@@ -1,0 +1,21 @@
+# Ripped ASM
+asm/nonmatchings
+asm/data
+
+# Build files
+assets/
+build/
+rom/
+
+# Generated config files
+config/*.ld
+config/*.yaml
+config/symbols.txt
+config/undefined_*
+
+# IDA files
+*.id0
+*.id1
+*.id2
+*.nam
+*.til
