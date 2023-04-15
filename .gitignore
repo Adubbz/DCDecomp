@@ -1,6 +1,7 @@
 # Ripped ASM
 asm/nonmatchings
 asm/data
+asm/header.s
 
 # Build files
 assets/
@@ -9,7 +10,6 @@ rom/
 
 # Generated config files
 config/*.ld
-config/*.yaml
 config/symbols.txt
 config/undefined_*
 

@@ -9,7 +9,7 @@ glabel func_00100000
 /* 104 00100004 00000000 */  nop
 
 # Handwritten function
-glabel func_00100008
+glabel _start
 /* 108 00100008 2A00023C */  lui        $2, %hi(StopCamera__7CCamera)
 /* 10C 0010000C F001033C */  lui        $3, %hi(D_1F06B00)
 /* 110 00100010 80234224 */  addiu      $2, $2, %lo(StopCamera__7CCamera)
@@ -53,9 +53,9 @@ glabel func_00100008
 /* 1A4 001000A4 04004524 */   addiu     $5, $2, 0x4
 /* 1A8 001000A8 D04F0408 */  j          Exit
 /* 1AC 001000AC 25204000 */   or        $4, $2, $0
-glabel func_001000B0
+glabel _exit
 /* 1B0 001000B0 D04F0408 */  j          Exit
 /* 1B4 001000B4 25200000 */   or        $4, $0, $0
-D_001000B8:
+_root:
 /* 1B8 001000B8 23000324 */  addiu      $3, $0, 0x23
 /* 1BC 001000BC 0C000000 */  syscall    0

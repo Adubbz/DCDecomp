@@ -58,4 +58,6 @@
 .L00101010 = 0x00101010;
 ain_light = 0x01DF86B0;
 ain_lightcolor = 0x01DF86F0;
-exit = Exit;
+func_00100008 = 0x00100008;
+D_001000B8 = 0x001000B8;
+func_001000B0 = 0x001000B0;

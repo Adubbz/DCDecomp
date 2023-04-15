@@ -31,7 +31,9 @@ OBJCOPY := $(PS2DEV)objcopy
 PYTHON  := py -3
 
 # Files
-LD_SCRIPT := $(CONFIG_DIR)/$(BASENAME).ld
+LD_SCRIPT  := $(CONFIG_DIR)/$(BASENAME).ld
+PRELIM_ELF := $(addprefix $(BUILD_DIR)/,$(BASENAME).prelim.elf)
+FINAL_ELF  := $(addprefix $(BUILD_DIR)/,$(BASENAME))
 
 ASM_FILES           := $(shell find $(ASM_DIR) -type f -iname '*.s' 2> /dev/null)
 C_FILES             := $(shell find $(SRC_DIR) -type f -iname '*.c' 2> /dev/null)
@@ -53,7 +55,7 @@ BIN_FLAGS    := -B mips:5900 -I binary -O elf32-littlemips
 
 all: build
 
-build: dirs $(BASENAME)
+build: dirs $(FINAL_ELF)
 
 dirs:
 	$(foreach dir,$(ALL_BUILD_DIRS),$(shell mkdir -p $(dir)))
@@ -78,8 +80,11 @@ $(BUILD_DIR)/%.s.o: %.s
 $(BUILD_DIR)/%.c.o: %.c
 	$(CC_MW) $(CC_MW_FLAGS) -o $@ $<
 
-$(BASENAME): $(ALL_OBJS)
+$(PRELIM_ELF): $(ALL_OBJS)
 	$(LD) $(LD_FLAGS) -o $@
+
+$(FINAL_ELF): $(PRELIM_ELF)
+	$(OBJCOPY) $< $@ -O binary
 
 # Phony targets
 .PHONY: all clean extract
