@@ -13,6 +13,9 @@ config/*.yaml
 config/symbols.txt
 config/undefined_*
 
+# Copyright issues
+tools/ee
+
 # IDA files
 *.id0
 *.id1

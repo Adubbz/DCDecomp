@@ -1,3 +1,5 @@
+BASENAME := SCUS_971.11
+
 # Directories
 ASM_DIR         := asm
 SRC_DIR         := src
@@ -5,6 +7,7 @@ ASSETS_DIR      := assets
 INCLUDE_DIR     := include
 BUILD_DIR       := build
 TOOLS_DIR       := tools
+SCRIPTS_DIR     := scripts
 CONFIG_DIR      := config
 NONMATCHING_DIR := $(ASM_DIR)/nonmatchings
 
@@ -17,30 +20,40 @@ CAT   := cat
 DIFF  := diff
 
 # Build tools
-CROSS := mips64r5900el-ps2-elf-
-MW    := $(TOOLS_DIR)/mw/2.3.1.01
-CC    := $(MW)/mwccmips
-AS    := $(TOOLS_DIR)/ee-as
-
-# Compiler flags
-AS_FLAGS := -mcpu=5900 -I include
-CC_FLAGS := -O2 -c -i include
+EE      := $(TOOLS_DIR)/ee/gcc/bin/ee-
+PS2DEV  := $(TOOLS_DIR)/mips64r5900el-ps2-elf-
+MW      := $(TOOLS_DIR)/mw/2.3.1.01
+CC_MW   := $(MW)/mwccmips
+CC_GCC  := $(EE)gcc295
+AS      := $(EE)as
+LD      := $(PS2DEV)ld
+OBJCOPY := $(PS2DEV)objcopy
+PYTHON  := py -3
 
 # Files
-ASM_FILES := $(shell find $(ASM_DIR) -type f -iname '*.s' 2> /dev/null)
-C_FILES   := $(shell find $(SRC_DIR) -type f -iname '*.c' 2> /dev/null)
-ASM_OBJs  := $(addprefix $(BUILD_DIR)/,$(ASM_FILES:.s=.s.o))
-C_OBJS    := $(addprefix $(BUILD_DIR)/,$(C_FILES:.c=.c.o))
-ALL_OBJS  := $(C_OBJS) $(ASM_OBJs) 
+LD_SCRIPT := $(CONFIG_DIR)/$(BASENAME).ld
+
+ASM_FILES           := $(shell find $(ASM_DIR) -type f -iname '*.s' 2> /dev/null)
+C_FILES             := $(shell find $(SRC_DIR) -type f -iname '*.c' 2> /dev/null)
+BIN_FILES           := $(shell find $(ASSETS_DIR) -type f -iname '*.bin' 2> /dev/null)
+ASM_OBJs            := $(addprefix $(BUILD_DIR)/,$(ASM_FILES:.s=.s.o))
+C_OBJS              := $(addprefix $(BUILD_DIR)/,$(C_FILES:.c=.c.o))
+BIN_OBJS            := $(addprefix $(BUILD_DIR)/,$(BIN_FILES:.bin=.bin.o))
+ALL_OBJS            := $(C_OBJS) $(ASM_OBJs) $(BIN_OBJS)
 
 # Build folders
-ASM_DIRS := $(sort $(dir $(ASM_FILES)))
-C_DIRS := $(sort $(dir $(C_FILES)))
-ASM_BUILD_DIRS := $(addprefix $(BUILD_DIR)/,$(ASM_DIRS))
-C_BUILD_DIRS := $(addprefix $(BUILD_DIR)/,$(C_DIRS))
-ALL_BUILD_DIRS := $(C_BUILD_DIRS) $(ASM_BUILD_DIRS) $(BUILD_DIR)
+ALL_BUILD_DIRS := $(sort $(dir $(ALL_OBJS)))
 
-all: dirs $(ALL_OBJS)
+# Compiler flags
+AS_FLAGS     := -c -EL -mcpu=5900 -32 -g2 -non_shared -I include
+CC_MW_FLAGS  := -O2 -c -i include
+CC_GCC_FLAGS := -c -EL -mcpu=5900 -g2 -non_shared -I include
+LD_FLAGS     := -b elf32-littlemips -m elf32lr5900 -T $(LD_SCRIPT) -T $(CONFIG_DIR)/undefined_funcs_auto.txt -T $(CONFIG_DIR)/undefined_syms_auto.txt -T $(CONFIG_DIR)/temporary_additional_syms.txt
+BIN_FLAGS    := -B mips:5900 -I binary -O elf32-littlemips
+
+all: build
+
+build: dirs $(BASENAME)
 
 dirs:
 	$(foreach dir,$(ALL_BUILD_DIRS),$(shell mkdir -p $(dir)))
@@ -52,11 +65,21 @@ clean:
 	@$(RM) -rf $(ASM_DIR)/data
 	@$(RM) -f $(CONFIG_DIR)/undefined_syms_auto* $(CONFIG_DIR)/undefined_funcs_auto* $(CONFIG_DIR)/*.ld
 
+extract:
+	@$(PYTHON) $(SCRIPTS_DIR)/dump_symbols.py
+	@$(PYTHON) $(TOOLS_DIR)/splat/split.py $(CONFIG_DIR)/$(BASENAME).yaml
+
+$(BUILD_DIR)/%.bin.o: %.bin
+	$(OBJCOPY) $(BIN_FLAGS) $< $@ 
+
 $(BUILD_DIR)/%.s.o: %.s
 	$(AS) $(AS_FLAGS) -o $@ $<
 
 $(BUILD_DIR)/%.c.o: %.c
-	$(CC) $(CC_FLAGS) -o $@ $<
+	$(CC_MW) $(CC_MW_FLAGS) -o $@ $<
+
+$(BASENAME): $(ALL_OBJS)
+	$(LD) $(LD_FLAGS) -o $@
 
 # Phony targets
-.PHONY: all clean
+.PHONY: all clean extract
