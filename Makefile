@@ -50,7 +50,7 @@ ALL_BUILD_DIRS := $(sort $(dir $(ALL_OBJS)))
 AS_FLAGS     := -c -EL -mcpu=5900 -32 -g2 -non_shared -I include
 CC_MW_FLAGS  := -O2 -c -i include
 CC_GCC_FLAGS := -c -EL -mcpu=5900 -g2 -non_shared -I include
-LD_FLAGS     := -b elf32-littlemips -m elf32lr5900 -T $(LD_SCRIPT) -T $(CONFIG_DIR)/undefined_funcs_auto.txt -T $(CONFIG_DIR)/undefined_syms_auto.txt -T $(CONFIG_DIR)/temporary_additional_syms.txt
+LD_FLAGS     := -b elf32-littlemips -m elf32lr5900 -e _start -z max-page-size=0x100 -T $(LD_SCRIPT) -T $(CONFIG_DIR)/undefined_funcs_auto.txt -T $(CONFIG_DIR)/undefined_syms_auto.txt -T $(CONFIG_DIR)/temporary_additional_syms.txt
 BIN_FLAGS    := -B mips:5900 -I binary -O elf32-littlemips
 
 all: build
