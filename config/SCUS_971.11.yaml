@@ -14,6 +14,7 @@ options:
   symbol_addrs_path: config/symbols.txt
   undefined_funcs_auto_path: config/undefined_funcs_auto.txt
   undefined_syms_auto_path: config/undefined_syms_auto.txt
+  extensions_path: config/extensions
   find_file_boundaries: false # We can manually determine file boundaries ourselves later
   use_legacy_include_asm: false
   string_encoding: ascii
@@ -25,9 +26,7 @@ options:
   # Disassembly-related options
   asm_inc_header: ".include \"macro.inc\"\n\n.set noat      /* allow manual use of $at */\n.set noreorder /* don't insert nops after branches */\n\n"
 segments:
-  - name: header
-    type: header
-    start: 0x0
+  - [0x0] # Elf header
   - name: main
     type: code
     start: 0x100
