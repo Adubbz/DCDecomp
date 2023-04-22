@@ -55,7 +55,7 @@ BIN_FLAGS    := -B mips:5900 -I binary -O elf32-littlemips
 
 all: build
 
-build: dirs $(FINAL_ELF)
+build: dirs $(PRELIM_ELF)
 
 dirs:
 	$(foreach dir,$(ALL_BUILD_DIRS),$(shell mkdir -p $(dir)))
