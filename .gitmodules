@@ -1,3 +1,6 @@
 [submodule "tools/splat"]
 	path = tools/splat
 	url = https://github.com/Adubbz/splat-ps2.git
+[submodule "tools/asm-differ"]
+	path = tools/asm-differ
+	url = https://github.com/simonlindholm/asm-differ.git

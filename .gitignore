@@ -15,6 +15,10 @@ config/undefined_*
 
 # Copyright issues
 tools/ee
+tools/mw
+
+# Python cache
+**/__pycache__
 
 # IDA files
 *.id0
