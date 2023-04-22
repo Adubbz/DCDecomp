@@ -9,7 +9,7 @@ options:
   src_path: src
   build_path: build
   compiler: GCC
-  ld_script_path: config/SCUS_971.11.ld
+  ld_script_path: config/SCUS_971.11.auto.ld
   platform: ps2
   symbol_addrs_path: config/symbols.txt
   undefined_funcs_auto_path: config/undefined_funcs_auto.txt
@@ -49,6 +49,11 @@ segments:
       - [0x1870, c, exit] # TODO: Check which module this is actually in
       - [0x1920, c]
 
+      - name: ebattle
+        type: cpp
+        start: 0x68200
+      - [0x68210, c]
+
       # SCE libs
       # - [0xC470, c, libdma] 
       # - [0xCF90, c]
@@ -64,9 +69,59 @@ segments:
       - [0x14FA60, bin, Vu_progmain]
 
       # __data_start
-      - [0x14FBC0, rodata]
+      - [0x14FBC0, rodata, data]
       # - [0x19FF80, c, sinit]
       # - [0x1A1110, rodata]
-      - [0x1A2480, bss]
-      - [0x2B148C] # End of ROM
-  - [0x1CABD94]
+      - [0x1A1900, rodata, sdata]
+      - [0x1A2480] # bss start
+
+      # Manually define .sbss/.bss .s files
+      - name: 1A2480.sbss
+        type: hasm
+        start: auto
+      - name: 1A2790.sbss
+        type: hasm
+        start: auto
+      - name: bss
+        type: hasm
+        start: auto
+
+      # .sbss
+      - name: sbss
+        type: .sbss
+        start: auto
+        vram: 0x2A2380
+
+      # .bss
+      - name: bss
+        type: .bss
+        start: auto
+        vram: 0x2A3709
+
+      # Markers
+      - name: __gp
+        type: linker_offset
+        start: auto
+        vram: 0x2A97F0
+      
+      - name: __bss_end
+        type: linker_offset
+        start: auto
+        vram: 0x1DABD00
+  - name: mwcats.1
+    type: bin
+    start: 0x1FEBF0
+  - name: mwcats.2
+    type: bin
+    start: 0x205060
+  - name: mwcats.3
+    type: bin
+    start: 0x2055F0
+  - [0x2057E0] # .relmain
+  - name: comment
+    type: bin
+    start: 0x2B11C8 
+  - name: reginfo
+    type: bin
+    start: 0x2B11F4 
+  - [0x2B148C] # End of ROM

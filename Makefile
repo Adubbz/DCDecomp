@@ -37,20 +37,22 @@ FINAL_ELF  := $(addprefix $(BUILD_DIR)/,$(BASENAME))
 
 ASM_FILES           := $(shell find $(ASM_DIR) -type f -iname '*.s' 2> /dev/null)
 C_FILES             := $(shell find $(SRC_DIR) -type f -iname '*.c' 2> /dev/null)
+CPP_FILES           := $(shell find $(SRC_DIR) -type f -iname '*.cpp' 2> /dev/null)
 BIN_FILES           := $(shell find $(ASSETS_DIR) -type f -iname '*.bin' 2> /dev/null)
 ASM_OBJs            := $(addprefix $(BUILD_DIR)/,$(ASM_FILES:.s=.s.o))
 C_OBJS              := $(addprefix $(BUILD_DIR)/,$(C_FILES:.c=.c.o))
+CPP_OBJS            := $(addprefix $(BUILD_DIR)/,$(CPP_FILES:.cpp=.cpp.o))
 BIN_OBJS            := $(addprefix $(BUILD_DIR)/,$(BIN_FILES:.bin=.bin.o))
-ALL_OBJS            := $(C_OBJS) $(ASM_OBJs) $(BIN_OBJS)
+ALL_OBJS            := $(C_OBJS) $(CPP_OBJS) $(ASM_OBJs) $(BIN_OBJS)
 
 # Build folders
 ALL_BUILD_DIRS := $(sort $(dir $(ALL_OBJS)))
 
 # Compiler flags
-AS_FLAGS     := -c -EL -mcpu=5900 -32 -g2 -non_shared -I include
+AS_FLAGS     := -c -EL -mcpu=5900 -32 -g2 -non_shared -G0 -I include
 CC_MW_FLAGS  := -O2 -c -i include
 CC_GCC_FLAGS := -c -EL -mcpu=5900 -g2 -non_shared -I include
-LD_FLAGS     := -b elf32-littlemips -m elf32lr5900 -e _start -z max-page-size=0x100 -Map $(PRELIM_ELF:.elf=.map) -T $(LD_SCRIPT) -T $(CONFIG_DIR)/undefined_funcs_auto.txt -T $(CONFIG_DIR)/undefined_syms_auto.txt -T $(CONFIG_DIR)/temporary_additional_syms.txt
+LD_FLAGS     := -G0 -b elf32-littlemips -m elf32lr5900 -e _start -z max-page-size=0x100 -Map $(PRELIM_ELF:.elf=.map) -T $(LD_SCRIPT) -T $(CONFIG_DIR)/undefined_funcs_auto.txt -T $(CONFIG_DIR)/undefined_syms_auto.txt -T $(CONFIG_DIR)/temporary_additional_syms.txt
 BIN_FLAGS    := -B mips:5900 -I binary -O elf32-littlemips
 
 all: build
@@ -65,7 +67,7 @@ clean:
 	@$(RM) -rf $(NONMATCHING_DIR)
 	@$(RM) -rf $(ASSETS_DIR)
 	@$(RM) -rf $(ASM_DIR)/data
-	@$(RM) -f $(CONFIG_DIR)/undefined_syms_auto* $(CONFIG_DIR)/undefined_funcs_auto* $(CONFIG_DIR)/*.ld
+	@$(RM) -f $(CONFIG_DIR)/undefined_syms_auto* $(CONFIG_DIR)/undefined_funcs_auto* $(CONFIG_DIR)/*.auto.ld
 
 extract:
 	@$(PYTHON) $(SCRIPTS_DIR)/dump_symbols.py
@@ -78,6 +80,9 @@ $(BUILD_DIR)/%.s.o: %.s
 	$(AS) $(AS_FLAGS) -o $@ $<
 
 $(BUILD_DIR)/%.c.o: %.c
+	$(CC_MW) $(CC_MW_FLAGS) -o $@ $<
+
+$(BUILD_DIR)/%.cpp.o: %.cpp
 	$(CC_MW) $(CC_MW_FLAGS) -o $@ $<
 
 $(PRELIM_ELF): $(ALL_OBJS)

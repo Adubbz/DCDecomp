@@ -9,7 +9,7 @@ build/
 rom/
 
 # Generated config files
-config/*.ld
+config/*.auto.ld
 config/symbols.txt
 config/undefined_*
 
