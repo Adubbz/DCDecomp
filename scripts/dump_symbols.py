@@ -13,10 +13,13 @@ def make_unique_symbol(sym):
     suffix = 2
     new_sym = sym
     while new_sym in prev_symbols:
-        new_sym = f'{sym}_{suffix}'
+        new_sym = f'{sym}__DSUFF_{suffix}__'
         suffix += 1
     prev_symbols.add(new_sym)
     return new_sym
+
+def sub_char(chr):
+    return f'__DSUBS_{ord(chr)}__'
 
 with open('config/symbols.txt', 'w') as f:
     for line in sym_tab.splitlines():
@@ -27,7 +30,7 @@ with open('config/symbols.txt', 'w') as f:
         offset = line[0:8]
         sym_type = line[15]
         sym_size = line[22:30]
-        symbol = line[31:].replace('<', '_').replace('>', '_').replace('@', '_str_').replace(',', '_')
+        symbol = line[31:].replace('<', sub_char('<')).replace('>', sub_char('>')).replace('@', sub_char('@')).replace(',', sub_char(','))
 
         if sym_type == 'F':
             out_type = 'type:func'

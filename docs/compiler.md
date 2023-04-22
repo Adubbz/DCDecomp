@@ -30,3 +30,6 @@ Good Makefile reference: https://gitlab.com/banjo.decomp/banjo-kazooie/-/blob/ma
 binutils is provided by [ps2toolchain-ee](https://github.com/ps2dev/ps2toolchain-ee)
 
 ee-as.exe is sourced from ProDG 2.0 found [here](https://archive.org/details/SNSystemsProDGPs2)
+
+
+https://stackoverflow.com/questions/19912881/how-to-tell-force-gnu-ld-to-put-a-section-symbol-in-a-specific-part-of-the-out
