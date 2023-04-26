@@ -6,7 +6,6 @@ asm/header.s
 # Build files
 assets/
 build/
-rom/
 
 # Generated config files
 config/*.auto.ld
@@ -15,7 +14,6 @@ config/undefined_*
 
 # Copyright issues
 tools/ee
-tools/mw
 
 # Python cache
 **/__pycache__
