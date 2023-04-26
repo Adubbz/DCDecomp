@@ -49,6 +49,11 @@ segments:
       - [0x1870, c, exit] # TODO: Check which module this is actually in
       - [0x1920, c]
 
+      - name: texture
+        type: cpp
+        start: 0x30FF0
+      - [0x31060, c]
+
       - name: ebattle
         type: cpp
         start: 0x68200

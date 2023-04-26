@@ -1027,8 +1027,7 @@ SECTIONS
         build\asm\nonmatchings\1920\MGDrawShade__FP6CFrame.s.o(.text);
         build\asm\nonmatchings\1920\MGBeginDrawShadow__F9sceGsTex0.s.o(.text);
         build\asm\nonmatchings\1920\MGEndDrawShadow__FUc.s.o(.text);
-        build\asm\nonmatchings\1920\__ct__8CTextureFv.s.o(.text);
-        build\asm\nonmatchings\1920\Initialize__8CTextureFv.s.o(.text);
+        build\src\texture.cpp.o(.text);
         build\asm\nonmatchings\1920\__ct__13CTextureBlockFv.s.o(.text);
         build\asm\nonmatchings\1920\Initialize__13CTextureBlockFv.s.o(.text);
         build\asm\nonmatchings\1920\Initialize__15CTextureManagerFi.s.o(.text);

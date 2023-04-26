@@ -23,12 +23,12 @@ DIFF  := diff
 EE      := $(TOOLS_DIR)/ee/gcc/bin/ee-
 PS2DEV  := $(TOOLS_DIR)/mips64r5900el-ps2-elf-
 MW      := $(TOOLS_DIR)/mw/2.3.1.01
-CC_MW   := $(MW)/mwccmips
-CC_GCC  := $(EE)gcc295
-AS      := $(EE)as
-LD      := $(PS2DEV)ld
-OBJCOPY := $(PS2DEV)objcopy
-PYTHON  := py -3
+CC_MW   := $(MW)/mwccmips.exe
+CC_GCC  := $(EE)gcc295.exe
+AS      := $(EE)as.exe
+LD      := $(PS2DEV)ld.exe
+OBJCOPY := $(PS2DEV)objcopy.exe
+PYTHON  := python
 
 # Files
 LD_SCRIPT  := $(CONFIG_DIR)/$(BASENAME).ld
