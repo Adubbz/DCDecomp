@@ -50,7 +50,7 @@ ALL_BUILD_DIRS := $(sort $(dir $(ALL_OBJS)))
 
 # Compiler flags
 AS_FLAGS     := -c -EL -mcpu=5900 -32 -g2 -non_shared -G0 -I include
-CC_MW_FLAGS  := -O2 -c -i include
+CC_MW_FLAGS  := -O2 -c -Cpp_exceptions off -i include
 CC_GCC_FLAGS := -c -EL -mcpu=5900 -g2 -non_shared -I include
 LD_FLAGS     := -G0 -b elf32-littlemips -m elf32lr5900 -e _start -z max-page-size=0x100 -Map $(PRELIM_ELF:.elf=.map) -T $(LD_SCRIPT) -T $(CONFIG_DIR)/undefined_funcs_auto.txt -T $(CONFIG_DIR)/undefined_syms_auto.txt -T $(CONFIG_DIR)/temporary_additional_syms.txt
 BIN_FLAGS    := -B mips:5900 -I binary -O elf32-littlemips
