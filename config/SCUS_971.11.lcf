@@ -1,0 +1,86 @@
+MEMORY
+{
+    main (RWX)  : ORIGIN = 0x00100000, LENGTH = 0
+    title (RWXO) : ORIGIN = AFTER(main), LENGTH = 0 > TITLE.bin
+    dun (RWXO)   : ORIGIN = AFTER(main), LENGTH = 0 > DUN.bin
+    heap (RW)   : ORIGIN = AFTER(main, title, dun), LENGTH = 0
+}
+
+SECTIONS
+{
+    # Hack to get main to start in the right place. This will be optimized out by mw.
+    .padding:
+    {
+        . = . + 0x4C;
+    } > main
+
+    # main
+    .main:
+    {
+        # text
+        . = ALIGN(128);
+        *(.text)
+
+        # data
+        *(.data)
+        *(.vudata)
+
+        # rodata
+        *(.rodata)
+        *(.rdata)
+
+		# C++ related sections
+
+		# static initializers
+		*(.init)
+		__static_init = .;
+		*(.ctor)
+		__static_init_end = .;
+		# vtable
+		*(.vtables)
+		# exception
+		*(.exception)
+		__exception_table_start__ = .;
+		EXCEPTION
+		__exception_table_end__ = .;
+
+		# gp
+		_gp	= . + 0x7ff0;
+
+		# literal
+		LITERAL
+
+		# sdata
+		*(.sdata)
+
+		# sbss
+		_fbss = .;
+		*(.sbss)
+		*(.scommon)
+		*(SCOMMON)
+
+        # bss
+		*(.bss)
+		*(.common)
+		*(COMMON)
+		*(.vubss)
+
+		# end of main segment
+		. = ALIGN(128);
+    } > main
+
+    .title:
+    {
+        . = ALIGN(128);
+    } > title
+
+    .dun:
+    {
+        . = ALIGN(128);
+    } > dun
+
+    .heap:
+    {
+        . = ALIGN(16);
+    } > heap
+}

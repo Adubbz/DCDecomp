@@ -9,7 +9,6 @@ BUILD_DIR       := build
 TOOLS_DIR       := tools
 SCRIPTS_DIR     := scripts
 CONFIG_DIR      := config
-NONMATCHING_DIR := $(ASM_DIR)/nonmatchings
 
 # System tools
 MKDIR := mkdir
@@ -26,24 +25,18 @@ MW      := $(TOOLS_DIR)/mw/2.3.1.01
 CC_MW   := $(MW)/mwccmips.exe
 CC_GCC  := $(EE)gcc295.exe
 AS      := $(EE)as.exe
-LD      := $(PS2DEV)ld.exe
+LD      := $(MW)/mwldmips.exe
+LD_GNU  := $(PS2DEV)ld.exe
 OBJCOPY := $(PS2DEV)objcopy.exe
 PYTHON  := python
 
 # Files
-LD_SCRIPT  := $(CONFIG_DIR)/$(BASENAME).ld
+LD_SCRIPT  := $(CONFIG_DIR)/$(BASENAME).lcf
 PRELIM_ELF := $(addprefix $(BUILD_DIR)/,$(BASENAME).prelim.elf)
 FINAL_ELF  := $(addprefix $(BUILD_DIR)/,$(BASENAME))
 
-ASM_FILES           := $(shell find $(ASM_DIR) -type f -iname '*.s' 2> /dev/null)
-C_FILES             := $(shell find $(SRC_DIR) -type f -iname '*.c' 2> /dev/null)
-CPP_FILES           := $(shell find $(SRC_DIR) -type f -iname '*.cpp' 2> /dev/null)
-BIN_FILES           := $(shell find $(ASSETS_DIR) -type f -iname '*.bin' 2> /dev/null)
-ASM_OBJs            := $(addprefix $(BUILD_DIR)/,$(ASM_FILES:.s=.s.o))
-C_OBJS              := $(addprefix $(BUILD_DIR)/,$(C_FILES:.c=.c.o))
-CPP_OBJS            := $(addprefix $(BUILD_DIR)/,$(CPP_FILES:.cpp=.cpp.o))
-BIN_OBJS            := $(addprefix $(BUILD_DIR)/,$(BIN_FILES:.bin=.bin.o))
-ALL_OBJS            := $(C_OBJS) $(CPP_OBJS) $(ASM_OBJs) $(BIN_OBJS)
+include obj_files.mk
+ALL_OBJS := $(TEXT_O_FILES) $(DATA_O_FILES) $(BSS_O_FILES) $(ADDITIONAL_O_FILES)
 
 # Build folders
 ALL_BUILD_DIRS := $(sort $(dir $(ALL_OBJS)))
@@ -52,7 +45,8 @@ ALL_BUILD_DIRS := $(sort $(dir $(ALL_OBJS)))
 AS_FLAGS     := -c -EL -mcpu=5900 -32 -g2 -non_shared -G0 -I include
 CC_MW_FLAGS  := -O2 -c -Cpp_exceptions off -i include
 CC_GCC_FLAGS := -c -EL -mcpu=5900 -g2 -non_shared -I include
-LD_FLAGS     := -G0 -b elf32-littlemips -m elf32lr5900 -e _start -z max-page-size=0x100 -Map $(PRELIM_ELF:.elf=.map) -T $(LD_SCRIPT) -T $(CONFIG_DIR)/undefined_funcs_auto.txt -T $(CONFIG_DIR)/undefined_syms_auto.txt -T $(CONFIG_DIR)/temporary_additional_syms.txt
+LD_GNU_FLAGS := -G0 -b elf32-littlemips -m elf32lr5900
+LD_MW_FLAGS  := -map -nostdlib -m _start -nodead
 BIN_FLAGS    := -B mips:5900 -I binary -O elf32-littlemips
 
 all: build
@@ -60,24 +54,27 @@ all: build
 build: dirs $(PRELIM_ELF)
 
 dirs:
-	$(foreach dir,$(ALL_BUILD_DIRS),$(shell mkdir -p $(dir)))
+	$(foreach dir,$(ALL_BUILD_DIRS),$(shell mkdir "$(dir)"))
 
 clean:
 	@$(RM) -rf $(BUILD_DIR)
-	@$(RM) -rf $(NONMATCHING_DIR)
 	@$(RM) -rf $(ASSETS_DIR)
-	@$(RM) -rf $(ASM_DIR)/data
 	@$(RM) -f $(CONFIG_DIR)/undefined_syms_auto* $(CONFIG_DIR)/undefined_funcs_auto* $(CONFIG_DIR)/*.auto.ld
 
 extract:
 	@$(PYTHON) $(SCRIPTS_DIR)/dump_symbols.py
 	@$(PYTHON) $(TOOLS_DIR)/splat/split.py $(CONFIG_DIR)/$(BASENAME).yaml
 
+$(BUILD_DIR)/%.gcc.c.o: %.gcc.c
+	$(CC_GCC) $(CC_GCC_FLAGS) -o $@ $<
+
 $(BUILD_DIR)/%.bin.o: %.bin
 	$(OBJCOPY) $(BIN_FLAGS) $< $@ 
 
+# NB: This is unfortunately rather slow due to the Python script, though is sadly a necessity as MW will not tolerate empty sections.
 $(BUILD_DIR)/%.s.o: %.s
 	$(AS) $(AS_FLAGS) -o $@ $<
+	@$(PYTHON) $(SCRIPTS_DIR)/section_stripper.py $@
 
 $(BUILD_DIR)/%.c.o: %.c
 	$(CC_MW) $(CC_MW_FLAGS) -o $@ $<
@@ -86,7 +83,8 @@ $(BUILD_DIR)/%.cpp.o: %.cpp
 	$(CC_MW) $(CC_MW_FLAGS) -o $@ $<
 
 $(PRELIM_ELF): $(ALL_OBJS)
-	$(LD) $(LD_FLAGS) -o $@
+	$(file >build/o_files, $(ALL_OBJS))
+	$(LD) $(LD_MW_FLAGS) -o $@ $(LD_SCRIPT) @build/o_files
 
 $(FINAL_ELF): $(PRELIM_ELF)
 	$(OBJCOPY) $< $@ -O binary

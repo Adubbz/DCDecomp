@@ -41,18 +41,8 @@ segments:
       - [0x2C8, c, abs]
       - [0x2E0, c, assert]
       - [0x318, c, atof]
-      - [0x338, c]
-      # atoi
-      # _calloc_r
-      # close_r
-      # quorem
-      - [0x1870, c, exit] # TODO: Check which module this is actually in
-      - [0x1920, c]
+      - [0x338, c, lib]
       - [0x230B0, c, dc]
-
-      # SCE libs
-      # - [0xC470, c, libdma] 
-      # - [0xCF90, c]
 
       # Vu programs
       - [0x145400, bin, Vu_prog0]

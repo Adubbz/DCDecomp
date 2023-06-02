@@ -12,14 +12,14 @@ prev_symbols = set()
 def make_unique_symbol(sym):
     suffix = 2
     new_sym = sym
-    while new_sym in prev_symbols:
-        new_sym = f'{sym}__DSUFF_{suffix}__'
+    while new_sym.lower() in prev_symbols:
+        new_sym = f'{sym}_{suffix}'
         suffix += 1
-    prev_symbols.add(new_sym)
+    prev_symbols.add(new_sym.lower())
     return new_sym
 
 def sub_char(chr):
-    return f'__DSUBS_{ord(chr)}__'
+    return f'_'
 
 with open('config/symbols.txt', 'w') as f:
     for line in sym_tab.splitlines():
