@@ -19,7 +19,9 @@ SECTIONS
     {
         # text
         . = ALIGN(128);
+        ALIGNALL(8); // Align text on 8-byte boundaries
         *(.text)
+        ALIGNALL(1);
 
         # data
         *(.data)

@@ -1014,8 +1014,7 @@ TEXT_O_FILES :=\
 	$(BUILD_DIR)/asm/nonmatchings/dc/MGDrawShade.s.o\
 	$(BUILD_DIR)/asm/nonmatchings/dc/MGBeginDrawShadow.s.o\
 	$(BUILD_DIR)/asm/nonmatchings/dc/MGEndDrawShadow.s.o\
-	$(BUILD_DIR)/asm/nonmatchings/dc/CTexture____ct.s.o\
-	$(BUILD_DIR)/asm/nonmatchings/dc/CTexture__Initialize.s.o\
+	$(BUILD_DIR)/src/texture.cpp.o\
 	$(BUILD_DIR)/asm/nonmatchings/dc/CTextureBlock____ct.s.o\
 	$(BUILD_DIR)/asm/nonmatchings/dc/CTextureBlock__Initialize.s.o\
 	$(BUILD_DIR)/asm/nonmatchings/dc/CTextureManager__Initialize.s.o\
@@ -1755,7 +1754,7 @@ TEXT_O_FILES :=\
 	$(BUILD_DIR)/asm/nonmatchings/dc/CommandTEX_ANIME_DATA2.s.o\
 	$(BUILD_DIR)/asm/nonmatchings/dc/CommandTEX_SCROLL_DATA.s.o\
 	$(BUILD_DIR)/asm/nonmatchings/dc/CommandTEX_ANIME_END.s.o\
-	$(BUILD_DIR)/asm/nonmatchings/dc/EBInitialize.s.o\
+	$(BUILD_DIR)/src/ebattle.cpp.o\
 	$(BUILD_DIR)/asm/nonmatchings/dc/EBInit.s.o\
 	$(BUILD_DIR)/asm/nonmatchings/dc/EBFinishSound.s.o\
 	$(BUILD_DIR)/asm/nonmatchings/dc/EBInitIntro.s.o\
