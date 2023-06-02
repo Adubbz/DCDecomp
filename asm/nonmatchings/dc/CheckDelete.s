@@ -1,0 +1,115 @@
+.include "macro.inc"
+
+.set noat      /* allow manual use of $at */
+.set noreorder /* don't insert nops after branches */
+
+glabel CheckDelete__FP9CEditAreaP9CMapPartsfff
+/* A5C20 001A5B20 A0FFBD27 */  addiu      $sp, $sp, -0x60
+/* A5C24 001A5B24 4000BF7F */  sq         $31, 0x40($sp)
+/* A5C28 001A5B28 3000B37F */  sq         $19, 0x30($sp)
+/* A5C2C 001A5B2C 2000B27F */  sq         $18, 0x20($sp)
+/* A5C30 001A5B30 1000B17F */  sq         $17, 0x10($sp)
+/* A5C34 001A5B34 0000B07F */  sq         $16, 0x0($sp)
+/* A5C38 001A5B38 289E8070 */  paddub     $19, $4, $0
+/* A5C3C 001A5B3C 2896A070 */  paddub     $18, $5, $0
+/* A5C40 001A5B40 5000A527 */  addiu      $5, $sp, 0x50
+/* A5C44 001A5B44 20B6050C */  jal        GetPos__9CEditAreaFP11CVector3_i_fff
+/* A5C48 001A5B48 00000000 */   nop
+/* A5C4C 001A5B4C 5000B08F */  lw         $16, 0x50($sp)
+/* A5C50 001A5B50 5800B18F */  lw         $17, 0x58($sp)
+/* A5C54 001A5B54 1801528E */  lw         $18, 0x118($18)
+/* A5C58 001A5B58 28266072 */  paddub     $4, $19, $0
+/* A5C5C 001A5B5C 3CC0050C */  jal        GetMapNo__9CEditAreaFv
+/* A5C60 001A5B60 00000000 */   nop
+/* A5C64 001A5B64 01000324 */  addiu      $3, $0, 0x1
+/* A5C68 001A5B68 03004310 */  beq        $2, $3, .L001A5B78
+/* A5C6C 001A5B6C 00000000 */   nop
+/* A5C70 001A5B70 45000010 */  b          .L001A5C88
+/* A5C74 001A5B74 00000000 */   nop
+.L001A5B78:
+/* A5C78 001A5B78 03000224 */  addiu      $2, $0, 0x3
+/* A5C7C 001A5B7C 42004212 */  beq        $18, $2, .L001A5C88
+/* A5C80 001A5B80 00000000 */   nop
+/* A5C84 001A5B84 28266072 */  paddub     $4, $19, $0
+/* A5C88 001A5B88 40C0050C */  jal        GetAreaID__9CEditAreaFv
+/* A5C8C 001A5B8C 00000000 */   nop
+/* A5C90 001A5B90 02000324 */  addiu      $3, $0, 0x2
+/* A5C94 001A5B94 2B004310 */  beq        $2, $3, .L001A5C44
+/* A5C98 001A5B98 00000000 */   nop
+/* A5C9C 001A5B9C 01000324 */  addiu      $3, $0, 0x1
+/* A5CA0 001A5BA0 16004310 */  beq        $2, $3, .L001A5BFC
+/* A5CA4 001A5BA4 00000000 */   nop
+/* A5CA8 001A5BA8 03004010 */  beqz       $2, .L001A5BB8
+/* A5CAC 001A5BAC 00000000 */   nop
+/* A5CB0 001A5BB0 35000010 */  b          .L001A5C88
+/* A5CB4 001A5BB4 00000000 */   nop
+.L001A5BB8:
+/* A5CB8 001A5BB8 05000224 */  addiu      $2, $0, 0x5
+/* A5CBC 001A5BBC 06000216 */  bne        $16, $2, .L001A5BD8
+/* A5CC0 001A5BC0 00000000 */   nop
+/* A5CC4 001A5BC4 04002016 */  bnez       $17, .L001A5BD8
+/* A5CC8 001A5BC8 00000000 */   nop
+/* A5CCC 001A5BCC 28166070 */  paddub     $2, $3, $0
+/* A5CD0 001A5BD0 2E000010 */  b          .L001A5C8C
+/* A5CD4 001A5BD4 00000000 */   nop
+.L001A5BD8:
+/* A5CD8 001A5BD8 02000224 */  addiu      $2, $0, 0x2
+/* A5CDC 001A5BDC 2A000216 */  bne        $16, $2, .L001A5C88
+/* A5CE0 001A5BE0 00000000 */   nop
+/* A5CE4 001A5BE4 07000224 */  addiu      $2, $0, 0x7
+/* A5CE8 001A5BE8 27002216 */  bne        $17, $2, .L001A5C88
+/* A5CEC 001A5BEC 00000000 */   nop
+/* A5CF0 001A5BF0 01000224 */  addiu      $2, $0, 0x1
+/* A5CF4 001A5BF4 25000010 */  b          .L001A5C8C
+/* A5CF8 001A5BF8 00000000 */   nop
+.L001A5BFC:
+/* A5CFC 001A5BFC 03000224 */  addiu      $2, $0, 0x3
+/* A5D00 001A5C00 07000216 */  bne        $16, $2, .L001A5C20
+/* A5D04 001A5C04 00000000 */   nop
+/* A5D08 001A5C08 05000224 */  addiu      $2, $0, 0x5
+/* A5D0C 001A5C0C 04002216 */  bne        $17, $2, .L001A5C20
+/* A5D10 001A5C10 00000000 */   nop
+/* A5D14 001A5C14 28166070 */  paddub     $2, $3, $0
+/* A5D18 001A5C18 1C000010 */  b          .L001A5C8C
+/* A5D1C 001A5C1C 00000000 */   nop
+.L001A5C20:
+/* A5D20 001A5C20 0B000224 */  addiu      $2, $0, 0xB
+/* A5D24 001A5C24 18000216 */  bne        $16, $2, .L001A5C88
+/* A5D28 001A5C28 00000000 */   nop
+/* A5D2C 001A5C2C 03000224 */  addiu      $2, $0, 0x3
+/* A5D30 001A5C30 15002216 */  bne        $17, $2, .L001A5C88
+/* A5D34 001A5C34 00000000 */   nop
+/* A5D38 001A5C38 01000224 */  addiu      $2, $0, 0x1
+/* A5D3C 001A5C3C 13000010 */  b          .L001A5C8C
+/* A5D40 001A5C40 00000000 */   nop
+.L001A5C44:
+/* A5D44 001A5C44 04000224 */  addiu      $2, $0, 0x4
+/* A5D48 001A5C48 06000216 */  bne        $16, $2, .L001A5C64
+/* A5D4C 001A5C4C 00000000 */   nop
+/* A5D50 001A5C50 04002016 */  bnez       $17, .L001A5C64
+/* A5D54 001A5C54 00000000 */   nop
+/* A5D58 001A5C58 01000224 */  addiu      $2, $0, 0x1
+/* A5D5C 001A5C5C 0B000010 */  b          .L001A5C8C
+/* A5D60 001A5C60 00000000 */   nop
+.L001A5C64:
+/* A5D64 001A5C64 03000224 */  addiu      $2, $0, 0x3
+/* A5D68 001A5C68 07000216 */  bne        $16, $2, .L001A5C88
+/* A5D6C 001A5C6C 00000000 */   nop
+/* A5D70 001A5C70 07000224 */  addiu      $2, $0, 0x7
+/* A5D74 001A5C74 04002216 */  bne        $17, $2, .L001A5C88
+/* A5D78 001A5C78 00000000 */   nop
+/* A5D7C 001A5C7C 01000224 */  addiu      $2, $0, 0x1
+/* A5D80 001A5C80 02000010 */  b          .L001A5C8C
+/* A5D84 001A5C84 00000000 */   nop
+.L001A5C88:
+/* A5D88 001A5C88 28160070 */  paddub     $2, $0, $0
+.L001A5C8C:
+/* A5D8C 001A5C8C 4000BF7B */  lq         $31, 0x40($sp)
+/* A5D90 001A5C90 3000B37B */  lq         $19, 0x30($sp)
+/* A5D94 001A5C94 2000B27B */  lq         $18, 0x20($sp)
+/* A5D98 001A5C98 1000B17B */  lq         $17, 0x10($sp)
+/* A5D9C 001A5C9C 0000B07B */  lq         $16, 0x0($sp)
+/* A5DA0 001A5CA0 6000BD27 */  addiu      $sp, $sp, 0x60
+/* A5DA4 001A5CA4 0800E003 */  jr         $31
+/* A5DA8 001A5CA8 00000000 */   nop
+/* A5DAC 001A5CAC 00000000 */  nop
