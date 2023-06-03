@@ -1015,8 +1015,6 @@ TEXT_O_FILES :=\
 	$(BUILD_DIR)/asm/nonmatchings/dc/MGBeginDrawShadow.s.o\
 	$(BUILD_DIR)/asm/nonmatchings/dc/MGEndDrawShadow.s.o\
 	$(BUILD_DIR)/src/texture.cpp.o\
-	$(BUILD_DIR)/asm/nonmatchings/dc/CTextureBlock____ct.s.o\
-	$(BUILD_DIR)/asm/nonmatchings/dc/CTextureBlock__Initialize.s.o\
 	$(BUILD_DIR)/asm/nonmatchings/dc/CTextureManager__Initialize.s.o\
 	$(BUILD_DIR)/asm/nonmatchings/dc/CTextureManager__SetBuffer.s.o\
 	$(BUILD_DIR)/asm/nonmatchings/dc/CTextureManager__SearchTextureName.s.o\

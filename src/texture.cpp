@@ -20,3 +20,19 @@ void CTexture::Initialize() {
     m_width = 0;
     m_is_converted = 0;
 }
+
+CTextureBlock::CTextureBlock() {
+    this->Initialize();
+}
+
+void CTextureBlock::Initialize() {
+    /* Initialize members. */
+    m_name[0] = NULL;
+    m_gs_texture_end_addr = 0;
+    m_gs_reserved_end_addr = 0;
+    m_gs_reserved_start_addr = 0;
+    m_texture_buffer_end = 0;
+    m_texture_buffer_start = 0;
+    m_is_fully_loaded = false;
+    m_is_extended = false;
+}
