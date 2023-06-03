@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+typedef int TextureHandle;
+
 struct i {
     u8 r;
     u8 g;
@@ -42,3 +44,19 @@ class CTextureBlock {
         void Initialize();
 };
 STATIC_ASSERT(sizeof(CTextureBlock) == 0x3C);
+
+class CTextureManager {
+    private:
+        u8 data[0x4E48];
+    public:
+        void Initialize(int gs_addr);
+        // A size argument should also be included here, however it seems L5 had a mismatch between the header and implementation.
+        void SetBuffer(i *buffer); 
+        TextureHandle GetTextureHandle(char *name, TextureHandle handle);
+        CTexture *GetTexture(TextureHandle handle);
+        CTexture *GetTexture(char *name, TextureHandle handle);
+    private:
+        TextureHandle SearchTextureName(char *name, TextureHandle handle);
+        CTexture *SearchTexture(char *name);
+};
+STATIC_ASSERT(sizeof(CTextureManager) == 0x4E48);

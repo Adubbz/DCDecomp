@@ -1753,7 +1753,6 @@ TEXT_O_FILES :=\
 	$(BUILD_DIR)/asm/nonmatchings/dc/CommandTEX_SCROLL_DATA.s.o\
 	$(BUILD_DIR)/asm/nonmatchings/dc/CommandTEX_ANIME_END.s.o\
 	$(BUILD_DIR)/src/ebattle.cpp.o\
-	$(BUILD_DIR)/asm/nonmatchings/dc/EBInit.s.o\
 	$(BUILD_DIR)/asm/nonmatchings/dc/EBFinishSound.s.o\
 	$(BUILD_DIR)/asm/nonmatchings/dc/EBInitIntro.s.o\
 	$(BUILD_DIR)/asm/nonmatchings/dc/EBSetMotion.s.o\

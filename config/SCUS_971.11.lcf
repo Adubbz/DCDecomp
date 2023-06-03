@@ -769,8 +769,8 @@ SECTIONS
         ALIGNALL(1); // Perform no additional alignment
 
         # data
-        *(.data)
         *(.vudata)
+        *(.data)
 
         # rodata
         *(.rodata)
