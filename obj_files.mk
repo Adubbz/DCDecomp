@@ -3921,14 +3921,14 @@ TEXT_O_FILES :=\
 	$(BUILD_DIR)/asm/nonmatchings/dc/Fader__Get.s.o
 
 DATA_O_FILES :=\
-	$(BUILD_DIR)/assets/Vu_prog0.bin.o\
-	$(BUILD_DIR)/assets/Vu_prog0f.bin.o\
-	$(BUILD_DIR)/assets/Vu_prog1.bin.o\
-	$(BUILD_DIR)/assets/Vu_progg.bin.o\
-	$(BUILD_DIR)/assets/Vu_shadow.bin.o\
-	$(BUILD_DIR)/assets/Vu_shadow2.bin.o\
-	$(BUILD_DIR)/assets/Vu_shadow3.bin.o\
-	$(BUILD_DIR)/assets/Vu_progmain.bin.o\
+	$(BUILD_DIR)/extracted/vu/Vu_prog0.bin.o\
+	$(BUILD_DIR)/extracted/vu/Vu_prog0f.bin.o\
+	$(BUILD_DIR)/extracted/vu/Vu_prog1.bin.o\
+	$(BUILD_DIR)/extracted/vu/Vu_progg.bin.o\
+	$(BUILD_DIR)/extracted/vu/Vu_shadow.bin.o\
+	$(BUILD_DIR)/extracted/vu/Vu_shadow2.bin.o\
+	$(BUILD_DIR)/extracted/vu/Vu_shadow3.bin.o\
+	$(BUILD_DIR)/extracted/vu/Vu_progmain.bin.o\
 	$(BUILD_DIR)/asm/data/data.rodata.s.o\
 	$(BUILD_DIR)/asm/data/sdata.rodata.s.o
 

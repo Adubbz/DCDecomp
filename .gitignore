@@ -1,11 +1,6 @@
 # Build files
-assets/
 build/
-
-# Generated config files
-config/*.auto.ld
-config/symbols.txt
-config/undefined_*
+extracted/
 
 # Copyright issues
 tools/ee

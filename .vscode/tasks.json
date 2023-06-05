@@ -1,0 +1,28 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Create Docker image",
+            "type": "shell",
+            "command": "docker build -t dcdecomp_dev .",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Docker image",
+            "type": "shell",
+            "command": "docker run -it --rm --mount type=bind,source=$(pwd),target=/workspaces/dcdecomp -w /workspaces/dcdecomp dcdecomp_dev",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Create Docker image"
+            ],
+            "presentation": {
+                "echo": false,
+                "showReuseMessage": false,
+                "panel": "dedicated",
+                "clear": true,
+                "close": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}

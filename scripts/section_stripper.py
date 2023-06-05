@@ -3,7 +3,7 @@ import os
 import subprocess
 
 def read_empty_sections(obj):
-    output = subprocess.check_output(['tools/ee/gcc/bin/ee-readelf.exe', '-S', obj]).decode()
+    output = subprocess.check_output(['wine', 'tools/ee/gcc/bin/ee-readelf.exe', '-S', obj]).decode()
     empty_sections = []
 
     for line in output.splitlines():
@@ -23,7 +23,8 @@ def read_empty_sections(obj):
     return empty_sections
 
 def strip_sections(obj, sections):
-    command = ['tools\mips64r5900el-ps2-elf-objcopy.exe', '-I', 'elf32-littlemips', '-O', 'elf32-littlemips']
+    print(f'Stripping {obj}')
+    command = ['mips64r5900el-ps2-elf-objcopy', '-I', 'elf32-littlemips', '-O', 'elf32-littlemips']
     
     for section in sections:
         command.append(f'--remove-section={section}')
@@ -39,4 +40,7 @@ parser = argparse.ArgumentParser(description='Strips zero-sized sections from ob
 parser.add_argument('object')
 args = parser.parse_args()
 
-strip_sections(args.object, read_empty_sections(args.object))
+empty_sections = read_empty_sections(args.object)
+
+if empty_sections:
+    strip_sections(args.object, empty_sections)
