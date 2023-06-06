@@ -2,8 +2,10 @@ import argparse
 import os
 import subprocess
 
+PRODG_PATH = os.environ['PRODG']
+
 def read_empty_sections(obj):
-    output = subprocess.check_output(['wine', 'tools/ee/gcc/bin/ee-readelf.exe', '-S', obj]).decode()
+    output = subprocess.check_output(['wine', f'{PRODG_PATH}/ee/gcc/bin/ee-readelf.exe', '-S', obj]).decode()
     empty_sections = []
 
     for line in output.splitlines():

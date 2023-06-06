@@ -2,9 +2,6 @@
 build/
 extracted/
 
-# Copyright issues
-tools/ee
-
 # Python cache
 **/__pycache__
 

@@ -19,16 +19,16 @@ DIFF      := diff
 SHA256SUM := sha256sum
 
 # Build tools
-EE      := $(TOOLS_DIR)/ee/gcc/bin/ee-
-MW      := $(TOOLS_DIR)/mw/2.3.1.01
-PS2DEV  := mips64r5900el-ps2-elf-
-CC_MW   := wibo $(MW)/mwccmips.exe
-CC_GCC  := wine $(EE)gcc295.exe
-AS      := wine $(EE)as.exe
-LD      := wibo $(MW)/mwldmips.exe
-LD_GNU  := $(PS2DEV)ld
-OBJCOPY := $(PS2DEV)objcopy
-PYTHON  := python
+EE       := $(PRODG)/ee/gcc/bin/ee-
+MW       := $(TOOLS_DIR)/compilers/mw/2.3.1.01/
+PS2DEV   := mips64r5900el-ps2-elf-
+CC_MW    := wibo $(MW)mwccmips.exe
+LD_MW    := wibo $(MW)mwldmips.exe
+CC_PRODG := wine $(EE)gcc295.exe
+AS_PRODG := wine $(EE)as.exe
+LD_GNU   := $(PS2DEV)ld
+OBJCOPY  := $(PS2DEV)objcopy
+PYTHON   := python
 
 # Files
 LD_SCRIPT  := $(BASENAME).lcf
@@ -64,14 +64,14 @@ extract:
 	@$(PYTHON) $(SCRIPTS_DIR)/extract.py iso
 
 $(BUILD_DIR)/%.gcc.c.o: %.gcc.c
-	$(CC_GCC) $(CC_GCC_FLAGS) -o $@ $<
+	$(CC_PRODG) $(CC_GCC_FLAGS) -o $@ $<
 
 $(BUILD_DIR)/%.bin.o: %.bin
 	$(OBJCOPY) $(BIN_FLAGS) $< $@ 
 
 # NB: This is unfortunately rather slow due to the Python script, though is sadly a necessity as MW will not tolerate empty sections.
 $(BUILD_DIR)/%.s.o: %.s
-	$(AS) $(AS_FLAGS) -o $@ $<
+	$(AS_PRODG) $(AS_FLAGS) -o $@ $<
 	@$(PYTHON) $(SCRIPTS_DIR)/section_stripper.py $@
 
 $(BUILD_DIR)/%.c.o: %.c
@@ -82,7 +82,7 @@ $(BUILD_DIR)/%.cpp.o: %.cpp
 
 $(OUTPUT): $(ALL_OBJS)
 	$(file >build/o_files, $(ALL_OBJS))
-	$(LD) $(LD_MW_FLAGS) -o $@ $(LD_SCRIPT) @build/o_files
+	$(LD_MW) $(LD_MW_FLAGS) -o $@ $(LD_SCRIPT) @build/o_files
 
 # Phony targets
 .PHONY: all clean extract

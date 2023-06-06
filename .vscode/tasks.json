@@ -15,6 +15,9 @@
             "dependsOn": [
                 "Create Docker image"
             ],
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
             "presentation": {
                 "echo": false,
                 "showReuseMessage": false,

@@ -2,14 +2,15 @@
 # Our best bet is Debian, as it seems to be much faster than Ubuntu.
 FROM --platform=linux/amd64 debian:11 AS dev
 
-# ps2toolchain environment variables
+ENV DEBIAN_FRONTEND=noninteractive
 ENV PS2DEV /usr/local/ps2dev
 ENV PS2SDK $PS2DEV/ps2sdk
+ENV PRODG /usr/local/prodg
 ENV PATH $PATH:${PS2DEV}/bin:${PS2DEV}/ee/bin:${PS2DEV}/iop/bin:${PS2DEV}/dvp/bin:${PS2SDK}/bin
 
 # Install base requirements
 RUN apt-get update \
-    && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
+    && apt-get install -y --no-install-recommends \
         apt-transport-https \
         ca-certificates \
         git \
@@ -26,7 +27,7 @@ RUN wget -nv -O- https://dl.winehq.org/wine-builds/winehq.key | APT_KEY_DONT_WAR
     && echo "deb https://dl.winehq.org/wine-builds/debian/ $(grep VERSION_CODENAME= /etc/os-release | cut -d= -f2) main" >> /etc/apt/sources.list \
     && dpkg --add-architecture i386 \
     && apt-get update \
-    && DEBIAN_FRONTEND="noninteractive" apt-get install -y --install-recommends winehq-${WINE_BRANCH} \
+    && apt-get install -y --install-recommends winehq-${WINE_BRANCH} \
     && rm -rf /var/lib/apt/lists/* \
     && wineboot --init
 
@@ -37,7 +38,7 @@ RUN wget -nv -O /usr/bin/winetricks https://raw.githubusercontent.com/Winetricks
 # Install build requirements
 # - musl is required by ps2toolchain
 RUN apt-get update \
-    && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
+    && apt-get install -y --no-install-recommends \
         python3 \
         python3-pip \
         python-is-python3 \
@@ -45,7 +46,34 @@ RUN apt-get update \
         musl \ 
     && rm -rf /var/lib/apt/lists/*
 
+# Install the ProDG compiler
+RUN wget -O /tmp/prodg.zip https://archive.org/download/SNSystemsProDGPs2/ProDGPs2usrLocalSceFiles.zip \
+    && unzip /tmp/prodg.zip "usr/local/sce/ee/*" -d "/tmp/prodg" \
+    && mv /tmp/prodg/usr/local/sce/ ${PRODG} \
+    && rm -rf /tmp/prodg && rm /tmp/prodg.zip
+
 # Install wibo and ps2sdk
 COPY --from=ghcr.io/decompals/wibo:latest /usr/local/sbin/wibo /usr/bin/
+COPY --from=ghcr.io/ps2dev/ps2toolchain-ee:latest ${PS2DEV} ${PS2DEV}
+
 # Install pip packages
 RUN pip install pycdlib
+
+# Define a new stage for building the project
+FROM dev AS build
+
+# Set the working directory
+WORKDIR /dcdecomp
+
+# Copy project files into the container
+COPY . .
+
+# Build the project
+RUN make extract \
+    && make -j$(nproc) \
+    && rm -rf extracted \
+    && find build/ ! -name 'SCUS_971.11' ! -name 'DUN.BIN' ! -name 'TITLE.BIN' -type f -exec rm -f {} + \
+    && rm -rf build/*/
+
+# Output the build
+CMD cp build/SCUS_971.11 /output/SCUS_971.11
