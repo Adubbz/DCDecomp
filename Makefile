@@ -23,8 +23,7 @@ EE       := $(PRODG)/ee/gcc/bin/ee-
 MW       := $(TOOLS_DIR)/compilers/mw/2.3.1.01/
 PS2DEV   := mips64r5900el-ps2-elf-
 CC_MW    := wibo $(MW)mwccmips.exe
-LD_MW    := wibo $(MW)mwldmips.exe
-CC_PRODG := wine $(EE)gcc295.exe
+LD_MW    := wine $(MW)mwldmips.exe
 AS_PRODG := wine $(EE)as.exe
 LD_GNU   := $(PS2DEV)ld
 OBJCOPY  := $(PS2DEV)objcopy
@@ -62,9 +61,6 @@ clean:
 extract:
 	@$(CD) $(ROM_DIR); $(SHA256SUM) -c checksum.sha256
 	@$(PYTHON) $(SCRIPTS_DIR)/extract.py iso
-
-$(BUILD_DIR)/%.gcc.c.o: %.gcc.c
-	$(CC_PRODG) $(CC_GCC_FLAGS) -o $@ $<
 
 $(BUILD_DIR)/%.bin.o: %.bin
 	$(OBJCOPY) $(BIN_FLAGS) $< $@ 

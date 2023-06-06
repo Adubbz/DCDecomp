@@ -69,11 +69,10 @@ WORKDIR /dcdecomp
 COPY . .
 
 # Build the project
-RUN make extract \
-    && make -j$(nproc) \
-    && rm -rf extracted \
-    && find build/ ! -name 'SCUS_971.11' ! -name 'DUN.BIN' ! -name 'TITLE.BIN' -type f -exec rm -f {} + \
-    && rm -rf build/*/
+RUN 
 
 # Output the build
-CMD cp build/SCUS_971.11 /output/SCUS_971.11
+CMD make extract \
+    && make -j$(nproc) \
+    && cp build/SCUS_971.11 /output/SCUS_971.11
+    
