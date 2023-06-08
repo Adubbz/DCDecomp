@@ -49,7 +49,8 @@ BIN_FLAGS    := -B mips:5900 -I binary -O elf32-littlemips
 
 all: build
 
-build: build_setup $(OUTPUT)
+build: $(OUTPUT) 
+	@$(PYTHON) $(SCRIPTS_DIR)/verify.py -p $(OUTPUT)
 
 build_setup:
 	$(foreach dir,$(ALL_BUILD_DIRS),$(shell mkdir -p $(dir)))
@@ -78,7 +79,7 @@ $(BUILD_DIR)/%.c.o: %.c
 $(BUILD_DIR)/%.cpp.o: %.cpp
 	$(CC_MW) $(CC_MW_FLAGS) -o $@ $<
 
-$(OUTPUT): $(ALL_OBJS)
+$(OUTPUT): build_setup $(ALL_OBJS)
 	$(file >build/o_files, $(ALL_OBJS))
 	$(LD_MW) $(LD_MW_FLAGS) -o $@ $(LD_SCRIPT) @build/o_files
 
