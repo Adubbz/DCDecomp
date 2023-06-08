@@ -1,12 +1,13 @@
 # We require a 64-bit distro to use ps2toolchain. However, wine refuses to support both 64-bit and 32-bit applications when used under Alpine.
 # Our best bet is Debian, as it seems to be much faster than Ubuntu.
-FROM --platform=linux/amd64 debian:11 AS dev
+FROM --platform=linux/amd64 debian:bookworm-slim AS base
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PS2DEV /usr/local/ps2dev
 ENV PS2SDK $PS2DEV/ps2sdk
 ENV PRODG /usr/local/prodg
-ENV PATH $PATH:${PS2DEV}/bin:${PS2DEV}/ee/bin:${PS2DEV}/iop/bin:${PS2DEV}/dvp/bin:${PS2SDK}/bin
+ENV VIRTUAL_ENV /opt/venv
+ENV PATH $PATH:${PS2DEV}/bin:${PS2DEV}/ee/bin:${PS2DEV}/iop/bin:${PS2DEV}/dvp/bin:${PS2SDK}/bin:${VIRTUAL_ENV}/bin
 
 # Install base requirements
 RUN apt-get update \
@@ -40,8 +41,7 @@ RUN wget -nv -O /usr/bin/winetricks https://raw.githubusercontent.com/Winetricks
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         python3 \
-        python3-pip \
-        python-is-python3 \
+        python3-venv \
         make \
         musl \ 
     && rm -rf /var/lib/apt/lists/*
@@ -57,10 +57,27 @@ COPY --from=ghcr.io/decompals/wibo:latest /usr/local/sbin/wibo /usr/bin/
 COPY --from=ghcr.io/ps2dev/ps2toolchain-ee:latest ${PS2DEV} ${PS2DEV}
 
 # Install pip packages
-RUN pip install pycdlib
+RUN python3 -m venv $VIRTUAL_ENV
+RUN python -m pip install pycdlib
 
-# Define a new stage for building the project
-FROM dev AS build
+#
+# Development stage
+#
+FROM base AS dev
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        less \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install dependencies for asm-differ
+RUN python -m pip install colorama watchdog levenshtein cxxfilt
+
+#
+# Build stage
+#
+FROM base AS build
+
 
 # Set the working directory
 WORKDIR /dcdecomp

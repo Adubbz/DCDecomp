@@ -58,9 +58,11 @@ build_setup:
 clean:
 	@$(RM) -rf $(BUILD_DIR)
 
+# We create symlink for asm-differ to resolve the correct expected file
 extract:
 	@$(CD) $(ROM_DIR); $(SHA256SUM) -c checksum.sha256
 	@$(PYTHON) $(SCRIPTS_DIR)/extract.py iso
+	@ln -s $(shell pwd)/extracted/iso extracted/build
 
 $(BUILD_DIR)/%.bin.o: %.bin
 	$(OBJCOPY) $(BIN_FLAGS) $< $@ 
