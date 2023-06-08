@@ -11,3 +11,6 @@ extracted/
 *.id2
 *.nam
 *.til
+
+# Mips2C context
+ctx.c

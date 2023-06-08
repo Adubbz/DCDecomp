@@ -32,10 +32,6 @@ RUN wget -nv -O- https://dl.winehq.org/wine-builds/winehq.key | APT_KEY_DONT_WAR
     && rm -rf /var/lib/apt/lists/* \
     && wineboot --init
 
-# Install winetricks
-RUN wget -nv -O /usr/bin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
-    && chmod +x /usr/bin/winetricks
-
 # Install build requirements
 # - musl is required by ps2toolchain
 RUN apt-get update \
@@ -68,6 +64,8 @@ FROM base AS dev
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         less \
+        gcc \
+        build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 # Install dependencies for asm-differ
