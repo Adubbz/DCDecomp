@@ -18,11 +18,6 @@ VU_EXTRACT_DIR = EXTRACT_DIR / 'vu'
 # Files
 ELF_PATH = ISO_EXTRACT_DIR / 'SCUS_971.11'
 
-# ELF + overlays
-SCUS_971_11_PATH = ISO_EXTRACT_DIR / 'SCUS_971.11'
-DUN_BIN_PATH = ISO_EXTRACT_DIR / 'DUN.BIN'
-TITLE_BIN_PATH = ISO_EXTRACT_DIR / 'TITLE.BIN'
-
 # VU programs
 VU_PROG0_PATH = VU_EXTRACT_DIR / 'Vu_prog0.bin'
 VU_PROG0F_PATH = VU_EXTRACT_DIR / 'Vu_prog0f.bin'
@@ -115,33 +110,12 @@ def extract_iso():
         extract_bin(f, VU_SHADOW3_PATH,  0x14DCF0, 0x1D70)
         extract_bin(f, VU_PROGMAIN_PATH, 0x14FA60, 0x160)
 
-def verify_extracted():
-    # TODO: May be better to hash all of these. For now we just check that they exist.
+if __name__ == "__main__":
+    # Change to work from the root directory
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+    os.chdir(root_dir)
 
-    # ELF + overlays
-    assert_exists(SCUS_971_11_PATH)
-    assert_exists(DUN_BIN_PATH)
-    assert_exists(TITLE_BIN_PATH)
-    
-    # VU programs
-    assert_exists(VU_PROG0_PATH)
-    assert_exists(VU_PROG0F_PATH)
-    assert_exists(VU_PROG1_PATH)
-    assert_exists(VU_PROGG_PATH)
-    assert_exists(VU_SHADOW_PATH)
-    assert_exists(VU_SHADOW2_PATH)
-    assert_exists(VU_SHADOW3_PATH)
-    assert_exists(VU_PROGMAIN_PATH)
+    parser = argparse.ArgumentParser(description='Utilities for extracting files for decompilation')
+    args = parser.parse_args()
 
-# Change to work from the root directory
-root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-os.chdir(root_dir)
-
-parser = argparse.ArgumentParser(description='Utilities for extracting files for decompilation')
-parser.add_argument('mode')
-args = parser.parse_args()
-
-if args.mode == 'iso':
     extract_iso()
-elif args.mode == 'verify':
-    verify_extracted()

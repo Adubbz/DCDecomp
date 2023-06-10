@@ -50,11 +50,11 @@ BIN_FLAGS    := -B mips:5900 -I binary -O elf32-littlemips
 all: build
 
 build: $(OUTPUT) 
-	@$(PYTHON) $(SCRIPTS_DIR)/verify.py -p $(OUTPUT)
+	@$(PYTHON) $(SCRIPTS_DIR)/verify.py -p -f $(OUTPUT)
 
 build_setup:
 	$(foreach dir,$(ALL_BUILD_DIRS),$(shell mkdir -p $(dir)))
-	@$(PYTHON) $(SCRIPTS_DIR)/extract.py verify
+	@$(PYTHON) $(SCRIPTS_DIR)/verify.py -e
 
 clean:
 	@$(RM) -rf $(BUILD_DIR)
