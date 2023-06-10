@@ -67,3 +67,8 @@ void EBInit(float speed_mult) {
         }
     }
 }
+
+void EBFinishSound(int do_fade_bgm, int do_play_fanfare) {
+    fade_bgm = do_fade_bgm;
+    play_fanfare = do_play_fanfare;
+}
