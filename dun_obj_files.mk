@@ -61,5 +61,5 @@ DUN_O_FILES :=\
     $(BUILD_DIR)/ref/asm/split/dun/LoaderLoop.s.o \
     $(BUILD_DIR)/ref/asm/split/dun/InitEyeCamera.s.o \
     $(BUILD_DIR)/ref/asm/split/dun/EyeCamera.s.o \
-    $(BUILD_DIR)/ref/asm/sections/dun/.data.s.o \
-    $(BUILD_DIR)/ref/asm/sections/dun/.bss.s.o \
+    $(BUILD_DIR)/ref/asm/sections/dun/dun.data.s.o \
+    $(BUILD_DIR)/ref/asm/sections/dun/dun.bss.s.o \

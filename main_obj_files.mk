@@ -3919,10 +3919,10 @@ MAIN_O_FILES :=\
     $(BUILD_DIR)/ref/asm/split/main/Fader__In.s.o \
     $(BUILD_DIR)/ref/asm/split/main/Fader__Out.s.o \
     $(BUILD_DIR)/ref/asm/split/main/Fader__Get.s.o \
-    $(BUILD_DIR)/ref/asm/sections/main/.vutext.s.o \
-    $(BUILD_DIR)/ref/asm/sections/main/.data.s.o \
-    $(BUILD_DIR)/ref/asm/sections/main/.vudata.s.o \
-    $(BUILD_DIR)/ref/asm/sections/main/.rodata.s.o \
-    $(BUILD_DIR)/ref/asm/sections/main/.sdata.s.o \
-    $(BUILD_DIR)/ref/asm/sections/main/.sbss.s.o \
-    $(BUILD_DIR)/ref/asm/sections/main/.bss.s.o \
+    $(BUILD_DIR)/ref/asm/sections/main/main.vutext.s.o \
+    $(BUILD_DIR)/ref/asm/sections/main/main.data.s.o \
+    $(BUILD_DIR)/ref/asm/sections/main/main.vudata.s.o \
+    $(BUILD_DIR)/ref/asm/sections/main/main.rodata.s.o \
+    $(BUILD_DIR)/ref/asm/sections/main/main.sdata.s.o \
+    $(BUILD_DIR)/ref/asm/sections/main/main.sbss.s.o \
+    $(BUILD_DIR)/ref/asm/sections/main/main.bss.s.o \

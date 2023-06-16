@@ -348,7 +348,7 @@ def write_split(processed_segments, section_name):
             f.write(f'    $(BUILD_DIR)/{REF_SPLIT_PATH}/{section_name}/{name}.s.o \\\n')
 
         for section in non_text_sections:
-            f.write(f'    $(BUILD_DIR)/{REF_SECTION_PATH}/{section_name}/{section.name}.s.o \\\n')
+            f.write(f'    $(BUILD_DIR)/{REF_SECTION_PATH}/{section_name}/{section_name}{section.name}.s.o \\\n')
 
 def disassemble_group(context, group_section_name, entries):
     global data
@@ -384,7 +384,7 @@ def disassemble_group(context, group_section_name, entries):
 
         section.setCommentOffset(vrom_start - segment_vrom_start)
         processed_segments[section_type].append(section)
-        segment_paths[section_type].append(output_root_path / f'{name}.s')
+        segment_paths[section_type].append(output_root_path / f'{group_section_name}{name}.s')
 
     # Add sections based on entries
     for entry in entries:
@@ -488,7 +488,7 @@ if __name__ == "__main__":
 
     # Create the spim context
     context = spimdisasm.common.Context()
-    context.changeGlobalSegmentRanges(0, len(data), 0, VRAM_OVERLAY_START)
+    context.changeGlobalSegmentRanges(0, ROM_ELF_END, 0, VRAM_OVERLAY_START)
     title_segment = context.addOverlaySegment(OVERLAY_CATEGORY, ROM_TITLE_START, ROM_TITLE_END, VRAM_OVERLAY_START, VRAM_TITLE_END)
     dun_segment = context.addOverlaySegment(OVERLAY_CATEGORY, ROM_DUN_START, ROM_DUN_END, VRAM_OVERLAY_START, VRAM_DUN_END)
 

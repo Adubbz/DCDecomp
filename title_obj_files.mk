@@ -170,5 +170,5 @@ TITLE_O_FILES :=\
     $(BUILD_DIR)/ref/asm/split/title/CScFader__Get.s.o \
     $(BUILD_DIR)/ref/asm/split/title/CScFader__Skip.s.o \
     $(BUILD_DIR)/ref/asm/split/title/TiPlayVolSE.s.o \
-    $(BUILD_DIR)/ref/asm/sections/title/.data.s.o \
-    $(BUILD_DIR)/ref/asm/sections/title/.bss.s.o \
+    $(BUILD_DIR)/ref/asm/sections/title/title.data.s.o \
+    $(BUILD_DIR)/ref/asm/sections/title/title.bss.s.o \

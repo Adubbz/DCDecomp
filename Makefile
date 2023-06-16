@@ -35,7 +35,10 @@ LD_SCRIPT  := $(BASENAME).lcf
 OUTPUT     := $(addprefix $(BUILD_DIR)/,$(BASENAME))
 
 include main_obj_files.mk
+include title_obj_files.mk
+include dun_obj_files.mk
 include additional_obj_files.mk
+# TODO: $(TITLE_O_FILES) $(DUN_O_FILES) 
 ALL_OBJS := $(MAIN_O_FILES) $(ADDITIONAL_O_FILES)
 
 # Build folders
