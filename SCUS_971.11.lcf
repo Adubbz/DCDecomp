@@ -20,8 +20,11 @@ SECTIONS
         # Initial text alignment
         . = ALIGN(128);
 
-        ALIGNALL(16);
-        crt0.s.o (.text)
+        ALIGNALL(8);
+        func_00100000.s.o (.text)
+        _start.s.o (.text)
+        _exit.s.o (.text)
+        _root.s.o (.text)
         _dpfeq.s.o (.text)
         _dpfne.s.o (.text)
         _dpflt.s.o (.text)
@@ -40,7 +43,7 @@ SECTIONS
         quorem.s.o (.text)
         _dtoa_r.s.o (.text)
         __errno.s.o (.text)
-        exit_2.s.o (.text)
+        exit__2.s.o (.text)
         fflush.s.o (.text)
         std.s.o (.text)
         __sfmoreglue.s.o (.text)
@@ -137,8 +140,8 @@ SECTIONS
         __sbprintf.s.o (.text)
         vfiprintf.s.o (.text)
         _vfiprintf_r.s.o (.text)
-        __sprint_2.s.o (.text)
-        __sbprintf_2.s.o (.text)
+        __sprint__2.s.o (.text)
+        __sbprintf__2.s.o (.text)
         vfprintf.s.o (.text)
         _vfprintf_r.s.o (.text)
         cvt.s.o (.text)
@@ -266,7 +269,7 @@ SECTIONS
         dptofp.s.o (.text)
         __pack_f.s.o (.text)
         __unpack_f.s.o (.text)
-        _fpadd_parts_2.s.o (.text)
+        _fpadd_parts__2.s.o (.text)
         fpadd.s.o (.text)
         fpsub.s.o (.text)
         fpmul.s.o (.text)
@@ -767,10 +770,11 @@ SECTIONS
         ALIGNALL(16); // Align all remaining text on 16 byte boundaries
         *(.text)
         ALIGNALL(1); // Perform no additional alignment
+        *(.vutext)
 
         # data
-        *(.vudata)
         *(.data)
+        *(.vudata)
 
         # rodata
         *(.rodata)
@@ -780,19 +784,20 @@ SECTIONS
 
 		# static initializers
 		*(.init)
-		__static_init = .;
+		// TODO: __static_init = .;
 		*(.ctor)
-		__static_init_end = .;
+		// TODO: __static_init_end = .;
 		# vtable
 		*(.vtables)
 		# exception
 		*(.exception)
-		__exception_table_start__ = .;
+		// TODO: __exception_table_start__ = .;
 		EXCEPTION
-		__exception_table_end__ = .;
+		// TODO: __exception_table_end__ = .;
 
 		# gp
-		_gp	= . + 0x7ff0;
+        _gp	= 0x2A97F0;
+		// TODO: _gp	= . + 0x7ff0;
 
 		# literal
 		LITERAL

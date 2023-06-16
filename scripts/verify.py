@@ -55,15 +55,7 @@ HASHES = {
     'DEV003.CNF': [FileHash('2313085880aa4199708c1426fc16c8b6f39db8c0703d9f7969d8c33fb4c7b7ba')],
     'NET.DB': [FileHash('7a8ecdfb6e303bbd3907054a29a616c648d27755db5819fb55ec0bf41bc37191')],
     'DMMY': [FileHash('32000a674a8e37c5345b6bce47c19e4894f8d01f59332aab614e1130a8ba5867')],
-    'DATA.DAT': [FileHash('4f581c66d83d9270da6cb9adce7ec10b6b9ade5cf74cf44718bcdd8e70401fb5')],
-    'Vu_prog0.bin': [FileHash('6aad883fd92ed4350c4e5235438a854aab0acbc2dca957ba5cf1d7112712ff6f')],
-    'Vu_prog0f.bin': [FileHash('2bb9bdefdd2ba22e0c0760fb137095b54de952edd1f967ee5913a54432054b0a')],
-    'Vu_prog1.bin': [FileHash('e09315ae736ccc026de51a8c901d78766e03866c5ede03b04610d33b4439dc03')],
-    'Vu_progmain.bin': [FileHash('fbb2e542bfad2382073929121eb782e3dd2a7b9a37c9e511b7ae00c70b8f6b66')],
-    'Vu_shadow3.bin': [FileHash('0af76bd0fe8f750b5f649878e60201af4dceb4b5dcb1d6fd83bd549f475f8cba')],
-    'Vu_progg.bin': [FileHash('625a5e35d0e34c350ae3cf5788050aca0610428bc5a8a9251686f3c6ff9dcd7d')],
-    'Vu_shadow.bin': [FileHash('3e726144b59dc851bd361291b4d7f607583e86b448761e96843eb1a041c69fd7')],
-    'Vu_shadow2.bin': [FileHash('e693583b29a756b4de15d481f84a68bfea1bb62e8b7f40f5b80d1b19ad448829')]
+    'DATA.DAT': [FileHash('4f581c66d83d9270da6cb9adce7ec10b6b9ade5cf74cf44718bcdd8e70401fb5')]
 }
 
 def calculate_sha256(path, offset=0, size=-1):
@@ -104,7 +96,7 @@ def ensure_ok(path, offset=0, size=-1):
 
 def verify_extracted():
     print('Verifying extracted files')
-    for path in Path('extracted/').rglob('*.*'):
+    for path in Path('rom/extracted/').rglob('*.*'):
         ensure_ok(path)
 
 if __name__ == "__main__":

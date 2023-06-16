@@ -11,22 +11,11 @@ COLOR_END = '\033[0m'
 
 # Directories
 ISO_PATH = Path('rom/Dark Cloud (USA).iso')
-EXTRACT_DIR = Path('extracted')
+EXTRACT_DIR = Path('rom/extracted')
 ISO_EXTRACT_DIR = EXTRACT_DIR / 'iso'
-VU_EXTRACT_DIR = EXTRACT_DIR / 'vu'
 
 # Files
 ELF_PATH = ISO_EXTRACT_DIR / 'SCUS_971.11'
-
-# VU programs
-VU_PROG0_PATH = VU_EXTRACT_DIR / 'Vu_prog0.bin'
-VU_PROG0F_PATH = VU_EXTRACT_DIR / 'Vu_prog0f.bin'
-VU_PROG1_PATH = VU_EXTRACT_DIR / 'Vu_prog1.bin'
-VU_PROGG_PATH = VU_EXTRACT_DIR / 'Vu_progg.bin'
-VU_SHADOW_PATH = VU_EXTRACT_DIR / 'Vu_shadow.bin'
-VU_SHADOW2_PATH = VU_EXTRACT_DIR / 'Vu_shadow2.bin'
-VU_SHADOW3_PATH = VU_EXTRACT_DIR / 'Vu_shadow3.bin'
-VU_PROGMAIN_PATH = VU_EXTRACT_DIR / 'Vu_progmain.bin'
 
 def assert_exists(path):
     if not path.exists():
@@ -83,7 +72,6 @@ def extract_iso():
 
     # Create extraction directories
     ensure_dir(ISO_EXTRACT_DIR)
-    ensure_dir(VU_EXTRACT_DIR)
 
     # Open the iso for reading
     iso = pycdlib.PyCdlib()
@@ -95,20 +83,6 @@ def extract_iso():
 
     # Close the iso
     iso.close()
-
-    print('Extracting elf data', flush=True)
-
-    # Open elf file for reading
-    with open(ELF_PATH, 'rb') as f:
-        # Extract vu programs
-        extract_bin(f, VU_PROG0_PATH,    0x145400, 0xE00)
-        extract_bin(f, VU_PROG0F_PATH,   0x146200, 0x2800)
-        extract_bin(f, VU_PROG1_PATH,    0x148A00, 0xED0)
-        extract_bin(f, VU_PROGG_PATH,    0x1498D0, 0x130)
-        extract_bin(f, VU_SHADOW_PATH,   0x149A00, 0x1D70)
-        extract_bin(f, VU_SHADOW2_PATH,  0x14B770, 0x2580)
-        extract_bin(f, VU_SHADOW3_PATH,  0x14DCF0, 0x1D70)
-        extract_bin(f, VU_PROGMAIN_PATH, 0x14FA60, 0x160)
 
 if __name__ == "__main__":
     # Change to work from the root directory

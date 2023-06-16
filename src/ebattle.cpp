@@ -4,8 +4,8 @@
 extern CTextureManager TexManager[];
 
 /* strings */
-extern char _314_2[]; /* "ebat" */
-extern char _315_2[]; /* "ebat2" */
+extern char LIT_314__2[]; /* "ebat" */
+extern char LIT_315__2[]; /* "ebat2" */
 
 /* data */
 extern int eb_motion[160];
@@ -43,10 +43,10 @@ void EBInitialize() {
 }
 
 void EBInit(float speed_mult) {
-    tex = TexManager->GetTexture(_314_2, -1);
+    tex = TexManager->GetTexture(LIT_314__2, -1);
 
     if (tex) {
-        tex2 = TexManager->GetTexture(_315_2, -1);
+        tex2 = TexManager->GetTexture(LIT_315__2, -1);
 
         if (tex2) {
             eb_count = 0;

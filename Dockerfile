@@ -54,7 +54,7 @@ COPY --from=ghcr.io/ps2dev/ps2toolchain-ee:latest ${PS2DEV} ${PS2DEV}
 
 # Install pip packages
 RUN python3 -m venv $VIRTUAL_ENV
-RUN python -m pip install pycdlib
+RUN python -m pip install pycdlib spimdisasm
 
 #
 # Development stage

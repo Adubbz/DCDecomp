@@ -1,6 +1,6 @@
 # Build files
 build/
-extracted/
+ref/
 
 # Python cache
 **/__pycache__

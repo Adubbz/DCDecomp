@@ -8,6 +8,7 @@ BUILD_DIR       := build
 TOOLS_DIR       := tools
 SCRIPTS_DIR     := scripts
 ROM_DIR         := rom
+REF_DIR         := ref
 
 # System tools
 MKDIR     := mkdir
@@ -33,8 +34,9 @@ PYTHON   := python
 LD_SCRIPT  := $(BASENAME).lcf
 OUTPUT     := $(addprefix $(BUILD_DIR)/,$(BASENAME))
 
-include obj_files.mk
-ALL_OBJS := $(TEXT_O_FILES) $(DATA_O_FILES) $(BSS_O_FILES) $(ADDITIONAL_O_FILES)
+include main_obj_files.mk
+include additional_obj_files.mk
+ALL_OBJS := $(MAIN_O_FILES) $(ADDITIONAL_O_FILES)
 
 # Build folders
 ALL_BUILD_DIRS := $(sort $(dir $(ALL_OBJS)))
@@ -60,10 +62,14 @@ clean:
 	@$(RM) -rf $(BUILD_DIR)
 
 # We create symlink for asm-differ to resolve the correct expected file
-extract:
+setup:
 	@$(CD) $(ROM_DIR); $(SHA256SUM) -c checksum.sha256
-	@$(PYTHON) $(SCRIPTS_DIR)/extract.py iso
-	@ln -s $(shell pwd)/extracted/iso extracted/build
+	@$(PYTHON) $(SCRIPTS_DIR)/extract.py
+	@ln -s $(shell pwd)/rom/extracted/iso rom/extracted/build
+	@$(PYTHON) $(SCRIPTS_DIR)/disassemble.py
+
+disassemble:
+	@$(PYTHON) $(SCRIPTS_DIR)/disassemble.py
 
 $(BUILD_DIR)/%.bin.o: %.bin
 	$(OBJCOPY) $(BIN_FLAGS) $< $@ 
@@ -84,4 +90,4 @@ $(OUTPUT): build_setup $(ALL_OBJS)
 	$(LD_MW) $(LD_MW_FLAGS) -o $@ $(LD_SCRIPT) @build/o_files
 
 # Phony targets
-.PHONY: all clean extract
+.PHONY: all clean setup
