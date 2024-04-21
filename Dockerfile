@@ -53,8 +53,9 @@ COPY --from=ghcr.io/decompals/wibo:latest /usr/local/sbin/wibo /usr/bin/
 COPY --from=ghcr.io/ps2dev/ps2toolchain-ee:latest ${PS2DEV} ${PS2DEV}
 
 # Install pip packages
+# Newer versions of rabbitizer and spimdisasm cause broken disassembly
 RUN python3 -m venv $VIRTUAL_ENV
-RUN python -m pip install pycdlib spimdisasm
+RUN python -m pip install pycdlib rabbitizer==1.7.4 spimdisasm==1.14.3
 
 #
 # Development stage
@@ -87,7 +88,7 @@ COPY . .
 RUN 
 
 # Output the build
-CMD make extract \
+CMD make setup \
     && make -j$(nproc) \
     && cp build/SCUS_971.11 /output/SCUS_971.11
     
