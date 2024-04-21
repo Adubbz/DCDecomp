@@ -115,7 +115,7 @@ def demangle_all(syms):
     # Split into lists of no more than 1024
     for i in range(0, len(syms), 1024):
         subset = syms[i:min(i+1024, len(syms))]
-        demangled = subprocess.check_output(['wine', f'{PRODG_PATH}/ee/gcc/bin/ee-c__filt.exe', *subset]).decode().strip().splitlines()
+        demangled = subprocess.check_output(['wibo', f'{PRODG_PATH}/ee/gcc/bin/ee-c__filt.exe', *subset]).decode().strip().splitlines()
         out.update(dict([(subset[i], s) for i, s in enumerate(demangled)]))
     return out
 
