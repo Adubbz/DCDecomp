@@ -1502,7 +1502,7 @@ MAIN_O_FILES :=\
     $(BUILD_DIR)/ref/asm/split/main/func_00157A80.s.o \
     $(BUILD_DIR)/ref/asm/split/main/func_00157AC0.s.o \
     $(BUILD_DIR)/ref/asm/split/main/func_00157B00.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetConfigData.s.o \
+	$(BUILD_DIR)/src/savedata.cpp.o \
     $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetMenuCursor.s.o \
     $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetCharaName.s.o \
     $(BUILD_DIR)/ref/asm/split/main/CSaveData__AddPlayTime.s.o \

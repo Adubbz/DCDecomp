@@ -7,7 +7,6 @@ def apply(config, args):
     config['myimg'] = 'build/SCUS_971.11'
     config['objdump_executable'] = 'mips64r5900el-ps2-elf-objdump'
     config['source_directories'] = ['src', 'include', 'asm']
-    config['disassemble_all'] = True
     config['expected_dir'] = 'rom/extracted/' # Combine with a folder symlink to hack around asm-differ's folder structure requirements
     config['show_line_numbers_default'] = False # Line numbers are associated with a significant performance penalty
 

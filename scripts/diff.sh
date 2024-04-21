@@ -27,5 +27,5 @@ case "$mode" in
 esac
 
 if [[ "$mode" == "main" ]]; then
-    python tools/asm-differ/diff.py -s -w -m -o -f build/SCUS_971.11 -j main "$symbol"
+    python tools/asm-differ/diff.py -s -w -m -d -o -os "$symbol" -f build/SCUS_971.11 -j main "$symbol"
 fi
