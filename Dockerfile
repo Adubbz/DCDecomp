@@ -85,7 +85,7 @@ WORKDIR /dcdecomp
 COPY . .
 
 # Build the project
-RUN 
+# RUN 
 
 # Output the build
 CMD make setup \
