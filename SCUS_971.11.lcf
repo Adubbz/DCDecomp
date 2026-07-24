@@ -773,10 +773,12 @@ SECTIONS
         *(.vutext)
 
         # data
+        // @MIGRATE main.data
         *(.data)
         *(.vudata)
 
         # rodata
+        // @MIGRATE main.rodata
         *(.rodata)
         *(.rdata)
 
@@ -799,19 +801,26 @@ SECTIONS
         _gp	= 0x2A97F0;
 		// TODO: _gp	= . + 0x7ff0;
 
+        _stack       = 0x01F80000;
+        _stack_size  = 0x00080000;
+        _align_segment = 0x00000080;
+
 		# literal
 		LITERAL
 
 		# sdata
+		// @MIGRATE main.sdata
 		*(.sdata)
 
 		# sbss
 		_fbss = .;
+		// @MIGRATE main.sbss
 		*(.sbss)
 		*(.scommon)
 		*(SCOMMON)
 
         # bss
+		// @MIGRATE main.bss
 		*(.bss)
 		*(.common)
 		*(COMMON)

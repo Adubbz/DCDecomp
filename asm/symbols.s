@@ -114,7 +114,4 @@ sym func_01DD1AB0 0x01DD1AB0
 sym func_01DD2220 0x01DD2220
 
 sym __bss_end 0x01DABD00
-sym _stack 0x01F80000
-sym _stack_size 0x00080000
 sym end__2 0x01F06B00
-sym _align_segment 0x00000080

@@ -1,6 +1,7 @@
 # Build files
 build/
 ref/
+re/
 
 # Python cache
 **/__pycache__
@@ -14,3 +15,6 @@ ref/
 
 # Mips2C context
 ctx.c
+
+# AI
+CLAUDE.md
