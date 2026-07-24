@@ -49,7 +49,7 @@ RUN wget -O /tmp/prodg.zip https://archive.org/download/SNSystemsProDGPs2/ProDGP
     && rm -rf /tmp/prodg && rm /tmp/prodg.zip
 
 # Install wibo and ps2sdk
-COPY --from=ghcr.io/decompals/wibo:latest /usr/local/sbin/wibo /usr/bin/
+COPY --from=ghcr.io/decompals/wibo:latest /usr/local/bin/wibo /usr/bin/
 COPY --from=ghcr.io/ps2dev/ps2toolchain-ee:latest ${PS2DEV} ${PS2DEV}
 
 # Install pip packages
