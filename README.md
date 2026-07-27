@@ -23,6 +23,19 @@ This aims to be a matching decompilation project. Currently an elf is produced w
 3. Place the NTSC 1.02 ISO with the name `Dark Cloud (USA).iso` inside the `rom` folder at the root of the project.
 4. Run `scripts\build.sh` within the project directory.
 
+## Building by hand
+
+Inside the dev container, the project is built with CMake and Ninja:
+
+```
+cmake -G Ninja -S . -B build   # configure (also run after `setup`)
+cmake --build build --target setup
+cmake --build build            # build and verify the elf
+```
+
+Other targets are `disassemble`, `elf` (link without verifying) and
+`verify_extracted`.
+
 # Development
 
 ## Windows

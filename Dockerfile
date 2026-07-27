@@ -38,8 +38,9 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         python3 \
         python3-venv \
-        make \
-        musl \ 
+        cmake \
+        ninja-build \
+        musl \
     && rm -rf /var/lib/apt/lists/*
 
 # Install the ProDG compiler
@@ -87,8 +88,10 @@ COPY . .
 # Build the project
 # RUN 
 
-# Output the build
-CMD make setup \
-    && make -j$(nproc) \
+# Output the build. The second configure picks up the reference dumps that
+# the setup target produces.
+CMD cmake -G Ninja -S . -B build \
+    && cmake --build build --target setup \
+    && cmake -G Ninja -S . -B build \
+    && cmake --build build \
     && cp build/SCUS_971.11 /output/SCUS_971.11
-    
