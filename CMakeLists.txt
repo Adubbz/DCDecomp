@@ -47,7 +47,10 @@ set(LD_MW wibo ${MW}mwldmips.exe)
 set(AS_PRODG wibo ${EE}as.exe)
 set(OBJCOPY ${PS2DEV}objcopy)
 set(OBJDUMP ${PS2DEV}objdump)
-find_program(PYTHON NAMES python3 python REQUIRED)
+# HINTS are searched before PATH, so the container's virtualenv wins: the
+# system python3 is missing pycdlib and the disassembler packages, and the
+# image puts the venv at the end of PATH.
+find_program(PYTHON NAMES python3 python REQUIRED HINTS $ENV{VIRTUAL_ENV}/bin)
 
 # Files
 set(LD_TEMPLATE ${BASENAME}.lcf)
@@ -231,15 +234,16 @@ add_custom_command(
     COMMENT "Writing ${BUILT_ISO}"
     VERBATIM)
 
+# Deliberately not tied to the verification target: booting a build that does
+# not match retail yet is exactly what the emulator is useful for.
 add_custom_target(iso DEPENDS "${CMAKE_SOURCE_DIR}/${BUILT_ISO}")
-add_dependencies(iso build)
 
 #
 # Run
 #
-# PCSX2 needs a display, so this only works outside the build container --
-# either configure on the host, or use scripts/run.sh, which builds in the
-# container and then launches the emulator on the host.
+# PCSX2 needs a display, so this only works outside the build container. Use
+# scripts/run.sh instead, which builds in the container and then launches the
+# emulator on the host; this target is for a native toolchain.
 add_custom_target(run
     COMMAND ${SCRIPTS_DIR}/pcsx2.sh "${BUILT_ISO}"
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
