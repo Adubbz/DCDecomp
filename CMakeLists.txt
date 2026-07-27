@@ -254,12 +254,15 @@ add_dependencies(run iso)
 #
 # Setup
 #
-# We create a symlink for asm-differ to resolve the correct expected file.
+# asm-differ resolves the expected file as <expected_dir>/<our path>, so it
+# looks for rom/extracted/build/... ; the symlink points that at the extracted
+# disc. It is relative on purpose, so it resolves both on the host and at
+# whatever path the container mounts the tree on.
 add_custom_target(setup
     COMMAND sha256sum -c checksum.sha256
     COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} ${PYTHON} ${SCRIPTS_DIR}/extract.py
     COMMAND ${CMAKE_COMMAND} -E create_symlink
-            ${CMAKE_SOURCE_DIR}/rom/extracted/iso ${CMAKE_SOURCE_DIR}/rom/extracted/build
+            iso ${CMAKE_SOURCE_DIR}/rom/extracted/build
     COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} ${PYTHON} ${SCRIPTS_DIR}/disassemble.py
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/${ROM_DIR}
     VERBATIM)
