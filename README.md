@@ -46,7 +46,13 @@ shell script, so under WSL use `run.sh` as above.
 
 ## Building by hand
 
-Inside the dev container the project is built with CMake and Ninja:
+For a shell in the same container `run.sh` uses:
+
+```
+podman run --rm -it -v "$PWD:$PWD:Z" -w "$PWD" dcdecomp_dev bash
+```
+
+Inside it the project is built with CMake and Ninja:
 
 ```
 cmake -G Ninja -S . -B build            # configure (re-run after `setup`)

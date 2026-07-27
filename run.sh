@@ -23,9 +23,12 @@ ISO="build/Dark Cloud (Build).iso"
 
 # `cmake --build build` verifies against the retail hashes; a mismatch is worth
 # reporting but should not stop you booting a work-in-progress build.
+# Mounted at its own path, not a fixed one, so the CMake cache in build/ stays
+# valid whether you go through this script or run cmake in the container
+# yourself.
 "$BUILDER" run --rm \
-    -v "$PWD:/dcdecomp:Z" \
-    -w /dcdecomp \
+    -v "$PWD:$PWD:Z" \
+    -w "$PWD" \
     -e HOME=/tmp \
     dcdecomp_dev bash -c '
         set -e
