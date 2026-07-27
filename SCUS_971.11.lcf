@@ -1,8 +1,13 @@
 MEMORY
 {
     main (RWX)  : ORIGIN = 0x00100000, LENGTH = 0
-    title (RWXO) : ORIGIN = AFTER(main), LENGTH = 0 > TITLE.bin
-    dun (RWXO)   : ORIGIN = AFTER(main), LENGTH = 0 > DUN.bin
+    // `> name` sends a region to its own overlay file; MWLD takes a bare
+    // filename and writes it beside the -o output, i.e. into build/. Both
+    // overlays load at the same explicit address -- the end of main's .bss.
+    // AFTER(main) would say the same thing, but only once .main has been laid
+    // out, and these regions have to be placed before it (see below).
+    title (RWXO) : ORIGIN = 0x01DABD00, LENGTH = 0 > TITLE.BIN
+    dun (RWXO)   : ORIGIN = 0x01DABD00, LENGTH = 0 > DUN.BIN
     heap (RW)   : ORIGIN = AFTER(main, title, dun), LENGTH = 0
 }
 
@@ -13,6 +18,23 @@ SECTIONS
     {
         . = . + 0x4C;
     } > main
+
+    // Overlays, written to their own files by the MEMORY block above. The
+    // bodies are expanded by cmake/Overlays.cmake, which also explains why the
+    // overlays' objects carry privately-prefixed section names.
+    //
+    // These come before .main only because MWLD assigns sections in the order
+    // written here and .main ends with catch-all wildcards; the addresses come
+    // from the MEMORY regions, not from this position.
+    .title:
+    {
+        // @OVERLAY title
+    } > title
+
+    .dun:
+    {
+        // @OVERLAY dun
+    } > dun
 
     // main
     .main:
@@ -805,6 +827,9 @@ SECTIONS
         _stack_size  = 0x00080000;
         _align_segment = 0x00000080;
 
+		# Retail resolves this to -1; the dun overlay's data references it.
+		_heap_size   = 0xFFFFFFFF;
+
 		# literal
 		LITERAL
 
@@ -830,15 +855,6 @@ SECTIONS
 		. = ALIGN(128);
     } > main
 
-    .title:
-    {
-        . = ALIGN(128);
-    } > title
-
-    .dun:
-    {
-        . = ALIGN(128);
-    } > dun
 
     .heap:
     {

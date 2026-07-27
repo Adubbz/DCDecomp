@@ -64,8 +64,20 @@ def calculate_sha256(path, offset=0, size=-1):
         data = f.read(size)
         return hashlib.sha256(data).hexdigest()
 
+# The whole file, as opposed to one of the partial spans in HASHES.
+COMPLETE = (0, -1)
+
+# How much of each built file has to match the retail original. Only the
+# executable is allowed to differ anywhere: it is checked over its code and
+# data, because the retail symbol and string tables are not reproduced yet.
+# Anything not listed here -- both overlays -- has to come out byte-identical.
+BUILT_SPANS = {
+    'SCUS_971.11': (0x100, 0x1A2380),
+}
+
 def validate(path, offset=0, size=-1, log=True):
-    log_prefix = f'{path.name}' if offset == 0 else f'{path.name} {COLOR_GREY}(partial){COLOR_END}'
+    partial = (offset, size) != COMPLETE
+    log_prefix = f'{path.name}' if not partial else f'{path.name} {COLOR_GREY}(partial){COLOR_END}'
 
     if not path.exists():
         if log:
@@ -99,20 +111,21 @@ def verify_extracted():
     for path in Path('rom/extracted/').rglob('*.*'):
         ensure_ok(path)
 
+def verify_built(files):
+    print('Verifying built files')
+    paths = [Path(f) for f in files]
+    # Check every file before failing, so one mismatch doesn't hide the others.
+    results = [validate(p, *BUILT_SPANS.get(p.name, COMPLETE)) for p in paths]
+    if not all(results):
+        sys.exit(1)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Verify decompiled files')
-    parser.add_argument('-f', '--file', dest='file')
+    parser.add_argument('-f', '--file', dest='files', nargs='+', help='Verify built files against the retail originals')
     parser.add_argument('-e', '--verify_extracted', dest='verify_extracted', action='store_true', help='Verify that the game has been extracted correctly')
-    parser.add_argument('-p', '--partial', dest='partial', action='store_true')
     args = parser.parse_args()
 
-    if args.file:
-        path = Path(args.file)
-
-        if args.partial:
-            if path.name == 'SCUS_971.11':
-                ensure_ok(path, 0x100, 0x1A2380)
-        else:
-            ensure_ok(path)
+    if args.files:
+        verify_built(args.files)
     elif args.verify_extracted:
         verify_extracted()

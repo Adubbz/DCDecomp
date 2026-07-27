@@ -4,37 +4,54 @@ DCDecomp is a work-in-progress decompilation project for Dark Cloud for the Play
 
 This project is targeting the NTSC 1.02 version of the game. Other versions may be considered in the future, though they aren't currently planned.
 
-This aims to be a matching decompilation project. Currently an elf is produced with text and data sections identical to the original. The compiler used by Level 5 (and by extension this project) is `MWCC/MWLD 2.3.1.01`. In future strategies of matching the symbol/strings tables may be explored, though this isn't a current priority.
+This aims to be a matching decompilation project. The compiler used by Level 5 (and by extension this project) is `MWCC/MWLD 2.3.1.01`.
+
+The build produces the main executable, whose text and data sections are identical to the original, and the `TITLE.BIN` and `DUN.BIN` overlays, which are byte-identical to the original. Matching the main executable's symbol/string tables may be explored in future, though this isn't a current priority.
 
 # Building
 
-## Windows
+The toolchain lives in a container built from the repo-root `Dockerfile`.
+[Podman](https://podman.io/docs/installation) is what the project targets;
+Docker works too, since the image is plain OCI.
 
-1. Install [Docker for Windows](https://docs.docker.com/desktop/install/windows-install/)
-2. Install [git](https://git-scm.com/download/win)
-3. Clone the project with `git clone --recurse-submodules https://github.com/Adubbz/DCDecomp.git`
-4. Place the NTSC 1.02 ISO with the name `Dark Cloud (USA).iso` inside the `rom` folder at the root of the project.
-5. Run `scripts\build.bat` within the project directory.
+1. Clone the project with `git clone --recurse-submodules https://github.com/Adubbz/DCDecomp.git`
+2. Place the NTSC 1.02 ISO with the name `Dark Cloud (USA).iso` inside the `rom` folder at the root of the project.
+3. Run `scripts/build.sh` (or `scripts\build.bat` on Windows).
 
-## Linux (works on immutable distros with SELinux enabled)
-
-1. Install [Docker for Linux](https://docs.docker.com/desktop/setup/install/linux/)
-2. Clone the project with `git clone --recurse-submodules https://github.com/Adubbz/DCDecomp.git`
-3. Place the NTSC 1.02 ISO with the name `Dark Cloud (USA).iso` inside the `rom` folder at the root of the project.
-4. Run `scripts\build.sh` within the project directory.
+That builds the image, extracts and disassembles the retail ISO, builds and
+verifies everything, and leaves the results in `build/`.
 
 ## Building by hand
 
-Inside the dev container, the project is built with CMake and Ninja:
+Inside the dev container the project is built with CMake and Ninja:
 
 ```
-cmake -G Ninja -S . -B build   # configure (also run after `setup`)
-cmake --build build --target setup
-cmake --build build            # build and verify the elf
+cmake -G Ninja -S . -B build            # configure (re-run after `setup`)
+cmake --build build --target setup      # extract the ISO and disassemble it
+cmake --build build                     # build and verify against the retail hashes
 ```
 
-Other targets are `disassemble`, `elf` (link without verifying) and
-`verify_extracted`.
+The stages, each available as its own target:
+
+| Target | What it does |
+| --- | --- |
+| `setup` | Extract the retail ISO into `rom/extracted` and disassemble it into `ref/` |
+| `disassemble` | Re-run just the disassembly |
+| `elf` | Assemble/compile everything and link `build/SCUS_971.11` plus the overlays |
+| `build` (default) | `elf`, then verify the executable and both overlays |
+| `iso` | Patch the built files into a copy of the retail ISO |
+| `run` | Boot that ISO in PCSX2 |
+
+## Running
+
+`cmake --build build --target run` boots `build/Dark Cloud (Build).iso` in
+PCSX2. PCSX2 needs a display, so run this on the host rather than in the
+container; `scripts/pcsx2.sh` finds it on `PATH`, as a Flatpak or as an
+AppImage, and `PCSX2=/path/to/pcsx2-qt` overrides the search.
+
+The ISO is a copy of the retail one with only `SCUS_971.11`, `TITLE.BIN` and
+`DUN.BIN` overwritten in place, so every other file keeps the sector it
+shipped on -- the game seeks to some of them by LBA.
 
 # Development
 

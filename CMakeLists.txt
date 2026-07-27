@@ -1,10 +1,24 @@
 cmake_minimum_required(VERSION 3.20)
 project(dcdecomp NONE)
 
+# The build has five stages, each with its own target:
+#
+#   setup        extract the retail ISO and disassemble it into ref/
+#   <objects>    re-assemble the still-unmatched .s files, compile the
+#                matched .c/.cpp files (both with the MW toolchain)
+#   elf          link everything with MWLD into the main ELF and the
+#                TITLE.BIN / DUN.BIN overlays
+#   iso          write the built files back into a copy of the retail ISO
+#   run          boot that ISO in PCSX2
+#
+# `build` (the default target) does everything up to and including `elf` and
+# then verifies the results against the retail hashes.
+
 set(BASENAME SCUS_971.11)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(ObjectLists)
+include(Overlays)
 include(Migration)
 
 # Directories
@@ -36,16 +50,20 @@ set(OBJDUMP ${PS2DEV}objdump)
 find_program(PYTHON NAMES python3 python REQUIRED)
 
 # Files
-set(LD_SCRIPT ${BASENAME}.lcf)
+set(LD_TEMPLATE ${BASENAME}.lcf)
 set(OUTPUT ${BUILD_DIR}/${BASENAME})
+set(RETAIL_ISO "${ROM_DIR}/Dark Cloud (USA).iso")
+set(BUILT_ISO "${BUILD_DIR}/Dark Cloud (Build).iso")
 
 # Compiler flags
 set(AS_FLAGS -c -EL -mcpu=5900 -32 -g2 -non_shared -G0 -I include)
 set(CC_MW_FLAGS -O2 -c -Cpp_exceptions off -strings readonly -i include -g)
 set(LD_MW_FLAGS -map -nostdlib -m _start -nodead -g)
+# `-sym on,noelf` keeps the relocations resolved but drops the symbol table and
+# section headers, leaving just the loadable image the console needs.
+set(LD_MW_ISO_FLAGS -nostdlib -m _start -nodead -sym on,noelf)
 set(BIN_FLAGS -B mips:5900 -I binary -O elf32-littlemips)
 
-# TODO: title/dun object lists are not linked yet.
 read_obj_list(main_obj_files.mk MAIN_O_FILES)
 read_obj_list(title_obj_files.mk TITLE_O_FILES)
 read_obj_list(dun_obj_files.mk DUN_O_FILES)
@@ -66,7 +84,11 @@ set(GENERATED_O_FILES "")
 foreach(s IN LISTS GENERATED_S_FILES)
     list(APPEND GENERATED_O_FILES ${s}.o)
 endforeach()
-set(ALL_OBJS ${MAIN_O_FILES} ${GENERATED_O_FILES} ${ADDITIONAL_O_FILES})
+set(MAIN_OBJS ${MAIN_O_FILES} ${GENERATED_O_FILES} ${ADDITIONAL_O_FILES})
+
+# The overlays' objects are passed after their -overlay option instead of in
+# the main response file, but they are still built the same way.
+set(ALL_OBJS ${MAIN_OBJS} ${TITLE_O_FILES} ${DUN_O_FILES})
 
 # Ninja does not create custom-command output directories on its own.
 make_object_dirs("${ALL_OBJS}")
@@ -75,9 +97,20 @@ foreach(obj IN LISTS ALL_OBJS)
     add_object(${obj})
 endforeach()
 
-# The final linker command file is generated from the checked-in template by
-# expanding its `// @MIGRATE <section>` markers, computing each island's
-# alignment padding from the real objects' section sizes via objdump.
+#
+# Linker command file
+#
+# The checked-in .lcf is a template. Overlay placement is expanded into it here
+# at configure time (it only depends on the object lists, which the setup stage
+# regenerates); migrated-data placement is expanded at build time, because it
+# has to objdump the compiled objects to size each island.
+#
+set(OVERLAY_LCF ${BUILD_DIR}/${BASENAME}.overlays.lcf)
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+    ${CMAKE_SOURCE_DIR}/${LD_TEMPLATE})
+expand_overlay_markers(${CMAKE_SOURCE_DIR}/${LD_TEMPLATE}
+                       ${CMAKE_SOURCE_DIR}/${OVERLAY_LCF})
+
 migration_enabled(MIGRATION_ENABLED)
 if(MIGRATION_ENABLED)
     set(GEN_LCF ${BUILD_DIR}/${BASENAME}.lcf)
@@ -86,9 +119,9 @@ if(MIGRATION_ENABLED)
     add_custom_command(
         OUTPUT ${CMAKE_SOURCE_DIR}/${GEN_LCF}
         COMMAND ${CMAKE_COMMAND} -E env OBJDUMP=${OBJDUMP}
-                ${PYTHON} ${SCRIPTS_DIR}/gen_lcf.py ${LD_SCRIPT}
+                ${PYTHON} ${SCRIPTS_DIR}/gen_lcf.py ${OVERLAY_LCF}
                 ${BUILD_DIR}/generated/main ${BUILD_DIR}/${SRC_DIR} ${GEN_LCF}
-        DEPENDS ${CMAKE_SOURCE_DIR}/${LD_SCRIPT}
+        DEPENDS ${CMAKE_SOURCE_DIR}/${OVERLAY_LCF}
                 ${CMAKE_SOURCE_DIR}/${MIGRATE_MANIFEST}
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/gen_lcf.py
                 ${GENERATED_PLAN_FILES} ${LCF_CONTRIB_OBJS}
@@ -96,11 +129,16 @@ if(MIGRATION_ENABLED)
         COMMENT "Generating ${GEN_LCF}"
         VERBATIM)
 else()
-    set(GEN_LCF ${LD_SCRIPT})
+    set(GEN_LCF ${OVERLAY_LCF})
 endif()
 
-# mwld takes the object list via a response file; link order is significant.
-list(JOIN ALL_OBJS " " O_FILES_CONTENT)
+#
+# Link
+#
+# mwld takes the main application's objects via a response file; link order is
+# significant. The overlays come out of this same command, and their MWo3
+# headers are stamped on immediately afterwards.
+list(JOIN MAIN_OBJS " " O_FILES_CONTENT)
 file(GENERATE OUTPUT ${CMAKE_BINARY_DIR}/o_files CONTENT "${O_FILES_CONTENT}\n")
 
 set(ABS_OBJS "")
@@ -108,27 +146,110 @@ foreach(obj IN LISTS ALL_OBJS)
     list(APPEND ABS_OBJS ${CMAKE_SOURCE_DIR}/${obj})
 endforeach()
 
+overlay_link_args(OVERLAY_ARGS)
+
+set(OVERLAY_BINS "")
+set(STAMP_COMMANDS "")
+set(overlay_id 0)
+foreach(name IN LISTS OVERLAYS)
+    math(EXPR overlay_id "${overlay_id} + 1")
+    string(TOUPPER ${name} upper)
+    list(APPEND OVERLAY_BINS ${CMAKE_BINARY_DIR}/${upper}.BIN)
+    list(APPEND STAMP_COMMANDS
+        COMMAND ${PYTHON} ${SCRIPTS_DIR}/mwo3.py --elf ${OUTPUT}
+                --name ${name} --id ${overlay_id} ${BUILD_DIR}/${upper}.BIN)
+endforeach()
+
 add_custom_command(
-    OUTPUT ${CMAKE_SOURCE_DIR}/${OUTPUT}
-    COMMAND ${LD_MW} ${LD_MW_FLAGS} -o ${OUTPUT} ${GEN_LCF} @${BUILD_DIR}/o_files
+    OUTPUT ${CMAKE_SOURCE_DIR}/${OUTPUT} ${OVERLAY_BINS}
+    COMMAND ${LD_MW} ${LD_MW_FLAGS} -o ${OUTPUT} ${GEN_LCF}
+            @${BUILD_DIR}/o_files ${OVERLAY_ARGS}
+    ${STAMP_COMMANDS}
     DEPENDS ${ABS_OBJS} ${CMAKE_SOURCE_DIR}/${GEN_LCF} ${CMAKE_BINARY_DIR}/o_files
+            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/mwo3.py
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    COMMENT "Linking ${OUTPUT}"
+    COMMENT "Linking ${OUTPUT} + overlays"
     VERBATIM)
 
-add_custom_target(elf DEPENDS ${CMAKE_SOURCE_DIR}/${OUTPUT})
+add_custom_target(elf DEPENDS ${CMAKE_SOURCE_DIR}/${OUTPUT} ${OVERLAY_BINS})
 
+#
+# Verification
+#
 add_custom_target(verify_extracted
     COMMAND ${PYTHON} ${SCRIPTS_DIR}/verify.py -e
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     VERBATIM)
 
+# verify.py decides per file how much of it has to match: the executable over
+# its code/data span, the overlays byte for byte.
+set(VERIFY_FILES ${OUTPUT})
+foreach(name IN LISTS OVERLAYS)
+    string(TOUPPER ${name} upper)
+    list(APPEND VERIFY_FILES ${BUILD_DIR}/${upper}.BIN)
+endforeach()
+
 add_custom_target(build ALL
-    COMMAND ${PYTHON} ${SCRIPTS_DIR}/verify.py -p -f ${OUTPUT}
+    COMMAND ${PYTHON} ${SCRIPTS_DIR}/verify.py -f ${VERIFY_FILES}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     VERBATIM)
 add_dependencies(build verify_extracted elf)
 
+#
+# ISO
+#
+# The ELF that goes on the disc is linked a second time without debugging
+# information. The main output keeps its symbols -- asm-differ needs them, and
+# so does the overlay header stamping -- but that makes it far larger than the
+# retail file, which has to fit back into the sectors the retail file occupies.
+# Everything else about the two links is identical -- including the overlay
+# files it drops beside the ELF, which are the same images without their
+# headers stamped on, and are not what ends up on the disc.
+set(ISO_ELF ${BUILD_DIR}/nodebug/${BASENAME})
+
+add_custom_command(
+    OUTPUT ${CMAKE_SOURCE_DIR}/${ISO_ELF}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${BUILD_DIR}/nodebug
+    COMMAND ${LD_MW} ${LD_MW_ISO_FLAGS} -o ${ISO_ELF} ${GEN_LCF}
+            @${BUILD_DIR}/o_files ${OVERLAY_ARGS}
+    DEPENDS ${ABS_OBJS} ${CMAKE_SOURCE_DIR}/${GEN_LCF} ${CMAKE_BINARY_DIR}/o_files
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Linking ${ISO_ELF} (no debug info)"
+    VERBATIM)
+
+# The built files are patched into a copy of the retail ISO rather than a
+# freshly mastered one, so every untouched file keeps its original LBA -- the
+# game seeks to some of them by sector.
+add_custom_command(
+    OUTPUT "${CMAKE_SOURCE_DIR}/${BUILT_ISO}"
+    COMMAND ${PYTHON} ${SCRIPTS_DIR}/make_iso.py
+            --source "${RETAIL_ISO}" --out "${BUILT_ISO}"
+            ${ISO_ELF} ${BUILD_DIR}/TITLE.BIN ${BUILD_DIR}/DUN.BIN
+    DEPENDS ${CMAKE_SOURCE_DIR}/${ISO_ELF} ${OVERLAY_BINS}
+            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/make_iso.py
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Writing ${BUILT_ISO}"
+    VERBATIM)
+
+add_custom_target(iso DEPENDS "${CMAKE_SOURCE_DIR}/${BUILT_ISO}")
+add_dependencies(iso build)
+
+#
+# Run
+#
+# PCSX2 needs a display, so this only works outside the build container --
+# either configure on the host, or use scripts/run.sh, which builds in the
+# container and then launches the emulator on the host.
+add_custom_target(run
+    COMMAND ${SCRIPTS_DIR}/pcsx2.sh "${BUILT_ISO}"
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    USES_TERMINAL
+    VERBATIM)
+add_dependencies(run iso)
+
+#
+# Setup
+#
 # We create a symlink for asm-differ to resolve the correct expected file.
 add_custom_target(setup
     COMMAND sha256sum -c checksum.sha256

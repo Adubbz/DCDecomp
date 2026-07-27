@@ -1,3 +1,9 @@
+# Build with podman:
+#   podman build -t dcdecomp_dev --target dev .     # toolchain + diffing tools
+#   podman build -t dcdecomp_build --target build . # one-shot build of the ISO
+# scripts/build.sh wraps the second one. Everything here is plain OCI, so
+# docker works too, but podman is what the project targets.
+#
 # We require a 64-bit distro to use ps2toolchain. However, wine refuses to support both 64-bit and 32-bit applications when used under Alpine.
 # Our best bet is Debian, as it seems to be much faster than Ubuntu.
 FROM --platform=linux/amd64 debian:bookworm-slim AS base
@@ -34,12 +40,14 @@ RUN apt-get update \
 
 # Install build requirements
 # - musl is required by ps2toolchain
+# - binutils supplies the readelf/objcopy the object fixup pass uses
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         python3 \
         python3-venv \
         cmake \
         ninja-build \
+        binutils \
         musl \
     && rm -rf /var/lib/apt/lists/*
 
@@ -85,13 +93,14 @@ WORKDIR /dcdecomp
 # Copy project files into the container
 COPY . .
 
-# Build the project
-# RUN 
-
-# Output the build. The second configure picks up the reference dumps that
-# the setup target produces.
+# Extract and disassemble the retail ISO, then build and verify everything and
+# write the rebuilt ISO out. The second configure is what picks up the object
+# lists the setup stage generates.
+#
+# rom/ has to be mounted in (the ISO is not copied into the image) and /output
+# is where the results land; see scripts/build.sh.
 CMD cmake -G Ninja -S . -B build \
     && cmake --build build --target setup \
     && cmake -G Ninja -S . -B build \
-    && cmake --build build \
-    && cp build/SCUS_971.11 /output/SCUS_971.11
+    && cmake --build build --target iso \
+    && cp build/SCUS_971.11 build/TITLE.BIN build/DUN.BIN build/*.iso /output/

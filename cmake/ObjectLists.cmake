@@ -44,13 +44,25 @@ function(add_object obj)
         set(src ${BUILD_DIR}/${src})
     endif()
 
+    # Objects belonging to an overlay get their sections renamed onto that
+    # overlay's private prefix, in the same pass that strips the empty ones.
+    # Compiled objects only need the pass when they are in an overlay; the
+    # main application has always linked them exactly as mwcc emits them.
+    overlay_for_object(${obj} overlay)
+    set(rename_flags "")
+    set(overlay_fixup "")
+    if(overlay)
+        overlay_rename_flags(${overlay} rename_flags)
+        set(overlay_fixup COMMAND sh ${SCRIPTS_DIR}/fixup_sections.sh ${obj} ${rename_flags})
+    endif()
+
     if(src MATCHES "\\.s$")
         # MWLD rejects zero-sized input sections, but the assembler emits
         # .text/.data/.bss regardless, so strip the empty ones.
         add_custom_command(
             OUTPUT ${CMAKE_SOURCE_DIR}/${obj}
             COMMAND ${AS_PRODG} ${AS_FLAGS} -o ${obj} ${src}
-            COMMAND sh ${SCRIPTS_DIR}/strip_empty_sections.sh ${obj}
+            COMMAND sh ${SCRIPTS_DIR}/fixup_sections.sh ${obj} ${rename_flags}
             DEPENDS ${CMAKE_SOURCE_DIR}/${src}
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "AS ${src}"
@@ -59,6 +71,7 @@ function(add_object obj)
         add_custom_command(
             OUTPUT ${CMAKE_SOURCE_DIR}/${obj}
             COMMAND ${CC_MW} ${CC_MW_FLAGS} -o ${obj} ${src}
+            ${overlay_fixup}
             DEPENDS ${CMAKE_SOURCE_DIR}/${src}
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "CC ${src}"
