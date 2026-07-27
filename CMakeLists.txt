@@ -147,14 +147,20 @@ foreach(obj IN LISTS ALL_OBJS)
 endforeach()
 
 overlay_link_args(OVERLAY_ARGS)
+check_overlay_prefixes()
 
+# Each overlay contributes an image to the link, a header-stamping step after
+# it, and a file to verify. Overlay ids are 1-based and follow declaration
+# order, matching the order the -overlay options are passed in.
 set(OVERLAY_BINS "")
 set(STAMP_COMMANDS "")
+set(VERIFY_FILES ${OUTPUT})
 set(overlay_id 0)
 foreach(name IN LISTS OVERLAYS)
     math(EXPR overlay_id "${overlay_id} + 1")
     string(TOUPPER ${name} upper)
     list(APPEND OVERLAY_BINS ${CMAKE_BINARY_DIR}/${upper}.BIN)
+    list(APPEND VERIFY_FILES ${BUILD_DIR}/${upper}.BIN)
     list(APPEND STAMP_COMMANDS
         COMMAND ${PYTHON} ${SCRIPTS_DIR}/mwo3.py --elf ${OUTPUT}
                 --name ${name} --id ${overlay_id} ${BUILD_DIR}/${upper}.BIN)
@@ -183,12 +189,6 @@ add_custom_target(verify_extracted
 
 # verify.py decides per file how much of it has to match: the executable over
 # its code/data span, the overlays byte for byte.
-set(VERIFY_FILES ${OUTPUT})
-foreach(name IN LISTS OVERLAYS)
-    string(TOUPPER ${name} upper)
-    list(APPEND VERIFY_FILES ${BUILD_DIR}/${upper}.BIN)
-endforeach()
-
 add_custom_target(build ALL
     COMMAND ${PYTHON} ${SCRIPTS_DIR}/verify.py -f ${VERIFY_FILES}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}

@@ -32,10 +32,26 @@ set(OVERLAYS title dun)
 set(OVERLAY_ORIGIN 0x01DABD00)
 set(OVERLAY_HEADER_SIZE 0x40)
 
-# Each overlay's private input-section prefix, e.g. title -> ".t".
+# Each overlay's private input-section prefix, e.g. title -> ".t". Kept short
+# because it is spelled out in the linker command file for every section.
 function(overlay_section_prefix name out_var)
     string(SUBSTRING ${name} 0 1 initial)
     set(${out_var} ".${initial}" PARENT_SCOPE)
+endfunction()
+
+# Two overlays sharing an initial would share a prefix, and their objects would
+# land in whichever region the linker command file names first.
+function(check_overlay_prefixes)
+    set(seen "")
+    foreach(name IN LISTS OVERLAYS)
+        overlay_section_prefix(${name} prefix)
+        if(${prefix} IN_LIST seen)
+            message(FATAL_ERROR
+                "Overlays ${name} and an earlier one share the section prefix "
+                "${prefix}; give overlay_section_prefix a longer prefix.")
+        endif()
+        list(APPEND seen ${prefix})
+    endforeach()
 endfunction()
 
 # The overlay an object belongs to, or "" for the main application.

@@ -42,6 +42,21 @@ The stages, each available as its own target:
 | `iso` | Patch the built files into a copy of the retail ISO |
 | `run` | Boot that ISO in PCSX2 |
 
+## Diffing
+
+`scripts/diff.sh [main|title|dun] <symbol>` compares a function against the
+retail original with [asm-differ](https://github.com/simonlindholm/asm-differ);
+the mode defaults to `main`. Symbols are the mangled names as they appear in
+the link map, e.g.
+
+```
+scripts/diff.sh title Load__7CScriptFPCc
+scripts/diff.sh dun GameInit__Fv
+```
+
+The overlays ship as raw images with no symbol table, so their functions are
+located in `build/SCUS_971.11.xMAP` and diffed by address.
+
 ## Running
 
 `cmake --build build --target run` boots `build/Dark Cloud (Build).iso` in

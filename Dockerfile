@@ -40,14 +40,12 @@ RUN apt-get update \
 
 # Install build requirements
 # - musl is required by ps2toolchain
-# - binutils supplies the readelf/objcopy the object fixup pass uses
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         python3 \
         python3-venv \
         cmake \
         ninja-build \
-        binutils \
         musl \
     && rm -rf /var/lib/apt/lists/*
 

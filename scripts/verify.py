@@ -102,8 +102,8 @@ def validate(path, offset=0, size=-1, log=True):
             print(f'{log_prefix}: {COLOR_RED}FAILED{COLOR_END}')
         return False
 
-def ensure_ok(path, offset=0, size=-1):
-    if not validate(path, offset, size):
+def ensure_ok(path):
+    if not validate(path):
         sys.exit(1)
 
 def verify_extracted():

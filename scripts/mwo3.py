@@ -8,6 +8,29 @@ command file reserves those 64 bytes at the start of the region, so the image
 already has the retail addresses; this fills the reservation in and pads the
 file to the 128-byte boundary the retail images are padded to.
 
+## Why the linker cannot do this
+
+The toolchain has no way to emit the header, so it is written here:
+
+  - The magic does not appear in mwldmips.exe, mwccmips.exe, asm_r5900_elf.exe
+    or any ProDG binary -- searched as raw bytes, not just as a string.
+  - The only mechanism that writes an overlay to its own file is `> name` on an
+    RWXO memory region, and it emits the raw image with no header.
+  - `-overlaygroup`/`-overlay` keep overlays inside the ELF, as a section named
+    after the group; even with no linker command file at all, mwld writes only
+    the ELF. They are still used, because they are what makes mwld treat the
+    regions as real overlays.
+  - The retail executable's .comment records the same "MW MIPS C Compiler
+    (2.3.1.01)", so a later linker was not involved either: Level 5 must have
+    packaged the images with a separate tool, which is what this replaces.
+
+The field layout is taken from the loader rather than guessed. mwOverlayInit
+reads the bss size at 0x14, memsets that many bytes from the end of the loaded
+file, then passes 0x18 and 0x1C to __initialize_cpp_rts as the bounds of the
+static-initialiser table. It never checks the magic -- "MWo3" appears nowhere
+in the executable -- but the retail images carry it, and ours are byte-identical
+to them.
+
 Every field is read back from the symbols the linker command file defines
 around the placement, so nothing here is hardcoded per overlay:
 
