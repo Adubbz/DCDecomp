@@ -1,7 +1,7 @@
 @echo off
 rem Build everything in the container and leave the results in build\.
 
-cd %~dp0\..\
+cd %~dp0
 
 if not exist "rom\Dark Cloud (USA).iso" (
     echo rom\Dark Cloud ^(USA^).iso is missing; place the NTSC 1.02 ISO there first.

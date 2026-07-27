@@ -113,5 +113,10 @@ sym func_01DC8EB0 0x01DC8EB0
 sym func_01DD1AB0 0x01DD1AB0
 sym func_01DD2220 0x01DD2220
 
+# CMenuCursor::InitPos, inside the savedata translation unit. That unit is
+# compiled from src/savedata.cpp now, so the disassembler's generated name for
+# it has nothing to bind to; point it at the address the compiled code lands on.
+sym func_00158AE0 0x00158AE0
+
 sym __bss_end 0x01DABD00
 sym end__2 0x01F06B00

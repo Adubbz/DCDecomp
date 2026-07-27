@@ -39,7 +39,7 @@ find_pcsx2() {
 emulator=$(find_pcsx2)
 if [ -z "$emulator" ]; then
     echo "PCSX2 not found. Install it, or point PCSX2 at the executable:" >&2
-    echo "  PCSX2=/path/to/pcsx2-qt scripts/run.sh" >&2
+    echo "  PCSX2=/path/to/pcsx2-qt run.sh" >&2
     exit 1
 fi
 

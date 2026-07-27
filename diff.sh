@@ -16,7 +16,7 @@ usage() {
 }
 
 # Use the project root as the working directory
-cd "${0%/*}/../"
+cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [[ $# -eq 1 ]]; then
     mode="main"

@@ -8,7 +8,7 @@ def apply(config, args):
     config['expected_dir'] = 'rom/extracted/' # Combine with a folder symlink to hack around asm-differ's folder structure requirements
     config['show_line_numbers_default'] = False # Line numbers are associated with a significant performance penalty
 
-    # scripts/diff.sh sets this when diffing an overlay. The overlays are raw
+    # diff.sh sets this when diffing an overlay. The overlays are raw
     # images rather than ELFs, so they are diffed by address instead of by
     # symbol, and the images have to replace the executable as the two sides.
     overlay = os.environ.get('DCDECOMP_OVERLAY')

@@ -242,7 +242,7 @@ add_custom_target(iso DEPENDS "${CMAKE_SOURCE_DIR}/${BUILT_ISO}")
 # Run
 #
 # PCSX2 needs a display, so this only works outside the build container. Use
-# scripts/run.sh instead, which builds in the container and then launches the
+# run.sh instead, which builds in the container and then launches the
 # emulator on the host; this target is for a native toolchain.
 add_custom_target(run
     COMMAND ${SCRIPTS_DIR}/pcsx2.sh "${BUILT_ISO}"

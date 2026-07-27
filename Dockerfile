@@ -1,7 +1,7 @@
 # Build with podman:
 #   podman build -t dcdecomp_dev --target dev .     # toolchain + diffing tools
 #   podman build -t dcdecomp_build --target build . # one-shot build of the ISO
-# scripts/build.sh wraps the second one. Everything here is plain OCI, so
+# build.sh wraps the second one. Everything here is plain OCI, so
 # docker works too, but podman is what the project targets.
 #
 # We require a 64-bit distro to use ps2toolchain. However, wine refuses to support both 64-bit and 32-bit applications when used under Alpine.
@@ -79,6 +79,12 @@ RUN apt-get update \
 # Install dependencies for asm-differ
 RUN python -m pip install colorama watchdog levenshtein cxxfilt
 
+# Install dependencies for decomp-permuter (permuting/decomp-permuter).
+# `toml` is required; `levenshtein` above doubles as its optional faster diff
+# algorithm. `pynacl` is deliberately omitted -- it is only needed for the
+# permuter@home distributed-computing feature, which this project does not use.
+RUN python -m pip install toml
+
 #
 # Build stage
 #
@@ -96,7 +102,7 @@ COPY . .
 # lists the setup stage generates.
 #
 # rom/ has to be mounted in (the ISO is not copied into the image) and /output
-# is where the results land; see scripts/build.sh.
+# is where the results land; see build.sh.
 CMD cmake -G Ninja -S . -B build \
     && cmake --build build --target setup \
     && cmake -G Ninja -S . -B build \

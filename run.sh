@@ -2,7 +2,7 @@
 # Build the game in the container, then boot it in PCSX2. One command, from a
 # clean checkout to the title screen.
 #
-#   scripts/run.sh
+#   run.sh
 #
 # The first run also builds the container image and extracts and disassembles
 # the disc, which takes a while; every run after that is incremental, because
@@ -13,7 +13,7 @@
 # PCSX2=/path/to/pcsx2-qt if it is not found automatically.
 set -euo pipefail
 
-cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
+cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . scripts/container.sh
 
 require_rom

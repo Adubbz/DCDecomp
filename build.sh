@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Build everything in the container from a clean copy of the tree and leave the
-# results in build/. Use scripts/run.sh instead if you want an incremental
+# results in build/. Use run.sh instead if you want an incremental
 # build that also boots the result.
 set -euo pipefail
 
-cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
+cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . scripts/container.sh
 
 require_rom

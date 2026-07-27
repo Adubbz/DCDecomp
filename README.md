@@ -16,7 +16,7 @@ Docker works too, since the image is plain OCI.
 
 1. Clone the project with `git clone --recurse-submodules https://github.com/Adubbz/DCDecomp.git`
 2. Place the NTSC 1.02 disc image, named `Dark Cloud (USA).iso`, in the `rom` folder at the root of the project.
-3. Run `scripts/run.sh`.
+3. Run `run.sh`.
 
 That is the whole thing: it builds the container image, extracts and
 disassembles the disc, builds and verifies the game, writes the result back to
@@ -35,14 +35,14 @@ exactly when the emulator is useful.
 
 | Script | What it does |
 | --- | --- |
-| `scripts/run.sh` | Build incrementally in the container, then boot in PCSX2 |
-| `scripts/build.sh` | One-shot build from a clean copy of the tree into `build/` (`scripts\build.bat` on Windows) |
-| `scripts/diff.sh` | Diff a function against the retail original |
+| `run.sh` | Build incrementally in the container, then boot in PCSX2 |
+| `build.sh` | One-shot build from a clean copy of the tree into `build/` (`build.bat` on Windows) |
+| `diff.sh` | Diff a function against the retail original |
 | `scripts/pcsx2.sh` | Boot an already-built ISO |
 
-On Windows, `scripts\build.bat` covers the build; point PCSX2 at the
+On Windows, `build.bat` covers the build; point PCSX2 at the
 `build\Dark Cloud (Build).iso` it leaves behind. The one-command flow is a
-shell script, so under WSL use `scripts/run.sh` as above.
+shell script, so under WSL use `run.sh` as above.
 
 ## Building by hand
 
@@ -63,7 +63,7 @@ The stages, each available as its own target:
 | `elf` | Assemble/compile everything and link `build/SCUS_971.11` plus the overlays |
 | `build` (default) | `elf`, then verify the executable and both overlays |
 | `iso` | Patch the built files into a copy of the retail ISO |
-| `run` | Boot that ISO in PCSX2 (needs a native toolchain; otherwise use `scripts/run.sh`) |
+| `run` | Boot that ISO in PCSX2 (needs a native toolchain; otherwise use `run.sh`) |
 
 The rebuilt ISO is a copy of the retail one with only `SCUS_971.11`,
 `TITLE.BIN` and `DUN.BIN` overwritten in place, so every other file keeps the
@@ -71,14 +71,14 @@ sector it shipped on -- the game seeks to some of them by LBA.
 
 ## Diffing
 
-`scripts/diff.sh [main|title|dun] <symbol>` compares a function against the
+`diff.sh [main|title|dun] <symbol>` compares a function against the
 retail original with [asm-differ](https://github.com/simonlindholm/asm-differ);
 the mode defaults to `main`. Symbols are the mangled names as they appear in
 the link map, e.g.
 
 ```
-scripts/diff.sh title Load__7CScriptFPCc
-scripts/diff.sh dun GameInit__Fv
+diff.sh title Load__7CScriptFPCc
+diff.sh dun GameInit__Fv
 ```
 
 The overlays ship as raw images with no symbol table, so their functions are
