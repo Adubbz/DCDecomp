@@ -1,3 +1,5 @@
+#include "ebattle.hpp"
+
 #include "texture.hpp"
 
 /* External */
@@ -38,10 +40,12 @@ extern int eb_key_num;
 
 extern void init_draw_ok();
 
+/* @ 0x168100 (0x10 bytes) -- EBInitialize__Fv */
 void EBInitialize() {
     ebattle_flag = 0;
 }
 
+/* @ 0x168110 (0xE0 bytes) -- EBInit__Ff */
 void EBInit(float speed_mult) {
     tex = TexManager->GetTexture(LIT_314__2, -1);
 
@@ -68,6 +72,7 @@ void EBInit(float speed_mult) {
     }
 }
 
+/* @ 0x1681F0 (0x10 bytes) -- EBFinishSound__Fii */
 void EBFinishSound(int do_fade_bgm, int do_play_fanfare) {
     fade_bgm = do_fade_bgm;
     play_fanfare = do_play_fanfare;

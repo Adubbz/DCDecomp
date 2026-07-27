@@ -1233,7 +1233,16 @@ MAIN_O_FILES :=\
     $(BUILD_DIR)/ref/asm/split/main/PlayTimeCount.s.o \
     $(BUILD_DIR)/ref/asm/split/main/LoadSystemMessage.s.o \
     $(BUILD_DIR)/ref/asm/split/main/initialize_data.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/main.s.o \
+    $(BUILD_DIR)/src/mainselect.cpp.o \
+    $(BUILD_DIR)/src/gamepad.cpp.o \
+    $(BUILD_DIR)/src/mglib.cpp.o \
+    $(BUILD_DIR)/src/editpartsinfo.cpp.o \
+    $(BUILD_DIR)/src/randomitem.cpp.o \
+    $(BUILD_DIR)/src/userstatus.cpp.o \
+    $(BUILD_DIR)/src/monstorunit.cpp.o \
+    $(BUILD_DIR)/src/hitvalue.cpp.o \
+    $(BUILD_DIR)/src/water.cpp.o \
+    $(BUILD_DIR)/src/main.cpp.o \
     $(BUILD_DIR)/ref/asm/split/main/MapJump.s.o \
     $(BUILD_DIR)/ref/asm/split/main/MenuInit.s.o \
     $(BUILD_DIR)/ref/asm/split/main/MenuLoop.s.o \
@@ -1267,8 +1276,7 @@ MAIN_O_FILES :=\
     $(BUILD_DIR)/ref/asm/split/main/func_001436E0.s.o \
     $(BUILD_DIR)/ref/asm/split/main/CDataAlloc_1_6000___Alloc.s.o \
     $(BUILD_DIR)/ref/asm/split/main/CDataAlloc_1_6000___Align64.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/func_00143820.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/func_00143850.s.o \
+    $(BUILD_DIR)/src/dataset.cpp.o \
     $(BUILD_DIR)/ref/asm/split/main/CMap__SetObject.s.o \
     $(BUILD_DIR)/ref/asm/split/main/CMap__SetObject_2.s.o \
     $(BUILD_DIR)/ref/asm/split/main/CMap__GetObject.s.o \
@@ -1503,44 +1511,6 @@ MAIN_O_FILES :=\
     $(BUILD_DIR)/ref/asm/split/main/func_00157AC0.s.o \
     $(BUILD_DIR)/ref/asm/split/main/func_00157B00.s.o \
     $(BUILD_DIR)/src/savedata.cpp.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetMenuCursor.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetCharaName.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__AddPlayTime.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetPlayTime.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__SetNowTime.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetNowTime.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__AddNowTime.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__SetDay.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetDay.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__AddDay.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__AddFishingPoint.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__SetFishingPoint.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__SetFishingRank.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetFishingRank.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetGrdData.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetEditPartsInfo.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetParts.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetGrdNPCData.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetElemData.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetDngStatus.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetStockItem.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetGameFlag.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__SetGameFlag.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetGameIntFlag.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__SetGameIntFlag.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetMapFlag.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__SetMapFlag.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__GetMapInitFlag.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__SetMapInitFlag.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__AtraPartsGet.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__AtraChipGet.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__VisitMap.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__QuestDungeon.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__ConvertConfig.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__InvertConfig.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/func_00158AE0.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData__Initialize.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CSaveData____ct.s.o \
     $(BUILD_DIR)/ref/asm/split/main/GetEditAtraData.s.o \
     $(BUILD_DIR)/ref/asm/split/main/GetEditAtraPartsData.s.o \
     $(BUILD_DIR)/ref/asm/split/main/GetEditAtraChipData.s.o \
@@ -2856,37 +2826,13 @@ MAIN_O_FILES :=\
     $(BUILD_DIR)/ref/asm/split/main/_SET_IBOX_FINISH.s.o \
     $(BUILD_DIR)/ref/asm/split/main/_GET_PIERO_ITEM.s.o \
     $(BUILD_DIR)/ref/asm/split/main/AddSystemEventScript.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__SetNowFloor.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__SearchItemIndexNo.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CUserStatus__ChkEventFlag.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CUserStatus__ClearEventFlag.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__LostItem.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__LostGateKey.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__GetLiveUnit.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__CheckItemGet.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__CheckWeaponUser.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__CheckWeaponRot.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__ClearDeamonShaft.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__GetItem.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__CheckActItemSlot.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__CheckDefaultWeapon.s.o \
+    $(BUILD_DIR)/src/dngstatusdata_span1.cpp.o \
     $(BUILD_DIR)/ref/asm/split/main/CUserStatus__AddDrink.s.o \
     $(BUILD_DIR)/ref/asm/split/main/CUserStatus__AddNowLife.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CUserStatus__CheckLife.s.o \
+    $(BUILD_DIR)/src/dngstatusdata_span2.cpp.o \
     $(BUILD_DIR)/ref/asm/split/main/CUserStatus__SetNextLife.s.o \
     $(BUILD_DIR)/ref/asm/split/main/CUserStatus__Step.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CUserStatus__Init.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__SetDead.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__SetResLimmitZone.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__InitResLimmitZone.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__Initialize.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__AddKills.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__ChkKills.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__GetAtraNum.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__GetMaxAtraNum.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__SetGetAtra.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__SetCopyAtraList.s.o \
-    $(BUILD_DIR)/ref/asm/split/main/CDngStatusData__GetAtraData.s.o \
+    $(BUILD_DIR)/src/dngstatusdata_span3.cpp.o \
     $(BUILD_DIR)/ref/asm/split/main/GetPieroItem.s.o \
     $(BUILD_DIR)/ref/asm/split/main/PresetSmallItemNo_Get.s.o \
     $(BUILD_DIR)/ref/asm/split/main/SearchiDoPutArea.s.o \
@@ -3920,9 +3866,12 @@ MAIN_O_FILES :=\
     $(BUILD_DIR)/ref/asm/split/main/Fader__Out.s.o \
     $(BUILD_DIR)/ref/asm/split/main/Fader__Get.s.o \
     $(BUILD_DIR)/ref/asm/sections/main/main.vutext.s.o \
-    $(BUILD_DIR)/ref/asm/sections/main/main.data.s.o \
     $(BUILD_DIR)/ref/asm/sections/main/main.vudata.s.o \
-    $(BUILD_DIR)/ref/asm/sections/main/main.rodata.s.o \
-    $(BUILD_DIR)/ref/asm/sections/main/main.sdata.s.o \
-    $(BUILD_DIR)/ref/asm/sections/main/main.sbss.s.o \
-    $(BUILD_DIR)/ref/asm/sections/main/main.bss.s.o \
+    $(NULL)
+
+# NB: the carved/split generated-section objects (main.data/rodata/sdata/
+# sbss/bss part*.s.o) are NOT listed here. They are discovered and emitted
+# generically from asm/migrated_symbols.txt via scripts/migrate_section.py
+# and added to the link as $(GENERATED_O_FILES) by the Makefile. main.vudata
+# has no migrations, so (like main.vutext) it is assembled straight from its
+# immutable reference dump and placed by the `*(.vudata)` wildcard.

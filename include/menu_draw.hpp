@@ -20,7 +20,7 @@
 /* ?ret */ void SaveMenuKeySaveDecideEnding(void); // @ 0x2222F0 (0x80 bytes) -- mangled: SaveMenuKeySaveDecideEnding__Fv
 /* ?ret */ void SaveMenuKeySaveEnding(void); // @ 0x222370 (0x40 bytes) -- mangled: SaveMenuKeySaveEnding__Fv
 /* ?ret */ void SaveMenuKeyEndSaveEnding(void); // @ 0x2223B0 (0x60 bytes) -- mangled: SaveMenuKeyEndSaveEnding__Fv
-/* ?ret */ void GetSaveMenuMsgNo(void); // @ 0x222410 (0xC8 bytes) -- mangled: GetSaveMenuMsgNo__Fv
+/* ?ret */ void GetSaveMenuMsgNo(void); // @ 0x222410 (0x230 bytes) -- mangled: GetSaveMenuMsgNo__Fv
 /* ?ret */ void SaveMenuTextureEnter(void); // @ 0x222640 (0x2D0 bytes) -- mangled: SaveMenuTextureEnter__Fv
 /* ?ret */ void SaveMenuEffectFadeOut(void); // @ 0x222910 (0x30 bytes) -- mangled: SaveMenuEffectFadeOut__Fv
 /* ?ret */ void GetSaveBoardAlphaInfo(int, int, int &, int &, int); // @ 0x222940 (0x160 bytes) -- mangled: GetSaveBoardAlphaInfo__FiiRiRii
@@ -60,7 +60,7 @@
 /* ?ret */ void DrawDunEnterFloorName(int, int, int, int, int, int); // @ 0x2283F0 (0x290 bytes) -- mangled: DrawDunEnterFloorName__Fiiiiii
 /* ?ret */ void StartQuickChange(void /* CW back-ref target unresolved */ *, int, int *, int); // @ 0x228680 (0x530 bytes) -- mangled: StartQuickChange__FP1iPii
 /* ?ret */ void CharaChangeLoop(void); // @ 0x228BB0 (0x2E0 bytes) -- mangled: CharaChangeLoop__Fv
-/* ?ret */ void CharaChangeKey(void); // @ 0x228E90 (0x4C bytes) -- mangled: CharaChangeKey__Fv
+/* ?ret */ void CharaChangeKey(void); // @ 0x228E90 (0x8B0 bytes) -- mangled: CharaChangeKey__Fv
 /* ?ret */ void CharaChangeDraw(void); // @ 0x229740 (0xAD0 bytes) -- mangled: CharaChangeDraw__Fv
 /* ?ret */ void DngActItemModelReadStart(void /* CW back-ref target unresolved */ *); // @ 0x22A210 (0x180 bytes) -- mangled: DngActItemModelReadStart__FP1
 /* ?ret */ void DngActItemModelBuild(int); // @ 0x22A390 (0x210 bytes) -- mangled: DngActItemModelBuild__Fi
@@ -94,7 +94,7 @@
 /* ?ret */ void Get3DPosTo2DPos(CFrame *, int *); // @ 0x22C020 (0x70 bytes) -- mangled: Get3DPosTo2DPos__FP6CFramePi
 /* ?ret */ void GetMenuCommonFontW(int, int); // @ 0x22C090 (0x40 bytes) -- mangled: GetMenuCommonFontW__Fii
 /* ?ret */ void GetMenuCommonPutXY(ClsMes *, int); // @ 0x22C0D0 (0x70 bytes) -- mangled: GetMenuCommonPutXY__FP6ClsMesi
-/* ?ret */ void InitMenuMesSet(int, short *); // @ 0x22C140 (0xA20 bytes) -- mangled: InitMenuMesSet__FiPs
+/* ?ret */ void InitMenuMesSet(int, short *); // @ 0x22C140 (0xD60 bytes) -- mangled: InitMenuMesSet__FiPs
 /* ?ret */ void DrawMenuClsMes(ClsMes *, int, int); // @ 0x22CEA0 (0x50 bytes) -- mangled: DrawMenuClsMes__FP6ClsMesii
 /* ?ret */ void ComMenuSePlay(int); // @ 0x22CEF0 (0x30 bytes) -- mangled: ComMenuSePlay__Fi
 /* ?ret */ void DrawMenu2DSprite(CTexture *, CRect_i_, CRect_i_, int); // @ 0x22CF20 (0x70 bytes) -- mangled: DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i

@@ -18,3 +18,11 @@ ctx.c
 
 # AI
 CLAUDE.md
+AGENTS.md
+
+# Permuting
+permuting/
+
+# IDA databases (derived from binaries already in-tree)
+*.i64
+*.idb

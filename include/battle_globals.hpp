@@ -20,8 +20,8 @@
 /* ?ret */ void DrawSaveBoardCharaName2(int, int, short *, CTexture **, spRGBA, spRGBA); // @ 0x23CB50 (0x290 bytes) -- mangled: DrawSaveBoardCharaName2__FiiPsPP8CTexture6spRGBA6spRGBA
 /* ?ret */ void GetMsgLengthCharaName(int); // @ 0x23CDE0 (0x80 bytes) -- mangled: GetMsgLengthCharaName__Fi
 /* ?ret */ void InitOpeningBook(void /* CW back-ref target unresolved */ *, int *); // @ 0x23CE60 (0xB0 bytes) -- mangled: InitOpeningBook__FP1Pi
-/* ?ret */ void OpeningBookKey(void); // @ 0x23CF10 (0x50 bytes) -- mangled: OpeningBookKey__Fv
-/* ?ret */ void OpeningBookDraw(void); // @ 0x23D580 (0xA4 bytes) -- mangled: OpeningBookDraw__Fv
+/* ?ret */ void OpeningBookKey(void); // @ 0x23CF10 (0x670 bytes) -- mangled: OpeningBookKey__Fv
+/* ?ret */ void OpeningBookDraw(void); // @ 0x23D580 (0x140 bytes) -- mangled: OpeningBookDraw__Fv
 /* ?ret */ void runerror(const char *); // @ 0x23D6C0 (0x50 bytes) -- mangled: runerror__FPCc
 /* ?ret */ void stkoverflow(void); // @ 0x23D710 (0x30 bytes) -- mangled: stkoverflow__Fv
 /* ?ret */ void chk_int(RS_STACKDATA, funcdata *); // @ 0x23D740 (0x70 bytes) -- mangled: chk_int__F12RS_STACKDATAP8funcdata

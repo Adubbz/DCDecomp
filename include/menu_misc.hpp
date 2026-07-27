@@ -61,7 +61,7 @@
 /* ?ret */ void WeaponOptionStatusDraw(WEAPON_HAVE *, int, int, int); // @ 0x20F7F0 (0x230 bytes) -- mangled: WeaponOptionStatusDraw__FP11WEAPON_HAVEiii
 /* ?ret */ void WeaponStarDraw(int, int, WEAPON_HAVE *, int); // @ 0x20FA20 (0x1C0 bytes) -- mangled: WeaponStarDraw__FiiP11WEAPON_HAVEi
 /* ?ret */ void LocalWeaponDataChange(char *, int, int, int); // @ 0x20FBE0 (0x100 bytes) -- mangled: LocalWeaponDataChange__FPciii
-/* ?ret */ void WeaponDataChangeByRGate(WEAPON_HAVE *, int); // @ 0x20FCE0 (0x94 bytes) -- mangled: WeaponDataChangeByRGate__FP11WEAPON_HAVEi
+/* ?ret */ void WeaponDataChangeByRGate(WEAPON_HAVE *, int); // @ 0x20FCE0 (0x4F0 bytes) -- mangled: WeaponDataChangeByRGate__FP11WEAPON_HAVEi
 /* ?ret */ void GetNumHowManyItemsHave(int); // @ 0x2101D0 (0x110 bytes) -- mangled: GetNumHowManyItemsHave__Fi
 /* ?ret */ void GetEditMenuMax(void); // @ 0x2102E0 (0x40 bytes) -- mangled: GetEditMenuMax__Fv
 /* ?ret */ void DrawMenuIcon(int); // @ 0x210320 (0xD0 bytes) -- mangled: DrawMenuIcon__Fi
@@ -72,11 +72,11 @@
 /* ?ret */ void EditMenuInit(int *, int); // @ 0x210AB0 (0x2F0 bytes) -- mangled: EditMenuInit__FPii
 /* ?ret */ void EditMenuExit(void); // @ 0x210DA0 (0x90 bytes) -- mangled: EditMenuExit__Fv
 /* ?ret */ void GetDrawHelpWindow(int); // @ 0x210E30 (0x70 bytes) -- mangled: GetDrawHelpWindow__Fi
-/* ?ret */ void EditMenuLoop(void); // @ 0x210EA0 (0x44 bytes) -- mangled: EditMenuLoop__Fv
-/* ?ret */ void EditMenuDraw(void); // @ 0x210FB0 (0x60 bytes) -- mangled: EditMenuDraw__Fv
+/* ?ret */ void EditMenuLoop(void); // @ 0x210EA0 (0x110 bytes) -- mangled: EditMenuLoop__Fv
+/* ?ret */ void EditMenuDraw(void); // @ 0x210FB0 (0x310 bytes) -- mangled: EditMenuDraw__Fv
 /* ?ret */ void EditMenuStart(void); // @ 0x2112C0 (0x4C0 bytes) -- mangled: EditMenuStart__Fv
 /* ?ret */ void EditMenuSelectDraw(void); // @ 0x211780 (0x230 bytes) -- mangled: EditMenuSelectDraw__Fv
-/* ?ret */ void EditMenuSelect(void); // @ 0x2119B0 (0x1BC bytes) -- mangled: EditMenuSelect__Fv
+/* ?ret */ void EditMenuSelect(void); // @ 0x2119B0 (0x390 bytes) -- mangled: EditMenuSelect__Fv
 /* ?ret */ void EditMenuToExitDraw(void); // @ 0x211D40 (0x20 bytes) -- mangled: EditMenuToExitDraw__Fv
 /* ?ret */ void EditMenuToExit(void); // @ 0x211D60 (0x150 bytes) -- mangled: EditMenuToExit__Fv
 /* ?ret */ void AtoraSelectDraw(void); // @ 0x211EB0 (0x90 bytes) -- mangled: AtoraSelectDraw__Fv
