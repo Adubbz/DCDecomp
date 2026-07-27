@@ -10,19 +10,36 @@ file to the 128-byte boundary the retail images are padded to.
 
 ## Why the linker cannot do this
 
-The toolchain has no way to emit the header, so it is written here:
+CodeWarrior for PlayStation 2 R1.5 is the release this project's compiler comes
+from -- its mwccmips.exe is byte-identical to ours -- and its own manual says,
+under the PlayStation2 linker's "Overlays" heading, that overlays are not
+supported in that release. The rest follows from that:
 
-  - The magic does not appear in mwldmips.exe, mwccmips.exe, asm_r5900_elf.exe
-    or any ProDG binary -- searched as raw bytes, not just as a string.
+  - The magic appears in no file on the CD (2339 files, 278MB, searched as raw
+    bytes): not in either mwldmips.exe build, not in the IDE's PS2 linker
+    plugin, not in any example. Nor in the ProDG binaries.
+  - `-overlaygroup`/`-overlay` keep overlays inside the ELF, as a section named
+    after the group; with no linker command file at all, mwld writes only the
+    ELF. They are still passed, because they are what makes mwld treat the
+    regions as real overlays.
   - The only mechanism that writes an overlay to its own file is `> name` on an
     RWXO memory region, and it emits the raw image with no header.
-  - `-overlaygroup`/`-overlay` keep overlays inside the ELF, as a section named
-    after the group; even with no linker command file at all, mwld writes only
-    the ELF. They are still used, because they are what makes mwld treat the
-    regions as real overlays.
-  - The retail executable's .comment records the same "MW MIPS C Compiler
-    (2.3.1.01)", so a later linker was not involved either: Level 5 must have
-    packaged the images with a separate tool, which is what this replaces.
+
+The manual does document how a header would be written -- WRITEB/WRITEH/WRITEW
+insert data at the section's current address, and OVERLAYID/SIZEOF report an
+overlay's id and size -- and that route does produce a byte-identical header
+here. It just cannot also keep the payload. The sizes are only known after the
+content is placed, and nothing may be forward-referenced: OVERLAYID, SIZEOF and
+plain symbols all fail with "Section not found" / "Symbol not found" when they
+name something declared later. Writing the header from a section placed after
+the content works and the 64 bytes come out exactly right, but mwld then treats
+that trailing section as the region's file image and zero-fills the payload;
+moving the location counter back within a single section is refused outright
+("move current location backward").
+
+So the retail images were packaged by something outside this release -- a later
+CodeWarrior with real overlay support, or a Level 5 tool -- and that packaging
+step is what this script replaces.
 
 The field layout is taken from the loader rather than guessed. mwOverlayInit
 reads the bss size at 0x14, memsets that many bytes from the end of the loaded
