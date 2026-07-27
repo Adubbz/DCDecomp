@@ -220,18 +220,18 @@ add_custom_command(
     COMMENT "Linking ${ISO_ELF} (no debug info)"
     VERBATIM)
 
-# The built files are patched into a copy of the retail ISO rather than a
-# freshly mastered one, so every untouched file keeps its original LBA -- the
-# game seeks to some of them by sector.
+# A fresh image is mastered from the extracted disc with the built files put in
+# place of their retail counterparts, so a built file may be any size.
 add_custom_command(
     OUTPUT "${CMAKE_SOURCE_DIR}/${BUILT_ISO}"
     COMMAND ${PYTHON} ${SCRIPTS_DIR}/make_iso.py
-            --source "${RETAIL_ISO}" --out "${BUILT_ISO}"
+            --source "${RETAIL_ISO}" --tree ${ROM_DIR}/extracted/iso
+            --out "${BUILT_ISO}"
             ${ISO_ELF} ${BUILD_DIR}/TITLE.BIN ${BUILD_DIR}/DUN.BIN
     DEPENDS ${CMAKE_SOURCE_DIR}/${ISO_ELF} ${OVERLAY_BINS}
             ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/make_iso.py
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    COMMENT "Writing ${BUILT_ISO}"
+    COMMENT "Mastering ${BUILT_ISO}"
     VERBATIM)
 
 # Deliberately not tied to the verification target: booting a build that does

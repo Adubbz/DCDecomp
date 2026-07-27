@@ -71,9 +71,9 @@ The stages, each available as its own target:
 | `iso` | Patch the built files into a copy of the retail ISO |
 | `run` | Boot that ISO in PCSX2 (needs a native toolchain; otherwise use `run.sh`) |
 
-The rebuilt ISO is a copy of the retail one with only `SCUS_971.11`,
-`TITLE.BIN` and `DUN.BIN` overwritten in place, so every other file keeps the
-sector it shipped on -- the game seeks to some of them by LBA.
+The `iso` target masters a fresh image from `rom/extracted`, with the built
+executable and overlays used in place of the retail ones. Because it is
+mastered rather than patched, the built files can be any size.
 
 ## Diffing
 
