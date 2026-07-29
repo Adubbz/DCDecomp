@@ -1,36 +1,20 @@
-# Overlay support.
-#
-# TITLE.BIN and DUN.BIN are MWLD overlays: both load at the address where the
-# main ELF's .bss ends, one at a time, and the main ELF carries Metrowerks'
-# overlay loader (mwLoadOverlay / MWNotifyOverlayLoaded) to swap them in. They
-# are produced by the same mwld run as the main ELF, using three mechanisms
-# together:
-#
-#   -overlaygroup/-overlay   declare the overlays and which objects belong to
-#                            each, so mwld links them as real overlays
-#   MEMORY/SECTIONS          give each overlay its own output file and place
-#                            its sections at the retail addresses
-#   renamed input sections   keep .main's trailing *(.text)/*(.data)/*(.bss)
-#                            wildcards from swallowing the overlays' objects.
-#                            mwld resolves placement strictly in the order the
-#                            linker command file is written and matches
-#                            wildcards against every input object regardless of
-#                            overlay membership, so an overlay object whose
-#                            sections are still called .text/.data/.bss ends up
-#                            inside main. Each overlay's objects therefore get
-#                            their sections renamed to a private prefix
-#                            (.ttext/.tdata/.tbss for title) as they are built.
-#
-# mwld 2.3.1.01 stops short of writing the 64-byte MWo3 header the loader
-# expects, so the placement reserves those bytes and scripts/mwo3.py fills them
-# in after the link. See the header of that script for the fields.
+# Overlay support. TITLE.BIN and DUN.BIN are MWLD overlays, produced by the
+# same mwld run as the main ELF and loaded one at a time where its .bss ends.
+# Four mechanisms: -overlaygroup/-overlay to declare them, MEMORY/SECTIONS to
+# place them, WRITEB/WRITEW for the 64-byte MWo3 header, and renamed input
+# sections so main's trailing *(.text) wildcards cannot swallow their objects.
 
 set(OVERLAYS title dun)
 
 # Where the overlays load: the end of the main ELF's .bss. Retail constant --
-# it is also disassemble.py's VRAM_OVERLAY_START and asm/symbols.s's __bss_end.
+# it is also disassemble.py's VRAM_OVERLAY_START.
 set(OVERLAY_ORIGIN 0x01DABD00)
 set(OVERLAY_HEADER_SIZE 0x40)
+
+# Retail rounds each overlay file up to this boundary with zeros. mwld cannot
+# emit it: the padding covers the start of .bss, so advancing the location
+# counter would move every bss symbol. Hence the round-up on the finished file.
+set(OVERLAY_FILE_ALIGN 128)
 
 # Each overlay's private input-section prefix, e.g. title -> ".t". Kept short
 # because it is spelled out in the linker command file for every section.
@@ -77,22 +61,53 @@ function(overlay_rename_flags name out_var)
         PARENT_SCOPE)
 endfunction()
 
+# The overlay's file name, which the header carries at offset 0x20. Written a
+# byte at a time, the way CodeWarrior's LCF generator writes it; mwld zero-fills
+# the rest of the reservation.
+function(overlay_name_bytes name out_var)
+    string(HEX "${name}.bin" hex)
+    string(REGEX MATCHALL ".." octets "${hex}")
+
+    set(lines "")
+    foreach(octet IN LISTS octets)
+        string(APPEND lines "\n        WRITEB 0x${octet};")
+    endforeach()
+    set(${out_var} "${lines}" PARENT_SCOPE)
+endfunction()
+
 # The placement body for one overlay, expanded into the linker template.
-#
-# Wildcards over the private prefix are enough here: mwld matches them in
-# command-line order, which is the address order disassemble.py writes the
-# object lists in. The symbols mark the boundaries mwo3.py needs, and are
-# placed where the section actually starts -- the explicit ALIGN(16) before
-# .data is what ALIGNALL(16) would apply anyway, and .bss deliberately starts
-# unaligned, exactly where .data ended.
+# Wildcards over the private prefix suffice: mwld matches them in command-line
+# order, which is the address order of the object lists. The 64 bytes at the
+# top are the MWo3 header the loader reads (bss size at 0x14, static-init
+# bounds at 0x18/0x1C). Those size fields are declared up front and assigned
+# below, because mwld rejects a forward reference -- which is what the PS2 LCF
+# Generator prelinker emits too.
 function(overlay_placement name out_var)
     overlay_section_prefix(${name} p)
+    overlay_name_bytes(${name} name_bytes)
     set(${out_var} "
-        _${name}_load = .;
-        // Reserved for the MWo3 header, written by scripts/mwo3.py.
-        . = . + ${OVERLAY_HEADER_SIZE};
-        _${name}_text = .;
+        // Declared before the header reads them; assigned for real below.
+        _${name}_text = 0;
+        _${name}_data = 0;
+        _${name}_bss = 0;
+        _${name}_end = 0;
 
+        _${name}_load = .;
+        WRITEB 0x4D;                            // 'M'
+        WRITEB 0x57;                            // 'W'
+        WRITEB 0x6F;                            // 'o'
+        WRITEB 0x33;                            // '3', header version
+        WRITEW OVERLAYID(.${name});             // overlay id, from -overlay order
+        WRITEW ADDR(.${name});                  // load address
+        WRITEW _${name}_data - _${name}_text;   // size of text
+        WRITEW _${name}_bss - _${name}_data;    // size of data
+        WRITEW _${name}_end - _${name}_bss;     // size of bss
+        WRITEW _${name}_static_init;            // static-initialiser table
+        WRITEW _${name}_static_init_end;
+        // Name, at offset 0x20.${name_bytes}
+        . = _${name}_load + ${OVERLAY_HEADER_SIZE};
+
+        _${name}_text = .;
         ALIGNALL(16);
         *(${p}text)
 
@@ -117,7 +132,17 @@ function(expand_overlay_markers template out)
         string(REPLACE "        // @OVERLAY ${name}" "${body}" content "${content}")
     endforeach()
 
-    file(WRITE ${out} "${content}")
+    # Only when it changed. file(WRITE) always touches the file, and this runs
+    # at configure time -- which every build does -- so an unconditional write
+    # would make the generated .lcf that consumes this look stale and relink
+    # the whole executable on every build.
+    set(previous "")
+    if(EXISTS ${out})
+        file(READ ${out} previous)
+    endif()
+    if(NOT previous STREQUAL content)
+        file(WRITE ${out} "${content}")
+    endif()
 endfunction()
 
 # The `-overlaygroup`/`-overlay` arguments for the link. Every overlay shares

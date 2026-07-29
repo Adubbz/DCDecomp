@@ -2,6 +2,12 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CTexture;
+
+
 /* ?ret */ void WaterSplash_Init(void); // @ 0x1AF360 (0x50 bytes) -- mangled: WaterSplash_Init__Fv
 /* ?ret */ void CheckHealingWater(void); // @ 0x1AF3B0 (0x330 bytes) -- mangled: CheckHealingWater__Fv
 /* ?ret */ void CheckHealZone(void); // @ 0x1AF6E0 (0x2A0 bytes) -- mangled: CheckHealZone__Fv

@@ -2,6 +2,17 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+struct ATTACH_LIST;
+class CTexture;
+struct IHAVEITEM;
+struct ITEM_PACK;
+struct WEAPON_HAVE;
+struct WEP_BUILDUP_INFO;
+
+
 /* ?ret */ void PersonalBoardWeaponPush(IHAVEITEM *, int); // @ 0x22F0A0 (0x350 bytes) -- mangled: PersonalBoardWeaponPush__FP9IHAVEITEMi
 /* ?ret */ void PersonalBoardAttachPush(IHAVEITEM *, int); // @ 0x22F3F0 (0xE0 bytes) -- mangled: PersonalBoardAttachPush__FP9IHAVEITEMi
 /* ?ret */ void PersonalBoardItemGetorSwap(int); // @ 0x22F4D0 (0x80 bytes) -- mangled: PersonalBoardItemGetorSwap__Fi

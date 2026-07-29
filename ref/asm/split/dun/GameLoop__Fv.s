@@ -1,0 +1,212 @@
+.include "macro.inc"
+
+.set noat /* Allow manual use of $at. */
+.set noreorder /* Don't insert nops after branches. */
+
+.section .text
+glabel GameLoop__Fv
+/* 001C80 01DAD980 E0FFBD27 */  addiu       $29, $29, -0x20
+/* 001C84 01DAD984 0000BF7F */  sq          $31, 0x0($29)
+/* 001C88 01DAD988 6C9D838F */  lw          $3, -0x6294($28)
+/* 001C8C 01DAD98C 02000224 */  addiu       $2, $0, 0x2
+/* 001C90 01DAD990 0A006210 */  beq         $3, $2, .L01DAD9BC_2E8FBC
+/* 001C94 01DAD994 00000000 */   nop
+/* 001C98 01DAD998 01000224 */  addiu       $2, $0, 0x1
+/* 001C9C 01DAD99C 03006210 */  beq         $3, $2, .L01DAD9AC_2E8FAC
+/* 001CA0 01DAD9A0 00000000 */   nop
+/* 001CA4 01DAD9A4 0B000010 */  b           .L01DAD9D4_2E8FD4
+/* 001CA8 01DAD9A8 00000000 */   nop
+.L01DAD9AC_2E8FAC:
+/* 001CAC 01DAD9AC 28C2760C */  jal         MoveChara__Fv__2
+/* 001CB0 01DAD9B0 00000000 */   nop
+/* 001CB4 01DAD9B4 07000010 */  b           .L01DAD9D4_2E8FD4
+/* 001CB8 01DAD9B8 00000000 */   nop
+.L01DAD9BC_2E8FBC:
+/* 001CBC 01DAD9BC C8D9070C */  jal         BattleMenuCursor__Fv
+/* 001CC0 01DAD9C0 00000000 */   nop
+/* 001CC4 01DAD9C4 03004014 */  bnez        $2, .L01DAD9D4_2E8FD4
+/* 001CC8 01DAD9C8 00000000 */   nop
+/* 001CCC 01DAD9CC 01000224 */  addiu       $2, $0, 0x1
+/* 001CD0 01DAD9D0 6C9D82AF */  sw          $2, -0x6294($28)
+.L01DAD9D4_2E8FD4:
+/* 001CD4 01DAD9D4 6C9D848F */  lw          $4, -0x6294($28)
+/* 001CD8 01DAD9D8 0800812C */  sltiu       $1, $4, 0x8
+/* 001CDC 01DAD9DC 43002010 */  beqz        $1, .L01DADAEC_2E90EC$b
+/* 001CE0 01DAD9E0 00000000 */   nop
+/* 001CE4 01DAD9E4 DC01023C */  lui         $2, %hi(LIT_994__3)
+/* 001CE8 01DAD9E8 702E4324 */  addiu       $3, $2, %lo(LIT_994__3)
+/* 001CEC 01DAD9EC 80100400 */  sll         $2, $4, 2
+/* 001CF0 01DAD9F0 21104300 */  addu        $2, $2, $3
+/* 001CF4 01DAD9F4 0000428C */  lw          $2, 0x0($2)
+/* 001CF8 01DAD9F8 08004000 */  jr          $2
+/* 001CFC 01DAD9FC 00000000 */   nop
+jlabel .L01DADA00_2E9000
+.L01DADA00_2E9000$b:
+/* 001D00 01DADA00 A8B8760C */  jal         MainDraw__Fv__3
+/* 001D04 01DADA04 00000000 */   nop
+/* 001D08 01DADA08 38000010 */  b           .L01DADAEC_2E90EC$b
+/* 001D0C 01DADA0C 00000000 */   nop
+jlabel .L01DADA10_2E9010
+.L01DADA10_2E9010$b:
+/* 001D10 01DADA10 78D8070C */  jal         BattleMenuDraw__Fv
+/* 001D14 01DADA14 00000000 */   nop
+/* 001D18 01DADA18 34000010 */  b           .L01DADAEC_2E90EC$b
+/* 001D1C 01DADA1C 00000000 */   nop
+jlabel .L01DADA20_2E9020
+.L01DADA20_2E9020$b:
+/* 001D20 01DADA20 689D8427 */  addiu       $4, $28, -0x6298
+/* 001D24 01DADA24 5090080C */  jal         EventItemSelectLoop__FPi
+/* 001D28 01DADA28 00000000 */   nop
+/* 001D2C 01DADA2C 2F004010 */  beqz        $2, .L01DADAEC_2E90EC$b
+/* 001D30 01DADA30 00000000 */   nop
+/* 001D34 01DADA34 01000224 */  addiu       $2, $0, 0x1
+/* 001D38 01DADA38 6C9D82AF */  sw          $2, -0x6294($28)
+/* 001D3C 01DADA3C 2B000010 */  b           .L01DADAEC_2E90EC$b
+/* 001D40 01DADA40 00000000 */   nop
+jlabel .L01DADA44_2E9044
+.L01DADA44_2E9044$b:
+/* 001D44 01DADA44 6499080C */  jal         DunEnterMenuLoop__Fv
+/* 001D48 01DADA48 00000000 */   nop
+/* 001D4C 01DADA4C FFFF0324 */  addiu       $3, $0, -0x1
+/* 001D50 01DADA50 26004310 */  beq         $2, $3, .L01DADAEC_2E90EC$b
+/* 001D54 01DADA54 00000000 */   nop
+/* 001D58 01DADA58 D501013C */  lui         $1, %hi(BtEventInfo + 0x84)
+/* 001D5C 01DADA5C C467238C */  lw          $3, %lo(BtEventInfo + 0x84)($1)
+/* 001D60 01DADA60 02006010 */  beqz        $3, .L01DADA6C_2E906C
+/* 001D64 01DADA64 00000000 */   nop
+/* 001D68 01DADA68 040062AC */  sw          $2, 0x4($3)
+.L01DADA6C_2E906C:
+/* 001D6C 01DADA6C D501013C */  lui         $1, %hi(BtEventInfo + 0x84)
+/* 001D70 01DADA70 C46720AC */  sw          $0, %lo(BtEventInfo + 0x84)($1)
+/* 001D74 01DADA74 789C848F */  lw          $4, -0x6388($28)
+/* 001D78 01DADA78 282E4070 */  paddub      $5, $2, $0
+/* 001D7C 01DADA7C 40F6060C */  jal         SetNowFloor__14CDngStatusDataFi
+/* 001D80 01DADA80 00000000 */   nop
+/* 001D84 01DADA84 01000224 */  addiu       $2, $0, 0x1
+/* 001D88 01DADA88 6C9D82AF */  sw          $2, -0x6294($28)
+/* 001D8C 01DADA8C 17000010 */  b           .L01DADAEC_2E90EC$b
+/* 001D90 01DADA90 00000000 */   nop
+jlabel .L01DADA94_2E9094
+.L01DADA94_2E9094$b:
+/* 001D94 01DADA94 D83C080C */  jal         DngEscapeMsgLoop__Fv
+/* 001D98 01DADA98 00000000 */   nop
+/* 001D9C 01DADA9C 13004018 */  blez        $2, .L01DADAEC_2E90EC$b
+/* 001DA0 01DADAA0 00000000 */   nop
+/* 001DA4 01DADAA4 D501013C */  lui         $1, %hi(BtEventInfo + 0x88)
+/* 001DA8 01DADAA8 C867238C */  lw          $3, %lo(BtEventInfo + 0x88)($1)
+/* 001DAC 01DADAAC 02006010 */  beqz        $3, .L01DADAB8_2E90B8
+/* 001DB0 01DADAB0 00000000 */   nop
+/* 001DB4 01DADAB4 040062AC */  sw          $2, 0x4($3)
+.L01DADAB8_2E90B8:
+/* 001DB8 01DADAB8 D501013C */  lui         $1, %hi(BtEventInfo + 0x88)
+/* 001DBC 01DADABC C86720AC */  sw          $0, %lo(BtEventInfo + 0x88)($1)
+/* 001DC0 01DADAC0 01000224 */  addiu       $2, $0, 0x1
+/* 001DC4 01DADAC4 6C9D82AF */  sw          $2, -0x6294($28)
+/* 001DC8 01DADAC8 08000010 */  b           .L01DADAEC_2E90EC$b
+/* 001DCC 01DADACC 00000000 */   nop
+jlabel .L01DADAD0_2E90D0
+.L01DADAD0_2E90D0$b:
+/* 001DD0 01DADAD0 ECA2080C */  jal         CharaChangeLoop__Fv
+/* 001DD4 01DADAD4 00000000 */   nop
+/* 001DD8 01DADAD8 549482AF */  sw          $2, -0x6BAC($28)
+/* 001DDC 01DADADC 03004010 */  beqz        $2, .L01DADAEC_2E90EC$b
+/* 001DE0 01DADAE0 00000000 */   nop
+/* 001DE4 01DADAE4 01000224 */  addiu       $2, $0, 0x1
+/* 001DE8 01DADAE8 6C9D82AF */  sw          $2, -0x6294($28)
+jlabel .L01DADAEC_2E90EC
+.L01DADAEC_2E90EC$b:
+/* 001DEC 01DADAEC 009E828F */  lw          $2, -0x6200($28)
+/* 001DF0 01DADAF0 3B004010 */  beqz        $2, .L01DADBE0_2E91E0
+/* 001DF4 01DADAF4 00000000 */   nop
+.L01DADAF8_2E90F8:
+/* 001DF8 01DADAF8 8CFB040C */  jal         ReadBGSync__Fv
+/* 001DFC 01DADAFC 00000000 */   nop
+/* 001E00 01DADB00 01000324 */  addiu       $3, $0, 0x1
+/* 001E04 01DADB04 FCFF4310 */  beq         $2, $3, .L01DADAF8_2E90F8
+/* 001E08 01DADB08 00000000 */   nop
+/* 001E0C 01DADB0C D401013C */  lui         $1, %hi(EdEventInfo + 0x30)
+/* 001E10 01DADB10 00D2228C */  lw          $2, %lo(EdEventInfo + 0x30)($1)
+/* 001E14 01DADB14 07004010 */  beqz        $2, .L01DADB34_2E9134
+/* 001E18 01DADB18 00000000 */   nop
+/* 001E1C 01DADB1C A464050C */  jal         SndExit__Fv
+/* 001E20 01DADB20 00000000 */   nop
+/* 001E24 01DADB24 4C66050C */  jal         SndBgmInit__Fv
+/* 001E28 01DADB28 00000000 */   nop
+/* 001E2C 01DADB2C 03000010 */  b           .L01DADB3C_2E913C
+/* 001E30 01DADB30 00000000 */   nop
+.L01DADB34_2E9134:
+/* 001E34 01DADB34 1469050C */  jal         SndStopAllSe__Fv
+/* 001E38 01DADB38 00000000 */   nop
+.L01DADB3C_2E913C:
+/* 001E3C 01DADB3C 1000A427 */  addiu       $4, $29, 0x10
+/* 001E40 01DADB40 0826060C */  jal         EdGetFadeColor__FPf
+/* 001E44 01DADB44 00000000 */   nop
+/* 001E48 01DADB48 1000A427 */  addiu       $4, $29, 0x10
+/* 001E4C 01DADB4C 84B8040C */  jal         MGSetBGColor__FPf
+/* 001E50 01DADB50 00000000 */   nop
+/* 001E54 01DADB54 789C848F */  lw          $4, -0x6388($28)
+/* 001E58 01DADB58 F0F6060C */  jal         LostGateKey__14CDngStatusDataFv
+/* 001E5C 01DADB5C 00000000 */   nop
+/* 001E60 01DADB60 D501013C */  lui         $1, %hi(BtEventInfo + 0xB8)
+/* 001E64 01DADB64 F867228C */  lw          $2, %lo(BtEventInfo + 0xB8)($1)
+/* 001E68 01DADB68 15004014 */  bnez        $2, .L01DADBC0_2E91C0
+/* 001E6C 01DADB6C 00000000 */   nop
+/* 001E70 01DADB70 789C858F */  lw          $5, -0x6388($28)
+/* 001E74 01DADB74 28260070 */  paddub      $4, $0, $0
+/* 001E78 01DADB78 0A000010 */  b           .L01DADBA4_2E91A4
+/* 001E7C 01DADB7C 00000000 */   nop
+.L01DADB80_2E9180:
+/* 001E80 01DADB80 40100400 */  sll         $2, $4, 1
+/* 001E84 01DADB84 21184500 */  addu        $3, $2, $5
+/* 001E88 01DADB88 06006284 */  lh          $2, 0x6($3)
+/* 001E8C 01DADB8C 120062A4 */  sh          $2, 0x12($3)
+/* 001E90 01DADB90 80100400 */  sll         $2, $4, 2
+/* 001E94 01DADB94 21104500 */  addu        $2, $2, $5
+/* 001E98 01DADB98 C84240AC */  sw          $0, 0x42C8($2)
+/* 001E9C 01DADB9C E04260A4 */  sh          $0, 0x42E0($3)
+/* 001EA0 01DADBA0 01008424 */  addiu       $4, $4, 0x1
+.L01DADBA4_2E91A4:
+/* 001EA4 01DADBA4 06008228 */  slti        $2, $4, 0x6
+/* 001EA8 01DADBA8 F5FF4014 */  bnez        $2, .L01DADB80_2E9180
+/* 001EAC 01DADBAC 00000000 */   nop
+/* 001EB0 01DADBB0 FFFF0224 */  addiu       $2, $0, -0x1
+/* 001EB4 01DADBB4 0100013C */  lui         $1, (0x10000 >> 16)
+/* 001EB8 01DADBB8 2108A100 */  addu        $1, $5, $1
+/* 001EBC 01DADBBC 108B22AC */  sw          $2, -0x74F0($1)
+.L01DADBC0_2E91C0:
+/* 001EC0 01DADBC0 789C828F */  lw          $2, -0x6388($28)
+/* 001EC4 01DADBC4 040040A0 */  sb          $0, 0x4($2)
+/* 001EC8 01DADBC8 789C838F */  lw          $3, -0x6388($28)
+/* 001ECC 01DADBCC FFFF0224 */  addiu       $2, $0, -0x1
+/* 001ED0 01DADBD0 030062A0 */  sb          $2, 0x3($3)
+/* 001ED4 01DADBD4 009E828F */  lw          $2, -0x6200($28)
+/* 001ED8 01DADBD8 14000010 */  b           .L01DADC2C_2E922C
+/* 001EDC 01DADBDC 00000000 */   nop
+.L01DADBE0_2E91E0:
+/* 001EE0 01DADBE0 049E828F */  lw          $2, -0x61FC($28)
+/* 001EE4 01DADBE4 0E004010 */  beqz        $2, .L01DADC20_2E9220
+/* 001EE8 01DADBE8 00000000 */   nop
+.L01DADBEC_2E91EC:
+/* 001EEC 01DADBEC 8CFB040C */  jal         ReadBGSync__Fv
+/* 001EF0 01DADBF0 00000000 */   nop
+/* 001EF4 01DADBF4 01000324 */  addiu       $3, $0, 0x1
+/* 001EF8 01DADBF8 FCFF4310 */  beq         $2, $3, .L01DADBEC_2E91EC
+/* 001EFC 01DADBFC 00000000 */   nop
+/* 001F00 01DADC00 A464050C */  jal         SndExit__Fv
+/* 001F04 01DADC04 00000000 */   nop
+/* 001F08 01DADC08 789C838F */  lw          $3, -0x6388($28)
+/* 001F0C 01DADC0C FFFF0224 */  addiu       $2, $0, -0x1
+/* 001F10 01DADC10 030062A0 */  sb          $2, 0x3($3)
+/* 001F14 01DADC14 01000224 */  addiu       $2, $0, 0x1
+/* 001F18 01DADC18 04000010 */  b           .L01DADC2C_2E922C
+/* 001F1C 01DADC1C 00000000 */   nop
+.L01DADC20_2E9220:
+/* 001F20 01DADC20 D464050C */  jal         SndStep__Fv
+/* 001F24 01DADC24 00000000 */   nop
+/* 001F28 01DADC28 28160070 */  paddub      $2, $0, $0
+.L01DADC2C_2E922C:
+/* 001F2C 01DADC2C 0000BF7B */  lq          $31, 0x0($29)
+/* 001F30 01DADC30 2000BD27 */  addiu       $29, $29, 0x20
+/* 001F34 01DADC34 0800E003 */  jr          $31
+/* 001F38 01DADC38 00000000 */   nop
+/* 001F3C 01DADC3C 00000000 */  nop

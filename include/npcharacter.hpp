@@ -2,6 +2,12 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CCPoly;
+
+
 class CNPCharacter {
 public:
     /* ?ret */ void Step(void); // @ 0x155FB0 (0x140 bytes) -- mangled: Step__12CNPCharacterFv

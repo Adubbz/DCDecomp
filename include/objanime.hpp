@@ -2,6 +2,17 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CCamera;
+class CEffectGroup;
+class CFrame;
+struct EDIT_EFFECT_INFO;
+struct EPARTS_FUNC_DATA;
+struct OBJ_ANIME_SEQ;
+
+
 /* ?ret */ void ObjAnimeAllStop(void); // @ 0x165CE0 (0x10 bytes) -- mangled: ObjAnimeAllStop__Fv
 /* ?ret */ void ObjAnimeAllStart(void); // @ 0x165CF0 (0x10 bytes) -- mangled: ObjAnimeAllStart__Fv
 /* ?ret */ void InitObjAnime(CFrame *, OBJ_ANIME_SEQ *); // @ 0x165D00 (0xD0 bytes) -- mangled: InitObjAnime__FP6CFrameP13OBJ_ANIME_SEQ

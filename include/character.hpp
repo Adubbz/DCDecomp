@@ -2,6 +2,16 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CCPoly;
+class CCamera;
+class CDataAlloc2_1_;
+class CTexAnimeData;
+class CVector3_f_;
+
+
 class CCharacter {
 public:
     /* ?ret */ void ClearPointLight(void); // @ 0x137EA0 (0x40 bytes) -- mangled: ClearPointLight__10CCharacterFv

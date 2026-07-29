@@ -2,6 +2,12 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CFrame;
+
+
 class CWeaponEffect {
 public:
     /* ?ret */ void InitSet(CFrame *, char *, char *); // @ 0x1D65C0 (0x80 bytes) -- mangled: InitSet__13CWeaponEffectFP6CFramePcPc

@@ -3,120 +3,40 @@
     \name = \value
 .endm
 
-sym .L00000043 0x00000043
+# Addresses referred to by code this build assembles, but defined by no object
+# in it. Each `sym` gives the linker the retail address directly.
+#
+# This file used to carry 112 of these, most standing in for references the
+# disassembler had left dangling. scripts/build/disassemble.py resolves those itself
+# now -- see its configure() and localize_branch_labels() -- and what is left
+# is only what genuinely crosses a link boundary.
+
+# The overlays' entry points, called from src/main.cpp; main is linked
+# separately from the overlay that defines them. Retail's name for each is
+# noted. src/main.cpp still calls them by address because the signatures it was
+# decompiled with do not all match the mangling of those names -- retail's
+# LoaderInit is LoaderInit__Fv, but it takes an argument here -- and changing a
+# signature changes what mwcc emits.
+sym func_01DAC1C0 0x01DAC1C0   # GameInit__Fv
+sym func_01DAD980 0x01DAD980   # GameLoop__Fv
+sym func_01DAF1C0 0x01DAF1C0   # OpeningInit__Fv
+sym func_01DAF970 0x01DAF970   # OpeningLoop__Fv
+sym func_01DC1420 0x01DC1420   # LoaderInit__Fv
+sym func_01DC1510 0x01DC1510   # LoaderLoop__Fv
+sym func_01DC8C50 0x01DC8C50   # RushInit__Fv
+sym func_01DC8EB0 0x01DC8EB0   # RushLoop__Fv
+sym func_01DD1AB0 0x01DD1AB0   # TitleInit__Fi
+sym func_01DD2220 0x01DD2220   # TitleLoop__Fv
+
+# Branch targets in one split file reached from another. A branch that crosses
+# files is relocated rather than resolved by the assembler, so it needs a
+# symbol; the ones that stay within a file are local labels and need nothing.
 sym .L00212170 0x00212170
 sym .L01DAFB60_2B5360 0x01DAFB60
 sym .L01DAFC40_2B5440 0x01DAFC40
 sym .L01DCAEA0_2D06A0 0x01DCAEA0
-sym D_00FFFF 0x00FFFF
-sym D_0FFFFF 0x0FFFFF
-sym D_1DC2510 0x1DC2510
-sym D_1DC44B0 0x1DC44B0
-sym D_1DC4540 0x1DC4540
-sym D_1DC4580 0x1DC4580
-sym D_1DC45E0 0x1DC45E0
-sym D_1DC48E0 0x1DC48E0
-sym D_1DC4BD0 0x1DC4BD0
-sym D_1DC4BE0 0x1DC4BE0
-sym D_1DF86B0 0x1DF86B0
-sym D_1DF87D0 0x1DF87D0
-sym D_1E58F40 0x1E58F40
-sym D_1E59480 0x1E59480
-sym D_1E5B380 0x1E5B380
-sym D_1E97BC0 0x1E97BC0
-sym D_1EA1D20 0x1EA1D20
-sym D_1EA1D30 0x1EA1D30
-sym D_1EA4080 0x1EA4080
-sym D_1EA5230 0x1EA5230
-sym D_1EA8300 0x1EA8300
-sym D_1EA8460 0x1EA8460
-sym D_1EB0020 0x1EB0020
-sym D_1EB11D0 0x1EB11D0
-sym D_1EB2900 0x1EB2900
-sym D_1EB4C80 0x1EB4C80
-sym D_1EB5E50 0x1EB5E50
-sym D_1EB60D0 0x1EB60D0
-sym D_1EB93A0 0x1EB93A0
-sym D_1EBAB60 0x1EBAB60
-sym D_1EBC320 0x1EBC320
-sym D_1EBE140 0x1EBE140
-sym D_1EC4B40 0x1EC4B40
-sym D_1EC7878 0x1EC7878
-sym D_1EC7888 0x1EC7888
-sym D_1EC7898 0x1EC7898
-sym D_1EFC000 0x1EFC000
-sym D_1F00150 0x1F00150
-sym D_1F02440 0x1F02440
-sym D_1F06650 0x1F06650
-sym D_1F066B0 0x1F066B0
-sym D_1F067E0 0x1F067E0
-sym D_1F06850 0x1F06850
-sym D_1F06870 0x1F06870
-sym D_20000010 0x20000010
-sym D_20000050 0x20000050
-sym D_40000001 0x40000001
-sym D_40000040 0x40000040
-sym D_70001000 0x70001000
-sym D_80000002 0x80000002
-sym D_BFF00001 0xBFF00001
-sym D_1DC2530 0x1DC2530
-sym D_1DF86C0 0x1DF86C0
-sym D_1E83900 0x1E83900
-sym D_1EA851C 0x1EA851C
-sym D_1EB4C90 0x1EB4C90
-sym D_1EB5F90 0x1EB5F90
-sym D_1EB60EC 0x1EB60EC
-sym D_1EC4740 0x1EC4740
-sym D_1F00340 0x1F00340
-sym D_1F067E8 0x1F067E8
-sym D_1DF36B0 0x1DF36B0
-sym D_1DF86D0 0x1DF86D0
-sym D_1EB4CA0 0x1EB4CA0
-sym D_1DF5EB0 0x1DF5EB0
-sym D_1DF86F0 0x1DF86F0
-sym D_1DF86F4 0x1DF86F4
-sym D_1DF86F8 0x1DF86F8
-sym D_1DF8740 0x1DF8740
-sym D_1DF8750 0x1DF8750
-sym D_1DF8760 0x1DF8760
-sym D_1DF8780 0x1DF8780
-sym D_1DF8784 0x1DF8784
-sym D_1DF8788 0x1DF8788
-sym func_01DABFF0 0x01DABFF0
-sym func_01DAC1C0 0x01DAC1C0
-sym func_01DB8790 0x01DB8790
-sym func_01DB92E0 0x01DB92E0
-sym func_01DB9660 0x01DB9660
-sym func_01DB9840 0x01DB9840
-sym func_01DB9B30 0x01DB9B30
-sym func_01DB9E00 0x01DB9E00
-sym func_01DBA060 0x01DBA060
-sym func_01DBA230 0x01DBA230
-sym func_01DBA3C0 0x01DBA3C0
-sym func_01DBE970 0x01DBE970
-sym func_01DBF9D0 0x01DBF9D0
-sym func_01DBFCE0 0x01DBFCE0
-sym func_01DC1000 0x01DC1000
-sym func_01DC1290 0x01DC1290
-sym func_01DC12C0 0x01DC12C0
-sym func_01DC1300 0x01DC1300
-sym func_01DC1400 0x01DC1400
-sym func_01DC1420 0x01DC1420
-sym func_01DAD980 0x01DAD980
-sym func_01DB91C0 0x01DB91C0
-sym func_01DB9330 0x01DB9330
-sym func_01DC1510 0x01DC1510
-sym func_01DAF1C0 0x01DAF1C0
-sym func_01DAF970 0x01DAF970
-sym func_01DC8C50 0x01DC8C50
-sym func_01DC8EB0 0x01DC8EB0
-sym func_01DD1AB0 0x01DD1AB0
-sym func_01DD2220 0x01DD2220
 
-# CMenuCursor::InitPos, inside the savedata translation unit. That unit is
-# compiled from src/savedata.cpp now, so the disassembler's generated name for
-# it has nothing to bind to; point it at the address the compiled code lands on.
+# Called from CSaveData__InvertConfig.s. The disassembler splits this function
+# into ref/asm/split/main/func_00158AE0.s, which cmake/objects/main.cmake does
+# not list; retail knows the address as InitPos__11CMenuCursorFv.
 sym func_00158AE0 0x00158AE0
-
-sym __bss_end 0x01DABD00
-sym end__2 0x01F06B00

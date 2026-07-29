@@ -2,6 +2,15 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+struct MG_SPRITE;
+struct RECT;
+struct SPRITE_TABLE;
+struct sceGsTex0;
+
+
 class CSpriteTable {
 public:
     /* ?ret */ void DrawTable(void); // @ 0x12BA20 (0x470 bytes) -- mangled: DrawTable__12CSpriteTableFv

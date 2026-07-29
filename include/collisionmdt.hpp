@@ -2,6 +2,13 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CBoxVu0;
+class CCPoly;
+
+
 class CCollisionMDT {
 public:
     /* ?ret */ void GetPolygon(int, float (*)[4], float (*)[4], float (*)[4]); // @ 0x124EC0 (0x50 bytes) -- mangled: GetPolygon__13CCollisionMDTFiPA4_fPA4_fPA4_f

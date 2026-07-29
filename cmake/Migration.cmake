@@ -3,7 +3,7 @@
 # and link the checked-in .lcf as-is.
 
 set(MIGRATE_MANIFEST asm/migrated_symbols.txt)
-set(MIGRATE_SCRIPT scripts/migrate_section.py)
+set(MIGRATE_SCRIPT scripts/build/migrate_section.py)
 
 # The reference dumps are read at configure time, so a tree that has not been
 # set up yet configures with migration off. Nothing links until the dumps
@@ -40,10 +40,22 @@ function(add_migrated_sections out_s_files out_plans)
     set(plans "")
     migration_enabled(enabled)
 
+    # Configuring before setup has run is the normal bootstrap, not a problem:
+    # every entry point configures, builds `setup`, then configures again so
+    # this pass sees the dumps. Saying so at STATUS keeps that path quiet.
+    # A ref/ that exists but has no sections/ is the case actually worth a
+    # warning -- setup ran and did not produce them.
     if(NOT enabled AND EXISTS ${CMAKE_SOURCE_DIR}/${MIGRATE_MANIFEST})
-        message(WARNING
-            "No reference dumps under ${REF_DIR}/asm/sections. "
-            "Build the setup target, then re-run cmake.")
+        if(EXISTS ${CMAKE_SOURCE_DIR}/${REF_DIR})
+            message(WARNING
+                "No reference dumps under ${REF_DIR}/asm/sections, though "
+                "${REF_DIR} exists. Data migration is off for this build; "
+                "re-run the setup target.")
+        else()
+            message(STATUS
+                "No ${REF_DIR} yet: configuring with data migration off. "
+                "The setup target and the reconfigure after it enable it.")
+        endif()
     endif()
 
     if(enabled)
@@ -75,7 +87,7 @@ function(add_migrated_sections out_s_files out_plans)
             add_custom_command(
                 OUTPUT ${outputs}
                 COMMAND ${CMAKE_COMMAND} -E make_directory ${outdir}
-                COMMAND ${PYTHON} ${MIGRATE_SCRIPT} --emit
+                COMMAND ${PYTHON_CMD} ${MIGRATE_SCRIPT} --emit
                         ${ref} ${MIGRATE_MANIFEST} ${sec} ${outdir}
                 DEPENDS ${CMAKE_SOURCE_DIR}/${ref} ${manifest}
                         ${CMAKE_SOURCE_DIR}/${MIGRATE_SCRIPT}

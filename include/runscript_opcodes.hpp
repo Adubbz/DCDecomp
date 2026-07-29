@@ -2,6 +2,15 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CDataAlloc2_1_;
+class CRunScript;
+struct RS_STACKDATA;
+struct SHOP_ITEMLIST;
+
+
 /* ?ret */ void GetStackInt(RS_STACKDATA *); // @ 0x1E1640 (0x50 bytes) -- mangled: GetStackInt__FP12RS_STACKDATA__3  // disambiguated by disassembler ("__3" suffix); real retail name has no suffix
 /* ?ret */ void GetStackFloat(RS_STACKDATA *); // @ 0x1E1690 (0x30 bytes) -- mangled: GetStackFloat__FP12RS_STACKDATA__3  // disambiguated by disassembler ("__3" suffix); real retail name has no suffix
 /* ?ret */ void GetStackString(RS_STACKDATA *); // @ 0x1E16C0 (0x10 bytes) -- mangled: GetStackString__FP12RS_STACKDATA__3  // disambiguated by disassembler ("__3" suffix); real retail name has no suffix

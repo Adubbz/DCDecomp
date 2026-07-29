@@ -2,6 +2,16 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+struct RS_CALLDATA;
+struct RS_PROG_HEADER;
+struct RS_STACKDATA;
+struct funcdata;
+struct vmcode_t;
+
+
 class CRunScript {
 public:
     CRunScript(void); // @ 0x23D940 (0x40 bytes) -- mangled: __ct__10CRunScriptFv

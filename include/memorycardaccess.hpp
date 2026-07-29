@@ -2,6 +2,12 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+struct MC_ICON_DATA;
+
+
 class CMemoryCardAccess {
 public:
     /* ?ret */ void Initialize(void); // @ 0x2135D0 (0x180 bytes) -- mangled: Initialize__17CMemoryCardAccessFv

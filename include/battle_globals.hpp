@@ -2,6 +2,15 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CTexture;
+struct RS_STACKDATA;
+struct funcdata;
+struct spRGBA;
+
+
 /* ?ret */ void GlobalNameInit(void); // @ 0x238450 (0x50 bytes) -- mangled: GlobalNameInit__Fv
 /* ?ret */ void InitNameRegist(int, int, void /* CW back-ref target unresolved */ *); // @ 0x2384A0 (0x190 bytes) -- mangled: InitNameRegist__FiiP1
 /* ?ret */ void ExitNameEnterFunc(void); // @ 0x238630 (0x70 bytes) -- mangled: ExitNameEnterFunc__Fv

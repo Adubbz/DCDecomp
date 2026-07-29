@@ -1,0 +1,15 @@
+.include "macro.inc"
+
+.set noat /* Allow manual use of $at. */
+.set noreorder /* Don't insert nops after branches. */
+
+.section .text
+glabel VectorMax__FPfPfPf
+/* 0230B0 00122FB0 0000AFD8 */  lqc2        $vf15, 0x0($5)
+/* 0230B4 00122FB4 0000D0D8 */  lqc2        $vf16, 0x0($6)
+/* 0230B8 00122FB8 AB7CF04B */  vmax.xyzw   $vf18, $vf15, $vf16
+/* 0230BC 00122FBC 000092F8 */  sqc2        $vf18, 0x0($4)
+/* 0230C0 00122FC0 0800E003 */  jr          $31
+/* 0230C4 00122FC4 00000000 */   nop
+/* 0230C8 00122FC8 00000000 */  nop
+/* 0230CC 00122FCC 00000000 */  nop

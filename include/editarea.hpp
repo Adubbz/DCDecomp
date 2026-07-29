@@ -2,6 +2,18 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CBoxVu0;
+class CCPoly;
+class CFrameVu1;
+class CMapParts;
+class CRect_i_;
+class CVector3_f_;
+class CVector3_i_;
+
+
 class CEditArea {
 public:
     /* ?ret */ void SetSize(int, int, float, float); // @ 0x16D860 (0x20 bytes) -- mangled: SetSize__9CEditAreaFiiff

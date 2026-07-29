@@ -2,6 +2,12 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CTexAnimeData;
+
+
 class CTextureAnime {
 public:
     /* ?ret */ void TexAnime(int); // @ 0x167170 (0x6B0 bytes) -- mangled: TexAnime__13CTextureAnimeFi

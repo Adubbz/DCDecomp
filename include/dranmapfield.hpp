@@ -2,6 +2,14 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CBoxVu0;
+class CCPoly;
+class CDataAlloc2_1_;
+
+
 class CDranMapField {
 public:
     /* ?ret */ void LoadModel(unsigned int *, CDataAlloc2_1_ *); // @ 0x1CD3C0 (0x150 bytes) -- mangled: LoadModel__13CDranMapFieldFPUiP14CDataAlloc2_1_

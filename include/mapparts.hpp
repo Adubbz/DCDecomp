@@ -2,6 +2,14 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CBoxVu0;
+class CCamera;
+class CEffectGroup;
+
+
 class CMapParts {
 public:
     /* ?ret */ void GetPosition(float *); // @ 0x19A7B0 (0x30 bytes) -- mangled: GetPosition__9CMapPartsFPf

@@ -1,0 +1,249 @@
+.include "macro.inc"
+
+.set noat /* Allow manual use of $at. */
+.set noreorder /* Don't insert nops after branches. */
+
+.section .text
+glabel Step__11CBombEffectFv
+/* 001CC0 01DAD9C0 281E0070 */  paddub      $3, $0, $0
+/* 001CC4 01DAD9C4 75000010 */  b           .L01DADB9C_2B339C
+/* 001CC8 01DAD9C8 00000000 */   nop
+.L01DAD9CC_2B31CC:
+/* 001CCC 01DAD9CC 80280300 */  sll         $5, $3, 2
+/* 001CD0 01DAD9D0 2148A400 */  addu        $9, $5, $4
+/* 001CD4 01DAD9D4 00012A25 */  addiu       $10, $9, 0x100
+/* 001CD8 01DAD9D8 0001258D */  lw          $5, 0x100($9)
+/* 001CDC 01DAD9DC 01000824 */  addiu       $8, $0, 0x1
+/* 001CE0 01DAD9E0 6D00A814 */  bne         $5, $8, .L01DADB98_2B3398
+/* 001CE4 01DAD9E4 00000000 */   nop
+/* 001CE8 01DAD9E8 80002525 */  addiu       $5, $9, 0x80
+/* 001CEC 01DAD9EC 8000278D */  lw          $7, 0x80($9)
+/* 001CF0 01DAD9F0 03000624 */  addiu       $6, $0, 0x3
+/* 001CF4 01DAD9F4 5600E610 */  beq         $7, $6, .L01DADB50_2B3350
+/* 001CF8 01DAD9F8 00000000 */   nop
+/* 001CFC 01DAD9FC 02000624 */  addiu       $6, $0, 0x2
+/* 001D00 01DADA00 3B00E610 */  beq         $7, $6, .L01DADAF0_2B32F0
+/* 001D04 01DADA04 00000000 */   nop
+/* 001D08 01DADA08 1F00E810 */  beq         $7, $8, .L01DADA88_2B3288
+/* 001D0C 01DADA0C 00000000 */   nop
+/* 001D10 01DADA10 0300E010 */  beqz        $7, .L01DADA20_2B3220
+/* 001D14 01DADA14 00000000 */   nop
+/* 001D18 01DADA18 5F000010 */  b           .L01DADB98_2B3398
+/* 001D1C 01DADA1C 00000000 */   nop
+.L01DADA20_2B3220:
+/* 001D20 01DADA20 A0002725 */  addiu       $7, $9, 0xA0
+/* 001D24 01DADA24 A000268D */  lw          $6, 0xA0($9)
+/* 001D28 01DADA28 0100C624 */  addiu       $6, $6, 0x1
+/* 001D2C 01DADA2C A00026AD */  sw          $6, 0xA0($9)
+/* 001D30 01DADA30 C00021C5 */  lwc1        $f1, 0xC0($9)
+/* 001D34 01DADA34 0041063C */  lui         $6, (0x41000000 >> 16)
+/* 001D38 01DADA38 00008644 */  mtc1        $6, $f0
+/* 001D3C 01DADA3C 00000000 */  nop
+/* 001D40 01DADA40 00080046 */  add.s       $f0, $f1, $f0
+/* 001D44 01DADA44 C00020E5 */  swc1        $f0, 0xC0($9)
+/* 001D48 01DADA48 E00021C5 */  lwc1        $f1, 0xE0($9)
+/* 001D4C 01DADA4C 8040063C */  lui         $6, (0x40800000 >> 16)
+/* 001D50 01DADA50 00008644 */  mtc1        $6, $f0
+/* 001D54 01DADA54 00000000 */  nop
+/* 001D58 01DADA58 00080046 */  add.s       $f0, $f1, $f0
+/* 001D5C 01DADA5C E00020E5 */  swc1        $f0, 0xE0($9)
+/* 001D60 01DADA60 A000268D */  lw          $6, 0xA0($9)
+/* 001D64 01DADA64 0300C628 */  slti        $6, $6, 0x3
+/* 001D68 01DADA68 4B00C014 */  bnez        $6, .L01DADB98_2B3398
+/* 001D6C 01DADA6C 00000000 */   nop
+/* 001D70 01DADA70 0000E0AC */  sw          $0, 0x0($7)
+/* 001D74 01DADA74 0000A68C */  lw          $6, 0x0($5)
+/* 001D78 01DADA78 0100C624 */  addiu       $6, $6, 0x1
+/* 001D7C 01DADA7C 0000A6AC */  sw          $6, 0x0($5)
+/* 001D80 01DADA80 45000010 */  b           .L01DADB98_2B3398
+/* 001D84 01DADA84 00000000 */   nop
+.L01DADA88_2B3288:
+/* 001D88 01DADA88 A0002725 */  addiu       $7, $9, 0xA0
+/* 001D8C 01DADA8C A000268D */  lw          $6, 0xA0($9)
+/* 001D90 01DADA90 0100C624 */  addiu       $6, $6, 0x1
+/* 001D94 01DADA94 A00026AD */  sw          $6, 0xA0($9)
+/* 001D98 01DADA98 C00021C5 */  lwc1        $f1, 0xC0($9)
+/* 001D9C 01DADA9C 803F063C */  lui         $6, (0x3F800000 >> 16)
+/* 001DA0 01DADAA0 00008644 */  mtc1        $6, $f0
+/* 001DA4 01DADAA4 00000000 */  nop
+/* 001DA8 01DADAA8 00080046 */  add.s       $f0, $f1, $f0
+/* 001DAC 01DADAAC C00020E5 */  swc1        $f0, 0xC0($9)
+/* 001DB0 01DADAB0 E00021C5 */  lwc1        $f1, 0xE0($9)
+/* 001DB4 01DADAB4 0041063C */  lui         $6, (0x41000000 >> 16)
+/* 001DB8 01DADAB8 00008644 */  mtc1        $6, $f0
+/* 001DBC 01DADABC 00000000 */  nop
+/* 001DC0 01DADAC0 00080046 */  add.s       $f0, $f1, $f0
+/* 001DC4 01DADAC4 E00020E5 */  swc1        $f0, 0xE0($9)
+/* 001DC8 01DADAC8 A000268D */  lw          $6, 0xA0($9)
+/* 001DCC 01DADACC 0400C628 */  slti        $6, $6, 0x4
+/* 001DD0 01DADAD0 3100C014 */  bnez        $6, .L01DADB98_2B3398
+/* 001DD4 01DADAD4 00000000 */   nop
+/* 001DD8 01DADAD8 0000E0AC */  sw          $0, 0x0($7)
+/* 001DDC 01DADADC 0000A68C */  lw          $6, 0x0($5)
+/* 001DE0 01DADAE0 0100C624 */  addiu       $6, $6, 0x1
+/* 001DE4 01DADAE4 0000A6AC */  sw          $6, 0x0($5)
+/* 001DE8 01DADAE8 2B000010 */  b           .L01DADB98_2B3398
+/* 001DEC 01DADAEC 00000000 */   nop
+.L01DADAF0_2B32F0:
+/* 001DF0 01DADAF0 A0002725 */  addiu       $7, $9, 0xA0
+/* 001DF4 01DADAF4 A000268D */  lw          $6, 0xA0($9)
+/* 001DF8 01DADAF8 0100C624 */  addiu       $6, $6, 0x1
+/* 001DFC 01DADAFC A00026AD */  sw          $6, 0xA0($9)
+/* 001E00 01DADB00 C00021C5 */  lwc1        $f1, 0xC0($9)
+/* 001E04 01DADB04 908280C7 */  lwc1        $f0, -0x7D70($28)
+/* 001E08 01DADB08 00080046 */  add.s       $f0, $f1, $f0
+/* 001E0C 01DADB0C C00020E5 */  swc1        $f0, 0xC0($9)
+/* 001E10 01DADB10 E00021C5 */  lwc1        $f1, 0xE0($9)
+/* 001E14 01DADB14 4040063C */  lui         $6, (0x40400000 >> 16)
+/* 001E18 01DADB18 00008644 */  mtc1        $6, $f0
+/* 001E1C 01DADB1C 00000000 */  nop
+/* 001E20 01DADB20 01080046 */  sub.s       $f0, $f1, $f0
+/* 001E24 01DADB24 E00020E5 */  swc1        $f0, 0xE0($9)
+/* 001E28 01DADB28 A000268D */  lw          $6, 0xA0($9)
+/* 001E2C 01DADB2C 1400C628 */  slti        $6, $6, 0x14
+/* 001E30 01DADB30 1900C014 */  bnez        $6, .L01DADB98_2B3398
+/* 001E34 01DADB34 00000000 */   nop
+/* 001E38 01DADB38 0000E0AC */  sw          $0, 0x0($7)
+/* 001E3C 01DADB3C 0000A68C */  lw          $6, 0x0($5)
+/* 001E40 01DADB40 0100C624 */  addiu       $6, $6, 0x1
+/* 001E44 01DADB44 0000A6AC */  sw          $6, 0x0($5)
+/* 001E48 01DADB48 13000010 */  b           .L01DADB98_2B3398
+/* 001E4C 01DADB4C 00000000 */   nop
+.L01DADB50_2B3350:
+/* 001E50 01DADB50 A000258D */  lw          $5, 0xA0($9)
+/* 001E54 01DADB54 0100A524 */  addiu       $5, $5, 0x1
+/* 001E58 01DADB58 A00025AD */  sw          $5, 0xA0($9)
+/* 001E5C 01DADB5C C00021C5 */  lwc1        $f1, 0xC0($9)
+/* 001E60 01DADB60 808080C7 */  lwc1        $f0, -0x7F80($28)
+/* 001E64 01DADB64 01080046 */  sub.s       $f0, $f1, $f0
+/* 001E68 01DADB68 C00020E5 */  swc1        $f0, 0xC0($9)
+/* 001E6C 01DADB6C E00021C5 */  lwc1        $f1, 0xE0($9)
+/* 001E70 01DADB70 0040053C */  lui         $5, (0x40000000 >> 16)
+/* 001E74 01DADB74 00008544 */  mtc1        $5, $f0
+/* 001E78 01DADB78 00000000 */  nop
+/* 001E7C 01DADB7C 01080046 */  sub.s       $f0, $f1, $f0
+/* 001E80 01DADB80 E00020E5 */  swc1        $f0, 0xE0($9)
+/* 001E84 01DADB84 A000258D */  lw          $5, 0xA0($9)
+/* 001E88 01DADB88 5000A528 */  slti        $5, $5, 0x50
+/* 001E8C 01DADB8C 0200A014 */  bnez        $5, .L01DADB98_2B3398
+/* 001E90 01DADB90 00000000 */   nop
+/* 001E94 01DADB94 000040AD */  sw          $0, 0x0($10)
+.L01DADB98_2B3398:
+/* 001E98 01DADB98 01006324 */  addiu       $3, $3, 0x1
+.L01DADB9C_2B339C:
+/* 001E9C 01DADB9C 05006528 */  slti        $5, $3, 0x5
+/* 001EA0 01DADBA0 8AFFA014 */  bnez        $5, .L01DAD9CC_2B31CC
+/* 001EA4 01DADBA4 00000000 */   nop
+/* 001EA8 01DADBA8 05000324 */  addiu       $3, $0, 0x5
+/* 001EAC 01DADBAC 63000010 */  b           .L01DADD3C_2B353C
+/* 001EB0 01DADBB0 00000000 */   nop
+.L01DADBB4_2B33B4:
+/* 001EB4 01DADBB4 80280300 */  sll         $5, $3, 2
+/* 001EB8 01DADBB8 2148A400 */  addu        $9, $5, $4
+/* 001EBC 01DADBBC 00012A25 */  addiu       $10, $9, 0x100
+/* 001EC0 01DADBC0 0001258D */  lw          $5, 0x100($9)
+/* 001EC4 01DADBC4 01000824 */  addiu       $8, $0, 0x1
+/* 001EC8 01DADBC8 5B00A814 */  bne         $5, $8, .L01DADD38_2B3538
+/* 001ECC 01DADBCC 00000000 */   nop
+/* 001ED0 01DADBD0 80002525 */  addiu       $5, $9, 0x80
+/* 001ED4 01DADBD4 8000278D */  lw          $7, 0x80($9)
+/* 001ED8 01DADBD8 03000624 */  addiu       $6, $0, 0x3
+/* 001EDC 01DADBDC 4400E610 */  beq         $7, $6, .L01DADCF0_2B34F0
+/* 001EE0 01DADBE0 00000000 */   nop
+/* 001EE4 01DADBE4 02000624 */  addiu       $6, $0, 0x2
+/* 001EE8 01DADBE8 2F00E610 */  beq         $7, $6, .L01DADCA8_2B34A8
+/* 001EEC 01DADBEC 00000000 */   nop
+/* 001EF0 01DADBF0 1900E810 */  beq         $7, $8, .L01DADC58_2B3458
+/* 001EF4 01DADBF4 00000000 */   nop
+/* 001EF8 01DADBF8 0300E010 */  beqz        $7, .L01DADC08_2B3408
+/* 001EFC 01DADBFC 00000000 */   nop
+/* 001F00 01DADC00 4D000010 */  b           .L01DADD38_2B3538
+/* 001F04 01DADC04 00000000 */   nop
+.L01DADC08_2B3408:
+/* 001F08 01DADC08 A0002725 */  addiu       $7, $9, 0xA0
+/* 001F0C 01DADC0C A000268D */  lw          $6, 0xA0($9)
+/* 001F10 01DADC10 0100C624 */  addiu       $6, $6, 0x1
+/* 001F14 01DADC14 A00026AD */  sw          $6, 0xA0($9)
+/* 001F18 01DADC18 C00021C5 */  lwc1        $f1, 0xC0($9)
+/* 001F1C 01DADC1C 8041063C */  lui         $6, (0x41800000 >> 16)
+/* 001F20 01DADC20 00008644 */  mtc1        $6, $f0
+/* 001F24 01DADC24 00000000 */  nop
+/* 001F28 01DADC28 00080046 */  add.s       $f0, $f1, $f0
+/* 001F2C 01DADC2C C00020E5 */  swc1        $f0, 0xC0($9)
+/* 001F30 01DADC30 A000268D */  lw          $6, 0xA0($9)
+/* 001F34 01DADC34 0300C628 */  slti        $6, $6, 0x3
+/* 001F38 01DADC38 3F00C014 */  bnez        $6, .L01DADD38_2B3538
+/* 001F3C 01DADC3C 00000000 */   nop
+/* 001F40 01DADC40 0000E0AC */  sw          $0, 0x0($7)
+/* 001F44 01DADC44 0000A68C */  lw          $6, 0x0($5)
+/* 001F48 01DADC48 0100C624 */  addiu       $6, $6, 0x1
+/* 001F4C 01DADC4C 0000A6AC */  sw          $6, 0x0($5)
+/* 001F50 01DADC50 39000010 */  b           .L01DADD38_2B3538
+/* 001F54 01DADC54 00000000 */   nop
+.L01DADC58_2B3458:
+/* 001F58 01DADC58 A0002725 */  addiu       $7, $9, 0xA0
+/* 001F5C 01DADC5C A000268D */  lw          $6, 0xA0($9)
+/* 001F60 01DADC60 0100C624 */  addiu       $6, $6, 0x1
+/* 001F64 01DADC64 A00026AD */  sw          $6, 0xA0($9)
+/* 001F68 01DADC68 C00021C5 */  lwc1        $f1, 0xC0($9)
+/* 001F6C 01DADC6C 0041063C */  lui         $6, (0x41000000 >> 16)
+/* 001F70 01DADC70 00008644 */  mtc1        $6, $f0
+/* 001F74 01DADC74 00000000 */  nop
+/* 001F78 01DADC78 00080046 */  add.s       $f0, $f1, $f0
+/* 001F7C 01DADC7C C00020E5 */  swc1        $f0, 0xC0($9)
+/* 001F80 01DADC80 A000268D */  lw          $6, 0xA0($9)
+/* 001F84 01DADC84 0400C628 */  slti        $6, $6, 0x4
+/* 001F88 01DADC88 2B00C014 */  bnez        $6, .L01DADD38_2B3538
+/* 001F8C 01DADC8C 00000000 */   nop
+/* 001F90 01DADC90 0000E0AC */  sw          $0, 0x0($7)
+/* 001F94 01DADC94 0000A68C */  lw          $6, 0x0($5)
+/* 001F98 01DADC98 0100C624 */  addiu       $6, $6, 0x1
+/* 001F9C 01DADC9C 0000A6AC */  sw          $6, 0x0($5)
+/* 001FA0 01DADCA0 25000010 */  b           .L01DADD38_2B3538
+/* 001FA4 01DADCA4 00000000 */   nop
+.L01DADCA8_2B34A8:
+/* 001FA8 01DADCA8 A0002725 */  addiu       $7, $9, 0xA0
+/* 001FAC 01DADCAC A000268D */  lw          $6, 0xA0($9)
+/* 001FB0 01DADCB0 0100C624 */  addiu       $6, $6, 0x1
+/* 001FB4 01DADCB4 A00026AD */  sw          $6, 0xA0($9)
+/* 001FB8 01DADCB8 C00021C5 */  lwc1        $f1, 0xC0($9)
+/* 001FBC 01DADCBC 908280C7 */  lwc1        $f0, -0x7D70($28)
+/* 001FC0 01DADCC0 00080046 */  add.s       $f0, $f1, $f0
+/* 001FC4 01DADCC4 C00020E5 */  swc1        $f0, 0xC0($9)
+/* 001FC8 01DADCC8 A000268D */  lw          $6, 0xA0($9)
+/* 001FCC 01DADCCC 1400C628 */  slti        $6, $6, 0x14
+/* 001FD0 01DADCD0 1900C014 */  bnez        $6, .L01DADD38_2B3538
+/* 001FD4 01DADCD4 00000000 */   nop
+/* 001FD8 01DADCD8 0000E0AC */  sw          $0, 0x0($7)
+/* 001FDC 01DADCDC 0000A68C */  lw          $6, 0x0($5)
+/* 001FE0 01DADCE0 0100C624 */  addiu       $6, $6, 0x1
+/* 001FE4 01DADCE4 0000A6AC */  sw          $6, 0x0($5)
+/* 001FE8 01DADCE8 13000010 */  b           .L01DADD38_2B3538
+/* 001FEC 01DADCEC 00000000 */   nop
+.L01DADCF0_2B34F0:
+/* 001FF0 01DADCF0 A000258D */  lw          $5, 0xA0($9)
+/* 001FF4 01DADCF4 0100A524 */  addiu       $5, $5, 0x1
+/* 001FF8 01DADCF8 A00025AD */  sw          $5, 0xA0($9)
+/* 001FFC 01DADCFC C00021C5 */  lwc1        $f1, 0xC0($9)
+/* 002000 01DADD00 808080C7 */  lwc1        $f0, -0x7F80($28)
+/* 002004 01DADD04 01080046 */  sub.s       $f0, $f1, $f0
+/* 002008 01DADD08 C00020E5 */  swc1        $f0, 0xC0($9)
+/* 00200C 01DADD0C E00021C5 */  lwc1        $f1, 0xE0($9)
+/* 002010 01DADD10 0040053C */  lui         $5, (0x40000000 >> 16)
+/* 002014 01DADD14 00008544 */  mtc1        $5, $f0
+/* 002018 01DADD18 00000000 */  nop
+/* 00201C 01DADD1C 01080046 */  sub.s       $f0, $f1, $f0
+/* 002020 01DADD20 E00020E5 */  swc1        $f0, 0xE0($9)
+/* 002024 01DADD24 A000258D */  lw          $5, 0xA0($9)
+/* 002028 01DADD28 5000A528 */  slti        $5, $5, 0x50
+/* 00202C 01DADD2C 0200A014 */  bnez        $5, .L01DADD38_2B3538
+/* 002030 01DADD30 00000000 */   nop
+/* 002034 01DADD34 000040AD */  sw          $0, 0x0($10)
+.L01DADD38_2B3538:
+/* 002038 01DADD38 01006324 */  addiu       $3, $3, 0x1
+.L01DADD3C_2B353C:
+/* 00203C 01DADD3C 08006528 */  slti        $5, $3, 0x8
+/* 002040 01DADD40 9CFFA014 */  bnez        $5, .L01DADBB4_2B33B4
+/* 002044 01DADD44 00000000 */   nop
+/* 002048 01DADD48 0800E003 */  jr          $31
+/* 00204C 01DADD4C 00000000 */   nop

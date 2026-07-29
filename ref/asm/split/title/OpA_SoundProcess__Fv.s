@@ -1,0 +1,504 @@
+.include "macro.inc"
+
+.set noat /* Allow manual use of $at. */
+.set noreorder /* Don't insert nops after branches. */
+
+.section .text
+glabel OpA_SoundProcess__Fv
+/* 00BE90 01DB7B90 A0FFBD27 */  addiu       $29, $29, -0x60
+/* 00BE94 01DB7B94 1000BF7F */  sq          $31, 0x10($29)
+/* 00BE98 01DB7B98 0000B07F */  sq          $16, 0x0($29)
+/* 00BE9C 01DB7B9C 38998283 */  lb          $2, -0x66C8($28)
+/* 00BEA0 01DB7BA0 04004014 */  bnez        $2, .L01DB7BB4_2BD3B4
+/* 00BEA4 01DB7BA4 00000000 */   nop
+/* 00BEA8 01DB7BA8 349980AF */  sw          $0, -0x66CC($28)
+/* 00BEAC 01DB7BAC 01000224 */  addiu       $2, $0, 0x1
+/* 00BEB0 01DB7BB0 389982A3 */  sb          $2, -0x66C8($28)
+.L01DB7BB4_2BD3B4:
+/* 00BEB4 01DB7BB4 E49881C7 */  lwc1        $f1, -0x671C($28)
+/* 00BEB8 01DB7BB8 A040023C */  lui         $2, (0x40A00000 >> 16)
+/* 00BEBC 01DB7BBC 00008244 */  mtc1        $2, $f0
+/* 00BEC0 01DB7BC0 00000000 */  nop
+/* 00BEC4 01DB7BC4 36080046 */  c.le.s      $f1, $f0
+/* 00BEC8 01DB7BC8 00000000 */  nop
+/* 00BECC 01DB7BCC 0B000145 */  bc1t        .L01DB7BFC_2BD3FC
+/* 00BED0 01DB7BD0 00000000 */   nop
+/* 00BED4 01DB7BD4 3499828F */  lw          $2, -0x66CC($28)
+/* 00BED8 01DB7BD8 09004014 */  bnez        $2, .L01DB7C00_2BD400
+/* 00BEDC 01DB7BDC 00000000 */   nop
+/* 00BEE0 01DB7BE0 FC9780AF */  sw          $0, -0x6804($28)
+/* 00BEE4 01DB7BE4 ACC3760C */  jal         OpBgmPlay__Fv
+/* 00BEE8 01DB7BE8 00000000 */   nop
+/* 00BEEC 01DB7BEC 01000224 */  addiu       $2, $0, 0x1
+/* 00BEF0 01DB7BF0 349982AF */  sw          $2, -0x66CC($28)
+/* 00BEF4 01DB7BF4 02000010 */  b           .L01DB7C00_2BD400
+/* 00BEF8 01DB7BF8 00000000 */   nop
+.L01DB7BFC_2BD3FC:
+/* 00BEFC 01DB7BFC 349980AF */  sw          $0, -0x66CC($28)
+.L01DB7C00_2BD400:
+/* 00BF00 01DB7C00 3000A427 */  addiu       $4, $29, 0x30
+/* 00BF04 01DB7C04 DF01023C */  lui         $2, %hi(Chara__3 + 0x3520)
+/* 00BF08 01DB7C08 00344524 */  addiu       $5, $2, %lo(Chara__3 + 0x3520)
+/* 00BF0C 01DB7C0C 0C86040C */  jal         sceVu0CopyVector
+/* 00BF10 01DB7C10 00000000 */   nop
+/* 00BF14 01DB7C14 E101023C */  lui         $2, %hi(OP_MainCamera)
+/* 00BF18 01DB7C18 E0954424 */  addiu       $4, $2, %lo(OP_MainCamera)
+/* 00BF1C 01DB7C1C 2000A527 */  addiu       $5, $29, 0x20
+/* 00BF20 01DB7C20 9C91040C */  jal         GetPos__7CCameraFPf
+/* 00BF24 01DB7C24 00000000 */   nop
+/* 00BF28 01DB7C28 DE01013C */  lui         $1, %hi(CScript__2 + 0xD0)
+/* 00BF2C 01DB7C2C D01B238C */  lw          $3, %lo(CScript__2 + 0xD0)($1)
+/* 00BF30 01DB7C30 01000224 */  addiu       $2, $0, 0x1
+/* 00BF34 01DB7C34 38006214 */  bne         $3, $2, .L01DB7D18_2BD518
+/* 00BF38 01DB7C38 00000000 */   nop
+/* 00BF3C 01DB7C3C DF01013C */  lui         $1, %hi(DngEventMan + 0x30)
+/* 00BF40 01DB7C40 E0362CC4 */  lwc1        $f12, %lo(DngEventMan + 0x30)($1)
+/* 00BF44 01DB7C44 2C44040C */  jal         fptosi
+/* 00BF48 01DB7C48 00000000 */   nop
+/* 00BF4C 01DB7C4C 40998383 */  lb          $3, -0x66C0($28)
+/* 00BF50 01DB7C50 04006014 */  bnez        $3, .L01DB7C64_2BD464
+/* 00BF54 01DB7C54 00000000 */   nop
+/* 00BF58 01DB7C58 3C9980AF */  sw          $0, -0x66C4($28)
+/* 00BF5C 01DB7C5C 01000324 */  addiu       $3, $0, 0x1
+/* 00BF60 01DB7C60 409983A3 */  sb          $3, -0x66C0($28)
+.L01DB7C64_2BD464:
+/* 00BF64 01DB7C64 3C99838F */  lw          $3, -0x66C4($28)
+/* 00BF68 01DB7C68 29006014 */  bnez        $3, .L01DB7D10_2BD510
+/* 00BF6C 01DB7C6C 00000000 */   nop
+/* 00BF70 01DB7C70 27004128 */  slti        $1, $2, 0x27
+/* 00BF74 01DB7C74 12002014 */  bnez        $1, .L01DB7CC0_2BD4C0
+/* 00BF78 01DB7C78 00000000 */   nop
+/* 00BF7C 01DB7C7C 28004128 */  slti        $1, $2, 0x28
+/* 00BF80 01DB7C80 0F002010 */  beqz        $1, .L01DB7CC0_2BD4C0
+/* 00BF84 01DB7C84 00000000 */   nop
+/* 00BF88 01DB7C88 FA43023C */  lui         $2, (0x43FA0000 >> 16)
+/* 00BF8C 01DB7C8C 00688244 */  mtc1        $2, $f13
+/* 00BF90 01DB7C90 C842023C */  lui         $2, (0x42C80000 >> 16)
+/* 00BF94 01DB7C94 00608244 */  mtc1        $2, $f12
+/* 00BF98 01DB7C98 3000A427 */  addiu       $4, $29, 0x30
+/* 00BF9C 01DB7C9C 0E000524 */  addiu       $5, $0, 0xE
+/* 00BFA0 01DB7CA0 15000624 */  addiu       $6, $0, 0x15
+/* 00BFA4 01DB7CA4 1C000724 */  addiu       $7, $0, 0x1C
+/* 00BFA8 01DB7CA8 D0C3760C */  jal         OpPlayVolPanSE__FPfffiii
+/* 00BFAC 01DB7CAC 00000000 */   nop
+/* 00BFB0 01DB7CB0 0A000224 */  addiu       $2, $0, 0xA
+/* 00BFB4 01DB7CB4 3C9982AF */  sw          $2, -0x66C4($28)
+/* 00BFB8 01DB7CB8 17000010 */  b           .L01DB7D18_2BD518
+/* 00BFBC 01DB7CBC 00000000 */   nop
+.L01DB7CC0_2BD4C0:
+/* 00BFC0 01DB7CC0 31004128 */  slti        $1, $2, 0x31
+/* 00BFC4 01DB7CC4 14002014 */  bnez        $1, .L01DB7D18_2BD518
+/* 00BFC8 01DB7CC8 00000000 */   nop
+/* 00BFCC 01DB7CCC 32004128 */  slti        $1, $2, 0x32
+/* 00BFD0 01DB7CD0 11002010 */  beqz        $1, .L01DB7D18_2BD518
+/* 00BFD4 01DB7CD4 00000000 */   nop
+/* 00BFD8 01DB7CD8 C842023C */  lui         $2, (0x42C80000 >> 16)
+/* 00BFDC 01DB7CDC 00608244 */  mtc1        $2, $f12
+/* 00BFE0 01DB7CE0 FA43023C */  lui         $2, (0x43FA0000 >> 16)
+/* 00BFE4 01DB7CE4 00688244 */  mtc1        $2, $f13
+/* 00BFE8 01DB7CE8 3000A427 */  addiu       $4, $29, 0x30
+/* 00BFEC 01DB7CEC 0E000524 */  addiu       $5, $0, 0xE
+/* 00BFF0 01DB7CF0 15000624 */  addiu       $6, $0, 0x15
+/* 00BFF4 01DB7CF4 1D000724 */  addiu       $7, $0, 0x1D
+/* 00BFF8 01DB7CF8 D0C3760C */  jal         OpPlayVolPanSE__FPfffiii
+/* 00BFFC 01DB7CFC 00000000 */   nop
+/* 00C000 01DB7D00 0A000224 */  addiu       $2, $0, 0xA
+/* 00C004 01DB7D04 3C9982AF */  sw          $2, -0x66C4($28)
+/* 00C008 01DB7D08 03000010 */  b           .L01DB7D18_2BD518
+/* 00C00C 01DB7D0C 00000000 */   nop
+.L01DB7D10_2BD510:
+/* 00C010 01DB7D10 FFFF6224 */  addiu       $2, $3, -0x1
+/* 00C014 01DB7D14 3C9982AF */  sw          $2, -0x66C4($28)
+.L01DB7D18_2BD518:
+/* 00C018 01DB7D18 DE01013C */  lui         $1, %hi(CScript__2 + 0xD0)
+/* 00C01C 01DB7D1C D01B238C */  lw          $3, %lo(CScript__2 + 0xD0)($1)
+/* 00C020 01DB7D20 04000224 */  addiu       $2, $0, 0x4
+/* 00C024 01DB7D24 38006214 */  bne         $3, $2, .L01DB7E08_2BD608
+/* 00C028 01DB7D28 00000000 */   nop
+/* 00C02C 01DB7D2C DF01013C */  lui         $1, %hi(DngEventMan + 0x30)
+/* 00C030 01DB7D30 E0362CC4 */  lwc1        $f12, %lo(DngEventMan + 0x30)($1)
+/* 00C034 01DB7D34 2C44040C */  jal         fptosi
+/* 00C038 01DB7D38 00000000 */   nop
+/* 00C03C 01DB7D3C 48998383 */  lb          $3, -0x66B8($28)
+/* 00C040 01DB7D40 04006014 */  bnez        $3, .L01DB7D54_2BD554
+/* 00C044 01DB7D44 00000000 */   nop
+/* 00C048 01DB7D48 449980AF */  sw          $0, -0x66BC($28)
+/* 00C04C 01DB7D4C 01000324 */  addiu       $3, $0, 0x1
+/* 00C050 01DB7D50 489983A3 */  sb          $3, -0x66B8($28)
+.L01DB7D54_2BD554:
+/* 00C054 01DB7D54 4499838F */  lw          $3, -0x66BC($28)
+/* 00C058 01DB7D58 29006014 */  bnez        $3, .L01DB7E00_2BD600
+/* 00C05C 01DB7D5C 00000000 */   nop
+/* 00C060 01DB7D60 63004128 */  slti        $1, $2, 0x63
+/* 00C064 01DB7D64 12002014 */  bnez        $1, .L01DB7DB0_2BD5B0
+/* 00C068 01DB7D68 00000000 */   nop
+/* 00C06C 01DB7D6C 64004128 */  slti        $1, $2, 0x64
+/* 00C070 01DB7D70 0F002010 */  beqz        $1, .L01DB7DB0_2BD5B0
+/* 00C074 01DB7D74 00000000 */   nop
+/* 00C078 01DB7D78 C842023C */  lui         $2, (0x42C80000 >> 16)
+/* 00C07C 01DB7D7C 00608244 */  mtc1        $2, $f12
+/* 00C080 01DB7D80 FA43023C */  lui         $2, (0x43FA0000 >> 16)
+/* 00C084 01DB7D84 00688244 */  mtc1        $2, $f13
+/* 00C088 01DB7D88 3000A427 */  addiu       $4, $29, 0x30
+/* 00C08C 01DB7D8C 0E000524 */  addiu       $5, $0, 0xE
+/* 00C090 01DB7D90 15000624 */  addiu       $6, $0, 0x15
+/* 00C094 01DB7D94 1C000724 */  addiu       $7, $0, 0x1C
+/* 00C098 01DB7D98 D0C3760C */  jal         OpPlayVolPanSE__FPfffiii
+/* 00C09C 01DB7D9C 00000000 */   nop
+/* 00C0A0 01DB7DA0 0A000224 */  addiu       $2, $0, 0xA
+/* 00C0A4 01DB7DA4 449982AF */  sw          $2, -0x66BC($28)
+/* 00C0A8 01DB7DA8 17000010 */  b           .L01DB7E08_2BD608
+/* 00C0AC 01DB7DAC 00000000 */   nop
+.L01DB7DB0_2BD5B0:
+/* 00C0B0 01DB7DB0 6D004128 */  slti        $1, $2, 0x6D
+/* 00C0B4 01DB7DB4 14002014 */  bnez        $1, .L01DB7E08_2BD608
+/* 00C0B8 01DB7DB8 00000000 */   nop
+/* 00C0BC 01DB7DBC 6E004128 */  slti        $1, $2, 0x6E
+/* 00C0C0 01DB7DC0 11002010 */  beqz        $1, .L01DB7E08_2BD608
+/* 00C0C4 01DB7DC4 00000000 */   nop
+/* 00C0C8 01DB7DC8 FA43023C */  lui         $2, (0x43FA0000 >> 16)
+/* 00C0CC 01DB7DCC 00688244 */  mtc1        $2, $f13
+/* 00C0D0 01DB7DD0 C842023C */  lui         $2, (0x42C80000 >> 16)
+/* 00C0D4 01DB7DD4 00608244 */  mtc1        $2, $f12
+/* 00C0D8 01DB7DD8 3000A427 */  addiu       $4, $29, 0x30
+/* 00C0DC 01DB7DDC 0E000524 */  addiu       $5, $0, 0xE
+/* 00C0E0 01DB7DE0 15000624 */  addiu       $6, $0, 0x15
+/* 00C0E4 01DB7DE4 1D000724 */  addiu       $7, $0, 0x1D
+/* 00C0E8 01DB7DE8 D0C3760C */  jal         OpPlayVolPanSE__FPfffiii
+/* 00C0EC 01DB7DEC 00000000 */   nop
+/* 00C0F0 01DB7DF0 0A000224 */  addiu       $2, $0, 0xA
+/* 00C0F4 01DB7DF4 449982AF */  sw          $2, -0x66BC($28)
+/* 00C0F8 01DB7DF8 03000010 */  b           .L01DB7E08_2BD608
+/* 00C0FC 01DB7DFC 00000000 */   nop
+.L01DB7E00_2BD600:
+/* 00C100 01DB7E00 FFFF6224 */  addiu       $2, $3, -0x1
+/* 00C104 01DB7E04 449982AF */  sw          $2, -0x66BC($28)
+.L01DB7E08_2BD608:
+/* 00C108 01DB7E08 DE01013C */  lui         $1, %hi(CScript__2 + 0xD0)
+/* 00C10C 01DB7E0C D01B238C */  lw          $3, %lo(CScript__2 + 0xD0)($1)
+/* 00C110 01DB7E10 0A000224 */  addiu       $2, $0, 0xA
+/* 00C114 01DB7E14 38006214 */  bne         $3, $2, .L01DB7EF8_2BD6F8
+/* 00C118 01DB7E18 00000000 */   nop
+/* 00C11C 01DB7E1C DF01013C */  lui         $1, %hi(DngEventMan + 0x30)
+/* 00C120 01DB7E20 E0362CC4 */  lwc1        $f12, %lo(DngEventMan + 0x30)($1)
+/* 00C124 01DB7E24 2C44040C */  jal         fptosi
+/* 00C128 01DB7E28 00000000 */   nop
+/* 00C12C 01DB7E2C 50998383 */  lb          $3, -0x66B0($28)
+/* 00C130 01DB7E30 04006014 */  bnez        $3, .L01DB7E44_2BD644
+/* 00C134 01DB7E34 00000000 */   nop
+/* 00C138 01DB7E38 4C9980AF */  sw          $0, -0x66B4($28)
+/* 00C13C 01DB7E3C 01000324 */  addiu       $3, $0, 0x1
+/* 00C140 01DB7E40 509983A3 */  sb          $3, -0x66B0($28)
+.L01DB7E44_2BD644:
+/* 00C144 01DB7E44 4C99838F */  lw          $3, -0x66B4($28)
+/* 00C148 01DB7E48 29006014 */  bnez        $3, .L01DB7EF0_2BD6F0
+/* 00C14C 01DB7E4C 00000000 */   nop
+/* 00C150 01DB7E50 E5004128 */  slti        $1, $2, 0xE5
+/* 00C154 01DB7E54 12002014 */  bnez        $1, .L01DB7EA0_2BD6A0
+/* 00C158 01DB7E58 00000000 */   nop
+/* 00C15C 01DB7E5C E6004128 */  slti        $1, $2, 0xE6
+/* 00C160 01DB7E60 0F002010 */  beqz        $1, .L01DB7EA0_2BD6A0
+/* 00C164 01DB7E64 00000000 */   nop
+/* 00C168 01DB7E68 C842023C */  lui         $2, (0x42C80000 >> 16)
+/* 00C16C 01DB7E6C 00608244 */  mtc1        $2, $f12
+/* 00C170 01DB7E70 FA43023C */  lui         $2, (0x43FA0000 >> 16)
+/* 00C174 01DB7E74 00688244 */  mtc1        $2, $f13
+/* 00C178 01DB7E78 3000A427 */  addiu       $4, $29, 0x30
+/* 00C17C 01DB7E7C 0E000524 */  addiu       $5, $0, 0xE
+/* 00C180 01DB7E80 15000624 */  addiu       $6, $0, 0x15
+/* 00C184 01DB7E84 1C000724 */  addiu       $7, $0, 0x1C
+/* 00C188 01DB7E88 D0C3760C */  jal         OpPlayVolPanSE__FPfffiii
+/* 00C18C 01DB7E8C 00000000 */   nop
+/* 00C190 01DB7E90 0A000224 */  addiu       $2, $0, 0xA
+/* 00C194 01DB7E94 4C9982AF */  sw          $2, -0x66B4($28)
+/* 00C198 01DB7E98 17000010 */  b           .L01DB7EF8_2BD6F8
+/* 00C19C 01DB7E9C 00000000 */   nop
+.L01DB7EA0_2BD6A0:
+/* 00C1A0 01DB7EA0 EF004128 */  slti        $1, $2, 0xEF
+/* 00C1A4 01DB7EA4 14002014 */  bnez        $1, .L01DB7EF8_2BD6F8
+/* 00C1A8 01DB7EA8 00000000 */   nop
+/* 00C1AC 01DB7EAC F0004128 */  slti        $1, $2, 0xF0
+/* 00C1B0 01DB7EB0 11002010 */  beqz        $1, .L01DB7EF8_2BD6F8
+/* 00C1B4 01DB7EB4 00000000 */   nop
+/* 00C1B8 01DB7EB8 C842023C */  lui         $2, (0x42C80000 >> 16)
+/* 00C1BC 01DB7EBC 00608244 */  mtc1        $2, $f12
+/* 00C1C0 01DB7EC0 FA43023C */  lui         $2, (0x43FA0000 >> 16)
+/* 00C1C4 01DB7EC4 00688244 */  mtc1        $2, $f13
+/* 00C1C8 01DB7EC8 3000A427 */  addiu       $4, $29, 0x30
+/* 00C1CC 01DB7ECC 0E000524 */  addiu       $5, $0, 0xE
+/* 00C1D0 01DB7ED0 15000624 */  addiu       $6, $0, 0x15
+/* 00C1D4 01DB7ED4 1D000724 */  addiu       $7, $0, 0x1D
+/* 00C1D8 01DB7ED8 D0C3760C */  jal         OpPlayVolPanSE__FPfffiii
+/* 00C1DC 01DB7EDC 00000000 */   nop
+/* 00C1E0 01DB7EE0 0A000224 */  addiu       $2, $0, 0xA
+/* 00C1E4 01DB7EE4 4C9982AF */  sw          $2, -0x66B4($28)
+/* 00C1E8 01DB7EE8 03000010 */  b           .L01DB7EF8_2BD6F8
+/* 00C1EC 01DB7EEC 00000000 */   nop
+.L01DB7EF0_2BD6F0:
+/* 00C1F0 01DB7EF0 FFFF6224 */  addiu       $2, $3, -0x1
+/* 00C1F4 01DB7EF4 4C9982AF */  sw          $2, -0x66B4($28)
+.L01DB7EF8_2BD6F8:
+/* 00C1F8 01DB7EF8 DE01013C */  lui         $1, %hi(CScript__2 + 0x9C)
+/* 00C1FC 01DB7EFC 9C1B238C */  lw          $3, %lo(CScript__2 + 0x9C)($1)
+/* 00C200 01DB7F00 0E000224 */  addiu       $2, $0, 0xE
+/* 00C204 01DB7F04 4C006214 */  bne         $3, $2, .L01DB8038_2BD838
+/* 00C208 01DB7F08 00000000 */   nop
+/* 00C20C 01DB7F0C DF01013C */  lui         $1, %hi(Chara__3 + 0x2650)
+/* 00C210 01DB7F10 30252CC4 */  lwc1        $f12, %lo(Chara__3 + 0x2650)($1)
+/* 00C214 01DB7F14 2C44040C */  jal         fptosi
+/* 00C218 01DB7F18 00000000 */   nop
+/* 00C21C 01DB7F1C 58998383 */  lb          $3, -0x66A8($28)
+/* 00C220 01DB7F20 04006014 */  bnez        $3, .L01DB7F34_2BD734
+/* 00C224 01DB7F24 00000000 */   nop
+/* 00C228 01DB7F28 549980AF */  sw          $0, -0x66AC($28)
+/* 00C22C 01DB7F2C 01000324 */  addiu       $3, $0, 0x1
+/* 00C230 01DB7F30 589983A3 */  sb          $3, -0x66A8($28)
+.L01DB7F34_2BD734:
+/* 00C234 01DB7F34 5499838F */  lw          $3, -0x66AC($28)
+/* 00C238 01DB7F38 3D006014 */  bnez        $3, .L01DB8030_2BD830
+/* 00C23C 01DB7F3C 00000000 */   nop
+/* 00C240 01DB7F40 28014128 */  slti        $1, $2, 0x128
+/* 00C244 01DB7F44 12002014 */  bnez        $1, .L01DB7F90_2BD790
+/* 00C248 01DB7F48 00000000 */   nop
+/* 00C24C 01DB7F4C 29014128 */  slti        $1, $2, 0x129
+/* 00C250 01DB7F50 0F002010 */  beqz        $1, .L01DB7F90_2BD790
+/* 00C254 01DB7F54 00000000 */   nop
+/* 00C258 01DB7F58 C842023C */  lui         $2, (0x42C80000 >> 16)
+/* 00C25C 01DB7F5C 00608244 */  mtc1        $2, $f12
+/* 00C260 01DB7F60 FA43023C */  lui         $2, (0x43FA0000 >> 16)
+/* 00C264 01DB7F64 00688244 */  mtc1        $2, $f13
+/* 00C268 01DB7F68 3000A427 */  addiu       $4, $29, 0x30
+/* 00C26C 01DB7F6C 0E000524 */  addiu       $5, $0, 0xE
+/* 00C270 01DB7F70 15000624 */  addiu       $6, $0, 0x15
+/* 00C274 01DB7F74 1C000724 */  addiu       $7, $0, 0x1C
+/* 00C278 01DB7F78 D0C3760C */  jal         OpPlayVolPanSE__FPfffiii
+/* 00C27C 01DB7F7C 00000000 */   nop
+/* 00C280 01DB7F80 05000224 */  addiu       $2, $0, 0x5
+/* 00C284 01DB7F84 549982AF */  sw          $2, -0x66AC($28)
+/* 00C288 01DB7F88 2B000010 */  b           .L01DB8038_2BD838
+/* 00C28C 01DB7F8C 00000000 */   nop
+.L01DB7F90_2BD790:
+/* 00C290 01DB7F90 2B014128 */  slti        $1, $2, 0x12B
+/* 00C294 01DB7F94 12002014 */  bnez        $1, .L01DB7FE0_2BD7E0
+/* 00C298 01DB7F98 00000000 */   nop
+/* 00C29C 01DB7F9C 2C014128 */  slti        $1, $2, 0x12C
+/* 00C2A0 01DB7FA0 0F002010 */  beqz        $1, .L01DB7FE0_2BD7E0
+/* 00C2A4 01DB7FA4 00000000 */   nop
+/* 00C2A8 01DB7FA8 C842023C */  lui         $2, (0x42C80000 >> 16)
+/* 00C2AC 01DB7FAC 00608244 */  mtc1        $2, $f12
+/* 00C2B0 01DB7FB0 FA43023C */  lui         $2, (0x43FA0000 >> 16)
+/* 00C2B4 01DB7FB4 00688244 */  mtc1        $2, $f13
+/* 00C2B8 01DB7FB8 3000A427 */  addiu       $4, $29, 0x30
+/* 00C2BC 01DB7FBC 0E000524 */  addiu       $5, $0, 0xE
+/* 00C2C0 01DB7FC0 15000624 */  addiu       $6, $0, 0x15
+/* 00C2C4 01DB7FC4 1D000724 */  addiu       $7, $0, 0x1D
+/* 00C2C8 01DB7FC8 D0C3760C */  jal         OpPlayVolPanSE__FPfffiii
+/* 00C2CC 01DB7FCC 00000000 */   nop
+/* 00C2D0 01DB7FD0 05000224 */  addiu       $2, $0, 0x5
+/* 00C2D4 01DB7FD4 549982AF */  sw          $2, -0x66AC($28)
+/* 00C2D8 01DB7FD8 17000010 */  b           .L01DB8038_2BD838
+/* 00C2DC 01DB7FDC 00000000 */   nop
+.L01DB7FE0_2BD7E0:
+/* 00C2E0 01DB7FE0 2E014128 */  slti        $1, $2, 0x12E
+/* 00C2E4 01DB7FE4 14002014 */  bnez        $1, .L01DB8038_2BD838
+/* 00C2E8 01DB7FE8 00000000 */   nop
+/* 00C2EC 01DB7FEC 2F014128 */  slti        $1, $2, 0x12F
+/* 00C2F0 01DB7FF0 11002010 */  beqz        $1, .L01DB8038_2BD838
+/* 00C2F4 01DB7FF4 00000000 */   nop
+/* 00C2F8 01DB7FF8 C842023C */  lui         $2, (0x42C80000 >> 16)
+/* 00C2FC 01DB7FFC 00608244 */  mtc1        $2, $f12
+/* 00C300 01DB8000 FA43023C */  lui         $2, (0x43FA0000 >> 16)
+/* 00C304 01DB8004 00688244 */  mtc1        $2, $f13
+/* 00C308 01DB8008 3000A427 */  addiu       $4, $29, 0x30
+/* 00C30C 01DB800C 0E000524 */  addiu       $5, $0, 0xE
+/* 00C310 01DB8010 15000624 */  addiu       $6, $0, 0x15
+/* 00C314 01DB8014 1C000724 */  addiu       $7, $0, 0x1C
+/* 00C318 01DB8018 D0C3760C */  jal         OpPlayVolPanSE__FPfffiii
+/* 00C31C 01DB801C 00000000 */   nop
+/* 00C320 01DB8020 05000224 */  addiu       $2, $0, 0x5
+/* 00C324 01DB8024 549982AF */  sw          $2, -0x66AC($28)
+/* 00C328 01DB8028 03000010 */  b           .L01DB8038_2BD838
+/* 00C32C 01DB802C 00000000 */   nop
+.L01DB8030_2BD830:
+/* 00C330 01DB8030 FFFF6224 */  addiu       $2, $3, -0x1
+/* 00C334 01DB8034 549982AF */  sw          $2, -0x66AC($28)
+.L01DB8038_2BD838:
+/* 00C338 01DB8038 DD01023C */  lui         $2, %hi(LIT_987__2)
+/* 00C33C 01DB803C A0674224 */  addiu       $2, $2, %lo(LIT_987__2)
+/* 00C340 01DB8040 4000A427 */  addiu       $4, $29, 0x40
+/* 00C344 01DB8044 00004278 */  lq          $2, 0x0($2)
+/* 00C348 01DB8048 0000827C */  sq          $2, 0x0($4)
+/* 00C34C 01DB804C 4843023C */  lui         $2, (0x43480000 >> 16)
+/* 00C350 01DB8050 00608244 */  mtc1        $2, $f12
+/* 00C354 01DB8054 FA43023C */  lui         $2, (0x43FA0000 >> 16)
+/* 00C358 01DB8058 00688244 */  mtc1        $2, $f13
+/* 00C35C 01DB805C 0F000524 */  addiu       $5, $0, 0xF
+/* 00C360 01DB8060 10000624 */  addiu       $6, $0, 0x10
+/* 00C364 01DB8064 14000724 */  addiu       $7, $0, 0x14
+/* 00C368 01DB8068 28C4760C */  jal         OpSetVolPanSE__FPfffiii
+/* 00C36C 01DB806C 00000000 */   nop
+/* 00C370 01DB8070 60998383 */  lb          $3, -0x66A0($28)
+/* 00C374 01DB8074 04006014 */  bnez        $3, .L01DB8088_2BD888
+/* 00C378 01DB8078 00000000 */   nop
+/* 00C37C 01DB807C 5C9980AF */  sw          $0, -0x66A4($28)
+/* 00C380 01DB8080 01000324 */  addiu       $3, $0, 0x1
+/* 00C384 01DB8084 609983A3 */  sb          $3, -0x66A0($28)
+.L01DB8088_2BD888:
+/* 00C388 01DB8088 68998383 */  lb          $3, -0x6698($28)
+/* 00C38C 01DB808C 04006014 */  bnez        $3, .L01DB80A0_2BD8A0
+/* 00C390 01DB8090 00000000 */   nop
+/* 00C394 01DB8094 649980AF */  sw          $0, -0x669C($28)
+/* 00C398 01DB8098 01000324 */  addiu       $3, $0, 0x1
+/* 00C39C 01DB809C 689983A3 */  sb          $3, -0x6698($28)
+.L01DB80A0_2BD8A0:
+/* 00C3A0 01DB80A0 70998383 */  lb          $3, -0x6690($28)
+/* 00C3A4 01DB80A4 05006014 */  bnez        $3, .L01DB80BC_2BD8BC
+/* 00C3A8 01DB80A8 00000000 */   nop
+/* 00C3AC 01DB80AC 0043033C */  lui         $3, (0x43000000 >> 16)
+/* 00C3B0 01DB80B0 6C9983AF */  sw          $3, -0x6694($28)
+/* 00C3B4 01DB80B4 01000324 */  addiu       $3, $0, 0x1
+/* 00C3B8 01DB80B8 709983A3 */  sb          $3, -0x6690($28)
+.L01DB80BC_2BD8BC:
+/* 00C3BC 01DB80BC C8988683 */  lb          $6, -0x6738($28)
+/* 00C3C0 01DB80C0 01000324 */  addiu       $3, $0, 0x1
+/* 00C3C4 01DB80C4 2300C314 */  bne         $6, $3, .L01DB8154_2BD954
+/* 00C3C8 01DB80C8 00000000 */   nop
+/* 00C3CC 01DB80CC 5C99838F */  lw          $3, -0x66A4($28)
+/* 00C3D0 01DB80D0 0B006014 */  bnez        $3, .L01DB8100_2BD900
+/* 00C3D4 01DB80D4 00000000 */   nop
+/* 00C3D8 01DB80D8 0F000424 */  addiu       $4, $0, 0xF
+/* 00C3DC 01DB80DC 10000524 */  addiu       $5, $0, 0x10
+/* 00C3E0 01DB80E0 1C000624 */  addiu       $6, $0, 0x1C
+/* 00C3E4 01DB80E4 DC838CC7 */  lwc1        $f12, -0x7C24($28)
+/* 00C3E8 01DB80E8 84C4760C */  jal         OpPlayVolSE__Fiiif
+/* 00C3EC 01DB80EC 00000000 */   nop
+/* 00C3F0 01DB80F0 01000324 */  addiu       $3, $0, 0x1
+/* 00C3F4 01DB80F4 5C9983AF */  sw          $3, -0x66A4($28)
+/* 00C3F8 01DB80F8 1A000010 */  b           .L01DB8164_2BD964
+/* 00C3FC 01DB80FC 00000000 */   nop
+.L01DB8100_2BD900:
+/* 00C400 01DB8100 DE01013C */  lui         $1, %hi(CScript__2)
+/* 00C404 01DB8104 001B268C */  lw          $6, %lo(CScript__2)($1)
+/* 00C408 01DB8108 2C000324 */  addiu       $3, $0, 0x2C
+/* 00C40C 01DB810C 1500C310 */  beq         $6, $3, .L01DB8164_2BD964
+/* 00C410 01DB8110 00000000 */   nop
+/* 00C414 01DB8114 DD01023C */  lui         $2, %hi(LIT_1004__3)
+/* 00C418 01DB8118 B0674224 */  addiu       $2, $2, %lo(LIT_1004__3)
+/* 00C41C 01DB811C 5000A427 */  addiu       $4, $29, 0x50
+/* 00C420 01DB8120 00004278 */  lq          $2, 0x0($2)
+/* 00C424 01DB8124 0000827C */  sq          $2, 0x0($4)
+/* 00C428 01DB8128 C842023C */  lui         $2, (0x42C80000 >> 16)
+/* 00C42C 01DB812C 00608244 */  mtc1        $2, $f12
+/* 00C430 01DB8130 C843023C */  lui         $2, (0x43C80000 >> 16)
+/* 00C434 01DB8134 00688244 */  mtc1        $2, $f13
+/* 00C438 01DB8138 0F000524 */  addiu       $5, $0, 0xF
+/* 00C43C 01DB813C 10000624 */  addiu       $6, $0, 0x10
+/* 00C440 01DB8140 1C000724 */  addiu       $7, $0, 0x1C
+/* 00C444 01DB8144 28C4760C */  jal         OpSetVolPanSE__FPfffiii
+/* 00C448 01DB8148 00000000 */   nop
+/* 00C44C 01DB814C 05000010 */  b           .L01DB8164_2BD964
+/* 00C450 01DB8150 00000000 */   nop
+.L01DB8154_2BD954:
+/* 00C454 01DB8154 5C9980AF */  sw          $0, -0x66A4($28)
+/* 00C458 01DB8158 649980AF */  sw          $0, -0x669C($28)
+/* 00C45C 01DB815C 0043033C */  lui         $3, (0x43000000 >> 16)
+/* 00C460 01DB8160 6C9983AF */  sw          $3, -0x6694($28)
+.L01DB8164_2BD964:
+/* 00C464 01DB8164 78998383 */  lb          $3, -0x6688($28)
+/* 00C468 01DB8168 04006014 */  bnez        $3, .L01DB817C_2BD97C
+/* 00C46C 01DB816C 00000000 */   nop
+/* 00C470 01DB8170 749980AF */  sw          $0, -0x668C($28)
+/* 00C474 01DB8174 01000324 */  addiu       $3, $0, 0x1
+/* 00C478 01DB8178 789983A3 */  sb          $3, -0x6688($28)
+.L01DB817C_2BD97C:
+/* 00C47C 01DB817C DE01013C */  lui         $1, %hi(CScript__2)
+/* 00C480 01DB8180 001B268C */  lw          $6, %lo(CScript__2)($1)
+/* 00C484 01DB8184 2C000324 */  addiu       $3, $0, 0x2C
+/* 00C488 01DB8188 2500C314 */  bne         $6, $3, .L01DB8220_2BDA20
+/* 00C48C 01DB818C 00000000 */   nop
+/* 00C490 01DB8190 0498838F */  lw          $3, -0x67FC($28)
+/* 00C494 01DB8194 B0110224 */  addiu       $2, $0, 0x11B0
+/* 00C498 01DB8198 18186200 */  mult        $3, $3, $2
+/* 00C49C 01DB819C E101023C */  lui         $2, %hi(Cam__2 + 0x2F0)
+/* 00C4A0 01DB81A0 C09B4224 */  addiu       $2, $2, %lo(Cam__2 + 0x2F0)
+/* 00C4A4 01DB81A4 21104300 */  addu        $2, $2, $3
+/* 00C4A8 01DB81A8 00004CC4 */  lwc1        $f12, 0x0($2)
+/* 00C4AC 01DB81AC 9044040C */  jal         fptodp
+/* 00C4B0 01DB81B0 00000000 */   nop
+/* 00C4B4 01DB81B4 28864070 */  paddub      $16, $2, $0
+/* 00C4B8 01DB81B8 F9000424 */  addiu       $4, $0, 0xF9
+/* 00C4BC 01DB81BC FC40040C */  jal         litodp
+/* 00C4C0 01DB81C0 00000000 */   nop
+/* 00C4C4 01DB81C4 28260072 */  paddub      $4, $16, $0
+/* 00C4C8 01DB81C8 282E4070 */  paddub      $5, $2, $0
+/* 00C4CC 01DB81CC 5800040C */  jal         _dpfgt
+/* 00C4D0 01DB81D0 00000000 */   nop
+/* 00C4D4 01DB81D4 12004010 */  beqz        $2, .L01DB8220_2BDA20
+/* 00C4D8 01DB81D8 00000000 */   nop
+/* 00C4DC 01DB81DC 7499838F */  lw          $3, -0x668C($28)
+/* 00C4E0 01DB81E0 10006014 */  bnez        $3, .L01DB8224_2BDA24
+/* 00C4E4 01DB81E4 00000000 */   nop
+.L01DB81E8_2BD9E8:
+/* 00C4E8 01DB81E8 8CFB040C */  jal         ReadBGSync__Fv
+/* 00C4EC 01DB81EC 00000000 */   nop
+/* 00C4F0 01DB81F0 FDFF4014 */  bnez        $2, .L01DB81E8_2BD9E8
+/* 00C4F4 01DB81F4 00000000 */   nop
+/* 00C4F8 01DB81F8 948B858F */  lw          $5, -0x746C($28)
+/* 00C4FC 01DB81FC DE01023C */  lui         $2, %hi(LIT_1030)
+/* 00C500 01DB8200 50DF4424 */  addiu       $4, $2, %lo(LIT_1030)
+/* 00C504 01DB8204 28360070 */  paddub      $6, $0, $0
+/* 00C508 01DB8208 ACFA040C */  jal         LoadFileBG__FPcP1Pi
+/* 00C50C 01DB820C 00000000 */   nop
+/* 00C510 01DB8210 01000324 */  addiu       $3, $0, 0x1
+/* 00C514 01DB8214 749983AF */  sw          $3, -0x668C($28)
+/* 00C518 01DB8218 02000010 */  b           .L01DB8224_2BDA24
+/* 00C51C 01DB821C 00000000 */   nop
+.L01DB8220_2BDA20:
+/* 00C520 01DB8220 749980AF */  sw          $0, -0x668C($28)
+.L01DB8224_2BDA24:
+/* 00C524 01DB8224 80998383 */  lb          $3, -0x6680($28)
+/* 00C528 01DB8228 04006014 */  bnez        $3, .L01DB823C_2BDA3C
+/* 00C52C 01DB822C 00000000 */   nop
+/* 00C530 01DB8230 7C9980AF */  sw          $0, -0x6684($28)
+/* 00C534 01DB8234 01000324 */  addiu       $3, $0, 0x1
+/* 00C538 01DB8238 809983A3 */  sb          $3, -0x6680($28)
+.L01DB823C_2BDA3C:
+/* 00C53C 01DB823C DE01013C */  lui         $1, %hi(CScript__2)
+/* 00C540 01DB8240 001B248C */  lw          $4, %lo(CScript__2)($1)
+/* 00C544 01DB8244 0E000324 */  addiu       $3, $0, 0xE
+/* 00C548 01DB8248 1B008314 */  bne         $4, $3, .L01DB82B8_2BDAB8
+/* 00C54C 01DB824C 00000000 */   nop
+/* 00C550 01DB8250 7C99838F */  lw          $3, -0x6684($28)
+/* 00C554 01DB8254 19006014 */  bnez        $3, .L01DB82BC_2BDABC
+/* 00C558 01DB8258 00000000 */   nop
+/* 00C55C 01DB825C 3C8D8427 */  addiu       $4, $28, -0x72C4
+/* 00C560 01DB8260 282E0070 */  paddub      $5, $0, $0
+/* 00C564 01DB8264 441A050C */  jal         Stop__6CSoundFi
+/* 00C568 01DB8268 00000000 */   nop
+/* 00C56C 01DB826C 3C8D8427 */  addiu       $4, $28, -0x72C4
+/* 00C570 01DB8270 282E0070 */  paddub      $5, $0, $0
+/* 00C574 01DB8274 04000624 */  addiu       $6, $0, 0x4
+/* 00C578 01DB8278 32000724 */  addiu       $7, $0, 0x32
+/* 00C57C 01DB827C 140F050C */  jal         SetReverb__6CSoundFiii
+/* 00C580 01DB8280 00000000 */   nop
+/* 00C584 01DB8284 3C8D8427 */  addiu       $4, $28, -0x72C4
+/* 00C588 01DB8288 DE01023C */  lui         $2, %hi(LIT_1031__2)
+/* 00C58C 01DB828C 70DF4524 */  addiu       $5, $2, %lo(LIT_1031__2)
+/* 00C590 01DB8290 948B868F */  lw          $6, -0x746C($28)
+/* 00C594 01DB8294 3410050C */  jal         LoadSoundFileFromPack__6CSoundFPcPUi
+/* 00C598 01DB8298 00000000 */   nop
+/* 00C59C 01DB829C FC9780AF */  sw          $0, -0x6804($28)
+/* 00C5A0 01DB82A0 ACC3760C */  jal         OpBgmPlay__Fv
+/* 00C5A4 01DB82A4 00000000 */   nop
+/* 00C5A8 01DB82A8 01000324 */  addiu       $3, $0, 0x1
+/* 00C5AC 01DB82AC 7C9983AF */  sw          $3, -0x6684($28)
+/* 00C5B0 01DB82B0 02000010 */  b           .L01DB82BC_2BDABC
+/* 00C5B4 01DB82B4 00000000 */   nop
+.L01DB82B8_2BDAB8:
+/* 00C5B8 01DB82B8 7C9980AF */  sw          $0, -0x6684($28)
+.L01DB82BC_2BDABC:
+/* 00C5BC 01DB82BC 1000BF7B */  lq          $31, 0x10($29)
+/* 00C5C0 01DB82C0 0000B07B */  lq          $16, 0x0($29)
+/* 00C5C4 01DB82C4 6000BD27 */  addiu       $29, $29, 0x60
+/* 00C5C8 01DB82C8 0800E003 */  jr          $31
+/* 00C5CC 01DB82CC 00000000 */   nop

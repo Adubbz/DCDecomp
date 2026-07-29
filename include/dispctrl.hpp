@@ -2,6 +2,12 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+struct sceVif1Packet;
+
+
 class CDispCtrl {
 public:
     /* ?ret */ void FadeOutStart(float); // @ 0x13E610 (0x20 bytes) -- mangled: FadeOutStart__9CDispCtrlFf

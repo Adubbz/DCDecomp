@@ -1,6 +1,16 @@
 #pragma once
 
 #include "common.h"
+#include "vu1.hpp"
+
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+struct RenderInfo;
+class CDataAlloc2_1_;
+struct MDT_HEADER;
+struct sceVif1Packet;
+
 
 class CCloth {
 public:

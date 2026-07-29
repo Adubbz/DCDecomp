@@ -2,6 +2,12 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CDungeonEvent;
+
+
 class CDungeonEventData {
 public:
     /* ?ret */ void Set(CDungeonEvent *); // @ 0x1CC820 (0x60 bytes) -- mangled: Set__17CDungeonEventDataFP13CDungeonEvent

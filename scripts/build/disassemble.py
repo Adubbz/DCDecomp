@@ -12,13 +12,14 @@ from functools import reduce
 from pathlib import Path
 from spimdisasm.common import FileSectionType
 
-PRODG_PATH = os.environ['PRODG']
-
 ISO_PATH = Path('rom/extracted/iso/')
 ELF_PATH = ISO_PATH / 'SCUS_971.11'
 TITLE_PATH = ISO_PATH / 'TITLE.BIN'
 DUN_PATH = ISO_PATH / 'DUN.BIN'
 REF_PATH = Path('ref/asm/')
+# Every binutils tool comes from binutils-mips-ps2-decompals.
+TOOL_PREFIX = os.environ.get('MIPS_TOOL_PREFIX', 'mips-ps2-decompals-')
+
 REF_SECTION_PATH = REF_PATH / 'sections'
 REF_SPLIT_PATH = REF_PATH / 'split'
 
@@ -101,23 +102,19 @@ ASM_PRELUDE = '''\
 
 SYMBOL_SUFFIX_PATTERN = re.compile(r'\$\$_[0-9]+$')
 
+# Longest split-file name, before the ".s" it is written with and the ".o" the
+# build produces from it. mwld keeps an object's base name in a 64-byte buffer
+# and walks off the end of anything longer -- it does not report an error, it
+# corrupts its own error path, which surfaces as wibo aborting on a missing
+# FormatMessageA import. Mangled names reach 126 characters, so they are cut to
+# fit; the symbol inside the file is always the full name.
+MAX_SPLIT_NAME_LENGTH = 59
+
 def ensure_dir(path):
     path.mkdir(parents=True, exist_ok=True)
 
 def readelf(args):
-    return subprocess.check_output(['mips64r5900el-ps2-elf-readelf', *args]).decode()
-
-def cppfilt(sym):
-    return 
-
-def demangle_all(syms):
-    out = {}
-    # Split into lists of no more than 1024
-    for i in range(0, len(syms), 1024):
-        subset = syms[i:min(i+1024, len(syms))]
-        demangled = subprocess.check_output(['wibo', f'{PRODG_PATH}/ee/gcc/bin/ee-c__filt.exe', *subset]).decode().strip().splitlines()
-        out.update(dict([(subset[i], s) for i, s in enumerate(demangled)]))
-    return out
+    return subprocess.check_output([f'{TOOL_PREFIX}readelf', *args]).decode()
 
 def align(val, alignment):
     return ((val + (alignment - 1)) & ~(alignment - 1))
@@ -159,7 +156,12 @@ def read_symbols():
         n, name = match.group(1, 2)
         sections[int(n)] = name
 
-    for match in re.finditer(r'^ *\d+: +([0-9a-f]+) +(\d+) +([A-Z]+) +([A-Z]+) +([A-Z]+) +([0-9UND]+) +(.*)', readelf(['-W', '-s', ELF_PATH]), re.MULTILINE):
+    # readelf prints a symbol's size in decimal until it gets large, then
+    # switches to hex. Matching only decimal silently dropped every symbol over
+    # that threshold -- six of them here, including Chara (0x196d0) and
+    # GlobalDataBuffer (0x19c9910) -- so the disassembler never knew their names
+    # and emitted auto-generated ones instead.
+    for match in re.finditer(r'^ *\d+: +([0-9a-f]+) +(0x[0-9a-fA-F]+|\d+) +([A-Z]+) +([A-Z]+) +([A-Z]+) +([0-9UND]+) +(.*)', readelf(['-W', '-s', ELF_PATH]), re.MULTILINE):
         addr, size, sym_type, bind, visibility, index, name = match.group(1, 2, 3, 4, 5, 6, 7)
 
         # Skip symbols with an undefined index
@@ -167,7 +169,7 @@ def read_symbols():
             continue
 
         addr = int(addr, 16)
-        size = int(size)
+        size = int(size, 0)
         index = int(index)
         name = name.strip()
         section = sections[index]
@@ -179,9 +181,68 @@ def configure():
     spimdisasm.common.GlobalConfig.GLABEL_ASM_COUNT = False
     spimdisasm.common.GlobalConfig.PRODUCE_SYMBOLS_PLUS_OFFSET = True
     spimdisasm.common.GlobalConfig.ASM_USE_PRELUDE = False
-    spimdisasm.common.GlobalConfig.STRING_GUESSER = False # Wrong guesses cause the binary to be non-matching
+
+    # Emit one label macro for every kind of symbol, undecorated and at column
+    # zero. Newer spimdisasm defaults to naming each kind separately (dlabel
+    # for data, jlabel for jump tables, an `endlabel` closing every symbol, a
+    # `nonmatching` marker before it) and to indenting the body.
+    #
+    # The dumps are not just assembler input: scripts/build/migrate_section.py reads
+    # them to carve migrated data out, matching labels and the address comment
+    # that follows them. Keeping the emission as it was leaves that -- and the
+    # macro.inc the dumps include -- working unchanged, and keeps the upgrade
+    # to what it is actually for: better decoding and real MWCC PS2 support,
+    # not a reshuffle of every reference file.
+    spimdisasm.common.GlobalConfig.ASM_DATA_LABEL = 'glabel'
+    spimdisasm.common.GlobalConfig.ASM_JTBL_LABEL = 'jlabel'
+    # Branch targets and alternate entry points go through alabel, which is a
+    # local label -- see include/macro.inc for why they must not be global.
+    spimdisasm.common.GlobalConfig.ASM_TEXT_ALT_LABEL = 'alabel'
+    spimdisasm.common.GlobalConfig.ASM_EHTBL_LABEL = 'glabel'
+    spimdisasm.common.GlobalConfig.ASM_TEXT_END_LABEL = ''
+    spimdisasm.common.GlobalConfig.ASM_DATA_END_LABEL = ''
+    spimdisasm.common.GlobalConfig.ASM_NM_LABEL = ''
+    spimdisasm.common.GlobalConfig.ASM_INDENTATION = 0
+    spimdisasm.common.GlobalConfig.ASM_INDENTATION_LABELS = 0
+
+    # Leave a data symbol's trailing alignment padding inside that symbol
+    # rather than splitting it out under a generated D_<addr> label. The
+    # migrated objects supply the padding too -- mwcc pads .data out to the
+    # section's alignment -- so a split pad makes the hole carved for an
+    # object smaller than the object itself, which gen_lcf.py rejects.
+    # .bss pads stay on: the B_<addr> labels they produce are what
+    # scripts/build/migrate_section.py already recognises as padding there.
+    spimdisasm.common.GlobalConfig.CREATE_DATA_PADS = False
+    spimdisasm.common.GlobalConfig.CREATE_BSS_PADS = True
+
+    # A value only becomes a symbol if it lands in a declared segment; anything
+    # else stays the constant it is. The segment ranges are the thing that
+    # decides this (see changeGlobalSegmentRanges below) -- the
+    # SYMBOL_FINDER_FILTER_* defaults bracket N64 RAM and are left alone,
+    # because widening them to this game's address space only re-admits the
+    # values the segment ranges just excluded, such as main code's constant
+    # 0x1EA1D20 becoming a reference to dun's bss.
+    spimdisasm.common.GlobalConfig.SYMBOL_FINDER_FILTERED_ADDRESSES_AS_CONSTANTS = True
+
+    # Do not invent symbols for addresses that belong to no segment being
+    # disassembled. main's code does reach into the overlays -- retail relocates
+    # e.g. 0x01EA1D20 against dun's `CharaMain` -- but from main's side those
+    # segments are not visible, so the address lands in the "unknown segment"
+    # and comes out as a %hi/%lo pair against a D_01EA1D20 that nothing
+    # defines, and the link fails on it. Left as the constant it is, the
+    # instruction assembles to exactly the same bytes.
+    spimdisasm.common.GlobalConfig.ALLOW_UNKSEGMENT = False
+
+    # Wrong guesses cause the binary to be non-matching. Newer spimdisasm
+    # replaced the single flag with per-section levels, where 0 is off; both
+    # are set so the guesser stays off whichever one the version honours.
+    spimdisasm.common.GlobalConfig.STRING_GUESSER = False
+    spimdisasm.common.GlobalConfig.RODATA_STRING_GUESSER_LEVEL = 0
+    spimdisasm.common.GlobalConfig.DATA_STRING_GUESSER_LEVEL = 0
     spimdisasm.common.GlobalConfig.ENDIAN = spimdisasm.common.InputEndian.LITTLE
-    spimdisasm.common.GlobalConfig.COMPILER = spimdisasm.common.Compiler.UNKNOWN # MWCC
+    # The game is Metrowerks CodeWarrior for PS2. spimdisasm models that
+    # compiler directly now; it used to have to be told UNKNOWN.
+    spimdisasm.common.GlobalConfig.COMPILER = spimdisasm.common.Compiler.MWCCPS2
     spimdisasm.common.GlobalConfig.ARCHLEVEL = spimdisasm.common.ArchLevel.MIPS3
     # spimdisasm.common.GlobalConfig.GP_VALUE = 0x002A97F0 - This causes assembler issues
 
@@ -230,6 +291,10 @@ def process_relocations(context):
 
 prev_symbols = set()
 
+# {address: [final name, ...]} for every symbol registered. Several retail
+# symbols can share one address; only one of them can label it in the dumps.
+symbols_by_addr = {}
+
 def make_unique_symbol(sym):
     suffix = 2
     new_sym = sym
@@ -241,12 +306,27 @@ def make_unique_symbol(sym):
 
 def process_symbols(context: spimdisasm.common.Context, title_segment, dun_segment):
     for addr, size, sym_type, bind, visibility, section, name in read_symbols():
-        # Exclude undesirable symbols        
+        # Exclude undesirable symbols
         if name in ['gcc2_compiled.', '__gnu_compiled_c']:
             continue
 
+        # MWLD emits its segment measurements as ordinary symbols whose *value*
+        # is a byte count, not an address -- __bss_size, _dun_text_size, the
+        # _align_segment granularity, and so on. Read as addresses they land at
+        # arbitrary points in the image and split whatever symbol covers that
+        # point. __bss_size (0x01B085F7) falls inside GlobalDataBuffer and cut
+        # its .bss reservation from the declared 0x19C9910 down to 0x185D577,
+        # which is what the "Range check triggered" warning was reporting.
+        #
+        # NOTYPE is what distinguishes them: every real symbol here is a FUNC
+        # or an OBJECT, so genuine data like `config_file_size` is unaffected.
+        if sym_type == 'NOTYPE' and (name.endswith('_size') or name == '_align_segment'):
+            continue
+
         # Make symbol names unique
-        name = make_unique_symbol(normalize_sym(name))                
+        name = make_unique_symbol(normalize_sym(name))
+        if name and not name.startswith('.'):
+            symbols_by_addr.setdefault(addr, []).append(name)
 
         # Select the segment appropriate for the symbol's address
         if section == 'title':
@@ -290,65 +370,221 @@ def process_symbols(context: spimdisasm.common.Context, title_segment, dun_segme
         if section == 'title' or section == 'dun':
             context_sym.overlayCategory = OVERLAY_CATEGORY
 
+            # main's code calls into the overlays and reads their data --
+            # retail relocates those references against the overlay's own
+            # symbols, e.g. SetMIniMapStatus__Fi and CharaMain in dun. An
+            # overlay segment is not visible from main, so without a global
+            # declaration the reference disassembles to an invented
+            # func_1DC12C0 / D_01EA1D20 that nothing defines and the link
+            # fails on. Declaring the same name globally lets main name it,
+            # while the definition still comes from the overlay's own dump.
+            # Only the symbols the overlay's own dumps go on to define. Retail
+            # also carries boundary symbols such as _dun_segment_start and
+            # _dun_bss_end, which sit either side of the disassembled range and
+            # which this build has no definition for -- naming a reference
+            # after one of those would just move the link error.
+            lo, hi = ((VRAM_TITLE_TEXT_START, VRAM_TITLE_BSS_END)
+                      if section == 'title'
+                      else (VRAM_DUN_TEXT_START, VRAM_DUN_BSS_END))
+
+            if name and not name.startswith('.') and lo <= addr < hi:
+                if sym_type == 'FUNC':
+                    global_sym = context.globalSegment.addFunction(addr)
+                else:
+                    global_sym = context.globalSegment.addSymbol(addr)
+                global_sym.name = name
+                global_sym.isUserDeclared = True
+                global_sym.setSizeIfUnset(size)
+
+# Auto-generated branch labels: `.L<vram>` or `.L<vram>_<vrom>`.
+BRANCH_LABEL_RE = re.compile(r'^glabel (\.L[0-9A-F]+(?:_[0-9A-F]+)?)$', re.MULTILINE)
+JUMP_TABLE_LABEL_RE = re.compile(r'^jlabel (\S+)$', re.MULTILINE)
+FUNCTION_LABEL_RE = re.compile(r'^glabel (\S+)$', re.MULTILINE)
+
+# A PC-relative branch and the label it lands on. `j`/`jal` are deliberately
+# not matched: those encode an absolute target, mwld resolves them correctly,
+# and pointing one at a file-local twin would leave it with no relocation at
+# all. `break` is the one other b-word and takes no label.
+BRANCH_TARGET_RE = re.compile(
+    r'^(/\*.*?\*/\s+b(?!reak\b)[a-z0-9]*\s+(?:[^,\s]+,\s*)*)([A-Za-z_$][\w.$]*)[ \t]*$',
+    re.MULTILINE)
+
+# Suffix for the file-local twin of a label that also has to be global.
+LOCAL_TWIN_SUFFIX = '$b'
+
+
+def localize_branch_labels(text):
+    """Make every branch in this file resolvable by the assembler alone.
+
+    gas resolves a branch to a locally defined label itself and encodes the
+    exact offset. A branch to a *global* label it leaves as an R_MIPS_PC16 for
+    mwld to finish -- and the two disagree by one instruction about the addend,
+    so the branch assembles one short (beqz 0x42 where retail has 0x43).
+
+    Retail's symbol table carries unnamed entries in the middle of functions,
+    so spimdisasm declares those addresses as symbols; left alone they are all
+    global. Three cases:
+
+      - a plain branch target is nobody else's business, so it just becomes a
+        local `.L...:`;
+      - a jump table's target has to stay global, because the table itself sits
+        in .rodata/.data, in a different object. That one keeps its global
+        definition and gains a local twin at the same address, which is what
+        the branches in this file are pointed at;
+      - a function's own name has to stay global too, and a function that
+        branches back to its own entry point -- MGInitVSyncCallBack__FPFi_i
+        spins on a flag that way -- hits the same addend disagreement. It gets
+        the same treatment, but only the branches are repointed: a `jal` to
+        that name still has to become a relocation.
+    """
+    text = BRANCH_LABEL_RE.sub(r'\1:', text)
+    text = twin_branched_functions(text)
+
+    names = list(dict.fromkeys(JUMP_TABLE_LABEL_RE.findall(text)))
+    if not names:
+        return text
+
+    # One pass over the file, not one per label: the section dumps are large
+    # and carry thousands of these between them.
+    alternation = '|'.join(re.escape(n) for n in names)
+    text = re.sub(rf'(?<![\w.$])({alternation})(?![\w.$])',
+                  lambda m: m.group(1) + LOCAL_TWIN_SUFFIX, text)
+
+    # The definition itself has to keep the global name, with the twin beside it.
+    suffix = re.escape(LOCAL_TWIN_SUFFIX)
+    return re.sub(rf'^jlabel (\S+){suffix}$',
+                  lambda m: f'jlabel {m.group(1)}\n{m.group(1)}{LOCAL_TWIN_SUFFIX}:',
+                  text, flags=re.MULTILINE)
+
+
+def twin_branched_functions(text):
+    """Give a local twin to every glabel this file branches to.
+
+    Only names defined here can get one -- a branch into another object has to
+    stay a relocation, and there is nothing local to point it at.
+    """
+    defined = set(FUNCTION_LABEL_RE.findall(text))
+    branched = {m.group(2) for m in BRANCH_TARGET_RE.finditer(text)} & defined
+    if not branched:
+        return text
+
+    text = BRANCH_TARGET_RE.sub(
+        lambda m: m.group(1) + m.group(2) + (LOCAL_TWIN_SUFFIX
+                                             if m.group(2) in branched else ''),
+        text)
+    return re.sub(rf'^glabel ({"|".join(re.escape(n) for n in branched)})$',
+                  lambda m: f'glabel {m.group(1)}\n{m.group(1)}{LOCAL_TWIN_SUFFIX}:',
+                  text, flags=re.MULTILINE)
+
+
+LABEL_RE = re.compile(r'^(?:glabel|jlabel)\s+(\S+)$')
+INDEX_ADDR_RE = re.compile(r'^/\*\s*([0-9A-Fa-f]+)(?:\s+([0-9A-Fa-f]+))?')
+
+
+def write_symbol_index():
+    """Record every symbol the dumps define, under the name they define it by.
+
+    This is the authority the build resolves against, not the retail symbol
+    table: where retail has two symbols called VSyncField, the dumps have
+    VSyncField and VSyncField__2, and it is the latter that a decompiled .cpp
+    declares and that the linker has to match.
+    """
+    out = REF_PATH / 'objects' / 'symbols.index'
+    out.parent.mkdir(parents=True, exist_ok=True)
+
+    rows = []
+    for path in sorted(REF_PATH.rglob('*.s')):
+        lines = path.read_text(errors='replace').splitlines()
+        for i, line in enumerate(lines):
+            m = LABEL_RE.match(line)
+            if not m:
+                continue
+            for nxt in lines[i + 1:]:
+                am = INDEX_ADDR_RE.match(nxt)
+                if am:
+                    # file-backed sections carry `fileoffset vaddr`, .bss only vaddr
+                    rows.append((m.group(1), int(am.group(2) or am.group(1), 16),
+                                 str(path)))
+                    break
+                if nxt.strip():
+                    break
+
+    with open(out, 'w') as f:
+        f.write('# symbol\tvram\tsource\n')
+        for name, vram, src in sorted(rows, key=lambda r: (r[1], r[0])):
+            f.write(f'{name}\t{vram:#010x}\t{src}\n')
+
+
 def write_section(section, out_path):
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(out_path, 'w', encoding='utf-8') as f:
         f.write(ASM_PRELUDE)
         f.write(f'.section {section.name}\n')
-        f.write(section.disassemble())
+        f.write(localize_branch_labels(section.disassemble()))
 
 def write_split(processed_segments, section_name):
     text_sections = sorted(processed_segments[FileSectionType.Text], key=lambda x: x.vram)
-    func_names = []
-
-    # Generate a list of all function names to minimize calls to c++filt
-    for section in text_sections:
-        for func in section.symbolList:
-            func_names.append(SYMBOL_SUFFIX_PATTERN.sub('', func.getName()))
-
-    demangled_syms = demangle_all(func_names)
     prev_names = set()
 
     def make_name(sym):
-        # Produce an appropriate demangled function name
-        name = SYMBOL_SUFFIX_PATTERN.sub('', sym)
-        name = demangled_syms[name]
-        name = name.split('(')[0].replace(':', '_').replace('<', '_').replace('>', '_').replace(' ', '_').replace('=', 'equals')
+        """The file name for one function: its own symbol, as it is mangled.
+
+        The game is GCC 2.x (ARM-style) mangling, so this is what actually
+        appears in the object files and the link map -- Load__7CScriptPCc, not
+        CScript::Load. No current demangler reads that form (binutils dropped
+        GNU v2 support), so demangling here would mean carrying a checked-in
+        table of it; the mangled name needs nothing and matches the symbol the
+        assembler emits.
+
+        `$$_N` suffixes are spimdisasm's way of separating same-named symbols
+        and are stripped, which can bring two files back into collision; the
+        loop below is what keeps them apart, as does truncation to
+        MAX_SPLIT_NAME_LENGTH.
+        """
+        name = SYMBOL_SUFFIX_PATTERN.sub('', sym)[:MAX_SPLIT_NAME_LENGTH]
 
         suffix = 2
         new_name = name
         while new_name.lower() in prev_names:
-            new_name = f'{name}_{suffix}'
+            tail = f'_{suffix}'
+            new_name = f'{name[:MAX_SPLIT_NAME_LENGTH - len(tail)]}{tail}'
             suffix += 1
         prev_names.add(new_name.lower())
         return new_name
 
-    # Write each function to its own file
-    out_names = []
+    # Write each function to its own file, recording where retail keeps it.
+    # The index is what lets the build work out, without reading four thousand
+    # object files, which .s a compiled .cpp supersedes: see gen_layout.py.
+    index = []
     for section in text_sections:
         for func in section.symbolList:
             name = make_name(func.getName())
-            out_names.append(name)
+            index.append((f'{REF_SPLIT_PATH}/{section_name}/{name}.s',
+                          func.getName(), func.vram, func.sizew * 4))
             out_path = REF_SPLIT_PATH / f'{section_name}/{name}.s'
             out_path.parent.mkdir(parents=True, exist_ok=True)
 
             with open(out_path, 'w', encoding='utf-8') as f:
                 f.write(ASM_PRELUDE)
                 f.write(f'.section .text\n')
-                f.write(func.disassemble())
+                f.write(localize_branch_labels(func.disassemble()))
 
     non_text_sections = sorted([e for k, v in processed_segments.items() if k != FileSectionType.Text for e in v], key=lambda x: x.vram)
 
-    # Write obj_files.mk
-    with open(REF_PATH / f'{section_name}_obj_files.mk', 'w') as f:
-        f.write(f'{section_name.upper()}_O_FILES :=\\\n')
-                
-        for name in out_names:
-            f.write(f'    $(BUILD_DIR)/{REF_SPLIT_PATH}/{section_name}/{name}.s.o \\\n')
+    # The address index: one row per source the build can link, with the retail
+    # address it occupies. Data sections are whole dumps rather than one symbol,
+    # so they are recorded by their span.
+    index_path = REF_PATH / 'objects' / f'{section_name}.index'
+    index_path.parent.mkdir(parents=True, exist_ok=True)
 
+    with open(index_path, 'w') as f:
+        f.write('# source\tsymbol\tvram\tsize\n')
+        for path, sym, vram, size in index:
+            f.write(f'{path}\t{sym}\t{vram:#010x}\t{size:#x}\n')
         for section in non_text_sections:
-            f.write(f'    $(BUILD_DIR)/{REF_SECTION_PATH}/{section_name}/{section_name}{section.name}.s.o \\\n')
+            path = f'{REF_SECTION_PATH}/{section_name}/{section_name}{section.name}.s'
+            f.write(f'{path}\t{section_name}{section.name}\t{section.vram:#010x}\t{section.sizew * 4:#x}\n')
 
 def disassemble_group(context, group_section_name, entries):
     global data
@@ -463,6 +699,7 @@ def disassemble(context):
     disassemble_group(context, 'main', main)
     disassemble_group(context, 'title', title)
     disassemble_group(context, 'dun', dun)
+    write_symbol_index()
 
 data = b''
 
@@ -476,7 +713,7 @@ if __name__ == "__main__":
     print('Disassembling...')
 
     # verify.verify_extracted()
-    os.chdir(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
+    os.chdir(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir)))
 
     # Configure spimdisasm
     configure()
@@ -488,7 +725,12 @@ if __name__ == "__main__":
 
     # Create the spim context
     context = spimdisasm.common.Context()
-    context.changeGlobalSegmentRanges(0, ROM_ELF_END, 0, VRAM_OVERLAY_START)
+    # The global segment starts where the game is loaded, not at 0. Declaring it
+    # from 0 makes every small constant look like an address inside the segment,
+    # which is how a displacement such as the 0x16028 in
+    #     lui $1, %hi(..) / addu $1, $3, $1 / lw $2, %lo(..)($1)
+    # ends up named D_00016028 and referenced as a symbol nothing defines.
+    context.changeGlobalSegmentRanges(0, ROM_ELF_END, VRAM_START, VRAM_OVERLAY_START)
     title_segment = context.addOverlaySegment(OVERLAY_CATEGORY, ROM_TITLE_START, ROM_TITLE_END, VRAM_OVERLAY_START, VRAM_TITLE_END)
     dun_segment = context.addOverlaySegment(OVERLAY_CATEGORY, ROM_DUN_START, ROM_DUN_END, VRAM_OVERLAY_START, VRAM_DUN_END)
 

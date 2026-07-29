@@ -2,6 +2,13 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+struct SPI_FUNC_PARAM;
+struct TAG_PARAM;
+
+
 class CScriptInterpreter {
 public:
     /* ?ret */ void GetNextTAG(void); // @ 0x15F100 (0x150 bytes) -- mangled: GetNextTAG__18CScriptInterpreterFv

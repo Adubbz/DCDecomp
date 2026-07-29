@@ -2,6 +2,13 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CDataAlloc2_1_;
+struct RS_STACKDATA;
+
+
 /* ?ret */ void BtSystemScriptEventInfoInit(void); // @ 0x1BB060 (0x1A0 bytes) -- mangled: BtSystemScriptEventInfoInit__Fv
 /* ?ret */ void GetObjHDL(int); // @ 0x1BB200 (0x60 bytes) -- mangled: GetObjHDL__Fi
 /* ?ret */ void BtSystemScriptLoad(int); // @ 0x1BB260 (0xB0 bytes) -- mangled: BtSystemScriptLoad__Fi

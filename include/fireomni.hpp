@@ -2,6 +2,13 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CCamera;
+class CTexture;
+
+
 class CFireOmni {
 public:
     CFireOmni(void); // @ 0x161650 (0xA0 bytes) -- mangled: __ct__9CFireOmniFv

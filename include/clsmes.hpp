@@ -2,6 +2,15 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CCharacter;
+class CRect_i_;
+class CTexture;
+struct sceVif1Packet;
+
+
 class ClsMes {
 public:
     /* ?ret */ void GetGaijiW(int); // @ 0x14CB30 (0xA0 bytes) -- mangled: GetGaijiW__6ClsMesFi

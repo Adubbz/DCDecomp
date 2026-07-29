@@ -2,6 +2,14 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+struct BT_SHOT_EFFECT;
+class CDataAlloc2_1_;
+class CFrame;
+
+
 class CSHOT_EFFECT {
 public:
     /* ?ret */ void Draw(void); // @ 0x1ABF20 (0x260 bytes) -- mangled: Draw__12CSHOT_EFFECTFv

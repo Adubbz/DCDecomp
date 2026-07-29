@@ -2,6 +2,12 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CVector3_f_;
+
+
 class CObject {
 public:
     /* ?ret */ void Step(void); // @ 0x156BA0 (0x10 bytes) -- mangled: Step__7CObjectFv

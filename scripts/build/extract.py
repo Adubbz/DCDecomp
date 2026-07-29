@@ -86,7 +86,7 @@ def extract_iso():
 
 if __name__ == "__main__":
     # Change to work from the root directory
-    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir))
     os.chdir(root_dir)
 
     parser = argparse.ArgumentParser(description='Utilities for extracting files for decompilation')

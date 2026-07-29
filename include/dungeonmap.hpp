@@ -2,6 +2,17 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CBoxVu0;
+class CCPoly;
+class CCamera;
+class CCameraFollow;
+class CDataAlloc2_1_;
+class CFrameVu1;
+
+
 class CDungeonMap {
 public:
     /* ?ret */ void SetNPC(int, unsigned int *, int, float *, float *, int, int, CDataAlloc2_1_ *); // @ 0x1C1C00 (0x270 bytes) -- mangled: SetNPC__11CDungeonMapFiPUiiPfPfiiP14CDataAlloc2_1_

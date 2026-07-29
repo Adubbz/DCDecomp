@@ -2,6 +2,12 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CFrameVu1;
+
+
 class CStealItem {
 public:
     /* ?ret */ void Initialize(CFrameVu1 *); // @ 0x1D74E0 (0x40 bytes) -- mangled: Initialize__10CStealItemFP9CFrameVu1

@@ -1,0 +1,191 @@
+.include "macro.inc"
+
+.set noat /* Allow manual use of $at. */
+.set noreorder /* Don't insert nops after branches. */
+
+.section .text
+glabel Run_TrapCircle__FP15MAP_TRAP_CIRCLE
+/* 013D70 01DBFA70 80FFBD27 */  addiu       $29, $29, -0x80
+/* 013D74 01DBFA74 7000BF7F */  sq          $31, 0x70($29)
+/* 013D78 01DBFA78 6000B67F */  sq          $22, 0x60($29)
+/* 013D7C 01DBFA7C 5000B57F */  sq          $21, 0x50($29)
+/* 013D80 01DBFA80 4000B47F */  sq          $20, 0x40($29)
+/* 013D84 01DBFA84 3000B37F */  sq          $19, 0x30($29)
+/* 013D88 01DBFA88 2000B27F */  sq          $18, 0x20($29)
+/* 013D8C 01DBFA8C 1000B17F */  sq          $17, 0x10($29)
+/* 013D90 01DBFA90 0000B07F */  sq          $16, 0x0($29)
+/* 013D94 01DBFA94 84008010 */  beqz        $4, .L01DBFCA8_2FB2A8
+/* 013D98 01DBFA98 00000000 */   nop
+/* 013D9C 01DBFA9C 789C948F */  lw          $20, -0x6388($28)
+/* 013DA0 01DBFAA0 46439626 */  addiu       $22, $20, 0x4346
+/* 013DA4 01DBFAA4 46439596 */  lhu         $21, 0x4346($20)
+/* 013DA8 01DBFAA8 2816A072 */  paddub      $2, $21, $0
+/* 013DAC 01DBFAAC 04008882 */  lb          $8, 0x4($20)
+/* 013DB0 01DBFAB0 40438326 */  addiu       $3, $20, 0x4340
+/* 013DB4 01DBFAB4 21186800 */  addu        $3, $3, $8
+/* 013DB8 01DBFAB8 00006680 */  lb          $6, 0x0($3)
+/* 013DBC 01DBFABC 40190600 */  sll         $3, $6, 5
+/* 013DC0 01DBFAC0 23186600 */  subu        $3, $3, $6
+/* 013DC4 01DBFAC4 C0380300 */  sll         $7, $3, 3
+/* 013DC8 01DBFAC8 A80A0624 */  addiu       $6, $0, 0xAA8
+/* 013DCC 01DBFACC 18180601 */  mult        $3, $8, $6
+/* 013DD0 01DBFAD0 21188302 */  addu        $3, $20, $3
+/* 013DD4 01DBFAD4 21186700 */  addu        $3, $3, $7
+/* 013DD8 01DBFAD8 0C457324 */  addiu       $19, $3, 0x450C
+/* 013DDC 01DBFADC FFFF1024 */  addiu       $16, $0, -0x1
+/* 013DE0 01DBFAE0 288E0070 */  paddub      $17, $0, $0
+/* 013DE4 01DBFAE4 1400928C */  lw          $18, 0x14($4)
+/* 013DE8 01DBFAE8 18180671 */  mult1       $3, $8, $6
+/* 013DEC 01DBFAEC 21187400 */  addu        $3, $3, $20
+/* 013DF0 01DBFAF0 2118E300 */  addu        $3, $7, $3
+/* 013DF4 01DBFAF4 0C456784 */  lh          $7, 0x450C($3)
+/* 013DF8 01DBFAF8 80300800 */  sll         $6, $8, 2
+/* 013DFC 01DBFAFC DC01033C */  lui         $3, %hi(_dun_text_end)
+/* 013E00 01DBFB00 001B6324 */  addiu       $3, $3, %lo(_dun_text_end)
+/* 013E04 01DBFB04 21186600 */  addu        $3, $3, $6
+/* 013E08 01DBFB08 0000638C */  lw          $3, 0x0($3)
+/* 013E0C 01DBFB0C 0400E310 */  beq         $7, $3, .L01DBFB20_2FB120
+/* 013E10 01DBFB10 00000000 */   nop
+/* 013E14 01DBFB14 01006324 */  addiu       $3, $3, 0x1
+/* 013E18 01DBFB18 0200E314 */  bne         $7, $3, .L01DBFB24_2FB124
+/* 013E1C 01DBFB1C 00000000 */   nop
+.L01DBFB20_2FB120:
+/* 013E20 01DBFB20 28960070 */  paddub      $18, $0, $0
+.L01DBFB24_2FB124:
+/* 013E24 01DBFB24 0A00412E */  sltiu       $1, $18, 0xA
+/* 013E28 01DBFB28 4F002010 */  beqz        $1, .L01DBFC68_2FB268
+/* 013E2C 01DBFB2C 00000000 */   nop
+/* 013E30 01DBFB30 DC01033C */  lui         $3, %hi(LIT_6309)
+/* 013E34 01DBFB34 A0336624 */  addiu       $6, $3, %lo(LIT_6309)
+/* 013E38 01DBFB38 80181200 */  sll         $3, $18, 2
+/* 013E3C 01DBFB3C 21186600 */  addu        $3, $3, $6
+/* 013E40 01DBFB40 0000638C */  lw          $3, 0x0($3)
+/* 013E44 01DBFB44 08006000 */  jr          $3
+/* 013E48 01DBFB48 00000000 */   nop
+jlabel .L01DBFB4C_2FB14C
+.L01DBFB4C_2FB14C$b:
+/* 013E4C 01DBFB4C 08000424 */  addiu       $4, $0, 0x8
+/* 013E50 01DBFB50 ECC6060C */  jal         BtSetStatusErr__Fi
+/* 013E54 01DBFB54 00000000 */   nop
+/* 013E58 01DBFB58 E1001124 */  addiu       $17, $0, 0xE1
+/* 013E5C 01DBFB5C 42000010 */  b           .L01DBFC68_2FB268
+/* 013E60 01DBFB60 00000000 */   nop
+jlabel .L01DBFB64_2FB164
+.L01DBFB64_2FB164$b:
+/* 013E64 01DBFB64 00008244 */  mtc1        $2, $f0
+/* 013E68 01DBFB68 00000000 */  nop
+/* 013E6C 01DBFB6C 60008046 */  cvt.s.w     $f1, $f0
+/* 013E70 01DBFB70 088380C7 */  lwc1        $f0, -0x7CF8($28)
+/* 013E74 01DBFB74 020B0046 */  mul.s       $f12, $f1, $f0
+/* 013E78 01DBFB78 2C44040C */  jal         fptosi
+/* 013E7C 01DBFB7C 00000000 */   nop
+/* 013E80 01DBFB80 0A004424 */  addiu       $4, $2, 0xA
+/* 013E84 01DBFB84 2110A402 */  addu        $2, $21, $4
+/* 013E88 01DBFB88 FFFF0334 */  ori         $3, $0, 0xFFFF
+/* 013E8C 01DBFB8C 2A104300 */  slt         $2, $2, $3
+/* 013E90 01DBFB90 04004014 */  bnez        $2, .L01DBFBA4_2FB1A4
+/* 013E94 01DBFB94 00000000 */   nop
+/* 013E98 01DBFB98 464383A6 */  sh          $3, 0x4346($20)
+/* 013E9C 01DBFB9C 04000010 */  b           .L01DBFBB0_2FB1B0
+/* 013EA0 01DBFBA0 00000000 */   nop
+.L01DBFBA4_2FB1A4:
+/* 013EA4 01DBFBA4 46438296 */  lhu         $2, 0x4346($20)
+/* 013EA8 01DBFBA8 21104400 */  addu        $2, $2, $4
+/* 013EAC 01DBFBAC 464382A6 */  sh          $2, 0x4346($20)
+.L01DBFBB0_2FB1B0:
+/* 013EB0 01DBFBB0 E1001124 */  addiu       $17, $0, 0xE1
+/* 013EB4 01DBFBB4 2C000010 */  b           .L01DBFC68_2FB268
+/* 013EB8 01DBFBB8 00000000 */   nop
+jlabel .L01DBFBBC_2FB1BC
+.L01DBFBBC_2FB1BC$b:
+/* 013EBC 01DBFBBC 28860070 */  paddub      $16, $0, $0
+/* 013EC0 01DBFBC0 E1001124 */  addiu       $17, $0, 0xE1
+/* 013EC4 01DBFBC4 28000010 */  b           .L01DBFC68_2FB268
+/* 013EC8 01DBFBC8 00000000 */   nop
+jlabel .L01DBFBCC_2FB1CC
+.L01DBFBCC_2FB1CC$b:
+/* 013ECC 01DBFBCC 02001024 */  addiu       $16, $0, 0x2
+/* 013ED0 01DBFBD0 E1001124 */  addiu       $17, $0, 0xE1
+/* 013ED4 01DBFBD4 24000010 */  b           .L01DBFC68_2FB268
+/* 013ED8 01DBFBD8 00000000 */   nop
+jlabel .L01DBFBDC_2FB1DC
+.L01DBFBDC_2FB1DC$b:
+/* 013EDC 01DBFBDC 04001024 */  addiu       $16, $0, 0x4
+/* 013EE0 01DBFBE0 E1001124 */  addiu       $17, $0, 0xE1
+/* 013EE4 01DBFBE4 20000010 */  b           .L01DBFC68_2FB268
+/* 013EE8 01DBFBE8 00000000 */   nop
+jlabel .L01DBFBEC_2FB1EC
+.L01DBFBEC_2FB1EC$b:
+/* 013EEC 01DBFBEC E09C848F */  lw          $4, -0x6320($28)
+/* 013EF0 01DBFBF0 D860070C */  jal         AllBin2__12CMonstorUnitFv
+/* 013EF4 01DBFBF4 00000000 */   nop
+/* 013EF8 01DBFBF8 E2001124 */  addiu       $17, $0, 0xE2
+/* 013EFC 01DBFBFC 1A000010 */  b           .L01DBFC68_2FB268
+/* 013F00 01DBFC00 00000000 */   nop
+jlabel .L01DBFC04_2FB204
+.L01DBFC04_2FB204$b:
+/* 013F04 01DBFC04 00008244 */  mtc1        $2, $f0
+/* 013F08 01DBFC08 00000000 */  nop
+/* 013F0C 01DBFC0C 60008046 */  cvt.s.w     $f1, $f0
+/* 013F10 01DBFC10 608480C7 */  lwc1        $f0, -0x7BA0($28)
+/* 013F14 01DBFC14 02000146 */  mul.s       $f0, $f0, $f1
+/* 013F18 01DBFC18 010B0046 */  sub.s       $f12, $f1, $f0
+/* 013F1C 01DBFC1C 2C44040C */  jal         fptosi
+/* 013F20 01DBFC20 00000000 */   nop
+/* 013F24 01DBFC24 0200401C */  bgtz        $2, .L01DBFC30_2FB230
+/* 013F28 01DBFC28 00000000 */   nop
+/* 013F2C 01DBFC2C 28160070 */  paddub      $2, $0, $0
+.L01DBFC30_2FB230:
+/* 013F30 01DBFC30 0000C2A6 */  sh          $2, 0x0($22)
+/* 013F34 01DBFC34 E2001124 */  addiu       $17, $0, 0xE2
+/* 013F38 01DBFC38 0B000010 */  b           .L01DBFC68_2FB268
+/* 013F3C 01DBFC3C 00000000 */   nop
+jlabel .L01DBFC40_2FB240
+.L01DBFC40_2FB240$b:
+/* 013F40 01DBFC40 01001024 */  addiu       $16, $0, 0x1
+/* 013F44 01DBFC44 E2001124 */  addiu       $17, $0, 0xE2
+/* 013F48 01DBFC48 07000010 */  b           .L01DBFC68_2FB268
+/* 013F4C 01DBFC4C 00000000 */   nop
+jlabel .L01DBFC50_2FB250
+.L01DBFC50_2FB250$b:
+/* 013F50 01DBFC50 03001024 */  addiu       $16, $0, 0x3
+/* 013F54 01DBFC54 E2001124 */  addiu       $17, $0, 0xE2
+/* 013F58 01DBFC58 03000010 */  b           .L01DBFC68_2FB268
+/* 013F5C 01DBFC5C 00000000 */   nop
+jlabel .L01DBFC60_2FB260
+.L01DBFC60_2FB260$b:
+/* 013F60 01DBFC60 05001024 */  addiu       $16, $0, 0x5
+/* 013F64 01DBFC64 E2001124 */  addiu       $17, $0, 0xE2
+.L01DBFC68_2FB268:
+/* 013F68 01DBFC68 FFFF0224 */  addiu       $2, $0, -0x1
+/* 013F6C 01DBFC6C 08000212 */  beq         $16, $2, .L01DBFC90_2FB290
+/* 013F70 01DBFC70 00000000 */   nop
+/* 013F74 01DBFC74 28266072 */  paddub      $4, $19, $0
+/* 013F78 01DBFC78 282E0072 */  paddub      $5, $16, $0
+/* 013F7C 01DBFC7C 383F080C */  jal         WeaponDataChangeByRGate__FP11WEAPON_HAVEi
+/* 013F80 01DBFC80 00000000 */   nop
+/* 013F84 01DBFC84 049D848F */  lw          $4, -0x62FC($28)
+/* 013F88 01DBFC88 A896080C */  jal         SetWeaponAttachStatus__FP11WEAPON_HAVE
+/* 013F8C 01DBFC8C 00000000 */   nop
+.L01DBFC90_2FB290:
+/* 013F90 01DBFC90 28262072 */  paddub      $4, $17, $0
+/* 013F94 01DBFC94 FFFF0524 */  addiu       $5, $0, -0x1
+/* 013F98 01DBFC98 28360070 */  paddub      $6, $0, $0
+/* 013F9C 01DBFC9C AC69050C */  jal         SndSePlay__Fiii
+/* 013FA0 01DBFCA0 00000000 */   nop
+/* 013FA4 01DBFCA4 28164072 */  paddub      $2, $18, $0
+.L01DBFCA8_2FB2A8:
+/* 013FA8 01DBFCA8 7000BF7B */  lq          $31, 0x70($29)
+/* 013FAC 01DBFCAC 6000B67B */  lq          $22, 0x60($29)
+/* 013FB0 01DBFCB0 5000B57B */  lq          $21, 0x50($29)
+/* 013FB4 01DBFCB4 4000B47B */  lq          $20, 0x40($29)
+/* 013FB8 01DBFCB8 3000B37B */  lq          $19, 0x30($29)
+/* 013FBC 01DBFCBC 2000B27B */  lq          $18, 0x20($29)
+/* 013FC0 01DBFCC0 1000B17B */  lq          $17, 0x10($29)
+/* 013FC4 01DBFCC4 0000B07B */  lq          $16, 0x0($29)
+/* 013FC8 01DBFCC8 8000BD27 */  addiu       $29, $29, 0x80
+/* 013FCC 01DBFCCC 0800E003 */  jr          $31
+/* 013FD0 01DBFCD0 00000000 */   nop
+/* 013FD4 01DBFCD4 00000000 */  nop
+/* 013FD8 01DBFCD8 00000000 */  nop
+/* 013FDC 01DBFCDC 00000000 */  nop

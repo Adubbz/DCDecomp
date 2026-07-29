@@ -13,12 +13,6 @@ MEMORY
 
 SECTIONS
 {
-    // Hack to get main to start in the right place. This will be optimized out by mw.
-    .padding:
-    {
-        . = . + 0x4C;
-    } > main
-
     // Overlays, written to their own files by the MEMORY block above. The
     // bodies are expanded by cmake/Overlays.cmake, which also explains why the
     // overlays' objects carry privately-prefixed section names.

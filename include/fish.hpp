@@ -2,6 +2,13 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CCPoly;
+class CFrame;
+
+
 class CFish {
 public:
     /* ?ret */ void FindFood(void); // @ 0x240180 (0xD0 bytes) -- mangled: FindFood__5CFishFv

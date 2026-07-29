@@ -2,6 +2,13 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CDataAlloc2_1_;
+struct MOTION_INFO;
+
+
 class CMotionModel {
 public:
     /* ?ret */ void LoadPack(unsigned int *, char *, CDataAlloc2_1_ *, CDataAlloc2_1_ *, MOTION_INFO *, int); // @ 0x1B6A30 (0x2A0 bytes) -- mangled: LoadPack__12CMotionModelFPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P11MOTION_INFOi

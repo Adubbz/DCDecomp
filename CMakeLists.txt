@@ -1,18 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 project(dcdecomp NONE)
 
-# The build has five stages, each with its own target:
-#
-#   setup        extract the retail ISO and disassemble it into ref/
-#   <objects>    re-assemble the still-unmatched .s files, compile the
-#                matched .c/.cpp files (both with the MW toolchain)
-#   elf          link everything with MWLD into the main ELF and the
-#                TITLE.BIN / DUN.BIN overlays
-#   iso          write the built files back into a copy of the retail ISO
-#   run          boot that ISO in PCSX2
-#
-# `build` (the default target) does everything up to and including `elf` and
-# then verifies the results against the retail hashes.
+# Targets: setup (extract + disassemble), elf, iso, run. `build`, the default,
+# is elf plus verification against the retail hashes.
 
 set(BASENAME SCUS_971.11)
 
@@ -23,6 +13,7 @@ include(Migration)
 
 # Directories
 set(SRC_DIR src)
+set(INCLUDE_DIR include)
 set(TOOLS_DIR tools)
 set(SCRIPTS_DIR scripts)
 set(ROM_DIR rom)
@@ -33,56 +24,73 @@ set(REF_DIR ref)
 # the binary directory expressed the same way.
 file(RELATIVE_PATH BUILD_DIR ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 
-# Build tools
-set(PRODG "$ENV{PRODG}" CACHE PATH "ProDG installation root")
-if(NOT PRODG)
-    message(FATAL_ERROR "PRODG is not set; point it at the ProDG installation root")
-endif()
+# Functions still supplied as retail's own instructions inside an otherwise
+# compiled translation unit, and where their generated bodies land. See
+# "Retail instructions as asm bodies" below for why they exist.
+set(ASM_BODY_DIR ${BUILD_DIR}/generated/asm)
+set(ASM_BODY_FUNCS
+    AddDrink__11CUserStatusFisf
+    AddNowLife__11CUserStatusFisf
+    SetNextLife__11CUserStatusFisf
+    Step__11CUserStatusFi)
 
-set(EE ${PRODG}/ee/gcc/bin/ee-)
-set(MW ${TOOLS_DIR}/compilers/mw/2.3.1.01/)
-set(PS2DEV mips64r5900el-ps2-elf-)
-set(CC_MW wibo ${MW}mwccmips.exe)
+# Build tools. Everything but the Metrowerks compiler and linker comes from
+# binutils-mips-ps2-decompals, on PATH, replacing ProDG and ps2toolchain-ee.
+set(MIPS_TOOL_PREFIX mips-ps2-decompals-
+    CACHE STRING "Prefix of the binutils-mips-ps2-decompals tools")
+
+set(MW ${TOOLS_DIR}/compilers/mw/2.3.3/)
+# MWCIncludes is set but empty: mwcc warns per file without it, and this
+# project has no MW system headers. Objects are byte-identical either way.
+set(CC_MW ${CMAKE_COMMAND} -E env MWCIncludes= wibo ${MW}mwccmips.exe)
 set(LD_MW wibo ${MW}mwldmips.exe)
-set(AS_PRODG wibo ${EE}as.exe)
-set(OBJCOPY ${PS2DEV}objcopy)
-set(OBJDUMP ${PS2DEV}objdump)
+set(AS ${MIPS_TOOL_PREFIX}as)
+set(OBJCOPY ${MIPS_TOOL_PREFIX}objcopy)
+set(OBJDUMP ${MIPS_TOOL_PREFIX}objdump)
 # HINTS are searched before PATH, so the container's virtualenv wins: the
 # system python3 is missing pycdlib and the disassembler packages, and the
 # image puts the venv at the end of PATH.
 find_program(PYTHON NAMES python3 python REQUIRED HINTS $ENV{VIRTUAL_ENV}/bin)
+
+# -u because Python block-buffers stdout when it is not a terminal, which
+# would hold a long script's progress until it finished.
+set(PYTHON_CMD ${PYTHON} -u)
 
 # Files
 set(LD_TEMPLATE ${BASENAME}.lcf)
 set(OUTPUT ${BUILD_DIR}/${BASENAME})
 set(RETAIL_ISO "${ROM_DIR}/Dark Cloud (USA).iso")
 set(BUILT_ISO "${BUILD_DIR}/Dark Cloud (Build).iso")
+set(CTX ${BUILD_DIR}/ctx.c)
+set(CTX_CPP ${BUILD_DIR}/ctx.cpp)
 
-# Compiler flags
-set(AS_FLAGS -c -EL -mcpu=5900 -32 -g2 -non_shared -G0 -I include)
-set(CC_MW_FLAGS -O2 -c -Cpp_exceptions off -strings readonly -i include -g)
+# Compiler flags, translated from the ProDG spellings these were written in.
+# -mabi=eabi (not -32) because o32's 32-bit registers turn every `ld` into an
+# $at macro the dumps forbid, and eabi64 is what retail carries. -mno-pdr
+# because the .lcf has no placement for the .pdr GNU as emits alongside -g.
+set(AS_FLAGS -EL -march=r5900 -mabi=eabi -g -mno-pdr -non_shared -G0 -I include)
+# ASM_BODY_DIR is on the include path for the generated `asm` bodies; see
+# "Retail instructions as asm bodies" below.
+set(CC_MW_FLAGS -O2 -c -Cpp_exceptions off -strings readonly
+                -i include -i ${ASM_BODY_DIR} -g)
 set(LD_MW_FLAGS -map -nostdlib -m _start -nodead -g)
 # `-sym on,noelf` keeps the relocations resolved but drops the symbol table and
 # section headers, leaving just the loadable image the console needs.
 set(LD_MW_ISO_FLAGS -nostdlib -m _start -nodead -sym on,noelf)
 set(BIN_FLAGS -B mips:5900 -I binary -O elf32-littlemips)
 
-read_obj_list(main_obj_files.mk MAIN_O_FILES)
-read_obj_list(title_obj_files.mk TITLE_O_FILES)
-read_obj_list(dun_obj_files.mk DUN_O_FILES)
-read_obj_list(additional_obj_files.mk ADDITIONAL_O_FILES)
+read_obj_list(main MAIN_O_FILES)
+read_obj_list(title TITLE_O_FILES)
+read_obj_list(dun DUN_O_FILES)
+read_obj_list(additional ADDITIONAL_O_FILES)
 
-# Data migration: as global data symbols get decompiled into real, typed C/C++
-# translation units, their bytes are carved out of copies of the monolithic
-# reference section dumps (never the ref/ dumps themselves) and the compiled
-# objects that now supply them are placed exactly into the resulting holes, so
-# every other symbol keeps its retail address. The carving, the split at island
-# boundaries, the object list and the linker-script placement are all derived
-# from asm/migrated_symbols.txt. See docs/RE/migrated_data_layout.md.
+# Data migration: decompiled globals are carved out of copies of the section
+# dumps and placed back into their retail holes, all derived from
+# asm/migrated_symbols.txt. See docs/RE/migrated_data_layout.md.
 add_migrated_sections(GENERATED_S_FILES GENERATED_PLAN_FILES)
 
-# Generated data-section objects stay ahead of ADDITIONAL_O_FILES, matching the
-# link order they had when hand-listed at the tail of main_obj_files.mk.
+# Generated data-section objects go at the tail of the main application, the
+# link order they had when hand-listed at the end of the main object list.
 set(GENERATED_O_FILES "")
 foreach(s IN LISTS GENERATED_S_FILES)
     list(APPEND GENERATED_O_FILES ${s}.o)
@@ -92,6 +100,32 @@ set(MAIN_OBJS ${MAIN_O_FILES} ${GENERATED_O_FILES} ${ADDITIONAL_O_FILES})
 # The overlays' objects are passed after their -overlay option instead of in
 # the main response file, but they are still built the same way.
 set(ALL_OBJS ${MAIN_OBJS} ${TITLE_O_FILES} ${DUN_O_FILES})
+
+#
+# Retail instructions as asm bodies
+#
+# TEMPORARY. MWCC emits a TU's functions as one contiguous .text, so an
+# unmatched function inside src/dngstatusdata.cpp cannot be filled from an
+# outside .s. These four keep their place with retail's own instructions as an
+# `asm` body. Retire one by making its C++ match, then delete it from here.
+foreach(fn IN LISTS ASM_BODY_FUNCS)
+    set(dump ${REF_DIR}/asm/split/main/${fn}.s)
+    # Absent until `setup` has disassembled the disc; the reconfigure that
+    # follows it is what fills these in.
+    if(EXISTS ${CMAKE_SOURCE_DIR}/${dump})
+        execute_process(
+            COMMAND ${PYTHON} ${SCRIPTS_DIR}/build/gen_asm_body.py
+                    ${dump} ${fn} ${ASM_BODY_DIR}/${fn}.inc
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            RESULT_VARIABLE gen_result
+            OUTPUT_QUIET)
+        if(NOT gen_result EQUAL 0)
+            message(FATAL_ERROR "gen_asm_body.py failed for ${fn}")
+        endif()
+        set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+                     ${CMAKE_SOURCE_DIR}/${dump})
+    endif()
+endforeach()
 
 # Ninja does not create custom-command output directories on its own.
 make_object_dirs("${ALL_OBJS}")
@@ -103,10 +137,8 @@ endforeach()
 #
 # Linker command file
 #
-# The checked-in .lcf is a template. Overlay placement is expanded into it here
-# at configure time (it only depends on the object lists, which the setup stage
-# regenerates); migrated-data placement is expanded at build time, because it
-# has to objdump the compiled objects to size each island.
+# The checked-in .lcf is a template: overlay placement is expanded at configure
+# time, migrated-data placement at build time (it has to objdump each island).
 #
 set(OVERLAY_LCF ${BUILD_DIR}/${BASENAME}.overlays.lcf)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
@@ -122,11 +154,11 @@ if(MIGRATION_ENABLED)
     add_custom_command(
         OUTPUT ${CMAKE_SOURCE_DIR}/${GEN_LCF}
         COMMAND ${CMAKE_COMMAND} -E env OBJDUMP=${OBJDUMP}
-                ${PYTHON} ${SCRIPTS_DIR}/gen_lcf.py ${OVERLAY_LCF}
+                ${PYTHON_CMD} ${SCRIPTS_DIR}/build/gen_lcf.py ${OVERLAY_LCF}
                 ${BUILD_DIR}/generated/main ${BUILD_DIR}/${SRC_DIR} ${GEN_LCF}
         DEPENDS ${CMAKE_SOURCE_DIR}/${OVERLAY_LCF}
                 ${CMAKE_SOURCE_DIR}/${MIGRATE_MANIFEST}
-                ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/gen_lcf.py
+                ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/gen_lcf.py
                 ${GENERATED_PLAN_FILES} ${LCF_CONTRIB_OBJS}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "Generating ${GEN_LCF}"
@@ -138,9 +170,7 @@ endif()
 #
 # Link
 #
-# mwld takes the main application's objects via a response file; link order is
-# significant. The overlays come out of this same command, and their MWo3
-# headers are stamped on immediately afterwards.
+# mwld takes the main objects via a response file; link order is significant.
 list(JOIN MAIN_OBJS " " O_FILES_CONTENT)
 file(GENERATE OUTPUT ${CMAKE_BINARY_DIR}/o_files CONTENT "${O_FILES_CONTENT}\n")
 
@@ -152,30 +182,26 @@ endforeach()
 overlay_link_args(OVERLAY_ARGS)
 check_overlay_prefixes()
 
-# Each overlay contributes an image to the link, a header-stamping step after
-# it, and a file to verify. Overlay ids are 1-based and follow declaration
-# order, matching the order the -overlay options are passed in.
+# Each overlay contributes an image to the link, a round-up of that image to
+# the retail file boundary, and a file to verify. The linker writes the images
+# itself, MWo3 header and all; see cmake/Overlays.cmake.
 set(OVERLAY_BINS "")
-set(STAMP_COMMANDS "")
+set(PAD_COMMANDS "")
 set(VERIFY_FILES ${OUTPUT})
-set(overlay_id 0)
 foreach(name IN LISTS OVERLAYS)
-    math(EXPR overlay_id "${overlay_id} + 1")
     string(TOUPPER ${name} upper)
     list(APPEND OVERLAY_BINS ${CMAKE_BINARY_DIR}/${upper}.BIN)
     list(APPEND VERIFY_FILES ${BUILD_DIR}/${upper}.BIN)
-    list(APPEND STAMP_COMMANDS
-        COMMAND ${PYTHON} ${SCRIPTS_DIR}/mwo3.py --elf ${OUTPUT}
-                --name ${name} --id ${overlay_id} ${BUILD_DIR}/${upper}.BIN)
+    list(APPEND PAD_COMMANDS
+        COMMAND truncate -s %${OVERLAY_FILE_ALIGN} ${BUILD_DIR}/${upper}.BIN)
 endforeach()
 
 add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/${OUTPUT} ${OVERLAY_BINS}
     COMMAND ${LD_MW} ${LD_MW_FLAGS} -o ${OUTPUT} ${GEN_LCF}
             @${BUILD_DIR}/o_files ${OVERLAY_ARGS}
-    ${STAMP_COMMANDS}
+    ${PAD_COMMANDS}
     DEPENDS ${ABS_OBJS} ${CMAKE_SOURCE_DIR}/${GEN_LCF} ${CMAKE_BINARY_DIR}/o_files
-            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/mwo3.py
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Linking ${OUTPUT} + overlays"
     VERBATIM)
@@ -183,31 +209,151 @@ add_custom_command(
 add_custom_target(elf DEPENDS ${CMAKE_SOURCE_DIR}/${OUTPUT} ${OVERLAY_BINS})
 
 #
+# Symbol provenance
+#
+# Which symbols come from the decompiled C++ and which still come from the
+# reference assembly, read from the objects themselves rather than any list.
+# VERBOSE_PROVENANCE echoes every symbol instead of the one-line summary.
+option(VERBOSE_PROVENANCE "Echo every symbol and its provider during the build" OFF)
+set(PROVENANCE ${BUILD_DIR}/symbol_provenance.txt)
+set(PROVENANCE_FLAGS "")
+if(VERBOSE_PROVENANCE)
+    set(PROVENANCE_FLAGS --verbose)
+endif()
+
+set(CPP_OBJS "")
+foreach(obj IN LISTS MAIN_OBJS)
+    if(obj MATCHES "\\.(c|cpp)\\.o$")
+        list(APPEND CPP_OBJS ${CMAKE_SOURCE_DIR}/${obj})
+    endif()
+endforeach()
+
+add_custom_command(
+    OUTPUT ${CMAKE_SOURCE_DIR}/${PROVENANCE}
+    COMMAND ${CMAKE_COMMAND} -E env MIPS_TOOL_PREFIX=${MIPS_TOOL_PREFIX}
+            ${PYTHON_CMD} ${SCRIPTS_DIR}/build/gen_layout.py
+            --obj-dir ${BUILD_DIR}/${SRC_DIR} --provenance ${PROVENANCE}
+            ${PROVENANCE_FLAGS}
+    DEPENDS ${CPP_OBJS} ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/gen_layout.py
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Resolving symbol provenance"
+    USES_TERMINAL
+    VERBATIM)
+
+add_custom_target(provenance DEPENDS ${CMAKE_SOURCE_DIR}/${PROVENANCE})
+
+#
+# The compile flags, as a build artefact
+#
+# diff.sh --scratch sends these to decomp.me. Written out rather than copied
+# into that script, so the two cannot drift.
+string(JOIN " " CC_MW_FLAGS_TEXT ${CC_MW_FLAGS})
+# file(GENERATE) rather than file(WRITE): it leaves the file alone when the
+# content is unchanged, so it cannot make anything downstream look stale.
+file(GENERATE OUTPUT ${CMAKE_BINARY_DIR}/compiler_flags.txt
+     CONTENT "${CC_MW_FLAGS_TEXT}\n")
+
+#
+# m2c context
+#
+# m2c needs the project's declarations as one C file; built from every header
+# so the same ctx.c serves any function. See scripts/diff/m2ctx.py.
+#
+# A plain glob, deliberately: CONFIGURE_DEPENDS is dirty by construction, so it
+# would re-run CMake and relink on every build. cmake.sh configures every time,
+# which re-evaluates this anyway.
+file(GLOB CTX_HEADERS
+     ${CMAKE_SOURCE_DIR}/${INCLUDE_DIR}/*.hpp
+     ${CMAKE_SOURCE_DIR}/${INCLUDE_DIR}/*.h)
+
+# One command, two outputs: ctx.cpp is the amalgamated C++ and ctx.c is what
+# clang re-emits from it, so they are always the same content either side of
+# that step.
+add_custom_command(
+    OUTPUT ${CMAKE_SOURCE_DIR}/${CTX} ${CMAKE_SOURCE_DIR}/${CTX_CPP}
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/diff/m2ctx.py -o ${CTX}
+    DEPENDS ${CTX_HEADERS} ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/diff/m2ctx.py
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Generating m2c context"
+    VERBATIM)
+
+add_custom_target(ctx DEPENDS ${CMAKE_SOURCE_DIR}/${CTX} ${CMAKE_SOURCE_DIR}/${CTX_CPP})
+
+#
+# objdiff / decomp.dev
+#
+# objdiff.json pairs each retail function's reference object with whatever
+# provides it now; scripts/build/gen_objdiff.py derives it. A decompiled
+# function's .s leaves the object lists, so those are assembled here for
+# objdiff alone -- they are in no object list, so nothing links them.
+execute_process(
+    COMMAND ${PYTHON} ${SCRIPTS_DIR}/build/gen_objdiff.py --list-extra-objects
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE objdiff_extra_raw
+    RESULT_VARIABLE objdiff_rc
+    ERROR_QUIET
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+set(OBJDIFF_TARGET_OBJS "")
+if(objdiff_rc EQUAL 0 AND objdiff_extra_raw)
+    string(REGEX REPLACE "[ \t\r\n]+" ";" objdiff_extra "${objdiff_extra_raw}")
+    foreach(src IN LISTS objdiff_extra)
+        list(APPEND OBJDIFF_TARGET_OBJS ${BUILD_DIR}/${src}.o)
+    endforeach()
+
+    make_object_dirs("${OBJDIFF_TARGET_OBJS}")
+    foreach(obj IN LISTS OBJDIFF_TARGET_OBJS)
+        add_object(${obj})
+    endforeach()
+endif()
+
+set(OBJDIFF_CONFIG objdiff.json)
+
+add_custom_command(
+    OUTPUT ${CMAKE_SOURCE_DIR}/${OBJDIFF_CONFIG}
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/gen_objdiff.py -o ${OBJDIFF_CONFIG}
+    DEPENDS ${CMAKE_SOURCE_DIR}/${PROVENANCE}
+            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/gen_objdiff.py
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Generating ${OBJDIFF_CONFIG}"
+    VERBATIM)
+
+set(OBJDIFF_ABS_OBJS "")
+foreach(obj IN LISTS OBJDIFF_TARGET_OBJS)
+    list(APPEND OBJDIFF_ABS_OBJS ${CMAKE_SOURCE_DIR}/${obj})
+endforeach()
+
+add_custom_target(objdiff
+    DEPENDS ${CMAKE_SOURCE_DIR}/${OBJDIFF_CONFIG} ${OBJDIFF_ABS_OBJS})
+add_dependencies(objdiff elf provenance)
+
+#
 # Verification
 #
+# USES_TERMINAL puts a step in Ninja's console pool so its progress appears as
+# it happens. That pool runs one edge at a time, so it is only for the few
+# steps slow enough to need it -- hashing DATA.DAT alone is 1.7GB.
 add_custom_target(verify_extracted
-    COMMAND ${PYTHON} ${SCRIPTS_DIR}/verify.py -e
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/verify.py -e
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    USES_TERMINAL
     VERBATIM)
 
 # verify.py decides per file how much of it has to match: the executable over
 # its code/data span, the overlays byte for byte.
 add_custom_target(build ALL
-    COMMAND ${PYTHON} ${SCRIPTS_DIR}/verify.py -f ${VERIFY_FILES}
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/verify.py -f ${VERIFY_FILES}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    USES_TERMINAL
     VERBATIM)
-add_dependencies(build verify_extracted elf)
+add_dependencies(build verify_extracted elf provenance ctx)
 
 #
 # ISO
 #
-# The ELF that goes on the disc is linked a second time without debugging
-# information. The main output keeps its symbols -- asm-differ needs them, and
-# so does the overlay header stamping -- but that makes it far larger than the
-# retail file, which has to fit back into the sectors the retail file occupies.
-# Everything else about the two links is identical -- including the overlay
-# files it drops beside the ELF, which are the same images without their
-# headers stamped on, and are not what ends up on the disc.
+# The disc's ELF is linked a second time without debug information: the main
+# output keeps its symbols for compare_build.py, which makes it far too large
+# for the sectors the retail file occupies. The links are otherwise identical.
 set(ISO_ELF ${BUILD_DIR}/nodebug/${BASENAME})
 
 add_custom_command(
@@ -224,14 +370,15 @@ add_custom_command(
 # place of their retail counterparts, so a built file may be any size.
 add_custom_command(
     OUTPUT "${CMAKE_SOURCE_DIR}/${BUILT_ISO}"
-    COMMAND ${PYTHON} ${SCRIPTS_DIR}/make_iso.py
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/make_iso.py
             --source "${RETAIL_ISO}" --tree ${ROM_DIR}/extracted/iso
             --out "${BUILT_ISO}"
             ${ISO_ELF} ${BUILD_DIR}/TITLE.BIN ${BUILD_DIR}/DUN.BIN
     DEPENDS ${CMAKE_SOURCE_DIR}/${ISO_ELF} ${OVERLAY_BINS}
-            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/make_iso.py
+            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/make_iso.py
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Mastering ${BUILT_ISO}"
+    USES_TERMINAL
     VERBATIM)
 
 # Deliberately not tied to the verification target: booting a build that does
@@ -241,11 +388,10 @@ add_custom_target(iso DEPENDS "${CMAKE_SOURCE_DIR}/${BUILT_ISO}")
 #
 # Run
 #
-# PCSX2 needs a display, so this only works outside the build container. Use
-# run.sh instead, which builds in the container and then launches the
-# emulator on the host; this target is for a native toolchain.
+# PCSX2 needs a display, so this is for a native toolchain; use run.sh
+# otherwise, which builds in the container and launches the emulator outside.
 add_custom_target(run
-    COMMAND ${SCRIPTS_DIR}/pcsx2.sh "${BUILT_ISO}"
+    COMMAND ${SCRIPTS_DIR}/host/pcsx2.sh "${BUILT_ISO}"
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     USES_TERMINAL
     VERBATIM)
@@ -254,20 +400,51 @@ add_dependencies(run iso)
 #
 # Setup
 #
-# asm-differ resolves the expected file as <expected_dir>/<our path>, so it
-# looks for rom/extracted/build/... ; the symlink points that at the extracted
-# disc. It is relative on purpose, so it resolves both on the host and at
-# whatever path the container mounts the tree on.
-add_custom_target(setup
-    COMMAND sha256sum -c checksum.sha256
-    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} ${PYTHON} ${SCRIPTS_DIR}/extract.py
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-            iso ${CMAKE_SOURCE_DIR}/rom/extracted/build
-    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} ${PYTHON} ${SCRIPTS_DIR}/disassemble.py
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/${ROM_DIR}
+# Three steps with real outputs rather than one target that redoes all of
+# them, so ninja skips whichever are already done. The checksum has no natural
+# output and leaves a stamp; the others are named by one file each.
+set(STAMP_DIR ${BUILD_DIR}/stamps)
+set(ROM_VERIFIED ${STAMP_DIR}/rom.verified)
+set(EXTRACTED_ELF ${ROM_DIR}/extracted/iso/${BASENAME})
+set(REF_INDEX ${REF_DIR}/asm/objects/main.index)
+
+add_custom_command(
+    OUTPUT ${CMAKE_SOURCE_DIR}/${ROM_VERIFIED}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${STAMP_DIR}
+    COMMAND ${CMAKE_COMMAND} -E chdir ${ROM_DIR} sha256sum -c checksum.sha256
+    COMMAND ${CMAKE_COMMAND} -E touch ${ROM_VERIFIED}
+    DEPENDS "${CMAKE_SOURCE_DIR}/${RETAIL_ISO}"
+            ${CMAKE_SOURCE_DIR}/${ROM_DIR}/checksum.sha256
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Checking the retail disc image"
+    USES_TERMINAL
     VERBATIM)
 
-add_custom_target(disassemble
-    COMMAND ${PYTHON} ${SCRIPTS_DIR}/disassemble.py
+add_custom_command(
+    OUTPUT ${CMAKE_SOURCE_DIR}/${EXTRACTED_ELF}
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/extract.py
+    DEPENDS ${CMAKE_SOURCE_DIR}/${ROM_VERIFIED}
+            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/extract.py
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Extracting the disc"
+    USES_TERMINAL
+    VERBATIM)
+
+add_custom_command(
+    OUTPUT ${CMAKE_SOURCE_DIR}/${REF_INDEX}
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/disassemble.py
+    DEPENDS ${CMAKE_SOURCE_DIR}/${EXTRACTED_ELF}
+            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/disassemble.py
+            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/verify.py
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Disassembling the disc"
+    USES_TERMINAL
+    VERBATIM)
+
+add_custom_target(setup DEPENDS ${CMAKE_SOURCE_DIR}/${REF_INDEX})
+
+add_custom_target(disassemble
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/disassemble.py
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    USES_TERMINAL
     VERBATIM)

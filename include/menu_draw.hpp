@@ -2,6 +2,24 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+struct ATTACH_LIST;
+class CCamera;
+class CFrame;
+class CRect_i_;
+class CTexture;
+class CUserStatus;
+class ClsMes;
+struct IHAVEITEM;
+struct ITEM_PACK;
+struct PERSONAL_BOARD;
+struct SAVEDATA_INFO;
+struct WEAPON_HAVE;
+struct spRGBA;
+
+
 /* ?ret */ void SaveMenuKeySaveCheck(void); // @ 0x221730 (0x170 bytes) -- mangled: SaveMenuKeySaveCheck__Fv
 /* ?ret */ void SaveMenuKeySaveDecide(void); // @ 0x2218A0 (0xE0 bytes) -- mangled: SaveMenuKeySaveDecide__Fv
 /* ?ret */ void SaveMenuKeySave(void); // @ 0x221980 (0x130 bytes) -- mangled: SaveMenuKeySave__Fv

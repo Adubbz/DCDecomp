@@ -2,6 +2,17 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+struct ATTACH_LIST;
+class CCharacter;
+struct ITEM_PACK;
+struct MAP_JUMP_COMPARE;
+struct RECT;
+struct WEAPON_HAVE;
+
+
 /* ?ret */ void GetItemMoney(int, int); // @ 0x1E6EF0 (0x50 bytes) -- mangled: GetItemMoney__Fii
 /* ?ret */ void ShopNoInput(int *, int, int); // @ 0x1E6F40 (0x90 bytes) -- mangled: ShopNoInput__FPiii
 /* ?ret */ void InitAllHaveData(void); // @ 0x1E6FD0 (0x50 bytes) -- mangled: InitAllHaveData__Fv

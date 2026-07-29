@@ -1,0 +1,122 @@
+.include "macro.inc"
+
+.set noat /* Allow manual use of $at. */
+.set noreorder /* Don't insert nops after branches. */
+
+.section .text
+glabel SearchItemIndexNo__14CDngStatusDataFi
+/* 0BDA40 001BD940 8400A228 */  slti        $2, $5, 0x84
+/* 0BDA44 001BD944 12004014 */  bnez        $2, .L001BD990
+/* 0BDA48 001BD948 00000000 */   nop
+/* 0BDA4C 001BD94C 0101A128 */  slti        $1, $5, 0x101
+/* 0BDA50 001BD950 0F002010 */  beqz        $1, .L001BD990
+/* 0BDA54 001BD954 00000000 */   nop
+/* 0BDA58 001BD958 28160070 */  paddub      $2, $0, $0
+/* 0BDA5C 001BD95C 09000010 */  b           .L001BD984
+/* 0BDA60 001BD960 00000000 */   nop
+.L001BD964:
+/* 0BDA64 001BD964 40180200 */  sll         $3, $2, 1
+/* 0BDA68 001BD968 21186400 */  addu        $3, $3, $4
+/* 0BDA6C 001BD96C 62436384 */  lh          $3, 0x4362($3)
+/* 0BDA70 001BD970 03006514 */  bne         $3, $5, .L001BD980
+/* 0BDA74 001BD974 00000000 */   nop
+/* 0BDA78 001BD978 4F000010 */  b           .L001BDAB8
+/* 0BDA7C 001BD97C 00000000 */   nop
+.L001BD980:
+/* 0BDA80 001BD980 01004224 */  addiu       $2, $2, 0x1
+.L001BD984:
+/* 0BDA84 001BD984 03004328 */  slti        $3, $2, 0x3
+/* 0BDA88 001BD988 F6FF6014 */  bnez        $3, .L001BD964
+/* 0BDA8C 001BD98C 00000000 */   nop
+.L001BD990:
+/* 0BDA90 001BD990 8400A228 */  slti        $2, $5, 0x84
+/* 0BDA94 001BD994 13004014 */  bnez        $2, .L001BD9E4
+/* 0BDA98 001BD998 00000000 */   nop
+/* 0BDA9C 001BD99C 0101A128 */  slti        $1, $5, 0x101
+/* 0BDAA0 001BD9A0 10002010 */  beqz        $1, .L001BD9E4
+/* 0BDAA4 001BD9A4 00000000 */   nop
+/* 0BDAA8 001BD9A8 28160070 */  paddub      $2, $0, $0
+/* 0BDAAC 001BD9AC 09000010 */  b           .L001BD9D4
+/* 0BDAB0 001BD9B0 00000000 */   nop
+.L001BD9B4:
+/* 0BDAB4 001BD9B4 40180200 */  sll         $3, $2, 1
+/* 0BDAB8 001BD9B8 21186400 */  addu        $3, $3, $4
+/* 0BDABC 001BD9BC 6E436384 */  lh          $3, 0x436E($3)
+/* 0BDAC0 001BD9C0 03006514 */  bne         $3, $5, .L001BD9D0
+/* 0BDAC4 001BD9C4 00000000 */   nop
+/* 0BDAC8 001BD9C8 3B000010 */  b           .L001BDAB8
+/* 0BDACC 001BD9CC 00000000 */   nop
+.L001BD9D0:
+/* 0BDAD0 001BD9D0 01004224 */  addiu       $2, $2, 0x1
+.L001BD9D4:
+/* 0BDAD4 001BD9D4 60438380 */  lb          $3, 0x4360($4)
+/* 0BDAD8 001BD9D8 2A184300 */  slt         $3, $2, $3
+/* 0BDADC 001BD9DC F5FF6014 */  bnez        $3, .L001BD9B4
+/* 0BDAE0 001BD9E0 00000000 */   nop
+.L001BD9E4:
+/* 0BDAE4 001BD9E4 5100A228 */  slti        $2, $5, 0x51
+/* 0BDAE8 001BD9E8 14004014 */  bnez        $2, .L001BDA3C
+/* 0BDAEC 001BD9EC 00000000 */   nop
+/* 0BDAF0 001BD9F0 8400A128 */  slti        $1, $5, 0x84
+/* 0BDAF4 001BD9F4 11002010 */  beqz        $1, .L001BDA3C
+/* 0BDAF8 001BD9F8 00000000 */   nop
+/* 0BDAFC 001BD9FC 28160070 */  paddub      $2, $0, $0
+/* 0BDB00 001BDA00 0B000010 */  b           .L001BDA30
+/* 0BDB04 001BDA04 00000000 */   nop
+.L001BDA08:
+/* 0BDB08 001BDA08 40190200 */  sll         $3, $2, 5
+/* 0BDB0C 001BDA0C 21186400 */  addu        $3, $3, $4
+/* 0BDB10 001BDA10 0100013C */  lui         $1, (0x10000 >> 16)
+/* 0BDB14 001BDA14 21086100 */  addu        $1, $3, $1
+/* 0BDB18 001BDA18 FC842384 */  lh          $3, -0x7B04($1)
+/* 0BDB1C 001BDA1C 03006514 */  bne         $3, $5, .L001BDA2C
+/* 0BDB20 001BDA20 00000000 */   nop
+/* 0BDB24 001BDA24 24000010 */  b           .L001BDAB8
+/* 0BDB28 001BDA28 00000000 */   nop
+.L001BDA2C:
+/* 0BDB2C 001BDA2C 01004224 */  addiu       $2, $2, 0x1
+.L001BDA30:
+/* 0BDB30 001BDA30 28004328 */  slti        $3, $2, 0x28
+/* 0BDB34 001BDA34 F4FF6014 */  bnez        $3, .L001BDA08
+/* 0BDB38 001BDA38 00000000 */   nop
+.L001BDA3C:
+/* 0BDB3C 001BDA3C 0101A228 */  slti        $2, $5, 0x101
+/* 0BDB40 001BDA40 1C004014 */  bnez        $2, .L001BDAB4
+/* 0BDB44 001BDA44 00000000 */   nop
+/* 0BDB48 001BDA48 283E0070 */  paddub      $7, $0, $0
+/* 0BDB4C 001BDA4C 15000010 */  b           .L001BDAA4
+/* 0BDB50 001BDA50 00000000 */   nop
+.L001BDA54:
+/* 0BDB54 001BDA54 28160070 */  paddub      $2, $0, $0
+/* 0BDB58 001BDA58 0E000010 */  b           .L001BDA94
+/* 0BDB5C 001BDA5C 00000000 */   nop
+.L001BDA60:
+/* 0BDB60 001BDA60 A80A0324 */  addiu       $3, $0, 0xAA8
+/* 0BDB64 001BDA64 1818E300 */  mult        $3, $7, $3
+/* 0BDB68 001BDA68 21306400 */  addu        $6, $3, $4
+/* 0BDB6C 001BDA6C 40190200 */  sll         $3, $2, 5
+/* 0BDB70 001BDA70 23186200 */  subu        $3, $3, $2
+/* 0BDB74 001BDA74 C0180300 */  sll         $3, $3, 3
+/* 0BDB78 001BDA78 21186600 */  addu        $3, $3, $6
+/* 0BDB7C 001BDA7C 0C456384 */  lh          $3, 0x450C($3)
+/* 0BDB80 001BDA80 03006514 */  bne         $3, $5, .L001BDA90
+/* 0BDB84 001BDA84 00000000 */   nop
+/* 0BDB88 001BDA88 0B000010 */  b           .L001BDAB8
+/* 0BDB8C 001BDA8C 00000000 */   nop
+.L001BDA90:
+/* 0BDB90 001BDA90 01004224 */  addiu       $2, $2, 0x1
+.L001BDA94:
+/* 0BDB94 001BDA94 0A004328 */  slti        $3, $2, 0xA
+/* 0BDB98 001BDA98 F1FF6014 */  bnez        $3, .L001BDA60
+/* 0BDB9C 001BDA9C 00000000 */   nop
+/* 0BDBA0 001BDAA0 0100E724 */  addiu       $7, $7, 0x1
+.L001BDAA4:
+/* 0BDBA4 001BDAA4 05008280 */  lb          $2, 0x5($4)
+/* 0BDBA8 001BDAA8 2A10E200 */  slt         $2, $7, $2
+/* 0BDBAC 001BDAAC E9FF4014 */  bnez        $2, .L001BDA54
+/* 0BDBB0 001BDAB0 00000000 */   nop
+.L001BDAB4:
+/* 0BDBB4 001BDAB4 FFFF0224 */  addiu       $2, $0, -0x1
+.L001BDAB8:
+/* 0BDBB8 001BDAB8 0800E003 */  jr          $31
+/* 0BDBBC 001BDABC 00000000 */   nop

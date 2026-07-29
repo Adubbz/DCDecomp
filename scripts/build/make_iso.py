@@ -14,8 +14,31 @@ so nothing depends on the old sector numbers.
 
 The naming and the volume identifiers are taken from the retail ISO rather
 than guessed, so the new image describes itself the same way: ISO9660 names
-carry their `;1` version, and the UDF tree keeps the original mixed case
-(title.bin against ISO9660's TITLE.BIN).
+carry their `;1` version.
+
+## The path table has to be at sector 257
+
+The console does not read the ISO9660 path table from where the volume
+descriptor says it is. On DVD media it reads a fixed LBA 257, which is where
+Sony's mastering tool always put it, and follows that table to the root
+directory. Every general-purpose mastering tool instead packs the path table
+in right after the descriptors, so the console reads sector 257, finds
+nothing, and cannot open a single file -- not the executable, not even
+SYSTEM.CNF. That is a silent failure: the disc mounts perfectly on a PC and in
+PCSX2's own ISO reader, and the game simply dies moments after boot.
+
+This was traced with a devel build of PCSX2 (IOP.cdvd tracing), which shows
+the console reading sector 16 and then sector 257 and giving up:
+
+    CDRead: Reading Sector 0000016      <- the volume descriptor
+    CDRead: Reading Sector 0000257      <- where it expects the path table
+    open fail name SCUS_971.11;1
+
+so after mastering, the path tables are moved to 257/259 and the descriptor is
+repointed at them. Sectors 257-260 fall inside the area UDF reserves, which is
+why the image is mastered with UDF and then has its UDF anchors cleared: the
+console reads ISO9660 and ignores UDF entirely (verified by booting the retail
+disc with its anchors zeroed), so the reservation is all UDF is used for here.
 
 Usage:
     make_iso.py --source <retail.iso> --tree <extracted dir> --out <built.iso>
@@ -23,6 +46,7 @@ Usage:
 """
 import argparse
 import os
+import struct
 import sys
 
 import pycdlib
@@ -82,6 +106,38 @@ def read_layout(source):
         iso.close()
 
 
+# Where the console looks for the ISO9660 path tables, and where Sony's
+# mastering tool put them.
+PATH_TABLE_LBA = 257
+PATH_TABLE_M_LBA = 259
+SECTOR = 2048
+
+def relocate_path_tables(path):
+    """Move the path tables to the sectors the console reads them from."""
+    with open(path, 'r+b') as image:
+        image.seek(16 * SECTOR)
+        pvd = bytearray(image.read(SECTOR))
+        l_lba = struct.unpack_from('<I', pvd, 140)[0]
+        m_lba = struct.unpack_from('>I', pvd, 148)[0]
+
+        image.seek(l_lba * SECTOR)
+        l_table = image.read(SECTOR)
+        image.seek(m_lba * SECTOR)
+        m_table = image.read(SECTOR)
+
+        image.seek(PATH_TABLE_LBA * SECTOR)
+        image.write(l_table)
+        image.seek(PATH_TABLE_M_LBA * SECTOR)
+        image.write(m_table)
+
+        struct.pack_into('<I', pvd, 140, PATH_TABLE_LBA)
+        struct.pack_into('>I', pvd, 148, PATH_TABLE_M_LBA)
+        image.seek(16 * SECTOR)
+        image.write(bytes(pvd))
+
+    print(f'  path tables moved to {PATH_TABLE_LBA}/{PATH_TABLE_M_LBA}')
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--source', required=True, help='the retail ISO, read for its layout')
@@ -121,6 +177,8 @@ def main():
     os.makedirs(os.path.dirname(args.out) or '.', exist_ok=True)
     iso.write(args.out)
     iso.close()
+
+    relocate_path_tables(args.out)
 
     print(f'Wrote {args.out} ({os.path.getsize(args.out)} bytes)')
 

@@ -1,0 +1,297 @@
+.include "macro.inc"
+
+.set noat /* Allow manual use of $at. */
+.set noreorder /* Don't insert nops after branches. */
+
+.section .text
+glabel MakeMesWinTbl__6ClsMesFi
+/* 04F9D0 0014F8D0 B0FFBD27 */  addiu       $29, $29, -0x50
+/* 04F9D4 0014F8D4 3000BF7F */  sq          $31, 0x30($29)
+/* 04F9D8 0014F8D8 2000B27F */  sq          $18, 0x20($29)
+/* 04F9DC 0014F8DC 1000B17F */  sq          $17, 0x10($29)
+/* 04F9E0 0014F8E0 0000B07F */  sq          $16, 0x0($29)
+/* 04F9E4 0014F8E4 28968070 */  paddub      $18, $4, $0
+/* 04F9E8 0014F8E8 A017828C */  lw          $2, 0x17A0($4)
+/* 04F9EC 0014F8EC 04004014 */  bnez        $2, .L0014F900
+/* 04F9F0 0014F8F0 00000000 */   nop
+/* 04F9F4 0014F8F4 28160070 */  paddub      $2, $0, $0
+/* 04F9F8 0014F8F8 F8000010 */  b           .L0014FCDC
+/* 04F9FC 0014F8FC 00000000 */   nop
+.L0014F900:
+/* 04FA00 0014F900 2C3D050C */  jal         GetTextLineDataTop__6ClsMesFi
+/* 04FA04 0014F904 00000000 */   nop
+/* 04FA08 0014F908 28864070 */  paddub      $16, $2, $0
+/* 04FA0C 0014F90C 04000016 */  bnez        $16, .L0014F920
+/* 04FA10 0014F910 00000000 */   nop
+/* 04FA14 0014F914 28160070 */  paddub      $2, $0, $0
+/* 04FA18 0014F918 F0000010 */  b           .L0014FCDC
+/* 04FA1C 0014F91C 00000000 */   nop
+.L0014F920:
+/* 04FA20 0014F920 28264072 */  paddub      $4, $18, $0
+/* 04FA24 0014F924 643D050C */  jal         InitMesWinTbl__6ClsMesFv
+/* 04FA28 0014F928 00000000 */   nop
+/* 04FA2C 0014F92C 4800A0AF */  sw          $0, 0x48($29)
+/* 04FA30 0014F930 4C00A0AF */  sw          $0, 0x4C($29)
+.L0014F934:
+/* 04FA34 0014F934 00001186 */  lh          $17, 0x0($16)
+/* 04FA38 0014F938 02001026 */  addiu       $16, $16, 0x2
+/* 04FA3C 0014F93C 03FF0224 */  addiu       $2, $0, -0xFD
+/* 04FA40 0014F940 05002212 */  beq         $17, $2, .L0014F958
+/* 04FA44 0014F944 00000000 */   nop
+/* 04FA48 0014F948 00012226 */  addiu       $2, $17, 0x100
+/* 04FA4C 0014F94C 0200412C */  sltiu       $1, $2, 0x2
+/* 04FA50 0014F950 04002010 */  beqz        $1, .L0014F964
+/* 04FA54 0014F954 00000000 */   nop
+.L0014F958:
+/* 04FA58 0014F958 FFFF0224 */  addiu       $2, $0, -0x1
+/* 04FA5C 0014F95C 381742AE */  sw          $2, 0x1738($18)
+/* 04FA60 0014F960 3C1742AE */  sw          $2, 0x173C($18)
+.L0014F964:
+/* 04FA64 0014F964 02FF0224 */  addiu       $2, $0, -0xFE
+/* 04FA68 0014F968 2F002212 */  beq         $17, $2, .L0014FA28
+/* 04FA6C 0014F96C 00000000 */   nop
+/* 04FA70 0014F970 03FF0224 */  addiu       $2, $0, -0xFD
+/* 04FA74 0014F974 21002212 */  beq         $17, $2, .L0014F9FC
+/* 04FA78 0014F978 00000000 */   nop
+/* 04FA7C 0014F97C 00FF0224 */  addiu       $2, $0, -0x100
+/* 04FA80 0014F980 10002212 */  beq         $17, $2, .L0014F9C4
+/* 04FA84 0014F984 00000000 */   nop
+/* 04FA88 0014F988 01FF0224 */  addiu       $2, $0, -0xFF
+/* 04FA8C 0014F98C 03002212 */  beq         $17, $2, .L0014F99C
+/* 04FA90 0014F990 00000000 */   nop
+/* 04FA94 0014F994 3D000010 */  b           .L0014FA8C
+/* 04FA98 0014F998 00000000 */   nop
+.L0014F99C:
+/* 04FA9C 0014F99C 4800A787 */  lh          $7, 0x48($29)
+/* 04FAA0 0014F9A0 4C00A887 */  lh          $8, 0x4C($29)
+/* 04FAA4 0014F9A4 28264072 */  paddub      $4, $18, $0
+/* 04FAA8 0014F9A8 282E2072 */  paddub      $5, $17, $0
+/* 04FAAC 0014F9AC 28360070 */  paddub      $6, $0, $0
+/* 04FAB0 0014F9B0 783D050C */  jal         SetMesWinTbl__6ClsMesFiiss
+/* 04FAB4 0014F9B4 00000000 */   nop
+/* 04FAB8 0014F9B8 01000224 */  addiu       $2, $0, 0x1
+/* 04FABC 0014F9BC C7000010 */  b           .L0014FCDC
+/* 04FAC0 0014F9C0 00000000 */   nop
+.L0014F9C4:
+/* 04FAC4 0014F9C4 4800A787 */  lh          $7, 0x48($29)
+/* 04FAC8 0014F9C8 4C00A887 */  lh          $8, 0x4C($29)
+/* 04FACC 0014F9CC 28264072 */  paddub      $4, $18, $0
+/* 04FAD0 0014F9D0 282E2072 */  paddub      $5, $17, $0
+/* 04FAD4 0014F9D4 28360070 */  paddub      $6, $0, $0
+/* 04FAD8 0014F9D8 783D050C */  jal         SetMesWinTbl__6ClsMesFiiss
+/* 04FADC 0014F9DC 00000000 */   nop
+/* 04FAE0 0014F9E0 4800A0AF */  sw          $0, 0x48($29)
+/* 04FAE4 0014F9E4 4C00A38F */  lw          $3, 0x4C($29)
+/* 04FAE8 0014F9E8 0C00428E */  lw          $2, 0xC($18)
+/* 04FAEC 0014F9EC 21106200 */  addu        $2, $3, $2
+/* 04FAF0 0014F9F0 4C00A2AF */  sw          $2, 0x4C($29)
+/* 04FAF4 0014F9F4 CFFF0010 */  b           .L0014F934
+/* 04FAF8 0014F9F8 00000000 */   nop
+.L0014F9FC:
+/* 04FAFC 0014F9FC 4800A787 */  lh          $7, 0x48($29)
+/* 04FB00 0014FA00 4C00A887 */  lh          $8, 0x4C($29)
+/* 04FB04 0014FA04 28264072 */  paddub      $4, $18, $0
+/* 04FB08 0014FA08 282E2072 */  paddub      $5, $17, $0
+/* 04FB0C 0014FA0C 28360070 */  paddub      $6, $0, $0
+/* 04FB10 0014FA10 783D050C */  jal         SetMesWinTbl__6ClsMesFiiss
+/* 04FB14 0014FA14 00000000 */   nop
+/* 04FB18 0014FA18 4800A0AF */  sw          $0, 0x48($29)
+/* 04FB1C 0014FA1C 4C00A0AF */  sw          $0, 0x4C($29)
+/* 04FB20 0014FA20 C4FF0010 */  b           .L0014F934
+/* 04FB24 0014FA24 00000000 */   nop
+.L0014FA28:
+/* 04FB28 0014FA28 4800A787 */  lh          $7, 0x48($29)
+/* 04FB2C 0014FA2C 4C00A887 */  lh          $8, 0x4C($29)
+/* 04FB30 0014FA30 28264072 */  paddub      $4, $18, $0
+/* 04FB34 0014FA34 282E2072 */  paddub      $5, $17, $0
+/* 04FB38 0014FA38 28360070 */  paddub      $6, $0, $0
+/* 04FB3C 0014FA3C 783D050C */  jal         SetMesWinTbl__6ClsMesFiiss
+/* 04FB40 0014FA40 00000000 */   nop
+/* 04FB44 0014FA44 3C17428E */  lw          $2, 0x173C($18)
+/* 04FB48 0014FA48 04004104 */  bgez        $2, .L0014FA5C
+/* 04FB4C 0014FA4C 00000000 */   nop
+/* 04FB50 0014FA50 3817428E */  lw          $2, 0x1738($18)
+/* 04FB54 0014FA54 07004004 */  bltz        $2, .L0014FA74
+/* 04FB58 0014FA58 00000000 */   nop
+.L0014FA5C:
+/* 04FB5C 0014FA5C 4800A38F */  lw          $3, 0x48($29)
+/* 04FB60 0014FA60 3817428E */  lw          $2, 0x1738($18)
+/* 04FB64 0014FA64 21106200 */  addu        $2, $3, $2
+/* 04FB68 0014FA68 4800A2AF */  sw          $2, 0x48($29)
+/* 04FB6C 0014FA6C B1FF0010 */  b           .L0014F934
+/* 04FB70 0014FA70 00000000 */   nop
+.L0014FA74:
+/* 04FB74 0014FA74 4800A38F */  lw          $3, 0x48($29)
+/* 04FB78 0014FA78 0800428E */  lw          $2, 0x8($18)
+/* 04FB7C 0014FA7C 21106200 */  addu        $2, $3, $2
+/* 04FB80 0014FA80 4800A2AF */  sw          $2, 0x48($29)
+/* 04FB84 0014FA84 ABFF0010 */  b           .L0014F934
+/* 04FB88 0014FA88 00000000 */   nop
+.L0014FA8C:
+/* 04FB8C 0014FA8C 00FD222A */  slti        $2, $17, -0x300
+/* 04FB90 0014FA90 16004014 */  bnez        $2, .L0014FAEC
+/* 04FB94 0014FA94 00000000 */   nop
+/* 04FB98 0014FA98 9EFD212A */  slti        $1, $17, -0x262
+/* 04FB9C 0014FA9C 13002010 */  beqz        $1, .L0014FAEC
+/* 04FBA0 0014FAA0 00000000 */   nop
+/* 04FBA4 0014FAA4 4800A787 */  lh          $7, 0x48($29)
+/* 04FBA8 0014FAA8 4C00A887 */  lh          $8, 0x4C($29)
+/* 04FBAC 0014FAAC 28264072 */  paddub      $4, $18, $0
+/* 04FBB0 0014FAB0 282E2072 */  paddub      $5, $17, $0
+/* 04FBB4 0014FAB4 28360070 */  paddub      $6, $0, $0
+/* 04FBB8 0014FAB8 783D050C */  jal         SetMesWinTbl__6ClsMesFiiss
+/* 04FBBC 0014FABC 00000000 */   nop
+/* 04FBC0 0014FAC0 28264072 */  paddub      $4, $18, $0
+/* 04FBC4 0014FAC4 282E2072 */  paddub      $5, $17, $0
+/* 04FBC8 0014FAC8 CC32050C */  jal         GetGaijiW__6ClsMesFi
+/* 04FBCC 0014FACC 00000000 */   nop
+/* 04FBD0 0014FAD0 3C1C0200 */  dsll32      $3, $2, 16
+/* 04FBD4 0014FAD4 3F1C0300 */  dsra32      $3, $3, 16
+/* 04FBD8 0014FAD8 4800A28F */  lw          $2, 0x48($29)
+/* 04FBDC 0014FADC 21104300 */  addu        $2, $2, $3
+/* 04FBE0 0014FAE0 4800A2AF */  sw          $2, 0x48($29)
+/* 04FBE4 0014FAE4 93FF0010 */  b           .L0014F934
+/* 04FBE8 0014FAE8 00000000 */   nop
+.L0014FAEC:
+/* 04FBEC 0014FAEC 00F7222A */  slti        $2, $17, -0x900
+/* 04FBF0 0014FAF0 10004014 */  bnez        $2, .L0014FB34
+/* 04FBF4 0014FAF4 00000000 */   nop
+/* 04FBF8 0014FAF8 00F8212A */  slti        $1, $17, -0x800
+/* 04FBFC 0014FAFC 0D002010 */  beqz        $1, .L0014FB34
+/* 04FC00 0014FB00 00000000 */   nop
+/* 04FC04 0014FB04 00092226 */  addiu       $2, $17, 0x900
+/* 04FC08 0014FB08 80100200 */  sll         $2, $2, 2
+/* 04FC0C 0014FB0C 3C1742AE */  sw          $2, 0x173C($18)
+/* 04FC10 0014FB10 28264072 */  paddub      $4, $18, $0
+/* 04FC14 0014FB14 3C17458E */  lw          $5, 0x173C($18)
+/* 04FC18 0014FB18 0800468E */  lw          $6, 0x8($18)
+/* 04FC1C 0014FB1C FEFF0726 */  addiu       $7, $16, -0x2
+/* 04FC20 0014FB20 E03D050C */  jal         CalcSpaceW__6ClsMesFiiPs
+/* 04FC24 0014FB24 00000000 */   nop
+/* 04FC28 0014FB28 381742AE */  sw          $2, 0x1738($18)
+/* 04FC2C 0014FB2C 81FF0010 */  b           .L0014F934
+/* 04FC30 0014FB30 00000000 */   nop
+.L0014FB34:
+/* 04FC34 0014FB34 00F8222A */  slti        $2, $17, -0x800
+/* 04FC38 0014FB38 08004014 */  bnez        $2, .L0014FB5C
+/* 04FC3C 0014FB3C 00000000 */   nop
+/* 04FC40 0014FB40 00F9212A */  slti        $1, $17, -0x700
+/* 04FC44 0014FB44 05002010 */  beqz        $1, .L0014FB5C
+/* 04FC48 0014FB48 00000000 */   nop
+/* 04FC4C 0014FB4C 00082226 */  addiu       $2, $17, 0x800
+/* 04FC50 0014FB50 381742AE */  sw          $2, 0x1738($18)
+/* 04FC54 0014FB54 77FF0010 */  b           .L0014F934
+/* 04FC58 0014FB58 00000000 */   nop
+.L0014FB5C:
+/* 04FC5C 0014FB5C 00F9222A */  slti        $2, $17, -0x700
+/* 04FC60 0014FB60 0A004014 */  bnez        $2, .L0014FB8C
+/* 04FC64 0014FB64 00000000 */   nop
+/* 04FC68 0014FB68 00FA212A */  slti        $1, $17, -0x600
+/* 04FC6C 0014FB6C 07002010 */  beqz        $1, .L0014FB8C
+/* 04FC70 0014FB70 00000000 */   nop
+/* 04FC74 0014FB74 00072326 */  addiu       $3, $17, 0x700
+/* 04FC78 0014FB78 4800A28F */  lw          $2, 0x48($29)
+/* 04FC7C 0014FB7C 21104300 */  addu        $2, $2, $3
+/* 04FC80 0014FB80 4800A2AF */  sw          $2, 0x48($29)
+/* 04FC84 0014FB84 6BFF0010 */  b           .L0014F934
+/* 04FC88 0014FB88 00000000 */   nop
+.L0014FB8C:
+/* 04FC8C 0014FB8C FAFA222A */  slti        $2, $17, -0x506
+/* 04FC90 0014FB90 22004014 */  bnez        $2, .L0014FC1C
+/* 04FC94 0014FB94 00000000 */   nop
+/* 04FC98 0014FB98 00FB212A */  slti        $1, $17, -0x500
+/* 04FC9C 0014FB9C 1F002010 */  beqz        $1, .L0014FC1C
+/* 04FCA0 0014FBA0 00000000 */   nop
+/* 04FCA4 0014FBA4 06052426 */  addiu       $4, $17, 0x506
+/* 04FCA8 0014FBA8 6039050C */  jal         SetAndGetNameRegistTbl__Fi
+/* 04FCAC 0014FBAC 00000000 */   nop
+/* 04FCB0 0014FBB0 288E4070 */  paddub      $17, $2, $0
+/* 04FCB4 0014FBB4 5FFF2012 */  beqz        $17, .L0014F934
+/* 04FCB8 0014FBB8 00000000 */   nop
+/* 04FCBC 0014FBBC 00002586 */  lh          $5, 0x0($17)
+/* 04FCC0 0014FBC0 0E000010 */  b           .L0014FBFC
+/* 04FCC4 0014FBC4 00000000 */   nop
+.L0014FBC8:
+/* 04FCC8 0014FBC8 4800A787 */  lh          $7, 0x48($29)
+/* 04FCCC 0014FBCC 4C00A887 */  lh          $8, 0x4C($29)
+/* 04FCD0 0014FBD0 28264072 */  paddub      $4, $18, $0
+/* 04FCD4 0014FBD4 28360070 */  paddub      $6, $0, $0
+/* 04FCD8 0014FBD8 783D050C */  jal         SetMesWinTbl__6ClsMesFiiss
+/* 04FCDC 0014FBDC 00000000 */   nop
+/* 04FCE0 0014FBE0 4800A38F */  lw          $3, 0x48($29)
+/* 04FCE4 0014FBE4 0800428E */  lw          $2, 0x8($18)
+/* 04FCE8 0014FBE8 21106200 */  addu        $2, $3, $2
+/* 04FCEC 0014FBEC 4800A2AF */  sw          $2, 0x48($29)
+/* 04FCF0 0014FBF0 02003126 */  addiu       $17, $17, 0x2
+/* 04FCF4 0014FBF4 00002586 */  lh          $5, 0x0($17)
+/* 04FCF8 0014FBF8 00000000 */  nop
+.L0014FBFC:
+/* 04FCFC 0014FBFC 00FF0224 */  addiu       $2, $0, -0x100
+/* 04FD00 0014FC00 4CFFA210 */  beq         $5, $2, .L0014F934
+/* 04FD04 0014FC04 00000000 */   nop
+/* 04FD08 0014FC08 01FF0224 */  addiu       $2, $0, -0xFF
+/* 04FD0C 0014FC0C EEFFA214 */  bne         $5, $2, .L0014FBC8
+/* 04FD10 0014FC10 00000000 */   nop
+/* 04FD14 0014FC14 47FF0010 */  b           .L0014F934
+/* 04FD18 0014FC18 00000000 */   nop
+.L0014FC1C:
+/* 04FD1C 0014FC1C FFFB0224 */  addiu       $2, $0, -0x401
+/* 04FD20 0014FC20 08002216 */  bne         $17, $2, .L0014FC44
+/* 04FD24 0014FC24 00000000 */   nop
+/* 04FD28 0014FC28 28264072 */  paddub      $4, $18, $0
+/* 04FD2C 0014FC2C 4800A527 */  addiu       $5, $29, 0x48
+/* 04FD30 0014FC30 4C00A627 */  addiu       $6, $29, 0x4C
+/* 04FD34 0014FC34 C039050C */  jal         MakeMesWinTbl_value__6ClsMesFPiPi
+/* 04FD38 0014FC38 00000000 */   nop
+/* 04FD3C 0014FC3C 3DFF0010 */  b           .L0014F934
+/* 04FD40 0014FC40 00000000 */   nop
+.L0014FC44:
+/* 04FD44 0014FC44 F3FB222A */  slti        $2, $17, -0x40D
+/* 04FD48 0014FC48 0D004014 */  bnez        $2, .L0014FC80
+/* 04FD4C 0014FC4C 00000000 */   nop
+/* 04FD50 0014FC50 FBFB212A */  slti        $1, $17, -0x405
+/* 04FD54 0014FC54 0A002010 */  beqz        $1, .L0014FC80
+/* 04FD58 0014FC58 00000000 */   nop
+/* 04FD5C 0014FC5C FAFB0224 */  addiu       $2, $0, -0x406
+/* 04FD60 0014FC60 23285100 */  subu        $5, $2, $17
+/* 04FD64 0014FC64 28264072 */  paddub      $4, $18, $0
+/* 04FD68 0014FC68 4800A627 */  addiu       $6, $29, 0x48
+/* 04FD6C 0014FC6C 4C00A727 */  addiu       $7, $29, 0x4C
+/* 04FD70 0014FC70 4C3A050C */  jal         MakeMesWinTbl_value__6ClsMesFiPiPi
+/* 04FD74 0014FC74 00000000 */   nop
+/* 04FD78 0014FC78 2EFF0010 */  b           .L0014F934
+/* 04FD7C 0014FC7C 00000000 */   nop
+.L0014FC80:
+/* 04FD80 0014FC80 28264072 */  paddub      $4, $18, $0
+/* 04FD84 0014FC84 282E2072 */  paddub      $5, $17, $0
+/* 04FD88 0014FC88 4800A627 */  addiu       $6, $29, 0x48
+/* 04FD8C 0014FC8C 4C00A727 */  addiu       $7, $29, 0x4C
+/* 04FD90 0014FC90 DC3A050C */  jal         MakeMesWinTbl_system__6ClsMesFiPiPi
+/* 04FD94 0014FC94 00000000 */   nop
+/* 04FD98 0014FC98 26FF4014 */  bnez        $2, .L0014F934
+/* 04FD9C 0014FC9C 00000000 */   nop
+/* 04FDA0 0014FCA0 4800A787 */  lh          $7, 0x48($29)
+/* 04FDA4 0014FCA4 4C00A887 */  lh          $8, 0x4C($29)
+/* 04FDA8 0014FCA8 28264072 */  paddub      $4, $18, $0
+/* 04FDAC 0014FCAC 282E2072 */  paddub      $5, $17, $0
+/* 04FDB0 0014FCB0 28360070 */  paddub      $6, $0, $0
+/* 04FDB4 0014FCB4 783D050C */  jal         SetMesWinTbl__6ClsMesFiiss
+/* 04FDB8 0014FCB8 00000000 */   nop
+/* 04FDBC 0014FCBC 1DFF4010 */  beqz        $2, .L0014F934
+/* 04FDC0 0014FCC0 00000000 */   nop
+/* 04FDC4 0014FCC4 4800A38F */  lw          $3, 0x48($29)
+/* 04FDC8 0014FCC8 0800428E */  lw          $2, 0x8($18)
+/* 04FDCC 0014FCCC 21106200 */  addu        $2, $3, $2
+/* 04FDD0 0014FCD0 4800A2AF */  sw          $2, 0x48($29)
+/* 04FDD4 0014FCD4 17FF0010 */  b           .L0014F934
+/* 04FDD8 0014FCD8 00000000 */   nop
+.L0014FCDC:
+/* 04FDDC 0014FCDC 3000BF7B */  lq          $31, 0x30($29)
+/* 04FDE0 0014FCE0 2000B27B */  lq          $18, 0x20($29)
+/* 04FDE4 0014FCE4 1000B17B */  lq          $17, 0x10($29)
+/* 04FDE8 0014FCE8 0000B07B */  lq          $16, 0x0($29)
+/* 04FDEC 0014FCEC 5000BD27 */  addiu       $29, $29, 0x50
+/* 04FDF0 0014FCF0 0800E003 */  jr          $31
+/* 04FDF4 0014FCF4 00000000 */   nop
+/* 04FDF8 0014FCF8 00000000 */  nop
+/* 04FDFC 0014FCFC 00000000 */  nop

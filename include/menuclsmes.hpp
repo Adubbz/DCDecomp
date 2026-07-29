@@ -2,6 +2,12 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+struct WEAPON_HAVE;
+
+
 class MenuClsMes {
 public:
     /* ?ret */ void InitMes(void); // @ 0x20B580 (0x20 bytes) -- mangled: InitMes__10MenuClsMesFv

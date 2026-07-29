@@ -1,0 +1,896 @@
+.include "macro.inc"
+
+.set noat /* Allow manual use of $at. */
+.set noreorder /* Don't insert nops after branches. */
+
+.section .text
+/* Handwritten function */
+glabel SoundProcess__Fv__2
+/* 01E4C0 01DCA1C0 F0FEBD27 */  addiu       $29, $29, -0x110
+/* 01E4C4 01DCA1C4 1000BF7F */  sq          $31, 0x10($29)
+/* 01E4C8 01DCA1C8 0000B07F */  sq          $16, 0x0($29)
+/* 01E4CC 01DCA1CC E301013C */  lui         $1, %hi(CScript + 0x5E4)
+/* 01E4D0 01DCA1D0 A4EF238C */  lw          $3, %lo(CScript + 0x5E4)($1)
+/* 01E4D4 01DCA1D4 07006010 */  beqz        $3, .L01DCA1F4_2CF9F4
+/* 01E4D8 01DCA1D8 00000000 */   nop
+/* 01E4DC 01DCA1DC 40000424 */  addiu       $4, $0, 0x40
+/* 01E4E0 01DCA1E0 282E0070 */  paddub      $5, $0, $0
+/* 01E4E4 01DCA1E4 C467050C */  jal         SndBgmFadeOut__Fii
+/* 01E4E8 01DCA1E8 00000000 */   nop
+/* 01E4EC 01DCA1EC E301013C */  lui         $1, %hi(CScript + 0x5E4)
+/* 01E4F0 01DCA1F0 A4EF20AC */  sw          $0, %lo(CScript + 0x5E4)($1)
+.L01DCA1F4_2CF9F4:
+/* 01E4F4 01DCA1F4 E301013C */  lui         $1, %hi(CScript + 0x18)
+/* 01E4F8 01DCA1F8 D8E9238C */  lw          $3, %lo(CScript + 0x18)($1)
+/* 01E4FC 01DCA1FC 17006014 */  bnez        $3, .L01DCA25C_2CFA5C
+/* 01E500 01DCA200 00000000 */   nop
+/* 01E504 01DCA204 F89B8383 */  lb          $3, -0x6408($28)
+/* 01E508 01DCA208 04006014 */  bnez        $3, .L01DCA21C_2CFA1C
+/* 01E50C 01DCA20C 00000000 */   nop
+/* 01E510 01DCA210 F49B80AF */  sw          $0, -0x640C($28)
+/* 01E514 01DCA214 01000324 */  addiu       $3, $0, 0x1
+/* 01E518 01DCA218 F89B83A3 */  sb          $3, -0x6408($28)
+.L01DCA21C_2CFA1C:
+/* 01E51C 01DCA21C E301013C */  lui         $1, %hi(CScript)
+/* 01E520 01DCA220 C0E9268C */  lw          $6, %lo(CScript)($1)
+/* 01E524 01DCA224 01000324 */  addiu       $3, $0, 0x1
+/* 01E528 01DCA228 0B00C314 */  bne         $6, $3, .L01DCA258_2CFA58
+/* 01E52C 01DCA22C 00000000 */   nop
+/* 01E530 01DCA230 F49B838F */  lw          $3, -0x640C($28)
+/* 01E534 01DCA234 09006014 */  bnez        $3, .L01DCA25C_2CFA5C
+/* 01E538 01DCA238 00000000 */   nop
+/* 01E53C 01DCA23C 28260070 */  paddub      $4, $0, $0
+/* 01E540 01DCA240 CC66050C */  jal         SndBgmPlay__Fi
+/* 01E544 01DCA244 00000000 */   nop
+/* 01E548 01DCA248 01000324 */  addiu       $3, $0, 0x1
+/* 01E54C 01DCA24C F49B83AF */  sw          $3, -0x640C($28)
+/* 01E550 01DCA250 02000010 */  b           .L01DCA25C_2CFA5C
+/* 01E554 01DCA254 00000000 */   nop
+.L01DCA258_2CFA58:
+/* 01E558 01DCA258 F49B80AF */  sw          $0, -0x640C($28)
+.L01DCA25C_2CFA5C:
+/* 01E55C 01DCA25C 009C8383 */  lb          $3, -0x6400($28)
+/* 01E560 01DCA260 04006014 */  bnez        $3, .L01DCA274_2CFA74
+/* 01E564 01DCA264 00000000 */   nop
+/* 01E568 01DCA268 FC9B80AF */  sw          $0, -0x6404($28)
+/* 01E56C 01DCA26C 01000324 */  addiu       $3, $0, 0x1
+/* 01E570 01DCA270 009C83A3 */  sb          $3, -0x6400($28)
+.L01DCA274_2CFA74:
+/* 01E574 01DCA274 E301013C */  lui         $1, %hi(CScript + 0x18)
+/* 01E578 01DCA278 D8E9268C */  lw          $6, %lo(CScript + 0x18)($1)
+/* 01E57C 01DCA27C 09000324 */  addiu       $3, $0, 0x9
+/* 01E580 01DCA280 0A00C314 */  bne         $6, $3, .L01DCA2AC_2CFAAC
+/* 01E584 01DCA284 00000000 */   nop
+/* 01E588 01DCA288 FC9B838F */  lw          $3, -0x6404($28)
+/* 01E58C 01DCA28C 08006014 */  bnez        $3, .L01DCA2B0_2CFAB0
+/* 01E590 01DCA290 00000000 */   nop
+/* 01E594 01DCA294 646C050C */  jal         SndAmbientStop__Fv
+/* 01E598 01DCA298 00000000 */   nop
+/* 01E59C 01DCA29C 01000324 */  addiu       $3, $0, 0x1
+/* 01E5A0 01DCA2A0 FC9B83AF */  sw          $3, -0x6404($28)
+/* 01E5A4 01DCA2A4 02000010 */  b           .L01DCA2B0_2CFAB0
+/* 01E5A8 01DCA2A8 00000000 */   nop
+.L01DCA2AC_2CFAAC:
+/* 01E5AC 01DCA2AC FC9B80AF */  sw          $0, -0x6404($28)
+.L01DCA2B0_2CFAB0:
+/* 01E5B0 01DCA2B0 089C8383 */  lb          $3, -0x63F8($28)
+/* 01E5B4 01DCA2B4 04006014 */  bnez        $3, .L01DCA2C8_2CFAC8
+/* 01E5B8 01DCA2B8 00000000 */   nop
+/* 01E5BC 01DCA2BC 049C80AF */  sw          $0, -0x63FC($28)
+/* 01E5C0 01DCA2C0 01000324 */  addiu       $3, $0, 0x1
+/* 01E5C4 01DCA2C4 089C83A3 */  sb          $3, -0x63F8($28)
+.L01DCA2C8_2CFAC8:
+/* 01E5C8 01DCA2C8 E301013C */  lui         $1, %hi(CScript + 0x18)
+/* 01E5CC 01DCA2CC D8E9238C */  lw          $3, %lo(CScript + 0x18)($1)
+/* 01E5D0 01DCA2D0 38006014 */  bnez        $3, .L01DCA3B4_2CFBB4
+/* 01E5D4 01DCA2D4 00000000 */   nop
+/* 01E5D8 01DCA2D8 C09B868F */  lw          $6, -0x6440($28)
+/* 01E5DC 01DCA2DC B0110324 */  addiu       $3, $0, 0x11B0
+/* 01E5E0 01DCA2E0 1830C300 */  mult        $6, $6, $3
+/* 01E5E4 01DCA2E4 E501033C */  lui         $3, %hi(Cam + 0x2F0)
+/* 01E5E8 01DCA2E8 E0C66324 */  addiu       $3, $3, %lo(Cam + 0x2F0)
+/* 01E5EC 01DCA2EC 21186600 */  addu        $3, $3, $6
+/* 01E5F0 01DCA2F0 000061C4 */  lwc1        $f1, 0x0($3)
+/* 01E5F4 01DCA2F4 2041033C */  lui         $3, (0x41200000 >> 16)
+/* 01E5F8 01DCA2F8 00008344 */  mtc1        $3, $f0
+/* 01E5FC 01DCA2FC 00000000 */  nop
+/* 01E600 01DCA300 36080046 */  c.le.s      $f1, $f0
+/* 01E604 01DCA304 00000000 */  nop
+/* 01E608 01DCA308 2A000145 */  bc1t        .L01DCA3B4_2CFBB4
+/* 01E60C 01DCA30C 00000000 */   nop
+/* 01E610 01DCA310 049C838F */  lw          $3, -0x63FC($28)
+/* 01E614 01DCA314 1D006014 */  bnez        $3, .L01DCA38C_2CFB8C
+/* 01E618 01DCA318 00000000 */   nop
+/* 01E61C 01DCA31C E501023C */  lui         $2, %hi(Cam + 0xBC)
+/* 01E620 01DCA320 ACC44224 */  addiu       $2, $2, %lo(Cam + 0xBC)
+/* 01E624 01DCA324 21104600 */  addu        $2, $2, $6
+/* 01E628 01DCA328 0000448C */  lw          $4, 0x0($2)
+/* 01E62C 01DCA32C DE01023C */  lui         $2, %hi(LIT_450__4)
+/* 01E630 01DCA330 A0FE4524 */  addiu       $5, $2, %lo(LIT_450__4)
+/* 01E634 01DCA334 C0A1040C */  jal         SearchFrame__6CFrameFPc
+/* 01E638 01DCA338 00000000 */   nop
+/* 01E63C 01DCA33C 13004010 */  beqz        $2, .L01DCA38C_2CFB8C
+/* 01E640 01DCA340 00000000 */   nop
+/* 01E644 01DCA344 28264070 */  paddub      $4, $2, $0
+/* 01E648 01DCA348 2000A527 */  addiu       $5, $29, 0x20
+/* 01E64C 01DCA34C 6CA0040C */  jal         GetLWMatrix__6CFrameFPA4_f
+/* 01E650 01DCA350 00000000 */   nop
+/* 01E654 01DCA354 5000A0C7 */  lwc1        $f0, 0x50($29)
+/* 01E658 01DCA358 6000A0E7 */  swc1        $f0, 0x60($29)
+/* 01E65C 01DCA35C 5400A0C7 */  lwc1        $f0, 0x54($29)
+/* 01E660 01DCA360 6400A0E7 */  swc1        $f0, 0x64($29)
+/* 01E664 01DCA364 5800A0C7 */  lwc1        $f0, 0x58($29)
+/* 01E668 01DCA368 6800A0E7 */  swc1        $f0, 0x68($29)
+/* 01E66C 01DCA36C C842023C */  lui         $2, (0x42C80000 >> 16)
+/* 01E670 01DCA370 00608244 */  mtc1        $2, $f12
+/* 01E674 01DCA374 7A44023C */  lui         $2, (0x447A0000 >> 16)
+/* 01E678 01DCA378 00688244 */  mtc1        $2, $f13
+/* 01E67C 01DCA37C 5A010424 */  addiu       $4, $0, 0x15A
+/* 01E680 01DCA380 6000A527 */  addiu       $5, $29, 0x60
+/* 01E684 01DCA384 086A050C */  jal         SndSePlay__FiPfff
+/* 01E688 01DCA388 00000000 */   nop
+.L01DCA38C_2CFB8C:
+/* 01E68C 01DCA38C 049C838F */  lw          $3, -0x63FC($28)
+/* 01E690 01DCA390 01006324 */  addiu       $3, $3, 0x1
+/* 01E694 01DCA394 049C83AF */  sw          $3, -0x63FC($28)
+/* 01E698 01DCA398 049C838F */  lw          $3, -0x63FC($28)
+/* 01E69C 01DCA39C 21006128 */  slti        $1, $3, 0x21
+/* 01E6A0 01DCA3A0 05002014 */  bnez        $1, .L01DCA3B8_2CFBB8
+/* 01E6A4 01DCA3A4 00000000 */   nop
+/* 01E6A8 01DCA3A8 049C80AF */  sw          $0, -0x63FC($28)
+/* 01E6AC 01DCA3AC 02000010 */  b           .L01DCA3B8_2CFBB8
+/* 01E6B0 01DCA3B0 00000000 */   nop
+.L01DCA3B4_2CFBB4:
+/* 01E6B4 01DCA3B4 049C80AF */  sw          $0, -0x63FC($28)
+.L01DCA3B8_2CFBB8:
+/* 01E6B8 01DCA3B8 E301013C */  lui         $1, %hi(CScript + 0x18)
+/* 01E6BC 01DCA3BC D8E9278C */  lw          $7, %lo(CScript + 0x18)($1)
+/* 01E6C0 01DCA3C0 0F00E014 */  bnez        $7, .L01DCA400_2CFC00
+/* 01E6C4 01DCA3C4 00000000 */   nop
+/* 01E6C8 01DCA3C8 C09B868F */  lw          $6, -0x6440($28)
+/* 01E6CC 01DCA3CC B0110324 */  addiu       $3, $0, 0x11B0
+/* 01E6D0 01DCA3D0 1830C300 */  mult        $6, $6, $3
+/* 01E6D4 01DCA3D4 E501033C */  lui         $3, %hi(Cam + 0x2F0)
+/* 01E6D8 01DCA3D8 E0C66324 */  addiu       $3, $3, %lo(Cam + 0x2F0)
+/* 01E6DC 01DCA3DC 21186600 */  addu        $3, $3, $6
+/* 01E6E0 01DCA3E0 000061C4 */  lwc1        $f1, 0x0($3)
+/* 01E6E4 01DCA3E4 2041033C */  lui         $3, (0x41200000 >> 16)
+/* 01E6E8 01DCA3E8 00008344 */  mtc1        $3, $f0
+/* 01E6EC 01DCA3EC 00000000 */  nop
+/* 01E6F0 01DCA3F0 36080046 */  c.le.s      $f1, $f0
+/* 01E6F4 01DCA3F4 00000000 */  nop
+/* 01E6F8 01DCA3F8 12000045 */  bc1f        .L01DCA444_2CFC44
+/* 01E6FC 01DCA3FC 00000000 */   nop
+.L01DCA400_2CFC00:
+/* 01E700 01DCA400 07000324 */  addiu       $3, $0, 0x7
+/* 01E704 01DCA404 8100E314 */  bne         $7, $3, .L01DCA60C_2CFE0C
+/* 01E708 01DCA408 00000000 */   nop
+/* 01E70C 01DCA40C C09B868F */  lw          $6, -0x6440($28)
+/* 01E710 01DCA410 B0110324 */  addiu       $3, $0, 0x11B0
+/* 01E714 01DCA414 1830C300 */  mult        $6, $6, $3
+/* 01E718 01DCA418 E501033C */  lui         $3, %hi(Cam + 0x2F0)
+/* 01E71C 01DCA41C E0C66324 */  addiu       $3, $3, %lo(Cam + 0x2F0)
+/* 01E720 01DCA420 21186600 */  addu        $3, $3, $6
+/* 01E724 01DCA424 000061C4 */  lwc1        $f1, 0x0($3)
+/* 01E728 01DCA428 2041033C */  lui         $3, (0x41200000 >> 16)
+/* 01E72C 01DCA42C 00008344 */  mtc1        $3, $f0
+/* 01E730 01DCA430 00000000 */  nop
+/* 01E734 01DCA434 36080046 */  c.le.s      $f1, $f0
+/* 01E738 01DCA438 00000000 */  nop
+/* 01E73C 01DCA43C 73000145 */  bc1t        .L01DCA60C_2CFE0C
+/* 01E740 01DCA440 00000000 */   nop
+.L01DCA444_2CFC44:
+/* 01E744 01DCA444 109C8283 */  lb          $2, -0x63F0($28)
+/* 01E748 01DCA448 04004014 */  bnez        $2, .L01DCA45C_2CFC5C
+/* 01E74C 01DCA44C 00000000 */   nop
+/* 01E750 01DCA450 0C9C80AF */  sw          $0, -0x63F4($28)
+/* 01E754 01DCA454 01000224 */  addiu       $2, $0, 0x1
+/* 01E758 01DCA458 109C82A3 */  sb          $2, -0x63F0($28)
+.L01DCA45C_2CFC5C:
+/* 01E75C 01DCA45C 3700E014 */  bnez        $7, .L01DCA53C_2CFD3C
+/* 01E760 01DCA460 00000000 */   nop
+/* 01E764 01DCA464 C09B838F */  lw          $3, -0x6440($28)
+/* 01E768 01DCA468 B0110224 */  addiu       $2, $0, 0x11B0
+/* 01E76C 01DCA46C 18186200 */  mult        $3, $3, $2
+/* 01E770 01DCA470 E501023C */  lui         $2, %hi(Cam + 0xBC)
+/* 01E774 01DCA474 ACC44224 */  addiu       $2, $2, %lo(Cam + 0xBC)
+/* 01E778 01DCA478 21104300 */  addu        $2, $2, $3
+/* 01E77C 01DCA47C 0000448C */  lw          $4, 0x0($2)
+/* 01E780 01DCA480 DE01023C */  lui         $2, %hi(LIT_444__4)
+/* 01E784 01DCA484 70FE4524 */  addiu       $5, $2, %lo(LIT_444__4)
+/* 01E788 01DCA488 C0A1040C */  jal         SearchFrame__6CFrameFPc
+/* 01E78C 01DCA48C 00000000 */   nop
+/* 01E790 01DCA490 28864070 */  paddub      $16, $2, $0
+/* 01E794 01DCA494 DF01013C */  lui         $1, %hi(Chara__3 + 0x14A0)
+/* 01E798 01DCA498 80132CC4 */  lwc1        $f12, %lo(Chara__3 + 0x14A0)($1)
+/* 01E79C 01DCA49C 2C44040C */  jal         fptosi
+/* 01E7A0 01DCA4A0 00000000 */   nop
+/* 01E7A4 01DCA4A4 0C9C838F */  lw          $3, -0x63F4($28)
+/* 01E7A8 01DCA4A8 1E006014 */  bnez        $3, .L01DCA524_2CFD24
+/* 01E7AC 01DCA4AC 00000000 */   nop
+/* 01E7B0 01DCA4B0 0A000324 */  addiu       $3, $0, 0xA
+/* 01E7B4 01DCA4B4 55004314 */  bne         $2, $3, .L01DCA60C_2CFE0C
+/* 01E7B8 01DCA4B8 00000000 */   nop
+/* 01E7BC 01DCA4BC 15000012 */  beqz        $16, .L01DCA514_2CFD14
+/* 01E7C0 01DCA4C0 00000000 */   nop
+/* 01E7C4 01DCA4C4 28260072 */  paddub      $4, $16, $0
+/* 01E7C8 01DCA4C8 7000A527 */  addiu       $5, $29, 0x70
+/* 01E7CC 01DCA4CC 6CA0040C */  jal         GetLWMatrix__6CFrameFPA4_f
+/* 01E7D0 01DCA4D0 00000000 */   nop
+/* 01E7D4 01DCA4D4 A000A0C7 */  lwc1        $f0, 0xA0($29)
+/* 01E7D8 01DCA4D8 B000A0E7 */  swc1        $f0, 0xB0($29)
+/* 01E7DC 01DCA4DC A400A0C7 */  lwc1        $f0, 0xA4($29)
+/* 01E7E0 01DCA4E0 B400A0E7 */  swc1        $f0, 0xB4($29)
+/* 01E7E4 01DCA4E4 A800A0C7 */  lwc1        $f0, 0xA8($29)
+/* 01E7E8 01DCA4E8 B800A0E7 */  swc1        $f0, 0xB8($29)
+/* 01E7EC 01DCA4EC B80B0224 */  addiu       $2, $0, 0xBB8
+/* 01E7F0 01DCA4F0 00008244 */  mtc1        $2, $f0
+/* 01E7F4 01DCA4F4 00000000 */  nop
+/* 01E7F8 01DCA4F8 60038046 */  cvt.s.w     $f13, $f0
+/* 01E7FC 01DCA4FC FA43023C */  lui         $2, (0x43FA0000 >> 16)
+/* 01E800 01DCA500 00608244 */  mtc1        $2, $f12
+/* 01E804 01DCA504 76010424 */  addiu       $4, $0, 0x176
+/* 01E808 01DCA508 B000A527 */  addiu       $5, $29, 0xB0
+/* 01E80C 01DCA50C 086A050C */  jal         SndSePlay__FiPfff
+/* 01E810 01DCA510 00000000 */   nop
+.L01DCA514_2CFD14:
+/* 01E814 01DCA514 05000324 */  addiu       $3, $0, 0x5
+/* 01E818 01DCA518 0C9C83AF */  sw          $3, -0x63F4($28)
+/* 01E81C 01DCA51C 3B000010 */  b           .L01DCA60C_2CFE0C
+/* 01E820 01DCA520 00000000 */   nop
+.L01DCA524_2CFD24:
+/* 01E824 01DCA524 39006018 */  blez        $3, .L01DCA60C_2CFE0C
+/* 01E828 01DCA528 00000000 */   nop
+/* 01E82C 01DCA52C FFFF6324 */  addiu       $3, $3, -0x1
+/* 01E830 01DCA530 0C9C83AF */  sw          $3, -0x63F4($28)
+/* 01E834 01DCA534 35000010 */  b           .L01DCA60C_2CFE0C
+/* 01E838 01DCA538 00000000 */   nop
+.L01DCA53C_2CFD3C:
+/* 01E83C 01DCA53C C09B838F */  lw          $3, -0x6440($28)
+/* 01E840 01DCA540 B0110224 */  addiu       $2, $0, 0x11B0
+/* 01E844 01DCA544 18186200 */  mult        $3, $3, $2
+/* 01E848 01DCA548 E501023C */  lui         $2, %hi(Cam + 0xBC)
+/* 01E84C 01DCA54C ACC44224 */  addiu       $2, $2, %lo(Cam + 0xBC)
+/* 01E850 01DCA550 21104300 */  addu        $2, $2, $3
+/* 01E854 01DCA554 0000448C */  lw          $4, 0x0($2)
+/* 01E858 01DCA558 DE01023C */  lui         $2, %hi(LIT_452__3)
+/* 01E85C 01DCA55C A8FE4524 */  addiu       $5, $2, %lo(LIT_452__3)
+/* 01E860 01DCA560 C0A1040C */  jal         SearchFrame__6CFrameFPc
+/* 01E864 01DCA564 00000000 */   nop
+/* 01E868 01DCA568 28864070 */  paddub      $16, $2, $0
+/* 01E86C 01DCA56C DF01013C */  lui         $1, %hi(Chara__3 + 0x2F0)
+/* 01E870 01DCA570 D0012CC4 */  lwc1        $f12, %lo(Chara__3 + 0x2F0)($1)
+/* 01E874 01DCA574 2C44040C */  jal         fptosi
+/* 01E878 01DCA578 00000000 */   nop
+/* 01E87C 01DCA57C 0C9C838F */  lw          $3, -0x63F4($28)
+/* 01E880 01DCA580 1E006014 */  bnez        $3, .L01DCA5FC_2CFDFC
+/* 01E884 01DCA584 00000000 */   nop
+/* 01E888 01DCA588 14000324 */  addiu       $3, $0, 0x14
+/* 01E88C 01DCA58C 1F004314 */  bne         $2, $3, .L01DCA60C_2CFE0C
+/* 01E890 01DCA590 00000000 */   nop
+/* 01E894 01DCA594 15000012 */  beqz        $16, .L01DCA5EC_2CFDEC
+/* 01E898 01DCA598 00000000 */   nop
+/* 01E89C 01DCA59C 28260072 */  paddub      $4, $16, $0
+/* 01E8A0 01DCA5A0 C000A527 */  addiu       $5, $29, 0xC0
+/* 01E8A4 01DCA5A4 6CA0040C */  jal         GetLWMatrix__6CFrameFPA4_f
+/* 01E8A8 01DCA5A8 00000000 */   nop
+/* 01E8AC 01DCA5AC F000A0C7 */  lwc1        $f0, 0xF0($29)
+/* 01E8B0 01DCA5B0 0001A0E7 */  swc1        $f0, 0x100($29)
+/* 01E8B4 01DCA5B4 F400A0C7 */  lwc1        $f0, 0xF4($29)
+/* 01E8B8 01DCA5B8 0401A0E7 */  swc1        $f0, 0x104($29)
+/* 01E8BC 01DCA5BC F800A0C7 */  lwc1        $f0, 0xF8($29)
+/* 01E8C0 01DCA5C0 0801A0E7 */  swc1        $f0, 0x108($29)
+/* 01E8C4 01DCA5C4 FA43023C */  lui         $2, (0x43FA0000 >> 16)
+/* 01E8C8 01DCA5C8 00608244 */  mtc1        $2, $f12
+/* 01E8CC 01DCA5CC B80B0224 */  addiu       $2, $0, 0xBB8
+/* 01E8D0 01DCA5D0 00008244 */  mtc1        $2, $f0
+/* 01E8D4 01DCA5D4 00000000 */  nop
+/* 01E8D8 01DCA5D8 60038046 */  cvt.s.w     $f13, $f0
+/* 01E8DC 01DCA5DC 76010424 */  addiu       $4, $0, 0x176
+/* 01E8E0 01DCA5E0 0001A527 */  addiu       $5, $29, 0x100
+/* 01E8E4 01DCA5E4 086A050C */  jal         SndSePlay__FiPfff
+/* 01E8E8 01DCA5E8 00000000 */   nop
+.L01DCA5EC_2CFDEC:
+/* 01E8EC 01DCA5EC 05000324 */  addiu       $3, $0, 0x5
+/* 01E8F0 01DCA5F0 0C9C83AF */  sw          $3, -0x63F4($28)
+/* 01E8F4 01DCA5F4 05000010 */  b           .L01DCA60C_2CFE0C
+/* 01E8F8 01DCA5F8 00000000 */   nop
+.L01DCA5FC_2CFDFC:
+/* 01E8FC 01DCA5FC 03006018 */  blez        $3, .L01DCA60C_2CFE0C
+/* 01E900 01DCA600 00000000 */   nop
+/* 01E904 01DCA604 FFFF6324 */  addiu       $3, $3, -0x1
+/* 01E908 01DCA608 0C9C83AF */  sw          $3, -0x63F4($28)
+.L01DCA60C_2CFE0C:
+/* 01E90C 01DCA60C 189C8383 */  lb          $3, -0x63E8($28)
+/* 01E910 01DCA610 04006014 */  bnez        $3, .L01DCA624_2CFE24
+/* 01E914 01DCA614 00000000 */   nop
+/* 01E918 01DCA618 149C80AF */  sw          $0, -0x63EC($28)
+/* 01E91C 01DCA61C 01000324 */  addiu       $3, $0, 0x1
+/* 01E920 01DCA620 189C83A3 */  sb          $3, -0x63E8($28)
+.L01DCA624_2CFE24:
+/* 01E924 01DCA624 149C838F */  lw          $3, -0x63EC($28)
+/* 01E928 01DCA628 1B026014 */  bnez        $3, .L01DCAE98_2D0698
+/* 01E92C 01DCA62C 00000000 */   nop
+/* 01E930 01DCA630 C09B838F */  lw          $3, -0x6440($28)
+/* 01E934 01DCA634 B0110224 */  addiu       $2, $0, 0x11B0
+/* 01E938 01DCA638 18186200 */  mult        $3, $3, $2
+/* 01E93C 01DCA63C E501023C */  lui         $2, %hi(Cam + 0x2F0)
+/* 01E940 01DCA640 E0C64224 */  addiu       $2, $2, %lo(Cam + 0x2F0)
+/* 01E944 01DCA644 21104300 */  addu        $2, $2, $3
+/* 01E948 01DCA648 00004CC4 */  lwc1        $f12, 0x0($2)
+/* 01E94C 01DCA64C 2C44040C */  jal         fptosi
+/* 01E950 01DCA650 00000000 */   nop
+/* 01E954 01DCA654 28864070 */  paddub      $16, $2, $0
+/* 01E958 01DCA658 E301013C */  lui         $1, %hi(CScript)
+/* 01E95C 01DCA65C C0E9238C */  lw          $3, %lo(CScript)($1)
+/* 01E960 01DCA660 FCFF6520 */  addi        $5, $3, -0x4 /* handwritten instruction */
+/* 01E964 01DCA664 1000A12C */  sltiu       $1, $5, 0x10
+/* 01E968 01DCA668 0D022010 */  beqz        $1, .L01DCAEA0_2D06A0
+/* 01E96C 01DCA66C 00000000 */   nop
+/* 01E970 01DCA670 DE01033C */  lui         $3, %hi(LIT_815__3)
+/* 01E974 01DCA674 60FF6424 */  addiu       $4, $3, %lo(LIT_815__3)
+/* 01E978 01DCA678 80180500 */  sll         $3, $5, 2
+/* 01E97C 01DCA67C 21186400 */  addu        $3, $3, $4
+/* 01E980 01DCA680 0000638C */  lw          $3, 0x0($3)
+/* 01E984 01DCA684 08006000 */  jr          $3
+/* 01E988 01DCA688 00000000 */   nop
+/* 01E98C 01DCA68C 1E000324 */  addiu       $3, $0, 0x1E
+/* 01E990 01DCA690 03020316 */  bne         $16, $3, .L01DCAEA0_2D06A0
+/* 01E994 01DCA694 00000000 */   nop
+/* 01E998 01DCA698 36000424 */  addiu       $4, $0, 0x36
+/* 01E99C 01DCA69C FFFF0524 */  addiu       $5, $0, -0x1
+/* 01E9A0 01DCA6A0 28360070 */  paddub      $6, $0, $0
+/* 01E9A4 01DCA6A4 AC69050C */  jal         SndSePlay__Fiii
+/* 01E9A8 01DCA6A8 00000000 */   nop
+/* 01E9AC 01DCA6AC 403F023C */  lui         $2, (0x3F400000 >> 16)
+/* 01E9B0 01DCA6B0 00608244 */  mtc1        $2, $f12
+/* 01E9B4 01DCA6B4 36000424 */  addiu       $4, $0, 0x36
+/* 01E9B8 01DCA6B8 282E0070 */  paddub      $5, $0, $0
+/* 01E9BC 01DCA6BC AC6A050C */  jal         SndSetSeVolf__Fifi
+/* 01E9C0 01DCA6C0 00000000 */   nop
+/* 01E9C4 01DCA6C4 05000324 */  addiu       $3, $0, 0x5
+/* 01E9C8 01DCA6C8 149C83AF */  sw          $3, -0x63EC($28)
+/* 01E9CC 01DCA6CC F4010010 */  b           .L01DCAEA0_2D06A0
+/* 01E9D0 01DCA6D0 00000000 */   nop
+/* 01E9D4 01DCA6D4 0A000324 */  addiu       $3, $0, 0xA
+/* 01E9D8 01DCA6D8 0D000316 */  bne         $16, $3, .L01DCA710_2CFF10
+/* 01E9DC 01DCA6DC 00000000 */   nop
+/* 01E9E0 01DCA6E0 36000424 */  addiu       $4, $0, 0x36
+/* 01E9E4 01DCA6E4 F8818CC7 */  lwc1        $f12, -0x7E08($28)
+/* 01E9E8 01DCA6E8 282E0070 */  paddub      $5, $0, $0
+/* 01E9EC 01DCA6EC AC6A050C */  jal         SndSetSeVolf__Fifi
+/* 01E9F0 01DCA6F0 00000000 */   nop
+/* 01E9F4 01DCA6F4 68020424 */  addiu       $4, $0, 0x268
+/* 01E9F8 01DCA6F8 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01E9FC 01DCA6FC 28360070 */  paddub      $6, $0, $0
+/* 01EA00 01DCA700 AC69050C */  jal         SndSePlay__Fiii
+/* 01EA04 01DCA704 00000000 */   nop
+/* 01EA08 01DCA708 05000324 */  addiu       $3, $0, 0x5
+/* 01EA0C 01DCA70C 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCA710_2CFF10:
+/* 01EA10 01DCA710 11000324 */  addiu       $3, $0, 0x11
+/* 01EA14 01DCA714 08000316 */  bne         $16, $3, .L01DCA738_2CFF38
+/* 01EA18 01DCA718 00000000 */   nop
+/* 01EA1C 01DCA71C 69020424 */  addiu       $4, $0, 0x269
+/* 01EA20 01DCA720 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EA24 01DCA724 28360070 */  paddub      $6, $0, $0
+/* 01EA28 01DCA728 AC69050C */  jal         SndSePlay__Fiii
+/* 01EA2C 01DCA72C 00000000 */   nop
+/* 01EA30 01DCA730 05000324 */  addiu       $3, $0, 0x5
+/* 01EA34 01DCA734 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCA738_2CFF38:
+/* 01EA38 01DCA738 17000324 */  addiu       $3, $0, 0x17
+/* 01EA3C 01DCA73C 08000316 */  bne         $16, $3, .L01DCA760_2CFF60
+/* 01EA40 01DCA740 00000000 */   nop
+/* 01EA44 01DCA744 5E020424 */  addiu       $4, $0, 0x25E
+/* 01EA48 01DCA748 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EA4C 01DCA74C 28360070 */  paddub      $6, $0, $0
+/* 01EA50 01DCA750 AC69050C */  jal         SndSePlay__Fiii
+/* 01EA54 01DCA754 00000000 */   nop
+/* 01EA58 01DCA758 05000324 */  addiu       $3, $0, 0x5
+/* 01EA5C 01DCA75C 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCA760_2CFF60:
+/* 01EA60 01DCA760 1F000324 */  addiu       $3, $0, 0x1F
+/* 01EA64 01DCA764 08000316 */  bne         $16, $3, .L01DCA788_2CFF88
+/* 01EA68 01DCA768 00000000 */   nop
+/* 01EA6C 01DCA76C 5F020424 */  addiu       $4, $0, 0x25F
+/* 01EA70 01DCA770 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EA74 01DCA774 28360070 */  paddub      $6, $0, $0
+/* 01EA78 01DCA778 AC69050C */  jal         SndSePlay__Fiii
+/* 01EA7C 01DCA77C 00000000 */   nop
+/* 01EA80 01DCA780 05000324 */  addiu       $3, $0, 0x5
+/* 01EA84 01DCA784 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCA788_2CFF88:
+/* 01EA88 01DCA788 2E000324 */  addiu       $3, $0, 0x2E
+/* 01EA8C 01DCA78C 08000316 */  bne         $16, $3, .L01DCA7B0_2CFFB0
+/* 01EA90 01DCA790 00000000 */   nop
+/* 01EA94 01DCA794 9B000424 */  addiu       $4, $0, 0x9B
+/* 01EA98 01DCA798 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EA9C 01DCA79C 28360070 */  paddub      $6, $0, $0
+/* 01EAA0 01DCA7A0 AC69050C */  jal         SndSePlay__Fiii
+/* 01EAA4 01DCA7A4 00000000 */   nop
+/* 01EAA8 01DCA7A8 05000324 */  addiu       $3, $0, 0x5
+/* 01EAAC 01DCA7AC 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCA7B0_2CFFB0:
+/* 01EAB0 01DCA7B0 32000324 */  addiu       $3, $0, 0x32
+/* 01EAB4 01DCA7B4 0D000316 */  bne         $16, $3, .L01DCA7EC_2CFFEC
+/* 01EAB8 01DCA7B8 00000000 */   nop
+/* 01EABC 01DCA7BC A6010424 */  addiu       $4, $0, 0x1A6
+/* 01EAC0 01DCA7C0 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EAC4 01DCA7C4 28360070 */  paddub      $6, $0, $0
+/* 01EAC8 01DCA7C8 AC69050C */  jal         SndSePlay__Fiii
+/* 01EACC 01DCA7CC 00000000 */   nop
+/* 01EAD0 01DCA7D0 93010424 */  addiu       $4, $0, 0x193
+/* 01EAD4 01DCA7D4 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EAD8 01DCA7D8 28360070 */  paddub      $6, $0, $0
+/* 01EADC 01DCA7DC AC69050C */  jal         SndSePlay__Fiii
+/* 01EAE0 01DCA7E0 00000000 */   nop
+/* 01EAE4 01DCA7E4 05000324 */  addiu       $3, $0, 0x5
+/* 01EAE8 01DCA7E8 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCA7EC_2CFFEC:
+/* 01EAEC 01DCA7EC 35000324 */  addiu       $3, $0, 0x35
+/* 01EAF0 01DCA7F0 08000316 */  bne         $16, $3, .L01DCA814_2D0014
+/* 01EAF4 01DCA7F4 00000000 */   nop
+/* 01EAF8 01DCA7F8 62020424 */  addiu       $4, $0, 0x262
+/* 01EAFC 01DCA7FC FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EB00 01DCA800 28360070 */  paddub      $6, $0, $0
+/* 01EB04 01DCA804 AC69050C */  jal         SndSePlay__Fiii
+/* 01EB08 01DCA808 00000000 */   nop
+/* 01EB0C 01DCA80C 05000324 */  addiu       $3, $0, 0x5
+/* 01EB10 01DCA810 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCA814_2D0014:
+/* 01EB14 01DCA814 3E000324 */  addiu       $3, $0, 0x3E
+/* 01EB18 01DCA818 08000316 */  bne         $16, $3, .L01DCA83C_2D003C
+/* 01EB1C 01DCA81C 00000000 */   nop
+/* 01EB20 01DCA820 5F020424 */  addiu       $4, $0, 0x25F
+/* 01EB24 01DCA824 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EB28 01DCA828 28360070 */  paddub      $6, $0, $0
+/* 01EB2C 01DCA82C AC69050C */  jal         SndSePlay__Fiii
+/* 01EB30 01DCA830 00000000 */   nop
+/* 01EB34 01DCA834 05000324 */  addiu       $3, $0, 0x5
+/* 01EB38 01DCA838 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCA83C_2D003C:
+/* 01EB3C 01DCA83C 41000324 */  addiu       $3, $0, 0x41
+/* 01EB40 01DCA840 08000316 */  bne         $16, $3, .L01DCA864_2D0064
+/* 01EB44 01DCA844 00000000 */   nop
+/* 01EB48 01DCA848 99000424 */  addiu       $4, $0, 0x99
+/* 01EB4C 01DCA84C FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EB50 01DCA850 28360070 */  paddub      $6, $0, $0
+/* 01EB54 01DCA854 AC69050C */  jal         SndSePlay__Fiii
+/* 01EB58 01DCA858 00000000 */   nop
+/* 01EB5C 01DCA85C 05000324 */  addiu       $3, $0, 0x5
+/* 01EB60 01DCA860 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCA864_2D0064:
+/* 01EB64 01DCA864 61000324 */  addiu       $3, $0, 0x61
+/* 01EB68 01DCA868 08000316 */  bne         $16, $3, .L01DCA88C_2D008C
+/* 01EB6C 01DCA86C 00000000 */   nop
+/* 01EB70 01DCA870 5E020424 */  addiu       $4, $0, 0x25E
+/* 01EB74 01DCA874 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EB78 01DCA878 28360070 */  paddub      $6, $0, $0
+/* 01EB7C 01DCA87C AC69050C */  jal         SndSePlay__Fiii
+/* 01EB80 01DCA880 00000000 */   nop
+/* 01EB84 01DCA884 05000324 */  addiu       $3, $0, 0x5
+/* 01EB88 01DCA888 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCA88C_2D008C:
+/* 01EB8C 01DCA88C 71000324 */  addiu       $3, $0, 0x71
+/* 01EB90 01DCA890 0D000316 */  bne         $16, $3, .L01DCA8C8_2D00C8
+/* 01EB94 01DCA894 00000000 */   nop
+/* 01EB98 01DCA898 90010424 */  addiu       $4, $0, 0x190
+/* 01EB9C 01DCA89C FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EBA0 01DCA8A0 28360070 */  paddub      $6, $0, $0
+/* 01EBA4 01DCA8A4 AC69050C */  jal         SndSePlay__Fiii
+/* 01EBA8 01DCA8A8 00000000 */   nop
+/* 01EBAC 01DCA8AC 69020424 */  addiu       $4, $0, 0x269
+/* 01EBB0 01DCA8B0 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EBB4 01DCA8B4 28360070 */  paddub      $6, $0, $0
+/* 01EBB8 01DCA8B8 AC69050C */  jal         SndSePlay__Fiii
+/* 01EBBC 01DCA8BC 00000000 */   nop
+/* 01EBC0 01DCA8C0 05000324 */  addiu       $3, $0, 0x5
+/* 01EBC4 01DCA8C4 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCA8C8_2D00C8:
+/* 01EBC8 01DCA8C8 77000324 */  addiu       $3, $0, 0x77
+/* 01EBCC 01DCA8CC 12000316 */  bne         $16, $3, .L01DCA918_2D0118
+/* 01EBD0 01DCA8D0 00000000 */   nop
+/* 01EBD4 01DCA8D4 91010424 */  addiu       $4, $0, 0x191
+/* 01EBD8 01DCA8D8 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EBDC 01DCA8DC 28360070 */  paddub      $6, $0, $0
+/* 01EBE0 01DCA8E0 AC69050C */  jal         SndSePlay__Fiii
+/* 01EBE4 01DCA8E4 00000000 */   nop
+/* 01EBE8 01DCA8E8 A4010424 */  addiu       $4, $0, 0x1A4
+/* 01EBEC 01DCA8EC FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EBF0 01DCA8F0 28360070 */  paddub      $6, $0, $0
+/* 01EBF4 01DCA8F4 AC69050C */  jal         SndSePlay__Fiii
+/* 01EBF8 01DCA8F8 00000000 */   nop
+/* 01EBFC 01DCA8FC A0000424 */  addiu       $4, $0, 0xA0
+/* 01EC00 01DCA900 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EC04 01DCA904 28360070 */  paddub      $6, $0, $0
+/* 01EC08 01DCA908 AC69050C */  jal         SndSePlay__Fiii
+/* 01EC0C 01DCA90C 00000000 */   nop
+/* 01EC10 01DCA910 05000324 */  addiu       $3, $0, 0x5
+/* 01EC14 01DCA914 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCA918_2D0118:
+/* 01EC18 01DCA918 7C000324 */  addiu       $3, $0, 0x7C
+/* 01EC1C 01DCA91C 08000316 */  bne         $16, $3, .L01DCA940_2D0140
+/* 01EC20 01DCA920 00000000 */   nop
+/* 01EC24 01DCA924 64020424 */  addiu       $4, $0, 0x264
+/* 01EC28 01DCA928 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EC2C 01DCA92C 28360070 */  paddub      $6, $0, $0
+/* 01EC30 01DCA930 AC69050C */  jal         SndSePlay__Fiii
+/* 01EC34 01DCA934 00000000 */   nop
+/* 01EC38 01DCA938 05000324 */  addiu       $3, $0, 0x5
+/* 01EC3C 01DCA93C 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCA940_2D0140:
+/* 01EC40 01DCA940 82000324 */  addiu       $3, $0, 0x82
+/* 01EC44 01DCA944 56010316 */  bne         $16, $3, .L01DCAEA0_2D06A0
+/* 01EC48 01DCA948 00000000 */   nop
+/* 01EC4C 01DCA94C 6A020424 */  addiu       $4, $0, 0x26A
+/* 01EC50 01DCA950 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EC54 01DCA954 28360070 */  paddub      $6, $0, $0
+/* 01EC58 01DCA958 AC69050C */  jal         SndSePlay__Fiii
+/* 01EC5C 01DCA95C 00000000 */   nop
+/* 01EC60 01DCA960 05000324 */  addiu       $3, $0, 0x5
+/* 01EC64 01DCA964 149C83AF */  sw          $3, -0x63EC($28)
+/* 01EC68 01DCA968 4D010010 */  b           .L01DCAEA0_2D06A0
+/* 01EC6C 01DCA96C 00000000 */   nop
+/* 01EC70 01DCA970 2F000324 */  addiu       $3, $0, 0x2F
+/* 01EC74 01DCA974 08000316 */  bne         $16, $3, .L01DCA998_2D0198
+/* 01EC78 01DCA978 00000000 */   nop
+/* 01EC7C 01DCA97C 59010424 */  addiu       $4, $0, 0x159
+/* 01EC80 01DCA980 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EC84 01DCA984 28360070 */  paddub      $6, $0, $0
+/* 01EC88 01DCA988 AC69050C */  jal         SndSePlay__Fiii
+/* 01EC8C 01DCA98C 00000000 */   nop
+/* 01EC90 01DCA990 0A000324 */  addiu       $3, $0, 0xA
+/* 01EC94 01DCA994 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCA998_2D0198:
+/* 01EC98 01DCA998 7C000324 */  addiu       $3, $0, 0x7C
+/* 01EC9C 01DCA99C 40010316 */  bne         $16, $3, .L01DCAEA0_2D06A0
+/* 01ECA0 01DCA9A0 00000000 */   nop
+/* 01ECA4 01DCA9A4 36000424 */  addiu       $4, $0, 0x36
+/* 01ECA8 01DCA9A8 282E0070 */  paddub      $5, $0, $0
+/* 01ECAC 01DCA9AC 2C6A050C */  jal         SndSeStop__Fii
+/* 01ECB0 01DCA9B0 00000000 */   nop
+/* 01ECB4 01DCA9B4 05000324 */  addiu       $3, $0, 0x5
+/* 01ECB8 01DCA9B8 149C83AF */  sw          $3, -0x63EC($28)
+/* 01ECBC 01DCA9BC 38010010 */  b           .L01DCAEA0_2D06A0
+/* 01ECC0 01DCA9C0 00000000 */   nop
+/* 01ECC4 01DCA9C4 14000324 */  addiu       $3, $0, 0x14
+/* 01ECC8 01DCA9C8 08000316 */  bne         $16, $3, .L01DCA9EC_2D01EC
+/* 01ECCC 01DCA9CC 00000000 */   nop
+/* 01ECD0 01DCA9D0 8B010424 */  addiu       $4, $0, 0x18B
+/* 01ECD4 01DCA9D4 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01ECD8 01DCA9D8 28360070 */  paddub      $6, $0, $0
+/* 01ECDC 01DCA9DC AC69050C */  jal         SndSePlay__Fiii
+/* 01ECE0 01DCA9E0 00000000 */   nop
+/* 01ECE4 01DCA9E4 05000324 */  addiu       $3, $0, 0x5
+/* 01ECE8 01DCA9E8 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCA9EC_2D01EC:
+/* 01ECEC 01DCA9EC 25000324 */  addiu       $3, $0, 0x25
+/* 01ECF0 01DCA9F0 08000316 */  bne         $16, $3, .L01DCAA14_2D0214
+/* 01ECF4 01DCA9F4 00000000 */   nop
+/* 01ECF8 01DCA9F8 9B000424 */  addiu       $4, $0, 0x9B
+/* 01ECFC 01DCA9FC FFFF0524 */  addiu       $5, $0, -0x1
+/* 01ED00 01DCAA00 28360070 */  paddub      $6, $0, $0
+/* 01ED04 01DCAA04 AC69050C */  jal         SndSePlay__Fiii
+/* 01ED08 01DCAA08 00000000 */   nop
+/* 01ED0C 01DCAA0C 05000324 */  addiu       $3, $0, 0x5
+/* 01ED10 01DCAA10 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCAA14_2D0214:
+/* 01ED14 01DCAA14 39000324 */  addiu       $3, $0, 0x39
+/* 01ED18 01DCAA18 08000316 */  bne         $16, $3, .L01DCAA3C_2D023C
+/* 01ED1C 01DCAA1C 00000000 */   nop
+/* 01ED20 01DCAA20 90010424 */  addiu       $4, $0, 0x190
+/* 01ED24 01DCAA24 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01ED28 01DCAA28 28360070 */  paddub      $6, $0, $0
+/* 01ED2C 01DCAA2C AC69050C */  jal         SndSePlay__Fiii
+/* 01ED30 01DCAA30 00000000 */   nop
+/* 01ED34 01DCAA34 04000324 */  addiu       $3, $0, 0x4
+/* 01ED38 01DCAA38 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCAA3C_2D023C:
+/* 01ED3C 01DCAA3C 3C000324 */  addiu       $3, $0, 0x3C
+/* 01ED40 01DCAA40 08000316 */  bne         $16, $3, .L01DCAA64_2D0264
+/* 01ED44 01DCAA44 00000000 */   nop
+/* 01ED48 01DCAA48 A0000424 */  addiu       $4, $0, 0xA0
+/* 01ED4C 01DCAA4C FFFF0524 */  addiu       $5, $0, -0x1
+/* 01ED50 01DCAA50 28360070 */  paddub      $6, $0, $0
+/* 01ED54 01DCAA54 AC69050C */  jal         SndSePlay__Fiii
+/* 01ED58 01DCAA58 00000000 */   nop
+/* 01ED5C 01DCAA5C 05000324 */  addiu       $3, $0, 0x5
+/* 01ED60 01DCAA60 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCAA64_2D0264:
+/* 01ED64 01DCAA64 47000324 */  addiu       $3, $0, 0x47
+/* 01ED68 01DCAA68 08000316 */  bne         $16, $3, .L01DCAA8C_2D028C
+/* 01ED6C 01DCAA6C 00000000 */   nop
+/* 01ED70 01DCAA70 9B000424 */  addiu       $4, $0, 0x9B
+/* 01ED74 01DCAA74 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01ED78 01DCAA78 28360070 */  paddub      $6, $0, $0
+/* 01ED7C 01DCAA7C AC69050C */  jal         SndSePlay__Fiii
+/* 01ED80 01DCAA80 00000000 */   nop
+/* 01ED84 01DCAA84 05000324 */  addiu       $3, $0, 0x5
+/* 01ED88 01DCAA88 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCAA8C_2D028C:
+/* 01ED8C 01DCAA8C 56000324 */  addiu       $3, $0, 0x56
+/* 01ED90 01DCAA90 03010316 */  bne         $16, $3, .L01DCAEA0_2D06A0
+/* 01ED94 01DCAA94 00000000 */   nop
+/* 01ED98 01DCAA98 8C010424 */  addiu       $4, $0, 0x18C
+/* 01ED9C 01DCAA9C FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EDA0 01DCAAA0 28360070 */  paddub      $6, $0, $0
+/* 01EDA4 01DCAAA4 AC69050C */  jal         SndSePlay__Fiii
+/* 01EDA8 01DCAAA8 00000000 */   nop
+/* 01EDAC 01DCAAAC 05000324 */  addiu       $3, $0, 0x5
+/* 01EDB0 01DCAAB0 149C83AF */  sw          $3, -0x63EC($28)
+/* 01EDB4 01DCAAB4 FA000010 */  b           .L01DCAEA0_2D06A0
+/* 01EDB8 01DCAAB8 00000000 */   nop
+/* 01EDBC 01DCAABC 8C000324 */  addiu       $3, $0, 0x8C
+/* 01EDC0 01DCAAC0 08000316 */  bne         $16, $3, .L01DCAAE4_2D02E4
+/* 01EDC4 01DCAAC4 00000000 */   nop
+/* 01EDC8 01DCAAC8 D2060424 */  addiu       $4, $0, 0x6D2
+/* 01EDCC 01DCAACC FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EDD0 01DCAAD0 28360070 */  paddub      $6, $0, $0
+/* 01EDD4 01DCAAD4 AC69050C */  jal         SndSePlay__Fiii
+/* 01EDD8 01DCAAD8 00000000 */   nop
+/* 01EDDC 01DCAADC 0A000324 */  addiu       $3, $0, 0xA
+/* 01EDE0 01DCAAE0 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCAAE4_2D02E4:
+/* 01EDE4 01DCAAE4 91000324 */  addiu       $3, $0, 0x91
+/* 01EDE8 01DCAAE8 08000316 */  bne         $16, $3, .L01DCAB0C_2D030C
+/* 01EDEC 01DCAAEC 00000000 */   nop
+/* 01EDF0 01DCAAF0 D2060424 */  addiu       $4, $0, 0x6D2
+/* 01EDF4 01DCAAF4 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EDF8 01DCAAF8 28360070 */  paddub      $6, $0, $0
+/* 01EDFC 01DCAAFC AC69050C */  jal         SndSePlay__Fiii
+/* 01EE00 01DCAB00 00000000 */   nop
+/* 01EE04 01DCAB04 0A000324 */  addiu       $3, $0, 0xA
+/* 01EE08 01DCAB08 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCAB0C_2D030C:
+/* 01EE0C 01DCAB0C 9E000324 */  addiu       $3, $0, 0x9E
+/* 01EE10 01DCAB10 E3000316 */  bne         $16, $3, .L01DCAEA0_2D06A0
+/* 01EE14 01DCAB14 00000000 */   nop
+/* 01EE18 01DCAB18 DB060424 */  addiu       $4, $0, 0x6DB
+/* 01EE1C 01DCAB1C FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EE20 01DCAB20 28360070 */  paddub      $6, $0, $0
+/* 01EE24 01DCAB24 AC69050C */  jal         SndSePlay__Fiii
+/* 01EE28 01DCAB28 00000000 */   nop
+/* 01EE2C 01DCAB2C 0A000324 */  addiu       $3, $0, 0xA
+/* 01EE30 01DCAB30 149C83AF */  sw          $3, -0x63EC($28)
+/* 01EE34 01DCAB34 DA000010 */  b           .L01DCAEA0_2D06A0
+/* 01EE38 01DCAB38 00000000 */   nop
+/* 01EE3C 01DCAB3C 75000324 */  addiu       $3, $0, 0x75
+/* 01EE40 01DCAB40 08000316 */  bne         $16, $3, .L01DCAB64_2D0364
+/* 01EE44 01DCAB44 00000000 */   nop
+/* 01EE48 01DCAB48 D3060424 */  addiu       $4, $0, 0x6D3
+/* 01EE4C 01DCAB4C FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EE50 01DCAB50 28360070 */  paddub      $6, $0, $0
+/* 01EE54 01DCAB54 AC69050C */  jal         SndSePlay__Fiii
+/* 01EE58 01DCAB58 00000000 */   nop
+/* 01EE5C 01DCAB5C 0A000324 */  addiu       $3, $0, 0xA
+/* 01EE60 01DCAB60 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCAB64_2D0364:
+/* 01EE64 01DCAB64 A0000324 */  addiu       $3, $0, 0xA0
+/* 01EE68 01DCAB68 CD000316 */  bne         $16, $3, .L01DCAEA0_2D06A0
+/* 01EE6C 01DCAB6C 00000000 */   nop
+/* 01EE70 01DCAB70 D5060424 */  addiu       $4, $0, 0x6D5
+/* 01EE74 01DCAB74 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EE78 01DCAB78 28360070 */  paddub      $6, $0, $0
+/* 01EE7C 01DCAB7C AC69050C */  jal         SndSePlay__Fiii
+/* 01EE80 01DCAB80 00000000 */   nop
+/* 01EE84 01DCAB84 0A000324 */  addiu       $3, $0, 0xA
+/* 01EE88 01DCAB88 149C83AF */  sw          $3, -0x63EC($28)
+/* 01EE8C 01DCAB8C C4000010 */  b           .L01DCAEA0_2D06A0
+/* 01EE90 01DCAB90 00000000 */   nop
+/* 01EE94 01DCAB94 57000324 */  addiu       $3, $0, 0x57
+/* 01EE98 01DCAB98 C1000316 */  bne         $16, $3, .L01DCAEA0_2D06A0
+/* 01EE9C 01DCAB9C 00000000 */   nop
+/* 01EEA0 01DCABA0 68010424 */  addiu       $4, $0, 0x168
+/* 01EEA4 01DCABA4 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EEA8 01DCABA8 28360070 */  paddub      $6, $0, $0
+/* 01EEAC 01DCABAC AC69050C */  jal         SndSePlay__Fiii
+/* 01EEB0 01DCABB0 00000000 */   nop
+/* 01EEB4 01DCABB4 03000324 */  addiu       $3, $0, 0x3
+/* 01EEB8 01DCABB8 149C83AF */  sw          $3, -0x63EC($28)
+/* 01EEBC 01DCABBC B8000010 */  b           .L01DCAEA0_2D06A0
+/* 01EEC0 01DCABC0 00000000 */   nop
+/* 01EEC4 01DCABC4 0A000324 */  addiu       $3, $0, 0xA
+/* 01EEC8 01DCABC8 0D000316 */  bne         $16, $3, .L01DCAC00_2D0400
+/* 01EECC 01DCABCC 00000000 */   nop
+/* 01EED0 01DCABD0 6A010424 */  addiu       $4, $0, 0x16A
+/* 01EED4 01DCABD4 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EED8 01DCABD8 28360070 */  paddub      $6, $0, $0
+/* 01EEDC 01DCABDC AC69050C */  jal         SndSePlay__Fiii
+/* 01EEE0 01DCABE0 00000000 */   nop
+/* 01EEE4 01DCABE4 6E010424 */  addiu       $4, $0, 0x16E
+/* 01EEE8 01DCABE8 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EEEC 01DCABEC 28360070 */  paddub      $6, $0, $0
+/* 01EEF0 01DCABF0 AC69050C */  jal         SndSePlay__Fiii
+/* 01EEF4 01DCABF4 00000000 */   nop
+/* 01EEF8 01DCABF8 05000324 */  addiu       $3, $0, 0x5
+/* 01EEFC 01DCABFC 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCAC00_2D0400:
+/* 01EF00 01DCAC00 12000324 */  addiu       $3, $0, 0x12
+/* 01EF04 01DCAC04 08000316 */  bne         $16, $3, .L01DCAC28_2D0428
+/* 01EF08 01DCAC08 00000000 */   nop
+/* 01EF0C 01DCAC0C 6C010424 */  addiu       $4, $0, 0x16C
+/* 01EF10 01DCAC10 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EF14 01DCAC14 28360070 */  paddub      $6, $0, $0
+/* 01EF18 01DCAC18 AC69050C */  jal         SndSePlay__Fiii
+/* 01EF1C 01DCAC1C 00000000 */   nop
+/* 01EF20 01DCAC20 05000324 */  addiu       $3, $0, 0x5
+/* 01EF24 01DCAC24 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCAC28_2D0428:
+/* 01EF28 01DCAC28 28000324 */  addiu       $3, $0, 0x28
+/* 01EF2C 01DCAC2C 08000316 */  bne         $16, $3, .L01DCAC50_2D0450
+/* 01EF30 01DCAC30 00000000 */   nop
+/* 01EF34 01DCAC34 6B010424 */  addiu       $4, $0, 0x16B
+/* 01EF38 01DCAC38 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EF3C 01DCAC3C 28360070 */  paddub      $6, $0, $0
+/* 01EF40 01DCAC40 AC69050C */  jal         SndSePlay__Fiii
+/* 01EF44 01DCAC44 00000000 */   nop
+/* 01EF48 01DCAC48 05000324 */  addiu       $3, $0, 0x5
+/* 01EF4C 01DCAC4C 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCAC50_2D0450:
+/* 01EF50 01DCAC50 34000324 */  addiu       $3, $0, 0x34
+/* 01EF54 01DCAC54 08000316 */  bne         $16, $3, .L01DCAC78_2D0478
+/* 01EF58 01DCAC58 00000000 */   nop
+/* 01EF5C 01DCAC5C 6C010424 */  addiu       $4, $0, 0x16C
+/* 01EF60 01DCAC60 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EF64 01DCAC64 28360070 */  paddub      $6, $0, $0
+/* 01EF68 01DCAC68 AC69050C */  jal         SndSePlay__Fiii
+/* 01EF6C 01DCAC6C 00000000 */   nop
+/* 01EF70 01DCAC70 05000324 */  addiu       $3, $0, 0x5
+/* 01EF74 01DCAC74 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCAC78_2D0478:
+/* 01EF78 01DCAC78 48000324 */  addiu       $3, $0, 0x48
+/* 01EF7C 01DCAC7C 08000316 */  bne         $16, $3, .L01DCACA0_2D04A0
+/* 01EF80 01DCAC80 00000000 */   nop
+/* 01EF84 01DCAC84 71010424 */  addiu       $4, $0, 0x171
+/* 01EF88 01DCAC88 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EF8C 01DCAC8C 28360070 */  paddub      $6, $0, $0
+/* 01EF90 01DCAC90 AC69050C */  jal         SndSePlay__Fiii
+/* 01EF94 01DCAC94 00000000 */   nop
+/* 01EF98 01DCAC98 05000324 */  addiu       $3, $0, 0x5
+/* 01EF9C 01DCAC9C 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCACA0_2D04A0:
+/* 01EFA0 01DCACA0 58000324 */  addiu       $3, $0, 0x58
+/* 01EFA4 01DCACA4 0D000316 */  bne         $16, $3, .L01DCACDC_2D04DC
+/* 01EFA8 01DCACA8 00000000 */   nop
+/* 01EFAC 01DCACAC 6D010424 */  addiu       $4, $0, 0x16D
+/* 01EFB0 01DCACB0 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EFB4 01DCACB4 28360070 */  paddub      $6, $0, $0
+/* 01EFB8 01DCACB8 AC69050C */  jal         SndSePlay__Fiii
+/* 01EFBC 01DCACBC 00000000 */   nop
+/* 01EFC0 01DCACC0 72010424 */  addiu       $4, $0, 0x172
+/* 01EFC4 01DCACC4 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EFC8 01DCACC8 28360070 */  paddub      $6, $0, $0
+/* 01EFCC 01DCACCC AC69050C */  jal         SndSePlay__Fiii
+/* 01EFD0 01DCACD0 00000000 */   nop
+/* 01EFD4 01DCACD4 05000324 */  addiu       $3, $0, 0x5
+/* 01EFD8 01DCACD8 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCACDC_2D04DC:
+/* 01EFDC 01DCACDC 5E000324 */  addiu       $3, $0, 0x5E
+/* 01EFE0 01DCACE0 6F000316 */  bne         $16, $3, .L01DCAEA0_2D06A0
+/* 01EFE4 01DCACE4 00000000 */   nop
+/* 01EFE8 01DCACE8 70010424 */  addiu       $4, $0, 0x170
+/* 01EFEC 01DCACEC FFFF0524 */  addiu       $5, $0, -0x1
+/* 01EFF0 01DCACF0 28360070 */  paddub      $6, $0, $0
+/* 01EFF4 01DCACF4 AC69050C */  jal         SndSePlay__Fiii
+/* 01EFF8 01DCACF8 00000000 */   nop
+/* 01EFFC 01DCACFC 05000324 */  addiu       $3, $0, 0x5
+/* 01F000 01DCAD00 149C83AF */  sw          $3, -0x63EC($28)
+/* 01F004 01DCAD04 66000010 */  b           .L01DCAEA0_2D06A0
+/* 01F008 01DCAD08 00000000 */   nop
+/* 01F00C 01DCAD0C 02000324 */  addiu       $3, $0, 0x2
+/* 01F010 01DCAD10 08000316 */  bne         $16, $3, .L01DCAD34_2D0534
+/* 01F014 01DCAD14 00000000 */   nop
+/* 01F018 01DCAD18 C9060424 */  addiu       $4, $0, 0x6C9
+/* 01F01C 01DCAD1C FFFF0524 */  addiu       $5, $0, -0x1
+/* 01F020 01DCAD20 28360070 */  paddub      $6, $0, $0
+/* 01F024 01DCAD24 AC69050C */  jal         SndSePlay__Fiii
+/* 01F028 01DCAD28 00000000 */   nop
+/* 01F02C 01DCAD2C 03000324 */  addiu       $3, $0, 0x3
+/* 01F030 01DCAD30 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCAD34_2D0534:
+/* 01F034 01DCAD34 28000324 */  addiu       $3, $0, 0x28
+/* 01F038 01DCAD38 08000316 */  bne         $16, $3, .L01DCAD5C_2D055C
+/* 01F03C 01DCAD3C 00000000 */   nop
+/* 01F040 01DCAD40 BF060424 */  addiu       $4, $0, 0x6BF
+/* 01F044 01DCAD44 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01F048 01DCAD48 28360070 */  paddub      $6, $0, $0
+/* 01F04C 01DCAD4C AC69050C */  jal         SndSePlay__Fiii
+/* 01F050 01DCAD50 00000000 */   nop
+/* 01F054 01DCAD54 03000324 */  addiu       $3, $0, 0x3
+/* 01F058 01DCAD58 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCAD5C_2D055C:
+/* 01F05C 01DCAD5C 46000324 */  addiu       $3, $0, 0x46
+/* 01F060 01DCAD60 4F000316 */  bne         $16, $3, .L01DCAEA0_2D06A0
+/* 01F064 01DCAD64 00000000 */   nop
+/* 01F068 01DCAD68 C9060424 */  addiu       $4, $0, 0x6C9
+/* 01F06C 01DCAD6C FFFF0524 */  addiu       $5, $0, -0x1
+/* 01F070 01DCAD70 28360070 */  paddub      $6, $0, $0
+/* 01F074 01DCAD74 AC69050C */  jal         SndSePlay__Fiii
+/* 01F078 01DCAD78 00000000 */   nop
+/* 01F07C 01DCAD7C C1060424 */  addiu       $4, $0, 0x6C1
+/* 01F080 01DCAD80 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01F084 01DCAD84 28360070 */  paddub      $6, $0, $0
+/* 01F088 01DCAD88 AC69050C */  jal         SndSePlay__Fiii
+/* 01F08C 01DCAD8C 00000000 */   nop
+/* 01F090 01DCAD90 03000324 */  addiu       $3, $0, 0x3
+/* 01F094 01DCAD94 149C83AF */  sw          $3, -0x63EC($28)
+/* 01F098 01DCAD98 41000010 */  b           .L01DCAEA0_2D06A0
+/* 01F09C 01DCAD9C 00000000 */   nop
+/* 01F0A0 01DCADA0 02000324 */  addiu       $3, $0, 0x2
+/* 01F0A4 01DCADA4 3E000316 */  bne         $16, $3, .L01DCAEA0_2D06A0
+/* 01F0A8 01DCADA8 00000000 */   nop
+/* 01F0AC 01DCADAC 2C010424 */  addiu       $4, $0, 0x12C
+/* 01F0B0 01DCADB0 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01F0B4 01DCADB4 28360070 */  paddub      $6, $0, $0
+/* 01F0B8 01DCADB8 AC69050C */  jal         SndSePlay__Fiii
+/* 01F0BC 01DCADBC 00000000 */   nop
+/* 01F0C0 01DCADC0 2E010424 */  addiu       $4, $0, 0x12E
+/* 01F0C4 01DCADC4 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01F0C8 01DCADC8 28360070 */  paddub      $6, $0, $0
+/* 01F0CC 01DCADCC AC69050C */  jal         SndSePlay__Fiii
+/* 01F0D0 01DCADD0 00000000 */   nop
+/* 01F0D4 01DCADD4 05000324 */  addiu       $3, $0, 0x5
+/* 01F0D8 01DCADD8 149C83AF */  sw          $3, -0x63EC($28)
+/* 01F0DC 01DCADDC 30000010 */  b           .L01DCAEA0_2D06A0
+/* 01F0E0 01DCADE0 00000000 */   nop
+/* 01F0E4 01DCADE4 1A000324 */  addiu       $3, $0, 0x1A
+/* 01F0E8 01DCADE8 08000316 */  bne         $16, $3, .L01DCAE0C_2D060C
+/* 01F0EC 01DCADEC 00000000 */   nop
+/* 01F0F0 01DCADF0 31010424 */  addiu       $4, $0, 0x131
+/* 01F0F4 01DCADF4 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01F0F8 01DCADF8 28360070 */  paddub      $6, $0, $0
+/* 01F0FC 01DCADFC AC69050C */  jal         SndSePlay__Fiii
+/* 01F100 01DCAE00 00000000 */   nop
+/* 01F104 01DCAE04 05000324 */  addiu       $3, $0, 0x5
+/* 01F108 01DCAE08 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCAE0C_2D060C:
+/* 01F10C 01DCAE0C 38000324 */  addiu       $3, $0, 0x38
+/* 01F110 01DCAE10 08000316 */  bne         $16, $3, .L01DCAE34_2D0634
+/* 01F114 01DCAE14 00000000 */   nop
+/* 01F118 01DCAE18 31010424 */  addiu       $4, $0, 0x131
+/* 01F11C 01DCAE1C FFFF0524 */  addiu       $5, $0, -0x1
+/* 01F120 01DCAE20 28360070 */  paddub      $6, $0, $0
+/* 01F124 01DCAE24 AC69050C */  jal         SndSePlay__Fiii
+/* 01F128 01DCAE28 00000000 */   nop
+/* 01F12C 01DCAE2C 05000324 */  addiu       $3, $0, 0x5
+/* 01F130 01DCAE30 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCAE34_2D0634:
+/* 01F134 01DCAE34 56000324 */  addiu       $3, $0, 0x56
+/* 01F138 01DCAE38 08000316 */  bne         $16, $3, .L01DCAE5C_2D065C
+/* 01F13C 01DCAE3C 00000000 */   nop
+/* 01F140 01DCAE40 31010424 */  addiu       $4, $0, 0x131
+/* 01F144 01DCAE44 FFFF0524 */  addiu       $5, $0, -0x1
+/* 01F148 01DCAE48 28360070 */  paddub      $6, $0, $0
+/* 01F14C 01DCAE4C AC69050C */  jal         SndSePlay__Fiii
+/* 01F150 01DCAE50 00000000 */   nop
+/* 01F154 01DCAE54 05000324 */  addiu       $3, $0, 0x5
+/* 01F158 01DCAE58 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCAE5C_2D065C:
+/* 01F15C 01DCAE5C 78000324 */  addiu       $3, $0, 0x78
+/* 01F160 01DCAE60 0F000316 */  bne         $16, $3, .L01DCAEA0_2D06A0
+/* 01F164 01DCAE64 00000000 */   nop
+/* 01F168 01DCAE68 2C010424 */  addiu       $4, $0, 0x12C
+/* 01F16C 01DCAE6C 282E0070 */  paddub      $5, $0, $0
+/* 01F170 01DCAE70 2C6A050C */  jal         SndSeStop__Fii
+/* 01F174 01DCAE74 00000000 */   nop
+/* 01F178 01DCAE78 2E010424 */  addiu       $4, $0, 0x12E
+/* 01F17C 01DCAE7C 282E0070 */  paddub      $5, $0, $0
+/* 01F180 01DCAE80 2C6A050C */  jal         SndSeStop__Fii
+/* 01F184 01DCAE84 00000000 */   nop
+/* 01F188 01DCAE88 05000324 */  addiu       $3, $0, 0x5
+/* 01F18C 01DCAE8C 149C83AF */  sw          $3, -0x63EC($28)
+/* 01F190 01DCAE90 03000010 */  b           .L01DCAEA0_2D06A0
+/* 01F194 01DCAE94 00000000 */   nop
+.L01DCAE98_2D0698:
+/* 01F198 01DCAE98 FFFF6324 */  addiu       $3, $3, -0x1
+/* 01F19C 01DCAE9C 149C83AF */  sw          $3, -0x63EC($28)
+.L01DCAEA0_2D06A0:
+/* 01F1A0 01DCAEA0 1000BF7B */  lq          $31, 0x10($29)
+/* 01F1A4 01DCAEA4 0000B07B */  lq          $16, 0x0($29)
+/* 01F1A8 01DCAEA8 1001BD27 */  addiu       $29, $29, 0x110
+/* 01F1AC 01DCAEAC 0800E003 */  jr          $31
+/* 01F1B0 01DCAEB0 00000000 */   nop
+/* 01F1B4 01DCAEB4 00000000 */  nop
+/* 01F1B8 01DCAEB8 00000000 */  nop
+/* 01F1BC 01DCAEBC 00000000 */  nop

@@ -2,6 +2,14 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CVisualVu1;
+struct RenderInfo;
+struct sceVif1Packet;
+
+
 class CFrameVu1 {
 public:
     /* ?ret */ void DrawVu1(unsigned int *, RenderInfo *); // @ 0x129400 (0xD10 bytes) -- mangled: DrawVu1__9CFrameVu1FPUiP10RenderInfo

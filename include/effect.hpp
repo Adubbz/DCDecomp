@@ -2,6 +2,9 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name.
+class CEffectParam;
+
 class CEffect {
 public:
     /* ?ret */ void SetEffect(CEffectParam *); // @ 0x163EE0 (0x1E0 bytes) -- mangled: SetEffect__7CEffectFP12CEffectParam

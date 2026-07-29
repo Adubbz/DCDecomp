@@ -2,6 +2,13 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+struct ACT_SEQ;
+class CCharacter;
+
+
 class CActionSeq {
 public:
     /* ?ret */ void Initialize(ACT_SEQ *, int); // @ 0x154B30 (0x50 bytes) -- mangled: Initialize__10CActionSeqFP7ACT_SEQi

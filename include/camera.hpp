@@ -2,6 +2,12 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CFrame;
+
+
 class CCamera {
 public:
     /* ?ret */ void Step(int); // @ 0x123F30 (0x2E0 bytes) -- mangled: Step__7CCameraFi

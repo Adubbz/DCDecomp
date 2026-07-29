@@ -1,0 +1,185 @@
+.include "macro.inc"
+
+.set noat /* Allow manual use of $at. */
+.set noreorder /* Don't insert nops after branches. */
+
+.section .text
+glabel DataLoad__Fv
+/* 01F5B0 01DCB2B0 F0FFBD27 */  addiu       $29, $29, -0x10
+/* 01F5B4 01DCB2B4 0000BF7F */  sq          $31, 0x0($29)
+/* 01F5B8 01DCB2B8 E301013C */  lui         $1, %hi(CScript + 0x1C)
+/* 01F5BC 01DCB2BC DCE9248C */  lw          $4, %lo(CScript + 0x1C)($1)
+/* 01F5C0 01DCB2C0 FFFF0324 */  addiu       $3, $0, -0x1
+/* 01F5C4 01DCB2C4 05008310 */  beq         $4, $3, .L01DCB2DC_2D0ADC
+/* 01F5C8 01DCB2C8 00000000 */   nop
+.L01DCB2CC_2D0ACC:
+/* 01F5CC 01DCB2CC 8CFB040C */  jal         ReadBGSync__Fv
+/* 01F5D0 01DCB2D0 00000000 */   nop
+/* 01F5D4 01DCB2D4 FDFF4014 */  bnez        $2, .L01DCB2CC_2D0ACC
+/* 01F5D8 01DCB2D8 00000000 */   nop
+.L01DCB2DC_2D0ADC:
+/* 01F5DC 01DCB2DC E301013C */  lui         $1, %hi(CScript + 0x1C)
+/* 01F5E0 01DCB2E0 DCE9258C */  lw          $5, %lo(CScript + 0x1C)($1)
+/* 01F5E4 01DCB2E4 0A00A12C */  sltiu       $1, $5, 0xA
+/* 01F5E8 01DCB2E8 56002010 */  beqz        $1, .L01DCB444_2D0C44
+/* 01F5EC 01DCB2EC 00000000 */   nop
+/* 01F5F0 01DCB2F0 DE01033C */  lui         $3, %hi(LIT_870__3)
+/* 01F5F4 01DCB2F4 10016424 */  addiu       $4, $3, %lo(LIT_870__3)
+/* 01F5F8 01DCB2F8 80180500 */  sll         $3, $5, 2
+/* 01F5FC 01DCB2FC 21186400 */  addu        $3, $3, $4
+/* 01F600 01DCB300 0000638C */  lw          $3, 0x0($3)
+/* 01F604 01DCB304 08006000 */  jr          $3
+/* 01F608 01DCB308 00000000 */   nop
+/* 01F60C 01DCB30C 948B858F */  lw          $5, -0x746C($28)
+/* 01F610 01DCB310 DE01023C */  lui         $2, %hi(LIT_860__2)
+/* 01F614 01DCB314 B0FF4424 */  addiu       $4, $2, %lo(LIT_860__2)
+/* 01F618 01DCB318 28360070 */  paddub      $6, $0, $0
+/* 01F61C 01DCB31C D8FC040C */  jal         LoadFile__FPcPvPi
+/* 01F620 01DCB320 00000000 */   nop
+/* 01F624 01DCB324 47000010 */  b           .L01DCB444_2D0C44
+/* 01F628 01DCB328 00000000 */   nop
+/* 01F62C 01DCB32C 948B858F */  lw          $5, -0x746C($28)
+/* 01F630 01DCB330 DE01023C */  lui         $2, %hi(LIT_861__2)
+/* 01F634 01DCB334 D0FF4424 */  addiu       $4, $2, %lo(LIT_861__2)
+/* 01F638 01DCB338 28360070 */  paddub      $6, $0, $0
+/* 01F63C 01DCB33C ACFA040C */  jal         LoadFileBG__FPcP1Pi
+/* 01F640 01DCB340 00000000 */   nop
+/* 01F644 01DCB344 3F000010 */  b           .L01DCB444_2D0C44
+/* 01F648 01DCB348 00000000 */   nop
+/* 01F64C 01DCB34C 948B858F */  lw          $5, -0x746C($28)
+/* 01F650 01DCB350 DE01023C */  lui         $2, %hi(LIT_862__3)
+/* 01F654 01DCB354 F0FF4424 */  addiu       $4, $2, %lo(LIT_862__3)
+/* 01F658 01DCB358 28360070 */  paddub      $6, $0, $0
+/* 01F65C 01DCB35C ACFA040C */  jal         LoadFileBG__FPcP1Pi
+/* 01F660 01DCB360 00000000 */   nop
+/* 01F664 01DCB364 37000010 */  b           .L01DCB444_2D0C44
+/* 01F668 01DCB368 00000000 */   nop
+/* 01F66C 01DCB36C 948B858F */  lw          $5, -0x746C($28)
+/* 01F670 01DCB370 DE01023C */  lui         $2, %hi(LIT_863__4)
+/* 01F674 01DCB374 10004424 */  addiu       $4, $2, %lo(LIT_863__4)
+/* 01F678 01DCB378 28360070 */  paddub      $6, $0, $0
+/* 01F67C 01DCB37C ACFA040C */  jal         LoadFileBG__FPcP1Pi
+/* 01F680 01DCB380 00000000 */   nop
+/* 01F684 01DCB384 2F000010 */  b           .L01DCB444_2D0C44
+/* 01F688 01DCB388 00000000 */   nop
+/* 01F68C 01DCB38C 948B858F */  lw          $5, -0x746C($28)
+/* 01F690 01DCB390 DE01023C */  lui         $2, %hi(LIT_864__3)
+/* 01F694 01DCB394 30004424 */  addiu       $4, $2, %lo(LIT_864__3)
+/* 01F698 01DCB398 28360070 */  paddub      $6, $0, $0
+/* 01F69C 01DCB39C ACFA040C */  jal         LoadFileBG__FPcP1Pi
+/* 01F6A0 01DCB3A0 00000000 */   nop
+/* 01F6A4 01DCB3A4 27000010 */  b           .L01DCB444_2D0C44
+/* 01F6A8 01DCB3A8 00000000 */   nop
+/* 01F6AC 01DCB3AC 948B858F */  lw          $5, -0x746C($28)
+/* 01F6B0 01DCB3B0 DE01023C */  lui         $2, %hi(LIT_865__3)
+/* 01F6B4 01DCB3B4 50004424 */  addiu       $4, $2, %lo(LIT_865__3)
+/* 01F6B8 01DCB3B8 28360070 */  paddub      $6, $0, $0
+/* 01F6BC 01DCB3BC ACFA040C */  jal         LoadFileBG__FPcP1Pi
+/* 01F6C0 01DCB3C0 00000000 */   nop
+/* 01F6C4 01DCB3C4 1F000010 */  b           .L01DCB444_2D0C44
+/* 01F6C8 01DCB3C8 00000000 */   nop
+/* 01F6CC 01DCB3CC 948B858F */  lw          $5, -0x746C($28)
+/* 01F6D0 01DCB3D0 DE01023C */  lui         $2, %hi(LIT_866__4)
+/* 01F6D4 01DCB3D4 70004424 */  addiu       $4, $2, %lo(LIT_866__4)
+/* 01F6D8 01DCB3D8 28360070 */  paddub      $6, $0, $0
+/* 01F6DC 01DCB3DC ACFA040C */  jal         LoadFileBG__FPcP1Pi
+/* 01F6E0 01DCB3E0 00000000 */   nop
+/* 01F6E4 01DCB3E4 17000010 */  b           .L01DCB444_2D0C44
+/* 01F6E8 01DCB3E8 00000000 */   nop
+/* 01F6EC 01DCB3EC 948B858F */  lw          $5, -0x746C($28)
+/* 01F6F0 01DCB3F0 DE01023C */  lui         $2, %hi(LIT_867__3)
+/* 01F6F4 01DCB3F4 90004424 */  addiu       $4, $2, %lo(LIT_867__3)
+/* 01F6F8 01DCB3F8 28360070 */  paddub      $6, $0, $0
+/* 01F6FC 01DCB3FC ACFA040C */  jal         LoadFileBG__FPcP1Pi
+/* 01F700 01DCB400 00000000 */   nop
+/* 01F704 01DCB404 0F000010 */  b           .L01DCB444_2D0C44
+/* 01F708 01DCB408 00000000 */   nop
+/* 01F70C 01DCB40C 948B858F */  lw          $5, -0x746C($28)
+/* 01F710 01DCB410 DE01023C */  lui         $2, %hi(LIT_868__4)
+/* 01F714 01DCB414 B0004424 */  addiu       $4, $2, %lo(LIT_868__4)
+/* 01F718 01DCB418 28360070 */  paddub      $6, $0, $0
+/* 01F71C 01DCB41C ACFA040C */  jal         LoadFileBG__FPcP1Pi
+/* 01F720 01DCB420 00000000 */   nop
+/* 01F724 01DCB424 07000010 */  b           .L01DCB444_2D0C44
+/* 01F728 01DCB428 00000000 */   nop
+/* 01F72C 01DCB42C 948B858F */  lw          $5, -0x746C($28)
+/* 01F730 01DCB430 DE01023C */  lui         $2, %hi(LIT_869__2)
+/* 01F734 01DCB434 D0004424 */  addiu       $4, $2, %lo(LIT_869__2)
+/* 01F738 01DCB438 28360070 */  paddub      $6, $0, $0
+/* 01F73C 01DCB43C ACFA040C */  jal         LoadFileBG__FPcP1Pi
+/* 01F740 01DCB440 00000000 */   nop
+.L01DCB444_2D0C44:
+/* 01F744 01DCB444 FFFF0424 */  addiu       $4, $0, -0x1
+/* 01F748 01DCB448 E301013C */  lui         $1, %hi(CScript + 0x1C)
+/* 01F74C 01DCB44C DCE924AC */  sw          $4, %lo(CScript + 0x1C)($1)
+/* 01F750 01DCB450 E301013C */  lui         $1, %hi(CScript + 0x20)
+/* 01F754 01DCB454 E0E9238C */  lw          $3, %lo(CScript + 0x20)($1)
+/* 01F758 01DCB458 07006410 */  beq         $3, $4, .L01DCB478_2D0C78
+/* 01F75C 01DCB45C 00000000 */   nop
+.L01DCB460_2D0C60:
+/* 01F760 01DCB460 8CFB040C */  jal         ReadBGSync__Fv
+/* 01F764 01DCB464 00000000 */   nop
+/* 01F768 01DCB468 FDFF4014 */  bnez        $2, .L01DCB460_2D0C60
+/* 01F76C 01DCB46C 00000000 */   nop
+/* 01F770 01DCB470 30FB040C */  jal         StartReadBG__Fv
+/* 01F774 01DCB474 00000000 */   nop
+.L01DCB478_2D0C78:
+/* 01F778 01DCB478 E301013C */  lui         $1, %hi(CScript + 0x20)
+/* 01F77C 01DCB47C E0E9258C */  lw          $5, %lo(CScript + 0x20)($1)
+/* 01F780 01DCB480 0A00A12C */  sltiu       $1, $5, 0xA
+/* 01F784 01DCB484 2E002010 */  beqz        $1, .L01DCB540_2D0D40
+/* 01F788 01DCB488 00000000 */   nop
+/* 01F78C 01DCB48C DE01033C */  lui         $3, %hi(LIT_871__3)
+/* 01F790 01DCB490 E0006424 */  addiu       $4, $3, %lo(LIT_871__3)
+/* 01F794 01DCB494 80180500 */  sll         $3, $5, 2
+/* 01F798 01DCB498 21186400 */  addu        $3, $3, $4
+/* 01F79C 01DCB49C 0000638C */  lw          $3, 0x0($3)
+/* 01F7A0 01DCB4A0 08006000 */  jr          $3
+/* 01F7A4 01DCB4A4 00000000 */   nop
+/* 01F7A8 01DCB4A8 582D770C */  jal         InitProcA__Fv
+/* 01F7AC 01DCB4AC 00000000 */   nop
+/* 01F7B0 01DCB4B0 23000010 */  b           .L01DCB540_2D0D40
+/* 01F7B4 01DCB4B4 00000000 */   nop
+/* 01F7B8 01DCB4B8 5C31770C */  jal         InitProcB__Fv
+/* 01F7BC 01DCB4BC 00000000 */   nop
+/* 01F7C0 01DCB4C0 1F000010 */  b           .L01DCB540_2D0D40
+/* 01F7C4 01DCB4C4 00000000 */   nop
+/* 01F7C8 01DCB4C8 1835770C */  jal         InitProcC__Fv
+/* 01F7CC 01DCB4CC 00000000 */   nop
+/* 01F7D0 01DCB4D0 1B000010 */  b           .L01DCB540_2D0D40
+/* 01F7D4 01DCB4D4 00000000 */   nop
+/* 01F7D8 01DCB4D8 9837770C */  jal         InitProcD__Fv
+/* 01F7DC 01DCB4DC 00000000 */   nop
+/* 01F7E0 01DCB4E0 17000010 */  b           .L01DCB540_2D0D40
+/* 01F7E4 01DCB4E4 00000000 */   nop
+/* 01F7E8 01DCB4E8 A839770C */  jal         InitProcE__Fv
+/* 01F7EC 01DCB4EC 00000000 */   nop
+/* 01F7F0 01DCB4F0 13000010 */  b           .L01DCB540_2D0D40
+/* 01F7F4 01DCB4F4 00000000 */   nop
+/* 01F7F8 01DCB4F8 843B770C */  jal         InitProcF__Fv
+/* 01F7FC 01DCB4FC 00000000 */   nop
+/* 01F800 01DCB500 0F000010 */  b           .L01DCB540_2D0D40
+/* 01F804 01DCB504 00000000 */   nop
+/* 01F808 01DCB508 C83D770C */  jal         InitProcG__Fv
+/* 01F80C 01DCB50C 00000000 */   nop
+/* 01F810 01DCB510 0B000010 */  b           .L01DCB540_2D0D40
+/* 01F814 01DCB514 00000000 */   nop
+/* 01F818 01DCB518 BC3F770C */  jal         InitProcH__Fv
+/* 01F81C 01DCB51C 00000000 */   nop
+/* 01F820 01DCB520 07000010 */  b           .L01DCB540_2D0D40
+/* 01F824 01DCB524 00000000 */   nop
+/* 01F828 01DCB528 2843770C */  jal         InitProcI__Fv
+/* 01F82C 01DCB52C 00000000 */   nop
+/* 01F830 01DCB530 03000010 */  b           .L01DCB540_2D0D40
+/* 01F834 01DCB534 00000000 */   nop
+/* 01F838 01DCB538 D845770C */  jal         InitProcTitle__Fv
+/* 01F83C 01DCB53C 00000000 */   nop
+.L01DCB540_2D0D40:
+/* 01F840 01DCB540 FFFF0324 */  addiu       $3, $0, -0x1
+/* 01F844 01DCB544 E301013C */  lui         $1, %hi(CScript + 0x20)
+/* 01F848 01DCB548 E0E923AC */  sw          $3, %lo(CScript + 0x20)($1)
+/* 01F84C 01DCB54C 0000BF7B */  lq          $31, 0x0($29)
+/* 01F850 01DCB550 1000BD27 */  addiu       $29, $29, 0x10
+/* 01F854 01DCB554 0800E003 */  jr          $31
+/* 01F858 01DCB558 00000000 */   nop
+/* 01F85C 01DCB55C 00000000 */  nop

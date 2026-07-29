@@ -2,6 +2,13 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CCharacter;
+struct WEAPON_HAVE;
+
+
 class CWeaponLevelUp {
 public:
     /* ?ret */ void CMenuEffectDataLoad(void /* CW back-ref target unresolved */ *, int); // @ 0x236000 (0x1F0 bytes) -- mangled: CMenuEffectDataLoad__14CWeaponLevelUpFP1i

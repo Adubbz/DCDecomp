@@ -6,9 +6,16 @@
 		"context": "..",
 		"dockerfile": "../Dockerfile",
 		"target": "dev"
-	}
+	},
 
-	
+	// Mounted at /dcdecomp rather than the default /workspaces/dcdecomp, so the
+	// devcontainer sees the tree at the same path as build.sh, run.sh, diff.sh
+	// and the build image. build/ is shared between all of them, and
+	// CMakeCache.txt records the absolute source directory it was configured
+	// for, so a cache written here under a different path is one cmake refuses
+	// to reuse anywhere else.
+	"workspaceMount": "source=${localWorkspaceFolder},target=/dcdecomp,type=bind",
+	"workspaceFolder": "/dcdecomp"
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},

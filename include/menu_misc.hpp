@@ -2,6 +2,15 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CCharacter;
+class CUserStatus;
+class ClsMes;
+struct WEAPON_HAVE;
+
+
 /* ?ret */ void NowGetGameFlagForBtlMenu(int); // @ 0x20BEC0 (0xC0 bytes) -- mangled: NowGetGameFlagForBtlMenu__Fi
 /* ?ret */ void GetMenuHebikiriFlag(void); // @ 0x20BF80 (0x30 bytes) -- mangled: GetMenuHebikiriFlag__Fv
 /* ?ret */ void EquipDefaultWeapon(int); // @ 0x20BFB0 (0xC0 bytes) -- mangled: EquipDefaultWeapon__Fi

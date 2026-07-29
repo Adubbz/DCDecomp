@@ -2,6 +2,18 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CRect_i_;
+class CTexture;
+class ClsMes;
+struct EDITPARTS_INFO;
+struct EDIT_CHIP_ATTACH_DATA;
+struct MC_CARD_INFO;
+struct RECT;
+
+
 /* ?ret */ void McCheckMCPs2(MC_CARD_INFO *); // @ 0x216D50 (0x40 bytes) -- mangled: McCheckMCPs2__FP12MC_CARD_INFO
 /* ?ret */ void DrawObjectVibe(int, int, CTexture *, CRect_i_, unsigned char, int); // @ 0x216D90 (0x140 bytes) -- mangled: DrawObjectVibe__FiiP8CTexture8CRect_i_Uci
 /* ?ret */ void DrawObjectVibe(int, int, CTexture *, RECT, unsigned char, int); // @ 0x216ED0 (0x70 bytes) -- mangled: DrawObjectVibe__FiiP8CTexture4RECTUci

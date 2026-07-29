@@ -1,0 +1,117 @@
+.include "macro.inc"
+
+.set noat /* Allow manual use of $at. */
+.set noreorder /* Don't insert nops after branches. */
+
+.section .text
+glabel SceneChange__Fv
+/* 003DA0 01DAFAA0 F0FFBD27 */  addiu       $29, $29, -0x10
+/* 003DA4 01DAFAA4 0000BF7F */  sq          $31, 0x0($29)
+/* 003DA8 01DAFAA8 DE01013C */  lui         $1, %hi(CScript__2 + 0x1C)
+/* 003DAC 01DAFAAC 1C1B258C */  lw          $5, %lo(CScript__2 + 0x1C)($1)
+/* 003DB0 01DAFAB0 0A00A12C */  sltiu       $1, $5, 0xA
+/* 003DB4 01DAFAB4 2A002010 */  beqz        $1, .L01DAFB60_2B5360
+/* 003DB8 01DAFAB8 00000000 */   nop
+/* 003DBC 01DAFABC DE01033C */  lui         $3, %hi(LIT_705__2)
+/* 003DC0 01DAFAC0 70D76424 */  addiu       $4, $3, %lo(LIT_705__2)
+/* 003DC4 01DAFAC4 80180500 */  sll         $3, $5, 2
+/* 003DC8 01DAFAC8 21186400 */  addu        $3, $3, $4
+/* 003DCC 01DAFACC 0000638C */  lw          $3, 0x0($3)
+/* 003DD0 01DAFAD0 08006000 */  jr          $3
+/* 003DD4 01DAFAD4 00000000 */   nop
+/* 003DD8 01DAFAD8 F4E4760C */  jal         OpB_LoadDataBG__Fv
+/* 003DDC 01DAFADC 00000000 */   nop
+/* 003DE0 01DAFAE0 1F000010 */  b           .L01DAFB60_2B5360
+/* 003DE4 01DAFAE4 00000000 */   nop
+/* 003DE8 01DAFAE8 08E5760C */  jal         OpB_LoadDataBG2__Fv
+/* 003DEC 01DAFAEC 00000000 */   nop
+/* 003DF0 01DAFAF0 1B000010 */  b           .L01DAFB60_2B5360
+/* 003DF4 01DAFAF4 00000000 */   nop
+/* 003DF8 01DAFAF8 A8EF760C */  jal         OpC_LoadDataBG__Fv
+/* 003DFC 01DAFAFC 00000000 */   nop
+/* 003E00 01DAFB00 17000010 */  b           .L01DAFB60_2B5360
+/* 003E04 01DAFB04 00000000 */   nop
+/* 003E08 01DAFB08 BCEF760C */  jal         OpC_LoadDataBG2__Fv
+/* 003E0C 01DAFB0C 00000000 */   nop
+/* 003E10 01DAFB10 13000010 */  b           .L01DAFB60_2B5360
+/* 003E14 01DAFB14 00000000 */   nop
+/* 003E18 01DAFB18 D0EF760C */  jal         OpC_LoadDataBG3__Fv
+/* 003E1C 01DAFB1C 00000000 */   nop
+/* 003E20 01DAFB20 0F000010 */  b           .L01DAFB60_2B5360
+/* 003E24 01DAFB24 00000000 */   nop
+/* 003E28 01DAFB28 E4EF760C */  jal         OpC_LoadDataBG4__Fv
+/* 003E2C 01DAFB2C 00000000 */   nop
+/* 003E30 01DAFB30 0B000010 */  b           .L01DAFB60_2B5360
+/* 003E34 01DAFB34 00000000 */   nop
+/* 003E38 01DAFB38 F8EF760C */  jal         OpC_LoadDataBG5__Fv
+/* 003E3C 01DAFB3C 00000000 */   nop
+/* 003E40 01DAFB40 07000010 */  b           .L01DAFB60_2B5360
+/* 003E44 01DAFB44 00000000 */   nop
+/* 003E48 01DAFB48 2C10770C */  jal         OpD_LoadDataBG__Fv
+/* 003E4C 01DAFB4C 00000000 */   nop
+/* 003E50 01DAFB50 03000010 */  b           .L01DAFB60_2B5360
+/* 003E54 01DAFB54 00000000 */   nop
+/* 003E58 01DAFB58 4010770C */  jal         OpD_LoadDataBG2__Fv
+/* 003E5C 01DAFB5C 00000000 */   nop
+.L01DAFB60_2B5360:
+/* 003E60 01DAFB60 DE01013C */  lui         $1, %hi(CScript__2 + 0x20)
+/* 003E64 01DAFB64 201B258C */  lw          $5, %lo(CScript__2 + 0x20)($1)
+/* 003E68 01DAFB68 0A00A12C */  sltiu       $1, $5, 0xA
+/* 003E6C 01DAFB6C 34002010 */  beqz        $1, .L01DAFC40_2B5440
+/* 003E70 01DAFB70 00000000 */   nop
+/* 003E74 01DAFB74 DE01033C */  lui         $3, %hi(LIT_706__2)
+/* 003E78 01DAFB78 40D76424 */  addiu       $4, $3, %lo(LIT_706__2)
+/* 003E7C 01DAFB7C 80180500 */  sll         $3, $5, 2
+/* 003E80 01DAFB80 21186400 */  addu        $3, $3, $4
+/* 003E84 01DAFB84 0000638C */  lw          $3, 0x0($3)
+/* 003E88 01DAFB88 08006000 */  jr          $3
+/* 003E8C 01DAFB8C 00000000 */   nop
+/* 003E90 01DAFB90 B4BF760C */  jal         SoundStop__Fv
+/* 003E94 01DAFB94 00000000 */   nop
+/* 003E98 01DAFB98 1CE5760C */  jal         OpB_InitProcess__Fv
+/* 003E9C 01DAFB9C 00000000 */   nop
+/* 003EA0 01DAFBA0 27000010 */  b           .L01DAFC40_2B5440
+/* 003EA4 01DAFBA4 00000000 */   nop
+/* 003EA8 01DAFBA8 70E8760C */  jal         OpB_InitProcess2__Fv
+/* 003EAC 01DAFBAC 00000000 */   nop
+/* 003EB0 01DAFBB0 23000010 */  b           .L01DAFC40_2B5440
+/* 003EB4 01DAFBB4 00000000 */   nop
+/* 003EB8 01DAFBB8 B4BF760C */  jal         SoundStop__Fv
+/* 003EBC 01DAFBBC 00000000 */   nop
+/* 003EC0 01DAFBC0 0CF0760C */  jal         OpC_InitProcess__Fv
+/* 003EC4 01DAFBC4 00000000 */   nop
+/* 003EC8 01DAFBC8 1D000010 */  b           .L01DAFC40_2B5440
+/* 003ECC 01DAFBCC 00000000 */   nop
+/* 003ED0 01DAFBD0 74F3760C */  jal         OpC_InitProcess2__Fv
+/* 003ED4 01DAFBD4 00000000 */   nop
+/* 003ED8 01DAFBD8 19000010 */  b           .L01DAFC40_2B5440
+/* 003EDC 01DAFBDC 00000000 */   nop
+/* 003EE0 01DAFBE0 B4BF760C */  jal         SoundStop__Fv
+/* 003EE4 01DAFBE4 00000000 */   nop
+/* 003EE8 01DAFBE8 B8F4760C */  jal         OpC_InitProcess3__Fv
+/* 003EEC 01DAFBEC 00000000 */   nop
+/* 003EF0 01DAFBF0 13000010 */  b           .L01DAFC40_2B5440
+/* 003EF4 01DAFBF4 00000000 */   nop
+/* 003EF8 01DAFBF8 88F6760C */  jal         OpC_InitProcess4__Fv
+/* 003EFC 01DAFBFC 00000000 */   nop
+/* 003F00 01DAFC00 0F000010 */  b           .L01DAFC40_2B5440
+/* 003F04 01DAFC04 00000000 */   nop
+/* 003F08 01DAFC08 3CF7760C */  jal         OpC_InitProcess5__Fv
+/* 003F0C 01DAFC0C 00000000 */   nop
+/* 003F10 01DAFC10 0B000010 */  b           .L01DAFC40_2B5440
+/* 003F14 01DAFC14 00000000 */   nop
+/* 003F18 01DAFC18 B4BF760C */  jal         SoundStop__Fv
+/* 003F1C 01DAFC1C 00000000 */   nop
+/* 003F20 01DAFC20 6010770C */  jal         OpD_InitProcess__Fv
+/* 003F24 01DAFC24 00000000 */   nop
+/* 003F28 01DAFC28 05000010 */  b           .L01DAFC40_2B5440
+/* 003F2C 01DAFC2C 00000000 */   nop
+/* 003F30 01DAFC30 B4BF760C */  jal         SoundStop__Fv
+/* 003F34 01DAFC34 00000000 */   nop
+/* 003F38 01DAFC38 3812770C */  jal         SubCamera
+/* 003F3C 01DAFC3C 00000000 */   nop
+.L01DAFC40_2B5440:
+/* 003F40 01DAFC40 0000BF7B */  lq          $31, 0x0($29)
+/* 003F44 01DAFC44 1000BD27 */  addiu       $29, $29, 0x10
+/* 003F48 01DAFC48 0800E003 */  jr          $31
+/* 003F4C 01DAFC4C 00000000 */   nop

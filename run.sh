@@ -4,42 +4,35 @@
 #
 #   run.sh
 #
-# The first run also builds the container image and extracts and disassembles
-# the disc, which takes a while; every run after that is incremental, because
-# the working tree is mounted into the container rather than copied into the
-# image.
-#
-# PCSX2 runs on the host, not in the container -- it needs a display. Set
-# PCSX2=/path/to/pcsx2-qt if it is not found automatically.
+# The first run builds the image and extracts and disassembles the disc; later
+# runs are incremental, since the tree is mounted rather than copied in. PCSX2
+# runs on the host (it needs a display); set PCSX2=/path/to/pcsx2-qt if needed.
 set -euo pipefail
 
 cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-. scripts/container.sh
+. scripts/host/container.sh
 
+# PCSX2 is the reason this one is host-only: it needs a display, so there is
+# nothing sensible for it to do from inside the container.
+require_builder
 require_rom
 ensure_image dcdecomp_dev dev
 
 ISO="build/Dark Cloud (Build).iso"
 
-# `cmake --build build` verifies against the retail hashes; a mismatch is worth
-# reporting but should not stop you booting a work-in-progress build.
-# Mounted at its own path, not a fixed one, so the CMake cache in build/ stays
-# valid whether you go through this script or run cmake in the container
-# yourself.
-"$BUILDER" run --rm \
-    -v "$PWD:$PWD:Z" \
-    -w "$PWD" \
+# The default target verifies against the retail hashes, and is allowed to fail
+# so a work-in-progress build still boots. -t keeps the colours and progress
+# line, skipped when this script's own output is redirected.
+TTY=()
+if [ -t 1 ]; then TTY=(-t); fi
+
+"$BUILDER" run --rm "${TTY[@]}" \
+    -v "$PWD:$CONTAINER_WORKDIR:Z" \
+    -w "$CONTAINER_WORKDIR" \
     -e HOME=/tmp \
-    dcdecomp_dev bash -c '
-        set -e
-        cmake -G Ninja -S . -B build
-        if [ ! -d ref ]; then
-            echo "First run: extracting and disassembling the disc."
-            cmake --build build --target setup
-            cmake -G Ninja -S . -B build
-        fi
-        cmake --build build || echo "WARNING: the build does not match retail."
-        cmake --build build --target iso
+    dcdecomp_dev sh -c '
+        scripts/build/cmake.sh build || echo "WARNING: the build does not match retail."
+        scripts/build/cmake.sh iso
     '
 
-exec scripts/pcsx2.sh "$ISO"
+exec scripts/host/pcsx2.sh "$ISO"

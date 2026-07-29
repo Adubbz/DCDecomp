@@ -1,0 +1,68 @@
+# decomp.dev integration.
+#
+# decomp.dev renders its progress page from an artifact named
+# "<VERSION>_report" holding objdiff's report.json, which this job builds from
+# scratch on every push. It needs no disc: ref/ and the compiler are committed,
+# and the disc is only required to produce ref/, which has already happened --
+# so no game data is downloaded, stored or uploaded here.
+#
+# The repository must also be registered once by hand at
+# https://decomp.dev/manage/new; this workflow alone does not add it.
+name: Progress report
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        # No submodules: m2c and decomp-permuter are decompilation aids, and
+        # neither is on the path from sources to a progress report.
+        uses: actions/checkout@v4
+
+      - name: Build the toolchain image
+        # The Dockerfile is the only description of this toolchain, so CI uses
+        # it rather than a second copy of the same steps that could drift.
+        run: docker build -t dcdecomp_dev --target dev .
+
+      - name: Build and generate the report
+        run: |
+          docker run --rm \
+            -v "$PWD:/dcdecomp" -w /dcdecomp -e HOME=/tmp \
+            dcdecomp_dev sh -c '
+              scripts/build/cmake.sh objdiff
+              mkdir -p progress
+              objdiff-cli report generate -o progress/report.json
+            '
+
+      - name: Summarise
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          m = json.load(open("progress/report.json"))["measures"]
+          print("| Measure | Value |")
+          print("| --- | --- |")
+          print("| Code matched | %.4f%% |" % m["matched_code_percent"])
+          print("| Functions matched | %s / %s |"
+                % (m["matched_functions"], m["total_functions"]))
+          print("| Bytes matched | %s / %s |"
+                % (m["matched_code"], m["total_code"]))
+          PY
+
+      - name: Upload the progress report
+        uses: actions/upload-artifact@v4
+        with:
+          # decomp.dev looks this name up; it is the executable's name, which is
+          # what identifies this project's version there.
+          name: SCUS_971.11_report
+          path: progress/report.json
+          if-no-files-found: error
