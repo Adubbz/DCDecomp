@@ -4,3 +4,6 @@
 [submodule "permuting/decomp-permuter"]
 	path = permuting/decomp-permuter
 	url = https://github.com/simonlindholm/decomp-permuter
+[submodule "tools/m2c"]
+	path = tools/m2c
+	url = https://github.com/matt-kempster/m2c.git
