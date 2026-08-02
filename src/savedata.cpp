@@ -576,18 +576,16 @@ int CSaveData::QuestDungeon(int dungeon_no, int add) {
 
 /* @ 0x158940 (0xC0 bytes) -- ConvertConfig__9CSaveDataFP13SV_CONFIG_SYS */
 void CSaveData::ConvertConfig(SV_CONFIG_SYS *out) {
-    /* Register/shape notes (all confirmed against retail 0x158940 via
-     * asm-differ):
-     * - `p` must be a named local assigned at the top (it gets s1; `out`
-     *   itself dying at the memset call is what lets MWCC keep `this` in a0
-     *   for the two config mirror writes below).
-     * - `src` must be assigned *after* those writes, right before the
-     *   memset (it gets s0; assigning it earlier or using `this` directly
-     *   in the copy loop changes the whole allocation).
-     * - The store must be written `*(p + copy * 18 + j)` -- left-associative
-     *   pointer arithmetic, so the address is computed (p + copy*18) + j as
-     *   in retail; the array form p[copy * 18 + j] made MWCC reassociate it
-     *   as (p + j) + copy*18, which does not match. */
+    /* Register/shape notes, confirmed against retail 0x158940:
+     * - `p` must be a named local assigned at the top (it takes s1; `out`
+     *   dying at the memset is what keeps `this` in a0 for the two config
+     *   mirror writes below).
+     * - `src` must be assigned after those writes, right before the memset
+     *   (it takes s0; earlier, or using `this` directly, changes the whole
+     *   allocation).
+     * - The store must be `*(p + copy * 18 + j)`: left-associative pointer
+     *   arithmetic gives retail's (p + copy*18) + j, where the array form
+     *   made MWCC reassociate to (p + j) + copy*18. */
     char *src; /* declared before p: MWCC assigns s0/s1 in declaration order
                 * (src->s0, p->s1, matching retail) even though p is
                 * assigned/used first. */

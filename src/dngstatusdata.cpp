@@ -1,6 +1,6 @@
 #include "dngstatusdata.hpp"
 
-#include "itemid.hpp"
+#include "item.hpp"
 #include "userstatus.hpp"
 
 /* CDngStatusData's and CUserStatus's methods are interleaved in retail
@@ -8,41 +8,24 @@
  * CheckDefaultWeapon, AddDrink..Init, SetDead..GetAtraData), so both classes
  * live in this one translation unit, in that order.
  *
- * TEMPORARY: four functions here are still retail's own instructions
- * ------------------------------------------------------------------
- * These four do not yet assemble to retail's exact bytes:
+ * TEMPORARY: four functions here are still retail's own instructions.
+ * CUserStatus::AddDrink, AddNowLife, SetNextLife and Step differ from retail
+ * in register allocation only -- correct size, addressing and branch
+ * structure, but MWCC assigns the scaled-index and base temps to different
+ * registers (3, 15, 13 and 68 instructions under mwcc 2.3.3). See
+ * docs/RE/dngstatusdata.md and docs/RE/mwcc_register_allocator.md.
  *
- *   CUserStatus::AddDrink     register allocation only -- correct size,
- *   CUserStatus::AddNowLife   addressing and branch structure, but MWCC
- *   CUserStatus::SetNextLife  assigns the scaled-index and base temps to
- *   CUserStatus::Step         different registers than retail. 3, 15, 13 and
- *                             68 instructions respectively under mwcc 2.3.3.
- *                             See docs/RE/dngstatusdata.md and
- *                             docs/RE/mwcc_register_allocator.md.
- *
- * Everywhere else in the project a function in that state is left to its own
- * .s object. That cannot work here: retail interleaves these four with
- * functions that do match (CheckLife sits between AddNowLife and SetNextLife),
- * and MWCC emits a translation unit's functions as one contiguous .text, so a
- * hole in the middle cannot be filled from outside without moving everything
- * after it. This file used to be compiled three times, once per contiguous run
- * of matching functions, to work around exactly that.
- *
- * Instead each of the four keeps its place here with retail's own instructions
- * as an `asm` body, generated from the reference dump into
- * build/generated/asm (CMakeLists.txt, "Retail instructions as asm bodies").
+ * Elsewhere such a function is left to its own .s object, which cannot work
+ * here: retail interleaves these four with functions that do match (CheckLife
+ * sits between AddNowLife and SetNextLife), and MWCC emits a TU's functions as
+ * one contiguous .text, so a hole cannot be filled from outside without moving
+ * everything after it. So each keeps its place with retail's own instructions
+ * as an `asm` body, generated into build/generated/asm (see CMakeLists.txt).
  * The C++ that does not match sits beside it under `#if DNG_COMPILE_UNMATCHED`,
- * which is off, so nothing is lost while the allocation is worked out.
+ * which is off.
  *
- * To retire one: make its C++ match, then delete its `#if
- * DNG_COMPILE_UNMATCHED` guard, the `asm` body in the `#else`, and its name
- * from ASM_BODY_FUNCS in CMakeLists.txt. Nothing else changes -- the code
- * below is already in retail's order.
- *
- * GetAtraData was also kept in a scratch src/dngtest.cpp that spelled its loops
- * with a literal 8 and one reused induction variable, rather than
- * GetMaxAtraSlotNo() and a second variable. That file was never linked; the
- * version below is the one that matches, and is now the only one. */
+ * To retire one: make its C++ match, then delete its guard, the `asm` body and
+ * its name from ASM_BODY_FUNCS in CMakeLists.txt. */
 
 extern "C" int printf(const char *fmt, ...);
 extern "C" int rand(void);

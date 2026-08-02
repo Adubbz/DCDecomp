@@ -141,6 +141,57 @@ def object_contributions(obj, retail, readelf):
     return placed, unplaced
 
 
+def migrated_sections(manifest):
+    """Section dumps the migration carves, from asm/migrated_symbols.txt."""
+    out = set()
+    if not os.path.exists(manifest):
+        return out
+    with open(manifest) as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#'):
+                out.add(line.split()[0])
+    return out
+
+
+def write_link_order(args, contributors, obj_section, objs):
+    """One mwld response file per section, in retail address order.
+
+    This is the link order, and nothing else states it: each object goes where
+    the address of its lowest-addressed contribution puts it. An object that
+    contributes in several places is listed once, at the first of them.
+
+    A whole-section dump is excluded only when migration carves it: the carved
+    parts replace it and --main-tail supplies them. The sections with no
+    migrations -- main.vutext, main.vudata -- are still assembled straight from
+    their dump and linked here.
+    """
+    carved = migrated_sections(args.migrate_manifest)
+    order = defaultdict(list)
+
+    for section, vram, src, sym, kind in sorted(
+            contributors, key=lambda c: (c[1], c[2])):
+        if kind == 'asm':
+            if os.path.basename(src)[:-2] in carved:
+                continue
+            order[section].append(f'{args.build_dir}/{src}.o')
+        else:
+            order[obj_section.get(os.path.basename(src), 'main')].append(src)
+
+    for section in SECTIONS:
+        seen, out = set(), []
+        for obj in order[section]:
+            if obj not in seen:
+                seen.add(obj)
+                out.append(obj)
+        if section == 'main':
+            out += args.main_tail
+
+        path = os.path.join(args.link_order_dir, f'{section}_o_files')
+        with open(path, 'w') as f:
+            f.write(' '.join(out) + '\n')
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--index-dir', default='ref/asm/objects')
@@ -148,6 +199,12 @@ def main():
     ap.add_argument('--elf', default='rom/extracted/iso/SCUS_971.11')
     ap.add_argument('--prefix', default=os.environ.get('MIPS_TOOL_PREFIX', 'mips-ps2-decompals-'))
     ap.add_argument('--provenance', default='build/symbol_provenance.txt')
+    ap.add_argument('--build-dir', default='build')
+    ap.add_argument('--migrate-manifest', default='asm/migrated_symbols.txt')
+    ap.add_argument('--link-order-dir',
+                    help='write <section>_o_files response files here')
+    ap.add_argument('--main-tail', nargs='*', default=[],
+                    help='objects appended to main after the address-ordered ones')
     ap.add_argument('--verbose', action='store_true',
                     help='also echo every symbol and its provider to stdout')
     args = ap.parse_args()
@@ -184,6 +241,10 @@ def main():
 
     # Every contributor, at the address retail keeps it.
     contributors, superseded = [], []
+    # Which section each compiled object belongs to, taken from the .s it
+    # supersedes. An object that supersedes nothing is data-only and goes with
+    # the main application, which is the only place data migration applies.
+    obj_section = {}
     for section in SECTIONS:
         index = os.path.join(args.index_dir, f'{section}.index')
         if not os.path.exists(index):
@@ -193,10 +254,14 @@ def main():
                           if k == '.text' and lo <= vram <= hi), None)
             if owner:
                 superseded.append((src, sym, vram, owner))
+                obj_section[owner] = section
             else:
                 contributors.append((section, vram, src, sym, 'asm'))
     for lo, hi, o, kind in spans:
         contributors.append((None, lo, os.path.join(args.obj_dir, o), kind, 'cpp'))
+
+    if args.link_order_dir:
+        write_link_order(args, contributors, obj_section, objs)
 
     # Consistency checks. Both of these are silent wrong-binary bugs otherwise:
     # a span that swallows a function its object does not define leaves a hole

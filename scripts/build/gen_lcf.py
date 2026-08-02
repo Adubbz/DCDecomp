@@ -1,55 +1,32 @@
 #!/usr/bin/env python3
-"""
-Generate the final linker command file (build/SCUS_971.11.lcf) from the
-human-authored template (SCUS_971.11.lcf) by expanding each
+"""Generate build/SCUS_971.11.lcf from the hand-authored template by expanding
+each
 
     // @MIGRATE <section>
 
 marker into the explicit interleaved placement of that section's split parts
-and migrated objects, as planned by scripts/build/migrate_section.py (which writes a
-<section>.plan.json next to the generated part .s files).
+and migrated objects, as planned by scripts/build/migrate_section.py. The rest
+of the template is copied verbatim. A marker whose section has no islands
+expands to nothing, leaving the template's `*(.sec)` wildcard to place the
+single carved file.
 
-Everything else in the template -- the hand-ordered .text list, the gp/stack
-constants, the EXCEPTION/LITERAL directives, the trailing generic `*(.sec)`
-wildcards, the title/dun/heap segments -- is copied through verbatim. A marker
-whose section has no islands (or no manifest entries at all) expands to
-nothing: the section's single carved file is then placed by the ordinary
-`*(.sec)` wildcard that the template still keeps right after the marker. So a
-section with no object-mapped migrations needs no special-casing.
-
-## Automatic alignment padding
-
-For each island the linker places the migrated object sections into the retail
-hole. If the object sections + their inter-section alignment consume fewer
-bytes than the island's retail span, the following raw part would shift; this
-tool emits an explicit `. = . + 0xN;` to close the gap. N is COMPUTED here, per
-island, as:
+For each island, if the object sections and their alignment consume fewer bytes
+than the island's retail span, the following raw part would shift, so an
+explicit `. = . + 0xN;` closes the gap:
 
     pad = island_span - linker_consumed
 
-where linker_consumed is the exact size the MWLD linker uses when
-concatenating the object's sections of that name, each rounded up to its own
-declared alignment (read from `objdump -h` on the compiled object). This is
-what auto-derives the old hand-tuned `. = . + 0x8;` after the sinit-thunk hole
-(main.cpp.o's .init is 0x58, the hole is 0x60), with no magic constant. It also
-FAILS LOUDLY if an object grew larger than its hole (pad < 0), which is the
-correct signal that the migration no longer fits and needs re-analysis.
+where linker_consumed is what MWLD uses concatenating the object's sections of
+that name, each rounded to its declared alignment (from `objdump -h`). A
+negative pad means an object outgrew its hole, and fails loudly.
 
-## Linker-owned regions (LITERAL / EXCEPTION)
-
-An island whose provider is `@DIRECTIVE` (see the manifest format in
-scripts/build/migrate_section.py) is filled by one of MWLD's own regions rather than
-by an object section -- the gp-relative literal pool it gathers every object's
-`.lit4`/`.lit8` into, or the exception table index. Their size is only known
-at link time, so they cannot use the computed `. = . + N;` pad. Instead the
-directive is emitted at the hole's start followed by an ABSOLUTE
-`. = <hole_end>;`, which pads whatever the region did not fill. MWLD rejects a
-backward `.` move, so a region outgrowing its retail span is a hard link error
-("move current location backward") instead of silent downstream drift.
-
-Because such a region is placed here, its standalone occurrence later in the
-template must not emit it a second time; DIRECTIVE_RE finds that line and
-replaces it with a breadcrumb comment pointing at the hole it moved to.
+An island provided by `@DIRECTIVE` is filled by an MWLD region -- the
+gp-relative literal pool, or the exception table -- whose size is known only at
+link time. Those get the directive at the hole's start followed by an absolute
+`. = <hole_end>;`; MWLD rejects a backward `.` move, so outgrowing the retail
+span is a hard error rather than silent drift. Because the region is placed
+here, DIRECTIVE_RE replaces its standalone occurrence later in the template
+with a breadcrumb comment.
 
 Usage:
     gen_lcf.py <template.lcf> <generated_dir> <objdir> <out.lcf> [--objdump BIN]

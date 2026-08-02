@@ -37,6 +37,6 @@ sym .L01DAFC40_2B5440 0x01DAFC40
 sym .L01DCAEA0_2D06A0 0x01DCAEA0
 
 # Called from CSaveData__InvertConfig.s. The disassembler splits this function
-# into ref/asm/split/main/func_00158AE0.s, which cmake/objects/main.cmake does
+# into ref/asm/split/main/func_00158AE0.s, which the link order does
 # not list; retail knows the address as InitPos__11CMenuCursorFv.
 sym func_00158AE0 0x00158AE0

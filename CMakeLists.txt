@@ -6,6 +6,10 @@ project(dcdecomp NONE)
 
 set(BASENAME SCUS_971.11)
 
+# The three images the disassembler splits the disc into, and the order the
+# reference indexes are read in.
+set(SECTIONS main title dun)
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(ObjectLists)
 include(Overlays)
@@ -79,27 +83,53 @@ set(LD_MW_FLAGS -map -nostdlib -m _start -nodead -g)
 set(LD_MW_ISO_FLAGS -nostdlib -m _start -nodead -sym on,noelf)
 set(BIN_FLAGS -B mips:5900 -I binary -O elf32-littlemips)
 
-read_obj_list(main MAIN_O_FILES)
-read_obj_list(title TITLE_O_FILES)
-read_obj_list(dun DUN_O_FILES)
-read_obj_list(additional ADDITIONAL_O_FILES)
-
 # Data migration: decompiled globals are carved out of copies of the section
 # dumps and placed back into their retail holes, all derived from
 # asm/migrated_symbols.txt. See docs/RE/migrated_data_layout.md.
 add_migrated_sections(GENERATED_S_FILES GENERATED_PLAN_FILES)
 
-# Generated data-section objects go at the tail of the main application, the
-# link order they had when hand-listed at the end of the main object list.
 set(GENERATED_O_FILES "")
 foreach(s IN LISTS GENERATED_S_FILES)
     list(APPEND GENERATED_O_FILES ${s}.o)
 endforeach()
-set(MAIN_OBJS ${MAIN_O_FILES} ${GENERATED_O_FILES} ${ADDITIONAL_O_FILES})
 
-# The overlays' objects are passed after their -overlay option instead of in
-# the main response file, but they are still built the same way.
-set(ALL_OBJS ${MAIN_OBJS} ${TITLE_O_FILES} ${DUN_O_FILES})
+# What gets built, as opposed to what gets linked. Every reference dump the
+# disassembler recorded is assembled and every source under src/ is compiled,
+# whether or not the link ends up using it -- a dump superseded by decompiled
+# C++ is still what objdiff compares that C++ against. Which of them the link
+# takes, and in what order, is decided from the compiled objects themselves at
+# build time; see scripts/build/gen_layout.py.
+#
+# The carved sections are the exception: the migration replaces them with the
+# generated parts above, so their dumps are never assembled.
+migrated_section_names(CARVED_SECTIONS)
+
+set(ASM_SOURCES "")
+foreach(section IN LISTS SECTIONS)
+    read_index_sources(${section} section_srcs "${CARVED_SECTIONS}")
+    list(APPEND ASM_SOURCES ${section_srcs})
+endforeach()
+
+file(GLOB CPP_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/${SRC_DIR}/*.cpp)
+file(GLOB EXTRA_ASM_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/asm/*.s)
+
+set(ALL_OBJS "")
+foreach(src IN LISTS ASM_SOURCES CPP_SOURCES EXTRA_ASM_SOURCES)
+    list(APPEND ALL_OBJS ${BUILD_DIR}/${src}.o)
+endforeach()
+list(APPEND ALL_OBJS ${GENERATED_O_FILES})
+
+set(LINK_ORDER "")
+foreach(section IN LISTS SECTIONS)
+    list(APPEND LINK_ORDER ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${section}_o_files)
+endforeach()
+
+# Appended after the address-ordered objects: the carved parts and the
+# hand-written symbol definitions have no retail address to sort them by.
+set(MAIN_TAIL ${GENERATED_O_FILES})
+foreach(src IN LISTS EXTRA_ASM_SOURCES)
+    list(APPEND MAIN_TAIL ${BUILD_DIR}/${src}.o)
+endforeach()
 
 #
 # Retail instructions as asm bodies
@@ -170,10 +200,9 @@ endif()
 #
 # Link
 #
-# mwld takes the main objects via a response file; link order is significant.
-list(JOIN MAIN_OBJS " " O_FILES_CONTENT)
-file(GENERATE OUTPUT ${CMAKE_BINARY_DIR}/o_files CONTENT "${O_FILES_CONTENT}\n")
-
+# Every image takes its objects through a response file that gen_layout.py
+# wrote, so link order comes from the address index and the compiled objects
+# rather than from anything checked in.
 set(ABS_OBJS "")
 foreach(obj IN LISTS ALL_OBJS)
     list(APPEND ABS_OBJS ${CMAKE_SOURCE_DIR}/${obj})
@@ -199,9 +228,9 @@ endforeach()
 add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/${OUTPUT} ${OVERLAY_BINS}
     COMMAND ${LD_MW} ${LD_MW_FLAGS} -o ${OUTPUT} ${GEN_LCF}
-            @${BUILD_DIR}/o_files ${OVERLAY_ARGS}
+            @${BUILD_DIR}/main_o_files ${OVERLAY_ARGS}
     ${PAD_COMMANDS}
-    DEPENDS ${ABS_OBJS} ${CMAKE_SOURCE_DIR}/${GEN_LCF} ${CMAKE_BINARY_DIR}/o_files
+    DEPENDS ${ABS_OBJS} ${CMAKE_SOURCE_DIR}/${GEN_LCF} ${LINK_ORDER}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Linking ${OUTPUT} + overlays"
     VERBATIM)
@@ -222,17 +251,20 @@ if(VERBOSE_PROVENANCE)
 endif()
 
 set(CPP_OBJS "")
-foreach(obj IN LISTS MAIN_OBJS)
-    if(obj MATCHES "\\.(c|cpp)\\.o$")
-        list(APPEND CPP_OBJS ${CMAKE_SOURCE_DIR}/${obj})
-    endif()
+foreach(src IN LISTS CPP_SOURCES)
+    list(APPEND CPP_OBJS ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${src}.o)
 endforeach()
 
+# The same pass writes the link order: one mwld response file per image, each
+# object at the address of its lowest-addressed contribution. That is the only
+# statement of link order in the build -- there is no list to keep in step.
 add_custom_command(
-    OUTPUT ${CMAKE_SOURCE_DIR}/${PROVENANCE}
+    OUTPUT ${CMAKE_SOURCE_DIR}/${PROVENANCE} ${LINK_ORDER}
     COMMAND ${CMAKE_COMMAND} -E env MIPS_TOOL_PREFIX=${MIPS_TOOL_PREFIX}
             ${PYTHON_CMD} ${SCRIPTS_DIR}/build/gen_layout.py
             --obj-dir ${BUILD_DIR}/${SRC_DIR} --provenance ${PROVENANCE}
+            --build-dir ${BUILD_DIR} --link-order-dir ${BUILD_DIR}
+            --main-tail ${MAIN_TAIL}
             ${PROVENANCE_FLAGS}
     DEPENDS ${CPP_OBJS} ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/gen_layout.py
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -360,8 +392,8 @@ add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/${ISO_ELF}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${BUILD_DIR}/nodebug
     COMMAND ${LD_MW} ${LD_MW_ISO_FLAGS} -o ${ISO_ELF} ${GEN_LCF}
-            @${BUILD_DIR}/o_files ${OVERLAY_ARGS}
-    DEPENDS ${ABS_OBJS} ${CMAKE_SOURCE_DIR}/${GEN_LCF} ${CMAKE_BINARY_DIR}/o_files
+            @${BUILD_DIR}/main_o_files ${OVERLAY_ARGS}
+    DEPENDS ${ABS_OBJS} ${CMAKE_SOURCE_DIR}/${GEN_LCF} ${LINK_ORDER}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Linking ${ISO_ELF} (no debug info)"
     VERBATIM)

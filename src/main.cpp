@@ -8,54 +8,30 @@
  * being constructed here is unanalyzed -- out of scope for this pass. */
 CRunScript RunScript;
 
-/* Retail `nm`: 0x1cbca00, `t` -- LOCAL linkage (file-scope `static`) in
- * retail. Declared non-`static` (GLOBAL) here instead, same tradeoff as
- * `MapNo`/`OldMapNo`/etc. in mainselect.hpp: `LoadSystemMessage__Fv` (not yet
- * decompiled, still raw `ref/asm/split/main/LoadSystemMessage.s`)
- * references this symbol externally, which a `static` here (LOCAL,
- * visible only within main.cpp.o) cannot satisfy -- confirmed by the
- * exact link error this produced before making it non-static:
- * "undefined: SystemMesBuffer / Referenced from LoadSystemMessage() in
- * LoadSystemMessage.s.o". The cost is only symbol *binding* (global vs.
- * local), not code bytes -- true `static` linkage has to wait until
- * LoadSystemMessage (and any other referencing function) is decompiled
- * into this same translation unit, same as `save_data` did. */
+/* Retail `nm`: 0x1cbca00, LOCAL. Declared GLOBAL here because
+ * LoadSystemMessage__Fv is still a raw .s and references it externally,
+ * which a `static` in this object cannot satisfy. That costs symbol binding
+ * only, not code bytes; restore `static` once it lands in this TU. */
 CDataAlloc<1, 6000> SystemMesBuffer;
 
-/* Touched briefly by main() near the top; purpose beyond that not
- * analyzed. LOCAL linkage in retail (`nm`: `t pBound`/`t ParentFrame`/
- * `t DataBuffer`, 0x2a2500-0x2a250c) -- moved here from src/mainselect.cpp, which
- * originally (incorrectly) declared these alongside GameClearFlag/MapNo/
- * etc.: retail's `main.sbss` interleaves them byte-for-byte with
- * `SaveData` immediately below and the rest of main()'s own globals, which
- * a *different* compiled object (mainselect.cpp.o) cannot reproduce (a single
- * object contributes one contiguous run to its output section) -- see
- * docs/RE/sbss_bss_layout.md. */
+/* Touched briefly by main(); purpose unanalysed. LOCAL in retail
+ * (`nm`: pBound/ParentFrame/DataBuffer, 0x2a2500-0x2a250c). They live here
+ * rather than in mainselect.cpp because retail's main.sbss interleaves them
+ * with SaveData and main()'s other globals, and one object contributes a
+ * single contiguous run -- see docs/RE/sbss_bss_layout.md. */
 static s32 pBound;
 static s32 ParentFrame;
 static s32 DataBuffer;
 
-/* The game's single global save-data instance, and the pointer the rest of
- * the game uses to reach it.
- *
- * Confirmed against the retail binary's own symbol table
- * (`readelf -s rom/extracted/iso/SCUS_971.11`):
- *     2433: 01cd4140 78272 OBJECT  LOCAL  DEFAULT  4 save_data
- *     11183: 002a250c     4 OBJECT  GLOBAL DEFAULT  4 SaveData
- *
- * `save_data` is 78272 bytes -- exactly `sizeof(CSaveData)` -- with LOCAL
- * linkage (file-scope `static`); `save_data` must live in the SAME
- * translation unit as whatever assigns `SaveData = &save_data;`, which
- * is main() itself (see below), so both now live here rather than in a
- * separate save_globals.cpp as an earlier pass of this file had them (that
- * required `save_data` to be non-static, since main() hadn't been
- * decompiled into the same file yet -- now that it has, `static` is
- * restored to match retail exactly). `SaveData` is unmangled (plain C++
- * globals aren't name-mangled, only overloadable functions are, under this
- * CFront-style ABI) and uninitialized (`main.sbss`, gp-relative offset
- * -0x72E4 from `_gp = 0x2A97F0`, confirmed against every
- * `lw $4, -0x72E4($28)` preamble before a CSaveData method call across
- * ref/asm/sections/dun/dun.text.s). */
+/* The global save-data instance and the pointer used to reach it. Retail's
+ * symbol table:
+ *     2433: 01cd4140 78272 OBJECT LOCAL  4 save_data
+ *    11183: 002a250c     4 OBJECT GLOBAL 4 SaveData
+ * 78272 is exactly sizeof(CSaveData). `save_data` is LOCAL, so it has to
+ * share a translation unit with whatever assigns `SaveData = &save_data;` --
+ * main(), below. `SaveData` is unmangled and sits in main.sbss at gp-0x72E4
+ * from _gp = 0x2A97F0, confirmed against the `lw $4,-0x72E4($28)` preamble of
+ * every CSaveData call in ref/asm/sections/dun/dun.text.s. */
 static CSaveData save_data __attribute__((aligned(64)));
 CSaveData *SaveData;
 
@@ -77,49 +53,25 @@ s32 SystemMes;
 char CSnd; /* 1 byte in retail, not 4 -- padded to a 4-byte slot in this globals group. */
 s32 main_select_padrup;
 
-/* Scratch buffer for the "reset trial character names, keep everything
- * else" sequence below (ConvertConfig -> memset+Initialize -> InvertConfig
- * round-trip). Confirmed via the retail binary's own symbol table
- * (`readelf -s`: `config_data`, 64 bytes -- exactly `sizeof(SV_CONFIG_SYS)`
- * -- LOCAL linkage, `main.bss`) that this is a real, named `static` global,
- * NOT a stack-local temporary as an earlier pass of this file had it
- * (`SV_CONFIG_SYS tmp_config;` inside the switch case) -- that inflated
- * this function's stack frame by 64 bytes relative to retail, which
- * doesn't allocate any stack space for it at all.
+/* Scratch buffer for the "reset trial character names, keep the rest"
+ * round-trip below. Retail has it as a real named static rather than a stack
+ * local: `readelf -s` gives `config_data`, 64 bytes (= sizeof(SV_CONFIG_SYS)),
+ * LOCAL, main.bss, and retail allocates no stack for it.
  *
- * Declared BEFORE `mainCDataAlloc2` (moved here from directly after
- * `SaveData`) to match retail's real `.bss` address order: `nm` on retail
- * shows `config_data` at 0x1ce7300 and `mainCDataAlloc2` at 0x1ce7560 --
- * `config_data` first, `mainCDataAlloc2` last -- confirmed via
- * `docs/RE/sbss_bss_layout.md`'s whole-region layout investigation. This
- * doesn't disturb the sinit-thunk constructor-call order documented above
- * (`RunScript`, `SystemMesBuffer`, `save_data`, `mainCDataAlloc2`, in that
- * order): `config_data` is a plain POD `SV_CONFIG_SYS` with no constructor,
- * so it doesn't participate in sinit ordering at all -- only its *data*
- * position moves. */
+ * Declared before `mainCDataAlloc2` to match retail's .bss order
+ * (config_data 0x1ce7300, mainCDataAlloc2 0x1ce7560). It is a POD with no
+ * constructor, so this does not disturb sinit order. */
 static SV_CONFIG_SYS config_data;
 
-/* Unidentified real retail global, `nm`: `DebugFont`, 0x1ce7340, LOCAL,
- * 0x21C bytes. The 4 bytes between its end and `mainCDataAlloc2` at
- * 0x1ce7560 are the linker's own alignment pad, not part of the object, so
- * they are left to the linker: declaring 0x220 here swallowed the pad and
- * made the symbol four bytes longer than retail's, the one thing
- * compare_build.py still reported once the code matched. Sits exactly
- * between `config_data` and `mainCDataAlloc2`
- * in retail's `.bss` layout -- without a same-sized stand-in here, main.cpp.o's
- * own `.bss` contribution would be short by 0x220 bytes and everything
- * after it (mainCDataAlloc2, then the raw dump's `msinCtx` etc.) would
- * land 0x220 bytes too early. TODO: identify the real type/usage (name
- * suggests a debug font glyph/texture table) and replace this placeholder.
+/* Unidentified retail global: `nm` DebugFont, 0x1ce7340, LOCAL, 0x21C bytes.
+ * A same-sized stand-in is needed or this object's .bss runs 0x220 short and
+ * everything after it lands early. The 4 bytes before mainCDataAlloc2 at
+ * 0x1ce7560 are the linker's alignment pad, not part of the object --
+ * declaring 0x220 made the symbol four bytes longer than retail's.
+ * TODO: identify the real type; the name suggests a font glyph table.
  *
- * Declared non-`static` (GLOBAL) despite retail's real LOCAL linkage --
- * same tradeoff as `SystemMesBuffer` above: `MenuLoop__Fv` (not yet
- * decompiled, still raw `ref/asm/split/main/MenuLoop.s`) references this
- * symbol externally, which a `static` here cannot satisfy (confirmed by the
- * exact link error this produced before making it non-static: "undefined:
- * DebugFont / Referenced from MenuLoop() in MenuLoop.s.o"). True `static`
- * linkage has to wait until MenuLoop is decompiled into this same
- * translation unit. */
+ * GLOBAL rather than retail's LOCAL for the same reason as SystemMesBuffer:
+ * MenuLoop__Fv is still a raw .s and references it. */
 char DebugFont[0x21C];
 
 /* Global, GLOBAL linkage per retail `nm` (0x1ce7560, `T`). Declared last,
@@ -202,24 +154,13 @@ int ReadBGSync__Fv();
 void TrialStart__Fv();
 }
 
-/* File-scope statics of the original main translation unit. The retail
- * symbol table has these as *unsuffixed* LOCAL objects (`nm`: `t mode`,
- * `t d1`, `t d2`, `t d8`, `t mc_mode`, in that exact main.sbss address
- * order, 0x2a2534-0x2a2548) -- i.e. file-scope `static`, NOT function-local
- * statics (those get a `$NNN` suffix like `init$683`; an earlier pass of
- * this file wrongly had these inside main(), producing `mode$7`-style
- * symbols).
- *
- * Now defined here as real `static`s (a whole-tree grep of every
- * not-yet-decompiled ref/asm/split/main/*.s file confirms none of them
- * reference `mode`/`d1`/`d2`/`d8`/`mc_mode` by their main.sbss gp-offsets --
- * only main() itself does -- so, unlike `NextMapNo` just below, there's no
- * cross-TU raw-dump binding to preserve). `d2`/`d8` are never read/written
- * by main() itself either (confirmed against the full gp-relative access
- * list of ref/asm/split/main/main.s) but still need to be defined here,
- * unused, purely so main.cpp.o's `.sbss` layout includes their retail
- * byte range in the right position (between `d1` and `mc_mode`). See
- * docs/RE/sbss_bss_layout.md for the full derivation. */
+/* File-scope statics of the original main translation unit. Retail has them
+ * unsuffixed and LOCAL (`nm`: mode, d1, d2, d8, mc_mode, in that main.sbss
+ * address order, 0x2a2534-0x2a2548), so file-scope `static` rather than
+ * function-local statics, which would get a `$NNN` suffix. No raw .s
+ * references them by gp-offset, so real `static` works. `d2`/`d8` are never
+ * touched by main() but must still be defined, so this object's .sbss covers
+ * their retail byte range. See docs/RE/sbss_bss_layout.md. */
 static s32 mode;
 static s32 d1;
 static s32 d2;
@@ -242,17 +183,12 @@ s32 PolyCount;
  * MapJump__Fii and friends are decompiled into this same file. */
 extern s32 NextMapNo;
 
-/* Low byte of an EE DMA channel's CHCR register, as a bitfield. The "kick
- * this DMA channel" write in main() (`(*(vu8*)d1 & ~0x40) | 0x40`, setting
- * bit 6 = STR with TTE/MOD/DIR bits preserved) is a *bitfield store* in the
- * original source, not hand-written masking: a 1-bit field assignment is
- * the only source form found that makes MWCC materialize the OR operand
- * with `daddiu $3,$0,0x40` (its bitfield-insertion engine works in 64-bit)
- * instead of folding it into an `ori` immediate -- every hand-masked
- * variant tried (int/long/long long masks, named mask locals, u8 casts)
- * came out as `ori v0,v0,0x40`. The same 7-instruction lbu/daddiu/li/and/
- * or/sb sequence appears in MGEndFrame (twice) against DmaCH8, so this
- * struct is shared original-source vocabulary, not a one-off. */
+/* Low byte of an EE DMA channel's CHCR, as a bitfield. The "kick this
+ * channel" write in main() is a 1-bit field assignment in the original
+ * source, not hand masking: only that form makes MWCC materialise the OR
+ * operand with `daddiu $3,$0,0x40` -- its bitfield engine works in 64-bit --
+ * instead of folding it into an `ori`. The same lbu/daddiu/li/and/or/sb
+ * sequence appears twice in MGEndFrame against DmaCH8. */
 typedef struct {
     u8 chcr_low : 6; /* DIR/MOD/ASP/TTE etc. -- untouched here */
     u8 str : 1;      /* channel start/busy */
@@ -294,26 +230,19 @@ int main(int argc, const char **argv, const char **envp) {
     static s32 init_flag;
     static s8 init3;
 
-    /* Locals, in retail's callee-saved-register order (MWCC assigns
-     * s0,s1,... to the top-level locals in declaration order -- confirmed
-     * by the earlier pass of this file, whose different declaration order
-     * shifted every assignment by one register):
-     *   v4 -> s0: per-iteration loop-exit result.
-     *   v5 -> s1: "skip the title demo, jump straight to map 800" flag,
-     *             set in the first switch's case 1, consumed+cleared in
-     *             the second switch's case 1.
-     *   i  -> s2: the 60-frame warmup loop counter, then reused (same
-     *             register in retail: both the `addiu $18,$18,1` counter
-     *             and the case-0 `bnez $18` once-flag are $18) as the
-     *             "first-switch case 0 already ran once" flag.
-     *   inited -> s3: InitExistData() result, handed to func_01DD1AB0.
-     *   j  -> s4: chara-name copy loop counter (both loops), sharing its
-     *             register with the other short-lived do-loop temporaries
-     *             (game_clear, vif1_packet), as retail does with $20.
-     *   v3 -> s5: never written anywhere in the function (retail reads a
-     *             genuinely uninitialized callee-saved register in the
-     *             second switch's case 12) -- declared last so it takes
-     *             the last callee-saved slot.
+    /* Locals in retail's callee-saved order; MWCC assigns s0,s1,... to
+     * top-level locals in declaration order:
+     *   v4     -> s0  per-iteration loop-exit result
+     *   v5     -> s1  "skip the title demo" flag, set in the first switch's
+     *                 case 1 and consumed in the second's
+     *   i      -> s2  warmup counter, reused as the case-0 once-flag
+     *                 ($18 in retail for both)
+     *   inited -> s3  InitExistData() result
+     *   j      -> s4  chara-name copy counter, sharing its register with the
+     *                 other short-lived temporaries as retail does with $20
+     *   v3     -> s5  never written; retail reads an uninitialised
+     *                 callee-saved register in the second switch's case 12,
+     *                 so this is declared last to take the last slot
      */
     int v4;
     int v5;
@@ -412,15 +341,11 @@ int main(int argc, const char **argv, const char **envp) {
         MGSetRenderInfo__Ffff(800.0f, 10.0f, 65535);
         sceGsSyncPath(0, 0);
 
-        /* A `switch`, not an `||` chain: as an `||` chain MWCC merges the
-         * adjacent values 9 and 10 into a single unsigned range check
-         * (`addiu v0,v1,-9; sltiu at,v0,2`), which retail doesn't have --
-         * retail is four separate `beq`s to the store block plus an
-         * unconditional `b` over it, which is exactly the comparison-chain
-         * shape MWCC gives a sparse switch (no value merging). MWCC emits
-         * a sparse switch's comparisons in *reverse* written case order,
-         * so the cases are written 9,7,10,14 to get retail's compare
-         * order 14,10,7,9. */
+        /* A `switch`, not an `||` chain: as a chain MWCC merges 9 and 10
+         * into a range check (`addiu v0,v1,-9; sltiu at,v0,2`), which retail
+         * does not have. MWCC emits a sparse switch's comparisons in reverse
+         * written order, so these are written 9,7,10,14 to get retail's
+         * 14,10,7,9. */
         switch (mode) {
             case 9:
             case 7:
@@ -444,17 +369,11 @@ int main(int argc, const char **argv, const char **envp) {
 
         GamePad.StopVibration();
 
-        /* Case bodies are deliberately NOT in numeric case-value order --
-         * they're in the exact physical order retail's compiled switch-jump-
-         * table target addresses appear in (confirmed against
-         * ref/asm/sections/main/main.rodata.s's LIT_875 table: index N
-         * -> the Nth case value's target address; sorting those addresses
-         * gives this body order). MWCC lays out a switch's case bodies in
-         * the order they were textually written in source, same as any
-         * other code -- reordering these to match was required for a byte
-         * match, since a jump table's *indices* are correct regardless of
-         * body order but the bodies' own positions (and hence every
-         * instruction's address within them) are not. */
+        /* Case bodies are in retail's physical body order rather than
+         * case-value order, taken from the LIT_875 table in
+         * ref/asm/sections/main/main.rodata.s. MWCC lays bodies out in
+         * written order, and a jump table's indices are right regardless of
+         * that order while the bodies' own addresses are not. */
         switch (mode) {
             case 9:
                 func_01DC1420(mode);
@@ -466,15 +385,12 @@ int main(int argc, const char **argv, const char **envp) {
                 LoadSystemMessage__Fv();
                 GlobalNameInit__Fv();
                 SndInitialize__Fiiii(4, 30, 4, 5);
-                /* `i` here is the warmup loop counter reused as a
-                 * "ran once" flag (same register, $18/s2, in retail for
-                 * both roles). Retail stores *GameClearFlag* = 1 here
-                 * (gp-0x72E0, the same word zeroed at startup and copied
-                 * into config+0x38 every frame below), NOT
-                 * main_select_menu_no (gp-0x72DC) as an earlier pass had
-                 * it -- and the 1 is emitted as a copy of the flag's own
-                 * register (`paddub $2,$18`), which writing the literal 1
-                 * reproduces via copy propagation. */
+                /* `i` is the warmup counter reused as a "ran once" flag,
+                 * $18 in retail for both. Retail stores GameClearFlag = 1
+                 * here (gp-0x72E0), not main_select_menu_no (gp-0x72DC),
+                 * and emits the 1 as a copy of the flag's own register
+                 * (`paddub $2,$18`), which the literal reproduces via copy
+                 * propagation. */
                 if (i == 0) {
                     i = 1;
                     inited = InitExistData__Fv();
@@ -543,17 +459,12 @@ int main(int argc, const char **argv, const char **envp) {
          * store (see DMA_CHCR_BYTE above for why this exact source form
          * is required for the daddiu/li/and/or sequence to match). */
         ((volatile DMA_CHCR_BYTE *) d1)->str = 1;
-        /* CSaveData::unk_1C8 is private; this matches retail's own raw
-         * offset-based access to it (this call site can't be a member of
-         * CSaveData -- it's main(), a totally different translation unit --
-         * so it isn't going through a getter either, just direct pointer
-         * arithmetic on the known field offset). Both the value and the
-         * base pointer go through named locals, value first: that is the
-         * only tried form whose temp numbering matches retail
-         * (`lw v0,MapNo; lw v1,SaveData; sw v0,0x1c8(v1)`) -- the direct
-         * one-liner, and every other local/cast permutation tried, either
-         * swaps v0/v1 or swaps the two loads (see the session notes in
-         * docs/RE/main.md). */
+        /* CSaveData::unk_1C8 is private, and retail reaches it by offset
+         * from main() -- a different translation unit -- so this is direct
+         * pointer arithmetic rather than a getter. Value and base both go
+         * through named locals, value first: the only form whose temp
+         * numbering matches retail (`lw v0,MapNo; lw v1,SaveData;
+         * sw v0,0x1c8(v1)`). See docs/RE/main.md. */
         {
             s32 map_no = MapNo;
             char *sd = (char *) SaveData;
@@ -571,20 +482,14 @@ int main(int argc, const char **argv, const char **envp) {
              * used again), confirmed missing by diffing against retail. */
             (void) *(volatile s32 *) 0x10000000;
 
-            /* Exact retail shape (lw a0,Vif1Packet; paddub s4,a0; jal
-             * SetEnv; lui/addiu a1; paddub a0,s4; paddub a2; jal PkCall)
-             * requires all three of: (a) SetEnv taking the *global*
-             * directly (so the load lands in $a0 with the local's def as
-             * a copy *from* it -- writing SetEnv(vif1_packet) instead
-             * flips the copy to lw s4 + paddub a0,s4), (b) a named local
-             * capturing the pre-call value for sceVif1PkCall (retail
-             * doesn't reload the global after SetEnv), and (c) the cast on
-             * Vu_prog0f, which is what hoists the lui/addiu pair *before*
-             * the first-argument copy. Without it the address is emitted
-             * after, MWCC's argument evaluation being strictly
-             * left-to-right; the cast node is enough to lift it out.
-             * Routing it through a named local, which is what did this
-             * under mwcc 2.3.1.01, no longer has any effect under 2.3.3. */
+            /* Retail's shape (lw a0,Vif1Packet; paddub s4,a0; jal SetEnv;
+             * lui/addiu a1; paddub a0,s4; paddub a2; jal PkCall) needs all
+             * three of: SetEnv taking the global directly, so the load lands
+             * in $a0 and the local is a copy from it; a named local holding
+             * the pre-call value, since retail does not reload after SetEnv;
+             * and the cast on Vu_prog0f, which hoists the lui/addiu pair
+             * ahead of the first-argument copy, MWCC evaluating arguments
+             * strictly left to right. */
             int vif1_packet = Vif1Packet;
             SetEnv__FP13sceVif1Packet(Vif1Packet);
             sceVif1PkCall(vif1_packet, (void *) Vu_prog0f, 0);
@@ -600,17 +505,13 @@ int main(int argc, const char **argv, const char **envp) {
             (void) *(volatile s32 *) 0x10000000;
             old_main_mode = mode;
 
-            /* Same "body order matches retail's compiled address order, not
-             * case-value order" situation as the other switch above,
-             * confirmed against the .L-label order in
+            /* Body order matches retail's compiled address order rather
+             * than case-value order, from the .L-label order in
              * ref/asm/split/main/main.s: 14 (0x141710), 0 (0x14173C),
              * 1 (0x141930), 2 (0x141984), 7 (0x1419D8), 13 (0x1419EC),
              * 12 (0x141A10), 10 (0x141A2C), 11 (0x141A58), 5 (0x141A80),
-             * 9 (0x141AB8), default (0x141ADC). Cases 3 and 4 have no
-             * distinct body in retail (their jump-table slot is the same
-             * address as `default`), so they're deliberately not written
-             * at all here -- a plain `switch` already sends unmatched
-             * values to `default`. */
+             * 9 (0x141AB8), default (0x141ADC). Cases 3 and 4 share
+             * `default`'s slot in retail, so they are not written. */
             switch (mode) {
                 case 14:
                     v4 = LangsetLoop__Fv();

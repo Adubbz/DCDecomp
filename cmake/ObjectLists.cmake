@@ -1,23 +1,31 @@
-# Object lists and the per-object build rules. The lists under cmake/objects/
-# are the single source of truth for link order, which is significant, so their
-# order is preserved exactly; the build path and .o suffix are derived here
-# rather than spelled out per entry.
+# The per-object build rules. What to build comes from the disassembler's
+# address index; what to link, and in what order, is decided at build time by
+# scripts/build/gen_layout.py -- neither is written down by hand.
 
-# Load one ordered source list and return the objects built from it.
-function(read_obj_list name out_var)
-    set(path ${CMAKE_SOURCE_DIR}/cmake/objects/${name}.cmake)
-    if(NOT EXISTS ${path})
-        message(FATAL_ERROR "No object list at ${path}")
+# Every source the disassembler recorded for one image, from its address index.
+# `exclude` names section dumps the migration carves; those are replaced by the
+# generated parts and never assembled from the dump itself.
+function(read_index_sources section out_var exclude)
+    set(path ${CMAKE_SOURCE_DIR}/${REF_DIR}/asm/objects/${section}.index)
+    set(srcs "")
+
+    if(EXISTS ${path})
+        set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${path})
+        file(STRINGS ${path} lines)
+        foreach(line IN LISTS lines)
+            if(NOT line MATCHES "^#")
+                string(REGEX MATCH "^[^	]+" src "${line}")
+                get_filename_component(base ${src} NAME)
+                string(REGEX REPLACE "\\.s$" "" stem ${base})
+                if(NOT stem IN_LIST exclude)
+                    list(APPEND srcs ${src})
+                endif()
+            endif()
+        endforeach()
+        list(REMOVE_DUPLICATES srcs)
     endif()
-    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${path})
 
-    include(${path})
-
-    set(objs "")
-    foreach(src IN LISTS OBJECT_SOURCES)
-        list(APPEND objs ${BUILD_DIR}/${src}.o)
-    endforeach()
-    set(${out_var} "${objs}" PARENT_SCOPE)
+    set(${out_var} "${srcs}" PARENT_SCOPE)
 endfunction()
 
 # Create every directory the object rules will write into.

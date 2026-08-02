@@ -6,9 +6,7 @@
 #   decompile.sh <symbol> --stack-structs       extra flags go to m2c
 #
 # Symbols are the mangled names diff.sh takes; look one up with
-# `grep <name> ref/asm/objects/*.index`. Output goes to stdout. m2c reports
-# failures as a C comment rather than on stderr, so a failed run still exits 0.
-# The work happens in the container, like the other entry points.
+# `grep <name> ref/asm/objects/*.index`.
 set -euo pipefail
 
 cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -19,9 +17,6 @@ usage() {
     exit 1
 }
 
-# The section is optional -- the reference index knows which one a symbol is
-# in. `main` is both a section name and a real symbol, so it only counts as the
-# former when something that is not a flag follows it.
 section=()
 if [[ $# -ge 2 && "$1" =~ ^(main|title|dun)$ && "$2" != -* ]]; then
     section=("$1")
@@ -32,11 +27,6 @@ symbol=$1
 shift
 
 CTX=build/ctx.c
-
-# mipsee is the Emotion Engine's MIPS variant, mwcc the compiler this project
-# builds with, and c++ what gets the CodeWarrior symbol names demangled -- m2c
-# prints `CSaveData::SetDay (int)` above the function because of that last
-# part. The default is mips-ido-c, which is wrong on all three counts here.
 M2C=(python3 tools/m2c/m2c.py --target mipsee-mwcc-c++)
 
 run() {
@@ -56,8 +46,6 @@ run() {
     }
     read -r _ asm _ _ _ <<<"$located"
 
-    # The context is a build artefact; generate it if this tree has not built
-    # yet, so the script works from a fresh checkout after `setup`.
     if [ ! -f "$CTX" ]; then
         echo "$0: $CTX is missing; generating it." >&2
         python3 scripts/diff/m2ctx.py -o "$CTX" >&2

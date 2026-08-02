@@ -152,8 +152,9 @@ endfunction()
 function(overlay_link_args out_var)
     set(args -og ovl,${OVERLAY_ORIGIN})
     foreach(name IN LISTS OVERLAYS)
-        string(TOUPPER ${name} upper)
-        list(APPEND args -ol ${name} ${${upper}_O_FILES})
+        # A response file, like the main image: mwld accepts one after -overlay,
+        # and gen_layout.py writes it with this overlay's objects in order.
+        list(APPEND args -ol ${name} @${BUILD_DIR}/${name}_o_files)
     endforeach()
     set(${out_var} "${args}" PARENT_SCOPE)
 endfunction()

@@ -416,26 +416,16 @@ LOCAL_TWIN_SUFFIX = '$b'
 def localize_branch_labels(text):
     """Make every branch in this file resolvable by the assembler alone.
 
-    gas resolves a branch to a locally defined label itself and encodes the
-    exact offset. A branch to a *global* label it leaves as an R_MIPS_PC16 for
-    mwld to finish -- and the two disagree by one instruction about the addend,
-    so the branch assembles one short (beqz 0x42 where retail has 0x43).
+    gas encodes a branch to a locally defined label itself, but leaves one to a
+    global label as an R_MIPS_PC16 for mwld -- and the two disagree by one
+    instruction about the addend, so the branch assembles one short.
 
-    Retail's symbol table carries unnamed entries in the middle of functions,
-    so spimdisasm declares those addresses as symbols; left alone they are all
-    global. Three cases:
-
-      - a plain branch target is nobody else's business, so it just becomes a
-        local `.L...:`;
-      - a jump table's target has to stay global, because the table itself sits
-        in .rodata/.data, in a different object. That one keeps its global
-        definition and gains a local twin at the same address, which is what
-        the branches in this file are pointed at;
-      - a function's own name has to stay global too, and a function that
-        branches back to its own entry point -- MGInitVSyncCallBack__FPFi_i
-        spins on a flag that way -- hits the same addend disagreement. It gets
-        the same treatment, but only the branches are repointed: a `jal` to
-        that name still has to become a relocation.
+    Retail's symbol table has unnamed entries mid-function, which spimdisasm
+    declares as global symbols. Three cases: a plain branch target becomes a
+    local `.L...`; a jump table's target stays global (the table is in another
+    object) and gains a local twin for the branches; a function's own name
+    stays global and gets the same treatment, but only its branches are
+    repointed, since a `jal` still needs the relocation.
     """
     text = BRANCH_LABEL_RE.sub(r'\1:', text)
     text = twin_branched_functions(text)
@@ -528,19 +518,15 @@ def write_split(processed_segments, section_name):
     prev_names = set()
 
     def make_name(sym):
-        """The file name for one function: its own symbol, as it is mangled.
+        """The file name for one function: its own symbol, as mangled.
 
-        The game is GCC 2.x (ARM-style) mangling, so this is what actually
-        appears in the object files and the link map -- Load__7CScriptPCc, not
-        CScript::Load. No current demangler reads that form (binutils dropped
-        GNU v2 support), so demangling here would mean carrying a checked-in
-        table of it; the mangled name needs nothing and matches the symbol the
-        assembler emits.
-
-        `$$_N` suffixes are spimdisasm's way of separating same-named symbols
-        and are stripped, which can bring two files back into collision; the
-        loop below is what keeps them apart, as does truncation to
-        MAX_SPLIT_NAME_LENGTH.
+        The game uses GCC 2.x (ARM-style) mangling, which is what appears in
+        the objects and the link map -- Load__7CScriptPCc, not CScript::Load.
+        No current demangler reads that form, so demangling would mean
+        carrying a checked-in table. `$$_N` suffixes are spimdisasm's way of
+        separating same-named symbols and are stripped, which can bring two
+        files back into collision; the loop below keeps them apart, as does
+        truncation.
         """
         name = SYMBOL_SUFFIX_PATTERN.sub('', sym)[:MAX_SPLIT_NAME_LENGTH]
 

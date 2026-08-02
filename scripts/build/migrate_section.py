@@ -1,96 +1,43 @@
 #!/usr/bin/env python3
-"""
-Carve + split a monolithic reference section dump (e.g.
-ref/asm/sections/main/main.sbss.s) in a single pass, driven entirely by the
+"""Carve and split a monolithic reference section dump in one pass, driven by the
 migration manifest (asm/migrated_symbols.txt).
 
-This replaces the old two-tool chain (carve_data_sections.py +
-split_carved_section.py) and removes ALL the hand-written, per-split-point
-Makefile / .mk / .lcf surgery that used to be needed for every migration.
-Everything a section's layout needs is now derived mechanically from:
+Everything a section's layout needs comes from the immutable reference dump --
+the byte range and adjacency of every symbol -- plus the manifest, whose
+per-line format is:
 
-  1. the immutable reference dump (byte ranges + adjacency of every symbol),
-  2. the manifest, whose extended per-line format is:
+    <section> <symbol> [<object>[:<elf-section>]]
 
-         <section> <symbol> [<object>[:<elf-section>]]
+  <section>      dump basename without ".s", e.g. "main.sbss".
+  <symbol>       the exact glabel name in that dump, or `@0xSTART+0xSIZE` for
+                 an anonymous range the disassembler left unlabelled.
+  <object>       the compiled object supplying the symbol's real bytes. With
+                 one the symbol becomes an "island", placed exactly into its
+                 retail hole; without, it is only carved -- a zero `.space`
+                 filler keeps its neighbours' addresses -- and the generic
+                 `*(.sec)` wildcard places the bytes. `@DIRECTIVE`
+                 (`@LITERAL`, `@EXCEPTION`) means one of MWLD's own regions
+                 fills it; its size is unknown until link time, so gen_lcf.py
+                 pads to an absolute address instead of a computed offset.
+  <elf-section>  the object's ELF section filling the hole when it differs
+                 from the dump's own, e.g. main.cpp.o's `.init`/`.ctor`
+                 filling holes in the main.rodata dump.
 
-     - <section>  : dump basename w/o ".s" (e.g. "main.sbss").
-     - <symbol>   : the exact glabel name in that dump.
-     - <object>   : (optional) the compiled object (e.g. "main.cpp.o") that
-                    now supplies this symbol's real bytes. When present, the
-                    symbol becomes an "island" that must be placed EXACTLY
-                    into its retail hole (via the generated LCF fragment).
-                    When absent, the symbol is only carved (a zero `.space`
-                    filler is left in place, keeping neighbours' addresses)
-                    and its real bytes are placed by the generic `*(.sec)`
-                    wildcard -- appropriate only when that wildcard position
-                    is harmless.
-     - <elf-section> : (optional, after a ':') the ELF section of <object>
-                    that fills the hole, when it differs from the dump's own
-                    section -- e.g. main.cpp.o's `.init`/`.ctor` fill holes
-                    that live in the main.rodata dump.
+An island is a maximal run of adjacent migrated-with-object holes, adjacent
+meaning the only thing between them is auto-generated alignment padding
+(anonymous `B_<hex>` labels). A real un-migrated symbol between two holes ends
+the island and is kept as a raw "part", re-linked verbatim. Each island records
+the (object, elf-section) sequence that fills it and its total span, interior
+pads included; the trailing pad is computed at LCF-generation time. See
+docs/RE/sbss_bss_layout.md.
 
-     Two extra forms cover retail data that has no `glabel` to name and/or is
-     supplied by the linker itself rather than by a compiled object:
-
-     - <symbol> as `@0xSTART+0xSIZE` : an ANONYMOUS byte range of the dump,
-                    identified by address instead of by label. Needed for
-                    retail regions the disassembler left unlabelled (a linker
-                    literal pool, an exception table, ...), which therefore
-                    cannot be named. START must be the range's exact retail
-                    address and SIZE its exact retail span.
-     - <object> as `@DIRECTIVE` : the hole is filled by MWLD's own
-                    `DIRECTIVE` region (`@LITERAL`, `@EXCEPTION`) rather than
-                    by an object section. Such a region's size is not known
-                    until link time, so gen_lcf.py places the directive at the
-                    hole's start and pads with an ABSOLUTE `. = <end>;` rather
-                    than a computed `. = . + N;`. If the region ever outgrows
-                    its retail span the linker fails loudly with "move current
-                    location backward".
-
-## Islands (combined gaps), computed automatically
-
-An "island" is a maximal run of adjacent migrated-with-object holes. Two
-migrated holes are treated as adjacent (same island) when the ONLY thing
-between them in the dump is auto-generated alignment padding -- i.e. anonymous
-`B_<hex>` pad labels the disassembler emits. Any *real* (named, non-pad)
-un-migrated symbol between two migrated holes ends the island; the real
-content becomes a raw "part" that is kept and re-linked verbatim. This is
-exactly the "Island A / Island B" reasoning that used to be done by hand
-(see docs/RE/sbss_bss_layout.md) -- it is now mechanical.
-
-Each island records, in address order, the sequence of (object, elf-section)
-that fills it (collapsing runs of the same object+section), plus the island's
-total byte span (which INCLUDES the interior alignment pads -- the compiled
-objects reproduce those pads via their own per-section alignment). The exact
-trailing padding an island needs, if any, is NOT stored here: it is computed
-at LCF-generation time (scripts/build/gen_lcf.py) as island_span - linker_consumed,
-where linker_consumed is derived from the real objects' section sizes and
-alignments. That is how the old hand-derived `. = . + 0x8` after the sinit
-hole is now produced automatically.
-
-## Output
-
-Emits N split "part" .s files plus a plan JSON describing, in order, the
-interleaving of parts and islands. A section with zero islands emits a single
-whole-file `<section>.s` (a plain carved copy) instead, placed by the generic
-wildcard -- so a section with no object-mapped migrations "just works" with no
-special-casing.
+Emits the split part .s files plus a plan JSON describing the interleaving of
+parts and islands; a section with no islands emits one whole carved file.
 
 Modes:
-  --list-sections <manifest>
-      Print every distinct <section> that appears in the manifest (space
-      separated). Used by the Makefile to discover, at parse time, which
-      sections need generating -- adding a manifest entry for a new section is
-      enough, no Makefile edit.
-
-  --list-parts <ref.s> <manifest> <section> <outdir>
-      Print (one per line) the .s part file paths this section produces, so
-      the Makefile knows the (otherwise unknown-until-generated) part count
-      statically. Reads only the immutable ref dump + manifest.
-
-  --emit <ref.s> <manifest> <section> <outdir>
-      Write the part .s files and <section>.plan.json to <outdir>.
+    --list-sections <manifest>
+    --list-parts <ref.s> <manifest> <section> <outdir>
+    --emit <ref.s> <manifest> <section> <outdir>
 """
 import argparse
 import json

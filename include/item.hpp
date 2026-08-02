@@ -4,11 +4,12 @@
  * string table (see docs/RE/item_ids.md). NOT exhaustive: ids with no
  * recovered name are absent, so an id's absence here is not proof it is
  * invalid. */
-enum ItemId {
+enum Item {
     /* [81, 132): attachment/gem materials (CDngStatusData::consumable_items).
      * NOT food/potions despite that field's current name -- GetItem stores
      * these via SetAttachMentValue, confirming they're weapon-socket
      * attachments and raw gemstones. */
+    ITEM_CONSUMABLE_START     = 81,
     ITEM_ATTACH_RESERVED_81   = 81,  /* flat +100 name lookup collides with an unrelated weapon name; likely an unused/reserved sentinel slot, not a real obtainable item */
     ITEM_ATTACH_FIRE          = 82,
     ITEM_ATTACH_ICE           = 83,
@@ -49,6 +50,7 @@ enum ItemId {
      * Food/healing consumables, dungeon "gimmick" materials, and unique
      * key/puzzle items. Coverage below is a representative sample, not
      * exhaustive -- see docs/RE/item_ids.md for how to recover the rest. */
+    ITEM_DUNGEON_START       = 132,
     ITEM_ENCHANT_MAGE_SLAYER = 132, /* right at the [81,132)/[132,257) boundary */
     ITEM_AMULET_ANTI_FREEZE  = 133,
     ITEM_AMULET_ANTI_CURSE   = 134,
@@ -115,6 +117,7 @@ enum ItemId {
     ITEM_CAVE_KEY            = 237,
     ITEM_CHANGING_POTION     = 238, /* scripted/story item, never stored -- sets CDngStatusData::special_flag_238 instead */
     ITEM_FLAME_KEY           = 249,
+    ITEM_DUNGEON_END         = 255,
 
     /* [257, +): weapons (CDngStatusData::chara_weapons), split into 6
      * per-character categories by CheckWeaponUser. Only the two boundary
@@ -125,6 +128,7 @@ enum ItemId {
      * mapping here -- see docs/RE/item_ids.md for the recovered per-
      * category weapon-name chains (high confidence for Toan/swords,
      * moderate-high but not individually id-verified for the rest). */
+    ITEM_WEAPON_START       = 257,
     ITEM_WEAPON_SLOT_EMPTY  = 257, /* reserved/placeholder "empty weapon slot" sentinel, not a real weapon */
     ITEM_WEAPON_TOAN_DAGGER = 258, /* Toan's starting weapon -- see CDngStatusData::Initialize's GetItem(258, 0) */
     /* [257, 299): Toan   (Boy from Norune)   -- Swords */

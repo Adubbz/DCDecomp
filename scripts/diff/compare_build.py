@@ -1,40 +1,35 @@
 #!/usr/bin/env python3
-"""
-Report every way the build differs from retail, and where.
+"""Report every way the build differs from retail, and where.
 
     compare_build.py                          # everything, all images
     compare_build.py --section main           # one image
     compare_build.py --context 4              # more instructions per hit
     compare_build.py <retail_elf> <build_elf> # non-default paths
 
-Two independent comparisons run, because they fail in different ways and
-neither one implies the other:
+Two independent comparisons run, because neither implies the other:
 
-CONTENT -- the bytes. Each image is compared against its retail original and
-    every differing byte is attributed back to the symbol that owns it, using
-    the address index scripts/build/disassemble.py writes (scripts/diff/ref_index.py).
-    Because that index also records which dump a symbol came out of, a hit in
-    text is disassembled and reported as "this instruction, at this offset into
-    this function", and a hit in data is reported as the differing bytes. This
-    is what verify.py's pass/fail is measuring, made specific.
+CONTENT -- the bytes. Every differing byte is attributed to the symbol that
+    owns it, via the address index disassemble.py writes (ref_index.py). Since
+    that index records which dump a symbol came from, a hit in text is
+    disassembled and reported as an instruction at an offset into a function,
+    and a hit in data as the differing bytes. This is verify.py's pass/fail
+    made specific.
 
-PLACEMENT -- the symbol table. Retail functions not yet migrated to C/C++ are
-    reassembled from .s files with retail's own bytes, so their addresses
-    should coincide with retail's *unless* something earlier in the same linked
-    region has a different total size than the retail code it replaces. A
-    name-joined, address-sorted comparison pinpoints the first symbol whose
-    size or content diverges: everything after it in the same output section
-    differs only because of that upstream cause. Alongside the addresses it
-    reports symbols whose size changed, whose number of occurrences changed,
-    and which the reference index names but the build never defines.
+PLACEMENT -- the symbol table. Un-migrated functions are reassembled from .s
+    with retail's own bytes, so their addresses should coincide with retail's
+    unless something earlier in the same region has a different size than the
+    code it replaces. A name-joined, address-sorted comparison pinpoints the
+    first symbol whose size or content diverges; everything after it differs
+    only because of that. It also reports symbols whose size or occurrence
+    count changed, and names the index knows that the build never defines.
 
 Placement needs a symbol table, so it covers the main executable only -- the
 overlays ship as raw images. Content covers all three.
 
-Requires mips-ps2-decompals-nm/readelf/objdump on PATH, which means running
-this in the project's dev container:
+Needs mips-ps2-decompals-nm/readelf/objdump on PATH, so run it in the dev
+container:
 
-    podman run --rm -v "$PWD:$PWD:Z" -w "$PWD" dcdecomp_dev \\
+    podman run --rm -v "$PWD:/dcdecomp:Z" -w /dcdecomp dcdecomp_dev \
         python3 scripts/diff/compare_build.py
 """
 import argparse
@@ -109,22 +104,16 @@ def require_tools():
 
 
 def load_symbols(elf_path):
-    """Return {name: [Sym, ...]} for every symbol with a non-empty name,
-    using `nm -S --defined-only` (address + size + type). ALL occurrences of
-    a name are kept (not just the first) -- retail genuinely contains
-    multiple distinct LOCAL (`static`) symbols sharing the same mangled name
-    at different addresses (confirmed: e.g. `GetArg__FR9input_strPiPPv`
-    exists twice, `CheckChar__Fc`/`SkipSpace__FR9input_str` three times each
-    -- an event-script command-interpreter subsystem compiled into more than
-    one translation unit, plus libm math-constant tables like `pi`/`atanhi`/
-    `zero` duplicated per translation unit that references them). Silently
-    keeping only the first occurrence (previous behavior) mis-paired these
-    against whichever occurrence happened to come first in nm's own output
-    order in the *other* binary, producing large bogus address "deltas" that
-    immediately revert at the next symbol -- confirmed to account for 71 of
-    114 delta-change events in one sweep of this project's `main` section.
-    Callers must reconcile multi-occurrence names explicitly (see
-    `reconcile`) rather than assume one Sym per name."""
+    """Return {name: [Sym, ...]} from `nm -S --defined-only`, keeping every
+    occurrence of a name rather than the first.
+
+    Retail genuinely has multiple distinct LOCAL symbols sharing a mangled name
+    at different addresses -- `GetArg__FR9input_strPiPPv` twice,
+    `CheckChar__Fc` three times, plus per-TU libm constant tables. Keeping only
+    the first mis-pairs them against whichever came first in the other binary's
+    nm output, which accounted for 71 of 114 delta events in one sweep. Callers
+    reconcile multi-occurrence names explicitly; see `reconcile`.
+    """
     out = run([NM, "-S", "--defined-only", elf_path])
     syms = {}
     for line in out.splitlines():
@@ -157,52 +146,22 @@ def load_symbols(elf_path):
 
 
 def reconcile(name, rlist, clist, current_syms, bounds=None):
-    """Pair up retail's and current's occurrences of one (possibly
-    duplicated) symbol name by ascending-address rank, rather than by
-    whatever arbitrary order `nm` happened to emit them in. Returns
-    (pairs, count_mismatch, clist_count) where `pairs` is a list of (r, c)
-    Sym pairs for the min(len(rlist), len(clist)) ranks that could be
-    paired, `count_mismatch` is True if the two binaries don't have the
-    same number of occurrences of this name (itself a real, separately-
-    interesting bug -- e.g. a duplicated-static-function split file missing
-    from cmake/objects/main.cmake -- not just a join artifact), and `clist_count`
-    is the actual current-side count AFTER folding in `__N` aliases (the
-    caller must use this, not the raw `len(current[name])`, when reporting
-    a mismatch -- using the raw count there was itself a bug: it under-
-    reported resolved aliases as still-mismatched).
+    """Pair retail's and current's occurrences of one (possibly duplicated) name by
+    ascending-address rank rather than nm's arbitrary order. Returns (pairs,
+    count_mismatch, clist_count); `clist_count` is the current-side count after
+    folding in `__N` aliases, and is what callers must report.
 
-    Before concluding a count mismatch, also look for `name__2`, `name__3`,
-    ... in `current`: this project's own disassembly/split convention
-    (confirmed in ref/asm/split/main/*.s, e.g. `GetArg__FR9input_strPiPPv`
-    vs. `GetArg__FR9input_strPiPPv__2`) deliberately renames the SYMBOL
-    itself, not just the filename, for the 2nd+ occurrence of any name that
-    is genuinely duplicated in retail (unavoidable: GNU `as`-reassembled
-    .s files can't preserve retail's original LOCAL/static scoping the way
-    MWCC's own build did, so two same-named GLOBAL symbols in different
-    objects would otherwise be a multiply-defined-symbol link error).
-    Without folding these back in, EVERY genuinely-duplicated retail name
-    with a fully-correct, fully-wired-up cmake/objects/main.cmake still reports as
-    a spurious "count mismatch" -- confirmed by spot-checking
-    `SeitonAttachBoardSub__FP11ATTACH_LIST` and `gCd`, both fully present
-    under their `__N` alias with correct addresses, not missing/buggy.
+    Before concluding a mismatch, look for `name__2`, `name__3`, ...: the split
+    convention renames the symbol itself for the 2nd+ occurrence of a name
+    retail genuinely duplicates, since GNU as cannot preserve retail's LOCAL
+    scoping and two same-named GLOBALs would be a link error. The suffixes are
+    not consecutive from 2 -- main.data.s has `maxFloorTbl`, `__3`, `__4` with
+    no `__2` -- so scan a fixed range rather than stopping at the first gap.
 
-    The `__N` suffixes are NOT guaranteed consecutive starting at 2 --
-    confirmed: `main.data.s` labels retail's 3 `maxFloorTbl` occurrences as
-    `maxFloorTbl`, `maxFloorTbl__3`, `maxFloorTbl__4` (no `__2` at all,
-    presumably because whatever upstream disassembly numbering scheme
-    produced these counts some other, unrelated duplicate-name run first).
-    A loop that breaks on the first missing consecutive suffix would stop
-    at `__2` and never find `__3`/`__4`. Instead, scan a generous fixed
-    range and collect whatever exists.
-
-    `bounds`, if given, is applied to `clist` (the base name's own current
-    occurrences) AND every `__N` alias found -- the disambiguation numbering
-    is assigned project-wide with no regard for section, so e.g. `gCd`
-    (unsuffixed) landed at 0x1d00767 (outside `main` entirely -- likely
-    corresponds to retail's *other*, non-`main` occurrence of this name)
-    while `gCd__2` (0x250ac0) is the one actually matching retail's in-
-    `main` occurrence. Without this filter, a perfectly-correct alias match
-    was being reported as a bogus "count mismatch" (retail 1, current 2)."""
+    `bounds` applies to the base name and every alias: the numbering is
+    assigned project-wide with no regard for section, so `gCd` sits outside
+    `main` while `gCd__2` is the occurrence that matches.
+    """
     rlist = sorted(rlist, key=lambda s: s.addr)
     clist = list(clist)
     for n in range(2, 20):
@@ -684,8 +643,8 @@ def report_placement(args, p, retail, current):
 
     if count_mismatches:
         print(f"\n  {p.red}{len(count_mismatches)} name(s) occurring a different number "
-              f"of times{p.reset} -- likely a missing, extra or duplicated .s entry in "
-              f"cmake/objects/{args.section if args.section != 'all' else 'main'}.cmake "
+              f"of times{p.reset} -- likely a missing, extra or duplicated .s in "
+              f"the {args.section if args.section != 'all' else 'main'} link order "
               f"for a name retail legitimately repeats:")
         for name, rc, cc in count_mismatches[:args.first_n]:
             print(f"    {name:<44s} retail {rc}, build {cc}")

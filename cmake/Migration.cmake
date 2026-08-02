@@ -33,6 +33,17 @@ function(migrate_query out_var)
     set(${out_var} "${out}" PARENT_SCOPE)
 endfunction()
 
+# The section dumps the manifest carves, e.g. "main.data". Empty before setup
+# has run, which is when nothing is carved anyway.
+function(migrated_section_names out_var)
+    migration_enabled(enabled)
+    set(names "")
+    if(enabled)
+        migrate_query(names --list-sections ${MIGRATE_MANIFEST})
+    endif()
+    set(${out_var} "${names}" PARENT_SCOPE)
+endfunction()
+
 # Declare one rule per migrated section. Each emits all of that section's split
 # parts plus its plan JSON in a single pass.
 function(add_migrated_sections out_s_files out_plans)

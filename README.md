@@ -87,7 +87,7 @@ host's display.
 
 Inside it, build through `scripts/build/cmake.sh` -- the one place that runs
 cmake. It configures, bootstraps `setup` on a fresh tree, and reconfigures
-afterwards so the object lists that `setup` writes are picked up:
+afterwards so the address index that `setup` writes is picked up:
 
 ```
 scripts/build/cmake.sh                  # build and verify against the retail hashes
@@ -114,6 +114,14 @@ Every entry point reaches these through `scripts/build/cmake.sh` rather than
 calling cmake itself, so the configure rules -- the setup bootstrap, the
 reconfigure that has to follow it, and the stale-cache recovery -- live in one
 place.
+
+Nothing states which objects the link takes, or in what order. Every reference
+dump in the address index is assembled and every `src/*.cpp` compiled; then
+`scripts/build/gen_layout.py` reads the compiled objects' symbol tables and
+writes one mwld response file per image, each object at the retail address of
+its lowest-addressed contribution. A symbol a `.cpp` defines is sourced from it
+and the `.s` holding that function drops out of the link on the next build --
+there is no list to update, and no way for one to fall out of step.
 
 `setup` is three separately tracked steps, not one block of work: checking the
 disc, extracting it, and disassembling it. Each records what it produced, so
