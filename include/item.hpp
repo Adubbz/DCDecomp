@@ -5,11 +5,7 @@
  * recovered name are absent, so an id's absence here is not proof it is
  * invalid. */
 enum Item {
-    /* [81, 132): attachment/gem materials (CDngStatusData::consumable_items).
-     * NOT food/potions despite that field's current name -- GetItem stores
-     * these via SetAttachMentValue, confirming they're weapon-socket
-     * attachments and raw gemstones. */
-    ITEM_CONSUMABLE_START     = 81,
+    ITEM_ATTACH_START         = 81,
     ITEM_ATTACH_RESERVED_81   = 81,  /* flat +100 name lookup collides with an unrelated weapon name; likely an unused/reserved sentinel slot, not a real obtainable item */
     ITEM_ATTACH_FIRE          = 82,
     ITEM_ATTACH_ICE           = 83,

@@ -26,15 +26,6 @@ RUN apt-get update \
         wget \
     && rm -rf /var/lib/apt/lists/* 
 
-# Install wine (not currently required - wibo is sufficient)
-# ARG WINE_BRANCH="stable"
-# RUN wget -nv -O- https://dl.winehq.org/wine-builds/winehq.key | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
-#     && echo "deb https://dl.winehq.org/wine-builds/debian/ $(grep VERSION_CODENAME= /etc/os-release | cut -d= -f2) main" >> /etc/apt/sources.list \
-#     && dpkg --add-architecture i386 \
-#     && apt-get update \
-#     && apt-get install -y --install-recommends winehq-${WINE_BRANCH} \
-#     && rm -rf /var/lib/apt/lists/* \
-#     && wineboot --init
 
 # Install build requirements
 RUN apt-get update \
@@ -76,6 +67,7 @@ RUN apt-get update \
         less \
         build-essential \
         doxygen \
+        clangd \
     && rm -rf /var/lib/apt/lists/*
 
 # objdiff is what diff.sh runs and what produces the progress report

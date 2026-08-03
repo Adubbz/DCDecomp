@@ -1,0 +1,15 @@
+#pragma once
+
+/* Declarations only. Retail carried its own copies of these, and the build
+ * reassembles them from ref/asm/split/main/{memcpy,memset,strcpy}.s and links
+ * them like any other object -- there is no C library here to link against. */
+
+typedef unsigned int size_t;
+
+extern "C" {
+
+void *memcpy(void *dest, const void *src, size_t size);
+void *memset(void *dest, int value, size_t size);
+char *strcpy(char *dest, const char *src);
+
+}

@@ -15,7 +15,23 @@
 	// for, so a cache written here under a different path is one cmake refuses
 	// to reuse anywhere else.
 	"workspaceMount": "source=${localWorkspaceFolder},target=/dcdecomp,type=bind",
-	"workspaceFolder": "/dcdecomp"
+	"workspaceFolder": "/dcdecomp",
+
+	// Extensions live in the container, not on the host, so the ones in
+	// .vscode/extensions.json have to be installed here too. clangd.path
+	// points at the image's own clangd so the extension does not download a
+	// second copy.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"llvm-vs-code-extensions.vscode-clangd",
+				"ms-python.black-formatter"
+			],
+			"settings": {
+				"clangd.path": "/usr/bin/clangd"
+			}
+		}
+	}
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},

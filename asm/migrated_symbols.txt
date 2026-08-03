@@ -89,3 +89,5 @@ main.bss mgWindowRect mglib.cpp.o
 main.rodata LIT_281__3 dngstatusdata.cpp.o
 main.rodata LIT_540__2 dngstatusdata.cpp.o
 main.rodata LIT_541__2 dngstatusdata.cpp.o
+main.rodata LIT_352__2 stockitem.cpp.o
+main.rodata LIT_353__6 stockitem.cpp.o

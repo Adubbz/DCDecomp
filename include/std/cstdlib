@@ -1,0 +1,9 @@
+#pragma once
+
+/* Declarations only; reassembled from ref/asm/split/main/rand.s. */
+
+extern "C" {
+
+int rand(void);
+
+}

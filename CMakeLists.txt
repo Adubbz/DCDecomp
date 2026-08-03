@@ -33,6 +33,7 @@ file(RELATIVE_PATH BUILD_DIR ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 # "Retail instructions as asm bodies" below for why they exist.
 set(ASM_BODY_DIR ${BUILD_DIR}/generated/asm)
 set(ASM_BODY_FUNCS
+    AddDrink__11CUserStatusFisf
     AddNowLife__11CUserStatusFisf
     SetNextLife__11CUserStatusFisf
     Step__11CUserStatusFi)
@@ -43,9 +44,11 @@ set(MIPS_TOOL_PREFIX mips-ps2-decompals-
     CACHE STRING "Prefix of the binutils-mips-ps2-decompals tools")
 
 set(MW ${TOOLS_DIR}/compilers/mw/2.3.3/)
-# MWCIncludes is set but empty: mwcc warns per file without it, and this
-# project has no MW system headers. Objects are byte-identical either way.
-set(CC_MW ${CMAKE_COMMAND} -E env MWCIncludes= wibo ${MW}mwccmips.exe)
+# MWCIncludes is mwcc's <> search list, which -i does not feed: -i only appends
+# to the "" list. Pointing it at include/std is what makes `#include <cstring>`
+# resolve to this project's declarations of the C functions retail carried.
+set(STD_INCLUDE_DIR ${INCLUDE_DIR}/std)
+set(CC_MW ${CMAKE_COMMAND} -E env MWCIncludes=${STD_INCLUDE_DIR} wibo ${MW}mwccmips.exe)
 set(LD_MW wibo ${MW}mwldmips.exe)
 set(AS ${MIPS_TOOL_PREFIX}as)
 set(OBJCOPY ${MIPS_TOOL_PREFIX}objcopy)

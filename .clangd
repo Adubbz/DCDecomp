@@ -1,5 +1,20 @@
 CompileFlags:
-  CompilationDatabase: build
+  Compiler: clang
+  Add:
+    - -xc++
+    - -std=c++98
+    - -nostdinc
+    - -nostdinc++
+    - --target=mipsel-unknown-elf
+    - -Iinclude
+    - -I../include
+    - -I../../include
+    - -Iinclude/std
+    - -I../include/std
+    - -I../../include/std
+    - -Ibuild/generated/asm
+    - -I../build/generated/asm
+    - -I../../build/generated/asm
 
 Diagnostics:
   UnusedIncludes: None

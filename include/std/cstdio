@@ -1,0 +1,9 @@
+#pragma once
+
+/* Declarations only; reassembled from ref/asm/split/main/printf.s. */
+
+extern "C" {
+
+int printf(const char *fmt, ...);
+
+}

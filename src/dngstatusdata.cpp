@@ -27,8 +27,8 @@
  * To retire one: make its C++ match, then delete its guard, the `asm` body and
  * its name from ASM_BODY_FUNCS in CMakeLists.txt. */
 
-extern "C" int printf(const char *fmt, ...);
-extern "C" int rand(void);
+#include <cstdio>
+#include <cstdlib>
 
 /* Named only so the `asm` bodies at the bottom of this file can branch to
  * them. `fptosi` is MWCC's float-to-int helper, which the compiler calls by
@@ -495,6 +495,7 @@ int CDngStatusData::CheckDefaultWeapon(int chara_no) {
     return 1;
 }
 
+#if DNG_COMPILE_UNMATCHED
 /* Adds to a character's water gauge. With ratio == 0 the gauge moves
  * instantly; otherwise the target is latched into drink_next[] and
  * drink_step[] holds the per-frame delta CUserStatus::Step applies, signed so
@@ -531,6 +532,16 @@ void CUserStatus::AddDrink(int chara_no, s16 amount, float ratio) {
         }
     }
 }
+#else
+/* Retail's own instructions, so this keeps its place in this translation
+ * unit while the C++ above does not match yet. Generated into
+ * build/generated/asm by scripts/build/gen_asm_body.py; see CMakeLists.txt,
+ * "Retail instructions as asm bodies". */
+asm void CUserStatus::AddDrink(int chara_no, s16 amount, float ratio)
+{
+#include "AddDrink__11CUserStatusFisf.inc"
+}
+#endif /* DNG_COMPILE_UNMATCHED */
 
 #if DNG_COMPILE_UNMATCHED
 /* Same instant/interpolated split as AddDrink, for HP. */

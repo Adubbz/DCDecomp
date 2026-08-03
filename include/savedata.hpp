@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-extern "C" void *memset(void *dest, int value, u32 size);
+#include <cstring>
 
 /* CDngStatusData / CStockItem storage is still an opaque char[] in CSaveData,
  * so their Initialize() methods are reached by mangled name, with the

@@ -1,3 +1,6 @@
+// C imports
+#include <cstring>
+// Our imports
 #include "savedata.hpp"
 #include "mainselect.hpp"
 #include "gamepad.hpp"
@@ -86,9 +89,6 @@ CDataAlloc2<1> mainCDataAlloc2;
  * against the existing reassembled .s files. Functions with no retained
  * retail name use this project's "func_ADDRESS" convention. */
 extern "C" {
-void *memset(void *dest, int value, u32 size);
-void *memcpy(void *dest, const void *src, u32 size);
-char *strcpy(char *dest, const char *src);
 int mwInit(int argc, const char **argv, const char **envp);
 void init_all__Fv();
 int sceGsSyncV(int interlace);

@@ -2,27 +2,23 @@
 
 #include "common.h"
 
-// Forward declarations for the types these declarations name. The skeleton
-// headers are generated from the retail symbol table, which knows the type
-// names but not where they live.
-struct ATTACH_LIST;
-struct WEAPON_HAVE;
-
 enum SearchSpace {
     SEARCHSPACE_DUNGEON_ITEMS    = 0,
-    SEARCHSPACE_WEAPONS         = 1,
-    SEARCHSPACE_CONSUMABLE_ITEMS = 2,
+    SEARCHSPACE_WEAPONS          = 1,
+    SEARCHSPACE_ATTACH           = 2,
 };
 
-struct WeaponItem {
-    s16 id;
+struct WEAPON_HAVE {
+    s16 itemNo;
     s16 data[123];
 };
+STATIC_ASSERT(sizeof(WEAPON_HAVE) == 0xF8);
 
-struct ConsumableItem {
-    s16 id;
+struct ATTACH_LIST {
+    s16 itemNo;
     s16 data[15];
 };
+STATIC_ASSERT(sizeof(ATTACH_LIST) == 0x20);
 
 class CStockItem {
 private:
@@ -30,8 +26,8 @@ private:
     /* Per-slot "vol": the amount left in that copy of the item, seeded from
      * ITEM_LIST +10. Travels with dungeon_items through every swap and sort. */
     s16 dungeon_item_vols[60];
-    WeaponItem weapon_items[30];
-    ConsumableItem consumable_items[30];
+    WEAPON_HAVE weapons[30];
+    ATTACH_LIST attachments[30];
 public:
     /**
      * @mangled Initialize__10CStockItemFv
@@ -52,7 +48,7 @@ public:
      * @address 0x23F6C0
      * @size 0x30
      */
-    void SetItemToPos(int index, s16 *item, s16 *vol);
+    void SetItemToPos(int pos, s16 *item, s16 *vol);
 
     /**
      * @mangled GetItemInfo__10CStockItemFiPsPs
@@ -60,7 +56,7 @@ public:
      * @size 0x20
      * @unknownret
      */
-    void GetItemInfo(int index, s16 *item, s16 *vol);
+    void GetItemInfo(int pos, s16 *item, s16 *vol);
 
     /**
      * @mangled SetWepToPos__10CStockItemFiP11WEAPON_HAVE
@@ -68,7 +64,7 @@ public:
      * @size 0x80
      * @unknownret
      */
-    void SetWepToPos(int, WEAPON_HAVE *);
+    void SetWepToPos(int pos, WEAPON_HAVE *weapon);
 
     /**
      * @mangled GetWeaponInfo__10CStockItemFiP11WEAPON_HAVE
@@ -76,7 +72,7 @@ public:
      * @size 0x40
      * @unknownret
      */
-    void GetWeaponInfo(int, WEAPON_HAVE *);
+    void GetWeaponInfo(int pos, WEAPON_HAVE *weapon);
 
     /**
      * @mangled SetAttachToPos__10CStockItemFiP11ATTACH_LIST
@@ -84,7 +80,7 @@ public:
      * @size 0x80
      * @unknownret
      */
-    void SetAttachToPos(int, ATTACH_LIST *);
+    void SetAttachToPos(int pos, ATTACH_LIST *attach);
 
     /**
      * @mangled GetAttachInfo__10CStockItemFiP11ATTACH_LIST
@@ -92,7 +88,7 @@ public:
      * @size 0x40
      * @unknownret
      */
-    void GetAttachInfo(int, ATTACH_LIST *);
+    void GetAttachInfo(int pos, ATTACH_LIST *attach);
 
     /**
      * @mangled SearchItem__10CStockItemFi
@@ -100,7 +96,7 @@ public:
      * @size 0x190
      * @unknownret
      */
-    void SearchItem(int);
+    int SearchItem(int);
 
     /**
      * @mangled SeitonChargeItemBoardSub__10CStockItemFv
