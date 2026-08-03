@@ -4,7 +4,27 @@
 
 class CMenuItemStep {
 public:
-    /* ?ret */ void Initialize(void); // @ 0x235650 (0x80 bytes) -- mangled: Initialize__13CMenuItemStepFv
-    /* ?ret */ void LoopStep(int); // @ 0x2356D0 (0x50 bytes) -- mangled: LoopStep__13CMenuItemStepFi
-    /* ?ret */ void CheckItemVolume(void); // @ 0x235720 (0x2F0 bytes) -- mangled: CheckItemVolume__13CMenuItemStepFv
+    /**
+     * @mangled Initialize__13CMenuItemStepFv
+     * @address 0x235650
+     * @size 0x80
+     * @unknownret
+     */
+    void Initialize(void);
+
+    /**
+     * @mangled LoopStep__13CMenuItemStepFi
+     * @address 0x2356D0
+     * @size 0x50
+     * @unknownret
+     */
+    void LoopStep(int);
+
+    /**
+     * @mangled CheckItemVolume__13CMenuItemStepFv
+     * @address 0x235720
+     * @size 0x2F0
+     * @unknownret
+     */
+    void CheckItemVolume(void);
 };

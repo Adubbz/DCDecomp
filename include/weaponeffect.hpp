@@ -10,8 +10,35 @@ class CFrame;
 
 class CWeaponEffect {
 public:
-    /* ?ret */ void InitSet(CFrame *, char *, char *); // @ 0x1D65C0 (0x80 bytes) -- mangled: InitSet__13CWeaponEffectFP6CFramePcPc
-    /* ?ret */ void Set(int, float, float); // @ 0x1D6640 (0x120 bytes) -- mangled: Set__13CWeaponEffectFiff
-    /* ?ret */ void Step(void); // @ 0x1D6760 (0x1E0 bytes) -- mangled: Step__13CWeaponEffectFv
-    /* ?ret */ void Draw(void); // @ 0x1D6940 (0x2A0 bytes) -- mangled: Draw__13CWeaponEffectFv
+    /**
+     * @mangled InitSet__13CWeaponEffectFP6CFramePcPc
+     * @address 0x1D65C0
+     * @size 0x80
+     * @unknownret
+     */
+    void InitSet(CFrame *, char *, char *);
+
+    /**
+     * @mangled Set__13CWeaponEffectFiff
+     * @address 0x1D6640
+     * @size 0x120
+     * @unknownret
+     */
+    void Set(int, float, float);
+
+    /**
+     * @mangled Step__13CWeaponEffectFv
+     * @address 0x1D6760
+     * @size 0x1E0
+     * @unknownret
+     */
+    void Step(void);
+
+    /**
+     * @mangled Draw__13CWeaponEffectFv
+     * @address 0x1D6940
+     * @size 0x2A0
+     * @unknownret
+     */
+    void Draw(void);
 };

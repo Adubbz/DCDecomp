@@ -1,0 +1,12 @@
+BasedOnStyle: LLVM
+ColumnLimit: 0
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+PointerAlignment: Right
+SpaceAfterCStyleCast: true
+AccessModifierOffset: -4
+IndentCaseLabels: true
+AlignTrailingComments: false
+AlwaysBreakTemplateDeclarations: Yes
+SortIncludes: false

@@ -10,10 +10,51 @@ struct sceVif1Packet;
 
 class CDispCtrl {
 public:
-    /* ?ret */ void FadeOutStart(float); // @ 0x13E610 (0x20 bytes) -- mangled: FadeOutStart__9CDispCtrlFf
-    /* ?ret */ void FadeInStart(float); // @ 0x13E630 (0x20 bytes) -- mangled: FadeInStart__9CDispCtrlFf
-    /* ?ret */ void FadeInit(float); // @ 0x13E650 (0x20 bytes) -- mangled: FadeInit__9CDispCtrlFf
-    /* ?ret */ void GetRate(void); // @ 0x13E670 (0x10 bytes) -- mangled: GetRate__9CDispCtrlFv
-    /* ?ret */ void FadeOut(sceVif1Packet *); // @ 0x13E680 (0x170 bytes) -- mangled: FadeOut__9CDispCtrlFP13sceVif1Packet
-    /* ?ret */ void FadeIn(sceVif1Packet *); // @ 0x13E7F0 (0x160 bytes) -- mangled: FadeIn__9CDispCtrlFP13sceVif1Packet
+    /**
+     * @mangled FadeOutStart__9CDispCtrlFf
+     * @address 0x13E610
+     * @size 0x20
+     * @unknownret
+     */
+    void FadeOutStart(float);
+
+    /**
+     * @mangled FadeInStart__9CDispCtrlFf
+     * @address 0x13E630
+     * @size 0x20
+     * @unknownret
+     */
+    void FadeInStart(float);
+
+    /**
+     * @mangled FadeInit__9CDispCtrlFf
+     * @address 0x13E650
+     * @size 0x20
+     * @unknownret
+     */
+    void FadeInit(float);
+
+    /**
+     * @mangled GetRate__9CDispCtrlFv
+     * @address 0x13E670
+     * @size 0x10
+     * @unknownret
+     */
+    void GetRate(void);
+
+    /**
+     * @mangled FadeOut__9CDispCtrlFP13sceVif1Packet
+     * @address 0x13E680
+     * @size 0x170
+     * @unknownret
+     */
+    void FadeOut(sceVif1Packet *);
+
+    /**
+     * @mangled FadeIn__9CDispCtrlFP13sceVif1Packet
+     * @address 0x13E7F0
+     * @size 0x160
+     * @unknownret
+     */
+    void FadeIn(sceVif1Packet *);
 };

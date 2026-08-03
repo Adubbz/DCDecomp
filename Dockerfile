@@ -75,6 +75,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         less \
         build-essential \
+        doxygen \
     && rm -rf /var/lib/apt/lists/*
 
 # objdiff is what diff.sh runs and what produces the progress report

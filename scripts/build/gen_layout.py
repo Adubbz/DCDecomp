@@ -35,37 +35,33 @@ def run(*cmd):
     return subprocess.run(cmd, capture_output=True, text=True, check=True).stdout
 
 
-def retail_symbols(elf, nm, index_dir):
+def retail_symbols(index_dir):
     """{name: address} for every symbol the build can place.
 
-    The disassembler's own index comes first and wins. Retail's symbol table
-    names two different things VSyncField; the dumps call the second one
-    VSyncField__2, and that is the name a decompiled .cpp declares and the
-    linker has to resolve, so that is the name this has to know. Retail's table
-    is still read underneath it, for anything the dumps do not label.
+    The per-image indexes, written by disassemble.py: the
+    dumps' own names, with retail's table folded in underneath for the names
+    they do not define. The ELF is not read here, so a checkout with no disc
+    resolves exactly what one with a disc does.
     """
     out = {}
-    # Optional: the disc cannot be redistributed, so a CI checkout has ref/ but
-    # no extracted executable. symbols.index below covers everything the dumps
-    # label, which is what the build actually places; retail's own table only
-    # adds names the dumps left unlabelled.
-    if os.path.exists(elf):
-        for line in run(nm, elf).splitlines():
-            parts = line.split()
-            if len(parts) == 3:
-                out[parts[2]] = int(parts[0], 16)
-    else:
-        print('gen_layout: %s is absent; using the reference index alone.' % elf,
-              file=sys.stderr)
-
-    index = os.path.join(index_dir, 'symbols.index')
-    if os.path.exists(index):
-        with open(index) as f:
+    for section in SECTIONS:
+        path = os.path.join(index_dir, f'{section}.index')
+        if not os.path.exists(path):
+            continue
+        with open(path) as f:
             for line in f:
                 if line.startswith('#') or not line.strip():
                     continue
-                name, vram, _src = line.rstrip('\n').split('\t')
-                out[name] = int(vram, 16)
+                fields = line.rstrip('\n').split('\t')
+                if len(fields) != 5:
+                    continue
+                # Both kinds: a `src` row names the symbol its source defines,
+                # so the index carries no `sym` row duplicating it. The
+                # exception is a whole-section dump, whose `src` row is named
+                # for the span (`main.data`) rather than for any symbol.
+                if fields[0] == 'src' and '/sections/' in fields[1]:
+                    continue
+                out[fields[2]] = int(fields[3], 16)
     return out
 
 
@@ -76,7 +72,10 @@ def read_index(path):
         for line in f:
             if line.startswith('#') or not line.strip():
                 continue
-            src, sym, vram, size = line.rstrip('\n').split('\t')
+            fields = line.rstrip('\n').split('\t')
+            if len(fields) != 5 or fields[0] != 'src':
+                continue
+            _kind, src, sym, vram, size = fields
             rows.append((src, sym, int(vram, 16), int(size, 16)))
     return rows
 
@@ -196,7 +195,6 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--index-dir', default='ref/asm/objects')
     ap.add_argument('--obj-dir', default='build/src')
-    ap.add_argument('--elf', default='rom/extracted/iso/SCUS_971.11')
     ap.add_argument('--prefix', default=os.environ.get('MIPS_TOOL_PREFIX', 'mips-ps2-decompals-'))
     ap.add_argument('--provenance', default='build/symbol_provenance.txt')
     ap.add_argument('--build-dir', default='build')
@@ -209,8 +207,8 @@ def main():
                     help='also echo every symbol and its provider to stdout')
     args = ap.parse_args()
 
-    nm, readelf = args.prefix + 'nm', args.prefix + 'readelf'
-    retail = retail_symbols(args.elf, nm, args.index_dir)
+    readelf = args.prefix + 'readelf'
+    retail = retail_symbols(args.index_dir)
 
     objs = sorted(f for f in os.listdir(args.obj_dir) if f.endswith('.o')) \
         if os.path.isdir(args.obj_dir) else []

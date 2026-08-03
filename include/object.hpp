@@ -10,47 +10,316 @@ class CVector3_f_;
 
 class CObject {
 public:
-    /* ?ret */ void Step(void); // @ 0x156BA0 (0x10 bytes) -- mangled: Step__7CObjectFv
-    /* ?ret */ void GetDistance(CObject &); // @ 0x156BB0 (0x60 bytes) -- mangled: GetDistance__7CObjectFR7CObject
-    /* ?ret */ void GetDir(CObject &, float *); // @ 0x156C10 (0x70 bytes) -- mangled: GetDir__7CObjectFR7CObjectPf
-    /* ?ret */ void SetMass(float); // @ 0x156C80 (0x10 bytes) -- mangled: SetMass__7CObjectFf
-    /* ?ret */ void SetPosition(CVector3_f_); // @ 0x156C90 (0x40 bytes) -- mangled: SetPosition__7CObjectF11CVector3_f_
-    /* ?ret */ void SetPosition(float, float, float); // @ 0x156CD0 (0x20 bytes) -- mangled: SetPosition__7CObjectFfff
-    /* ?ret */ void SetVelocity(CVector3_f_); // @ 0x156CF0 (0x30 bytes) -- mangled: SetVelocity__7CObjectF11CVector3_f_
-    /* ?ret */ void SetAcceleration(CVector3_f_); // @ 0x156D20 (0x30 bytes) -- mangled: SetAcceleration__7CObjectF11CVector3_f_
-    /* ?ret */ void SetGravity(CVector3_f_); // @ 0x156D50 (0x30 bytes) -- mangled: SetGravity__7CObjectF11CVector3_f_
-    /* ?ret */ void SetMoment(CVector3_f_); // @ 0x156D80 (0x30 bytes) -- mangled: SetMoment__7CObjectF11CVector3_f_
-    /* ?ret */ void SetRotation(CVector3_f_); // @ 0x156DB0 (0x30 bytes) -- mangled: SetRotation__7CObjectF11CVector3_f_
-    /* ?ret */ void SetRotation(float, float, float); // @ 0x156DE0 (0x20 bytes) -- mangled: SetRotation__7CObjectFfff
-    /* ?ret */ void SetRotation(float *); // @ 0x156E00 (0x20 bytes) -- mangled: SetRotation__7CObjectFPf
-    /* ?ret */ void SetRotVelocity(CVector3_f_); // @ 0x156E20 (0x30 bytes) -- mangled: SetRotVelocity__7CObjectF11CVector3_f_
-    /* ?ret */ void SetRotAcceleration(CVector3_f_); // @ 0x156E50 (0x30 bytes) -- mangled: SetRotAcceleration__7CObjectF11CVector3_f_
-    /* ?ret */ void GetMass(void); // @ 0x156E80 (0x10 bytes) -- mangled: GetMass__7CObjectFv
-    /* ?ret */ void GetPosition(CVector3_f_ *); // @ 0x156E90 (0x20 bytes) -- mangled: GetPosition__7CObjectFP11CVector3_f_
-    /* ?ret */ void GetVelocity(CVector3_f_ *); // @ 0x156EB0 (0x10 bytes) -- mangled: GetVelocity__7CObjectFP11CVector3_f_
-    /* ?ret */ void GetAcceleration(CVector3_f_ *); // @ 0x156EC0 (0x10 bytes) -- mangled: GetAcceleration__7CObjectFP11CVector3_f_
-    /* ?ret */ void GetGravity(CVector3_f_ *); // @ 0x156ED0 (0x10 bytes) -- mangled: GetGravity__7CObjectFP11CVector3_f_
-    /* ?ret */ void GetMoment(CVector3_f_ *); // @ 0x156EE0 (0x10 bytes) -- mangled: GetMoment__7CObjectFP11CVector3_f_
-    /* ?ret */ void GetRotation(float *); // @ 0x156EF0 (0x20 bytes) -- mangled: GetRotation__7CObjectFPf
-    /* ?ret */ void GetRotation(CVector3_f_ *); // @ 0x156F10 (0x10 bytes) -- mangled: GetRotation__7CObjectFP11CVector3_f_
-    /* ?ret */ void GetRotVelocity(CVector3_f_ *); // @ 0x156F20 (0x10 bytes) -- mangled: GetRotVelocity__7CObjectFP11CVector3_f_
-    /* ?ret */ void GetRotAcceleration(CVector3_f_ *); // @ 0x156F30 (0x10 bytes) -- mangled: GetRotAcceleration__7CObjectFP11CVector3_f_
-    /* ?ret */ void GetVelocity(void); // @ 0x156F40 (0x10 bytes) -- mangled: GetVelocity__7CObjectFv
-    /* ?ret */ void GetAcceleration(void); // @ 0x156F50 (0x10 bytes) -- mangled: GetAcceleration__7CObjectFv
-    /* ?ret */ void GetGravity(void); // @ 0x156F60 (0x10 bytes) -- mangled: GetGravity__7CObjectFv
-    /* ?ret */ void GetMoment(void); // @ 0x156F70 (0x10 bytes) -- mangled: GetMoment__7CObjectFv
-    /* ?ret */ void GetRotation(void); // @ 0x156F80 (0x10 bytes) -- mangled: GetRotation__7CObjectFv
-    /* ?ret */ void GetRotVelocity(void); // @ 0x156F90 (0x10 bytes) -- mangled: GetRotVelocity__7CObjectFv
-    /* ?ret */ void GetRotAcceleration(void); // @ 0x156FA0 (0x10 bytes) -- mangled: GetRotAcceleration__7CObjectFv
-    /* ?ret */ void SetScale(float, float, float); // @ 0x156FB0 (0x20 bytes) -- mangled: SetScale__7CObjectFfff
-    /* ?ret */ void SetScale(float *); // @ 0x156FD0 (0x20 bytes) -- mangled: SetScale__7CObjectFPf
-    /* ?ret */ void GetScale(float *); // @ 0x156FF0 (0x20 bytes) -- mangled: GetScale__7CObjectFPf
-    CObject(float); // @ 0x157010 (0x40 bytes) -- mangled: __ct__7CObjectFf
-    /* ?ret */ void Initialize(float); // @ 0x157050 (0x70 bytes) -- mangled: Initialize__7CObjectFf
+    /**
+     * @mangled Step__7CObjectFv
+     * @address 0x156BA0
+     * @size 0x10
+     * @unknownret
+     */
+    void Step(void);
+
+    /**
+     * @mangled GetDistance__7CObjectFR7CObject
+     * @address 0x156BB0
+     * @size 0x60
+     * @unknownret
+     */
+    void GetDistance(CObject &);
+
+    /**
+     * @mangled GetDir__7CObjectFR7CObjectPf
+     * @address 0x156C10
+     * @size 0x70
+     * @unknownret
+     */
+    void GetDir(CObject &, float *);
+
+    /**
+     * @mangled SetMass__7CObjectFf
+     * @address 0x156C80
+     * @size 0x10
+     * @unknownret
+     */
+    void SetMass(float);
+
+    /**
+     * @mangled SetPosition__7CObjectF11CVector3_f_
+     * @address 0x156C90
+     * @size 0x40
+     * @unknownret
+     */
+    void SetPosition(CVector3_f_);
+
+    /**
+     * @mangled SetPosition__7CObjectFfff
+     * @address 0x156CD0
+     * @size 0x20
+     * @unknownret
+     */
+    void SetPosition(float, float, float);
+
+    /**
+     * @mangled SetVelocity__7CObjectF11CVector3_f_
+     * @address 0x156CF0
+     * @size 0x30
+     * @unknownret
+     */
+    void SetVelocity(CVector3_f_);
+
+    /**
+     * @mangled SetAcceleration__7CObjectF11CVector3_f_
+     * @address 0x156D20
+     * @size 0x30
+     * @unknownret
+     */
+    void SetAcceleration(CVector3_f_);
+
+    /**
+     * @mangled SetGravity__7CObjectF11CVector3_f_
+     * @address 0x156D50
+     * @size 0x30
+     * @unknownret
+     */
+    void SetGravity(CVector3_f_);
+
+    /**
+     * @mangled SetMoment__7CObjectF11CVector3_f_
+     * @address 0x156D80
+     * @size 0x30
+     * @unknownret
+     */
+    void SetMoment(CVector3_f_);
+
+    /**
+     * @mangled SetRotation__7CObjectF11CVector3_f_
+     * @address 0x156DB0
+     * @size 0x30
+     * @unknownret
+     */
+    void SetRotation(CVector3_f_);
+
+    /**
+     * @mangled SetRotation__7CObjectFfff
+     * @address 0x156DE0
+     * @size 0x20
+     * @unknownret
+     */
+    void SetRotation(float, float, float);
+
+    /**
+     * @mangled SetRotation__7CObjectFPf
+     * @address 0x156E00
+     * @size 0x20
+     * @unknownret
+     */
+    void SetRotation(float *);
+
+    /**
+     * @mangled SetRotVelocity__7CObjectF11CVector3_f_
+     * @address 0x156E20
+     * @size 0x30
+     * @unknownret
+     */
+    void SetRotVelocity(CVector3_f_);
+
+    /**
+     * @mangled SetRotAcceleration__7CObjectF11CVector3_f_
+     * @address 0x156E50
+     * @size 0x30
+     * @unknownret
+     */
+    void SetRotAcceleration(CVector3_f_);
+
+    /**
+     * @mangled GetMass__7CObjectFv
+     * @address 0x156E80
+     * @size 0x10
+     * @unknownret
+     */
+    void GetMass(void);
+
+    /**
+     * @mangled GetPosition__7CObjectFP11CVector3_f_
+     * @address 0x156E90
+     * @size 0x20
+     * @unknownret
+     */
+    void GetPosition(CVector3_f_ *);
+
+    /**
+     * @mangled GetVelocity__7CObjectFP11CVector3_f_
+     * @address 0x156EB0
+     * @size 0x10
+     * @unknownret
+     */
+    void GetVelocity(CVector3_f_ *);
+
+    /**
+     * @mangled GetAcceleration__7CObjectFP11CVector3_f_
+     * @address 0x156EC0
+     * @size 0x10
+     * @unknownret
+     */
+    void GetAcceleration(CVector3_f_ *);
+
+    /**
+     * @mangled GetGravity__7CObjectFP11CVector3_f_
+     * @address 0x156ED0
+     * @size 0x10
+     * @unknownret
+     */
+    void GetGravity(CVector3_f_ *);
+
+    /**
+     * @mangled GetMoment__7CObjectFP11CVector3_f_
+     * @address 0x156EE0
+     * @size 0x10
+     * @unknownret
+     */
+    void GetMoment(CVector3_f_ *);
+
+    /**
+     * @mangled GetRotation__7CObjectFPf
+     * @address 0x156EF0
+     * @size 0x20
+     * @unknownret
+     */
+    void GetRotation(float *);
+
+    /**
+     * @mangled GetRotation__7CObjectFP11CVector3_f_
+     * @address 0x156F10
+     * @size 0x10
+     * @unknownret
+     */
+    void GetRotation(CVector3_f_ *);
+
+    /**
+     * @mangled GetRotVelocity__7CObjectFP11CVector3_f_
+     * @address 0x156F20
+     * @size 0x10
+     * @unknownret
+     */
+    void GetRotVelocity(CVector3_f_ *);
+
+    /**
+     * @mangled GetRotAcceleration__7CObjectFP11CVector3_f_
+     * @address 0x156F30
+     * @size 0x10
+     * @unknownret
+     */
+    void GetRotAcceleration(CVector3_f_ *);
+
+    /**
+     * @mangled GetVelocity__7CObjectFv
+     * @address 0x156F40
+     * @size 0x10
+     * @unknownret
+     */
+    void GetVelocity(void);
+
+    /**
+     * @mangled GetAcceleration__7CObjectFv
+     * @address 0x156F50
+     * @size 0x10
+     * @unknownret
+     */
+    void GetAcceleration(void);
+
+    /**
+     * @mangled GetGravity__7CObjectFv
+     * @address 0x156F60
+     * @size 0x10
+     * @unknownret
+     */
+    void GetGravity(void);
+
+    /**
+     * @mangled GetMoment__7CObjectFv
+     * @address 0x156F70
+     * @size 0x10
+     * @unknownret
+     */
+    void GetMoment(void);
+
+    /**
+     * @mangled GetRotation__7CObjectFv
+     * @address 0x156F80
+     * @size 0x10
+     * @unknownret
+     */
+    void GetRotation(void);
+
+    /**
+     * @mangled GetRotVelocity__7CObjectFv
+     * @address 0x156F90
+     * @size 0x10
+     * @unknownret
+     */
+    void GetRotVelocity(void);
+
+    /**
+     * @mangled GetRotAcceleration__7CObjectFv
+     * @address 0x156FA0
+     * @size 0x10
+     * @unknownret
+     */
+    void GetRotAcceleration(void);
+
+    /**
+     * @mangled SetScale__7CObjectFfff
+     * @address 0x156FB0
+     * @size 0x20
+     * @unknownret
+     */
+    void SetScale(float, float, float);
+
+    /**
+     * @mangled SetScale__7CObjectFPf
+     * @address 0x156FD0
+     * @size 0x20
+     * @unknownret
+     */
+    void SetScale(float *);
+
+    /**
+     * @mangled GetScale__7CObjectFPf
+     * @address 0x156FF0
+     * @size 0x20
+     * @unknownret
+     */
+    void GetScale(float *);
+
+    /**
+     * @mangled __ct__7CObjectFf
+     * @address 0x157010
+     * @size 0x40
+     */
+    CObject(float);
+
+    /**
+     * @mangled Initialize__7CObjectFf
+     * @address 0x157050
+     * @size 0x70
+     * @unknownret
+     */
+    void Initialize(float);
 };
 
 class CFrameAttr {
 public:
-    /* ?ret */ void Initialize(void); // @ 0x127CC0 (0x80 bytes) -- mangled: Initialize__10CFrameAttrFv
-    CFrameAttr(void); // @ 0x127D40 (0x30 bytes) -- mangled: __ct__10CFrameAttrFv
+    /**
+     * @mangled Initialize__10CFrameAttrFv
+     * @address 0x127CC0
+     * @size 0x80
+     * @unknownret
+     */
+    void Initialize(void);
+
+    /**
+     * @mangled __ct__10CFrameAttrFv
+     * @address 0x127D40
+     * @size 0x30
+     */
+    CFrameAttr(void);
 };

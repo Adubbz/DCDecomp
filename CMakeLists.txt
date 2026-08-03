@@ -33,7 +33,6 @@ file(RELATIVE_PATH BUILD_DIR ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 # "Retail instructions as asm bodies" below for why they exist.
 set(ASM_BODY_DIR ${BUILD_DIR}/generated/asm)
 set(ASM_BODY_FUNCS
-    AddDrink__11CUserStatusFisf
     AddNowLife__11CUserStatusFisf
     SetNextLife__11CUserStatusFisf
     Step__11CUserStatusFi)
@@ -110,8 +109,32 @@ foreach(section IN LISTS SECTIONS)
     list(APPEND ASM_SOURCES ${section_srcs})
 endforeach()
 
-file(GLOB CPP_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/${SRC_DIR}/*.cpp)
-file(GLOB EXTRA_ASM_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/asm/*.s)
+# CONFIGURE_DEPENDS so a newly added source is picked up without anyone having
+# to remember to reconfigure: ninja re-evaluates the glob each build and only
+# re-runs CMake when the set of files actually changed. That matters for the
+# objdiff GUI, whose rebuild deliberately skips configuring.
+file(GLOB CPP_SOURCES CONFIGURE_DEPENDS
+     RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/${SRC_DIR}/*.cpp)
+file(GLOB EXTRA_ASM_SOURCES CONFIGURE_DEPENDS
+     RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/asm/*.s)
+
+# Everything disassemble.py writes, declared as that step's outputs so ninja
+# orders the assemble steps after it. Nothing under ref/ may be a
+# CMAKE_CONFIGURE_DEPENDS as a result: a file that is both a configure input
+# and a build output puts CMake and ninja in a loop ("manifest still dirty
+# after 100 tries"). scripts/build/cmake.sh configures on every invocation,
+# which is what picks a regenerated ref/ up. Without this the .s look like plain
+# sources, and a re-disassembly runs concurrently with the four thousand jobs
+# reading the files it is rewriting.
+set(REF_OUTPUTS "")
+foreach(section IN LISTS SECTIONS)
+    read_index_sources(${section} all_index_srcs "")
+    foreach(src IN LISTS all_index_srcs)
+        list(APPEND REF_OUTPUTS ${CMAKE_SOURCE_DIR}/${src})
+    endforeach()
+    list(APPEND REF_OUTPUTS ${CMAKE_SOURCE_DIR}/${REF_DIR}/asm/objects/${section}.index)
+endforeach()
+list(REMOVE_DUPLICATES REF_OUTPUTS)
 
 set(ALL_OBJS "")
 foreach(src IN LISTS ASM_SOURCES CPP_SOURCES EXTRA_ASM_SOURCES)
@@ -152,8 +175,6 @@ foreach(fn IN LISTS ASM_BODY_FUNCS)
         if(NOT gen_result EQUAL 0)
             message(FATAL_ERROR "gen_asm_body.py failed for ${fn}")
         endif()
-        set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
-                     ${CMAKE_SOURCE_DIR}/${dump})
     endif()
 endforeach()
 
@@ -291,10 +312,10 @@ file(GENERATE OUTPUT ${CMAKE_BINARY_DIR}/compiler_flags.txt
 # m2c needs the project's declarations as one C file; built from every header
 # so the same ctx.c serves any function. See scripts/diff/m2ctx.py.
 #
-# A plain glob, deliberately: CONFIGURE_DEPENDS is dirty by construction, so it
-# would re-run CMake and relink on every build. cmake.sh configures every time,
-# which re-evaluates this anyway.
-file(GLOB CTX_HEADERS
+# CONFIGURE_DEPENDS for the same reason as the source globs above: a header
+# added while the objdiff GUI is running would otherwise not reach the context
+# until someone reconfigured, and that rebuild deliberately skips configuring.
+file(GLOB CTX_HEADERS CONFIGURE_DEPENDS
      ${CMAKE_SOURCE_DIR}/${INCLUDE_DIR}/*.hpp
      ${CMAKE_SOURCE_DIR}/${INCLUDE_DIR}/*.h)
 
@@ -355,9 +376,13 @@ foreach(obj IN LISTS OBJDIFF_TARGET_OBJS)
     list(APPEND OBJDIFF_ABS_OBJS ${CMAKE_SOURCE_DIR}/${obj})
 endforeach()
 
+# The objects and the config, but deliberately not `elf`: objdiff compares
+# object files and never looks at the executable, so linking it -- and
+# generating the linker script to do so -- is pure latency in the edit-save
+# loop the GUI drives.
 add_custom_target(objdiff
-    DEPENDS ${CMAKE_SOURCE_DIR}/${OBJDIFF_CONFIG} ${OBJDIFF_ABS_OBJS})
-add_dependencies(objdiff elf provenance)
+    DEPENDS ${CMAKE_SOURCE_DIR}/${OBJDIFF_CONFIG} ${OBJDIFF_ABS_OBJS} ${ABS_OBJS})
+add_dependencies(objdiff provenance)
 
 #
 # Verification
@@ -440,6 +465,11 @@ set(ROM_VERIFIED ${STAMP_DIR}/rom.verified)
 set(EXTRACTED_ELF ${ROM_DIR}/extracted/iso/${BASENAME})
 set(REF_INDEX ${REF_DIR}/asm/objects/main.index)
 
+# Only when there is a disc to set up from. A checkout without one -- CI --
+# builds against the committed ref/, where these dumps are ordinary sources
+# with no rule behind them.
+if(EXISTS "${CMAKE_SOURCE_DIR}/${RETAIL_ISO}")
+
 add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/${ROM_VERIFIED}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${STAMP_DIR}
@@ -462,8 +492,9 @@ add_custom_command(
     USES_TERMINAL
     VERBATIM)
 
+# Every dump it writes is an output, not just the index it is named by.
 add_custom_command(
-    OUTPUT ${CMAKE_SOURCE_DIR}/${REF_INDEX}
+    OUTPUT ${REF_OUTPUTS}
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/disassemble.py
     DEPENDS ${CMAKE_SOURCE_DIR}/${EXTRACTED_ELF}
             ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/disassemble.py
@@ -474,6 +505,15 @@ add_custom_command(
     VERBATIM)
 
 add_custom_target(setup DEPENDS ${CMAKE_SOURCE_DIR}/${REF_INDEX})
+
+else()
+
+add_custom_target(setup
+    COMMAND ${CMAKE_COMMAND} -E echo
+            "No disc image; building against the committed ref/."
+    VERBATIM)
+
+endif()
 
 add_custom_target(disassemble
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/disassemble.py

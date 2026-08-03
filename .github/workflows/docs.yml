@@ -1,0 +1,87 @@
+# Doxygen documentation, published to GitHub Pages.
+#
+# Needs no disc: doxygen reads src/ and include/ only, and the `asm` body
+# fragments it would otherwise miss are regenerated from the committed dumps
+# under ref/. No game data is downloaded, stored or uploaded here.
+#
+# Pages must also be enabled once by hand, at Settings -> Pages -> Source ->
+# "GitHub Actions"; this workflow alone does not turn it on.
+name: Documentation
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Never let two deployments race; queue rather than cancel, so a push that
+# lands mid-deploy still publishes.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Build the toolchain image
+        # Same reasoning as the progress workflow: the Dockerfile is the only
+        # description of this toolchain, doxygen included, so CI uses it rather
+        # than a second copy of the same steps that could drift.
+        run: docker build -t dcdecomp_dev --target dev .
+
+      - name: Generate the documentation
+        run: |
+          docker run --rm \
+            -v "$PWD:/dcdecomp" -w /dcdecomp -e HOME=/tmp \
+            dcdecomp_dev sh -c '
+              # The `asm` bodies src/ includes are build outputs, and doxygen
+              # warns for each one it cannot open. Which functions need them
+              # changes as they are decompiled, so the list is read back out of
+              # the sources rather than repeated here.
+              mkdir -p build/generated/asm
+              grep -rho "#include \"[A-Za-z0-9_]*\.inc\"" src \
+                | sed "s/.*\"\(.*\)\.inc\"/\1/" | sort -u \
+                | while read -r fn; do
+                    python3 scripts/build/gen_asm_body.py \
+                      "ref/asm/split/main/$fn.s" "$fn" \
+                      "build/generated/asm/$fn.inc"
+                  done
+              doxygen 2>/tmp/warnings.txt
+              cat /tmp/warnings.txt
+              test ! -s /tmp/warnings.txt
+            '
+
+      - name: Upload the documentation
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # OUTPUT_DIRECTORY in the Doxyfile, with HTML_OUTPUT flattened into
+          # it, so this is the site root.
+          path: doxygen
+
+  deploy:
+    # Pull requests build the documentation to prove it still generates, but
+    # only master is published.
+    if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -91,6 +91,13 @@ def amalgamate(headers_dir):
                     continue
                 out.append(line)
 
+        # A header whose last line has no newline would otherwise be glued to
+        # the first line of the next one. common.h is such a file, and its last
+        # line is the STATIC_ASSERT define -- so whatever followed it was being
+        # swallowed whole by the substitution below.
+        if out and not out[-1].endswith("\n"):
+            out.append("\n")
+
     for name in sorted(os.listdir(headers_dir)):
         if name.endswith((".hpp", ".h")):
             expand(os.path.join(headers_dir, name))

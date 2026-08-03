@@ -10,9 +10,43 @@ class CFrameVu1;
 
 class CObjectFrame {
 public:
-    /* ?ret */ void SetFrame(CFrameVu1 *, int); // @ 0x1570C0 (0x30 bytes) -- mangled: SetFrame__12CObjectFrameFP9CFrameVu1i
-    /* ?ret */ void FrameObjectOnOff(char *, int); // @ 0x1570F0 (0xA0 bytes) -- mangled: FrameObjectOnOff__12CObjectFrameFPci
-    /* ?ret */ void Draw(void); // @ 0x157190 (0x90 bytes) -- mangled: Draw__12CObjectFrameFv
-    /* ?ret */ void DrawLOD(float *, int, int, int *); // @ 0x157220 (0x240 bytes) -- mangled: DrawLOD__12CObjectFrameFPfiiPi
-    /* ?ret */ void Initialize(CFrameVu1 *); // @ 0x157460 (0x90 bytes) -- mangled: Initialize__12CObjectFrameFP9CFrameVu1
+    /**
+     * @mangled SetFrame__12CObjectFrameFP9CFrameVu1i
+     * @address 0x1570C0
+     * @size 0x30
+     * @unknownret
+     */
+    void SetFrame(CFrameVu1 *, int);
+
+    /**
+     * @mangled FrameObjectOnOff__12CObjectFrameFPci
+     * @address 0x1570F0
+     * @size 0xA0
+     * @unknownret
+     */
+    void FrameObjectOnOff(char *, int);
+
+    /**
+     * @mangled Draw__12CObjectFrameFv
+     * @address 0x157190
+     * @size 0x90
+     * @unknownret
+     */
+    void Draw(void);
+
+    /**
+     * @mangled DrawLOD__12CObjectFrameFPfiiPi
+     * @address 0x157220
+     * @size 0x240
+     * @unknownret
+     */
+    void DrawLOD(float *, int, int, int *);
+
+    /**
+     * @mangled Initialize__12CObjectFrameFP9CFrameVu1
+     * @address 0x157460
+     * @size 0x90
+     * @unknownret
+     */
+    void Initialize(CFrameVu1 *);
 };

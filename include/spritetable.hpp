@@ -13,10 +13,51 @@ struct sceGsTex0;
 
 class CSpriteTable {
 public:
-    /* ?ret */ void DrawTable(void); // @ 0x12BA20 (0x470 bytes) -- mangled: DrawTable__12CSpriteTableFv
-    /* ?ret */ void AddTable(int, int, MG_SPRITE *, int, int); // @ 0x12BE90 (0x160 bytes) -- mangled: AddTable__12CSpriteTableFiiP9MG_SPRITEii
-    /* ?ret */ void AddTable(int, int, sceGsTex0 *, RECT *, int, int); // @ 0x12BFF0 (0x70 bytes) -- mangled: AddTable__12CSpriteTableFiiP9sceGsTex0P4RECTii
-    /* ?ret */ void Initialize(SPRITE_TABLE *, int, int); // @ 0x12C060 (0x60 bytes) -- mangled: Initialize__12CSpriteTableFP12SPRITE_TABLEii
-    /* ?ret */ void GetNext(void); // @ 0x12C0C0 (0x30 bytes) -- mangled: GetNext__12CSpriteTableFv
-    /* ?ret */ void ClearPointer(void); // @ 0x12C0F0 (0x80 bytes) -- mangled: ClearPointer__12CSpriteTableFv
+    /**
+     * @mangled DrawTable__12CSpriteTableFv
+     * @address 0x12BA20
+     * @size 0x470
+     * @unknownret
+     */
+    void DrawTable(void);
+
+    /**
+     * @mangled AddTable__12CSpriteTableFiiP9MG_SPRITEii
+     * @address 0x12BE90
+     * @size 0x160
+     * @unknownret
+     */
+    void AddTable(int, int, MG_SPRITE *, int, int);
+
+    /**
+     * @mangled AddTable__12CSpriteTableFiiP9sceGsTex0P4RECTii
+     * @address 0x12BFF0
+     * @size 0x70
+     * @unknownret
+     */
+    void AddTable(int, int, sceGsTex0 *, RECT *, int, int);
+
+    /**
+     * @mangled Initialize__12CSpriteTableFP12SPRITE_TABLEii
+     * @address 0x12C060
+     * @size 0x60
+     * @unknownret
+     */
+    void Initialize(SPRITE_TABLE *, int, int);
+
+    /**
+     * @mangled GetNext__12CSpriteTableFv
+     * @address 0x12C0C0
+     * @size 0x30
+     * @unknownret
+     */
+    void GetNext(void);
+
+    /**
+     * @mangled ClearPointer__12CSpriteTableFv
+     * @address 0x12C0F0
+     * @size 0x80
+     * @unknownret
+     */
+    void ClearPointer(void);
 };

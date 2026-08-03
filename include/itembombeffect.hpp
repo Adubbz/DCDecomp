@@ -10,15 +10,62 @@ class CCamera;
 
 class CItemBombEffect {
 public:
-    /* ?ret */ void Draw(CCamera *); // @ 0x1D5B30 (0x380 bytes) -- mangled: Draw__15CItemBombEffectFP7CCamera
-    /* ?ret */ void Step(void); // @ 0x1D5EB0 (0x1F0 bytes) -- mangled: Step__15CItemBombEffectFv
-    /* ?ret */ void SetBomb(float *, float); // @ 0x1D60A0 (0xC0 bytes) -- mangled: SetBomb__15CItemBombEffectFPff
-    /* ?ret */ void CheckBomb(void); // @ 0x1D6160 (0x50 bytes) -- mangled: CheckBomb__15CItemBombEffectFv
-    /* ?ret */ void Initialize(void); // @ 0x1D61B0 (0x30 bytes) -- mangled: Initialize__15CItemBombEffectFv
+    /**
+     * @mangled Draw__15CItemBombEffectFP7CCamera
+     * @address 0x1D5B30
+     * @size 0x380
+     * @unknownret
+     */
+    void Draw(CCamera *);
+
+    /**
+     * @mangled Step__15CItemBombEffectFv
+     * @address 0x1D5EB0
+     * @size 0x1F0
+     * @unknownret
+     */
+    void Step(void);
+
+    /**
+     * @mangled SetBomb__15CItemBombEffectFPff
+     * @address 0x1D60A0
+     * @size 0xC0
+     * @unknownret
+     */
+    void SetBomb(float *, float);
+
+    /**
+     * @mangled CheckBomb__15CItemBombEffectFv
+     * @address 0x1D6160
+     * @size 0x50
+     * @unknownret
+     */
+    void CheckBomb(void);
+
+    /**
+     * @mangled Initialize__15CItemBombEffectFv
+     * @address 0x1D61B0
+     * @size 0x30
+     * @unknownret
+     */
+    void Initialize(void);
 };
 
 class CShockWave {
 public:
-    /* ?ret */ void Draw(CCamera *); // @ 0x1D61E0 (0x300 bytes) -- mangled: Draw__10CShockWaveFP7CCamera
-    /* ?ret */ void Step(void); // @ 0x1D64E0 (0xE0 bytes) -- mangled: Step__10CShockWaveFv
+    /**
+     * @mangled Draw__10CShockWaveFP7CCamera
+     * @address 0x1D61E0
+     * @size 0x300
+     * @unknownret
+     */
+    void Draw(CCamera *);
+
+    /**
+     * @mangled Step__10CShockWaveFv
+     * @address 0x1D64E0
+     * @size 0xE0
+     * @unknownret
+     */
+    void Step(void);
 };

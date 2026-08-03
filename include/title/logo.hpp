@@ -4,11 +4,58 @@
 
 class CLogo {
 public:
-    CLogo(void); // @ 0x1DD3E00 (0x40 bytes) -- mangled: __ct__5CLogoFv
-    /* ?ret */ void Init(void); // @ 0x1DD3E40 (0xC0 bytes) -- mangled: Init__5CLogoFv
-    /* ?ret */ void Fade(void); // @ 0x1DD3F00 (0x80 bytes) -- mangled: Fade__5CLogoFv
-    /* ?ret */ void FadeOut(void); // @ 0x1DD3F80 (0x40 bytes) -- mangled: FadeOut__5CLogoFv
-    /* ?ret */ void Sparkdraw(float); // @ 0x1DD3FC0 (0x2D0 bytes) -- mangled: Sparkdraw__5CLogoFf
-    /* ?ret */ void Draw(void); // @ 0x1DD4290 (0x140 bytes) -- mangled: Draw__5CLogoFv
-    /* ?ret */ void Move(void); // @ 0x1DD43D0 (0x50 bytes) -- mangled: Move__5CLogoFv
+    /**
+     * @mangled __ct__5CLogoFv
+     * @address 0x1DD3E00
+     * @size 0x40
+     */
+    CLogo(void);
+
+    /**
+     * @mangled Init__5CLogoFv
+     * @address 0x1DD3E40
+     * @size 0xC0
+     * @unknownret
+     */
+    void Init(void);
+
+    /**
+     * @mangled Fade__5CLogoFv
+     * @address 0x1DD3F00
+     * @size 0x80
+     * @unknownret
+     */
+    void Fade(void);
+
+    /**
+     * @mangled FadeOut__5CLogoFv
+     * @address 0x1DD3F80
+     * @size 0x40
+     * @unknownret
+     */
+    void FadeOut(void);
+
+    /**
+     * @mangled Sparkdraw__5CLogoFf
+     * @address 0x1DD3FC0
+     * @size 0x2D0
+     * @unknownret
+     */
+    void Sparkdraw(float);
+
+    /**
+     * @mangled Draw__5CLogoFv
+     * @address 0x1DD4290
+     * @size 0x140
+     * @unknownret
+     */
+    void Draw(void);
+
+    /**
+     * @mangled Move__5CLogoFv
+     * @address 0x1DD43D0
+     * @size 0x50
+     * @unknownret
+     */
+    void Move(void);
 };

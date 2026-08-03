@@ -4,6 +4,19 @@
 
 class CBombEffect {
 public:
-    /* ?ret */ void Draw(CCamera *, int); // @ 0x1DAD610 (0x3B0 bytes) -- mangled: Draw__11CBombEffectFP7CCamerai
-    /* ?ret */ void Step(void); // @ 0x1DAD9C0 (0x390 bytes) -- mangled: Step__11CBombEffectFv
+    /**
+     * @mangled Draw__11CBombEffectFP7CCamerai
+     * @address 0x1DAD610
+     * @size 0x3B0
+     * @unknownret
+     */
+    void Draw(CCamera *, int);
+
+    /**
+     * @mangled Step__11CBombEffectFv
+     * @address 0x1DAD9C0
+     * @size 0x390
+     * @unknownret
+     */
+    void Step(void);
 };

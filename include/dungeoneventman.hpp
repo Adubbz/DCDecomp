@@ -10,14 +10,83 @@ class CDungeonMap;
 
 class CDungeonEventMan {
 public:
-    /* ?ret */ void SearchPartsID(int, int); // @ 0x1CC8F0 (0x50 bytes) -- mangled: SearchPartsID__16CDungeonEventManFii
-    /* ?ret */ void SearchSlot(void); // @ 0x1CC940 (0x50 bytes) -- mangled: SearchSlot__16CDungeonEventManFv
-    /* ?ret */ void SearchDataSwitch(int, int); // @ 0x1CC990 (0xD0 bytes) -- mangled: SearchDataSwitch__16CDungeonEventManFii
-    /* ?ret */ void SearchItemEventHold(int); // @ 0x1CCA60 (0x70 bytes) -- mangled: SearchItemEventHold__16CDungeonEventManFi
-    /* ?ret */ void GetDataNum(void); // @ 0x1CCAD0 (0x60 bytes) -- mangled: GetDataNum__16CDungeonEventManFv
-    /* ?ret */ void SearchDataSlot(void); // @ 0x1CCB30 (0x70 bytes) -- mangled: SearchDataSlot__16CDungeonEventManFv
-    /* ?ret */ void CheckCollisionDataHit(int); // @ 0x1CCBA0 (0x130 bytes) -- mangled: CheckCollisionDataHit__16CDungeonEventManFi
-    /* ?ret */ void SearchDataSlotPos(float *); // @ 0x1CCCD0 (0x110 bytes) -- mangled: SearchDataSlotPos__16CDungeonEventManFPf
-    /* ?ret */ void SearchDataSlotPos2(float *); // @ 0x1CCDE0 (0x160 bytes) -- mangled: SearchDataSlotPos2__16CDungeonEventManFPf
-    /* ?ret */ void SetupEvent(CDungeonMap *, int); // @ 0x1CCF40 (0x480 bytes) -- mangled: SetupEvent__16CDungeonEventManFP11CDungeonMapi
+    /**
+     * @mangled SearchPartsID__16CDungeonEventManFii
+     * @address 0x1CC8F0
+     * @size 0x50
+     * @unknownret
+     */
+    void SearchPartsID(int, int);
+
+    /**
+     * @mangled SearchSlot__16CDungeonEventManFv
+     * @address 0x1CC940
+     * @size 0x50
+     * @unknownret
+     */
+    void SearchSlot(void);
+
+    /**
+     * @mangled SearchDataSwitch__16CDungeonEventManFii
+     * @address 0x1CC990
+     * @size 0xD0
+     * @unknownret
+     */
+    void SearchDataSwitch(int, int);
+
+    /**
+     * @mangled SearchItemEventHold__16CDungeonEventManFi
+     * @address 0x1CCA60
+     * @size 0x70
+     * @unknownret
+     */
+    void SearchItemEventHold(int);
+
+    /**
+     * @mangled GetDataNum__16CDungeonEventManFv
+     * @address 0x1CCAD0
+     * @size 0x60
+     * @unknownret
+     */
+    void GetDataNum(void);
+
+    /**
+     * @mangled SearchDataSlot__16CDungeonEventManFv
+     * @address 0x1CCB30
+     * @size 0x70
+     * @unknownret
+     */
+    void SearchDataSlot(void);
+
+    /**
+     * @mangled CheckCollisionDataHit__16CDungeonEventManFi
+     * @address 0x1CCBA0
+     * @size 0x130
+     * @unknownret
+     */
+    void CheckCollisionDataHit(int);
+
+    /**
+     * @mangled SearchDataSlotPos__16CDungeonEventManFPf
+     * @address 0x1CCCD0
+     * @size 0x110
+     * @unknownret
+     */
+    void SearchDataSlotPos(float *);
+
+    /**
+     * @mangled SearchDataSlotPos2__16CDungeonEventManFPf
+     * @address 0x1CCDE0
+     * @size 0x160
+     * @unknownret
+     */
+    void SearchDataSlotPos2(float *);
+
+    /**
+     * @mangled SetupEvent__16CDungeonEventManFP11CDungeonMapi
+     * @address 0x1CCF40
+     * @size 0x480
+     * @unknownret
+     */
+    void SetupEvent(CDungeonMap *, int);
 };

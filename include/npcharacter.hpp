@@ -10,20 +10,130 @@ class CCPoly;
 
 class CNPCharacter {
 public:
-    /* ?ret */ void Step(void); // @ 0x155FB0 (0x140 bytes) -- mangled: Step__12CNPCharacterFv
-    /* ?ret */ void ShadowStep(void); // @ 0x1560F0 (0x50 bytes) -- mangled: ShadowStep__12CNPCharacterFv
-    /* ?ret */ void PlaySeq(void); // @ 0x156140 (0x210 bytes) -- mangled: PlaySeq__12CNPCharacterFv
-    /* ?ret */ void ClearSeq(void); // @ 0x156350 (0x50 bytes) -- mangled: ClearSeq__12CNPCharacterFv
-    /* ?ret */ void SetSeq(float *, float); // @ 0x1563A0 (0x70 bytes) -- mangled: SetSeq__12CNPCharacterFPff
-    /* ?ret */ void SetWait(int); // @ 0x156410 (0x40 bytes) -- mangled: SetWait__12CNPCharacterFi
-    /* ?ret */ void CheckSeq(void); // @ 0x156450 (0x20 bytes) -- mangled: CheckSeq__12CNPCharacterFv
-    /* ?ret */ void GetNextSeq(void); // @ 0x156470 (0x40 bytes) -- mangled: GetNextSeq__12CNPCharacterFv
-    /* ?ret */ void GetNowSeq(void); // @ 0x1564B0 (0x20 bytes) -- mangled: GetNowSeq__12CNPCharacterFv
-    /* ?ret */ void NextSeq(void); // @ 0x1564D0 (0x70 bytes) -- mangled: NextSeq__12CNPCharacterFv
-    /* ?ret */ void Draw(void); // @ 0x156540 (0xE0 bytes) -- mangled: Draw__12CNPCharacterFv
-    /* ?ret */ void DrawShadow(void); // @ 0x156620 (0x50 bytes) -- mangled: DrawShadow__12CNPCharacterFv
-    /* ?ret */ void CheckDraw(void); // @ 0x156670 (0x60 bytes) -- mangled: CheckDraw__12CNPCharacterFv
-    /* ?ret */ void PickUpPoly(float *, CCPoly *); // @ 0x1566D0 (0x40 bytes) -- mangled: PickUpPoly__12CNPCharacterFPfP6CCPoly
-    /* ?ret */ void Initialize(void); // @ 0x1569E0 (0x90 bytes) -- mangled: Initialize__12CNPCharacterFv
-    CNPCharacter(void); // @ 0x156A70 (0xF0 bytes) -- mangled: __ct__12CNPCharacterFv
+    /**
+     * @mangled Step__12CNPCharacterFv
+     * @address 0x155FB0
+     * @size 0x140
+     * @unknownret
+     */
+    void Step(void);
+
+    /**
+     * @mangled ShadowStep__12CNPCharacterFv
+     * @address 0x1560F0
+     * @size 0x50
+     * @unknownret
+     */
+    void ShadowStep(void);
+
+    /**
+     * @mangled PlaySeq__12CNPCharacterFv
+     * @address 0x156140
+     * @size 0x210
+     * @unknownret
+     */
+    void PlaySeq(void);
+
+    /**
+     * @mangled ClearSeq__12CNPCharacterFv
+     * @address 0x156350
+     * @size 0x50
+     * @unknownret
+     */
+    void ClearSeq(void);
+
+    /**
+     * @mangled SetSeq__12CNPCharacterFPff
+     * @address 0x1563A0
+     * @size 0x70
+     * @unknownret
+     */
+    void SetSeq(float *, float);
+
+    /**
+     * @mangled SetWait__12CNPCharacterFi
+     * @address 0x156410
+     * @size 0x40
+     * @unknownret
+     */
+    void SetWait(int);
+
+    /**
+     * @mangled CheckSeq__12CNPCharacterFv
+     * @address 0x156450
+     * @size 0x20
+     * @unknownret
+     */
+    void CheckSeq(void);
+
+    /**
+     * @mangled GetNextSeq__12CNPCharacterFv
+     * @address 0x156470
+     * @size 0x40
+     * @unknownret
+     */
+    void GetNextSeq(void);
+
+    /**
+     * @mangled GetNowSeq__12CNPCharacterFv
+     * @address 0x1564B0
+     * @size 0x20
+     * @unknownret
+     */
+    void GetNowSeq(void);
+
+    /**
+     * @mangled NextSeq__12CNPCharacterFv
+     * @address 0x1564D0
+     * @size 0x70
+     * @unknownret
+     */
+    void NextSeq(void);
+
+    /**
+     * @mangled Draw__12CNPCharacterFv
+     * @address 0x156540
+     * @size 0xE0
+     * @unknownret
+     */
+    void Draw(void);
+
+    /**
+     * @mangled DrawShadow__12CNPCharacterFv
+     * @address 0x156620
+     * @size 0x50
+     * @unknownret
+     */
+    void DrawShadow(void);
+
+    /**
+     * @mangled CheckDraw__12CNPCharacterFv
+     * @address 0x156670
+     * @size 0x60
+     * @unknownret
+     */
+    void CheckDraw(void);
+
+    /**
+     * @mangled PickUpPoly__12CNPCharacterFPfP6CCPoly
+     * @address 0x1566D0
+     * @size 0x40
+     * @unknownret
+     */
+    void PickUpPoly(float *, CCPoly *);
+
+    /**
+     * @mangled Initialize__12CNPCharacterFv
+     * @address 0x1569E0
+     * @size 0x90
+     * @unknownret
+     */
+    void Initialize(void);
+
+    /**
+     * @mangled __ct__12CNPCharacterFv
+     * @address 0x156A70
+     * @size 0xF0
+     */
+    CNPCharacter(void);
 };

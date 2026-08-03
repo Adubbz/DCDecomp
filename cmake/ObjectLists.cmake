@@ -9,17 +9,23 @@ function(read_index_sources section out_var exclude)
     set(path ${CMAKE_SOURCE_DIR}/${REF_DIR}/asm/objects/${section}.index)
     set(srcs "")
 
+    # Deliberately not a CMAKE_CONFIGURE_DEPENDS: the index is also an output
+    # of the disassemble step, so making configure depend on it puts CMake and
+    # ninja in a loop -- "manifest still dirty after 100 tries". A changed
+    # index is picked up by the configure scripts/build/cmake.sh runs at the
+    # start of every invocation.
     if(EXISTS ${path})
-        set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${path})
-        file(STRINGS ${path} lines)
+        # REGEX filters in file(STRINGS) itself: the `sym` rows are four times
+        # the bulk of this file and only gen_layout.py reads them, so matching
+        # them line by line in CMake would be the slowest thing in configure --
+        # which the objdiff GUI runs on every save.
+        file(STRINGS ${path} lines REGEX "^src	")
         foreach(line IN LISTS lines)
-            if(NOT line MATCHES "^#")
-                string(REGEX MATCH "^[^	]+" src "${line}")
-                get_filename_component(base ${src} NAME)
-                string(REGEX REPLACE "\\.s$" "" stem ${base})
-                if(NOT stem IN_LIST exclude)
-                    list(APPEND srcs ${src})
-                endif()
+            string(REGEX REPLACE "^src	([^	]+)	.*" "\\1" src "${line}")
+            get_filename_component(base ${src} NAME)
+            string(REGEX REPLACE "\\.s$" "" stem ${base})
+            if(NOT stem IN_LIST exclude)
+                list(APPEND srcs ${src})
             endif()
         endforeach()
         list(REMOVE_DUPLICATES srcs)

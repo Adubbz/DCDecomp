@@ -12,11 +12,58 @@ struct sceVif1Packet;
 
 class CFrameVu1 {
 public:
-    /* ?ret */ void DrawVu1(unsigned int *, RenderInfo *); // @ 0x129400 (0xD10 bytes) -- mangled: DrawVu1__9CFrameVu1FPUiP10RenderInfo
-    /* ?ret */ void DrawVu1(sceVif1Packet *, RenderInfo *); // @ 0x12A110 (0x80 bytes) -- mangled: DrawVu1__9CFrameVu1FP13sceVif1PacketP10RenderInfo
-    /* ?ret */ void SetVisual(CVisualVu1 *); // @ 0x12A210 (0x10 bytes) -- mangled: SetVisual__9CFrameVu1FP10CVisualVu1
-    /* ?ret */ void GetVisual(void); // @ 0x12A220 (0x10 bytes) -- mangled: GetVisual__9CFrameVu1Fv
-    /* ?ret */ void Initialize(void); // @ 0x12A230 (0x30 bytes) -- mangled: Initialize__9CFrameVu1Fv
-    CFrameVu1(void); // @ 0x12A260 (0x50 bytes) -- mangled: __ct__9CFrameVu1Fv
-    /* ?ret */ void __as(CFrameVu1 &); // @ 0x12A2B0 (0x50 bytes) -- mangled: __as__9CFrameVu1FR9CFrameVu1
+    /**
+     * @mangled DrawVu1__9CFrameVu1FPUiP10RenderInfo
+     * @address 0x129400
+     * @size 0xD10
+     * @unknownret
+     */
+    void DrawVu1(unsigned int *, RenderInfo *);
+
+    /**
+     * @mangled DrawVu1__9CFrameVu1FP13sceVif1PacketP10RenderInfo
+     * @address 0x12A110
+     * @size 0x80
+     * @unknownret
+     */
+    void DrawVu1(sceVif1Packet *, RenderInfo *);
+
+    /**
+     * @mangled SetVisual__9CFrameVu1FP10CVisualVu1
+     * @address 0x12A210
+     * @size 0x10
+     * @unknownret
+     */
+    void SetVisual(CVisualVu1 *);
+
+    /**
+     * @mangled GetVisual__9CFrameVu1Fv
+     * @address 0x12A220
+     * @size 0x10
+     * @unknownret
+     */
+    void GetVisual(void);
+
+    /**
+     * @mangled Initialize__9CFrameVu1Fv
+     * @address 0x12A230
+     * @size 0x30
+     * @unknownret
+     */
+    void Initialize(void);
+
+    /**
+     * @mangled __ct__9CFrameVu1Fv
+     * @address 0x12A260
+     * @size 0x50
+     */
+    CFrameVu1(void);
+
+    /**
+     * @mangled __as__9CFrameVu1FR9CFrameVu1
+     * @address 0x12A2B0
+     * @size 0x50
+     * @unknownret
+     */
+    void __as(CFrameVu1 &);
 };

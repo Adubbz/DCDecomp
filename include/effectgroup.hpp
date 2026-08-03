@@ -11,9 +11,43 @@ class CEffectParam;
 
 class CEffectGroup {
 public:
-    /* ?ret */ void EnterEffect(CEffectParam *); // @ 0x164980 (0x70 bytes) -- mangled: EnterEffect__12CEffectGroupFP12CEffectParam
-    /* ?ret */ void Step(int); // @ 0x1649F0 (0x70 bytes) -- mangled: Step__12CEffectGroupFi
-    /* ?ret */ void Draw(void); // @ 0x164A60 (0x60 bytes) -- mangled: Draw__12CEffectGroupFv
-    /* ?ret */ void Clear(void); // @ 0x164AC0 (0x60 bytes) -- mangled: Clear__12CEffectGroupFv
-    /* ?ret */ void Initialize(CEffect *, int); // @ 0x164B20 (0x10 bytes) -- mangled: Initialize__12CEffectGroupFP7CEffecti
+    /**
+     * @mangled EnterEffect__12CEffectGroupFP12CEffectParam
+     * @address 0x164980
+     * @size 0x70
+     * @unknownret
+     */
+    void EnterEffect(CEffectParam *);
+
+    /**
+     * @mangled Step__12CEffectGroupFi
+     * @address 0x1649F0
+     * @size 0x70
+     * @unknownret
+     */
+    void Step(int);
+
+    /**
+     * @mangled Draw__12CEffectGroupFv
+     * @address 0x164A60
+     * @size 0x60
+     * @unknownret
+     */
+    void Draw(void);
+
+    /**
+     * @mangled Clear__12CEffectGroupFv
+     * @address 0x164AC0
+     * @size 0x60
+     * @unknownret
+     */
+    void Clear(void);
+
+    /**
+     * @mangled Initialize__12CEffectGroupFP7CEffecti
+     * @address 0x164B20
+     * @size 0x10
+     * @unknownret
+     */
+    void Initialize(CEffect *, int);
 };

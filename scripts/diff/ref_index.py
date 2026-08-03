@@ -123,9 +123,11 @@ def entries(section):
             if line.startswith('#'):
                 continue
             fields = line.rstrip('\n').split('\t')
-            if len(fields) != 4:
+            # `sym` rows are the symbol -> address map folded into the same
+            # file; only `src` rows name something the link can take.
+            if len(fields) != 5 or fields[0] != 'src':
                 continue
-            source, symbol, vram, size = fields
+            _kind, source, symbol, vram, size = fields
             out.append(Entry(section, source, symbol, int(vram, 16), int(size, 16)))
 
     out.sort(key=lambda entry: entry.vram)

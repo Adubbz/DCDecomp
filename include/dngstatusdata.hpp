@@ -41,29 +41,166 @@ STATIC_ASSERT(sizeof(DNG_CONSUMABLE) == 0x20);
 
 class CDngStatusData {
 public:
-    void SetNowFloor(int floor); // @ 0x1BD900 (0x40 bytes) -- mangled: SetNowFloor__14CDngStatusDataFi
-    int SearchItemIndexNo(int item_id); // @ 0x1BD940 (0x180 bytes) -- mangled: SearchItemIndexNo__14CDngStatusDataFi
-    int LostItem(int item_id); // @ 0x1BDB60 (0x60 bytes) -- mangled: LostItem__14CDngStatusDataFi
-    void LostGateKey(void); // @ 0x1BDBC0 (0x130 bytes) -- mangled: LostGateKey__14CDngStatusDataFv
-    int GetLiveUnit(void); // @ 0x1BDCF0 (0x50 bytes) -- mangled: GetLiveUnit__14CDngStatusDataFv
-    int CheckItemGet(int item_id); // @ 0x1BDD40 (0x190 bytes) -- mangled: CheckItemGet__14CDngStatusDataFi
-    int CheckWeaponUser(int weapon_id); // @ 0x1BDED0 (0xC0 bytes) -- mangled: CheckWeaponUser__14CDngStatusDataFi
-    int CheckWeaponRot(int weapon_id); // @ 0x1BDF90 (0xC0 bytes) -- mangled: CheckWeaponRot__14CDngStatusDataFi
-    void ClearDeamonShaft(void); // @ 0x1BE050 (0x10 bytes) -- mangled: ClearDeamonShaft__14CDngStatusDataFv
-    int GetItem(int item_id, int qty); // @ 0x1BE060 (0x400 bytes) -- mangled: GetItem__14CDngStatusDataFii
-    int CheckActItemSlot(int item_id); // @ 0x1BE460 (0x50 bytes) -- mangled: CheckActItemSlot__14CDngStatusDataFi
-    int CheckDefaultWeapon(int chara_no); // @ 0x1BE4B0 (0x60 bytes) -- mangled: CheckDefaultWeapon__14CDngStatusDataFi
-    void SetDead(void); // @ 0x1BEEF0 (0x20 bytes) -- mangled: SetDead__14CDngStatusDataFv
-    void SetResLimmitZone(void); // @ 0x1BEF10 (0x50 bytes) -- mangled: SetResLimmitZone__14CDngStatusDataFv
-    void InitResLimmitZone(void); // @ 0x1BEF60 (0x3E0 bytes) -- mangled: InitResLimmitZone__14CDngStatusDataFv
-    void Initialize(void); // @ 0x1BF340 (0x3C0 bytes) -- mangled: Initialize__14CDngStatusDataFv
-    void AddKills(void); // @ 0x1BF700 (0x40 bytes) -- mangled: AddKills__14CDngStatusDataFv
-    s16 ChkKills(int georama_no, int floor); // @ 0x1BF740 (0x30 bytes) -- mangled: ChkKills__14CDngStatusDataFii
-    int GetAtraNum(int georama_no, int floor); // @ 0x1BF770 (0x80 bytes) -- mangled: GetAtraNum__14CDngStatusDataFii
-    int GetMaxAtraNum(int georama_no, int floor); // @ 0x1BF7F0 (0x80 bytes) -- mangled: GetMaxAtraNum__14CDngStatusDataFii
-    int SetGetAtra(int georama_no, int floor, int atra_id); // @ 0x1BF870 (0x80 bytes) -- mangled: SetGetAtra__14CDngStatusDataFiii
-    void SetCopyAtraList(int georama_no, int floor, int *out8); // @ 0x1BF8F0 (0x60 bytes) -- mangled: SetCopyAtraList__14CDngStatusDataFiiPi
-    void GetAtraData(int georama_no, int floor, int atra_id); // @ 0x1BF950 (0x160 bytes) -- mangled: GetAtraData__14CDngStatusDataFiii
+    /**
+     * @mangled SetNowFloor__14CDngStatusDataFi
+     * @address 0x1BD900
+     * @size 0x40
+     */
+    void SetNowFloor(int floor);
+
+    /**
+     * @mangled SearchItemIndexNo__14CDngStatusDataFi
+     * @address 0x1BD940
+     * @size 0x180
+     */
+    int SearchItemIndexNo(int item_id);
+
+    /**
+     * @mangled LostItem__14CDngStatusDataFi
+     * @address 0x1BDB60
+     * @size 0x60
+     */
+    int LostItem(int item_id);
+
+    /**
+     * @mangled LostGateKey__14CDngStatusDataFv
+     * @address 0x1BDBC0
+     * @size 0x130
+     */
+    void LostGateKey(void);
+
+    /**
+     * @mangled GetLiveUnit__14CDngStatusDataFv
+     * @address 0x1BDCF0
+     * @size 0x50
+     */
+    int GetLiveUnit(void);
+
+    /**
+     * @mangled CheckItemGet__14CDngStatusDataFi
+     * @address 0x1BDD40
+     * @size 0x190
+     */
+    int CheckItemGet(int item_id);
+
+    /**
+     * @mangled CheckWeaponUser__14CDngStatusDataFi
+     * @address 0x1BDED0
+     * @size 0xC0
+     */
+    int CheckWeaponUser(int weapon_id);
+
+    /**
+     * @mangled CheckWeaponRot__14CDngStatusDataFi
+     * @address 0x1BDF90
+     * @size 0xC0
+     */
+    int CheckWeaponRot(int weapon_id);
+
+    /**
+     * @mangled ClearDeamonShaft__14CDngStatusDataFv
+     * @address 0x1BE050
+     * @size 0x10
+     */
+    void ClearDeamonShaft(void);
+
+    /**
+     * @mangled GetItem__14CDngStatusDataFii
+     * @address 0x1BE060
+     * @size 0x400
+     */
+    int GetItem(int item_id, int qty);
+
+    /**
+     * @mangled CheckActItemSlot__14CDngStatusDataFi
+     * @address 0x1BE460
+     * @size 0x50
+     */
+    int CheckActItemSlot(int item_id);
+
+    /**
+     * @mangled CheckDefaultWeapon__14CDngStatusDataFi
+     * @address 0x1BE4B0
+     * @size 0x60
+     */
+    int CheckDefaultWeapon(int chara_no);
+
+    /**
+     * @mangled SetDead__14CDngStatusDataFv
+     * @address 0x1BEEF0
+     * @size 0x20
+     */
+    void SetDead(void);
+
+    /**
+     * @mangled SetResLimmitZone__14CDngStatusDataFv
+     * @address 0x1BEF10
+     * @size 0x50
+     */
+    void SetResLimmitZone(void);
+
+    /**
+     * @mangled InitResLimmitZone__14CDngStatusDataFv
+     * @address 0x1BEF60
+     * @size 0x3E0
+     */
+    void InitResLimmitZone(void);
+
+    /**
+     * @mangled Initialize__14CDngStatusDataFv
+     * @address 0x1BF340
+     * @size 0x3C0
+     */
+    void Initialize(void);
+
+    /**
+     * @mangled AddKills__14CDngStatusDataFv
+     * @address 0x1BF700
+     * @size 0x40
+     */
+    void AddKills(void);
+
+    /**
+     * @mangled ChkKills__14CDngStatusDataFii
+     * @address 0x1BF740
+     * @size 0x30
+     */
+    s16 ChkKills(int georama_no, int floor);
+
+    /**
+     * @mangled GetAtraNum__14CDngStatusDataFii
+     * @address 0x1BF770
+     * @size 0x80
+     */
+    int GetAtraNum(int georama_no, int floor);
+
+    /**
+     * @mangled GetMaxAtraNum__14CDngStatusDataFii
+     * @address 0x1BF7F0
+     * @size 0x80
+     */
+    int GetMaxAtraNum(int georama_no, int floor);
+
+    /**
+     * @mangled SetGetAtra__14CDngStatusDataFiii
+     * @address 0x1BF870
+     * @size 0x80
+     */
+    int SetGetAtra(int georama_no, int floor, int atra_id);
+
+    /**
+     * @mangled SetCopyAtraList__14CDngStatusDataFiiPi
+     * @address 0x1BF8F0
+     * @size 0x60
+     */
+    void SetCopyAtraList(int georama_no, int floor, int *out8);
+
+    /**
+     * @mangled GetAtraData__14CDngStatusDataFiii
+     * @address 0x1BF950
+     * @size 0x160
+     */
+    void GetAtraData(int georama_no, int floor, int atra_id);
 
 private:
     /* Field names/offsets below come directly from the project's IDA
@@ -102,7 +239,10 @@ private:
     s16 quick_item_slot[3];
     s16 quick_item_qty[3];
     s16 dungeon_items[103];
-    s16 item_qty_or_flag[103];
+    /* Per-slot "vol": how much is left in that copy of the item. Seeded from
+     * ITEM_LIST +10 via ItemDataToHaveCopy, drained by CMenuItemStep::
+     * CheckItemVolume, which advances the item id a stage when it empties. */
+    s16 item_vol[103];
     char unk_450A[2];
     WEAPON_HAVE chara_weapons[6][11];
     DNG_CONSUMABLE consumable_items[43];

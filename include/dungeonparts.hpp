@@ -4,9 +4,43 @@
 
 class CDungeonParts {
 public:
-    /* ?ret */ void GetSearchFrame(char *); // @ 0x1C1590 (0xE0 bytes) -- mangled: GetSearchFrame__13CDungeonPartsFPc
-    /* ?ret */ void SetHealZone(float *, float, float); // @ 0x1C1670 (0x60 bytes) -- mangled: SetHealZone__13CDungeonPartsFPfff
-    /* ?ret */ void Draw(void); // @ 0x1C16D0 (0x180 bytes) -- mangled: Draw__13CDungeonPartsFv
-    /* ?ret */ void DrawCalc(int, int, int, int); // @ 0x1C1850 (0x350 bytes) -- mangled: DrawCalc__13CDungeonPartsFiiii
-    /* ?ret */ void initalize(void); // @ 0x1C1BA0 (0x60 bytes) -- mangled: initalize__13CDungeonPartsFv
+    /**
+     * @mangled GetSearchFrame__13CDungeonPartsFPc
+     * @address 0x1C1590
+     * @size 0xE0
+     * @unknownret
+     */
+    void GetSearchFrame(char *);
+
+    /**
+     * @mangled SetHealZone__13CDungeonPartsFPfff
+     * @address 0x1C1670
+     * @size 0x60
+     * @unknownret
+     */
+    void SetHealZone(float *, float, float);
+
+    /**
+     * @mangled Draw__13CDungeonPartsFv
+     * @address 0x1C16D0
+     * @size 0x180
+     * @unknownret
+     */
+    void Draw(void);
+
+    /**
+     * @mangled DrawCalc__13CDungeonPartsFiiii
+     * @address 0x1C1850
+     * @size 0x350
+     * @unknownret
+     */
+    void DrawCalc(int, int, int, int);
+
+    /**
+     * @mangled initalize__13CDungeonPartsFv
+     * @address 0x1C1BA0
+     * @size 0x60
+     * @unknownret
+     */
+    void initalize(void);
 };

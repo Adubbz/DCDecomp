@@ -1,6 +1,12 @@
 {
     "recommendations": [
-        "ms-vscode-remote.remote-containers",
-        "ms-vscode.cpptools-extension-pack"
+        "llvm-vs-code-extensions.vscode-clangd",
+        "ms-python.black-formatter",
+        "ms-vscode-remote.remote-containers"
+    ],
+    "unwantedRecommendations": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-vscode.cmake-tools"
     ]
 }

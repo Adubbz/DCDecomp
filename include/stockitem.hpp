@@ -9,9 +9,9 @@ struct ATTACH_LIST;
 struct WEAPON_HAVE;
 
 enum SearchSpace {
-    DungeonItems    = 0,
-    Weapons         = 1,
-    ConsumableItems = 2,
+    SEARCHSPACE_DUNGEON_ITEMS    = 0,
+    SEARCHSPACE_WEAPONS         = 1,
+    SEARCHSPACE_CONSUMABLE_ITEMS = 2,
 };
 
 struct WeaponItem {
@@ -24,26 +24,114 @@ struct ConsumableItem {
     s16 data[15];
 };
 
-
 class CStockItem {
 private:
     s16 dungeon_items[60];
-    char unk78[120];
+    /* Per-slot "vol": the amount left in that copy of the item, seeded from
+     * ITEM_LIST +10. Travels with dungeon_items through every swap and sort. */
+    s16 dungeon_item_vols[60];
     WeaponItem weapon_items[30];
     ConsumableItem consumable_items[30];
 public:
-    void Initialize(); // @ 0x23F590 (0x70 bytes) -- mangled: Initialize__10CStockItemFv
-    s16 SearchSpace(int item, int mode); // @ 0x23F600 (0xC0 bytes) -- mangled: SearchSpace__10CStockItemFii
-    /* ?ret */ void SetItemToPos(int, short *, short *); // @ 0x23F6C0 (0x30 bytes) -- mangled: SetItemToPos__10CStockItemFiPsPs
-    /* ?ret */ void GetItemInfo(int, short *, short *); // @ 0x23F6F0 (0x20 bytes) -- mangled: GetItemInfo__10CStockItemFiPsPs
-    /* ?ret */ void SetWepToPos(int, WEAPON_HAVE *); // @ 0x23F710 (0x80 bytes) -- mangled: SetWepToPos__10CStockItemFiP11WEAPON_HAVE
-    /* ?ret */ void GetWeaponInfo(int, WEAPON_HAVE *); // @ 0x23F790 (0x40 bytes) -- mangled: GetWeaponInfo__10CStockItemFiP11WEAPON_HAVE
-    /* ?ret */ void SetAttachToPos(int, ATTACH_LIST *); // @ 0x23F7D0 (0x80 bytes) -- mangled: SetAttachToPos__10CStockItemFiP11ATTACH_LIST
-    /* ?ret */ void GetAttachInfo(int, ATTACH_LIST *); // @ 0x23F850 (0x40 bytes) -- mangled: GetAttachInfo__10CStockItemFiP11ATTACH_LIST
-    /* ?ret */ void SearchItem(int); // @ 0x23F890 (0x190 bytes) -- mangled: SearchItem__10CStockItemFi
-    /* ?ret */ void SeitonChargeItemBoardSub(void); // @ 0x23FB40 (0x130 bytes) -- mangled: SeitonChargeItemBoardSub__10CStockItemFv
-    /* ?ret */ void SeitonItem(void); // @ 0x23FC70 (0x80 bytes) -- mangled: SeitonItem__10CStockItemFv
-    /* ?ret */ void SeitonAttach(void); // @ 0x23FF10 (0x80 bytes) -- mangled: SeitonAttach__10CStockItemFv
-    /* ?ret */ void GetNowModeSpace(int); // @ 0x23FF90 (0xC0 bytes) -- mangled: GetNowModeSpace__10CStockItemFi
+    /**
+     * @mangled Initialize__10CStockItemFv
+     * @address 0x23F590
+     * @size 0x70
+     */
+    void Initialize();
+
+    /**
+     * @mangled SearchSpace__10CStockItemFii
+     * @address 0x23F600
+     * @size 0xC0
+     */
+    s16 SearchSpace(int item, int mode);
+
+    /**
+     * @mangled SetItemToPos__10CStockItemFiPsPs
+     * @address 0x23F6C0
+     * @size 0x30
+     */
+    void SetItemToPos(int index, s16 *item, s16 *vol);
+
+    /**
+     * @mangled GetItemInfo__10CStockItemFiPsPs
+     * @address 0x23F6F0
+     * @size 0x20
+     * @unknownret
+     */
+    void GetItemInfo(int index, s16 *item, s16 *vol);
+
+    /**
+     * @mangled SetWepToPos__10CStockItemFiP11WEAPON_HAVE
+     * @address 0x23F710
+     * @size 0x80
+     * @unknownret
+     */
+    void SetWepToPos(int, WEAPON_HAVE *);
+
+    /**
+     * @mangled GetWeaponInfo__10CStockItemFiP11WEAPON_HAVE
+     * @address 0x23F790
+     * @size 0x40
+     * @unknownret
+     */
+    void GetWeaponInfo(int, WEAPON_HAVE *);
+
+    /**
+     * @mangled SetAttachToPos__10CStockItemFiP11ATTACH_LIST
+     * @address 0x23F7D0
+     * @size 0x80
+     * @unknownret
+     */
+    void SetAttachToPos(int, ATTACH_LIST *);
+
+    /**
+     * @mangled GetAttachInfo__10CStockItemFiP11ATTACH_LIST
+     * @address 0x23F850
+     * @size 0x40
+     * @unknownret
+     */
+    void GetAttachInfo(int, ATTACH_LIST *);
+
+    /**
+     * @mangled SearchItem__10CStockItemFi
+     * @address 0x23F890
+     * @size 0x190
+     * @unknownret
+     */
+    void SearchItem(int);
+
+    /**
+     * @mangled SeitonChargeItemBoardSub__10CStockItemFv
+     * @address 0x23FB40
+     * @size 0x130
+     * @unknownret
+     */
+    void SeitonChargeItemBoardSub(void);
+
+    /**
+     * @mangled SeitonItem__10CStockItemFv
+     * @address 0x23FC70
+     * @size 0x80
+     * @unknownret
+     */
+    void SeitonItem(void);
+
+    /**
+     * @mangled SeitonAttach__10CStockItemFv
+     * @address 0x23FF10
+     * @size 0x80
+     * @unknownret
+     */
+    void SeitonAttach(void);
+
+    /**
+     * @mangled GetNowModeSpace__10CStockItemFi
+     * @address 0x23FF90
+     * @size 0xC0
+     * @unknownret
+     */
+    void GetNowModeSpace(int);
 };
 STATIC_ASSERT(sizeof(CStockItem) == 0x21C0);

@@ -177,7 +177,7 @@ int CDngStatusData::LostItem(int item_id) {
     for (i = 0; (valid = i < 103) != 0; i++) {
         if (this->dungeon_items[i] == item_id) {
             this->dungeon_items[i] = -1;
-            this->item_qty_or_flag[i] = 0;
+            this->item_vol[i] = 0;
             return i;
         }
     }
@@ -407,13 +407,13 @@ int CDngStatusData::GetItem(int item_id, int qty) {
                     for (m = 0; (valid = m < 3) != 0; m++) {
                         if (this->dungeon_items[this->item_capacity + m] == -1) {
                             this->dungeon_items[this->item_capacity + m] = item_id;
-                            this->item_qty_or_flag[this->item_capacity + m] = have_copy;
+                            this->item_vol[this->item_capacity + m] = have_copy;
                             return i;
                         }
                     }
                 } else {
                     this->dungeon_items[i] = item_id;
-                    this->item_qty_or_flag[i] = have_copy;
+                    this->item_vol[i] = have_copy;
                 }
                 return i;
             }
@@ -495,7 +495,6 @@ int CDngStatusData::CheckDefaultWeapon(int chara_no) {
     return 1;
 }
 
-#if DNG_COMPILE_UNMATCHED
 /* Adds to a character's water gauge. With ratio == 0 the gauge moves
  * instantly; otherwise the target is latched into drink_next[] and
  * drink_step[] holds the per-frame delta CUserStatus::Step applies, signed so
@@ -533,6 +532,7 @@ void CUserStatus::AddDrink(int chara_no, s16 amount, float ratio) {
     }
 }
 
+#if DNG_COMPILE_UNMATCHED
 /* Same instant/interpolated split as AddDrink, for HP. */
 /* @ 0x1BE710 (0x180 bytes) -- AddNowLife__11CUserStatusFisf */
 void CUserStatus::AddNowLife(int chara_no, s16 amount, float ratio) {
@@ -581,11 +581,6 @@ void CUserStatus::AddNowLife(int chara_no, s16 amount, float ratio) {
  * translation unit while the C++ above does not match yet. Generated
  * into build/generated/asm by scripts/build/gen_asm_body.py; see
  * CMakeLists.txt, "Retail instructions as asm bodies". */
-asm void CUserStatus::AddDrink(int chara_no, s16 amount, float ratio)
-{
-#include "AddDrink__11CUserStatusFisf.inc"
-}
-
 asm void CUserStatus::AddNowLife(int chara_no, s16 amount, float ratio)
 {
 #include "AddNowLife__11CUserStatusFisf.inc"
@@ -889,7 +884,7 @@ struct DNG_ITEM_BLOCK {
     s16 quick_item_slot[3];
     s16 quick_item_qty[3];
     s16 dungeon_items[103];
-    s16 item_qty_or_flag[103];
+    s16 item_vol[103];
 };
 
 /* Resets the whole class to a fresh-game state: party HP/weapons/atra grid/
@@ -980,7 +975,7 @@ void CDngStatusData::Initialize(void) {
 
     for (t = 0; (valid = t < 103) != 0; t++) {
         item_block->dungeon_items[t] = -1;
-        item_block->item_qty_or_flag[t] = 0;
+        item_block->item_vol[t] = 0;
     }
 
     for (i = 0; (valid = i < 43) != 0; i++) {
@@ -1109,4 +1104,3 @@ void CDngStatusData::GetAtraData(int georama_no, int floor, int atra_id) {
         }
     }
 }
-

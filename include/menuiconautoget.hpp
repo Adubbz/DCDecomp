@@ -4,11 +4,59 @@
 
 class CMenuIconAutoGet {
 public:
-    /* ?ret */ void IsMoveIcon(void); // @ 0x2380B0 (0x40 bytes) -- mangled: IsMoveIcon__16CMenuIconAutoGetFv
-    /* ?ret */ void IsSameItem(int); // @ 0x2380F0 (0x40 bytes) -- mangled: IsSameItem__16CMenuIconAutoGetFi
-    /* ?ret */ void GetMoveIconGole(int, int); // @ 0x238130 (0x50 bytes) -- mangled: GetMoveIconGole__16CMenuIconAutoGetFii
-    /* ?ret */ void GetSpace(void); // @ 0x238180 (0x50 bytes) -- mangled: GetSpace__16CMenuIconAutoGetFv
-    /* ?ret */ void IconAutoMove(void); // @ 0x2381D0 (0x190 bytes) -- mangled: IconAutoMove__16CMenuIconAutoGetFv
-    /* ?ret */ void IconMoveTarSet(int, int, int, int, float, float); // @ 0x238360 (0x30 bytes) -- mangled: IconMoveTarSet__16CMenuIconAutoGetFiiiiff
-    /* ?ret */ void IconAutoMoveDraw(void); // @ 0x238390 (0xC0 bytes) -- mangled: IconAutoMoveDraw__16CMenuIconAutoGetFv
+    /**
+     * @mangled IsMoveIcon__16CMenuIconAutoGetFv
+     * @address 0x2380B0
+     * @size 0x40
+     * @unknownret
+     */
+    void IsMoveIcon(void);
+
+    /**
+     * @mangled IsSameItem__16CMenuIconAutoGetFi
+     * @address 0x2380F0
+     * @size 0x40
+     * @unknownret
+     */
+    void IsSameItem(int);
+
+    /**
+     * @mangled GetMoveIconGole__16CMenuIconAutoGetFii
+     * @address 0x238130
+     * @size 0x50
+     * @unknownret
+     */
+    void GetMoveIconGole(int, int);
+
+    /**
+     * @mangled GetSpace__16CMenuIconAutoGetFv
+     * @address 0x238180
+     * @size 0x50
+     * @unknownret
+     */
+    void GetSpace(void);
+
+    /**
+     * @mangled IconAutoMove__16CMenuIconAutoGetFv
+     * @address 0x2381D0
+     * @size 0x190
+     * @unknownret
+     */
+    void IconAutoMove(void);
+
+    /**
+     * @mangled IconMoveTarSet__16CMenuIconAutoGetFiiiiff
+     * @address 0x238360
+     * @size 0x30
+     * @unknownret
+     */
+    void IconMoveTarSet(int, int, int, int, float, float);
+
+    /**
+     * @mangled IconAutoMoveDraw__16CMenuIconAutoGetFv
+     * @address 0x238390
+     * @size 0xC0
+     * @unknownret
+     */
+    void IconAutoMoveDraw(void);
 };

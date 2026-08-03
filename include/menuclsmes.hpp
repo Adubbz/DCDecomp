@@ -10,10 +10,51 @@ struct WEAPON_HAVE;
 
 class MenuClsMes {
 public:
-    /* ?ret */ void InitMes(void); // @ 0x20B580 (0x20 bytes) -- mangled: InitMes__10MenuClsMesFv
-    /* ?ret */ void InitData(void); // @ 0x20B5A0 (0x30 bytes) -- mangled: InitData__10MenuClsMesFv
-    /* ?ret */ void SetBuffInfo(short *); // @ 0x20B5D0 (0x220 bytes) -- mangled: SetBuffInfo__10MenuClsMesFPs
-    /* ?ret */ void NowWeaponStatus(WEAPON_HAVE *); // @ 0x20B7F0 (0x170 bytes) -- mangled: NowWeaponStatus__10MenuClsMesFP11WEAPON_HAVE
-    /* ?ret */ void Step(void); // @ 0x20B960 (0x80 bytes) -- mangled: Step__10MenuClsMesFv
-    /* ?ret */ void Draw1(int, int, int); // @ 0x20B9E0 (0x4E0 bytes) -- mangled: Draw1__10MenuClsMesFiii
+    /**
+     * @mangled InitMes__10MenuClsMesFv
+     * @address 0x20B580
+     * @size 0x20
+     * @unknownret
+     */
+    void InitMes(void);
+
+    /**
+     * @mangled InitData__10MenuClsMesFv
+     * @address 0x20B5A0
+     * @size 0x30
+     * @unknownret
+     */
+    void InitData(void);
+
+    /**
+     * @mangled SetBuffInfo__10MenuClsMesFPs
+     * @address 0x20B5D0
+     * @size 0x220
+     * @unknownret
+     */
+    void SetBuffInfo(short *);
+
+    /**
+     * @mangled NowWeaponStatus__10MenuClsMesFP11WEAPON_HAVE
+     * @address 0x20B7F0
+     * @size 0x170
+     * @unknownret
+     */
+    void NowWeaponStatus(WEAPON_HAVE *);
+
+    /**
+     * @mangled Step__10MenuClsMesFv
+     * @address 0x20B960
+     * @size 0x80
+     * @unknownret
+     */
+    void Step(void);
+
+    /**
+     * @mangled Draw1__10MenuClsMesFiii
+     * @address 0x20B9E0
+     * @size 0x4E0
+     * @unknownret
+     */
+    void Draw1(int, int, int);
 };

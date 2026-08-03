@@ -10,14 +10,82 @@ class CFrame;
 
 class CBound {
 public:
-    /* ?ret */ void InCheck(float *, float *); // @ 0x13D250 (0x270 bytes) -- mangled: InCheck__6CBoundFPfPf
-    /* ?ret */ void SetDir(CFrame *, float *, float *, float *, float, float); // @ 0x13D4C0 (0x100 bytes) -- mangled: SetDir__6CBoundFP6CFramePfPfPfff
-    /* ?ret */ void ChangeDir(float *, float *, float *); // @ 0x13D5C0 (0x70 bytes) -- mangled: ChangeDir__6CBoundFPfPfPf
-    /* ?ret */ void UpDateDir(void); // @ 0x13D630 (0x210 bytes) -- mangled: UpDateDir__6CBoundFv
-    /* ?ret */ void SetDir(float *, float *); // @ 0x13D840 (0x60 bytes) -- mangled: SetDir__6CBoundFPfPf
-    /* ?ret */ void SetDir(float *); // @ 0x13D8A0 (0x150 bytes) -- mangled: SetDir__6CBoundFPf
-    /* ?ret */ void UpDateDirPos(void); // @ 0x13D9F0 (0x280 bytes) -- mangled: UpDateDirPos__6CBoundFv
-    /* ?ret */ void UpDate(void); // @ 0x13DC70 (0x80 bytes) -- mangled: UpDate__6CBoundFv
-    /* ?ret */ void InitParam(void); // @ 0x13DCF0 (0x80 bytes) -- mangled: InitParam__6CBoundFv
-    CBound(float, float, float); // @ 0x13DD70 (0x120 bytes) -- mangled: __ct__6CBoundFfff
+    /**
+     * @mangled InCheck__6CBoundFPfPf
+     * @address 0x13D250
+     * @size 0x270
+     * @unknownret
+     */
+    void InCheck(float *, float *);
+
+    /**
+     * @mangled SetDir__6CBoundFP6CFramePfPfPfff
+     * @address 0x13D4C0
+     * @size 0x100
+     * @unknownret
+     */
+    void SetDir(CFrame *, float *, float *, float *, float, float);
+
+    /**
+     * @mangled ChangeDir__6CBoundFPfPfPf
+     * @address 0x13D5C0
+     * @size 0x70
+     * @unknownret
+     */
+    void ChangeDir(float *, float *, float *);
+
+    /**
+     * @mangled UpDateDir__6CBoundFv
+     * @address 0x13D630
+     * @size 0x210
+     * @unknownret
+     */
+    void UpDateDir(void);
+
+    /**
+     * @mangled SetDir__6CBoundFPfPf
+     * @address 0x13D840
+     * @size 0x60
+     * @unknownret
+     */
+    void SetDir(float *, float *);
+
+    /**
+     * @mangled SetDir__6CBoundFPf
+     * @address 0x13D8A0
+     * @size 0x150
+     * @unknownret
+     */
+    void SetDir(float *);
+
+    /**
+     * @mangled UpDateDirPos__6CBoundFv
+     * @address 0x13D9F0
+     * @size 0x280
+     * @unknownret
+     */
+    void UpDateDirPos(void);
+
+    /**
+     * @mangled UpDate__6CBoundFv
+     * @address 0x13DC70
+     * @size 0x80
+     * @unknownret
+     */
+    void UpDate(void);
+
+    /**
+     * @mangled InitParam__6CBoundFv
+     * @address 0x13DCF0
+     * @size 0x80
+     * @unknownret
+     */
+    void InitParam(void);
+
+    /**
+     * @mangled __ct__6CBoundFfff
+     * @address 0x13DD70
+     * @size 0x120
+     */
+    CBound(float, float, float);
 };

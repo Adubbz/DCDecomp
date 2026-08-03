@@ -23,6 +23,10 @@ TOOL_PREFIX = os.environ.get('MIPS_TOOL_PREFIX', 'mips-ps2-decompals-')
 REF_SECTION_PATH = REF_PATH / 'sections'
 REF_SPLIT_PATH = REF_PATH / 'split'
 
+# Linkable sources per image, filled in by write_split() and written out with
+# that image's symbols once every dump exists.
+SRC_ROWS = {}
+
 # ROM addresses
 ROM_ELF_START      = 0x0
 ROM_ELF_TEXT_START = 0x000100
@@ -471,19 +475,70 @@ LABEL_RE = re.compile(r'^(?:glabel|jlabel)\s+(\S+)$')
 INDEX_ADDR_RE = re.compile(r'^/\*\s*([0-9A-Fa-f]+)(?:\s+([0-9A-Fa-f]+))?')
 
 
-def write_symbol_index():
-    """Record every symbol the dumps define, under the name they define it by.
+def retail_symbols_by_section():
+    """{image: {name: address}} from retail's own symbol table.
 
-    This is the authority the build resolves against, not the retail symbol
-    table: where retail has two symbols called VSyncField, the dumps have
-    VSyncField and VSyncField__2, and it is the latter that a decompiled .cpp
-    declares and that the linker has to match.
+    Addresses come from nm and the image from readelf's section index: nm is
+    what the build has always resolved against, and readelf is the only one of
+    the two that says which image a symbol belongs to -- the overlays share
+    addresses, so nothing else tells title and dun apart.
+
+    readelf alone will not do. Retail gives some symbols a processor-specific
+    binding that prints as `<processor specific>: 13` where a binding keyword
+    belongs, and those are exactly the names the dumps cannot spell:
+    `__ct__14CDataAlloc2<1>Fv`, whose `<1>` cannot be a filename, so the dump
+    calls it func_00143820. Hence parsing from the right rather than by column.
     """
-    out = REF_PATH / 'objects' / 'symbols.index'
-    out.parent.mkdir(parents=True, exist_ok=True)
+    sections = {}
+    for m in re.finditer(r'^ *\[ *([0-9]+)\] +([A-Za-z.]+) ', readelf(['-W', '-S', ELF_PATH]),
+                         re.MULTILINE):
+        sections[int(m.group(1))] = m.group(2)
 
-    rows = []
+    owner = {}
+    for line in readelf(['-W', '-s', ELF_PATH]).splitlines():
+        parts = line.split()
+        if len(parts) < 8 or not parts[0].rstrip(':').isdigit():
+            continue
+        ndx = parts[-2]
+        if ndx.isdigit():
+            owner[parts[-1]] = sections.get(int(ndx), 'main')
+
+    out = {name: {} for name in ('main', 'title', 'dun')}
+    nm_out = subprocess.check_output([f'{TOOL_PREFIX}nm', str(ELF_PATH)]).decode()
+    for line in nm_out.splitlines():
+        parts = line.split()
+        if len(parts) != 3:
+            continue
+        name = parts[2]
+        section = owner.get(name, 'main')
+        # Anything outside the two overlays belongs to the main image.
+        out[section if section in out else 'main'][name] = int(parts[0], 16)
+    return out
+
+
+def write_symbol_rows():
+    """Fold every symbol the build can resolve into the per-section indexes.
+
+    Each index carries two kinds of row, told apart by the first column:
+
+        src   a source the link can take, with its size -- one per .s
+        sym   a symbol and its address
+
+    The dumps' own symbols come first and win: where retail has two symbols
+    called VSyncField the dumps have VSyncField and VSyncField__2, and it is
+    the latter a decompiled .cpp declares. Retail's table is folded in
+    underneath for the names the dumps do not define, attributed to the image
+    whose ELF section holds it -- the overlays share addresses, so only that
+    section tells title and dun apart.
+    """
+    by_section = {name: [] for name in ('main', 'title', 'dun')}
+
     for path in sorted(REF_PATH.rglob('*.s')):
+        # ref/asm/{split,sections}/<image>/<file>.s
+        parts = path.parts
+        section = parts[3] if len(parts) > 4 else None
+        if section not in by_section:
+            continue
         lines = path.read_text(errors='replace').splitlines()
         for i, line in enumerate(lines):
             m = LABEL_RE.match(line)
@@ -493,16 +548,50 @@ def write_symbol_index():
                 am = INDEX_ADDR_RE.match(nxt)
                 if am:
                     # file-backed sections carry `fileoffset vaddr`, .bss only vaddr
-                    rows.append((m.group(1), int(am.group(2) or am.group(1), 16),
-                                 str(path)))
+                    by_section[section].append(
+                        (m.group(1), int(am.group(2) or am.group(1), 16), str(path)))
                     break
                 if nxt.strip():
                     break
 
+    defined = {name for rows in by_section.values() for name, _v, _s in rows}
+    for section, retail in retail_symbols_by_section().items():
+        by_section[section] += [(name, vram, 'retail')
+                                for name, vram in retail.items()
+                                if name not in defined]
+
+    return by_section
+
+
+def write_index(section_name, src_rows, sym_rows):
+    """One index per image: its linkable sources and its symbols.
+
+    Rows are in address order, both kinds together, so the file reads as the
+    image's own layout -- each source followed by the symbols inside it. `src`
+    sorts before `sym` at a shared address, which puts a source ahead of what
+    it defines. Nothing depends on the order; every reader sorts or filters for
+    itself.
+    """
+    out = REF_PATH / 'objects' / f'{section_name}.index'
+    out.parent.mkdir(parents=True, exist_ok=True)
+
+    rows = [('src', src, sym, vram, size) for src, sym, vram, size in src_rows]
+
+    # A `sym` row for a symbol a `src` row already names, at the same address,
+    # says nothing the `src` row does not -- and every function has one or two
+    # of them, from the split dump and from the whole-section dump it was cut
+    # out of. Readers take symbols from both kinds, so dropping these loses
+    # nothing and halves the file.
+    named = {(sym, vram) for _k, _s, sym, vram, _z in rows}
+    rows += [('sym', src, sym, vram, 0) for sym, vram, src in sym_rows
+             if (sym, vram) not in named]
+
+    rows.sort(key=lambda r: (r[3], r[0], r[2]))
+
     with open(out, 'w') as f:
-        f.write('# symbol\tvram\tsource\n')
-        for name, vram, src in sorted(rows, key=lambda r: (r[1], r[0])):
-            f.write(f'{name}\t{vram:#010x}\t{src}\n')
+        f.write('# kind\tsource\tsymbol\tvram\tsize\n')
+        for kind, src, sym, vram, size in rows:
+            f.write(f'{kind}\t{src}\t{sym}\t{vram:#010x}\t{size:#x}\n')
 
 
 def write_section(section, out_path):
@@ -558,19 +647,15 @@ def write_split(processed_segments, section_name):
 
     non_text_sections = sorted([e for k, v in processed_segments.items() if k != FileSectionType.Text for e in v], key=lambda x: x.vram)
 
-    # The address index: one row per source the build can link, with the retail
-    # address it occupies. Data sections are whole dumps rather than one symbol,
-    # so they are recorded by their span.
-    index_path = REF_PATH / 'objects' / f'{section_name}.index'
-    index_path.parent.mkdir(parents=True, exist_ok=True)
-
-    with open(index_path, 'w') as f:
-        f.write('# source\tsymbol\tvram\tsize\n')
-        for path, sym, vram, size in index:
-            f.write(f'{path}\t{sym}\t{vram:#010x}\t{size:#x}\n')
-        for section in non_text_sections:
-            path = f'{REF_SECTION_PATH}/{section_name}/{section_name}{section.name}.s'
-            f.write(f'{path}\t{section_name}{section.name}\t{section.vram:#010x}\t{section.sizew * 4:#x}\n')
+    # One row per source the build can link, with the retail address it
+    # occupies. Data sections are whole dumps rather than one symbol, so they
+    # are recorded by their span. Held until the symbols can be folded in
+    # alongside them; see write_index().
+    for section in non_text_sections:
+        path = f'{REF_SECTION_PATH}/{section_name}/{section_name}{section.name}.s'
+        index.append((path, f'{section_name}{section.name}',
+                      section.vram, section.sizew * 4))
+    SRC_ROWS[section_name] = index
 
 def disassemble_group(context, group_section_name, entries):
     global data
@@ -685,7 +770,10 @@ def disassemble(context):
     disassemble_group(context, 'main', main)
     disassemble_group(context, 'title', title)
     disassemble_group(context, 'dun', dun)
-    write_symbol_index()
+    sym_rows = write_symbol_rows()
+    for section_name in ('main', 'title', 'dun'):
+        write_index(section_name, SRC_ROWS.get(section_name, []),
+                    sym_rows.get(section_name, []))
 
 data = b''
 

@@ -1,6 +1,23 @@
 {
+    "[c]": {
+        "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+    },
+    "[cpp]": {
+        "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+    },
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
     "editor.insertSpaces": true,
     "editor.tabSize": 4,
     "editor.detectIndentation": true,
-    "terminal.integrated.tabs.enableAnimation": false
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "files.associations": {
+        ".clangd": "yaml"
+    },
+    "terminal.integrated.tabs.enableAnimation": false,
+    // clangd replaces IntelliSense; leaving both on gives two sets of
+    // squiggles from two different views of the include path.
+    "C_Cpp.intelliSenseEngine": "disabled"
 }

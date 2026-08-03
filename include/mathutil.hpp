@@ -2,52 +2,380 @@
 
 #include "common.h"
 
-/* ?ret */ void __construct_array(/* unknown args */); // @ 0x1222D0 (0x130 bytes) -- mangled: __construct_array
-/* ?ret */ void __construct_new_array(/* unknown args */); // @ 0x122400 (0x150 bytes) -- mangled: __construct_new_array
-/* ?ret */ void __dl(void *); // @ 0x122550 (0x40 bytes) -- mangled: __dl__FPv
-/* ?ret */ void __throw_catch_compare(/* unknown args */); // @ 0x122610 (0x270 bytes) -- mangled: __throw_catch_compare
-/* ?ret */ void unexpected(void); // @ 0x122880 (0x30 bytes) -- mangled: unexpected__3stdFv
-/* ?ret */ void terminate(void); // @ 0x1228B0 (0x30 bytes) -- mangled: terminate__3stdFv
-/* ?ret */ void duhandler(void); // @ 0x1228E0 (0x30 bytes) -- mangled: duhandler__3stdFv
-/* ?ret */ void dthandler(void); // @ 0x122910 (0x20 bytes) -- mangled: dthandler__3stdFv
-/* ?ret */ void __register_global_object(/* unknown args */); // @ 0x122930 (0x30 bytes) -- mangled: __register_global_object
-/* ?ret */ void __initialize_cpp_rts(/* unknown args */); // @ 0x122960 (0x60 bytes) -- mangled: __initialize_cpp_rts
-/* ?ret */ void __DecodeUnsignedNumber(char *, unsigned int *); // @ 0x1229C0 (0xA0 bytes) -- mangled: __DecodeUnsignedNumber__FPcPUi
-/* ?ret */ void __DecodeSignedNumber(char *, int *); // @ 0x122A60 (0xA0 bytes) -- mangled: __DecodeSignedNumber__FPcPi
-/* ?ret */ void __end__catch(/* unknown args */); // @ 0x122B00 (0x40 bytes) -- mangled: __end__catch
-/* ?ret */ void __unexpected(/* unknown args */); // @ 0x122B40 (0x1C0 bytes) -- mangled: __unexpected
-/* ?ret */ void mwInit(/* unknown args */); // @ 0x122DA0 (0x40 bytes) -- mangled: mwInit
-/* ?ret */ void mwOverlayInit(/* unknown args */); // @ 0x122DE0 (0x90 bytes) -- mangled: mwOverlayInit
-/* ?ret */ void MWNotifyOverlayLoaded(/* unknown args */); // @ 0x122E70 (0x10 bytes) -- mangled: MWNotifyOverlayLoaded
-/* ?ret */ void mwBload(/* unknown args */); // @ 0x122E80 (0xC0 bytes) -- mangled: mwBload
-/* ?ret */ void mwLoadOverlay(/* unknown args */); // @ 0x122F40 (0x70 bytes) -- mangled: mwLoadOverlay
-/* ?ret */ void VectorMax(float *, float *, float *); // @ 0x122FB0 (0x20 bytes) -- mangled: VectorMax__FPfPfPf
-/* ?ret */ void VectorMax(float *, float *, float *, float *); // @ 0x122FD0 (0x20 bytes) -- mangled: VectorMax__FPfPfPfPf
-/* ?ret */ void VectorMax(float *, float *, float *, float *, float *); // @ 0x122FF0 (0x30 bytes) -- mangled: VectorMax__FPfPfPfPfPf
-/* ?ret */ void VectorMin(float *, float *, float *); // @ 0x123020 (0x20 bytes) -- mangled: VectorMin__FPfPfPf
-/* ?ret */ void VectorMin(float *, float *, float *, float *, float *); // @ 0x123040 (0x30 bytes) -- mangled: VectorMin__FPfPfPfPfPf
-/* ?ret */ void VectorMaxMin(float *, float *, float *, float *); // @ 0x123070 (0x20 bytes) -- mangled: VectorMaxMin__FPfPfPfPf
-/* ?ret */ void VectorMaxMin(float *, float *, float *, float *, float *); // @ 0x123090 (0x30 bytes) -- mangled: VectorMaxMin__FPfPfPfPfPf
-/* ?ret */ void VectorMaxMin(float *, float *, float *, float *, float *, float *); // @ 0x1230C0 (0x40 bytes) -- mangled: VectorMaxMin__FPfPfPfPfPfPf
-/* ?ret */ void PlaneNormal(float *, float *, float *, float *); // @ 0x123100 (0x30 bytes) -- mangled: PlaneNormal__FPfPfPfPf
-/* ?ret */ void DistPlanePoint(float *, float *, float *); // @ 0x123130 (0x50 bytes) -- mangled: DistPlanePoint__FPfPfPf
-/* ?ret */ void ReflectionPlane(float *, float *, float *, float *); // @ 0x123180 (0xB0 bytes) -- mangled: ReflectionPlane__FPfPfPfPf
-/* ?ret */ void IntersectionPoint_line_poly3(float *, float *, float *, float *, float *, float *, float *); // @ 0x123230 (0x150 bytes) -- mangled: IntersectionPoint_line_poly3__FPfPfPfPfPfPfPf
-/* ?ret */ void Check_Point_Poly3_XYZ(float *, float *, float *, float *, float *); // @ 0x123380 (0x1E0 bytes) -- mangled: Check_Point_Poly3_XYZ__FPfPfPfPfPf
-/* ?ret */ void DistVector(float *); // @ 0x123560 (0x30 bytes) -- mangled: DistVector__FPf
-/* ?ret */ void DistVector(float *, float *); // @ 0x123590 (0x40 bytes) -- mangled: DistVector__FPfPf
-/* ?ret */ void MulMatrix(float (*)[4], float (*)[4], float (*)[4]); // @ 0x1235D0 (0x80 bytes) -- mangled: MulMatrix__FPA4_fPA4_fPA4_f
-/* ?ret */ void RotMatrixY(float (*)[4], float); // @ 0x123650 (0x80 bytes) -- mangled: RotMatrixY__FPA4_ff
-/* ?ret */ void LookAtMatrixZ(float (*)[4], float *); // @ 0x1236D0 (0x110 bytes) -- mangled: LookAtMatrixZ__FPA4_fPf
-/* ?ret */ void ApplyMatrixN(float (*)[4], float (*)[4], float (*)[4], int); // @ 0x1237E0 (0x60 bytes) -- mangled: ApplyMatrixN__FPA4_fPA4_fPA4_fi
-/* ?ret */ void VectorInterpolate(float *, float *, float *, float, int); // @ 0x123840 (0x190 bytes) -- mangled: VectorInterpolate__FPfPfPffi
-/* ?ret */ void AngleInterpolate(float, float, float, int); // @ 0x1239D0 (0x160 bytes) -- mangled: AngleInterpolate__Ffffi
-/* ?ret */ void AngleCmp(float, float, float); // @ 0x123B30 (0xB0 bytes) -- mangled: AngleCmp__Ffff
-/* ?ret */ void AngleLimit(float); // @ 0x123BE0 (0xD0 bytes) -- mangled: AngleLimit__Ff
-/* ?ret */ void rnd(void); // @ 0x123CB0 (0x40 bytes) -- mangled: rnd__Fv
-/* ?ret */ void nrnd(void); // @ 0x123CF0 (0xC0 bytes) -- mangled: nrnd__Fv
-/* ?ret */ void CreateSinTable(void); // @ 0x123DB0 (0x90 bytes) -- mangled: CreateSinTable__Fv
-/* ?ret */ void Sinf(float); // @ 0x123E40 (0xC0 bytes) -- mangled: Sinf__Ff
-/* ?ret */ void Cosf(float); // @ 0x123F00 (0x30 bytes) -- mangled: Cosf__Ff
+/**
+ * @mangled __construct_array
+ * @address 0x1222D0
+ * @size 0x130
+ * @unknownret
+ */
+void __construct_array(/* unknown args */);
+
+/**
+ * @mangled __construct_new_array
+ * @address 0x122400
+ * @size 0x150
+ * @unknownret
+ */
+void __construct_new_array(/* unknown args */);
+
+/**
+ * @mangled __dl__FPv
+ * @address 0x122550
+ * @size 0x40
+ * @unknownret
+ */
+void __dl(void *);
+
+/**
+ * @mangled __throw_catch_compare
+ * @address 0x122610
+ * @size 0x270
+ * @unknownret
+ */
+void __throw_catch_compare(/* unknown args */);
+
+/**
+ * @mangled unexpected__3stdFv
+ * @address 0x122880
+ * @size 0x30
+ * @unknownret
+ */
+void unexpected(void);
+
+/**
+ * @mangled terminate__3stdFv
+ * @address 0x1228B0
+ * @size 0x30
+ * @unknownret
+ */
+void terminate(void);
+
+/**
+ * @mangled duhandler__3stdFv
+ * @address 0x1228E0
+ * @size 0x30
+ * @unknownret
+ */
+void duhandler(void);
+
+/**
+ * @mangled dthandler__3stdFv
+ * @address 0x122910
+ * @size 0x20
+ * @unknownret
+ */
+void dthandler(void);
+
+/**
+ * @mangled __register_global_object
+ * @address 0x122930
+ * @size 0x30
+ * @unknownret
+ */
+void __register_global_object(/* unknown args */);
+
+/**
+ * @mangled __initialize_cpp_rts
+ * @address 0x122960
+ * @size 0x60
+ * @unknownret
+ */
+void __initialize_cpp_rts(/* unknown args */);
+
+/**
+ * @mangled __DecodeUnsignedNumber__FPcPUi
+ * @address 0x1229C0
+ * @size 0xA0
+ * @unknownret
+ */
+void __DecodeUnsignedNumber(char *, unsigned int *);
+
+/**
+ * @mangled __DecodeSignedNumber__FPcPi
+ * @address 0x122A60
+ * @size 0xA0
+ * @unknownret
+ */
+void __DecodeSignedNumber(char *, int *);
+
+/**
+ * @mangled __end__catch
+ * @address 0x122B00
+ * @size 0x40
+ * @unknownret
+ */
+void __end__catch(/* unknown args */);
+
+/**
+ * @mangled __unexpected
+ * @address 0x122B40
+ * @size 0x1C0
+ * @unknownret
+ */
+void __unexpected(/* unknown args */);
+
+/**
+ * @mangled mwInit
+ * @address 0x122DA0
+ * @size 0x40
+ * @unknownret
+ */
+void mwInit(/* unknown args */);
+
+/**
+ * @mangled mwOverlayInit
+ * @address 0x122DE0
+ * @size 0x90
+ * @unknownret
+ */
+void mwOverlayInit(/* unknown args */);
+
+/**
+ * @mangled MWNotifyOverlayLoaded
+ * @address 0x122E70
+ * @size 0x10
+ * @unknownret
+ */
+void MWNotifyOverlayLoaded(/* unknown args */);
+
+/**
+ * @mangled mwBload
+ * @address 0x122E80
+ * @size 0xC0
+ * @unknownret
+ */
+void mwBload(/* unknown args */);
+
+/**
+ * @mangled mwLoadOverlay
+ * @address 0x122F40
+ * @size 0x70
+ * @unknownret
+ */
+void mwLoadOverlay(/* unknown args */);
+
+/**
+ * @mangled VectorMax__FPfPfPf
+ * @address 0x122FB0
+ * @size 0x20
+ * @unknownret
+ */
+void VectorMax(float *, float *, float *);
+
+/**
+ * @mangled VectorMax__FPfPfPfPf
+ * @address 0x122FD0
+ * @size 0x20
+ * @unknownret
+ */
+void VectorMax(float *, float *, float *, float *);
+
+/**
+ * @mangled VectorMax__FPfPfPfPfPf
+ * @address 0x122FF0
+ * @size 0x30
+ * @unknownret
+ */
+void VectorMax(float *, float *, float *, float *, float *);
+
+/**
+ * @mangled VectorMin__FPfPfPf
+ * @address 0x123020
+ * @size 0x20
+ * @unknownret
+ */
+void VectorMin(float *, float *, float *);
+
+/**
+ * @mangled VectorMin__FPfPfPfPfPf
+ * @address 0x123040
+ * @size 0x30
+ * @unknownret
+ */
+void VectorMin(float *, float *, float *, float *, float *);
+
+/**
+ * @mangled VectorMaxMin__FPfPfPfPf
+ * @address 0x123070
+ * @size 0x20
+ * @unknownret
+ */
+void VectorMaxMin(float *, float *, float *, float *);
+
+/**
+ * @mangled VectorMaxMin__FPfPfPfPfPf
+ * @address 0x123090
+ * @size 0x30
+ * @unknownret
+ */
+void VectorMaxMin(float *, float *, float *, float *, float *);
+
+/**
+ * @mangled VectorMaxMin__FPfPfPfPfPfPf
+ * @address 0x1230C0
+ * @size 0x40
+ * @unknownret
+ */
+void VectorMaxMin(float *, float *, float *, float *, float *, float *);
+
+/**
+ * @mangled PlaneNormal__FPfPfPfPf
+ * @address 0x123100
+ * @size 0x30
+ * @unknownret
+ */
+void PlaneNormal(float *, float *, float *, float *);
+
+/**
+ * @mangled DistPlanePoint__FPfPfPf
+ * @address 0x123130
+ * @size 0x50
+ * @unknownret
+ */
+void DistPlanePoint(float *, float *, float *);
+
+/**
+ * @mangled ReflectionPlane__FPfPfPfPf
+ * @address 0x123180
+ * @size 0xB0
+ * @unknownret
+ */
+void ReflectionPlane(float *, float *, float *, float *);
+
+/**
+ * @mangled IntersectionPoint_line_poly3__FPfPfPfPfPfPfPf
+ * @address 0x123230
+ * @size 0x150
+ * @unknownret
+ */
+void IntersectionPoint_line_poly3(float *, float *, float *, float *, float *, float *, float *);
+
+/**
+ * @mangled Check_Point_Poly3_XYZ__FPfPfPfPfPf
+ * @address 0x123380
+ * @size 0x1E0
+ * @unknownret
+ */
+void Check_Point_Poly3_XYZ(float *, float *, float *, float *, float *);
+
+/**
+ * @mangled DistVector__FPf
+ * @address 0x123560
+ * @size 0x30
+ * @unknownret
+ */
+void DistVector(float *);
+
+/**
+ * @mangled DistVector__FPfPf
+ * @address 0x123590
+ * @size 0x40
+ * @unknownret
+ */
+void DistVector(float *, float *);
+
+/**
+ * @mangled MulMatrix__FPA4_fPA4_fPA4_f
+ * @address 0x1235D0
+ * @size 0x80
+ * @unknownret
+ */
+void MulMatrix(float (*)[4], float (*)[4], float (*)[4]);
+
+/**
+ * @mangled RotMatrixY__FPA4_ff
+ * @address 0x123650
+ * @size 0x80
+ * @unknownret
+ */
+void RotMatrixY(float (*)[4], float);
+
+/**
+ * @mangled LookAtMatrixZ__FPA4_fPf
+ * @address 0x1236D0
+ * @size 0x110
+ * @unknownret
+ */
+void LookAtMatrixZ(float (*)[4], float *);
+
+/**
+ * @mangled ApplyMatrixN__FPA4_fPA4_fPA4_fi
+ * @address 0x1237E0
+ * @size 0x60
+ * @unknownret
+ */
+void ApplyMatrixN(float (*)[4], float (*)[4], float (*)[4], int);
+
+/**
+ * @mangled VectorInterpolate__FPfPfPffi
+ * @address 0x123840
+ * @size 0x190
+ * @unknownret
+ */
+void VectorInterpolate(float *, float *, float *, float, int);
+
+/**
+ * @mangled AngleInterpolate__Ffffi
+ * @address 0x1239D0
+ * @size 0x160
+ * @unknownret
+ */
+void AngleInterpolate(float, float, float, int);
+
+/**
+ * @mangled AngleCmp__Ffff
+ * @address 0x123B30
+ * @size 0xB0
+ * @unknownret
+ */
+void AngleCmp(float, float, float);
+
+/**
+ * @mangled AngleLimit__Ff
+ * @address 0x123BE0
+ * @size 0xD0
+ * @unknownret
+ */
+void AngleLimit(float);
+
+/**
+ * @mangled rnd__Fv
+ * @address 0x123CB0
+ * @size 0x40
+ * @unknownret
+ */
+void rnd(void);
+
+/**
+ * @mangled nrnd__Fv
+ * @address 0x123CF0
+ * @size 0xC0
+ * @unknownret
+ */
+void nrnd(void);
+
+/**
+ * @mangled CreateSinTable__Fv
+ * @address 0x123DB0
+ * @size 0x90
+ * @unknownret
+ */
+void CreateSinTable(void);
+
+/**
+ * @mangled Sinf__Ff
+ * @address 0x123E40
+ * @size 0xC0
+ * @unknownret
+ */
+void Sinf(float);
+
+/**
+ * @mangled Cosf__Ff
+ * @address 0x123F00
+ * @size 0x30
+ * @unknownret
+ */
+void Cosf(float);
 
 /* + 4 more not-yet-named function(s) in this range (IDA/disassembler could not name them) */

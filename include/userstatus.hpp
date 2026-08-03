@@ -4,14 +4,61 @@
 
 class CUserStatus {
 public:
-    int ChkEventFlag(int flag_no); // @ 0x1BDAC0 (0x60 bytes) -- mangled: ChkEventFlag__11CUserStatusFi
-    void ClearEventFlag(void); // @ 0x1BDB20 (0x40 bytes) -- mangled: ClearEventFlag__11CUserStatusFv
-    void AddDrink(int chara_no, s16 amount, float ratio); // @ 0x1BE510 (0x200 bytes) -- mangled: AddDrink__11CUserStatusFisf
-    void AddNowLife(int chara_no, s16 amount, float ratio); // @ 0x1BE710 (0x180 bytes) -- mangled: AddNowLife__11CUserStatusFisf
-    int CheckLife(void); // @ 0x1BE890 (0x70 bytes) -- mangled: CheckLife__11CUserStatusFv
-    void SetNextLife(int chara_no, s16 value, float ratio); // @ 0x1BE900 (0x150 bytes) -- mangled: SetNextLife__11CUserStatusFisf
-    void Step(int paused); // @ 0x1BEA50 (0x390 bytes) -- mangled: Step__11CUserStatusFi
-    void Init(void); // @ 0x1BEDE0 (0x110 bytes) -- mangled: Init__11CUserStatusFv
+    /**
+     * @mangled ChkEventFlag__11CUserStatusFi
+     * @address 0x1BDAC0
+     * @size 0x60
+     */
+    int ChkEventFlag(int flag_no);
+
+    /**
+     * @mangled ClearEventFlag__11CUserStatusFv
+     * @address 0x1BDB20
+     * @size 0x40
+     */
+    void ClearEventFlag(void);
+
+    /**
+     * @mangled AddDrink__11CUserStatusFisf
+     * @address 0x1BE510
+     * @size 0x200
+     */
+    void AddDrink(int chara_no, s16 amount, float ratio);
+
+    /**
+     * @mangled AddNowLife__11CUserStatusFisf
+     * @address 0x1BE710
+     * @size 0x180
+     */
+    void AddNowLife(int chara_no, s16 amount, float ratio);
+
+    /**
+     * @mangled CheckLife__11CUserStatusFv
+     * @address 0x1BE890
+     * @size 0x70
+     */
+    int CheckLife(void);
+
+    /**
+     * @mangled SetNextLife__11CUserStatusFisf
+     * @address 0x1BE900
+     * @size 0x150
+     */
+    void SetNextLife(int chara_no, s16 value, float ratio);
+
+    /**
+     * @mangled Step__11CUserStatusFi
+     * @address 0x1BEA50
+     * @size 0x390
+     */
+    void Step(int paused);
+
+    /**
+     * @mangled Init__11CUserStatusFv
+     * @address 0x1BEDE0
+     * @size 0x110
+     */
+    void Init(void);
 
 private:
     /* CUserStatus is a second view over the same save-slot player-status blob

@@ -83,9 +83,6 @@ function(add_migrated_sections out_s_files out_plans)
                 message(FATAL_ERROR
                     "Missing reference dump ${ref}. Run the setup target first.")
             endif()
-            set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
-                ${CMAKE_SOURCE_DIR}/${ref})
-
             migrate_query(parts --list-parts
                 ${ref} ${MIGRATE_MANIFEST} ${sec} ${outdir})
 

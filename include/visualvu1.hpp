@@ -12,17 +12,76 @@ struct sceVif1Packet;
 
 class CVisualVu1 {
 public:
-    /* ?ret */ void RemakeData(unsigned int *); // @ 0x134BB0 (0x10 bytes) -- mangled: RemakeData__10CVisualVu1FPUi
-    /* ?ret */ void DrawVu1(sceVif1Packet *, float (*)[4], RenderInfo *, VU1_PROGRAM, sceVif1Packet *, int, int); // @ 0x134BC0 (0xD0 bytes) -- mangled: DrawVu1__10CVisualVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii
-    /* ?ret */ void Initialize(void); // @ 0x134EC0 (0x40 bytes) -- mangled: Initialize__10CVisualVu1Fv
-    CVisualVu1(void); // @ 0x134F00 (0x50 bytes) -- mangled: __ct__10CVisualVu1Fv
-    /* ?ret */ void DrawVu1(unsigned int *, float (*)[4], RenderInfo *, VU1_PROGRAM, RenderInfo *, int, int); // @ 0x135000 (0x970 bytes) -- mangled: DrawVu1__10CVisualVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii
-    /* ?ret */ void CreateVUdataFromMDT(unsigned int *, unsigned int *, int, int); // @ 0x135AA0 (0x3B0 bytes) -- mangled: CreateVUdataFromMDT__10CVisualVu1FPUiPUiii
-    /* ?ret */ void CreateVUdataFromMDTRemake(unsigned int *, unsigned int *, int); // @ 0x135E50 (0x290 bytes) -- mangled: CreateVUdataFromMDTRemake__10CVisualVu1FPUiPUii
+    /**
+     * @mangled RemakeData__10CVisualVu1FPUi
+     * @address 0x134BB0
+     * @size 0x10
+     * @unknownret
+     */
+    void RemakeData(unsigned int *);
+
+    /**
+     * @mangled DrawVu1__10CVisualVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii
+     * @address 0x134BC0
+     * @size 0xD0
+     * @unknownret
+     */
+    void DrawVu1(sceVif1Packet *, float (*)[4], RenderInfo *, VU1_PROGRAM, sceVif1Packet *, int, int);
+
+    /**
+     * @mangled Initialize__10CVisualVu1Fv
+     * @address 0x134EC0
+     * @size 0x40
+     * @unknownret
+     */
+    void Initialize(void);
+
+    /**
+     * @mangled __ct__10CVisualVu1Fv
+     * @address 0x134F00
+     * @size 0x50
+     */
+    CVisualVu1(void);
+
+    /**
+     * @mangled DrawVu1__10CVisualVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii
+     * @address 0x135000
+     * @size 0x970
+     * @unknownret
+     */
+    void DrawVu1(unsigned int *, float (*)[4], RenderInfo *, VU1_PROGRAM, RenderInfo *, int, int);
+
+    /**
+     * @mangled CreateVUdataFromMDT__10CVisualVu1FPUiPUiii
+     * @address 0x135AA0
+     * @size 0x3B0
+     * @unknownret
+     */
+    void CreateVUdataFromMDT(unsigned int *, unsigned int *, int, int);
+
+    /**
+     * @mangled CreateVUdataFromMDTRemake__10CVisualVu1FPUiPUii
+     * @address 0x135E50
+     * @size 0x290
+     * @unknownret
+     */
+    void CreateVUdataFromMDTRemake(unsigned int *, unsigned int *, int);
 };
 
 class CVisual {
 public:
-    /* ?ret */ void Initialize(void); // @ 0x134B50 (0x10 bytes) -- mangled: Initialize__7CVisualFv
-    CVisual(void); // @ 0x134B60 (0x50 bytes) -- mangled: __ct__7CVisualFv
+    /**
+     * @mangled Initialize__7CVisualFv
+     * @address 0x134B50
+     * @size 0x10
+     * @unknownret
+     */
+    void Initialize(void);
+
+    /**
+     * @mangled __ct__7CVisualFv
+     * @address 0x134B60
+     * @size 0x50
+     */
+    CVisual(void);
 };

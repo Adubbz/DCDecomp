@@ -27,6 +27,14 @@ require_builder
 
 mkdir -p build ref
 
+# clangd's compile database, refreshed here rather than by CMake: CMake only
+# runs inside the container, where this tree is /dcdecomp, and clangd runs
+# against whatever path the editor opened. Skipped if the host has no python3 --
+# it configures an editor, and nothing about the build depends on it.
+if command -v python3 >/dev/null 2>&1; then
+    python3 scripts/build/gen_compile_commands.py
+fi
+
 # rom/ and ref/ are mounted rather than copied in: rom/ keeps the 1.7GB disc
 # out of the build context, and ref/ makes the extraction and disassembly
 # survive between runs. The image still gets a clean copy of the sources, which

@@ -7,16 +7,99 @@ struct EPARTS_INFO_HEADER;
 
 class CEditPartsInfo {
 public:
-    /* ?ret */ void GetPartsInfo(int); // @ 0x199FD0 (0x50 bytes) -- mangled: GetPartsInfo__14CEditPartsInfoFi
-    /* ?ret */ void CheckComplete(int); // @ 0x19A020 (0x80 bytes) -- mangled: CheckComplete__14CEditPartsInfoFi
-    /* ?ret */ void SetCompEvent(int, int); // @ 0x19A0A0 (0x60 bytes) -- mangled: SetCompEvent__14CEditPartsInfoFii
-    /* ?ret */ void GetCompEvent(int); // @ 0x19A100 (0x40 bytes) -- mangled: GetCompEvent__14CEditPartsInfoFi
-    /* ?ret */ void GetRequest(int); // @ 0x19A140 (0x40 bytes) -- mangled: GetRequest__14CEditPartsInfoFi
-    /* ?ret */ void GetNextPartsNum(int); // @ 0x19A180 (0x90 bytes) -- mangled: GetNextPartsNum__14CEditPartsInfoFi
-    /* ?ret */ void GetNextParts(int); // @ 0x19A210 (0x70 bytes) -- mangled: GetNextParts__14CEditPartsInfoFi
-    /* ?ret */ void Clear(void); // @ 0x19A280 (0x40 bytes) -- mangled: Clear__14CEditPartsInfoFv
-    /* ?ret */ void Save(int, CSaveData *); // @ 0x19A2C0 (0x130 bytes) -- mangled: Save__14CEditPartsInfoFiP9CSaveData
-    /* ?ret */ void Load(int, CSaveData *, int); // @ 0x19A3F0 (0x180 bytes) -- mangled: Load__14CEditPartsInfoFiP9CSaveDatai
-    /* ?ret */ void Initialize(int); // @ 0x19A570 (0x1D0 bytes) -- mangled: Initialize__14CEditPartsInfoFi
-    /* ?ret */ void Initialize(int, EPARTS_INFO_HEADER *); // @ 0x19A740 (0x70 bytes) -- mangled: Initialize__14CEditPartsInfoFiP18EPARTS_INFO_HEADER
+    /**
+     * @mangled GetPartsInfo__14CEditPartsInfoFi
+     * @address 0x199FD0
+     * @size 0x50
+     * @unknownret
+     */
+    void GetPartsInfo(int);
+
+    /**
+     * @mangled CheckComplete__14CEditPartsInfoFi
+     * @address 0x19A020
+     * @size 0x80
+     * @unknownret
+     */
+    void CheckComplete(int);
+
+    /**
+     * @mangled SetCompEvent__14CEditPartsInfoFii
+     * @address 0x19A0A0
+     * @size 0x60
+     * @unknownret
+     */
+    void SetCompEvent(int, int);
+
+    /**
+     * @mangled GetCompEvent__14CEditPartsInfoFi
+     * @address 0x19A100
+     * @size 0x40
+     * @unknownret
+     */
+    void GetCompEvent(int);
+
+    /**
+     * @mangled GetRequest__14CEditPartsInfoFi
+     * @address 0x19A140
+     * @size 0x40
+     * @unknownret
+     */
+    void GetRequest(int);
+
+    /**
+     * @mangled GetNextPartsNum__14CEditPartsInfoFi
+     * @address 0x19A180
+     * @size 0x90
+     * @unknownret
+     */
+    void GetNextPartsNum(int);
+
+    /**
+     * @mangled GetNextParts__14CEditPartsInfoFi
+     * @address 0x19A210
+     * @size 0x70
+     * @unknownret
+     */
+    void GetNextParts(int);
+
+    /**
+     * @mangled Clear__14CEditPartsInfoFv
+     * @address 0x19A280
+     * @size 0x40
+     * @unknownret
+     */
+    void Clear(void);
+
+    /**
+     * @mangled Save__14CEditPartsInfoFiP9CSaveData
+     * @address 0x19A2C0
+     * @size 0x130
+     * @unknownret
+     */
+    void Save(int, CSaveData *);
+
+    /**
+     * @mangled Load__14CEditPartsInfoFiP9CSaveDatai
+     * @address 0x19A3F0
+     * @size 0x180
+     * @unknownret
+     */
+    void Load(int, CSaveData *, int);
+
+    /**
+     * @mangled Initialize__14CEditPartsInfoFi
+     * @address 0x19A570
+     * @size 0x1D0
+     * @unknownret
+     */
+    void Initialize(int);
+
+    /**
+     * @mangled Initialize__14CEditPartsInfoFiP18EPARTS_INFO_HEADER
+     * @address 0x19A740
+     * @size 0x70
+     * @unknownret
+     */
+    void Initialize(int, EPARTS_INFO_HEADER *);
 };

@@ -8,6 +8,9 @@ objdiff.json
 progress/
 re/
 
+# Doxygen output
+doxygen/
+
 # Python cache
 **/__pycache__
 

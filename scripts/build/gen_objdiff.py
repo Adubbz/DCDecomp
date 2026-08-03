@@ -135,8 +135,13 @@ def main():
         "name": "Dark Cloud (USA, SCUS-97111)",
         "custom_make": CUSTOM_MAKE,
         "custom_args": CUSTOM_ARGS,
+        # objdiff only runs the build command for a side it has a path for, and
+        # a unit has no base until its function is decompiled -- so building the
+        # base side would never fire for exactly the units that need it. Every
+        # unit has a target, and the command ignores the path it is handed, so
+        # driving the build off the target side rebuilds from any unit.
         "build_target": True,
-        "build_base": True,
+        "build_base": False,
         "watch_patterns": WATCH_PATTERNS,
         "units": unit_list,
     }

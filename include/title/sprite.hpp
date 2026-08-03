@@ -4,9 +4,42 @@
 
 class CSprite {
 public:
-    CSprite(void); // @ 0x1DD4420 (0x50 bytes) -- mangled: __ct__7CSpriteFv
-    /* ?ret */ void Init(void); // @ 0x1DD4470 (0x50 bytes) -- mangled: Init__7CSpriteFv
-    /* ?ret */ void Move(void); // @ 0x1DD44C0 (0x2A0 bytes) -- mangled: Move__7CSpriteFv
-    /* ?ret */ void Draw(void); // @ 0x1DD4760 (0x550 bytes) -- mangled: Draw__7CSpriteFv
-    /* ?ret */ void Se(void); // @ 0x1DD4CB0 (0x10 bytes) -- mangled: Se__7CSpriteFv
+    /**
+     * @mangled __ct__7CSpriteFv
+     * @address 0x1DD4420
+     * @size 0x50
+     */
+    CSprite(void);
+
+    /**
+     * @mangled Init__7CSpriteFv
+     * @address 0x1DD4470
+     * @size 0x50
+     * @unknownret
+     */
+    void Init(void);
+
+    /**
+     * @mangled Move__7CSpriteFv
+     * @address 0x1DD44C0
+     * @size 0x2A0
+     * @unknownret
+     */
+    void Move(void);
+
+    /**
+     * @mangled Draw__7CSpriteFv
+     * @address 0x1DD4760
+     * @size 0x550
+     * @unknownret
+     */
+    void Draw(void);
+
+    /**
+     * @mangled Se__7CSpriteFv
+     * @address 0x1DD4CB0
+     * @size 0x10
+     * @unknownret
+     */
+    void Se(void);
 };

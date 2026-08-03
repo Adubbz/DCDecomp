@@ -4,7 +4,27 @@
 
 class CCollisionData {
 public:
-    /* ?ret */ void Set(float *, int, int, float, float, int, int, int, int); // @ 0x1B57A0 (0x180 bytes) -- mangled: Set__14CCollisionDataFPfiiffiiii
-    /* ?ret */ void CheckHitUser(float *, int, float); // @ 0x1B5920 (0x1C0 bytes) -- mangled: CheckHitUser__14CCollisionDataFPfif
-    /* ?ret */ void SetKickBack(float *, float, float, int); // @ 0x1B5AE0 (0xB0 bytes) -- mangled: SetKickBack__14CCollisionDataFPfffi
+    /**
+     * @mangled Set__14CCollisionDataFPfiiffiiii
+     * @address 0x1B57A0
+     * @size 0x180
+     * @unknownret
+     */
+    void Set(float *, int, int, float, float, int, int, int, int);
+
+    /**
+     * @mangled CheckHitUser__14CCollisionDataFPfif
+     * @address 0x1B5920
+     * @size 0x1C0
+     * @unknownret
+     */
+    void CheckHitUser(float *, int, float);
+
+    /**
+     * @mangled SetKickBack__14CCollisionDataFPfffi
+     * @address 0x1B5AE0
+     * @size 0xB0
+     * @unknownret
+     */
+    void SetKickBack(float *, float, float, int);
 };

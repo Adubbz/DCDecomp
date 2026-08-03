@@ -7,19 +7,65 @@ class CEffectParam;
 
 class CEffect {
 public:
-    /* ?ret */ void SetEffect(CEffectParam *); // @ 0x163EE0 (0x1E0 bytes) -- mangled: SetEffect__7CEffectFP12CEffectParam
-    /* ?ret */ void Step(int); // @ 0x1640C0 (0x280 bytes) -- mangled: Step__7CEffectFi
-    /* ?ret */ void Draw(void); // @ 0x164340 (0x430 bytes) -- mangled: Draw__7CEffectFv
-    /* ?ret */ void Initialize(void); // @ 0x164870 (0x110 bytes) -- mangled: Initialize__7CEffectFv
+    /**
+     * @mangled SetEffect__7CEffectFP12CEffectParam
+     * @address 0x163EE0
+     * @size 0x1E0
+     * @unknownret
+     */
+    void SetEffect(CEffectParam *);
+
+    /**
+     * @mangled Step__7CEffectFi
+     * @address 0x1640C0
+     * @size 0x280
+     * @unknownret
+     */
+    void Step(int);
+
+    /**
+     * @mangled Draw__7CEffectFv
+     * @address 0x164340
+     * @size 0x430
+     * @unknownret
+     */
+    void Draw(void);
+
+    /**
+     * @mangled Initialize__7CEffectFv
+     * @address 0x164870
+     * @size 0x110
+     * @unknownret
+     */
+    void Initialize(void);
 };
 
 class C3DSprite {
 public:
-    /* ?ret */ void Draw(void); // @ 0x163D20 (0x170 bytes) -- mangled: Draw__9C3DSpriteFv
-    /* ?ret */ void Initialize(void); // @ 0x163E90 (0x50 bytes) -- mangled: Initialize__9C3DSpriteFv
+    /**
+     * @mangled Draw__9C3DSpriteFv
+     * @address 0x163D20
+     * @size 0x170
+     * @unknownret
+     */
+    void Draw(void);
+
+    /**
+     * @mangled Initialize__9C3DSpriteFv
+     * @address 0x163E90
+     * @size 0x50
+     * @unknownret
+     */
+    void Initialize(void);
 };
 
 class CEffectParam {
 public:
-    /* ?ret */ void Initialize(void); // @ 0x164770 (0x100 bytes) -- mangled: Initialize__12CEffectParamFv
+    /**
+     * @mangled Initialize__12CEffectParamFv
+     * @address 0x164770
+     * @size 0x100
+     * @unknownret
+     */
+    void Initialize(void);
 };

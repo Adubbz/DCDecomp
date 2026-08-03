@@ -11,13 +11,74 @@ struct TAG_PARAM;
 
 class CScriptInterpreter {
 public:
-    /* ?ret */ void GetNextTAG(void); // @ 0x15F100 (0x150 bytes) -- mangled: GetNextTAG__18CScriptInterpreterFv
-    /* ?ret */ void SetTAG(TAG_PARAM *, int); // @ 0x15F250 (0x10 bytes) -- mangled: SetTAG__18CScriptInterpreterFP9TAG_PARAMi
-    /* ?ret */ void SetFunction(SPI_FUNC_PARAM *, int); // @ 0x15F260 (0x10 bytes) -- mangled: SetFunction__18CScriptInterpreterFP14SPI_FUNC_PARAMi
-    /* ?ret */ void SetScript(char *, int); // @ 0x15F270 (0x40 bytes) -- mangled: SetScript__18CScriptInterpreterFPci
-    CScriptInterpreter(void); // @ 0x15F2B0 (0x40 bytes) -- mangled: __ct__18CScriptInterpreterFv
-    /* ?ret */ void ControlCode(void); // @ 0x15F2F0 (0x180 bytes) -- mangled: ControlCode__18CScriptInterpreterFv
-    /* ?ret */ void CallFunction(int *); // @ 0x15F470 (0x320 bytes) -- mangled: CallFunction__18CScriptInterpreterFPi
-    /* ?ret */ void GetArg(int *); // @ 0x15F790 (0x3F0 bytes) -- mangled: GetArg__18CScriptInterpreterFPi
-    /* ?ret */ void SearchCommand(int *); // @ 0x15FB80 (0x1B0 bytes) -- mangled: SearchCommand__18CScriptInterpreterFPi
+    /**
+     * @mangled GetNextTAG__18CScriptInterpreterFv
+     * @address 0x15F100
+     * @size 0x150
+     * @unknownret
+     */
+    void GetNextTAG(void);
+
+    /**
+     * @mangled SetTAG__18CScriptInterpreterFP9TAG_PARAMi
+     * @address 0x15F250
+     * @size 0x10
+     * @unknownret
+     */
+    void SetTAG(TAG_PARAM *, int);
+
+    /**
+     * @mangled SetFunction__18CScriptInterpreterFP14SPI_FUNC_PARAMi
+     * @address 0x15F260
+     * @size 0x10
+     * @unknownret
+     */
+    void SetFunction(SPI_FUNC_PARAM *, int);
+
+    /**
+     * @mangled SetScript__18CScriptInterpreterFPci
+     * @address 0x15F270
+     * @size 0x40
+     * @unknownret
+     */
+    void SetScript(char *, int);
+
+    /**
+     * @mangled __ct__18CScriptInterpreterFv
+     * @address 0x15F2B0
+     * @size 0x40
+     */
+    CScriptInterpreter(void);
+
+    /**
+     * @mangled ControlCode__18CScriptInterpreterFv
+     * @address 0x15F2F0
+     * @size 0x180
+     * @unknownret
+     */
+    void ControlCode(void);
+
+    /**
+     * @mangled CallFunction__18CScriptInterpreterFPi
+     * @address 0x15F470
+     * @size 0x320
+     * @unknownret
+     */
+    void CallFunction(int *);
+
+    /**
+     * @mangled GetArg__18CScriptInterpreterFPi
+     * @address 0x15F790
+     * @size 0x3F0
+     * @unknownret
+     */
+    void GetArg(int *);
+
+    /**
+     * @mangled SearchCommand__18CScriptInterpreterFPi
+     * @address 0x15FB80
+     * @size 0x1B0
+     * @unknownret
+     */
+    void SearchCommand(int *);
 };
