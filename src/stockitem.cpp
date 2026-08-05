@@ -2,7 +2,7 @@
 
 #include <cstdio>
 #include <cstring>
-#include "item.hpp"
+#include "itemdata.hpp"
 #include "types.h"
 
 void CStockItem::Initialize() {

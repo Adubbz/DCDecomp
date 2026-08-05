@@ -1,13 +1,30 @@
-Language: Cpp
+---
 BasedOnStyle: LLVM
 ColumnLimit: 0
 IndentWidth: 4
 TabWidth: 4
 UseTab: Never
-PointerAlignment: Right
-SpaceAfterCStyleCast: true
+
+---
+Language: Cpp
+
+
 AccessModifierOffset: -4
 IndentCaseLabels: true
-AlignTrailingComments: false
+
+
+
+
+PointerAlignment: Right
+SpaceAfterCStyleCast: true
+SortIncludes: true
 AlwaysBreakTemplateDeclarations: Yes
-SortIncludes: false
+
+# Aligns the enum values in itemdata.hpp into columns.
+AllowShortEnumsOnASingleLine: false
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: true
+  AlignCompound: true
+  PadOperators: true

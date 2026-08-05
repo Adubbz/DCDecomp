@@ -20,19 +20,25 @@ ensure_image dcdecomp_dev dev
 
 ISO="build/Dark Cloud (Build).iso"
 
-# The default target verifies against the retail hashes, and is allowed to fail
-# so a work-in-progress build still boots. -t keeps the colours and progress
-# line, skipped when this script's own output is redirected.
+# -t keeps the colours and progress line, skipped when this script's own output
+# is redirected.
 TTY=()
 if [ -t 1 ]; then TTY=(-t); fi
 
+# The image is built first and on its own: the `iso` target is deliberately not
+# tied to the hash check, so code that does not match retail still boots, which
+# is the whole point of running it. `set -e` matters here -- if that step fails
+# the run has to stop, or the emulator boots whatever stale image is lying
+# around. Only the match report afterwards is allowed to fail.
 "$BUILDER" run --rm "${TTY[@]}" \
     -v "$PWD:$CONTAINER_WORKDIR:Z" \
     -w "$CONTAINER_WORKDIR" \
     -e HOME=/tmp \
     dcdecomp_dev sh -c '
-        scripts/build/cmake.sh build || echo "WARNING: the build does not match retail."
+        set -e
         scripts/build/cmake.sh iso
+        scripts/build/cmake.sh build \
+            || echo "WARNING: this build does not match retail; booting it anyway." >&2
     '
 
 exec scripts/host/pcsx2.sh "$ISO"

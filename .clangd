@@ -18,3 +18,6 @@ CompileFlags:
 
 Diagnostics:
   UnusedIncludes: None
+
+Documentation:
+  CommentFormat: Doxygen

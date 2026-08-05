@@ -29,6 +29,12 @@ REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 # `.L001BE57C` -> `L001BE57C`, in both the definition and the branches.
 LABEL_RE = re.compile(r'\.L([0-9A-Fa-f]{6,8})\b')
 
+# MWCC's inline assembler has no %hi/%lo, so the address pair the dumps spell
+# out becomes the `la` macro, which expands right back to the same two
+# instructions and relocations.
+HI_RE = re.compile(r'^\s*lui\s+(\$\d+),\s*%hi\(([^)]+)\)\s*$')
+LO_RE = re.compile(r'^\s*addiu\s+(\$\d+),\s*(\$\d+),\s*%lo\(([^)]+)\)\s*$')
+
 
 def body(ref, symbol):
     """The instruction and label lines of one function, in MWCC asm syntax."""
@@ -49,7 +55,22 @@ def body(ref, symbol):
                 lines.append('    ' + LABEL_RE.sub(r'L\1', insn.group(1)))
     if not lines:
         raise SystemExit('gen_asm_body: %s is not in %s' % (symbol, ref))
-    return lines
+    return fold_addresses(lines)
+
+
+def fold_addresses(lines):
+    """Collapse each `lui %hi` / `addiu %lo` pair into one `la`."""
+    out, i = [], 0
+    while i < len(lines):
+        hi = HI_RE.match(lines[i])
+        lo = LO_RE.match(lines[i + 1]) if hi and i + 1 < len(lines) else None
+        if lo and lo.group(2) == hi.group(1) and lo.group(3) == hi.group(2):
+            out.append('    la          %s, %s' % (lo.group(1), lo.group(3)))
+            i += 2
+            continue
+        out.append(lines[i])
+        i += 1
+    return out
 
 
 def main():

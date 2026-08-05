@@ -91,3 +91,7 @@ main.rodata LIT_540__2 dngstatusdata.cpp.o
 main.rodata LIT_541__2 dngstatusdata.cpp.o
 main.rodata LIT_352__2 stockitem.cpp.o
 main.rodata LIT_353__6 stockitem.cpp.o
+main.data WeaponList itemdata.cpp.o
+main.data AttachList itemdata.cpp.o
+main.data ITEM_LIST itemdata.cpp.o
+main.data ComItemInfo itemdata.cpp.o

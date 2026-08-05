@@ -27,7 +27,7 @@ ctx.c
 # AI
 CLAUDE.md
 AGENTS.md
-.claude/
+.claude
 .codex/
 
 # Permuting

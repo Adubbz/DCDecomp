@@ -2,7 +2,8 @@
     "recommendations": [
         "llvm-vs-code-extensions.vscode-clangd",
         "ms-python.black-formatter",
-        "ms-vscode-remote.remote-containers"
+        "cschlosser.doxdocgen",
+        "edwinhuish.better-comments-next"
     ],
     "unwantedRecommendations": [
         "ms-vscode.cpptools",

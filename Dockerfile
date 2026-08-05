@@ -67,8 +67,22 @@ RUN apt-get update \
         less \
         build-essential \
         doxygen \
-        clangd \
+        unzip \
     && rm -rf /var/lib/apt/lists/*
+
+# clangd is fetched rather than installed from apt: Debian trixie stops at 19,
+# and the clang-format it bundles is what formats this tree. A configuration
+# written for a newer clang-format is rejected outright by an older one, which
+# then falls back to LLVM style and silently reindents everything to two
+# spaces -- so the editor's clangd and a contributor's clang-format have to
+# agree. .clang-format is kept minimal for the same reason.
+ARG CLANGD_VERSION=22.1.6
+RUN wget -O /tmp/clangd.zip \
+        https://github.com/clangd/clangd/releases/download/${CLANGD_VERSION}/clangd-linux-${CLANGD_VERSION}.zip \
+    && unzip -q /tmp/clangd.zip -d /opt \
+    && ln -s /opt/clangd_${CLANGD_VERSION}/bin/clangd /usr/local/bin/clangd \
+    && ln -s /opt/clangd_${CLANGD_VERSION}/bin/clangd /usr/bin/clangd \
+    && rm /tmp/clangd.zip
 
 # objdiff is what diff.sh runs and what produces the progress report
 # decomp.dev ingests. A single static binary, so it is fetched rather than
@@ -103,5 +117,8 @@ COPY . .
 # target it hangs off. rom/ and ref/ are mounted in and /output is where the
 # results land; see build.sh.
 CMD scripts/build/cmake.sh elf ctx \
+    && (python3 scripts/build/verify.py -f \
+          build/SCUS_971.11 build/TITLE.BIN build/DUN.BIN \
+        || echo "Verification found unmatched or unverified build output (informational only)." >&2) \
     && cp build/SCUS_971.11 build/TITLE.BIN build/DUN.BIN \
           build/ctx.c build/ctx.cpp build/compiler_flags.txt /output/

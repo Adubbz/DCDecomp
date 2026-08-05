@@ -8,16 +8,57 @@
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter"
     },
-    "editor.insertSpaces": true,
-    "editor.tabSize": 4,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
     "editor.detectIndentation": true,
-    "files.insertFinalNewline": true,
-    "files.trimFinalNewlines": true,
+    "better-comments.multilineComments": true,
+    "better-comments.tags": [
+        {
+            // the mangled symbol: the dark theme's function yellow, because
+            // that is exactly what the value is -- a function's linker name
+            "tag": "@mangled",
+            "color": "#A08AB0",
+            "strikethrough": false,
+            "underline": false,
+            "bold": false,
+            "italic": false
+        },
+        {
+            // retail address: the dark theme's numeric-literal green
+            "tag": "@address",
+            "color": "#7FA0B8",
+            "strikethrough": false,
+            "underline": false,
+            "bold": false,
+            "italic": false
+        },
+        {
+            // byte size: the dark theme's type teal, so it reads apart from
+            // @address on the line below it
+            "tag": "@size",
+            "color": "#6FA391",
+            "strikethrough": false,
+            "underline": false,
+            "bold": false,
+            "italic": false
+        },
+        {
+            // "return type not recovered": the dark theme's keyword blue, the
+            // colour it paints the `void` this tag stands in for. Italic and
+            // not bold on purpose -- it is on nearly every declaration in the
+            // tree, so it should read as an aside rather than compete with the
+            // three tags above it.
+            "tag": "@unknownret",
+            "color": "#8C8C8C",
+            "strikethrough": false,
+            "underline": false,
+            "bold": false,
+            "italic": true
+        }
+    ],
     "files.associations": {
         ".clangd": "yaml"
     },
-    "terminal.integrated.tabs.enableAnimation": false,
-    // clangd replaces IntelliSense; leaving both on gives two sets of
-    // squiggles from two different views of the include path.
-    "C_Cpp.intelliSenseEngine": "disabled"
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "clangd.path": "/usr/bin/clangd",
 }
