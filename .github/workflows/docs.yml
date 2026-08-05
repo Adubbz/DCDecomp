@@ -37,6 +37,13 @@ jobs:
         # than a second copy of the same steps that could drift.
         run: docker build -t dcdecomp_dev --target dev .
 
+      - name: Check out the Doxygen Awesome theme
+        uses: actions/checkout@v4
+        with:
+          repository: jothepro/doxygen-awesome-css
+          ref: v2.4.2
+          path: doxygen-awesome-css
+
       - name: Generate the documentation
         run: |
           docker run --rm \

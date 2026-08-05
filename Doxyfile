@@ -22,7 +22,12 @@ ALIASES                = "mangled=@par Mangled name:^^" \
                          "unknownret=@par Return type:^^Not recovered."
 INCLUDE_PATH           = build/generated/asm
 WARN_IF_UNDOCUMENTED   = NO
-HTML_COLORSTYLE        = TOGGLE
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+HTML_EXTRA_STYLESHEET  = doxygen-awesome-css/doxygen-awesome.css \
+                         doxygen-awesome-css/doxygen-awesome-sidebar-only.css
+HTML_COLORSTYLE        = LIGHT
 GENERATE_LATEX         = NO
 HAVE_DOT               = NO
 COLLABORATION_GRAPH    = NO
