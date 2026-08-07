@@ -134,7 +134,7 @@ int CDngStatusData::SearchItemIndexNo(int item_id) {
         int j;
         for (j = 0; (valid = j < this->party_size) != 0; j++) {
             for (i = 0; (valid = i < 10) != 0; i++) {
-                if (this->chara_weapons[j][i].id == item_id) {
+                if (this->chara_weapons[j][i].item_no == item_id) {
                     return i;
                 }
             }
@@ -345,7 +345,7 @@ int CDngStatusData::CheckWeaponRot(int weapon_id) {
         int count = 0;
         int i;
         for (i = 0; (valid = i < 10) != 0; i++) {
-            if (!(valid = this->chara_weapons[chara_no][i].id < 257)) {
+            if (!(valid = this->chara_weapons[chara_no][i].item_no < 257)) {
                 count++;
             }
         }
@@ -449,13 +449,13 @@ int CDngStatusData::GetItem(int item_id, int qty) {
 
         int jj;
         for (jj = 0; (valid = jj < 11) != 0; jj++) {
-            if (this->chara_weapons[chara_no][jj].id < 257) {
+            if (this->chara_weapons[chara_no][jj].item_no < 257) {
                 WepDataListToHaveCopy__FiP11WEAPON_HAVE(item_id, &this->chara_weapons[chara_no][jj]);
 
                 int count = 0;
                 int kk;
                 for (kk = 0; (valid = kk < 10) != 0; kk++) {
-                    if (!(valid = this->chara_weapons[chara_no][kk].id < 257)) {
+                    if (!(valid = this->chara_weapons[chara_no][kk].item_no < 257)) {
                         count++;
                     }
                 }
@@ -489,7 +489,7 @@ int CDngStatusData::CheckActItemSlot(int item_id) {
 /* @ 0x1BE4B0 (0x60 bytes) -- CheckDefaultWeapon__14CDngStatusDataFi */
 int CDngStatusData::CheckDefaultWeapon(int chara_no) {
     s32 def_weapon = defWeapon__3[chara_no];
-    if (def_weapon == this->chara_weapons[chara_no][this->equipped_weapon_slot[chara_no]].id) {
+    if (def_weapon == this->chara_weapons[chara_no][this->equipped_weapon_slot[chara_no]].item_no) {
         return 0;
     }
     return 1;
@@ -927,7 +927,7 @@ void CDngStatusData::Initialize(void) {
         this->equipped_weapon_slot[t] = -1;
 
         for (q = 0; (valid = q < 11) != 0; q++) {
-            this->chara_weapons[t][q].id = -1;
+            this->chara_weapons[t][q].item_no = -1;
         }
 
         this->stat_float_a[t] = 30.0f;

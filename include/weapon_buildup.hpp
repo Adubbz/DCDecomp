@@ -12,7 +12,6 @@ struct ITEM_PACK;
 struct WEAPON_HAVE;
 struct WEP_BUILDUP_INFO;
 
-
 /**
  * @mangled PersonalBoardWeaponPush__FP9IHAVEITEMi
  * @address 0x22F0A0
@@ -206,12 +205,16 @@ void SeitonItemBoardSub(ITEM_PACK *);
 void SeitonItemBoard(ITEM_PACK *);
 
 /**
+ * Returns the sort category an attachment identifier falls in.
+ *
+ * The result is an AttachKind; that enum carries the ranges and the two
+ * places they do not line up with what the items are.
+ *
  * @mangled GetAttachKind__Fi
  * @address 0x231AD0
  * @size 0xA0
- * @unknownret
  */
-void GetAttachKind(int);
+int GetAttachKind(int item_no);
 
 /**
  * @mangled CompAttach__FP11ATTACH_LISTP11ATTACH_LIST
@@ -220,15 +223,6 @@ void GetAttachKind(int);
  * @unknownret
  */
 void CompAttach(ATTACH_LIST *, ATTACH_LIST *);
-
-/**
- * @mangled SeitonAttachBoardSub__FP11ATTACH_LIST__2
- * @address 0x231C70
- * @size 0x120
- * @unknownret
- * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
- */
-void SeitonAttachBoardSub(ATTACH_LIST *);
 
 /**
  * @mangled SeitonAttachBoard__FP11ATTACH_LIST

@@ -2,11 +2,14 @@
 
 #include "common.h"
 
+// chara_weapons stores WEAPON_HAVE by value, so the complete type is needed;
+// it lives with the definition table it is copied from.
+#include "itemdata.hpp"
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 struct STATIC_ASSER;
-
 
 /* Refcounted "atra" (Atlamillia) placement-grid entry. id is the required
  * atra id for a grid slot (-1 = empty, -2 = wildcard/any-atra acceptor, -3 =
@@ -19,18 +22,6 @@ struct DNG_ATRA_REGISTRY_ENTRY {
     s32 refcount;
 };
 STATIC_ASSERT(sizeof(DNG_ATRA_REGISTRY_ENTRY) == 0xC);
-
-/* Per-character weapon-inventory slot. Only the item id (s16 at offset 0) is
- * understood so far; the remaining 246 bytes hold the weapon's runtime state
- * (charge/synthesis data). Accessed as a struct member so the compiler folds
- * the field offset into the load displacement (matches retail codegen). */
-struct WEAPON_HAVE {
-    s16 id;
-    char unk_02[236];
-    s16 flags; // 0xEE -- bit 3 and bit 4 each scale the water-drain rate (CUserStatus::Step)
-    char unk_F0[8];
-};
-STATIC_ASSERT(sizeof(WEAPON_HAVE) == 0xF8);
 
 /* Consumable-item inventory slot (id is a s16 at offset 0). */
 struct DNG_CONSUMABLE {
@@ -203,6 +194,13 @@ public:
     void GetAtraData(int georama_no, int floor, int atra_id);
 
 private:
+    // CSaveData embeds this class and mirrors config_mirror into its own
+    // config[15]. That must stay a direct member access to keep retail's
+    // >0x7FFF `lui at,0x1; addu at,<this>,at; lw/sw reg,-0x68b8(at)` idiom,
+    // so CSaveData reaches the field directly rather than through an
+    // accessor, which would emit a call.
+    friend class CSaveData;
+
     /* Field names/offsets below come directly from the project's IDA
      * database (already reverse engineered there ahead of this decompile
      * pass); "unk_*" fields are not yet touched by any decompiled function. */

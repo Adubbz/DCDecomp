@@ -8,23 +8,42 @@ UseTab: Never
 ---
 Language: Cpp
 
+# Include sorting
+SortIncludes: true
+IncludeBlocks: Regroup
+IncludeCategories:
+  # 1. Main header corresponding to this source file (e.g., foo.h inside foo.cpp)
+  - Regex: '^"(.*)\.h"'
+    Priority: 0
+    SortPriority: 0
+  
+  # 2. C Standard Library system headers (e.g., <stdlib.h>, <stdio.h>)
+  - Regex: '^<.*\.(h|hpp)>'
+    Priority: 1
+
+  # 3. C++ Standard Library headers (e.g., <vector>, <string>, <iostream>)
+  - Regex: '^<[^.]*>'
+    Priority: 2
+
+  # 4. Third-party library headers (e.g., <boost/thread.hpp>, <gtest/gtest.h>)
+  - Regex: '^<.*'
+    Priority: 3
+
+  # 5. Internal project-specific headers (e.g., "core/renderer.h")
+  - Regex: '.*'
+    Priority: 4
+
+AllowShortEnumsOnASingleLine: false
+
+# Only enums align their `=` into columns, and clang-format has no enum-only
+# scope for it -- so alignment is off everywhere and each enum body is fenced
+# with `// clang-format off` / `// clang-format on`. Keep new enumerators
+# aligned by hand inside those fences.
+AlignConsecutiveAssignments: None
+
 
 AccessModifierOffset: -4
 IndentCaseLabels: true
-
-
-
-
 PointerAlignment: Right
 SpaceAfterCStyleCast: true
-SortIncludes: true
 AlwaysBreakTemplateDeclarations: Yes
-
-# Aligns the enum values in itemdata.hpp into columns.
-AllowShortEnumsOnASingleLine: false
-AlignConsecutiveAssignments:
-  Enabled: true
-  AcrossEmptyLines: false
-  AcrossComments: true
-  AlignCompound: true
-  PadOperators: true

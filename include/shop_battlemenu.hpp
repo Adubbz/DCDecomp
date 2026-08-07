@@ -8,9 +8,27 @@
 struct ATTACH_LIST;
 class CCharacter;
 struct ITEM_PACK;
-struct MAP_JUMP_COMPARE;
 struct RECT;
 struct WEAPON_HAVE;
+
+/**
+ * Ranks one world-map destination by how near it is.
+ *
+ * Every field below is taken from GetNearWorldPos, the only function that
+ * fills these in: it builds sixteen of them on the stack, sorts them on
+ * `distance`, and reads nothing else back out. The offsets and widths are
+ * what that code uses; the names are what its arithmetic implies.
+ */
+struct MAP_JUMP_COMPARE {
+    s8 index;         /**< Identifies the destination this entry stands for. */
+    s8 reachable;     /**< Is one when the destination can be jumped to, zero when it cannot. */
+    char unk_02[2];   /**< Contains the padding before `distance`. */
+    float distance;   /**< Orders the entries; GetNearWorldPos sorts on this ascending. */
+    s32 dx;           /**< Contains one axis of the offset to the destination. */
+    s32 dy;           /**< Contains the other axis of the offset to the destination. */
+    s32 distance_sq;  /**< Contains dx squared plus dy squared. */
+};
+STATIC_ASSERT(sizeof(MAP_JUMP_COMPARE) == 0x14);
 
 
 /**
@@ -1550,12 +1568,16 @@ void LocalDrawWorldMap(void);
 void DrawWorldMap(int);
 
 /**
+ * Exchanges two world-map destination rankings.
+ *
+ * Unlike the menu_draw.cpp overloads of this name, this one does not check
+ * either pointer: its only caller passes addresses of stack entries.
+ *
  * @mangled MenuDataSwap__FP16MAP_JUMP_COMPAREP16MAP_JUMP_COMPARE
  * @address 0x20A430
  * @size 0x70
- * @unknownret
  */
-void MenuDataSwap(MAP_JUMP_COMPARE *, MAP_JUMP_COMPARE *);
+void MenuDataSwap(MAP_JUMP_COMPARE *first, MAP_JUMP_COMPARE *second);
 
 /**
  * @mangled GetNearWorldPos__FiPi

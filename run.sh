@@ -25,20 +25,25 @@ ISO="build/Dark Cloud (Build).iso"
 TTY=()
 if [ -t 1 ]; then TTY=(-t); fi
 
-# The image is built first and on its own: the `iso` target is deliberately not
-# tied to the hash check, so code that does not match retail still boots, which
-# is the whole point of running it. `set -e` matters here -- if that step fails
-# the run has to stop, or the emulator boots whatever stale image is lying
-# around. Only the match report afterwards is allowed to fail.
+# Building comes first and on its own: neither target is tied to the hash
+# check, so code that does not match retail still boots, which is the whole
+# point of running it. `set -e` matters here -- if that step fails the run has
+# to stop, or the emulator boots whatever stale image is lying around. `elf` is
+# what leaves build/SCUS_971.11 for the report below; the disc carries a second
+# link of its own, without debug information.
+#
+# The report is the same one build.sh and the Dockerfile's CMD give, and
+# deliberately not the `build` target: that also pulls in verify_extracted,
+# which hashes the 1.7GB DATA.DAT, and nothing about booting the image depends
+# on the extracted files. It only reports, so the boot goes ahead either way.
 "$BUILDER" run --rm "${TTY[@]}" \
     -v "$PWD:$CONTAINER_WORKDIR:Z" \
     -w "$CONTAINER_WORKDIR" \
     -e HOME=/tmp \
     dcdecomp_dev sh -c '
         set -e
-        scripts/build/cmake.sh iso
-        scripts/build/cmake.sh build \
-            || echo "WARNING: this build does not match retail; booting it anyway." >&2
+        scripts/build/cmake.sh iso elf
+        scripts/build/verify_built.sh
     '
 
 exec scripts/host/pcsx2.sh "$ISO"

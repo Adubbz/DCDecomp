@@ -12,11 +12,13 @@ cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 require_rom
 
 if in_container; then
-    # The image's own build stage runs exactly these targets, through the same
-    # script; the difference is that it gets a pristine copy of the sources,
-    # while this builds the tree as it stands.
+    # The image's own build stage runs exactly these targets and the same
+    # verification, through the same scripts; the difference is that it gets a
+    # pristine copy of the sources, while this builds the tree as it stands.
+    # Verification only reports -- an unmatched build still leaves its output.
     echo "Already inside the container: building the working tree in place."
-    exec scripts/build/cmake.sh elf ctx
+    scripts/build/cmake.sh elf ctx
+    exec scripts/build/verify_built.sh
 fi
 
 require_builder

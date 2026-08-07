@@ -10,6 +10,7 @@
 /**
  * In-game item ids.
  */
+// clang-format off
 enum Item {
     ITEM_ATTACH_START                  = 81,
     ITEM_CONSUMABLE_START              = 81,
@@ -278,20 +279,24 @@ enum Item {
     ITEM_WEAPON_SNAIL                  = 374,
     ITEM_WEAPON_SWALLOW                = 375,
 };
+// clang-format on
 
 /**
  * Per-weapon behaviour flags.
  */
+// clang-format off
 enum WeaponFlag {
     WEAPONFLAG_QUENCH  = 0x0008, /**< Reduced thirst drain. */
     WEAPONFLAG_THIRST  = 0x0010, /**< Increases thirst drain. */
     WEAPONFLAG_FRAGILE = 0x0100, /**< Double durability loss. */
     WEAPONFLAG_DURABLE = 0x0200, /**< Halved durability loss. */
 };
+// clang-format on
 
 /**
  * The six playable characters.
  */
+// clang-format off
 enum Character {
     CHARA_TOAN   = 0,
     CHARA_XIAO   = 1,
@@ -300,15 +305,18 @@ enum Character {
     CHARA_UNGAGA = 4,
     CHARA_OSMOND = 5,
 };
+// clang-format on
 
 /**
  * The kind of an item.
  */
+// clang-format off
 enum ItemKind {
     ITEMKIND_ATTACH = 0,
     ITEMKIND_ITEM   = 1,
     ITEMKIND_WEAPON = 2,
 };
+// clang-format on
 
 /**
  * Maps an item to its kind and indices.
@@ -339,20 +347,24 @@ STATIC_ASSERT(sizeof(ITEM_DATA) == 0x14);
 /**
  * What using an item does.
  */
+// clang-format off
 enum ItemUseFlag {
     ITEMUSE_STATUS  = 0x0020, /**< Grants a status effect. */
     ITEMUSE_HEAL_HP = 0x0040, /**< Restores HP. */
     ITEMUSE_DRINK   = 0x0080, /**< Restores thirst. */
 };
+// clang-format on
 
 /**
  * Which menus and actions an item is eligible for.
  */
+// clang-format off
 enum ItemKindFlag {
     ITEMKINDF_CONSUMABLE = 0x0004, /**< Item is consumed on use. */
     ITEMKINDF_THROWABLE  = 0x0010, /**< Item can be thrown. */
     ITEMKINDF_RANDOM     = 0x0020, /**< Item has random properties. */
 };
+// clang-format on
 
 /**
  * The stats an attachment adds to a weapon.
@@ -385,6 +397,45 @@ struct ATTACH_DATA {
 };
 STATIC_ASSERT(sizeof(ATTACH_DATA) == 0x20);
 
+/**
+ * One attachment as the player holds it.
+ *
+ * The same shape as the ATTACH_DATA it comes from:
+ * AttachDataListToHaveCopy fills one of these by copying an entry of
+ * AttachList over it whole, all 0x20 bytes, rather than field by field.
+ * PlusAttachmentVolume agrees, reaching in at 0x08, 0x10 and 0x15 with the
+ * widths `attack`, `fire` and `dino` have here. It stays its own type because
+ * retail mangles it as one.
+ */
+struct ATTACH_LIST {
+    s16 item_no; /**< Identifies the attachment. */
+    s16 unk_02;
+    s16 unk_04;
+    s16 stat_00;
+    s16 attack;
+    s16 endurance;
+    s16 speed;
+    s16 magic;
+    u8 fire;
+    u8 ice;
+    u8 thunder;
+    u8 wind;
+    u8 holy;
+    u8 dino;
+    u8 undead;
+    u8 sea;
+    u8 stone;
+    u8 plant;
+    u8 beast;
+    u8 sky;
+    u8 metal;
+    u8 mimic;
+    u8 mage;
+    u8 unk_1F;
+};
+STATIC_ASSERT(sizeof(ATTACH_LIST) == 0x20);
+
+// clang-format off
 enum AttachStat {
     ATTACHSTAT_UNK0      = 0,
     ATTACHSTAT_ATTACK    = 1,
@@ -407,6 +458,29 @@ enum AttachStat {
     ATTACHSTAT_MIMIC     = 22,
     ATTACHSTAT_MAGE      = 23,
 };
+// clang-format on
+
+/**
+ * The category GetAttachKind sorts an attachment into.
+ *
+ * The categories are identifier ranges rather than anything the attachment
+ * carries, so they only roughly follow what the items are. Garnet is the
+ * first of the twelve birthstones but sits below the 96 boundary and so comes
+ * out ATTACHKIND_STAT, apart from the eleven that follow it. Identifier 110
+ * falls in the gap the gem and slayer ranges leave between them and comes out
+ * ATTACHKIND_OTHER, alongside everything that is not an attachment at all.
+ *
+ * @see asort_table__3, which these index to get a sort priority.
+ */
+// clang-format off
+enum AttachKind {
+    ATTACHKIND_ELEMENT = 1, /**< 81-90: fire, ice, thunder, wind, holy. */
+    ATTACHKIND_STAT    = 2, /**< 91-95: attack, endurance, speed, magical power, garnet. */
+    ATTACHKIND_GEM     = 3, /**< 96-109: amethyst through turquoise, and sun. */
+    ATTACHKIND_SLAYER  = 4, /**< 111-121: dinoslayer through mage slayer. */
+    ATTACHKIND_OTHER   = 5, /**< Everything else, identifier 110 included. */
+};
+// clang-format on
 
 /**
  * A weapon definition.
@@ -436,6 +510,36 @@ struct WEAPON_DATA {
     s16 unk_4A;
 };
 STATIC_ASSERT(sizeof(WEAPON_DATA) == 0x4C);
+
+/**
+ * One weapon as the player holds it.
+ *
+ * Unlike ATTACH_LIST this is not the shape of the table it comes from:
+ * WepDataListToHaveCopy zeroes the whole record and then copies the
+ * WEAPON_DATA across a field at a time, moving each one to a new offset and
+ * narrowing `elem` and `vs_monster` from s16 to u8. Only what that function
+ * writes, and `flags`, is known; the run from 0x26 to 0xED is untouched by
+ * everything decompiled so far, and so is the tail past `flags`.
+ */
+struct WEAPON_HAVE {
+    s16 item_no; /**< Identifies the weapon. */
+    s16 unk_02;
+    s16 attack;     /**< Seeded from WEAPON_DATA::attack. */
+    s16 endurance;  /**< Seeded from WEAPON_DATA::endurance. */
+    s16 speed;      /**< Seeded from WEAPON_DATA::speed. */
+    s16 magic;      /**< Seeded from WEAPON_DATA::magic. */
+    s16 durability; /**< Seeded from WEAPON_DATA::durability. */
+    s16 unk_0E;
+    float durability_f; /**< The durability again, converted on the way in. */
+    char unk_14[2];
+    u8 best_elem;      /**< Indexes the largest entry of `elem`. */
+    u8 elem[5];        /**< AttachStat order: fire, ice, thunder, wind, holy. */
+    u8 vs_monster[10]; /**< Monster effectiveness, one byte per WEAPON_DATA entry. */
+    char unk_26[200];
+    s16 flags; /**< Bit 3 and bit 4 each scale the water-drain rate (CUserStatus::Step). */
+    char unk_F0[8];
+};
+STATIC_ASSERT(sizeof(WEAPON_HAVE) == 0xF8);
 
 /**
  * Get the weapon data for an item, or null if invalid.

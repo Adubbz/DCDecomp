@@ -117,8 +117,6 @@ COPY . .
 # target it hangs off. rom/ and ref/ are mounted in and /output is where the
 # results land; see build.sh.
 CMD scripts/build/cmake.sh elf ctx \
-    && (python3 scripts/build/verify.py -f \
-          build/SCUS_971.11 build/TITLE.BIN build/DUN.BIN \
-        || echo "Verification found unmatched or unverified build output (informational only)." >&2) \
+    && scripts/build/verify_built.sh \
     && cp build/SCUS_971.11 build/TITLE.BIN build/DUN.BIN \
           build/ctx.c build/ctx.cpp build/compiler_flags.txt /output/

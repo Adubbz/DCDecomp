@@ -981,36 +981,40 @@ void InitHaveWep(WEAPON_HAVE *);
 void InitHaveAttach(ATTACH_LIST *);
 
 /**
+ * Exchanges two menu values, doing nothing if either pointer is null.
+ *
  * @mangled MenuDataSwap__FPsPs
  * @address 0x22E4E0
  * @size 0x30
- * @unknownret
  */
-void MenuDataSwap(short *, short *);
+void MenuDataSwap(s16 *first, s16 *second);
 
 /**
+ * Exchanges two menu values, doing nothing if either pointer is null.
+ *
  * @mangled MenuDataSwap__FPiPi
  * @address 0x22E510
  * @size 0x30
- * @unknownret
  */
-void MenuDataSwap(int *, int *);
+void MenuDataSwap(int *first, int *second);
 
 /**
+ * Exchanges two weapon records, doing nothing if either pointer is null.
+ *
  * @mangled MenuDataSwap__FP11WEAPON_HAVEP11WEAPON_HAVE
  * @address 0x22E540
  * @size 0x90
- * @unknownret
  */
-void MenuDataSwap(WEAPON_HAVE *, WEAPON_HAVE *);
+void MenuDataSwap(WEAPON_HAVE *first, WEAPON_HAVE *second);
 
 /**
+ * Exchanges two attachment records, doing nothing if either pointer is null.
+ *
  * @mangled MenuDataSwap__FP11ATTACH_LISTP11ATTACH_LIST
  * @address 0x22E5D0
  * @size 0x90
- * @unknownret
  */
-void MenuDataSwap(ATTACH_LIST *, ATTACH_LIST *);
+void MenuDataSwap(ATTACH_LIST *first, ATTACH_LIST *second);
 
 /**
  * @mangled SetMenuTrushMark__FP9ITEM_PACK

@@ -52,3 +52,7 @@ decompile.sh SetDay__9CSaveDataFi          # found on its own
 decompile.sh title Se__7CSpriteFv          # ...or name the overlay
 decompile.sh DataLoad__Fv --stack-structs  # extra flags go to m2c
 ```
+
+## Documentation
+
+Source documentation is available on [GitHub Pages](https://adubbz.github.io/DCDecomp/).

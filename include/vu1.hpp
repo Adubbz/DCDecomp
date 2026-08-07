@@ -10,6 +10,8 @@
 // functions, so this placeholder only has to let the declarations compile; an
 // enum mangles the same way a struct of this name would. Work out the real
 // layout before implementing one of them.
+// clang-format off
 enum VU1_PROGRAM {
     VU1_PROGRAM_UNKNOWN = 0
 };
+// clang-format on
