@@ -8,24 +8,9 @@
  * CheckDefaultWeapon, AddDrink..Init, SetDead..GetAtraData), so both classes
  * live in this one translation unit, in that order.
  *
- * TEMPORARY: four functions here are still retail's own instructions.
- * CUserStatus::AddDrink, AddNowLife, SetNextLife and Step differ from retail
- * in register allocation only -- correct size, addressing and branch
- * structure, but MWCC assigns the scaled-index and base temps to different
- * registers (3, 15, 13 and 68 instructions under mwcc 2.3.3). See
- * docs/RE/dngstatusdata.md and docs/RE/mwcc_register_allocator.md.
- *
- * Elsewhere such a function is left to its own .s object, which cannot work
- * here: retail interleaves these four with functions that do match (CheckLife
- * sits between AddNowLife and SetNextLife), and MWCC emits a TU's functions as
- * one contiguous .text, so a hole cannot be filled from outside without moving
- * everything after it. So each keeps its place with retail's own instructions
- * as an `asm` body, generated into build/generated/asm (see CMakeLists.txt).
- * The C++ that does not match sits beside it under `#if DNG_COMPILE_UNMATCHED`,
- * which is off.
- *
- * To retire one: make its C++ match, then delete its guard, the `asm` body and
- * its name from ASM_BODY_FUNCS in CMakeLists.txt. */
+ * `#if DNG_COMPILE_UNMATCHED` guards C++ that is written but does not yet
+ * compile to retail's bytes; it is off, and the marker below each guard
+ * supplies the function instead. See re/ai/adddrink_matching_progress.md. */
 
 #include <cstdio>
 #include <cstdlib>
@@ -533,13 +518,7 @@ void CUserStatus::AddDrink(int chara_no, s16 amount, float ratio) {
     }
 }
 #else
-/* Retail's own instructions, so this keeps its place in this translation
- * unit while the C++ above does not match yet. Generated into
- * build/generated/asm by scripts/build/gen_asm_body.py; see CMakeLists.txt,
- * "Retail instructions as asm bodies". */
-asm void CUserStatus::AddDrink(int chara_no, s16 amount, float ratio) {
-#include "AddDrink__11CUserStatusFisf.inc"
-}
+INCLUDE_ASM("main", AddDrink__11CUserStatusFisf);
 #endif /* DNG_COMPILE_UNMATCHED */
 
 #if DNG_COMPILE_UNMATCHED
@@ -587,13 +566,7 @@ void CUserStatus::AddNowLife(int chara_no, s16 amount, float ratio) {
     }
 }
 #else
-/* Retail's own instructions, so these keep their place in this
- * translation unit while the C++ above does not match yet. Generated
- * into build/generated/asm by scripts/build/gen_asm_body.py; see
- * CMakeLists.txt, "Retail instructions as asm bodies". */
-asm void CUserStatus::AddNowLife(int chara_no, s16 amount, float ratio) {
-#include "AddNowLife__11CUserStatusFisf.inc"
-}
+INCLUDE_ASM("main", AddNowLife__11CUserStatusFisf);
 #endif /* DNG_COMPILE_UNMATCHED */
 
 /* Alive iff the active character has HP left -- and, while an interpolated HP
@@ -735,17 +708,9 @@ void CUserStatus::Step(int paused) {
     }
 }
 #else
-/* Retail's own instructions, so these keep their place in this
- * translation unit while the C++ above does not match yet. Generated
- * into build/generated/asm by scripts/build/gen_asm_body.py; see
- * CMakeLists.txt, "Retail instructions as asm bodies". */
-asm void CUserStatus::SetNextLife(int chara_no, s16 value, float ratio) {
-#include "SetNextLife__11CUserStatusFisf.inc"
-}
+INCLUDE_ASM("main", SetNextLife__11CUserStatusFisf);
 
-asm void CUserStatus::Step(int paused) {
-#include "Step__11CUserStatusFi.inc"
-}
+INCLUDE_ASM("main", Step__11CUserStatusFi);
 #endif /* DNG_COMPILE_UNMATCHED */
 
 /* @ 0x1BEDE0 (0x110 bytes) -- Init__11CUserStatusFv */
@@ -1111,3 +1076,5 @@ void CDngStatusData::GetAtraData(int georama_no, int floor, int atra_id) {
         }
     }
 }
+
+INCLUDE_RODATA("main", LIT_646__2);

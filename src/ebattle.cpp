@@ -2,6 +2,12 @@
 
 #include "texture.hpp"
 
+INCLUDE_ASM("main", CommandTEX_ANIME__FPPv);
+INCLUDE_ASM("main", CommandTEX_ANIME_DATA__FPPv);
+INCLUDE_ASM("main", CommandTEX_ANIME_DATA2__FPPv);
+INCLUDE_ASM("main", CommandTEX_SCROLL_DATA__FPPv);
+INCLUDE_ASM("main", CommandTEX_ANIME_END__FPPv);
+
 /* External */
 extern CTextureManager TexManager[];
 

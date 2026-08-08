@@ -25,7 +25,7 @@ glabel MenuAtoraSelectKey__Fv
 /* 11C420 0021C320 DB01013C */  lui         $1, %hi(MenuAtoraSel + 0x18C)
 /* 11C424 0021C324 5C82248C */  lw          $4, %lo(MenuAtoraSel + 0x18C)($1)
 /* 11C428 0021C328 0B00812C */  sltiu       $1, $4, 0xB
-/* 11C42C 0021C32C 7D012010 */  beqz        $1, .L0021C924$b
+/* 11C42C 0021C32C 7D012010 */  beqz        $1, .L.L0021C924$b
 /* 11C430 0021C330 00000000 */   nop
 /* 11C434 0021C334 2A00023C */  lui         $2, %hi(LIT_1821)
 /* 11C438 0021C338 A0EA4324 */  addiu       $3, $2, %lo(LIT_1821)
@@ -35,36 +35,33 @@ glabel MenuAtoraSelectKey__Fv
 /* 11C448 0021C348 08004000 */  jr          $2
 /* 11C44C 0021C34C 00000000 */   nop
 jlabel .L0021C350
-.L0021C350$b:
 /* 11C450 0021C350 DB01013C */  lui         $1, %hi(MenuAtoraSel + 0x190)
 /* 11C454 0021C354 6082228C */  lw          $2, %lo(MenuAtoraSel + 0x190)($1)
 /* 11C458 0021C358 10004128 */  slti        $1, $2, 0x10
-/* 11C45C 0021C35C 71012014 */  bnez        $1, .L0021C924$b
+/* 11C45C 0021C35C 71012014 */  bnez        $1, .L.L0021C924$b
 /* 11C460 0021C360 00000000 */   nop
 /* 11C464 0021C364 E896828F */  lw          $2, -0x6918($28)
-/* 11C468 0021C368 6E014010 */  beqz        $2, .L0021C924$b
+/* 11C468 0021C368 6E014010 */  beqz        $2, .L.L0021C924$b
 /* 11C46C 0021C36C 00000000 */   nop
 /* 11C470 0021C370 DB01013C */  lui         $1, %hi(MenuAtoraSel + 0x18C)
 /* 11C474 0021C374 5C8220AC */  sw          $0, %lo(MenuAtoraSel + 0x18C)($1)
 /* 11C478 0021C378 2C68080C */  jal         MenuAtoraAfterFadeIn__Fv
 /* 11C47C 0021C37C 00000000 */   nop
-/* 11C480 0021C380 68010010 */  b           .L0021C924$b
+/* 11C480 0021C380 68010010 */  b           .L.L0021C924$b
 /* 11C484 0021C384 00000000 */   nop
 jlabel .L0021C388
-.L0021C388$b:
 /* 11C488 0021C388 DB01013C */  lui         $1, %hi(MenuAtoraSel + 0x190)
 /* 11C48C 0021C38C 6082228C */  lw          $2, %lo(MenuAtoraSel + 0x190)($1)
 /* 11C490 0021C390 13004128 */  slti        $1, $2, 0x13
-/* 11C494 0021C394 63012014 */  bnez        $1, .L0021C924$b
+/* 11C494 0021C394 63012014 */  bnez        $1, .L.L0021C924$b
 /* 11C498 0021C398 00000000 */   nop
 /* 11C49C 0021C39C 246A080C */  jal         ExitAtoraSelect__Fv
 /* 11C4A0 0021C3A0 00000000 */   nop
 /* 11C4A4 0021C3A4 DB01013C */  lui         $1, %hi(MenuAtoraSel + 0x18C)
 /* 11C4A8 0021C3A8 5C8220AC */  sw          $0, %lo(MenuAtoraSel + 0x18C)($1)
-/* 11C4AC 0021C3AC 5D010010 */  b           .L0021C924$b
+/* 11C4AC 0021C3AC 5D010010 */  b           .L.L0021C924$b
 /* 11C4B0 0021C3B0 00000000 */   nop
 jlabel .L0021C3B4
-.L0021C3B4$b:
 /* 11C4B4 0021C3B4 DB01013C */  lui         $1, %hi(MenuAtoraSel + 0xC)
 /* 11C4B8 0021C3B8 DC802384 */  lh          $3, %lo(MenuAtoraSel + 0xC)($1)
 /* 11C4BC 0021C3BC 05000224 */  addiu       $2, $0, 0x5
@@ -75,7 +72,7 @@ jlabel .L0021C3B4
 /* 11C4D0 0021C3D0 02000224 */  addiu       $2, $0, 0x2
 /* 11C4D4 0021C3D4 03006210 */  beq         $3, $2, .L0021C3E4
 /* 11C4D8 0021C3D8 00000000 */   nop
-/* 11C4DC 0021C3DC 51010010 */  b           .L0021C924$b
+/* 11C4DC 0021C3DC 51010010 */  b           .L.L0021C924$b
 /* 11C4E0 0021C3E0 00000000 */   nop
 .L0021C3E4:
 /* 11C4E4 0021C3E4 DB01013C */  lui         $1, %hi(MenuAtoraSel + 0xE)
@@ -120,10 +117,9 @@ jlabel .L0021C3B4
 /* 11C57C 0021C47C 282E0070 */  paddub      $5, $0, $0
 /* 11C580 0021C480 C467050C */  jal         SndBgmFadeOut__Fii
 /* 11C584 0021C484 00000000 */   nop
-/* 11C588 0021C488 26010010 */  b           .L0021C924$b
+/* 11C588 0021C488 26010010 */  b           .L.L0021C924$b
 /* 11C58C 0021C48C 00000000 */   nop
 jlabel .L0021C490
-.L0021C490$b:
 /* 11C590 0021C490 DB01013C */  lui         $1, %hi(MenuAtoraSel + 0x190)
 /* 11C594 0021C494 6082228C */  lw          $2, %lo(MenuAtoraSel + 0x190)($1)
 /* 11C598 0021C498 32004128 */  slti        $1, $2, 0x32
@@ -143,7 +139,7 @@ jlabel .L0021C490
 /* 11C5C8 0021C4C8 DB01013C */  lui         $1, %hi(MenuAtoraSel + 0x190)
 /* 11C5CC 0021C4CC 6082228C */  lw          $2, %lo(MenuAtoraSel + 0x190)($1)
 /* 11C5D0 0021C4D0 47004128 */  slti        $1, $2, 0x47
-/* 11C5D4 0021C4D4 13012014 */  bnez        $1, .L0021C924$b
+/* 11C5D4 0021C4D4 13012014 */  bnez        $1, .L.L0021C924$b
 /* 11C5D8 0021C4D8 00000000 */   nop
 /* 11C5DC 0021C4DC DB01013C */  lui         $1, %hi(MenuAtoraSel + 0xC)
 /* 11C5E0 0021C4E0 DC802584 */  lh          $5, %lo(MenuAtoraSel + 0xC)($1)
@@ -176,14 +172,13 @@ jlabel .L0021C490
 /* 11C64C 0021C54C F496868F */  lw          $6, -0x690C($28)
 /* 11C650 0021C550 8CCB080C */  jal         InitEastKingEvent__FiPiP1
 /* 11C654 0021C554 00000000 */   nop
-/* 11C658 0021C558 F2000010 */  b           .L0021C924$b
+/* 11C658 0021C558 F2000010 */  b           .L.L0021C924$b
 /* 11C65C 0021C55C 00000000 */   nop
 jlabel .L0021C560
-.L0021C560$b:
 /* 11C660 0021C560 F8CB080C */  jal         EastKingEventKey__Fv
 /* 11C664 0021C564 00000000 */   nop
 /* 11C668 0021C568 01000324 */  addiu       $3, $0, 0x1
-/* 11C66C 0021C56C ED004314 */  bne         $2, $3, .L0021C924$b
+/* 11C66C 0021C56C ED004314 */  bne         $2, $3, .L.L0021C924$b
 /* 11C670 0021C570 00000000 */   nop
 /* 11C674 0021C574 09000224 */  addiu       $2, $0, 0x9
 /* 11C678 0021C578 DB01013C */  lui         $1, %hi(MenuAtoraSel + 0x18C)
@@ -198,59 +193,55 @@ jlabel .L0021C560
 /* 11C69C 0021C59C 00000000 */   nop
 /* 11C6A0 0021C5A0 DB01013C */  lui         $1, %hi(MenuAtoraSel + 0x190)
 /* 11C6A4 0021C5A4 608220AC */  sw          $0, %lo(MenuAtoraSel + 0x190)($1)
-/* 11C6A8 0021C5A8 DE000010 */  b           .L0021C924$b
+/* 11C6A8 0021C5A8 DE000010 */  b           .L.L0021C924$b
 /* 11C6AC 0021C5AC 00000000 */   nop
 jlabel .L0021C5B0
-.L0021C5B0$b:
 /* 11C6B0 0021C5B0 D464050C */  jal         SndStep__Fv
 /* 11C6B4 0021C5B4 00000000 */   nop
 /* 11C6B8 0021C5B8 DB01013C */  lui         $1, %hi(MenuAtoraSel + 0x190)
 /* 11C6BC 0021C5BC 6082228C */  lw          $2, %lo(MenuAtoraSel + 0x190)($1)
 /* 11C6C0 0021C5C0 41004128 */  slti        $1, $2, 0x41
-/* 11C6C4 0021C5C4 D7002014 */  bnez        $1, .L0021C924$b
+/* 11C6C4 0021C5C4 D7002014 */  bnez        $1, .L.L0021C924$b
 /* 11C6C8 0021C5C8 00000000 */   nop
 /* 11C6CC 0021C5CC DB01013C */  lui         $1, %hi(MenuAtoraSel + 0x18C)
 /* 11C6D0 0021C5D0 5C8220AC */  sw          $0, %lo(MenuAtoraSel + 0x18C)($1)
-/* 11C6D4 0021C5D4 D3000010 */  b           .L0021C924$b
+/* 11C6D4 0021C5D4 D3000010 */  b           .L.L0021C924$b
 /* 11C6D8 0021C5D8 00000000 */   nop
 jlabel .L0021C5DC
-.L0021C5DC$b:
 /* 11C6DC 0021C5DC DB01013C */  lui         $1, %hi(MenuAtoraSel + 0x190)
 /* 11C6E0 0021C5E0 6082228C */  lw          $2, %lo(MenuAtoraSel + 0x190)($1)
 /* 11C6E4 0021C5E4 29004128 */  slti        $1, $2, 0x29
-/* 11C6E8 0021C5E8 CE002014 */  bnez        $1, .L0021C924$b
+/* 11C6E8 0021C5E8 CE002014 */  bnez        $1, .L.L0021C924$b
 /* 11C6EC 0021C5EC 00000000 */   nop
 /* 11C6F0 0021C5F0 DB01013C */  lui         $1, %hi(MenuAtoraSel + 0x18C)
 /* 11C6F4 0021C5F4 5C8220AC */  sw          $0, %lo(MenuAtoraSel + 0x18C)($1)
-/* 11C6F8 0021C5F8 CA000010 */  b           .L0021C924$b
+/* 11C6F8 0021C5F8 CA000010 */  b           .L.L0021C924$b
 /* 11C6FC 0021C5FC 00000000 */   nop
 jlabel .L0021C600
-.L0021C600$b:
 /* 11C700 0021C600 CC01023C */  lui         $2, %hi(GamePad)
 /* 11C704 0021C604 40C54424 */  addiu       $4, $2, %lo(GamePad)
 /* 11C708 0021C608 60000524 */  addiu       $5, $0, 0x60
 /* 11C70C 0021C60C 1CAE040C */  jal         Down__8CGamePadFi
 /* 11C710 0021C610 00000000 */   nop
-/* 11C714 0021C614 C3004010 */  beqz        $2, .L0021C924$b
+/* 11C714 0021C614 C3004010 */  beqz        $2, .L.L0021C924$b
 /* 11C718 0021C618 00000000 */   nop
 /* 11C71C 0021C61C DB01013C */  lui         $1, %hi(MenuAtoraSel + 0x18C)
 /* 11C720 0021C620 5C8220AC */  sw          $0, %lo(MenuAtoraSel + 0x18C)($1)
-/* 11C724 0021C624 BF000010 */  b           .L0021C924$b
+/* 11C724 0021C624 BF000010 */  b           .L.L0021C924$b
 /* 11C728 0021C628 00000000 */   nop
 jlabel .L0021C62C
-.L0021C62C$b:
 /* 11C72C 0021C62C DB01013C */  lui         $1, %hi(MenuAtoraSel + 0x190)
 /* 11C730 0021C630 6082228C */  lw          $2, %lo(MenuAtoraSel + 0x190)($1)
 /* 11C734 0021C634 19004128 */  slti        $1, $2, 0x19
-/* 11C738 0021C638 06002014 */  bnez        $1, .L0021C654$b
+/* 11C738 0021C638 06002014 */  bnez        $1, .L.L0021C654$b
 /* 11C73C 0021C63C 00000000 */   nop
 /* 11C740 0021C640 E896828F */  lw          $2, -0x6918($28)
-/* 11C744 0021C644 03004010 */  beqz        $2, .L0021C654$b
+/* 11C744 0021C644 03004010 */  beqz        $2, .L.L0021C654$b
 /* 11C748 0021C648 00000000 */   nop
 /* 11C74C 0021C64C DB01013C */  lui         $1, %hi(MenuAtoraSel + 0x18C)
 /* 11C750 0021C650 5C8220AC */  sw          $0, %lo(MenuAtoraSel + 0x18C)($1)
 jlabel .L0021C654
-.L0021C654$b:
+.L.L0021C654$b:
 /* 11C754 0021C654 DB01013C */  lui         $1, %hi(MenuAtoraSel)
 /* 11C758 0021C658 D080238C */  lw          $3, %lo(MenuAtoraSel)($1)
 /* 11C75C 0021C65C 01000224 */  addiu       $2, $0, 0x1
@@ -352,7 +343,7 @@ jlabel .L0021C654
 /* 11C8BC 0021C7BC 0A000224 */  addiu       $2, $0, 0xA
 /* 11C8C0 0021C7C0 03000212 */  beq         $16, $2, .L0021C7D0
 /* 11C8C4 0021C7C4 00000000 */   nop
-/* 11C8C8 0021C7C8 56000010 */  b           .L0021C924$b
+/* 11C8C8 0021C7C8 56000010 */  b           .L.L0021C924$b
 /* 11C8CC 0021C7CC 00000000 */   nop
 .L0021C7D0:
 /* 11C8D0 0021C7D0 DB01013C */  lui         $1, %hi(MenuAtoraSel + 0xE)
@@ -373,7 +364,7 @@ jlabel .L0021C654
 /* 11C90C 0021C80C 01000424 */  addiu       $4, $0, 0x1
 /* 11C910 0021C810 BCB3080C */  jal         ComMenuSePlay__Fi
 /* 11C914 0021C814 00000000 */   nop
-/* 11C918 0021C818 42000010 */  b           .L0021C924$b
+/* 11C918 0021C818 42000010 */  b           .L.L0021C924$b
 /* 11C91C 0021C81C 00000000 */   nop
 .L0021C820:
 /* 11C920 0021C820 E496828F */  lw          $2, -0x691C($28)
@@ -383,7 +374,7 @@ jlabel .L0021C654
 /* 11C930 0021C830 02000424 */  addiu       $4, $0, 0x2
 /* 11C934 0021C834 BCB3080C */  jal         ComMenuSePlay__Fi
 /* 11C938 0021C838 00000000 */   nop
-/* 11C93C 0021C83C 39000010 */  b           .L0021C924$b
+/* 11C93C 0021C83C 39000010 */  b           .L.L0021C924$b
 /* 11C940 0021C840 00000000 */   nop
 .L0021C844:
 /* 11C944 0021C844 DB01013C */  lui         $1, %hi(MenuAtoraSel + 0xC)
@@ -428,7 +419,7 @@ jlabel .L0021C654
 /* 11C9DC 0021C8DC 01000424 */  addiu       $4, $0, 0x1
 /* 11C9E0 0021C8E0 BCB3080C */  jal         ComMenuSePlay__Fi
 /* 11C9E4 0021C8E4 00000000 */   nop
-/* 11C9E8 0021C8E8 0E000010 */  b           .L0021C924$b
+/* 11C9E8 0021C8E8 0E000010 */  b           .L.L0021C924$b
 /* 11C9EC 0021C8EC 00000000 */   nop
 .L0021C8F0:
 /* 11C9F0 0021C8F0 02000224 */  addiu       $2, $0, 0x2
@@ -445,7 +436,7 @@ jlabel .L0021C654
 /* 11CA1C 0021C91C 246A080C */  jal         ExitAtoraSelect__Fv
 /* 11CA20 0021C920 00000000 */   nop
 jlabel .L0021C924
-.L0021C924$b:
+.L.L0021C924$b:
 /* 11CA24 0021C924 28360070 */  paddub      $6, $0, $0
 /* 11CA28 0021C928 DB01013C */  lui         $1, %hi(MenuAtoraSel)
 /* 11CA2C 0021C92C D080238C */  lw          $3, %lo(MenuAtoraSel)($1)

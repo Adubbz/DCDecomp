@@ -26,7 +26,6 @@ glabel BtAtraGetShort_Loop__Fii
 /* 0D2DB8 001D2CB8 08004000 */  jr          $2
 /* 0D2DBC 001D2CBC 00000000 */   nop
 jlabel .L001D2CC0
-.L001D2CC0$b:
 /* 0D2DC0 001D2CC0 006E050C */  jal         SndSPSeSyncBG__Fv
 /* 0D2DC4 001D2CC4 00000000 */   nop
 /* 0D2DC8 001D2CC8 BA004014 */  bnez        $2, .L001D2FB4
@@ -222,7 +221,6 @@ jlabel .L001D2CC0
 /* 0D30BC 001D2FBC AA000010 */  b           .L001D3268
 /* 0D30C0 001D2FC0 00000000 */   nop
 jlabel .L001D2FC4
-.L001D2FC4$b:
 /* 0D30C4 001D2FC4 309D81C7 */  lwc1        $f1, -0x62D0($28)
 /* 0D30C8 001D2FC8 8043023C */  lui         $2, (0x43800000 >> 16)
 /* 0D30CC 001D2FCC 00008244 */  mtc1        $2, $f0
@@ -284,7 +282,6 @@ jlabel .L001D2FC4
 /* 0D31A4 001D30A4 70000010 */  b           .L001D3268
 /* 0D31A8 001D30A8 00000000 */   nop
 jlabel .L001D30AC
-.L001D30AC$b:
 /* 0D31AC 001D30AC 3C9D81C7 */  lwc1        $f1, -0x62C4($28)
 /* 0D31B0 001D30B0 0043023C */  lui         $2, (0x43000000 >> 16)
 /* 0D31B4 001D30B4 00008244 */  mtc1        $2, $f0
@@ -306,7 +303,6 @@ jlabel .L001D30AC
 /* 0D31F0 001D30F0 5D000010 */  b           .L001D3268
 /* 0D31F4 001D30F4 00000000 */   nop
 jlabel .L001D30F8
-.L001D30F8$b:
 /* 0D31F8 001D30F8 CC01023C */  lui         $2, %hi(GamePad)
 /* 0D31FC 001D30FC 40C54424 */  addiu       $4, $2, %lo(GamePad)
 /* 0D3200 001D3100 60000524 */  addiu       $5, $0, 0x60
@@ -331,7 +327,6 @@ jlabel .L001D30F8
 /* 0D324C 001D314C 46000010 */  b           .L001D3268
 /* 0D3250 001D3150 00000000 */   nop
 jlabel .L001D3154
-.L001D3154$b:
 /* 0D3254 001D3154 DC01023C */  lui         $2, %hi(DispFade__3)
 /* 0D3258 001D3158 D04B4424 */  addiu       $4, $2, %lo(DispFade__3)
 /* 0D325C 001D315C 9CF9040C */  jal         GetRate__9CDispCtrlFv
@@ -357,7 +352,6 @@ jlabel .L001D3154
 /* 0D32AC 001D31AC 2E000010 */  b           .L001D3268
 /* 0D32B0 001D31B0 00000000 */   nop
 jlabel .L001D31B4
-.L001D31B4$b:
 /* 0D32B4 001D31B4 01000224 */  addiu       $2, $0, 0x1
 /* 0D32B8 001D31B8 DC01013C */  lui         $1, %hi(BtActStatus + 0x54)
 /* 0D32BC 001D31BC D44422AC */  sw          $2, %lo(BtActStatus + 0x54)($1)

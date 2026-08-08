@@ -12,8 +12,8 @@ glabel __ct__6CWaterFv
 /* 0616D0 001615D0 70000426 */  addiu       $4, $16, 0x70
 /* 0616D4 001615D4 C0D3040C */  jal         __ct__10CVisualVu1Fv
 /* 0616D8 001615D8 00000000 */   nop
-/* 0616DC 001615DC 2A00023C */  lui         $2, %hi(RO_002A1660)
-/* 0616E0 001615E0 60164224 */  addiu       $2, $2, %lo(RO_002A1660)
+/* 0616DC 001615DC 2A00023C */  lui         $2, %hi(__vt__14CVisualPolyVu1)
+/* 0616E0 001615E0 60164224 */  addiu       $2, $2, %lo(__vt__14CVisualPolyVu1)
 /* 0616E4 001615E4 780002AE */  sw          $2, 0x78($16)
 /* 0616E8 001615E8 B0000426 */  addiu       $4, $16, 0xB0
 /* 0616EC 001615EC 98A8040C */  jal         __ct__9CFrameVu1Fv

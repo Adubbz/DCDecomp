@@ -220,11 +220,11 @@ glabel __mb_cur_max
 /* 14FEF0 0024FDF0 01000000 */ .word 0x00000001
 /* 14FEF4 0024FDF4 00000000 */ .word 0x00000000
 
-glabel lc_ctype.3
+glabel lc_ctype_3
 /* 14FEF8 0024FDF8 43000000 */ .word 0x00000043
 /* 14FEFC 0024FDFC 00000000 */ .word 0x00000000
 
-glabel last_lc_ctype.4
+glabel last_lc_ctype_4
 /* 14FF00 0024FE00 43000000 */ .word 0x00000043
 /* 14FF04 0024FE04 00000000 */ .word 0x00000000
 
@@ -577,7 +577,7 @@ glabel _scmd_bk_bind
 glabel _it_bind
 /* 1503B0 002502B0 FFFFFFFF */ .word 0xFFFFFFFF
 
-glabel c_cnt.84
+glabel c_cnt_84
 /* 1503B4 002502B4 00000000 */ .word 0x00000000
 
 glabel stm_status
@@ -1088,13 +1088,13 @@ glabel __ps2_libinfo____3
 /* 150A88 00250988 72617068 */ .word 0x68706172
 /* 150A8C 0025098C 32313030 */ .word 0x30303132
 
-glabel gp.6
+glabel gp_6
 /* 150A90 00250990 01000200 */ .word 0x00020001
 /* 150A94 00250994 01000300 */ .word 0x00030001
 /* 150A98 00250998 00000000 */ .word 0x00000000
 /* 150A9C 0025099C 00000000 */ .word 0x00000000
 
-glabel init_vif_regs.3
+glabel init_vif_regs_3
 /* 150AA0 002509A0 04040001 */ .word GlobalDataBuffer + 0xD55384
 /* 150AA4 002509A4 00000020 */ .word 0x20000000
 /* 150AA8 002509A8 00000000 */ .word 0x00000000
@@ -1104,7 +1104,7 @@ glabel init_vif_regs.3
 /* 150AB8 002509B8 00000002 */ .word 0x02000000
 /* 150ABC 002509BC 00000004 */ .word 0x04000000
 
-glabel init_mp3.3
+glabel init_mp3_3
 /* 150AC0 002509C0 00000006 */ .word 0x06000000
 /* 150AC4 002509C4 00000000 */ .word 0x00000000
 /* 150AC8 002509C8 00000000 */ .word 0x00000000
@@ -1121,7 +1121,7 @@ glabel D_002509DC
 glabel ttyinit
 /* 150AE0 002509E0 00000000 */ .word 0x00000000
 
-glabel heap_ptr.30
+glabel heap_ptr_30
 /* 150AE4 002509E4 006BF001 */ .word 0x01F06B00
 
 glabel topId
@@ -1256,7 +1256,7 @@ glabel S5432
 /* 150BF8 00250AF8 3E87083C */ .word 0x3C08873E
 /* 150BFC 00250AFC A4AA2ABE */ .word 0xBE2AAAA4
 
-glabel init_vif_regs.126
+glabel init_vif_regs_126
 /* 150C00 00250B00 04040001 */ .word GlobalDataBuffer + 0xD55384
 /* 150C04 00250B04 00000020 */ .word 0x20000000
 /* 150C08 00250B08 00000000 */ .word 0x00000000

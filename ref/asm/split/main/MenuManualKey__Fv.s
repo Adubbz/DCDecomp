@@ -27,7 +27,6 @@ glabel MenuManualKey__Fv
 /* 13467C 0023457C 08004000 */  jr          $2
 /* 134680 00234580 00000000 */   nop
 jlabel .L00234584
-.L00234584$b:
 /* 134684 00234584 C0CF080C */  jal         SetManualMsgBuffer__Fv
 /* 134688 00234588 00000000 */   nop
 /* 13468C 0023458C C5014010 */  beqz        $2, .L00234CA4
@@ -38,7 +37,6 @@ jlabel .L00234584
 /* 1346A0 002345A0 C0010010 */  b           .L00234CA4
 /* 1346A4 002345A4 00000000 */   nop
 jlabel .L002345A8
-.L002345A8$b:
 /* 1346A8 002345A8 DB01013C */  lui         $1, %hi(ManualMenu + 0x18)
 /* 1346AC 002345AC 88A8228C */  lw          $2, %lo(ManualMenu + 0x18)($1)
 /* 1346B0 002345B0 01004224 */  addiu       $2, $2, 0x1
@@ -55,7 +53,6 @@ jlabel .L002345A8
 /* 1346DC 002345DC B1010010 */  b           .L00234CA4
 /* 1346E0 002345E0 00000000 */   nop
 jlabel .L002345E4
-.L002345E4$b:
 /* 1346E4 002345E4 DB01013C */  lui         $1, %hi(ManualMenu + 0xA)
 /* 1346E8 002345E8 7AA82384 */  lh          $3, %lo(ManualMenu + 0xA)($1)
 /* 1346EC 002345EC FEFF0224 */  addiu       $2, $0, -0x2
@@ -265,7 +262,6 @@ jlabel .L002345E4
 /* 1349DC 002348DC F1000010 */  b           .L00234CA4
 /* 1349E0 002348E0 00000000 */   nop
 jlabel .L002348E4
-.L002348E4$b:
 /* 1349E4 002348E4 FFFF0224 */  addiu       $2, $0, -0x1
 /* 1349E8 002348E8 DA01013C */  lui         $1, %hi(CommonMenuMes3 + 0x1740)
 /* 1349EC 002348EC 505222AC */  sw          $2, %lo(CommonMenuMes3 + 0x1740)($1)
@@ -474,7 +470,6 @@ jlabel .L002348E4
 /* 134CE4 00234BE4 2F000010 */  b           .L00234CA4
 /* 134CE8 00234BE8 00000000 */   nop
 jlabel .L00234BEC
-.L00234BEC$b:
 /* 134CEC 00234BEC FFFF0224 */  addiu       $2, $0, -0x1
 /* 134CF0 00234BF0 DA01013C */  lui         $1, %hi(CommonMenuMes3 + 0x1740)
 /* 134CF4 00234BF4 505222AC */  sw          $2, %lo(CommonMenuMes3 + 0x1740)($1)
@@ -504,7 +499,6 @@ jlabel .L00234BEC
 /* 134D54 00234C54 13000010 */  b           .L00234CA4
 /* 134D58 00234C58 00000000 */   nop
 jlabel .L00234C5C
-.L00234C5C$b:
 /* 134D5C 00234C5C FFFF0224 */  addiu       $2, $0, -0x1
 /* 134D60 00234C60 DA01013C */  lui         $1, %hi(CommonMenuMes3 + 0x1740)
 /* 134D64 00234C64 505222AC */  sw          $2, %lo(CommonMenuMes3 + 0x1740)($1)

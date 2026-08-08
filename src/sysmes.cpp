@@ -1,1 +1,21 @@
-#include "sysmes.hpp"
+#include "common.h"
+
+INCLUDE_ASM("main", SkipSpace__FR9input_str__3);
+INCLUDE_ASM("main", CheckChar__Fc__3);
+INCLUDE_ASM("main", PreProcess__FR9input_str__2);
+INCLUDE_ASM("main", InitSystemMes__Fv);
+INCLUDE_ASM("main", ClearSystemMes__Fv);
+INCLUDE_ASM("main", SystemMesCheck__Fv);
+INCLUDE_ASM("main", SystemMesStep__Fv);
+INCLUDE_ASM("main", SystemMesDraw__Fv);
+INCLUDE_ASM("main", ItemGetMes__Fiiii);
+INCLUDE_ASM("main", AtraGetMes__Fiii);
+INCLUDE_ASM("main", TecGetMes__Fii);
+INCLUDE_ASM("main", MaxUpMes__Fii);
+INCLUDE_ASM("main", DeadMes__Fii);
+INCLUDE_ASM("main", AllDeadMes__Fi);
+INCLUDE_ASM("main", NotGetAtraMes__Fii);
+INCLUDE_ASM("main", DontGetItemMes__Fi);
+INCLUDE_ASM("main", SetSystemMes__FiiiiPiPi);
+INCLUDE_ASM("main", pretest__FPA4_fPf);
+INCLUDE_ASM("main", Trans_AddCell__FPfPf);

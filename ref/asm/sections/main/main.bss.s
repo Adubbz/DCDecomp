@@ -108,25 +108,25 @@ glabel TrayReq
 glabel _rs_data
 /* 002A4F30 */ .space 0x18
 
-glabel eh.39
+glabel eh_39
 /* 002A4F48 */ .space 0x10
 
-glabel initialized.40
+glabel initialized_40
 /* 002A4F58 */ .space 0x08
 
-glabel top_elt.41
+glabel top_elt_41
 /* 002A4F60 */ .space 0x08
 
-glabel thenan.3
+glabel thenan_3
 /* 002A4F68 */ .space 0x18
 
-glabel thenan.3__2
+glabel thenan_3__2
 /* 002A4F80 */ .space 0x10
 
 glabel objects
 /* 002A4F90 */ .space 0x10
 
-glabel stack.6
+glabel stack_6
 /* 002A4FA0 */ .space 0x400
 
 glabel topArg
@@ -138,7 +138,7 @@ glabel topSema
 glabel userarea
 /* 002A53B0 */ .space 0x50
 
-glabel q.3
+glabel q_3
 /* 002A5400 */ .space 0x110
 
 glabel tinfo
@@ -300,7 +300,7 @@ glabel dma_iop_data
 glabel buffer
 /* 002A9E00 */ .space 0x80
 
-glabel transData.6
+glabel transData_6
 /* 002A9E80 */ .space 0x10
 
 glabel stack

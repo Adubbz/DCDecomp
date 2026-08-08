@@ -23,12 +23,12 @@ glabel sceCdInit
 /* 00B14C 0010B04C 2D100000 */   daddu      $2, $0, $0
 /* 00B150 0010B050 2D200000 */  daddu       $4, $0, $0
 /* 00B154 0010B054 125B040C */  jal         sceSifInitRpc
-/* 00B158 0010B058 2500143C */   lui        $20, %hi(c_cnt.84)
+/* 00B158 0010B058 2500143C */   lui        $20, %hi(c_cnt_84)
 /* 00B15C 0010B05C 8450040C */  jal         GetThreadId
 /* 00B160 0010B060 2500153C */   lui        $21, %hi(_it_bind)
 /* 00B164 0010B064 2A00103C */  lui         $16, %hi(_i_mode)
 /* 00B168 0010B068 FFFF0324 */  addiu       $3, $0, -0x1
-/* 00B16C 0010B06C B402858E */  lw          $5, %lo(c_cnt.84)($20)
+/* 00B16C 0010B06C B402858E */  lw          $5, %lo(c_cnt_84)($20)
 /* 00B170 0010B070 2500043C */  lui         $4, %hi(_icmd_bind)
 /* 00B174 0010B074 2A00063C */  lui         $6, %hi(my_thid)
 /* 00B178 0010B078 940283AC */  sw          $3, %lo(_icmd_bind)($4)
@@ -55,7 +55,7 @@ glabel sceCdInit
 /* 00B1CC 0010B0CC 2900163C */  lui         $22, %hi(RO_00297190)
 /* 00B1D0 0010B0D0 A80283AD */  sw          $3, %lo(_scmd_dr_bind)($12)
 /* 00B1D4 0010B0D4 AC02A3AD */  sw          $3, %lo(_scmd_bk_bind)($13)
-/* 00B1D8 0010B0D8 B40285AE */  sw          $5, %lo(c_cnt.84)($20)
+/* 00B1D8 0010B0D8 B40285AE */  sw          $5, %lo(c_cnt_84)($20)
 /* 00B1DC 0010B0DC B002A3AE */  sw          $3, %lo(_it_bind)($21)
 .L0010B0E0:
 /* 00B1E0 0010B0E0 0080053C */  lui         $5, (0x80000592 >> 16)
@@ -68,7 +68,7 @@ glabel sceCdInit
 /* 00B1FC 0010B0FC 2400228E */   lw         $2, 0x24($17)
 /* 00B200 0010B100 7002E28E */  lw          $2, %lo(CD_debug)($23)
 /* 00B204 0010B104 03004018 */  blez        $2, .L0010B114
-/* 00B208 0010B108 B402868E */   lw         $6, %lo(c_cnt.84)($20)
+/* 00B208 0010B108 B402868E */   lw         $6, %lo(c_cnt_84)($20)
 /* 00B20C 0010B10C A611040C */  jal         printf
 /* 00B210 0010B110 9071C426 */   addiu      $4, $22, %lo(RO_00297190)
 .L0010B114:

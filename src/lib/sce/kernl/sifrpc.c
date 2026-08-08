@@ -1,0 +1,24 @@
+#include "common.h"
+
+INCLUDE_ASM("main", sceSifInitRpc);
+INCLUDE_ASM("main", sceSifExitRpc);
+INCLUDE_ASM("main", _sceRpcGetPacket);
+INCLUDE_ASM("main", _sceRpcFreePacket);
+INCLUDE_ASM("main", _sceRpcGetFPacket);
+INCLUDE_ASM("main", _sceRpcGetFPacket2);
+INCLUDE_ASM("main", _request_end);
+INCLUDE_ASM("main", _request_rdata);
+INCLUDE_ASM("main", sceSifGetOtherData);
+INCLUDE_ASM("main", _search_svdata);
+INCLUDE_ASM("main", _request_bind);
+INCLUDE_ASM("main", sceSifBindRpc);
+INCLUDE_ASM("main", _request_call);
+INCLUDE_ASM("main", sceSifCallRpc);
+INCLUDE_ASM("main", sceSifCheckStatRpc);
+INCLUDE_ASM("main", sceSifSetRpcQueue);
+INCLUDE_ASM("main", sceSifRegisterRpc);
+INCLUDE_ASM("main", sceSifRemoveRpc);
+INCLUDE_ASM("main", sceSifRemoveRpcQueue);
+INCLUDE_ASM("main", sceSifGetNextRequest);
+INCLUDE_ASM("main", sceSifExecRequest);
+INCLUDE_ASM("main", sceSifRpcLoop);

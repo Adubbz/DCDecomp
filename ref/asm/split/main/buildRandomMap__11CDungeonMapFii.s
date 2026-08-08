@@ -631,7 +631,7 @@ glabel buildRandomMap__11CDungeonMapFii
 .L001CBF8C:
 /* 0CC08C 001CBF8C A49D848F */  lw          $4, -0x625C($28)
 /* 0CC090 001CBF90 0700812C */  sltiu       $1, $4, 0x7
-/* 0CC094 001CBF94 1E002010 */  beqz        $1, .L001CC010$b
+/* 0CC094 001CBF94 1E002010 */  beqz        $1, .L.L001CC010$b
 /* 0CC098 001CBF98 00000000 */   nop
 /* 0CC09C 001CBF9C 2A00023C */  lui         $2, %hi(LIT_3191)
 /* 0CC0A0 001CBFA0 70BF4324 */  addiu       $3, $2, %lo(LIT_3191)
@@ -641,41 +641,35 @@ glabel buildRandomMap__11CDungeonMapFii
 /* 0CC0B0 001CBFB0 08004000 */  jr          $2
 /* 0CC0B4 001CBFB4 00000000 */   nop
 jlabel .L001CBFB8
-.L001CBFB8$b:
 /* 0CC0B8 001CBFB8 C3000224 */  addiu       $2, $0, 0xC3
 /* 0CC0BC 001CBFBC 6404A2AE */  sw          $2, 0x464($21)
-/* 0CC0C0 001CBFC0 13000010 */  b           .L001CC010$b
+/* 0CC0C0 001CBFC0 13000010 */  b           .L.L001CC010$b
 /* 0CC0C4 001CBFC4 00000000 */   nop
 jlabel .L001CBFC8
-.L001CBFC8$b:
 /* 0CC0C8 001CBFC8 C9000224 */  addiu       $2, $0, 0xC9
 /* 0CC0CC 001CBFCC 6404A2AE */  sw          $2, 0x464($21)
-/* 0CC0D0 001CBFD0 0F000010 */  b           .L001CC010$b
+/* 0CC0D0 001CBFD0 0F000010 */  b           .L.L001CC010$b
 /* 0CC0D4 001CBFD4 00000000 */   nop
 jlabel .L001CBFD8
-.L001CBFD8$b:
 /* 0CC0D8 001CBFD8 CA000224 */  addiu       $2, $0, 0xCA
 /* 0CC0DC 001CBFDC 6404A2AE */  sw          $2, 0x464($21)
-/* 0CC0E0 001CBFE0 0B000010 */  b           .L001CC010$b
+/* 0CC0E0 001CBFE0 0B000010 */  b           .L.L001CC010$b
 /* 0CC0E4 001CBFE4 00000000 */   nop
 jlabel .L001CBFE8
-.L001CBFE8$b:
 /* 0CC0E8 001CBFE8 CB000224 */  addiu       $2, $0, 0xCB
 /* 0CC0EC 001CBFEC 6404A2AE */  sw          $2, 0x464($21)
-/* 0CC0F0 001CBFF0 07000010 */  b           .L001CC010$b
+/* 0CC0F0 001CBFF0 07000010 */  b           .L.L001CC010$b
 /* 0CC0F4 001CBFF4 00000000 */   nop
 jlabel .L001CBFF8
-.L001CBFF8$b:
 /* 0CC0F8 001CBFF8 CC000224 */  addiu       $2, $0, 0xCC
 /* 0CC0FC 001CBFFC 6404A2AE */  sw          $2, 0x464($21)
-/* 0CC100 001CC000 03000010 */  b           .L001CC010$b
+/* 0CC100 001CC000 03000010 */  b           .L.L001CC010$b
 /* 0CC104 001CC004 00000000 */   nop
 jlabel .L001CC008
-.L001CC008$b:
 /* 0CC108 001CC008 CE000224 */  addiu       $2, $0, 0xCE
 /* 0CC10C 001CC00C 6404A2AE */  sw          $2, 0x464($21)
 jlabel .L001CC010
-.L001CC010$b:
+.L.L001CC010$b:
 /* 0CC110 001CC010 A49D838F */  lw          $3, -0x625C($28)
 /* 0CC114 001CC014 01000224 */  addiu       $2, $0, 0x1
 /* 0CC118 001CC018 21006214 */  bne         $3, $2, .L001CC0A0

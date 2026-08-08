@@ -1,0 +1,26 @@
+#include "common.h"
+
+INCLUDE_ASM("main", __default_terminate);
+INCLUDE_ASM("main", __terminate);
+INCLUDE_ASM("main", __throw_type_match);
+INCLUDE_ASM("main", __empty);
+INCLUDE_ASM("main", new_eh_context);
+INCLUDE_ASM("main", __get_eh_context);
+INCLUDE_ASM("main", __get_eh_info);
+INCLUDE_ASM("main", eh_context_initialize);
+INCLUDE_ASM("main", eh_context_static);
+INCLUDE_ASM("main", __get_dynamic_handler_chain);
+INCLUDE_ASM("main", __sjthrow);
+INCLUDE_ASM("main", __sjpopnthrow);
+INCLUDE_ASM("main", __eh_rtime_match);
+INCLUDE_ASM("main", __get_eh_table_version);
+INCLUDE_ASM("main", __get_eh_table_language);
+INCLUDE_ASM("main", old_find_exception_handler);
+INCLUDE_ASM("main", find_exception_handler);
+INCLUDE_ASM("main", get_reg_addr);
+INCLUDE_ASM("main", copy_reg);
+INCLUDE_ASM("main", next_stack_level);
+INCLUDE_ASM("main", __unwinding_cleanup);
+INCLUDE_ASM("main", throw_helper);
+INCLUDE_ASM("main", __throw);
+INCLUDE_ASM("main", __rethrow);

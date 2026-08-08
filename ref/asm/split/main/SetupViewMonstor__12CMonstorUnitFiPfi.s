@@ -89,7 +89,7 @@ glabel SetupViewMonstor__12CMonstorUnitFiPfi
 /* 0E04E0 001E03E0 21B8D202 */  addu        $23, $22, $18
 /* 0E04E4 001E03E4 28260072 */  paddub      $4, $16, $0
 /* 0E04E8 001E03E8 A000E526 */  addiu       $5, $23, 0xA0
-/* 0E04EC 001E03EC 780C050C */  jal         func_001431E0
+/* 0E04EC 001E03EC 780C050C */  jal         __as__7CObjectFRC7CObject
 /* 0E04F0 001E03F0 00000000 */   nop
 /* 0E04F4 001E03F4 281EE072 */  paddub      $3, $23, $0
 /* 0E04F8 001E03F8 500160C4 */  lwc1        $f0, 0x150($3)
@@ -474,7 +474,7 @@ glabel SetupViewMonstor__12CMonstorUnitFiPfi
 /* 0E0AA0 001E09A0 2110F302 */  addu        $2, $23, $19
 /* 0E0AA4 001E09A4 28262072 */  paddub      $4, $17, $0
 /* 0E0AA8 001E09A8 A0004524 */  addiu       $5, $2, 0xA0
-/* 0E0AAC 001E09AC 780C050C */  jal         func_001431E0
+/* 0E0AAC 001E09AC 780C050C */  jal         __as__7CObjectFRC7CObject
 /* 0E0AB0 001E09B0 00000000 */   nop
 /* 0E0AB4 001E09B4 21185602 */  addu        $3, $18, $22
 /* 0E0AB8 001E09B8 B0110224 */  addiu       $2, $0, 0x11B0

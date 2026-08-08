@@ -1,0 +1,19 @@
+#include "common.h"
+
+INCLUDE_ASM("main", _Balloc);
+INCLUDE_ASM("main", _Bfree);
+INCLUDE_ASM("main", _multadd);
+INCLUDE_ASM("main", _s2b);
+INCLUDE_ASM("main", _hi0bits);
+INCLUDE_ASM("main", _lo0bits);
+INCLUDE_ASM("main", _i2b);
+INCLUDE_ASM("main", _multiply);
+INCLUDE_ASM("main", _pow5mult);
+INCLUDE_ASM("main", _lshift);
+INCLUDE_ASM("main", __mcmp);
+INCLUDE_ASM("main", __mdiff);
+INCLUDE_ASM("main", _ulp);
+INCLUDE_ASM("main", _b2d);
+INCLUDE_ASM("main", _d2b);
+INCLUDE_ASM("main", _ratio);
+INCLUDE_ASM("main", _mprec_log10);

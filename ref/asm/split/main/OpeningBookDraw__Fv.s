@@ -47,7 +47,6 @@ glabel OpeningBookDraw__Fv
 /* 13D71C 0023D61C 08006000 */  jr          $3
 /* 13D720 0023D620 00000000 */   nop
 jlabel .L0023D624
-.L0023D624$b:
 /* 13D724 0023D624 DA01013C */  lui         $1, %hi(CommonMenuMes2 + 0x174C)
 /* 13D728 0023D628 9C3A248C */  lw          $4, %lo(CommonMenuMes2 + 0x174C)($1)
 /* 13D72C 0023D62C 38B4080C */  jal         MenuTextureReload__Fi
@@ -79,7 +78,6 @@ jlabel .L0023D624
 /* 13D794 0023D694 03000010 */  b           .L0023D6A4
 /* 13D798 0023D698 00000000 */   nop
 jlabel .L0023D69C
-.L0023D69C$b:
 /* 13D79C 0023D69C E8E6080C */  jal         NameEnterDraw__Fv
 /* 13D7A0 0023D6A0 00000000 */   nop
 .L0023D6A4:

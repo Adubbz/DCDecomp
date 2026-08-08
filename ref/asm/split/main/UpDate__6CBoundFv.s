@@ -4,7 +4,7 @@
 .set noreorder /* Don't insert nops after branches. */
 
 .section .text
-glabel UpDate__6CBoundFv
+jlabel UpDate__6CBoundFv
 /* 03DD70 0013DC70 E0FFBD27 */  addiu       $29, $29, -0x20
 /* 03DD74 0013DC74 1000BF7F */  sq          $31, 0x10($29)
 /* 03DD78 0013DC78 0000B07F */  sq          $16, 0x0($29)

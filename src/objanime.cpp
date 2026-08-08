@@ -1,1 +1,23 @@
 #include "objanime.hpp"
+
+INCLUDE_ASM("main", EffectMacroStep__FPf);
+INCLUDE_ASM("main", EffectSmoke__FP12CEffectGroupPffi);
+INCLUDE_ASM("main", EffectWaterSpray__FP12CEffectGroupPfPfii);
+INCLUDE_ASM("main", EffectHamon__FP12CEffectGroupPff);
+INCLUDE_ASM("main", DepthOfField__FPfiii);
+INCLUDE_ASM("main", Initialize__13OBJ_ANIME_SEQFv);
+INCLUDE_ASM("main", __ct__13OBJ_ANIME_SEQFv);
+INCLUDE_ASM("main", ObjAnimeAllStop__Fv);
+INCLUDE_ASM("main", ObjAnimeAllStart__Fv);
+INCLUDE_ASM("main", InitObjAnime__FP6CFrameP13OBJ_ANIME_SEQ);
+INCLUDE_ASM("main", InitObjAnime__FPP6CFrameP13OBJ_ANIME_SEQ);
+INCLUDE_ASM("main", InitObjAnime__FPP6CFrameiP13OBJ_ANIME_SEQ);
+INCLUDE_ASM("main", InitObjAnime__FPP6CFrameiP16EPARTS_FUNC_DATAP13OBJ_ANIME_SEQ);
+INCLUDE_ASM("main", end_check__Ffff);
+INCLUDE_ASM("main", ObjAnimePlay__FP13OBJ_ANIME_SEQ);
+INCLUDE_ASM("main", InitEditEffect__FP6CFrameP16EDIT_EFFECT_INFO);
+INCLUDE_ASM("main", InitEditEffect__FP6CFrameP16EPARTS_FUNC_DATAP16EDIT_EFFECT_INFO);
+INCLUDE_ASM("main", CheckEditEffect__FP16EDIT_EFFECT_INFOf);
+INCLUDE_ASM("main", EditEffectStep__Fv);
+INCLUDE_ASM("main", EditEffectStep2__Fv);
+INCLUDE_ASM("main", DrawEditEffect__FP16EDIT_EFFECT_INFOP7CCameraP12CEffectGroup);

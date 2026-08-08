@@ -1,1 +1,20 @@
 #include "title/op_a.hpp"
+
+INCLUDE_ASM("title", OpA_InitProcess__Fv);
+INCLUDE_ASM("title", LoadTexture__Fv__3);
+INCLUDE_ASM("title", LoadData__Fv__2);
+INCLUDE_ASM("title", SetDanceMotion__Fv);
+INCLUDE_ASM("title", InitDancerPos__Fv);
+INCLUDE_ASM("title", OpA_DrawProcess__Fv);
+INCLUDE_ASM("title", DrawCloud__Fv);
+INCLUDE_ASM("title", SmokeProcess__Fv);
+INCLUDE_ASM("title", OpA_MotionProcess__Fv);
+INCLUDE_ASM("title", MoveDancers__Fv);
+INCLUDE_ASM("title", ReaderShadow__Fv);
+INCLUDE_ASM("title", DancerShadow__Fv);
+INCLUDE_ASM("title", ShogunShadow__Fv);
+INCLUDE_ASM("title", ShisaiShadow__Fv);
+INCLUDE_ASM("title", DrawShadow__Ffff);
+INCLUDE_ASM("title", OpA_SoundProcess__Fv);
+INCLUDE_ASM("title", setTexScroll__Fv);
+INCLUDE_ASM("title", setCloudTexScroll__Fv);

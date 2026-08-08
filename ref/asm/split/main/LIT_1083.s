@@ -1,0 +1,16 @@
+.include "macro.inc"
+
+.set noat /* Allow manual use of $at. */
+.set noreorder /* Don't insert nops after branches. */
+
+.section .rodata
+.align 4
+glabel LIT_1083
+/* 199750 00299650 2366756B */ .word 0x6B756623
+/* 199754 00299654 69323536 */ .word 0x36353269
+/* 199758 00299658 23313238 */ .word 0x38323123
+/* 19975C 0029965C 23313238 */ .word 0x38323123
+/* 199760 00299660 23310000 */ .word 0x00003123
+/* 199764 00299664 00000000 */ .word 0x00000000
+/* 199768 00299668 00000000 */ .word 0x00000000
+/* 19976C 0029966C 00000000 */ .word 0x00000000

@@ -1,1 +1,27 @@
 #include "title/title.hpp"
+
+INCLUDE_ASM("title", DataLoad__Fv);
+INCLUDE_ASM("title", InitProcA__Fv);
+INCLUDE_ASM("title", DrawProcA__Fv);
+INCLUDE_ASM("title", InitProcB__Fv);
+INCLUDE_ASM("title", DrawProcB__Fv);
+INCLUDE_ASM("title", AtraLight__Fv);
+INCLUDE_ASM("title", InitProcC__Fv);
+INCLUDE_ASM("title", DrawProcC__Fv);
+INCLUDE_ASM("title", InitProcD__Fv);
+INCLUDE_ASM("title", DrawProcD__Fv);
+INCLUDE_ASM("title", InitProcE__Fv);
+INCLUDE_ASM("title", DrawProcE__Fv);
+INCLUDE_ASM("title", InitProcF__Fv);
+INCLUDE_ASM("title", DrawProcF__Fv);
+INCLUDE_ASM("title", InitProcG__Fv);
+INCLUDE_ASM("title", DrawProcG__Fv);
+INCLUDE_ASM("title", InitProcH__Fv);
+INCLUDE_ASM("title", DrawProcH__Fv);
+INCLUDE_ASM("title", InitProcI__Fv);
+INCLUDE_ASM("title", DrawProcI__Fv);
+INCLUDE_ASM("title", InitProcTitle__Fv);
+INCLUDE_ASM("title", DrawProcTitle__Fv);
+INCLUDE_ASM("title", TitleInit__Fi);
+INCLUDE_ASM("title", TitleLoop__Fv);
+INCLUDE_ASM("title", TitleDraw__Fv);

@@ -4,7 +4,7 @@
 .set noreorder /* Don't insert nops after branches. */
 
 .section .text
-glabel GetLWMatrix__6CFrameFPA4_f
+jlabel GetLWMatrix__6CFrameFPA4_f
 /* 0282B0 001281B0 40FFBD27 */  addiu       $29, $29, -0xC0
 /* 0282B4 001281B4 2000BF7F */  sq          $31, 0x20($29)
 /* 0282B8 001281B8 1000B17F */  sq          $17, 0x10($29)

@@ -4,7 +4,7 @@
 .set noreorder /* Don't insert nops after branches. */
 
 .section .text
-glabel CheckRiverChain__9CEditAreaFiiii
+jlabel CheckRiverChain__9CEditAreaFiiii
 /* 06FE00 0016FD00 A0FFBD27 */  addiu       $29, $29, -0x60
 /* 06FE04 0016FD04 5000BF7F */  sq          $31, 0x50($29)
 /* 06FE08 0016FD08 4000B47F */  sq          $20, 0x40($29)

@@ -1,0 +1,31 @@
+.include "macro.inc"
+
+.set noat /* Allow manual use of $at. */
+.set noreorder /* Don't insert nops after branches. */
+
+.section .text
+glabel __ct__12CSHOT_EFFECTFv
+/* 043780 00143680 E0FFBD27 */  addiu       $29, $29, -0x20
+/* 043784 00143684 1000BF7F */  sq          $31, 0x10($29)
+/* 043788 00143688 0000B07F */  sq          $16, 0x0($29)
+/* 04378C 0014368C 28868070 */  paddub      $16, $4, $0
+/* 043790 00143690 10000426 */  addiu       $4, $16, 0x10
+/* 043794 00143694 4C0D050C */  jal         __ct__10CCharacterFv
+/* 043798 00143698 00000000 */   nop
+/* 04379C 0014369C C0110426 */  addiu       $4, $16, 0x11C0
+/* 0437A0 001436A0 1400023C */  lui         $2, %hi(__ct__10CCharacterFv)
+/* 0437A4 001436A4 30354524 */  addiu       $5, $2, %lo(__ct__10CCharacterFv)
+/* 0437A8 001436A8 28360070 */  paddub      $6, $0, $0
+/* 0437AC 001436AC B0110724 */  addiu       $7, $0, 0x11B0
+/* 0437B0 001436B0 08000824 */  addiu       $8, $0, 0x8
+/* 0437B4 001436B4 B488040C */  jal         __construct_array
+/* 0437B8 001436B8 00000000 */   nop
+/* 0437BC 001436BC 28160072 */  paddub      $2, $16, $0
+/* 0437C0 001436C0 1000BF7B */  lq          $31, 0x10($29)
+/* 0437C4 001436C4 0000B07B */  lq          $16, 0x0($29)
+/* 0437C8 001436C8 2000BD27 */  addiu       $29, $29, 0x20
+/* 0437CC 001436CC 0800E003 */  jr          $31
+/* 0437D0 001436D0 00000000 */   nop
+/* 0437D4 001436D4 00000000 */  nop
+/* 0437D8 001436D8 00000000 */  nop
+/* 0437DC 001436DC 00000000 */  nop

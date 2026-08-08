@@ -22,7 +22,6 @@ glabel SetCharaDoor__11CDungeonMapFi
 /* 0CB368 001CB268 08004000 */  jr          $2
 /* 0CB36C 001CB26C 00000000 */   nop
 jlabel .L001CB270
-.L001CB270$b:
 /* 0CB370 001CB270 789C828F */  lw          $2, -0x6388($28)
 /* 0CB374 001CB274 05004280 */  lb          $2, 0x5($2)
 /* 0CB378 001CB278 02004228 */  slti        $2, $2, 0x2
@@ -70,7 +69,6 @@ jlabel .L001CB270
 /* 0CB420 001CB320 CA000010 */  b           .L001CB64C
 /* 0CB424 001CB324 00000000 */   nop
 jlabel .L001CB328
-.L001CB328$b:
 /* 0CB428 001CB328 3000A527 */  addiu       $5, $29, 0x30
 /* 0CB42C 001CB32C 40000624 */  addiu       $6, $0, 0x40
 /* 0CB430 001CB330 09000724 */  addiu       $7, $0, 0x9
@@ -113,7 +111,6 @@ jlabel .L001CB328
 /* 0CB4C4 001CB3C4 A1000010 */  b           .L001CB64C
 /* 0CB4C8 001CB3C8 00000000 */   nop
 jlabel .L001CB3CC
-.L001CB3CC$b:
 /* 0CB4CC 001CB3CC 3000A527 */  addiu       $5, $29, 0x30
 /* 0CB4D0 001CB3D0 40000624 */  addiu       $6, $0, 0x40
 /* 0CB4D4 001CB3D4 09000724 */  addiu       $7, $0, 0x9
@@ -156,7 +153,6 @@ jlabel .L001CB3CC
 /* 0CB568 001CB468 78000010 */  b           .L001CB64C
 /* 0CB56C 001CB46C 00000000 */   nop
 jlabel .L001CB470
-.L001CB470$b:
 /* 0CB570 001CB470 3000A527 */  addiu       $5, $29, 0x30
 /* 0CB574 001CB474 40000624 */  addiu       $6, $0, 0x40
 /* 0CB578 001CB478 09000724 */  addiu       $7, $0, 0x9
@@ -199,7 +195,6 @@ jlabel .L001CB470
 /* 0CB60C 001CB50C 4F000010 */  b           .L001CB64C
 /* 0CB610 001CB510 00000000 */   nop
 jlabel .L001CB514
-.L001CB514$b:
 /* 0CB614 001CB514 3000A527 */  addiu       $5, $29, 0x30
 /* 0CB618 001CB518 40000624 */  addiu       $6, $0, 0x40
 /* 0CB61C 001CB51C 283E0070 */  paddub      $7, $0, $0
@@ -241,7 +236,6 @@ jlabel .L001CB514
 /* 0CB6AC 001CB5AC 27000010 */  b           .L001CB64C
 /* 0CB6B0 001CB5B0 00000000 */   nop
 jlabel .L001CB5B4
-.L001CB5B4$b:
 /* 0CB6B4 001CB5B4 3000A527 */  addiu       $5, $29, 0x30
 /* 0CB6B8 001CB5B8 40000624 */  addiu       $6, $0, 0x40
 /* 0CB6BC 001CB5BC 283E0070 */  paddub      $7, $0, $0

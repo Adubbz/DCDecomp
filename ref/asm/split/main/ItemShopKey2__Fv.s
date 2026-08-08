@@ -23,7 +23,7 @@ glabel ItemShopKey2__Fv
 /* 0EEEAC 001EEDAC 00000000 */   nop
 /* 0EEEB0 001EEDB0 8CFB040C */  jal         ReadBGSync__Fv
 /* 0EEEB4 001EEDB4 00000000 */   nop
-/* 0EEEB8 001EEDB8 83064014 */  bnez        $2, .L001F07C8$b
+/* 0EEEB8 001EEDB8 83064014 */  bnez        $2, .L.L001F07C8$b
 /* 0EEEBC 001EEDBC 00000000 */   nop
 /* 0EEEC0 001EEDC0 349F070C */  jal         ShopTextureLoadFix__Fv
 /* 0EEEC4 001EEDC4 00000000 */   nop
@@ -32,13 +32,13 @@ glabel ItemShopKey2__Fv
 /* 0EEED0 001EEDD0 01000424 */  addiu       $4, $0, 0x1
 /* 0EEED4 001EEDD4 E89F070C */  jal         ShopPersonReadStart__Fii
 /* 0EEED8 001EEDD8 00000000 */   nop
-/* 0EEEDC 001EEDDC 7A060010 */  b           .L001F07C8$b
+/* 0EEEDC 001EEDDC 7A060010 */  b           .L.L001F07C8$b
 /* 0EEEE0 001EEDE0 00000000 */   nop
 .L001EEDE4:
 /* 0EEEE4 001EEDE4 D901013C */  lui         $1, %hi(ShopMenu + 0x180)
 /* 0EEEE8 001EEDE8 50022484 */  lh          $4, %lo(ShopMenu + 0x180)($1)
 /* 0EEEEC 001EEDEC 1A00812C */  sltiu       $1, $4, 0x1A
-/* 0EEEF0 001EEDF0 75062010 */  beqz        $1, .L001F07C8$b
+/* 0EEEF0 001EEDF0 75062010 */  beqz        $1, .L.L001F07C8$b
 /* 0EEEF4 001EEDF4 00000000 */   nop
 /* 0EEEF8 001EEDF8 2A00023C */  lui         $2, %hi(LIT_2794)
 /* 0EEEFC 001EEDFC 70D34324 */  addiu       $3, $2, %lo(LIT_2794)
@@ -48,7 +48,6 @@ glabel ItemShopKey2__Fv
 /* 0EEF0C 001EEE0C 08004000 */  jr          $2
 /* 0EEF10 001EEE10 00000000 */   nop
 jlabel .L001EEE14
-.L001EEE14$b:
 /* 0EEF14 001EEE14 D901013C */  lui         $1, %hi(ShopMenu + 0x18E)
 /* 0EEF18 001EEE18 5E022284 */  lh          $2, %lo(ShopMenu + 0x18E)($1)
 /* 0EEF1C 001EEE1C 08004224 */  addiu       $2, $2, 0x8
@@ -66,23 +65,22 @@ jlabel .L001EEE14
 /* 0EEF48 001EEE48 D901013C */  lui         $1, %hi(ShopMenu + 0x184)
 /* 0EEF4C 001EEE4C 5402228C */  lw          $2, %lo(ShopMenu + 0x184)($1)
 /* 0EEF50 001EEE50 15004128 */  slti        $1, $2, 0x15
-/* 0EEF54 001EEE54 5C062014 */  bnez        $1, .L001F07C8$b
+/* 0EEF54 001EEE54 5C062014 */  bnez        $1, .L.L001F07C8$b
 /* 0EEF58 001EEE58 00000000 */   nop
 /* 0EEF5C 001EEE5C D901013C */  lui         $1, %hi(ShopMenu + 0x188)
 /* 0EEF60 001EEE60 58022284 */  lh          $2, %lo(ShopMenu + 0x188)($1)
-/* 0EEF64 001EEE64 58064010 */  beqz        $2, .L001F07C8$b
+/* 0EEF64 001EEE64 58064010 */  beqz        $2, .L.L001F07C8$b
 /* 0EEF68 001EEE68 00000000 */   nop
 /* 0EEF6C 001EEE6C D901013C */  lui         $1, %hi(ShopMenu + 0x18E)
 /* 0EEF70 001EEE70 5E022284 */  lh          $2, %lo(ShopMenu + 0x18E)($1)
 /* 0EEF74 001EEE74 80004228 */  slti        $2, $2, 0x80
-/* 0EEF78 001EEE78 53064014 */  bnez        $2, .L001F07C8$b
+/* 0EEF78 001EEE78 53064014 */  bnez        $2, .L.L001F07C8$b
 /* 0EEF7C 001EEE7C 00000000 */   nop
 /* 0EEF80 001EEE80 D901013C */  lui         $1, %hi(ShopMenu + 0x180)
 /* 0EEF84 001EEE84 500220A4 */  sh          $0, %lo(ShopMenu + 0x180)($1)
-/* 0EEF88 001EEE88 4F060010 */  b           .L001F07C8$b
+/* 0EEF88 001EEE88 4F060010 */  b           .L.L001F07C8$b
 /* 0EEF8C 001EEE8C 00000000 */   nop
 jlabel .L001EEE90
-.L001EEE90$b:
 /* 0EEF90 001EEE90 D901013C */  lui         $1, %hi(ShopMenu + 0x18E)
 /* 0EEF94 001EEE94 5E022284 */  lh          $2, %lo(ShopMenu + 0x18E)($1)
 /* 0EEF98 001EEE98 F8FF4224 */  addiu       $2, $2, -0x8
@@ -98,17 +96,16 @@ jlabel .L001EEE90
 /* 0EEFBC 001EEEBC D901013C */  lui         $1, %hi(ShopMenu + 0x184)
 /* 0EEFC0 001EEEC0 5402228C */  lw          $2, %lo(ShopMenu + 0x184)($1)
 /* 0EEFC4 001EEEC4 1B004128 */  slti        $1, $2, 0x1B
-/* 0EEFC8 001EEEC8 3F062014 */  bnez        $1, .L001F07C8$b
+/* 0EEFC8 001EEEC8 3F062014 */  bnez        $1, .L.L001F07C8$b
 /* 0EEFCC 001EEECC 00000000 */   nop
 /* 0EEFD0 001EEED0 D901013C */  lui         $1, %hi(ShopMenu + 0x18E)
 /* 0EEFD4 001EEED4 5E022284 */  lh          $2, %lo(ShopMenu + 0x18E)($1)
-/* 0EEFD8 001EEED8 3B06401C */  bgtz        $2, .L001F07C8$b
+/* 0EEFD8 001EEED8 3B06401C */  bgtz        $2, .L.L001F07C8$b
 /* 0EEFDC 001EEEDC 00000000 */   nop
 /* 0EEFE0 001EEEE0 01001624 */  addiu       $22, $0, 0x1
-/* 0EEFE4 001EEEE4 38060010 */  b           .L001F07C8$b
+/* 0EEFE4 001EEEE4 38060010 */  b           .L.L001F07C8$b
 /* 0EEFE8 001EEEE8 00000000 */   nop
 jlabel .L001EEEEC
-.L001EEEEC$b:
 /* 0EEFEC 001EEEEC CC01023C */  lui         $2, %hi(GamePad)
 /* 0EEFF0 001EEEF0 40C54424 */  addiu       $4, $2, %lo(GamePad)
 /* 0EEFF4 001EEEF4 50000524 */  addiu       $5, $0, 0x50
@@ -229,7 +226,7 @@ jlabel .L001EEEEC
 /* 0EF1A0 001EF0A0 9A000424 */  addiu       $4, $0, 0x9A
 /* 0EF1A4 001EF0A4 BCB3080C */  jal         ComMenuSePlay__Fi
 /* 0EF1A8 001EF0A8 00000000 */   nop
-/* 0EF1AC 001EF0AC C6050010 */  b           .L001F07C8$b
+/* 0EF1AC 001EF0AC C6050010 */  b           .L.L001F07C8$b
 /* 0EF1B0 001EF0B0 00000000 */   nop
 .L001EF0B4:
 /* 0EF1B4 001EF0B4 CC01023C */  lui         $2, %hi(GamePad)
@@ -237,17 +234,16 @@ jlabel .L001EEEEC
 /* 0EF1BC 001EF0BC 20000524 */  addiu       $5, $0, 0x20
 /* 0EF1C0 001EF0C0 1CAE040C */  jal         Down__8CGamePadFi
 /* 0EF1C4 001EF0C4 00000000 */   nop
-/* 0EF1C8 001EF0C8 BF054010 */  beqz        $2, .L001F07C8$b
+/* 0EF1C8 001EF0C8 BF054010 */  beqz        $2, .L.L001F07C8$b
 /* 0EF1CC 001EF0CC 00000000 */   nop
 /* 0EF1D0 001EF0D0 D901013C */  lui         $1, %hi(ShopMenu + 0x180)
 /* 0EF1D4 001EF0D4 500220A4 */  sh          $0, %lo(ShopMenu + 0x180)($1)
 /* 0EF1D8 001EF0D8 02000424 */  addiu       $4, $0, 0x2
 /* 0EF1DC 001EF0DC BCB3080C */  jal         ComMenuSePlay__Fi
 /* 0EF1E0 001EF0E0 00000000 */   nop
-/* 0EF1E4 001EF0E4 B8050010 */  b           .L001F07C8$b
+/* 0EF1E4 001EF0E4 B8050010 */  b           .L.L001F07C8$b
 /* 0EF1E8 001EF0E8 00000000 */   nop
 jlabel .L001EF0EC
-.L001EF0EC$b:
 /* 0EF1EC 001EF0EC DA01013C */  lui         $1, %hi(CommonMenuMes1 + 0x16BC)
 /* 0EF1F0 001EF0F0 4C22228C */  lw          $2, %lo(CommonMenuMes1 + 0x16BC)($1)
 /* 0EF1F4 001EF0F4 B4040524 */  addiu       $5, $0, 0x4B4
@@ -482,7 +478,7 @@ jlabel .L001EF0EC
 /* 0EF55C 001EF45C 9A000424 */  addiu       $4, $0, 0x9A
 /* 0EF560 001EF460 BCB3080C */  jal         ComMenuSePlay__Fi
 /* 0EF564 001EF464 00000000 */   nop
-/* 0EF568 001EF468 D7040010 */  b           .L001F07C8$b
+/* 0EF568 001EF468 D7040010 */  b           .L.L001F07C8$b
 /* 0EF56C 001EF46C 00000000 */   nop
 .L001EF470:
 /* 0EF570 001EF470 CC01023C */  lui         $2, %hi(GamePad)
@@ -490,7 +486,7 @@ jlabel .L001EF0EC
 /* 0EF578 001EF478 20000524 */  addiu       $5, $0, 0x20
 /* 0EF57C 001EF47C 1CAE040C */  jal         Down__8CGamePadFi
 /* 0EF580 001EF480 00000000 */   nop
-/* 0EF584 001EF484 D0044010 */  beqz        $2, .L001F07C8$b
+/* 0EF584 001EF484 D0044010 */  beqz        $2, .L.L001F07C8$b
 /* 0EF588 001EF488 00000000 */   nop
 /* 0EF58C 001EF48C 28260070 */  paddub      $4, $0, $0
 /* 0EF590 001EF490 282E0070 */  paddub      $5, $0, $0
@@ -499,10 +495,9 @@ jlabel .L001EF0EC
 /* 0EF59C 001EF49C 02000424 */  addiu       $4, $0, 0x2
 /* 0EF5A0 001EF4A0 BCB3080C */  jal         ComMenuSePlay__Fi
 /* 0EF5A4 001EF4A4 00000000 */   nop
-/* 0EF5A8 001EF4A8 C7040010 */  b           .L001F07C8$b
+/* 0EF5A8 001EF4A8 C7040010 */  b           .L.L001F07C8$b
 /* 0EF5AC 001EF4AC 00000000 */   nop
 jlabel .L001EF4B0
-.L001EF4B0$b:
 /* 0EF5B0 001EF4B0 01000224 */  addiu       $2, $0, 0x1
 /* 0EF5B4 001EF4B4 DA01013C */  lui         $1, %hi(CommonMenuMes3 + 0x16C4)
 /* 0EF5B8 001EF4B8 D45122AC */  sw          $2, %lo(CommonMenuMes3 + 0x16C4)($1)
@@ -522,7 +517,7 @@ jlabel .L001EF4B0
 /* 0EF5F0 001EF4F0 00000000 */   nop
 /* 0EF5F4 001EF4F4 DA01013C */  lui         $1, %hi(CommonMenuMes3 + 0x16C4)
 /* 0EF5F8 001EF4F8 D45120AC */  sw          $0, %lo(CommonMenuMes3 + 0x16C4)($1)
-/* 0EF5FC 001EF4FC B2040010 */  b           .L001F07C8$b
+/* 0EF5FC 001EF4FC B2040010 */  b           .L.L001F07C8$b
 /* 0EF600 001EF500 00000000 */   nop
 .L001EF504:
 /* 0EF604 001EF504 CC01023C */  lui         $2, %hi(GamePad)
@@ -530,7 +525,7 @@ jlabel .L001EF4B0
 /* 0EF60C 001EF50C 20000524 */  addiu       $5, $0, 0x20
 /* 0EF610 001EF510 1CAE040C */  jal         Down__8CGamePadFi
 /* 0EF614 001EF514 00000000 */   nop
-/* 0EF618 001EF518 AB044010 */  beqz        $2, .L001F07C8$b
+/* 0EF618 001EF518 AB044010 */  beqz        $2, .L.L001F07C8$b
 /* 0EF61C 001EF51C 00000000 */   nop
 /* 0EF620 001EF520 02000424 */  addiu       $4, $0, 0x2
 /* 0EF624 001EF524 BCB3080C */  jal         ComMenuSePlay__Fi
@@ -543,16 +538,15 @@ jlabel .L001EF4B0
 /* 0EF640 001EF540 00000000 */   nop
 /* 0EF644 001EF544 E4B3070C */  jal         ShopCancelGoodReturn2__Fv
 /* 0EF648 001EF548 00000000 */   nop
-/* 0EF64C 001EF54C 9E040010 */  b           .L001F07C8$b
+/* 0EF64C 001EF54C 9E040010 */  b           .L.L001F07C8$b
 /* 0EF650 001EF550 00000000 */   nop
 jlabel .L001EF554
-.L001EF554$b:
 /* 0EF654 001EF554 CC01023C */  lui         $2, %hi(GamePad)
 /* 0EF658 001EF558 40C54424 */  addiu       $4, $2, %lo(GamePad)
 /* 0EF65C 001EF55C 60000524 */  addiu       $5, $0, 0x60
 /* 0EF660 001EF560 1CAE040C */  jal         Down__8CGamePadFi
 /* 0EF664 001EF564 00000000 */   nop
-/* 0EF668 001EF568 97044010 */  beqz        $2, .L001F07C8$b
+/* 0EF668 001EF568 97044010 */  beqz        $2, .L.L001F07C8$b
 /* 0EF66C 001EF56C 00000000 */   nop
 /* 0EF670 001EF570 D901013C */  lui         $1, %hi(ShopMenu + 0x180)
 /* 0EF674 001EF574 500220A4 */  sh          $0, %lo(ShopMenu + 0x180)($1)
@@ -567,7 +561,7 @@ jlabel .L001EF554
 /* 0EF698 001EF598 02000424 */  addiu       $4, $0, 0x2
 /* 0EF69C 001EF59C BCB3080C */  jal         ComMenuSePlay__Fi
 /* 0EF6A0 001EF5A0 00000000 */   nop
-/* 0EF6A4 001EF5A4 88040010 */  b           .L001F07C8$b
+/* 0EF6A4 001EF5A4 88040010 */  b           .L.L001F07C8$b
 /* 0EF6A8 001EF5A8 00000000 */   nop
 .L001EF5AC:
 /* 0EF6AC 001EF5AC 8494878F */  lw          $7, -0x6B7C($28)
@@ -648,25 +642,23 @@ jlabel .L001EF554
 /* 0EF7C4 001EF6C4 02000424 */  addiu       $4, $0, 0x2
 /* 0EF7C8 001EF6C8 BCB3080C */  jal         ComMenuSePlay__Fi
 /* 0EF7CC 001EF6CC 00000000 */   nop
-/* 0EF7D0 001EF6D0 3D040010 */  b           .L001F07C8$b
+/* 0EF7D0 001EF6D0 3D040010 */  b           .L.L001F07C8$b
 /* 0EF7D4 001EF6D4 00000000 */   nop
 jlabel .L001EF6D8
-.L001EF6D8$b:
 /* 0EF7D8 001EF6D8 CC01023C */  lui         $2, %hi(GamePad)
 /* 0EF7DC 001EF6DC 40C54424 */  addiu       $4, $2, %lo(GamePad)
 /* 0EF7E0 001EF6E0 60F00534 */  ori         $5, $0, 0xF060
 /* 0EF7E4 001EF6E4 1CAE040C */  jal         Down__8CGamePadFi
 /* 0EF7E8 001EF6E8 00000000 */   nop
-/* 0EF7EC 001EF6EC 36044010 */  beqz        $2, .L001F07C8$b
+/* 0EF7EC 001EF6EC 36044010 */  beqz        $2, .L.L001F07C8$b
 /* 0EF7F0 001EF6F0 00000000 */   nop
 /* 0EF7F4 001EF6F4 D901013C */  lui         $1, %hi(ShopMenu + 0x180)
 /* 0EF7F8 001EF6F8 500220A4 */  sh          $0, %lo(ShopMenu + 0x180)($1)
 /* 0EF7FC 001EF6FC DA01013C */  lui         $1, %hi(CommonMenuMes3 + 0x16C4)
 /* 0EF800 001EF700 D45120AC */  sw          $0, %lo(CommonMenuMes3 + 0x16C4)($1)
-/* 0EF804 001EF704 30040010 */  b           .L001F07C8$b
+/* 0EF804 001EF704 30040010 */  b           .L.L001F07C8$b
 /* 0EF808 001EF708 00000000 */   nop
 jlabel .L001EF70C
-.L001EF70C$b:
 /* 0EF80C 001EF70C 01000224 */  addiu       $2, $0, 0x1
 /* 0EF810 001EF710 DA01013C */  lui         $1, %hi(CommonMenuMes3 + 0x16C4)
 /* 0EF814 001EF714 D45122AC */  sw          $2, %lo(CommonMenuMes3 + 0x16C4)($1)
@@ -675,7 +667,7 @@ jlabel .L001EF70C
 /* 0EF820 001EF720 60000524 */  addiu       $5, $0, 0x60
 /* 0EF824 001EF724 1CAE040C */  jal         Down__8CGamePadFi
 /* 0EF828 001EF728 00000000 */   nop
-/* 0EF82C 001EF72C 26044010 */  beqz        $2, .L001F07C8$b
+/* 0EF82C 001EF72C 26044010 */  beqz        $2, .L.L001F07C8$b
 /* 0EF830 001EF730 00000000 */   nop
 /* 0EF834 001EF734 02000424 */  addiu       $4, $0, 0x2
 /* 0EF838 001EF738 BCB3080C */  jal         ComMenuSePlay__Fi
@@ -686,10 +678,9 @@ jlabel .L001EF70C
 /* 0EF84C 001EF74C 00000000 */   nop
 /* 0EF850 001EF750 DA01013C */  lui         $1, %hi(CommonMenuMes3 + 0x16C4)
 /* 0EF854 001EF754 D45120AC */  sw          $0, %lo(CommonMenuMes3 + 0x16C4)($1)
-/* 0EF858 001EF758 1B040010 */  b           .L001F07C8$b
+/* 0EF858 001EF758 1B040010 */  b           .L.L001F07C8$b
 /* 0EF85C 001EF75C 00000000 */   nop
 jlabel .L001EF760
-.L001EF760$b:
 /* 0EF860 001EF760 01000224 */  addiu       $2, $0, 0x1
 /* 0EF864 001EF764 DA01013C */  lui         $1, %hi(CommonMenuMes3 + 0x16C4)
 /* 0EF868 001EF768 D45122AC */  sw          $2, %lo(CommonMenuMes3 + 0x16C4)($1)
@@ -698,7 +689,7 @@ jlabel .L001EF760
 /* 0EF874 001EF774 60000524 */  addiu       $5, $0, 0x60
 /* 0EF878 001EF778 1CAE040C */  jal         Down__8CGamePadFi
 /* 0EF87C 001EF77C 00000000 */   nop
-/* 0EF880 001EF780 11044010 */  beqz        $2, .L001F07C8$b
+/* 0EF880 001EF780 11044010 */  beqz        $2, .L.L001F07C8$b
 /* 0EF884 001EF784 00000000 */   nop
 /* 0EF888 001EF788 02000424 */  addiu       $4, $0, 0x2
 /* 0EF88C 001EF78C D901013C */  lui         $1, %hi(ShopMenu + 0x180)
@@ -709,10 +700,9 @@ jlabel .L001EF760
 /* 0EF8A0 001EF7A0 D45120AC */  sw          $0, %lo(CommonMenuMes3 + 0x16C4)($1)
 /* 0EF8A4 001EF7A4 BCB3080C */  jal         ComMenuSePlay__Fi
 /* 0EF8A8 001EF7A8 00000000 */   nop
-/* 0EF8AC 001EF7AC 06040010 */  b           .L001F07C8$b
+/* 0EF8AC 001EF7AC 06040010 */  b           .L.L001F07C8$b
 /* 0EF8B0 001EF7B0 00000000 */   nop
 jlabel .L001EF7B4
-.L001EF7B4$b:
 /* 0EF8B4 001EF7B4 01000224 */  addiu       $2, $0, 0x1
 /* 0EF8B8 001EF7B8 DA01013C */  lui         $1, %hi(CommonMenuMes3 + 0x16C4)
 /* 0EF8BC 001EF7BC D45122AC */  sw          $2, %lo(CommonMenuMes3 + 0x16C4)($1)
@@ -732,7 +722,7 @@ jlabel .L001EF7B4
 /* 0EF8F4 001EF7F4 01000424 */  addiu       $4, $0, 0x1
 /* 0EF8F8 001EF7F8 BCB3080C */  jal         ComMenuSePlay__Fi
 /* 0EF8FC 001EF7FC 00000000 */   nop
-/* 0EF900 001EF800 F1030010 */  b           .L001F07C8$b
+/* 0EF900 001EF800 F1030010 */  b           .L.L001F07C8$b
 /* 0EF904 001EF804 00000000 */   nop
 .L001EF808:
 /* 0EF908 001EF808 CC01023C */  lui         $2, %hi(GamePad)
@@ -740,7 +730,7 @@ jlabel .L001EF7B4
 /* 0EF910 001EF810 20000524 */  addiu       $5, $0, 0x20
 /* 0EF914 001EF814 1CAE040C */  jal         Down__8CGamePadFi
 /* 0EF918 001EF818 00000000 */   nop
-/* 0EF91C 001EF81C EA034010 */  beqz        $2, .L001F07C8$b
+/* 0EF91C 001EF81C EA034010 */  beqz        $2, .L.L001F07C8$b
 /* 0EF920 001EF820 00000000 */   nop
 /* 0EF924 001EF824 19000424 */  addiu       $4, $0, 0x19
 /* 0EF928 001EF828 01000524 */  addiu       $5, $0, 0x1
@@ -751,10 +741,9 @@ jlabel .L001EF7B4
 /* 0EF93C 001EF83C 2826A070 */  paddub      $4, $5, $0
 /* 0EF940 001EF840 BCB3080C */  jal         ComMenuSePlay__Fi
 /* 0EF944 001EF844 00000000 */   nop
-/* 0EF948 001EF848 DF030010 */  b           .L001F07C8$b
+/* 0EF948 001EF848 DF030010 */  b           .L.L001F07C8$b
 /* 0EF94C 001EF84C 00000000 */   nop
 jlabel .L001EF850
-.L001EF850$b:
 /* 0EF950 001EF850 CC01023C */  lui         $2, %hi(GamePad)
 /* 0EF954 001EF854 40C54424 */  addiu       $4, $2, %lo(GamePad)
 /* 0EF958 001EF858 40000524 */  addiu       $5, $0, 0x40
@@ -771,7 +760,7 @@ jlabel .L001EF850
 /* 0EF984 001EF884 9A000424 */  addiu       $4, $0, 0x9A
 /* 0EF988 001EF888 BCB3080C */  jal         ComMenuSePlay__Fi
 /* 0EF98C 001EF88C 00000000 */   nop
-/* 0EF990 001EF890 CD030010 */  b           .L001F07C8$b
+/* 0EF990 001EF890 CD030010 */  b           .L.L001F07C8$b
 /* 0EF994 001EF894 00000000 */   nop
 .L001EF898:
 /* 0EF998 001EF898 CC01023C */  lui         $2, %hi(GamePad)
@@ -779,7 +768,7 @@ jlabel .L001EF850
 /* 0EF9A0 001EF8A0 20000524 */  addiu       $5, $0, 0x20
 /* 0EF9A4 001EF8A4 1CAE040C */  jal         Down__8CGamePadFi
 /* 0EF9A8 001EF8A8 00000000 */   nop
-/* 0EF9AC 001EF8AC C6034010 */  beqz        $2, .L001F07C8$b
+/* 0EF9AC 001EF8AC C6034010 */  beqz        $2, .L.L001F07C8$b
 /* 0EF9B0 001EF8B0 00000000 */   nop
 /* 0EF9B4 001EF8B4 28260070 */  paddub      $4, $0, $0
 /* 0EF9B8 001EF8B8 282E0070 */  paddub      $5, $0, $0
@@ -788,10 +777,9 @@ jlabel .L001EF850
 /* 0EF9C4 001EF8C4 02000424 */  addiu       $4, $0, 0x2
 /* 0EF9C8 001EF8C8 BCB3080C */  jal         ComMenuSePlay__Fi
 /* 0EF9CC 001EF8CC 00000000 */   nop
-/* 0EF9D0 001EF8D0 BD030010 */  b           .L001F07C8$b
+/* 0EF9D0 001EF8D0 BD030010 */  b           .L.L001F07C8$b
 /* 0EF9D4 001EF8D4 00000000 */   nop
 jlabel .L001EF8D8
-.L001EF8D8$b:
 /* 0EF9D8 001EF8D8 D901013C */  lui         $1, %hi(ShopMenu + 0x194)
 /* 0EF9DC 001EF8DC 64022284 */  lh          $2, %lo(ShopMenu + 0x194)($1)
 /* 0EF9E0 001EF8E0 08004014 */  bnez        $2, .L001EF904
@@ -1816,7 +1804,7 @@ jlabel .L001EF8D8
 .L001F0758:
 /* 0F0858 001F0758 DA01013C */  lui         $1, %hi(CommonMenuMes2 + 0x1728)
 /* 0F085C 001F075C 783A228C */  lw          $2, %lo(CommonMenuMes2 + 0x1728)($1)
-/* 0F0860 001F0760 19005110 */  beq         $2, $17, .L001F07C8$b
+/* 0F0860 001F0760 19005110 */  beq         $2, $17, .L.L001F07C8$b
 /* 0F0864 001F0764 00000000 */   nop
 .L001F0768:
 /* 0F0868 001F0768 01000224 */  addiu       $2, $0, 0x1
@@ -1846,7 +1834,7 @@ jlabel .L001EF8D8
 /* 0F08C0 001F07C0 5441050C */  jal         MakeMesWin__6ClsMesFi
 /* 0F08C4 001F07C4 00000000 */   nop
 jlabel .L001F07C8
-.L001F07C8$b:
+.L.L001F07C8$b:
 /* 0F08C8 001F07C8 2816C072 */  paddub      $2, $22, $0
 .L001F07CC:
 /* 0F08CC 001F07CC 9000BF7B */  lq          $31, 0x90($29)

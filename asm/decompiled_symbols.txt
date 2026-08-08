@@ -1,0 +1,86 @@
+# Data symbols that decompiled C++ provides, and the source that provides them.
+#
+# scripts/build/migrate_section.py carves each of these out of the reference
+# dump that holds it, so its bytes are not linked twice, and the generated
+# linker script places the object's own version exactly into the hole it left
+# ("island"). Everything else in that dump keeps its retail address.
+#
+# Which dump a symbol belongs to is not written here: its address says, and
+# ref/asm/objects/*.index knows it.
+#
+# Only data needs this. A function is supplied by an INCLUDE_ASM marker in its
+# translation unit and a constant by INCLUDE_RODATA, both of which put retail's
+# bytes inside the object -- so there is nothing to carve and nothing to place.
+# tools/mwccgap has no equivalent for .data or .bss, which is why these remain.
+#
+# Format, one entry per line:
+#
+#   <symbol>        the symbol's name in the reference dumps -- the raw name,
+#                   including any suffix the disassembler added to tell two
+#                   same-named symbols apart (VSyncField__2, not VSyncField)
+#   <source>        the source that provides it, relative to src/
+#   [:<section>]    the object's ELF section, when it differs from the one the
+#                   dump holds -- main.cpp's .init and .ctor fill holes that
+#                   live in the main.rdata dump
+#
+# See re/ai/build_pipeline.md for how the carving and placement work.
+
+sub_map$439          savedata.cpp
+save_data            main.cpp
+SaveData             main.cpp
+MapNo                main.cpp
+OldMapNo             main.cpp
+LocalMapNo           main.cpp
+StartEventNo         main.cpp
+SystemMes            main.cpp
+CSnd                 main.cpp
+main_select_padrup   main.cpp
+PolyCount            main.cpp
+GameClearFlag        main.cpp
+main_select_menu_no  main.cpp
+main_select_param    mainselect.cpp
+old_main_mode        mainselect.cpp
+DmaCH8               mglib.cpp
+Vif1Packet           mglib.cpp
+VSyncField__2        mglib.cpp
+mgTEX1Env            mglib.cpp
+mgClearBackFlag      mglib.cpp
+pBound               main.cpp
+ParentFrame          main.cpp
+DataBuffer           main.cpp
+mode                 main.cpp
+d1                   main.cpp
+d2                   main.cpp
+d8                   main.cpp
+mc_mode              main.cpp
+depth$682            main.cpp
+init$683             main.cpp
+wt$685               main.cpp
+init$686             main.cpp
+init_flag$704        main.cpp
+init$705             main.cpp
+config_data          main.cpp
+DebugFont            main.cpp
+GamePad              gamepad.cpp
+RunScript            main.cpp
+SystemMesBuffer      main.cpp
+mainCDataAlloc2      main.cpp
+__sinit_main.cpp     main.cpp:.init
+RO_002A1018          main.cpp:.ctor
+EditPartsInfo        editpartsinfo.cpp
+RandomItem           randomitem.cpp
+UserStatus           userstatus.cpp
+NowMonstorUnit       monstorunit.cpp
+NowHitValue          hitvalue.cpp
+TextureData          texture.cpp
+WaterData            water.cpp
+mgWindowRect         mglib.cpp
+sort_top_type__3     stockitem.cpp
+asort_top_type__3    stockitem.cpp
+sort_table__3        stockitem.cpp
+asort_table__3       stockitem.cpp
+LIT_459              stockitem.cpp
+WeaponList           itemdata.cpp
+AttachList           itemdata.cpp
+ITEM_LIST            itemdata.cpp
+ComItemInfo          itemdata.cpp

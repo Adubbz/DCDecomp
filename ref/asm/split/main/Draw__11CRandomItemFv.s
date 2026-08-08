@@ -60,7 +60,7 @@ glabel Draw__11CRandomItemFv
 /* 0D6DA4 001D6CA4 9405858C */  lw          $5, 0x594($4)
 /* 0D6DA8 001D6CA8 3DFFA420 */  addi        $4, $5, -0xC3 /* handwritten instruction */
 /* 0D6DAC 001D6CAC 0C00812C */  sltiu       $1, $4, 0xC
-/* 0D6DB0 001D6CB0 14002010 */  beqz        $1, .L001D6D04$b
+/* 0D6DB0 001D6CB0 14002010 */  beqz        $1, .L.L001D6D04$b
 /* 0D6DB4 001D6CB4 00000000 */   nop
 /* 0D6DB8 001D6CB8 2A00023C */  lui         $2, %hi(LIT_1366__2)
 /* 0D6DBC 001D6CBC C0CE4324 */  addiu       $3, $2, %lo(LIT_1366__2)
@@ -70,25 +70,22 @@ glabel Draw__11CRandomItemFv
 /* 0D6DCC 001D6CCC 08004000 */  jr          $2
 /* 0D6DD0 001D6CD0 00000000 */   nop
 jlabel .L001D6CD4
-.L001D6CD4$b:
 /* 0D6DD4 001D6CD4 28360070 */  paddub      $6, $0, $0
 /* 0D6DD8 001D6CD8 283E0070 */  paddub      $7, $0, $0
 /* 0D6DDC 001D6CDC 0B000010 */  b           .L001D6D0C
 /* 0D6DE0 001D6CE0 00000000 */   nop
 jlabel .L001D6CE4
-.L001D6CE4$b:
 /* 0D6DE4 001D6CE4 40000624 */  addiu       $6, $0, 0x40
 /* 0D6DE8 001D6CE8 283EC070 */  paddub      $7, $6, $0
 /* 0D6DEC 001D6CEC 07000010 */  b           .L001D6D0C
 /* 0D6DF0 001D6CF0 00000000 */   nop
 jlabel .L001D6CF4
-.L001D6CF4$b:
 /* 0D6DF4 001D6CF4 28360070 */  paddub      $6, $0, $0
 /* 0D6DF8 001D6CF8 40000724 */  addiu       $7, $0, 0x40
 /* 0D6DFC 001D6CFC 03000010 */  b           .L001D6D0C
 /* 0D6E00 001D6D00 00000000 */   nop
 jlabel .L001D6D04
-.L001D6D04$b:
+.L.L001D6D04$b:
 /* 0D6E04 001D6D04 40000624 */  addiu       $6, $0, 0x40
 /* 0D6E08 001D6D08 C0000724 */  addiu       $7, $0, 0xC0
 .L001D6D0C:

@@ -2,6 +2,15 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name. The skeleton
+// headers are generated from the retail symbol table, which knows the type
+// names but not where they live.
+class CCharacter;
+class CCameraFollow;
+class CCPoly;
+struct BT_SHOT_EFFECT;
+struct MAP_TRAP_CIRCLE;
+
 /**
  * @mangled LoadBaseTexture__Fv
  * @address 0x1DABD80

@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include "object.hpp"
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -12,7 +14,10 @@ class CTexAnimeData;
 class CVector3_f_;
 
 
-class CCharacter {
+/**
+ * Moves and animates one character in the world.
+ */
+class CCharacter : public CObject {
 public:
     /**
      * @mangled ClearPointLight__10CCharacterFv

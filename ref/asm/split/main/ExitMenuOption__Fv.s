@@ -47,7 +47,7 @@ glabel ExitMenuOption__Fv
 /* 11E918 0021E818 04006010 */  beqz        $3, .L0021E82C
 /* 11E91C 0021E81C 00000000 */   nop
 /* 11E920 0021E820 28264070 */  paddub      $4, $2, $0
-/* 11E924 0021E824 B862050C */  jal         func_00158AE0
+/* 11E924 0021E824 B862050C */  jal         InitPos__11CMenuCursorFv
 /* 11E928 0021E828 00000000 */   nop
 .L0021E82C:
 /* 11E92C 0021E82C DB01013C */  lui         $1, %hi(OptionMenu + 0x28)

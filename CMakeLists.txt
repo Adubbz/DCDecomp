@@ -28,16 +28,6 @@ set(REF_DIR ref)
 # the binary directory expressed the same way.
 file(RELATIVE_PATH BUILD_DIR ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 
-# Functions still supplied as retail's own instructions inside an otherwise
-# compiled translation unit, and where their generated bodies land. See
-# "Retail instructions as asm bodies" below for why they exist.
-set(ASM_BODY_DIR ${BUILD_DIR}/generated/asm)
-set(ASM_BODY_FUNCS
-    AddDrink__11CUserStatusFisf
-    AddNowLife__11CUserStatusFisf
-    SetNextLife__11CUserStatusFisf
-    Step__11CUserStatusFi)
-
 # Build tools. Everything but the Metrowerks compiler and linker comes from
 # binutils-mips-ps2-decompals, on PATH, replacing ProDG and ps2toolchain-ee.
 set(MIPS_TOOL_PREFIX mips-ps2-decompals-
@@ -75,10 +65,7 @@ set(CTX_CPP ${BUILD_DIR}/ctx.cpp)
 # $at macro the dumps forbid, and eabi64 is what retail carries. -mno-pdr
 # because the .lcf has no placement for the .pdr GNU as emits alongside -g.
 set(AS_FLAGS -EL -march=r5900 -mabi=eabi -g -mno-pdr -non_shared -G0 -I include)
-# ASM_BODY_DIR is on the include path for the generated `asm` bodies; see
-# "Retail instructions as asm bodies" below.
-set(CC_MW_FLAGS -O2 -c -Cpp_exceptions off -strings readonly
-                -i include -i ${ASM_BODY_DIR} -g)
+set(CC_MW_FLAGS -O2 -c -Cpp_exceptions off -strings readonly -i include)
 set(LD_MW_FLAGS -map -nostdlib -m _start -nodead -g)
 # `-sym on,noelf` keeps the relocations resolved but drops the symbol table and
 # section headers, leaving just the loadable image the console needs.
@@ -87,7 +74,7 @@ set(BIN_FLAGS -B mips:5900 -I binary -O elf32-littlemips)
 
 # Data migration: decompiled globals are carved out of copies of the section
 # dumps and placed back into their retail holes, all derived from
-# asm/migrated_symbols.txt. See docs/RE/migrated_data_layout.md.
+# asm/decompiled_symbols.txt. See re/ai/build_pipeline.md.
 add_migrated_sections(GENERATED_S_FILES GENERATED_PLAN_FILES)
 
 set(GENERATED_O_FILES "")
@@ -100,7 +87,7 @@ endforeach()
 # whether or not the link ends up using it -- a dump superseded by decompiled
 # C++ is still what objdiff compares that C++ against. Which of them the link
 # takes, and in what order, is decided from the compiled objects themselves at
-# build time; see scripts/build/gen_layout.py.
+# build time; see scripts/build/layout.py.
 #
 # The carved sections are the exception: the migration replaces them with the
 # generated parts above, so their dumps are never assembled.
@@ -116,8 +103,13 @@ endforeach()
 # to remember to reconfigure: ninja re-evaluates the glob each build and only
 # re-runs CMake when the set of files actually changed. That matters for the
 # objdiff GUI, whose rebuild deliberately skips configuring.
-file(GLOB CPP_SOURCES CONFIGURE_DEPENDS
-     RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/${SRC_DIR}/*.cpp)
+# GLOB_RECURSE: the overlays have a directory each and the library translation
+# units are filed under src/lib/ by the library they came out of. Both
+# extensions: the game's own code is C++, and everything under src/lib/ -- the
+# SDK, newlib, libgcc -- is C.
+file(GLOB_RECURSE CPP_SOURCES CONFIGURE_DEPENDS
+     RELATIVE ${CMAKE_SOURCE_DIR}
+     ${CMAKE_SOURCE_DIR}/${SRC_DIR}/*.cpp ${CMAKE_SOURCE_DIR}/${SRC_DIR}/*.c)
 file(GLOB EXTRA_ASM_SOURCES CONFIGURE_DEPENDS
      RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/asm/*.s)
 
@@ -139,6 +131,12 @@ foreach(section IN LISTS SECTIONS)
 endforeach()
 list(REMOVE_DUPLICATES REF_OUTPUTS)
 
+# Where the per-function and per-constant dumps live. An INCLUDE_ASM or
+# INCLUDE_RODATA marker names a symbol, and tools/mwccgap turns that name
+# straight into a path under here -- the dumps are named for the whole of their
+# symbol, so no table or link farm sits in between.
+set(ASM_DIR ${REF_DIR}/asm/split)
+
 set(ALL_OBJS "")
 foreach(src IN LISTS ASM_SOURCES CPP_SOURCES EXTRA_ASM_SOURCES)
     list(APPEND ALL_OBJS ${BUILD_DIR}/${src}.o)
@@ -155,30 +153,6 @@ endforeach()
 set(MAIN_TAIL ${GENERATED_O_FILES})
 foreach(src IN LISTS EXTRA_ASM_SOURCES)
     list(APPEND MAIN_TAIL ${BUILD_DIR}/${src}.o)
-endforeach()
-
-#
-# Retail instructions as asm bodies
-#
-# TEMPORARY. MWCC emits a TU's functions as one contiguous .text, so an
-# unmatched function inside src/dngstatusdata.cpp cannot be filled from an
-# outside .s. These four keep their place with retail's own instructions as an
-# `asm` body. Retire one by making its C++ match, then delete it from here.
-foreach(fn IN LISTS ASM_BODY_FUNCS)
-    set(dump ${REF_DIR}/asm/split/main/${fn}.s)
-    # Absent until `setup` has disassembled the disc; the reconfigure that
-    # follows it is what fills these in.
-    if(EXISTS ${CMAKE_SOURCE_DIR}/${dump})
-        execute_process(
-            COMMAND ${PYTHON} ${SCRIPTS_DIR}/build/gen_asm_body.py
-                    ${dump} ${fn} ${ASM_BODY_DIR}/${fn}.inc
-            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            RESULT_VARIABLE gen_result
-            OUTPUT_QUIET)
-        if(NOT gen_result EQUAL 0)
-            message(FATAL_ERROR "gen_asm_body.py failed for ${fn}")
-        endif()
-    endif()
 endforeach()
 
 # Ninja does not create custom-command output directories on its own.
@@ -208,11 +182,11 @@ if(MIGRATION_ENABLED)
     add_custom_command(
         OUTPUT ${CMAKE_SOURCE_DIR}/${GEN_LCF}
         COMMAND ${CMAKE_COMMAND} -E env OBJDUMP=${OBJDUMP}
-                ${PYTHON_CMD} ${SCRIPTS_DIR}/build/gen_lcf.py ${OVERLAY_LCF}
+                ${PYTHON_CMD} ${SCRIPTS_DIR}/build/migrate.py --lcf ${OVERLAY_LCF}
                 ${BUILD_DIR}/generated/main ${BUILD_DIR}/${SRC_DIR} ${GEN_LCF}
         DEPENDS ${CMAKE_SOURCE_DIR}/${OVERLAY_LCF}
                 ${CMAKE_SOURCE_DIR}/${MIGRATE_MANIFEST}
-                ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/gen_lcf.py
+                ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/migrate.py
                 ${GENERATED_PLAN_FILES} ${LCF_CONTRIB_OBJS}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "Generating ${GEN_LCF}"
@@ -224,7 +198,7 @@ endif()
 #
 # Link
 #
-# Every image takes its objects through a response file that gen_layout.py
+# Every image takes its objects through a response file that layout.py
 # wrote, so link order comes from the address index and the compiled objects
 # rather than from anything checked in.
 set(ABS_OBJS "")
@@ -267,33 +241,27 @@ add_custom_target(elf DEPENDS ${CMAKE_SOURCE_DIR}/${OUTPUT} ${OVERLAY_BINS})
 # Which symbols come from the decompiled C++ and which still come from the
 # reference assembly, read from the objects themselves rather than any list.
 # VERBOSE_PROVENANCE echoes every symbol instead of the one-line summary.
-option(VERBOSE_PROVENANCE "Echo every symbol and its provider during the build" OFF)
 set(PROVENANCE ${BUILD_DIR}/symbol_provenance.txt)
-set(PROVENANCE_FLAGS "")
-if(VERBOSE_PROVENANCE)
-    set(PROVENANCE_FLAGS --verbose)
-endif()
 
 set(CPP_OBJS "")
 foreach(src IN LISTS CPP_SOURCES)
     list(APPEND CPP_OBJS ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${src}.o)
 endforeach()
 
-# The same pass writes the link order: one mwld response file per image, each
-# object at the address of its lowest-addressed contribution. That is the only
-# statement of link order in the build -- there is no list to keep in step.
+# The link order and the provenance come out of the same pass. Neither reads a
+# compiled object: the linker script says where each unit starts, so this
+# depends on it and on the sources rather than on the four hundred objects it
+# used to open.
 add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/${PROVENANCE} ${LINK_ORDER}
-    COMMAND ${CMAKE_COMMAND} -E env MIPS_TOOL_PREFIX=${MIPS_TOOL_PREFIX}
-            ${PYTHON_CMD} ${SCRIPTS_DIR}/build/gen_layout.py
-            --obj-dir ${BUILD_DIR}/${SRC_DIR} --provenance ${PROVENANCE}
-            --build-dir ${BUILD_DIR} --link-order-dir ${BUILD_DIR}
-            --main-tail ${MAIN_TAIL}
-            ${PROVENANCE_FLAGS}
-    DEPENDS ${CPP_OBJS} ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/gen_layout.py
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/layout.py
+            --link-order ${BUILD_DIR} --provenance ${PROVENANCE}
+            --build-dir ${BUILD_DIR} --main-tail ${MAIN_TAIL}
+            --carved ${CARVED_SECTIONS} --lcf ${LD_TEMPLATE}
+    DEPENDS ${CMAKE_SOURCE_DIR}/${LD_TEMPLATE} ${CPP_SOURCES}
+            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/layout.py
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    COMMENT "Resolving symbol provenance"
-    USES_TERMINAL
+    COMMENT "Resolving the layout"
     VERBATIM)
 
 add_custom_target(provenance DEPENDS ${CMAKE_SOURCE_DIR}/${PROVENANCE})
@@ -339,11 +307,11 @@ add_custom_target(ctx DEPENDS ${CMAKE_SOURCE_DIR}/${CTX} ${CMAKE_SOURCE_DIR}/${C
 # objdiff / decomp.dev
 #
 # objdiff.json pairs each retail function's reference object with whatever
-# provides it now; scripts/build/gen_objdiff.py derives it. A decompiled
+# provides it now; scripts/build/layout.py derives it. A decompiled
 # function's .s leaves the object lists, so those are assembled here for
 # objdiff alone -- they are in no object list, so nothing links them.
 execute_process(
-    COMMAND ${PYTHON} ${SCRIPTS_DIR}/build/gen_objdiff.py --list-extra-objects
+    COMMAND ${PYTHON} ${SCRIPTS_DIR}/build/layout.py --list-extra-objects
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     OUTPUT_VARIABLE objdiff_extra_raw
     RESULT_VARIABLE objdiff_rc
@@ -367,9 +335,11 @@ set(OBJDIFF_CONFIG objdiff.json)
 
 add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/${OBJDIFF_CONFIG}
-    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/gen_objdiff.py -o ${OBJDIFF_CONFIG}
-    DEPENDS ${CMAKE_SOURCE_DIR}/${PROVENANCE}
-            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/gen_objdiff.py
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/layout.py
+            --objdiff ${OBJDIFF_CONFIG} --build-dir ${BUILD_DIR}
+            --lcf ${LD_TEMPLATE}
+    DEPENDS ${CMAKE_SOURCE_DIR}/${LD_TEMPLATE} ${CPP_SOURCES}
+            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/layout.py
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Generating ${OBJDIFF_CONFIG}"
     VERBATIM)

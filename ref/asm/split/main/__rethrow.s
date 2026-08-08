@@ -49,7 +49,7 @@ glabel __rethrow
 /* 00E4A8 0010E3A8 E805C58F */  lw          $5, 0x5E8($30)
 /* 00E4AC 0010E3AC 0C00A6AC */  sw          $6, 0xC($5)
 /* 00E4B0 0010E3B0 F005C7AF */  sw          $7, 0x5F0($30)
-alabel T_0010E3B4
+jlabel T_0010E3B4
 /* 00E4B4 0010E3B4 1100083C */  lui         $8, %hi(T_0010E3B4)
 /* 00E4B8 0010E3B8 E005C58F */  lw          $5, 0x5E0($30)
 /* 00E4BC 0010E3BC D847040C */  jal         __frame_state_for
@@ -103,7 +103,7 @@ alabel T_0010E3B4
 /* 00E574 0010E474 23186700 */  subu        $3, $3, $7
 /* 00E578 0010E478 03000010 */  b           .L0010E488
 /* 00E57C 0010E47C E805C28F */   lw         $2, 0x5E8($30)
-alabel T_0010E480
+jlabel T_0010E480
 /* 00E580 0010E480 08008000 */  jr          $4
 /* 00E584 0010E484 21E8A303 */   addu       $29, $29, $3
 .L0010E488:

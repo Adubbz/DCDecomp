@@ -10,8 +10,14 @@ struct RenderInfo;
 struct sceVif1Packet;
 
 
+/**
+ * Draws a model with the VU1 microprogram.
+ */
 class CFrameVu1 {
 public:
+    u8 unk_000[0x220];
+    float pos[4]; /**< World position of the frame. */
+
     /**
      * @mangled DrawVu1__9CFrameVu1FPUiP10RenderInfo
      * @address 0x129400

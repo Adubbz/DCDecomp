@@ -1,5 +1,4 @@
 #include "texture.hpp"
-
 /* @ 0x130EF0 (0x30 bytes) -- __ct__8CTextureFv */
 CTexture::CTexture() {
     this->Initialize();
@@ -42,3 +41,34 @@ void CTextureBlock::Initialize() {
 /* Retail `TextureData` (main.bss, 0x10 bytes, immediately before `WaterData`).
  * Field layout unconfirmed, so migrated as a same-sized placeholder array. */
 char TextureData[0x10];
+
+INCLUDE_ASM("main", Initialize__15CTextureManagerFi);
+INCLUDE_ASM("main", SetBuffer__15CTextureManagerFP1i);
+INCLUDE_ASM("main", SearchTextureName__15CTextureManagerFPci);
+INCLUDE_ASM("main", GetTextureHandle__15CTextureManagerFPci);
+INCLUDE_ASM("main", GetTexture__15CTextureManagerFi);
+INCLUDE_ASM("main", GetTexture__15CTextureManagerFPci);
+INCLUDE_ASM("main", SearchTexture__15CTextureManagerFPc);
+INCLUDE_ASM("main", EnterTexture__15CTextureManagerFiPcPUciiiPUciiPUcPUcPUcUli);
+INCLUDE_ASM("main", EnterTextureEX__15CTextureManagerFiPcPUciiiPUciiPUcPUcPUcUli);
+INCLUDE_ASM("main", EnterFixTexture__15CTextureManagerFPcPUciiiPUciiPUcPUcPUcUli);
+INCLUDE_ASM("main", EnterFixTextureZ__15CTextureManagerFPUc);
+INCLUDE_ASM("main", EnterIMGFile__15CTextureManagerFPUciii);
+INCLUDE_ASM("main", LoadImage__FPUiiiiP1iiiii);
+INCLUDE_ASM("main", ReloadTexture__15CTextureManagerFP13sceVif1Packeti);
+INCLUDE_ASM("main", BeginEnterTextureBlock__15CTextureManagerFi);
+INCLUDE_ASM("main", EndEnterTextureBlock__15CTextureManagerFi);
+INCLUDE_ASM("main", DeleteTextureBlock__15CTextureManagerFi);
+INCLUDE_ASM("main", CleanUpBuffer__15CTextureManagerFv);
+INCLUDE_ASM("main", CleanUpTextureList__15CTextureManagerFv);
+INCLUDE_ASM("main", GetStr__FPcPc);
+INCLUDE_ASM("main", GetDummyInfo__FPcPcPiPiPi);
+INCLUDE_ASM("main", LoadTextureBlock__15CTextureManagerFiPUi);
+INCLUDE_ASM("main", LoadTextureBlock__15CTextureManagerFiP16LOADTEXTURE_INFOPUi);
+INCLUDE_ASM("main", LoadTextureBlock__15CTextureManagerFiP17LOADTEXTURE_INFO2);
+INCLUDE_ASM("main", LoadTextureBlockEX__15CTextureManagerFiP17LOADTEXTURE_INFO2);
+INCLUDE_ASM("main", EnterTextureFile__15CTextureManagerFP16LOADTEXTURE_INFO);
+INCLUDE_ASM("main", PageConv8to32__FiiPUcPUc);
+INCLUDE_ASM("main", BlockConv8to32__FPUcPUc);
+INCLUDE_ASM("main", Conv8to32__FiiPUcPUc);
+INCLUDE_ASM("main", print_buff_info__15CTextureManagerFv);

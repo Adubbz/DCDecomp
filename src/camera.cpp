@@ -1,1 +1,21 @@
 #include "camera.hpp"
+
+INCLUDE_ASM("main", Step__7CCameraFi);
+INCLUDE_ASM("main", Stay__7CCameraFv);
+INCLUDE_ASM("main", SetPos__7CCameraFP6CFramefff);
+INCLUDE_ASM("main", SetPos__7CCameraFPf);
+INCLUDE_ASM("main", SetNextPos__7CCameraFP6CFramefff);
+INCLUDE_ASM("main", SetRef__7CCameraFP6CFramefff);
+INCLUDE_ASM("main", SetRef__7CCameraFPf);
+INCLUDE_ASM("main", SetRef__7CCameraFfff);
+INCLUDE_ASM("main", SetNextRef__7CCameraFP6CFramefff);
+INCLUDE_ASM("main", GetDir__7CCameraFPf);
+INCLUDE_ASM("main", GetCameraMatrix__7CCameraFPA4_f);
+INCLUDE_ASM("main", SetSpeed__7CCameraFf);
+INCLUDE_ASM("main", SetRoll__7CCameraFf);
+INCLUDE_ASM("main", GetPos__7CCameraFPf);
+INCLUDE_ASM("main", GetRef__7CCameraFPf);
+INCLUDE_ASM("main", GetAngleH__7CCameraFv);
+INCLUDE_ASM("main", GetRoll__7CCameraFv);
+INCLUDE_ASM("main", __ct__7CCameraFf);
+INCLUDE_ASM("main", __dt__7CCameraFv);

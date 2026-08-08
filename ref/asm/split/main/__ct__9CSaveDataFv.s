@@ -11,7 +11,7 @@ glabel __ct__9CSaveDataFv
 /* 058E3C 00158D3C 28868070 */  paddub      $16, $4, $0
 /* 058E40 00158D40 500680A4 */  sh          $0, 0x650($4)
 /* 058E44 00158D44 50060426 */  addiu       $4, $16, 0x650
-/* 058E48 00158D48 B862050C */  jal         func_00158AE0
+/* 058E48 00158D48 B862050C */  jal         InitPos__11CMenuCursorFv
 /* 058E4C 00158D4C 00000000 */   nop
 /* 058E50 00158D50 28260072 */  paddub      $4, $16, $0
 /* 058E54 00158D54 D862050C */  jal         Initialize__9CSaveDataFv

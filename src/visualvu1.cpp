@@ -1,1 +1,24 @@
 #include "visualvu1.hpp"
+
+INCLUDE_ASM("main", SetTextureInfo__FP8CTexturePcP8TM2_head);
+INCLUDE_ASM("main", SetTextureInfo__FP8CTexturePcPUc);
+INCLUDE_ASM("main", Initialize__7CVisualFv);
+INCLUDE_ASM("main", __ct__7CVisualFv);
+INCLUDE_ASM("main", RemakeData__10CVisualVu1FPUi);
+INCLUDE_ASM("main", DrawVu1__10CVisualVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
+INCLUDE_ASM("main", SetShadowData__FPUiPA4_f);
+INCLUDE_ASM("main", SetMaterial__FPUiP12MDT_MATERIAL);
+INCLUDE_ASM("main", SetTEX0__FPUiUlUl);
+INCLUDE_ASM("main", Initialize__10CVisualVu1Fv);
+INCLUDE_ASM("main", __ct__10CVisualVu1Fv);
+INCLUDE_ASM("main", SetMDTDataAddress__13CVisualMDTVu1FPUi);
+INCLUDE_ASM("main", GetMDTDataAddress__13CVisualMDTVu1Fv);
+INCLUDE_ASM("main", Initialize__13CVisualMDTVu1Fv);
+INCLUDE_ASM("main", __ct__13CVisualMDTVu1Fv);
+INCLUDE_ASM("main", DrawVu1__10CVisualVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
+INCLUDE_ASM("main", SetVuData__FiP1PUiP1P1P1P1i);
+INCLUDE_ASM("main", CreateVUdataFromMDT__10CVisualVu1FPUiPUiii);
+INCLUDE_ASM("main", CreateVUdataFromMDTRemake__10CVisualVu1FPUiPUii);
+INCLUDE_ASM("main", DrawVu1__13CVisualMDTVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
+INCLUDE_ASM("main", DrawVu1__13CVisualMDTVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
+INCLUDE_ASM("main", RemakeData__13CVisualMDTVu1FPUi);

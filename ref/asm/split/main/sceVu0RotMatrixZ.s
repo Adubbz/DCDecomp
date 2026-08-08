@@ -11,15 +11,15 @@ glabel sceVu0RotMatrixZ
 /* 021A50 00121950 C93F013C */  lui         $1, (0x3FC90FDB >> 16)
 /* 021A54 00121954 DB0F2134 */  ori         $1, $1, (0x3FC90FDB & 0xFFFF)
 /* 021A58 00121958 00008144 */  mtc1        $1, $f0
-/* 021A5C 0012195C 04000045 */  bc1f        _RotMatrixZ_01
+/* 021A5C 0012195C 04000045 */  bc1f        .L_RotMatrixZ_01
 /* 021A60 00121960 00000000 */   nop
 /* 021A64 00121964 00030C46 */  add.s       $f12, $f0, $f12
 /* 021A68 00121968 5E860408 */  j           _RotMatrixZ_02
 /* 021A6C 0012196C 01000724 */   addiu      $7, $0, 0x1
-_RotMatrixZ_01:
+.L_RotMatrixZ_01:
 /* 021A70 00121970 01030C46 */  sub.s       $f12, $f0, $f12
 /* 021A74 00121974 2D380000 */  daddu       $7, $0, $0
-_RotMatrixZ_02:
+jlabel _RotMatrixZ_02
 /* 021A78 00121978 00600844 */  mfc1        $8, $f12
 /* 021A7C 0012197C 0030A848 */  qmtc2.ni    $8, $vf6
 /* 021A80 00121980 2D30E003 */  daddu       $6, $31, $0
@@ -37,7 +37,7 @@ _RotMatrixZ_02:
 /* 021AB0 001219B0 C429044B */  vsubx.x     $vf7, $vf5, $vf4x
 /* 021AB4 001219B4 C129844A */  vaddy.y     $vf7, $vf5, $vf4y
 /* 021AB8 001219B8 04000724 */  addiu       $7, $0, 0x4
-_loopRotMatrixZ:
+.L_loopRotMatrixZ:
 /* 021ABC 001219BC 0000A4D8 */  lqc2        $vf4, 0x0($5)
 /* 021AC0 001219C0 BC31E44B */  vmulax.xyzw $ACC, $vf6, $vf4x
 /* 021AC4 001219C4 BD38E44B */  vmadday.xyzw $ACC, $vf7, $vf4y
@@ -46,7 +46,7 @@ _loopRotMatrixZ:
 /* 021AD0 001219D0 000085F8 */  sqc2        $vf5, 0x0($4)
 /* 021AD4 001219D4 FFFFE720 */  addi        $7, $7, -0x1 /* handwritten instruction */
 /* 021AD8 001219D8 1000A520 */  addi        $5, $5, 0x10 /* handwritten instruction */
-/* 021ADC 001219DC F7FF0714 */  bne         $0, $7, _loopRotMatrixZ
+/* 021ADC 001219DC F7FF0714 */  bne         $0, $7, .L_loopRotMatrixZ
 /* 021AE0 001219E0 10008420 */   addi       $4, $4, 0x10 /* handwritten instruction */
 /* 021AE4 001219E4 0800E003 */  jr          $31
 /* 021AE8 001219E8 00000000 */   nop

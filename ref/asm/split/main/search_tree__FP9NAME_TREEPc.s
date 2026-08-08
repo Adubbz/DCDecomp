@@ -4,7 +4,7 @@
 .set noreorder /* Don't insert nops after branches. */
 
 .section .text
-glabel search_tree__FP9NAME_TREEPc
+jlabel search_tree__FP9NAME_TREEPc
 /* 03EFF0 0013EEF0 D0FFBD27 */  addiu       $29, $29, -0x30
 /* 03EFF4 0013EEF4 2000BF7F */  sq          $31, 0x20($29)
 /* 03EFF8 0013EEF8 1000B17F */  sq          $17, 0x10($29)

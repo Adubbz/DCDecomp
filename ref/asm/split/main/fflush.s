@@ -4,7 +4,7 @@
 .set noreorder /* Don't insert nops after branches. */
 
 .section .text
-glabel fflush
+jlabel fflush
 /* 001920 00101820 C0FFBD27 */  addiu       $29, $29, -0x40
 /* 001924 00101824 1000B1FF */  sd          $17, 0x10($29)
 /* 001928 00101828 3000BFFF */  sd          $31, 0x30($29)

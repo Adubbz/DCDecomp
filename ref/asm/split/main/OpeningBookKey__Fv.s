@@ -26,7 +26,6 @@ glabel OpeningBookKey__Fv
 /* 13D058 0023CF58 08004000 */  jr          $2
 /* 13D05C 0023CF5C 00000000 */   nop
 jlabel .L0023CF60
-.L0023CF60$b:
 /* 13D060 0023CF60 DB01013C */  lui         $1, %hi(OpenBook)
 /* 13D064 0023CF64 70BC2284 */  lh          $2, %lo(OpenBook)($1)
 /* 13D068 0023CF68 FC004014 */  bnez        $2, .L0023D35C
@@ -319,7 +318,6 @@ jlabel .L0023CF60
 /* 13D4BC 0023D3BC 65000010 */  b           .L0023D554
 /* 13D4C0 0023D3C0 00000000 */   nop
 jlabel .L0023D3C4
-.L0023D3C4$b:
 /* 13D4C4 0023D3C4 DB01013C */  lui         $1, %hi(OpenBook + 0xC)
 /* 13D4C8 0023D3C8 7CBC2284 */  lh          $2, %lo(OpenBook + 0xC)($1)
 /* 13D4CC 0023D3CC 02004224 */  addiu       $2, $2, 0x2
@@ -341,7 +339,6 @@ jlabel .L0023D3C4
 /* 13D50C 0023D40C 51000010 */  b           .L0023D554
 /* 13D510 0023D410 00000000 */   nop
 jlabel .L0023D414
-.L0023D414$b:
 /* 13D514 0023D414 DB01013C */  lui         $1, %hi(OpenBook + 0xC)
 /* 13D518 0023D418 7CBC2284 */  lh          $2, %lo(OpenBook + 0xC)($1)
 /* 13D51C 0023D41C FEFF4224 */  addiu       $2, $2, -0x2
@@ -371,7 +368,6 @@ jlabel .L0023D414
 /* 13D57C 0023D47C 35000010 */  b           .L0023D554
 /* 13D580 0023D480 00000000 */   nop
 jlabel .L0023D484
-.L0023D484$b:
 /* 13D584 0023D484 CC01023C */  lui         $2, %hi(GamePad)
 /* 13D588 0023D488 40C54424 */  addiu       $4, $2, %lo(GamePad)
 /* 13D58C 0023D48C 40000524 */  addiu       $5, $0, 0x40
@@ -393,7 +389,6 @@ jlabel .L0023D484
 /* 13D5CC 0023D4CC 21000010 */  b           .L0023D554
 /* 13D5D0 0023D4D0 00000000 */   nop
 jlabel .L0023D4D4
-.L0023D4D4$b:
 /* 13D5D4 0023D4D4 DB01013C */  lui         $1, %hi(OpenBook + 0xC)
 /* 13D5D8 0023D4D8 7CBC2284 */  lh          $2, %lo(OpenBook + 0xC)($1)
 /* 13D5DC 0023D4DC FFFF4224 */  addiu       $2, $2, -0x1
@@ -424,7 +419,6 @@ jlabel .L0023D4D4
 /* 13D640 0023D540 04000010 */  b           .L0023D554
 /* 13D644 0023D544 00000000 */   nop
 jlabel .L0023D548
-.L0023D548$b:
 /* 13D648 0023D548 10EA080C */  jal         NameEnterKey__Fv
 /* 13D64C 0023D54C 00000000 */   nop
 /* 13D650 0023D550 28864070 */  paddub      $16, $2, $0

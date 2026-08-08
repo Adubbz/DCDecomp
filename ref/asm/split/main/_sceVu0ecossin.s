@@ -27,13 +27,13 @@ glabel _sceVu0ecossin
 /* 021A1C 0012191C C401274A */  vsubx.w     $vf7, $vf0, $vf7x
 /* 021A20 00121920 BD03874B */  .word       0x4B8703BD                   # vsqrt       $Q, $vf7w # 00000000 <InstrIdType: R5900_COP2_SPECIAL2>
 /* 021A24 00121924 BF03004A */  vwaitq
-/* 021A28 00121928 0300E014 */  bnez        $7, _ecossin_01
+/* 021A28 00121928 0300E014 */  bnez        $7, .L_ecossin_01
 /* 021A2C 0012192C E001004B */   vaddq.x    $vf7, $vf0, $Q
-/* 021A30 00121930 02000010 */  b           _ecossin_02
+/* 021A30 00121930 02000010 */  b           .L_ecossin_02
 /* 021A34 00121934 0029074B */   vaddx.x    $vf4, $vf5, $vf7x
-_ecossin_01:
+.L_ecossin_01:
 /* 021A38 00121938 0429074B */  vsubx.x     $vf4, $vf5, $vf7x
-_ecossin_02:
+.L_ecossin_02:
 /* 021A3C 0012193C 0800E003 */  jr          $31
 /* 021A40 00121940 00000000 */   nop
 /* 021A44 00121944 00000000 */  nop

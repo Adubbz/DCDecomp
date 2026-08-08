@@ -22,16 +22,16 @@ glabel __ct__12CNPCharacterFv
 /* 056BA8 00156AA8 1C9E050C */  jal         __ct__13CTextureAnimeFP13CTexAnimeDatai
 /* 056BAC 00156AAC 00000000 */   nop
 /* 056BB0 00156AB0 20040426 */  addiu       $4, $16, 0x420
-/* 056BB4 00156AB4 1400023C */  lui         $2, %hi(func_00143610)
-/* 056BB8 00156AB8 10364524 */  addiu       $5, $2, %lo(func_00143610)
+/* 056BB4 00156AB4 1400023C */  lui         $2, %hi(__ct__11MotionParamFv)
+/* 056BB8 00156AB8 10364524 */  addiu       $5, $2, %lo(__ct__11MotionParamFv)
 /* 056BBC 00156ABC 28360070 */  paddub      $6, $0, $0
 /* 056BC0 00156AC0 80000724 */  addiu       $7, $0, 0x80
 /* 056BC4 00156AC4 08000824 */  addiu       $8, $0, 0x8
 /* 056BC8 00156AC8 B488040C */  jal         __construct_array
 /* 056BCC 00156ACC 00000000 */   nop
 /* 056BD0 00156AD0 20080426 */  addiu       $4, $16, 0x820
-/* 056BD4 00156AD4 1400023C */  lui         $2, %hi(func_00143610)
-/* 056BD8 00156AD8 10364524 */  addiu       $5, $2, %lo(func_00143610)
+/* 056BD4 00156AD4 1400023C */  lui         $2, %hi(__ct__11MotionParamFv)
+/* 056BD8 00156AD8 10364524 */  addiu       $5, $2, %lo(__ct__11MotionParamFv)
 /* 056BDC 00156ADC 28360070 */  paddub      $6, $0, $0
 /* 056BE0 00156AE0 80000724 */  addiu       $7, $0, 0x80
 /* 056BE4 00156AE4 08000824 */  addiu       $8, $0, 0x8

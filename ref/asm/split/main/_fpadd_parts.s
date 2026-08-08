@@ -28,9 +28,9 @@ glabel _fpadd_parts
 /* 00FCB8 0010FBB8 0400A38C */  lw          $3, 0x4($5)
 /* 00FCBC 0010FBBC 0400028D */  lw          $2, 0x4($8)
 /* 00FCC0 0010FBC0 F2FF4310 */  beq         $2, $3, .L0010FB8C
-/* 00FCC4 0010FBC4 2A00023C */   lui        $2, %hi(thenan.3)
+/* 00FCC4 0010FBC4 2A00023C */   lui        $2, %hi(thenan_3)
 /* 00FCC8 0010FBC8 0800E003 */  jr          $31
-/* 00FCCC 0010FBCC 684F4224 */   addiu      $2, $2, %lo(thenan.3)
+/* 00FCCC 0010FBCC 684F4224 */   addiu      $2, $2, %lo(thenan_3)
 .L0010FBD0:
 /* 00FCD0 0010FBD0 F3FF4010 */  beqz        $2, .L0010FBA0
 /* 00FCD4 0010FBD4 02006238 */   xori       $2, $3, 0x2

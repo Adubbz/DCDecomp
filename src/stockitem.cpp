@@ -7,7 +7,6 @@
 #include "itemdata.hpp"
 #include "menu_draw.hpp"
 #include "weapon_buildup.hpp"
-
 /** Selects the first item type for the next stock sort operation. */
 int sort_top_type__3 = 1;
 
@@ -336,3 +335,25 @@ int CStockItem::GetNowModeSpace(int search_space) {
 
     return empty_slot;
 }
+
+INCLUDE_RODATA("main", LIT_407__2);
+INCLUDE_RODATA("main", LIT_408__3);
+INCLUDE_RODATA("main", LIT_409__4);
+INCLUDE_RODATA("main", LIT_410__3);
+INCLUDE_RODATA("main", LIT_411);
+INCLUDE_RODATA("main", LIT_412);
+INCLUDE_RODATA("main", LIT_417__3);
+INCLUDE_RODATA("main", LIT_418__3);
+INCLUDE_RODATA("main", LIT_420__2);
+INCLUDE_RODATA("main", LIT_421__3);
+INCLUDE_RODATA("main", LIT_422__2);
+INCLUDE_RODATA("main", LIT_423);
+INCLUDE_RODATA("main", LIT_424__2);
+INCLUDE_RODATA("main", LIT_425__3);
+INCLUDE_RODATA("main", LIT_426);
+INCLUDE_RODATA("main", LIT_427);
+INCLUDE_RODATA("main", LIT_428);
+INCLUDE_RODATA("main", LIT_429);
+INCLUDE_RODATA("main", LIT_430);
+INCLUDE_RODATA("main", LIT_431);
+INCLUDE_RODATA("main", LIT_777__2);

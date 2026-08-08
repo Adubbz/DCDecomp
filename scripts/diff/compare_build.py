@@ -375,7 +375,7 @@ class Locator:
 
 def load_provenance():
     """{address: (provider, source)} -- which file the build sourced each
-    symbol from, as gen_layout.py worked it out. Absent until the build has
+    symbol from, as layout.py worked it out. Absent until the build has
     run once, and only an annotation, so a missing file is not an error."""
     if not os.path.exists(PROVENANCE):
         return {}

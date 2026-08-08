@@ -18,7 +18,7 @@ glabel exe__10CRunScriptFP8vmcode_t
 /* 13E1A0 0023E0A0 3000268E */  lw          $6, 0x30($17)
 /* 13E1A4 0023E0A4 0000C58C */  lw          $5, 0x0($6)
 /* 13E1A8 0023E0A8 1F00A12C */  sltiu       $1, $5, 0x1F
-/* 13E1AC 0023E0AC 29052010 */  beqz        $1, .L0023F554$b
+/* 13E1AC 0023E0AC 29052010 */  beqz        $1, .L.L0023F554$b
 /* 13E1B0 0023E0B0 00000000 */   nop
 /* 13E1B4 0023E0B4 2A00033C */  lui         $3, %hi(LIT_376__5)
 /* 13E1B8 0023E0B8 80FB6424 */  addiu       $4, $3, %lo(LIT_376__5)
@@ -28,7 +28,6 @@ glabel exe__10CRunScriptFP8vmcode_t
 /* 13E1C8 0023E0C8 08006000 */  jr          $3
 /* 13E1CC 0023E0CC 00000000 */   nop
 jlabel .L0023E0D0
-.L0023E0D0$b:
 /* 13E1D0 0023E0D0 0800C48C */  lw          $4, 0x8($6)
 /* 13E1D4 0023E0D4 20000324 */  addiu       $3, $0, 0x20
 /* 13E1D8 0023E0D8 75008310 */  beq         $4, $3, .L0023E2B0
@@ -48,7 +47,7 @@ jlabel .L0023E0D0
 /* 13E210 0023E110 01000324 */  addiu       $3, $0, 0x1
 /* 13E214 0023E114 03008310 */  beq         $4, $3, .L0023E124
 /* 13E218 0023E118 00000000 */   nop
-/* 13E21C 0023E11C 0D050010 */  b           .L0023F554$b
+/* 13E21C 0023E11C 0D050010 */  b           .L.L0023F554$b
 /* 13E220 0023E120 00000000 */   nop
 .L0023E124:
 /* 13E224 0023E124 0400C28C */  lw          $2, 0x4($6)
@@ -59,7 +58,7 @@ jlabel .L0023E0D0
 /* 13E238 0023E138 000045DC */  ld          $5, 0x0($2)
 /* 13E23C 0023E13C 70F6080C */  jal         push__10CRunScriptF12RS_STACKDATA
 /* 13E240 0023E140 00000000 */   nop
-/* 13E244 0023E144 03050010 */  b           .L0023F554$b
+/* 13E244 0023E144 03050010 */  b           .L.L0023F554$b
 /* 13E248 0023E148 00000000 */   nop
 .L0023E14C:
 /* 13E24C 0023E14C 6800A427 */  addiu       $4, $29, 0x68
@@ -81,7 +80,7 @@ jlabel .L0023E0D0
 /* 13E28C 0023E18C 000045DC */  ld          $5, 0x0($2)
 /* 13E290 0023E190 70F6080C */  jal         push__10CRunScriptF12RS_STACKDATA
 /* 13E294 0023E194 00000000 */   nop
-/* 13E298 0023E198 EE040010 */  b           .L0023F554$b
+/* 13E298 0023E198 EE040010 */  b           .L.L0023F554$b
 /* 13E29C 0023E19C 00000000 */   nop
 .L0023E1A0:
 /* 13E2A0 0023E1A0 7000A427 */  addiu       $4, $29, 0x70
@@ -104,7 +103,7 @@ jlabel .L0023E0D0
 /* 13E2E4 0023E1E4 000045DC */  ld          $5, 0x0($2)
 /* 13E2E8 0023E1E8 70F6080C */  jal         push__10CRunScriptF12RS_STACKDATA
 /* 13E2EC 0023E1EC 00000000 */   nop
-/* 13E2F0 0023E1F0 D8040010 */  b           .L0023F554$b
+/* 13E2F0 0023E1F0 D8040010 */  b           .L.L0023F554$b
 /* 13E2F4 0023E1F4 00000000 */   nop
 .L0023E1F8:
 /* 13E2F8 0023E1F8 01000424 */  addiu       $4, $0, 0x1
@@ -122,7 +121,7 @@ jlabel .L0023E0D0
 /* 13E328 0023E228 000045DC */  ld          $5, 0x0($2)
 /* 13E32C 0023E22C 70F6080C */  jal         push__10CRunScriptF12RS_STACKDATA
 /* 13E330 0023E230 00000000 */   nop
-/* 13E334 0023E234 C7040010 */  b           .L0023F554$b
+/* 13E334 0023E234 C7040010 */  b           .L.L0023F554$b
 /* 13E338 0023E238 00000000 */   nop
 .L0023E23C:
 /* 13E33C 0023E23C 7800A427 */  addiu       $4, $29, 0x78
@@ -152,7 +151,7 @@ jlabel .L0023E0D0
 /* 13E39C 0023E29C 000045DC */  ld          $5, 0x0($2)
 /* 13E3A0 0023E2A0 70F6080C */  jal         push__10CRunScriptF12RS_STACKDATA
 /* 13E3A4 0023E2A4 00000000 */   nop
-/* 13E3A8 0023E2A8 AA040010 */  b           .L0023F554$b
+/* 13E3A8 0023E2A8 AA040010 */  b           .L.L0023F554$b
 /* 13E3AC 0023E2AC 00000000 */   nop
 .L0023E2B0:
 /* 13E3B0 0023E2B0 8000A427 */  addiu       $4, $29, 0x80
@@ -184,10 +183,9 @@ jlabel .L0023E0D0
 /* 13E418 0023E318 000045DC */  ld          $5, 0x0($2)
 /* 13E41C 0023E31C 70F6080C */  jal         push__10CRunScriptF12RS_STACKDATA
 /* 13E420 0023E320 00000000 */   nop
-/* 13E424 0023E324 8B040010 */  b           .L0023F554$b
+/* 13E424 0023E324 8B040010 */  b           .L.L0023F554$b
 /* 13E428 0023E328 00000000 */   nop
 jlabel .L0023E32C
-.L0023E32C$b:
 /* 13E42C 0023E32C 0800C48C */  lw          $4, 0x8($6)
 /* 13E430 0023E330 20000324 */  addiu       $3, $0, 0x20
 /* 13E434 0023E334 61008310 */  beq         $4, $3, .L0023E4BC
@@ -207,7 +205,7 @@ jlabel .L0023E32C
 /* 13E46C 0023E36C 01000324 */  addiu       $3, $0, 0x1
 /* 13E470 0023E370 03008310 */  beq         $4, $3, .L0023E380
 /* 13E474 0023E374 00000000 */   nop
-/* 13E478 0023E378 76040010 */  b           .L0023F554$b
+/* 13E478 0023E378 76040010 */  b           .L.L0023F554$b
 /* 13E47C 0023E37C 00000000 */   nop
 .L0023E380:
 /* 13E480 0023E380 0400C28C */  lw          $2, 0x4($6)
@@ -217,7 +215,7 @@ jlabel .L0023E32C
 /* 13E490 0023E390 28262072 */  paddub      $4, $17, $0
 /* 13E494 0023E394 B0F6080C */  jal         push_ptr__10CRunScriptFP12RS_STACKDATA
 /* 13E498 0023E398 00000000 */   nop
-/* 13E49C 0023E39C 6D040010 */  b           .L0023F554$b
+/* 13E49C 0023E39C 6D040010 */  b           .L.L0023F554$b
 /* 13E4A0 0023E3A0 00000000 */   nop
 .L0023E3A4:
 /* 13E4A4 0023E3A4 8800A427 */  addiu       $4, $29, 0x88
@@ -238,7 +236,7 @@ jlabel .L0023E32C
 /* 13E4E0 0023E3E0 28262072 */  paddub      $4, $17, $0
 /* 13E4E4 0023E3E4 B0F6080C */  jal         push_ptr__10CRunScriptFP12RS_STACKDATA
 /* 13E4E8 0023E3E8 00000000 */   nop
-/* 13E4EC 0023E3EC 59040010 */  b           .L0023F554$b
+/* 13E4EC 0023E3EC 59040010 */  b           .L.L0023F554$b
 /* 13E4F0 0023E3F0 00000000 */   nop
 .L0023E3F4:
 /* 13E4F4 0023E3F4 9000A427 */  addiu       $4, $29, 0x90
@@ -260,7 +258,7 @@ jlabel .L0023E32C
 /* 13E534 0023E434 28262072 */  paddub      $4, $17, $0
 /* 13E538 0023E438 B0F6080C */  jal         push_ptr__10CRunScriptFP12RS_STACKDATA
 /* 13E53C 0023E43C 00000000 */   nop
-/* 13E540 0023E440 44040010 */  b           .L0023F554$b
+/* 13E540 0023E440 44040010 */  b           .L.L0023F554$b
 /* 13E544 0023E444 00000000 */   nop
 .L0023E448:
 /* 13E548 0023E448 0400C28C */  lw          $2, 0x4($6)
@@ -270,7 +268,7 @@ jlabel .L0023E32C
 /* 13E558 0023E458 28262072 */  paddub      $4, $17, $0
 /* 13E55C 0023E45C B0F6080C */  jal         push_ptr__10CRunScriptFP12RS_STACKDATA
 /* 13E560 0023E460 00000000 */   nop
-/* 13E564 0023E464 3B040010 */  b           .L0023F554$b
+/* 13E564 0023E464 3B040010 */  b           .L.L0023F554$b
 /* 13E568 0023E468 00000000 */   nop
 .L0023E46C:
 /* 13E56C 0023E46C 9800A427 */  addiu       $4, $29, 0x98
@@ -291,7 +289,7 @@ jlabel .L0023E32C
 /* 13E5A8 0023E4A8 28262072 */  paddub      $4, $17, $0
 /* 13E5AC 0023E4AC B0F6080C */  jal         push_ptr__10CRunScriptFP12RS_STACKDATA
 /* 13E5B0 0023E4B0 00000000 */   nop
-/* 13E5B4 0023E4B4 27040010 */  b           .L0023F554$b
+/* 13E5B4 0023E4B4 27040010 */  b           .L.L0023F554$b
 /* 13E5B8 0023E4B8 00000000 */   nop
 .L0023E4BC:
 /* 13E5BC 0023E4BC A000A427 */  addiu       $4, $29, 0xA0
@@ -313,10 +311,9 @@ jlabel .L0023E32C
 /* 13E5FC 0023E4FC 28262072 */  paddub      $4, $17, $0
 /* 13E600 0023E500 B0F6080C */  jal         push_ptr__10CRunScriptFP12RS_STACKDATA
 /* 13E604 0023E504 00000000 */   nop
-/* 13E608 0023E508 12040010 */  b           .L0023F554$b
+/* 13E608 0023E508 12040010 */  b           .L.L0023F554$b
 /* 13E60C 0023E50C 00000000 */   nop
 jlabel .L0023E510
-.L0023E510$b:
 /* 13E610 0023E510 5000A427 */  addiu       $4, $29, 0x50
 /* 13E614 0023E514 282E2072 */  paddub      $5, $17, $0
 /* 13E618 0023E518 E0F6080C */  jal         pop__10CRunScriptFv
@@ -335,10 +332,9 @@ jlabel .L0023E510
 /* 13E64C 0023E54C 5000A5DF */  ld          $5, 0x50($29)
 /* 13E650 0023E550 70F6080C */  jal         push__10CRunScriptF12RS_STACKDATA
 /* 13E654 0023E554 00000000 */   nop
-/* 13E658 0023E558 FE030010 */  b           .L0023F554$b
+/* 13E658 0023E558 FE030010 */  b           .L.L0023F554$b
 /* 13E65C 0023E55C 00000000 */   nop
 jlabel .L0023E560
-.L0023E560$b:
 /* 13E660 0023E560 0400C48C */  lw          $4, 0x4($6)
 /* 13E664 0023E564 01000324 */  addiu       $3, $0, 0x1
 /* 13E668 0023E568 07008314 */  bne         $4, $3, .L0023E588
@@ -347,7 +343,7 @@ jlabel .L0023E560
 /* 13E674 0023E574 0800C58C */  lw          $5, 0x8($6)
 /* 13E678 0023E578 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13E67C 0023E57C 00000000 */   nop
-/* 13E680 0023E580 F4030010 */  b           .L0023F554$b
+/* 13E680 0023E580 F4030010 */  b           .L.L0023F554$b
 /* 13E684 0023E584 00000000 */   nop
 .L0023E588:
 /* 13E688 0023E588 03000324 */  addiu       $3, $0, 0x3
@@ -359,29 +355,27 @@ jlabel .L0023E560
 /* 13E6A0 0023E5A0 28262072 */  paddub      $4, $17, $0
 /* 13E6A4 0023E5A4 98F6080C */  jal         push_str__10CRunScriptFPc
 /* 13E6A8 0023E5A8 00000000 */   nop
-/* 13E6AC 0023E5AC E9030010 */  b           .L0023F554$b
+/* 13E6AC 0023E5AC E9030010 */  b           .L.L0023F554$b
 /* 13E6B0 0023E5B0 00000000 */   nop
 .L0023E5B4:
 /* 13E6B4 0023E5B4 02000324 */  addiu       $3, $0, 0x2
-/* 13E6B8 0023E5B8 E6038314 */  bne         $4, $3, .L0023F554$b
+/* 13E6B8 0023E5B8 E6038314 */  bne         $4, $3, .L.L0023F554$b
 /* 13E6BC 0023E5BC 00000000 */   nop
 /* 13E6C0 0023E5C0 28262072 */  paddub      $4, $17, $0
 /* 13E6C4 0023E5C4 0800CCC4 */  lwc1        $f12, 0x8($6)
 /* 13E6C8 0023E5C8 C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13E6CC 0023E5CC 00000000 */   nop
-/* 13E6D0 0023E5D0 E0030010 */  b           .L0023F554$b
+/* 13E6D0 0023E5D0 E0030010 */  b           .L.L0023F554$b
 /* 13E6D4 0023E5D4 00000000 */   nop
 jlabel .L0023E5D8
-.L0023E5D8$b:
 /* 13E6D8 0023E5D8 1000238E */  lw          $3, 0x10($17)
 /* 13E6DC 0023E5DC F8FF6324 */  addiu       $3, $3, -0x8
 /* 13E6E0 0023E5E0 100023AE */  sw          $3, 0x10($17)
-/* 13E6E4 0023E5E4 DB030010 */  b           .L0023F554$b
+/* 13E6E4 0023E5E4 DB030010 */  b           .L.L0023F554$b
 /* 13E6E8 0023E5E8 00000000 */   nop
 jlabel .L0023E5EC
-.L0023E5EC$b:
 /* 13E6EC 0023E5EC 3800238E */  lw          $3, 0x38($17)
-/* 13E6F0 0023E5F0 D8036014 */  bnez        $3, .L0023F554$b
+/* 13E6F0 0023E5F0 D8036014 */  bnez        $3, .L.L0023F554$b
 /* 13E6F4 0023E5F4 00000000 */   nop
 /* 13E6F8 0023E5F8 0400C48C */  lw          $4, 0x4($6)
 /* 13E6FC 0023E5FC 4000238E */  lw          $3, 0x40($17)
@@ -390,9 +384,8 @@ jlabel .L0023E5EC
 /* 13E708 0023E608 A5FE0010 */  b           .L0023E0A0
 /* 13E70C 0023E60C 00000000 */   nop
 jlabel .L0023E610
-.L0023E610$b:
 /* 13E710 0023E610 3800238E */  lw          $3, 0x38($17)
-/* 13E714 0023E614 CF036014 */  bnez        $3, .L0023F554$b
+/* 13E714 0023E614 CF036014 */  bnez        $3, .L.L0023F554$b
 /* 13E718 0023E618 00000000 */   nop
 /* 13E71C 0023E61C B000A427 */  addiu       $4, $29, 0xB0
 /* 13E720 0023E620 282E2072 */  paddub      $5, $17, $0
@@ -401,7 +394,7 @@ jlabel .L0023E610
 /* 13E72C 0023E62C B000A4DF */  ld          $4, 0xB0($29)
 /* 13E730 0023E630 ECF5080C */  jal         is_true__F12RS_STACKDATA
 /* 13E734 0023E634 00000000 */   nop
-/* 13E738 0023E638 C6034010 */  beqz        $2, .L0023F554$b
+/* 13E738 0023E638 C6034010 */  beqz        $2, .L.L0023F554$b
 /* 13E73C 0023E63C 00000000 */   nop
 /* 13E740 0023E640 3000238E */  lw          $3, 0x30($17)
 /* 13E744 0023E644 0800638C */  lw          $3, 0x8($3)
@@ -420,9 +413,8 @@ jlabel .L0023E610
 /* 13E774 0023E674 8AFE0010 */  b           .L0023E0A0
 /* 13E778 0023E678 00000000 */   nop
 jlabel .L0023E67C
-.L0023E67C$b:
 /* 13E77C 0023E67C 3800238E */  lw          $3, 0x38($17)
-/* 13E780 0023E680 B4036014 */  bnez        $3, .L0023F554$b
+/* 13E780 0023E680 B4036014 */  bnez        $3, .L.L0023F554$b
 /* 13E784 0023E684 00000000 */   nop
 /* 13E788 0023E688 B800A427 */  addiu       $4, $29, 0xB8
 /* 13E78C 0023E68C 282E2072 */  paddub      $5, $17, $0
@@ -431,7 +423,7 @@ jlabel .L0023E67C
 /* 13E798 0023E698 B800A4DF */  ld          $4, 0xB8($29)
 /* 13E79C 0023E69C ECF5080C */  jal         is_true__F12RS_STACKDATA
 /* 13E7A0 0023E6A0 00000000 */   nop
-/* 13E7A4 0023E6A4 AB034014 */  bnez        $2, .L0023F554$b
+/* 13E7A4 0023E6A4 AB034014 */  bnez        $2, .L.L0023F554$b
 /* 13E7A8 0023E6A8 00000000 */   nop
 /* 13E7AC 0023E6AC 3000238E */  lw          $3, 0x30($17)
 /* 13E7B0 0023E6B0 0800638C */  lw          $3, 0x8($3)
@@ -450,7 +442,6 @@ jlabel .L0023E67C
 /* 13E7E0 0023E6E0 6FFE0010 */  b           .L0023E0A0
 /* 13E7E4 0023E6E4 00000000 */   nop
 jlabel .L0023E6E8
-.L0023E6E8$b:
 /* 13E7E8 0023E6E8 5800A427 */  addiu       $4, $29, 0x58
 /* 13E7EC 0023E6EC 282E2072 */  paddub      $5, $17, $0
 /* 13E7F0 0023E6F0 E0F6080C */  jal         pop__10CRunScriptFv
@@ -471,7 +462,7 @@ jlabel .L0023E6E8
 /* 13E82C 0023E72C 0400638C */  lw          $3, 0x4($3)
 /* 13E830 0023E730 D8FF6520 */  addi        $5, $3, -0x28 /* handwritten instruction */
 /* 13E834 0023E734 0600A12C */  sltiu       $1, $5, 0x6
-/* 13E838 0023E738 86032010 */  beqz        $1, .L0023F554$b
+/* 13E838 0023E738 86032010 */  beqz        $1, .L.L0023F554$b
 /* 13E83C 0023E73C 00000000 */   nop
 /* 13E840 0023E740 2A00033C */  lui         $3, %hi(LIT_377__4)
 /* 13E844 0023E744 60FB6424 */  addiu       $4, $3, %lo(LIT_377__4)
@@ -481,56 +472,50 @@ jlabel .L0023E6E8
 /* 13E854 0023E754 08006000 */  jr          $3
 /* 13E858 0023E758 00000000 */   nop
 jlabel .L0023E75C
-.L0023E75C$b:
 /* 13E85C 0023E75C 26280602 */  xor         $5, $16, $6
 /* 13E860 0023E760 0100A52C */  sltiu       $5, $5, 0x1
 /* 13E864 0023E764 28262072 */  paddub      $4, $17, $0
 /* 13E868 0023E768 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13E86C 0023E76C 00000000 */   nop
-/* 13E870 0023E770 78030010 */  b           .L0023F554$b
+/* 13E870 0023E770 78030010 */  b           .L.L0023F554$b
 /* 13E874 0023E774 00000000 */   nop
 jlabel .L0023E778
-.L0023E778$b:
 /* 13E878 0023E778 26280602 */  xor         $5, $16, $6
 /* 13E87C 0023E77C 2B280500 */  sltu        $5, $0, $5
 /* 13E880 0023E780 28262072 */  paddub      $4, $17, $0
 /* 13E884 0023E784 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13E888 0023E788 00000000 */   nop
-/* 13E88C 0023E78C 71030010 */  b           .L0023F554$b
+/* 13E88C 0023E78C 71030010 */  b           .L.L0023F554$b
 /* 13E890 0023E790 00000000 */   nop
 jlabel .L0023E794
-.L0023E794$b:
 /* 13E894 0023E794 2A28D000 */  slt         $5, $6, $16
 /* 13E898 0023E798 28262072 */  paddub      $4, $17, $0
 /* 13E89C 0023E79C 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13E8A0 0023E7A0 00000000 */   nop
-/* 13E8A4 0023E7A4 6B030010 */  b           .L0023F554$b
+/* 13E8A4 0023E7A4 6B030010 */  b           .L.L0023F554$b
 /* 13E8A8 0023E7A8 00000000 */   nop
 jlabel .L0023E7AC
-.L0023E7AC$b:
 /* 13E8AC 0023E7AC 2A280602 */  slt         $5, $16, $6
 /* 13E8B0 0023E7B0 0100A538 */  xori        $5, $5, 0x1
 /* 13E8B4 0023E7B4 28262072 */  paddub      $4, $17, $0
 /* 13E8B8 0023E7B8 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13E8BC 0023E7BC 00000000 */   nop
-/* 13E8C0 0023E7C0 64030010 */  b           .L0023F554$b
+/* 13E8C0 0023E7C0 64030010 */  b           .L.L0023F554$b
 /* 13E8C4 0023E7C4 00000000 */   nop
 jlabel .L0023E7C8
-.L0023E7C8$b:
 /* 13E8C8 0023E7C8 2A280602 */  slt         $5, $16, $6
 /* 13E8CC 0023E7CC 28262072 */  paddub      $4, $17, $0
 /* 13E8D0 0023E7D0 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13E8D4 0023E7D4 00000000 */   nop
-/* 13E8D8 0023E7D8 5E030010 */  b           .L0023F554$b
+/* 13E8D8 0023E7D8 5E030010 */  b           .L.L0023F554$b
 /* 13E8DC 0023E7DC 00000000 */   nop
 jlabel .L0023E7E0
-.L0023E7E0$b:
 /* 13E8E0 0023E7E0 2A28D000 */  slt         $5, $6, $16
 /* 13E8E4 0023E7E4 0100A538 */  xori        $5, $5, 0x1
 /* 13E8E8 0023E7E8 28262072 */  paddub      $4, $17, $0
 /* 13E8EC 0023E7EC 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13E8F0 0023E7F0 00000000 */   nop
-/* 13E8F4 0023E7F4 57030010 */  b           .L0023F554$b
+/* 13E8F4 0023E7F4 57030010 */  b           .L.L0023F554$b
 /* 13E8F8 0023E7F8 00000000 */   nop
 .L0023E7FC:
 /* 13E8FC 0023E7FC 01000424 */  addiu       $4, $0, 0x1
@@ -585,7 +570,7 @@ jlabel .L0023E7E0
 /* 13E9B0 0023E8B0 0400638C */  lw          $3, 0x4($3)
 /* 13E9B4 0023E8B4 D8FF6520 */  addi        $5, $3, -0x28 /* handwritten instruction */
 /* 13E9B8 0023E8B8 0600A12C */  sltiu       $1, $5, 0x6
-/* 13E9BC 0023E8BC 25032010 */  beqz        $1, .L0023F554$b
+/* 13E9BC 0023E8BC 25032010 */  beqz        $1, .L.L0023F554$b
 /* 13E9C0 0023E8C0 00000000 */   nop
 /* 13E9C4 0023E8C4 2A00033C */  lui         $3, %hi(LIT_378__2)
 /* 13E9C8 0023E8C8 40FB6424 */  addiu       $4, $3, %lo(LIT_378__2)
@@ -595,7 +580,6 @@ jlabel .L0023E7E0
 /* 13E9D8 0023E8D8 08006000 */  jr          $3
 /* 13E9DC 0023E8DC 00000000 */   nop
 jlabel .L0023E8E0
-.L0023E8E0$b:
 /* 13E9E0 0023E8E0 32A01546 */  c.eq.s      $f20, $f21
 /* 13E9E4 0023E8E4 01000224 */  addiu       $2, $0, 0x1
 /* 13E9E8 0023E8E8 02000145 */  bc1t        .L0023E8F4
@@ -606,10 +590,9 @@ jlabel .L0023E8E0
 /* 13E9F8 0023E8F8 28262072 */  paddub      $4, $17, $0
 /* 13E9FC 0023E8FC 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13EA00 0023E900 00000000 */   nop
-/* 13EA04 0023E904 13030010 */  b           .L0023F554$b
+/* 13EA04 0023E904 13030010 */  b           .L.L0023F554$b
 /* 13EA08 0023E908 00000000 */   nop
 jlabel .L0023E90C
-.L0023E90C$b:
 /* 13EA0C 0023E90C 32A01546 */  c.eq.s      $f20, $f21
 /* 13EA10 0023E910 01000224 */  addiu       $2, $0, 0x1
 /* 13EA14 0023E914 02000045 */  bc1f        .L0023E920
@@ -620,10 +603,9 @@ jlabel .L0023E90C
 /* 13EA24 0023E924 28262072 */  paddub      $4, $17, $0
 /* 13EA28 0023E928 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13EA2C 0023E92C 00000000 */   nop
-/* 13EA30 0023E930 08030010 */  b           .L0023F554$b
+/* 13EA30 0023E930 08030010 */  b           .L.L0023F554$b
 /* 13EA34 0023E934 00000000 */   nop
 jlabel .L0023E938
-.L0023E938$b:
 /* 13EA38 0023E938 34A81446 */  c.lt.s      $f21, $f20
 /* 13EA3C 0023E93C 01000224 */  addiu       $2, $0, 0x1
 /* 13EA40 0023E940 02000145 */  bc1t        .L0023E94C
@@ -634,10 +616,9 @@ jlabel .L0023E938
 /* 13EA50 0023E950 28262072 */  paddub      $4, $17, $0
 /* 13EA54 0023E954 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13EA58 0023E958 00000000 */   nop
-/* 13EA5C 0023E95C FD020010 */  b           .L0023F554$b
+/* 13EA5C 0023E95C FD020010 */  b           .L.L0023F554$b
 /* 13EA60 0023E960 00000000 */   nop
 jlabel .L0023E964
-.L0023E964$b:
 /* 13EA64 0023E964 36A81446 */  c.le.s      $f21, $f20
 /* 13EA68 0023E968 01000224 */  addiu       $2, $0, 0x1
 /* 13EA6C 0023E96C 02000145 */  bc1t        .L0023E978
@@ -648,10 +629,9 @@ jlabel .L0023E964
 /* 13EA7C 0023E97C 28262072 */  paddub      $4, $17, $0
 /* 13EA80 0023E980 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13EA84 0023E984 00000000 */   nop
-/* 13EA88 0023E988 F2020010 */  b           .L0023F554$b
+/* 13EA88 0023E988 F2020010 */  b           .L.L0023F554$b
 /* 13EA8C 0023E98C 00000000 */   nop
 jlabel .L0023E990
-.L0023E990$b:
 /* 13EA90 0023E990 36A81446 */  c.le.s      $f21, $f20
 /* 13EA94 0023E994 01000224 */  addiu       $2, $0, 0x1
 /* 13EA98 0023E998 02000045 */  bc1f        .L0023E9A4
@@ -662,10 +642,9 @@ jlabel .L0023E990
 /* 13EAA8 0023E9A8 28262072 */  paddub      $4, $17, $0
 /* 13EAAC 0023E9AC 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13EAB0 0023E9B0 00000000 */   nop
-/* 13EAB4 0023E9B4 E7020010 */  b           .L0023F554$b
+/* 13EAB4 0023E9B4 E7020010 */  b           .L.L0023F554$b
 /* 13EAB8 0023E9B8 00000000 */   nop
 jlabel .L0023E9BC
-.L0023E9BC$b:
 /* 13EABC 0023E9BC 34A81446 */  c.lt.s      $f21, $f20
 /* 13EAC0 0023E9C0 01000224 */  addiu       $2, $0, 0x1
 /* 13EAC4 0023E9C4 02000045 */  bc1f        .L0023E9D0
@@ -676,10 +655,9 @@ jlabel .L0023E9BC
 /* 13EAD4 0023E9D4 28262072 */  paddub      $4, $17, $0
 /* 13EAD8 0023E9D8 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13EADC 0023E9DC 00000000 */   nop
-/* 13EAE0 0023E9E0 DC020010 */  b           .L0023F554$b
+/* 13EAE0 0023E9E0 DC020010 */  b           .L.L0023F554$b
 /* 13EAE4 0023E9E4 00000000 */   nop
 jlabel .L0023E9E8
-.L0023E9E8$b:
 /* 13EAE8 0023E9E8 5800A427 */  addiu       $4, $29, 0x58
 /* 13EAEC 0023E9EC 282E2072 */  paddub      $5, $17, $0
 /* 13EAF0 0023E9F0 E0F6080C */  jal         pop__10CRunScriptFv
@@ -700,7 +678,7 @@ jlabel .L0023E9E8
 /* 13EB2C 0023EA2C 28262072 */  paddub      $4, $17, $0
 /* 13EB30 0023EA30 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13EB34 0023EA34 00000000 */   nop
-/* 13EB38 0023EA38 C6020010 */  b           .L0023F554$b
+/* 13EB38 0023EA38 C6020010 */  b           .L.L0023F554$b
 /* 13EB3C 0023EA3C 00000000 */   nop
 .L0023EA40:
 /* 13EB40 0023EA40 01000324 */  addiu       $3, $0, 0x1
@@ -715,7 +693,7 @@ jlabel .L0023E9E8
 /* 13EB64 0023EA64 28262072 */  paddub      $4, $17, $0
 /* 13EB68 0023EA68 C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13EB6C 0023EA6C 00000000 */   nop
-/* 13EB70 0023EA70 B8020010 */  b           .L0023F554$b
+/* 13EB70 0023EA70 B8020010 */  b           .L.L0023F554$b
 /* 13EB74 0023EA74 00000000 */   nop
 .L0023EA78:
 /* 13EB78 0023EA78 0E008014 */  bnez        $4, .L0023EAB4
@@ -731,7 +709,7 @@ jlabel .L0023E9E8
 /* 13EBA0 0023EAA0 28262072 */  paddub      $4, $17, $0
 /* 13EBA4 0023EAA4 C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13EBA8 0023EAA8 00000000 */   nop
-/* 13EBAC 0023EAAC A9020010 */  b           .L0023F554$b
+/* 13EBAC 0023EAAC A9020010 */  b           .L.L0023F554$b
 /* 13EBB0 0023EAB0 00000000 */   nop
 .L0023EAB4:
 /* 13EBB4 0023EAB4 01000224 */  addiu       $2, $0, 0x1
@@ -747,7 +725,7 @@ jlabel .L0023E9E8
 /* 13EBDC 0023EADC 28262072 */  paddub      $4, $17, $0
 /* 13EBE0 0023EAE0 C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13EBE4 0023EAE4 00000000 */   nop
-/* 13EBE8 0023EAE8 9A020010 */  b           .L0023F554$b
+/* 13EBE8 0023EAE8 9A020010 */  b           .L.L0023F554$b
 /* 13EBEC 0023EAEC 00000000 */   nop
 .L0023EAF0:
 /* 13EBF0 0023EAF0 2500013C */  lui         $1, %hi(_impure_ptr)
@@ -762,10 +740,9 @@ jlabel .L0023E9E8
 /* 13EC14 0023EB14 FFFF0424 */  addiu       $4, $0, -0x1
 /* 13EC18 0023EB18 DC05040C */  jal         exit__2
 /* 13EC1C 0023EB1C 00000000 */   nop
-/* 13EC20 0023EB20 8C020010 */  b           .L0023F554$b
+/* 13EC20 0023EB20 8C020010 */  b           .L.L0023F554$b
 /* 13EC24 0023EB24 00000000 */   nop
 jlabel .L0023EB28
-.L0023EB28$b:
 /* 13EC28 0023EB28 5800A427 */  addiu       $4, $29, 0x58
 /* 13EC2C 0023EB2C 282E2072 */  paddub      $5, $17, $0
 /* 13EC30 0023EB30 E0F6080C */  jal         pop__10CRunScriptFv
@@ -786,7 +763,7 @@ jlabel .L0023EB28
 /* 13EC6C 0023EB6C 28262072 */  paddub      $4, $17, $0
 /* 13EC70 0023EB70 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13EC74 0023EB74 00000000 */   nop
-/* 13EC78 0023EB78 76020010 */  b           .L0023F554$b
+/* 13EC78 0023EB78 76020010 */  b           .L.L0023F554$b
 /* 13EC7C 0023EB7C 00000000 */   nop
 .L0023EB80:
 /* 13EC80 0023EB80 01000324 */  addiu       $3, $0, 0x1
@@ -801,7 +778,7 @@ jlabel .L0023EB28
 /* 13ECA4 0023EBA4 28262072 */  paddub      $4, $17, $0
 /* 13ECA8 0023EBA8 C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13ECAC 0023EBAC 00000000 */   nop
-/* 13ECB0 0023EBB0 68020010 */  b           .L0023F554$b
+/* 13ECB0 0023EBB0 68020010 */  b           .L.L0023F554$b
 /* 13ECB4 0023EBB4 00000000 */   nop
 .L0023EBB8:
 /* 13ECB8 0023EBB8 0E008014 */  bnez        $4, .L0023EBF4
@@ -817,7 +794,7 @@ jlabel .L0023EB28
 /* 13ECE0 0023EBE0 28262072 */  paddub      $4, $17, $0
 /* 13ECE4 0023EBE4 C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13ECE8 0023EBE8 00000000 */   nop
-/* 13ECEC 0023EBEC 59020010 */  b           .L0023F554$b
+/* 13ECEC 0023EBEC 59020010 */  b           .L.L0023F554$b
 /* 13ECF0 0023EBF0 00000000 */   nop
 .L0023EBF4:
 /* 13ECF4 0023EBF4 01000224 */  addiu       $2, $0, 0x1
@@ -833,7 +810,7 @@ jlabel .L0023EB28
 /* 13ED1C 0023EC1C 28262072 */  paddub      $4, $17, $0
 /* 13ED20 0023EC20 C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13ED24 0023EC24 00000000 */   nop
-/* 13ED28 0023EC28 4A020010 */  b           .L0023F554$b
+/* 13ED28 0023EC28 4A020010 */  b           .L.L0023F554$b
 /* 13ED2C 0023EC2C 00000000 */   nop
 .L0023EC30:
 /* 13ED30 0023EC30 2500013C */  lui         $1, %hi(_impure_ptr)
@@ -848,10 +825,9 @@ jlabel .L0023EB28
 /* 13ED54 0023EC54 FFFF0424 */  addiu       $4, $0, -0x1
 /* 13ED58 0023EC58 DC05040C */  jal         exit__2
 /* 13ED5C 0023EC5C 00000000 */   nop
-/* 13ED60 0023EC60 3C020010 */  b           .L0023F554$b
+/* 13ED60 0023EC60 3C020010 */  b           .L.L0023F554$b
 /* 13ED64 0023EC64 00000000 */   nop
 jlabel .L0023EC68
-.L0023EC68$b:
 /* 13ED68 0023EC68 5800A427 */  addiu       $4, $29, 0x58
 /* 13ED6C 0023EC6C 282E2072 */  paddub      $5, $17, $0
 /* 13ED70 0023EC70 E0F6080C */  jal         pop__10CRunScriptFv
@@ -872,7 +848,7 @@ jlabel .L0023EC68
 /* 13EDAC 0023ECAC 28262072 */  paddub      $4, $17, $0
 /* 13EDB0 0023ECB0 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13EDB4 0023ECB4 00000000 */   nop
-/* 13EDB8 0023ECB8 26020010 */  b           .L0023F554$b
+/* 13EDB8 0023ECB8 26020010 */  b           .L.L0023F554$b
 /* 13EDBC 0023ECBC 00000000 */   nop
 .L0023ECC0:
 /* 13EDC0 0023ECC0 01000324 */  addiu       $3, $0, 0x1
@@ -887,7 +863,7 @@ jlabel .L0023EC68
 /* 13EDE4 0023ECE4 28262072 */  paddub      $4, $17, $0
 /* 13EDE8 0023ECE8 C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13EDEC 0023ECEC 00000000 */   nop
-/* 13EDF0 0023ECF0 18020010 */  b           .L0023F554$b
+/* 13EDF0 0023ECF0 18020010 */  b           .L.L0023F554$b
 /* 13EDF4 0023ECF4 00000000 */   nop
 .L0023ECF8:
 /* 13EDF8 0023ECF8 0E008014 */  bnez        $4, .L0023ED34
@@ -903,7 +879,7 @@ jlabel .L0023EC68
 /* 13EE20 0023ED20 28262072 */  paddub      $4, $17, $0
 /* 13EE24 0023ED24 C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13EE28 0023ED28 00000000 */   nop
-/* 13EE2C 0023ED2C 09020010 */  b           .L0023F554$b
+/* 13EE2C 0023ED2C 09020010 */  b           .L.L0023F554$b
 /* 13EE30 0023ED30 00000000 */   nop
 .L0023ED34:
 /* 13EE34 0023ED34 01000224 */  addiu       $2, $0, 0x1
@@ -919,7 +895,7 @@ jlabel .L0023EC68
 /* 13EE5C 0023ED5C 28262072 */  paddub      $4, $17, $0
 /* 13EE60 0023ED60 C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13EE64 0023ED64 00000000 */   nop
-/* 13EE68 0023ED68 FA010010 */  b           .L0023F554$b
+/* 13EE68 0023ED68 FA010010 */  b           .L.L0023F554$b
 /* 13EE6C 0023ED6C 00000000 */   nop
 .L0023ED70:
 /* 13EE70 0023ED70 2500013C */  lui         $1, %hi(_impure_ptr)
@@ -934,10 +910,9 @@ jlabel .L0023EC68
 /* 13EE94 0023ED94 FFFF0424 */  addiu       $4, $0, -0x1
 /* 13EE98 0023ED98 DC05040C */  jal         exit__2
 /* 13EE9C 0023ED9C 00000000 */   nop
-/* 13EEA0 0023EDA0 EC010010 */  b           .L0023F554$b
+/* 13EEA0 0023EDA0 EC010010 */  b           .L.L0023F554$b
 /* 13EEA4 0023EDA4 00000000 */   nop
 jlabel .L0023EDA8
-.L0023EDA8$b:
 /* 13EEA8 0023EDA8 5800A427 */  addiu       $4, $29, 0x58
 /* 13EEAC 0023EDAC 282E2072 */  paddub      $5, $17, $0
 /* 13EEB0 0023EDB0 E0F6080C */  jal         pop__10CRunScriptFv
@@ -970,7 +945,7 @@ jlabel .L0023EDA8
 /* 13EF14 0023EE14 28262072 */  paddub      $4, $17, $0
 /* 13EF18 0023EE18 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13EF1C 0023EE1C 00000000 */   nop
-/* 13EF20 0023EE20 CC010010 */  b           .L0023F554$b
+/* 13EF20 0023EE20 CC010010 */  b           .L.L0023F554$b
 /* 13EF24 0023EE24 00000000 */   nop
 .L0023EE28:
 /* 13EF28 0023EE28 01000324 */  addiu       $3, $0, 0x1
@@ -985,7 +960,7 @@ jlabel .L0023EDA8
 /* 13EF4C 0023EE4C 28262072 */  paddub      $4, $17, $0
 /* 13EF50 0023EE50 C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13EF54 0023EE54 00000000 */   nop
-/* 13EF58 0023EE58 BE010010 */  b           .L0023F554$b
+/* 13EF58 0023EE58 BE010010 */  b           .L.L0023F554$b
 /* 13EF5C 0023EE5C 00000000 */   nop
 .L0023EE60:
 /* 13EF60 0023EE60 0E008014 */  bnez        $4, .L0023EE9C
@@ -1001,7 +976,7 @@ jlabel .L0023EDA8
 /* 13EF88 0023EE88 28262072 */  paddub      $4, $17, $0
 /* 13EF8C 0023EE8C C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13EF90 0023EE90 00000000 */   nop
-/* 13EF94 0023EE94 AF010010 */  b           .L0023F554$b
+/* 13EF94 0023EE94 AF010010 */  b           .L.L0023F554$b
 /* 13EF98 0023EE98 00000000 */   nop
 .L0023EE9C:
 /* 13EF9C 0023EE9C 01000224 */  addiu       $2, $0, 0x1
@@ -1017,7 +992,7 @@ jlabel .L0023EDA8
 /* 13EFC4 0023EEC4 28262072 */  paddub      $4, $17, $0
 /* 13EFC8 0023EEC8 C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13EFCC 0023EECC 00000000 */   nop
-/* 13EFD0 0023EED0 A0010010 */  b           .L0023F554$b
+/* 13EFD0 0023EED0 A0010010 */  b           .L.L0023F554$b
 /* 13EFD4 0023EED4 00000000 */   nop
 .L0023EED8:
 /* 13EFD8 0023EED8 2500013C */  lui         $1, %hi(_impure_ptr)
@@ -1032,10 +1007,9 @@ jlabel .L0023EDA8
 /* 13EFFC 0023EEFC FFFF0424 */  addiu       $4, $0, -0x1
 /* 13F000 0023EF00 DC05040C */  jal         exit__2
 /* 13F004 0023EF04 00000000 */   nop
-/* 13F008 0023EF08 92010010 */  b           .L0023F554$b
+/* 13F008 0023EF08 92010010 */  b           .L.L0023F554$b
 /* 13F00C 0023EF0C 00000000 */   nop
 jlabel .L0023EF10
-.L0023EF10$b:
 /* 13F010 0023EF10 C000A427 */  addiu       $4, $29, 0xC0
 /* 13F014 0023EF14 282E2072 */  paddub      $5, $17, $0
 /* 13F018 0023EF18 E0F6080C */  jal         pop__10CRunScriptFv
@@ -1067,10 +1041,9 @@ jlabel .L0023EF10
 /* 13F078 0023EF78 28262072 */  paddub      $4, $17, $0
 /* 13F07C 0023EF7C 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13F080 0023EF80 00000000 */   nop
-/* 13F084 0023EF84 73010010 */  b           .L0023F554$b
+/* 13F084 0023EF84 73010010 */  b           .L.L0023F554$b
 /* 13F088 0023EF88 00000000 */   nop
 jlabel .L0023EF8C
-.L0023EF8C$b:
 /* 13F08C 0023EF8C D000A427 */  addiu       $4, $29, 0xD0
 /* 13F090 0023EF90 282E2072 */  paddub      $5, $17, $0
 /* 13F094 0023EF94 E0F6080C */  jal         pop__10CRunScriptFv
@@ -1092,10 +1065,9 @@ jlabel .L0023EF8C
 /* 13F0D4 0023EFD4 28262072 */  paddub      $4, $17, $0
 /* 13F0D8 0023EFD8 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13F0DC 0023EFDC 00000000 */   nop
-/* 13F0E0 0023EFE0 5C010010 */  b           .L0023F554$b
+/* 13F0E0 0023EFE0 5C010010 */  b           .L.L0023F554$b
 /* 13F0E4 0023EFE4 00000000 */   nop
 jlabel .L0023EFE8
-.L0023EFE8$b:
 /* 13F0E8 0023EFE8 E000A427 */  addiu       $4, $29, 0xE0
 /* 13F0EC 0023EFEC 282E2072 */  paddub      $5, $17, $0
 /* 13F0F0 0023EFF0 E0F6080C */  jal         pop__10CRunScriptFv
@@ -1117,10 +1089,9 @@ jlabel .L0023EFE8
 /* 13F130 0023F030 28262072 */  paddub      $4, $17, $0
 /* 13F134 0023F034 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13F138 0023F038 00000000 */   nop
-/* 13F13C 0023F03C 45010010 */  b           .L0023F554$b
+/* 13F13C 0023F03C 45010010 */  b           .L.L0023F554$b
 /* 13F140 0023F040 00000000 */   nop
 jlabel .L0023F044
-.L0023F044$b:
 /* 13F144 0023F044 5800A427 */  addiu       $4, $29, 0x58
 /* 13F148 0023F048 282E2072 */  paddub      $5, $17, $0
 /* 13F14C 0023F04C E0F6080C */  jal         pop__10CRunScriptFv
@@ -1133,7 +1104,7 @@ jlabel .L0023F044
 /* 13F168 0023F068 28262072 */  paddub      $4, $17, $0
 /* 13F16C 0023F06C 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13F170 0023F070 00000000 */   nop
-/* 13F174 0023F074 37010010 */  b           .L0023F554$b
+/* 13F174 0023F074 37010010 */  b           .L.L0023F554$b
 /* 13F178 0023F078 00000000 */   nop
 .L0023F07C:
 /* 13F17C 0023F07C 01000224 */  addiu       $2, $0, 0x1
@@ -1144,7 +1115,7 @@ jlabel .L0023F044
 /* 13F190 0023F090 28262072 */  paddub      $4, $17, $0
 /* 13F194 0023F094 C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13F198 0023F098 00000000 */   nop
-/* 13F19C 0023F09C 2D010010 */  b           .L0023F554$b
+/* 13F19C 0023F09C 2D010010 */  b           .L.L0023F554$b
 /* 13F1A0 0023F0A0 00000000 */   nop
 .L0023F0A4:
 /* 13F1A4 0023F0A4 2500013C */  lui         $1, %hi(_impure_ptr)
@@ -1159,10 +1130,9 @@ jlabel .L0023F044
 /* 13F1C8 0023F0C8 FFFF0424 */  addiu       $4, $0, -0x1
 /* 13F1CC 0023F0CC DC05040C */  jal         exit__2
 /* 13F1D0 0023F0D0 00000000 */   nop
-/* 13F1D4 0023F0D4 1F010010 */  b           .L0023F554$b
+/* 13F1D4 0023F0D4 1F010010 */  b           .L.L0023F554$b
 /* 13F1D8 0023F0D8 00000000 */   nop
 jlabel .L0023F0DC
-.L0023F0DC$b:
 /* 13F1DC 0023F0DC 5800A427 */  addiu       $4, $29, 0x58
 /* 13F1E0 0023F0E0 282E2072 */  paddub      $5, $17, $0
 /* 13F1E4 0023F0E4 E0F6080C */  jal         pop__10CRunScriptFv
@@ -1178,7 +1148,7 @@ jlabel .L0023F0DC
 /* 13F20C 0023F10C 06030046 */  mov.s       $f12, $f0
 /* 13F210 0023F110 C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13F214 0023F114 00000000 */   nop
-/* 13F218 0023F118 0E010010 */  b           .L0023F554$b
+/* 13F218 0023F118 0E010010 */  b           .L.L0023F554$b
 /* 13F21C 0023F11C 00000000 */   nop
 .L0023F120:
 /* 13F220 0023F120 01000224 */  addiu       $2, $0, 0x1
@@ -1191,7 +1161,7 @@ jlabel .L0023F0DC
 /* 13F23C 0023F13C 06030046 */  mov.s       $f12, $f0
 /* 13F240 0023F140 C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13F244 0023F144 00000000 */   nop
-/* 13F248 0023F148 02010010 */  b           .L0023F554$b
+/* 13F248 0023F148 02010010 */  b           .L.L0023F554$b
 /* 13F24C 0023F14C 00000000 */   nop
 .L0023F150:
 /* 13F250 0023F150 2500013C */  lui         $1, %hi(_impure_ptr)
@@ -1206,10 +1176,9 @@ jlabel .L0023F0DC
 /* 13F274 0023F174 FFFF0424 */  addiu       $4, $0, -0x1
 /* 13F278 0023F178 DC05040C */  jal         exit__2
 /* 13F27C 0023F17C 00000000 */   nop
-/* 13F280 0023F180 F4000010 */  b           .L0023F554$b
+/* 13F280 0023F180 F4000010 */  b           .L.L0023F554$b
 /* 13F284 0023F184 00000000 */   nop
 jlabel .L0023F188
-.L0023F188$b:
 /* 13F288 0023F188 5800A427 */  addiu       $4, $29, 0x58
 /* 13F28C 0023F18C 282E2072 */  paddub      $5, $17, $0
 /* 13F290 0023F190 E0F6080C */  jal         pop__10CRunScriptFv
@@ -1225,7 +1194,7 @@ jlabel .L0023F188
 /* 13F2B8 0023F1B8 06030046 */  mov.s       $f12, $f0
 /* 13F2BC 0023F1BC C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13F2C0 0023F1C0 00000000 */   nop
-/* 13F2C4 0023F1C4 E3000010 */  b           .L0023F554$b
+/* 13F2C4 0023F1C4 E3000010 */  b           .L.L0023F554$b
 /* 13F2C8 0023F1C8 00000000 */   nop
 .L0023F1CC:
 /* 13F2CC 0023F1CC 01000224 */  addiu       $2, $0, 0x1
@@ -1238,7 +1207,7 @@ jlabel .L0023F188
 /* 13F2E8 0023F1E8 06030046 */  mov.s       $f12, $f0
 /* 13F2EC 0023F1EC C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13F2F0 0023F1F0 00000000 */   nop
-/* 13F2F4 0023F1F4 D7000010 */  b           .L0023F554$b
+/* 13F2F4 0023F1F4 D7000010 */  b           .L.L0023F554$b
 /* 13F2F8 0023F1F8 00000000 */   nop
 .L0023F1FC:
 /* 13F2FC 0023F1FC 2500013C */  lui         $1, %hi(_impure_ptr)
@@ -1253,10 +1222,9 @@ jlabel .L0023F188
 /* 13F320 0023F220 FFFF0424 */  addiu       $4, $0, -0x1
 /* 13F324 0023F224 DC05040C */  jal         exit__2
 /* 13F328 0023F228 00000000 */   nop
-/* 13F32C 0023F22C C9000010 */  b           .L0023F554$b
+/* 13F32C 0023F22C C9000010 */  b           .L.L0023F554$b
 /* 13F330 0023F230 00000000 */   nop
 jlabel .L0023F234
-.L0023F234$b:
 /* 13F334 0023F234 5800A427 */  addiu       $4, $29, 0x58
 /* 13F338 0023F238 282E2072 */  paddub      $5, $17, $0
 /* 13F33C 0023F23C E0F6080C */  jal         pop__10CRunScriptFv
@@ -1271,7 +1239,7 @@ jlabel .L0023F234
 /* 13F360 0023F260 28262072 */  paddub      $4, $17, $0
 /* 13F364 0023F264 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13F368 0023F268 00000000 */   nop
-/* 13F36C 0023F26C B9000010 */  b           .L0023F554$b
+/* 13F36C 0023F26C B9000010 */  b           .L.L0023F554$b
 /* 13F370 0023F270 00000000 */   nop
 .L0023F274:
 /* 13F374 0023F274 2500013C */  lui         $1, %hi(_impure_ptr)
@@ -1286,10 +1254,9 @@ jlabel .L0023F234
 /* 13F398 0023F298 FFFF0424 */  addiu       $4, $0, -0x1
 /* 13F39C 0023F29C DC05040C */  jal         exit__2
 /* 13F3A0 0023F2A0 00000000 */   nop
-/* 13F3A4 0023F2A4 AB000010 */  b           .L0023F554$b
+/* 13F3A4 0023F2A4 AB000010 */  b           .L.L0023F554$b
 /* 13F3A8 0023F2A8 00000000 */   nop
 jlabel .L0023F2AC
-.L0023F2AC$b:
 /* 13F3AC 0023F2AC 5800A427 */  addiu       $4, $29, 0x58
 /* 13F3B0 0023F2B0 282E2072 */  paddub      $5, $17, $0
 /* 13F3B4 0023F2B4 E0F6080C */  jal         pop__10CRunScriptFv
@@ -1302,7 +1269,7 @@ jlabel .L0023F2AC
 /* 13F3D0 0023F2D0 28262072 */  paddub      $4, $17, $0
 /* 13F3D4 0023F2D4 C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13F3D8 0023F2D8 00000000 */   nop
-/* 13F3DC 0023F2DC 9D000010 */  b           .L0023F554$b
+/* 13F3DC 0023F2DC 9D000010 */  b           .L.L0023F554$b
 /* 13F3E0 0023F2E0 00000000 */   nop
 .L0023F2E4:
 /* 13F3E4 0023F2E4 01000224 */  addiu       $2, $0, 0x1
@@ -1312,7 +1279,7 @@ jlabel .L0023F2AC
 /* 13F3F4 0023F2F4 5C00ACC7 */  lwc1        $f12, 0x5C($29)
 /* 13F3F8 0023F2F8 C8F6080C */  jal         push_float__10CRunScriptFf
 /* 13F3FC 0023F2FC 00000000 */   nop
-/* 13F400 0023F300 94000010 */  b           .L0023F554$b
+/* 13F400 0023F300 94000010 */  b           .L.L0023F554$b
 /* 13F404 0023F304 00000000 */   nop
 .L0023F308:
 /* 13F408 0023F308 2500013C */  lui         $1, %hi(_impure_ptr)
@@ -1327,10 +1294,9 @@ jlabel .L0023F2AC
 /* 13F42C 0023F32C FFFF0424 */  addiu       $4, $0, -0x1
 /* 13F430 0023F330 DC05040C */  jal         exit__2
 /* 13F434 0023F334 00000000 */   nop
-/* 13F438 0023F338 86000010 */  b           .L0023F554$b
+/* 13F438 0023F338 86000010 */  b           .L.L0023F554$b
 /* 13F43C 0023F33C 00000000 */   nop
 jlabel .L0023F340
-.L0023F340$b:
 /* 13F440 0023F340 5800A427 */  addiu       $4, $29, 0x58
 /* 13F444 0023F344 282E2072 */  paddub      $5, $17, $0
 /* 13F448 0023F348 E0F6080C */  jal         pop__10CRunScriptFv
@@ -1342,7 +1308,7 @@ jlabel .L0023F340
 /* 13F460 0023F360 28262072 */  paddub      $4, $17, $0
 /* 13F464 0023F364 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13F468 0023F368 00000000 */   nop
-/* 13F46C 0023F36C 79000010 */  b           .L0023F554$b
+/* 13F46C 0023F36C 79000010 */  b           .L.L0023F554$b
 /* 13F470 0023F370 00000000 */   nop
 .L0023F374:
 /* 13F474 0023F374 01000224 */  addiu       $2, $0, 0x1
@@ -1355,7 +1321,7 @@ jlabel .L0023F340
 /* 13F490 0023F390 282E4070 */  paddub      $5, $2, $0
 /* 13F494 0023F394 84F6080C */  jal         push_int__10CRunScriptFi
 /* 13F498 0023F398 00000000 */   nop
-/* 13F49C 0023F39C 6D000010 */  b           .L0023F554$b
+/* 13F49C 0023F39C 6D000010 */  b           .L.L0023F554$b
 /* 13F4A0 0023F3A0 00000000 */   nop
 .L0023F3A4:
 /* 13F4A4 0023F3A4 2500013C */  lui         $1, %hi(_impure_ptr)
@@ -1370,10 +1336,9 @@ jlabel .L0023F340
 /* 13F4C8 0023F3C8 FFFF0424 */  addiu       $4, $0, -0x1
 /* 13F4CC 0023F3CC DC05040C */  jal         exit__2
 /* 13F4D0 0023F3D0 00000000 */   nop
-/* 13F4D4 0023F3D4 5F000010 */  b           .L0023F554$b
+/* 13F4D4 0023F3D4 5F000010 */  b           .L.L0023F554$b
 /* 13F4D8 0023F3D8 00000000 */   nop
 jlabel .L0023F3DC
-.L0023F3DC$b:
 /* 13F4DC 0023F3DC 0400C28C */  lw          $2, 0x4($6)
 /* 13F4E0 0023F3E0 C0180200 */  sll         $3, $2, 3
 /* 13F4E4 0023F3E4 1000228E */  lw          $2, 0x10($17)
@@ -1384,17 +1349,16 @@ jlabel .L0023F3DC
 /* 13F4F8 0023F3F8 0400458C */  lw          $5, 0x4($2)
 /* 13F4FC 0023F3FC 14F6080C */  jal         print__FP12RS_STACKDATAi
 /* 13F500 0023F400 00000000 */   nop
-/* 13F504 0023F404 53000010 */  b           .L0023F554$b
+/* 13F504 0023F404 53000010 */  b           .L.L0023F554$b
 /* 13F508 0023F408 00000000 */   nop
 jlabel .L0023F40C
-.L0023F40C$b:
 /* 13F50C 0023F40C 0400C38C */  lw          $3, 0x4($6)
 /* 13F510 0023F410 C0200300 */  sll         $4, $3, 3
 /* 13F514 0023F414 1000238E */  lw          $3, 0x10($17)
 /* 13F518 0023F418 23186400 */  subu        $3, $3, $4
 /* 13F51C 0023F41C 100023AE */  sw          $3, 0x10($17)
 /* 13F520 0023F420 3800238E */  lw          $3, 0x38($17)
-/* 13F524 0023F424 4B006014 */  bnez        $3, .L0023F554$b
+/* 13F524 0023F424 4B006014 */  bnez        $3, .L.L0023F554$b
 /* 13F528 0023F428 00000000 */   nop
 /* 13F52C 0023F42C 3000228E */  lw          $2, 0x30($17)
 /* 13F530 0023F430 28262072 */  paddub      $4, $17, $0
@@ -1402,17 +1366,15 @@ jlabel .L0023F40C
 /* 13F538 0023F438 0400468C */  lw          $6, 0x4($2)
 /* 13F53C 0023F43C 40F7080C */  jal         ext__10CRunScriptFP12RS_STACKDATAi
 /* 13F540 0023F440 00000000 */   nop
-/* 13F544 0023F444 43000010 */  b           .L0023F554$b
+/* 13F544 0023F444 43000010 */  b           .L.L0023F554$b
 /* 13F548 0023F448 00000000 */   nop
 jlabel .L0023F44C
-.L0023F44C$b:
 /* 13F54C 0023F44C 01000324 */  addiu       $3, $0, 0x1
 /* 13F550 0023F450 340023AE */  sw          $3, 0x34($17)
 /* 13F554 0023F454 300020AE */  sw          $0, 0x30($17)
 /* 13F558 0023F458 43000010 */  b           .L0023F568
 /* 13F55C 0023F45C 00000000 */   nop
 jlabel .L0023F460
-.L0023F460$b:
 /* 13F560 0023F460 0800C38C */  lw          $3, 0x8($6)
 /* 13F564 0023F464 4000228E */  lw          $2, 0x40($17)
 /* 13F568 0023F468 21284300 */  addu        $5, $2, $3
@@ -1423,10 +1385,9 @@ jlabel .L0023F460
 /* 13F57C 0023F47C 3000238E */  lw          $3, 0x30($17)
 /* 13F580 0023F480 F4FF6324 */  addiu       $3, $3, -0xC
 /* 13F584 0023F484 300023AE */  sw          $3, 0x30($17)
-/* 13F588 0023F488 32000010 */  b           .L0023F554$b
+/* 13F588 0023F488 32000010 */  b           .L.L0023F554$b
 /* 13F58C 0023F48C 00000000 */   nop
 jlabel .L0023F490
-.L0023F490$b:
 /* 13F590 0023F490 5000A427 */  addiu       $4, $29, 0x50
 /* 13F594 0023F494 282E2072 */  paddub      $5, $17, $0
 /* 13F598 0023F498 E0F6080C */  jal         pop__10CRunScriptFv
@@ -1460,21 +1421,19 @@ jlabel .L0023F490
 /* 13F600 0023F500 5000A5DF */  ld          $5, 0x50($29)
 /* 13F604 0023F504 70F6080C */  jal         push__10CRunScriptF12RS_STACKDATA
 /* 13F608 0023F508 00000000 */   nop
-/* 13F60C 0023F50C 11000010 */  b           .L0023F554$b
+/* 13F60C 0023F50C 11000010 */  b           .L.L0023F554$b
 /* 13F610 0023F510 00000000 */   nop
 jlabel .L0023F514
-.L0023F514$b:
 /* 13F614 0023F514 3800238E */  lw          $3, 0x38($17)
-/* 13F618 0023F518 0E006014 */  bnez        $3, .L0023F554$b
+/* 13F618 0023F518 0E006014 */  bnez        $3, .L.L0023F554$b
 /* 13F61C 0023F51C 00000000 */   nop
 /* 13F620 0023F520 0C00C324 */  addiu       $3, $6, 0xC
 /* 13F624 0023F524 300023AE */  sw          $3, 0x30($17)
 /* 13F628 0023F528 0F000010 */  b           .L0023F568
 /* 13F62C 0023F52C 00000000 */   nop
 jlabel .L0023F530
-.L0023F530$b:
 /* 13F630 0023F530 3800238E */  lw          $3, 0x38($17)
-/* 13F634 0023F534 07006010 */  beqz        $3, .L0023F554$b
+/* 13F634 0023F534 07006010 */  beqz        $3, .L.L0023F554$b
 /* 13F638 0023F538 00000000 */   nop
 /* 13F63C 0023F53C 380020AE */  sw          $0, 0x38($17)
 /* 13F640 0023F540 3000238E */  lw          $3, 0x30($17)
@@ -1483,7 +1442,7 @@ jlabel .L0023F530
 /* 13F64C 0023F54C 06000010 */  b           .L0023F568
 /* 13F650 0023F550 00000000 */   nop
 jlabel .L0023F554
-.L0023F554$b:
+.L.L0023F554$b:
 /* 13F654 0023F554 3000238E */  lw          $3, 0x30($17)
 /* 13F658 0023F558 0C006324 */  addiu       $3, $3, 0xC
 /* 13F65C 0023F55C 300023AE */  sw          $3, 0x30($17)

@@ -1,0 +1,19 @@
+#include "common.h"
+
+INCLUDE_ASM("main", new_iob);
+INCLUDE_ASM("main", get_iob);
+INCLUDE_ASM("main", _sceFsSemInit);
+INCLUDE_ASM("main", _sceFsSemExit);
+INCLUDE_ASM("main", _sceFsDbChk);
+INCLUDE_ASM("main", _sceFsSigSema);
+INCLUDE_ASM("main", _sceFsIntrSigSema);
+INCLUDE_ASM("main", sceFsInit);
+INCLUDE_ASM("main", _fs_version);
+INCLUDE_ASM("main", sceFsReset);
+INCLUDE_ASM("main", sceOpen);
+INCLUDE_ASM("main", sceClose);
+INCLUDE_ASM("main", sceLseek);
+INCLUDE_ASM("main", fs_read_intr);
+INCLUDE_ASM("main", sceRead);
+INCLUDE_ASM("main", sceWrite);
+INCLUDE_ASM("main", sceIoctl);

@@ -21,7 +21,6 @@ glabel BattleMenuCharaKey__Fv
 /* 0F7574 001F7474 08004000 */  jr          $2
 /* 0F7578 001F7478 00000000 */   nop
 jlabel .L001F747C
-.L001F747C$b:
 /* 0F757C 001F747C D901013C */  lui         $1, %hi(MenuChara + 0x8)
 /* 0F7580 001F7480 7804228C */  lw          $2, %lo(MenuChara + 0x8)($1)
 /* 0F7584 001F7484 01004224 */  addiu       $2, $2, 0x1
@@ -51,7 +50,6 @@ jlabel .L001F747C
 /* 0F75E4 001F74E4 4B020010 */  b           .L001F7E14
 /* 0F75E8 001F74E8 00000000 */   nop
 jlabel .L001F74EC
-.L001F74EC$b:
 /* 0F75EC 001F74EC D901013C */  lui         $1, %hi(MenuChara + 0x8)
 /* 0F75F0 001F74F0 7804228C */  lw          $2, %lo(MenuChara + 0x8)($1)
 /* 0F75F4 001F74F4 01004224 */  addiu       $2, $2, 0x1
@@ -78,7 +76,6 @@ jlabel .L001F74EC
 /* 0F7648 001F7548 33020010 */  b           .L001F7E18
 /* 0F764C 001F754C 00000000 */   nop
 jlabel .L001F7550
-.L001F7550$b:
 /* 0F7650 001F7550 FC94828F */  lw          $2, -0x6B04($28)
 /* 0F7654 001F7554 6F004014 */  bnez        $2, .L001F7714
 /* 0F7658 001F7558 00000000 */   nop
@@ -246,7 +243,6 @@ jlabel .L001F7550
 /* 0F78CC 001F77CC 91010010 */  b           .L001F7E14
 /* 0F78D0 001F77D0 00000000 */   nop
 jlabel .L001F77D4
-.L001F77D4$b:
 /* 0F78D4 001F77D4 01000424 */  addiu       $4, $0, 0x1
 /* 0F78D8 001F77D8 D8DB070C */  jal         ToFromSelect__Fi
 /* 0F78DC 001F77DC 00000000 */   nop
@@ -303,7 +299,6 @@ jlabel .L001F77D4
 /* 0F79A8 001F78A8 5A010010 */  b           .L001F7E14
 /* 0F79AC 001F78AC 00000000 */   nop
 jlabel .L001F78B0
-.L001F78B0$b:
 /* 0F79B0 001F78B0 D901013C */  lui         $1, %hi(MenuChara + 0x4)
 /* 0F79B4 001F78B4 740421C4 */  lwc1        $f1, %lo(MenuChara + 0x4)($1)
 /* 0F79B8 001F78B8 803F023C */  lui         $2, (0x3F800000 >> 16)
@@ -430,7 +425,6 @@ jlabel .L001F78B0
 /* 0F7B6C 001F7A6C E9000010 */  b           .L001F7E14
 /* 0F7B70 001F7A70 00000000 */   nop
 jlabel .L001F7A74
-.L001F7A74$b:
 /* 0F7B74 001F7A74 CC01023C */  lui         $2, %hi(GamePad)
 /* 0F7B78 001F7A78 40C54424 */  addiu       $4, $2, %lo(GamePad)
 /* 0F7B7C 001F7A7C 60000524 */  addiu       $5, $0, 0x60
@@ -446,7 +440,6 @@ jlabel .L001F7A74
 /* 0F7BA4 001F7AA4 DB000010 */  b           .L001F7E14
 /* 0F7BA8 001F7AA8 00000000 */   nop
 jlabel .L001F7AAC
-.L001F7AAC$b:
 /* 0F7BAC 001F7AAC D901013C */  lui         $1, %hi(MenuChara)
 /* 0F7BB0 001F7AB0 70043084 */  lh          $16, %lo(MenuChara)($1)
 /* 0F7BB4 001F7AB4 CC01023C */  lui         $2, %hi(GamePad)

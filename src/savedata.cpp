@@ -1,5 +1,12 @@
 #include "savedata.hpp"
 
+INCLUDE_ASM("main", SetMoment__12CObjectFrameF11CVector3_f_);
+INCLUDE_ASM("main", SetRotation__12CObjectFrameFfff);
+INCLUDE_ASM("main", SetRotation__12CObjectFrameF11CVector3_f_);
+INCLUDE_ASM("main", SetRotVelocity__12CObjectFrameF11CVector3_f_);
+INCLUDE_ASM("main", SetRotAcceleration__12CObjectFrameF11CVector3_f_);
+INCLUDE_ASM("main", SetPosition__7CObjectFPf);
+
 /**
  * Contains one entry of the Georama building definition table.
  *
@@ -196,11 +203,6 @@ SV_GRD_PART *CSaveData::GetParts(int georama_no, int *out_count) {
 }
 
 void *CSaveData::GetGrdNPCData(int map_no, int npc_no) {
-    // Map IDs >= 11 are "sub-maps" that share one global NPC table
-    // (special_npc) instead of each having a georama slot; a match here only
-    // means "this is a recognized sub-map". The first negative entry ends the
-    // table. The retail symbol is `sub_map$439` in .data at 0x25DF50: it must
-    // stay a function-local (not file-scope) static, and must not be `const`.
     static s32 sub_map[] = {14, 23, 11, 19, 42, 38, -1, 0};
     int i;
 

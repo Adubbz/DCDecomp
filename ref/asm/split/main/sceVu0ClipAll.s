@@ -15,7 +15,7 @@ glabel sceVu0ClipAll
 /* 0222F0 001221F0 0000AAD8 */  lqc2        $vf10, 0x0($5)
 /* 0222F4 001221F4 00008BD8 */  lqc2        $vf11, 0x0($4)
 /* 0222F8 001221F8 0000ACD8 */  lqc2        $vf12, 0x0($5)
-loop_clip_all:
+.Lloop_clip_all:
 /* 0222FC 001221FC BC21E84B */  vmulax.xyzw $ACC, $vf4, $vf8x
 /* 022300 00122200 BD28E84B */  vmadday.xyzw $ACC, $vf5, $vf8y
 /* 022304 00122204 BE30E84B */  vmaddaz.xyzw $ACC, $vf6, $vf8z
@@ -35,12 +35,12 @@ loop_clip_all:
 /* 02233C 0012223C FFFF0821 */  addi        $8, $8, -0x1 /* handwritten instruction */
 /* 022340 00122240 00804248 */  cfc2.ni     $2, $vi16
 /* 022344 00122244 C0004230 */  andi        $2, $2, 0xC0
-/* 022348 00122248 04004010 */  beqz        $2, end_clip_all
+/* 022348 00122248 04004010 */  beqz        $2, .Lend_clip_all
 /* 02234C 0012224C 00000000 */   nop
-/* 022350 00122250 EAFF0814 */  bne         $0, $8, loop_clip_all
+/* 022350 00122250 EAFF0814 */  bne         $0, $8, .Lloop_clip_all
 /* 022354 00122254 00000000 */   nop
 /* 022358 00122258 01000220 */  addi        $2, $0, 0x1 /* handwritten instruction */
-end_clip_all:
+.Lend_clip_all:
 /* 02235C 0012225C 0800E003 */  jr          $31
 /* 022360 00122260 00000000 */   nop
 /* 022364 00122264 00000000 */  nop

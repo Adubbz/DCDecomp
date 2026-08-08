@@ -15,11 +15,11 @@ glabel EventMode__Fv
 /* 07EA88 0017E988 282E0070 */  paddub      $5, $0, $0
 /* 07EA8C 0017E98C B45E060C */  jal         EdEventMode__FP13CCameraFollowi
 /* 07EA90 0017E990 00000000 */   nop
-/* 07EA94 0017E994 CB004010 */  beqz        $2, .L0017ECC4$b
+/* 07EA94 0017E994 CB004010 */  beqz        $2, .L.L0017ECC4$b
 /* 07EA98 0017E998 00000000 */   nop
 /* 07EA9C 0017E99C FCFF4520 */  addi        $5, $2, -0x4 /* handwritten instruction */
 /* 07EAA0 0017E9A0 0800A12C */  sltiu       $1, $5, 0x8
-/* 07EAA4 0017E9A4 28002010 */  beqz        $1, .L0017EA48$b
+/* 07EAA4 0017E9A4 28002010 */  beqz        $1, .L.L0017EA48$b
 /* 07EAA8 0017E9A8 00000000 */   nop
 /* 07EAAC 0017E9AC 2A00033C */  lui         $3, %hi(LIT_2340)
 /* 07EAB0 0017E9B0 30AC6424 */  addiu       $4, $3, %lo(LIT_2340)
@@ -29,7 +29,6 @@ glabel EventMode__Fv
 /* 07EAC0 0017E9C0 08006000 */  jr          $3
 /* 07EAC4 0017E9C4 00000000 */   nop
 jlabel .L0017E9C8
-.L0017E9C8$b:
 /* 07EAC8 0017E9C8 D401023C */  lui         $2, %hi(EdEventInfo + 0x2B0)
 /* 07EACC 0017E9CC 80D44424 */  addiu       $4, $2, %lo(EdEventInfo + 0x2B0)
 /* 07EAD0 0017E9D0 D401013C */  lui         $1, %hi(EdEventInfo + 0x2AC)
@@ -40,40 +39,35 @@ jlabel .L0017E9C8
 /* 07EAE4 0017E9E4 A0D4288C */  lw          $8, %lo(EdEventInfo + 0x2D0)($1)
 /* 07EAE8 0017E9E8 78FB050C */  jal         GotoInterior__FPciiP14ED_EVENT_PARAMi
 /* 07EAEC 0017E9EC 00000000 */   nop
-/* 07EAF0 0017E9F0 B4000010 */  b           .L0017ECC4$b
+/* 07EAF0 0017E9F0 B4000010 */  b           .L.L0017ECC4$b
 /* 07EAF4 0017E9F4 00000000 */   nop
 jlabel .L0017E9F8
-.L0017E9F8$b:
 /* 07EAF8 0017E9F8 38FB050C */  jal         GotoDungeon__Fv
 /* 07EAFC 0017E9FC 00000000 */   nop
-/* 07EB00 0017EA00 B0000010 */  b           .L0017ECC4$b
+/* 07EB00 0017EA00 B0000010 */  b           .L.L0017ECC4$b
 /* 07EB04 0017EA04 00000000 */   nop
 jlabel .L0017EA08
-.L0017EA08$b:
 /* 07EB08 0017EA08 44E0050C */  jal         EdExitLoop__Fv
 /* 07EB0C 0017EA0C 00000000 */   nop
-/* 07EB10 0017EA10 AC000010 */  b           .L0017ECC4$b
+/* 07EB10 0017EA10 AC000010 */  b           .L.L0017ECC4$b
 /* 07EB14 0017EA14 00000000 */   nop
 jlabel .L0017EA18
-.L0017EA18$b:
 /* 07EB18 0017EA18 44E0050C */  jal         EdExitLoop__Fv
 /* 07EB1C 0017EA1C 00000000 */   nop
-/* 07EB20 0017EA20 A8000010 */  b           .L0017ECC4$b
+/* 07EB20 0017EA20 A8000010 */  b           .L.L0017ECC4$b
 /* 07EB24 0017EA24 00000000 */   nop
 jlabel .L0017EA28
-.L0017EA28$b:
 /* 07EB28 0017EA28 02000324 */  addiu       $3, $0, 0x2
 /* 07EB2C 0017EA2C 608783AF */  sw          $3, -0x78A0($28)
-/* 07EB30 0017EA30 A4000010 */  b           .L0017ECC4$b
+/* 07EB30 0017EA30 A4000010 */  b           .L.L0017ECC4$b
 /* 07EB34 0017EA34 00000000 */   nop
 jlabel .L0017EA38
-.L0017EA38$b:
 /* 07EB38 0017EA38 10000324 */  addiu       $3, $0, 0x10
 /* 07EB3C 0017EA3C 608783AF */  sw          $3, -0x78A0($28)
-/* 07EB40 0017EA40 A0000010 */  b           .L0017ECC4$b
+/* 07EB40 0017EA40 A0000010 */  b           .L.L0017ECC4$b
 /* 07EB44 0017EA44 00000000 */   nop
 jlabel .L0017EA48
-.L0017EA48$b:
+.L.L0017EA48$b:
 /* 07EB48 0017EA48 01000324 */  addiu       $3, $0, 0x1
 /* 07EB4C 0017EA4C 608783AF */  sw          $3, -0x78A0($28)
 /* 07EB50 0017EA50 D401013C */  lui         $1, %hi(EdEventInfo + 0x44)
@@ -237,7 +231,7 @@ jlabel .L0017EA48
 /* 07EDBC 0017ECBC 21088100 */  addu        $1, $4, $1
 /* 07EDC0 0017ECC0 2C5F23AC */  sw          $3, (0x15F2C & 0xFFFF)($1)
 jlabel .L0017ECC4
-.L0017ECC4$b:
+.L.L0017ECC4$b:
 /* 07EDC4 0017ECC4 2000BF7B */  lq          $31, 0x20($29)
 /* 07EDC8 0017ECC8 1000B17B */  lq          $17, 0x10($29)
 /* 07EDCC 0017ECCC 0000B07B */  lq          $16, 0x0($29)

@@ -1,1 +1,19 @@
 #include "npcharacter.hpp"
+
+INCLUDE_ASM("main", Step__12CNPCharacterFv);
+INCLUDE_ASM("main", ShadowStep__12CNPCharacterFv);
+INCLUDE_ASM("main", PlaySeq__12CNPCharacterFv);
+INCLUDE_ASM("main", ClearSeq__12CNPCharacterFv);
+INCLUDE_ASM("main", SetSeq__12CNPCharacterFPff);
+INCLUDE_ASM("main", SetWait__12CNPCharacterFi);
+INCLUDE_ASM("main", CheckSeq__12CNPCharacterFv);
+INCLUDE_ASM("main", GetNextSeq__12CNPCharacterFv);
+INCLUDE_ASM("main", GetNowSeq__12CNPCharacterFv);
+INCLUDE_ASM("main", NextSeq__12CNPCharacterFv);
+INCLUDE_ASM("main", Draw__12CNPCharacterFv);
+INCLUDE_ASM("main", DrawShadow__12CNPCharacterFv);
+INCLUDE_ASM("main", CheckDraw__12CNPCharacterFv);
+INCLUDE_ASM("main", PickUpPoly__12CNPCharacterFPfP6CCPoly);
+INCLUDE_ASM("main", PickUpPoly__10CCharacterFPfP6CCPoly);
+INCLUDE_ASM("main", Initialize__12CNPCharacterFv);
+INCLUDE_ASM("main", __ct__12CNPCharacterFv);

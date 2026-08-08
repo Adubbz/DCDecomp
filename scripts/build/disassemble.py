@@ -21,7 +21,18 @@ REF_PATH = Path('ref/asm/')
 TOOL_PREFIX = os.environ.get('MIPS_TOOL_PREFIX', 'mips-ps2-decompals-')
 
 REF_SECTION_PATH = REF_PATH / 'sections'
+# One directory per image holding every dump an INCLUDE_ marker can name: a
+# function's instructions and a constant's bytes alike. They share it because
+# tools/mwccgap resolves both kinds against a single prefix, and each file is
+# named for the whole of its symbol, so the marker's name is the path.
 REF_SPLIT_PATH = REF_PATH / 'split'
+
+# The .rodata range that is written one constant per file rather than as a
+# whole-section dump, because every constant in it belongs to a translation
+# unit and is supplied there by an INCLUDE_RODATA marker. Named apart from
+# `.rodata` only so its would-be dump does not collide with the tail's; the
+# files it writes carry `.section .rodata` like any other.
+SPLIT_RODATA_NAME = '.rodata_split'
 
 # Linkable sources per image, filled in by write_split() and written out with
 # that image's symbols once every dump exists.
@@ -106,14 +117,6 @@ ASM_PRELUDE = '''\
 
 SYMBOL_SUFFIX_PATTERN = re.compile(r'\$\$_[0-9]+$')
 
-# Longest split-file name, before the ".s" it is written with and the ".o" the
-# build produces from it. mwld keeps an object's base name in a 64-byte buffer
-# and walks off the end of anything longer -- it does not report an error, it
-# corrupts its own error path, which surfaces as wibo aborting on a missing
-# FormatMessageA import. Mangled names reach 126 characters, so they are cut to
-# fit; the symbol inside the file is always the full name.
-MAX_SPLIT_NAME_LENGTH = 59
-
 def ensure_dir(path):
     path.mkdir(parents=True, exist_ok=True)
 
@@ -165,7 +168,13 @@ def read_symbols():
     # that threshold -- six of them here, including Chara (0x196d0) and
     # GlobalDataBuffer (0x19c9910) -- so the disassembler never knew their names
     # and emitted auto-generated ones instead.
-    for match in re.finditer(r'^ *\d+: +([0-9a-f]+) +(0x[0-9a-fA-F]+|\d+) +([A-Z]+) +([A-Z]+) +([A-Z]+) +([0-9UND]+) +(.*)', readelf(['-W', '-s', ELF_PATH]), re.MULTILINE):
+    #
+    # The binding is matched loosely for the same reason. Retail gives 55 of its
+    # functions a processor-specific binding, which readelf prints as
+    # `<processor specific>: 13` where a keyword belongs; requiring a keyword
+    # dropped every one of them, and they came out as func_00158AE0 rather than
+    # InitPos__11CMenuCursorFv. Only the type is actually read below.
+    for match in re.finditer(r'^ *\d+: +([0-9a-f]+) +(0x[0-9A-Fa-f]+|\d+) +([A-Z]+) +(.+?) +([A-Z]+) +([0-9UND]+) +(.*)', readelf(['-W', '-s', ELF_PATH]), re.MULTILINE):
         addr, size, sym_type, bind, visibility, index, name = match.group(1, 2, 3, 4, 5, 6, 7)
 
         # Skip symbols with an undefined index
@@ -191,7 +200,7 @@ def configure():
     # for data, jlabel for jump tables, an `endlabel` closing every symbol, a
     # `nonmatching` marker before it) and to indenting the body.
     #
-    # The dumps are not just assembler input: scripts/build/migrate_section.py reads
+    # The dumps are not just assembler input: scripts/build/migrate.py reads
     # them to carve migrated data out, matching labels and the address comment
     # that follows them. Keeping the emission as it was leaves that -- and the
     # macro.inc the dumps include -- working unchanged, and keeps the upgrade
@@ -213,9 +222,9 @@ def configure():
     # rather than splitting it out under a generated D_<addr> label. The
     # migrated objects supply the padding too -- mwcc pads .data out to the
     # section's alignment -- so a split pad makes the hole carved for an
-    # object smaller than the object itself, which gen_lcf.py rejects.
+    # object smaller than the object itself, which the linker-script pass rejects.
     # .bss pads stay on: the B_<addr> labels they produce are what
-    # scripts/build/migrate_section.py already recognises as padding there.
+    # scripts/build/migrate.py already recognises as padding there.
     spimdisasm.common.GlobalConfig.CREATE_DATA_PADS = False
     spimdisasm.common.GlobalConfig.CREATE_BSS_PADS = True
 
@@ -253,11 +262,19 @@ def configure():
     # Configure rabbitizer
     rabbitizer.config.regNames_namedRegisters = False
 
+# GCC's suffix for a function-local static -- `blanks.12`, `heap_ptr.30`. The
+# dot has to go: tools/mwccgap declares a constant it transplants as a C
+# object of that name, and a dot is not part of an identifier. Only a dot
+# before a digit is touched, which leaves the `__sinit_<file>.cpp` symbols --
+# the other thirty dotted names retail carries -- spelled as mwcc spells them.
+LOCAL_STATIC_SUFFIX = re.compile(r'\.(?=[0-9])')
+
+
 def normalize_sym(sym):
     if sym.startswith('@'):
         sym = sym.replace('@', 'LIT_')
     sym = sym.replace(',', '_').replace('<', '_').replace('>', '_')
-    return sym
+    return LOCAL_STATIC_SUFFIX.sub('_', sym)
 
 def process_relocations(context):
     relocs = readelf(['-W', '--relocs', ELF_PATH])
@@ -403,18 +420,28 @@ def process_symbols(context: spimdisasm.common.Context, title_segment, dun_segme
 # Auto-generated branch labels: `.L<vram>` or `.L<vram>_<vrom>`.
 BRANCH_LABEL_RE = re.compile(r'^glabel (\.L[0-9A-F]+(?:_[0-9A-F]+)?)$', re.MULTILINE)
 JUMP_TABLE_LABEL_RE = re.compile(r'^jlabel (\S+)$', re.MULTILINE)
-FUNCTION_LABEL_RE = re.compile(r'^glabel (\S+)$', re.MULTILINE)
+GLOBAL_LABEL_RE = re.compile(r'^(?:glabel|jlabel) (\S+)$', re.MULTILINE)
 
 # A PC-relative branch and the label it lands on. `j`/`jal` are deliberately
 # not matched: those encode an absolute target, mwld resolves them correctly,
 # and pointing one at a file-local twin would leave it with no relocation at
 # all. `break` is the one other b-word and takes no label.
 BRANCH_TARGET_RE = re.compile(
-    r'^(/\*.*?\*/\s+b(?!reak\b)[a-z0-9]*\s+(?:[^,\s]+,\s*)*)([A-Za-z_$][\w.$]*)[ \t]*$',
+    r'^(/\*.*?\*/\s+b(?!reak\b)[a-z0-9]*\s+(?:[^,\s]+,\s*)*)([A-Za-z_$.][\w.$]*)[ \t]*$',
     re.MULTILINE)
 
-# Suffix for the file-local twin of a label that also has to be global.
+# The file-local twin of a label that also has to be global. `.L` is not
+# decoration: gas treats a label starting with it as a local symbol, and
+# tools/mwccgap counts the lines of a dump to work out how much room to leave
+# for it, skipping exactly the lines that look like `.L...:`. A twin named
+# anything else is counted as an instruction, and the function is then reserved
+# one word more than retail's own body has to fill it.
+LOCAL_TWIN_PREFIX = '.L'
 LOCAL_TWIN_SUFFIX = '$b'
+
+
+def local_twin(name):
+    return f'{LOCAL_TWIN_PREFIX}{name}{LOCAL_TWIN_SUFFIX}'
 
 
 def localize_branch_labels(text):
@@ -431,43 +458,133 @@ def localize_branch_labels(text):
     stays global and gets the same treatment, but only its branches are
     repointed, since a `jal` still needs the relocation.
     """
+    addressed = addressed_labels(text)
+    text = globalize_addressed_labels(text, addressed)
     text = BRANCH_LABEL_RE.sub(r'\1:', text)
-    text = twin_branched_functions(text)
+    text = localize_alt_labels(text, addressed)
+    return twin_branched_labels(text)
 
-    names = list(dict.fromkeys(JUMP_TABLE_LABEL_RE.findall(text)))
+
+# A label standing on its own line, which is how spimdisasm writes an alternate
+# entry point that retail's symbol table happens to name -- `$L5:`, `loop1:`.
+BARE_LABEL_RE = re.compile(r'^([A-Za-z_$][\w.$]*):$', re.MULTILINE)
+
+# A label whose *address* is taken, rather than one only branched to: the two
+# halves of a %hi/%lo pair, and the absolute `j`/`jal` target encoding.
+ADDRESSED_LABEL_RE = re.compile(
+    r'%(?:hi|lo)\(([A-Za-z_$.][\w.$]*)\)'
+    r'|^/\*.*?\*/\s+j(?:al)?\s+([A-Za-z_$.][\w.$]*)[ \t]*$',
+    re.MULTILINE)
+
+
+def addressed_labels(text):
+    """Every label this file takes the address of rather than branching to.
+
+    These have to stay global. gas resolves a branch to a local label itself,
+    but the address of one it can only express as a relocation against the
+    section symbol -- and that is a *local* symbol, which tools/mwccgap cannot
+    carry across into the object it builds: it renumbers the symbol table as it
+    transplants, and a section-symbol relocation comes out pointing at nothing.
+    Left global, the relocation names a symbol instead, and survives.
+    """
+    return {m.group(1) or m.group(2) for m in ADDRESSED_LABEL_RE.finditer(text)}
+
+
+def globalize_addressed_labels(text, addressed):
+    """Make every label whose address is taken a real, linker-visible symbol.
+
+    A branch target can stay local, and normally should -- see include/macro.inc
+    for what happens to a branch that becomes a relocation. A label the code
+    loads the *address* of cannot: gas has no local way to write that down, so
+    it emits a %hi/%lo pair against the section symbol, and a section symbol is
+    a local one. tools/mwccgap renumbers the symbol table as it transplants a
+    function into the compiled object and cannot carry those across -- the
+    relocation comes out pointing at a symbol index that no longer exists,
+    which mwld reads as a corrupt object and dies on without a diagnostic.
+
+    Naming the label makes the relocation name a symbol instead. `jlabel` is
+    what marks a global label that code also branches to, and the pass below
+    gives each one a file-local twin so the branches stay local.
+
+    A `.L` name cannot simply be exported -- gas keeps those out of the symbol
+    table -- so it is renamed to the `T_` spelling spimdisasm already uses for
+    labels of this kind.
+    """
+    if not addressed:
+        return text
+
+    renamed = {name: ('T_' + name[2:] if name.startswith('.L') else name)
+               for name in addressed}
+
+    # Every mention of the label, definition and use alike.
+    alternation = '|'.join(re.escape(n) for n in sorted(renamed, key=len, reverse=True))
+    text = re.sub(rf'(?<![\w.$])({alternation})(?![\w.$])',
+                  lambda m: renamed[m.group(1)], text)
+
+    # However the definition was spelled, it is a global label now.
+    finals = '|'.join(re.escape(n) for n in sorted(set(renamed.values()),
+                                                   key=len, reverse=True))
+    text = re.sub(rf'^(?:alabel |glabel )?({finals}):?$', r'jlabel \1',
+                  text, flags=re.MULTILINE)
+    return text
+
+
+def localize_alt_labels(text, addressed):
+    """Give every named branch target inside a function a `.L` name.
+
+    These are retail's own local labels, kept because its symbol table names
+    them. Nothing outside the function reaches them -- a branch cannot cross an
+    object, and no jump table in the data dumps refers to one -- so the name is
+    free to change, and tools/mwccgap needs it to: it sizes a function by
+    counting the lines of its dump, and the only label lines it knows to skip
+    are the ones spelled `.L...`.
+
+    One whose address is taken keeps its name and becomes a `glabel`, which
+    mwccgap skips for the same reason while leaving the symbol global.
+    """
+    names = [n for n in dict.fromkeys(BARE_LABEL_RE.findall(text))
+             if not n.startswith(LOCAL_TWIN_PREFIX)]
     if not names:
         return text
 
-    # One pass over the file, not one per label: the section dumps are large
-    # and carry thousands of these between them.
-    alternation = '|'.join(re.escape(n) for n in names)
-    text = re.sub(rf'(?<![\w.$])({alternation})(?![\w.$])',
-                  lambda m: m.group(1) + LOCAL_TWIN_SUFFIX, text)
+    keep = [n for n in names if n in addressed]
+    if keep:
+        text = re.sub(rf'^({"|".join(re.escape(n) for n in keep)}):$',
+                      r'glabel \1', text, flags=re.MULTILINE)
 
-    # The definition itself has to keep the global name, with the twin beside it.
-    suffix = re.escape(LOCAL_TWIN_SUFFIX)
-    return re.sub(rf'^jlabel (\S+){suffix}$',
-                  lambda m: f'jlabel {m.group(1)}\n{m.group(1)}{LOCAL_TWIN_SUFFIX}:',
-                  text, flags=re.MULTILINE)
+    rename = [n for n in names if n not in addressed]
+    if not rename:
+        return text
+
+    alternation = '|'.join(re.escape(n) for n in rename)
+    return re.sub(rf'(?<![\w.$])({alternation})(?![\w.$])',
+                  lambda m: LOCAL_TWIN_PREFIX + m.group(1), text)
 
 
-def twin_branched_functions(text):
-    """Give a local twin to every glabel this file branches to.
+def twin_branched_labels(text):
+    """Give a local twin to every global label this file branches to.
 
-    Only names defined here can get one -- a branch into another object has to
+    A branch to a global label becomes an R_MIPS_PC16 for mwld, and gas and
+    mwld disagree by one instruction about the addend -- see include/macro.inc.
+    So each branch is pointed at a file-local twin sitting on the same address,
+    while everything else -- a `jal`, a %hi/%lo pair, a jump table in another
+    object -- goes on naming the global symbol.
+
+    Only names defined here can get one: a branch into another object has to
     stay a relocation, and there is nothing local to point it at.
     """
-    defined = set(FUNCTION_LABEL_RE.findall(text))
+    defined = set(GLOBAL_LABEL_RE.findall(text))
     branched = {m.group(2) for m in BRANCH_TARGET_RE.finditer(text)} & defined
     if not branched:
         return text
 
     text = BRANCH_TARGET_RE.sub(
-        lambda m: m.group(1) + m.group(2) + (LOCAL_TWIN_SUFFIX
-                                             if m.group(2) in branched else ''),
+        lambda m: m.group(1) + (local_twin(m.group(2))
+                                if m.group(2) in branched else m.group(2)),
         text)
-    return re.sub(rf'^glabel ({"|".join(re.escape(n) for n in branched)})$',
-                  lambda m: f'glabel {m.group(1)}\n{m.group(1)}{LOCAL_TWIN_SUFFIX}:',
+    alternation = '|'.join(re.escape(n) for n in branched)
+    return re.sub(rf'^((?:glabel|jlabel) ({alternation}))$',
+                  lambda m: f'{m.group(1)}\n{local_twin(m.group(2))}:',
                   text, flags=re.MULTILINE)
 
 
@@ -602,35 +719,71 @@ def write_section(section, out_path):
         f.write(f'.section {section.name}\n')
         f.write(localize_branch_labels(section.disassemble()))
 
+def write_rodata_split(processed_segments, section_name):
+    """Write each constant in the split .rodata range to a file of its own.
+
+    tools/mwccgap reads one of these per INCLUDE_RODATA marker, and requires
+    exactly one symbol in the file, so the whole-section dump cannot serve.
+    A constant runs until the next one starts, which keeps whatever padding
+    retail left after it inside it -- the pieces then tile the range exactly
+    and the assembler never has to restore alignment.
+    """
+    for section in processed_segments.get(FileSectionType.Rodata, []):
+        if section.name != SPLIT_RODATA_NAME:
+            continue
+        out_dir = REF_SPLIT_PATH / section_name
+        out_dir.mkdir(parents=True, exist_ok=True)
+        for symbol in section.symbolList:
+            # The alignment retail's own address implies, capped at 16. A
+            # constant's bytes here run to the start of the next one, so the
+            # running offset already matches its address and this asks for
+            # nothing -- except after a constant the C++ emits itself, which
+            # mwcc writes without its trailing padding and leaves to the
+            # alignment of whatever follows. This is what restores it.
+            align = min(symbol.vram & -symbol.vram, 16) if symbol.vram else 16
+            with open(out_dir / f'{symbol.getName()}.s', 'w', encoding='utf-8') as f:
+                f.write(ASM_PRELUDE)
+                f.write('.section .rodata\n')
+                f.write(f'.align {align.bit_length() - 1}\n')
+                f.write(symbol.disassemble())
+
+
 def write_split(processed_segments, section_name):
     text_sections = sorted(processed_segments[FileSectionType.Text], key=lambda x: x.vram)
     prev_names = set()
 
     def make_name(sym):
-        """The file name for one function: its own symbol, as mangled.
+        """The file name for one function: the whole of its own symbol.
 
         The game uses GCC 2.x (ARM-style) mangling, which is what appears in
         the objects and the link map -- Load__7CScriptPCc, not CScript::Load.
         No current demangler reads that form, so demangling would mean
-        carrying a checked-in table. `$$_N` suffixes are spimdisasm's way of
-        separating same-named symbols and are stripped, which can bring two
-        files back into collision; the loop below keeps them apart, as does
-        truncation.
+        carrying a checked-in table.
+
+        The name is not shortened. It used to be, because each of these was
+        assembled into an object of its own and mwld keeps an object's base
+        name in a 64-byte buffer that it walks off the end of. Nothing links
+        these any more -- an INCLUDE_ASM marker names one and tools/mwccgap
+        reads it -- so the marker's symbol is the file name exactly, which is
+        what lets the marker resolve without a table mapping one to the other.
+
+        `$$_N` suffixes are spimdisasm's way of separating same-named symbols
+        and are stripped, which can bring two files back into collision; the
+        loop below keeps them apart.
         """
-        name = SYMBOL_SUFFIX_PATTERN.sub('', sym)[:MAX_SPLIT_NAME_LENGTH]
+        name = SYMBOL_SUFFIX_PATTERN.sub('', sym)
 
         suffix = 2
         new_name = name
         while new_name.lower() in prev_names:
-            tail = f'_{suffix}'
-            new_name = f'{name[:MAX_SPLIT_NAME_LENGTH - len(tail)]}{tail}'
+            new_name = f'{name}_{suffix}'
             suffix += 1
         prev_names.add(new_name.lower())
         return new_name
 
     # Write each function to its own file, recording where retail keeps it.
     # The index is what lets the build work out, without reading four thousand
-    # object files, which .s a compiled .cpp supersedes: see gen_layout.py.
+    # object files, which unit each function belongs to: see asm/units.txt.
     index = []
     for section in text_sections:
         for func in section.symbolList:
@@ -645,13 +798,21 @@ def write_split(processed_segments, section_name):
                 f.write(f'.section .text\n')
                 f.write(localize_branch_labels(func.disassemble()))
 
-    non_text_sections = sorted([e for k, v in processed_segments.items() if k != FileSectionType.Text for e in v], key=lambda x: x.vram)
+    write_rodata_split(processed_segments, section_name)
+
+    non_text_sections = sorted([e for k, v in processed_segments.items()
+                                if k != FileSectionType.Text for e in v],
+                               key=lambda x: x.vram)
 
     # One row per source the build can link, with the retail address it
     # occupies. Data sections are whole dumps rather than one symbol, so they
     # are recorded by their span. Held until the symbols can be folded in
     # alongside them; see write_index().
     for section in non_text_sections:
+        # No `src` row for the split range: nothing assembles it, so it must
+        # not look like a source the link can take.
+        if section.name == SPLIT_RODATA_NAME:
+            continue
         path = f'{REF_SECTION_PATH}/{section_name}/{section_name}{section.name}.s'
         index.append((path, f'{section_name}{section.name}',
                       section.vram, section.sizew * 4))
@@ -723,8 +884,19 @@ def disassemble_group(context, group_section_name, entries):
         paths = segment_paths[section_type]
 
         for i, section in enumerate(sections):
-            out_path = paths[i]
-            write_section(section, out_path)
+            if section.name == SPLIT_RODATA_NAME:
+                continue
+            if section_type == FileSectionType.Text:
+                # Nothing reads the whole-image .text dump -- every function is
+                # a file of its own -- but spimdisasm settles some of its
+                # auto-generated names while disassembling a section, and the
+                # per-function pass below inherits them. Skipping the work
+                # renamed a label in __throw between its definition and the
+                # reference to it. So the section is disassembled and the
+                # result dropped, which keeps the naming and saves the 22MB.
+                section.disassemble()
+                continue
+            write_section(section, paths[i])
 
     # Write individual functions to their own s files
     print(f'{group_section_name}: Writing split files...')
@@ -741,8 +913,18 @@ def disassemble(context):
         (FileSectionType.Data, '.data', VRAM_ELF_DATA_START, VRAM_ELF_DATA_END),
         (FileSectionType.Data, '.vudata', VRAM_ELF_VUDATA_START, VRAM_ELF_VUDATA_END),
 
-        # In the interest of simplicity, we'll group these sections together for now
-        (FileSectionType.Rodata, '.rodata', VRAM_ELF_RODATA_START, VRAM_ELF_LIT4_END),
+        # .rodata proper is written one constant per file: each belongs to a
+        # translation unit, which supplies it with an INCLUDE_RODATA marker, so
+        # nothing links a whole-section dump of it. What follows -- the static
+        # initialisers, the constructor table, the vtables and the literal pool
+        # -- are C++ runtime structures rather than constants a unit declares,
+        # and INCLUDE_RODATA can only produce .rodata, so they stay a dump.
+        # `.rdata` rather than `.rodata` so the linker command file can place
+        # that dump after the constants the objects carry: `*(.rodata)` takes
+        # whatever it matches first, and it would take the dump before the
+        # explicit placement below it ever ran.
+        (FileSectionType.Rodata, SPLIT_RODATA_NAME, VRAM_ELF_RODATA_START, VRAM_ELF_RODATA_END),
+        (FileSectionType.Rodata, '.rdata', VRAM_ELF_RODATA_END, VRAM_ELF_LIT4_END),
 
         # (FileSectionType.Rodata, '.rodata', VRAM_ELF_RODATA_START, VRAM_ELF_RODATA_END),
         # (FileSectionType.Rodata, '.init', VRAM_ELF_INIT_START, VRAM_ELF_INIT_END),

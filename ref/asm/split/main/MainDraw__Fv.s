@@ -868,7 +868,7 @@ glabel MainDraw__Fv
 /* 07C594 0017C494 00000000 */   nop
 /* 07C598 0017C498 6087848F */  lw          $4, -0x78A0($28)
 /* 07C59C 0017C49C 1100812C */  sltiu       $1, $4, 0x11
-/* 07C5A0 0017C4A0 4A002010 */  beqz        $1, .L0017C5CC$b
+/* 07C5A0 0017C4A0 4A002010 */  beqz        $1, .L.L0017C5CC$b
 /* 07C5A4 0017C4A4 00000000 */   nop
 /* 07C5A8 0017C4A8 2A00023C */  lui         $2, %hi(LIT_1840)
 /* 07C5AC 0017C4AC B0AB4324 */  addiu       $3, $2, %lo(LIT_1840)
@@ -878,9 +878,8 @@ glabel MainDraw__Fv
 /* 07C5BC 0017C4BC 08004000 */  jr          $2
 /* 07C5C0 0017C4C0 00000000 */   nop
 jlabel .L0017C4C4
-.L0017C4C4$b:
 /* 07C5C4 0017C4C4 7C90828F */  lw          $2, -0x6F84($28)
-/* 07C5C8 0017C4C8 35004014 */  bnez        $2, .L0017C5A0$b
+/* 07C5C8 0017C4C8 35004014 */  bnez        $2, .L.L0017C5A0$b
 /* 07C5CC 0017C4CC 00000000 */   nop
 /* 07C5D0 0017C4D0 449B050C */  jal         EditEffectStep__Fv
 /* 07C5D4 0017C4D4 00000000 */   nop
@@ -902,7 +901,7 @@ jlabel .L0017C4C4
 /* 07C614 0017C514 00000000 */   nop
 /* 07C618 0017C518 2090838F */  lw          $3, -0x6FE0($28)
 /* 07C61C 0017C51C 01000224 */  addiu       $2, $0, 0x1
-/* 07C620 0017C520 1F006214 */  bne         $3, $2, .L0017C5A0$b
+/* 07C620 0017C520 1F006214 */  bne         $3, $2, .L.L0017C5A0$b
 /* 07C624 0017C524 00000000 */   nop
 /* 07C628 0017C528 2700023C */  lui         $2, %hi(LIT_1754)
 /* 07C62C 0017C52C 40944224 */  addiu       $2, $2, %lo(LIT_1754)
@@ -937,7 +936,7 @@ jlabel .L0017C4C4
 /* 07C698 0017C598 F0FF4014 */  bnez        $2, .L0017C55C
 /* 07C69C 0017C59C 00000000 */   nop
 jlabel .L0017C5A0
-.L0017C5A0$b:
+.L.L0017C5A0$b:
 /* 07C6A0 0017C5A0 789B050C */  jal         EditEffectStep2__Fv
 /* 07C6A4 0017C5A4 00000000 */   nop
 /* 07C6A8 0017C5A8 E890848F */  lw          $4, -0x6F18($28)
@@ -950,7 +949,7 @@ jlabel .L0017C5A0
 /* 07C6C4 0017C5C4 9892050C */  jal         Draw__12CEffectGroupFv
 /* 07C6C8 0017C5C8 00000000 */   nop
 jlabel .L0017C5CC
-.L0017C5CC$b:
+.L.L0017C5CC$b:
 /* 07C6CC 0017C5CC BC90828F */  lw          $2, -0x6F44($28)
 /* 07C6D0 0017C5D0 06004014 */  bnez        $2, .L0017C5EC
 /* 07C6D4 0017C5D4 00000000 */   nop

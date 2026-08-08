@@ -4,7 +4,7 @@
 .set noreorder /* Don't insert nops after branches. */
 
 .section .text
-glabel SetFrameAttr__FP6CFramei
+jlabel SetFrameAttr__FP6CFramei
 /* 025FF0 00125EF0 C0FFBD27 */  addiu       $29, $29, -0x40
 /* 025FF4 00125EF4 2000BF7F */  sq          $31, 0x20($29)
 /* 025FF8 00125EF8 1000B17F */  sq          $17, 0x10($29)

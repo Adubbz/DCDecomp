@@ -54,7 +54,7 @@ glabel InvertConfig__9CSaveDataFP13SV_CONFIG_SYS
 /* 058BA0 00158AA0 04004010 */  beqz        $2, .L00158AB4
 /* 058BA4 00158AA4 00000000 */   nop
 /* 058BA8 00158AA8 50060426 */  addiu       $4, $16, 0x650
-/* 058BAC 00158AAC B862050C */  jal         func_00158AE0
+/* 058BAC 00158AAC B862050C */  jal         InitPos__11CMenuCursorFv
 /* 058BB0 00158AB0 00000000 */   nop
 .L00158AB4:
 /* 058BB4 00158AB4 3C00028E */  lw          $2, 0x3C($16)

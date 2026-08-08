@@ -1,0 +1,21 @@
+#include "common.h"
+
+INCLUDE_ASM("main", sceGsResetGraph);
+INCLUDE_ASM("main", sceGsGetGParam);
+INCLUDE_ASM("main", sceGsResetPath);
+INCLUDE_ASM("main", sceGsSetDefDispEnv);
+INCLUDE_ASM("main", sceGsPutDispEnv);
+INCLUDE_ASM("main", sceGszbufaddr);
+INCLUDE_ASM("main", sceGsSetDefDrawEnv);
+INCLUDE_ASM("main", sceGsSetDefClear);
+INCLUDE_ASM("main", sceGsPutDrawEnv);
+INCLUDE_ASM("main", sceGsSetDefDBuff);
+INCLUDE_ASM("main", sceGsSwapDBuff);
+INCLUDE_ASM("main", sceGsSyncV);
+INCLUDE_ASM("main", sceGsSyncPath);
+INCLUDE_ASM("main", sceGsSetDefLoadImage);
+INCLUDE_ASM("main", sceGsSetDefStoreImage);
+INCLUDE_ASM("main", sceGsExecLoadImage);
+INCLUDE_ASM("main", sceGsExecStoreImage);
+INCLUDE_ASM("main", sceGsSyncVCallback);
+INCLUDE_ASM("main", sceGsSetHalfOffset);

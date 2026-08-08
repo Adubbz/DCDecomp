@@ -103,15 +103,15 @@ glabel __unexpected
 .L00122C9C:
 /* 022D9C 00122C9C 0B004010 */  beqz        $2, .L00122CCC
 /* 022DA0 00122CA0 7000C427 */   addiu      $4, $30, 0x70
-/* 022DA4 00122CA4 2A00023C */  lui         $2, %hi(RO_002A1080)
-/* 022DA8 00122CA8 80104224 */  addiu       $2, $2, %lo(RO_002A1080)
+/* 022DA4 00122CA4 2A00023C */  lui         $2, %hi(__vt__Q23std13bad_exception)
+/* 022DA8 00122CA8 80104224 */  addiu       $2, $2, %lo(__vt__Q23std13bad_exception)
 /* 022DAC 00122CAC 9C00C2AF */  sw          $2, 0x9C($30)
 /* 022DB0 00122CB0 2A00023C */  lui         $2, %hi(LIT_425)
 /* 022DB4 00122CB4 008D4424 */  addiu       $4, $2, %lo(LIT_425)
-/* 022DB8 00122CB8 1200023C */  lui         $2, %hi(func_00122D00)
+/* 022DB8 00122CB8 1200023C */  lui         $2, %hi(__dt__Q23std13bad_exceptionFv)
 /* 022DBC 00122CBC 9C00C527 */  addiu       $5, $30, 0x9C
 /* 022DC0 00122CC0 4A38040C */  jal         __throw
-/* 022DC4 00122CC4 002D4624 */   addiu      $6, $2, %lo(func_00122D00)
+/* 022DC4 00122CC4 002D4624 */   addiu      $6, $2, %lo(__dt__Q23std13bad_exceptionFv)
 /* 022DC8 00122CC8 7000C427 */  addiu       $4, $30, 0x70
 .L00122CCC:
 /* 022DCC 00122CCC C08A040C */  jal         __end__catch

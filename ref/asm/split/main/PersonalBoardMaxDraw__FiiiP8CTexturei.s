@@ -80,7 +80,6 @@ glabel PersonalBoardMaxDraw__FiiiP8CTexturei
 /* 130BDC 00230ADC 08004000 */  jr          $2
 /* 130BE0 00230AE0 00000000 */   nop
 jlabel .L00230AE4
-.L00230AE4$b:
 /* 130BE4 00230AE4 BC00A527 */  addiu       $5, $29, 0xBC
 /* 130BE8 00230AE8 A4C8080C */  jal         GetNowModeMaxNum__FiPi
 /* 130BEC 00230AEC 00000000 */   nop
@@ -106,7 +105,6 @@ jlabel .L00230AE4
 /* 130C38 00230B38 14000010 */  b           .L00230B8C
 /* 130C3C 00230B3C 00000000 */   nop
 jlabel .L00230B40
-.L00230B40$b:
 /* 130C40 00230B40 28260070 */  paddub      $4, $0, $0
 /* 130C44 00230B44 09000010 */  b           .L00230B6C
 /* 130C48 00230B48 00000000 */   nop

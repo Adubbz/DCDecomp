@@ -634,7 +634,7 @@ glabel EditLoop__Fv
 /* 07A228 0017A128 00000000 */   nop
 .L0017A12C:
 /* 07A22C 0017A12C 1100812C */  sltiu       $1, $4, 0x11
-/* 07A230 0017A130 65022010 */  beqz        $1, .L0017AAC8$b
+/* 07A230 0017A130 65022010 */  beqz        $1, .L.L0017AAC8$b
 /* 07A234 0017A134 00000000 */   nop
 /* 07A238 0017A138 2A00023C */  lui         $2, %hi(LIT_1611)
 /* 07A23C 0017A13C 40AB4324 */  addiu       $3, $2, %lo(LIT_1611)
@@ -644,7 +644,6 @@ glabel EditLoop__Fv
 /* 07A24C 0017A14C 08004000 */  jr          $2
 /* 07A250 0017A150 00000000 */   nop
 jlabel .L0017A154
-.L0017A154$b:
 /* 07A254 0017A154 B89080AF */  sw          $0, -0x6F48($28)
 /* 07A258 0017A158 44F7050C */  jal         MainMode__Fv
 /* 07A25C 0017A15C 00000000 */   nop
@@ -666,7 +665,7 @@ jlabel .L0017A154
 .L0017A198:
 /* 07A298 0017A198 48A8050C */  jal         EdCheckViewMode__Fv
 /* 07A29C 0017A19C 00000000 */   nop
-/* 07A2A0 0017A1A0 49024014 */  bnez        $2, .L0017AAC8$b
+/* 07A2A0 0017A1A0 49024014 */  bnez        $2, .L.L0017AAC8$b
 /* 07A2A4 0017A1A4 00000000 */   nop
 /* 07A2A8 0017A1A8 0091848F */  lw          $4, -0x6F00($28)
 /* 07A2AC 0017A1AC 01000524 */  addiu       $5, $0, 0x1
@@ -674,10 +673,9 @@ jlabel .L0017A154
 /* 07A2B4 0017A1B4 0800398F */  lw          $25, 0x8($25)
 /* 07A2B8 0017A1B8 09F82003 */  jalr        $25
 /* 07A2BC 0017A1BC 00000000 */   nop
-/* 07A2C0 0017A1C0 41020010 */  b           .L0017AAC8$b
+/* 07A2C0 0017A1C0 41020010 */  b           .L.L0017AAC8$b
 /* 07A2C4 0017A1C4 00000000 */   nop
 jlabel .L0017A1C8
-.L0017A1C8$b:
 /* 07A2C8 0017A1C8 9090828F */  lw          $2, -0x6F70($28)
 /* 07A2CC 0017A1CC 03004018 */  blez        $2, .L0017A1DC
 /* 07A2D0 0017A1D0 00000000 */   nop
@@ -712,12 +710,12 @@ jlabel .L0017A1C8
 /* 07A338 0017A238 00000000 */   nop
 .L0017A23C:
 /* 07A33C 0017A23C A890828F */  lw          $2, -0x6F58($28)
-/* 07A340 0017A240 21024010 */  beqz        $2, .L0017AAC8$b
+/* 07A340 0017A240 21024010 */  beqz        $2, .L.L0017AAC8$b
 /* 07A344 0017A244 00000000 */   nop
 /* 07A348 0017A248 9C9080AF */  sw          $0, -0x6F64($28)
 /* 07A34C 0017A24C 0426060C */  jal         EdFadeOutCheck__Fv
 /* 07A350 0017A250 00000000 */   nop
-/* 07A354 0017A254 1C024010 */  beqz        $2, .L0017AAC8$b
+/* 07A354 0017A254 1C024010 */  beqz        $2, .L.L0017AAC8$b
 /* 07A358 0017A258 00000000 */   nop
 /* 07A35C 0017A25C A890848F */  lw          $4, -0x6F58($28)
 /* 07A360 0017A260 05008104 */  bgez        $4, .L0017A278
@@ -739,10 +737,9 @@ jlabel .L0017A1C8
 /* 07A39C 0017A29C 00000000 */   nop
 .L0017A2A0:
 /* 07A3A0 0017A2A0 A89080AF */  sw          $0, -0x6F58($28)
-/* 07A3A4 0017A2A4 08020010 */  b           .L0017AAC8$b
+/* 07A3A4 0017A2A4 08020010 */  b           .L.L0017AAC8$b
 /* 07A3A8 0017A2A8 00000000 */   nop
 jlabel .L0017A2AC
-.L0017A2AC$b:
 /* 07A3AC 0017A2AC D301023C */  lui         $2, %hi(EventCamera)
 /* 07A3B0 0017A2B0 40514224 */  addiu       $2, $2, %lo(EventCamera)
 /* 07A3B4 0017A2B4 009182AF */  sw          $2, -0x6F00($28)
@@ -763,10 +760,9 @@ jlabel .L0017A2AC
 /* 07A3F0 0017A2F0 B49080AF */  sw          $0, -0x6F4C($28)
 /* 07A3F4 0017A2F4 B89080AF */  sw          $0, -0x6F48($28)
 /* 07A3F8 0017A2F8 9C9080AF */  sw          $0, -0x6F64($28)
-/* 07A3FC 0017A2FC F2010010 */  b           .L0017AAC8$b
+/* 07A3FC 0017A2FC F2010010 */  b           .L.L0017AAC8$b
 /* 07A400 0017A300 00000000 */   nop
 jlabel .L0017A304
-.L0017A304$b:
 /* 07A404 0017A304 D301023C */  lui         $2, %hi(TalkCamera)
 /* 07A408 0017A308 404E4224 */  addiu       $2, $2, %lo(TalkCamera)
 /* 07A40C 0017A30C 009182AF */  sw          $2, -0x6F00($28)
@@ -782,10 +778,9 @@ jlabel .L0017A304
 /* 07A434 0017A334 00000000 */   nop
 /* 07A438 0017A338 B49080AF */  sw          $0, -0x6F4C($28)
 /* 07A43C 0017A33C B89080AF */  sw          $0, -0x6F48($28)
-/* 07A440 0017A340 E1010010 */  b           .L0017AAC8$b
+/* 07A440 0017A340 E1010010 */  b           .L.L0017AAC8$b
 /* 07A444 0017A344 00000000 */   nop
 jlabel .L0017A348
-.L0017A348$b:
 /* 07A448 0017A348 CC01023C */  lui         $2, %hi(GamePad)
 /* 07A44C 0017A34C 40C54424 */  addiu       $4, $2, %lo(GamePad)
 /* 07A450 0017A350 00F00534 */  ori         $5, $0, 0xF000
@@ -813,12 +808,12 @@ jlabel .L0017A348
 /* 07A4A8 0017A3A8 8C87060C */  jal         EditAreaClip__11CEditGroundFP7CCameraf
 /* 07A4AC 0017A3AC 00000000 */   nop
 /* 07A4B0 0017A3B0 A890828F */  lw          $2, -0x6F58($28)
-/* 07A4B4 0017A3B4 C4014010 */  beqz        $2, .L0017AAC8$b
+/* 07A4B4 0017A3B4 C4014010 */  beqz        $2, .L.L0017AAC8$b
 /* 07A4B8 0017A3B8 00000000 */   nop
 /* 07A4BC 0017A3BC 9C9080AF */  sw          $0, -0x6F64($28)
 /* 07A4C0 0017A3C0 0426060C */  jal         EdFadeOutCheck__Fv
 /* 07A4C4 0017A3C4 00000000 */   nop
-/* 07A4C8 0017A3C8 BF014010 */  beqz        $2, .L0017AAC8$b
+/* 07A4C8 0017A3C8 BF014010 */  beqz        $2, .L.L0017AAC8$b
 /* 07A4CC 0017A3CC 00000000 */   nop
 /* 07A4D0 0017A3D0 A890848F */  lw          $4, -0x6F58($28)
 /* 07A4D4 0017A3D4 282E0070 */  paddub      $5, $0, $0
@@ -832,10 +827,9 @@ jlabel .L0017A348
 /* 07A4F4 0017A3F4 C425060C */  jal         EdFadeIn__Fifff
 /* 07A4F8 0017A3F8 00000000 */   nop
 /* 07A4FC 0017A3FC A89080AF */  sw          $0, -0x6F58($28)
-/* 07A500 0017A400 B1010010 */  b           .L0017AAC8$b
+/* 07A500 0017A400 B1010010 */  b           .L.L0017AAC8$b
 /* 07A504 0017A404 00000000 */   nop
 jlabel .L0017A408
-.L0017A408$b:
 /* 07A508 0017A408 3091838F */  lw          $3, -0x6ED0($28)
 /* 07A50C 0017A40C 9C000224 */  addiu       $2, $0, 0x9C
 /* 07A510 0017A410 09006214 */  bne         $3, $2, .L0017A438
@@ -906,7 +900,7 @@ jlabel .L0017A408
 /* 07A604 0017A504 309182AF */  sw          $2, -0x6ED0($28)
 .L0017A508:
 /* 07A608 0017A508 3091828F */  lw          $2, -0x6ED0($28)
-/* 07A60C 0017A50C 6E014104 */  bgez        $2, .L0017AAC8$b
+/* 07A60C 0017A50C 6E014104 */  bgez        $2, .L.L0017AAC8$b
 /* 07A610 0017A510 00000000 */   nop
 /* 07A614 0017A514 309180AF */  sw          $0, -0x6ED0($28)
 /* 07A618 0017A518 0C000224 */  addiu       $2, $0, 0xC
@@ -1020,10 +1014,9 @@ jlabel .L0017A408
 /* 07A7B0 0017A6B0 3D040010 */  b           .L0017B7A8
 /* 07A7B4 0017A6B4 00000000 */   nop
 jlabel .L0017A6B8
-.L0017A6B8$b:
 /* 07A7B8 0017A6B8 A843080C */  jal         EditMenuLoop__Fv
 /* 07A7BC 0017A6BC 00000000 */   nop
-/* 07A7C0 0017A6C0 01014010 */  beqz        $2, .L0017AAC8$b
+/* 07A7C0 0017A6C0 01014010 */  beqz        $2, .L.L0017AAC8$b
 /* 07A7C4 0017A6C4 00000000 */   nop
 /* 07A7C8 0017A6C8 04000224 */  addiu       $2, $0, 0x4
 /* 07A7CC 0017A6CC 608782AF */  sw          $2, -0x78A0($28)
@@ -1065,7 +1058,6 @@ jlabel .L0017A6B8
 /* 07A84C 0017A74C 16040010 */  b           .L0017B7A8
 /* 07A850 0017A750 00000000 */   nop
 jlabel .L0017A754
-.L0017A754$b:
 /* 07A854 0017A754 A0B8040C */  jal         GetVif1Packet__Fv
 /* 07A858 0017A758 00000000 */   nop
 /* 07A85C 0017A75C C701033C */  lui         $3, %hi(TexManager)
@@ -1080,7 +1072,7 @@ jlabel .L0017A754
 /* 07A880 0017A780 00000000 */   nop
 /* 07A884 0017A784 E0CB050C */  jal         EdMenuMode__Fv
 /* 07A888 0017A788 00000000 */   nop
-/* 07A88C 0017A78C CE004010 */  beqz        $2, .L0017AAC8$b
+/* 07A88C 0017A78C CE004010 */  beqz        $2, .L.L0017AAC8$b
 /* 07A890 0017A790 00000000 */   nop
 /* 07A894 0017A794 01000224 */  addiu       $2, $0, 0x1
 /* 07A898 0017A798 608782AF */  sw          $2, -0x78A0($28)
@@ -1113,7 +1105,6 @@ jlabel .L0017A754
 /* 07A900 0017A800 E9030010 */  b           .L0017B7A8
 /* 07A904 0017A804 00000000 */   nop
 jlabel .L0017A808
-.L0017A808$b:
 /* 07A908 0017A808 4091828F */  lw          $2, -0x6EC0($28)
 /* 07A90C 0017A80C 8C004128 */  slti        $1, $2, 0x8C
 /* 07A910 0017A810 03002010 */  beqz        $1, .L0017A820
@@ -1218,7 +1209,7 @@ jlabel .L0017A808
 /* 07AA84 0017A984 09F82003 */  jalr        $25
 /* 07AA88 0017A988 00000000 */   nop
 /* 07AA8C 0017A98C 4091828F */  lw          $2, -0x6EC0($28)
-/* 07AA90 0017A990 4D004104 */  bgez        $2, .L0017AAC8$b
+/* 07AA90 0017A990 4D004104 */  bgez        $2, .L.L0017AAC8$b
 /* 07AA94 0017A994 00000000 */   nop
 .L0017A998:
 /* 07AA98 0017A998 8CFB040C */  jal         ReadBGSync__Fv
@@ -1290,10 +1281,9 @@ jlabel .L0017A808
 /* 07AB8C 0017AA8C 40000424 */  addiu       $4, $0, 0x40
 /* 07AB90 0017AA90 C425060C */  jal         EdFadeIn__Fifff
 /* 07AB94 0017AA94 00000000 */   nop
-/* 07AB98 0017AA98 0B000010 */  b           .L0017AAC8$b
+/* 07AB98 0017AA98 0B000010 */  b           .L.L0017AAC8$b
 /* 07AB9C 0017AA9C 00000000 */   nop
 jlabel .L0017AAA0
-.L0017AAA0$b:
 /* 07ABA0 0017AAA0 B89080AF */  sw          $0, -0x6F48($28)
 /* 07ABA4 0017AAA4 01000424 */  addiu       $4, $0, 0x1
 /* 07ABA8 0017AAA8 B4B5040C */  jal         MGFlipWaitVSync__Fi
@@ -1305,7 +1295,7 @@ jlabel .L0017AAA0
 /* 07ABC0 0017AAC0 8C87060C */  jal         EditAreaClip__11CEditGroundFP7CCameraf
 /* 07ABC4 0017AAC4 00000000 */   nop
 jlabel .L0017AAC8
-.L0017AAC8$b:
+.L.L0017AAC8$b:
 /* 07ABC8 0017AAC8 0091848F */  lw          $4, -0x6F00($28)
 /* 07ABCC 0017AACC D000A527 */  addiu       $5, $29, 0xD0
 /* 07ABD0 0017AAD0 F890040C */  jal         GetCameraMatrix__7CCameraFPA4_f
@@ -1351,7 +1341,7 @@ jlabel .L0017AAC8
 .L0017AB6C:
 /* 07AC6C 0017AB6C 6087848F */  lw          $4, -0x78A0($28)
 /* 07AC70 0017AB70 1100812C */  sltiu       $1, $4, 0x11
-/* 07AC74 0017AB74 27002010 */  beqz        $1, .L0017AC14$b
+/* 07AC74 0017AB74 27002010 */  beqz        $1, .L.L0017AC14$b
 /* 07AC78 0017AB78 00000000 */   nop
 /* 07AC7C 0017AB7C 2A00023C */  lui         $2, %hi(LIT_1612)
 /* 07AC80 0017AB80 F0AA4324 */  addiu       $3, $2, %lo(LIT_1612)
@@ -1361,7 +1351,6 @@ jlabel .L0017AAC8
 /* 07AC90 0017AB90 08004000 */  jr          $2
 /* 07AC94 0017AB94 00000000 */   nop
 jlabel .L0017AB98
-.L0017AB98$b:
 /* 07AC98 0017AB98 C49080AF */  sw          $0, -0x6F3C($28)
 /* 07AC9C 0017AB9C 01000224 */  addiu       $2, $0, 0x1
 /* 07ACA0 0017ABA0 C89082AF */  sw          $2, -0x6F38($28)
@@ -1370,10 +1359,9 @@ jlabel .L0017AB98
 /* 07ACAC 0017ABAC C09082AF */  sw          $2, -0x6F40($28)
 /* 07ACB0 0017ABB0 F4ED050C */  jal         MainDraw__Fv
 /* 07ACB4 0017ABB4 00000000 */   nop
-/* 07ACB8 0017ABB8 16000010 */  b           .L0017AC14$b
+/* 07ACB8 0017ABB8 16000010 */  b           .L.L0017AC14$b
 /* 07ACBC 0017ABBC 00000000 */   nop
 jlabel .L0017ABC0
-.L0017ABC0$b:
 /* 07ACC0 0017ABC0 01000224 */  addiu       $2, $0, 0x1
 /* 07ACC4 0017ABC4 C49082AF */  sw          $2, -0x6F3C($28)
 /* 07ACC8 0017ABC8 C89080AF */  sw          $0, -0x6F38($28)
@@ -1381,17 +1369,16 @@ jlabel .L0017ABC0
 /* 07ACD0 0017ABD0 BC9080AF */  sw          $0, -0x6F44($28)
 /* 07ACD4 0017ABD4 D890828F */  lw          $2, -0x6F28($28)
 /* 07ACD8 0017ABD8 0B004128 */  slti        $1, $2, 0xB
-/* 07ACDC 0017ABDC 02002010 */  beqz        $1, .L0017ABE8$b
+/* 07ACDC 0017ABDC 02002010 */  beqz        $1, .L.L0017ABE8$b
 /* 07ACE0 0017ABE0 00000000 */   nop
 /* 07ACE4 0017ABE4 C09080AF */  sw          $0, -0x6F40($28)
 jlabel .L0017ABE8
-.L0017ABE8$b:
+.L.L0017ABE8$b:
 /* 07ACE8 0017ABE8 F4ED050C */  jal         MainDraw__Fv
 /* 07ACEC 0017ABEC 00000000 */   nop
-/* 07ACF0 0017ABF0 08000010 */  b           .L0017AC14$b
+/* 07ACF0 0017ABF0 08000010 */  b           .L.L0017AC14$b
 /* 07ACF4 0017ABF4 00000000 */   nop
 jlabel .L0017ABF8
-.L0017ABF8$b:
 /* 07ACF8 0017ABF8 D201023C */  lui         $2, %hi(EditNameMes)
 /* 07ACFC 0017ABFC 50144424 */  addiu       $4, $2, %lo(EditNameMes)
 /* 07AD00 0017AC00 FFFF0524 */  addiu       $5, $0, -0x1
@@ -1400,7 +1387,7 @@ jlabel .L0017ABF8
 /* 07AD0C 0017AC0C 1826060C */  jal         EdFadeInOut__Fv
 /* 07AD10 0017AC10 00000000 */   nop
 jlabel .L0017AC14
-.L0017AC14$b:
+.L.L0017AC14$b:
 /* 07AD14 0017AC14 D0DF050C */  jal         CheckKeyLock__Fv
 /* 07AD18 0017AC18 00000000 */   nop
 /* 07AD1C 0017AC1C 6087838F */  lw          $3, -0x78A0($28)

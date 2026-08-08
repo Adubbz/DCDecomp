@@ -1,0 +1,20 @@
+#include "common.h"
+
+INCLUDE_ASM("main", decode_uleb128);
+INCLUDE_ASM("main", decode_sleb128);
+INCLUDE_ASM("main", fde_merge);
+INCLUDE_ASM("main", end_fde_sort);
+INCLUDE_ASM("main", count_fdes);
+INCLUDE_ASM("main", add_fdes);
+INCLUDE_ASM("main", frame_init);
+INCLUDE_ASM("main", find_fde);
+INCLUDE_ASM("main", extract_cie_info);
+INCLUDE_ASM("main", execute_cfa_insn);
+INCLUDE_ASM("main", __register_frame_info);
+INCLUDE_ASM("main", __register_frame);
+INCLUDE_ASM("main", __register_frame_info_table);
+INCLUDE_ASM("main", __register_frame_table);
+INCLUDE_ASM("main", __deregister_frame_info);
+INCLUDE_ASM("main", __deregister_frame);
+INCLUDE_ASM("main", __frame_state_for);
+INCLUDE_ASM("main", fde_split);

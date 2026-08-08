@@ -1,1 +1,25 @@
 #include "title/opening.hpp"
+
+INCLUDE_ASM("title", OpeningInit__Fv);
+INCLUDE_ASM("title", LoadMessage__Fv);
+INCLUDE_ASM("title", LoadScene__Fv);
+INCLUDE_ASM("title", LoadSceneBG__Fv);
+INCLUDE_ASM("title", OpeningLoop__Fv);
+INCLUDE_ASM("title", SceneChange__Fv);
+INCLUDE_ASM("title", PauseProcess__Fv);
+INCLUDE_ASM("title", SoundStop__Fv);
+INCLUDE_ASM("title", WaitKeyProcess__Fv);
+INCLUDE_ASM("title", MotionProcess__Fv);
+INCLUDE_ASM("title", SoundProcess__Fv);
+INCLUDE_ASM("title", DrawProcess__Fv);
+INCLUDE_ASM("title", DrawMess__Fv);
+INCLUDE_ASM("title", OpBgmPlay__Fv);
+INCLUDE_ASM("title", OpPlayVolPanSE__FPfffiii);
+INCLUDE_ASM("title", OpSetVolPanSE__FPfffiii);
+INCLUDE_ASM("title", OpPlayVolSE__Fiiif);
+INCLUDE_ASM("title", OpGetVolSQ__Fi);
+INCLUDE_ASM("title", FadeCansel__Fv);
+INCLUDE_ASM("title", OPAnalyz__FPc);
+INCLUDE_ASM("title", OPMdsLoad__Fv);
+INCLUDE_ASM("title", skipSpace__FPci);
+INCLUDE_ASM("title", checkArg__FPciPi);

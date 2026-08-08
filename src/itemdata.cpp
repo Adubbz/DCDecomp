@@ -1,8 +1,14 @@
 #include "itemdata.hpp"
 
+INCLUDE_ASM("main", skipSpace__FPci__2);
+INCLUDE_ASM("main", checkArg__FPciPi__2);
+INCLUDE_ASM("main", TEIGIAnalyz__FPc);
+INCLUDE_ASM("main", TEIGIImgLoad__FPUiP14CDataAlloc2_1_);
+INCLUDE_ASM("main", TEIGIMdsLoad__FPUii);
+
 /*
  * The definition tables, migrated out of the main.data dump. Carved from it
- * and placed back into their retail hole by asm/migrated_symbols.txt; the
+ * and placed back into their retail hole by asm/decompiled_symbols.txt; the
  * four are contiguous there and stay in this order, which is what puts each
  * one back at its own address.
  *
@@ -800,3 +806,51 @@ int GetCommonItemDataMsg(int item_no) {
 int GetCommonItemDataSystemMsg(int item_no) {
     return GetCommonItemDataMsg(item_no) + 100;
 }
+
+INCLUDE_RODATA("main", LIT_809__2);
+INCLUDE_RODATA("main", LIT_810);
+INCLUDE_RODATA("main", LIT_811);
+INCLUDE_RODATA("main", LIT_1149);
+INCLUDE_RODATA("main", LIT_1150__2);
+INCLUDE_RODATA("main", LIT_1151__2);
+INCLUDE_RODATA("main", LIT_1152__2);
+INCLUDE_RODATA("main", LIT_1153__2);
+INCLUDE_RODATA("main", LIT_1154__2);
+INCLUDE_RODATA("main", LIT_1155__2);
+INCLUDE_RODATA("main", LIT_1156__2);
+INCLUDE_RODATA("main", LIT_1157);
+INCLUDE_RODATA("main", LIT_1158);
+INCLUDE_RODATA("main", LIT_1159__2);
+INCLUDE_RODATA("main", LIT_1160);
+INCLUDE_RODATA("main", LIT_1161);
+INCLUDE_RODATA("main", LIT_1162);
+INCLUDE_RODATA("main", LIT_1163);
+INCLUDE_RODATA("main", LIT_585);
+INCLUDE_RODATA("main", LIT_586);
+INCLUDE_RODATA("main", LIT_587);
+INCLUDE_RODATA("main", LIT_588);
+INCLUDE_RODATA("main", LIT_589__2);
+INCLUDE_RODATA("main", LIT_590__2);
+INCLUDE_RODATA("main", LIT_635__2);
+INCLUDE_RODATA("main", LIT_636);
+INCLUDE_RODATA("main", LIT_637);
+INCLUDE_RODATA("main", LIT_638);
+INCLUDE_RODATA("main", LIT_639__2);
+INCLUDE_RODATA("main", LIT_640__2);
+INCLUDE_RODATA("main", LIT_641);
+INCLUDE_RODATA("main", LIT_642__2);
+INCLUDE_RODATA("main", LIT_656__4);
+INCLUDE_RODATA("main", LIT_657__2);
+INCLUDE_RODATA("main", LIT_658__2);
+INCLUDE_RODATA("main", LIT_659__2);
+INCLUDE_RODATA("main", LIT_660);
+INCLUDE_RODATA("main", LIT_661);
+INCLUDE_RODATA("main", LIT_747);
+INCLUDE_RODATA("main", LIT_754);
+INCLUDE_RODATA("main", LIT_755);
+INCLUDE_RODATA("main", LIT_792);
+INCLUDE_RODATA("main", LIT_793);
+INCLUDE_RODATA("main", LIT_794__2);
+INCLUDE_RODATA("main", LIT_795__2);
+INCLUDE_RODATA("main", LIT_796);
+INCLUDE_RODATA("main", LIT_866__2);

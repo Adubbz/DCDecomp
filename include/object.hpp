@@ -8,8 +8,14 @@
 class CVector3_f_;
 
 
+/**
+ * Places one object in the world.
+ */
 class CObject {
 public:
+    u8 unk_000[16];
+    float pos[4]; /**< World position of the object. */
+
     /**
      * @mangled Step__7CObjectFv
      * @address 0x156BA0
@@ -289,6 +295,14 @@ public:
      * @unknownret
      */
     void GetScale(float *);
+
+    /**
+     * Makes an object with no data.
+     *
+     * @mangled __ct__7CObjectFv
+     * @address 0x143650
+     */
+    CObject();
 
     /**
      * @mangled __ct__7CObjectFf

@@ -1,0 +1,23 @@
+#include "common.h"
+
+INCLUDE_ASM("main", memclr);
+INCLUDE_ASM("main", sceDmaGetChan);
+INCLUDE_ASM("main", sceDmaReset);
+INCLUDE_ASM("main", sceDmaDebug);
+INCLUDE_ASM("main", sceDmaPutEnv);
+INCLUDE_ASM("main", sceDmaGetEnv);
+INCLUDE_ASM("main", sceDmaPutStallAddr);
+INCLUDE_ASM("main", sceDmaSend);
+INCLUDE_ASM("main", sceDmaSendN);
+INCLUDE_ASM("main", sceDmaSendI);
+INCLUDE_ASM("main", sceDmaRecv);
+INCLUDE_ASM("main", sceDmaRecvN);
+INCLUDE_ASM("main", sceDmaRecvI);
+INCLUDE_ASM("main", sceDmaSendM);
+INCLUDE_ASM("main", sceDmaSync);
+INCLUDE_ASM("main", sceDmaWatch);
+INCLUDE_ASM("main", sceDmaSyncN);
+INCLUDE_ASM("main", sceDmaLastSyncTime);
+INCLUDE_ASM("main", sceDmaPause);
+INCLUDE_ASM("main", sceDmaRestart);
+INCLUDE_ASM("main", sceDmaCallback);

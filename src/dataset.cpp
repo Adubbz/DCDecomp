@@ -1,25 +1,28 @@
-#include "dataalloc.hpp"
+#include "common.h"
 
-/* @ 0x143820 (0x30 bytes) -- __ct__14CDataAlloc2<1>Fv
- *
- * Written as a raw `asm` body: MWCC's normal constructor codegen defensively
- * spills `this` into a callee-saved register around the call and re-copies it
- * to $v0, four instructions retail does not have. Retail instead relies on
- * the callee (__ct__14CDataAlloc2_1_Fi) leaving $v0 = this across the tail
- * call, which MWCC's optimizer cannot prove for an ordinary call. */
-asm CDataAlloc2<1>::CDataAlloc2() {
-    addiu sp,sp,-16
-    sq ra,0(sp)
-    addiu a1,zero,-1
-    jal __ct__14CDataAlloc2_1_Fi
-    nop
-    lq ra,0(sp)
-    addiu sp,sp,16
-    jr ra
-    nop
-}
-
-/* @ 0x143850 (0x20 bytes) -- __ct__18CDataAlloc<1,6000>Fv */
-CDataAlloc<1, 6000>::CDataAlloc() {
-    unk_17700 = 0;
-}
+INCLUDE_ASM("main", Initialize__13CCollisionMDTFv);
+INCLUDE_ASM("main", InitializeDataBuffer__Fv);
+INCLUDE_ASM("main", SetDataBuffer__FP14CDataAlloc2_1_i);
+INCLUDE_ASM("main", SetPacketReadBuffer__Fii);
+INCLUDE_ASM("main", BufferAllClear__Fv);
+INCLUDE_ASM("main", htoi__FPc);
+INCLUDE_ASM("main", SetFrameAttr__FP6CFramei);
+INCLUDE_ASM("main", LoadMDSFile__FPUiP14CDataAlloc2_1_iPPcPPc);
+INCLUDE_ASM("main", CreateVisual__FPUiP14CDataAlloc2_1_i);
+INCLUDE_ASM("main", ArrangeShadowMDT__FPUi);
+INCLUDE_ASM("main", LoadMDSFileLOD__FPP9CFrameVu1PPUiP14CDataAlloc2_1_i);
+INCLUDE_ASM("main", LoadCollisionFile__FPUiP14CDataAlloc2_1_);
+INCLUDE_ASM("main", CreateCollisionMDT__FPUiP14CDataAlloc2_1_);
+INCLUDE_ASM("main", LoadMDSFile__FPUiii);
+INCLUDE_ASM("main", CreateBBox__FP8CBox3_f_PA4_fi);
+INCLUDE_ASM("main", CopyFrameVu1__FP9CFrameVu1P14CDataAlloc2_1_);
+INCLUDE_ASM("main", CopyFrame__FP6CFrameP14CDataAlloc2_1_);
+INCLUDE_ASM("main", LoadLODData__FPP9CFrameVu1PPcPUii);
+INCLUDE_ASM("main", LoadCollisionFile__FPUi);
+INCLUDE_ASM("main", GetPolygon__10CCollisionFiPA4_fPA4_fPA4_f);
+INCLUDE_ASM("main", GetMaxY__10CCollisionFPf);
+INCLUDE_ASM("main", Intersection__10CCollisionFPfPfPf);
+INCLUDE_ASM("main", PickUpNearPoly__10CCollisionFP6CCPoly);
+INCLUDE_ASM("main", PickUpNearPoly__10CCollisionFP6CCPolyRC7CBoxVu0);
+INCLUDE_ASM("main", PickUpNearPoly__10CCollisionFP6CCPolyPff);
+INCLUDE_ASM("main", Initialize__10CCollisionFv);

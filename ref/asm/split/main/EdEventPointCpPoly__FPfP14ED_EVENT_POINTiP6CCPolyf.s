@@ -43,8 +43,8 @@ glabel EdEventPointCpPoly__FPfP14ED_EVENT_POINTiP6CCPolyf
 /* 084BDC 00184ADC 00000000 */   nop
 /* 084BE0 00184AE0 D401023C */  lui         $2, %hi(chara$631 + 0x420)
 /* 084BE4 00184AE4 70BD4424 */  addiu       $4, $2, %lo(chara$631 + 0x420)
-/* 084BE8 00184AE8 1400023C */  lui         $2, %hi(func_00143610)
-/* 084BEC 00184AEC 10364524 */  addiu       $5, $2, %lo(func_00143610)
+/* 084BE8 00184AE8 1400023C */  lui         $2, %hi(__ct__11MotionParamFv)
+/* 084BEC 00184AEC 10364524 */  addiu       $5, $2, %lo(__ct__11MotionParamFv)
 /* 084BF0 00184AF0 28360070 */  paddub      $6, $0, $0
 /* 084BF4 00184AF4 80000724 */  addiu       $7, $0, 0x80
 /* 084BF8 00184AF8 08000824 */  addiu       $8, $0, 0x8
@@ -52,8 +52,8 @@ glabel EdEventPointCpPoly__FPfP14ED_EVENT_POINTiP6CCPolyf
 /* 084C00 00184B00 00000000 */   nop
 /* 084C04 00184B04 D401023C */  lui         $2, %hi(chara$631 + 0x820)
 /* 084C08 00184B08 70C14424 */  addiu       $4, $2, %lo(chara$631 + 0x820)
-/* 084C0C 00184B0C 1400023C */  lui         $2, %hi(func_00143610)
-/* 084C10 00184B10 10364524 */  addiu       $5, $2, %lo(func_00143610)
+/* 084C0C 00184B0C 1400023C */  lui         $2, %hi(__ct__11MotionParamFv)
+/* 084C10 00184B10 10364524 */  addiu       $5, $2, %lo(__ct__11MotionParamFv)
 /* 084C14 00184B14 28360070 */  paddub      $6, $0, $0
 /* 084C18 00184B18 80000724 */  addiu       $7, $0, 0x80
 /* 084C1C 00184B1C 08000824 */  addiu       $8, $0, 0x8

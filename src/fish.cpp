@@ -1,1 +1,26 @@
 #include "fish.hpp"
+
+INCLUDE_ASM("main", rand_check__Ff);
+INCLUDE_ASM("main", GetActCnt__Fv);
+INCLUDE_ASM("main", GetActCnt2__Fv);
+INCLUDE_ASM("main", FindFood__5CFishFv);
+INCLUDE_ASM("main", EatFood__5CFishFv);
+INCLUDE_ASM("main", BiteHook__5CFishFv);
+INCLUDE_ASM("main", LeaveFood__5CFishFv);
+INCLUDE_ASM("main", LeaveHook__5CFishFv);
+INCLUDE_ASM("main", SetCPoly__5CFishFP6CCPolyi);
+INCLUDE_ASM("main", Step__5CFishFv);
+INCLUDE_ASM("main", Draw__5CFishFv);
+INCLUDE_ASM("main", SetFoodPos__5CFishFiPff);
+INCLUDE_ASM("main", SetAngleMode__5CFishFv);
+INCLUDE_ASM("main", SetBattleMode__5CFishFv);
+INCLUDE_ASM("main", SetScale__5CFishFv);
+INCLUDE_ASM("main", GetFP__5CFishFv);
+INCLUDE_ASM("main", SetMotion__5CFishFii);
+INCLUDE_ASM("main", SetPosition__5CFishFPf);
+INCLUDE_ASM("main", GetPosition__5CFishFPf);
+INCLUDE_ASM("main", SetRotation__5CFishFPf);
+INCLUDE_ASM("main", GetRotation__5CFishFPf);
+INCLUDE_ASM("main", SetReference__5CFishFP6CFrame);
+INCLUDE_ASM("main", DeleteReference__5CFishFv);
+INCLUDE_ASM("main", Initialize__5CFishFv);

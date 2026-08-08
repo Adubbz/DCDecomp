@@ -1,0 +1,20 @@
+#include "common.h"
+
+INCLUDE_ASM("main", sceResetttyinit);
+INCLUDE_ASM("main", VSync);
+INCLUDE_ASM("main", VSync2);
+INCLUDE_ASM("main", write);
+INCLUDE_ASM("main", read);
+INCLUDE_ASM("main", open);
+INCLUDE_ASM("main", close);
+INCLUDE_ASM("main", ioctl);
+INCLUDE_ASM("main", lseek);
+INCLUDE_ASM("main", sbrk);
+INCLUDE_ASM("main", isatty);
+INCLUDE_ASM("main", fstat);
+INCLUDE_ASM("main", getpid);
+INCLUDE_ASM("main", kill);
+INCLUDE_ASM("main", stat);
+INCLUDE_ASM("main", unlink);
+INCLUDE_ASM("main", putnum);
+INCLUDE_ASM("main", get_mem_info);

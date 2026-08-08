@@ -148,7 +148,7 @@ glabel EditInLoop__Fv
 /* 09C5AC 0019C4AC 00000000 */   nop
 /* 09C5B0 0019C4B0 9492848F */  lw          $4, -0x6D6C($28)
 /* 09C5B4 0019C4B4 0800812C */  sltiu       $1, $4, 0x8
-/* 09C5B8 0019C4B8 36022010 */  beqz        $1, .L0019CD94$b
+/* 09C5B8 0019C4B8 36022010 */  beqz        $1, .L.L0019CD94$b
 /* 09C5BC 0019C4BC 00000000 */   nop
 /* 09C5C0 0019C4C0 2A00023C */  lui         $2, %hi(LIT_893__2)
 /* 09C5C4 0019C4C4 F0B24324 */  addiu       $3, $2, %lo(LIT_893__2)
@@ -158,7 +158,6 @@ glabel EditInLoop__Fv
 /* 09C5D4 0019C4D4 08004000 */  jr          $2
 /* 09C5D8 0019C4D8 00000000 */   nop
 jlabel .L0019C4DC
-.L0019C4DC$b:
 /* 09C5DC 0019C4DC DC92828F */  lw          $2, -0x6D24($28)
 /* 09C5E0 0019C4E0 03004018 */  blez        $2, .L0019C4F0
 /* 09C5E4 0019C4E4 00000000 */   nop
@@ -200,15 +199,14 @@ jlabel .L0019C4DC
 /* 09C668 0019C568 A89282AF */  sw          $2, -0x6D58($28)
 /* 09C66C 0019C56C 48A8050C */  jal         EdCheckViewMode__Fv
 /* 09C670 0019C570 00000000 */   nop
-/* 09C674 0019C574 07024010 */  beqz        $2, .L0019CD94$b
+/* 09C674 0019C574 07024010 */  beqz        $2, .L.L0019CD94$b
 /* 09C678 0019C578 00000000 */   nop
 /* 09C67C 0019C57C D501023C */  lui         $2, %hi(ViewCamera__2)
 /* 09C680 0019C580 B0434224 */  addiu       $2, $2, %lo(ViewCamera__2)
 /* 09C684 0019C584 A89282AF */  sw          $2, -0x6D58($28)
-/* 09C688 0019C588 02020010 */  b           .L0019CD94$b
+/* 09C688 0019C588 02020010 */  b           .L.L0019CD94$b
 /* 09C68C 0019C58C 00000000 */   nop
 jlabel .L0019C590
-.L0019C590$b:
 /* 09C690 0019C590 D501023C */  lui         $2, %hi(EventCamera__2)
 /* 09C694 0019C594 B0404224 */  addiu       $2, $2, %lo(EventCamera__2)
 /* 09C698 0019C598 A89282AF */  sw          $2, -0x6D58($28)
@@ -302,10 +300,9 @@ jlabel .L0019C590
 /* 09C7E0 0019C6E0 F461060C */  jal         EdEventNPCStep__Fv
 /* 09C7E4 0019C6E4 00000000 */   nop
 /* 09C7E8 0019C6E8 D49280AF */  sw          $0, -0x6D2C($28)
-/* 09C7EC 0019C6EC A9010010 */  b           .L0019CD94$b
+/* 09C7EC 0019C6EC A9010010 */  b           .L.L0019CD94$b
 /* 09C7F0 0019C6F0 00000000 */   nop
 jlabel .L0019C6F4
-.L0019C6F4$b:
 /* 09C7F4 0019C6F4 D501023C */  lui         $2, %hi(MainCamera__2)
 /* 09C7F8 0019C6F8 B03A4224 */  addiu       $2, $2, %lo(MainCamera__2)
 /* 09C7FC 0019C6FC A89282AF */  sw          $2, -0x6D58($28)
@@ -401,15 +398,14 @@ jlabel .L0019C6F4
 /* 09C95C 0019C85C 00000000 */   nop
 .L0019C860:
 /* 09C960 0019C860 A492828F */  lw          $2, -0x6D5C($28)
-/* 09C964 0019C864 4B014104 */  bgez        $2, .L0019CD94$b
+/* 09C964 0019C864 4B014104 */  bgez        $2, .L.L0019CD94$b
 /* 09C968 0019C868 00000000 */   nop
 /* 09C96C 0019C86C A49280AF */  sw          $0, -0x6D5C($28)
 /* 09C970 0019C870 02000224 */  addiu       $2, $0, 0x2
 /* 09C974 0019C874 949282AF */  sw          $2, -0x6D6C($28)
-/* 09C978 0019C878 46010010 */  b           .L0019CD94$b
+/* 09C978 0019C878 46010010 */  b           .L.L0019CD94$b
 /* 09C97C 0019C87C 00000000 */   nop
 jlabel .L0019C880
-.L0019C880$b:
 /* 09C980 0019C880 D501023C */  lui         $2, %hi(MainCamera__2)
 /* 09C984 0019C884 B03A4224 */  addiu       $2, $2, %lo(MainCamera__2)
 /* 09C988 0019C888 A89282AF */  sw          $2, -0x6D58($28)
@@ -431,7 +427,6 @@ jlabel .L0019C880
 /* 09C9C0 0019C8C0 76020010 */  b           .L0019D29C
 /* 09C9C4 0019C8C4 00000000 */   nop
 jlabel .L0019C8C8
-.L0019C8C8$b:
 /* 09C9C8 0019C8C8 D501023C */  lui         $2, %hi(MainCamera__2)
 /* 09C9CC 0019C8CC B03A4224 */  addiu       $2, $2, %lo(MainCamera__2)
 /* 09C9D0 0019C8D0 A89282AF */  sw          $2, -0x6D58($28)
@@ -578,7 +573,7 @@ jlabel .L0019C8C8
 /* 09CBF4 0019CAF4 A48080C7 */  lwc1        $f0, -0x7F5C($28)
 /* 09CBF8 0019CAF8 34080046 */  c.lt.s      $f1, $f0
 /* 09CBFC 0019CAFC 00000000 */  nop
-/* 09CC00 0019CB00 A4000045 */  bc1f        .L0019CD94$b
+/* 09CC00 0019CB00 A4000045 */  bc1f        .L.L0019CD94$b
 /* 09CC04 0019CB04 00000000 */   nop
 /* 09CC08 0019CB08 41B81446 */  sub.s       $f1, $f23, $f20
 /* 09CC0C 0019CB0C 00008044 */  mtc1        $0, $f0
@@ -594,7 +589,7 @@ jlabel .L0019C8C8
 /* 09CC30 0019CB30 A48080C7 */  lwc1        $f0, -0x7F5C($28)
 /* 09CC34 0019CB34 34080046 */  c.lt.s      $f1, $f0
 /* 09CC38 0019CB38 00000000 */  nop
-/* 09CC3C 0019CB3C 95000045 */  bc1f        .L0019CD94$b
+/* 09CC3C 0019CB3C 95000045 */  bc1f        .L.L0019CD94$b
 /* 09CC40 0019CB40 00000000 */   nop
 .L0019CB44:
 /* 09CC44 0019CB44 06AB0046 */  mov.s       $f12, $f21
@@ -610,7 +605,7 @@ jlabel .L0019C8C8
 /* 09CC6C 0019CB6C 2C02A727 */  addiu       $7, $29, 0x22C
 /* 09CC70 0019CB70 2464060C */  jal         EdTalkMode__FP10CCharacterP13CCameraFollowiPi
 /* 09CC74 0019CB74 00000000 */   nop
-/* 09CC78 0019CB78 86004010 */  beqz        $2, .L0019CD94$b
+/* 09CC78 0019CB78 86004010 */  beqz        $2, .L.L0019CD94$b
 /* 09CC7C 0019CB7C 00000000 */   nop
 /* 09CC80 0019CB80 02000324 */  addiu       $3, $0, 0x2
 /* 09CC84 0019CB84 03004314 */  bne         $2, $3, .L0019CB94
@@ -635,10 +630,9 @@ jlabel .L0019C8C8
 /* 09CCC8 0019CBC8 00000000 */   nop
 .L0019CBCC:
 /* 09CCCC 0019CBCC 949280AF */  sw          $0, -0x6D6C($28)
-/* 09CCD0 0019CBD0 70000010 */  b           .L0019CD94$b
+/* 09CCD0 0019CBD0 70000010 */  b           .L.L0019CD94$b
 /* 09CCD4 0019CBD4 00000000 */   nop
 jlabel .L0019CBD8
-.L0019CBD8$b:
 /* 09CCD8 0019CBD8 AC92838F */  lw          $3, -0x6D54($28)
 /* 09CCDC 0019CBDC 680C628C */  lw          $2, 0xC68($3)
 /* 09CCE0 0019CBE0 680C62AC */  sw          $2, 0xC68($3)
@@ -694,15 +688,14 @@ jlabel .L0019CBD8
 /* 09CDA0 0019CCA0 0A00022A */  slti        $2, $16, 0xA
 /* 09CDA4 0019CCA4 E0FF4014 */  bnez        $2, .L0019CC28
 /* 09CDA8 0019CCA8 00000000 */   nop
-/* 09CDAC 0019CCAC 39000010 */  b           .L0019CD94$b
+/* 09CDAC 0019CCAC 39000010 */  b           .L.L0019CD94$b
 /* 09CDB0 0019CCB0 00000000 */   nop
 jlabel .L0019CCB4
-.L0019CCB4$b:
 /* 09CDB4 0019CCB4 FFFF0224 */  addiu       $2, $0, -0x1
 /* 09CDB8 0019CCB8 CC9482AF */  sw          $2, -0x6B34($28)
 /* 09CDBC 0019CCBC E0CB050C */  jal         EdMenuMode__Fv
 /* 09CDC0 0019CCC0 00000000 */   nop
-/* 09CDC4 0019CCC4 33004010 */  beqz        $2, .L0019CD94$b
+/* 09CDC4 0019CCC4 33004010 */  beqz        $2, .L.L0019CD94$b
 /* 09CDC8 0019CCC8 00000000 */   nop
 /* 09CDCC 0019CCCC 949280AF */  sw          $0, -0x6D6C($28)
 /* 09CDD0 0019CCD0 CCCB050C */  jal         EdExitMenu__Fv
@@ -758,7 +751,7 @@ jlabel .L0019CCB4
 /* 09CE8C 0019CD8C 43010010 */  b           .L0019D29C
 /* 09CE90 0019CD90 00000000 */   nop
 jlabel .L0019CD94
-.L0019CD94$b:
+.L.L0019CD94$b:
 /* 09CE94 0019CD94 D401013C */  lui         $1, %hi(EdEventInfo + 0x320)
 /* 09CE98 0019CD98 F0D4228C */  lw          $2, %lo(EdEventInfo + 0x320)($1)
 /* 09CE9C 0019CD9C 0B004010 */  beqz        $2, .L0019CDCC

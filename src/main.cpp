@@ -21,7 +21,7 @@ CDataAlloc<1, 6000> SystemMesBuffer;
  * (`nm`: pBound/ParentFrame/DataBuffer, 0x2a2500-0x2a250c). They live here
  * rather than in mainselect.cpp because retail's main.sbss interleaves them
  * with SaveData and main()'s other globals, and one object contributes a
- * single contiguous run -- see docs/RE/sbss_bss_layout.md. */
+ * single contiguous run -- see re/ai/build_pipeline.md. */
 static s32 pBound;
 static s32 ParentFrame;
 static s32 DataBuffer;
@@ -160,7 +160,7 @@ void TrialStart__Fv();
  * function-local statics, which would get a `$NNN` suffix. No raw .s
  * references them by gp-offset, so real `static` works. `d2`/`d8` are never
  * touched by main() but must still be defined, so this object's .sbss covers
- * their retail byte range. See docs/RE/sbss_bss_layout.md. */
+ * their retail byte range. See re/ai/build_pipeline.md. */
 static s32 mode;
 static s32 d1;
 static s32 d2;
@@ -464,7 +464,7 @@ int main(int argc, const char **argv, const char **envp) {
          * pointer arithmetic rather than a getter. Value and base both go
          * through named locals, value first: the only form whose temp
          * numbering matches retail (`lw v0,MapNo; lw v1,SaveData;
-         * sw v0,0x1c8(v1)`). See docs/RE/main.md. */
+         * sw v0,0x1c8(v1)`). See re/ai/main.md. */
         {
             s32 map_no = MapNo;
             char *sd = (char *) SaveData;
@@ -734,3 +734,33 @@ int main(int argc, const char **argv, const char **envp) {
         }
     }
 }
+
+INCLUDE_RODATA("main", LIT_880);
+INCLUDE_RODATA("main", LIT_881);
+INCLUDE_RODATA("main", LIT_884__2);
+INCLUDE_RODATA("main", LIT_886);
+INCLUDE_RODATA("main", LIT_887__2);
+INCLUDE_RODATA("main", LIT_888);
+INCLUDE_RODATA("main", LIT_889);
+INCLUDE_RODATA("main", LIT_890);
+INCLUDE_RODATA("main", LIT_891);
+INCLUDE_RODATA("main", LIT_892);
+INCLUDE_RODATA("main", LIT_893);
+INCLUDE_RODATA("main", LIT_894);
+INCLUDE_RODATA("main", LIT_903);
+INCLUDE_RODATA("main", LIT_904);
+INCLUDE_RODATA("main", LIT_1003);
+INCLUDE_RODATA("main", LIT_1004);
+INCLUDE_RODATA("main", LIT_1007);
+INCLUDE_RODATA("main", LIT_1011);
+INCLUDE_RODATA("main", LIT_1061);
+INCLUDE_RODATA("main", LIT_1062);
+INCLUDE_RODATA("main", LIT_1079);
+INCLUDE_RODATA("main", LIT_1080);
+INCLUDE_RODATA("main", LIT_1081);
+INCLUDE_RODATA("main", LIT_1082);
+INCLUDE_RODATA("main", LIT_1083);
+INCLUDE_RODATA("main", LIT_1084);
+INCLUDE_RODATA("main", LIT_1086);
+INCLUDE_RODATA("main", LIT_1087);
+INCLUDE_RODATA("main", LIT_1195);

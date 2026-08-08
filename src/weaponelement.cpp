@@ -1,1 +1,21 @@
 #include "weaponelement.hpp"
+
+INCLUDE_ASM("main", Initialize__14CWeaponElementFv);
+INCLUDE_ASM("main", Set__14CWeaponElementFPA4_fPffif);
+INCLUDE_ASM("main", Step__14CWeaponElementFv);
+INCLUDE_ASM("main", Draw__14CWeaponElementFv);
+INCLUDE_ASM("main", Init_Holy__14CWeaponElementFPf);
+INCLUDE_ASM("main", Step_Holy__14CWeaponElementFv);
+INCLUDE_ASM("main", Draw_Holy__14CWeaponElementFv);
+INCLUDE_ASM("main", Init_Cold__14CWeaponElementFPf);
+INCLUDE_ASM("main", Step_Cold__14CWeaponElementFv);
+INCLUDE_ASM("main", Draw_Cold__14CWeaponElementFv);
+INCLUDE_ASM("main", Init_Wind__14CWeaponElementFPf);
+INCLUDE_ASM("main", Step_Wind__14CWeaponElementFv);
+INCLUDE_ASM("main", Draw_Wind__14CWeaponElementFv);
+INCLUDE_ASM("main", Init_Fire__14CWeaponElementFPf);
+INCLUDE_ASM("main", Step_Fire__14CWeaponElementFv);
+INCLUDE_ASM("main", Draw_Fire__14CWeaponElementFv);
+INCLUDE_ASM("main", Init_Thunder__14CWeaponElementFPf);
+INCLUDE_ASM("main", Step_Thunder__14CWeaponElementFv);
+INCLUDE_ASM("main", Draw_Thunder__14CWeaponElementFv);

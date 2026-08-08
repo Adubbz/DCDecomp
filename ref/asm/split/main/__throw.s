@@ -42,16 +42,17 @@ glabel __throw
 /* 00E2B0 0010E1B0 6435040C */  jal         __terminate
 /* 00E2B4 0010E1B4 00000000 */   nop
 /* 00E2B8 0010E1B8 E005C527 */  addiu       $5, $30, 0x5E0
-/* 00E2BC 0010E1BC 03000010 */  b           .L0010E1CC
+/* 00E2BC 0010E1BC 03000010 */  b           .LT_0010E1CC$b
 /* 00E2C0 0010E1C0 EC05C5AF */   sw         $5, 0x5EC($30)
 .L0010E1C4:
 /* 00E2C4 0010E1C4 E005C627 */  addiu       $6, $30, 0x5E0
 /* 00E2C8 0010E1C8 EC05C6AF */  sw          $6, 0x5EC($30)
-.L0010E1CC:
-/* 00E2CC 0010E1CC 1100073C */  lui         $7, %hi(.L0010E1CC)
+jlabel T_0010E1CC
+.LT_0010E1CC$b:
+/* 00E2CC 0010E1CC 1100073C */  lui         $7, %hi(T_0010E1CC)
 /* 00E2D0 0010E1D0 E005C58F */  lw          $5, 0x5E0($30)
 /* 00E2D4 0010E1D4 D847040C */  jal         __frame_state_for
-/* 00E2D8 0010E1D8 CCE1E424 */   addiu      $4, $7, %lo(.L0010E1CC)
+/* 00E2D8 0010E1D8 CCE1E424 */   addiu      $4, $7, %lo(T_0010E1CC)
 /* 00E2DC 0010E1DC 2D184000 */  daddu       $3, $2, $0
 /* 00E2E0 0010E1E0 04006014 */  bnez        $3, .L0010E1F4
 /* 00E2E4 0010E1E4 E005C2AF */   sw         $2, 0x5E0($30)
@@ -101,7 +102,7 @@ glabel __throw
 /* 00E38C 0010E28C 23186700 */  subu        $3, $3, $7
 /* 00E390 0010E290 03000010 */  b           .L0010E2A0
 /* 00E394 0010E294 E405C28F */   lw         $2, 0x5E4($30)
-alabel T_0010E298
+jlabel T_0010E298
 /* 00E398 0010E298 08008000 */  jr          $4
 /* 00E39C 0010E29C 21E8A303 */   addu       $29, $29, $3
 .L0010E2A0:

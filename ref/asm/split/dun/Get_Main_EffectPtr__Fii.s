@@ -16,25 +16,21 @@ glabel Get_Main_EffectPtr__Fii
 /* 00E380 01DBA080 08004000 */  jr          $2
 /* 00E384 01DBA084 00000000 */   nop
 jlabel .L01DBA088_2F5688
-.L01DBA088_2F5688$b:
 /* 00E388 01DBA088 DC01013C */  lui         $1, %hi(MyEffectEntry_Tbl)
 /* 00E38C 01DBA08C F021228C */  lw          $2, %lo(MyEffectEntry_Tbl)($1)
 /* 00E390 01DBA090 64000010 */  b           .L01DBA224_2F5824
 /* 00E394 01DBA094 00000000 */   nop
 jlabel .L01DBA098_2F5698
-.L01DBA098_2F5698$b:
 /* 00E398 01DBA098 DC01013C */  lui         $1, %hi(MyEffectEntry_Tbl + 0x4)
 /* 00E39C 01DBA09C F421228C */  lw          $2, %lo(MyEffectEntry_Tbl + 0x4)($1)
 /* 00E3A0 01DBA0A0 60000010 */  b           .L01DBA224_2F5824
 /* 00E3A4 01DBA0A4 00000000 */   nop
 jlabel .L01DBA0A8_2F56A8
-.L01DBA0A8_2F56A8$b:
 /* 00E3A8 01DBA0A8 DC01013C */  lui         $1, %hi(MyEffectEntry_Tbl + 0x8)
 /* 00E3AC 01DBA0AC F821228C */  lw          $2, %lo(MyEffectEntry_Tbl + 0x8)($1)
 /* 00E3B0 01DBA0B0 5C000010 */  b           .L01DBA224_2F5824
 /* 00E3B4 01DBA0B4 00000000 */   nop
 jlabel .L01DBA0B8_2F56B8
-.L01DBA0B8_2F56B8$b:
 /* 00E3B8 01DBA0B8 0400A004 */  bltz        $5, .L01DBA0CC_2F56CC
 /* 00E3BC 01DBA0BC 00000000 */   nop
 /* 00E3C0 01DBA0C0 0500A128 */  slti        $1, $5, 0x5
@@ -51,13 +47,11 @@ jlabel .L01DBA0B8_2F56B8
 /* 00E3E4 01DBA0E4 4F000010 */  b           .L01DBA224_2F5824
 /* 00E3E8 01DBA0E8 00000000 */   nop
 jlabel .L01DBA0EC_2F56EC
-.L01DBA0EC_2F56EC$b:
 /* 00E3EC 01DBA0EC DC01013C */  lui         $1, %hi(MyEffectEntry_Tbl + 0x20)
 /* 00E3F0 01DBA0F0 1022228C */  lw          $2, %lo(MyEffectEntry_Tbl + 0x20)($1)
 /* 00E3F4 01DBA0F4 4B000010 */  b           .L01DBA224_2F5824
 /* 00E3F8 01DBA0F8 00000000 */   nop
 jlabel .L01DBA0FC_2F56FC
-.L01DBA0FC_2F56FC$b:
 /* 00E3FC 01DBA0FC 789C838F */  lw          $3, -0x6388($28)
 /* 00E400 01DBA100 A80A0224 */  addiu       $2, $0, 0xAA8
 /* 00E404 01DBA104 18108200 */  mult        $2, $4, $2

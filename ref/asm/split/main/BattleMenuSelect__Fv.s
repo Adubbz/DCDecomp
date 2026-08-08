@@ -103,7 +103,7 @@ glabel BattleMenuSelect__Fv
 /* 0F6D84 001F6C84 E494908F */  lw          $16, -0x6B1C($28)
 /* 0F6D88 001F6C88 5895868F */  lw          $6, -0x6AA8($28)
 /* 0F6D8C 001F6C8C 0900C12C */  sltiu       $1, $6, 0x9
-/* 0F6D90 001F6C90 94002010 */  beqz        $1, .L001F6EE4$b
+/* 0F6D90 001F6C90 94002010 */  beqz        $1, .L.L001F6EE4$b
 /* 0F6D94 001F6C94 00000000 */   nop
 /* 0F6D98 001F6C98 2A00023C */  lui         $2, %hi(LIT_1288)
 /* 0F6D9C 001F6C9C 20D74324 */  addiu       $3, $2, %lo(LIT_1288)
@@ -113,7 +113,6 @@ glabel BattleMenuSelect__Fv
 /* 0F6DAC 001F6CAC 08004000 */  jr          $2
 /* 0F6DB0 001F6CB0 00000000 */   nop
 jlabel .L001F6CB4
-.L001F6CB4$b:
 /* 0F6DB4 001F6CB4 0F008014 */  bnez        $4, .L001F6CF4
 /* 0F6DB8 001F6CB8 00000000 */   nop
 /* 0F6DBC 001F6CBC 0100013C */  lui         $1, (0x10000 >> 16)
@@ -134,24 +133,21 @@ jlabel .L001F6CB4
 /* 0F6DF4 001F6CF4 28260072 */  paddub      $4, $16, $0
 /* 0F6DF8 001F6CF8 B8DC070C */  jal         InitMenuChara__FP1
 /* 0F6DFC 001F6CFC 00000000 */   nop
-/* 0F6E00 001F6D00 78000010 */  b           .L001F6EE4$b
+/* 0F6E00 001F6D00 78000010 */  b           .L.L001F6EE4$b
 /* 0F6E04 001F6D04 00000000 */   nop
 jlabel .L001F6D08
-.L001F6D08$b:
 /* 0F6E08 001F6D08 28260070 */  paddub      $4, $0, $0
 /* 0F6E0C 001F6D0C D4F1070C */  jal         InitWeaponSelect__Fii
 /* 0F6E10 001F6D10 00000000 */   nop
-/* 0F6E14 001F6D14 73000010 */  b           .L001F6EE4$b
+/* 0F6E14 001F6D14 73000010 */  b           .L.L001F6EE4$b
 /* 0F6E18 001F6D18 00000000 */   nop
 jlabel .L001F6D1C
-.L001F6D1C$b:
 /* 0F6E1C 001F6D1C 28260070 */  paddub      $4, $0, $0
 /* 0F6E20 001F6D20 7809080C */  jal         InitItemMode__Fii
 /* 0F6E24 001F6D24 00000000 */   nop
-/* 0F6E28 001F6D28 6E000010 */  b           .L001F6EE4$b
+/* 0F6E28 001F6D28 6E000010 */  b           .L.L001F6EE4$b
 /* 0F6E2C 001F6D2C 00000000 */   nop
 jlabel .L001F6D30
-.L001F6D30$b:
 /* 0F6E30 001F6D30 7800A327 */  addiu       $3, $29, 0x78
 /* 0F6E34 001F6D34 608882DF */  ld          $2, -0x77A0($28)
 /* 0F6E38 001F6D38 000062FC */  sd          $2, 0x0($3)
@@ -201,10 +197,9 @@ jlabel .L001F6D30
 /* 0F6ED4 001F6DD4 28262072 */  paddub      $4, $17, $0
 /* 0F6ED8 001F6DD8 1069080C */  jal         InitMenuAtoraSelect__Fi
 /* 0F6EDC 001F6DDC 00000000 */   nop
-/* 0F6EE0 001F6DE0 40000010 */  b           .L001F6EE4$b
+/* 0F6EE0 001F6DE0 40000010 */  b           .L.L001F6EE4$b
 /* 0F6EE4 001F6DE4 00000000 */   nop
 jlabel .L001F6DE8
-.L001F6DE8$b:
 /* 0F6EE8 001F6DE8 B02F080C */  jal         NowGetGameFlagForBtlMenu__Fi
 /* 0F6EEC 001F6DEC 00000000 */   nop
 /* 0F6EF0 001F6DF0 14004010 */  beqz        $2, .L001F6E44
@@ -236,29 +231,26 @@ jlabel .L001F6DE8
 /* 0F6F50 001F6E50 BC1F080C */  jal         InitMenuMove__FiiP1
 /* 0F6F54 001F6E54 00000000 */   nop
 /* 0F6F58 001F6E58 489580A3 */  sb          $0, -0x6AB8($28)
-/* 0F6F5C 001F6E5C 21000010 */  b           .L001F6EE4$b
+/* 0F6F5C 001F6E5C 21000010 */  b           .L.L001F6EE4$b
 /* 0F6F60 001F6E60 00000000 */   nop
 jlabel .L001F6E64
-.L001F6E64$b:
 /* 0F6F64 001F6E64 01000424 */  addiu       $4, $0, 0x1
 /* 0F6F68 001F6E68 0095858F */  lw          $5, -0x6B00($28)
 /* 0F6F6C 001F6E6C 28360072 */  paddub      $6, $16, $0
 /* 0F6F70 001F6E70 3479080C */  jal         InitMenuOption__FiiP1
 /* 0F6F74 001F6E74 00000000 */   nop
-/* 0F6F78 001F6E78 1A000010 */  b           .L001F6EE4$b
+/* 0F6F78 001F6E78 1A000010 */  b           .L.L001F6EE4$b
 /* 0F6F7C 001F6E7C 00000000 */   nop
 jlabel .L001F6E80
-.L001F6E80$b:
 /* 0F6F80 001F6E80 489580A3 */  sb          $0, -0x6AB8($28)
 /* 0F6F84 001F6E84 01000424 */  addiu       $4, $0, 0x1
 /* 0F6F88 001F6E88 0095858F */  lw          $5, -0x6B00($28)
 /* 0F6F8C 001F6E8C 28360072 */  paddub      $6, $16, $0
 /* 0F6F90 001F6E90 C47E080C */  jal         InitMenuSave__FiiP1
 /* 0F6F94 001F6E94 00000000 */   nop
-/* 0F6F98 001F6E98 12000010 */  b           .L001F6EE4$b
+/* 0F6F98 001F6E98 12000010 */  b           .L.L001F6EE4$b
 /* 0F6F9C 001F6E9C 00000000 */   nop
 jlabel .L001F6EA0
-.L001F6EA0$b:
 /* 0F6FA0 001F6EA0 489580A3 */  sb          $0, -0x6AB8($28)
 /* 0F6FA4 001F6EA4 2900023C */  lui         $2, %hi(LIT_1270)
 /* 0F6FA8 001F6EA8 A02F4324 */  addiu       $3, $2, %lo(LIT_1270)
@@ -277,7 +269,7 @@ jlabel .L001F6EA0
 /* 0F6FDC 001F6EDC 1C2C080C */  jal         BattleManualInit__FPiP1
 /* 0F6FE0 001F6EE0 00000000 */   nop
 jlabel .L001F6EE4
-.L001F6EE4$b:
+.L.L001F6EE4$b:
 /* 0F6FE4 001F6EE4 5895828F */  lw          $2, -0x6AA8($28)
 /* 0F6FE8 001F6EE8 08004224 */  addiu       $2, $2, 0x8
 /* 0F6FEC 001F6EEC 208882AF */  sw          $2, -0x77E0($28)

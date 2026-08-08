@@ -20,8 +20,8 @@ glabel __ct__11CEditGroundFv
 /* 0A5B20 001A5A20 0100013C */  lui         $1, (0x15040 >> 16)
 /* 0A5B24 001A5A24 40502134 */  ori         $1, $1, (0x15040 & 0xFFFF)
 /* 0A5B28 001A5A28 21200102 */  addu        $4, $16, $1
-/* 0A5B2C 001A5A2C 1A00023C */  lui         $2, %hi(func_001A5AE0)
-/* 0A5B30 001A5A30 E05A4524 */  addiu       $5, $2, %lo(func_001A5AE0)
+/* 0A5B2C 001A5A2C 1A00023C */  lui         $2, %hi(__ct__12CGroundWaterFv)
+/* 0A5B30 001A5A30 E05A4524 */  addiu       $5, $2, %lo(__ct__12CGroundWaterFv)
 /* 0A5B34 001A5A34 28360070 */  paddub      $6, $0, $0
 /* 0A5B38 001A5A38 B0030724 */  addiu       $7, $0, 0x3B0
 /* 0A5B3C 001A5A3C 04000824 */  addiu       $8, $0, 0x4

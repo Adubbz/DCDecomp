@@ -33,8 +33,8 @@ glabel FishingLoadFish__FiP14CDataAlloc2_1_i
 /* 0A8A50 001A8950 E49E040C */  jal         __nwa__FUiP1
 /* 0A8A54 001A8954 00000000 */   nop
 /* 0A8A58 001A8958 28264070 */  paddub      $4, $2, $0
-/* 0A8A5C 001A895C 1B00023C */  lui         $2, %hi(func_001A8DC0)
-/* 0A8A60 001A8960 C08D4524 */  addiu       $5, $2, %lo(func_001A8DC0)
+/* 0A8A5C 001A895C 1B00023C */  lui         $2, %hi(__ct__5CFishFv)
+/* 0A8A60 001A8960 C08D4524 */  addiu       $5, $2, %lo(__ct__5CFishFv)
 /* 0A8A64 001A8964 28360070 */  paddub      $6, $0, $0
 /* 0A8A68 001A8968 10240724 */  addiu       $7, $0, 0x2410
 /* 0A8A6C 001A896C 06000824 */  addiu       $8, $0, 0x6

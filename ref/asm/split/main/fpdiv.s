@@ -40,9 +40,9 @@ glabel fpdiv
 .L00110DAC:
 /* 010EAC 00110DAC 3200E614 */  bne         $7, $6, .L00110E78
 /* 010EB0 00110DB0 2D20A003 */   daddu      $4, $29, $0
-/* 010EB4 00110DB4 2A00023C */  lui         $2, %hi(thenan.3__2)
+/* 010EB4 00110DB4 2A00023C */  lui         $2, %hi(thenan_3__2)
 /* 010EB8 00110DB8 2F000010 */  b           .L00110E78
-/* 010EBC 00110DBC 804F4424 */   addiu      $4, $2, %lo(thenan.3__2)
+/* 010EBC 00110DBC 804F4424 */   addiu      $4, $2, %lo(thenan_3__2)
 .L00110DC0:
 /* 010EC0 00110DC0 05004014 */  bnez        $2, .L00110DD8
 /* 010EC4 00110DC4 0200C238 */   xori       $2, $6, 0x2

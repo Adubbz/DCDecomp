@@ -200,7 +200,7 @@ glabel DrawAallWeapon__FiifP10CCharacterP11WEAPON_HAVEiii
 /* 0FB5DC 001FB4DC DA01013C */  lui         $1, %hi(WepMenu + 0x2)
 /* 0FB5E0 001FB4E0 72EA2484 */  lh          $4, %lo(WepMenu + 0x2)($1)
 /* 0FB5E4 001FB4E4 0C00812C */  sltiu       $1, $4, 0xC
-/* 0FB5E8 001FB4E8 16002010 */  beqz        $1, .L001FB544$b
+/* 0FB5E8 001FB4E8 16002010 */  beqz        $1, .L.L001FB544$b
 /* 0FB5EC 001FB4EC 00000000 */   nop
 /* 0FB5F0 001FB4F0 2A00023C */  lui         $2, %hi(LIT_2194)
 /* 0FB5F4 001FB4F4 00D84324 */  addiu       $3, $2, %lo(LIT_2194)
@@ -210,7 +210,6 @@ glabel DrawAallWeapon__FiifP10CCharacterP11WEAPON_HAVEiii
 /* 0FB604 001FB504 08004000 */  jr          $2
 /* 0FB608 001FB508 00000000 */   nop
 jlabel .L001FB50C
-.L001FB50C$b:
 /* 0FB60C 001FB50C 02003226 */  addiu       $18, $17, 0x2
 /* 0FB610 001FB510 66000526 */  addiu       $5, $16, 0x66
 /* 0FB614 001FB514 28264072 */  paddub      $4, $18, $0
@@ -226,7 +225,7 @@ jlabel .L001FB50C
 /* 0FB63C 001FB53C B4E4070C */  jal         DrawWepVolumeDisplay__FiiP11WEAPON_HAVEi
 /* 0FB640 001FB540 00000000 */   nop
 jlabel .L001FB544
-.L001FB544$b:
+.L.L001FB544$b:
 /* 0FB644 001FB544 EFFF2426 */  addiu       $4, $17, -0x11
 /* 0FB648 001FB548 CEFF0526 */  addiu       $5, $16, -0x32
 /* 0FB64C 001FB54C 2836C072 */  paddub      $6, $22, $0

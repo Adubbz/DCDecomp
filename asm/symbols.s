@@ -6,10 +6,19 @@
 # Addresses referred to by code this build assembles, but defined by no object
 # in it. Each `sym` gives the linker the retail address directly.
 #
-# This file used to carry 112 of these, most standing in for references the
-# disassembler had left dangling. scripts/build/disassemble.py resolves those itself
-# now -- see its configure() and localize_branch_labels() -- and what is left
-# is only what genuinely crosses a link boundary.
+# This file used to carry 112 of these, then 15. Everything that was standing in
+# for a dangling reference is gone: scripts/build/disassemble.py resolves branch
+# targets itself (see localize_branch_labels), grouping functions into
+# translation units put the rest inside a single object, and reading the
+# processor-specific symbol binding retail uses gave 55 functions their real
+# names instead of func_<address>.
+#
+# What is left is not a build artefact. src/main.cpp calls the overlays'
+# entry points by address rather than by name, so nothing in the link defines
+# what it refers to. Naming them would empty this file -- the overlays do
+# export them -- but the signatures main.cpp was decompiled with do not all
+# match those names' mangling, and changing a signature changes what mwcc
+# emits. That is a decompilation question, not a build one.
 
 # The overlays' entry points, called from src/main.cpp; main is linked
 # separately from the overlay that defines them. Retail's name for each is
@@ -28,15 +37,3 @@ sym func_01DC8EB0 0x01DC8EB0   # RushLoop__Fv
 sym func_01DD1AB0 0x01DD1AB0   # TitleInit__Fi
 sym func_01DD2220 0x01DD2220   # TitleLoop__Fv
 
-# Branch targets in one split file reached from another. A branch that crosses
-# files is relocated rather than resolved by the assembler, so it needs a
-# symbol; the ones that stay within a file are local labels and need nothing.
-sym .L00212170 0x00212170
-sym .L01DAFB60_2B5360 0x01DAFB60
-sym .L01DAFC40_2B5440 0x01DAFC40
-sym .L01DCAEA0_2D06A0 0x01DCAEA0
-
-# Called from CSaveData__InvertConfig.s. The disassembler splits this function
-# into ref/asm/split/main/func_00158AE0.s, which the link order does
-# not list; retail knows the address as InitPos__11CMenuCursorFv.
-sym func_00158AE0 0x00158AE0

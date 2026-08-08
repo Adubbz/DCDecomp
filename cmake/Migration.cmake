@@ -2,8 +2,8 @@
 # manifest. Trees that predate the manifest simply have no generated sections
 # and link the checked-in .lcf as-is.
 
-set(MIGRATE_MANIFEST asm/migrated_symbols.txt)
-set(MIGRATE_SCRIPT scripts/build/migrate_section.py)
+set(MIGRATE_MANIFEST asm/decompiled_symbols.txt)
+set(MIGRATE_SCRIPT scripts/build/migrate.py)
 
 # The reference dumps are read at configure time, so a tree that has not been
 # set up yet configures with migration off. Nothing links until the dumps
@@ -18,7 +18,7 @@ function(migration_enabled out_var)
     endif()
 endfunction()
 
-# Run migrate_section.py at configure time and return its output as a list.
+# Run migrate.py at configure time and return its output as a list.
 function(migrate_query out_var)
     execute_process(
         COMMAND ${PYTHON} ${MIGRATE_SCRIPT} ${ARGN}
@@ -27,7 +27,7 @@ function(migrate_query out_var)
         RESULT_VARIABLE rc
         OUTPUT_STRIP_TRAILING_WHITESPACE)
     if(NOT rc EQUAL 0)
-        message(FATAL_ERROR "migrate_section.py ${ARGN} failed: ${rc}")
+        message(FATAL_ERROR "migrate.py ${ARGN} failed: ${rc}")
     endif()
     string(REGEX REPLACE "[ \t\r\n]+" ";" out "${out}")
     set(${out_var} "${out}" PARENT_SCOPE)
@@ -112,7 +112,7 @@ function(add_migrated_sections out_s_files out_plans)
     set(${out_plans} "${plans}" PARENT_SCOPE)
 endfunction()
 
-# The objects gen_lcf.py must objdump to compute island padding.
+# The objects the linker script must objdump to compute island padding.
 function(migrated_contrib_objs out_var objdir)
     set(objs "")
     migration_enabled(enabled)

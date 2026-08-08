@@ -47,7 +47,6 @@ glabel WeaponDataChangeByRGate__FP11WEAPON_HAVEi
 /* 10FE6C 0020FD6C 08004000 */  jr          $2
 /* 10FE70 0020FD70 00000000 */   nop
 jlabel .L0020FD74
-.L0020FD74$b:
 /* 10FE74 0020FD74 2A00023C */  lui         $2, %hi(LIT_1616__2)
 /* 10FE78 0020FD78 00E24424 */  addiu       $4, $2, %lo(LIT_1616__2)
 /* 10FE7C 0020FD7C A611040C */  jal         printf
@@ -69,7 +68,6 @@ jlabel .L0020FD74
 /* 10FEB8 0020FDB8 FE000010 */  b           .L002101B4
 /* 10FEBC 0020FDBC 00000000 */   nop
 jlabel .L0020FDC0
-.L0020FDC0$b:
 /* 10FEC0 0020FDC0 00002486 */  lh          $4, 0x0($17)
 /* 10FEC4 0020FDC4 70CF070C */  jal         IsDefaultWeapon__Fi
 /* 10FEC8 0020FDC8 00000000 */   nop
@@ -177,7 +175,6 @@ jlabel .L0020FDC0
 /* 110044 0020FF44 9B000010 */  b           .L002101B4
 /* 110048 0020FF48 00000000 */   nop
 jlabel .L0020FF4C
-.L0020FF4C$b:
 /* 11004C 0020FF4C 00002486 */  lh          $4, 0x0($17)
 /* 110050 0020FF50 70CF070C */  jal         IsDefaultWeapon__Fi
 /* 110054 0020FF54 00000000 */   nop
@@ -221,7 +218,6 @@ jlabel .L0020FF4C
 /* 1100E4 0020FFE4 73000010 */  b           .L002101B4
 /* 1100E8 0020FFE8 00000000 */   nop
 jlabel .L0020FFEC
-.L0020FFEC$b:
 /* 1100EC 0020FFEC 00002486 */  lh          $4, 0x0($17)
 /* 1100F0 0020FFF0 70CF070C */  jal         IsDefaultWeapon__Fi
 /* 1100F4 0020FFF4 00000000 */   nop
@@ -267,7 +263,6 @@ jlabel .L0020FFEC
 /* 11018C 0021008C 49000010 */  b           .L002101B4
 /* 110190 00210090 00000000 */   nop
 jlabel .L00210094
-.L00210094$b:
 /* 110194 00210094 2A00023C */  lui         $2, %hi(LIT_1623__2)
 /* 110198 00210098 A0E24424 */  addiu       $4, $2, %lo(LIT_1623__2)
 /* 11019C 0021009C A611040C */  jal         printf
@@ -324,7 +319,6 @@ jlabel .L00210094
 /* 110260 00210160 14000010 */  b           .L002101B4
 /* 110264 00210164 00000000 */   nop
 jlabel .L00210168
-.L00210168$b:
 /* 110268 00210168 8040023C */  lui         $2, (0x40800000 >> 16)
 /* 11026C 0021016C 00088244 */  mtc1        $2, $f1
 /* 110270 00210170 100020C6 */  lwc1        $f0, 0x10($17)

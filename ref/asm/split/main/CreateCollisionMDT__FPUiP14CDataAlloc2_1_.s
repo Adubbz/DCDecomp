@@ -41,8 +41,8 @@ glabel CreateCollisionMDT__FPUiP14CDataAlloc2_1_
 /* 0273D4 001272D4 28A64070 */  paddub      $20, $2, $0
 /* 0273D8 001272D8 0A008012 */  beqz        $20, .L00127304
 /* 0273DC 001272DC 00000000 */   nop
-/* 0273E0 001272E0 2A00023C */  lui         $2, %hi(RO_002A1100)
-/* 0273E4 001272E4 00114224 */  addiu       $2, $2, %lo(RO_002A1100)
+/* 0273E0 001272E0 2A00023C */  lui         $2, %hi(__vt__10CCollision)
+/* 0273E4 001272E4 00114224 */  addiu       $2, $2, %lo(__vt__10CCollision)
 /* 0273E8 001272E8 200082AE */  sw          $2, 0x20($20)
 /* 0273EC 001272EC 2A00023C */  lui         $2, %hi(__vt__13CCollisionMDT)
 /* 0273F0 001272F0 D0104224 */  addiu       $2, $2, %lo(__vt__13CCollisionMDT)

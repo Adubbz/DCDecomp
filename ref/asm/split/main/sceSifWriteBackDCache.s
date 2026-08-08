@@ -8,7 +8,7 @@
 glabel sceSifWriteBackDCache
 /* 016C98 00116B98 FFFF193C */  lui         $25, (0xFFFFFFC0 >> 16)
 /* 016C9C 00116B9C C0FF3937 */  ori         $25, $25, (0xFFFFFFC0 & 0xFFFF)
-/* 016CA0 00116BA0 2600A018 */  blez        $5, last
+/* 016CA0 00116BA0 2600A018 */  blez        $5, .Llast
 /* 016CA4 00116BA4 21508500 */   addu       $10, $4, $5
 /* 016CA8 00116BA8 24409900 */  and         $8, $4, $25
 /* 016CAC 00116BAC FFFF4A25 */  addiu       $10, $10, -0x1
@@ -17,19 +17,19 @@ glabel sceSifWriteBackDCache
 /* 016CB8 00116BB8 82590A00 */  srl         $11, $10, 6
 /* 016CBC 00116BBC 01006B25 */  addiu       $11, $11, 0x1
 /* 016CC0 00116BC0 07006931 */  andi        $9, $11, 0x7
-/* 016CC4 00116BC4 08002011 */  beqz        $9, eight
+/* 016CC4 00116BC4 08002011 */  beqz        $9, .Leight
 /* 016CC8 00116BC8 C2500B00 */   srl        $10, $11, 3
-loop1:
+.Lloop1:
 /* 016CCC 00116BCC 0F000000 */  sync
 /* 016CD0 00116BD0 000018BD */  cache       0x18, 0x0($8) /* handwritten instruction */
 /* 016CD4 00116BD4 0F000000 */  sync
 /* 016CD8 00116BD8 FFFF2925 */  addiu       $9, $9, -0x1
 /* 016CDC 00116BDC 00000000 */  nop
-/* 016CE0 00116BE0 FAFF201D */  bgtz        $9, loop1
+/* 016CE0 00116BE0 FAFF201D */  bgtz        $9, .Lloop1
 /* 016CE4 00116BE4 40000825 */   addiu      $8, $8, 0x40
-eight:
-/* 016CE8 00116BE8 14004011 */  beqz        $10, last
-loop8:
+.Leight:
+/* 016CE8 00116BE8 14004011 */  beqz        $10, .Llast
+.Lloop8:
 /* 016CEC 00116BEC FFFF4A25 */   addiu      $10, $10, -0x1
 /* 016CF0 00116BF0 0F000000 */  sync
 /* 016CF4 00116BF4 000018BD */  cache       0x18, 0x0($8) /* handwritten instruction */
@@ -48,9 +48,9 @@ loop8:
 /* 016D28 00116C28 0F000000 */  sync
 /* 016D2C 00116C2C C00118BD */  cache       0x18, 0x1C0($8) /* handwritten instruction */
 /* 016D30 00116C30 0F000000 */  sync
-/* 016D34 00116C34 EDFF401D */  bgtz        $10, loop8
+/* 016D34 00116C34 EDFF401D */  bgtz        $10, .Lloop8
 /* 016D38 00116C38 00020825 */   addiu      $8, $8, 0x200
-last:
+.Llast:
 /* 016D3C 00116C3C 0800E003 */  jr          $31
 /* 016D40 00116C40 00000000 */   nop
 /* 016D44 00116C44 0800E003 */  jr          $31

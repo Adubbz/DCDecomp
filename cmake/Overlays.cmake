@@ -75,15 +75,12 @@ function(overlay_name_bytes name out_var)
     set(${out_var} "${lines}" PARENT_SCOPE)
 endfunction()
 
-# The placement body for one overlay, expanded into the linker template.
-# Wildcards over the private prefix suffice: mwld matches them in command-line
-# order, which is the address order of the object lists. The 64 bytes at the
-# top are the MWo3 header the loader reads (bss size at 0x14, static-init
-# bounds at 0x18/0x1C). Those size fields are declared up front and assigned
-# below, because mwld rejects a forward reference -- which is what the PS2 LCF
-# Generator prelinker emits too.
-function(overlay_placement name out_var)
-    overlay_section_prefix(${name} p)
+# The 64-byte MWo3 header one overlay begins with, expanded into the linker
+# template ahead of the placement written there. The loader reads the sizes at
+# 0x14 and the static-init bounds at 0x18/0x1C. Those fields are declared up
+# front and assigned by the placement, because mwld rejects a forward
+# reference -- which is what the PS2 LCF Generator prelinker emits too.
+function(overlay_header name out_var)
     overlay_name_bytes(${name} name_bytes)
     set(${out_var} "
         // Declared before the header reads them; assigned for real below.
@@ -108,27 +105,17 @@ function(overlay_placement name out_var)
         . = _${name}_load + ${OVERLAY_HEADER_SIZE};
 
         _${name}_text = .;
-        ALIGNALL(16);
-        *(${p}text)
-
-        . = ALIGN(16);
-        _${name}_data = .;
-        *(${p}data)
-
-        ALIGNALL(1);
-        _${name}_bss = .;
-        *(${p}bss)
-        _${name}_end = .;" PARENT_SCOPE)
+        ALIGNALL(16);" PARENT_SCOPE)
 endfunction()
 
 # Expand the linker template: replace every `// @OVERLAY <name>` marker with
-# that overlay's placement. Any `// @MIGRATE` markers are left alone for
-# gen_lcf.py, which runs afterwards.
+# that overlay's header. Any `// @MIGRATE` markers are left alone for the
+# linker-script pass, which runs afterwards.
 function(expand_overlay_markers template out)
     file(READ ${template} content)
 
     foreach(name IN LISTS OVERLAYS)
-        overlay_placement(${name} body)
+        overlay_header(${name} body)
         string(REPLACE "        // @OVERLAY ${name}" "${body}" content "${content}")
     endforeach()
 
@@ -153,7 +140,7 @@ function(overlay_link_args out_var)
     set(args -og ovl,${OVERLAY_ORIGIN})
     foreach(name IN LISTS OVERLAYS)
         # A response file, like the main image: mwld accepts one after -overlay,
-        # and gen_layout.py writes it with this overlay's objects in order.
+        # and layout.py writes it with this overlay's objects in order.
         list(APPEND args -ol ${name} @${BUILD_DIR}/${name}_o_files)
     endforeach()
     set(${out_var} "${args}" PARENT_SCOPE)

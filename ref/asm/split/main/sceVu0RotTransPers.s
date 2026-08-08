@@ -17,10 +17,10 @@ glabel sceVu0RotTransPers
 /* 0221A4 001220A4 BC03E94B */  vdiv        $Q, $vf0w, $vf9w
 /* 0221A8 001220A8 BF03004A */  vwaitq
 /* 0221AC 001220AC 5C4AC04B */  vmulq.xyz   $vf9, $vf9, $Q
-/* 0221B0 001220B0 0200E010 */  beqz        $7, _rotTP
+/* 0221B0 001220B0 0200E010 */  beqz        $7, .L_rotTP
 /* 0221B4 001220B4 7D49EA4B */   vftoi4.xyzw $vf10, $vf9
 /* 0221B8 001220B8 7C496A4A */  vftoi0.zw   $vf10, $vf9
-_rotTP:
+.L_rotTP:
 /* 0221BC 001220BC 0800E003 */  jr          $31
 /* 0221C0 001220C0 00008AF8 */   sqc2       $vf10, 0x0($4)
 /* 0221C4 001220C4 00000000 */  nop

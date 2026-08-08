@@ -671,7 +671,7 @@ glabel InitMenuMesSet__FiPs
 /* 12CC30 0022CB30 DA01013C */  lui         $1, %hi(AtoraNameMes + 0x16C0)
 /* 12CC34 0022CB34 906920AC */  sw          $0, %lo(AtoraNameMes + 0x16C0)($1)
 /* 12CC38 0022CB38 0800212E */  sltiu       $1, $17, 0x8
-/* 12CC3C 0022CB3C D0002010 */  beqz        $1, .L0022CE80$b
+/* 12CC3C 0022CB3C D0002010 */  beqz        $1, .L.L0022CE80$b
 /* 12CC40 0022CB40 00000000 */   nop
 /* 12CC44 0022CB44 2A00033C */  lui         $3, %hi(LIT_692__3)
 /* 12CC48 0022CB48 60F16424 */  addiu       $4, $3, %lo(LIT_692__3)
@@ -681,7 +681,6 @@ glabel InitMenuMesSet__FiPs
 /* 12CC58 0022CB58 08006000 */  jr          $3
 /* 12CC5C 0022CB5C 00000000 */   nop
 jlabel .L0022CB60
-.L0022CB60$b:
 /* 12CC60 0022CB60 DA01023C */  lui         $2, %hi(CommonMenuMes1)
 /* 12CC64 0022CB64 900B4424 */  addiu       $4, $2, %lo(CommonMenuMes1)
 /* 12CC68 0022CB68 01000524 */  addiu       $5, $0, 0x1
@@ -711,10 +710,9 @@ jlabel .L0022CB60
 /* 12CCC8 0022CBC8 01000324 */  addiu       $3, $0, 0x1
 /* 12CCCC 0022CBCC DA01013C */  lui         $1, %hi(AtoraNameMes + 0x1730)
 /* 12CCD0 0022CBD0 006A23AC */  sw          $3, %lo(AtoraNameMes + 0x1730)($1)
-/* 12CCD4 0022CBD4 AA000010 */  b           .L0022CE80$b
+/* 12CCD4 0022CBD4 AA000010 */  b           .L.L0022CE80$b
 /* 12CCD8 0022CBD8 00000000 */   nop
 jlabel .L0022CBDC
-.L0022CBDC$b:
 /* 12CCDC 0022CBDC DA01023C */  lui         $2, %hi(CommonMenuMes2)
 /* 12CCE0 0022CBE0 50234424 */  addiu       $4, $2, %lo(CommonMenuMes2)
 /* 12CCE4 0022CBE4 01000524 */  addiu       $5, $0, 0x1
@@ -736,10 +734,9 @@ jlabel .L0022CBDC
 /* 12CD24 0022CC24 01000324 */  addiu       $3, $0, 0x1
 /* 12CD28 0022CC28 DA01013C */  lui         $1, %hi(CommonMenuMes1 + 0x16CC)
 /* 12CD2C 0022CC2C 5C2223AC */  sw          $3, %lo(CommonMenuMes1 + 0x16CC)($1)
-/* 12CD30 0022CC30 93000010 */  b           .L0022CE80$b
+/* 12CD30 0022CC30 93000010 */  b           .L.L0022CE80$b
 /* 12CD34 0022CC34 00000000 */   nop
 jlabel .L0022CC38
-.L0022CC38$b:
 /* 12CD38 0022CC38 DA01023C */  lui         $2, %hi(CommonMenuMes1)
 /* 12CD3C 0022CC3C 900B4424 */  addiu       $4, $2, %lo(CommonMenuMes1)
 /* 12CD40 0022CC40 01000524 */  addiu       $5, $0, 0x1
@@ -803,7 +800,7 @@ jlabel .L0022CC38
 /* 12CE24 0022CD24 16000324 */  addiu       $3, $0, 0x16
 /* 12CE28 0022CD28 DA01013C */  lui         $1, %hi(CommonMenuMes3 + 0xC)
 /* 12CE2C 0022CD2C 1C3B23AC */  sw          $3, %lo(CommonMenuMes3 + 0xC)($1)
-/* 12CE30 0022CD30 53000010 */  b           .L0022CE80$b
+/* 12CE30 0022CD30 53000010 */  b           .L.L0022CE80$b
 /* 12CE34 0022CD34 00000000 */   nop
 .L0022CD38:
 /* 12CE38 0022CD38 DA01013C */  lui         $1, %hi(CommonMenuMes3 + 0x16D8)
@@ -814,10 +811,9 @@ jlabel .L0022CC38
 /* 12CE4C 0022CD4C 14000324 */  addiu       $3, $0, 0x14
 /* 12CE50 0022CD50 DA01013C */  lui         $1, %hi(CommonMenuMes3 + 0xC)
 /* 12CE54 0022CD54 1C3B23AC */  sw          $3, %lo(CommonMenuMes3 + 0xC)($1)
-/* 12CE58 0022CD58 49000010 */  b           .L0022CE80$b
+/* 12CE58 0022CD58 49000010 */  b           .L.L0022CE80$b
 /* 12CE5C 0022CD5C 00000000 */   nop
 jlabel .L0022CD60
-.L0022CD60$b:
 /* 12CE60 0022CD60 DA01023C */  lui         $2, %hi(CommonMenuMes2)
 /* 12CE64 0022CD64 50234424 */  addiu       $4, $2, %lo(CommonMenuMes2)
 /* 12CE68 0022CD68 01000524 */  addiu       $5, $0, 0x1
@@ -849,10 +845,9 @@ jlabel .L0022CD60
 /* 12CED0 0022CDD0 01000324 */  addiu       $3, $0, 0x1
 /* 12CED4 0022CDD4 DA01013C */  lui         $1, %hi(AtoraNameMes + 0x14)
 /* 12CED8 0022CDD8 E45223AC */  sw          $3, %lo(AtoraNameMes + 0x14)($1)
-/* 12CEDC 0022CDDC 28000010 */  b           .L0022CE80$b
+/* 12CEDC 0022CDDC 28000010 */  b           .L.L0022CE80$b
 /* 12CEE0 0022CDE0 00000000 */   nop
 jlabel .L0022CDE4
-.L0022CDE4$b:
 /* 12CEE4 0022CDE4 DA01023C */  lui         $2, %hi(AtoraNameMes)
 /* 12CEE8 0022CDE8 D0524424 */  addiu       $4, $2, %lo(AtoraNameMes)
 /* 12CEEC 0022CDEC 04000524 */  addiu       $5, $0, 0x4
@@ -861,10 +856,9 @@ jlabel .L0022CDE4
 /* 12CEF8 0022CDF8 01000324 */  addiu       $3, $0, 0x1
 /* 12CEFC 0022CDFC DA01013C */  lui         $1, %hi(AtoraNameMes + 0x14)
 /* 12CF00 0022CE00 E45223AC */  sw          $3, %lo(AtoraNameMes + 0x14)($1)
-/* 12CF04 0022CE04 1E000010 */  b           .L0022CE80$b
+/* 12CF04 0022CE04 1E000010 */  b           .L.L0022CE80$b
 /* 12CF08 0022CE08 00000000 */   nop
 jlabel .L0022CE0C
-.L0022CE0C$b:
 /* 12CF0C 0022CE0C DA01023C */  lui         $2, %hi(CommonMenuMes2)
 /* 12CF10 0022CE10 50234424 */  addiu       $4, $2, %lo(CommonMenuMes2)
 /* 12CF14 0022CE14 01000524 */  addiu       $5, $0, 0x1
@@ -878,10 +872,9 @@ jlabel .L0022CE0C
 /* 12CF34 0022CE34 01000324 */  addiu       $3, $0, 0x1
 /* 12CF38 0022CE38 DA01013C */  lui         $1, %hi(CommonMenuMes3 + 0x14)
 /* 12CF3C 0022CE3C 243B23AC */  sw          $3, %lo(CommonMenuMes3 + 0x14)($1)
-/* 12CF40 0022CE40 0F000010 */  b           .L0022CE80$b
+/* 12CF40 0022CE40 0F000010 */  b           .L.L0022CE80$b
 /* 12CF44 0022CE44 00000000 */   nop
 jlabel .L0022CE48
-.L0022CE48$b:
 /* 12CF48 0022CE48 DA01023C */  lui         $2, %hi(CommonMenuMes2)
 /* 12CF4C 0022CE4C 50234424 */  addiu       $4, $2, %lo(CommonMenuMes2)
 /* 12CF50 0022CE50 01000524 */  addiu       $5, $0, 0x1
@@ -897,7 +890,7 @@ jlabel .L0022CE48
 /* 12CF78 0022CE78 DA01013C */  lui         $1, %hi(CommonMenuMes2 + 0x10)
 /* 12CF7C 0022CE7C 602323AC */  sw          $3, %lo(CommonMenuMes2 + 0x10)($1)
 jlabel .L0022CE80
-.L0022CE80$b:
+.L.L0022CE80$b:
 /* 12CF80 0022CE80 2000BF7B */  lq          $31, 0x20($29)
 /* 12CF84 0022CE84 1000B17B */  lq          $17, 0x10($29)
 /* 12CF88 0022CE88 0000B07B */  lq          $16, 0x0($29)

@@ -241,7 +241,7 @@ glabel BtCleatRandomMap__Fv
 /* 00CDF4 01DB8AF4 80574424 */  addiu       $4, $2, %lo(UraDungeonMap + 0x90)
 /* 00CDF8 01DB8AF8 DC01023C */  lui         $2, %hi(MainDungeonMap + 0x90)
 /* 00CDFC 01DB8AFC 704C4524 */  addiu       $5, $2, %lo(MainDungeonMap + 0x90)
-/* 00CE00 01DB8B00 980C050C */  jal         func_00143260
+/* 00CE00 01DB8B00 980C050C */  jal         __as__6CWaterFR6CWater
 /* 00CE04 01DB8B04 00000000 */   nop
 /* 00CE08 01DB8B08 DC01013C */  lui         $1, %hi(SkyColor__FP9CFrameVu1 + 0x60)
 /* 00CE0C 01DB8B0C 904F20C4 */  lwc1        $f0, %lo(SkyColor__FP9CFrameVu1 + 0x60)($1)
@@ -498,25 +498,25 @@ glabel BtCleatRandomMap__Fv
 /* 00D1CC 01DB8ECC E0144424 */  addiu       $4, $2, %lo(__sinit_op_c.cpp + 0x30)
 /* 00D1D0 01DB8ED0 DD01023C */  lui         $2, %hi(DrawProcH__Fv + 0xF0)
 /* 00D1D4 01DB8ED4 D0094524 */  addiu       $5, $2, %lo(DrawProcH__Fv + 0xF0)
-/* 00D1D8 01DB8ED8 240B050C */  jal         func_00142C90
+/* 00D1D8 01DB8ED8 240B050C */  jal         __as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL
 /* 00D1DC 01DB8EDC 00000000 */   nop
 /* 00D1E0 01DB8EE0 DE01023C */  lui         $2, %hi(CScript__2 + 0xD10)
 /* 00D1E4 01DB8EE4 10284424 */  addiu       $4, $2, %lo(CScript__2 + 0xD10)
 /* 00D1E8 01DB8EE8 DD01023C */  lui         $2, %hi(TitleInit__Fi + 0x250)
 /* 00D1EC 01DB8EEC 001D4524 */  addiu       $5, $2, %lo(TitleInit__Fi + 0x250)
-/* 00D1F0 01DB8EF0 240B050C */  jal         func_00142C90
+/* 00D1F0 01DB8EF0 240B050C */  jal         __as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL
 /* 00D1F4 01DB8EF4 00000000 */   nop
 /* 00D1F8 01DB8EF8 DE01023C */  lui         $2, %hi(CScript__2 + 0x2040)
 /* 00D1FC 01DB8EFC 403B4424 */  addiu       $4, $2, %lo(CScript__2 + 0x2040)
 /* 00D200 01DB8F00 DD01023C */  lui         $2, %hi(TitleDraw__Fv + 0x420)
 /* 00D204 01DB8F04 30304524 */  addiu       $5, $2, %lo(TitleDraw__Fv + 0x420)
-/* 00D208 01DB8F08 240B050C */  jal         func_00142C90
+/* 00D208 01DB8F08 240B050C */  jal         __as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL
 /* 00D20C 01DB8F0C 00000000 */   nop
 /* 00D210 01DB8F10 DE01023C */  lui         $2, %hi(CScript__2 + 0x3370)
 /* 00D214 01DB8F14 704E4424 */  addiu       $4, $2, %lo(CScript__2 + 0x3370)
 /* 00D218 01DB8F18 DD01023C */  lui         $2, %hi(Draw__5CLogoFv + 0xD0)
 /* 00D21C 01DB8F1C 60434524 */  addiu       $5, $2, %lo(Draw__5CLogoFv + 0xD0)
-/* 00D220 01DB8F20 240B050C */  jal         func_00142C90
+/* 00D220 01DB8F20 240B050C */  jal         __as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL
 /* 00D224 01DB8F24 00000000 */   nop
 /* 00D228 01DB8F28 DD01023C */  lui         $2, %hi(_title_text_end + 0x310)
 /* 00D22C 01DB8F2C 90564624 */  addiu       $6, $2, %lo(_title_text_end + 0x310)

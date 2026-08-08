@@ -122,7 +122,7 @@ glabel WeaponMenuSelect__Fv
 /* 0FD090 001FCF90 DA01013C */  lui         $1, %hi(WepMenu + 0xC)
 /* 0FD094 001FCF94 7CEA2584 */  lh          $5, %lo(WepMenu + 0xC)($1)
 /* 0FD098 001FCF98 0F00A12C */  sltiu       $1, $5, 0xF
-/* 0FD09C 001FCF9C AA012010 */  beqz        $1, .L001FD648$b
+/* 0FD09C 001FCF9C AA012010 */  beqz        $1, .L.L001FD648$b
 /* 0FD0A0 001FCFA0 00000000 */   nop
 /* 0FD0A4 001FCFA4 2A00033C */  lui         $3, %hi(LIT_2806__2)
 /* 0FD0A8 001FCFA8 60D96424 */  addiu       $4, $3, %lo(LIT_2806__2)
@@ -132,7 +132,6 @@ glabel WeaponMenuSelect__Fv
 /* 0FD0B8 001FCFB8 08006000 */  jr          $3
 /* 0FD0BC 001FCFBC 00000000 */   nop
 jlabel .L001FCFC0
-.L001FCFC0$b:
 /* 0FD0C0 001FCFC0 DA01013C */  lui         $1, %hi(WepMenu + 0x10)
 /* 0FD0C4 001FCFC4 80EA20C4 */  lwc1        $f0, %lo(WepMenu + 0x10)($1)
 /* 0FD0C8 001FCFC8 60008046 */  cvt.s.w     $f1, $f0
@@ -141,12 +140,12 @@ jlabel .L001FCFC0
 /* 0FD0D4 001FCFD4 00000000 */  nop
 /* 0FD0D8 001FCFD8 36080046 */  c.le.s      $f1, $f0
 /* 0FD0DC 001FCFDC 00000000 */  nop
-/* 0FD0E0 001FCFE0 99010145 */  bc1t        .L001FD648$b
+/* 0FD0E0 001FCFE0 99010145 */  bc1t        .L.L001FD648$b
 /* 0FD0E4 001FCFE4 00000000 */   nop
-/* 0FD0E8 001FCFE8 97010012 */  beqz        $16, .L001FD648$b
+/* 0FD0E8 001FCFE8 97010012 */  beqz        $16, .L.L001FD648$b
 /* 0FD0EC 001FCFEC 00000000 */   nop
 /* 0FD0F0 001FCFF0 0495838F */  lw          $3, -0x6AFC($28)
-/* 0FD0F4 001FCFF4 94016010 */  beqz        $3, .L001FD648$b
+/* 0FD0F4 001FCFF4 94016010 */  beqz        $3, .L.L001FD648$b
 /* 0FD0F8 001FCFF8 00000000 */   nop
 /* 0FD0FC 001FCFFC 02000324 */  addiu       $3, $0, 0x2
 /* 0FD100 001FD000 208883AF */  sw          $3, -0x77E0($28)
@@ -154,33 +153,31 @@ jlabel .L001FCFC0
 /* 0FD108 001FD008 7CEA20A4 */  sh          $0, %lo(WepMenu + 0xC)($1)
 /* 0FD10C 001FD00C DA01013C */  lui         $1, %hi(WepMenu + 0x10)
 /* 0FD110 001FD010 80EA20AC */  sw          $0, %lo(WepMenu + 0x10)($1)
-/* 0FD114 001FD014 8C010010 */  b           .L001FD648$b
+/* 0FD114 001FD014 8C010010 */  b           .L.L001FD648$b
 /* 0FD118 001FD018 00000000 */   nop
 jlabel .L001FD01C
-.L001FD01C$b:
 /* 0FD11C 001FD01C DA01013C */  lui         $1, %hi(WepMenu + 0x10)
 /* 0FD120 001FD020 80EA238C */  lw          $3, %lo(WepMenu + 0x10)($1)
 /* 0FD124 001FD024 15006128 */  slti        $1, $3, 0x15
-/* 0FD128 001FD028 87012014 */  bnez        $1, .L001FD648$b
+/* 0FD128 001FD028 87012014 */  bnez        $1, .L.L001FD648$b
 /* 0FD12C 001FD02C 00000000 */   nop
-/* 0FD130 001FD030 85010012 */  beqz        $16, .L001FD648$b
+/* 0FD130 001FD030 85010012 */  beqz        $16, .L.L001FD648$b
 /* 0FD134 001FD034 00000000 */   nop
 /* 0FD138 001FD038 C8F2070C */  jal         ExitWeaponMenuSelect__Fv
 /* 0FD13C 001FD03C 00000000 */   nop
-/* 0FD140 001FD040 81010010 */  b           .L001FD648$b
+/* 0FD140 001FD040 81010010 */  b           .L.L001FD648$b
 /* 0FD144 001FD044 00000000 */   nop
 jlabel .L001FD048
-.L001FD048$b:
 /* 0FD148 001FD048 DB01013C */  lui         $1, %hi(MenuWepLevelUp + 0x1300)
 /* 0FD14C 001FD04C E0BB2384 */  lh          $3, %lo(MenuWepLevelUp + 0x1300)($1)
-/* 0FD150 001FD050 7D016014 */  bnez        $3, .L001FD648$b
+/* 0FD150 001FD050 7D016014 */  bnez        $3, .L.L001FD648$b
 /* 0FD154 001FD054 00000000 */   nop
 /* 0FD158 001FD058 CC01023C */  lui         $2, %hi(GamePad)
 /* 0FD15C 001FD05C 40C54424 */  addiu       $4, $2, %lo(GamePad)
 /* 0FD160 001FD060 60000524 */  addiu       $5, $0, 0x60
 /* 0FD164 001FD064 1CAE040C */  jal         Down__8CGamePadFi
 /* 0FD168 001FD068 00000000 */   nop
-/* 0FD16C 001FD06C 76014010 */  beqz        $2, .L001FD648$b
+/* 0FD16C 001FD06C 76014010 */  beqz        $2, .L.L001FD648$b
 /* 0FD170 001FD070 00000000 */   nop
 /* 0FD174 001FD074 DB01013C */  lui         $1, %hi(MenuWepLevelUp + 0x1314)
 /* 0FD178 001FD078 F4BB2484 */  lh          $4, %lo(MenuWepLevelUp + 0x1314)($1)
@@ -194,7 +191,7 @@ jlabel .L001FD048
 /* 0FD198 001FD098 04008310 */  beq         $4, $3, .L001FD0AC
 /* 0FD19C 001FD09C 00000000 */   nop
 /* 0FD1A0 001FD0A0 0B000324 */  addiu       $3, $0, 0xB
-/* 0FD1A4 001FD0A4 68018314 */  bne         $4, $3, .L001FD648$b
+/* 0FD1A4 001FD0A4 68018314 */  bne         $4, $3, .L.L001FD648$b
 /* 0FD1A8 001FD0A8 00000000 */   nop
 .L001FD0AC:
 /* 0FD1AC 001FD0AC DB01013C */  lui         $1, %hi(MenuWepLevelUp + 0x12D4)
@@ -293,39 +290,36 @@ jlabel .L001FD048
 /* 0FD300 001FD200 00000000 */   nop
 /* 0FD304 001FD204 DA01013C */  lui         $1, %hi(WepMenu + 0xC)
 /* 0FD308 001FD208 7CEA20A4 */  sh          $0, %lo(WepMenu + 0xC)($1)
-/* 0FD30C 001FD20C 0E010010 */  b           .L001FD648$b
+/* 0FD30C 001FD20C 0E010010 */  b           .L.L001FD648$b
 /* 0FD310 001FD210 00000000 */   nop
 jlabel .L001FD214
-.L001FD214$b:
 /* 0FD314 001FD214 CC01023C */  lui         $2, %hi(GamePad)
 /* 0FD318 001FD218 40C54424 */  addiu       $4, $2, %lo(GamePad)
 /* 0FD31C 001FD21C 60000524 */  addiu       $5, $0, 0x60
 /* 0FD320 001FD220 1CAE040C */  jal         Down__8CGamePadFi
 /* 0FD324 001FD224 00000000 */   nop
-/* 0FD328 001FD228 07014010 */  beqz        $2, .L001FD648$b
+/* 0FD328 001FD228 07014010 */  beqz        $2, .L.L001FD648$b
 /* 0FD32C 001FD22C 00000000 */   nop
 /* 0FD330 001FD230 DA01013C */  lui         $1, %hi(WepMenu + 0xC)
 /* 0FD334 001FD234 7CEA20A4 */  sh          $0, %lo(WepMenu + 0xC)($1)
 /* 0FD338 001FD238 FFFF0324 */  addiu       $3, $0, -0x1
 /* 0FD33C 001FD23C DA01013C */  lui         $1, %hi(WepMenu + 0x8)
 /* 0FD340 001FD240 78EA23A0 */  sb          $3, %lo(WepMenu + 0x8)($1)
-/* 0FD344 001FD244 00010010 */  b           .L001FD648$b
+/* 0FD344 001FD244 00010010 */  b           .L.L001FD648$b
 /* 0FD348 001FD248 00000000 */   nop
 jlabel .L001FD24C
-.L001FD24C$b:
 /* 0FD34C 001FD24C CC01023C */  lui         $2, %hi(GamePad)
 /* 0FD350 001FD250 40C54424 */  addiu       $4, $2, %lo(GamePad)
 /* 0FD354 001FD254 60000524 */  addiu       $5, $0, 0x60
 /* 0FD358 001FD258 1CAE040C */  jal         Down__8CGamePadFi
 /* 0FD35C 001FD25C 00000000 */   nop
-/* 0FD360 001FD260 F9004010 */  beqz        $2, .L001FD648$b
+/* 0FD360 001FD260 F9004010 */  beqz        $2, .L.L001FD648$b
 /* 0FD364 001FD264 00000000 */   nop
 /* 0FD368 001FD268 DA01013C */  lui         $1, %hi(WepMenu + 0xC)
 /* 0FD36C 001FD26C 7CEA20A4 */  sh          $0, %lo(WepMenu + 0xC)($1)
-/* 0FD370 001FD270 F5000010 */  b           .L001FD648$b
+/* 0FD370 001FD270 F5000010 */  b           .L.L001FD648$b
 /* 0FD374 001FD274 00000000 */   nop
 jlabel .L001FD278
-.L001FD278$b:
 /* 0FD378 001FD278 CC01023C */  lui         $2, %hi(GamePad)
 /* 0FD37C 001FD27C 40C54424 */  addiu       $4, $2, %lo(GamePad)
 /* 0FD380 001FD280 40000524 */  addiu       $5, $0, 0x40
@@ -392,14 +386,13 @@ jlabel .L001FD278
 .L001FD368:
 /* 0FD468 001FD368 DA01013C */  lui         $1, %hi(WepMenu + 0xC)
 /* 0FD46C 001FD36C 7CEA2384 */  lh          $3, %lo(WepMenu + 0xC)($1)
-/* 0FD470 001FD370 B5006014 */  bnez        $3, .L001FD648$b
+/* 0FD470 001FD370 B5006014 */  bnez        $3, .L.L001FD648$b
 /* 0FD474 001FD374 00000000 */   nop
 /* 0FD478 001FD378 DA01013C */  lui         $1, %hi(WepMenu + 0x20)
 /* 0FD47C 001FD37C 90EA20AC */  sw          $0, %lo(WepMenu + 0x20)($1)
-/* 0FD480 001FD380 B1000010 */  b           .L001FD648$b
+/* 0FD480 001FD380 B1000010 */  b           .L.L001FD648$b
 /* 0FD484 001FD384 00000000 */   nop
 jlabel .L001FD388
-.L001FD388$b:
 /* 0FD488 001FD388 CC01023C */  lui         $2, %hi(GamePad)
 /* 0FD48C 001FD38C 40C54424 */  addiu       $4, $2, %lo(GamePad)
 /* 0FD490 001FD390 00500524 */  addiu       $5, $0, 0x5000
@@ -499,35 +492,34 @@ jlabel .L001FD388
 .L001FD4EC:
 /* 0FD5EC 001FD4EC DA01013C */  lui         $1, %hi(WepMenu + 0xC)
 /* 0FD5F0 001FD4F0 7CEA2384 */  lh          $3, %lo(WepMenu + 0xC)($1)
-/* 0FD5F4 001FD4F4 54006014 */  bnez        $3, .L001FD648$b
+/* 0FD5F4 001FD4F4 54006014 */  bnez        $3, .L.L001FD648$b
 /* 0FD5F8 001FD4F8 00000000 */   nop
 /* 0FD5FC 001FD4FC DA01013C */  lui         $1, %hi(WepMenu + 0x20)
 /* 0FD600 001FD500 90EA20AC */  sw          $0, %lo(WepMenu + 0x20)($1)
 /* 0FD604 001FD504 DA01013C */  lui         $1, %hi(WepMenu + 0x2)
 /* 0FD608 001FD508 72EA20A4 */  sh          $0, %lo(WepMenu + 0x2)($1)
-/* 0FD60C 001FD50C 4E000010 */  b           .L001FD648$b
+/* 0FD60C 001FD50C 4E000010 */  b           .L.L001FD648$b
 /* 0FD610 001FD510 00000000 */   nop
 jlabel .L001FD514
-.L001FD514$b:
 /* 0FD614 001FD514 789581C7 */  lwc1        $f1, -0x6A88($28)
 /* 0FD618 001FD518 B08080C7 */  lwc1        $f0, -0x7F50($28)
 /* 0FD61C 001FD51C 34080046 */  c.lt.s      $f1, $f0
 /* 0FD620 001FD520 00000000 */  nop
-/* 0FD624 001FD524 03000145 */  bc1t        .L001FD534$b
+/* 0FD624 001FD524 03000145 */  bc1t        .L.L001FD534$b
 /* 0FD628 001FD528 00000000 */   nop
 /* 0FD62C 001FD52C DA01013C */  lui         $1, %hi(WepMenu + 0xC)
 /* 0FD630 001FD530 7CEA20A4 */  sh          $0, %lo(WepMenu + 0xC)($1)
 jlabel .L001FD534
-.L001FD534$b:
+.L.L001FD534$b:
 /* 0FD634 001FD534 DA01013C */  lui         $1, %hi(WepMenu + 0x10)
 /* 0FD638 001FD538 80EA238C */  lw          $3, %lo(WepMenu + 0x10)($1)
 /* 0FD63C 001FD53C 1A006328 */  slti        $3, $3, 0x1A
-/* 0FD640 001FD540 03006014 */  bnez        $3, .L001FD550$b
+/* 0FD640 001FD540 03006014 */  bnez        $3, .L.L001FD550$b
 /* 0FD644 001FD544 00000000 */   nop
 /* 0FD648 001FD548 DA01013C */  lui         $1, %hi(WepMenu + 0xC)
 /* 0FD64C 001FD54C 7CEA20A4 */  sh          $0, %lo(WepMenu + 0xC)($1)
 jlabel .L001FD550
-.L001FD550$b:
+.L.L001FD550$b:
 /* 0FD650 001FD550 DA01013C */  lui         $1, %hi(WepMenu + 0x4)
 /* 0FD654 001FD554 74EA3080 */  lb          $16, %lo(WepMenu + 0x4)($1)
 /* 0FD658 001FD558 DA01013C */  lui         $1, %hi(WepMenu + 0x20)
@@ -549,7 +541,6 @@ jlabel .L001FD550
 /* 0FD698 001FD598 08006000 */  jr          $3
 /* 0FD69C 001FD59C 00000000 */   nop
 jlabel .L001FD5A0
-.L001FD5A0$b:
 /* 0FD6A0 001FD5A0 1834080C */  jal         GetMenuCharaEffectReadFlag__Fv
 /* 0FD6A4 001FD5A4 00000000 */   nop
 /* 0FD6A8 001FD5A8 0A004010 */  beqz        $2, .L001FD5D4
@@ -569,7 +560,6 @@ jlabel .L001FD5A0
 /* 0FD6DC 001FD5DC 03000010 */  b           .L001FD5EC
 /* 0FD6E0 001FD5E0 00000000 */   nop
 jlabel .L001FD5E4
-.L001FD5E4$b:
 /* 0FD6E4 001FD5E4 14FE070C */  jal         WeaponMenuAttachModeKey__Fv
 /* 0FD6E8 001FD5E8 00000000 */   nop
 .L001FD5EC:
@@ -592,14 +582,14 @@ jlabel .L001FD5E4
 /* 0FD728 001FD628 00000000 */   nop
 /* 0FD72C 001FD62C DA01013C */  lui         $1, %hi(WepMenu + 0x7)
 /* 0FD730 001FD630 77EA2380 */  lb          $3, %lo(WepMenu + 0x7)($1)
-/* 0FD734 001FD634 04006312 */  beq         $19, $3, .L001FD648$b
+/* 0FD734 001FD634 04006312 */  beq         $19, $3, .L.L001FD648$b
 /* 0FD738 001FD638 00000000 */   nop
 .L001FD63C:
 /* 0FD73C 001FD63C 28260070 */  paddub      $4, $0, $0
 /* 0FD740 001FD640 BCB3080C */  jal         ComMenuSePlay__Fi
 /* 0FD744 001FD644 00000000 */   nop
 jlabel .L001FD648
-.L001FD648$b:
+.L.L001FD648$b:
 /* 0FD748 001FD648 28860070 */  paddub      $16, $0, $0
 /* 0FD74C 001FD64C FFFF1224 */  addiu       $18, $0, -0x1
 /* 0FD750 001FD650 0DFE0624 */  addiu       $6, $0, -0x1F3
@@ -681,7 +671,7 @@ jlabel .L001FD648
 /* 0FD87C 001FD77C 00000000 */  nop
 .L001FD780:
 /* 0FD880 001FD780 0C00412D */  sltiu       $1, $10, 0xC
-/* 0FD884 001FD784 D1002010 */  beqz        $1, .L001FDACC$b
+/* 0FD884 001FD784 D1002010 */  beqz        $1, .L.L001FDACC$b
 /* 0FD888 001FD788 00000000 */   nop
 /* 0FD88C 001FD78C 2A00063C */  lui         $6, %hi(LIT_2808__2)
 /* 0FD890 001FD790 00D9C724 */  addiu       $7, $6, %lo(LIT_2808__2)
@@ -691,7 +681,6 @@ jlabel .L001FD648
 /* 0FD8A0 001FD7A0 0800C000 */  jr          $6
 /* 0FD8A4 001FD7A4 00000000 */   nop
 jlabel .L001FD7A8
-.L001FD7A8$b:
 /* 0FD8A8 001FD7A8 DA01013C */  lui         $1, %hi(WepMenu + 0xC)
 /* 0FD8AC 001FD7AC 7CEA2484 */  lh          $4, %lo(WepMenu + 0xC)($1)
 /* 0FD8B0 001FD7B0 0E000324 */  addiu       $3, $0, 0xE
@@ -703,14 +692,13 @@ jlabel .L001FD7A8
 /* 0FD8C8 001FD7C8 0C000324 */  addiu       $3, $0, 0xC
 /* 0FD8CC 001FD7CC 03008310 */  beq         $4, $3, .L001FD7DC
 /* 0FD8D0 001FD7D0 00000000 */   nop
-/* 0FD8D4 001FD7D4 BD000010 */  b           .L001FDACC$b
+/* 0FD8D4 001FD7D4 BD000010 */  b           .L.L001FDACC$b
 /* 0FD8D8 001FD7D8 00000000 */   nop
 .L001FD7DC:
 /* 0FD8DC 001FD7DC A4001124 */  addiu       $17, $0, 0xA4
-/* 0FD8E0 001FD7E0 BA000010 */  b           .L001FDACC$b
+/* 0FD8E0 001FD7E0 BA000010 */  b           .L.L001FDACC$b
 /* 0FD8E4 001FD7E4 00000000 */   nop
 jlabel .L001FD7E8
-.L001FD7E8$b:
 /* 0FD8E8 001FD7E8 9000A427 */  addiu       $4, $29, 0x90
 /* 0FD8EC 001FD7EC 282E8072 */  paddub      $5, $20, $0
 /* 0FD8F0 001FD7F0 20D5080C */  jal         EnableBuildUpModel__FP16WEP_BUILDUP_INFOP11WEAPON_HAVE
@@ -748,7 +736,7 @@ jlabel .L001FD7E8
 /* 0FD960 001FD860 DA01013C */  lui         $1, %hi(WepMenu + 0x2)
 /* 0FD964 001FD864 72EA2484 */  lh          $4, %lo(WepMenu + 0x2)($1)
 /* 0FD968 001FD868 05000324 */  addiu       $3, $0, 0x5
-/* 0FD96C 001FD86C 97008314 */  bne         $4, $3, .L001FDACC$b
+/* 0FD96C 001FD86C 97008314 */  bne         $4, $3, .L.L001FDACC$b
 /* 0FD970 001FD870 00000000 */   nop
 /* 0FD974 001FD874 DA01013C */  lui         $1, %hi(WepMenu + 0x20)
 /* 0FD978 001FD878 90EA238C */  lw          $3, %lo(WepMenu + 0x20)($1)
@@ -763,25 +751,23 @@ jlabel .L001FD7E8
 .L001FD89C:
 /* 0FD99C 001FD89C 3C1C0400 */  dsll32      $3, $4, 16
 /* 0FD9A0 001FD8A0 3F1C0300 */  dsra32      $3, $3, 16
-/* 0FD9A4 001FD8A4 89006014 */  bnez        $3, .L001FDACC$b
+/* 0FD9A4 001FD8A4 89006014 */  bnez        $3, .L.L001FDACC$b
 /* 0FD9A8 001FD8A8 00000000 */   nop
 /* 0FD9AC 001FD8AC AD001124 */  addiu       $17, $0, 0xAD
-/* 0FD9B0 001FD8B0 86000010 */  b           .L001FDACC$b
+/* 0FD9B0 001FD8B0 86000010 */  b           .L.L001FDACC$b
 /* 0FD9B4 001FD8B4 00000000 */   nop
 jlabel .L001FD8B8
-.L001FD8B8$b:
 /* 0FD9B8 001FD8B8 00008486 */  lh          $4, 0x0($20)
 /* 0FD9BC 001FD8BC 01018328 */  slti        $3, $4, 0x101
-/* 0FD9C0 001FD8C0 82006014 */  bnez        $3, .L001FDACC$b
+/* 0FD9C0 001FD8C0 82006014 */  bnez        $3, .L.L001FDACC$b
 /* 0FD9C4 001FD8C4 00000000 */   nop
 /* 0FD9C8 001FD8C8 10AA080C */  jal         GetWeaponMsgNo2__Fi
 /* 0FD9CC 001FD8CC 00000000 */   nop
 /* 0FD9D0 001FD8D0 F4015124 */  addiu       $17, $2, 0x1F4
 /* 0FD9D4 001FD8D4 02009386 */  lh          $19, 0x2($20)
-/* 0FD9D8 001FD8D8 7C000010 */  b           .L001FDACC$b
+/* 0FD9D8 001FD8D8 7C000010 */  b           .L.L001FDACC$b
 /* 0FD9DC 001FD8DC 00000000 */   nop
 jlabel .L001FD8E0
-.L001FD8E0$b:
 /* 0FD9E0 001FD8E0 DA01013C */  lui         $1, %hi(WepMenu + 0x20)
 /* 0FD9E4 001FD8E4 90EA228C */  lw          $2, %lo(WepMenu + 0x20)($1)
 /* 0FD9E8 001FD8E8 40110200 */  sll         $2, $2, 5
@@ -796,7 +782,7 @@ jlabel .L001FD8E0
 /* 0FDA0C 001FD90C 00000000 */   nop
 /* 0FDA10 001FD910 289E4070 */  paddub      $19, $2, $0
 /* 0FDA14 001FD914 5A000324 */  addiu       $3, $0, 0x5A
-/* 0FDA18 001FD918 6C00A316 */  bne         $21, $3, .L001FDACC$b
+/* 0FDA18 001FD918 6C00A316 */  bne         $21, $3, .L.L001FDACC$b
 /* 0FDA1C 001FD91C 00000000 */   nop
 /* 0FDA20 001FD920 DA01013C */  lui         $1, %hi(WepMenu + 0x20)
 /* 0FDA24 001FD924 90EA228C */  lw          $2, %lo(WepMenu + 0x20)($1)
@@ -806,7 +792,7 @@ jlabel .L001FD8E0
 /* 0FDA34 001FD934 10AA080C */  jal         GetWeaponMsgNo2__Fi
 /* 0FDA38 001FD938 00000000 */   nop
 /* 0FDA3C 001FD93C 28964070 */  paddub      $18, $2, $0
-/* 0FDA40 001FD940 62000010 */  b           .L001FDACC$b
+/* 0FDA40 001FD940 62000010 */  b           .L.L001FDACC$b
 /* 0FDA44 001FD944 00000000 */   nop
 .L001FD948:
 /* 0FDA48 001FD948 00008486 */  lh          $4, 0x0($20)
@@ -820,39 +806,36 @@ jlabel .L001FD8E0
 /* 0FDA68 001FD968 04008314 */  bne         $4, $3, .L001FD97C
 /* 0FDA6C 001FD96C 00000000 */   nop
 /* 0FDA70 001FD970 70001124 */  addiu       $17, $0, 0x70
-/* 0FDA74 001FD974 55000010 */  b           .L001FDACC$b
+/* 0FDA74 001FD974 55000010 */  b           .L.L001FDACC$b
 /* 0FDA78 001FD978 00000000 */   nop
 .L001FD97C:
 /* 0FDA7C 001FD97C 71001124 */  addiu       $17, $0, 0x71
-/* 0FDA80 001FD980 52000010 */  b           .L001FDACC$b
+/* 0FDA80 001FD980 52000010 */  b           .L.L001FDACC$b
 /* 0FDA84 001FD984 00000000 */   nop
 jlabel .L001FD988
-.L001FD988$b:
 /* 0FDA88 001FD988 16008482 */  lb          $4, 0x16($20)
 /* 0FDA8C 001FD98C 3C1E0300 */  dsll32      $3, $3, 24
 /* 0FDA90 001FD990 3F1E0300 */  dsra32      $3, $3, 24
-/* 0FDA94 001FD994 4D008314 */  bne         $4, $3, .L001FDACC$b
+/* 0FDA94 001FD994 4D008314 */  bne         $4, $3, .L.L001FDACC$b
 /* 0FDA98 001FD998 00000000 */   nop
 /* 0FDA9C 001FD99C 15003126 */  addiu       $17, $17, 0x15
-/* 0FDAA0 001FD9A0 4A000010 */  b           .L001FDACC$b
+/* 0FDAA0 001FD9A0 4A000010 */  b           .L.L001FDACC$b
 /* 0FDAA4 001FD9A4 00000000 */   nop
 jlabel .L001FD9A8
-.L001FD9A8$b:
 /* 0FDAA8 001FD9A8 3C260400 */  dsll32      $4, $4, 24
 /* 0FDAAC 001FD9AC 3F260400 */  dsra32      $4, $4, 24
 /* 0FDAB0 001FD9B0 01000324 */  addiu       $3, $0, 0x1
-/* 0FDAB4 001FD9B4 45008314 */  bne         $4, $3, .L001FDACC$b
+/* 0FDAB4 001FD9B4 45008314 */  bne         $4, $3, .L.L001FDACC$b
 /* 0FDAB8 001FD9B8 00000000 */   nop
 /* 0FDABC 001FD9BC 16008482 */  lb          $4, 0x16($20)
 /* 0FDAC0 001FD9C0 3C1E0500 */  dsll32      $3, $5, 24
 /* 0FDAC4 001FD9C4 3F1E0300 */  dsra32      $3, $3, 24
-/* 0FDAC8 001FD9C8 40008314 */  bne         $4, $3, .L001FDACC$b
+/* 0FDAC8 001FD9C8 40008314 */  bne         $4, $3, .L.L001FDACC$b
 /* 0FDACC 001FD9CC 00000000 */   nop
 /* 0FDAD0 001FD9D0 15003126 */  addiu       $17, $17, 0x15
-/* 0FDAD4 001FD9D4 3D000010 */  b           .L001FDACC$b
+/* 0FDAD4 001FD9D4 3D000010 */  b           .L.L001FDACC$b
 /* 0FDAD8 001FD9D8 00000000 */   nop
 jlabel .L001FD9DC
-.L001FD9DC$b:
 /* 0FDADC 001FD9DC DA01013C */  lui         $1, %hi(WepMenu + 0x1C)
 /* 0FDAE0 001FD9E0 8CEA248C */  lw          $4, %lo(WepMenu + 0x1C)($1)
 /* 0FDAE4 001FD9E4 02000324 */  addiu       $3, $0, 0x2
@@ -861,7 +844,7 @@ jlabel .L001FD9DC
 /* 0FDAF0 001FD9F0 01000324 */  addiu       $3, $0, 0x1
 /* 0FDAF4 001FD9F4 03008310 */  beq         $4, $3, .L001FDA04
 /* 0FDAF8 001FD9F8 00000000 */   nop
-/* 0FDAFC 001FD9FC 33000010 */  b           .L001FDACC$b
+/* 0FDAFC 001FD9FC 33000010 */  b           .L.L001FDACC$b
 /* 0FDB00 001FDA00 00000000 */   nop
 .L001FDA04:
 /* 0FDB04 001FDA04 7495838F */  lw          $3, -0x6A8C($28)
@@ -878,14 +861,14 @@ jlabel .L001FD9DC
 /* 0FDB30 001FDA30 7495838F */  lw          $3, -0x6A8C($28)
 /* 0FDB34 001FDA34 10006484 */  lh          $4, 0x10($3)
 /* 0FDB38 001FDA38 5A000324 */  addiu       $3, $0, 0x5A
-/* 0FDB3C 001FDA3C 23008314 */  bne         $4, $3, .L001FDACC$b
+/* 0FDB3C 001FDA3C 23008314 */  bne         $4, $3, .L.L001FDACC$b
 /* 0FDB40 001FDA40 00000000 */   nop
 /* 0FDB44 001FDA44 DA01013C */  lui         $1, %hi(WepMenu + 0x152)
 /* 0FDB48 001FDA48 C2EB2484 */  lh          $4, %lo(WepMenu + 0x152)($1)
 /* 0FDB4C 001FDA4C 10AA080C */  jal         GetWeaponMsgNo2__Fi
 /* 0FDB50 001FDA50 00000000 */   nop
 /* 0FDB54 001FDA54 28964070 */  paddub      $18, $2, $0
-/* 0FDB58 001FDA58 1C000010 */  b           .L001FDACC$b
+/* 0FDB58 001FDA58 1C000010 */  b           .L.L001FDACC$b
 /* 0FDB5C 001FDA5C 00000000 */   nop
 .L001FDA60:
 /* 0FDB60 001FDA60 DA01013C */  lui         $1, %hi(WepMenu + 0x20)
@@ -894,7 +877,7 @@ jlabel .L001FD9DC
 /* 0FDB6C 001FDA6C 2120A302 */  addu        $4, $21, $3
 /* 0FDB70 001FDA70 00008584 */  lh          $5, 0x0($4)
 /* 0FDB74 001FDA74 5100A328 */  slti        $3, $5, 0x51
-/* 0FDB78 001FDA78 14006014 */  bnez        $3, .L001FDACC$b
+/* 0FDB78 001FDA78 14006014 */  bnez        $3, .L.L001FDACC$b
 /* 0FDB7C 001FDA7C 00000000 */   nop
 /* 0FDB80 001FDA80 F401B124 */  addiu       $17, $5, 0x1F4
 /* 0FDB84 001FDA84 2C98080C */  jal         GetAttachVolumeForMsg__FP11ATTACH_LIST
@@ -906,18 +889,18 @@ jlabel .L001FD9DC
 /* 0FDB9C 001FDA9C 2128A302 */  addu        $5, $21, $3
 /* 0FDBA0 001FDAA0 0000A484 */  lh          $4, 0x0($5)
 /* 0FDBA4 001FDAA4 5A000324 */  addiu       $3, $0, 0x5A
-/* 0FDBA8 001FDAA8 08008314 */  bne         $4, $3, .L001FDACC$b
+/* 0FDBA8 001FDAA8 08008314 */  bne         $4, $3, .L.L001FDACC$b
 /* 0FDBAC 001FDAAC 00000000 */   nop
 /* 0FDBB0 001FDAB0 0200A484 */  lh          $4, 0x2($5)
 /* 0FDBB4 001FDAB4 10AA080C */  jal         GetWeaponMsgNo2__Fi
 /* 0FDBB8 001FDAB8 00000000 */   nop
 /* 0FDBBC 001FDABC 28964070 */  paddub      $18, $2, $0
-/* 0FDBC0 001FDAC0 02000010 */  b           .L001FDACC$b
+/* 0FDBC0 001FDAC0 02000010 */  b           .L.L001FDACC$b
 /* 0FDBC4 001FDAC4 00000000 */   nop
 .L001FDAC8:
 /* 0FDBC8 001FDAC8 BE001124 */  addiu       $17, $0, 0xBE
 jlabel .L001FDACC
-.L001FDACC$b:
+.L.L001FDACC$b:
 /* 0FDBCC 001FDACC DA01013C */  lui         $1, %hi(WepMenu + 0xC)
 /* 0FDBD0 001FDAD0 7CEA2684 */  lh          $6, %lo(WepMenu + 0xC)($1)
 /* 0FDBD4 001FDAD4 0B000324 */  addiu       $3, $0, 0xB

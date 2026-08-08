@@ -19,7 +19,7 @@ glabel DrawMes__14CWeaponLevelUpFv
 /* 137DCC 00237CCC 00000000 */   nop
 /* 137DD0 00237CD0 14132586 */  lh          $5, 0x1314($17)
 /* 137DD4 00237CD4 0800A12C */  sltiu       $1, $5, 0x8
-/* 137DD8 00237CD8 0A002010 */  beqz        $1, .L00237D04$b
+/* 137DD8 00237CD8 0A002010 */  beqz        $1, .L.L00237D04$b
 /* 137DDC 00237CDC 00000000 */   nop
 /* 137DE0 00237CE0 2A00033C */  lui         $3, %hi(LIT_1458)
 /* 137DE4 00237CE4 B0F56424 */  addiu       $4, $3, %lo(LIT_1458)
@@ -29,11 +29,10 @@ glabel DrawMes__14CWeaponLevelUpFv
 /* 137DF4 00237CF4 08006000 */  jr          $3
 /* 137DF8 00237CF8 00000000 */   nop
 jlabel .L00237CFC
-.L00237CFC$b:
 /* 137DFC 00237CFC E3000010 */  b           .L0023808C
 /* 137E00 00237D00 00000000 */   nop
 jlabel .L00237D04
-.L00237D04$b:
+.L.L00237D04$b:
 /* 137E04 00237D04 28860070 */  paddub      $16, $0, $0
 /* 137E08 00237D08 3000A327 */  addiu       $3, $29, 0x30
 /* 137E0C 00237D0C F08982DF */  ld          $2, -0x7610($28)

@@ -4,7 +4,7 @@
 .set noreorder /* Don't insert nops after branches. */
 
 .section .text
-glabel PickUpNearPoly__6CFrameFP6CCPolyRC7CBoxVu0
+jlabel PickUpNearPoly__6CFrameFP6CCPolyRC7CBoxVu0
 /* 02A490 0012A390 E0FDBD27 */  addiu       $29, $29, -0x220
 /* 02A494 0012A394 5000BF7F */  sq          $31, 0x50($29)
 /* 02A498 0012A398 4000B47F */  sq          $20, 0x40($29)

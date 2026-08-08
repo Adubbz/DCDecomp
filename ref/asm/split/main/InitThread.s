@@ -21,10 +21,10 @@ glabel InitThread
 /* 0152BC 001151BC 13004004 */  bltz        $2, .L0011520C
 /* 0152C0 001151C0 A85322AE */   sw         $2, %lo(topSema)($17)
 /* 0152C4 001151C4 1100023C */  lui         $2, %hi(topThread)
-/* 0152C8 001151C8 2A00033C */  lui         $3, %hi(stack.6)
+/* 0152C8 001151C8 2A00033C */  lui         $3, %hi(stack_6)
 /* 0152CC 001151CC 2B00053C */  lui         $5, %hi(_gp)
 /* 0152D0 001151D0 D8504224 */  addiu       $2, $2, %lo(topThread)
-/* 0152D4 001151D4 A04F6324 */  addiu       $3, $3, %lo(stack.6)
+/* 0152D4 001151D4 A04F6324 */  addiu       $3, $3, %lo(stack_6)
 /* 0152D8 001151D8 F097A524 */  addiu       $5, $5, %lo(_gp)
 /* 0152DC 001151DC 00040624 */  addiu       $6, $0, 0x400
 /* 0152E0 001151E0 0400A2AF */  sw          $2, 0x4($29)

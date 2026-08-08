@@ -1,1 +1,21 @@
 #include "mapparts.hpp"
+
+INCLUDE_ASM("main", GetPosition__9CMapPartsFPf);
+INCLUDE_ASM("main", SetPosition__9CMapPartsFPf);
+INCLUDE_ASM("main", SetPosition__9CMapPartsFfff);
+INCLUDE_ASM("main", SetRotation__9CMapPartsFfff);
+INCLUDE_ASM("main", SetRotY__9CMapPartsFi);
+INCLUDE_ASM("main", GetRotY__9CMapPartsFv);
+INCLUDE_ASM("main", Initialize__9CMapPartsFv);
+INCLUDE_ASM("main", __ct__9CMapPartsFv);
+INCLUDE_ASM("main", FrameObjectOnOff__9CMapPartsFPci);
+INCLUDE_ASM("main", GetWidth__9CMapPartsFv);
+INCLUDE_ASM("main", GetHeight__9CMapPartsFv);
+INCLUDE_ASM("main", GetInfoData__9CMapPartsFii);
+INCLUDE_ASM("main", ChangeAltData__9CMapPartsFv);
+INCLUDE_ASM("main", ChangeDigData__9CMapPartsFv);
+INCLUDE_ASM("main", CheckBox__9CMapPartsFP7CBoxVu0);
+INCLUDE_ASM("main", CheckBox2__9CMapPartsFP7CBoxVu0);
+INCLUDE_ASM("main", DrawLOD__9CMapPartsFPfiiPi);
+INCLUDE_ASM("main", DrawParts__9CMapPartsFfPfiiPi);
+INCLUDE_ASM("main", DrawEffect__9CMapPartsFP7CCamerafP12CEffectGroup);

@@ -1,0 +1,26 @@
+#include "common.h"
+
+INCLUDE_ASM("main", sceMcInit);
+INCLUDE_ASM("main", _lmcGetClientPtr);
+INCLUDE_ASM("main", sceMcChangeThreadPriority);
+INCLUDE_ASM("main", sceMcGetSlotMax);
+INCLUDE_ASM("main", sceMcOpen);
+INCLUDE_ASM("main", sceMcMkdir);
+INCLUDE_ASM("main", sceMcClose);
+INCLUDE_ASM("main", sceMcSeek);
+INCLUDE_ASM("main", mceIntrReadFixAlign);
+INCLUDE_ASM("main", sceMcRead);
+INCLUDE_ASM("main", sceMcWrite);
+INCLUDE_ASM("main", sceMcSync);
+INCLUDE_ASM("main", mceGetInfoApdx);
+INCLUDE_ASM("main", sceMcGetInfo);
+INCLUDE_ASM("main", sceMcGetDir);
+INCLUDE_ASM("main", mceStorePwd);
+INCLUDE_ASM("main", sceMcChdir);
+INCLUDE_ASM("main", sceMcFormat);
+INCLUDE_ASM("main", sceMcDelete);
+INCLUDE_ASM("main", sceMcFlush);
+INCLUDE_ASM("main", sceMcSetFileInfo);
+INCLUDE_ASM("main", sceMcRename);
+INCLUDE_ASM("main", sceMcUnformat);
+INCLUDE_ASM("main", sceMcGetEntSpace);

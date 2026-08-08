@@ -26,7 +26,7 @@ glabel ReEntry__12CSHOT_EFFECTFP14BT_SHOT_EFFECTP14CDataAlloc2_1_
 /* 0AD954 001AD854 2190D102 */  addu        $18, $22, $17
 /* 0AD958 001AD858 C0114426 */  addiu       $4, $18, 0x11C0
 /* 0AD95C 001AD85C 1000C526 */  addiu       $5, $22, 0x10
-/* 0AD960 001AD860 780C050C */  jal         func_001431E0
+/* 0AD960 001AD860 780C050C */  jal         __as__7CObjectFRC7CObject
 /* 0AD964 001AD864 00000000 */   nop
 /* 0AD968 001AD868 C000C0C6 */  lwc1        $f0, 0xC0($22)
 /* 0AD96C 001AD86C 281E4072 */  paddub      $3, $18, $0

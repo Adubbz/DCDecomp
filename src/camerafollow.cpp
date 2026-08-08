@@ -1,1 +1,20 @@
 #include "camerafollow.hpp"
+
+INCLUDE_ASM("main", Step__13CCameraFollowFi);
+INCLUDE_ASM("main", Stay__13CCameraFollowFv);
+INCLUDE_ASM("main", __as__13CCameraFollowFRC13CCameraFollow);
+INCLUDE_ASM("main", SetFollow__13CCameraFollowFfff);
+INCLUDE_ASM("main", FollowOn__13CCameraFollowFv);
+INCLUDE_ASM("main", FollowOff__13CCameraFollowFv);
+INCLUDE_ASM("main", SetAngle__13CCameraFollowFf);
+INCLUDE_ASM("main", SetAngleSoon__13CCameraFollowFf);
+INCLUDE_ASM("main", GetAngle__13CCameraFollowFv);
+INCLUDE_ASM("main", AddAngle__13CCameraFollowFf);
+INCLUDE_ASM("main", SetDistance__13CCameraFollowFf);
+INCLUDE_ASM("main", GetDistance__13CCameraFollowFv);
+INCLUDE_ASM("main", AddDistance__13CCameraFollowFf);
+INCLUDE_ASM("main", SetHeight__13CCameraFollowFf);
+INCLUDE_ASM("main", GetHeight__13CCameraFollowFv);
+INCLUDE_ASM("main", AddHeight__13CCameraFollowFf);
+INCLUDE_ASM("main", __ct__13CCameraFollowFffff);
+INCLUDE_ASM("main", __dt__13CCameraFollowFv);
