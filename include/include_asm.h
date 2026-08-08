@@ -16,7 +16,7 @@
  * markers are empty here.
  *
  * A function that a marker supplies is not decompiled. objdiff is told so:
- * scripts/build/gen_objdiff.py gives it no base, so it counts as zero.
+ * scripts/build/layout.py gives it no base, so it counts as zero.
  */
 
 #define INCLUDE_ASM(FOLDER, NAME)

@@ -230,7 +230,7 @@ float *CDungeonMap::DistTrapCircle() {
  * 0x2A1D98, which the build links from the whole-section dump -- so the object's
  * copies are eight extra bytes in the small-data area, and every gp-relative
  * offset in the image moves. Placing them needs asm/decompiled_symbols.txt to
- * learn about .lit4, which gen_layout.py does not read today. Until then the
+ * learn about .lit4, which the migration does not read today. Until then the
  * marker supplies the function and the C++ waits here. */
 #if DNG_COMPILE_UNMATCHED
 /* @ 0x1C7E60 (0x80 bytes) -- StepTrapCircle__11CDungeonMapFv */

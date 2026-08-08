@@ -49,18 +49,6 @@ jobs:
           docker run --rm \
             -v "$PWD:/dcdecomp" -w /dcdecomp -e HOME=/tmp \
             dcdecomp_dev sh -c '
-              # The `asm` bodies src/ includes are build outputs, and doxygen
-              # warns for each one it cannot open. Which functions need them
-              # changes as they are decompiled, so the list is read back out of
-              # the sources rather than repeated here.
-              mkdir -p build/generated/asm
-              grep -rho "#include \"[A-Za-z0-9_]*\.inc\"" src \
-                | sed "s/.*\"\(.*\)\.inc\"/\1/" | sort -u \
-                | while read -r fn; do
-                    python3 scripts/build/gen_asm_body.py \
-                      "ref/asm/split/main/$fn.s" "$fn" \
-                      "build/generated/asm/$fn.inc"
-                  done
               doxygen 2>/tmp/warnings.txt
               cat /tmp/warnings.txt
               test ! -s /tmp/warnings.txt

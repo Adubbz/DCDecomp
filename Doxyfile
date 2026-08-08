@@ -20,7 +20,6 @@ ALIASES                = "mangled=@par Mangled name:^^" \
                          "address=@par Address:^^" \
                          "size=@par Size:^^" \
                          "unknownret=@par Return type:^^Not recovered."
-INCLUDE_PATH           = build/generated/asm
 WARN_IF_UNDOCUMENTED   = NO
 GENERATE_TREEVIEW      = YES
 DISABLE_INDEX          = NO

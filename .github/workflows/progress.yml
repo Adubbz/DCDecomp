@@ -25,9 +25,10 @@ jobs:
 
     steps:
       - name: Check out the repository
-        # No submodules: m2c and decomp-permuter are decompilation aids, and
-        # neither is on the path from sources to a progress report.
         uses: actions/checkout@v4
+
+      - name: Check out the mwccgap submodule
+        run: git submodule update --init tools/mwccgap
 
       - name: Build the toolchain image
         # The Dockerfile is the only description of this toolchain, so CI uses
@@ -39,6 +40,7 @@ jobs:
           docker run --rm \
             -v "$PWD:/dcdecomp" -w /dcdecomp -e HOME=/tmp \
             dcdecomp_dev sh -c '
+              set -e
               scripts/build/cmake.sh objdiff
               mkdir -p progress
               objdiff-cli report generate -o progress/report.json

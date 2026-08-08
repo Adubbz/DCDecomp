@@ -1,6 +1,6 @@
 # Data symbols that decompiled C++ provides, and the source that provides them.
 #
-# scripts/build/migrate_section.py carves each of these out of the reference
+# scripts/build/migrate.py carves each of these out of the reference
 # dump that holds it, so its bytes are not linked twice, and the generated
 # linker script places the object's own version exactly into the hole it left
 # ("island"). Everything else in that dump keeps its retail address.
