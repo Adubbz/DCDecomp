@@ -1,13 +1,13 @@
 #include "dungeonmap.hpp"
 
-#include "framevu1.hpp"
+#include <cstdlib>
 
 #include "camera.hpp"
 #include "character.hpp"
+#include "dungeonparts.hpp"
 #include "frame.hpp"
+#include "framevu1.hpp"
 #include "mathutil.hpp"
-
-#include <cstdlib>
 
 INCLUDE_ASM("main", SetNPC__11CDungeonMapFiPUiiPfPfiiP14CDataAlloc2_1_);
 
@@ -22,14 +22,27 @@ extern "C" s32 selectMapNo;
 /* The character that the player controls; the dungeon overlay defines it. */
 extern "C" CCharacter CharaMain;
 
-/* @ 0x1C1E70 (0x40 bytes) -- ClearNPC_Cash__11CDungeonMapFv */
+/**
+ * A single grid cell while a floor is being built.
+ */
+struct BUILD_MAP_INFO {
+    s32 kind;
+    s32 unk_04;
+    s32 link[16];
+    s32 unk_48;
+};
+
+STATIC_ASSERT(sizeof(BUILD_MAP_INFO) == 0x4C);
+
+/* The 20 x 20 grid that the map builder works on. */
+extern "C" BUILD_MAP_INFO buildMapDat[400];
+
 void CDungeonMap::ClearNPC_Cash() {
     for (int i = 0; i < 4; i++) {
         this->npc[i].draw_num = 0;
     }
 }
 
-/* @ 0x1C1EB0 (0xD0 bytes) -- ReservNPC_Draw__11CDungeonMapFifffi */
 void CDungeonMap::ReservNPC_Draw(int npc_no, float x, float y, float z, int param) {
 
     // A character that has no model, or that is hidden, draws no copy.
@@ -46,14 +59,12 @@ INCLUDE_ASM("main", DrawNPCDraw__11CDungeonMapFv);
 
 INCLUDE_ASM("main", StepNPC__11CDungeonMapFv);
 
-/* @ 0x1C22B0 (0x40 bytes) -- NPCSetMotion__11CDungeonMapFii */
 void CDungeonMap::NPCSetMotion(int npc_no, int motion_no) {
     this->npc[npc_no].motion_no = motion_no;
     this->npc[npc_no].unk_C64 = 0;
     this->npc[npc_no].motion_speed = -1.0f;
 }
 
-/* @ 0x1C22F0 (0x40 bytes) -- NPCSetMotion__11CDungeonMapFiifi */
 void CDungeonMap::NPCSetMotion(int npc_no, int motion_no, float speed, int unk) {
     this->npc[npc_no].motion_no = motion_no;
     this->npc[npc_no].unk_C64 = unk;
@@ -61,7 +72,6 @@ void CDungeonMap::NPCSetMotion(int npc_no, int motion_no, float speed, int unk) 
     this->npc[npc_no].motion_speed = speed;
 }
 
-/* @ 0x1C2330 (0x90 bytes) -- GetFrameSearch__11CDungeonMapFPc */
 CFrame *CDungeonMap::GetFrameSearch(char *name) {
     for (int i = 0; i < 72; i++) {
         CFrame *frame = this->parts[i].GetSearchFrame(name);
@@ -72,13 +82,32 @@ CFrame *CDungeonMap::GetFrameSearch(char *name) {
     return NULL;
 }
 
-INCLUDE_ASM("main", DrawMapFreeStyle__11CDungeonMapFv);
+void CDungeonMap::DrawMapFreeStyle() {
+    int i;
+    int npc_no;
+
+    this->ClearNPC_Cash();
+
+    for (i = 0; this->parts[i].frame[0] != NULL; i++) {
+        this->parts[i].pos[0] = 0.0;
+        this->parts[i].pos[1] = 0.0;
+        this->parts[i].pos[2] = 0.0;
+        this->parts[i].pos[3] = 1.0;
+        this->parts[i].direction = 0;
+        this->parts[i].Draw();
+
+        for (npc_no = 0; npc_no < 4; npc_no++) {
+            if (this->npc[npc_no].parts_no == i) {
+                this->ReservNPC_Draw(npc_no, 0.0, 0.0, 0.0, 0);
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("main", DrawMapCalc__11CDungeonMapFi);
 
 INCLUDE_ASM("main", DrawMap__11CDungeonMapFP13CCameraFollowP9CFrameVu1);
 
-/* @ 0x1C2FC0 (0xA0 bytes) -- DrawBGModel__11CDungeonMapFP7CCamera */
 void CDungeonMap::DrawBGModel(CCamera *camera) {
     float pos[4];
 
@@ -97,7 +126,6 @@ INCLUDE_ASM("main", DrawDummyModel__11CDungeonMapFP7CCamera);
 
 INCLUDE_ASM("main", DrawMiniMap__11CDungeonMapFPff);
 
-/* @ 0x1C39C0 (0x240 bytes) -- checkMask__11CDungeonMapFff */
 void CDungeonMap::checkMask(float x, float z) {
     int cell_x;
     int cell_z;
@@ -135,7 +163,6 @@ void CDungeonMap::checkMask(float x, float z) {
     this->mask[cell_x + cell_z * 20] = 1;
 }
 
-/* @ 0x1C3C00 (0xC0 bytes) -- FlushCheckMask__11CDungeonMapFv */
 void CDungeonMap::FlushCheckMask() {
     int i;
 
@@ -147,7 +174,7 @@ void CDungeonMap::FlushCheckMask() {
         this->room_seen[i] = 0;
     }
 
-    // A stair always shows, so that the player can find the way down again.
+    // The entrance always shows on the mini map.
     for (i = 0; i < 400; i++) {
         if (this->cells[i].parts_no == 30) {
             this->mask[i] = 1;
@@ -169,11 +196,46 @@ INCLUDE_ASM("main", DrawAtraBoll__11CDungeonMapFPf);
 
 INCLUDE_ASM("main", CreateCollision__11CDungeonMapFP6CCPoly7CBoxVu0i);
 
-INCLUDE_ASM("main", buildRoom__Fiiiii);
+static int buildRoom(int x, int y, int w, int h, int room_no) {
+    int ok = 1;
+    int i, j;
+
+    // The room needs its own cells and a border of one cell around them, so
+    // that two rooms never come out sharing a wall.
+    for (j = -1; j < h + 2; j++) {
+        for (i = -1; i < w + 2; i++) {
+            if (i + x >= 0 && i + x < 20 && j + y >= 0 && j + y < 20) {
+                if (buildMapDat[x + (j + y) * 20 + i].kind != -1) {
+                    ok = 0;
+                }
+            }
+        }
+    }
+    if (!ok) {
+        return ok;
+    }
+
+    for (j = 0; j < h; j++) {
+        for (i = 0; i < w; i++) {
+            buildMapDat[x + (y + j) * 20 + i].kind = 17;
+            buildMapDat[x + (y + j) * 20 + i].link[room_no] = 1;
+            buildMapDat[x + (y + j) * 20 + i].unk_48 |= 1;
+        }
+    }
+    return 1;
+}
 
 INCLUDE_ASM("main", mapPartsFilter__Fv);
 
-INCLUDE_ASM("main", copyMapInfo__FP14BUILD_MAP_INFOP14BUILD_MAP_INFO);
+static void copyMapInfo(BUILD_MAP_INFO *dst, BUILD_MAP_INFO *src) {
+    for (int i = 0; i < 400; i++) {
+        dst[i].kind = src[i].kind;
+        for (int j = 0; j < 16; j++) {
+            dst[i].link[j] = src[i].link[j];
+        }
+        dst[i].unk_48 = src[i].unk_48;
+    }
+}
 
 INCLUDE_ASM("main", joinRoom__Fii);
 
@@ -185,14 +247,12 @@ INCLUDE_ASM("main", setUnderDungeonStart__Fv);
 
 INCLUDE_ASM("main", setStair__Fv);
 
-/* @ 0x1C79B0 (0x40 bytes) -- initTrapCircle__11CDungeonMapFv */
 void CDungeonMap::initTrapCircle() {
     for (int i = 0; i < 3; i++) {
         this->trap_circle[i].state = 0;
     }
 }
 
-/* @ 0x1C79F0 (0xC0 bytes) -- CheckTrapCircle__11CDungeonMapFPff */
 float *CDungeonMap::CheckTrapCircle(float *pos, float dist) {
     for (int i = 0; i < 3; i++) {
         if (this->trap_circle[i].state != 0) {
@@ -204,11 +264,26 @@ float *CDungeonMap::CheckTrapCircle(float *pos, float dist) {
     return NULL;
 }
 
-INCLUDE_ASM("main", SetupTrapCircle__11CDungeonMapFPf);
+void CDungeonMap::SetupTrapCircle(float *pos) {
+    for (int i = 0; i < 3; i++) {
+        bool is_free = !this->trap_circle[i].state;
+
+        // The first free slot takes the circle, and no later slot is looked at.
+        if (is_free) {
+            sceVu0CopyVector(this->trap_circle[i].pos, pos);
+            this->trap_circle[i].state = 1;
+            this->trap_circle[i].kind = (int) ((10.0f * (float) rand()) / 2147483648.0f);
+            if (this->trap_circle[i].kind >= 10) {
+                this->trap_circle[i].kind = 9;
+            }
+            this->trap_circle[i].timer = 0.0f;
+            break;
+        }
+    }
+}
 
 INCLUDE_ASM("main", DrawTrapCircle__11CDungeonMapFv);
 
-/* @ 0x1C7D80 (0xE0 bytes) -- DistTrapCircle__11CDungeonMapFv */
 float *CDungeonMap::DistTrapCircle() {
     float pos[4];
 
@@ -224,14 +299,6 @@ float *CDungeonMap::DistTrapCircle() {
     return NULL;
 }
 
-/* CDungeonMap::StepTrapCircle matches retail instruction for instruction, but
- * it is the only function here that needs a literal pool, and mwcc puts the two
- * floats in .lit4 sections of their own. Retail keeps them in main.rodata at
- * 0x2A1D98, which the build links from the whole-section dump -- so the object's
- * copies are eight extra bytes in the small-data area, and every gp-relative
- * offset in the image moves. Placing them needs asm/decompiled_symbols.txt to
- * learn about .lit4, which the migration does not read today. Until then the
- * marker supplies the function and the C++ waits here. */
 #if DNG_COMPILE_UNMATCHED
 /* @ 0x1C7E60 (0x80 bytes) -- StepTrapCircle__11CDungeonMapFv */
 void CDungeonMap::StepTrapCircle() {
@@ -247,7 +314,6 @@ void CDungeonMap::StepTrapCircle() {
 #endif /* DNG_COMPILE_UNMATCHED */
 INCLUDE_ASM("main", StepTrapCircle__11CDungeonMapFv);
 
-/* @ 0x1C7EE0 (0xC0 bytes) -- CheckTreasureBox__11CDungeonMapFPff */
 int CDungeonMap::CheckTreasureBox(float *pos, float dist) {
     for (int i = 0; i < this->box_num; i++) {
         if (this->boxes[i].used != 0 && DistVector(this->boxes[i].pos, pos) < dist) {
@@ -257,7 +323,6 @@ int CDungeonMap::CheckTreasureBox(float *pos, float dist) {
     return 1;
 }
 
-/* @ 0x1C7FA0 (0xE0 bytes) -- CheckAtra__11CDungeonMapFPff */
 int CDungeonMap::CheckAtra(float *pos, float dist) {
 
     // Only the first six floors hold atla.
@@ -292,7 +357,6 @@ void CDungeonMap::RsetMimicEvent() {
     }
 }
 
-/* @ 0x1C8ED0 (0x150 bytes) -- GetActiveIvent__11CDungeonMapFP9CFrameVu1 */
 int CDungeonMap::GetActiveIvent(CFrameVu1 *frame) {
     float pos[4];
 
@@ -315,7 +379,6 @@ INCLUDE_ASM("main", buildDummyModel__11CDungeonMapFv);
 
 INCLUDE_ASM("main", GetRoomLinkInfo__11CDungeonMapFv);
 
-/* @ 0x1CA240 (0x50 bytes) -- SetUnderLoad__11CDungeonMapFv */
 void CDungeonMap::SetUnderLoad() {
     for (int i = 0; i < 20; i++) {
         this->cells[i * 20 + 19].parts_no = 44;
