@@ -97,3 +97,5 @@ roomStack            dungeonmap.cpp
 wait$1659            dungeonmap.cpp
 init$1660            dungeonmap.cpp
 roomStackCnt         dungeonmap.cpp
+__vt__7CCamera       camera.cpp:.vtables
+_fbss                camera.cpp

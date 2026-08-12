@@ -1,5 +1,7 @@
 #pragma once
 
+#include <libvu0.h>
+
 #include "common.h"
 
 // Forward declarations for the types these declarations name. The skeleton
@@ -16,7 +18,7 @@ struct sceVif1Packet;
 class CFrame {
 public:
     u8 unk_000[544];
-    float unk_220[4];
+    sceVu0FVECTOR pos; /**< World position of the frame. */
     u8 unk_230[32];
 
 
@@ -251,3 +253,5 @@ public:
      */
     int PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box);
 };
+
+STATIC_ASSERT(sizeof(CFrame) == 0x260);

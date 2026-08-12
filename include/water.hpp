@@ -15,7 +15,7 @@ class CWater {
 public:
     u8 unk_000[176];
     CFrame frame; /**< Places and draws the water surface. */
-    u8 unk_304[28];
+    u8 unk_310[16];
 
     /**
      * @mangled SetParam__6CWaterFffff

@@ -1246,7 +1246,7 @@ void CDungeonMap::DrawItemBox(float *pos) {
         switch (this->boxes[i].kind) {
             case 0:
                 this->model[1]->SetPosition(this->boxes[i].pos);
-                sceVu0CopyVector(lid, this->model[1]->unk_220);
+                sceVu0CopyVector(lid, this->model[1]->pos);
                 lid[1] += 8.0f;
                 lid[2] -= 5.0f;
                 this->model[0]->SetPosition(lid);
@@ -1257,7 +1257,7 @@ void CDungeonMap::DrawItemBox(float *pos) {
                 break;
             case 1:
                 this->model[4]->SetPosition(this->boxes[i].pos);
-                sceVu0CopyVector(lid, this->model[4]->unk_220);
+                sceVu0CopyVector(lid, this->model[4]->pos);
                 lid[1] += 3.0f;
                 lid[2] -= 3.0f;
                 this->model[3]->SetPosition(lid);
@@ -1302,7 +1302,7 @@ int CDungeonMap::CreateCollision(CCPoly *poly, CBoxVu0 box, int num) {
     float pos[4];
     CFrame *frame;
 
-    sceVu0CopyVector(pos, CharaMain.frame->unk_220);
+    sceVu0CopyVector(pos, CharaMain.frame->pos);
     frame = this->collision_model;
     // Retail returns no value here, which leaves whatever v0 happens to hold.
     if (frame == NULL) {
