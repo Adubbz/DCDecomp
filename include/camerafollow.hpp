@@ -2,147 +2,190 @@
 
 #include "common.h"
 
-class CCameraFollow {
+#include "camera.hpp"
+
+/**
+ * @file
+ * Declares the camera that circles a point in the world.
+ */
+
+/**
+ * Follows a point in the world, keeping the eye on that point. The eye sits on a circle about the point, at a set height and distance.
+ */
+class CCameraFollow : public CCamera {
 public:
+    float follow[4];  /**< World position that the eye circles and looks at. */
+    float distance;   /**< Distance from the eye to the position, on the horizontal plane. */
+    float height;     /**< Height of the eye above the position. */
+    float next_angle; /**< Angle, in radians, that the eye turns to. */
+    float angle;      /**< Angle, in radians, of the eye about the position. */
+    s32 follow_on;    /**< 1 while the eye circles the position; 0 leaves the eye where it is. */
+
     /**
+     * Turns the eye one or more steps towards the angle that it turns to, and
+     * puts the eye and the look-at point where the circle wants them. A step
+     * count below zero turns the eye at once.
+     *
      * @mangled Step__13CCameraFollowFi
      * @address 0x1247D0
      * @size 0x280
-     * @unknownret
      */
-    void Step(int);
+    virtual void Step(int steps);
 
     /**
+     * Puts the position that the eye circles onto the point that the eye
+     * looks at, and the angle that the eye turns to onto its angle, so that
+     * nothing moves.
+     *
      * @mangled Stay__13CCameraFollowFv
      * @address 0x124A50
      * @size 0x50
-     * @unknownret
      */
-    void Stay(void);
+    virtual void Stay();
 
     /**
+     * Copies the position, the distance and the height of another camera.
+     *
      * @mangled __as__13CCameraFollowFRC13CCameraFollow
      * @address 0x124AA0
      * @size 0x40
-     * @unknownret
      */
-    void __as(const CCameraFollow &);
+    CCameraFollow &operator=(const CCameraFollow &src);
 
     /**
+     * Sets the world position that the eye circles.
+     *
      * @mangled SetFollow__13CCameraFollowFfff
      * @address 0x124AE0
      * @size 0x20
-     * @unknownret
      */
-    void SetFollow(float, float, float);
+    void SetFollow(float x, float y, float z);
 
     /**
+     * Makes the eye circle the position again.
+     *
      * @mangled FollowOn__13CCameraFollowFv
      * @address 0x124B00
      * @size 0x10
-     * @unknownret
      */
-    void FollowOn(void);
+    void FollowOn();
 
     /**
+     * Leaves the eye where it is, and makes it take the angle that the base
+     * camera measures.
+     *
      * @mangled FollowOff__13CCameraFollowFv
      * @address 0x124B10
      * @size 0x10
-     * @unknownret
      */
-    void FollowOff(void);
+    void FollowOff();
 
     /**
+     * Sets the angle that the eye turns to, which it reaches over several
+     * steps.
+     *
      * @mangled SetAngle__13CCameraFollowFf
      * @address 0x124B20
      * @size 0x10
-     * @unknownret
      */
-    void SetAngle(float);
+    void SetAngle(float angle);
 
     /**
+     * Sets the angle of the eye, and the angle that it turns to, so that the
+     * eye moves at once.
+     *
      * @mangled SetAngleSoon__13CCameraFollowFf
      * @address 0x124B30
      * @size 0x10
-     * @unknownret
      */
-    void SetAngleSoon(float);
+    void SetAngleSoon(float angle);
 
     /**
+     * Returns the angle that the eye is at now.
+     *
      * @mangled GetAngle__13CCameraFollowFv
      * @address 0x124B40
      * @size 0x10
-     * @unknownret
      */
-    void GetAngle(void);
+    float GetAngle();
 
     /**
+     * Adds to the angle that the eye turns to.
+     *
      * @mangled AddAngle__13CCameraFollowFf
      * @address 0x124B50
      * @size 0x20
-     * @unknownret
      */
-    void AddAngle(float);
+    void AddAngle(float angle);
 
     /**
+     * Sets the distance from the eye to the position that it circles.
+     *
      * @mangled SetDistance__13CCameraFollowFf
      * @address 0x124B70
      * @size 0x10
-     * @unknownret
      */
-    void SetDistance(float);
+    void SetDistance(float distance);
 
     /**
+     * Returns the distance from the eye to the position that it circles.
+     *
      * @mangled GetDistance__13CCameraFollowFv
      * @address 0x124B80
      * @size 0x10
-     * @unknownret
      */
-    void GetDistance(void);
+    float GetDistance();
 
     /**
+     * Adds to the distance from the eye to the position that it circles.
+     *
      * @mangled AddDistance__13CCameraFollowFf
      * @address 0x124B90
      * @size 0x20
-     * @unknownret
      */
-    void AddDistance(float);
+    void AddDistance(float distance);
 
     /**
+     * Sets the height of the eye above the position that it circles.
+     *
      * @mangled SetHeight__13CCameraFollowFf
      * @address 0x124BB0
      * @size 0x10
-     * @unknownret
      */
-    void SetHeight(float);
+    void SetHeight(float height);
 
     /**
+     * Returns the height of the eye above the position that it circles.
+     *
      * @mangled GetHeight__13CCameraFollowFv
      * @address 0x124BC0
      * @size 0x10
-     * @unknownret
      */
-    void GetHeight(void);
+    float GetHeight();
 
     /**
+     * Adds to the height of the eye above the position that it circles.
+     *
      * @mangled AddHeight__13CCameraFollowFf
      * @address 0x124BD0
      * @size 0x20
-     * @unknownret
      */
-    void AddHeight(float);
+    void AddHeight(float height);
 
     /**
+     * Puts the eye on the circle that the given distance, height and angle
+     * describe, about the origin.
+     *
      * @mangled __ct__13CCameraFollowFffff
      * @address 0x124BF0
      * @size 0x90
      */
-    CCameraFollow(float, float, float, float);
+    CCameraFollow(float distance, float height, float angle, float speed);
 
     /**
      * @mangled __dt__13CCameraFollowFv
      * @address 0x124C80
      * @size 0x70
      */
-    ~CCameraFollow(void);
+    virtual ~CCameraFollow();
 };

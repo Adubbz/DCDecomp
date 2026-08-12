@@ -318,9 +318,8 @@ void VectorInterpolate(float *, float *, float *, float, int);
  * @mangled AngleInterpolate__Ffffi
  * @address 0x1239D0
  * @size 0x160
- * @unknownret
  */
-void AngleInterpolate(float, float, float, int);
+float AngleInterpolate(float, float, float, int);
 
 /**
  * @mangled AngleCmp__Ffff
