@@ -26,9 +26,9 @@ extern "C" s32 selectMapNo;
 /* The player's save-slot status; the dungeon reads the party and the floor. */
 extern CUserStatus *UserStatus;
 
-extern const char LIT_1007__2[];
-extern const char LIT_1559[];
-extern const char LIT_1560[];
+extern const unsigned char LIT_1007__2[];
+extern const unsigned char LIT_1559[];
+extern const unsigned char LIT_1560[];
 extern const unsigned char LIT_2448[];
 extern const unsigned char LIT_2859[];
 extern const unsigned char LIT_2860[];
@@ -89,8 +89,8 @@ STATIC_ASSERT(sizeof(ITEM_FREE_AREA) == 0x64);
 extern "C" int DebugStatus[];
 extern "C" int BtEquipMap;
 extern "C" int BtEquipMasuisyou;
-extern const char LIT_1470[];
-extern const char LIT_1471[];
+extern const unsigned char LIT_1470[];
+extern const unsigned char LIT_1471[];
 extern "C" ITEM_FREE_AREA *ItemFreeAreaAll[];
 
 /**
@@ -191,7 +191,7 @@ void CDungeonMap::SetNPC(int npc_no, unsigned int *pack, int parts_no, sceVu0FVE
         BtNPCTexAnimeData[npc_no][i].Initialize();
     }
     this->npc[npc_no].chara.InitializeTexAnime(BtNPCTexAnimeData[npc_no], 32);
-    this->npc[npc_no].chara.LoadPackData2(pack, LIT_1007__2, alloc, npc_no + 64,
+    this->npc[npc_no].chara.LoadPackData2(pack, (char *) LIT_1007__2, alloc, npc_no + 64,
                                           alloc, 0);
     if (this->npc[npc_no].chara.frame == NULL) {
         printf("******* NPCEntryErr\n");
@@ -647,8 +647,8 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
     }
 
     visible = BtEquipMap ? 0 : 1;
-    CTexture *map_texture = TexManager.GetTexture(LIT_1470, -1);
-    CTexture *symbol_texture = TexManager.GetTexture(LIT_1471, -1);
+    CTexture *map_texture = TexManager.GetTexture((char *) LIT_1470, -1);
+    CTexture *symbol_texture = TexManager.GetTexture((char *) LIT_1471, -1);
 
     for (row = 0; row < 20; row++) {
         for (col = 0; col < 20; col++) {
@@ -844,8 +844,8 @@ void CDungeonMap::DrawFireFreeStyle(CFrameVu1 *frame, CCameraFollow *camera) {
     ((CCamera *) camera)->GetPos(cam_pos);
     sceVu0ScaleVectorXYZ(cam_pos, cam_pos, 0.1f);
 
-    this->fire.SetTexture(TexManager.GetTexture(LIT_1559, -1),
-                          TexManager.GetTexture(LIT_1560, -1));
+    this->fire.SetTexture(TexManager.GetTexture((char *) LIT_1559, -1),
+                          TexManager.GetTexture((char *) LIT_1560, -1));
     this->fire.FireCreate();
 
     near_dist = 16000.0f;
