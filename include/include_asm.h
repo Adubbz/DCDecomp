@@ -17,7 +17,23 @@
  *
  * A function that a marker supplies is not decompiled. objdiff is told so:
  * scripts/build/layout.py gives it no base, so it counts as zero.
+ *
+ * `FUZZY_MATCH("<image>", <mangled name>)` is the opposite: the function below
+ * it *is* decompiled and its code is what links. It says that the compiled
+ * code reproduces retail's instructions, their order and the control flow
+ * between them exactly, and differs only in which registers the compiler chose.
+ * Such a function occupies the same bytes as retail's, so nothing after it
+ * moves, and every other function and all data still come out byte-identical.
+ *
+ * The macro expands to nothing: it is a claim about the function that follows,
+ * for the tools to check rather than trust. scripts/build/verify.py compares
+ * the built image against retail function by function and holds a declared
+ * function to exactly that -- same length, same opcodes, same immediates and
+ * branch offsets, differing only in register fields. A function that drifts
+ * further, or one that differs without the declaration, is a failure, and any
+ * difference in data is a failure whether declared or not.
  */
 
 #define INCLUDE_ASM(FOLDER, NAME)
 #define INCLUDE_RODATA(FOLDER, NAME)
+#define FUZZY_MATCH(FOLDER, NAME)

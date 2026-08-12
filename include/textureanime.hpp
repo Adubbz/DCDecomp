@@ -2,10 +2,33 @@
 
 #include "common.h"
 
-// Forward declarations for the types these declarations name. The skeleton
-// headers are generated from the retail symbol table, which knows the type
-// names but not where they live.
-class CTexAnimeData;
+
+/**
+ * Animates the texture of one part of a model.
+ */
+class CTexAnimeData {
+public:
+    u8 unk_00[88];
+
+    /**
+     * Sets the animation to play no frame.
+     *
+     * @mangled Initialize__13CTexAnimeDataFv
+     * @address 0x1670D0
+     * @size 0xA0
+     * @unknownret
+     */
+    void Initialize(void);
+
+    /**
+     * @mangled __ct__13CTexAnimeDataFv
+     * @address 0x1670A0
+     * @size 0x30
+     */
+    CTexAnimeData(void);
+};
+
+STATIC_ASSERT(sizeof(CTexAnimeData) == 0x58);
 
 
 class CTextureAnime {

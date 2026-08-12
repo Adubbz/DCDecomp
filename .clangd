@@ -12,6 +12,9 @@ CompileFlags:
     - -Iinclude/std
     - -I../include/std
     - -I../../include/std
+    - -Iinclude/sce
+    - -I../include/sce
+    - -I../../include/sce
     - -Ibuild/generated/asm
     - -I../build/generated/asm
     - -I../../build/generated/asm

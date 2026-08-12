@@ -353,6 +353,14 @@ SECTIONS
 
 		# gp
         _gp	= 0x2A97F0;
+
+		# Entries of retail's literal pool that a compiled unit loads from.
+		# scripts/build/literals.py binds each float constant an object holds
+		# to the entry retail loads it from, and migrate.py writes one
+		# assignment per entry here, in pool order. A constant retail's pool
+		# does not hold stays in its object and the LITERAL directive below
+		# appends it to the pool instead, which moves the small data after it.
+		// @LITERALS
 		// TODO: _gp	= . + 0x7ff0;
 
         _stack       = 0x01F80000;

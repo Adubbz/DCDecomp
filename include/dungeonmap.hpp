@@ -1,8 +1,14 @@
 #pragma once
 
+#include <libvu0.h>
+
 #include "common.h"
 
+#include "character.hpp"
+#include "collision.hpp"
+#include "water.hpp"
 #include "dungeonparts.hpp"
+#include "fireomni.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
@@ -23,12 +29,14 @@ class CFrameVu1;
 /**
  * Describes one cell of the 20 x 20 dungeon floor grid.
  */
-struct MAP_CELL {
-    s32 parts_no;  /**< Index into CDungeonMap::parts; -1 for an empty cell. */
+struct MAPPARTS {
+    s32 parts_no;  /**< MapPartsNo of the part that the cell draws. */
     s32 direction; /**< Rotation that the map part uses. */
     float unk_08;
     s32 unk_0C;
 };
+
+typedef MAPPARTS MAP_CELL;
 
 /**
  * Describes the position and the extent of one room, in grid cells.
@@ -50,7 +58,7 @@ struct TREASURE_BOX {
     s32 item_no;  /**< Identifier of the item inside the box. */
     s32 unk_24;
     s32 kind; /**< 0 for a large box, 1 for a small box. */
-    s32 unk_2C;
+    float lid_angle; /**< Degrees the lid has swung open. */
     s32 unk_30;
     u8 unk_34[12];
 };
@@ -78,6 +86,15 @@ struct TRAP_CIRCLE {
 };
 
 /**
+ * Records whether one special linked-room result is active.
+ */
+struct ROOM_LINK_RESULT {
+    s32 used; /**< 1 after the linked-room item and door are placed. */
+    s32 unk_04;
+    u8 unk_08[16];
+};
+
+/**
  * Marks one place on the floor that starts an event when the player comes near.
  */
 struct DUNGEON_EVENT {
@@ -97,13 +114,7 @@ struct DUNGEON_EVENT {
  * Describes one non-player character that walks in the dungeon.
  */
 struct DUNGEON_NPC {
-    u8 chara[188];       /**< Start of the CCharacter that draws and moves the character. */
-    CFrame *chara_frame; /**< Frame of the CCharacter; zero if the character has no model. */
-    u8 unk_00C0[2976];
-    float motion_speed; /**< Speed of the motion; -1.0 for the speed that the motion gives. */
-    s32 unk_C64;
-    s32 motion_no; /**< Identifier of the motion that the character plays. */
-    u8 unk_C6C[1348];
+    CCharacter chara; /**< Draws and moves the character. */
     float pos[4]; /**< World position of the character. */
     float unk_11C0[4];
     s32 parts_no;  /**< Index of the map part that the character stands on. */
@@ -123,11 +134,19 @@ class CDungeonMap {
 public:
     u8 unk_0000[8];
     s32 room_seen[16]; /**< 1 for each room that the player found. */
-    u8 unk_0048[72];
-    u8 water[800]; /**< CWater that draws the water surface. */
+    u8 unk_0048[8];
+    CFireOmni fire; /**< Draws the fire and the raster of every map part. */
+    CWater water; /**< Draws the water surface. */
     float draw_dist_scale; /**< Scale that the draw distance uses. */
-    u8 unk_03B4[184];
-    s32 unk_046C[3];
+    s32 unk_03B4;
+    s32 unk_03B8;
+    s32 unk_03BC;
+    float dummy_pos[8][4];   /**< World position of each dummy model. */
+    s32 dummy_model[8];      /**< Index into dummy_frame of each dummy model. */
+    s32 dummy_num;           /**< Number of dummy models on the floor. */
+    s32 unk_0464;
+    s32 map_seed; /**< Seed that the floor was built from. */
+    CFrame *dummy_frame[3];  /**< Models that a dummy model can draw with. */
     CFrame *bg_model[6];     /**< Models that draw behind the floor. */
     CDungeonParts parts[72]; /**< Map parts that the floor is built from. */
     s32 mask[400];           /**< 1 for each grid cell that the mini map shows. */
@@ -142,8 +161,14 @@ public:
     ATRA_BOLL atra[8];      /**< Atla balls that lie on the floor. */
     s32 atra_num;           /**< Number of atla balls on the floor. */
     CFrame *atra_model;     /**< Model that draws an atla ball. */
-    u8 unk_BD88[8];
-    u8 unk_BD90[96];
+    CFrame *collision_model; /**< Model that the collision of an atla ball uses. */
+    s32 link_door_x;
+    s32 link_door_y;
+    float link_item_x;
+    float link_item_y;
+    ROOM_LINK_RESULT room_link[3];
+    s32 room_link_3_used;
+    u8 unk_BDE8[8];
     DUNGEON_NPC npc[4];         /**< Characters that walk in the dungeon. */
     TRAP_CIRCLE trap_circle[3]; /**< Trap circles that lie on the floor. */
 
@@ -153,7 +178,7 @@ public:
      * @size 0x270
      * @unknownret
      */
-    void SetNPC(int, unsigned int *, int, float *, float *, int, int, CDataAlloc2_1_ *);
+    void SetNPC(int, unsigned int *, int, sceVu0FVECTOR, sceVu0FVECTOR, int, int, CDataAlloc2_1_ *);
 
     /**
      * Sets the number of copies to draw of every character to zero.
@@ -219,10 +244,12 @@ public:
     CFrame *GetFrameSearch(char *name);
 
     /**
+     * Draws every map part at the origin, and reserves a copy of each character
+     * that stands on one.
+     *
      * @mangled DrawMapFreeStyle__11CDungeonMapFv
      * @address 0x1C23C0
      * @size 0x100
-     * @unknownret
      */
     void DrawMapFreeStyle(void);
 
@@ -253,12 +280,13 @@ public:
     void DrawBGModel(CCamera *camera);
 
     /**
+     * Draws every dummy model that the camera is near enough to.
+     *
      * @mangled DrawDummyModel__11CDungeonMapFP7CCamera
      * @address 0x1C3060
      * @size 0x120
-     * @unknownret
      */
-    void DrawDummyModel(CCamera *);
+    void DrawDummyModel(CCamera *camera);
 
     /**
      * @mangled DrawMiniMap__11CDungeonMapFPff
@@ -328,20 +356,23 @@ public:
     void DrawItemBox(float *);
 
     /**
+     * Draws every atla ball that the camera is near enough to, bobbing on the spot.
+     *
      * @mangled DrawAtraBoll__11CDungeonMapFPf
      * @address 0x1C5100
      * @size 0x170
-     * @unknownret
      */
-    void DrawAtraBoll(float *);
+    void DrawAtraBoll(float *pos);
 
     /**
+     * Adds a collision polygon for every atla ball near the player, and returns
+     * the new total.
+     *
      * @mangled CreateCollision__11CDungeonMapFP6CCPoly7CBoxVu0i
      * @address 0x1C5270
      * @size 0x150
-     * @unknownret
      */
-    void CreateCollision(CCPoly *, CBoxVu0, int);
+    int CreateCollision(CCPoly *poly, CBoxVu0 box, int num);
 
     /**
      * Sets every trap circle slot to free.
@@ -362,7 +393,7 @@ public:
     float *CheckTrapCircle(float *pos, float dist);
 
     /**
-     * Puts a trap circle of a random kind at a position.
+     * Puts a trap circle of a random kind in the first free slot at a position.
      *
      * @mangled SetupTrapCircle__11CDungeonMapFPf
      * @address 0x1C7AB0
@@ -507,15 +538,16 @@ public:
      * @mangled SetCharaDoor__11CDungeonMapFi
      * @address 0x1CB230
      * @size 0x440
-     * @unknownret
      */
-    void SetCharaDoor(int);
+    int SetCharaDoor(int);
 
     /**
+     * Builds a floor: places the rooms, joins them with corridors, fills the
+     * grid with map parts and picks the set of parts that the floor draws with.
+     *
      * @mangled buildRandomMap__11CDungeonMapFii
      * @address 0x1CB670
      * @size 0xA80
-     * @unknownret
      */
     void buildRandomMap(int, int);
 
@@ -536,11 +568,21 @@ public:
     void initalize(void);
 };
 
+/**
+ * Turns the grid that the builder worked on into the map parts that draw it.
+ *
+ * @mangled mapPartsFilter__Fv
+ * @address 0x1C5550
+ * @size 0xBE0
+ */
+void mapPartsFilter(void);
+
 STATIC_ASSERT(sizeof(MAP_CELL) == 0x10);
 STATIC_ASSERT(sizeof(ROOM_INFO) == 0x10);
 STATIC_ASSERT(sizeof(TREASURE_BOX) == 0x40);
 STATIC_ASSERT(sizeof(ATRA_BOLL) == 0x20);
 STATIC_ASSERT(sizeof(TRAP_CIRCLE) == 0x20);
+STATIC_ASSERT(sizeof(ROOM_LINK_RESULT) == 0x18);
 STATIC_ASSERT(sizeof(DUNGEON_EVENT) == 0x50);
 STATIC_ASSERT(sizeof(DUNGEON_NPC) == 0x1330);
 STATIC_ASSERT(sizeof(CDungeonMap) == 0x10B10);

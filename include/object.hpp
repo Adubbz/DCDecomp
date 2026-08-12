@@ -15,6 +15,7 @@ class CObject {
 public:
     u8 unk_000[16];
     float pos[4]; /**< World position of the object. */
+    u8 unk_020[128];
 
     /**
      * @mangled Step__7CObjectFv
@@ -22,7 +23,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void Step(void);
+    virtual void Step(void);
 
     /**
      * @mangled GetDistance__7CObjectFR7CObject
@@ -46,7 +47,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void SetMass(float);
+    virtual void SetMass(float);
 
     /**
      * @mangled SetPosition__7CObjectF11CVector3_f_
@@ -54,7 +55,15 @@ public:
      * @size 0x40
      * @unknownret
      */
-    void SetPosition(CVector3_f_);
+    virtual void SetPosition(CVector3_f_);
+
+    /**
+     * @mangled SetPosition__7CObjectFPf
+     * @address 0x157B00
+     * @size 0x40
+     * @unknownret
+     */
+    virtual void SetPosition(float *);
 
     /**
      * @mangled SetPosition__7CObjectFfff
@@ -62,7 +71,7 @@ public:
      * @size 0x20
      * @unknownret
      */
-    void SetPosition(float, float, float);
+    virtual void SetPosition(float, float, float);
 
     /**
      * @mangled SetVelocity__7CObjectF11CVector3_f_
@@ -70,7 +79,7 @@ public:
      * @size 0x30
      * @unknownret
      */
-    void SetVelocity(CVector3_f_);
+    virtual void SetVelocity(CVector3_f_);
 
     /**
      * @mangled SetAcceleration__7CObjectF11CVector3_f_
@@ -78,7 +87,7 @@ public:
      * @size 0x30
      * @unknownret
      */
-    void SetAcceleration(CVector3_f_);
+    virtual void SetAcceleration(CVector3_f_);
 
     /**
      * @mangled SetGravity__7CObjectF11CVector3_f_
@@ -86,7 +95,7 @@ public:
      * @size 0x30
      * @unknownret
      */
-    void SetGravity(CVector3_f_);
+    virtual void SetGravity(CVector3_f_);
 
     /**
      * @mangled SetMoment__7CObjectF11CVector3_f_
@@ -94,7 +103,7 @@ public:
      * @size 0x30
      * @unknownret
      */
-    void SetMoment(CVector3_f_);
+    virtual void SetMoment(CVector3_f_);
 
     /**
      * @mangled SetRotation__7CObjectF11CVector3_f_
@@ -102,7 +111,7 @@ public:
      * @size 0x30
      * @unknownret
      */
-    void SetRotation(CVector3_f_);
+    virtual void SetRotation(CVector3_f_);
 
     /**
      * @mangled SetRotation__7CObjectFfff
@@ -110,7 +119,7 @@ public:
      * @size 0x20
      * @unknownret
      */
-    void SetRotation(float, float, float);
+    virtual void SetRotation(float, float, float);
 
     /**
      * @mangled SetRotation__7CObjectFPf
@@ -118,7 +127,7 @@ public:
      * @size 0x20
      * @unknownret
      */
-    void SetRotation(float *);
+    virtual void SetRotation(float *);
 
     /**
      * @mangled SetRotVelocity__7CObjectF11CVector3_f_
@@ -126,7 +135,7 @@ public:
      * @size 0x30
      * @unknownret
      */
-    void SetRotVelocity(CVector3_f_);
+    virtual void SetRotVelocity(CVector3_f_);
 
     /**
      * @mangled SetRotAcceleration__7CObjectF11CVector3_f_
@@ -134,7 +143,7 @@ public:
      * @size 0x30
      * @unknownret
      */
-    void SetRotAcceleration(CVector3_f_);
+    virtual void SetRotAcceleration(CVector3_f_);
 
     /**
      * @mangled GetMass__7CObjectFv
@@ -142,7 +151,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void GetMass(void);
+    virtual void GetMass(void);
 
     /**
      * @mangled GetPosition__7CObjectFP11CVector3_f_
@@ -150,7 +159,7 @@ public:
      * @size 0x20
      * @unknownret
      */
-    void GetPosition(CVector3_f_ *);
+    virtual void GetPosition(CVector3_f_ *);
 
     /**
      * @mangled GetVelocity__7CObjectFP11CVector3_f_
@@ -158,7 +167,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void GetVelocity(CVector3_f_ *);
+    virtual void GetVelocity(CVector3_f_ *);
 
     /**
      * @mangled GetAcceleration__7CObjectFP11CVector3_f_
@@ -166,7 +175,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void GetAcceleration(CVector3_f_ *);
+    virtual void GetAcceleration(CVector3_f_ *);
 
     /**
      * @mangled GetGravity__7CObjectFP11CVector3_f_
@@ -174,7 +183,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void GetGravity(CVector3_f_ *);
+    virtual void GetGravity(CVector3_f_ *);
 
     /**
      * @mangled GetMoment__7CObjectFP11CVector3_f_
@@ -182,7 +191,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void GetMoment(CVector3_f_ *);
+    virtual void GetMoment(CVector3_f_ *);
 
     /**
      * @mangled GetRotation__7CObjectFPf
@@ -190,7 +199,7 @@ public:
      * @size 0x20
      * @unknownret
      */
-    void GetRotation(float *);
+    virtual void GetRotation(float *);
 
     /**
      * @mangled GetRotation__7CObjectFP11CVector3_f_
@@ -198,7 +207,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void GetRotation(CVector3_f_ *);
+    virtual void GetRotation(CVector3_f_ *);
 
     /**
      * @mangled GetRotVelocity__7CObjectFP11CVector3_f_
@@ -206,7 +215,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void GetRotVelocity(CVector3_f_ *);
+    virtual void GetRotVelocity(CVector3_f_ *);
 
     /**
      * @mangled GetRotAcceleration__7CObjectFP11CVector3_f_
@@ -214,7 +223,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void GetRotAcceleration(CVector3_f_ *);
+    virtual void GetRotAcceleration(CVector3_f_ *);
 
     /**
      * @mangled GetVelocity__7CObjectFv
@@ -222,7 +231,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void GetVelocity(void);
+    virtual void GetVelocity(void);
 
     /**
      * @mangled GetAcceleration__7CObjectFv
@@ -230,7 +239,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void GetAcceleration(void);
+    virtual void GetAcceleration(void);
 
     /**
      * @mangled GetGravity__7CObjectFv
@@ -238,7 +247,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void GetGravity(void);
+    virtual void GetGravity(void);
 
     /**
      * @mangled GetMoment__7CObjectFv
@@ -246,7 +255,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void GetMoment(void);
+    virtual void GetMoment(void);
 
     /**
      * @mangled GetRotation__7CObjectFv
@@ -254,7 +263,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void GetRotation(void);
+    virtual void GetRotation(void);
 
     /**
      * @mangled GetRotVelocity__7CObjectFv
@@ -262,7 +271,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void GetRotVelocity(void);
+    virtual void GetRotVelocity(void);
 
     /**
      * @mangled GetRotAcceleration__7CObjectFv
@@ -270,7 +279,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void GetRotAcceleration(void);
+    virtual void GetRotAcceleration(void);
 
     /**
      * @mangled SetScale__7CObjectFfff
@@ -278,7 +287,7 @@ public:
      * @size 0x20
      * @unknownret
      */
-    void SetScale(float, float, float);
+    virtual void SetScale(float, float, float);
 
     /**
      * @mangled SetScale__7CObjectFPf
@@ -286,7 +295,7 @@ public:
      * @size 0x20
      * @unknownret
      */
-    void SetScale(float *);
+    virtual void SetScale(float *);
 
     /**
      * @mangled GetScale__7CObjectFPf
@@ -294,7 +303,7 @@ public:
      * @size 0x20
      * @unknownret
      */
-    void GetScale(float *);
+    virtual void GetScale(float *);
 
     /**
      * Makes an object with no data.
@@ -320,8 +329,15 @@ public:
     void Initialize(float);
 };
 
+/**
+ * Carries the attributes that one frame draws with.
+ */
 class CFrameAttr {
 public:
+    u8 unk_00[12];
+    u8 unk_0C;
+    u8 unk_0D[83];
+
     /**
      * @mangled Initialize__10CFrameAttrFv
      * @address 0x127CC0
@@ -337,3 +353,5 @@ public:
      */
     CFrameAttr(void);
 };
+
+STATIC_ASSERT(sizeof(CFrameAttr) == 0x60);

@@ -23,6 +23,11 @@ import os
 import re
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# verify.py owns what a source declares about a function; objdiff needs the
+# fuzzy declarations to categorise a unit.
+import verify  # noqa: E402
+
 SECTIONS = ('main', 'title', 'dun')
 
 INDEX_DIR = 'ref/asm/objects'
@@ -50,6 +55,15 @@ OBJDIFF = {
     'build_base': True,
     'watch_patterns': ['src/**/*.{c,cpp,h,hpp,s,inc,lcf}',
                        'include/**/*.{h,hpp,s,inc,lcf}'],
+    # What each function is expected to be, so objdiff can show the three
+    # apart. A perfect function's bytes are retail's; a fuzzy one is the same
+    # instructions in the same order with different registers, and says so with
+    # FUZZY_MATCH; an undecompiled one is still supplied by INCLUDE_ASM.
+    'progress_categories': [
+        {'id': 'perfect', 'name': 'Perfect'},
+        {'id': 'fuzzy', 'name': 'Fuzzy'},
+        {'id': 'undecompiled', 'name': 'Undecompiled'},
+    ],
 }
 
 
@@ -214,7 +228,7 @@ def provenance(path, placed, functions, marked, build_dir):
     return sum(1 for r in rows if r[1] == 'cpp'), sum(1 for r in rows if r[1] == 'asm')
 
 
-def objdiff(path, placed, functions, marked, build_dir):
+def objdiff(path, placed, functions, marked, build_dir, declared):
     """objdiff.json: one unit per retail function.
 
     The target is that function's reference dump assembled as retail wrote it.
@@ -222,26 +236,31 @@ def objdiff(path, placed, functions, marked, build_dir):
     supplies the function, which scores the unit at zero. Pairing every function
     that way makes the percentage a share of the whole game.
     """
-    unit_list, decompiled = [], 0
+    unit_list, decompiled, fuzzy_units = [], 0, 0
     for section in SECTIONS:
         spans = owners(placed, section)
         for address, symbol, _size, source in functions[section]:
             unit = {'name': f'{section}/{symbol}',
                     'target_path': f'{build_dir}/{source}.o'}
             if marked.get((section, symbol)):
-                unit['metadata'] = {'complete': False}
+                unit['metadata'] = {'complete': False,
+                                    'progress_categories': ['undecompiled']}
             else:
                 owner = owner_of(spans, address)
                 if owner:
                     unit['base_path'] = f'{build_dir}/{owner}.o'
                     decompiled += 1
+                category = ('fuzzy' if (section, symbol) in declared else 'perfect')
+                unit['metadata'] = {'progress_categories': [category]}
+                if category == 'fuzzy':
+                    fuzzy_units += 1
             unit_list.append(unit)
 
     config = dict(OBJDIFF, name='dcdecomp', units=unit_list)
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(config, f, indent=2)
         f.write('\n')
-    return len(unit_list), decompiled
+    return len(unit_list), decompiled, fuzzy_units
 
 
 def main():
@@ -295,9 +314,10 @@ def main():
                               args.build_dir)
         print(f'layout: {cpp} functions from cpp, {asm} from asm -> {args.provenance}')
     if args.objdiff:
-        total, done = objdiff(args.objdiff, placed, functions, marked, args.build_dir)
-        print(f'layout: {total} objdiff units, {done} with a decompiled base -> '
-              f'{args.objdiff}')
+        total, done, fz = objdiff(args.objdiff, placed, functions, marked,
+                                  args.build_dir, verify.declarations())
+        print(f'layout: {total} objdiff units, {done} with a decompiled base '
+              f'({fz} declared fuzzy) -> {args.objdiff}')
     return 0
 
 

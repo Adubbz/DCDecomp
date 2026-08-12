@@ -45,6 +45,8 @@ class CTextureBlock {
 };
 STATIC_ASSERT(sizeof(CTextureBlock) == 0x3C);
 
+struct sceVif1Packet;
+
 class CTextureManager {
     private:
         u8 data[0x4E48];
@@ -55,6 +57,14 @@ class CTextureManager {
         TextureHandle GetTextureHandle(char *name, TextureHandle handle);
         CTexture *GetTexture(TextureHandle handle);
         CTexture *GetTexture(char *name, TextureHandle handle);
+
+        /**
+         * @mangled ReloadTexture__15CTextureManagerFP13sceVif1Packeti
+         * @address 0x133070
+         * @size 0x1C0
+         * @unknownret
+         */
+        void ReloadTexture(sceVif1Packet *packet, int handle);
     private:
         TextureHandle SearchTextureName(char *name, TextureHandle handle);
         CTexture *SearchTexture(char *name);

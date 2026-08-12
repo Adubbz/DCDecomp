@@ -131,7 +131,7 @@ void MGBeginFrame__Fv();
  * goes straight into $a0 and is copied to $s4 only to survive the call for
  * reuse by sceVif1PkCall below. An earlier pass declared this () and made
  * the copy direction come out backwards (lw s4 then paddub a0,s4). */
-void SetEnv__FP13sceVif1Packet(int vif1_packet);
+void SetEnv__FP13sceVif1Packet(sceVif1Packet *vif1_packet);
 void sceVif1PkCall(int vif1_packet, void *vu_prog, int a3);
 int func_01DD2220();
 int func_01DC8EB0();
@@ -490,7 +490,7 @@ int main(int argc, const char **argv, const char **envp) {
              * and the cast on Vu_prog0f, which hoists the lui/addiu pair
              * ahead of the first-argument copy, MWCC evaluating arguments
              * strictly left to right. */
-            int vif1_packet = Vif1Packet;
+            int vif1_packet = (int) Vif1Packet;
             SetEnv__FP13sceVif1Packet(Vif1Packet);
             sceVif1PkCall(vif1_packet, (void *) Vu_prog0f, 0);
 

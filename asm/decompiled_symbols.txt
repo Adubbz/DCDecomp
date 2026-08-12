@@ -84,3 +84,16 @@ WeaponList           itemdata.cpp
 AttachList           itemdata.cpp
 ITEM_LIST            itemdata.cpp
 ComItemInfo          itemdata.cpp
+chainTableDoor       dungeonmap.cpp
+chainTableRoad       dungeonmap.cpp
+chainTableRoom       dungeonmap.cpp
+chainTableDivid      dungeonmap.cpp
+chainTableDividDoor  dungeonmap.cpp
+LIT_2868             dungeonmap.cpp
+scanRoomInfoWork     dungeonmap.cpp
+buildMapDat          dungeonmap.cpp
+buildMapWork         dungeonmap.cpp
+roomStack            dungeonmap.cpp
+wait$1659            dungeonmap.cpp
+init$1660            dungeonmap.cpp
+roomStackCnt         dungeonmap.cpp

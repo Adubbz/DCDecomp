@@ -95,6 +95,7 @@ function(add_object obj)
             COMMAND ${AS} ${AS_FLAGS} -o ${obj} ${src}
             ${fixup}
             DEPENDS ${CMAKE_SOURCE_DIR}/${src} ${CMAKE_SOURCE_DIR}/${INCLUDE_DIR}/macro.inc
+                    ${ASM_OBJECT_EXTRA_DEPENDS} ${REF_STAMP}
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "AS ${src}"
             VERBATIM)
@@ -108,17 +109,28 @@ function(add_object obj)
         #
         # The script exists for the depfile as much as anything: without it an
         # edit to a header, or to a .cpp that another one #includes, rebuilds
-        # nothing at all.
+        # nothing at all. -MD rather than -MMD because the libraries are
+        # reached as <cstring> and <libvu0.h>, and -MMD leaves every <> include
+        # out of the map -- an edit to one of those headers would rebuild
+        # nothing, silently.
+        #
+        # scripts/build/literals.py runs on what comes out: a float constant
+        # MWCC put in a .lit4 or .lit8 section of its own is bound to the
+        # entry of retail's literal pool that retail loads it from, and the
+        # section dropped, so the object adds nothing to the pool. See that
+        # script; only compiled code has such sections.
         add_custom_command(
             OUTPUT ${CMAKE_SOURCE_DIR}/${obj}
             COMMAND ${CMAKE_COMMAND} -E env
                     MW_DIR=${MW} MIPS_TOOL_PREFIX=${MIPS_TOOL_PREFIX}
-                    STD_INCLUDE_DIR=${STD_INCLUDE_DIR}
+                    LIB_INCLUDE_DIRS=${LIB_INCLUDE_DIRS}
                     ASM_DIR=${ASM_DIR}
                     sh ${SCRIPTS_DIR}/build/mwccgap.sh ${obj} ${obj}.d ${src}
-                    ${CC_MW_FLAGS} -MMD
+                    ${CC_MW_FLAGS} -MD
+            COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/literals.py --bind ${obj}
             ${fixup}
-            DEPENDS ${CMAKE_SOURCE_DIR}/${src}
+            DEPENDS ${CMAKE_SOURCE_DIR}/${src} ${REF_STAMP}
+                    ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/literals.py
             DEPFILE ${CMAKE_SOURCE_DIR}/${obj}.d
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "CC ${src}"

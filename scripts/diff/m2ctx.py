@@ -57,10 +57,12 @@ REF = (T.LVALUEREFERENCE, T.RVALUEREFERENCE)
 ARRAY = (T.CONSTANTARRAY, T.INCOMPLETEARRAY, T.VARIABLEARRAY)
 FUNC = (T.FUNCTIONPROTO, T.FUNCTIONNOPROTO)
 
-# Both spellings: the C functions retail carried are reached as <cstring> and
-# friends, which resolve against include/std rather than include/.
+# Both spellings: a library is reached as <cstring> or <libvu0.h>, which
+# resolve against the library directories below rather than against include/.
 INCLUDE = re.compile(r'^\s*#\s*include\s+(?:"([^"]+)"|<([^>]+)>)')
-STD_SUBDIR = "std"
+# mwcc's <> search list, in the order it searches. std comes first because it
+# carries size_t, which the headers below it use.
+LIB_SUBDIRS = ("std", "sce")
 STATIC_ASSERT_DEF = re.compile(r'^\s*#\s*define\s+STATIC_ASSERT\b.*$', re.MULTILINE)
 REDEFINED = re.compile(r"redefinition of '([^']+)'")
 
@@ -86,8 +88,10 @@ def amalgamate(headers_dir):
                 if m:
                     name = m.group(1) or m.group(2)
                     nested = os.path.join(headers_dir, name)
-                    if not os.path.exists(nested):
-                        nested = os.path.join(headers_dir, STD_SUBDIR, name)
+                    for subdir in LIB_SUBDIRS:
+                        if os.path.exists(nested):
+                            break
+                        nested = os.path.join(headers_dir, subdir, name)
                     if os.path.exists(nested):
                         expand(nested)
                     else:
@@ -104,12 +108,15 @@ def amalgamate(headers_dir):
         if out and not out[-1].endswith("\n"):
             out.append("\n")
 
-    # The std shims first: they carry size_t, which the headers below use. They
-    # have no extension, so the game-header filter would not pick them up.
-    std_dir = os.path.join(headers_dir, STD_SUBDIR)
-    if os.path.isdir(std_dir):
-        for name in sorted(os.listdir(std_dir)):
-            expand(os.path.join(std_dir, name))
+    # The libraries first: the std shims carry size_t, which the headers below
+    # use, and they have no extension, so the game-header filter would not pick
+    # them up.
+    for subdir in LIB_SUBDIRS:
+        lib_dir = os.path.join(headers_dir, subdir)
+        if not os.path.isdir(lib_dir):
+            continue
+        for name in sorted(os.listdir(lib_dir)):
+            expand(os.path.join(lib_dir, name))
 
     for name in sorted(os.listdir(headers_dir)):
         if name.endswith((".hpp", ".h")):

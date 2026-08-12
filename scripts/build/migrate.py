@@ -27,6 +27,9 @@ import re
 import subprocess
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import literals
+
 GLABEL_RE = re.compile(r'^glabel\s+(\S+)\s*$')
 # The address comment spimdisasm puts on each line. Sections with file
 # backing carry `/* fileoffset vaddr [word] */`; .bss and .sbss occupy no
@@ -498,6 +501,23 @@ def expand_marker(section, indent, generated_dir, objdir, objdump, cache,
     return lines
 
 
+LITERAL_MARKER = re.compile(r'^\s*// @LITERALS\s*$', re.M)
+
+
+def expand_literals(text, objdir):
+    """Replace the @LITERALS marker with one assignment per pool entry.
+
+    Which entries those are comes from the objects: scripts/build/literals.py
+    points each float constant a compiled unit loads at a symbol named for the
+    retail pool address it has to resolve to, and this defines them, in pool
+    order. Nothing in the sources names an address.
+    """
+    addresses = literals.named_addresses(objdir)
+    body = '\n'.join(f'\t\t{literals.literal_symbol(address)} = {address:#010x};'
+                     for address in addresses)
+    return LITERAL_MARKER.sub(body if body else '', text), len(addresses)
+
+
 def lcf_main(argv):
     ap = argparse.ArgumentParser(prog='migrate.py --lcf')
     ap.add_argument('template')
@@ -531,8 +551,11 @@ def lcf_main(argv):
                 continue
             out_lines.append(line)
 
+    text, count = expand_literals(''.join(out_lines), a.objdir)
     with open(a.out, 'w') as f:
-        f.writelines(out_lines)
+        f.write(text)
+    if count:
+        print(f'migrate: {count} literal pool entry/entries used by the objects')
     return 0
 
 if __name__ == '__main__':

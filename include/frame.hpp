@@ -15,13 +15,10 @@ struct sceVif1Packet;
 
 class CFrame {
 public:
-    /**
-     * @mangled Initialize__6CFrameFv
-     * @address 0x127D70
-     * @size 0x110
-     * @unknownret
-     */
-    void Initialize(void);
+    u8 unk_000[544];
+    float unk_220[4];
+    u8 unk_230[32];
+
 
     /**
      * @mangled SetPosition__6CFrameFfff
@@ -221,7 +218,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void DrawVu1(unsigned int *, RenderInfo *);
+    virtual void DrawVu1(unsigned int *, RenderInfo *);
 
     /**
      * @mangled DrawVu1__6CFrameFP13sceVif1PacketP10RenderInfo
@@ -229,7 +226,15 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void DrawVu1(sceVif1Packet *, RenderInfo *);
+    virtual void DrawVu1(sceVif1Packet *, RenderInfo *);
+
+    /**
+     * @mangled Initialize__6CFrameFv
+     * @address 0x127D70
+     * @size 0x110
+     * @unknownret
+     */
+    virtual void Initialize(void);
 
     /**
      * @mangled __ct__6CFrameFv
@@ -244,5 +249,5 @@ public:
      * @size 0x280
      * @unknownret
      */
-    void PickUpNearPoly(CCPoly *, const CBoxVu0 &);
+    int PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box);
 };

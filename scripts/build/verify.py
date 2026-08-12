@@ -1,8 +1,116 @@
 #!/usr/bin/env python3
 import argparse
 import hashlib
+import os
+import re
+import struct
 import sys
 from pathlib import Path
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))), 'diff'))
+
+# ---------------------------------------------------------------- match kinds
+#
+# What counts as a fuzzy match, and which functions claim to be one.
+#
+# A fuzzy match is a function whose compiled code has retail's instructions in
+# retail's order, and differs only in which registers the compiler picked. It
+# occupies the same bytes, so nothing after it moves; the rest of the image, and
+# all of the data, still comes out byte-identical.
+#
+# `FUZZY_MATCH("<image>", <symbol>)` in a source declares one. The declaration
+# is checked, not trusted: same length, same opcodes, same immediates and branch
+# offsets, register fields free to differ. Anything looser is not a fuzzy match.
+
+SECTIONS = ('main', 'title', 'dun')
+
+DECLARATION = re.compile(r'^\s*FUZZY_MATCH\s*\(\s*"([^"]*)"\s*,\s*([^)\s]+)\s*\)', re.M)
+ASM_MARKER = re.compile(r'^\s*INCLUDE_ASM\s*\(\s*"([^"]*)"\s*,\s*([^)\s]+)\s*\)', re.M)
+
+# ASM is not a quality of the bytes -- a function an INCLUDE_ASM marker supplies
+# is retail's own -- but of the source: nothing about it is decompiled, so it is
+# worth counting apart from a function whose C++ reproduces retail exactly.
+PERFECT, FUZZY, ASM, UNMATCHED = 'perfect', 'fuzzy', 'asm', 'unmatched'
+
+# Where the register fields sit, by instruction class. Everything outside them
+# -- opcode, function code, shift amount, immediate, branch offset -- has to
+# match, which is what makes this "same instructions, same control flow".
+SPECIAL, MMI, COP0, COP1, COP2 = 0x00, 0x1C, 0x10, 0x11, 0x12
+JUMP = (0x02, 0x03)
+
+_RS_RT_RD = ~((31 << 21) | (31 << 16) | (31 << 11)) & 0xFFFFFFFF
+_RS_RT = ~((31 << 21) | (31 << 16)) & 0xFFFFFFFF
+# Coprocessor formats keep the fmt field in rs; ft/fs/fd are the operands.
+_FT_FS_FD = ~((31 << 16) | (31 << 11) | (31 << 6)) & 0xFFFFFFFF
+
+
+def _mask(word):
+    """The bits of an instruction that a register choice cannot change."""
+    op = word >> 26
+    if op in JUMP:
+        return 0xFFFFFFFF          # no registers: any difference is real
+    if op in (SPECIAL, MMI):
+        return _RS_RT_RD
+    if op in (COP1, COP2):
+        return _FT_FS_FD
+    if op == COP0:
+        return _RS_RT_RD
+    return _RS_RT
+
+
+def same_but_for_registers(a, b):
+    """True if two instruction words differ only in their register fields."""
+    if a == b:
+        return True
+    if (a >> 26) != (b >> 26):
+        return False
+    m = _mask(a)
+    return (a & m) == (b & m)
+
+
+def classify(retail, built):
+    """PERFECT, FUZZY or UNMATCHED for one function's bytes.
+
+    Anything not a whole number of instructions, or of a different length, is
+    UNMATCHED: a fuzzy match is a register choice, not a different function.
+    """
+    if retail == built:
+        return PERFECT
+    if len(retail) != len(built) or len(retail) % 4:
+        return UNMATCHED
+    n = len(retail) // 4
+    for a, b in zip(struct.unpack(f'<{n}I', retail), struct.unpack(f'<{n}I', built)):
+        if not same_but_for_registers(a, b):
+            return UNMATCHED
+    return FUZZY
+
+
+def _scan(pattern, src_dir):
+    out = {}
+    for root, _dirs, files in os.walk(src_dir):
+        for name in sorted(files):
+            if not name.endswith(('.c', '.cpp')):
+                continue
+            path = os.path.join(root, name)
+            text = open(path, encoding='utf-8', errors='replace').read()
+            for image, symbol in pattern.findall(text):
+                out[(image, symbol)] = path
+    return out
+
+
+def declarations(src_dir='src'):
+    """{(image, symbol): source} for every FUZZY_MATCH in the tree."""
+    return _scan(DECLARATION, src_dir)
+
+
+def markers(src_dir='src'):
+    """{(image, symbol): source} for every INCLUDE_ASM in the tree."""
+    return _scan(ASM_MARKER, src_dir)
+
+
+# ------------------------------------------------------------------ file hashes
+
 
 # Constants
 COLOR_GREEN = '\033[92m'
@@ -102,6 +210,114 @@ def validate(path, offset=0, size=-1, log=True):
             print(f'{log_prefix}: {COLOR_RED}FAILED{COLOR_END}')
         return False
 
+COLOR_YELLOW = '\033[93m'
+
+# The file each image is verified in. main is a span of the executable; the
+# overlays are whole files.
+IMAGE_FILE = {'main': 'SCUS_971.11', 'title': 'TITLE.BIN', 'dun': 'DUN.BIN'}
+
+# Worst last, so the eye lands on the failures.
+ORDER = (PERFECT, FUZZY, ASM, UNMATCHED)
+LABEL = {PERFECT: 'Perfect', FUZZY: 'Fuzzy',
+         ASM: 'Asm', UNMATCHED: 'Unmatched'}
+
+
+def categorise(section, declared, asm):
+    """Sort one image's functions into perfect, fuzzy and unmatched.
+
+    Returns (rows, data_differs). `rows` is one (entry, verdict) per function;
+    `data_differs` is the number of bytes outside any function that do not
+    match, which is always a failure -- a fuzzy match is a register choice in
+    code, and there is no such thing for data.
+    """
+    import compare_build
+    import ref_index
+
+    image = compare_build.load_image(section, compare_build.RETAIL_ELF,
+                                     compare_build.BUILD_ELF)
+    covered = bytearray(len(image.retail))
+    rows = []
+    for entry in ref_index.entries(section):
+        if not entry.is_function:
+            continue
+        start = entry.vram - image.vaddr
+        end = start + entry.size
+        if start < 0 or end > len(image.retail) or end > len(image.build):
+            continue
+        covered[start:end] = b'\x01' * entry.size
+        verdict = classify(image.retail[start:end], image.build[start:end])
+        if verdict == FUZZY and (section, entry.symbol) not in declared:
+            # Undeclared drift looks like a fuzzy match but nothing promised it
+            # would stay one, so it is not allowed to pass as one.
+            verdict = UNMATCHED
+        elif verdict == PERFECT and (section, entry.symbol) in asm:
+            # Retail's own bytes, straight from the marker. Right, but not
+            # decompiled, so it is not a perfect match in the sense that counts.
+            verdict = ASM
+        rows.append((entry, verdict))
+
+    data_differs = sum(1 for i, c in enumerate(covered)
+                       if not c and image.retail[i] != image.build[i])
+    return rows, data_differs
+
+
+def verify_functions(sections=SECTIONS):
+    """Report the share of code that is a perfect, fuzzy or unmatched match."""
+    declared = declarations()
+    asm = markers()
+    totals = {k: [0, 0] for k in ORDER}
+    bad_data = 0
+    failures = []
+
+    print('Verifying built files')
+    per_image = {}
+    for section in sections:
+        rows, data_differs = categorise(section, declared, asm)
+        bad_data += data_differs
+        counts = {k: [0, 0] for k in ORDER}
+        for entry, verdict in rows:
+            counts[verdict][0] += 1
+            counts[verdict][1] += entry.size
+            totals[verdict][0] += 1
+            totals[verdict][1] += entry.size
+            if verdict == UNMATCHED:
+                failures.append((section, entry.symbol))
+        per_image[section] = (counts, data_differs)
+
+        name = IMAGE_FILE[section]
+        if data_differs or counts[UNMATCHED][0]:
+            verdict = f'{COLOR_RED}FAILED{COLOR_END}'
+        elif counts[FUZZY][0]:
+            verdict = f'{COLOR_YELLOW}FUZZY{COLOR_END}'
+        else:
+            verdict = f'{COLOR_GREEN}OK{COLOR_END}'
+        detail = (f'{counts[PERFECT][0]} perfect, {counts[FUZZY][0]} fuzzy, '
+                  f'{counts[ASM][0]} asm, {counts[UNMATCHED][0]} unmatched')
+        if data_differs:
+            detail += f', {data_differs} data bytes differ'
+        print(f'{name}: {verdict} {COLOR_GREY}({detail}){COLOR_END}')
+
+    code = sum(v[1] for v in totals.values()) or 1
+
+    def pct(kind):
+        return 100.0 * totals[kind][1] / code
+
+    print('\nCode, by byte')
+    for kind, colour in ((PERFECT, COLOR_GREEN), (FUZZY, COLOR_YELLOW),
+                         (ASM, COLOR_GREY), (UNMATCHED, COLOR_RED)):
+        print(f'  {colour}{LABEL[kind]}{COLOR_END}{" " * (10 - len(LABEL[kind]))}'
+              f' {pct(kind):6.2f}%   {totals[kind][0]:>5} functions')
+    print('  Data       ' + (f'{COLOR_RED}{bad_data} bytes differ{COLOR_END}'
+                             if bad_data else f'{COLOR_GREEN}perfect{COLOR_END}'))
+
+    for section, symbol in failures[:10]:
+        print(f'    {COLOR_RED}unmatched{COLOR_END} {section}/{symbol}')
+    if len(failures) > 10:
+        print(f'    ... and {len(failures) - 10} more')
+
+    return not failures and not bad_data
+
+
 def ensure_ok(path):
     if not validate(path):
         sys.exit(1)
@@ -123,9 +339,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Verify decompiled files')
     parser.add_argument('-f', '--file', dest='files', nargs='+', help='Verify built files against the retail originals')
     parser.add_argument('-e', '--verify_extracted', dest='verify_extracted', action='store_true', help='Verify that the game has been extracted correctly')
+    parser.add_argument('-c', '--categorise', action='store_true',
+                        help='Report perfect/fuzzy/asm/unmatched shares per function')
     args = parser.parse_args()
 
-    if args.files:
+    if args.categorise:
+        sys.exit(0 if verify_functions() else 1)
+    elif args.files:
         verify_built(args.files)
     elif args.verify_extracted:
         verify_extracted()

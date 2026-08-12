@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import verify
 
+import sys
 import os
 import spimdisasm
 import subprocess
@@ -267,14 +268,69 @@ def configure():
 # object of that name, and a dot is not part of an identifier. Only a dot
 # before a digit is touched, which leaves the `__sinit_<file>.cpp` symbols --
 # the other thirty dotted names retail carries -- spelled as mwcc spells them.
+
+
+
+# `sub_map$439.1` and friends: MWCC numbers a function-local static by
+# appending a dot and a digit, which is not a path character either.
 LOCAL_STATIC_SUFFIX = re.compile(r'\.(?=[0-9])')
 
 
 def normalize_sym(sym):
+    """How this project spells a symbol everywhere.
+
+    A symbol has to be a file name -- ref/asm/split/<image>/<symbol>.s -- so the
+    characters a C++ mangling carries that a path cannot are folded to '_'. That
+    spelling is then the one the INCLUDE_ASM markers, the address index and the
+    link all use.
+    """
     if sym.startswith('@'):
         sym = sym.replace('@', 'LIT_')
     sym = sym.replace(',', '_').replace('<', '_').replace('>', '_')
     return LOCAL_STATIC_SUFFIX.sub('_', sym)
+
+
+def write_symbol_aliases(out, objects):
+    """Map the sanitised spelling back to the one MWCC emits, for objdiff.
+
+    The compiler does not sanitise: `CDataAlloc2<1>::CDataAlloc2()` mangles to
+    `__ct__14CDataAlloc2<1>Fv`, brackets and all. That only matters to objdiff,
+    which pairs a target with a base by symbol name and so finds nothing for
+    those; scripts/build/fixup_sections.sh feeds this to objcopy for the
+    per-function reference objects alone, and nothing that links is renamed.
+
+    The pairs come from the built objects rather than from retail, because the
+    project spells the class both ways and only the objects say which.
+    dataalloc.cpp defines the real `CDataAlloc2<1>`, so its symbols carry the
+    brackets; every other file takes a `CDataAlloc2_1_ *`, a stub class whose
+    name is already the sanitised spelling, and renaming those would break the
+    pairing that already works.
+    """
+    prefix = os.environ.get('MIPS_TOOL_PREFIX', 'mips-ps2-decompals-')
+    pairs = {}
+    for obj in objects:
+        if not os.path.exists(obj):
+            continue
+        text = subprocess.run([prefix + 'nm', '--defined-only', obj],
+                              capture_output=True, text=True).stdout
+        for line in text.splitlines():
+            name = line.split(' ', 2)[-1].strip()
+            # Only the templated names. The other thing normalize_sym folds is
+            # the dot in a function-local static, and MWCC spells those with the
+            # dot too, so those already agree.
+            if not any(c in name for c in '<>,'):
+                continue
+            sanitised = normalize_sym(name)
+            if sanitised != name:
+                pairs[sanitised] = name
+
+    os.makedirs(os.path.dirname(out) or '.', exist_ok=True)
+    with open(out, 'w') as f:
+        for sanitised, real in sorted(pairs.items()):
+            f.write(f'{sanitised} {real}\n')
+    print(f'symbol aliases: {len(pairs)} templated symbols -> {out}')
+    return 0
+
 
 def process_relocations(context):
     relocs = readelf(['-W', '--relocs', ELF_PATH])
@@ -966,6 +1022,13 @@ def append_rom(path):
         data = data.ljust(align(len(data), 128), b'\x00')
 
 if __name__ == "__main__":
+    # The alias map is the inverse of normalize_sym above, and needs none of the
+    # disassembly below -- only the objects the build already produced.
+    if len(sys.argv) > 2 and sys.argv[1] == '--symbol-aliases':
+        os.chdir(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                              os.pardir, os.pardir)))
+        sys.exit(write_symbol_aliases(sys.argv[2], sys.argv[3:]))
+
     print('Disassembling...')
 
     # verify.verify_extracted()

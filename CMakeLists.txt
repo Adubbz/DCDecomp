@@ -22,6 +22,16 @@ set(TOOLS_DIR tools)
 set(SCRIPTS_DIR scripts)
 set(ROM_DIR rom)
 set(REF_DIR ref)
+# The last thing disassemble.py writes, so it stands for "ref/ is complete".
+# Every object reads the dumps under ref/ -- a compiled one through mwccgap,
+# an assembled one directly -- so they all depend on it, or a build that has to
+# disassemble first races the step writing the very files it is reading.
+set(REF_INDEX ${REF_DIR}/asm/objects/main.index)
+if(EXISTS ${CMAKE_SOURCE_DIR}/${REF_INDEX})
+    set(REF_STAMP ${CMAKE_SOURCE_DIR}/${REF_INDEX})
+else()
+    set(REF_STAMP "")
+endif()
 
 # Every tool runs from the source root and is given source-relative paths, so
 # the objects record the same paths the Makefile build produced. BUILD_DIR is
@@ -35,10 +45,18 @@ set(MIPS_TOOL_PREFIX mips-ps2-decompals-
 
 set(MW ${TOOLS_DIR}/compilers/mw/2.3.3/)
 # MWCIncludes is mwcc's <> search list, which -i does not feed: -i only appends
-# to the "" list. Pointing it at include/std is what makes `#include <cstring>`
-# resolve to this project's declarations of the C functions retail carried.
+# to the "" list. The libraries are reached through it and the game's own
+# headers through -i, which is what keeps `#include <cstring>` and `#include
+# <libvu0.h>` apart from `#include "frame.hpp"`: include/std declares the C
+# functions retail carried, include/sce the PlayStation 2 library ones.
+#
+# The escaped separator is what the Windows tool splits the list on, and the
+# backslash is what stops CMake taking the string for a two-element list and
+# passing it as two arguments.
 set(STD_INCLUDE_DIR ${INCLUDE_DIR}/std)
-set(CC_MW ${CMAKE_COMMAND} -E env MWCIncludes=${STD_INCLUDE_DIR} wibo ${MW}mwccmips.exe)
+set(SCE_INCLUDE_DIR ${INCLUDE_DIR}/sce)
+set(LIB_INCLUDE_DIRS "${STD_INCLUDE_DIR}\;${SCE_INCLUDE_DIR}")
+set(CC_MW ${CMAKE_COMMAND} -E env MWCIncludes=${LIB_INCLUDE_DIRS} wibo ${MW}mwccmips.exe)
 set(LD_MW wibo ${MW}mwldmips.exe)
 set(AS ${MIPS_TOOL_PREFIX}as)
 set(OBJCOPY ${MIPS_TOOL_PREFIX}objcopy)
@@ -113,6 +131,14 @@ file(GLOB_RECURSE CPP_SOURCES CONFIGURE_DEPENDS
 file(GLOB EXTRA_ASM_SOURCES CONFIGURE_DEPENDS
      RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/asm/*.s)
 
+# The objects the compiled sources produce. Named here rather than where each
+# is used because two steps want them: the linker script, whose literal pool
+# symbols are read out of their symbol tables, and the provenance pass.
+set(CPP_OBJS "")
+foreach(src IN LISTS CPP_SOURCES)
+    list(APPEND CPP_OBJS ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${src}.o)
+endforeach()
+
 # Everything disassemble.py writes, declared as that step's outputs so ninja
 # orders the assemble steps after it. Nothing under ref/ may be a
 # CMAKE_CONFIGURE_DEPENDS as a result: a file that is both a configure input
@@ -184,10 +210,15 @@ if(MIGRATION_ENABLED)
         COMMAND ${CMAKE_COMMAND} -E env OBJDUMP=${OBJDUMP}
                 ${PYTHON_CMD} ${SCRIPTS_DIR}/build/migrate.py --lcf ${OVERLAY_LCF}
                 ${BUILD_DIR}/generated/main ${BUILD_DIR}/${SRC_DIR} ${GEN_LCF}
+        # The compiled objects too: migrate.py reads the literal pool entries
+        # they name out of their symbol tables and defines one symbol each, so
+        # a source that starts using another entry has to regenerate the
+        # script. scripts/build/literals.py is what puts those symbols there.
         DEPENDS ${CMAKE_SOURCE_DIR}/${OVERLAY_LCF}
                 ${CMAKE_SOURCE_DIR}/${MIGRATE_MANIFEST}
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/migrate.py
-                ${GENERATED_PLAN_FILES} ${LCF_CONTRIB_OBJS}
+                ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/literals.py
+                ${GENERATED_PLAN_FILES} ${LCF_CONTRIB_OBJS} ${CPP_OBJS}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "Generating ${GEN_LCF}"
         VERBATIM)
@@ -243,11 +274,6 @@ add_custom_target(elf DEPENDS ${CMAKE_SOURCE_DIR}/${OUTPUT} ${OVERLAY_BINS})
 # VERBOSE_PROVENANCE echoes every symbol instead of the one-line summary.
 set(PROVENANCE ${BUILD_DIR}/symbol_provenance.txt)
 
-set(CPP_OBJS "")
-foreach(src IN LISTS CPP_SOURCES)
-    list(APPEND CPP_OBJS ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${src}.o)
-endforeach()
-
 # The link order and the provenance come out of the same pass. Neither reads a
 # compiled object: the linker script says where each unit starts, so this
 # depends on it and on the sources rather than on the four hundred objects it
@@ -286,9 +312,13 @@ file(GENERATE OUTPUT ${CMAKE_BINARY_DIR}/compiler_flags.txt
 # CONFIGURE_DEPENDS for the same reason as the source globs above: a header
 # added while the objdiff GUI is running would otherwise not reach the context
 # until someone reconfigured, and that rebuild deliberately skips configuring.
+# The library directories too: m2ctx.py folds them in as well, so an edit to
+# one has to regenerate the context.
 file(GLOB CTX_HEADERS CONFIGURE_DEPENDS
      ${CMAKE_SOURCE_DIR}/${INCLUDE_DIR}/*.hpp
-     ${CMAKE_SOURCE_DIR}/${INCLUDE_DIR}/*.h)
+     ${CMAKE_SOURCE_DIR}/${INCLUDE_DIR}/*.h
+     ${CMAKE_SOURCE_DIR}/${STD_INCLUDE_DIR}/*
+     ${CMAKE_SOURCE_DIR}/${SCE_INCLUDE_DIR}/*)
 
 # One command, two outputs: ctx.cpp is the amalgamated C++ and ctx.c is what
 # clang re-emits from it, so they are always the same content either side of
@@ -325,11 +355,28 @@ if(objdiff_rc EQUAL 0 AND objdiff_extra_raw)
         list(APPEND OBJDIFF_TARGET_OBJS ${BUILD_DIR}/${src}.o)
     endforeach()
 
+    set(SYMBOL_ALIASES ${BUILD_DIR}/symbol_aliases.txt)
     make_object_dirs("${OBJDIFF_TARGET_OBJS}")
+    set(ASM_OBJECT_EXTRA_DEPENDS ${CMAKE_SOURCE_DIR}/${SYMBOL_ALIASES})
     foreach(obj IN LISTS OBJDIFF_TARGET_OBJS)
         add_object(${obj})
     endforeach()
+    unset(ASM_OBJECT_EXTRA_DEPENDS)
 endif()
+
+# objdiff pairs a target object with a base by symbol name, so the per-function
+# reference objects need the spelling MWCC emits for a templated symbol. Which
+# symbols those are is only knowable from the compiled objects, so this reads
+# them; scripts/build/fixup_sections.sh applies the result to the reference
+# objects alone, and nothing that links is renamed.
+add_custom_command(
+    OUTPUT ${CMAKE_SOURCE_DIR}/${SYMBOL_ALIASES}
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/disassemble.py
+            --symbol-aliases ${SYMBOL_ALIASES} ${ALL_OBJS}
+    DEPENDS ${ABS_OBJS} ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/disassemble.py
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Collecting templated symbol names for objdiff"
+    VERBATIM)
 
 set(OBJDIFF_CONFIG objdiff.json)
 
@@ -354,7 +401,8 @@ endforeach()
 # generating the linker script to do so -- is pure latency in the edit-save
 # loop the GUI drives.
 add_custom_target(objdiff
-    DEPENDS ${CMAKE_SOURCE_DIR}/${OBJDIFF_CONFIG} ${OBJDIFF_ABS_OBJS} ${ABS_OBJS})
+    DEPENDS ${CMAKE_SOURCE_DIR}/${OBJDIFF_CONFIG} ${OBJDIFF_ABS_OBJS} ${ABS_OBJS}
+            ${CMAKE_SOURCE_DIR}/${SYMBOL_ALIASES})
 add_dependencies(objdiff provenance)
 
 #
@@ -369,10 +417,12 @@ add_custom_target(verify_extracted
     USES_TERMINAL
     VERBATIM)
 
-# verify.py decides per file how much of it has to match: the executable over
-# its code/data span, the overlays byte for byte.
+# verify.py sorts every function into perfect, fuzzy and unmatched, and fails
+# on an unmatched one or on any difference in data. A fuzzy function is one
+# whose source declares FUZZY_MATCH: retail's instructions in retail's order,
+# differing only in the registers the compiler picked.
 add_custom_target(build ALL
-    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/verify.py -f ${VERIFY_FILES}
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/verify.py -c
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     USES_TERMINAL
     VERBATIM)
@@ -436,7 +486,6 @@ add_dependencies(run iso)
 set(STAMP_DIR ${BUILD_DIR}/stamps)
 set(ROM_VERIFIED ${STAMP_DIR}/rom.verified)
 set(EXTRACTED_ELF ${ROM_DIR}/extracted/iso/${BASENAME})
-set(REF_INDEX ${REF_DIR}/asm/objects/main.index)
 
 # Only when there is a disc to set up from. A checkout without one -- CI --
 # builds against the committed ref/, where these dumps are ordinary sources

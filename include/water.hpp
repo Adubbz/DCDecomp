@@ -2,12 +2,21 @@
 
 #include "common.h"
 
+#include "frame.hpp"
+
 struct RenderInfo;
 struct sceVif1Packet;
 class CDataAlloc2_1_; /* disassembler's filesystem-safe spelling of CDataAlloc2<1> (dataalloc.hpp) */
 
+/**
+ * Draws the water surface of one map part.
+ */
 class CWater {
 public:
+    u8 unk_000[176];
+    CFrame frame; /**< Places and draws the water surface. */
+    u8 unk_304[28];
+
     /**
      * @mangled SetParam__6CWaterFffff
      * @address 0x1607A0
@@ -87,3 +96,12 @@ public:
      */
     CWater(void);
 };
+
+STATIC_ASSERT(sizeof(CWater) == 0x320);
+
+/* Retail's name for CWater::DrawVu1 spells its last parameter with a CodeWarrior
+ * back-reference that MWCC 2.3.3 does not emit, so the member function above
+ * cannot carry it. Declared here as it stands instead, for the callers that
+ * have to reach it. */
+extern "C" void DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(CWater *water, RenderInfo *render_info,
+                                                                 sceVif1Packet *packet, void *unk);

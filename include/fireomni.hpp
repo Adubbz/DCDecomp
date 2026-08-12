@@ -9,8 +9,27 @@ class CCamera;
 class CTexture;
 
 
+/**
+ * Draws a fire that gives off light in every direction, and the raster that it
+ * casts on the floor.
+ */
 class CFireOmni {
 public:
+    s32 unk_00;
+    s32 unk_04;
+    s32 unk_08;
+    float unk_0C;
+    s32 unk_10;
+    s32 unk_14;
+    s16 unk_18;
+    s16 unk_1A;
+    s32 unk_1C;
+    float pos[4]; /**< World position that the fire draws at. */
+    s32 unk_30;
+    s32 unk_34;
+    s32 unk_38;
+    s32 unk_3C;
+
     /**
      * @mangled __ct__9CFireOmniFv
      * @address 0x161650
@@ -66,3 +85,5 @@ public:
      */
     void DrawRaster(void);
 };
+
+STATIC_ASSERT(sizeof(CFireOmni) == 0x40);

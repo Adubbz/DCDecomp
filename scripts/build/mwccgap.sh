@@ -44,9 +44,11 @@ fi
 
 : "${MW_DIR:=tools/compilers/mw/2.3.3}"
 : "${MIPS_TOOL_PREFIX:=mips-ps2-decompals-}"
-: "${STD_INCLUDE_DIR:=include/std}"
+# mwcc's <> search list: the library headers, and only those, so a library is
+# spelled `#include <libvu0.h>` while the game's own headers come through -i.
+: "${LIB_INCLUDE_DIRS:=include/std;include/sce}"
 
-MWCIncludes=$STD_INCLUDE_DIR \
+MWCIncludes=$LIB_INCLUDE_DIRS \
 PYTHONPATH=$MWCCGAP_DIR \
 python3 "$MWCCGAP_DIR/mwccgap.py" "$src" "$obj" \
     --mwcc-path "$MW_DIR/mwccmips.exe" \

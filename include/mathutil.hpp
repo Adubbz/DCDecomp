@@ -262,9 +262,8 @@ void Check_Point_Poly3_XYZ(float *, float *, float *, float *, float *);
  * @mangled DistVector__FPf
  * @address 0x123560
  * @size 0x30
- * @unknownret
  */
-void DistVector(float *);
+float DistVector(float *vector);
 
 /**
  * Returns the distance between two positions.

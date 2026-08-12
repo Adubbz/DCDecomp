@@ -8,6 +8,7 @@
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 class CCPoly;
+class CFrame;
 class CCamera;
 class CDataAlloc2_1_;
 class CTexAnimeData;
@@ -19,6 +20,14 @@ class CVector3_f_;
  */
 class CCharacter : public CObject {
 public:
+    u8 unk_0A4[24];
+    CFrame *frame;  /**< Frame that draws the character; zero if it has no model. */
+    u8 unk_0C0[2976];
+    float motion_speed; /**< Speed of the motion; -1.0 for the speed the motion gives. */
+    s32 unk_C64;
+    s32 motion_no; /**< Identifier of the motion that the character plays. */
+    u8 unk_C6C[1348];
+
     /**
      * @mangled ClearPointLight__10CCharacterFv
      * @address 0x137EA0
@@ -161,7 +170,7 @@ public:
      * @size 0x760
      * @unknownret
      */
-    void Step(void);
+    virtual void Step(void);
 
     /**
      * @mangled ShadowStep__10CCharacterFv
@@ -169,7 +178,7 @@ public:
      * @size 0x1C0
      * @unknownret
      */
-    void ShadowStep(void);
+    virtual void ShadowStep(void);
 
     /**
      * @mangled ClothStep__10CCharacterFi
@@ -177,7 +186,7 @@ public:
      * @size 0x120
      * @unknownret
      */
-    void ClothStep(int);
+    virtual void ClothStep(int);
 
     /**
      * @mangled ClothFloor__10CCharacterFi
@@ -185,7 +194,23 @@ public:
      * @size 0x40
      * @unknownret
      */
-    void ClothFloor(int);
+    virtual void ClothFloor(int);
+
+    /**
+     * @mangled StopCloth__10CCharacterFi
+     * @address 0x13B390
+     * @size 0x44
+     * @unknownret
+     */
+    virtual void StopCloth(int);
+
+    /**
+     * @mangled GetPosition__10CCharacterFPf
+     * @address 0x1390B0
+     * @size 0x2C
+     * @unknownret
+     */
+    virtual void GetPosition(float *);
 
     /**
      * @mangled SetPosition__10CCharacterFfff
@@ -193,7 +218,7 @@ public:
      * @size 0x90
      * @unknownret
      */
-    void SetPosition(float, float, float);
+    virtual void SetPosition(float, float, float);
 
     /**
      * @mangled GetWorldPosition__10CCharacterFPf
@@ -201,7 +226,15 @@ public:
      * @size 0x70
      * @unknownret
      */
-    void GetWorldPosition(float *);
+    virtual void GetWorldPosition(float *);
+
+    /**
+     * @mangled PickUpPoly__10CCharacterFPfP6CCPoly
+     * @address 0x156710
+     * @size 0x2D0
+     * @unknownret
+     */
+    virtual void PickUpPoly(float *, CCPoly *);
 
     /**
      * @mangled SetPosition__10CCharacterFPf
@@ -209,7 +242,7 @@ public:
      * @size 0x30
      * @unknownret
      */
-    void SetPosition(float *);
+    virtual void SetPosition(float *);
 
     /**
      * @mangled SetPosition__10CCharacterF11CVector3_f_
@@ -217,7 +250,7 @@ public:
      * @size 0x40
      * @unknownret
      */
-    void SetPosition(CVector3_f_);
+    virtual void SetPosition(CVector3_f_);
 
     /**
      * @mangled SetRotation__10CCharacterFfff
@@ -225,7 +258,7 @@ public:
      * @size 0x90
      * @unknownret
      */
-    void SetRotation(float, float, float);
+    virtual void SetRotation(float, float, float);
 
     /**
      * @mangled SetRotation__10CCharacterFPf
@@ -233,7 +266,7 @@ public:
      * @size 0x30
      * @unknownret
      */
-    void SetRotation(float *);
+    virtual void SetRotation(float *);
 
     /**
      * @mangled SetRotation__10CCharacterF11CVector3_f_
@@ -241,7 +274,7 @@ public:
      * @size 0x40
      * @unknownret
      */
-    void SetRotation(CVector3_f_);
+    virtual void SetRotation(CVector3_f_);
 
     /**
      * @mangled SetScale__10CCharacterFfff
@@ -249,7 +282,7 @@ public:
      * @size 0x90
      * @unknownret
      */
-    void SetScale(float, float, float);
+    virtual void SetScale(float, float, float);
 
     /**
      * @mangled SetScale__10CCharacterFPf
@@ -257,7 +290,7 @@ public:
      * @size 0x30
      * @unknownret
      */
-    void SetScale(float *);
+    virtual void SetScale(float *);
 
     /**
      * @mangled Draw__10CCharacterFv
@@ -265,7 +298,7 @@ public:
      * @size 0x3F0
      * @unknownret
      */
-    void Draw(void);
+    virtual void Draw(void);
 
     /**
      * @mangled DrawShadow__10CCharacterFv
@@ -273,7 +306,7 @@ public:
      * @size 0xF0
      * @unknownret
      */
-    void DrawShadow(void);
+    virtual void DrawShadow(void);
 
     /**
      * @mangled LoadPackData__10CCharacterFPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_
@@ -281,7 +314,7 @@ public:
      * @size 0x30
      * @unknownret
      */
-    void LoadPackData(unsigned int *, char *, CDataAlloc2_1_ *, CDataAlloc2_1_ *);
+    virtual void LoadPackData(unsigned int *, char *, CDataAlloc2_1_ *, CDataAlloc2_1_ *);
 
     /**
      * @mangled LoadPackData__10CCharacterFPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P14CDataAlloc2_1_
@@ -289,7 +322,7 @@ public:
      * @size 0x30
      * @unknownret
      */
-    void LoadPackData(unsigned int *, char *, CDataAlloc2_1_ *, CDataAlloc2_1_ *, CDataAlloc2_1_ *);
+    virtual void LoadPackData(unsigned int *, char *, CDataAlloc2_1_ *, CDataAlloc2_1_ *, CDataAlloc2_1_ *);
 
     /**
      * @mangled LoadPackData2__10CCharacterFPUiPcP14CDataAlloc2_1_iP14CDataAlloc2_1_i
@@ -297,7 +330,7 @@ public:
      * @size 0x40
      * @unknownret
      */
-    void LoadPackData2(unsigned int *, char *, CDataAlloc2_1_ *, int, CDataAlloc2_1_ *, int);
+    virtual void LoadPackData2(unsigned int *, char *, CDataAlloc2_1_ *, int, CDataAlloc2_1_ *, int);
 
     /**
      * @mangled LoadPackData3__10CCharacterFPUiPcP14CDataAlloc2_1_iP14CDataAlloc2_1_ii
@@ -305,7 +338,7 @@ public:
      * @size 0x40
      * @unknownret
      */
-    void LoadPackData3(unsigned int *, char *, CDataAlloc2_1_ *, int, CDataAlloc2_1_ *, int, int);
+    virtual void LoadPackData3(unsigned int *, char *, CDataAlloc2_1_ *, int, CDataAlloc2_1_ *, int, int);
 
     /**
      * @mangled DeleteExtendTexture__10CCharacterFi
@@ -329,16 +362,11 @@ public:
      * @size 0x2D0
      * @unknownret
      */
-    void Initialize(void);
+    virtual void Initialize(void);
 
-    /**
-     * @mangled PickUpPoly__10CCharacterFPfP6CCPoly
-     * @address 0x156710
-     * @size 0x2D0
-     * @unknownret
-     */
-    void PickUpPoly(float *, CCPoly *);
 };
+
+STATIC_ASSERT(sizeof(CCharacter) == 0x11B0);
 
 class CMainChara {
 public:
