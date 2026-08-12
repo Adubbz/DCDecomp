@@ -21,6 +21,9 @@ ALIASES                = "mangled=@par Mangled name:^^" \
                          "size=@par Size:^^" \
                          "unknownret=@par Return type:^^Not recovered."
 WARN_IF_UNDOCUMENTED   = NO
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+PREDEFINED             = __attribute__(x)=
 GENERATE_TREEVIEW      = YES
 DISABLE_INDEX          = NO
 FULL_SIDEBAR           = NO
