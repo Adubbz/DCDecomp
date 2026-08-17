@@ -7,3 +7,6 @@
 [submodule "tools/mwccgap"]
 	path = tools/mwccgap
 	url = https://github.com/Adubbz/mwccgap.git
+[submodule "tools/mwccps2-debugger"]
+	path = tools/mwccps2-debugger
+	url = https://github.com/Raikaru/mwccps2-debugger.git
