@@ -4,10 +4,7 @@
 
 #include <libvu0.h>
 
-// Forward declarations for the types these declarations name. The skeleton
-// headers are generated from the retail symbol table, which knows the type
-// names but not where they live.
-class CVector3_f_;
+#include "vector3.hpp"
 
 /**
  * Places one object in the world.
@@ -15,11 +12,20 @@ class CVector3_f_;
 class CObject {
 public:
     float mass; /**< Mass of the object. */
-    float unk_000[3];
-    float pos[4]; /**< World position of the object. */
-    u8 unk_020[128];
+    float unk_004[3];
+    float pos[4];                 /**< World position of the object. */
+    CVector3_f_ velocity;         /**< Distance that the position moves each step. */
+    CVector3_f_ acceleration;     /**< Distance that the velocity gains each step. */
+    CVector3_f_ gravity;          /**< Part of the velocity that gravity gives. */
+    CVector3_f_ moment;           /**< Moment of inertia about each axis. */
+    CVector3_f_ rotation;         /**< Angle, in radians, about each axis. */
+    CVector3_f_ rot_velocity;     /**< Angle that the rotation turns each step. */
+    CVector3_f_ rot_acceleration; /**< Angle that the rotational velocity gains each step. */
+    float scale[4];               /**< Scale of the object along each axis. */
 
     /**
+     * Steps the object. The base object does nothing.
+     *
      * @mangled Step__7CObjectFv
      * @address 0x156BA0
      * @size 0x10
@@ -45,268 +51,302 @@ public:
     void GetDir(CObject &other, float *out_direction);
 
     /**
+     * Sets the mass of the object.
+     *
      * @mangled SetMass__7CObjectFf
      * @address 0x156C80
      * @size 0x10
-     * @unknownret
      */
-    virtual void SetMass(float);
+    virtual void SetMass(float mass);
 
     /**
+     * Puts the object at a world position.
+     *
      * @mangled SetPosition__7CObjectF11CVector3_f_
      * @address 0x156C90
      * @size 0x40
-     * @unknownret
      */
-    virtual void SetPosition(CVector3_f_);
+    virtual void SetPosition(CVector3_f_ position);
 
     /**
+     * Puts the object at a world position.
+     *
      * @mangled SetPosition__7CObjectFPf
      * @address 0x157B00
      * @size 0x40
      * @unknownret
      */
-    virtual void SetPosition(float *);
+    virtual void SetPosition(float *position);
 
     /**
+     * Puts the object at a world position.
+     *
      * @mangled SetPosition__7CObjectFfff
      * @address 0x156CD0
      * @size 0x20
-     * @unknownret
      */
-    virtual void SetPosition(float, float, float);
+    virtual void SetPosition(float x, float y, float z);
 
     /**
+     * Sets the distance that the position moves each step.
+     *
      * @mangled SetVelocity__7CObjectF11CVector3_f_
      * @address 0x156CF0
      * @size 0x30
-     * @unknownret
      */
-    virtual void SetVelocity(CVector3_f_);
+    virtual void SetVelocity(CVector3_f_ velocity);
 
     /**
+     * Sets the distance that the velocity gains each step.
+     *
      * @mangled SetAcceleration__7CObjectF11CVector3_f_
      * @address 0x156D20
      * @size 0x30
-     * @unknownret
      */
-    virtual void SetAcceleration(CVector3_f_);
+    virtual void SetAcceleration(CVector3_f_ acceleration);
 
     /**
+     * Sets the part of the velocity that gravity gives.
+     *
      * @mangled SetGravity__7CObjectF11CVector3_f_
      * @address 0x156D50
      * @size 0x30
-     * @unknownret
      */
-    virtual void SetGravity(CVector3_f_);
+    virtual void SetGravity(CVector3_f_ gravity);
 
     /**
+     * Sets the moment of inertia about each axis.
+     *
      * @mangled SetMoment__7CObjectF11CVector3_f_
      * @address 0x156D80
      * @size 0x30
-     * @unknownret
      */
-    virtual void SetMoment(CVector3_f_);
+    virtual void SetMoment(CVector3_f_ moment);
 
     /**
+     * Turns the object to an angle about each axis.
+     *
      * @mangled SetRotation__7CObjectF11CVector3_f_
      * @address 0x156DB0
      * @size 0x30
-     * @unknownret
      */
-    virtual void SetRotation(CVector3_f_);
+    virtual void SetRotation(CVector3_f_ rotation);
 
     /**
+     * Turns the object to an angle about each axis.
+     *
      * @mangled SetRotation__7CObjectFfff
      * @address 0x156DE0
      * @size 0x20
-     * @unknownret
      */
-    virtual void SetRotation(float, float, float);
+    virtual void SetRotation(float x, float y, float z);
 
     /**
+     * Turns the object to an angle about each axis.
+     *
      * @mangled SetRotation__7CObjectFPf
      * @address 0x156E00
      * @size 0x20
-     * @unknownret
      */
-    virtual void SetRotation(float *);
+    virtual void SetRotation(float *rotation);
 
     /**
+     * Sets the angle that the rotation turns each step.
+     *
      * @mangled SetRotVelocity__7CObjectF11CVector3_f_
      * @address 0x156E20
      * @size 0x30
-     * @unknownret
      */
-    virtual void SetRotVelocity(CVector3_f_);
+    virtual void SetRotVelocity(CVector3_f_ rot_velocity);
 
     /**
+     * Sets the angle that the rotational velocity gains each step.
+     *
      * @mangled SetRotAcceleration__7CObjectF11CVector3_f_
      * @address 0x156E50
      * @size 0x30
-     * @unknownret
      */
-    virtual void SetRotAcceleration(CVector3_f_);
+    virtual void SetRotAcceleration(CVector3_f_ rot_acceleration);
 
     /**
+     * Gets the mass of the object.
+     *
      * @mangled GetMass__7CObjectFv
      * @address 0x156E80
      * @size 0x10
-     * @unknownret
      */
-    virtual void GetMass(void);
+    virtual float GetMass(void);
 
     /**
+     * Gets the world position of the object.
+     *
      * @mangled GetPosition__7CObjectFP11CVector3_f_
      * @address 0x156E90
      * @size 0x20
-     * @unknownret
      */
-    virtual void GetPosition(CVector3_f_ *);
+    virtual void GetPosition(CVector3_f_ *out_position);
 
     /**
+     * Gets the distance that the position moves each step.
+     *
      * @mangled GetVelocity__7CObjectFP11CVector3_f_
      * @address 0x156EB0
      * @size 0x10
-     * @unknownret
      */
-    virtual void GetVelocity(CVector3_f_ *);
+    virtual void GetVelocity(CVector3_f_ *out_velocity);
 
     /**
+     * Gets the distance that the velocity gains each step.
+     *
      * @mangled GetAcceleration__7CObjectFP11CVector3_f_
      * @address 0x156EC0
      * @size 0x10
-     * @unknownret
      */
-    virtual void GetAcceleration(CVector3_f_ *);
+    virtual void GetAcceleration(CVector3_f_ *out_acceleration);
 
     /**
+     * Gets the part of the velocity that gravity gives.
+     *
      * @mangled GetGravity__7CObjectFP11CVector3_f_
      * @address 0x156ED0
      * @size 0x10
-     * @unknownret
      */
-    virtual void GetGravity(CVector3_f_ *);
+    virtual void GetGravity(CVector3_f_ *out_gravity);
 
     /**
+     * Gets the moment of inertia about each axis.
+     *
      * @mangled GetMoment__7CObjectFP11CVector3_f_
      * @address 0x156EE0
      * @size 0x10
-     * @unknownret
      */
-    virtual void GetMoment(CVector3_f_ *);
+    virtual void GetMoment(CVector3_f_ *out_moment);
 
     /**
+     * Gets the angle of the object about each axis.
+     *
      * @mangled GetRotation__7CObjectFPf
      * @address 0x156EF0
      * @size 0x20
-     * @unknownret
      */
-    virtual void GetRotation(float *);
+    virtual void GetRotation(float *out_rotation);
 
     /**
+     * Gets the angle of the object about each axis.
+     *
      * @mangled GetRotation__7CObjectFP11CVector3_f_
      * @address 0x156F10
      * @size 0x10
-     * @unknownret
      */
-    virtual void GetRotation(CVector3_f_ *);
+    virtual void GetRotation(CVector3_f_ *out_rotation);
 
     /**
+     * Gets the angle that the rotation turns each step.
+     *
      * @mangled GetRotVelocity__7CObjectFP11CVector3_f_
      * @address 0x156F20
      * @size 0x10
-     * @unknownret
      */
-    virtual void GetRotVelocity(CVector3_f_ *);
+    virtual void GetRotVelocity(CVector3_f_ *out_rot_velocity);
 
     /**
+     * Gets the angle that the rotational velocity gains each step.
+     *
      * @mangled GetRotAcceleration__7CObjectFP11CVector3_f_
      * @address 0x156F30
      * @size 0x10
-     * @unknownret
      */
-    virtual void GetRotAcceleration(CVector3_f_ *);
+    virtual void GetRotAcceleration(CVector3_f_ *out_rot_acceleration);
 
     /**
+     * Gets the distance that the position moves each step.
+     *
      * @mangled GetVelocity__7CObjectFv
      * @address 0x156F40
      * @size 0x10
-     * @unknownret
      */
-    virtual void GetVelocity(void);
+    virtual CVector3_f_ *GetVelocity(void);
 
     /**
+     * Gets the distance that the velocity gains each step.
+     *
      * @mangled GetAcceleration__7CObjectFv
      * @address 0x156F50
      * @size 0x10
-     * @unknownret
      */
-    virtual void GetAcceleration(void);
+    virtual CVector3_f_ *GetAcceleration(void);
 
     /**
+     * Gets the part of the velocity that gravity gives.
+     *
      * @mangled GetGravity__7CObjectFv
      * @address 0x156F60
      * @size 0x10
-     * @unknownret
      */
-    virtual void GetGravity(void);
+    virtual CVector3_f_ *GetGravity(void);
 
     /**
+     * Gets the moment of inertia about each axis.
+     *
      * @mangled GetMoment__7CObjectFv
      * @address 0x156F70
      * @size 0x10
-     * @unknownret
      */
-    virtual void GetMoment(void);
+    virtual CVector3_f_ *GetMoment(void);
 
     /**
+     * Gets the angle of the object about each axis.
+     *
      * @mangled GetRotation__7CObjectFv
      * @address 0x156F80
      * @size 0x10
-     * @unknownret
      */
-    virtual void GetRotation(void);
+    virtual CVector3_f_ *GetRotation(void);
 
     /**
+     * Gets the angle that the rotation turns each step.
+     *
      * @mangled GetRotVelocity__7CObjectFv
      * @address 0x156F90
      * @size 0x10
-     * @unknownret
      */
-    virtual void GetRotVelocity(void);
+    virtual CVector3_f_ *GetRotVelocity(void);
 
     /**
+     * Gets the angle that the rotational velocity gains each step.
+     *
      * @mangled GetRotAcceleration__7CObjectFv
      * @address 0x156FA0
      * @size 0x10
-     * @unknownret
      */
-    virtual void GetRotAcceleration(void);
+    virtual CVector3_f_ *GetRotAcceleration(void);
 
     /**
+     * Sets the scale of the object along each axis.
+     *
      * @mangled SetScale__7CObjectFfff
      * @address 0x156FB0
      * @size 0x20
-     * @unknownret
      */
-    virtual void SetScale(float, float, float);
+    virtual void SetScale(float x, float y, float z);
 
     /**
+     * Sets the scale of the object along each axis.
+     *
      * @mangled SetScale__7CObjectFPf
      * @address 0x156FD0
      * @size 0x20
-     * @unknownret
      */
-    virtual void SetScale(float *);
+    virtual void SetScale(float *scale);
 
     /**
+     * Gets the scale of the object along each axis.
+     *
      * @mangled GetScale__7CObjectFPf
      * @address 0x156FF0
      * @size 0x20
-     * @unknownret
      */
-    virtual void GetScale(float *);
+    virtual void GetScale(float *out_scale);
 
     /**
      * Makes an object with no data.
@@ -317,43 +357,23 @@ public:
     CObject();
 
     /**
+     * Makes an object of a mass, and puts it at rest at the world origin.
+     *
      * @mangled __ct__7CObjectFf
      * @address 0x157010
      * @size 0x40
      */
-    CObject(float);
+    CObject(float mass);
 
     /**
+     * Sets the mass of the object, puts it at the world origin at rest, and
+     * gives it a moment and a scale of one.
+     *
      * @mangled Initialize__7CObjectFf
      * @address 0x157050
      * @size 0x70
-     * @unknownret
      */
-    void Initialize(float);
+    void Initialize(float mass);
 };
 
-/**
- * Carries the attributes that one frame draws with.
- */
-class CFrameAttr {
-public:
-    u8 unk_00[12];
-    u8 unk_0C;
-    u8 unk_0D[83];
-
-    /**
-     * @mangled Initialize__10CFrameAttrFv
-     * @address 0x127CC0
-     * @size 0x80
-     * @unknownret
-     */
-    void Initialize(void);
-
-    /**
-     * @mangled __ct__10CFrameAttrFv
-     * @address 0x127D40
-     * @size 0x30
-     */
-    CFrameAttr(void);
-};
-STATIC_ASSERT(sizeof(CFrameAttr) == 0x60);
+STATIC_ASSERT(sizeof(CObject) == 0xB0);

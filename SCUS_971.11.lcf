@@ -245,7 +245,8 @@ SECTIONS
         nowload.cpp.o               (.text)   // 0x00153f40
         actionseq.cpp.o             (.text)   // 0x00154b30
         npcharacter.cpp.o           (.text)   // 0x00155fb0
-        object.cpp.o                (.text)   // 0x00156b60
+        fakepointlight.cpp.o        (.text)   // 0x00156b60
+        object.cpp.o                (.text)   // 0x00156ba0
         objectframe.cpp.o           (.text)   // 0x001570c0
         mapobject.cpp.o             (.text)   // 0x001574f0
         savedata.cpp.o              (.text)   // 0x001579e0

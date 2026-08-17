@@ -20,7 +20,7 @@ class CVector3_f_;
  */
 class CCharacter : public CObject {
 public:
-    u8 unk_0A4[24];
+    u8 unk_0B0[12];
     CFrame *frame;  /**< Frame that draws the character; zero if it has no model. */
     u8 unk_0C0[2976];
     float motion_speed; /**< Speed of the motion; -1.0 for the speed the motion gives. */

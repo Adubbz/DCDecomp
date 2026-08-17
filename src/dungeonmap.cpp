@@ -12,6 +12,7 @@
 #include "dataset.hpp"
 #include "dungeonparts.hpp"
 #include "frame.hpp"
+#include "frameattr.hpp"
 #include "framevu1.hpp"
 #include "mathutil.hpp"
 #include "mglib.hpp"
