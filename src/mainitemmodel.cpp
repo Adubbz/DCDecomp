@@ -1,13 +1,13 @@
 #include "mainitemmodel.hpp"
 
-INCLUDE_ASM("main", GetFreeCashNo__14CMainItemModelFv);
-INCLUDE_ASM("main", GetFreeModelNo__14CMainItemModelFv);
-INCLUDE_ASM("main", SetCashModel__14CMainItemModelFiPUiPUii);
-INCLUDE_ASM("main", DeleteModel__14CMainItemModelFi);
-INCLUDE_ASM("main", SetHandModel__14CMainItemModelFi);
-INCLUDE_ASM("main", AllReleasItem__14CMainItemModelFv);
-INCLUDE_ASM("main", SetThrowModel__14CMainItemModelFiPfPf);
-INCLUDE_ASM("main", Draw__14CMainItemModelFv);
-INCLUDE_ASM("main", Step__14CMainItemModelFv);
-INCLUDE_ASM("main", Initialize__14CMainItemModelFv);
-INCLUDE_ASM("main", CheckStatusType__15CActiveItemPackFv);
+INCLUDE_ASM("asm/nonmatchings/mainitemmodel", GetFreeCashNo__14CMainItemModelFv);
+INCLUDE_ASM("asm/nonmatchings/mainitemmodel", GetFreeModelNo__14CMainItemModelFv);
+INCLUDE_ASM("asm/nonmatchings/mainitemmodel", SetCashModel__14CMainItemModelFiPUiPUii);
+INCLUDE_ASM("asm/nonmatchings/mainitemmodel", DeleteModel__14CMainItemModelFi);
+INCLUDE_ASM("asm/nonmatchings/mainitemmodel", SetHandModel__14CMainItemModelFi);
+INCLUDE_ASM("asm/nonmatchings/mainitemmodel", AllReleasItem__14CMainItemModelFv);
+INCLUDE_ASM("asm/nonmatchings/mainitemmodel", SetThrowModel__14CMainItemModelFiPfPf);
+INCLUDE_ASM("asm/nonmatchings/mainitemmodel", Draw__14CMainItemModelFv);
+INCLUDE_ASM("asm/nonmatchings/mainitemmodel", Step__14CMainItemModelFv);
+INCLUDE_ASM("asm/nonmatchings/mainitemmodel", Initialize__14CMainItemModelFv);
+INCLUDE_ASM("asm/nonmatchings/mainitemmodel", CheckStatusType__15CActiveItemPackFv);

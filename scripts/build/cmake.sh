@@ -49,20 +49,20 @@ configure() {
 
 configure
 
-had_ref=1
-[ -d ref ] || had_ref=0
+had_asm=1
+[ -d asm/nonmatchings ] || had_asm=0
 
 if [ -f "rom/Dark Cloud (USA).iso" ]; then
     cmake --build "$BUILD_DIR" --target setup
-elif [ "$had_ref" = 0 ]; then
-    echo "cmake.sh: no rom/Dark Cloud (USA).iso and no ref/ to fall back on." >&2
+elif [ "$had_asm" = 0 ]; then
+    echo "cmake.sh: no rom/Dark Cloud (USA).iso and no asm/ to fall back on." >&2
     echo "          Place the NTSC 1.02 disc image in rom/ and try again." >&2
     exit 1
 else
-    echo "cmake.sh: no disc image; building against the committed ref/." >&2
+    echo "cmake.sh: no disc image; building against the committed asm/." >&2
 fi
 
-if [ "$had_ref" = 0 ]; then
+if [ "$had_asm" = 0 ]; then
     cmake -G Ninja -S . -B "$BUILD_DIR"
 fi
 

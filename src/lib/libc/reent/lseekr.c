@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", _lseek_r);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/reent/lseekr", _lseek_r);

@@ -2,15 +2,15 @@
 
 char EditPartsInfo[0x1628];
 
-INCLUDE_ASM("main", GetPartsInfo__14CEditPartsInfoFi);
-INCLUDE_ASM("main", CheckComplete__14CEditPartsInfoFi);
-INCLUDE_ASM("main", SetCompEvent__14CEditPartsInfoFii);
-INCLUDE_ASM("main", GetCompEvent__14CEditPartsInfoFi);
-INCLUDE_ASM("main", GetRequest__14CEditPartsInfoFi);
-INCLUDE_ASM("main", GetNextPartsNum__14CEditPartsInfoFi);
-INCLUDE_ASM("main", GetNextParts__14CEditPartsInfoFi);
-INCLUDE_ASM("main", Clear__14CEditPartsInfoFv);
-INCLUDE_ASM("main", Save__14CEditPartsInfoFiP9CSaveData);
-INCLUDE_ASM("main", Load__14CEditPartsInfoFiP9CSaveDatai);
-INCLUDE_ASM("main", Initialize__14CEditPartsInfoFi);
-INCLUDE_ASM("main", Initialize__14CEditPartsInfoFiP18EPARTS_INFO_HEADER);
+INCLUDE_ASM("asm/nonmatchings/editpartsinfo", GetPartsInfo__14CEditPartsInfoFi);
+INCLUDE_ASM("asm/nonmatchings/editpartsinfo", CheckComplete__14CEditPartsInfoFi);
+INCLUDE_ASM("asm/nonmatchings/editpartsinfo", SetCompEvent__14CEditPartsInfoFii);
+INCLUDE_ASM("asm/nonmatchings/editpartsinfo", GetCompEvent__14CEditPartsInfoFi);
+INCLUDE_ASM("asm/nonmatchings/editpartsinfo", GetRequest__14CEditPartsInfoFi);
+INCLUDE_ASM("asm/nonmatchings/editpartsinfo", GetNextPartsNum__14CEditPartsInfoFi);
+INCLUDE_ASM("asm/nonmatchings/editpartsinfo", GetNextParts__14CEditPartsInfoFi);
+INCLUDE_ASM("asm/nonmatchings/editpartsinfo", Clear__14CEditPartsInfoFv);
+INCLUDE_ASM("asm/nonmatchings/editpartsinfo", Save__14CEditPartsInfoFiP9CSaveData);
+INCLUDE_ASM("asm/nonmatchings/editpartsinfo", Load__14CEditPartsInfoFiP9CSaveDatai);
+INCLUDE_ASM("asm/nonmatchings/editpartsinfo", Initialize__14CEditPartsInfoFi);
+INCLUDE_ASM("asm/nonmatchings/editpartsinfo", Initialize__14CEditPartsInfoFiP18EPARTS_INFO_HEADER);

@@ -21,17 +21,28 @@ set(INCLUDE_DIR include)
 set(TOOLS_DIR tools)
 set(SCRIPTS_DIR scripts)
 set(ROM_DIR rom)
-set(REF_DIR ref)
-# The last thing disassemble.py writes, so it stands for "ref/ is complete".
-# Every object reads the dumps under ref/ -- a compiled one through mwccgap,
-# an assembled one directly -- so they all depend on it, or a build that has to
-# disassemble first races the step writing the very files it is reading.
-set(REF_INDEX ${REF_DIR}/asm/objects/main.index)
+# Where splat writes: one file per translation unit, the per-function
+# reference assembly each marker names, and the whole-section dumps.
+set(ASM_DIR asm)
+set(ASM_DATA_DIR ${ASM_DIR}/data)
+set(CONFIG_DIR config)
+# The symbol list splat runs against, which stands for "the configuration is
+# present". Every object reads what splat produced -- a compiled one through
+# mwccgap, an assembled one directly -- so they all depend on it, or a build
+# that has to split first races the step writing the files it is reading.
+set(REF_INDEX ${CONFIG_DIR}/main.symbols.txt)
 if(EXISTS ${CMAKE_SOURCE_DIR}/${REF_INDEX})
     set(REF_STAMP ${CMAKE_SOURCE_DIR}/${REF_INDEX})
 else()
     set(REF_STAMP "")
 endif()
+
+# What `derive_config` reads, so that editing any of it re-runs CMake.
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+    ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/disassemble.py
+    ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/main.yaml
+    ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/title.yaml
+    ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/dun.yaml)
 
 # Every tool runs from the source root and is given source-relative paths, so
 # the objects record the same paths the Makefile build produced. BUILD_DIR is
@@ -119,19 +130,46 @@ foreach(section IN LISTS SECTIONS)
     list(APPEND ASM_SOURCES ${section_srcs})
 endforeach()
 
-# CONFIGURE_DEPENDS so a newly added source is picked up without anyone having
-# to remember to reconfigure: ninja re-evaluates the glob each build and only
-# re-runs CMake when the set of files actually changed. That matters for the
-# objdiff GUI, whose rebuild deliberately skips configuring.
-# GLOB_RECURSE: the overlays have a directory each and the library translation
-# units are filed under src/lib/ by the library they came out of. Both
-# extensions: the game's own code is C++, and everything under src/lib/ -- the
-# SDK, newlib, libgcc -- is C.
-file(GLOB_RECURSE CPP_SOURCES CONFIGURE_DEPENDS
+# Only for its CONFIGURE_DEPENDS: ninja re-evaluates the glob each build and
+# re-runs CMake when the set of sources changed, so a newly added one is picked
+# up without anyone having to remember. What is built comes from the unit rows
+# below.
+file(GLOB_RECURSE ALL_CPP_SOURCES CONFIGURE_DEPENDS
      RELATIVE ${CMAKE_SOURCE_DIR}
      ${CMAKE_SOURCE_DIR}/${SRC_DIR}/*.cpp ${CMAKE_SOURCE_DIR}/${SRC_DIR}/*.c)
+
+# Which units are compiled and which are taken whole. A unit with nothing
+# decompiled in it is linked straight from the single assembly file splat
+# writes for it, and its source -- markers and nothing else -- is not compiled
+# at all. Decompile one function in such a unit and re-run the `disassemble`
+# target; it becomes a compiled unit and gets the reference files it now needs.
+derive_config(--list-units unit_rows)
+
+set(CPP_SOURCES "")
+set(UNIT_ASM_SOURCES "")
+set(WHOLE_UNIT_OBJS "")
+set(WHOLE_UNIT_REFS "")
+foreach(row IN LISTS unit_rows)
+    string(REPLACE "\t" ";" parts "${row}")
+    list(GET parts 0 kind)
+    list(GET parts 2 source)
+    list(GET parts 3 reference)
+    list(APPEND UNIT_ASM_SOURCES ${reference})
+    if(kind STREQUAL "asm")
+        # Assembled into the object the source would have produced, so the
+        # linker script's placement never has to know which it was.
+        list(APPEND WHOLE_UNIT_OBJS ${BUILD_DIR}/${source}.o)
+        list(APPEND WHOLE_UNIT_REFS ${reference})
+    else()
+        list(APPEND CPP_SOURCES ${source})
+    endif()
+endforeach()
+# Hand-written assembly, kept apart from what splat generates: the per-unit
+# files it writes land in asm/ itself, and a glob over those would link every
+# translation unit's reference assembly alongside the objects that already
+# provide it.
 file(GLOB EXTRA_ASM_SOURCES CONFIGURE_DEPENDS
-     RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/asm/*.s)
+     RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/asm/handwritten/*.s)
 
 # The objects the compiled sources produce. Named here rather than where each
 # is used because two steps want them: the linker script, whose literal pool
@@ -141,35 +179,24 @@ foreach(src IN LISTS CPP_SOURCES)
     list(APPEND CPP_OBJS ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${src}.o)
 endforeach()
 
-# Everything disassemble.py writes, declared as that step's outputs so ninja
-# orders the assemble steps after it. Nothing under ref/ may be a
-# CMAKE_CONFIGURE_DEPENDS as a result: a file that is both a configure input
-# and a build output puts CMake and ninja in a loop ("manifest still dirty
-# after 100 tries"). scripts/build/cmake.sh configures on every invocation,
-# which is what picks a regenerated ref/ up. Without this the .s look like plain
-# sources, and a re-disassembly runs concurrently with the four thousand jobs
-# reading the files it is rewriting.
+# What the split step is named by. splat writes several thousand files, and
+# declaring each as an output makes the ninja manifest enormous for no gain:
+# the tree is checked in, so an ordinary build never runs the step at all.
+# Nothing under asm/ or config/ may be a CMAKE_CONFIGURE_DEPENDS: a file that
+# is both a configure input and a build output puts CMake and ninja in a loop
+# ("manifest still dirty after 100 tries"). scripts/build/cmake.sh configures
+# on every invocation, which is what picks a regenerated tree up.
 set(REF_OUTPUTS "")
 foreach(section IN LISTS SECTIONS)
-    read_index_sources(${section} all_index_srcs "")
-    foreach(src IN LISTS all_index_srcs)
-        list(APPEND REF_OUTPUTS ${CMAKE_SOURCE_DIR}/${src})
-    endforeach()
-    list(APPEND REF_OUTPUTS ${CMAKE_SOURCE_DIR}/${REF_DIR}/asm/objects/${section}.index)
+    list(APPEND REF_OUTPUTS ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/${section}.symbols.txt)
+    list(APPEND REF_OUTPUTS ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/${section}.yaml)
 endforeach()
-list(REMOVE_DUPLICATES REF_OUTPUTS)
-
-# Where the per-function and per-constant dumps live. An INCLUDE_ASM or
-# INCLUDE_RODATA marker names a symbol, and tools/mwccgap turns that name
-# straight into a path under here -- the dumps are named for the whole of their
-# symbol, so no table or link farm sits in between.
-set(ASM_DIR ${REF_DIR}/asm/split)
 
 set(ALL_OBJS "")
 foreach(src IN LISTS ASM_SOURCES CPP_SOURCES EXTRA_ASM_SOURCES)
     list(APPEND ALL_OBJS ${BUILD_DIR}/${src}.o)
 endforeach()
-list(APPEND ALL_OBJS ${GENERATED_O_FILES})
+list(APPEND ALL_OBJS ${GENERATED_O_FILES} ${WHOLE_UNIT_OBJS})
 
 set(LINK_ORDER "")
 foreach(section IN LISTS SECTIONS)
@@ -187,8 +214,21 @@ endforeach()
 make_object_dirs("${ALL_OBJS}")
 
 foreach(obj IN LISTS ALL_OBJS)
-    add_object(${obj})
+    if(NOT obj IN_LIST WHOLE_UNIT_OBJS)
+        add_object(${obj})
+    endif()
 endforeach()
+
+# The units taken whole, each assembled from its reference rather than compiled.
+list(LENGTH WHOLE_UNIT_OBJS whole_count)
+if(whole_count GREATER 0)
+    math(EXPR whole_last "${whole_count} - 1")
+    foreach(i RANGE ${whole_last})
+        list(GET WHOLE_UNIT_OBJS ${i} obj)
+        list(GET WHOLE_UNIT_REFS ${i} ref)
+        add_unit_asm_object(${obj} ${ref})
+    endforeach()
+endif()
 
 #
 # Linker command file
@@ -286,8 +326,12 @@ add_custom_command(
             --link-order ${BUILD_DIR} --provenance ${PROVENANCE}
             --build-dir ${BUILD_DIR} --main-tail ${MAIN_TAIL}
             --carved ${CARVED_SECTIONS} --lcf ${LD_TEMPLATE}
+    # disassemble.py owns the section layout and the unit classification, so
+    # the link order changes with it: which object a unit is taken from, and
+    # where each whole-section dump lives.
     DEPENDS ${CMAKE_SOURCE_DIR}/${LD_TEMPLATE} ${CPP_SOURCES}
             ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/layout.py
+            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/disassemble.py
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Resolving the layout"
     VERBATIM)
@@ -357,12 +401,31 @@ if(objdiff_rc EQUAL 0 AND objdiff_extra_raw)
         list(APPEND OBJDIFF_TARGET_OBJS ${BUILD_DIR}/${src}.o)
     endforeach()
 
+    # The base objdiff compares each unit against: the source on its own.
+    # Only the units that have one -- a unit with nothing decompiled in it is
+    # INCLUDE_ASM markers and nothing else, and compiling that produces an
+    # empty object for objdiff to pair against nothing.
+    set(OBJDIFF_BASE_OBJS "")
+    foreach(src IN LISTS CPP_SOURCES)
+        list(APPEND OBJDIFF_BASE_OBJS ${BUILD_DIR}/diff/${src}.o)
+    endforeach()
+
     set(SYMBOL_ALIASES ${BUILD_DIR}/symbol_aliases.txt)
-    make_object_dirs("${OBJDIFF_TARGET_OBJS}")
+    make_object_dirs("${OBJDIFF_TARGET_OBJS};${OBJDIFF_BASE_OBJS}")
     set(ASM_OBJECT_EXTRA_DEPENDS ${CMAKE_SOURCE_DIR}/${SYMBOL_ALIASES})
     foreach(obj IN LISTS OBJDIFF_TARGET_OBJS)
         add_object(${obj})
     endforeach()
+
+    list(LENGTH CPP_SOURCES base_count)
+    if(base_count GREATER 0)
+        math(EXPR base_last "${base_count} - 1")
+        foreach(i RANGE ${base_last})
+            list(GET CPP_SOURCES ${i} src)
+            list(GET OBJDIFF_BASE_OBJS ${i} obj)
+            add_diff_base_object(${obj} ${src})
+        endforeach()
+    endif()
     unset(ASM_OBJECT_EXTRA_DEPENDS)
 endif()
 
@@ -389,12 +452,13 @@ add_custom_command(
             --lcf ${LD_TEMPLATE}
     DEPENDS ${CMAKE_SOURCE_DIR}/${LD_TEMPLATE} ${CPP_SOURCES}
             ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/layout.py
+            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/disassemble.py
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Generating ${OBJDIFF_CONFIG}"
     VERBATIM)
 
 set(OBJDIFF_ABS_OBJS "")
-foreach(obj IN LISTS OBJDIFF_TARGET_OBJS)
+foreach(obj IN LISTS OBJDIFF_TARGET_OBJS OBJDIFF_BASE_OBJS)
     list(APPEND OBJDIFF_ABS_OBJS ${CMAKE_SOURCE_DIR}/${obj})
 endforeach()
 
@@ -490,8 +554,14 @@ set(ROM_VERIFIED ${STAMP_DIR}/rom.verified)
 set(EXTRACTED_ELF ${ROM_DIR}/extracted/iso/${BASENAME})
 
 # Only when there is a disc to set up from. A checkout without one -- CI --
-# builds against the committed ref/, where these dumps are ordinary sources
+# builds against the committed asm/, where these dumps are ordinary sources
 # with no rule behind them.
+# Splitting the disc, defined once and used by both `setup` and `disassemble`.
+# The configuration splat runs against is checked in under config/; this only
+# runs splat and fixes up what splat cannot express.
+set(SPLIT_COMMANDS
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/disassemble.py --config ${CONFIG_DIR})
+
 if(EXISTS "${CMAKE_SOURCE_DIR}/${RETAIL_ISO}")
 
 add_custom_command(
@@ -516,15 +586,14 @@ add_custom_command(
     USES_TERMINAL
     VERBATIM)
 
-# Every dump it writes is an output, not just the index it is named by.
 add_custom_command(
     OUTPUT ${REF_OUTPUTS}
-    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/disassemble.py
+    ${SPLIT_COMMANDS}
     DEPENDS ${CMAKE_SOURCE_DIR}/${EXTRACTED_ELF}
             ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/disassemble.py
-            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/verify.py
+            ${CMAKE_SOURCE_DIR}/${LD_TEMPLATE}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    COMMENT "Disassembling the disc"
+    COMMENT "Splitting the disc with splat"
     USES_TERMINAL
     VERBATIM)
 
@@ -534,13 +603,13 @@ else()
 
 add_custom_target(setup
     COMMAND ${CMAKE_COMMAND} -E echo
-            "No disc image; building against the committed ref/."
+            "No disc image; building against the committed asm/."
     VERBATIM)
 
 endif()
 
 add_custom_target(disassemble
-    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/disassemble.py
+    ${SPLIT_COMMANDS}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     USES_TERMINAL
     VERBATIM)

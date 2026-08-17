@@ -25,8 +25,11 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(
 
 SECTIONS = ('main', 'title', 'dun')
 
-DECLARATION = re.compile(r'^\s*FUZZY_MATCH\s*\(\s*"([^"]*)"\s*,\s*([^)\s]+)\s*\)', re.M)
-ASM_MARKER = re.compile(r'^\s*INCLUDE_ASM\s*\(\s*"([^"]*)"\s*,\s*([^)\s]+)\s*\)', re.M)
+# A marker names the directory its reference assembly is in and the symbol it
+# stands for. Only the symbol is read: retail's names are unique across the
+# three images, so nothing else is needed to tell two apart.
+DECLARATION = re.compile(r'^\s*FUZZY_MATCH\s*\(\s*"[^"]*"\s*,\s*([^)\s]+)\s*\)', re.M)
+ASM_MARKER = re.compile(r'^\s*INCLUDE_ASM\s*\(\s*"[^"]*"\s*,\s*([^)\s]+)\s*\)', re.M)
 
 # ASM is not a quality of the bytes -- a function an INCLUDE_ASM marker supplies
 # is retail's own -- but of the source: nothing about it is decompiled, so it is
@@ -94,18 +97,18 @@ def _scan(pattern, src_dir):
                 continue
             path = os.path.join(root, name)
             text = open(path, encoding='utf-8', errors='replace').read()
-            for image, symbol in pattern.findall(text):
-                out[(image, symbol)] = path
+            for symbol in pattern.findall(text):
+                out[symbol] = path
     return out
 
 
 def declarations(src_dir='src'):
-    """{(image, symbol): source} for every FUZZY_MATCH in the tree."""
+    """{symbol: source} for every FUZZY_MATCH in the tree."""
     return _scan(DECLARATION, src_dir)
 
 
 def markers(src_dir='src'):
-    """{(image, symbol): source} for every INCLUDE_ASM in the tree."""
+    """{symbol: source} for every INCLUDE_ASM in the tree."""
     return _scan(ASM_MARKER, src_dir)
 
 
@@ -246,18 +249,23 @@ def categorise(section, declared, asm):
             continue
         covered[start:end] = b'\x01' * entry.size
         verdict = classify(image.retail[start:end], image.build[start:end])
-        if verdict == FUZZY and (section, entry.symbol) not in declared:
+        if verdict == FUZZY and entry.symbol not in declared:
             # Undeclared drift looks like a fuzzy match but nothing promised it
             # would stay one, so it is not allowed to pass as one.
             verdict = UNMATCHED
-        elif verdict == PERFECT and (section, entry.symbol) in asm:
+        elif verdict == PERFECT and entry.symbol in asm:
             # Retail's own bytes, straight from the marker. Right, but not
             # decompiled, so it is not a perfect match in the sense that counts.
             verdict = ASM
         rows.append((entry, verdict))
 
-    data_differs = sum(1 for i, c in enumerate(covered)
+    # A build that is not the same length as retail is a failure like any
+    # other, and has to be reported rather than crash the count: every byte
+    # past the end of the shorter of the two differs by definition.
+    shared = min(len(image.retail), len(image.build))
+    data_differs = sum(1 for i, c in enumerate(covered[:shared])
                        if not c and image.retail[i] != image.build[i])
+    data_differs += abs(len(image.retail) - len(image.build))
     return rows, data_differs
 
 

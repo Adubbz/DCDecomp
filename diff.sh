@@ -13,7 +13,7 @@
 # this is for looking at the number locally.
 #
 # Symbols are the mangled names the compiler uses, e.g. SetDay__9CSaveDataFi;
-# look one up with `grep <name> ref/asm/objects/*.index`. The work happens in
+# look one up with `grep <name> config/*.symbols.txt`. The work happens in
 # the container, where objdiff and the EE binutils live.
 #
 # objdiff compares object files, not disassembly text: the target is the
@@ -84,7 +84,7 @@ case $mode in
             exit 1
         else
             echo "$0: $symbol is in no reference index -- check the spelling with" >&2
-            echo "$0: grep $symbol ref/asm/objects/*.index" >&2
+            echo "$0: grep $symbol config/*.symbols.txt" >&2
             exit 1
         fi
 

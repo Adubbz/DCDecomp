@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", abs);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdlib/abs", abs);

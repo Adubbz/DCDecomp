@@ -1,4 +1,4 @@
 #include "common.h"
 
-INCLUDE_ASM("main", _sprintf_r);
-INCLUDE_ASM("main", sprintf);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdio/sprintf", _sprintf_r);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdio/sprintf", sprintf);

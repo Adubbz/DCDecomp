@@ -4,21 +4,28 @@
  * @file
  * Declares the markers that stand in for a function that is not decompiled yet.
  *
- * `INCLUDE_ASM("<image>", <mangled name>);` puts retail's own instructions for
- * that function into the object that this translation unit compiles to. It
+ * `INCLUDE_ASM("<directory>", <mangled name>);` puts retail's own instructions
+ * for that function into the object that this translation unit compiles to. It
  * exists because mwcc emits a translation unit's functions as one contiguous
  * .text, so a function that the file does not define cannot be supplied from
  * an outside .s without moving everything after it.
  *
- * tools/mwccgap reads the marker, finds the dump at
- * `ref/asm/split/<image>/<mangled name>.s`, and puts the assembled bytes where
- * the marker stands. The compiler itself sees nothing, which is why both
- * markers are empty here.
+ * splat writes the reference assembly, one file per function, under the
+ * translation unit it belongs to -- so `src/menu/window.cpp` names
+ * `asm/nonmatchings/menu/window`. tools/mwccgap reads the marker, finds
+ * `<directory>/<mangled name>.s`, and puts the assembled bytes where the
+ * marker stands. The compiler itself sees nothing, which is why both markers
+ * are empty here.
+ *
+ * A constant that only one function loads travels inside that function's file,
+ * so it needs no marker of its own. `INCLUDE_RODATA` is for the rest: a
+ * constant no single function claims, which splat writes to a file of its own
+ * beside the functions.
  *
  * A function that a marker supplies is not decompiled. objdiff is told so:
  * scripts/build/layout.py gives it no base, so it counts as zero.
  *
- * `FUZZY_MATCH("<image>", <mangled name>)` is the opposite: the function below
+ * `FUZZY_MATCH("<directory>", <mangled name>)` is the opposite: the function below
  * it *is* decompiled and its code is what links. It says that the compiled
  * code reproduces retail's instructions, their order and the control flow
  * between them exactly, and differs only in which registers the compiler chose.

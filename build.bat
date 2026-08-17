@@ -24,10 +24,9 @@ echo Podman or Docker not found! Please visit https://podman.io/docs/installatio
 exit /b 1
 
 :build
-rem rom\ and ref\ are mounted rather than copied in: rom\ keeps the 1.7GB ISO
-rem out of the build context, and ref\ makes the extraction and disassembly
-rem survive between runs. build\ receives the executable, the overlays and the
-rem context.
+rem rom\ is mounted rather than copied in, to keep the 1.7GB ISO out of the
+rem build context. The reference assembly is checked in, so nothing else has to
+rem survive between runs. build\ receives the executable and the overlays.
 %BUILDER% build -t dcdecomp_build --target build . || exit /b 1
-if not exist ref mkdir ref
-%BUILDER% run --rm -v .\rom:/dcdecomp/rom -v .\ref:/dcdecomp/ref -v .\build:/output dcdecomp_build
+if not exist build mkdir build
+%BUILDER% run --rm -v .\rom:/dcdecomp/rom -v .\build:/output dcdecomp_build

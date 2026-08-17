@@ -1,4 +1,4 @@
 #include "common.h"
 
-INCLUDE_ASM("main", __malloc_lock);
-INCLUDE_ASM("main", __malloc_unlock);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdlib/mlock", __malloc_lock);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdlib/mlock", __malloc_unlock);

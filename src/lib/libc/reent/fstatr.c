@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", _fstat_r);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/reent/fstatr", _fstat_r);

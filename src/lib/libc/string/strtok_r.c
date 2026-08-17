@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", strtok_r);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/string/strtok_r", strtok_r);

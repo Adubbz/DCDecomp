@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", __ieee754_rem_pio2f);
+INCLUDE_ASM("asm/nonmatchings/lib/libm/math/ef_rem_pio2", __ieee754_rem_pio2f);

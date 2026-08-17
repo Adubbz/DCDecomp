@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", __ieee754_atan2);
+INCLUDE_ASM("asm/nonmatchings/lib/libm/math/e_atan2", __ieee754_atan2);

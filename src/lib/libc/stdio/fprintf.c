@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", fprintf);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdio/fprintf", fprintf);

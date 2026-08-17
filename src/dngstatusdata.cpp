@@ -518,7 +518,7 @@ void CUserStatus::AddDrink(int chara_no, s16 amount, float ratio) {
     }
 }
 #else
-INCLUDE_ASM("main", AddDrink__11CUserStatusFisf);
+INCLUDE_ASM("asm/nonmatchings/dngstatusdata", AddDrink__11CUserStatusFisf);
 #endif /* DNG_COMPILE_UNMATCHED */
 
 #if DNG_COMPILE_UNMATCHED
@@ -566,7 +566,7 @@ void CUserStatus::AddNowLife(int chara_no, s16 amount, float ratio) {
     }
 }
 #else
-INCLUDE_ASM("main", AddNowLife__11CUserStatusFisf);
+INCLUDE_ASM("asm/nonmatchings/dngstatusdata", AddNowLife__11CUserStatusFisf);
 #endif /* DNG_COMPILE_UNMATCHED */
 
 /* Alive iff the active character has HP left -- and, while an interpolated HP
@@ -708,9 +708,9 @@ void CUserStatus::Step(int paused) {
     }
 }
 #else
-INCLUDE_ASM("main", SetNextLife__11CUserStatusFisf);
+INCLUDE_ASM("asm/nonmatchings/dngstatusdata", SetNextLife__11CUserStatusFisf);
 
-INCLUDE_ASM("main", Step__11CUserStatusFi);
+INCLUDE_ASM("asm/nonmatchings/dngstatusdata", Step__11CUserStatusFi);
 #endif /* DNG_COMPILE_UNMATCHED */
 
 /* @ 0x1BEDE0 (0x110 bytes) -- Init__11CUserStatusFv */
@@ -1077,4 +1077,3 @@ void CDngStatusData::GetAtraData(int georama_no, int floor, int atra_id) {
     }
 }
 
-INCLUDE_RODATA("main", LIT_646__2);

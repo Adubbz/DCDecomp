@@ -1,7 +1,7 @@
 #include "common.h"
 
-INCLUDE_ASM("main", topThread);
-INCLUDE_ASM("main", InitThread);
-INCLUDE_ASM("main", iWakeupThread);
-INCLUDE_ASM("main", iRotateThreadReadyQueue);
-INCLUDE_ASM("main", iSuspendThread);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/thread", topThread);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/thread", InitThread);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/thread", iWakeupThread);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/thread", iRotateThreadReadyQueue);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/thread", iSuspendThread);

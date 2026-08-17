@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", sinf);
+INCLUDE_ASM("asm/nonmatchings/lib/libm/math/sf_sin", sinf);

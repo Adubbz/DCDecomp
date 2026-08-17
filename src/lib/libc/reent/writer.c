@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", _write_r);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/reent/writer", _write_r);

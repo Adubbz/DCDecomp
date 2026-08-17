@@ -53,6 +53,22 @@ decompile.sh title Se__7CSpriteFv          # ...or name the overlay
 decompile.sh DataLoad__Fv --stack-structs  # extra flags go to m2c
 ```
 
+## Reference assembly
+
+[splat](https://github.com/ethteck/splat) splits the disc images into the
+assembly the build compares against, driven by the configuration under
+`config/`, which is checked in and is what `scripts/build/disassemble.py` splits
+against.
+Each translation unit becomes one segment, so its functions and its constants
+are written to a single file per unit.
+
+The result is checked in, so the project builds without the disc image. To
+regenerate it:
+
+```
+cmake --build build --target disassemble
+```
+
 ## Documentation
 
 Source documentation is available on [GitHub Pages](https://adubbz.github.io/DCDecomp/).

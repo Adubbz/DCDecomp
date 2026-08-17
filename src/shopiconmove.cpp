@@ -1,5 +1,5 @@
 #include "shopiconmove.hpp"
 
-INCLUDE_ASM("main", IconMoveTarSet__12ShopIconMoveFiiiP13MENU_ITEMDATAffi);
-INCLUDE_ASM("main", IconAutoMove__12ShopIconMoveFii);
-INCLUDE_ASM("main", IconAutoMoveDraw__12ShopIconMoveFv);
+INCLUDE_ASM("asm/nonmatchings/shopiconmove", IconMoveTarSet__12ShopIconMoveFiiiP13MENU_ITEMDATAffi);
+INCLUDE_ASM("asm/nonmatchings/shopiconmove", IconAutoMove__12ShopIconMoveFii);
+INCLUDE_ASM("asm/nonmatchings/shopiconmove", IconAutoMoveDraw__12ShopIconMoveFv);

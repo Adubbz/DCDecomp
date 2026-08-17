@@ -1,4 +1,12 @@
 # Assembly Macros
+#
+# Read at most once. splat writes the include twice into a file that carries
+# both code and constants -- once in the header it puts on every generated
+# file, once in the preamble a standalone constant takes -- and defining a
+# macro a second time is an error, not a warning.
+.ifndef MACRO_INC
+.set MACRO_INC, 1
+
 .macro glabel label
     .global \label
     \label:
@@ -25,3 +33,5 @@
 .macro move a, b
     or \a, \b, $0
 .endm
+
+.endif

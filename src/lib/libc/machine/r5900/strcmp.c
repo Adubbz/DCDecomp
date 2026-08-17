@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", strcmp);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/machine/r5900/strcmp", strcmp);

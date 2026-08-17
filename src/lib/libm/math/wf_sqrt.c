@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", sqrtf);
+INCLUDE_ASM("asm/nonmatchings/lib/libm/math/wf_sqrt", sqrtf);

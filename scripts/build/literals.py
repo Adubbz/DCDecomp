@@ -90,6 +90,10 @@ import os
 import re
 import struct
 import sys
+from pathlib import Path
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import disassemble  # noqa: E402
 
 # Where MWLD's LITERAL directive put the pool in retail, taken from the image:
 # the 8-byte entries run from the end of .data to the first 4-byte one, and the
@@ -99,14 +103,18 @@ import sys
 POOL = {8: (0x002A17B8, 0x002A1868), 4: (0x002A1868, 0x002A1E80)}
 
 # The dump that holds the pool, and the linker script that fixes _gp.
-POOL_DUMP = 'ref/asm/sections/main/main.rdata.s'
+POOL_DUMP = disassemble.dump_path('main.rdata')
 LCF = 'SCUS_971.11.lcf'
-INDEX_DIR = 'ref/asm/objects'
+# Where splat files a function's own assembly. A function still supplied by a
+# marker is under the first, one that is decompiled under the second; both are
+# retail's instructions either way, which is all this reads them for.
+ASM_DIRS = ('asm/nonmatchings', 'asm/matchings')
 
 # The address comment spimdisasm puts on each line of a dump: `/* fileoffset
 # vaddr bytes */`. The bytes are in the order the file stores them, so a word
 # is that field read little-endian.
-DUMP_RE = re.compile(r'^/\*\s*[0-9A-Fa-f]+\s+([0-9A-Fa-f]+)\s+([0-9A-Fa-f]{8})\s*\*/')
+DUMP_RE = re.compile(
+    r'^\s*/\*\s*[0-9A-Fa-f]+\s+([0-9A-Fa-f]+)\s+([0-9A-Fa-f]{8})\s*\*/')
 GP_RE = re.compile(r'^\s*_gp\s*=\s*(0x[0-9A-Fa-f]+)\s*;', re.M)
 
 # A translation unit's placement in the linker script, which is what says
@@ -408,23 +416,29 @@ class Retail:
 
     @property
     def functions(self):
-        """{symbol: (dump, vram, size)}, and the same sorted by address."""
+        """{symbol: (dump, vram, size)}, and the same sorted by address.
+
+        The address and the size come from retail's own symbol table, as splat
+        records it; the dump is found by name, because splat files each
+        function under the translation unit it belongs to and names the file
+        for the function.
+        """
         if self._functions is None:
+            paths = {}
+            for directory in ASM_DIRS:
+                root = Path(self._path(directory))
+                for path in root.rglob('*.s'):
+                    paths.setdefault(path.stem,
+                                     os.path.relpath(path, self.root))
+
             by_name, by_address = {}, []
-            directory = self._path(INDEX_DIR)
-            for name in sorted(os.listdir(directory)):
-                if not name.endswith('.index'):
-                    continue
-                with open(os.path.join(directory, name)) as f:
-                    for line in f:
-                        row = line.rstrip('\n').split('\t')
-                        if len(row) != 5 or row[0] != 'src':
-                            continue
-                        if '/split/' not in row[1]:
-                            continue
-                        entry = (row[1], int(row[3], 16), int(row[4], 16))
-                        by_name[row[2]] = entry
-                        by_address.append((entry[1], row[2]))
+            table = disassemble.read_symbol_table(self._path('config'))
+            for rows in table.values():
+                for name, (vram, sym_type, size) in rows.items():
+                    if sym_type != 'func' or name not in paths:
+                        continue
+                    by_name[name] = (paths[name], vram, size)
+                    by_address.append((vram, name))
             by_address.sort()
             self._functions = (by_name, by_address)
         return self._functions

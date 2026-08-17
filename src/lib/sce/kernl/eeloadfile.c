@@ -1,13 +1,13 @@
 #include "common.h"
 
-INCLUDE_ASM("main", _lf_bind);
-INCLUDE_ASM("main", _lf_version);
-INCLUDE_ASM("main", sceSifLoadFileReset);
-INCLUDE_ASM("main", sceSifLoadModuleBuffer);
-INCLUDE_ASM("main", _sceSifLoadModule);
-INCLUDE_ASM("main", sceSifLoadModule);
-INCLUDE_ASM("main", _sceSifLoadElfPart);
-INCLUDE_ASM("main", sceSifLoadElfPart);
-INCLUDE_ASM("main", sceSifLoadElf);
-INCLUDE_ASM("main", sceSifGetIopAddr);
-INCLUDE_ASM("main", sceSifSetIopAddr);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/eeloadfile", _lf_bind);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/eeloadfile", _lf_version);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/eeloadfile", sceSifLoadFileReset);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/eeloadfile", sceSifLoadModuleBuffer);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/eeloadfile", _sceSifLoadModule);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/eeloadfile", sceSifLoadModule);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/eeloadfile", _sceSifLoadElfPart);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/eeloadfile", sceSifLoadElfPart);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/eeloadfile", sceSifLoadElf);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/eeloadfile", sceSifGetIopAddr);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/eeloadfile", sceSifSetIopAddr);

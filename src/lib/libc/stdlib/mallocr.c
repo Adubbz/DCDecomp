@@ -1,4 +1,4 @@
 #include "common.h"
 
-INCLUDE_ASM("main", malloc_extend_top);
-INCLUDE_ASM("main", _malloc_r);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdlib/mallocr", malloc_extend_top);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdlib/mallocr", _malloc_r);

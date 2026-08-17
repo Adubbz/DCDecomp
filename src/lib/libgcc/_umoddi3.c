@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", __umoddi3);
+INCLUDE_ASM("asm/nonmatchings/lib/libgcc/_umoddi3", __umoddi3);

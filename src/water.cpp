@@ -2,13 +2,15 @@
 
 char WaterData[0x10];
 
-INCLUDE_ASM("main", SetParam__6CWaterFffff);
-INCLUDE_ASM("main", SetColor__6CWaterFUcUcUcUc);
-INCLUDE_ASM("main", CreateVUData__6CWaterFPUiP10RenderInfo);
-INCLUDE_ASM("main", DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1);
-INCLUDE_ASM("main", CheckClip__6CWaterFv);
-INCLUDE_ASM("main", Hamon__6CWaterFv);
-INCLUDE_ASM("main", SetVertex__6CWaterFPfPfPfPf);
-INCLUDE_ASM("main", Shake__6CWaterFiif);
-INCLUDE_ASM("main", SetSize__6CWaterFiiP14CDataAlloc2_1_);
-INCLUDE_ASM("main", __ct__6CWaterFv);
+INCLUDE_ASM("asm/nonmatchings/water", SetParam__6CWaterFffff);
+INCLUDE_ASM("asm/nonmatchings/water", SetColor__6CWaterFUcUcUcUc);
+INCLUDE_ASM("asm/nonmatchings/water", CreateVUData__6CWaterFPUiP10RenderInfo);
+INCLUDE_RODATA("asm/nonmatchings/water", LIT_345__2);
+INCLUDE_ASM("asm/nonmatchings/water", DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1);
+INCLUDE_ASM("asm/nonmatchings/water", CheckClip__6CWaterFv);
+INCLUDE_ASM("asm/nonmatchings/water", Hamon__6CWaterFv);
+INCLUDE_ASM("asm/nonmatchings/water", SetVertex__6CWaterFPfPfPfPf);
+INCLUDE_ASM("asm/nonmatchings/water", Shake__6CWaterFiif);
+INCLUDE_ASM("asm/nonmatchings/water", SetSize__6CWaterFiiP14CDataAlloc2_1_);
+INCLUDE_ASM("asm/nonmatchings/water", __ct__6CWaterFv);
+

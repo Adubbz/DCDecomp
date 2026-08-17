@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", __fixunsdfdi);
+INCLUDE_ASM("asm/nonmatchings/lib/libgcc/_fixunsdfdi", __fixunsdfdi);

@@ -1,6 +1,6 @@
 #include "common.h"
 
-INCLUDE_ASM("main", __sread);
-INCLUDE_ASM("main", __swrite);
-INCLUDE_ASM("main", __sseek);
-INCLUDE_ASM("main", __sclose);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdio/stdio", __sread);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdio/stdio", __swrite);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdio/stdio", __sseek);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdio/stdio", __sclose);

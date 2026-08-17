@@ -4,8 +4,8 @@
 # 1. Strips zero-sized .text/.data/.bss. GNU-lineage assemblers always emit
 #    those section headers even when a source file never puts anything in
 #    them, and MWLD errors on any zero-sized input section.
-# 2. Localizes the `.L…` branch labels. disassemble.py makes an address-taken
-#    label global so a reference from another function can still resolve, but
+# 2. Localizes the `.L…` branch labels. A label whose address is taken has to
+#    stay global so a reference from another function can still resolve, but
 #    that leaves each one a global text symbol -- and objdiff counts every
 #    global text symbol in an object as a function, so `main`'s reference
 #    object came out as 26 functions rather than one and scored accordingly.
@@ -13,8 +13,8 @@
 #    for a function. The linked section dumps carry no such label, so this only
 #    ever touches the per-function objects objdiff compares against.
 # 3. Renames the templated symbols back to the spelling MWCC emits, but only
-#    for the per-function objects under ref/asm/split -- the ones objdiff
-#    compares against, which nothing links. objdiff pairs a target with a base
+#    for the per-function objects under asm/nonmatchings and asm/matchings --
+#    the ones objdiff compares against, which nothing links. objdiff pairs a target with a base
 #    by symbol name, and `__ct__14CDataAlloc2_1_Fv` in the dump never matched
 #    the `__ct__14CDataAlloc2<1>Fv` the compiler produces. The linked objects
 #    keep the sanitised name, which is what the rest of the build uses.
@@ -47,7 +47,7 @@ shift
 # definition breaks the link.
 refonly=""
 case "$obj" in
-  */asm/split/*)
+  */asm/nonmatchings/*|*/asm/matchings/*)
     refonly="-w --localize-symbol=.L*"
     [ -f build/symbol_aliases.txt ] &&
         refonly="$refonly --redefine-syms=build/symbol_aliases.txt"

@@ -1,14 +1,12 @@
 #include "common.h"
 
-INCLUDE_ASM("main", func_00100000);
-INCLUDE_ASM("main", _start);
-INCLUDE_ASM("main", _exit);
-INCLUDE_ASM("main", _root);
-INCLUDE_ASM("main", _dpfeq);
-INCLUDE_ASM("main", _dpfne);
-INCLUDE_ASM("main", _dpflt);
-INCLUDE_ASM("main", _dpfle);
-INCLUDE_ASM("main", _dpfgt);
-INCLUDE_ASM("main", _dpfge);
-
-INCLUDE_RODATA("main", RO_00296780);
+INCLUDE_ASM("asm/nonmatchings/lib/crt0", func_00100000);
+INCLUDE_ASM("asm/nonmatchings/lib/crt0", _start);
+INCLUDE_ASM("asm/nonmatchings/lib/crt0", _exit);
+INCLUDE_ASM("asm/nonmatchings/lib/crt0", _root);
+INCLUDE_ASM("asm/nonmatchings/lib/crt0", _dpfeq);
+INCLUDE_ASM("asm/nonmatchings/lib/crt0", _dpfne);
+INCLUDE_ASM("asm/nonmatchings/lib/crt0", _dpflt);
+INCLUDE_ASM("asm/nonmatchings/lib/crt0", _dpfle);
+INCLUDE_ASM("asm/nonmatchings/lib/crt0", _dpfgt);
+INCLUDE_ASM("asm/nonmatchings/lib/crt0", _dpfge);

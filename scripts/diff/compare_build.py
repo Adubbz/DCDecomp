@@ -9,7 +9,7 @@
 Two independent comparisons run, because neither implies the other:
 
 CONTENT -- the bytes. Every differing byte is attributed to the symbol that
-    owns it, via the address index disassemble.py writes (ref_index.py). Since
+    owns it, via the splat configuration (ref_index.py). Since
     that index records which dump a symbol came from, a hit in text is
     disassembled and reported as an instruction at an offset into a function,
     and a hit in data as the differing bytes. This is verify.py's pass/fail
@@ -182,7 +182,7 @@ def is_compiler_local_label(name):
     whole binary, so a plain name join treats all of them as "the same
     symbol" and produces meaningless giant address deltas. Real function/
     global names (including retail's own `.L0014xxxx`-style *local static*
-    labels emitted by disassemble.py, which DO encode a unique address in
+    labels emitted by the disassembler, which DO encode a unique address in
     their own name) are unaffected by this filter."""
     if name.startswith("$L") or name.startswith(".L"):
         return True

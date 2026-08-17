@@ -2,4 +2,4 @@
 
 /* The title overlay's sound helper. */
 
-INCLUDE_ASM("title", TiPlayVolSE__Fiiif);
+INCLUDE_ASM("asm/nonmatchings/title/tisound", TiPlayVolSE__Fiiif);

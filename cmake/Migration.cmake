@@ -11,7 +11,7 @@ set(MIGRATE_SCRIPT scripts/build/migrate.py)
 function(migration_enabled out_var)
     if(EXISTS ${CMAKE_SOURCE_DIR}/${MIGRATE_MANIFEST}
        AND EXISTS ${CMAKE_SOURCE_DIR}/${MIGRATE_SCRIPT}
-       AND IS_DIRECTORY ${CMAKE_SOURCE_DIR}/${REF_DIR}/asm/sections)
+       AND IS_DIRECTORY ${CMAKE_SOURCE_DIR}/${ASM_DATA_DIR})
         set(${out_var} TRUE PARENT_SCOPE)
     else()
         set(${out_var} FALSE PARENT_SCOPE)
@@ -57,14 +57,14 @@ function(add_migrated_sections out_s_files out_plans)
     # A ref/ that exists but has no sections/ is the case actually worth a
     # warning -- setup ran and did not produce them.
     if(NOT enabled AND EXISTS ${CMAKE_SOURCE_DIR}/${MIGRATE_MANIFEST})
-        if(EXISTS ${CMAKE_SOURCE_DIR}/${REF_DIR})
+        if(EXISTS ${CMAKE_SOURCE_DIR}/${ASM_DIR})
             message(WARNING
-                "No reference dumps under ${REF_DIR}/asm/sections, though "
-                "${REF_DIR} exists. Data migration is off for this build; "
+                "No reference dumps under ${ASM_DATA_DIR}, though "
+                "${ASM_DIR} exists. Data migration is off for this build; "
                 "re-run the setup target.")
         else()
             message(STATUS
-                "No ${REF_DIR} yet: configuring with data migration off. "
+                "No ${ASM_DIR} yet: configuring with data migration off. "
                 "The setup target and the reconfigure after it enable it.")
         endif()
     endif()
@@ -76,7 +76,8 @@ function(add_migrated_sections out_s_files out_plans)
         migrate_query(sections --list-sections ${MIGRATE_MANIFEST})
         foreach(sec IN LISTS sections)
             string(REGEX MATCH "^[^.]+" file ${sec})
-            set(ref ${REF_DIR}/asm/sections/${file}/${sec}.s)
+            string(REGEX REPLACE "^[^.]+\\." "" sec_only ${sec})
+            set(ref ${ASM_DATA_DIR}/${file}/${sec_only}.${sec_only}.s)
             set(outdir ${BUILD_DIR}/generated/${file})
 
             if(NOT EXISTS ${CMAKE_SOURCE_DIR}/${ref})

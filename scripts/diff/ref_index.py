@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Look up a retail symbol in the reference index.
 
-disassemble.py writes ``ref/asm/objects/<section>.index``: one tab-separated
-row per source the build can link, carrying the retail address and size of
-what that source contains. That makes it the project's symbol table for the
-retail side. It is preferred over the link map for two reasons: it covers
-every function, including the ones already superseded by a compiled ``.cpp``,
-and it names them the way the compiler does (mangled) rather than the way mwld
-prints them (demangled, with spaces in the signature).
+The splat configuration under ``config/`` carries retail's own symbol table,
+and splat files each function's assembly under the translation unit it belongs
+to. Together those say where every symbol lives and which file holds it, which
+makes them the project's symbol table for the retail side. They are preferred
+over the link map for two reasons: they cover every function, including the
+ones already superseded by a compiled ``.cpp``, and they name them the way the
+compiler does (mangled) rather than the way mwld prints them (demangled, with
+spaces in the signature).
 
     python3 scripts/diff/ref_index.py <symbol> [section]
 
@@ -22,7 +23,14 @@ import re
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-INDEX_DIR = os.path.join(REPO, 'ref', 'asm', 'objects')
+CONFIG_DIR = os.path.join(REPO, 'config')
+
+sys.path.insert(0, os.path.join(REPO, 'scripts', 'build'))
+import disassemble  # noqa: E402
+
+# Where splat files a function's own assembly: still supplied by a marker
+# under the first, decompiled under the second.
+ASM_DIRS = ('asm/nonmatchings', 'asm/matchings')
 
 # The main executable first: it is what most lookups are for, and the overlays
 # reuse its address space, so a plain search order would otherwise be ambiguous.
@@ -51,11 +59,12 @@ class Entry:
     def is_function(self):
         """Whether this row is one function or a whole data section.
 
-        disassemble.py splits text a function at a time into ref/asm/split/,
-        and dumps every other section whole into ref/asm/sections/ -- so the
-        path says which of the two a row is, and nothing else has to guess.
+        splat files text a function at a time under asm/nonmatchings and
+        asm/matchings, and dumps every other section whole under asm/data --
+        so the path says which of the two a row is, and nothing else has to
+        guess.
         """
-        return '/split/' in self.source
+        return any(d in self.source for d in ('/nonmatchings/', '/matchings/'))
 
     @property
     def end(self):
@@ -94,16 +103,26 @@ def overlay_origin():
     return int(match.group(1), 16)
 
 
-def index_path(section):
-    return os.path.join(INDEX_DIR, '%s.index' % section)
-
-
 _CACHE = {}
 _STARTS = {}   # section -> the cached rows' start addresses, for bisect
 
 
+def _asm_paths():
+    """{symbol: path} for every per-function file splat wrote."""
+    paths = {}
+    for directory in ASM_DIRS:
+        root = os.path.join(REPO, directory)
+        for base, _dirs, files in os.walk(root):
+            for name in files:
+                if name.endswith('.s'):
+                    full = os.path.join(base, name)
+                    paths.setdefault(name[:-2],
+                                     os.path.relpath(full, REPO))
+    return paths
+
+
 def entries(section):
-    """Every row of one section's index, in address order.
+    """Every symbol of one image that the build can take, in address order.
 
     Cached: the callers that walk a whole binary ask for this per address, and
     main alone is four thousand rows.
@@ -111,24 +130,29 @@ def entries(section):
     if section in _CACHE:
         return _CACHE[section]
 
-    path = index_path(section)
-    if not os.path.exists(path):
+    if not os.path.isdir(CONFIG_DIR):
         raise SystemExit(
-            'ref_index: %s is missing; run `cmake --build build --target setup` '
-            'to disassemble the retail binary first.' % os.path.relpath(path, REPO))
+            'ref_index: config/ is missing; run `cmake --build build --target '
+            'setup` to split the retail binary first.')
+
+    paths = _asm_paths()
+    table = disassemble.read_symbol_table(CONFIG_DIR)
+
+    # main's list carries the overlays' symbols too, so that its code can name
+    # what it calls into. Those belong to the overlay, not to main.
+    lo, hi = disassemble.image_range(section)
 
     out = []
-    with open(path, encoding='utf-8') as f:
-        for line in f:
-            if line.startswith('#'):
-                continue
-            fields = line.rstrip('\n').split('\t')
-            # `sym` rows are the symbol -> address map folded into the same
-            # file; only `src` rows name something the link can take.
-            if len(fields) != 5 or fields[0] != 'src':
-                continue
-            _kind, source, symbol, vram, size = fields
-            out.append(Entry(section, source, symbol, int(vram, 16), int(size, 16)))
+    for name, (vram, sym_type, size) in table.get(section, {}).items():
+        path = paths.get(name)
+        if path is None or sym_type != 'func' or not lo <= vram < hi:
+            continue
+        out.append(Entry(section, path, name, vram, size))
+
+    for image, dump, start, end in disassemble.dump_spans():
+        if image == section:
+            out.append(Entry(section, disassemble.dump_path(dump), dump,
+                             start, end - start))
 
     out.sort(key=lambda entry: entry.vram)
     _CACHE[section] = out

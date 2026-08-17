@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", __sfvwrite);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdio/fvwrite", __sfvwrite);

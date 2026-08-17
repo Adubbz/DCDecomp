@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", __moddi3);
+INCLUDE_ASM("asm/nonmatchings/lib/libgcc/_moddi3", __moddi3);

@@ -171,8 +171,8 @@ s32 chainTableDividDoor[2][3] = {
     {6, MAP_PARTS_DIVIDE_DOOR_EAST, 0},
 };
 
-INCLUDE_RODATA("main", LIT_1007__2);
 
+#if DNG_COMPILE_UNMATCHED
 void CDungeonMap::SetNPC(int npc_no, unsigned int *pack, int parts_no, sceVu0FVECTOR pos, sceVu0FVECTOR rot,
                          int visible, int motion_no, CDataAlloc2_1_ *alloc) {
     int i;
@@ -209,6 +209,9 @@ void CDungeonMap::SetNPC(int npc_no, unsigned int *pack, int parts_no, sceVu0FVE
     this->npc[npc_no].chara.unk_C64 = 0;
     this->npc[npc_no].chara.motion_speed = -1.0f;
 }
+#endif /* DNG_COMPILE_UNMATCHED */
+INCLUDE_ASM("asm/nonmatchings/dungeonmap", SetNPC__11CDungeonMapFiPUiiPfPfiiP14CDataAlloc2_1_);
+INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_1008);
 
 void CDungeonMap::ClearNPC_Cash() {
     for (int i = 0; i < 4; i++) {
@@ -360,7 +363,7 @@ void CDungeonMap::DrawMapCalc(int mode) {
     }
 }
 
-FUZZY_MATCH("main", DrawMap__11CDungeonMapFP13CCameraFollowP9CFrameVu1)
+#if DNG_COMPILE_UNMATCHED
 void CDungeonMap::DrawMap(CCameraFollow *camera, CFrameVu1 *player) {
     float cam_pos[4];
     float view_delta[4];
@@ -565,6 +568,8 @@ void CDungeonMap::DrawMap(CCameraFollow *camera, CFrameVu1 *player) {
         SndSetSePanf(sound_no, pan, 0);
     }
 }
+#endif /* DNG_COMPILE_UNMATCHED */
+INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawMap__11CDungeonMapFP13CCameraFollowP9CFrameVu1);
 
 void CDungeonMap::DrawBGModel(CCamera *camera) {
     float pos[4];
@@ -767,9 +772,9 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
     BtEquipMasuisyou = saved_crystal;
 }
 #endif
-INCLUDE_ASM("main", DrawMiniMap__11CDungeonMapFPff);
-INCLUDE_RODATA("main", LIT_1470);
-INCLUDE_RODATA("main", LIT_1471);
+INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawMiniMap__11CDungeonMapFPff);
+INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_1470);
+INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_1471);
 
 void CDungeonMap::checkMask(float x, float z) {
     int cell_x;
@@ -912,7 +917,9 @@ void CDungeonMap::DrawFireFreeStyle(CFrameVu1 *frame, CCameraFollow *camera) {
     }
 }
 #endif /* DNG_COMPILE_UNMATCHED */
-INCLUDE_ASM("main", DrawFireFreeStyle__11CDungeonMapFP9CFrameVu1P13CCameraFollow);
+INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawFireFreeStyle__11CDungeonMapFP9CFrameVu1P13CCameraFollow);
+INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_1559);
+INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_1560);
 
 #if DNG_COMPILE_UNMATCHED
 void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
@@ -1020,9 +1027,7 @@ void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
     }
 }
 #endif /* DNG_COMPILE_UNMATCHED */
-INCLUDE_ASM("main", DrawFire__11CDungeonMapFP9CFrameVu1P13CCameraFollow);
-INCLUDE_RODATA("main", LIT_1559);
-INCLUDE_RODATA("main", LIT_1560);
+INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawFire__11CDungeonMapFP9CFrameVu1P13CCameraFollow);
 
 #if DNG_COMPILE_UNMATCHED
 /* 189 of 202 instructions. Retail's loop test forms `&parts[parts_no]` and the
@@ -1088,7 +1093,7 @@ void CDungeonMap::DrawRaster(CFrameVu1 *frame) {
     }
 }
 #endif /* DNG_COMPILE_UNMATCHED */
-INCLUDE_ASM("main", DrawRaster__11CDungeonMapFP9CFrameVu1);
+INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawRaster__11CDungeonMapFP9CFrameVu1);
 
 void CDungeonMap::DrawWater(float *pos, int mute) {
     static int wait;
@@ -1270,7 +1275,7 @@ void CDungeonMap::DrawItemBox(float *pos) {
     }
 }
 #endif /* DNG_COMPILE_UNMATCHED */
-INCLUDE_ASM("main", DrawItemBox__11CDungeonMapFPf);
+INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawItemBox__11CDungeonMapFPf);
 
 void CDungeonMap::DrawAtraBoll(float *pos) {
     float draw_pos[4];
@@ -1529,7 +1534,7 @@ void mapPartsFilter(void) {
     }
 }
 #endif
-INCLUDE_ASM("main", mapPartsFilter__Fv);
+INCLUDE_ASM("asm/nonmatchings/dungeonmap", mapPartsFilter__Fv);
 
 static void copyMapInfo(BUILD_MAP_INFO *dst, BUILD_MAP_INFO *src) {
     for (int i = 0; i < 400; i++) {
@@ -1541,8 +1546,13 @@ static void copyMapInfo(BUILD_MAP_INFO *dst, BUILD_MAP_INFO *src) {
     }
 }
 
-FUZZY_MATCH("main", joinRoom__Fii)
-static int joinRoom(int a, int b) {
+// Declared here because the assembly below supplies it and the two callers are
+// further down the file. Not static: the symbol has to be one the transplanted
+// definition can satisfy.
+int joinRoom(int a, int b);
+
+#if DNG_COMPILE_UNMATCHED
+int joinRoom(int a, int b) {
     int cy;
     int done;
     int tx;
@@ -1738,6 +1748,8 @@ static int joinRoom(int a, int b) {
     copyMapInfo(buildMapDat, buildMapWork);
     return 1;
 }
+#endif /* DNG_COMPILE_UNMATCHED */
+INCLUDE_ASM("asm/nonmatchings/dungeonmap", joinRoom__Fii);
 
 static void setRoomObject() {
     int i;
@@ -2129,7 +2141,7 @@ found:
 
 /* 192 of 192 instructions, in order; retail puts the second loop's counter in
  * a2 where mwcc reuses a0 after the sceVu0CopyVector call between the loops. */
-FUZZY_MATCH("main", SetTreasureBox__11CDungeonMapFPfiii)
+#if DNG_COMPILE_UNMATCHED
 int CDungeonMap::SetTreasureBox(float *pos, int item_no, int kind, int unk) {
     int box_no;
     int event_no;
@@ -2189,6 +2201,9 @@ found:
     this->box_num++;
     return event_no;
 }
+#endif /* DNG_COMPILE_UNMATCHED */
+INCLUDE_ASM("asm/nonmatchings/dungeonmap", SetTreasureBox__11CDungeonMapFPfiii);
+INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_2448);
 
 #if DNG_COMPILE_UNMATCHED
 /**
@@ -2307,8 +2322,7 @@ void CDungeonMap::buildEventData(int floor_no, int enabled, int place_atla) {
     }
 }
 #endif
-INCLUDE_ASM("main", buildEventData__11CDungeonMapFiii);
-INCLUDE_RODATA("main", LIT_2448);
+INCLUDE_ASM("asm/nonmatchings/dungeonmap", buildEventData__11CDungeonMapFiii);
 
 void CDungeonMap::SetMimicEvent(float x, float y, float z, int item_no, int kind) {
     float pos[4];
@@ -2732,9 +2746,9 @@ void CDungeonMap::GetRoomLinkInfo(void) {
     }
 }
 #endif
-INCLUDE_ASM("main", GetRoomLinkInfo__11CDungeonMapFv);
-INCLUDE_RODATA("main", LIT_2859);
-INCLUDE_RODATA("main", LIT_2860);
+INCLUDE_ASM("asm/nonmatchings/dungeonmap", GetRoomLinkInfo__11CDungeonMapFv);
+INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_2859);
+INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_2860);
 
 void CDungeonMap::SetUnderLoad() {
     for (int i = 0; i < 20; i++) {
@@ -3271,7 +3285,8 @@ void CDungeonMap::buildRandomMap(int room_max, int full) {
     printf((const char *) LIT_3190);
 }
 #endif /* DNG_COMPILE_UNMATCHED */
-INCLUDE_ASM("main", buildRandomMap__11CDungeonMapFii);
+INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_3190);
+INCLUDE_ASM("asm/nonmatchings/dungeonmap", buildRandomMap__11CDungeonMapFii);
 void CDungeonMap::initSubmap(CDataAlloc2_1_ *alloc) {
     int i;
     int j;
@@ -3396,5 +3411,4 @@ void CDungeonMap::initalize() {
     }
     this->draw_dist_scale = 4.0f;
 }
-INCLUDE_RODATA("main", LIT_3190);
-INCLUDE_RODATA("main", LIT_3191);
+

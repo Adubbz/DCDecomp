@@ -1,14 +1,14 @@
 #include "common.h"
 
-INCLUDE_ASM("main", DisableIntc);
-INCLUDE_ASM("main", EnableIntc);
-INCLUDE_ASM("main", DisableDmac);
-INCLUDE_ASM("main", EnableDmac);
-INCLUDE_ASM("main", SetAlarm);
-INCLUDE_ASM("main", ReleaseAlarm);
-INCLUDE_ASM("main", iEnableIntc);
-INCLUDE_ASM("main", iDisableIntc);
-INCLUDE_ASM("main", iEnableDmac);
-INCLUDE_ASM("main", iDisableDmac);
-INCLUDE_ASM("main", iSetAlarm);
-INCLUDE_ASM("main", iReleaseAlarm);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/intr", DisableIntc);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/intr", EnableIntc);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/intr", DisableDmac);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/intr", EnableDmac);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/intr", SetAlarm);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/intr", ReleaseAlarm);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/intr", iEnableIntc);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/intr", iDisableIntc);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/intr", iEnableDmac);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/intr", iDisableDmac);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/intr", iSetAlarm);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/intr", iReleaseAlarm);

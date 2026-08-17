@@ -27,10 +27,10 @@ require_builder
 # would build stale sources.
 "$BUILDER" build -t dcdecomp_build --target build .
 
-mkdir -p build ref
+mkdir -p build
 
-# rom/ and ref/ are mounted rather than copied in: rom/ keeps the 1.7GB disc
-# out of the build context, and ref/ makes the extraction and disassembly
+# rom/ is mounted rather than copied in, to keep the 1.7GB disc out of the
+# build context. The reference assembly is checked in, so nothing else has to
 # survive between runs. The image still gets a clean copy of the sources, which
 # is the point of this script. -t keeps the colours and progress line, skipped
 # when this script's own output is redirected.
@@ -39,6 +39,5 @@ if [ -t 1 ]; then TTY=(-t); fi
 
 "$BUILDER" run --rm "${TTY[@]}" \
   -v "$(pwd)/rom:/dcdecomp/rom:Z" \
-  -v "$(pwd)/ref:/dcdecomp/ref:Z" \
   -v "$(pwd)/build:/output:Z" \
   dcdecomp_build

@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", exit__2);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdlib/exit", exit__2);

@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", copysignf);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/common/sf_copysign", copysignf);

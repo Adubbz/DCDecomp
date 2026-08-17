@@ -1,6 +1,6 @@
 #include "common.h"
 
-INCLUDE_ASM("main", sceSdRemoteInit);
-INCLUDE_ASM("main", sceSdTransToIOP);
-INCLUDE_ASM("main", sceSdCallBack);
-INCLUDE_ASM("main", sceSdRemote);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/sdr_main", sceSdRemoteInit);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/sdr_main", sceSdTransToIOP);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/sdr_main", sceSdCallBack);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/sdr_main", sceSdRemote);

@@ -1,11 +1,11 @@
 #include "savedata.hpp"
 
-INCLUDE_ASM("main", SetMoment__12CObjectFrameF11CVector3_f_);
-INCLUDE_ASM("main", SetRotation__12CObjectFrameFfff);
-INCLUDE_ASM("main", SetRotation__12CObjectFrameF11CVector3_f_);
-INCLUDE_ASM("main", SetRotVelocity__12CObjectFrameF11CVector3_f_);
-INCLUDE_ASM("main", SetRotAcceleration__12CObjectFrameF11CVector3_f_);
-INCLUDE_ASM("main", SetPosition__7CObjectFPf);
+INCLUDE_ASM("asm/nonmatchings/savedata", SetMoment__12CObjectFrameF11CVector3_f_);
+INCLUDE_ASM("asm/nonmatchings/savedata", SetRotation__12CObjectFrameFfff);
+INCLUDE_ASM("asm/nonmatchings/savedata", SetRotation__12CObjectFrameF11CVector3_f_);
+INCLUDE_ASM("asm/nonmatchings/savedata", SetRotVelocity__12CObjectFrameF11CVector3_f_);
+INCLUDE_ASM("asm/nonmatchings/savedata", SetRotAcceleration__12CObjectFrameF11CVector3_f_);
+INCLUDE_ASM("asm/nonmatchings/savedata", SetPosition__7CObjectFPf);
 
 /**
  * Contains one entry of the Georama building definition table.

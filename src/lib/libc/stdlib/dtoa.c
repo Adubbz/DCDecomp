@@ -1,4 +1,4 @@
 #include "common.h"
 
-INCLUDE_ASM("main", quorem);
-INCLUDE_ASM("main", _dtoa_r);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdlib/dtoa", quorem);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdlib/dtoa", _dtoa_r);

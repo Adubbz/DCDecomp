@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", __ieee754_acosf);
+INCLUDE_ASM("asm/nonmatchings/lib/libm/math/ef_acos", __ieee754_acosf);

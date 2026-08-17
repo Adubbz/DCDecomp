@@ -1,0 +1,235 @@
+{
+  "schema_version": 2,
+  "name": "mwccmips-2.3.3-000921",
+  "display_name": "MW C/C++ for MIPS (PS2) 2.3.3 build 1010 (2000-09-21)",
+  "binary": {
+    "filename": "mwccmips.exe",
+    "sha256": "6375fd27814a1cb7eddbc229ecbd15b57d83562f95be23804f0a06ad4814e2df",
+    "size": 1268224,
+    "pe_timestamp": "0x39c9eaab",
+    "image_base": "0x00400000"
+  },
+  "functions": {
+    "CodeGen_Generator": {
+      "address": "0x004356b0",
+      "return_address": "0x00435f2c"
+    },
+    "register_allocation_driver": {
+      "address": "0x004a6ad0"
+    },
+    "colorgraph": {
+      "address": "0x004a6820",
+      "return_from_driver_call": "0x004a6b7f"
+    },
+    "build_interference_graph": {
+      "address": "0x004a0d60"
+    },
+    "build_allocation_order": {
+      "address": "0x004a64e0"
+    },
+    "spill": {
+      "address": "0x004eccb0"
+    },
+    "pcode_new": {
+      "address": "0x00493140"
+    },
+    "pcode_table_initializer": {
+      "address": "0x0048a600"
+    }
+  },
+  "globals": {
+    "pcbasicblocks": {
+      "address": "0x00556f58",
+      "kind": "pointer"
+    },
+    "interference_nodes": {
+      "address": "0x00556f80",
+      "kind": "pointer"
+    },
+    "coloring_class": {
+      "address": "0x00557ff2",
+      "kind": "signed byte"
+    },
+    "allocatable_register_count": {
+      "address": "0x00556f08",
+      "kind": "int array indexed by register class"
+    }
+  },
+  "function_name": {
+    "codegen_argument_stack_offset": 4,
+    "name_record_pointer_offset": 8,
+    "inline_name_offset": 10,
+    "max_bytes": 256
+  },
+  "frontend_ir": {
+    "driver": null,
+    "breakpoints": {},
+    "globals": {},
+    "capture": {
+      "root_preview_bytes": 0,
+      "evidence": "The IrOptimizer driver, gFunction, and the IRO root are not recovered for this build. The section is present and empty so that no frontend breakpoint is armed and no address is guessed."
+    }
+  },
+  "pcode_layout": {
+    "basic_block": {
+      "byte_size": 48,
+      "fields": {
+        "next": 0,
+        "previous": 4,
+        "label_head": 8,
+        "predecessors": 12,
+        "successors": 16,
+        "pcode_head": 20,
+        "pcode_tail": 24,
+        "index_i32": 28,
+        "line_i32": 32,
+        "loop_weight_i32": 40,
+        "pcode_count_i16": 44,
+        "flags_u16": 46
+      }
+    },
+    "instruction": {
+      "header_size": 52,
+      "operand_stride": 14,
+      "fields": {
+        "next": 0,
+        "previous": 4,
+        "owner": 8,
+        "property_flags": 12,
+        "opcode_u16": 32,
+        "operand_count_i16": 34,
+        "encoded_word_u32": 40
+      }
+    },
+    "operand": {
+      "fields": {
+        "tag_u8": 0,
+        "register_class_u8": 1,
+        "attributes_u16": 2,
+        "payload_u32": 4,
+        "secondary_u32": 8
+      },
+      "register_classes": [
+        "GPR",
+        "FPR",
+        "SPECIAL",
+        "COPROC2_i",
+        "COPROC2_ii",
+        "COPROC2_f",
+        "COPROC2_special"
+      ],
+      "tags": {
+        "0": "register",
+        "1": "system_register",
+        "2": "immediate",
+        "3": "inline_immediate",
+        "4": "memory",
+        "6": "label",
+        "7": "placeholder"
+      }
+    },
+    "label_record": {
+      "block_pointer_offset": 4,
+      "bound_u16_offset": 8,
+      "index_u16_offset": 10
+    }
+  },
+  "pcode_opcode_table": {
+    "address": "0x00549510",
+    "entry_count": 1120,
+    "entry_stride": 42,
+    "string_max_bytes": 128,
+    "fields": {
+      "mnemonic": 0,
+      "alternate_mnemonic": 4,
+      "operand_format": 8,
+      "operand_slot_count": 12,
+      "opaque_format_class": 13,
+      "encoding_template": 14,
+      "property_flags": 22,
+      "format_derived_flags": 26,
+      "aux_internal_name": 30
+    }
+  },
+  "pcode_breakpoints": [
+    {
+      "name": "after-instruction-selection",
+      "address": "0x00435917"
+    },
+    {
+      "name": "after-pass-004a5e70",
+      "address": "0x0043594f"
+    },
+    {
+      "name": "before-register-allocation",
+      "address": "0x00435a70"
+    },
+    {
+      "name": "after-register-allocation",
+      "address": "0x00435a75"
+    },
+    {
+      "name": "after-prologue-epilogue",
+      "address": "0x00435ccb"
+    },
+    {
+      "name": "after-pass-004aa950",
+      "address": "0x00435dc9"
+    }
+  ],
+  "scheduler": {
+    "driver": null,
+    "ready_selector": null,
+    "ready_selector_return": null,
+    "evidence": "CodeGen_Generator reaches the scheduling pass at 0x00435d45 only when the optimization level byte at 0x00557c4c is 3 or more. The project compiles at -O2, so no scheduler anchor is recovered and none is guessed."
+  },
+  "register_allocation": {
+    "driver": "0x004a6ad0",
+    "colorgraph": "0x004a6820",
+    "colorgraph_return": "0x004a6b7f",
+    "class_labels": [
+      "GPR",
+      "FPR",
+      "SPECIAL",
+      "COPROC2_i",
+      "COPROC2_ii",
+      "COPROC2_f",
+      "COPROC2_special"
+    ],
+    "globals": {
+      "coloring_class": "0x00557ff2",
+      "interference_nodes": "0x00556f80"
+    },
+    "node_stride": 30,
+    "node_fields": {
+      "next": 0,
+      "virtual_register_i16": 16,
+      "physical_register_i16": 18,
+      "flags_u16": 20,
+      "interference_tree": 26
+    },
+    "edge_stride": 16,
+    "edge_fields": {
+      "left": 4,
+      "right": 8,
+      "range_low_i16": 12,
+      "range_high_i16": 14
+    },
+    "flag_bits": {
+      "1": "spill-required",
+      "512": "paired-register"
+    }
+  },
+  "string_anchors": {
+    "CodeGen.c": "0x00512f00",
+    "PCode.c": "0x0051c610",
+    "VReg.c": "0x0051c5f0",
+    "PCodeInfo.c": "0x0051c9cd",
+    "InstrSelection.c": "0x0051cbec",
+    "InterferenceGraph.c": "0x0051cf38",
+    "Coloring.c": "0x0051d228",
+    "Scheduler.c": "0x0051d298",
+    "Spill.c": "0x00524710"
+  },
+  "evidence": "Every address and layout is recovered from this exact image; no 2.4 or b210 address is inherited. CodeGen_Generator is the CodeGen.c pass driver that reaches the Coloring.c assert path; the register-allocation driver at 0x004a6ad0 loops the seven register classes, stores the class into 0x00557ff2, builds the interference graph, orders the nodes, and calls colorgraph. colorgraph at 0x004a6820 walks its argument list, clears one bit per already-coloured interfering neighbour, and takes the lowest remaining bit, which fixes the node stride of 30 and the vreg/colour/flag offsets. pcode_new at 0x00493140 allocates 14 * operands + 52 bytes and writes the opcode at +32 and the operand count at +34, which fixes the instruction header size and the 14-byte operand stride specific to this build. The opcode table base, 42-byte stride, and field offsets come from the table writer at 0x0048a400 and the 0xb7c0-byte clear at 0x0048a607. The function-name path is confirmed live: the CodeGen_Generator argument at esp+4 holds a record pointer at +8 whose name begins at +10."
+}

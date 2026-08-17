@@ -7,7 +7,7 @@
 set(OVERLAYS title dun)
 
 # Where the overlays load: the end of the main ELF's .bss. Retail constant --
-# it is also disassemble.py's VRAM_OVERLAY_START.
+# it is also where scripts/build/disassemble.py starts each overlay.
 set(OVERLAY_ORIGIN 0x01DABD00)
 set(OVERLAY_HEADER_SIZE 0x40)
 

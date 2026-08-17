@@ -1,9 +1,9 @@
 #include "common.h"
 
-INCLUDE_ASM("main", QueueInit);
-INCLUDE_ASM("main", QueuePeekWriteDone);
-INCLUDE_ASM("main", QueuePeekReadDone);
-INCLUDE_ASM("main", sceTtyHandler);
-INCLUDE_ASM("main", sceTtyWrite);
-INCLUDE_ASM("main", sceTtyRead);
-INCLUDE_ASM("main", sceTtyInit);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/tty", QueueInit);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/tty", QueuePeekWriteDone);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/tty", QueuePeekReadDone);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/tty", sceTtyHandler);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/tty", sceTtyWrite);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/tty", sceTtyRead);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/tty", sceTtyInit);

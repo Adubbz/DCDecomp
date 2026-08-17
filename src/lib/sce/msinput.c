@@ -1,9 +1,9 @@
 #include "common.h"
 
-INCLUDE_ASM("main", sceMSIn_Init);
-INCLUDE_ASM("main", sceMSIn_ATick);
-INCLUDE_ASM("main", sceMSIn_Load);
-INCLUDE_ASM("main", put_message);
-INCLUDE_ASM("main", sceMSIn_PutMsg);
-INCLUDE_ASM("main", sceMSIn_PutExcMsg);
-INCLUDE_ASM("main", sceMSIn_PutHsMsg);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/msinput", sceMSIn_Init);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/msinput", sceMSIn_ATick);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/msinput", sceMSIn_Load);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/msinput", put_message);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/msinput", sceMSIn_PutMsg);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/msinput", sceMSIn_PutExcMsg);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/msinput", sceMSIn_PutHsMsg);

@@ -36,3 +36,6 @@ permuting/
 # IDA databases (derived from binaries already in-tree)
 *.i64
 *.idb
+
+# splat scratch (the linker scripts it writes are not the ones this build uses)
+/build/splat/

@@ -1,8 +1,8 @@
 #include "common.h"
 
-INCLUDE_ASM("main", __sprint__2);
-INCLUDE_ASM("main", __sbprintf__2);
-INCLUDE_ASM("main", vfprintf);
-INCLUDE_ASM("main", _vfprintf_r);
-INCLUDE_ASM("main", cvt);
-INCLUDE_ASM("main", exponent);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdio/vfprintf", __sprint__2);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdio/vfprintf", __sbprintf__2);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdio/vfprintf", vfprintf);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdio/vfprintf", _vfprintf_r);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdio/vfprintf", cvt);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdio/vfprintf", exponent);

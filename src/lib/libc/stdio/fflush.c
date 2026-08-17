@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", fflush);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdio/fflush", fflush);

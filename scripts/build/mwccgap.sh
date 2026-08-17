@@ -7,10 +7,13 @@
 # tools/mwccgap compiles the source twice: once as written, to learn which
 # functions the C++ already defines, and once with each marker replaced by a
 # run of `nop` the size of the function it stands for. It then assembles the
-# reference dump and puts those bytes over the nops. The result is one object
-# holding both, which is what lets a half-decompiled translation unit link at
-# retail's addresses -- mwcc emits a unit's functions as one contiguous .text,
-# so a hole in the middle cannot be filled from an outside .s.
+# reference file splat wrote and puts those bytes over the nops. The result is
+# one object holding both, which is what lets a half-decompiled translation
+# unit link at retail's addresses -- mwcc emits a unit's functions as one
+# contiguous .text, so a hole in the middle cannot be filled from an outside .s.
+#
+# A marker names its file's directory outright -- `asm/nonmatchings/<unit>` --
+# so the prefix below is the source root and nothing has to be looked up.
 #
 # The second compile reads a temporary file, always named `.c`, so mwcc can no
 # longer tell the language from the extension -- `-lang` is passed explicitly,
@@ -56,7 +59,7 @@ python3 "$MWCCGAP_DIR/mwccgap.py" "$src" "$obj" \
     --as-path "${MIPS_TOOL_PREFIX}as" \
     --as-march r5900 \
     --as-mabi eabi \
-    --asm-dir-prefix "${ASM_DIR:-ref/asm/split}" \
+    --asm-dir-prefix "${ASM_DIR:-.}" \
     -lang "$lang" \
     "$@" \
     --as-flags -g -mno-pdr -non_shared -G0 -Iinclude < /dev/null

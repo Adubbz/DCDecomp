@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", atof);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdlib/atof", atof);

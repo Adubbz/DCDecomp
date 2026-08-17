@@ -1,8 +1,7 @@
 #include "dungeoneventdata.hpp"
 
-INCLUDE_ASM("main", Set__17CDungeonEventDataFP13CDungeonEvent);
-INCLUDE_ASM("main", CheckSwitch__17CDungeonEventDataFv);
-INCLUDE_ASM("main", Stop__17CDungeonEventDataFv);
-INCLUDE_ASM("main", Start__17CDungeonEventDataFv);
+INCLUDE_ASM("asm/nonmatchings/dungeoneventdata", Set__17CDungeonEventDataFP13CDungeonEvent);
+INCLUDE_ASM("asm/nonmatchings/dungeoneventdata", CheckSwitch__17CDungeonEventDataFv);
+INCLUDE_ASM("asm/nonmatchings/dungeoneventdata", Stop__17CDungeonEventDataFv);
+INCLUDE_ASM("asm/nonmatchings/dungeoneventdata", Start__17CDungeonEventDataFv);
 
-INCLUDE_RODATA("main", LIT_3309);

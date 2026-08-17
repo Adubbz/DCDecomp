@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", _sbrk_r);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/reent/sbrkr", _sbrk_r);

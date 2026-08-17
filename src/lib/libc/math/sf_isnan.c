@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", isnanf);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/math/sf_isnan", isnanf);

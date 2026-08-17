@@ -2,18 +2,20 @@
 
 #include "common.h"
 
+#include <libvu0.h>
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 class CVector3_f_;
-
 
 /**
  * Places one object in the world.
  */
 class CObject {
 public:
-    u8 unk_000[16];
+    float mass; /**< Mass of the object. */
+    float unk_000[3];
     float pos[4]; /**< World position of the object. */
     u8 unk_020[128];
 
@@ -21,25 +23,26 @@ public:
      * @mangled Step__7CObjectFv
      * @address 0x156BA0
      * @size 0x10
-     * @unknownret
      */
-    virtual void Step(void);
+    virtual void Step();
 
     /**
+     * Gets the distance between this object and another.
+     *
      * @mangled GetDistance__7CObjectFR7CObject
      * @address 0x156BB0
      * @size 0x60
-     * @unknownret
      */
-    void GetDistance(CObject &);
+    float GetDistance(CObject &other);
 
     /**
+     * Gets the direction from this object to another.
+     *
      * @mangled GetDir__7CObjectFR7CObjectPf
      * @address 0x156C10
      * @size 0x70
-     * @unknownret
      */
-    void GetDir(CObject &, float *);
+    void GetDir(CObject &other, float *out_direction);
 
     /**
      * @mangled SetMass__7CObjectFf
@@ -353,5 +356,4 @@ public:
      */
     CFrameAttr(void);
 };
-
 STATIC_ASSERT(sizeof(CFrameAttr) == 0x60);

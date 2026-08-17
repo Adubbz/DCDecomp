@@ -55,7 +55,10 @@ RUN python3 -m venv $VIRTUAL_ENV
 # (scripts/diff/m2ctx.py). The wheel bundles LLVM's own shared library, so
 # no clang or gcc has to be installed alongside it. It lives in the base stage
 # rather than dev because the build stage generates build/ctx.c too.
-RUN python -m pip install pycdlib rabbitizer==1.16.2 spimdisasm==1.42.3 libclang
+# splat is the disassembler. Its MIPS support -- spimdisasm and rabbitizer,
+# which do the actual decoding -- is an extra rather than a hard dependency,
+# so it has to be asked for by name or splat imports and then fails at runtime.
+RUN python -m pip install pycdlib "splat64[mips]==0.50.0" libclang
 
 #
 # Development stage
@@ -114,7 +117,7 @@ COPY . .
 
 # Build everything and copy the results out, through the same cmake.sh the
 # entry points use. `ctx` is named because this builds `elf`, not the default
-# target it hangs off. rom/ and ref/ are mounted in and /output is where the
+# target it hangs off. rom/ is mounted in and /output is where the
 # results land; see build.sh.
 CMD scripts/build/cmake.sh elf ctx \
     && scripts/build/verify_built.sh \

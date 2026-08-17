@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", atan);
+INCLUDE_ASM("asm/nonmatchings/lib/libm/math/s_atan", atan);

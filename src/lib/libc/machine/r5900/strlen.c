@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", strlen);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/machine/r5900/strlen", strlen);

@@ -1,6 +1,6 @@
 #include "common.h"
 
-INCLUDE_ASM("main", sceSifResetIop);
-INCLUDE_ASM("main", sceSifIsAliveIop);
-INCLUDE_ASM("main", sceSifSyncIop);
-INCLUDE_ASM("main", sceSifRebootIop);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/iopreset", sceSifResetIop);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/iopreset", sceSifIsAliveIop);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/iopreset", sceSifSyncIop);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/iopreset", sceSifRebootIop);

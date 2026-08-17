@@ -1,5 +1,5 @@
 #include "dngmessageman.hpp"
 
-INCLUDE_ASM("main", LimmitZone__14CDngMessageManFv);
-INCLUDE_ASM("main", SetStatus_Dry__14CDngMessageManFfff);
-INCLUDE_ASM("main", SetSteevMes__14CDngMessageManFi);
+INCLUDE_ASM("asm/nonmatchings/dngmessageman", LimmitZone__14CDngMessageManFv);
+INCLUDE_ASM("asm/nonmatchings/dngmessageman", SetStatus_Dry__14CDngMessageManFfff);
+INCLUDE_ASM("asm/nonmatchings/dngmessageman", SetSteevMes__14CDngMessageManFi);

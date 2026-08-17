@@ -1,8 +1,8 @@
 #include "title/cursol.hpp"
 
-INCLUDE_ASM("title", __ct__7CCursolFv);
-INCLUDE_ASM("title", Init__7CCursolFv);
-INCLUDE_ASM("title", Move__7CCursolFv);
-INCLUDE_ASM("title", Set__7CCursolFf);
-INCLUDE_ASM("title", GetSelect__7CCursolFv);
-INCLUDE_ASM("title", GetPos__7CCursolFv);
+INCLUDE_ASM("asm/nonmatchings/title/cursol", __ct__7CCursolFv);
+INCLUDE_ASM("asm/nonmatchings/title/cursol", Init__7CCursolFv);
+INCLUDE_ASM("asm/nonmatchings/title/cursol", Move__7CCursolFv);
+INCLUDE_ASM("asm/nonmatchings/title/cursol", Set__7CCursolFf);
+INCLUDE_ASM("asm/nonmatchings/title/cursol", GetSelect__7CCursolFv);
+INCLUDE_ASM("asm/nonmatchings/title/cursol", GetPos__7CCursolFv);

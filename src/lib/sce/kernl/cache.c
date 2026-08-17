@@ -1,8 +1,8 @@
 #include "common.h"
 
-INCLUDE_ASM("main", _sceSDC);
-INCLUDE_ASM("main", SyncDCache);
-INCLUDE_ASM("main", iSyncDCache);
-INCLUDE_ASM("main", _sceIDC);
-INCLUDE_ASM("main", InvalidDCache);
-INCLUDE_ASM("main", iInvalidDCache);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/cache", _sceSDC);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/cache", SyncDCache);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/cache", iSyncDCache);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/cache", _sceIDC);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/cache", InvalidDCache);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/cache", iInvalidDCache);

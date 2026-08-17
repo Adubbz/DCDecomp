@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", _close_r);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/reent/closer", _close_r);

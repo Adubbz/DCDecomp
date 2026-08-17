@@ -1,0 +1,7 @@
+.include "macro.inc"
+.section .rodata
+.align 4
+
+glabel LIT_2114
+    /* 19D390 0029D290 70333200 */ .word GlobalDataBuffer + 0x782F0
+    /* 19D394 0029D294 00000000 */ .word 0x00000000

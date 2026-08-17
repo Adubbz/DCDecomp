@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", __floatdidf);
+INCLUDE_ASM("asm/nonmatchings/lib/libgcc/_floatdidf", __floatdidf);

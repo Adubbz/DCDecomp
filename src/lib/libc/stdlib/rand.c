@@ -1,4 +1,4 @@
 #include "common.h"
 
-INCLUDE_ASM("main", srand);
-INCLUDE_ASM("main", rand);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdlib/rand", srand);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/stdlib/rand", rand);

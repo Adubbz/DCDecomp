@@ -1,6 +1,6 @@
 #include "common.h"
 
-INCLUDE_ASM("main", _setlocale_r);
-INCLUDE_ASM("main", _localeconv_r);
-INCLUDE_ASM("main", setlocale);
-INCLUDE_ASM("main", localeconv);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/locale/locale", _setlocale_r);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/locale/locale", _localeconv_r);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/locale/locale", setlocale);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/locale/locale", localeconv);

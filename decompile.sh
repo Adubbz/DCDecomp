@@ -6,7 +6,7 @@
 #   decompile.sh <symbol> --stack-structs       extra flags go to m2c
 #
 # Symbols are the mangled names diff.sh takes; look one up with
-# `grep <name> ref/asm/objects/*.index`.
+# `grep <name> config/*.symbols.txt`.
 set -euo pipefail
 
 cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -40,7 +40,7 @@ run() {
             echo "$0: $symbol is not in the ${section[0]} reference index" >&2
         else
             echo "$0: $symbol is in no reference index -- check the spelling with" >&2
-            echo "$0: grep $symbol ref/asm/objects/*.index" >&2
+            echo "$0: grep $symbol config/*.symbols.txt" >&2
         fi
         exit 1
     }

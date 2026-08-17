@@ -7,6 +7,7 @@
 #include "dataalloc.hpp"
 #include "mglib.hpp"
 
+
 /* Global, GLOBAL-linkage per retail `nm` (0x1cbc9b0, `T`). Purpose beyond
  * being constructed here is unanalyzed -- out of scope for this pass. */
 CRunScript RunScript;
@@ -735,32 +736,5 @@ int main(int argc, const char **argv, const char **envp) {
     }
 }
 
-INCLUDE_RODATA("main", LIT_880);
-INCLUDE_RODATA("main", LIT_881);
-INCLUDE_RODATA("main", LIT_884__2);
-INCLUDE_RODATA("main", LIT_886);
-INCLUDE_RODATA("main", LIT_887__2);
-INCLUDE_RODATA("main", LIT_888);
-INCLUDE_RODATA("main", LIT_889);
-INCLUDE_RODATA("main", LIT_890);
-INCLUDE_RODATA("main", LIT_891);
-INCLUDE_RODATA("main", LIT_892);
-INCLUDE_RODATA("main", LIT_893);
-INCLUDE_RODATA("main", LIT_894);
-INCLUDE_RODATA("main", LIT_903);
-INCLUDE_RODATA("main", LIT_904);
-INCLUDE_RODATA("main", LIT_1003);
-INCLUDE_RODATA("main", LIT_1004);
-INCLUDE_RODATA("main", LIT_1007);
-INCLUDE_RODATA("main", LIT_1011);
-INCLUDE_RODATA("main", LIT_1061);
-INCLUDE_RODATA("main", LIT_1062);
-INCLUDE_RODATA("main", LIT_1079);
-INCLUDE_RODATA("main", LIT_1080);
-INCLUDE_RODATA("main", LIT_1081);
-INCLUDE_RODATA("main", LIT_1082);
-INCLUDE_RODATA("main", LIT_1083);
-INCLUDE_RODATA("main", LIT_1084);
-INCLUDE_RODATA("main", LIT_1086);
-INCLUDE_RODATA("main", LIT_1087);
-INCLUDE_RODATA("main", LIT_1195);
+INCLUDE_RODATA("asm/nonmatchings/main", LIT_880);
+INCLUDE_RODATA("asm/nonmatchings/main", LIT_881);

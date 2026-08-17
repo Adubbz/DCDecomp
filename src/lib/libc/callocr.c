@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("main", _calloc_r);
+INCLUDE_ASM("asm/nonmatchings/lib/libc/callocr", _calloc_r);

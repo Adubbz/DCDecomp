@@ -1,6 +1,6 @@
 #include "common.h"
 
-INCLUDE_ASM("main", sceSifInitIopHeap);
-INCLUDE_ASM("main", sceSifAllocIopHeap);
-INCLUDE_ASM("main", sceSifFreeIopHeap);
-INCLUDE_ASM("main", sceSifLoadIopHeap);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/iopheap", sceSifInitIopHeap);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/iopheap", sceSifAllocIopHeap);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/iopheap", sceSifFreeIopHeap);
+INCLUDE_ASM("asm/nonmatchings/lib/sce/kernl/iopheap", sceSifLoadIopHeap);
