@@ -8,10 +8,30 @@
 class CCamera;
 class CEffectGroup;
 class CFrame;
-struct EDIT_EFFECT_INFO;
 struct EPARTS_FUNC_DATA;
 struct OBJ_ANIME_SEQ;
 
+/**
+ * Describes one effect that an edited map places on a part, and the frame
+ * that carries it.
+ */
+struct EDIT_EFFECT_INFO {
+    u8 unk_00[16];
+    s32 kind;      /**< Number that names the effect; zero or below where the slot is free. */
+    s32 map_flag;  /**< Map flag that stops the effect while it is set; zero or below where none does. */
+    float start;   /**< Time of day that the effect starts at. */
+    float end;     /**< Time of day that the effect stops at. */
+    CFrame *frame; /**< Frame that the effect stands on. */
+    s32 unk_24;
+    u8 unk_28[8];
+    float offset[3]; /**< Distance from the frame to the effect. */
+    s32 unk_3C;
+    u8 unk_40[16];
+    float colour[3]; /**< Colour of the light that the effect gives. */
+    u8 unk_5C[20];
+};
+
+STATIC_ASSERT(sizeof(EDIT_EFFECT_INFO) == 0x70);
 
 /**
  * @mangled ObjAnimeAllStop__Fv
@@ -94,12 +114,14 @@ void InitEditEffect(CFrame *, EDIT_EFFECT_INFO *);
 void InitEditEffect(CFrame *, EPARTS_FUNC_DATA *, EDIT_EFFECT_INFO *);
 
 /**
+ * Gives back 1 while an effect is one that the time of day and the map flags
+ * let draw.
+ *
  * @mangled CheckEditEffect__FP16EDIT_EFFECT_INFOf
  * @address 0x166BB0
  * @size 0x160
- * @unknownret
  */
-void CheckEditEffect(EDIT_EFFECT_INFO *, float);
+int CheckEditEffect(EDIT_EFFECT_INFO *, float);
 
 /**
  * @mangled EditEffectStep__Fv

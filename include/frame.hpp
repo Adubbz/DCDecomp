@@ -1,8 +1,8 @@
 #pragma once
 
-#include <libvu0.h>
-
 #include "common.h"
+
+#include <libvu0.h>
 
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
@@ -14,13 +14,16 @@ class CFrameAttr;
 struct RenderInfo;
 struct sceVif1Packet;
 
-
 class CFrame {
 public:
-    u8 unk_000[544];
+    s32 flags; /**< Bits that select how the frame draws and how it takes part in collision. */
+    u8 unk_004[172];
+    s16 draw_on; /**< 1 while the frame draws; 0 leaves it out of the scene. */
+    u8 unk_0B2[94];
+    CFrame *unk_110;
+    u8 unk_114[268];
     sceVu0FVECTOR pos; /**< World position of the frame. */
     u8 unk_230[32];
-
 
     /**
      * @mangled SetPosition__6CFrameFfff
@@ -135,12 +138,13 @@ public:
     void SetTransMatrix(float *);
 
     /**
+     * Finds the frame of a name, at or below this one.
+     *
      * @mangled SearchFrame__6CFrameFPc
      * @address 0x128700
      * @size 0x90
-     * @unknownret
      */
-    void SearchFrame(char *);
+    CFrame *SearchFrame(char *name);
 
     /**
      * @mangled GetBoundBox__6CFrameFP7CBoxVu0i

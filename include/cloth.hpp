@@ -14,6 +14,11 @@ struct sceVif1Packet;
 
 class CCloth {
 public:
+    u8 unk_00[72];
+    s32 unk_48;
+    float unk_4C;
+    s32 unk_50;
+
     /**
      * @mangled Draw__6CClothFv
      * @address 0x13B640

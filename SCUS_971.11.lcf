@@ -249,7 +249,8 @@ SECTIONS
         object.cpp.o                (.text)   // 0x00156ba0
         objectframe.cpp.o           (.text)   // 0x001570c0
         mapobject.cpp.o             (.text)   // 0x001574f0
-        savedata.cpp.o              (.text)   // 0x001579e0
+        objectframe2.cpp.o          (.text)   // 0x001579e0
+        savedata.cpp.o              (.text)   // 0x00157b00
         snd.cpp.o                   (.text)   // 0x00158d80
         scriptinterpreter.cpp.o     (.text)   // 0x0015f100
         sysmes.cpp.o                (.text)   // 0x0015fd30

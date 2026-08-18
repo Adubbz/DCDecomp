@@ -179,17 +179,19 @@ foreach(src IN LISTS CPP_SOURCES)
     list(APPEND CPP_OBJS ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${src}.o)
 endforeach()
 
-# What the split step is named by. splat writes several thousand files, and
-# declaring each as an output makes the ninja manifest enormous for no gain:
-# the tree is checked in, so an ordinary build never runs the step at all.
+# The checked-in configuration that names the split. splat writes several
+# thousand files, and declaring each as an output makes the ninja manifest
+# enormous for no gain. These files must remain inputs: Ninja deletes custom
+# command outputs during clean, but disassemble.py reads and never creates the
+# symbol tables.
 # Nothing under asm/ or config/ may be a CMAKE_CONFIGURE_DEPENDS: a file that
 # is both a configure input and a build output puts CMake and ninja in a loop
 # ("manifest still dirty after 100 tries"). scripts/build/cmake.sh configures
 # on every invocation, which is what picks a regenerated tree up.
-set(REF_OUTPUTS "")
+set(REF_CONFIGS "")
 foreach(section IN LISTS SECTIONS)
-    list(APPEND REF_OUTPUTS ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/${section}.symbols.txt)
-    list(APPEND REF_OUTPUTS ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/${section}.yaml)
+    list(APPEND REF_CONFIGS ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/${section}.symbols.txt)
+    list(APPEND REF_CONFIGS ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/${section}.yaml)
 endforeach()
 
 set(ALL_OBJS "")
@@ -551,6 +553,7 @@ add_dependencies(run iso)
 # output and leaves a stamp; the others are named by one file each.
 set(STAMP_DIR ${BUILD_DIR}/stamps)
 set(ROM_VERIFIED ${STAMP_DIR}/rom.verified)
+set(DISASSEMBLE_STAMP ${STAMP_DIR}/disassembled)
 set(EXTRACTED_ELF ${ROM_DIR}/extracted/iso/${BASENAME})
 
 # Only when there is a disc to set up from. A checkout without one -- CI --
@@ -587,17 +590,20 @@ add_custom_command(
     VERBATIM)
 
 add_custom_command(
-    OUTPUT ${REF_OUTPUTS}
+    OUTPUT ${CMAKE_SOURCE_DIR}/${DISASSEMBLE_STAMP}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${STAMP_DIR}
     ${SPLIT_COMMANDS}
+    COMMAND ${CMAKE_COMMAND} -E touch ${DISASSEMBLE_STAMP}
     DEPENDS ${CMAKE_SOURCE_DIR}/${EXTRACTED_ELF}
             ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/disassemble.py
             ${CMAKE_SOURCE_DIR}/${LD_TEMPLATE}
+            ${REF_CONFIGS}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Splitting the disc with splat"
     USES_TERMINAL
     VERBATIM)
 
-add_custom_target(setup DEPENDS ${CMAKE_SOURCE_DIR}/${REF_INDEX})
+add_custom_target(setup DEPENDS ${CMAKE_SOURCE_DIR}/${DISASSEMBLE_STAMP})
 
 else()
 
@@ -610,6 +616,8 @@ endif()
 
 add_custom_target(disassemble
     ${SPLIT_COMMANDS}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${STAMP_DIR}
+    COMMAND ${CMAKE_COMMAND} -E touch ${DISASSEMBLE_STAMP}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     USES_TERMINAL
     VERBATIM)

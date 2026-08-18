@@ -52,6 +52,26 @@ void SndSetSeVolf(int se_no, float vol, int voice);
 void SndSetSePanf(int se_no, float pan, int voice);
 
 /**
+ * Plays one sound effect with an integer volume and pan.
+ *
+ * @mangled SndSePlay__Fiii
+ * @address 0x15A6B0
+ * @size 0xD0
+ * @unknownret
+ */
+int SndSePlay(int se_no, int voice, int pan);
+
+/**
+ * Plays the sound of one foot at a world position.
+ *
+ * @mangled SndPlayFootSound__FiiPf
+ * @address 0x15ABE0
+ * @size 0x120
+ * @unknownret
+ */
+void SndPlayFootSound(int sound_id, int foot, float *position);
+
+/**
  * Draws one part of a texture into a rectangle of the screen, at one alpha.
  *
  * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_Uc
@@ -92,3 +112,15 @@ void set2DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, const CRect_i_ &
  */
 void setColSprite(sceVif1Packet *, int *, int *, int *, int *, unsigned char, unsigned char,
                   unsigned char, unsigned char);
+
+/**
+ * Draws one part of a texture into a four-cornered shape of the screen, at one
+ * alpha.
+ *
+ * @mangled set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiPiPiUc
+ * @address 0x15D470
+ * @size 0x40
+ * @unknownret
+ */
+void set3DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, int *, int *, int *, int *,
+                 unsigned char);

@@ -2,8 +2,41 @@
 
 #include "common.h"
 
+/**
+ * @file
+ * Declares what the game remembers about every part an edited map can hold.
+ */
+
 class CSaveData;
-struct EPARTS_INFO_HEADER;
+
+/**
+ * Describes the shape of one editable map part, as the part definition file
+ * on the disc writes it.
+ */
+struct EPARTS_INFO_HEADER {
+    u8 unk_00[8];
+    s32 width;  /**< Cells that the part covers from west to east. */
+    s32 height; /**< Cells that the part covers from north to south. */
+    u8 unk_10[44];
+    u8 *cell; /**< One byte per grid cell, row by row, that says what the cell is. */
+};
+
+/**
+ * Records what one editable map part is and how far the player has taken it.
+ */
+struct EDITPARTS_INFO {
+    s32 parts_no; /**< Number that names the part. */
+    s32 unk_04;
+    s32 unk_08;
+    s32 unk_0C;
+    u8 unk_10[12];
+    s32 width;  /**< Cells that the part covers from west to east. */
+    s32 height; /**< Cells that the part covers from north to south. */
+    u8 unk_24[192];
+    EPARTS_INFO_HEADER *header; /**< Shape of the part. */
+};
+
+STATIC_ASSERT(sizeof(EDITPARTS_INFO) == 0xE8);
 
 class CEditPartsInfo {
 public:

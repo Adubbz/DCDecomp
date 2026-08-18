@@ -100,4 +100,12 @@ roomStackCnt         dungeonmap.cpp
 __vt__7CCamera       camera.cpp:.vtables
 __vt__13CCameraFollow camerafollow.cpp:.vtables
 __vt__7CObject       object.cpp:.vtables
+__vt__12CObjectFrame savedata.cpp:.vtables
+__vt__10CMapObject   mapobject.cpp:.vtables
+LIT_391__2           mapobject.cpp
+__vt__9CMapParts     mapparts.cpp:.vtables
+__vt__8CHitMark      hitmark.cpp:.vtables
+__vt__10CMainChara   character.cpp:.vtables
+LIT_650              character.cpp
+MotionStopFlag__10CCharacter character.cpp
 _fbss                camera.cpp

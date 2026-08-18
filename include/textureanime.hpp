@@ -33,6 +33,8 @@ STATIC_ASSERT(sizeof(CTexAnimeData) == 0x58);
 
 class CTextureAnime {
 public:
+    u8 unk_000[496];
+
     /**
      * @mangled TexAnime__13CTextureAnimeFi
      * @address 0x167170
@@ -48,6 +50,11 @@ public:
      * @unknownret
      */
     void Initialize(CTexAnimeData *, int);
+
+    /**
+     * Makes an animation that plays nothing.
+     */
+    CTextureAnime(void);
 
     /**
      * @mangled __ct__13CTextureAnimeFP13CTexAnimeDatai
@@ -112,3 +119,5 @@ public:
      */
     void LoadCFGFile(char *, int);
 };
+
+STATIC_ASSERT(sizeof(CTextureAnime) == 0x1F0);

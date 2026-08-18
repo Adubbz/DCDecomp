@@ -209,7 +209,7 @@ segments:
       - {start: 0x30ff0, type: cpp, name: texture}
       - {start: 0x34860, type: asmtu, name: visualvu1}
       - {start: 0x36390, type: asmtu, name: visualshadow}
-      - {start: 0x374e0, type: asmtu, name: character}
+      - {start: 0x374e0, type: cpp, name: character}
       - {start: 0x39e10, type: asmtu, name: chararead}
       - {start: 0x3b580, type: asmtu, name: wind}
       - {start: 0x3b740, type: asmtu, name: cloth}
@@ -228,9 +228,10 @@ segments:
       - {start: 0x560b0, type: asmtu, name: npcharacter}
       - {start: 0x56c60, type: cpp, name: fakepointlight}
       - {start: 0x56ca0, type: cpp, name: object}
-      - {start: 0x571c0, type: asmtu, name: objectframe}
-      - {start: 0x575f0, type: asmtu, name: mapobject}
-      - {start: 0x57ae0, type: cpp, name: savedata}
+      - {start: 0x571c0, type: cpp, name: objectframe}
+      - {start: 0x575f0, type: cpp, name: mapobject}
+      - {start: 0x57ae0, type: cpp, name: objectframe2}
+      - {start: 0x57c00, type: cpp, name: savedata}
       - {start: 0x58e80, type: asmtu, name: snd}
       - {start: 0x5f200, type: asmtu, name: scriptinterpreter}
       - {start: 0x5fe30, type: asmtu, name: sysmes}
@@ -247,7 +248,7 @@ segments:
       - {start: 0x6d960, type: asmtu, name: editarea}
       - {start: 0x70350, type: asmtu, name: edit}
       - {start: 0x9a0d0, type: cpp, name: editpartsinfo}
-      - {start: 0x9a8b0, type: asmtu, name: mapparts}
+      - {start: 0x9a8b0, type: cpp, name: mapparts}
       - {start: 0x9b780, type: asmtu, name: edit_in}
       - {start: 0xa0570, type: asmtu, name: editground}
       - {start: 0xa88e0, type: asmtu, name: fishing}
@@ -256,7 +257,7 @@ segments:
       - {start: 0xaec20, type: asmtu, name: shot_firebar}
       - {start: 0xaf460, type: asmtu, name: shot_freefuncs}
       - {start: 0xb2a00, type: asmtu, name: healeffect}
-      - {start: 0xb2f90, type: asmtu, name: hitmark}
+      - {start: 0xb2f90, type: cpp, name: hitmark}
       - {start: 0xb3880, type: asmtu, name: collisiondata}
       - {start: 0xb5c90, type: asmtu, name: dngmessageman}
       - {start: 0xb5e90, type: cpp, name: hitvalue}

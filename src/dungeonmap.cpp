@@ -41,9 +41,6 @@ extern "C" CTexAnimeData BtNPCTexAnimeData[4][32];
 /* The texture manager that the dungeon draws its textures out of. */
 extern "C" CTextureManager TexManager;
 
-/* What the water draws into. */
-extern "C" RenderInfo mgRenderInfo;
-
 /* The model a trap circle draws with. */
 extern "C" CCharacter Trap_Circle;
 
@@ -207,7 +204,7 @@ void CDungeonMap::SetNPC(int npc_no, unsigned int *pack, int parts_no, sceVu0FVE
     this->npc[npc_no].used = 1;
     this->npc[npc_no].unk_11DC = motion_no;
     this->npc[npc_no].chara.motion_no = motion_no;
-    this->npc[npc_no].chara.unk_C64 = 0;
+    this->npc[npc_no].chara.flags = 0;
     this->npc[npc_no].chara.motion_speed = -1.0f;
 }
 #endif /* DNG_COMPILE_UNMATCHED */
@@ -289,13 +286,13 @@ void CDungeonMap::StepNPC() {
 
 void CDungeonMap::NPCSetMotion(int npc_no, int motion_no) {
     this->npc[npc_no].chara.motion_no = motion_no;
-    this->npc[npc_no].chara.unk_C64 = 0;
+    this->npc[npc_no].chara.flags = 0;
     this->npc[npc_no].chara.motion_speed = -1.0f;
 }
 
 void CDungeonMap::NPCSetMotion(int npc_no, int motion_no, float speed, int unk) {
     this->npc[npc_no].chara.motion_no = motion_no;
-    this->npc[npc_no].chara.unk_C64 = unk;
+    this->npc[npc_no].chara.flags = unk;
     this->npc[npc_no].chara.motion_speed = -1.0f;
     this->npc[npc_no].chara.motion_speed = speed;
 }

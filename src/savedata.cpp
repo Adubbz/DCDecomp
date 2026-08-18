@@ -1,11 +1,12 @@
 #include "savedata.hpp"
 
-INCLUDE_ASM("asm/nonmatchings/savedata", SetMoment__12CObjectFrameF11CVector3_f_);
-INCLUDE_ASM("asm/nonmatchings/savedata", SetRotation__12CObjectFrameFfff);
-INCLUDE_ASM("asm/nonmatchings/savedata", SetRotation__12CObjectFrameF11CVector3_f_);
-INCLUDE_ASM("asm/nonmatchings/savedata", SetRotVelocity__12CObjectFrameF11CVector3_f_);
-INCLUDE_ASM("asm/nonmatchings/savedata", SetRotAcceleration__12CObjectFrameF11CVector3_f_);
-INCLUDE_ASM("asm/nonmatchings/savedata", SetPosition__7CObjectFPf);
+#include <libvu0.h>
+
+#include "object.hpp"
+
+void CObject::SetPosition(float *position) {
+    sceVu0CopyVector(this->pos, position);
+}
 
 /**
  * Contains one entry of the Georama building definition table.

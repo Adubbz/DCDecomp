@@ -2,21 +2,19 @@
 
 #include "common.h"
 
+#include "frame.hpp"
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 class CVisualVu1;
-struct RenderInfo;
-struct sceVif1Packet;
 
 
 /**
  * Draws a model with the VU1 microprogram.
  */
-class CFrameVu1 {
+class CFrameVu1 : public CFrame {
 public:
-    u8 unk_000[0x220];
-    float pos[4]; /**< World position of the frame. */
 
     /**
      * @mangled DrawVu1__9CFrameVu1FPUiP10RenderInfo
@@ -24,7 +22,7 @@ public:
      * @size 0xD10
      * @unknownret
      */
-    void DrawVu1(unsigned int *, RenderInfo *);
+    virtual void DrawVu1(unsigned int *, RenderInfo *);
 
     /**
      * @mangled DrawVu1__9CFrameVu1FP13sceVif1PacketP10RenderInfo
@@ -32,7 +30,7 @@ public:
      * @size 0x80
      * @unknownret
      */
-    void DrawVu1(sceVif1Packet *, RenderInfo *);
+    virtual void DrawVu1(sceVif1Packet *, RenderInfo *);
 
     /**
      * @mangled SetVisual__9CFrameVu1FP10CVisualVu1
@@ -56,7 +54,7 @@ public:
      * @size 0x30
      * @unknownret
      */
-    void Initialize(void);
+    virtual void Initialize(void);
 
     /**
      * @mangled __ct__9CFrameVu1Fv
