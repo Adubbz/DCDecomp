@@ -75,4 +75,3 @@ INCLUDE_ASM("asm/nonmatchings/mglib", MGDrawShadow__FP6CFramePfPf);
 INCLUDE_ASM("asm/nonmatchings/mglib", MGDrawShade__FP6CFrame);
 INCLUDE_ASM("asm/nonmatchings/mglib", MGBeginDrawShadow__F9sceGsTex0);
 INCLUDE_ASM("asm/nonmatchings/mglib", MGEndDrawShadow__FUc);
-

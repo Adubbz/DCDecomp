@@ -98,3 +98,11 @@ class CTextureManager {
         CTexture *SearchTexture(char *name);
 };
 STATIC_ASSERT(sizeof(CTextureManager) == 0x4E48);
+
+/**
+ * Manages the game's loaded textures.
+ *
+ * @address 0x1C75870
+ * @size 0x4E48
+ */
+extern CTextureManager TexManager;

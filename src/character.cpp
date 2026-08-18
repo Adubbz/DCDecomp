@@ -14,7 +14,6 @@
 #include "texture.hpp"
 
 /* External */
-extern CTextureManager TexManager[];
 
 /* sbss */
 s32 CCharacter::MotionStopFlag;
@@ -42,7 +41,7 @@ void zcross(float z, float *from, float *to, float *out) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/character", scissior__FPA4_fPA4_fPA4_ff);
-extern const char LIT_648[16] __attribute__((aligned(8))) = "%d*******\n";
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_648);
 
 void CVisualVu1::SetMDTDataAddress(unsigned int *data) {
 }
@@ -747,8 +746,8 @@ void CCharacter::DeleteExtendTexture(int block_no) {
         info.unk_10 = 0;
         info.unk_14 = 0;
         info.unk_0C = 0;
-        TexManager->DeleteTextureBlock(block_no);
-        TexManager->LoadTextureBlockEX(block_no, &info);
+        TexManager.DeleteTextureBlock(block_no);
+        TexManager.LoadTextureBlockEX(block_no, &info);
     }
 }
 
@@ -866,22 +865,22 @@ void CMainChara::Initialize() {
     this->unk_11CC = 0;
 }
 
-extern const char LIT_725[24] __attribute__((aligned(8))) = "VERTEX_ANIME";
-extern const char LIT_726[24] __attribute__((aligned(16))) = "SHADOW_VERTEX_ANIME";
-extern const char LIT_727[8] __attribute__((aligned(8))) = "MODEL";
-extern const char LIT_728[16] __attribute__((aligned(16))) = "SHADOW_MODEL";
-extern const char LIT_729[8] __attribute__((aligned(16))) = "MOTION";
-extern const char LIT_730[16] __attribute__((aligned(8))) = "SHADOW_MOTION";
-extern const char LIT_731[8] __attribute__((aligned(8))) = "KEY";
-extern const char LIT_732[16] __attribute__((aligned(16))) = "KEY_START";
-extern const char LIT_733[16] __attribute__((aligned(16))) = "MOTION_END";
-extern const char LIT_734[8] __attribute__((aligned(16))) = "CLOTH";
-extern const char LIT_735[16] __attribute__((aligned(8))) = "BODY_SIZE";
-extern const char LIT_736[16] __attribute__((aligned(8))) = "ALLOC_MDT";
-extern const char LIT_737[24] __attribute__((aligned(8))) = "ALLOC_DBUFF";
-extern const char LIT_738[32] __attribute__((aligned(16))) = "ALLOC_SHADOW_MDT";
-extern const char LIT_739[24] __attribute__((aligned(16))) = "ALLOC_SHADOW_DBUFF";
-extern const char LIT_740[8] __attribute__((aligned(8))) = "IMG";
-extern const char LIT_741[8] __attribute__((aligned(16))) = "IMG_END";
-extern const char LIT_742[8] __attribute__((aligned(8))) = "FOOT";
-extern const char LIT_743[8] __attribute__((aligned(16))) = "EVENT";
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_725);
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_726);
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_727);
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_728);
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_729);
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_730);
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_731);
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_732);
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_733);
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_734);
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_735);
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_736);
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_737);
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_738);
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_739);
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_740);
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_741);
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_742);
+INCLUDE_RODATA("asm/nonmatchings/character", LIT_743);

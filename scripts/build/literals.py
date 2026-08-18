@@ -78,10 +78,9 @@ A constant retail's pool does not hold at all is left where MWCC put it. MWLD
 appends it, the small data after the pool moves, and `scripts/build/verify.py`
 reports that as the failure it is.
 
-`--symbols` reports every entry the objects in a directory named;
-`scripts/build/migrate.py` turns that into one assignment each in the generated
-linker script, in pool order. `--report` shows what a source's unit loads in
-retail, and what its object binds to.
+`--symbols` reports every entry the objects in a directory named. The checked-in
+linker script defines those absolute symbols in pool order. `--report` shows
+what a source's unit loads in retail, and what its object binds to.
 """
 
 import argparse

@@ -13,7 +13,6 @@ set(SECTIONS main title dun)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(ObjectLists)
 include(Overlays)
-include(Migration)
 
 # Directories
 set(SRC_DIR src)
@@ -103,16 +102,6 @@ set(LD_MW_FLAGS -map -nostdlib -m _start -nodead -g)
 set(LD_MW_ISO_FLAGS -nostdlib -m _start -nodead -sym on,noelf)
 set(BIN_FLAGS -B mips:5900 -I binary -O elf32-littlemips)
 
-# Data migration: decompiled globals are carved out of copies of the section
-# dumps and placed back into their retail holes, all derived from
-# asm/decompiled_symbols.txt. See re/ai/build_pipeline.md.
-add_migrated_sections(GENERATED_S_FILES GENERATED_PLAN_FILES)
-
-set(GENERATED_O_FILES "")
-foreach(s IN LISTS GENERATED_S_FILES)
-    list(APPEND GENERATED_O_FILES ${s}.o)
-endforeach()
-
 # What gets built, as opposed to what gets linked. Every reference dump the
 # disassembler recorded is assembled and every source under src/ is compiled,
 # whether or not the link ends up using it -- a dump superseded by decompiled
@@ -120,15 +109,20 @@ endforeach()
 # takes, and in what order, is decided from the compiled objects themselves at
 # build time; see scripts/build/layout.py.
 #
-# The carved sections are the exception: the migration replaces them with the
-# generated parts above, so their dumps are never assembled.
-migrated_section_names(CARVED_SECTIONS)
+# Decompiled globals replace ranges in these five retail dumps. Their static,
+# checked-in fragments live under asm/data/main/parts, so the unsplit dumps are
+# not assembled.
+set(REPLACED_SECTIONS main.bss main.data main.rdata main.sbss main.sdata)
 
 set(ASM_SOURCES "")
 foreach(section IN LISTS SECTIONS)
-    read_index_sources(${section} section_srcs "${CARVED_SECTIONS}")
+    read_index_sources(${section} section_srcs "${REPLACED_SECTIONS}")
     list(APPEND ASM_SOURCES ${section_srcs})
 endforeach()
+file(GLOB STATIC_SECTION_SOURCES CONFIGURE_DEPENDS
+     RELATIVE ${CMAKE_SOURCE_DIR}
+     ${CMAKE_SOURCE_DIR}/${ASM_DATA_DIR}/main/parts/*.s)
+list(APPEND ASM_SOURCES ${STATIC_SECTION_SOURCES})
 
 # Only for its CONFIGURE_DEPENDS: ninja re-evaluates the glob each build and
 # re-runs CMake when the set of sources changed, so a newly added one is picked
@@ -164,6 +158,11 @@ foreach(row IN LISTS unit_rows)
         list(APPEND CPP_SOURCES ${source})
     endif()
 endforeach()
+
+# These data-only source files replace proven typed objects inside residual
+# whole-section dumps. They are separate objects because their owning retail
+# units also contribute BSS at earlier addresses.
+list(APPEND CPP_SOURCES src/mglib_data.cpp src/texture_data.cpp)
 # Hand-written assembly, kept apart from what splat generates: the per-unit
 # files it writes land in asm/ itself, and a glob over those would link every
 # translation unit's reference assembly alongside the objects that already
@@ -198,16 +197,22 @@ set(ALL_OBJS "")
 foreach(src IN LISTS ASM_SOURCES CPP_SOURCES EXTRA_ASM_SOURCES)
     list(APPEND ALL_OBJS ${BUILD_DIR}/${src}.o)
 endforeach()
-list(APPEND ALL_OBJS ${GENERATED_O_FILES} ${WHOLE_UNIT_OBJS})
+list(APPEND ALL_OBJS ${WHOLE_UNIT_OBJS})
 
 set(LINK_ORDER "")
 foreach(section IN LISTS SECTIONS)
     list(APPEND LINK_ORDER ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${section}_o_files)
 endforeach()
 
-# Appended after the address-ordered objects: the carved parts and the
-# hand-written symbol definitions have no retail address to sort them by.
-set(MAIN_TAIL ${GENERATED_O_FILES})
+# Appended after the address-ordered objects: the static section fragments and
+# hand-written symbol definitions have no text address to sort them by.
+set(MAIN_TAIL "")
+foreach(src IN LISTS STATIC_SECTION_SOURCES)
+    list(APPEND MAIN_TAIL ${BUILD_DIR}/${src}.o)
+endforeach()
+list(APPEND MAIN_TAIL
+     ${BUILD_DIR}/src/mglib_data.cpp.o
+     ${BUILD_DIR}/src/texture_data.cpp.o)
 foreach(src IN LISTS EXTRA_ASM_SOURCES)
     list(APPEND MAIN_TAIL ${BUILD_DIR}/${src}.o)
 endforeach()
@@ -235,8 +240,8 @@ endif()
 #
 # Linker command file
 #
-# The checked-in .lcf is a template: overlay placement is expanded at configure
-# time, migrated-data placement at build time (it has to objdump each island).
+# The checked-in .lcf is a template whose overlay placement is expanded at
+# configure time.
 #
 set(OVERLAY_LCF ${BUILD_DIR}/${BASENAME}.overlays.lcf)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
@@ -244,31 +249,7 @@ set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
 expand_overlay_markers(${CMAKE_SOURCE_DIR}/${LD_TEMPLATE}
                        ${CMAKE_SOURCE_DIR}/${OVERLAY_LCF})
 
-migration_enabled(MIGRATION_ENABLED)
-if(MIGRATION_ENABLED)
-    set(GEN_LCF ${BUILD_DIR}/${BASENAME}.lcf)
-    migrated_contrib_objs(LCF_CONTRIB_OBJS ${BUILD_DIR}/${SRC_DIR})
-
-    add_custom_command(
-        OUTPUT ${CMAKE_SOURCE_DIR}/${GEN_LCF}
-        COMMAND ${CMAKE_COMMAND} -E env OBJDUMP=${OBJDUMP}
-                ${PYTHON_CMD} ${SCRIPTS_DIR}/build/migrate.py --lcf ${OVERLAY_LCF}
-                ${BUILD_DIR}/generated/main ${BUILD_DIR}/${SRC_DIR} ${GEN_LCF}
-        # The compiled objects too: migrate.py reads the literal pool entries
-        # they name out of their symbol tables and defines one symbol each, so
-        # a source that starts using another entry has to regenerate the
-        # script. scripts/build/literals.py is what puts those symbols there.
-        DEPENDS ${CMAKE_SOURCE_DIR}/${OVERLAY_LCF}
-                ${CMAKE_SOURCE_DIR}/${MIGRATE_MANIFEST}
-                ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/migrate.py
-                ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/literals.py
-                ${GENERATED_PLAN_FILES} ${LCF_CONTRIB_OBJS} ${CPP_OBJS}
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        COMMENT "Generating ${GEN_LCF}"
-        VERBATIM)
-else()
-    set(GEN_LCF ${OVERLAY_LCF})
-endif()
+set(GEN_LCF ${OVERLAY_LCF})
 
 #
 # Link
@@ -327,7 +308,7 @@ add_custom_command(
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/layout.py
             --link-order ${BUILD_DIR} --provenance ${PROVENANCE}
             --build-dir ${BUILD_DIR} --main-tail ${MAIN_TAIL}
-            --carved ${CARVED_SECTIONS} --lcf ${LD_TEMPLATE}
+            --carved ${REPLACED_SECTIONS} --lcf ${LD_TEMPLATE}
     # disassemble.py owns the section layout and the unit classification, so
     # the link order changes with it: which object a unit is taken from, and
     # where each whole-section dump lives.

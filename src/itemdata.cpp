@@ -42,10 +42,9 @@ INCLUDE_RODATA("asm/nonmatchings/itemdata", LIT_589__2);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", LIT_590__2);
 
 /*
- * The definition tables, migrated out of the main.data dump. Carved from it
- * and placed back into their retail hole by asm/decompiled_symbols.txt; the
- * four are contiguous there and stay in this order, which is what puts each
- * one back at its own address.
+ * The source-owned definition tables replace their bytes in main.data. The
+ * linker script places this unit's data section at its retail address; the
+ * four tables are contiguous and stay in this order.
  *
  * Byte-for-byte from retail. WeaponList and AttachList stay as bytes because
  * nothing is known about their fields yet -- inventing a struct for them
@@ -841,4 +840,3 @@ int GetCommonItemDataMsg(int item_no) {
 int GetCommonItemDataSystemMsg(int item_no) {
     return GetCommonItemDataMsg(item_no) + 100;
 }
-

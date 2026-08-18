@@ -9,7 +9,6 @@ INCLUDE_ASM("asm/nonmatchings/ebattle", CommandTEX_SCROLL_DATA__FPPv);
 INCLUDE_ASM("asm/nonmatchings/ebattle", CommandTEX_ANIME_END__FPPv);
 
 /* External */
-extern CTextureManager TexManager[];
 
 /* strings */
 extern char LIT_314__2[]; /* "ebat" */
@@ -53,10 +52,10 @@ void EBInitialize() {
 
 /* @ 0x168110 (0xE0 bytes) -- EBInit__Ff */
 void EBInit(float speed_mult) {
-    tex = TexManager->GetTexture(LIT_314__2, -1);
+    tex = TexManager.GetTexture(LIT_314__2, -1);
 
     if (tex) {
-        tex2 = TexManager->GetTexture(LIT_315__2, -1);
+        tex2 = TexManager.GetTexture(LIT_315__2, -1);
 
         if (tex2) {
             eb_count = 0;

@@ -174,15 +174,10 @@ static s32 mc_mode;
  * include/mainselect.hpp. */
 s32 PolyCount;
 
-/* `NextMapNo` (main.sdata, initialized to -1) stays `extern`, binding to
- * the still-uncarved symbol in ref/asm/sections/main/main.sdata.s:
- * `MapJump__Fii` (same retail TU, not yet decompiled) writes it, and
- * defining a separate `static` copy in this file would break the
- * MapJump->main() communication that retail's shared TU-local gave them.
- * The cost is only symbol *binding* (global vs. local), which doesn't
- * affect main()'s code bytes; true `static` linkage has to wait until
- * MapJump__Fii and friends are decompiled into this same file. */
-extern s32 NextMapNo;
+/**
+ * Selects the next map that the game loads.
+ */
+s32 NextMapNo = -1;
 
 /* Low byte of an EE DMA channel's CHCR, as a bitfield. The "kick this
  * channel" write in main() is a 1-bit field assignment in the original

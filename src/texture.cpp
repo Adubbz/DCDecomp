@@ -80,4 +80,3 @@ INCLUDE_ASM("asm/nonmatchings/texture", PageConv8to32__FiiPUcPUc);
 INCLUDE_ASM("asm/nonmatchings/texture", BlockConv8to32__FPUcPUc);
 INCLUDE_ASM("asm/nonmatchings/texture", Conv8to32__FiiPUcPUc);
 INCLUDE_ASM("asm/nonmatchings/texture", print_buff_info__15CTextureManagerFv);
-

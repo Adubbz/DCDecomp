@@ -323,7 +323,20 @@ SECTIONS
         *(.vutext)
 
         # data
-        // @MIGRATE main.data
+        main.data.part1.s.o (.data)
+        character.cpp.o (.data)
+        main.data.part2.s.o (.data)
+        mapobject.cpp.o (.data)
+        main.data.part3.s.o (.data)
+        savedata.cpp.o (.data)
+        main.data.part4.s.o (.data)
+        dungeonmap.cpp.o (.data)
+        main.data.part5.s.o (.data)
+        itemdata.cpp.o (.data)
+        main.data.part6.s.o (.data)
+        stockitem.cpp.o (.data)
+        . = . + 0xC;
+        main.data.part7.s.o (.data)
         *(.data)
         *(.vudata)
 
@@ -335,7 +348,27 @@ SECTIONS
         // holds is what comes after -- the static initialisers, the vtables
         // and the literal pool -- so its placement follows.
         *(.rodata)
-        // @MIGRATE main.rdata
+        main.rdata.part1.s.o (.rdata)
+        main.cpp.o (.init)
+        . = . + 0x8;
+        main.rdata.part2.s.o (.rdata)
+        main.cpp.o (.ctor)
+        main.rdata.part3.s.o (.rdata)
+        camerafollow.cpp.o (.vtables)
+        camera.cpp.o (.vtables)
+        . = . + 0xC;
+        main.rdata.part4.s.o (.rdata)
+        character.cpp.o (.vtables)
+        . = . + 0x8;
+        main.rdata.part5.s.o (.rdata)
+        mapobject.cpp.o (.vtables)
+        savedata.cpp.o (.vtables)
+        object.cpp.o (.vtables)
+        . = . + 0xA0;
+        main.rdata.part6.s.o (.rdata)
+        mapparts.cpp.o (.vtables)
+        hitmark.cpp.o (.vtables)
+        main.rdata.part7.s.o (.rdata)
         *(.rdata)
 
 		# C++ related sections
@@ -358,11 +391,34 @@ SECTIONS
 
 		# Entries of retail's literal pool that a compiled unit loads from.
 		# scripts/build/literals.py binds each float constant an object holds
-		# to the entry retail loads it from, and migrate.py writes one
-		# assignment per entry here, in pool order. A constant retail's pool
+		# to the entry retail loads it from. The assignments stay here in pool
+		# order. A constant retail's pool
 		# does not hold stays in its object and the LITERAL directive below
 		# appends it to the pool instead, which moves the small data after it.
-		// @LITERALS
+		_LIT_002A1800 = 0x002a1800;
+		_LIT_002A1868 = 0x002a1868;
+		_LIT_002A1870 = 0x002a1870;
+		_LIT_002A1888 = 0x002a1888;
+		_LIT_002A1894 = 0x002a1894;
+		_LIT_002A18A0 = 0x002a18a0;
+		_LIT_002A18BC = 0x002a18bc;
+		_LIT_002A18D0 = 0x002a18d0;
+		_LIT_002A18E4 = 0x002a18e4;
+		_LIT_002A18EC = 0x002a18ec;
+		_LIT_002A18F0 = 0x002a18f0;
+		_LIT_002A1908 = 0x002a1908;
+		_LIT_002A1934 = 0x002a1934;
+		_LIT_002A1944 = 0x002a1944;
+		_LIT_002A1948 = 0x002a1948;
+		_LIT_002A1AF8 = 0x002a1af8;
+		_LIT_002A1D10 = 0x002a1d10;
+		_LIT_002A1D24 = 0x002a1d24;
+		_LIT_002A1D98 = 0x002a1d98;
+		_LIT_002A1D9C = 0x002a1d9c;
+		_LIT_002A1DBC = 0x002a1dbc;
+		_LIT_002A1DCC = 0x002a1dcc;
+		_LIT_002A1DD0 = 0x002a1dd0;
+		_LIT_002A1DD8 = 0x002a1dd8;
 		// TODO: _gp	= . + 0x7ff0;
 
         _stack       = 0x01F80000;
@@ -376,18 +432,55 @@ SECTIONS
 		LITERAL
 
 		# sdata
-		// @MIGRATE main.sdata
+		main.sdata.part1.s.o (.sdata)
+		mainselect.cpp.o (.sdata)
+		main.cpp.o (.sdata)
+		main.sdata.part2.s.o (.sdata)
+		stockitem.cpp.o (.sdata)
+		main.sdata.part3.s.o (.sdata)
 		*(.sdata)
 
 		# sbss
 		_fbss = .;
-		// @MIGRATE main.sbss
+		camera.cpp.o (.sbss)
+		main.sbss.part1.s.o (.sbss)
+		mglib.cpp.o (.sbss)
+		main.sbss.part2.s.o (.sbss)
+		character.cpp.o (.sbss)
+		main.sbss.part3.s.o (.sbss)
+		main.cpp.o (.sbss)
+		main.sbss.part4.s.o (.sbss)
+		dungeonmap.cpp.o (.sbss)
+		main.sbss.part5.s.o (.sbss)
+		userstatus.cpp.o (.sbss)
+		main.sbss.part6.s.o (.sbss)
+		monstorunit.cpp.o (.sbss)
+		main.sbss.part7.s.o (.sbss)
+		randomitem.cpp.o (.sbss)
+		main.sbss.part8.s.o (.sbss)
+		hitvalue.cpp.o (.sbss)
+		main.sbss.part9.s.o (.sbss)
 		*(.sbss)
 		*(.scommon)
 		*(SCOMMON)
 
         # bss
-		// @MIGRATE main.bss
+		main.bss.part1.s.o (.bss)
+		texture.cpp.o (.bss)
+		water.cpp.o (.bss)
+		main.bss.part2.s.o (.bss)
+		mglib.cpp.o (.bss)
+		mglib_data.cpp.o (.bss)
+		texture_data.cpp.o (.bss)
+		main.bss.part3.s.o (.bss)
+		mainselect.cpp.o (.bss)
+		gamepad.cpp.o (.bss)
+		main.cpp.o (.bss)
+		main.bss.part4.s.o (.bss)
+		editpartsinfo.cpp.o (.bss)
+		main.bss.part5.s.o (.bss)
+		dungeonmap.cpp.o (.bss)
+		main.bss.part6.s.o (.bss)
 		*(.bss)
 		*(.common)
 		*(COMMON)

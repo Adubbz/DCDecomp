@@ -108,9 +108,8 @@ function(overlay_header name out_var)
         ALIGNALL(16);" PARENT_SCOPE)
 endfunction()
 
-# Expand the linker template: replace every `// @OVERLAY <name>` marker with
-# that overlay's header. Any `// @MIGRATE` markers are left alone for the
-# linker-script pass, which runs afterwards.
+# Expand the linker template by replacing each `// @OVERLAY <name>` marker
+# with that overlay's header.
 function(expand_overlay_markers template out)
     file(READ ${template} content)
 

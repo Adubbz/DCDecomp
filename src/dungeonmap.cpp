@@ -3092,8 +3092,8 @@ int CDungeonMap::SetCharaDoor(int chara_no) {
  * Compiling this also moves data. MWCC emits its own jump table for the
  * switch, which has to land where retail keeps LIT_3191 -- so that marker
  * comes out and the LIT_3190 one moves above the function -- and it emits a
- * .data template for `map_no`, which needs LIT_3162 in
- * asm/decompiled_symbols.txt so the island covers it. Both are undone here. */
+ * .data template for `map_no`, which expands this unit's source-owned data
+ * range through LIT_3162. Both are undone here. */
 void CDungeonMap::buildRandomMap(int room_max, int full) {
     int w;
     int h;
@@ -3409,4 +3409,3 @@ void CDungeonMap::initalize() {
     }
     this->draw_dist_scale = 4.0f;
 }
-

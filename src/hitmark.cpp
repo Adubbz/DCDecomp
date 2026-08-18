@@ -10,7 +10,6 @@
 #include "texture.hpp"
 
 /* External */
-extern CTextureManager TexManager[];
 
 /* strings */
 extern char LIT_1430[]; /* "basefx00" */
@@ -67,7 +66,7 @@ void CHitMark::Draw() {
     }
 
     sceVu0CopyVector(base, this->pos);
-    texture = TexManager->GetTexture(LIT_1430, -1);
+    texture = TexManager.GetTexture(LIT_1430, -1);
 
     for (i = 0; i < this->count; i++) {
         if (this->used[i] == 0) {
@@ -217,7 +216,7 @@ void CHitPointMark::Draw() {
     rect.y = 0x20;
     rect.width = 0x30;
     rect.height = 0x30;
-    set3DSprite(Vif1Packet, TexManager->GetTexture(LIT_1430, -1), rect, top_left, top_right,
+    set3DSprite(Vif1Packet, TexManager.GetTexture(LIT_1430, -1), rect, top_left, top_right,
                 bottom_left, bottom_right, 0x80);
 }
 
