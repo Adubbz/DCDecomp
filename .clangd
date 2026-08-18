@@ -3,6 +3,7 @@ CompileFlags:
   Add:
     - -xc++
     - -std=c++98
+    - -Wno-deprecated-writable-strings
     - -nostdinc
     - -nostdinc++
     - --target=mipsel-unknown-elf

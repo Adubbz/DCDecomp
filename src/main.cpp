@@ -205,8 +205,6 @@ typedef struct {
 extern char My_dma_start0[];
 extern char Vu_progmain[];
 extern char Vu_prog0f[];
-extern char LIT_873[];
-extern char LIT_874[];
 
 /* @ 0x1410B0 (0xC80 bytes) -- main */
 int main(int argc, const char **argv, const char **envp) {
@@ -271,7 +269,7 @@ int main(int argc, const char **argv, const char **envp) {
     mode = 7;
     main_select_menu_no = 0;
 
-    strcpy(main_select_param, LIT_873);
+    strcpy(main_select_param, "e01");
     init_all__Fv();
 
     while (sceGsSyncV(0) == 0) {
@@ -520,12 +518,12 @@ int main(int argc, const char **argv, const char **envp) {
                     v4 = func_01DD2220();
                     if (v4 == 1) {
                         main_select_menu_no = 0;
-                        strcpy(main_select_param, LIT_873);
+                        strcpy(main_select_param, "e01");
                         mode = 2;
                     }
                     if (v4 == 2) {
                         main_select_menu_no = 1;
-                        strcpy(main_select_param, LIT_873);
+                        strcpy(main_select_param, "e01");
                         mode = 2;
                     }
                     if (v4 == 3) {
@@ -698,7 +696,7 @@ int main(int argc, const char **argv, const char **envp) {
                  * tested `== 0` so no bool materialization is needed)
                  * reproduces that without adding an xori. */
                 main_select_menu_no = 0;
-                strcpy(main_select_param, LIT_874);
+                strcpy(main_select_param, "title");
                 if (NextMapNo == 800) {
                     mode = 0;
                 }

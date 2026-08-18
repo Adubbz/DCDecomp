@@ -36,5 +36,3 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishLineGetHook__FPf);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingCheckUkiHook__Fv);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineStep__FPfPf);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineDraw__Fi);
-INCLUDE_ASM("asm/nonmatchings/fishing", checkCollision__FPfPfPfif);
-INCLUDE_ASM("asm/nonmatchings/fishing", set3DCellModel__FPfPcfiiiiUc);

@@ -27,13 +27,6 @@ extern "C" s32 selectMapNo;
 /* The player's save-slot status; the dungeon reads the party and the floor. */
 extern CUserStatus *UserStatus;
 
-extern const unsigned char LIT_1007__2[];
-extern const unsigned char LIT_1559[];
-extern const unsigned char LIT_1560[];
-extern const unsigned char LIT_2448[];
-extern const unsigned char LIT_2859[];
-extern const unsigned char LIT_2860[];
-extern const unsigned char LIT_3190[];
 
 /* One texture animation for every part of every character in the dungeon. */
 extern "C" CTexAnimeData BtNPCTexAnimeData[4][32];
@@ -87,8 +80,6 @@ STATIC_ASSERT(sizeof(ITEM_FREE_AREA) == 0x64);
 extern "C" int DebugStatus[];
 extern "C" int BtEquipMap;
 extern "C" int BtEquipMasuisyou;
-extern const unsigned char LIT_1470[];
-extern const unsigned char LIT_1471[];
 extern "C" ITEM_FREE_AREA *ItemFreeAreaAll[];
 
 /**
@@ -189,7 +180,7 @@ void CDungeonMap::SetNPC(int npc_no, unsigned int *pack, int parts_no, sceVu0FVE
         BtNPCTexAnimeData[npc_no][i].Initialize();
     }
     this->npc[npc_no].chara.InitializeTexAnime(BtNPCTexAnimeData[npc_no], 32);
-    this->npc[npc_no].chara.LoadPackData2(pack, (char *) LIT_1007__2, alloc, npc_no + 64,
+    this->npc[npc_no].chara.LoadPackData2(pack, "info.cfg", alloc, npc_no + 64,
                                           alloc, 0);
     if (this->npc[npc_no].chara.frame == NULL) {
         printf("******* NPCEntryErr\n");
@@ -650,8 +641,8 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
     }
 
     visible = BtEquipMap ? 0 : 1;
-    CTexture *map_texture = TexManager.GetTexture((char *) LIT_1470, -1);
-    CTexture *symbol_texture = TexManager.GetTexture((char *) LIT_1471, -1);
+    CTexture *map_texture = TexManager.GetTexture("minimap1", -1);
+    CTexture *symbol_texture = TexManager.GetTexture("itempack", -1);
 
     for (row = 0; row < 20; row++) {
         for (col = 0; col < 20; col++) {
@@ -847,8 +838,8 @@ void CDungeonMap::DrawFireFreeStyle(CFrameVu1 *frame, CCameraFollow *camera) {
     ((CCamera *) camera)->GetPos(cam_pos);
     sceVu0ScaleVectorXYZ(cam_pos, cam_pos, 0.1f);
 
-    this->fire.SetTexture(TexManager.GetTexture((char *) LIT_1559, -1),
-                          TexManager.GetTexture((char *) LIT_1560, -1));
+    this->fire.SetTexture(TexManager.GetTexture("lightling", -1),
+                          TexManager.GetTexture("blender", -1));
     this->fire.FireCreate();
 
     near_dist = 16000.0f;
@@ -942,8 +933,8 @@ void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
     ((CCamera *) camera)->GetPos(cam_near);
     sceVu0ScaleVectorXYZ(cam_near, cam_near, 0.1f);
 
-    this->fire.SetTexture(TexManager.GetTexture((char *) LIT_1559, -1),
-                          TexManager.GetTexture((char *) LIT_1560, -1));
+    this->fire.SetTexture(TexManager.GetTexture("lightling", -1),
+                          TexManager.GetTexture("blender", -1));
     this->fire.FireCreate();
 
     sceVu0CopyVector(frame_near, frame->pos);
@@ -2125,7 +2116,7 @@ void CDungeonMap::SetAtraBoll(float *pos, int atra_no) {
             goto found;
         }
     }
-    printf((const char *) LIT_2448);
+    printf("ivent buffer over !!\n");
     exit__2(-1);
 
 found:
@@ -2171,7 +2162,7 @@ int CDungeonMap::SetTreasureBox(float *pos, int item_no, int kind, int unk) {
             goto found;
         }
     }
-    printf((const char *) LIT_2448);
+    printf("ivent buffer over !!\n");
     exit__2(-1);
 
 found:
@@ -2302,7 +2293,7 @@ void CDungeonMap::buildEventData(int floor_no, int enabled, int place_atla) {
                         goto found_atla_event;
                     }
                 }
-                printf((const char *) LIT_2448);
+                printf("ivent buffer over !!\n");
                 exit__2(-1);
 
             found_atla_event:
@@ -2350,7 +2341,7 @@ void CDungeonMap::SetMimicEvent(float x, float y, float z, int item_no, int kind
             goto found;
         }
     }
-    printf((const char *) LIT_2448);
+    printf("ivent buffer over !!\n");
     exit__2(-1);
 
 found:
@@ -2619,7 +2610,7 @@ void CDungeonMap::GetRoomLinkInfo(void) {
             scanRoomInfoWork[y + 1][x] = 1;
             break;
         default:
-            printf((const char *) LIT_2859);
+            printf("ERROR !!\n");
             return;
     }
 
@@ -2714,7 +2705,7 @@ void CDungeonMap::GetRoomLinkInfo(void) {
         }
     }
     if (room_count == 0) {
-        printf((const char *) LIT_2860, target_label);
+        printf("//////--------> SET NOOMAL DOOR PUTERR!![%d] ///////// \n", target_label);
         active = 0;
     }
     while (active != 0) {
@@ -3280,7 +3271,7 @@ void CDungeonMap::buildRandomMap(int room_max, int full) {
     }
 
     this->SetUnderLoad();
-    printf((const char *) LIT_3190);
+    printf("map build success!!\n");
 }
 #endif /* DNG_COMPILE_UNMATCHED */
 INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_3190);

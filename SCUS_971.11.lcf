@@ -271,6 +271,7 @@ SECTIONS
         edit_in.cpp.o               (.text)   // 0x0019b680
         editground.cpp.o            (.text)   // 0x001a0470
         fishing.cpp.o               (.text)   // 0x001a87e0
+        shot_utils.cpp.o            (.text)   // 0x001ab740
         shot_effect.cpp.o           (.text)   // 0x001abc40
         hit_machingun_effect.cpp.o  (.text)   // 0x001ae980
         shot_firebar.cpp.o          (.text)   // 0x001aeb20

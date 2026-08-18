@@ -95,7 +95,8 @@ set(CTX_CPP ${BUILD_DIR}/ctx.cpp)
 set(AS_FLAGS -EL -march=r5900 -mabi=eabi -g -mno-pdr -non_shared -G0 -I include)
 # -RTTI off because retail's vtables carry a zero where mwcc otherwise puts a
 # pointer to the class's __RTTI__ record; the game was built without it.
-set(CC_MW_FLAGS -O2 -c -Cpp_exceptions off -RTTI off -strings readonly -i include)
+set(CC_MW_FLAGS -O2 -c -Cpp_exceptions off -RTTI off -strings readonly
+    -pragma "divbyzerocheck on" -i include)
 set(LD_MW_FLAGS -map -nostdlib -m _start -nodead -g)
 # `-sym on,noelf` keeps the relocations resolved but drops the symbol table and
 # section headers, leaving just the loadable image the console needs.
