@@ -1,0 +1,7 @@
+{
+  "src/gamepad.cpp": {
+    "sections": {
+      ".padbss": ["pad_dma_buf", "pad_dma_buf2"]
+    }
+  }
+}

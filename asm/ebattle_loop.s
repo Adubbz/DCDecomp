@@ -4114,12 +4114,12 @@ glabel EdMoveChara__Fv
     /* 06BE4C 0016BD4C 2600013C */  lui        $1, %hi(reference$516 + 0x4)
     /* 06BE50 0016BD50 946E20E4 */  swc1       $f0, %lo(reference$516 + 0x4)($1)
   .L0016BD54:
-    /* 06BE54 0016BD54 0C8F8283 */  lb         $2, -0x70F4($28)
+    /* 06BE54 0016BD54 0C8F8283 */  lb         $2, %gp_rel(init$770)($28)
     /* 06BE58 0016BD58 04004014 */  bnez       $2, .L0016BD6C
     /* 06BE5C 0016BD5C 00000000 */   nop
-    /* 06BE60 0016BD60 088F80AF */  sw         $0, -0x70F8($28)
+    /* 06BE60 0016BD60 088F80AF */  sw         $0, %gp_rel(rot_count$769)($28)
     /* 06BE64 0016BD64 01000224 */  addiu      $2, $0, 0x1
-    /* 06BE68 0016BD68 0C8F82A3 */  sb         $2, -0x70F4($28)
+    /* 06BE68 0016BD68 0C8F82A3 */  sb         $2, %gp_rel(init$770)($28)
   .L0016BD6C:
     /* 06BE6C 0016BD6C 20000424 */  addiu      $4, $0, 0x20
     /* 06BE70 0016BD70 BCA6050C */  jal        PadOn__Fi
@@ -4130,9 +4130,9 @@ glabel EdMoveChara__Fv
     /* 06BE84 0016BD84 03004014 */  bnez       $2, .L0016BD94
     /* 06BE88 0016BD88 00000000 */   nop
     /* 06BE8C 0016BD8C 1E000224 */  addiu      $2, $0, 0x1E
-    /* 06BE90 0016BD90 088F82AF */  sw         $2, -0x70F8($28)
+    /* 06BE90 0016BD90 088F82AF */  sw         $2, %gp_rel(rot_count$769)($28)
   .L0016BD94:
-    /* 06BE94 0016BD94 088F828F */  lw         $2, -0x70F8($28)
+    /* 06BE94 0016BD94 088F828F */  lw         $2, %gp_rel(rot_count$769)($28)
     /* 06BE98 0016BD98 33004018 */  blez       $2, .L0016BE68
     /* 06BE9C 0016BD9C 00000000 */   nop
     /* 06BEA0 0016BDA0 28264072 */  paddub     $4, $18, $0
@@ -4171,7 +4171,7 @@ glabel EdMoveChara__Fv
     /* 06BF24 0016BE24 02000010 */  b          .L0016BE30
     /* 06BF28 0016BE28 00000000 */   nop
   .L0016BE2C:
-    /* 06BF2C 0016BE2C 088F80AF */  sw         $0, -0x70F8($28)
+    /* 06BF2C 0016BE2C 088F80AF */  sw         $0, %gp_rel(rot_count$769)($28)
   .L0016BE30:
     /* 06BF30 0016BE30 0A00001A */  blez       $16, .L0016BE5C
     /* 06BF34 0016BE34 00000000 */   nop
@@ -4184,19 +4184,19 @@ glabel EdMoveChara__Fv
     /* 06BF50 0016BE50 02000010 */  b          .L0016BE5C
     /* 06BF54 0016BE54 00000000 */   nop
   .L0016BE58:
-    /* 06BF58 0016BE58 088F80AF */  sw         $0, -0x70F8($28)
+    /* 06BF58 0016BE58 088F80AF */  sw         $0, %gp_rel(rot_count$769)($28)
   .L0016BE5C:
     /* 06BF5C 0016BE5C 02000016 */  bnez       $16, .L0016BE68
     /* 06BF60 0016BE60 00000000 */   nop
-    /* 06BF64 0016BE64 088F80AF */  sw         $0, -0x70F8($28)
+    /* 06BF64 0016BE64 088F80AF */  sw         $0, %gp_rel(rot_count$769)($28)
   .L0016BE68:
-    /* 06BF68 0016BE68 088F828F */  lw         $2, -0x70F8($28)
+    /* 06BF68 0016BE68 088F828F */  lw         $2, %gp_rel(rot_count$769)($28)
     /* 06BF6C 0016BE6C FFFF4224 */  addiu      $2, $2, -0x1
-    /* 06BF70 0016BE70 088F82AF */  sw         $2, -0x70F8($28)
-    /* 06BF74 0016BE74 088F828F */  lw         $2, -0x70F8($28)
+    /* 06BF70 0016BE70 088F82AF */  sw         $2, %gp_rel(rot_count$769)($28)
+    /* 06BF74 0016BE74 088F828F */  lw         $2, %gp_rel(rot_count$769)($28)
     /* 06BF78 0016BE78 02004104 */  bgez       $2, .L0016BE84
     /* 06BF7C 0016BE7C 00000000 */   nop
-    /* 06BF80 0016BE80 088F80AF */  sw         $0, -0x70F8($28)
+    /* 06BF80 0016BE80 088F80AF */  sw         $0, %gp_rel(rot_count$769)($28)
   .L0016BE84:
     /* 06BF84 0016BE84 28264072 */  paddub     $4, $18, $0
     /* 06BF88 0016BE88 D201023C */  lui        $2, %hi(EdVillager)
@@ -4472,19 +4472,19 @@ glabel EdMoveChara__Fv
     /* 06C37C 0016C27C 00000000 */  nop
     /* 06C380 0016C280 86A50046 */  mov.s      $f22, $f20
     /* 06C384 0016C284 28860070 */  paddub     $16, $0, $0
-    /* 06C388 0016C288 148F8283 */  lb         $2, -0x70EC($28)
+    /* 06C388 0016C288 148F8283 */  lb         $2, %gp_rel(init$846)($28)
     /* 06C38C 0016C28C 04004014 */  bnez       $2, .L0016C2A0
     /* 06C390 0016C290 00000000 */   nop
-    /* 06C394 0016C294 108F80AF */  sw         $0, -0x70F0($28)
+    /* 06C394 0016C294 108F80AF */  sw         $0, %gp_rel(bgm_vol$845)($28)
     /* 06C398 0016C298 01000224 */  addiu      $2, $0, 0x1
-    /* 06C39C 0016C29C 148F82A3 */  sb         $2, -0x70EC($28)
+    /* 06C39C 0016C29C 148F82A3 */  sb         $2, %gp_rel(init$846)($28)
   .L0016C2A0:
-    /* 06C3A0 0016C2A0 1C8F8283 */  lb         $2, -0x70E4($28)
+    /* 06C3A0 0016C2A0 1C8F8283 */  lb         $2, %gp_rel(init$849)($28)
     /* 06C3A4 0016C2A4 04004014 */  bnez       $2, .L0016C2B8
     /* 06C3A8 0016C2A8 00000000 */   nop
-    /* 06C3AC 0016C2AC 188F80AF */  sw         $0, -0x70E8($28)
+    /* 06C3AC 0016C2AC 188F80AF */  sw         $0, %gp_rel(load_file$848)($28)
     /* 06C3B0 0016C2B0 01000224 */  addiu      $2, $0, 0x1
-    /* 06C3B4 0016C2B4 1C8F82A3 */  sb         $2, -0x70E4($28)
+    /* 06C3B4 0016C2B4 1C8F82A3 */  sb         $2, %gp_rel(init$849)($28)
   .L0016C2B8:
     /* 06C3B8 0016C2B8 D201013C */  lui        $1, %hi(EdMoveCharaInfo + 0xA4)
     /* 06C3BC 0016C2BC 1497228C */  lw         $2, %lo(EdMoveCharaInfo + 0xA4)($1)
@@ -4520,19 +4520,19 @@ glabel EdMoveChara__Fv
     /* 06C430 0016C330 5CA5060C */  jal        FishingFishStatus__FPi
     /* 06C434 0016C334 00000000 */   nop
     /* 06C438 0016C338 28A64070 */  paddub     $20, $2, $0
-    /* 06C43C 0016C33C 248F8283 */  lb         $2, -0x70DC($28)
+    /* 06C43C 0016C33C 248F8283 */  lb         $2, %gp_rel(init$856)($28)
     /* 06C440 0016C340 04004014 */  bnez       $2, .L0016C354
     /* 06C444 0016C344 00000000 */   nop
-    /* 06C448 0016C348 208F80AF */  sw         $0, -0x70E0($28)
+    /* 06C448 0016C348 208F80AF */  sw         $0, %gp_rel(st_cnt$855)($28)
     /* 06C44C 0016C34C 01000224 */  addiu      $2, $0, 0x1
-    /* 06C450 0016C350 248F82A3 */  sb         $2, -0x70DC($28)
+    /* 06C450 0016C350 248F82A3 */  sb         $2, %gp_rel(init$856)($28)
   .L0016C354:
-    /* 06C454 0016C354 2C8F8283 */  lb         $2, -0x70D4($28)
+    /* 06C454 0016C354 2C8F8283 */  lb         $2, %gp_rel(init$859)($28)
     /* 06C458 0016C358 04004014 */  bnez       $2, .L0016C36C
     /* 06C45C 0016C35C 00000000 */   nop
-    /* 06C460 0016C360 288F80AF */  sw         $0, -0x70D8($28)
+    /* 06C460 0016C360 288F80AF */  sw         $0, %gp_rel(wait_cnt$858)($28)
     /* 06C464 0016C364 01000224 */  addiu      $2, $0, 0x1
-    /* 06C468 0016C368 2C8F82A3 */  sb         $2, -0x70D4($28)
+    /* 06C468 0016C368 2C8F82A3 */  sb         $2, %gp_rel(init$859)($28)
   .L0016C36C:
     /* 06C46C 0016C36C F88E848F */  lw         $4, -0x7108($28)
     /* 06C470 0016C370 0D00812C */  sltiu      $1, $4, 0xD
@@ -4553,12 +4553,12 @@ glabel EdMoveChara__Fv
     /* 06C4A8 0016C3A8 FFFF0424 */  addiu      $4, $0, -0x1
     /* 06C4AC 0016C3AC ECA5060C */  jal        FishingAngleFish__Fi
     /* 06C4B0 0016C3B0 00000000 */   nop
-    /* 06C4B4 0016C3B4 288F80AF */  sw         $0, -0x70D8($28)
-    /* 06C4B8 0016C3B8 208F80AF */  sw         $0, -0x70E0($28)
+    /* 06C4B4 0016C3B4 288F80AF */  sw         $0, %gp_rel(wait_cnt$858)($28)
+    /* 06C4B8 0016C3B8 208F80AF */  sw         $0, %gp_rel(st_cnt$855)($28)
     /* 06C4BC 0016C3BC 3A030010 */  b          .L0016D0A8
     /* 06C4C0 0016C3C0 00000000 */   nop
   jlabel .L0016C3C4
-    /* 06C4C4 0016C3C4 208F828F */  lw         $2, -0x70E0($28)
+    /* 06C4C4 0016C3C4 208F828F */  lw         $2, %gp_rel(st_cnt$855)($28)
     /* 06C4C8 0016C3C8 79004128 */  slti       $1, $2, 0x79
     /* 06C4CC 0016C3CC 06002014 */  bnez       $1, .L0016C3E8
     /* 06C4D0 0016C3D0 00000000 */   nop
@@ -4579,7 +4579,7 @@ glabel EdMoveChara__Fv
     /* 06C508 0016C408 00000000 */   nop
     /* 06C50C 0016C40C 02000224 */  addiu      $2, $0, 0x2
     /* 06C510 0016C410 F88E82AF */  sw         $2, -0x7108($28)
-    /* 06C514 0016C414 208F80AF */  sw         $0, -0x70E0($28)
+    /* 06C514 0016C414 208F80AF */  sw         $0, %gp_rel(st_cnt$855)($28)
   .L0016C418:
     /* 06C518 0016C418 20000424 */  addiu      $4, $0, 0x20
     /* 06C51C 0016C41C FFFF0534 */  ori        $5, $0, 0xFFFF
@@ -4634,13 +4634,13 @@ glabel EdMoveChara__Fv
     /* 06C5D4 0016C4D4 600C42AE */  sw         $2, 0xC60($18)
     /* 06C5D8 0016C4D8 03000224 */  addiu      $2, $0, 0x3
     /* 06C5DC 0016C4DC F88E82AF */  sw         $2, -0x7108($28)
-    /* 06C5E0 0016C4E0 208F80AF */  sw         $0, -0x70E0($28)
+    /* 06C5E0 0016C4E0 208F80AF */  sw         $0, %gp_rel(st_cnt$855)($28)
     /* 06C5E4 0016C4E4 F0020010 */  b          .L0016D0A8
     /* 06C5E8 0016C4E8 00000000 */   nop
   jlabel .L0016C4EC
     /* 06C5EC 0016C4EC 01000224 */  addiu      $2, $0, 0x1
     /* 06C5F0 0016C4F0 F48E82AF */  sw         $2, -0x710C($28)
-    /* 06C5F4 0016C4F4 208F838F */  lw         $3, -0x70E0($28)
+    /* 06C5F4 0016C4F4 208F838F */  lw         $3, %gp_rel(st_cnt$855)($28)
     /* 06C5F8 0016C4F8 5A000224 */  addiu      $2, $0, 0x5A
     /* 06C5FC 0016C4FC 09006214 */  bne        $3, $2, .L0016C524
     /* 06C600 0016C500 00000000 */   nop
@@ -4664,8 +4664,8 @@ glabel EdMoveChara__Fv
     /* 06C644 0016C544 600C42AE */  sw         $2, 0xC60($18)
     /* 06C648 0016C548 04000224 */  addiu      $2, $0, 0x4
     /* 06C64C 0016C54C F88E82AF */  sw         $2, -0x7108($28)
-    /* 06C650 0016C550 208F80AF */  sw         $0, -0x70E0($28)
-    /* 06C654 0016C554 288F80AF */  sw         $0, -0x70D8($28)
+    /* 06C650 0016C550 208F80AF */  sw         $0, %gp_rel(st_cnt$855)($28)
+    /* 06C654 0016C554 288F80AF */  sw         $0, %gp_rel(wait_cnt$858)($28)
     /* 06C658 0016C558 D3020010 */  b          .L0016D0A8
     /* 06C65C 0016C55C 00000000 */   nop
   jlabel .L0016C560
@@ -4676,7 +4676,7 @@ glabel EdMoveChara__Fv
     /* 06C670 0016C570 00000000 */   nop
     /* 06C674 0016C574 01000224 */  addiu      $2, $0, 0x1
     /* 06C678 0016C578 F48E82AF */  sw         $2, -0x710C($28)
-    /* 06C67C 0016C57C 288F838F */  lw         $3, -0x70D8($28)
+    /* 06C67C 0016C57C 288F838F */  lw         $3, %gp_rel(wait_cnt$858)($28)
     /* 06C680 0016C580 58026128 */  slti       $1, $3, 0x258
     /* 06C684 0016C584 08002010 */  beqz       $1, .L0016C5A8
     /* 06C688 0016C588 00000000 */   nop
@@ -4709,7 +4709,7 @@ glabel EdMoveChara__Fv
     /* 06C6EC 0016C5EC 80BF023C */  lui        $2, (0xBF800000 >> 16)
     /* 06C6F0 0016C5F0 600C42AE */  sw         $2, 0xC60($18)
   .L0016C5F4:
-    /* 06C6F4 0016C5F4 288F828F */  lw         $2, -0x70D8($28)
+    /* 06C6F4 0016C5F4 288F828F */  lw         $2, %gp_rel(wait_cnt$858)($28)
     /* 06C6F8 0016C5F8 E3044128 */  slti       $1, $2, 0x4E3
     /* 06C6FC 0016C5FC 0C002014 */  bnez       $1, .L0016C630
     /* 06C700 0016C600 00000000 */   nop
@@ -4723,7 +4723,7 @@ glabel EdMoveChara__Fv
     /* 06C720 0016C620 640C42AE */  sw         $2, 0xC64($18)
     /* 06C724 0016C624 80BF023C */  lui        $2, (0xBF800000 >> 16)
     /* 06C728 0016C628 600C42AE */  sw         $2, 0xC60($18)
-    /* 06C72C 0016C62C 288F80AF */  sw         $0, -0x70D8($28)
+    /* 06C72C 0016C62C 288F80AF */  sw         $0, %gp_rel(wait_cnt$858)($28)
   .L0016C630:
     /* 06C730 0016C630 CC01023C */  lui        $2, %hi(GamePad)
     /* 06C734 0016C634 40C54424 */  addiu      $4, $2, %lo(GamePad)
@@ -4752,7 +4752,7 @@ glabel EdMoveChara__Fv
     /* 06C790 0016C690 00000000 */  nop
     /* 06C794 0016C694 07000145 */  bc1t       .L0016C6B4
     /* 06C798 0016C698 00000000 */   nop
-    /* 06C79C 0016C69C 288F80AF */  sw         $0, -0x70D8($28)
+    /* 06C79C 0016C69C 288F80AF */  sw         $0, %gp_rel(wait_cnt$858)($28)
     /* 06C7A0 0016C6A0 0D000224 */  addiu      $2, $0, 0xD
     /* 06C7A4 0016C6A4 680C42AE */  sw         $2, 0xC68($18)
     /* 06C7A8 0016C6A8 640C40AE */  sw         $0, 0xC64($18)
@@ -4765,7 +4765,7 @@ glabel EdMoveChara__Fv
     /* 06C7C0 0016C6C0 00000000 */   nop
     /* 06C7C4 0016C6C4 09004014 */  bnez       $2, .L0016C6EC
     /* 06C7C8 0016C6C8 00000000 */   nop
-    /* 06C7CC 0016C6CC 208F828F */  lw         $2, -0x70E0($28)
+    /* 06C7CC 0016C6CC 208F828F */  lw         $2, %gp_rel(st_cnt$855)($28)
     /* 06C7D0 0016C6D0 1F004128 */  slti       $1, $2, 0x1F
     /* 06C7D4 0016C6D4 10002014 */  bnez       $1, .L0016C718
     /* 06C7D8 0016C6D8 00000000 */   nop
@@ -4782,7 +4782,7 @@ glabel EdMoveChara__Fv
     /* 06C800 0016C700 640C42AE */  sw         $2, 0xC64($18)
     /* 06C804 0016C704 80BF023C */  lui        $2, (0xBF800000 >> 16)
     /* 06C808 0016C708 600C42AE */  sw         $2, 0xC60($18)
-    /* 06C80C 0016C70C 208F80AF */  sw         $0, -0x70E0($28)
+    /* 06C80C 0016C70C 208F80AF */  sw         $0, %gp_rel(st_cnt$855)($28)
     /* 06C810 0016C710 0B000010 */  b          .L0016C740
     /* 06C814 0016C714 00000000 */   nop
   .L0016C718:
@@ -4798,14 +4798,14 @@ glabel EdMoveChara__Fv
     /* 06C838 0016C738 07000224 */  addiu      $2, $0, 0x7
     /* 06C83C 0016C73C F88E82AF */  sw         $2, -0x7108($28)
   .L0016C740:
-    /* 06C840 0016C740 288F828F */  lw         $2, -0x70D8($28)
+    /* 06C840 0016C740 288F828F */  lw         $2, %gp_rel(wait_cnt$858)($28)
     /* 06C844 0016C744 01004224 */  addiu      $2, $2, 0x1
-    /* 06C848 0016C748 288F82AF */  sw         $2, -0x70D8($28)
+    /* 06C848 0016C748 288F82AF */  sw         $2, %gp_rel(wait_cnt$858)($28)
     /* 06C84C 0016C74C 01001024 */  addiu      $16, $0, 0x1
     /* 06C850 0016C750 55020010 */  b          .L0016D0A8
     /* 06C854 0016C754 00000000 */   nop
   jlabel .L0016C758
-    /* 06C858 0016C758 208F838F */  lw         $3, -0x70E0($28)
+    /* 06C858 0016C758 208F838F */  lw         $3, %gp_rel(st_cnt$855)($28)
     /* 06C85C 0016C75C 28000224 */  addiu      $2, $0, 0x28
     /* 06C860 0016C760 17006214 */  bne        $3, $2, .L0016C7C0
     /* 06C864 0016C764 00000000 */   nop
@@ -4842,9 +4842,9 @@ glabel EdMoveChara__Fv
     /* 06C8DC 0016C7DC 600C42AE */  sw         $2, 0xC60($18)
     /* 06C8E0 0016C7E0 01000224 */  addiu      $2, $0, 0x1
     /* 06C8E4 0016C7E4 F88E82AF */  sw         $2, -0x7108($28)
-    /* 06C8E8 0016C7E8 288F80AF */  sw         $0, -0x70D8($28)
+    /* 06C8E8 0016C7E8 288F80AF */  sw         $0, %gp_rel(wait_cnt$858)($28)
   .L0016C7EC:
-    /* 06C8EC 0016C7EC 208F828F */  lw         $2, -0x70E0($28)
+    /* 06C8EC 0016C7EC 208F828F */  lw         $2, %gp_rel(st_cnt$855)($28)
     /* 06C8F0 0016C7F0 1F004128 */  slti       $1, $2, 0x1F
     /* 06C8F4 0016C7F4 07002014 */  bnez       $1, .L0016C814
     /* 06C8F8 0016C7F8 00000000 */   nop
@@ -4884,8 +4884,8 @@ glabel EdMoveChara__Fv
     /* 06C974 0016C874 00000000 */   nop
     /* 06C978 0016C878 04000224 */  addiu      $2, $0, 0x4
     /* 06C97C 0016C87C F88E82AF */  sw         $2, -0x7108($28)
-    /* 06C980 0016C880 208F80AF */  sw         $0, -0x70E0($28)
-    /* 06C984 0016C884 288F80AF */  sw         $0, -0x70D8($28)
+    /* 06C980 0016C880 208F80AF */  sw         $0, %gp_rel(st_cnt$855)($28)
+    /* 06C984 0016C884 288F80AF */  sw         $0, %gp_rel(wait_cnt$858)($28)
   .L0016C888:
     /* 06C988 0016C888 40000424 */  addiu      $4, $0, 0x40
     /* 06C98C 0016C88C FFFF0534 */  ori        $5, $0, 0xFFFF
@@ -4900,7 +4900,7 @@ glabel EdMoveChara__Fv
     /* 06C9B0 0016C8B0 640C42AE */  sw         $2, 0xC64($18)
     /* 06C9B4 0016C8B4 80BF023C */  lui        $2, (0xBF800000 >> 16)
     /* 06C9B8 0016C8B8 600C42AE */  sw         $2, 0xC60($18)
-    /* 06C9BC 0016C8BC 208F80AF */  sw         $0, -0x70E0($28)
+    /* 06C9BC 0016C8BC 208F80AF */  sw         $0, %gp_rel(st_cnt$855)($28)
     /* 06C9C0 0016C8C0 00608244 */  mtc1       $2, $f12
     /* 06C9C4 0016C8C4 00000000 */  nop
     /* 06C9C8 0016C8C8 46630046 */  mov.s      $f13, $f12
@@ -4979,7 +4979,7 @@ glabel EdMoveChara__Fv
     /* 06CAE0 0016C9E0 00000000 */   nop
     /* 06CAE4 0016C9E4 04000224 */  addiu      $2, $0, 0x4
     /* 06CAE8 0016C9E8 F88E82AF */  sw         $2, -0x7108($28)
-    /* 06CAEC 0016C9EC 288F80AF */  sw         $0, -0x70D8($28)
+    /* 06CAEC 0016C9EC 288F80AF */  sw         $0, %gp_rel(wait_cnt$858)($28)
     /* 06CAF0 0016C9F0 BE11040C */  jal        rand
     /* 06CAF4 0016C9F4 00000000 */   nop
     /* 06CAF8 0016C9F8 64000324 */  addiu      $3, $0, 0x64
@@ -4995,7 +4995,7 @@ glabel EdMoveChara__Fv
     /* 06CB20 0016CA20 04A4060C */  jal        FishingDeleteEsa__Fv
     /* 06CB24 0016CA24 00000000 */   nop
   .L0016CA28:
-    /* 06CB28 0016CA28 208F80AF */  sw         $0, -0x70E0($28)
+    /* 06CB28 0016CA28 208F80AF */  sw         $0, %gp_rel(st_cnt$855)($28)
     /* 06CB2C 0016CA2C 9E010010 */  b          .L0016D0A8
     /* 06CB30 0016CA30 00000000 */   nop
   .L0016CA34:
@@ -5041,7 +5041,7 @@ glabel EdMoveChara__Fv
     /* 06CBD0 0016CAD0 ACFA040C */  jal        LoadFileBG__FPcP1Pi
     /* 06CBD4 0016CAD4 00000000 */   nop
   .L0016CAD8:
-    /* 06CBD8 0016CAD8 208F80AF */  sw         $0, -0x70E0($28)
+    /* 06CBD8 0016CAD8 208F80AF */  sw         $0, %gp_rel(st_cnt$855)($28)
   .L0016CADC:
     /* 06CBDC 0016CADC BE11040C */  jal        rand
     /* 06CBE0 0016CAE0 00000000 */   nop
@@ -5079,7 +5079,7 @@ glabel EdMoveChara__Fv
   jlabel .L0016CB5C
     /* 06CC5C 0016CB5C 04A4060C */  jal        FishingDeleteEsa__Fv
     /* 06CC60 0016CB60 00000000 */   nop
-    /* 06CC64 0016CB64 208F828F */  lw         $2, -0x70E0($28)
+    /* 06CC64 0016CB64 208F828F */  lw         $2, %gp_rel(st_cnt$855)($28)
     /* 06CC68 0016CB68 79004128 */  slti       $1, $2, 0x79
     /* 06CC6C 0016CB6C 2D002014 */  bnez       $1, .L0016CC24
     /* 06CC70 0016CB70 00000000 */   nop
@@ -5159,7 +5159,7 @@ glabel EdMoveChara__Fv
     /* 06CD8C 0016CC8C 01001024 */  addiu      $16, $0, 0x1
     /* 06CD90 0016CC90 7867050C */  jal        SndGetBgmVol__Fv
     /* 06CD94 0016CC94 00000000 */   nop
-    /* 06CD98 0016CC98 108F82AF */  sw         $2, -0x70F0($28)
+    /* 06CD98 0016CC98 108F82AF */  sw         $2, %gp_rel(bgm_vol$845)($28)
     /* 06CD9C 0016CC9C 3C000424 */  addiu      $4, $0, 0x3C
     /* 06CDA0 0016CCA0 282E0070 */  paddub     $5, $0, $0
     /* 06CDA4 0016CCA4 C467050C */  jal        SndBgmFadeOut__Fii
@@ -5182,9 +5182,9 @@ glabel EdMoveChara__Fv
     /* 06CDE4 0016CCE4 00000000 */   nop
     /* 06CDE8 0016CCE8 30A6060C */  jal        FishingInitFishStatus__Fv
     /* 06CDEC 0016CCEC 00000000 */   nop
-    /* 06CDF0 0016CCF0 288F80AF */  sw         $0, -0x70D8($28)
+    /* 06CDF0 0016CCF0 288F80AF */  sw         $0, %gp_rel(wait_cnt$858)($28)
   .L0016CCF4:
-    /* 06CDF4 0016CCF4 208F828F */  lw         $2, -0x70E0($28)
+    /* 06CDF4 0016CCF4 208F828F */  lw         $2, %gp_rel(st_cnt$855)($28)
     /* 06CDF8 0016CCF8 29004128 */  slti       $1, $2, 0x29
     /* 06CDFC 0016CCFC 07002014 */  bnez       $1, .L0016CD1C
     /* 06CE00 0016CD00 00000000 */   nop
@@ -5356,7 +5356,7 @@ glabel EdMoveChara__Fv
     /* 06D078 0016CF78 00000000 */   nop
   .L0016CF7C:
     /* 06D07C 0016CF7C 3C000424 */  addiu      $4, $0, 0x3C
-    /* 06D080 0016CF80 108F858F */  lw         $5, -0x70F0($28)
+    /* 06D080 0016CF80 108F858F */  lw         $5, %gp_rel(bgm_vol$845)($28)
     /* 06D084 0016CF84 28360070 */  paddub     $6, $0, $0
     /* 06D088 0016CF88 9067050C */  jal        SndBgmFadeIn__Fiii
     /* 06D08C 0016CF8C 00000000 */   nop
@@ -5371,7 +5371,7 @@ glabel EdMoveChara__Fv
     /* 06D0B0 0016CFB0 06000224 */  addiu      $2, $0, 0x6
     /* 06D0B4 0016CFB4 640C42AE */  sw         $2, 0xC64($18)
     /* 06D0B8 0016CFB8 600C43AE */  sw         $3, 0xC60($18)
-    /* 06D0BC 0016CFBC 208F80AF */  sw         $0, -0x70E0($28)
+    /* 06D0BC 0016CFBC 208F80AF */  sw         $0, %gp_rel(st_cnt$855)($28)
   .L0016CFC0:
     /* 06D0C0 0016CFC0 803F023C */  lui        $2, (0x3F800000 >> 16)
     /* 06D0C4 0016CFC4 00B08244 */  mtc1       $2, $f22
@@ -5401,7 +5401,7 @@ glabel EdMoveChara__Fv
     /* 06D120 0016D020 0800398F */  lw         $25, 0x8($25)
     /* 06D124 0016D024 09F82003 */  jalr       $25
     /* 06D128 0016D028 00000000 */   nop
-    /* 06D12C 0016D02C 208F838F */  lw         $3, -0x70E0($28)
+    /* 06D12C 0016D02C 208F838F */  lw         $3, %gp_rel(st_cnt$855)($28)
     /* 06D130 0016D030 78000224 */  addiu      $2, $0, 0x78
     /* 06D134 0016D034 08006214 */  bne        $3, $2, .L0016D058
     /* 06D138 0016D038 00000000 */   nop
@@ -5458,9 +5458,9 @@ glabel EdMoveChara__Fv
     /* 06D1F8 0016D0F8 B892040C */  jal        SetFollow__13CCameraFollowFfff
     /* 06D1FC 0016D0FC 00000000 */   nop
   .L0016D100:
-    /* 06D200 0016D100 208F828F */  lw         $2, -0x70E0($28)
+    /* 06D200 0016D100 208F828F */  lw         $2, %gp_rel(st_cnt$855)($28)
     /* 06D204 0016D104 01004224 */  addiu      $2, $2, 0x1
-    /* 06D208 0016D108 208F82AF */  sw         $2, -0x70E0($28)
+    /* 06D208 0016D108 208F82AF */  sw         $2, %gp_rel(st_cnt$855)($28)
     /* 06D20C 0016D10C 02000010 */  b          .L0016D118
     /* 06D210 0016D110 00000000 */   nop
   .L0016D114:
@@ -5743,22 +5743,22 @@ glabel EdMoveChara__Fv
     /* 06D628 0016D528 D011428E */  lw         $2, 0x11D0($18)
     /* 06D62C 0016D52C 3A004010 */  beqz       $2, .L0016D618
     /* 06D630 0016D530 00000000 */   nop
-    /* 06D634 0016D534 348F8283 */  lb         $2, -0x70CC($28)
+    /* 06D634 0016D534 348F8283 */  lb         $2, %gp_rel(init$1011)($28)
     /* 06D638 0016D538 04004014 */  bnez       $2, .L0016D54C
     /* 06D63C 0016D53C 00000000 */   nop
-    /* 06D640 0016D540 308F80AF */  sw         $0, -0x70D0($28)
+    /* 06D640 0016D540 308F80AF */  sw         $0, %gp_rel(cnt$1010)($28)
     /* 06D644 0016D544 01000224 */  addiu      $2, $0, 0x1
-    /* 06D648 0016D548 348F82A3 */  sb         $2, -0x70CC($28)
+    /* 06D648 0016D548 348F82A3 */  sb         $2, %gp_rel(init$1011)($28)
   .L0016D54C:
-    /* 06D64C 0016D54C 308F96C7 */  lwc1       $f22, -0x70D0($28)
+    /* 06D64C 0016D54C 308F96C7 */  lwc1       $f22, %gp_rel(cnt$1010)($28)
     /* 06D650 0016D550 6401A227 */  addiu      $2, $29, 0x164
     /* 06D654 0016D554 000040AC */  sw         $0, 0x0($2)
     /* 06D658 0016D558 6001A427 */  addiu      $4, $29, 0x160
     /* 06D65C 0016D55C 588D040C */  jal        DistVector__FPf
     /* 06D660 0016D560 00000000 */   nop
-    /* 06D664 0016D564 308F81C7 */  lwc1       $f1, -0x70D0($28)
+    /* 06D664 0016D564 308F81C7 */  lwc1       $f1, %gp_rel(cnt$1010)($28)
     /* 06D668 0016D568 40080046 */  add.s      $f1, $f1, $f0
-    /* 06D66C 0016D56C 308F81E7 */  swc1       $f1, -0x70D0($28)
+    /* 06D66C 0016D56C 308F81E7 */  swc1       $f1, %gp_rel(cnt$1010)($28)
     /* 06D670 0016D570 2041023C */  lui        $2, (0x41200000 >> 16)
     /* 06D674 0016D574 00008244 */  mtc1       $2, $f0
     /* 06D678 0016D578 00000000 */  nop
@@ -5776,7 +5776,7 @@ glabel EdMoveChara__Fv
     /* 06D6A8 0016D5A8 E46A050C */  jal        SndPlayFootSound__FiiPf
     /* 06D6AC 0016D5AC 00000000 */   nop
   .L0016D5B0:
-    /* 06D6B0 0016D5B0 308F81C7 */  lwc1       $f1, -0x70D0($28)
+    /* 06D6B0 0016D5B0 308F81C7 */  lwc1       $f1, %gp_rel(cnt$1010)($28)
     /* 06D6B4 0016D5B4 A041023C */  lui        $2, (0x41A00000 >> 16)
     /* 06D6B8 0016D5B8 00008244 */  mtc1       $2, $f0
     /* 06D6BC 0016D5BC 00000000 */  nop
@@ -5794,7 +5794,7 @@ glabel EdMoveChara__Fv
     /* 06D6EC 0016D5EC E46A050C */  jal        SndPlayFootSound__FiiPf
     /* 06D6F0 0016D5F0 00000000 */   nop
   .L0016D5F4:
-    /* 06D6F4 0016D5F4 308F81C7 */  lwc1       $f1, -0x70D0($28)
+    /* 06D6F4 0016D5F4 308F81C7 */  lwc1       $f1, %gp_rel(cnt$1010)($28)
     /* 06D6F8 0016D5F8 A041023C */  lui        $2, (0x41A00000 >> 16)
     /* 06D6FC 0016D5FC 00008244 */  mtc1       $2, $f0
     /* 06D700 0016D600 00000000 */  nop
@@ -5802,7 +5802,7 @@ glabel EdMoveChara__Fv
     /* 06D708 0016D608 00000000 */  nop
     /* 06D70C 0016D60C 02000145 */  bc1t       .L0016D618
     /* 06D710 0016D610 00000000 */   nop
-    /* 06D714 0016D614 308F80AF */  sw         $0, -0x70D0($28)
+    /* 06D714 0016D614 308F80AF */  sw         $0, %gp_rel(cnt$1010)($28)
   .L0016D618:
     /* 06D718 0016D618 6090828F */  lw         $2, -0x6FA0($28)
     /* 06D71C 0016D61C B00C4426 */  addiu      $4, $18, 0xCB0

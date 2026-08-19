@@ -470,6 +470,8 @@ SECTIONS
 		texture.cpp.o (.bss)
 		water.cpp.o (.bss)
 		main.bss.part2.s.o (.bss)
+		gamepad.cpp.o (.padbss)
+		main.bss.part2b.s.o (.bss)
 		mglib.cpp.o (.bss)
 		mglib_data.cpp.o (.bss)
 		texture_data.cpp.o (.bss)

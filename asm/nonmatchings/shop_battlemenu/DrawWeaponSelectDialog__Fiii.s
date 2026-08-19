@@ -137,12 +137,12 @@ glabel DrawWeaponSelectDialog__Fiii
   .L001FC418:
     /* 0FC518 001FC418 40001224 */  addiu      $18, $0, 0x40
   .L001FC41C:
-    /* 0FC51C 001FC41C 9C958283 */  lb         $2, -0x6A64($28)
+    /* 0FC51C 001FC41C 9C958283 */  lb         $2, %gp_rel(init$2371)($28)
     /* 0FC520 001FC420 04004014 */  bnez       $2, .L001FC434
     /* 0FC524 001FC424 00000000 */   nop
-    /* 0FC528 001FC428 989580AF */  sw         $0, -0x6A68($28)
+    /* 0FC528 001FC428 989580AF */  sw         $0, %gp_rel(warmcnt$2370)($28)
     /* 0FC52C 001FC42C 01000224 */  addiu      $2, $0, 0x1
-    /* 0FC530 001FC430 9C9582A3 */  sb         $2, -0x6A64($28)
+    /* 0FC530 001FC430 9C9582A3 */  sb         $2, %gp_rel(init$2371)($28)
   .L001FC434:
     /* 0FC534 001FC434 DA01013C */  lui        $1, %hi(WepMenu + 0x5)
     /* 0FC538 001FC438 75EA2480 */  lb         $4, %lo(WepMenu + 0x5)($1)
@@ -165,7 +165,7 @@ glabel DrawWeaponSelectDialog__Fiii
   .L001FC47C:
     /* 0FC57C 001FC47C 1D00C01A */  blez       $22, .L001FC4F4
     /* 0FC580 001FC480 00000000 */   nop
-    /* 0FC584 001FC484 989580C7 */  lwc1       $f0, -0x6A68($28)
+    /* 0FC584 001FC484 989580C7 */  lwc1       $f0, %gp_rel(warmcnt$2370)($28)
     /* 0FC588 001FC488 60008046 */  cvt.s.w    $f1, $f0
     /* 0FC58C 001FC48C 4041023C */  lui        $2, (0x41400000 >> 16)
     /* 0FC590 001FC490 00008244 */  mtc1       $2, $f0
@@ -183,16 +183,16 @@ glabel DrawWeaponSelectDialog__Fiii
     /* 0FC5C0 001FC4C0 7200040C */  jal        abs
     /* 0FC5C4 001FC4C4 00000000 */   nop
     /* 0FC5C8 001FC4C8 78005224 */  addiu      $18, $2, 0x78
-    /* 0FC5CC 001FC4CC 9895828F */  lw         $2, -0x6A68($28)
+    /* 0FC5CC 001FC4CC 9895828F */  lw         $2, %gp_rel(warmcnt$2370)($28)
     /* 0FC5D0 001FC4D0 01004224 */  addiu      $2, $2, 0x1
-    /* 0FC5D4 001FC4D4 989582AF */  sw         $2, -0x6A68($28)
-    /* 0FC5D8 001FC4D8 9895828F */  lw         $2, -0x6A68($28)
+    /* 0FC5D4 001FC4D4 989582AF */  sw         $2, %gp_rel(warmcnt$2370)($28)
+    /* 0FC5D8 001FC4D8 9895828F */  lw         $2, %gp_rel(warmcnt$2370)($28)
     /* 0FC5DC 001FC4DC 0F00013C */  lui        $1, (0xF4241 >> 16)
     /* 0FC5E0 001FC4E0 41422134 */  ori        $1, $1, (0xF4241 & 0xFFFF)
     /* 0FC5E4 001FC4E4 2A084100 */  slt        $1, $2, $1
     /* 0FC5E8 001FC4E8 02002014 */  bnez       $1, .L001FC4F4
     /* 0FC5EC 001FC4EC 00000000 */   nop
-    /* 0FC5F0 001FC4F0 989580AF */  sw         $0, -0x6A68($28)
+    /* 0FC5F0 001FC4F0 989580AF */  sw         $0, %gp_rel(warmcnt$2370)($28)
   .L001FC4F4:
     /* 0FC5F4 001FC4F4 2001B0AF */  sw         $16, 0x120($29)
     /* 0FC5F8 001FC4F8 4F002226 */  addiu      $2, $17, 0x4F
@@ -213,24 +213,24 @@ glabel DrawWeaponSelectDialog__Fiii
     /* 0FC634 001FC534 0000838E */  lw         $3, 0x0($20)
     /* 0FC638 001FC538 20006324 */  addiu      $3, $3, 0x20
     /* 0FC63C 001FC53C 000083AE */  sw         $3, 0x0($20)
-    /* 0FC640 001FC540 A4958383 */  lb         $3, -0x6A5C($28)
+    /* 0FC640 001FC540 A4958383 */  lb         $3, %gp_rel(init$2380)($28)
     /* 0FC644 001FC544 04006014 */  bnez       $3, .L001FC558
     /* 0FC648 001FC548 00000000 */   nop
-    /* 0FC64C 001FC54C A09580AF */  sw         $0, -0x6A60($28)
+    /* 0FC64C 001FC54C A09580AF */  sw         $0, %gp_rel(levelbrinkcnt$2379)($28)
     /* 0FC650 001FC550 01000324 */  addiu      $3, $0, 0x1
-    /* 0FC654 001FC554 A49583A3 */  sb         $3, -0x6A5C($28)
+    /* 0FC654 001FC554 A49583A3 */  sb         $3, %gp_rel(init$2380)($28)
   .L001FC558:
     /* 0FC658 001FC558 80001224 */  addiu      $18, $0, 0x80
-    /* 0FC65C 001FC55C A095838F */  lw         $3, -0x6A60($28)
+    /* 0FC65C 001FC55C A095838F */  lw         $3, %gp_rel(levelbrinkcnt$2379)($28)
     /* 0FC660 001FC560 01006324 */  addiu      $3, $3, 0x1
-    /* 0FC664 001FC564 A09583AF */  sw         $3, -0x6A60($28)
-    /* 0FC668 001FC568 A095838F */  lw         $3, -0x6A60($28)
+    /* 0FC664 001FC564 A09583AF */  sw         $3, %gp_rel(levelbrinkcnt$2379)($28)
+    /* 0FC668 001FC568 A095838F */  lw         $3, %gp_rel(levelbrinkcnt$2379)($28)
     /* 0FC66C 001FC56C 0F00013C */  lui        $1, (0xF4241 >> 16)
     /* 0FC670 001FC570 41422134 */  ori        $1, $1, (0xF4241 & 0xFFFF)
     /* 0FC674 001FC574 2A086100 */  slt        $1, $3, $1
     /* 0FC678 001FC578 02002014 */  bnez       $1, .L001FC584
     /* 0FC67C 001FC57C 00000000 */   nop
-    /* 0FC680 001FC580 A09580AF */  sw         $0, -0x6A60($28)
+    /* 0FC680 001FC580 A09580AF */  sw         $0, %gp_rel(levelbrinkcnt$2379)($28)
   .L001FC584:
     /* 0FC684 001FC584 C000B0AF */  sw         $16, 0xC0($29)
     /* 0FC688 001FC588 69002326 */  addiu      $3, $17, 0x69
@@ -285,7 +285,7 @@ glabel DrawWeaponSelectDialog__Fiii
     /* 0FC744 001FC644 00000000 */   nop
     /* 0FC748 001FC648 13004014 */  bnez       $2, .L001FC698
     /* 0FC74C 001FC64C 00000000 */   nop
-    /* 0FC750 001FC650 A09580C7 */  lwc1       $f0, -0x6A60($28)
+    /* 0FC750 001FC650 A09580C7 */  lwc1       $f0, %gp_rel(levelbrinkcnt$2379)($28)
     /* 0FC754 001FC654 60008046 */  cvt.s.w    $f1, $f0
     /* 0FC758 001FC658 4041023C */  lui        $2, (0x41400000 >> 16)
     /* 0FC75C 001FC65C 00008244 */  mtc1       $2, $f0

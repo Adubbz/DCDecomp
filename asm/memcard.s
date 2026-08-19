@@ -934,14 +934,14 @@ glabel DrawMenuWaku__FffiiiP8CTexturei
     /* 117C4C 00217B4C 28A60071 */  paddub     $20, $8, $0
     /* 117C50 00217B50 8B00A012 */  beqz       $21, .L00217D80
     /* 117C54 00217B54 00000000 */   nop
-    /* 117C58 00217B58 00978283 */  lb         $2, -0x6900($28)
+    /* 117C58 00217B58 00978283 */  lb         $2, %gp_rel(init$724)($28)
     /* 117C5C 00217B5C 04004014 */  bnez       $2, .L00217B70
     /* 117C60 00217B60 00000000 */   nop
-    /* 117C64 00217B64 FC9680AF */  sw         $0, -0x6904($28)
+    /* 117C64 00217B64 FC9680AF */  sw         $0, %gp_rel(MenuWakuCnt$723)($28)
     /* 117C68 00217B68 01000224 */  addiu      $2, $0, 0x1
-    /* 117C6C 00217B6C 009782A3 */  sb         $2, -0x6900($28)
+    /* 117C6C 00217B6C 009782A3 */  sb         $2, %gp_rel(init$724)($28)
   .L00217B70:
-    /* 117C70 00217B70 FC9680C7 */  lwc1       $f0, -0x6904($28)
+    /* 117C70 00217B70 FC9680C7 */  lwc1       $f0, %gp_rel(MenuWakuCnt$723)($28)
     /* 117C74 00217B74 60008046 */  cvt.s.w    $f1, $f0
     /* 117C78 00217B78 9C8280C7 */  lwc1       $f0, -0x7D64($28)
     /* 117C7C 00217B7C 02050146 */  mul.s      $f20, $f0, $f1
@@ -1063,17 +1063,17 @@ glabel DrawMenuWaku__FffiiiP8CTexturei
     /* 117E4C 00217D4C 283E8072 */  paddub     $7, $20, $0
     /* 117E50 00217D50 C8B3080C */  jal        DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i
     /* 117E54 00217D54 00000000 */   nop
-    /* 117E58 00217D58 FC96838F */  lw         $3, -0x6904($28)
+    /* 117E58 00217D58 FC96838F */  lw         $3, %gp_rel(MenuWakuCnt$723)($28)
     /* 117E5C 00217D5C 01006324 */  addiu      $3, $3, 0x1
-    /* 117E60 00217D60 FC9683AF */  sw         $3, -0x6904($28)
-    /* 117E64 00217D64 FC96838F */  lw         $3, -0x6904($28)
+    /* 117E60 00217D60 FC9683AF */  sw         $3, %gp_rel(MenuWakuCnt$723)($28)
+    /* 117E64 00217D64 FC96838F */  lw         $3, %gp_rel(MenuWakuCnt$723)($28)
     /* 117E68 00217D68 04006004 */  bltz       $3, .L00217D7C
     /* 117E6C 00217D6C 00000000 */   nop
     /* 117E70 00217D70 1E006328 */  slti       $3, $3, 0x1E
     /* 117E74 00217D74 02006014 */  bnez       $3, .L00217D80
     /* 117E78 00217D78 00000000 */   nop
   .L00217D7C:
-    /* 117E7C 00217D7C FC9680AF */  sw         $0, -0x6904($28)
+    /* 117E7C 00217D7C FC9680AF */  sw         $0, %gp_rel(MenuWakuCnt$723)($28)
   .L00217D80:
     /* 117E80 00217D80 9000BF7B */  lq         $31, 0x90($29)
     /* 117E84 00217D84 8000B77B */  lq         $23, 0x80($29)
@@ -1934,12 +1934,12 @@ glabel AtoraTipRelationDraw__FiiP14EDITPARTS_INFOiii
     /* 118A84 00218984 28862071 */  paddub     $16, $9, $0
     /* 118A88 00218988 6A00C010 */  beqz       $6, .L00218B34
     /* 118A8C 0021898C 00000000 */   nop
-    /* 118A90 00218990 08978383 */  lb         $3, -0x68F8($28)
+    /* 118A90 00218990 08978383 */  lb         $3, %gp_rel(init$999)($28)
     /* 118A94 00218994 04006014 */  bnez       $3, .L002189A8
     /* 118A98 00218998 00000000 */   nop
-    /* 118A9C 0021899C 049780AF */  sw         $0, -0x68FC($28)
+    /* 118A9C 0021899C 049780AF */  sw         $0, %gp_rel(tipcurCnt$998)($28)
     /* 118AA0 002189A0 01000324 */  addiu      $3, $0, 0x1
-    /* 118AA4 002189A4 089783A3 */  sb         $3, -0x68F8($28)
+    /* 118AA4 002189A4 089783A3 */  sb         $3, %gp_rel(init$999)($28)
   .L002189A8:
     /* 118AA8 002189A8 AC000724 */  addiu      $7, $0, 0xAC
     /* 118AAC 002189AC 86010824 */  addiu      $8, $0, 0x186
@@ -1969,7 +1969,7 @@ glabel AtoraTipRelationDraw__FiiP14EDITPARTS_INFOiii
     /* 118B04 00218A04 0C000524 */  addiu      $5, $0, 0xC
     /* 118B08 00218A08 F4FF0624 */  addiu      $6, $0, -0xC
   .L00218A0C:
-    /* 118B0C 00218A0C 0497848F */  lw         $4, -0x68FC($28)
+    /* 118B0C 00218A0C 0497848F */  lw         $4, %gp_rel(tipcurCnt$998)($28)
     /* 118B10 00218A10 CC010324 */  addiu      $3, $0, 0x1CC
     /* 118B14 00218A14 1A008300 */  div        $0, $4, $3
     /* 118B18 00218A18 00000000 */  nop
@@ -2035,10 +2035,10 @@ glabel AtoraTipRelationDraw__FiiP14EDITPARTS_INFOiii
     /* 118BFC 00218AFC C8B3080C */  jal        DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i
     /* 118C00 00218B00 00000000 */   nop
   .L00218B04:
-    /* 118C04 00218B04 0497838F */  lw         $3, -0x68FC($28)
+    /* 118C04 00218B04 0497838F */  lw         $3, %gp_rel(tipcurCnt$998)($28)
     /* 118C08 00218B08 01006324 */  addiu      $3, $3, 0x1
-    /* 118C0C 00218B0C 049783AF */  sw         $3, -0x68FC($28)
-    /* 118C10 00218B10 0497838F */  lw         $3, -0x68FC($28)
+    /* 118C0C 00218B0C 049783AF */  sw         $3, %gp_rel(tipcurCnt$998)($28)
+    /* 118C10 00218B10 0497838F */  lw         $3, %gp_rel(tipcurCnt$998)($28)
     /* 118C14 00218B14 06006004 */  bltz       $3, .L00218B30
     /* 118C18 00218B18 00000000 */   nop
     /* 118C1C 00218B1C 0F00013C */  lui        $1, (0xF4240 >> 16)
@@ -2047,7 +2047,7 @@ glabel AtoraTipRelationDraw__FiiP14EDITPARTS_INFOiii
     /* 118C28 00218B28 02002014 */  bnez       $1, .L00218B34
     /* 118C2C 00218B2C 00000000 */   nop
   .L00218B30:
-    /* 118C30 00218B30 049780AF */  sw         $0, -0x68FC($28)
+    /* 118C30 00218B30 049780AF */  sw         $0, %gp_rel(tipcurCnt$998)($28)
   .L00218B34:
     /* 118C34 00218B34 4000BF7B */  lq         $31, 0x40($29)
     /* 118C38 00218B38 3000B37B */  lq         $19, 0x30($29)
@@ -9396,24 +9396,24 @@ glabel DrawMenuOption__Fv
     /* 11F6CC 0021F5CC 01000010 */  b          .L0021F5D4
     /* 11F6D0 0021F5D0 00000000 */   nop
   .L0021F5D4:
-    /* 11F6D4 0021F5D4 1C978283 */  lb         $2, -0x68E4($28)
+    /* 11F6D4 0021F5D4 1C978283 */  lb         $2, %gp_rel(init$2386)($28)
     /* 11F6D8 0021F5D8 03004014 */  bnez       $2, .L0021F5E8
     /* 11F6DC 0021F5DC 00000000 */   nop
-    /* 11F6E0 0021F5E0 189780AF */  sw         $0, -0x68E8($28)
-    /* 11F6E4 0021F5E4 1C9783A3 */  sb         $3, -0x68E4($28)
+    /* 11F6E0 0021F5E0 189780AF */  sw         $0, %gp_rel(OpMenuWakuCnt$2385)($28)
+    /* 11F6E4 0021F5E4 1C9783A3 */  sb         $3, %gp_rel(init$2386)($28)
   .L0021F5E8:
-    /* 11F6E8 0021F5E8 24978283 */  lb         $2, -0x68DC($28)
+    /* 11F6E8 0021F5E8 24978283 */  lb         $2, %gp_rel(init$2389)($28)
     /* 11F6EC 0021F5EC 04004014 */  bnez       $2, .L0021F600
     /* 11F6F0 0021F5F0 00000000 */   nop
-    /* 11F6F4 0021F5F4 209780AF */  sw         $0, -0x68E0($28)
+    /* 11F6F4 0021F5F4 209780AF */  sw         $0, %gp_rel(OptionCurCnt$2388)($28)
     /* 11F6F8 0021F5F8 01000224 */  addiu      $2, $0, 0x1
-    /* 11F6FC 0021F5FC 249782A3 */  sb         $2, -0x68DC($28)
+    /* 11F6FC 0021F5FC 249782A3 */  sb         $2, %gp_rel(init$2389)($28)
   .L0021F600:
     /* 11F700 0021F600 14002226 */  addiu      $2, $17, 0x14
     /* 11F704 0021F604 00008244 */  mtc1       $2, $f0
     /* 11F708 0021F608 00000000 */  nop
     /* 11F70C 0021F60C A0008046 */  cvt.s.w    $f2, $f0
-    /* 11F710 0021F610 189780C7 */  lwc1       $f0, -0x68E8($28)
+    /* 11F710 0021F610 189780C7 */  lwc1       $f0, %gp_rel(OpMenuWakuCnt$2385)($28)
     /* 11F714 0021F614 60008046 */  cvt.s.w    $f1, $f0
     /* 11F718 0021F618 9C8080C7 */  lwc1       $f0, -0x7F64($28)
     /* 11F71C 0021F61C 02050146 */  mul.s      $f20, $f0, $f1
@@ -9515,19 +9515,19 @@ glabel DrawMenuOption__Fv
     /* 11F89C 0021F79C 283E0072 */  paddub     $7, $16, $0
     /* 11F8A0 0021F7A0 C8B3080C */  jal        DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i
     /* 11F8A4 0021F7A4 00000000 */   nop
-    /* 11F8A8 0021F7A8 1897828F */  lw         $2, -0x68E8($28)
+    /* 11F8A8 0021F7A8 1897828F */  lw         $2, %gp_rel(OpMenuWakuCnt$2385)($28)
     /* 11F8AC 0021F7AC 01004224 */  addiu      $2, $2, 0x1
-    /* 11F8B0 0021F7B0 189782AF */  sw         $2, -0x68E8($28)
-    /* 11F8B4 0021F7B4 1897828F */  lw         $2, -0x68E8($28)
+    /* 11F8B0 0021F7B0 189782AF */  sw         $2, %gp_rel(OpMenuWakuCnt$2385)($28)
+    /* 11F8B4 0021F7B4 1897828F */  lw         $2, %gp_rel(OpMenuWakuCnt$2385)($28)
     /* 11F8B8 0021F7B8 04004004 */  bltz       $2, .L0021F7CC
     /* 11F8BC 0021F7BC 00000000 */   nop
     /* 11F8C0 0021F7C0 1E004228 */  slti       $2, $2, 0x1E
     /* 11F8C4 0021F7C4 02004014 */  bnez       $2, .L0021F7D0
     /* 11F8C8 0021F7C8 00000000 */   nop
   .L0021F7CC:
-    /* 11F8CC 0021F7CC 189780AF */  sw         $0, -0x68E8($28)
+    /* 11F8CC 0021F7CC 189780AF */  sw         $0, %gp_rel(OpMenuWakuCnt$2385)($28)
   .L0021F7D0:
-    /* 11F8D0 0021F7D0 209780C7 */  lwc1       $f0, -0x68E0($28)
+    /* 11F8D0 0021F7D0 209780C7 */  lwc1       $f0, %gp_rel(OptionCurCnt$2388)($28)
     /* 11F8D4 0021F7D4 60008046 */  cvt.s.w    $f1, $f0
     /* 11F8D8 0021F7D8 B48180C7 */  lwc1       $f0, -0x7E4C($28)
     /* 11F8DC 0021F7DC 02030146 */  mul.s      $f12, $f0, $f1
@@ -9540,7 +9540,7 @@ glabel DrawMenuOption__Fv
     /* 11F8F8 0021F7F8 DB01013C */  lui        $1, %hi(OptionMenu + 0x18)
     /* 11F8FC 0021F7FC 588A20C4 */  lwc1       $f0, %lo(OptionMenu + 0x18)($1)
     /* 11F900 0021F800 00050146 */  add.s      $f20, $f0, $f1
-    /* 11F904 0021F804 209780C7 */  lwc1       $f0, -0x68E0($28)
+    /* 11F904 0021F804 209780C7 */  lwc1       $f0, %gp_rel(OptionCurCnt$2388)($28)
     /* 11F908 0021F808 60008046 */  cvt.s.w    $f1, $f0
     /* 11F90C 0021F80C B88180C7 */  lwc1       $f0, -0x7E48($28)
     /* 11F910 0021F810 02030146 */  mul.s      $f12, $f0, $f1
@@ -9605,10 +9605,10 @@ glabel DrawMenuOption__Fv
     /* 11F9FC 0021F8FC 283E0072 */  paddub     $7, $16, $0
     /* 11FA00 0021F900 C8B3080C */  jal        DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i
     /* 11FA04 0021F904 00000000 */   nop
-    /* 11FA08 0021F908 2097828F */  lw         $2, -0x68E0($28)
+    /* 11FA08 0021F908 2097828F */  lw         $2, %gp_rel(OptionCurCnt$2388)($28)
     /* 11FA0C 0021F90C 01004224 */  addiu      $2, $2, 0x1
-    /* 11FA10 0021F910 209782AF */  sw         $2, -0x68E0($28)
-    /* 11FA14 0021F914 2097828F */  lw         $2, -0x68E0($28)
+    /* 11FA10 0021F910 209782AF */  sw         $2, %gp_rel(OptionCurCnt$2388)($28)
+    /* 11FA14 0021F914 2097828F */  lw         $2, %gp_rel(OptionCurCnt$2388)($28)
     /* 11FA18 0021F918 1000013C */  lui        $1, (0x107AC1 >> 16)
     /* 11FA1C 0021F91C C17A2134 */  ori        $1, $1, (0x107AC1 & 0xFFFF)
     /* 11FA20 0021F920 2A084100 */  slt        $1, $2, $1
@@ -9617,7 +9617,7 @@ glabel DrawMenuOption__Fv
     /* 11FA2C 0021F92C 02004104 */  bgez       $2, .L0021F938
     /* 11FA30 0021F930 00000000 */   nop
   .L0021F934:
-    /* 11FA34 0021F934 209780AF */  sw         $0, -0x68E0($28)
+    /* 11FA34 0021F934 209780AF */  sw         $0, %gp_rel(OptionCurCnt$2388)($28)
   .L0021F938:
     /* 11FA38 0021F938 DB01013C */  lui        $1, %hi(OptionMenu + 0x10)
     /* 11FA3C 0021F93C 508A228C */  lw         $2, %lo(OptionMenu + 0x10)($1)
@@ -10814,19 +10814,19 @@ glabel DrawMenuSave__FPc
     /* 120B80 00220A80 2A081200 */  slt        $1, $0, $18
     /* 120B84 00220A84 66002010 */  beqz       $1, .L00220C20
     /* 120B88 00220A88 00000000 */   nop
-    /* 120B8C 00220A8C 2C978283 */  lb         $2, -0x68D4($28)
+    /* 120B8C 00220A8C 2C978283 */  lb         $2, %gp_rel(init$2681)($28)
     /* 120B90 00220A90 04004014 */  bnez       $2, .L00220AA4
     /* 120B94 00220A94 00000000 */   nop
-    /* 120B98 00220A98 289780AF */  sw         $0, -0x68D8($28)
+    /* 120B98 00220A98 289780AF */  sw         $0, %gp_rel(ct$2680)($28)
     /* 120B9C 00220A9C 01000224 */  addiu      $2, $0, 0x1
-    /* 120BA0 00220AA0 2C9782A3 */  sb         $2, -0x68D4($28)
+    /* 120BA0 00220AA0 2C9782A3 */  sb         $2, %gp_rel(init$2681)($28)
   .L00220AA4:
     /* 120BA4 00220AA4 2900023C */  lui        $2, %hi(LIT_2683)
     /* 120BA8 00220AA8 D03F4224 */  addiu      $2, $2, %lo(LIT_2683)
     /* 120BAC 00220AAC 7000A327 */  addiu      $3, $29, 0x70
     /* 120BB0 00220AB0 00004278 */  lq         $2, 0x0($2)
     /* 120BB4 00220AB4 0000627C */  sq         $2, 0x0($3)
-    /* 120BB8 00220AB8 289780C7 */  lwc1       $f0, -0x68D8($28)
+    /* 120BB8 00220AB8 289780C7 */  lwc1       $f0, %gp_rel(ct$2680)($28)
     /* 120BBC 00220ABC 60008046 */  cvt.s.w    $f1, $f0
     /* 120BC0 00220AC0 B48180C7 */  lwc1       $f0, -0x7E4C($28)
     /* 120BC4 00220AC4 02030146 */  mul.s      $f12, $f0, $f1
@@ -10840,7 +10840,7 @@ glabel DrawMenuSave__FPc
     /* 120BE4 00220AE4 00000000 */  nop
     /* 120BE8 00220AE8 20008046 */  cvt.s.w    $f0, $f0
     /* 120BEC 00220AEC 00050146 */  add.s      $f20, $f0, $f1
-    /* 120BF0 00220AF0 289780C7 */  lwc1       $f0, -0x68D8($28)
+    /* 120BF0 00220AF0 289780C7 */  lwc1       $f0, %gp_rel(ct$2680)($28)
     /* 120BF4 00220AF4 60008046 */  cvt.s.w    $f1, $f0
     /* 120BF8 00220AF8 B88180C7 */  lwc1       $f0, -0x7E48($28)
     /* 120BFC 00220AFC 02030146 */  mul.s      $f12, $f0, $f1
@@ -10901,10 +10901,10 @@ glabel DrawMenuSave__FPc
     /* 120CD8 00220BD8 283E0072 */  paddub     $7, $16, $0
     /* 120CDC 00220BDC C8B3080C */  jal        DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i
     /* 120CE0 00220BE0 00000000 */   nop
-    /* 120CE4 00220BE4 2897838F */  lw         $3, -0x68D8($28)
+    /* 120CE4 00220BE4 2897838F */  lw         $3, %gp_rel(ct$2680)($28)
     /* 120CE8 00220BE8 01006324 */  addiu      $3, $3, 0x1
-    /* 120CEC 00220BEC 289783AF */  sw         $3, -0x68D8($28)
-    /* 120CF0 00220BF0 289780C7 */  lwc1       $f0, -0x68D8($28)
+    /* 120CEC 00220BEC 289783AF */  sw         $3, %gp_rel(ct$2680)($28)
+    /* 120CF0 00220BF0 289780C7 */  lwc1       $f0, %gp_rel(ct$2680)($28)
     /* 120CF4 00220BF4 60008046 */  cvt.s.w    $f1, $f0
     /* 120CF8 00220BF8 0100033C */  lui        $3, (0x19B53 >> 16)
     /* 120CFC 00220BFC 539B6334 */  ori        $3, $3, (0x19B53 & 0xFFFF)
@@ -10915,7 +10915,7 @@ glabel DrawMenuSave__FPc
     /* 120D10 00220C10 00000000 */  nop
     /* 120D14 00220C14 02000145 */  bc1t       .L00220C20
     /* 120D18 00220C18 00000000 */   nop
-    /* 120D1C 00220C1C 289780AF */  sw         $0, -0x68D8($28)
+    /* 120D1C 00220C1C 289780AF */  sw         $0, %gp_rel(ct$2680)($28)
   .L00220C20:
     /* 120D20 00220C20 DB01013C */  lui        $1, %hi(SaveMenu + 0x4)
     /* 120D24 00220C24 D48A248C */  lw         $4, %lo(SaveMenu + 0x4)($1)

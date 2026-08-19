@@ -1586,12 +1586,12 @@ glabel CheckDmg__12CMonstorUnitFv
     /* 0DB7E8 001DB6E8 00008244 */  mtc1       $2, $f0
     /* 0DB7EC 001DB6EC 00000000 */  nop
     /* 0DB7F0 001DB6F0 20038046 */  cvt.s.w    $f12, $f0
-    /* 0DB7F4 001DB6F4 7C948283 */  lb         $2, -0x6B84($28)
+    /* 0DB7F4 001DB6F4 7C948283 */  lb         $2, %gp_rel(init$1193)($28)
     /* 0DB7F8 001DB6F8 04004014 */  bnez       $2, .L001DB70C
     /* 0DB7FC 001DB6FC 00000000 */   nop
-    /* 0DB800 001DB700 789480AF */  sw         $0, -0x6B88($28)
+    /* 0DB800 001DB700 789480AF */  sw         $0, %gp_rel(cnt$1192)($28)
     /* 0DB804 001DB704 01000224 */  addiu      $2, $0, 0x1
-    /* 0DB808 001DB708 7C9482A3 */  sb         $2, -0x6B84($28)
+    /* 0DB808 001DB708 7C9482A3 */  sb         $2, %gp_rel(init$1193)($28)
   .L001DB70C:
     /* 0DB80C 001DB70C 9000A28E */  lw         $2, 0x90($21)
     /* 0DB810 001DB710 C0180200 */  sll        $3, $2, 3
@@ -1604,7 +1604,7 @@ glabel CheckDmg__12CMonstorUnitFv
     /* 0DB82C 001DB72C 0500013C */  lui        $1, (0x55250 >> 16)
     /* 0DB830 001DB730 50522134 */  ori        $1, $1, (0x55250 & 0xFFFF)
     /* 0DB834 001DB734 21286100 */  addu       $5, $3, $1
-    /* 0DB838 001DB738 7894848F */  lw         $4, -0x6B88($28)
+    /* 0DB838 001DB738 7894848F */  lw         $4, %gp_rel(cnt$1192)($28)
     /* 0DB83C 001DB73C 40190400 */  sll        $3, $4, 5
     /* 0DB840 001DB740 23186400 */  subu       $3, $3, $4
     /* 0DB844 001DB744 80210300 */  sll        $4, $3, 6
@@ -1624,16 +1624,16 @@ glabel CheckDmg__12CMonstorUnitFv
     /* 0DB87C 001DB77C 14E42DC4 */  lwc1       $f13, -0x1BEC($1)
     /* 0DB880 001DB780 10DE060C */  jal        Set__14CWeaponElementFPA4_fPffif
     /* 0DB884 001DB784 00000000 */   nop
-    /* 0DB888 001DB788 7894838F */  lw         $3, -0x6B88($28)
+    /* 0DB888 001DB788 7894838F */  lw         $3, %gp_rel(cnt$1192)($28)
     /* 0DB88C 001DB78C 03006228 */  slti       $2, $3, 0x3
     /* 0DB890 001DB790 04004014 */  bnez       $2, .L001DB7A4
     /* 0DB894 001DB794 00000000 */   nop
-    /* 0DB898 001DB798 789480AF */  sw         $0, -0x6B88($28)
+    /* 0DB898 001DB798 789480AF */  sw         $0, %gp_rel(cnt$1192)($28)
     /* 0DB89C 001DB79C 03000010 */  b          .L001DB7AC
     /* 0DB8A0 001DB7A0 00000000 */   nop
   .L001DB7A4:
     /* 0DB8A4 001DB7A4 01006224 */  addiu      $2, $3, 0x1
-    /* 0DB8A8 001DB7A8 789482AF */  sw         $2, -0x6B88($28)
+    /* 0DB8A8 001DB7A8 789482AF */  sw         $2, %gp_rel(cnt$1192)($28)
   .L001DB7AC:
     /* 0DB8AC 001DB7AC BE11040C */  jal        rand
     /* 0DB8B0 001DB7B0 00000000 */   nop

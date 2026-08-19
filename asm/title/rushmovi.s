@@ -1258,12 +1258,12 @@ glabel MotionProcess__Fv__2
     /* 01DEC8 01DC9BC8 58A1040C */  jal        SetTransMatrix__6CFrameFPA4_f
     /* 01DECC 01DC9BCC 00000000 */   nop
   .L01DC9BD0:
-    /* 01DED0 01DC9BD0 E09B8283 */  lb         $2, -0x6420($28)
+    /* 01DED0 01DC9BD0 E09B8283 */  lb         $2, %gp_rel(init$499)($28)
     /* 01DED4 01DC9BD4 04004014 */  bnez       $2, .L01DC9BE8
     /* 01DED8 01DC9BD8 00000000 */   nop
-    /* 01DEDC 01DC9BDC DC9B80AF */  sw         $0, -0x6424($28)
+    /* 01DEDC 01DC9BDC DC9B80AF */  sw         $0, %gp_rel(old$498)($28)
     /* 01DEE0 01DC9BE0 01000224 */  addiu      $2, $0, 0x1
-    /* 01DEE4 01DC9BE4 E09B82A3 */  sb         $2, -0x6420($28)
+    /* 01DEE4 01DC9BE4 E09B82A3 */  sb         $2, %gp_rel(init$499)($28)
   .L01DC9BE8:
     /* 01DEE8 01DC9BE8 C09B838F */  lw         $3, -0x6440($28)
     /* 01DEEC 01DC9BEC B0110224 */  addiu      $2, $0, 0x11B0
@@ -1274,7 +1274,7 @@ glabel MotionProcess__Fv__2
     /* 01DF00 01DC9C00 00004CC4 */  lwc1       $f12, 0x0($2)
     /* 01DF04 01DC9C04 2C44040C */  jal        fptosi
     /* 01DF08 01DC9C08 00000000 */   nop
-    /* 01DF0C 01DC9C0C DC9B848F */  lw         $4, -0x6424($28)
+    /* 01DF0C 01DC9C0C DC9B848F */  lw         $4, %gp_rel(old$498)($28)
     /* 01DF10 01DC9C10 1A008210 */  beq        $4, $2, .L01DC9C7C
     /* 01DF14 01DC9C14 00000000 */   nop
     /* 01DF18 01DC9C18 0C000324 */  addiu      $3, $0, 0xC
@@ -1300,7 +1300,7 @@ glabel MotionProcess__Fv__2
     /* 01DF64 01DC9C64 80BF033C */  lui        $3, (0xBF800000 >> 16)
     /* 01DF68 01DC9C68 E001013C */  lui        $1, %hi(Chara__3 + 0x8830)
     /* 01DF6C 01DC9C6C 108723AC */  sw         $3, %lo(Chara__3 + 0x8830)($1)
-    /* 01DF70 01DC9C70 DC9B82AF */  sw         $2, -0x6424($28)
+    /* 01DF70 01DC9C70 DC9B82AF */  sw         $2, %gp_rel(old$498)($28)
     /* 01DF74 01DC9C74 1E000010 */  b          .L01DC9CF0
     /* 01DF78 01DC9C78 00000000 */   nop
   .L01DC9C7C:
@@ -1320,7 +1320,7 @@ glabel MotionProcess__Fv__2
     /* 01DFB0 01DC9CB0 80BF033C */  lui        $3, (0xBF800000 >> 16)
     /* 01DFB4 01DC9CB4 E001013C */  lui        $1, %hi(Chara__3 + 0x8830)
     /* 01DFB8 01DC9CB8 108723AC */  sw         $3, %lo(Chara__3 + 0x8830)($1)
-    /* 01DFBC 01DC9CBC DC9B82AF */  sw         $2, -0x6424($28)
+    /* 01DFBC 01DC9CBC DC9B82AF */  sw         $2, %gp_rel(old$498)($28)
     /* 01DFC0 01DC9CC0 0B000010 */  b          .L01DC9CF0
     /* 01DFC4 01DC9CC4 00000000 */   nop
   .L01DC9CC8:
@@ -1335,19 +1335,19 @@ glabel MotionProcess__Fv__2
     /* 01DFE8 01DC9CE8 E001013C */  lui        $1, %hi(Chara__3 + 0x8830)
     /* 01DFEC 01DC9CEC 108723AC */  sw         $3, %lo(Chara__3 + 0x8830)($1)
   .L01DC9CF0:
-    /* 01DFF0 01DC9CF0 E89B8383 */  lb         $3, -0x6418($28)
+    /* 01DFF0 01DC9CF0 E89B8383 */  lb         $3, %gp_rel(init$513)($28)
     /* 01DFF4 01DC9CF4 04006014 */  bnez       $3, .L01DC9D08
     /* 01DFF8 01DC9CF8 00000000 */   nop
-    /* 01DFFC 01DC9CFC E49B80AF */  sw         $0, -0x641C($28)
+    /* 01DFFC 01DC9CFC E49B80AF */  sw         $0, %gp_rel(iwacnt$512)($28)
     /* 01E000 01DC9D00 01000324 */  addiu      $3, $0, 0x1
-    /* 01E004 01DC9D04 E89B83A3 */  sb         $3, -0x6418($28)
+    /* 01E004 01DC9D04 E89B83A3 */  sb         $3, %gp_rel(init$513)($28)
   .L01DC9D08:
     /* 01E008 01DC9D08 E301013C */  lui        $1, %hi(CScript)
     /* 01E00C 01DC9D0C C0E9248C */  lw         $4, %lo(CScript)($1)
     /* 01E010 01DC9D10 13000324 */  addiu      $3, $0, 0x13
     /* 01E014 01DC9D14 4D008314 */  bne        $4, $3, .L01DC9E4C
     /* 01E018 01DC9D18 00000000 */   nop
-    /* 01E01C 01DC9D1C E49B838F */  lw         $3, -0x641C($28)
+    /* 01E01C 01DC9D1C E49B838F */  lw         $3, %gp_rel(iwacnt$512)($28)
     /* 01E020 01DC9D20 1A006014 */  bnez       $3, .L01DC9D8C
     /* 01E024 01DC9D24 00000000 */   nop
     /* 01E028 01DC9D28 DF01023C */  lui        $2, %hi(Chara__3 + 0x2360)
@@ -1376,7 +1376,7 @@ glabel MotionProcess__Fv__2
     /* 01E084 01DC9D84 DF01013C */  lui        $1, %hi(Chara__3 + 0x2650)
     /* 01E088 01DC9D88 302523AC */  sw         $3, %lo(Chara__3 + 0x2650)($1)
   .L01DC9D8C:
-    /* 01E08C 01DC9D8C E49B848F */  lw         $4, -0x641C($28)
+    /* 01E08C 01DC9D8C E49B848F */  lw         $4, %gp_rel(iwacnt$512)($28)
     /* 01E090 01DC9D90 4A010324 */  addiu      $3, $0, 0x14A
     /* 01E094 01DC9D94 1C008314 */  bne        $4, $3, .L01DC9E08
     /* 01E098 01DC9D98 00000000 */   nop
@@ -1408,7 +1408,7 @@ glabel MotionProcess__Fv__2
     /* 01E100 01DC9E00 DF01013C */  lui        $1, %hi(Chara__3 + 0x2650)
     /* 01E104 01DC9E04 302523AC */  sw         $3, %lo(Chara__3 + 0x2650)($1)
   .L01DC9E08:
-    /* 01E108 01DC9E08 E49B848F */  lw         $4, -0x641C($28)
+    /* 01E108 01DC9E08 E49B848F */  lw         $4, %gp_rel(iwacnt$512)($28)
     /* 01E10C 01DC9E0C 4B010324 */  addiu      $3, $0, 0x14B
     /* 01E110 01DC9E10 09008314 */  bne        $4, $3, .L01DC9E38
     /* 01E114 01DC9E14 00000000 */   nop
@@ -1421,13 +1421,13 @@ glabel MotionProcess__Fv__2
     /* 01E130 01DC9E30 DF01013C */  lui        $1, %hi(Chara__3 + 0x2FC0)
     /* 01E134 01DC9E34 A02E23AC */  sw         $3, %lo(Chara__3 + 0x2FC0)($1)
   .L01DC9E38:
-    /* 01E138 01DC9E38 E49B838F */  lw         $3, -0x641C($28)
+    /* 01E138 01DC9E38 E49B838F */  lw         $3, %gp_rel(iwacnt$512)($28)
     /* 01E13C 01DC9E3C 01006324 */  addiu      $3, $3, 0x1
-    /* 01E140 01DC9E40 E49B83AF */  sw         $3, -0x641C($28)
+    /* 01E140 01DC9E40 E49B83AF */  sw         $3, %gp_rel(iwacnt$512)($28)
     /* 01E144 01DC9E44 02000010 */  b          .L01DC9E50
     /* 01E148 01DC9E48 00000000 */   nop
   .L01DC9E4C:
-    /* 01E14C 01DC9E4C E49B80AF */  sw         $0, -0x641C($28)
+    /* 01E14C 01DC9E4C E49B80AF */  sw         $0, %gp_rel(iwacnt$512)($28)
   .L01DC9E50:
     /* 01E150 01DC9E50 4000BF7B */  lq         $31, 0x40($29)
     /* 01E154 01DC9E54 3000B37B */  lq         $19, 0x30($29)
@@ -1552,12 +1552,12 @@ glabel DrawProcess__Fv__2
     /* 01E324 01DCA024 09000224 */  addiu      $2, $0, 0x9
     /* 01E328 01DCA028 3F006210 */  beq        $3, $2, .L01DCA128
     /* 01E32C 01DCA02C 00000000 */   nop
-    /* 01E330 01DCA030 F09B8283 */  lb         $2, -0x6410($28)
+    /* 01E330 01DCA030 F09B8283 */  lb         $2, %gp_rel(init$600)($28)
     /* 01E334 01DCA034 04004014 */  bnez       $2, .L01DCA048
     /* 01E338 01DCA038 00000000 */   nop
-    /* 01E33C 01DCA03C EC9B80AF */  sw         $0, -0x6414($28)
+    /* 01E33C 01DCA03C EC9B80AF */  sw         $0, %gp_rel(fade$599)($28)
     /* 01E340 01DCA040 01000224 */  addiu      $2, $0, 0x1
-    /* 01E344 01DCA044 F09B82A3 */  sb         $2, -0x6410($28)
+    /* 01E344 01DCA044 F09B82A3 */  sb         $2, %gp_rel(init$600)($28)
   .L01DCA048:
     /* 01E348 01DCA048 C89B828F */  lw         $2, -0x6438($28)
     /* 01E34C 01DCA04C 28004010 */  beqz       $2, .L01DCA0F0
@@ -1590,17 +1590,17 @@ glabel DrawProcess__Fv__2
     /* 01E3B8 01DCA0B8 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01E3BC 01DCA0BC B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01E3C0 01DCA0C0 00000000 */   nop
-    /* 01E3C4 01DCA0C4 EC9B8893 */  lbu        $8, -0x6414($28)
+    /* 01E3C4 01DCA0C4 EC9B8893 */  lbu        $8, %gp_rel(fade$599)($28)
     /* 01E3C8 01DCA0C8 28260072 */  paddub     $4, $16, $0
     /* 01E3CC 01DCA0CC 282E4070 */  paddub     $5, $2, $0
     /* 01E3D0 01DCA0D0 4001A627 */  addiu      $6, $29, 0x140
     /* 01E3D4 01DCA0D4 5001A727 */  addiu      $7, $29, 0x150
     /* 01E3D8 01DCA0D8 C470050C */  jal        set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_Uc
     /* 01E3DC 01DCA0DC 00000000 */   nop
-    /* 01E3E0 01DCA0E0 EC9B828F */  lw         $2, -0x6414($28)
+    /* 01E3E0 01DCA0E0 EC9B828F */  lw         $2, %gp_rel(fade$599)($28)
     /* 01E3E4 01DCA0E4 02004224 */  addiu      $2, $2, 0x2
     /* 01E3E8 01DCA0E8 7F004230 */  andi       $2, $2, 0x7F
-    /* 01E3EC 01DCA0EC EC9B82AF */  sw         $2, -0x6414($28)
+    /* 01E3EC 01DCA0EC EC9B82AF */  sw         $2, %gp_rel(fade$599)($28)
   .L01DCA0F0:
     /* 01E3F0 01DCA0F0 CC01023C */  lui        $2, %hi(GamePad)
     /* 01E3F4 01DCA0F4 40C54424 */  addiu      $4, $2, %lo(GamePad)
@@ -1616,7 +1616,7 @@ glabel DrawProcess__Fv__2
     /* 01E418 01DCA118 C89B828F */  lw         $2, -0x6438($28)
     /* 01E41C 01DCA11C 02004014 */  bnez       $2, .L01DCA128
     /* 01E420 01DCA120 00000000 */   nop
-    /* 01E424 01DCA124 EC9B80AF */  sw         $0, -0x6414($28)
+    /* 01E424 01DCA124 EC9B80AF */  sw         $0, %gp_rel(fade$599)($28)
   .L01DCA128:
     /* 01E428 01DCA128 8801A427 */  addiu      $4, $29, 0x188
     /* 01E42C 01DCA12C 68BC040C */  jal        MGGetFBuffBackTex__FP9sceGsTex0
@@ -1678,61 +1678,61 @@ glabel SoundProcess__Fv__2
     /* 01E4F8 01DCA1F8 D8E9238C */  lw         $3, %lo(CScript + 0x18)($1)
     /* 01E4FC 01DCA1FC 17006014 */  bnez       $3, .L01DCA25C
     /* 01E500 01DCA200 00000000 */   nop
-    /* 01E504 01DCA204 F89B8383 */  lb         $3, -0x6408($28)
+    /* 01E504 01DCA204 F89B8383 */  lb         $3, %gp_rel(init$646)($28)
     /* 01E508 01DCA208 04006014 */  bnez       $3, .L01DCA21C
     /* 01E50C 01DCA20C 00000000 */   nop
-    /* 01E510 01DCA210 F49B80AF */  sw         $0, -0x640C($28)
+    /* 01E510 01DCA210 F49B80AF */  sw         $0, %gp_rel(mus$645)($28)
     /* 01E514 01DCA214 01000324 */  addiu      $3, $0, 0x1
-    /* 01E518 01DCA218 F89B83A3 */  sb         $3, -0x6408($28)
+    /* 01E518 01DCA218 F89B83A3 */  sb         $3, %gp_rel(init$646)($28)
   .L01DCA21C:
     /* 01E51C 01DCA21C E301013C */  lui        $1, %hi(CScript)
     /* 01E520 01DCA220 C0E9268C */  lw         $6, %lo(CScript)($1)
     /* 01E524 01DCA224 01000324 */  addiu      $3, $0, 0x1
     /* 01E528 01DCA228 0B00C314 */  bne        $6, $3, .L01DCA258
     /* 01E52C 01DCA22C 00000000 */   nop
-    /* 01E530 01DCA230 F49B838F */  lw         $3, -0x640C($28)
+    /* 01E530 01DCA230 F49B838F */  lw         $3, %gp_rel(mus$645)($28)
     /* 01E534 01DCA234 09006014 */  bnez       $3, .L01DCA25C
     /* 01E538 01DCA238 00000000 */   nop
     /* 01E53C 01DCA23C 28260070 */  paddub     $4, $0, $0
     /* 01E540 01DCA240 CC66050C */  jal        SndBgmPlay__Fi
     /* 01E544 01DCA244 00000000 */   nop
     /* 01E548 01DCA248 01000324 */  addiu      $3, $0, 0x1
-    /* 01E54C 01DCA24C F49B83AF */  sw         $3, -0x640C($28)
+    /* 01E54C 01DCA24C F49B83AF */  sw         $3, %gp_rel(mus$645)($28)
     /* 01E550 01DCA250 02000010 */  b          .L01DCA25C
     /* 01E554 01DCA254 00000000 */   nop
   .L01DCA258:
-    /* 01E558 01DCA258 F49B80AF */  sw         $0, -0x640C($28)
+    /* 01E558 01DCA258 F49B80AF */  sw         $0, %gp_rel(mus$645)($28)
   .L01DCA25C:
-    /* 01E55C 01DCA25C 009C8383 */  lb         $3, -0x6400($28)
+    /* 01E55C 01DCA25C 009C8383 */  lb         $3, %gp_rel(init$654__2)($28)
     /* 01E560 01DCA260 04006014 */  bnez       $3, .L01DCA274
     /* 01E564 01DCA264 00000000 */   nop
-    /* 01E568 01DCA268 FC9B80AF */  sw         $0, -0x6404($28)
+    /* 01E568 01DCA268 FC9B80AF */  sw         $0, %gp_rel(ambi$653)($28)
     /* 01E56C 01DCA26C 01000324 */  addiu      $3, $0, 0x1
-    /* 01E570 01DCA270 009C83A3 */  sb         $3, -0x6400($28)
+    /* 01E570 01DCA270 009C83A3 */  sb         $3, %gp_rel(init$654__2)($28)
   .L01DCA274:
     /* 01E574 01DCA274 E301013C */  lui        $1, %hi(CScript + 0x18)
     /* 01E578 01DCA278 D8E9268C */  lw         $6, %lo(CScript + 0x18)($1)
     /* 01E57C 01DCA27C 09000324 */  addiu      $3, $0, 0x9
     /* 01E580 01DCA280 0A00C314 */  bne        $6, $3, .L01DCA2AC
     /* 01E584 01DCA284 00000000 */   nop
-    /* 01E588 01DCA288 FC9B838F */  lw         $3, -0x6404($28)
+    /* 01E588 01DCA288 FC9B838F */  lw         $3, %gp_rel(ambi$653)($28)
     /* 01E58C 01DCA28C 08006014 */  bnez       $3, .L01DCA2B0
     /* 01E590 01DCA290 00000000 */   nop
     /* 01E594 01DCA294 646C050C */  jal        SndAmbientStop__Fv
     /* 01E598 01DCA298 00000000 */   nop
     /* 01E59C 01DCA29C 01000324 */  addiu      $3, $0, 0x1
-    /* 01E5A0 01DCA2A0 FC9B83AF */  sw         $3, -0x6404($28)
+    /* 01E5A0 01DCA2A0 FC9B83AF */  sw         $3, %gp_rel(ambi$653)($28)
     /* 01E5A4 01DCA2A4 02000010 */  b          .L01DCA2B0
     /* 01E5A8 01DCA2A8 00000000 */   nop
   .L01DCA2AC:
-    /* 01E5AC 01DCA2AC FC9B80AF */  sw         $0, -0x6404($28)
+    /* 01E5AC 01DCA2AC FC9B80AF */  sw         $0, %gp_rel(ambi$653)($28)
   .L01DCA2B0:
-    /* 01E5B0 01DCA2B0 089C8383 */  lb         $3, -0x63F8($28)
+    /* 01E5B0 01DCA2B0 089C8383 */  lb         $3, %gp_rel(init$662)($28)
     /* 01E5B4 01DCA2B4 04006014 */  bnez       $3, .L01DCA2C8
     /* 01E5B8 01DCA2B8 00000000 */   nop
-    /* 01E5BC 01DCA2BC 049C80AF */  sw         $0, -0x63FC($28)
+    /* 01E5BC 01DCA2BC 049C80AF */  sw         $0, %gp_rel(bat$661)($28)
     /* 01E5C0 01DCA2C0 01000324 */  addiu      $3, $0, 0x1
-    /* 01E5C4 01DCA2C4 089C83A3 */  sb         $3, -0x63F8($28)
+    /* 01E5C4 01DCA2C4 089C83A3 */  sb         $3, %gp_rel(init$662)($28)
   .L01DCA2C8:
     /* 01E5C8 01DCA2C8 E301013C */  lui        $1, %hi(CScript + 0x18)
     /* 01E5CC 01DCA2CC D8E9238C */  lw         $3, %lo(CScript + 0x18)($1)
@@ -1752,7 +1752,7 @@ glabel SoundProcess__Fv__2
     /* 01E604 01DCA304 00000000 */  nop
     /* 01E608 01DCA308 2A000145 */  bc1t       .L01DCA3B4
     /* 01E60C 01DCA30C 00000000 */   nop
-    /* 01E610 01DCA310 049C838F */  lw         $3, -0x63FC($28)
+    /* 01E610 01DCA310 049C838F */  lw         $3, %gp_rel(bat$661)($28)
     /* 01E614 01DCA314 1D006014 */  bnez       $3, .L01DCA38C
     /* 01E618 01DCA318 00000000 */   nop
     /* 01E61C 01DCA31C E501023C */  lui        $2, %hi(Cam + 0xBC)
@@ -1784,18 +1784,18 @@ glabel SoundProcess__Fv__2
     /* 01E684 01DCA384 086A050C */  jal        SndSePlay__FiPfff
     /* 01E688 01DCA388 00000000 */   nop
   .L01DCA38C:
-    /* 01E68C 01DCA38C 049C838F */  lw         $3, -0x63FC($28)
+    /* 01E68C 01DCA38C 049C838F */  lw         $3, %gp_rel(bat$661)($28)
     /* 01E690 01DCA390 01006324 */  addiu      $3, $3, 0x1
-    /* 01E694 01DCA394 049C83AF */  sw         $3, -0x63FC($28)
-    /* 01E698 01DCA398 049C838F */  lw         $3, -0x63FC($28)
+    /* 01E694 01DCA394 049C83AF */  sw         $3, %gp_rel(bat$661)($28)
+    /* 01E698 01DCA398 049C838F */  lw         $3, %gp_rel(bat$661)($28)
     /* 01E69C 01DCA39C 21006128 */  slti       $1, $3, 0x21
     /* 01E6A0 01DCA3A0 05002014 */  bnez       $1, .L01DCA3B8
     /* 01E6A4 01DCA3A4 00000000 */   nop
-    /* 01E6A8 01DCA3A8 049C80AF */  sw         $0, -0x63FC($28)
+    /* 01E6A8 01DCA3A8 049C80AF */  sw         $0, %gp_rel(bat$661)($28)
     /* 01E6AC 01DCA3AC 02000010 */  b          .L01DCA3B8
     /* 01E6B0 01DCA3B0 00000000 */   nop
   .L01DCA3B4:
-    /* 01E6B4 01DCA3B4 049C80AF */  sw         $0, -0x63FC($28)
+    /* 01E6B4 01DCA3B4 049C80AF */  sw         $0, %gp_rel(bat$661)($28)
   .L01DCA3B8:
     /* 01E6B8 01DCA3B8 E301013C */  lui        $1, %hi(CScript + 0x18)
     /* 01E6BC 01DCA3BC D8E9278C */  lw         $7, %lo(CScript + 0x18)($1)
@@ -1834,12 +1834,12 @@ glabel SoundProcess__Fv__2
     /* 01E73C 01DCA43C 73000145 */  bc1t       .L01DCA60C
     /* 01E740 01DCA440 00000000 */   nop
   .L01DCA444:
-    /* 01E744 01DCA444 109C8283 */  lb         $2, -0x63F0($28)
+    /* 01E744 01DCA444 109C8283 */  lb         $2, %gp_rel(init$680)($28)
     /* 01E748 01DCA448 04004014 */  bnez       $2, .L01DCA45C
     /* 01E74C 01DCA44C 00000000 */   nop
-    /* 01E750 01DCA450 0C9C80AF */  sw         $0, -0x63F4($28)
+    /* 01E750 01DCA450 0C9C80AF */  sw         $0, %gp_rel(wait$679)($28)
     /* 01E754 01DCA454 01000224 */  addiu      $2, $0, 0x1
-    /* 01E758 01DCA458 109C82A3 */  sb         $2, -0x63F0($28)
+    /* 01E758 01DCA458 109C82A3 */  sb         $2, %gp_rel(init$680)($28)
   .L01DCA45C:
     /* 01E75C 01DCA45C 3700E014 */  bnez       $7, .L01DCA53C
     /* 01E760 01DCA460 00000000 */   nop
@@ -1859,7 +1859,7 @@ glabel SoundProcess__Fv__2
     /* 01E798 01DCA498 80132CC4 */  lwc1       $f12, %lo(Chara__3 + 0x14A0)($1)
     /* 01E79C 01DCA49C 2C44040C */  jal        fptosi
     /* 01E7A0 01DCA4A0 00000000 */   nop
-    /* 01E7A4 01DCA4A4 0C9C838F */  lw         $3, -0x63F4($28)
+    /* 01E7A4 01DCA4A4 0C9C838F */  lw         $3, %gp_rel(wait$679)($28)
     /* 01E7A8 01DCA4A8 1E006014 */  bnez       $3, .L01DCA524
     /* 01E7AC 01DCA4AC 00000000 */   nop
     /* 01E7B0 01DCA4B0 0A000324 */  addiu      $3, $0, 0xA
@@ -1889,14 +1889,14 @@ glabel SoundProcess__Fv__2
     /* 01E810 01DCA510 00000000 */   nop
   .L01DCA514:
     /* 01E814 01DCA514 05000324 */  addiu      $3, $0, 0x5
-    /* 01E818 01DCA518 0C9C83AF */  sw         $3, -0x63F4($28)
+    /* 01E818 01DCA518 0C9C83AF */  sw         $3, %gp_rel(wait$679)($28)
     /* 01E81C 01DCA51C 3B000010 */  b          .L01DCA60C
     /* 01E820 01DCA520 00000000 */   nop
   .L01DCA524:
     /* 01E824 01DCA524 39006018 */  blez       $3, .L01DCA60C
     /* 01E828 01DCA528 00000000 */   nop
     /* 01E82C 01DCA52C FFFF6324 */  addiu      $3, $3, -0x1
-    /* 01E830 01DCA530 0C9C83AF */  sw         $3, -0x63F4($28)
+    /* 01E830 01DCA530 0C9C83AF */  sw         $3, %gp_rel(wait$679)($28)
     /* 01E834 01DCA534 35000010 */  b          .L01DCA60C
     /* 01E838 01DCA538 00000000 */   nop
   .L01DCA53C:
@@ -1916,7 +1916,7 @@ glabel SoundProcess__Fv__2
     /* 01E870 01DCA570 D0012CC4 */  lwc1       $f12, %lo(Chara__3 + 0x2F0)($1)
     /* 01E874 01DCA574 2C44040C */  jal        fptosi
     /* 01E878 01DCA578 00000000 */   nop
-    /* 01E87C 01DCA57C 0C9C838F */  lw         $3, -0x63F4($28)
+    /* 01E87C 01DCA57C 0C9C838F */  lw         $3, %gp_rel(wait$679)($28)
     /* 01E880 01DCA580 1E006014 */  bnez       $3, .L01DCA5FC
     /* 01E884 01DCA584 00000000 */   nop
     /* 01E888 01DCA588 14000324 */  addiu      $3, $0, 0x14
@@ -1946,23 +1946,23 @@ glabel SoundProcess__Fv__2
     /* 01E8E8 01DCA5E8 00000000 */   nop
   .L01DCA5EC:
     /* 01E8EC 01DCA5EC 05000324 */  addiu      $3, $0, 0x5
-    /* 01E8F0 01DCA5F0 0C9C83AF */  sw         $3, -0x63F4($28)
+    /* 01E8F0 01DCA5F0 0C9C83AF */  sw         $3, %gp_rel(wait$679)($28)
     /* 01E8F4 01DCA5F4 05000010 */  b          .L01DCA60C
     /* 01E8F8 01DCA5F8 00000000 */   nop
   .L01DCA5FC:
     /* 01E8FC 01DCA5FC 03006018 */  blez       $3, .L01DCA60C
     /* 01E900 01DCA600 00000000 */   nop
     /* 01E904 01DCA604 FFFF6324 */  addiu      $3, $3, -0x1
-    /* 01E908 01DCA608 0C9C83AF */  sw         $3, -0x63F4($28)
+    /* 01E908 01DCA608 0C9C83AF */  sw         $3, %gp_rel(wait$679)($28)
   .L01DCA60C:
-    /* 01E90C 01DCA60C 189C8383 */  lb         $3, -0x63E8($28)
+    /* 01E90C 01DCA60C 189C8383 */  lb         $3, %gp_rel(init$704)($28)
     /* 01E910 01DCA610 04006014 */  bnez       $3, .L01DCA624
     /* 01E914 01DCA614 00000000 */   nop
-    /* 01E918 01DCA618 149C80AF */  sw         $0, -0x63EC($28)
+    /* 01E918 01DCA618 149C80AF */  sw         $0, %gp_rel(wait$703)($28)
     /* 01E91C 01DCA61C 01000324 */  addiu      $3, $0, 0x1
-    /* 01E920 01DCA620 189C83A3 */  sb         $3, -0x63E8($28)
+    /* 01E920 01DCA620 189C83A3 */  sb         $3, %gp_rel(init$704)($28)
   .L01DCA624:
-    /* 01E924 01DCA624 149C838F */  lw         $3, -0x63EC($28)
+    /* 01E924 01DCA624 149C838F */  lw         $3, %gp_rel(wait$703)($28)
     /* 01E928 01DCA628 1B026014 */  bnez       $3, .L01DCAE98
     /* 01E92C 01DCA62C 00000000 */   nop
     /* 01E930 01DCA630 C09B838F */  lw         $3, -0x6440($28)
@@ -2003,7 +2003,7 @@ glabel SoundProcess__Fv__2
     /* 01E9BC 01DCA6BC AC6A050C */  jal        SndSetSeVolf__Fifi
     /* 01E9C0 01DCA6C0 00000000 */   nop
     /* 01E9C4 01DCA6C4 05000324 */  addiu      $3, $0, 0x5
-    /* 01E9C8 01DCA6C8 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01E9C8 01DCA6C8 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
     /* 01E9CC 01DCA6CC F4010010 */  b          .L01DCAEA0
     /* 01E9D0 01DCA6D0 00000000 */   nop
     /* 01E9D4 01DCA6D4 0A000324 */  addiu      $3, $0, 0xA
@@ -2020,7 +2020,7 @@ glabel SoundProcess__Fv__2
     /* 01EA00 01DCA700 AC69050C */  jal        SndSePlay__Fiii
     /* 01EA04 01DCA704 00000000 */   nop
     /* 01EA08 01DCA708 05000324 */  addiu      $3, $0, 0x5
-    /* 01EA0C 01DCA70C 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EA0C 01DCA70C 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCA710:
     /* 01EA10 01DCA710 11000324 */  addiu      $3, $0, 0x11
     /* 01EA14 01DCA714 08000316 */  bne        $16, $3, .L01DCA738
@@ -2031,7 +2031,7 @@ glabel SoundProcess__Fv__2
     /* 01EA28 01DCA728 AC69050C */  jal        SndSePlay__Fiii
     /* 01EA2C 01DCA72C 00000000 */   nop
     /* 01EA30 01DCA730 05000324 */  addiu      $3, $0, 0x5
-    /* 01EA34 01DCA734 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EA34 01DCA734 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCA738:
     /* 01EA38 01DCA738 17000324 */  addiu      $3, $0, 0x17
     /* 01EA3C 01DCA73C 08000316 */  bne        $16, $3, .L01DCA760
@@ -2042,7 +2042,7 @@ glabel SoundProcess__Fv__2
     /* 01EA50 01DCA750 AC69050C */  jal        SndSePlay__Fiii
     /* 01EA54 01DCA754 00000000 */   nop
     /* 01EA58 01DCA758 05000324 */  addiu      $3, $0, 0x5
-    /* 01EA5C 01DCA75C 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EA5C 01DCA75C 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCA760:
     /* 01EA60 01DCA760 1F000324 */  addiu      $3, $0, 0x1F
     /* 01EA64 01DCA764 08000316 */  bne        $16, $3, .L01DCA788
@@ -2053,7 +2053,7 @@ glabel SoundProcess__Fv__2
     /* 01EA78 01DCA778 AC69050C */  jal        SndSePlay__Fiii
     /* 01EA7C 01DCA77C 00000000 */   nop
     /* 01EA80 01DCA780 05000324 */  addiu      $3, $0, 0x5
-    /* 01EA84 01DCA784 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EA84 01DCA784 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCA788:
     /* 01EA88 01DCA788 2E000324 */  addiu      $3, $0, 0x2E
     /* 01EA8C 01DCA78C 08000316 */  bne        $16, $3, .L01DCA7B0
@@ -2064,7 +2064,7 @@ glabel SoundProcess__Fv__2
     /* 01EAA0 01DCA7A0 AC69050C */  jal        SndSePlay__Fiii
     /* 01EAA4 01DCA7A4 00000000 */   nop
     /* 01EAA8 01DCA7A8 05000324 */  addiu      $3, $0, 0x5
-    /* 01EAAC 01DCA7AC 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EAAC 01DCA7AC 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCA7B0:
     /* 01EAB0 01DCA7B0 32000324 */  addiu      $3, $0, 0x32
     /* 01EAB4 01DCA7B4 0D000316 */  bne        $16, $3, .L01DCA7EC
@@ -2080,7 +2080,7 @@ glabel SoundProcess__Fv__2
     /* 01EADC 01DCA7DC AC69050C */  jal        SndSePlay__Fiii
     /* 01EAE0 01DCA7E0 00000000 */   nop
     /* 01EAE4 01DCA7E4 05000324 */  addiu      $3, $0, 0x5
-    /* 01EAE8 01DCA7E8 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EAE8 01DCA7E8 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCA7EC:
     /* 01EAEC 01DCA7EC 35000324 */  addiu      $3, $0, 0x35
     /* 01EAF0 01DCA7F0 08000316 */  bne        $16, $3, .L01DCA814
@@ -2091,7 +2091,7 @@ glabel SoundProcess__Fv__2
     /* 01EB04 01DCA804 AC69050C */  jal        SndSePlay__Fiii
     /* 01EB08 01DCA808 00000000 */   nop
     /* 01EB0C 01DCA80C 05000324 */  addiu      $3, $0, 0x5
-    /* 01EB10 01DCA810 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EB10 01DCA810 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCA814:
     /* 01EB14 01DCA814 3E000324 */  addiu      $3, $0, 0x3E
     /* 01EB18 01DCA818 08000316 */  bne        $16, $3, .L01DCA83C
@@ -2102,7 +2102,7 @@ glabel SoundProcess__Fv__2
     /* 01EB2C 01DCA82C AC69050C */  jal        SndSePlay__Fiii
     /* 01EB30 01DCA830 00000000 */   nop
     /* 01EB34 01DCA834 05000324 */  addiu      $3, $0, 0x5
-    /* 01EB38 01DCA838 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EB38 01DCA838 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCA83C:
     /* 01EB3C 01DCA83C 41000324 */  addiu      $3, $0, 0x41
     /* 01EB40 01DCA840 08000316 */  bne        $16, $3, .L01DCA864
@@ -2113,7 +2113,7 @@ glabel SoundProcess__Fv__2
     /* 01EB54 01DCA854 AC69050C */  jal        SndSePlay__Fiii
     /* 01EB58 01DCA858 00000000 */   nop
     /* 01EB5C 01DCA85C 05000324 */  addiu      $3, $0, 0x5
-    /* 01EB60 01DCA860 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EB60 01DCA860 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCA864:
     /* 01EB64 01DCA864 61000324 */  addiu      $3, $0, 0x61
     /* 01EB68 01DCA868 08000316 */  bne        $16, $3, .L01DCA88C
@@ -2124,7 +2124,7 @@ glabel SoundProcess__Fv__2
     /* 01EB7C 01DCA87C AC69050C */  jal        SndSePlay__Fiii
     /* 01EB80 01DCA880 00000000 */   nop
     /* 01EB84 01DCA884 05000324 */  addiu      $3, $0, 0x5
-    /* 01EB88 01DCA888 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EB88 01DCA888 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCA88C:
     /* 01EB8C 01DCA88C 71000324 */  addiu      $3, $0, 0x71
     /* 01EB90 01DCA890 0D000316 */  bne        $16, $3, .L01DCA8C8
@@ -2140,7 +2140,7 @@ glabel SoundProcess__Fv__2
     /* 01EBB8 01DCA8B8 AC69050C */  jal        SndSePlay__Fiii
     /* 01EBBC 01DCA8BC 00000000 */   nop
     /* 01EBC0 01DCA8C0 05000324 */  addiu      $3, $0, 0x5
-    /* 01EBC4 01DCA8C4 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EBC4 01DCA8C4 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCA8C8:
     /* 01EBC8 01DCA8C8 77000324 */  addiu      $3, $0, 0x77
     /* 01EBCC 01DCA8CC 12000316 */  bne        $16, $3, .L01DCA918
@@ -2161,7 +2161,7 @@ glabel SoundProcess__Fv__2
     /* 01EC08 01DCA908 AC69050C */  jal        SndSePlay__Fiii
     /* 01EC0C 01DCA90C 00000000 */   nop
     /* 01EC10 01DCA910 05000324 */  addiu      $3, $0, 0x5
-    /* 01EC14 01DCA914 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EC14 01DCA914 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCA918:
     /* 01EC18 01DCA918 7C000324 */  addiu      $3, $0, 0x7C
     /* 01EC1C 01DCA91C 08000316 */  bne        $16, $3, .L01DCA940
@@ -2172,7 +2172,7 @@ glabel SoundProcess__Fv__2
     /* 01EC30 01DCA930 AC69050C */  jal        SndSePlay__Fiii
     /* 01EC34 01DCA934 00000000 */   nop
     /* 01EC38 01DCA938 05000324 */  addiu      $3, $0, 0x5
-    /* 01EC3C 01DCA93C 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EC3C 01DCA93C 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCA940:
     /* 01EC40 01DCA940 82000324 */  addiu      $3, $0, 0x82
     /* 01EC44 01DCA944 56010316 */  bne        $16, $3, .L01DCAEA0
@@ -2183,7 +2183,7 @@ glabel SoundProcess__Fv__2
     /* 01EC58 01DCA958 AC69050C */  jal        SndSePlay__Fiii
     /* 01EC5C 01DCA95C 00000000 */   nop
     /* 01EC60 01DCA960 05000324 */  addiu      $3, $0, 0x5
-    /* 01EC64 01DCA964 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EC64 01DCA964 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
     /* 01EC68 01DCA968 4D010010 */  b          .L01DCAEA0
     /* 01EC6C 01DCA96C 00000000 */   nop
     /* 01EC70 01DCA970 2F000324 */  addiu      $3, $0, 0x2F
@@ -2195,7 +2195,7 @@ glabel SoundProcess__Fv__2
     /* 01EC88 01DCA988 AC69050C */  jal        SndSePlay__Fiii
     /* 01EC8C 01DCA98C 00000000 */   nop
     /* 01EC90 01DCA990 0A000324 */  addiu      $3, $0, 0xA
-    /* 01EC94 01DCA994 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EC94 01DCA994 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCA998:
     /* 01EC98 01DCA998 7C000324 */  addiu      $3, $0, 0x7C
     /* 01EC9C 01DCA99C 40010316 */  bne        $16, $3, .L01DCAEA0
@@ -2205,7 +2205,7 @@ glabel SoundProcess__Fv__2
     /* 01ECAC 01DCA9AC 2C6A050C */  jal        SndSeStop__Fii
     /* 01ECB0 01DCA9B0 00000000 */   nop
     /* 01ECB4 01DCA9B4 05000324 */  addiu      $3, $0, 0x5
-    /* 01ECB8 01DCA9B8 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01ECB8 01DCA9B8 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
     /* 01ECBC 01DCA9BC 38010010 */  b          .L01DCAEA0
     /* 01ECC0 01DCA9C0 00000000 */   nop
     /* 01ECC4 01DCA9C4 14000324 */  addiu      $3, $0, 0x14
@@ -2217,7 +2217,7 @@ glabel SoundProcess__Fv__2
     /* 01ECDC 01DCA9DC AC69050C */  jal        SndSePlay__Fiii
     /* 01ECE0 01DCA9E0 00000000 */   nop
     /* 01ECE4 01DCA9E4 05000324 */  addiu      $3, $0, 0x5
-    /* 01ECE8 01DCA9E8 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01ECE8 01DCA9E8 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCA9EC:
     /* 01ECEC 01DCA9EC 25000324 */  addiu      $3, $0, 0x25
     /* 01ECF0 01DCA9F0 08000316 */  bne        $16, $3, .L01DCAA14
@@ -2228,7 +2228,7 @@ glabel SoundProcess__Fv__2
     /* 01ED04 01DCAA04 AC69050C */  jal        SndSePlay__Fiii
     /* 01ED08 01DCAA08 00000000 */   nop
     /* 01ED0C 01DCAA0C 05000324 */  addiu      $3, $0, 0x5
-    /* 01ED10 01DCAA10 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01ED10 01DCAA10 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCAA14:
     /* 01ED14 01DCAA14 39000324 */  addiu      $3, $0, 0x39
     /* 01ED18 01DCAA18 08000316 */  bne        $16, $3, .L01DCAA3C
@@ -2239,7 +2239,7 @@ glabel SoundProcess__Fv__2
     /* 01ED2C 01DCAA2C AC69050C */  jal        SndSePlay__Fiii
     /* 01ED30 01DCAA30 00000000 */   nop
     /* 01ED34 01DCAA34 04000324 */  addiu      $3, $0, 0x4
-    /* 01ED38 01DCAA38 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01ED38 01DCAA38 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCAA3C:
     /* 01ED3C 01DCAA3C 3C000324 */  addiu      $3, $0, 0x3C
     /* 01ED40 01DCAA40 08000316 */  bne        $16, $3, .L01DCAA64
@@ -2250,7 +2250,7 @@ glabel SoundProcess__Fv__2
     /* 01ED54 01DCAA54 AC69050C */  jal        SndSePlay__Fiii
     /* 01ED58 01DCAA58 00000000 */   nop
     /* 01ED5C 01DCAA5C 05000324 */  addiu      $3, $0, 0x5
-    /* 01ED60 01DCAA60 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01ED60 01DCAA60 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCAA64:
     /* 01ED64 01DCAA64 47000324 */  addiu      $3, $0, 0x47
     /* 01ED68 01DCAA68 08000316 */  bne        $16, $3, .L01DCAA8C
@@ -2261,7 +2261,7 @@ glabel SoundProcess__Fv__2
     /* 01ED7C 01DCAA7C AC69050C */  jal        SndSePlay__Fiii
     /* 01ED80 01DCAA80 00000000 */   nop
     /* 01ED84 01DCAA84 05000324 */  addiu      $3, $0, 0x5
-    /* 01ED88 01DCAA88 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01ED88 01DCAA88 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCAA8C:
     /* 01ED8C 01DCAA8C 56000324 */  addiu      $3, $0, 0x56
     /* 01ED90 01DCAA90 03010316 */  bne        $16, $3, .L01DCAEA0
@@ -2272,7 +2272,7 @@ glabel SoundProcess__Fv__2
     /* 01EDA4 01DCAAA4 AC69050C */  jal        SndSePlay__Fiii
     /* 01EDA8 01DCAAA8 00000000 */   nop
     /* 01EDAC 01DCAAAC 05000324 */  addiu      $3, $0, 0x5
-    /* 01EDB0 01DCAAB0 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EDB0 01DCAAB0 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
     /* 01EDB4 01DCAAB4 FA000010 */  b          .L01DCAEA0
     /* 01EDB8 01DCAAB8 00000000 */   nop
     /* 01EDBC 01DCAABC 8C000324 */  addiu      $3, $0, 0x8C
@@ -2284,7 +2284,7 @@ glabel SoundProcess__Fv__2
     /* 01EDD4 01DCAAD4 AC69050C */  jal        SndSePlay__Fiii
     /* 01EDD8 01DCAAD8 00000000 */   nop
     /* 01EDDC 01DCAADC 0A000324 */  addiu      $3, $0, 0xA
-    /* 01EDE0 01DCAAE0 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EDE0 01DCAAE0 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCAAE4:
     /* 01EDE4 01DCAAE4 91000324 */  addiu      $3, $0, 0x91
     /* 01EDE8 01DCAAE8 08000316 */  bne        $16, $3, .L01DCAB0C
@@ -2295,7 +2295,7 @@ glabel SoundProcess__Fv__2
     /* 01EDFC 01DCAAFC AC69050C */  jal        SndSePlay__Fiii
     /* 01EE00 01DCAB00 00000000 */   nop
     /* 01EE04 01DCAB04 0A000324 */  addiu      $3, $0, 0xA
-    /* 01EE08 01DCAB08 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EE08 01DCAB08 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCAB0C:
     /* 01EE0C 01DCAB0C 9E000324 */  addiu      $3, $0, 0x9E
     /* 01EE10 01DCAB10 E3000316 */  bne        $16, $3, .L01DCAEA0
@@ -2306,7 +2306,7 @@ glabel SoundProcess__Fv__2
     /* 01EE24 01DCAB24 AC69050C */  jal        SndSePlay__Fiii
     /* 01EE28 01DCAB28 00000000 */   nop
     /* 01EE2C 01DCAB2C 0A000324 */  addiu      $3, $0, 0xA
-    /* 01EE30 01DCAB30 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EE30 01DCAB30 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
     /* 01EE34 01DCAB34 DA000010 */  b          .L01DCAEA0
     /* 01EE38 01DCAB38 00000000 */   nop
     /* 01EE3C 01DCAB3C 75000324 */  addiu      $3, $0, 0x75
@@ -2318,7 +2318,7 @@ glabel SoundProcess__Fv__2
     /* 01EE54 01DCAB54 AC69050C */  jal        SndSePlay__Fiii
     /* 01EE58 01DCAB58 00000000 */   nop
     /* 01EE5C 01DCAB5C 0A000324 */  addiu      $3, $0, 0xA
-    /* 01EE60 01DCAB60 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EE60 01DCAB60 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCAB64:
     /* 01EE64 01DCAB64 A0000324 */  addiu      $3, $0, 0xA0
     /* 01EE68 01DCAB68 CD000316 */  bne        $16, $3, .L01DCAEA0
@@ -2329,7 +2329,7 @@ glabel SoundProcess__Fv__2
     /* 01EE7C 01DCAB7C AC69050C */  jal        SndSePlay__Fiii
     /* 01EE80 01DCAB80 00000000 */   nop
     /* 01EE84 01DCAB84 0A000324 */  addiu      $3, $0, 0xA
-    /* 01EE88 01DCAB88 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EE88 01DCAB88 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
     /* 01EE8C 01DCAB8C C4000010 */  b          .L01DCAEA0
     /* 01EE90 01DCAB90 00000000 */   nop
     /* 01EE94 01DCAB94 57000324 */  addiu      $3, $0, 0x57
@@ -2341,7 +2341,7 @@ glabel SoundProcess__Fv__2
     /* 01EEAC 01DCABAC AC69050C */  jal        SndSePlay__Fiii
     /* 01EEB0 01DCABB0 00000000 */   nop
     /* 01EEB4 01DCABB4 03000324 */  addiu      $3, $0, 0x3
-    /* 01EEB8 01DCABB8 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EEB8 01DCABB8 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
     /* 01EEBC 01DCABBC B8000010 */  b          .L01DCAEA0
     /* 01EEC0 01DCABC0 00000000 */   nop
     /* 01EEC4 01DCABC4 0A000324 */  addiu      $3, $0, 0xA
@@ -2358,7 +2358,7 @@ glabel SoundProcess__Fv__2
     /* 01EEF0 01DCABF0 AC69050C */  jal        SndSePlay__Fiii
     /* 01EEF4 01DCABF4 00000000 */   nop
     /* 01EEF8 01DCABF8 05000324 */  addiu      $3, $0, 0x5
-    /* 01EEFC 01DCABFC 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EEFC 01DCABFC 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCAC00:
     /* 01EF00 01DCAC00 12000324 */  addiu      $3, $0, 0x12
     /* 01EF04 01DCAC04 08000316 */  bne        $16, $3, .L01DCAC28
@@ -2369,7 +2369,7 @@ glabel SoundProcess__Fv__2
     /* 01EF18 01DCAC18 AC69050C */  jal        SndSePlay__Fiii
     /* 01EF1C 01DCAC1C 00000000 */   nop
     /* 01EF20 01DCAC20 05000324 */  addiu      $3, $0, 0x5
-    /* 01EF24 01DCAC24 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EF24 01DCAC24 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCAC28:
     /* 01EF28 01DCAC28 28000324 */  addiu      $3, $0, 0x28
     /* 01EF2C 01DCAC2C 08000316 */  bne        $16, $3, .L01DCAC50
@@ -2380,7 +2380,7 @@ glabel SoundProcess__Fv__2
     /* 01EF40 01DCAC40 AC69050C */  jal        SndSePlay__Fiii
     /* 01EF44 01DCAC44 00000000 */   nop
     /* 01EF48 01DCAC48 05000324 */  addiu      $3, $0, 0x5
-    /* 01EF4C 01DCAC4C 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EF4C 01DCAC4C 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCAC50:
     /* 01EF50 01DCAC50 34000324 */  addiu      $3, $0, 0x34
     /* 01EF54 01DCAC54 08000316 */  bne        $16, $3, .L01DCAC78
@@ -2391,7 +2391,7 @@ glabel SoundProcess__Fv__2
     /* 01EF68 01DCAC68 AC69050C */  jal        SndSePlay__Fiii
     /* 01EF6C 01DCAC6C 00000000 */   nop
     /* 01EF70 01DCAC70 05000324 */  addiu      $3, $0, 0x5
-    /* 01EF74 01DCAC74 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EF74 01DCAC74 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCAC78:
     /* 01EF78 01DCAC78 48000324 */  addiu      $3, $0, 0x48
     /* 01EF7C 01DCAC7C 08000316 */  bne        $16, $3, .L01DCACA0
@@ -2402,7 +2402,7 @@ glabel SoundProcess__Fv__2
     /* 01EF90 01DCAC90 AC69050C */  jal        SndSePlay__Fiii
     /* 01EF94 01DCAC94 00000000 */   nop
     /* 01EF98 01DCAC98 05000324 */  addiu      $3, $0, 0x5
-    /* 01EF9C 01DCAC9C 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EF9C 01DCAC9C 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCACA0:
     /* 01EFA0 01DCACA0 58000324 */  addiu      $3, $0, 0x58
     /* 01EFA4 01DCACA4 0D000316 */  bne        $16, $3, .L01DCACDC
@@ -2418,7 +2418,7 @@ glabel SoundProcess__Fv__2
     /* 01EFCC 01DCACCC AC69050C */  jal        SndSePlay__Fiii
     /* 01EFD0 01DCACD0 00000000 */   nop
     /* 01EFD4 01DCACD4 05000324 */  addiu      $3, $0, 0x5
-    /* 01EFD8 01DCACD8 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01EFD8 01DCACD8 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCACDC:
     /* 01EFDC 01DCACDC 5E000324 */  addiu      $3, $0, 0x5E
     /* 01EFE0 01DCACE0 6F000316 */  bne        $16, $3, .L01DCAEA0
@@ -2429,7 +2429,7 @@ glabel SoundProcess__Fv__2
     /* 01EFF4 01DCACF4 AC69050C */  jal        SndSePlay__Fiii
     /* 01EFF8 01DCACF8 00000000 */   nop
     /* 01EFFC 01DCACFC 05000324 */  addiu      $3, $0, 0x5
-    /* 01F000 01DCAD00 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01F000 01DCAD00 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
     /* 01F004 01DCAD04 66000010 */  b          .L01DCAEA0
     /* 01F008 01DCAD08 00000000 */   nop
     /* 01F00C 01DCAD0C 02000324 */  addiu      $3, $0, 0x2
@@ -2441,7 +2441,7 @@ glabel SoundProcess__Fv__2
     /* 01F024 01DCAD24 AC69050C */  jal        SndSePlay__Fiii
     /* 01F028 01DCAD28 00000000 */   nop
     /* 01F02C 01DCAD2C 03000324 */  addiu      $3, $0, 0x3
-    /* 01F030 01DCAD30 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01F030 01DCAD30 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCAD34:
     /* 01F034 01DCAD34 28000324 */  addiu      $3, $0, 0x28
     /* 01F038 01DCAD38 08000316 */  bne        $16, $3, .L01DCAD5C
@@ -2452,7 +2452,7 @@ glabel SoundProcess__Fv__2
     /* 01F04C 01DCAD4C AC69050C */  jal        SndSePlay__Fiii
     /* 01F050 01DCAD50 00000000 */   nop
     /* 01F054 01DCAD54 03000324 */  addiu      $3, $0, 0x3
-    /* 01F058 01DCAD58 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01F058 01DCAD58 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCAD5C:
     /* 01F05C 01DCAD5C 46000324 */  addiu      $3, $0, 0x46
     /* 01F060 01DCAD60 4F000316 */  bne        $16, $3, .L01DCAEA0
@@ -2468,7 +2468,7 @@ glabel SoundProcess__Fv__2
     /* 01F088 01DCAD88 AC69050C */  jal        SndSePlay__Fiii
     /* 01F08C 01DCAD8C 00000000 */   nop
     /* 01F090 01DCAD90 03000324 */  addiu      $3, $0, 0x3
-    /* 01F094 01DCAD94 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01F094 01DCAD94 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
     /* 01F098 01DCAD98 41000010 */  b          .L01DCAEA0
     /* 01F09C 01DCAD9C 00000000 */   nop
     /* 01F0A0 01DCADA0 02000324 */  addiu      $3, $0, 0x2
@@ -2485,7 +2485,7 @@ glabel SoundProcess__Fv__2
     /* 01F0CC 01DCADCC AC69050C */  jal        SndSePlay__Fiii
     /* 01F0D0 01DCADD0 00000000 */   nop
     /* 01F0D4 01DCADD4 05000324 */  addiu      $3, $0, 0x5
-    /* 01F0D8 01DCADD8 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01F0D8 01DCADD8 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
     /* 01F0DC 01DCADDC 30000010 */  b          .L01DCAEA0
     /* 01F0E0 01DCADE0 00000000 */   nop
     /* 01F0E4 01DCADE4 1A000324 */  addiu      $3, $0, 0x1A
@@ -2497,7 +2497,7 @@ glabel SoundProcess__Fv__2
     /* 01F0FC 01DCADFC AC69050C */  jal        SndSePlay__Fiii
     /* 01F100 01DCAE00 00000000 */   nop
     /* 01F104 01DCAE04 05000324 */  addiu      $3, $0, 0x5
-    /* 01F108 01DCAE08 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01F108 01DCAE08 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCAE0C:
     /* 01F10C 01DCAE0C 38000324 */  addiu      $3, $0, 0x38
     /* 01F110 01DCAE10 08000316 */  bne        $16, $3, .L01DCAE34
@@ -2508,7 +2508,7 @@ glabel SoundProcess__Fv__2
     /* 01F124 01DCAE24 AC69050C */  jal        SndSePlay__Fiii
     /* 01F128 01DCAE28 00000000 */   nop
     /* 01F12C 01DCAE2C 05000324 */  addiu      $3, $0, 0x5
-    /* 01F130 01DCAE30 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01F130 01DCAE30 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCAE34:
     /* 01F134 01DCAE34 56000324 */  addiu      $3, $0, 0x56
     /* 01F138 01DCAE38 08000316 */  bne        $16, $3, .L01DCAE5C
@@ -2519,7 +2519,7 @@ glabel SoundProcess__Fv__2
     /* 01F14C 01DCAE4C AC69050C */  jal        SndSePlay__Fiii
     /* 01F150 01DCAE50 00000000 */   nop
     /* 01F154 01DCAE54 05000324 */  addiu      $3, $0, 0x5
-    /* 01F158 01DCAE58 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01F158 01DCAE58 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCAE5C:
     /* 01F15C 01DCAE5C 78000324 */  addiu      $3, $0, 0x78
     /* 01F160 01DCAE60 0F000316 */  bne        $16, $3, .L01DCAEA0
@@ -2533,12 +2533,12 @@ glabel SoundProcess__Fv__2
     /* 01F180 01DCAE80 2C6A050C */  jal        SndSeStop__Fii
     /* 01F184 01DCAE84 00000000 */   nop
     /* 01F188 01DCAE88 05000324 */  addiu      $3, $0, 0x5
-    /* 01F18C 01DCAE8C 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01F18C 01DCAE8C 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
     /* 01F190 01DCAE90 03000010 */  b          .L01DCAEA0
     /* 01F194 01DCAE94 00000000 */   nop
   .L01DCAE98:
     /* 01F198 01DCAE98 FFFF6324 */  addiu      $3, $3, -0x1
-    /* 01F19C 01DCAE9C 149C83AF */  sw         $3, -0x63EC($28)
+    /* 01F19C 01DCAE9C 149C83AF */  sw         $3, %gp_rel(wait$703)($28)
   .L01DCAEA0:
     /* 01F1A0 01DCAEA0 1000BF7B */  lq         $31, 0x10($29)
     /* 01F1A4 01DCAEA4 0000B07B */  lq         $16, 0x0($29)

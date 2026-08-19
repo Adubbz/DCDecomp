@@ -2386,32 +2386,32 @@ glabel Draw_MainUnit__Fv
     /* 0023AC 01DAE0AC D09D828F */  lw         $2, -0x6230($28)
     /* 0023B0 01DAE0B0 20004010 */  beqz       $2, .L01DAE134
     /* 0023B4 01DAE0B4 00000000 */   nop
-    /* 0023B8 01DAE0B8 3C9E8283 */  lb         $2, -0x61C4($28)
+    /* 0023B8 01DAE0B8 3C9E8283 */  lb         $2, %gp_rel(init$1032)($28)
     /* 0023BC 01DAE0BC 04004014 */  bnez       $2, .L01DAE0D0
     /* 0023C0 01DAE0C0 00000000 */   nop
-    /* 0023C4 01DAE0C4 389E80AF */  sw         $0, -0x61C8($28)
+    /* 0023C4 01DAE0C4 389E80AF */  sw         $0, %gp_rel(rate$1031)($28)
     /* 0023C8 01DAE0C8 01000224 */  addiu      $2, $0, 0x1
-    /* 0023CC 01DAE0CC 3C9E82A3 */  sb         $2, -0x61C4($28)
+    /* 0023CC 01DAE0CC 3C9E82A3 */  sb         $2, %gp_rel(init$1032)($28)
   .L01DAE0D0:
-    /* 0023D0 01DAE0D0 389E81C7 */  lwc1       $f1, -0x61C8($28)
+    /* 0023D0 01DAE0D0 389E81C7 */  lwc1       $f1, %gp_rel(rate$1031)($28)
     /* 0023D4 01DAE0D4 B08080C7 */  lwc1       $f0, -0x7F50($28)
     /* 0023D8 01DAE0D8 34080046 */  c.lt.s     $f1, $f0
     /* 0023DC 01DAE0DC 00000000 */  nop
     /* 0023E0 01DAE0E0 05000145 */  bc1t       .L01DAE0F8
     /* 0023E4 01DAE0E4 00000000 */   nop
     /* 0023E8 01DAE0E8 01080046 */  sub.s      $f0, $f1, $f0
-    /* 0023EC 01DAE0EC 389E80E7 */  swc1       $f0, -0x61C8($28)
+    /* 0023EC 01DAE0EC 389E80E7 */  swc1       $f0, %gp_rel(rate$1031)($28)
     /* 0023F0 01DAE0F0 04000010 */  b          .L01DAE104
     /* 0023F4 01DAE0F4 00000000 */   nop
   .L01DAE0F8:
     /* 0023F8 01DAE0F8 D08580C7 */  lwc1       $f0, -0x7A30($28)
     /* 0023FC 01DAE0FC 00080046 */  add.s      $f0, $f1, $f0
-    /* 002400 01DAE100 389E80E7 */  swc1       $f0, -0x61C8($28)
+    /* 002400 01DAE100 389E80E7 */  swc1       $f0, %gp_rel(rate$1031)($28)
   .L01DAE104:
     /* 002404 01DAE104 C042023C */  lui        $2, (0x42C00000 >> 16)
     /* 002408 01DAE108 C001A2AF */  sw         $2, 0x1C0($29)
     /* 00240C 01DAE10C C401A2AF */  sw         $2, 0x1C4($29)
-    /* 002410 01DAE110 389E8CC7 */  lwc1       $f12, -0x61C8($28)
+    /* 002410 01DAE110 389E8CC7 */  lwc1       $f12, %gp_rel(rate$1031)($28)
     /* 002414 01DAE114 2876040C */  jal        sinf
     /* 002418 01DAE118 00000000 */   nop
     /* 00241C 01DAE11C C042023C */  lui        $2, (0x42C00000 >> 16)
@@ -3229,29 +3229,29 @@ glabel MainDraw__Fv__3
     /* 002FF8 01DAECF8 9001A527 */  addiu      $5, $29, 0x190
     /* 002FFC 01DAECFC 0C86040C */  jal        sceVu0CopyVector
     /* 003000 01DAED00 00000000 */   nop
-    /* 003004 01DAED04 449E8283 */  lb         $2, -0x61BC($28)
+    /* 003004 01DAED04 449E8283 */  lb         $2, %gp_rel(init$1147)($28)
     /* 003008 01DAED08 05004014 */  bnez       $2, .L01DAED20
     /* 00300C 01DAED0C 00000000 */   nop
     /* 003010 01DAED10 EC8580C7 */  lwc1       $f0, -0x7A14($28)
-    /* 003014 01DAED14 409E80E7 */  swc1       $f0, -0x61C0($28)
+    /* 003014 01DAED14 409E80E7 */  swc1       $f0, %gp_rel(itemposr$1146)($28)
     /* 003018 01DAED18 01000224 */  addiu      $2, $0, 0x1
-    /* 00301C 01DAED1C 449E82A3 */  sb         $2, -0x61BC($28)
+    /* 00301C 01DAED1C 449E82A3 */  sb         $2, %gp_rel(init$1147)($28)
   .L01DAED20:
-    /* 003020 01DAED20 409E81C7 */  lwc1       $f1, -0x61C0($28)
+    /* 003020 01DAED20 409E81C7 */  lwc1       $f1, %gp_rel(itemposr$1146)($28)
     /* 003024 01DAED24 A88580C7 */  lwc1       $f0, -0x7A58($28)
     /* 003028 01DAED28 40080046 */  add.s      $f1, $f1, $f0
-    /* 00302C 01DAED2C 409E81E7 */  swc1       $f1, -0x61C0($28)
+    /* 00302C 01DAED2C 409E81E7 */  swc1       $f1, %gp_rel(itemposr$1146)($28)
     /* 003030 01DAED30 B08080C7 */  lwc1       $f0, -0x7F50($28)
     /* 003034 01DAED34 34080046 */  c.lt.s     $f1, $f0
     /* 003038 01DAED38 00000000 */  nop
     /* 00303C 01DAED3C 05000145 */  bc1t       .L01DAED54
     /* 003040 01DAED40 00000000 */   nop
-    /* 003044 01DAED44 409E81C7 */  lwc1       $f1, -0x61C0($28)
+    /* 003044 01DAED44 409E81C7 */  lwc1       $f1, %gp_rel(itemposr$1146)($28)
     /* 003048 01DAED48 F08580C7 */  lwc1       $f0, -0x7A10($28)
     /* 00304C 01DAED4C 01080046 */  sub.s      $f0, $f1, $f0
-    /* 003050 01DAED50 409E80E7 */  swc1       $f0, -0x61C0($28)
+    /* 003050 01DAED50 409E80E7 */  swc1       $f0, %gp_rel(itemposr$1146)($28)
   .L01DAED54:
-    /* 003054 01DAED54 409E8CC7 */  lwc1       $f12, -0x61C0($28)
+    /* 003054 01DAED54 409E8CC7 */  lwc1       $f12, %gp_rel(itemposr$1146)($28)
     /* 003058 01DAED58 2876040C */  jal        sinf
     /* 00305C 01DAED5C 00000000 */   nop
     /* 003060 01DAED60 003F023C */  lui        $2, (0x3F000000 >> 16)
@@ -3298,29 +3298,29 @@ glabel MainDraw__Fv__3
     /* 003100 01DAEE00 B001A527 */  addiu      $5, $29, 0x1B0
     /* 003104 01DAEE04 0C86040C */  jal        sceVu0CopyVector
     /* 003108 01DAEE08 00000000 */   nop
-    /* 00310C 01DAEE0C 4C9E8283 */  lb         $2, -0x61B4($28)
+    /* 00310C 01DAEE0C 4C9E8283 */  lb         $2, %gp_rel(init$1154)($28)
     /* 003110 01DAEE10 05004014 */  bnez       $2, .L01DAEE28
     /* 003114 01DAEE14 00000000 */   nop
     /* 003118 01DAEE18 F48580C7 */  lwc1       $f0, -0x7A0C($28)
-    /* 00311C 01DAEE1C 489E80E7 */  swc1       $f0, -0x61B8($28)
+    /* 00311C 01DAEE1C 489E80E7 */  swc1       $f0, %gp_rel(itemposr$1153)($28)
     /* 003120 01DAEE20 01000224 */  addiu      $2, $0, 0x1
-    /* 003124 01DAEE24 4C9E82A3 */  sb         $2, -0x61B4($28)
+    /* 003124 01DAEE24 4C9E82A3 */  sb         $2, %gp_rel(init$1154)($28)
   .L01DAEE28:
-    /* 003128 01DAEE28 489E81C7 */  lwc1       $f1, -0x61B8($28)
+    /* 003128 01DAEE28 489E81C7 */  lwc1       $f1, %gp_rel(itemposr$1153)($28)
     /* 00312C 01DAEE2C A88580C7 */  lwc1       $f0, -0x7A58($28)
     /* 003130 01DAEE30 40080046 */  add.s      $f1, $f1, $f0
-    /* 003134 01DAEE34 489E81E7 */  swc1       $f1, -0x61B8($28)
+    /* 003134 01DAEE34 489E81E7 */  swc1       $f1, %gp_rel(itemposr$1153)($28)
     /* 003138 01DAEE38 B08080C7 */  lwc1       $f0, -0x7F50($28)
     /* 00313C 01DAEE3C 34080046 */  c.lt.s     $f1, $f0
     /* 003140 01DAEE40 00000000 */  nop
     /* 003144 01DAEE44 05000145 */  bc1t       .L01DAEE5C
     /* 003148 01DAEE48 00000000 */   nop
-    /* 00314C 01DAEE4C 489E81C7 */  lwc1       $f1, -0x61B8($28)
+    /* 00314C 01DAEE4C 489E81C7 */  lwc1       $f1, %gp_rel(itemposr$1153)($28)
     /* 003150 01DAEE50 F88580C7 */  lwc1       $f0, -0x7A08($28)
     /* 003154 01DAEE54 01080046 */  sub.s      $f0, $f1, $f0
-    /* 003158 01DAEE58 489E80E7 */  swc1       $f0, -0x61B8($28)
+    /* 003158 01DAEE58 489E80E7 */  swc1       $f0, %gp_rel(itemposr$1153)($28)
   .L01DAEE5C:
-    /* 00315C 01DAEE5C 489E8CC7 */  lwc1       $f12, -0x61B8($28)
+    /* 00315C 01DAEE5C 489E8CC7 */  lwc1       $f12, %gp_rel(itemposr$1153)($28)
     /* 003160 01DAEE60 2876040C */  jal        sinf
     /* 003164 01DAEE64 00000000 */   nop
     /* 003168 01DAEE68 F08181C7 */  lwc1       $f1, -0x7E10($28)
@@ -3425,29 +3425,29 @@ glabel MainDraw__Fv__3
     /* 0032E4 01DAEFE4 00000000 */  nop
     /* 0032E8 01DAEFE8 00080046 */  add.s      $f0, $f1, $f0
     /* 0032EC 01DAEFEC 000000E6 */  swc1       $f0, 0x0($16)
-    /* 0032F0 01DAEFF0 549E8283 */  lb         $2, -0x61AC($28)
+    /* 0032F0 01DAEFF0 549E8283 */  lb         $2, %gp_rel(init$1168)($28)
     /* 0032F4 01DAEFF4 05004014 */  bnez       $2, .L01DAF00C
     /* 0032F8 01DAEFF8 00000000 */   nop
     /* 0032FC 01DAEFFC FC8580C7 */  lwc1       $f0, -0x7A04($28)
-    /* 003300 01DAF000 509E80E7 */  swc1       $f0, -0x61B0($28)
+    /* 003300 01DAF000 509E80E7 */  swc1       $f0, %gp_rel(bic_posr$1167)($28)
     /* 003304 01DAF004 01000224 */  addiu      $2, $0, 0x1
-    /* 003308 01DAF008 549E82A3 */  sb         $2, -0x61AC($28)
+    /* 003308 01DAF008 549E82A3 */  sb         $2, %gp_rel(init$1168)($28)
   .L01DAF00C:
-    /* 00330C 01DAF00C 509E81C7 */  lwc1       $f1, -0x61B0($28)
+    /* 00330C 01DAF00C 509E81C7 */  lwc1       $f1, %gp_rel(bic_posr$1167)($28)
     /* 003310 01DAF010 008680C7 */  lwc1       $f0, -0x7A00($28)
     /* 003314 01DAF014 40080046 */  add.s      $f1, $f1, $f0
-    /* 003318 01DAF018 509E81E7 */  swc1       $f1, -0x61B0($28)
+    /* 003318 01DAF018 509E81E7 */  swc1       $f1, %gp_rel(bic_posr$1167)($28)
     /* 00331C 01DAF01C 448480C7 */  lwc1       $f0, -0x7BBC($28)
     /* 003320 01DAF020 34080046 */  c.lt.s     $f1, $f0
     /* 003324 01DAF024 00000000 */  nop
     /* 003328 01DAF028 05000145 */  bc1t       .L01DAF040
     /* 00332C 01DAF02C 00000000 */   nop
-    /* 003330 01DAF030 509E81C7 */  lwc1       $f1, -0x61B0($28)
+    /* 003330 01DAF030 509E81C7 */  lwc1       $f1, %gp_rel(bic_posr$1167)($28)
     /* 003334 01DAF034 048680C7 */  lwc1       $f0, -0x79FC($28)
     /* 003338 01DAF038 01080046 */  sub.s      $f0, $f1, $f0
-    /* 00333C 01DAF03C 509E80E7 */  swc1       $f0, -0x61B0($28)
+    /* 00333C 01DAF03C 509E80E7 */  swc1       $f0, %gp_rel(bic_posr$1167)($28)
   .L01DAF040:
-    /* 003340 01DAF040 509E8CC7 */  lwc1       $f12, -0x61B0($28)
+    /* 003340 01DAF040 509E8CC7 */  lwc1       $f12, %gp_rel(bic_posr$1167)($28)
     /* 003344 01DAF044 2876040C */  jal        sinf
     /* 003348 01DAF048 00000000 */   nop
     /* 00334C 01DAF04C 003F023C */  lui        $2, (0x3F000000 >> 16)
@@ -3538,29 +3538,29 @@ glabel MainDraw__Fv__3
     /* 003494 01DAF194 00080046 */  add.s      $f0, $f1, $f0
     /* 003498 01DAF198 EB01013C */  lui        $1, %hi(iventPos + 0x4)
     /* 00349C 01DAF19C 146420E4 */  swc1       $f0, %lo(iventPos + 0x4)($1)
-    /* 0034A0 01DAF1A0 5C9E8283 */  lb         $2, -0x61A4($28)
+    /* 0034A0 01DAF1A0 5C9E8283 */  lb         $2, %gp_rel(init$1184__2)($28)
     /* 0034A4 01DAF1A4 05004014 */  bnez       $2, .L01DAF1BC
     /* 0034A8 01DAF1A8 00000000 */   nop
     /* 0034AC 01DAF1AC 088680C7 */  lwc1       $f0, -0x79F8($28)
-    /* 0034B0 01DAF1B0 589E80E7 */  swc1       $f0, -0x61A8($28)
+    /* 0034B0 01DAF1B0 589E80E7 */  swc1       $f0, %gp_rel(bic_posr$1183)($28)
     /* 0034B4 01DAF1B4 01000224 */  addiu      $2, $0, 0x1
-    /* 0034B8 01DAF1B8 5C9E82A3 */  sb         $2, -0x61A4($28)
+    /* 0034B8 01DAF1B8 5C9E82A3 */  sb         $2, %gp_rel(init$1184__2)($28)
   .L01DAF1BC:
-    /* 0034BC 01DAF1BC 589E81C7 */  lwc1       $f1, -0x61A8($28)
+    /* 0034BC 01DAF1BC 589E81C7 */  lwc1       $f1, %gp_rel(bic_posr$1183)($28)
     /* 0034C0 01DAF1C0 008680C7 */  lwc1       $f0, -0x7A00($28)
     /* 0034C4 01DAF1C4 40080046 */  add.s      $f1, $f1, $f0
-    /* 0034C8 01DAF1C8 589E81E7 */  swc1       $f1, -0x61A8($28)
+    /* 0034C8 01DAF1C8 589E81E7 */  swc1       $f1, %gp_rel(bic_posr$1183)($28)
     /* 0034CC 01DAF1CC 448480C7 */  lwc1       $f0, -0x7BBC($28)
     /* 0034D0 01DAF1D0 34080046 */  c.lt.s     $f1, $f0
     /* 0034D4 01DAF1D4 00000000 */  nop
     /* 0034D8 01DAF1D8 05000145 */  bc1t       .L01DAF1F0
     /* 0034DC 01DAF1DC 00000000 */   nop
-    /* 0034E0 01DAF1E0 589E81C7 */  lwc1       $f1, -0x61A8($28)
+    /* 0034E0 01DAF1E0 589E81C7 */  lwc1       $f1, %gp_rel(bic_posr$1183)($28)
     /* 0034E4 01DAF1E4 0C8680C7 */  lwc1       $f0, -0x79F4($28)
     /* 0034E8 01DAF1E8 01080046 */  sub.s      $f0, $f1, $f0
-    /* 0034EC 01DAF1EC 589E80E7 */  swc1       $f0, -0x61A8($28)
+    /* 0034EC 01DAF1EC 589E80E7 */  swc1       $f0, %gp_rel(bic_posr$1183)($28)
   .L01DAF1F0:
-    /* 0034F0 01DAF1F0 589E8CC7 */  lwc1       $f12, -0x61A8($28)
+    /* 0034F0 01DAF1F0 589E8CC7 */  lwc1       $f12, %gp_rel(bic_posr$1183)($28)
     /* 0034F4 01DAF1F4 2876040C */  jal        sinf
     /* 0034F8 01DAF1F8 00000000 */   nop
     /* 0034FC 01DAF1FC 003F023C */  lui        $2, (0x3F000000 >> 16)
@@ -5903,19 +5903,19 @@ glabel MoveChara__Fv__2
     /* 005844 01DB1544 48170010 */  b          .L01DB7268
     /* 005848 01DB1548 00000000 */   nop
   .L01DB154C:
-    /* 00584C 01DB154C 709E8283 */  lb         $2, -0x6190($28)
+    /* 00584C 01DB154C 709E8283 */  lb         $2, %gp_rel(init$1902)($28)
     /* 005850 01DB1550 04004014 */  bnez       $2, .L01DB1564
     /* 005854 01DB1554 00000000 */   nop
-    /* 005858 01DB1558 6C9E80AF */  sw         $0, -0x6194($28)
+    /* 005858 01DB1558 6C9E80AF */  sw         $0, %gp_rel(cnt$1901)($28)
     /* 00585C 01DB155C 01000224 */  addiu      $2, $0, 0x1
-    /* 005860 01DB1560 709E82A3 */  sb         $2, -0x6190($28)
+    /* 005860 01DB1560 709E82A3 */  sb         $2, %gp_rel(init$1902)($28)
   .L01DB1564:
     /* 005864 01DB1564 109D828F */  lw         $2, -0x62F0($28)
     /* 005868 01DB1568 3001A427 */  addiu      $4, $29, 0x130
     /* 00586C 01DB156C 20024524 */  addiu      $5, $2, 0x220
     /* 005870 01DB1570 0C86040C */  jal        sceVu0CopyVector
     /* 005874 01DB1574 00000000 */   nop
-    /* 005878 01DB1578 6C9E828F */  lw         $2, -0x6194($28)
+    /* 005878 01DB1578 6C9E828F */  lw         $2, %gp_rel(cnt$1901)($28)
     /* 00587C 01DB157C 05004228 */  slti       $2, $2, 0x5
     /* 005880 01DB1580 07004014 */  bnez       $2, .L01DB15A0
     /* 005884 01DB1584 00000000 */   nop
@@ -5924,11 +5924,11 @@ glabel MoveChara__Fv__2
     /* 005890 01DB1590 3801ADC7 */  lwc1       $f13, 0x138($29)
     /* 005894 01DB1594 700E070C */  jal        checkMask__11CDungeonMapFff
     /* 005898 01DB1598 00000000 */   nop
-    /* 00589C 01DB159C 6C9E80AF */  sw         $0, -0x6194($28)
+    /* 00589C 01DB159C 6C9E80AF */  sw         $0, %gp_rel(cnt$1901)($28)
   .L01DB15A0:
-    /* 0058A0 01DB15A0 6C9E828F */  lw         $2, -0x6194($28)
+    /* 0058A0 01DB15A0 6C9E828F */  lw         $2, %gp_rel(cnt$1901)($28)
     /* 0058A4 01DB15A4 01004224 */  addiu      $2, $2, 0x1
-    /* 0058A8 01DB15A8 6C9E82AF */  sw         $2, -0x6194($28)
+    /* 0058A8 01DB15A8 6C9E82AF */  sw         $2, %gp_rel(cnt$1901)($28)
     /* 0058AC 01DB15AC DC01013C */  lui        $1, %hi(BtActStatus + 0x10)
     /* 0058B0 01DB15B0 9044228C */  lw         $2, %lo(BtActStatus + 0x10)($1)
     /* 0058B4 01DB15B4 33004014 */  bnez       $2, .L01DB1684
@@ -8794,41 +8794,41 @@ glabel MoveChara__Fv__2
     /* 008338 01DB4038 22000010 */  b          .L01DB40C4
     /* 00833C 01DB403C 00000000 */   nop
   .L01DB4040:
-    /* 008340 01DB4040 789E8283 */  lb         $2, -0x6188($28)
+    /* 008340 01DB4040 789E8283 */  lb         $2, %gp_rel(init$2340)($28)
     /* 008344 01DB4044 04004014 */  bnez       $2, .L01DB4058
     /* 008348 01DB4048 00000000 */   nop
-    /* 00834C 01DB404C 749E80AF */  sw         $0, -0x618C($28)
+    /* 00834C 01DB404C 749E80AF */  sw         $0, %gp_rel(snd_cnt$2339)($28)
     /* 008350 01DB4050 01000224 */  addiu      $2, $0, 0x1
-    /* 008354 01DB4054 789E82A3 */  sb         $2, -0x6188($28)
+    /* 008354 01DB4054 789E82A3 */  sb         $2, %gp_rel(init$2340)($28)
   .L01DB4058:
-    /* 008358 01DB4058 809E8283 */  lb         $2, -0x6180($28)
+    /* 008358 01DB4058 809E8283 */  lb         $2, %gp_rel(init$2343)($28)
     /* 00835C 01DB405C 04004014 */  bnez       $2, .L01DB4070
     /* 008360 01DB4060 00000000 */   nop
-    /* 008364 01DB4064 7C9E80AF */  sw         $0, -0x6184($28)
+    /* 008364 01DB4064 7C9E80AF */  sw         $0, %gp_rel(id_cnt$2342)($28)
     /* 008368 01DB4068 01000224 */  addiu      $2, $0, 0x1
-    /* 00836C 01DB406C 809E82A3 */  sb         $2, -0x6180($28)
+    /* 00836C 01DB406C 809E82A3 */  sb         $2, %gp_rel(init$2343)($28)
   .L01DB4070:
-    /* 008370 01DB4070 749E828F */  lw         $2, -0x618C($28)
+    /* 008370 01DB4070 749E828F */  lw         $2, %gp_rel(snd_cnt$2339)($28)
     /* 008374 01DB4074 01004224 */  addiu      $2, $2, 0x1
-    /* 008378 01DB4078 749E82AF */  sw         $2, -0x618C($28)
-    /* 00837C 01DB407C 749E828F */  lw         $2, -0x618C($28)
+    /* 008378 01DB4078 749E82AF */  sw         $2, %gp_rel(snd_cnt$2339)($28)
+    /* 00837C 01DB407C 749E828F */  lw         $2, %gp_rel(snd_cnt$2339)($28)
     /* 008380 01DB4080 05004228 */  slti       $2, $2, 0x5
     /* 008384 01DB4084 0F004014 */  bnez       $2, .L01DB40C4
     /* 008388 01DB4088 00000000 */   nop
     /* 00838C 01DB408C CC010424 */  addiu      $4, $0, 0x1CC
     /* 008390 01DB4090 05000524 */  addiu      $5, $0, 0x5
-    /* 008394 01DB4094 7C9E868F */  lw         $6, -0x6184($28)
+    /* 008394 01DB4094 7C9E868F */  lw         $6, %gp_rel(id_cnt$2342)($28)
     /* 008398 01DB4098 C86B050C */  jal        SndSeSeqPlayStop__Fiii
     /* 00839C 01DB409C 00000000 */   nop
-    /* 0083A0 01DB40A0 749E80AF */  sw         $0, -0x618C($28)
-    /* 0083A4 01DB40A4 7C9E828F */  lw         $2, -0x6184($28)
+    /* 0083A0 01DB40A0 749E80AF */  sw         $0, %gp_rel(snd_cnt$2339)($28)
+    /* 0083A4 01DB40A4 7C9E828F */  lw         $2, %gp_rel(id_cnt$2342)($28)
     /* 0083A8 01DB40A8 01004224 */  addiu      $2, $2, 0x1
-    /* 0083AC 01DB40AC 7C9E82AF */  sw         $2, -0x6184($28)
-    /* 0083B0 01DB40B0 7C9E828F */  lw         $2, -0x6184($28)
+    /* 0083AC 01DB40AC 7C9E82AF */  sw         $2, %gp_rel(id_cnt$2342)($28)
+    /* 0083B0 01DB40B0 7C9E828F */  lw         $2, %gp_rel(id_cnt$2342)($28)
     /* 0083B4 01DB40B4 0A004228 */  slti       $2, $2, 0xA
     /* 0083B8 01DB40B8 02004014 */  bnez       $2, .L01DB40C4
     /* 0083BC 01DB40BC 00000000 */   nop
-    /* 0083C0 01DB40C0 7C9E80AF */  sw         $0, -0x6184($28)
+    /* 0083C0 01DB40C0 7C9E80AF */  sw         $0, %gp_rel(id_cnt$2342)($28)
   .L01DB40C4:
     /* 0083C4 01DB40C4 B400B127 */  addiu      $17, $29, 0xB4
     /* 0083C8 01DB40C8 000021C6 */  lwc1       $f1, 0x0($17)
@@ -12459,32 +12459,32 @@ glabel motionDrive__Fv
     /* 00B958 01DB7658 28964070 */  paddub     $18, $2, $0
     /* 00B95C 01DB765C 32002012 */  beqz       $17, .L01DB7728
     /* 00B960 01DB7660 00000000 */   nop
-    /* 00B964 01DB7664 889E8283 */  lb         $2, -0x6178($28)
+    /* 00B964 01DB7664 889E8283 */  lb         $2, %gp_rel(init$4445)($28)
     /* 00B968 01DB7668 04004014 */  bnez       $2, .L01DB767C
     /* 00B96C 01DB766C 00000000 */   nop
-    /* 00B970 01DB7670 849E80AF */  sw         $0, -0x617C($28)
+    /* 00B970 01DB7670 849E80AF */  sw         $0, %gp_rel(y$4444)($28)
     /* 00B974 01DB7674 01000224 */  addiu      $2, $0, 0x1
-    /* 00B978 01DB7678 889E82A3 */  sb         $2, -0x6178($28)
+    /* 00B978 01DB7678 889E82A3 */  sb         $2, %gp_rel(init$4445)($28)
   .L01DB767C:
-    /* 00B97C 01DB767C 849E81C7 */  lwc1       $f1, -0x617C($28)
+    /* 00B97C 01DB767C 849E81C7 */  lwc1       $f1, %gp_rel(y$4444)($28)
     /* 00B980 01DB7680 A08580C7 */  lwc1       $f0, -0x7A60($28)
     /* 00B984 01DB7684 40080046 */  add.s      $f1, $f1, $f0
-    /* 00B988 01DB7688 849E81E7 */  swc1       $f1, -0x617C($28)
+    /* 00B988 01DB7688 849E81E7 */  swc1       $f1, %gp_rel(y$4444)($28)
     /* 00B98C 01DB768C 448480C7 */  lwc1       $f0, -0x7BBC($28)
     /* 00B990 01DB7690 34080046 */  c.lt.s     $f1, $f0
     /* 00B994 01DB7694 00000000 */  nop
     /* 00B998 01DB7698 05000145 */  bc1t       .L01DB76B0
     /* 00B99C 01DB769C 00000000 */   nop
-    /* 00B9A0 01DB76A0 849E81C7 */  lwc1       $f1, -0x617C($28)
+    /* 00B9A0 01DB76A0 849E81C7 */  lwc1       $f1, %gp_rel(y$4444)($28)
     /* 00B9A4 01DB76A4 A48580C7 */  lwc1       $f0, -0x7A5C($28)
     /* 00B9A8 01DB76A8 01080046 */  sub.s      $f0, $f1, $f0
-    /* 00B9AC 01DB76AC 849E80E7 */  swc1       $f0, -0x617C($28)
+    /* 00B9AC 01DB76AC 849E80E7 */  swc1       $f0, %gp_rel(y$4444)($28)
   .L01DB76B0:
     /* 00B9B0 01DB76B0 28262072 */  paddub     $4, $17, $0
     /* 00B9B4 01DB76B4 02000524 */  addiu      $5, $0, 0x2
     /* 00B9B8 01DB76B8 A0A3040C */  jal        SetRotType__6CFrameFi
     /* 00B9BC 01DB76BC 00000000 */   nop
-    /* 00B9C0 01DB76C0 849E8CC7 */  lwc1       $f12, -0x617C($28)
+    /* 00B9C0 01DB76C0 849E8CC7 */  lwc1       $f12, %gp_rel(y$4444)($28)
     /* 00B9C4 01DB76C4 F88E040C */  jal        AngleLimit__Ff
     /* 00B9C8 01DB76C8 00000000 */   nop
     /* 00B9CC 01DB76CC 00608044 */  mtc1       $0, $f12
@@ -12500,7 +12500,7 @@ glabel motionDrive__Fv
     /* 00B9F4 01DB76F4 02000524 */  addiu      $5, $0, 0x2
     /* 00B9F8 01DB76F8 A0A3040C */  jal        SetRotType__6CFrameFi
     /* 00B9FC 01DB76FC 00000000 */   nop
-    /* 00BA00 01DB7700 849E8CC7 */  lwc1       $f12, -0x617C($28)
+    /* 00BA00 01DB7700 849E8CC7 */  lwc1       $f12, %gp_rel(y$4444)($28)
     /* 00BA04 01DB7704 F88E040C */  jal        AngleLimit__Ff
     /* 00BA08 01DB7708 00000000 */   nop
     /* 00BA0C 01DB770C 00608044 */  mtc1       $0, $f12
@@ -12780,12 +12780,12 @@ glabel motionDrive__Fv
     /* 00BE04 01DB7B04 0000428C */  lw         $2, 0x0($2)
     /* 00BE08 01DB7B08 1E00C210 */  beq        $6, $2, .L01DB7B84
     /* 00BE0C 01DB7B0C 00000000 */   nop
-    /* 00BE10 01DB7B10 909E8283 */  lb         $2, -0x6170($28)
+    /* 00BE10 01DB7B10 909E8283 */  lb         $2, %gp_rel(init$4498)($28)
     /* 00BE14 01DB7B14 04004014 */  bnez       $2, .L01DB7B28
     /* 00BE18 01DB7B18 00000000 */   nop
-    /* 00BE1C 01DB7B1C 8C9E80AF */  sw         $0, -0x6174($28)
+    /* 00BE1C 01DB7B1C 8C9E80AF */  sw         $0, %gp_rel(warning_cnt$4497)($28)
     /* 00BE20 01DB7B20 01000224 */  addiu      $2, $0, 0x1
-    /* 00BE24 01DB7B24 909E82A3 */  sb         $2, -0x6170($28)
+    /* 00BE24 01DB7B24 909E82A3 */  sb         $2, %gp_rel(init$4498)($28)
   .L01DB7B28:
     /* 00BE28 01DB7B28 10000CC5 */  lwc1       $f12, 0x10($8)
     /* 00BE2C 01DB7B2C 2C44040C */  jal        fptosi
@@ -12798,10 +12798,10 @@ glabel motionDrive__Fv
     /* 00BE48 01DB7B48 00000000 */   nop
     /* 00BE4C 01DB7B4C 0A000324 */  addiu      $3, $0, 0xA
   .L01DB7B50:
-    /* 00BE50 01DB7B50 8C9E828F */  lw         $2, -0x6174($28)
+    /* 00BE50 01DB7B50 8C9E828F */  lw         $2, %gp_rel(warning_cnt$4497)($28)
     /* 00BE54 01DB7B54 0900401C */  bgtz       $2, .L01DB7B7C
     /* 00BE58 01DB7B58 00000000 */   nop
-    /* 00BE5C 01DB7B5C 8C9E83AF */  sw         $3, -0x6174($28)
+    /* 00BE5C 01DB7B5C 8C9E83AF */  sw         $3, %gp_rel(warning_cnt$4497)($28)
     /* 00BE60 01DB7B60 16000424 */  addiu      $4, $0, 0x16
     /* 00BE64 01DB7B64 FFFF0524 */  addiu      $5, $0, -0x1
     /* 00BE68 01DB7B68 28360070 */  paddub     $6, $0, $0
@@ -12811,7 +12811,7 @@ glabel motionDrive__Fv
     /* 00BE78 01DB7B78 00000000 */   nop
   .L01DB7B7C:
     /* 00BE7C 01DB7B7C FFFF4224 */  addiu      $2, $2, -0x1
-    /* 00BE80 01DB7B80 8C9E82AF */  sw         $2, -0x6174($28)
+    /* 00BE80 01DB7B80 8C9E82AF */  sw         $2, %gp_rel(warning_cnt$4497)($28)
   .L01DB7B84:
     /* 00BE84 01DB7B84 DC01013C */  lui        $1, %hi(BtActStatus)
     /* 00BE88 01DB7B88 8044228C */  lw         $2, %lo(BtActStatus)($1)
@@ -13267,17 +13267,17 @@ glabel motionDrive__Fv
     /* 00C500 01DB8200 21104400 */  addu       $2, $2, $4
     /* 00C504 01DB8204 EC4254C4 */  lwc1       $f20, 0x42EC($2)
     /* 00C508 01DB8208 044355C4 */  lwc1       $f21, 0x4304($2)
-    /* 00C50C 01DB820C 989E8283 */  lb         $2, -0x6168($28)
+    /* 00C50C 01DB820C 989E8283 */  lb         $2, %gp_rel(init$4570)($28)
     /* 00C510 01DB8210 04004014 */  bnez       $2, .L01DB8224
     /* 00C514 01DB8214 00000000 */   nop
-    /* 00C518 01DB8218 949E80AF */  sw         $0, -0x616C($28)
+    /* 00C518 01DB8218 949E80AF */  sw         $0, %gp_rel(heal_counter$4569)($28)
     /* 00C51C 01DB821C 01000224 */  addiu      $2, $0, 0x1
-    /* 00C520 01DB8220 989E82A3 */  sb         $2, -0x6168($28)
+    /* 00C520 01DB8220 989E82A3 */  sb         $2, %gp_rel(init$4570)($28)
   .L01DB8224:
-    /* 00C524 01DB8224 949E828F */  lw         $2, -0x616C($28)
+    /* 00C524 01DB8224 949E828F */  lw         $2, %gp_rel(heal_counter$4569)($28)
     /* 00C528 01DB8228 01004224 */  addiu      $2, $2, 0x1
-    /* 00C52C 01DB822C 949E82AF */  sw         $2, -0x616C($28)
-    /* 00C530 01DB8230 949E828F */  lw         $2, -0x616C($28)
+    /* 00C52C 01DB822C 949E82AF */  sw         $2, %gp_rel(heal_counter$4569)($28)
+    /* 00C530 01DB8230 949E828F */  lw         $2, %gp_rel(heal_counter$4569)($28)
     /* 00C534 01DB8234 F0004228 */  slti       $2, $2, 0xF0
     /* 00C538 01DB8238 14004014 */  bnez       $2, .L01DB828C
     /* 00C53C 01DB823C 00000000 */   nop
@@ -13300,7 +13300,7 @@ glabel motionDrive__Fv
     /* 00C580 01DB8280 C4F9060C */  jal        AddNowLife__11CUserStatusFisf
     /* 00C584 01DB8284 00000000 */   nop
   .L01DB8288:
-    /* 00C588 01DB8288 949E80AF */  sw         $0, -0x616C($28)
+    /* 00C588 01DB8288 949E80AF */  sw         $0, %gp_rel(heal_counter$4569)($28)
   .L01DB828C:
     /* 00C58C 01DB828C 789C848F */  lw         $4, -0x6388($28)
     /* 00C590 01DB8290 282E0070 */  paddub     $5, $0, $0
@@ -16369,18 +16369,18 @@ glabel BtCheckDamageProc__Fv
     /* 00F2F8 01DBAFF8 0000B07F */  sq         $16, 0x0($29)
     /* 00F2FC 01DBAFFC 28B60070 */  paddub     $22, $0, $0
     /* 00F300 01DBB000 28F60070 */  paddub     $30, $0, $0
-    /* 00F304 01DBB004 A09E8283 */  lb         $2, -0x6160($28)
+    /* 00F304 01DBB004 A09E8283 */  lb         $2, %gp_rel(init$5249)($28)
     /* 00F308 01DBB008 04004014 */  bnez       $2, .L01DBB01C
     /* 00F30C 01DBB00C 00000000 */   nop
-    /* 00F310 01DBB010 9C9E80AF */  sw         $0, -0x6164($28)
+    /* 00F310 01DBB010 9C9E80AF */  sw         $0, %gp_rel(dmgSnd$5248)($28)
     /* 00F314 01DBB014 01000224 */  addiu      $2, $0, 0x1
-    /* 00F318 01DBB018 A09E82A3 */  sb         $2, -0x6160($28)
+    /* 00F318 01DBB018 A09E82A3 */  sb         $2, %gp_rel(init$5249)($28)
   .L01DBB01C:
-    /* 00F31C 01DBB01C 9C9E828F */  lw         $2, -0x6164($28)
+    /* 00F31C 01DBB01C 9C9E828F */  lw         $2, %gp_rel(dmgSnd$5248)($28)
     /* 00F320 01DBB020 03004018 */  blez       $2, .L01DBB030
     /* 00F324 01DBB024 00000000 */   nop
     /* 00F328 01DBB028 FFFF4224 */  addiu      $2, $2, -0x1
-    /* 00F32C 01DBB02C 9C9E82AF */  sw         $2, -0x6164($28)
+    /* 00F32C 01DBB02C 9C9E82AF */  sw         $2, %gp_rel(dmgSnd$5248)($28)
   .L01DBB030:
     /* 00F330 01DBB030 D501013C */  lui        $1, (0x1D564B0 >> 16)
     /* 00F334 01DBB034 B064238C */  lw         $3, (0x1D564B0 & 0xFFFF)($1)
@@ -16939,7 +16939,7 @@ glabel BtCheckDamageProc__Fv
     /* 00FB80 01DBB880 21104400 */  addu       $2, $2, $4
     /* 00FB84 01DBB884 003C40AC */  sw         $0, 0x3C00($2)
   .L01DBB888:
-    /* 00FB88 01DBB888 9C9E828F */  lw         $2, -0x6164($28)
+    /* 00FB88 01DBB888 9C9E828F */  lw         $2, %gp_rel(dmgSnd$5248)($28)
     /* 00FB8C 01DBB88C 7F00401C */  bgtz       $2, .L01DBBA8C
     /* 00FB90 01DBB890 00000000 */   nop
     /* 00FB94 01DBB894 A2000424 */  addiu      $4, $0, 0xA2
@@ -16948,7 +16948,7 @@ glabel BtCheckDamageProc__Fv
     /* 00FBA0 01DBB8A0 AC69050C */  jal        SndSePlay__Fiii
     /* 00FBA4 01DBB8A4 00000000 */   nop
     /* 00FBA8 01DBB8A8 1E000224 */  addiu      $2, $0, 0x1E
-    /* 00FBAC 01DBB8AC 9C9E82AF */  sw         $2, -0x6164($28)
+    /* 00FBAC 01DBB8AC 9C9E82AF */  sw         $2, %gp_rel(dmgSnd$5248)($28)
     /* 00FBB0 01DBB8B0 76000010 */  b          .L01DBBA8C
     /* 00FBB4 01DBB8B4 00000000 */   nop
   .L01DBB8B8:
@@ -17159,7 +17159,7 @@ glabel BtCheckDamageProc__Fv
     /* 00FECC 01DBBBCC 21104400 */  addu       $2, $2, $4
     /* 00FED0 01DBBBD0 003C40AC */  sw         $0, 0x3C00($2)
   .L01DBBBD4:
-    /* 00FED4 01DBBBD4 9C9E828F */  lw         $2, -0x6164($28)
+    /* 00FED4 01DBBBD4 9C9E828F */  lw         $2, %gp_rel(dmgSnd$5248)($28)
     /* 00FED8 01DBBBD8 A800401C */  bgtz       $2, .L01DBBE7C
     /* 00FEDC 01DBBBDC 00000000 */   nop
     /* 00FEE0 01DBBBE0 A2000424 */  addiu      $4, $0, 0xA2
@@ -17168,7 +17168,7 @@ glabel BtCheckDamageProc__Fv
     /* 00FEEC 01DBBBEC AC69050C */  jal        SndSePlay__Fiii
     /* 00FEF0 01DBBBF0 00000000 */   nop
     /* 00FEF4 01DBBBF4 1E000224 */  addiu      $2, $0, 0x1E
-    /* 00FEF8 01DBBBF8 9C9E82AF */  sw         $2, -0x6164($28)
+    /* 00FEF8 01DBBBF8 9C9E82AF */  sw         $2, %gp_rel(dmgSnd$5248)($28)
     /* 00FEFC 01DBBBFC 9F000010 */  b          .L01DBBE7C
     /* 00FF00 01DBBC00 00000000 */   nop
   .L01DBBC04:
@@ -17240,14 +17240,14 @@ glabel BtCheckDamageProc__Fv
     /* 010004 01DBBD04 DC1D288C */  lw         $8, %lo(CharaMain + 0xBC)($1)
     /* 010008 01DBBD08 C0D8060C */  jal        HitValueEntry__FP9CHitValuePfiiP6CFrame
     /* 01000C 01DBBD0C 00000000 */   nop
-    /* 010010 01DBBD10 A89E8283 */  lb         $2, -0x6158($28)
+    /* 010010 01DBBD10 A89E8283 */  lb         $2, %gp_rel(init$5346)($28)
     /* 010014 01DBBD14 04004014 */  bnez       $2, .L01DBBD28
     /* 010018 01DBBD18 00000000 */   nop
-    /* 01001C 01DBBD1C A49E80AF */  sw         $0, -0x615C($28)
+    /* 01001C 01DBBD1C A49E80AF */  sw         $0, %gp_rel(cnt$5345)($28)
     /* 010020 01DBBD20 01000224 */  addiu      $2, $0, 0x1
-    /* 010024 01DBBD24 A89E82A3 */  sb         $2, -0x6158($28)
+    /* 010024 01DBBD24 A89E82A3 */  sb         $2, %gp_rel(init$5346)($28)
   .L01DBBD28:
-    /* 010028 01DBBD28 A49E828F */  lw         $2, -0x615C($28)
+    /* 010028 01DBBD28 A49E828F */  lw         $2, %gp_rel(cnt$5345)($28)
     /* 01002C 01DBBD2C 40190200 */  sll        $3, $2, 5
     /* 010030 01DBBD30 EC01023C */  lui        $2, %hi(MyHitPointMark)
     /* 010034 01DBBD34 40494224 */  addiu      $2, $2, %lo(MyHitPointMark)
@@ -17261,16 +17261,16 @@ glabel BtCheckDamageProc__Fv
     /* 010054 01DBBD54 140000AE */  sw         $0, 0x14($16)
     /* 010058 01DBBD58 10000224 */  addiu      $2, $0, 0x10
     /* 01005C 01DBBD5C 100002AE */  sw         $2, 0x10($16)
-    /* 010060 01DBBD60 A49E838F */  lw         $3, -0x615C($28)
+    /* 010060 01DBBD60 A49E838F */  lw         $3, %gp_rel(cnt$5345)($28)
     /* 010064 01DBBD64 0F006228 */  slti       $2, $3, 0xF
     /* 010068 01DBBD68 04004014 */  bnez       $2, .L01DBBD7C
     /* 01006C 01DBBD6C 00000000 */   nop
-    /* 010070 01DBBD70 A49E80AF */  sw         $0, -0x615C($28)
+    /* 010070 01DBBD70 A49E80AF */  sw         $0, %gp_rel(cnt$5345)($28)
     /* 010074 01DBBD74 03000010 */  b          .L01DBBD84
     /* 010078 01DBBD78 00000000 */   nop
   .L01DBBD7C:
     /* 01007C 01DBBD7C 01006224 */  addiu      $2, $3, 0x1
-    /* 010080 01DBBD80 A49E82AF */  sw         $2, -0x615C($28)
+    /* 010080 01DBBD80 A49E82AF */  sw         $2, %gp_rel(cnt$5345)($28)
   .L01DBBD84:
     /* 010084 01DBBD84 C89D81C7 */  lwc1       $f1, -0x6238($28)
     /* 010088 01DBBD88 DC8380C7 */  lwc1       $f0, -0x7C24($28)
@@ -19530,21 +19530,21 @@ glabel BattleActionPlay_Ozumond__Fi
     /* 012220 01DBDF20 01000346 */  sub.s      $f0, $f0, $f3
     /* 012224 01DBDF24 6800A0E7 */  swc1       $f0, 0x68($29)
   .L01DBDF28:
-    /* 012228 01DBDF28 B89E8383 */  lb         $3, -0x6148($28)
+    /* 012228 01DBDF28 B89E8383 */  lb         $3, %gp_rel(init$5882)($28)
     /* 01222C 01DBDF2C 04006014 */  bnez       $3, .L01DBDF40
     /* 012230 01DBDF30 00000000 */   nop
-    /* 012234 01DBDF34 B49E80AF */  sw         $0, -0x614C($28)
+    /* 012234 01DBDF34 B49E80AF */  sw         $0, %gp_rel(s_cnt$5881)($28)
     /* 012238 01DBDF38 01000324 */  addiu      $3, $0, 0x1
-    /* 01223C 01DBDF3C B89E83A3 */  sb         $3, -0x6148($28)
+    /* 01223C 01DBDF3C B89E83A3 */  sb         $3, %gp_rel(init$5882)($28)
   .L01DBDF40:
-    /* 012240 01DBDF40 B49E838F */  lw         $3, -0x614C($28)
+    /* 012240 01DBDF40 B49E838F */  lw         $3, %gp_rel(s_cnt$5881)($28)
     /* 012244 01DBDF44 01006324 */  addiu      $3, $3, 0x1
-    /* 012248 01DBDF48 B49E83AF */  sw         $3, -0x614C($28)
-    /* 01224C 01DBDF4C B49E838F */  lw         $3, -0x614C($28)
+    /* 012248 01DBDF48 B49E83AF */  sw         $3, %gp_rel(s_cnt$5881)($28)
+    /* 01224C 01DBDF4C B49E838F */  lw         $3, %gp_rel(s_cnt$5881)($28)
     /* 012250 01DBDF50 0A006328 */  slti       $3, $3, 0xA
     /* 012254 01DBDF54 14006014 */  bnez       $3, .L01DBDFA8
     /* 012258 01DBDF58 00000000 */   nop
-    /* 01225C 01DBDF5C B49E80AF */  sw         $0, -0x614C($28)
+    /* 01225C 01DBDF5C B49E80AF */  sw         $0, %gp_rel(s_cnt$5881)($28)
     /* 012260 01DBDF60 11002016 */  bnez       $17, .L01DBDFA8
     /* 012264 01DBDF64 00000000 */   nop
     /* 012268 01DBDF68 009D828F */  lw         $2, -0x6300($28)
@@ -19564,21 +19564,21 @@ glabel BattleActionPlay_Ozumond__Fi
     /* 0122A0 01DBDFA0 58B7060C */  jal        Set__12CSHOT_EFFECTFPfPfiiiP6CFramei
     /* 0122A4 01DBDFA4 00000000 */   nop
   .L01DBDFA8:
-    /* 0122A8 01DBDFA8 C09E8383 */  lb         $3, -0x6140($28)
+    /* 0122A8 01DBDFA8 C09E8383 */  lb         $3, %gp_rel(init$5889)($28)
     /* 0122AC 01DBDFAC 04006014 */  bnez       $3, .L01DBDFC0
     /* 0122B0 01DBDFB0 00000000 */   nop
-    /* 0122B4 01DBDFB4 BC9E80AF */  sw         $0, -0x6144($28)
+    /* 0122B4 01DBDFB4 BC9E80AF */  sw         $0, %gp_rel(msg_cnt$5888)($28)
     /* 0122B8 01DBDFB8 01000324 */  addiu      $3, $0, 0x1
-    /* 0122BC 01DBDFBC C09E83A3 */  sb         $3, -0x6140($28)
+    /* 0122BC 01DBDFBC C09E83A3 */  sb         $3, %gp_rel(init$5889)($28)
   .L01DBDFC0:
-    /* 0122C0 01DBDFC0 BC9E838F */  lw         $3, -0x6144($28)
+    /* 0122C0 01DBDFC0 BC9E838F */  lw         $3, %gp_rel(msg_cnt$5888)($28)
     /* 0122C4 01DBDFC4 01006324 */  addiu      $3, $3, 0x1
-    /* 0122C8 01DBDFC8 BC9E83AF */  sw         $3, -0x6144($28)
-    /* 0122CC 01DBDFCC BC9E838F */  lw         $3, -0x6144($28)
+    /* 0122C8 01DBDFC8 BC9E83AF */  sw         $3, %gp_rel(msg_cnt$5888)($28)
+    /* 0122CC 01DBDFCC BC9E838F */  lw         $3, %gp_rel(msg_cnt$5888)($28)
     /* 0122D0 01DBDFD0 0A006328 */  slti       $3, $3, 0xA
     /* 0122D4 01DBDFD4 1B006014 */  bnez       $3, .L01DBE044
     /* 0122D8 01DBDFD8 00000000 */   nop
-    /* 0122DC 01DBDFDC BC9E80AF */  sw         $0, -0x6144($28)
+    /* 0122DC 01DBDFDC BC9E80AF */  sw         $0, %gp_rel(msg_cnt$5888)($28)
     /* 0122E0 01DBDFE0 6000A427 */  addiu      $4, $29, 0x60
     /* 0122E4 01DBDFE4 282E8070 */  paddub     $5, $4, $0
     /* 0122E8 01DBDFE8 9285040C */  jal        sceVu0Normalize
@@ -19672,19 +19672,19 @@ glabel BattleActionPlay_Ozumond_H__Fi
     /* 012430 01DBE130 DC01013C */  lui        $1, %hi(BtActStatus + 0x18)
     /* 012434 01DBE134 984423AC */  sw         $3, %lo(BtActStatus + 0x18)($1)
     /* 012438 01DBE138 0A000324 */  addiu      $3, $0, 0xA
-    /* 01243C 01DBE13C C49E83AF */  sw         $3, -0x613C($28)
+    /* 01243C 01DBE13C C49E83AF */  sw         $3, %gp_rel(wait_cnt$5903)($28)
   .L01DBE140:
     /* 012440 01DBE140 0B000324 */  addiu      $3, $0, 0xB
     /* 012444 01DBE144 DC01013C */  lui        $1, %hi(BtActStatus + 0xC)
     /* 012448 01DBE148 8C4423AC */  sw         $3, %lo(BtActStatus + 0xC)($1)
-    /* 01244C 01DBE14C C49E838F */  lw         $3, -0x613C($28)
+    /* 01244C 01DBE14C C49E838F */  lw         $3, %gp_rel(wait_cnt$5903)($28)
     /* 012450 01DBE150 01006324 */  addiu      $3, $3, 0x1
-    /* 012454 01DBE154 C49E83AF */  sw         $3, -0x613C($28)
-    /* 012458 01DBE158 C49E838F */  lw         $3, -0x613C($28)
+    /* 012454 01DBE154 C49E83AF */  sw         $3, %gp_rel(wait_cnt$5903)($28)
+    /* 012458 01DBE158 C49E838F */  lw         $3, %gp_rel(wait_cnt$5903)($28)
     /* 01245C 01DBE15C 0A006328 */  slti       $3, $3, 0xA
     /* 012460 01DBE160 75006014 */  bnez       $3, .L01DBE338
     /* 012464 01DBE164 00000000 */   nop
-    /* 012468 01DBE168 C49E80AF */  sw         $0, -0x613C($28)
+    /* 012468 01DBE168 C49E80AF */  sw         $0, %gp_rel(wait_cnt$5903)($28)
     /* 01246C 01DBE16C 99010424 */  addiu      $4, $0, 0x199
     /* 012470 01DBE170 05000524 */  addiu      $5, $0, 0x5
     /* 012474 01DBE174 28360070 */  paddub     $6, $0, $0
@@ -19840,12 +19840,12 @@ glabel BattleActionPlay_Ozumond_F__Fi
     /* 0126A8 01DBE3A8 1000B17F */  sq         $17, 0x10($29)
     /* 0126AC 01DBE3AC 0000B07F */  sq         $16, 0x0($29)
     /* 0126B0 01DBE3B0 288E8070 */  paddub     $17, $4, $0
-    /* 0126B4 01DBE3B4 CC9E8283 */  lb         $2, -0x6134($28)
+    /* 0126B4 01DBE3B4 CC9E8283 */  lb         $2, %gp_rel(init$5932)($28)
     /* 0126B8 01DBE3B8 04004014 */  bnez       $2, .L01DBE3CC
     /* 0126BC 01DBE3BC 00000000 */   nop
-    /* 0126C0 01DBE3C0 C89E80AF */  sw         $0, -0x6138($28)
+    /* 0126C0 01DBE3C0 C89E80AF */  sw         $0, %gp_rel(wait_cnt$5931)($28)
     /* 0126C4 01DBE3C4 01000224 */  addiu      $2, $0, 0x1
-    /* 0126C8 01DBE3C8 CC9E82A3 */  sb         $2, -0x6134($28)
+    /* 0126C8 01DBE3C8 CC9E82A3 */  sb         $2, %gp_rel(init$5932)($28)
   .L01DBE3CC:
     /* 0126CC 01DBE3CC 049D828F */  lw         $2, -0x62FC($28)
     /* 0126D0 01DBE3D0 16004480 */  lb         $4, 0x16($2)
@@ -19950,7 +19950,7 @@ glabel BattleActionPlay_Ozumond_F__Fi
     /* 01284C 01DBE54C 8C4423AC */  sw         $3, %lo(BtActStatus + 0xC)($1)
   .L01DBE550:
     /* 012850 01DBE550 0A000324 */  addiu      $3, $0, 0xA
-    /* 012854 01DBE554 C89E83AF */  sw         $3, -0x6138($28)
+    /* 012854 01DBE554 C89E83AF */  sw         $3, %gp_rel(wait_cnt$5931)($28)
   .L01DBE558:
     /* 012858 01DBE558 DC01013C */  lui        $1, %hi(BtActStatus + 0x14)
     /* 01285C 01DBE55C 9444248C */  lw         $4, %lo(BtActStatus + 0x14)($1)
@@ -20079,7 +20079,7 @@ glabel BattleActionPlay_Ozumond_F__Fi
     /* 012A34 01DBE734 D8BB060C */  jal        Rset__13CSHOT_FIREBARFv
     /* 012A38 01DBE738 00000000 */   nop
     /* 012A3C 01DBE73C 0A000324 */  addiu      $3, $0, 0xA
-    /* 012A40 01DBE740 C89E83AF */  sw         $3, -0x6138($28)
+    /* 012A40 01DBE740 C89E83AF */  sw         $3, %gp_rel(wait_cnt$5931)($28)
     /* 012A44 01DBE744 B09E80AF */  sw         $0, -0x6150($28)
   .L01DBE748:
     /* 012A48 01DBE748 2000BF7B */  lq         $31, 0x20($29)
@@ -20245,12 +20245,12 @@ glabel autoCamTrial__Fv
     /* 012C98 01DBE998 1800B6E7 */  swc1       $f22, 0x18($29)
     /* 012C9C 01DBE99C 1400B5E7 */  swc1       $f21, 0x14($29)
     /* 012CA0 01DBE9A0 1000B4E7 */  swc1       $f20, 0x10($29)
-    /* 012CA4 01DBE9A4 D89E8383 */  lb         $3, -0x6128($28)
+    /* 012CA4 01DBE9A4 D89E8383 */  lb         $3, %gp_rel(init$5985)($28)
     /* 012CA8 01DBE9A8 04006014 */  bnez       $3, .L01DBE9BC
     /* 012CAC 01DBE9AC 00000000 */   nop
-    /* 012CB0 01DBE9B0 D49E80AF */  sw         $0, -0x612C($28)
+    /* 012CB0 01DBE9B0 D49E80AF */  sw         $0, %gp_rel(cameraDilay$5984)($28)
     /* 012CB4 01DBE9B4 01000324 */  addiu      $3, $0, 0x1
-    /* 012CB8 01DBE9B8 D89E83A3 */  sb         $3, -0x6128($28)
+    /* 012CB8 01DBE9B8 D89E83A3 */  sb         $3, %gp_rel(init$5985)($28)
   .L01DBE9BC:
     /* 012CBC 01DBE9BC D501013C */  lui        $1, (0x1D56474 >> 16)
     /* 012CC0 01DBE9C0 7464238C */  lw         $3, (0x1D56474 & 0xFFFF)($1)
@@ -20610,21 +20610,21 @@ glabel autoCamTrial__Fv
     /* 0131C4 01DBEEC4 8EFF4014 */  bnez       $2, .L01DBED00
     /* 0131C8 01DBEEC8 00000000 */   nop
   .L01DBEECC:
-    /* 0131CC 01DBEECC E09E8283 */  lb         $2, -0x6120($28)
+    /* 0131CC 01DBEECC E09E8283 */  lb         $2, %gp_rel(init$6020)($28)
     /* 0131D0 01DBEED0 04004014 */  bnez       $2, .L01DBEEE4
     /* 0131D4 01DBEED4 00000000 */   nop
-    /* 0131D8 01DBEED8 DC9E80AF */  sw         $0, -0x6124($28)
+    /* 0131D8 01DBEED8 DC9E80AF */  sw         $0, %gp_rel(cnt$6019)($28)
     /* 0131DC 01DBEEDC 01000224 */  addiu      $2, $0, 0x1
-    /* 0131E0 01DBEEE0 E09E82A3 */  sb         $2, -0x6120($28)
+    /* 0131E0 01DBEEE0 E09E82A3 */  sb         $2, %gp_rel(init$6020)($28)
   .L01DBEEE4:
-    /* 0131E4 01DBEEE4 DC9E828F */  lw         $2, -0x6124($28)
+    /* 0131E4 01DBEEE4 DC9E828F */  lw         $2, %gp_rel(cnt$6019)($28)
     /* 0131E8 01DBEEE8 01004224 */  addiu      $2, $2, 0x1
-    /* 0131EC 01DBEEEC DC9E82AF */  sw         $2, -0x6124($28)
-    /* 0131F0 01DBEEF0 DC9E828F */  lw         $2, -0x6124($28)
+    /* 0131EC 01DBEEEC DC9E82AF */  sw         $2, %gp_rel(cnt$6019)($28)
+    /* 0131F0 01DBEEF0 DC9E828F */  lw         $2, %gp_rel(cnt$6019)($28)
     /* 0131F4 01DBEEF4 3D004128 */  slti       $1, $2, 0x3D
     /* 0131F8 01DBEEF8 02002014 */  bnez       $1, .L01DBEF04
     /* 0131FC 01DBEEFC 00000000 */   nop
-    /* 013200 01DBEF00 DC9E80AF */  sw         $0, -0x6124($28)
+    /* 013200 01DBEF00 DC9E80AF */  sw         $0, %gp_rel(cnt$6019)($28)
   .L01DBEF04:
     /* 013204 01DBEF04 A89C848F */  lw         $4, -0x6358($28)
     /* 013208 01DBEF08 0001A527 */  addiu      $5, $29, 0x100
@@ -21753,7 +21753,7 @@ glabel DrawtargetCursor__FPffff
     /* 0142B8 01DBFFB8 0000428E */  lw         $2, 0x0($18)
     /* 0142BC 01DBFFBC C3100200 */  sra        $2, $2, 3
     /* 0142C0 01DBFFC0 000042AE */  sw         $2, 0x0($18)
-    /* 0142C4 01DBFFC4 EC9E8283 */  lb         $2, -0x6114($28)
+    /* 0142C4 01DBFFC4 EC9E8283 */  lb         $2, %gp_rel(init$6338)($28)
     /* 0142C8 01DBFFC8 0A004014 */  bnez       $2, .L01DBFFF4
     /* 0142CC 01DBFFCC 00000000 */   nop
     /* 0142D0 01DBFFD0 8041023C */  lui        $2, (0x41800000 >> 16)
@@ -21762,9 +21762,9 @@ glabel DrawtargetCursor__FPffff
     /* 0142DC 01DBFFDC 02031446 */  mul.s      $f12, $f0, $f20
     /* 0142E0 01DBFFE0 2C44040C */  jal        fptosi
     /* 0142E4 01DBFFE4 00000000 */   nop
-    /* 0142E8 01DBFFE8 E89E82AF */  sw         $2, -0x6118($28)
+    /* 0142E8 01DBFFE8 E89E82AF */  sw         $2, %gp_rel(rate$6337)($28)
     /* 0142EC 01DBFFEC 01000224 */  addiu      $2, $0, 0x1
-    /* 0142F0 01DBFFF0 EC9E82A3 */  sb         $2, -0x6114($28)
+    /* 0142F0 01DBFFF0 EC9E82A3 */  sb         $2, %gp_rel(init$6338)($28)
   .L01DBFFF4:
     /* 0142F4 01DBFFF4 8000A0AF */  sw         $0, 0x80($29)
     /* 0142F8 01DBFFF8 20000224 */  addiu      $2, $0, 0x20
@@ -21778,7 +21778,7 @@ glabel DrawtargetCursor__FPffff
     /* 014318 01DC0018 7400A4AF */  sw         $4, 0x74($29)
     /* 01431C 01DC001C 7800A3AF */  sw         $3, 0x78($29)
     /* 014320 01DC0020 7C00A3AF */  sw         $3, 0x7C($29)
-    /* 014324 01DC0024 E89E8893 */  lbu        $8, -0x6118($28)
+    /* 014324 01DC0024 E89E8893 */  lbu        $8, %gp_rel(rate$6337)($28)
     /* 014328 01DC0028 D48B848F */  lw         $4, -0x742C($28)
     /* 01432C 01DC002C 282E0072 */  paddub     $5, $16, $0
     /* 014330 01DC0030 7000A627 */  addiu      $6, $29, 0x70
@@ -21796,7 +21796,7 @@ glabel DrawtargetCursor__FPffff
     /* 014360 01DC0060 9400A4AF */  sw         $4, 0x94($29)
     /* 014364 01DC0064 9800A3AF */  sw         $3, 0x98($29)
     /* 014368 01DC0068 9C00A3AF */  sw         $3, 0x9C($29)
-    /* 01436C 01DC006C E89E8893 */  lbu        $8, -0x6118($28)
+    /* 01436C 01DC006C E89E8893 */  lbu        $8, %gp_rel(rate$6337)($28)
     /* 014370 01DC0070 D48B848F */  lw         $4, -0x742C($28)
     /* 014374 01DC0074 282E0072 */  paddub     $5, $16, $0
     /* 014378 01DC0078 9000A627 */  addiu      $6, $29, 0x90
@@ -21815,7 +21815,7 @@ glabel DrawtargetCursor__FPffff
     /* 0143AC 01DC00AC B400A4AF */  sw         $4, 0xB4($29)
     /* 0143B0 01DC00B0 B800A3AF */  sw         $3, 0xB8($29)
     /* 0143B4 01DC00B4 BC00A3AF */  sw         $3, 0xBC($29)
-    /* 0143B8 01DC00B8 E89E8893 */  lbu        $8, -0x6118($28)
+    /* 0143B8 01DC00B8 E89E8893 */  lbu        $8, %gp_rel(rate$6337)($28)
     /* 0143BC 01DC00BC D48B848F */  lw         $4, -0x742C($28)
     /* 0143C0 01DC00C0 282E0072 */  paddub     $5, $16, $0
     /* 0143C4 01DC00C4 B000A627 */  addiu      $6, $29, 0xB0
@@ -21833,7 +21833,7 @@ glabel DrawtargetCursor__FPffff
     /* 0143F4 01DC00F4 D400A4AF */  sw         $4, 0xD4($29)
     /* 0143F8 01DC00F8 D800A3AF */  sw         $3, 0xD8($29)
     /* 0143FC 01DC00FC DC00A3AF */  sw         $3, 0xDC($29)
-    /* 014400 01DC0100 E89E8893 */  lbu        $8, -0x6118($28)
+    /* 014400 01DC0100 E89E8893 */  lbu        $8, %gp_rel(rate$6337)($28)
     /* 014404 01DC0104 D48B848F */  lw         $4, -0x742C($28)
     /* 014408 01DC0108 282E0072 */  paddub     $5, $16, $0
     /* 01440C 01DC010C D000A627 */  addiu      $6, $29, 0xD0
@@ -22796,34 +22796,34 @@ glabel unitBlowActionRot__FPf
 glabel setUnitDamageColor__Fi
     /* 015220 01DC0F20 F0FFBD27 */  addiu      $29, $29, -0x10
     /* 015224 01DC0F24 0000BF7F */  sq         $31, 0x0($29)
-    /* 015228 01DC0F28 F49E8283 */  lb         $2, -0x610C($28)
+    /* 015228 01DC0F28 F49E8283 */  lb         $2, %gp_rel(init$6720)($28)
     /* 01522C 01DC0F2C 05004014 */  bnez       $2, .L01DC0F44
     /* 015230 01DC0F30 00000000 */   nop
     /* 015234 01DC0F34 0043023C */  lui        $2, (0x43000000 >> 16)
-    /* 015238 01DC0F38 F09E82AF */  sw         $2, -0x6110($28)
+    /* 015238 01DC0F38 F09E82AF */  sw         $2, %gp_rel(dmgColor$6719)($28)
     /* 01523C 01DC0F3C 01000224 */  addiu      $2, $0, 0x1
-    /* 015240 01DC0F40 F49E82A3 */  sb         $2, -0x610C($28)
+    /* 015240 01DC0F40 F49E82A3 */  sb         $2, %gp_rel(init$6720)($28)
   .L01DC0F44:
-    /* 015244 01DC0F44 FC9E8283 */  lb         $2, -0x6104($28)
+    /* 015244 01DC0F44 FC9E8283 */  lb         $2, %gp_rel(init$6723)($28)
     /* 015248 01DC0F48 04004014 */  bnez       $2, .L01DC0F5C
     /* 01524C 01DC0F4C 00000000 */   nop
-    /* 015250 01DC0F50 F89E80AF */  sw         $0, -0x6108($28)
+    /* 015250 01DC0F50 F89E80AF */  sw         $0, %gp_rel(dmgVec$6722)($28)
     /* 015254 01DC0F54 01000224 */  addiu      $2, $0, 0x1
-    /* 015258 01DC0F58 FC9E82A3 */  sb         $2, -0x6104($28)
+    /* 015258 01DC0F58 FC9E82A3 */  sb         $2, %gp_rel(init$6723)($28)
   .L01DC0F5C:
     /* 01525C 01DC0F5C 04008010 */  beqz       $4, .L01DC0F70
     /* 015260 01DC0F60 00000000 */   nop
     /* 015264 01DC0F64 01000224 */  addiu      $2, $0, 0x1
-    /* 015268 01DC0F68 009F82AF */  sw         $2, -0x6100($28)
-    /* 01526C 01DC0F6C F89E80AF */  sw         $0, -0x6108($28)
+    /* 015268 01DC0F68 009F82AF */  sw         $2, %gp_rel(dmgFlag$6725)($28)
+    /* 01526C 01DC0F6C F89E80AF */  sw         $0, %gp_rel(dmgVec$6722)($28)
   .L01DC0F70:
-    /* 015270 01DC0F70 009F828F */  lw         $2, -0x6100($28)
+    /* 015270 01DC0F70 009F828F */  lw         $2, %gp_rel(dmgFlag$6725)($28)
     /* 015274 01DC0F74 18004010 */  beqz       $2, .L01DC0FD8
     /* 015278 01DC0F78 00000000 */   nop
-    /* 01527C 01DC0F7C F89E81C7 */  lwc1       $f1, -0x6108($28)
+    /* 01527C 01DC0F7C F89E81C7 */  lwc1       $f1, %gp_rel(dmgVec$6722)($28)
     /* 015280 01DC0F80 D48580C7 */  lwc1       $f0, -0x7A2C($28)
     /* 015284 01DC0F84 000B0046 */  add.s      $f12, $f1, $f0
-    /* 015288 01DC0F88 F89E8CE7 */  swc1       $f12, -0x6108($28)
+    /* 015288 01DC0F88 F89E8CE7 */  swc1       $f12, %gp_rel(dmgVec$6722)($28)
     /* 01528C 01DC0F8C 2876040C */  jal        sinf
     /* 015290 01DC0F90 00000000 */   nop
     /* 015294 01DC0F94 A042023C */  lui        $2, (0x42A00000 >> 16)
@@ -22834,17 +22834,17 @@ glabel setUnitDamageColor__Fi
     /* 0152A8 01DC0FA8 00008244 */  mtc1       $2, $f0
     /* 0152AC 01DC0FAC 00000000 */  nop
     /* 0152B0 01DC0FB0 00000146 */  add.s      $f0, $f0, $f1
-    /* 0152B4 01DC0FB4 F09E80E7 */  swc1       $f0, -0x6110($28)
-    /* 0152B8 01DC0FB8 F89E81C7 */  lwc1       $f1, -0x6108($28)
+    /* 0152B4 01DC0FB4 F09E80E7 */  swc1       $f0, %gp_rel(dmgColor$6719)($28)
+    /* 0152B8 01DC0FB8 F89E81C7 */  lwc1       $f1, %gp_rel(dmgVec$6722)($28)
     /* 0152BC 01DC0FBC D88580C7 */  lwc1       $f0, -0x7A28($28)
     /* 0152C0 01DC0FC0 34080046 */  c.lt.s     $f1, $f0
     /* 0152C4 01DC0FC4 00000000 */  nop
     /* 0152C8 01DC0FC8 03000145 */  bc1t       .L01DC0FD8
     /* 0152CC 01DC0FCC 00000000 */   nop
-    /* 0152D0 01DC0FD0 009F80AF */  sw         $0, -0x6100($28)
-    /* 0152D4 01DC0FD4 F09E82AF */  sw         $2, -0x6110($28)
+    /* 0152D0 01DC0FD0 009F80AF */  sw         $0, %gp_rel(dmgFlag$6725)($28)
+    /* 0152D4 01DC0FD4 F09E82AF */  sw         $2, %gp_rel(dmgColor$6719)($28)
   .L01DC0FD8:
-    /* 0152D8 01DC0FD8 F09E80C7 */  lwc1       $f0, -0x6110($28)
+    /* 0152D8 01DC0FD8 F09E80C7 */  lwc1       $f0, %gp_rel(dmgColor$6719)($28)
     /* 0152DC 01DC0FDC 0000BF7B */  lq         $31, 0x0($29)
     /* 0152E0 01DC0FE0 1000BD27 */  addiu      $29, $29, 0x10
     /* 0152E4 01DC0FE4 0800E003 */  jr         $31
@@ -23210,12 +23210,12 @@ glabel LoaderLoop__Fv
     /* 015818 01DC1518 1000B17F */  sq         $17, 0x10($29)
     /* 01581C 01DC151C 0000B07F */  sq         $16, 0x0($29)
     /* 015820 01DC1520 288E0070 */  paddub     $17, $0, $0
-    /* 015824 01DC1524 189F8283 */  lb         $2, -0x60E8($28)
+    /* 015824 01DC1524 189F8283 */  lb         $2, %gp_rel(init$6784)($28)
     /* 015828 01DC1528 04004014 */  bnez       $2, .L01DC153C
     /* 01582C 01DC152C 00000000 */   nop
-    /* 015830 01DC1530 149F80AF */  sw         $0, -0x60EC($28)
+    /* 015830 01DC1530 149F80AF */  sw         $0, %gp_rel(nowCursor$6783)($28)
     /* 015834 01DC1534 01000224 */  addiu      $2, $0, 0x1
-    /* 015838 01DC1538 189F82A3 */  sb         $2, -0x60E8($28)
+    /* 015838 01DC1538 189F82A3 */  sb         $2, %gp_rel(init$6784)($28)
   .L01DC153C:
     /* 01583C 01DC153C F001013C */  lui        $1, %hi(CDbgMsg + 0x18)
     /* 015840 01DC1540 F868238C */  lw         $3, %lo(CDbgMsg + 0x18)($1)
@@ -23241,7 +23241,7 @@ glabel LoaderLoop__Fv
     /* 01588C 01DC158C 0000458C */  lw         $5, 0x0($2)
     /* 015890 01DC1590 5A15040C */  jal        strcpy
     /* 015894 01DC1594 00000000 */   nop
-    /* 015898 01DC1598 149F828F */  lw         $2, -0x60EC($28)
+    /* 015898 01DC1598 149F828F */  lw         $2, %gp_rel(nowCursor$6783)($28)
     /* 01589C 01DC159C 14005014 */  bne        $2, $16, .L01DC15F0
     /* 0158A0 01DC15A0 00000000 */   nop
     /* 0158A4 01DC15A4 F001013C */  lui        $1, %hi(CDbgMsg + 0x18)
@@ -23294,11 +23294,11 @@ glabel LoaderLoop__Fv
     /* 015954 01DC1654 00000000 */   nop
     /* 015958 01DC1658 06004010 */  beqz       $2, .L01DC1674
     /* 01595C 01DC165C 00000000 */   nop
-    /* 015960 01DC1660 149F828F */  lw         $2, -0x60EC($28)
+    /* 015960 01DC1660 149F828F */  lw         $2, %gp_rel(nowCursor$6783)($28)
     /* 015964 01DC1664 03004010 */  beqz       $2, .L01DC1674
     /* 015968 01DC1668 00000000 */   nop
     /* 01596C 01DC166C FFFF4224 */  addiu      $2, $2, -0x1
-    /* 015970 01DC1670 149F82AF */  sw         $2, -0x60EC($28)
+    /* 015970 01DC1670 149F82AF */  sw         $2, %gp_rel(nowCursor$6783)($28)
   .L01DC1674:
     /* 015974 01DC1674 CC01023C */  lui        $2, %hi(GamePad)
     /* 015978 01DC1678 40C54424 */  addiu      $4, $2, %lo(GamePad)
@@ -23307,12 +23307,12 @@ glabel LoaderLoop__Fv
     /* 015984 01DC1684 00000000 */   nop
     /* 015988 01DC1688 07004010 */  beqz       $2, .L01DC16A8
     /* 01598C 01DC168C 00000000 */   nop
-    /* 015990 01DC1690 149F838F */  lw         $3, -0x60EC($28)
+    /* 015990 01DC1690 149F838F */  lw         $3, %gp_rel(nowCursor$6783)($28)
     /* 015994 01DC1694 06000224 */  addiu      $2, $0, 0x6
     /* 015998 01DC1698 03006210 */  beq        $3, $2, .L01DC16A8
     /* 01599C 01DC169C 00000000 */   nop
     /* 0159A0 01DC16A0 01006224 */  addiu      $2, $3, 0x1
-    /* 0159A4 01DC16A4 149F82AF */  sw         $2, -0x60EC($28)
+    /* 0159A4 01DC16A4 149F82AF */  sw         $2, %gp_rel(nowCursor$6783)($28)
   .L01DC16A8:
     /* 0159A8 01DC16A8 CC01023C */  lui        $2, %hi(GamePad)
     /* 0159AC 01DC16AC 40C54424 */  addiu      $4, $2, %lo(GamePad)
@@ -23329,7 +23329,7 @@ glabel LoaderLoop__Fv
     /* 0159D8 01DC16D8 11004010 */  beqz       $2, .L01DC1720
     /* 0159DC 01DC16DC 00000000 */   nop
   .L01DC16E0:
-    /* 0159E0 01DC16E0 149F828F */  lw         $2, -0x60EC($28)
+    /* 0159E0 01DC16E0 149F828F */  lw         $2, %gp_rel(nowCursor$6783)($28)
     /* 0159E4 01DC16E4 A49D82AF */  sw         $2, -0x625C($28)
     /* 0159E8 01DC16E8 248D82AF */  sw         $2, -0x72DC($28)
     /* 0159EC 01DC16EC A49D828F */  lw         $2, -0x625C($28)

@@ -26,24 +26,24 @@ glabel DrawWater__11CDungeonMapFPfi
     /* 0C4A8C 001C498C 9643023C */  lui        $2, (0x43960000 >> 16)
     /* 0C4A90 001C4990 00A88244 */  mtc1       $2, $f21
     /* 0C4A94 001C4994 28B60070 */  paddub     $22, $0, $0
-    /* 0C4A98 001C4998 00948283 */  lb         $2, -0x6C00($28)
+    /* 0C4A98 001C4998 00948283 */  lb         $2, %gp_rel(init$1660)($28)
     /* 0C4A9C 001C499C 04004014 */  bnez       $2, .L001C49B0
     /* 0C4AA0 001C49A0 00000000 */   nop
-    /* 0C4AA4 001C49A4 FC9380AF */  sw         $0, -0x6C04($28)
+    /* 0C4AA4 001C49A4 FC9380AF */  sw         $0, %gp_rel(wait$1659)($28)
     /* 0C4AA8 001C49A8 01000224 */  addiu      $2, $0, 0x1
-    /* 0C4AAC 001C49AC 009482A3 */  sb         $2, -0x6C00($28)
+    /* 0C4AAC 001C49AC 009482A3 */  sb         $2, %gp_rel(init$1660)($28)
   .L001C49B0:
-    /* 0C4AB0 001C49B0 FC93838F */  lw         $3, -0x6C04($28)
+    /* 0C4AB0 001C49B0 FC93838F */  lw         $3, %gp_rel(wait$1659)($28)
     /* 0C4AB4 001C49B4 1E006228 */  slti       $2, $3, 0x1E
     /* 0C4AB8 001C49B8 05004014 */  bnez       $2, .L001C49D0
     /* 0C4ABC 001C49BC 00000000 */   nop
-    /* 0C4AC0 001C49C0 FC9380AF */  sw         $0, -0x6C04($28)
+    /* 0C4AC0 001C49C0 FC9380AF */  sw         $0, %gp_rel(wait$1659)($28)
     /* 0C4AC4 001C49C4 01001624 */  addiu      $22, $0, 0x1
     /* 0C4AC8 001C49C8 03000010 */  b          .L001C49D8
     /* 0C4ACC 001C49CC 00000000 */   nop
   .L001C49D0:
     /* 0C4AD0 001C49D0 01006224 */  addiu      $2, $3, 0x1
-    /* 0C4AD4 001C49D4 FC9382AF */  sw         $2, -0x6C04($28)
+    /* 0C4AD4 001C49D4 FC9382AF */  sw         $2, %gp_rel(wait$1659)($28)
   .L001C49D8:
     /* 0C4AD8 001C49D8 288E0070 */  paddub     $17, $0, $0
     /* 0C4ADC 001C49DC 49000010 */  b          .L001C4B04

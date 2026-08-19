@@ -2675,19 +2675,19 @@ glabel CheckRiverChain__9CEditAreaFiiii
   .L0016FD90:
     /* 06FE90 0016FD90 01000324 */  addiu      $3, $0, 0x1
     /* 06FE94 0016FD94 000083AC */  sw         $3, 0x0($4)
-    /* 06FE98 0016FD98 3C8F8283 */  lb         $2, -0x70C4($28)
+    /* 06FE98 0016FD98 3C8F8283 */  lb         $2, %gp_rel(init$840)($28)
     /* 06FE9C 0016FD9C 03004014 */  bnez       $2, .L0016FDAC
     /* 06FEA0 0016FDA0 00000000 */   nop
-    /* 06FEA4 0016FDA4 388F80AF */  sw         $0, -0x70C8($28)
-    /* 06FEA8 0016FDA8 3C8F83A3 */  sb         $3, -0x70C4($28)
+    /* 06FEA4 0016FDA4 388F80AF */  sw         $0, %gp_rel(ext$839)($28)
+    /* 06FEA8 0016FDA8 3C8F83A3 */  sb         $3, %gp_rel(init$840)($28)
   .L0016FDAC:
     /* 06FEAC 0016FDAC 28268072 */  paddub     $4, $20, $0
     /* 06FEB0 0016FDB0 282E6072 */  paddub     $5, $19, $0
     /* 06FEB4 0016FDB4 28364072 */  paddub     $6, $18, $0
     /* 06FEB8 0016FDB8 A4B7050C */  jal        GetPartsExtra__9CEditAreaFii
     /* 06FEBC 0016FDBC 00000000 */   nop
-    /* 06FEC0 0016FDC0 388F82AF */  sw         $2, -0x70C8($28)
-    /* 06FEC4 0016FDC4 388F838F */  lw         $3, -0x70C8($28)
+    /* 06FEC0 0016FDC0 388F82AF */  sw         $2, %gp_rel(ext$839)($28)
+    /* 06FEC4 0016FDC4 388F838F */  lw         $3, %gp_rel(ext$839)($28)
     /* 06FEC8 0016FDC8 02000224 */  addiu      $2, $0, 0x2
     /* 06FECC 0016FDCC 0A006210 */  beq        $3, $2, .L0016FDF8
     /* 06FED0 0016FDD0 00000000 */   nop

@@ -318,21 +318,21 @@ glabel Step__13CSHOT_FIREBARFv
     /* 0AF0B4 001AEFB4 1000B17F */  sq         $17, 0x10($29)
     /* 0AF0B8 001AEFB8 0000B07F */  sq         $16, 0x0($29)
     /* 0AF0BC 001AEFBC 28A68070 */  paddub     $20, $4, $0
-    /* 0AF0C0 001AEFC0 90938383 */  lb         $3, -0x6C70($28)
+    /* 0AF0C0 001AEFC0 90938383 */  lb         $3, %gp_rel(init$1152)($28)
     /* 0AF0C4 001AEFC4 04006014 */  bnez       $3, .L001AEFD8
     /* 0AF0C8 001AEFC8 00000000 */   nop
-    /* 0AF0CC 001AEFCC 8C9380AF */  sw         $0, -0x6C74($28)
+    /* 0AF0CC 001AEFCC 8C9380AF */  sw         $0, %gp_rel(msg_cnt$1151)($28)
     /* 0AF0D0 001AEFD0 01000324 */  addiu      $3, $0, 0x1
-    /* 0AF0D4 001AEFD4 909383A3 */  sb         $3, -0x6C70($28)
+    /* 0AF0D4 001AEFD4 909383A3 */  sb         $3, %gp_rel(init$1152)($28)
   .L001AEFD8:
-    /* 0AF0D8 001AEFD8 8C93838F */  lw         $3, -0x6C74($28)
+    /* 0AF0D8 001AEFD8 8C93838F */  lw         $3, %gp_rel(msg_cnt$1151)($28)
     /* 0AF0DC 001AEFDC 01006324 */  addiu      $3, $3, 0x1
-    /* 0AF0E0 001AEFE0 8C9383AF */  sw         $3, -0x6C74($28)
-    /* 0AF0E4 001AEFE4 8C93838F */  lw         $3, -0x6C74($28)
+    /* 0AF0E0 001AEFE0 8C9383AF */  sw         $3, %gp_rel(msg_cnt$1151)($28)
+    /* 0AF0E4 001AEFE4 8C93838F */  lw         $3, %gp_rel(msg_cnt$1151)($28)
     /* 0AF0E8 001AEFE8 1E006328 */  slti       $3, $3, 0x1E
     /* 0AF0EC 001AEFEC 02006014 */  bnez       $3, .L001AEFF8
     /* 0AF0F0 001AEFF0 00000000 */   nop
-    /* 0AF0F4 001AEFF4 8C9380AF */  sw         $0, -0x6C74($28)
+    /* 0AF0F4 001AEFF4 8C9380AF */  sw         $0, %gp_rel(msg_cnt$1151)($28)
   .L001AEFF8:
     /* 0AF0F8 001AEFF8 28860070 */  paddub     $16, $0, $0
     /* 0AF0FC 001AEFFC 6A000010 */  b          .L001AF1A8
@@ -358,7 +358,7 @@ glabel Step__13CSHOT_FIREBARFv
     /* 0AF148 001AF048 C48580C7 */  lwc1       $f0, -0x7A3C($28)
     /* 0AF14C 001AF04C 00080046 */  add.s      $f0, $f1, $f0
     /* 0AF150 001AF050 0008C0E4 */  swc1       $f0, 0x800($6)
-    /* 0AF154 001AF054 8C93838F */  lw         $3, -0x6C74($28)
+    /* 0AF154 001AF054 8C93838F */  lw         $3, %gp_rel(msg_cnt$1151)($28)
     /* 0AF158 001AF058 3A006014 */  bnez       $3, .L001AF144
     /* 0AF15C 001AF05C 00000000 */   nop
     /* 0AF160 001AF060 803F023C */  lui        $2, (0x3F800000 >> 16)

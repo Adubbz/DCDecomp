@@ -156,8 +156,8 @@ def image_of_unit(unit):
 def read_units(config_dir=CONFIG, src_dir=SRC):
     """[(kind, image, source, reference)] for every translation unit.
 
-    Every source under src/ is one, classified by the yaml splat splits
-    against; a unit with no code of its own is in no yaml and is compiled.
+    YAML classifies split units, including assembly-only libraries that have
+    no source anchor. Other sources are compiled as data-only units.
     """
     sources = {}
     for path in sorted(Path(src_dir).rglob("*")):
@@ -176,6 +176,13 @@ def read_units(config_dir=CONFIG, src_dir=SRC):
                 unit = match.group(2)
                 classified[unit] = (UNIT_TYPES[match.group(1)], image)
                 order.append(unit)
+
+    # Library units are always linked from their split assembly until they
+    # have real source. They therefore do not need marker-only source files
+    # merely to make the unit discoverable.
+    for unit in classified:
+        if unit.startswith("lib/") and unit not in sources:
+            sources[unit] = f"{src_dir}/{unit}.c"
 
     rest = sorted(unit for unit in sources if unit not in classified)
     rows = []
@@ -426,6 +433,36 @@ def twin_branched_labels(text):
     )
 
 
+GP_RELATIVE = re.compile(r"(?<![%\w])(-?0x[0-9A-Fa-f]+)\(\$28\)")
+
+
+def restore_gp_relative_relocations(path, text, symbols, image_of):
+    """Restore GP-relative relocations whose target has a declared symbol."""
+    image = image_of(path)
+    rows = symbols.get(image, {})
+    gp = rows.get("_gp")
+    if gp is None:
+        return text
+
+    by_address = {}
+    for name, (address, sym_type, _size) in rows.items():
+        # Splat preserves relocations for ordinary globals. MWCC's local
+        # statics are the symbols it loses because their retail names use '$'.
+        if sym_type == "object" and "$" in name:
+            by_address.setdefault(address, []).append(name)
+
+    def replace(match):
+        immediate = match.group(1)
+        offset = (-int(immediate[3:], 16) if immediate.startswith("-0x")
+                  else int(immediate, 16))
+        names = by_address.get(gp[0] + offset)
+        if not names:
+            return match.group(0)
+        return f"%gp_rel({names[0]})($28)"
+
+    return GP_RELATIVE.sub(replace, text)
+
+
 def image_of_file():
     """A way to ask which image a reference file belongs to.
 
@@ -539,9 +576,12 @@ def fix_branches(root):
         path for path in Path(root).rglob("*.s") if "parts" not in path.parts
     )
     original = {path: path.read_text(encoding="utf-8") for path in paths}
+    symbols = read_symbol_table()
+    image_of = image_of_file()
 
     texts, shared = globalize_shared_labels(original)
     for path, text in texts.items():
+        text = restore_gp_relative_relocations(path, text, symbols, image_of)
         texts[path] = twin_branched_labels(
             localize_alt_labels(globalize_addressed_labels(text)))
 

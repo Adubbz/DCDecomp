@@ -156,30 +156,30 @@ glabel MGStretchMoveImage__FP9sceGsTex0RC8CRect_i_P9sceGsTex0RC8CRect_i_
     /* 02F784 0012F684 000046DC */  ld         $6, 0x0($2)
     /* 02F788 0012F688 0A84040C */  jal        sceVif1PkAddGsAD
     /* 02F78C 0012F68C 00000000 */   nop
-    /* 02F790 0012F690 608C8283 */  lb         $2, -0x73A0($28)
+    /* 02F790 0012F690 608C8283 */  lb         $2, %gp_rel(init$684)($28)
     /* 02F794 0012F694 05004014 */  bnez       $2, .L0012F6AC
     /* 02F798 0012F698 00000000 */   nop
     /* 02F79C 0012F69C F6FF0224 */  addiu      $2, $0, -0xA
-    /* 02F7A0 0012F6A0 5C8C82AF */  sw         $2, -0x73A4($28)
+    /* 02F7A0 0012F6A0 5C8C82AF */  sw         $2, %gp_rel(dyy$683)($28)
     /* 02F7A4 0012F6A4 01000224 */  addiu      $2, $0, 0x1
-    /* 02F7A8 0012F6A8 608C82A3 */  sb         $2, -0x73A0($28)
+    /* 02F7A8 0012F6A8 608C82A3 */  sb         $2, %gp_rel(init$684)($28)
   .L0012F6AC:
-    /* 02F7AC 0012F6AC 688C8283 */  lb         $2, -0x7398($28)
+    /* 02F7AC 0012F6AC 688C8283 */  lb         $2, %gp_rel(init$687)($28)
     /* 02F7B0 0012F6B0 05004014 */  bnez       $2, .L0012F6C8
     /* 02F7B4 0012F6B4 00000000 */   nop
     /* 02F7B8 0012F6B8 F8FF0224 */  addiu      $2, $0, -0x8
-    /* 02F7BC 0012F6BC 648C82AF */  sw         $2, -0x739C($28)
+    /* 02F7BC 0012F6BC 648C82AF */  sw         $2, %gp_rel(dx$686)($28)
     /* 02F7C0 0012F6C0 01000224 */  addiu      $2, $0, 0x1
-    /* 02F7C4 0012F6C4 688C82A3 */  sb         $2, -0x7398($28)
+    /* 02F7C4 0012F6C4 688C82A3 */  sb         $2, %gp_rel(init$687)($28)
   .L0012F6C8:
     /* 02F7C8 0012F6C8 D88B828F */  lw         $2, -0x7428($28)
     /* 02F7CC 0012F6CC 04004010 */  beqz       $2, .L0012F6E0
     /* 02F7D0 0012F6D0 00000000 */   nop
-    /* 02F7D4 0012F6D4 5C8C948F */  lw         $20, -0x73A4($28)
+    /* 02F7D4 0012F6D4 5C8C948F */  lw         $20, %gp_rel(dyy$683)($28)
     /* 02F7D8 0012F6D8 03000010 */  b          .L0012F6E8
     /* 02F7DC 0012F6DC 00000000 */   nop
   .L0012F6E0:
-    /* 02F7E0 0012F6E0 5C8C828F */  lw         $2, -0x73A4($28)
+    /* 02F7E0 0012F6E0 5C8C828F */  lw         $2, %gp_rel(dyy$683)($28)
     /* 02F7E4 0012F6E4 10005424 */  addiu      $20, $2, 0x10
   .L0012F6E8:
     /* 02F7E8 0012F6E8 148C828F */  lw         $2, -0x73EC($28)
@@ -234,7 +234,7 @@ glabel MGStretchMoveImage__FP9sceGsTex0RC8CRect_i_P9sceGsTex0RC8CRect_i_
     /* 02F8A8 0012F7A8 38240200 */  dsll       $4, $2, 16
     /* 02F8AC 0012F7AC 0000228E */  lw         $2, 0x0($17)
     /* 02F8B0 0012F7B0 006C4324 */  addiu      $3, $2, 0x6C00
-    /* 02F8B4 0012F7B4 648C828F */  lw         $2, -0x739C($28)
+    /* 02F8B4 0012F7B4 648C828F */  lw         $2, %gp_rel(dx$686)($28)
     /* 02F8B8 0012F7B8 21106200 */  addu       $2, $3, $2
     /* 02F8BC 0012F7BC 3C100200 */  dsll32     $2, $2, 0
     /* 02F8C0 0012F7C0 3F100200 */  dsra32     $2, $2, 0
@@ -271,7 +271,7 @@ glabel MGStretchMoveImage__FP9sceGsTex0RC8CRect_i_P9sceGsTex0RC8CRect_i_
     /* 02F93C 0012F83C 006C4324 */  addiu      $3, $2, 0x6C00
     /* 02F940 0012F840 0800228E */  lw         $2, 0x8($17)
     /* 02F944 0012F844 21186200 */  addu       $3, $3, $2
-    /* 02F948 0012F848 648C828F */  lw         $2, -0x739C($28)
+    /* 02F948 0012F848 648C828F */  lw         $2, %gp_rel(dx$686)($28)
     /* 02F94C 0012F84C 21104300 */  addu       $2, $2, $3
     /* 02F950 0012F850 3C100200 */  dsll32     $2, $2, 0
     /* 02F954 0012F854 3F100200 */  dsra32     $2, $2, 0

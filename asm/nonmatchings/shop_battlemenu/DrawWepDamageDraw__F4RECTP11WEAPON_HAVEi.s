@@ -81,16 +81,16 @@ glabel DrawWepDamageDraw__F4RECTP11WEAPON_HAVEi
     /* 0F8F48 001F8E48 283E8072 */  paddub     $7, $20, $0
     /* 0F8F4C 001F8E4C C8B3080C */  jal        DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i
     /* 0F8F50 001F8E50 00000000 */   nop
-    /* 0F8F54 001F8E54 94958283 */  lb         $2, -0x6A6C($28)
+    /* 0F8F54 001F8E54 94958283 */  lb         $2, %gp_rel(init$1677)($28)
     /* 0F8F58 001F8E58 04004014 */  bnez       $2, .L001F8E6C
     /* 0F8F5C 001F8E5C 00000000 */   nop
-    /* 0F8F60 001F8E60 909580AF */  sw         $0, -0x6A70($28)
+    /* 0F8F60 001F8E60 909580AF */  sw         $0, %gp_rel(warningcnt$1676)($28)
     /* 0F8F64 001F8E64 01000224 */  addiu      $2, $0, 0x1
-    /* 0F8F68 001F8E68 949582A3 */  sb         $2, -0x6A6C($28)
+    /* 0F8F68 001F8E68 949582A3 */  sb         $2, %gp_rel(init$1677)($28)
   .L001F8E6C:
-    /* 0F8F6C 001F8E6C 9095828F */  lw         $2, -0x6A70($28)
+    /* 0F8F6C 001F8E6C 9095828F */  lw         $2, %gp_rel(warningcnt$1676)($28)
     /* 0F8F70 001F8E70 01004224 */  addiu      $2, $2, 0x1
-    /* 0F8F74 001F8E74 909582AF */  sw         $2, -0x6A70($28)
+    /* 0F8F74 001F8E74 909582AF */  sw         $2, %gp_rel(warningcnt$1676)($28)
     /* 0F8F78 001F8E78 0C00A286 */  lh         $2, 0xC($21)
     /* 0F8F7C 001F8E7C 00008244 */  mtc1       $2, $f0
     /* 0F8F80 001F8E80 00000000 */  nop
@@ -105,7 +105,7 @@ glabel DrawWepDamageDraw__F4RECTP11WEAPON_HAVEi
     /* 0F8FA4 001F8EA4 1C003216 */  bne        $17, $18, .L001F8F18
     /* 0F8FA8 001F8EA8 00000000 */   nop
   .L001F8EAC:
-    /* 0F8FAC 001F8EAC 909580C7 */  lwc1       $f0, -0x6A70($28)
+    /* 0F8FAC 001F8EAC 909580C7 */  lwc1       $f0, %gp_rel(warningcnt$1676)($28)
     /* 0F8FB0 001F8EB0 60008046 */  cvt.s.w    $f1, $f0
     /* 0F8FB4 001F8EB4 9041023C */  lui        $2, (0x41900000 >> 16)
     /* 0F8FB8 001F8EB8 00008244 */  mtc1       $2, $f0
@@ -122,16 +122,16 @@ glabel DrawWepDamageDraw__F4RECTP11WEAPON_HAVEi
     /* 0F8FE4 001F8EE4 28264070 */  paddub     $4, $2, $0
     /* 0F8FE8 001F8EE8 7200040C */  jal        abs
     /* 0F8FEC 001F8EEC 00000000 */   nop
-    /* 0F8FF0 001F8EF0 9095828F */  lw         $2, -0x6A70($28)
+    /* 0F8FF0 001F8EF0 9095828F */  lw         $2, %gp_rel(warningcnt$1676)($28)
     /* 0F8FF4 001F8EF4 01004224 */  addiu      $2, $2, 0x1
-    /* 0F8FF8 001F8EF8 909582AF */  sw         $2, -0x6A70($28)
-    /* 0F8FFC 001F8EFC 9095828F */  lw         $2, -0x6A70($28)
+    /* 0F8FF8 001F8EF8 909582AF */  sw         $2, %gp_rel(warningcnt$1676)($28)
+    /* 0F8FFC 001F8EFC 9095828F */  lw         $2, %gp_rel(warningcnt$1676)($28)
     /* 0F9000 001F8F00 0F00013C */  lui        $1, (0xF4241 >> 16)
     /* 0F9004 001F8F04 41422134 */  ori        $1, $1, (0xF4241 & 0xFFFF)
     /* 0F9008 001F8F08 2A084100 */  slt        $1, $2, $1
     /* 0F900C 001F8F0C 02002014 */  bnez       $1, .L001F8F18
     /* 0F9010 001F8F10 00000000 */   nop
-    /* 0F9014 001F8F14 909580AF */  sw         $0, -0x6A70($28)
+    /* 0F9014 001F8F14 909580AF */  sw         $0, %gp_rel(warningcnt$1676)($28)
   .L001F8F18:
     /* 0F9018 001F8F18 B000A28F */  lw         $2, 0xB0($29)
     /* 0F901C 001F8F1C 00110200 */  sll        $2, $2, 4

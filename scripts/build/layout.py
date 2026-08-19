@@ -111,6 +111,11 @@ def category_of(source):
     return "game"
 
 
+def included_in_objdiff(source):
+    """Return whether objdiff should expose this translation unit."""
+    return not source.startswith("src/lib/") or source == "src/lib/crt0.c"
+
+
 # Which image an address belongs to. The overlays share a range with each
 # other but not with main, and only one of them is ever loaded at a time.
 IMAGE_RANGES = (
@@ -233,7 +238,7 @@ def unit_references():
 
 
 def read_sources(src_dir=SRC_DIR):
-    """{source: [(kind, symbol)]} for every marker, in the order written."""
+    """Return markers and synthetic identities for all translation units."""
     out = {}
     for root, _dirs, files in os.walk(src_dir):
         for name in sorted(files):
@@ -249,6 +254,11 @@ def read_sources(src_dir=SRC_DIR):
             except OSError:
                 continue
             out[path] = MARKER.findall(text)
+    # Whole-assembly library units have no placeholder source. Keep their
+    # synthetic source identities so linker-script object names still map to
+    # the units derived from the split configuration.
+    for _kind, _image, source, _reference in disassemble.read_units():
+        out.setdefault(source, [])
     return out
 
 
@@ -366,11 +376,17 @@ def link_order(args, placed, dumps, carved):
 def provenance(path, placed, functions, marked, build_dir):
     """Where each function comes from, for reading rather than for the build."""
     rows = []
+    kinds = {source: kind for kind, _image, source, _ref
+             in disassemble.read_units()}
     for section in SECTIONS:
         spans = owners(placed, section)
         for address, symbol, _size, _src in functions[section]:
             source = owner_of(spans, address)
-            kind = "asm" if marked.get(symbol) else "cpp"
+            kind = (
+                "asm"
+                if kinds.get(source) == "asm" or marked.get(symbol)
+                else "cpp"
+            )
             rows.append((address, kind, f"{build_dir}/{source}.o", symbol))
     rows.sort()
     with open(path, "w") as f:
@@ -401,6 +417,8 @@ def objdiff(path, placed, functions, marked, build_dir, declared):
 
     unit_list, decompiled, fuzzy_units = [], 0, 0
     for address, image, source in placed:
+        if not included_in_objdiff(source):
+            continue
         # Named after the source, so the sidebar groups a unit under the
         # library it came from.
         name = os.path.splitext(os.path.relpath(source, SRC_DIR))[0]
@@ -502,8 +520,8 @@ def main():
         # losing sight of those symbols.
         print("\n".join(sorted(
             reference
-            for reference in unit_references().values()
-            if os.path.exists(reference)
+            for source, reference in unit_references().items()
+            if included_in_objdiff(source) and os.path.exists(reference)
         )))
         return 0
 

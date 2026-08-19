@@ -1092,7 +1092,7 @@ glabel MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List
     /* 048A14 00148914 00000000 */   nop
     /* 048A18 00148918 1000438C */  lw         $3, 0x10($2)
     /* 048A1C 0014891C 21104300 */  addu       $2, $2, $3
-    /* 048A20 00148920 B08D82AF */  sw         $2, -0x7250($28)
+    /* 048A20 00148920 B08D82AF */  sw         $2, %gp_rel(vert$388)($28)
     /* 048A24 00148924 0000238E */  lw         $3, 0x0($17)
     /* 048A28 00148928 40100300 */  sll        $2, $3, 1
     /* 048A2C 0014892C 21104300 */  addu       $2, $2, $3
@@ -1271,7 +1271,7 @@ glabel MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List
     /* 048CD0 00148BD0 21186400 */  addu       $3, $3, $4
     /* 048CD4 00148BD4 0000638C */  lw         $3, 0x0($3)
     /* 048CD8 00148BD8 00290300 */  sll        $5, $3, 4
-    /* 048CDC 00148BDC B08D838F */  lw         $3, -0x7250($28)
+    /* 048CDC 00148BDC B08D838F */  lw         $3, %gp_rel(vert$388)($28)
     /* 048CE0 00148BE0 21486500 */  addu       $9, $3, $5
     /* 048CE4 00148BE4 0000248E */  lw         $4, 0x0($17)
     /* 048CE8 00148BE8 40180400 */  sll        $3, $4, 1

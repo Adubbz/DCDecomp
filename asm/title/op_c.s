@@ -3954,19 +3954,19 @@ glabel OpC_MotionProcess__Fv
     /* 013994 01DBF694 90AC4424 */  addiu      $4, $2, %lo(Wind__2)
     /* 013998 01DBF698 4CED040C */  jal        Step__5CWindFv
     /* 01399C 01DBF69C 00000000 */   nop
-    /* 0139A0 01DBF6A0 0C9A8383 */  lb         $3, -0x65F4($28)
+    /* 0139A0 01DBF6A0 0C9A8383 */  lb         $3, %gp_rel(init$901)($28)
     /* 0139A4 01DBF6A4 04006014 */  bnez       $3, .L01DBF6B8
     /* 0139A8 01DBF6A8 00000000 */   nop
-    /* 0139AC 01DBF6AC 089A80AF */  sw         $0, -0x65F8($28)
+    /* 0139AC 01DBF6AC 089A80AF */  sw         $0, %gp_rel(camera$900)($28)
     /* 0139B0 01DBF6B0 01000324 */  addiu      $3, $0, 0x1
-    /* 0139B4 01DBF6B4 0C9A83A3 */  sb         $3, -0x65F4($28)
+    /* 0139B4 01DBF6B4 0C9A83A3 */  sb         $3, %gp_rel(init$901)($28)
   .L01DBF6B8:
-    /* 0139B8 01DBF6B8 089A838F */  lw         $3, -0x65F8($28)
+    /* 0139B8 01DBF6B8 089A838F */  lw         $3, %gp_rel(camera$900)($28)
     /* 0139BC 01DBF6BC DE01013C */  lui        $1, %hi(CScript__2)
     /* 0139C0 01DBF6C0 001B248C */  lw         $4, %lo(CScript__2)($1)
     /* 0139C4 01DBF6C4 36006410 */  beq        $3, $4, .L01DBF7A0
     /* 0139C8 01DBF6C8 00000000 */   nop
-    /* 0139CC 01DBF6CC 089A84AF */  sw         $4, -0x65F8($28)
+    /* 0139CC 01DBF6CC 089A84AF */  sw         $4, %gp_rel(camera$900)($28)
     /* 0139D0 01DBF6D0 4D000324 */  addiu      $3, $0, 0x4D
     /* 0139D4 01DBF6D4 2F008310 */  beq        $4, $3, .L01DBF794
     /* 0139D8 01DBF6D8 00000000 */   nop
@@ -4105,21 +4105,21 @@ glabel OpC_MotionProcess__Fv
     /* 013BB4 01DBF8B4 F5FF6014 */  bnez       $3, .L01DBF88C
     /* 013BB8 01DBF8B8 00000000 */   nop
   .L01DBF8BC:
-    /* 013BBC 01DBF8BC 149A8383 */  lb         $3, -0x65EC($28)
+    /* 013BBC 01DBF8BC 149A8383 */  lb         $3, %gp_rel(init$939)($28)
     /* 013BC0 01DBF8C0 05006014 */  bnez       $3, .L01DBF8D8
     /* 013BC4 01DBF8C4 00000000 */   nop
     /* 013BC8 01DBF8C8 003F033C */  lui        $3, (0x3F000000 >> 16)
-    /* 013BCC 01DBF8CC 109A83AF */  sw         $3, -0x65F0($28)
+    /* 013BCC 01DBF8CC 109A83AF */  sw         $3, %gp_rel(step$938)($28)
     /* 013BD0 01DBF8D0 01000324 */  addiu      $3, $0, 0x1
-    /* 013BD4 01DBF8D4 149A83A3 */  sb         $3, -0x65EC($28)
+    /* 013BD4 01DBF8D4 149A83A3 */  sb         $3, %gp_rel(init$939)($28)
   .L01DBF8D8:
-    /* 013BD8 01DBF8D8 1C9A8383 */  lb         $3, -0x65E4($28)
+    /* 013BD8 01DBF8D8 1C9A8383 */  lb         $3, %gp_rel(init$942)($28)
     /* 013BDC 01DBF8DC 05006014 */  bnez       $3, .L01DBF8F4
     /* 013BE0 01DBF8E0 00000000 */   nop
     /* 013BE4 01DBF8E4 0040033C */  lui        $3, (0x40000000 >> 16)
-    /* 013BE8 01DBF8E8 189A83AF */  sw         $3, -0x65E8($28)
+    /* 013BE8 01DBF8E8 189A83AF */  sw         $3, %gp_rel(d$941)($28)
     /* 013BEC 01DBF8EC 01000324 */  addiu      $3, $0, 0x1
-    /* 013BF0 01DBF8F0 1C9A83A3 */  sb         $3, -0x65E4($28)
+    /* 013BF0 01DBF8F0 1C9A83A3 */  sb         $3, %gp_rel(init$942)($28)
   .L01DBF8F4:
     /* 013BF4 01DBF8F4 DE01013C */  lui        $1, %hi(CScript__2)
     /* 013BF8 01DBF8F8 001B248C */  lw         $4, %lo(CScript__2)($1)
@@ -4142,7 +4142,7 @@ glabel OpC_MotionProcess__Fv
     /* 013C38 01DBF938 00000000 */   nop
   .L01DBF93C:
     /* 013C3C 01DBF93C 0040033C */  lui        $3, (0x40000000 >> 16)
-    /* 013C40 01DBF940 189A83AF */  sw         $3, -0x65E8($28)
+    /* 013C40 01DBF940 189A83AF */  sw         $3, %gp_rel(d$941)($28)
     /* 013C44 01DBF944 D48380C7 */  lwc1       $f0, -0x7C2C($28)
     /* 013C48 01DBF948 E301013C */  lui        $1, %hi(Fuusya__2 + 0xD8)
     /* 013C4C 01DBF94C 48AC20E4 */  swc1       $f0, %lo(Fuusya__2 + 0xD8)($1)
@@ -4164,7 +4164,7 @@ glabel OpC_MotionProcess__Fv
     /* 013C88 01DBF988 15000045 */  bc1f       .L01DBF9E0
     /* 013C8C 01DBF98C 00000000 */   nop
     /* 013C90 01DBF990 688280C7 */  lwc1       $f0, -0x7D98($28)
-    /* 013C94 01DBF994 109A80E7 */  swc1       $f0, -0x65F0($28)
+    /* 013C94 01DBF994 109A80E7 */  swc1       $f0, %gp_rel(step$938)($28)
     /* 013C98 01DBF998 D88380C7 */  lwc1       $f0, -0x7C28($28)
     /* 013C9C 01DBF99C E301013C */  lui        $1, %hi(Fuusya__2 + 0xD8)
     /* 013CA0 01DBF9A0 48AC20E4 */  swc1       $f0, %lo(Fuusya__2 + 0xD8)($1)
@@ -4197,7 +4197,7 @@ glabel OpC_MotionProcess__Fv
     /* 013D04 01DBFA04 3001A527 */  addiu      $5, $29, 0x130
     /* 013D08 01DBFA08 A891040C */  jal        GetRef__7CCameraFPf
     /* 013D0C 01DBFA0C 00000000 */   nop
-    /* 013D10 01DBFA10 189A81C7 */  lwc1       $f1, -0x65E8($28)
+    /* 013D10 01DBFA10 189A81C7 */  lwc1       $f1, %gp_rel(d$941)($28)
     /* 013D14 01DBFA14 C842023C */  lui        $2, (0x42C80000 >> 16)
     /* 013D18 01DBFA18 00008244 */  mtc1       $2, $f0
     /* 013D1C 01DBFA1C 00000000 */  nop
@@ -4209,7 +4209,7 @@ glabel OpC_MotionProcess__Fv
     /* 013D34 01DBFA34 00008244 */  mtc1       $2, $f0
     /* 013D38 01DBFA38 00000000 */  nop
     /* 013D3C 01DBFA3C 00080046 */  add.s      $f0, $f1, $f0
-    /* 013D40 01DBFA40 189A80E7 */  swc1       $f0, -0x65E8($28)
+    /* 013D40 01DBFA40 189A80E7 */  swc1       $f0, %gp_rel(d$941)($28)
   .L01DBFA44:
     /* 013D44 01DBFA44 BE11040C */  jal        rand
     /* 013D48 01DBFA48 00000000 */   nop
@@ -4221,7 +4221,7 @@ glabel OpC_MotionProcess__Fv
     /* 013D60 01DBFA60 00008244 */  mtc1       $2, $f0
     /* 013D64 01DBFA64 00000000 */  nop
     /* 013D68 01DBFA68 60008046 */  cvt.s.w    $f1, $f0
-    /* 013D6C 01DBFA6C 189A80C7 */  lwc1       $f0, -0x65E8($28)
+    /* 013D6C 01DBFA6C 189A80C7 */  lwc1       $f0, %gp_rel(d$941)($28)
     /* 013D70 01DBFA70 43080046 */  div.s      $f1, $f1, $f0
     /* 013D74 01DBFA74 3401A0C7 */  lwc1       $f0, 0x134($29)
     /* 013D78 01DBFA78 00000146 */  add.s      $f0, $f0, $f1
@@ -4233,14 +4233,14 @@ glabel OpC_MotionProcess__Fv
     /* 013D90 01DBFA90 00000000 */   nop
   .L01DBFA94:
     /* 013D94 01DBFA94 003F033C */  lui        $3, (0x3F000000 >> 16)
-    /* 013D98 01DBFA98 109A83AF */  sw         $3, -0x65F0($28)
+    /* 013D98 01DBFA98 109A83AF */  sw         $3, %gp_rel(step$938)($28)
     /* 013D9C 01DBFA9C 20C1033C */  lui        $3, (0xC1200000 >> 16)
     /* 013DA0 01DBFAA0 E301013C */  lui        $1, %hi(Fuusya__2 + 0xD8)
     /* 013DA4 01DBFAA4 48AC23AC */  sw         $3, %lo(Fuusya__2 + 0xD8)($1)
     /* 013DA8 01DBFAA8 803F033C */  lui        $3, (0x3F800000 >> 16)
     /* 013DAC 01DBFAAC F49983AF */  sw         $3, -0x660C($28)
   .L01DBFAB0:
-    /* 013DB0 01DBFAB0 109A80C7 */  lwc1       $f0, -0x65F0($28)
+    /* 013DB0 01DBFAB0 109A80C7 */  lwc1       $f0, %gp_rel(step$938)($28)
     /* 013DB4 01DBFAB4 E101013C */  lui        $1, %hi(Op_MotionInfo + 0x8)
     /* 013DB8 01DBFAB8 E8CD20E4 */  swc1       $f0, %lo(Op_MotionInfo + 0x8)($1)
     /* 013DBC 01DBFABC DE01013C */  lui        $1, %hi(CScript__2 + 0x4E4)
@@ -4345,26 +4345,26 @@ glabel OpC_SoundProcess__Fv
     /* 013F20 01DBFC20 70FFBD27 */  addiu      $29, $29, -0x90
     /* 013F24 01DBFC24 1000BF7F */  sq         $31, 0x10($29)
     /* 013F28 01DBFC28 0000B07F */  sq         $16, 0x0($29)
-    /* 013F2C 01DBFC2C 249A8383 */  lb         $3, -0x65DC($28)
+    /* 013F2C 01DBFC2C 249A8383 */  lb         $3, %gp_rel(init$993)($28)
     /* 013F30 01DBFC30 05006014 */  bnez       $3, .L01DBFC48
     /* 013F34 01DBFC34 00000000 */   nop
     /* 013F38 01DBFC38 2042033C */  lui        $3, (0x42200000 >> 16)
-    /* 013F3C 01DBFC3C 209A83AF */  sw         $3, -0x65E0($28)
+    /* 013F3C 01DBFC3C 209A83AF */  sw         $3, %gp_rel(vol$992)($28)
     /* 013F40 01DBFC40 01000324 */  addiu      $3, $0, 0x1
-    /* 013F44 01DBFC44 249A83A3 */  sb         $3, -0x65DC($28)
+    /* 013F44 01DBFC44 249A83A3 */  sb         $3, %gp_rel(init$993)($28)
   .L01DBFC48:
-    /* 013F48 01DBFC48 2C9A8383 */  lb         $3, -0x65D4($28)
+    /* 013F48 01DBFC48 2C9A8383 */  lb         $3, %gp_rel(init$996)($28)
     /* 013F4C 01DBFC4C 04006014 */  bnez       $3, .L01DBFC60
     /* 013F50 01DBFC50 00000000 */   nop
-    /* 013F54 01DBFC54 289A80AF */  sw         $0, -0x65D8($28)
+    /* 013F54 01DBFC54 289A80AF */  sw         $0, %gp_rel(cnt$995)($28)
     /* 013F58 01DBFC58 01000324 */  addiu      $3, $0, 0x1
-    /* 013F5C 01DBFC5C 2C9A83A3 */  sb         $3, -0x65D4($28)
+    /* 013F5C 01DBFC5C 2C9A83A3 */  sb         $3, %gp_rel(init$996)($28)
   .L01DBFC60:
     /* 013F60 01DBFC60 FC99838F */  lw         $3, -0x6604($28)
     /* 013F64 01DBFC64 12006014 */  bnez       $3, .L01DBFCB0
     /* 013F68 01DBFC68 00000000 */   nop
     /* 013F6C 01DBFC6C 2042033C */  lui        $3, (0x42200000 >> 16)
-    /* 013F70 01DBFC70 209A83AF */  sw         $3, -0x65E0($28)
+    /* 013F70 01DBFC70 209A83AF */  sw         $3, %gp_rel(vol$992)($28)
     /* 013F74 01DBFC74 DE01013C */  lui        $1, %hi(CScript__2)
     /* 013F78 01DBFC78 001B238C */  lw         $3, %lo(CScript__2)($1)
     /* 013F7C 01DBFC7C 3A006328 */  slti       $3, $3, 0x3A
@@ -4382,19 +4382,19 @@ glabel OpC_SoundProcess__Fv
     /* 013FA8 01DBFCA8 ACC3760C */  jal        OpBgmPlay__Fv
     /* 013FAC 01DBFCAC 00000000 */   nop
   .L01DBFCB0:
-    /* 013FB0 01DBFCB0 349A8383 */  lb         $3, -0x65CC($28)
+    /* 013FB0 01DBFCB0 349A8383 */  lb         $3, %gp_rel(init$1005)($28)
     /* 013FB4 01DBFCB4 04006014 */  bnez       $3, .L01DBFCC8
     /* 013FB8 01DBFCB8 00000000 */   nop
-    /* 013FBC 01DBFCBC 309A80AF */  sw         $0, -0x65D0($28)
+    /* 013FBC 01DBFCBC 309A80AF */  sw         $0, %gp_rel(se$1004)($28)
     /* 013FC0 01DBFCC0 01000324 */  addiu      $3, $0, 0x1
-    /* 013FC4 01DBFCC4 349A83A3 */  sb         $3, -0x65CC($28)
+    /* 013FC4 01DBFCC4 349A83A3 */  sb         $3, %gp_rel(init$1005)($28)
   .L01DBFCC8:
     /* 013FC8 01DBFCC8 DE01013C */  lui        $1, %hi(CScript__2)
     /* 013FCC 01DBFCCC 001B248C */  lw         $4, %lo(CScript__2)($1)
     /* 013FD0 01DBFCD0 46000324 */  addiu      $3, $0, 0x46
     /* 013FD4 01DBFCD4 0D008314 */  bne        $4, $3, .L01DBFD0C
     /* 013FD8 01DBFCD8 00000000 */   nop
-    /* 013FDC 01DBFCDC 309A838F */  lw         $3, -0x65D0($28)
+    /* 013FDC 01DBFCDC 309A838F */  lw         $3, %gp_rel(se$1004)($28)
     /* 013FE0 01DBFCE0 0B006014 */  bnez       $3, .L01DBFD10
     /* 013FE4 01DBFCE4 00000000 */   nop
     /* 013FE8 01DBFCE8 3C8D8427 */  addiu      $4, $28, -0x72C4
@@ -4403,11 +4403,11 @@ glabel OpC_SoundProcess__Fv
     /* 013FF4 01DBFCF4 8814050C */  jal        SQ_Play__6CSoundFii
     /* 013FF8 01DBFCF8 00000000 */   nop
     /* 013FFC 01DBFCFC 01000324 */  addiu      $3, $0, 0x1
-    /* 014000 01DBFD00 309A83AF */  sw         $3, -0x65D0($28)
+    /* 014000 01DBFD00 309A83AF */  sw         $3, %gp_rel(se$1004)($28)
     /* 014004 01DBFD04 02000010 */  b          .L01DBFD10
     /* 014008 01DBFD08 00000000 */   nop
   .L01DBFD0C:
-    /* 01400C 01DBFD0C 309A80AF */  sw         $0, -0x65D0($28)
+    /* 01400C 01DBFD0C 309A80AF */  sw         $0, %gp_rel(se$1004)($28)
   .L01DBFD10:
     /* 014010 01DBFD10 DE01013C */  lui        $1, %hi(CScript__2)
     /* 014014 01DBFD14 001B238C */  lw         $3, %lo(CScript__2)($1)
@@ -4574,12 +4574,12 @@ glabel OpC_SoundProcess__Fv
     /* 014278 01DBFF78 6E008314 */  bne        $4, $3, .L01DC0134
     /* 01427C 01DBFF7C 00000000 */   nop
   .L01DBFF80:
-    /* 014280 01DBFF80 3C9A8283 */  lb         $2, -0x65C4($28)
+    /* 014280 01DBFF80 3C9A8283 */  lb         $2, %gp_rel(init$1042)($28)
     /* 014284 01DBFF84 04004014 */  bnez       $2, .L01DBFF98
     /* 014288 01DBFF88 00000000 */   nop
-    /* 01428C 01DBFF8C 389A80AF */  sw         $0, -0x65C8($28)
+    /* 01428C 01DBFF8C 389A80AF */  sw         $0, %gp_rel(wait$1041)($28)
     /* 014290 01DBFF90 01000224 */  addiu      $2, $0, 0x1
-    /* 014294 01DBFF94 3C9A82A3 */  sb         $2, -0x65C4($28)
+    /* 014294 01DBFF94 3C9A82A3 */  sb         $2, %gp_rel(init$1042)($28)
   .L01DBFF98:
     /* 014298 01DBFF98 5000A427 */  addiu      $4, $29, 0x50
     /* 01429C 01DBFF9C E001023C */  lui        $2, %hi(Chara__3 + 0xC2A0)
@@ -4593,7 +4593,7 @@ glabel OpC_SoundProcess__Fv
     /* 0142BC 01DBFFBC 00008244 */  mtc1       $2, $f0
     /* 0142C0 01DBFFC0 00000000 */  nop
     /* 0142C4 01DBFFC4 60008046 */  cvt.s.w    $f1, $f0
-    /* 0142C8 01DBFFC8 389A838F */  lw         $3, -0x65C8($28)
+    /* 0142C8 01DBFFC8 389A838F */  lw         $3, %gp_rel(wait$1041)($28)
     /* 0142CC 01DBFFCC 57006014 */  bnez       $3, .L01DC012C
     /* 0142D0 01DBFFD0 00000000 */   nop
     /* 0142D4 01DBFFD4 9242033C */  lui        $3, (0x42920000 >> 16)
@@ -4638,7 +4638,7 @@ glabel OpC_SoundProcess__Fv
     /* 01436C 01DC006C 00000000 */   nop
   .L01DC0070:
     /* 014370 01DC0070 04000324 */  addiu      $3, $0, 0x4
-    /* 014374 01DC0074 389A83AF */  sw         $3, -0x65C8($28)
+    /* 014374 01DC0074 389A83AF */  sw         $3, %gp_rel(wait$1041)($28)
     /* 014378 01DC0078 2E000010 */  b          .L01DC0134
     /* 01437C 01DC007C 00000000 */   nop
   .L01DC0080:
@@ -4684,24 +4684,24 @@ glabel OpC_SoundProcess__Fv
     /* 014418 01DC0118 00000000 */   nop
   .L01DC011C:
     /* 01441C 01DC011C 04000324 */  addiu      $3, $0, 0x4
-    /* 014420 01DC0120 389A83AF */  sw         $3, -0x65C8($28)
+    /* 014420 01DC0120 389A83AF */  sw         $3, %gp_rel(wait$1041)($28)
     /* 014424 01DC0124 03000010 */  b          .L01DC0134
     /* 014428 01DC0128 00000000 */   nop
   .L01DC012C:
     /* 01442C 01DC012C FFFF6324 */  addiu      $3, $3, -0x1
-    /* 014430 01DC0130 389A83AF */  sw         $3, -0x65C8($28)
+    /* 014430 01DC0130 389A83AF */  sw         $3, %gp_rel(wait$1041)($28)
   .L01DC0134:
     /* 014434 01DC0134 DE01013C */  lui        $1, %hi(CScript__2 + 0x270)
     /* 014438 01DC0138 701D248C */  lw         $4, %lo(CScript__2 + 0x270)($1)
     /* 01443C 01DC013C 05000324 */  addiu      $3, $0, 0x5
     /* 014440 01DC0140 50008314 */  bne        $4, $3, .L01DC0284
     /* 014444 01DC0144 00000000 */   nop
-    /* 014448 01DC0148 449A8283 */  lb         $2, -0x65BC($28)
+    /* 014448 01DC0148 449A8283 */  lb         $2, %gp_rel(init$1063__2)($28)
     /* 01444C 01DC014C 04004014 */  bnez       $2, .L01DC0160
     /* 014450 01DC0150 00000000 */   nop
-    /* 014454 01DC0154 409A80AF */  sw         $0, -0x65C0($28)
+    /* 014454 01DC0154 409A80AF */  sw         $0, %gp_rel(wait$1062)($28)
     /* 014458 01DC0158 01000224 */  addiu      $2, $0, 0x1
-    /* 01445C 01DC015C 449A82A3 */  sb         $2, -0x65BC($28)
+    /* 01445C 01DC015C 449A82A3 */  sb         $2, %gp_rel(init$1063__2)($28)
   .L01DC0160:
     /* 014460 01DC0160 6000A427 */  addiu      $4, $29, 0x60
     /* 014464 01DC0164 E001023C */  lui        $2, %hi(Chara__3 + 0xC2A0)
@@ -4715,7 +4715,7 @@ glabel OpC_SoundProcess__Fv
     /* 014484 01DC0184 00008244 */  mtc1       $2, $f0
     /* 014488 01DC0188 00000000 */  nop
     /* 01448C 01DC018C 60008046 */  cvt.s.w    $f1, $f0
-    /* 014490 01DC0190 409A838F */  lw         $3, -0x65C0($28)
+    /* 014490 01DC0190 409A838F */  lw         $3, %gp_rel(wait$1062)($28)
     /* 014494 01DC0194 39006014 */  bnez       $3, .L01DC027C
     /* 014498 01DC0198 00000000 */   nop
     /* 01449C 01DC019C 8143033C */  lui        $3, (0x43810000 >> 16)
@@ -4743,7 +4743,7 @@ glabel OpC_SoundProcess__Fv
     /* 0144F4 01DC01F4 D0C3760C */  jal        OpPlayVolPanSE__FPfffiii
     /* 0144F8 01DC01F8 00000000 */   nop
     /* 0144FC 01DC01FC 04000324 */  addiu      $3, $0, 0x4
-    /* 014500 01DC0200 409A83AF */  sw         $3, -0x65C0($28)
+    /* 014500 01DC0200 409A83AF */  sw         $3, %gp_rel(wait$1062)($28)
     /* 014504 01DC0204 1F000010 */  b          .L01DC0284
     /* 014508 01DC0208 00000000 */   nop
   .L01DC020C:
@@ -4772,23 +4772,23 @@ glabel OpC_SoundProcess__Fv
     /* 014564 01DC0264 D0C3760C */  jal        OpPlayVolPanSE__FPfffiii
     /* 014568 01DC0268 00000000 */   nop
     /* 01456C 01DC026C 04000324 */  addiu      $3, $0, 0x4
-    /* 014570 01DC0270 409A83AF */  sw         $3, -0x65C0($28)
+    /* 014570 01DC0270 409A83AF */  sw         $3, %gp_rel(wait$1062)($28)
     /* 014574 01DC0274 03000010 */  b          .L01DC0284
     /* 014578 01DC0278 00000000 */   nop
   .L01DC027C:
     /* 01457C 01DC027C FFFF6324 */  addiu      $3, $3, -0x1
-    /* 014580 01DC0280 409A83AF */  sw         $3, -0x65C0($28)
+    /* 014580 01DC0280 409A83AF */  sw         $3, %gp_rel(wait$1062)($28)
   .L01DC0284:
     /* 014584 01DC0284 DE01013C */  lui        $1, %hi(CScript__2 + 0x2D4)
     /* 014588 01DC0288 D41D2390 */  lbu        $3, %lo(CScript__2 + 0x2D4)($1)
     /* 01458C 01DC028C 50006010 */  beqz       $3, .L01DC03D0
     /* 014590 01DC0290 00000000 */   nop
-    /* 014594 01DC0294 4C9A8283 */  lb         $2, -0x65B4($28)
+    /* 014594 01DC0294 4C9A8283 */  lb         $2, %gp_rel(init$1078)($28)
     /* 014598 01DC0298 04004014 */  bnez       $2, .L01DC02AC
     /* 01459C 01DC029C 00000000 */   nop
-    /* 0145A0 01DC02A0 489A80AF */  sw         $0, -0x65B8($28)
+    /* 0145A0 01DC02A0 489A80AF */  sw         $0, %gp_rel(wait$1077)($28)
     /* 0145A4 01DC02A4 01000224 */  addiu      $2, $0, 0x1
-    /* 0145A8 01DC02A8 4C9A82A3 */  sb         $2, -0x65B4($28)
+    /* 0145A8 01DC02A8 4C9A82A3 */  sb         $2, %gp_rel(init$1078)($28)
   .L01DC02AC:
     /* 0145AC 01DC02AC 7000A427 */  addiu      $4, $29, 0x70
     /* 0145B0 01DC02B0 E001023C */  lui        $2, %hi(Chara__3 + 0xE600)
@@ -4802,7 +4802,7 @@ glabel OpC_SoundProcess__Fv
     /* 0145D0 01DC02D0 00008244 */  mtc1       $2, $f0
     /* 0145D4 01DC02D4 00000000 */  nop
     /* 0145D8 01DC02D8 60008046 */  cvt.s.w    $f1, $f0
-    /* 0145DC 01DC02DC 489A838F */  lw         $3, -0x65B8($28)
+    /* 0145DC 01DC02DC 489A838F */  lw         $3, %gp_rel(wait$1077)($28)
     /* 0145E0 01DC02E0 39006014 */  bnez       $3, .L01DC03C8
     /* 0145E4 01DC02E4 00000000 */   nop
     /* 0145E8 01DC02E8 F642033C */  lui        $3, (0x42F60000 >> 16)
@@ -4830,7 +4830,7 @@ glabel OpC_SoundProcess__Fv
     /* 014640 01DC0340 D0C3760C */  jal        OpPlayVolPanSE__FPfffiii
     /* 014644 01DC0344 00000000 */   nop
     /* 014648 01DC0348 04000324 */  addiu      $3, $0, 0x4
-    /* 01464C 01DC034C 489A83AF */  sw         $3, -0x65B8($28)
+    /* 01464C 01DC034C 489A83AF */  sw         $3, %gp_rel(wait$1077)($28)
     /* 014650 01DC0350 1F000010 */  b          .L01DC03D0
     /* 014654 01DC0354 00000000 */   nop
   .L01DC0358:
@@ -4859,12 +4859,12 @@ glabel OpC_SoundProcess__Fv
     /* 0146B0 01DC03B0 D0C3760C */  jal        OpPlayVolPanSE__FPfffiii
     /* 0146B4 01DC03B4 00000000 */   nop
     /* 0146B8 01DC03B8 04000324 */  addiu      $3, $0, 0x4
-    /* 0146BC 01DC03BC 489A83AF */  sw         $3, -0x65B8($28)
+    /* 0146BC 01DC03BC 489A83AF */  sw         $3, %gp_rel(wait$1077)($28)
     /* 0146C0 01DC03C0 03000010 */  b          .L01DC03D0
     /* 0146C4 01DC03C4 00000000 */   nop
   .L01DC03C8:
     /* 0146C8 01DC03C8 FFFF6324 */  addiu      $3, $3, -0x1
-    /* 0146CC 01DC03CC 489A83AF */  sw         $3, -0x65B8($28)
+    /* 0146CC 01DC03CC 489A83AF */  sw         $3, %gp_rel(wait$1077)($28)
   .L01DC03D0:
     /* 0146D0 01DC03D0 DE01013C */  lui        $1, %hi(CScript__2 + 0x18)
     /* 0146D4 01DC03D4 181B248C */  lw         $4, %lo(CScript__2 + 0x18)($1)
@@ -4875,12 +4875,12 @@ glabel OpC_SoundProcess__Fv
     /* 0146E8 01DC03E8 A01D2390 */  lbu        $3, %lo(CScript__2 + 0x2A0)($1)
     /* 0146EC 01DC03EC 50006010 */  beqz       $3, .L01DC0530
     /* 0146F0 01DC03F0 00000000 */   nop
-    /* 0146F4 01DC03F4 549A8283 */  lb         $2, -0x65AC($28)
+    /* 0146F4 01DC03F4 549A8283 */  lb         $2, %gp_rel(init$1095)($28)
     /* 0146F8 01DC03F8 04004014 */  bnez       $2, .L01DC040C
     /* 0146FC 01DC03FC 00000000 */   nop
-    /* 014700 01DC0400 509A80AF */  sw         $0, -0x65B0($28)
+    /* 014700 01DC0400 509A80AF */  sw         $0, %gp_rel(wait$1094)($28)
     /* 014704 01DC0404 01000224 */  addiu      $2, $0, 0x1
-    /* 014708 01DC0408 549A82A3 */  sb         $2, -0x65AC($28)
+    /* 014708 01DC0408 549A82A3 */  sb         $2, %gp_rel(init$1095)($28)
   .L01DC040C:
     /* 01470C 01DC040C 8000A427 */  addiu      $4, $29, 0x80
     /* 014710 01DC0410 E001023C */  lui        $2, %hi(Chara__3 + 0xD450)
@@ -4894,7 +4894,7 @@ glabel OpC_SoundProcess__Fv
     /* 014730 01DC0430 00008244 */  mtc1       $2, $f0
     /* 014734 01DC0434 00000000 */  nop
     /* 014738 01DC0438 60008046 */  cvt.s.w    $f1, $f0
-    /* 01473C 01DC043C 509A838F */  lw         $3, -0x65B0($28)
+    /* 01473C 01DC043C 509A838F */  lw         $3, %gp_rel(wait$1094)($28)
     /* 014740 01DC0440 39006014 */  bnez       $3, .L01DC0528
     /* 014744 01DC0444 00000000 */   nop
     /* 014748 01DC0448 0442033C */  lui        $3, (0x42040000 >> 16)
@@ -4922,7 +4922,7 @@ glabel OpC_SoundProcess__Fv
     /* 0147A0 01DC04A0 D0C3760C */  jal        OpPlayVolPanSE__FPfffiii
     /* 0147A4 01DC04A4 00000000 */   nop
     /* 0147A8 01DC04A8 04000324 */  addiu      $3, $0, 0x4
-    /* 0147AC 01DC04AC 509A83AF */  sw         $3, -0x65B0($28)
+    /* 0147AC 01DC04AC 509A83AF */  sw         $3, %gp_rel(wait$1094)($28)
     /* 0147B0 01DC04B0 1F000010 */  b          .L01DC0530
     /* 0147B4 01DC04B4 00000000 */   nop
   .L01DC04B8:
@@ -4951,12 +4951,12 @@ glabel OpC_SoundProcess__Fv
     /* 014810 01DC0510 D0C3760C */  jal        OpPlayVolPanSE__FPfffiii
     /* 014814 01DC0514 00000000 */   nop
     /* 014818 01DC0518 04000324 */  addiu      $3, $0, 0x4
-    /* 01481C 01DC051C 509A83AF */  sw         $3, -0x65B0($28)
+    /* 01481C 01DC051C 509A83AF */  sw         $3, %gp_rel(wait$1094)($28)
     /* 014820 01DC0520 03000010 */  b          .L01DC0530
     /* 014824 01DC0524 00000000 */   nop
   .L01DC0528:
     /* 014828 01DC0528 FFFF6324 */  addiu      $3, $3, -0x1
-    /* 01482C 01DC052C 509A83AF */  sw         $3, -0x65B0($28)
+    /* 01482C 01DC052C 509A83AF */  sw         $3, %gp_rel(wait$1094)($28)
   .L01DC0530:
     /* 014830 01DC0530 1000BF7B */  lq         $31, 0x10($29)
     /* 014834 01DC0534 0000B07B */  lq         $16, 0x0($29)
@@ -5412,20 +5412,20 @@ glabel OpC_DrawProcess__Fv
     /* 014ED0 01DC0BD0 E8FF4014 */  bnez       $2, .L01DC0B74
     /* 014ED4 01DC0BD4 00000000 */   nop
   .L01DC0BD8:
-    /* 014ED8 01DC0BD8 5C9A8283 */  lb         $2, -0x65A4($28)
+    /* 014ED8 01DC0BD8 5C9A8283 */  lb         $2, %gp_rel(init$1181)($28)
     /* 014EDC 01DC0BDC 04004014 */  bnez       $2, .L01DC0BF0
     /* 014EE0 01DC0BE0 00000000 */   nop
-    /* 014EE4 01DC0BE4 589A80AF */  sw         $0, -0x65A8($28)
+    /* 014EE4 01DC0BE4 589A80AF */  sw         $0, %gp_rel(flg$1180)($28)
     /* 014EE8 01DC0BE8 01000224 */  addiu      $2, $0, 0x1
-    /* 014EEC 01DC0BEC 5C9A82A3 */  sb         $2, -0x65A4($28)
+    /* 014EEC 01DC0BEC 5C9A82A3 */  sb         $2, %gp_rel(init$1181)($28)
   .L01DC0BF0:
-    /* 014EF0 01DC0BF0 649A8283 */  lb         $2, -0x659C($28)
+    /* 014EF0 01DC0BF0 649A8283 */  lb         $2, %gp_rel(init$1184)($28)
     /* 014EF4 01DC0BF4 05004014 */  bnez       $2, .L01DC0C0C
     /* 014EF8 01DC0BF8 00000000 */   nop
     /* 014EFC 01DC0BFC FF000224 */  addiu      $2, $0, 0xFF
-    /* 014F00 01DC0C00 609A82AF */  sw         $2, -0x65A0($28)
+    /* 014F00 01DC0C00 609A82AF */  sw         $2, %gp_rel(bright$1183)($28)
     /* 014F04 01DC0C04 01000224 */  addiu      $2, $0, 0x1
-    /* 014F08 01DC0C08 649A82A3 */  sb         $2, -0x659C($28)
+    /* 014F08 01DC0C08 649A82A3 */  sb         $2, %gp_rel(init$1184)($28)
   .L01DC0C0C:
     /* 014F0C 01DC0C0C DE01013C */  lui        $1, %hi(CScript__2 + 0x14)
     /* 014F10 01DC0C10 141B238C */  lw         $3, %lo(CScript__2 + 0x14)($1)
@@ -5434,11 +5434,11 @@ glabel OpC_DrawProcess__Fv
     /* 014F1C 01DC0C1C 00000000 */   nop
     /* 014F20 01DC0C20 DE01013C */  lui        $1, %hi(CScript__2 + 0x14)
     /* 014F24 01DC0C24 141B20AC */  sw         $0, %lo(CScript__2 + 0x14)($1)
-    /* 014F28 01DC0C28 589A82AF */  sw         $2, -0x65A8($28)
+    /* 014F28 01DC0C28 589A82AF */  sw         $2, %gp_rel(flg$1180)($28)
     /* 014F2C 01DC0C2C FF000224 */  addiu      $2, $0, 0xFF
-    /* 014F30 01DC0C30 609A82AF */  sw         $2, -0x65A0($28)
+    /* 014F30 01DC0C30 609A82AF */  sw         $2, %gp_rel(bright$1183)($28)
   .L01DC0C34:
-    /* 014F34 01DC0C34 589A838F */  lw         $3, -0x65A8($28)
+    /* 014F34 01DC0C34 589A838F */  lw         $3, %gp_rel(flg$1180)($28)
     /* 014F38 01DC0C38 01000224 */  addiu      $2, $0, 0x1
     /* 014F3C 01DC0C3C 35006214 */  bne        $3, $2, .L01DC0D14
     /* 014F40 01DC0C40 00000000 */   nop
@@ -5449,7 +5449,7 @@ glabel OpC_DrawProcess__Fv
     /* 014F54 01DC0C54 00000000 */   nop
     /* 014F58 01DC0C58 28860070 */  paddub     $16, $0, $0
     /* 014F5C 01DC0C5C 3001A1C7 */  lwc1       $f1, 0x130($29)
-    /* 014F60 01DC0C60 609A828F */  lw         $2, -0x65A0($28)
+    /* 014F60 01DC0C60 609A828F */  lw         $2, %gp_rel(bright$1183)($28)
     /* 014F64 01DC0C64 00008244 */  mtc1       $2, $f0
     /* 014F68 01DC0C68 00000000 */  nop
     /* 014F6C 01DC0C6C 20008046 */  cvt.s.w    $f0, $f0
@@ -5484,9 +5484,9 @@ glabel OpC_DrawProcess__Fv
     /* 014FD8 01DC0CD8 000060E4 */  swc1       $f0, 0x0($3)
     /* 014FDC 01DC0CDC 01001024 */  addiu      $16, $0, 0x1
   .L01DC0CE0:
-    /* 014FE0 01DC0CE0 609A828F */  lw         $2, -0x65A0($28)
+    /* 014FE0 01DC0CE0 609A828F */  lw         $2, %gp_rel(bright$1183)($28)
     /* 014FE4 01DC0CE4 FCFF4224 */  addiu      $2, $2, -0x4
-    /* 014FE8 01DC0CE8 609A82AF */  sw         $2, -0x65A0($28)
+    /* 014FE8 01DC0CE8 609A82AF */  sw         $2, %gp_rel(bright$1183)($28)
     /* 014FEC 01DC0CEC 2500023C */  lui        $2, %hi(light)
     /* 014FF0 01DC0CF0 801B4424 */  addiu      $4, $2, %lo(light)
     /* 014FF4 01DC0CF4 3001A527 */  addiu      $5, $29, 0x130
@@ -5494,12 +5494,12 @@ glabel OpC_DrawProcess__Fv
     /* 014FFC 01DC0CFC 00000000 */   nop
     /* 015000 01DC0D00 06000016 */  bnez       $16, .L01DC0D1C
     /* 015004 01DC0D04 00000000 */   nop
-    /* 015008 01DC0D08 589A80AF */  sw         $0, -0x65A8($28)
+    /* 015008 01DC0D08 589A80AF */  sw         $0, %gp_rel(flg$1180)($28)
     /* 01500C 01DC0D0C 03000010 */  b          .L01DC0D1C
     /* 015010 01DC0D10 00000000 */   nop
   .L01DC0D14:
     /* 015014 01DC0D14 FF000224 */  addiu      $2, $0, 0xFF
-    /* 015018 01DC0D18 609A82AF */  sw         $2, -0x65A0($28)
+    /* 015018 01DC0D18 609A82AF */  sw         $2, %gp_rel(bright$1183)($28)
   .L01DC0D1C:
     /* 01501C 01DC0D1C C701023C */  lui        $2, %hi(TexManager)
     /* 015020 01DC0D20 70584424 */  addiu      $4, $2, %lo(TexManager)
@@ -7670,23 +7670,23 @@ glabel SmokeProcess__Fv__2
     /* 017030 01DC2D30 90FDBD27 */  addiu      $29, $29, -0x270
     /* 017034 01DC2D34 1000BF7F */  sq         $31, 0x10($29)
     /* 017038 01DC2D38 0000B07F */  sq         $16, 0x0($29)
-    /* 01703C 01DC2D3C 6C9A8283 */  lb         $2, -0x6594($28)
+    /* 01703C 01DC2D3C 6C9A8283 */  lb         $2, %gp_rel(init$1745)($28)
     /* 017040 01DC2D40 04004014 */  bnez       $2, .L01DC2D54
     /* 017044 01DC2D44 00000000 */   nop
-    /* 017048 01DC2D48 689A80AF */  sw         $0, -0x6598($28)
+    /* 017048 01DC2D48 689A80AF */  sw         $0, %gp_rel(cnt$1744)($28)
     /* 01704C 01DC2D4C 01000224 */  addiu      $2, $0, 0x1
-    /* 017050 01DC2D50 6C9A82A3 */  sb         $2, -0x6594($28)
+    /* 017050 01DC2D50 6C9A82A3 */  sb         $2, %gp_rel(init$1745)($28)
   .L01DC2D54:
-    /* 017054 01DC2D54 689A828F */  lw         $2, -0x6598($28)
+    /* 017054 01DC2D54 689A828F */  lw         $2, %gp_rel(cnt$1744)($28)
     /* 017058 01DC2D58 01004224 */  addiu      $2, $2, 0x1
-    /* 01705C 01DC2D5C 689A82AF */  sw         $2, -0x6598($28)
-    /* 017060 01DC2D60 689A828F */  lw         $2, -0x6598($28)
+    /* 01705C 01DC2D5C 689A82AF */  sw         $2, %gp_rel(cnt$1744)($28)
+    /* 017060 01DC2D60 689A828F */  lw         $2, %gp_rel(cnt$1744)($28)
     /* 017064 01DC2D64 08004128 */  slti       $1, $2, 0x8
     /* 017068 01DC2D68 02002014 */  bnez       $1, .L01DC2D74
     /* 01706C 01DC2D6C 00000000 */   nop
-    /* 017070 01DC2D70 689A80AF */  sw         $0, -0x6598($28)
+    /* 017070 01DC2D70 689A80AF */  sw         $0, %gp_rel(cnt$1744)($28)
   .L01DC2D74:
-    /* 017074 01DC2D74 689A828F */  lw         $2, -0x6598($28)
+    /* 017074 01DC2D74 689A828F */  lw         $2, %gp_rel(cnt$1744)($28)
     /* 017078 01DC2D78 3A014014 */  bnez       $2, .L01DC3264
     /* 01707C 01DC2D7C 00000000 */   nop
     /* 017080 01DC2D80 DE01023C */  lui        $2, %hi(LIT_1751)

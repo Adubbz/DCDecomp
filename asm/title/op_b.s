@@ -2347,19 +2347,19 @@ glabel OpB_MotionProcess__Fv
     /* 00EE20 01DBAB20 20A34424 */  addiu      $4, $2, %lo(Wind)
     /* 00EE24 01DBAB24 2CED040C */  jal        SetVelocity__5CWindFf
     /* 00EE28 01DBAB28 00000000 */   nop
-    /* 00EE2C 01DBAB2C B8998383 */  lb         $3, -0x6648($28)
+    /* 00EE2C 01DBAB2C B8998383 */  lb         $3, %gp_rel(init$590)($28)
     /* 00EE30 01DBAB30 04006014 */  bnez       $3, .L01DBAB44
     /* 00EE34 01DBAB34 00000000 */   nop
-    /* 00EE38 01DBAB38 B49980AF */  sw         $0, -0x664C($28)
+    /* 00EE38 01DBAB38 B49980AF */  sw         $0, %gp_rel(camera$589)($28)
     /* 00EE3C 01DBAB3C 01000324 */  addiu      $3, $0, 0x1
-    /* 00EE40 01DBAB40 B89983A3 */  sb         $3, -0x6648($28)
+    /* 00EE40 01DBAB40 B89983A3 */  sb         $3, %gp_rel(init$590)($28)
   .L01DBAB44:
-    /* 00EE44 01DBAB44 B499838F */  lw         $3, -0x664C($28)
+    /* 00EE44 01DBAB44 B499838F */  lw         $3, %gp_rel(camera$589)($28)
     /* 00EE48 01DBAB48 DE01013C */  lui        $1, %hi(CScript__2)
     /* 00EE4C 01DBAB4C 001B248C */  lw         $4, %lo(CScript__2)($1)
     /* 00EE50 01DBAB50 2B006410 */  beq        $3, $4, .L01DBAC00
     /* 00EE54 01DBAB54 00000000 */   nop
-    /* 00EE58 01DBAB58 B49984AF */  sw         $4, -0x664C($28)
+    /* 00EE58 01DBAB58 B49984AF */  sw         $4, %gp_rel(camera$589)($28)
     /* 00EE5C 01DBAB5C 33000324 */  addiu      $3, $0, 0x33
     /* 00EE60 01DBAB60 12008314 */  bne        $4, $3, .L01DBABAC
     /* 00EE64 01DBAB64 00000000 */   nop
@@ -2383,7 +2383,7 @@ glabel OpB_MotionProcess__Fv
     /* 00EEA4 01DBABA4 F8FF6014 */  bnez       $3, .L01DBAB88
     /* 00EEA8 01DBABA8 00000000 */   nop
   .L01DBABAC:
-    /* 00EEAC 01DBABAC B499848F */  lw         $4, -0x664C($28)
+    /* 00EEAC 01DBABAC B499848F */  lw         $4, %gp_rel(camera$589)($28)
     /* 00EEB0 01DBABB0 39000324 */  addiu      $3, $0, 0x39
     /* 00EEB4 01DBABB4 12008314 */  bne        $4, $3, .L01DBAC00
     /* 00EEB8 01DBABB8 00000000 */   nop
@@ -2506,11 +2506,11 @@ glabel OpB_SoundProcess__Fv
     /* 00F060 01DBAD60 081D228C */  lw         $2, %lo(CScript__2 + 0x208)($1)
     /* 00F064 01DBAD64 64004014 */  bnez       $2, .L01DBAEF8
     /* 00F068 01DBAD68 00000000 */   nop
-    /* 00F06C 01DBAD6C C0998283 */  lb         $2, -0x6640($28)
+    /* 00F06C 01DBAD6C C0998283 */  lb         $2, %gp_rel(init$645__2)($28)
     /* 00F070 01DBAD70 03004014 */  bnez       $2, .L01DBAD80
     /* 00F074 01DBAD74 00000000 */   nop
-    /* 00F078 01DBAD78 BC9980AF */  sw         $0, -0x6644($28)
-    /* 00F07C 01DBAD7C C09984A3 */  sb         $4, -0x6640($28)
+    /* 00F078 01DBAD78 BC9980AF */  sw         $0, %gp_rel(wait$644)($28)
+    /* 00F07C 01DBAD7C C09984A3 */  sb         $4, %gp_rel(init$645__2)($28)
   .L01DBAD80:
     /* 00F080 01DBAD80 2000A427 */  addiu      $4, $29, 0x20
     /* 00F084 01DBAD84 E001023C */  lui        $2, %hi(Chara__3 + 0x9F40)
@@ -2521,7 +2521,7 @@ glabel OpB_SoundProcess__Fv
     /* 00F098 01DBAD98 00A12CC4 */  lwc1       $f12, %lo(Chara__3 + 0xA220)($1)
     /* 00F09C 01DBAD9C 2C44040C */  jal        fptosi
     /* 00F0A0 01DBADA0 00000000 */   nop
-    /* 00F0A4 01DBADA4 BC99838F */  lw         $3, -0x6644($28)
+    /* 00F0A4 01DBADA4 BC99838F */  lw         $3, %gp_rel(wait$644)($28)
     /* 00F0A8 01DBADA8 51006014 */  bnez       $3, .L01DBAEF0
     /* 00F0AC 01DBADAC 00000000 */   nop
     /* 00F0B0 01DBADB0 1D004128 */  slti       $1, $2, 0x1D
@@ -2563,7 +2563,7 @@ glabel OpB_SoundProcess__Fv
     /* 00F13C 01DBAE3C 00000000 */   nop
   .L01DBAE40:
     /* 00F140 01DBAE40 04000224 */  addiu      $2, $0, 0x4
-    /* 00F144 01DBAE44 BC9982AF */  sw         $2, -0x6644($28)
+    /* 00F144 01DBAE44 BC9982AF */  sw         $2, %gp_rel(wait$644)($28)
     /* 00F148 01DBAE48 2B000010 */  b          .L01DBAEF8
     /* 00F14C 01DBAE4C 00000000 */   nop
   .L01DBAE50:
@@ -2606,12 +2606,12 @@ glabel OpB_SoundProcess__Fv
     /* 00F1DC 01DBAEDC 00000000 */   nop
   .L01DBAEE0:
     /* 00F1E0 01DBAEE0 04000224 */  addiu      $2, $0, 0x4
-    /* 00F1E4 01DBAEE4 BC9982AF */  sw         $2, -0x6644($28)
+    /* 00F1E4 01DBAEE4 BC9982AF */  sw         $2, %gp_rel(wait$644)($28)
     /* 00F1E8 01DBAEE8 03000010 */  b          .L01DBAEF8
     /* 00F1EC 01DBAEEC 00000000 */   nop
   .L01DBAEF0:
     /* 00F1F0 01DBAEF0 FFFF6224 */  addiu      $2, $3, -0x1
-    /* 00F1F4 01DBAEF4 BC9982AF */  sw         $2, -0x6644($28)
+    /* 00F1F4 01DBAEF4 BC9982AF */  sw         $2, %gp_rel(wait$644)($28)
   .L01DBAEF8:
     /* 00F1F8 01DBAEF8 DD01023C */  lui        $2, %hi(LIT_663__3)
     /* 00F1FC 01DBAEFC A0774224 */  addiu      $2, $2, %lo(LIT_663__3)
@@ -2735,12 +2735,12 @@ glabel OpB_SoundProcess__Fv
     /* 00F3C8 01DBB0C8 06000224 */  addiu      $2, $0, 0x6
     /* 00F3CC 01DBB0CC 3D006214 */  bne        $3, $2, .L01DBB1C4
     /* 00F3D0 01DBB0D0 00000000 */   nop
-    /* 00F3D4 01DBB0D4 C8998283 */  lb         $2, -0x6638($28)
+    /* 00F3D4 01DBB0D4 C8998283 */  lb         $2, %gp_rel(init$676)($28)
     /* 00F3D8 01DBB0D8 04004014 */  bnez       $2, .L01DBB0EC
     /* 00F3DC 01DBB0DC 00000000 */   nop
-    /* 00F3E0 01DBB0E0 C49980AF */  sw         $0, -0x663C($28)
+    /* 00F3E0 01DBB0E0 C49980AF */  sw         $0, %gp_rel(wait$675)($28)
     /* 00F3E4 01DBB0E4 01000224 */  addiu      $2, $0, 0x1
-    /* 00F3E8 01DBB0E8 C89982A3 */  sb         $2, -0x6638($28)
+    /* 00F3E8 01DBB0E8 C89982A3 */  sb         $2, %gp_rel(init$676)($28)
   .L01DBB0EC:
     /* 00F3EC 01DBB0EC 4000A427 */  addiu      $4, $29, 0x40
     /* 00F3F0 01DBB0F0 E001023C */  lui        $2, %hi(Chara__3 + 0x9F40)
@@ -2751,7 +2751,7 @@ glabel OpB_SoundProcess__Fv
     /* 00F404 01DBB104 B0B22CC4 */  lwc1       $f12, %lo(Chara__3 + 0xB3D0)($1)
     /* 00F408 01DBB108 2C44040C */  jal        fptosi
     /* 00F40C 01DBB10C 00000000 */   nop
-    /* 00F410 01DBB110 C499838F */  lw         $3, -0x663C($28)
+    /* 00F410 01DBB110 C499838F */  lw         $3, %gp_rel(wait$675)($28)
     /* 00F414 01DBB114 29006014 */  bnez       $3, .L01DBB1BC
     /* 00F418 01DBB118 00000000 */   nop
     /* 00F41C 01DBB11C 87004128 */  slti       $1, $2, 0x87
@@ -2771,7 +2771,7 @@ glabel OpB_SoundProcess__Fv
     /* 00F454 01DBB154 D0C3760C */  jal        OpPlayVolPanSE__FPfffiii
     /* 00F458 01DBB158 00000000 */   nop
     /* 00F45C 01DBB15C 05000224 */  addiu      $2, $0, 0x5
-    /* 00F460 01DBB160 C49982AF */  sw         $2, -0x663C($28)
+    /* 00F460 01DBB160 C49982AF */  sw         $2, %gp_rel(wait$675)($28)
     /* 00F464 01DBB164 17000010 */  b          .L01DBB1C4
     /* 00F468 01DBB168 00000000 */   nop
   .L01DBB16C:
@@ -2792,12 +2792,12 @@ glabel OpB_SoundProcess__Fv
     /* 00F4A4 01DBB1A4 D0C3760C */  jal        OpPlayVolPanSE__FPfffiii
     /* 00F4A8 01DBB1A8 00000000 */   nop
     /* 00F4AC 01DBB1AC 05000224 */  addiu      $2, $0, 0x5
-    /* 00F4B0 01DBB1B0 C49982AF */  sw         $2, -0x663C($28)
+    /* 00F4B0 01DBB1B0 C49982AF */  sw         $2, %gp_rel(wait$675)($28)
     /* 00F4B4 01DBB1B4 03000010 */  b          .L01DBB1C4
     /* 00F4B8 01DBB1B8 00000000 */   nop
   .L01DBB1BC:
     /* 00F4BC 01DBB1BC FFFF6224 */  addiu      $2, $3, -0x1
-    /* 00F4C0 01DBB1C0 C49982AF */  sw         $2, -0x663C($28)
+    /* 00F4C0 01DBB1C0 C49982AF */  sw         $2, %gp_rel(wait$675)($28)
   .L01DBB1C4:
     /* 00F4C4 01DBB1C4 5000A427 */  addiu      $4, $29, 0x50
     /* 00F4C8 01DBB1C8 E001023C */  lui        $2, %hi(Chara__3 + 0xB0F0)
@@ -3350,14 +3350,14 @@ glabel setTexAnime__Fv
     /* 00FCB8 01DBB9B8 3F004230 */  andi       $2, $2, 0x3F
     /* 00FCBC 01DBB9BC 3C980200 */  dsll32     $19, $2, 0
     /* 00FCC0 01DBB9C0 3F981300 */  dsra32     $19, $19, 0
-    /* 00FCC4 01DBB9C4 D0998283 */  lb         $2, -0x6630($28)
+    /* 00FCC4 01DBB9C4 D0998283 */  lb         $2, %gp_rel(init$783)($28)
     /* 00FCC8 01DBB9C8 04004014 */  bnez       $2, .L01DBB9DC
     /* 00FCCC 01DBB9CC 00000000 */   nop
-    /* 00FCD0 01DBB9D0 CC9980AF */  sw         $0, -0x6634($28)
+    /* 00FCD0 01DBB9D0 CC9980AF */  sw         $0, %gp_rel(cnt$782)($28)
     /* 00FCD4 01DBB9D4 01000224 */  addiu      $2, $0, 0x1
-    /* 00FCD8 01DBB9D8 D09982A3 */  sb         $2, -0x6630($28)
+    /* 00FCD8 01DBB9D8 D09982A3 */  sb         $2, %gp_rel(init$783)($28)
   .L01DBB9DC:
-    /* 00FCDC 01DBB9DC CC998CC7 */  lwc1       $f12, -0x6634($28)
+    /* 00FCDC 01DBB9DC CC998CC7 */  lwc1       $f12, %gp_rel(cnt$782)($28)
     /* 00FCE0 01DBB9E0 2C44040C */  jal        fptosi
     /* 00FCE4 01DBB9E4 00000000 */   nop
     /* 00FCE8 01DBB9E8 80110200 */  sll        $2, $2, 6
@@ -3379,12 +3379,12 @@ glabel setTexAnime__Fv
     /* 00FD28 01DBBA28 285E0070 */  paddub     $11, $0, $0
     /* 00FD2C 01DBBA2C 9801050C */  jal        MoveImageTest__FP13sceVif1PacketiiiRC8CRect_i_iiiiii
     /* 00FD30 01DBBA30 00000000 */   nop
-    /* 00FD34 01DBBA34 CC9981C7 */  lwc1       $f1, -0x6634($28)
+    /* 00FD34 01DBBA34 CC9981C7 */  lwc1       $f1, %gp_rel(cnt$782)($28)
     /* 00FD38 01DBBA38 003F033C */  lui        $3, (0x3F000000 >> 16)
     /* 00FD3C 01DBBA3C 00008344 */  mtc1       $3, $f0
     /* 00FD40 01DBBA40 00000000 */  nop
     /* 00FD44 01DBBA44 40080046 */  add.s      $f1, $f1, $f0
-    /* 00FD48 01DBBA48 CC9981E7 */  swc1       $f1, -0x6634($28)
+    /* 00FD48 01DBBA48 CC9981E7 */  swc1       $f1, %gp_rel(cnt$782)($28)
     /* 00FD4C 01DBBA4C E040033C */  lui        $3, (0x40E00000 >> 16)
     /* 00FD50 01DBBA50 00008344 */  mtc1       $3, $f0
     /* 00FD54 01DBBA54 00000000 */  nop
@@ -3392,7 +3392,7 @@ glabel setTexAnime__Fv
     /* 00FD5C 01DBBA5C 00000000 */  nop
     /* 00FD60 01DBBA60 02000145 */  bc1t       .L01DBBA6C
     /* 00FD64 01DBBA64 00000000 */   nop
-    /* 00FD68 01DBBA68 CC9980AF */  sw         $0, -0x6634($28)
+    /* 00FD68 01DBBA68 CC9980AF */  sw         $0, %gp_rel(cnt$782)($28)
   .L01DBBA6C:
     /* 00FD6C 01DBBA6C 6000BF7B */  lq         $31, 0x60($29)
     /* 00FD70 01DBBA70 5000B37B */  lq         $19, 0x50($29)

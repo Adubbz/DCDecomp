@@ -1,34 +1,24 @@
 cmake_minimum_required(VERSION 3.20)
 project(dcdecomp NONE)
 
-# Targets: setup (extract + disassemble), elf, iso, run. `build`, the default,
-# is elf plus verification against the retail hashes.
+# The default target builds and verifies the executable.
 
 set(BASENAME SCUS_971.11)
 
-# The three images the disassembler splits the disc into, and the order the
-# reference indexes are read in.
 set(SECTIONS main title dun)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(ObjectLists)
 include(Overlays)
 
-# Directories
 set(SRC_DIR src)
 set(INCLUDE_DIR include)
 set(TOOLS_DIR tools)
 set(SCRIPTS_DIR scripts)
 set(ROM_DIR rom)
-# Where splat writes: one file per translation unit, the per-function
-# reference assembly each marker names, and the whole-section dumps.
 set(ASM_DIR asm)
 set(ASM_DATA_DIR ${ASM_DIR}/data)
 set(CONFIG_DIR config)
-# The symbol list splat runs against, which stands for "the configuration is
-# present". Every object reads what splat produced -- a compiled one through
-# mwccgap, an assembled one directly -- so they all depend on it, or a build
-# that has to split first races the step writing the files it is reading.
 set(REF_INDEX ${CONFIG_DIR}/main.symbols.txt)
 if(EXISTS ${CMAKE_SOURCE_DIR}/${REF_INDEX})
     set(REF_STAMP ${CMAKE_SOURCE_DIR}/${REF_INDEX})
@@ -36,33 +26,19 @@ else()
     set(REF_STAMP "")
 endif()
 
-# What `derive_config` reads, so that editing any of it re-runs CMake.
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
     ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/disassemble.py
     ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/main.yaml
     ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/title.yaml
     ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/dun.yaml)
 
-# Every tool runs from the source root and is given source-relative paths, so
-# the objects record the same paths the Makefile build produced. BUILD_DIR is
-# the binary directory expressed the same way.
 file(RELATIVE_PATH BUILD_DIR ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 
-# Build tools. Everything but the Metrowerks compiler and linker comes from
-# binutils-mips-ps2-decompals, on PATH, replacing ProDG and ps2toolchain-ee.
 set(MIPS_TOOL_PREFIX mips-ps2-decompals-
     CACHE STRING "Prefix of the binutils-mips-ps2-decompals tools")
 
 set(MW ${TOOLS_DIR}/compilers/mw/2.3.3/)
-# MWCIncludes is mwcc's <> search list, which -i does not feed: -i only appends
-# to the "" list. The libraries are reached through it and the game's own
-# headers through -i, which is what keeps `#include <cstring>` and `#include
-# <libvu0.h>` apart from `#include "frame.hpp"`: include/std declares the C
-# functions retail carried, include/sce the PlayStation 2 library ones.
-#
-# The escaped separator is what the Windows tool splits the list on, and the
-# backslash is what stops CMake taking the string for a two-element list and
-# passing it as two arguments.
+# MWCIncludes supplies the compiler's system-header search path.
 set(STD_INCLUDE_DIR ${INCLUDE_DIR}/std)
 set(SCE_INCLUDE_DIR ${INCLUDE_DIR}/sce)
 set(LIB_INCLUDE_DIRS "${STD_INCLUDE_DIR}\;${SCE_INCLUDE_DIR}")
@@ -71,16 +47,10 @@ set(LD_MW wibo ${MW}mwldmips.exe)
 set(AS ${MIPS_TOOL_PREFIX}as)
 set(OBJCOPY ${MIPS_TOOL_PREFIX}objcopy)
 set(OBJDUMP ${MIPS_TOOL_PREFIX}objdump)
-# HINTS are searched before PATH, so the container's virtualenv wins: the
-# system python3 is missing pycdlib and the disassembler packages, and the
-# image puts the venv at the end of PATH.
 find_program(PYTHON NAMES python3 python REQUIRED HINTS $ENV{VIRTUAL_ENV}/bin)
 
-# -u because Python block-buffers stdout when it is not a terminal, which
-# would hold a long script's progress until it finished.
 set(PYTHON_CMD ${PYTHON} -u)
 
-# Files
 set(LD_TEMPLATE ${BASENAME}.lcf)
 set(OUTPUT ${BUILD_DIR}/${BASENAME})
 set(RETAIL_ISO "${ROM_DIR}/Dark Cloud (USA).iso")
@@ -88,31 +58,14 @@ set(BUILT_ISO "${BUILD_DIR}/Dark Cloud (Build).iso")
 set(CTX ${BUILD_DIR}/ctx.c)
 set(CTX_CPP ${BUILD_DIR}/ctx.cpp)
 
-# Compiler flags, translated from the ProDG spellings these were written in.
-# -mabi=eabi (not -32) because o32's 32-bit registers turn every `ld` into an
-# $at macro the dumps forbid, and eabi64 is what retail carries. -mno-pdr
-# because the .lcf has no placement for the .pdr GNU as emits alongside -g.
 set(AS_FLAGS -EL -march=r5900 -mabi=eabi -g -mno-pdr -non_shared -G0 -I include)
-# -RTTI off because retail's vtables carry a zero where mwcc otherwise puts a
-# pointer to the class's __RTTI__ record; the game was built without it.
 set(CC_MW_FLAGS -O2 -c -Cpp_exceptions off -RTTI off -strings readonly
     -pragma "divbyzerocheck on" -i include)
 set(LD_MW_FLAGS -map -nostdlib -m _start -nodead -g)
-# `-sym on,noelf` keeps the relocations resolved but drops the symbol table and
-# section headers, leaving just the loadable image the console needs.
 set(LD_MW_ISO_FLAGS -nostdlib -m _start -nodead -sym on,noelf)
 set(BIN_FLAGS -B mips:5900 -I binary -O elf32-littlemips)
 
-# What gets built, as opposed to what gets linked. Every reference dump the
-# disassembler recorded is assembled and every source under src/ is compiled,
-# whether or not the link ends up using it -- a dump superseded by decompiled
-# C++ is still what objdiff compares that C++ against. Which of them the link
-# takes, and in what order, is decided from the compiled objects themselves at
-# build time; see scripts/build/layout.py.
-#
-# Decompiled globals replace ranges in these five retail dumps. Their static,
-# checked-in fragments live under asm/data/main/parts, so the unsplit dumps are
-# not assembled.
+# Decompiled globals replace these retail section dumps.
 set(REPLACED_SECTIONS main.bss main.data main.rdata main.sbss main.sdata)
 
 set(ASM_SOURCES "")
@@ -125,19 +78,11 @@ file(GLOB STATIC_SECTION_SOURCES CONFIGURE_DEPENDS
      ${CMAKE_SOURCE_DIR}/${ASM_DATA_DIR}/main/parts/*.s)
 list(APPEND ASM_SOURCES ${STATIC_SECTION_SOURCES})
 
-# Only for its CONFIGURE_DEPENDS: ninja re-evaluates the glob each build and
-# re-runs CMake when the set of sources changed, so a newly added one is picked
-# up without anyone having to remember. What is built comes from the unit rows
-# below.
 file(GLOB_RECURSE ALL_CPP_SOURCES CONFIGURE_DEPENDS
      RELATIVE ${CMAKE_SOURCE_DIR}
      ${CMAKE_SOURCE_DIR}/${SRC_DIR}/*.cpp ${CMAKE_SOURCE_DIR}/${SRC_DIR}/*.c)
 
-# Which units are compiled and which are taken whole. A unit with nothing
-# decompiled in it is linked straight from the single assembly file splat
-# writes for it, and its source -- markers and nothing else -- is not compiled
-# at all. Decompile one function in such a unit and re-run the `disassemble`
-# target; it becomes a compiled unit and gets the reference files it now needs.
+# Classify units as compiled or assembly-only.
 derive_config(--list-units unit_rows)
 
 set(CPP_SOURCES "")
@@ -151,8 +96,6 @@ foreach(row IN LISTS unit_rows)
     list(GET parts 3 reference)
     list(APPEND UNIT_ASM_SOURCES ${reference})
     if(kind STREQUAL "asm")
-        # Assembled into the object the source would have produced, so the
-        # linker script's placement never has to know which it was.
         list(APPEND WHOLE_UNIT_OBJS ${BUILD_DIR}/${source}.o)
         list(APPEND WHOLE_UNIT_REFS ${reference})
     else()
@@ -160,34 +103,17 @@ foreach(row IN LISTS unit_rows)
     endif()
 endforeach()
 
-# These data-only source files replace proven typed objects inside residual
-# whole-section dumps. They are separate objects because their owning retail
-# units also contribute BSS at earlier addresses.
+# Typed data carved from residual section dumps.
 list(APPEND CPP_SOURCES src/mglib_data.cpp src/texture_data.cpp)
-# Hand-written assembly, kept apart from what splat generates: the per-unit
-# files it writes land in asm/ itself, and a glob over those would link every
-# translation unit's reference assembly alongside the objects that already
-# provide it.
 file(GLOB EXTRA_ASM_SOURCES CONFIGURE_DEPENDS
      RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/asm/handwritten/*.s)
 
-# The objects the compiled sources produce. Named here rather than where each
-# is used because two steps want them: the linker script, whose literal pool
-# symbols are read out of their symbol tables, and the provenance pass.
 set(CPP_OBJS "")
 foreach(src IN LISTS CPP_SOURCES)
     list(APPEND CPP_OBJS ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${src}.o)
 endforeach()
 
-# The checked-in configuration that names the split. splat writes several
-# thousand files, and declaring each as an output makes the ninja manifest
-# enormous for no gain. These files must remain inputs: Ninja deletes custom
-# command outputs during clean, but disassemble.py reads and never creates the
-# symbol tables.
-# Nothing under asm/ or config/ may be a CMAKE_CONFIGURE_DEPENDS: a file that
-# is both a configure input and a build output puts CMake and ninja in a loop
-# ("manifest still dirty after 100 tries"). scripts/build/cmake.sh configures
-# on every invocation, which is what picks a regenerated tree up.
+# Checked-in splat configuration remains an input, not a generated output.
 set(REF_CONFIGS "")
 foreach(section IN LISTS SECTIONS)
     list(APPEND REF_CONFIGS ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/${section}.symbols.txt)
@@ -205,8 +131,7 @@ foreach(section IN LISTS SECTIONS)
     list(APPEND LINK_ORDER ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${section}_o_files)
 endforeach()
 
-# Appended after the address-ordered objects: the static section fragments and
-# hand-written symbol definitions have no text address to sort them by.
+# Data fragments and handwritten definitions follow address-ordered objects.
 set(MAIN_TAIL "")
 foreach(src IN LISTS STATIC_SECTION_SOURCES)
     list(APPEND MAIN_TAIL ${BUILD_DIR}/${src}.o)
@@ -218,7 +143,6 @@ foreach(src IN LISTS EXTRA_ASM_SOURCES)
     list(APPEND MAIN_TAIL ${BUILD_DIR}/${src}.o)
 endforeach()
 
-# Ninja does not create custom-command output directories on its own.
 make_object_dirs("${ALL_OBJS}")
 
 foreach(obj IN LISTS ALL_OBJS)
@@ -227,7 +151,7 @@ foreach(obj IN LISTS ALL_OBJS)
     endif()
 endforeach()
 
-# The units taken whole, each assembled from its reference rather than compiled.
+# Assemble undecompiled units from their whole-unit references.
 list(LENGTH WHOLE_UNIT_OBJS whole_count)
 if(whole_count GREATER 0)
     math(EXPR whole_last "${whole_count} - 1")
@@ -238,12 +162,7 @@ if(whole_count GREATER 0)
     endforeach()
 endif()
 
-#
-# Linker command file
-#
-# The checked-in .lcf is a template whose overlay placement is expanded at
-# configure time.
-#
+# Expand overlay placement in the linker command template.
 set(OVERLAY_LCF ${BUILD_DIR}/${BASENAME}.overlays.lcf)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
     ${CMAKE_SOURCE_DIR}/${LD_TEMPLATE})
@@ -252,12 +171,6 @@ expand_overlay_markers(${CMAKE_SOURCE_DIR}/${LD_TEMPLATE}
 
 set(GEN_LCF ${OVERLAY_LCF})
 
-#
-# Link
-#
-# Every image takes its objects through a response file that layout.py
-# wrote, so link order comes from the address index and the compiled objects
-# rather than from anything checked in.
 set(ABS_OBJS "")
 foreach(obj IN LISTS ALL_OBJS)
     list(APPEND ABS_OBJS ${CMAKE_SOURCE_DIR}/${obj})
@@ -266,9 +179,6 @@ endforeach()
 overlay_link_args(OVERLAY_ARGS)
 check_overlay_prefixes()
 
-# Each overlay contributes an image to the link, a round-up of that image to
-# the retail file boundary, and a file to verify. The linker writes the images
-# itself, MWo3 header and all; see cmake/Overlays.cmake.
 set(OVERLAY_BINS "")
 set(PAD_COMMANDS "")
 set(VERIFY_FILES ${OUTPUT})
@@ -292,27 +202,15 @@ add_custom_command(
 
 add_custom_target(elf DEPENDS ${CMAKE_SOURCE_DIR}/${OUTPUT} ${OVERLAY_BINS})
 
-#
-# Symbol provenance
-#
-# Which symbols come from the decompiled C++ and which still come from the
-# reference assembly, read from the objects themselves rather than any list.
-# VERBOSE_PROVENANCE echoes every symbol instead of the one-line summary.
+# Record whether each symbol comes from source or reference assembly.
 set(PROVENANCE ${BUILD_DIR}/symbol_provenance.txt)
 
-# The link order and the provenance come out of the same pass. Neither reads a
-# compiled object: the linker script says where each unit starts, so this
-# depends on it and on the sources rather than on the four hundred objects it
-# used to open.
 add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/${PROVENANCE} ${LINK_ORDER}
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/layout.py
             --link-order ${BUILD_DIR} --provenance ${PROVENANCE}
             --build-dir ${BUILD_DIR} --main-tail ${MAIN_TAIL}
             --carved ${REPLACED_SECTIONS} --lcf ${LD_TEMPLATE}
-    # disassemble.py owns the section layout and the unit classification, so
-    # the link order changes with it: which object a unit is taken from, and
-    # where each whole-section dump lives.
     DEPENDS ${CMAKE_SOURCE_DIR}/${LD_TEMPLATE} ${CPP_SOURCES}
             ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/layout.py
             ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/disassemble.py
@@ -322,37 +220,18 @@ add_custom_command(
 
 add_custom_target(provenance DEPENDS ${CMAKE_SOURCE_DIR}/${PROVENANCE})
 
-#
-# The compile flags, as a build artefact
-#
-# diff.sh --scratch sends these to decomp.me. Written out rather than copied
-# into that script, so the two cannot drift.
+# Export compiler flags for diff tooling.
 string(JOIN " " CC_MW_FLAGS_TEXT ${CC_MW_FLAGS})
-# file(GENERATE) rather than file(WRITE): it leaves the file alone when the
-# content is unchanged, so it cannot make anything downstream look stale.
 file(GENERATE OUTPUT ${CMAKE_BINARY_DIR}/compiler_flags.txt
      CONTENT "${CC_MW_FLAGS_TEXT}\n")
 
-#
-# m2c context
-#
-# m2c needs the project's declarations as one C file; built from every header
-# so the same ctx.c serves any function. See scripts/diff/m2ctx.py.
-#
-# CONFIGURE_DEPENDS for the same reason as the source globs above: a header
-# added while the objdiff GUI is running would otherwise not reach the context
-# until someone reconfigured, and that rebuild deliberately skips configuring.
-# The library directories too: m2ctx.py folds them in as well, so an edit to
-# one has to regenerate the context.
+# Build a shared m2c context from project headers.
 file(GLOB CTX_HEADERS CONFIGURE_DEPENDS
      ${CMAKE_SOURCE_DIR}/${INCLUDE_DIR}/*.hpp
      ${CMAKE_SOURCE_DIR}/${INCLUDE_DIR}/*.h
      ${CMAKE_SOURCE_DIR}/${STD_INCLUDE_DIR}/*
      ${CMAKE_SOURCE_DIR}/${SCE_INCLUDE_DIR}/*)
 
-# One command, two outputs: ctx.cpp is the amalgamated C++ and ctx.c is what
-# clang re-emits from it, so they are always the same content either side of
-# that step.
 add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/${CTX} ${CMAKE_SOURCE_DIR}/${CTX_CPP}
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/diff/m2ctx.py -o ${CTX}
@@ -363,13 +242,7 @@ add_custom_command(
 
 add_custom_target(ctx DEPENDS ${CMAKE_SOURCE_DIR}/${CTX} ${CMAKE_SOURCE_DIR}/${CTX_CPP})
 
-#
-# objdiff / decomp.dev
-#
-# objdiff.json pairs each retail function's reference object with whatever
-# provides it now; scripts/build/layout.py derives it. A decompiled
-# function's .s leaves the object lists, so those are assembled here for
-# objdiff alone -- they are in no object list, so nothing links them.
+# Build reference and source objects for objdiff.
 execute_process(
     COMMAND ${PYTHON} ${SCRIPTS_DIR}/build/layout.py --list-extra-objects
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -385,10 +258,6 @@ if(objdiff_rc EQUAL 0 AND objdiff_extra_raw)
         list(APPEND OBJDIFF_TARGET_OBJS ${BUILD_DIR}/${src}.o)
     endforeach()
 
-    # The base objdiff compares each unit against: the source on its own.
-    # Only the units that have one -- a unit with nothing decompiled in it is
-    # INCLUDE_ASM markers and nothing else, and compiling that produces an
-    # empty object for objdiff to pair against nothing.
     set(OBJDIFF_BASE_OBJS "")
     foreach(src IN LISTS CPP_SOURCES)
         list(APPEND OBJDIFF_BASE_OBJS ${BUILD_DIR}/diff/${src}.o)
@@ -413,11 +282,7 @@ if(objdiff_rc EQUAL 0 AND objdiff_extra_raw)
     unset(ASM_OBJECT_EXTRA_DEPENDS)
 endif()
 
-# objdiff pairs a target object with a base by symbol name, so the per-function
-# reference objects need the spelling MWCC emits for a templated symbol. Which
-# symbols those are is only knowable from the compiled objects, so this reads
-# them; scripts/build/fixup_sections.sh applies the result to the reference
-# objects alone, and nothing that links is renamed.
+# Align templated reference symbols with MWCC names.
 add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/${SYMBOL_ALIASES}
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/disassemble.py
@@ -446,31 +311,17 @@ foreach(obj IN LISTS OBJDIFF_TARGET_OBJS OBJDIFF_BASE_OBJS)
     list(APPEND OBJDIFF_ABS_OBJS ${CMAKE_SOURCE_DIR}/${obj})
 endforeach()
 
-# The objects and the config, but deliberately not `elf`: objdiff compares
-# object files and never looks at the executable, so linking it -- and
-# generating the linker script to do so -- is pure latency in the edit-save
-# loop the GUI drives.
 add_custom_target(objdiff
     DEPENDS ${CMAKE_SOURCE_DIR}/${OBJDIFF_CONFIG} ${OBJDIFF_ABS_OBJS} ${ABS_OBJS}
             ${CMAKE_SOURCE_DIR}/${SYMBOL_ALIASES})
 add_dependencies(objdiff provenance)
 
-#
-# Verification
-#
-# USES_TERMINAL puts a step in Ninja's console pool so its progress appears as
-# it happens. That pool runs one edge at a time, so it is only for the few
-# steps slow enough to need it -- hashing DATA.DAT alone is 1.7GB.
 add_custom_target(verify_extracted
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/verify.py -e
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     USES_TERMINAL
     VERBATIM)
 
-# verify.py sorts every function into perfect, fuzzy and unmatched, and fails
-# on an unmatched one or on any difference in data. A fuzzy function is one
-# whose source declares FUZZY_MATCH: retail's instructions in retail's order,
-# differing only in the registers the compiler picked.
 add_custom_target(build ALL
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/verify.py -c
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -478,12 +329,7 @@ add_custom_target(build ALL
     VERBATIM)
 add_dependencies(build verify_extracted elf provenance ctx)
 
-#
-# ISO
-#
-# The disc's ELF is linked a second time without debug information: the main
-# output keeps its symbols for compare_build.py, which makes it far too large
-# for the sectors the retail file occupies. The links are otherwise identical.
+# Link a stripped executable for the rebuilt disc.
 set(ISO_ELF ${BUILD_DIR}/nodebug/${BASENAME})
 
 add_custom_command(
@@ -496,8 +342,6 @@ add_custom_command(
     COMMENT "Linking ${ISO_ELF} (no debug info)"
     VERBATIM)
 
-# A fresh image is mastered from the extracted disc with the built files put in
-# place of their retail counterparts, so a built file may be any size.
 add_custom_command(
     OUTPUT "${CMAKE_SOURCE_DIR}/${BUILT_ISO}"
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/make_iso.py
@@ -511,15 +355,8 @@ add_custom_command(
     USES_TERMINAL
     VERBATIM)
 
-# Deliberately not tied to the verification target: booting a build that does
-# not match retail yet is exactly what the emulator is useful for.
 add_custom_target(iso DEPENDS "${CMAKE_SOURCE_DIR}/${BUILT_ISO}")
 
-#
-# Run
-#
-# PCSX2 needs a display, so this is for a native toolchain; use run.sh
-# otherwise, which builds in the container and launches the emulator outside.
 add_custom_target(run
     COMMAND ${SCRIPTS_DIR}/host/pcsx2.sh "${BUILT_ISO}"
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -527,23 +364,11 @@ add_custom_target(run
     VERBATIM)
 add_dependencies(run iso)
 
-#
-# Setup
-#
-# Three steps with real outputs rather than one target that redoes all of
-# them, so ninja skips whichever are already done. The checksum has no natural
-# output and leaves a stamp; the others are named by one file each.
 set(STAMP_DIR ${BUILD_DIR}/stamps)
 set(ROM_VERIFIED ${STAMP_DIR}/rom.verified)
 set(DISASSEMBLE_STAMP ${STAMP_DIR}/disassembled)
 set(EXTRACTED_ELF ${ROM_DIR}/extracted/iso/${BASENAME})
 
-# Only when there is a disc to set up from. A checkout without one -- CI --
-# builds against the committed asm/, where these dumps are ordinary sources
-# with no rule behind them.
-# Splitting the disc, defined once and used by both `setup` and `disassemble`.
-# The configuration splat runs against is checked in under config/; this only
-# runs splat and fixes up what splat cannot express.
 set(SPLIT_COMMANDS
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/disassemble.py --config ${CONFIG_DIR})
 

@@ -4087,13 +4087,13 @@ glabel DrawPartsCursor__11CEditGroundFiPfPfiPfi
     /* 0A406C 001A3F6C 28AE0071 */  paddub     $21, $8, $0
     /* 0A4070 001A3F70 D000A9AF */  sw         $9, 0xD0($29)
     /* 0A4074 001A3F74 CC00AAAF */  sw         $10, 0xCC($29)
-    /* 0A4078 001A3F78 34938283 */  lb         $2, -0x6CCC($28)
+    /* 0A4078 001A3F78 34938283 */  lb         $2, %gp_rel(init$1126)($28)
     /* 0A407C 001A3F7C 05004014 */  bnez       $2, .L001A3F94
     /* 0A4080 001A3F80 00000000 */   nop
     /* 0A4084 001A3F84 FFFF0224 */  addiu      $2, $0, -0x1
-    /* 0A4088 001A3F88 309382AF */  sw         $2, -0x6CD0($28)
+    /* 0A4088 001A3F88 309382AF */  sw         $2, %gp_rel(old_parts$1125)($28)
     /* 0A408C 001A3F8C 01000224 */  addiu      $2, $0, 0x1
-    /* 0A4090 001A3F90 349382A3 */  sb         $2, -0x6CCC($28)
+    /* 0A4090 001A3F90 349382A3 */  sb         $2, %gp_rel(init$1126)($28)
   .L001A3F94:
     /* 0A4094 001A3F94 0400C006 */  bltz       $22, .L001A3FA8
     /* 0A4098 001A3F98 00000000 */   nop

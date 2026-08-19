@@ -13,7 +13,8 @@
 				"llvm-vs-code-extensions.vscode-clangd",
 				"ms-python.black-formatter",
 				"cschlosser.doxdocgen",
-				"edwinhuish.better-comments-next"
+				"edwinhuish.better-comments-next",
+				"twxs.cmake"
 			]
 		}
 	}

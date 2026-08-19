@@ -748,19 +748,19 @@ glabel DrawProcA__Fv
     /* 0200E4 01DCBDE4 3000A527 */  addiu      $5, $29, 0x30
     /* 0200E8 01DCBDE8 1086040C */  jal        sceVu0CopyMatrix
     /* 0200EC 01DCBDEC 00000000 */   nop
-    /* 0200F0 01DCBDF0 209C8283 */  lb         $2, -0x63E0($28)
+    /* 0200F0 01DCBDF0 209C8283 */  lb         $2, %gp_rel(init$959)($28)
     /* 0200F4 01DCBDF4 04004014 */  bnez       $2, .L01DCBE08
     /* 0200F8 01DCBDF8 00000000 */   nop
-    /* 0200FC 01DCBDFC 1C9C80AF */  sw         $0, -0x63E4($28)
+    /* 0200FC 01DCBDFC 1C9C80AF */  sw         $0, %gp_rel(lightning$958)($28)
     /* 020100 01DCBE00 01000224 */  addiu      $2, $0, 0x1
-    /* 020104 01DCBE04 209C82A3 */  sb         $2, -0x63E0($28)
+    /* 020104 01DCBE04 209C82A3 */  sb         $2, %gp_rel(init$959)($28)
   .L01DCBE08:
-    /* 020108 01DCBE08 289C8283 */  lb         $2, -0x63D8($28)
+    /* 020108 01DCBE08 289C8283 */  lb         $2, %gp_rel(init$962)($28)
     /* 02010C 01DCBE0C 04004014 */  bnez       $2, .L01DCBE20
     /* 020110 01DCBE10 00000000 */   nop
-    /* 020114 01DCBE14 249C80AF */  sw         $0, -0x63DC($28)
+    /* 020114 01DCBE14 249C80AF */  sw         $0, %gp_rel(col$961)($28)
     /* 020118 01DCBE18 01000224 */  addiu      $2, $0, 0x1
-    /* 02011C 01DCBE1C 289C82A3 */  sb         $2, -0x63D8($28)
+    /* 02011C 01DCBE1C 289C82A3 */  sb         $2, %gp_rel(init$962)($28)
   .L01DCBE20:
     /* 020120 01DCBE20 BE11040C */  jal        rand
     /* 020124 01DCBE24 00000000 */   nop
@@ -772,9 +772,9 @@ glabel DrawProcA__Fv
     /* 02013C 01DCBE3C 14004014 */  bnez       $2, .L01DCBE90
     /* 020140 01DCBE40 00000000 */   nop
     /* 020144 01DCBE44 FE000224 */  addiu      $2, $0, 0xFE
-    /* 020148 01DCBE48 249C82AF */  sw         $2, -0x63DC($28)
+    /* 020148 01DCBE48 249C82AF */  sw         $2, %gp_rel(col$961)($28)
     /* 02014C 01DCBE4C 04000224 */  addiu      $2, $0, 0x4
-    /* 020150 01DCBE50 1C9C82AF */  sw         $2, -0x63E4($28)
+    /* 020150 01DCBE50 1C9C82AF */  sw         $2, %gp_rel(lightning$958)($28)
     /* 020154 01DCBE54 BE11040C */  jal        rand
     /* 020158 01DCBE58 00000000 */   nop
     /* 02015C 01DCBE5C 06000324 */  addiu      $3, $0, 0x6
@@ -815,9 +815,9 @@ glabel DrawProcA__Fv
     /* 0201E4 01DCBEE4 01000224 */  addiu      $2, $0, 0x1
     /* 0201E8 01DCBEE8 D49B82AF */  sw         $2, -0x642C($28)
     /* 0201EC 01DCBEEC FE000224 */  addiu      $2, $0, 0xFE
-    /* 0201F0 01DCBEF0 249C82AF */  sw         $2, -0x63DC($28)
+    /* 0201F0 01DCBEF0 249C82AF */  sw         $2, %gp_rel(col$961)($28)
     /* 0201F4 01DCBEF4 04000224 */  addiu      $2, $0, 0x4
-    /* 0201F8 01DCBEF8 1C9C82AF */  sw         $2, -0x63E4($28)
+    /* 0201F8 01DCBEF8 1C9C82AF */  sw         $2, %gp_rel(lightning$958)($28)
     /* 0201FC 01DCBEFC 4A000424 */  addiu      $4, $0, 0x4A
     /* 020200 01DCBF00 FFFF0524 */  addiu      $5, $0, -0x1
     /* 020204 01DCBF04 28360070 */  paddub     $6, $0, $0
@@ -833,7 +833,7 @@ glabel DrawProcA__Fv
     /* 020224 01DCBF24 C01B4224 */  addiu      $2, $2, %lo(lightcolor)
     /* 020228 01DCBF28 21104500 */  addu       $2, $2, $5
     /* 02022C 01DCBF2C 000041C4 */  lwc1       $f1, 0x0($2)
-    /* 020230 01DCBF30 249C848F */  lw         $4, -0x63DC($28)
+    /* 020230 01DCBF30 249C848F */  lw         $4, %gp_rel(col$961)($28)
     /* 020234 01DCBF34 00008444 */  mtc1       $4, $f0
     /* 020238 01DCBF38 00000000 */  nop
     /* 02023C 01DCBF3C 20008046 */  cvt.s.w    $f0, $f0
@@ -908,9 +908,9 @@ glabel DrawProcA__Fv
     /* 020338 01DCC038 03008128 */  slti       $1, $4, 0x3
     /* 02033C 01DCC03C 04002014 */  bnez       $1, .L01DCC050
     /* 020340 01DCC040 00000000 */   nop
-    /* 020344 01DCC044 249C828F */  lw         $2, -0x63DC($28)
+    /* 020344 01DCC044 249C828F */  lw         $2, %gp_rel(col$961)($28)
     /* 020348 01DCC048 FEFF4224 */  addiu      $2, $2, -0x2
-    /* 02034C 01DCC04C 249C82AF */  sw         $2, -0x63DC($28)
+    /* 02034C 01DCC04C 249C82AF */  sw         $2, %gp_rel(col$961)($28)
   .L01DCC050:
     /* 020350 01DCC050 01006324 */  addiu      $3, $3, 0x1
   .L01DCC054:
@@ -1019,7 +1019,7 @@ glabel DrawProcA__Fv
     /* 0204DC 01DCC1DC 1400398F */  lw         $25, 0x14($25)
     /* 0204E0 01DCC1E0 09F82003 */  jalr       $25
     /* 0204E4 01DCC1E4 00000000 */   nop
-    /* 0204E8 01DCC1E8 1C9C828F */  lw         $2, -0x63E4($28)
+    /* 0204E8 01DCC1E8 1C9C828F */  lw         $2, %gp_rel(lightning$958)($28)
     /* 0204EC 01DCC1EC 0B004010 */  beqz       $2, .L01DCC21C
     /* 0204F0 01DCC1F0 00000000 */   nop
     /* 0204F4 01DCC1F4 28260072 */  paddub     $4, $16, $0
@@ -1073,11 +1073,11 @@ glabel DrawProcA__Fv
     /* 0205B0 01DCC2B0 7898050C */  jal        ObjAnimePlay__FP13OBJ_ANIME_SEQ
     /* 0205B4 01DCC2B4 00000000 */   nop
   .L01DCC2B8:
-    /* 0205B8 01DCC2B8 1C9C828F */  lw         $2, -0x63E4($28)
+    /* 0205B8 01DCC2B8 1C9C828F */  lw         $2, %gp_rel(lightning$958)($28)
     /* 0205BC 01DCC2BC 03004018 */  blez       $2, .L01DCC2CC
     /* 0205C0 01DCC2C0 00000000 */   nop
     /* 0205C4 01DCC2C4 FFFF4224 */  addiu      $2, $2, -0x1
-    /* 0205C8 01DCC2C8 1C9C82AF */  sw         $2, -0x63E4($28)
+    /* 0205C8 01DCC2C8 1C9C82AF */  sw         $2, %gp_rel(lightning$958)($28)
   .L01DCC2CC:
     /* 0205CC 01DCC2CC DE01023C */  lui        $2, %hi(LIT_1006)
     /* 0205D0 01DCC2D0 90B24224 */  addiu      $2, $2, %lo(LIT_1006)
@@ -8713,13 +8713,13 @@ glabel TitleDraw__Fv
     /* 027998 01DD3698 B4010010 */  b          .L01DD3D6C
     /* 02799C 01DD369C 00000000 */   nop
   .L01DD36A0:
-    /* 0279A0 01DD36A0 689C8283 */  lb         $2, -0x6398($28)
+    /* 0279A0 01DD36A0 689C8283 */  lb         $2, %gp_rel(init$578)($28)
     /* 0279A4 01DD36A4 05004014 */  bnez       $2, .L01DD36BC
     /* 0279A8 01DD36A8 00000000 */   nop
     /* 0279AC 01DD36AC 80000224 */  addiu      $2, $0, 0x80
-    /* 0279B0 01DD36B0 649C82AF */  sw         $2, -0x639C($28)
+    /* 0279B0 01DD36B0 649C82AF */  sw         $2, %gp_rel(br$577)($28)
     /* 0279B4 01DD36B4 01000224 */  addiu      $2, $0, 0x1
-    /* 0279B8 01DD36B8 689C82A3 */  sb         $2, -0x6398($28)
+    /* 0279B8 01DD36B8 689C82A3 */  sb         $2, %gp_rel(init$578)($28)
   .L01DD36BC:
     /* 0279BC 01DD36BC 589C8293 */  lbu        $2, -0x63A8($28)
     /* 0279C0 01DD36C0 11004010 */  beqz       $2, .L01DD3708
@@ -8733,17 +8733,17 @@ glabel TitleDraw__Fv
     /* 0279E0 01DD36E0 05004014 */  bnez       $2, .L01DD36F8
     /* 0279E4 01DD36E4 00000000 */   nop
     /* 0279E8 01DD36E8 20000224 */  addiu      $2, $0, 0x20
-    /* 0279EC 01DD36EC 649C82AF */  sw         $2, -0x639C($28)
+    /* 0279EC 01DD36EC 649C82AF */  sw         $2, %gp_rel(br$577)($28)
     /* 0279F0 01DD36F0 07000010 */  b          .L01DD3710
     /* 0279F4 01DD36F4 00000000 */   nop
   .L01DD36F8:
     /* 0279F8 01DD36F8 80000224 */  addiu      $2, $0, 0x80
-    /* 0279FC 01DD36FC 649C82AF */  sw         $2, -0x639C($28)
+    /* 0279FC 01DD36FC 649C82AF */  sw         $2, %gp_rel(br$577)($28)
     /* 027A00 01DD3700 03000010 */  b          .L01DD3710
     /* 027A04 01DD3704 00000000 */   nop
   .L01DD3708:
     /* 027A08 01DD3708 80000224 */  addiu      $2, $0, 0x80
-    /* 027A0C 01DD370C 649C82AF */  sw         $2, -0x639C($28)
+    /* 027A0C 01DD370C 649C82AF */  sw         $2, %gp_rel(br$577)($28)
   .L01DD3710:
     /* 027A10 01DD3710 E601023C */  lui        $2, %hi(CCursol)
     /* 027A14 01DD3714 40DF4424 */  addiu      $4, $2, %lo(CCursol)
@@ -8784,7 +8784,7 @@ glabel TitleDraw__Fv
     /* 027A9C 01DD379C 00000000 */   nop
     /* 027AA0 01DD37A0 28864070 */  paddub     $16, $2, $0
     /* 027AA4 01DD37A4 389C8427 */  addiu      $4, $28, -0x63C8
-    /* 027AA8 01DD37A8 649C858F */  lw         $5, -0x639C($28)
+    /* 027AA8 01DD37A8 649C858F */  lw         $5, %gp_rel(br$577)($28)
     /* 027AAC 01DD37AC 7C54770C */  jal        Get__8CScFaderFi
     /* 027AB0 01DD37B0 00000000 */   nop
     /* 027AB4 01DD37B4 FF004830 */  andi       $8, $2, 0xFF
@@ -8924,7 +8924,7 @@ glabel TitleDraw__Fv
     /* 027CC8 01DD39C8 00000000 */   nop
     /* 027CCC 01DD39CC 28864070 */  paddub     $16, $2, $0
     /* 027CD0 01DD39D0 389C8427 */  addiu      $4, $28, -0x63C8
-    /* 027CD4 01DD39D4 649C858F */  lw         $5, -0x639C($28)
+    /* 027CD4 01DD39D4 649C858F */  lw         $5, %gp_rel(br$577)($28)
     /* 027CD8 01DD39D8 7C54770C */  jal        Get__8CScFaderFi
     /* 027CDC 01DD39DC 00000000 */   nop
     /* 027CE0 01DD39E0 FF004830 */  andi       $8, $2, 0xFF
@@ -9065,7 +9065,7 @@ glabel TitleDraw__Fv
     /* 027EF8 01DD3BF8 00000000 */   nop
     /* 027EFC 01DD3BFC 28864070 */  paddub     $16, $2, $0
     /* 027F00 01DD3C00 389C8427 */  addiu      $4, $28, -0x63C8
-    /* 027F04 01DD3C04 649C858F */  lw         $5, -0x639C($28)
+    /* 027F04 01DD3C04 649C858F */  lw         $5, %gp_rel(br$577)($28)
     /* 027F08 01DD3C08 7C54770C */  jal        Get__8CScFaderFi
     /* 027F0C 01DD3C0C 00000000 */   nop
     /* 027F10 01DD3C10 FF004830 */  andi       $8, $2, 0xFF

@@ -16,15 +16,15 @@ glabel CharaStatusMsgDraw__Fiiiii
     /* 107CE4 00207BE4 2896C070 */  paddub     $18, $6, $0
     /* 107CE8 00207BE8 288EE070 */  paddub     $17, $7, $0
     /* 107CEC 00207BEC 28860071 */  paddub     $16, $8, $0
-    /* 107CF0 00207BF0 C8958283 */  lb         $2, -0x6A38($28)
+    /* 107CF0 00207BF0 C8958283 */  lb         $2, %gp_rel(init$5777)($28)
     /* 107CF4 00207BF4 05004014 */  bnez       $2, .L00207C0C
     /* 107CF8 00207BF8 00000000 */   nop
     /* 107CFC 00207BFC EC8280C7 */  lwc1       $f0, -0x7D14($28)
-    /* 107D00 00207C00 C49580E7 */  swc1       $f0, -0x6A3C($28)
+    /* 107D00 00207C00 C49580E7 */  swc1       $f0, %gp_rel(statusCnt$5776)($28)
     /* 107D04 00207C04 01000224 */  addiu      $2, $0, 0x1
-    /* 107D08 00207C08 C89582A3 */  sb         $2, -0x6A38($28)
+    /* 107D08 00207C08 C89582A3 */  sb         $2, %gp_rel(init$5777)($28)
   .L00207C0C:
-    /* 107D0C 00207C0C C4958CC7 */  lwc1       $f12, -0x6A3C($28)
+    /* 107D0C 00207C0C C4958CC7 */  lwc1       $f12, %gp_rel(statusCnt$5776)($28)
     /* 107D10 00207C10 2876040C */  jal        sinf
     /* 107D14 00207C14 00000000 */   nop
     /* 107D18 00207C18 8040023C */  lui        $2, (0x40800000 >> 16)
@@ -137,15 +137,15 @@ glabel CharaStatusMsgDraw__Fiiiii
   .L00207D9C:
     /* 107E9C 00207D9C B08082C7 */  lwc1       $f2, -0x7F50($28)
     /* 107EA0 00207DA0 43100046 */  div.s      $f1, $f2, $f0
-    /* 107EA4 00207DA4 C49580C7 */  lwc1       $f0, -0x6A3C($28)
+    /* 107EA4 00207DA4 C49580C7 */  lwc1       $f0, %gp_rel(statusCnt$5776)($28)
     /* 107EA8 00207DA8 00000146 */  add.s      $f0, $f0, $f1
-    /* 107EAC 00207DAC C49580E7 */  swc1       $f0, -0x6A3C($28)
+    /* 107EAC 00207DAC C49580E7 */  swc1       $f0, %gp_rel(statusCnt$5776)($28)
     /* 107EB0 00207DB0 34000246 */  c.lt.s     $f0, $f2
     /* 107EB4 00207DB4 00000000 */  nop
     /* 107EB8 00207DB8 03000145 */  bc1t       .L00207DC8
     /* 107EBC 00207DBC 00000000 */   nop
     /* 107EC0 00207DC0 EC8280C7 */  lwc1       $f0, -0x7D14($28)
-    /* 107EC4 00207DC4 C49580E7 */  swc1       $f0, -0x6A3C($28)
+    /* 107EC4 00207DC4 C49580E7 */  swc1       $f0, %gp_rel(statusCnt$5776)($28)
   .L00207DC8:
     /* 107EC8 00207DC8 5000BF7B */  lq         $31, 0x50($29)
     /* 107ECC 00207DCC 4000B47B */  lq         $20, 0x40($29)
