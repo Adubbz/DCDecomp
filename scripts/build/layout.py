@@ -79,25 +79,17 @@ OBJDIFF = {
         {"id": "game", "name": "Game"},
         {"id": "title", "name": "TITLE overlay"},
         {"id": "dun", "name": "DUN overlay"},
-        {"id": "libc", "name": "libc"},
-        {"id": "libm", "name": "libm"},
-        {"id": "libgcc", "name": "libgcc"},
-        {"id": "sce", "name": "SCE SDK"},
     ],
-    # MWCC mangles C++ the way GCC did before 3.0 -- `__ct__7CCameraFf` -- so
-    # objdiff can read those names back if it is told which scheme to use.
-    "options": {"demangler": "gnu_legacy"},
+    # MWCC's own mangling -- `__ct__7CCameraFf` -- so objdiff can read those
+    # names back if it is told which scheme to use.
+    "options": {"demangler": "codewarrior"},
 }
 
 
-# Which library a unit belongs to, from where its source sits. Everything the
-# game itself is made of falls through to `game`; the overlays are called out
-# because they are separate images.
-LIBRARIES = (
-    ("src/lib/libc/", "libc"),
-    ("src/lib/libm/", "libm"),
-    ("src/lib/libgcc/", "libgcc"),
-    ("src/lib/", "sce"),
+# Which category a unit is counted under, from where its source sits. The
+# overlays are called out because they are separate images; everything else
+# objdiff is shown falls through to `game`.
+CATEGORY_DIRS = (
     ("src/title/", "title"),
     ("src/dun/", "dun"),
 )
@@ -105,7 +97,7 @@ LIBRARIES = (
 
 def category_of(source):
     """The progress category a unit is counted under."""
-    for prefix, name in LIBRARIES:
+    for prefix, name in CATEGORY_DIRS:
         if source.startswith(prefix):
             return name
     return "game"
@@ -113,7 +105,7 @@ def category_of(source):
 
 def included_in_objdiff(source):
     """Return whether objdiff should expose this translation unit."""
-    return not source.startswith("src/lib/") or source == "src/lib/crt0.c"
+    return not source.startswith("src/lib/")
 
 
 # Which image an address belongs to. The overlays share a range with each
