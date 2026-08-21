@@ -17,37 +17,35 @@ import re
 import sys
 from pathlib import Path
 
-
 CONFIG = Path("config")
 SRC = Path("src")
 
 
-# Retail's own section boundaries, in address order and with no gaps. The kind
-# is the splat segment type, which names the dump's file as well as its
-# contents.
 SECTIONS = {
     "main": (
-        (".text",    "text",   0x00100000, 0x00245300),
-        (".vutext",  "data",   0x00245300, 0x0024FAC0),
-        (".data",    "data",   0x0024FAC0, 0x00296680),
-        (".vudata",  "data",   0x00296680, 0x00296780),
-        (".rodata",  "rodata", 0x00296780, 0x0029FE80),
-        (".rdata",   "rdata",  0x0029FE80, 0x002A1E80),
-        (".sdata",   "sdata",  0x002A1E80, 0x002A2380),
-        (".sbss",    "sbss",   0x002A2380, 0x002A3709),
-        (".bss",     "bss",    0x002A3709, 0x01DABD00),
+        (".text", "text", 0x00100000, 0x00245300),
+        (".vutext", "data", 0x00245300, 0x0024FAC0),
+        (".data", "data", 0x0024FAC0, 0x00296680),
+        (".vudata", "data", 0x00296680, 0x00296780),
+        (".rodata", "rodata", 0x00296780, 0x0029FE80),
+        (".rdata", "rdata", 0x0029FE80, 0x002A1E80),
+        (".sdata", "sdata", 0x002A1E80, 0x002A2380),
+        (".sbss", "sbss", 0x002A2380, 0x002A3709),
+        (".bss", "bss", 0x002A3709, 0x01DABD00),
     ),
     "title": (
-        ("header",   "bin",    0x01DABD00, 0x01DABD40),
-        (".text",    "text",   0x01DABD40, 0x01DD5380),
-        (".data",    "data",   0x01DD5380, 0x01DE1AFC),
-        (".bss",     "bss",    0x01DE1AFC, 0x01E5DF80),
+        ("header", "bin", 0x01DABD00, 0x01DABD40),
+        (".text", "text", 0x01DABD40, 0x01DD5380),
+        (".data", "data", 0x01DD5380, 0x01DE1AFC),
+        (".bss", "bss", 0x01DE1AFC, 0x01E5DF80),
     ),
     "dun": (
-        ("header",   "bin",    0x01DABD00, 0x01DABD40),
-        (".text",    "text",   0x01DABD40, 0x01DC1B00),
-        (".data",    "data",   0x01DC1B00, 0x01DC4414),
-        (".bss",     "bss",    0x01DC4414, 0x01F06B00),
+        ("header", "bin", 0x01DABD00, 0x01DABD40),
+        (".text", "text", 0x01DABD40, 0x01DC1B00),
+        (".data", "data", 0x01DC1B00, 0x01DC2980),
+        (".rodata", "rodata", 0x01DC2980, 0x01DC3580),
+        (".sinit", "data", 0x01DC3580, 0x01DC4414),
+        (".bss", "bss", 0x01DC4414, 0x01F06B00),
     ),
 }
 
@@ -65,10 +63,12 @@ RODATA_SECTIONS = (".rodata", ".rdata")
 
 def sections_named(names):
     """[(start, end)] for every section of every image with one of these names."""
-    return [(start, end)
-            for image in IMAGES
-            for name, _kind, start, end in SECTIONS[image]
-            if name in names]
+    return [
+        (start, end)
+        for image in IMAGES
+        for name, _kind, start, end in SECTIONS[image]
+        if name in names
+    ]
 
 
 def image_range(image):
@@ -82,10 +82,12 @@ def image_range(image):
 
 def dump_spans():
     """[(image, dump, start, end)] for every whole-section dump, in address order."""
-    return [(image, f"{image}.{name.lstrip('.')}", start, end)
-            for image in IMAGES
-            for name, kind, start, end in SECTIONS[image]
-            if kind in DUMPED]
+    return [
+        (image, f"{image}.{name.lstrip('.')}", start, end)
+        for image in IMAGES
+        for name, kind, start, end in SECTIONS[image]
+        if kind in DUMPED
+    ]
 
 
 def dump_names():
@@ -195,9 +197,7 @@ def read_units(config_dir=CONFIG, src_dir=SRC):
     return rows
 
 
-SYMBOL_ROW = re.compile(
-    r"^(\S+)\s*=\s*(0x[0-9A-Fa-f]+)\s*;(?:\s*//\s*(.*))?$"
-)
+SYMBOL_ROW = re.compile(r"^(\S+)\s*=\s*(0x[0-9A-Fa-f]+)\s*;(?:\s*//\s*(.*))?$")
 
 
 def read_symbol_table(config_dir=CONFIG):
@@ -313,6 +313,38 @@ def configure_vu_sections():
     MipsSymbolBase.SymbolBase._allowWordSymbolReference = allow_word_symbol_reference
 
 
+HEAP_SYMBOL = "GlobalDataBuffer"
+
+
+def configure_heap_words():
+    """Keep a word that only looks like a pointer into the heap a constant.
+
+    Nothing static can point into a buffer the game allocates at runtime, so a
+    word landing inside it is data that happens to read like an address --
+    `.word 0x00786565`, the tail of "c06a_tameex", became
+    `GlobalDataBuffer + 0x4DB4E5` and moved with the heap.
+
+    Only a reference that resolves to the buffer *itself* is refused: a word
+    that reaches a named object inside main's .bss is a real pointer, and
+    spimdisasm names it after that object rather than after the buffer.
+    """
+    from spimdisasm.mips.symbols import MipsSymbolBase
+
+    entry = read_symbol_table().get("main", {}).get(HEAP_SYMBOL)
+    if entry is None:
+        return
+    heap = entry[0]
+
+    original = MipsSymbolBase.SymbolBase._allowWordSymbolReference
+
+    def allow_word_symbol_reference(self, symbol_ref, word):
+        if getattr(symbol_ref, "vram", None) == heap:
+            return False
+        return original(self, symbol_ref, word)
+
+    MipsSymbolBase.SymbolBase._allowWordSymbolReference = allow_word_symbol_reference
+
+
 # A PC-relative branch and the label it lands on. `j`/`jal` are deliberately
 # not matched: those encode an absolute target that mwld resolves correctly.
 # `break` is the one other b-word and takes no label.
@@ -360,23 +392,23 @@ def globalize_addressed_labels(text):
     if not addressed:
         return text
 
-    renamed = {name: ("T_" + name[2:] if name.startswith(".L") else name)
-               for name in addressed}
+    renamed = {
+        name: ("T_" + name[2:] if name.startswith(".L") else name) for name in addressed
+    }
 
     alternation = "|".join(
         re.escape(name) for name in sorted(renamed, key=len, reverse=True)
     )
-    text = re.sub(rf"(?<![\w.$])({alternation})(?![\w.$])",
-                  lambda m: renamed[m.group(1)], text)
+    text = re.sub(
+        rf"(?<![\w.$])({alternation})(?![\w.$])", lambda m: renamed[m.group(1)], text
+    )
 
     finals = "|".join(
-        re.escape(name)
-        for name in sorted(set(renamed.values()), key=len, reverse=True)
+        re.escape(name) for name in sorted(set(renamed.values()), key=len, reverse=True)
     )
     # `glabel` is deliberately not matched: such a label is already a symbol,
     # and mwccgap rejects a promoted one in .rodata.
-    return re.sub(rf"^[ \t]*(?:alabel )?({finals}):?$", r"jlabel \1",
-                  text, flags=re.M)
+    return re.sub(rf"^[ \t]*(?:alabel )?({finals}):?$", r"jlabel \1", text, flags=re.M)
 
 
 def localize_alt_labels(text):
@@ -395,16 +427,20 @@ def localize_alt_labels(text):
     keep = [name for name in names if name in addressed]
     if keep:
         alternation = "|".join(re.escape(name) for name in keep)
-        text = re.sub(rf"^[ \t]*({alternation}):[ \t]*$", r"glabel \1", text,
-                      flags=re.M)
+        text = re.sub(
+            rf"^[ \t]*({alternation}):[ \t]*$", r"glabel \1", text, flags=re.M
+        )
 
     rename = [name for name in names if name not in addressed]
     if not rename:
         return text
 
     alternation = "|".join(re.escape(name) for name in rename)
-    return re.sub(rf"(?<![\w.$])({alternation})(?![\w.$])",
-                  lambda m: TWIN_PREFIX + m.group(1), text)
+    return re.sub(
+        rf"(?<![\w.$])({alternation})(?![\w.$])",
+        lambda m: TWIN_PREFIX + m.group(1),
+        text,
+    )
 
 
 def twin_branched_labels(text):
@@ -453,8 +489,11 @@ def restore_gp_relative_relocations(path, text, symbols, image_of):
 
     def replace(match):
         immediate = match.group(1)
-        offset = (-int(immediate[3:], 16) if immediate.startswith("-0x")
-                  else int(immediate, 16))
+        offset = (
+            -int(immediate[3:], 16)
+            if immediate.startswith("-0x")
+            else int(immediate, 16)
+        )
         names = by_address.get(gp[0] + offset)
         if not names:
             return match.group(0)
@@ -479,7 +518,7 @@ def image_of_file():
         for marker in ("nonmatchings", "matchings"):
             if marker in parts:
                 index = parts.index(marker)
-                unit = "/".join(parts[index + 1:-1])
+                unit = "/".join(parts[index + 1 : -1])
                 return by_reference.get(f"asm/{unit}.s")
         if "data" in parts:
             return path.name.split("_", 1)[0]
@@ -499,13 +538,13 @@ def linked_object(path):
     for marker in ("nonmatchings", "matchings"):
         if marker in parts:
             index = parts.index(marker)
-            return "/".join(parts[index + 1:-1])
+            return "/".join(parts[index + 1 : -1])
     if "handwritten" in parts:
         return None
     if "data" in parts:
         return path.name
     posix = path.as_posix()
-    return posix[len("asm/"):-len(".s")] if posix.startswith("asm/") else None
+    return posix[len("asm/") : -len(".s")] if posix.startswith("asm/") else None
 
 
 # A generated local label, and every mention of one. gas keeps a name beginning
@@ -539,9 +578,7 @@ def globalize_shared_labels(texts):
             referenced.setdefault((image, match.group(1)), set()).add(owner)
 
     shared = {
-        key
-        for key, home in defined.items()
-        if referenced.get(key, set()) - {home}
+        key for key, home in defined.items() if referenced.get(key, set()) - {home}
     }
     if not shared:
         # A copy either way: the caller rewrites what it is given, and handing
@@ -559,10 +596,10 @@ def globalize_shared_labels(texts):
             out[path] = text
             continue
         alternation = "|".join(sorted(addresses))
-        text = re.sub(rf"\.L({alternation})\b",
-                      lambda m: "T_" + m.group(1), text)
-        out[path] = re.sub(rf"^[ \t]*T_({alternation}):[ \t]*$",
-                           r"jlabel T_\1", text, flags=re.M)
+        text = re.sub(rf"\.L({alternation})\b", lambda m: "T_" + m.group(1), text)
+        out[path] = re.sub(
+            rf"^[ \t]*T_({alternation}):[ \t]*$", r"jlabel T_\1", text, flags=re.M
+        )
     return out, len(shared)
 
 
@@ -583,7 +620,8 @@ def fix_branches(root):
     for path, text in texts.items():
         text = restore_gp_relative_relocations(path, text, symbols, image_of)
         texts[path] = twin_branched_labels(
-            localize_alt_labels(globalize_addressed_labels(text)))
+            localize_alt_labels(globalize_addressed_labels(text))
+        )
 
     changed = 0
     for path, text in texts.items():
@@ -730,29 +768,30 @@ def write_symbol_aliases(out, objects):
     reference objects alone, so that objdiff can pair a templated symbol with
     its base; nothing that links is renamed.
     """
-    prefix = os.environ.get('MIPS_TOOL_PREFIX', 'mips-ps2-decompals-')
+    prefix = os.environ.get("MIPS_TOOL_PREFIX", "mips-ps2-decompals-")
     pairs = {}
     for obj in objects:
         if not os.path.exists(obj):
             continue
-        text = subprocess.run([prefix + 'nm', '--defined-only', obj],
-                              capture_output=True, text=True).stdout
+        text = subprocess.run(
+            [prefix + "nm", "--defined-only", obj], capture_output=True, text=True
+        ).stdout
         for line in text.splitlines():
-            name = line.split(' ', 2)[-1].strip()
+            name = line.split(" ", 2)[-1].strip()
             # Only the templated names. The dot in a function-local static is
             # the other thing normalize_sym folds, and MWCC spells that with
             # the dot too, so those already agree.
-            if not any(c in name for c in '<>,'):
+            if not any(c in name for c in "<>,"):
                 continue
             sanitised = normalize_sym(name)
             if sanitised != name:
                 pairs[sanitised] = name
 
-    os.makedirs(os.path.dirname(out) or '.', exist_ok=True)
-    with open(out, 'w') as f:
+    os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
+    with open(out, "w") as f:
         for sanitised, real in sorted(pairs.items()):
-            f.write(f'{sanitised} {real}\n')
-    print(f'disassemble: {len(pairs)} templated symbols -> {out}')
+            f.write(f"{sanitised} {real}\n")
+    print(f"disassemble: {len(pairs)} templated symbols -> {out}")
 
 
 def split_one(config):
@@ -760,6 +799,7 @@ def split_one(config):
     configure_spimdisasm()
     configure_r5900_registers()
     configure_vu_sections()
+    configure_heap_words()
     from splat.scripts import split
 
     # The yaml carries every option; nothing is overridden here.
@@ -768,15 +808,25 @@ def split_one(config):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("names", nargs="*",
-                    help="images to split, or objects for --symbol-aliases")
+    ap.add_argument(
+        "names", nargs="*", help="images to split, or objects for --symbol-aliases"
+    )
     ap.add_argument("--config", default=CONFIG, type=Path)
-    ap.add_argument("--list-units", action="store_true",
-                    help="print the translation units, one tab-separated row each")
-    ap.add_argument("--list-dumps", action="store_true",
-                    help="print the whole-section dumps, one row each")
-    ap.add_argument("--symbol-aliases", metavar="OUT",
-                    help="write the templated symbol names of the given objects")
+    ap.add_argument(
+        "--list-units",
+        action="store_true",
+        help="print the translation units, one tab-separated row each",
+    )
+    ap.add_argument(
+        "--list-dumps",
+        action="store_true",
+        help="print the whole-section dumps, one row each",
+    )
+    ap.add_argument(
+        "--symbol-aliases",
+        metavar="OUT",
+        help="write the templated symbol names of the given objects",
+    )
     ap.add_argument("--single", help=argparse.SUPPRESS)
     args = ap.parse_args()
 
@@ -808,8 +858,11 @@ def main():
     for image in args.names or IMAGES:
         config = args.config / f"{image}.yaml"
         if not config.exists():
-            print(f"disassemble: {config} is missing -- the configuration is "
-                  f"checked in under {args.config}/", file=sys.stderr)
+            print(
+                f"disassemble: {config} is missing -- the configuration is "
+                f"checked in under {args.config}/",
+                file=sys.stderr,
+            )
             return 1
         result = subprocess.run(
             [sys.executable, os.path.abspath(__file__), "--single", str(config)]
@@ -820,8 +873,10 @@ def main():
 
     unaligned = drop_rodata_alignment("asm")
     if unaligned:
-        print(f"disassemble: dropped the alignment from the constants in "
-              f"{unaligned} file(s)")
+        print(
+            f"disassemble: dropped the alignment from the constants in "
+            f"{unaligned} file(s)"
+        )
     aligned = align_rodata()
     if aligned:
         print(f"disassemble: aligned the constants in {aligned} file(s)")
@@ -829,8 +884,10 @@ def main():
     changed, shared = fix_branches("asm")
     if removed:
         print(f"disassemble: dropped {removed} duplicate per-unit section dump(s)")
-    print(f"disassemble: fixed up the labels in {changed} file(s); "
-          f"{shared} reached from another object were exported")
+    print(
+        f"disassemble: fixed up the labels in {changed} file(s); "
+        f"{shared} reached from another object were exported"
+    )
     return 0
 
 

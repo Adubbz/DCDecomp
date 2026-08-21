@@ -24,10 +24,6 @@
 /* The floor that the player selected; only the first six hold atla. */
 extern "C" s32 selectMapNo;
 
-/* The player's save-slot status; the dungeon reads the party and the floor. */
-extern CUserStatus *UserStatus;
-
-
 /* One texture animation for every part of every character in the dungeon. */
 extern "C" CTexAnimeData BtNPCTexAnimeData[4][32];
 
@@ -159,7 +155,6 @@ s32 chainTableDividDoor[2][3] = {
     {9, MAP_PARTS_DIVIDE_DOOR_NORTH, 0},
     {6, MAP_PARTS_DIVIDE_DOOR_EAST, 0},
 };
-
 
 #if DNG_COMPILE_UNMATCHED
 void CDungeonMap::SetNPC(int npc_no, unsigned int *pack, int parts_no, sceVu0FVECTOR pos, sceVu0FVECTOR rot,
@@ -2998,6 +2993,7 @@ void CDungeonMap::BuildCharaSpecialParts() {
         }
     }
 }
+
 /* The constants that the functions above name. These stand here rather than
  * at the foot of the file because MWCC's own .rodata for SetCharaDoor's jump
  * table is spliced in at this point, and retail puts the table after all of
@@ -3276,6 +3272,7 @@ void CDungeonMap::buildRandomMap(int room_max, int full) {
 #endif /* DNG_COMPILE_UNMATCHED */
 INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_3190);
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", buildRandomMap__11CDungeonMapFii);
+
 void CDungeonMap::initSubmap(CDataAlloc2_1_ *alloc) {
     int i;
     int j;
@@ -3338,6 +3335,7 @@ void CDungeonMap::initSubmap(CDataAlloc2_1_ *alloc) {
         this->room_link[j].used = 0;
     }
 }
+
 void CDungeonMap::initalize() {
     int i;
     int j;

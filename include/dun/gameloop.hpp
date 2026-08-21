@@ -57,7 +57,7 @@ void GameInit(void);
  * @size 0x2C0
  * @unknownret
  */
-void GameLoop(void);
+int GameLoop(void);
 
 /**
  * @mangled Draw_MainUnitShadow__Fv
@@ -118,10 +118,11 @@ void BtCleatRandomMap(void);
 void BtCleatFreeMap(void);
 
 /**
+ * Clears the monsters that the player can see and spreads them over the floor again.
+ *
  * @mangled BtArrengeMonstor__Fv
  * @address 0x1DB92E0
  * @size 0x50
- * @unknownret
  */
 void BtArrengeMonstor(void);
 
@@ -166,10 +167,11 @@ void LoadWeapon2(unsigned int *, unsigned int *, unsigned int *, int, int);
 void SwordDmgCheck1(float, int);
 
 /**
+ * Colours the trail of the player's weapon from the element that the weapon leans on.
+ *
  * @mangled SetWeaponColor__Fv
  * @address 0x1DB9E00
  * @size 0x260
- * @unknownret
  */
 void SetWeaponColor(void);
 
@@ -179,7 +181,7 @@ void SetWeaponColor(void);
  * @size 0x1D0
  * @unknownret
  */
-void Get_Main_EffectPtr(int, int);
+BT_SHOT_EFFECT *Get_Main_EffectPtr(int chara, int form);
 
 /**
  * @mangled MainChara_Effect__FP14BT_SHOT_EFFECTPUii
@@ -196,15 +198,6 @@ void MainChara_Effect(BT_SHOT_EFFECT *, unsigned int *, int);
  * @unknownret
  */
 void LoadChara2(int, int, unsigned int *, unsigned int *, unsigned int *, unsigned int *);
-
-/**
- * @mangled LoadData__Fv__3
- * @address 0x1DBA930
- * @size 0x6A0
- * @unknownret
- * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
- */
-void LoadData(void);
 
 /**
  * @mangled BtCheckDamageProc__Fv
@@ -231,10 +224,11 @@ void BattleActionThlow(void);
 void BattleActionDrink(void);
 
 /**
+ * Starts Xiao's gun action, if the player is free and the gauge is full.
+ *
  * @mangled BattleActionOn_Jinn__Fv
  * @address 0x1DBC8A0
  * @size 0x90
- * @unknownret
  */
 void BattleActionOn_Jinn(void);
 
@@ -247,10 +241,11 @@ void BattleActionOn_Jinn(void);
 void BattleActionPlay_Jinn(CCharacter *, int);
 
 /**
+ * Starts Ruby's magic action, if the player is free and the gauge is full.
+ *
  * @mangled BattleActionOn_Ruby__Fv
  * @address 0x1DBCF00
  * @size 0x80
- * @unknownret
  */
 void BattleActionOn_Ruby(void);
 
@@ -271,26 +266,29 @@ void BattleActionShotRuby(CCharacter *, int, float, int);
 void BattleActionPlay_Ruby(CCharacter *, int);
 
 /**
+ * Starts Osmond's action, if the player is free and nothing blocks it.
+ *
  * @mangled BattleActionOn_Ozumond__Fv
  * @address 0x1DBDB40
  * @size 0x90
- * @unknownret
  */
 void BattleActionOn_Ozumond(void);
 
 /**
+ * Starts Osmond's charged action, if the player is free and the gauge is full.
+ *
  * @mangled BattleActionOn_Ozumond_H__Fv
  * @address 0x1DBDBD0
  * @size 0xA0
- * @unknownret
  */
 void BattleActionOn_Ozumond_H(void);
 
 /**
+ * Starts Osmond's flight action, if the player is free and nothing blocks it.
+ *
  * @mangled BattleActionOn_Ozumond_F__Fv
  * @address 0x1DBDC70
  * @size 0x80
- * @unknownret
  */
 void BattleActionOn_Ozumond_F(void);
 
@@ -319,15 +317,6 @@ void BattleActionPlay_Ozumond_H(int);
 void BattleActionPlay_Ozumond_F(int);
 
 /**
- * @mangled CameraAutoMove__FP13CCameraFollowP6CCPolyPfff__2
- * @address 0x1DBE760
- * @size 0x210
- * @unknownret
- * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
- */
-void CameraAutoMove(CCameraFollow *, CCPoly *, float *, float, float);
-
-/**
  * @mangled autoCamTrial__Fv
  * @address 0x1DBE970
  * @size 0x1060
@@ -352,18 +341,20 @@ void DelActiveItem(int);
 void Run_TrapCircle(MAP_TRAP_CIRCLE *);
 
 /**
+ * Drops the lock-on, and with it the cursor and the life gauge.
+ *
  * @mangled LockOffTargte__Fv
  * @address 0x1DBFCE0
  * @size 0x30
- * @unknownret
  */
 void LockOffTargte(void);
 
 /**
+ * Draws the life gauge of the enemy that the player has locked on to.
+ *
  * @mangled DrawTargetLife__Fv
  * @address 0x1DBFD10
  * @size 0x1C0
- * @unknownret
  */
 void DrawTargetLife(void);
 
@@ -392,12 +383,13 @@ void SetNearLockOnTarget(int, int);
 void setTargetCursor(int);
 
 /**
+ * Turns the player's model to face the way a blow throws them.
+ *
  * @mangled unitBlowActionRot__FPf
  * @address 0x1DC0E80
  * @size 0xA0
- * @unknownret
  */
-void unitBlowActionRot(float *);
+void unitBlowActionRot(float *velocity);
 
 /**
  * @mangled setUnitDamageColor__Fi
@@ -408,28 +400,31 @@ void unitBlowActionRot(float *);
 void setUnitDamageColor(int);
 
 /**
+ * Stops the ambient-colour animation on the player's model.
+ *
  * @mangled RsetUnitAmbientAnime__Fv
  * @address 0x1DC0FF0
  * @size 0x10
- * @unknownret
  */
 void RsetUnitAmbientAnime(void);
 
 /**
+ * Starts an ambient-colour animation on the player's model.
+ *
  * @mangled setUnitAmbientAnime__Ffffff
  * @address 0x1DC1000
  * @size 0x50
- * @unknownret
  */
-void setUnitAmbientAnime(float, float, float, float, float);
+void setUnitAmbientAnime(float speed, float time, float red, float green, float blue);
 
 /**
+ * Steps the ambient-colour animation and writes the colour it reaches.
+ *
  * @mangled unitAmbientAnime__FPf
  * @address 0x1DC1050
  * @size 0x130
- * @unknownret
  */
-void unitAmbientAnime(float *);
+int unitAmbientAnime(float *colour);
 
 /**
  * @mangled LoadStartLogo__Fi
@@ -440,34 +435,38 @@ void unitAmbientAnime(float *);
 void LoadStartLogo(int);
 
 /**
+ * Brings the floor title on screen.
+ *
  * @mangled FloorTitleOn__Fv
  * @address 0x1DC1290
  * @size 0x30
- * @unknownret
  */
 void FloorTitleOn(void);
 
 /**
+ * Takes the mini-map away, or gives back what it drew before.
+ *
  * @mangled SetMIniMapStatus__Fi
  * @address 0x1DC12C0
  * @size 0x40
- * @unknownret
  */
-void SetMIniMapStatus(int);
+void SetMIniMapStatus(int on);
 
 /**
+ * Puts the player back into the state a floor starts in.
+ *
  * @mangled ResetStatusInfo__Fv
  * @address 0x1DC1300
  * @size 0x100
- * @unknownret
  */
 void ResetStatusInfo(void);
 
 /**
+ * Takes away the push that the player's action gives them.
+ *
  * @mangled ResetMovePower__Fv
  * @address 0x1DC1400
  * @size 0x20
- * @unknownret
  */
 void ResetMovePower(void);
 
@@ -488,10 +487,11 @@ void LoaderInit(void);
 void LoaderLoop(void);
 
 /**
+ * Points the first-person camera the way the player faces.
+ *
  * @mangled InitEyeCamera__Fv
  * @address 0x1DC1790
  * @size 0x50
- * @unknownret
  */
 void InitEyeCamera(void);
 

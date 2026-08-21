@@ -532,9 +532,9 @@ struct WEAPON_HAVE {
     s16 unk_0E;
     float durability_f; /**< The durability again, converted on the way in. */
     char unk_14[2];
-    u8 best_elem;      /**< Indexes the largest entry of `elem`. */
+    s8 best_elem;      /**< Indexes the largest entry of `elem`, or -1 for none. */
     u8 elem[5];        /**< AttachStat order: fire, ice, thunder, wind, holy. */
-    u8 vs_monster[10]; /**< Monster effectiveness, one byte per WEAPON_DATA entry. */
+    char vs_monster[10]; /**< Monster effectiveness, one byte per WEAPON_DATA entry. */
     char unk_26[200];
     s16 flags; /**< Bit 3 and bit 4 each scale the water-drain rate (CUserStatus::Step). */
     char unk_F0[8];

@@ -1022,7 +1022,7 @@ glabel LIT_259__2
 
 glabel LIT_260__2
     /* 19A1C8 0029A0C8 626C656E */ .word 0x6E656C62
-    /* 19A1CC 0029A0CC 64657200 */ .word GlobalDataBuffer + 0x47B4E4
+    /* 19A1CC 0029A0CC 64657200 */ .word 0x00726564
 
 glabel LIT_261__2
     /* 19A1D0 0029A0D0 64303165 */ .word 0x65313064
@@ -1036,4 +1036,4 @@ glabel LIT_298__3
 
 glabel LIT_328__2
     /* 19A1E8 0029A0E8 616C7068 */ .word 0x68706C61
-    /* 19A1EC 0029A0EC 61303100 */ .word GlobalDataBuffer + 0x67FE1
+    /* 19A1EC 0029A0EC 61303100 */ .word 0x00313061

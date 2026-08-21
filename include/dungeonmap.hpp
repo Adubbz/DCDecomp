@@ -54,7 +54,7 @@ struct ROOM_INFO {
 struct TREASURE_BOX {
     s32 used; /**< 1 if the slot is in use. */
     u8 unk_04[12];
-    float pos[4]; /**< World position of the box. */
+    sceVu0FVECTOR pos; /**< World position of the box. */
     s32 item_no;  /**< Identifier of the item inside the box. */
     s32 unk_24;
     s32 kind; /**< 0 for a large box, 1 for a small box. */
@@ -113,7 +113,7 @@ struct DUNGEON_EVENT {
 /**
  * Describes one non-player character that walks in the dungeon.
  */
-struct DUNGEON_NPC {
+struct MAP_NPC_MODEL {
     CCharacter chara; /**< Draws and moves the character. */
     float pos[4]; /**< World position of the character. */
     float unk_11C0[4];
@@ -132,16 +132,15 @@ struct DUNGEON_NPC {
  */
 class CDungeonMap {
 public:
-    u8 unk_0000[8];
+    s32 unk_0000;
+    s32 unk_0004;
     s32 room_seen[16]; /**< 1 for each room that the player found. */
-    u8 unk_0048[8];
     CFireOmni fire; /**< Draws the fire and the raster of every map part. */
     CWater water; /**< Draws the water surface. */
     float draw_dist_scale; /**< Scale that the draw distance uses. */
     s32 unk_03B4;
     s32 unk_03B8;
-    s32 unk_03BC;
-    float dummy_pos[8][4];   /**< World position of each dummy model. */
+    sceVu0FVECTOR dummy_pos[8]; /**< World position of each dummy model. */
     s32 dummy_model[8];      /**< Index into dummy_frame of each dummy model. */
     s32 dummy_num;           /**< Number of dummy models on the floor. */
     s32 unk_0464;
@@ -154,7 +153,6 @@ public:
     MAP_CELL cells[400];      /**< 20 x 20 grid of the floor. */
     ROOM_INFO rooms[16];      /**< Position and extent of each room. */
     s32 room_num;             /**< Number of rooms on the floor. */
-    u8 unk_B654[12];
     TREASURE_BOX boxes[24]; /**< Treasure boxes that stand on the floor. */
     s32 box_num;            /**< Number of treasure boxes on the floor. */
     CFrame *model[7];       /**< Models that the boxes and the water use. */
@@ -168,8 +166,9 @@ public:
     float link_item_y;
     ROOM_LINK_RESULT room_link[3];
     s32 room_link_3_used;
-    u8 unk_BDE8[8];
-    DUNGEON_NPC npc[4];         /**< Characters that walk in the dungeon. */
+    u8 unk_BDE8[4];
+    s32 unk_BDEC;
+    MAP_NPC_MODEL npc[4];         /**< Characters that walk in the dungeon. */
     TRAP_CIRCLE trap_circle[3]; /**< Trap circles that lie on the floor. */
 
     /**
@@ -584,5 +583,5 @@ STATIC_ASSERT(sizeof(ATRA_BOLL) == 0x20);
 STATIC_ASSERT(sizeof(TRAP_CIRCLE) == 0x20);
 STATIC_ASSERT(sizeof(ROOM_LINK_RESULT) == 0x18);
 STATIC_ASSERT(sizeof(DUNGEON_EVENT) == 0x50);
-STATIC_ASSERT(sizeof(DUNGEON_NPC) == 0x1330);
+STATIC_ASSERT(sizeof(MAP_NPC_MODEL) == 0x1330);
 STATIC_ASSERT(sizeof(CDungeonMap) == 0x10B10);

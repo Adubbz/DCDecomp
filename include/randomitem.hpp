@@ -2,8 +2,18 @@
 
 #include "common.h"
 
+class CTexture;
+
 class CRandomItem {
 public:
+    CTexture *gold_texture; /**< Texture that a dropped pile of gold draws with. */
+    u8 unk_004[0x28C];
+    s32 unk_290[32];
+    u8 unk_310[0x184];
+    s32 unk_494[32];
+    s32 unk_514[32];
+    u8 unk_594[0x8C];
+
     /**
      * @mangled Draw__11CRandomItemFv
      * @address 0x1D6BE0
@@ -40,9 +50,8 @@ public:
      * @mangled CheckPosition__11CRandomItemFv
      * @address 0x1D6FA0
      * @size 0x250
-     * @unknownret
      */
-    void CheckPosition(void);
+    int CheckPosition(void);
 
     /**
      * @mangled Set__11CRandomItemFPfiii
@@ -76,3 +85,5 @@ public:
      */
     void Step(void);
 };
+
+STATIC_ASSERT(sizeof(CRandomItem) == 0x620);

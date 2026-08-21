@@ -9,7 +9,16 @@ class CCamera;
 class CEffectGroup;
 class CFrame;
 struct EPARTS_FUNC_DATA;
-struct OBJ_ANIME_SEQ;
+/**
+ * Plays one animation of a map object.
+ *
+ * 0x1B00 bytes hold 48 of them at `FrameObjAnim`.
+ */
+struct OBJ_ANIME_SEQ {
+    u8 unk_00[0x90];
+};
+
+STATIC_ASSERT(sizeof(OBJ_ANIME_SEQ) == 0x90);
 
 /**
  * Describes one effect that an edited map places on a part, and the frame

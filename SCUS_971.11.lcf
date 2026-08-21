@@ -61,7 +61,12 @@ SECTIONS
 
         . = ALIGN(16);
         _dun_data = .;
+        ALIGNALL(1);
+        data.data.s.o   (.ddata)     // 0x01dc1b00
+        gameloop.cpp.o  (.drodata)   // 0x01dc2980
+        sinit.data.s.o  (.ddata)     // 0x01dc3580
         *(.ddata)
+        *(.drodata)
 
         ALIGNALL(1);
         _dun_bss = .;
@@ -398,11 +403,13 @@ SECTIONS
 		# appends it to the pool instead, which moves the small data after it.
 		_LIT_002A1800 = 0x002a1800;
 		_LIT_002A1868 = 0x002a1868;
+		_LIT_002A186C = 0x002a186c;
 		_LIT_002A1870 = 0x002a1870;
 		_LIT_002A1888 = 0x002a1888;
 		_LIT_002A1894 = 0x002a1894;
 		_LIT_002A18A0 = 0x002a18a0;
 		_LIT_002A18BC = 0x002a18bc;
+		_LIT_002A18C4 = 0x002a18c4;
 		_LIT_002A18D0 = 0x002a18d0;
 		_LIT_002A18E4 = 0x002a18e4;
 		_LIT_002A18EC = 0x002a18ec;
@@ -411,8 +418,15 @@ SECTIONS
 		_LIT_002A1934 = 0x002a1934;
 		_LIT_002A1944 = 0x002a1944;
 		_LIT_002A1948 = 0x002a1948;
+		_LIT_002A1A8C = 0x002a1a8c;
 		_LIT_002A1AF8 = 0x002a1af8;
+		_LIT_002A1BCC = 0x002a1bcc;
+		_LIT_002A1BD0 = 0x002a1bd0;
+		_LIT_002A1C50 = 0x002a1c50;
+		_LIT_002A1D0C = 0x002a1d0c;
 		_LIT_002A1D10 = 0x002a1d10;
+		_LIT_002A1D1C = 0x002a1d1c;
+		_LIT_002A1D20 = 0x002a1d20;
 		_LIT_002A1D24 = 0x002a1d24;
 		_LIT_002A1D98 = 0x002a1d98;
 		_LIT_002A1D9C = 0x002a1d9c;

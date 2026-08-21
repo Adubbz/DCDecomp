@@ -141,7 +141,7 @@ class CDungeonParts {
 public:
     s16 unk_000;
     s16 unk_002;
-    s32 unk_004;
+    CFrame *unk_004;
     s16 unk_008;
     s16 unk_00A;
     s32 unk_00C;

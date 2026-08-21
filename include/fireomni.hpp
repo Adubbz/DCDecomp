@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include <libvu0.h>
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -24,7 +26,7 @@ public:
     s16 unk_18;
     s16 unk_1A;
     s32 unk_1C;
-    float pos[4]; /**< World position that the fire draws at. */
+    sceVu0FVECTOR pos; /**< World position that the fire draws at. */
     s32 unk_30;
     s32 unk_34;
     s32 unk_38;

@@ -245,16 +245,57 @@ def declarator(t, name=""):
     return (base + " " + name).rstrip()
 
 
-def record_fields(cur):
+ANONYMOUS = re.compile(r"\((?:unnamed|anonymous)\b")
+
+
+def anonymous_record(t):
+    """The definition of an unnamed record `t` is built from, or None.
+
+    clang has no name to print for one -- it spells the type
+    "Outer::(unnamed at header.hpp:12:5)" -- so the only way to say it in C
+    is to write the definition out again where the field is declared. Arrays
+    are looked through, since an array of one is spelt the same way.
+    """
+    while t.kind == T.ELABORATED:
+        t = t.get_named_type()
+    while t.kind in ARRAY:
+        t = t.element_type
+        while t.kind == T.ELABORATED:
+            t = t.get_named_type()
+    if t.kind != T.RECORD:
+        return None
+    decl = t.get_declaration()
+    return decl if ANONYMOUS.search(decl.type.spelling) else None
+
+
+def array_suffix(t):
+    """The `[n]` an array type carries, so an inlined record keeps it."""
+    while t.kind == T.ELABORATED:
+        t = t.get_named_type()
+    if t.kind not in ARRAY:
+        return ""
+    n = t.element_count if t.kind == T.CONSTANTARRAY else ""
+    return "[%s]%s" % (n, array_suffix(t.element_type))
+
+
+def record_fields(cur, depth=1):
+    pad = "    " * depth
     out = []
     for f in cur.get_children():
         if f.kind != K.FIELD_DECL:
             continue
-        if f.is_bitfield():
-            out.append("    %s : %d;" % (declarator(f.type, f.spelling),
-                                         f.get_bitfield_width()))
+        decl = anonymous_record(f.type)
+        if decl is not None:
+            tag = "union" if decl.kind == K.UNION_DECL else "struct"
+            body = record_fields(decl, depth + 1) or ["%s    char _empty;" % pad]
+            out.append("%s%s {\n%s\n%s} %s%s;" % (
+                pad, tag, "\n".join(body), pad,
+                f.spelling, array_suffix(f.type)))
+        elif f.is_bitfield():
+            out.append("%s%s : %d;" % (pad, declarator(f.type, f.spelling),
+                                       f.get_bitfield_width()))
         else:
-            out.append("    %s;" % declarator(f.type, f.spelling))
+            out.append("%s%s;" % (pad, declarator(f.type, f.spelling)))
     return out
 
 
@@ -276,12 +317,30 @@ def usable(cur, root):
     return not cur.spelling.startswith("_static_assert")
 
 
+# `extern "C" { ... }` is a cursor of its own with the declarations nested
+# inside it, so a walk over the top level alone would see none of them --
+# which is every SDK and libc declaration the headers carry. Older libclang
+# spells the block UNEXPOSED_DECL and newer ones LINKAGE_SPEC; both nest the
+# same way.
+TRANSPARENT = (K.UNEXPOSED_DECL, K.LINKAGE_SPEC, K.NAMESPACE)
+
+
+def declarations(cursor):
+    """Every declaration below `cursor`, with linkage blocks walked through."""
+    for cur in cursor.get_children():
+        if cur.kind in TRANSPARENT:
+            for inner in declarations(cur):
+                yield inner
+        else:
+            yield cur
+
+
 def convert(tu, root):
     enums, fwd, typedefs, records, rest = [], [], [], [], []
     tags = []
     defined = set()
 
-    for cur in tu.cursor.get_children():
+    for cur in declarations(tu.cursor):
         if not usable(cur, root):
             continue
 

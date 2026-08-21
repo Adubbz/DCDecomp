@@ -21,7 +21,9 @@ public:
     s16 draw_on; /**< 1 while the frame draws; 0 leaves it out of the scene. */
     u8 unk_0B2[94];
     CFrame *unk_110;
-    u8 unk_114[268];
+    u8 unk_114[188];
+    sceVu0FMATRIX world; /**< Where the frame stands, in world space. */
+    u8 unk_210[16];
     sceVu0FVECTOR pos; /**< World position of the frame. */
     u8 unk_230[32];
 

@@ -83,6 +83,7 @@ public:
     s32 timer;    /**< Steps that the mark still draws for. */
     s32 blink;    /**< 1 while the mark shows; 0 while it is hidden. */
     s32 on;       /**< 1 while the mark is in use. */
+    s32 unk_1C;
 
     /**
      * Draws the mark, unless the blink hides it.
@@ -103,4 +104,4 @@ public:
     void Step(void);
 };
 
-STATIC_ASSERT(sizeof(CHitPointMark) == 0x1C);
+STATIC_ASSERT(sizeof(CHitPointMark) == 0x20);

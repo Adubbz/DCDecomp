@@ -82,9 +82,11 @@ function(add_diff_base_object obj src)
         OUTPUT ${CMAKE_SOURCE_DIR}/${obj}
         COMMAND ${CMAKE_COMMAND} -E env "MWCIncludes=${LIB_INCLUDE_DIRS}"
                 wibo ${MW}mwccmips.exe ${CC_MW_FLAGS} -o ${obj} ${src}
+        COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/literals.py --bind ${obj}
         COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/postprocess_object.py ${obj} ${src}
         COMMAND sh ${SCRIPTS_DIR}/build/fixup_sections.sh ${obj} ${fixup_flags}
         DEPENDS ${CMAKE_SOURCE_DIR}/${src} ${REF_STAMP}
+                ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/literals.py
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/postprocess_object.py
                 ${CMAKE_SOURCE_DIR}/config/object_fixups.json
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -110,6 +112,9 @@ function(add_object obj)
     endif()
     if(src MATCHES "^${SRC_DIR}/lib/")
         list(APPEND fixup_flags --set-section-alignment .text=4)
+    endif()
+    if(OBJDIFF_TARGET_ONLY)
+        list(APPEND fixup_flags -w --localize-symbol=.L*)
     endif()
     set(fixup COMMAND sh ${SCRIPTS_DIR}/build/fixup_sections.sh ${obj} ${fixup_flags})
 

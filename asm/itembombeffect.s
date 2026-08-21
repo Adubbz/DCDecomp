@@ -1118,4 +1118,4 @@ glabel Step__10CShockWaveFv
 
 glabel LIT_1169__2
     /* 19CFB8 0029CEB8 626F6D62 */ .word 0x626D6F62
-    /* 19CFBC 0029CEBC 5F657800 */ .word GlobalDataBuffer + 0x4DB4DF
+    /* 19CFBC 0029CEBC 5F657800 */ .word 0x0078655F

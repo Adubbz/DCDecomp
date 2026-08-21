@@ -1386,7 +1386,7 @@ glabel __ct__10CRunEffectFv
 
 glabel LIT_395__2
     /* 19A1F0 0029A0F0 66785F66 */ .word 0x665F7866
-    /* 19A1F4 0029A0F4 6F6F7400 */ .word GlobalDataBuffer + 0x49BEEF
+    /* 19A1F4 0029A0F4 6F6F7400 */ .word 0x00746F6F
 
 glabel LIT_396
     /* 19A1F8 0029A0F8 66785F66 */ .word 0x665F7866

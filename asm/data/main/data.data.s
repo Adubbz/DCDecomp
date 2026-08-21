@@ -907,7 +907,7 @@ glabel __FRAME_BEGIN__
     /* 1507BC 002506BC 10DB1000 */ .word find_exception_handler
     /* 1507C0 002506C0 44010000 */ .word 0x00000144
     /* 1507C4 002506C4 04040000 */ .word 0x00000404
-    /* 1507C8 002506C8 000E8001 */ .word GlobalDataBuffer + 0x1555D80
+    /* 1507C8 002506C8 000E8001 */ .word 0x01800E00
     /* 1507CC 002506CC 04080000 */ .word 0x00000804
     /* 1507D0 002506D0 00960404 */ .word 0x04049600
     /* 1507D4 002506D4 04000000 */ .word 0x00000004
@@ -1095,7 +1095,7 @@ glabel gp_6
     /* 150A9C 0025099C 00000000 */ .word 0x00000000
 
 glabel init_vif_regs_3
-    /* 150AA0 002509A0 04040001 */ .word GlobalDataBuffer + 0xD55384
+    /* 150AA0 002509A0 04040001 */ .word 0x01000404
     /* 150AA4 002509A4 00000020 */ .word 0x20000000
     /* 150AA8 002509A8 00000000 */ .word 0x00000000
     /* 150AAC 002509AC 00000005 */ .word 0x05000000
@@ -1257,7 +1257,7 @@ glabel S5432
     /* 150BFC 00250AFC A4AA2ABE */ .word 0xBE2AAAA4
 
 glabel init_vif_regs_126
-    /* 150C00 00250B00 04040001 */ .word GlobalDataBuffer + 0xD55384
+    /* 150C00 00250B00 04040001 */ .word 0x01000404
     /* 150C04 00250B04 00000020 */ .word 0x20000000
     /* 150C08 00250B08 00000000 */ .word 0x00000000
     /* 150C0C 00250B0C 00000005 */ .word 0x05000000
@@ -1284,7 +1284,7 @@ glabel tga_head$211
     /* 150C40 00250B40 00000200 */ .word 0x00020000
     /* 150C44 00250B44 00000000 */ .word 0x00000000
     /* 150C48 00250B48 00000000 */ .word 0x00000000
-    /* 150C4C 00250B4C 8002C001 */ .word GlobalDataBuffer + 0x1955200
+    /* 150C4C 00250B4C 8002C001 */ .word 0x01C00280
     /* 150C50 00250B50 18000000 */ .word 0x00000018
     /* 150C54 00250B54 00000000 */ .word 0x00000000
     /* 150C58 00250B58 00000000 */ .word 0x00000000
@@ -2006,7 +2006,7 @@ glabel CurrentDir__2
     /* 151680 00251580 793A2F70 */ .word 0x702F3A79
     /* 151684 00251584 73322F64 */ .word 0x642F3273
     /* 151688 00251588 635F6461 */ .word 0x61645F63
-    /* 15168C 0025158C 74612F00 */ .word GlobalDataBuffer + 0x4B0F4
+    /* 15168C 0025158C 74612F00 */ .word 0x002F6174
     /* 151690 00251590 00000000 */ .word 0x00000000
     /* 151694 00251594 00000000 */ .word 0x00000000
     /* 151698 00251598 00000000 */ .word 0x00000000
@@ -4789,7 +4789,7 @@ glabel LIT_1959
     /* 15412C 0025402C 00000000 */ .word 0x00000000
 
 glabel LIT_263
-    /* 154130 00254030 696D6700 */ .word GlobalDataBuffer + 0x3CBCE9
+    /* 154130 00254030 696D6700 */ .word 0x00676D69
     /* 154134 00254034 00000000 */ .word 0x00000000
     /* 154138 00254038 00000000 */ .word 0x00000000
     /* 15413C 0025403C 00000000 */ .word 0x00000000
@@ -30934,7 +30934,7 @@ glabel LIT_325__2
     /* 166910 00266810 6D657377 */ .word 0x7773656D
     /* 166914 00266814 696E2F73 */ .word 0x732F6E69
     /* 166918 00266818 79737465 */ .word 0x65747379
-    /* 16691C 0026681C 6D5F6100 */ .word GlobalDataBuffer + 0x36AEED
+    /* 16691C 0026681C 6D5F6100 */ .word 0x00615F6D
     /* 166920 00266820 00000000 */ .word 0x00000000
     /* 166924 00266824 00000000 */ .word 0x00000000
     /* 166928 00266828 00000000 */ .word 0x00000000
@@ -33818,7 +33818,7 @@ glabel LIT_656__2
     /* 1694C0 002693C0 6D657377 */ .word 0x7773656D
     /* 1694C4 002693C4 696E2F73 */ .word 0x732F6E69
     /* 1694C8 002693C8 79737465 */ .word 0x65747379
-    /* 1694CC 002693CC 6D313400 */ .word GlobalDataBuffer + 0x980ED
+    /* 1694CC 002693CC 6D313400 */ .word 0x0034316D
     /* 1694D0 002693D0 00000000 */ .word 0x00000000
     /* 1694D4 002693D4 00000000 */ .word 0x00000000
     /* 1694D8 002693D8 00000000 */ .word 0x00000000
@@ -36217,7 +36217,7 @@ glabel LIT_783__2
     /* 16B6AC 0026B5AC 00000000 */ .word 0x00000000
 
 glabel ItemFreeAreaD01
-    /* 16B6B0 0026B5B0 00010001 */ .word GlobalDataBuffer + 0xD55080
+    /* 16B6B0 0026B5B0 00010001 */ .word 0x01000100
     /* 16B6B4 0026B5B4 000000C0 */ .word 0xC0000000
     /* 16B6B8 0026B5B8 00000000 */ .word 0x00000000
     /* 16B6BC 0026B5BC 000080C0 */ .word 0xC0800000
@@ -36895,7 +36895,7 @@ glabel ItemFreeAreaD01
     /* 16C13C 0026C03C 00000000 */ .word 0x00000000
 
 glabel ItemFreeAreaD02
-    /* 16C140 0026C040 00020001 */ .word GlobalDataBuffer + 0xD55180
+    /* 16C140 0026C040 00020001 */ .word 0x01000200
     /* 16C144 0026C044 000000BF */ .word 0xBF000000
     /* 16C148 0026C048 00000000 */ .word 0x00000000
     /* 16C14C 0026C04C 000000C0 */ .word 0xC0000000
@@ -37273,7 +37273,7 @@ glabel ItemFreeAreaD02
     /* 16C71C 0026C61C 00000000 */ .word 0x00000000
 
 glabel ItemFreeAreaD03
-    /* 16C720 0026C620 00010001 */ .word GlobalDataBuffer + 0xD55080
+    /* 16C720 0026C620 00010001 */ .word 0x01000100
     /* 16C724 0026C624 000080BF */ .word 0xBF800000
     /* 16C728 0026C628 0000803F */ .word 0x3F800000
     /* 16C72C 0026C62C 000080C0 */ .word 0xC0800000
@@ -37951,7 +37951,7 @@ glabel ItemFreeAreaD03
     /* 16D1AC 0026D0AC 00000000 */ .word 0x00000000
 
 glabel ItemFreeAreaD04
-    /* 16D1B0 0026D0B0 00010001 */ .word GlobalDataBuffer + 0xD55080
+    /* 16D1B0 0026D0B0 00010001 */ .word 0x01000100
     /* 16D1B4 0026D0B4 000080BF */ .word 0xBF800000
     /* 16D1B8 0026D0B8 00000000 */ .word 0x00000000
     /* 16D1BC 0026D0BC 000080C0 */ .word 0xC0800000
@@ -38629,7 +38629,7 @@ glabel ItemFreeAreaD04
     /* 16DC3C 0026DB3C 00000000 */ .word 0x00000000
 
 glabel ItemFreeAreaD05
-    /* 16DC40 0026DB40 00010001 */ .word GlobalDataBuffer + 0xD55080
+    /* 16DC40 0026DB40 00010001 */ .word 0x01000100
     /* 16DC44 0026DB44 000000BF */ .word 0xBF000000
     /* 16DC48 0026DB48 00000000 */ .word 0x00000000
     /* 16DC4C 0026DB4C 000080C0 */ .word 0xC0800000
@@ -39307,7 +39307,7 @@ glabel ItemFreeAreaD05
     /* 16E6CC 0026E5CC 00000000 */ .word 0x00000000
 
 glabel ItemFreeAreaD06
-    /* 16E6D0 0026E5D0 00010001 */ .word GlobalDataBuffer + 0xD55080
+    /* 16E6D0 0026E5D0 00010001 */ .word 0x01000100
     /* 16E6D4 0026E5D4 0000C0BF */ .word 0xBFC00000
     /* 16E6D8 0026E5D8 00000000 */ .word 0x00000000
     /* 16E6DC 0026E5DC 0000A0C0 */ .word 0xC0A00000
@@ -39685,7 +39685,7 @@ glabel ItemFreeAreaD06
     /* 16ECAC 0026EBAC 00000000 */ .word 0x00000000
 
 glabel ItemFreeAreaD07
-    /* 16ECB0 0026EBB0 00010001 */ .word GlobalDataBuffer + 0xD55080
+    /* 16ECB0 0026EBB0 00010001 */ .word 0x01000100
     /* 16ECB4 0026EBB4 0000C0BF */ .word 0xBFC00000
     /* 16ECB8 0026EBB8 00000000 */ .word 0x00000000
     /* 16ECBC 0026EBBC 000060C0 */ .word 0xC0600000
@@ -39710,7 +39710,7 @@ glabel ItemFreeAreaD07
     /* 16ED08 0026EC08 00000000 */ .word 0x00000000
     /* 16ED0C 0026EC0C 00000000 */ .word 0x00000000
     /* 16ED10 0026EC10 00000000 */ .word 0x00000000
-    /* 16ED14 0026EC14 03010001 */ .word GlobalDataBuffer + 0xD55083
+    /* 16ED14 0026EC14 03010001 */ .word 0x01000103
     /* 16ED18 0026EC18 0000C0BF */ .word 0xBFC00000
     /* 16ED1C 0026EC1C 00000000 */ .word 0x00000000
     /* 16ED20 0026EC20 0000C0BF */ .word 0xBFC00000
@@ -40387,1386 +40387,1386 @@ glabel ItemFreeAreaD07
     /* 16F79C 0026F69C 00000000 */ .word 0x00000000
 
 glabel ItemSetRateList0
-    /* 16F7A0 0026F6A0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F7A4 0026F6A4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F7A8 0026F6A8 5F003C00 */ .word GlobalDataBuffer + 0x114FDF
-    /* 16F7AC 0026F6AC 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 16F7B0 0026F6B0 3C005F00 */ .word GlobalDataBuffer + 0x344FBC
-    /* 16F7B4 0026F6B4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 16F7B8 0026F6B8 64003C00 */ .word GlobalDataBuffer + 0x114FE4
-    /* 16F7BC 0026F6BC 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16F7C0 0026F6C0 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16F7C4 0026F6C4 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16F7C8 0026F6C8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F7CC 0026F6CC 32003C00 */ .word GlobalDataBuffer + 0x114FB2
-    /* 16F7D0 0026F6D0 41003200 */ .word GlobalDataBuffer + 0x74FC1
-    /* 16F7D4 0026F6D4 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 16F7D8 0026F6D8 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 16F7DC 0026F6DC 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 16F7E0 0026F6E0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F7E4 0026F6E4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F7E8 0026F6E8 5A003C00 */ .word GlobalDataBuffer + 0x114FDA
-    /* 16F7EC 0026F6EC 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 16F7F0 0026F6F0 4B005000 */ .word GlobalDataBuffer + 0x254FCB
-    /* 16F7F4 0026F6F4 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 16F7F8 0026F6F8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F7FC 0026F6FC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F800 0026F700 32003C00 */ .word GlobalDataBuffer + 0x114FB2
-    /* 16F804 0026F704 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16F808 0026F708 50005500 */ .word GlobalDataBuffer + 0x2A4FD0
-    /* 16F80C 0026F70C 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 16F810 0026F710 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F814 0026F714 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F818 0026F718 32003C00 */ .word GlobalDataBuffer + 0x114FB2
-    /* 16F81C 0026F71C 46005000 */ .word GlobalDataBuffer + 0x254FC6
-    /* 16F820 0026F720 5F005A00 */ .word GlobalDataBuffer + 0x2F4FDF
-    /* 16F824 0026F724 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 16F828 0026F728 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F82C 0026F72C 32005500 */ .word GlobalDataBuffer + 0x2A4FB2
-    /* 16F830 0026F730 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F834 0026F734 32005500 */ .word GlobalDataBuffer + 0x2A4FB2
-    /* 16F838 0026F738 55005500 */ .word GlobalDataBuffer + 0x2A4FD5
-    /* 16F83C 0026F73C 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 16F840 0026F740 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F844 0026F744 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F848 0026F748 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F84C 0026F74C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F850 0026F750 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F854 0026F754 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F858 0026F758 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F85C 0026F75C 5A005000 */ .word GlobalDataBuffer + 0x254FDA
-    /* 16F860 0026F760 5A005000 */ .word GlobalDataBuffer + 0x254FDA
-    /* 16F864 0026F764 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16F868 0026F768 50005500 */ .word GlobalDataBuffer + 0x2A4FD0
-    /* 16F86C 0026F76C 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16F870 0026F770 55005000 */ .word GlobalDataBuffer + 0x254FD5
-    /* 16F874 0026F774 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 16F878 0026F778 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F87C 0026F77C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F880 0026F780 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F884 0026F784 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F888 0026F788 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F88C 0026F78C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F890 0026F790 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F894 0026F794 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F898 0026F798 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F89C 0026F79C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8A0 0026F7A0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8A4 0026F7A4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8A8 0026F7A8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8AC 0026F7AC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8B0 0026F7B0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8B4 0026F7B4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8B8 0026F7B8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8BC 0026F7BC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8C0 0026F7C0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8C4 0026F7C4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8C8 0026F7C8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8CC 0026F7CC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8D0 0026F7D0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8D4 0026F7D4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8D8 0026F7D8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8DC 0026F7DC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8E0 0026F7E0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8E4 0026F7E4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8E8 0026F7E8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8EC 0026F7EC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8F0 0026F7F0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8F4 0026F7F4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8F8 0026F7F8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F8FC 0026F7FC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F900 0026F800 32005A00 */ .word GlobalDataBuffer + 0x2F4FB2
-    /* 16F904 0026F804 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F908 0026F808 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F90C 0026F80C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F910 0026F810 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F914 0026F814 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F918 0026F818 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F91C 0026F81C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F920 0026F820 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F924 0026F824 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F928 0026F828 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F92C 0026F82C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F930 0026F830 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F934 0026F834 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F938 0026F838 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F93C 0026F83C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F940 0026F840 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F944 0026F844 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F948 0026F848 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F94C 0026F84C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F950 0026F850 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F954 0026F854 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F958 0026F858 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F95C 0026F85C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F960 0026F860 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F964 0026F864 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F968 0026F868 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F96C 0026F86C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F970 0026F870 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F974 0026F874 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F978 0026F878 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F97C 0026F87C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F980 0026F880 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F984 0026F884 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F988 0026F888 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F98C 0026F88C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F990 0026F890 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F994 0026F894 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F998 0026F898 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F99C 0026F89C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F9A0 0026F8A0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F9A4 0026F8A4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F9A8 0026F8A8 5F003C00 */ .word GlobalDataBuffer + 0x114FDF
-    /* 16F9AC 0026F8AC 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 16F9B0 0026F8B0 3C005F00 */ .word GlobalDataBuffer + 0x344FBC
-    /* 16F9B4 0026F8B4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 16F9B8 0026F8B8 64003C00 */ .word GlobalDataBuffer + 0x114FE4
-    /* 16F9BC 0026F8BC 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16F9C0 0026F8C0 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16F9C4 0026F8C4 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16F9C8 0026F8C8 3C006400 */ .word GlobalDataBuffer + 0x394FBC
-    /* 16F9CC 0026F8CC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 16F9D0 0026F8D0 5F003C00 */ .word GlobalDataBuffer + 0x114FDF
-    /* 16F9D4 0026F8D4 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 16F9D8 0026F8D8 3C003200 */ .word GlobalDataBuffer + 0x74FBC
-    /* 16F9DC 0026F8DC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F9E0 0026F8E0 32003C00 */ .word GlobalDataBuffer + 0x114FB2
-    /* 16F9E4 0026F8E4 3C003C00 */ .word GlobalDataBuffer + 0x114FBC
-    /* 16F9E8 0026F8E8 3C003C00 */ .word GlobalDataBuffer + 0x114FBC
-    /* 16F9EC 0026F8EC 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16F9F0 0026F8F0 62003C00 */ .word GlobalDataBuffer + 0x114FE2
-    /* 16F9F4 0026F8F4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16F9F8 0026F8F8 32003C00 */ .word GlobalDataBuffer + 0x114FB2
-    /* 16F9FC 0026F8FC 41003200 */ .word GlobalDataBuffer + 0x74FC1
-    /* 16FA00 0026F900 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 16FA04 0026F904 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 16FA08 0026F908 5F005000 */ .word GlobalDataBuffer + 0x254FDF
-    /* 16FA0C 0026F90C 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 16FA10 0026F910 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 16FA14 0026F914 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FA18 0026F918 32005A00 */ .word GlobalDataBuffer + 0x2F4FB2
-    /* 16FA1C 0026F91C 3C004100 */ .word GlobalDataBuffer + 0x164FBC
-    /* 16FA20 0026F920 46005A00 */ .word GlobalDataBuffer + 0x2F4FC6
-    /* 16FA24 0026F924 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 16FA28 0026F928 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 16FA2C 0026F92C 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 16FA30 0026F930 5F004100 */ .word GlobalDataBuffer + 0x164FDF
-    /* 16FA34 0026F934 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FA38 0026F938 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FA3C 0026F93C 3C005000 */ .word GlobalDataBuffer + 0x254FBC
-    /* 16FA40 0026F940 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16FA44 0026F944 55005F00 */ .word GlobalDataBuffer + 0x344FD5
-    /* 16FA48 0026F948 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 16FA4C 0026F94C 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 16FA50 0026F950 5F005000 */ .word GlobalDataBuffer + 0x254FDF
-    /* 16FA54 0026F954 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FA58 0026F958 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FA5C 0026F95C 3C004600 */ .word GlobalDataBuffer + 0x1B4FBC
-    /* 16FA60 0026F960 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16FA64 0026F964 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 16FA68 0026F968 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 16FA6C 0026F96C 3C004600 */ .word GlobalDataBuffer + 0x1B4FBC
-    /* 16FA70 0026F970 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FA74 0026F974 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FA78 0026F978 55003200 */ .word GlobalDataBuffer + 0x74FD5
-    /* 16FA7C 0026F97C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FA80 0026F980 55005500 */ .word GlobalDataBuffer + 0x2A4FD5
-    /* 16FA84 0026F984 55005F00 */ .word GlobalDataBuffer + 0x344FD5
-    /* 16FA88 0026F988 5F005000 */ .word GlobalDataBuffer + 0x254FDF
-    /* 16FA8C 0026F98C 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 16FA90 0026F990 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FA94 0026F994 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FA98 0026F998 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FA9C 0026F99C 32003200 */ .word GlobalDataBuffer + 0x74FB2
+    /* 16F7A0 0026F6A0 32003200 */ .word 0x00320032
+    /* 16F7A4 0026F6A4 32003200 */ .word 0x00320032
+    /* 16F7A8 0026F6A8 5F003C00 */ .word 0x003C005F
+    /* 16F7AC 0026F6AC 41004600 */ .word 0x00460041
+    /* 16F7B0 0026F6B0 3C005F00 */ .word 0x005F003C
+    /* 16F7B4 0026F6B4 64006400 */ .word 0x00640064
+    /* 16F7B8 0026F6B8 64003C00 */ .word 0x003C0064
+    /* 16F7BC 0026F6BC 62006200 */ .word 0x00620062
+    /* 16F7C0 0026F6C0 62006200 */ .word 0x00620062
+    /* 16F7C4 0026F6C4 62006200 */ .word 0x00620062
+    /* 16F7C8 0026F6C8 32003200 */ .word 0x00320032
+    /* 16F7CC 0026F6CC 32003C00 */ .word 0x003C0032
+    /* 16F7D0 0026F6D0 41003200 */ .word 0x00320041
+    /* 16F7D4 0026F6D4 50005F00 */ .word 0x005F0050
+    /* 16F7D8 0026F6D8 50005F00 */ .word 0x005F0050
+    /* 16F7DC 0026F6DC 5F003200 */ .word 0x0032005F
+    /* 16F7E0 0026F6E0 32003200 */ .word 0x00320032
+    /* 16F7E4 0026F6E4 32003200 */ .word 0x00320032
+    /* 16F7E8 0026F6E8 5A003C00 */ .word 0x003C005A
+    /* 16F7EC 0026F6EC 41004600 */ .word 0x00460041
+    /* 16F7F0 0026F6F0 4B005000 */ .word 0x0050004B
+    /* 16F7F4 0026F6F4 5F005F00 */ .word 0x005F005F
+    /* 16F7F8 0026F6F8 32003200 */ .word 0x00320032
+    /* 16F7FC 0026F6FC 32003200 */ .word 0x00320032
+    /* 16F800 0026F700 32003C00 */ .word 0x003C0032
+    /* 16F804 0026F704 50005000 */ .word 0x00500050
+    /* 16F808 0026F708 50005500 */ .word 0x00550050
+    /* 16F80C 0026F70C 5F005F00 */ .word 0x005F005F
+    /* 16F810 0026F710 32003200 */ .word 0x00320032
+    /* 16F814 0026F714 32003200 */ .word 0x00320032
+    /* 16F818 0026F718 32003C00 */ .word 0x003C0032
+    /* 16F81C 0026F71C 46005000 */ .word 0x00500046
+    /* 16F820 0026F720 5F005A00 */ .word 0x005A005F
+    /* 16F824 0026F724 5F005F00 */ .word 0x005F005F
+    /* 16F828 0026F728 32003200 */ .word 0x00320032
+    /* 16F82C 0026F72C 32005500 */ .word 0x00550032
+    /* 16F830 0026F730 32003200 */ .word 0x00320032
+    /* 16F834 0026F734 32005500 */ .word 0x00550032
+    /* 16F838 0026F738 55005500 */ .word 0x00550055
+    /* 16F83C 0026F73C 5F005F00 */ .word 0x005F005F
+    /* 16F840 0026F740 32003200 */ .word 0x00320032
+    /* 16F844 0026F744 32003200 */ .word 0x00320032
+    /* 16F848 0026F748 32003200 */ .word 0x00320032
+    /* 16F84C 0026F74C 32003200 */ .word 0x00320032
+    /* 16F850 0026F750 32003200 */ .word 0x00320032
+    /* 16F854 0026F754 32003200 */ .word 0x00320032
+    /* 16F858 0026F758 32003200 */ .word 0x00320032
+    /* 16F85C 0026F75C 5A005000 */ .word 0x0050005A
+    /* 16F860 0026F760 5A005000 */ .word 0x0050005A
+    /* 16F864 0026F764 50005000 */ .word 0x00500050
+    /* 16F868 0026F768 50005500 */ .word 0x00550050
+    /* 16F86C 0026F76C 50005000 */ .word 0x00500050
+    /* 16F870 0026F770 55005000 */ .word 0x00500055
+    /* 16F874 0026F774 5A003200 */ .word 0x0032005A
+    /* 16F878 0026F778 32003200 */ .word 0x00320032
+    /* 16F87C 0026F77C 32003200 */ .word 0x00320032
+    /* 16F880 0026F780 32003200 */ .word 0x00320032
+    /* 16F884 0026F784 32003200 */ .word 0x00320032
+    /* 16F888 0026F788 32003200 */ .word 0x00320032
+    /* 16F88C 0026F78C 32003200 */ .word 0x00320032
+    /* 16F890 0026F790 32003200 */ .word 0x00320032
+    /* 16F894 0026F794 32003200 */ .word 0x00320032
+    /* 16F898 0026F798 32003200 */ .word 0x00320032
+    /* 16F89C 0026F79C 32003200 */ .word 0x00320032
+    /* 16F8A0 0026F7A0 32003200 */ .word 0x00320032
+    /* 16F8A4 0026F7A4 32003200 */ .word 0x00320032
+    /* 16F8A8 0026F7A8 32003200 */ .word 0x00320032
+    /* 16F8AC 0026F7AC 32003200 */ .word 0x00320032
+    /* 16F8B0 0026F7B0 32003200 */ .word 0x00320032
+    /* 16F8B4 0026F7B4 32003200 */ .word 0x00320032
+    /* 16F8B8 0026F7B8 32003200 */ .word 0x00320032
+    /* 16F8BC 0026F7BC 32003200 */ .word 0x00320032
+    /* 16F8C0 0026F7C0 32003200 */ .word 0x00320032
+    /* 16F8C4 0026F7C4 32003200 */ .word 0x00320032
+    /* 16F8C8 0026F7C8 32003200 */ .word 0x00320032
+    /* 16F8CC 0026F7CC 32003200 */ .word 0x00320032
+    /* 16F8D0 0026F7D0 32003200 */ .word 0x00320032
+    /* 16F8D4 0026F7D4 32003200 */ .word 0x00320032
+    /* 16F8D8 0026F7D8 32003200 */ .word 0x00320032
+    /* 16F8DC 0026F7DC 32003200 */ .word 0x00320032
+    /* 16F8E0 0026F7E0 32003200 */ .word 0x00320032
+    /* 16F8E4 0026F7E4 32003200 */ .word 0x00320032
+    /* 16F8E8 0026F7E8 32003200 */ .word 0x00320032
+    /* 16F8EC 0026F7EC 32003200 */ .word 0x00320032
+    /* 16F8F0 0026F7F0 32003200 */ .word 0x00320032
+    /* 16F8F4 0026F7F4 32003200 */ .word 0x00320032
+    /* 16F8F8 0026F7F8 32003200 */ .word 0x00320032
+    /* 16F8FC 0026F7FC 32003200 */ .word 0x00320032
+    /* 16F900 0026F800 32005A00 */ .word 0x005A0032
+    /* 16F904 0026F804 32003200 */ .word 0x00320032
+    /* 16F908 0026F808 32003200 */ .word 0x00320032
+    /* 16F90C 0026F80C 32003200 */ .word 0x00320032
+    /* 16F910 0026F810 32003200 */ .word 0x00320032
+    /* 16F914 0026F814 32003200 */ .word 0x00320032
+    /* 16F918 0026F818 32003200 */ .word 0x00320032
+    /* 16F91C 0026F81C 32003200 */ .word 0x00320032
+    /* 16F920 0026F820 32003200 */ .word 0x00320032
+    /* 16F924 0026F824 32003200 */ .word 0x00320032
+    /* 16F928 0026F828 32003200 */ .word 0x00320032
+    /* 16F92C 0026F82C 32003200 */ .word 0x00320032
+    /* 16F930 0026F830 32003200 */ .word 0x00320032
+    /* 16F934 0026F834 32003200 */ .word 0x00320032
+    /* 16F938 0026F838 32003200 */ .word 0x00320032
+    /* 16F93C 0026F83C 32003200 */ .word 0x00320032
+    /* 16F940 0026F840 32003200 */ .word 0x00320032
+    /* 16F944 0026F844 32003200 */ .word 0x00320032
+    /* 16F948 0026F848 32003200 */ .word 0x00320032
+    /* 16F94C 0026F84C 32003200 */ .word 0x00320032
+    /* 16F950 0026F850 32003200 */ .word 0x00320032
+    /* 16F954 0026F854 32003200 */ .word 0x00320032
+    /* 16F958 0026F858 32003200 */ .word 0x00320032
+    /* 16F95C 0026F85C 32003200 */ .word 0x00320032
+    /* 16F960 0026F860 32003200 */ .word 0x00320032
+    /* 16F964 0026F864 32003200 */ .word 0x00320032
+    /* 16F968 0026F868 32003200 */ .word 0x00320032
+    /* 16F96C 0026F86C 32003200 */ .word 0x00320032
+    /* 16F970 0026F870 32003200 */ .word 0x00320032
+    /* 16F974 0026F874 32003200 */ .word 0x00320032
+    /* 16F978 0026F878 32003200 */ .word 0x00320032
+    /* 16F97C 0026F87C 32003200 */ .word 0x00320032
+    /* 16F980 0026F880 32003200 */ .word 0x00320032
+    /* 16F984 0026F884 32003200 */ .word 0x00320032
+    /* 16F988 0026F888 32003200 */ .word 0x00320032
+    /* 16F98C 0026F88C 32003200 */ .word 0x00320032
+    /* 16F990 0026F890 32003200 */ .word 0x00320032
+    /* 16F994 0026F894 32003200 */ .word 0x00320032
+    /* 16F998 0026F898 32003200 */ .word 0x00320032
+    /* 16F99C 0026F89C 32003200 */ .word 0x00320032
+    /* 16F9A0 0026F8A0 32003200 */ .word 0x00320032
+    /* 16F9A4 0026F8A4 32003200 */ .word 0x00320032
+    /* 16F9A8 0026F8A8 5F003C00 */ .word 0x003C005F
+    /* 16F9AC 0026F8AC 41004600 */ .word 0x00460041
+    /* 16F9B0 0026F8B0 3C005F00 */ .word 0x005F003C
+    /* 16F9B4 0026F8B4 64006400 */ .word 0x00640064
+    /* 16F9B8 0026F8B8 64003C00 */ .word 0x003C0064
+    /* 16F9BC 0026F8BC 62006200 */ .word 0x00620062
+    /* 16F9C0 0026F8C0 62006200 */ .word 0x00620062
+    /* 16F9C4 0026F8C4 62006200 */ .word 0x00620062
+    /* 16F9C8 0026F8C8 3C006400 */ .word 0x0064003C
+    /* 16F9CC 0026F8CC 64006400 */ .word 0x00640064
+    /* 16F9D0 0026F8D0 5F003C00 */ .word 0x003C005F
+    /* 16F9D4 0026F8D4 41004600 */ .word 0x00460041
+    /* 16F9D8 0026F8D8 3C003200 */ .word 0x0032003C
+    /* 16F9DC 0026F8DC 32003200 */ .word 0x00320032
+    /* 16F9E0 0026F8E0 32003C00 */ .word 0x003C0032
+    /* 16F9E4 0026F8E4 3C003C00 */ .word 0x003C003C
+    /* 16F9E8 0026F8E8 3C003C00 */ .word 0x003C003C
+    /* 16F9EC 0026F8EC 62006200 */ .word 0x00620062
+    /* 16F9F0 0026F8F0 62003C00 */ .word 0x003C0062
+    /* 16F9F4 0026F8F4 32003200 */ .word 0x00320032
+    /* 16F9F8 0026F8F8 32003C00 */ .word 0x003C0032
+    /* 16F9FC 0026F8FC 41003200 */ .word 0x00320041
+    /* 16FA00 0026F900 50005F00 */ .word 0x005F0050
+    /* 16FA04 0026F904 50005F00 */ .word 0x005F0050
+    /* 16FA08 0026F908 5F005000 */ .word 0x0050005F
+    /* 16FA0C 0026F90C 5F005F00 */ .word 0x005F005F
+    /* 16FA10 0026F910 5F003200 */ .word 0x0032005F
+    /* 16FA14 0026F914 32003200 */ .word 0x00320032
+    /* 16FA18 0026F918 32005A00 */ .word 0x005A0032
+    /* 16FA1C 0026F91C 3C004100 */ .word 0x0041003C
+    /* 16FA20 0026F920 46005A00 */ .word 0x005A0046
+    /* 16FA24 0026F924 5F005F00 */ .word 0x005F005F
+    /* 16FA28 0026F928 5F003200 */ .word 0x0032005F
+    /* 16FA2C 0026F92C 50005F00 */ .word 0x005F0050
+    /* 16FA30 0026F930 5F004100 */ .word 0x0041005F
+    /* 16FA34 0026F934 32003200 */ .word 0x00320032
+    /* 16FA38 0026F938 32003200 */ .word 0x00320032
+    /* 16FA3C 0026F93C 3C005000 */ .word 0x0050003C
+    /* 16FA40 0026F940 50005000 */ .word 0x00500050
+    /* 16FA44 0026F944 55005F00 */ .word 0x005F0055
+    /* 16FA48 0026F948 5F003200 */ .word 0x0032005F
+    /* 16FA4C 0026F94C 50005F00 */ .word 0x005F0050
+    /* 16FA50 0026F950 5F005000 */ .word 0x0050005F
+    /* 16FA54 0026F954 32003200 */ .word 0x00320032
+    /* 16FA58 0026F958 32003200 */ .word 0x00320032
+    /* 16FA5C 0026F95C 3C004600 */ .word 0x0046003C
+    /* 16FA60 0026F960 50005000 */ .word 0x00500050
+    /* 16FA64 0026F964 5F005F00 */ .word 0x005F005F
+    /* 16FA68 0026F968 5F003200 */ .word 0x0032005F
+    /* 16FA6C 0026F96C 3C004600 */ .word 0x0046003C
+    /* 16FA70 0026F970 32003200 */ .word 0x00320032
+    /* 16FA74 0026F974 32003200 */ .word 0x00320032
+    /* 16FA78 0026F978 55003200 */ .word 0x00320055
+    /* 16FA7C 0026F97C 32003200 */ .word 0x00320032
+    /* 16FA80 0026F980 55005500 */ .word 0x00550055
+    /* 16FA84 0026F984 55005F00 */ .word 0x005F0055
+    /* 16FA88 0026F988 5F005000 */ .word 0x0050005F
+    /* 16FA8C 0026F98C 5F003200 */ .word 0x0032005F
+    /* 16FA90 0026F990 32003200 */ .word 0x00320032
+    /* 16FA94 0026F994 32003200 */ .word 0x00320032
+    /* 16FA98 0026F998 32003200 */ .word 0x00320032
+    /* 16FA9C 0026F99C 32003200 */ .word 0x00320032
     /* 16FAA0 0026F9A0 00000000 */ .word 0x00000000
     /* 16FAA4 0026F9A4 00000000 */ .word 0x00000000
     /* 16FAA8 0026F9A8 00000000 */ .word 0x00000000
     /* 16FAAC 0026F9AC 00000000 */ .word 0x00000000
 
 glabel ItemSetRateList1
-    /* 16FAB0 0026F9B0 32003C00 */ .word GlobalDataBuffer + 0x114FB2
-    /* 16FAB4 0026F9B4 3C003200 */ .word GlobalDataBuffer + 0x74FBC
-    /* 16FAB8 0026F9B8 5F003C00 */ .word GlobalDataBuffer + 0x114FDF
-    /* 16FABC 0026F9BC 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 16FAC0 0026F9C0 3C005F00 */ .word GlobalDataBuffer + 0x344FBC
-    /* 16FAC4 0026F9C4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 16FAC8 0026F9C8 64003C00 */ .word GlobalDataBuffer + 0x114FE4
-    /* 16FACC 0026F9CC 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16FAD0 0026F9D0 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16FAD4 0026F9D4 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16FAD8 0026F9D8 32003C00 */ .word GlobalDataBuffer + 0x114FB2
-    /* 16FADC 0026F9DC 3C003C00 */ .word GlobalDataBuffer + 0x114FBC
-    /* 16FAE0 0026F9E0 41003C00 */ .word GlobalDataBuffer + 0x114FC1
-    /* 16FAE4 0026F9E4 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 16FAE8 0026F9E8 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 16FAEC 0026F9EC 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 16FAF0 0026F9F0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FAF4 0026F9F4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FAF8 0026F9F8 5A003C00 */ .word GlobalDataBuffer + 0x114FDA
-    /* 16FAFC 0026F9FC 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 16FB00 0026FA00 4B005000 */ .word GlobalDataBuffer + 0x254FCB
-    /* 16FB04 0026FA04 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 16FB08 0026FA08 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FB0C 0026FA0C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FB10 0026FA10 32003C00 */ .word GlobalDataBuffer + 0x114FB2
-    /* 16FB14 0026FA14 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16FB18 0026FA18 50005500 */ .word GlobalDataBuffer + 0x2A4FD0
-    /* 16FB1C 0026FA1C 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 16FB20 0026FA20 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FB24 0026FA24 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FB28 0026FA28 32003C00 */ .word GlobalDataBuffer + 0x114FB2
-    /* 16FB2C 0026FA2C 46005000 */ .word GlobalDataBuffer + 0x254FC6
-    /* 16FB30 0026FA30 5F005A00 */ .word GlobalDataBuffer + 0x2F4FDF
-    /* 16FB34 0026FA34 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 16FB38 0026FA38 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FB3C 0026FA3C 32005500 */ .word GlobalDataBuffer + 0x2A4FB2
-    /* 16FB40 0026FA40 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FB44 0026FA44 32005500 */ .word GlobalDataBuffer + 0x2A4FB2
-    /* 16FB48 0026FA48 55005500 */ .word GlobalDataBuffer + 0x2A4FD5
-    /* 16FB4C 0026FA4C 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 16FB50 0026FA50 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FB54 0026FA54 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FB58 0026FA58 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FB5C 0026FA5C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FB60 0026FA60 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FB64 0026FA64 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FB68 0026FA68 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FB6C 0026FA6C 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16FB70 0026FA70 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16FB74 0026FA74 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16FB78 0026FA78 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16FB7C 0026FA7C 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16FB80 0026FA80 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16FB84 0026FA84 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 16FB88 0026FA88 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FB8C 0026FA8C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FB90 0026FA90 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FB94 0026FA94 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FB98 0026FA98 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FB9C 0026FA9C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBA0 0026FAA0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBA4 0026FAA4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBA8 0026FAA8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBAC 0026FAAC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBB0 0026FAB0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBB4 0026FAB4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBB8 0026FAB8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBBC 0026FABC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBC0 0026FAC0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBC4 0026FAC4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBC8 0026FAC8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBCC 0026FACC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBD0 0026FAD0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBD4 0026FAD4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBD8 0026FAD8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBDC 0026FADC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBE0 0026FAE0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBE4 0026FAE4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBE8 0026FAE8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBEC 0026FAEC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBF0 0026FAF0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBF4 0026FAF4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBF8 0026FAF8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FBFC 0026FAFC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC00 0026FB00 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC04 0026FB04 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC08 0026FB08 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC0C 0026FB0C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC10 0026FB10 32005A00 */ .word GlobalDataBuffer + 0x2F4FB2
-    /* 16FC14 0026FB14 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC18 0026FB18 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC1C 0026FB1C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC20 0026FB20 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC24 0026FB24 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC28 0026FB28 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC2C 0026FB2C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC30 0026FB30 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC34 0026FB34 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC38 0026FB38 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC3C 0026FB3C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC40 0026FB40 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC44 0026FB44 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC48 0026FB48 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC4C 0026FB4C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC50 0026FB50 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC54 0026FB54 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC58 0026FB58 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC5C 0026FB5C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC60 0026FB60 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC64 0026FB64 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC68 0026FB68 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC6C 0026FB6C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC70 0026FB70 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC74 0026FB74 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC78 0026FB78 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC7C 0026FB7C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC80 0026FB80 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC84 0026FB84 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC88 0026FB88 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC8C 0026FB8C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC90 0026FB90 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC94 0026FB94 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC98 0026FB98 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FC9C 0026FB9C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FCA0 0026FBA0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FCA4 0026FBA4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FCA8 0026FBA8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FCAC 0026FBAC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FCB0 0026FBB0 32003C00 */ .word GlobalDataBuffer + 0x114FB2
-    /* 16FCB4 0026FBB4 3C003200 */ .word GlobalDataBuffer + 0x74FBC
-    /* 16FCB8 0026FBB8 5F003C00 */ .word GlobalDataBuffer + 0x114FDF
-    /* 16FCBC 0026FBBC 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 16FCC0 0026FBC0 3C005F00 */ .word GlobalDataBuffer + 0x344FBC
-    /* 16FCC4 0026FBC4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 16FCC8 0026FBC8 64003C00 */ .word GlobalDataBuffer + 0x114FE4
-    /* 16FCCC 0026FBCC 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16FCD0 0026FBD0 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16FCD4 0026FBD4 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16FCD8 0026FBD8 3C006400 */ .word GlobalDataBuffer + 0x394FBC
-    /* 16FCDC 0026FBDC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 16FCE0 0026FBE0 5F003C00 */ .word GlobalDataBuffer + 0x114FDF
-    /* 16FCE4 0026FBE4 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 16FCE8 0026FBE8 3C003200 */ .word GlobalDataBuffer + 0x74FBC
-    /* 16FCEC 0026FBEC 3C003200 */ .word GlobalDataBuffer + 0x74FBC
-    /* 16FCF0 0026FBF0 32003C00 */ .word GlobalDataBuffer + 0x114FB2
-    /* 16FCF4 0026FBF4 3C003C00 */ .word GlobalDataBuffer + 0x114FBC
-    /* 16FCF8 0026FBF8 3C003C00 */ .word GlobalDataBuffer + 0x114FBC
-    /* 16FCFC 0026FBFC 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16FD00 0026FC00 62003C00 */ .word GlobalDataBuffer + 0x114FE2
-    /* 16FD04 0026FC04 32003C00 */ .word GlobalDataBuffer + 0x114FB2
-    /* 16FD08 0026FC08 3C003C00 */ .word GlobalDataBuffer + 0x114FBC
-    /* 16FD0C 0026FC0C 41003C00 */ .word GlobalDataBuffer + 0x114FC1
-    /* 16FD10 0026FC10 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 16FD14 0026FC14 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 16FD18 0026FC18 5F005000 */ .word GlobalDataBuffer + 0x254FDF
-    /* 16FD1C 0026FC1C 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 16FD20 0026FC20 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 16FD24 0026FC24 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FD28 0026FC28 32005A00 */ .word GlobalDataBuffer + 0x2F4FB2
-    /* 16FD2C 0026FC2C 3C004100 */ .word GlobalDataBuffer + 0x164FBC
-    /* 16FD30 0026FC30 46005A00 */ .word GlobalDataBuffer + 0x2F4FC6
-    /* 16FD34 0026FC34 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 16FD38 0026FC38 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 16FD3C 0026FC3C 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 16FD40 0026FC40 5F004100 */ .word GlobalDataBuffer + 0x164FDF
-    /* 16FD44 0026FC44 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FD48 0026FC48 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FD4C 0026FC4C 3C005000 */ .word GlobalDataBuffer + 0x254FBC
-    /* 16FD50 0026FC50 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16FD54 0026FC54 55005F00 */ .word GlobalDataBuffer + 0x344FD5
-    /* 16FD58 0026FC58 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 16FD5C 0026FC5C 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 16FD60 0026FC60 5F005000 */ .word GlobalDataBuffer + 0x254FDF
-    /* 16FD64 0026FC64 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FD68 0026FC68 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FD6C 0026FC6C 3C004600 */ .word GlobalDataBuffer + 0x1B4FBC
-    /* 16FD70 0026FC70 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16FD74 0026FC74 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 16FD78 0026FC78 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 16FD7C 0026FC7C 3C004600 */ .word GlobalDataBuffer + 0x1B4FBC
-    /* 16FD80 0026FC80 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FD84 0026FC84 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FD88 0026FC88 55003200 */ .word GlobalDataBuffer + 0x74FD5
-    /* 16FD8C 0026FC8C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FD90 0026FC90 55005500 */ .word GlobalDataBuffer + 0x2A4FD5
-    /* 16FD94 0026FC94 55005F00 */ .word GlobalDataBuffer + 0x344FD5
-    /* 16FD98 0026FC98 5F005000 */ .word GlobalDataBuffer + 0x254FDF
-    /* 16FD9C 0026FC9C 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 16FDA0 0026FCA0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FDA4 0026FCA4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FDA8 0026FCA8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FDAC 0026FCAC 32003200 */ .word GlobalDataBuffer + 0x74FB2
+    /* 16FAB0 0026F9B0 32003C00 */ .word 0x003C0032
+    /* 16FAB4 0026F9B4 3C003200 */ .word 0x0032003C
+    /* 16FAB8 0026F9B8 5F003C00 */ .word 0x003C005F
+    /* 16FABC 0026F9BC 41004600 */ .word 0x00460041
+    /* 16FAC0 0026F9C0 3C005F00 */ .word 0x005F003C
+    /* 16FAC4 0026F9C4 64006400 */ .word 0x00640064
+    /* 16FAC8 0026F9C8 64003C00 */ .word 0x003C0064
+    /* 16FACC 0026F9CC 62006200 */ .word 0x00620062
+    /* 16FAD0 0026F9D0 62006200 */ .word 0x00620062
+    /* 16FAD4 0026F9D4 62006200 */ .word 0x00620062
+    /* 16FAD8 0026F9D8 32003C00 */ .word 0x003C0032
+    /* 16FADC 0026F9DC 3C003C00 */ .word 0x003C003C
+    /* 16FAE0 0026F9E0 41003C00 */ .word 0x003C0041
+    /* 16FAE4 0026F9E4 50005F00 */ .word 0x005F0050
+    /* 16FAE8 0026F9E8 50005F00 */ .word 0x005F0050
+    /* 16FAEC 0026F9EC 5F003200 */ .word 0x0032005F
+    /* 16FAF0 0026F9F0 32003200 */ .word 0x00320032
+    /* 16FAF4 0026F9F4 32003200 */ .word 0x00320032
+    /* 16FAF8 0026F9F8 5A003C00 */ .word 0x003C005A
+    /* 16FAFC 0026F9FC 41004600 */ .word 0x00460041
+    /* 16FB00 0026FA00 4B005000 */ .word 0x0050004B
+    /* 16FB04 0026FA04 5F005F00 */ .word 0x005F005F
+    /* 16FB08 0026FA08 32003200 */ .word 0x00320032
+    /* 16FB0C 0026FA0C 32003200 */ .word 0x00320032
+    /* 16FB10 0026FA10 32003C00 */ .word 0x003C0032
+    /* 16FB14 0026FA14 50005000 */ .word 0x00500050
+    /* 16FB18 0026FA18 50005500 */ .word 0x00550050
+    /* 16FB1C 0026FA1C 5F005F00 */ .word 0x005F005F
+    /* 16FB20 0026FA20 32003200 */ .word 0x00320032
+    /* 16FB24 0026FA24 32003200 */ .word 0x00320032
+    /* 16FB28 0026FA28 32003C00 */ .word 0x003C0032
+    /* 16FB2C 0026FA2C 46005000 */ .word 0x00500046
+    /* 16FB30 0026FA30 5F005A00 */ .word 0x005A005F
+    /* 16FB34 0026FA34 5F005F00 */ .word 0x005F005F
+    /* 16FB38 0026FA38 32003200 */ .word 0x00320032
+    /* 16FB3C 0026FA3C 32005500 */ .word 0x00550032
+    /* 16FB40 0026FA40 32003200 */ .word 0x00320032
+    /* 16FB44 0026FA44 32005500 */ .word 0x00550032
+    /* 16FB48 0026FA48 55005500 */ .word 0x00550055
+    /* 16FB4C 0026FA4C 5F005F00 */ .word 0x005F005F
+    /* 16FB50 0026FA50 32003200 */ .word 0x00320032
+    /* 16FB54 0026FA54 32003200 */ .word 0x00320032
+    /* 16FB58 0026FA58 32003200 */ .word 0x00320032
+    /* 16FB5C 0026FA5C 32003200 */ .word 0x00320032
+    /* 16FB60 0026FA60 32003200 */ .word 0x00320032
+    /* 16FB64 0026FA64 32003200 */ .word 0x00320032
+    /* 16FB68 0026FA68 32003200 */ .word 0x00320032
+    /* 16FB6C 0026FA6C 50005000 */ .word 0x00500050
+    /* 16FB70 0026FA70 50005000 */ .word 0x00500050
+    /* 16FB74 0026FA74 50005000 */ .word 0x00500050
+    /* 16FB78 0026FA78 50005000 */ .word 0x00500050
+    /* 16FB7C 0026FA7C 50005000 */ .word 0x00500050
+    /* 16FB80 0026FA80 50005000 */ .word 0x00500050
+    /* 16FB84 0026FA84 5A003200 */ .word 0x0032005A
+    /* 16FB88 0026FA88 32003200 */ .word 0x00320032
+    /* 16FB8C 0026FA8C 32003200 */ .word 0x00320032
+    /* 16FB90 0026FA90 32003200 */ .word 0x00320032
+    /* 16FB94 0026FA94 32003200 */ .word 0x00320032
+    /* 16FB98 0026FA98 32003200 */ .word 0x00320032
+    /* 16FB9C 0026FA9C 32003200 */ .word 0x00320032
+    /* 16FBA0 0026FAA0 32003200 */ .word 0x00320032
+    /* 16FBA4 0026FAA4 32003200 */ .word 0x00320032
+    /* 16FBA8 0026FAA8 32003200 */ .word 0x00320032
+    /* 16FBAC 0026FAAC 32003200 */ .word 0x00320032
+    /* 16FBB0 0026FAB0 32003200 */ .word 0x00320032
+    /* 16FBB4 0026FAB4 32003200 */ .word 0x00320032
+    /* 16FBB8 0026FAB8 32003200 */ .word 0x00320032
+    /* 16FBBC 0026FABC 32003200 */ .word 0x00320032
+    /* 16FBC0 0026FAC0 32003200 */ .word 0x00320032
+    /* 16FBC4 0026FAC4 32003200 */ .word 0x00320032
+    /* 16FBC8 0026FAC8 32003200 */ .word 0x00320032
+    /* 16FBCC 0026FACC 32003200 */ .word 0x00320032
+    /* 16FBD0 0026FAD0 32003200 */ .word 0x00320032
+    /* 16FBD4 0026FAD4 32003200 */ .word 0x00320032
+    /* 16FBD8 0026FAD8 32003200 */ .word 0x00320032
+    /* 16FBDC 0026FADC 32003200 */ .word 0x00320032
+    /* 16FBE0 0026FAE0 32003200 */ .word 0x00320032
+    /* 16FBE4 0026FAE4 32003200 */ .word 0x00320032
+    /* 16FBE8 0026FAE8 32003200 */ .word 0x00320032
+    /* 16FBEC 0026FAEC 32003200 */ .word 0x00320032
+    /* 16FBF0 0026FAF0 32003200 */ .word 0x00320032
+    /* 16FBF4 0026FAF4 32003200 */ .word 0x00320032
+    /* 16FBF8 0026FAF8 32003200 */ .word 0x00320032
+    /* 16FBFC 0026FAFC 32003200 */ .word 0x00320032
+    /* 16FC00 0026FB00 32003200 */ .word 0x00320032
+    /* 16FC04 0026FB04 32003200 */ .word 0x00320032
+    /* 16FC08 0026FB08 32003200 */ .word 0x00320032
+    /* 16FC0C 0026FB0C 32003200 */ .word 0x00320032
+    /* 16FC10 0026FB10 32005A00 */ .word 0x005A0032
+    /* 16FC14 0026FB14 32003200 */ .word 0x00320032
+    /* 16FC18 0026FB18 32003200 */ .word 0x00320032
+    /* 16FC1C 0026FB1C 32003200 */ .word 0x00320032
+    /* 16FC20 0026FB20 32003200 */ .word 0x00320032
+    /* 16FC24 0026FB24 32003200 */ .word 0x00320032
+    /* 16FC28 0026FB28 32003200 */ .word 0x00320032
+    /* 16FC2C 0026FB2C 32003200 */ .word 0x00320032
+    /* 16FC30 0026FB30 32003200 */ .word 0x00320032
+    /* 16FC34 0026FB34 32003200 */ .word 0x00320032
+    /* 16FC38 0026FB38 32003200 */ .word 0x00320032
+    /* 16FC3C 0026FB3C 32003200 */ .word 0x00320032
+    /* 16FC40 0026FB40 32003200 */ .word 0x00320032
+    /* 16FC44 0026FB44 32003200 */ .word 0x00320032
+    /* 16FC48 0026FB48 32003200 */ .word 0x00320032
+    /* 16FC4C 0026FB4C 32003200 */ .word 0x00320032
+    /* 16FC50 0026FB50 32003200 */ .word 0x00320032
+    /* 16FC54 0026FB54 32003200 */ .word 0x00320032
+    /* 16FC58 0026FB58 32003200 */ .word 0x00320032
+    /* 16FC5C 0026FB5C 32003200 */ .word 0x00320032
+    /* 16FC60 0026FB60 32003200 */ .word 0x00320032
+    /* 16FC64 0026FB64 32003200 */ .word 0x00320032
+    /* 16FC68 0026FB68 32003200 */ .word 0x00320032
+    /* 16FC6C 0026FB6C 32003200 */ .word 0x00320032
+    /* 16FC70 0026FB70 32003200 */ .word 0x00320032
+    /* 16FC74 0026FB74 32003200 */ .word 0x00320032
+    /* 16FC78 0026FB78 32003200 */ .word 0x00320032
+    /* 16FC7C 0026FB7C 32003200 */ .word 0x00320032
+    /* 16FC80 0026FB80 32003200 */ .word 0x00320032
+    /* 16FC84 0026FB84 32003200 */ .word 0x00320032
+    /* 16FC88 0026FB88 32003200 */ .word 0x00320032
+    /* 16FC8C 0026FB8C 32003200 */ .word 0x00320032
+    /* 16FC90 0026FB90 32003200 */ .word 0x00320032
+    /* 16FC94 0026FB94 32003200 */ .word 0x00320032
+    /* 16FC98 0026FB98 32003200 */ .word 0x00320032
+    /* 16FC9C 0026FB9C 32003200 */ .word 0x00320032
+    /* 16FCA0 0026FBA0 32003200 */ .word 0x00320032
+    /* 16FCA4 0026FBA4 32003200 */ .word 0x00320032
+    /* 16FCA8 0026FBA8 32003200 */ .word 0x00320032
+    /* 16FCAC 0026FBAC 32003200 */ .word 0x00320032
+    /* 16FCB0 0026FBB0 32003C00 */ .word 0x003C0032
+    /* 16FCB4 0026FBB4 3C003200 */ .word 0x0032003C
+    /* 16FCB8 0026FBB8 5F003C00 */ .word 0x003C005F
+    /* 16FCBC 0026FBBC 41004600 */ .word 0x00460041
+    /* 16FCC0 0026FBC0 3C005F00 */ .word 0x005F003C
+    /* 16FCC4 0026FBC4 64006400 */ .word 0x00640064
+    /* 16FCC8 0026FBC8 64003C00 */ .word 0x003C0064
+    /* 16FCCC 0026FBCC 62006200 */ .word 0x00620062
+    /* 16FCD0 0026FBD0 62006200 */ .word 0x00620062
+    /* 16FCD4 0026FBD4 62006200 */ .word 0x00620062
+    /* 16FCD8 0026FBD8 3C006400 */ .word 0x0064003C
+    /* 16FCDC 0026FBDC 64006400 */ .word 0x00640064
+    /* 16FCE0 0026FBE0 5F003C00 */ .word 0x003C005F
+    /* 16FCE4 0026FBE4 41004600 */ .word 0x00460041
+    /* 16FCE8 0026FBE8 3C003200 */ .word 0x0032003C
+    /* 16FCEC 0026FBEC 3C003200 */ .word 0x0032003C
+    /* 16FCF0 0026FBF0 32003C00 */ .word 0x003C0032
+    /* 16FCF4 0026FBF4 3C003C00 */ .word 0x003C003C
+    /* 16FCF8 0026FBF8 3C003C00 */ .word 0x003C003C
+    /* 16FCFC 0026FBFC 62006200 */ .word 0x00620062
+    /* 16FD00 0026FC00 62003C00 */ .word 0x003C0062
+    /* 16FD04 0026FC04 32003C00 */ .word 0x003C0032
+    /* 16FD08 0026FC08 3C003C00 */ .word 0x003C003C
+    /* 16FD0C 0026FC0C 41003C00 */ .word 0x003C0041
+    /* 16FD10 0026FC10 50005F00 */ .word 0x005F0050
+    /* 16FD14 0026FC14 50005F00 */ .word 0x005F0050
+    /* 16FD18 0026FC18 5F005000 */ .word 0x0050005F
+    /* 16FD1C 0026FC1C 5F005F00 */ .word 0x005F005F
+    /* 16FD20 0026FC20 5F003200 */ .word 0x0032005F
+    /* 16FD24 0026FC24 32003200 */ .word 0x00320032
+    /* 16FD28 0026FC28 32005A00 */ .word 0x005A0032
+    /* 16FD2C 0026FC2C 3C004100 */ .word 0x0041003C
+    /* 16FD30 0026FC30 46005A00 */ .word 0x005A0046
+    /* 16FD34 0026FC34 5F005F00 */ .word 0x005F005F
+    /* 16FD38 0026FC38 5F003200 */ .word 0x0032005F
+    /* 16FD3C 0026FC3C 50005F00 */ .word 0x005F0050
+    /* 16FD40 0026FC40 5F004100 */ .word 0x0041005F
+    /* 16FD44 0026FC44 32003200 */ .word 0x00320032
+    /* 16FD48 0026FC48 32003200 */ .word 0x00320032
+    /* 16FD4C 0026FC4C 3C005000 */ .word 0x0050003C
+    /* 16FD50 0026FC50 50005000 */ .word 0x00500050
+    /* 16FD54 0026FC54 55005F00 */ .word 0x005F0055
+    /* 16FD58 0026FC58 5F003200 */ .word 0x0032005F
+    /* 16FD5C 0026FC5C 50005F00 */ .word 0x005F0050
+    /* 16FD60 0026FC60 5F005000 */ .word 0x0050005F
+    /* 16FD64 0026FC64 32003200 */ .word 0x00320032
+    /* 16FD68 0026FC68 32003200 */ .word 0x00320032
+    /* 16FD6C 0026FC6C 3C004600 */ .word 0x0046003C
+    /* 16FD70 0026FC70 50005000 */ .word 0x00500050
+    /* 16FD74 0026FC74 5F005F00 */ .word 0x005F005F
+    /* 16FD78 0026FC78 5F003200 */ .word 0x0032005F
+    /* 16FD7C 0026FC7C 3C004600 */ .word 0x0046003C
+    /* 16FD80 0026FC80 32003200 */ .word 0x00320032
+    /* 16FD84 0026FC84 32003200 */ .word 0x00320032
+    /* 16FD88 0026FC88 55003200 */ .word 0x00320055
+    /* 16FD8C 0026FC8C 32003200 */ .word 0x00320032
+    /* 16FD90 0026FC90 55005500 */ .word 0x00550055
+    /* 16FD94 0026FC94 55005F00 */ .word 0x005F0055
+    /* 16FD98 0026FC98 5F005000 */ .word 0x0050005F
+    /* 16FD9C 0026FC9C 5F003200 */ .word 0x0032005F
+    /* 16FDA0 0026FCA0 32003200 */ .word 0x00320032
+    /* 16FDA4 0026FCA4 32003200 */ .word 0x00320032
+    /* 16FDA8 0026FCA8 32003200 */ .word 0x00320032
+    /* 16FDAC 0026FCAC 32003200 */ .word 0x00320032
     /* 16FDB0 0026FCB0 00000000 */ .word 0x00000000
     /* 16FDB4 0026FCB4 00000000 */ .word 0x00000000
     /* 16FDB8 0026FCB8 00000000 */ .word 0x00000000
     /* 16FDBC 0026FCBC 00000000 */ .word 0x00000000
 
 glabel ItemSetRateList2
-    /* 16FDC0 0026FCC0 32004100 */ .word GlobalDataBuffer + 0x164FB2
-    /* 16FDC4 0026FCC4 41003200 */ .word GlobalDataBuffer + 0x74FC1
-    /* 16FDC8 0026FCC8 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 16FDCC 0026FCCC 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 16FDD0 0026FCD0 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 16FDD4 0026FCD4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 16FDD8 0026FCD8 64004100 */ .word GlobalDataBuffer + 0x164FE4
-    /* 16FDDC 0026FCDC 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16FDE0 0026FCE0 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16FDE4 0026FCE4 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16FDE8 0026FCE8 32004100 */ .word GlobalDataBuffer + 0x164FB2
-    /* 16FDEC 0026FCEC 41003C00 */ .word GlobalDataBuffer + 0x114FC1
-    /* 16FDF0 0026FCF0 41004100 */ .word GlobalDataBuffer + 0x164FC1
-    /* 16FDF4 0026FCF4 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 16FDF8 0026FCF8 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 16FDFC 0026FCFC 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 16FE00 0026FD00 32003C00 */ .word GlobalDataBuffer + 0x114FB2
-    /* 16FE04 0026FD04 3C003200 */ .word GlobalDataBuffer + 0x74FBC
-    /* 16FE08 0026FD08 50003200 */ .word GlobalDataBuffer + 0x74FD0
-    /* 16FE0C 0026FD0C 32004600 */ .word GlobalDataBuffer + 0x1B4FB2
-    /* 16FE10 0026FD10 4B005000 */ .word GlobalDataBuffer + 0x254FCB
-    /* 16FE14 0026FD14 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 16FE18 0026FD18 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FE1C 0026FD1C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FE20 0026FD20 32003C00 */ .word GlobalDataBuffer + 0x114FB2
-    /* 16FE24 0026FD24 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16FE28 0026FD28 50005500 */ .word GlobalDataBuffer + 0x2A4FD0
-    /* 16FE2C 0026FD2C 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 16FE30 0026FD30 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FE34 0026FD34 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FE38 0026FD38 32003C00 */ .word GlobalDataBuffer + 0x114FB2
-    /* 16FE3C 0026FD3C 46005000 */ .word GlobalDataBuffer + 0x254FC6
-    /* 16FE40 0026FD40 5F005A00 */ .word GlobalDataBuffer + 0x2F4FDF
-    /* 16FE44 0026FD44 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 16FE48 0026FD48 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FE4C 0026FD4C 32005500 */ .word GlobalDataBuffer + 0x2A4FB2
-    /* 16FE50 0026FD50 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FE54 0026FD54 32005500 */ .word GlobalDataBuffer + 0x2A4FB2
-    /* 16FE58 0026FD58 55005500 */ .word GlobalDataBuffer + 0x2A4FD5
-    /* 16FE5C 0026FD5C 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 16FE60 0026FD60 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FE64 0026FD64 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FE68 0026FD68 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FE6C 0026FD6C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FE70 0026FD70 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FE74 0026FD74 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FE78 0026FD78 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FE7C 0026FD7C 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16FE80 0026FD80 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16FE84 0026FD84 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16FE88 0026FD88 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16FE8C 0026FD8C 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16FE90 0026FD90 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 16FE94 0026FD94 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 16FE98 0026FD98 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FE9C 0026FD9C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEA0 0026FDA0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEA4 0026FDA4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEA8 0026FDA8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEAC 0026FDAC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEB0 0026FDB0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEB4 0026FDB4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEB8 0026FDB8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEBC 0026FDBC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEC0 0026FDC0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEC4 0026FDC4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEC8 0026FDC8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FECC 0026FDCC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FED0 0026FDD0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FED4 0026FDD4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FED8 0026FDD8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEDC 0026FDDC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEE0 0026FDE0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEE4 0026FDE4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEE8 0026FDE8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEEC 0026FDEC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEF0 0026FDF0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEF4 0026FDF4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEF8 0026FDF8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FEFC 0026FDFC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF00 0026FE00 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF04 0026FE04 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF08 0026FE08 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF0C 0026FE0C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF10 0026FE10 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF14 0026FE14 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF18 0026FE18 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF1C 0026FE1C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF20 0026FE20 32005A00 */ .word GlobalDataBuffer + 0x2F4FB2
-    /* 16FF24 0026FE24 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF28 0026FE28 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF2C 0026FE2C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF30 0026FE30 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF34 0026FE34 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF38 0026FE38 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF3C 0026FE3C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF40 0026FE40 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF44 0026FE44 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF48 0026FE48 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF4C 0026FE4C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF50 0026FE50 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF54 0026FE54 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF58 0026FE58 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF5C 0026FE5C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF60 0026FE60 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF64 0026FE64 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF68 0026FE68 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF6C 0026FE6C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF70 0026FE70 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF74 0026FE74 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF78 0026FE78 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF7C 0026FE7C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF80 0026FE80 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF84 0026FE84 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF88 0026FE88 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF8C 0026FE8C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF90 0026FE90 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF94 0026FE94 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF98 0026FE98 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FF9C 0026FE9C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FFA0 0026FEA0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FFA4 0026FEA4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FFA8 0026FEA8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FFAC 0026FEAC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FFB0 0026FEB0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FFB4 0026FEB4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FFB8 0026FEB8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FFBC 0026FEBC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FFC0 0026FEC0 32004100 */ .word GlobalDataBuffer + 0x164FB2
-    /* 16FFC4 0026FEC4 41003200 */ .word GlobalDataBuffer + 0x74FC1
-    /* 16FFC8 0026FEC8 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 16FFCC 0026FECC 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 16FFD0 0026FED0 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 16FFD4 0026FED4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 16FFD8 0026FED8 64004100 */ .word GlobalDataBuffer + 0x164FE4
-    /* 16FFDC 0026FEDC 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16FFE0 0026FEE0 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16FFE4 0026FEE4 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 16FFE8 0026FEE8 41006400 */ .word GlobalDataBuffer + 0x394FC1
-    /* 16FFEC 0026FEEC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 16FFF0 0026FEF0 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 16FFF4 0026FEF4 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 16FFF8 0026FEF8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 16FFFC 0026FEFC 41003200 */ .word GlobalDataBuffer + 0x74FC1
-    /* 170000 0026FF00 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170004 0026FF04 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170008 0026FF08 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17000C 0026FF0C 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 170010 0026FF10 62003200 */ .word GlobalDataBuffer + 0x74FE2
-    /* 170014 0026FF14 32004100 */ .word GlobalDataBuffer + 0x164FB2
-    /* 170018 0026FF18 41003C00 */ .word GlobalDataBuffer + 0x114FC1
-    /* 17001C 0026FF1C 41004100 */ .word GlobalDataBuffer + 0x164FC1
-    /* 170020 0026FF20 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 170024 0026FF24 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 170028 0026FF28 5F005000 */ .word GlobalDataBuffer + 0x254FDF
-    /* 17002C 0026FF2C 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170030 0026FF30 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 170034 0026FF34 3C003C00 */ .word GlobalDataBuffer + 0x114FBC
-    /* 170038 0026FF38 32005000 */ .word GlobalDataBuffer + 0x254FB2
-    /* 17003C 0026FF3C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170040 0026FF40 46005A00 */ .word GlobalDataBuffer + 0x2F4FC6
-    /* 170044 0026FF44 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170048 0026FF48 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 17004C 0026FF4C 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 170050 0026FF50 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 170054 0026FF54 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170058 0026FF58 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17005C 0026FF5C 3C005000 */ .word GlobalDataBuffer + 0x254FBC
-    /* 170060 0026FF60 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 170064 0026FF64 55005F00 */ .word GlobalDataBuffer + 0x344FD5
-    /* 170068 0026FF68 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 17006C 0026FF6C 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 170070 0026FF70 5F005000 */ .word GlobalDataBuffer + 0x254FDF
-    /* 170074 0026FF74 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170078 0026FF78 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17007C 0026FF7C 3C004600 */ .word GlobalDataBuffer + 0x1B4FBC
-    /* 170080 0026FF80 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 170084 0026FF84 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170088 0026FF88 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 17008C 0026FF8C 3C004600 */ .word GlobalDataBuffer + 0x1B4FBC
-    /* 170090 0026FF90 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170094 0026FF94 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170098 0026FF98 55003200 */ .word GlobalDataBuffer + 0x74FD5
-    /* 17009C 0026FF9C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1700A0 0026FFA0 55005500 */ .word GlobalDataBuffer + 0x2A4FD5
-    /* 1700A4 0026FFA4 55005F00 */ .word GlobalDataBuffer + 0x344FD5
-    /* 1700A8 0026FFA8 5F005000 */ .word GlobalDataBuffer + 0x254FDF
-    /* 1700AC 0026FFAC 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 1700B0 0026FFB0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1700B4 0026FFB4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1700B8 0026FFB8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1700BC 0026FFBC 32003200 */ .word GlobalDataBuffer + 0x74FB2
+    /* 16FDC0 0026FCC0 32004100 */ .word 0x00410032
+    /* 16FDC4 0026FCC4 41003200 */ .word 0x00320041
+    /* 16FDC8 0026FCC8 5F003200 */ .word 0x0032005F
+    /* 16FDCC 0026FCCC 41004600 */ .word 0x00460041
+    /* 16FDD0 0026FCD0 32005F00 */ .word 0x005F0032
+    /* 16FDD4 0026FCD4 64006400 */ .word 0x00640064
+    /* 16FDD8 0026FCD8 64004100 */ .word 0x00410064
+    /* 16FDDC 0026FCDC 62006200 */ .word 0x00620062
+    /* 16FDE0 0026FCE0 62006200 */ .word 0x00620062
+    /* 16FDE4 0026FCE4 62006200 */ .word 0x00620062
+    /* 16FDE8 0026FCE8 32004100 */ .word 0x00410032
+    /* 16FDEC 0026FCEC 41003C00 */ .word 0x003C0041
+    /* 16FDF0 0026FCF0 41004100 */ .word 0x00410041
+    /* 16FDF4 0026FCF4 50005F00 */ .word 0x005F0050
+    /* 16FDF8 0026FCF8 32005F00 */ .word 0x005F0032
+    /* 16FDFC 0026FCFC 5F003200 */ .word 0x0032005F
+    /* 16FE00 0026FD00 32003C00 */ .word 0x003C0032
+    /* 16FE04 0026FD04 3C003200 */ .word 0x0032003C
+    /* 16FE08 0026FD08 50003200 */ .word 0x00320050
+    /* 16FE0C 0026FD0C 32004600 */ .word 0x00460032
+    /* 16FE10 0026FD10 4B005000 */ .word 0x0050004B
+    /* 16FE14 0026FD14 5F005F00 */ .word 0x005F005F
+    /* 16FE18 0026FD18 32003200 */ .word 0x00320032
+    /* 16FE1C 0026FD1C 32003200 */ .word 0x00320032
+    /* 16FE20 0026FD20 32003C00 */ .word 0x003C0032
+    /* 16FE24 0026FD24 50005000 */ .word 0x00500050
+    /* 16FE28 0026FD28 50005500 */ .word 0x00550050
+    /* 16FE2C 0026FD2C 5F005F00 */ .word 0x005F005F
+    /* 16FE30 0026FD30 32003200 */ .word 0x00320032
+    /* 16FE34 0026FD34 32003200 */ .word 0x00320032
+    /* 16FE38 0026FD38 32003C00 */ .word 0x003C0032
+    /* 16FE3C 0026FD3C 46005000 */ .word 0x00500046
+    /* 16FE40 0026FD40 5F005A00 */ .word 0x005A005F
+    /* 16FE44 0026FD44 5F005F00 */ .word 0x005F005F
+    /* 16FE48 0026FD48 32003200 */ .word 0x00320032
+    /* 16FE4C 0026FD4C 32005500 */ .word 0x00550032
+    /* 16FE50 0026FD50 32003200 */ .word 0x00320032
+    /* 16FE54 0026FD54 32005500 */ .word 0x00550032
+    /* 16FE58 0026FD58 55005500 */ .word 0x00550055
+    /* 16FE5C 0026FD5C 5F005F00 */ .word 0x005F005F
+    /* 16FE60 0026FD60 32003200 */ .word 0x00320032
+    /* 16FE64 0026FD64 32003200 */ .word 0x00320032
+    /* 16FE68 0026FD68 32003200 */ .word 0x00320032
+    /* 16FE6C 0026FD6C 32003200 */ .word 0x00320032
+    /* 16FE70 0026FD70 32003200 */ .word 0x00320032
+    /* 16FE74 0026FD74 32003200 */ .word 0x00320032
+    /* 16FE78 0026FD78 32003200 */ .word 0x00320032
+    /* 16FE7C 0026FD7C 50005000 */ .word 0x00500050
+    /* 16FE80 0026FD80 50005000 */ .word 0x00500050
+    /* 16FE84 0026FD84 50005000 */ .word 0x00500050
+    /* 16FE88 0026FD88 50005000 */ .word 0x00500050
+    /* 16FE8C 0026FD8C 50005000 */ .word 0x00500050
+    /* 16FE90 0026FD90 50005000 */ .word 0x00500050
+    /* 16FE94 0026FD94 5A003200 */ .word 0x0032005A
+    /* 16FE98 0026FD98 32003200 */ .word 0x00320032
+    /* 16FE9C 0026FD9C 32003200 */ .word 0x00320032
+    /* 16FEA0 0026FDA0 32003200 */ .word 0x00320032
+    /* 16FEA4 0026FDA4 32003200 */ .word 0x00320032
+    /* 16FEA8 0026FDA8 32003200 */ .word 0x00320032
+    /* 16FEAC 0026FDAC 32003200 */ .word 0x00320032
+    /* 16FEB0 0026FDB0 32003200 */ .word 0x00320032
+    /* 16FEB4 0026FDB4 32003200 */ .word 0x00320032
+    /* 16FEB8 0026FDB8 32003200 */ .word 0x00320032
+    /* 16FEBC 0026FDBC 32003200 */ .word 0x00320032
+    /* 16FEC0 0026FDC0 32003200 */ .word 0x00320032
+    /* 16FEC4 0026FDC4 32003200 */ .word 0x00320032
+    /* 16FEC8 0026FDC8 32003200 */ .word 0x00320032
+    /* 16FECC 0026FDCC 32003200 */ .word 0x00320032
+    /* 16FED0 0026FDD0 32003200 */ .word 0x00320032
+    /* 16FED4 0026FDD4 32003200 */ .word 0x00320032
+    /* 16FED8 0026FDD8 32003200 */ .word 0x00320032
+    /* 16FEDC 0026FDDC 32003200 */ .word 0x00320032
+    /* 16FEE0 0026FDE0 32003200 */ .word 0x00320032
+    /* 16FEE4 0026FDE4 32003200 */ .word 0x00320032
+    /* 16FEE8 0026FDE8 32003200 */ .word 0x00320032
+    /* 16FEEC 0026FDEC 32003200 */ .word 0x00320032
+    /* 16FEF0 0026FDF0 32003200 */ .word 0x00320032
+    /* 16FEF4 0026FDF4 32003200 */ .word 0x00320032
+    /* 16FEF8 0026FDF8 32003200 */ .word 0x00320032
+    /* 16FEFC 0026FDFC 32003200 */ .word 0x00320032
+    /* 16FF00 0026FE00 32003200 */ .word 0x00320032
+    /* 16FF04 0026FE04 32003200 */ .word 0x00320032
+    /* 16FF08 0026FE08 32003200 */ .word 0x00320032
+    /* 16FF0C 0026FE0C 32003200 */ .word 0x00320032
+    /* 16FF10 0026FE10 32003200 */ .word 0x00320032
+    /* 16FF14 0026FE14 32003200 */ .word 0x00320032
+    /* 16FF18 0026FE18 32003200 */ .word 0x00320032
+    /* 16FF1C 0026FE1C 32003200 */ .word 0x00320032
+    /* 16FF20 0026FE20 32005A00 */ .word 0x005A0032
+    /* 16FF24 0026FE24 32003200 */ .word 0x00320032
+    /* 16FF28 0026FE28 32003200 */ .word 0x00320032
+    /* 16FF2C 0026FE2C 32003200 */ .word 0x00320032
+    /* 16FF30 0026FE30 32003200 */ .word 0x00320032
+    /* 16FF34 0026FE34 32003200 */ .word 0x00320032
+    /* 16FF38 0026FE38 32003200 */ .word 0x00320032
+    /* 16FF3C 0026FE3C 32003200 */ .word 0x00320032
+    /* 16FF40 0026FE40 32003200 */ .word 0x00320032
+    /* 16FF44 0026FE44 32003200 */ .word 0x00320032
+    /* 16FF48 0026FE48 32003200 */ .word 0x00320032
+    /* 16FF4C 0026FE4C 32003200 */ .word 0x00320032
+    /* 16FF50 0026FE50 32003200 */ .word 0x00320032
+    /* 16FF54 0026FE54 32003200 */ .word 0x00320032
+    /* 16FF58 0026FE58 32003200 */ .word 0x00320032
+    /* 16FF5C 0026FE5C 32003200 */ .word 0x00320032
+    /* 16FF60 0026FE60 32003200 */ .word 0x00320032
+    /* 16FF64 0026FE64 32003200 */ .word 0x00320032
+    /* 16FF68 0026FE68 32003200 */ .word 0x00320032
+    /* 16FF6C 0026FE6C 32003200 */ .word 0x00320032
+    /* 16FF70 0026FE70 32003200 */ .word 0x00320032
+    /* 16FF74 0026FE74 32003200 */ .word 0x00320032
+    /* 16FF78 0026FE78 32003200 */ .word 0x00320032
+    /* 16FF7C 0026FE7C 32003200 */ .word 0x00320032
+    /* 16FF80 0026FE80 32003200 */ .word 0x00320032
+    /* 16FF84 0026FE84 32003200 */ .word 0x00320032
+    /* 16FF88 0026FE88 32003200 */ .word 0x00320032
+    /* 16FF8C 0026FE8C 32003200 */ .word 0x00320032
+    /* 16FF90 0026FE90 32003200 */ .word 0x00320032
+    /* 16FF94 0026FE94 32003200 */ .word 0x00320032
+    /* 16FF98 0026FE98 32003200 */ .word 0x00320032
+    /* 16FF9C 0026FE9C 32003200 */ .word 0x00320032
+    /* 16FFA0 0026FEA0 32003200 */ .word 0x00320032
+    /* 16FFA4 0026FEA4 32003200 */ .word 0x00320032
+    /* 16FFA8 0026FEA8 32003200 */ .word 0x00320032
+    /* 16FFAC 0026FEAC 32003200 */ .word 0x00320032
+    /* 16FFB0 0026FEB0 32003200 */ .word 0x00320032
+    /* 16FFB4 0026FEB4 32003200 */ .word 0x00320032
+    /* 16FFB8 0026FEB8 32003200 */ .word 0x00320032
+    /* 16FFBC 0026FEBC 32003200 */ .word 0x00320032
+    /* 16FFC0 0026FEC0 32004100 */ .word 0x00410032
+    /* 16FFC4 0026FEC4 41003200 */ .word 0x00320041
+    /* 16FFC8 0026FEC8 5F003200 */ .word 0x0032005F
+    /* 16FFCC 0026FECC 41004600 */ .word 0x00460041
+    /* 16FFD0 0026FED0 32005F00 */ .word 0x005F0032
+    /* 16FFD4 0026FED4 64006400 */ .word 0x00640064
+    /* 16FFD8 0026FED8 64004100 */ .word 0x00410064
+    /* 16FFDC 0026FEDC 62006200 */ .word 0x00620062
+    /* 16FFE0 0026FEE0 62006200 */ .word 0x00620062
+    /* 16FFE4 0026FEE4 62006200 */ .word 0x00620062
+    /* 16FFE8 0026FEE8 41006400 */ .word 0x00640041
+    /* 16FFEC 0026FEEC 64006400 */ .word 0x00640064
+    /* 16FFF0 0026FEF0 5F003200 */ .word 0x0032005F
+    /* 16FFF4 0026FEF4 41004600 */ .word 0x00460041
+    /* 16FFF8 0026FEF8 32003200 */ .word 0x00320032
+    /* 16FFFC 0026FEFC 41003200 */ .word 0x00320041
+    /* 170000 0026FF00 32003200 */ .word 0x00320032
+    /* 170004 0026FF04 32003200 */ .word 0x00320032
+    /* 170008 0026FF08 32003200 */ .word 0x00320032
+    /* 17000C 0026FF0C 62006200 */ .word 0x00620062
+    /* 170010 0026FF10 62003200 */ .word 0x00320062
+    /* 170014 0026FF14 32004100 */ .word 0x00410032
+    /* 170018 0026FF18 41003C00 */ .word 0x003C0041
+    /* 17001C 0026FF1C 41004100 */ .word 0x00410041
+    /* 170020 0026FF20 50005F00 */ .word 0x005F0050
+    /* 170024 0026FF24 32005F00 */ .word 0x005F0032
+    /* 170028 0026FF28 5F005000 */ .word 0x0050005F
+    /* 17002C 0026FF2C 5F005F00 */ .word 0x005F005F
+    /* 170030 0026FF30 5F003200 */ .word 0x0032005F
+    /* 170034 0026FF34 3C003C00 */ .word 0x003C003C
+    /* 170038 0026FF38 32005000 */ .word 0x00500032
+    /* 17003C 0026FF3C 32003200 */ .word 0x00320032
+    /* 170040 0026FF40 46005A00 */ .word 0x005A0046
+    /* 170044 0026FF44 5F005F00 */ .word 0x005F005F
+    /* 170048 0026FF48 5F003200 */ .word 0x0032005F
+    /* 17004C 0026FF4C 50005F00 */ .word 0x005F0050
+    /* 170050 0026FF50 5F003200 */ .word 0x0032005F
+    /* 170054 0026FF54 32003200 */ .word 0x00320032
+    /* 170058 0026FF58 32003200 */ .word 0x00320032
+    /* 17005C 0026FF5C 3C005000 */ .word 0x0050003C
+    /* 170060 0026FF60 50005000 */ .word 0x00500050
+    /* 170064 0026FF64 55005F00 */ .word 0x005F0055
+    /* 170068 0026FF68 5F003200 */ .word 0x0032005F
+    /* 17006C 0026FF6C 50005F00 */ .word 0x005F0050
+    /* 170070 0026FF70 5F005000 */ .word 0x0050005F
+    /* 170074 0026FF74 32003200 */ .word 0x00320032
+    /* 170078 0026FF78 32003200 */ .word 0x00320032
+    /* 17007C 0026FF7C 3C004600 */ .word 0x0046003C
+    /* 170080 0026FF80 50005000 */ .word 0x00500050
+    /* 170084 0026FF84 5F005F00 */ .word 0x005F005F
+    /* 170088 0026FF88 5F003200 */ .word 0x0032005F
+    /* 17008C 0026FF8C 3C004600 */ .word 0x0046003C
+    /* 170090 0026FF90 32003200 */ .word 0x00320032
+    /* 170094 0026FF94 32003200 */ .word 0x00320032
+    /* 170098 0026FF98 55003200 */ .word 0x00320055
+    /* 17009C 0026FF9C 32003200 */ .word 0x00320032
+    /* 1700A0 0026FFA0 55005500 */ .word 0x00550055
+    /* 1700A4 0026FFA4 55005F00 */ .word 0x005F0055
+    /* 1700A8 0026FFA8 5F005000 */ .word 0x0050005F
+    /* 1700AC 0026FFAC 5F003200 */ .word 0x0032005F
+    /* 1700B0 0026FFB0 32003200 */ .word 0x00320032
+    /* 1700B4 0026FFB4 32003200 */ .word 0x00320032
+    /* 1700B8 0026FFB8 32003200 */ .word 0x00320032
+    /* 1700BC 0026FFBC 32003200 */ .word 0x00320032
     /* 1700C0 0026FFC0 00000000 */ .word 0x00000000
     /* 1700C4 0026FFC4 00000000 */ .word 0x00000000
     /* 1700C8 0026FFC8 00000000 */ .word 0x00000000
     /* 1700CC 0026FFCC 00000000 */ .word 0x00000000
 
 glabel ItemSetRateList3
-    /* 1700D0 0026FFD0 32004600 */ .word GlobalDataBuffer + 0x1B4FB2
-    /* 1700D4 0026FFD4 46003200 */ .word GlobalDataBuffer + 0x74FC6
-    /* 1700D8 0026FFD8 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 1700DC 0026FFDC 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 1700E0 0026FFE0 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 1700E4 0026FFE4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1700E8 0026FFE8 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 1700EC 0026FFEC 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 1700F0 0026FFF0 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 1700F4 0026FFF4 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 1700F8 0026FFF8 32004600 */ .word GlobalDataBuffer + 0x1B4FB2
-    /* 1700FC 0026FFFC 46003C00 */ .word GlobalDataBuffer + 0x114FC6
-    /* 170100 00270000 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 170104 00270004 50005A00 */ .word GlobalDataBuffer + 0x2F4FD0
-    /* 170108 00270008 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 17010C 0027000C 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 170110 00270010 32004100 */ .word GlobalDataBuffer + 0x164FB2
-    /* 170114 00270014 41003200 */ .word GlobalDataBuffer + 0x74FC1
-    /* 170118 00270018 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17011C 0027001C 32004600 */ .word GlobalDataBuffer + 0x1B4FB2
-    /* 170120 00270020 4B005000 */ .word GlobalDataBuffer + 0x254FCB
-    /* 170124 00270024 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170128 00270028 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17012C 0027002C 41004100 */ .word GlobalDataBuffer + 0x164FC1
-    /* 170130 00270030 41004100 */ .word GlobalDataBuffer + 0x164FC1
-    /* 170134 00270034 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 170138 00270038 50005500 */ .word GlobalDataBuffer + 0x2A4FD0
-    /* 17013C 0027003C 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170140 00270040 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170144 00270044 41004100 */ .word GlobalDataBuffer + 0x164FC1
-    /* 170148 00270048 41003C00 */ .word GlobalDataBuffer + 0x114FC1
-    /* 17014C 0027004C 46005000 */ .word GlobalDataBuffer + 0x254FC6
-    /* 170150 00270050 5F005A00 */ .word GlobalDataBuffer + 0x2F4FDF
-    /* 170154 00270054 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170158 00270058 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17015C 0027005C 32005500 */ .word GlobalDataBuffer + 0x2A4FB2
-    /* 170160 00270060 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170164 00270064 32005500 */ .word GlobalDataBuffer + 0x2A4FB2
-    /* 170168 00270068 55005500 */ .word GlobalDataBuffer + 0x2A4FD5
-    /* 17016C 0027006C 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170170 00270070 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170174 00270074 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170178 00270078 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17017C 0027007C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170180 00270080 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170184 00270084 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170188 00270088 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17018C 0027008C 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 170190 00270090 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 170194 00270094 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 170198 00270098 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 17019C 0027009C 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 1701A0 002700A0 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 1701A4 002700A4 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 1701A8 002700A8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701AC 002700AC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701B0 002700B0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701B4 002700B4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701B8 002700B8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701BC 002700BC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701C0 002700C0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701C4 002700C4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701C8 002700C8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701CC 002700CC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701D0 002700D0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701D4 002700D4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701D8 002700D8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701DC 002700DC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701E0 002700E0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701E4 002700E4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701E8 002700E8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701EC 002700EC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701F0 002700F0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701F4 002700F4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701F8 002700F8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1701FC 002700FC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170200 00270100 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170204 00270104 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170208 00270108 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17020C 0027010C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170210 00270110 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170214 00270114 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170218 00270118 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17021C 0027011C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170220 00270120 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170224 00270124 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170228 00270128 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17022C 0027012C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170230 00270130 32005A00 */ .word GlobalDataBuffer + 0x2F4FB2
-    /* 170234 00270134 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170238 00270138 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17023C 0027013C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170240 00270140 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170244 00270144 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170248 00270148 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17024C 0027014C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170250 00270150 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170254 00270154 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170258 00270158 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17025C 0027015C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170260 00270160 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170264 00270164 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170268 00270168 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17026C 0027016C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170270 00270170 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170274 00270174 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170278 00270178 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17027C 0027017C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170280 00270180 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170284 00270184 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170288 00270188 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17028C 0027018C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170290 00270190 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170294 00270194 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170298 00270198 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17029C 0027019C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1702A0 002701A0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1702A4 002701A4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1702A8 002701A8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1702AC 002701AC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1702B0 002701B0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1702B4 002701B4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1702B8 002701B8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1702BC 002701BC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1702C0 002701C0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1702C4 002701C4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1702C8 002701C8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1702CC 002701CC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1702D0 002701D0 32004600 */ .word GlobalDataBuffer + 0x1B4FB2
-    /* 1702D4 002701D4 46003200 */ .word GlobalDataBuffer + 0x74FC6
-    /* 1702D8 002701D8 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 1702DC 002701DC 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 1702E0 002701E0 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 1702E4 002701E4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1702E8 002701E8 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 1702EC 002701EC 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 1702F0 002701F0 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 1702F4 002701F4 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 1702F8 002701F8 46006400 */ .word GlobalDataBuffer + 0x394FC6
-    /* 1702FC 002701FC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 170300 00270200 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 170304 00270204 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 170308 00270208 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17030C 0027020C 46003200 */ .word GlobalDataBuffer + 0x74FC6
-    /* 170310 00270210 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170314 00270214 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170318 00270218 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17031C 0027021C 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 170320 00270220 62003200 */ .word GlobalDataBuffer + 0x74FE2
-    /* 170324 00270224 32004600 */ .word GlobalDataBuffer + 0x1B4FB2
-    /* 170328 00270228 46003C00 */ .word GlobalDataBuffer + 0x114FC6
-    /* 17032C 0027022C 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 170330 00270230 50005A00 */ .word GlobalDataBuffer + 0x2F4FD0
-    /* 170334 00270234 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 170338 00270238 5F005000 */ .word GlobalDataBuffer + 0x254FDF
-    /* 17033C 0027023C 5A005A00 */ .word GlobalDataBuffer + 0x2F4FDA
-    /* 170340 00270240 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 170344 00270244 41004100 */ .word GlobalDataBuffer + 0x164FC1
-    /* 170348 00270248 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17034C 0027024C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170350 00270250 46005A00 */ .word GlobalDataBuffer + 0x2F4FC6
-    /* 170354 00270254 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170358 00270258 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 17035C 0027025C 50005A00 */ .word GlobalDataBuffer + 0x2F4FD0
-    /* 170360 00270260 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 170364 00270264 32004100 */ .word GlobalDataBuffer + 0x164FB2
-    /* 170368 00270268 41004100 */ .word GlobalDataBuffer + 0x164FC1
-    /* 17036C 0027026C 41005000 */ .word GlobalDataBuffer + 0x254FC1
-    /* 170370 00270270 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 170374 00270274 55005F00 */ .word GlobalDataBuffer + 0x344FD5
-    /* 170378 00270278 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 17037C 0027027C 50005A00 */ .word GlobalDataBuffer + 0x2F4FD0
-    /* 170380 00270280 5F005000 */ .word GlobalDataBuffer + 0x254FDF
-    /* 170384 00270284 32004100 */ .word GlobalDataBuffer + 0x164FB2
-    /* 170388 00270288 41004100 */ .word GlobalDataBuffer + 0x164FC1
-    /* 17038C 0027028C 3C004600 */ .word GlobalDataBuffer + 0x1B4FBC
-    /* 170390 00270290 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 170394 00270294 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170398 00270298 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 17039C 0027029C 3C004600 */ .word GlobalDataBuffer + 0x1B4FBC
-    /* 1703A0 002702A0 41004100 */ .word GlobalDataBuffer + 0x164FC1
-    /* 1703A4 002702A4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1703A8 002702A8 55003200 */ .word GlobalDataBuffer + 0x74FD5
-    /* 1703AC 002702AC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1703B0 002702B0 55005500 */ .word GlobalDataBuffer + 0x2A4FD5
-    /* 1703B4 002702B4 5A005F00 */ .word GlobalDataBuffer + 0x344FDA
-    /* 1703B8 002702B8 5F005000 */ .word GlobalDataBuffer + 0x254FDF
-    /* 1703BC 002702BC 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 1703C0 002702C0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1703C4 002702C4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1703C8 002702C8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1703CC 002702CC 32003200 */ .word GlobalDataBuffer + 0x74FB2
+    /* 1700D0 0026FFD0 32004600 */ .word 0x00460032
+    /* 1700D4 0026FFD4 46003200 */ .word 0x00320046
+    /* 1700D8 0026FFD8 5F003200 */ .word 0x0032005F
+    /* 1700DC 0026FFDC 41004600 */ .word 0x00460041
+    /* 1700E0 0026FFE0 32005F00 */ .word 0x005F0032
+    /* 1700E4 0026FFE4 64006400 */ .word 0x00640064
+    /* 1700E8 0026FFE8 64004600 */ .word 0x00460064
+    /* 1700EC 0026FFEC 62006200 */ .word 0x00620062
+    /* 1700F0 0026FFF0 62006200 */ .word 0x00620062
+    /* 1700F4 0026FFF4 62006200 */ .word 0x00620062
+    /* 1700F8 0026FFF8 32004600 */ .word 0x00460032
+    /* 1700FC 0026FFFC 46003C00 */ .word 0x003C0046
+    /* 170100 00270000 41004600 */ .word 0x00460041
+    /* 170104 00270004 50005A00 */ .word 0x005A0050
+    /* 170108 00270008 32005F00 */ .word 0x005F0032
+    /* 17010C 0027000C 5F003200 */ .word 0x0032005F
+    /* 170110 00270010 32004100 */ .word 0x00410032
+    /* 170114 00270014 41003200 */ .word 0x00320041
+    /* 170118 00270018 32003200 */ .word 0x00320032
+    /* 17011C 0027001C 32004600 */ .word 0x00460032
+    /* 170120 00270020 4B005000 */ .word 0x0050004B
+    /* 170124 00270024 5F005F00 */ .word 0x005F005F
+    /* 170128 00270028 32003200 */ .word 0x00320032
+    /* 17012C 0027002C 41004100 */ .word 0x00410041
+    /* 170130 00270030 41004100 */ .word 0x00410041
+    /* 170134 00270034 50005000 */ .word 0x00500050
+    /* 170138 00270038 50005500 */ .word 0x00550050
+    /* 17013C 0027003C 5F005F00 */ .word 0x005F005F
+    /* 170140 00270040 32003200 */ .word 0x00320032
+    /* 170144 00270044 41004100 */ .word 0x00410041
+    /* 170148 00270048 41003C00 */ .word 0x003C0041
+    /* 17014C 0027004C 46005000 */ .word 0x00500046
+    /* 170150 00270050 5F005A00 */ .word 0x005A005F
+    /* 170154 00270054 5F005F00 */ .word 0x005F005F
+    /* 170158 00270058 32003200 */ .word 0x00320032
+    /* 17015C 0027005C 32005500 */ .word 0x00550032
+    /* 170160 00270060 32003200 */ .word 0x00320032
+    /* 170164 00270064 32005500 */ .word 0x00550032
+    /* 170168 00270068 55005500 */ .word 0x00550055
+    /* 17016C 0027006C 5F005F00 */ .word 0x005F005F
+    /* 170170 00270070 32003200 */ .word 0x00320032
+    /* 170174 00270074 32003200 */ .word 0x00320032
+    /* 170178 00270078 32003200 */ .word 0x00320032
+    /* 17017C 0027007C 32003200 */ .word 0x00320032
+    /* 170180 00270080 32003200 */ .word 0x00320032
+    /* 170184 00270084 32003200 */ .word 0x00320032
+    /* 170188 00270088 32003200 */ .word 0x00320032
+    /* 17018C 0027008C 4B004B00 */ .word 0x004B004B
+    /* 170190 00270090 4B004B00 */ .word 0x004B004B
+    /* 170194 00270094 4B004B00 */ .word 0x004B004B
+    /* 170198 00270098 4B004B00 */ .word 0x004B004B
+    /* 17019C 0027009C 4B004B00 */ .word 0x004B004B
+    /* 1701A0 002700A0 4B004B00 */ .word 0x004B004B
+    /* 1701A4 002700A4 5A003200 */ .word 0x0032005A
+    /* 1701A8 002700A8 32003200 */ .word 0x00320032
+    /* 1701AC 002700AC 32003200 */ .word 0x00320032
+    /* 1701B0 002700B0 32003200 */ .word 0x00320032
+    /* 1701B4 002700B4 32003200 */ .word 0x00320032
+    /* 1701B8 002700B8 32003200 */ .word 0x00320032
+    /* 1701BC 002700BC 32003200 */ .word 0x00320032
+    /* 1701C0 002700C0 32003200 */ .word 0x00320032
+    /* 1701C4 002700C4 32003200 */ .word 0x00320032
+    /* 1701C8 002700C8 32003200 */ .word 0x00320032
+    /* 1701CC 002700CC 32003200 */ .word 0x00320032
+    /* 1701D0 002700D0 32003200 */ .word 0x00320032
+    /* 1701D4 002700D4 32003200 */ .word 0x00320032
+    /* 1701D8 002700D8 32003200 */ .word 0x00320032
+    /* 1701DC 002700DC 32003200 */ .word 0x00320032
+    /* 1701E0 002700E0 32003200 */ .word 0x00320032
+    /* 1701E4 002700E4 32003200 */ .word 0x00320032
+    /* 1701E8 002700E8 32003200 */ .word 0x00320032
+    /* 1701EC 002700EC 32003200 */ .word 0x00320032
+    /* 1701F0 002700F0 32003200 */ .word 0x00320032
+    /* 1701F4 002700F4 32003200 */ .word 0x00320032
+    /* 1701F8 002700F8 32003200 */ .word 0x00320032
+    /* 1701FC 002700FC 32003200 */ .word 0x00320032
+    /* 170200 00270100 32003200 */ .word 0x00320032
+    /* 170204 00270104 32003200 */ .word 0x00320032
+    /* 170208 00270108 32003200 */ .word 0x00320032
+    /* 17020C 0027010C 32003200 */ .word 0x00320032
+    /* 170210 00270110 32003200 */ .word 0x00320032
+    /* 170214 00270114 32003200 */ .word 0x00320032
+    /* 170218 00270118 32003200 */ .word 0x00320032
+    /* 17021C 0027011C 32003200 */ .word 0x00320032
+    /* 170220 00270120 32003200 */ .word 0x00320032
+    /* 170224 00270124 32003200 */ .word 0x00320032
+    /* 170228 00270128 32003200 */ .word 0x00320032
+    /* 17022C 0027012C 32003200 */ .word 0x00320032
+    /* 170230 00270130 32005A00 */ .word 0x005A0032
+    /* 170234 00270134 32003200 */ .word 0x00320032
+    /* 170238 00270138 32003200 */ .word 0x00320032
+    /* 17023C 0027013C 32003200 */ .word 0x00320032
+    /* 170240 00270140 32003200 */ .word 0x00320032
+    /* 170244 00270144 32003200 */ .word 0x00320032
+    /* 170248 00270148 32003200 */ .word 0x00320032
+    /* 17024C 0027014C 32003200 */ .word 0x00320032
+    /* 170250 00270150 32003200 */ .word 0x00320032
+    /* 170254 00270154 32003200 */ .word 0x00320032
+    /* 170258 00270158 32003200 */ .word 0x00320032
+    /* 17025C 0027015C 32003200 */ .word 0x00320032
+    /* 170260 00270160 32003200 */ .word 0x00320032
+    /* 170264 00270164 32003200 */ .word 0x00320032
+    /* 170268 00270168 32003200 */ .word 0x00320032
+    /* 17026C 0027016C 32003200 */ .word 0x00320032
+    /* 170270 00270170 32003200 */ .word 0x00320032
+    /* 170274 00270174 32003200 */ .word 0x00320032
+    /* 170278 00270178 32003200 */ .word 0x00320032
+    /* 17027C 0027017C 32003200 */ .word 0x00320032
+    /* 170280 00270180 32003200 */ .word 0x00320032
+    /* 170284 00270184 32003200 */ .word 0x00320032
+    /* 170288 00270188 32003200 */ .word 0x00320032
+    /* 17028C 0027018C 32003200 */ .word 0x00320032
+    /* 170290 00270190 32003200 */ .word 0x00320032
+    /* 170294 00270194 32003200 */ .word 0x00320032
+    /* 170298 00270198 32003200 */ .word 0x00320032
+    /* 17029C 0027019C 32003200 */ .word 0x00320032
+    /* 1702A0 002701A0 32003200 */ .word 0x00320032
+    /* 1702A4 002701A4 32003200 */ .word 0x00320032
+    /* 1702A8 002701A8 32003200 */ .word 0x00320032
+    /* 1702AC 002701AC 32003200 */ .word 0x00320032
+    /* 1702B0 002701B0 32003200 */ .word 0x00320032
+    /* 1702B4 002701B4 32003200 */ .word 0x00320032
+    /* 1702B8 002701B8 32003200 */ .word 0x00320032
+    /* 1702BC 002701BC 32003200 */ .word 0x00320032
+    /* 1702C0 002701C0 32003200 */ .word 0x00320032
+    /* 1702C4 002701C4 32003200 */ .word 0x00320032
+    /* 1702C8 002701C8 32003200 */ .word 0x00320032
+    /* 1702CC 002701CC 32003200 */ .word 0x00320032
+    /* 1702D0 002701D0 32004600 */ .word 0x00460032
+    /* 1702D4 002701D4 46003200 */ .word 0x00320046
+    /* 1702D8 002701D8 5F003200 */ .word 0x0032005F
+    /* 1702DC 002701DC 41004600 */ .word 0x00460041
+    /* 1702E0 002701E0 32005F00 */ .word 0x005F0032
+    /* 1702E4 002701E4 64006400 */ .word 0x00640064
+    /* 1702E8 002701E8 64004600 */ .word 0x00460064
+    /* 1702EC 002701EC 62006200 */ .word 0x00620062
+    /* 1702F0 002701F0 62006200 */ .word 0x00620062
+    /* 1702F4 002701F4 62006200 */ .word 0x00620062
+    /* 1702F8 002701F8 46006400 */ .word 0x00640046
+    /* 1702FC 002701FC 64006400 */ .word 0x00640064
+    /* 170300 00270200 5F003200 */ .word 0x0032005F
+    /* 170304 00270204 41004600 */ .word 0x00460041
+    /* 170308 00270208 32003200 */ .word 0x00320032
+    /* 17030C 0027020C 46003200 */ .word 0x00320046
+    /* 170310 00270210 32003200 */ .word 0x00320032
+    /* 170314 00270214 32003200 */ .word 0x00320032
+    /* 170318 00270218 32003200 */ .word 0x00320032
+    /* 17031C 0027021C 62006200 */ .word 0x00620062
+    /* 170320 00270220 62003200 */ .word 0x00320062
+    /* 170324 00270224 32004600 */ .word 0x00460032
+    /* 170328 00270228 46003C00 */ .word 0x003C0046
+    /* 17032C 0027022C 41004600 */ .word 0x00460041
+    /* 170330 00270230 50005A00 */ .word 0x005A0050
+    /* 170334 00270234 32005F00 */ .word 0x005F0032
+    /* 170338 00270238 5F005000 */ .word 0x0050005F
+    /* 17033C 0027023C 5A005A00 */ .word 0x005A005A
+    /* 170340 00270240 5A003200 */ .word 0x0032005A
+    /* 170344 00270244 41004100 */ .word 0x00410041
+    /* 170348 00270248 32003200 */ .word 0x00320032
+    /* 17034C 0027024C 32003200 */ .word 0x00320032
+    /* 170350 00270250 46005A00 */ .word 0x005A0046
+    /* 170354 00270254 5F005F00 */ .word 0x005F005F
+    /* 170358 00270258 5F003200 */ .word 0x0032005F
+    /* 17035C 0027025C 50005A00 */ .word 0x005A0050
+    /* 170360 00270260 5F003200 */ .word 0x0032005F
+    /* 170364 00270264 32004100 */ .word 0x00410032
+    /* 170368 00270268 41004100 */ .word 0x00410041
+    /* 17036C 0027026C 41005000 */ .word 0x00500041
+    /* 170370 00270270 50005000 */ .word 0x00500050
+    /* 170374 00270274 55005F00 */ .word 0x005F0055
+    /* 170378 00270278 5F003200 */ .word 0x0032005F
+    /* 17037C 0027027C 50005A00 */ .word 0x005A0050
+    /* 170380 00270280 5F005000 */ .word 0x0050005F
+    /* 170384 00270284 32004100 */ .word 0x00410032
+    /* 170388 00270288 41004100 */ .word 0x00410041
+    /* 17038C 0027028C 3C004600 */ .word 0x0046003C
+    /* 170390 00270290 50005000 */ .word 0x00500050
+    /* 170394 00270294 5F005F00 */ .word 0x005F005F
+    /* 170398 00270298 5F003200 */ .word 0x0032005F
+    /* 17039C 0027029C 3C004600 */ .word 0x0046003C
+    /* 1703A0 002702A0 41004100 */ .word 0x00410041
+    /* 1703A4 002702A4 32003200 */ .word 0x00320032
+    /* 1703A8 002702A8 55003200 */ .word 0x00320055
+    /* 1703AC 002702AC 32003200 */ .word 0x00320032
+    /* 1703B0 002702B0 55005500 */ .word 0x00550055
+    /* 1703B4 002702B4 5A005F00 */ .word 0x005F005A
+    /* 1703B8 002702B8 5F005000 */ .word 0x0050005F
+    /* 1703BC 002702BC 5A003200 */ .word 0x0032005A
+    /* 1703C0 002702C0 32003200 */ .word 0x00320032
+    /* 1703C4 002702C4 32003200 */ .word 0x00320032
+    /* 1703C8 002702C8 32003200 */ .word 0x00320032
+    /* 1703CC 002702CC 32003200 */ .word 0x00320032
     /* 1703D0 002702D0 00000000 */ .word 0x00000000
     /* 1703D4 002702D4 00000000 */ .word 0x00000000
     /* 1703D8 002702D8 00000000 */ .word 0x00000000
     /* 1703DC 002702DC 00000000 */ .word 0x00000000
 
 glabel ItemSetRateList4
-    /* 1703E0 002702E0 32004B00 */ .word GlobalDataBuffer + 0x204FB2
-    /* 1703E4 002702E4 4B003200 */ .word GlobalDataBuffer + 0x74FCB
-    /* 1703E8 002702E8 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 1703EC 002702EC 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 1703F0 002702F0 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 1703F4 002702F4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1703F8 002702F8 64004B00 */ .word GlobalDataBuffer + 0x204FE4
-    /* 1703FC 002702FC 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 170400 00270300 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 170404 00270304 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 170408 00270308 32004B00 */ .word GlobalDataBuffer + 0x204FB2
-    /* 17040C 0027030C 4B003C00 */ .word GlobalDataBuffer + 0x114FCB
-    /* 170410 00270310 41004B00 */ .word GlobalDataBuffer + 0x204FC1
-    /* 170414 00270314 50005A00 */ .word GlobalDataBuffer + 0x2F4FD0
-    /* 170418 00270318 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 17041C 0027031C 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 170420 00270320 32004600 */ .word GlobalDataBuffer + 0x1B4FB2
-    /* 170424 00270324 46003200 */ .word GlobalDataBuffer + 0x74FC6
-    /* 170428 00270328 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17042C 0027032C 32004600 */ .word GlobalDataBuffer + 0x1B4FB2
-    /* 170430 00270330 4B005000 */ .word GlobalDataBuffer + 0x254FCB
-    /* 170434 00270334 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170438 00270338 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17043C 0027033C 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 170440 00270340 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 170444 00270344 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 170448 00270348 50005500 */ .word GlobalDataBuffer + 0x2A4FD0
-    /* 17044C 0027034C 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170450 00270350 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170454 00270354 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 170458 00270358 46003C00 */ .word GlobalDataBuffer + 0x114FC6
-    /* 17045C 0027035C 46005000 */ .word GlobalDataBuffer + 0x254FC6
-    /* 170460 00270360 5F005A00 */ .word GlobalDataBuffer + 0x2F4FDF
-    /* 170464 00270364 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170468 00270368 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17046C 0027036C 32005500 */ .word GlobalDataBuffer + 0x2A4FB2
-    /* 170470 00270370 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170474 00270374 32005500 */ .word GlobalDataBuffer + 0x2A4FB2
-    /* 170478 00270378 55005500 */ .word GlobalDataBuffer + 0x2A4FD5
-    /* 17047C 0027037C 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170480 00270380 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170484 00270384 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170488 00270388 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17048C 0027038C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170490 00270390 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170494 00270394 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170498 00270398 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17049C 0027039C 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 1704A0 002703A0 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 1704A4 002703A4 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 1704A8 002703A8 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 1704AC 002703AC 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 1704B0 002703B0 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 1704B4 002703B4 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 1704B8 002703B8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1704BC 002703BC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1704C0 002703C0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1704C4 002703C4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1704C8 002703C8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1704CC 002703CC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1704D0 002703D0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1704D4 002703D4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1704D8 002703D8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1704DC 002703DC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1704E0 002703E0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1704E4 002703E4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1704E8 002703E8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1704EC 002703EC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1704F0 002703F0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1704F4 002703F4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1704F8 002703F8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1704FC 002703FC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170500 00270400 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170504 00270404 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170508 00270408 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17050C 0027040C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170510 00270410 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170514 00270414 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170518 00270418 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17051C 0027041C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170520 00270420 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170524 00270424 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170528 00270428 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17052C 0027042C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170530 00270430 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170534 00270434 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170538 00270438 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17053C 0027043C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170540 00270440 32005A00 */ .word GlobalDataBuffer + 0x2F4FB2
-    /* 170544 00270444 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170548 00270448 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17054C 0027044C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170550 00270450 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170554 00270454 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170558 00270458 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17055C 0027045C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170560 00270460 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170564 00270464 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170568 00270468 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17056C 0027046C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170570 00270470 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170574 00270474 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170578 00270478 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17057C 0027047C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170580 00270480 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170584 00270484 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170588 00270488 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17058C 0027048C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170590 00270490 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170594 00270494 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170598 00270498 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17059C 0027049C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1705A0 002704A0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1705A4 002704A4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1705A8 002704A8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1705AC 002704AC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1705B0 002704B0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1705B4 002704B4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1705B8 002704B8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1705BC 002704BC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1705C0 002704C0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1705C4 002704C4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1705C8 002704C8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1705CC 002704CC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1705D0 002704D0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1705D4 002704D4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1705D8 002704D8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1705DC 002704DC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1705E0 002704E0 32004B00 */ .word GlobalDataBuffer + 0x204FB2
-    /* 1705E4 002704E4 4B003200 */ .word GlobalDataBuffer + 0x74FCB
-    /* 1705E8 002704E8 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 1705EC 002704EC 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 1705F0 002704F0 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 1705F4 002704F4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1705F8 002704F8 64004B00 */ .word GlobalDataBuffer + 0x204FE4
-    /* 1705FC 002704FC 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 170600 00270500 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 170604 00270504 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 170608 00270508 4B006400 */ .word GlobalDataBuffer + 0x394FCB
-    /* 17060C 0027050C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 170610 00270510 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 170614 00270514 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 170618 00270518 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17061C 0027051C 4B003200 */ .word GlobalDataBuffer + 0x74FCB
-    /* 170620 00270520 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170624 00270524 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170628 00270528 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17062C 0027052C 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 170630 00270530 62003200 */ .word GlobalDataBuffer + 0x74FE2
-    /* 170634 00270534 32004B00 */ .word GlobalDataBuffer + 0x204FB2
-    /* 170638 00270538 4B003C00 */ .word GlobalDataBuffer + 0x114FCB
-    /* 17063C 0027053C 41004B00 */ .word GlobalDataBuffer + 0x204FC1
-    /* 170640 00270540 50005A00 */ .word GlobalDataBuffer + 0x2F4FD0
-    /* 170644 00270544 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 170648 00270548 5F005000 */ .word GlobalDataBuffer + 0x254FDF
-    /* 17064C 0027054C 5A005A00 */ .word GlobalDataBuffer + 0x2F4FDA
-    /* 170650 00270550 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 170654 00270554 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 170658 00270558 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17065C 0027055C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170660 00270560 46005A00 */ .word GlobalDataBuffer + 0x2F4FC6
-    /* 170664 00270564 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170668 00270568 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 17066C 0027056C 50005A00 */ .word GlobalDataBuffer + 0x2F4FD0
-    /* 170670 00270570 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 170674 00270574 32004600 */ .word GlobalDataBuffer + 0x1B4FB2
-    /* 170678 00270578 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 17067C 0027057C 46004B00 */ .word GlobalDataBuffer + 0x204FC6
-    /* 170680 00270580 4B005000 */ .word GlobalDataBuffer + 0x254FCB
-    /* 170684 00270584 55005F00 */ .word GlobalDataBuffer + 0x344FD5
-    /* 170688 00270588 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 17068C 0027058C 50005A00 */ .word GlobalDataBuffer + 0x2F4FD0
-    /* 170690 00270590 5F004B00 */ .word GlobalDataBuffer + 0x204FDF
-    /* 170694 00270594 32004600 */ .word GlobalDataBuffer + 0x1B4FB2
-    /* 170698 00270598 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 17069C 0027059C 3C004600 */ .word GlobalDataBuffer + 0x1B4FBC
-    /* 1706A0 002705A0 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 1706A4 002705A4 5A005F00 */ .word GlobalDataBuffer + 0x344FDA
-    /* 1706A8 002705A8 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 1706AC 002705AC 3C004600 */ .word GlobalDataBuffer + 0x1B4FBC
-    /* 1706B0 002705B0 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 1706B4 002705B4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1706B8 002705B8 55003200 */ .word GlobalDataBuffer + 0x74FD5
-    /* 1706BC 002705BC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1706C0 002705C0 55005500 */ .word GlobalDataBuffer + 0x2A4FD5
-    /* 1706C4 002705C4 5A005F00 */ .word GlobalDataBuffer + 0x344FDA
-    /* 1706C8 002705C8 5F005000 */ .word GlobalDataBuffer + 0x254FDF
-    /* 1706CC 002705CC 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 1706D0 002705D0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1706D4 002705D4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1706D8 002705D8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1706DC 002705DC 32003200 */ .word GlobalDataBuffer + 0x74FB2
+    /* 1703E0 002702E0 32004B00 */ .word 0x004B0032
+    /* 1703E4 002702E4 4B003200 */ .word 0x0032004B
+    /* 1703E8 002702E8 5F003200 */ .word 0x0032005F
+    /* 1703EC 002702EC 41004600 */ .word 0x00460041
+    /* 1703F0 002702F0 32005F00 */ .word 0x005F0032
+    /* 1703F4 002702F4 64006400 */ .word 0x00640064
+    /* 1703F8 002702F8 64004B00 */ .word 0x004B0064
+    /* 1703FC 002702FC 62006200 */ .word 0x00620062
+    /* 170400 00270300 62006200 */ .word 0x00620062
+    /* 170404 00270304 62006200 */ .word 0x00620062
+    /* 170408 00270308 32004B00 */ .word 0x004B0032
+    /* 17040C 0027030C 4B003C00 */ .word 0x003C004B
+    /* 170410 00270310 41004B00 */ .word 0x004B0041
+    /* 170414 00270314 50005A00 */ .word 0x005A0050
+    /* 170418 00270318 32005F00 */ .word 0x005F0032
+    /* 17041C 0027031C 5F003200 */ .word 0x0032005F
+    /* 170420 00270320 32004600 */ .word 0x00460032
+    /* 170424 00270324 46003200 */ .word 0x00320046
+    /* 170428 00270328 32003200 */ .word 0x00320032
+    /* 17042C 0027032C 32004600 */ .word 0x00460032
+    /* 170430 00270330 4B005000 */ .word 0x0050004B
+    /* 170434 00270334 5F005F00 */ .word 0x005F005F
+    /* 170438 00270338 32003200 */ .word 0x00320032
+    /* 17043C 0027033C 46004600 */ .word 0x00460046
+    /* 170440 00270340 46004600 */ .word 0x00460046
+    /* 170444 00270344 4B004B00 */ .word 0x004B004B
+    /* 170448 00270348 50005500 */ .word 0x00550050
+    /* 17044C 0027034C 5F005F00 */ .word 0x005F005F
+    /* 170450 00270350 32003200 */ .word 0x00320032
+    /* 170454 00270354 46004600 */ .word 0x00460046
+    /* 170458 00270358 46003C00 */ .word 0x003C0046
+    /* 17045C 0027035C 46005000 */ .word 0x00500046
+    /* 170460 00270360 5F005A00 */ .word 0x005A005F
+    /* 170464 00270364 5F005F00 */ .word 0x005F005F
+    /* 170468 00270368 32003200 */ .word 0x00320032
+    /* 17046C 0027036C 32005500 */ .word 0x00550032
+    /* 170470 00270370 32003200 */ .word 0x00320032
+    /* 170474 00270374 32005500 */ .word 0x00550032
+    /* 170478 00270378 55005500 */ .word 0x00550055
+    /* 17047C 0027037C 5F005F00 */ .word 0x005F005F
+    /* 170480 00270380 32003200 */ .word 0x00320032
+    /* 170484 00270384 32003200 */ .word 0x00320032
+    /* 170488 00270388 32003200 */ .word 0x00320032
+    /* 17048C 0027038C 32003200 */ .word 0x00320032
+    /* 170490 00270390 32003200 */ .word 0x00320032
+    /* 170494 00270394 32003200 */ .word 0x00320032
+    /* 170498 00270398 32003200 */ .word 0x00320032
+    /* 17049C 0027039C 46004600 */ .word 0x00460046
+    /* 1704A0 002703A0 46004600 */ .word 0x00460046
+    /* 1704A4 002703A4 46004600 */ .word 0x00460046
+    /* 1704A8 002703A8 46004600 */ .word 0x00460046
+    /* 1704AC 002703AC 46004600 */ .word 0x00460046
+    /* 1704B0 002703B0 46004600 */ .word 0x00460046
+    /* 1704B4 002703B4 5A003200 */ .word 0x0032005A
+    /* 1704B8 002703B8 32003200 */ .word 0x00320032
+    /* 1704BC 002703BC 32003200 */ .word 0x00320032
+    /* 1704C0 002703C0 32003200 */ .word 0x00320032
+    /* 1704C4 002703C4 32003200 */ .word 0x00320032
+    /* 1704C8 002703C8 32003200 */ .word 0x00320032
+    /* 1704CC 002703CC 32003200 */ .word 0x00320032
+    /* 1704D0 002703D0 32003200 */ .word 0x00320032
+    /* 1704D4 002703D4 32003200 */ .word 0x00320032
+    /* 1704D8 002703D8 32003200 */ .word 0x00320032
+    /* 1704DC 002703DC 32003200 */ .word 0x00320032
+    /* 1704E0 002703E0 32003200 */ .word 0x00320032
+    /* 1704E4 002703E4 32003200 */ .word 0x00320032
+    /* 1704E8 002703E8 32003200 */ .word 0x00320032
+    /* 1704EC 002703EC 32003200 */ .word 0x00320032
+    /* 1704F0 002703F0 32003200 */ .word 0x00320032
+    /* 1704F4 002703F4 32003200 */ .word 0x00320032
+    /* 1704F8 002703F8 32003200 */ .word 0x00320032
+    /* 1704FC 002703FC 32003200 */ .word 0x00320032
+    /* 170500 00270400 32003200 */ .word 0x00320032
+    /* 170504 00270404 32003200 */ .word 0x00320032
+    /* 170508 00270408 32003200 */ .word 0x00320032
+    /* 17050C 0027040C 32003200 */ .word 0x00320032
+    /* 170510 00270410 32003200 */ .word 0x00320032
+    /* 170514 00270414 32003200 */ .word 0x00320032
+    /* 170518 00270418 32003200 */ .word 0x00320032
+    /* 17051C 0027041C 32003200 */ .word 0x00320032
+    /* 170520 00270420 32003200 */ .word 0x00320032
+    /* 170524 00270424 32003200 */ .word 0x00320032
+    /* 170528 00270428 32003200 */ .word 0x00320032
+    /* 17052C 0027042C 32003200 */ .word 0x00320032
+    /* 170530 00270430 32003200 */ .word 0x00320032
+    /* 170534 00270434 32003200 */ .word 0x00320032
+    /* 170538 00270438 32003200 */ .word 0x00320032
+    /* 17053C 0027043C 32003200 */ .word 0x00320032
+    /* 170540 00270440 32005A00 */ .word 0x005A0032
+    /* 170544 00270444 32003200 */ .word 0x00320032
+    /* 170548 00270448 32003200 */ .word 0x00320032
+    /* 17054C 0027044C 32003200 */ .word 0x00320032
+    /* 170550 00270450 32003200 */ .word 0x00320032
+    /* 170554 00270454 32003200 */ .word 0x00320032
+    /* 170558 00270458 32003200 */ .word 0x00320032
+    /* 17055C 0027045C 32003200 */ .word 0x00320032
+    /* 170560 00270460 32003200 */ .word 0x00320032
+    /* 170564 00270464 32003200 */ .word 0x00320032
+    /* 170568 00270468 32003200 */ .word 0x00320032
+    /* 17056C 0027046C 32003200 */ .word 0x00320032
+    /* 170570 00270470 32003200 */ .word 0x00320032
+    /* 170574 00270474 32003200 */ .word 0x00320032
+    /* 170578 00270478 32003200 */ .word 0x00320032
+    /* 17057C 0027047C 32003200 */ .word 0x00320032
+    /* 170580 00270480 32003200 */ .word 0x00320032
+    /* 170584 00270484 32003200 */ .word 0x00320032
+    /* 170588 00270488 32003200 */ .word 0x00320032
+    /* 17058C 0027048C 32003200 */ .word 0x00320032
+    /* 170590 00270490 32003200 */ .word 0x00320032
+    /* 170594 00270494 32003200 */ .word 0x00320032
+    /* 170598 00270498 32003200 */ .word 0x00320032
+    /* 17059C 0027049C 32003200 */ .word 0x00320032
+    /* 1705A0 002704A0 32003200 */ .word 0x00320032
+    /* 1705A4 002704A4 32003200 */ .word 0x00320032
+    /* 1705A8 002704A8 32003200 */ .word 0x00320032
+    /* 1705AC 002704AC 32003200 */ .word 0x00320032
+    /* 1705B0 002704B0 32003200 */ .word 0x00320032
+    /* 1705B4 002704B4 32003200 */ .word 0x00320032
+    /* 1705B8 002704B8 32003200 */ .word 0x00320032
+    /* 1705BC 002704BC 32003200 */ .word 0x00320032
+    /* 1705C0 002704C0 32003200 */ .word 0x00320032
+    /* 1705C4 002704C4 32003200 */ .word 0x00320032
+    /* 1705C8 002704C8 32003200 */ .word 0x00320032
+    /* 1705CC 002704CC 32003200 */ .word 0x00320032
+    /* 1705D0 002704D0 32003200 */ .word 0x00320032
+    /* 1705D4 002704D4 32003200 */ .word 0x00320032
+    /* 1705D8 002704D8 32003200 */ .word 0x00320032
+    /* 1705DC 002704DC 32003200 */ .word 0x00320032
+    /* 1705E0 002704E0 32004B00 */ .word 0x004B0032
+    /* 1705E4 002704E4 4B003200 */ .word 0x0032004B
+    /* 1705E8 002704E8 5F003200 */ .word 0x0032005F
+    /* 1705EC 002704EC 41004600 */ .word 0x00460041
+    /* 1705F0 002704F0 32005F00 */ .word 0x005F0032
+    /* 1705F4 002704F4 64006400 */ .word 0x00640064
+    /* 1705F8 002704F8 64004B00 */ .word 0x004B0064
+    /* 1705FC 002704FC 62006200 */ .word 0x00620062
+    /* 170600 00270500 62006200 */ .word 0x00620062
+    /* 170604 00270504 62006200 */ .word 0x00620062
+    /* 170608 00270508 4B006400 */ .word 0x0064004B
+    /* 17060C 0027050C 64006400 */ .word 0x00640064
+    /* 170610 00270510 5F003200 */ .word 0x0032005F
+    /* 170614 00270514 41004600 */ .word 0x00460041
+    /* 170618 00270518 32003200 */ .word 0x00320032
+    /* 17061C 0027051C 4B003200 */ .word 0x0032004B
+    /* 170620 00270520 32003200 */ .word 0x00320032
+    /* 170624 00270524 32003200 */ .word 0x00320032
+    /* 170628 00270528 32003200 */ .word 0x00320032
+    /* 17062C 0027052C 62006200 */ .word 0x00620062
+    /* 170630 00270530 62003200 */ .word 0x00320062
+    /* 170634 00270534 32004B00 */ .word 0x004B0032
+    /* 170638 00270538 4B003C00 */ .word 0x003C004B
+    /* 17063C 0027053C 41004B00 */ .word 0x004B0041
+    /* 170640 00270540 50005A00 */ .word 0x005A0050
+    /* 170644 00270544 32005F00 */ .word 0x005F0032
+    /* 170648 00270548 5F005000 */ .word 0x0050005F
+    /* 17064C 0027054C 5A005A00 */ .word 0x005A005A
+    /* 170650 00270550 5A003200 */ .word 0x0032005A
+    /* 170654 00270554 46004600 */ .word 0x00460046
+    /* 170658 00270558 32003200 */ .word 0x00320032
+    /* 17065C 0027055C 32003200 */ .word 0x00320032
+    /* 170660 00270560 46005A00 */ .word 0x005A0046
+    /* 170664 00270564 5F005F00 */ .word 0x005F005F
+    /* 170668 00270568 5F003200 */ .word 0x0032005F
+    /* 17066C 0027056C 50005A00 */ .word 0x005A0050
+    /* 170670 00270570 5F003200 */ .word 0x0032005F
+    /* 170674 00270574 32004600 */ .word 0x00460032
+    /* 170678 00270578 46004600 */ .word 0x00460046
+    /* 17067C 0027057C 46004B00 */ .word 0x004B0046
+    /* 170680 00270580 4B005000 */ .word 0x0050004B
+    /* 170684 00270584 55005F00 */ .word 0x005F0055
+    /* 170688 00270588 5F003200 */ .word 0x0032005F
+    /* 17068C 0027058C 50005A00 */ .word 0x005A0050
+    /* 170690 00270590 5F004B00 */ .word 0x004B005F
+    /* 170694 00270594 32004600 */ .word 0x00460032
+    /* 170698 00270598 46004600 */ .word 0x00460046
+    /* 17069C 0027059C 3C004600 */ .word 0x0046003C
+    /* 1706A0 002705A0 50005000 */ .word 0x00500050
+    /* 1706A4 002705A4 5A005F00 */ .word 0x005F005A
+    /* 1706A8 002705A8 5F003200 */ .word 0x0032005F
+    /* 1706AC 002705AC 3C004600 */ .word 0x0046003C
+    /* 1706B0 002705B0 46004600 */ .word 0x00460046
+    /* 1706B4 002705B4 32003200 */ .word 0x00320032
+    /* 1706B8 002705B8 55003200 */ .word 0x00320055
+    /* 1706BC 002705BC 32003200 */ .word 0x00320032
+    /* 1706C0 002705C0 55005500 */ .word 0x00550055
+    /* 1706C4 002705C4 5A005F00 */ .word 0x005F005A
+    /* 1706C8 002705C8 5F005000 */ .word 0x0050005F
+    /* 1706CC 002705CC 5A003200 */ .word 0x0032005A
+    /* 1706D0 002705D0 32003200 */ .word 0x00320032
+    /* 1706D4 002705D4 32003200 */ .word 0x00320032
+    /* 1706D8 002705D8 32003200 */ .word 0x00320032
+    /* 1706DC 002705DC 32003200 */ .word 0x00320032
     /* 1706E0 002705E0 00000000 */ .word 0x00000000
     /* 1706E4 002705E4 00000000 */ .word 0x00000000
     /* 1706E8 002705E8 00000000 */ .word 0x00000000
     /* 1706EC 002705EC 00000000 */ .word 0x00000000
 
 glabel ItemSetRateList5
-    /* 1706F0 002705F0 32005000 */ .word GlobalDataBuffer + 0x254FB2
-    /* 1706F4 002705F4 50003200 */ .word GlobalDataBuffer + 0x74FD0
-    /* 1706F8 002705F8 50003200 */ .word GlobalDataBuffer + 0x74FD0
-    /* 1706FC 002705FC 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 170700 00270600 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 170704 00270604 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 170708 00270608 64005000 */ .word GlobalDataBuffer + 0x254FE4
-    /* 17070C 0027060C 62005F00 */ .word GlobalDataBuffer + 0x344FE2
-    /* 170710 00270610 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 170714 00270614 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 170718 00270618 32005000 */ .word GlobalDataBuffer + 0x254FB2
-    /* 17071C 0027061C 50003C00 */ .word GlobalDataBuffer + 0x114FD0
-    /* 170720 00270620 41005000 */ .word GlobalDataBuffer + 0x254FC1
-    /* 170724 00270624 50005500 */ .word GlobalDataBuffer + 0x2A4FD0
-    /* 170728 00270628 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 17072C 0027062C 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 170730 00270630 32004B00 */ .word GlobalDataBuffer + 0x204FB2
-    /* 170734 00270634 4B003200 */ .word GlobalDataBuffer + 0x74FCB
-    /* 170738 00270638 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17073C 0027063C 32004600 */ .word GlobalDataBuffer + 0x1B4FB2
-    /* 170740 00270640 4B005000 */ .word GlobalDataBuffer + 0x254FCB
-    /* 170744 00270644 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170748 00270648 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17074C 0027064C 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 170750 00270650 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 170754 00270654 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 170758 00270658 50005500 */ .word GlobalDataBuffer + 0x2A4FD0
-    /* 17075C 0027065C 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170760 00270660 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170764 00270664 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 170768 00270668 4B003C00 */ .word GlobalDataBuffer + 0x114FCB
-    /* 17076C 0027066C 46005000 */ .word GlobalDataBuffer + 0x254FC6
-    /* 170770 00270670 55005A00 */ .word GlobalDataBuffer + 0x2F4FD5
-    /* 170774 00270674 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170778 00270678 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17077C 0027067C 32005500 */ .word GlobalDataBuffer + 0x2A4FB2
-    /* 170780 00270680 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170784 00270684 32005500 */ .word GlobalDataBuffer + 0x2A4FB2
-    /* 170788 00270688 55005500 */ .word GlobalDataBuffer + 0x2A4FD5
-    /* 17078C 0027068C 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170790 00270690 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170794 00270694 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170798 00270698 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17079C 0027069C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1707A0 002706A0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1707A4 002706A4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1707A8 002706A8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1707AC 002706AC 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 1707B0 002706B0 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 1707B4 002706B4 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 1707B8 002706B8 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 1707BC 002706BC 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 1707C0 002706C0 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 1707C4 002706C4 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 1707C8 002706C8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1707CC 002706CC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1707D0 002706D0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1707D4 002706D4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1707D8 002706D8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1707DC 002706DC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1707E0 002706E0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1707E4 002706E4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1707E8 002706E8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1707EC 002706EC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1707F0 002706F0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1707F4 002706F4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1707F8 002706F8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1707FC 002706FC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170800 00270700 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170804 00270704 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170808 00270708 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17080C 0027070C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170810 00270710 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170814 00270714 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170818 00270718 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17081C 0027071C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170820 00270720 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170824 00270724 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170828 00270728 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17082C 0027072C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170830 00270730 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170834 00270734 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170838 00270738 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17083C 0027073C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170840 00270740 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170844 00270744 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170848 00270748 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17084C 0027074C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170850 00270750 32005A00 */ .word GlobalDataBuffer + 0x2F4FB2
-    /* 170854 00270754 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170858 00270758 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17085C 0027075C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170860 00270760 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170864 00270764 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170868 00270768 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17086C 0027076C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170870 00270770 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170874 00270774 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170878 00270778 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17087C 0027077C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170880 00270780 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170884 00270784 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170888 00270788 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17088C 0027078C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170890 00270790 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170894 00270794 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170898 00270798 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17089C 0027079C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708A0 002707A0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708A4 002707A4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708A8 002707A8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708AC 002707AC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708B0 002707B0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708B4 002707B4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708B8 002707B8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708BC 002707BC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708C0 002707C0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708C4 002707C4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708C8 002707C8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708CC 002707CC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708D0 002707D0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708D4 002707D4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708D8 002707D8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708DC 002707DC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708E0 002707E0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708E4 002707E4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708E8 002707E8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708EC 002707EC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1708F0 002707F0 32005000 */ .word GlobalDataBuffer + 0x254FB2
-    /* 1708F4 002707F4 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 1708F8 002707F8 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 1708FC 002707FC 41005F00 */ .word GlobalDataBuffer + 0x344FC1
-    /* 170900 00270800 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170904 00270804 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 170908 00270808 64005F00 */ .word GlobalDataBuffer + 0x344FE4
-    /* 17090C 0027080C 62005F00 */ .word GlobalDataBuffer + 0x344FE2
-    /* 170910 00270810 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 170914 00270814 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 170918 00270818 50006400 */ .word GlobalDataBuffer + 0x394FD0
-    /* 17091C 0027081C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 170920 00270820 50003200 */ .word GlobalDataBuffer + 0x74FD0
-    /* 170924 00270824 5F004600 */ .word GlobalDataBuffer + 0x1B4FDF
-    /* 170928 00270828 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 17092C 0027082C 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 170930 00270830 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170934 00270834 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 170938 00270838 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 17093C 0027083C 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 170940 00270840 62003200 */ .word GlobalDataBuffer + 0x74FE2
-    /* 170944 00270844 32005000 */ .word GlobalDataBuffer + 0x254FB2
-    /* 170948 00270848 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 17094C 0027084C 41005F00 */ .word GlobalDataBuffer + 0x344FC1
-    /* 170950 00270850 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170954 00270854 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 170958 00270858 5F005000 */ .word GlobalDataBuffer + 0x254FDF
-    /* 17095C 0027085C 55005500 */ .word GlobalDataBuffer + 0x2A4FD5
-    /* 170960 00270860 55003200 */ .word GlobalDataBuffer + 0x74FD5
-    /* 170964 00270864 4B005F00 */ .word GlobalDataBuffer + 0x344FCB
-    /* 170968 00270868 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 17096C 0027086C 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170970 00270870 5F005500 */ .word GlobalDataBuffer + 0x2A4FDF
-    /* 170974 00270874 5A005F00 */ .word GlobalDataBuffer + 0x344FDA
-    /* 170978 00270878 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 17097C 0027087C 50005500 */ .word GlobalDataBuffer + 0x2A4FD0
-    /* 170980 00270880 55003200 */ .word GlobalDataBuffer + 0x74FD5
-    /* 170984 00270884 32004B00 */ .word GlobalDataBuffer + 0x204FB2
-    /* 170988 00270888 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 17098C 0027088C 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 170990 00270890 4B005000 */ .word GlobalDataBuffer + 0x254FCB
-    /* 170994 00270894 55005F00 */ .word GlobalDataBuffer + 0x344FD5
-    /* 170998 00270898 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 17099C 0027089C 50005500 */ .word GlobalDataBuffer + 0x2A4FD0
-    /* 1709A0 002708A0 5F004B00 */ .word GlobalDataBuffer + 0x204FDF
-    /* 1709A4 002708A4 32004B00 */ .word GlobalDataBuffer + 0x204FB2
-    /* 1709A8 002708A8 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 1709AC 002708AC 3C004600 */ .word GlobalDataBuffer + 0x1B4FBC
-    /* 1709B0 002708B0 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 1709B4 002708B4 5A005F00 */ .word GlobalDataBuffer + 0x344FDA
-    /* 1709B8 002708B8 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 1709BC 002708BC 3C004600 */ .word GlobalDataBuffer + 0x1B4FBC
-    /* 1709C0 002708C0 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 1709C4 002708C4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1709C8 002708C8 55003200 */ .word GlobalDataBuffer + 0x74FD5
-    /* 1709CC 002708CC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1709D0 002708D0 55005500 */ .word GlobalDataBuffer + 0x2A4FD5
-    /* 1709D4 002708D4 5A005F00 */ .word GlobalDataBuffer + 0x344FDA
-    /* 1709D8 002708D8 5F005000 */ .word GlobalDataBuffer + 0x254FDF
-    /* 1709DC 002708DC 55003200 */ .word GlobalDataBuffer + 0x74FD5
-    /* 1709E0 002708E0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1709E4 002708E4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1709E8 002708E8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1709EC 002708EC 32003200 */ .word GlobalDataBuffer + 0x74FB2
+    /* 1706F0 002705F0 32005000 */ .word 0x00500032
+    /* 1706F4 002705F4 50003200 */ .word 0x00320050
+    /* 1706F8 002705F8 50003200 */ .word 0x00320050
+    /* 1706FC 002705FC 41004600 */ .word 0x00460041
+    /* 170700 00270600 32005F00 */ .word 0x005F0032
+    /* 170704 00270604 64006400 */ .word 0x00640064
+    /* 170708 00270608 64005000 */ .word 0x00500064
+    /* 17070C 0027060C 62005F00 */ .word 0x005F0062
+    /* 170710 00270610 62006200 */ .word 0x00620062
+    /* 170714 00270614 62006200 */ .word 0x00620062
+    /* 170718 00270618 32005000 */ .word 0x00500032
+    /* 17071C 0027061C 50003C00 */ .word 0x003C0050
+    /* 170720 00270620 41005000 */ .word 0x00500041
+    /* 170724 00270624 50005500 */ .word 0x00550050
+    /* 170728 00270628 32005F00 */ .word 0x005F0032
+    /* 17072C 0027062C 5F003200 */ .word 0x0032005F
+    /* 170730 00270630 32004B00 */ .word 0x004B0032
+    /* 170734 00270634 4B003200 */ .word 0x0032004B
+    /* 170738 00270638 32003200 */ .word 0x00320032
+    /* 17073C 0027063C 32004600 */ .word 0x00460032
+    /* 170740 00270640 4B005000 */ .word 0x0050004B
+    /* 170744 00270644 5F005F00 */ .word 0x005F005F
+    /* 170748 00270648 32003200 */ .word 0x00320032
+    /* 17074C 0027064C 4B004B00 */ .word 0x004B004B
+    /* 170750 00270650 4B004B00 */ .word 0x004B004B
+    /* 170754 00270654 4B004B00 */ .word 0x004B004B
+    /* 170758 00270658 50005500 */ .word 0x00550050
+    /* 17075C 0027065C 5F005F00 */ .word 0x005F005F
+    /* 170760 00270660 32003200 */ .word 0x00320032
+    /* 170764 00270664 4B004B00 */ .word 0x004B004B
+    /* 170768 00270668 4B003C00 */ .word 0x003C004B
+    /* 17076C 0027066C 46005000 */ .word 0x00500046
+    /* 170770 00270670 55005A00 */ .word 0x005A0055
+    /* 170774 00270674 5F005F00 */ .word 0x005F005F
+    /* 170778 00270678 32003200 */ .word 0x00320032
+    /* 17077C 0027067C 32005500 */ .word 0x00550032
+    /* 170780 00270680 32003200 */ .word 0x00320032
+    /* 170784 00270684 32005500 */ .word 0x00550032
+    /* 170788 00270688 55005500 */ .word 0x00550055
+    /* 17078C 0027068C 5F005F00 */ .word 0x005F005F
+    /* 170790 00270690 32003200 */ .word 0x00320032
+    /* 170794 00270694 32003200 */ .word 0x00320032
+    /* 170798 00270698 32003200 */ .word 0x00320032
+    /* 17079C 0027069C 32003200 */ .word 0x00320032
+    /* 1707A0 002706A0 32003200 */ .word 0x00320032
+    /* 1707A4 002706A4 32003200 */ .word 0x00320032
+    /* 1707A8 002706A8 32003200 */ .word 0x00320032
+    /* 1707AC 002706AC 46004600 */ .word 0x00460046
+    /* 1707B0 002706B0 46004600 */ .word 0x00460046
+    /* 1707B4 002706B4 46004600 */ .word 0x00460046
+    /* 1707B8 002706B8 46004600 */ .word 0x00460046
+    /* 1707BC 002706BC 46004600 */ .word 0x00460046
+    /* 1707C0 002706C0 46004600 */ .word 0x00460046
+    /* 1707C4 002706C4 5A003200 */ .word 0x0032005A
+    /* 1707C8 002706C8 32003200 */ .word 0x00320032
+    /* 1707CC 002706CC 32003200 */ .word 0x00320032
+    /* 1707D0 002706D0 32003200 */ .word 0x00320032
+    /* 1707D4 002706D4 32003200 */ .word 0x00320032
+    /* 1707D8 002706D8 32003200 */ .word 0x00320032
+    /* 1707DC 002706DC 32003200 */ .word 0x00320032
+    /* 1707E0 002706E0 32003200 */ .word 0x00320032
+    /* 1707E4 002706E4 32003200 */ .word 0x00320032
+    /* 1707E8 002706E8 32003200 */ .word 0x00320032
+    /* 1707EC 002706EC 32003200 */ .word 0x00320032
+    /* 1707F0 002706F0 32003200 */ .word 0x00320032
+    /* 1707F4 002706F4 32003200 */ .word 0x00320032
+    /* 1707F8 002706F8 32003200 */ .word 0x00320032
+    /* 1707FC 002706FC 32003200 */ .word 0x00320032
+    /* 170800 00270700 32003200 */ .word 0x00320032
+    /* 170804 00270704 32003200 */ .word 0x00320032
+    /* 170808 00270708 32003200 */ .word 0x00320032
+    /* 17080C 0027070C 32003200 */ .word 0x00320032
+    /* 170810 00270710 32003200 */ .word 0x00320032
+    /* 170814 00270714 32003200 */ .word 0x00320032
+    /* 170818 00270718 32003200 */ .word 0x00320032
+    /* 17081C 0027071C 32003200 */ .word 0x00320032
+    /* 170820 00270720 32003200 */ .word 0x00320032
+    /* 170824 00270724 32003200 */ .word 0x00320032
+    /* 170828 00270728 32003200 */ .word 0x00320032
+    /* 17082C 0027072C 32003200 */ .word 0x00320032
+    /* 170830 00270730 32003200 */ .word 0x00320032
+    /* 170834 00270734 32003200 */ .word 0x00320032
+    /* 170838 00270738 32003200 */ .word 0x00320032
+    /* 17083C 0027073C 32003200 */ .word 0x00320032
+    /* 170840 00270740 32003200 */ .word 0x00320032
+    /* 170844 00270744 32003200 */ .word 0x00320032
+    /* 170848 00270748 32003200 */ .word 0x00320032
+    /* 17084C 0027074C 32003200 */ .word 0x00320032
+    /* 170850 00270750 32005A00 */ .word 0x005A0032
+    /* 170854 00270754 32003200 */ .word 0x00320032
+    /* 170858 00270758 32003200 */ .word 0x00320032
+    /* 17085C 0027075C 32003200 */ .word 0x00320032
+    /* 170860 00270760 32003200 */ .word 0x00320032
+    /* 170864 00270764 32003200 */ .word 0x00320032
+    /* 170868 00270768 32003200 */ .word 0x00320032
+    /* 17086C 0027076C 32003200 */ .word 0x00320032
+    /* 170870 00270770 32003200 */ .word 0x00320032
+    /* 170874 00270774 32003200 */ .word 0x00320032
+    /* 170878 00270778 32003200 */ .word 0x00320032
+    /* 17087C 0027077C 32003200 */ .word 0x00320032
+    /* 170880 00270780 32003200 */ .word 0x00320032
+    /* 170884 00270784 32003200 */ .word 0x00320032
+    /* 170888 00270788 32003200 */ .word 0x00320032
+    /* 17088C 0027078C 32003200 */ .word 0x00320032
+    /* 170890 00270790 32003200 */ .word 0x00320032
+    /* 170894 00270794 32003200 */ .word 0x00320032
+    /* 170898 00270798 32003200 */ .word 0x00320032
+    /* 17089C 0027079C 32003200 */ .word 0x00320032
+    /* 1708A0 002707A0 32003200 */ .word 0x00320032
+    /* 1708A4 002707A4 32003200 */ .word 0x00320032
+    /* 1708A8 002707A8 32003200 */ .word 0x00320032
+    /* 1708AC 002707AC 32003200 */ .word 0x00320032
+    /* 1708B0 002707B0 32003200 */ .word 0x00320032
+    /* 1708B4 002707B4 32003200 */ .word 0x00320032
+    /* 1708B8 002707B8 32003200 */ .word 0x00320032
+    /* 1708BC 002707BC 32003200 */ .word 0x00320032
+    /* 1708C0 002707C0 32003200 */ .word 0x00320032
+    /* 1708C4 002707C4 32003200 */ .word 0x00320032
+    /* 1708C8 002707C8 32003200 */ .word 0x00320032
+    /* 1708CC 002707CC 32003200 */ .word 0x00320032
+    /* 1708D0 002707D0 32003200 */ .word 0x00320032
+    /* 1708D4 002707D4 32003200 */ .word 0x00320032
+    /* 1708D8 002707D8 32003200 */ .word 0x00320032
+    /* 1708DC 002707DC 32003200 */ .word 0x00320032
+    /* 1708E0 002707E0 32003200 */ .word 0x00320032
+    /* 1708E4 002707E4 32003200 */ .word 0x00320032
+    /* 1708E8 002707E8 32003200 */ .word 0x00320032
+    /* 1708EC 002707EC 32003200 */ .word 0x00320032
+    /* 1708F0 002707F0 32005000 */ .word 0x00500032
+    /* 1708F4 002707F4 5F005F00 */ .word 0x005F005F
+    /* 1708F8 002707F8 50005F00 */ .word 0x005F0050
+    /* 1708FC 002707FC 41005F00 */ .word 0x005F0041
+    /* 170900 00270800 5F005F00 */ .word 0x005F005F
+    /* 170904 00270804 64006400 */ .word 0x00640064
+    /* 170908 00270808 64005F00 */ .word 0x005F0064
+    /* 17090C 0027080C 62005F00 */ .word 0x005F0062
+    /* 170910 00270810 62006200 */ .word 0x00620062
+    /* 170914 00270814 62006200 */ .word 0x00620062
+    /* 170918 00270818 50006400 */ .word 0x00640050
+    /* 17091C 0027081C 64006400 */ .word 0x00640064
+    /* 170920 00270820 50003200 */ .word 0x00320050
+    /* 170924 00270824 5F004600 */ .word 0x0046005F
+    /* 170928 00270828 32005F00 */ .word 0x005F0032
+    /* 17092C 0027082C 5F003200 */ .word 0x0032005F
+    /* 170930 00270830 32003200 */ .word 0x00320032
+    /* 170934 00270834 5F003200 */ .word 0x0032005F
+    /* 170938 00270838 5F003200 */ .word 0x0032005F
+    /* 17093C 0027083C 62006200 */ .word 0x00620062
+    /* 170940 00270840 62003200 */ .word 0x00320062
+    /* 170944 00270844 32005000 */ .word 0x00500032
+    /* 170948 00270848 50005F00 */ .word 0x005F0050
+    /* 17094C 0027084C 41005F00 */ .word 0x005F0041
+    /* 170950 00270850 5F005F00 */ .word 0x005F005F
+    /* 170954 00270854 32005F00 */ .word 0x005F0032
+    /* 170958 00270858 5F005000 */ .word 0x0050005F
+    /* 17095C 0027085C 55005500 */ .word 0x00550055
+    /* 170960 00270860 55003200 */ .word 0x00320055
+    /* 170964 00270864 4B005F00 */ .word 0x005F004B
+    /* 170968 00270868 32003200 */ .word 0x00320032
+    /* 17096C 0027086C 5F005F00 */ .word 0x005F005F
+    /* 170970 00270870 5F005500 */ .word 0x0055005F
+    /* 170974 00270874 5A005F00 */ .word 0x005F005A
+    /* 170978 00270878 5F003200 */ .word 0x0032005F
+    /* 17097C 0027087C 50005500 */ .word 0x00550050
+    /* 170980 00270880 55003200 */ .word 0x00320055
+    /* 170984 00270884 32004B00 */ .word 0x004B0032
+    /* 170988 00270888 4B004B00 */ .word 0x004B004B
+    /* 17098C 0027088C 4B004B00 */ .word 0x004B004B
+    /* 170990 00270890 4B005000 */ .word 0x0050004B
+    /* 170994 00270894 55005F00 */ .word 0x005F0055
+    /* 170998 00270898 5F003200 */ .word 0x0032005F
+    /* 17099C 0027089C 50005500 */ .word 0x00550050
+    /* 1709A0 002708A0 5F004B00 */ .word 0x004B005F
+    /* 1709A4 002708A4 32004B00 */ .word 0x004B0032
+    /* 1709A8 002708A8 4B004B00 */ .word 0x004B004B
+    /* 1709AC 002708AC 3C004600 */ .word 0x0046003C
+    /* 1709B0 002708B0 50005000 */ .word 0x00500050
+    /* 1709B4 002708B4 5A005F00 */ .word 0x005F005A
+    /* 1709B8 002708B8 5F003200 */ .word 0x0032005F
+    /* 1709BC 002708BC 3C004600 */ .word 0x0046003C
+    /* 1709C0 002708C0 4B004B00 */ .word 0x004B004B
+    /* 1709C4 002708C4 32003200 */ .word 0x00320032
+    /* 1709C8 002708C8 55003200 */ .word 0x00320055
+    /* 1709CC 002708CC 32003200 */ .word 0x00320032
+    /* 1709D0 002708D0 55005500 */ .word 0x00550055
+    /* 1709D4 002708D4 5A005F00 */ .word 0x005F005A
+    /* 1709D8 002708D8 5F005000 */ .word 0x0050005F
+    /* 1709DC 002708DC 55003200 */ .word 0x00320055
+    /* 1709E0 002708E0 32003200 */ .word 0x00320032
+    /* 1709E4 002708E4 32003200 */ .word 0x00320032
+    /* 1709E8 002708E8 32003200 */ .word 0x00320032
+    /* 1709EC 002708EC 32003200 */ .word 0x00320032
     /* 1709F0 002708F0 00000000 */ .word 0x00000000
     /* 1709F4 002708F4 00000000 */ .word 0x00000000
     /* 1709F8 002708F8 00000000 */ .word 0x00000000
     /* 1709FC 002708FC 00000000 */ .word 0x00000000
 
 glabel ItemSetRateList6
-    /* 170A00 00270900 32005000 */ .word GlobalDataBuffer + 0x254FB2
-    /* 170A04 00270904 50003200 */ .word GlobalDataBuffer + 0x74FD0
-    /* 170A08 00270908 50003200 */ .word GlobalDataBuffer + 0x74FD0
-    /* 170A0C 0027090C 41004600 */ .word GlobalDataBuffer + 0x1B4FC1
-    /* 170A10 00270910 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 170A14 00270914 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 170A18 00270918 64005000 */ .word GlobalDataBuffer + 0x254FE4
-    /* 170A1C 0027091C 62005F00 */ .word GlobalDataBuffer + 0x344FE2
-    /* 170A20 00270920 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 170A24 00270924 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 170A28 00270928 32005000 */ .word GlobalDataBuffer + 0x254FB2
-    /* 170A2C 0027092C 50003C00 */ .word GlobalDataBuffer + 0x114FD0
-    /* 170A30 00270930 41005000 */ .word GlobalDataBuffer + 0x254FC1
-    /* 170A34 00270934 50005500 */ .word GlobalDataBuffer + 0x2A4FD0
-    /* 170A38 00270938 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 170A3C 0027093C 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 170A40 00270940 32004B00 */ .word GlobalDataBuffer + 0x204FB2
-    /* 170A44 00270944 4B003200 */ .word GlobalDataBuffer + 0x74FCB
-    /* 170A48 00270948 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170A4C 0027094C 32004600 */ .word GlobalDataBuffer + 0x1B4FB2
-    /* 170A50 00270950 4B005000 */ .word GlobalDataBuffer + 0x254FCB
-    /* 170A54 00270954 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170A58 00270958 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170A5C 0027095C 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 170A60 00270960 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 170A64 00270964 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 170A68 00270968 50005500 */ .word GlobalDataBuffer + 0x2A4FD0
-    /* 170A6C 0027096C 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170A70 00270970 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170A74 00270974 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 170A78 00270978 4B003C00 */ .word GlobalDataBuffer + 0x114FCB
-    /* 170A7C 0027097C 46005000 */ .word GlobalDataBuffer + 0x254FC6
-    /* 170A80 00270980 55005A00 */ .word GlobalDataBuffer + 0x2F4FD5
-    /* 170A84 00270984 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170A88 00270988 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170A8C 0027098C 32005500 */ .word GlobalDataBuffer + 0x2A4FB2
-    /* 170A90 00270990 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170A94 00270994 32005500 */ .word GlobalDataBuffer + 0x2A4FB2
-    /* 170A98 00270998 55005500 */ .word GlobalDataBuffer + 0x2A4FD5
-    /* 170A9C 0027099C 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170AA0 002709A0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170AA4 002709A4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170AA8 002709A8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170AAC 002709AC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170AB0 002709B0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170AB4 002709B4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170AB8 002709B8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170ABC 002709BC 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 170AC0 002709C0 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 170AC4 002709C4 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 170AC8 002709C8 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 170ACC 002709CC 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 170AD0 002709D0 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 170AD4 002709D4 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 170AD8 002709D8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170ADC 002709DC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170AE0 002709E0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170AE4 002709E4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170AE8 002709E8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170AEC 002709EC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170AF0 002709F0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170AF4 002709F4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170AF8 002709F8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170AFC 002709FC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B00 00270A00 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B04 00270A04 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B08 00270A08 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B0C 00270A0C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B10 00270A10 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B14 00270A14 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B18 00270A18 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B1C 00270A1C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B20 00270A20 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B24 00270A24 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B28 00270A28 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B2C 00270A2C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B30 00270A30 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B34 00270A34 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B38 00270A38 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B3C 00270A3C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B40 00270A40 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B44 00270A44 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B48 00270A48 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B4C 00270A4C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B50 00270A50 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B54 00270A54 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B58 00270A58 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B5C 00270A5C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B60 00270A60 32005A00 */ .word GlobalDataBuffer + 0x2F4FB2
-    /* 170B64 00270A64 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B68 00270A68 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B6C 00270A6C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B70 00270A70 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B74 00270A74 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B78 00270A78 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B7C 00270A7C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B80 00270A80 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B84 00270A84 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B88 00270A88 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B8C 00270A8C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B90 00270A90 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B94 00270A94 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B98 00270A98 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170B9C 00270A9C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BA0 00270AA0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BA4 00270AA4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BA8 00270AA8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BAC 00270AAC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BB0 00270AB0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BB4 00270AB4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BB8 00270AB8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BBC 00270ABC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BC0 00270AC0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BC4 00270AC4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BC8 00270AC8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BCC 00270ACC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BD0 00270AD0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BD4 00270AD4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BD8 00270AD8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BDC 00270ADC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BE0 00270AE0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BE4 00270AE4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BE8 00270AE8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BEC 00270AEC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BF0 00270AF0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BF4 00270AF4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BF8 00270AF8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170BFC 00270AFC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170C00 00270B00 32005000 */ .word GlobalDataBuffer + 0x254FB2
-    /* 170C04 00270B04 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170C08 00270B08 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 170C0C 00270B0C 41005F00 */ .word GlobalDataBuffer + 0x344FC1
-    /* 170C10 00270B10 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170C14 00270B14 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 170C18 00270B18 64005F00 */ .word GlobalDataBuffer + 0x344FE4
-    /* 170C1C 00270B1C 62005F00 */ .word GlobalDataBuffer + 0x344FE2
-    /* 170C20 00270B20 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 170C24 00270B24 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 170C28 00270B28 50006400 */ .word GlobalDataBuffer + 0x394FD0
-    /* 170C2C 00270B2C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 170C30 00270B30 50003200 */ .word GlobalDataBuffer + 0x74FD0
-    /* 170C34 00270B34 5F004600 */ .word GlobalDataBuffer + 0x1B4FDF
-    /* 170C38 00270B38 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 170C3C 00270B3C 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 170C40 00270B40 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170C44 00270B44 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 170C48 00270B48 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 170C4C 00270B4C 62006200 */ .word GlobalDataBuffer + 0x374FE2
-    /* 170C50 00270B50 62003200 */ .word GlobalDataBuffer + 0x74FE2
-    /* 170C54 00270B54 32005000 */ .word GlobalDataBuffer + 0x254FB2
-    /* 170C58 00270B58 50005F00 */ .word GlobalDataBuffer + 0x344FD0
-    /* 170C5C 00270B5C 41005F00 */ .word GlobalDataBuffer + 0x344FC1
-    /* 170C60 00270B60 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170C64 00270B64 32005F00 */ .word GlobalDataBuffer + 0x344FB2
-    /* 170C68 00270B68 5F005000 */ .word GlobalDataBuffer + 0x254FDF
-    /* 170C6C 00270B6C 55005500 */ .word GlobalDataBuffer + 0x2A4FD5
-    /* 170C70 00270B70 55003200 */ .word GlobalDataBuffer + 0x74FD5
-    /* 170C74 00270B74 4B005F00 */ .word GlobalDataBuffer + 0x344FCB
-    /* 170C78 00270B78 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170C7C 00270B7C 5F005F00 */ .word GlobalDataBuffer + 0x344FDF
-    /* 170C80 00270B80 5F005500 */ .word GlobalDataBuffer + 0x2A4FDF
-    /* 170C84 00270B84 5A005F00 */ .word GlobalDataBuffer + 0x344FDA
-    /* 170C88 00270B88 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 170C8C 00270B8C 50005500 */ .word GlobalDataBuffer + 0x2A4FD0
-    /* 170C90 00270B90 55003200 */ .word GlobalDataBuffer + 0x74FD5
-    /* 170C94 00270B94 32004B00 */ .word GlobalDataBuffer + 0x204FB2
-    /* 170C98 00270B98 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 170C9C 00270B9C 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 170CA0 00270BA0 4B005000 */ .word GlobalDataBuffer + 0x254FCB
-    /* 170CA4 00270BA4 55005F00 */ .word GlobalDataBuffer + 0x344FD5
-    /* 170CA8 00270BA8 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 170CAC 00270BAC 50005500 */ .word GlobalDataBuffer + 0x2A4FD0
-    /* 170CB0 00270BB0 5F004B00 */ .word GlobalDataBuffer + 0x204FDF
-    /* 170CB4 00270BB4 32004B00 */ .word GlobalDataBuffer + 0x204FB2
-    /* 170CB8 00270BB8 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 170CBC 00270BBC 3C004600 */ .word GlobalDataBuffer + 0x1B4FBC
-    /* 170CC0 00270BC0 50005000 */ .word GlobalDataBuffer + 0x254FD0
-    /* 170CC4 00270BC4 5A005F00 */ .word GlobalDataBuffer + 0x344FDA
-    /* 170CC8 00270BC8 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 170CCC 00270BCC 3C004600 */ .word GlobalDataBuffer + 0x1B4FBC
-    /* 170CD0 00270BD0 4B004B00 */ .word GlobalDataBuffer + 0x204FCB
-    /* 170CD4 00270BD4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170CD8 00270BD8 55003200 */ .word GlobalDataBuffer + 0x74FD5
-    /* 170CDC 00270BDC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170CE0 00270BE0 55005500 */ .word GlobalDataBuffer + 0x2A4FD5
-    /* 170CE4 00270BE4 5A005F00 */ .word GlobalDataBuffer + 0x344FDA
-    /* 170CE8 00270BE8 5F005000 */ .word GlobalDataBuffer + 0x254FDF
-    /* 170CEC 00270BEC 55003200 */ .word GlobalDataBuffer + 0x74FD5
-    /* 170CF0 00270BF0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170CF4 00270BF4 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170CF8 00270BF8 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 170CFC 00270BFC 32003200 */ .word GlobalDataBuffer + 0x74FB2
+    /* 170A00 00270900 32005000 */ .word 0x00500032
+    /* 170A04 00270904 50003200 */ .word 0x00320050
+    /* 170A08 00270908 50003200 */ .word 0x00320050
+    /* 170A0C 0027090C 41004600 */ .word 0x00460041
+    /* 170A10 00270910 32005F00 */ .word 0x005F0032
+    /* 170A14 00270914 64006400 */ .word 0x00640064
+    /* 170A18 00270918 64005000 */ .word 0x00500064
+    /* 170A1C 0027091C 62005F00 */ .word 0x005F0062
+    /* 170A20 00270920 62006200 */ .word 0x00620062
+    /* 170A24 00270924 62006200 */ .word 0x00620062
+    /* 170A28 00270928 32005000 */ .word 0x00500032
+    /* 170A2C 0027092C 50003C00 */ .word 0x003C0050
+    /* 170A30 00270930 41005000 */ .word 0x00500041
+    /* 170A34 00270934 50005500 */ .word 0x00550050
+    /* 170A38 00270938 32005F00 */ .word 0x005F0032
+    /* 170A3C 0027093C 5F003200 */ .word 0x0032005F
+    /* 170A40 00270940 32004B00 */ .word 0x004B0032
+    /* 170A44 00270944 4B003200 */ .word 0x0032004B
+    /* 170A48 00270948 32003200 */ .word 0x00320032
+    /* 170A4C 0027094C 32004600 */ .word 0x00460032
+    /* 170A50 00270950 4B005000 */ .word 0x0050004B
+    /* 170A54 00270954 5F005F00 */ .word 0x005F005F
+    /* 170A58 00270958 32003200 */ .word 0x00320032
+    /* 170A5C 0027095C 4B004B00 */ .word 0x004B004B
+    /* 170A60 00270960 4B004B00 */ .word 0x004B004B
+    /* 170A64 00270964 4B004B00 */ .word 0x004B004B
+    /* 170A68 00270968 50005500 */ .word 0x00550050
+    /* 170A6C 0027096C 5F005F00 */ .word 0x005F005F
+    /* 170A70 00270970 32003200 */ .word 0x00320032
+    /* 170A74 00270974 4B004B00 */ .word 0x004B004B
+    /* 170A78 00270978 4B003C00 */ .word 0x003C004B
+    /* 170A7C 0027097C 46005000 */ .word 0x00500046
+    /* 170A80 00270980 55005A00 */ .word 0x005A0055
+    /* 170A84 00270984 5F005F00 */ .word 0x005F005F
+    /* 170A88 00270988 32003200 */ .word 0x00320032
+    /* 170A8C 0027098C 32005500 */ .word 0x00550032
+    /* 170A90 00270990 32003200 */ .word 0x00320032
+    /* 170A94 00270994 32005500 */ .word 0x00550032
+    /* 170A98 00270998 55005500 */ .word 0x00550055
+    /* 170A9C 0027099C 5F005F00 */ .word 0x005F005F
+    /* 170AA0 002709A0 32003200 */ .word 0x00320032
+    /* 170AA4 002709A4 32003200 */ .word 0x00320032
+    /* 170AA8 002709A8 32003200 */ .word 0x00320032
+    /* 170AAC 002709AC 32003200 */ .word 0x00320032
+    /* 170AB0 002709B0 32003200 */ .word 0x00320032
+    /* 170AB4 002709B4 32003200 */ .word 0x00320032
+    /* 170AB8 002709B8 32003200 */ .word 0x00320032
+    /* 170ABC 002709BC 46004600 */ .word 0x00460046
+    /* 170AC0 002709C0 46004600 */ .word 0x00460046
+    /* 170AC4 002709C4 46004600 */ .word 0x00460046
+    /* 170AC8 002709C8 46004600 */ .word 0x00460046
+    /* 170ACC 002709CC 46004600 */ .word 0x00460046
+    /* 170AD0 002709D0 46004600 */ .word 0x00460046
+    /* 170AD4 002709D4 5A003200 */ .word 0x0032005A
+    /* 170AD8 002709D8 32003200 */ .word 0x00320032
+    /* 170ADC 002709DC 32003200 */ .word 0x00320032
+    /* 170AE0 002709E0 32003200 */ .word 0x00320032
+    /* 170AE4 002709E4 32003200 */ .word 0x00320032
+    /* 170AE8 002709E8 32003200 */ .word 0x00320032
+    /* 170AEC 002709EC 32003200 */ .word 0x00320032
+    /* 170AF0 002709F0 32003200 */ .word 0x00320032
+    /* 170AF4 002709F4 32003200 */ .word 0x00320032
+    /* 170AF8 002709F8 32003200 */ .word 0x00320032
+    /* 170AFC 002709FC 32003200 */ .word 0x00320032
+    /* 170B00 00270A00 32003200 */ .word 0x00320032
+    /* 170B04 00270A04 32003200 */ .word 0x00320032
+    /* 170B08 00270A08 32003200 */ .word 0x00320032
+    /* 170B0C 00270A0C 32003200 */ .word 0x00320032
+    /* 170B10 00270A10 32003200 */ .word 0x00320032
+    /* 170B14 00270A14 32003200 */ .word 0x00320032
+    /* 170B18 00270A18 32003200 */ .word 0x00320032
+    /* 170B1C 00270A1C 32003200 */ .word 0x00320032
+    /* 170B20 00270A20 32003200 */ .word 0x00320032
+    /* 170B24 00270A24 32003200 */ .word 0x00320032
+    /* 170B28 00270A28 32003200 */ .word 0x00320032
+    /* 170B2C 00270A2C 32003200 */ .word 0x00320032
+    /* 170B30 00270A30 32003200 */ .word 0x00320032
+    /* 170B34 00270A34 32003200 */ .word 0x00320032
+    /* 170B38 00270A38 32003200 */ .word 0x00320032
+    /* 170B3C 00270A3C 32003200 */ .word 0x00320032
+    /* 170B40 00270A40 32003200 */ .word 0x00320032
+    /* 170B44 00270A44 32003200 */ .word 0x00320032
+    /* 170B48 00270A48 32003200 */ .word 0x00320032
+    /* 170B4C 00270A4C 32003200 */ .word 0x00320032
+    /* 170B50 00270A50 32003200 */ .word 0x00320032
+    /* 170B54 00270A54 32003200 */ .word 0x00320032
+    /* 170B58 00270A58 32003200 */ .word 0x00320032
+    /* 170B5C 00270A5C 32003200 */ .word 0x00320032
+    /* 170B60 00270A60 32005A00 */ .word 0x005A0032
+    /* 170B64 00270A64 32003200 */ .word 0x00320032
+    /* 170B68 00270A68 32003200 */ .word 0x00320032
+    /* 170B6C 00270A6C 32003200 */ .word 0x00320032
+    /* 170B70 00270A70 32003200 */ .word 0x00320032
+    /* 170B74 00270A74 32003200 */ .word 0x00320032
+    /* 170B78 00270A78 32003200 */ .word 0x00320032
+    /* 170B7C 00270A7C 32003200 */ .word 0x00320032
+    /* 170B80 00270A80 32003200 */ .word 0x00320032
+    /* 170B84 00270A84 32003200 */ .word 0x00320032
+    /* 170B88 00270A88 32003200 */ .word 0x00320032
+    /* 170B8C 00270A8C 32003200 */ .word 0x00320032
+    /* 170B90 00270A90 32003200 */ .word 0x00320032
+    /* 170B94 00270A94 32003200 */ .word 0x00320032
+    /* 170B98 00270A98 32003200 */ .word 0x00320032
+    /* 170B9C 00270A9C 32003200 */ .word 0x00320032
+    /* 170BA0 00270AA0 32003200 */ .word 0x00320032
+    /* 170BA4 00270AA4 32003200 */ .word 0x00320032
+    /* 170BA8 00270AA8 32003200 */ .word 0x00320032
+    /* 170BAC 00270AAC 32003200 */ .word 0x00320032
+    /* 170BB0 00270AB0 32003200 */ .word 0x00320032
+    /* 170BB4 00270AB4 32003200 */ .word 0x00320032
+    /* 170BB8 00270AB8 32003200 */ .word 0x00320032
+    /* 170BBC 00270ABC 32003200 */ .word 0x00320032
+    /* 170BC0 00270AC0 32003200 */ .word 0x00320032
+    /* 170BC4 00270AC4 32003200 */ .word 0x00320032
+    /* 170BC8 00270AC8 32003200 */ .word 0x00320032
+    /* 170BCC 00270ACC 32003200 */ .word 0x00320032
+    /* 170BD0 00270AD0 32003200 */ .word 0x00320032
+    /* 170BD4 00270AD4 32003200 */ .word 0x00320032
+    /* 170BD8 00270AD8 32003200 */ .word 0x00320032
+    /* 170BDC 00270ADC 32003200 */ .word 0x00320032
+    /* 170BE0 00270AE0 32003200 */ .word 0x00320032
+    /* 170BE4 00270AE4 32003200 */ .word 0x00320032
+    /* 170BE8 00270AE8 32003200 */ .word 0x00320032
+    /* 170BEC 00270AEC 32003200 */ .word 0x00320032
+    /* 170BF0 00270AF0 32003200 */ .word 0x00320032
+    /* 170BF4 00270AF4 32003200 */ .word 0x00320032
+    /* 170BF8 00270AF8 32003200 */ .word 0x00320032
+    /* 170BFC 00270AFC 32003200 */ .word 0x00320032
+    /* 170C00 00270B00 32005000 */ .word 0x00500032
+    /* 170C04 00270B04 5F005F00 */ .word 0x005F005F
+    /* 170C08 00270B08 50005F00 */ .word 0x005F0050
+    /* 170C0C 00270B0C 41005F00 */ .word 0x005F0041
+    /* 170C10 00270B10 5F005F00 */ .word 0x005F005F
+    /* 170C14 00270B14 64006400 */ .word 0x00640064
+    /* 170C18 00270B18 64005F00 */ .word 0x005F0064
+    /* 170C1C 00270B1C 62005F00 */ .word 0x005F0062
+    /* 170C20 00270B20 62006200 */ .word 0x00620062
+    /* 170C24 00270B24 62006200 */ .word 0x00620062
+    /* 170C28 00270B28 50006400 */ .word 0x00640050
+    /* 170C2C 00270B2C 64006400 */ .word 0x00640064
+    /* 170C30 00270B30 50003200 */ .word 0x00320050
+    /* 170C34 00270B34 5F004600 */ .word 0x0046005F
+    /* 170C38 00270B38 32005F00 */ .word 0x005F0032
+    /* 170C3C 00270B3C 5F003200 */ .word 0x0032005F
+    /* 170C40 00270B40 32003200 */ .word 0x00320032
+    /* 170C44 00270B44 5F003200 */ .word 0x0032005F
+    /* 170C48 00270B48 5F003200 */ .word 0x0032005F
+    /* 170C4C 00270B4C 62006200 */ .word 0x00620062
+    /* 170C50 00270B50 62003200 */ .word 0x00320062
+    /* 170C54 00270B54 32005000 */ .word 0x00500032
+    /* 170C58 00270B58 50005F00 */ .word 0x005F0050
+    /* 170C5C 00270B5C 41005F00 */ .word 0x005F0041
+    /* 170C60 00270B60 5F005F00 */ .word 0x005F005F
+    /* 170C64 00270B64 32005F00 */ .word 0x005F0032
+    /* 170C68 00270B68 5F005000 */ .word 0x0050005F
+    /* 170C6C 00270B6C 55005500 */ .word 0x00550055
+    /* 170C70 00270B70 55003200 */ .word 0x00320055
+    /* 170C74 00270B74 4B005F00 */ .word 0x005F004B
+    /* 170C78 00270B78 32003200 */ .word 0x00320032
+    /* 170C7C 00270B7C 5F005F00 */ .word 0x005F005F
+    /* 170C80 00270B80 5F005500 */ .word 0x0055005F
+    /* 170C84 00270B84 5A005F00 */ .word 0x005F005A
+    /* 170C88 00270B88 5F003200 */ .word 0x0032005F
+    /* 170C8C 00270B8C 50005500 */ .word 0x00550050
+    /* 170C90 00270B90 55003200 */ .word 0x00320055
+    /* 170C94 00270B94 32004B00 */ .word 0x004B0032
+    /* 170C98 00270B98 4B004B00 */ .word 0x004B004B
+    /* 170C9C 00270B9C 4B004B00 */ .word 0x004B004B
+    /* 170CA0 00270BA0 4B005000 */ .word 0x0050004B
+    /* 170CA4 00270BA4 55005F00 */ .word 0x005F0055
+    /* 170CA8 00270BA8 5F003200 */ .word 0x0032005F
+    /* 170CAC 00270BAC 50005500 */ .word 0x00550050
+    /* 170CB0 00270BB0 5F004B00 */ .word 0x004B005F
+    /* 170CB4 00270BB4 32004B00 */ .word 0x004B0032
+    /* 170CB8 00270BB8 4B004B00 */ .word 0x004B004B
+    /* 170CBC 00270BBC 3C004600 */ .word 0x0046003C
+    /* 170CC0 00270BC0 50005000 */ .word 0x00500050
+    /* 170CC4 00270BC4 5A005F00 */ .word 0x005F005A
+    /* 170CC8 00270BC8 5F003200 */ .word 0x0032005F
+    /* 170CCC 00270BCC 3C004600 */ .word 0x0046003C
+    /* 170CD0 00270BD0 4B004B00 */ .word 0x004B004B
+    /* 170CD4 00270BD4 32003200 */ .word 0x00320032
+    /* 170CD8 00270BD8 55003200 */ .word 0x00320055
+    /* 170CDC 00270BDC 32003200 */ .word 0x00320032
+    /* 170CE0 00270BE0 55005500 */ .word 0x00550055
+    /* 170CE4 00270BE4 5A005F00 */ .word 0x005F005A
+    /* 170CE8 00270BE8 5F005000 */ .word 0x0050005F
+    /* 170CEC 00270BEC 55003200 */ .word 0x00320055
+    /* 170CF0 00270BF0 32003200 */ .word 0x00320032
+    /* 170CF4 00270BF4 32003200 */ .word 0x00320032
+    /* 170CF8 00270BF8 32003200 */ .word 0x00320032
+    /* 170CFC 00270BFC 32003200 */ .word 0x00320032
     /* 170D00 00270C00 00000000 */ .word 0x00000000
     /* 170D04 00270C04 00000000 */ .word 0x00000000
     /* 170D08 00270C08 00000000 */ .word 0x00000000
@@ -59756,356 +59756,356 @@ glabel ITEM_LIST
 
 glabel ComItemInfo
     /* 17DF50 0027DE50 00000000 */ .word 0x00000000
-    /* 17DF54 0027DE54 78005100 */ .word GlobalDataBuffer + 0x264FF8
+    /* 17DF54 0027DE54 78005100 */ .word 0x00510078
     /* 17DF58 0027DE58 00000100 */ .word 0x00010000
-    /* 17DF5C 0027DE5C 79005200 */ .word GlobalDataBuffer + 0x274FF9
+    /* 17DF5C 0027DE5C 79005200 */ .word 0x00520079
     /* 17DF60 0027DE60 00000200 */ .word 0x00020000
-    /* 17DF64 0027DE64 7A005300 */ .word GlobalDataBuffer + 0x284FFA
+    /* 17DF64 0027DE64 7A005300 */ .word 0x0053007A
     /* 17DF68 0027DE68 00000300 */ .word 0x00030000
-    /* 17DF6C 0027DE6C 7B005400 */ .word GlobalDataBuffer + 0x294FFB
+    /* 17DF6C 0027DE6C 7B005400 */ .word 0x0054007B
     /* 17DF70 0027DE70 00000400 */ .word 0x00040000
-    /* 17DF74 0027DE74 7C005500 */ .word GlobalDataBuffer + 0x2A4FFC
+    /* 17DF74 0027DE74 7C005500 */ .word 0x0055007C
     /* 17DF78 0027DE78 00000500 */ .word 0x00050000
-    /* 17DF7C 0027DE7C 7D005600 */ .word GlobalDataBuffer + 0x2B4FFD
+    /* 17DF7C 0027DE7C 7D005600 */ .word 0x0056007D
     /* 17DF80 0027DE80 00000600 */ .word 0x00060000
-    /* 17DF84 0027DE84 7E005700 */ .word GlobalDataBuffer + 0x2C4FFE
+    /* 17DF84 0027DE84 7E005700 */ .word 0x0057007E
     /* 17DF88 0027DE88 00000700 */ .word 0x00070000
-    /* 17DF8C 0027DE8C 7F005800 */ .word GlobalDataBuffer + 0x2D4FFF
+    /* 17DF8C 0027DE8C 7F005800 */ .word 0x0058007F
     /* 17DF90 0027DE90 00000800 */ .word 0x00080000
-    /* 17DF94 0027DE94 80005900 */ .word GlobalDataBuffer + 0x2E5000
+    /* 17DF94 0027DE94 80005900 */ .word 0x00590080
     /* 17DF98 0027DE98 00000900 */ .word 0x00090000
-    /* 17DF9C 0027DE9C 81005A00 */ .word GlobalDataBuffer + 0x2F5001
+    /* 17DF9C 0027DE9C 81005A00 */ .word 0x005A0081
     /* 17DFA0 0027DEA0 00000A00 */ .word 0x000A0000
-    /* 17DFA4 0027DEA4 82005B00 */ .word GlobalDataBuffer + 0x305002
+    /* 17DFA4 0027DEA4 82005B00 */ .word 0x005B0082
     /* 17DFA8 0027DEA8 00000B00 */ .word 0x000B0000
-    /* 17DFAC 0027DEAC 83005C00 */ .word GlobalDataBuffer + 0x315003
+    /* 17DFAC 0027DEAC 83005C00 */ .word 0x005C0083
     /* 17DFB0 0027DEB0 00000C00 */ .word 0x000C0000
-    /* 17DFB4 0027DEB4 84005D00 */ .word GlobalDataBuffer + 0x325004
+    /* 17DFB4 0027DEB4 84005D00 */ .word 0x005D0084
     /* 17DFB8 0027DEB8 00000D00 */ .word 0x000D0000
-    /* 17DFBC 0027DEBC 85005E00 */ .word GlobalDataBuffer + 0x335005
+    /* 17DFBC 0027DEBC 85005E00 */ .word 0x005E0085
     /* 17DFC0 0027DEC0 00000E00 */ .word 0x000E0000
-    /* 17DFC4 0027DEC4 86005F00 */ .word GlobalDataBuffer + 0x345006
+    /* 17DFC4 0027DEC4 86005F00 */ .word 0x005F0086
     /* 17DFC8 0027DEC8 00000F00 */ .word 0x000F0000
-    /* 17DFCC 0027DECC 87006000 */ .word GlobalDataBuffer + 0x355007
+    /* 17DFCC 0027DECC 87006000 */ .word 0x00600087
     /* 17DFD0 0027DED0 00001000 */ .word func_00100000
-    /* 17DFD4 0027DED4 88006100 */ .word GlobalDataBuffer + 0x365008
+    /* 17DFD4 0027DED4 88006100 */ .word 0x00610088
     /* 17DFD8 0027DED8 00001100 */ .word 0x00110000
-    /* 17DFDC 0027DEDC 89006200 */ .word GlobalDataBuffer + 0x375009
+    /* 17DFDC 0027DEDC 89006200 */ .word 0x00620089
     /* 17DFE0 0027DEE0 00001200 */ .word 0x00120000
-    /* 17DFE4 0027DEE4 8A006300 */ .word GlobalDataBuffer + 0x38500A
+    /* 17DFE4 0027DEE4 8A006300 */ .word 0x0063008A
     /* 17DFE8 0027DEE8 00001300 */ .word MGClearScreen__FUcUcUcUc
-    /* 17DFEC 0027DEEC 8B006400 */ .word GlobalDataBuffer + 0x39500B
+    /* 17DFEC 0027DEEC 8B006400 */ .word 0x0064008B
     /* 17DFF0 0027DEF0 00001400 */ .word GetArg__FR9input_strPiPPv__2
-    /* 17DFF4 0027DEF4 8C006500 */ .word GlobalDataBuffer + 0x3A500C
+    /* 17DFF4 0027DEF4 8C006500 */ .word 0x0065008C
     /* 17DFF8 0027DEF8 00001500 */ .word 0x00150000
-    /* 17DFFC 0027DEFC 8D006600 */ .word GlobalDataBuffer + 0x3B500D
+    /* 17DFFC 0027DEFC 8D006600 */ .word 0x0066008D
     /* 17E000 0027DF00 00001600 */ .word 0x00160000
-    /* 17E004 0027DF04 8E006700 */ .word GlobalDataBuffer + 0x3C500E
+    /* 17E004 0027DF04 8E006700 */ .word 0x0067008E
     /* 17E008 0027DF08 00001700 */ .word 0x00170000
-    /* 17E00C 0027DF0C 8F006800 */ .word GlobalDataBuffer + 0x3D500F
+    /* 17E00C 0027DF0C 8F006800 */ .word 0x0068008F
     /* 17E010 0027DF10 00001800 */ .word 0x00180000
-    /* 17E014 0027DF14 90006900 */ .word GlobalDataBuffer + 0x3E5010
+    /* 17E014 0027DF14 90006900 */ .word 0x00690090
     /* 17E018 0027DF18 00001900 */ .word 0x00190000
-    /* 17E01C 0027DF1C 91006A00 */ .word GlobalDataBuffer + 0x3F5011
+    /* 17E01C 0027DF1C 91006A00 */ .word 0x006A0091
     /* 17E020 0027DF20 00001A00 */ .word 0x001A0000
-    /* 17E024 0027DF24 92006B00 */ .word GlobalDataBuffer + 0x405012
+    /* 17E024 0027DF24 92006B00 */ .word 0x006B0092
     /* 17E028 0027DF28 00001B00 */ .word 0x001B0000
-    /* 17E02C 0027DF2C 93006C00 */ .word GlobalDataBuffer + 0x415013
+    /* 17E02C 0027DF2C 93006C00 */ .word 0x006C0093
     /* 17E030 0027DF30 00001C00 */ .word 0x001C0000
-    /* 17E034 0027DF34 94006D00 */ .word GlobalDataBuffer + 0x425014
+    /* 17E034 0027DF34 94006D00 */ .word 0x006D0094
     /* 17E038 0027DF38 00001D00 */ .word 0x001D0000
-    /* 17E03C 0027DF3C 95006E00 */ .word GlobalDataBuffer + 0x435015
+    /* 17E03C 0027DF3C 95006E00 */ .word 0x006E0095
     /* 17E040 0027DF40 00001E00 */ .word 0x001E0000
-    /* 17E044 0027DF44 96006F00 */ .word GlobalDataBuffer + 0x445016
+    /* 17E044 0027DF44 96006F00 */ .word 0x006F0096
     /* 17E048 0027DF48 00001F00 */ .word 0x001F0000
-    /* 17E04C 0027DF4C 97007000 */ .word GlobalDataBuffer + 0x455017
+    /* 17E04C 0027DF4C 97007000 */ .word 0x00700097
     /* 17E050 0027DF50 00002000 */ .word 0x00200000
-    /* 17E054 0027DF54 98007100 */ .word GlobalDataBuffer + 0x465018
+    /* 17E054 0027DF54 98007100 */ .word 0x00710098
     /* 17E058 0027DF58 00002100 */ .word 0x00210000
-    /* 17E05C 0027DF5C 99007200 */ .word GlobalDataBuffer + 0x475019
+    /* 17E05C 0027DF5C 99007200 */ .word 0x00720099
     /* 17E060 0027DF60 00002200 */ .word 0x00220000
-    /* 17E064 0027DF64 9A007300 */ .word GlobalDataBuffer + 0x48501A
+    /* 17E064 0027DF64 9A007300 */ .word 0x0073009A
     /* 17E068 0027DF68 00002300 */ .word 0x00230000
-    /* 17E06C 0027DF6C 9B007400 */ .word GlobalDataBuffer + 0x49501B
+    /* 17E06C 0027DF6C 9B007400 */ .word 0x0074009B
     /* 17E070 0027DF70 00002400 */ .word 0x00240000
-    /* 17E074 0027DF74 9C007500 */ .word GlobalDataBuffer + 0x4A501C
+    /* 17E074 0027DF74 9C007500 */ .word 0x0075009C
     /* 17E078 0027DF78 00002500 */ .word __malloc_av_ + 0x1F8
-    /* 17E07C 0027DF7C 9D007600 */ .word GlobalDataBuffer + 0x4B501D
+    /* 17E07C 0027DF7C 9D007600 */ .word 0x0076009D
     /* 17E080 0027DF80 00002600 */ .word se_info + 0x2050
-    /* 17E084 0027DF84 9E007700 */ .word GlobalDataBuffer + 0x4C501E
+    /* 17E084 0027DF84 9E007700 */ .word 0x0077009E
     /* 17E088 0027DF88 00002700 */ .word ItemSetRateList3 + 0x30
-    /* 17E08C 0027DF8C 9F007800 */ .word GlobalDataBuffer + 0x4D501F
+    /* 17E08C 0027DF8C 9F007800 */ .word 0x0078009F
     /* 17E090 0027DF90 00002800 */ .word MonstorTable + 0x500
-    /* 17E094 0027DF94 A0007900 */ .word GlobalDataBuffer + 0x4E5020
+    /* 17E094 0027DF94 A0007900 */ .word 0x007900A0
     /* 17E098 0027DF98 00002900 */ .word BtUraEnemyLayout06 + 0x1410
-    /* 17E09C 0027DF9C A1007A00 */ .word GlobalDataBuffer + 0x4F5021
+    /* 17E09C 0027DF9C A1007A00 */ .word 0x007A00A1
     /* 17E0A0 0027DFA0 00002A00 */ .word 0x002A0000
-    /* 17E0A4 0027DFA4 A2007B00 */ .word GlobalDataBuffer + 0x505022
-    /* 17E0A8 0027DFA8 00002B00 */ .word GlobalDataBuffer + 0x4F80
-    /* 17E0AC 0027DFAC A3007C00 */ .word GlobalDataBuffer + 0x515023
-    /* 17E0B0 0027DFB0 00002C00 */ .word GlobalDataBuffer + 0x14F80
-    /* 17E0B4 0027DFB4 A4007D00 */ .word GlobalDataBuffer + 0x525024
-    /* 17E0B8 0027DFB8 00002D00 */ .word GlobalDataBuffer + 0x24F80
-    /* 17E0BC 0027DFBC A5007E00 */ .word GlobalDataBuffer + 0x535025
-    /* 17E0C0 0027DFC0 00002E00 */ .word GlobalDataBuffer + 0x34F80
-    /* 17E0C4 0027DFC4 A6007F00 */ .word GlobalDataBuffer + 0x545026
-    /* 17E0C8 0027DFC8 00002F00 */ .word GlobalDataBuffer + 0x44F80
-    /* 17E0CC 0027DFCC A7008000 */ .word GlobalDataBuffer + 0x555027
-    /* 17E0D0 0027DFD0 00003000 */ .word GlobalDataBuffer + 0x54F80
-    /* 17E0D4 0027DFD4 00008100 */ .word GlobalDataBuffer + 0x564F80
-    /* 17E0D8 0027DFD8 00003100 */ .word GlobalDataBuffer + 0x64F80
-    /* 17E0DC 0027DFDC 01008200 */ .word GlobalDataBuffer + 0x574F81
-    /* 17E0E0 0027DFE0 00003200 */ .word GlobalDataBuffer + 0x74F80
-    /* 17E0E4 0027DFE4 02008300 */ .word GlobalDataBuffer + 0x584F82
-    /* 17E0E8 0027DFE8 01003300 */ .word GlobalDataBuffer + 0x84F81
-    /* 17E0EC 0027DFEC 03008400 */ .word GlobalDataBuffer + 0x594F83
-    /* 17E0F0 0027DFF0 01003400 */ .word GlobalDataBuffer + 0x94F81
-    /* 17E0F4 0027DFF4 04008500 */ .word GlobalDataBuffer + 0x5A4F84
-    /* 17E0F8 0027DFF8 01003500 */ .word GlobalDataBuffer + 0xA4F81
-    /* 17E0FC 0027DFFC 05008600 */ .word GlobalDataBuffer + 0x5B4F85
-    /* 17E100 0027E000 01003600 */ .word GlobalDataBuffer + 0xB4F81
-    /* 17E104 0027E004 06008700 */ .word GlobalDataBuffer + 0x5C4F86
-    /* 17E108 0027E008 01003700 */ .word GlobalDataBuffer + 0xC4F81
-    /* 17E10C 0027E00C 07008800 */ .word GlobalDataBuffer + 0x5D4F87
-    /* 17E110 0027E010 01003800 */ .word GlobalDataBuffer + 0xD4F81
-    /* 17E114 0027E014 08008900 */ .word GlobalDataBuffer + 0x5E4F88
-    /* 17E118 0027E018 01003900 */ .word GlobalDataBuffer + 0xE4F81
-    /* 17E11C 0027E01C 09008A00 */ .word GlobalDataBuffer + 0x5F4F89
-    /* 17E120 0027E020 01003A00 */ .word GlobalDataBuffer + 0xF4F81
-    /* 17E124 0027E024 0A008B00 */ .word GlobalDataBuffer + 0x604F8A
-    /* 17E128 0027E028 01003B00 */ .word GlobalDataBuffer + 0x104F81
-    /* 17E12C 0027E02C 0B008C00 */ .word GlobalDataBuffer + 0x614F8B
-    /* 17E130 0027E030 01003C00 */ .word GlobalDataBuffer + 0x114F81
-    /* 17E134 0027E034 0C008D00 */ .word GlobalDataBuffer + 0x624F8C
-    /* 17E138 0027E038 01003D00 */ .word GlobalDataBuffer + 0x124F81
-    /* 17E13C 0027E03C 0D008E00 */ .word GlobalDataBuffer + 0x634F8D
-    /* 17E140 0027E040 01003E00 */ .word GlobalDataBuffer + 0x134F81
-    /* 17E144 0027E044 0E008F00 */ .word GlobalDataBuffer + 0x644F8E
-    /* 17E148 0027E048 01003F00 */ .word GlobalDataBuffer + 0x144F81
-    /* 17E14C 0027E04C 0F009000 */ .word GlobalDataBuffer + 0x654F8F
-    /* 17E150 0027E050 01004000 */ .word GlobalDataBuffer + 0x154F81
-    /* 17E154 0027E054 10009100 */ .word GlobalDataBuffer + 0x664F90
-    /* 17E158 0027E058 01004100 */ .word GlobalDataBuffer + 0x164F81
-    /* 17E15C 0027E05C 11009200 */ .word GlobalDataBuffer + 0x674F91
-    /* 17E160 0027E060 01004200 */ .word GlobalDataBuffer + 0x174F81
-    /* 17E164 0027E064 12009300 */ .word GlobalDataBuffer + 0x684F92
-    /* 17E168 0027E068 01004300 */ .word GlobalDataBuffer + 0x184F81
-    /* 17E16C 0027E06C 13009400 */ .word GlobalDataBuffer + 0x694F93
-    /* 17E170 0027E070 01004400 */ .word GlobalDataBuffer + 0x194F81
-    /* 17E174 0027E074 14009500 */ .word GlobalDataBuffer + 0x6A4F94
-    /* 17E178 0027E078 01004500 */ .word GlobalDataBuffer + 0x1A4F81
-    /* 17E17C 0027E07C 15009600 */ .word GlobalDataBuffer + 0x6B4F95
-    /* 17E180 0027E080 01004600 */ .word GlobalDataBuffer + 0x1B4F81
-    /* 17E184 0027E084 16009700 */ .word GlobalDataBuffer + 0x6C4F96
-    /* 17E188 0027E088 01004700 */ .word GlobalDataBuffer + 0x1C4F81
-    /* 17E18C 0027E08C 17009800 */ .word GlobalDataBuffer + 0x6D4F97
-    /* 17E190 0027E090 01004800 */ .word GlobalDataBuffer + 0x1D4F81
-    /* 17E194 0027E094 18009900 */ .word GlobalDataBuffer + 0x6E4F98
-    /* 17E198 0027E098 01004900 */ .word GlobalDataBuffer + 0x1E4F81
-    /* 17E19C 0027E09C 19009A00 */ .word GlobalDataBuffer + 0x6F4F99
-    /* 17E1A0 0027E0A0 01004A00 */ .word GlobalDataBuffer + 0x1F4F81
-    /* 17E1A4 0027E0A4 1A009B00 */ .word GlobalDataBuffer + 0x704F9A
-    /* 17E1A8 0027E0A8 01004B00 */ .word GlobalDataBuffer + 0x204F81
-    /* 17E1AC 0027E0AC 1B009C00 */ .word GlobalDataBuffer + 0x714F9B
-    /* 17E1B0 0027E0B0 01004C00 */ .word GlobalDataBuffer + 0x214F81
-    /* 17E1B4 0027E0B4 1C009D00 */ .word GlobalDataBuffer + 0x724F9C
-    /* 17E1B8 0027E0B8 01004D00 */ .word GlobalDataBuffer + 0x224F81
-    /* 17E1BC 0027E0BC 1D009E00 */ .word GlobalDataBuffer + 0x734F9D
-    /* 17E1C0 0027E0C0 01004E00 */ .word GlobalDataBuffer + 0x234F81
-    /* 17E1C4 0027E0C4 1E009F00 */ .word GlobalDataBuffer + 0x744F9E
-    /* 17E1C8 0027E0C8 01004F00 */ .word GlobalDataBuffer + 0x244F81
-    /* 17E1CC 0027E0CC 1F00A000 */ .word GlobalDataBuffer + 0x754F9F
-    /* 17E1D0 0027E0D0 01005000 */ .word GlobalDataBuffer + 0x254F81
-    /* 17E1D4 0027E0D4 2000A100 */ .word GlobalDataBuffer + 0x764FA0
-    /* 17E1D8 0027E0D8 01005100 */ .word GlobalDataBuffer + 0x264F81
-    /* 17E1DC 0027E0DC 2100A200 */ .word GlobalDataBuffer + 0x774FA1
-    /* 17E1E0 0027E0E0 01005200 */ .word GlobalDataBuffer + 0x274F81
-    /* 17E1E4 0027E0E4 2200A300 */ .word GlobalDataBuffer + 0x784FA2
-    /* 17E1E8 0027E0E8 01005300 */ .word GlobalDataBuffer + 0x284F81
-    /* 17E1EC 0027E0EC 2300A400 */ .word GlobalDataBuffer + 0x794FA3
-    /* 17E1F0 0027E0F0 01005400 */ .word GlobalDataBuffer + 0x294F81
-    /* 17E1F4 0027E0F4 2400A500 */ .word GlobalDataBuffer + 0x7A4FA4
-    /* 17E1F8 0027E0F8 01005500 */ .word GlobalDataBuffer + 0x2A4F81
-    /* 17E1FC 0027E0FC 2500A600 */ .word GlobalDataBuffer + 0x7B4FA5
-    /* 17E200 0027E100 01005600 */ .word GlobalDataBuffer + 0x2B4F81
-    /* 17E204 0027E104 2600A700 */ .word GlobalDataBuffer + 0x7C4FA6
-    /* 17E208 0027E108 01005700 */ .word GlobalDataBuffer + 0x2C4F81
-    /* 17E20C 0027E10C 2700A800 */ .word GlobalDataBuffer + 0x7D4FA7
-    /* 17E210 0027E110 01005800 */ .word GlobalDataBuffer + 0x2D4F81
-    /* 17E214 0027E114 2800A900 */ .word GlobalDataBuffer + 0x7E4FA8
-    /* 17E218 0027E118 01005900 */ .word GlobalDataBuffer + 0x2E4F81
-    /* 17E21C 0027E11C 2900AA00 */ .word GlobalDataBuffer + 0x7F4FA9
-    /* 17E220 0027E120 01005A00 */ .word GlobalDataBuffer + 0x2F4F81
-    /* 17E224 0027E124 2A00AB00 */ .word GlobalDataBuffer + 0x804FAA
-    /* 17E228 0027E128 01005B00 */ .word GlobalDataBuffer + 0x304F81
-    /* 17E22C 0027E12C 2B00AC00 */ .word GlobalDataBuffer + 0x814FAB
-    /* 17E230 0027E130 01005C00 */ .word GlobalDataBuffer + 0x314F81
-    /* 17E234 0027E134 2C00AD00 */ .word GlobalDataBuffer + 0x824FAC
-    /* 17E238 0027E138 01005D00 */ .word GlobalDataBuffer + 0x324F81
-    /* 17E23C 0027E13C 2D00AE00 */ .word GlobalDataBuffer + 0x834FAD
-    /* 17E240 0027E140 01005E00 */ .word GlobalDataBuffer + 0x334F81
-    /* 17E244 0027E144 2E00AF00 */ .word GlobalDataBuffer + 0x844FAE
-    /* 17E248 0027E148 01005F00 */ .word GlobalDataBuffer + 0x344F81
-    /* 17E24C 0027E14C 2F00B000 */ .word GlobalDataBuffer + 0x854FAF
-    /* 17E250 0027E150 01006000 */ .word GlobalDataBuffer + 0x354F81
-    /* 17E254 0027E154 3000B100 */ .word GlobalDataBuffer + 0x864FB0
-    /* 17E258 0027E158 01006100 */ .word GlobalDataBuffer + 0x364F81
-    /* 17E25C 0027E15C 3100B200 */ .word GlobalDataBuffer + 0x874FB1
-    /* 17E260 0027E160 01006200 */ .word GlobalDataBuffer + 0x374F81
-    /* 17E264 0027E164 3200B300 */ .word GlobalDataBuffer + 0x884FB2
-    /* 17E268 0027E168 01006300 */ .word GlobalDataBuffer + 0x384F81
-    /* 17E26C 0027E16C 3300B400 */ .word GlobalDataBuffer + 0x894FB3
-    /* 17E270 0027E170 01006400 */ .word GlobalDataBuffer + 0x394F81
-    /* 17E274 0027E174 3400B500 */ .word GlobalDataBuffer + 0x8A4FB4
-    /* 17E278 0027E178 01006500 */ .word GlobalDataBuffer + 0x3A4F81
-    /* 17E27C 0027E17C 3500B600 */ .word GlobalDataBuffer + 0x8B4FB5
-    /* 17E280 0027E180 01006600 */ .word GlobalDataBuffer + 0x3B4F81
-    /* 17E284 0027E184 3600B700 */ .word GlobalDataBuffer + 0x8C4FB6
-    /* 17E288 0027E188 01006700 */ .word GlobalDataBuffer + 0x3C4F81
-    /* 17E28C 0027E18C 3700B800 */ .word GlobalDataBuffer + 0x8D4FB7
-    /* 17E290 0027E190 01006800 */ .word GlobalDataBuffer + 0x3D4F81
-    /* 17E294 0027E194 3800B900 */ .word GlobalDataBuffer + 0x8E4FB8
-    /* 17E298 0027E198 01006900 */ .word GlobalDataBuffer + 0x3E4F81
-    /* 17E29C 0027E19C 3900BA00 */ .word GlobalDataBuffer + 0x8F4FB9
-    /* 17E2A0 0027E1A0 01006A00 */ .word GlobalDataBuffer + 0x3F4F81
-    /* 17E2A4 0027E1A4 3A00BB00 */ .word GlobalDataBuffer + 0x904FBA
-    /* 17E2A8 0027E1A8 01006B00 */ .word GlobalDataBuffer + 0x404F81
-    /* 17E2AC 0027E1AC 3B00BC00 */ .word GlobalDataBuffer + 0x914FBB
-    /* 17E2B0 0027E1B0 01006C00 */ .word GlobalDataBuffer + 0x414F81
-    /* 17E2B4 0027E1B4 3C00BD00 */ .word GlobalDataBuffer + 0x924FBC
-    /* 17E2B8 0027E1B8 01006D00 */ .word GlobalDataBuffer + 0x424F81
-    /* 17E2BC 0027E1BC 3D00BE00 */ .word GlobalDataBuffer + 0x934FBD
-    /* 17E2C0 0027E1C0 01006E00 */ .word GlobalDataBuffer + 0x434F81
-    /* 17E2C4 0027E1C4 3E00BF00 */ .word GlobalDataBuffer + 0x944FBE
-    /* 17E2C8 0027E1C8 01006F00 */ .word GlobalDataBuffer + 0x444F81
-    /* 17E2CC 0027E1CC 3F00C000 */ .word GlobalDataBuffer + 0x954FBF
-    /* 17E2D0 0027E1D0 01007000 */ .word GlobalDataBuffer + 0x454F81
-    /* 17E2D4 0027E1D4 4000C100 */ .word GlobalDataBuffer + 0x964FC0
-    /* 17E2D8 0027E1D8 01007100 */ .word GlobalDataBuffer + 0x464F81
-    /* 17E2DC 0027E1DC 4100C200 */ .word GlobalDataBuffer + 0x974FC1
-    /* 17E2E0 0027E1E0 01007200 */ .word GlobalDataBuffer + 0x474F81
-    /* 17E2E4 0027E1E4 4200C300 */ .word GlobalDataBuffer + 0x984FC2
-    /* 17E2E8 0027E1E8 01007300 */ .word GlobalDataBuffer + 0x484F81
-    /* 17E2EC 0027E1EC 4300C400 */ .word GlobalDataBuffer + 0x994FC3
-    /* 17E2F0 0027E1F0 01007400 */ .word GlobalDataBuffer + 0x494F81
-    /* 17E2F4 0027E1F4 4400C500 */ .word GlobalDataBuffer + 0x9A4FC4
-    /* 17E2F8 0027E1F8 01007500 */ .word GlobalDataBuffer + 0x4A4F81
-    /* 17E2FC 0027E1FC 4500C600 */ .word GlobalDataBuffer + 0x9B4FC5
-    /* 17E300 0027E200 01007600 */ .word GlobalDataBuffer + 0x4B4F81
-    /* 17E304 0027E204 4600C700 */ .word GlobalDataBuffer + 0x9C4FC6
-    /* 17E308 0027E208 01007700 */ .word GlobalDataBuffer + 0x4C4F81
-    /* 17E30C 0027E20C 4700C800 */ .word GlobalDataBuffer + 0x9D4FC7
-    /* 17E310 0027E210 01007800 */ .word GlobalDataBuffer + 0x4D4F81
-    /* 17E314 0027E214 4800C900 */ .word GlobalDataBuffer + 0x9E4FC8
-    /* 17E318 0027E218 01007900 */ .word GlobalDataBuffer + 0x4E4F81
-    /* 17E31C 0027E21C 4900CA00 */ .word GlobalDataBuffer + 0x9F4FC9
-    /* 17E320 0027E220 01007A00 */ .word GlobalDataBuffer + 0x4F4F81
-    /* 17E324 0027E224 4A00CB00 */ .word GlobalDataBuffer + 0xA04FCA
-    /* 17E328 0027E228 01007B00 */ .word GlobalDataBuffer + 0x504F81
-    /* 17E32C 0027E22C 4B00CC00 */ .word GlobalDataBuffer + 0xA14FCB
-    /* 17E330 0027E230 01007C00 */ .word GlobalDataBuffer + 0x514F81
-    /* 17E334 0027E234 4C00CD00 */ .word GlobalDataBuffer + 0xA24FCC
-    /* 17E338 0027E238 01007D00 */ .word GlobalDataBuffer + 0x524F81
-    /* 17E33C 0027E23C 4D00CE00 */ .word GlobalDataBuffer + 0xA34FCD
-    /* 17E340 0027E240 01007E00 */ .word GlobalDataBuffer + 0x534F81
-    /* 17E344 0027E244 4E00CF00 */ .word GlobalDataBuffer + 0xA44FCE
-    /* 17E348 0027E248 01007F00 */ .word GlobalDataBuffer + 0x544F81
-    /* 17E34C 0027E24C 4F00D000 */ .word GlobalDataBuffer + 0xA54FCF
-    /* 17E350 0027E250 01008000 */ .word GlobalDataBuffer + 0x554F81
-    /* 17E354 0027E254 5000D100 */ .word GlobalDataBuffer + 0xA64FD0
-    /* 17E358 0027E258 01008100 */ .word GlobalDataBuffer + 0x564F81
-    /* 17E35C 0027E25C 5100D200 */ .word GlobalDataBuffer + 0xA74FD1
-    /* 17E360 0027E260 01008200 */ .word GlobalDataBuffer + 0x574F81
-    /* 17E364 0027E264 5200D300 */ .word GlobalDataBuffer + 0xA84FD2
-    /* 17E368 0027E268 01008300 */ .word GlobalDataBuffer + 0x584F81
-    /* 17E36C 0027E26C 5300D400 */ .word GlobalDataBuffer + 0xA94FD3
-    /* 17E370 0027E270 01008400 */ .word GlobalDataBuffer + 0x594F81
-    /* 17E374 0027E274 5400D500 */ .word GlobalDataBuffer + 0xAA4FD4
-    /* 17E378 0027E278 01008500 */ .word GlobalDataBuffer + 0x5A4F81
-    /* 17E37C 0027E27C 5500D600 */ .word GlobalDataBuffer + 0xAB4FD5
-    /* 17E380 0027E280 01008600 */ .word GlobalDataBuffer + 0x5B4F81
-    /* 17E384 0027E284 5600D700 */ .word GlobalDataBuffer + 0xAC4FD6
-    /* 17E388 0027E288 01008700 */ .word GlobalDataBuffer + 0x5C4F81
-    /* 17E38C 0027E28C 5700D800 */ .word GlobalDataBuffer + 0xAD4FD7
-    /* 17E390 0027E290 01008800 */ .word GlobalDataBuffer + 0x5D4F81
-    /* 17E394 0027E294 5800D900 */ .word GlobalDataBuffer + 0xAE4FD8
-    /* 17E398 0027E298 01008900 */ .word GlobalDataBuffer + 0x5E4F81
-    /* 17E39C 0027E29C 5900DA00 */ .word GlobalDataBuffer + 0xAF4FD9
-    /* 17E3A0 0027E2A0 01008A00 */ .word GlobalDataBuffer + 0x5F4F81
-    /* 17E3A4 0027E2A4 5A00DB00 */ .word GlobalDataBuffer + 0xB04FDA
-    /* 17E3A8 0027E2A8 01008B00 */ .word GlobalDataBuffer + 0x604F81
-    /* 17E3AC 0027E2AC 5B00DC00 */ .word GlobalDataBuffer + 0xB14FDB
-    /* 17E3B0 0027E2B0 01008C00 */ .word GlobalDataBuffer + 0x614F81
-    /* 17E3B4 0027E2B4 5C00DD00 */ .word GlobalDataBuffer + 0xB24FDC
-    /* 17E3B8 0027E2B8 01008D00 */ .word GlobalDataBuffer + 0x624F81
-    /* 17E3BC 0027E2BC 5D00DE00 */ .word GlobalDataBuffer + 0xB34FDD
-    /* 17E3C0 0027E2C0 01008E00 */ .word GlobalDataBuffer + 0x634F81
-    /* 17E3C4 0027E2C4 5E00DF00 */ .word GlobalDataBuffer + 0xB44FDE
-    /* 17E3C8 0027E2C8 01008F00 */ .word GlobalDataBuffer + 0x644F81
-    /* 17E3CC 0027E2CC 5F00E000 */ .word GlobalDataBuffer + 0xB54FDF
-    /* 17E3D0 0027E2D0 01009000 */ .word GlobalDataBuffer + 0x654F81
-    /* 17E3D4 0027E2D4 6000E100 */ .word GlobalDataBuffer + 0xB64FE0
-    /* 17E3D8 0027E2D8 01009100 */ .word GlobalDataBuffer + 0x664F81
-    /* 17E3DC 0027E2DC 6100E200 */ .word GlobalDataBuffer + 0xB74FE1
-    /* 17E3E0 0027E2E0 01009200 */ .word GlobalDataBuffer + 0x674F81
-    /* 17E3E4 0027E2E4 6200E300 */ .word GlobalDataBuffer + 0xB84FE2
-    /* 17E3E8 0027E2E8 01009300 */ .word GlobalDataBuffer + 0x684F81
-    /* 17E3EC 0027E2EC 6300E400 */ .word GlobalDataBuffer + 0xB94FE3
-    /* 17E3F0 0027E2F0 01009400 */ .word GlobalDataBuffer + 0x694F81
-    /* 17E3F4 0027E2F4 6400E500 */ .word GlobalDataBuffer + 0xBA4FE4
-    /* 17E3F8 0027E2F8 01009500 */ .word GlobalDataBuffer + 0x6A4F81
-    /* 17E3FC 0027E2FC 6500E600 */ .word GlobalDataBuffer + 0xBB4FE5
-    /* 17E400 0027E300 01009600 */ .word GlobalDataBuffer + 0x6B4F81
-    /* 17E404 0027E304 6600E700 */ .word GlobalDataBuffer + 0xBC4FE6
-    /* 17E408 0027E308 01009700 */ .word GlobalDataBuffer + 0x6C4F81
-    /* 17E40C 0027E30C 6700E800 */ .word GlobalDataBuffer + 0xBD4FE7
-    /* 17E410 0027E310 01009800 */ .word GlobalDataBuffer + 0x6D4F81
-    /* 17E414 0027E314 6800E900 */ .word GlobalDataBuffer + 0xBE4FE8
-    /* 17E418 0027E318 01009900 */ .word GlobalDataBuffer + 0x6E4F81
-    /* 17E41C 0027E31C 6900EA00 */ .word GlobalDataBuffer + 0xBF4FE9
-    /* 17E420 0027E320 01009A00 */ .word GlobalDataBuffer + 0x6F4F81
-    /* 17E424 0027E324 6A00EB00 */ .word GlobalDataBuffer + 0xC04FEA
-    /* 17E428 0027E328 01009B00 */ .word GlobalDataBuffer + 0x704F81
-    /* 17E42C 0027E32C 6B00EC00 */ .word GlobalDataBuffer + 0xC14FEB
-    /* 17E430 0027E330 01009C00 */ .word GlobalDataBuffer + 0x714F81
-    /* 17E434 0027E334 6C00ED00 */ .word GlobalDataBuffer + 0xC24FEC
-    /* 17E438 0027E338 01009D00 */ .word GlobalDataBuffer + 0x724F81
-    /* 17E43C 0027E33C 6D00EE00 */ .word GlobalDataBuffer + 0xC34FED
-    /* 17E440 0027E340 01009E00 */ .word GlobalDataBuffer + 0x734F81
-    /* 17E444 0027E344 6E00EF00 */ .word GlobalDataBuffer + 0xC44FEE
-    /* 17E448 0027E348 01009F00 */ .word GlobalDataBuffer + 0x744F81
-    /* 17E44C 0027E34C 6F00F000 */ .word GlobalDataBuffer + 0xC54FEF
-    /* 17E450 0027E350 0100A000 */ .word GlobalDataBuffer + 0x754F81
-    /* 17E454 0027E354 7000F100 */ .word GlobalDataBuffer + 0xC64FF0
-    /* 17E458 0027E358 0100A100 */ .word GlobalDataBuffer + 0x764F81
-    /* 17E45C 0027E35C 7100F200 */ .word GlobalDataBuffer + 0xC74FF1
-    /* 17E460 0027E360 0100A200 */ .word GlobalDataBuffer + 0x774F81
-    /* 17E464 0027E364 7200F300 */ .word GlobalDataBuffer + 0xC84FF2
-    /* 17E468 0027E368 0100A300 */ .word GlobalDataBuffer + 0x784F81
-    /* 17E46C 0027E36C 7300F400 */ .word GlobalDataBuffer + 0xC94FF3
-    /* 17E470 0027E370 0100A400 */ .word GlobalDataBuffer + 0x794F81
-    /* 17E474 0027E374 7400F500 */ .word GlobalDataBuffer + 0xCA4FF4
-    /* 17E478 0027E378 0100A500 */ .word GlobalDataBuffer + 0x7A4F81
-    /* 17E47C 0027E37C 7500F600 */ .word GlobalDataBuffer + 0xCB4FF5
-    /* 17E480 0027E380 0100A600 */ .word GlobalDataBuffer + 0x7B4F81
-    /* 17E484 0027E384 7600F700 */ .word GlobalDataBuffer + 0xCC4FF6
-    /* 17E488 0027E388 0100A700 */ .word GlobalDataBuffer + 0x7C4F81
-    /* 17E48C 0027E38C 7700F800 */ .word GlobalDataBuffer + 0xCD4FF7
-    /* 17E490 0027E390 0100A800 */ .word GlobalDataBuffer + 0x7D4F81
-    /* 17E494 0027E394 7800F900 */ .word GlobalDataBuffer + 0xCE4FF8
-    /* 17E498 0027E398 0100A900 */ .word GlobalDataBuffer + 0x7E4F81
-    /* 17E49C 0027E39C 7900FA00 */ .word GlobalDataBuffer + 0xCF4FF9
-    /* 17E4A0 0027E3A0 0100AA00 */ .word GlobalDataBuffer + 0x7F4F81
-    /* 17E4A4 0027E3A4 7A00FB00 */ .word GlobalDataBuffer + 0xD04FFA
-    /* 17E4A8 0027E3A8 0100AB00 */ .word GlobalDataBuffer + 0x804F81
-    /* 17E4AC 0027E3AC 7B00FC00 */ .word GlobalDataBuffer + 0xD14FFB
-    /* 17E4B0 0027E3B0 0100AC00 */ .word GlobalDataBuffer + 0x814F81
-    /* 17E4B4 0027E3B4 7C00FD00 */ .word GlobalDataBuffer + 0xD24FFC
-    /* 17E4B8 0027E3B8 0100AD00 */ .word GlobalDataBuffer + 0x824F81
-    /* 17E4BC 0027E3BC 7D00FE00 */ .word GlobalDataBuffer + 0xD34FFD
-    /* 17E4C0 0027E3C0 0100AE00 */ .word GlobalDataBuffer + 0x834F81
-    /* 17E4C4 0027E3C4 7E00FF00 */ .word GlobalDataBuffer + 0xD44FFE
-    /* 17E4C8 0027E3C8 0100AF00 */ .word GlobalDataBuffer + 0x844F81
+    /* 17E0A4 0027DFA4 A2007B00 */ .word 0x007B00A2
+    /* 17E0A8 0027DFA8 00002B00 */ .word 0x002B0000
+    /* 17E0AC 0027DFAC A3007C00 */ .word 0x007C00A3
+    /* 17E0B0 0027DFB0 00002C00 */ .word 0x002C0000
+    /* 17E0B4 0027DFB4 A4007D00 */ .word 0x007D00A4
+    /* 17E0B8 0027DFB8 00002D00 */ .word 0x002D0000
+    /* 17E0BC 0027DFBC A5007E00 */ .word 0x007E00A5
+    /* 17E0C0 0027DFC0 00002E00 */ .word 0x002E0000
+    /* 17E0C4 0027DFC4 A6007F00 */ .word 0x007F00A6
+    /* 17E0C8 0027DFC8 00002F00 */ .word 0x002F0000
+    /* 17E0CC 0027DFCC A7008000 */ .word 0x008000A7
+    /* 17E0D0 0027DFD0 00003000 */ .word 0x00300000
+    /* 17E0D4 0027DFD4 00008100 */ .word 0x00810000
+    /* 17E0D8 0027DFD8 00003100 */ .word 0x00310000
+    /* 17E0DC 0027DFDC 01008200 */ .word 0x00820001
+    /* 17E0E0 0027DFE0 00003200 */ .word 0x00320000
+    /* 17E0E4 0027DFE4 02008300 */ .word 0x00830002
+    /* 17E0E8 0027DFE8 01003300 */ .word 0x00330001
+    /* 17E0EC 0027DFEC 03008400 */ .word 0x00840003
+    /* 17E0F0 0027DFF0 01003400 */ .word 0x00340001
+    /* 17E0F4 0027DFF4 04008500 */ .word 0x00850004
+    /* 17E0F8 0027DFF8 01003500 */ .word 0x00350001
+    /* 17E0FC 0027DFFC 05008600 */ .word 0x00860005
+    /* 17E100 0027E000 01003600 */ .word 0x00360001
+    /* 17E104 0027E004 06008700 */ .word 0x00870006
+    /* 17E108 0027E008 01003700 */ .word 0x00370001
+    /* 17E10C 0027E00C 07008800 */ .word 0x00880007
+    /* 17E110 0027E010 01003800 */ .word 0x00380001
+    /* 17E114 0027E014 08008900 */ .word 0x00890008
+    /* 17E118 0027E018 01003900 */ .word 0x00390001
+    /* 17E11C 0027E01C 09008A00 */ .word 0x008A0009
+    /* 17E120 0027E020 01003A00 */ .word 0x003A0001
+    /* 17E124 0027E024 0A008B00 */ .word 0x008B000A
+    /* 17E128 0027E028 01003B00 */ .word 0x003B0001
+    /* 17E12C 0027E02C 0B008C00 */ .word 0x008C000B
+    /* 17E130 0027E030 01003C00 */ .word 0x003C0001
+    /* 17E134 0027E034 0C008D00 */ .word 0x008D000C
+    /* 17E138 0027E038 01003D00 */ .word 0x003D0001
+    /* 17E13C 0027E03C 0D008E00 */ .word 0x008E000D
+    /* 17E140 0027E040 01003E00 */ .word 0x003E0001
+    /* 17E144 0027E044 0E008F00 */ .word 0x008F000E
+    /* 17E148 0027E048 01003F00 */ .word 0x003F0001
+    /* 17E14C 0027E04C 0F009000 */ .word 0x0090000F
+    /* 17E150 0027E050 01004000 */ .word 0x00400001
+    /* 17E154 0027E054 10009100 */ .word 0x00910010
+    /* 17E158 0027E058 01004100 */ .word 0x00410001
+    /* 17E15C 0027E05C 11009200 */ .word 0x00920011
+    /* 17E160 0027E060 01004200 */ .word 0x00420001
+    /* 17E164 0027E064 12009300 */ .word 0x00930012
+    /* 17E168 0027E068 01004300 */ .word 0x00430001
+    /* 17E16C 0027E06C 13009400 */ .word 0x00940013
+    /* 17E170 0027E070 01004400 */ .word 0x00440001
+    /* 17E174 0027E074 14009500 */ .word 0x00950014
+    /* 17E178 0027E078 01004500 */ .word 0x00450001
+    /* 17E17C 0027E07C 15009600 */ .word 0x00960015
+    /* 17E180 0027E080 01004600 */ .word 0x00460001
+    /* 17E184 0027E084 16009700 */ .word 0x00970016
+    /* 17E188 0027E088 01004700 */ .word 0x00470001
+    /* 17E18C 0027E08C 17009800 */ .word 0x00980017
+    /* 17E190 0027E090 01004800 */ .word 0x00480001
+    /* 17E194 0027E094 18009900 */ .word 0x00990018
+    /* 17E198 0027E098 01004900 */ .word 0x00490001
+    /* 17E19C 0027E09C 19009A00 */ .word 0x009A0019
+    /* 17E1A0 0027E0A0 01004A00 */ .word 0x004A0001
+    /* 17E1A4 0027E0A4 1A009B00 */ .word 0x009B001A
+    /* 17E1A8 0027E0A8 01004B00 */ .word 0x004B0001
+    /* 17E1AC 0027E0AC 1B009C00 */ .word 0x009C001B
+    /* 17E1B0 0027E0B0 01004C00 */ .word 0x004C0001
+    /* 17E1B4 0027E0B4 1C009D00 */ .word 0x009D001C
+    /* 17E1B8 0027E0B8 01004D00 */ .word 0x004D0001
+    /* 17E1BC 0027E0BC 1D009E00 */ .word 0x009E001D
+    /* 17E1C0 0027E0C0 01004E00 */ .word 0x004E0001
+    /* 17E1C4 0027E0C4 1E009F00 */ .word 0x009F001E
+    /* 17E1C8 0027E0C8 01004F00 */ .word 0x004F0001
+    /* 17E1CC 0027E0CC 1F00A000 */ .word 0x00A0001F
+    /* 17E1D0 0027E0D0 01005000 */ .word 0x00500001
+    /* 17E1D4 0027E0D4 2000A100 */ .word 0x00A10020
+    /* 17E1D8 0027E0D8 01005100 */ .word 0x00510001
+    /* 17E1DC 0027E0DC 2100A200 */ .word 0x00A20021
+    /* 17E1E0 0027E0E0 01005200 */ .word 0x00520001
+    /* 17E1E4 0027E0E4 2200A300 */ .word 0x00A30022
+    /* 17E1E8 0027E0E8 01005300 */ .word 0x00530001
+    /* 17E1EC 0027E0EC 2300A400 */ .word 0x00A40023
+    /* 17E1F0 0027E0F0 01005400 */ .word 0x00540001
+    /* 17E1F4 0027E0F4 2400A500 */ .word 0x00A50024
+    /* 17E1F8 0027E0F8 01005500 */ .word 0x00550001
+    /* 17E1FC 0027E0FC 2500A600 */ .word 0x00A60025
+    /* 17E200 0027E100 01005600 */ .word 0x00560001
+    /* 17E204 0027E104 2600A700 */ .word 0x00A70026
+    /* 17E208 0027E108 01005700 */ .word 0x00570001
+    /* 17E20C 0027E10C 2700A800 */ .word 0x00A80027
+    /* 17E210 0027E110 01005800 */ .word 0x00580001
+    /* 17E214 0027E114 2800A900 */ .word 0x00A90028
+    /* 17E218 0027E118 01005900 */ .word 0x00590001
+    /* 17E21C 0027E11C 2900AA00 */ .word 0x00AA0029
+    /* 17E220 0027E120 01005A00 */ .word 0x005A0001
+    /* 17E224 0027E124 2A00AB00 */ .word 0x00AB002A
+    /* 17E228 0027E128 01005B00 */ .word 0x005B0001
+    /* 17E22C 0027E12C 2B00AC00 */ .word 0x00AC002B
+    /* 17E230 0027E130 01005C00 */ .word 0x005C0001
+    /* 17E234 0027E134 2C00AD00 */ .word 0x00AD002C
+    /* 17E238 0027E138 01005D00 */ .word 0x005D0001
+    /* 17E23C 0027E13C 2D00AE00 */ .word 0x00AE002D
+    /* 17E240 0027E140 01005E00 */ .word 0x005E0001
+    /* 17E244 0027E144 2E00AF00 */ .word 0x00AF002E
+    /* 17E248 0027E148 01005F00 */ .word 0x005F0001
+    /* 17E24C 0027E14C 2F00B000 */ .word 0x00B0002F
+    /* 17E250 0027E150 01006000 */ .word 0x00600001
+    /* 17E254 0027E154 3000B100 */ .word 0x00B10030
+    /* 17E258 0027E158 01006100 */ .word 0x00610001
+    /* 17E25C 0027E15C 3100B200 */ .word 0x00B20031
+    /* 17E260 0027E160 01006200 */ .word 0x00620001
+    /* 17E264 0027E164 3200B300 */ .word 0x00B30032
+    /* 17E268 0027E168 01006300 */ .word 0x00630001
+    /* 17E26C 0027E16C 3300B400 */ .word 0x00B40033
+    /* 17E270 0027E170 01006400 */ .word 0x00640001
+    /* 17E274 0027E174 3400B500 */ .word 0x00B50034
+    /* 17E278 0027E178 01006500 */ .word 0x00650001
+    /* 17E27C 0027E17C 3500B600 */ .word 0x00B60035
+    /* 17E280 0027E180 01006600 */ .word 0x00660001
+    /* 17E284 0027E184 3600B700 */ .word 0x00B70036
+    /* 17E288 0027E188 01006700 */ .word 0x00670001
+    /* 17E28C 0027E18C 3700B800 */ .word 0x00B80037
+    /* 17E290 0027E190 01006800 */ .word 0x00680001
+    /* 17E294 0027E194 3800B900 */ .word 0x00B90038
+    /* 17E298 0027E198 01006900 */ .word 0x00690001
+    /* 17E29C 0027E19C 3900BA00 */ .word 0x00BA0039
+    /* 17E2A0 0027E1A0 01006A00 */ .word 0x006A0001
+    /* 17E2A4 0027E1A4 3A00BB00 */ .word 0x00BB003A
+    /* 17E2A8 0027E1A8 01006B00 */ .word 0x006B0001
+    /* 17E2AC 0027E1AC 3B00BC00 */ .word 0x00BC003B
+    /* 17E2B0 0027E1B0 01006C00 */ .word 0x006C0001
+    /* 17E2B4 0027E1B4 3C00BD00 */ .word 0x00BD003C
+    /* 17E2B8 0027E1B8 01006D00 */ .word 0x006D0001
+    /* 17E2BC 0027E1BC 3D00BE00 */ .word 0x00BE003D
+    /* 17E2C0 0027E1C0 01006E00 */ .word 0x006E0001
+    /* 17E2C4 0027E1C4 3E00BF00 */ .word 0x00BF003E
+    /* 17E2C8 0027E1C8 01006F00 */ .word 0x006F0001
+    /* 17E2CC 0027E1CC 3F00C000 */ .word 0x00C0003F
+    /* 17E2D0 0027E1D0 01007000 */ .word 0x00700001
+    /* 17E2D4 0027E1D4 4000C100 */ .word 0x00C10040
+    /* 17E2D8 0027E1D8 01007100 */ .word 0x00710001
+    /* 17E2DC 0027E1DC 4100C200 */ .word 0x00C20041
+    /* 17E2E0 0027E1E0 01007200 */ .word 0x00720001
+    /* 17E2E4 0027E1E4 4200C300 */ .word 0x00C30042
+    /* 17E2E8 0027E1E8 01007300 */ .word 0x00730001
+    /* 17E2EC 0027E1EC 4300C400 */ .word 0x00C40043
+    /* 17E2F0 0027E1F0 01007400 */ .word 0x00740001
+    /* 17E2F4 0027E1F4 4400C500 */ .word 0x00C50044
+    /* 17E2F8 0027E1F8 01007500 */ .word 0x00750001
+    /* 17E2FC 0027E1FC 4500C600 */ .word 0x00C60045
+    /* 17E300 0027E200 01007600 */ .word 0x00760001
+    /* 17E304 0027E204 4600C700 */ .word 0x00C70046
+    /* 17E308 0027E208 01007700 */ .word 0x00770001
+    /* 17E30C 0027E20C 4700C800 */ .word 0x00C80047
+    /* 17E310 0027E210 01007800 */ .word 0x00780001
+    /* 17E314 0027E214 4800C900 */ .word 0x00C90048
+    /* 17E318 0027E218 01007900 */ .word 0x00790001
+    /* 17E31C 0027E21C 4900CA00 */ .word 0x00CA0049
+    /* 17E320 0027E220 01007A00 */ .word 0x007A0001
+    /* 17E324 0027E224 4A00CB00 */ .word 0x00CB004A
+    /* 17E328 0027E228 01007B00 */ .word 0x007B0001
+    /* 17E32C 0027E22C 4B00CC00 */ .word 0x00CC004B
+    /* 17E330 0027E230 01007C00 */ .word 0x007C0001
+    /* 17E334 0027E234 4C00CD00 */ .word 0x00CD004C
+    /* 17E338 0027E238 01007D00 */ .word 0x007D0001
+    /* 17E33C 0027E23C 4D00CE00 */ .word 0x00CE004D
+    /* 17E340 0027E240 01007E00 */ .word 0x007E0001
+    /* 17E344 0027E244 4E00CF00 */ .word 0x00CF004E
+    /* 17E348 0027E248 01007F00 */ .word 0x007F0001
+    /* 17E34C 0027E24C 4F00D000 */ .word 0x00D0004F
+    /* 17E350 0027E250 01008000 */ .word 0x00800001
+    /* 17E354 0027E254 5000D100 */ .word 0x00D10050
+    /* 17E358 0027E258 01008100 */ .word 0x00810001
+    /* 17E35C 0027E25C 5100D200 */ .word 0x00D20051
+    /* 17E360 0027E260 01008200 */ .word 0x00820001
+    /* 17E364 0027E264 5200D300 */ .word 0x00D30052
+    /* 17E368 0027E268 01008300 */ .word 0x00830001
+    /* 17E36C 0027E26C 5300D400 */ .word 0x00D40053
+    /* 17E370 0027E270 01008400 */ .word 0x00840001
+    /* 17E374 0027E274 5400D500 */ .word 0x00D50054
+    /* 17E378 0027E278 01008500 */ .word 0x00850001
+    /* 17E37C 0027E27C 5500D600 */ .word 0x00D60055
+    /* 17E380 0027E280 01008600 */ .word 0x00860001
+    /* 17E384 0027E284 5600D700 */ .word 0x00D70056
+    /* 17E388 0027E288 01008700 */ .word 0x00870001
+    /* 17E38C 0027E28C 5700D800 */ .word 0x00D80057
+    /* 17E390 0027E290 01008800 */ .word 0x00880001
+    /* 17E394 0027E294 5800D900 */ .word 0x00D90058
+    /* 17E398 0027E298 01008900 */ .word 0x00890001
+    /* 17E39C 0027E29C 5900DA00 */ .word 0x00DA0059
+    /* 17E3A0 0027E2A0 01008A00 */ .word 0x008A0001
+    /* 17E3A4 0027E2A4 5A00DB00 */ .word 0x00DB005A
+    /* 17E3A8 0027E2A8 01008B00 */ .word 0x008B0001
+    /* 17E3AC 0027E2AC 5B00DC00 */ .word 0x00DC005B
+    /* 17E3B0 0027E2B0 01008C00 */ .word 0x008C0001
+    /* 17E3B4 0027E2B4 5C00DD00 */ .word 0x00DD005C
+    /* 17E3B8 0027E2B8 01008D00 */ .word 0x008D0001
+    /* 17E3BC 0027E2BC 5D00DE00 */ .word 0x00DE005D
+    /* 17E3C0 0027E2C0 01008E00 */ .word 0x008E0001
+    /* 17E3C4 0027E2C4 5E00DF00 */ .word 0x00DF005E
+    /* 17E3C8 0027E2C8 01008F00 */ .word 0x008F0001
+    /* 17E3CC 0027E2CC 5F00E000 */ .word 0x00E0005F
+    /* 17E3D0 0027E2D0 01009000 */ .word 0x00900001
+    /* 17E3D4 0027E2D4 6000E100 */ .word 0x00E10060
+    /* 17E3D8 0027E2D8 01009100 */ .word 0x00910001
+    /* 17E3DC 0027E2DC 6100E200 */ .word 0x00E20061
+    /* 17E3E0 0027E2E0 01009200 */ .word 0x00920001
+    /* 17E3E4 0027E2E4 6200E300 */ .word 0x00E30062
+    /* 17E3E8 0027E2E8 01009300 */ .word 0x00930001
+    /* 17E3EC 0027E2EC 6300E400 */ .word 0x00E40063
+    /* 17E3F0 0027E2F0 01009400 */ .word 0x00940001
+    /* 17E3F4 0027E2F4 6400E500 */ .word 0x00E50064
+    /* 17E3F8 0027E2F8 01009500 */ .word 0x00950001
+    /* 17E3FC 0027E2FC 6500E600 */ .word 0x00E60065
+    /* 17E400 0027E300 01009600 */ .word 0x00960001
+    /* 17E404 0027E304 6600E700 */ .word 0x00E70066
+    /* 17E408 0027E308 01009700 */ .word 0x00970001
+    /* 17E40C 0027E30C 6700E800 */ .word 0x00E80067
+    /* 17E410 0027E310 01009800 */ .word 0x00980001
+    /* 17E414 0027E314 6800E900 */ .word 0x00E90068
+    /* 17E418 0027E318 01009900 */ .word 0x00990001
+    /* 17E41C 0027E31C 6900EA00 */ .word 0x00EA0069
+    /* 17E420 0027E320 01009A00 */ .word 0x009A0001
+    /* 17E424 0027E324 6A00EB00 */ .word 0x00EB006A
+    /* 17E428 0027E328 01009B00 */ .word 0x009B0001
+    /* 17E42C 0027E32C 6B00EC00 */ .word 0x00EC006B
+    /* 17E430 0027E330 01009C00 */ .word 0x009C0001
+    /* 17E434 0027E334 6C00ED00 */ .word 0x00ED006C
+    /* 17E438 0027E338 01009D00 */ .word 0x009D0001
+    /* 17E43C 0027E33C 6D00EE00 */ .word 0x00EE006D
+    /* 17E440 0027E340 01009E00 */ .word 0x009E0001
+    /* 17E444 0027E344 6E00EF00 */ .word 0x00EF006E
+    /* 17E448 0027E348 01009F00 */ .word 0x009F0001
+    /* 17E44C 0027E34C 6F00F000 */ .word 0x00F0006F
+    /* 17E450 0027E350 0100A000 */ .word 0x00A00001
+    /* 17E454 0027E354 7000F100 */ .word 0x00F10070
+    /* 17E458 0027E358 0100A100 */ .word 0x00A10001
+    /* 17E45C 0027E35C 7100F200 */ .word 0x00F20071
+    /* 17E460 0027E360 0100A200 */ .word 0x00A20001
+    /* 17E464 0027E364 7200F300 */ .word 0x00F30072
+    /* 17E468 0027E368 0100A300 */ .word 0x00A30001
+    /* 17E46C 0027E36C 7300F400 */ .word 0x00F40073
+    /* 17E470 0027E370 0100A400 */ .word 0x00A40001
+    /* 17E474 0027E374 7400F500 */ .word 0x00F50074
+    /* 17E478 0027E378 0100A500 */ .word 0x00A50001
+    /* 17E47C 0027E37C 7500F600 */ .word 0x00F60075
+    /* 17E480 0027E380 0100A600 */ .word 0x00A60001
+    /* 17E484 0027E384 7600F700 */ .word 0x00F70076
+    /* 17E488 0027E388 0100A700 */ .word 0x00A70001
+    /* 17E48C 0027E38C 7700F800 */ .word 0x00F80077
+    /* 17E490 0027E390 0100A800 */ .word 0x00A80001
+    /* 17E494 0027E394 7800F900 */ .word 0x00F90078
+    /* 17E498 0027E398 0100A900 */ .word 0x00A90001
+    /* 17E49C 0027E39C 7900FA00 */ .word 0x00FA0079
+    /* 17E4A0 0027E3A0 0100AA00 */ .word 0x00AA0001
+    /* 17E4A4 0027E3A4 7A00FB00 */ .word 0x00FB007A
+    /* 17E4A8 0027E3A8 0100AB00 */ .word 0x00AB0001
+    /* 17E4AC 0027E3AC 7B00FC00 */ .word 0x00FC007B
+    /* 17E4B0 0027E3B0 0100AC00 */ .word 0x00AC0001
+    /* 17E4B4 0027E3B4 7C00FD00 */ .word 0x00FD007C
+    /* 17E4B8 0027E3B8 0100AD00 */ .word 0x00AD0001
+    /* 17E4BC 0027E3BC 7D00FE00 */ .word 0x00FE007D
+    /* 17E4C0 0027E3C0 0100AE00 */ .word 0x00AE0001
+    /* 17E4C4 0027E3C4 7E00FF00 */ .word 0x00FF007E
+    /* 17E4C8 0027E3C8 0100AF00 */ .word 0x00AF0001
     /* 17E4CC 0027E3CC 7F00FFFF */ .word 0xFFFF007F
     /* 17E4D0 0027E3D0 02000000 */ .word 0x00000002
     /* 17E4D4 0027E3D4 00000100 */ .word 0x00010000
@@ -60148,204 +60148,204 @@ glabel ComItemInfo
     /* 17E568 0027E468 02001300 */ .word 0x00130002
     /* 17E56C 0027E46C 13001400 */ .word 0x00140013
     /* 17E570 0027E470 02001400 */ .word 0x00140002
-    /* 17E574 0027E474 14000001 */ .word GlobalDataBuffer + 0xD54F94
+    /* 17E574 0027E474 14000001 */ .word 0x01000014
     /* 17E578 0027E478 02001500 */ .word 0x00150002
-    /* 17E57C 0027E47C 15000101 */ .word GlobalDataBuffer + 0xD64F95
+    /* 17E57C 0027E47C 15000101 */ .word 0x01010015
     /* 17E580 0027E480 02001600 */ .word 0x00160002
-    /* 17E584 0027E484 16000201 */ .word GlobalDataBuffer + 0xD74F96
+    /* 17E584 0027E484 16000201 */ .word 0x01020016
     /* 17E588 0027E488 02001700 */ .word 0x00170002
-    /* 17E58C 0027E48C 17000301 */ .word GlobalDataBuffer + 0xD84F97
+    /* 17E58C 0027E48C 17000301 */ .word 0x01030017
     /* 17E590 0027E490 02001800 */ .word 0x00180002
-    /* 17E594 0027E494 18000401 */ .word GlobalDataBuffer + 0xD94F98
+    /* 17E594 0027E494 18000401 */ .word 0x01040018
     /* 17E598 0027E498 02001900 */ .word 0x00190002
-    /* 17E59C 0027E49C 19000501 */ .word GlobalDataBuffer + 0xDA4F99
+    /* 17E59C 0027E49C 19000501 */ .word 0x01050019
     /* 17E5A0 0027E4A0 02001A00 */ .word 0x001A0002
-    /* 17E5A4 0027E4A4 1A000601 */ .word GlobalDataBuffer + 0xDB4F9A
+    /* 17E5A4 0027E4A4 1A000601 */ .word 0x0106001A
     /* 17E5A8 0027E4A8 02001B00 */ .word 0x001B0002
-    /* 17E5AC 0027E4AC 1B000701 */ .word GlobalDataBuffer + 0xDC4F9B
+    /* 17E5AC 0027E4AC 1B000701 */ .word 0x0107001B
     /* 17E5B0 0027E4B0 02001C00 */ .word 0x001C0002
-    /* 17E5B4 0027E4B4 1C000801 */ .word GlobalDataBuffer + 0xDD4F9C
+    /* 17E5B4 0027E4B4 1C000801 */ .word 0x0108001C
     /* 17E5B8 0027E4B8 02001D00 */ .word 0x001D0002
-    /* 17E5BC 0027E4BC 1D000901 */ .word GlobalDataBuffer + 0xDE4F9D
+    /* 17E5BC 0027E4BC 1D000901 */ .word 0x0109001D
     /* 17E5C0 0027E4C0 02001E00 */ .word 0x001E0002
-    /* 17E5C4 0027E4C4 1E000A01 */ .word GlobalDataBuffer + 0xDF4F9E
+    /* 17E5C4 0027E4C4 1E000A01 */ .word 0x010A001E
     /* 17E5C8 0027E4C8 02001F00 */ .word 0x001F0002
-    /* 17E5CC 0027E4CC 1F000B01 */ .word GlobalDataBuffer + 0xE04F9F
+    /* 17E5CC 0027E4CC 1F000B01 */ .word 0x010B001F
     /* 17E5D0 0027E4D0 02002000 */ .word 0x00200002
-    /* 17E5D4 0027E4D4 20000C01 */ .word GlobalDataBuffer + 0xE14FA0
+    /* 17E5D4 0027E4D4 20000C01 */ .word 0x010C0020
     /* 17E5D8 0027E4D8 02002100 */ .word 0x00210002
-    /* 17E5DC 0027E4DC 21000D01 */ .word GlobalDataBuffer + 0xE24FA1
+    /* 17E5DC 0027E4DC 21000D01 */ .word 0x010D0021
     /* 17E5E0 0027E4E0 02002200 */ .word 0x00220002
-    /* 17E5E4 0027E4E4 22000E01 */ .word GlobalDataBuffer + 0xE34FA2
+    /* 17E5E4 0027E4E4 22000E01 */ .word 0x010E0022
     /* 17E5E8 0027E4E8 02002300 */ .word 0x00230002
-    /* 17E5EC 0027E4EC 23000F01 */ .word GlobalDataBuffer + 0xE44FA3
+    /* 17E5EC 0027E4EC 23000F01 */ .word 0x010F0023
     /* 17E5F0 0027E4F0 02002400 */ .word 0x00240002
-    /* 17E5F4 0027E4F4 24001001 */ .word GlobalDataBuffer + 0xE54FA4
+    /* 17E5F4 0027E4F4 24001001 */ .word 0x01100024
     /* 17E5F8 0027E4F8 02002500 */ .word __malloc_av_ + 0x1FA
-    /* 17E5FC 0027E4FC 25001101 */ .word GlobalDataBuffer + 0xE64FA5
+    /* 17E5FC 0027E4FC 25001101 */ .word 0x01110025
     /* 17E600 0027E500 02002600 */ .word se_info + 0x2052
-    /* 17E604 0027E504 26001C01 */ .word GlobalDataBuffer + 0xF14FA6
+    /* 17E604 0027E504 26001C01 */ .word 0x011C0026
     /* 17E608 0027E508 02002700 */ .word ItemSetRateList3 + 0x32
-    /* 17E60C 0027E50C 27001D01 */ .word GlobalDataBuffer + 0xF24FA7
+    /* 17E60C 0027E50C 27001D01 */ .word 0x011D0027
     /* 17E610 0027E510 02002800 */ .word MonstorTable + 0x502
-    /* 17E614 0027E514 28001E01 */ .word GlobalDataBuffer + 0xF34FA8
+    /* 17E614 0027E514 28001E01 */ .word 0x011E0028
     /* 17E618 0027E518 02002900 */ .word BtUraEnemyLayout06 + 0x1412
-    /* 17E61C 0027E51C 29001F01 */ .word GlobalDataBuffer + 0xF44FA9
+    /* 17E61C 0027E51C 29001F01 */ .word 0x011F0029
     /* 17E620 0027E520 02002A00 */ .word 0x002A0002
     /* 17E624 0027E524 2A001500 */ .word 0x0015002A
-    /* 17E628 0027E528 02002B00 */ .word GlobalDataBuffer + 0x4F82
+    /* 17E628 0027E528 02002B00 */ .word 0x002B0002
     /* 17E62C 0027E52C 2B001600 */ .word 0x0016002B
-    /* 17E630 0027E530 02002C00 */ .word GlobalDataBuffer + 0x14F82
+    /* 17E630 0027E530 02002C00 */ .word 0x002C0002
     /* 17E634 0027E534 2C001700 */ .word 0x0017002C
-    /* 17E638 0027E538 02002D00 */ .word GlobalDataBuffer + 0x24F82
+    /* 17E638 0027E538 02002D00 */ .word 0x002D0002
     /* 17E63C 0027E53C 2D001800 */ .word 0x0018002D
-    /* 17E640 0027E540 02002E00 */ .word GlobalDataBuffer + 0x34F82
+    /* 17E640 0027E540 02002E00 */ .word 0x002E0002
     /* 17E644 0027E544 2E001900 */ .word 0x0019002E
-    /* 17E648 0027E548 02002F00 */ .word GlobalDataBuffer + 0x44F82
+    /* 17E648 0027E548 02002F00 */ .word 0x002F0002
     /* 17E64C 0027E54C 2F001A00 */ .word 0x001A002F
-    /* 17E650 0027E550 02003000 */ .word GlobalDataBuffer + 0x54F82
+    /* 17E650 0027E550 02003000 */ .word 0x00300002
     /* 17E654 0027E554 30001B00 */ .word 0x001B0030
-    /* 17E658 0027E558 02003100 */ .word GlobalDataBuffer + 0x64F82
+    /* 17E658 0027E558 02003100 */ .word 0x00310002
     /* 17E65C 0027E55C 31001C00 */ .word 0x001C0031
-    /* 17E660 0027E560 02003200 */ .word GlobalDataBuffer + 0x74F82
+    /* 17E660 0027E560 02003200 */ .word 0x00320002
     /* 17E664 0027E564 32001D00 */ .word 0x001D0032
-    /* 17E668 0027E568 02003300 */ .word GlobalDataBuffer + 0x84F82
+    /* 17E668 0027E568 02003300 */ .word 0x00330002
     /* 17E66C 0027E56C 33001E00 */ .word 0x001E0033
-    /* 17E670 0027E570 02003400 */ .word GlobalDataBuffer + 0x94F82
+    /* 17E670 0027E570 02003400 */ .word 0x00340002
     /* 17E674 0027E574 34001F00 */ .word 0x001F0034
-    /* 17E678 0027E578 02003500 */ .word GlobalDataBuffer + 0xA4F82
-    /* 17E67C 0027E57C 35001201 */ .word GlobalDataBuffer + 0xE74FB5
-    /* 17E680 0027E580 02003600 */ .word GlobalDataBuffer + 0xB4F82
-    /* 17E684 0027E584 36001301 */ .word GlobalDataBuffer + 0xE84FB6
-    /* 17E688 0027E588 02003700 */ .word GlobalDataBuffer + 0xC4F82
-    /* 17E68C 0027E58C 37002001 */ .word GlobalDataBuffer + 0xF54FB7
-    /* 17E690 0027E590 02003800 */ .word GlobalDataBuffer + 0xD4F82
-    /* 17E694 0027E594 38002101 */ .word GlobalDataBuffer + 0xF64FB8
-    /* 17E698 0027E598 02003900 */ .word GlobalDataBuffer + 0xE4F82
+    /* 17E678 0027E578 02003500 */ .word 0x00350002
+    /* 17E67C 0027E57C 35001201 */ .word 0x01120035
+    /* 17E680 0027E580 02003600 */ .word 0x00360002
+    /* 17E684 0027E584 36001301 */ .word 0x01130036
+    /* 17E688 0027E588 02003700 */ .word 0x00370002
+    /* 17E68C 0027E58C 37002001 */ .word 0x01200037
+    /* 17E690 0027E590 02003800 */ .word 0x00380002
+    /* 17E694 0027E594 38002101 */ .word 0x01210038
+    /* 17E698 0027E598 02003900 */ .word 0x00390002
     /* 17E69C 0027E59C 39002100 */ .word 0x00210039
-    /* 17E6A0 0027E5A0 02003A00 */ .word GlobalDataBuffer + 0xF4F82
+    /* 17E6A0 0027E5A0 02003A00 */ .word 0x003A0002
     /* 17E6A4 0027E5A4 3A002200 */ .word 0x0022003A
-    /* 17E6A8 0027E5A8 02003B00 */ .word GlobalDataBuffer + 0x104F82
+    /* 17E6A8 0027E5A8 02003B00 */ .word 0x003B0002
     /* 17E6AC 0027E5AC 3B002300 */ .word 0x0023003B
-    /* 17E6B0 0027E5B0 02003C00 */ .word GlobalDataBuffer + 0x114F82
+    /* 17E6B0 0027E5B0 02003C00 */ .word 0x003C0002
     /* 17E6B4 0027E5B4 3C002400 */ .word 0x0024003C
-    /* 17E6B8 0027E5B8 02003D00 */ .word GlobalDataBuffer + 0x124F82
+    /* 17E6B8 0027E5B8 02003D00 */ .word 0x003D0002
     /* 17E6BC 0027E5BC 3D002500 */ .word __malloc_av_ + 0x235
-    /* 17E6C0 0027E5C0 02003E00 */ .word GlobalDataBuffer + 0x134F82
+    /* 17E6C0 0027E5C0 02003E00 */ .word 0x003E0002
     /* 17E6C4 0027E5C4 3E002600 */ .word se_info + 0x208E
-    /* 17E6C8 0027E5C8 02003F00 */ .word GlobalDataBuffer + 0x144F82
+    /* 17E6C8 0027E5C8 02003F00 */ .word 0x003F0002
     /* 17E6CC 0027E5CC 3F002700 */ .word ItemSetRateList3 + 0x6F
-    /* 17E6D0 0027E5D0 02004000 */ .word GlobalDataBuffer + 0x154F82
+    /* 17E6D0 0027E5D0 02004000 */ .word 0x00400002
     /* 17E6D4 0027E5D4 40002800 */ .word MonstorTable + 0x540
-    /* 17E6D8 0027E5D8 02004100 */ .word GlobalDataBuffer + 0x164F82
+    /* 17E6D8 0027E5D8 02004100 */ .word 0x00410002
     /* 17E6DC 0027E5DC 41002900 */ .word BtUraEnemyLayout06 + 0x1451
-    /* 17E6E0 0027E5E0 02004200 */ .word GlobalDataBuffer + 0x174F82
+    /* 17E6E0 0027E5E0 02004200 */ .word 0x00420002
     /* 17E6E4 0027E5E4 42002A00 */ .word 0x002A0042
-    /* 17E6E8 0027E5E8 02004300 */ .word GlobalDataBuffer + 0x184F82
-    /* 17E6EC 0027E5EC 43002B00 */ .word GlobalDataBuffer + 0x4FC3
-    /* 17E6F0 0027E5F0 02004400 */ .word GlobalDataBuffer + 0x194F82
-    /* 17E6F4 0027E5F4 44002C00 */ .word GlobalDataBuffer + 0x14FC4
-    /* 17E6F8 0027E5F8 02004500 */ .word GlobalDataBuffer + 0x1A4F82
-    /* 17E6FC 0027E5FC 45002D00 */ .word GlobalDataBuffer + 0x24FC5
-    /* 17E700 0027E600 02004600 */ .word GlobalDataBuffer + 0x1B4F82
-    /* 17E704 0027E604 46001401 */ .word GlobalDataBuffer + 0xE94FC6
-    /* 17E708 0027E608 02004700 */ .word GlobalDataBuffer + 0x1C4F82
-    /* 17E70C 0027E60C 47001501 */ .word GlobalDataBuffer + 0xEA4FC7
-    /* 17E710 0027E610 02004800 */ .word GlobalDataBuffer + 0x1D4F82
-    /* 17E714 0027E614 48002201 */ .word GlobalDataBuffer + 0xF74FC8
-    /* 17E718 0027E618 02004900 */ .word GlobalDataBuffer + 0x1E4F82
+    /* 17E6E8 0027E5E8 02004300 */ .word 0x00430002
+    /* 17E6EC 0027E5EC 43002B00 */ .word 0x002B0043
+    /* 17E6F0 0027E5F0 02004400 */ .word 0x00440002
+    /* 17E6F4 0027E5F4 44002C00 */ .word 0x002C0044
+    /* 17E6F8 0027E5F8 02004500 */ .word 0x00450002
+    /* 17E6FC 0027E5FC 45002D00 */ .word 0x002D0045
+    /* 17E700 0027E600 02004600 */ .word 0x00460002
+    /* 17E704 0027E604 46001401 */ .word 0x01140046
+    /* 17E708 0027E608 02004700 */ .word 0x00470002
+    /* 17E70C 0027E60C 47001501 */ .word 0x01150047
+    /* 17E710 0027E610 02004800 */ .word 0x00480002
+    /* 17E714 0027E614 48002201 */ .word 0x01220048
+    /* 17E718 0027E618 02004900 */ .word 0x00490002
     /* 17E71C 0027E61C 49000000 */ .word 0x00000049
-    /* 17E720 0027E620 02004A00 */ .word GlobalDataBuffer + 0x1F4F82
-    /* 17E724 0027E624 4A002E00 */ .word GlobalDataBuffer + 0x34FCA
-    /* 17E728 0027E628 02004B00 */ .word GlobalDataBuffer + 0x204F82
-    /* 17E72C 0027E62C 4B002F00 */ .word GlobalDataBuffer + 0x44FCB
-    /* 17E730 0027E630 02004C00 */ .word GlobalDataBuffer + 0x214F82
-    /* 17E734 0027E634 4C003000 */ .word GlobalDataBuffer + 0x54FCC
-    /* 17E738 0027E638 02004D00 */ .word GlobalDataBuffer + 0x224F82
-    /* 17E73C 0027E63C 4D003100 */ .word GlobalDataBuffer + 0x64FCD
-    /* 17E740 0027E640 02004E00 */ .word GlobalDataBuffer + 0x234F82
-    /* 17E744 0027E644 4E003200 */ .word GlobalDataBuffer + 0x74FCE
-    /* 17E748 0027E648 02004F00 */ .word GlobalDataBuffer + 0x244F82
-    /* 17E74C 0027E64C 4F003300 */ .word GlobalDataBuffer + 0x84FCF
-    /* 17E750 0027E650 02005000 */ .word GlobalDataBuffer + 0x254F82
-    /* 17E754 0027E654 50003400 */ .word GlobalDataBuffer + 0x94FD0
-    /* 17E758 0027E658 02005100 */ .word GlobalDataBuffer + 0x264F82
-    /* 17E75C 0027E65C 51003500 */ .word GlobalDataBuffer + 0xA4FD1
-    /* 17E760 0027E660 02005200 */ .word GlobalDataBuffer + 0x274F82
-    /* 17E764 0027E664 52003600 */ .word GlobalDataBuffer + 0xB4FD2
-    /* 17E768 0027E668 02005300 */ .word GlobalDataBuffer + 0x284F82
-    /* 17E76C 0027E66C 53003700 */ .word GlobalDataBuffer + 0xC4FD3
-    /* 17E770 0027E670 02005400 */ .word GlobalDataBuffer + 0x294F82
-    /* 17E774 0027E674 54003800 */ .word GlobalDataBuffer + 0xD4FD4
-    /* 17E778 0027E678 02005500 */ .word GlobalDataBuffer + 0x2A4F82
-    /* 17E77C 0027E67C 55003900 */ .word GlobalDataBuffer + 0xE4FD5
-    /* 17E780 0027E680 02005600 */ .word GlobalDataBuffer + 0x2B4F82
-    /* 17E784 0027E684 56001601 */ .word GlobalDataBuffer + 0xEB4FD6
-    /* 17E788 0027E688 02005700 */ .word GlobalDataBuffer + 0x2C4F82
-    /* 17E78C 0027E68C 57001701 */ .word GlobalDataBuffer + 0xEC4FD7
-    /* 17E790 0027E690 02005800 */ .word GlobalDataBuffer + 0x2D4F82
-    /* 17E794 0027E694 58002301 */ .word GlobalDataBuffer + 0xF84FD8
-    /* 17E798 0027E698 02005900 */ .word GlobalDataBuffer + 0x2E4F82
+    /* 17E720 0027E620 02004A00 */ .word 0x004A0002
+    /* 17E724 0027E624 4A002E00 */ .word 0x002E004A
+    /* 17E728 0027E628 02004B00 */ .word 0x004B0002
+    /* 17E72C 0027E62C 4B002F00 */ .word 0x002F004B
+    /* 17E730 0027E630 02004C00 */ .word 0x004C0002
+    /* 17E734 0027E634 4C003000 */ .word 0x0030004C
+    /* 17E738 0027E638 02004D00 */ .word 0x004D0002
+    /* 17E73C 0027E63C 4D003100 */ .word 0x0031004D
+    /* 17E740 0027E640 02004E00 */ .word 0x004E0002
+    /* 17E744 0027E644 4E003200 */ .word 0x0032004E
+    /* 17E748 0027E648 02004F00 */ .word 0x004F0002
+    /* 17E74C 0027E64C 4F003300 */ .word 0x0033004F
+    /* 17E750 0027E650 02005000 */ .word 0x00500002
+    /* 17E754 0027E654 50003400 */ .word 0x00340050
+    /* 17E758 0027E658 02005100 */ .word 0x00510002
+    /* 17E75C 0027E65C 51003500 */ .word 0x00350051
+    /* 17E760 0027E660 02005200 */ .word 0x00520002
+    /* 17E764 0027E664 52003600 */ .word 0x00360052
+    /* 17E768 0027E668 02005300 */ .word 0x00530002
+    /* 17E76C 0027E66C 53003700 */ .word 0x00370053
+    /* 17E770 0027E670 02005400 */ .word 0x00540002
+    /* 17E774 0027E674 54003800 */ .word 0x00380054
+    /* 17E778 0027E678 02005500 */ .word 0x00550002
+    /* 17E77C 0027E67C 55003900 */ .word 0x00390055
+    /* 17E780 0027E680 02005600 */ .word 0x00560002
+    /* 17E784 0027E684 56001601 */ .word 0x01160056
+    /* 17E788 0027E688 02005700 */ .word 0x00570002
+    /* 17E78C 0027E68C 57001701 */ .word 0x01170057
+    /* 17E790 0027E690 02005800 */ .word 0x00580002
+    /* 17E794 0027E694 58002301 */ .word 0x01230058
+    /* 17E798 0027E698 02005900 */ .word 0x00590002
     /* 17E79C 0027E69C 59000000 */ .word 0x00000059
-    /* 17E7A0 0027E6A0 02005A00 */ .word GlobalDataBuffer + 0x2F4F82
-    /* 17E7A4 0027E6A4 5A003A00 */ .word GlobalDataBuffer + 0xF4FDA
-    /* 17E7A8 0027E6A8 02005B00 */ .word GlobalDataBuffer + 0x304F82
-    /* 17E7AC 0027E6AC 5B003B00 */ .word GlobalDataBuffer + 0x104FDB
-    /* 17E7B0 0027E6B0 02005C00 */ .word GlobalDataBuffer + 0x314F82
-    /* 17E7B4 0027E6B4 5C003C00 */ .word GlobalDataBuffer + 0x114FDC
-    /* 17E7B8 0027E6B8 02005D00 */ .word GlobalDataBuffer + 0x324F82
-    /* 17E7BC 0027E6BC 5D003D00 */ .word GlobalDataBuffer + 0x124FDD
-    /* 17E7C0 0027E6C0 02005E00 */ .word GlobalDataBuffer + 0x334F82
-    /* 17E7C4 0027E6C4 5E003E00 */ .word GlobalDataBuffer + 0x134FDE
-    /* 17E7C8 0027E6C8 02005F00 */ .word GlobalDataBuffer + 0x344F82
-    /* 17E7CC 0027E6CC 5F003F00 */ .word GlobalDataBuffer + 0x144FDF
-    /* 17E7D0 0027E6D0 02006000 */ .word GlobalDataBuffer + 0x354F82
-    /* 17E7D4 0027E6D4 60004000 */ .word GlobalDataBuffer + 0x154FE0
-    /* 17E7D8 0027E6D8 02006100 */ .word GlobalDataBuffer + 0x364F82
-    /* 17E7DC 0027E6DC 61004100 */ .word GlobalDataBuffer + 0x164FE1
-    /* 17E7E0 0027E6E0 02006200 */ .word GlobalDataBuffer + 0x374F82
-    /* 17E7E4 0027E6E4 62004200 */ .word GlobalDataBuffer + 0x174FE2
-    /* 17E7E8 0027E6E8 02006300 */ .word GlobalDataBuffer + 0x384F82
-    /* 17E7EC 0027E6EC 63004300 */ .word GlobalDataBuffer + 0x184FE3
-    /* 17E7F0 0027E6F0 02006400 */ .word GlobalDataBuffer + 0x394F82
-    /* 17E7F4 0027E6F4 64004400 */ .word GlobalDataBuffer + 0x194FE4
-    /* 17E7F8 0027E6F8 02006500 */ .word GlobalDataBuffer + 0x3A4F82
-    /* 17E7FC 0027E6FC 65004500 */ .word GlobalDataBuffer + 0x1A4FE5
-    /* 17E800 0027E700 02006600 */ .word GlobalDataBuffer + 0x3B4F82
-    /* 17E804 0027E704 66001801 */ .word GlobalDataBuffer + 0xED4FE6
-    /* 17E808 0027E708 02006700 */ .word GlobalDataBuffer + 0x3C4F82
-    /* 17E80C 0027E70C 67001901 */ .word GlobalDataBuffer + 0xEE4FE7
-    /* 17E810 0027E710 02006800 */ .word GlobalDataBuffer + 0x3D4F82
+    /* 17E7A0 0027E6A0 02005A00 */ .word 0x005A0002
+    /* 17E7A4 0027E6A4 5A003A00 */ .word 0x003A005A
+    /* 17E7A8 0027E6A8 02005B00 */ .word 0x005B0002
+    /* 17E7AC 0027E6AC 5B003B00 */ .word 0x003B005B
+    /* 17E7B0 0027E6B0 02005C00 */ .word 0x005C0002
+    /* 17E7B4 0027E6B4 5C003C00 */ .word 0x003C005C
+    /* 17E7B8 0027E6B8 02005D00 */ .word 0x005D0002
+    /* 17E7BC 0027E6BC 5D003D00 */ .word 0x003D005D
+    /* 17E7C0 0027E6C0 02005E00 */ .word 0x005E0002
+    /* 17E7C4 0027E6C4 5E003E00 */ .word 0x003E005E
+    /* 17E7C8 0027E6C8 02005F00 */ .word 0x005F0002
+    /* 17E7CC 0027E6CC 5F003F00 */ .word 0x003F005F
+    /* 17E7D0 0027E6D0 02006000 */ .word 0x00600002
+    /* 17E7D4 0027E6D4 60004000 */ .word 0x00400060
+    /* 17E7D8 0027E6D8 02006100 */ .word 0x00610002
+    /* 17E7DC 0027E6DC 61004100 */ .word 0x00410061
+    /* 17E7E0 0027E6E0 02006200 */ .word 0x00620002
+    /* 17E7E4 0027E6E4 62004200 */ .word 0x00420062
+    /* 17E7E8 0027E6E8 02006300 */ .word 0x00630002
+    /* 17E7EC 0027E6EC 63004300 */ .word 0x00430063
+    /* 17E7F0 0027E6F0 02006400 */ .word 0x00640002
+    /* 17E7F4 0027E6F4 64004400 */ .word 0x00440064
+    /* 17E7F8 0027E6F8 02006500 */ .word 0x00650002
+    /* 17E7FC 0027E6FC 65004500 */ .word 0x00450065
+    /* 17E800 0027E700 02006600 */ .word 0x00660002
+    /* 17E804 0027E704 66001801 */ .word 0x01180066
+    /* 17E808 0027E708 02006700 */ .word 0x00670002
+    /* 17E80C 0027E70C 67001901 */ .word 0x01190067
+    /* 17E810 0027E710 02006800 */ .word 0x00680002
     /* 17E814 0027E714 68000000 */ .word 0x00000068
-    /* 17E818 0027E718 02006900 */ .word GlobalDataBuffer + 0x3E4F82
+    /* 17E818 0027E718 02006900 */ .word 0x00690002
     /* 17E81C 0027E71C 69000000 */ .word 0x00000069
-    /* 17E820 0027E720 02006A00 */ .word GlobalDataBuffer + 0x3F4F82
-    /* 17E824 0027E724 6A004600 */ .word GlobalDataBuffer + 0x1B4FEA
-    /* 17E828 0027E728 02006B00 */ .word GlobalDataBuffer + 0x404F82
-    /* 17E82C 0027E72C 6B004700 */ .word GlobalDataBuffer + 0x1C4FEB
-    /* 17E830 0027E730 02006C00 */ .word GlobalDataBuffer + 0x414F82
-    /* 17E834 0027E734 6C004800 */ .word GlobalDataBuffer + 0x1D4FEC
-    /* 17E838 0027E738 02006D00 */ .word GlobalDataBuffer + 0x424F82
-    /* 17E83C 0027E73C 6D004900 */ .word GlobalDataBuffer + 0x1E4FED
-    /* 17E840 0027E740 02006E00 */ .word GlobalDataBuffer + 0x434F82
-    /* 17E844 0027E744 6E004A00 */ .word GlobalDataBuffer + 0x1F4FEE
-    /* 17E848 0027E748 02006F00 */ .word GlobalDataBuffer + 0x444F82
-    /* 17E84C 0027E74C 6F004B00 */ .word GlobalDataBuffer + 0x204FEF
-    /* 17E850 0027E750 02007000 */ .word GlobalDataBuffer + 0x454F82
-    /* 17E854 0027E754 70004C00 */ .word GlobalDataBuffer + 0x214FF0
-    /* 17E858 0027E758 02007100 */ .word GlobalDataBuffer + 0x464F82
-    /* 17E85C 0027E75C 71004D00 */ .word GlobalDataBuffer + 0x224FF1
-    /* 17E860 0027E760 02007200 */ .word GlobalDataBuffer + 0x474F82
-    /* 17E864 0027E764 72004E00 */ .word GlobalDataBuffer + 0x234FF2
-    /* 17E868 0027E768 02007300 */ .word GlobalDataBuffer + 0x484F82
-    /* 17E86C 0027E76C 73004F00 */ .word GlobalDataBuffer + 0x244FF3
-    /* 17E870 0027E770 02007400 */ .word GlobalDataBuffer + 0x494F82
-    /* 17E874 0027E774 74005000 */ .word GlobalDataBuffer + 0x254FF4
-    /* 17E878 0027E778 02007500 */ .word GlobalDataBuffer + 0x4A4F82
-    /* 17E87C 0027E77C 75001A01 */ .word GlobalDataBuffer + 0xEF4FF5
-    /* 17E880 0027E780 02007600 */ .word GlobalDataBuffer + 0x4B4F82
-    /* 17E884 0027E784 76001B01 */ .word GlobalDataBuffer + 0xF04FF6
-    /* 17E888 0027E788 02007700 */ .word GlobalDataBuffer + 0x4C4F82
+    /* 17E820 0027E720 02006A00 */ .word 0x006A0002
+    /* 17E824 0027E724 6A004600 */ .word 0x0046006A
+    /* 17E828 0027E728 02006B00 */ .word 0x006B0002
+    /* 17E82C 0027E72C 6B004700 */ .word 0x0047006B
+    /* 17E830 0027E730 02006C00 */ .word 0x006C0002
+    /* 17E834 0027E734 6C004800 */ .word 0x0048006C
+    /* 17E838 0027E738 02006D00 */ .word 0x006D0002
+    /* 17E83C 0027E73C 6D004900 */ .word 0x0049006D
+    /* 17E840 0027E740 02006E00 */ .word 0x006E0002
+    /* 17E844 0027E744 6E004A00 */ .word 0x004A006E
+    /* 17E848 0027E748 02006F00 */ .word 0x006F0002
+    /* 17E84C 0027E74C 6F004B00 */ .word 0x004B006F
+    /* 17E850 0027E750 02007000 */ .word 0x00700002
+    /* 17E854 0027E754 70004C00 */ .word 0x004C0070
+    /* 17E858 0027E758 02007100 */ .word 0x00710002
+    /* 17E85C 0027E75C 71004D00 */ .word 0x004D0071
+    /* 17E860 0027E760 02007200 */ .word 0x00720002
+    /* 17E864 0027E764 72004E00 */ .word 0x004E0072
+    /* 17E868 0027E768 02007300 */ .word 0x00730002
+    /* 17E86C 0027E76C 73004F00 */ .word 0x004F0073
+    /* 17E870 0027E770 02007400 */ .word 0x00740002
+    /* 17E874 0027E774 74005000 */ .word 0x00500074
+    /* 17E878 0027E778 02007500 */ .word 0x00750002
+    /* 17E87C 0027E77C 75001A01 */ .word 0x011A0075
+    /* 17E880 0027E780 02007600 */ .word 0x00760002
+    /* 17E884 0027E784 76001B01 */ .word 0x011B0076
+    /* 17E888 0027E788 02007700 */ .word 0x00770002
     /* 17E88C 0027E78C 77000000 */ .word 0x00000077
 
 glabel defWeapon__4
@@ -60812,7 +60812,7 @@ glabel BtEntryEffect05
 
 glabel BtEntryEffect06
     /* 17EF30 0027EE30 61776162 */ .word 0x62617761
-    /* 17EF34 0027EE34 72657300 */ .word GlobalDataBuffer + 0x48B4F2
+    /* 17EF34 0027EE34 72657300 */ .word 0x00736572
     /* 17EF38 0027EE38 00000000 */ .word 0x00000000
     /* 17EF3C 0027EE3C 00000000 */ .word 0x00000000
     /* 17EF40 0027EE40 00000000 */ .word 0x00000000
@@ -60842,7 +60842,7 @@ glabel BtEntryEffect06
 
 glabel BtEntryEffect07
     /* 17EFA0 0027EEA0 675F7761 */ .word 0x61775F67
-    /* 17EFA4 0027EEA4 76653100 */ .word GlobalDataBuffer + 0x6B4F6
+    /* 17EFA4 0027EEA4 76653100 */ .word 0x00316576
     /* 17EFA8 0027EEA8 00000000 */ .word 0x00000000
     /* 17EFAC 0027EEAC 00000000 */ .word 0x00000000
     /* 17EFB0 0027EEB0 00000000 */ .word 0x00000000
@@ -60872,7 +60872,7 @@ glabel BtEntryEffect07
 
 glabel BtEntryEffect08
     /* 17F010 0027EF10 675F7761 */ .word 0x61775F67
-    /* 17F014 0027EF14 76653200 */ .word GlobalDataBuffer + 0x7B4F6
+    /* 17F014 0027EF14 76653200 */ .word 0x00326576
     /* 17F018 0027EF18 00000000 */ .word 0x00000000
     /* 17F01C 0027EF1C 00000000 */ .word 0x00000000
     /* 17F020 0027EF20 00000000 */ .word 0x00000000
@@ -60903,7 +60903,7 @@ glabel BtEntryEffect08
 glabel BtEntryEffect09
     /* 17F080 0027EF80 6D616769 */ .word 0x6967616D
     /* 17F084 0027EF84 635F6E6F */ .word 0x6F6E5F63
-    /* 17F088 0027EF88 726F6900 */ .word GlobalDataBuffer + 0x3EBEF2
+    /* 17F088 0027EF88 726F6900 */ .word 0x00696F72
     /* 17F08C 0027EF8C 00000000 */ .word 0x00000000
     /* 17F090 0027EF90 00000000 */ .word 0x00000000
     /* 17F094 0027EF94 01000000 */ .word 0x00000001
@@ -60992,7 +60992,7 @@ glabel BtEntryEffect11
 
 glabel BtEntryEffect12
     /* 17F1D0 0027F0D0 6D616769 */ .word 0x6967616D
-    /* 17F1D4 0027F0D4 635F7300 */ .word GlobalDataBuffer + 0x48AEE3
+    /* 17F1D4 0027F0D4 635F7300 */ .word 0x00735F63
     /* 17F1D8 0027F0D8 00000000 */ .word 0x00000000
     /* 17F1DC 0027F0DC 00000000 */ .word 0x00000000
     /* 17F1E0 0027F0E0 00000000 */ .word 0x00000000
@@ -61082,7 +61082,7 @@ glabel BtEntryEffect14
 
 glabel BtEntryEffect15
     /* 17F320 0027F220 675F6361 */ .word 0x61635F67
-    /* 17F324 0027F224 6E6F6E00 */ .word GlobalDataBuffer + 0x43BEEE
+    /* 17F324 0027F224 6E6F6E00 */ .word 0x006E6F6E
     /* 17F328 0027F228 00000000 */ .word 0x00000000
     /* 17F32C 0027F22C 00000000 */ .word 0x00000000
     /* 17F330 0027F230 00000000 */ .word 0x00000000
@@ -61202,7 +61202,7 @@ glabel BtEntryEffect18
 
 glabel BtEntryEffect19
     /* 17F4E0 0027F3E0 66756B69 */ .word 0x696B7566
-    /* 17F4E4 0027F3E4 5F657800 */ .word GlobalDataBuffer + 0x4DB4DF
+    /* 17F4E4 0027F3E4 5F657800 */ .word 0x0078655F
     /* 17F4E8 0027F3E8 00000000 */ .word 0x00000000
     /* 17F4EC 0027F3EC 00000000 */ .word 0x00000000
     /* 17F4F0 0027F3F0 00000000 */ .word 0x00000000
@@ -61263,7 +61263,7 @@ glabel BtEntryEffect20
 glabel BtEntryEffect21
     /* 17F5C0 0027F4C0 6D696B61 */ .word 0x616B696D
     /* 17F5C4 0027F4C4 7A756B69 */ .word 0x696B757A
-    /* 17F5C8 0027F4C8 5F657800 */ .word GlobalDataBuffer + 0x4DB4DF
+    /* 17F5C8 0027F4C8 5F657800 */ .word 0x0078655F
     /* 17F5CC 0027F4CC 00000000 */ .word 0x00000000
     /* 17F5D0 0027F4D0 00000000 */ .word 0x00000000
     /* 17F5D4 0027F4D4 01000000 */ .word 0x00000001
@@ -61710,9 +61710,9 @@ glabel MonstorTable
     /* 17FC48 0027FB48 00000000 */ .word 0x00000000
     /* 17FC4C 0027FB4C 00000000 */ .word 0x00000000
     /* 17FC50 0027FB50 4B000000 */ .word 0x0000004B
-    /* 17FC54 0027FB54 01006E00 */ .word GlobalDataBuffer + 0x434F81
-    /* 17FC58 0027FB58 50006400 */ .word GlobalDataBuffer + 0x394FD0
-    /* 17FC5C 0027FB5C 50008200 */ .word GlobalDataBuffer + 0x574FD0
+    /* 17FC54 0027FB54 01006E00 */ .word 0x006E0001
+    /* 17FC58 0027FB58 50006400 */ .word 0x00640050
+    /* 17FC5C 0027FB5C 50008200 */ .word 0x00820050
     /* 17FC60 0027FB60 0000C040 */ .word 0x40C00000
     /* 17FC64 0027FB64 03000000 */ .word 0x00000003
     /* 17FC68 0027FB68 FFFFFFFF */ .word 0xFFFFFFFF
@@ -61722,10 +61722,10 @@ glabel MonstorTable
     /* 17FC78 0027FB78 00000000 */ .word 0x00000000
     /* 17FC7C 0027FB7C 01000000 */ .word 0x00000001
     /* 17FC80 0027FB80 B1000100 */ .word 0x000100B1
-    /* 17FC84 0027FB84 64005000 */ .word GlobalDataBuffer + 0x254FE4
-    /* 17FC88 0027FB88 96006400 */ .word GlobalDataBuffer + 0x395016
-    /* 17FC8C 0027FB8C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 17FC90 0027FB90 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 17FC84 0027FB84 64005000 */ .word 0x00500064
+    /* 17FC88 0027FB88 96006400 */ .word 0x00640096
+    /* 17FC8C 0027FB8C 64006400 */ .word 0x00640064
+    /* 17FC90 0027FB90 64006400 */ .word 0x00640064
     /* 17FC94 0027FB94 64000000 */ .word 0x00000064
     /* 17FC98 0027FB98 0000803F */ .word 0x3F800000
     /* 17FC9C 0027FB9C 65303361 */ .word 0x61333065
@@ -61749,9 +61749,9 @@ glabel MonstorTable
     /* 17FCE4 0027FBE4 00000000 */ .word 0x00000000
     /* 17FCE8 0027FBE8 00000000 */ .word 0x00000000
     /* 17FCEC 0027FBEC 17000000 */ .word 0x00000017
-    /* 17FCF0 0027FBF0 01006E00 */ .word GlobalDataBuffer + 0x434F81
-    /* 17FCF4 0027FBF4 5A006400 */ .word GlobalDataBuffer + 0x394FDA
-    /* 17FCF8 0027FBF8 6400A000 */ .word GlobalDataBuffer + 0x754FE4
+    /* 17FCF0 0027FBF0 01006E00 */ .word 0x006E0001
+    /* 17FCF4 0027FBF4 5A006400 */ .word 0x0064005A
+    /* 17FCF8 0027FBF8 6400A000 */ .word 0x00A00064
     /* 17FCFC 0027FBFC 0000C040 */ .word 0x40C00000
     /* 17FD00 0027FC00 00000000 */ .word 0x00000000
     /* 17FD04 0027FC04 FFFFFFFF */ .word 0xFFFFFFFF
@@ -61761,10 +61761,10 @@ glabel MonstorTable
     /* 17FD14 0027FC14 00000000 */ .word 0x00000000
     /* 17FD18 0027FC18 03000000 */ .word 0x00000003
     /* 17FD1C 0027FC1C FFFF0100 */ .word 0x0001FFFF
-    /* 17FD20 0027FC20 64005A00 */ .word GlobalDataBuffer + 0x2F4FE4
-    /* 17FD24 0027FC24 94006400 */ .word GlobalDataBuffer + 0x395014
-    /* 17FD28 0027FC28 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 17FD2C 0027FC2C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 17FD20 0027FC20 64005A00 */ .word 0x005A0064
+    /* 17FD24 0027FC24 94006400 */ .word 0x00640094
+    /* 17FD28 0027FC28 64006400 */ .word 0x00640064
+    /* 17FD2C 0027FC2C 64006400 */ .word 0x00640064
     /* 17FD30 0027FC30 64000000 */ .word 0x00000064
     /* 17FD34 0027FC34 0000803F */ .word 0x3F800000
     /* 17FD38 0027FC38 65303561 */ .word 0x61353065
@@ -61788,9 +61788,9 @@ glabel MonstorTable
     /* 17FD80 0027FC80 00000000 */ .word 0x00000000
     /* 17FD84 0027FC84 00000000 */ .word 0x00000000
     /* 17FD88 0027FC88 26000000 */ .word 0x00000026
-    /* 17FD8C 0027FC8C 03006400 */ .word GlobalDataBuffer + 0x394F83
-    /* 17FD90 0027FC90 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 17FD94 0027FC94 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 17FD8C 0027FC8C 03006400 */ .word 0x00640003
+    /* 17FD90 0027FC90 64006400 */ .word 0x00640064
+    /* 17FD94 0027FC94 64006400 */ .word 0x00640064
     /* 17FD98 0027FC98 0000C040 */ .word 0x40C00000
     /* 17FD9C 0027FC9C 03001400 */ .word 0x00140003
     /* 17FDA0 0027FCA0 FFFFFFFF */ .word 0xFFFFFFFF
@@ -61800,10 +61800,10 @@ glabel MonstorTable
     /* 17FDB0 0027FCB0 00000000 */ .word 0x00000000
     /* 17FDB4 0027FCB4 05000000 */ .word 0x00000005
     /* 17FDB8 0027FCB8 A0000100 */ .word 0x000100A0
-    /* 17FDBC 0027FCBC 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 17FDC0 0027FCC0 5C006400 */ .word GlobalDataBuffer + 0x394FDC
-    /* 17FDC4 0027FCC4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 17FDC8 0027FCC8 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 17FDBC 0027FCBC 5A003200 */ .word 0x0032005A
+    /* 17FDC0 0027FCC0 5C006400 */ .word 0x0064005C
+    /* 17FDC4 0027FCC4 64006400 */ .word 0x00640064
+    /* 17FDC8 0027FCC8 64006400 */ .word 0x00640064
     /* 17FDCC 0027FCCC 64000000 */ .word 0x00000064
     /* 17FDD0 0027FCD0 3333333F */ .word 0x3F333333
     /* 17FDD4 0027FCD4 65303661 */ .word 0x61363065
@@ -61827,9 +61827,9 @@ glabel MonstorTable
     /* 17FE1C 0027FD1C 00000000 */ .word 0x00000000
     /* 17FE20 0027FD20 00000000 */ .word 0x00000000
     /* 17FE24 0027FD24 17000000 */ .word 0x00000017
-    /* 17FE28 0027FD28 05006400 */ .word GlobalDataBuffer + 0x394F85
-    /* 17FE2C 0027FD2C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 17FE30 0027FD30 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 17FE28 0027FD28 05006400 */ .word 0x00640005
+    /* 17FE2C 0027FD2C 64006400 */ .word 0x00640064
+    /* 17FE30 0027FD30 64006400 */ .word 0x00640064
     /* 17FE34 0027FD34 0000C040 */ .word 0x40C00000
     /* 17FE38 0027FD38 01000000 */ .word 0x00000001
     /* 17FE3C 0027FD3C FFFFFFFF */ .word 0xFFFFFFFF
@@ -61839,10 +61839,10 @@ glabel MonstorTable
     /* 17FE4C 0027FD4C 00000000 */ .word 0x00000000
     /* 17FE50 0027FD50 06000000 */ .word 0x00000006
     /* 17FE54 0027FD54 94000100 */ .word 0x00010094
-    /* 17FE58 0027FD58 64005A00 */ .word GlobalDataBuffer + 0x2F4FE4
-    /* 17FE5C 0027FD5C C7006400 */ .word GlobalDataBuffer + 0x395047
-    /* 17FE60 0027FD60 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 17FE64 0027FD64 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 17FE58 0027FD58 64005A00 */ .word 0x005A0064
+    /* 17FE5C 0027FD5C C7006400 */ .word 0x006400C7
+    /* 17FE60 0027FD60 64006400 */ .word 0x00640064
+    /* 17FE64 0027FD64 64006400 */ .word 0x00640064
     /* 17FE68 0027FD68 64000000 */ .word 0x00000064
     /* 17FE6C 0027FD6C 0000803F */ .word 0x3F800000
     /* 17FE70 0027FD70 65303761 */ .word 0x61373065
@@ -61866,9 +61866,9 @@ glabel MonstorTable
     /* 17FEB8 0027FDB8 00000000 */ .word 0x00000000
     /* 17FEBC 0027FDBC 00000000 */ .word 0x00000000
     /* 17FEC0 0027FDC0 B4000000 */ .word 0x000000B4
-    /* 17FEC4 0027FDC4 05006400 */ .word GlobalDataBuffer + 0x394F85
-    /* 17FEC8 0027FDC8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 17FECC 0027FDCC 64009600 */ .word GlobalDataBuffer + 0x6B4FE4
+    /* 17FEC4 0027FDC4 05006400 */ .word 0x00640005
+    /* 17FEC8 0027FDC8 64006400 */ .word 0x00640064
+    /* 17FECC 0027FDCC 64009600 */ .word 0x00960064
     /* 17FED0 0027FDD0 0000F040 */ .word 0x40F00000
     /* 17FED4 0027FDD4 05000000 */ .word 0x00000005
     /* 17FED8 0027FDD8 FFFFFFFF */ .word 0xFFFFFFFF
@@ -61878,10 +61878,10 @@ glabel MonstorTable
     /* 17FEE8 0027FDE8 00000000 */ .word 0x00000000
     /* 17FEEC 0027FDEC 07000000 */ .word 0x00000007
     /* 17FEF0 0027FDF0 AE000100 */ .word 0x000100AE
-    /* 17FEF4 0027FDF4 5A004600 */ .word GlobalDataBuffer + 0x1B4FDA
-    /* 17FEF8 0027FDF8 5D006400 */ .word GlobalDataBuffer + 0x394FDD
-    /* 17FEFC 0027FDFC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 17FF00 0027FE00 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 17FEF4 0027FDF4 5A004600 */ .word 0x0046005A
+    /* 17FEF8 0027FDF8 5D006400 */ .word 0x0064005D
+    /* 17FEFC 0027FDFC 64006400 */ .word 0x00640064
+    /* 17FF00 0027FE00 64006400 */ .word 0x00640064
     /* 17FF04 0027FE04 64000000 */ .word 0x00000064
     /* 17FF08 0027FE08 0000803F */ .word 0x3F800000
     /* 17FF0C 0027FE0C 65303861 */ .word 0x61383065
@@ -61905,9 +61905,9 @@ glabel MonstorTable
     /* 17FF54 0027FE54 00000000 */ .word 0x00000000
     /* 17FF58 0027FE58 00000000 */ .word 0x00000000
     /* 17FF5C 0027FE5C 78000000 */ .word 0x00000078
-    /* 17FF60 0027FE60 0400B400 */ .word GlobalDataBuffer + 0x894F84
-    /* 17FF64 0027FE64 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 17FF68 0027FE68 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 17FF60 0027FE60 0400B400 */ .word 0x00B40004
+    /* 17FF64 0027FE64 64006400 */ .word 0x00640064
+    /* 17FF68 0027FE68 64006400 */ .word 0x00640064
     /* 17FF6C 0027FE6C 0000D040 */ .word 0x40D00000
     /* 17FF70 0027FE70 00000000 */ .word 0x00000000
     /* 17FF74 0027FE74 0000FFFF */ .word 0xFFFF0000
@@ -61917,10 +61917,10 @@ glabel MonstorTable
     /* 17FF84 0027FE84 00000000 */ .word 0x00000000
     /* 17FF88 0027FE88 08000000 */ .word 0x00000008
     /* 17FF8C 0027FE8C 97000100 */ .word 0x00010097
-    /* 17FF90 0027FE90 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 17FF94 0027FE94 A9006400 */ .word GlobalDataBuffer + 0x395029
-    /* 17FF98 0027FE98 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 17FF9C 0027FE9C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 17FF90 0027FE90 64004600 */ .word 0x00460064
+    /* 17FF94 0027FE94 A9006400 */ .word 0x006400A9
+    /* 17FF98 0027FE98 64006400 */ .word 0x00640064
+    /* 17FF9C 0027FE9C 64006400 */ .word 0x00640064
     /* 17FFA0 0027FEA0 64000000 */ .word 0x00000064
     /* 17FFA4 0027FEA4 0000803F */ .word 0x3F800000
     /* 17FFA8 0027FEA8 65303961 */ .word 0x61393065
@@ -61944,9 +61944,9 @@ glabel MonstorTable
     /* 17FFF0 0027FEF0 00000000 */ .word 0x00000000
     /* 17FFF4 0027FEF4 00000000 */ .word 0x00000000
     /* 17FFF8 0027FEF8 3C000000 */ .word 0x0000003C
-    /* 17FFFC 0027FEFC 06006400 */ .word GlobalDataBuffer + 0x394F86
-    /* 180000 0027FF00 78006400 */ .word GlobalDataBuffer + 0x394FF8
-    /* 180004 0027FF04 78006400 */ .word GlobalDataBuffer + 0x394FF8
+    /* 17FFFC 0027FEFC 06006400 */ .word 0x00640006
+    /* 180000 0027FF00 78006400 */ .word 0x00640078
+    /* 180004 0027FF04 78006400 */ .word 0x00640078
     /* 180008 0027FF08 0000D040 */ .word 0x40D00000
     /* 18000C 0027FF0C 00000000 */ .word 0x00000000
     /* 180010 0027FF10 FFFFFFFF */ .word 0xFFFFFFFF
@@ -61956,10 +61956,10 @@ glabel MonstorTable
     /* 180020 0027FF20 00000000 */ .word 0x00000000
     /* 180024 0027FF24 09000000 */ .word 0x00000009
     /* 180028 0027FF28 97000000 */ .word 0x00000097
-    /* 18002C 0027FF2C 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 180030 0027FF30 54006400 */ .word GlobalDataBuffer + 0x394FD4
-    /* 180034 0027FF34 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180038 0027FF38 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18002C 0027FF2C 64004600 */ .word 0x00460064
+    /* 180030 0027FF30 54006400 */ .word 0x00640054
+    /* 180034 0027FF34 64006400 */ .word 0x00640064
+    /* 180038 0027FF38 64006400 */ .word 0x00640064
     /* 18003C 0027FF3C 64000000 */ .word 0x00000064
     /* 180040 0027FF40 0000803F */ .word 0x3F800000
     /* 180044 0027FF44 65313061 */ .word 0x61303165
@@ -61983,9 +61983,9 @@ glabel MonstorTable
     /* 18008C 0027FF8C 00000000 */ .word 0x00000000
     /* 180090 0027FF90 00000000 */ .word 0x00000000
     /* 180094 0027FF94 96000000 */ .word 0x00000096
-    /* 180098 0027FF98 04009600 */ .word GlobalDataBuffer + 0x6B4F84
-    /* 18009C 0027FF9C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1800A0 0027FFA0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180098 0027FF98 04009600 */ .word 0x00960004
+    /* 18009C 0027FF9C 64006400 */ .word 0x00640064
+    /* 1800A0 0027FFA0 64006400 */ .word 0x00640064
     /* 1800A4 0027FFA4 0000A040 */ .word 0x40A00000
     /* 1800A8 0027FFA8 03000A00 */ .word 0x000A0003
     /* 1800AC 0027FFAC 0300FFFF */ .word 0xFFFF0003
@@ -61995,10 +61995,10 @@ glabel MonstorTable
     /* 1800BC 0027FFBC 00000000 */ .word 0x00000000
     /* 1800C0 0027FFC0 0A000000 */ .word 0x0000000A
     /* 1800C4 0027FFC4 A8000100 */ .word 0x000100A8
-    /* 1800C8 0027FFC8 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 1800CC 0027FFCC 94006400 */ .word GlobalDataBuffer + 0x395014
-    /* 1800D0 0027FFD0 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1800D4 0027FFD4 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1800C8 0027FFC8 64004600 */ .word 0x00460064
+    /* 1800CC 0027FFCC 94006400 */ .word 0x00640094
+    /* 1800D0 0027FFD0 64006400 */ .word 0x00640064
+    /* 1800D4 0027FFD4 64006400 */ .word 0x00640064
     /* 1800D8 0027FFD8 64000000 */ .word 0x00000064
     /* 1800DC 0027FFDC 0000803F */ .word 0x3F800000
     /* 1800E0 0027FFE0 65313161 */ .word 0x61313165
@@ -62022,9 +62022,9 @@ glabel MonstorTable
     /* 180128 00280028 00000000 */ .word 0x00000000
     /* 18012C 0028002C 00000000 */ .word 0x00000000
     /* 180130 00280030 3C000000 */ .word 0x0000003C
-    /* 180134 00280034 0400B400 */ .word GlobalDataBuffer + 0x894F84
-    /* 180138 00280038 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18013C 0028003C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180134 00280034 0400B400 */ .word 0x00B40004
+    /* 180138 00280038 64006400 */ .word 0x00640064
+    /* 18013C 0028003C 64006400 */ .word 0x00640064
     /* 180140 00280040 0000D040 */ .word 0x40D00000
     /* 180144 00280044 02000000 */ .word 0x00000002
     /* 180148 00280048 0200FFFF */ .word 0xFFFF0002
@@ -62034,10 +62034,10 @@ glabel MonstorTable
     /* 180158 00280058 00000000 */ .word 0x00000000
     /* 18015C 0028005C 0B000000 */ .word 0x0000000B
     /* 180160 00280060 A7000100 */ .word 0x000100A7
-    /* 180164 00280064 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 180168 00280068 91006400 */ .word GlobalDataBuffer + 0x395011
-    /* 18016C 0028006C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180170 00280070 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180164 00280064 64004600 */ .word 0x00460064
+    /* 180168 00280068 91006400 */ .word 0x00640091
+    /* 18016C 0028006C 64006400 */ .word 0x00640064
+    /* 180170 00280070 64006400 */ .word 0x00640064
     /* 180174 00280074 64000000 */ .word 0x00000064
     /* 180178 00280078 00000000 */ .word 0x00000000
     /* 18017C 0028007C 65313261 */ .word 0x61323165
@@ -62061,9 +62061,9 @@ glabel MonstorTable
     /* 1801C4 002800C4 00000000 */ .word 0x00000000
     /* 1801C8 002800C8 00000000 */ .word 0x00000000
     /* 1801CC 002800CC 78000000 */ .word 0x00000078
-    /* 1801D0 002800D0 05006400 */ .word GlobalDataBuffer + 0x394F85
-    /* 1801D4 002800D4 64005000 */ .word GlobalDataBuffer + 0x254FE4
-    /* 1801D8 002800D8 50006400 */ .word GlobalDataBuffer + 0x394FD0
+    /* 1801D0 002800D0 05006400 */ .word 0x00640005
+    /* 1801D4 002800D4 64005000 */ .word 0x00500064
+    /* 1801D8 002800D8 50006400 */ .word 0x00640050
     /* 1801DC 002800DC 0000D040 */ .word 0x40D00000
     /* 1801E0 002800E0 02000000 */ .word 0x00000002
     /* 1801E4 002800E4 0B00FFFF */ .word 0xFFFF000B
@@ -62073,10 +62073,10 @@ glabel MonstorTable
     /* 1801F4 002800F4 00000000 */ .word 0x00000000
     /* 1801F8 002800F8 0C000000 */ .word 0x0000000C
     /* 1801FC 002800FC BC000100 */ .word 0x000100BC
-    /* 180200 00280100 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 180204 00280104 C5003200 */ .word GlobalDataBuffer + 0x75045
-    /* 180208 00280108 32007800 */ .word GlobalDataBuffer + 0x4D4FB2
-    /* 18020C 0028010C 32003200 */ .word GlobalDataBuffer + 0x74FB2
+    /* 180200 00280100 64004600 */ .word 0x00460064
+    /* 180204 00280104 C5003200 */ .word 0x003200C5
+    /* 180208 00280108 32007800 */ .word 0x00780032
+    /* 18020C 0028010C 32003200 */ .word 0x00320032
     /* 180210 00280110 32000000 */ .word 0x00000032
     /* 180214 00280114 0000803F */ .word 0x3F800000
     /* 180218 00280118 65313461 */ .word 0x61343165
@@ -62100,9 +62100,9 @@ glabel MonstorTable
     /* 180260 00280160 00000000 */ .word 0x00000000
     /* 180264 00280164 00000000 */ .word 0x00000000
     /* 180268 00280168 3C000000 */ .word 0x0000003C
-    /* 18026C 0028016C 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 180270 00280170 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180274 00280174 6E006400 */ .word GlobalDataBuffer + 0x394FEE
+    /* 18026C 0028016C 09006400 */ .word 0x00640009
+    /* 180270 00280170 64006400 */ .word 0x00640064
+    /* 180274 00280174 6E006400 */ .word 0x0064006E
     /* 180278 00280178 0000A040 */ .word 0x40A00000
     /* 18027C 0028017C 00000000 */ .word 0x00000000
     /* 180280 00280180 FFFFFFFF */ .word 0xFFFFFFFF
@@ -62112,10 +62112,10 @@ glabel MonstorTable
     /* 180290 00280190 00000000 */ .word 0x00000000
     /* 180294 00280194 0E000000 */ .word 0x0000000E
     /* 180298 00280198 AA000100 */ .word 0x000100AA
-    /* 18029C 0028019C 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 1802A0 002801A0 91006400 */ .word GlobalDataBuffer + 0x395011
-    /* 1802A4 002801A4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1802A8 002801A8 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18029C 0028019C 64004600 */ .word 0x00460064
+    /* 1802A0 002801A0 91006400 */ .word 0x00640091
+    /* 1802A4 002801A4 64006400 */ .word 0x00640064
+    /* 1802A8 002801A8 64006400 */ .word 0x00640064
     /* 1802AC 002801AC 64000000 */ .word 0x00000064
     /* 1802B0 002801B0 0000803F */ .word 0x3F800000
     /* 1802B4 002801B4 65313561 */ .word 0x61353165
@@ -62139,9 +62139,9 @@ glabel MonstorTable
     /* 1802FC 002801FC 00000000 */ .word 0x00000000
     /* 180300 00280200 00000000 */ .word 0x00000000
     /* 180304 00280204 3C000000 */ .word 0x0000003C
-    /* 180308 00280208 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 18030C 0028020C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180310 00280210 6E006400 */ .word GlobalDataBuffer + 0x394FEE
+    /* 180308 00280208 09006400 */ .word 0x00640009
+    /* 18030C 0028020C 64006400 */ .word 0x00640064
+    /* 180310 00280210 6E006400 */ .word 0x0064006E
     /* 180314 00280214 0000A040 */ .word 0x40A00000
     /* 180318 00280218 00000000 */ .word 0x00000000
     /* 18031C 0028021C FFFFFFFF */ .word 0xFFFFFFFF
@@ -62151,10 +62151,10 @@ glabel MonstorTable
     /* 18032C 0028022C 00000000 */ .word 0x00000000
     /* 180330 00280230 0F000000 */ .word 0x0000000F
     /* 180334 00280234 92000100 */ .word 0x00010092
-    /* 180338 00280238 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 18033C 0028023C 9B006400 */ .word GlobalDataBuffer + 0x39501B
-    /* 180340 00280240 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180344 00280244 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180338 00280238 64004600 */ .word 0x00460064
+    /* 18033C 0028023C 9B006400 */ .word 0x0064009B
+    /* 180340 00280240 64006400 */ .word 0x00640064
+    /* 180344 00280244 64006400 */ .word 0x00640064
     /* 180348 00280248 64000000 */ .word 0x00000064
     /* 18034C 0028024C 0000803F */ .word 0x3F800000
     /* 180350 00280250 65313661 */ .word 0x61363165
@@ -62178,9 +62178,9 @@ glabel MonstorTable
     /* 180398 00280298 00000000 */ .word 0x00000000
     /* 18039C 0028029C 00000000 */ .word 0x00000000
     /* 1803A0 002802A0 3C000000 */ .word 0x0000003C
-    /* 1803A4 002802A4 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 1803A8 002802A8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1803AC 002802AC 6E006400 */ .word GlobalDataBuffer + 0x394FEE
+    /* 1803A4 002802A4 09006400 */ .word 0x00640009
+    /* 1803A8 002802A8 64006400 */ .word 0x00640064
+    /* 1803AC 002802AC 6E006400 */ .word 0x0064006E
     /* 1803B0 002802B0 0000A040 */ .word 0x40A00000
     /* 1803B4 002802B4 00000000 */ .word 0x00000000
     /* 1803B8 002802B8 1300FFFF */ .word 0xFFFF0013
@@ -62190,10 +62190,10 @@ glabel MonstorTable
     /* 1803C8 002802C8 00000000 */ .word 0x00000000
     /* 1803CC 002802CC 10000000 */ .word 0x00000010
     /* 1803D0 002802D0 97000100 */ .word 0x00010097
-    /* 1803D4 002802D4 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 1803D8 002802D8 91006400 */ .word GlobalDataBuffer + 0x395011
-    /* 1803DC 002802DC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1803E0 002802E0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1803D4 002802D4 64004600 */ .word 0x00460064
+    /* 1803D8 002802D8 91006400 */ .word 0x00640091
+    /* 1803DC 002802DC 64006400 */ .word 0x00640064
+    /* 1803E0 002802E0 64006400 */ .word 0x00640064
     /* 1803E4 002802E4 64000000 */ .word 0x00000064
     /* 1803E8 002802E8 0000803F */ .word 0x3F800000
     /* 1803EC 002802EC 65313761 */ .word 0x61373165
@@ -62217,9 +62217,9 @@ glabel MonstorTable
     /* 180434 00280334 00000000 */ .word 0x00000000
     /* 180438 00280338 00000000 */ .word 0x00000000
     /* 18043C 0028033C 3C000000 */ .word 0x0000003C
-    /* 180440 00280340 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 180444 00280344 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180448 00280348 6E006400 */ .word GlobalDataBuffer + 0x394FEE
+    /* 180440 00280340 09006400 */ .word 0x00640009
+    /* 180444 00280344 64006400 */ .word 0x00640064
+    /* 180448 00280348 6E006400 */ .word 0x0064006E
     /* 18044C 0028034C 0000A040 */ .word 0x40A00000
     /* 180450 00280350 00000000 */ .word 0x00000000
     /* 180454 00280354 FFFFFFFF */ .word 0xFFFFFFFF
@@ -62229,10 +62229,10 @@ glabel MonstorTable
     /* 180464 00280364 00000000 */ .word 0x00000000
     /* 180468 00280368 11000000 */ .word 0x00000011
     /* 18046C 0028036C 92000100 */ .word 0x00010092
-    /* 180470 00280370 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 180474 00280374 91006400 */ .word GlobalDataBuffer + 0x395011
-    /* 180478 00280378 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18047C 0028037C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180470 00280370 64004600 */ .word 0x00460064
+    /* 180474 00280374 91006400 */ .word 0x00640091
+    /* 180478 00280378 64006400 */ .word 0x00640064
+    /* 18047C 0028037C 64006400 */ .word 0x00640064
     /* 180480 00280380 64000000 */ .word 0x00000064
     /* 180484 00280384 0000803F */ .word 0x3F800000
     /* 180488 00280388 65313861 */ .word 0x61383165
@@ -62256,9 +62256,9 @@ glabel MonstorTable
     /* 1804D0 002803D0 00000000 */ .word 0x00000000
     /* 1804D4 002803D4 00000000 */ .word 0x00000000
     /* 1804D8 002803D8 3C000000 */ .word 0x0000003C
-    /* 1804DC 002803DC 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 1804E0 002803E0 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1804E4 002803E4 6E006400 */ .word GlobalDataBuffer + 0x394FEE
+    /* 1804DC 002803DC 09006400 */ .word 0x00640009
+    /* 1804E0 002803E0 64006400 */ .word 0x00640064
+    /* 1804E4 002803E4 6E006400 */ .word 0x0064006E
     /* 1804E8 002803E8 0000A040 */ .word 0x40A00000
     /* 1804EC 002803EC 00000000 */ .word 0x00000000
     /* 1804F0 002803F0 0400FFFF */ .word 0xFFFF0004
@@ -62268,10 +62268,10 @@ glabel MonstorTable
     /* 180500 00280400 00000000 */ .word 0x00000000
     /* 180504 00280404 12000000 */ .word 0x00000012
     /* 180508 00280408 97000100 */ .word 0x00010097
-    /* 18050C 0028040C 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 180510 00280410 91006400 */ .word GlobalDataBuffer + 0x395011
-    /* 180514 00280414 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180518 00280418 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18050C 0028040C 64004600 */ .word 0x00460064
+    /* 180510 00280410 91006400 */ .word 0x00640091
+    /* 180514 00280414 64006400 */ .word 0x00640064
+    /* 180518 00280418 64006400 */ .word 0x00640064
     /* 18051C 0028041C 64000000 */ .word 0x00000064
     /* 180520 00280420 0000803F */ .word 0x3F800000
     /* 180524 00280424 65313961 */ .word 0x61393165
@@ -62295,9 +62295,9 @@ glabel MonstorTable
     /* 18056C 0028046C 00000000 */ .word 0x00000000
     /* 180570 00280470 00000000 */ .word 0x00000000
     /* 180574 00280474 3C000000 */ .word 0x0000003C
-    /* 180578 00280478 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 18057C 0028047C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180580 00280480 6E006400 */ .word GlobalDataBuffer + 0x394FEE
+    /* 180578 00280478 09006400 */ .word 0x00640009
+    /* 18057C 0028047C 64006400 */ .word 0x00640064
+    /* 180580 00280480 6E006400 */ .word 0x0064006E
     /* 180584 00280484 0000A040 */ .word 0x40A00000
     /* 180588 00280488 00000000 */ .word 0x00000000
     /* 18058C 0028048C FFFFFFFF */ .word 0xFFFFFFFF
@@ -62307,10 +62307,10 @@ glabel MonstorTable
     /* 18059C 0028049C 00000000 */ .word 0x00000000
     /* 1805A0 002804A0 13000000 */ .word 0x00000013
     /* 1805A4 002804A4 94000100 */ .word 0x00010094
-    /* 1805A8 002804A8 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 1805AC 002804AC 91006400 */ .word GlobalDataBuffer + 0x395011
-    /* 1805B0 002804B0 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1805B4 002804B4 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1805A8 002804A8 64004600 */ .word 0x00460064
+    /* 1805AC 002804AC 91006400 */ .word 0x00640091
+    /* 1805B0 002804B0 64006400 */ .word 0x00640064
+    /* 1805B4 002804B4 64006400 */ .word 0x00640064
     /* 1805B8 002804B8 64000000 */ .word 0x00000064
     /* 1805BC 002804BC 0000803F */ .word 0x3F800000
     /* 1805C0 002804C0 65323061 */ .word 0x61303265
@@ -62334,9 +62334,9 @@ glabel MonstorTable
     /* 180608 00280508 00000000 */ .word 0x00000000
     /* 18060C 0028050C 00000000 */ .word 0x00000000
     /* 180610 00280510 3C000000 */ .word 0x0000003C
-    /* 180614 00280514 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 180618 00280518 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18061C 0028051C 6E006400 */ .word GlobalDataBuffer + 0x394FEE
+    /* 180614 00280514 09006400 */ .word 0x00640009
+    /* 180618 00280518 64006400 */ .word 0x00640064
+    /* 18061C 0028051C 6E006400 */ .word 0x0064006E
     /* 180620 00280520 0000A040 */ .word 0x40A00000
     /* 180624 00280524 00000000 */ .word 0x00000000
     /* 180628 00280528 FFFFFFFF */ .word 0xFFFFFFFF
@@ -62346,10 +62346,10 @@ glabel MonstorTable
     /* 180638 00280538 00000000 */ .word 0x00000000
     /* 18063C 0028053C 14000000 */ .word 0x00000014
     /* 180640 00280540 94000100 */ .word 0x00010094
-    /* 180644 00280544 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 180648 00280548 91006400 */ .word GlobalDataBuffer + 0x395011
-    /* 18064C 0028054C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180650 00280550 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180644 00280544 64004600 */ .word 0x00460064
+    /* 180648 00280548 91006400 */ .word 0x00640091
+    /* 18064C 0028054C 64006400 */ .word 0x00640064
+    /* 180650 00280550 64006400 */ .word 0x00640064
     /* 180654 00280554 64000000 */ .word 0x00000064
     /* 180658 00280558 0000803F */ .word 0x3F800000
     /* 18065C 0028055C 65323161 */ .word 0x61313265
@@ -62373,9 +62373,9 @@ glabel MonstorTable
     /* 1806A4 002805A4 00000000 */ .word 0x00000000
     /* 1806A8 002805A8 00000000 */ .word 0x00000000
     /* 1806AC 002805AC 0E010000 */ .word 0x0000010E
-    /* 1806B0 002805B0 09004600 */ .word GlobalDataBuffer + 0x1B4F89
-    /* 1806B4 002805B4 46004600 */ .word GlobalDataBuffer + 0x1B4FC6
-    /* 1806B8 002805B8 46006400 */ .word GlobalDataBuffer + 0x394FC6
+    /* 1806B0 002805B0 09004600 */ .word 0x00460009
+    /* 1806B4 002805B4 46004600 */ .word 0x00460046
+    /* 1806B8 002805B8 46006400 */ .word 0x00640046
     /* 1806BC 002805BC 00000041 */ .word 0x41000000
     /* 1806C0 002805C0 00000000 */ .word 0x00000000
     /* 1806C4 002805C4 0500FFFF */ .word 0xFFFF0005
@@ -62385,10 +62385,10 @@ glabel MonstorTable
     /* 1806D4 002805D4 00000000 */ .word 0x00000000
     /* 1806D8 002805D8 15000000 */ .word 0x00000015
     /* 1806DC 002805DC A9000000 */ .word 0x000000A9
-    /* 1806E0 002805E0 55003200 */ .word GlobalDataBuffer + 0x74FD5
-    /* 1806E4 002805E4 5E006400 */ .word GlobalDataBuffer + 0x394FDE
-    /* 1806E8 002805E8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1806EC 002805EC 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1806E0 002805E0 55003200 */ .word 0x00320055
+    /* 1806E4 002805E4 5E006400 */ .word 0x0064005E
+    /* 1806E8 002805E8 64006400 */ .word 0x00640064
+    /* 1806EC 002805EC 64006400 */ .word 0x00640064
     /* 1806F0 002805F0 64000000 */ .word 0x00000064
     /* 1806F4 002805F4 0000803F */ .word 0x3F800000
     /* 1806F8 002805F8 65323261 */ .word 0x61323265
@@ -62412,9 +62412,9 @@ glabel MonstorTable
     /* 180740 00280640 00000000 */ .word 0x00000000
     /* 180744 00280644 00000000 */ .word 0x00000000
     /* 180748 00280648 78000000 */ .word 0x00000078
-    /* 18074C 0028064C 09005A00 */ .word GlobalDataBuffer + 0x2F4F89
-    /* 180750 00280650 5A005A00 */ .word GlobalDataBuffer + 0x2F4FDA
-    /* 180754 00280654 5A006400 */ .word GlobalDataBuffer + 0x394FDA
+    /* 18074C 0028064C 09005A00 */ .word 0x005A0009
+    /* 180750 00280650 5A005A00 */ .word 0x005A005A
+    /* 180754 00280654 5A006400 */ .word 0x0064005A
     /* 180758 00280658 00000041 */ .word 0x41000000
     /* 18075C 0028065C 00000000 */ .word 0x00000000
     /* 180760 00280660 0400FFFF */ .word 0xFFFF0004
@@ -62424,10 +62424,10 @@ glabel MonstorTable
     /* 180770 00280670 00000000 */ .word 0x00000000
     /* 180774 00280674 16000000 */ .word 0x00000016
     /* 180778 00280678 A9000000 */ .word 0x000000A9
-    /* 18077C 0028067C 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 180780 00280680 5E006400 */ .word GlobalDataBuffer + 0x394FDE
-    /* 180784 00280684 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180788 00280688 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18077C 0028067C 5A003200 */ .word 0x0032005A
+    /* 180780 00280680 5E006400 */ .word 0x0064005E
+    /* 180784 00280684 64006400 */ .word 0x00640064
+    /* 180788 00280688 64006400 */ .word 0x00640064
     /* 18078C 0028068C 64000000 */ .word 0x00000064
     /* 180790 00280690 0000803F */ .word 0x3F800000
     /* 180794 00280694 65323361 */ .word 0x61333265
@@ -62451,9 +62451,9 @@ glabel MonstorTable
     /* 1807DC 002806DC 00000000 */ .word 0x00000000
     /* 1807E0 002806E0 00000000 */ .word 0x00000000
     /* 1807E4 002806E4 FA000000 */ .word 0x000000FA
-    /* 1807E8 002806E8 02007800 */ .word GlobalDataBuffer + 0x4D4F82
-    /* 1807EC 002806EC 64009600 */ .word GlobalDataBuffer + 0x6B4FE4
-    /* 1807F0 002806F0 78006400 */ .word GlobalDataBuffer + 0x394FF8
+    /* 1807E8 002806E8 02007800 */ .word 0x00780002
+    /* 1807EC 002806EC 64009600 */ .word 0x00960064
+    /* 1807F0 002806F0 78006400 */ .word 0x00640078
     /* 1807F4 002806F4 0000C040 */ .word 0x40C00000
     /* 1807F8 002806F8 05001400 */ .word 0x00140005
     /* 1807FC 002806FC 0600FFFF */ .word 0xFFFF0006
@@ -62463,10 +62463,10 @@ glabel MonstorTable
     /* 18080C 0028070C 00000000 */ .word 0x00000000
     /* 180810 00280710 17000000 */ .word 0x00000017
     /* 180814 00280714 99000100 */ .word 0x00010099
-    /* 180818 00280718 5F004600 */ .word GlobalDataBuffer + 0x1B4FDF
-    /* 18081C 0028071C C1006400 */ .word GlobalDataBuffer + 0x395041
-    /* 180820 00280720 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180824 00280724 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180818 00280718 5F004600 */ .word 0x0046005F
+    /* 18081C 0028071C C1006400 */ .word 0x006400C1
+    /* 180820 00280720 64006400 */ .word 0x00640064
+    /* 180824 00280724 64006400 */ .word 0x00640064
     /* 180828 00280728 64000000 */ .word 0x00000064
     /* 18082C 0028072C 0000803F */ .word 0x3F800000
     /* 180830 00280730 65323461 */ .word 0x61343265
@@ -62490,9 +62490,9 @@ glabel MonstorTable
     /* 180878 00280778 00000000 */ .word 0x00000000
     /* 18087C 0028077C 00000000 */ .word 0x00000000
     /* 180880 00280780 E1000000 */ .word 0x000000E1
-    /* 180884 00280784 02007800 */ .word GlobalDataBuffer + 0x4D4F82
-    /* 180888 00280788 64009600 */ .word GlobalDataBuffer + 0x6B4FE4
-    /* 18088C 0028078C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180884 00280784 02007800 */ .word 0x00780002
+    /* 180888 00280788 64009600 */ .word 0x00960064
+    /* 18088C 0028078C 64006400 */ .word 0x00640064
     /* 180890 00280790 0000E040 */ .word 0x40E00000
     /* 180894 00280794 00000000 */ .word 0x00000000
     /* 180898 00280798 0200FFFF */ .word 0xFFFF0002
@@ -62502,10 +62502,10 @@ glabel MonstorTable
     /* 1808A8 002807A8 00000000 */ .word 0x00000000
     /* 1808AC 002807AC 18000000 */ .word 0x00000018
     /* 1808B0 002807B0 86000100 */ .word 0x00010086
-    /* 1808B4 002807B4 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 1808B8 002807B8 E2006400 */ .word GlobalDataBuffer + 0x395062
-    /* 1808BC 002807BC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1808C0 002807C0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1808B4 002807B4 64004600 */ .word 0x00460064
+    /* 1808B8 002807B8 E2006400 */ .word 0x006400E2
+    /* 1808BC 002807BC 64006400 */ .word 0x00640064
+    /* 1808C0 002807C0 64006400 */ .word 0x00640064
     /* 1808C4 002807C4 64000000 */ .word 0x00000064
     /* 1808C8 002807C8 0000803F */ .word 0x3F800000
     /* 1808CC 002807CC 65323561 */ .word 0x61353265
@@ -62529,9 +62529,9 @@ glabel MonstorTable
     /* 180914 00280814 00000000 */ .word 0x00000000
     /* 180918 00280818 00000000 */ .word 0x00000000
     /* 18091C 0028081C 0E010000 */ .word 0x0000010E
-    /* 180920 00280820 07007800 */ .word GlobalDataBuffer + 0x4D4F87
-    /* 180924 00280824 50008C00 */ .word GlobalDataBuffer + 0x614FD0
-    /* 180928 00280828 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180920 00280820 07007800 */ .word 0x00780007
+    /* 180924 00280824 50008C00 */ .word 0x008C0050
+    /* 180928 00280828 64006400 */ .word 0x00640064
     /* 18092C 0028082C 00000041 */ .word 0x41000000
     /* 180930 00280830 05001E00 */ .word 0x001E0005
     /* 180934 00280834 0F00FFFF */ .word 0xFFFF000F
@@ -62541,10 +62541,10 @@ glabel MonstorTable
     /* 180944 00280844 00000000 */ .word 0x00000000
     /* 180948 00280848 19000000 */ .word 0x00000019
     /* 18094C 0028084C 9F000100 */ .word 0x0001009F
-    /* 180950 00280850 5F003C00 */ .word GlobalDataBuffer + 0x114FDF
-    /* 180954 00280854 5C006400 */ .word GlobalDataBuffer + 0x394FDC
-    /* 180958 00280858 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18095C 0028085C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180950 00280850 5F003C00 */ .word 0x003C005F
+    /* 180954 00280854 5C006400 */ .word 0x0064005C
+    /* 180958 00280858 64006400 */ .word 0x00640064
+    /* 18095C 0028085C 64006400 */ .word 0x00640064
     /* 180960 00280860 64000000 */ .word 0x00000064
     /* 180964 00280864 0000003F */ .word 0x3F000000
     /* 180968 00280868 65323661 */ .word 0x61363265
@@ -62568,9 +62568,9 @@ glabel MonstorTable
     /* 1809B0 002808B0 00000000 */ .word 0x00000000
     /* 1809B4 002808B4 00000000 */ .word 0x00000000
     /* 1809B8 002808B8 2C010000 */ .word 0x0000012C
-    /* 1809BC 002808BC 00006400 */ .word GlobalDataBuffer + 0x394F80
-    /* 1809C0 002808C0 8C006400 */ .word GlobalDataBuffer + 0x39500C
-    /* 1809C4 002808C4 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1809BC 002808BC 00006400 */ .word 0x00640000
+    /* 1809C0 002808C0 8C006400 */ .word 0x0064008C
+    /* 1809C4 002808C4 64006400 */ .word 0x00640064
     /* 1809C8 002808C8 0000C040 */ .word 0x40C00000
     /* 1809CC 002808CC 03000000 */ .word 0x00000003
     /* 1809D0 002808D0 0B00FFFF */ .word 0xFFFF000B
@@ -62580,10 +62580,10 @@ glabel MonstorTable
     /* 1809E0 002808E0 00000000 */ .word 0x00000000
     /* 1809E4 002808E4 1A000000 */ .word 0x0000001A
     /* 1809E8 002808E8 A6000100 */ .word 0x000100A6
-    /* 1809EC 002808EC 64003C00 */ .word GlobalDataBuffer + 0x114FE4
-    /* 1809F0 002808F0 F5006400 */ .word GlobalDataBuffer + 0x395075
-    /* 1809F4 002808F4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1809F8 002808F8 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1809EC 002808EC 64003C00 */ .word 0x003C0064
+    /* 1809F0 002808F0 F5006400 */ .word 0x006400F5
+    /* 1809F4 002808F4 64006400 */ .word 0x00640064
+    /* 1809F8 002808F8 64006400 */ .word 0x00640064
     /* 1809FC 002808FC 64000000 */ .word 0x00000064
     /* 180A00 00280900 0000803F */ .word 0x3F800000
     /* 180A04 00280904 65323761 */ .word 0x61373265
@@ -62607,9 +62607,9 @@ glabel MonstorTable
     /* 180A4C 0028094C 00000000 */ .word 0x00000000
     /* 180A50 00280950 00000000 */ .word 0x00000000
     /* 180A54 00280954 E1000000 */ .word 0x000000E1
-    /* 180A58 00280958 01006E00 */ .word GlobalDataBuffer + 0x434F81
-    /* 180A5C 0028095C 64005000 */ .word GlobalDataBuffer + 0x254FE4
-    /* 180A60 00280960 50009600 */ .word GlobalDataBuffer + 0x6B4FD0
+    /* 180A58 00280958 01006E00 */ .word 0x006E0001
+    /* 180A5C 0028095C 64005000 */ .word 0x00500064
+    /* 180A60 00280960 50009600 */ .word 0x00960050
     /* 180A64 00280964 0000C040 */ .word 0x40C00000
     /* 180A68 00280968 03000000 */ .word 0x00000003
     /* 180A6C 0028096C FFFFFFFF */ .word 0xFFFFFFFF
@@ -62619,10 +62619,10 @@ glabel MonstorTable
     /* 180A7C 0028097C 00000000 */ .word 0x00000000
     /* 180A80 00280980 1B000000 */ .word 0x0000001B
     /* 180A84 00280984 B1000100 */ .word 0x000100B1
-    /* 180A88 00280988 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 180A8C 0028098C E3006400 */ .word GlobalDataBuffer + 0x395063
-    /* 180A90 00280990 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180A94 00280994 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180A88 00280988 64004600 */ .word 0x00460064
+    /* 180A8C 0028098C E3006400 */ .word 0x006400E3
+    /* 180A90 00280990 64006400 */ .word 0x00640064
+    /* 180A94 00280994 64006400 */ .word 0x00640064
     /* 180A98 00280998 64000000 */ .word 0x00000064
     /* 180A9C 0028099C 0000803F */ .word 0x3F800000
     /* 180AA0 002809A0 65323861 */ .word 0x61383265
@@ -62646,9 +62646,9 @@ glabel MonstorTable
     /* 180AE8 002809E8 00000000 */ .word 0x00000000
     /* 180AEC 002809EC 00000000 */ .word 0x00000000
     /* 180AF0 002809F0 96000000 */ .word 0x00000096
-    /* 180AF4 002809F4 01006E00 */ .word GlobalDataBuffer + 0x434F81
-    /* 180AF8 002809F8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180AFC 002809FC 8C008200 */ .word GlobalDataBuffer + 0x57500C
+    /* 180AF4 002809F4 01006E00 */ .word 0x006E0001
+    /* 180AF8 002809F8 64006400 */ .word 0x00640064
+    /* 180AFC 002809FC 8C008200 */ .word 0x0082008C
     /* 180B00 00280A00 0000C040 */ .word 0x40C00000
     /* 180B04 00280A04 00000000 */ .word 0x00000000
     /* 180B08 00280A08 FFFFFFFF */ .word 0xFFFFFFFF
@@ -62658,10 +62658,10 @@ glabel MonstorTable
     /* 180B18 00280A18 00000000 */ .word 0x00000000
     /* 180B1C 00280A1C 1C000000 */ .word 0x0000001C
     /* 180B20 00280A20 98000100 */ .word 0x00010098
-    /* 180B24 00280A24 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 180B28 00280A28 5B006400 */ .word GlobalDataBuffer + 0x394FDB
-    /* 180B2C 00280A2C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180B30 00280A30 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180B24 00280A24 64004600 */ .word 0x00460064
+    /* 180B28 00280A28 5B006400 */ .word 0x0064005B
+    /* 180B2C 00280A2C 64006400 */ .word 0x00640064
+    /* 180B30 00280A30 64006400 */ .word 0x00640064
     /* 180B34 00280A34 64000000 */ .word 0x00000064
     /* 180B38 00280A38 0000803F */ .word 0x3F800000
     /* 180B3C 00280A3C 65333061 */ .word 0x61303365
@@ -62685,9 +62685,9 @@ glabel MonstorTable
     /* 180B84 00280A84 00000000 */ .word 0x00000000
     /* 180B88 00280A88 00000000 */ .word 0x00000000
     /* 180B8C 00280A8C 77010000 */ .word 0x00000177
-    /* 180B90 00280A90 03006400 */ .word GlobalDataBuffer + 0x394F83
-    /* 180B94 00280A94 64006E00 */ .word GlobalDataBuffer + 0x434FE4
-    /* 180B98 00280A98 6E006400 */ .word GlobalDataBuffer + 0x394FEE
+    /* 180B90 00280A90 03006400 */ .word 0x00640003
+    /* 180B94 00280A94 64006E00 */ .word 0x006E0064
+    /* 180B98 00280A98 6E006400 */ .word 0x0064006E
     /* 180B9C 00280A9C 00006041 */ .word 0x41600000
     /* 180BA0 00280AA0 08000000 */ .word 0x00000008
     /* 180BA4 00280AA4 0700FFFF */ .word 0xFFFF0007
@@ -62697,10 +62697,10 @@ glabel MonstorTable
     /* 180BB4 00280AB4 00000000 */ .word 0x00000000
     /* 180BB8 00280AB8 1E000000 */ .word 0x0000001E
     /* 180BBC 00280ABC B1000100 */ .word 0x000100B1
-    /* 180BC0 00280AC0 64003200 */ .word GlobalDataBuffer + 0x74FE4
-    /* 180BC4 00280AC4 5C006400 */ .word GlobalDataBuffer + 0x394FDC
-    /* 180BC8 00280AC8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180BCC 00280ACC 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180BC0 00280AC0 64003200 */ .word 0x00320064
+    /* 180BC4 00280AC4 5C006400 */ .word 0x0064005C
+    /* 180BC8 00280AC8 64006400 */ .word 0x00640064
+    /* 180BCC 00280ACC 64006400 */ .word 0x00640064
     /* 180BD0 00280AD0 64000000 */ .word 0x00000064
     /* 180BD4 00280AD4 0000003F */ .word 0x3F000000
     /* 180BD8 00280AD8 65333161 */ .word 0x61313365
@@ -62725,8 +62725,8 @@ glabel MonstorTable
     /* 180C24 00280B24 00000000 */ .word 0x00000000
     /* 180C28 00280B28 E1000000 */ .word 0x000000E1
     /* 180C2C 00280B2C 09000000 */ .word 0x00000009
-    /* 180C30 00280B30 AA006400 */ .word GlobalDataBuffer + 0x39502A
-    /* 180C34 00280B34 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180C30 00280B30 AA006400 */ .word 0x006400AA
+    /* 180C34 00280B34 64006400 */ .word 0x00640064
     /* 180C38 00280B38 0000A040 */ .word 0x40A00000
     /* 180C3C 00280B3C 00000A00 */ .word 0x000A0000
     /* 180C40 00280B40 10000500 */ .word 0x00050010
@@ -62736,10 +62736,10 @@ glabel MonstorTable
     /* 180C50 00280B50 00000000 */ .word 0x00000000
     /* 180C54 00280B54 1F000000 */ .word 0x0000001F
     /* 180C58 00280B58 A1000100 */ .word 0x000100A1
-    /* 180C5C 00280B5C 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 180C60 00280B60 51006400 */ .word GlobalDataBuffer + 0x394FD1
-    /* 180C64 00280B64 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180C68 00280B68 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180C5C 00280B5C 64004600 */ .word 0x00460064
+    /* 180C60 00280B60 51006400 */ .word 0x00640051
+    /* 180C64 00280B64 64006400 */ .word 0x00640064
+    /* 180C68 00280B68 64006400 */ .word 0x00640064
     /* 180C6C 00280B6C 64000000 */ .word 0x00000064
     /* 180C70 00280B70 0000803F */ .word 0x3F800000
     /* 180C74 00280B74 65333261 */ .word 0x61323365
@@ -62763,9 +62763,9 @@ glabel MonstorTable
     /* 180CBC 00280BBC 00000000 */ .word 0x00000000
     /* 180CC0 00280BC0 00000000 */ .word 0x00000000
     /* 180CC4 00280BC4 0D020000 */ .word 0x0000020D
-    /* 180CC8 00280BC8 03006400 */ .word GlobalDataBuffer + 0x394F83
-    /* 180CCC 00280BCC 64005000 */ .word GlobalDataBuffer + 0x254FE4
-    /* 180CD0 00280BD0 78006400 */ .word GlobalDataBuffer + 0x394FF8
+    /* 180CC8 00280BC8 03006400 */ .word 0x00640003
+    /* 180CCC 00280BCC 64005000 */ .word 0x00500064
+    /* 180CD0 00280BD0 78006400 */ .word 0x00640078
     /* 180CD4 00280BD4 00003041 */ .word 0x41300000
     /* 180CD8 00280BD8 00000000 */ .word 0x00000000
     /* 180CDC 00280BDC FFFFFFFF */ .word 0xFFFFFFFF
@@ -62775,10 +62775,10 @@ glabel MonstorTable
     /* 180CEC 00280BEC 00000000 */ .word 0x00000000
     /* 180CF0 00280BF0 20000000 */ .word 0x00000020
     /* 180CF4 00280BF4 FFFF0100 */ .word 0x0001FFFF
-    /* 180CF8 00280BF8 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 180CFC 00280BFC A0006400 */ .word GlobalDataBuffer + 0x395020
-    /* 180D00 00280C00 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180D04 00280C04 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180CF8 00280BF8 64004600 */ .word 0x00460064
+    /* 180CFC 00280BFC A0006400 */ .word 0x006400A0
+    /* 180D00 00280C00 64006400 */ .word 0x00640064
+    /* 180D04 00280C04 64006400 */ .word 0x00640064
     /* 180D08 00280C08 64000000 */ .word 0x00000064
     /* 180D0C 00280C0C 0000803F */ .word 0x3F800000
     /* 180D10 00280C10 65333361 */ .word 0x61333365
@@ -62802,11 +62802,11 @@ glabel MonstorTable
     /* 180D58 00280C58 00000000 */ .word 0x00000000
     /* 180D5C 00280C5C 00000000 */ .word 0x00000000
     /* 180D60 00280C60 EE020000 */ .word 0x000002EE
-    /* 180D64 00280C64 03006400 */ .word GlobalDataBuffer + 0x394F83
-    /* 180D68 00280C68 64006E00 */ .word GlobalDataBuffer + 0x434FE4
-    /* 180D6C 00280C6C 6E006400 */ .word GlobalDataBuffer + 0x394FEE
+    /* 180D64 00280C64 03006400 */ .word 0x00640003
+    /* 180D68 00280C68 64006E00 */ .word 0x006E0064
+    /* 180D6C 00280C6C 6E006400 */ .word 0x0064006E
     /* 180D70 00280C70 00006041 */ .word 0x41600000
-    /* 180D74 00280C74 0A003200 */ .word GlobalDataBuffer + 0x74F8A
+    /* 180D74 00280C74 0A003200 */ .word 0x0032000A
     /* 180D78 00280C78 0700FFFF */ .word 0xFFFF0007
     /* 180D7C 00280C7C 0C000000 */ .word 0x0000000C
     /* 180D80 00280C80 0F000000 */ .word 0x0000000F
@@ -62814,10 +62814,10 @@ glabel MonstorTable
     /* 180D88 00280C88 00000000 */ .word 0x00000000
     /* 180D8C 00280C8C 21000000 */ .word 0x00000021
     /* 180D90 00280C90 B1000100 */ .word 0x000100B1
-    /* 180D94 00280C94 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 180D98 00280C98 A0006400 */ .word GlobalDataBuffer + 0x395020
-    /* 180D9C 00280C9C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180DA0 00280CA0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180D94 00280C94 64004600 */ .word 0x00460064
+    /* 180D98 00280C98 A0006400 */ .word 0x006400A0
+    /* 180D9C 00280C9C 64006400 */ .word 0x00640064
+    /* 180DA0 00280CA0 64006400 */ .word 0x00640064
     /* 180DA4 00280CA4 64000000 */ .word 0x00000064
     /* 180DA8 00280CA8 0000003F */ .word 0x3F000000
     /* 180DAC 00280CAC 65333461 */ .word 0x61343365
@@ -62841,9 +62841,9 @@ glabel MonstorTable
     /* 180DF4 00280CF4 00000000 */ .word 0x00000000
     /* 180DF8 00280CF8 00000000 */ .word 0x00000000
     /* 180DFC 00280CFC 5A000000 */ .word 0x0000005A
-    /* 180E00 00280D00 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 180E04 00280D04 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180E08 00280D08 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180E00 00280D00 08006400 */ .word 0x00640008
+    /* 180E04 00280D04 64006400 */ .word 0x00640064
+    /* 180E08 00280D08 64006400 */ .word 0x00640064
     /* 180E0C 00280D0C 00004041 */ .word 0x41400000
     /* 180E10 00280D10 03000A00 */ .word 0x000A0003
     /* 180E14 00280D14 FFFFFFFF */ .word 0xFFFFFFFF
@@ -62853,10 +62853,10 @@ glabel MonstorTable
     /* 180E24 00280D24 04000000 */ .word 0x00000004
     /* 180E28 00280D28 22000000 */ .word 0x00000022
     /* 180E2C 00280D2C AF000100 */ .word 0x000100AF
-    /* 180E30 00280D30 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 180E34 00280D34 B5006400 */ .word GlobalDataBuffer + 0x395035
-    /* 180E38 00280D38 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180E3C 00280D3C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180E30 00280D30 5A003200 */ .word 0x0032005A
+    /* 180E34 00280D34 B5006400 */ .word 0x006400B5
+    /* 180E38 00280D38 64006400 */ .word 0x00640064
+    /* 180E3C 00280D3C 64006400 */ .word 0x00640064
     /* 180E40 00280D40 64000000 */ .word 0x00000064
     /* 180E44 00280D44 0000803F */ .word 0x3F800000
     /* 180E48 00280D48 65333561 */ .word 0x61353365
@@ -62880,9 +62880,9 @@ glabel MonstorTable
     /* 180E90 00280D90 00000000 */ .word 0x00000000
     /* 180E94 00280D94 00000000 */ .word 0x00000000
     /* 180E98 00280D98 44000000 */ .word 0x00000044
-    /* 180E9C 00280D9C 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 180EA0 00280DA0 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180EA4 00280DA4 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180E9C 00280D9C 08006400 */ .word 0x00640008
+    /* 180EA0 00280DA0 64006400 */ .word 0x00640064
+    /* 180EA4 00280DA4 64006400 */ .word 0x00640064
     /* 180EA8 00280DA8 0000A040 */ .word 0x40A00000
     /* 180EAC 00280DAC 01000A00 */ .word 0x000A0001
     /* 180EB0 00280DB0 FFFFFFFF */ .word 0xFFFFFFFF
@@ -62892,10 +62892,10 @@ glabel MonstorTable
     /* 180EC0 00280DC0 03000000 */ .word 0x00000003
     /* 180EC4 00280DC4 23000000 */ .word 0x00000023
     /* 180EC8 00280DC8 B1000100 */ .word 0x000100B1
-    /* 180ECC 00280DCC 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 180ED0 00280DD0 EB006400 */ .word GlobalDataBuffer + 0x39506B
-    /* 180ED4 00280DD4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180ED8 00280DD8 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180ECC 00280DCC 5A003200 */ .word 0x0032005A
+    /* 180ED0 00280DD0 EB006400 */ .word 0x006400EB
+    /* 180ED4 00280DD4 64006400 */ .word 0x00640064
+    /* 180ED8 00280DD8 64006400 */ .word 0x00640064
     /* 180EDC 00280DDC 64000000 */ .word 0x00000064
     /* 180EE0 00280DE0 0000803F */ .word 0x3F800000
     /* 180EE4 00280DE4 65333661 */ .word 0x61363365
@@ -62919,9 +62919,9 @@ glabel MonstorTable
     /* 180F2C 00280E2C 00000000 */ .word 0x00000000
     /* 180F30 00280E30 00000000 */ .word 0x00000000
     /* 180F34 00280E34 0D020000 */ .word 0x0000020D
-    /* 180F38 00280E38 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 180F3C 00280E3C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180F40 00280E40 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180F38 00280E38 08006400 */ .word 0x00640008
+    /* 180F3C 00280E3C 64006400 */ .word 0x00640064
+    /* 180F40 00280E40 64006400 */ .word 0x00640064
     /* 180F44 00280E44 00004041 */ .word 0x41400000
     /* 180F48 00280E48 05001400 */ .word 0x00140005
     /* 180F4C 00280E4C FFFFFFFF */ .word 0xFFFFFFFF
@@ -62931,10 +62931,10 @@ glabel MonstorTable
     /* 180F5C 00280E5C 04000000 */ .word 0x00000004
     /* 180F60 00280E60 24000000 */ .word 0x00000024
     /* 180F64 00280E64 AE000100 */ .word 0x000100AE
-    /* 180F68 00280E68 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 180F6C 00280E6C B5006400 */ .word GlobalDataBuffer + 0x395035
-    /* 180F70 00280E70 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180F74 00280E74 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180F68 00280E68 5A003200 */ .word 0x0032005A
+    /* 180F6C 00280E6C B5006400 */ .word 0x006400B5
+    /* 180F70 00280E70 64006400 */ .word 0x00640064
+    /* 180F74 00280E74 64006400 */ .word 0x00640064
     /* 180F78 00280E78 64000000 */ .word 0x00000064
     /* 180F7C 00280E7C 0000803F */ .word 0x3F800000
     /* 180F80 00280E80 65333761 */ .word 0x61373365
@@ -62958,9 +62958,9 @@ glabel MonstorTable
     /* 180FC8 00280EC8 00000000 */ .word 0x00000000
     /* 180FCC 00280ECC 00000000 */ .word 0x00000000
     /* 180FD0 00280ED0 0E010000 */ .word 0x0000010E
-    /* 180FD4 00280ED4 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 180FD8 00280ED8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 180FDC 00280EDC 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 180FD4 00280ED4 08006400 */ .word 0x00640008
+    /* 180FD8 00280ED8 64006400 */ .word 0x00640064
+    /* 180FDC 00280EDC 64006400 */ .word 0x00640064
     /* 180FE0 00280EE0 0000A040 */ .word 0x40A00000
     /* 180FE4 00280EE4 05001400 */ .word 0x00140005
     /* 180FE8 00280EE8 FFFFFFFF */ .word 0xFFFFFFFF
@@ -62970,10 +62970,10 @@ glabel MonstorTable
     /* 180FF8 00280EF8 03000000 */ .word 0x00000003
     /* 180FFC 00280EFC 25000000 */ .word 0x00000025
     /* 181000 00280F00 B1000100 */ .word 0x000100B1
-    /* 181004 00280F04 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 181008 00280F08 EB006400 */ .word GlobalDataBuffer + 0x39506B
-    /* 18100C 00280F0C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181010 00280F10 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181004 00280F04 5A003200 */ .word 0x0032005A
+    /* 181008 00280F08 EB006400 */ .word 0x006400EB
+    /* 18100C 00280F0C 64006400 */ .word 0x00640064
+    /* 181010 00280F10 64006400 */ .word 0x00640064
     /* 181014 00280F14 64000000 */ .word 0x00000064
     /* 181018 00280F18 0000803F */ .word 0x3F800000
     /* 18101C 00280F1C 65333861 */ .word 0x61383365
@@ -62997,9 +62997,9 @@ glabel MonstorTable
     /* 181064 00280F64 00000000 */ .word 0x00000000
     /* 181068 00280F68 00000000 */ .word 0x00000000
     /* 18106C 00280F6C 58020000 */ .word 0x00000258
-    /* 181070 00280F70 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 181074 00280F74 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181078 00280F78 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181070 00280F70 08006400 */ .word 0x00640008
+    /* 181074 00280F74 64006400 */ .word 0x00640064
+    /* 181078 00280F78 64006400 */ .word 0x00640064
     /* 18107C 00280F7C 00004041 */ .word 0x41400000
     /* 181080 00280F80 08001E00 */ .word 0x001E0008
     /* 181084 00280F84 FFFFFFFF */ .word 0xFFFFFFFF
@@ -63009,10 +63009,10 @@ glabel MonstorTable
     /* 181094 00280F94 04000000 */ .word 0x00000004
     /* 181098 00280F98 26000000 */ .word 0x00000026
     /* 18109C 00280F9C B0000100 */ .word 0x000100B0
-    /* 1810A0 00280FA0 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 1810A4 00280FA4 B5006400 */ .word GlobalDataBuffer + 0x395035
-    /* 1810A8 00280FA8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1810AC 00280FAC 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1810A0 00280FA0 5A003200 */ .word 0x0032005A
+    /* 1810A4 00280FA4 B5006400 */ .word 0x006400B5
+    /* 1810A8 00280FA8 64006400 */ .word 0x00640064
+    /* 1810AC 00280FAC 64006400 */ .word 0x00640064
     /* 1810B0 00280FB0 64000000 */ .word 0x00000064
     /* 1810B4 00280FB4 0000803F */ .word 0x3F800000
     /* 1810B8 00280FB8 65333961 */ .word 0x61393365
@@ -63036,9 +63036,9 @@ glabel MonstorTable
     /* 181100 00281000 00000000 */ .word 0x00000000
     /* 181104 00281004 00000000 */ .word 0x00000000
     /* 181108 00281008 C2010000 */ .word 0x000001C2
-    /* 18110C 0028100C 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 181110 00281010 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181114 00281014 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18110C 0028100C 08006400 */ .word 0x00640008
+    /* 181110 00281010 64006400 */ .word 0x00640064
+    /* 181114 00281014 64006400 */ .word 0x00640064
     /* 181118 00281018 0000A040 */ .word 0x40A00000
     /* 18111C 0028101C 08001E00 */ .word 0x001E0008
     /* 181120 00281020 FFFFFFFF */ .word 0xFFFFFFFF
@@ -63048,10 +63048,10 @@ glabel MonstorTable
     /* 181130 00281030 03000000 */ .word 0x00000003
     /* 181134 00281034 27000000 */ .word 0x00000027
     /* 181138 00281038 B1000100 */ .word 0x000100B1
-    /* 18113C 0028103C 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 181140 00281040 EB006400 */ .word GlobalDataBuffer + 0x39506B
-    /* 181144 00281044 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181148 00281048 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18113C 0028103C 5A003200 */ .word 0x0032005A
+    /* 181140 00281040 EB006400 */ .word 0x006400EB
+    /* 181144 00281044 64006400 */ .word 0x00640064
+    /* 181148 00281048 64006400 */ .word 0x00640064
     /* 18114C 0028104C 64000000 */ .word 0x00000064
     /* 181150 00281050 0000803F */ .word 0x3F800000
     /* 181154 00281054 65343061 */ .word 0x61303465
@@ -63075,11 +63075,11 @@ glabel MonstorTable
     /* 18119C 0028109C 00000000 */ .word 0x00000000
     /* 1811A0 002810A0 00000000 */ .word 0x00000000
     /* 1811A4 002810A4 58020000 */ .word 0x00000258
-    /* 1811A8 002810A8 07005000 */ .word GlobalDataBuffer + 0x254F87
-    /* 1811AC 002810AC 64009600 */ .word GlobalDataBuffer + 0x6B4FE4
-    /* 1811B0 002810B0 50005000 */ .word GlobalDataBuffer + 0x254FD0
+    /* 1811A8 002810A8 07005000 */ .word 0x00500007
+    /* 1811AC 002810AC 64009600 */ .word 0x00960064
+    /* 1811B0 002810B0 50005000 */ .word 0x00500050
     /* 1811B4 002810B4 00001041 */ .word 0x41100000
-    /* 1811B8 002810B8 0A003C00 */ .word GlobalDataBuffer + 0x114F8A
+    /* 1811B8 002810B8 0A003C00 */ .word 0x003C000A
     /* 1811BC 002810BC 0500FFFF */ .word 0xFFFF0005
     /* 1811C0 002810C0 0F000000 */ .word 0x0000000F
     /* 1811C4 002810C4 0F000000 */ .word 0x0000000F
@@ -63087,10 +63087,10 @@ glabel MonstorTable
     /* 1811CC 002810CC 00000000 */ .word 0x00000000
     /* 1811D0 002810D0 28000000 */ .word 0x00000028
     /* 1811D4 002810D4 B1000100 */ .word 0x000100B1
-    /* 1811D8 002810D8 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 1811DC 002810DC 5C006400 */ .word GlobalDataBuffer + 0x394FDC
-    /* 1811E0 002810E0 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1811E4 002810E4 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1811D8 002810D8 5A003200 */ .word 0x0032005A
+    /* 1811DC 002810DC 5C006400 */ .word 0x0064005C
+    /* 1811E0 002810E0 64006400 */ .word 0x00640064
+    /* 1811E4 002810E4 64006400 */ .word 0x00640064
     /* 1811E8 002810E8 64000000 */ .word 0x00000064
     /* 1811EC 002810EC 0000803F */ .word 0x3F800000
     /* 1811F0 002810F0 65343261 */ .word 0x61323465
@@ -63114,9 +63114,9 @@ glabel MonstorTable
     /* 181238 00281138 00000000 */ .word 0x00000000
     /* 18123C 0028113C 00000000 */ .word 0x00000000
     /* 181240 00281140 0F000000 */ .word 0x0000000F
-    /* 181244 00281144 01006E00 */ .word GlobalDataBuffer + 0x434F81
-    /* 181248 00281148 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18124C 0028114C 64007800 */ .word GlobalDataBuffer + 0x4D4FE4
+    /* 181244 00281144 01006E00 */ .word 0x006E0001
+    /* 181248 00281148 64006400 */ .word 0x00640064
+    /* 18124C 0028114C 64007800 */ .word 0x00780064
     /* 181250 00281150 66666640 */ .word 0x40666666
     /* 181254 00281154 00000000 */ .word 0x00000000
     /* 181258 00281158 0900FFFF */ .word 0xFFFF0009
@@ -63126,10 +63126,10 @@ glabel MonstorTable
     /* 181268 00281168 00000000 */ .word 0x00000000
     /* 18126C 0028116C 2A000000 */ .word 0x0000002A
     /* 181270 00281170 87000000 */ .word 0x00000087
-    /* 181274 00281174 64005A00 */ .word GlobalDataBuffer + 0x2F4FE4
-    /* 181278 00281178 85006400 */ .word GlobalDataBuffer + 0x395005
-    /* 18127C 0028117C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181280 00281180 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181274 00281174 64005A00 */ .word 0x005A0064
+    /* 181278 00281178 85006400 */ .word 0x00640085
+    /* 18127C 0028117C 64006400 */ .word 0x00640064
+    /* 181280 00281180 64006400 */ .word 0x00640064
     /* 181284 00281184 64000000 */ .word 0x00000064
     /* 181288 00281188 0000803F */ .word 0x3F800000
     /* 18128C 0028118C 65343361 */ .word 0x61333465
@@ -63153,11 +63153,11 @@ glabel MonstorTable
     /* 1812D4 002811D4 00000000 */ .word 0x00000000
     /* 1812D8 002811D8 00000000 */ .word 0x00000000
     /* 1812DC 002811DC A3020000 */ .word 0x000002A3
-    /* 1812E0 002811E0 07009600 */ .word GlobalDataBuffer + 0x6B4F87
-    /* 1812E4 002811E4 82006400 */ .word GlobalDataBuffer + 0x395002
-    /* 1812E8 002811E8 78008200 */ .word GlobalDataBuffer + 0x574FF8
+    /* 1812E0 002811E0 07009600 */ .word 0x00960007
+    /* 1812E4 002811E4 82006400 */ .word 0x00640082
+    /* 1812E8 002811E8 78008200 */ .word 0x00820078
     /* 1812EC 002811EC 0000E040 */ .word 0x40E00000
-    /* 1812F0 002811F0 0A003200 */ .word GlobalDataBuffer + 0x74F8A
+    /* 1812F0 002811F0 0A003200 */ .word 0x0032000A
     /* 1812F4 002811F4 0500FFFF */ .word 0xFFFF0005
     /* 1812F8 002811F8 0F000000 */ .word 0x0000000F
     /* 1812FC 002811FC 11000000 */ .word 0x00000011
@@ -63165,10 +63165,10 @@ glabel MonstorTable
     /* 181304 00281204 00000000 */ .word 0x00000000
     /* 181308 00281208 2B000000 */ .word 0x0000002B
     /* 18130C 0028120C A4000100 */ .word 0x000100A4
-    /* 181310 00281210 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 181314 00281214 51006400 */ .word GlobalDataBuffer + 0x394FD1
-    /* 181318 00281218 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18131C 0028121C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181310 00281210 64004600 */ .word 0x00460064
+    /* 181314 00281214 51006400 */ .word 0x00640051
+    /* 181318 00281218 64006400 */ .word 0x00640064
+    /* 18131C 0028121C 64006400 */ .word 0x00640064
     /* 181320 00281220 64000000 */ .word 0x00000064
     /* 181324 00281224 0000803F */ .word 0x3F800000
     /* 181328 00281228 65343461 */ .word 0x61343465
@@ -63192,9 +63192,9 @@ glabel MonstorTable
     /* 181370 00281270 00000000 */ .word 0x00000000
     /* 181374 00281274 00000000 */ .word 0x00000000
     /* 181378 00281278 0D020000 */ .word 0x0000020D
-    /* 18137C 0028127C 09003200 */ .word GlobalDataBuffer + 0x74F89
-    /* 181380 00281280 96006400 */ .word GlobalDataBuffer + 0x395016
-    /* 181384 00281284 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18137C 0028127C 09003200 */ .word 0x00320009
+    /* 181380 00281280 96006400 */ .word 0x00640096
+    /* 181384 00281284 64006400 */ .word 0x00640064
     /* 181388 00281288 0000A040 */ .word 0x40A00000
     /* 18138C 0028128C 03000000 */ .word 0x00000003
     /* 181390 00281290 0A000C00 */ .word 0x000C000A
@@ -63204,10 +63204,10 @@ glabel MonstorTable
     /* 1813A0 002812A0 00000000 */ .word 0x00000000
     /* 1813A4 002812A4 2C000000 */ .word 0x0000002C
     /* 1813A8 002812A8 96000100 */ .word 0x00010096
-    /* 1813AC 002812AC 50003200 */ .word GlobalDataBuffer + 0x74FD0
-    /* 1813B0 002812B0 85006400 */ .word GlobalDataBuffer + 0x395005
-    /* 1813B4 002812B4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1813B8 002812B8 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1813AC 002812AC 50003200 */ .word 0x00320050
+    /* 1813B0 002812B0 85006400 */ .word 0x00640085
+    /* 1813B4 002812B4 64006400 */ .word 0x00640064
+    /* 1813B8 002812B8 64006400 */ .word 0x00640064
     /* 1813BC 002812BC 64000000 */ .word 0x00000064
     /* 1813C0 002812C0 0000803F */ .word 0x3F800000
     /* 1813C4 002812C4 65343561 */ .word 0x61353465
@@ -63231,9 +63231,9 @@ glabel MonstorTable
     /* 18140C 0028130C 00000000 */ .word 0x00000000
     /* 181410 00281310 00000000 */ .word 0x00000000
     /* 181414 00281314 0D020000 */ .word 0x0000020D
-    /* 181418 00281318 09009600 */ .word GlobalDataBuffer + 0x6B4F89
-    /* 18141C 0028131C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181420 00281320 32006400 */ .word GlobalDataBuffer + 0x394FB2
+    /* 181418 00281318 09009600 */ .word 0x00960009
+    /* 18141C 0028131C 64006400 */ .word 0x00640064
+    /* 181420 00281320 32006400 */ .word 0x00640032
     /* 181424 00281324 0000A040 */ .word 0x40A00000
     /* 181428 00281328 03000000 */ .word 0x00000003
     /* 18142C 0028132C FFFFFFFF */ .word 0xFFFFFFFF
@@ -63243,10 +63243,10 @@ glabel MonstorTable
     /* 18143C 0028133C 00000000 */ .word 0x00000000
     /* 181440 00281340 2D000000 */ .word 0x0000002D
     /* 181444 00281344 93000100 */ .word 0x00010093
-    /* 181448 00281348 50003200 */ .word GlobalDataBuffer + 0x74FD0
-    /* 18144C 0028134C 86006400 */ .word GlobalDataBuffer + 0x395006
-    /* 181450 00281350 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181454 00281354 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181448 00281348 50003200 */ .word 0x00320050
+    /* 18144C 0028134C 86006400 */ .word 0x00640086
+    /* 181450 00281350 64006400 */ .word 0x00640064
+    /* 181454 00281354 64006400 */ .word 0x00640064
     /* 181458 00281358 64000000 */ .word 0x00000064
     /* 18145C 0028135C 0000803F */ .word 0x3F800000
     /* 181460 00281360 65343661 */ .word 0x61363465
@@ -63270,9 +63270,9 @@ glabel MonstorTable
     /* 1814A8 002813A8 00000000 */ .word 0x00000000
     /* 1814AC 002813AC 00000000 */ .word 0x00000000
     /* 1814B0 002813B0 0D020000 */ .word 0x0000020D
-    /* 1814B4 002813B4 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 1814B8 002813B8 64003200 */ .word GlobalDataBuffer + 0x74FE4
-    /* 1814BC 002813BC 96006400 */ .word GlobalDataBuffer + 0x395016
+    /* 1814B4 002813B4 09006400 */ .word 0x00640009
+    /* 1814B8 002813B8 64003200 */ .word 0x00320064
+    /* 1814BC 002813BC 96006400 */ .word 0x00640096
     /* 1814C0 002813C0 0000A040 */ .word 0x40A00000
     /* 1814C4 002813C4 03000000 */ .word 0x00000003
     /* 1814C8 002813C8 FFFFFFFF */ .word 0xFFFFFFFF
@@ -63282,10 +63282,10 @@ glabel MonstorTable
     /* 1814D8 002813D8 00000000 */ .word 0x00000000
     /* 1814DC 002813DC 2E000000 */ .word 0x0000002E
     /* 1814E0 002813E0 97000100 */ .word 0x00010097
-    /* 1814E4 002813E4 50003200 */ .word GlobalDataBuffer + 0x74FD0
-    /* 1814E8 002813E8 87006400 */ .word GlobalDataBuffer + 0x395007
-    /* 1814EC 002813EC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1814F0 002813F0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1814E4 002813E4 50003200 */ .word 0x00320050
+    /* 1814E8 002813E8 87006400 */ .word 0x00640087
+    /* 1814EC 002813EC 64006400 */ .word 0x00640064
+    /* 1814F0 002813F0 64006400 */ .word 0x00640064
     /* 1814F4 002813F4 64000000 */ .word 0x00000064
     /* 1814F8 002813F8 0000803F */ .word 0x3F800000
     /* 1814FC 002813FC 65343761 */ .word 0x61373465
@@ -63309,9 +63309,9 @@ glabel MonstorTable
     /* 181544 00281444 00000000 */ .word 0x00000000
     /* 181548 00281448 00000000 */ .word 0x00000000
     /* 18154C 0028144C 0D020000 */ .word 0x0000020D
-    /* 181550 00281450 09009600 */ .word GlobalDataBuffer + 0x6B4F89
-    /* 181554 00281454 32006400 */ .word GlobalDataBuffer + 0x394FB2
-    /* 181558 00281458 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181550 00281450 09009600 */ .word 0x00960009
+    /* 181554 00281454 32006400 */ .word 0x00640032
+    /* 181558 00281458 64006400 */ .word 0x00640064
     /* 18155C 0028145C 0000A040 */ .word 0x40A00000
     /* 181560 00281460 03000000 */ .word 0x00000003
     /* 181564 00281464 FFFFFFFF */ .word 0xFFFFFFFF
@@ -63321,10 +63321,10 @@ glabel MonstorTable
     /* 181574 00281474 00000000 */ .word 0x00000000
     /* 181578 00281478 2F000000 */ .word 0x0000002F
     /* 18157C 0028147C 98000100 */ .word 0x00010098
-    /* 181580 00281480 50003200 */ .word GlobalDataBuffer + 0x74FD0
-    /* 181584 00281484 84006400 */ .word GlobalDataBuffer + 0x395004
-    /* 181588 00281488 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18158C 0028148C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181580 00281480 50003200 */ .word 0x00320050
+    /* 181584 00281484 84006400 */ .word 0x00640084
+    /* 181588 00281488 64006400 */ .word 0x00640064
+    /* 18158C 0028148C 64006400 */ .word 0x00640064
     /* 181590 00281490 64000000 */ .word 0x00000064
     /* 181594 00281494 0000803F */ .word 0x3F800000
     /* 181598 00281498 65343861 */ .word 0x61383465
@@ -63348,9 +63348,9 @@ glabel MonstorTable
     /* 1815E0 002814E0 00000000 */ .word 0x00000000
     /* 1815E4 002814E4 00000000 */ .word 0x00000000
     /* 1815E8 002814E8 58020000 */ .word 0x00000258
-    /* 1815EC 002814EC 09003200 */ .word GlobalDataBuffer + 0x74F89
-    /* 1815F0 002814F0 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 1815F4 002814F4 32009600 */ .word GlobalDataBuffer + 0x6B4FB2
+    /* 1815EC 002814EC 09003200 */ .word 0x00320009
+    /* 1815F0 002814F0 32003200 */ .word 0x00320032
+    /* 1815F4 002814F4 32009600 */ .word 0x00960032
     /* 1815F8 002814F8 0000A040 */ .word 0x40A00000
     /* 1815FC 002814FC 03000000 */ .word 0x00000003
     /* 181600 00281500 FFFFFFFF */ .word 0xFFFFFFFF
@@ -63361,9 +63361,9 @@ glabel MonstorTable
     /* 181614 00281514 30000000 */ .word 0x00000030
     /* 181618 00281518 95000100 */ .word 0x00010095
     /* 18161C 0028151C 32000A00 */ .word 0x000A0032
-    /* 181620 00281520 9A006400 */ .word GlobalDataBuffer + 0x39501A
-    /* 181624 00281524 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181628 00281528 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181620 00281520 9A006400 */ .word 0x0064009A
+    /* 181624 00281524 64006400 */ .word 0x00640064
+    /* 181628 00281528 64006400 */ .word 0x00640064
     /* 18162C 0028152C 64000000 */ .word 0x00000064
     /* 181630 00281530 0000803F */ .word 0x3F800000
     /* 181634 00281534 65343961 */ .word 0x61393465
@@ -63387,9 +63387,9 @@ glabel MonstorTable
     /* 18167C 0028157C 00000000 */ .word 0x00000000
     /* 181680 00281580 00000000 */ .word 0x00000000
     /* 181684 00281584 B4000000 */ .word 0x000000B4
-    /* 181688 00281588 0900C800 */ .word GlobalDataBuffer + 0x9D4F89
-    /* 18168C 0028158C 4B007D00 */ .word GlobalDataBuffer + 0x524FCB
-    /* 181690 00281590 64004B00 */ .word GlobalDataBuffer + 0x204FE4
+    /* 181688 00281588 0900C800 */ .word 0x00C80009
+    /* 18168C 0028158C 4B007D00 */ .word 0x007D004B
+    /* 181690 00281590 64004B00 */ .word 0x004B0064
     /* 181694 00281594 00008040 */ .word 0x40800000
     /* 181698 00281598 08001400 */ .word 0x00140008
     /* 18169C 0028159C 1000FFFF */ .word 0xFFFF0010
@@ -63399,10 +63399,10 @@ glabel MonstorTable
     /* 1816AC 002815AC 00000000 */ .word 0x00000000
     /* 1816B0 002815B0 31000000 */ .word 0x00000031
     /* 1816B4 002815B4 9F000100 */ .word 0x0001009F
-    /* 1816B8 002815B8 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 1816BC 002815BC 9F006400 */ .word GlobalDataBuffer + 0x39501F
-    /* 1816C0 002815C0 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1816C4 002815C4 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1816B8 002815B8 64004600 */ .word 0x00460064
+    /* 1816BC 002815BC 9F006400 */ .word 0x0064009F
+    /* 1816C0 002815C0 64006400 */ .word 0x00640064
+    /* 1816C4 002815C4 64006400 */ .word 0x00640064
     /* 1816C8 002815C8 64000000 */ .word 0x00000064
     /* 1816CC 002815CC 0000803F */ .word 0x3F800000
     /* 1816D0 002815D0 65353061 */ .word 0x61303565
@@ -63426,9 +63426,9 @@ glabel MonstorTable
     /* 181718 00281618 00000000 */ .word 0x00000000
     /* 18171C 0028161C 00000000 */ .word 0x00000000
     /* 181720 00281620 96000000 */ .word 0x00000096
-    /* 181724 00281624 01009600 */ .word GlobalDataBuffer + 0x6B4F81
-    /* 181728 00281628 32006400 */ .word GlobalDataBuffer + 0x394FB2
-    /* 18172C 0028162C 64007800 */ .word GlobalDataBuffer + 0x4D4FE4
+    /* 181724 00281624 01009600 */ .word 0x00960001
+    /* 181728 00281628 32006400 */ .word 0x00640032
+    /* 18172C 0028162C 64007800 */ .word 0x00780064
     /* 181730 00281630 00008040 */ .word 0x40800000
     /* 181734 00281634 00000000 */ .word 0x00000000
     /* 181738 00281638 FFFFFFFF */ .word 0xFFFFFFFF
@@ -63438,10 +63438,10 @@ glabel MonstorTable
     /* 181748 00281648 00000000 */ .word 0x00000000
     /* 18174C 0028164C 32000000 */ .word 0x00000032
     /* 181750 00281650 FFFF0100 */ .word 0x0001FFFF
-    /* 181754 00281654 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 181758 00281658 85006400 */ .word GlobalDataBuffer + 0x395005
-    /* 18175C 0028165C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181760 00281660 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181754 00281654 64004600 */ .word 0x00460064
+    /* 181758 00281658 85006400 */ .word 0x00640085
+    /* 18175C 0028165C 64006400 */ .word 0x00640064
+    /* 181760 00281660 64006400 */ .word 0x00640064
     /* 181764 00281664 64000000 */ .word 0x00000064
     /* 181768 00281668 0000803F */ .word 0x3F800000
     /* 18176C 0028166C 65353161 */ .word 0x61313565
@@ -63467,7 +63467,7 @@ glabel MonstorTable
     /* 1817BC 002816BC 2C010000 */ .word 0x0000012C
     /* 1817C0 002816C0 01001400 */ .word 0x00140001
     /* 1817C4 002816C4 14001400 */ .word 0x00140014
-    /* 1817C8 002816C8 1400A000 */ .word GlobalDataBuffer + 0x754F94
+    /* 1817C8 002816C8 1400A000 */ .word 0x00A00014
     /* 1817CC 002816CC 00008040 */ .word 0x40800000
     /* 1817D0 002816D0 05000000 */ .word 0x00000005
     /* 1817D4 002816D4 0B00FFFF */ .word 0xFFFF000B
@@ -63478,9 +63478,9 @@ glabel MonstorTable
     /* 1817E8 002816E8 33000000 */ .word 0x00000033
     /* 1817EC 002816EC B0000000 */ .word 0x000000B0
     /* 1817F0 002816F0 50001E00 */ .word 0x001E0050
-    /* 1817F4 002816F4 5E006400 */ .word GlobalDataBuffer + 0x394FDE
-    /* 1817F8 002816F8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1817FC 002816FC 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1817F4 002816F4 5E006400 */ .word 0x0064005E
+    /* 1817F8 002816F8 64006400 */ .word 0x00640064
+    /* 1817FC 002816FC 64006400 */ .word 0x00640064
     /* 181800 00281700 64000000 */ .word 0x00000064
     /* 181804 00281704 0000803F */ .word 0x3F800000
     /* 181808 00281708 65353261 */ .word 0x61323565
@@ -63504,9 +63504,9 @@ glabel MonstorTable
     /* 181850 00281750 00000000 */ .word 0x00000000
     /* 181854 00281754 00000000 */ .word 0x00000000
     /* 181858 00281758 2C010000 */ .word 0x0000012C
-    /* 18185C 0028175C 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 181860 00281760 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181864 00281764 6400A000 */ .word GlobalDataBuffer + 0x754FE4
+    /* 18185C 0028175C 09006400 */ .word 0x00640009
+    /* 181860 00281760 64006400 */ .word 0x00640064
+    /* 181864 00281764 6400A000 */ .word 0x00A00064
     /* 181868 00281768 0000A040 */ .word 0x40A00000
     /* 18186C 0028176C 00000000 */ .word 0x00000000
     /* 181870 00281770 FFFFFFFF */ .word 0xFFFFFFFF
@@ -63516,10 +63516,10 @@ glabel MonstorTable
     /* 181880 00281780 00000000 */ .word 0x00000000
     /* 181884 00281784 34000000 */ .word 0x00000034
     /* 181888 00281788 A6000100 */ .word 0x000100A6
-    /* 18188C 0028178C 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 181890 00281790 85006400 */ .word GlobalDataBuffer + 0x395005
-    /* 181894 00281794 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181898 00281798 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18188C 0028178C 64004600 */ .word 0x00460064
+    /* 181890 00281790 85006400 */ .word 0x00640085
+    /* 181894 00281794 64006400 */ .word 0x00640064
+    /* 181898 00281798 64006400 */ .word 0x00640064
     /* 18189C 0028179C 64000000 */ .word 0x00000064
     /* 1818A0 002817A0 0000803F */ .word 0x3F800000
     /* 1818A4 002817A4 65353561 */ .word 0x61353565
@@ -63543,11 +63543,11 @@ glabel MonstorTable
     /* 1818EC 002817EC 00000000 */ .word 0x00000000
     /* 1818F0 002817F0 00000000 */ .word 0x00000000
     /* 1818F4 002817F4 C2010000 */ .word 0x000001C2
-    /* 1818F8 002817F8 03006400 */ .word GlobalDataBuffer + 0x394F83
-    /* 1818FC 002817FC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181900 00281800 50005000 */ .word GlobalDataBuffer + 0x254FD0
+    /* 1818F8 002817F8 03006400 */ .word 0x00640003
+    /* 1818FC 002817FC 64006400 */ .word 0x00640064
+    /* 181900 00281800 50005000 */ .word 0x00500050
     /* 181904 00281804 00008040 */ .word 0x40800000
-    /* 181908 00281808 0A003200 */ .word GlobalDataBuffer + 0x74F8A
+    /* 181908 00281808 0A003200 */ .word 0x0032000A
     /* 18190C 0028180C FFFFFFFF */ .word 0xFFFFFFFF
     /* 181910 00281810 06000000 */ .word 0x00000006
     /* 181914 00281814 0F000000 */ .word 0x0000000F
@@ -63555,10 +63555,10 @@ glabel MonstorTable
     /* 18191C 0028181C 00000000 */ .word 0x00000000
     /* 181920 00281820 37000000 */ .word 0x00000037
     /* 181924 00281824 FFFF0100 */ .word 0x0001FFFF
-    /* 181928 00281828 64003200 */ .word GlobalDataBuffer + 0x74FE4
-    /* 18192C 0028182C A0006400 */ .word GlobalDataBuffer + 0x395020
-    /* 181930 00281830 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181934 00281834 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181928 00281828 64003200 */ .word 0x00320064
+    /* 18192C 0028182C A0006400 */ .word 0x006400A0
+    /* 181930 00281830 64006400 */ .word 0x00640064
+    /* 181934 00281834 64006400 */ .word 0x00640064
     /* 181938 00281838 64000000 */ .word 0x00000064
     /* 18193C 0028183C 0000803F */ .word 0x3F800000
     /* 181940 00281840 65353661 */ .word 0x61363565
@@ -63582,9 +63582,9 @@ glabel MonstorTable
     /* 181988 00281888 00000000 */ .word 0x00000000
     /* 18198C 0028188C 00000000 */ .word 0x00000000
     /* 181990 00281890 0D020000 */ .word 0x0000020D
-    /* 181994 00281894 05006400 */ .word GlobalDataBuffer + 0x394F85
-    /* 181998 00281898 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18199C 0028189C 64009600 */ .word GlobalDataBuffer + 0x6B4FE4
+    /* 181994 00281894 05006400 */ .word 0x00640005
+    /* 181998 00281898 64006400 */ .word 0x00640064
+    /* 18199C 0028189C 64009600 */ .word 0x00960064
     /* 1819A0 002818A0 0000F040 */ .word 0x40F00000
     /* 1819A4 002818A4 00000000 */ .word 0x00000000
     /* 1819A8 002818A8 FFFFFFFF */ .word 0xFFFFFFFF
@@ -63594,10 +63594,10 @@ glabel MonstorTable
     /* 1819B8 002818B8 00000000 */ .word 0x00000000
     /* 1819BC 002818BC 38000000 */ .word 0x00000038
     /* 1819C0 002818C0 FFFF0100 */ .word 0x0001FFFF
-    /* 1819C4 002818C4 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 1819C8 002818C8 9B006400 */ .word GlobalDataBuffer + 0x39501B
-    /* 1819CC 002818CC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1819D0 002818D0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1819C4 002818C4 64004600 */ .word 0x00460064
+    /* 1819C8 002818C8 9B006400 */ .word 0x0064009B
+    /* 1819CC 002818CC 64006400 */ .word 0x00640064
+    /* 1819D0 002818D0 64006400 */ .word 0x00640064
     /* 1819D4 002818D4 64000000 */ .word 0x00000064
     /* 1819D8 002818D8 0000803F */ .word 0x3F800000
     /* 1819DC 002818DC 65353761 */ .word 0x61373565
@@ -63621,9 +63621,9 @@ glabel MonstorTable
     /* 181A24 00281924 00000000 */ .word 0x00000000
     /* 181A28 00281928 00000000 */ .word 0x00000000
     /* 181A2C 0028192C C2010000 */ .word 0x000001C2
-    /* 181A30 00281930 07003200 */ .word GlobalDataBuffer + 0x74F87
-    /* 181A34 00281934 78009600 */ .word GlobalDataBuffer + 0x6B4FF8
-    /* 181A38 00281938 32006400 */ .word GlobalDataBuffer + 0x394FB2
+    /* 181A30 00281930 07003200 */ .word 0x00320007
+    /* 181A34 00281934 78009600 */ .word 0x00960078
+    /* 181A38 00281938 32006400 */ .word 0x00640032
     /* 181A3C 0028193C 00008040 */ .word 0x40800000
     /* 181A40 00281940 08002800 */ .word MonstorTable + 0x508
     /* 181A44 00281944 0F00FFFF */ .word 0xFFFF000F
@@ -63633,10 +63633,10 @@ glabel MonstorTable
     /* 181A54 00281954 00000000 */ .word 0x00000000
     /* 181A58 00281958 39000000 */ .word 0x00000039
     /* 181A5C 0028195C 9F000100 */ .word 0x0001009F
-    /* 181A60 00281960 5A004600 */ .word GlobalDataBuffer + 0x1B4FDA
-    /* 181A64 00281964 5C006400 */ .word GlobalDataBuffer + 0x394FDC
-    /* 181A68 00281968 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181A6C 0028196C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181A60 00281960 5A004600 */ .word 0x0046005A
+    /* 181A64 00281964 5C006400 */ .word 0x0064005C
+    /* 181A68 00281968 64006400 */ .word 0x00640064
+    /* 181A6C 0028196C 64006400 */ .word 0x00640064
     /* 181A70 00281970 64000000 */ .word 0x00000064
     /* 181A74 00281974 0000803F */ .word 0x3F800000
     /* 181A78 00281978 65353861 */ .word 0x61383565
@@ -63660,9 +63660,9 @@ glabel MonstorTable
     /* 181AC0 002819C0 00000000 */ .word 0x00000000
     /* 181AC4 002819C4 00000000 */ .word 0x00000000
     /* 181AC8 002819C8 96000000 */ .word 0x00000096
-    /* 181ACC 002819CC 06006400 */ .word GlobalDataBuffer + 0x394F86
-    /* 181AD0 002819D0 7D006400 */ .word GlobalDataBuffer + 0x394FFD
-    /* 181AD4 002819D4 7D006400 */ .word GlobalDataBuffer + 0x394FFD
+    /* 181ACC 002819CC 06006400 */ .word 0x00640006
+    /* 181AD0 002819D0 7D006400 */ .word 0x0064007D
+    /* 181AD4 002819D4 7D006400 */ .word 0x0064007D
     /* 181AD8 002819D8 0000A040 */ .word 0x40A00000
     /* 181ADC 002819DC 00000000 */ .word 0x00000000
     /* 181AE0 002819E0 FFFFFFFF */ .word 0xFFFFFFFF
@@ -63672,10 +63672,10 @@ glabel MonstorTable
     /* 181AF0 002819F0 00000000 */ .word 0x00000000
     /* 181AF4 002819F4 3A000000 */ .word 0x0000003A
     /* 181AF8 002819F8 97000000 */ .word 0x00000097
-    /* 181AFC 002819FC 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 181B00 00281A00 54006400 */ .word GlobalDataBuffer + 0x394FD4
-    /* 181B04 00281A04 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181B08 00281A08 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181AFC 002819FC 64004600 */ .word 0x00460064
+    /* 181B00 00281A00 54006400 */ .word 0x00640054
+    /* 181B04 00281A04 64006400 */ .word 0x00640064
+    /* 181B08 00281A08 64006400 */ .word 0x00640064
     /* 181B0C 00281A0C 64000000 */ .word 0x00000064
     /* 181B10 00281A10 0000803F */ .word 0x3F800000
     /* 181B14 00281A14 65353961 */ .word 0x61393565
@@ -63699,9 +63699,9 @@ glabel MonstorTable
     /* 181B5C 00281A5C 00000000 */ .word 0x00000000
     /* 181B60 00281A60 00000000 */ .word 0x00000000
     /* 181B64 00281A64 5A000000 */ .word 0x0000005A
-    /* 181B68 00281A68 00003200 */ .word GlobalDataBuffer + 0x74F80
-    /* 181B6C 00281A6C 78006400 */ .word GlobalDataBuffer + 0x394FF8
-    /* 181B70 00281A70 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181B68 00281A68 00003200 */ .word 0x00320000
+    /* 181B6C 00281A6C 78006400 */ .word 0x00640078
+    /* 181B70 00281A70 64006400 */ .word 0x00640064
     /* 181B74 00281A74 00008C41 */ .word 0x418C0000
     /* 181B78 00281A78 05002800 */ .word MonstorTable + 0x505
     /* 181B7C 00281A7C 0500FFFF */ .word 0xFFFF0005
@@ -63711,10 +63711,10 @@ glabel MonstorTable
     /* 181B8C 00281A8C 00000000 */ .word 0x00000000
     /* 181B90 00281A90 3B000000 */ .word 0x0000003B
     /* 181B94 00281A94 A1000100 */ .word 0x000100A1
-    /* 181B98 00281A98 5A004600 */ .word GlobalDataBuffer + 0x1B4FDA
-    /* 181B9C 00281A9C 55006400 */ .word GlobalDataBuffer + 0x394FD5
-    /* 181BA0 00281AA0 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181BA4 00281AA4 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181B98 00281A98 5A004600 */ .word 0x0046005A
+    /* 181B9C 00281A9C 55006400 */ .word 0x00640055
+    /* 181BA0 00281AA0 64006400 */ .word 0x00640064
+    /* 181BA4 00281AA4 64006400 */ .word 0x00640064
     /* 181BA8 00281AA8 64000000 */ .word 0x00000064
     /* 181BAC 00281AAC 0000803F */ .word 0x3F800000
     /* 181BB0 00281AB0 65363061 */ .word 0x61303665
@@ -63738,9 +63738,9 @@ glabel MonstorTable
     /* 181BF8 00281AF8 00000000 */ .word 0x00000000
     /* 181BFC 00281AFC 00000000 */ .word 0x00000000
     /* 181C00 00281B00 0C000000 */ .word 0x0000000C
-    /* 181C04 00281B04 06006400 */ .word GlobalDataBuffer + 0x394F86
-    /* 181C08 00281B08 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181C0C 00281B0C 96006400 */ .word GlobalDataBuffer + 0x395016
+    /* 181C04 00281B04 06006400 */ .word 0x00640006
+    /* 181C08 00281B08 64006400 */ .word 0x00640064
+    /* 181C0C 00281B0C 96006400 */ .word 0x00640096
     /* 181C10 00281B10 00004040 */ .word 0x40400000
     /* 181C14 00281B14 00000000 */ .word 0x00000000
     /* 181C18 00281B18 FFFFFFFF */ .word 0xFFFFFFFF
@@ -63750,10 +63750,10 @@ glabel MonstorTable
     /* 181C28 00281B28 00000000 */ .word 0x00000000
     /* 181C2C 00281B2C 3C000000 */ .word 0x0000003C
     /* 181C30 00281B30 97000000 */ .word 0x00000097
-    /* 181C34 00281B34 64005A00 */ .word GlobalDataBuffer + 0x2F4FE4
-    /* 181C38 00281B38 C7006400 */ .word GlobalDataBuffer + 0x395047
-    /* 181C3C 00281B3C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181C40 00281B40 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181C34 00281B34 64005A00 */ .word 0x005A0064
+    /* 181C38 00281B38 C7006400 */ .word 0x006400C7
+    /* 181C3C 00281B3C 64006400 */ .word 0x00640064
+    /* 181C40 00281B40 64006400 */ .word 0x00640064
     /* 181C44 00281B44 64000000 */ .word 0x00000064
     /* 181C48 00281B48 0000803F */ .word 0x3F800000
     /* 181C4C 00281B4C 65363161 */ .word 0x61313665
@@ -63777,9 +63777,9 @@ glabel MonstorTable
     /* 181C94 00281B94 00000000 */ .word 0x00000000
     /* 181C98 00281B98 00000000 */ .word 0x00000000
     /* 181C9C 00281B9C 96000000 */ .word 0x00000096
-    /* 181CA0 00281BA0 06006400 */ .word GlobalDataBuffer + 0x394F86
-    /* 181CA4 00281BA4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181CA8 00281BA8 78006400 */ .word GlobalDataBuffer + 0x394FF8
+    /* 181CA0 00281BA0 06006400 */ .word 0x00640006
+    /* 181CA4 00281BA4 64006400 */ .word 0x00640064
+    /* 181CA8 00281BA8 78006400 */ .word 0x00640078
     /* 181CAC 00281BAC 00004040 */ .word 0x40400000
     /* 181CB0 00281BB0 00000000 */ .word 0x00000000
     /* 181CB4 00281BB4 FFFFFFFF */ .word 0xFFFFFFFF
@@ -63789,10 +63789,10 @@ glabel MonstorTable
     /* 181CC4 00281BC4 00000000 */ .word 0x00000000
     /* 181CC8 00281BC8 3D000000 */ .word 0x0000003D
     /* 181CCC 00281BCC 97000000 */ .word 0x00000097
-    /* 181CD0 00281BD0 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 181CD4 00281BD4 95006400 */ .word GlobalDataBuffer + 0x395015
-    /* 181CD8 00281BD8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181CDC 00281BDC 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181CD0 00281BD0 64004600 */ .word 0x00460064
+    /* 181CD4 00281BD4 95006400 */ .word 0x00640095
+    /* 181CD8 00281BD8 64006400 */ .word 0x00640064
+    /* 181CDC 00281BDC 64006400 */ .word 0x00640064
     /* 181CE0 00281BE0 64000000 */ .word 0x00000064
     /* 181CE4 00281BE4 0000803F */ .word 0x3F800000
     /* 181CE8 00281BE8 65363261 */ .word 0x61323665
@@ -63816,9 +63816,9 @@ glabel MonstorTable
     /* 181D30 00281C30 00000000 */ .word 0x00000000
     /* 181D34 00281C34 00000000 */ .word 0x00000000
     /* 181D38 00281C38 0E010000 */ .word 0x0000010E
-    /* 181D3C 00281C3C 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 181D40 00281C40 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181D44 00281C44 78006400 */ .word GlobalDataBuffer + 0x394FF8
+    /* 181D3C 00281C3C 09006400 */ .word 0x00640009
+    /* 181D40 00281C40 64006400 */ .word 0x00640064
+    /* 181D44 00281C44 78006400 */ .word 0x00640078
     /* 181D48 00281C48 0000A040 */ .word 0x40A00000
     /* 181D4C 00281C4C 02000000 */ .word 0x00000002
     /* 181D50 00281C50 FFFFFFFF */ .word 0xFFFFFFFF
@@ -63828,10 +63828,10 @@ glabel MonstorTable
     /* 181D60 00281C60 00000000 */ .word 0x00000000
     /* 181D64 00281C64 3E000000 */ .word 0x0000003E
     /* 181D68 00281C68 FFFF0100 */ .word 0x0001FFFF
-    /* 181D6C 00281C6C 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 181D70 00281C70 94006400 */ .word GlobalDataBuffer + 0x395014
-    /* 181D74 00281C74 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181D78 00281C78 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181D6C 00281C6C 64004600 */ .word 0x00460064
+    /* 181D70 00281C70 94006400 */ .word 0x00640094
+    /* 181D74 00281C74 64006400 */ .word 0x00640064
+    /* 181D78 00281C78 64006400 */ .word 0x00640064
     /* 181D7C 00281C7C 64000000 */ .word 0x00000064
     /* 181D80 00281C80 0000803F */ .word 0x3F800000
     /* 181D84 00281C84 65363361 */ .word 0x61333665
@@ -63855,9 +63855,9 @@ glabel MonstorTable
     /* 181DCC 00281CCC 00000000 */ .word 0x00000000
     /* 181DD0 00281CD0 00000000 */ .word 0x00000000
     /* 181DD4 00281CD4 58020000 */ .word 0x00000258
-    /* 181DD8 00281CD8 05003200 */ .word GlobalDataBuffer + 0x74F85
-    /* 181DDC 00281CDC 96006400 */ .word GlobalDataBuffer + 0x395016
-    /* 181DE0 00281CE0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181DD8 00281CD8 05003200 */ .word 0x00320005
+    /* 181DDC 00281CDC 96006400 */ .word 0x00640096
+    /* 181DE0 00281CE0 64006400 */ .word 0x00640064
     /* 181DE4 00281CE4 0000C040 */ .word 0x40C00000
     /* 181DE8 00281CE8 02000A00 */ .word 0x000A0002
     /* 181DEC 00281CEC FFFFFFFF */ .word 0xFFFFFFFF
@@ -63867,10 +63867,10 @@ glabel MonstorTable
     /* 181DFC 00281CFC 00000000 */ .word 0x00000000
     /* 181E00 00281D00 3F000000 */ .word 0x0000003F
     /* 181E04 00281D04 95000100 */ .word 0x00010095
-    /* 181E08 00281D08 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 181E0C 00281D0C 5D006400 */ .word GlobalDataBuffer + 0x394FDD
-    /* 181E10 00281D10 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181E14 00281D14 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181E08 00281D08 64004600 */ .word 0x00460064
+    /* 181E0C 00281D0C 5D006400 */ .word 0x0064005D
+    /* 181E10 00281D10 64006400 */ .word 0x00640064
+    /* 181E14 00281D14 64006400 */ .word 0x00640064
     /* 181E18 00281D18 64000000 */ .word 0x00000064
     /* 181E1C 00281D1C 0000803F */ .word 0x3F800000
     /* 181E20 00281D20 65363461 */ .word 0x61343665
@@ -63894,11 +63894,11 @@ glabel MonstorTable
     /* 181E68 00281D68 00000000 */ .word 0x00000000
     /* 181E6C 00281D6C 00000000 */ .word 0x00000000
     /* 181E70 00281D70 EE020000 */ .word 0x000002EE
-    /* 181E74 00281D74 07005000 */ .word GlobalDataBuffer + 0x254F87
-    /* 181E78 00281D78 64007D00 */ .word GlobalDataBuffer + 0x524FE4
-    /* 181E7C 00281D7C 50006400 */ .word GlobalDataBuffer + 0x394FD0
+    /* 181E74 00281D74 07005000 */ .word 0x00500007
+    /* 181E78 00281D78 64007D00 */ .word 0x007D0064
+    /* 181E7C 00281D7C 50006400 */ .word 0x00640050
     /* 181E80 00281D80 00006041 */ .word 0x41600000
-    /* 181E84 00281D84 0A003200 */ .word GlobalDataBuffer + 0x74F8A
+    /* 181E84 00281D84 0A003200 */ .word 0x0032000A
     /* 181E88 00281D88 0700FFFF */ .word 0xFFFF0007
     /* 181E8C 00281D8C 0C000000 */ .word 0x0000000C
     /* 181E90 00281D90 0F000000 */ .word 0x0000000F
@@ -63906,10 +63906,10 @@ glabel MonstorTable
     /* 181E98 00281D98 00000000 */ .word 0x00000000
     /* 181E9C 00281D9C 40000000 */ .word 0x00000040
     /* 181EA0 00281DA0 B1000100 */ .word 0x000100B1
-    /* 181EA4 00281DA4 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 181EA8 00281DA8 9A006400 */ .word GlobalDataBuffer + 0x39501A
-    /* 181EAC 00281DAC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181EB0 00281DB0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181EA4 00281DA4 5F003200 */ .word 0x0032005F
+    /* 181EA8 00281DA8 9A006400 */ .word 0x0064009A
+    /* 181EAC 00281DAC 64006400 */ .word 0x00640064
+    /* 181EB0 00281DB0 64006400 */ .word 0x00640064
     /* 181EB4 00281DB4 64000000 */ .word 0x00000064
     /* 181EB8 00281DB8 0000803F */ .word 0x3F800000
     /* 181EBC 00281DBC 65363561 */ .word 0x61353665
@@ -63933,9 +63933,9 @@ glabel MonstorTable
     /* 181F04 00281E04 00000000 */ .word 0x00000000
     /* 181F08 00281E08 00000000 */ .word 0x00000000
     /* 181F0C 00281E0C EE020000 */ .word 0x000002EE
-    /* 181F10 00281E10 07006400 */ .word GlobalDataBuffer + 0x394F87
-    /* 181F14 00281E14 64008C00 */ .word GlobalDataBuffer + 0x614FE4
-    /* 181F18 00281E18 8C006400 */ .word GlobalDataBuffer + 0x39500C
+    /* 181F10 00281E10 07006400 */ .word 0x00640007
+    /* 181F14 00281E14 64008C00 */ .word 0x008C0064
+    /* 181F18 00281E18 8C006400 */ .word 0x0064008C
     /* 181F1C 00281E1C 00006041 */ .word 0x41600000
     /* 181F20 00281E20 05000000 */ .word 0x00000005
     /* 181F24 00281E24 0700FFFF */ .word 0xFFFF0007
@@ -63945,10 +63945,10 @@ glabel MonstorTable
     /* 181F34 00281E34 00000000 */ .word 0x00000000
     /* 181F38 00281E38 41000000 */ .word 0x00000041
     /* 181F3C 00281E3C A2000100 */ .word 0x000100A2
-    /* 181F40 00281E40 64003200 */ .word GlobalDataBuffer + 0x74FE4
-    /* 181F44 00281E44 52006400 */ .word GlobalDataBuffer + 0x394FD2
-    /* 181F48 00281E48 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 181F4C 00281E4C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 181F40 00281E40 64003200 */ .word 0x00320064
+    /* 181F44 00281E44 52006400 */ .word 0x00640052
+    /* 181F48 00281E48 64006400 */ .word 0x00640064
+    /* 181F4C 00281E4C 64006400 */ .word 0x00640064
     /* 181F50 00281E50 64000000 */ .word 0x00000064
     /* 181F54 00281E54 0000003F */ .word 0x3F000000
     /* 181F58 00281E58 65363661 */ .word 0x61363665
@@ -63972,9 +63972,9 @@ glabel MonstorTable
     /* 181FA0 00281EA0 00000000 */ .word 0x00000000
     /* 181FA4 00281EA4 00000000 */ .word 0x00000000
     /* 181FA8 00281EA8 A4010000 */ .word 0x000001A4
-    /* 181FAC 00281EAC 05009600 */ .word GlobalDataBuffer + 0x6B4F85
-    /* 181FB0 00281EB0 7D005000 */ .word GlobalDataBuffer + 0x254FFD
-    /* 181FB4 00281EB4 50006400 */ .word GlobalDataBuffer + 0x394FD0
+    /* 181FAC 00281EAC 05009600 */ .word 0x00960005
+    /* 181FB0 00281EB0 7D005000 */ .word 0x0050007D
+    /* 181FB4 00281EB4 50006400 */ .word 0x00640050
     /* 181FB8 00281EB8 0000A040 */ .word 0x40A00000
     /* 181FBC 00281EBC 02000000 */ .word 0x00000002
     /* 181FC0 00281EC0 0B00FFFF */ .word 0xFFFF000B
@@ -63984,10 +63984,10 @@ glabel MonstorTable
     /* 181FD0 00281ED0 00000000 */ .word 0x00000000
     /* 181FD4 00281ED4 42000000 */ .word 0x00000042
     /* 181FD8 00281ED8 BB000100 */ .word 0x000100BB
-    /* 181FDC 00281EDC 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 181FE0 00281EE0 C5002D00 */ .word GlobalDataBuffer + 0x25045
-    /* 181FE4 00281EE4 2D008200 */ .word GlobalDataBuffer + 0x574FAD
-    /* 181FE8 00281EE8 2D002D00 */ .word GlobalDataBuffer + 0x24FAD
+    /* 181FDC 00281EDC 64004600 */ .word 0x00460064
+    /* 181FE0 00281EE0 C5002D00 */ .word 0x002D00C5
+    /* 181FE4 00281EE4 2D008200 */ .word 0x0082002D
+    /* 181FE8 00281EE8 2D002D00 */ .word 0x002D002D
     /* 181FEC 00281EEC 2D000000 */ .word 0x0000002D
     /* 181FF0 00281EF0 0000803F */ .word 0x3F800000
     /* 181FF4 00281EF4 65363761 */ .word 0x61373665
@@ -64011,9 +64011,9 @@ glabel MonstorTable
     /* 18203C 00281F3C 00000000 */ .word 0x00000000
     /* 182040 00281F40 00000000 */ .word 0x00000000
     /* 182044 00281F44 2C010000 */ .word 0x0000012C
-    /* 182048 00281F48 04009600 */ .word GlobalDataBuffer + 0x6B4F84
-    /* 18204C 00281F4C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182050 00281F50 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182048 00281F48 04009600 */ .word 0x00960004
+    /* 18204C 00281F4C 64006400 */ .word 0x00640064
+    /* 182050 00281F50 64006400 */ .word 0x00640064
     /* 182054 00281F54 0000D040 */ .word 0x40D00000
     /* 182058 00281F58 05000000 */ .word 0x00000005
     /* 18205C 00281F5C 0200FFFF */ .word 0xFFFF0002
@@ -64023,10 +64023,10 @@ glabel MonstorTable
     /* 18206C 00281F6C 00000000 */ .word 0x00000000
     /* 182070 00281F70 43000000 */ .word 0x00000043
     /* 182074 00281F74 FFFF0100 */ .word 0x0001FFFF
-    /* 182078 00281F78 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 18207C 00281F7C 93006400 */ .word GlobalDataBuffer + 0x395013
-    /* 182080 00281F80 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182084 00281F84 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182078 00281F78 64004600 */ .word 0x00460064
+    /* 18207C 00281F7C 93006400 */ .word 0x00640093
+    /* 182080 00281F80 64006400 */ .word 0x00640064
+    /* 182084 00281F84 64006400 */ .word 0x00640064
     /* 182088 00281F88 64000000 */ .word 0x00000064
     /* 18208C 00281F8C 00000000 */ .word 0x00000000
     /* 182090 00281F90 65363861 */ .word 0x61383665
@@ -64050,9 +64050,9 @@ glabel MonstorTable
     /* 1820D8 00281FD8 00000000 */ .word 0x00000000
     /* 1820DC 00281FDC 00000000 */ .word 0x00000000
     /* 1820E0 00281FE0 E1000000 */ .word 0x000000E1
-    /* 1820E4 00281FE4 04009600 */ .word GlobalDataBuffer + 0x6B4F84
-    /* 1820E8 00281FE8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1820EC 00281FEC 64008200 */ .word GlobalDataBuffer + 0x574FE4
+    /* 1820E4 00281FE4 04009600 */ .word 0x00960004
+    /* 1820E8 00281FE8 64006400 */ .word 0x00640064
+    /* 1820EC 00281FEC 64008200 */ .word 0x00820064
     /* 1820F0 00281FF0 0000D040 */ .word 0x40D00000
     /* 1820F4 00281FF4 02000000 */ .word 0x00000002
     /* 1820F8 00281FF8 0200FFFF */ .word 0xFFFF0002
@@ -64062,10 +64062,10 @@ glabel MonstorTable
     /* 182108 00282008 00000000 */ .word 0x00000000
     /* 18210C 0028200C 44000000 */ .word 0x00000044
     /* 182110 00282010 FFFF0100 */ .word 0x0001FFFF
-    /* 182114 00282014 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 182118 00282018 92006400 */ .word GlobalDataBuffer + 0x395012
-    /* 18211C 0028201C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182120 00282020 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182114 00282014 64004600 */ .word 0x00460064
+    /* 182118 00282018 92006400 */ .word 0x00640092
+    /* 18211C 0028201C 64006400 */ .word 0x00640064
+    /* 182120 00282020 64006400 */ .word 0x00640064
     /* 182124 00282024 64000000 */ .word 0x00000064
     /* 182128 00282028 00000000 */ .word 0x00000000
     /* 18212C 0028202C 65363961 */ .word 0x61393665
@@ -64089,9 +64089,9 @@ glabel MonstorTable
     /* 182174 00282074 00000000 */ .word 0x00000000
     /* 182178 00282078 00000000 */ .word 0x00000000
     /* 18217C 0028207C 2C010000 */ .word 0x0000012C
-    /* 182180 00282080 09006400 */ .word GlobalDataBuffer + 0x394F89
+    /* 182180 00282080 09006400 */ .word 0x00640009
     /* 182184 00282084 64000000 */ .word 0x00000064
-    /* 182188 00282088 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182188 00282088 64006400 */ .word 0x00640064
     /* 18218C 0028208C 0000A040 */ .word 0x40A00000
     /* 182190 00282090 05000A00 */ .word 0x000A0005
     /* 182194 00282094 12001700 */ .word 0x00170012
@@ -64101,10 +64101,10 @@ glabel MonstorTable
     /* 1821A4 002820A4 00000000 */ .word 0x00000000
     /* 1821A8 002820A8 45000000 */ .word 0x00000045
     /* 1821AC 002820AC A3000100 */ .word 0x000100A3
-    /* 1821B0 002820B0 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 1821B4 002820B4 53006400 */ .word GlobalDataBuffer + 0x394FD3
-    /* 1821B8 002820B8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1821BC 002820BC 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1821B0 002820B0 64004600 */ .word 0x00460064
+    /* 1821B4 002820B4 53006400 */ .word 0x00640053
+    /* 1821B8 002820B8 64006400 */ .word 0x00640064
+    /* 1821BC 002820BC 64006400 */ .word 0x00640064
     /* 1821C0 002820C0 64000000 */ .word 0x00000064
     /* 1821C4 002820C4 0000803F */ .word 0x3F800000
     /* 1821C8 002820C8 65373061 */ .word 0x61303765
@@ -64129,8 +64129,8 @@ glabel MonstorTable
     /* 182214 00282114 00000000 */ .word 0x00000000
     /* 182218 00282118 E0010000 */ .word 0x000001E0
     /* 18221C 0028211C 0300CEFF */ .word 0xFFCE0003
-    /* 182220 00282120 B4006400 */ .word GlobalDataBuffer + 0x395034
-    /* 182224 00282124 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182220 00282120 B4006400 */ .word 0x006400B4
+    /* 182224 00282124 64006400 */ .word 0x00640064
     /* 182228 00282128 0000E040 */ .word 0x40E00000
     /* 18222C 0028212C 05002800 */ .word MonstorTable + 0x505
     /* 182230 00282130 FFFFFFFF */ .word 0xFFFFFFFF
@@ -64140,10 +64140,10 @@ glabel MonstorTable
     /* 182240 00282140 00000000 */ .word 0x00000000
     /* 182244 00282144 46000000 */ .word 0x00000046
     /* 182248 00282148 51000100 */ .word 0x00010051
-    /* 18224C 0028214C 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 182250 00282150 A0006400 */ .word GlobalDataBuffer + 0x395020
-    /* 182254 00282154 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182258 00282158 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18224C 0028214C 64004600 */ .word 0x00460064
+    /* 182250 00282150 A0006400 */ .word 0x006400A0
+    /* 182254 00282154 64006400 */ .word 0x00640064
+    /* 182258 00282158 64006400 */ .word 0x00640064
     /* 18225C 0028215C 64000000 */ .word 0x00000064
     /* 182260 00282160 0000803F */ .word 0x3F800000
     /* 182264 00282164 65373161 */ .word 0x61313765
@@ -64167,9 +64167,9 @@ glabel MonstorTable
     /* 1822AC 002821AC 00000000 */ .word 0x00000000
     /* 1822B0 002821B0 00000000 */ .word 0x00000000
     /* 1822B4 002821B4 2C010000 */ .word 0x0000012C
-    /* 1822B8 002821B8 02006400 */ .word GlobalDataBuffer + 0x394F82
-    /* 1822BC 002821BC 64007D00 */ .word GlobalDataBuffer + 0x524FE4
-    /* 1822C0 002821C0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1822B8 002821B8 02006400 */ .word 0x00640002
+    /* 1822BC 002821BC 64007D00 */ .word 0x007D0064
+    /* 1822C0 002821C0 64006400 */ .word 0x00640064
     /* 1822C4 002821C4 00002041 */ .word 0x41200000
     /* 1822C8 002821C8 05001400 */ .word 0x00140005
     /* 1822CC 002821CC 0600FFFF */ .word 0xFFFF0006
@@ -64179,10 +64179,10 @@ glabel MonstorTable
     /* 1822DC 002821DC 00000000 */ .word 0x00000000
     /* 1822E0 002821E0 47000000 */ .word 0x00000047
     /* 1822E4 002821E4 A6000100 */ .word 0x000100A6
-    /* 1822E8 002821E8 5F004600 */ .word GlobalDataBuffer + 0x1B4FDF
-    /* 1822EC 002821EC 5C006400 */ .word GlobalDataBuffer + 0x394FDC
-    /* 1822F0 002821F0 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1822F4 002821F4 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1822E8 002821E8 5F004600 */ .word 0x0046005F
+    /* 1822EC 002821EC 5C006400 */ .word 0x0064005C
+    /* 1822F0 002821F0 64006400 */ .word 0x00640064
+    /* 1822F4 002821F4 64006400 */ .word 0x00640064
     /* 1822F8 002821F8 64000000 */ .word 0x00000064
     /* 1822FC 002821FC 0000803F */ .word 0x3F800000
     /* 182300 00282200 65373261 */ .word 0x61323765
@@ -64206,9 +64206,9 @@ glabel MonstorTable
     /* 182348 00282248 00000000 */ .word 0x00000000
     /* 18234C 0028224C 00000000 */ .word 0x00000000
     /* 182350 00282250 0D020000 */ .word 0x0000020D
-    /* 182354 00282254 02004B00 */ .word GlobalDataBuffer + 0x204F82
-    /* 182358 00282258 64007D00 */ .word GlobalDataBuffer + 0x524FE4
-    /* 18235C 0028225C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182354 00282254 02004B00 */ .word 0x004B0002
+    /* 182358 00282258 64007D00 */ .word 0x007D0064
+    /* 18235C 0028225C 64006400 */ .word 0x00640064
     /* 182360 00282260 0000A040 */ .word 0x40A00000
     /* 182364 00282264 00000000 */ .word 0x00000000
     /* 182368 00282268 0200FFFF */ .word 0xFFFF0002
@@ -64218,10 +64218,10 @@ glabel MonstorTable
     /* 182378 00282278 00000000 */ .word 0x00000000
     /* 18237C 0028227C 48000000 */ .word 0x00000048
     /* 182380 00282280 99000100 */ .word 0x00010099
-    /* 182384 00282284 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 182388 00282288 E2006400 */ .word GlobalDataBuffer + 0x395062
-    /* 18238C 0028228C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182390 00282290 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182384 00282284 64004600 */ .word 0x00460064
+    /* 182388 00282288 E2006400 */ .word 0x006400E2
+    /* 18238C 0028228C 64006400 */ .word 0x00640064
+    /* 182390 00282290 64006400 */ .word 0x00640064
     /* 182394 00282294 64000000 */ .word 0x00000064
     /* 182398 00282298 0000803F */ .word 0x3F800000
     /* 18239C 0028229C 65373361 */ .word 0x61333765
@@ -64245,9 +64245,9 @@ glabel MonstorTable
     /* 1823E4 002822E4 00000000 */ .word 0x00000000
     /* 1823E8 002822E8 00000000 */ .word 0x00000000
     /* 1823EC 002822EC 58020000 */ .word 0x00000258
-    /* 1823F0 002822F0 00007D00 */ .word GlobalDataBuffer + 0x524F80
-    /* 1823F4 002822F4 32006400 */ .word GlobalDataBuffer + 0x394FB2
-    /* 1823F8 002822F8 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1823F0 002822F0 00007D00 */ .word 0x007D0000
+    /* 1823F4 002822F4 32006400 */ .word 0x00640032
+    /* 1823F8 002822F8 64006400 */ .word 0x00640064
     /* 1823FC 002822FC 00008C41 */ .word 0x418C0000
     /* 182400 00282300 05001E00 */ .word 0x001E0005
     /* 182404 00282304 1400FFFF */ .word 0xFFFF0014
@@ -64257,10 +64257,10 @@ glabel MonstorTable
     /* 182414 00282314 00000000 */ .word 0x00000000
     /* 182418 00282318 49000000 */ .word 0x00000049
     /* 18241C 0028231C A2000100 */ .word 0x000100A2
-    /* 182420 00282320 50003200 */ .word GlobalDataBuffer + 0x74FD0
-    /* 182424 00282324 5B006400 */ .word GlobalDataBuffer + 0x394FDB
-    /* 182428 00282328 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18242C 0028232C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182420 00282320 50003200 */ .word 0x00320050
+    /* 182424 00282324 5B006400 */ .word 0x0064005B
+    /* 182428 00282328 64006400 */ .word 0x00640064
+    /* 18242C 0028232C 64006400 */ .word 0x00640064
     /* 182430 00282330 64000000 */ .word 0x00000064
     /* 182434 00282334 0000003F */ .word 0x3F000000
     /* 182438 00282338 65373461 */ .word 0x61343765
@@ -64284,11 +64284,11 @@ glabel MonstorTable
     /* 182480 00282380 00000000 */ .word 0x00000000
     /* 182484 00282384 00000000 */ .word 0x00000000
     /* 182488 00282388 84030000 */ .word 0x00000384
-    /* 18248C 0028238C 00003200 */ .word GlobalDataBuffer + 0x74F80
-    /* 182490 00282390 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 182494 00282394 32008200 */ .word GlobalDataBuffer + 0x574FB2
+    /* 18248C 0028238C 00003200 */ .word 0x00320000
+    /* 182490 00282390 32003200 */ .word 0x00320032
+    /* 182494 00282394 32008200 */ .word 0x00820032
     /* 182498 00282398 00008C41 */ .word 0x418C0000
-    /* 18249C 0028239C 0A003C00 */ .word GlobalDataBuffer + 0x114F8A
+    /* 18249C 0028239C 0A003C00 */ .word 0x003C000A
     /* 1824A0 002823A0 1600FFFF */ .word 0xFFFF0016
     /* 1824A4 002823A4 14000000 */ .word 0x00000014
     /* 1824A8 002823A8 16000000 */ .word 0x00000016
@@ -64297,9 +64297,9 @@ glabel MonstorTable
     /* 1824B4 002823B4 4A000000 */ .word 0x0000004A
     /* 1824B8 002823B8 9A000100 */ .word 0x0001009A
     /* 1824BC 002823BC 32002800 */ .word MonstorTable + 0x532
-    /* 1824C0 002823C0 5E006400 */ .word GlobalDataBuffer + 0x394FDE
-    /* 1824C4 002823C4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1824C8 002823C8 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1824C0 002823C0 5E006400 */ .word 0x0064005E
+    /* 1824C4 002823C4 64006400 */ .word 0x00640064
+    /* 1824C8 002823C8 64006400 */ .word 0x00640064
     /* 1824CC 002823CC 64000000 */ .word 0x00000064
     /* 1824D0 002823D0 0000003F */ .word 0x3F000000
     /* 1824D4 002823D4 65373561 */ .word 0x61353765
@@ -64323,9 +64323,9 @@ glabel MonstorTable
     /* 18251C 0028241C 00000000 */ .word 0x00000000
     /* 182520 00282420 00000000 */ .word 0x00000000
     /* 182524 00282424 77010000 */ .word 0x00000177
-    /* 182528 00282428 01006400 */ .word GlobalDataBuffer + 0x394F81
-    /* 18252C 0028242C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182530 00282430 64009100 */ .word GlobalDataBuffer + 0x664FE4
+    /* 182528 00282428 01006400 */ .word 0x00640001
+    /* 18252C 0028242C 64006400 */ .word 0x00640064
+    /* 182530 00282430 64009100 */ .word 0x00910064
     /* 182534 00282434 0000E040 */ .word 0x40E00000
     /* 182538 00282438 05000A00 */ .word 0x000A0005
     /* 18253C 0028243C 0100FFFF */ .word 0xFFFF0001
@@ -64335,10 +64335,10 @@ glabel MonstorTable
     /* 18254C 0028244C 00000000 */ .word 0x00000000
     /* 182550 00282450 4B000000 */ .word 0x0000004B
     /* 182554 00282454 97000100 */ .word 0x00010097
-    /* 182558 00282458 50004600 */ .word GlobalDataBuffer + 0x1B4FD0
-    /* 18255C 0028245C 5E006400 */ .word GlobalDataBuffer + 0x394FDE
-    /* 182560 00282460 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182564 00282464 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182558 00282458 50004600 */ .word 0x00460050
+    /* 18255C 0028245C 5E006400 */ .word 0x0064005E
+    /* 182560 00282460 64006400 */ .word 0x00640064
+    /* 182564 00282464 64006400 */ .word 0x00640064
     /* 182568 00282468 64000000 */ .word 0x00000064
     /* 18256C 0028246C 0000803F */ .word 0x3F800000
     /* 182570 00282470 65373661 */ .word 0x61363765
@@ -64362,9 +64362,9 @@ glabel MonstorTable
     /* 1825B8 002824B8 00000000 */ .word 0x00000000
     /* 1825BC 002824BC 00000000 */ .word 0x00000000
     /* 1825C0 002824C0 C2010000 */ .word 0x000001C2
-    /* 1825C4 002824C4 06006400 */ .word GlobalDataBuffer + 0x394F86
-    /* 1825C8 002824C8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1825CC 002824CC 6E006400 */ .word GlobalDataBuffer + 0x394FEE
+    /* 1825C4 002824C4 06006400 */ .word 0x00640006
+    /* 1825C8 002824C8 64006400 */ .word 0x00640064
+    /* 1825CC 002824CC 6E006400 */ .word 0x0064006E
     /* 1825D0 002824D0 0000C040 */ .word 0x40C00000
     /* 1825D4 002824D4 05000A00 */ .word 0x000A0005
     /* 1825D8 002824D8 1500FFFF */ .word 0xFFFF0015
@@ -64374,10 +64374,10 @@ glabel MonstorTable
     /* 1825E8 002824E8 00000000 */ .word 0x00000000
     /* 1825EC 002824EC 4C000000 */ .word 0x0000004C
     /* 1825F0 002824F0 FFFF0100 */ .word 0x0001FFFF
-    /* 1825F4 002824F4 50004600 */ .word GlobalDataBuffer + 0x1B4FD0
-    /* 1825F8 002824F8 AA006400 */ .word GlobalDataBuffer + 0x39502A
-    /* 1825FC 002824FC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182600 00282500 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1825F4 002824F4 50004600 */ .word 0x00460050
+    /* 1825F8 002824F8 AA006400 */ .word 0x006400AA
+    /* 1825FC 002824FC 64006400 */ .word 0x00640064
+    /* 182600 00282500 64006400 */ .word 0x00640064
     /* 182604 00282504 64000000 */ .word 0x00000064
     /* 182608 00282508 0000803F */ .word 0x3F800000
     /* 18260C 0028250C 65373761 */ .word 0x61373765
@@ -64401,9 +64401,9 @@ glabel MonstorTable
     /* 182654 00282554 00000000 */ .word 0x00000000
     /* 182658 00282558 00000000 */ .word 0x00000000
     /* 18265C 0028255C 1E000000 */ .word 0x0000001E
-    /* 182660 00282560 03006400 */ .word GlobalDataBuffer + 0x394F83
-    /* 182664 00282564 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182668 00282568 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182660 00282560 03006400 */ .word 0x00640003
+    /* 182664 00282564 64006400 */ .word 0x00640064
+    /* 182668 00282568 64006400 */ .word 0x00640064
     /* 18266C 0028256C 0000D040 */ .word 0x40D00000
     /* 182670 00282570 05001400 */ .word 0x00140005
     /* 182674 00282574 FFFFFFFF */ .word 0xFFFFFFFF
@@ -64413,10 +64413,10 @@ glabel MonstorTable
     /* 182684 00282584 00000000 */ .word 0x00000000
     /* 182688 00282588 4D000000 */ .word 0x0000004D
     /* 18268C 0028258C A0000100 */ .word 0x000100A0
-    /* 182690 00282590 5A003C00 */ .word GlobalDataBuffer + 0x114FDA
-    /* 182694 00282594 A0006400 */ .word GlobalDataBuffer + 0x395020
-    /* 182698 00282598 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18269C 0028259C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182690 00282590 5A003C00 */ .word 0x003C005A
+    /* 182694 00282594 A0006400 */ .word 0x006400A0
+    /* 182698 00282598 64006400 */ .word 0x00640064
+    /* 18269C 0028259C 64006400 */ .word 0x00640064
     /* 1826A0 002825A0 64000000 */ .word 0x00000064
     /* 1826A4 002825A4 CDCC4C3F */ .word 0x3F4CCCCD
     /* 1826A8 002825A8 65373861 */ .word 0x61383765
@@ -64440,9 +64440,9 @@ glabel MonstorTable
     /* 1826F0 002825F0 00000000 */ .word 0x00000000
     /* 1826F4 002825F4 00000000 */ .word 0x00000000
     /* 1826F8 002825F8 96000000 */ .word 0x00000096
-    /* 1826FC 002825FC 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 182700 00282600 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182704 00282604 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1826FC 002825FC 08006400 */ .word 0x00640008
+    /* 182700 00282600 64006400 */ .word 0x00640064
+    /* 182704 00282604 64006400 */ .word 0x00640064
     /* 182708 00282608 00004041 */ .word 0x41400000
     /* 18270C 0028260C 05000A00 */ .word 0x000A0005
     /* 182710 00282610 FFFFFFFF */ .word 0xFFFFFFFF
@@ -64452,10 +64452,10 @@ glabel MonstorTable
     /* 182720 00282620 04000000 */ .word 0x00000004
     /* 182724 00282624 4E000000 */ .word 0x0000004E
     /* 182728 00282628 AF000100 */ .word 0x000100AF
-    /* 18272C 0028262C 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 182730 00282630 B5006400 */ .word GlobalDataBuffer + 0x395035
-    /* 182734 00282634 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182738 00282638 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18272C 0028262C 5A003200 */ .word 0x0032005A
+    /* 182730 00282630 B5006400 */ .word 0x006400B5
+    /* 182734 00282634 64006400 */ .word 0x00640064
+    /* 182738 00282638 64006400 */ .word 0x00640064
     /* 18273C 0028263C 64000000 */ .word 0x00000064
     /* 182740 00282640 0000803F */ .word 0x3F800000
     /* 182744 00282644 65373961 */ .word 0x61393765
@@ -64479,9 +64479,9 @@ glabel MonstorTable
     /* 18278C 0028268C 00000000 */ .word 0x00000000
     /* 182790 00282690 00000000 */ .word 0x00000000
     /* 182794 00282694 5A000000 */ .word 0x0000005A
-    /* 182798 00282698 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 18279C 0028269C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1827A0 002826A0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182798 00282698 08006400 */ .word 0x00640008
+    /* 18279C 0028269C 64006400 */ .word 0x00640064
+    /* 1827A0 002826A0 64006400 */ .word 0x00640064
     /* 1827A4 002826A4 0000A040 */ .word 0x40A00000
     /* 1827A8 002826A8 02000A00 */ .word 0x000A0002
     /* 1827AC 002826AC FFFFFFFF */ .word 0xFFFFFFFF
@@ -64491,10 +64491,10 @@ glabel MonstorTable
     /* 1827BC 002826BC 03000000 */ .word 0x00000003
     /* 1827C0 002826C0 4F000000 */ .word 0x0000004F
     /* 1827C4 002826C4 B1000100 */ .word 0x000100B1
-    /* 1827C8 002826C8 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 1827CC 002826CC EB006400 */ .word GlobalDataBuffer + 0x39506B
-    /* 1827D0 002826D0 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1827D4 002826D4 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1827C8 002826C8 5A003200 */ .word 0x0032005A
+    /* 1827CC 002826CC EB006400 */ .word 0x006400EB
+    /* 1827D0 002826D0 64006400 */ .word 0x00640064
+    /* 1827D4 002826D4 64006400 */ .word 0x00640064
     /* 1827D8 002826D8 64000000 */ .word 0x00000064
     /* 1827DC 002826DC 0000803F */ .word 0x3F800000
     /* 1827E0 002826E0 65383061 */ .word 0x61303865
@@ -64518,9 +64518,9 @@ glabel MonstorTable
     /* 182828 00282728 00000000 */ .word 0x00000000
     /* 18282C 0028272C 00000000 */ .word 0x00000000
     /* 182830 00282730 2C010000 */ .word 0x0000012C
-    /* 182834 00282734 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 182838 00282738 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18283C 0028273C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182834 00282734 08006400 */ .word 0x00640008
+    /* 182838 00282738 64006400 */ .word 0x00640064
+    /* 18283C 0028273C 64006400 */ .word 0x00640064
     /* 182840 00282740 00004041 */ .word 0x41400000
     /* 182844 00282744 05001400 */ .word 0x00140005
     /* 182848 00282748 FFFFFFFF */ .word 0xFFFFFFFF
@@ -64530,10 +64530,10 @@ glabel MonstorTable
     /* 182858 00282758 04000000 */ .word 0x00000004
     /* 18285C 0028275C 50000000 */ .word 0x00000050
     /* 182860 00282760 AF000100 */ .word 0x000100AF
-    /* 182864 00282764 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 182868 00282768 B5006400 */ .word GlobalDataBuffer + 0x395035
-    /* 18286C 0028276C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182870 00282770 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182864 00282764 5A003200 */ .word 0x0032005A
+    /* 182868 00282768 B5006400 */ .word 0x006400B5
+    /* 18286C 0028276C 64006400 */ .word 0x00640064
+    /* 182870 00282770 64006400 */ .word 0x00640064
     /* 182874 00282774 64000000 */ .word 0x00000064
     /* 182878 00282778 0000803F */ .word 0x3F800000
     /* 18287C 0028277C 65383161 */ .word 0x61313865
@@ -64557,9 +64557,9 @@ glabel MonstorTable
     /* 1828C4 002827C4 00000000 */ .word 0x00000000
     /* 1828C8 002827C8 00000000 */ .word 0x00000000
     /* 1828CC 002827CC 96000000 */ .word 0x00000096
-    /* 1828D0 002827D0 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 1828D4 002827D4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1828D8 002827D8 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1828D0 002827D0 08006400 */ .word 0x00640008
+    /* 1828D4 002827D4 64006400 */ .word 0x00640064
+    /* 1828D8 002827D8 64006400 */ .word 0x00640064
     /* 1828DC 002827DC 0000A040 */ .word 0x40A00000
     /* 1828E0 002827E0 05001400 */ .word 0x00140005
     /* 1828E4 002827E4 FFFFFFFF */ .word 0xFFFFFFFF
@@ -64569,10 +64569,10 @@ glabel MonstorTable
     /* 1828F4 002827F4 03000000 */ .word 0x00000003
     /* 1828F8 002827F8 51000000 */ .word 0x00000051
     /* 1828FC 002827FC B1000100 */ .word 0x000100B1
-    /* 182900 00282800 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 182904 00282804 EB006400 */ .word GlobalDataBuffer + 0x39506B
-    /* 182908 00282808 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18290C 0028280C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182900 00282800 5A003200 */ .word 0x0032005A
+    /* 182904 00282804 EB006400 */ .word 0x006400EB
+    /* 182908 00282808 64006400 */ .word 0x00640064
+    /* 18290C 0028280C 64006400 */ .word 0x00640064
     /* 182910 00282810 64000000 */ .word 0x00000064
     /* 182914 00282814 0000803F */ .word 0x3F800000
     /* 182918 00282818 65383261 */ .word 0x61323865
@@ -64596,9 +64596,9 @@ glabel MonstorTable
     /* 182960 00282860 00000000 */ .word 0x00000000
     /* 182964 00282864 00000000 */ .word 0x00000000
     /* 182968 00282868 A3020000 */ .word 0x000002A3
-    /* 18296C 0028286C 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 182970 00282870 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182974 00282874 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18296C 0028286C 08006400 */ .word 0x00640008
+    /* 182970 00282870 64006400 */ .word 0x00640064
+    /* 182974 00282874 64006400 */ .word 0x00640064
     /* 182978 00282878 00004041 */ .word 0x41400000
     /* 18297C 0028287C 05001E00 */ .word 0x001E0005
     /* 182980 00282880 FFFFFFFF */ .word 0xFFFFFFFF
@@ -64608,10 +64608,10 @@ glabel MonstorTable
     /* 182990 00282890 04000000 */ .word 0x00000004
     /* 182994 00282894 52000000 */ .word 0x00000052
     /* 182998 00282898 AF000100 */ .word 0x000100AF
-    /* 18299C 0028289C 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 1829A0 002828A0 B5006400 */ .word GlobalDataBuffer + 0x395035
-    /* 1829A4 002828A4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1829A8 002828A8 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18299C 0028289C 5A003200 */ .word 0x0032005A
+    /* 1829A0 002828A0 B5006400 */ .word 0x006400B5
+    /* 1829A4 002828A4 64006400 */ .word 0x00640064
+    /* 1829A8 002828A8 64006400 */ .word 0x00640064
     /* 1829AC 002828AC 64000000 */ .word 0x00000064
     /* 1829B0 002828B0 0000803F */ .word 0x3F800000
     /* 1829B4 002828B4 65383361 */ .word 0x61333865
@@ -64635,9 +64635,9 @@ glabel MonstorTable
     /* 1829FC 002828FC 00000000 */ .word 0x00000000
     /* 182A00 00282900 00000000 */ .word 0x00000000
     /* 182A04 00282904 C2010000 */ .word 0x000001C2
-    /* 182A08 00282908 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 182A0C 0028290C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182A10 00282910 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182A08 00282908 08006400 */ .word 0x00640008
+    /* 182A0C 0028290C 64006400 */ .word 0x00640064
+    /* 182A10 00282910 64006400 */ .word 0x00640064
     /* 182A14 00282914 0000A040 */ .word 0x40A00000
     /* 182A18 00282918 05001400 */ .word 0x00140005
     /* 182A1C 0028291C FFFFFFFF */ .word 0xFFFFFFFF
@@ -64647,10 +64647,10 @@ glabel MonstorTable
     /* 182A2C 0028292C 03000000 */ .word 0x00000003
     /* 182A30 00282930 53000000 */ .word 0x00000053
     /* 182A34 00282934 B1000100 */ .word 0x000100B1
-    /* 182A38 00282938 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 182A3C 0028293C EB006400 */ .word GlobalDataBuffer + 0x39506B
-    /* 182A40 00282940 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182A44 00282944 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182A38 00282938 5A003200 */ .word 0x0032005A
+    /* 182A3C 0028293C EB006400 */ .word 0x006400EB
+    /* 182A40 00282940 64006400 */ .word 0x00640064
+    /* 182A44 00282944 64006400 */ .word 0x00640064
     /* 182A48 00282948 64000000 */ .word 0x00000064
     /* 182A4C 0028294C 0000803F */ .word 0x3F800000
     /* 182A50 00282950 6B6F7269 */ .word 0x69726F6B
@@ -64674,9 +64674,9 @@ glabel MonstorTable
     /* 182A98 00282998 6E6F7961 */ .word 0x61796F6E
     /* 182A9C 0028299C 00000000 */ .word 0x00000000
     /* 182AA0 002829A0 64000000 */ .word 0x00000064
-    /* 182AA4 002829A4 0900C800 */ .word GlobalDataBuffer + 0x9D4F89
-    /* 182AA8 002829A8 00006400 */ .word GlobalDataBuffer + 0x394F80
-    /* 182AAC 002829AC 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182AA4 002829A4 0900C800 */ .word 0x00C80009
+    /* 182AA8 002829A8 00006400 */ .word 0x00640000
+    /* 182AAC 002829AC 64006400 */ .word 0x00640064
     /* 182AB0 002829B0 00000040 */ .word 0x40000000
     /* 182AB4 002829B4 05000000 */ .word 0x00000005
     /* 182AB8 002829B8 FFFFFFFF */ .word 0xFFFFFFFF
@@ -64713,9 +64713,9 @@ glabel MonstorTable
     /* 182B34 00282A34 00000000 */ .word 0x00000000
     /* 182B38 00282A38 00000000 */ .word 0x00000000
     /* 182B3C 00282A3C B4000000 */ .word 0x000000B4
-    /* 182B40 00282A40 0900C800 */ .word GlobalDataBuffer + 0x9D4F89
-    /* 182B44 00282A44 00006400 */ .word GlobalDataBuffer + 0x394F80
-    /* 182B48 00282A48 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182B40 00282A40 0900C800 */ .word 0x00C80009
+    /* 182B44 00282A44 00006400 */ .word 0x00640000
+    /* 182B48 00282A48 64006400 */ .word 0x00640064
     /* 182B4C 00282A4C 0000A040 */ .word 0x40A00000
     /* 182B50 00282A50 00000000 */ .word 0x00000000
     /* 182B54 00282A54 14001100 */ .word 0x00110014
@@ -64725,10 +64725,10 @@ glabel MonstorTable
     /* 182B64 00282A64 00000000 */ .word 0x00000000
     /* 182B68 00282A68 55000000 */ .word 0x00000055
     /* 182B6C 00282A6C A2000100 */ .word 0x000100A2
-    /* 182B70 00282A70 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 182B74 00282A74 52006400 */ .word GlobalDataBuffer + 0x394FD2
-    /* 182B78 00282A78 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182B7C 00282A7C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182B70 00282A70 64004600 */ .word 0x00460064
+    /* 182B74 00282A74 52006400 */ .word 0x00640052
+    /* 182B78 00282A78 64006400 */ .word 0x00640064
+    /* 182B7C 00282A7C 64006400 */ .word 0x00640064
     /* 182B80 00282A80 64000000 */ .word 0x00000064
     /* 182B84 00282A84 0000803F */ .word 0x3F800000
     /* 182B88 00282A88 63313261 */ .word 0x61323163
@@ -64752,9 +64752,9 @@ glabel MonstorTable
     /* 182BD0 00282AD0 00000000 */ .word 0x00000000
     /* 182BD4 00282AD4 00000000 */ .word 0x00000000
     /* 182BD8 00282AD8 FA000000 */ .word 0x000000FA
-    /* 182BDC 00282ADC 05006400 */ .word GlobalDataBuffer + 0x394F85
-    /* 182BE0 00282AE0 96006400 */ .word GlobalDataBuffer + 0x395016
-    /* 182BE4 00282AE4 64003200 */ .word GlobalDataBuffer + 0x74FE4
+    /* 182BDC 00282ADC 05006400 */ .word 0x00640005
+    /* 182BE0 00282AE0 96006400 */ .word 0x00640096
+    /* 182BE4 00282AE4 64003200 */ .word 0x00320064
     /* 182BE8 00282AE8 00003442 */ .word 0x42340000
     /* 182BEC 00282AEC 0A001400 */ .word 0x0014000A
     /* 182BF0 00282AF0 0D00FFFF */ .word 0xFFFF000D
@@ -64791,9 +64791,9 @@ glabel MonstorTable
     /* 182C6C 00282B6C 00000000 */ .word 0x00000000
     /* 182C70 00282B70 00000000 */ .word 0x00000000
     /* 182C74 00282B74 BC020000 */ .word 0x000002BC
-    /* 182C78 00282B78 05006400 */ .word GlobalDataBuffer + 0x394F85
-    /* 182C7C 00282B7C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182C80 00282B80 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182C78 00282B78 05006400 */ .word 0x00640005
+    /* 182C7C 00282B7C 64006400 */ .word 0x00640064
+    /* 182C80 00282B80 64006400 */ .word 0x00640064
     /* 182C84 00282B84 00000C42 */ .word 0x420C0000
     /* 182C88 00282B88 0C000000 */ .word 0x0000000C
     /* 182C8C 00282B8C 0E00FFFF */ .word 0xFFFF000E
@@ -64830,9 +64830,9 @@ glabel MonstorTable
     /* 182D08 00282C08 00000000 */ .word 0x00000000
     /* 182D0C 00282C0C 00000000 */ .word 0x00000000
     /* 182D10 00282C10 BC020000 */ .word 0x000002BC
-    /* 182D14 00282C14 09009600 */ .word GlobalDataBuffer + 0x6B4F89
-    /* 182D18 00282C18 CEFF5000 */ .word GlobalDataBuffer + 0x264F4E
-    /* 182D1C 00282C1C 50007800 */ .word GlobalDataBuffer + 0x4D4FD0
+    /* 182D14 00282C14 09009600 */ .word 0x00960009
+    /* 182D18 00282C18 CEFF5000 */ .word 0x0050FFCE
+    /* 182D1C 00282C1C 50007800 */ .word 0x00780050
     /* 182D20 00282C20 00005041 */ .word 0x41500000
     /* 182D24 00282C24 0A000000 */ .word 0x0000000A
     /* 182D28 00282C28 FFFFFFFF */ .word 0xFFFFFFFF
@@ -64869,9 +64869,9 @@ glabel MonstorTable
     /* 182DA4 00282CA4 00000000 */ .word 0x00000000
     /* 182DA8 00282CA8 00000000 */ .word 0x00000000
     /* 182DAC 00282CAC D0070000 */ .word 0x000007D0
-    /* 182DB0 00282CB0 01006E00 */ .word GlobalDataBuffer + 0x434F81
-    /* 182DB4 00282CB4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182DB8 00282CB8 96007D00 */ .word GlobalDataBuffer + 0x525016
+    /* 182DB0 00282CB0 01006E00 */ .word 0x006E0001
+    /* 182DB4 00282CB4 64006400 */ .word 0x00640064
+    /* 182DB8 00282CB8 96007D00 */ .word 0x007D0096
     /* 182DBC 00282CBC 0000C040 */ .word 0x40C00000
     /* 182DC0 00282CC0 0A002800 */ .word MonstorTable + 0x50A
     /* 182DC4 00282CC4 FFFFFFFF */ .word 0xFFFFFFFF
@@ -64908,9 +64908,9 @@ glabel MonstorTable
     /* 182E40 00282D40 00000000 */ .word 0x00000000
     /* 182E44 00282D44 00000000 */ .word 0x00000000
     /* 182E48 00282D48 E8030000 */ .word 0x000003E8
-    /* 182E4C 00282D4C 01006400 */ .word GlobalDataBuffer + 0x394F81
-    /* 182E50 00282D50 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182E54 00282D54 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182E4C 00282D4C 01006400 */ .word 0x00640001
+    /* 182E50 00282D50 64006400 */ .word 0x00640064
+    /* 182E54 00282D54 64006400 */ .word 0x00640064
     /* 182E58 00282D58 00008040 */ .word 0x40800000
     /* 182E5C 00282D5C 0A000000 */ .word 0x0000000A
     /* 182E60 00282D60 FFFFFFFF */ .word 0xFFFFFFFF
@@ -64947,9 +64947,9 @@ glabel MonstorTable
     /* 182EDC 00282DDC 00000000 */ .word 0x00000000
     /* 182EE0 00282DE0 00000000 */ .word 0x00000000
     /* 182EE4 00282DE4 D0070000 */ .word 0x000007D0
-    /* 182EE8 00282DE8 05006400 */ .word GlobalDataBuffer + 0x394F85
-    /* 182EEC 00282DEC 64009600 */ .word GlobalDataBuffer + 0x6B4FE4
-    /* 182EF0 00282DF0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 182EE8 00282DE8 05006400 */ .word 0x00640005
+    /* 182EEC 00282DEC 64009600 */ .word 0x00960064
+    /* 182EF0 00282DF0 64006400 */ .word 0x00640064
     /* 182EF4 00282DF4 0000C841 */ .word 0x41C80000
     /* 182EF8 00282DF8 0C002800 */ .word MonstorTable + 0x50C
     /* 182EFC 00282DFC FFFFFFFF */ .word 0xFFFFFFFF
@@ -64986,9 +64986,9 @@ glabel MonstorTable
     /* 182F78 00282E78 00000000 */ .word 0x00000000
     /* 182F7C 00282E7C 00000000 */ .word 0x00000000
     /* 182F80 00282E80 D0070000 */ .word 0x000007D0
-    /* 182F84 00282E84 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 182F88 00282E88 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 182F8C 00282E8C 64007800 */ .word GlobalDataBuffer + 0x4D4FE4
+    /* 182F84 00282E84 09006400 */ .word 0x00640009
+    /* 182F88 00282E88 64006400 */ .word 0x00640064
+    /* 182F8C 00282E8C 64007800 */ .word 0x00780064
     /* 182F90 00282E90 00006041 */ .word 0x41600000
     /* 182F94 00282E94 19001E00 */ .word 0x001E0019
     /* 182F98 00282E98 0500FFFF */ .word 0xFFFF0005
@@ -65025,9 +65025,9 @@ glabel MonstorTable
     /* 183014 00282F14 00000000 */ .word 0x00000000
     /* 183018 00282F18 00000000 */ .word 0x00000000
     /* 18301C 00282F1C 800C0000 */ .word 0x00000C80
-    /* 183020 00282F20 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 183024 00282F24 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 183028 00282F28 64007800 */ .word GlobalDataBuffer + 0x4D4FE4
+    /* 183020 00282F20 09006400 */ .word 0x00640009
+    /* 183024 00282F24 64006400 */ .word 0x00640064
+    /* 183028 00282F28 64007800 */ .word 0x00780064
     /* 18302C 00282F2C 00000041 */ .word 0x41000000
     /* 183030 00282F30 00001400 */ .word GetArg__FR9input_strPiPPv__2
     /* 183034 00282F34 FFFFFFFF */ .word 0xFFFFFFFF
@@ -65064,9 +65064,9 @@ glabel MonstorTable
     /* 1830B0 00282FB0 00000000 */ .word 0x00000000
     /* 1830B4 00282FB4 00000000 */ .word 0x00000000
     /* 1830B8 00282FB8 800C0000 */ .word 0x00000C80
-    /* 1830BC 00282FBC 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 1830C0 00282FC0 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1830C4 00282FC4 64007800 */ .word GlobalDataBuffer + 0x4D4FE4
+    /* 1830BC 00282FBC 09006400 */ .word 0x00640009
+    /* 1830C0 00282FC0 64006400 */ .word 0x00640064
+    /* 1830C4 00282FC4 64007800 */ .word 0x00780064
     /* 1830C8 00282FC8 00000041 */ .word 0x41000000
     /* 1830CC 00282FCC 00001400 */ .word GetArg__FR9input_strPiPPv__2
     /* 1830D0 00282FD0 FFFFFFFF */ .word 0xFFFFFFFF
@@ -65103,9 +65103,9 @@ glabel MonstorTable
     /* 18314C 0028304C 72690000 */ .word 0x00006972
     /* 183150 00283050 00000000 */ .word 0x00000000
     /* 183154 00283054 5A000000 */ .word 0x0000005A
-    /* 183158 00283058 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 18315C 0028305C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 183160 00283060 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 183158 00283058 09006400 */ .word 0x00640009
+    /* 18315C 0028305C 64006400 */ .word 0x00640064
+    /* 183160 00283060 64006400 */ .word 0x00640064
     /* 183164 00283064 0000A040 */ .word 0x40A00000
     /* 183168 00283068 00001400 */ .word GetArg__FR9input_strPiPPv__2
     /* 18316C 0028306C FFFFFFFF */ .word 0xFFFFFFFF
@@ -65142,9 +65142,9 @@ glabel MonstorTable
     /* 1831E8 002830E8 00000000 */ .word 0x00000000
     /* 1831EC 002830EC 00000000 */ .word 0x00000000
     /* 1831F0 002830F0 5A000000 */ .word 0x0000005A
-    /* 1831F4 002830F4 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 1831F8 002830F8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1831FC 002830FC 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1831F4 002830F4 09006400 */ .word 0x00640009
+    /* 1831F8 002830F8 64006400 */ .word 0x00640064
+    /* 1831FC 002830FC 64006400 */ .word 0x00640064
     /* 183200 00283100 0000A040 */ .word 0x40A00000
     /* 183204 00283104 00001400 */ .word GetArg__FR9input_strPiPPv__2
     /* 183208 00283108 FFFFFFFF */ .word 0xFFFFFFFF
@@ -65181,9 +65181,9 @@ glabel MonstorTable
     /* 183284 00283184 00000000 */ .word 0x00000000
     /* 183288 00283188 00000000 */ .word 0x00000000
     /* 18328C 0028318C 5A000000 */ .word 0x0000005A
-    /* 183290 00283190 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 183294 00283194 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 183298 00283198 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 183290 00283190 09006400 */ .word 0x00640009
+    /* 183294 00283194 64006400 */ .word 0x00640064
+    /* 183298 00283198 64006400 */ .word 0x00640064
     /* 18329C 0028319C 0000A040 */ .word 0x40A00000
     /* 1832A0 002831A0 00001400 */ .word GetArg__FR9input_strPiPPv__2
     /* 1832A4 002831A4 FFFFFFFF */ .word 0xFFFFFFFF
@@ -65220,9 +65220,9 @@ glabel MonstorTable
     /* 183320 00283220 5F730000 */ .word 0x0000735F
     /* 183324 00283224 00000000 */ .word 0x00000000
     /* 183328 00283228 5A000000 */ .word 0x0000005A
-    /* 18332C 0028322C 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 183330 00283230 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 183334 00283234 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18332C 0028322C 09006400 */ .word 0x00640009
+    /* 183330 00283230 64006400 */ .word 0x00640064
+    /* 183334 00283234 64006400 */ .word 0x00640064
     /* 183338 00283238 0000A040 */ .word 0x40A00000
     /* 18333C 0028323C 00001400 */ .word GetArg__FR9input_strPiPPv__2
     /* 183340 00283240 FFFFFFFF */ .word 0xFFFFFFFF
@@ -65259,9 +65259,9 @@ glabel MonstorTable
     /* 1833BC 002832BC 00000000 */ .word 0x00000000
     /* 1833C0 002832C0 00000000 */ .word 0x00000000
     /* 1833C4 002832C4 50000000 */ .word 0x00000050
-    /* 1833C8 002832C8 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 1833CC 002832CC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1833D0 002832D0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1833C8 002832C8 09006400 */ .word 0x00640009
+    /* 1833CC 002832CC 64006400 */ .word 0x00640064
+    /* 1833D0 002832D0 64006400 */ .word 0x00640064
     /* 1833D4 002832D4 0000E040 */ .word 0x40E00000
     /* 1833D8 002832D8 00000000 */ .word 0x00000000
     /* 1833DC 002832DC FFFFFFFF */ .word 0xFFFFFFFF
@@ -65298,9 +65298,9 @@ glabel MonstorTable
     /* 183458 00283358 69000000 */ .word 0x00000069
     /* 18345C 0028335C 00000000 */ .word 0x00000000
     /* 183460 00283360 50000000 */ .word 0x00000050
-    /* 183464 00283364 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 183468 00283368 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18346C 0028336C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 183464 00283364 09006400 */ .word 0x00640009
+    /* 183468 00283368 64006400 */ .word 0x00640064
+    /* 18346C 0028336C 64006400 */ .word 0x00640064
     /* 183470 00283370 0000A040 */ .word 0x40A00000
     /* 183474 00283374 00000000 */ .word 0x00000000
     /* 183478 00283378 FFFFFFFF */ .word 0xFFFFFFFF
@@ -65337,9 +65337,9 @@ glabel MonstorTable
     /* 1834F4 002833F4 67656B69 */ .word 0x696B6567
     /* 1834F8 002833F8 00000000 */ .word 0x00000000
     /* 1834FC 002833FC 50000000 */ .word 0x00000050
-    /* 183500 00283400 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 183504 00283404 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 183508 00283408 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 183500 00283400 09006400 */ .word 0x00640009
+    /* 183504 00283404 64006400 */ .word 0x00640064
+    /* 183508 00283408 64006400 */ .word 0x00640064
     /* 18350C 0028340C 0000A040 */ .word 0x40A00000
     /* 183510 00283410 00000000 */ .word 0x00000000
     /* 183514 00283414 FFFFFFFF */ .word 0xFFFFFFFF
@@ -65376,9 +65376,9 @@ glabel MonstorTable
     /* 183590 00283490 00000000 */ .word 0x00000000
     /* 183594 00283494 00000000 */ .word 0x00000000
     /* 183598 00283498 58020000 */ .word 0x00000258
-    /* 18359C 0028349C 03007800 */ .word GlobalDataBuffer + 0x4D4F83
-    /* 1835A0 002834A0 5A006400 */ .word GlobalDataBuffer + 0x394FDA
-    /* 1835A4 002834A4 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18359C 0028349C 03007800 */ .word 0x00780003
+    /* 1835A0 002834A0 5A006400 */ .word 0x0064005A
+    /* 1835A4 002834A4 64006400 */ .word 0x00640064
     /* 1835A8 002834A8 00006041 */ .word 0x41600000
     /* 1835AC 002834AC 08000000 */ .word 0x00000008
     /* 1835B0 002834B0 0700FFFF */ .word 0xFFFF0007
@@ -65388,7 +65388,7 @@ glabel MonstorTable
     /* 1835C0 002834C0 00000000 */ .word 0x00000000
     /* 1835C4 002834C4 5A000000 */ .word 0x0000005A
     /* 1835C8 002834C8 B1000000 */ .word 0x000000B1
-    /* 1835CC 002834CC 64003200 */ .word GlobalDataBuffer + 0x74FE4
+    /* 1835CC 002834CC 64003200 */ .word 0x00320064
     /* 1835D0 002834D0 FFFF0000 */ .word 0x0000FFFF
     /* 1835D4 002834D4 00000000 */ .word 0x00000000
     /* 1835D8 002834D8 00000000 */ .word 0x00000000
@@ -65415,9 +65415,9 @@ glabel MonstorTable
     /* 18362C 0028352C 00000000 */ .word 0x00000000
     /* 183630 00283530 00000000 */ .word 0x00000000
     /* 183634 00283534 F4010000 */ .word 0x000001F4
-    /* 183638 00283538 03005A00 */ .word GlobalDataBuffer + 0x2F4F83
-    /* 18363C 0028353C 78006400 */ .word GlobalDataBuffer + 0x394FF8
-    /* 183640 00283540 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 183638 00283538 03005A00 */ .word 0x005A0003
+    /* 18363C 0028353C 78006400 */ .word 0x00640078
+    /* 183640 00283540 64006400 */ .word 0x00640064
     /* 183644 00283544 00006041 */ .word 0x41600000
     /* 183648 00283548 0A000000 */ .word 0x0000000A
     /* 18364C 0028354C 0700FFFF */ .word 0xFFFF0007
@@ -65427,7 +65427,7 @@ glabel MonstorTable
     /* 18365C 0028355C 00000000 */ .word 0x00000000
     /* 183660 00283560 5B000000 */ .word 0x0000005B
     /* 183664 00283564 B1000000 */ .word 0x000000B1
-    /* 183668 00283568 64003200 */ .word GlobalDataBuffer + 0x74FE4
+    /* 183668 00283568 64003200 */ .word 0x00320064
     /* 18366C 0028356C FFFF0000 */ .word 0x0000FFFF
     /* 183670 00283570 00000000 */ .word 0x00000000
     /* 183674 00283574 00000000 */ .word 0x00000000
@@ -65454,9 +65454,9 @@ glabel MonstorTable
     /* 1836C8 002835C8 00000000 */ .word 0x00000000
     /* 1836CC 002835CC 00000000 */ .word 0x00000000
     /* 1836D0 002835D0 0D000000 */ .word 0x0000000D
-    /* 1836D4 002835D4 01006400 */ .word GlobalDataBuffer + 0x394F81
-    /* 1836D8 002835D8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1836DC 002835DC 46008200 */ .word GlobalDataBuffer + 0x574FC6
+    /* 1836D4 002835D4 01006400 */ .word 0x00640001
+    /* 1836D8 002835D8 64006400 */ .word 0x00640064
+    /* 1836DC 002835DC 46008200 */ .word 0x00820046
     /* 1836E0 002835E0 0000E040 */ .word 0x40E00000
     /* 1836E4 002835E4 00000100 */ .word 0x00010000
     /* 1836E8 002835E8 FFFFFFFF */ .word 0xFFFFFFFF
@@ -65466,10 +65466,10 @@ glabel MonstorTable
     /* 1836F8 002835F8 00000000 */ .word 0x00000000
     /* 1836FC 002835FC 2D010000 */ .word 0x0000012D
     /* 183700 00283600 A0000100 */ .word 0x000100A0
-    /* 183704 00283604 5A006400 */ .word GlobalDataBuffer + 0x394FDA
-    /* 183708 00283608 5C006400 */ .word GlobalDataBuffer + 0x394FDC
-    /* 18370C 0028360C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 183710 00283610 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 183704 00283604 5A006400 */ .word 0x0064005A
+    /* 183708 00283608 5C006400 */ .word 0x0064005C
+    /* 18370C 0028360C 64006400 */ .word 0x00640064
+    /* 183710 00283610 64006400 */ .word 0x00640064
     /* 183714 00283614 64000000 */ .word 0x00000064
     /* 183718 00283618 0000803F */ .word 0x3F800000
     /* 18371C 0028361C 65313033 */ .word 0x33303165
@@ -65493,9 +65493,9 @@ glabel MonstorTable
     /* 183764 00283664 00000000 */ .word 0x00000000
     /* 183768 00283668 00000000 */ .word 0x00000000
     /* 18376C 0028366C 0F000000 */ .word 0x0000000F
-    /* 183770 00283670 03006400 */ .word GlobalDataBuffer + 0x394F83
-    /* 183774 00283674 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 183778 00283678 64003C00 */ .word GlobalDataBuffer + 0x114FE4
+    /* 183770 00283670 03006400 */ .word 0x00640003
+    /* 183774 00283674 64006400 */ .word 0x00640064
+    /* 183778 00283678 64003C00 */ .word 0x003C0064
     /* 18377C 0028367C 00001041 */ .word 0x41100000
     /* 183780 00283680 03000A00 */ .word 0x000A0003
     /* 183784 00283684 FFFFFFFF */ .word 0xFFFFFFFF
@@ -65505,10 +65505,10 @@ glabel MonstorTable
     /* 183794 00283694 00000000 */ .word 0x00000000
     /* 183798 00283698 2F010000 */ .word 0x0000012F
     /* 18379C 0028369C A0000100 */ .word 0x000100A0
-    /* 1837A0 002836A0 5A006400 */ .word GlobalDataBuffer + 0x394FDA
-    /* 1837A4 002836A4 5C006400 */ .word GlobalDataBuffer + 0x394FDC
-    /* 1837A8 002836A8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1837AC 002836AC 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1837A0 002836A0 5A006400 */ .word 0x0064005A
+    /* 1837A4 002836A4 5C006400 */ .word 0x0064005C
+    /* 1837A8 002836A8 64006400 */ .word 0x00640064
+    /* 1837AC 002836AC 64006400 */ .word 0x00640064
     /* 1837B0 002836B0 64000000 */ .word 0x00000064
     /* 1837B4 002836B4 9A99193F */ .word 0x3F19999A
     /* 1837B8 002836B8 65313034 */ .word 0x34303165
@@ -65532,9 +65532,9 @@ glabel MonstorTable
     /* 183800 00283700 00000000 */ .word 0x00000000
     /* 183804 00283704 00000000 */ .word 0x00000000
     /* 183808 00283708 1C000000 */ .word 0x0000001C
-    /* 18380C 0028370C 02006400 */ .word GlobalDataBuffer + 0x394F82
-    /* 183810 00283710 3C008200 */ .word GlobalDataBuffer + 0x574FBC
-    /* 183814 00283714 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18380C 0028370C 02006400 */ .word 0x00640002
+    /* 183810 00283710 3C008200 */ .word 0x0082003C
+    /* 183814 00283714 64006400 */ .word 0x00640064
     /* 183818 00283718 00007041 */ .word 0x41700000
     /* 18381C 0028371C 01000200 */ .word 0x00020001
     /* 183820 00283720 1D00FFFF */ .word 0xFFFF001D
@@ -65544,10 +65544,10 @@ glabel MonstorTable
     /* 183830 00283730 00000000 */ .word 0x00000000
     /* 183834 00283734 30010000 */ .word 0x00000130
     /* 183838 00283738 E3000100 */ .word 0x000100E3
-    /* 18383C 0028373C 5A006400 */ .word GlobalDataBuffer + 0x394FDA
-    /* 183840 00283740 BE006400 */ .word GlobalDataBuffer + 0x39503E
-    /* 183844 00283744 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 183848 00283748 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18383C 0028373C 5A006400 */ .word 0x0064005A
+    /* 183840 00283740 BE006400 */ .word 0x006400BE
+    /* 183844 00283744 64006400 */ .word 0x00640064
+    /* 183848 00283748 64006400 */ .word 0x00640064
     /* 18384C 0028374C 64000000 */ .word 0x00000064
     /* 183850 00283750 00000000 */ .word 0x00000000
     /* 183854 00283754 65313035 */ .word 0x35303165
@@ -65571,9 +65571,9 @@ glabel MonstorTable
     /* 18389C 0028379C 00000000 */ .word 0x00000000
     /* 1838A0 002837A0 00000000 */ .word 0x00000000
     /* 1838A4 002837A4 32000000 */ .word 0x00000032
-    /* 1838A8 002837A8 04008C00 */ .word GlobalDataBuffer + 0x614F84
-    /* 1838AC 002837AC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1838B0 002837B0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1838A8 002837A8 04008C00 */ .word 0x008C0004
+    /* 1838AC 002837AC 64006400 */ .word 0x00640064
+    /* 1838B0 002837B0 64006400 */ .word 0x00640064
     /* 1838B4 002837B4 0000E040 */ .word 0x40E00000
     /* 1838B8 002837B8 03000A00 */ .word 0x000A0003
     /* 1838BC 002837BC FFFFFFFF */ .word 0xFFFFFFFF
@@ -65583,10 +65583,10 @@ glabel MonstorTable
     /* 1838CC 002837CC 00000000 */ .word 0x00000000
     /* 1838D0 002837D0 31010000 */ .word 0x00000131
     /* 1838D4 002837D4 BA000100 */ .word 0x000100BA
-    /* 1838D8 002837D8 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 1838DC 002837DC BD006400 */ .word GlobalDataBuffer + 0x39503D
-    /* 1838E0 002837E0 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1838E4 002837E4 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1838D8 002837D8 64004600 */ .word 0x00460064
+    /* 1838DC 002837DC BD006400 */ .word 0x006400BD
+    /* 1838E0 002837E0 64006400 */ .word 0x00640064
+    /* 1838E4 002837E4 64006400 */ .word 0x00640064
     /* 1838E8 002837E8 64000000 */ .word 0x00000064
     /* 1838EC 002837EC 0000803F */ .word 0x3F800000
     /* 1838F0 002837F0 65313036 */ .word 0x36303165
@@ -65610,9 +65610,9 @@ glabel MonstorTable
     /* 183938 00283838 00000000 */ .word 0x00000000
     /* 18393C 0028383C 00000000 */ .word 0x00000000
     /* 183940 00283840 3F000000 */ .word 0x0000003F
-    /* 183944 00283844 05009600 */ .word GlobalDataBuffer + 0x6B4F85
-    /* 183948 00283848 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18394C 0028384C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 183944 00283844 05009600 */ .word 0x00960005
+    /* 183948 00283848 64006400 */ .word 0x00640064
+    /* 18394C 0028384C 64006400 */ .word 0x00640064
     /* 183950 00283850 0000C040 */ .word 0x40C00000
     /* 183954 00283854 03000A00 */ .word 0x000A0003
     /* 183958 00283858 FFFFFFFF */ .word 0xFFFFFFFF
@@ -65622,10 +65622,10 @@ glabel MonstorTable
     /* 183968 00283868 00000000 */ .word 0x00000000
     /* 18396C 0028386C 32010000 */ .word 0x00000132
     /* 183970 00283870 FFFF0100 */ .word 0x0001FFFF
-    /* 183974 00283874 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 183978 00283878 C7006400 */ .word GlobalDataBuffer + 0x395047
-    /* 18397C 0028387C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 183980 00283880 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 183974 00283874 64004600 */ .word 0x00460064
+    /* 183978 00283878 C7006400 */ .word 0x006400C7
+    /* 18397C 0028387C 64006400 */ .word 0x00640064
+    /* 183980 00283880 64006400 */ .word 0x00640064
     /* 183984 00283884 64000000 */ .word 0x00000064
     /* 183988 00283888 00000000 */ .word 0x00000000
     /* 18398C 0028388C 62617269 */ .word 0x69726162
@@ -65649,9 +65649,9 @@ glabel MonstorTable
     /* 1839D4 002838D4 61000000 */ .word 0x00000061
     /* 1839D8 002838D8 00000000 */ .word 0x00000000
     /* 1839DC 002838DC 64000000 */ .word 0x00000064
-    /* 1839E0 002838E0 0900C800 */ .word GlobalDataBuffer + 0x9D4F89
-    /* 1839E4 002838E4 00006400 */ .word GlobalDataBuffer + 0x394F80
-    /* 1839E8 002838E8 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1839E0 002838E0 0900C800 */ .word 0x00C80009
+    /* 1839E4 002838E4 00006400 */ .word 0x00640000
+    /* 1839E8 002838E8 64006400 */ .word 0x00640064
     /* 1839EC 002838EC 00000040 */ .word 0x40000000
     /* 1839F0 002838F0 05000000 */ .word 0x00000005
     /* 1839F4 002838F4 FFFFFFFF */ .word 0xFFFFFFFF
@@ -65688,9 +65688,9 @@ glabel MonstorTable
     /* 183A70 00283970 00000000 */ .word 0x00000000
     /* 183A74 00283974 00000000 */ .word 0x00000000
     /* 183A78 00283978 64000000 */ .word 0x00000064
-    /* 183A7C 0028397C 0900C800 */ .word GlobalDataBuffer + 0x9D4F89
-    /* 183A80 00283980 00006400 */ .word GlobalDataBuffer + 0x394F80
-    /* 183A84 00283984 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 183A7C 0028397C 0900C800 */ .word 0x00C80009
+    /* 183A80 00283980 00006400 */ .word 0x00640000
+    /* 183A84 00283984 64006400 */ .word 0x00640064
     /* 183A88 00283988 00000040 */ .word 0x40000000
     /* 183A8C 0028398C 05000000 */ .word 0x00000005
     /* 183A90 00283990 FFFFFFFF */ .word 0xFFFFFFFF
@@ -65707,7 +65707,7 @@ glabel MonstorTable
     /* 183ABC 002839BC 00000000 */ .word 0x00000000
     /* 183AC0 002839C0 00000000 */ .word 0x00000000
     /* 183AC4 002839C4 695F6D65 */ .word 0x656D5F69
-    /* 183AC8 002839C8 74656F00 */ .word GlobalDataBuffer + 0x44B4F4
+    /* 183AC8 002839C8 74656F00 */ .word 0x006F6574
     /* 183ACC 002839CC 00000000 */ .word 0x00000000
     /* 183AD0 002839D0 00000000 */ .word 0x00000000
     /* 183AD4 002839D4 00000000 */ .word 0x00000000
@@ -65724,12 +65724,12 @@ glabel MonstorTable
     /* 183B00 00283A00 00000000 */ .word 0x00000000
     /* 183B04 00283A04 6331335F */ .word 0x5F333163
     /* 183B08 00283A08 695F6D65 */ .word 0x656D5F69
-    /* 183B0C 00283A0C 74656F00 */ .word GlobalDataBuffer + 0x44B4F4
+    /* 183B0C 00283A0C 74656F00 */ .word 0x006F6574
     /* 183B10 00283A10 00000000 */ .word 0x00000000
     /* 183B14 00283A14 64000000 */ .word 0x00000064
-    /* 183B18 00283A18 0900C800 */ .word GlobalDataBuffer + 0x9D4F89
-    /* 183B1C 00283A1C 00006400 */ .word GlobalDataBuffer + 0x394F80
-    /* 183B20 00283A20 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 183B18 00283A18 0900C800 */ .word 0x00C80009
+    /* 183B1C 00283A1C 00006400 */ .word 0x00640000
+    /* 183B20 00283A20 64006400 */ .word 0x00640064
     /* 183B24 00283A24 00000040 */ .word 0x40000000
     /* 183B28 00283A28 05000000 */ .word 0x00000005
     /* 183B2C 00283A2C FFFFFFFF */ .word 0xFFFFFFFF
@@ -65766,9 +65766,9 @@ glabel MonstorTable
     /* 183BA8 00283AA8 74756D61 */ .word 0x616D7574
     /* 183BAC 00283AAC 6B690000 */ .word 0x0000696B
     /* 183BB0 00283AB0 64000000 */ .word 0x00000064
-    /* 183BB4 00283AB4 0900C800 */ .word GlobalDataBuffer + 0x9D4F89
-    /* 183BB8 00283AB8 00006400 */ .word GlobalDataBuffer + 0x394F80
-    /* 183BBC 00283ABC 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 183BB4 00283AB4 0900C800 */ .word 0x00C80009
+    /* 183BB8 00283AB8 00006400 */ .word 0x00640000
+    /* 183BBC 00283ABC 64006400 */ .word 0x00640064
     /* 183BC0 00283AC0 00000040 */ .word 0x40000000
     /* 183BC4 00283AC4 05000000 */ .word 0x00000005
     /* 183BC8 00283AC8 FFFFFFFF */ .word 0xFFFFFFFF
@@ -65805,9 +65805,9 @@ glabel MonstorTable
     /* 183C44 00283B44 00000000 */ .word 0x00000000
     /* 183C48 00283B48 00000000 */ .word 0x00000000
     /* 183C4C 00283B4C 08070000 */ .word 0x00000708
-    /* 183C50 00283B50 01004600 */ .word GlobalDataBuffer + 0x1B4F81
-    /* 183C54 00283B54 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 183C58 00283B58 64008C00 */ .word GlobalDataBuffer + 0x614FE4
+    /* 183C50 00283B50 01004600 */ .word 0x00460001
+    /* 183C54 00283B54 64006400 */ .word 0x00640064
+    /* 183C58 00283B58 64008C00 */ .word 0x008C0064
     /* 183C5C 00283B5C 00006041 */ .word 0x41600000
     /* 183C60 00283B60 08000000 */ .word 0x00000008
     /* 183C64 00283B64 FFFFFFFF */ .word 0xFFFFFFFF
@@ -65817,10 +65817,10 @@ glabel MonstorTable
     /* 183C74 00283B74 02000000 */ .word 0x00000002
     /* 183C78 00283B78 3D010000 */ .word 0x0000013D
     /* 183C7C 00283B7C FFFF0000 */ .word 0x0000FFFF
-    /* 183C80 00283B80 64005A00 */ .word GlobalDataBuffer + 0x2F4FE4
-    /* 183C84 00283B84 FFFF6400 */ .word GlobalDataBuffer + 0x3A4F7F
-    /* 183C88 00283B88 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 183C8C 00283B8C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 183C80 00283B80 64005A00 */ .word 0x005A0064
+    /* 183C84 00283B84 FFFF6400 */ .word 0x0064FFFF
+    /* 183C88 00283B88 64006400 */ .word 0x00640064
+    /* 183C8C 00283B8C 64006400 */ .word 0x00640064
     /* 183C90 00283B90 64000000 */ .word 0x00000064
     /* 183C94 00283B94 0000803F */ .word 0x3F800000
     /* 183C98 00283B98 63323361 */ .word 0x61333263
@@ -65844,9 +65844,9 @@ glabel MonstorTable
     /* 183CE0 00283BE0 00000000 */ .word 0x00000000
     /* 183CE4 00283BE4 00000000 */ .word 0x00000000
     /* 183CE8 00283BE8 88130000 */ .word 0x00001388
-    /* 183CEC 00283BEC 01004600 */ .word GlobalDataBuffer + 0x1B4F81
-    /* 183CF0 00283BF0 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 183CF4 00283BF4 64008C00 */ .word GlobalDataBuffer + 0x614FE4
+    /* 183CEC 00283BEC 01004600 */ .word 0x00460001
+    /* 183CF0 00283BF0 64006400 */ .word 0x00640064
+    /* 183CF4 00283BF4 64008C00 */ .word 0x008C0064
     /* 183CF8 00283BF8 00006041 */ .word 0x41600000
     /* 183CFC 00283BFC 08000000 */ .word 0x00000008
     /* 183D00 00283C00 1A00FFFF */ .word 0xFFFF001A
@@ -65857,13 +65857,13 @@ glabel MonstorTable
     /* 183D14 00283C14 DF000000 */ .word 0x000000DF
     /* 183D18 00283C18 FFFF0000 */ .word 0x0000FFFF
     /* 183D1C 00283C1C 64000000 */ .word 0x00000064
-    /* 183D20 00283C20 FFFF6400 */ .word GlobalDataBuffer + 0x3A4F7F
-    /* 183D24 00283C24 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 183D28 00283C28 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 183D20 00283C20 FFFF6400 */ .word 0x0064FFFF
+    /* 183D24 00283C24 64006400 */ .word 0x00640064
+    /* 183D28 00283C28 64006400 */ .word 0x00640064
     /* 183D2C 00283C2C 64000000 */ .word 0x00000064
     /* 183D30 00283C30 00000000 */ .word 0x00000000
     /* 183D34 00283C34 6C617374 */ .word 0x7473616C
-    /* 183D38 00283C38 5F6D6300 */ .word GlobalDataBuffer + 0x38BCDF
+    /* 183D38 00283C38 5F6D6300 */ .word 0x00636D5F
     /* 183D3C 00283C3C 00000000 */ .word 0x00000000
     /* 183D40 00283C40 00000000 */ .word 0x00000000
     /* 183D44 00283C44 00000000 */ .word 0x00000000
@@ -65883,9 +65883,9 @@ glabel MonstorTable
     /* 183D7C 00283C7C 72610000 */ .word 0x00006172
     /* 183D80 00283C80 00000000 */ .word 0x00000000
     /* 183D84 00283C84 64000000 */ .word 0x00000064
-    /* 183D88 00283C88 01004600 */ .word GlobalDataBuffer + 0x1B4F81
-    /* 183D8C 00283C8C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 183D90 00283C90 64008C00 */ .word GlobalDataBuffer + 0x614FE4
+    /* 183D88 00283C88 01004600 */ .word 0x00460001
+    /* 183D8C 00283C8C 64006400 */ .word 0x00640064
+    /* 183D90 00283C90 64008C00 */ .word 0x008C0064
     /* 183D94 00283C94 00006041 */ .word 0x41600000
     /* 183D98 00283C98 08000000 */ .word 0x00000008
     /* 183D9C 00283C9C FFFFFFFF */ .word 0xFFFFFFFF
@@ -65895,10 +65895,10 @@ glabel MonstorTable
     /* 183DAC 00283CAC 02000000 */ .word 0x00000002
     /* 183DB0 00283CB0 00000000 */ .word 0x00000000
     /* 183DB4 00283CB4 FFFF0000 */ .word 0x0000FFFF
-    /* 183DB8 00283CB8 64005A00 */ .word GlobalDataBuffer + 0x2F4FE4
-    /* 183DBC 00283CBC FFFF6400 */ .word GlobalDataBuffer + 0x3A4F7F
-    /* 183DC0 00283CC0 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 183DC4 00283CC4 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 183DB8 00283CB8 64005A00 */ .word 0x005A0064
+    /* 183DBC 00283CBC FFFF6400 */ .word 0x0064FFFF
+    /* 183DC0 00283CC0 64006400 */ .word 0x00640064
+    /* 183DC4 00283CC4 64006400 */ .word 0x00640064
     /* 183DC8 00283CC8 64000000 */ .word 0x00000064
     /* 183DCC 00283CCC 0000803F */ .word 0x3F800000
     /* 183DD0 00283CD0 6C617374 */ .word 0x7473616C
@@ -65922,9 +65922,9 @@ glabel MonstorTable
     /* 183E18 00283D18 67656B69 */ .word 0x696B6567
     /* 183E1C 00283D1C 00000000 */ .word 0x00000000
     /* 183E20 00283D20 64000000 */ .word 0x00000064
-    /* 183E24 00283D24 01004600 */ .word GlobalDataBuffer + 0x1B4F81
-    /* 183E28 00283D28 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 183E2C 00283D2C 64008C00 */ .word GlobalDataBuffer + 0x614FE4
+    /* 183E24 00283D24 01004600 */ .word 0x00460001
+    /* 183E28 00283D28 64006400 */ .word 0x00640064
+    /* 183E2C 00283D2C 64008C00 */ .word 0x008C0064
     /* 183E30 00283D30 00006041 */ .word 0x41600000
     /* 183E34 00283D34 08000000 */ .word 0x00000008
     /* 183E38 00283D38 FFFFFFFF */ .word 0xFFFFFFFF
@@ -65934,10 +65934,10 @@ glabel MonstorTable
     /* 183E48 00283D48 02000000 */ .word 0x00000002
     /* 183E4C 00283D4C 00000000 */ .word 0x00000000
     /* 183E50 00283D50 FFFF0000 */ .word 0x0000FFFF
-    /* 183E54 00283D54 64005A00 */ .word GlobalDataBuffer + 0x2F4FE4
-    /* 183E58 00283D58 FFFF6400 */ .word GlobalDataBuffer + 0x3A4F7F
-    /* 183E5C 00283D5C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 183E60 00283D60 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 183E54 00283D54 64005A00 */ .word 0x005A0064
+    /* 183E58 00283D58 FFFF6400 */ .word 0x0064FFFF
+    /* 183E5C 00283D5C 64006400 */ .word 0x00640064
+    /* 183E60 00283D60 64006400 */ .word 0x00640064
     /* 183E64 00283D64 64000000 */ .word 0x00000064
     /* 183E68 00283D68 0000803F */ .word 0x3F800000
     /* 183E6C 00283D6C 6332335F */ .word 0x5F333263
@@ -65961,9 +65961,9 @@ glabel MonstorTable
     /* 183EB4 00283DB4 00000000 */ .word 0x00000000
     /* 183EB8 00283DB8 00000000 */ .word 0x00000000
     /* 183EBC 00283DBC 5A000000 */ .word 0x0000005A
-    /* 183EC0 00283DC0 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 183EC4 00283DC4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 183EC8 00283DC8 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 183EC0 00283DC0 09006400 */ .word 0x00640009
+    /* 183EC4 00283DC4 64006400 */ .word 0x00640064
+    /* 183EC8 00283DC8 64006400 */ .word 0x00640064
     /* 183ECC 00283DCC 0000A040 */ .word 0x40A00000
     /* 183ED0 00283DD0 00001400 */ .word GetArg__FR9input_strPiPPv__2
     /* 183ED4 00283DD4 FFFFFFFF */ .word 0xFFFFFFFF
@@ -66000,9 +66000,9 @@ glabel MonstorTable
     /* 183F50 00283E50 5F730000 */ .word 0x0000735F
     /* 183F54 00283E54 00000000 */ .word 0x00000000
     /* 183F58 00283E58 5A000000 */ .word 0x0000005A
-    /* 183F5C 00283E5C 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 183F60 00283E60 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 183F64 00283E64 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 183F5C 00283E5C 09006400 */ .word 0x00640009
+    /* 183F60 00283E60 64006400 */ .word 0x00640064
+    /* 183F64 00283E64 64006400 */ .word 0x00640064
     /* 183F68 00283E68 0000A040 */ .word 0x40A00000
     /* 183F6C 00283E6C 00001400 */ .word GetArg__FR9input_strPiPPv__2
     /* 183F70 00283E70 FFFFFFFF */ .word 0xFFFFFFFF
@@ -66051,10 +66051,10 @@ glabel MonstorTable
     /* 18401C 00283F1C 00000000 */ .word 0x00000000
     /* 184020 00283F20 37010000 */ .word 0x00000137
     /* 184024 00283F24 FFFF0100 */ .word 0x0001FFFF
-    /* 184028 00283F28 46003C00 */ .word GlobalDataBuffer + 0x114FC6
-    /* 18402C 00283F2C A1006400 */ .word GlobalDataBuffer + 0x395021
-    /* 184030 00283F30 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184034 00283F34 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184028 00283F28 46003C00 */ .word 0x003C0046
+    /* 18402C 00283F2C A1006400 */ .word 0x006400A1
+    /* 184030 00283F30 64006400 */ .word 0x00640064
+    /* 184034 00283F34 64006400 */ .word 0x00640064
     /* 184038 00283F38 64000000 */ .word 0x00000064
     /* 18403C 00283F3C 0000803F */ .word 0x3F800000
     /* 184040 00283F40 65313038 */ .word 0x38303165
@@ -66078,9 +66078,9 @@ glabel MonstorTable
     /* 184088 00283F88 00000000 */ .word 0x00000000
     /* 18408C 00283F8C 00000000 */ .word 0x00000000
     /* 184090 00283F90 2E090000 */ .word 0x0000092E
-    /* 184094 00283F94 09003200 */ .word GlobalDataBuffer + 0x74F89
-    /* 184098 00283F98 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18409C 00283F9C 7D007D00 */ .word GlobalDataBuffer + 0x524FFD
+    /* 184094 00283F94 09003200 */ .word 0x00320009
+    /* 184098 00283F98 64006400 */ .word 0x00640064
+    /* 18409C 00283F9C 7D007D00 */ .word 0x007D007D
     /* 1840A0 00283FA0 00000041 */ .word 0x41000000
     /* 1840A4 00283FA4 0A000A00 */ .word 0x000A000A
     /* 1840A8 00283FA8 0500FFFF */ .word 0xFFFF0005
@@ -66090,10 +66090,10 @@ glabel MonstorTable
     /* 1840B8 00283FB8 00000000 */ .word 0x00000000
     /* 1840BC 00283FBC 34010000 */ .word 0x00000134
     /* 1840C0 00283FC0 85000100 */ .word 0x00010085
-    /* 1840C4 00283FC4 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 1840C8 00283FC8 54006400 */ .word GlobalDataBuffer + 0x394FD4
-    /* 1840CC 00283FCC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1840D0 00283FD0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1840C4 00283FC4 64004600 */ .word 0x00460064
+    /* 1840C8 00283FC8 54006400 */ .word 0x00640054
+    /* 1840CC 00283FCC 64006400 */ .word 0x00640064
+    /* 1840D0 00283FD0 64006400 */ .word 0x00640064
     /* 1840D4 00283FD4 64000000 */ .word 0x00000064
     /* 1840D8 00283FD8 0000803F */ .word 0x3F800000
     /* 1840DC 00283FDC 65313235 */ .word 0x35323165
@@ -66129,10 +66129,10 @@ glabel MonstorTable
     /* 184154 00284054 00000000 */ .word 0x00000000
     /* 184158 00284058 38000000 */ .word 0x00000038
     /* 18415C 0028405C FFFF0100 */ .word 0x0001FFFF
-    /* 184160 00284060 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 184164 00284064 9B006400 */ .word GlobalDataBuffer + 0x39501B
-    /* 184168 00284068 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18416C 0028406C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184160 00284060 64004600 */ .word 0x00460064
+    /* 184164 00284064 9B006400 */ .word 0x0064009B
+    /* 184168 00284068 64006400 */ .word 0x00640064
+    /* 18416C 0028406C 64006400 */ .word 0x00640064
     /* 184170 00284070 64000000 */ .word 0x00000064
     /* 184174 00284074 0000803F */ .word 0x3F800000
     /* 184178 00284078 65313236 */ .word 0x36323165
@@ -66156,11 +66156,11 @@ glabel MonstorTable
     /* 1841C0 002840C0 00000000 */ .word 0x00000000
     /* 1841C4 002840C4 00000000 */ .word 0x00000000
     /* 1841C8 002840C8 540B0000 */ .word 0x00000B54
-    /* 1841CC 002840CC 07003200 */ .word GlobalDataBuffer + 0x74F87
-    /* 1841D0 002840D0 32009600 */ .word GlobalDataBuffer + 0x6B4FB2
-    /* 1841D4 002840D4 50005000 */ .word GlobalDataBuffer + 0x254FD0
+    /* 1841CC 002840CC 07003200 */ .word 0x00320007
+    /* 1841D0 002840D0 32009600 */ .word 0x00960032
+    /* 1841D4 002840D4 50005000 */ .word 0x00500050
     /* 1841D8 002840D8 00001041 */ .word 0x41100000
-    /* 1841DC 002840DC 0A003C00 */ .word GlobalDataBuffer + 0x114F8A
+    /* 1841DC 002840DC 0A003C00 */ .word 0x003C000A
     /* 1841E0 002840E0 0500FFFF */ .word 0xFFFF0005
     /* 1841E4 002840E4 14000000 */ .word 0x00000014
     /* 1841E8 002840E8 0F000000 */ .word 0x0000000F
@@ -66168,10 +66168,10 @@ glabel MonstorTable
     /* 1841F0 002840F0 00000000 */ .word 0x00000000
     /* 1841F4 002840F4 28000000 */ .word 0x00000028
     /* 1841F8 002840F8 B1000100 */ .word 0x000100B1
-    /* 1841FC 002840FC 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 184200 00284100 5C006400 */ .word GlobalDataBuffer + 0x394FDC
-    /* 184204 00284104 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184208 00284108 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1841FC 002840FC 5A003200 */ .word 0x0032005A
+    /* 184200 00284100 5C006400 */ .word 0x0064005C
+    /* 184204 00284104 64006400 */ .word 0x00640064
+    /* 184208 00284108 64006400 */ .word 0x00640064
     /* 18420C 0028410C 14000000 */ .word 0x00000014
     /* 184210 00284110 0000803F */ .word 0x3F800000
     /* 184214 00284114 65313237 */ .word 0x37323165
@@ -66195,11 +66195,11 @@ glabel MonstorTable
     /* 18425C 0028415C 00000000 */ .word 0x00000000
     /* 184260 00284160 00000000 */ .word 0x00000000
     /* 184264 00284164 DC050000 */ .word 0x000005DC
-    /* 184268 00284168 03006400 */ .word GlobalDataBuffer + 0x394F83
-    /* 18426C 0028416C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184270 00284170 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184268 00284168 03006400 */ .word 0x00640003
+    /* 18426C 0028416C 64006400 */ .word 0x00640064
+    /* 184270 00284170 64006400 */ .word 0x00640064
     /* 184274 00284174 00006041 */ .word 0x41600000
-    /* 184278 00284178 0A003C00 */ .word GlobalDataBuffer + 0x114F8A
+    /* 184278 00284178 0A003C00 */ .word 0x003C000A
     /* 18427C 0028417C 0700FFFF */ .word 0xFFFF0007
     /* 184280 00284180 0F000000 */ .word 0x0000000F
     /* 184284 00284184 05000000 */ .word 0x00000005
@@ -66207,10 +66207,10 @@ glabel MonstorTable
     /* 18428C 0028418C 00000000 */ .word 0x00000000
     /* 184290 00284190 5B000000 */ .word 0x0000005B
     /* 184294 00284194 B1000000 */ .word 0x000000B1
-    /* 184298 00284198 64003200 */ .word GlobalDataBuffer + 0x74FE4
-    /* 18429C 0028419C FFFF5000 */ .word GlobalDataBuffer + 0x264F7F
-    /* 1842A0 002841A0 50009600 */ .word GlobalDataBuffer + 0x6B4FD0
-    /* 1842A4 002841A4 50005000 */ .word GlobalDataBuffer + 0x254FD0
+    /* 184298 00284198 64003200 */ .word 0x00320064
+    /* 18429C 0028419C FFFF5000 */ .word 0x0050FFFF
+    /* 1842A0 002841A0 50009600 */ .word 0x00960050
+    /* 1842A4 002841A4 50005000 */ .word 0x00500050
     /* 1842A8 002841A8 14000000 */ .word 0x00000014
     /* 1842AC 002841AC 0000003F */ .word 0x3F000000
     /* 1842B0 002841B0 65313238 */ .word 0x38323165
@@ -66234,9 +66234,9 @@ glabel MonstorTable
     /* 1842F8 002841F8 00000000 */ .word 0x00000000
     /* 1842FC 002841FC 00000000 */ .word 0x00000000
     /* 184300 00284200 08070000 */ .word 0x00000708
-    /* 184304 00284204 04009600 */ .word GlobalDataBuffer + 0x6B4F84
-    /* 184308 00284208 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 18430C 0028420C 32003200 */ .word GlobalDataBuffer + 0x74FB2
+    /* 184304 00284204 04009600 */ .word 0x00960004
+    /* 184308 00284208 32003200 */ .word 0x00320032
+    /* 18430C 0028420C 32003200 */ .word 0x00320032
     /* 184310 00284210 0000A040 */ .word 0x40A00000
     /* 184314 00284214 0A000A00 */ .word 0x000A000A
     /* 184318 00284218 0300FFFF */ .word 0xFFFF0003
@@ -66246,10 +66246,10 @@ glabel MonstorTable
     /* 184328 00284228 00000000 */ .word 0x00000000
     /* 18432C 0028422C 0A000000 */ .word 0x0000000A
     /* 184330 00284230 A8000100 */ .word 0x000100A8
-    /* 184334 00284234 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 184338 00284238 94006400 */ .word GlobalDataBuffer + 0x395014
-    /* 18433C 0028423C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184340 00284240 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184334 00284234 64004600 */ .word 0x00460064
+    /* 184338 00284238 94006400 */ .word 0x00640094
+    /* 18433C 0028423C 64006400 */ .word 0x00640064
+    /* 184340 00284240 64006400 */ .word 0x00640064
     /* 184344 00284244 64000000 */ .word 0x00000064
     /* 184348 00284248 0000803F */ .word 0x3F800000
     /* 18434C 0028424C 65313239 */ .word 0x39323165
@@ -66273,9 +66273,9 @@ glabel MonstorTable
     /* 184394 00284294 00000000 */ .word 0x00000000
     /* 184398 00284298 00000000 */ .word 0x00000000
     /* 18439C 0028429C D0070000 */ .word 0x000007D0
-    /* 1843A0 002842A0 01006E00 */ .word GlobalDataBuffer + 0x434F81
-    /* 1843A4 002842A4 50006400 */ .word GlobalDataBuffer + 0x394FD0
-    /* 1843A8 002842A8 50008200 */ .word GlobalDataBuffer + 0x574FD0
+    /* 1843A0 002842A0 01006E00 */ .word 0x006E0001
+    /* 1843A4 002842A4 50006400 */ .word 0x00640050
+    /* 1843A8 002842A8 50008200 */ .word 0x00820050
     /* 1843AC 002842AC 0000C040 */ .word 0x40C00000
     /* 1843B0 002842B0 0A000A00 */ .word 0x000A000A
     /* 1843B4 002842B4 FFFFFFFF */ .word 0xFFFFFFFF
@@ -66285,10 +66285,10 @@ glabel MonstorTable
     /* 1843C4 002842C4 00000000 */ .word 0x00000000
     /* 1843C8 002842C8 01000000 */ .word 0x00000001
     /* 1843CC 002842CC B1000100 */ .word 0x000100B1
-    /* 1843D0 002842D0 64005000 */ .word GlobalDataBuffer + 0x254FE4
-    /* 1843D4 002842D4 96006400 */ .word GlobalDataBuffer + 0x395016
-    /* 1843D8 002842D8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1843DC 002842DC 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1843D0 002842D0 64005000 */ .word 0x00500064
+    /* 1843D4 002842D4 96006400 */ .word 0x00640096
+    /* 1843D8 002842D8 64006400 */ .word 0x00640064
+    /* 1843DC 002842DC 64006400 */ .word 0x00640064
     /* 1843E0 002842E0 64000000 */ .word 0x00000064
     /* 1843E4 002842E4 0000803F */ .word 0x3F800000
     /* 1843E8 002842E8 65313330 */ .word 0x30333165
@@ -66313,8 +66313,8 @@ glabel MonstorTable
     /* 184434 00284334 00000000 */ .word 0x00000000
     /* 184438 00284338 60090000 */ .word 0x00000960
     /* 18443C 0028433C 03000000 */ .word 0x00000003
-    /* 184440 00284340 B4006400 */ .word GlobalDataBuffer + 0x395034
-    /* 184444 00284344 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184440 00284340 B4006400 */ .word 0x006400B4
+    /* 184444 00284344 64006400 */ .word 0x00640064
     /* 184448 00284348 0000E040 */ .word 0x40E00000
     /* 18444C 0028434C 0A002800 */ .word MonstorTable + 0x50A
     /* 184450 00284350 FFFFFFFF */ .word 0xFFFFFFFF
@@ -66324,10 +66324,10 @@ glabel MonstorTable
     /* 184460 00284360 00000000 */ .word 0x00000000
     /* 184464 00284364 46000000 */ .word 0x00000046
     /* 184468 00284368 51000100 */ .word 0x00010051
-    /* 18446C 0028436C 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 184470 00284370 A0006400 */ .word GlobalDataBuffer + 0x395020
-    /* 184474 00284374 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184478 00284378 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18446C 0028436C 64004600 */ .word 0x00460064
+    /* 184470 00284370 A0006400 */ .word 0x006400A0
+    /* 184474 00284374 64006400 */ .word 0x00640064
+    /* 184478 00284378 64006400 */ .word 0x00640064
     /* 18447C 0028437C 64000000 */ .word 0x00000064
     /* 184480 00284380 0000803F */ .word 0x3F800000
     /* 184484 00284384 65313331 */ .word 0x31333165
@@ -66351,9 +66351,9 @@ glabel MonstorTable
     /* 1844CC 002843CC 00000000 */ .word 0x00000000
     /* 1844D0 002843D0 00000000 */ .word 0x00000000
     /* 1844D4 002843D4 DC050000 */ .word 0x000005DC
-    /* 1844D8 002843D8 01009600 */ .word GlobalDataBuffer + 0x6B4F81
-    /* 1844DC 002843DC 32006400 */ .word GlobalDataBuffer + 0x394FB2
-    /* 1844E0 002843E0 64007800 */ .word GlobalDataBuffer + 0x4D4FE4
+    /* 1844D8 002843D8 01009600 */ .word 0x00960001
+    /* 1844DC 002843DC 32006400 */ .word 0x00640032
+    /* 1844E0 002843E0 64007800 */ .word 0x00780064
     /* 1844E4 002843E4 00008040 */ .word 0x40800000
     /* 1844E8 002843E8 0A000A00 */ .word 0x000A000A
     /* 1844EC 002843EC FFFFFFFF */ .word 0xFFFFFFFF
@@ -66363,10 +66363,10 @@ glabel MonstorTable
     /* 1844FC 002843FC 00000000 */ .word 0x00000000
     /* 184500 00284400 32000000 */ .word 0x00000032
     /* 184504 00284404 FFFF0100 */ .word 0x0001FFFF
-    /* 184508 00284408 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 18450C 0028440C 85006400 */ .word GlobalDataBuffer + 0x395005
-    /* 184510 00284410 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184514 00284414 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184508 00284408 64004600 */ .word 0x00460064
+    /* 18450C 0028440C 85006400 */ .word 0x00640085
+    /* 184510 00284410 64006400 */ .word 0x00640064
+    /* 184514 00284414 64006400 */ .word 0x00640064
     /* 184518 00284418 64000000 */ .word 0x00000064
     /* 18451C 0028441C 0000803F */ .word 0x3F800000
     /* 184520 00284420 65313332 */ .word 0x32333165
@@ -66390,11 +66390,11 @@ glabel MonstorTable
     /* 184568 00284468 00000000 */ .word 0x00000000
     /* 18456C 0028446C 00000000 */ .word 0x00000000
     /* 184570 00284470 D6060000 */ .word 0x000006D6
-    /* 184574 00284474 09006400 */ .word GlobalDataBuffer + 0x394F89
-    /* 184578 00284478 64003200 */ .word GlobalDataBuffer + 0x74FE4
-    /* 18457C 0028447C 96006400 */ .word GlobalDataBuffer + 0x395016
+    /* 184574 00284474 09006400 */ .word 0x00640009
+    /* 184578 00284478 64003200 */ .word 0x00320064
+    /* 18457C 0028447C 96006400 */ .word 0x00640096
     /* 184580 00284480 0000A040 */ .word 0x40A00000
-    /* 184584 00284484 0A003200 */ .word GlobalDataBuffer + 0x74F8A
+    /* 184584 00284484 0A003200 */ .word 0x0032000A
     /* 184588 00284488 FFFFFFFF */ .word 0xFFFFFFFF
     /* 18458C 0028448C 0A000000 */ .word 0x0000000A
     /* 184590 00284490 0C000000 */ .word 0x0000000C
@@ -66402,10 +66402,10 @@ glabel MonstorTable
     /* 184598 00284498 00000000 */ .word 0x00000000
     /* 18459C 0028449C 2E000000 */ .word 0x0000002E
     /* 1845A0 002844A0 97000100 */ .word 0x00010097
-    /* 1845A4 002844A4 50003200 */ .word GlobalDataBuffer + 0x74FD0
-    /* 1845A8 002844A8 87006400 */ .word GlobalDataBuffer + 0x395007
-    /* 1845AC 002844AC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1845B0 002844B0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1845A4 002844A4 50003200 */ .word 0x00320050
+    /* 1845A8 002844A8 87006400 */ .word 0x00640087
+    /* 1845AC 002844AC 64006400 */ .word 0x00640064
+    /* 1845B0 002844B0 64006400 */ .word 0x00640064
     /* 1845B4 002844B4 64000000 */ .word 0x00000064
     /* 1845B8 002844B8 0000803F */ .word 0x3F800000
     /* 1845BC 002844BC 65313132 */ .word 0x32313165
@@ -66429,7 +66429,7 @@ glabel MonstorTable
     /* 184604 00284504 00000000 */ .word 0x00000000
     /* 184608 00284508 00000000 */ .word 0x00000000
     /* 18460C 0028450C A00F0000 */ .word 0x00000FA0
-    /* 184610 00284510 00009600 */ .word GlobalDataBuffer + 0x6B4F80
+    /* 184610 00284510 00009600 */ .word 0x00960000
     /* 184614 00284514 00001E00 */ .word 0x001E0000
     /* 184618 00284518 1E001E00 */ .word 0x001E001E
     /* 18461C 0028451C 0000D040 */ .word 0x40D00000
@@ -66441,10 +66441,10 @@ glabel MonstorTable
     /* 184634 00284534 00000000 */ .word 0x00000000
     /* 184638 00284538 38010000 */ .word 0x00000138
     /* 18463C 0028453C FFFF0100 */ .word 0x0001FFFF
-    /* 184640 00284540 46003C00 */ .word GlobalDataBuffer + 0x114FC6
-    /* 184644 00284544 A2006400 */ .word GlobalDataBuffer + 0x395022
-    /* 184648 00284548 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18464C 0028454C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184640 00284540 46003C00 */ .word 0x003C0046
+    /* 184644 00284544 A2006400 */ .word 0x006400A2
+    /* 184648 00284548 64006400 */ .word 0x00640064
+    /* 18464C 0028454C 64006400 */ .word 0x00640064
     /* 184650 00284550 64000000 */ .word 0x00000064
     /* 184654 00284554 0000803F */ .word 0x3F800000
     /* 184658 00284558 65313139 */ .word 0x39313165
@@ -66468,9 +66468,9 @@ glabel MonstorTable
     /* 1846A0 002845A0 00000000 */ .word 0x00000000
     /* 1846A4 002845A4 00000000 */ .word 0x00000000
     /* 1846A8 002845A8 C4090000 */ .word 0x000009C4
-    /* 1846AC 002845AC 01006400 */ .word GlobalDataBuffer + 0x394F81
+    /* 1846AC 002845AC 01006400 */ .word 0x00640001
     /* 1846B0 002845B0 14001400 */ .word 0x00140014
-    /* 1846B4 002845B4 14009600 */ .word GlobalDataBuffer + 0x6B4F94
+    /* 1846B4 002845B4 14009600 */ .word 0x00960014
     /* 1846B8 002845B8 00002041 */ .word 0x41200000
     /* 1846BC 002845BC 0F000A00 */ .word 0x000A000F
     /* 1846C0 002845C0 FFFFFFFF */ .word 0xFFFFFFFF
@@ -66480,10 +66480,10 @@ glabel MonstorTable
     /* 1846D0 002845D0 00000000 */ .word 0x00000000
     /* 1846D4 002845D4 3F010000 */ .word 0x0000013F
     /* 1846D8 002845D8 FFFF0100 */ .word 0x0001FFFF
-    /* 1846DC 002845DC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1846E0 002845E0 BA006400 */ .word GlobalDataBuffer + 0x39503A
-    /* 1846E4 002845E4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1846E8 002845E8 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1846DC 002845DC 64006400 */ .word 0x00640064
+    /* 1846E0 002845E0 BA006400 */ .word 0x006400BA
+    /* 1846E4 002845E4 64006400 */ .word 0x00640064
+    /* 1846E8 002845E8 64006400 */ .word 0x00640064
     /* 1846EC 002845EC 64000000 */ .word 0x00000064
     /* 1846F0 002845F0 0000803F */ .word 0x3F800000
     /* 1846F4 002845F4 65313333 */ .word 0x33333165
@@ -66519,10 +66519,10 @@ glabel MonstorTable
     /* 18476C 0028466C 00000000 */ .word 0x00000000
     /* 184770 00284670 1A000000 */ .word 0x0000001A
     /* 184774 00284674 A6000100 */ .word 0x000100A6
-    /* 184778 00284678 64003C00 */ .word GlobalDataBuffer + 0x114FE4
-    /* 18477C 0028467C F5006400 */ .word GlobalDataBuffer + 0x395075
-    /* 184780 00284680 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184784 00284684 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184778 00284678 64003C00 */ .word 0x003C0064
+    /* 18477C 0028467C F5006400 */ .word 0x006400F5
+    /* 184780 00284680 64006400 */ .word 0x00640064
+    /* 184784 00284684 64006400 */ .word 0x00640064
     /* 184788 00284688 64000000 */ .word 0x00000064
     /* 18478C 0028468C 0000803F */ .word 0x3F800000
     /* 184790 00284690 65313334 */ .word 0x34333165
@@ -66546,11 +66546,11 @@ glabel MonstorTable
     /* 1847D8 002846D8 00000000 */ .word 0x00000000
     /* 1847DC 002846DC 00000000 */ .word 0x00000000
     /* 1847E0 002846E0 C4090000 */ .word 0x000009C4
-    /* 1847E4 002846E4 03006400 */ .word GlobalDataBuffer + 0x394F83
-    /* 1847E8 002846E8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1847EC 002846EC 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1847E4 002846E4 03006400 */ .word 0x00640003
+    /* 1847E8 002846E8 64006400 */ .word 0x00640064
+    /* 1847EC 002846EC 64006400 */ .word 0x00640064
     /* 1847F0 002846F0 0000D040 */ .word 0x40D00000
-    /* 1847F4 002846F4 0F003200 */ .word GlobalDataBuffer + 0x74F8F
+    /* 1847F4 002846F4 0F003200 */ .word 0x0032000F
     /* 1847F8 002846F8 FFFFFFFF */ .word 0xFFFFFFFF
     /* 1847FC 002846FC 14000000 */ .word 0x00000014
     /* 184800 00284700 0A000000 */ .word 0x0000000A
@@ -66558,10 +66558,10 @@ glabel MonstorTable
     /* 184808 00284708 00000000 */ .word 0x00000000
     /* 18480C 0028470C 4D000000 */ .word 0x0000004D
     /* 184810 00284710 A0000100 */ .word 0x000100A0
-    /* 184814 00284714 5A003C00 */ .word GlobalDataBuffer + 0x114FDA
-    /* 184818 00284718 A0005000 */ .word GlobalDataBuffer + 0x255020
-    /* 18481C 0028471C 50009600 */ .word GlobalDataBuffer + 0x6B4FD0
-    /* 184820 00284720 50005000 */ .word GlobalDataBuffer + 0x254FD0
+    /* 184814 00284714 5A003C00 */ .word 0x003C005A
+    /* 184818 00284718 A0005000 */ .word 0x005000A0
+    /* 18481C 0028471C 50009600 */ .word 0x00960050
+    /* 184820 00284720 50005000 */ .word 0x00500050
     /* 184824 00284724 14000000 */ .word 0x00000014
     /* 184828 00284728 CDCC4C3F */ .word 0x3F4CCCCD
     /* 18482C 0028472C 65313335 */ .word 0x35333165
@@ -66587,7 +66587,7 @@ glabel MonstorTable
     /* 18487C 0028477C B80B0000 */ .word 0x00000BB8
     /* 184880 00284780 01001400 */ .word 0x00140001
     /* 184884 00284784 14001400 */ .word 0x00140014
-    /* 184888 00284788 14008200 */ .word GlobalDataBuffer + 0x574F94
+    /* 184888 00284788 14008200 */ .word 0x00820014
     /* 18488C 0028478C 0000E040 */ .word 0x40E00000
     /* 184890 00284790 0F000A00 */ .word 0x000A000F
     /* 184894 00284794 FFFFFFFF */ .word 0xFFFFFFFF
@@ -66597,10 +66597,10 @@ glabel MonstorTable
     /* 1848A4 002847A4 00000000 */ .word 0x00000000
     /* 1848A8 002847A8 2D010000 */ .word 0x0000012D
     /* 1848AC 002847AC A0000100 */ .word 0x000100A0
-    /* 1848B0 002847B0 5A006400 */ .word GlobalDataBuffer + 0x394FDA
-    /* 1848B4 002847B4 5C006400 */ .word GlobalDataBuffer + 0x394FDC
-    /* 1848B8 002847B8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1848BC 002847BC 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1848B0 002847B0 5A006400 */ .word 0x0064005A
+    /* 1848B4 002847B4 5C006400 */ .word 0x0064005C
+    /* 1848B8 002847B8 64006400 */ .word 0x00640064
+    /* 1848BC 002847BC 64006400 */ .word 0x00640064
     /* 1848C0 002847C0 64000000 */ .word 0x00000064
     /* 1848C4 002847C4 0000803F */ .word 0x3F800000
     /* 1848C8 002847C8 65313336 */ .word 0x36333165
@@ -66624,9 +66624,9 @@ glabel MonstorTable
     /* 184910 00284810 00000000 */ .word 0x00000000
     /* 184914 00284814 00000000 */ .word 0x00000000
     /* 184918 00284818 DC050000 */ .word 0x000005DC
-    /* 18491C 0028481C 09003200 */ .word GlobalDataBuffer + 0x74F89
-    /* 184920 00284820 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 184924 00284824 32003200 */ .word GlobalDataBuffer + 0x74FB2
+    /* 18491C 0028481C 09003200 */ .word 0x00320009
+    /* 184920 00284820 32003200 */ .word 0x00320032
+    /* 184924 00284824 32003200 */ .word 0x00320032
     /* 184928 00284828 00000041 */ .word 0x41000000
     /* 18492C 0028482C 0F000A00 */ .word 0x000A000F
     /* 184930 00284830 0500FFFF */ .word 0xFFFF0005
@@ -66636,10 +66636,10 @@ glabel MonstorTable
     /* 184940 00284840 00000000 */ .word 0x00000000
     /* 184944 00284844 15000000 */ .word 0x00000015
     /* 184948 00284848 A9000000 */ .word 0x000000A9
-    /* 18494C 0028484C 55003200 */ .word GlobalDataBuffer + 0x74FD5
-    /* 184950 00284850 5E006400 */ .word GlobalDataBuffer + 0x394FDE
-    /* 184954 00284854 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184958 00284858 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18494C 0028484C 55003200 */ .word 0x00320055
+    /* 184950 00284850 5E006400 */ .word 0x0064005E
+    /* 184954 00284854 64006400 */ .word 0x00640064
+    /* 184958 00284858 64006400 */ .word 0x00640064
     /* 18495C 0028485C 64000000 */ .word 0x00000064
     /* 184960 00284860 0000803F */ .word 0x3F800000
     /* 184964 00284864 65313337 */ .word 0x37333165
@@ -66663,11 +66663,11 @@ glabel MonstorTable
     /* 1849AC 002848AC 00000000 */ .word 0x00000000
     /* 1849B0 002848B0 00000000 */ .word 0x00000000
     /* 1849B4 002848B4 3C0F0000 */ .word 0x00000F3C
-    /* 1849B8 002848B8 07005000 */ .word GlobalDataBuffer + 0x254F87
-    /* 1849BC 002848BC 50009600 */ .word GlobalDataBuffer + 0x6B4FD0
-    /* 1849C0 002848C0 50005000 */ .word GlobalDataBuffer + 0x254FD0
+    /* 1849B8 002848B8 07005000 */ .word 0x00500007
+    /* 1849BC 002848BC 50009600 */ .word 0x00960050
+    /* 1849C0 002848C0 50005000 */ .word 0x00500050
     /* 1849C4 002848C4 00006041 */ .word 0x41600000
-    /* 1849C8 002848C8 0F004600 */ .word GlobalDataBuffer + 0x1B4F8F
+    /* 1849C8 002848C8 0F004600 */ .word 0x0046000F
     /* 1849CC 002848CC 0700FFFF */ .word 0xFFFF0007
     /* 1849D0 002848D0 19000000 */ .word 0x00000019
     /* 1849D4 002848D4 0F000000 */ .word 0x0000000F
@@ -66675,10 +66675,10 @@ glabel MonstorTable
     /* 1849DC 002848DC 00000000 */ .word 0x00000000
     /* 1849E0 002848E0 40000000 */ .word 0x00000040
     /* 1849E4 002848E4 B1000100 */ .word 0x000100B1
-    /* 1849E8 002848E8 5F003200 */ .word GlobalDataBuffer + 0x74FDF
-    /* 1849EC 002848EC 9A005000 */ .word GlobalDataBuffer + 0x25501A
-    /* 1849F0 002848F0 50009600 */ .word GlobalDataBuffer + 0x6B4FD0
-    /* 1849F4 002848F4 50005000 */ .word GlobalDataBuffer + 0x254FD0
+    /* 1849E8 002848E8 5F003200 */ .word 0x0032005F
+    /* 1849EC 002848EC 9A005000 */ .word 0x0050009A
+    /* 1849F0 002848F0 50009600 */ .word 0x00960050
+    /* 1849F4 002848F4 50005000 */ .word 0x00500050
     /* 1849F8 002848F8 14000000 */ .word 0x00000014
     /* 1849FC 002848FC 0000803F */ .word 0x3F800000
     /* 184A00 00284900 65313338 */ .word 0x38333165
@@ -66702,9 +66702,9 @@ glabel MonstorTable
     /* 184A48 00284948 00000000 */ .word 0x00000000
     /* 184A4C 0028494C 00000000 */ .word 0x00000000
     /* 184A50 00284950 DD090000 */ .word 0x000009DD
-    /* 184A54 00284954 09009600 */ .word GlobalDataBuffer + 0x6B4F89
-    /* 184A58 00284958 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184A5C 0028495C 32006400 */ .word GlobalDataBuffer + 0x394FB2
+    /* 184A54 00284954 09009600 */ .word 0x00960009
+    /* 184A58 00284958 64006400 */ .word 0x00640064
+    /* 184A5C 0028495C 32006400 */ .word 0x00640032
     /* 184A60 00284960 0000A040 */ .word 0x40A00000
     /* 184A64 00284964 0F000A00 */ .word 0x000A000F
     /* 184A68 00284968 FFFFFFFF */ .word 0xFFFFFFFF
@@ -66714,10 +66714,10 @@ glabel MonstorTable
     /* 184A78 00284978 00000000 */ .word 0x00000000
     /* 184A7C 0028497C 2D000000 */ .word 0x0000002D
     /* 184A80 00284980 93000100 */ .word 0x00010093
-    /* 184A84 00284984 50003200 */ .word GlobalDataBuffer + 0x74FD0
-    /* 184A88 00284988 86006400 */ .word GlobalDataBuffer + 0x395006
-    /* 184A8C 0028498C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184A90 00284990 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184A84 00284984 50003200 */ .word 0x00320050
+    /* 184A88 00284988 86006400 */ .word 0x00640086
+    /* 184A8C 0028498C 64006400 */ .word 0x00640064
+    /* 184A90 00284990 64006400 */ .word 0x00640064
     /* 184A94 00284994 64000000 */ .word 0x00000064
     /* 184A98 00284998 0000803F */ .word 0x3F800000
     /* 184A9C 0028499C 65313339 */ .word 0x39333165
@@ -66741,9 +66741,9 @@ glabel MonstorTable
     /* 184AE4 002849E4 00000000 */ .word 0x00000000
     /* 184AE8 002849E8 00000000 */ .word 0x00000000
     /* 184AEC 002849EC B20C0000 */ .word 0x00000CB2
-    /* 184AF0 002849F0 01006400 */ .word GlobalDataBuffer + 0x394F81
-    /* 184AF4 002849F4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184AF8 002849F8 64008200 */ .word GlobalDataBuffer + 0x574FE4
+    /* 184AF0 002849F0 01006400 */ .word 0x00640001
+    /* 184AF4 002849F4 64006400 */ .word 0x00640064
+    /* 184AF8 002849F8 64008200 */ .word 0x00820064
     /* 184AFC 002849FC 0000C040 */ .word 0x40C00000
     /* 184B00 00284A00 0F000A00 */ .word 0x000A000F
     /* 184B04 00284A04 FFFFFFFF */ .word 0xFFFFFFFF
@@ -66753,10 +66753,10 @@ glabel MonstorTable
     /* 184B14 00284A14 00000000 */ .word 0x00000000
     /* 184B18 00284A18 1C000000 */ .word 0x0000001C
     /* 184B1C 00284A1C 98000100 */ .word 0x00010098
-    /* 184B20 00284A20 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 184B24 00284A24 5B006400 */ .word GlobalDataBuffer + 0x394FDB
-    /* 184B28 00284A28 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184B2C 00284A2C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184B20 00284A20 64004600 */ .word 0x00460064
+    /* 184B24 00284A24 5B006400 */ .word 0x0064005B
+    /* 184B28 00284A28 64006400 */ .word 0x00640064
+    /* 184B2C 00284A2C 64006400 */ .word 0x00640064
     /* 184B30 00284A30 64000000 */ .word 0x00000064
     /* 184B34 00284A34 0000803F */ .word 0x3F800000
     /* 184B38 00284A38 65313039 */ .word 0x39303165
@@ -66780,9 +66780,9 @@ glabel MonstorTable
     /* 184B80 00284A80 00000000 */ .word 0x00000000
     /* 184B84 00284A84 00000000 */ .word 0x00000000
     /* 184B88 00284A88 AC0D0000 */ .word 0x00000DAC
-    /* 184B8C 00284A8C 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 184B90 00284A90 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184B94 00284A94 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184B8C 00284A8C 08006400 */ .word 0x00640008
+    /* 184B90 00284A90 64006400 */ .word 0x00640064
+    /* 184B94 00284A94 64006400 */ .word 0x00640064
     /* 184B98 00284A98 0000A040 */ .word 0x40A00000
     /* 184B9C 00284A9C 0F000A00 */ .word 0x000A000F
     /* 184BA0 00284AA0 FFFFFFFF */ .word 0xFFFFFFFF
@@ -66792,10 +66792,10 @@ glabel MonstorTable
     /* 184BB0 00284AB0 03000000 */ .word 0x00000003
     /* 184BB4 00284AB4 35010000 */ .word 0x00000135
     /* 184BB8 00284AB8 B1000100 */ .word 0x000100B1
-    /* 184BBC 00284ABC 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 184BC0 00284AC0 EB006400 */ .word GlobalDataBuffer + 0x39506B
-    /* 184BC4 00284AC4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184BC8 00284AC8 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184BBC 00284ABC 5A003200 */ .word 0x0032005A
+    /* 184BC0 00284AC0 EB006400 */ .word 0x006400EB
+    /* 184BC4 00284AC4 64006400 */ .word 0x00640064
+    /* 184BC8 00284AC8 64006400 */ .word 0x00640064
     /* 184BCC 00284ACC 64000000 */ .word 0x00000064
     /* 184BD0 00284AD0 0000803F */ .word 0x3F800000
     /* 184BD4 00284AD4 65313130 */ .word 0x30313165
@@ -66819,11 +66819,11 @@ glabel MonstorTable
     /* 184C1C 00284B1C 00000000 */ .word 0x00000000
     /* 184C20 00284B20 00000000 */ .word 0x00000000
     /* 184C24 00284B24 88130000 */ .word 0x00001388
-    /* 184C28 00284B28 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 184C2C 00284B2C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184C30 00284B30 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184C28 00284B28 08006400 */ .word 0x00640008
+    /* 184C2C 00284B2C 64006400 */ .word 0x00640064
+    /* 184C30 00284B30 64006400 */ .word 0x00640064
     /* 184C34 00284B34 00004041 */ .word 0x41400000
-    /* 184C38 00284B38 0F003200 */ .word GlobalDataBuffer + 0x74F8F
+    /* 184C38 00284B38 0F003200 */ .word 0x0032000F
     /* 184C3C 00284B3C FFFFFFFF */ .word 0xFFFFFFFF
     /* 184C40 00284B40 14000000 */ .word 0x00000014
     /* 184C44 00284B44 23000000 */ .word 0x00000023
@@ -66831,10 +66831,10 @@ glabel MonstorTable
     /* 184C4C 00284B4C 04000000 */ .word 0x00000004
     /* 184C50 00284B50 36010000 */ .word 0x00000136
     /* 184C54 00284B54 AF000100 */ .word 0x000100AF
-    /* 184C58 00284B58 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 184C5C 00284B5C B5006400 */ .word GlobalDataBuffer + 0x395035
-    /* 184C60 00284B60 64009600 */ .word GlobalDataBuffer + 0x6B4FE4
-    /* 184C64 00284B64 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184C58 00284B58 5A003200 */ .word 0x0032005A
+    /* 184C5C 00284B5C B5006400 */ .word 0x006400B5
+    /* 184C60 00284B60 64009600 */ .word 0x00960064
+    /* 184C64 00284B64 64006400 */ .word 0x00640064
     /* 184C68 00284B68 14000000 */ .word 0x00000014
     /* 184C6C 00284B6C 0000803F */ .word 0x3F800000
     /* 184C70 00284B70 65313133 */ .word 0x33313165
@@ -66870,10 +66870,10 @@ glabel MonstorTable
     /* 184CE8 00284BE8 00000000 */ .word 0x00000000
     /* 184CEC 00284BEC 39010000 */ .word 0x00000139
     /* 184CF0 00284BF0 FFFF0100 */ .word 0x0001FFFF
-    /* 184CF4 00284BF4 46003C00 */ .word GlobalDataBuffer + 0x114FC6
-    /* 184CF8 00284BF8 A3006400 */ .word GlobalDataBuffer + 0x395023
-    /* 184CFC 00284BFC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184D00 00284C00 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184CF4 00284BF4 46003C00 */ .word 0x003C0046
+    /* 184CF8 00284BF8 A3006400 */ .word 0x006400A3
+    /* 184CFC 00284BFC 64006400 */ .word 0x00640064
+    /* 184D00 00284C00 64006400 */ .word 0x00640064
     /* 184D04 00284C04 64000000 */ .word 0x00000064
     /* 184D08 00284C08 0000803F */ .word 0x3F800000
     /* 184D0C 00284C0C 65313136 */ .word 0x36313165
@@ -66899,7 +66899,7 @@ glabel MonstorTable
     /* 184D5C 00284C5C 70170000 */ .word 0x00001770
     /* 184D60 00284C60 09002800 */ .word MonstorTable + 0x509
     /* 184D64 00284C64 28002800 */ .word MonstorTable + 0x528
-    /* 184D68 00284C68 28008C00 */ .word GlobalDataBuffer + 0x614FA8
+    /* 184D68 00284C68 28008C00 */ .word 0x008C0028
     /* 184D6C 00284C6C 00003041 */ .word 0x41300000
     /* 184D70 00284C70 14000A00 */ .word 0x000A0014
     /* 184D74 00284C74 0B000500 */ .word 0x0005000B
@@ -66909,10 +66909,10 @@ glabel MonstorTable
     /* 184D84 00284C84 00000000 */ .word 0x00000000
     /* 184D88 00284C88 3C010000 */ .word 0x0000013C
     /* 184D8C 00284C8C FFFF0100 */ .word 0x0001FFFF
-    /* 184D90 00284C90 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 184D94 00284C94 5E006400 */ .word GlobalDataBuffer + 0x394FDE
-    /* 184D98 00284C98 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184D9C 00284C9C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184D90 00284C90 32003200 */ .word 0x00320032
+    /* 184D94 00284C94 5E006400 */ .word 0x0064005E
+    /* 184D98 00284C98 64006400 */ .word 0x00640064
+    /* 184D9C 00284C9C 64006400 */ .word 0x00640064
     /* 184DA0 00284CA0 64000000 */ .word 0x00000064
     /* 184DA4 00284CA4 0000803F */ .word 0x3F800000
     /* 184DA8 00284CA8 65313430 */ .word 0x30343165
@@ -66936,9 +66936,9 @@ glabel MonstorTable
     /* 184DF0 00284CF0 00000000 */ .word 0x00000000
     /* 184DF4 00284CF4 00000000 */ .word 0x00000000
     /* 184DF8 00284CF8 DC050000 */ .word 0x000005DC
-    /* 184DFC 00284CFC 06006400 */ .word GlobalDataBuffer + 0x394F86
-    /* 184E00 00284D00 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184E04 00284D04 96006400 */ .word GlobalDataBuffer + 0x395016
+    /* 184DFC 00284CFC 06006400 */ .word 0x00640006
+    /* 184E00 00284D00 64006400 */ .word 0x00640064
+    /* 184E04 00284D04 96006400 */ .word 0x00640096
     /* 184E08 00284D08 00004040 */ .word 0x40400000
     /* 184E0C 00284D0C 14000A00 */ .word 0x000A0014
     /* 184E10 00284D10 FFFFFFFF */ .word 0xFFFFFFFF
@@ -66948,10 +66948,10 @@ glabel MonstorTable
     /* 184E20 00284D20 00000000 */ .word 0x00000000
     /* 184E24 00284D24 3C000000 */ .word 0x0000003C
     /* 184E28 00284D28 97000000 */ .word 0x00000097
-    /* 184E2C 00284D2C 64005A00 */ .word GlobalDataBuffer + 0x2F4FE4
-    /* 184E30 00284D30 00006400 */ .word GlobalDataBuffer + 0x394F80
-    /* 184E34 00284D34 96006400 */ .word GlobalDataBuffer + 0x395016
-    /* 184E38 00284D38 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184E2C 00284D2C 64005A00 */ .word 0x005A0064
+    /* 184E30 00284D30 00006400 */ .word 0x00640000
+    /* 184E34 00284D34 96006400 */ .word 0x00640096
+    /* 184E38 00284D38 64006400 */ .word 0x00640064
     /* 184E3C 00284D3C 64000000 */ .word 0x00000064
     /* 184E40 00284D40 0000803F */ .word 0x3F800000
     /* 184E44 00284D44 65313431 */ .word 0x31343165
@@ -66975,11 +66975,11 @@ glabel MonstorTable
     /* 184E8C 00284D8C 00000000 */ .word 0x00000000
     /* 184E90 00284D90 00000000 */ .word 0x00000000
     /* 184E94 00284D94 70170000 */ .word 0x00001770
-    /* 184E98 00284D98 03007800 */ .word GlobalDataBuffer + 0x4D4F83
-    /* 184E9C 00284D9C 5A006400 */ .word GlobalDataBuffer + 0x394FDA
-    /* 184EA0 00284DA0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184E98 00284D98 03007800 */ .word 0x00780003
+    /* 184E9C 00284D9C 5A006400 */ .word 0x0064005A
+    /* 184EA0 00284DA0 64006400 */ .word 0x00640064
     /* 184EA4 00284DA4 00006041 */ .word 0x41600000
-    /* 184EA8 00284DA8 1E005000 */ .word GlobalDataBuffer + 0x254F9E
+    /* 184EA8 00284DA8 1E005000 */ .word 0x0050001E
     /* 184EAC 00284DAC 0700FFFF */ .word 0xFFFF0007
     /* 184EB0 00284DB0 19000000 */ .word 0x00000019
     /* 184EB4 00284DB4 05000000 */ .word 0x00000005
@@ -66987,10 +66987,10 @@ glabel MonstorTable
     /* 184EBC 00284DBC 00000000 */ .word 0x00000000
     /* 184EC0 00284DC0 5A000000 */ .word 0x0000005A
     /* 184EC4 00284DC4 B1000000 */ .word 0x000000B1
-    /* 184EC8 00284DC8 64003200 */ .word GlobalDataBuffer + 0x74FE4
-    /* 184ECC 00284DCC FFFF6400 */ .word GlobalDataBuffer + 0x3A4F7F
-    /* 184ED0 00284DD0 64009600 */ .word GlobalDataBuffer + 0x6B4FE4
-    /* 184ED4 00284DD4 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184EC8 00284DC8 64003200 */ .word 0x00320064
+    /* 184ECC 00284DCC FFFF6400 */ .word 0x0064FFFF
+    /* 184ED0 00284DD0 64009600 */ .word 0x00960064
+    /* 184ED4 00284DD4 64006400 */ .word 0x00640064
     /* 184ED8 00284DD8 14000000 */ .word 0x00000014
     /* 184EDC 00284DDC 0000003F */ .word 0x3F000000
     /* 184EE0 00284DE0 65313432 */ .word 0x32343165
@@ -67014,9 +67014,9 @@ glabel MonstorTable
     /* 184F28 00284E28 00000000 */ .word 0x00000000
     /* 184F2C 00284E2C 00000000 */ .word 0x00000000
     /* 184F30 00284E30 7C150000 */ .word 0x0000157C
-    /* 184F34 00284E34 01006400 */ .word GlobalDataBuffer + 0x394F81
-    /* 184F38 00284E38 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184F3C 00284E3C 64009100 */ .word GlobalDataBuffer + 0x664FE4
+    /* 184F34 00284E34 01006400 */ .word 0x00640001
+    /* 184F38 00284E38 64006400 */ .word 0x00640064
+    /* 184F3C 00284E3C 64009100 */ .word 0x00910064
     /* 184F40 00284E40 0000F040 */ .word 0x40F00000
     /* 184F44 00284E44 14000A00 */ .word 0x000A0014
     /* 184F48 00284E48 0100FFFF */ .word 0xFFFF0001
@@ -67026,10 +67026,10 @@ glabel MonstorTable
     /* 184F58 00284E58 00000000 */ .word 0x00000000
     /* 184F5C 00284E5C 4B000000 */ .word 0x0000004B
     /* 184F60 00284E60 97000100 */ .word 0x00010097
-    /* 184F64 00284E64 50004600 */ .word GlobalDataBuffer + 0x1B4FD0
-    /* 184F68 00284E68 5E006400 */ .word GlobalDataBuffer + 0x394FDE
-    /* 184F6C 00284E6C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 184F70 00284E70 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184F64 00284E64 50004600 */ .word 0x00460050
+    /* 184F68 00284E68 5E006400 */ .word 0x0064005E
+    /* 184F6C 00284E6C 64006400 */ .word 0x00640064
+    /* 184F70 00284E70 64006400 */ .word 0x00640064
     /* 184F74 00284E74 64000000 */ .word 0x00000064
     /* 184F78 00284E78 0000803F */ .word 0x3F800000
     /* 184F7C 00284E7C 65313433 */ .word 0x33343165
@@ -67053,9 +67053,9 @@ glabel MonstorTable
     /* 184FC4 00284EC4 00000000 */ .word 0x00000000
     /* 184FC8 00284EC8 00000000 */ .word 0x00000000
     /* 184FCC 00284ECC 76160000 */ .word 0x00001676
-    /* 184FD0 00284ED0 02007800 */ .word GlobalDataBuffer + 0x4D4F82
-    /* 184FD4 00284ED4 64009600 */ .word GlobalDataBuffer + 0x6B4FE4
-    /* 184FD8 00284ED8 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 184FD0 00284ED0 02007800 */ .word 0x00780002
+    /* 184FD4 00284ED4 64009600 */ .word 0x00960064
+    /* 184FD8 00284ED8 64006400 */ .word 0x00640064
     /* 184FDC 00284EDC 0000E040 */ .word 0x40E00000
     /* 184FE0 00284EE0 14000A00 */ .word 0x000A0014
     /* 184FE4 00284EE4 0200FFFF */ .word 0xFFFF0002
@@ -67065,10 +67065,10 @@ glabel MonstorTable
     /* 184FF4 00284EF4 00000000 */ .word 0x00000000
     /* 184FF8 00284EF8 18000000 */ .word 0x00000018
     /* 184FFC 00284EFC 86000100 */ .word 0x00010086
-    /* 185000 00284F00 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 185004 00284F04 E2006400 */ .word GlobalDataBuffer + 0x395062
-    /* 185008 00284F08 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18500C 00284F0C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185000 00284F00 64004600 */ .word 0x00460064
+    /* 185004 00284F04 E2006400 */ .word 0x006400E2
+    /* 185008 00284F08 64006400 */ .word 0x00640064
+    /* 18500C 00284F0C 64006400 */ .word 0x00640064
     /* 185010 00284F10 64000000 */ .word 0x00000064
     /* 185014 00284F14 0000803F */ .word 0x3F800000
     /* 185018 00284F18 65313434 */ .word 0x34343165
@@ -67092,9 +67092,9 @@ glabel MonstorTable
     /* 185060 00284F60 00000000 */ .word 0x00000000
     /* 185064 00284F64 00000000 */ .word 0x00000000
     /* 185068 00284F68 88130000 */ .word 0x00001388
-    /* 18506C 00284F6C 09009600 */ .word GlobalDataBuffer + 0x6B4F89
-    /* 185070 00284F70 32006400 */ .word GlobalDataBuffer + 0x394FB2
-    /* 185074 00284F74 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18506C 00284F6C 09009600 */ .word 0x00960009
+    /* 185070 00284F70 32006400 */ .word 0x00640032
+    /* 185074 00284F74 64006400 */ .word 0x00640064
     /* 185078 00284F78 0000A040 */ .word 0x40A00000
     /* 18507C 00284F7C 14000A00 */ .word 0x000A0014
     /* 185080 00284F80 FFFFFFFF */ .word 0xFFFFFFFF
@@ -67104,10 +67104,10 @@ glabel MonstorTable
     /* 185090 00284F90 00000000 */ .word 0x00000000
     /* 185094 00284F94 2F000000 */ .word 0x0000002F
     /* 185098 00284F98 98000100 */ .word 0x00010098
-    /* 18509C 00284F9C 50003200 */ .word GlobalDataBuffer + 0x74FD0
-    /* 1850A0 00284FA0 84006400 */ .word GlobalDataBuffer + 0x395004
-    /* 1850A4 00284FA4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1850A8 00284FA8 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18509C 00284F9C 50003200 */ .word 0x00320050
+    /* 1850A0 00284FA0 84006400 */ .word 0x00640084
+    /* 1850A4 00284FA4 64006400 */ .word 0x00640064
+    /* 1850A8 00284FA8 64006400 */ .word 0x00640064
     /* 1850AC 00284FAC 64000000 */ .word 0x00000064
     /* 1850B0 00284FB0 0000803F */ .word 0x3F800000
     /* 1850B4 00284FB4 65313435 */ .word 0x35343165
@@ -67131,9 +67131,9 @@ glabel MonstorTable
     /* 1850FC 00284FFC 00000000 */ .word 0x00000000
     /* 185100 00285000 00000000 */ .word 0x00000000
     /* 185104 00285004 88130000 */ .word 0x00001388
-    /* 185108 00285008 05003200 */ .word GlobalDataBuffer + 0x74F85
-    /* 18510C 0028500C 96006400 */ .word GlobalDataBuffer + 0x395016
-    /* 185110 00285010 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185108 00285008 05003200 */ .word 0x00320005
+    /* 18510C 0028500C 96006400 */ .word 0x00640096
+    /* 185110 00285010 64006400 */ .word 0x00640064
     /* 185114 00285014 0000C040 */ .word 0x40C00000
     /* 185118 00285018 14000A00 */ .word 0x000A0014
     /* 18511C 0028501C FFFFFFFF */ .word 0xFFFFFFFF
@@ -67143,10 +67143,10 @@ glabel MonstorTable
     /* 18512C 0028502C 00000000 */ .word 0x00000000
     /* 185130 00285030 3F000000 */ .word 0x0000003F
     /* 185134 00285034 95000100 */ .word 0x00010095
-    /* 185138 00285038 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 18513C 0028503C 5D006400 */ .word GlobalDataBuffer + 0x394FDD
-    /* 185140 00285040 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185144 00285044 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185138 00285038 64004600 */ .word 0x00460064
+    /* 18513C 0028503C 5D006400 */ .word 0x0064005D
+    /* 185140 00285040 64006400 */ .word 0x00640064
+    /* 185144 00285044 64006400 */ .word 0x00640064
     /* 185148 00285048 64000000 */ .word 0x00000064
     /* 18514C 0028504C 0000803F */ .word 0x3F800000
     /* 185150 00285050 65313436 */ .word 0x36343165
@@ -67170,9 +67170,9 @@ glabel MonstorTable
     /* 185198 00285098 00000000 */ .word 0x00000000
     /* 18519C 0028509C 00000000 */ .word 0x00000000
     /* 1851A0 002850A0 A00F0000 */ .word 0x00000FA0
-    /* 1851A4 002850A4 01006E00 */ .word GlobalDataBuffer + 0x434F81
-    /* 1851A8 002850A8 64005000 */ .word GlobalDataBuffer + 0x254FE4
-    /* 1851AC 002850AC 50009600 */ .word GlobalDataBuffer + 0x6B4FD0
+    /* 1851A4 002850A4 01006E00 */ .word 0x006E0001
+    /* 1851A8 002850A8 64005000 */ .word 0x00500064
+    /* 1851AC 002850AC 50009600 */ .word 0x00960050
     /* 1851B0 002850B0 0000C040 */ .word 0x40C00000
     /* 1851B4 002850B4 14000A00 */ .word 0x000A0014
     /* 1851B8 002850B8 FFFFFFFF */ .word 0xFFFFFFFF
@@ -67182,10 +67182,10 @@ glabel MonstorTable
     /* 1851C8 002850C8 00000000 */ .word 0x00000000
     /* 1851CC 002850CC 1B000000 */ .word 0x0000001B
     /* 1851D0 002850D0 B1000100 */ .word 0x000100B1
-    /* 1851D4 002850D4 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 1851D8 002850D8 E3006400 */ .word GlobalDataBuffer + 0x395063
-    /* 1851DC 002850DC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1851E0 002850E0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1851D4 002850D4 64004600 */ .word 0x00460064
+    /* 1851D8 002850D8 E3006400 */ .word 0x006400E3
+    /* 1851DC 002850DC 64006400 */ .word 0x00640064
+    /* 1851E0 002850E0 64006400 */ .word 0x00640064
     /* 1851E4 002850E4 64000000 */ .word 0x00000064
     /* 1851E8 002850E8 0000803F */ .word 0x3F800000
     /* 1851EC 002850EC 65313039 */ .word 0x39303165
@@ -67209,9 +67209,9 @@ glabel MonstorTable
     /* 185234 00285134 00000000 */ .word 0x00000000
     /* 185238 00285138 00000000 */ .word 0x00000000
     /* 18523C 0028513C 88130000 */ .word 0x00001388
-    /* 185240 00285140 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 185244 00285144 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185248 00285148 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185240 00285140 08006400 */ .word 0x00640008
+    /* 185244 00285144 64006400 */ .word 0x00640064
+    /* 185248 00285148 64006400 */ .word 0x00640064
     /* 18524C 0028514C 0000A040 */ .word 0x40A00000
     /* 185250 00285150 14000A00 */ .word 0x000A0014
     /* 185254 00285154 FFFFFFFF */ .word 0xFFFFFFFF
@@ -67221,10 +67221,10 @@ glabel MonstorTable
     /* 185264 00285164 03000000 */ .word 0x00000003
     /* 185268 00285168 35010000 */ .word 0x00000135
     /* 18526C 0028516C B1000100 */ .word 0x000100B1
-    /* 185270 00285170 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 185274 00285174 EB006400 */ .word GlobalDataBuffer + 0x39506B
-    /* 185278 00285178 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18527C 0028517C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185270 00285170 5A003200 */ .word 0x0032005A
+    /* 185274 00285174 EB006400 */ .word 0x006400EB
+    /* 185278 00285178 64006400 */ .word 0x00640064
+    /* 18527C 0028517C 64006400 */ .word 0x00640064
     /* 185280 00285180 64000000 */ .word 0x00000064
     /* 185284 00285184 0000803F */ .word 0x3F800000
     /* 185288 00285188 65313130 */ .word 0x30313165
@@ -67248,11 +67248,11 @@ glabel MonstorTable
     /* 1852D0 002851D0 00000000 */ .word 0x00000000
     /* 1852D4 002851D4 00000000 */ .word 0x00000000
     /* 1852D8 002851D8 4C1D0000 */ .word 0x00001D4C
-    /* 1852DC 002851DC 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 1852E0 002851E0 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1852E4 002851E4 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1852DC 002851DC 08006400 */ .word 0x00640008
+    /* 1852E0 002851E0 64006400 */ .word 0x00640064
+    /* 1852E4 002851E4 64006400 */ .word 0x00640064
     /* 1852E8 002851E8 00004041 */ .word 0x41400000
-    /* 1852EC 002851EC 14003200 */ .word GlobalDataBuffer + 0x74F94
+    /* 1852EC 002851EC 14003200 */ .word 0x00320014
     /* 1852F0 002851F0 FFFFFFFF */ .word 0xFFFFFFFF
     /* 1852F4 002851F4 14000000 */ .word 0x00000014
     /* 1852F8 002851F8 23000000 */ .word 0x00000023
@@ -67260,10 +67260,10 @@ glabel MonstorTable
     /* 185300 00285200 04000000 */ .word 0x00000004
     /* 185304 00285204 36010000 */ .word 0x00000136
     /* 185308 00285208 AF000100 */ .word 0x000100AF
-    /* 18530C 0028520C 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 185310 00285210 B5006400 */ .word GlobalDataBuffer + 0x395035
-    /* 185314 00285214 64009600 */ .word GlobalDataBuffer + 0x6B4FE4
-    /* 185318 00285218 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18530C 0028520C 5A003200 */ .word 0x0032005A
+    /* 185310 00285210 B5006400 */ .word 0x006400B5
+    /* 185314 00285214 64009600 */ .word 0x00960064
+    /* 185318 00285218 64006400 */ .word 0x00640064
     /* 18531C 0028521C 14000000 */ .word 0x00000014
     /* 185320 00285220 0000803F */ .word 0x3F800000
     /* 185324 00285224 65313134 */ .word 0x34313165
@@ -67287,9 +67287,9 @@ glabel MonstorTable
     /* 18536C 0028526C 00000000 */ .word 0x00000000
     /* 185370 00285270 00000000 */ .word 0x00000000
     /* 185374 00285274 401F0000 */ .word 0x00001F40
-    /* 185378 00285278 00006400 */ .word GlobalDataBuffer + 0x394F80
-    /* 18537C 0028527C 64008C00 */ .word GlobalDataBuffer + 0x614FE4
-    /* 185380 00285280 00006400 */ .word GlobalDataBuffer + 0x394F80
+    /* 185378 00285278 00006400 */ .word 0x00640000
+    /* 18537C 0028527C 64008C00 */ .word 0x008C0064
+    /* 185380 00285280 00006400 */ .word 0x00640000
     /* 185384 00285284 0000D040 */ .word 0x40D00000
     /* 185388 00285288 17000A00 */ .word 0x000A0017
     /* 18538C 0028528C 1800FFFF */ .word 0xFFFF0018
@@ -67299,10 +67299,10 @@ glabel MonstorTable
     /* 18539C 0028529C 00000000 */ .word 0x00000000
     /* 1853A0 002852A0 3A010000 */ .word 0x0000013A
     /* 1853A4 002852A4 FFFF0100 */ .word 0x0001FFFF
-    /* 1853A8 002852A8 46003C00 */ .word GlobalDataBuffer + 0x114FC6
-    /* 1853AC 002852AC A4006400 */ .word GlobalDataBuffer + 0x395024
-    /* 1853B0 002852B0 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1853B4 002852B4 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1853A8 002852A8 46003C00 */ .word 0x003C0046
+    /* 1853AC 002852AC A4006400 */ .word 0x006400A4
+    /* 1853B0 002852B0 64006400 */ .word 0x00640064
+    /* 1853B4 002852B4 64006400 */ .word 0x00640064
     /* 1853B8 002852B8 64000000 */ .word 0x00000064
     /* 1853BC 002852BC 0000803F */ .word 0x3F800000
     /* 1853C0 002852C0 65313138 */ .word 0x38313165
@@ -67328,7 +67328,7 @@ glabel MonstorTable
     /* 185410 00285310 C4090000 */ .word 0x000009C4
     /* 185414 00285314 01001E00 */ .word 0x001E0001
     /* 185418 00285318 1E001E00 */ .word 0x001E001E
-    /* 18541C 0028531C 1E009600 */ .word GlobalDataBuffer + 0x6B4F9E
+    /* 18541C 0028531C 1E009600 */ .word 0x0096001E
     /* 185420 00285320 00002041 */ .word 0x41200000
     /* 185424 00285324 17000A00 */ .word 0x000A0017
     /* 185428 00285328 1C00FFFF */ .word 0xFFFF001C
@@ -67338,10 +67338,10 @@ glabel MonstorTable
     /* 185438 00285338 00000000 */ .word 0x00000000
     /* 18543C 0028533C 3E010000 */ .word 0x0000013E
     /* 185440 00285340 FFFF0100 */ .word 0x0001FFFF
-    /* 185444 00285344 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185448 00285348 BE006400 */ .word GlobalDataBuffer + 0x39503E
-    /* 18544C 0028534C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185450 00285350 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185444 00285344 64006400 */ .word 0x00640064
+    /* 185448 00285348 BE006400 */ .word 0x006400BE
+    /* 18544C 0028534C 64006400 */ .word 0x00640064
+    /* 185450 00285350 64006400 */ .word 0x00640064
     /* 185454 00285354 64000000 */ .word 0x00000064
     /* 185458 00285358 0000803F */ .word 0x3F800000
     /* 18545C 0028535C 65313439 */ .word 0x39343165
@@ -67365,11 +67365,11 @@ glabel MonstorTable
     /* 1854A4 002853A4 00000000 */ .word 0x00000000
     /* 1854A8 002853A8 00000000 */ .word 0x00000000
     /* 1854AC 002853AC 4C1D0000 */ .word 0x00001D4C
-    /* 1854B0 002853B0 07006400 */ .word GlobalDataBuffer + 0x394F87
-    /* 1854B4 002853B4 64007800 */ .word GlobalDataBuffer + 0x4D4FE4
-    /* 1854B8 002853B8 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1854B0 002853B0 07006400 */ .word 0x00640007
+    /* 1854B4 002853B4 64007800 */ .word 0x00780064
+    /* 1854B8 002853B8 64006400 */ .word 0x00640064
     /* 1854BC 002853BC 0000E040 */ .word 0x40E00000
-    /* 1854C0 002853C0 17003200 */ .word GlobalDataBuffer + 0x74F97
+    /* 1854C0 002853C0 17003200 */ .word 0x00320017
     /* 1854C4 002853C4 0500FFFF */ .word 0xFFFF0005
     /* 1854C8 002853C8 1E000000 */ .word 0x0000001E
     /* 1854CC 002853CC 11000000 */ .word 0x00000011
@@ -67377,10 +67377,10 @@ glabel MonstorTable
     /* 1854D4 002853D4 00000000 */ .word 0x00000000
     /* 1854D8 002853D8 2B000000 */ .word 0x0000002B
     /* 1854DC 002853DC A4000100 */ .word 0x000100A4
-    /* 1854E0 002853E0 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 1854E4 002853E4 51006400 */ .word GlobalDataBuffer + 0x394FD1
-    /* 1854E8 002853E8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1854EC 002853EC 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1854E0 002853E0 64004600 */ .word 0x00460064
+    /* 1854E4 002853E4 51006400 */ .word 0x00640051
+    /* 1854E8 002853E8 64006400 */ .word 0x00640064
+    /* 1854EC 002853EC 64006400 */ .word 0x00640064
     /* 1854F0 002853F0 64000000 */ .word 0x00000064
     /* 1854F4 002853F4 0000803F */ .word 0x3F800000
     /* 1854F8 002853F8 65313530 */ .word 0x30353165
@@ -67416,10 +67416,10 @@ glabel MonstorTable
     /* 185570 00285470 00000000 */ .word 0x00000000
     /* 185574 00285474 2C000000 */ .word 0x0000002C
     /* 185578 00285478 96000100 */ .word 0x00010096
-    /* 18557C 0028547C 50003200 */ .word GlobalDataBuffer + 0x74FD0
-    /* 185580 00285480 85006400 */ .word GlobalDataBuffer + 0x395005
-    /* 185584 00285484 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185588 00285488 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18557C 0028547C 50003200 */ .word 0x00320050
+    /* 185580 00285480 85006400 */ .word 0x00640085
+    /* 185584 00285484 64006400 */ .word 0x00640064
+    /* 185588 00285488 64006400 */ .word 0x00640064
     /* 18558C 0028548C 64000000 */ .word 0x00000064
     /* 185590 00285490 0000803F */ .word 0x3F800000
     /* 185594 00285494 65313531 */ .word 0x31353165
@@ -67443,7 +67443,7 @@ glabel MonstorTable
     /* 1855DC 002854DC 00000000 */ .word 0x00000000
     /* 1855E0 002854E0 00000000 */ .word 0x00000000
     /* 1855E4 002854E4 70170000 */ .word 0x00001770
-    /* 1855E8 002854E8 0900C800 */ .word GlobalDataBuffer + 0x9D4F89
+    /* 1855E8 002854E8 0900C800 */ .word 0x00C80009
     /* 1855EC 002854EC 14001400 */ .word 0x00140014
     /* 1855F0 002854F0 14001400 */ .word 0x00140014
     /* 1855F4 002854F4 00008040 */ .word 0x40800000
@@ -67455,10 +67455,10 @@ glabel MonstorTable
     /* 18560C 0028550C 00000000 */ .word 0x00000000
     /* 185610 00285510 31000000 */ .word 0x00000031
     /* 185614 00285514 9F000100 */ .word 0x0001009F
-    /* 185618 00285518 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 18561C 0028551C 9F006400 */ .word GlobalDataBuffer + 0x39501F
-    /* 185620 00285520 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185624 00285524 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185618 00285518 64004600 */ .word 0x00460064
+    /* 18561C 0028551C 9F006400 */ .word 0x0064009F
+    /* 185620 00285520 64006400 */ .word 0x00640064
+    /* 185624 00285524 64006400 */ .word 0x00640064
     /* 185628 00285528 64000000 */ .word 0x00000064
     /* 18562C 0028552C 0000803F */ .word 0x3F800000
     /* 185630 00285530 65313532 */ .word 0x32353165
@@ -67482,9 +67482,9 @@ glabel MonstorTable
     /* 185678 00285578 00000000 */ .word 0x00000000
     /* 18567C 0028557C 00000000 */ .word 0x00000000
     /* 185680 00285580 64190000 */ .word 0x00001964
-    /* 185684 00285584 02006400 */ .word GlobalDataBuffer + 0x394F82
-    /* 185688 00285588 64007D00 */ .word GlobalDataBuffer + 0x524FE4
-    /* 18568C 0028558C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185684 00285584 02006400 */ .word 0x00640002
+    /* 185688 00285588 64007D00 */ .word 0x007D0064
+    /* 18568C 0028558C 64006400 */ .word 0x00640064
     /* 185690 00285590 00002041 */ .word 0x41200000
     /* 185694 00285594 17001400 */ .word 0x00140017
     /* 185698 00285598 0600FFFF */ .word 0xFFFF0006
@@ -67494,10 +67494,10 @@ glabel MonstorTable
     /* 1856A8 002855A8 00000000 */ .word 0x00000000
     /* 1856AC 002855AC 47000000 */ .word 0x00000047
     /* 1856B0 002855B0 A6000100 */ .word 0x000100A6
-    /* 1856B4 002855B4 5F004600 */ .word GlobalDataBuffer + 0x1B4FDF
-    /* 1856B8 002855B8 5C006400 */ .word GlobalDataBuffer + 0x394FDC
-    /* 1856BC 002855BC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1856C0 002855C0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1856B4 002855B4 5F004600 */ .word 0x0046005F
+    /* 1856B8 002855B8 5C006400 */ .word 0x0064005C
+    /* 1856BC 002855BC 64006400 */ .word 0x00640064
+    /* 1856C0 002855C0 64006400 */ .word 0x00640064
     /* 1856C4 002855C4 64000000 */ .word 0x00000064
     /* 1856C8 002855C8 0000803F */ .word 0x3F800000
     /* 1856CC 002855CC 65313533 */ .word 0x33353165
@@ -67521,9 +67521,9 @@ glabel MonstorTable
     /* 185714 00285614 00000000 */ .word 0x00000000
     /* 185718 00285618 00000000 */ .word 0x00000000
     /* 18571C 0028561C 88130000 */ .word 0x00001388
-    /* 185720 00285620 04008200 */ .word GlobalDataBuffer + 0x574F84
-    /* 185724 00285624 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185728 00285628 64009600 */ .word GlobalDataBuffer + 0x6B4FE4
+    /* 185720 00285620 04008200 */ .word 0x00820004
+    /* 185724 00285624 64006400 */ .word 0x00640064
+    /* 185728 00285628 64009600 */ .word 0x00960064
     /* 18572C 0028562C 0000D040 */ .word 0x40D00000
     /* 185730 00285630 17000A00 */ .word 0x000A0017
     /* 185734 00285634 0200FFFF */ .word 0xFFFF0002
@@ -67533,10 +67533,10 @@ glabel MonstorTable
     /* 185744 00285644 00000000 */ .word 0x00000000
     /* 185748 00285648 44000000 */ .word 0x00000044
     /* 18574C 0028564C FFFF0100 */ .word 0x0001FFFF
-    /* 185750 00285650 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 185754 00285654 92006400 */ .word GlobalDataBuffer + 0x395012
-    /* 185758 00285658 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18575C 0028565C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185750 00285650 64004600 */ .word 0x00460064
+    /* 185754 00285654 92006400 */ .word 0x00640092
+    /* 185758 00285658 64006400 */ .word 0x00640064
+    /* 18575C 0028565C 64006400 */ .word 0x00640064
     /* 185760 00285660 64000000 */ .word 0x00000064
     /* 185764 00285664 00000000 */ .word 0x00000000
     /* 185768 00285668 65313534 */ .word 0x34353165
@@ -67560,11 +67560,11 @@ glabel MonstorTable
     /* 1857B0 002856B0 00000000 */ .word 0x00000000
     /* 1857B4 002856B4 00000000 */ .word 0x00000000
     /* 1857B8 002856B8 5E1A0000 */ .word 0x00001A5E
-    /* 1857BC 002856BC 07007800 */ .word GlobalDataBuffer + 0x4D4F87
-    /* 1857C0 002856C0 50008C00 */ .word GlobalDataBuffer + 0x614FD0
-    /* 1857C4 002856C4 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1857BC 002856BC 07007800 */ .word 0x00780007
+    /* 1857C0 002856C0 50008C00 */ .word 0x008C0050
+    /* 1857C4 002856C4 64006400 */ .word 0x00640064
     /* 1857C8 002856C8 00000041 */ .word 0x41000000
-    /* 1857CC 002856CC 17003C00 */ .word GlobalDataBuffer + 0x114F97
+    /* 1857CC 002856CC 17003C00 */ .word 0x003C0017
     /* 1857D0 002856D0 0F00FFFF */ .word 0xFFFF000F
     /* 1857D4 002856D4 1E000000 */ .word 0x0000001E
     /* 1857D8 002856D8 0F000000 */ .word 0x0000000F
@@ -67572,9 +67572,9 @@ glabel MonstorTable
     /* 1857E0 002856E0 00000000 */ .word 0x00000000
     /* 1857E4 002856E4 19000000 */ .word 0x00000019
     /* 1857E8 002856E8 9F000100 */ .word 0x0001009F
-    /* 1857EC 002856EC 5F003C00 */ .word GlobalDataBuffer + 0x114FDF
-    /* 1857F0 002856F0 5C005000 */ .word GlobalDataBuffer + 0x254FDC
-    /* 1857F4 002856F4 50009600 */ .word GlobalDataBuffer + 0x6B4FD0
+    /* 1857EC 002856EC 5F003C00 */ .word 0x003C005F
+    /* 1857F0 002856F0 5C005000 */ .word 0x0050005C
+    /* 1857F4 002856F4 50009600 */ .word 0x00960050
     /* 1857F8 002856F8 50001400 */ .word 0x00140050
     /* 1857FC 002856FC 64000000 */ .word 0x00000064
     /* 185800 00285700 0000003F */ .word 0x3F000000
@@ -67611,10 +67611,10 @@ glabel MonstorTable
     /* 18587C 0028577C 00000000 */ .word 0x00000000
     /* 185880 00285780 48000000 */ .word 0x00000048
     /* 185884 00285784 99000100 */ .word 0x00010099
-    /* 185888 00285788 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 18588C 0028578C E2006400 */ .word GlobalDataBuffer + 0x395062
-    /* 185890 00285790 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185894 00285794 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185888 00285788 64004600 */ .word 0x00460064
+    /* 18588C 0028578C E2006400 */ .word 0x006400E2
+    /* 185890 00285790 64006400 */ .word 0x00640064
+    /* 185894 00285794 64006400 */ .word 0x00640064
     /* 185898 00285798 64000000 */ .word 0x00000064
     /* 18589C 0028579C 0000803F */ .word 0x3F800000
     /* 1858A0 002857A0 65313039 */ .word 0x39303165
@@ -67638,9 +67638,9 @@ glabel MonstorTable
     /* 1858E8 002857E8 00000000 */ .word 0x00000000
     /* 1858EC 002857EC 00000000 */ .word 0x00000000
     /* 1858F0 002857F0 64190000 */ .word 0x00001964
-    /* 1858F4 002857F4 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 1858F8 002857F8 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1858FC 002857FC 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1858F4 002857F4 08006400 */ .word 0x00640008
+    /* 1858F8 002857F8 64006400 */ .word 0x00640064
+    /* 1858FC 002857FC 64006400 */ .word 0x00640064
     /* 185900 00285800 0000A040 */ .word 0x40A00000
     /* 185904 00285804 17000A00 */ .word 0x000A0017
     /* 185908 00285808 FFFFFFFF */ .word 0xFFFFFFFF
@@ -67650,10 +67650,10 @@ glabel MonstorTable
     /* 185918 00285818 03000000 */ .word 0x00000003
     /* 18591C 0028581C 35010000 */ .word 0x00000135
     /* 185920 00285820 B1000100 */ .word 0x000100B1
-    /* 185924 00285824 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 185928 00285828 EB006400 */ .word GlobalDataBuffer + 0x39506B
-    /* 18592C 0028582C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185930 00285830 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185924 00285824 5A003200 */ .word 0x0032005A
+    /* 185928 00285828 EB006400 */ .word 0x006400EB
+    /* 18592C 0028582C 64006400 */ .word 0x00640064
+    /* 185930 00285830 64006400 */ .word 0x00640064
     /* 185934 00285834 64000000 */ .word 0x00000064
     /* 185938 00285838 0000803F */ .word 0x3F800000
     /* 18593C 0028583C 65313130 */ .word 0x30313165
@@ -67677,11 +67677,11 @@ glabel MonstorTable
     /* 185984 00285884 00000000 */ .word 0x00000000
     /* 185988 00285888 00000000 */ .word 0x00000000
     /* 18598C 0028588C 10270000 */ .word 0x00002710
-    /* 185990 00285890 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 185994 00285894 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185998 00285898 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185990 00285890 08006400 */ .word 0x00640008
+    /* 185994 00285894 64006400 */ .word 0x00640064
+    /* 185998 00285898 64006400 */ .word 0x00640064
     /* 18599C 0028589C 00004041 */ .word 0x41400000
-    /* 1859A0 002858A0 17003200 */ .word GlobalDataBuffer + 0x74F97
+    /* 1859A0 002858A0 17003200 */ .word 0x00320017
     /* 1859A4 002858A4 FFFFFFFF */ .word 0xFFFFFFFF
     /* 1859A8 002858A8 19000000 */ .word 0x00000019
     /* 1859AC 002858AC 23000000 */ .word 0x00000023
@@ -67689,10 +67689,10 @@ glabel MonstorTable
     /* 1859B4 002858B4 04000000 */ .word 0x00000004
     /* 1859B8 002858B8 36010000 */ .word 0x00000136
     /* 1859BC 002858BC AF000100 */ .word 0x000100AF
-    /* 1859C0 002858C0 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 1859C4 002858C4 B5006400 */ .word GlobalDataBuffer + 0x395035
-    /* 1859C8 002858C8 64009600 */ .word GlobalDataBuffer + 0x6B4FE4
-    /* 1859CC 002858CC 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1859C0 002858C0 5A003200 */ .word 0x0032005A
+    /* 1859C4 002858C4 B5006400 */ .word 0x006400B5
+    /* 1859C8 002858C8 64009600 */ .word 0x00960064
+    /* 1859CC 002858CC 64006400 */ .word 0x00640064
     /* 1859D0 002858D0 14000000 */ .word 0x00000014
     /* 1859D4 002858D4 0000803F */ .word 0x3F800000
     /* 1859D8 002858D8 65313135 */ .word 0x35313165
@@ -67716,8 +67716,8 @@ glabel MonstorTable
     /* 185A20 00285920 00000000 */ .word 0x00000000
     /* 185A24 00285924 00000000 */ .word 0x00000000
     /* 185A28 00285928 D4300000 */ .word 0x000030D4
-    /* 185A2C 0028592C 00003200 */ .word GlobalDataBuffer + 0x74F80
-    /* 185A30 00285930 32003200 */ .word GlobalDataBuffer + 0x74FB2
+    /* 185A2C 0028592C 00003200 */ .word 0x00320000
+    /* 185A30 00285930 32003200 */ .word 0x00320032
     /* 185A34 00285934 32000000 */ .word 0x00000032
     /* 185A38 00285938 0000D040 */ .word 0x40D00000
     /* 185A3C 0028593C 1E000A00 */ .word 0x000A001E
@@ -67728,10 +67728,10 @@ glabel MonstorTable
     /* 185A50 00285950 00000000 */ .word 0x00000000
     /* 185A54 00285954 3B010000 */ .word 0x0000013B
     /* 185A58 00285958 FFFF0100 */ .word 0x0001FFFF
-    /* 185A5C 0028595C 46003C00 */ .word GlobalDataBuffer + 0x114FC6
-    /* 185A60 00285960 A5006400 */ .word GlobalDataBuffer + 0x395025
-    /* 185A64 00285964 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185A68 00285968 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185A5C 0028595C 46003C00 */ .word 0x003C0046
+    /* 185A60 00285960 A5006400 */ .word 0x006400A5
+    /* 185A64 00285964 64006400 */ .word 0x00640064
+    /* 185A68 00285968 64006400 */ .word 0x00640064
     /* 185A6C 0028596C 64000000 */ .word 0x00000064
     /* 185A70 00285970 0000803F */ .word 0x3F800000
     /* 185A74 00285974 65313137 */ .word 0x37313165
@@ -67756,8 +67756,8 @@ glabel MonstorTable
     /* 185AC0 002859C0 00000000 */ .word 0x00000000
     /* 185AC4 002859C4 983A0000 */ .word 0x00003A98
     /* 185AC8 002859C8 01000000 */ .word 0x00000001
-    /* 185ACC 002859CC 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 185AD0 002859D0 32008C00 */ .word GlobalDataBuffer + 0x614FB2
+    /* 185ACC 002859CC 32003200 */ .word 0x00320032
+    /* 185AD0 002859D0 32008C00 */ .word 0x008C0032
     /* 185AD4 002859D4 00003041 */ .word 0x41300000
     /* 185AD8 002859D8 1E000A00 */ .word 0x000A001E
     /* 185ADC 002859DC FFFFFFFF */ .word 0xFFFFFFFF
@@ -67767,10 +67767,10 @@ glabel MonstorTable
     /* 185AEC 002859EC 00000000 */ .word 0x00000000
     /* 185AF0 002859F0 3D010000 */ .word 0x0000013D
     /* 185AF4 002859F4 BD000100 */ .word 0x000100BD
-    /* 185AF8 002859F8 64005A00 */ .word GlobalDataBuffer + 0x2F4FE4
-    /* 185AFC 002859FC FFFF6400 */ .word GlobalDataBuffer + 0x3A4F7F
-    /* 185B00 00285A00 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185B04 00285A04 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185AF8 002859F8 64005A00 */ .word 0x005A0064
+    /* 185AFC 002859FC FFFF6400 */ .word 0x0064FFFF
+    /* 185B00 00285A00 64006400 */ .word 0x00640064
+    /* 185B04 00285A04 64006400 */ .word 0x00640064
     /* 185B08 00285A08 64000000 */ .word 0x00000064
     /* 185B0C 00285A0C 0000803F */ .word 0x3F800000
     /* 185B10 00285A10 65313538 */ .word 0x38353165
@@ -67794,9 +67794,9 @@ glabel MonstorTable
     /* 185B58 00285A58 00000000 */ .word 0x00000000
     /* 185B5C 00285A5C 00000000 */ .word 0x00000000
     /* 185B60 00285A60 4C1D0000 */ .word 0x00001D4C
-    /* 185B64 00285A64 06009600 */ .word GlobalDataBuffer + 0x6B4F86
-    /* 185B68 00285A68 96009600 */ .word GlobalDataBuffer + 0x6B5016
-    /* 185B6C 00285A6C 9600C800 */ .word GlobalDataBuffer + 0x9D5016
+    /* 185B64 00285A64 06009600 */ .word 0x00960006
+    /* 185B68 00285A68 96009600 */ .word 0x00960096
+    /* 185B6C 00285A6C 9600C800 */ .word 0x00C80096
     /* 185B70 00285A70 00004040 */ .word 0x40400000
     /* 185B74 00285A74 1E000A00 */ .word 0x000A001E
     /* 185B78 00285A78 FFFFFFFF */ .word 0xFFFFFFFF
@@ -67806,10 +67806,10 @@ glabel MonstorTable
     /* 185B88 00285A88 00000000 */ .word 0x00000000
     /* 185B8C 00285A8C 3D000000 */ .word 0x0000003D
     /* 185B90 00285A90 97000000 */ .word 0x00000097
-    /* 185B94 00285A94 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 185B98 00285A98 95006400 */ .word GlobalDataBuffer + 0x395015
-    /* 185B9C 00285A9C C8006400 */ .word GlobalDataBuffer + 0x395048
-    /* 185BA0 00285AA0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185B94 00285A94 64004600 */ .word 0x00460064
+    /* 185B98 00285A98 95006400 */ .word 0x00640095
+    /* 185B9C 00285A9C C8006400 */ .word 0x006400C8
+    /* 185BA0 00285AA0 64006400 */ .word 0x00640064
     /* 185BA4 00285AA4 64000000 */ .word 0x00000064
     /* 185BA8 00285AA8 0000803F */ .word 0x3F800000
     /* 185BAC 00285AAC 65313539 */ .word 0x39353165
@@ -67833,9 +67833,9 @@ glabel MonstorTable
     /* 185BF4 00285AF4 00000000 */ .word 0x00000000
     /* 185BF8 00285AF8 00000000 */ .word 0x00000000
     /* 185BFC 00285AFC 803E0000 */ .word 0x00003E80
-    /* 185C00 00285B00 06006400 */ .word GlobalDataBuffer + 0x394F86
-    /* 185C04 00285B04 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185C08 00285B08 6E006400 */ .word GlobalDataBuffer + 0x394FEE
+    /* 185C00 00285B00 06006400 */ .word 0x00640006
+    /* 185C04 00285B04 64006400 */ .word 0x00640064
+    /* 185C08 00285B08 6E006400 */ .word 0x0064006E
     /* 185C0C 00285B0C 0000C040 */ .word 0x40C00000
     /* 185C10 00285B10 1E000A00 */ .word 0x000A001E
     /* 185C14 00285B14 1500FFFF */ .word 0xFFFF0015
@@ -67845,10 +67845,10 @@ glabel MonstorTable
     /* 185C24 00285B24 00000000 */ .word 0x00000000
     /* 185C28 00285B28 4C000000 */ .word 0x0000004C
     /* 185C2C 00285B2C FFFF0100 */ .word 0x0001FFFF
-    /* 185C30 00285B30 50004600 */ .word GlobalDataBuffer + 0x1B4FD0
-    /* 185C34 00285B34 AA006400 */ .word GlobalDataBuffer + 0x39502A
-    /* 185C38 00285B38 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185C3C 00285B3C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185C30 00285B30 50004600 */ .word 0x00460050
+    /* 185C34 00285B34 AA006400 */ .word 0x006400AA
+    /* 185C38 00285B38 64006400 */ .word 0x00640064
+    /* 185C3C 00285B3C 64006400 */ .word 0x00640064
     /* 185C40 00285B40 64000000 */ .word 0x00000064
     /* 185C44 00285B44 0000803F */ .word 0x3F800000
     /* 185C48 00285B48 65313630 */ .word 0x30363165
@@ -67872,9 +67872,9 @@ glabel MonstorTable
     /* 185C90 00285B90 00000000 */ .word 0x00000000
     /* 185C94 00285B94 00000000 */ .word 0x00000000
     /* 185C98 00285B98 D4300000 */ .word 0x000030D4
-    /* 185C9C 00285B9C 03006400 */ .word GlobalDataBuffer + 0x394F83
-    /* 185CA0 00285BA0 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185CA4 00285BA4 64003C00 */ .word GlobalDataBuffer + 0x114FE4
+    /* 185C9C 00285B9C 03006400 */ .word 0x00640003
+    /* 185CA0 00285BA0 64006400 */ .word 0x00640064
+    /* 185CA4 00285BA4 64003C00 */ .word 0x003C0064
     /* 185CA8 00285BA8 00001041 */ .word 0x41100000
     /* 185CAC 00285BAC 1E000A00 */ .word 0x000A001E
     /* 185CB0 00285BB0 FFFFFFFF */ .word 0xFFFFFFFF
@@ -67884,10 +67884,10 @@ glabel MonstorTable
     /* 185CC0 00285BC0 00000000 */ .word 0x00000000
     /* 185CC4 00285BC4 2F010000 */ .word 0x0000012F
     /* 185CC8 00285BC8 A0000100 */ .word 0x000100A0
-    /* 185CCC 00285BCC 5A006400 */ .word GlobalDataBuffer + 0x394FDA
-    /* 185CD0 00285BD0 5C006400 */ .word GlobalDataBuffer + 0x394FDC
-    /* 185CD4 00285BD4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185CD8 00285BD8 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185CCC 00285BCC 5A006400 */ .word 0x0064005A
+    /* 185CD0 00285BD0 5C006400 */ .word 0x0064005C
+    /* 185CD4 00285BD4 64006400 */ .word 0x00640064
+    /* 185CD8 00285BD8 64006400 */ .word 0x00640064
     /* 185CDC 00285BDC 64000000 */ .word 0x00000064
     /* 185CE0 00285BE0 9A99193F */ .word 0x3F19999A
     /* 185CE4 00285BE4 65313631 */ .word 0x31363165
@@ -67911,9 +67911,9 @@ glabel MonstorTable
     /* 185D2C 00285C2C 00000000 */ .word 0x00000000
     /* 185D30 00285C30 00000000 */ .word 0x00000000
     /* 185D34 00285C34 1C250000 */ .word 0x0000251C
-    /* 185D38 00285C38 09003200 */ .word GlobalDataBuffer + 0x74F89
-    /* 185D3C 00285C3C 32003200 */ .word GlobalDataBuffer + 0x74FB2
-    /* 185D40 00285C40 32009600 */ .word GlobalDataBuffer + 0x6B4FB2
+    /* 185D38 00285C38 09003200 */ .word 0x00320009
+    /* 185D3C 00285C3C 32003200 */ .word 0x00320032
+    /* 185D40 00285C40 32009600 */ .word 0x00960032
     /* 185D44 00285C44 0000A040 */ .word 0x40A00000
     /* 185D48 00285C48 1E000A00 */ .word 0x000A001E
     /* 185D4C 00285C4C FFFFFFFF */ .word 0xFFFFFFFF
@@ -67924,9 +67924,9 @@ glabel MonstorTable
     /* 185D60 00285C60 30000000 */ .word 0x00000030
     /* 185D64 00285C64 95000100 */ .word 0x00010095
     /* 185D68 00285C68 32000A00 */ .word 0x000A0032
-    /* 185D6C 00285C6C 9A006400 */ .word GlobalDataBuffer + 0x39501A
-    /* 185D70 00285C70 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185D74 00285C74 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185D6C 00285C6C 9A006400 */ .word 0x0064009A
+    /* 185D70 00285C70 64006400 */ .word 0x00640064
+    /* 185D74 00285C74 64006400 */ .word 0x00640064
     /* 185D78 00285C78 64000000 */ .word 0x00000064
     /* 185D7C 00285C7C 0000803F */ .word 0x3F800000
     /* 185D80 00285C80 65313632 */ .word 0x32363165
@@ -67952,7 +67952,7 @@ glabel MonstorTable
     /* 185DD0 00285CD0 10270000 */ .word 0x00002710
     /* 185DD4 00285CD4 01001400 */ .word 0x00140001
     /* 185DD8 00285CD8 14001400 */ .word 0x00140014
-    /* 185DDC 00285CDC 1400A000 */ .word GlobalDataBuffer + 0x754F94
+    /* 185DDC 00285CDC 1400A000 */ .word 0x00A00014
     /* 185DE0 00285CE0 00008040 */ .word 0x40800000
     /* 185DE4 00285CE4 1E000A00 */ .word 0x000A001E
     /* 185DE8 00285CE8 0B00FFFF */ .word 0xFFFF000B
@@ -67963,9 +67963,9 @@ glabel MonstorTable
     /* 185DFC 00285CFC 33000000 */ .word 0x00000033
     /* 185E00 00285D00 B0000000 */ .word 0x000000B0
     /* 185E04 00285D04 50001E00 */ .word 0x001E0050
-    /* 185E08 00285D08 5E006400 */ .word GlobalDataBuffer + 0x394FDE
-    /* 185E0C 00285D0C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185E10 00285D10 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185E08 00285D08 5E006400 */ .word 0x0064005E
+    /* 185E0C 00285D0C 64006400 */ .word 0x00640064
+    /* 185E10 00285D10 64006400 */ .word 0x00640064
     /* 185E14 00285D14 64000000 */ .word 0x00000064
     /* 185E18 00285D18 0000803F */ .word 0x3F800000
     /* 185E1C 00285D1C 65313633 */ .word 0x33363165
@@ -67989,11 +67989,11 @@ glabel MonstorTable
     /* 185E64 00285D64 00000000 */ .word 0x00000000
     /* 185E68 00285D68 00000000 */ .word 0x00000000
     /* 185E6C 00285D6C EC2C0000 */ .word 0x00002CEC
-    /* 185E70 00285D70 03006400 */ .word GlobalDataBuffer + 0x394F83
-    /* 185E74 00285D74 64006E00 */ .word GlobalDataBuffer + 0x434FE4
-    /* 185E78 00285D78 6E006400 */ .word GlobalDataBuffer + 0x394FEE
+    /* 185E70 00285D70 03006400 */ .word 0x00640003
+    /* 185E74 00285D74 64006E00 */ .word 0x006E0064
+    /* 185E78 00285D78 6E006400 */ .word 0x0064006E
     /* 185E7C 00285D7C 00006041 */ .word 0x41600000
-    /* 185E80 00285D80 1E003200 */ .word GlobalDataBuffer + 0x74F9E
+    /* 185E80 00285D80 1E003200 */ .word 0x0032001E
     /* 185E84 00285D84 0700FFFF */ .word 0xFFFF0007
     /* 185E88 00285D88 23000000 */ .word 0x00000023
     /* 185E8C 00285D8C 0F000000 */ .word 0x0000000F
@@ -68001,10 +68001,10 @@ glabel MonstorTable
     /* 185E94 00285D94 00000000 */ .word 0x00000000
     /* 185E98 00285D98 21000000 */ .word 0x00000021
     /* 185E9C 00285D9C B1000100 */ .word 0x000100B1
-    /* 185EA0 00285DA0 64004600 */ .word GlobalDataBuffer + 0x1B4FE4
-    /* 185EA4 00285DA4 A0006400 */ .word GlobalDataBuffer + 0x395020
-    /* 185EA8 00285DA8 64009600 */ .word GlobalDataBuffer + 0x6B4FE4
-    /* 185EAC 00285DAC 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185EA0 00285DA0 64004600 */ .word 0x00460064
+    /* 185EA4 00285DA4 A0006400 */ .word 0x006400A0
+    /* 185EA8 00285DA8 64009600 */ .word 0x00960064
+    /* 185EAC 00285DAC 64006400 */ .word 0x00640064
     /* 185EB0 00285DB0 14000000 */ .word 0x00000014
     /* 185EB4 00285DB4 0000003F */ .word 0x3F000000
     /* 185EB8 00285DB8 65313634 */ .word 0x34363165
@@ -68028,11 +68028,11 @@ glabel MonstorTable
     /* 185F00 00285E00 00000000 */ .word 0x00000000
     /* 185F04 00285E04 00000000 */ .word 0x00000000
     /* 185F08 00285E08 1C250000 */ .word 0x0000251C
-    /* 185F0C 00285E0C 03006400 */ .word GlobalDataBuffer + 0x394F83
-    /* 185F10 00285E10 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185F14 00285E14 50005000 */ .word GlobalDataBuffer + 0x254FD0
+    /* 185F0C 00285E0C 03006400 */ .word 0x00640003
+    /* 185F10 00285E10 64006400 */ .word 0x00640064
+    /* 185F14 00285E14 50005000 */ .word 0x00500050
     /* 185F18 00285E18 00008040 */ .word 0x40800000
-    /* 185F1C 00285E1C 1E003200 */ .word GlobalDataBuffer + 0x74F9E
+    /* 185F1C 00285E1C 1E003200 */ .word 0x0032001E
     /* 185F20 00285E20 FFFFFFFF */ .word 0xFFFFFFFF
     /* 185F24 00285E24 23000000 */ .word 0x00000023
     /* 185F28 00285E28 0F000000 */ .word 0x0000000F
@@ -68040,10 +68040,10 @@ glabel MonstorTable
     /* 185F30 00285E30 00000000 */ .word 0x00000000
     /* 185F34 00285E34 37000000 */ .word 0x00000037
     /* 185F38 00285E38 FFFF0100 */ .word 0x0001FFFF
-    /* 185F3C 00285E3C 64003200 */ .word GlobalDataBuffer + 0x74FE4
-    /* 185F40 00285E40 A0006400 */ .word GlobalDataBuffer + 0x395020
-    /* 185F44 00285E44 64009600 */ .word GlobalDataBuffer + 0x6B4FE4
-    /* 185F48 00285E48 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185F3C 00285E3C 64003200 */ .word 0x00320064
+    /* 185F40 00285E40 A0006400 */ .word 0x006400A0
+    /* 185F44 00285E44 64009600 */ .word 0x00960064
+    /* 185F48 00285E48 64006400 */ .word 0x00640064
     /* 185F4C 00285E4C 14000000 */ .word 0x00000014
     /* 185F50 00285E50 0000803F */ .word 0x3F800000
     /* 185F54 00285E54 65313039 */ .word 0x39303165
@@ -68067,9 +68067,9 @@ glabel MonstorTable
     /* 185F9C 00285E9C 00000000 */ .word 0x00000000
     /* 185FA0 00285EA0 00000000 */ .word 0x00000000
     /* 185FA4 00285EA4 4C1D0000 */ .word 0x00001D4C
-    /* 185FA8 00285EA8 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 185FAC 00285EAC 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185FB0 00285EB0 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185FA8 00285EA8 08006400 */ .word 0x00640008
+    /* 185FAC 00285EAC 64006400 */ .word 0x00640064
+    /* 185FB0 00285EB0 64006400 */ .word 0x00640064
     /* 185FB4 00285EB4 0000A040 */ .word 0x40A00000
     /* 185FB8 00285EB8 1E000A00 */ .word 0x000A001E
     /* 185FBC 00285EBC FFFFFFFF */ .word 0xFFFFFFFF
@@ -68079,10 +68079,10 @@ glabel MonstorTable
     /* 185FCC 00285ECC 03000000 */ .word 0x00000003
     /* 185FD0 00285ED0 35010000 */ .word 0x00000135
     /* 185FD4 00285ED4 B1000100 */ .word 0x000100B1
-    /* 185FD8 00285ED8 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 185FDC 00285EDC EB006400 */ .word GlobalDataBuffer + 0x39506B
-    /* 185FE0 00285EE0 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 185FE4 00285EE4 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 185FD8 00285ED8 5A003200 */ .word 0x0032005A
+    /* 185FDC 00285EDC EB006400 */ .word 0x006400EB
+    /* 185FE0 00285EE0 64006400 */ .word 0x00640064
+    /* 185FE4 00285EE4 64006400 */ .word 0x00640064
     /* 185FE8 00285EE8 64000000 */ .word 0x00000064
     /* 185FEC 00285EEC 0000803F */ .word 0x3F800000
     /* 185FF0 00285EF0 65313130 */ .word 0x30313165
@@ -68106,11 +68106,11 @@ glabel MonstorTable
     /* 186038 00285F38 00000000 */ .word 0x00000000
     /* 18603C 00285F3C 00000000 */ .word 0x00000000
     /* 186040 00285F40 2C4C0000 */ .word 0x00004C2C
-    /* 186044 00285F44 08006400 */ .word GlobalDataBuffer + 0x394F88
-    /* 186048 00285F48 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18604C 00285F4C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 186044 00285F44 08006400 */ .word 0x00640008
+    /* 186048 00285F48 64006400 */ .word 0x00640064
+    /* 18604C 00285F4C 64006400 */ .word 0x00640064
     /* 186050 00285F50 00004041 */ .word 0x41400000
-    /* 186054 00285F54 1E003200 */ .word GlobalDataBuffer + 0x74F9E
+    /* 186054 00285F54 1E003200 */ .word 0x0032001E
     /* 186058 00285F58 FFFFFFFF */ .word 0xFFFFFFFF
     /* 18605C 00285F5C 1E000000 */ .word 0x0000001E
     /* 186060 00285F60 23000000 */ .word 0x00000023
@@ -68118,10 +68118,10 @@ glabel MonstorTable
     /* 186068 00285F68 04000000 */ .word 0x00000004
     /* 18606C 00285F6C 36010000 */ .word 0x00000136
     /* 186070 00285F70 AF000100 */ .word 0x000100AF
-    /* 186074 00285F74 5A003200 */ .word GlobalDataBuffer + 0x74FDA
-    /* 186078 00285F78 B5006400 */ .word GlobalDataBuffer + 0x395035
-    /* 18607C 00285F7C 64009600 */ .word GlobalDataBuffer + 0x6B4FE4
-    /* 186080 00285F80 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 186074 00285F74 5A003200 */ .word 0x0032005A
+    /* 186078 00285F78 B5006400 */ .word 0x006400B5
+    /* 18607C 00285F7C 64009600 */ .word 0x00960064
+    /* 186080 00285F80 64006400 */ .word 0x00640064
     /* 186084 00285F84 14000000 */ .word 0x00000014
     /* 186088 00285F88 0000803F */ .word 0x3F800000
     /* 18608C 00285F8C 63323161 */ .word 0x61313263
@@ -68145,11 +68145,11 @@ glabel MonstorTable
     /* 1860D4 00285FD4 00000000 */ .word 0x00000000
     /* 1860D8 00285FD8 00000000 */ .word 0x00000000
     /* 1860DC 00285FDC 409C0000 */ .word 0x00009C40
-    /* 1860E0 00285FE0 07006400 */ .word GlobalDataBuffer + 0x394F87
-    /* 1860E4 00285FE4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1860E8 00285FE8 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1860E0 00285FE0 07006400 */ .word 0x00640007
+    /* 1860E4 00285FE4 64006400 */ .word 0x00640064
+    /* 1860E8 00285FE8 64006400 */ .word 0x00640064
     /* 1860EC 00285FEC 00006041 */ .word 0x41600000
-    /* 1860F0 00285FF0 08006400 */ .word GlobalDataBuffer + 0x394F88
+    /* 1860F0 00285FF0 08006400 */ .word 0x00640008
     /* 1860F4 00285FF4 1E002100 */ .word 0x0021001E
     /* 1860F8 00285FF8 05000000 */ .word 0x00000005
     /* 1860FC 00285FFC 00000000 */ .word 0x00000000
@@ -68158,9 +68158,9 @@ glabel MonstorTable
     /* 186108 00286008 DD000000 */ .word 0x000000DD
     /* 18610C 0028600C FFFF0000 */ .word 0x0000FFFF
     /* 186110 00286010 32000000 */ .word 0x00000032
-    /* 186114 00286014 FFFF6400 */ .word GlobalDataBuffer + 0x3A4F7F
-    /* 186118 00286018 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 18611C 0028601C 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 186114 00286014 FFFF6400 */ .word 0x0064FFFF
+    /* 186118 00286018 64006400 */ .word 0x00640064
+    /* 18611C 0028601C 64006400 */ .word 0x00640064
     /* 186120 00286020 32000000 */ .word 0x00000032
     /* 186124 00286024 00000000 */ .word 0x00000000
     /* 186128 00286028 63323261 */ .word 0x61323263
@@ -68184,11 +68184,11 @@ glabel MonstorTable
     /* 186170 00286070 00000000 */ .word 0x00000000
     /* 186174 00286074 00000000 */ .word 0x00000000
     /* 186178 00286078 50C30000 */ .word 0x0000C350
-    /* 18617C 0028607C 07006400 */ .word GlobalDataBuffer + 0x394F87
-    /* 186180 00286080 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 186184 00286084 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 18617C 0028607C 07006400 */ .word 0x00640007
+    /* 186180 00286080 64006400 */ .word 0x00640064
+    /* 186184 00286084 64006400 */ .word 0x00640064
     /* 186188 00286088 00006041 */ .word 0x41600000
-    /* 18618C 0028608C 08006400 */ .word GlobalDataBuffer + 0x394F88
+    /* 18618C 0028608C 08006400 */ .word 0x00640008
     /* 186190 00286090 1F002000 */ .word 0x0020001F
     /* 186194 00286094 05000000 */ .word 0x00000005
     /* 186198 00286098 00000000 */ .word 0x00000000
@@ -68197,9 +68197,9 @@ glabel MonstorTable
     /* 1861A4 002860A4 DD000000 */ .word 0x000000DD
     /* 1861A8 002860A8 FFFF0000 */ .word 0x0000FFFF
     /* 1861AC 002860AC 32000000 */ .word 0x00000032
-    /* 1861B0 002860B0 FFFF6400 */ .word GlobalDataBuffer + 0x3A4F7F
-    /* 1861B4 002860B4 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 1861B8 002860B8 64006400 */ .word GlobalDataBuffer + 0x394FE4
+    /* 1861B0 002860B0 FFFF6400 */ .word 0x0064FFFF
+    /* 1861B4 002860B4 64006400 */ .word 0x00640064
+    /* 1861B8 002860B8 64006400 */ .word 0x00640064
     /* 1861BC 002860BC 32000000 */ .word 0x00000032
     /* 1861C0 002860C0 00000000 */ .word 0x00000000
     /* 1861C4 002860C4 00000000 */ .word 0x00000000
@@ -80203,20 +80203,20 @@ glabel ext_func_info__3
     /* 191C7C 00291B7C FFFFFFFF */ .word 0xFFFFFFFF
 
 glabel PriceList
-    /* 191C80 00291B80 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
-    /* 191C84 00291B84 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
-    /* 191C88 00291B88 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
-    /* 191C8C 00291B8C 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
-    /* 191C90 00291B90 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
+    /* 191C80 00291B80 2C019600 */ .word 0x0096012C
+    /* 191C84 00291B84 2C019600 */ .word 0x0096012C
+    /* 191C88 00291B88 2C019600 */ .word 0x0096012C
+    /* 191C8C 00291B8C 2C019600 */ .word 0x0096012C
+    /* 191C90 00291B90 2C019600 */ .word 0x0096012C
     /* 191C94 00291B94 02000100 */ .word 0x00010002
     /* 191C98 00291B98 02000100 */ .word 0x00010002
     /* 191C9C 00291B9C 02000100 */ .word 0x00010002
     /* 191CA0 00291BA0 02000100 */ .word 0x00010002
     /* 191CA4 00291BA4 02000100 */ .word 0x00010002
-    /* 191CA8 00291BA8 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
-    /* 191CAC 00291BAC 04018200 */ .word GlobalDataBuffer + 0x575084
-    /* 191CB0 00291BB0 04018200 */ .word GlobalDataBuffer + 0x575084
-    /* 191CB4 00291BB4 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
+    /* 191CA8 00291BA8 2C019600 */ .word 0x0096012C
+    /* 191CAC 00291BAC 04018200 */ .word 0x00820104
+    /* 191CB0 00291BB0 04018200 */ .word 0x00820104
+    /* 191CB4 00291BB4 2C019600 */ .word 0x0096012C
     /* 191CB8 00291BB8 B80B5802 */ .word 0x02580BB8
     /* 191CBC 00291BBC B80B5802 */ .word 0x02580BB8
     /* 191CC0 00291BC0 B80B5802 */ .word 0x02580BB8
@@ -80233,16 +80233,16 @@ glabel PriceList
     /* 191CEC 00291BEC 02000100 */ .word 0x00010002
     /* 191CF0 00291BF0 02000100 */ .word 0x00010002
     /* 191CF4 00291BF4 02000100 */ .word 0x00010002
-    /* 191CF8 00291BF8 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
-    /* 191CFC 00291BFC 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
-    /* 191D00 00291C00 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
-    /* 191D04 00291C04 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
-    /* 191D08 00291C08 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
-    /* 191D0C 00291C0C 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
-    /* 191D10 00291C10 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
-    /* 191D14 00291C14 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
-    /* 191D18 00291C18 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
-    /* 191D1C 00291C1C 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
+    /* 191CF8 00291BF8 2C019600 */ .word 0x0096012C
+    /* 191CFC 00291BFC 2C019600 */ .word 0x0096012C
+    /* 191D00 00291C00 2C019600 */ .word 0x0096012C
+    /* 191D04 00291C04 2C019600 */ .word 0x0096012C
+    /* 191D08 00291C08 2C019600 */ .word 0x0096012C
+    /* 191D0C 00291C0C 2C019600 */ .word 0x0096012C
+    /* 191D10 00291C10 2C019600 */ .word 0x0096012C
+    /* 191D14 00291C14 2C019600 */ .word 0x0096012C
+    /* 191D18 00291C18 2C019600 */ .word 0x0096012C
+    /* 191D1C 00291C1C 2C019600 */ .word 0x0096012C
     /* 191D20 00291C20 02000100 */ .word 0x00010002
     /* 191D24 00291C24 02000100 */ .word 0x00010002
     /* 191D28 00291C28 02000100 */ .word 0x00010002
@@ -80254,10 +80254,10 @@ glabel PriceList
     /* 191D40 00291C40 02000100 */ .word 0x00010002
     /* 191D44 00291C44 02000100 */ .word 0x00010002
     /* 191D48 00291C48 02000100 */ .word 0x00010002
-    /* 191D4C 00291C4C 9001C800 */ .word GlobalDataBuffer + 0x9D5110
-    /* 191D50 00291C50 B801DC00 */ .word GlobalDataBuffer + 0xB15138
-    /* 191D54 00291C54 7C01BE00 */ .word GlobalDataBuffer + 0x9350FC
-    /* 191D58 00291C58 9001C800 */ .word GlobalDataBuffer + 0x9D5110
+    /* 191D4C 00291C4C 9001C800 */ .word 0x00C80190
+    /* 191D50 00291C50 B801DC00 */ .word 0x00DC01B8
+    /* 191D54 00291C54 7C01BE00 */ .word 0x00BE017C
+    /* 191D58 00291C58 9001C800 */ .word 0x00C80190
     /* 191D5C 00291C5C E803F401 */ .word 0x01F403E8
     /* 191D60 00291C60 E803F401 */ .word 0x01F403E8
     /* 191D64 00291C64 E803F401 */ .word 0x01F403E8
@@ -80271,57 +80271,57 @@ glabel PriceList
     /* 191D84 00291C84 1E000F00 */ .word 0x000F001E
     /* 191D88 00291C88 3C001E00 */ .word 0x001E003C
     /* 191D8C 00291C8C 14000A00 */ .word 0x000A0014
-    /* 191D90 00291C90 82004100 */ .word GlobalDataBuffer + 0x165002
-    /* 191D94 00291C94 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
+    /* 191D90 00291C90 82004100 */ .word 0x00410082
+    /* 191D94 00291C94 2C019600 */ .word 0x0096012C
     /* 191D98 00291C98 50002800 */ .word MonstorTable + 0x550
-    /* 191D9C 00291C9C 78003C00 */ .word GlobalDataBuffer + 0x114FF8
-    /* 191DA0 00291CA0 64003200 */ .word GlobalDataBuffer + 0x74FE4
-    /* 191DA4 00291CA4 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
+    /* 191D9C 00291C9C 78003C00 */ .word 0x003C0078
+    /* 191DA0 00291CA0 64003200 */ .word 0x00320064
+    /* 191DA4 00291CA4 2C019600 */ .word 0x0096012C
     /* 191DA8 00291CA8 3C001E00 */ .word 0x001E003C
     /* 191DAC 00291CAC 02000100 */ .word 0x00010002
     /* 191DB0 00291CB0 02000100 */ .word 0x00010002
     /* 191DB4 00291CB4 02000100 */ .word 0x00010002
     /* 191DB8 00291CB8 50002800 */ .word MonstorTable + 0x550
     /* 191DBC 00291CBC 04000200 */ .word 0x00020004
-    /* 191DC0 00291CC0 64003200 */ .word GlobalDataBuffer + 0x74FE4
-    /* 191DC4 00291CC4 64003200 */ .word GlobalDataBuffer + 0x74FE4
-    /* 191DC8 00291CC8 64003200 */ .word GlobalDataBuffer + 0x74FE4
-    /* 191DCC 00291CCC 64003200 */ .word GlobalDataBuffer + 0x74FE4
-    /* 191DD0 00291CD0 64003200 */ .word GlobalDataBuffer + 0x74FE4
-    /* 191DD4 00291CD4 64003200 */ .word GlobalDataBuffer + 0x74FE4
+    /* 191DC0 00291CC0 64003200 */ .word 0x00320064
+    /* 191DC4 00291CC4 64003200 */ .word 0x00320064
+    /* 191DC8 00291CC8 64003200 */ .word 0x00320064
+    /* 191DCC 00291CCC 64003200 */ .word 0x00320064
+    /* 191DD0 00291CD0 64003200 */ .word 0x00320064
+    /* 191DD4 00291CD4 64003200 */ .word 0x00320064
     /* 191DD8 00291CD8 50002800 */ .word MonstorTable + 0x550
-    /* 191DDC 00291CDC 5A002D00 */ .word GlobalDataBuffer + 0x24FDA
-    /* 191DE0 00291CE0 78003C00 */ .word GlobalDataBuffer + 0x114FF8
+    /* 191DDC 00291CDC 5A002D00 */ .word 0x002D005A
+    /* 191DE0 00291CE0 78003C00 */ .word 0x003C0078
     /* 191DE4 00291CE4 50002800 */ .word MonstorTable + 0x550
     /* 191DE8 00291CE8 02000100 */ .word 0x00010002
     /* 191DEC 00291CEC 2B001600 */ .word 0x0016002B
     /* 191DF0 00291CF0 02000100 */ .word 0x00010002
     /* 191DF4 00291CF4 32001900 */ .word 0x00190032
     /* 191DF8 00291CF8 14000A00 */ .word 0x000A0014
-    /* 191DFC 00291CFC 64003200 */ .word GlobalDataBuffer + 0x74FE4
+    /* 191DFC 00291CFC 64003200 */ .word 0x00320064
     /* 191E00 00291D00 14000A00 */ .word 0x000A0014
     /* 191E04 00291D04 E803F401 */ .word 0x01F403E8
-    /* 191E08 00291D08 64003200 */ .word GlobalDataBuffer + 0x74FE4
-    /* 191E0C 00291D0C 20039001 */ .word GlobalDataBuffer + 0x16552A0
-    /* 191E10 00291D10 20039001 */ .word GlobalDataBuffer + 0x16552A0
-    /* 191E14 00291D14 F401FA00 */ .word GlobalDataBuffer + 0xCF5174
-    /* 191E18 00291D18 C8006400 */ .word GlobalDataBuffer + 0x395048
+    /* 191E08 00291D08 64003200 */ .word 0x00320064
+    /* 191E0C 00291D0C 20039001 */ .word 0x01900320
+    /* 191E10 00291D10 20039001 */ .word 0x01900320
+    /* 191E14 00291D14 F401FA00 */ .word 0x00FA01F4
+    /* 191E18 00291D18 C8006400 */ .word 0x006400C8
     /* 191E1C 00291D1C 02000100 */ .word 0x00010002
-    /* 191E20 00291D20 F401FA00 */ .word GlobalDataBuffer + 0xCF5174
-    /* 191E24 00291D24 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
-    /* 191E28 00291D28 C201E100 */ .word GlobalDataBuffer + 0xB65142
-    /* 191E2C 00291D2C 9001C800 */ .word GlobalDataBuffer + 0x9D5110
-    /* 191E30 00291D30 A401D200 */ .word GlobalDataBuffer + 0xA75124
-    /* 191E34 00291D34 7C01BE00 */ .word GlobalDataBuffer + 0x9350FC
+    /* 191E20 00291D20 F401FA00 */ .word 0x00FA01F4
+    /* 191E24 00291D24 2C019600 */ .word 0x0096012C
+    /* 191E28 00291D28 C201E100 */ .word 0x00E101C2
+    /* 191E2C 00291D2C 9001C800 */ .word 0x00C80190
+    /* 191E30 00291D30 A401D200 */ .word 0x00D201A4
+    /* 191E34 00291D34 7C01BE00 */ .word 0x00BE017C
     /* 191E38 00291D38 02000100 */ .word 0x00010002
     /* 191E3C 00291D3C E803E803 */ .word 0x03E803E8
-    /* 191E40 00291D40 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
+    /* 191E40 00291D40 2C019600 */ .word 0x0096012C
     /* 191E44 00291D44 02000100 */ .word 0x00010002
     /* 191E48 00291D48 02000100 */ .word 0x00010002
     /* 191E4C 00291D4C 02000100 */ .word 0x00010002
-    /* 191E50 00291D50 9001C800 */ .word GlobalDataBuffer + 0x9D5110
-    /* 191E54 00291D54 9001C800 */ .word GlobalDataBuffer + 0x9D5110
-    /* 191E58 00291D58 9001C800 */ .word GlobalDataBuffer + 0x9D5110
+    /* 191E50 00291D50 9001C800 */ .word 0x00C80190
+    /* 191E54 00291D54 9001C800 */ .word 0x00C80190
+    /* 191E58 00291D58 9001C800 */ .word 0x00C80190
     /* 191E5C 00291D5C 02000100 */ .word 0x00010002
     /* 191E60 00291D60 02000100 */ .word 0x00010002
     /* 191E64 00291D64 02000100 */ .word 0x00010002
@@ -80346,13 +80346,13 @@ glabel PriceList
     /* 191EB0 00291DB0 02000100 */ .word 0x00010002
     /* 191EB4 00291DB4 02000100 */ .word 0x00010002
     /* 191EB8 00291DB8 02000100 */ .word 0x00010002
-    /* 191EBC 00291DBC 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
-    /* 191EC0 00291DC0 2C019600 */ .word GlobalDataBuffer + 0x6B50AC
-    /* 191EC4 00291DC4 B4005A00 */ .word GlobalDataBuffer + 0x2F5034
+    /* 191EBC 00291DBC 2C019600 */ .word 0x0096012C
+    /* 191EC0 00291DC0 2C019600 */ .word 0x0096012C
+    /* 191EC4 00291DC4 B4005A00 */ .word 0x005A00B4
     /* 191EC8 00291DC8 02000100 */ .word 0x00010002
-    /* 191ECC 00291DCC F401FA00 */ .word GlobalDataBuffer + 0xCF5174
-    /* 191ED0 00291DD0 20039001 */ .word GlobalDataBuffer + 0x16552A0
-    /* 191ED4 00291DD4 20039001 */ .word GlobalDataBuffer + 0x16552A0
+    /* 191ECC 00291DCC F401FA00 */ .word 0x00FA01F4
+    /* 191ED0 00291DD0 20039001 */ .word 0x01900320
+    /* 191ED4 00291DD4 20039001 */ .word 0x01900320
     /* 191ED8 00291DD8 E803F401 */ .word 0x01F403E8
     /* 191EDC 00291DDC 02000100 */ .word 0x00010002
     /* 191EE0 00291DE0 02000100 */ .word 0x00010002
@@ -80381,18 +80381,18 @@ glabel PriceList
     /* 191F3C 00291E3C 02000100 */ .word 0x00010002
     /* 191F40 00291E40 02000100 */ .word 0x00010002
     /* 191F44 00291E44 02000100 */ .word 0x00010002
-    /* 191F48 00291E48 2C014B00 */ .word GlobalDataBuffer + 0x2050AC
-    /* 191F4C 00291E4C F4017D00 */ .word GlobalDataBuffer + 0x525174
+    /* 191F48 00291E48 2C014B00 */ .word 0x004B012C
+    /* 191F4C 00291E4C F4017D00 */ .word 0x007D01F4
     /* 191F50 00291E50 C4097102 */ .word 0x027109C4
-    /* 191F54 00291E54 BC02AF00 */ .word GlobalDataBuffer + 0x84523C
-    /* 191F58 00291E58 2003C800 */ .word GlobalDataBuffer + 0x9D52A0
-    /* 191F5C 00291E5C E803FA00 */ .word GlobalDataBuffer + 0xCF5368
-    /* 191F60 00291E60 90016400 */ .word GlobalDataBuffer + 0x395110
+    /* 191F54 00291E54 BC02AF00 */ .word 0x00AF02BC
+    /* 191F58 00291E58 2003C800 */ .word 0x00C80320
+    /* 191F5C 00291E5C E803FA00 */ .word 0x00FA03E8
+    /* 191F60 00291E60 90016400 */ .word 0x00640190
     /* 191F64 00291E64 D007F401 */ .word 0x01F407D0
     /* 191F68 00291E68 B80BEE02 */ .word 0x02EE0BB8
     /* 191F6C 00291E6C D007F401 */ .word 0x01F407D0
     /* 191F70 00291E70 60095802 */ .word 0x02580960
-    /* 191F74 00291E74 F4017D00 */ .word GlobalDataBuffer + 0x525174
+    /* 191F74 00291E74 F4017D00 */ .word 0x007D01F4
     /* 191F78 00291E78 B80BEE02 */ .word 0x02EE0BB8
     /* 191F7C 00291E7C B80BEE02 */ .word 0x02EE0BB8
     /* 191F80 00291E80 02000100 */ .word 0x00010002
@@ -80405,86 +80405,86 @@ glabel PriceList
     /* 191F9C 00291E9C 02000100 */ .word 0x00010002
     /* 191FA0 00291EA0 02000100 */ .word 0x00010002
     /* 191FA4 00291EA4 02000100 */ .word 0x00010002
-    /* 191FA8 00291EA8 2003C800 */ .word GlobalDataBuffer + 0x9D52A0
-    /* 191FAC 00291EAC 9803E600 */ .word GlobalDataBuffer + 0xBB5318
+    /* 191FA8 00291EA8 2003C800 */ .word 0x00C80320
+    /* 191FAC 00291EAC 9803E600 */ .word 0x00E60398
     /* 191FB0 00291EB0 02000100 */ .word 0x00010002
-    /* 191FB4 00291EB4 8403E100 */ .word GlobalDataBuffer + 0xB65304
-    /* 191FB8 00291EB8 DE03F800 */ .word GlobalDataBuffer + 0xCD535E
+    /* 191FB4 00291EB4 8403E100 */ .word 0x00E10384
+    /* 191FB8 00291EB8 DE03F800 */ .word 0x00F803DE
     /* 191FBC 00291EBC C4097102 */ .word 0x027109C4
-    /* 191FC0 00291EC0 DC057701 */ .word GlobalDataBuffer + 0x14C555C
+    /* 191FC0 00291EC0 DC057701 */ .word 0x017705DC
     /* 191FC4 00291EC4 02000100 */ .word 0x00010002
-    /* 191FC8 00291EC8 E803FA00 */ .word GlobalDataBuffer + 0xCF5368
+    /* 191FC8 00291EC8 E803FA00 */ .word 0x00FA03E8
     /* 191FCC 00291ECC D007F401 */ .word 0x01F407D0
-    /* 191FD0 00291ED0 AC03EB00 */ .word GlobalDataBuffer + 0xC0532C
-    /* 191FD4 00291ED4 DC057701 */ .word GlobalDataBuffer + 0x14C555C
+    /* 191FD0 00291ED0 AC03EB00 */ .word 0x00EB03AC
+    /* 191FD4 00291ED4 DC057701 */ .word 0x017705DC
     /* 191FD8 00291ED8 02000100 */ .word 0x00010002
     /* 191FDC 00291EDC 02000100 */ .word 0x00010002
     /* 191FE0 00291EE0 02000100 */ .word 0x00010002
     /* 191FE4 00291EE4 02000100 */ .word 0x00010002
     /* 191FE8 00291EE8 02000100 */ .word 0x00010002
     /* 191FEC 00291EEC 02000100 */ .word 0x00010002
-    /* 191FF0 00291EF0 68015A00 */ .word GlobalDataBuffer + 0x2F50E8
-    /* 191FF4 00291EF4 58029600 */ .word GlobalDataBuffer + 0x6B51D8
-    /* 191FF8 00291EF8 E803FA00 */ .word GlobalDataBuffer + 0xCF5368
-    /* 191FFC 00291EFC 90016400 */ .word GlobalDataBuffer + 0x395110
-    /* 192000 00291F00 8403E100 */ .word GlobalDataBuffer + 0xB65304
-    /* 192004 00291F04 E803FA00 */ .word GlobalDataBuffer + 0xCF5368
-    /* 192008 00291F08 B0042C01 */ .word GlobalDataBuffer + 0x1015430
+    /* 191FF0 00291EF0 68015A00 */ .word 0x005A0168
+    /* 191FF4 00291EF4 58029600 */ .word 0x00960258
+    /* 191FF8 00291EF8 E803FA00 */ .word 0x00FA03E8
+    /* 191FFC 00291EFC 90016400 */ .word 0x00640190
+    /* 192000 00291F00 8403E100 */ .word 0x00E10384
+    /* 192004 00291F04 E803FA00 */ .word 0x00FA03E8
+    /* 192008 00291F08 B0042C01 */ .word 0x012C04B0
     /* 19200C 00291F0C 02000100 */ .word 0x00010002
     /* 192010 00291F10 02000100 */ .word 0x00010002
-    /* 192014 00291F14 F4017D00 */ .word GlobalDataBuffer + 0x525174
-    /* 192018 00291F18 58029600 */ .word GlobalDataBuffer + 0x6B51D8
+    /* 192014 00291F14 F4017D00 */ .word 0x007D01F4
+    /* 192018 00291F18 58029600 */ .word 0x00960258
     /* 19201C 00291F1C 02000100 */ .word 0x00010002
-    /* 192020 00291F20 8403E100 */ .word GlobalDataBuffer + 0xB65304
+    /* 192020 00291F20 8403E100 */ .word 0x00E10384
     /* 192024 00291F24 02000100 */ .word 0x00010002
     /* 192028 00291F28 02000100 */ .word 0x00010002
-    /* 19202C 00291F2C F4017D00 */ .word GlobalDataBuffer + 0x525174
-    /* 192030 00291F30 BC02AF00 */ .word GlobalDataBuffer + 0x84523C
-    /* 192034 00291F34 2003C800 */ .word GlobalDataBuffer + 0x9D52A0
-    /* 192038 00291F38 5203D400 */ .word GlobalDataBuffer + 0xA952D2
-    /* 19203C 00291F3C E803FA00 */ .word GlobalDataBuffer + 0xCF5368
-    /* 192040 00291F40 90016400 */ .word GlobalDataBuffer + 0x395110
-    /* 192044 00291F44 8403E100 */ .word GlobalDataBuffer + 0xB65304
-    /* 192048 00291F48 DC057701 */ .word GlobalDataBuffer + 0x14C555C
+    /* 19202C 00291F2C F4017D00 */ .word 0x007D01F4
+    /* 192030 00291F30 BC02AF00 */ .word 0x00AF02BC
+    /* 192034 00291F34 2003C800 */ .word 0x00C80320
+    /* 192038 00291F38 5203D400 */ .word 0x00D40352
+    /* 19203C 00291F3C E803FA00 */ .word 0x00FA03E8
+    /* 192040 00291F40 90016400 */ .word 0x00640190
+    /* 192044 00291F44 8403E100 */ .word 0x00E10384
+    /* 192048 00291F48 DC057701 */ .word 0x017705DC
     /* 19204C 00291F4C 02000100 */ .word 0x00010002
     /* 192050 00291F50 02000100 */ .word 0x00010002
     /* 192054 00291F54 02000100 */ .word 0x00010002
-    /* 192058 00291F58 5203D400 */ .word GlobalDataBuffer + 0xA952D2
-    /* 19205C 00291F5C C8003200 */ .word GlobalDataBuffer + 0x75048
+    /* 192058 00291F58 5203D400 */ .word 0x00D40352
+    /* 19205C 00291F5C C8003200 */ .word 0x003200C8
     /* 192060 00291F60 02000100 */ .word 0x00010002
-    /* 192064 00291F64 E803FA00 */ .word GlobalDataBuffer + 0xCF5368
+    /* 192064 00291F64 E803FA00 */ .word 0x00FA03E8
     /* 192068 00291F68 02000100 */ .word 0x00010002
     /* 19206C 00291F6C 02000100 */ .word 0x00010002
-    /* 192070 00291F70 90016400 */ .word GlobalDataBuffer + 0x395110
-    /* 192074 00291F74 BC02AF00 */ .word GlobalDataBuffer + 0x84523C
-    /* 192078 00291F78 58029600 */ .word GlobalDataBuffer + 0x6B51D8
-    /* 19207C 00291F7C D002B400 */ .word GlobalDataBuffer + 0x895250
-    /* 192080 00291F80 2003C800 */ .word GlobalDataBuffer + 0x9D52A0
-    /* 192084 00291F84 B0042C01 */ .word GlobalDataBuffer + 0x1015430
-    /* 192088 00291F88 78055E01 */ .word GlobalDataBuffer + 0x13354F8
+    /* 192070 00291F70 90016400 */ .word 0x00640190
+    /* 192074 00291F74 BC02AF00 */ .word 0x00AF02BC
+    /* 192078 00291F78 58029600 */ .word 0x00960258
+    /* 19207C 00291F7C D002B400 */ .word 0x00B402D0
+    /* 192080 00291F80 2003C800 */ .word 0x00C80320
+    /* 192084 00291F84 B0042C01 */ .word 0x012C04B0
+    /* 192088 00291F88 78055E01 */ .word 0x015E0578
     /* 19208C 00291F8C 02000100 */ .word 0x00010002
     /* 192090 00291F90 02000100 */ .word 0x00010002
     /* 192094 00291F94 02000100 */ .word 0x00010002
-    /* 192098 00291F98 90016400 */ .word GlobalDataBuffer + 0x395110
-    /* 19209C 00291F9C 2C014B00 */ .word GlobalDataBuffer + 0x2050AC
+    /* 192098 00291F98 90016400 */ .word 0x00640190
+    /* 19209C 00291F9C 2C014B00 */ .word 0x004B012C
     /* 1920A0 00291FA0 02000100 */ .word 0x00010002
-    /* 1920A4 00291FA4 D002B400 */ .word GlobalDataBuffer + 0x895250
+    /* 1920A4 00291FA4 D002B400 */ .word 0x00B402D0
     /* 1920A8 00291FA8 02000100 */ .word 0x00010002
     /* 1920AC 00291FAC 02000100 */ .word 0x00010002
-    /* 1920B0 00291FB0 2003C800 */ .word GlobalDataBuffer + 0x9D52A0
-    /* 1920B4 00291FB4 E803FA00 */ .word GlobalDataBuffer + 0xCF5368
-    /* 1920B8 00291FB8 B0042C01 */ .word GlobalDataBuffer + 0x1015430
-    /* 1920BC 00291FBC DC057701 */ .word GlobalDataBuffer + 0x14C555C
-    /* 1920C0 00291FC0 A406A901 */ .word GlobalDataBuffer + 0x17E5624
+    /* 1920B0 00291FB0 2003C800 */ .word 0x00C80320
+    /* 1920B4 00291FB4 E803FA00 */ .word 0x00FA03E8
+    /* 1920B8 00291FB8 B0042C01 */ .word 0x012C04B0
+    /* 1920BC 00291FBC DC057701 */ .word 0x017705DC
+    /* 1920C0 00291FC0 A406A901 */ .word 0x01A906A4
     /* 1920C4 00291FC4 D007F401 */ .word 0x01F407D0
     /* 1920C8 00291FC8 02000100 */ .word 0x00010002
     /* 1920CC 00291FCC 02000100 */ .word 0x00010002
     /* 1920D0 00291FD0 02000100 */ .word 0x00010002
     /* 1920D4 00291FD4 02000100 */ .word 0x00010002
-    /* 1920D8 00291FD8 2C014B00 */ .word GlobalDataBuffer + 0x2050AC
-    /* 1920DC 00291FDC 0807C201 */ .word GlobalDataBuffer + 0x1975688
-    /* 1920E0 00291FE0 2003C800 */ .word GlobalDataBuffer + 0x9D52A0
-    /* 1920E4 00291FE4 E803FA00 */ .word GlobalDataBuffer + 0xCF5368
+    /* 1920D8 00291FD8 2C014B00 */ .word 0x004B012C
+    /* 1920DC 00291FDC 0807C201 */ .word 0x01C20708
+    /* 1920E0 00291FE0 2003C800 */ .word 0x00C80320
+    /* 1920E4 00291FE4 E803FA00 */ .word 0x00FA03E8
     /* 1920E8 00291FE8 02000100 */ .word 0x00010002
     /* 1920EC 00291FEC 02000100 */ .word 0x00010002
     /* 1920F0 00291FF0 B80BEE02 */ .word 0x02EE0BB8
@@ -80496,44 +80496,44 @@ glabel PriceList
     /* 192108 00292008 64195906 */ .word 0x06591964
     /* 19210C 0029200C 02000100 */ .word 0x00010002
     /* 192110 00292010 02000100 */ .word 0x00010002
-    /* 192114 00292014 DC057701 */ .word GlobalDataBuffer + 0x14C555C
+    /* 192114 00292014 DC057701 */ .word 0x017705DC
     /* 192118 00292018 480D5203 */ .word 0x03520D48
-    /* 19211C 0029201C E803FA00 */ .word GlobalDataBuffer + 0xCF5368
+    /* 19211C 0029201C E803FA00 */ .word 0x00FA03E8
 
 glabel ItemShopList2
-    /* 192120 00292020 94009100 */ .word GlobalDataBuffer + 0x665014
-    /* 192124 00292024 B100B700 */ .word GlobalDataBuffer + 0x8C5031
-    /* 192128 00292028 AF00AE00 */ .word GlobalDataBuffer + 0x83502F
-    /* 19212C 0029202C B0009700 */ .word GlobalDataBuffer + 0x6C5030
-    /* 192130 00292030 99009F00 */ .word GlobalDataBuffer + 0x745019
-    /* 192134 00292034 EB005B00 */ .word GlobalDataBuffer + 0x30506B
-    /* 192138 00292038 5C005100 */ .word GlobalDataBuffer + 0x264FDC
-    /* 19213C 0029203C 52005300 */ .word GlobalDataBuffer + 0x284FD2
-    /* 192140 00292040 54005500 */ .word GlobalDataBuffer + 0x2A4FD4
-    /* 192144 00292044 6F00C000 */ .word GlobalDataBuffer + 0x954FEF
-    /* 192148 00292048 94009B00 */ .word GlobalDataBuffer + 0x705014
-    /* 19214C 0029204C 9200B000 */ .word GlobalDataBuffer + 0x855012
-    /* 192150 00292050 B100B700 */ .word GlobalDataBuffer + 0x8C5031
-    /* 192154 00292054 AE00AF00 */ .word GlobalDataBuffer + 0x84502E
-    /* 192158 00292058 73009700 */ .word GlobalDataBuffer + 0x6C4FF3
-    /* 19215C 0029205C 9900EB00 */ .word GlobalDataBuffer + 0xC05019
-    /* 192160 00292060 C0000501 */ .word GlobalDataBuffer + 0xDA5040
-    /* 192164 00292064 C500C700 */ .word GlobalDataBuffer + 0x9C5045
+    /* 192120 00292020 94009100 */ .word 0x00910094
+    /* 192124 00292024 B100B700 */ .word 0x00B700B1
+    /* 192128 00292028 AF00AE00 */ .word 0x00AE00AF
+    /* 19212C 0029202C B0009700 */ .word 0x009700B0
+    /* 192130 00292030 99009F00 */ .word 0x009F0099
+    /* 192134 00292034 EB005B00 */ .word 0x005B00EB
+    /* 192138 00292038 5C005100 */ .word 0x0051005C
+    /* 19213C 0029203C 52005300 */ .word 0x00530052
+    /* 192140 00292040 54005500 */ .word 0x00550054
+    /* 192144 00292044 6F00C000 */ .word 0x00C0006F
+    /* 192148 00292048 94009B00 */ .word 0x009B0094
+    /* 19214C 0029204C 9200B000 */ .word 0x00B00092
+    /* 192150 00292050 B100B700 */ .word 0x00B700B1
+    /* 192154 00292054 AE00AF00 */ .word 0x00AF00AE
+    /* 192158 00292058 73009700 */ .word 0x00970073
+    /* 19215C 0029205C 9900EB00 */ .word 0x00EB0099
+    /* 192160 00292060 C0000501 */ .word 0x010500C0
+    /* 192164 00292064 C500C700 */ .word 0x00C700C5
     /* 192168 00292068 FFFF0000 */ .word 0x0000FFFF
     /* 19216C 0029206C 00000000 */ .word 0x00000000
-    /* 192170 00292070 E200E200 */ .word GlobalDataBuffer + 0xB75062
-    /* 192174 00292074 E200C100 */ .word GlobalDataBuffer + 0x965062
-    /* 192178 00292078 C100BE00 */ .word GlobalDataBuffer + 0x935041
-    /* 19217C 0029207C BE00F500 */ .word GlobalDataBuffer + 0xCA503E
-    /* 192180 00292080 F500F500 */ .word GlobalDataBuffer + 0xCA5075
-    /* 192184 00292084 91009200 */ .word GlobalDataBuffer + 0x675011
-    /* 192188 00292088 9300AE00 */ .word GlobalDataBuffer + 0x835013
+    /* 192170 00292070 E200E200 */ .word 0x00E200E2
+    /* 192174 00292074 E200C100 */ .word 0x00C100E2
+    /* 192178 00292078 C100BE00 */ .word 0x00BE00C1
+    /* 19217C 0029207C BE00F500 */ .word 0x00F500BE
+    /* 192180 00292080 F500F500 */ .word 0x00F500F5
+    /* 192184 00292084 91009200 */ .word 0x00920091
+    /* 192188 00292088 9300AE00 */ .word 0x00AE0093
     /* 19218C 0029208C FFFF0000 */ .word 0x0000FFFF
     /* 192190 00292090 00000000 */ .word 0x00000000
     /* 192194 00292094 00000000 */ .word 0x00000000
-    /* 192198 00292098 91009200 */ .word GlobalDataBuffer + 0x675011
-    /* 19219C 0029209C 93009600 */ .word GlobalDataBuffer + 0x6B5013
-    /* 1921A0 002920A0 97009800 */ .word GlobalDataBuffer + 0x6D5017
+    /* 192198 00292098 91009200 */ .word 0x00920091
+    /* 19219C 0029209C 93009600 */ .word 0x00960093
+    /* 1921A0 002920A0 97009800 */ .word 0x00980097
     /* 1921A4 002920A4 FFFF0000 */ .word 0x0000FFFF
     /* 1921A8 002920A8 00000000 */ .word 0x00000000
     /* 1921AC 002920AC 00000000 */ .word 0x00000000
@@ -80541,142 +80541,142 @@ glabel ItemShopList2
     /* 1921B4 002920B4 00000000 */ .word 0x00000000
     /* 1921B8 002920B8 00000000 */ .word 0x00000000
     /* 1921BC 002920BC 00000000 */ .word 0x00000000
-    /* 1921C0 002920C0 91009200 */ .word GlobalDataBuffer + 0x675011
-    /* 1921C4 002920C4 93009400 */ .word GlobalDataBuffer + 0x695013
-    /* 1921C8 002920C8 96005B00 */ .word GlobalDataBuffer + 0x305016
-    /* 1921CC 002920CC 5C005D00 */ .word GlobalDataBuffer + 0x324FDC
+    /* 1921C0 002920C0 91009200 */ .word 0x00920091
+    /* 1921C4 002920C4 93009400 */ .word 0x00940093
+    /* 1921C8 002920C8 96005B00 */ .word 0x005B0096
+    /* 1921CC 002920CC 5C005D00 */ .word 0x005D005C
     /* 1921D0 002920D0 5E00FFFF */ .word 0xFFFF005E
     /* 1921D4 002920D4 00000000 */ .word 0x00000000
     /* 1921D8 002920D8 00000000 */ .word 0x00000000
     /* 1921DC 002920DC 00000000 */ .word 0x00000000
     /* 1921E0 002920E0 00000000 */ .word 0x00000000
     /* 1921E4 002920E4 00000000 */ .word 0x00000000
-    /* 1921E8 002920E8 91009200 */ .word GlobalDataBuffer + 0x675011
-    /* 1921EC 002920EC 93009600 */ .word GlobalDataBuffer + 0x6B5013
-    /* 1921F0 002920F0 9B005100 */ .word GlobalDataBuffer + 0x26501B
-    /* 1921F4 002920F4 52005300 */ .word GlobalDataBuffer + 0x284FD2
-    /* 1921F8 002920F8 54005500 */ .word GlobalDataBuffer + 0x2A4FD4
+    /* 1921E8 002920E8 91009200 */ .word 0x00920091
+    /* 1921EC 002920EC 93009600 */ .word 0x00960093
+    /* 1921F0 002920F0 9B005100 */ .word 0x0051009B
+    /* 1921F4 002920F4 52005300 */ .word 0x00530052
+    /* 1921F8 002920F8 54005500 */ .word 0x00550054
     /* 1921FC 002920FC FFFF0000 */ .word 0x0000FFFF
     /* 192200 00292100 00000000 */ .word 0x00000000
     /* 192204 00292104 00000000 */ .word 0x00000000
     /* 192208 00292108 00000000 */ .word 0x00000000
     /* 19220C 0029210C 00000000 */ .word 0x00000000
-    /* 192210 00292110 91009200 */ .word GlobalDataBuffer + 0x675011
-    /* 192214 00292114 93009600 */ .word GlobalDataBuffer + 0x6B5013
-    /* 192218 00292118 95009F00 */ .word GlobalDataBuffer + 0x745015
-    /* 19221C 0029211C 71007800 */ .word GlobalDataBuffer + 0x4D4FF1
+    /* 192210 00292110 91009200 */ .word 0x00920091
+    /* 192214 00292114 93009600 */ .word 0x00960093
+    /* 192218 00292118 95009F00 */ .word 0x009F0095
+    /* 19221C 0029211C 71007800 */ .word 0x00780071
     /* 192220 00292120 7000FFFF */ .word 0xFFFF0070
     /* 192224 00292124 00000000 */ .word 0x00000000
     /* 192228 00292128 00000000 */ .word 0x00000000
     /* 19222C 0029212C 00000000 */ .word 0x00000000
     /* 192230 00292130 00000000 */ .word 0x00000000
     /* 192234 00292134 00000000 */ .word 0x00000000
-    /* 192238 00292138 A600A700 */ .word GlobalDataBuffer + 0x7C5026
-    /* 19223C 0029213C A800A900 */ .word GlobalDataBuffer + 0x7E5028
-    /* 192240 00292140 AA00B100 */ .word GlobalDataBuffer + 0x86502A
-    /* 192244 00292144 B000AE00 */ .word GlobalDataBuffer + 0x835030
+    /* 192238 00292138 A600A700 */ .word 0x00A700A6
+    /* 19223C 0029213C A800A900 */ .word 0x00A900A8
+    /* 192240 00292140 AA00B100 */ .word 0x00B100AA
+    /* 192244 00292144 B000AE00 */ .word 0x00AE00B0
     /* 192248 00292148 FFFF0000 */ .word 0x0000FFFF
     /* 19224C 0029214C 00000000 */ .word 0x00000000
     /* 192250 00292150 00000000 */ .word 0x00000000
     /* 192254 00292154 00000000 */ .word 0x00000000
     /* 192258 00292158 00000000 */ .word 0x00000000
     /* 19225C 0029215C 00000000 */ .word 0x00000000
-    /* 192260 00292160 09010401 */ .word GlobalDataBuffer + 0xD95089
-    /* 192264 00292164 30014001 */ .word GlobalDataBuffer + 0x11550B0
-    /* 192268 00292168 4F01B100 */ .word GlobalDataBuffer + 0x8650CF
-    /* 19226C 0029216C B700AE00 */ .word GlobalDataBuffer + 0x835037
-    /* 192270 00292170 B000AF00 */ .word GlobalDataBuffer + 0x845030
-    /* 192274 00292174 EB00C000 */ .word GlobalDataBuffer + 0x95506B
+    /* 192260 00292160 09010401 */ .word 0x01040109
+    /* 192264 00292164 30014001 */ .word 0x01400130
+    /* 192268 00292168 4F01B100 */ .word 0x00B1014F
+    /* 19226C 0029216C B700AE00 */ .word 0x00AE00B7
+    /* 192270 00292170 B000AF00 */ .word 0x00AF00B0
+    /* 192274 00292174 EB00C000 */ .word 0x00C000EB
     /* 192278 00292178 FFFF0000 */ .word 0x0000FFFF
     /* 19227C 0029217C 00000000 */ .word 0x00000000
     /* 192280 00292180 00000000 */ .word 0x00000000
     /* 192284 00292184 00000000 */ .word 0x00000000
-    /* 192288 00292188 93009B00 */ .word GlobalDataBuffer + 0x705013
-    /* 19228C 0029218C 95009A00 */ .word GlobalDataBuffer + 0x6F5015
-    /* 192290 00292190 9F00B100 */ .word GlobalDataBuffer + 0x86501F
-    /* 192294 00292194 B700AE00 */ .word GlobalDataBuffer + 0x835037
-    /* 192298 00292198 B000AF00 */ .word GlobalDataBuffer + 0x845030
-    /* 19229C 0029219C 54007200 */ .word GlobalDataBuffer + 0x474FD4
-    /* 1922A0 002921A0 7500EB00 */ .word GlobalDataBuffer + 0xC04FF5
-    /* 1922A4 002921A4 C000BB00 */ .word GlobalDataBuffer + 0x905040
+    /* 192288 00292188 93009B00 */ .word 0x009B0093
+    /* 19228C 0029218C 95009A00 */ .word 0x009A0095
+    /* 192290 00292190 9F00B100 */ .word 0x00B1009F
+    /* 192294 00292194 B700AE00 */ .word 0x00AE00B7
+    /* 192298 00292198 B000AF00 */ .word 0x00AF00B0
+    /* 19229C 0029219C 54007200 */ .word 0x00720054
+    /* 1922A0 002921A0 7500EB00 */ .word 0x00EB0075
+    /* 1922A4 002921A4 C000BB00 */ .word 0x00BB00C0
     /* 1922A8 002921A8 FFFF0000 */ .word 0x0000FFFF
     /* 1922AC 002921AC 00000000 */ .word 0x00000000
-    /* 1922B0 002921B0 91009200 */ .word GlobalDataBuffer + 0x675011
-    /* 1922B4 002921B4 93009500 */ .word GlobalDataBuffer + 0x6A5013
-    /* 1922B8 002921B8 9F007400 */ .word GlobalDataBuffer + 0x49501F
-    /* 1922BC 002921BC AE00B000 */ .word GlobalDataBuffer + 0x85502E
-    /* 1922C0 002921C0 AF00B100 */ .word GlobalDataBuffer + 0x86502F
-    /* 1922C4 002921C4 B700EB00 */ .word GlobalDataBuffer + 0xC05037
-    /* 1922C8 002921C8 6D017601 */ .word GlobalDataBuffer + 0x14B50ED
+    /* 1922B0 002921B0 91009200 */ .word 0x00920091
+    /* 1922B4 002921B4 93009500 */ .word 0x00950093
+    /* 1922B8 002921B8 9F007400 */ .word 0x0074009F
+    /* 1922BC 002921BC AE00B000 */ .word 0x00B000AE
+    /* 1922C0 002921C0 AF00B100 */ .word 0x00B100AF
+    /* 1922C4 002921C4 B700EB00 */ .word 0x00EB00B7
+    /* 1922C8 002921C8 6D017601 */ .word 0x0176016D
     /* 1922CC 002921CC C000FFFF */ .word 0xFFFF00C0
     /* 1922D0 002921D0 00000000 */ .word 0x00000000
     /* 1922D4 002921D4 00000000 */ .word 0x00000000
-    /* 1922D8 002921D8 93009500 */ .word GlobalDataBuffer + 0x6A5013
-    /* 1922DC 002921DC 9A00AE00 */ .word GlobalDataBuffer + 0x83501A
-    /* 1922E0 002921E0 B000AF00 */ .word GlobalDataBuffer + 0x845030
-    /* 1922E4 002921E4 B100B700 */ .word GlobalDataBuffer + 0x8C5031
-    /* 1922E8 002921E8 EB00C000 */ .word GlobalDataBuffer + 0x95506B
+    /* 1922D8 002921D8 93009500 */ .word 0x00950093
+    /* 1922DC 002921DC 9A00AE00 */ .word 0x00AE009A
+    /* 1922E0 002921E0 B000AF00 */ .word 0x00AF00B0
+    /* 1922E4 002921E4 B100B700 */ .word 0x00B700B1
+    /* 1922E8 002921E8 EB00C000 */ .word 0x00C000EB
     /* 1922EC 002921EC FFFF0000 */ .word 0x0000FFFF
     /* 1922F0 002921F0 00000000 */ .word 0x00000000
     /* 1922F4 002921F4 00000000 */ .word 0x00000000
     /* 1922F8 002921F8 00000000 */ .word 0x00000000
     /* 1922FC 002921FC 00000000 */ .word 0x00000000
-    /* 192300 00292200 A100A200 */ .word GlobalDataBuffer + 0x775021
-    /* 192304 00292204 A300A400 */ .word GlobalDataBuffer + 0x795023
-    /* 192308 00292208 A5005100 */ .word GlobalDataBuffer + 0x265025
-    /* 19230C 0029220C 52005300 */ .word GlobalDataBuffer + 0x284FD2
-    /* 192310 00292210 54005500 */ .word GlobalDataBuffer + 0x2A4FD4
-    /* 192314 00292214 71007800 */ .word GlobalDataBuffer + 0x4D4FF1
+    /* 192300 00292200 A100A200 */ .word 0x00A200A1
+    /* 192304 00292204 A300A400 */ .word 0x00A400A3
+    /* 192308 00292208 A5005100 */ .word 0x005100A5
+    /* 19230C 0029220C 52005300 */ .word 0x00530052
+    /* 192310 00292210 54005500 */ .word 0x00550054
+    /* 192314 00292214 71007800 */ .word 0x00780071
     /* 192318 00292218 C000FFFF */ .word 0xFFFF00C0
     /* 19231C 0029221C 00000000 */ .word 0x00000000
     /* 192320 00292220 00000000 */ .word 0x00000000
     /* 192324 00292224 00000000 */ .word 0x00000000
-    /* 192328 00292228 94009100 */ .word GlobalDataBuffer + 0x665014
-    /* 19232C 0029222C B100B700 */ .word GlobalDataBuffer + 0x8C5031
-    /* 192330 00292230 B000AE00 */ .word GlobalDataBuffer + 0x835030
-    /* 192334 00292234 AF009700 */ .word GlobalDataBuffer + 0x6C502F
+    /* 192328 00292228 94009100 */ .word 0x00910094
+    /* 19232C 0029222C B100B700 */ .word 0x00B700B1
+    /* 192330 00292230 B000AE00 */ .word 0x00AE00B0
+    /* 192334 00292234 AF009700 */ .word 0x009700AF
     /* 192338 00292238 C000FFFF */ .word 0xFFFF00C0
     /* 19233C 0029223C 00000000 */ .word 0x00000000
     /* 192340 00292240 00000000 */ .word 0x00000000
     /* 192344 00292244 00000000 */ .word 0x00000000
     /* 192348 00292248 00000000 */ .word 0x00000000
     /* 19234C 0029224C 00000000 */ .word 0x00000000
-    /* 192350 00292250 94009B00 */ .word GlobalDataBuffer + 0x705014
-    /* 192354 00292254 9200B000 */ .word GlobalDataBuffer + 0x855012
-    /* 192358 00292258 B100B700 */ .word GlobalDataBuffer + 0x8C5031
-    /* 19235C 0029225C AE00AF00 */ .word GlobalDataBuffer + 0x84502E
-    /* 192360 00292260 73009700 */ .word GlobalDataBuffer + 0x6C4FF3
-    /* 192364 00292264 9900EB00 */ .word GlobalDataBuffer + 0xC05019
+    /* 192350 00292250 94009B00 */ .word 0x009B0094
+    /* 192354 00292254 9200B000 */ .word 0x00B00092
+    /* 192358 00292258 B100B700 */ .word 0x00B700B1
+    /* 19235C 0029225C AE00AF00 */ .word 0x00AF00AE
+    /* 192360 00292260 73009700 */ .word 0x00970073
+    /* 192364 00292264 9900EB00 */ .word 0x00EB0099
     /* 192368 00292268 C000FFFF */ .word 0xFFFF00C0
     /* 19236C 0029226C 00000000 */ .word 0x00000000
     /* 192370 00292270 00000000 */ .word 0x00000000
     /* 192374 00292274 00000000 */ .word 0x00000000
-    /* 192378 00292278 93009B00 */ .word GlobalDataBuffer + 0x705013
-    /* 19237C 0029227C 98009900 */ .word GlobalDataBuffer + 0x6E5018
-    /* 192380 00292280 9A009F00 */ .word GlobalDataBuffer + 0x74501A
-    /* 192384 00292284 AE00B000 */ .word GlobalDataBuffer + 0x85502E
-    /* 192388 00292288 AF00B100 */ .word GlobalDataBuffer + 0x86502F
-    /* 19238C 0029228C B700EB00 */ .word GlobalDataBuffer + 0xC05037
+    /* 192378 00292278 93009B00 */ .word 0x009B0093
+    /* 19237C 0029227C 98009900 */ .word 0x00990098
+    /* 192380 00292280 9A009F00 */ .word 0x009F009A
+    /* 192384 00292284 AE00B000 */ .word 0x00B000AE
+    /* 192388 00292288 AF00B100 */ .word 0x00B100AF
+    /* 19238C 0029228C B700EB00 */ .word 0x00EB00B7
     /* 192390 00292290 C000FFFF */ .word 0xFFFF00C0
     /* 192394 00292294 00000000 */ .word 0x00000000
     /* 192398 00292298 00000000 */ .word 0x00000000
     /* 19239C 0029229C 00000000 */ .word 0x00000000
-    /* 1923A0 002922A0 5F006000 */ .word GlobalDataBuffer + 0x354FDF
-    /* 1923A4 002922A4 61006200 */ .word GlobalDataBuffer + 0x374FE1
-    /* 1923A8 002922A8 63006400 */ .word GlobalDataBuffer + 0x394FE3
-    /* 1923AC 002922AC 65006600 */ .word GlobalDataBuffer + 0x3B4FE5
-    /* 1923B0 002922B0 67006800 */ .word GlobalDataBuffer + 0x3D4FE7
-    /* 1923B4 002922B4 69006A00 */ .word GlobalDataBuffer + 0x3F4FE9
+    /* 1923A0 002922A0 5F006000 */ .word 0x0060005F
+    /* 1923A4 002922A4 61006200 */ .word 0x00620061
+    /* 1923A8 002922A8 63006400 */ .word 0x00640063
+    /* 1923AC 002922AC 65006600 */ .word 0x00660065
+    /* 1923B0 002922B0 67006800 */ .word 0x00680067
+    /* 1923B4 002922B4 69006A00 */ .word 0x006A0069
     /* 1923B8 002922B8 FFFF0000 */ .word 0x0000FFFF
     /* 1923BC 002922BC 00000000 */ .word 0x00000000
     /* 1923C0 002922C0 00000000 */ .word 0x00000000
     /* 1923C4 002922C4 00000000 */ .word 0x00000000
-    /* 1923C8 002922C8 5B005C00 */ .word GlobalDataBuffer + 0x314FDB
-    /* 1923CC 002922CC 5D005E00 */ .word GlobalDataBuffer + 0x334FDD
-    /* 1923D0 002922D0 6F007000 */ .word GlobalDataBuffer + 0x454FEF
-    /* 1923D4 002922D4 71007200 */ .word GlobalDataBuffer + 0x474FF1
-    /* 1923D8 002922D8 73007400 */ .word GlobalDataBuffer + 0x494FF3
-    /* 1923DC 002922DC 75007800 */ .word GlobalDataBuffer + 0x4D4FF5
+    /* 1923C8 002922C8 5B005C00 */ .word 0x005C005B
+    /* 1923CC 002922CC 5D005E00 */ .word 0x005E005D
+    /* 1923D0 002922D0 6F007000 */ .word 0x0070006F
+    /* 1923D4 002922D4 71007200 */ .word 0x00720071
+    /* 1923D8 002922D8 73007400 */ .word 0x00740073
+    /* 1923DC 002922DC 75007800 */ .word 0x00780075
     /* 1923E0 002922E0 FFFF0000 */ .word 0x0000FFFF
     /* 1923E4 002922E4 00000000 */ .word 0x00000000
     /* 1923E8 002922E8 00000000 */ .word 0x00000000
@@ -80985,13 +80985,13 @@ glabel LIT_840
     /* 19286C 0029276C 0000803F */ .word 0x3F800000
 
 glabel LIT_1363__2
-    /* 192870 00292770 A200B400 */ .word GlobalDataBuffer + 0x895022
-    /* 192874 00292774 B400B400 */ .word GlobalDataBuffer + 0x895034
-    /* 192878 00292778 B400B400 */ .word GlobalDataBuffer + 0x895034
-    /* 19287C 0029277C B400B400 */ .word GlobalDataBuffer + 0x895034
-    /* 192880 00292780 B400B400 */ .word GlobalDataBuffer + 0x895034
-    /* 192884 00292784 B400B400 */ .word GlobalDataBuffer + 0x895034
-    /* 192888 00292788 B400B400 */ .word GlobalDataBuffer + 0x895034
+    /* 192870 00292770 A200B400 */ .word 0x00B400A2
+    /* 192874 00292774 B400B400 */ .word 0x00B400B4
+    /* 192878 00292778 B400B400 */ .word 0x00B400B4
+    /* 19287C 0029277C B400B400 */ .word 0x00B400B4
+    /* 192880 00292780 B400B400 */ .word 0x00B400B4
+    /* 192884 00292784 B400B400 */ .word 0x00B400B4
+    /* 192888 00292788 B400B400 */ .word 0x00B400B4
     /* 19288C 0029278C 00000000 */ .word 0x00000000
 
 glabel LIT_1377
@@ -81171,28 +81171,28 @@ glabel exitemlst
     /* 192AD4 002929D4 98000500 */ .word 0x00050098
     /* 192AD8 002929D8 99000500 */ .word 0x00050099
     /* 192ADC 002929DC 9A000F00 */ .word 0x000F009A
-    /* 192AE0 002929E0 6F003200 */ .word GlobalDataBuffer + 0x74FEF
-    /* 192AE4 002929E4 70003200 */ .word GlobalDataBuffer + 0x74FF0
-    /* 192AE8 002929E8 71003200 */ .word GlobalDataBuffer + 0x74FF1
-    /* 192AEC 002929EC 72003200 */ .word GlobalDataBuffer + 0x74FF2
-    /* 192AF0 002929F0 73003200 */ .word GlobalDataBuffer + 0x74FF3
-    /* 192AF4 002929F4 74003200 */ .word GlobalDataBuffer + 0x74FF4
-    /* 192AF8 002929F8 75003200 */ .word GlobalDataBuffer + 0x74FF5
-    /* 192AFC 002929FC 76003200 */ .word GlobalDataBuffer + 0x74FF6
-    /* 192B00 00292A00 77003200 */ .word GlobalDataBuffer + 0x74FF7
-    /* 192B04 00292A04 78003200 */ .word GlobalDataBuffer + 0x74FF8
-    /* 192B08 00292A08 5F006400 */ .word GlobalDataBuffer + 0x394FDF
-    /* 192B0C 00292A0C 60006400 */ .word GlobalDataBuffer + 0x394FE0
-    /* 192B10 00292A10 61006400 */ .word GlobalDataBuffer + 0x394FE1
-    /* 192B14 00292A14 62006400 */ .word GlobalDataBuffer + 0x394FE2
-    /* 192B18 00292A18 63006400 */ .word GlobalDataBuffer + 0x394FE3
-    /* 192B1C 00292A1C 64006400 */ .word GlobalDataBuffer + 0x394FE4
-    /* 192B20 00292A20 65006400 */ .word GlobalDataBuffer + 0x394FE5
-    /* 192B24 00292A24 66006400 */ .word GlobalDataBuffer + 0x394FE6
-    /* 192B28 00292A28 67006400 */ .word GlobalDataBuffer + 0x394FE7
-    /* 192B2C 00292A2C 68006400 */ .word GlobalDataBuffer + 0x394FE8
-    /* 192B30 00292A30 69006400 */ .word GlobalDataBuffer + 0x394FE9
-    /* 192B34 00292A34 6A006400 */ .word GlobalDataBuffer + 0x394FEA
+    /* 192AE0 002929E0 6F003200 */ .word 0x0032006F
+    /* 192AE4 002929E4 70003200 */ .word 0x00320070
+    /* 192AE8 002929E8 71003200 */ .word 0x00320071
+    /* 192AEC 002929EC 72003200 */ .word 0x00320072
+    /* 192AF0 002929F0 73003200 */ .word 0x00320073
+    /* 192AF4 002929F4 74003200 */ .word 0x00320074
+    /* 192AF8 002929F8 75003200 */ .word 0x00320075
+    /* 192AFC 002929FC 76003200 */ .word 0x00320076
+    /* 192B00 00292A00 77003200 */ .word 0x00320077
+    /* 192B04 00292A04 78003200 */ .word 0x00320078
+    /* 192B08 00292A08 5F006400 */ .word 0x0064005F
+    /* 192B0C 00292A0C 60006400 */ .word 0x00640060
+    /* 192B10 00292A10 61006400 */ .word 0x00640061
+    /* 192B14 00292A14 62006400 */ .word 0x00640062
+    /* 192B18 00292A18 63006400 */ .word 0x00640063
+    /* 192B1C 00292A1C 64006400 */ .word 0x00640064
+    /* 192B20 00292A20 65006400 */ .word 0x00640065
+    /* 192B24 00292A24 66006400 */ .word 0x00640066
+    /* 192B28 00292A28 67006400 */ .word 0x00640067
+    /* 192B2C 00292A2C 68006400 */ .word 0x00640068
+    /* 192B30 00292A30 69006400 */ .word 0x00640069
+    /* 192B34 00292A34 6A006400 */ .word 0x0064006A
     /* 192B38 00292A38 0A014C04 */ .word 0x044C010A
     /* 192B3C 00292A3C 37017805 */ .word 0x05780137
     /* 192B40 00292A40 3D010807 */ .word 0x0708013D
@@ -81952,24 +81952,24 @@ glabel LIT_2612__2
     /* 1933C0 002932C0 00000000 */ .word 0x00000000
     /* 1933C4 002932C4 00000000 */ .word 0x00000000
     /* 1933C8 002932C8 00000000 */ .word 0x00000000
-    /* 1933CC 002932CC 0000AC00 */ .word GlobalDataBuffer + 0x814F80
+    /* 1933CC 002932CC 0000AC00 */ .word 0x00AC0000
     /* 1933D0 002932D0 73000000 */ .word 0x00000073
     /* 1933D4 002932D4 00000000 */ .word 0x00000000
 
 glabel LIT_2616
-    /* 1933D8 002932D8 74007600 */ .word GlobalDataBuffer + 0x4B4FF4
-    /* 1933DC 002932DC 75007700 */ .word GlobalDataBuffer + 0x4C4FF5
+    /* 1933D8 002932D8 74007600 */ .word 0x00760074
+    /* 1933DC 002932DC 75007700 */ .word 0x00770075
     /* 1933E0 002932E0 75000000 */ .word 0x00000075
     /* 1933E4 002932E4 00000000 */ .word 0x00000000
     /* 1933E8 002932E8 00000000 */ .word 0x00000000
     /* 1933EC 002932EC 00000000 */ .word 0x00000000
 
 glabel LIT_2679
-    /* 1933F0 002932F0 A100A200 */ .word GlobalDataBuffer + 0x775021
-    /* 1933F4 002932F4 A3009B01 */ .word GlobalDataBuffer + 0x1705023
-    /* 1933F8 002932F8 9C019D01 */ .word GlobalDataBuffer + 0x172511C
-    /* 1933FC 002932FC A800AA00 */ .word GlobalDataBuffer + 0x7F5028
-    /* 193400 00293300 A900AB00 */ .word GlobalDataBuffer + 0x805029
+    /* 1933F0 002932F0 A100A200 */ .word 0x00A200A1
+    /* 1933F4 002932F4 A3009B01 */ .word 0x019B00A3
+    /* 1933F8 002932F8 9C019D01 */ .word 0x019D019C
+    /* 1933FC 002932FC A800AA00 */ .word 0x00AA00A8
+    /* 193400 00293300 A900AB00 */ .word 0x00AB00A9
     /* 193404 00293304 00000000 */ .word 0x00000000
 
 glabel LIT_3657
@@ -82005,7 +82005,7 @@ glabel LIT_3968
     /* 19346C 0029336C 00000000 */ .word 0x00000000
 
 glabel LIT_4085
-    /* 193470 00293370 C000A500 */ .word GlobalDataBuffer + 0x7A5040
+    /* 193470 00293370 C000A500 */ .word 0x00A500C0
     /* 193474 00293374 50000000 */ .word 0x00000050
     /* 193478 00293378 6E010000 */ .word 0x0000016E
     /* 19347C 0029337C 68000000 */ .word 0x00000068
@@ -82013,8 +82013,8 @@ glabel LIT_4085
     /* 193484 00293384 4E000000 */ .word 0x0000004E
     /* 193488 00293388 68000000 */ .word 0x00000068
     /* 19348C 0029338C 4E000000 */ .word 0x0000004E
-    /* 193490 00293390 5800AA00 */ .word GlobalDataBuffer + 0x7F4FD8
-    /* 193494 00293394 0000B800 */ .word GlobalDataBuffer + 0x8D4F80
+    /* 193490 00293390 5800AA00 */ .word 0x00AA0058
+    /* 193494 00293394 0000B800 */ .word 0x00B80000
     /* 193498 00293398 00000000 */ .word 0x00000000
     /* 19349C 0029339C 00000000 */ .word 0x00000000
 
@@ -82123,9 +82123,9 @@ glabel LIT_4996
     /* 1935FC 002934FC 00000000 */ .word 0x00000000
 
 glabel LIT_5068
-    /* 193600 00293500 B400B600 */ .word GlobalDataBuffer + 0x8B5034
-    /* 193604 00293504 B600B600 */ .word GlobalDataBuffer + 0x8B5036
-    /* 193608 00293508 B500B600 */ .word GlobalDataBuffer + 0x8B5035
+    /* 193600 00293500 B400B600 */ .word 0x00B600B4
+    /* 193604 00293504 B600B600 */ .word 0x00B600B6
+    /* 193608 00293508 B500B600 */ .word 0x00B600B5
     /* 19360C 0029350C 00000000 */ .word 0x00000000
 
 glabel LIT_5342
@@ -82139,10 +82139,10 @@ glabel LIT_5342
     /* 19362C 0029352C 00000000 */ .word 0x00000000
 
 glabel LIT_5345
-    /* 193630 00293530 00006800 */ .word GlobalDataBuffer + 0x3D4F80
-    /* 193634 00293534 B200E200 */ .word GlobalDataBuffer + 0xB75032
-    /* 193638 00293538 2D00BF00 */ .word GlobalDataBuffer + 0x944FAD
-    /* 19363C 0029353C 5900BF00 */ .word GlobalDataBuffer + 0x944FD9
+    /* 193630 00293530 00006800 */ .word 0x00680000
+    /* 193634 00293534 B200E200 */ .word 0x00E200B2
+    /* 193638 00293538 2D00BF00 */ .word 0x00BF002D
+    /* 19363C 0029353C 5900BF00 */ .word 0x00BF0059
     /* 193640 00293540 00000000 */ .word 0x00000000
     /* 193644 00293544 1A010000 */ .word 0x0000011A
     /* 193648 00293548 00000000 */ .word 0x00000000
@@ -82173,9 +82173,9 @@ glabel LIT_5534
     /* 19368C 0029358C 0E000000 */ .word 0x0000000E
 
 glabel LIT_5742
-    /* 193690 00293590 0401AC00 */ .word GlobalDataBuffer + 0x815084
-    /* 193694 00293594 0C014600 */ .word GlobalDataBuffer + 0x1B508C
-    /* 193698 00293598 6400AA00 */ .word GlobalDataBuffer + 0x7F4FE4
+    /* 193690 00293590 0401AC00 */ .word 0x00AC0104
+    /* 193694 00293594 0C014600 */ .word 0x0046010C
+    /* 193698 00293598 6400AA00 */ .word 0x00AA0064
     /* 19369C 0029359C 00000000 */ .word 0x00000000
 
 glabel MenuGrobalMapNoTbl
@@ -82375,21 +82375,21 @@ glabel LIT_6037
     /* 19384C 0029374C 0F000000 */ .word 0x0000000F
 
 glabel LIT_6105
-    /* 193850 00293750 5001B200 */ .word GlobalDataBuffer + 0x8750D0
+    /* 193850 00293750 5001B200 */ .word 0x00B20150
     /* 193854 00293754 00000000 */ .word 0x00000000
-    /* 193858 00293758 2A01DC00 */ .word GlobalDataBuffer + 0xB150AA
+    /* 193858 00293758 2A01DC00 */ .word 0x00DC012A
     /* 19385C 0029375C 00000000 */ .word 0x00000000
-    /* 193860 00293760 0401B400 */ .word GlobalDataBuffer + 0x895084
-    /* 193864 00293764 C400CE00 */ .word GlobalDataBuffer + 0xA35044
-    /* 193868 00293768 9000D600 */ .word GlobalDataBuffer + 0xAB5010
-    /* 19386C 0029376C F0001401 */ .word GlobalDataBuffer + 0xE95070
-    /* 193870 00293770 3A014801 */ .word GlobalDataBuffer + 0x11D50BA
-    /* 193874 00293774 47013C01 */ .word GlobalDataBuffer + 0x11150C7
-    /* 193878 00293778 D2019000 */ .word GlobalDataBuffer + 0x655152
-    /* 19387C 0029377C D601AB00 */ .word GlobalDataBuffer + 0x805156
-    /* 193880 00293780 B4019000 */ .word GlobalDataBuffer + 0x655134
-    /* 193884 00293784 BB012601 */ .word GlobalDataBuffer + 0xFB513B
-    /* 193888 00293788 C3011201 */ .word GlobalDataBuffer + 0xE75143
+    /* 193860 00293760 0401B400 */ .word 0x00B40104
+    /* 193864 00293764 C400CE00 */ .word 0x00CE00C4
+    /* 193868 00293768 9000D600 */ .word 0x00D60090
+    /* 19386C 0029376C F0001401 */ .word 0x011400F0
+    /* 193870 00293770 3A014801 */ .word 0x0148013A
+    /* 193874 00293774 47013C01 */ .word 0x013C0147
+    /* 193878 00293778 D2019000 */ .word 0x009001D2
+    /* 19387C 0029377C D601AB00 */ .word 0x00AB01D6
+    /* 193880 00293780 B4019000 */ .word 0x009001B4
+    /* 193884 00293784 BB012601 */ .word 0x012601BB
+    /* 193888 00293788 C3011201 */ .word 0x011201C3
     /* 19388C 0029378C 00000000 */ .word 0x00000000
 
 glabel LIT_6185
@@ -82403,9 +82403,9 @@ glabel LIT_6185
     /* 1938AC 002937AC 00000000 */ .word 0x00000000
 
 glabel LIT_6188
-    /* 1938B0 002937B0 3801A801 */ .word GlobalDataBuffer + 0x17D50B8
-    /* 1938B4 002937B4 A801A801 */ .word GlobalDataBuffer + 0x17D5128
-    /* 1938B8 002937B8 A801A801 */ .word GlobalDataBuffer + 0x17D5128
+    /* 1938B0 002937B0 3801A801 */ .word 0x01A80138
+    /* 1938B4 002937B4 A801A801 */ .word 0x01A801A8
+    /* 1938B8 002937B8 A801A801 */ .word 0x01A801A8
     /* 1938BC 002937BC A8010000 */ .word 0x000001A8
 
 glabel LIT_6227
@@ -82479,13 +82479,13 @@ glabel LIT_6385
     /* 1939A4 002938A4 03000000 */ .word 0x00000003
     /* 1939A8 002938A8 00000000 */ .word 0x00000000
     /* 1939AC 002938AC 00000000 */ .word 0x00000000
-    /* 1939B0 002938B0 00000001 */ .word GlobalDataBuffer + 0xD54F80
+    /* 1939B0 002938B0 00000001 */ .word 0x01000000
     /* 1939B4 002938B4 01030203 */ .word 0x03020301
     /* 1939B8 002938B8 00000002 */ .word 0x02000000
     /* 1939BC 002938BC 00030303 */ .word 0x03030300
-    /* 1939C0 002938C0 03000201 */ .word GlobalDataBuffer + 0xD74F83
-    /* 1939C4 002938C4 02030001 */ .word GlobalDataBuffer + 0xD55282
-    /* 1939C8 002938C8 04030201 */ .word GlobalDataBuffer + 0xD75284
+    /* 1939C0 002938C0 03000201 */ .word 0x01020003
+    /* 1939C4 002938C4 02030001 */ .word 0x01000302
+    /* 1939C8 002938C8 04030201 */ .word 0x01020304
     /* 1939CC 002938CC 01010000 */ .word 0x00000101
     /* 1939D0 002938D0 00000000 */ .word 0x00000000
     /* 1939D4 002938D4 00000000 */ .word 0x00000000
@@ -82539,9 +82539,9 @@ glabel defWeapon__5
     /* 193A74 00293974 6B010000 */ .word 0x0000016B
 
 glabel LIT_734__5
-    /* 193A78 00293978 AA008C00 */ .word GlobalDataBuffer + 0x61502A
-    /* 193A7C 0029397C AA008C00 */ .word GlobalDataBuffer + 0x61502A
-    /* 193A80 00293980 B400A000 */ .word GlobalDataBuffer + 0x755034
+    /* 193A78 00293978 AA008C00 */ .word 0x008C00AA
+    /* 193A7C 0029397C AA008C00 */ .word 0x008C00AA
+    /* 193A80 00293980 B400A000 */ .word 0x00A000B4
     /* 193A84 00293984 00000000 */ .word 0x00000000
     /* 193A88 00293988 00000000 */ .word 0x00000000
     /* 193A8C 0029398C 00000000 */ .word 0x00000000
@@ -82700,7 +82700,7 @@ glabel readFilePath
     /* 193C90 00293B90 64756E2F */ .word 0x2F6E7564
     /* 193C94 00293B94 6D61696E */ .word 0x6E69616D
     /* 193C98 00293B98 63686172 */ .word 0x72616863
-    /* 193C9C 00293B9C 612F6300 */ .word GlobalDataBuffer + 0x387EE1
+    /* 193C9C 00293B9C 612F6300 */ .word 0x00632F61
     /* 193CA0 00293BA0 00000000 */ .word 0x00000000
     /* 193CA4 00293BA4 00000000 */ .word 0x00000000
     /* 193CA8 00293BA8 00000000 */ .word 0x00000000
@@ -82751,9 +82751,9 @@ glabel LIT_1333
     /* 193D44 00293C44 00000000 */ .word 0x00000000
 
 glabel LIT_1336
-    /* 193D48 00293C48 5401F000 */ .word GlobalDataBuffer + 0xC550D4
-    /* 193D4C 00293C4C F000F000 */ .word GlobalDataBuffer + 0xC55070
-    /* 193D50 00293C50 F000F000 */ .word GlobalDataBuffer + 0xC55070
+    /* 193D48 00293C48 5401F000 */ .word 0x00F00154
+    /* 193D4C 00293C4C F000F000 */ .word 0x00F000F0
+    /* 193D50 00293C50 F000F000 */ .word 0x00F000F0
     /* 193D54 00293C54 F0000000 */ .word 0x000000F0
     /* 193D58 00293C58 00000000 */ .word 0x00000000
     /* 193D5C 00293C5C 00000000 */ .word 0x00000000
@@ -82769,12 +82769,12 @@ glabel LIT_1463
     /* 193D7C 00293C7C 00000000 */ .word 0x00000000
 
 glabel LIT_405
-    /* 193D80 00293C80 50003400 */ .word GlobalDataBuffer + 0x94FD0
-    /* 193D84 00293C84 50003400 */ .word GlobalDataBuffer + 0x94FD0
+    /* 193D80 00293C80 50003400 */ .word 0x00340050
+    /* 193D84 00293C84 50003400 */ .word 0x00340050
     /* 193D88 00293C88 50002000 */ .word 0x00200050
     /* 193D8C 00293C8C 5E001E00 */ .word 0x001E005E
-    /* 193D90 00293C90 50003400 */ .word GlobalDataBuffer + 0x94FD0
-    /* 193D94 00293C94 50003400 */ .word GlobalDataBuffer + 0x94FD0
+    /* 193D90 00293C90 50003400 */ .word 0x00340050
+    /* 193D94 00293C94 50003400 */ .word 0x00340050
     /* 193D98 00293C98 06FF0000 */ .word 0x0000FF06
     /* 193D9C 00293C9C 00000000 */ .word 0x00000000
 
@@ -82889,7 +82889,7 @@ glabel LIT_402
 glabel LIT_1126
     /* 193F00 00293E00 6461726B */ .word 0x6B726164
     /* 193F04 00293E04 636C6F75 */ .word 0x756F6C63
-    /* 193F08 00293E08 64256400 */ .word GlobalDataBuffer + 0x3974E4
+    /* 193F08 00293E08 64256400 */ .word 0x00642564
     /* 193F0C 00293E0C 00000000 */ .word 0x00000000
     /* 193F10 00293E10 00000000 */ .word 0x00000000
     /* 193F14 00293E14 00000000 */ .word 0x00000000
@@ -82936,7 +82936,7 @@ glabel LIT_1665__2
 
 glabel LIT_1666__2
     /* 193FA0 00293EA0 6125642E */ .word 0x2E642561
-    /* 193FA4 00293EA4 696D6700 */ .word GlobalDataBuffer + 0x3CBCE9
+    /* 193FA4 00293EA4 696D6700 */ .word 0x00676D69
     /* 193FA8 00293EA8 00000000 */ .word 0x00000000
     /* 193FAC 00293EAC 00000000 */ .word 0x00000000
 
@@ -83135,9 +83135,9 @@ glabel LIT_3447
     /* 19423C 0029413C 00000000 */ .word 0x00000000
 
 glabel LIT_3628
-    /* 194240 00294140 0000FC00 */ .word GlobalDataBuffer + 0xD14F80
-    /* 194244 00294144 FC00FC00 */ .word GlobalDataBuffer + 0xD1507C
-    /* 194248 00294148 FC00FC00 */ .word GlobalDataBuffer + 0xD1507C
+    /* 194240 00294140 0000FC00 */ .word 0x00FC0000
+    /* 194244 00294144 FC00FC00 */ .word 0x00FC00FC
+    /* 194248 00294148 FC00FC00 */ .word 0x00FC00FC
     /* 19424C 0029414C FC000000 */ .word 0x000000FC
 
 glabel maxFloorTbl__4
@@ -84515,10 +84515,10 @@ glabel LIT_1446
     /* 19568C 0029558C 00000000 */ .word 0x00000000
 
 glabel LIT_1447
-    /* 195690 00295590 00347900 */ .word GlobalDataBuffer + 0x4E8380
+    /* 195690 00295590 00347900 */ .word 0x00793400
     /* 195694 00295594 34790034 */ .word 0x34007934
     /* 195698 00295598 79003479 */ .word 0x79340079
-    /* 19569C 0029559C 00347900 */ .word GlobalDataBuffer + 0x4E8380
+    /* 19569C 0029559C 00347900 */ .word 0x00793400
     /* 1956A0 002955A0 34790034 */ .word 0x34007934
     /* 1956A4 002955A4 79000000 */ .word 0x00000079
     /* 1956A8 002955A8 00000000 */ .word 0x00000000
@@ -84577,7 +84577,7 @@ glabel LIT_1920
 glabel EastKingMsgMax
     /* 195748 00295648 02020303 */ .word 0x03030202
     /* 19574C 0029564C 02030202 */ .word 0x02020302
-    /* 195750 00295650 02020601 */ .word GlobalDataBuffer + 0xDB5182
+    /* 195750 00295650 02020601 */ .word 0x01060202
     /* 195754 00295654 00000000 */ .word 0x00000000
     /* 195758 00295658 00000000 */ .word 0x00000000
     /* 19575C 0029565C 00000000 */ .word 0x00000000
@@ -84739,13 +84739,13 @@ glabel LIT_626__4
     /* 19590C 0029580C 02000000 */ .word 0x00000002
 
 glabel LIT_399__3
-    /* 195910 00295810 18012701 */ .word GlobalDataBuffer + 0xFC5098
-    /* 195914 00295814 28012901 */ .word GlobalDataBuffer + 0xFE50A8
-    /* 195918 00295818 38013901 */ .word GlobalDataBuffer + 0x10E50B8
-    /* 19591C 0029581C 44014901 */ .word GlobalDataBuffer + 0x11E50C4
-    /* 195920 00295820 55015901 */ .word GlobalDataBuffer + 0x12E50D5
-    /* 195924 00295824 64016501 */ .word GlobalDataBuffer + 0x13A50E4
-    /* 195928 00295828 74017501 */ .word GlobalDataBuffer + 0x14A50F4
+    /* 195910 00295810 18012701 */ .word 0x01270118
+    /* 195914 00295814 28012901 */ .word 0x01290128
+    /* 195918 00295818 38013901 */ .word 0x01390138
+    /* 19591C 0029581C 44014901 */ .word 0x01490144
+    /* 195920 00295820 55015901 */ .word 0x01590155
+    /* 195924 00295824 64016501 */ .word 0x01650164
+    /* 195928 00295828 74017501 */ .word 0x01750174
     /* 19592C 0029582C FFFF0000 */ .word 0x0000FFFF
 
 glabel LIT_594__3
@@ -84774,7 +84774,7 @@ glabel LIT_847__2
     /* 195970 00295870 636F6D6D */ .word 0x6D6D6F63
     /* 195974 00295874 656E752F */ .word 0x2F756E65
     /* 195978 00295878 65666665 */ .word 0x65666665
-    /* 19597C 0029587C 63742F00 */ .word GlobalDataBuffer + 0x4C3E3
+    /* 19597C 0029587C 63742F00 */ .word 0x002F7463
     /* 195980 00295880 00000000 */ .word 0x00000000
     /* 195984 00295884 00000000 */ .word 0x00000000
     /* 195988 00295888 00000000 */ .word 0x00000000
@@ -84893,10 +84893,10 @@ glabel LIT_386__3
     /* 195ADC 002959DC 00000000 */ .word 0x00000000
 
 glabel LIT_387__3
-    /* 195AE0 002959E0 E0012801 */ .word GlobalDataBuffer + 0xFD5160
-    /* 195AE4 002959E4 F0012801 */ .word GlobalDataBuffer + 0xFD5170
-    /* 195AE8 002959E8 E0013801 */ .word GlobalDataBuffer + 0x10D5160
-    /* 195AEC 002959EC F0013801 */ .word GlobalDataBuffer + 0x10D5170
+    /* 195AE0 002959E0 E0012801 */ .word 0x012801E0
+    /* 195AE4 002959E4 F0012801 */ .word 0x012801F0
+    /* 195AE8 002959E8 E0013801 */ .word 0x013801E0
+    /* 195AEC 002959EC F0013801 */ .word 0x013801F0
 
 glabel LIT_417__2
     /* 195AF0 002959F0 00009041 */ .word 0x41900000
@@ -84909,31 +84909,31 @@ glabel LIT_417__2
     /* 195B0C 00295A0C 00000000 */ .word 0x00000000
 
 glabel LIT_487__2
-    /* 195B10 00295A10 28007D00 */ .word GlobalDataBuffer + 0x524FA8
-    /* 195B14 00295A14 D1000501 */ .word GlobalDataBuffer + 0xDA5051
-    /* 195B18 00295A18 37017A01 */ .word GlobalDataBuffer + 0x14F50B7
-    /* 195B1C 00295A1C 28004A00 */ .word GlobalDataBuffer + 0x1F4FA8
-    /* 195B20 00295A20 6F00A800 */ .word GlobalDataBuffer + 0x7D4FEF
+    /* 195B10 00295A10 28007D00 */ .word 0x007D0028
+    /* 195B14 00295A14 D1000501 */ .word 0x010500D1
+    /* 195B18 00295A18 37017A01 */ .word 0x017A0137
+    /* 195B1C 00295A1C 28004A00 */ .word 0x004A0028
+    /* 195B20 00295A20 6F00A800 */ .word 0x00A8006F
     /* 195B24 00295A24 DF000000 */ .word 0x000000DF
     /* 195B28 00295A28 00002800 */ .word MonstorTable + 0x500
-    /* 195B2C 00295A2C DF002F01 */ .word GlobalDataBuffer + 0x104505F
+    /* 195B2C 00295A2C DF002F01 */ .word 0x012F00DF
     /* 195B30 00295A30 80012800 */ .word MonstorTable + 0x680
-    /* 195B34 00295A34 4A006F00 */ .word GlobalDataBuffer + 0x444FCA
-    /* 195B38 00295A38 A800DF00 */ .word GlobalDataBuffer + 0xB45028
+    /* 195B34 00295A34 4A006F00 */ .word 0x006F004A
+    /* 195B38 00295A38 A800DF00 */ .word 0x00DF00A8
     /* 195B3C 00295A3C 00000000 */ .word 0x00000000
 
 glabel LIT_488__2
-    /* 195B40 00295A40 4E004E00 */ .word GlobalDataBuffer + 0x234FCE
-    /* 195B44 00295A44 2C002C00 */ .word GlobalDataBuffer + 0x14FAC
-    /* 195B48 00295A48 3C003400 */ .word GlobalDataBuffer + 0x94FBC
+    /* 195B40 00295A40 4E004E00 */ .word 0x004E004E
+    /* 195B44 00295A44 2C002C00 */ .word 0x002C002C
+    /* 195B48 00295A48 3C003400 */ .word 0x0034003C
     /* 195B4C 00295A4C 18001800 */ .word 0x00180018
-    /* 195B50 00295A50 30003000 */ .word GlobalDataBuffer + 0x54FB0
+    /* 195B50 00295A50 30003000 */ .word 0x00300030
     /* 195B54 00295A54 70000000 */ .word 0x00000070
-    /* 195B58 00295A58 0000B000 */ .word GlobalDataBuffer + 0x854F80
-    /* 195B5C 00295A5C 4B004A00 */ .word GlobalDataBuffer + 0x1F4FCB
+    /* 195B58 00295A58 0000B000 */ .word 0x00B00000
+    /* 195B5C 00295A5C 4B004A00 */ .word 0x004A004B
     /* 195B60 00295A60 46001800 */ .word 0x00180046
-    /* 195B64 00295A64 18003000 */ .word GlobalDataBuffer + 0x54F98
-    /* 195B68 00295A68 30007000 */ .word GlobalDataBuffer + 0x454FB0
+    /* 195B64 00295A64 18003000 */ .word 0x00300018
+    /* 195B68 00295A68 30007000 */ .word 0x00700030
     /* 195B6C 00295A6C 00000000 */ .word 0x00000000
 
 glabel LIT_631__4
@@ -84942,11 +84942,11 @@ glabel LIT_631__4
     /* 195B78 00295A78 00000000 */ .word 0x00000000
     /* 195B7C 00295A7C 00000000 */ .word 0x00000000
     /* 195B80 00295A80 00000000 */ .word 0x00000000
-    /* 195B84 00295A84 E600E600 */ .word GlobalDataBuffer + 0xBB5066
-    /* 195B88 00295A88 E600E600 */ .word GlobalDataBuffer + 0xBB5066
-    /* 195B8C 00295A8C E600E600 */ .word GlobalDataBuffer + 0xBB5066
-    /* 195B90 00295A90 E600E600 */ .word GlobalDataBuffer + 0xBB5066
-    /* 195B94 00295A94 E600E600 */ .word GlobalDataBuffer + 0xBB5066
+    /* 195B84 00295A84 E600E600 */ .word 0x00E600E6
+    /* 195B88 00295A88 E600E600 */ .word 0x00E600E6
+    /* 195B8C 00295A8C E600E600 */ .word 0x00E600E6
+    /* 195B90 00295A90 E600E600 */ .word 0x00E600E6
+    /* 195B94 00295A94 E600E600 */ .word 0x00E600E6
     /* 195B98 00295A98 00000000 */ .word 0x00000000
     /* 195B9C 00295A9C 00000000 */ .word 0x00000000
 
@@ -84971,21 +84971,21 @@ glabel LIT_665__3
     /* 195BDC 00295ADC 00000000 */ .word 0x00000000
 
 glabel LIT_691__5
-    /* 195BE0 00295AE0 5800A000 */ .word GlobalDataBuffer + 0x754FD8
-    /* 195BE4 00295AE4 FC003601 */ .word GlobalDataBuffer + 0x10B507C
-    /* 195BE8 00295AE8 6601A401 */ .word GlobalDataBuffer + 0x17950E6
-    /* 195BEC 00295AEC 58007200 */ .word GlobalDataBuffer + 0x474FD8
-    /* 195BF0 00295AF0 9A00D800 */ .word GlobalDataBuffer + 0xAD501A
+    /* 195BE0 00295AE0 5800A000 */ .word 0x00A00058
+    /* 195BE4 00295AE4 FC003601 */ .word 0x013600FC
+    /* 195BE8 00295AE8 6601A401 */ .word 0x01A40166
+    /* 195BEC 00295AEC 58007200 */ .word 0x00720058
+    /* 195BF0 00295AF0 9A00D800 */ .word 0x00D8009A
     /* 195BF4 00295AF4 0C010000 */ .word 0x0000010C
     /* 195BF8 00295AF8 00000000 */ .word 0x00000000
     /* 195BFC 00295AFC 00000000 */ .word 0x00000000
 
 glabel LIT_694__2
-    /* 195C00 00295B00 58005800 */ .word GlobalDataBuffer + 0x2D4FD8
-    /* 195C04 00295B04 58000001 */ .word GlobalDataBuffer + 0xD54FD8
-    /* 195C08 00295B08 5E01B401 */ .word GlobalDataBuffer + 0x18950DE
-    /* 195C0C 00295B0C 58007200 */ .word GlobalDataBuffer + 0x474FD8
-    /* 195C10 00295B10 9A00D800 */ .word GlobalDataBuffer + 0xAD501A
+    /* 195C00 00295B00 58005800 */ .word 0x00580058
+    /* 195C04 00295B04 58000001 */ .word 0x01000058
+    /* 195C08 00295B08 5E01B401 */ .word 0x01B4015E
+    /* 195C0C 00295B0C 58007200 */ .word 0x00720058
+    /* 195C10 00295B10 9A00D800 */ .word 0x00D8009A
     /* 195C14 00295B14 0C010000 */ .word 0x0000010C
 
 glabel LIT_887__6
@@ -85018,256 +85018,256 @@ glabel LIT_1351__4
     /* 195C70 00295B70 00000000 */ .word 0x00000000
     /* 195C74 00295B74 00000000 */ .word 0x00000000
     /* 195C78 00295B78 00000000 */ .word 0x00000000
-    /* 195C7C 00295B7C 3C002B00 */ .word GlobalDataBuffer + 0x4FBC
+    /* 195C7C 00295B7C 3C002B00 */ .word 0x002B003C
     /* 195C80 00295B80 DE000000 */ .word 0x000000DE
     /* 195C84 00295B84 00000000 */ .word 0x00000000
     /* 195C88 00295B88 00000000 */ .word 0x00000000
     /* 195C8C 00295B8C 00000000 */ .word 0x00000000
     /* 195C90 00295B90 00002900 */ .word BtUraEnemyLayout06 + 0x1410
-    /* 195C94 00295B94 4D00DE00 */ .word GlobalDataBuffer + 0xB34FCD
+    /* 195C94 00295B94 4D00DE00 */ .word 0x00DE004D
     /* 195C98 00295B98 00000000 */ .word 0x00000000
     /* 195C9C 00295B9C 00000000 */ .word 0x00000000
     /* 195CA0 00295BA0 00000000 */ .word 0x00000000
     /* 195CA4 00295BA4 00000000 */ .word 0x00000000
-    /* 195CA8 00295BA8 03002E00 */ .word GlobalDataBuffer + 0x34F83
-    /* 195CAC 00295BAC 38003800 */ .word GlobalDataBuffer + 0xD4FB8
+    /* 195CA8 00295BA8 03002E00 */ .word 0x002E0003
+    /* 195CAC 00295BAC 38003800 */ .word 0x00380038
     /* 195CB0 00295BB0 00000000 */ .word 0x00000000
     /* 195CB4 00295BB4 00000000 */ .word 0x00000000
     /* 195CB8 00295BB8 00000000 */ .word 0x00000000
     /* 195CBC 00295BBC 00000500 */ .word 0x00050000
     /* 195CC0 00295BC0 3F002300 */ .word 0x0023003F
-    /* 195CC4 00295BC4 2E004600 */ .word GlobalDataBuffer + 0x1B4FAE
+    /* 195CC4 00295BC4 2E004600 */ .word 0x0046002E
     /* 195CC8 00295BC8 00000000 */ .word 0x00000000
     /* 195CCC 00295BCC 00000000 */ .word 0x00000000
     /* 195CD0 00295BD0 00000000 */ .word 0x00000000
-    /* 195CD4 00295BD4 B500CA00 */ .word GlobalDataBuffer + 0x9F5035
-    /* 195CD8 00295BD8 BC00C900 */ .word GlobalDataBuffer + 0x9E503C
+    /* 195CD4 00295BD4 B500CA00 */ .word 0x00CA00B5
+    /* 195CD8 00295BD8 BC00C900 */ .word 0x00C900BC
     /* 195CDC 00295BDC 00000000 */ .word 0x00000000
     /* 195CE0 00295BE0 00000000 */ .word 0x00000000
     /* 195CE4 00295BE4 00000000 */ .word 0x00000000
-    /* 195CE8 00295BE8 0000B900 */ .word GlobalDataBuffer + 0x8E4F80
-    /* 195CEC 00295BEC C400BC00 */ .word GlobalDataBuffer + 0x915044
+    /* 195CE8 00295BE8 0000B900 */ .word 0x00B90000
+    /* 195CEC 00295BEC C400BC00 */ .word 0x00BC00C4
     /* 195CF0 00295BF0 CA000000 */ .word 0x000000CA
     /* 195CF4 00295BF4 00000000 */ .word 0x00000000
     /* 195CF8 00295BF8 00000000 */ .word 0x00000000
     /* 195CFC 00295BFC 00000000 */ .word 0x00000000
-    /* 195D00 00295C00 A800CA00 */ .word GlobalDataBuffer + 0x9F5028
-    /* 195D04 00295C04 CD00CA00 */ .word GlobalDataBuffer + 0x9F504D
+    /* 195D00 00295C00 A800CA00 */ .word 0x00CA00A8
+    /* 195D04 00295C04 CD00CA00 */ .word 0x00CA00CD
     /* 195D08 00295C08 00000000 */ .word 0x00000000
     /* 195D0C 00295C0C 00000000 */ .word 0x00000000
     /* 195D10 00295C10 00000000 */ .word 0x00000000
-    /* 195D14 00295C14 0000B300 */ .word GlobalDataBuffer + 0x884F80
-    /* 195D18 00295C18 D000BD00 */ .word GlobalDataBuffer + 0x925050
+    /* 195D14 00295C14 0000B300 */ .word 0x00B30000
+    /* 195D18 00295C18 D000BD00 */ .word 0x00BD00D0
     /* 195D1C 00295C1C D4000000 */ .word 0x000000D4
     /* 195D20 00295C20 00000000 */ .word 0x00000000
     /* 195D24 00295C24 00000000 */ .word 0x00000000
     /* 195D28 00295C28 00000000 */ .word 0x00000000
-    /* 195D2C 00295C2C B600C900 */ .word GlobalDataBuffer + 0x9E5036
-    /* 195D30 00295C30 C200BC00 */ .word GlobalDataBuffer + 0x915042
-    /* 195D34 00295C34 C200BC00 */ .word GlobalDataBuffer + 0x915042
+    /* 195D2C 00295C2C B600C900 */ .word 0x00C900B6
+    /* 195D30 00295C30 C200BC00 */ .word 0x00BC00C2
+    /* 195D34 00295C34 C200BC00 */ .word 0x00BC00C2
     /* 195D38 00295C38 00000000 */ .word 0x00000000
     /* 195D3C 00295C3C 00000000 */ .word 0x00000000
-    /* 195D40 00295C40 0000B000 */ .word GlobalDataBuffer + 0x854F80
-    /* 195D44 00295C44 CE00C800 */ .word GlobalDataBuffer + 0x9D504E
-    /* 195D48 00295C48 CA00C900 */ .word GlobalDataBuffer + 0x9E504A
+    /* 195D40 00295C40 0000B000 */ .word 0x00B00000
+    /* 195D44 00295C44 CE00C800 */ .word 0x00C800CE
+    /* 195D48 00295C48 CA00C900 */ .word 0x00C900CA
     /* 195D4C 00295C4C BF000000 */ .word 0x000000BF
     /* 195D50 00295C50 00000000 */ .word 0x00000000
     /* 195D54 00295C54 00000000 */ .word 0x00000000
-    /* 195D58 00295C58 B500CA00 */ .word GlobalDataBuffer + 0x9F5035
-    /* 195D5C 00295C5C BC00C900 */ .word GlobalDataBuffer + 0x9E503C
+    /* 195D58 00295C58 B500CA00 */ .word 0x00CA00B5
+    /* 195D5C 00295C5C BC00C900 */ .word 0x00C900BC
     /* 195D60 00295C60 00000000 */ .word 0x00000000
     /* 195D64 00295C64 00000000 */ .word 0x00000000
     /* 195D68 00295C68 00000000 */ .word 0x00000000
-    /* 195D6C 00295C6C 0000B900 */ .word GlobalDataBuffer + 0x8E4F80
-    /* 195D70 00295C70 C400BC00 */ .word GlobalDataBuffer + 0x915044
+    /* 195D6C 00295C6C 0000B900 */ .word 0x00B90000
+    /* 195D70 00295C70 C400BC00 */ .word 0x00BC00C4
     /* 195D74 00295C74 CA000000 */ .word 0x000000CA
     /* 195D78 00295C78 00000000 */ .word 0x00000000
     /* 195D7C 00295C7C 00000000 */ .word 0x00000000
     /* 195D80 00295C80 00000000 */ .word 0x00000000
-    /* 195D84 00295C84 A800CA00 */ .word GlobalDataBuffer + 0x9F5028
-    /* 195D88 00295C88 CD00CA00 */ .word GlobalDataBuffer + 0x9F504D
+    /* 195D84 00295C84 A800CA00 */ .word 0x00CA00A8
+    /* 195D88 00295C88 CD00CA00 */ .word 0x00CA00CD
     /* 195D8C 00295C8C 00000000 */ .word 0x00000000
     /* 195D90 00295C90 00000000 */ .word 0x00000000
     /* 195D94 00295C94 00000000 */ .word 0x00000000
-    /* 195D98 00295C98 0000B300 */ .word GlobalDataBuffer + 0x884F80
-    /* 195D9C 00295C9C D000BD00 */ .word GlobalDataBuffer + 0x925050
+    /* 195D98 00295C98 0000B300 */ .word 0x00B30000
+    /* 195D9C 00295C9C D000BD00 */ .word 0x00BD00D0
     /* 195DA0 00295CA0 D4000000 */ .word 0x000000D4
     /* 195DA4 00295CA4 00000000 */ .word 0x00000000
     /* 195DA8 00295CA8 00000000 */ .word 0x00000000
     /* 195DAC 00295CAC 00000000 */ .word 0x00000000
-    /* 195DB0 00295CB0 B600C900 */ .word GlobalDataBuffer + 0x9E5036
-    /* 195DB4 00295CB4 C200BC00 */ .word GlobalDataBuffer + 0x915042
-    /* 195DB8 00295CB8 C200BC00 */ .word GlobalDataBuffer + 0x915042
+    /* 195DB0 00295CB0 B600C900 */ .word 0x00C900B6
+    /* 195DB4 00295CB4 C200BC00 */ .word 0x00BC00C2
+    /* 195DB8 00295CB8 C200BC00 */ .word 0x00BC00C2
     /* 195DBC 00295CBC 00000000 */ .word 0x00000000
     /* 195DC0 00295CC0 00000000 */ .word 0x00000000
-    /* 195DC4 00295CC4 0000B000 */ .word GlobalDataBuffer + 0x854F80
-    /* 195DC8 00295CC8 CE00C800 */ .word GlobalDataBuffer + 0x9D504E
-    /* 195DCC 00295CCC CA00C900 */ .word GlobalDataBuffer + 0x9E504A
+    /* 195DC4 00295CC4 0000B000 */ .word 0x00B00000
+    /* 195DC8 00295CC8 CE00C800 */ .word 0x00C800CE
+    /* 195DCC 00295CCC CA00C900 */ .word 0x00C900CA
     /* 195DD0 00295CD0 BF000000 */ .word 0x000000BF
     /* 195DD4 00295CD4 00000000 */ .word 0x00000000
     /* 195DD8 00295CD8 00000000 */ .word 0x00000000
-    /* 195DDC 00295CDC B500CA00 */ .word GlobalDataBuffer + 0x9F5035
-    /* 195DE0 00295CE0 BC00C900 */ .word GlobalDataBuffer + 0x9E503C
+    /* 195DDC 00295CDC B500CA00 */ .word 0x00CA00B5
+    /* 195DE0 00295CE0 BC00C900 */ .word 0x00C900BC
     /* 195DE4 00295CE4 00000000 */ .word 0x00000000
     /* 195DE8 00295CE8 00000000 */ .word 0x00000000
     /* 195DEC 00295CEC 00000000 */ .word 0x00000000
-    /* 195DF0 00295CF0 0000B900 */ .word GlobalDataBuffer + 0x8E4F80
-    /* 195DF4 00295CF4 C400BC00 */ .word GlobalDataBuffer + 0x915044
+    /* 195DF0 00295CF0 0000B900 */ .word 0x00B90000
+    /* 195DF4 00295CF4 C400BC00 */ .word 0x00BC00C4
     /* 195DF8 00295CF8 CA000000 */ .word 0x000000CA
     /* 195DFC 00295CFC 00000000 */ .word 0x00000000
     /* 195E00 00295D00 00000000 */ .word 0x00000000
     /* 195E04 00295D04 00000000 */ .word 0x00000000
-    /* 195E08 00295D08 A800CA00 */ .word GlobalDataBuffer + 0x9F5028
-    /* 195E0C 00295D0C CD00CA00 */ .word GlobalDataBuffer + 0x9F504D
+    /* 195E08 00295D08 A800CA00 */ .word 0x00CA00A8
+    /* 195E0C 00295D0C CD00CA00 */ .word 0x00CA00CD
     /* 195E10 00295D10 00000000 */ .word 0x00000000
     /* 195E14 00295D14 00000000 */ .word 0x00000000
     /* 195E18 00295D18 00000000 */ .word 0x00000000
-    /* 195E1C 00295D1C 0000B300 */ .word GlobalDataBuffer + 0x884F80
-    /* 195E20 00295D20 D000BD00 */ .word GlobalDataBuffer + 0x925050
+    /* 195E1C 00295D1C 0000B300 */ .word 0x00B30000
+    /* 195E20 00295D20 D000BD00 */ .word 0x00BD00D0
     /* 195E24 00295D24 D4000000 */ .word 0x000000D4
     /* 195E28 00295D28 00000000 */ .word 0x00000000
     /* 195E2C 00295D2C 00000000 */ .word 0x00000000
     /* 195E30 00295D30 00000000 */ .word 0x00000000
-    /* 195E34 00295D34 B600C900 */ .word GlobalDataBuffer + 0x9E5036
-    /* 195E38 00295D38 C200BC00 */ .word GlobalDataBuffer + 0x915042
-    /* 195E3C 00295D3C C200BC00 */ .word GlobalDataBuffer + 0x915042
+    /* 195E34 00295D34 B600C900 */ .word 0x00C900B6
+    /* 195E38 00295D38 C200BC00 */ .word 0x00BC00C2
+    /* 195E3C 00295D3C C200BC00 */ .word 0x00BC00C2
     /* 195E40 00295D40 00000000 */ .word 0x00000000
     /* 195E44 00295D44 00000000 */ .word 0x00000000
-    /* 195E48 00295D48 0000B000 */ .word GlobalDataBuffer + 0x854F80
-    /* 195E4C 00295D4C CE00C800 */ .word GlobalDataBuffer + 0x9D504E
-    /* 195E50 00295D50 CA00C900 */ .word GlobalDataBuffer + 0x9E504A
+    /* 195E48 00295D48 0000B000 */ .word 0x00B00000
+    /* 195E4C 00295D4C CE00C800 */ .word 0x00C800CE
+    /* 195E50 00295D50 CA00C900 */ .word 0x00C900CA
     /* 195E54 00295D54 BF000000 */ .word 0x000000BF
     /* 195E58 00295D58 00000000 */ .word 0x00000000
     /* 195E5C 00295D5C 00000000 */ .word 0x00000000
-    /* 195E60 00295D60 B500CA00 */ .word GlobalDataBuffer + 0x9F5035
-    /* 195E64 00295D64 BC00C900 */ .word GlobalDataBuffer + 0x9E503C
+    /* 195E60 00295D60 B500CA00 */ .word 0x00CA00B5
+    /* 195E64 00295D64 BC00C900 */ .word 0x00C900BC
     /* 195E68 00295D68 00000000 */ .word 0x00000000
     /* 195E6C 00295D6C 00000000 */ .word 0x00000000
     /* 195E70 00295D70 00000000 */ .word 0x00000000
-    /* 195E74 00295D74 0000B900 */ .word GlobalDataBuffer + 0x8E4F80
-    /* 195E78 00295D78 C400BC00 */ .word GlobalDataBuffer + 0x915044
+    /* 195E74 00295D74 0000B900 */ .word 0x00B90000
+    /* 195E78 00295D78 C400BC00 */ .word 0x00BC00C4
     /* 195E7C 00295D7C CA000000 */ .word 0x000000CA
     /* 195E80 00295D80 00000000 */ .word 0x00000000
     /* 195E84 00295D84 00000000 */ .word 0x00000000
     /* 195E88 00295D88 00000000 */ .word 0x00000000
-    /* 195E8C 00295D8C A800CA00 */ .word GlobalDataBuffer + 0x9F5028
-    /* 195E90 00295D90 CD00CA00 */ .word GlobalDataBuffer + 0x9F504D
+    /* 195E8C 00295D8C A800CA00 */ .word 0x00CA00A8
+    /* 195E90 00295D90 CD00CA00 */ .word 0x00CA00CD
     /* 195E94 00295D94 00000000 */ .word 0x00000000
     /* 195E98 00295D98 00000000 */ .word 0x00000000
     /* 195E9C 00295D9C 00000000 */ .word 0x00000000
-    /* 195EA0 00295DA0 0000B300 */ .word GlobalDataBuffer + 0x884F80
-    /* 195EA4 00295DA4 D000BD00 */ .word GlobalDataBuffer + 0x925050
+    /* 195EA0 00295DA0 0000B300 */ .word 0x00B30000
+    /* 195EA4 00295DA4 D000BD00 */ .word 0x00BD00D0
     /* 195EA8 00295DA8 D4000000 */ .word 0x000000D4
     /* 195EAC 00295DAC 00000000 */ .word 0x00000000
     /* 195EB0 00295DB0 00000000 */ .word 0x00000000
     /* 195EB4 00295DB4 00000000 */ .word 0x00000000
-    /* 195EB8 00295DB8 B600C900 */ .word GlobalDataBuffer + 0x9E5036
-    /* 195EBC 00295DBC C200BC00 */ .word GlobalDataBuffer + 0x915042
-    /* 195EC0 00295DC0 C200BC00 */ .word GlobalDataBuffer + 0x915042
+    /* 195EB8 00295DB8 B600C900 */ .word 0x00C900B6
+    /* 195EBC 00295DBC C200BC00 */ .word 0x00BC00C2
+    /* 195EC0 00295DC0 C200BC00 */ .word 0x00BC00C2
     /* 195EC4 00295DC4 00000000 */ .word 0x00000000
     /* 195EC8 00295DC8 00000000 */ .word 0x00000000
-    /* 195ECC 00295DCC 0000B000 */ .word GlobalDataBuffer + 0x854F80
-    /* 195ED0 00295DD0 CE00C800 */ .word GlobalDataBuffer + 0x9D504E
-    /* 195ED4 00295DD4 CA00C900 */ .word GlobalDataBuffer + 0x9E504A
+    /* 195ECC 00295DCC 0000B000 */ .word 0x00B00000
+    /* 195ED0 00295DD0 CE00C800 */ .word 0x00C800CE
+    /* 195ED4 00295DD4 CA00C900 */ .word 0x00C900CA
     /* 195ED8 00295DD8 BF000000 */ .word 0x000000BF
     /* 195EDC 00295DDC 00000000 */ .word 0x00000000
     /* 195EE0 00295DE0 00000000 */ .word 0x00000000
-    /* 195EE4 00295DE4 B500CA00 */ .word GlobalDataBuffer + 0x9F5035
-    /* 195EE8 00295DE8 BC00C900 */ .word GlobalDataBuffer + 0x9E503C
+    /* 195EE4 00295DE4 B500CA00 */ .word 0x00CA00B5
+    /* 195EE8 00295DE8 BC00C900 */ .word 0x00C900BC
     /* 195EEC 00295DEC 00000000 */ .word 0x00000000
     /* 195EF0 00295DF0 00000000 */ .word 0x00000000
     /* 195EF4 00295DF4 00000000 */ .word 0x00000000
-    /* 195EF8 00295DF8 0000B900 */ .word GlobalDataBuffer + 0x8E4F80
-    /* 195EFC 00295DFC C400BC00 */ .word GlobalDataBuffer + 0x915044
+    /* 195EF8 00295DF8 0000B900 */ .word 0x00B90000
+    /* 195EFC 00295DFC C400BC00 */ .word 0x00BC00C4
     /* 195F00 00295E00 CA000000 */ .word 0x000000CA
     /* 195F04 00295E04 00000000 */ .word 0x00000000
     /* 195F08 00295E08 00000000 */ .word 0x00000000
     /* 195F0C 00295E0C 00000000 */ .word 0x00000000
-    /* 195F10 00295E10 A800CA00 */ .word GlobalDataBuffer + 0x9F5028
-    /* 195F14 00295E14 CD00CA00 */ .word GlobalDataBuffer + 0x9F504D
+    /* 195F10 00295E10 A800CA00 */ .word 0x00CA00A8
+    /* 195F14 00295E14 CD00CA00 */ .word 0x00CA00CD
     /* 195F18 00295E18 00000000 */ .word 0x00000000
     /* 195F1C 00295E1C 00000000 */ .word 0x00000000
     /* 195F20 00295E20 00000000 */ .word 0x00000000
-    /* 195F24 00295E24 0000B300 */ .word GlobalDataBuffer + 0x884F80
-    /* 195F28 00295E28 D000BD00 */ .word GlobalDataBuffer + 0x925050
+    /* 195F24 00295E24 0000B300 */ .word 0x00B30000
+    /* 195F28 00295E28 D000BD00 */ .word 0x00BD00D0
     /* 195F2C 00295E2C D4000000 */ .word 0x000000D4
     /* 195F30 00295E30 00000000 */ .word 0x00000000
     /* 195F34 00295E34 00000000 */ .word 0x00000000
     /* 195F38 00295E38 00000000 */ .word 0x00000000
-    /* 195F3C 00295E3C B600C900 */ .word GlobalDataBuffer + 0x9E5036
-    /* 195F40 00295E40 C200BC00 */ .word GlobalDataBuffer + 0x915042
-    /* 195F44 00295E44 C200BC00 */ .word GlobalDataBuffer + 0x915042
+    /* 195F3C 00295E3C B600C900 */ .word 0x00C900B6
+    /* 195F40 00295E40 C200BC00 */ .word 0x00BC00C2
+    /* 195F44 00295E44 C200BC00 */ .word 0x00BC00C2
     /* 195F48 00295E48 00000000 */ .word 0x00000000
     /* 195F4C 00295E4C 00000000 */ .word 0x00000000
-    /* 195F50 00295E50 0000B000 */ .word GlobalDataBuffer + 0x854F80
-    /* 195F54 00295E54 CE00C800 */ .word GlobalDataBuffer + 0x9D504E
-    /* 195F58 00295E58 CA00C900 */ .word GlobalDataBuffer + 0x9E504A
+    /* 195F50 00295E50 0000B000 */ .word 0x00B00000
+    /* 195F54 00295E54 CE00C800 */ .word 0x00C800CE
+    /* 195F58 00295E58 CA00C900 */ .word 0x00C900CA
     /* 195F5C 00295E5C BF000000 */ .word 0x000000BF
     /* 195F60 00295E60 00000000 */ .word 0x00000000
     /* 195F64 00295E64 00000000 */ .word 0x00000000
-    /* 195F68 00295E68 B500CA00 */ .word GlobalDataBuffer + 0x9F5035
-    /* 195F6C 00295E6C BC00C900 */ .word GlobalDataBuffer + 0x9E503C
+    /* 195F68 00295E68 B500CA00 */ .word 0x00CA00B5
+    /* 195F6C 00295E6C BC00C900 */ .word 0x00C900BC
     /* 195F70 00295E70 00000000 */ .word 0x00000000
     /* 195F74 00295E74 00000000 */ .word 0x00000000
     /* 195F78 00295E78 00000000 */ .word 0x00000000
-    /* 195F7C 00295E7C 0000B900 */ .word GlobalDataBuffer + 0x8E4F80
-    /* 195F80 00295E80 C400BC00 */ .word GlobalDataBuffer + 0x915044
+    /* 195F7C 00295E7C 0000B900 */ .word 0x00B90000
+    /* 195F80 00295E80 C400BC00 */ .word 0x00BC00C4
     /* 195F84 00295E84 CA000000 */ .word 0x000000CA
     /* 195F88 00295E88 00000000 */ .word 0x00000000
     /* 195F8C 00295E8C 00000000 */ .word 0x00000000
     /* 195F90 00295E90 00000000 */ .word 0x00000000
-    /* 195F94 00295E94 A800CA00 */ .word GlobalDataBuffer + 0x9F5028
-    /* 195F98 00295E98 CD00CA00 */ .word GlobalDataBuffer + 0x9F504D
+    /* 195F94 00295E94 A800CA00 */ .word 0x00CA00A8
+    /* 195F98 00295E98 CD00CA00 */ .word 0x00CA00CD
     /* 195F9C 00295E9C 00000000 */ .word 0x00000000
     /* 195FA0 00295EA0 00000000 */ .word 0x00000000
     /* 195FA4 00295EA4 00000000 */ .word 0x00000000
-    /* 195FA8 00295EA8 0000B300 */ .word GlobalDataBuffer + 0x884F80
-    /* 195FAC 00295EAC D000BD00 */ .word GlobalDataBuffer + 0x925050
+    /* 195FA8 00295EA8 0000B300 */ .word 0x00B30000
+    /* 195FAC 00295EAC D000BD00 */ .word 0x00BD00D0
     /* 195FB0 00295EB0 D4000000 */ .word 0x000000D4
     /* 195FB4 00295EB4 00000000 */ .word 0x00000000
     /* 195FB8 00295EB8 00000000 */ .word 0x00000000
     /* 195FBC 00295EBC 00000000 */ .word 0x00000000
-    /* 195FC0 00295EC0 B600C900 */ .word GlobalDataBuffer + 0x9E5036
-    /* 195FC4 00295EC4 C200BC00 */ .word GlobalDataBuffer + 0x915042
-    /* 195FC8 00295EC8 C200BC00 */ .word GlobalDataBuffer + 0x915042
+    /* 195FC0 00295EC0 B600C900 */ .word 0x00C900B6
+    /* 195FC4 00295EC4 C200BC00 */ .word 0x00BC00C2
+    /* 195FC8 00295EC8 C200BC00 */ .word 0x00BC00C2
     /* 195FCC 00295ECC 00000000 */ .word 0x00000000
     /* 195FD0 00295ED0 00000000 */ .word 0x00000000
-    /* 195FD4 00295ED4 0000B000 */ .word GlobalDataBuffer + 0x854F80
-    /* 195FD8 00295ED8 CE00C800 */ .word GlobalDataBuffer + 0x9D504E
-    /* 195FDC 00295EDC CA00C900 */ .word GlobalDataBuffer + 0x9E504A
+    /* 195FD4 00295ED4 0000B000 */ .word 0x00B00000
+    /* 195FD8 00295ED8 CE00C800 */ .word 0x00C800CE
+    /* 195FDC 00295EDC CA00C900 */ .word 0x00C900CA
     /* 195FE0 00295EE0 BF000000 */ .word 0x000000BF
     /* 195FE4 00295EE4 00000000 */ .word 0x00000000
     /* 195FE8 00295EE8 00000000 */ .word 0x00000000
     /* 195FEC 00295EEC 00000000 */ .word 0x00000000
 
 glabel AlphabetEtcOffset
-    /* 195FF0 00295EF0 01000001 */ .word GlobalDataBuffer + 0xD54F81
-    /* 195FF4 00295EF4 01010001 */ .word GlobalDataBuffer + 0xD55081
+    /* 195FF0 00295EF0 01000001 */ .word 0x01000001
+    /* 195FF4 00295EF4 01010001 */ .word 0x01000101
     /* 195FF8 00295EF8 01000202 */ .word 0x02020001
     /* 195FFC 00295EFC 00010102 */ .word 0x02010100
     /* 196000 00295F00 02040404 */ .word 0x04040402
     /* 196004 00295F04 02020002 */ .word 0x02000202
     /* 196008 00295F08 00010002 */ .word 0x02000100
-    /* 19600C 00295F0C 02020101 */ .word GlobalDataBuffer + 0xD65182
-    /* 196010 00295F10 00000101 */ .word GlobalDataBuffer + 0xD64F80
+    /* 19600C 00295F0C 02020101 */ .word 0x01010202
+    /* 196010 00295F10 00000101 */ .word 0x01010000
     /* 196014 00295F14 01010000 */ .word 0x00000101
     /* 196018 00295F18 02010002 */ .word 0x02000102
     /* 19601C 00295F1C 00000002 */ .word 0x02000000
     /* 196020 00295F20 02020102 */ .word 0x02010202
     /* 196024 00295F24 02010102 */ .word 0x02010102
-    /* 196028 00295F28 01010201 */ .word GlobalDataBuffer + 0xD75081
+    /* 196028 00295F28 01010201 */ .word 0x01020101
     /* 19602C 00295F2C 02020202 */ .word 0x02020202
     /* 196030 00295F30 01010103 */ .word 0x03010101
     /* 196034 00295F34 03030402 */ .word 0x02040303
     /* 196038 00295F38 01030204 */ .word 0x04020301
-    /* 19603C 00295F3C 00000101 */ .word GlobalDataBuffer + 0xD64F80
+    /* 19603C 00295F3C 00000101 */ .word 0x01010000
     /* 196040 00295F40 02010102 */ .word 0x02010102
     /* 196044 00295F44 02010103 */ .word 0x03010102
-    /* 196048 00295F48 01020101 */ .word GlobalDataBuffer + 0xD65181
-    /* 19604C 00295F4C 01010101 */ .word GlobalDataBuffer + 0xD65081
+    /* 196048 00295F48 01020101 */ .word 0x01010201
+    /* 19604C 00295F4C 01010101 */ .word 0x01010101
     /* 196050 00295F50 01010102 */ .word 0x02010101
-    /* 196054 00295F54 01020101 */ .word GlobalDataBuffer + 0xD65181
-    /* 196058 00295F58 00080101 */ .word GlobalDataBuffer + 0xD65780
+    /* 196054 00295F54 01020101 */ .word 0x01010201
+    /* 196058 00295F58 00080101 */ .word 0x01010800
     /* 19605C 00295F5C FF040304 */ .word 0x040304FF
     /* 196060 00295F60 02020100 */ .word 0x00010202
     /* 196064 00295F64 00010100 */ .word 0x00010100
@@ -85275,16 +85275,16 @@ glabel AlphabetEtcOffset
     /* 19606C 00295F6C 00010000 */ .word 0x00000100
     /* 196070 00295F70 00010600 */ .word 0x00060100
     /* 196074 00295F74 FC070000 */ .word 0x000007FC
-    /* 196078 00295F78 00000101 */ .word GlobalDataBuffer + 0xD64F80
-    /* 19607C 00295F7C 01000001 */ .word GlobalDataBuffer + 0xD54F81
+    /* 196078 00295F78 00000101 */ .word 0x01010000
+    /* 19607C 00295F7C 01000001 */ .word 0x01000001
     /* 196080 00295F80 03020203 */ .word 0x03020203
     /* 196084 00295F84 04030303 */ .word 0x03030304
     /* 196088 00295F88 03030303 */ .word 0x03030303
     /* 19608C 00295F8C 04030304 */ .word 0x04030304
     /* 196090 00295F90 01020406 */ .word 0x06040201
     /* 196094 00295F94 01020202 */ .word 0x02020201
-    /* 196098 00295F98 01020201 */ .word GlobalDataBuffer + 0xD75181
-    /* 19609C 00295F9C 02020301 */ .word GlobalDataBuffer + 0xD85182
+    /* 196098 00295F98 01020201 */ .word 0x01020201
+    /* 19609C 00295F9C 02020301 */ .word 0x01030202
     /* 1960A0 00295FA0 01010102 */ .word 0x02010101
     /* 1960A4 00295FA4 04060208 */ .word 0x08020604
     /* 1960A8 00295FA8 02080202 */ .word 0x02020802

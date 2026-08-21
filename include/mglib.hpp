@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include <libgraph.h>
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -32,6 +34,46 @@ extern "C" RenderInfo mgRenderInfo;
  * @file
  * Declares the graphics library that the game draws every model through.
  */
+
+/**
+ * Sets the colour the frame is cleared to, from four floats in memory.
+ *
+ * @mangled MGSetBGColor__FPf
+ * @address 0x12E210
+ * @size 0x30
+ * @unknownret
+ */
+void MGSetBGColor(float *colour);
+
+/**
+ * Starts drawing the shadows, which go through a texture of their own.
+ *
+ * @mangled MGBeginDrawShadow__F9sceGsTex0
+ * @address 0x1308A0
+ * @size 0x288
+ * @unknownret
+ */
+void MGBeginDrawShadow(sceGsTex0 tex0);
+
+/**
+ * Finishes drawing the shadows and lays them over the frame.
+ *
+ * @mangled MGEndDrawShadow__FUc
+ * @address 0x130B30
+ * @size 0x3B8
+ * @unknownret
+ */
+void MGEndDrawShadow(unsigned char alpha);
+
+/**
+ * Sets the colour the frame is cleared to.
+ *
+ * @mangled MGSetBGColor__Fffff
+ * @address 0x12E090
+ * @size 0x174
+ * @unknownret
+ */
+void MGSetBGColor(float red, float green, float blue, float alpha);
 
 extern s32 DmaCH8;
 extern sceVif1Packet *Vif1Packet;

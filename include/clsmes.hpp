@@ -11,8 +11,72 @@ class CTexture;
 struct sceVif1Packet;
 
 
+/** One entry of the pair table at the tail of ClsMes. */
+struct CLSMES_PAIR {
+    s32 unk_0;
+    s32 unk_4;
+};
+
 class ClsMes {
 public:
+    s32 unk_000;
+    s32 unk_004;
+    s32 unk_008;
+    s32 unk_00C;
+    s32 unk_010;
+    s32 unk_014;
+    s32 unk_018;
+    s32 unk_01C;
+    s32 unk_020;
+    s32 unk_024;
+    s32 unk_028;
+    u8 unk_02C[0x2C];
+    s32 unk_058;
+    u8 unk_05C[0x30];
+    float unk_08C;
+    s32 unk_090;
+    s32 unk_094;
+    s32 unk_098;
+    u8 unk_09C[0x8];
+    float unk_0A4;
+    float unk_0A8;
+    s32 unk_0AC;
+    s32 unk_0B0;
+    s32 unk_0B4;
+    s32 unk_0B8;
+    s32 unk_0BC;
+    s32 unk_0C0;
+    u8 unk_0C4[0x15E4];
+    s32 unk_16A8;
+    s32 unk_16AC;
+    s32 unk_16B0;
+    s32 unk_16B4;
+    s32 unk_16B8;
+    s32 unk_16BC;
+    s32 unk_16C0;
+    s32 unk_16C4;
+    s32 unk_16C8;
+    s32 unk_16CC;
+    s32 unk_16D0;
+    s32 unk_16D4;
+    u8 unk_16D8[0x8];
+    s32 unk_16E0[10];
+    s32 unk_1708[8];
+    s32 unk_1728;
+    s32 unk_172C;
+    s32 unk_1730;
+    s32 unk_1734;
+    s32 unk_1738;
+    s32 unk_173C;
+    s32 unk_1740;
+    s32 unk_1744;
+    s32 unk_1748;
+    s32 unk_174C;
+    CLSMES_PAIR unk_1750[10];
+    u8 unk_17A0[0x10];
+    void *unk_17B0;
+    u8 unk_17B4[4];
+
     /**
      * @mangled GetGaijiW__6ClsMesFi
      * @address 0x14CB30
@@ -308,3 +372,5 @@ public:
      */
     void DrawMesWin(void);
 };
+
+STATIC_ASSERT(sizeof(ClsMes) == 0x17B8);

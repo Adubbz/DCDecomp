@@ -138,7 +138,7 @@ glabel scalbn
 
 glabel D_00296AB8
     /* 196BB8 00296AB8 59F3F8C2 */ .word 0xC2F8F359
-    /* 196BBC 00296ABC 1F6EA501 */ .word GlobalDataBuffer + 0x17ABD9F
+    /* 196BBC 00296ABC 1F6EA501 */ .word 0x01A56E1F
 
 glabel D_00296AC0
     /* 196BC0 00296AC0 9C750088 */ .word 0x8800759C

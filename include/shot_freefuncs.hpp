@@ -118,15 +118,16 @@ void topStatusInfo(int, int, int);
  * @size 0x30
  * @unknownret
  */
-void StatusErrCheck(int);
+int StatusErrCheck(int status);
 
 /**
+ * Gives the colour a status ailment tints a model with, and 1 while one runs.
+ *
  * @mangled BtStatusErrColorSet__Fv
  * @address 0x1B1960
  * @size 0xF0
- * @unknownret
  */
-void BtStatusErrColorSet(void);
+int BtStatusErrColorSet(void);
 
 /**
  * @mangled BtStatusErrStep__Fv
@@ -183,3 +184,34 @@ void BtMapJumpLoad(char *);
  * @unknownret
  */
 void BtSet3DCellModel(float *, CTexture *, float, int, int, int, int, int);
+
+/**
+ * Gives the way a shot flies for one heading and pitch.
+ *
+ * @mangled setShotVector__FPffff
+ * @address 0x1D4100
+ * @size 0x98
+ * @unknownret
+ */
+void setShotVector(float *vector, float speed, float heading, float pitch);
+
+/**
+ * Gives the way the player's character faces, at one pitch.
+ *
+ * @mangled getCharacterVector__FPff
+ * @address 0x1D41A0
+ * @size 0xC0
+ * @unknownret
+ */
+void getCharacterVector(float *vector, float pitch);
+
+/**
+ * Gives the way a thrown thing has to leave one point to land on another.
+ *
+ * @mangled ParabolicInitialVector__FPfPfPfff
+ * @address 0x1D4080
+ * @size 0x7C
+ * @unknownret
+ */
+void ParabolicInitialVector(float *vector, float *from, float *to, float gravity,
+                            float height);

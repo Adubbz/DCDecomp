@@ -1276,4 +1276,4 @@ glabel huge
 
 glabel tiny
     /* 196BB0 00296AB0 59F3F8C2 */ .word 0xC2F8F359
-    /* 196BB4 00296AB4 1F6EA501 */ .word GlobalDataBuffer + 0x17ABD9F
+    /* 196BB4 00296AB4 1F6EA501 */ .word 0x01A56E1F

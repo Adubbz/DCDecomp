@@ -12,6 +12,8 @@ class CFrame;
 
 class CSHOT_EFFECT {
 public:
+    u8 unk_0000[0xA160];
+
     /**
      * @mangled Draw__12CSHOT_EFFECTFv
      * @address 0x1ABF20
@@ -58,7 +60,7 @@ public:
      * @size 0x5B0
      * @unknownret
      */
-    void Entry2(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2_1_ *, int);
+    int Entry2(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2_1_ *, int);
 
     /**
      * @mangled ReEntry__12CSHOT_EFFECTFP14BT_SHOT_EFFECTP14CDataAlloc2_1_
@@ -77,12 +79,14 @@ public:
     void SetLoop(int);
 
     /**
+     * Starts one shot effect and gives back the slot it went into, or -1
+     * where none was free.
+     *
      * @mangled Set__12CSHOT_EFFECTFPfPfiiiP6CFramei
      * @address 0x1ADD60
      * @size 0x460
-     * @unknownret
      */
-    void Set(float *, float *, int, int, int, CFrame *, int);
+    int Set(float *, float *, int, int, int, CFrame *, int);
 
     /**
      * @mangled SetWait__12CSHOT_EFFECTFi
@@ -173,8 +177,23 @@ public:
     void Initialize(void);
 };
 
+STATIC_ASSERT(sizeof(CSHOT_EFFECT) == 0xA160);
+
 class CSHOT {
 public:
+    u8 unk_000[0x40];
+    sceVu0FVECTOR pos[12];     /**< Where each shot is. */
+    sceVu0FVECTOR unk_100[12];
+    sceVu0FVECTOR vector[12];  /**< The way each shot flies, and how fast. */
+    s32 unk_280[12];
+    s32 life[12];              /**< How long each shot has left, in frames. */
+    s32 damage[12];            /**< What each shot takes off what it hits. */
+    float unk_310[12];
+    s32 unk_340[12];
+    s32 unk_370[12];
+    s32 unk_3A0[12];
+    s32 used[12];              /**< 1 while the slot holds a shot. */
+
     /**
      * @mangled draw__5CSHOTFv
      * @address 0x1ABC40
@@ -192,8 +211,15 @@ public:
     void step(void);
 };
 
+STATIC_ASSERT(sizeof(CSHOT) == 0x400);
+
 class CSHOT_MACHINGUN {
 public:
+    u8 unk_000[0x200];
+    s32 unk_200[16];
+    s32 unk_240[16];
+    s32 unk_280[16];
+
     /**
      * @mangled Set__15CSHOT_MACHINGUNFPfPfii
      * @address 0x1AE660

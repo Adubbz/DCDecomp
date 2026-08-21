@@ -19,6 +19,22 @@ public:
     s32 y;      /**< Distance of the top edge from the top of the texture. */
     s32 width;  /**< Distance from the left edge to the right edge. */
     s32 height; /**< Distance from the top edge to the bottom edge. */
+
+    CRect_i_() {}
+    CRect_i_(s32 x, s32 y, s32 width, s32 height)
+        : x(x), y(y), width(width), height(height) {}
 };
 
 STATIC_ASSERT(sizeof(CRect_i_) == 0x10);
+
+/**
+ * Names the colour a sprite corner draws with.
+ */
+struct spRGBA {
+    u8 r; /**< How much red the corner has. */
+    u8 g; /**< How much green the corner has. */
+    u8 b; /**< How much blue the corner has. */
+    u8 a; /**< How opaque the corner is; 0x80 is fully opaque. */
+};
+
+STATIC_ASSERT(sizeof(spRGBA) == 0x4);

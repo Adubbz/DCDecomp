@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include <libgraph.h>
+
 typedef int TextureHandle;
 
 struct i {
@@ -18,7 +20,9 @@ class CTexture {
         s16 m_height;
         u16 m_bytes_per_pixel;
         char m_name[32];
-        u64 m_tex0;
+    public:
+        sceGsTex0 m_tex0; /**< The register the texture draws through. */
+    private:
         u64 m_tex1;
         u8 *m_mip_data[4];
         i *m_converted_data;
@@ -50,13 +54,27 @@ struct sceVif1Packet;
 /**
  * Names one block of textures that a caller asks the manager to load.
  */
-struct LOADTEXTURE_INFO2 {
-    s32 unk_00;
+/**
+ * Names one texture file and the block it goes into, for the calls that read
+ * the files themselves rather than a pack.
+ */
+struct LOADTEXTURE_INFO {
+    char *name;   /**< Names the texture file, or the image inside a pack. */
     s32 block_no; /**< Block that the textures go into. */
     s32 unk_08;
-    s32 unk_0C;
-    s32 unk_10;
-    s32 unk_14;
+};
+
+/**
+ * Names one texture file and the block it goes into.
+ *
+ * The loading calls take an array of these and stop at the first entry with
+ * no name, so a caller with one file to load passes two: the file and the
+ * terminator.
+ */
+struct LOADTEXTURE_INFO2 {
+    char *name;   /**< Names the texture file, or the image inside a pack. */
+    s32 block_no; /**< Block that the textures go into. */
+    s32 unk_08;
 };
 
 class CTextureManager {
@@ -77,6 +95,86 @@ class CTextureManager {
          * @unknownret
          */
         void DeleteTextureBlock(int block_no);
+
+        /**
+         * Enters into the manager every texture an IMG file already read holds.
+         *
+         * @mangled EnterIMGFile__15CTextureManagerFPUciii
+         * @address 0x132BA0
+         * @size 0x2E4
+         * @unknownret
+         */
+        void EnterIMGFile(unsigned char *img, int block_no, int, int);
+
+        /**
+         * Enters into the manager the fixed textures a file already read holds.
+         *
+         * @mangled EnterFixTextureZ__15CTextureManagerFPUc
+         * @address 0x132930
+         * @size 0x264
+         * @unknownret
+         */
+        void EnterFixTextureZ(unsigned char *file);
+
+        /**
+         * Reads every texture a list names and enters it into the manager.
+         *
+         * @mangled EnterTextureFile__15CTextureManagerFP16LOADTEXTURE_INFO
+         * @address 0x134260
+         * @size 0x10
+         * @unknownret
+         */
+        void EnterTextureFile(LOADTEXTURE_INFO *info);
+
+        /**
+         * Loads into a block the textures a pack already read holds.
+         *
+         * @mangled LoadTextureBlock__15CTextureManagerFiPUi
+         * @address 0x133D30
+         * @size 0x28
+         * @unknownret
+         */
+        void LoadTextureBlock(int block_no, unsigned int *pack);
+
+        /**
+         * Frees every texture buffer that no block still holds.
+         *
+         * @mangled CleanUpBuffer__15CTextureManagerFv
+         * @address 0x1337F0
+         * @size 0x268
+         * @unknownret
+         */
+        void CleanUpBuffer(void);
+
+        /**
+         * Drops the entries of the texture list that no block still holds.
+         *
+         * @mangled CleanUpTextureList__15CTextureManagerFv
+         * @address 0x133A60
+         * @size 0xE4
+         * @unknownret
+         */
+        void CleanUpTextureList(void);
+
+        /**
+         * Prints how much of each texture buffer is in use.
+         *
+         * @mangled print_buff_info__15CTextureManagerFv
+         * @address 0x134750
+         * @size 0x8
+         * @unknownret
+         */
+        void print_buff_info(void);
+
+        /**
+         * Loads a list of textures into a block, replacing what is there.
+         *
+         * @mangled LoadTextureBlock__15CTextureManagerFiP17LOADTEXTURE_INFO2
+         * @address 0x133F20
+         * @size 0x194
+         * @unknownret
+         */
+        void LoadTextureBlock(int block_no, LOADTEXTURE_INFO2 *info);
 
         /**
          * @mangled LoadTextureBlockEX__15CTextureManagerFiP17LOADTEXTURE_INFO2

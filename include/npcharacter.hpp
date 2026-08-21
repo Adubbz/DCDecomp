@@ -10,6 +10,8 @@ class CCPoly;
 
 class CNPCharacter {
 public:
+    u8 unk_0000[0x14A0];
+
     /**
      * @mangled Step__12CNPCharacterFv
      * @address 0x155FB0
@@ -137,3 +139,5 @@ public:
      */
     CNPCharacter(void);
 };
+
+STATIC_ASSERT(sizeof(CNPCharacter) == 0x14A0);

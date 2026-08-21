@@ -4,13 +4,17 @@
 
 class CDataAlloc2_1_ {
 public:
+    u8 *buffer; /**< Specifies the start of the allocation buffer. */
+    u32 backing; /**< Provides inline storage when the allocator owns its buffer. */
+    s32 used; /**< Specifies the allocated 16-byte block count. */
+    s32 size; /**< Specifies the available 16-byte block count. */
+
     /**
      * @mangled Alloc__14CDataAlloc2_1_Fi
      * @address 0x1278A0
      * @size 0x60
-     * @unknownret
      */
-    void Alloc(int);
+    void *Alloc(int blocks);
 
     /**
      * @mangled Alloc64__14CDataAlloc2_1_Fi

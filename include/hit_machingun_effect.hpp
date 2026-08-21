@@ -34,7 +34,7 @@ public:
      */
     void Step(void);
 
-private:
+public:
     float position[16][4]; /**< World positions of the active flashes. */
     s32 timer[16];        /**< Remaining frame counts of the flashes. */
 };

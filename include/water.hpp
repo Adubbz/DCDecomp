@@ -2,7 +2,11 @@
 
 #include "common.h"
 
+#include <libvu0.h>
+
 #include "frame.hpp"
+#include "framevu1.hpp"
+#include "visualvu1.hpp"
 
 struct RenderInfo;
 struct sceVif1Packet;
@@ -13,9 +17,23 @@ class CDataAlloc2_1_; /* disassembler's filesystem-safe spelling of CDataAlloc2<
  */
 class CWater {
 public:
-    u8 unk_000[176];
-    CFrame frame; /**< Places and draws the water surface. */
-    u8 unk_310[16];
+    s32 unk_000;
+    s32 unk_004;
+    s32 unk_008;
+    float unk_00C;
+    float unk_010;
+    sceVu0FVECTOR vertex[4]; /**< The four corners of the surface. */
+    s32 unk_060;
+    float unk_064;
+    float unk_068;
+    CVisualPolyVu1 visual; /**< Draws the polygons of the surface. */
+    float unk_090;
+    float unk_094;
+    float unk_098;
+    float unk_09C;
+    float unk_0A0;
+    s32 unk_0A4;
+    CFrameVu1 frame; /**< Places and draws the water surface. */
 
     /**
      * @mangled SetParam__6CWaterFffff

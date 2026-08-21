@@ -78,7 +78,13 @@ case $mode in
         # resolved even when it was not given -- the reference index is what
         # knows it, exactly as it does for --scratch.
         if located=$(python3 scripts/diff/ref_index.py "$symbol" "${section[@]}" 2>/dev/null); then
-            read -r found _ <<<"$located"
+            read -r _ reference _ <<<"$located"
+            # objdiff names a unit after its source, e.g. camera or
+            # dun/gameloop; the reference path spells the same thing out as
+            # asm/{non,}matchings/<unit>/<symbol>.s.
+            unit=${reference#asm/nonmatchings/}
+            unit=${unit#asm/matchings/}
+            unit=${unit%/*}
         elif [[ ${#section[@]} -ne 0 ]]; then
             echo "$0: $symbol is not in the ${section[0]} reference index" >&2
             exit 1
@@ -92,7 +98,7 @@ case $mode in
             unit=$1; sym=$2; shift 2
             scripts/build/cmake.sh objdiff >/dev/null
             exec objdiff-cli diff -p . -u "$unit" "$sym" "$@"
-        ' diff "$found/$symbol" "$symbol" "$@")
+        ' diff "$unit" "$symbol" "$@")
 
         # objdiff's interactive view needs a terminal, but `diff.sh ... | cat`
         # and CI runs must not be given one.

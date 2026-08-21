@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include "character.hpp"
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -10,7 +12,7 @@ class CCPoly;
 class CDataAlloc2_1_;
 
 
-class CDranMapField {
+class CDranMapField : public CCharacter {
 public:
     /**
      * @mangled LoadModel__13CDranMapFieldFPUiP14CDataAlloc2_1_
@@ -52,3 +54,5 @@ public:
      */
     void Step(void);
 };
+
+STATIC_ASSERT(sizeof(CDranMapField) == 0x11B0);

@@ -4,13 +4,63 @@
 
 class CRect_i_;
 class CTexture;
+struct spRGBA;
 struct sceVif1Packet;
+
+/**
+ * Loads one character voice bank.
+ *
+ * @mangled SndVoiceLoad__Fi
+ * @address 0x15B3F0
+ * @size 0x90
+ */
+int SndVoiceLoad(int voice_no);
 
 /**
  * @file
  * Declares the sound effect calls that the game makes while it draws, and the
  * sprite calls that retail's sound translation unit also carries.
  */
+
+/**
+ * Gives the sound system back what it holds, on the way out of an area.
+ *
+ * @mangled SndExit__Fv
+ * @address 0x159290
+ * @size 0xC0
+ * @unknownret
+ */
+void SndExit(void);
+
+/**
+ * Steps every sound that is playing.
+ *
+ * @mangled SndStep__Fv
+ * @address 0x159350
+ * @size 0x100
+ * @unknownret
+ */
+void SndStep(void);
+
+/**
+ * Starts the background music system from nothing.
+ *
+ * @mangled SndBgmInit__Fv
+ * @address 0x159930
+ * @size 0x30
+ * @unknownret
+ */
+void SndBgmInit(void);
+
+/**
+ * Stops every sound effect that is playing.
+ *
+ * @mangled SndStopAllSe__Fv
+ * @address 0x15A450
+ * @size 0xA0
+ * @unknownret
+ */
+void SndStopAllSe(void);
 
 /**
  * Works out the volume and the pan of a sound at a position.
@@ -72,6 +122,26 @@ int SndSePlay(int se_no, int voice, int pan);
 void SndPlayFootSound(int sound_id, int foot, float *position);
 
 /**
+ * Plays or stops one sound-effect sequence.
+ *
+ * @mangled SndSeSeqPlayStop__Fiii
+ * @address 0x15AF20
+ * @size 0x74
+ * @unknownret
+ */
+void SndSeSeqPlayStop(int sound_id, int step, int flag);
+
+/**
+ * Turns the bilinear filter on or off for the sprites that follow.
+ *
+ * @mangled setbilinear__Fi
+ * @address 0x15BC10
+ * @size 0xC
+ * @unknownret
+ */
+void setbilinear(int on);
+
+/**
  * Draws one part of a texture into a rectangle of the screen, at one alpha.
  *
  * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_Uc
@@ -101,6 +171,16 @@ void set2DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, const CRect_i_ &
  * @unknownret
  */
 void set2DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, const CRect_i_ &, int, int, float);
+
+/**
+ * Draws an untextured rectangle with a colour at each of its four corners.
+ *
+ * @mangled set2DSpriteC4__FP13sceVif1PacketRC8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBA
+ * @address 0x15E120
+ * @size 0x41C
+ * @unknownret
+ */
+void set2DSpriteC4(sceVif1Packet *, const CRect_i_ &, spRGBA *, spRGBA *, spRGBA *, spRGBA *);
 
 /**
  * Draws one four-cornered shape of one colour.

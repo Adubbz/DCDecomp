@@ -15,7 +15,7 @@ void CTexture::Initialize() {
     m_mip_data[0] = 0;
     m_converted_data = 0;
     m_tex1 = 0;
-    m_tex0 = 0;
+    m_tex0.value = 0;
     m_bytes_per_pixel = 0;
     m_height = 0;
     m_width = 0;

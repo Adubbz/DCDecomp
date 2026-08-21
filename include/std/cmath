@@ -9,5 +9,7 @@ float cosf(float x);
 float sqrtf(float x);
 float atan2f(float y, float x);
 double sqrt(double x);
+double cos(double x);
+double sin(double x);
 
 }

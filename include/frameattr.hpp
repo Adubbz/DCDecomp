@@ -12,9 +12,16 @@
  */
 class CFrameAttr {
 public:
-    u8 unk_00[12];
-    u8 unk_0C;
-    u8 unk_0D[83];
+    s16 unk_00;
+    u8 unk_02[2];
+    float unk_04;
+    s8 unk_08;
+    s8 unk_09;
+    s8 unk_0A;
+    s8 unk_0B;
+    s8 unk_0C;
+    s8 unk_0D;
+    u8 unk_0E[0x52];
 
     /**
      * @mangled Initialize__10CFrameAttrFv

@@ -13,6 +13,16 @@ class CFrame;
  */
 
 /**
+ * Gives every data buffer back, so the next area starts from an empty one.
+ *
+ * @mangled BufferAllClear__Fv
+ * @address 0x125BC0
+ * @size 0x254
+ * @unknownret
+ */
+void BufferAllClear(void);
+
+/**
  * Gives a frame the attributes that it draws with.
  *
  * @mangled SetFrameAttr__FP6CFramei

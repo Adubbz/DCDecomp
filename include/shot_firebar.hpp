@@ -4,6 +4,13 @@
 
 class CSHOT_FIREBAR {
 public:
+    u8 unk_0000[0xA00];
+    s32 unk_0A00[64];
+    u8 unk_0B00[0x100];
+    s32 unk_0C00[64];
+    s32 unk_0D00;
+    u8 unk_0D04[0xC];
+
     /**
      * @mangled Init__13CSHOT_FIREBARFPfPfii
      * @address 0x1AEB20

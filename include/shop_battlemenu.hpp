@@ -997,7 +997,7 @@ void BattleMenuDraw(void);
  * @size 0x1A0
  * @unknownret
  */
-void BattleMenuCursor(void);
+int BattleMenuCursor(void);
 
 /**
  * @mangled BattleMenuAppear__Fv

@@ -67,8 +67,10 @@ segments:
     bss_size: 0x142680
     subsegments:
       - {start: 0x0, type: bin, name: header, dir: dun}
-      - {start: 0x40, type: asmtu, name: dun/gameloop}
+      - {start: 0x40, type: cpp, name: dun/gameloop}
       - {start: 0x15e00, type: data, name: data, dir: dun}
+      - {start: 0x16c80, type: .rodata, name: dun/gameloop}
+      - {start: 0x17880, type: data, name: sinit, dir: dun}
       - {start: 0x18714, type: bin, name: dun_pad}
       - {start: 0x18780, type: bss, name: bss, vram: 0x1dc4414, dir: dun}
   - [0x18780]

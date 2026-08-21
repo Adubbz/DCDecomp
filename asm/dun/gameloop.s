@@ -1921,7 +1921,7 @@ glabel GameLoop__Fv
   .L01DAD9D4:
     /* 001CD4 01DAD9D4 6C9D848F */  lw         $4, -0x6294($28)
     /* 001CD8 01DAD9D8 0800812C */  sltiu      $1, $4, 0x8
-    /* 001CDC 01DAD9DC 43002010 */  beqz       $1, .L01DADAEC
+    /* 001CDC 01DAD9DC 43002010 */  beqz       $1, .L.L01DADAEC$b
     /* 001CE0 01DAD9E0 00000000 */   nop
     /* 001CE4 01DAD9E4 DC01023C */  lui        $2, %hi(LIT_994__3)
     /* 001CE8 01DAD9E8 702E4324 */  addiu      $3, $2, %lo(LIT_994__3)
@@ -1930,27 +1930,31 @@ glabel GameLoop__Fv
     /* 001CF4 01DAD9F4 0000428C */  lw         $2, 0x0($2)
     /* 001CF8 01DAD9F8 08004000 */  jr         $2
     /* 001CFC 01DAD9FC 00000000 */   nop
+  jlabel .L01DADA00
     /* 001D00 01DADA00 A8B8760C */  jal        MainDraw__Fv__3
     /* 001D04 01DADA04 00000000 */   nop
-    /* 001D08 01DADA08 38000010 */  b          .L01DADAEC
+    /* 001D08 01DADA08 38000010 */  b          .L.L01DADAEC$b
     /* 001D0C 01DADA0C 00000000 */   nop
+  jlabel .L01DADA10
     /* 001D10 01DADA10 78D8070C */  jal        BattleMenuDraw__Fv
     /* 001D14 01DADA14 00000000 */   nop
-    /* 001D18 01DADA18 34000010 */  b          .L01DADAEC
+    /* 001D18 01DADA18 34000010 */  b          .L.L01DADAEC$b
     /* 001D1C 01DADA1C 00000000 */   nop
+  jlabel .L01DADA20
     /* 001D20 01DADA20 689D8427 */  addiu      $4, $28, -0x6298
     /* 001D24 01DADA24 5090080C */  jal        EventItemSelectLoop__FPi
     /* 001D28 01DADA28 00000000 */   nop
-    /* 001D2C 01DADA2C 2F004010 */  beqz       $2, .L01DADAEC
+    /* 001D2C 01DADA2C 2F004010 */  beqz       $2, .L.L01DADAEC$b
     /* 001D30 01DADA30 00000000 */   nop
     /* 001D34 01DADA34 01000224 */  addiu      $2, $0, 0x1
     /* 001D38 01DADA38 6C9D82AF */  sw         $2, -0x6294($28)
-    /* 001D3C 01DADA3C 2B000010 */  b          .L01DADAEC
+    /* 001D3C 01DADA3C 2B000010 */  b          .L.L01DADAEC$b
     /* 001D40 01DADA40 00000000 */   nop
+  jlabel .L01DADA44
     /* 001D44 01DADA44 6499080C */  jal        DunEnterMenuLoop__Fv
     /* 001D48 01DADA48 00000000 */   nop
     /* 001D4C 01DADA4C FFFF0324 */  addiu      $3, $0, -0x1
-    /* 001D50 01DADA50 26004310 */  beq        $2, $3, .L01DADAEC
+    /* 001D50 01DADA50 26004310 */  beq        $2, $3, .L.L01DADAEC$b
     /* 001D54 01DADA54 00000000 */   nop
     /* 001D58 01DADA58 D501013C */  lui        $1, (0x1D567C4 >> 16)
     /* 001D5C 01DADA5C C467238C */  lw         $3, (0x1D567C4 & 0xFFFF)($1)
@@ -1966,11 +1970,12 @@ glabel GameLoop__Fv
     /* 001D80 01DADA80 00000000 */   nop
     /* 001D84 01DADA84 01000224 */  addiu      $2, $0, 0x1
     /* 001D88 01DADA88 6C9D82AF */  sw         $2, -0x6294($28)
-    /* 001D8C 01DADA8C 17000010 */  b          .L01DADAEC
+    /* 001D8C 01DADA8C 17000010 */  b          .L.L01DADAEC$b
     /* 001D90 01DADA90 00000000 */   nop
+  jlabel .L01DADA94
     /* 001D94 01DADA94 D83C080C */  jal        DngEscapeMsgLoop__Fv
     /* 001D98 01DADA98 00000000 */   nop
-    /* 001D9C 01DADA9C 13004018 */  blez       $2, .L01DADAEC
+    /* 001D9C 01DADA9C 13004018 */  blez       $2, .L.L01DADAEC$b
     /* 001DA0 01DADAA0 00000000 */   nop
     /* 001DA4 01DADAA4 D501013C */  lui        $1, (0x1D567C8 >> 16)
     /* 001DA8 01DADAA8 C867238C */  lw         $3, (0x1D567C8 & 0xFFFF)($1)
@@ -1982,16 +1987,18 @@ glabel GameLoop__Fv
     /* 001DBC 01DADABC C86720AC */  sw         $0, (0x1D567C8 & 0xFFFF)($1)
     /* 001DC0 01DADAC0 01000224 */  addiu      $2, $0, 0x1
     /* 001DC4 01DADAC4 6C9D82AF */  sw         $2, -0x6294($28)
-    /* 001DC8 01DADAC8 08000010 */  b          .L01DADAEC
+    /* 001DC8 01DADAC8 08000010 */  b          .L.L01DADAEC$b
     /* 001DCC 01DADACC 00000000 */   nop
+  jlabel .L01DADAD0
     /* 001DD0 01DADAD0 ECA2080C */  jal        CharaChangeLoop__Fv
     /* 001DD4 01DADAD4 00000000 */   nop
     /* 001DD8 01DADAD8 549482AF */  sw         $2, -0x6BAC($28)
-    /* 001DDC 01DADADC 03004010 */  beqz       $2, .L01DADAEC
+    /* 001DDC 01DADADC 03004010 */  beqz       $2, .L.L01DADAEC$b
     /* 001DE0 01DADAE0 00000000 */   nop
     /* 001DE4 01DADAE4 01000224 */  addiu      $2, $0, 0x1
     /* 001DE8 01DADAE8 6C9D82AF */  sw         $2, -0x6294($28)
-  .L01DADAEC:
+  jlabel .L01DADAEC
+.L.L01DADAEC$b:
     /* 001DEC 01DADAEC 009E828F */  lw         $2, -0x6200($28)
     /* 001DF0 01DADAF0 3B004010 */  beqz       $2, .L01DADBE0
     /* 001DF4 01DADAF4 00000000 */   nop
@@ -3815,6 +3822,7 @@ glabel MainDraw__Fv__3
     /* 0038B8 01DAF5B8 0000428C */  lw         $2, 0x0($2)
     /* 0038BC 01DAF5BC 08004000 */  jr         $2
     /* 0038C0 01DAF5C0 00000000 */   nop
+  jlabel .L01DAF5C4
     /* 0038C4 01DAF5C4 5002A0AF */  sw         $0, 0x250($29)
     /* 0038C8 01DAF5C8 5402A0AF */  sw         $0, 0x254($29)
     /* 0038CC 01DAF5CC 72000424 */  addiu      $4, $0, 0x72
@@ -3858,6 +3866,7 @@ glabel MainDraw__Fv__3
     /* 003964 01DAF664 00000000 */   nop
     /* 003968 01DAF668 9A000010 */  b          .L01DAF8D4
     /* 00396C 01DAF66C 00000000 */   nop
+  jlabel .L01DAF670
     /* 003970 01DAF670 9002A0AF */  sw         $0, 0x290($29)
     /* 003974 01DAF674 9402A0AF */  sw         $0, 0x294($29)
     /* 003978 01DAF678 BE000424 */  addiu      $4, $0, 0xBE
@@ -3880,6 +3889,7 @@ glabel MainDraw__Fv__3
     /* 0039BC 01DAF6BC 40001024 */  addiu      $16, $0, 0x40
     /* 0039C0 01DAF6C0 84000010 */  b          .L01DAF8D4
     /* 0039C4 01DAF6C4 00000000 */   nop
+  jlabel .L01DAF6C8
     /* 0039C8 01DAF6C8 B002A0AF */  sw         $0, 0x2B0($29)
     /* 0039CC 01DAF6CC B402A0AF */  sw         $0, 0x2B4($29)
     /* 0039D0 01DAF6D0 4C000424 */  addiu      $4, $0, 0x4C
@@ -3923,6 +3933,7 @@ glabel MainDraw__Fv__3
     /* 003A68 01DAF768 DCFF1024 */  addiu      $16, $0, -0x24
     /* 003A6C 01DAF76C 59000010 */  b          .L01DAF8D4
     /* 003A70 01DAF770 00000000 */   nop
+  jlabel .L01DAF774
     /* 003A74 01DAF774 F002A0AF */  sw         $0, 0x2F0($29)
     /* 003A78 01DAF778 F402A0AF */  sw         $0, 0x2F4($29)
     /* 003A7C 01DAF77C 98000424 */  addiu      $4, $0, 0x98
@@ -3946,6 +3957,7 @@ glabel MainDraw__Fv__3
     /* 003AC4 01DAF7C4 40001024 */  addiu      $16, $0, 0x40
     /* 003AC8 01DAF7C8 42000010 */  b          .L01DAF8D4
     /* 003ACC 01DAF7CC 00000000 */   nop
+  jlabel .L01DAF7D0
     /* 003AD0 01DAF7D0 1003A0AF */  sw         $0, 0x310($29)
     /* 003AD4 01DAF7D4 1403A0AF */  sw         $0, 0x314($29)
     /* 003AD8 01DAF7D8 4C000424 */  addiu      $4, $0, 0x4C
@@ -3990,6 +4002,7 @@ glabel MainDraw__Fv__3
     /* 003B74 01DAF874 C0FF1024 */  addiu      $16, $0, -0x40
     /* 003B78 01DAF878 16000010 */  b          .L01DAF8D4
     /* 003B7C 01DAF87C 00000000 */   nop
+  jlabel .L01DAF880
     /* 003B80 01DAF880 5003A0AF */  sw         $0, 0x350($29)
     /* 003B84 01DAF884 5403A0AF */  sw         $0, 0x354($29)
     /* 003B88 01DAF888 98000424 */  addiu      $4, $0, 0x98
@@ -4082,6 +4095,7 @@ glabel MainDraw__Fv__3
     /* 003CD8 01DAF9D8 0000428C */  lw         $2, 0x0($2)
     /* 003CDC 01DAF9DC 08004000 */  jr         $2
     /* 003CE0 01DAF9E0 00000000 */   nop
+  jlabel .L01DAF9E4
     /* 003CE4 01DAF9E4 B003A0AF */  sw         $0, 0x3B0($29)
     /* 003CE8 01DAF9E8 B403A0AF */  sw         $0, 0x3B4($29)
     /* 003CEC 01DAF9EC 2D000424 */  addiu      $4, $0, 0x2D
@@ -4105,6 +4119,7 @@ glabel MainDraw__Fv__3
     /* 003D34 01DAFA34 ECFF1024 */  addiu      $16, $0, -0x14
     /* 003D38 01DAFA38 A9000010 */  b          .L01DAFCE0
     /* 003D3C 01DAFA3C 00000000 */   nop
+  jlabel .L01DAFA40
     /* 003D40 01DAFA40 D003A0AF */  sw         $0, 0x3D0($29)
     /* 003D44 01DAFA44 D403A0AF */  sw         $0, 0x3D4($29)
     /* 003D48 01DAFA48 DA000424 */  addiu      $4, $0, 0xDA
@@ -4134,6 +4149,7 @@ glabel MainDraw__Fv__3
     /* 003DA8 01DAFAA8 20001024 */  addiu      $16, $0, 0x20
     /* 003DAC 01DAFAAC 8C000010 */  b          .L01DAFCE0
     /* 003DB0 01DAFAB0 00000000 */   nop
+  jlabel .L01DAFAB4
     /* 003DB4 01DAFAB4 F003A0AF */  sw         $0, 0x3F0($29)
     /* 003DB8 01DAFAB8 F403A0AF */  sw         $0, 0x3F4($29)
     /* 003DBC 01DAFABC 91000424 */  addiu      $4, $0, 0x91
@@ -4162,6 +4178,7 @@ glabel MainDraw__Fv__3
     /* 003E18 01DAFB18 20001024 */  addiu      $16, $0, 0x20
     /* 003E1C 01DAFB1C 70000010 */  b          .L01DAFCE0
     /* 003E20 01DAFB20 00000000 */   nop
+  jlabel .L01DAFB24
     /* 003E24 01DAFB24 1004A0AF */  sw         $0, 0x410($29)
     /* 003E28 01DAFB28 1404A0AF */  sw         $0, 0x414($29)
     /* 003E2C 01DAFB2C 8E000424 */  addiu      $4, $0, 0x8E
@@ -4185,6 +4202,7 @@ glabel MainDraw__Fv__3
     /* 003E74 01DAFB74 10001024 */  addiu      $16, $0, 0x10
     /* 003E78 01DAFB78 59000010 */  b          .L01DAFCE0
     /* 003E7C 01DAFB7C 00000000 */   nop
+  jlabel .L01DAFB80
     /* 003E80 01DAFB80 3004A0AF */  sw         $0, 0x430($29)
     /* 003E84 01DAFB84 3404A0AF */  sw         $0, 0x434($29)
     /* 003E88 01DAFB88 4B000424 */  addiu      $4, $0, 0x4B
@@ -4229,6 +4247,7 @@ glabel MainDraw__Fv__3
     /* 003F24 01DAFC24 C0FF1024 */  addiu      $16, $0, -0x40
     /* 003F28 01DAFC28 2D000010 */  b          .L01DAFCE0
     /* 003F2C 01DAFC2C 00000000 */   nop
+  jlabel .L01DAFC30
     /* 003F30 01DAFC30 7004A0AF */  sw         $0, 0x470($29)
     /* 003F34 01DAFC34 7404A0AF */  sw         $0, 0x474($29)
     /* 003F38 01DAFC38 E1000424 */  addiu      $4, $0, 0xE1
@@ -4252,6 +4271,7 @@ glabel MainDraw__Fv__3
     /* 003F80 01DAFC80 80FF1024 */  addiu      $16, $0, -0x80
     /* 003F84 01DAFC84 16000010 */  b          .L01DAFCE0
     /* 003F88 01DAFC88 00000000 */   nop
+  jlabel .L01DAFC8C
     /* 003F8C 01DAFC8C 9004A0AF */  sw         $0, 0x490($29)
     /* 003F90 01DAFC90 9404A0AF */  sw         $0, 0x494($29)
     /* 003F94 01DAFC94 8E000424 */  addiu      $4, $0, 0x8E
@@ -5313,7 +5333,7 @@ glabel MoveChara__Fv__2
     /* 004F6C 01DB0C6C 7B174310 */  beq        $2, $3, .L01DB6A5C
     /* 004F70 01DB0C70 00000000 */   nop
     /* 004F74 01DB0C74 23010324 */  addiu      $3, $0, 0x123
-    /* 004F78 01DB0C78 7B194310 */  beq        $2, $3, .L01DB7268
+    /* 004F78 01DB0C78 7B194310 */  beq        $2, $3, .L.L01DB7268$b
     /* 004F7C 01DB0C7C 00000000 */   nop
     /* 004F80 01DB0C80 22010324 */  addiu      $3, $0, 0x122
     /* 004F84 01DB0C84 2E174310 */  beq        $2, $3, .L01DB6940
@@ -5401,7 +5421,7 @@ glabel MoveChara__Fv__2
     /* 0050CC 01DB0DCC 00000000 */   nop
     /* 0050D0 01DB0DD0 03004010 */  beqz       $2, .L01DB0DE0
     /* 0050D4 01DB0DD4 00000000 */   nop
-    /* 0050D8 01DB0DD8 23190010 */  b          .L01DB7268
+    /* 0050D8 01DB0DD8 23190010 */  b          .L.L01DB7268$b
     /* 0050DC 01DB0DDC 00000000 */   nop
   .L01DB0DE0:
     /* 0050E0 01DB0DE0 200B050C */  jal        CheckTrialEnd__Fv
@@ -5410,7 +5430,7 @@ glabel MoveChara__Fv__2
     /* 0050EC 01DB0DEC 00000000 */   nop
     /* 0050F0 01DB0DF0 01000224 */  addiu      $2, $0, 0x1
     /* 0050F4 01DB0DF4 049E82AF */  sw         $2, -0x61FC($28)
-    /* 0050F8 01DB0DF8 1B190010 */  b          .L01DB7268
+    /* 0050F8 01DB0DF8 1B190010 */  b          .L.L01DB7268$b
     /* 0050FC 01DB0DFC 00000000 */   nop
   .L01DB0E00:
     /* 005100 01DB0E00 CC01023C */  lui        $2, %hi(GamePad)
@@ -5439,7 +5459,7 @@ glabel MoveChara__Fv__2
     /* 00515C 01DB0E5C 00000000 */   nop
     /* 005160 01DB0E60 9B000224 */  addiu      $2, $0, 0x9B
     /* 005164 01DB0E64 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 005168 01DB0E68 FF180010 */  b          .L01DB7268
+    /* 005168 01DB0E68 FF180010 */  b          .L.L01DB7268$b
     /* 00516C 01DB0E6C 00000000 */   nop
   .L01DB0E70:
     /* 005170 01DB0E70 06C30046 */  mov.s      $f12, $f24
@@ -5702,7 +5722,7 @@ glabel MoveChara__Fv__2
     /* 005550 01DB1250 28360070 */  paddub     $6, $0, $0
     /* 005554 01DB1254 AC69050C */  jal        SndSePlay__Fiii
     /* 005558 01DB1258 00000000 */   nop
-    /* 00555C 01DB125C 02180010 */  b          .L01DB7268
+    /* 00555C 01DB125C 02180010 */  b          .L.L01DB7268$b
     /* 005560 01DB1260 00000000 */   nop
   .L01DB1264:
     /* 005564 01DB1264 CC01023C */  lui        $2, %hi(GamePad)
@@ -5763,7 +5783,7 @@ glabel MoveChara__Fv__2
     /* 005634 01DB1334 28360070 */  paddub     $6, $0, $0
     /* 005638 01DB1338 AC69050C */  jal        SndSePlay__Fiii
     /* 00563C 01DB133C 00000000 */   nop
-    /* 005640 01DB1340 C9170010 */  b          .L01DB7268
+    /* 005640 01DB1340 C9170010 */  b          .L.L01DB7268$b
     /* 005644 01DB1344 00000000 */   nop
   .L01DB1348:
     /* 005648 01DB1348 00008044 */  mtc1       $0, $f0
@@ -5900,7 +5920,7 @@ glabel MoveChara__Fv__2
     /* 005838 01DB1538 FC9D82AF */  sw         $2, -0x6204($28)
     /* 00583C 01DB153C 5CFA760C */  jal        autoCamTrial__Fv
     /* 005840 01DB1540 00000000 */   nop
-    /* 005844 01DB1544 48170010 */  b          .L01DB7268
+    /* 005844 01DB1544 48170010 */  b          .L.L01DB7268$b
     /* 005848 01DB1548 00000000 */   nop
   .L01DB154C:
     /* 00584C 01DB154C 709E8283 */  lb         $2, %gp_rel(init$1902)($28)
@@ -6486,7 +6506,7 @@ glabel MoveChara__Fv__2
     /* 0060DC 01DB1DDC D06720AC */  sw         $0, (0x1D567D0 & 0xFFFF)($1)
     /* 0060E0 01DB1DE0 26020224 */  addiu      $2, $0, 0x226
     /* 0060E4 01DB1DE4 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 0060E8 01DB1DE8 1F150010 */  b          .L01DB7268
+    /* 0060E8 01DB1DE8 1F150010 */  b          .L.L01DB7268$b
     /* 0060EC 01DB1DEC 00000000 */   nop
   .L01DB1DF0:
     /* 0060F0 01DB1DF0 789C848F */  lw         $4, -0x6388($28)
@@ -6510,7 +6530,7 @@ glabel MoveChara__Fv__2
     /* 006138 01DB1E38 746720AC */  sw         $0, (0x1D56774 & 0xFFFF)($1)
     /* 00613C 01DB1E3C 90010224 */  addiu      $2, $0, 0x190
     /* 006140 01DB1E40 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 006144 01DB1E44 08150010 */  b          .L01DB7268
+    /* 006144 01DB1E44 08150010 */  b          .L.L01DB7268$b
     /* 006148 01DB1E48 00000000 */   nop
   .L01DB1E4C:
     /* 00614C 01DB1E4C 789C848F */  lw         $4, -0x6388($28)
@@ -6548,7 +6568,7 @@ glabel MoveChara__Fv__2
     /* 0061CC 01DB1ECC 00000000 */   nop
     /* 0061D0 01DB1ED0 90010224 */  addiu      $2, $0, 0x190
     /* 0061D4 01DB1ED4 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 0061D8 01DB1ED8 E3140010 */  b          .L01DB7268
+    /* 0061D8 01DB1ED8 E3140010 */  b          .L.L01DB7268$b
     /* 0061DC 01DB1EDC 00000000 */   nop
   .L01DB1EE0:
     /* 0061E0 01DB1EE0 C89C848F */  lw         $4, -0x6338($28)
@@ -6611,7 +6631,7 @@ glabel MoveChara__Fv__2
     /* 0062B8 01DB1FB8 78000224 */  addiu      $2, $0, 0x78
     /* 0062BC 01DB1FBC EA01013C */  lui        $1, %hi(DngMessMan + 0x8)
     /* 0062C0 01DB1FC0 987622AC */  sw         $2, %lo(DngMessMan + 0x8)($1)
-    /* 0062C4 01DB1FC4 A8140010 */  b          .L01DB7268
+    /* 0062C4 01DB1FC4 A8140010 */  b          .L.L01DB7268$b
     /* 0062C8 01DB1FC8 00000000 */   nop
   .L01DB1FCC:
     /* 0062CC 01DB1FCC 089D848F */  lw         $4, -0x62F8($28)
@@ -6623,7 +6643,7 @@ glabel MoveChara__Fv__2
     /* 0062E4 01DB1FE4 00000000 */   nop
     /* 0062E8 01DB1FE8 3DFF0422 */  addi       $4, $16, -0xC3 /* handwritten instruction */
     /* 0062EC 01DB1FEC 0C00812C */  sltiu      $1, $4, 0xC
-    /* 0062F0 01DB1FF0 14002010 */  beqz       $1, .L01DB2044
+    /* 0062F0 01DB1FF0 14002010 */  beqz       $1, .L.L01DB2044$b
     /* 0062F4 01DB1FF4 00000000 */   nop
     /* 0062F8 01DB1FF8 DC01023C */  lui        $2, %hi(LIT_4413)
     /* 0062FC 01DB1FFC 70304324 */  addiu      $3, $2, %lo(LIT_4413)
@@ -6632,6 +6652,7 @@ glabel MoveChara__Fv__2
     /* 006308 01DB2008 0000428C */  lw         $2, 0x0($2)
     /* 00630C 01DB200C 08004000 */  jr         $2
     /* 006310 01DB2010 00000000 */   nop
+  jlabel .L01DB2014
     /* 006314 01DB2014 789C848F */  lw         $4, -0x6388($28)
     /* 006318 01DB2018 282E0072 */  paddub     $5, $16, $0
     /* 00631C 01DB201C 28360070 */  paddub     $6, $0, $0
@@ -6644,7 +6665,8 @@ glabel MoveChara__Fv__2
     /* 006338 01DB2038 FC9D82AF */  sw         $2, -0x6204($28)
     /* 00633C 01DB203C 0F000010 */  b          .L01DB207C
     /* 006340 01DB2040 00000000 */   nop
-  .L01DB2044:
+  jlabel .L01DB2044
+.L.L01DB2044$b:
     /* 006344 01DB2044 A49D848F */  lw         $4, -0x625C($28)
     /* 006348 01DB2048 282E0072 */  paddub     $5, $16, $0
     /* 00634C 01DB204C 9C4E070C */  jal        BtGetAttach_Init__Fii
@@ -6802,7 +6824,7 @@ glabel MoveChara__Fv__2
     /* 006594 01DB2294 786720AC */  sw         $0, (0x1D56778 & 0xFFFF)($1)
     /* 006598 01DB2298 F4010224 */  addiu      $2, $0, 0x1F4
     /* 00659C 01DB229C FC9D82AF */  sw         $2, -0x6204($28)
-    /* 0065A0 01DB22A0 F1130010 */  b          .L01DB7268
+    /* 0065A0 01DB22A0 F1130010 */  b          .L.L01DB7268$b
     /* 0065A4 01DB22A4 00000000 */   nop
   .L01DB22A8:
     /* 0065A8 01DB22A8 3000028E */  lw         $2, 0x30($16)
@@ -6820,7 +6842,7 @@ glabel MoveChara__Fv__2
     /* 0065D8 01DB22D8 02000224 */  addiu      $2, $0, 0x2
     /* 0065DC 01DB22DC D501013C */  lui        $1, (0x1D56764 >> 16)
     /* 0065E0 01DB22E0 646722AC */  sw         $2, (0x1D56764 & 0xFFFF)($1)
-    /* 0065E4 01DB22E4 E0130010 */  b          .L01DB7268
+    /* 0065E4 01DB22E4 E0130010 */  b          .L.L01DB7268$b
     /* 0065E8 01DB22E8 00000000 */   nop
   .L01DB22EC:
     /* 0065EC 01DB22EC CC01023C */  lui        $2, %hi(GamePad)
@@ -6835,7 +6857,7 @@ glabel MoveChara__Fv__2
     /* 006610 01DB2310 01000224 */  addiu      $2, $0, 0x1
     /* 006614 01DB2314 D501013C */  lui        $1, (0x1D56764 >> 16)
     /* 006618 01DB2318 646722AC */  sw         $2, (0x1D56764 & 0xFFFF)($1)
-    /* 00661C 01DB231C D2130010 */  b          .L01DB7268
+    /* 00661C 01DB231C D2130010 */  b          .L.L01DB7268$b
     /* 006620 01DB2320 00000000 */   nop
   .L01DB2324:
     /* 006624 01DB2324 DC01013C */  lui        $1, %hi(BtActStatus + 0x94)
@@ -6910,7 +6932,7 @@ glabel MoveChara__Fv__2
     /* 006734 01DB2434 244520AC */  sw         $0, %lo(BtActStatus + 0xA4)($1)
     /* 006738 01DB2438 0005770C */  jal        ResetMovePower__Fv
     /* 00673C 01DB243C 00000000 */   nop
-    /* 006740 01DB2440 89130010 */  b          .L01DB7268
+    /* 006740 01DB2440 89130010 */  b          .L.L01DB7268$b
     /* 006744 01DB2444 00000000 */   nop
   .L01DB2448:
     /* 006748 01DB2448 CC01023C */  lui        $2, %hi(GamePad)
@@ -6947,7 +6969,7 @@ glabel MoveChara__Fv__2
     /* 0067C4 01DB24C4 987622AC */  sw         $2, %lo(DngMessMan + 0x8)($1)
     /* 0067C8 01DB24C8 5CFA760C */  jal        autoCamTrial__Fv
     /* 0067CC 01DB24CC 00000000 */   nop
-    /* 0067D0 01DB24D0 65130010 */  b          .L01DB7268
+    /* 0067D0 01DB24D0 65130010 */  b          .L.L01DB7268$b
     /* 0067D4 01DB24D4 00000000 */   nop
   .L01DB24D8:
     /* 0067D8 01DB24D8 FFFF0224 */  addiu      $2, $0, -0x1
@@ -7217,7 +7239,7 @@ glabel MoveChara__Fv__2
     /* 006BCC 01DB28CC 588D25AC */  sw         $5, -0x72A8($1)
     /* 006BD0 01DB28D0 01001024 */  addiu      $16, $0, 0x1
   .L01DB28D4:
-    /* 006BD4 01DB28D4 64120016 */  bnez       $16, .L01DB7268
+    /* 006BD4 01DB28D4 64120016 */  bnez       $16, .L.L01DB7268$b
     /* 006BD8 01DB28D8 00000000 */   nop
     /* 006BDC 01DB28DC 35000010 */  b          .L01DB29B4
     /* 006BE0 01DB28E0 00000000 */   nop
@@ -7234,26 +7256,32 @@ glabel MoveChara__Fv__2
     /* 006C08 01DB2908 0000428C */  lw         $2, 0x0($2)
     /* 006C0C 01DB290C 08004000 */  jr         $2
     /* 006C10 01DB2910 00000000 */   nop
+  jlabel .L01DB2914
     /* 006C14 01DB2914 1405090C */  jal        ToanKey_On__Fv
     /* 006C18 01DB2918 00000000 */   nop
     /* 006C1C 01DB291C 25000010 */  b          .L01DB29B4
     /* 006C20 01DB2920 00000000 */   nop
+  jlabel .L01DB2924
     /* 006C24 01DB2924 28F2760C */  jal        BattleActionOn_Jinn__Fv
     /* 006C28 01DB2928 00000000 */   nop
     /* 006C2C 01DB292C 21000010 */  b          .L01DB29B4
     /* 006C30 01DB2930 00000000 */   nop
+  jlabel .L01DB2934
     /* 006C34 01DB2934 1410090C */  jal        GoroKey_On__Fv
     /* 006C38 01DB2938 00000000 */   nop
     /* 006C3C 01DB293C 1D000010 */  b          .L01DB29B4
     /* 006C40 01DB2940 00000000 */   nop
+  jlabel .L01DB2944
     /* 006C44 01DB2944 C0F3760C */  jal        BattleActionOn_Ruby__Fv
     /* 006C48 01DB2948 00000000 */   nop
     /* 006C4C 01DB294C 19000010 */  b          .L01DB29B4
     /* 006C50 01DB2950 00000000 */   nop
+  jlabel .L01DB2954
     /* 006C54 01DB2954 380C090C */  jal        UngagaKey_On__Fv
     /* 006C58 01DB2958 00000000 */   nop
     /* 006C5C 01DB295C 15000010 */  b          .L01DB29B4
     /* 006C60 01DB2960 00000000 */   nop
+  jlabel .L01DB2964
     /* 006C64 01DB2964 DC01013C */  lui        $1, %hi(BtActStatus + 0xA0)
     /* 006C68 01DB2968 2045228C */  lw         $2, %lo(BtActStatus + 0xA0)($1)
     /* 006C6C 01DB296C 03004014 */  bnez       $2, .L01DB297C
@@ -7294,10 +7322,12 @@ glabel MoveChara__Fv__2
     /* 006CEC 01DB29EC 0000428C */  lw         $2, 0x0($2)
     /* 006CF0 01DB29F0 08004000 */  jr         $2
     /* 006CF4 01DB29F4 00000000 */   nop
+  jlabel .L01DB29F8
     /* 006CF8 01DB29F8 A405090C */  jal        ToanKey_Play__Fv
     /* 006CFC 01DB29FC 00000000 */   nop
     /* 006D00 01DB2A00 2E000010 */  b          .L01DB2ABC
     /* 006D04 01DB2A04 00000000 */   nop
+  jlabel .L01DB2A08
     /* 006D08 01DB2A08 EA01023C */  lui        $2, %hi(CharaMain)
     /* 006D0C 01DB2A0C 201D4424 */  addiu      $4, $2, %lo(CharaMain)
     /* 006D10 01DB2A10 282E0070 */  paddub     $5, $0, $0
@@ -7305,10 +7335,12 @@ glabel MoveChara__Fv__2
     /* 006D18 01DB2A18 00000000 */   nop
     /* 006D1C 01DB2A1C 27000010 */  b          .L01DB2ABC
     /* 006D20 01DB2A20 00000000 */   nop
+  jlabel .L01DB2A24
     /* 006D24 01DB2A24 4C10090C */  jal        GoroKey_Play__Fv
     /* 006D28 01DB2A28 00000000 */   nop
     /* 006D2C 01DB2A2C 23000010 */  b          .L01DB2ABC
     /* 006D30 01DB2A30 00000000 */   nop
+  jlabel .L01DB2A34
     /* 006D34 01DB2A34 EA01023C */  lui        $2, %hi(CharaMain)
     /* 006D38 01DB2A38 201D4424 */  addiu      $4, $2, %lo(CharaMain)
     /* 006D3C 01DB2A3C 282E0070 */  paddub     $5, $0, $0
@@ -7316,10 +7348,12 @@ glabel MoveChara__Fv__2
     /* 006D44 01DB2A44 00000000 */   nop
     /* 006D48 01DB2A48 1C000010 */  b          .L01DB2ABC
     /* 006D4C 01DB2A4C 00000000 */   nop
+  jlabel .L01DB2A50
     /* 006D50 01DB2A50 980C090C */  jal        UngagaKey_Play__Fv
     /* 006D54 01DB2A54 00000000 */   nop
     /* 006D58 01DB2A58 18000010 */  b          .L01DB2ABC
     /* 006D5C 01DB2A5C 00000000 */   nop
+  jlabel .L01DB2A60
     /* 006D60 01DB2A60 DC01013C */  lui        $1, %hi(BtActStatus + 0xA0)
     /* 006D64 01DB2A64 2045228C */  lw         $2, %lo(BtActStatus + 0xA0)($1)
     /* 006D68 01DB2A68 04004014 */  bnez       $2, .L01DB2A7C
@@ -7780,7 +7814,7 @@ glabel MoveChara__Fv__2
     /* 007454 01DB3154 646722AC */  sw         $2, (0x1D56764 & 0xFFFF)($1)
     /* 007458 01DB3158 D501013C */  lui        $1, (0x1D567F4 >> 16)
     /* 00745C 01DB315C F46720AC */  sw         $0, (0x1D567F4 & 0xFFFF)($1)
-    /* 007460 01DB3160 41100010 */  b          .L01DB7268
+    /* 007460 01DB3160 41100010 */  b          .L.L01DB7268$b
     /* 007464 01DB3164 00000000 */   nop
   .L01DB3168:
     /* 007468 01DB3168 B8EF760C */  jal        BattleActionThlow__Fv
@@ -8024,7 +8058,7 @@ glabel MoveChara__Fv__2
     /* 0077E8 01DB34E8 00000000 */   nop
     /* 0077EC 01DB34EC C8000224 */  addiu      $2, $0, 0xC8
     /* 0077F0 01DB34F0 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 0077F4 01DB34F4 5C0F0010 */  b          .L01DB7268
+    /* 0077F4 01DB34F4 5C0F0010 */  b          .L.L01DB7268$b
     /* 0077F8 01DB34F8 00000000 */   nop
   .L01DB34FC:
     /* 0077FC 01DB34FC DC01013C */  lui        $1, %hi(BtActStatus + 0x10)
@@ -8875,7 +8909,7 @@ glabel MoveChara__Fv__2
     /* 00846C 01DB416C 00000000 */   nop
     /* 008470 01DB4170 F4010224 */  addiu      $2, $0, 0x1F4
     /* 008474 01DB4174 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 008478 01DB4178 3B0C0010 */  b          .L01DB7268
+    /* 008478 01DB4178 3B0C0010 */  b          .L.L01DB7268$b
     /* 00847C 01DB417C 00000000 */   nop
   .L01DB4180:
     /* 008480 01DB4180 EA01013C */  lui        $1, %hi(CharaMain + 0x2F0)
@@ -9207,7 +9241,7 @@ glabel MoveChara__Fv__2
   .L01DB4660:
     /* 008960 01DB4660 0A000224 */  addiu      $2, $0, 0xA
     /* 008964 01DB4664 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 008968 01DB4668 FF0A0010 */  b          .L01DB7268
+    /* 008968 01DB4668 FF0A0010 */  b          .L.L01DB7268$b
     /* 00896C 01DB466C 00000000 */   nop
   .L01DB4670:
     /* 008970 01DB4670 000021C6 */  lwc1       $f1, 0x0($17)
@@ -9355,16 +9389,16 @@ glabel MoveChara__Fv__2
   .L01DB48A0:
     /* 008BA0 01DB48A0 5CFA760C */  jal        autoCamTrial__Fv
     /* 008BA4 01DB48A4 00000000 */   nop
-    /* 008BA8 01DB48A8 6F0A0010 */  b          .L01DB7268
+    /* 008BA8 01DB48A8 6F0A0010 */  b          .L.L01DB7268$b
     /* 008BAC 01DB48AC 00000000 */   nop
   .L01DB48B0:
     /* 008BB0 01DB48B0 FC9D84AF */  sw         $4, -0x6204($28)
-    /* 008BB4 01DB48B4 6C0A0010 */  b          .L01DB7268
+    /* 008BB4 01DB48B4 6C0A0010 */  b          .L.L01DB7268$b
     /* 008BB8 01DB48B8 00000000 */   nop
   .L01DB48BC:
     /* 008BBC 01DB48BC 0426060C */  jal        EdFadeOutCheck__Fv
     /* 008BC0 01DB48C0 00000000 */   nop
-    /* 008BC4 01DB48C4 680A4010 */  beqz       $2, .L01DB7268
+    /* 008BC4 01DB48C4 680A4010 */  beqz       $2, .L.L01DB7268$b
     /* 008BC8 01DB48C8 00000000 */   nop
     /* 008BCC 01DB48CC E89D918F */  lw         $17, -0x6218($28)
     /* 008BD0 01DB48D0 28860070 */  paddub     $16, $0, $0
@@ -9391,7 +9425,7 @@ glabel MoveChara__Fv__2
     /* 008C1C 01DB491C 749D80AF */  sw         $0, -0x628C($28)
     /* 008C20 01DB4920 90010224 */  addiu      $2, $0, 0x190
     /* 008C24 01DB4924 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 008C28 01DB4928 4F0A0010 */  b          .L01DB7268
+    /* 008C28 01DB4928 4F0A0010 */  b          .L.L01DB7268$b
     /* 008C2C 01DB492C 00000000 */   nop
   .L01DB4930:
     /* 008C30 01DB4930 38FF760C */  jal        LockOffTargte__Fv
@@ -9530,13 +9564,13 @@ glabel MoveChara__Fv__2
     /* 008E34 01DB4B34 78ED060C */  jal        BtSystemScriptAfter__Fv
     /* 008E38 01DB4B38 00000000 */   nop
     /* 008E3C 01DB4B3C FC9D80AF */  sw         $0, -0x6204($28)
-    /* 008E40 01DB4B40 C9090010 */  b          .L01DB7268
+    /* 008E40 01DB4B40 C9090010 */  b          .L.L01DB7268$b
     /* 008E44 01DB4B44 00000000 */   nop
   .L01DB4B48:
     /* 008E48 01DB4B48 FC9D828F */  lw         $2, -0x6204($28)
     /* 008E4C 01DB4B4C 01004224 */  addiu      $2, $2, 0x1
     /* 008E50 01DB4B50 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 008E54 01DB4B54 C4090010 */  b          .L01DB7268
+    /* 008E54 01DB4B54 C4090010 */  b          .L.L01DB7268$b
     /* 008E58 01DB4B58 00000000 */   nop
   .L01DB4B5C:
     /* 008E5C 01DB4B5C A89C848F */  lw         $4, -0x6358($28)
@@ -9591,7 +9625,7 @@ glabel MoveChara__Fv__2
     /* 008F1C 01DB4C1C D501013C */  lui        $1, (0x1D567D8 >> 16)
     /* 008F20 01DB4C20 D867248C */  lw         $4, (0x1D567D8 & 0xFFFF)($1)
     /* 008F24 01DB4C24 0700812C */  sltiu      $1, $4, 0x7
-    /* 008F28 01DB4C28 8F092010 */  beqz       $1, .L01DB7268
+    /* 008F28 01DB4C28 8F092010 */  beqz       $1, .L.L01DB7268$b
     /* 008F2C 01DB4C2C 00000000 */   nop
     /* 008F30 01DB4C30 DC01023C */  lui        $2, %hi(LIT_4416)
     /* 008F34 01DB4C34 10304324 */  addiu      $3, $2, %lo(LIT_4416)
@@ -9600,20 +9634,23 @@ glabel MoveChara__Fv__2
     /* 008F40 01DB4C40 0000428C */  lw         $2, 0x0($2)
     /* 008F44 01DB4C44 08004000 */  jr         $2
     /* 008F48 01DB4C48 00000000 */   nop
+  jlabel .L01DB4C4C
     /* 008F4C 01DB4C4C D501013C */  lui        $1, (0x1D567D8 >> 16)
     /* 008F50 01DB4C50 D86720AC */  sw         $0, (0x1D567D8 & 0xFFFF)($1)
     /* 008F54 01DB4C54 004D070C */  jal        BtMiniItemSelect__Fv
     /* 008F58 01DB4C58 00000000 */   nop
     /* 008F5C 01DB4C5C 9A010224 */  addiu      $2, $0, 0x19A
     /* 008F60 01DB4C60 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 008F64 01DB4C64 80090010 */  b          .L01DB7268
+    /* 008F64 01DB4C64 80090010 */  b          .L.L01DB7268$b
     /* 008F68 01DB4C68 00000000 */   nop
+  jlabel .L01DB4C6C
     /* 008F6C 01DB4C6C D501013C */  lui        $1, (0x1D567D8 >> 16)
     /* 008F70 01DB4C70 D86720AC */  sw         $0, (0x1D567D8 & 0xFFFF)($1)
     /* 008F74 01DB4C74 A0000224 */  addiu      $2, $0, 0xA0
     /* 008F78 01DB4C78 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 008F7C 01DB4C7C 7A090010 */  b          .L01DB7268
+    /* 008F7C 01DB4C7C 7A090010 */  b          .L.L01DB7268$b
     /* 008F80 01DB4C80 00000000 */   nop
+  jlabel .L01DB4C84
     /* 008F84 01DB4C84 D501013C */  lui        $1, (0x1D567D8 >> 16)
     /* 008F88 01DB4C88 D86720AC */  sw         $0, (0x1D567D8 & 0xFFFF)($1)
     /* 008F8C 01DB4C8C 17000424 */  addiu      $4, $0, 0x17
@@ -9623,8 +9660,9 @@ glabel MoveChara__Fv__2
     /* 008F9C 01DB4C9C 00000000 */   nop
     /* 008FA0 01DB4CA0 04000224 */  addiu      $2, $0, 0x4
     /* 008FA4 01DB4CA4 6C9D82AF */  sw         $2, -0x6294($28)
-    /* 008FA8 01DB4CA8 6F090010 */  b          .L01DB7268
+    /* 008FA8 01DB4CA8 6F090010 */  b          .L.L01DB7268$b
     /* 008FAC 01DB4CAC 00000000 */   nop
+  jlabel .L01DB4CB0
     /* 008FB0 01DB4CB0 D501013C */  lui        $1, (0x1D567D8 >> 16)
     /* 008FB4 01DB4CB4 D86720AC */  sw         $0, (0x1D567D8 & 0xFFFF)($1)
     /* 008FB8 01DB4CB8 EB01023C */  lui        $2, %hi(DngMes2)
@@ -9636,8 +9674,9 @@ glabel MoveChara__Fv__2
     /* 008FD0 01DB4CD0 00000000 */   nop
     /* 008FD4 01DB4CD4 07000224 */  addiu      $2, $0, 0x7
     /* 008FD8 01DB4CD8 6C9D82AF */  sw         $2, -0x6294($28)
-    /* 008FDC 01DB4CDC 62090010 */  b          .L01DB7268
+    /* 008FDC 01DB4CDC 62090010 */  b          .L.L01DB7268$b
     /* 008FE0 01DB4CE0 00000000 */   nop
+  jlabel .L01DB4CE4
     /* 008FE4 01DB4CE4 D501013C */  lui        $1, (0x1D567D8 >> 16)
     /* 008FE8 01DB4CE8 D86720AC */  sw         $0, (0x1D567D8 & 0xFFFF)($1)
     /* 008FEC 01DB4CEC 78ED060C */  jal        BtSystemScriptAfter__Fv
@@ -9712,8 +9751,9 @@ glabel MoveChara__Fv__2
     /* 0090F8 01DB4DF8 882F4424 */  addiu      $4, $2, %lo(LIT_4407)
     /* 0090FC 01DB4DFC A611040C */  jal        printf
     /* 009100 01DB4E00 00000000 */   nop
-    /* 009104 01DB4E04 18090010 */  b          .L01DB7268
+    /* 009104 01DB4E04 18090010 */  b          .L.L01DB7268$b
     /* 009108 01DB4E08 00000000 */   nop
+  jlabel .L01DB4E0C
     /* 00910C 01DB4E0C D501013C */  lui        $1, (0x1D567D8 >> 16)
     /* 009110 01DB4E10 D86720AC */  sw         $0, (0x1D567D8 & 0xFFFF)($1)
     /* 009114 01DB4E14 78ED060C */  jal        BtSystemScriptAfter__Fv
@@ -9724,12 +9764,12 @@ glabel MoveChara__Fv__2
     /* 009128 01DB4E28 6C6722AC */  sw         $2, (0x1D5676C & 0xFFFF)($1)
     /* 00912C 01DB4E2C 90010224 */  addiu      $2, $0, 0x190
     /* 009130 01DB4E30 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 009134 01DB4E34 0C090010 */  b          .L01DB7268
+    /* 009134 01DB4E34 0C090010 */  b          .L.L01DB7268$b
     /* 009138 01DB4E38 00000000 */   nop
   .L01DB4E3C:
     /* 00913C 01DB4E3C 104D070C */  jal        BtMiniItemSelect_Loop__Fv
     /* 009140 01DB4E40 00000000 */   nop
-    /* 009144 01DB4E44 08094010 */  beqz       $2, .L01DB7268
+    /* 009144 01DB4E44 08094010 */  beqz       $2, .L.L01DB7268$b
     /* 009148 01DB4E48 00000000 */   nop
     /* 00914C 01DB4E4C 91010224 */  addiu      $2, $0, 0x191
     /* 009150 01DB4E50 FC9D82AF */  sw         $2, -0x6204($28)
@@ -9740,7 +9780,7 @@ glabel MoveChara__Fv__2
     /* 009164 01DB4E64 9C9222AC */  sw         $2, %lo(DngMes2 + 0x16BC)($1)
     /* 009168 01DB4E68 EC01013C */  lui        $1, %hi(DngMesStb + 0x16BC)
     /* 00916C 01DB4E6C 5CAA22AC */  sw         $2, %lo(DngMesStb + 0x16BC)($1)
-    /* 009170 01DB4E70 FD080010 */  b          .L01DB7268
+    /* 009170 01DB4E70 FD080010 */  b          .L.L01DB7268$b
     /* 009174 01DB4E74 00000000 */   nop
   .L01DB4E78:
     /* 009178 01DB4E78 C49C858F */  lw         $5, -0x633C($28)
@@ -9913,7 +9953,7 @@ glabel MoveChara__Fv__2
   .L01DB50F8:
     /* 0093F8 01DB50F8 91010224 */  addiu      $2, $0, 0x191
     /* 0093FC 01DB50FC FC9D82AF */  sw         $2, -0x6204($28)
-    /* 009400 01DB5100 59080010 */  b          .L01DB7268
+    /* 009400 01DB5100 59080010 */  b          .L.L01DB7268$b
     /* 009404 01DB5104 00000000 */   nop
   .L01DB5108:
     /* 009408 01DB5108 01000224 */  addiu      $2, $0, 0x1
@@ -9932,7 +9972,7 @@ glabel MoveChara__Fv__2
     /* 00943C 01DB513C FC9D828F */  lw         $2, -0x6204($28)
     /* 009440 01DB5140 01004224 */  addiu      $2, $2, 0x1
     /* 009444 01DB5144 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 009448 01DB5148 47080010 */  b          .L01DB7268
+    /* 009448 01DB5148 47080010 */  b          .L.L01DB7268$b
     /* 00944C 01DB514C 00000000 */   nop
   .L01DB5150:
     /* 009450 01DB5150 F0D1060C */  jal        DebugInfomationIF__Fv
@@ -9961,7 +10001,7 @@ glabel MoveChara__Fv__2
     /* 0094AC 01DB51AC 28000324 */  addiu      $3, $0, 0x28
     /* 0094B0 01DB51B0 03004310 */  beq        $2, $3, .L01DB51C0
     /* 0094B4 01DB51B4 00000000 */   nop
-    /* 0094B8 01DB51B8 2B080010 */  b          .L01DB7268
+    /* 0094B8 01DB51B8 2B080010 */  b          .L.L01DB7268$b
     /* 0094BC 01DB51BC 00000000 */   nop
   .L01DB51C0:
     /* 0094C0 01DB51C0 CC01023C */  lui        $2, %hi(GamePad)
@@ -9974,7 +10014,7 @@ glabel MoveChara__Fv__2
     /* 0094DC 01DB51DC FC9D828F */  lw         $2, -0x6204($28)
     /* 0094E0 01DB51E0 01004224 */  addiu      $2, $2, 0x1
     /* 0094E4 01DB51E4 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 0094E8 01DB51E8 1F080010 */  b          .L01DB7268
+    /* 0094E8 01DB51E8 1F080010 */  b          .L.L01DB7268$b
     /* 0094EC 01DB51EC 00000000 */   nop
   .L01DB51F0:
     /* 0094F0 01DB51F0 CC01023C */  lui        $2, %hi(GamePad)
@@ -9986,7 +10026,7 @@ glabel MoveChara__Fv__2
     /* 009508 01DB5208 E49C80AF */  sw         $0, -0x631C($28)
     /* 00950C 01DB520C E3000224 */  addiu      $2, $0, 0xE3
     /* 009510 01DB5210 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 009514 01DB5214 14080010 */  b          .L01DB7268
+    /* 009514 01DB5214 14080010 */  b          .L.L01DB7268$b
     /* 009518 01DB5218 00000000 */   nop
   .L01DB521C:
     /* 00951C 01DB521C CC01023C */  lui        $2, %hi(GamePad)
@@ -9998,7 +10038,7 @@ glabel MoveChara__Fv__2
     /* 009534 01DB5234 E49C80AF */  sw         $0, -0x631C($28)
     /* 009538 01DB5238 E4000224 */  addiu      $2, $0, 0xE4
     /* 00953C 01DB523C FC9D82AF */  sw         $2, -0x6204($28)
-    /* 009540 01DB5240 09080010 */  b          .L01DB7268
+    /* 009540 01DB5240 09080010 */  b          .L.L01DB7268$b
     /* 009544 01DB5244 00000000 */   nop
   .L01DB5248:
     /* 009548 01DB5248 CC01023C */  lui        $2, %hi(GamePad)
@@ -10009,7 +10049,7 @@ glabel MoveChara__Fv__2
     /* 00955C 01DB525C EC9C80AF */  sw         $0, -0x6314($28)
     /* 009560 01DB5260 E49C80AF */  sw         $0, -0x631C($28)
     /* 009564 01DB5264 FC9D80AF */  sw         $0, -0x6204($28)
-    /* 009568 01DB5268 FF070010 */  b          .L01DB7268
+    /* 009568 01DB5268 FF070010 */  b          .L.L01DB7268$b
     /* 00956C 01DB526C 00000000 */   nop
   .L01DB5270:
     /* 009570 01DB5270 CC01023C */  lui        $2, %hi(GamePad)
@@ -10023,7 +10063,7 @@ glabel MoveChara__Fv__2
     /* 009590 01DB5290 A064228C */  lw         $2, (0x1D564A0 & 0xFFFF)($1)
     /* 009594 01DB5294 DC9C82AF */  sw         $2, -0x6324($28)
     /* 009598 01DB5298 FC9D80AF */  sw         $0, -0x6204($28)
-    /* 00959C 01DB529C F2070010 */  b          .L01DB7268
+    /* 00959C 01DB529C F2070010 */  b          .L.L01DB7268$b
     /* 0095A0 01DB52A0 00000000 */   nop
   .L01DB52A4:
     /* 0095A4 01DB52A4 CC01023C */  lui        $2, %hi(GamePad)
@@ -10070,7 +10110,7 @@ glabel MoveChara__Fv__2
     /* 00963C 01DB533C EC9C80AF */  sw         $0, -0x6314($28)
     /* 009640 01DB5340 E49C80AF */  sw         $0, -0x631C($28)
     /* 009644 01DB5344 FC9D80AF */  sw         $0, -0x6204($28)
-    /* 009648 01DB5348 C7070010 */  b          .L01DB7268
+    /* 009648 01DB5348 C7070010 */  b          .L.L01DB7268$b
     /* 00964C 01DB534C 00000000 */   nop
   .L01DB5350:
     /* 009650 01DB5350 CC01023C */  lui        $2, %hi(GamePad)
@@ -10083,7 +10123,7 @@ glabel MoveChara__Fv__2
     /* 00966C 01DB536C FC9D828F */  lw         $2, -0x6204($28)
     /* 009670 01DB5370 01004224 */  addiu      $2, $2, 0x1
     /* 009674 01DB5374 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 009678 01DB5378 BB070010 */  b          .L01DB7268
+    /* 009678 01DB5378 BB070010 */  b          .L.L01DB7268$b
     /* 00967C 01DB537C 00000000 */   nop
   .L01DB5380:
     /* 009680 01DB5380 CC01023C */  lui        $2, %hi(GamePad)
@@ -10102,6 +10142,7 @@ glabel MoveChara__Fv__2
     /* 0096B4 01DB53B4 0000428C */  lw         $2, 0x0($2)
     /* 0096B8 01DB53B8 08004000 */  jr         $2
     /* 0096BC 01DB53BC 00000000 */   nop
+  jlabel .L01DB53C0
     /* 0096C0 01DB53C0 789C838F */  lw         $3, -0x6388($28)
     /* 0096C4 01DB53C4 04006280 */  lb         $2, 0x4($3)
     /* 0096C8 01DB53C8 80100200 */  sll        $2, $2, 2
@@ -10114,26 +10155,31 @@ glabel MoveChara__Fv__2
     /* 0096E4 01DB53E4 E04240A4 */  sh         $0, 0x42E0($2)
     /* 0096E8 01DB53E8 18000010 */  b          .L01DB544C
     /* 0096EC 01DB53EC 00000000 */   nop
+  jlabel .L01DB53F0
     /* 0096F0 01DB53F0 04000424 */  addiu      $4, $0, 0x4
     /* 0096F4 01DB53F4 ECC6060C */  jal        BtSetStatusErr__Fi
     /* 0096F8 01DB53F8 00000000 */   nop
     /* 0096FC 01DB53FC 13000010 */  b          .L01DB544C
     /* 009700 01DB5400 00000000 */   nop
+  jlabel .L01DB5404
     /* 009704 01DB5404 08000424 */  addiu      $4, $0, 0x8
     /* 009708 01DB5408 ECC6060C */  jal        BtSetStatusErr__Fi
     /* 00970C 01DB540C 00000000 */   nop
     /* 009710 01DB5410 0E000010 */  b          .L01DB544C
     /* 009714 01DB5414 00000000 */   nop
+  jlabel .L01DB5418
     /* 009718 01DB5418 10000424 */  addiu      $4, $0, 0x10
     /* 00971C 01DB541C ECC6060C */  jal        BtSetStatusErr__Fi
     /* 009720 01DB5420 00000000 */   nop
     /* 009724 01DB5424 09000010 */  b          .L01DB544C
     /* 009728 01DB5428 00000000 */   nop
+  jlabel .L01DB542C
     /* 00972C 01DB542C 20000424 */  addiu      $4, $0, 0x20
     /* 009730 01DB5430 ECC6060C */  jal        BtSetStatusErr__Fi
     /* 009734 01DB5434 00000000 */   nop
     /* 009738 01DB5438 04000010 */  b          .L01DB544C
     /* 00973C 01DB543C 00000000 */   nop
+  jlabel .L01DB5440
     /* 009740 01DB5440 40000424 */  addiu      $4, $0, 0x40
     /* 009744 01DB5444 ECC6060C */  jal        BtSetStatusErr__Fi
     /* 009748 01DB5448 00000000 */   nop
@@ -10142,7 +10188,7 @@ glabel MoveChara__Fv__2
     /* 009750 01DB5450 EC9C80AF */  sw         $0, -0x6314($28)
     /* 009754 01DB5454 E49C80AF */  sw         $0, -0x631C($28)
     /* 009758 01DB5458 FC9D80AF */  sw         $0, -0x6204($28)
-    /* 00975C 01DB545C 82070010 */  b          .L01DB7268
+    /* 00975C 01DB545C 82070010 */  b          .L.L01DB7268$b
     /* 009760 01DB5460 00000000 */   nop
   .L01DB5464:
     /* 009764 01DB5464 D501013C */  lui        $1, (0x1D5648C >> 16)
@@ -10160,7 +10206,7 @@ glabel MoveChara__Fv__2
     /* 009794 01DB5494 00000000 */   nop
     /* 009798 01DB5498 90010224 */  addiu      $2, $0, 0x190
     /* 00979C 01DB549C FC9D82AF */  sw         $2, -0x6204($28)
-    /* 0097A0 01DB54A0 71070010 */  b          .L01DB7268
+    /* 0097A0 01DB54A0 71070010 */  b          .L.L01DB7268$b
     /* 0097A4 01DB54A4 00000000 */   nop
   .L01DB54A8:
     /* 0097A8 01DB54A8 C49C858F */  lw         $5, -0x633C($28)
@@ -10205,7 +10251,7 @@ glabel MoveChara__Fv__2
     /* 00983C 01DB553C F05F070C */  jal        ArrangementPos__12CMonstorUnitFP11CDungeonMapiii
     /* 009840 01DB5540 00000000 */   nop
     /* 009844 01DB5544 FC9D80AF */  sw         $0, -0x6204($28)
-    /* 009848 01DB5548 47070010 */  b          .L01DB7268
+    /* 009848 01DB5548 47070010 */  b          .L.L01DB7268$b
     /* 00984C 01DB554C 00000000 */   nop
   .L01DB5550:
     /* 009850 01DB5550 C49C858F */  lw         $5, -0x633C($28)
@@ -10251,7 +10297,7 @@ glabel MoveChara__Fv__2
     /* 0098E8 01DB55E8 F05F070C */  jal        ArrangementPos__12CMonstorUnitFP11CDungeonMapiii
     /* 0098EC 01DB55EC 00000000 */   nop
     /* 0098F0 01DB55F0 FC9D80AF */  sw         $0, -0x6204($28)
-    /* 0098F4 01DB55F4 1C070010 */  b          .L01DB7268
+    /* 0098F4 01DB55F4 1C070010 */  b          .L.L01DB7268$b
     /* 0098F8 01DB55F8 00000000 */   nop
   .L01DB55FC:
     /* 0098FC 01DB55FC CC01023C */  lui        $2, %hi(GamePad)
@@ -10259,7 +10305,7 @@ glabel MoveChara__Fv__2
     /* 009904 01DB5604 00080524 */  addiu      $5, $0, 0x800
     /* 009908 01DB5608 1CAE040C */  jal        Down__8CGamePadFi
     /* 00990C 01DB560C 00000000 */   nop
-    /* 009910 01DB5610 15074010 */  beqz       $2, .L01DB7268
+    /* 009910 01DB5610 15074010 */  beqz       $2, .L.L01DB7268$b
     /* 009914 01DB5614 00000000 */   nop
     /* 009918 01DB5618 749D80AF */  sw         $0, -0x628C($28)
     /* 00991C 01DB561C D49D80AF */  sw         $0, -0x622C($28)
@@ -10278,11 +10324,11 @@ glabel MoveChara__Fv__2
     /* 009950 01DB5650 00000000 */   nop
     /* 009954 01DB5654 0A000224 */  addiu      $2, $0, 0xA
     /* 009958 01DB5658 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 00995C 01DB565C 02070010 */  b          .L01DB7268
+    /* 00995C 01DB565C 02070010 */  b          .L.L01DB7268$b
     /* 009960 01DB5660 00000000 */   nop
   .L01DB5664:
     /* 009964 01DB5664 FC9D80AF */  sw         $0, -0x6204($28)
-    /* 009968 01DB5668 FF060010 */  b          .L01DB7268
+    /* 009968 01DB5668 FF060010 */  b          .L.L01DB7268$b
     /* 00996C 01DB566C 00000000 */   nop
   .L01DB5670:
     /* 009970 01DB5670 00608044 */  mtc1       $0, $f12
@@ -10301,7 +10347,7 @@ glabel MoveChara__Fv__2
     /* 0099A4 01DB56A4 FC9D828F */  lw         $2, -0x6204($28)
     /* 0099A8 01DB56A8 01004224 */  addiu      $2, $2, 0x1
     /* 0099AC 01DB56AC FC9D82AF */  sw         $2, -0x6204($28)
-    /* 0099B0 01DB56B0 ED060010 */  b          .L01DB7268
+    /* 0099B0 01DB56B0 ED060010 */  b          .L.L01DB7268$b
     /* 0099B4 01DB56B4 00000000 */   nop
   .L01DB56B8:
     /* 0099B8 01DB56B8 5CFA760C */  jal        autoCamTrial__Fv
@@ -10315,7 +10361,7 @@ glabel MoveChara__Fv__2
     /* 0099D8 01DB56D8 00000000 */  nop
     /* 0099DC 01DB56DC 34000146 */  c.lt.s     $f0, $f1
     /* 0099E0 01DB56E0 00000000 */  nop
-    /* 0099E4 01DB56E4 E0060145 */  bc1t       .L01DB7268
+    /* 0099E4 01DB56E4 E0060145 */  bc1t       .L.L01DB7268$b
     /* 0099E8 01DB56E8 00000000 */   nop
     /* 0099EC 01DB56EC 20030424 */  addiu      $4, $0, 0x320
     /* 0099F0 01DB56F0 FFFF0524 */  addiu      $5, $0, -0x1
@@ -10323,7 +10369,7 @@ glabel MoveChara__Fv__2
     /* 0099F8 01DB56F8 00000000 */   nop
     /* 0099FC 01DB56FC 01000224 */  addiu      $2, $0, 0x1
     /* 009A00 01DB5700 009E82AF */  sw         $2, -0x6200($28)
-    /* 009A04 01DB5704 D8060010 */  b          .L01DB7268
+    /* 009A04 01DB5704 D8060010 */  b          .L.L01DB7268$b
     /* 009A08 01DB5708 00000000 */   nop
   .L01DB570C:
     /* 009A0C 01DB570C FC4E070C */  jal        BtEscape_Init__Fv
@@ -10331,12 +10377,12 @@ glabel MoveChara__Fv__2
     /* 009A14 01DB5714 FC9D828F */  lw         $2, -0x6204($28)
     /* 009A18 01DB5718 01004224 */  addiu      $2, $2, 0x1
     /* 009A1C 01DB571C FC9D82AF */  sw         $2, -0x6204($28)
-    /* 009A20 01DB5720 D1060010 */  b          .L01DB7268
+    /* 009A20 01DB5720 D1060010 */  b          .L.L01DB7268$b
     /* 009A24 01DB5724 00000000 */   nop
   .L01DB5728:
     /* 009A28 01DB5728 504F070C */  jal        BtEscape_Loop__Fv
     /* 009A2C 01DB572C 00000000 */   nop
-    /* 009A30 01DB5730 CD064010 */  beqz       $2, .L01DB7268
+    /* 009A30 01DB5730 CD064010 */  beqz       $2, .L.L01DB7268$b
     /* 009A34 01DB5734 00000000 */   nop
     /* 009A38 01DB5738 0043023C */  lui        $2, (0x43000000 >> 16)
     /* 009A3C 01DB573C 00608244 */  mtc1       $2, $f12
@@ -10346,7 +10392,7 @@ glabel MoveChara__Fv__2
     /* 009A4C 01DB574C 00000000 */   nop
     /* 009A50 01DB5750 B0000224 */  addiu      $2, $0, 0xB0
     /* 009A54 01DB5754 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 009A58 01DB5758 C3060010 */  b          .L01DB7268
+    /* 009A58 01DB5758 C3060010 */  b          .L.L01DB7268$b
     /* 009A5C 01DB575C 00000000 */   nop
   .L01DB5760:
     /* 009A60 01DB5760 00608044 */  mtc1       $0, $f12
@@ -10365,7 +10411,7 @@ glabel MoveChara__Fv__2
     /* 009A94 01DB5794 FC9D828F */  lw         $2, -0x6204($28)
     /* 009A98 01DB5798 01004224 */  addiu      $2, $2, 0x1
     /* 009A9C 01DB579C FC9D82AF */  sw         $2, -0x6204($28)
-    /* 009AA0 01DB57A0 B1060010 */  b          .L01DB7268
+    /* 009AA0 01DB57A0 B1060010 */  b          .L.L01DB7268$b
     /* 009AA4 01DB57A4 00000000 */   nop
   .L01DB57A8:
     /* 009AA8 01DB57A8 5CFA760C */  jal        autoCamTrial__Fv
@@ -10379,7 +10425,7 @@ glabel MoveChara__Fv__2
     /* 009AC8 01DB57C8 00000000 */  nop
     /* 009ACC 01DB57CC 34000146 */  c.lt.s     $f0, $f1
     /* 009AD0 01DB57D0 00000000 */  nop
-    /* 009AD4 01DB57D4 A4060145 */  bc1t       .L01DB7268
+    /* 009AD4 01DB57D4 A4060145 */  bc1t       .L.L01DB7268$b
     /* 009AD8 01DB57D8 00000000 */   nop
     /* 009ADC 01DB57DC A49D848F */  lw         $4, -0x625C($28)
     /* 009AE0 01DB57E0 0700812C */  sltiu      $1, $4, 0x7
@@ -10392,24 +10438,31 @@ glabel MoveChara__Fv__2
     /* 009AFC 01DB57FC 0000428C */  lw         $2, 0x0($2)
     /* 009B00 01DB5800 08004000 */  jr         $2
     /* 009B04 01DB5804 00000000 */   nop
+  jlabel .L01DB5808
     /* 009B08 01DB5808 28860070 */  paddub     $16, $0, $0
     /* 009B0C 01DB580C 11000010 */  b          .L01DB5854
     /* 009B10 01DB5810 00000000 */   nop
+  jlabel .L01DB5814
     /* 009B14 01DB5814 01001024 */  addiu      $16, $0, 0x1
     /* 009B18 01DB5818 0E000010 */  b          .L01DB5854
     /* 009B1C 01DB581C 00000000 */   nop
+  jlabel .L01DB5820
     /* 009B20 01DB5820 13001024 */  addiu      $16, $0, 0x13
     /* 009B24 01DB5824 0B000010 */  b          .L01DB5854
     /* 009B28 01DB5828 00000000 */   nop
+  jlabel .L01DB582C
     /* 009B2C 01DB582C 2A001024 */  addiu      $16, $0, 0x2A
     /* 009B30 01DB5830 08000010 */  b          .L01DB5854
     /* 009B34 01DB5834 00000000 */   nop
+  jlabel .L01DB5838
     /* 009B38 01DB5838 17001024 */  addiu      $16, $0, 0x17
     /* 009B3C 01DB583C 05000010 */  b          .L01DB5854
     /* 009B40 01DB5840 00000000 */   nop
+  jlabel .L01DB5844
     /* 009B44 01DB5844 26001024 */  addiu      $16, $0, 0x26
     /* 009B48 01DB5848 02000010 */  b          .L01DB5854
     /* 009B4C 01DB584C 00000000 */   nop
+  jlabel .L01DB5850
     /* 009B50 01DB5850 3C001024 */  addiu      $16, $0, 0x3C
   .L01DB5854:
     /* 009B54 01DB5854 28260072 */  paddub     $4, $16, $0
@@ -10418,7 +10471,7 @@ glabel MoveChara__Fv__2
     /* 009B60 01DB5860 00000000 */   nop
     /* 009B64 01DB5864 02000224 */  addiu      $2, $0, 0x2
     /* 009B68 01DB5868 009E82AF */  sw         $2, -0x6200($28)
-    /* 009B6C 01DB586C 7E060010 */  b          .L01DB7268
+    /* 009B6C 01DB586C 7E060010 */  b          .L.L01DB7268$b
     /* 009B70 01DB5870 00000000 */   nop
   .L01DB5874:
     /* 009B74 01DB5874 9C9C838F */  lw         $3, -0x6364($28)
@@ -10441,7 +10494,7 @@ glabel MoveChara__Fv__2
   .L01DB58B8:
     /* 009BB8 01DB58B8 5CFA760C */  jal        autoCamTrial__Fv
     /* 009BBC 01DB58BC 00000000 */   nop
-    /* 009BC0 01DB58C0 69060010 */  b          .L01DB7268
+    /* 009BC0 01DB58C0 69060010 */  b          .L.L01DB7268$b
     /* 009BC4 01DB58C4 00000000 */   nop
   .L01DB58C8:
     /* 009BC8 01DB58C8 A84D070C */  jal        BtGetGateKey_Loop__Fv
@@ -10452,15 +10505,15 @@ glabel MoveChara__Fv__2
   .L01DB58DC:
     /* 009BDC 01DB58DC 5CFA760C */  jal        autoCamTrial__Fv
     /* 009BE0 01DB58E0 00000000 */   nop
-    /* 009BE4 01DB58E4 60060010 */  b          .L01DB7268
+    /* 009BE4 01DB58E4 60060010 */  b          .L.L01DB7268$b
     /* 009BE8 01DB58E8 00000000 */   nop
   .L01DB58EC:
     /* 009BEC 01DB58EC C04E070C */  jal        BtGetAttach_Loop__Fv
     /* 009BF0 01DB58F0 00000000 */   nop
-    /* 009BF4 01DB58F4 5C064010 */  beqz       $2, .L01DB7268
+    /* 009BF4 01DB58F4 5C064010 */  beqz       $2, .L.L01DB7268$b
     /* 009BF8 01DB58F8 00000000 */   nop
     /* 009BFC 01DB58FC FC9D80AF */  sw         $0, -0x6204($28)
-    /* 009C00 01DB5900 59060010 */  b          .L01DB7268
+    /* 009C00 01DB5900 59060010 */  b          .L.L01DB7268$b
     /* 009C04 01DB5904 00000000 */   nop
   .L01DB5908:
     /* 009C08 01DB5908 F805770C */  jal        EyeCamera__Fv
@@ -10487,7 +10540,7 @@ glabel MoveChara__Fv__2
     /* 009C5C 01DB595C 00000000 */   nop
     /* 009C60 01DB5960 9B000224 */  addiu      $2, $0, 0x9B
     /* 009C64 01DB5964 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 009C68 01DB5968 3F060010 */  b          .L01DB7268
+    /* 009C68 01DB5968 3F060010 */  b          .L.L01DB7268$b
     /* 009C6C 01DB596C 00000000 */   nop
   .L01DB5970:
     /* 009C70 01DB5970 04000424 */  addiu      $4, $0, 0x4
@@ -11023,7 +11076,7 @@ glabel MoveChara__Fv__2
     /* 00A430 01DB6130 28360070 */  paddub     $6, $0, $0
     /* 00A434 01DB6134 AC69050C */  jal        SndSePlay__Fiii
     /* 00A438 01DB6138 00000000 */   nop
-    /* 00A43C 01DB613C 4A040010 */  b          .L01DB7268
+    /* 00A43C 01DB613C 4A040010 */  b          .L.L01DB7268$b
     /* 00A440 01DB6140 00000000 */   nop
   .L01DB6144:
     /* 00A444 01DB6144 D09C848F */  lw         $4, -0x6330($28)
@@ -11244,7 +11297,7 @@ glabel MoveChara__Fv__2
     /* 00A780 01DB6480 00000000 */   nop
     /* 00A784 01DB6484 03004014 */  bnez       $2, .L01DB6494
     /* 00A788 01DB6488 00000000 */   nop
-    /* 00A78C 01DB648C 76032012 */  beqz       $17, .L01DB7268
+    /* 00A78C 01DB648C 76032012 */  beqz       $17, .L.L01DB7268$b
     /* 00A790 01DB6490 00000000 */   nop
   .L01DB6494:
     /* 00A794 01DB6494 F49C80AF */  sw         $0, -0x630C($28)
@@ -11323,7 +11376,7 @@ glabel MoveChara__Fv__2
     /* 00A8B0 01DB65B0 904420AC */  sw         $0, %lo(BtActStatus + 0x10)($1)
   .L01DB65B4:
     /* 00A8B4 01DB65B4 FC9D90AF */  sw         $16, -0x6204($28)
-    /* 00A8B8 01DB65B8 2B030010 */  b          .L01DB7268
+    /* 00A8B8 01DB65B8 2B030010 */  b          .L.L01DB7268$b
     /* 00A8BC 01DB65BC 00000000 */   nop
   .L01DB65C0:
     /* 00A8C0 01DB65C0 249D828F */  lw         $2, -0x62DC($28)
@@ -11361,7 +11414,7 @@ glabel MoveChara__Fv__2
     /* 00A940 01DB6640 FC9D828F */  lw         $2, -0x6204($28)
     /* 00A944 01DB6644 01004224 */  addiu      $2, $2, 0x1
     /* 00A948 01DB6648 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 00A94C 01DB664C 06030010 */  b          .L01DB7268
+    /* 00A94C 01DB664C 06030010 */  b          .L.L01DB7268$b
     /* 00A950 01DB6650 00000000 */   nop
   .L01DB6654:
     /* 00A954 01DB6654 649D838F */  lw         $3, -0x629C($28)
@@ -11370,19 +11423,19 @@ glabel MoveChara__Fv__2
     /* 00A960 01DB6660 00000000 */   nop
     /* 00A964 01DB6664 01006224 */  addiu      $2, $3, 0x1
     /* 00A968 01DB6668 649D82AF */  sw         $2, -0x629C($28)
-    /* 00A96C 01DB666C FE020010 */  b          .L01DB7268
+    /* 00A96C 01DB666C FE020010 */  b          .L.L01DB7268$b
     /* 00A970 01DB6670 00000000 */   nop
   .L01DB6674:
     /* 00A974 01DB6674 01000324 */  addiu      $3, $0, 0x1
     /* 00A978 01DB6678 789D83AF */  sw         $3, -0x6288($28)
     /* 00A97C 01DB667C 02004224 */  addiu      $2, $2, 0x2
     /* 00A980 01DB6680 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 00A984 01DB6684 F8020010 */  b          .L01DB7268
+    /* 00A984 01DB6684 F8020010 */  b          .L.L01DB7268$b
     /* 00A988 01DB6688 00000000 */   nop
   .L01DB668C:
     /* 00A98C 01DB668C 01004224 */  addiu      $2, $2, 0x1
     /* 00A990 01DB6690 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 00A994 01DB6694 F4020010 */  b          .L01DB7268
+    /* 00A994 01DB6694 F4020010 */  b          .L.L01DB7268$b
     /* 00A998 01DB6698 00000000 */   nop
   .L01DB669C:
     /* 00A99C 01DB669C 789D80AF */  sw         $0, -0x6288($28)
@@ -11439,7 +11492,7 @@ glabel MoveChara__Fv__2
     /* 00AA68 01DB6768 FC9D828F */  lw         $2, -0x6204($28)
     /* 00AA6C 01DB676C 01004224 */  addiu      $2, $2, 0x1
     /* 00AA70 01DB6770 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 00AA74 01DB6774 BC020010 */  b          .L01DB7268
+    /* 00AA74 01DB6774 BC020010 */  b          .L.L01DB7268$b
     /* 00AA78 01DB6778 00000000 */   nop
   .L01DB677C:
     /* 00AA7C 01DB677C CC94828F */  lw         $2, -0x6B34($28)
@@ -11449,7 +11502,7 @@ glabel MoveChara__Fv__2
     /* 00AA8C 01DB678C FC9D82AF */  sw         $2, -0x6204($28)
     /* 00AA90 01DB6790 5CFA760C */  jal        autoCamTrial__Fv
     /* 00AA94 01DB6794 00000000 */   nop
-    /* 00AA98 01DB6798 B3020010 */  b          .L01DB7268
+    /* 00AA98 01DB6798 B3020010 */  b          .L.L01DB7268$b
     /* 00AA9C 01DB679C 00000000 */   nop
   .L01DB67A0:
     /* 00AAA0 01DB67A0 789C848F */  lw         $4, -0x6388($28)
@@ -11477,7 +11530,7 @@ glabel MoveChara__Fv__2
     /* 00AAF0 01DB67F0 5CFA760C */  jal        autoCamTrial__Fv
     /* 00AAF4 01DB67F4 00000000 */   nop
     /* 00AAF8 01DB67F8 B49C828F */  lw         $2, -0x634C($28)
-    /* 00AAFC 01DB67FC 9A024010 */  beqz       $2, .L01DB7268
+    /* 00AAFC 01DB67FC 9A024010 */  beqz       $2, .L.L01DB7268$b
     /* 00AB00 01DB6800 00000000 */   nop
     /* 00AB04 01DB6804 F49C80AF */  sw         $0, -0x630C($28)
     /* 00AB08 01DB6808 A89C848F */  lw         $4, -0x6358($28)
@@ -11523,13 +11576,13 @@ glabel MoveChara__Fv__2
     /* 00ABA8 01DB68A8 BC9C82AF */  sw         $2, -0x6344($28)
     /* 00ABAC 01DB68AC 789C828F */  lw         $2, -0x6388($28)
     /* 00ABB0 01DB68B0 04004280 */  lb         $2, 0x4($2)
-    /* 00ABB4 01DB68B4 6C024314 */  bne        $2, $3, .L01DB7268
+    /* 00ABB4 01DB68B4 6C024314 */  bne        $2, $3, .L.L01DB7268$b
     /* 00ABB8 01DB68B8 00000000 */   nop
     /* 00ABBC 01DB68BC 009D848F */  lw         $4, -0x6300($28)
     /* 00ABC0 01DB68C0 282E0070 */  paddub     $5, $0, $0
     /* 00ABC4 01DB68C4 64E5760C */  jal        EquipReAttach__FP10CCharacteri
     /* 00ABC8 01DB68C8 00000000 */   nop
-    /* 00ABCC 01DB68CC 66020010 */  b          .L01DB7268
+    /* 00ABCC 01DB68CC 66020010 */  b          .L.L01DB7268$b
     /* 00ABD0 01DB68D0 00000000 */   nop
   .L01DB68D4:
     /* 00ABD4 01DB68D4 009D838F */  lw         $3, -0x6300($28)
@@ -11554,11 +11607,11 @@ glabel MoveChara__Fv__2
     /* 00AC20 01DB6920 00000000 */   nop
     /* 00AC24 01DB6924 0A000224 */  addiu      $2, $0, 0xA
     /* 00AC28 01DB6928 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 00AC2C 01DB692C 4E020010 */  b          .L01DB7268
+    /* 00AC2C 01DB692C 4E020010 */  b          .L.L01DB7268$b
     /* 00AC30 01DB6930 00000000 */   nop
   .L01DB6934:
     /* 00AC34 01DB6934 FC9D80AF */  sw         $0, -0x6204($28)
-    /* 00AC38 01DB6938 4B020010 */  b          .L01DB7268
+    /* 00AC38 01DB6938 4B020010 */  b          .L.L01DB7268$b
     /* 00AC3C 01DB693C 00000000 */   nop
   .L01DB6940:
     /* 00AC40 01DB6940 DC01013C */  lui        $1, %hi(BtActStatus + 0x10)
@@ -11632,7 +11685,7 @@ glabel MoveChara__Fv__2
     /* 00AD48 01DB6A48 644520AC */  sw         $0, %lo(BtActStatus + 0xE4)($1)
     /* 00AD4C 01DB6A4C 5CFA760C */  jal        autoCamTrial__Fv
     /* 00AD50 01DB6A50 00000000 */   nop
-    /* 00AD54 01DB6A54 04020010 */  b          .L01DB7268
+    /* 00AD54 01DB6A54 04020010 */  b          .L.L01DB7268$b
     /* 00AD58 01DB6A58 00000000 */   nop
   .L01DB6A5C:
     /* 00AD5C 01DB6A5C B44C070C */  jal        BtMiniChrSelect_Loop__Fv
@@ -11652,7 +11705,7 @@ glabel MoveChara__Fv__2
     /* 00AD94 01DB6A94 789C848F */  lw         $4, -0x6388($28)
     /* 00AD98 01DB6A98 BCFB060C */  jal        SetDead__14CDngStatusDataFv
     /* 00AD9C 01DB6A9C 00000000 */   nop
-    /* 00ADA0 01DB6AA0 F1010010 */  b          .L01DB7268
+    /* 00ADA0 01DB6AA0 F1010010 */  b          .L.L01DB7268$b
     /* 00ADA4 01DB6AA4 00000000 */   nop
   .L01DB6AA8:
     /* 00ADA8 01DB6AA8 008B838F */  lw         $3, -0x7500($28)
@@ -11698,7 +11751,7 @@ glabel MoveChara__Fv__2
   .L01DB6B44:
     /* 00AE44 01DB6B44 5CFA760C */  jal        autoCamTrial__Fv
     /* 00AE48 01DB6B48 00000000 */   nop
-    /* 00AE4C 01DB6B4C C6010010 */  b          .L01DB7268
+    /* 00AE4C 01DB6B4C C6010010 */  b          .L.L01DB7268$b
     /* 00AE50 01DB6B50 00000000 */   nop
   .L01DB6B54:
     /* 00AE54 01DB6B54 FC44070C */  jal        BtGetTreasureboxBig_Init__Fv
@@ -11706,15 +11759,15 @@ glabel MoveChara__Fv__2
     /* 00AE5C 01DB6B5C FC9D828F */  lw         $2, -0x6204($28)
     /* 00AE60 01DB6B60 01004224 */  addiu      $2, $2, 0x1
     /* 00AE64 01DB6B64 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 00AE68 01DB6B68 BF010010 */  b          .L01DB7268
+    /* 00AE68 01DB6B68 BF010010 */  b          .L.L01DB7268$b
     /* 00AE6C 01DB6B6C 00000000 */   nop
   .L01DB6B70:
     /* 00AE70 01DB6B70 0446070C */  jal        BtGetTreasureboxBig_Loop__Fv
     /* 00AE74 01DB6B74 00000000 */   nop
-    /* 00AE78 01DB6B78 BB014010 */  beqz       $2, .L01DB7268
+    /* 00AE78 01DB6B78 BB014010 */  beqz       $2, .L.L01DB7268$b
     /* 00AE7C 01DB6B7C 00000000 */   nop
     /* 00AE80 01DB6B80 FC9D80AF */  sw         $0, -0x6204($28)
-    /* 00AE84 01DB6B84 B8010010 */  b          .L01DB7268
+    /* 00AE84 01DB6B84 B8010010 */  b          .L.L01DB7268$b
     /* 00AE88 01DB6B88 00000000 */   nop
   .L01DB6B8C:
     /* 00AE8C 01DB6B8C A49D848F */  lw         $4, -0x625C($28)
@@ -11723,15 +11776,15 @@ glabel MoveChara__Fv__2
     /* 00AE98 01DB6B98 FC9D828F */  lw         $2, -0x6204($28)
     /* 00AE9C 01DB6B9C 01004224 */  addiu      $2, $2, 0x1
     /* 00AEA0 01DB6BA0 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 00AEA4 01DB6BA4 B0010010 */  b          .L01DB7268
+    /* 00AEA4 01DB6BA4 B0010010 */  b          .L.L01DB7268$b
     /* 00AEA8 01DB6BA8 00000000 */   nop
   .L01DB6BAC:
     /* 00AEAC 01DB6BAC 1849070C */  jal        BtGetTreasureboxSmall_Loop__Fv
     /* 00AEB0 01DB6BB0 00000000 */   nop
-    /* 00AEB4 01DB6BB4 AC014010 */  beqz       $2, .L01DB7268
+    /* 00AEB4 01DB6BB4 AC014010 */  beqz       $2, .L.L01DB7268$b
     /* 00AEB8 01DB6BB8 00000000 */   nop
     /* 00AEBC 01DB6BBC FC9D80AF */  sw         $0, -0x6204($28)
-    /* 00AEC0 01DB6BC0 A9010010 */  b          .L01DB7268
+    /* 00AEC0 01DB6BC0 A9010010 */  b          .L.L01DB7268$b
     /* 00AEC4 01DB6BC4 00000000 */   nop
   .L01DB6BC8:
     /* 00AEC8 01DB6BC8 BC4A070C */  jal        BtAtraGetShort_Init__Fv
@@ -11740,7 +11793,7 @@ glabel MoveChara__Fv__2
     /* 00AED4 01DB6BD4 FC9D828F */  lw         $2, -0x6204($28)
     /* 00AED8 01DB6BD8 01004224 */  addiu      $2, $2, 0x1
     /* 00AEDC 01DB6BDC FC9D82AF */  sw         $2, -0x6204($28)
-    /* 00AEE0 01DB6BE0 A1010010 */  b          .L01DB7268
+    /* 00AEE0 01DB6BE0 A1010010 */  b          .L.L01DB7268$b
     /* 00AEE4 01DB6BE4 00000000 */   nop
   .L01DB6BE8:
     /* 00AEE8 01DB6BE8 789C828F */  lw         $2, -0x6388($28)
@@ -11749,10 +11802,10 @@ glabel MoveChara__Fv__2
     /* 00AEF4 01DB6BF4 1C4B070C */  jal        BtAtraGetShort_Loop__Fii
     /* 00AEF8 01DB6BF8 00000000 */   nop
     /* 00AEFC 01DB6BFC 01000324 */  addiu      $3, $0, 0x1
-    /* 00AF00 01DB6C00 99014314 */  bne        $2, $3, .L01DB7268
+    /* 00AF00 01DB6C00 99014314 */  bne        $2, $3, .L.L01DB7268$b
     /* 00AF04 01DB6C04 00000000 */   nop
     /* 00AF08 01DB6C08 FC9D80AF */  sw         $0, -0x6204($28)
-    /* 00AF0C 01DB6C0C 96010010 */  b          .L01DB7268
+    /* 00AF0C 01DB6C0C 96010010 */  b          .L.L01DB7268$b
     /* 00AF10 01DB6C10 00000000 */   nop
   .L01DB6C14:
     /* 00AF14 01DB6C14 01000224 */  addiu      $2, $0, 0x1
@@ -11772,7 +11825,7 @@ glabel MoveChara__Fv__2
     /* 00AF4C 01DB6C4C FC9D828F */  lw         $2, -0x6204($28)
     /* 00AF50 01DB6C50 01004224 */  addiu      $2, $2, 0x1
     /* 00AF54 01DB6C54 FC9D82AF */  sw         $2, -0x6204($28)
-    /* 00AF58 01DB6C58 83010010 */  b          .L01DB7268
+    /* 00AF58 01DB6C58 83010010 */  b          .L.L01DB7268$b
     /* 00AF5C 01DB6C5C 00000000 */   nop
   .L01DB6C60:
     /* 00AF60 01DB6C60 9C9C838F */  lw         $3, -0x6364($28)
@@ -11782,7 +11835,7 @@ glabel MoveChara__Fv__2
     /* 00AF70 01DB6C70 40C54424 */  addiu      $4, $2, %lo(GamePad)
     /* 00AF74 01DB6C74 1CAE040C */  jal        Down__8CGamePadFi
     /* 00AF78 01DB6C78 00000000 */   nop
-    /* 00AF7C 01DB6C7C 7A014010 */  beqz       $2, .L01DB7268
+    /* 00AF7C 01DB6C7C 7A014010 */  beqz       $2, .L.L01DB7268$b
     /* 00AF80 01DB6C80 00000000 */   nop
     /* 00AF84 01DB6C84 EC9C80AF */  sw         $0, -0x6314($28)
     /* 00AF88 01DB6C88 E49C80AF */  sw         $0, -0x631C($28)
@@ -11796,7 +11849,7 @@ glabel MoveChara__Fv__2
     /* 00AFA8 01DB6CA8 3480050C */  jal        ClearSystemMes__Fv
     /* 00AFAC 01DB6CAC 00000000 */   nop
     /* 00AFB0 01DB6CB0 FC9D80AF */  sw         $0, -0x6204($28)
-    /* 00AFB4 01DB6CB4 6C010010 */  b          .L01DB7268
+    /* 00AFB4 01DB6CB4 6C010010 */  b          .L.L01DB7268$b
     /* 00AFB8 01DB6CB8 00000000 */   nop
   .L01DB6CBC:
     /* 00AFBC 01DB6CBC 789C838F */  lw         $3, -0x6388($28)
@@ -11912,7 +11965,7 @@ glabel MoveChara__Fv__2
     /* 00B16C 01DB6E6C 00000000 */   nop
     /* 00B170 01DB6E70 5CFA760C */  jal        autoCamTrial__Fv
     /* 00B174 01DB6E74 00000000 */   nop
-    /* 00B178 01DB6E78 FB000010 */  b          .L01DB7268
+    /* 00B178 01DB6E78 FB000010 */  b          .L.L01DB7268$b
     /* 00B17C 01DB6E7C 00000000 */   nop
   .L01DB6E80:
     /* 00B180 01DB6E80 17000224 */  addiu      $2, $0, 0x17
@@ -12014,7 +12067,7 @@ glabel MoveChara__Fv__2
   .L01DB6FF4:
     /* 00B2F4 01DB6FF4 5CFA760C */  jal        autoCamTrial__Fv
     /* 00B2F8 01DB6FF8 00000000 */   nop
-    /* 00B2FC 01DB6FFC 9A000010 */  b          .L01DB7268
+    /* 00B2FC 01DB6FFC 9A000010 */  b          .L.L01DB7268$b
     /* 00B300 01DB7000 00000000 */   nop
   .L01DB7004:
     /* 00B304 01DB7004 089E828F */  lw         $2, -0x61F8($28)
@@ -12067,7 +12120,7 @@ glabel MoveChara__Fv__2
   .L01DB70B4:
     /* 00B3B4 01DB70B4 5CFA760C */  jal        autoCamTrial__Fv
     /* 00B3B8 01DB70B8 00000000 */   nop
-    /* 00B3BC 01DB70BC 6A000010 */  b          .L01DB7268
+    /* 00B3BC 01DB70BC 6A000010 */  b          .L.L01DB7268$b
     /* 00B3C0 01DB70C0 00000000 */   nop
   .L01DB70C4:
     /* 00B3C4 01DB70C4 17000224 */  addiu      $2, $0, 0x17
@@ -12120,7 +12173,7 @@ glabel MoveChara__Fv__2
   .L01DB7178:
     /* 00B478 01DB7178 5CFA760C */  jal        autoCamTrial__Fv
     /* 00B47C 01DB717C 00000000 */   nop
-    /* 00B480 01DB7180 39000010 */  b          .L01DB7268
+    /* 00B480 01DB7180 39000010 */  b          .L.L01DB7268$b
     /* 00B484 01DB7184 00000000 */   nop
   .L01DB7188:
     /* 00B488 01DB7188 789C848F */  lw         $4, -0x6388($28)
@@ -12143,7 +12196,7 @@ glabel MoveChara__Fv__2
   .L01DB71CC:
     /* 00B4CC 01DB71CC 5CFA760C */  jal        autoCamTrial__Fv
     /* 00B4D0 01DB71D0 00000000 */   nop
-    /* 00B4D4 01DB71D4 24000010 */  b          .L01DB7268
+    /* 00B4D4 01DB71D4 24000010 */  b          .L.L01DB7268$b
     /* 00B4D8 01DB71D8 00000000 */   nop
   .L01DB71DC:
     /* 00B4DC 01DB71DC CC01023C */  lui        $2, %hi(GamePad)
@@ -12182,7 +12235,8 @@ glabel MoveChara__Fv__2
   .L01DB7260:
     /* 00B560 01DB7260 5CFA760C */  jal        autoCamTrial__Fv
     /* 00B564 01DB7264 00000000 */   nop
-  .L01DB7268:
+  jlabel .L01DB7268
+.L.L01DB7268$b:
     /* 00B568 01DB7268 1C9D828F */  lw         $2, -0x62E4($28)
     /* 00B56C 01DB726C 61004010 */  beqz       $2, .L01DB73F4
     /* 00B570 01DB7270 00000000 */   nop
@@ -15342,18 +15396,22 @@ glabel Get_Main_EffectPtr__Fii
     /* 00E37C 01DBA07C 0000428C */  lw         $2, 0x0($2)
     /* 00E380 01DBA080 08004000 */  jr         $2
     /* 00E384 01DBA084 00000000 */   nop
+  jlabel .L01DBA088
     /* 00E388 01DBA088 DC01013C */  lui        $1, %hi(MyEffectEntry_Tbl)
     /* 00E38C 01DBA08C F021228C */  lw         $2, %lo(MyEffectEntry_Tbl)($1)
     /* 00E390 01DBA090 64000010 */  b          .L01DBA224
     /* 00E394 01DBA094 00000000 */   nop
+  jlabel .L01DBA098
     /* 00E398 01DBA098 DC01013C */  lui        $1, %hi(MyEffectEntry_Tbl + 0x4)
     /* 00E39C 01DBA09C F421228C */  lw         $2, %lo(MyEffectEntry_Tbl + 0x4)($1)
     /* 00E3A0 01DBA0A0 60000010 */  b          .L01DBA224
     /* 00E3A4 01DBA0A4 00000000 */   nop
+  jlabel .L01DBA0A8
     /* 00E3A8 01DBA0A8 DC01013C */  lui        $1, %hi(MyEffectEntry_Tbl + 0x8)
     /* 00E3AC 01DBA0AC F821228C */  lw         $2, %lo(MyEffectEntry_Tbl + 0x8)($1)
     /* 00E3B0 01DBA0B0 5C000010 */  b          .L01DBA224
     /* 00E3B4 01DBA0B4 00000000 */   nop
+  jlabel .L01DBA0B8
     /* 00E3B8 01DBA0B8 0400A004 */  bltz       $5, .L01DBA0CC
     /* 00E3BC 01DBA0BC 00000000 */   nop
     /* 00E3C0 01DBA0C0 0500A128 */  slti       $1, $5, 0x5
@@ -15369,10 +15427,12 @@ glabel Get_Main_EffectPtr__Fii
     /* 00E3E0 01DBA0E0 0000428C */  lw         $2, 0x0($2)
     /* 00E3E4 01DBA0E4 4F000010 */  b          .L01DBA224
     /* 00E3E8 01DBA0E8 00000000 */   nop
+  jlabel .L01DBA0EC
     /* 00E3EC 01DBA0EC DC01013C */  lui        $1, %hi(MyEffectEntry_Tbl + 0x20)
     /* 00E3F0 01DBA0F0 1022228C */  lw         $2, %lo(MyEffectEntry_Tbl + 0x20)($1)
     /* 00E3F4 01DBA0F4 4B000010 */  b          .L01DBA224
     /* 00E3F8 01DBA0F8 00000000 */   nop
+  jlabel .L01DBA0FC
     /* 00E3FC 01DBA0FC 789C838F */  lw         $3, -0x6388($28)
     /* 00E400 01DBA100 A80A0224 */  addiu      $2, $0, 0xAA8
     /* 00E404 01DBA104 18108200 */  mult       $2, $4, $2
@@ -21450,12 +21510,14 @@ glabel Run_TrapCircle__FP15MAP_TRAP_CIRCLE
     /* 013E40 01DBFB40 0000638C */  lw         $3, 0x0($3)
     /* 013E44 01DBFB44 08006000 */  jr         $3
     /* 013E48 01DBFB48 00000000 */   nop
+  jlabel .L01DBFB4C
     /* 013E4C 01DBFB4C 08000424 */  addiu      $4, $0, 0x8
     /* 013E50 01DBFB50 ECC6060C */  jal        BtSetStatusErr__Fi
     /* 013E54 01DBFB54 00000000 */   nop
     /* 013E58 01DBFB58 E1001124 */  addiu      $17, $0, 0xE1
     /* 013E5C 01DBFB5C 42000010 */  b          .L01DBFC68
     /* 013E60 01DBFB60 00000000 */   nop
+  jlabel .L01DBFB64
     /* 013E64 01DBFB64 00008244 */  mtc1       $2, $f0
     /* 013E68 01DBFB68 00000000 */  nop
     /* 013E6C 01DBFB6C 60008046 */  cvt.s.w    $f1, $f0
@@ -21480,24 +21542,29 @@ glabel Run_TrapCircle__FP15MAP_TRAP_CIRCLE
     /* 013EB0 01DBFBB0 E1001124 */  addiu      $17, $0, 0xE1
     /* 013EB4 01DBFBB4 2C000010 */  b          .L01DBFC68
     /* 013EB8 01DBFBB8 00000000 */   nop
+  jlabel .L01DBFBBC
     /* 013EBC 01DBFBBC 28860070 */  paddub     $16, $0, $0
     /* 013EC0 01DBFBC0 E1001124 */  addiu      $17, $0, 0xE1
     /* 013EC4 01DBFBC4 28000010 */  b          .L01DBFC68
     /* 013EC8 01DBFBC8 00000000 */   nop
+  jlabel .L01DBFBCC
     /* 013ECC 01DBFBCC 02001024 */  addiu      $16, $0, 0x2
     /* 013ED0 01DBFBD0 E1001124 */  addiu      $17, $0, 0xE1
     /* 013ED4 01DBFBD4 24000010 */  b          .L01DBFC68
     /* 013ED8 01DBFBD8 00000000 */   nop
+  jlabel .L01DBFBDC
     /* 013EDC 01DBFBDC 04001024 */  addiu      $16, $0, 0x4
     /* 013EE0 01DBFBE0 E1001124 */  addiu      $17, $0, 0xE1
     /* 013EE4 01DBFBE4 20000010 */  b          .L01DBFC68
     /* 013EE8 01DBFBE8 00000000 */   nop
+  jlabel .L01DBFBEC
     /* 013EEC 01DBFBEC E09C848F */  lw         $4, -0x6320($28)
     /* 013EF0 01DBFBF0 D860070C */  jal        AllBin2__12CMonstorUnitFv
     /* 013EF4 01DBFBF4 00000000 */   nop
     /* 013EF8 01DBFBF8 E2001124 */  addiu      $17, $0, 0xE2
     /* 013EFC 01DBFBFC 1A000010 */  b          .L01DBFC68
     /* 013F00 01DBFC00 00000000 */   nop
+  jlabel .L01DBFC04
     /* 013F04 01DBFC04 00008244 */  mtc1       $2, $f0
     /* 013F08 01DBFC08 00000000 */  nop
     /* 013F0C 01DBFC0C 60008046 */  cvt.s.w    $f1, $f0
@@ -21514,14 +21581,17 @@ glabel Run_TrapCircle__FP15MAP_TRAP_CIRCLE
     /* 013F34 01DBFC34 E2001124 */  addiu      $17, $0, 0xE2
     /* 013F38 01DBFC38 0B000010 */  b          .L01DBFC68
     /* 013F3C 01DBFC3C 00000000 */   nop
+  jlabel .L01DBFC40
     /* 013F40 01DBFC40 01001024 */  addiu      $16, $0, 0x1
     /* 013F44 01DBFC44 E2001124 */  addiu      $17, $0, 0xE2
     /* 013F48 01DBFC48 07000010 */  b          .L01DBFC68
     /* 013F4C 01DBFC4C 00000000 */   nop
+  jlabel .L01DBFC50
     /* 013F50 01DBFC50 03001024 */  addiu      $16, $0, 0x3
     /* 013F54 01DBFC54 E2001124 */  addiu      $17, $0, 0xE2
     /* 013F58 01DBFC58 03000010 */  b          .L01DBFC68
     /* 013F5C 01DBFC5C 00000000 */   nop
+  jlabel .L01DBFC60
     /* 013F60 01DBFC60 05001024 */  addiu      $16, $0, 0x5
     /* 013F64 01DBFC64 E2001124 */  addiu      $17, $0, 0xE2
   .L01DBFC68:
@@ -23602,3 +23672,1048 @@ glabel EyeCamera__Fv
     /* 015DF4 01DC1AF4 00000000 */  nop
     /* 015DF8 01DC1AF8 00000000 */  nop
     /* 015DFC 01DC1AFC 00000000 */  nop
+
+.section .rodata, "a"
+.align 4
+
+/* Generated by spimdisasm 1.42.4 */
+
+glabel LIT_617__7
+    /* 016C80 01DC2980 23667261 */ .word 0x61726623
+    /* 016C84 01DC2984 6D655F69 */ .word 0x695F656D
+    /* 016C88 01DC2988 6D616765 */ .word 0x6567616D
+    /* 016C8C 01DC298C 23363430 */ .word 0x30343623
+    /* 016C90 01DC2990 23343438 */ .word 0x38343423
+    /* 016C94 01DC2994 23340000 */ .word 0x00003423
+    /* 016C98 01DC2998 00000000 */ .word 0x00000000
+    /* 016C9C 01DC299C 00000000 */ .word 0x00000000
+
+glabel LIT_618__4
+    /* 016CA0 01DC29A0 64756E2F */ .word 0x2F6E7564
+    /* 016CA4 01DC29A4 6574632F */ .word 0x2F637465
+    /* 016CA8 01DC29A8 63757273 */ .word 0x73727563
+    /* 016CAC 01DC29AC 6F722E69 */ .word 0x692E726F
+    /* 016CB0 01DC29B0 6D670000 */ .word 0x0000676D
+    /* 016CB4 01DC29B4 00000000 */ .word 0x00000000
+
+glabel LIT_619__7
+    /* 016CB8 01DC29B8 67617465 */ .word 0x65746167
+    /* 016CBC 01DC29BC 6B657930 */ .word 0x3079656B
+    /* 016CC0 01DC29C0 302E696D */ .word 0x6D692E30
+    /* 016CC4 01DC29C4 67000000 */ .word 0x00000067
+    /* 016CC8 01DC29C8 00000000 */ .word 0x00000000
+    /* 016CCC 01DC29CC 00000000 */ .word 0x00000000
+
+glabel LIT_620__5
+    /* 016CD0 01DC29D0 23776174 */ .word 0x74617723
+    /* 016CD4 01DC29D4 65722336 */ .word 0x36237265
+    /* 016CD8 01DC29D8 34302332 */ .word 0x32233034
+    /* 016CDC 01DC29DC 32342334 */ .word 0x34233432
+    /* 016CE0 01DC29E0 00000000 */ .word 0x00000000
+    /* 016CE4 01DC29E4 00000000 */ .word 0x00000000
+    /* 016CE8 01DC29E8 00000000 */ .word 0x00000000
+    /* 016CEC 01DC29EC 00000000 */ .word 0x00000000
+
+glabel LIT_621__7
+    /* 016CF0 01DC29F0 64756E2F */ .word 0x2F6E7564
+    /* 016CF4 01DC29F4 6574632F */ .word 0x2F637465
+    /* 016CF8 01DC29F8 61747274 */ .word 0x74727461
+    /* 016CFC 01DC29FC 782E696D */ .word 0x6D692E78
+    /* 016D00 01DC2A00 67000000 */ .word 0x00000067
+    /* 016D04 01DC2A04 00000000 */ .word 0x00000000
+
+glabel LIT_622__6
+    /* 016D08 01DC2A08 77657072 */ .word 0x72706577
+    /* 016D0C 01DC2A0C 65616479 */ .word 0x79646165
+    /* 016D10 01DC2A10 2E696D67 */ .word 0x676D692E
+    /* 016D14 01DC2A14 00000000 */ .word 0x00000000
+    /* 016D18 01DC2A18 00000000 */ .word 0x00000000
+    /* 016D1C 01DC2A1C 00000000 */ .word 0x00000000
+
+glabel LIT_623__6
+    /* 016D20 01DC2A20 23736861 */ .word 0x61687323
+    /* 016D24 01DC2A24 646F775F */ .word 0x5F776F64
+    /* 016D28 01DC2A28 62756623 */ .word 0x23667562
+    /* 016D2C 01DC2A2C 36343023 */ .word 0x23303436
+    /* 016D30 01DC2A30 32323423 */ .word 0x23343232
+    /* 016D34 01DC2A34 33000000 */ .word 0x00000033
+    /* 016D38 01DC2A38 00000000 */ .word 0x00000000
+    /* 016D3C 01DC2A3C 00000000 */ .word 0x00000000
+
+glabel LIT_624__6
+    /* 016D40 01DC2A40 64756E2F */ .word 0x2F6E7564
+    /* 016D44 01DC2A44 65666665 */ .word 0x65666665
+    /* 016D48 01DC2A48 63742F62 */ .word 0x622F7463
+    /* 016D4C 01DC2A4C 61736566 */ .word 0x66657361
+    /* 016D50 01DC2A50 7830302E */ .word 0x2E303078
+    /* 016D54 01DC2A54 696D6700 */ .word 0x00676D69
+
+glabel LIT_625__7
+    /* 016D58 01DC2A58 62617365 */ .word 0x65736162
+    /* 016D5C 01DC2A5C 66783031 */ .word 0x31307866
+    /* 016D60 01DC2A60 2E696D67 */ .word 0x676D692E
+    /* 016D64 01DC2A64 00000000 */ .word 0x00000000
+    /* 016D68 01DC2A68 00000000 */ .word 0x00000000
+    /* 016D6C 01DC2A6C 00000000 */ .word 0x00000000
+
+glabel LIT_626__8
+    /* 016D70 01DC2A70 64756E2F */ .word 0x2F6E7564
+    /* 016D74 01DC2A74 6430312F */ .word 0x2F313064
+    /* 016D78 01DC2A78 65666665 */ .word 0x65666665
+    /* 016D7C 01DC2A7C 63742F66 */ .word 0x662F7463
+    /* 016D80 01DC2A80 785F666F */ .word 0x6F665F78
+    /* 016D84 01DC2A84 6F742E69 */ .word 0x692E746F
+    /* 016D88 01DC2A88 6D670000 */ .word 0x0000676D
+    /* 016D8C 01DC2A8C 00000000 */ .word 0x00000000
+
+glabel LIT_627__8
+    /* 016D90 01DC2A90 64756E2F */ .word 0x2F6E7564
+    /* 016D94 01DC2A94 65666665 */ .word 0x65666665
+    /* 016D98 01DC2A98 63742F62 */ .word 0x622F7463
+    /* 016D9C 01DC2A9C 6F6D6266 */ .word 0x66626D6F
+    /* 016DA0 01DC2AA0 7830302E */ .word 0x2E303078
+    /* 016DA4 01DC2AA4 696D6700 */ .word 0x00676D69
+
+glabel LIT_628__8
+    /* 016DA8 01DC2AA8 70617573 */ .word 0x73756170
+    /* 016DAC 01DC2AAC 652E696D */ .word 0x6D692E65
+    /* 016DB0 01DC2AB0 67000000 */ .word 0x00000067
+    /* 016DB4 01DC2AB4 00000000 */ .word 0x00000000
+    /* 016DB8 01DC2AB8 00000000 */ .word 0x00000000
+    /* 016DBC 01DC2ABC 00000000 */ .word 0x00000000
+
+glabel LIT_629__7
+    /* 016DC0 01DC2AC0 23646267 */ .word 0x67626423
+    /* 016DC4 01DC2AC4 776F726B */ .word 0x6B726F77
+    /* 016DC8 01DC2AC8 23363430 */ .word 0x30343623
+    /* 016DCC 01DC2ACC 23343438 */ .word 0x38343423
+    /* 016DD0 01DC2AD0 23330000 */ .word 0x00003323
+    /* 016DD4 01DC2AD4 00000000 */ .word 0x00000000
+    /* 016DD8 01DC2AD8 00000000 */ .word 0x00000000
+    /* 016DDC 01DC2ADC 00000000 */ .word 0x00000000
+
+glabel LIT_630__9
+    /* 016DE0 01DC2AE0 63686563 */ .word 0x63656863
+    /* 016DE4 01DC2AE4 6B2F616E */ .word 0x6E612F6B
+    /* 016DE8 01DC2AE8 6B666F6E */ .word 0x6E6F666B
+    /* 016DEC 01DC2AEC 742E696D */ .word 0x6D692E74
+    /* 016DF0 01DC2AF0 67000000 */ .word 0x00000067
+    /* 016DF4 01DC2AF4 00000000 */ .word 0x00000000
+    /* 016DF8 01DC2AF8 00000000 */ .word 0x00000000
+    /* 016DFC 01DC2AFC 00000000 */ .word 0x00000000
+
+glabel LIT_631__8
+    /* 016E00 01DC2B00 236D6573 */ .word 0x73656D23
+    /* 016E04 01DC2B04 5F667261 */ .word 0x6172665F
+    /* 016E08 01DC2B08 6D655F62 */ .word 0x625F656D
+    /* 016E0C 01DC2B0C 75666623 */ .word 0x23666675
+    /* 016E10 01DC2B10 36343023 */ .word 0x23303436
+    /* 016E14 01DC2B14 34343823 */ .word 0x23383434
+    /* 016E18 01DC2B18 34000000 */ .word 0x00000034
+    /* 016E1C 01DC2B1C 00000000 */ .word 0x00000000
+
+glabel LIT_632__6
+    /* 016E20 01DC2B20 23666F6E */ .word 0x6E6F6623
+    /* 016E24 01DC2B24 74626173 */ .word 0x73616274
+    /* 016E28 01DC2B28 65233531 */ .word 0x31352365
+    /* 016E2C 01DC2B2C 32233235 */ .word 0x35322332
+    /* 016E30 01DC2B30 36233100 */ .word 0x00312336
+    /* 016E34 01DC2B34 00000000 */ .word 0x00000000
+    /* 016E38 01DC2B38 00000000 */ .word 0x00000000
+    /* 016E3C 01DC2B3C 00000000 */ .word 0x00000000
+
+glabel LIT_633__6
+    /* 016E40 01DC2B40 2366756B */ .word 0x6B756623
+    /* 016E44 01DC2B44 69646173 */ .word 0x73616469
+    /* 016E48 01DC2B48 68696261 */ .word 0x61626968
+    /* 016E4C 01DC2B4C 73652336 */ .word 0x36236573
+    /* 016E50 01DC2B50 34302332 */ .word 0x32233034
+    /* 016E54 01DC2B54 32342334 */ .word 0x34233432
+    /* 016E58 01DC2B58 00000000 */ .word 0x00000000
+    /* 016E5C 01DC2B5C 00000000 */ .word 0x00000000
+
+glabel LIT_634__6
+    /* 016E60 01DC2B60 6D657377 */ .word 0x7773656D
+    /* 016E64 01DC2B64 696E2F73 */ .word 0x732F6E69
+    /* 016E68 01DC2B68 79737430 */ .word 0x30747379
+    /* 016E6C 01DC2B6C 342E696D */ .word 0x6D692E34
+    /* 016E70 01DC2B70 67000000 */ .word 0x00000067
+    /* 016E74 01DC2B74 00000000 */ .word 0x00000000
+    /* 016E78 01DC2B78 00000000 */ .word 0x00000000
+    /* 016E7C 01DC2B7C 00000000 */ .word 0x00000000
+
+glabel LIT_635__7
+    /* 016E80 01DC2B80 6D657377 */ .word 0x7773656D
+    /* 016E84 01DC2B84 696E2F67 */ .word 0x672F6E69
+    /* 016E88 01DC2B88 61696A69 */ .word 0x696A6961
+    /* 016E8C 01DC2B8C 2E696D67 */ .word 0x676D692E
+    /* 016E90 01DC2B90 00000000 */ .word 0x00000000
+    /* 016E94 01DC2B94 00000000 */ .word 0x00000000
+    /* 016E98 01DC2B98 00000000 */ .word 0x00000000
+    /* 016E9C 01DC2B9C 00000000 */ .word 0x00000000
+
+glabel LIT_636__6
+    /* 016EA0 01DC2BA0 6D657377 */ .word 0x7773656D
+    /* 016EA4 01DC2BA4 696E2F66 */ .word 0x662F6E69
+    /* 016EA8 01DC2BA8 756B6932 */ .word 0x32696B75
+    /* 016EAC 01DC2BAC 35362E69 */ .word 0x692E3635
+    /* 016EB0 01DC2BB0 6D670000 */ .word 0x0000676D
+    /* 016EB4 01DC2BB4 00000000 */ .word 0x00000000
+
+glabel LIT_637__5
+    /* 016EB8 01DC2BB8 656C656D */ .word 0x6D656C65
+    /* 016EBC 01DC2BBC 656E742E */ .word 0x2E746E65
+    /* 016EC0 01DC2BC0 696D6700 */ .word 0x00676D69
+    /* 016EC4 01DC2BC4 00000000 */ .word 0x00000000
+
+glabel LIT_638__7
+    /* 016EC8 01DC2BC8 69676574 */ .word 0x74656769
+    /* 016ECC 01DC2BCC 66782E69 */ .word 0x692E7866
+    /* 016ED0 01DC2BD0 6D670000 */ .word 0x0000676D
+    /* 016ED4 01DC2BD4 00000000 */ .word 0x00000000
+
+glabel LIT_639__9
+    /* 016ED8 01DC2BD8 00000000 */ .word 0x00000000
+    /* 016EDC 01DC2BDC 00000000 */ .word 0x00000000
+
+glabel LIT_653__6
+    /* 016EE0 01DC2BE0 67617465 */ .word 0x65746167
+    /* 016EE4 01DC2BE4 6B657930 */ .word 0x3079656B
+    /* 016EE8 01DC2BE8 25642E69 */ .word 0x692E6425
+    /* 016EEC 01DC2BEC 6D670000 */ .word 0x0000676D
+
+glabel LIT_654__6
+    /* 016EF0 01DC2BF0 64756E2F */ .word 0x2F6E7564
+    /* 016EF4 01DC2BF4 7061636B */ .word 0x6B636170
+    /* 016EF8 01DC2BF8 2F746578 */ .word 0x7865742F
+    /* 016EFC 01DC2BFC 696D6732 */ .word 0x32676D69
+    /* 016F00 01DC2C00 2E706163 */ .word 0x6361702E
+    /* 016F04 01DC2C04 00000000 */ .word 0x00000000
+    /* 016F08 01DC2C08 00000000 */ .word 0x00000000
+    /* 016F0C 01DC2C0C 00000000 */ .word 0x00000000
+
+glabel LIT_655__4
+    /* 016F10 01DC2C10 4572726F */ .word 0x6F727245
+    /* 016F14 01DC2C14 723A3A50 */ .word 0x503A3A72
+    /* 016F18 01DC2C18 61636B2D */ .word 0x2D6B6361
+    /* 016F1C 01DC2C1C 3E46696C */ .word 0x6C69463E
+    /* 016F20 01DC2C20 654E6F74 */ .word 0x746F4E65
+    /* 016F24 01DC2C24 466F756E */ .word 0x6E756F46
+    /* 016F28 01DC2C28 64205B25 */ .word 0x255B2064
+    /* 016F2C 01DC2C2C 645D2573 */ .word 0x73255D64
+    /* 016F30 01DC2C30 21210A00 */ .word 0x000A2121
+    /* 016F34 01DC2C34 00000000 */ .word 0x00000000
+    /* 016F38 01DC2C38 00000000 */ .word 0x00000000
+    /* 016F3C 01DC2C3C 00000000 */ .word 0x00000000
+
+glabel LIT_670__4
+    /* 016F40 01DC2C40 4D61696E */ .word 0x6E69614D
+    /* 016F44 01DC2C44 56697375 */ .word 0x75736956
+    /* 016F48 01DC2C48 616C4461 */ .word 0x61446C61
+    /* 016F4C 01DC2C4C 74612020 */ .word 0x20206174
+    /* 016F50 01DC2C50 0925642F */ .word 0x2F642509
+    /* 016F54 01DC2C54 25640A00 */ .word 0x000A6425
+    /* 016F58 01DC2C58 00000000 */ .word 0x00000000
+    /* 016F5C 01DC2C5C 00000000 */ .word 0x00000000
+
+glabel LIT_671__4
+    /* 016F60 01DC2C60 4D6F7469 */ .word 0x69746F4D
+    /* 016F64 01DC2C64 6F6E4461 */ .word 0x61446E6F
+    /* 016F68 01DC2C68 74612020 */ .word 0x20206174
+    /* 016F6C 01DC2C6C 20202020 */ .word 0x20202020
+    /* 016F70 01DC2C70 0925642F */ .word 0x2F642509
+    /* 016F74 01DC2C74 25640A00 */ .word 0x000A6425
+    /* 016F78 01DC2C78 00000000 */ .word 0x00000000
+    /* 016F7C 01DC2C7C 00000000 */ .word 0x00000000
+
+glabel LIT_672__4
+    /* 016F80 01DC2C80 43686172 */ .word 0x72616843
+    /* 016F84 01DC2C84 614D6F64 */ .word 0x646F4D61
+    /* 016F88 01DC2C88 656C4275 */ .word 0x75426C65
+    /* 016F8C 01DC2C8C 66666572 */ .word 0x72656666
+    /* 016F90 01DC2C90 0925642F */ .word 0x2F642509
+    /* 016F94 01DC2C94 25640A00 */ .word 0x000A6425
+    /* 016F98 01DC2C98 00000000 */ .word 0x00000000
+    /* 016F9C 01DC2C9C 00000000 */ .word 0x00000000
+
+glabel LIT_673__4
+    /* 016FA0 01DC2CA0 4D617365 */ .word 0x6573614D
+    /* 016FA4 01DC2CA4 6B694D6F */ .word 0x6F4D696B
+    /* 016FA8 01DC2CA8 64656C42 */ .word 0x426C6564
+    /* 016FAC 01DC2CAC 75666665 */ .word 0x65666675
+    /* 016FB0 01DC2CB0 72092564 */ .word 0x64250972
+    /* 016FB4 01DC2CB4 2F25640A */ .word 0x0A64252F
+    /* 016FB8 01DC2CB8 00000000 */ .word 0x00000000
+    /* 016FBC 01DC2CBC 00000000 */ .word 0x00000000
+
+glabel LIT_674__4
+    /* 016FC0 01DC2CC0 4D617056 */ .word 0x5670614D
+    /* 016FC4 01DC2CC4 69737561 */ .word 0x61757369
+    /* 016FC8 01DC2CC8 6C446174 */ .word 0x7461446C
+    /* 016FCC 01DC2CCC 61202020 */ .word 0x20202061
+    /* 016FD0 01DC2CD0 0925642F */ .word 0x2F642509
+    /* 016FD4 01DC2CD4 25640A00 */ .word 0x000A6425
+    /* 016FD8 01DC2CD8 00000000 */ .word 0x00000000
+    /* 016FDC 01DC2CDC 00000000 */ .word 0x00000000
+
+glabel LIT_675__4
+    /* 016FE0 01DC2CE0 4D6F6E73 */ .word 0x736E6F4D
+    /* 016FE4 01DC2CE4 746F724D */ .word 0x4D726F74
+    /* 016FE8 01DC2CE8 6F64656C */ .word 0x6C65646F
+    /* 016FEC 01DC2CEC 42756666 */ .word 0x66667542
+    /* 016FF0 01DC2CF0 65720925 */ .word 0x25097265
+    /* 016FF4 01DC2CF4 642F2564 */ .word 0x64252F64
+    /* 016FF8 01DC2CF8 0A000000 */ .word 0x0000000A
+    /* 016FFC 01DC2CFC 00000000 */ .word 0x00000000
+
+glabel LIT_676__3
+    /* 017000 01DC2D00 53797374 */ .word 0x74737953
+    /* 017004 01DC2D04 656D5363 */ .word 0x63536D65
+    /* 017008 01DC2D08 72697074 */ .word 0x74706972
+    /* 01700C 01DC2D0C 42756666 */ .word 0x66667542
+    /* 017010 01DC2D10 65720925 */ .word 0x25097265
+    /* 017014 01DC2D14 642F2564 */ .word 0x64252F64
+    /* 017018 01DC2D18 0A000000 */ .word 0x0000000A
+    /* 01701C 01DC2D1C 00000000 */ .word 0x00000000
+
+glabel LIT_677__3
+    /* 017020 01DC2D20 53746172 */ .word 0x72617453
+    /* 017024 01DC2D24 744C6F67 */ .word 0x676F4C74
+    /* 017028 01DC2D28 6F427566 */ .word 0x6675426F
+    /* 01702C 01DC2D2C 66657209 */ .word 0x09726566
+    /* 017030 01DC2D30 20202020 */ .word 0x20202020
+    /* 017034 01DC2D34 25642F25 */ .word 0x252F6425
+    /* 017038 01DC2D38 640A0000 */ .word 0x00000A64
+    /* 01703C 01DC2D3C 00000000 */ .word 0x00000000
+
+glabel LIT_678__3
+    /* 017040 01DC2D40 42744D65 */ .word 0x654D7442
+    /* 017044 01DC2D44 73427566 */ .word 0x66754273
+    /* 017048 01DC2D48 66657209 */ .word 0x09726566
+    /* 01704C 01DC2D4C 20202020 */ .word 0x20202020
+    /* 017050 01DC2D50 20202020 */ .word 0x20202020
+    /* 017054 01DC2D54 25642F25 */ .word 0x252F6425
+    /* 017058 01DC2D58 640A0000 */ .word 0x00000A64
+    /* 01705C 01DC2D5C 00000000 */ .word 0x00000000
+
+glabel LIT_679__3
+    /* 017060 01DC2D60 42745374 */ .word 0x74537442
+    /* 017064 01DC2D64 6565624D */ .word 0x4D626565
+    /* 017068 01DC2D68 65734275 */ .word 0x75427365
+    /* 01706C 01DC2D6C 66666572 */ .word 0x72656666
+    /* 017070 01DC2D70 0925642F */ .word 0x2F642509
+    /* 017074 01DC2D74 25640A00 */ .word 0x000A6425
+
+glabel LIT_910
+    /* 017078 01DC2D78 6974656D */ .word 0x6D657469
+    /* 01707C 01DC2D7C 7061636B */ .word 0x6B636170
+    /* 017080 01DC2D80 2E696D67 */ .word 0x676D692E
+    /* 017084 01DC2D84 00000000 */ .word 0x00000000
+
+glabel LIT_911
+    /* 017088 01DC2D88 73746179 */ .word 0x79617473
+    /* 01708C 01DC2D8C 6672616D */ .word 0x6D617266
+    /* 017090 01DC2D90 652E696D */ .word 0x6D692E65
+    /* 017094 01DC2D94 67000000 */ .word 0x00000067
+    /* 017098 01DC2D98 00000000 */ .word 0x00000000
+    /* 01709C 01DC2D9C 00000000 */ .word 0x00000000
+
+glabel LIT_914__5
+    /* 0170A0 01DC2DA0 64756E2F */ .word 0x2F6E7564
+    /* 0170A4 01DC2DA4 6D657373 */ .word 0x7373656D
+    /* 0170A8 01DC2DA8 6167652F */ .word 0x2F656761
+    /* 0170AC 01DC2DAC 77775F6D */ .word 0x6D5F7777
+    /* 0170B0 01DC2DB0 65732F64 */ .word 0x642F7365
+    /* 0170B4 01DC2DB4 756E6D73 */ .word 0x736D6E75
+    /* 0170B8 01DC2DB8 6430305F */ .word 0x5F303064
+    /* 0170BC 01DC2DBC 25642E6D */ .word 0x6D2E6425
+    /* 0170C0 01DC2DC0 65730000 */ .word 0x00007365
+    /* 0170C4 01DC2DC4 00000000 */ .word 0x00000000
+    /* 0170C8 01DC2DC8 00000000 */ .word 0x00000000
+    /* 0170CC 01DC2DCC 00000000 */ .word 0x00000000
+
+glabel LIT_915__4
+    /* 0170D0 01DC2DD0 64756E2F */ .word 0x2F6E7564
+    /* 0170D4 01DC2DD4 6D657373 */ .word 0x7373656D
+    /* 0170D8 01DC2DD8 6167652F */ .word 0x2F656761
+    /* 0170DC 01DC2DDC 77775F6D */ .word 0x6D5F7777
+    /* 0170E0 01DC2DE0 65732F66 */ .word 0x662F7365
+    /* 0170E4 01DC2DE4 6F6E7431 */ .word 0x31746E6F
+    /* 0170E8 01DC2DE8 385F2564 */ .word 0x64255F38
+    /* 0170EC 01DC2DEC 2E6D6573 */ .word 0x73656D2E
+    /* 0170F0 01DC2DF0 00000000 */ .word 0x00000000
+    /* 0170F4 01DC2DF4 00000000 */ .word 0x00000000
+    /* 0170F8 01DC2DF8 00000000 */ .word 0x00000000
+    /* 0170FC 01DC2DFC 00000000 */ .word 0x00000000
+
+glabel LIT_916__3
+    /* 017100 01DC2E00 6D657377 */ .word 0x7773656D
+    /* 017104 01DC2E04 696E2F73 */ .word 0x732F6E69
+    /* 017108 01DC2E08 79737465 */ .word 0x65747379
+    /* 01710C 01DC2E0C 6D313465 */ .word 0x6534316D
+    /* 017110 01DC2E10 2E62696E */ .word 0x6E69622E
+    /* 017114 01DC2E14 00000000 */ .word 0x00000000
+
+glabel LIT_917
+    /* 017118 01DC2E18 77657072 */ .word 0x72706577
+    /* 01711C 01DC2E1C 65616479 */ .word 0x79646165
+    /* 017120 01DC2E20 00000000 */ .word 0x00000000
+    /* 017124 01DC2E24 00000000 */ .word 0x00000000
+
+glabel LIT_918
+    /* 017128 01DC2E28 73746179 */ .word 0x79617473
+    /* 01712C 01DC2E2C 6672616D */ .word 0x6D617266
+    /* 017130 01DC2E30 65000000 */ .word 0x00000065
+    /* 017134 01DC2E34 00000000 */ .word 0x00000000
+
+glabel LIT_919__3
+    /* 017138 01DC2E38 73686164 */ .word 0x64616873
+    /* 01713C 01DC2E3C 6F775F62 */ .word 0x625F776F
+    /* 017140 01DC2E40 75660000 */ .word 0x00006675
+    /* 017144 01DC2E44 00000000 */ .word 0x00000000
+
+glabel LIT_920__4
+    /* 017148 01DC2E48 67617465 */ .word 0x65746167
+    /* 01714C 01DC2E4C 6B657930 */ .word 0x3079656B
+    /* 017150 01DC2E50 25640000 */ .word 0x00006425
+    /* 017154 01DC2E54 00000000 */ .word 0x00000000
+
+glabel LIT_921__3
+    /* 017158 01DC2E58 2A2A2A2A */ .word 0x2A2A2A2A
+    /* 01715C 01DC2E5C 2A2A2A2A */ .word 0x2A2A2A2A
+    /* 017160 01DC2E60 20455252 */ .word 0x52524520
+    /* 017164 01DC2E64 0A000000 */ .word 0x0000000A
+
+glabel LIT_922__2
+    /* 017168 01DC2E68 64626777 */ .word 0x77676264
+    /* 01716C 01DC2E6C 6F726B00 */ .word 0x006B726F
+
+glabel LIT_994__3
+    /* 017170 01DC2E70 ECDADA01 */ .word .L01DADAEC
+    /* 017174 01DC2E74 00DADA01 */ .word .L01DADA00
+    /* 017178 01DC2E78 10DADA01 */ .word .L01DADA10
+    /* 01717C 01DC2E7C 20DADA01 */ .word .L01DADA20
+    /* 017180 01DC2E80 44DADA01 */ .word .L01DADA44
+    /* 017184 01DC2E84 D0DADA01 */ .word .L01DADAD0
+    /* 017188 01DC2E88 ECDADA01 */ .word .L01DADAEC
+    /* 01718C 01DC2E8C 94DADA01 */ .word .L01DADA94
+
+glabel LIT_1059__2
+    /* 017190 01DC2E90 6C696768 */ .word 0x6867696C
+    /* 017194 01DC2E94 74303100 */ .word 0x00313074
+
+glabel LIT_1797
+    /* 017198 01DC2E98 77617465 */ .word 0x65746177
+    /* 01719C 01DC2E9C 72000000 */ .word 0x00000072
+
+glabel LIT_1806
+    /* 0171A0 01DC2EA0 70617573 */ .word 0x73756170
+    /* 0171A4 01DC2EA4 65000000 */ .word 0x00000065
+
+glabel LIT_1807
+    /* 0171A8 01DC2EA8 6672616D */ .word 0x6D617266
+    /* 0171AC 01DC2EAC 655F696D */ .word 0x6D695F65
+    /* 0171B0 01DC2EB0 61676500 */ .word 0x00656761
+    /* 0171B4 01DC2EB4 00000000 */ .word 0x00000000
+    /* 0171B8 01DC2EB8 00000000 */ .word 0x00000000
+    /* 0171BC 01DC2EBC 00000000 */ .word 0x00000000
+
+glabel LIT_1821__2
+    /* 0171C0 01DC2EC0 E4F9DA01 */ .word .L01DAF9E4
+    /* 0171C4 01DC2EC4 40FADA01 */ .word .L01DAFA40
+    /* 0171C8 01DC2EC8 B4FADA01 */ .word .L01DAFAB4
+    /* 0171CC 01DC2ECC 24FBDA01 */ .word .L01DAFB24
+    /* 0171D0 01DC2ED0 80FBDA01 */ .word .L01DAFB80
+    /* 0171D4 01DC2ED4 30FCDA01 */ .word .L01DAFC30
+    /* 0171D8 01DC2ED8 8CFCDA01 */ .word .L01DAFC8C
+    /* 0171DC 01DC2EDC 00000000 */ .word 0x00000000
+
+glabel LIT_1820
+    /* 0171E0 01DC2EE0 C4F5DA01 */ .word .L01DAF5C4
+    /* 0171E4 01DC2EE4 70F6DA01 */ .word .L01DAF670
+    /* 0171E8 01DC2EE8 C8F6DA01 */ .word .L01DAF6C8
+    /* 0171EC 01DC2EEC 74F7DA01 */ .word .L01DAF774
+    /* 0171F0 01DC2EF0 D0F7DA01 */ .word .L01DAF7D0
+    /* 0171F4 01DC2EF4 80F8DA01 */ .word .L01DAF880
+
+glabel LIT_4385
+    /* 0171F8 01DC2EF8 70617573 */ .word 0x73756170
+    /* 0171FC 01DC2EFC 6521210A */ .word 0x0A212165
+    /* 017200 01DC2F00 00000000 */ .word 0x00000000
+    /* 017204 01DC2F04 00000000 */ .word 0x00000000
+    /* 017208 01DC2F08 00000000 */ .word 0x00000000
+    /* 01720C 01DC2F0C 00000000 */ .word 0x00000000
+
+glabel LIT_4395
+    /* 017210 01DC2F10 64656164 */ .word 0x64616564
+    /* 017214 01DC2F14 20736372 */ .word 0x72637320
+    /* 017218 01DC2F18 69707420 */ .word 0x20747069
+    /* 01721C 01DC2F1C 21210A00 */ .word 0x000A2121
+
+glabel LIT_4396
+    /* 017220 01DC2F20 7468726F */ .word 0x6F726874
+    /* 017224 01DC2F24 77202121 */ .word 0x21212077
+    /* 017228 01DC2F28 0A000000 */ .word 0x0000000A
+    /* 01722C 01DC2F2C 00000000 */ .word 0x00000000
+
+glabel LIT_4400
+    /* 017230 01DC2F30 6572202D */ .word 0x2D207265
+    /* 017234 01DC2F34 3E202564 */ .word 0x6425203E
+    /* 017238 01DC2F38 0A000000 */ .word 0x0000000A
+    /* 01723C 01DC2F3C 00000000 */ .word 0x00000000
+
+glabel LIT_4404
+    /* 017240 01DC2F40 2A2A2A2A */ .word 0x2A2A2A2A
+    /* 017244 01DC2F44 2A2A2A2A */ .word 0x2A2A2A2A
+    /* 017248 01DC2F48 2A2A2073 */ .word 0x73202A2A
+    /* 01724C 01DC2F4C 79737465 */ .word 0x65747379
+    /* 017250 01DC2F50 6D206D65 */ .word 0x656D206D
+    /* 017254 01DC2F54 6D202121 */ .word 0x2121206D
+    /* 017258 01DC2F58 210A0000 */ .word 0x00000A21
+    /* 01725C 01DC2F5C 00000000 */ .word 0x00000000
+
+glabel LIT_4405
+    /* 017260 01DC2F60 2A2A2A2A */ .word 0x2A2A2A2A
+    /* 017264 01DC2F64 2A2A2A2A */ .word 0x2A2A2A2A
+    /* 017268 01DC2F68 2A2A2065 */ .word 0x65202A2A
+    /* 01726C 01DC2F6C 7874206D */ .word 0x6D207478
+    /* 017270 01DC2F70 656D2021 */ .word 0x21206D65
+    /* 017274 01DC2F74 21210A00 */ .word 0x000A2121
+
+glabel LIT_4406
+    /* 017278 01DC2F78 65786974 */ .word 0x74697865
+    /* 01727C 01DC2F7C 20736372 */ .word 0x72637320
+    /* 017280 01DC2F80 6970740A */ .word 0x0A747069
+    /* 017284 01DC2F84 00000000 */ .word 0x00000000
+
+glabel LIT_4407
+    /* 017288 01DC2F88 676F2064 */ .word 0x64206F67
+    /* 01728C 01DC2F8C 756E6765 */ .word 0x65676E75
+    /* 017290 01DC2F90 6F6E0A00 */ .word 0x000A6E6F
+    /* 017294 01DC2F94 00000000 */ .word 0x00000000
+
+glabel LIT_4408
+    /* 017298 01DC2F98 64636F6C */ .word 0x6C6F6364
+    /* 01729C 01DC2F9C 30000000 */ .word 0x00000030
+
+glabel LIT_4409
+    /* 0172A0 01DC2FA0 64636F6C */ .word 0x6C6F6364
+    /* 0172A4 01DC2FA4 31000000 */ .word 0x00000031
+
+glabel LIT_4410
+    /* 0172A8 01DC2FA8 73652073 */ .word 0x73206573
+    /* 0172AC 01DC2FAC 746F7020 */ .word 0x20706F74
+    /* 0172B0 01DC2FB0 21210A00 */ .word 0x000A2121
+    /* 0172B4 01DC2FB4 00000000 */ .word 0x00000000
+
+glabel LIT_4411
+    /* 0172B8 01DC2FB8 6974656D */ .word 0x6D657469
+    /* 0172BC 01DC2FBC 6E6F203D */ .word 0x3D206F6E
+    /* 0172C0 01DC2FC0 2025640A */ .word 0x0A642520
+    /* 0172C4 01DC2FC4 00000000 */ .word 0x00000000
+    /* 0172C8 01DC2FC8 00000000 */ .word 0x00000000
+    /* 0172CC 01DC2FCC 00000000 */ .word 0x00000000
+
+glabel LIT_4418
+    /* 0172D0 01DC2FD0 0858DB01 */ .word .L01DB5808
+    /* 0172D4 01DC2FD4 1458DB01 */ .word .L01DB5814
+    /* 0172D8 01DC2FD8 2058DB01 */ .word .L01DB5820
+    /* 0172DC 01DC2FDC 2C58DB01 */ .word .L01DB582C
+    /* 0172E0 01DC2FE0 3858DB01 */ .word .L01DB5838
+    /* 0172E4 01DC2FE4 4458DB01 */ .word .L01DB5844
+    /* 0172E8 01DC2FE8 5058DB01 */ .word .L01DB5850
+    /* 0172EC 01DC2FEC 00000000 */ .word 0x00000000
+
+glabel LIT_4417
+    /* 0172F0 01DC2FF0 C053DB01 */ .word .L01DB53C0
+    /* 0172F4 01DC2FF4 F053DB01 */ .word .L01DB53F0
+    /* 0172F8 01DC2FF8 0454DB01 */ .word .L01DB5404
+    /* 0172FC 01DC2FFC 1854DB01 */ .word .L01DB5418
+    /* 017300 01DC3000 2C54DB01 */ .word .L01DB542C
+    /* 017304 01DC3004 4054DB01 */ .word .L01DB5440
+    /* 017308 01DC3008 00000000 */ .word 0x00000000
+    /* 01730C 01DC300C 00000000 */ .word 0x00000000
+
+glabel LIT_4416
+    /* 017310 01DC3010 6872DB01 */ .word .L01DB7268
+    /* 017314 01DC3014 4C4CDB01 */ .word .L01DB4C4C
+    /* 017318 01DC3018 6C4CDB01 */ .word .L01DB4C6C
+    /* 01731C 01DC301C 844CDB01 */ .word .L01DB4C84
+    /* 017320 01DC3020 E44CDB01 */ .word .L01DB4CE4
+    /* 017324 01DC3024 0C4EDB01 */ .word .L01DB4E0C
+    /* 017328 01DC3028 B04CDB01 */ .word .L01DB4CB0
+    /* 01732C 01DC302C 00000000 */ .word 0x00000000
+
+glabel LIT_4415
+    /* 017330 01DC3030 F829DB01 */ .word .L01DB29F8
+    /* 017334 01DC3034 082ADB01 */ .word .L01DB2A08
+    /* 017338 01DC3038 242ADB01 */ .word .L01DB2A24
+    /* 01733C 01DC303C 342ADB01 */ .word .L01DB2A34
+    /* 017340 01DC3040 502ADB01 */ .word .L01DB2A50
+    /* 017344 01DC3044 602ADB01 */ .word .L01DB2A60
+    /* 017348 01DC3048 00000000 */ .word 0x00000000
+    /* 01734C 01DC304C 00000000 */ .word 0x00000000
+
+glabel LIT_4414
+    /* 017350 01DC3050 1429DB01 */ .word .L01DB2914
+    /* 017354 01DC3054 2429DB01 */ .word .L01DB2924
+    /* 017358 01DC3058 3429DB01 */ .word .L01DB2934
+    /* 01735C 01DC305C 4429DB01 */ .word .L01DB2944
+    /* 017360 01DC3060 5429DB01 */ .word .L01DB2954
+    /* 017364 01DC3064 6429DB01 */ .word .L01DB2964
+    /* 017368 01DC3068 00000000 */ .word 0x00000000
+    /* 01736C 01DC306C 00000000 */ .word 0x00000000
+
+glabel LIT_4413
+    /* 017370 01DC3070 1420DB01 */ .word .L01DB2014
+    /* 017374 01DC3074 1420DB01 */ .word .L01DB2014
+    /* 017378 01DC3078 4420DB01 */ .word .L01DB2044
+    /* 01737C 01DC307C 1420DB01 */ .word .L01DB2014
+    /* 017380 01DC3080 4420DB01 */ .word .L01DB2044
+    /* 017384 01DC3084 4420DB01 */ .word .L01DB2044
+    /* 017388 01DC3088 1420DB01 */ .word .L01DB2014
+    /* 01738C 01DC308C 1420DB01 */ .word .L01DB2014
+    /* 017390 01DC3090 1420DB01 */ .word .L01DB2014
+    /* 017394 01DC3094 1420DB01 */ .word .L01DB2014
+    /* 017398 01DC3098 1420DB01 */ .word .L01DB2014
+    /* 01739C 01DC309C 1420DB01 */ .word .L01DB2014
+
+glabel LIT_4830
+    /* 0173A0 01DC30A0 74756B65 */ .word 0x656B7574
+    /* 0173A4 01DC30A4 6E653100 */ .word 0x0031656E
+
+glabel LIT_4831
+    /* 0173A8 01DC30A8 6F626A34 */ .word 0x346A626F
+    /* 0173AC 01DC30AC 36000000 */ .word 0x00000036
+
+glabel LIT_4833
+    /* 0173B0 01DC30B0 6A6E7432 */ .word 0x32746E6A
+    /* 0173B4 01DC30B4 5F310000 */ .word 0x0000315F
+    /* 0173B8 01DC30B8 00000000 */ .word 0x00000000
+    /* 0173BC 01DC30BC 00000000 */ .word 0x00000000
+
+glabel LIT_4974
+    /* 0173C0 01DC30C0 64756E2F */ .word 0x2F6E7564
+    /* 0173C4 01DC30C4 6574632F */ .word 0x2F637465
+    /* 0173C8 01DC30C8 61747263 */ .word 0x63727461
+    /* 0173CC 01DC30CC 6F6C2E6D */ .word 0x6D2E6C6F
+    /* 0173D0 01DC30D0 64730000 */ .word 0x00007364
+    /* 0173D4 01DC30D4 00000000 */ .word 0x00000000
+
+glabel LIT_4979
+    /* 0173D8 01DC30D8 70617469 */ .word 0x69746170
+    /* 0173DC 01DC30DC 31000000 */ .word 0x00000031
+
+glabel LIT_4980
+    /* 0173E0 01DC30E0 77656170 */ .word 0x70616577
+    /* 0173E4 01DC30E4 6F6E0000 */ .word 0x00006E6F
+    /* 0173E8 01DC30E8 00000000 */ .word 0x00000000
+    /* 0173EC 01DC30EC 00000000 */ .word 0x00000000
+
+glabel LIT_4997
+    /* 0173F0 01DC30F0 6E6F2077 */ .word 0x77206F6E
+    /* 0173F4 01DC30F4 6561706F */ .word 0x6F706165
+    /* 0173F8 01DC30F8 6E206672 */ .word 0x7266206E
+    /* 0173FC 01DC30FC 616D6520 */ .word 0x20656D61
+    /* 017400 01DC3100 21210A00 */ .word 0x000A2121
+    /* 017404 01DC3104 00000000 */ .word 0x00000000
+    /* 017408 01DC3108 00000000 */ .word 0x00000000
+    /* 01740C 01DC310C 00000000 */ .word 0x00000000
+
+glabel LIT_5137
+    /* 017410 01DC3110 88A0DB01 */ .word .L01DBA088
+    /* 017414 01DC3114 98A0DB01 */ .word .L01DBA098
+    /* 017418 01DC3118 A8A0DB01 */ .word .L01DBA0A8
+    /* 01741C 01DC311C B8A0DB01 */ .word .L01DBA0B8
+    /* 017420 01DC3120 ECA0DB01 */ .word .L01DBA0EC
+    /* 017424 01DC3124 FCA0DB01 */ .word .L01DBA0FC
+    /* 017428 01DC3128 00000000 */ .word 0x00000000
+    /* 01742C 01DC312C 00000000 */ .word 0x00000000
+
+glabel LIT_5159
+    /* 017430 01DC3130 65666665 */ .word 0x65666665
+    /* 017434 01DC3134 63742065 */ .word 0x65207463
+    /* 017438 01DC3138 6E747279 */ .word 0x7972746E
+    /* 01743C 01DC313C 20657272 */ .word 0x72726520
+    /* 017440 01DC3140 21210A00 */ .word 0x000A2121
+    /* 017444 01DC3144 00000000 */ .word 0x00000000
+    /* 017448 01DC3148 00000000 */ .word 0x00000000
+    /* 01744C 01DC314C 00000000 */ .word 0x00000000
+
+glabel LIT_5160
+    /* 017450 01DC3150 73657420 */ .word 0x20746573
+    /* 017454 01DC3154 65666620 */ .word 0x20666665
+    /* 017458 01DC3158 73756373 */ .word 0x73637573
+    /* 01745C 01DC315C 65737320 */ .word 0x20737365
+    /* 017460 01DC3160 210A0000 */ .word 0x00000A21
+    /* 017464 01DC3164 00000000 */ .word 0x00000000
+
+glabel LIT_5197
+    /* 017468 01DC3168 62617365 */ .word 0x65736162
+    /* 01746C 01DC316C 2E636667 */ .word 0x6766632E
+    /* 017470 01DC3170 00000000 */ .word 0x00000000
+    /* 017474 01DC3174 00000000 */ .word 0x00000000
+
+glabel LIT_5198
+    /* 017478 01DC3178 68616E64 */ .word 0x646E6168
+    /* 01747C 01DC317C 5F75702E */ .word 0x2E70755F
+    /* 017480 01DC3180 63666700 */ .word 0x00676663
+    /* 017484 01DC3184 00000000 */ .word 0x00000000
+
+glabel LIT_5199
+    /* 017488 01DC3188 63303577 */ .word 0x77353063
+    /* 01748C 01DC318C 5F682E69 */ .word 0x692E685F
+    /* 017490 01DC3190 6D670000 */ .word 0x0000676D
+    /* 017494 01DC3194 00000000 */ .word 0x00000000
+
+glabel LIT_5200
+    /* 017498 01DC3198 6D67616E */ .word 0x6E61676D
+    /* 01749C 01DC319C 30312E63 */ .word 0x632E3130
+    /* 0174A0 01DC31A0 68720000 */ .word 0x00007268
+    /* 0174A4 01DC31A4 00000000 */ .word 0x00000000
+
+glabel LIT_5201
+    /* 0174A8 01DC31A8 6330355F */ .word 0x5F353063
+    /* 0174AC 01DC31AC 6630332E */ .word 0x2E333066
+    /* 0174B0 01DC31B0 63687200 */ .word 0x00726863
+    /* 0174B4 01DC31B4 00000000 */ .word 0x00000000
+
+glabel LIT_5226
+    /* 0174B8 01DC31B8 5B25645D */ .word 0x5D64255B
+    /* 0174BC 01DC31BC 2025730A */ .word 0x0A732520
+    /* 0174C0 01DC31C0 00000000 */ .word 0x00000000
+    /* 0174C4 01DC31C4 00000000 */ .word 0x00000000
+    /* 0174C8 01DC31C8 00000000 */ .word 0x00000000
+    /* 0174CC 01DC31CC 00000000 */ .word 0x00000000
+
+glabel LIT_5227
+    /* 0174D0 01DC31D0 636F6D6D */ .word 0x6D6D6F63
+    /* 0174D4 01DC31D4 656E752F */ .word 0x2F756E65
+    /* 0174D8 01DC31D8 77656170 */ .word 0x70616577
+    /* 0174DC 01DC31DC 6F6E2F00 */ .word 0x002F6E6F
+
+glabel LIT_5228
+    /* 0174E0 01DC31E0 64756E2F */ .word 0x2F6E7564
+    /* 0174E4 01DC31E4 6D61696E */ .word 0x6E69616D
+    /* 0174E8 01DC31E8 63686172 */ .word 0x72616863
+    /* 0174EC 01DC31EC 612F6330 */ .word 0x30632F61
+    /* 0174F0 01DC31F0 31642E63 */ .word 0x632E6431
+    /* 0174F4 01DC31F4 68720000 */ .word 0x00007268
+    /* 0174F8 01DC31F8 00000000 */ .word 0x00000000
+    /* 0174FC 01DC31FC 00000000 */ .word 0x00000000
+
+glabel LIT_5229
+    /* 017500 01DC3200 636F6D6D */ .word 0x6D6D6F63
+    /* 017504 01DC3204 656E752F */ .word 0x2F756E65
+    /* 017508 01DC3208 77656170 */ .word 0x70616577
+    /* 01750C 01DC320C 6F6E2F63 */ .word 0x632F6E6F
+    /* 017510 01DC3210 30317730 */ .word 0x30773130
+    /* 017514 01DC3214 302E6368 */ .word 0x68632E30
+    /* 017518 01DC3218 72000000 */ .word 0x00000072
+    /* 01751C 01DC321C 00000000 */ .word 0x00000000
+
+glabel LIT_5230
+    /* 017520 01DC3220 636F6D6D */ .word 0x6D6D6F63
+    /* 017524 01DC3224 656E752F */ .word 0x2F756E65
+    /* 017528 01DC3228 77656170 */ .word 0x70616577
+    /* 01752C 01DC322C 6F6E2F63 */ .word 0x632F6E6F
+    /* 017530 01DC3230 30317730 */ .word 0x30773130
+    /* 017534 01DC3234 312E6368 */ .word 0x68632E31
+    /* 017538 01DC3238 72000000 */ .word 0x00000072
+    /* 01753C 01DC323C 00000000 */ .word 0x00000000
+
+glabel LIT_5231
+    /* 017540 01DC3240 64756E2F */ .word 0x2F6E7564
+    /* 017544 01DC3244 6D61696E */ .word 0x6E69616D
+    /* 017548 01DC3248 63686172 */ .word 0x72616863
+    /* 01754C 01DC324C 612F7765 */ .word 0x65772F61
+    /* 017550 01DC3250 705F6566 */ .word 0x66655F70
+    /* 017554 01DC3254 662F6330 */ .word 0x30632F66
+    /* 017558 01DC3258 315F6675 */ .word 0x75665F31
+    /* 01755C 01DC325C 75737961 */ .word 0x61797375
+    /* 017560 01DC3260 2E636872 */ .word 0x7268632E
+    /* 017564 01DC3264 00000000 */ .word 0x00000000
+
+glabel LIT_5232
+    /* 017568 01DC3268 766F6963 */ .word 0x63696F76
+    /* 01756C 01DC326C 65206572 */ .word 0x72652065
+    /* 017570 01DC3270 72200A00 */ .word 0x000A2072
+    /* 017574 01DC3274 00000000 */ .word 0x00000000
+
+glabel LIT_5233
+    /* 017578 01DC3278 736E6420 */ .word 0x20646E73
+    /* 01757C 01DC327C 6C6F6164 */ .word 0x64616F6C
+    /* 017580 01DC3280 0A000000 */ .word 0x0000000A
+    /* 017584 01DC3284 00000000 */ .word 0x00000000
+    /* 017588 01DC3288 00000000 */ .word 0x00000000
+    /* 01758C 01DC328C 00000000 */ .word 0x00000000
+
+glabel LIT_5234
+    /* 017590 01DC3290 64756E2F */ .word 0x2F6E7564
+    /* 017594 01DC3294 7061636B */ .word 0x6B636170
+    /* 017598 01DC3298 2F6D6169 */ .word 0x69616D2F
+    /* 01759C 01DC329C 6E646174 */ .word 0x7461646E
+    /* 0175A0 01DC32A0 2E706163 */ .word 0x6361702E
+    /* 0175A4 01DC32A4 00000000 */ .word 0x00000000
+    /* 0175A8 01DC32A8 00000000 */ .word 0x00000000
+    /* 0175AC 01DC32AC 00000000 */ .word 0x00000000
+
+glabel LIT_5235
+    /* 0175B0 01DC32B0 64756E2F */ .word 0x2F6E7564
+    /* 0175B4 01DC32B4 6574632F */ .word 0x2F637465
+    /* 0175B8 01DC32B8 63757273 */ .word 0x73727563
+    /* 0175BC 01DC32BC 6F722E6D */ .word 0x6D2E726F
+    /* 0175C0 01DC32C0 64730000 */ .word 0x00007364
+    /* 0175C4 01DC32C4 00000000 */ .word 0x00000000
+    /* 0175C8 01DC32C8 00000000 */ .word 0x00000000
+    /* 0175CC 01DC32CC 00000000 */ .word 0x00000000
+
+glabel LIT_5236
+    /* 0175D0 01DC32D0 64756E2F */ .word 0x2F6E7564
+    /* 0175D4 01DC32D4 6574632F */ .word 0x2F637465
+    /* 0175D8 01DC32D8 626F6D62 */ .word 0x626D6F62
+    /* 0175DC 01DC32DC 6C6F636B */ .word 0x6B636F6C
+    /* 0175E0 01DC32E0 2E6D6473 */ .word 0x73646D2E
+    /* 0175E4 01DC32E4 00000000 */ .word 0x00000000
+    /* 0175E8 01DC32E8 00000000 */ .word 0x00000000
+    /* 0175EC 01DC32EC 00000000 */ .word 0x00000000
+
+glabel LIT_5237
+    /* 0175F0 01DC32F0 64756E2F */ .word 0x2F6E7564
+    /* 0175F4 01DC32F4 6574632F */ .word 0x2F637465
+    /* 0175F8 01DC32F8 6269632E */ .word 0x2E636962
+    /* 0175FC 01DC32FC 6D647300 */ .word 0x0073646D
+
+glabel LIT_5239
+    /* 017600 01DC3300 64756E2F */ .word 0x2F6E7564
+    /* 017604 01DC3304 6574632F */ .word 0x2F637465
+    /* 017608 01DC3308 6174722E */ .word 0x2E727461
+    /* 01760C 01DC330C 6D647300 */ .word 0x0073646D
+
+glabel LIT_5240
+    /* 017610 01DC3310 63656666 */ .word 0x66666563
+    /* 017614 01DC3314 655F732E */ .word 0x2E735F65
+    /* 017618 01DC3318 63687200 */ .word 0x00726863
+    /* 01761C 01DC331C 00000000 */ .word 0x00000000
+
+glabel LIT_5241
+    /* 017620 01DC3320 696E666F */ .word 0x6F666E69
+    /* 017624 01DC3324 2E636667 */ .word 0x6766632E
+    /* 017628 01DC3328 00000000 */ .word 0x00000000
+    /* 01762C 01DC332C 00000000 */ .word 0x00000000
+
+glabel LIT_5242
+    /* 017630 01DC3330 69676574 */ .word 0x74656769
+    /* 017634 01DC3334 66780000 */ .word 0x00007866
+
+glabel LIT_5243
+    /* 017638 01DC3338 69676574 */ .word 0x74656769
+    /* 01763C 01DC333C 66786200 */ .word 0x00627866
+
+glabel LIT_5244
+    /* 017640 01DC3340 77617465 */ .word 0x65746177
+    /* 017644 01DC3344 725F7370 */ .word 0x70735F72
+    /* 017648 01DC3348 2E636872 */ .word 0x7268632E
+    /* 01764C 01DC334C 00000000 */ .word 0x00000000
+
+glabel LIT_5245
+    /* 017650 01DC3350 74726170 */ .word 0x70617274
+    /* 017654 01DC3354 30312E63 */ .word 0x632E3130
+    /* 017658 01DC3358 68720000 */ .word 0x00007268
+    /* 01765C 01DC335C 00000000 */ .word 0x00000000
+
+glabel LIT_5246
+    /* 017660 01DC3360 6B617261 */ .word 0x6172616B
+    /* 017664 01DC3364 3025642E */ .word 0x2E642530
+    /* 017668 01DC3368 6D647300 */ .word 0x0073646D
+    /* 01766C 01DC336C 00000000 */ .word 0x00000000
+
+glabel LIT_5247
+    /* 017670 01DC3370 64756E2F */ .word 0x2F6E7564
+    /* 017674 01DC3374 65666665 */ .word 0x65666665
+    /* 017678 01DC3378 63742F6D */ .word 0x6D2F7463
+    /* 01767C 01DC337C 6173656B */ .word 0x6B657361
+    /* 017680 01DC3380 695F6578 */ .word 0x78655F69
+    /* 017684 01DC3384 2E636872 */ .word 0x7268632E
+    /* 017688 01DC3388 00000000 */ .word 0x00000000
+    /* 01768C 01DC338C 00000000 */ .word 0x00000000
+
+glabel LIT_5627
+    /* 017690 01DC3390 6974656D */ .word 0x6D657469
+    /* 017694 01DC3394 00000000 */ .word 0x00000000
+
+glabel LIT_5735
+    /* 017698 01DC3398 65666633 */ .word 0x33666665
+    /* 01769C 01DC339C 30000000 */ .word 0x00000030
+
+glabel LIT_6309
+    /* 0176A0 01DC33A0 4CFBDB01 */ .word .L01DBFB4C
+    /* 0176A4 01DC33A4 64FBDB01 */ .word .L01DBFB64
+    /* 0176A8 01DC33A8 BCFBDB01 */ .word .L01DBFBBC
+    /* 0176AC 01DC33AC CCFBDB01 */ .word .L01DBFBCC
+    /* 0176B0 01DC33B0 DCFBDB01 */ .word .L01DBFBDC
+    /* 0176B4 01DC33B4 ECFBDB01 */ .word .L01DBFBEC
+    /* 0176B8 01DC33B8 04FCDB01 */ .word .L01DBFC04
+    /* 0176BC 01DC33BC 40FCDB01 */ .word .L01DBFC40
+    /* 0176C0 01DC33C0 50FCDB01 */ .word .L01DBFC50
+    /* 0176C4 01DC33C4 60FCDB01 */ .word .L01DBFC60
+
+glabel LIT_6367
+    /* 0176C8 01DC33C8 64303165 */ .word 0x65313064
+    /* 0176CC 01DC33CC 30340000 */ .word 0x00003430
+
+glabel LIT_6745
+    /* 0176D0 01DC33D0 646E616D */ .word 0x6D616E64
+    /* 0176D4 01DC33D4 6530302E */ .word 0x2E303065
+    /* 0176D8 01DC33D8 696D6700 */ .word 0x00676D69
+    /* 0176DC 01DC33DC 00000000 */ .word 0x00000000
+
+glabel LIT_6746
+    /* 0176E0 01DC33E0 646E616D */ .word 0x6D616E64
+    /* 0176E4 01DC33E4 6530312E */ .word 0x2E313065
+    /* 0176E8 01DC33E8 696D6700 */ .word 0x00676D69
+    /* 0176EC 01DC33EC 00000000 */ .word 0x00000000
+
+glabel LIT_6747
+    /* 0176F0 01DC33F0 646E616D */ .word 0x6D616E64
+    /* 0176F4 01DC33F4 6530322E */ .word 0x2E323065
+    /* 0176F8 01DC33F8 696D6700 */ .word 0x00676D69
+    /* 0176FC 01DC33FC 00000000 */ .word 0x00000000
+
+glabel LIT_6748
+    /* 017700 01DC3400 646E616D */ .word 0x6D616E64
+    /* 017704 01DC3404 6530332E */ .word 0x2E333065
+    /* 017708 01DC3408 696D6700 */ .word 0x00676D69
+    /* 01770C 01DC340C 00000000 */ .word 0x00000000
+
+glabel LIT_6749
+    /* 017710 01DC3410 646E616D */ .word 0x6D616E64
+    /* 017714 01DC3414 6530342E */ .word 0x2E343065
+    /* 017718 01DC3418 696D6700 */ .word 0x00676D69
+    /* 01771C 01DC341C 00000000 */ .word 0x00000000
+
+glabel LIT_6750
+    /* 017720 01DC3420 646E616D */ .word 0x6D616E64
+    /* 017724 01DC3424 6530352E */ .word 0x2E353065
+    /* 017728 01DC3428 696D6700 */ .word 0x00676D69
+    /* 01772C 01DC342C 00000000 */ .word 0x00000000
+
+glabel LIT_6751
+    /* 017730 01DC3430 646E616D */ .word 0x6D616E64
+    /* 017734 01DC3434 6530362E */ .word 0x2E363065
+    /* 017738 01DC3438 696D6700 */ .word 0x00676D69
+    /* 01773C 01DC343C 00000000 */ .word 0x00000000
+
+glabel LIT_6753
+    /* 017740 01DC3440 666C6F6F */ .word 0x6F6F6C66
+    /* 017744 01DC3444 72303000 */ .word 0x00303072
+
+glabel LIT_6754
+    /* 017748 01DC3448 666C6F6F */ .word 0x6F6F6C66
+    /* 01774C 01DC344C 72303100 */ .word 0x00313072
+
+glabel LIT_6755
+    /* 017750 01DC3450 666C6F6F */ .word 0x6F6F6C66
+    /* 017754 01DC3454 72303200 */ .word 0x00323072
+
+glabel LIT_6756
+    /* 017758 01DC3458 666C6F6F */ .word 0x6F6F6C66
+    /* 01775C 01DC345C 72303300 */ .word 0x00333072
+
+glabel LIT_6757
+    /* 017760 01DC3460 666C6F6F */ .word 0x6F6F6C66
+    /* 017764 01DC3464 72303400 */ .word 0x00343072
+
+glabel LIT_6758
+    /* 017768 01DC3468 666C6F6F */ .word 0x6F6F6C66
+    /* 01776C 01DC346C 72303500 */ .word 0x00353072
+
+glabel LIT_6759
+    /* 017770 01DC3470 666C6F6F */ .word 0x6F6F6C66
+    /* 017774 01DC3474 72303600 */ .word 0x00363072
+    /* 017778 01DC3478 00000000 */ .word 0x00000000
+    /* 01777C 01DC347C 00000000 */ .word 0x00000000
+
+glabel LIT_6774
+    /* 017780 01DC3480 43617665 */ .word 0x65766143
+    /* 017784 01DC3484 206F6620 */ .word 0x20666F20
+    /* 017788 01DC3488 74686520 */ .word 0x20656874
+    /* 01778C 01DC348C 53616372 */ .word 0x72636153
+    /* 017790 01DC3490 65642042 */ .word 0x42206465
+    /* 017794 01DC3494 65617374 */ .word 0x74736165
+    /* 017798 01DC3498 00000000 */ .word 0x00000000
+    /* 01779C 01DC349C 00000000 */ .word 0x00000000
+
+glabel LIT_6775
+    /* 0177A0 01DC34A0 466F7265 */ .word 0x65726F46
+    /* 0177A4 01DC34A4 7374206F */ .word 0x6F207473
+    /* 0177A8 01DC34A8 66207468 */ .word 0x68742066
+    /* 0177AC 01DC34AC 65204F77 */ .word 0x774F2065
+    /* 0177B0 01DC34B0 6E000000 */ .word 0x0000006E
+    /* 0177B4 01DC34B4 00000000 */ .word 0x00000000
+
+glabel LIT_6776
+    /* 0177B8 01DC34B8 53756E6B */ .word 0x6B6E7553
+    /* 0177BC 01DC34BC 656E2053 */ .word 0x53206E65
+    /* 0177C0 01DC34C0 68697000 */ .word 0x00706968
+    /* 0177C4 01DC34C4 00000000 */ .word 0x00000000
+    /* 0177C8 01DC34C8 00000000 */ .word 0x00000000
+    /* 0177CC 01DC34CC 00000000 */ .word 0x00000000
+
+glabel LIT_6777
+    /* 0177D0 01DC34D0 53687269 */ .word 0x69726853
+    /* 0177D4 01DC34D4 6E65206F */ .word 0x6F20656E
+    /* 0177D8 01DC34D8 66205375 */ .word 0x75532066
+    /* 0177DC 01DC34DC 6E20616E */ .word 0x6E61206E
+    /* 0177E0 01DC34E0 64204D6F */ .word 0x6F4D2064
+    /* 0177E4 01DC34E4 6F6E0000 */ .word 0x00006E6F
+
+glabel LIT_6778
+    /* 0177E8 01DC34E8 4D6F6F6E */ .word 0x6E6F6F4D
+    /* 0177EC 01DC34EC 4F636561 */ .word 0x6165634F
+    /* 0177F0 01DC34F0 6E000000 */ .word 0x0000006E
+    /* 0177F4 01DC34F4 00000000 */ .word 0x00000000
+    /* 0177F8 01DC34F8 00000000 */ .word 0x00000000
+    /* 0177FC 01DC34FC 00000000 */ .word 0x00000000
+
+glabel LIT_6779
+    /* 017800 01DC3500 4461726B */ .word 0x6B726144
+    /* 017804 01DC3504 48657665 */ .word 0x65766548
+    /* 017808 01DC3508 6E204361 */ .word 0x6143206E
+    /* 01780C 01DC350C 73746C65 */ .word 0x656C7473
+    /* 017810 01DC3510 00000000 */ .word 0x00000000
+    /* 017814 01DC3514 00000000 */ .word 0x00000000
+
+glabel LIT_6780
+    /* 017818 01DC3518 4465616D */ .word 0x6D616544
+    /* 01781C 01DC351C 6F6E2053 */ .word 0x53206E6F
+    /* 017820 01DC3520 68616674 */ .word 0x74666168
+    /* 017824 01DC3524 00000000 */ .word 0x00000000
+    /* 017828 01DC3528 00000000 */ .word 0x00000000
+    /* 01782C 01DC352C 00000000 */ .word 0x00000000
+
+glabel LIT_6807
+    /* 017830 01DC3530 2D204D61 */ .word 0x614D202D
+    /* 017834 01DC3534 70496E66 */ .word 0x666E4970
+    /* 017838 01DC3538 6F6D6174 */ .word 0x74616D6F
+    /* 01783C 01DC353C 696F6E46 */ .word 0x466E6F69
+    /* 017840 01DC3540 696C6520 */ .word 0x20656C69
+    /* 017844 01DC3544 4C6F6164 */ .word 0x64616F4C
+    /* 017848 01DC3548 6572202D */ .word 0x2D207265
+    /* 01784C 01DC354C 0A000000 */ .word 0x0000000A
+
+glabel LIT_6808
+    /* 017850 01DC3550 3E3E5B25 */ .word 0x255B3E3E
+    /* 017854 01DC3554 32645D20 */ .word 0x205D6432
+    /* 017858 01DC3558 25730A00 */ .word 0x000A7325
+    /* 01785C 01DC355C 00000000 */ .word 0x00000000
+
+glabel LIT_6809
+    /* 017860 01DC3560 20205B25 */ .word 0x255B2020
+    /* 017864 01DC3564 32645D20 */ .word 0x205D6432
+    /* 017868 01DC3568 25730A00 */ .word 0x000A7325
+    /* 01786C 01DC356C 00000000 */ .word 0x00000000
+    /* 017870 01DC3570 00000000 */ .word 0x00000000
+    /* 017874 01DC3574 00000000 */ .word 0x00000000
+    /* 017878 01DC3578 00000000 */ .word 0x00000000
+    /* 01787C 01DC357C 00000000 */ .word 0x00000000

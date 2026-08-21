@@ -223,7 +223,7 @@ glabel D_00298090
 
 glabel tiny__2
     /* 1981B0 002980B0 59F3F8C2 */ .word 0xC2F8F359
-    /* 1981B4 002980B4 1F6EA501 */ .word GlobalDataBuffer + 0x17ABD9F
+    /* 1981B4 002980B4 1F6EA501 */ .word 0x01A56E1F
 
 glabel zero
     /* 1981B8 002980B8 00000000 */ .word 0x00000000

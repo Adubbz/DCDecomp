@@ -1,6 +1,8 @@
 #pragma once
 
 #include "common.h"
+
+#include <libvu0.h>
 #include "vu1.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
@@ -9,6 +11,13 @@
 struct RenderInfo;
 struct sceVif1Packet;
 
+
+/**
+ * Draws the polygons of a water surface with the VU1 microprogram.
+ *
+ * Adds no method of its own: its vtable is CVisualVu1's, entry for entry.
+ */
+class CVisualPolyVu1;
 
 class CVisualVu1 {
 public:
@@ -89,6 +98,14 @@ public:
      */
     void CreateVUdataFromMDTRemake(unsigned int *, unsigned int *, int);
 };
+
+class CVisualPolyVu1 : public CVisualVu1 {
+public:
+    u8 unk_004[0xC];
+    sceVu0FVECTOR unk_010;
+};
+
+STATIC_ASSERT(sizeof(CVisualPolyVu1) == 0x20);
 
 class CVisual {
 public:

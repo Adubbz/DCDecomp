@@ -70,7 +70,7 @@ glabel linear__2
     /* 1A1FE8 002A1EE8 01000000 */ .word 0x00000001
 
 glabel LIT_211__2
-    /* 1A1FEC 002A1EEC 80808000 */ .word GlobalDataBuffer + 0x55D000
+    /* 1A1FEC 002A1EEC 80808000 */ .word 0x00808080
 
 glabel SystemMesNo
     /* 1A1FF0 002A1EF0 FFFFFFFF */ .word 0xFFFFFFFF
@@ -85,7 +85,7 @@ glabel LIT_442__2
     /* 1A1FFC 002A1EFC 80808080 */ .word 0x80808080
 
 glabel LIT_531
-    /* 1A2000 002A1F00 68808000 */ .word GlobalDataBuffer + 0x55CFE8
+    /* 1A2000 002A1F00 68808000 */ .word 0x00808068
 
 glabel eb_cool_flag
     /* 1A2004 002A1F04 01000000 */ .word 0x00000001
@@ -203,13 +203,13 @@ glabel LanguageStr
     /* 1A20BC 002A1FBC 08BB2900 */ .word LIT_512
 
 glabel LIT_1292
-    /* 1A20C0 002A1FC0 20406000 */ .word GlobalDataBuffer + 0x358FA0
+    /* 1A20C0 002A1FC0 20406000 */ .word 0x00604020
 
 glabel LIT_1293
-    /* 1A20C4 002A1FC4 6080A200 */ .word GlobalDataBuffer + 0x77CFE0
+    /* 1A20C4 002A1FC4 6080A200 */ .word 0x00A28060
 
 glabel LIT_1294
-    /* 1A20C8 002A1FC8 4060A200 */ .word GlobalDataBuffer + 0x77AFC0
+    /* 1A20C8 002A1FC8 4060A200 */ .word 0x00A26040
 
 glabel debugModeFlag__2
     /* 1A20CC 002A1FCC 01000000 */ .word 0x00000001
@@ -337,7 +337,7 @@ glabel LIT_5711
     /* 1A21B4 002A20B4 00000000 */ .word 0x00000000
 
 glabel LIT_5977
-    /* 1A21B8 002A20B8 31013001 */ .word GlobalDataBuffer + 0x10550B1
+    /* 1A21B8 002A20B8 31013001 */ .word 0x01300131
     /* 1A21BC 002A20BC 2F010000 */ .word 0x0000012F
 
 glabel LIT_6236
@@ -368,7 +368,7 @@ glabel LIT_1334
 
 glabel LIT_1335
     /* 1A21F0 002A20F0 B4A0A0A0 */ .word 0xA0A0A0B4
-    /* 1A21F4 002A20F4 A0A0A000 */ .word GlobalDataBuffer + 0x75F020
+    /* 1A21F4 002A20F4 A0A0A000 */ .word 0x00A0A0A0
 
 glabel EditMenuIconID
     /* 1A21F8 002A20F8 0D0A0B05 */ .word 0x050B0A0D
@@ -425,20 +425,20 @@ glabel LIT_2647
     /* 1A225C 002A215C 0000A0C1 */ .word 0xC1A00000
 
 glabel LIT_3137
-    /* 1A2260 002A2160 80808000 */ .word GlobalDataBuffer + 0x55D000
+    /* 1A2260 002A2160 80808000 */ .word 0x00808080
 
 glabel LIT_3138
-    /* 1A2264 002A2164 80808000 */ .word GlobalDataBuffer + 0x55D000
+    /* 1A2264 002A2164 80808000 */ .word 0x00808080
 
 glabel LIT_3260
-    /* 1A2268 002A2168 80808000 */ .word GlobalDataBuffer + 0x55D000
+    /* 1A2268 002A2168 80808000 */ .word 0x00808080
 
 glabel LIT_3261__2
-    /* 1A226C 002A216C 80808000 */ .word GlobalDataBuffer + 0x55D000
+    /* 1A226C 002A216C 80808000 */ .word 0x00808080
 
 glabel LIT_3395
     /* 1A2270 002A2170 00F0F0F0 */ .word 0xF0F0F000
-    /* 1A2274 002A2174 F0F0F000 */ .word GlobalDataBuffer + 0xC64070
+    /* 1A2274 002A2174 F0F0F000 */ .word 0x00F0F0F0
 
 glabel kakudai_tate_lang
     /* 1A2278 002A2178 00101010 */ .word 0x10101000
@@ -454,7 +454,7 @@ glabel changeMenu_long
 
 glabel LIT_1730
     /* 1A2290 002A2190 77657069 */ .word 0x69706577
-    /* 1A2294 002A2194 636F6E00 */ .word GlobalDataBuffer + 0x43BEE3
+    /* 1A2294 002A2194 636F6E00 */ .word 0x006E6F63
 
 glabel LIT_1732
     /* 1A2298 002A2198 00000000 */ .word 0x00000000
@@ -513,7 +513,7 @@ glabel LIT_353__5
     /* 1A22FC 002A21FC FFFFFFFF */ .word 0xFFFFFFFF
 
 glabel LIT_484__2
-    /* 1A2300 002A2200 59005800 */ .word GlobalDataBuffer + 0x2D4FD9
+    /* 1A2300 002A2200 59005800 */ .word 0x00580059
     /* 1A2304 002A2204 3E001800 */ .word 0x0018003E
 
 glabel LIT_1453__2
@@ -533,7 +533,7 @@ glabel asort_top_type__3
     /* 1A231C 002A221C 01000000 */ .word 0x00000001
 
 glabel op_fogColor
-    /* 1A2320 002A2220 60A0EF00 */ .word GlobalDataBuffer + 0xC4EFE0
+    /* 1A2320 002A2220 60A0EF00 */ .word 0x00EFA060
 
 glabel debugModeFlag
     /* 1A2324 002A2224 01000000 */ .word 0x00000001
@@ -554,7 +554,7 @@ glabel Projection
     /* 1A2340 002A2240 00004844 */ .word 0x44480000
 
 glabel editFogColor
-    /* 1A2344 002A2244 60A0EF00 */ .word GlobalDataBuffer + 0xC4EFE0
+    /* 1A2344 002A2244 60A0EF00 */ .word 0x00EFA060
 
 glabel LIT_495__4
     /* 1A2348 002A2248 00004842 */ .word 0x42480000

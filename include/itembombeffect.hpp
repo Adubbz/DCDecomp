@@ -6,9 +6,13 @@
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 class CCamera;
+class CUserStatus;
 
 
 class CItemBombEffect {
+private:
+    u8 data[0xC0];
+
 public:
     /**
      * @mangled Draw__15CItemBombEffectFP7CCamera
@@ -53,6 +57,10 @@ public:
 
 class CShockWave {
 public:
+    u8 unk_00[0x28];
+    s32 unk_28;
+    u8 unk_2C[0x4];
+
     /**
      * @mangled Draw__10CShockWaveFP7CCamera
      * @address 0x1D61E0
@@ -69,3 +77,17 @@ public:
      */
     void Step(void);
 };
+
+STATIC_ASSERT(sizeof(CShockWave) == 0x30);
+
+/**
+ * Spends one use of a running item.
+ *
+ * @mangled usedActiveItem__FP11CUserStatusi
+ * @address 0x1D56F0
+ * @size 0x248
+ * @unknownret
+ */
+void usedActiveItem(CUserStatus *status, int item);
+
+STATIC_ASSERT(sizeof(CItemBombEffect) == 0xC0);

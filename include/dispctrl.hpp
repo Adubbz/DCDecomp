@@ -10,6 +10,10 @@ struct sceVif1Packet;
 
 class CDispCtrl {
 public:
+    float unk_0;
+    float unk_4;
+    s32 unk_8;
+
     /**
      * @mangled FadeOutStart__9CDispCtrlFf
      * @address 0x13E610
@@ -58,3 +62,5 @@ public:
      */
     void FadeIn(sceVif1Packet *);
 };
+
+STATIC_ASSERT(sizeof(CDispCtrl) == 0xC);

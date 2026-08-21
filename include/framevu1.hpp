@@ -15,6 +15,7 @@ class CVisualVu1;
  */
 class CFrameVu1 : public CFrame {
 public:
+    u8 unk_260[0x10];
 
     /**
      * @mangled DrawVu1__9CFrameVu1FPUiP10RenderInfo
@@ -71,3 +72,5 @@ public:
      */
     void __as(CFrameVu1 &);
 };
+
+STATIC_ASSERT(sizeof(CFrameVu1) == 0x270);

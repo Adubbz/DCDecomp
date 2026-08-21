@@ -250,7 +250,7 @@ void EventItemSelectExit(void);
  * @size 0x120
  * @unknownret
  */
-void EventItemSelectLoop(int *);
+int EventItemSelectLoop(int *);
 
 /**
  * @mangled EventItemSelectKey__FPi
@@ -341,6 +341,16 @@ void PlusAttachmentVolume(ATTACH_LIST *, ATTACH_LIST *, float);
 void GetWeaponAttachStatusUp(WEAPON_HAVE *, int);
 
 /**
+ * Takes one hit off the weapon the player holds and gives back what broke:
+ * 0 for nothing, 1 for the weapon, 2 for the one it fell back to.
+ *
+ * @mangled BattleSubWeaponDmg__Ffi
+ * @address 0x1B5D90
+ * @size 0x570
+ */
+int BattleSubWeaponDmg(float amount, int kind);
+
+/**
  * @mangled SetWeaponAttachStatus__FP11WEAPON_HAVE
  * @address 0x225AA0
  * @size 0xC0
@@ -394,7 +404,7 @@ void ExitDunEnterMenu(void);
  * @size 0x90
  * @unknownret
  */
-void DunEnterMenuLoop(void);
+int DunEnterMenuLoop(void);
 
 /**
  * @mangled DunEnterMenuKey__Fv
@@ -482,7 +492,7 @@ void StartQuickChange(void /* CW back-ref target unresolved */ *, int, int *, in
  * @size 0x2E0
  * @unknownret
  */
-void CharaChangeLoop(void);
+int CharaChangeLoop(void);
 
 /**
  * @mangled CharaChangeKey__Fv

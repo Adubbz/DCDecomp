@@ -3,6 +3,9 @@
 #include "common.h"
 
 class CMainItemModel {
+private:
+    u8 data[0x2810];
+
 public:
     /**
      * @mangled GetFreeCashNo__14CMainItemModelFv
@@ -95,3 +98,5 @@ public:
      */
     void CheckStatusType(void);
 };
+
+STATIC_ASSERT(sizeof(CMainItemModel) == 0x2810);

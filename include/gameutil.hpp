@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+class CCPoly;
+
 /**
  * @file
  * Declares the motion data that a character plays, and the calls that step it.
@@ -57,7 +59,12 @@ struct tagMOTION_TYPE {
     u8 unk_00[16];
     MOTION_STATE state; /**< How far the set has played. */
     CCamera *camera;    /**< Camera that the motion moves; zero where it moves none. */
-    u8 unk_34[44];
+    s32 unk_34;
+    CFrame *unk_38;
+    u8 unk_3C[4];
+    sceVu0FVECTOR unk_40;
+    s32 unk_50;
+    u8 unk_54[12];
     tagFRAME_INF *frame_info; /**< Frames that the motions drive. */
     MOTION_INFO *motion_info; /**< One entry per motion of the set. */
     s32 unk_68;
@@ -90,3 +97,24 @@ void SetMotionEX(CFrame *frame, tagMOTION_TYPE *motion, MOTION_INFO *info, MOTIO
  * @unknownret
  */
 int NextMotionTime_GET_EX(MOTION_INFO *info, MOTION_STATE *state);
+
+/**
+ * Finds where a line from one point to another crosses a set of polygons, and
+ * gives back how many crossings it found.
+ *
+ * @mangled CheckHits__FP6CCPolyiPfPfiPiPA4_fii
+ * @address 0x14A230
+ * @size 0x444
+ */
+int CheckHits(CCPoly *poly, int count, float *from, float *to, int max, int *hit_poly,
+              float (*hit_point)[4], int sort, int mode);
+
+/**
+ * Finds the polygon straight below a point, and gives back which one it is.
+ *
+ * @mangled CheckHitVertical__FP6CCPolyiPffPfi
+ * @address 0x14A080
+ * @size 0x1A4
+ */
+int CheckHitVertical(CCPoly *poly, int count, float *from, float depth, float *hit_point,
+                     int mode);

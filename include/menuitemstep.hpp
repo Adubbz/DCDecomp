@@ -3,6 +3,9 @@
 #include "common.h"
 
 class CMenuItemStep {
+private:
+    u8 data[0x2C];
+
 public:
     /**
      * @mangled Initialize__13CMenuItemStepFv
@@ -28,3 +31,5 @@ public:
      */
     void CheckItemVolume(void);
 };
+
+STATIC_ASSERT(sizeof(CMenuItemStep) == 0x2C);

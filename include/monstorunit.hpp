@@ -2,11 +2,68 @@
 
 #include "common.h"
 
+#include <libvu0.h>
+
+#include "character.hpp"
+
 class CDungeonMap;
 class CDataAlloc2_1_; /* disassembler's filesystem-safe spelling of CDataAlloc2<1> (dataalloc.hpp) */
 
+class CFrame;
+
+/**
+ * Records what one monster of the floor is doing.
+ */
+struct MONSTOR {
+    s32 state; /**< 2 while the monster stands on the floor and takes part. */
+    u8 unk_004[0x1C];
+    s32 max_hp; /**< Life the monster has at full health. */
+    s32 hp;     /**< Life the monster has left. */
+    u8 unk_028[0x14];
+    s32 unk_03C;
+    s16 kind;      /**< 2 for a monster the lock-on cursor leaves alone. */
+    s16 name_no;   /**< Identifies the name the lock-on cursor shows. */
+    float unk_044;
+    u8 unk_048[0x78];
+    s32 unk_0C0;
+    u8 unk_0C4[0x10];
+    s16 unk_0D4;
+    u8 unk_0D6[0x26];
+    s32 unk_0FC;
+    sceVu0FVECTOR unk_100;
+    float unk_110;
+    float unk_114;
+    float lock_range; /**< Distance up to which the monster can be locked on to. */
+    s16 unk_11C;
+    u8 unk_11E[0x72];
+};
+
+STATIC_ASSERT(sizeof(MONSTOR) == 0x190);
+
+/**
+ * Draws one monster of the floor.
+ */
+class CMonstorChara : public CCharacter {
+public:
+    u8 unk_11B0[0x2360];
+};
+
+STATIC_ASSERT(sizeof(CMonstorChara) == 0x3510);
+
 class CMonstorUnit {
 public:
+    void *script[16]; /**< Script working memory for each monster on the floor. */
+    CFrame *collision; /**< Collision model that every monster on the floor shares. */
+    u8 unk_044[4];
+    s32 unk_048;
+    u8 unk_04C[0x44];
+    s32 unk_090;
+    s32 unk_094;
+    u8 unk_098[0x1E338];
+    MONSTOR monster[16];      /**< What each monster of the floor is doing. */
+    CMonstorChara chara[16];  /**< The model each monster draws with. */
+    u8 unk_54DD0[0xB980];
+
     /**
      * @mangled GetMonstorNum__12CMonstorUnitFv
      * @address 0x1D7A40
@@ -168,12 +225,14 @@ public:
     void CleanViewMonstor(int);
 
     /**
+     * Loads the models one monster needs, and says how many it took.
+     *
      * @mangled SetupBaseModel__12CMonstorUnitFiiiP14CDataAlloc2_1_
      * @address 0x1DFE90
      * @size 0x420
      * @unknownret
      */
-    void SetupBaseModel(int, int, int, CDataAlloc2_1_ *);
+    int SetupBaseModel(int, int, int, CDataAlloc2_1_ *);
 
     /**
      * @mangled SetupViewMonstor__12CMonstorUnitFiPfi

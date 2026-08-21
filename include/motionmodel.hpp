@@ -11,6 +11,8 @@ struct MOTION_INFO;
 
 class CMotionModel {
 public:
+    u8 unk_00[0xA0];
+
     /**
      * @mangled LoadPack__12CMotionModelFPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P11MOTION_INFOi
      * @address 0x1B6A30
@@ -35,3 +37,14 @@ public:
      */
     void Draw(void);
 };
+
+STATIC_ASSERT(sizeof(CMotionModel) == 0xA0);
+
+/**
+ * Gives the attribute that one weapon element hits with.
+ *
+ * @mangled GetWeaponElementAttr__Fi
+ * @address 0x1B69F0
+ * @size 0x34
+ */
+int GetWeaponElementAttr(int element);

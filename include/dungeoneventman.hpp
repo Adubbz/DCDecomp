@@ -8,8 +8,41 @@
 class CDungeonMap;
 
 
+/**
+ * Records what one placed dungeon event is doing.
+ */
+struct DUNGEON_EVENT_STATE {
+    s32 unk_00;
+    u8 unk_04[0x2C];
+    s32 unk_30;
+    s32 unk_34;
+    s32 unk_38;
+    s32 unk_3C;
+};
+
+STATIC_ASSERT(sizeof(DUNGEON_EVENT_STATE) == 0x40);
+
+/**
+ * Records what one dungeon event slot is doing.
+ */
+struct DUNGEON_EVENT_SLOT {
+    s8 unk_00;
+    u8 unk_01[0x1B];
+    s32 unk_1C;
+    s32 unk_20;
+    u8 unk_24[0x10];
+    s32 unk_34;
+    u8 unk_38[0x4];
+    s32 unk_3C;
+};
+
+STATIC_ASSERT(sizeof(DUNGEON_EVENT_SLOT) == 0x40);
+
 class CDungeonEventMan {
 public:
+    DUNGEON_EVENT_SLOT slot[64]; /**< What each event slot is doing. */
+    DUNGEON_EVENT_STATE event[96]; /**< What each placed event is doing. */
+
     /**
      * @mangled SearchPartsID__16CDungeonEventManFii
      * @address 0x1CC8F0
@@ -90,3 +123,5 @@ public:
      */
     void SetupEvent(CDungeonMap *, int);
 };
+
+STATIC_ASSERT(sizeof(CDungeonEventMan) == 0x2800);

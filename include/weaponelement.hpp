@@ -3,6 +3,9 @@
 #include "common.h"
 
 class CWeaponElement {
+private:
+    u8 data[0x7C0];
+
 public:
     /**
      * @mangled Initialize__14CWeaponElementFv
@@ -156,3 +159,5 @@ public:
      */
     void Draw_Thunder(void);
 };
+
+STATIC_ASSERT(sizeof(CWeaponElement) == 0x7C0);

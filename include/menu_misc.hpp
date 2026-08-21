@@ -417,7 +417,7 @@ void DngEscapeMsgDraw(void);
  * @size 0x170
  * @unknownret
  */
-void DngEscapeMsgLoop(void);
+int DngEscapeMsgLoop(void);
 
 /**
  * @mangled CheckItemThrow__FPiPi

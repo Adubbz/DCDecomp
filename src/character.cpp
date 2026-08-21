@@ -731,7 +731,7 @@ void CCharacter::LoadPackData3(unsigned int *pack, char *name, CDataAlloc2_1_ *a
 }
 
 void CCharacter::DeleteExtendTexture(int block_no) {
-    LOADTEXTURE_INFO2 info;
+    LOADTEXTURE_INFO2 info[2];
 
     if (this->unk_0D4 != NULL) {
         this->tex_anime.LoadCFGFile(this->unk_0D4, this->unk_0D8);
@@ -740,14 +740,14 @@ void CCharacter::DeleteExtendTexture(int block_no) {
     // A block that the character loaded textures into goes back to what the
     // character alone asks for.
     if (this->unk_0C8 != 0 || this->unk_0CC != 0 || this->unk_0D0 != 0) {
-        info.block_no = block_no;
-        info.unk_08 = 0;
-        info.unk_00 = this->unk_0C4;
-        info.unk_10 = 0;
-        info.unk_14 = 0;
-        info.unk_0C = 0;
+        info[0].block_no = block_no;
+        info[0].unk_08 = 0;
+        info[0].name = (char *) this->unk_0C4;
+        info[1].block_no = 0;
+        info[1].unk_08 = 0;
+        info[1].name = NULL;
         TexManager.DeleteTextureBlock(block_no);
-        TexManager.LoadTextureBlockEX(block_no, &info);
+        TexManager.LoadTextureBlockEX(block_no, info);
     }
 }
 

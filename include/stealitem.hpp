@@ -9,6 +9,9 @@ class CFrameVu1;
 
 
 class CStealItem {
+private:
+    u8 data[0x160];
+
 public:
     /**
      * @mangled Initialize__10CStealItemFP9CFrameVu1
@@ -50,3 +53,5 @@ public:
      */
     void checkEvent(void);
 };
+
+STATIC_ASSERT(sizeof(CStealItem) == 0x160);

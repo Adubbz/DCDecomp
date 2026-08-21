@@ -327,15 +327,16 @@ float AngleInterpolate(float, float, float, int);
  * @size 0xB0
  * @unknownret
  */
-void AngleCmp(float, float, float);
+int AngleCmp(float a, float b, float range);
 
 /**
+ * Wraps one angle into the half turn either side of zero.
+ *
  * @mangled AngleLimit__Ff
  * @address 0x123BE0
  * @size 0xD0
- * @unknownret
  */
-void AngleLimit(float);
+float AngleLimit(float angle);
 
 /**
  * @mangled rnd__Fv

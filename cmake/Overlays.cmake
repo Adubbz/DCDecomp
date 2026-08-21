@@ -40,6 +40,7 @@ function(overlay_rename_flags name out_var)
     set(${out_var}
         --rename-section .text=${p}text
         --rename-section .data=${p}data
+        --rename-section .rodata=${p}rodata
         --rename-section .bss=${p}bss
         PARENT_SCOPE)
 endfunction()
