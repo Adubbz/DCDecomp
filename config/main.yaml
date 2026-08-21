@@ -278,7 +278,7 @@ segments:
       - {start: 0xd5680, type: asmtu, name: itembombeffect}
       - {start: 0xd66c0, type: asmtu, name: weaponeffect}
       - {start: 0xd6ce0, type: cpp, name: randomitem}
-      - {start: 0xd75e0, type: asmtu, name: stealitem}
+      - {start: 0xd75e0, type: cpp, name: stealitem}
       - {start: 0xd7b40, type: cpp, name: monstorunit}
       - {start: 0xe1740, type: asmtu, name: runscript_opcodes}
       - {start: 0xe6a30, type: asmtu, name: shopiconmove}
