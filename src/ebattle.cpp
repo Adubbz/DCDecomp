@@ -2,6 +2,9 @@
 
 #include "texture.hpp"
 
+/* The four values EBDraw reads to place its caution mark; all of them zero. */
+extern "C" const s32 Caution[4] = {0, 0, 0, 0};
+
 INCLUDE_ASM("asm/nonmatchings/ebattle", CommandTEX_ANIME__FPPv);
 INCLUDE_ASM("asm/nonmatchings/ebattle", CommandTEX_ANIME_DATA__FPPv);
 INCLUDE_ASM("asm/nonmatchings/ebattle", CommandTEX_ANIME_DATA2__FPPv);

@@ -29,7 +29,11 @@ struct COLLISION_HIT {
     s32 flags; /**< What the hit does besides damage. */
     s32 unk_54;
     s32 owner; /**< Identifies what dealt the hit, or -1. */
-    u8 unk_5C[0x14];
+    s32 unk_5C;
+    s32 unk_60;
+    char *vs_monster; /**< The attacker's monster-effectiveness table. */
+    s32 unk_68;
+    s32 unk_6C;
     s32 unk_70;
     s32 unk_74;
     u8 unk_78[0x28];
@@ -41,7 +45,9 @@ class CCollisionData {
 public:
     COLLISION_HIT hit[96]; /**< Every hit the test found this frame. */
     s32 unk_3C00[16];
-    u8 unk_3C40[0x150];
+    u8 unk_3C40[0x140];
+    s32 now_hit; /**< Indexes the hit record being filled in. */
+    u8 unk_3D84[0xC];
 
     /**
      * @mangled Set__14CCollisionDataFPfiiffiiii

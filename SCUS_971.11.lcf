@@ -320,7 +320,8 @@ SECTIONS
         runscript.cpp.o             (.text)   // 0x0023d940
         stockitem.cpp.o             (.text)   // 0x0023f590
         fish.cpp.o                  (.text)   // 0x00240050
-        charakey.cpp.o              (.text)   // 0x002411e0
+        charakey.cpp.o              (.text)   // 0x00241320
+        langset.cpp.o               (.text)   // 0x00244b30
         fader.cpp.o                 (.text)   // 0x002451f0
         mainselect.cpp.o            (.text)   // 0x002a1e8c
         userstatus.cpp.o            (.text)   // 0x002a3468
@@ -343,6 +344,8 @@ SECTIONS
         stockitem.cpp.o (.data)
         . = . + 0xC;
         main.data.part7.s.o (.data)
+        charakey.cpp.o (.data)
+        main.data.part7b.s.o (.data)
         *(.data)
         *(.vudata)
 
@@ -368,9 +371,9 @@ SECTIONS
         . = . + 0x8;
         main.rdata.part5.s.o (.rdata)
         mapobject.cpp.o (.vtables)
+        objectframe2.cpp.o (.vtables)
         savedata.cpp.o (.vtables)
         object.cpp.o (.vtables)
-        . = . + 0xA0;
         main.rdata.part6.s.o (.rdata)
         mapparts.cpp.o (.vtables)
         hitmark.cpp.o (.vtables)
@@ -419,12 +422,50 @@ SECTIONS
 		_LIT_002A1934 = 0x002a1934;
 		_LIT_002A1944 = 0x002a1944;
 		_LIT_002A1948 = 0x002a1948;
-		_LIT_002A1A8C = 0x002a1a8c;
+		_LIT_002A1950 = 0x002a1950;
+		_LIT_002A1954 = 0x002a1954;
+		_LIT_002A1958 = 0x002a1958;
+		_LIT_002A195C = 0x002a195c;
+		_LIT_002A1A80 = 0x002a1a80;
 		_LIT_002A1AF8 = 0x002a1af8;
+		_LIT_002A1B5C = 0x002a1b5c;
 		_LIT_002A1BCC = 0x002a1bcc;
-		_LIT_002A1BD0 = 0x002a1bd0;
+		_LIT_002A1C04 = 0x002a1c04;
 		_LIT_002A1C50 = 0x002a1c50;
+		_LIT_002A1C68 = 0x002a1c68;
+		_LIT_002A1C6C = 0x002a1c6c;
+		_LIT_002A1C70 = 0x002a1c70;
+		_LIT_002A1C74 = 0x002a1c74;
+		_LIT_002A1C78 = 0x002a1c78;
+		_LIT_002A1C7C = 0x002a1c7c;
+		_LIT_002A1C80 = 0x002a1c80;
+		_LIT_002A1C84 = 0x002a1c84;
+		_LIT_002A1C88 = 0x002a1c88;
+		_LIT_002A1C8C = 0x002a1c8c;
+		_LIT_002A1C90 = 0x002a1c90;
+		_LIT_002A1C94 = 0x002a1c94;
+		_LIT_002A1C98 = 0x002a1c98;
+		_LIT_002A1C9C = 0x002a1c9c;
+		_LIT_002A1CA0 = 0x002a1ca0;
+		_LIT_002A1CA4 = 0x002a1ca4;
+		_LIT_002A1CA8 = 0x002a1ca8;
+		_LIT_002A1CAC = 0x002a1cac;
 		_LIT_002A1CB0 = 0x002a1cb0;
+		_LIT_002A1CB4 = 0x002a1cb4;
+		_LIT_002A1CB8 = 0x002a1cb8;
+		_LIT_002A1CBC = 0x002a1cbc;
+		_LIT_002A1CC0 = 0x002a1cc0;
+		_LIT_002A1CC4 = 0x002a1cc4;
+		_LIT_002A1CC8 = 0x002a1cc8;
+		_LIT_002A1CCC = 0x002a1ccc;
+		_LIT_002A1CD0 = 0x002a1cd0;
+		_LIT_002A1CF0 = 0x002a1cf0;
+		_LIT_002A1CF4 = 0x002a1cf4;
+		_LIT_002A1CF8 = 0x002a1cf8;
+		_LIT_002A1CFC = 0x002a1cfc;
+		_LIT_002A1D00 = 0x002a1d00;
+		_LIT_002A1D04 = 0x002a1d04;
+		_LIT_002A1D08 = 0x002a1d08;
 		_LIT_002A1D0C = 0x002a1d0c;
 		_LIT_002A1D10 = 0x002a1d10;
 		_LIT_002A1D1C = 0x002a1d1c;
@@ -465,6 +506,11 @@ SECTIONS
 		_fbss = .;
 		camera.cpp.o (.sbss)
 		main.sbss.part1.s.o (.sbss)
+		gamepad.cpp.o (.sbss)
+		// Retail gives each of the four statics a 4-byte slot; the compiler
+		// packs them to nine bytes, so the run is short by seven.
+		. = . + 0x7;
+		main.sbss.part1b.s.o (.sbss)
 		mglib.cpp.o (.sbss)
 		main.sbss.part2.s.o (.sbss)
 		character.cpp.o (.sbss)
@@ -473,6 +519,9 @@ SECTIONS
 		main.sbss.part4.s.o (.sbss)
 		dungeonmap.cpp.o (.sbss)
 		main.sbss.part5.s.o (.sbss)
+		charakey.cpp.o (.sbss)
+		. = . + 0x3;
+		main.sbss.part5b.s.o (.sbss)
 		userstatus.cpp.o (.sbss)
 		main.sbss.part6.s.o (.sbss)
 		monstorunit.cpp.o (.sbss)

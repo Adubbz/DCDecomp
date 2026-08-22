@@ -1,7 +1,32 @@
 {
   "src/gamepad.cpp": {
     "sections": {
-      ".padbss": ["pad_dma_buf", "pad_dma_buf2"]
+      ".padbss": [
+        "pad_dma_buf",
+        "pad_dma_buf2"
+      ]
     }
+  },
+  "src/main.cpp": {
+    "rodata_exports": [
+      "LIT_873",
+      "LIT_874"
+    ]
+  },
+  "src/dungeonmap.cpp": {
+    "rodata_exports": [
+      "LIT_2448"
+    ]
+  },
+  "src/ebattle.cpp": {
+    "rodata_exports": [
+      "LIT_314__2",
+      "LIT_315__2"
+    ]
+  },
+  "src/hitmark.cpp": {
+    "rodata_exports": [
+      "LIT_1430"
+    ]
   }
 }

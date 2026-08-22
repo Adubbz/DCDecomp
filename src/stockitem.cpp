@@ -336,10 +336,3 @@ int CStockItem::GetNowModeSpace(int search_space) {
 
     return empty_slot;
 }
-
-INCLUDE_RODATA("asm/nonmatchings/stockitem", LIT_407__2);
-INCLUDE_RODATA("asm/nonmatchings/stockitem", LIT_408__3);
-INCLUDE_RODATA("asm/nonmatchings/stockitem", LIT_409__4);
-INCLUDE_RODATA("asm/nonmatchings/stockitem", LIT_410__3);
-INCLUDE_RODATA("asm/nonmatchings/stockitem", LIT_411);
-INCLUDE_RODATA("asm/nonmatchings/stockitem", LIT_412);

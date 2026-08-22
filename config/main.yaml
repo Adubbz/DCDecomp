@@ -222,7 +222,7 @@ segments:
       - {start: 0x43970, type: asmtu, name: map}
       - {start: 0x43c50, type: asmtu, name: sound}
       - {start: 0x47a70, type: asmtu, name: gameutil}
-      - {start: 0x4cc30, type: asmtu, name: clsmes}
+      - {start: 0x4cc30, type: cpp, name: clsmes}
       - {start: 0x54040, type: asmtu, name: nowload}
       - {start: 0x54c30, type: asmtu, name: actionseq}
       - {start: 0x560b0, type: asmtu, name: npcharacter}
@@ -296,7 +296,8 @@ segments:
       - {start: 0x13da40, type: asmtu, name: runscript}
       - {start: 0x13f690, type: cpp, name: stockitem}
       - {start: 0x140150, type: asmtu, name: fish}
-      - {start: 0x1412e0, type: asmtu, name: charakey}
+      - {start: 0x141420, type: cpp, name: charakey}
+      - {start: 0x144c30, type: asmtu, name: langset}
       - {start: 0x1452f0, type: asmtu, name: fader}
       - {start: 0x145400, type: data, name: vutext, dir: main, linker_section: .vutext}
       - {start: 0x14fbc0, type: data, name: data, dir: main}
@@ -353,7 +354,7 @@ segments:
       - {start: 0x199148, type: .rodata, name: chararead}
       - {start: 0x199168, type: .rodata, name: dispctrl}
       - {start: 0x199178, type: .rodata, name: dataread}
-      - {start: 0x1994f0, type: .rodata, name: main}
+      - {start: 0x1994d8, type: .rodata, name: main}
       - {start: 0x1995a0, type: .rodata, name: gamemode}
       - {start: 0x1997d0, type: .rodata, name: sound}
       - {start: 0x199b20, type: .rodata, name: gameutil}
@@ -366,7 +367,8 @@ segments:
       - {start: 0x19a1c0, type: .rodata, name: fireomni}
       - {start: 0x19a1f0, type: .rodata, name: runeffect}
       - {start: 0x19a208, type: .rodata, name: objanime}
-      - {start: 0x19a2c0, type: .rodata, name: ebattle_loop}
+      - {start: 0x19a2c0, type: .rodata, name: ebattle}
+      - {start: 0x19a2e0, type: .rodata, name: ebattle_loop}
       - {start: 0x19a368, type: .rodata, name: edit}
       - {start: 0x19b378, type: .rodata, name: edit_in}
       - {start: 0x19b528, type: .rodata, name: editground}
@@ -376,6 +378,7 @@ segments:
       - {start: 0x19b630, type: .rodata, name: shot_firebar}
       - {start: 0x19b638, type: .rodata, name: shot_freefuncs}
       - {start: 0x19b7f0, type: .rodata, name: healeffect}
+      - {start: 0x19b7f8, type: .rodata, name: hitmark}
       - {start: 0x19b9c8, type: .rodata, name: collisiondata}
       - {start: 0x19bc18, type: .rodata, name: hitvalue}
       - {start: 0x19bc40, type: .rodata, name: motionmodel}
@@ -405,7 +408,9 @@ segments:
       - {start: 0x19f6d0, type: .rodata, name: battle_globals}
       - {start: 0x19f910, type: .rodata, name: runscript}
       - {start: 0x19fd00, type: .rodata, name: stockitem}
-      - {start: 0x19fd98, type: .rodata, name: charakey}
+      - {start: 0x19fd38, type: .rodata, name: fish}
+      - {start: 0x19fe78, type: .rodata, name: charakey}
+      - {start: 0x19fe90, type: .rodata, name: langset}
       - {start: 0x19ff80, type: rdata, name: rdata, dir: main}
       - {start: 0x1a1f80, type: sdata, name: sdata, dir: main}
       - {start: 0x1a2480, type: sbss, name: sbss, vram: 0x2a2380, dir: main}

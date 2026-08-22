@@ -2187,7 +2187,6 @@ found:
 }
 #endif /* DNG_COMPILE_UNMATCHED */
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", SetTreasureBox__11CDungeonMapFPfiii);
-INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_2448);
 
 #if DNG_COMPILE_UNMATCHED
 /**

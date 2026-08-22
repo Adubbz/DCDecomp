@@ -24,3 +24,5 @@ INCLUDE_ASM("asm/nonmatchings/fish", GetRotation__5CFishFPf);
 INCLUDE_ASM("asm/nonmatchings/fish", SetReference__5CFishFP6CFrame);
 INCLUDE_ASM("asm/nonmatchings/fish", DeleteReference__5CFishFv);
 INCLUDE_ASM("asm/nonmatchings/fish", Initialize__5CFishFv);
+INCLUDE_ASM("asm/nonmatchings/fish", LoadFish__FP5CFishiiP14CDataAlloc2_1_i);
+INCLUDE_ASM("asm/nonmatchings/fish", GetFishFileName__Fi);

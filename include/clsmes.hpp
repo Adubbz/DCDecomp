@@ -11,6 +11,22 @@ class CTexture;
 struct sceVif1Packet;
 
 
+/**
+ * One laid-out line of a message window.
+ */
+struct MES_WIN_LINE {
+    s16 unk_0;
+    s16 unk_2;
+    s16 unk_4;
+    s8 unk_6;
+    u8 unk_7;
+};
+
+STATIC_ASSERT(sizeof(MES_WIN_LINE) == 0x8);
+
+/** Lines one message window can lay out. */
+#define MES_WIN_LINE_MAX 700
+
 /** One entry of the pair table at the tail of ClsMes. */
 struct CLSMES_PAIR {
     s32 unk_0;
@@ -30,11 +46,21 @@ public:
     s32 unk_020;
     s32 unk_024;
     s32 unk_028;
-    u8 unk_02C[0x2C];
+    s32 unk_02C;
+    s32 unk_030;
+    s32 unk_034;
+    s32 unk_038;
+    s32 unk_03C;
+    s32 unk_040;
+    s32 unk_044;
+    s32 unk_048;
+    s32 unk_04C;
+    s32 unk_050;
+    s32 unk_054;
     s32 unk_058;
     u8 unk_05C[0x30];
     float unk_08C;
-    s32 unk_090;
+    float unk_090;
     s32 unk_094;
     s32 unk_098;
     u8 unk_09C[0x8];
@@ -42,11 +68,12 @@ public:
     float unk_0A8;
     s32 unk_0AC;
     s32 unk_0B0;
-    s32 unk_0B4;
+    float unk_0B4;
     s32 unk_0B8;
     s32 unk_0BC;
     s32 unk_0C0;
-    u8 unk_0C4[0x15E4];
+    MES_WIN_LINE win_line[MES_WIN_LINE_MAX]; /**< Every line the window lays out. */
+    s32 win_line_num;                        /**< Lines the window has laid out. */
     s32 unk_16A8;
     s32 unk_16AC;
     s32 unk_16B0;
@@ -59,7 +86,8 @@ public:
     s32 unk_16CC;
     s32 unk_16D0;
     s32 unk_16D4;
-    u8 unk_16D8[0x8];
+    s32 unk_16D8;
+    s32 unk_16DC;
     s32 unk_16E0[10];
     s32 unk_1708[8];
     s32 unk_1728;
@@ -73,7 +101,10 @@ public:
     s32 unk_1748;
     s32 unk_174C;
     CLSMES_PAIR unk_1750[10];
-    u8 unk_17A0[0x10];
+    short *buff;        /**< The message file the window reads its text out of. */
+    short *buff_system; /**< The same, for the system messages. */
+    char *text;        /**< Where the text of that file starts. */
+    char *text_system; /**< The same, for the system messages. */
     void *unk_17B0;
     u8 unk_17B4[4];
 
@@ -81,17 +112,15 @@ public:
      * @mangled GetGaijiW__6ClsMesFi
      * @address 0x14CB30
      * @size 0xA0
-     * @unknownret
      */
-    void GetGaijiW(int);
+    s16 GetGaijiW(int code);
 
     /**
      * @mangled GetNameLen__6ClsMesFi
      * @address 0x14CBD0
      * @size 0x90
-     * @unknownret
      */
-    void GetNameLen(int);
+    int GetNameLen(int chara);
 
     /**
      * @mangled GetNameWidth__6ClsMesFi
@@ -176,9 +205,8 @@ public:
      * @mangled State__6ClsMesFv
      * @address 0x14E080
      * @size 0xB0
-     * @unknownret
      */
-    void State(void);
+    int State(void);
 
     /**
      * @mangled MyTextureMake_InitAll__6ClsMesFv
@@ -256,17 +284,15 @@ public:
      * @mangled GetTextLineDataTop__6ClsMesFi
      * @address 0x14F4B0
      * @size 0x70
-     * @unknownret
      */
-    void GetTextLineDataTop(int);
+    short *GetTextLineDataTop(int line);
 
     /**
      * @mangled GetTextLineDataTop_system__6ClsMesFi
      * @address 0x14F520
      * @size 0x70
-     * @unknownret
      */
-    void GetTextLineDataTop_system(int);
+    short *GetTextLineDataTop_system(int line);
 
     /**
      * @mangled InitMesWinTbl__6ClsMesFv
@@ -296,9 +322,8 @@ public:
      * @mangled MakeMesWinTbl__6ClsMesFi
      * @address 0x14F8D0
      * @size 0x430
-     * @unknownret
      */
-    void MakeMesWinTbl(int);
+    int MakeMesWinTbl(int mes_no);
 
     /**
      * @mangled NeedMesWinWH__6ClsMesFiPi
@@ -306,15 +331,14 @@ public:
      * @size 0x6B0
      * @unknownret
      */
-    void NeedMesWinWH(int, int *);
+    void NeedMesWinWH(int mes_no, int *out_wh);
 
     /**
      * @mangled MakeMesWin__6ClsMesFi
      * @address 0x150550
      * @size 0x100
-     * @unknownret
      */
-    void MakeMesWin(int);
+    int MakeMesWin(int mes_no);
 
     /**
      * @mangled MakeMesTexture__6ClsMesFi
@@ -322,7 +346,7 @@ public:
      * @size 0x1C0
      * @unknownret
      */
-    void MakeMesTexture(int);
+    void MakeMesTexture(int mes_no);
 
     /**
      * @mangled Myset2DSprite_Fuchi__6ClsMesFP13sceVif1PacketP8CTextureiiiiiiii

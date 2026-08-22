@@ -89,7 +89,11 @@ public:
     s16 unk_42E0[6];                // 0x42E0
     float water_max[6];             // 0x42EC
     float water_now[6];             // 0x4304
-    char unk_431C[0x20];            // 0x431C
+    char unk_431C[8];               // 0x431C
+    s32 unk_4324;                   // 0x4324
+    char unk_4328[0xC];             // 0x4328
+    s32 unk_4334;                   // 0x4334
+    char unk_4338[4];               // 0x4338
     s32 minimap_status;             // 0x433C
     s8 equipped_weapon_slot[6]; /**< Specifies each character's equipped weapon slot. */
     u16 unk_4346;                   // 0x4346

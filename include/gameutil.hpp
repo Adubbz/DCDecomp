@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+class CCharacter;
+
 class CCPoly;
 
 /**
@@ -118,3 +120,13 @@ int CheckHits(CCPoly *poly, int count, float *from, float *to, int max, int *hit
  */
 int CheckHitVertical(CCPoly *poly, int count, float *from, float depth, float *hit_point,
                      int mode);
+
+/**
+ * Works out where a character stands on screen, in pixels.
+ *
+ * @mangled GetScrPosFromChar__FP10CCharacterPi
+ * @address 0x14C980
+ * @size 0x88
+ * @unknownret
+ */
+void GetScrPosFromChar(CCharacter *chara, int *out_pos);
