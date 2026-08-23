@@ -4,6 +4,7 @@
 
 class CRect_i_;
 class CTexture;
+struct i;
 struct spRGBA;
 struct sceVif1Packet;
 
@@ -142,6 +143,36 @@ void SndSeSeqPlayStop(int sound_id, int step, int flag);
 void setbilinear(int on);
 
 /**
+ * Opens a run of sprites that all draw out of one texture.
+ *
+ * @mangled set2DSprite_Start__FP13sceVif1PacketP8CTexture
+ * @address 0x14C220
+ * @size 0x19C
+ * @unknownret
+ */
+void set2DSprite_Start(sceVif1Packet *packet, CTexture *texture);
+
+/**
+ * Closes that run.
+ *
+ * @mangled set2DSprite_End__FP13sceVif1PacketP8CTexture
+ * @address 0x14C4F0
+ * @size 0xA4
+ * @unknownret
+ */
+void set2DSprite_End(sceVif1Packet *packet, CTexture *texture);
+
+/**
+ * Sends the palette a texture draws through.
+ *
+ * @mangled SetClut__FP13sceVif1PacketP8CTextureP1i
+ * @address 0x14C5A0
+ * @size 0x60
+ * @unknownret
+ */
+void SetClut(sceVif1Packet *packet, CTexture *texture, i *clut);
+
+/**
  * Draws one part of a texture into a rectangle of the screen, at one alpha.
  *
  * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_Uc
@@ -149,7 +180,8 @@ void setbilinear(int on);
  * @size 0x320
  * @unknownret
  */
-void set2DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, const CRect_i_ &, unsigned char);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
+                 const CRect_i_ &texel, unsigned char alpha);
 
 /**
  * Draws one part of a texture into a rectangle of the screen, at one colour.
@@ -171,6 +203,19 @@ void set2DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, const CRect_i_ &
  * @unknownret
  */
 void set2DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, const CRect_i_ &, int, int, float);
+
+/**
+ * Draws one part of a texture into a rectangle of the screen, with a colour
+ * of its own at each corner.
+ *
+ * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBAi
+ * @address 0x15C980
+ * @size 0x82C
+ * @unknownret
+ */
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
+                 const CRect_i_ &texel, spRGBA *top_left, spRGBA *top_right,
+                 spRGBA *bottom_left, spRGBA *bottom_right, int mode);
 
 /**
  * Draws an untextured rectangle with a colour at each of its four corners.

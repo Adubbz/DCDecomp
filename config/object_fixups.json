@@ -28,5 +28,13 @@
     "rodata_exports": [
       "LIT_1430"
     ]
+  },
+  "src/clsmes.cpp": {
+    "rodata_exports": [
+      "LIT_821",
+      "LIT_822",
+      "LIT_1556",
+      "LIT_1557"
+    ]
   }
 }

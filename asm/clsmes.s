@@ -7482,7 +7482,7 @@ glabel DrawMesWin__6ClsMesFv
     /* 053818 00153718 B417A68E */  lw         $6, 0x17B4($21)
     /* 05381C 0015371C D48B848F */  lw         $4, -0x742C($28)
     /* 053820 00153720 282E0072 */  paddub     $5, $16, $0
-    /* 053824 00153724 6831050C */  jal        SetClut__FP13sceVif1PacketP8CTextureP1
+    /* 053824 00153724 6831050C */  jal        SetClut__FP13sceVif1PacketP8CTextureP1i
     /* 053828 00153728 00000000 */   nop
     /* 05382C 0015372C B416A28E */  lw         $2, 0x16B4($21)
     /* 053830 00153730 01004224 */  addiu      $2, $2, 0x1

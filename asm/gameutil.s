@@ -5181,7 +5181,7 @@ glabel set2DSprite_End__FP13sceVif1PacketP8CTexture
     /* 04C698 0014C598 00000000 */  nop
     /* 04C69C 0014C59C 00000000 */  nop
 
-glabel SetClut__FP13sceVif1PacketP8CTextureP1
+glabel SetClut__FP13sceVif1PacketP8CTextureP1i
     /* 04C6A0 0014C5A0 D0FFBD27 */  addiu      $29, $29, -0x30
     /* 04C6A4 0014C5A4 1000BF7F */  sq         $31, 0x10($29)
     /* 04C6A8 0014C5A8 2846C070 */  paddub     $8, $6, $0

@@ -173,7 +173,7 @@ STATIC_ASSERT(sizeof(CDebugFont) == 0x21C);
 struct ED_EVENT_INFO {
     u8 unk_000[0x30];
     s32 unk_030;
-    s32 unk_034;
+    s32 fukidashi;
     u8 unk_038[0x4];
     float unk_03C;
     u8 unk_040[0x20];
@@ -1344,112 +1344,112 @@ void GameInit(void) {
     }
 
     DngMes1.Preset(1);
-    DngMes1.unk_16C4 = 0;
-    DngMes1.unk_16CC = 1;
-    DngMes1.unk_174C = 26;
-    DngMes1.unk_098 = 1;
-    DngMes1.unk_010 = 15;
-    DngMes1.unk_014 = 3;
-    DngMes1.unk_000 = 48;
-    DngMes1.unk_004 = 368;
-    DngMes1.unk_008 = 11;
-    DngMes1.unk_00C = 22;
-    DngMes1.unk_16C0 = 0;
+    DngMes1.page_arrow = 0;
+    DngMes1.centre_rows = 1;
+    DngMes1.tex_block = 26;
+    DngMes1.stay_frame = 1;
+    DngMes1.columns = 15;
+    DngMes1.rows = 3;
+    DngMes1.text_x = 48;
+    DngMes1.text_y = 368;
+    DngMes1.char_width = 11;
+    DngMes1.char_height = 22;
+    DngMes1.style = 0;
     DngMes1.unk_17B0 = MesWinTexBuff_01;
 
     DngMes2.Preset(1);
-    DngMes2.unk_16C4 = 0;
-    DngMes2.unk_16CC = 1;
-    DngMes2.unk_174C = 26;
-    DngMes2.unk_098 = 0;
-    DngMes2.unk_010 = 15;
-    DngMes2.unk_014 = 3;
-    DngMes2.unk_000 = 320;
-    DngMes2.unk_004 = 346;
-    DngMes2.unk_008 = 11;
-    DngMes2.unk_00C = 22;
+    DngMes2.page_arrow = 0;
+    DngMes2.centre_rows = 1;
+    DngMes2.tex_block = 26;
+    DngMes2.stay_frame = 0;
+    DngMes2.columns = 15;
+    DngMes2.rows = 3;
+    DngMes2.text_x = 320;
+    DngMes2.text_y = 346;
+    DngMes2.char_width = 11;
+    DngMes2.char_height = 22;
     DngMes2.unk_17B0 = MesWinTexBuff_02;
 
-    DngMesStb.unk_018 = 70;
-    DngMesStb.unk_01C = 10;
-    DngMesStb.unk_020 = 0;
-    DngMesStb.unk_024 = 0;
-    DngMesStb.unk_028 = 0;
-    DngMesStb.unk_090 = 0;
-    DngMesStb.unk_094 = 1;
-    DngMesStb.unk_0A4 = DngMesStb.unk_0A8;
-    DngMesStb.unk_0AC = 0;
-    DngMesStb.unk_0B4 = 0;
-    DngMesStb.unk_0B8 = 0;
-    DngMesStb.unk_0BC = 0;
-    DngMesStb.unk_0C0 = 0;
+    DngMesStb.text_columns = 70;
+    DngMesStb.text_rows = 10;
+    DngMesStb.text_len = 0;
+    DngMesStb.text_width = 0;
+    DngMesStb.text_height = 0;
+    DngMesStb.fade = 0;
+    DngMesStb.fade_in = 1;
+    DngMesStb.text_rate = DngMesStb.text_rate_set;
+    DngMesStb.waiting = 0;
+    DngMesStb.text_at = 0;
+    DngMesStb.text_no = 0;
+    DngMesStb.text_from = 0;
+    DngMesStb.page_from = 0;
     DngMesStb.InitMesWinTbl();
-    DngMesStb.unk_16AC = DngMesStb.unk_16A8;
-    DngMesStb.unk_16B0 = 0;
-    DngMesStb.unk_16B4 = 0;
-    DngMesStb.unk_16B8 = 0;
-    DngMesStb.unk_16BC = -1;
-    DngMesStb.unk_16D4 = 128;
+    DngMesStb.clut_now = DngMesStb.clut_default;
+    DngMesStb.wait = 0;
+    DngMesStb.blink = 0;
+    DngMesStb.auto_page_wait = 0;
+    DngMesStb.mes_made = -1;
+    DngMesStb.edge_alpha = 128;
     for (int i = 0; i < 10; i++) {
-        DngMesStb.unk_16E0[i] = -1;
+        DngMesStb.mes_no[i] = -1;
     }
     for (int i = 0; i < 8; i++) {
-        DngMesStb.unk_1708[i] = 0;
+        DngMesStb.values[i] = 0;
     }
-    DngMesStb.unk_1728 = 0;
-    DngMesStb.unk_172C = 0;
-    DngMesStb.unk_1730 = 1;
-    DngMesStb.unk_1734 = 0;
-    DngMesStb.unk_1738 = -1;
-    DngMesStb.unk_173C = -1;
-    DngMesStb.unk_1740 = -1;
-    DngMesStb.unk_1744 = 0;
-    DngMesStb.unk_1748 = 0;
+    DngMesStb.value = 0;
+    DngMesStb.value_signed = 0;
+    DngMesStb.value_show = 1;
+    DngMesStb.value_narrow = 0;
+    DngMesStb.space_width = -1;
+    DngMesStb.space_area = -1;
+    DngMesStb.cursor_row = -1;
+    DngMesStb.cursor_y = 0;
+    DngMesStb.cursor_lit = 0;
     for (int i = 0; i < 10; i++) {
-        DngMesStb.unk_1750[i].unk_0 = -1;
-        DngMesStb.unk_1750[i].unk_4 = -1;
+        DngMesStb.line_pos[i].x = -1;
+        DngMesStb.line_pos[i].y = -1;
     }
     DngMesStb.Preset(4);
-    DngMesStb.unk_010 = 21;
-    DngMesStb.unk_014 = 4;
-    DngMesStb.unk_0A4 = 1.0f;
-    DngMesStb.unk_0A8 = 1.0f;
-    DngMesStb.unk_08C = 1.0f;
-    DngMesStb.unk_16C4 = 0;
-    DngMesStb.unk_174C = 26;
-    DngMesStb.unk_058 = 0;
-    DngMesStb.unk_16AC = Color2Clut(0x80BFBFBF) & 0xFF;
-    DngMesStb.unk_010 = 15;
-    DngMesStb.unk_008 = 12;
-    DngMesStb.unk_00C = 24;
+    DngMesStb.columns = 21;
+    DngMesStb.rows = 4;
+    DngMesStb.text_rate = 1.0f;
+    DngMesStb.text_rate_set = 1.0f;
+    DngMesStb.fade_speed = 1.0f;
+    DngMesStb.page_arrow = 0;
+    DngMesStb.tex_block = 26;
+    DngMesStb.tail_on = 0;
+    DngMesStb.clut_now = Color2Clut(0x80BFBFBF) & 0xFF;
+    DngMesStb.columns = 15;
+    DngMesStb.char_width = 12;
+    DngMesStb.char_height = 24;
     DngMesStb.unk_17B0 = MesWinTexBuff_11;
 
-    BtEventMes0.unk_008 = 12;
-    BtEventMes0.unk_00C = 20;
-    BtEventMes0.unk_010 = 21;
-    BtEventMes0.unk_014 = 4;
-    BtEventMes0.unk_0A4 = 0.3f;
-    BtEventMes0.unk_0A8 = 0.3f;
-    BtEventMes0.unk_174C = 26;
-    BtEventMes0.unk_16C0 = 0;
-    BtEventMes0.unk_16C4 = 0;
-    BtEventMes0.unk_16CC = 1;
-    BtEventMes0.unk_08C = 0.1f;
-    BtEventMes0.unk_16C4 = 1;
+    BtEventMes0.char_width = 12;
+    BtEventMes0.char_height = 20;
+    BtEventMes0.columns = 21;
+    BtEventMes0.rows = 4;
+    BtEventMes0.text_rate = 0.3f;
+    BtEventMes0.text_rate_set = 0.3f;
+    BtEventMes0.tex_block = 26;
+    BtEventMes0.style = 0;
+    BtEventMes0.page_arrow = 0;
+    BtEventMes0.centre_rows = 1;
+    BtEventMes0.fade_speed = 0.1f;
+    BtEventMes0.page_arrow = 1;
     BtEventMes0.unk_17B0 = MesWinTexBuff_01;
 
-    BtEventMes1.unk_010 = 22;
-    BtEventMes1.unk_014 = 5;
-    BtEventMes1.unk_008 = 12;
-    BtEventMes1.unk_00C = 24;
-    BtEventMes1.unk_0A4 = 0.3f;
-    BtEventMes1.unk_0A8 = 0.3f;
-    BtEventMes1.unk_174C = 26;
-    BtEventMes1.unk_16C0 = 0;
-    BtEventMes1.unk_16C4 = 0;
-    BtEventMes1.unk_16CC = 1;
-    BtEventMes1.unk_08C = 0.1f;
-    BtEventMes1.unk_16C4 = 1;
+    BtEventMes1.columns = 22;
+    BtEventMes1.rows = 5;
+    BtEventMes1.char_width = 12;
+    BtEventMes1.char_height = 24;
+    BtEventMes1.text_rate = 0.3f;
+    BtEventMes1.text_rate_set = 0.3f;
+    BtEventMes1.tex_block = 26;
+    BtEventMes1.style = 0;
+    BtEventMes1.page_arrow = 0;
+    BtEventMes1.centre_rows = 1;
+    BtEventMes1.fade_speed = 0.1f;
+    BtEventMes1.page_arrow = 1;
     BtEventMes1.unk_17B0 = MesWinTexBuff_02;
 
     mes = (short *) (BtMesBuffer.buffer + BtMesBuffer.used * 16);
@@ -1505,7 +1505,7 @@ void GameInit(void) {
     }
 
     SndSetReadBuffer(read_buffer);
-    if (EdEventInfo.unk_034 != 0) {
+    if (EdEventInfo.fukidashi != 0) {
         SndBgmLoad(selectMapNo + 100);
         SndBgmPlay(0);
     }
@@ -5127,7 +5127,7 @@ int SetNearLockOnTarget(int from, int nearest_only) {
         }
 
         if (lockOnTargetNo != target) {
-            DngMes2.unk_16BC = -1;
+            DngMes2.mes_made = -1;
             MonsterNameMake(NowMonstorUnit->monster[target].name_no);
         }
     }
@@ -5455,7 +5455,7 @@ void LoaderInit(void) {
     CDbgMsg.width = 256;
     CDbgMsg.height = 224;
     CDbgMsg.unk_14 = 96;
-    EdEventInfo.unk_034 = 1;
+    EdEventInfo.fukidashi = 1;
 }
 #if DUN_COMPILE_SBSS
 int LoaderLoop(void) {

@@ -28,6 +28,18 @@ public:
 STATIC_ASSERT(sizeof(CRect_i_) == 0x10);
 
 /**
+ * Names a rectangle the same way, for the calls that take the plain C name.
+ */
+struct RECT {
+    s32 x;      /**< Distance of the left edge from the left of the screen. */
+    s32 y;      /**< Distance of the top edge from the top of the screen. */
+    s32 width;  /**< Distance from the left edge to the right edge. */
+    s32 height; /**< Distance from the top edge to the bottom edge. */
+};
+
+STATIC_ASSERT(sizeof(RECT) == 0x10);
+
+/**
  * Names the colour a sprite corner draws with.
  */
 struct spRGBA {

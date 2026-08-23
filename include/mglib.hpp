@@ -8,6 +8,7 @@
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 class CFrame;
+class CRect_i_;
 struct sceVif1Packet;
 
 /**
@@ -195,3 +196,44 @@ void MGDrawShadow(CFrame *frame, float *position, float *light);
  * @unknownret
  */
 void MGDrawShade(CFrame *frame);
+
+/**
+ * Names the texture that stands for the frame being drawn.
+ *
+ * @mangled MGGetFBuffTex__FP9sceGsTex0
+ * @address 0x12F130
+ * @size 0x70
+ * @unknownret
+ */
+void MGGetFBuffTex(sceGsTex0 *tex0);
+
+/**
+ * Sets the register that names where the depth buffer lives.
+ *
+ * @mangled MGSetGsZBUF__FP9sceGsZbuf
+ * @address 0x12EEC0
+ * @size 0xC4
+ * @unknownret
+ */
+void MGSetGsZBUF(sceGsZbuf *zbuf);
+
+/**
+ * Sets the register that names which pixels a primitive may write.
+ *
+ * @mangled MGSetGsTEST__FP9sceGsTest
+ * @address 0x12EDF0
+ * @size 0xC4
+ * @unknownret
+ */
+void MGSetGsTEST(sceGsTest *test);
+
+/**
+ * Fills a rectangle of the frame with one colour.
+ *
+ * @mangled MGFillBox__FRC8CRect_i_UcUcUcUc
+ * @address 0x12FA70
+ * @size 0x2C0
+ * @unknownret
+ */
+void MGFillBox(const CRect_i_ &rect, unsigned char r, unsigned char g, unsigned char b,
+               unsigned char a);

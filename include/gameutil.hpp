@@ -16,6 +16,10 @@ class CCPoly;
 // names but not where they live.
 class CCamera;
 class CFrame;
+class CRect_i_;
+class CTexture;
+struct RECT;
+struct sceVif1Packet;
 
 /**
  * Describes one motion of a model: the range of frames it covers and how fast
@@ -130,3 +134,80 @@ int CheckHitVertical(CCPoly *poly, int count, float *from, float depth, float *h
  * @unknownret
  */
 void GetScrPosFromChar(CCharacter *chara, int *out_pos);
+
+/**
+ * Maps one character of a registered name from its Japanese code to the
+ * external-character code the English font draws it with.
+ *
+ * @mangled NameRegistCodeJtoE__Fi
+ * @address 0x14CA60
+ * @size 0xD0
+ */
+int NameRegistCodeJtoE(int code);
+
+/**
+ * Enters one colour into the font palette and gives back the entry it took.
+ *
+ * @mangled Color2Clut__FUi
+ * @address 0x14CA10
+ * @size 0x50
+ */
+unsigned int Color2Clut(unsigned int colour);
+
+/**
+ * Turns one point about another by an angle, and writes where it lands.
+ *
+ * @mangled RollPos__FPfPffPf
+ * @address 0x14C690
+ * @size 0x1F0
+ */
+void RollPos(float *centre, float *point, float angle, float *out);
+
+/**
+ * Draws one part of a texture into a rectangle of the screen, at one colour.
+ *
+ * @mangled set2DSprite_Core__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_UcUcUcUc
+ * @address 0x14C3C0
+ * @size 0x130
+ * @unknownret
+ */
+void set2DSprite_Core(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
+                      const CRect_i_ &texel, unsigned char r, unsigned char g,
+                      unsigned char b, unsigned char a);
+
+/**
+ * Tells whether a point lies inside a rectangle.
+ *
+ * @mangled CheckPosInOutForRect__FP4RECTii
+ * @address 0x14C880
+ * @size 0x7C
+ */
+int CheckPosInOutForRect(RECT *rect, int x, int y);
+
+/**
+ * Gives back how far a point lies from a rectangle.
+ *
+ * @mangled GetDisPosToRect__FP4RECTii
+ * @address 0x14C900
+ * @size 0x80
+ */
+float GetDisPosToRect(RECT *rect, int x, int y);
+
+/**
+ * Gives back the point that lies a fraction of the way from one to another.
+ *
+ * @mangled LinerInterpolation__Ffff
+ * @address 0x14C600
+ * @size 0x14
+ */
+float LinerInterpolation(float from, float to, float at);
+
+/**
+ * Widens a rectangle so that it also covers a point.
+ *
+ * @mangled AreaAddPos__FPiPiPi
+ * @address 0x14C620
+ * @size 0x70
+ * @unknownret
+ */
+void AreaAddPos(int *area, int *pos, int *out);

@@ -333,6 +333,8 @@ SECTIONS
         main.data.part1.s.o (.data)
         character.cpp.o (.data)
         main.data.part2.s.o (.data)
+        clsmes.cpp.o (.data)
+        main.data.part2b.s.o (.data)
         mapobject.cpp.o (.data)
         main.data.part3.s.o (.data)
         savedata.cpp.o (.data)
@@ -398,6 +400,11 @@ SECTIONS
 		# gp
         _gp	= 0x2A97F0;
 
+		# The table of external characters that follows the Georama editor's
+		# parts data. Retail reaches it by its own name, not as an offset into
+		# EditPartsData, so the code carries a relocation against this address.
+		EditGaijiTbl = 0x002589ec;
+
 		# Entries of retail's literal pool that a compiled unit loads from.
 		# scripts/build/literals.py binds each float constant an object holds
 		# to the entry retail loads it from. The assignments stay here in pool
@@ -408,6 +415,7 @@ SECTIONS
 		_LIT_002A1868 = 0x002a1868;
 		_LIT_002A186C = 0x002a186c;
 		_LIT_002A1870 = 0x002a1870;
+		_LIT_002A1874 = 0x002a1874;
 		_LIT_002A1888 = 0x002a1888;
 		_LIT_002A1894 = 0x002a1894;
 		_LIT_002A18A0 = 0x002a18a0;
@@ -426,6 +434,8 @@ SECTIONS
 		_LIT_002A1954 = 0x002a1954;
 		_LIT_002A1958 = 0x002a1958;
 		_LIT_002A195C = 0x002a195c;
+		_LIT_002A1960 = 0x002a1960;
+		_LIT_002A1988 = 0x002a1988;
 		_LIT_002A1A80 = 0x002a1a80;
 		_LIT_002A1AF8 = 0x002a1af8;
 		_LIT_002A1B5C = 0x002a1b5c;
@@ -498,6 +508,8 @@ SECTIONS
 		mainselect.cpp.o (.sdata)
 		main.cpp.o (.sdata)
 		main.sdata.part2.s.o (.sdata)
+		clsmes.cpp.o (.sdata)
+		main.sdata.part2b.s.o (.sdata)
 		stockitem.cpp.o (.sdata)
 		main.sdata.part3.s.o (.sdata)
 		*(.sdata)

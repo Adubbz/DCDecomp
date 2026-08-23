@@ -29,7 +29,7 @@ INCLUDE_ASM("asm/nonmatchings/gameutil", CheckCameraWidth__FP6CCPolyiPffPfi);
 INCLUDE_ASM("asm/nonmatchings/gameutil", set2DSprite_Start__FP13sceVif1PacketP8CTexture);
 INCLUDE_ASM("asm/nonmatchings/gameutil", set2DSprite_Core__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_UcUcUcUc);
 INCLUDE_ASM("asm/nonmatchings/gameutil", set2DSprite_End__FP13sceVif1PacketP8CTexture);
-INCLUDE_ASM("asm/nonmatchings/gameutil", SetClut__FP13sceVif1PacketP8CTextureP1);
+INCLUDE_ASM("asm/nonmatchings/gameutil", SetClut__FP13sceVif1PacketP8CTextureP1i);
 INCLUDE_ASM("asm/nonmatchings/gameutil", LinerInterpolation__Ffff);
 INCLUDE_ASM("asm/nonmatchings/gameutil", AreaAddPos__FPiPiPi);
 INCLUDE_ASM("asm/nonmatchings/gameutil", RollPos__FPfPffPf);
