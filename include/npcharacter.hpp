@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include "character.hpp"
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -10,7 +12,10 @@ class CCPoly;
 
 class CNPCharacter {
 public:
-    u8 unk_0000[0x14A0];
+    CCharacter chara; /**< The character that the walker draws and moves with. */
+    u8 unk_11B0[0x2DC];
+    s32 unk_148C;     /**< Texture set that the walker's model animates with. */
+    u8 unk_1490[0x10];
 
     /**
      * @mangled Step__12CNPCharacterFv

@@ -9,6 +9,7 @@ class CCharacter;
 class CCameraFollow;
 class CCPoly;
 struct BT_SHOT_EFFECT;
+class CFrame;
 struct MAP_TRAP_CIRCLE;
 
 /**
@@ -23,9 +24,8 @@ void LoadBaseTexture(void);
  * @mangled LoadTempTexture__FPPciPc
  * @address 0x1DABED0
  * @size 0x120
- * @unknownret
  */
-void LoadTempTexture(char **, int, char *);
+int LoadTempTexture(char **files, int block, char *buffer);
 
 /**
  * @mangled SetTempTexture__FiPc
@@ -203,9 +203,8 @@ void LoadChara2(int, int, unsigned int *, unsigned int *, unsigned int *, unsign
  * @mangled BtCheckDamageProc__Fv
  * @address 0x1DBAFD0
  * @size 0xF10
- * @unknownret
  */
-void BtCheckDamageProc(void);
+int BtCheckDamageProc(void);
 
 /**
  * @mangled BattleActionThlow__Fv
@@ -336,9 +335,8 @@ void DelActiveItem(int);
  * @mangled Run_TrapCircle__FP15MAP_TRAP_CIRCLE
  * @address 0x1DBFA70
  * @size 0x270
- * @unknownret
  */
-void Run_TrapCircle(MAP_TRAP_CIRCLE *);
+int Run_TrapCircle(MAP_TRAP_CIRCLE *trap);
 
 /**
  * Drops the lock-on, and with it the cursor and the life gauge.
@@ -370,9 +368,8 @@ void DrawtargetCursor(float *, float, float, float);
  * @mangled SetNearLockOnTarget__Fii
  * @address 0x1DC0160
  * @size 0x640
- * @unknownret
  */
-void SetNearLockOnTarget(int, int);
+int SetNearLockOnTarget(int from, int nearest_only);
 
 /**
  * @mangled setTargetCursor__Fi
@@ -395,9 +392,8 @@ void unitBlowActionRot(float *velocity);
  * @mangled setUnitDamageColor__Fi
  * @address 0x1DC0F20
  * @size 0xD0
- * @unknownret
  */
-void setUnitDamageColor(int);
+float setUnitDamageColor(int hit);
 
 /**
  * Stops the ambient-colour animation on the player's model.
@@ -430,9 +426,8 @@ int unitAmbientAnime(float *colour);
  * @mangled LoadStartLogo__Fi
  * @address 0x1DC1180
  * @size 0x110
- * @unknownret
  */
-void LoadStartLogo(int);
+int LoadStartLogo(int map);
 
 /**
  * Brings the floor title on screen.
@@ -482,9 +477,8 @@ void LoaderInit(void);
  * @mangled LoaderLoop__Fv
  * @address 0x1DC1510
  * @size 0x280
- * @unknownret
  */
-void LoaderLoop(void);
+int LoaderLoop(void);
 
 /**
  * Points the first-person camera the way the player faces.
@@ -502,3 +496,122 @@ void InitEyeCamera(void);
  * @unknownret
  */
 void EyeCamera(void);
+
+/**
+ * Carries the Georama editor's own fade on by one step.
+ *
+ * @mangled EdFadeInOut__Fv
+ * @address 0x189860
+ * @size 0x1B0
+ * @unknownret
+ */
+void EdFadeInOut(void);
+
+/**
+ * Blurs whatever lies outside the depth the focus names.
+ *
+ * @mangled DepthOfField__FPfiii
+ * @address 0x1652C0
+ * @size 0x9D0
+ * @unknownret
+ */
+void DepthOfField(float *focus, int steps, int strength, int mode);
+
+/**
+ * Draws the bee that follows one of the walkers.
+ *
+ * @mangled DrawBee__FP6CFramei
+ * @address 0x1D9590
+ * @size 0x270
+ * @unknownret
+ */
+void DrawBee(CFrame *frame, int block_no);
+
+/**
+ * Draws the Georama editor's sprites over the frame.
+ *
+ * @mangled EdEventSpriteDraw__Fv
+ * @address 0x1989D0
+ * @size 0x2A0
+ * @unknownret
+ */
+void EdEventSpriteDraw(void);
+
+/**
+ * Draws the event battle's own overlay.
+ *
+ * @mangled EBDraw__Fv
+ * @address 0x168B80
+ * @size 0x560
+ * @unknownret
+ */
+void EBDraw(void);
+
+/**
+ * Draws the Georama editor's debug text.
+ *
+ * @mangled EdDDrawFont__Fv
+ * @address 0x170270
+ * @size 0xB0
+ * @unknownret
+ */
+void EdDDrawFont(void);
+
+/**
+ * Draws the debug overlay.
+ *
+ * @mangled DebugInfomationDraw__Fv
+ * @address 0x1B3780
+ * @size 0xF70
+ * @unknownret
+ */
+void DebugInfomationDraw(void);
+
+/**
+ * Carries the system message on by one step.
+ *
+ * @mangled SystemMesStep__Fv
+ * @address 0x160120
+ * @size 0xB4
+ * @unknownret
+ */
+void SystemMesStep(void);
+
+/**
+ * Draws the system message.
+ *
+ * @mangled SystemMesDraw__Fv
+ * @address 0x1601E0
+ * @size 0xB0
+ * @unknownret
+ */
+void SystemMesDraw(void);
+
+/**
+ * Gives back the floor number that one of the deeper dungeons shows.
+ *
+ * @mangled BtGetFloorLevel__Fi
+ * @address 0x1B77C0
+ * @size 0x3C
+ */
+int BtGetFloorLevel(int floor);
+
+/**
+ * Copies the textures the item list holds into the frame it draws from.
+ *
+ * @mangled DngActiveItemTextureCopy__Fv
+ * @address 0x22A5A0
+ * @size 0x104
+ * @unknownret
+ */
+void DngActiveItemTextureCopy(void);
+
+/**
+ * The same, for the weapon the player holds.
+ *
+ * @mangled DngActiveWeaponTextureCopy__Fv
+ * @address 0x22A6B0
+ * @size 0x130
+ * @unknownret
+ */
+void DngActiveWeaponTextureCopy(void);

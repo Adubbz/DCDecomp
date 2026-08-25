@@ -74,6 +74,7 @@
 #include "objanime.hpp"
 #include "randomitem.hpp"
 #include "rect.hpp"
+#include "runeffect.hpp"
 #include "runscript_opcodes.hpp"
 #include "savedata.hpp"
 #include "shop_battlemenu.hpp"
@@ -176,7 +177,9 @@ struct ED_EVENT_INFO {
     s32 fukidashi;
     u8 unk_038[0x4];
     float unk_03C;
-    u8 unk_040[0x20];
+    u8 unk_040[0x10];
+    s32 unk_050;
+    u8 unk_054[0xC];
     s32 unk_060;
     s32 unk_064;
     s32 unk_068;
@@ -187,9 +190,13 @@ struct ED_EVENT_INFO {
     s32 unk_0F4[6];
     u8 unk_10C[0x68];
     s32 unk_174[6];
-    u8 unk_18C[0x174];
+    u8 unk_18C[0xD0];
+    CFrame *unk_25C[1];
+    u8 unk_260[0xA0];
     s32 unk_300;
-    u8 unk_304[0x14C];
+    u8 unk_304[0xC];
+    sceVu0FVECTOR unk_310;
+    u8 unk_320[0x130];
 };
 
 STATIC_ASSERT(sizeof(ED_EVENT_INFO) == 0x450);
@@ -202,10 +209,14 @@ struct BT_EVENT_INFO {
     s32 unk_2C;
     u8 unk_30[0x4];
     s32 unk_34;
-    u8 unk_38[0x4C];
+    s32 unk_38;
+    u8 unk_3C[0x48];
     s32 *floor_result;  /**< Where the floor the player chose is written back. */
     s32 *escape_result; /**< Where the escape answer is written back. */
-    u8 unk_8C[0x2C];
+    s32 unk_8C;
+    u8 unk_90[0x4];
+    s32 unk_94;
+    u8 unk_98[0x20];
     s32 unk_B8;
     s32 unk_BC;
 };
@@ -235,7 +246,7 @@ struct ACTIVE_ITEM {
 extern "C" ACTIVE_ITEM activeItem;
 
 /* The effect table each playable character draws its own effects from. */
-extern "C" void *MyEffectEntry_Tbl[16];
+extern "C" BT_SHOT_EFFECT *MyEffectEntry_Tbl[16];
 
 /* The monsters each floor of each dungeon lays out. */
 extern "C" BT_ENEMY_FLOOR *BtEnemyLayoutList[7];
@@ -392,7 +403,7 @@ extern CCameraFollow *NowCamera__3;
 extern "C" float camera_near_dist__2;
 
 /* The frame that the player's model hangs off. */
-extern CFrame *CharaFrame;
+extern CFrameVu1 *CharaFrame;
 
 /* The dungeon floor that the player is on. */
 extern "C" CDungeonMap MainDungeonMap;
@@ -797,6 +808,18 @@ extern "C" s32 exitMenuFlag;
 /* Which lighting the field draws under. */
 extern "C" s32 lightingMode;
 
+/* The colour the frame is cleared to, on the front and the back floors. */
+extern "C" u8 main_bgColor[3];
+extern "C" u8 sub_bgColor[3];
+
+/* The colour the fog draws, on the front and the back floors. */
+extern "C" u8 main_fogColor[3];
+extern "C" u8 sub_fogColor[3];
+
+/* How far the fog reaches and how it thickens, on each of those floors. */
+extern "C" float main_fogRate[4];
+extern "C" float sub_fogRate[4];
+
 /* The message the dungeon drew last, so a repeat does not show twice. */
 extern "C" s32 oldMsgNo;
 extern "C" s32 oldMsgNo2;
@@ -838,6 +861,30 @@ extern "C" s32 timeOutCount;
 
 /* Whether the item list the menu caches is still good. */
 extern "C" s32 BtItemListCashFlag;
+
+/* Whether the game is playing itself for the attract loop. */
+extern "C" s32 autoDemo;
+
+/* Whether the player has finished every floor of the dungeon. */
+extern "C" s32 BtAllClear;
+
+/* Whether the dungeon message window has to be laid out again. */
+extern "C" s32 Mes1MakeFlg;
+
+/* The model the item a gate holds draws with. */
+extern "C" CFrame *itemBoxModel;
+
+/* Where the marker over an event stands. */
+extern "C" sceVu0FVECTOR iventPos;
+
+/* The dust the player kicks up as they run. */
+extern "C" CRunEffect CRunFx__2;
+
+/* The register that names where the depth buffer lives. */
+extern "C" sceGsZbuf mgZBuffer;
+
+/* The register that names how the renderer blends what it draws. */
+extern "C" sceGsAlpha mgAlpha;
 
 /* How long the camera waits before it moves itself, in frames. */
 extern "C" s32 defCameraWait;
@@ -1900,7 +1947,705 @@ INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_1059__2);
 INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_1797);
 INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_1806);
 INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_1807);
+#if DUN_COMPILE_DATA && DUN_COMPILE_SBSS
+void MainDraw(void) {
+    sceVu0FMATRIX camera;
+    sceVu0FVECTOR eye;
+    sceVu0FMATRIX view;
+    sceVu0FMATRIX unit;
+    sceGsTex0 frame_tex;
+    sceGsTex0 water_tex;
+    int i;
+
+    EdEventInfo.unk_050 = 0;
+    NowCamera__3->GetPos(eye);
+    NowCamera__3->GetCameraMatrix(camera);
+    sceVu0UnitMatrix(unit);
+    sceVu0MulMatrix(view, unit, camera);
+    MGSetViewMatrix(view, eye);
+    SndSetCamera(NowCamera__3);
+    sceVif1PkCall(Vif1Packet, (void *) Vu_prog0f, 0);
+
+    if (BtAllDrawFlag == 0) {
+        if (BtItemListCashFlag != 0) {
+            TexManager.ReloadTexture(Vif1Packet, 0x28);
+            DngActiveItemTextureCopy();
+            DngActiveWeaponTextureCopy();
+            BtItemListCashFlag = 0;
+        }
+        EdFadeInOut();
+        return;
+    }
+
+    if (lightingMode == 0) {
+        MGSetPLight(main_light, main_lightcolor);
+        MGSetAmbient(main_ambientlight);
+        MGSetBGColor(main_bgColor[0], main_bgColor[1], main_bgColor[2], 128.0f);
+        MGSetFogParm(main_fogRate[0], main_fogRate[1], main_fogColor[0], main_fogColor[1],
+                     main_fogColor[2], main_fogRate[2], main_fogRate[3]);
+    } else {
+        MGSetPLight(sub_light, sub_lightcolor);
+        MGSetAmbient(sub_ambientlight);
+        MGSetBGColor(sub_bgColor[0], sub_bgColor[1], sub_bgColor[2], 128.0f);
+        MGSetFogParm(sub_fogRate[0], sub_fogRate[1], sub_fogColor[0], sub_fogColor[1],
+                     sub_fogColor[2], sub_fogRate[2], sub_fogRate[3]);
+    }
+
+    if (BtItemListCashFlag != 0) {
+        TexManager.ReloadTexture(Vif1Packet, 0x28);
+        DngActiveItemTextureCopy();
+        DngActiveWeaponTextureCopy();
+        BtItemListCashFlag = 0;
+    }
+
+    TexManager.ReloadTexture(Vif1Packet, 3);
+    BtTexAnime.TexAnime(3);
+    NowDngMap->DrawBGModel(NowCamera__3);
+    NowDngMap->DrawDummyModel(NowCamera__3);
+
+    if (NowDngMap->unk_BDEC == 1) {
+        NowDngMap->DrawMap(NowCamera__3, CharaFrame);
+    } else {
+        NowDngMap->DrawMapFreeStyle();
+    }
+
+    // The map field's own draw, not the virtual one it inherits: retail binds
+    // this call at compile time.
+    NowDranMapField->CDranMapField::Draw();
+
+    if (itemOpenSmallFlag == 0 && itemOpenBigFlag == 0) {
+        sceVu0FVECTOR box_pos;
+
+        sceVu0CopyVector(box_pos, CharaFrame->pos);
+        NowDngMap->DrawItemBox(box_pos);
+    } else {
+        if (itemOpenSmallFlag != 0) {
+            itemOpenSmall.Draw();
+        }
+        if (itemOpenBigFlag != 0) {
+            itemOpenBig.Draw();
+        }
+    }
+
+    if (BtEventMode != 0) {
+        sceVu0FVECTOR focus = {200.0f, 500.0f, 0.0f, 0.0f};
+
+        DepthOfField(focus, 3, 0x40, 0);
+    }
+
+    if (atraGetStatus == 0) {
+        sceVu0FVECTOR atra_pos;
+
+        TexManager.ReloadTexture(Vif1Packet, 0x16);
+        sceVu0CopyVector(atra_pos, CharaFrame->pos);
+        NowDngMap->DrawAtraBoll(atra_pos);
+    }
+
+    Draw_MainUnitShadow();
+
+    if (BtActStatus.unk_000 != 0 && EdEventInfo.unk_060 != 0) {
+        Draw_MainUnit();
+    }
+
+    if (CMonUnitHyde == 0 && BtEventMode == 0) {
+        NowMonstorUnit->DrawMonstor();
+    }
+
+    if (CharaMainHandViewFlag != 0) {
+        TexManager.ReloadTexture(Vif1Packet, 0x11);
+
+        if (UserStatus->cur_chara == 1) {
+            CharaHand.Draw();
+        }
+
+        if (NowWeapon != NULL && UserStatus->cur_chara == 1 && NowWeapon->frame != NULL &&
+            BtActStatus.unk_058 != 0) {
+            TexManager.ReloadTexture(Vif1Packet, 0x1D);
+            NowWeapon->Draw();
+        }
+    }
+
+    if (BtEventMode != 0) {
+        for (i = 0; i < 6; i++) {
+            if (EdEventInfo.unk_0B4[i] != 0) {
+                TexManager.ReloadTexture(Vif1Packet, i + 0x20);
+                NPCUnit[i].chara.TextureAnime(NPCUnit[i].unk_148C);
+                NPCUnit[i].Draw();
+
+                if (i == BtEventInfo.unk_94) {
+                    DrawBee(NPCUnit[BtEventInfo.unk_94].chara.frame, 0xF);
+                }
+            }
+        }
+    }
+
+    NowDngMap->DrawNPCDraw();
+    mainItemModel.Draw();
+    TexManager.ReloadTexture(Vif1Packet, 6);
+    DrawWaterLing();
+
+    if (Water_Splash_actFlag != 0) {
+        Water_Splash.Draw();
+    }
+
+    if (NowDngMap->unk_BDEC == 1) {
+        CRect_i_ area;
+        sceVu0FVECTOR water_pos;
+
+        TexManager.ReloadTexture(Vif1Packet, 0xD);
+        MGGetFBuffTex(&frame_tex);
+        area.x = 0;
+        area.y = 0;
+        area.width = 0x280;
+        area.height = 0xE0;
+        water_tex = TexManager.GetTexture("water", -1)->m_tex0;
+        MGMoveImage(&frame_tex, area, &water_tex, 0, 0, 0);
+        sceVu0CopyVector(water_pos, CharaFrame->pos);
+        NowDngMap->DrawWater(water_pos, driveStepHold);
+    }
+
+    if (CEffectHyde == 0 && BtEventMode == 0) {
+        TexManager.ReloadTexture(Vif1Packet, 0x13);
+        NowShockWave->Draw(NowCamera__3);
+
+        for (i = 0; i < 3; i++) {
+            CBomb__2[i].Draw(NowCamera__3);
+        }
+        for (i = 0; i < 5; i++) {
+            MasekiEffect[i].Draw();
+        }
+
+        CSHOT_EFFECT *shot = NowShotEffect;
+
+        for (i = 0; i < 5; i++) {
+            shot[i].Draw();
+        }
+        NowMainEffect->Draw();
+    }
+
+    sceVu0FVECTOR raster_pos;
+
+    sceVu0CopyVector(raster_pos, CharaFrame->pos);
+    TexManager.ReloadTexture(Vif1Packet, 0xE);
+    NowDngMap->DrawRaster(CharaFrame);
+
+    if (NowDngMap->unk_BDEC == 1) {
+        NowDngMap->DrawFire(CharaFrame, NowCamera__3);
+    } else {
+        NowDngMap->DrawFireFreeStyle(CharaFrame, NowCamera__3);
+    }
+
+    if (atraGetStatus != 0 && atraShortGetType != 0) {
+        TexManager.ReloadTexture(Vif1Packet, 0x1C);
+        shortAtraEffect.Draw();
+    }
+
+    if (gateItemFlag != 0) {
+        TexManager.ReloadTexture(Vif1Packet, 0x1C);
+        MGDraw(itemBoxModel);
+    }
+
+    if (itemOpenSmallFlag != 0) {
+        sceVu0FVECTOR ambient;
+        sceVu0FVECTOR lift;
+        sceVu0FVECTOR held;
+
+        MGGetAmbient(ambient);
+        TexManager.ReloadTexture(Vif1Packet, 0x16);
+        itemOpenSmallFx.Draw();
+        TexManager.ReloadTexture(Vif1Packet, 0x1C);
+        sceVu0CopyVector(lift, itemBoxModel->pos);
+        sceVu0CopyVector(held, lift);
+
+        static float itemposr = -3.1415927f;
+
+        itemposr += 0.10471976f;
+        if (itemposr >= 3.1415927f) {
+            itemposr -= 6.2831855f;
+        }
+
+        lift[1] += 0.5f * sinf(itemposr);
+        itemBoxModel->SetPosition(lift);
+        MGDraw(itemBoxModel);
+        MGSetAmbient(ambient);
+        itemBoxModel->SetPosition(held);
+    }
+
+    if (itemOpenBigFlag != 0) {
+        sceVu0FVECTOR lift;
+        sceVu0FVECTOR held;
+
+        TexManager.ReloadTexture(Vif1Packet, 0x16);
+        MGDraw(itemOpenBigFx.frame);
+        sceVu0CopyVector(lift, itemBoxModel->pos);
+        sceVu0CopyVector(held, lift);
+
+        static float itemposr = -3.1415927f;
+
+        itemposr += 0.10471976f;
+        if (itemposr >= 3.1415927f) {
+            itemposr -= 6.2831855f;
+        }
+
+        lift[1] += 0.03f * sinf(itemposr);
+        itemBoxModel->SetPosition(lift);
+        TexManager.ReloadTexture(Vif1Packet, 0x1C);
+        MGDraw(itemBoxModel);
+    }
+
+    if (NewChangeFxFlag != 0) {
+        sceVu0FVECTOR pos;
+        sceVu0FVECTOR rot;
+
+        TexManager.ReloadTexture(Vif1Packet, 0xB);
+        sceVu0CopyVector(pos, CharaMain.pos);
+        CharaMain.GetRotation(rot);
+        NewChangeFx.SetPosition(pos);
+        NewChangeFx.SetRotation(rot);
+        NewChangeFx.Draw();
+    }
+
+    if (EscapeFlag != 0) {
+        TexManager.ReloadTexture(Vif1Packet, 0x1C);
+        EscapeEffect.Draw();
+    }
+
+    NowDngMap->DrawTrapCircle();
+    TexManager.ReloadTexture(Vif1Packet, 1);
+
+    if (CMonUnitHyde == 0 && BtEventMode == 0) {
+        NowMonstorUnit->DrawMonstorCursor();
+    }
+
+    if (BtEventInfo.unk_38 != 0) {
+        sceVu0FVECTOR mark;
+
+        sceVu0CopyVector(mark, CharaMain.pos);
+        mark[1] += 22.0f;
+
+        static float bic_posr = -3.141592f;
+
+        bic_posr += 0.10471974f;
+        if (bic_posr >= 3.141592f) {
+            bic_posr -= 6.283184f;
+        }
+
+        mark[1] += 0.5f * sinf(bic_posr);
+
+        float lift[6] = {16.0f, 14.0f, 16.0f, 16.0f, 18.0f, 15.0f};
+
+        mark[1] += lift[UserStatus->cur_chara] - 15.0f;
+        bicCursorFrame->SetPosition(mark);
+        MGDraw(bicCursorFrame);
+        BtEventInfo.unk_38 = 0;
+    }
+
+    if (BtAllClear == 0 && DebugStatus[10] == 0) {
+        int shift;
+        int floor_no;
+        int digit_x;
+
+        setbilinear(0);
+
+        if (autoDemo == 0 && CMonUnitHyde == 0) {
+            setTargetCursor(lockOnTargetFlag);
+
+            if (lockOnTargetDraw != 0) {
+                MGDraw(cursorFrame);
+                lockOnTargetDraw = 0;
+            }
+            setbilinear(0);
+        }
+
+        if (iventInfo != -1 && iventMarker != 0) {
+            sceVu0CopyVector(iventPos, CharaMain.pos);
+            iventPos[1] += 22.0f;
+
+            static float bic_posr = -3.141592f;
+
+            bic_posr += 0.10471974f;
+            if (bic_posr >= 3.141592f) {
+                bic_posr -= 6.283184f;
+            }
+
+            iventPos[1] += 0.5f * sinf(bic_posr);
+
+            float lift[6] = {16.0f, 14.0f, 16.0f, 16.0f, 18.0f, 15.0f};
+
+            iventPos[1] += lift[UserStatus->cur_chara] - 15.0f;
+            bicCursorFrame->SetPosition(iventPos);
+        }
+
+        if (BombInfo.unk_14 != 0) {
+            bombCursorFrame->SetPosition(BombInfo.pos);
+            MGDraw(bombCursorFrame);
+        }
+
+        if (CEffectHyde == 0 && BtEventMode == 0) {
+            MGSetGsZBUF(NULL);
+            RandomItem->Draw();
+            StealItem.Draw();
+        }
+
+        if (autoDemo == 0) {
+            sceGsAlpha blend;
+            sceGsZbuf depth;
+
+            TexManager.ReloadTexture(Vif1Packet, 0x12);
+
+            blend = mgAlpha;
+            blend.bits.a = 0;
+            blend.bits.b = 2;
+            blend.bits.c = 0;
+            blend.bits.d = 1;
+            MGSetGsALPHA(&blend);
+
+            depth = mgZBuffer;
+            depth.bits.zmsk = 1;
+            MGSetGsZBUF(&depth);
+
+            for (i = 0; i < 4; i++) {
+                CWeaponElFx[i].Draw();
+            }
+
+            WeaponCrashEffect.Draw();
+
+            for (i = 0; i < 16; i++) {
+                HitMark[i].Draw();
+                HitPointMark[i].Draw();
+                MyHitPointMark[i].Draw();
+            }
+
+            HealEffect.Draw();
+
+            if (CEffectHyde == 0 && BtEventMode == 0) {
+                NowShotData->draw();
+                OzumondShotEffect.Draw();
+                OzumondFire.Draw();
+            }
+
+            CWeaponFx.Draw();
+            CRunFx__2.Step();
+            CRunFx__2.Draw();
+            MGSetGsALPHA(NULL);
+            MGSetGsZBUF(NULL);
+        }
+
+        if (rogoSwitch2 == 1 && BtEventInfo.unk_8C == 0) {
+            TEX_Floor1 = TexManager.GetTexture(floor_name, -1);
+            shift = 0;
+            floor_no = 0;
+
+            if (UserStatus->cur_floor >= 9) {
+                floor_no = -0x24;
+            }
+
+            TexManager.ReloadTexture(Vif1Packet, 8);
+
+            if (LanguageCode == 0) {
+                switch (selectMapNo) {
+                    case 0:
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0xE2, 0xAA, 0x72, 0x32),
+                                    CRect_i_(0, 0, 0x72, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x17D, 0xAA, 0x4C, 0x32),
+                                    CRect_i_(0x72, 0, 0x4C, 0x32), rogoAlphaA[2]);
+                        break;
+                    case 1:
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0xBE, 0xAA, 0xBE, 0x32),
+                                    CRect_i_(0, 0, 0xBE, 0x32), rogoAlphaA[2]);
+                        shift = 0x40;
+                        break;
+                    case 2:
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0xF5, 0xAA, 0x4C, 0x32),
+                                    CRect_i_(0, 0, 0x4C, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x159, 0xAA, 0x4C, 0x32),
+                                    CRect_i_(0x4C, 0, 0x4C, 0x32), rogoAlphaA[2]);
+                        shift = -0x24;
+                        break;
+                    case 3:
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0xE8, 0xAA, 0x98, 0x32),
+                                    CRect_i_(0, 0, 0x98, 0x32), rogoAlphaA[2]);
+                        shift = 0x40;
+                        break;
+                    case 4:
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0xD7, 0xAA, 0x4C, 0x32),
+                                    CRect_i_(0, 0, 0x4C, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x13B, 0xAA, 0xBE, 0x32),
+                                    CRect_i_(0x4C, 0, 0xBE, 0x32), rogoAlphaA[2]);
+                        shift = -0x40;
+                        break;
+                    case 5:
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x135, 0xAA, 0x98, 0x32),
+                                    CRect_i_(0, 0, 0x98, 0x32), rogoAlphaA[2]);
+                        shift = -0x40;
+                        break;
+                }
+
+                if (BtUraDongeon != 0) {
+                    set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x120, 0xE6, 0x40, 0x38),
+                                CRect_i_(0x13A, 0x78, 0x40, 0x38), rogoAlphaA[2]);
+                } else if (UserStatus->res_limit_zone_current >= 0) {
+                    set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0xD4, 0xE6, 0xD8, 0x30),
+                                CRect_i_(0, 0x78, 0xD8, 0x30), rogoAlphaA[2]);
+                }
+            }
+
+            if (LanguageCode > 0) {
+                switch (selectMapNo) {
+                    case 0:
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0x122, 0xAA, 0x2D, 0x32),
+                                    CRect_i_(0, 0, 0x2D, 0x32), rogoAlphaA[2]);
+                        shift = -0x14;
+                        break;
+                    case 1:
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0xA0, 0xAA, 0xDA, 0x32),
+                                    CRect_i_(0, 0, 0xDA, 0x32), rogoAlphaA[2]);
+                        shift = 0x40;
+                        if (UserStatus->cur_floor < 9) {
+                            shift = 0x20;
+                        }
+                        break;
+                    case 2:
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0xC8, 0xAA, 0x91, 0x32),
+                                    CRect_i_(0, 0, 0x91, 0x32), rogoAlphaA[2]);
+                        if (UserStatus->cur_floor >= 9) {
+                            shift = 0x20;
+                        }
+                        break;
+                    case 3:
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0xDC, 0xAA, 0x8E, 0x32),
+                                    CRect_i_(0, 0, 0x8E, 0x32), rogoAlphaA[2]);
+                        shift = 0x10;
+                        break;
+                    case 4:
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0xC3, 0xAA, 0x4B, 0x32),
+                                    CRect_i_(0, 0, 0x4B, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x13B, 0xAA, 0xC0, 0x32),
+                                    CRect_i_(0x60, 0, 0xC0, 0x32), rogoAlphaA[2]);
+                        shift = -0x40;
+                        break;
+                    case 5:
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x108, 0xAA, 0xE1, 0x32),
+                                    CRect_i_(0, 0, 0xE1, 0x32), rogoAlphaA[2]);
+                        shift = -0x80;
+                        break;
+                    case 6:
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0xDC, 0xAA, 0x8E, 0x32),
+                                    CRect_i_(0, 0, 0x8E, 0x32), rogoAlphaA[2]);
+                        shift = 0x10;
+                        break;
+                }
+
+                if (BtUraDongeon != 0) {
+                    set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x110, 0xE6, 0x60, 0x38),
+                                CRect_i_(0x110, 0x78, 0x60, 0x38), rogoAlphaA[2]);
+                } else if (UserStatus->res_limit_zone_current >= 0) {
+                    set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0xD4, 0xE6, 0xF0, 0x30),
+                                CRect_i_(0, 0x78, 0xF0, 0x30), rogoAlphaA[2]);
+                }
+            }
+
+            floor_no = UserStatus->cur_floor + 1;
+
+            if (selectMapNo == 5) {
+                floor_no = BtGetFloorLevel(floor_no - 1);
+            }
+
+            if (floor_no < 10) {
+                digit_x = floor_no % 10 * 0x26;
+                set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(shift + 0x15A, 0xAA, 0x26, 0x32),
+                            CRect_i_(digit_x, 0x32, 0x26, 0x32), rogoAlphaA[2]);
+            }
+
+            if (floor_no >= 10 && floor_no < 100) {
+                digit_x = floor_no / 10 * 0x26;
+                set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(shift + 0x136, 0xAA, 0x26, 0x32),
+                            CRect_i_(digit_x, 0x32, 0x26, 0x32), rogoAlphaA[2]);
+                digit_x = floor_no % 10 * 0x26;
+                set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(shift + 0x15A, 0xAA, 0x26, 0x32),
+                            CRect_i_(digit_x, 0x32, 0x26, 0x32), rogoAlphaA[2]);
+            }
+
+            if (floor_no >= 100) {
+                int digit = floor_no / 100;
+
+                digit_x = digit * 0x26;
+                floor_no -= digit * 100;
+                set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(shift + 0x112, 0xAA, 0x26, 0x32),
+                            CRect_i_(digit_x, 0x32, 0x26, 0x32), rogoAlphaA[2]);
+                digit_x = floor_no / 10 * 0x26;
+                set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(shift + 0x136, 0xAA, 0x26, 0x32),
+                            CRect_i_(digit_x, 0x32, 0x26, 0x32), rogoAlphaA[2]);
+                digit_x = floor_no % 10 * 0x26;
+                set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(shift + 0x15A, 0xAA, 0x26, 0x32),
+                            CRect_i_(digit_x, 0x32, 0x26, 0x32), rogoAlphaA[2]);
+            }
+        }
+
+        TexManager.ReloadTexture(Vif1Packet, 2);
+
+        int gauge_alpha = rogoY3 + 0x60;
+
+        if ((int) BtActStatus.unk_048 >= 100) {
+            if (BtActStatus.unk_04C == 0) {
+                set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, 0x18C, 0x80, 0x1C),
+                            CRect_i_(0, 0, 0x80, 0x1C), gauge_alpha);
+            } else {
+                set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, 0x18C, 0x80, 0x1C),
+                            CRect_i_(0, 0x1C, 0x80, 0x1C), gauge_alpha);
+            }
+        }
+
+        float wear = BtActStatus.unk_048;
+
+        if ((int) wear < 100) {
+            int left = (int) wear;
+
+            set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, 0x18C, 0x80, 0x1C),
+                        CRect_i_(0, 0x54, 0x80, 0x1C), gauge_alpha);
+            set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x42, 0x18C, left, 0x1C),
+                        CRect_i_(0x1A, 0x38, left, 0x1C), gauge_alpha);
+        }
+
+        if (infoMap != 0 && NowDngMap->unk_BDEC == 1) {
+            sceVu0FVECTOR map_pos;
+            sceVu0FVECTOR map_rot;
+
+            TexManager.ReloadTexture(Vif1Packet, 0x1F);
+            sceVu0CopyVector(map_pos, CharaFrame->pos);
+            CharaFrame->GetRotation(map_rot);
+            NowDngMap->DrawMiniMap(map_pos, map_rot[1]);
+            NowMonstorUnit->DrawMapSymbol(map_pos);
+            RandomItem->MapSymbolDraw();
+        }
+
+        topStatusInfo(rogoY3, itemNowSel, UserStatus->cur_floor);
+        BtStatusErrDraw(rogoY3);
+
+        for (i = 0; i < 32; i++) {
+            HitValue[i].Draw();
+        }
+
+        if (exitMenuFlag != 0) {
+            TexManager.ReloadTexture(Vif1Packet, 7);
+            set2DSprite(Vif1Packet, TexManager.GetTexture("pause", -1),
+                        CRect_i_(0x100, 0xCC, 0x80, 0x28), 0, 0);
+        }
+
+        setbilinear(1);
+    }
+
+    if (MonstorNameOff == 0) {
+        MonsterNameDraw();
+    }
+
+    SetMonsterNameDrawFlag(0);
+
+    if (EdEventInfo.unk_300 != 0) {
+        sceVu0FVECTOR fade;
+
+        sceVu0CopyVector(fade, EdEventInfo.unk_310);
+        MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), (int) fade[0], (int) fade[1], (int) fade[2],
+                  (int) fade[3]);
+    }
+
+    if (BtEventMode != 0) {
+        EdEventSpriteDraw();
+        EBDraw();
+        TexManager.ReloadTexture(Vif1Packet, 0x1A);
+        BtEventMes0.DrawMesWin();
+        BtEventMes1.DrawMesWin();
+    }
+
+    for (i = 0; i < 1; i++) {
+        if (EdEventInfo.unk_25C[i] != NULL) {
+            TexManager.ReloadTexture(Vif1Packet, i + 0x28);
+            MGDraw(EdEventInfo.unk_25C[i]);
+        }
+    }
+
+    setbilinear(0);
+    TexManager.ReloadTexture(Vif1Packet, 0x1A);
+    SystemMesStep();
+    SystemMesDraw();
+
+    int showing;
+
+    if (DngMessMan.unk_08 > 0) {
+        showing = 0;
+    } else {
+        showing = DngMessMan.unk_00;
+    }
+
+    if (showing != 0) {
+        if (DngMessMan.unk_1C == 0) {
+            int mes_no = DngMessMan.unk_24;
+
+            DngMes1.mes_no[0] = DngMessMan.unk_0C;
+            DngMes1.mes_no[1] = DngMessMan.unk_10;
+            DngMes1.values[0] = DngMessMan.unk_14;
+            DngMes1.values[1] = DngMessMan.unk_18;
+            DngMes1.value_signed = 1;
+            DngMes1.value_show = 0;
+
+            if (mes_no != oldMsgNo) {
+                oldMsgNo = mes_no;
+                Mes1MakeFlg = 1;
+            }
+            if (Mes1MakeFlg != 0) {
+                Mes1MakeFlg = DngMes1.MakeMesWin(mes_no);
+            }
+            if (mes_no != -1) {
+                DngMes1.text_x = 0x136;
+                DngMes1.text_y = 0x154;
+                DngMes1.auto_pos = 9;
+                DngMes1.DrawMesWin();
+            }
+        } else {
+            int mes_no = DngMessMan.unk_24;
+            int pos[4];
+
+            DngMesStb.value_signed = 1;
+            DngMesStb.value_show = 0;
+
+            if (mes_no != oldMsgNo) {
+                oldMsgNo = mes_no;
+                Mes1MakeFlg = 1;
+            }
+            if (Mes1MakeFlg != 0) {
+                Mes1MakeFlg = DngMesStb.MakeMesWin(mes_no);
+            }
+            if (mes_no != -1) {
+                DngMesStb.auto_pos = 8;
+                DngMesStb.AutoSet(pos);
+                DngMesStb.DrawMesWin();
+            }
+        }
+    }
+
+    if (BtEventMode != 0) {
+        if (DebugStatus[4] != 0) {
+            TexManager.ReloadTexture(Vif1Packet, 0xC);
+            EdDDrawFont();
+        }
+    } else {
+        TexManager.ReloadTexture(Vif1Packet, 0xC);
+        DebugInfomationDraw();
+    }
+
+    DispFade__3.FadeIn(Vif1Packet);
+    DispFade__3.FadeOut(Vif1Packet);
+    EdFadeInOut();
+
+    if (frameCaputer != 0) {
+        sceGsSyncPath(0, 0);
+        TexManager.ReloadTexture(Vif1Packet, 0x17);
+        MGMoveFrameBuffImage(&TexManager.GetTexture("frame_image", -1)->m_tex0, 0, 0, 0);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/dun/gameloop", MainDraw__Fv__3);
+#endif /* DUN_COMPILE_DATA && DUN_COMPILE_SBSS */
 INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_4385);
 INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_4395);
 INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_4396);
@@ -2776,6 +3521,8 @@ void SwordDmgCheck1(float amount, int kind) {
 INCLUDE_ASM("asm/nonmatchings/dun/gameloop", SwordDmgCheck1__Ffi);
 #endif /* DUN_COMPILE_DATA && DUN_COMPILE_SHARED_RODATA */
 
+FUZZY_MATCH("asm/nonmatchings/dun/gameloop", SetWeaponColor__Fv);
+
 void SetWeaponColor(void) {
     u8 red, green, blue;
     s8 element = NowWeaponHave->best_elem;
@@ -2801,22 +3548,24 @@ void SetWeaponColor(void) {
     }
 }
 
+FUZZY_MATCH("asm/nonmatchings/dun/gameloop", Get_Main_EffectPtr__Fii);
+
 BT_SHOT_EFFECT *Get_Main_EffectPtr(int chara, int form) {
     switch (chara) {
         case 0:
-            return (BT_SHOT_EFFECT *) MyEffectEntry_Tbl[0];
+            return MyEffectEntry_Tbl[0];
         case 1:
-            return (BT_SHOT_EFFECT *) MyEffectEntry_Tbl[1];
+            return MyEffectEntry_Tbl[1];
         case 2:
-            return (BT_SHOT_EFFECT *) MyEffectEntry_Tbl[2];
+            return MyEffectEntry_Tbl[2];
         case 3:
             // Ruby draws a different set for each of her forms.
             if (form < 0 || form >= 5) {
                 form = 0;
             }
-            return (BT_SHOT_EFFECT *) MyEffectEntry_Tbl[3 + form];
+            return MyEffectEntry_Tbl[3 + form];
         case 4:
-            return (BT_SHOT_EFFECT *) MyEffectEntry_Tbl[8];
+            return MyEffectEntry_Tbl[8];
         case 5: {
             // Osmond draws from the weapon he has equipped rather than a form.
             s32 weapon =
@@ -2856,7 +3605,7 @@ BT_SHOT_EFFECT *Get_Main_EffectPtr(int chara, int form) {
                 entry = 2;
                 BtActStatus.unk_0A0 = 1;
             }
-            return (BT_SHOT_EFFECT *) MyEffectEntry_Tbl[9 + entry];
+            return MyEffectEntry_Tbl[9 + entry];
         }
     }
     return NULL;
@@ -2887,13 +3636,13 @@ void MainChara_Effect(BT_SHOT_EFFECT *effect, unsigned int *data, int reload) {
     if (UserStatus->cur_chara == 5) {
         unsigned int *crash = ozumond_default_effect;
 
-        CharaMainEffectCrash.Entry2((BT_SHOT_EFFECT *) MyEffectEntry_Tbl[9],
+        CharaMainEffectCrash.Entry2(MyEffectEntry_Tbl[9],
                                     crash, 0x10, &WEffectModelBuffer, 6);
     }
     if (UserStatus->cur_chara == 3) {
         unsigned int *crash = ozumond_default_effect;
 
-        CharaMainEffectCrash.Entry2((BT_SHOT_EFFECT *) MyEffectEntry_Tbl[3],
+        CharaMainEffectCrash.Entry2(MyEffectEntry_Tbl[3],
                                     crash, 0x10, &WEffectModelBuffer, 6);
     }
     NowMainEffect = &CharaMainEffect;
@@ -2960,7 +3709,7 @@ void LoadChara2(int chara, int keep_place, unsigned int *chara_data, unsigned in
         CharaMain.SetPosition(pos);
         CharaMain.SetRotation(rotation[0], rotation[1], rotation[2]);
     }
-    CharaFrame = CharaMain.frame;
+    CharaFrame = (CFrameVu1 *) CharaMain.frame;
 
     if (chara == 5) {
         LOADTEXTURE_INFO2 info[2] = {{NULL, 0x46, 0}, {NULL, 0x46, 0}};
@@ -3064,7 +3813,9 @@ static void LoadData(void) {
     wait_now_loading_vsync();
     LoadChara2(UserStatus->cur_chara, 1, read_buffer, weapon_data_0,
                weapon_data_1, equipped_weapon_data);
-    CharaFrame->SetPosition(200.0f, 0.0f, 150.0f);
+    float chara_x = 200.0f;
+
+    CharaFrame->SetPosition(chara_x, 0.0f, 150.0f);
 
     BT_SHOT_EFFECT *main_effect = Get_Main_EffectPtr(UserStatus->cur_chara, 0);
     LoadFile("dun/mainchara/wep_eff/c01_fuusya.chr", read_buffer, NULL);
@@ -4369,8 +5120,11 @@ void BattleActionPlay_Ozumond_F(int aimed) {
 INCLUDE_ASM("asm/nonmatchings/dun/gameloop", BattleActionPlay_Ozumond_F__Fi);
 #endif /* DUN_COMPILE_SBSS && DUN_COMPILE_SHARED_RODATA */
 
-INCLUDE_ASM("asm/nonmatchings/dun/gameloop", CameraAutoMove__FP13CCameraFollowP6CCPolyPfff__2);
-/* FIXME: This function isn't being renamed correctly after being made static
+/* The overlay's own copy of the camera walk is static, so only `autoCamTrial`
+ * names it. It compiles to retail's code exactly, but while that caller is
+ * still supplied by its marker the marker's `jal` needs the disambiguated
+ * global the reference dump carries, so both flip together. */
+#if DUN_COMPILE_SBSS
 static void CameraAutoMove(CCameraFollow *camera, CCPoly *poly, float *position, float from, float to) {
     float reference[4];
     float offset[4];
@@ -4411,7 +5165,9 @@ static void CameraAutoMove(CCameraFollow *camera, CCPoly *poly, float *position,
         camera->AddHeight(1.0f);
     }
 }
-*/
+#else
+INCLUDE_ASM("asm/nonmatchings/dun/gameloop", CameraAutoMove__FP13CCameraFollowP6CCPolyPfff__2);
+#endif /* DUN_COMPILE_SBSS */
 
 #if DUN_COMPILE_SBSS
 void autoCamTrial(void) {
@@ -4715,6 +5471,8 @@ void autoCamTrial(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/dun/gameloop", autoCamTrial__Fv);
 #endif /* DUN_COMPILE_SBSS */
+FUZZY_MATCH("asm/nonmatchings/dun/gameloop", DelActiveItem__Fi);
+
 void DelActiveItem(int slot) {
     // The two arrays are adjacent, and retail walks the second one off the
     // first rather than off the save data again.

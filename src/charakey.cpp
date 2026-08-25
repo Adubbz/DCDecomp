@@ -230,7 +230,9 @@ void ToanKey_Play(void) {
         float end = CharaMain.motion_type.motion_info[0x24].end;
 
         if (time >= 824.0f && time <= 825) {
-            CWeaponFx.Set(8, 32.0f, 64.0f);
+            float tip = 64.0f;
+
+            CWeaponFx.Set(8, 32.0f, tip);
         }
 
         BtActStatus.unk_0E8 = 1;

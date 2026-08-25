@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+class CFrame;
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -11,7 +13,8 @@ struct MOTION_INFO;
 
 class CMotionModel {
 public:
-    u8 unk_00[0xA0];
+    CFrame *frame; /**< Frame that draws the model. */
+    u8 unk_04[0x9C];
 
     /**
      * @mangled LoadPack__12CMotionModelFPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P11MOTION_INFOi

@@ -99,7 +99,6 @@ void InitReadBG__Fv();
 void SndInit__Fv();
 void LoadOverlay__Fi(int mode);
 void MGSetRenderInfo__Ffff(float a1, float a2, float a3);
-void sceGsSyncPath(int a1, int a2);
 void FlushCache(int mode);
 void sceDmaSend(int channel, void *tag);
 void init_now_loading__Fi(int map_no);

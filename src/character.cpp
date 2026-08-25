@@ -283,7 +283,7 @@ void CCharacter::Step() {
     motion_info = &motion->motion_info[index];
     if (motion_info != NULL) {
         if (old_time >= (float) motion_info->start && old_time <= (float) motion_info->end &&
-            (float) motion_info->end - motion_info->speed - 0.001f <= old_time) {
+            (float) motion_info->end - motion_info->speed - 0.01f <= old_time) {
             this->motion_state = 3;
         }
     }
@@ -309,7 +309,7 @@ void CCharacter::Step() {
         motion->state.unk_08 = 0.0f;
     }
     if (this->flags & 2) {
-        if (!(motion->state.time + saved_speed + 0.001f <
+        if (!(motion->state.time + saved_speed + 0.01f <
               (float) motion->motion_info[index].end)) {
             motion->motion_info[index].speed = 0.0f;
         }
@@ -328,12 +328,12 @@ void CCharacter::Step() {
     }
 
     if (this->unk_C9C != 0) {
-        this->unk_CF0 -= 0.01f;
+        this->unk_CF0 -= 0.08f;
         if (this->unk_CF0 < this->unk_CFC) {
             this->unk_CF0 = this->unk_CFC;
         }
     } else {
-        this->unk_CF0 += 0.01f;
+        this->unk_CF0 += 0.08f;
         if (this->unk_CF0 > 1.0f) {
             this->unk_CF0 = 1.0f;
         }
@@ -364,7 +364,7 @@ void CCharacter::Step() {
     }
 
     new_time = motion->state.time;
-    GetPosition(position);
+    GetWorldPosition(position);
     delta = old_time - new_time;
     abs_delta = delta < 0.0f ? -delta : delta;
     if (abs_delta < 1.0f) {

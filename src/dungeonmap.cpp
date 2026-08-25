@@ -1158,9 +1158,13 @@ void CDungeonMap::DrawWater(float *pos, int mute) {
         this->water.SetColor(red, green, blue, 0x80);
         if (shake != 0) {
             if (selectMapNo == 0 && selectMapNo == 6) {
-                this->water.SetParam(0.12f, 0.018f, 1.0f, 11.0f);
+                float height = 1.0f;
+
+                this->water.SetParam(0.12f, 0.018f, height, 11.0f);
             } else {
-                this->water.SetParam(0.12f, 0.018f, 0.0f, 11.0f);
+                float speed = 11.0f;
+
+                this->water.SetParam(0.12f, 0.018f, 0.0f, speed);
             }
             this->water.Shake(16, 4, 2.15f);
         }

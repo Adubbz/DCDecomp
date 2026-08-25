@@ -421,6 +421,7 @@ SECTIONS
 		_LIT_002A18A0 = 0x002a18a0;
 		_LIT_002A18B8 = 0x002a18b8;
 		_LIT_002A18BC = 0x002a18bc;
+		_LIT_002A18C0 = 0x002a18c0;
 		_LIT_002A18C4 = 0x002a18c4;
 		_LIT_002A18D0 = 0x002a18d0;
 		_LIT_002A18E4 = 0x002a18e4;
@@ -437,9 +438,11 @@ SECTIONS
 		_LIT_002A1960 = 0x002a1960;
 		_LIT_002A1988 = 0x002a1988;
 		_LIT_002A1A80 = 0x002a1a80;
+		_LIT_002A1A8C = 0x002a1a8c;
 		_LIT_002A1AF8 = 0x002a1af8;
 		_LIT_002A1B5C = 0x002a1b5c;
 		_LIT_002A1BCC = 0x002a1bcc;
+		_LIT_002A1BD0 = 0x002a1bd0;
 		_LIT_002A1C04 = 0x002a1c04;
 		_LIT_002A1C50 = 0x002a1c50;
 		_LIT_002A1C68 = 0x002a1c68;
@@ -519,9 +522,9 @@ SECTIONS
 		camera.cpp.o (.sbss)
 		main.sbss.part1.s.o (.sbss)
 		gamepad.cpp.o (.sbss)
-		// Retail gives each of the four statics a 4-byte slot; the compiler
-		// packs them to nine bytes, so the run is short by seven.
-		. = . + 0x7;
+		// Retail rounds the end of a unit's small-bss run up to four bytes,
+		// which the last static -- a one-byte flag here -- leaves short.
+		. = ALIGN(4);
 		main.sbss.part1b.s.o (.sbss)
 		mglib.cpp.o (.sbss)
 		main.sbss.part2.s.o (.sbss)
@@ -529,10 +532,12 @@ SECTIONS
 		main.sbss.part3.s.o (.sbss)
 		main.cpp.o (.sbss)
 		main.sbss.part4.s.o (.sbss)
+		clsmes.cpp.o (.sbss)
+		main.sbss.part4b.s.o (.sbss)
 		dungeonmap.cpp.o (.sbss)
 		main.sbss.part5.s.o (.sbss)
 		charakey.cpp.o (.sbss)
-		. = . + 0x3;
+		. = ALIGN(4);
 		main.sbss.part5b.s.o (.sbss)
 		userstatus.cpp.o (.sbss)
 		main.sbss.part6.s.o (.sbss)
@@ -561,6 +566,8 @@ SECTIONS
 		gamepad.cpp.o (.bss)
 		main.cpp.o (.bss)
 		main.bss.part4.s.o (.bss)
+		clsmes.cpp.o (.bss)
+		main.bss.part4b.s.o (.bss)
 		editpartsinfo.cpp.o (.bss)
 		main.bss.part5.s.o (.bss)
 		dungeonmap.cpp.o (.bss)

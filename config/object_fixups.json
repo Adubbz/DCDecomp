@@ -36,5 +36,11 @@
       "LIT_1556",
       "LIT_1557"
     ]
+  },
+  "src/dun/gameloop.cpp": {
+    "symbols": {
+      "MainDraw__Fv": "MainDraw__Fv__3",
+      "MoveChara__Fv": "MoveChara__Fv__2"
+    }
   }
 }

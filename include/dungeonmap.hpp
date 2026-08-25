@@ -77,7 +77,7 @@ struct ATRA_BOLL {
 /**
  * Describes one trap circle that a trap left on the floor.
  */
-struct TRAP_CIRCLE {
+struct MAP_TRAP_CIRCLE {
     float pos[4]; /**< World position of the circle. */
     s32 state;    /**< 0 for a free slot, 1 while the circle waits, 2 while the circle fades. */
     s32 kind;     /**< Identifier of the trap that the circle shows. */
@@ -169,7 +169,7 @@ public:
     u8 unk_BDE8[4];
     s32 unk_BDEC;
     MAP_NPC_MODEL npc[4];         /**< Characters that walk in the dungeon. */
-    TRAP_CIRCLE trap_circle[3]; /**< Trap circles that lie on the floor. */
+    MAP_TRAP_CIRCLE trap_circle[3]; /**< Trap circles that lie on the floor. */
 
     /**
      * @mangled SetNPC__11CDungeonMapFiPUiiPfPfiiP14CDataAlloc2_1_
@@ -580,7 +580,7 @@ STATIC_ASSERT(sizeof(MAP_CELL) == 0x10);
 STATIC_ASSERT(sizeof(ROOM_INFO) == 0x10);
 STATIC_ASSERT(sizeof(TREASURE_BOX) == 0x40);
 STATIC_ASSERT(sizeof(ATRA_BOLL) == 0x20);
-STATIC_ASSERT(sizeof(TRAP_CIRCLE) == 0x20);
+STATIC_ASSERT(sizeof(MAP_TRAP_CIRCLE) == 0x20);
 STATIC_ASSERT(sizeof(ROOM_LINK_RESULT) == 0x18);
 STATIC_ASSERT(sizeof(DUNGEON_EVENT) == 0x50);
 STATIC_ASSERT(sizeof(MAP_NPC_MODEL) == 0x1330);

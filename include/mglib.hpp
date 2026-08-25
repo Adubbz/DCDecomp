@@ -237,3 +237,55 @@ void MGSetGsTEST(sceGsTest *test);
  */
 void MGFillBox(const CRect_i_ &rect, unsigned char r, unsigned char g, unsigned char b,
                unsigned char a);
+
+/**
+ * Sets how far the fog reaches and what colour it is.
+ *
+ * @mangled MGSetFogParm__FffUcUcUcff
+ * @address 0x12E010
+ * @size 0x7C
+ * @unknownret
+ */
+void MGSetFogParm(float near, float far, unsigned char r, unsigned char g, unsigned char b,
+                  float scale, float bias);
+
+/**
+ * Sets the register that names how a primitive blends with the frame.
+ *
+ * @mangled MGSetGsALPHA__FP10sceGsAlpha
+ * @address 0x12EF90
+ * @size 0xC4
+ * @unknownret
+ */
+void MGSetGsALPHA(sceGsAlpha *alpha);
+
+/**
+ * Copies a rectangle of one texture into another.
+ *
+ * @mangled MGMoveImage__FP9sceGsTex0RC8CRect_i_P9sceGsTex0iii
+ * @address 0x12F210
+ * @size 0x21C
+ * @unknownret
+ */
+void MGMoveImage(sceGsTex0 *from, const CRect_i_ &rect, sceGsTex0 *to, int x, int y, int mode);
+
+/**
+ * Copies the frame being drawn into a texture.
+ *
+ * @mangled MGMoveFrameBuffImage__FP9sceGsTex0iii
+ * @address 0x12F970
+ * @size 0x100
+ * @unknownret
+ */
+void MGMoveFrameBuffImage(sceGsTex0 *to, int x, int y, int mode);
+
+/**
+ * Sets the matrix that puts the world in front of the eye, and where the eye
+ * stands.
+ *
+ * @mangled MGSetViewMatrix__FPA4_fPf
+ * @address 0x12DFA0
+ * @size 0x6C
+ * @unknownret
+ */
+void MGSetViewMatrix(float (*view)[4], float *eye);

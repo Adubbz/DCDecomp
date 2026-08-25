@@ -71,13 +71,29 @@ struct sceGsTest {
  * The register that names how a primitive blends with what is already drawn.
  */
 struct sceGsAlpha {
-    unsigned long long value; /**< The register, as the library built it. */
+    union {
+        unsigned long long value; /**< The register, as the library built it. */
+        struct {
+            unsigned long long a : 2;   /**< Which colour the blend starts from. */
+            unsigned long long b : 2;   /**< Which colour it takes away. */
+            unsigned long long c : 2;   /**< Which alpha it weighs the difference by. */
+            unsigned long long d : 2;   /**< Which colour it adds back. */
+            unsigned long long pad08 : 24;
+            unsigned long long fix : 8; /**< The alpha to use where C names a fixed one. */
+            unsigned long long pad40 : 24;
+        } bits;
+    };
 };
 
 /**
  * Waits for or polls a vertical synchronization event.
  */
 int sceGsSyncV(int mode);
+
+/**
+ * Waits for or polls the drawing path to fall idle.
+ */
+int sceGsSyncPath(int mode, unsigned short timeout);
 
 #ifdef __cplusplus
 }

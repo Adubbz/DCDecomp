@@ -2,6 +2,7 @@
 
 #include "common.h"
 
+class CCamera;
 class CRect_i_;
 class CTexture;
 struct i;
@@ -205,6 +206,17 @@ void set2DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, const CRect_i_ &
 void set2DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, const CRect_i_ &, int, int, float);
 
 /**
+ * Draws a whole texture into a rectangle of the screen, turned about a point.
+ *
+ * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_ii
+ * @address 0x15BD00
+ * @size 0x300
+ * @unknownret
+ */
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, int u,
+                 int v);
+
+/**
  * Draws one part of a texture into a rectangle of the screen, with a colour
  * of its own at each corner.
  *
@@ -249,3 +261,13 @@ void setColSprite(sceVif1Packet *, int *, int *, int *, int *, unsigned char, un
  */
 void set3DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, int *, int *, int *, int *,
                  unsigned char);
+
+/**
+ * Tells the sound where the camera stands, so that it can pan what it plays.
+ *
+ * @mangled SndSetCamera__FP7CCamera
+ * @address 0x1596F0
+ * @size 0x48
+ * @unknownret
+ */
+void SndSetCamera(CCamera *camera);

@@ -4,6 +4,8 @@
 
 class CRunEffect {
 public:
+    u8 unk_00[0xD0];
+
     /**
      * @mangled Lighting__10CRunEffectFi
      * @address 0x163470
@@ -43,3 +45,5 @@ public:
      */
     CRunEffect(void);
 };
+
+STATIC_ASSERT(sizeof(CRunEffect) == 0xD0);

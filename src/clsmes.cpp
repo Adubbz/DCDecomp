@@ -36,15 +36,19 @@ extern "C" u8 EditPartsData[0x6E28];
  * script binds the name; retail's code carries a relocation against it. */
 extern "C" EDIT_GAIJI EditGaijiTbl[];
 
-/* Random tables the message window shakes its text with. */
-extern "C" float RandTbl[64];
-extern "C" float RandTbl2[64];
-
 /* The external-character code of every letter of each registered name. */
-extern "C" s16 NameRegistTbl[8][11];
+s16 NameRegistTbl[8][11];
 
-/* Every pass of the outline the message window draws behind its text. */
-extern "C" MES_FUCHI FuchiTbl_E[];
+/* Random tables the message window shakes its text with. */
+float RandTbl[64];
+float RandTbl2[64];
+
+/* Every pass of the outline the message window draws behind its text. The
+ * last entry's alpha ends the run. */
+MES_FUCHI FuchiTbl_E[] = {
+    {0, -2, 0, 0, 0, 128}, {0, 2, 0, 0, 0, 128}, {2, 0, 0, 0, 0, 128},
+    {-2, 0, 0, 0, 0, 128}, {0, 0, 0, 0, 0, -1},
+};
 
 /* The palette the message window's font draws out of. */
 extern "C" u32 MesWinClut[256];
@@ -93,7 +97,7 @@ extern "C" u32 FontColorTbl[16];
 extern "C" sceVif1Packet *Vif1Packet;
 
 /* Whether the message windows skip drawing themselves entirely. */
-extern "C" int MesAbsDrawOff;
+int MesAbsDrawOff;
 
 s16 ClsMes::GetGaijiW(int code) {
     if (code >= -0x300 && code < -0x263) {
@@ -197,6 +201,8 @@ void ClsMes::AutoSetSub(CCharacter *first, CCharacter *second, int *out_pos) {
     GetScrPosFromChar(first, out_pos);
     GetScrPosFromChar(second, &out_pos[2]);
 }
+
+FUZZY_MATCH("asm/nonmatchings/clsmes", AutoSet__6ClsMesFPi);
 
 void ClsMes::AutoSet(int *pos) {
     RECT cand[3][3];
@@ -342,27 +348,25 @@ void ClsMes::AutoSet(int *pos) {
     this->grow_y = this->win_y + (this->win_height >> 1);
 
     if (this->tail_on != 0) {
-        if (this->win_x + (this->win_width >> 2) < this->tail_to_x) {
-            if (this->tail_to_x < this->win_x + (this->win_width * 3 >> 2)) {
-                this->tail_x = this->tail_to_x;
-            } else {
-                this->tail_x = this->win_x + (this->win_width * 3 >> 2);
-            }
+        if (this->tail_to_x <= this->win_x + (int) (this->win_width >> 2)) {
+            this->tail_x = this->win_x + (int) (this->win_width >> 2);
+        } else if (this->tail_to_x >= this->win_x + (int) (this->win_width * 3 >> 2)) {
+            this->tail_x = this->win_x + (int) (this->win_width * 3 >> 2);
         } else {
-            this->tail_x = this->win_x + (this->win_width >> 2);
+            this->tail_x = this->tail_to_x;
         }
 
-        if (this->win_y + (this->win_height >> 2) < this->tail_to_y) {
-            if (this->tail_to_y < this->win_y + (this->win_height * 3 >> 2)) {
-                this->tail_y = this->tail_to_y;
-            } else {
-                this->tail_y = this->win_y + (this->win_height * 3 >> 2);
-            }
+        if (this->tail_to_y <= this->win_y + (int) (this->win_height >> 2)) {
+            this->tail_y = this->win_y + (int) (this->win_height >> 2);
+        } else if (this->tail_to_y >= this->win_y + (int) (this->win_height * 3 >> 2)) {
+            this->tail_y = this->win_y + (int) (this->win_height * 3 >> 2);
         } else {
-            this->tail_y = this->win_y + (this->win_height >> 2);
+            this->tail_y = this->tail_to_y;
         }
     }
 }
+
+FUZZY_MATCH("asm/nonmatchings/clsmes", AbsFukidashiIn__6ClsMesFv);
 
 void ClsMes::AbsFukidashiIn(void) {
     if (this->win_x < 0x10) {
@@ -683,11 +687,8 @@ void ClsMes::GoNextPage(void) {
     }
 }
 
-/* MyTextureMake_sub reproduces retail's control flow but comes out four
- * instructions short: retail's switch on the line code carries a dead range
- * check and hoists `this` into the argument register ahead of the compare
- * chain. A short function moves every function after it in the image, so the
- * marker supplies it until the switch comes out at retail's length. */
+FUZZY_MATCH("asm/nonmatchings/clsmes", MyTextureMake_sub__6ClsMesFv);
+
 int ClsMes::MyTextureMake_sub(void) {
     int at = this->text_no;
 
@@ -1416,6 +1417,8 @@ void NeedMesWinWH_sub(int *len, int *max_len, int *width, int *max_width, int ch
     }
 }
 
+FUZZY_MATCH("asm/nonmatchings/clsmes", NeedMesWinWH__6ClsMesFiPi);
+
 void ClsMes::NeedMesWinWH(int mes_no, int *out) {
     short *at;
     int *max_len;
@@ -1637,6 +1640,8 @@ int ClsMes::MakeMesWin(int mes_no) {
     }
     return 0;
 }
+
+FUZZY_MATCH("asm/nonmatchings/clsmes", MakeMesTexture__6ClsMesFi);
 
 void ClsMes::MakeMesTexture(int mes_no) {
     int wh[4];
@@ -2248,6 +2253,8 @@ void ClsMes::DrawMesWin_sub(CTexture *texture, int dx, int dy, int frame) {
                     0, 0, 0, this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
     }
 }
+
+FUZZY_MATCH("asm/nonmatchings/clsmes", MyMenuHelpWinDraw__FiiiiiiiP8CTexture);
 
 void MyMenuHelpWinDraw(int x, int y, int width, int height, int shade, int u, int v,
                        CTexture *texture) {

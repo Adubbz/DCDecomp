@@ -146,6 +146,41 @@ def export_constants(path, names, parser):
     subprocess.run([objcopy] + arguments + [str(path), str(path)], check=True)
 
 
+def rename_symbols(path, mappings):
+    """Spell the unit's own symbols the way the reference assembly does.
+
+    Retail gives two functions in different images the same mangled name, and
+    the disassembler tells them apart with a `__N` suffix that the source
+    cannot write. Renaming the object's definition and its references together
+    keeps the call inside the unit, rather than letting it resolve against the
+    other image's copy.
+    """
+    if not mappings:
+        return
+    arguments = []
+    for old, new in mappings.items():
+        arguments += ["--redefine-sym", f"{old}={new}"]
+    objcopy = os.environ.get("MIPS_TOOL_PREFIX", "mips-ps2-decompals-") + "objcopy"
+    subprocess.run([objcopy] + arguments + [str(path), str(path)], check=True)
+
+
+# Every datum retail places in .sdata or .sbss starts on a four-byte boundary,
+# whatever its own type needs: the two-byte `rpad$180` is followed by two bytes
+# of padding, and each one-byte flag by three. MWCC gives each static a section
+# of its own with the alignment of its type, so a `char` lands wherever the
+# previous datum ended and every gp-relative offset after it is short.
+SMALL_DATA_ALIGNMENT = 4
+SMALL_DATA_SECTIONS = (".sdata", ".sbss")
+
+
+def align_small_data(elf):
+    """Give each small-data section retail's four-byte slot."""
+    for section in elf.sections:
+        if (section.name in SMALL_DATA_SECTIONS
+                and section.sh_addralign < SMALL_DATA_ALIGNMENT):
+            section.sh_addralign = SMALL_DATA_ALIGNMENT
+
+
 def rename_sections(elf, mappings, parser):
     """Rename the sections that define configured symbols."""
     symbols = {symbol.name: symbol for symbol in elf.symtab.symbols}
@@ -180,12 +215,15 @@ def main():
             symbol.name = replacement
             symbol.st_name = elf.strtab.add_symbol(replacement)
 
+    align_small_data(elf)
+
     config = json.loads(args.config.read_text(encoding="utf-8"))
     fixups = config.get(args.source, {})
     rename_sections(elf, fixups.get("sections", {}), parser)
     args.object.write_bytes(elf.pack())
 
-    # After the rewrite: objcopy reads the file, so it has to be the final one.
+    # After the rewrite: objcopy reads the file, so these have to be last.
+    rename_symbols(args.object, fixups.get("symbols", {}))
     export_constants(args.object, fixups.get("rodata_exports", []), parser)
 
 
