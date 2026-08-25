@@ -25,7 +25,7 @@ void CObjectFrame::FrameObjectOnOff(char *name, int on) {
         if (this->frame[i] != NULL) {
             found = this->frame[i]->SearchFrame(name);
             if (found != NULL) {
-                found->draw_on = on;
+                found->attr.draw_on = on;
             }
         }
     }
@@ -84,7 +84,7 @@ void CObjectFrame::DrawLOD(float *distance, int lowest, int highest, int *out_le
         this->frame[0]->SetPosition(this->pos);
         this->frame[0]->SetRotation(this->rotation.x, this->rotation.y, this->rotation.z);
         this->frame[0]->GetLWMatrix(local_to_world);
-        MulMatrix(local_to_eye, mgRenderInfo.world_to_eye, local_to_world);
+        MulMatrix(local_to_eye, mgRenderInfo.view_scaled, local_to_world);
         eye_distance = local_to_eye[3][0] * local_to_eye[3][0] +
                        local_to_eye[3][1] * local_to_eye[3][1] +
                        local_to_eye[3][2] * local_to_eye[3][2];

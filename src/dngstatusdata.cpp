@@ -93,15 +93,15 @@ int CDngStatusData::SearchItemIndexNo(int item_id) {
 
     if (!(valid = item_id < 132) && item_id < 257) {
         for (i = 0; (valid = i < 3) != 0; i++) {
-            if (this->quick_item_slot[i] == item_id) {
+            if (this->inventory.quick_item_slot[i] == item_id) {
                 return i;
             }
         }
     }
 
     if (!(valid = item_id <= 131) && item_id < 257) {
-        for (i = 0; (valid = i < this->item_capacity) != 0; i++) {
-            if (this->dungeon_items[i] == item_id) {
+        for (i = 0; (valid = i < this->inventory.item_capacity) != 0; i++) {
+            if (this->inventory.dungeon_items[i] == item_id) {
                 return i;
             }
         }
@@ -160,8 +160,8 @@ int CDngStatusData::LostItem(int item_id) {
     int valid;
 
     for (i = 0; (valid = i < 103) != 0; i++) {
-        if (this->dungeon_items[i] == item_id) {
-            this->dungeon_items[i] = -1;
+        if (this->inventory.dungeon_items[i] == item_id) {
+            this->inventory.dungeon_items[i] = -1;
             this->item_vol[i]      = 0;
             return i;
         }
@@ -176,35 +176,35 @@ void CDngStatusData::LostGateKey(void) {
     int valid;
 
     for (i = 0; (valid = i < 103) != 0; i++) {
-        if (this->dungeon_items[i] == 195) {
-            this->dungeon_items[i] = -1;
+        if (this->inventory.dungeon_items[i] == 195) {
+            this->inventory.dungeon_items[i] = -1;
         }
-        if (this->dungeon_items[i] == 196) {
-            this->dungeon_items[i] = -1;
+        if (this->inventory.dungeon_items[i] == 196) {
+            this->inventory.dungeon_items[i] = -1;
         }
-        if (this->dungeon_items[i] == 198) {
-            this->dungeon_items[i] = -1;
+        if (this->inventory.dungeon_items[i] == 198) {
+            this->inventory.dungeon_items[i] = -1;
         }
-        if (this->dungeon_items[i] == 201) {
-            this->dungeon_items[i] = -1;
+        if (this->inventory.dungeon_items[i] == 201) {
+            this->inventory.dungeon_items[i] = -1;
         }
-        if (this->dungeon_items[i] == 202) {
-            this->dungeon_items[i] = -1;
+        if (this->inventory.dungeon_items[i] == 202) {
+            this->inventory.dungeon_items[i] = -1;
         }
-        if (this->dungeon_items[i] == 203) {
-            this->dungeon_items[i] = -1;
+        if (this->inventory.dungeon_items[i] == 203) {
+            this->inventory.dungeon_items[i] = -1;
         }
-        if (this->dungeon_items[i] == 204) {
-            this->dungeon_items[i] = -1;
+        if (this->inventory.dungeon_items[i] == 204) {
+            this->inventory.dungeon_items[i] = -1;
         }
-        if (this->dungeon_items[i] == 205) {
-            this->dungeon_items[i] = -1;
+        if (this->inventory.dungeon_items[i] == 205) {
+            this->inventory.dungeon_items[i] = -1;
         }
-        if (this->dungeon_items[i] == 206) {
-            this->dungeon_items[i] = -1;
+        if (this->inventory.dungeon_items[i] == 206) {
+            this->inventory.dungeon_items[i] = -1;
         }
-        if (!(valid = this->dungeon_items[i] < 216) && this->dungeon_items[i] < 223) {
-            this->dungeon_items[i] = -1;
+        if (!(valid = this->inventory.dungeon_items[i] < 216) && this->inventory.dungeon_items[i] < 223) {
+            this->inventory.dungeon_items[i] = -1;
         }
     }
 }
@@ -240,18 +240,18 @@ int CDngStatusData::CheckItemGet(int item_id) {
             int k;
 
             for (i = 0; (valid = i < GetMaxDungeonItems()) != 0; i++) {
-                if (!(valid = this->dungeon_items[i] < 132) && this->dungeon_items[i] < 257) {
+                if (!(valid = this->inventory.dungeon_items[i] < 132) && this->inventory.dungeon_items[i] < 257) {
                     count++;
                 }
             }
 
             for (k = 0; (valid = k < 3) != 0; k++) {
-                if (this->quick_item_slot[k] != -1) {
-                    count += this->quick_item_qty[k];
+                if (this->inventory.quick_item_slot[k] != -1) {
+                    count += this->inventory.quick_item_qty[k];
                 }
             }
 
-            if (count < this->item_capacity) {
+            if (count < this->inventory.item_capacity) {
                 result = 0;
             } else {
                 return 1;
@@ -362,7 +362,7 @@ int CDngStatusData::GetItem(int item_id, int qty) {
     if (!(valid = item_id < 132) && item_id < 257) {
         int i;
         for (i = 0; (valid = i < 103) != 0; i++) {
-            if (this->dungeon_items[i] < 132) {
+            if (this->inventory.dungeon_items[i] < 132) {
                 if (item_id == 238) {
                     this->special_flag_238 = 1;
                     return 0;
@@ -371,18 +371,18 @@ int CDngStatusData::GetItem(int item_id, int qty) {
                 int count = 0;
                 int j;
                 for (j = 0; (valid = j < 103) != 0; j++) {
-                    if (!(valid = this->dungeon_items[j] < 132)) {
+                    if (!(valid = this->inventory.dungeon_items[j] < 132)) {
                         count++;
                     }
                 }
                 int k;
                 for (k = 0; (valid = k < 3) != 0; k++) {
-                    if (this->quick_item_slot[k] != -1) {
-                        count += this->quick_item_qty[k];
+                    if (this->inventory.quick_item_slot[k] != -1) {
+                        count += this->inventory.quick_item_qty[k];
                     }
                 }
 
-                if (count + 1 > this->item_capacity) {
+                if (count + 1 > this->inventory.item_capacity) {
                     this->overflow_flag = 1;
                 }
 
@@ -390,14 +390,14 @@ int CDngStatusData::GetItem(int item_id, int qty) {
                 if (this->overflow_flag != 0) {
                     int m;
                     for (m = 0; (valid = m < 3) != 0; m++) {
-                        if (this->dungeon_items[this->item_capacity + m] == -1) {
-                            this->dungeon_items[this->item_capacity + m] = item_id;
-                            this->item_vol[this->item_capacity + m]      = have_copy;
+                        if (this->inventory.dungeon_items[this->inventory.item_capacity + m] == -1) {
+                            this->inventory.dungeon_items[this->inventory.item_capacity + m] = item_id;
+                            this->item_vol[this->inventory.item_capacity + m]      = have_copy;
                             return i;
                         }
                     }
                 } else {
-                    this->dungeon_items[i] = item_id;
+                    this->inventory.dungeon_items[i] = item_id;
                     this->item_vol[i]      = have_copy;
                 }
                 return i;
@@ -461,7 +461,7 @@ int CDngStatusData::CheckActItemSlot(int item_id) {
     int valid;
 
     for (i = 0; (valid = i < 3) != 0; i++) {
-        if (this->quick_item_slot[i] == item_id) {
+        if (this->inventory.quick_item_slot[i] == item_id) {
             return i;
         }
     }
@@ -518,6 +518,7 @@ void CUserStatus::AddDrink(int chara_no, s16 amount, float ratio) {
     }
 }
 #else
+
 INCLUDE_ASM("asm/nonmatchings/dngstatusdata", AddDrink__11CUserStatusFisf);
 #endif /* DNG_COMPILE_UNMATCHED */
 
@@ -939,11 +940,11 @@ void CDngStatusData::Initialize(void) {
     }
 
     this->dead_mask            = 0;
-    DNG_ITEM_BLOCK *item_block = (DNG_ITEM_BLOCK *) &this->item_capacity;
-    this->item_capacity        = 50;
-    this->quick_item_slot[0]   = -1;
-    this->quick_item_slot[1]   = -1;
-    this->quick_item_slot[2]   = -1;
+    DNG_ITEM_BLOCK *item_block = (DNG_ITEM_BLOCK *) &this->inventory.item_capacity;
+    this->inventory.item_capacity        = 50;
+    this->inventory.quick_item_slot[0]   = -1;
+    this->inventory.quick_item_slot[1]   = -1;
+    this->inventory.quick_item_slot[2]   = -1;
 
     for (t = 0; (valid = t < 103) != 0; t++) {
         item_block->dungeon_items[t] = -1;
@@ -1076,4 +1077,3 @@ void CDngStatusData::GetAtraData(int georama_no, int floor, int atra_id) {
         }
     }
 }
-

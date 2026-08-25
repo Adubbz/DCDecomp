@@ -18,7 +18,9 @@ class CEffectGroup;
 struct EDIT_EFFECT_INFO;
 struct EDITPARTS_INFO;
 
-/** Number of effects that one map part can carry. */
+/**
+ * Number of effects that one map part can carry.
+ */
 #define MAP_PARTS_EFFECT_MAX 24
 
 /**
@@ -41,7 +43,7 @@ public:
     s32 unk_10C;
     s32 unk_110;
     s32 unk_114;
-    s32 unk_118;
+    s32 unk_118; /**< 2 on the parts whose ambient sound is the one a door makes. */
     float unk_11C;
     float unk_120;
     s32 unk_124;
@@ -50,7 +52,7 @@ public:
     sceVu0FVECTOR unk_130;
     sceVu0FVECTOR unk_140;
     u8 unk_150[128];
-    s32 unk_1D0;
+    s32 kind; /**< Kind of map part. */
     s32 unk_1D4;
     /** 1 where the slot carries an effect; below zero where no slot after it does. */
     s32 effect_on[MAP_PARTS_EFFECT_MAX];

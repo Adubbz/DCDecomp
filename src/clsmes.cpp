@@ -53,9 +53,6 @@ MES_FUCHI FuchiTbl_E[] = {
 /* The palette the message window's font draws out of. */
 extern "C" u32 MesWinClut[256];
 
-/* The GIF tag that opens a run of GS register writes. */
-extern "C" sceVif1PkQuad GiftagAD;
-
 /* The register that names where the message window's depth buffer lives. */
 extern "C" sceGsZbuf mgZBuffer;
 
@@ -172,7 +169,7 @@ void Myset2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &src
 
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
-    sceVif1PkOpenGifTag(packet, *(sceVif1PkQuad *) &GiftagAD);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
     sceVif1PkAddGsAD(packet, 0x14, 0x61);
     sceVif1PkAddGsAD(packet, 0, 0x1D6);
 
@@ -182,7 +179,7 @@ void Myset2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &src
     sceVif1PkAddGsAD(packet, 1,
                      (unsigned long) r | (unsigned long) g << 8 | (unsigned long) b << 16 |
                          (unsigned long) a << 24 | (unsigned long) *(u32 *) &one << 32);
-    sceVif1PkAddGsAD(packet, 6, *(unsigned long *) &texture->m_tex0);
+    sceVif1PkAddGsAD(packet, 6, *(unsigned long *) &texture->tex0);
     sceVif1PkAddGsAD(packet, 3, (unsigned long) (dst.x << 4) | (unsigned long) (dst.y << 4) << 16);
     sceVif1PkAddGsAD(packet, 4,
                      (unsigned long) ((src.x << 4) + 0x6C00) |
@@ -2025,10 +2022,10 @@ void ClsMes::MakeFukidashi(sceVif1Packet *packet) {
 
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
-    sceVif1PkOpenGifTag(packet, *(sceVif1PkQuad *) &GiftagAD);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
     sceVif1PkAddGsAD(packet, 0x3F, 0);
 
-    tex0 = TexManager.GetTexture("fukidashibase", -1)->m_tex0;
+    tex0 = *(sceGsTex0 *) &TexManager.GetTexture("fukidashibase", -1)->tex0;
 
     unsigned int tbp = tex0.bits.tbp0;
     int tbw = tex0.bits.tbw;
@@ -2061,7 +2058,7 @@ void ClsMes::MakeFukidashi(sceVif1Packet *packet) {
 
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
-    sceVif1PkOpenGifTag(packet, *(sceVif1PkQuad *) &GiftagAD);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
     this->MakeFukidashi_sub(packet, 1);
     this->MakeFukidashi_sub(packet, 0);
     sceVif1PkAddGsAD(packet, 0x3F, 0);
@@ -2091,7 +2088,7 @@ void ClsMes::MakeFukidashi(sceVif1Packet *packet) {
 
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
-    sceVif1PkOpenGifTag(packet, *(sceVif1PkQuad *) &GiftagAD);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
     sceVif1PkAddGsAD(packet, 0x3F, 0);
     sceVif1PkAddGsAD(packet, 0x4C,
                      (unsigned long) (frame.bits.tbp0 >> 5) |
@@ -2604,7 +2601,7 @@ void ClsMes::DrawMesWin(void) {
 
     sceVif1PkCnt(Vif1Packet, 0);
     sceVif1PkOpenDirectCode(Vif1Packet, 0);
-    sceVif1PkOpenGifTag(Vif1Packet, *(sceVif1PkQuad *) &tag);
+    sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &tag);
     sceVif1PkAddGsAD(Vif1Packet, 0x3F, 0);
     sceVif1PkCloseGifTag(Vif1Packet);
     sceVif1PkCloseDirectCode(Vif1Packet);

@@ -6,6 +6,9 @@
 #include "gamepad.hpp"
 #include "dataalloc.hpp"
 #include "mglib.hpp"
+#include "debugfont.hpp"
+#include "sound.hpp"
+#include "runscript.hpp"
 
 
 /* Global, GLOBAL-linkage per retail `nm` (0x1cbc9b0, `T`). Purpose beyond
@@ -53,8 +56,8 @@ s32 MapNo;
 s32 OldMapNo;
 s32 LocalMapNo;
 s32 StartEventNo;
-s32 SystemMes;
-char CSnd; /* 1 byte in retail, not 4 -- padded to a 4-byte slot in this globals group. */
+short *SystemMes;
+CSound CSnd;
 s32 main_select_padrup;
 
 /* Scratch buffer for the "reset trial character names, keep the rest"
@@ -76,7 +79,7 @@ static SV_CONFIG_SYS config_data;
  *
  * GLOBAL rather than retail's LOCAL for the same reason as SystemMesBuffer:
  * MenuLoop__Fv is still a raw .s and references it. */
-char DebugFont[0x21C];
+CDebugFont DebugFont;
 
 /* Global, GLOBAL linkage per retail `nm` (0x1ce7560, `T`). Declared last,
  * after `save_data`/`SaveData`, since retail's sinit thunk constructs it
@@ -100,7 +103,6 @@ void SndInit__Fv();
 void LoadOverlay__Fi(int mode);
 void MGSetRenderInfo__Ffff(float a1, float a2, float a3);
 void FlushCache(int mode);
-void sceDmaSend(int channel, void *tag);
 void init_now_loading__Fi(int map_no);
 void LoadSystemMessage__Fv();
 void SndInitialize__Fiiii(int a1, int a2, int a3, int a4);
@@ -132,7 +134,6 @@ void MGBeginFrame__Fv();
  * reuse by sceVif1PkCall below. An earlier pass declared this () and made
  * the copy direction come out backwards (lw s4 then paddub a0,s4). */
 void SetEnv__FP13sceVif1Packet(sceVif1Packet *vif1_packet);
-void sceVif1PkCall(int vif1_packet, void *vu_prog, int a3);
 int func_01DD2220();
 int func_01DC8EB0();
 int EditLoop__Fv();
@@ -161,11 +162,13 @@ void TrialStart__Fv();
  * references them by gp-offset, so real `static` works. `d2`/`d8` are never
  * touched by main() but must still be defined, so this object's .sbss covers
  * their retail byte range. See re/ai/build_pipeline.md. */
-static s32 mode;
-static s32 d1;
-static s32 d2;
-static s32 d8;
-static s32 mc_mode;
+/** Top-level game mode currently being updated. */
+s32 mode;
+static sceDmaChan *d1;
+static sceDmaChan *d2;
+static sceDmaChan *d8;
+/** Memory-card operation selected by the developer menu. */
+s32 mc_mode;
 
 /* `PolyCount` (GLOBAL linkage) immediately follows `mc_mode` in retail's
  * main.sbss (0x2a2548) -- moved here from src/mainselect.cpp for the same reason
@@ -485,7 +488,7 @@ int main(int argc, const char **argv, const char **envp) {
              * strictly left to right. */
             int vif1_packet = (int) Vif1Packet;
             SetEnv__FP13sceVif1Packet(Vif1Packet);
-            sceVif1PkCall(vif1_packet, (void *) Vu_prog0f, 0);
+            sceVif1PkCall((sceVif1Packet *) vif1_packet, (u_long128 *) Vu_prog0f, 0);
 
             /* gp-0x72A8 here is PolyCount, not mc_mode (gp-0x72AC) -- an
              * earlier pass had the wrong global (off by one slot in the

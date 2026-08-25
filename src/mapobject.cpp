@@ -30,20 +30,20 @@ void CMapObject::FrameObjectOnOff(char *name, int on) {
         if (this->frame[i] != NULL) {
             found = this->frame[i]->SearchFrame(name);
             if (found != NULL) {
-                found->draw_on = on;
+                found->attr.draw_on = on;
             }
         }
     }
     if (this->shadow_frame != NULL) {
         found = this->shadow_frame->SearchFrame(name);
         if (found != NULL) {
-            found->draw_on = on;
+            found->attr.draw_on = on;
         }
     }
     if (this->shade_frame != NULL) {
         found = this->shade_frame->SearchFrame(name);
         if (found != NULL) {
-            found->draw_on = on;
+            found->attr.draw_on = on;
         }
     }
     if (this->collision_frame != NULL) {

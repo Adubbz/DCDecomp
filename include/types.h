@@ -10,4 +10,10 @@ typedef short s16;
 typedef int s32;
 typedef long long s64;
 
+typedef unsigned char u_char;
+typedef unsigned short u_short;
+typedef unsigned int u_int;
+typedef unsigned long u_long;
+typedef unsigned __int128 u_long128;
+
 #define NULL 0

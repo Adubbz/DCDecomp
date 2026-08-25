@@ -9,7 +9,7 @@ public:
     CTexture *gold_texture; /**< Texture that a dropped pile of gold draws with. */
     u8 unk_004[0x28C];
     s32 unk_290[32];
-    u8 unk_310[0x184];
+    u8 unk_09[0x184];
     s32 unk_494[32];
     s32 unk_514[32];
     u8 unk_594[0x8C];
@@ -36,7 +36,7 @@ public:
      * @size 0x50
      * @unknownret
      */
-    void checkEvent(void);
+    int checkEvent(void);
 
     /**
      * @mangled checkErr__11CRandomItemFv
@@ -44,7 +44,7 @@ public:
      * @size 0x60
      * @unknownret
      */
-    void checkErr(void);
+    int checkErr(void);
 
     /**
      * @mangled CheckPosition__11CRandomItemFv

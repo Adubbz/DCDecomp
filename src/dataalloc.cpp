@@ -21,5 +21,5 @@ asm CDataAlloc2<1>::CDataAlloc2() {
 
 /* @ 0x143850 (0x20 bytes) -- __ct__18CDataAlloc<1,6000>Fv */
 CDataAlloc<1, 6000>::CDataAlloc() {
-    unk_17700 = 0;
+    used = 0;
 }

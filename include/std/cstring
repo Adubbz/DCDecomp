@@ -10,8 +10,11 @@ extern "C" {
 
 void *memcpy(void *dest, const void *src, size_t size);
 void *memset(void *dest, int value, size_t size);
+int memcmp(const void *left, const void *right, size_t size);
+int strcmp(const char *left, const char *right);
 char *strcpy(char *dest, const char *src);
 char *strcat(char *dest, const char *src);
 size_t strlen(const char *text);
+int strcasecmp(const char *left, const char *right);
 
 }

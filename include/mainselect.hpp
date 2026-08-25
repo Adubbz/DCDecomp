@@ -8,8 +8,8 @@ extern s32 MapNo;
 extern s32 OldMapNo;
 extern s32 LocalMapNo;
 extern s32 StartEventNo;
-extern s32 SystemMes;
-extern char CSnd; /* 1 byte in retail, not 4 -- padded to a 4-byte slot in this globals group. */
+extern short *SystemMes;
+extern s32 LanguageCode;
 extern s32 main_select_padrup;
 extern s32 PolyCount;
 

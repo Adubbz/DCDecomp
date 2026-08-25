@@ -1,100 +1,83 @@
 #pragma once
 
 #include "common.h"
-#include "vu1.hpp"
 
-// Forward declarations for the types these declarations name. The skeleton
-// headers are generated from the retail symbol table, which knows the type
-// names but not where they live.
-struct RenderInfo;
-class CDataAlloc2_1_;
-struct MDT_HEADER;
-struct sceVif1Packet;
+#include <libvu0.h>
 
+#include "dataalloc.hpp"
+#include "mdt.hpp"
+#include "visualvu1.hpp"
 
-class CCloth {
+class CBound;
+class CFrame;
+
+/**
+ * Simulates and draws a fixed-capacity grid of cloth vertices.
+ */
+class CCloth : public CVisualVu1 {
 public:
-    u8 unk_00[72];
-    s32 unk_48;
-    float unk_4C;
-    s32 unk_50;
+    int visual_unk_10;
+    int visual_unk_14;
+    u_int *visual_vu_data;
+    u_int visual_vu_size;
+    int unk_20;
+    u_int *vu_block[2]; /**< VU packet data for each display buffer. */
+    int num_i; /**< Number of active grid rows. */
+    int num_j; /**< Number of active grid columns. */
+    float pitch; /**< Rest spacing between adjacent vertices. */
+    int stop;
+    CFrame *frame; /**< Frame from which the cloth hangs. */
+    int unk_30;
+    CBound *bound;
+    int floor_on;
+    float floor_y;
+    void *wind;
+    float wind_effect;
+    float normal_scale;
+    MDT_MATERIAL material;
+    sceVu0FVECTOR gravity;
+    sceVu0FVECTOR follow;
+    sceVu0FVECTOR stiffness;
+    sceVu0FVECTOR last_position;
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR home[16][16];
+    sceVu0FVECTOR point[16][16];
+    sceVu0FVECTOR last[16][16];
+    sceVu0FVECTOR rest[16][16];
+    sceVu0FVECTOR speed[16][16];
+    sceVu0FVECTOR normal_grid[16][16];
+    sceVu0FVECTOR texture_coord[16][16];
+    int polygon_divide[16];
+    int mask[16][16];
+    sceVu0FVECTOR world_home[16][16];
 
     /**
+     * Draws the simulated cloth through a temporary world-space frame.
+     *
      * @mangled Draw__6CClothFv
      * @address 0x13B640
      * @size 0x160
-     * @unknownret
      */
-    void Draw(void);
+    void Draw();
+
+    void Clear();
+    void Step(int step);
+    int CreateVUData(u_int *packet);
+    void InitParam();
 
     /**
-     * @mangled Clear__6CClothFv
-     * @address 0x13B7A0
-     * @size 0x100
-     * @unknownret
-     */
-    void Clear(void);
-
-    /**
-     * @mangled Step__6CClothFi
-     * @address 0x13B8A0
-     * @size 0xBD0
-     * @unknownret
-     */
-    void Step(int);
-
-    /**
-     * @mangled DrawVu1__6CClothFPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii
-     * @address 0x13C470
-     * @size 0xC0
-     * @unknownret
-     */
-    void DrawVu1(unsigned int *, float (*)[4], RenderInfo *, VU1_PROGRAM, RenderInfo *, int, int);
-
-    /**
-     * @mangled DrawVu1__6CClothFP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii
-     * @address 0x13C530
-     * @size 0xC0
-     * @unknownret
-     */
-    void DrawVu1(sceVif1Packet *, float (*)[4], RenderInfo *, VU1_PROGRAM, sceVif1Packet *, int, int);
-
-    /**
-     * @mangled CreateVUData__6CClothFPUi
-     * @address 0x13C5F0
-     * @size 0x3C0
-     * @unknownret
-     */
-    void CreateVUData(unsigned int *);
-
-    /**
-     * @mangled InitParam__6CClothFv
-     * @address 0x13C9B0
-     * @size 0x1C0
-     * @unknownret
-     */
-    void InitParam(void);
-
-    /**
+     * Constructs a cloth grid with the requested dimensions and spacing.
+     *
      * @mangled __ct__6CClothFiif
      * @address 0x13CB70
      * @size 0x80
      */
-    CCloth(int, int, float);
+    CCloth(int num_i = 16, int num_j = 16, float pitch = 1.0f);
 
-    /**
-     * @mangled Initialize__6CClothFP14CDataAlloc2_1_
-     * @address 0x13CBF0
-     * @size 0x460
-     * @unknownret
-     */
-    void Initialize(CDataAlloc2_1_ *);
-
-    /**
-     * @mangled Initialize__6CClothFP10MDT_HEADERP14CDataAlloc2_1_
-     * @address 0x13D050
-     * @size 0x200
-     * @unknownret
-     */
-    void Initialize(MDT_HEADER *, CDataAlloc2_1_ *);
+    virtual void Initialize(CDataAlloc2<1> *alloc);
+    virtual void Initialize(MDT_HEADER *header, CDataAlloc2<1> *alloc);
+    virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
+        VU1_PROGRAM program, RenderInfo *unknown, int arg1, int arg2);
+    virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
+        VU1_PROGRAM program, sceVif1Packet *unknown, int arg1, int arg2);
 };

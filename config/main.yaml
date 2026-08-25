@@ -196,32 +196,32 @@ segments:
       - {start: 0x20d08, type: asmtu, name: lib/sce/pkt/libvifpk}
       - {start: 0x21340, type: asmtu, name: lib/sce/sdr_main}
       - {start: 0x21688, type: asmtu, name: lib/sce/libvu0}
-      - {start: 0x223d0, type: asmtu, name: mathutil}
+      - {start: 0x223d0, type: cpp, name: mathutil}
       - {start: 0x24030, type: cpp, name: camera}
       - {start: 0x248d0, type: cpp, name: camerafollow}
-      - {start: 0x24df0, type: asmtu, name: collisionmdt}
-      - {start: 0x25a70, type: asmtu, name: dataset}
-      - {start: 0x279a0, type: asmtu, name: dataalloc2_1}
-      - {start: 0x27c80, type: asmtu, name: frame}
+      - {start: 0x24df0, type: cpp, name: collisionmdt}
+      - {start: 0x25a70, type: cpp, name: dataset}
+      - {start: 0x279a0, type: cpp, name: dataalloc2_1}
+      - {start: 0x27c80, type: cpp, name: frame}
       - {start: 0x2a710, type: cpp, name: gamepad}
       - {start: 0x2bb20, type: asmtu, name: spritetable}
       - {start: 0x2c270, type: cpp, name: mglib}
       - {start: 0x30ff0, type: cpp, name: texture}
-      - {start: 0x34860, type: asmtu, name: visualvu1}
+      - {start: 0x34860, type: cpp, name: visualvu1}
       - {start: 0x36390, type: asmtu, name: visualshadow}
       - {start: 0x374e0, type: cpp, name: character}
-      - {start: 0x39e10, type: asmtu, name: chararead}
+      - {start: 0x39e10, type: cpp, name: chararead}
       - {start: 0x3b580, type: asmtu, name: wind}
-      - {start: 0x3b740, type: asmtu, name: cloth}
+      - {start: 0x3b740, type: cpp, name: cloth}
       - {start: 0x3d350, type: asmtu, name: bound}
-      - {start: 0x3df90, type: asmtu, name: dispctrl}
-      - {start: 0x3ea50, type: asmtu, name: dataread}
+      - {start: 0x3df90, type: cpp, name: dispctrl}
+      - {start: 0x3ea50, type: cpp, name: dataread}
       - {start: 0x411b0, type: cpp, name: main}
       - {start: 0x41e30, type: asmtu, name: gamemode}
       - {start: 0x43920, type: cpp, name: dataalloc}
       - {start: 0x43970, type: asmtu, name: map}
       - {start: 0x43c50, type: asmtu, name: sound}
-      - {start: 0x47a70, type: asmtu, name: gameutil}
+      - {start: 0x47a70, type: cpp, name: gameutil}
       - {start: 0x4cc30, type: cpp, name: clsmes}
       - {start: 0x54040, type: asmtu, name: nowload}
       - {start: 0x54c30, type: asmtu, name: actionseq}
@@ -232,9 +232,9 @@ segments:
       - {start: 0x575f0, type: cpp, name: mapobject}
       - {start: 0x57ae0, type: cpp, name: objectframe2}
       - {start: 0x57c00, type: cpp, name: savedata}
-      - {start: 0x58e80, type: asmtu, name: snd}
+      - {start: 0x58e80, type: cpp, name: snd}
       - {start: 0x5f200, type: asmtu, name: scriptinterpreter}
-      - {start: 0x5fe30, type: asmtu, name: sysmes}
+      - {start: 0x5fe30, type: cpp, name: sysmes}
       - {start: 0x608a0, type: cpp, name: water}
       - {start: 0x61750, type: asmtu, name: fireomni}
       - {start: 0x62680, type: asmtu, name: runeffect}
@@ -244,9 +244,9 @@ segments:
       - {start: 0x64c30, type: asmtu, name: objanime}
       - {start: 0x67160, type: asmtu, name: textureanime}
       - {start: 0x67d80, type: cpp, name: ebattle}
-      - {start: 0x68300, type: asmtu, name: ebattle_loop}
+      - {start: 0x68300, type: cpp, name: ebattle_loop}
       - {start: 0x6d960, type: asmtu, name: editarea}
-      - {start: 0x70350, type: asmtu, name: edit}
+      - {start: 0x70350, type: cpp, name: edit}
       - {start: 0x9a0d0, type: cpp, name: editpartsinfo}
       - {start: 0x9a8b0, type: cpp, name: mapparts}
       - {start: 0x9b780, type: asmtu, name: edit_in}
@@ -292,8 +292,8 @@ segments:
       - {start: 0x135750, type: asmtu, name: menuitemstep}
       - {start: 0x135b10, type: asmtu, name: weaponlevelup}
       - {start: 0x1381b0, type: asmtu, name: menuiconautoget}
-      - {start: 0x138550, type: asmtu, name: battle_globals}
-      - {start: 0x13da40, type: asmtu, name: runscript}
+      - {start: 0x138550, type: cpp, name: battle_globals}
+      - {start: 0x13da40, type: cpp, name: runscript}
       - {start: 0x13f690, type: cpp, name: stockitem}
       - {start: 0x140150, type: asmtu, name: fish}
       - {start: 0x141420, type: cpp, name: charakey}

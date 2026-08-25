@@ -97,15 +97,12 @@ public:
     float unk_0B8;
     CFrame *frame;        /**< Frame that draws the character; zero if it has no model. */
     CFrame *shadow_frame; /**< Frame that draws the shadow; zero if it casts none. */
-    s32 unk_0C4;
-    s32 unk_0C8;
-    s32 unk_0CC;
-    s32 unk_0D0;
+    u_int *images[4];
     char *unk_0D4;
     s32 unk_0D8;
     CTextureAnime tex_anime; /**< Animation of every texture that the character draws. */
-    s32 unk_2CC;
-    s32 unk_2D0;
+    tagFRAME_INF *unk_2cc;
+    tagFRAME_INF *unk_2d0;
     s32 unk_2D4;
     s32 unk_2D8;
     s32 unk_2DC;

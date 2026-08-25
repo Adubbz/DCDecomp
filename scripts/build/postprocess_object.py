@@ -2,6 +2,7 @@
 """Apply symbol-derived and configured fixes to a compiled object."""
 
 import argparse
+import functools
 import json
 import os
 import re
@@ -119,7 +120,7 @@ def compiled_constants(path):
     return out
 
 
-def export_constants(path, names, parser):
+def export_constants(path, names, parser, assembly_constants=()):
     """Rename the object's own constants to the names retail's other units use.
 
     A translation unit that is only half decompiled has its string constants
@@ -130,14 +131,26 @@ def export_constants(path, names, parser):
     """
     if not names:
         return
+    # INCLUDE_RODATA may already have spliced an undecompiled constant into
+    # the object. In that case it has its retail name and needs no compiler
+    # constant alias.
+    defined = {
+        symbol.name
+        for symbol in Elf(path.read_bytes()).symtab.symbols
+        if symbol.st_shndx != 0
+    }
     compiled = compiled_constants(path)
     arguments = []
     for name in names:
+        if name in defined:
+            continue
         wanted = retail_constant(name)
         if wanted is None:
             parser.error(f"no reference assembly defines {name!r}")
         matches = [symbol for symbol, body in compiled.items()
                    if body and wanted.startswith(body)]
+        if not matches and name in assembly_constants:
+            continue
         if len(matches) != 1:
             parser.error(f"{name!r} matches {len(matches)} constants in {path}")
         arguments += ["--redefine-sym", f"{matches[0]}={name}",
@@ -164,6 +177,15 @@ def rename_symbols(path, mappings):
     subprocess.run([objcopy] + arguments + [str(path), str(path)], check=True)
 
 
+def globalize_symbols(path, names):
+    """Expose local functions referenced by retained cross-unit data tables."""
+    if not names:
+        return
+    objcopy = os.environ.get("MIPS_TOOL_PREFIX", "mips-ps2-decompals-") + "objcopy"
+    arguments = [value for name in names for value in ("--globalize-symbol", name)]
+    subprocess.run([objcopy] + arguments + [str(path), str(path)], check=True)
+
+
 # Every datum retail places in .sdata or .sbss starts on a four-byte boundary,
 # whatever its own type needs: the two-byte `rpad$180` is followed by two bytes
 # of padding, and each one-byte flag by three. MWCC gives each static a section
@@ -172,13 +194,59 @@ def rename_symbols(path, mappings):
 SMALL_DATA_ALIGNMENT = 4
 SMALL_DATA_SECTIONS = (".sdata", ".sbss")
 
+# Retail starts every constant on an eight-byte boundary, whatever its own
+# length asks for: `"IMG"` follows an eighteen-byte name at 0x299028 rather than
+# at 0x299024. MWCC gives a constant of four bytes or fewer a section of
+# four-byte alignment, so without this the short ones pull everything after them
+# forward.
+RODATA_ALIGNMENT = 8
+
+# A constant the reference assembly still supplies arrives asking for sixteen,
+# because that is what splat writes at the head of every dump. Retail granted
+# that to some and not to others -- 121 of the map editor's 283 constants sit
+# where eight divides and sixteen does not -- so where the address is known it
+# is the address, rather than either compiler's habit, that says how wide the
+# slot is.
+RODATA_ALIGNMENTS = (16, 8, 4)
+
+
+@functools.lru_cache(maxsize=None)
+def retail_addresses():
+    """Every symbol the configuration gives an address, by name."""
+    out = {}
+    for path in sorted(ROOT.glob("config/*.symbols.txt")):
+        for line in path.read_text(encoding="utf-8").splitlines():
+            match = re.match(r"(\S+) = (0x[0-9a-fA-F]+);", line.strip())
+            if match:
+                out.setdefault(match.group(1), int(match.group(2), 16))
+    return out
+
+
+def rodata_alignment(names):
+    """The slot retail gave a constant, or none where it names no address."""
+    for name in names:
+        address = retail_addresses().get(name)
+        if address:
+            return next(a for a in RODATA_ALIGNMENTS if address % a == 0)
+    return None
+
 
 def align_small_data(elf):
     """Give each small-data section retail's four-byte slot."""
-    for section in elf.sections:
+    defined = defaultdict(list)
+    for symbol in elf.symtab.symbols:
+        if symbol.st_shndx and symbol.st_shndx < len(elf.sections):
+            defined[symbol.st_shndx].append(symbol.name)
+    for index, section in enumerate(elf.sections):
         if (section.name in SMALL_DATA_SECTIONS
                 and section.sh_addralign < SMALL_DATA_ALIGNMENT):
             section.sh_addralign = SMALL_DATA_ALIGNMENT
+        elif section.name == ".rodata":
+            wanted = rodata_alignment(defined.get(index, ()))
+            if wanted is not None:
+                section.sh_addralign = wanted
+            elif section.sh_addralign < RODATA_ALIGNMENT:
+                section.sh_addralign = RODATA_ALIGNMENT
 
 
 def rename_sections(elf, mappings, parser):
@@ -224,7 +292,24 @@ def main():
 
     # After the rewrite: objcopy reads the file, so these have to be last.
     rename_symbols(args.object, fixups.get("symbols", {}))
-    export_constants(args.object, fixups.get("rodata_exports", []), parser)
+    # GNU assembly cannot spell MWCC's angle-bracket template names. Splat
+    # uses the same deterministic safe spelling for definitions and callers.
+    native_symbols = {
+        symbol.name for symbol in Elf(args.object.read_bytes()).symtab.symbols
+        if "<" in symbol.name
+    }
+    template_aliases = {
+        name: name.replace("<", "_").replace(",", "_")
+                  .replace(">", "_").replace(" ", "")
+        for name in native_symbols
+    }
+    rename_symbols(args.object, template_aliases)
+    globalize_symbols(args.object, fixups.get("globalize_symbols", []))
+    source_text = (ROOT / args.source).read_text(encoding="utf-8")
+    assembly_constants = set(re.findall(
+        r"INCLUDE_RODATA\([^,]+,\s*([^)\s]+)\s*\)", source_text))
+    export_constants(args.object, fixups.get("rodata_exports", []), parser,
+                     assembly_constants)
 
 
 if __name__ == "__main__":

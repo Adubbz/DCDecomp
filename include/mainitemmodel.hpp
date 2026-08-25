@@ -45,7 +45,7 @@ public:
      * @size 0x120
      * @unknownret
      */
-    void SetHandModel(int);
+    int SetHandModel(int);
 
     /**
      * @mangled AllReleasItem__14CMainItemModelFv
@@ -88,15 +88,26 @@ public:
     void Initialize(void);
 };
 
+/**
+ * Names the model each item the player is running draws with.
+ */
 class CActiveItemPack {
 public:
+    s32 now;                /**< Slot the player is using now. */
+    s32 item[4];            /**< Item each slot runs. */
+    s32 model[9];           /**< Model each slot draws with, or -1 for none. */
+    CMainItemModel *models; /**< The pool the models come out of. */
+
     /**
+     * Gives back how the item the player is using now is run.
+     *
      * @mangled CheckStatusType__15CActiveItemPackFv
      * @address 0x1D5430
      * @size 0x150
-     * @unknownret
      */
-    void CheckStatusType(void);
+    int CheckStatusType(void);
 };
+
+STATIC_ASSERT(sizeof(CActiveItemPack) == 0x3C);
 
 STATIC_ASSERT(sizeof(CMainItemModel) == 0x2810);

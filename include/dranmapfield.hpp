@@ -11,7 +11,6 @@ class CBoxVu0;
 class CCPoly;
 class CDataAlloc2_1_;
 
-
 class CDranMapField : public CCharacter {
 public:
     /**
@@ -28,7 +27,7 @@ public:
      * @size 0x100
      * @unknownret
      */
-    void AddCollision(CCPoly *, int, CBoxVu0);
+    int AddCollision(CCPoly *, int, CBoxVu0);
 
     /**
      * @mangled LoadCollision__13CDranMapFieldFPUiP14CDataAlloc2_1_

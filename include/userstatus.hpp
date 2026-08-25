@@ -1,7 +1,19 @@
 #pragma once
 
 #include "common.h"
+
 #include "dngstatusdata.hpp"
+
+/**
+ * Records what has become of one atla of one floor.
+ */
+struct ATRA_SAVE {
+    s32 unk_00;
+    s32 unk_04;
+    s32 unk_08;
+};
+
+STATIC_ASSERT(sizeof(ATRA_SAVE) == 0xC);
 
 class CUserStatus {
 public:
@@ -75,48 +87,51 @@ public:
      * The blob is public because retail reaches into it from outside the class:
      * BuildCharaSpecialParts reads cur_floor, party_size and
      * res_limit_zone_current straight off the global pointer. */
-    s8 cur_georama;                 // 0x0000
-    char unk_01[1];                 // 0x0001
-    s8 cur_floor;                   // 0x0002
-    s8 unk_03;                      // 0x0003
-    s8 cur_chara;                   // 0x0004
-    s8 party_size;                  // 0x0005
-    s16 max_hp[6];                  // 0x0006
-    s16 hp[6];                      // 0x0012
-    char unk_01E[0x42A1];           // 0x001E
-    s8 atra_list[9];                // 0x42BF
-    s32 unk_42C8[6];                // 0x42C8
-    s16 unk_42E0[6];                // 0x42E0
-    float water_max[6];             // 0x42EC
-    float water_now[6];             // 0x4304
-    char unk_431C[8];               // 0x431C
-    s32 unk_4324;                   // 0x4324
-    char unk_4328[0xC];             // 0x4328
-    s32 unk_4334;                   // 0x4334
-    char unk_4338[4];               // 0x4338
-    s32 minimap_status;             // 0x433C
-    s8 equipped_weapon_slot[6]; /**< Specifies each character's equipped weapon slot. */
-    u16 unk_4346;                   // 0x4346
-    s32 unk_4348[6];                // 0x4348
-    s16 active_item[3];             /**< Identifies the item each slot is running, or -1. */
-    s16 active_item_left[3];        /**< How many uses each running item has left. */
-    char unk_436C[0x19E];           // 0x436C
-    char unk_450A[2];               // 0x450A
-    WEAPON_HAVE chara_weapons[6][11]; /**< Specifies the weapons owned by each character. */
+    s8 cur_georama;                      // 0x0000
+    char unk_01[1];                      // 0x0001
+    s8 cur_floor;                        // 0x0002
+    s8 unk_03;                           // 0x0003
+    s8 cur_chara;                        // 0x0004
+    s8 party_size;                       // 0x0005
+    s16 max_hp[6];                       // 0x0006
+    s16 hp[6];                           // 0x0012
+    char unk_01E[0x205A];                // 0x001E
+    ATRA_SAVE atra_data[7][100];         // 0x2078
+    char unk_4148[0x177];                // 0x4148
+    s8 atra_list[9];                     // 0x42BF
+    s32 unk_42C8[6];                     // 0x42C8
+    s16 unk_42E0[6];                     // 0x42E0
+    float water_max[6];                  // 0x42EC
+    float water_now[6];                  // 0x4304
+    s32 unk_431C;                        // 0x431C
+    char unk_4320[4];                    // 0x4320
+    s32 unk_4324;                        // 0x4324
+    char unk_4328[0xC];                  // 0x4328
+    s32 unk_4334;                        // 0x4334
+    char unk_4338[4];                    // 0x4338
+    s32 minimap_status;                  // 0x433C
+    s8 equipped_weapon_slot[6];          /**< Specifies each character's equipped weapon slot. */
+    u16 unk_4346;                        // 0x4346
+    s32 unk_4348[6];                     // 0x4348
+    s16 active_item[3];                  /**< Identifies the item each slot is running, or -1. */
+    s16 active_item_left[3];             /**< How many uses each running item has left. */
+    char unk_436C[0x19E];                // 0x436C
+    char unk_450A[2];                    // 0x450A
+    WEAPON_HAVE chara_weapons[6][11];    /**< Specifies the weapons owned by each character. */
     DNG_CONSUMABLE consumable_items[43]; /**< Specifies the stored consumable items. */
-    s16 next_hp[6];                 // 0x8A5C
-    s16 life_step[6];               // 0x8A68
-    s32 unk_8A74[6];                // 0x8A74
-    s32 unk_8A8C[6];                // 0x8A8C
-    s8 event_flags[50];             // 0x8AA4
-    s16 drink_next[6];              // 0x8AD6
-    s16 drink_step[6];              // 0x8AE2
-    char unk_8AEE[2];               // 0x8AEE
-    float damage_accum[6];          // 0x8AF0
-    s32 water_drain_disable;        // 0x8B08
-    s32 step_disable;               // 0x8B0C
-    s32 res_limit_zone_current;     // 0x8B10
-    s32 active_item_vol[3];         // 0x8B14
+    s16 next_hp[6];                      // 0x8A5C
+    s16 life_step[6];                    // 0x8A68
+    s32 unk_8A74[6];                     // 0x8A74
+    s32 unk_8A8C[6];                     // 0x8A8C
+    s8 event_flags[50];                  // 0x8AA4
+    s16 drink_next[6];                   // 0x8AD6
+    s16 drink_step[6];                   // 0x8AE2
+    char unk_8AEE[2];                    // 0x8AEE
+    float damage_accum[6];               // 0x8AF0
+    s32 water_drain_disable;             // 0x8B08
+    s32 step_disable;                    // 0x8B0C
+    s32 res_limit_zone_current;          // 0x8B10
+    s32 active_item_vol[3];              // 0x8B14
 };
 
 /* The player's save-slot status; the dungeon reads the party and the floor. */

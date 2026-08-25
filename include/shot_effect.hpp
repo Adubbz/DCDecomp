@@ -9,7 +9,6 @@ struct BT_SHOT_EFFECT;
 class CDataAlloc2_1_;
 class CFrame;
 
-
 class CSHOT_EFFECT {
 public:
     u8 unk_0000[0xA160];
@@ -182,17 +181,17 @@ STATIC_ASSERT(sizeof(CSHOT_EFFECT) == 0xA160);
 class CSHOT {
 public:
     u8 unk_000[0x40];
-    sceVu0FVECTOR pos[12];     /**< Where each shot is. */
+    sceVu0FVECTOR pos[12]; /**< Where each shot is. */
     sceVu0FVECTOR unk_100[12];
-    sceVu0FVECTOR vector[12];  /**< The way each shot flies, and how fast. */
+    sceVu0FVECTOR vector[12]; /**< The way each shot flies, and how fast. */
     s32 unk_280[12];
-    s32 life[12];              /**< How long each shot has left, in frames. */
-    s32 damage[12];            /**< What each shot takes off what it hits. */
-    float unk_310[12];
-    s32 unk_340[12];
+    s32 life[12];   /**< How long each shot has left, in frames. */
+    s32 damage[12]; /**< What each shot takes off what it hits. */
+    float unk_09[12];
+    s32 unk_30[12];
     s32 unk_370[12];
     s32 unk_3A0[12];
-    s32 used[12];              /**< 1 while the slot holds a shot. */
+    s32 used[12]; /**< 1 while the slot holds a shot. */
 
     /**
      * @mangled draw__5CSHOTFv

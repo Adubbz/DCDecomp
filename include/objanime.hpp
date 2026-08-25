@@ -9,6 +9,7 @@ class CCamera;
 class CEffectGroup;
 class CFrame;
 struct EPARTS_FUNC_DATA;
+
 /**
  * Plays one animation of a map object.
  *
@@ -33,11 +34,13 @@ struct EDIT_EFFECT_INFO {
     CFrame *frame; /**< Frame that the effect stands on. */
     s32 unk_24;
     u8 unk_28[8];
-    float offset[3]; /**< Distance from the frame to the effect. */
-    s32 unk_3C;
+    sceVu0FVECTOR offset; /**< Distance from the frame to the effect; also the first end of a line sound source. */
     u8 unk_40[16];
-    float colour[3]; /**< Colour of the light that the effect gives. */
-    u8 unk_5C[20];
+    sceVu0FVECTOR colour; /**< Colour of the light that the effect gives; also the second end of a line sound source, whose fourth component says whether that end is set. */
+    float sound_no;      /**< Sound effect emitted by this effect. */
+    float near_distance; /**< Distance at which the sound has full volume. */
+    float far_distance;  /**< Distance beyond which the sound is inaudible. */
+    u8 unk_6C[4];
 };
 
 STATIC_ASSERT(sizeof(EDIT_EFFECT_INFO) == 0x70);
@@ -120,7 +123,7 @@ void InitEditEffect(CFrame *, EDIT_EFFECT_INFO *);
  * @size 0x1E0
  * @unknownret
  */
-void InitEditEffect(CFrame *, EPARTS_FUNC_DATA *, EDIT_EFFECT_INFO *);
+int InitEditEffect(CFrame *, EPARTS_FUNC_DATA *, EDIT_EFFECT_INFO *);
 
 /**
  * Gives back 1 while an effect is one that the time of day and the map flags

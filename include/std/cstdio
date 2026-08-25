@@ -4,7 +4,24 @@
 
 extern "C" {
 
+struct FILE;
+
+struct _reent {
+    int _errno;
+    FILE *_stdin;
+    FILE *_stdout;
+    FILE *_stderr;
+};
+
+extern _reent *_impure_ptr[];
+
 int printf(const char *fmt, ...);
+int fprintf(FILE *stream, const char *fmt, ...);
 int sprintf(char *out, const char *fmt, ...);
+int fflush(FILE *stream);
 
 }
+
+#define stdin (_impure_ptr[0]->_stdin)
+#define stdout (_impure_ptr[0]->_stdout)
+#define stderr (_impure_ptr[0]->_stderr)

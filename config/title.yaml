@@ -67,11 +67,11 @@ segments:
     bss_size: 0x7c480
     subsegments:
       - {start: 0x0, type: bin, name: header, dir: title}
-      - {start: 0x40, type: asmtu, name: title/script}
-      - {start: 0x14e0, type: asmtu, name: title/dispfade}
-      - {start: 0x1910, type: asmtu, name: title/bombeffect}
+      - {start: 0x40, type: cpp, name: title/script}
+      - {start: 0x14e0, type: cpp, name: title/dispfade}
+      - {start: 0x1910, type: cpp, name: title/bombeffect}
       - {start: 0x2050, type: asmtu, name: title/majinbeem}
-      - {start: 0x2890, type: asmtu, name: title/seireiking}
+      - {start: 0x2890, type: cpp, name: title/seireiking}
       - {start: 0x34c0, type: asmtu, name: title/opening}
       - {start: 0x91c0, type: asmtu, name: title/op_a}
       - {start: 0xcad0, type: asmtu, name: title/op_b}

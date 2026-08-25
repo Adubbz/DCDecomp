@@ -3,6 +3,11 @@
 #include "common.h"
 
 /**
+ * @file
+ * Declares the game's vector, geometry, interpolation, and trigonometry helpers.
+ */
+
+/**
  * @mangled __construct_array
  * @address 0x1222D0
  * @size 0x130
@@ -152,12 +157,12 @@ void mwBload(/* unknown args */);
  * @size 0x70
  * @unknownret
  */
-void mwLoadOverlay(/* unknown args */);
+extern "C" int mwLoadOverlay(char *path, void *address);
 
 /**
  * @mangled VectorMax__FPfPfPf
  * @address 0x122FB0
- * @size 0x20
+ * @size 0x18
  * @unknownret
  */
 void VectorMax(float *, float *, float *);
@@ -173,7 +178,7 @@ void VectorMax(float *, float *, float *, float *);
 /**
  * @mangled VectorMax__FPfPfPfPfPf
  * @address 0x122FF0
- * @size 0x30
+ * @size 0x28
  * @unknownret
  */
 void VectorMax(float *, float *, float *, float *, float *);
@@ -189,7 +194,7 @@ void VectorMin(float *, float *, float *);
 /**
  * @mangled VectorMin__FPfPfPfPfPf
  * @address 0x123040
- * @size 0x30
+ * @size 0x2C
  * @unknownret
  */
 void VectorMin(float *, float *, float *, float *, float *);
@@ -205,7 +210,7 @@ void VectorMaxMin(float *, float *, float *, float *);
 /**
  * @mangled VectorMaxMin__FPfPfPfPfPf
  * @address 0x123090
- * @size 0x30
+ * @size 0x2C
  * @unknownret
  */
 void VectorMaxMin(float *, float *, float *, float *, float *);
@@ -213,7 +218,7 @@ void VectorMaxMin(float *, float *, float *, float *, float *);
 /**
  * @mangled VectorMaxMin__FPfPfPfPfPfPf
  * @address 0x1230C0
- * @size 0x40
+ * @size 0x38
  * @unknownret
  */
 void VectorMaxMin(float *, float *, float *, float *, float *, float *);
@@ -221,7 +226,7 @@ void VectorMaxMin(float *, float *, float *, float *, float *, float *);
 /**
  * @mangled PlaneNormal__FPfPfPfPf
  * @address 0x123100
- * @size 0x30
+ * @size 0x28
  * @unknownret
  */
 void PlaneNormal(float *, float *, float *, float *);
@@ -229,34 +234,31 @@ void PlaneNormal(float *, float *, float *, float *);
 /**
  * @mangled DistPlanePoint__FPfPfPf
  * @address 0x123130
- * @size 0x50
- * @unknownret
+ * @size 0x4C
  */
-void DistPlanePoint(float *, float *, float *);
+float DistPlanePoint(float *normal, float *on_plane, float *point);
 
 /**
  * @mangled ReflectionPlane__FPfPfPfPf
  * @address 0x123180
- * @size 0xB0
- * @unknownret
+ * @size 0xA8
  */
-void ReflectionPlane(float *, float *, float *, float *);
+float ReflectionPlane(float *normal, float *on_plane, float *point, float *reflection);
 
 /**
  * @mangled IntersectionPoint_line_poly3__FPfPfPfPfPfPfPf
  * @address 0x123230
- * @size 0x150
- * @unknownret
+ * @size 0x144
  */
-void IntersectionPoint_line_poly3(float *, float *, float *, float *, float *, float *, float *);
+int IntersectionPoint_line_poly3(float *from, float *to, float *v0, float *v1, float *v2,
+                                 float *normal, float *hit);
 
 /**
  * @mangled Check_Point_Poly3_XYZ__FPfPfPfPfPf
  * @address 0x123380
- * @size 0x1E0
- * @unknownret
+ * @size 0x1DC
  */
-void Check_Point_Poly3_XYZ(float *, float *, float *, float *, float *);
+int Check_Point_Poly3_XYZ(float *point, float *v0, float *v1, float *v2, float *normal);
 
 /**
  * @mangled DistVector__FPf
@@ -270,14 +272,14 @@ float DistVector(float *vector);
  *
  * @mangled DistVector__FPfPf
  * @address 0x123590
- * @size 0x40
+ * @size 0x38
  */
 float DistVector(float *a, float *b);
 
 /**
  * @mangled MulMatrix__FPA4_fPA4_fPA4_f
  * @address 0x1235D0
- * @size 0x80
+ * @size 0x78
  * @unknownret
  */
 void MulMatrix(float (*)[4], float (*)[4], float (*)[4]);
@@ -285,7 +287,7 @@ void MulMatrix(float (*)[4], float (*)[4], float (*)[4]);
 /**
  * @mangled RotMatrixY__FPA4_ff
  * @address 0x123650
- * @size 0x80
+ * @size 0x74
  * @unknownret
  */
 void RotMatrixY(float (*)[4], float);
@@ -293,7 +295,7 @@ void RotMatrixY(float (*)[4], float);
 /**
  * @mangled LookAtMatrixZ__FPA4_fPf
  * @address 0x1236D0
- * @size 0x110
+ * @size 0x10C
  * @unknownret
  */
 void LookAtMatrixZ(float (*)[4], float *);
@@ -309,7 +311,7 @@ void ApplyMatrixN(float (*)[4], float (*)[4], float (*)[4], int);
 /**
  * @mangled VectorInterpolate__FPfPfPffi
  * @address 0x123840
- * @size 0x190
+ * @size 0x18C
  * @unknownret
  */
 void VectorInterpolate(float *, float *, float *, float, int);
@@ -324,7 +326,7 @@ float AngleInterpolate(float, float, float, int);
 /**
  * @mangled AngleCmp__Ffff
  * @address 0x123B30
- * @size 0xB0
+ * @size 0xA8
  * @unknownret
  */
 int AngleCmp(float a, float b, float range);
@@ -341,18 +343,16 @@ float AngleLimit(float angle);
 /**
  * @mangled rnd__Fv
  * @address 0x123CB0
- * @size 0x40
- * @unknownret
+ * @size 0x3C
  */
-void rnd(void);
+float rnd(void);
 
 /**
  * @mangled nrnd__Fv
  * @address 0x123CF0
  * @size 0xC0
- * @unknownret
  */
-void nrnd(void);
+float nrnd(void);
 
 /**
  * @mangled CreateSinTable__Fv
@@ -365,17 +365,15 @@ void CreateSinTable(void);
 /**
  * @mangled Sinf__Ff
  * @address 0x123E40
- * @size 0xC0
- * @unknownret
+ * @size 0xB8
  */
-void Sinf(float);
+float Sinf(float angle);
 
 /**
  * @mangled Cosf__Ff
  * @address 0x123F00
- * @size 0x30
- * @unknownret
+ * @size 0x28
  */
-void Cosf(float);
+float Cosf(float angle);
 
 /* + 4 more not-yet-named function(s) in this range (IDA/disassembler could not name them) */

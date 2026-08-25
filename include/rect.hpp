@@ -21,9 +21,10 @@ public:
     s32 height; /**< Distance from the top edge to the bottom edge. */
 
     CRect_i_() {}
+
     CRect_i_(s32 x, s32 y, s32 width, s32 height)
         : x(x), y(y), width(width), height(height) {}
-};
+} __attribute__((aligned(16)));
 
 STATIC_ASSERT(sizeof(CRect_i_) == 0x10);
 

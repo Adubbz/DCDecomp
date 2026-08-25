@@ -494,7 +494,7 @@ void CCharacter::ClothStep(int step) {
     if (this->frame != NULL) {
         this->frame->SetPosition(this->pos[0], this->pos[1], this->pos[2]);
         this->frame->SetRotation(this->rotation.x, this->rotation.y, this->rotation.z);
-        root = this->frame->unk_110;
+        root = this->frame->parent;
         if (root != NULL) {
             this->pos[3] = 1.0f;
             root->GetWorldPosition(world_pos, this->pos);
@@ -503,8 +503,8 @@ void CCharacter::ClothStep(int step) {
 
     for (i = 0; i < CHARA_CLOTH_MAX; i++) {
         if (this->cloth[i] != NULL) {
-            this->cloth[i]->unk_50 = this->unk_C98;
-            this->cloth[i]->unk_4C = world_pos[1];
+            this->cloth[i]->wind = (void *)this->unk_C98;
+            this->cloth[i]->floor_y = world_pos[1];
             this->cloth[i]->Step(step);
         }
     }
@@ -515,7 +515,7 @@ void CCharacter::ClothFloor(int floor) {
 
     for (i = 0; i < CHARA_CLOTH_MAX; i++) {
         if (this->cloth[i] != NULL) {
-            this->cloth[i]->unk_48 = floor;
+            this->cloth[i]->floor_on = floor;
         }
     }
 }
@@ -533,8 +533,8 @@ void CCharacter::SetPosition(float x, float y, float z) {
 void CCharacter::GetWorldPosition(float *out_position) {
     GetPosition(out_position);
     out_position[3] = 1.0f;
-    if (this->frame->unk_110 != NULL) {
-        this->frame->unk_110->GetWorldPosition(out_position, out_position);
+    if (this->frame->parent != NULL) {
+        this->frame->parent->GetWorldPosition(out_position, out_position);
     }
 }
 
@@ -739,10 +739,10 @@ void CCharacter::DeleteExtendTexture(int block_no) {
 
     // A block that the character loaded textures into goes back to what the
     // character alone asks for.
-    if (this->unk_0C8 != 0 || this->unk_0CC != 0 || this->unk_0D0 != 0) {
+    if (this->images[1] != 0 || this->images[2] != 0 || this->images[3] != 0) {
         info[0].block_no = block_no;
         info[0].unk_08 = 0;
-        info[0].name = (char *) this->unk_0C4;
+        info[0].name = (char *) this->images[0];
         info[1].block_no = 0;
         info[1].unk_08 = 0;
         info[1].name = NULL;
@@ -775,8 +775,8 @@ void CCharacter::Initialize() {
     this->motion_no = 0;
     this->shadow_frame = NULL;
     this->motion_speed = -1.0f;
-    this->unk_2CC = 0;
-    this->unk_2D0 = 0;
+    this->unk_2cc = 0;
+    this->unk_2d0 = 0;
     this->motion_type.motion_info = NULL;
     this->unk_C6C = 0;
     this->motion_type.unk_78 = 0;
@@ -865,22 +865,3 @@ void CMainChara::Initialize() {
     this->unk_11CC = 0;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_725);
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_726);
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_727);
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_728);
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_729);
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_730);
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_731);
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_732);
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_733);
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_734);
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_735);
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_736);
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_737);
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_738);
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_739);
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_740);
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_741);
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_742);
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_743);

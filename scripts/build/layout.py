@@ -2,6 +2,7 @@
 """Work out what the link takes, in what order, and what objdiff compares.
 
     layout.py --link-order <dir> [--build-dir build] [--main-tail obj...]
+              [--tail <image>=<obj>...]
     layout.py --objdiff objdiff.json
     layout.py --provenance <file>
     layout.py --list-extra-objects
@@ -336,7 +337,7 @@ def link_order(args, placed, dumps, carved):
     splices the rest back in around what the compiler produced.
 
     A whole-section dump is excluded when the migration carves it: the carved
-    parts replace it and --main-tail supplies them.
+    parts replace it and --main-tail or --tail supplies them.
     """
     for section in SECTIONS:
         # Every unit's object is named after its source, whether it was
@@ -359,6 +360,8 @@ def link_order(args, placed, dumps, carved):
                 out.append(obj)
         if section == "main":
             out += args.main_tail
+        out += [obj for entry in args.tail
+                for image, _, obj in [entry.partition("=")] if image == section]
 
         with open(os.path.join(args.link_order, f"{section}_o_files"), "w") as f:
             f.write(" ".join(out) + "\n")
@@ -479,6 +482,13 @@ def main():
         nargs="*",
         default=[],
         help="objects appended to main after the address-ordered ones",
+    )
+    ap.add_argument(
+        "--tail",
+        nargs="*",
+        default=[],
+        metavar="IMAGE=OBJECT",
+        help="objects appended to one image after the address-ordered ones",
     )
     ap.add_argument(
         "--list-extra-objects",

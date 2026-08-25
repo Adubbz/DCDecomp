@@ -24,4 +24,4 @@ class CDataAlloc2_1_;
  */
 void ReadInfo(CCharacter *chara, unsigned int *pack, char *name, CDataAlloc2_1_ *model_alloc,
               CDataAlloc2_1_ *motion_alloc, CDataAlloc2_1_ *texture_alloc, int motion_set,
-              CDataAlloc2_1_ *extend_alloc, int unk_08, int unk_09);
+              CDataAlloc2_1_ *extend_alloc, int texture_block, int preserve_texture);

@@ -271,3 +271,13 @@ void set3DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, int *, int *, in
  * @unknownret
  */
 void SndSetCamera(CCamera *camera);
+
+/**
+ * Sets the listener directly from position and rotation vectors.
+ */
+void SndSetCamera(float *position, float *rotation);
+
+/**
+ * Stops one playing sound-effect voice.
+ */
+void SndSeStop(int se_no, int voice);

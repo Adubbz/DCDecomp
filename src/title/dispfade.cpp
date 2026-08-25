@@ -1,8 +1,117 @@
 #include "title/dispfade.hpp"
 
-INCLUDE_ASM("asm/nonmatchings/title/dispfade", FadeOutStart__9CDispFadeFfi);
-INCLUDE_ASM("asm/nonmatchings/title/dispfade", FadeInStart__9CDispFadeFfi);
-INCLUDE_ASM("asm/nonmatchings/title/dispfade", FadeInit__9CDispFadeFf);
-INCLUDE_ASM("asm/nonmatchings/title/dispfade", GetRate__9CDispFadeFv);
-INCLUDE_ASM("asm/nonmatchings/title/dispfade", FadeOut__9CDispFadeFP13sceVif1Packet);
-INCLUDE_ASM("asm/nonmatchings/title/dispfade", FadeIn__9CDispFadeFP13sceVif1Packet);
+#include "mglib.hpp"
+#include "rect.hpp"
+
+void CDispFade::FadeOutStart(float speed, int colour)
+{
+    fade_speed = speed;
+    mode = 1;
+    fade_colour = colour;
+}
+
+void CDispFade::FadeInStart(float speed, int colour)
+{
+    fade_speed = speed;
+    mode = 2;
+    fade_colour = colour;
+}
+
+void CDispFade::FadeInit(float initial_rate)
+{
+    fade_rate = initial_rate;
+    mode = -1;
+    fade_colour = 0;
+}
+
+float CDispFade::GetRate(void)
+{
+    return fade_rate;
+}
+
+float CDispFade::FadeOut(sceVif1Packet *packet)
+{
+    if (mode != 1) {
+        return fade_rate;
+    }
+    if (fade_rate == 0.0f && fade_speed == 0.0f) {
+        return fade_rate;
+    }
+
+    fade_rate += fade_speed;
+    if (fade_rate > 128.0f) {
+        fade_rate = 128.0f;
+    }
+
+    for (s32 x = 0; x < 640; x += 64) {
+        if (fade_colour != 0) {
+            for (s32 y = 0; y < 224; y += 32) {
+                CRect_i_ rect;
+                rect.x = x * 16;
+                rect.y = y * 16;
+                rect.width = 1024;
+                rect.height = 512;
+                MGFillBox(rect, 255, 255, 255, static_cast<u8>(fade_rate));
+            }
+        } else {
+            for (s32 y = 0; y < 224; y += 32) {
+                CRect_i_ rect;
+                rect.x = x * 16;
+                rect.y = y * 16;
+                rect.width = 1024;
+                rect.height = 512;
+                MGFillBox(rect, 0, 0, 0, static_cast<u8>(fade_rate));
+            }
+        }
+    }
+
+    if (fade_rate >= 128.0f) {
+        fade_rate = 128.0f;
+        fade_speed = 0.0f;
+    }
+    return fade_rate;
+}
+
+float CDispFade::FadeIn(sceVif1Packet *packet)
+{
+    if (mode != 2) {
+        return fade_rate;
+    }
+    if (fade_rate == 0.0f && fade_speed == 0.0f) {
+        return fade_rate;
+    }
+
+    fade_rate -= fade_speed;
+    if (fade_rate < 0.0f) {
+        fade_rate = 0.0f;
+    }
+
+    for (s32 x = 0; x < 640; x += 64) {
+        if (fade_colour != 0) {
+            for (s32 y = 0; y < 224; y += 32) {
+                CRect_i_ rect;
+                rect.x = x * 16;
+                rect.y = y * 16;
+                rect.width = 1024;
+                rect.height = 512;
+                MGFillBox(rect, 255, 255, 255, static_cast<u8>(fade_rate));
+            }
+        } else {
+            for (s32 y = 0; y < 224; y += 32) {
+                CRect_i_ rect;
+                rect.x = x * 16;
+                rect.y = y * 16;
+                rect.width = 1024;
+                rect.height = 512;
+                MGFillBox(rect, 0, 0, 0, static_cast<u8>(fade_rate));
+            }
+        }
+    }
+
+    if (fade_rate <= 0.0f) {
+        fade_rate = 0.0f;
+        fade_speed = 0.0f;
+        mode = -1;
+    }
+    return fade_rate;
+}

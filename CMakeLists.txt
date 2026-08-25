@@ -66,7 +66,8 @@ set(LD_MW_ISO_FLAGS -nostdlib -m _start -nodead -sym on,noelf)
 set(BIN_FLAGS -B mips:5900 -I binary -O elf32-littlemips)
 
 # Decompiled globals replace these retail section dumps.
-set(REPLACED_SECTIONS main.bss main.data main.rdata main.sbss main.sdata)
+set(REPLACED_SECTIONS main.bss main.data main.rdata main.sbss main.sdata
+                      title.data)
 
 set(ASM_SOURCES "")
 foreach(section IN LISTS SECTIONS)
@@ -76,6 +77,124 @@ endforeach()
 file(GLOB STATIC_SECTION_SOURCES CONFIGURE_DEPENDS
      RELATIVE ${CMAKE_SOURCE_DIR}
      ${CMAKE_SOURCE_DIR}/${ASM_DATA_DIR}/main/parts/*.s)
+# A residual dump that a decompiled unit now owns part of is carved into the
+# runs the unit leaves behind. The cuts are addresses rather than symbol names
+# because a compiler-generated constant has no name to key on.
+set(CARVED_PART_SOURCES "")
+set(CARVED_PART_OUTPUTS "")
+function(carve_part part)
+    set(input ${ASM_DATA_DIR}/main/parts/${part})
+    set(outputs "")
+    set(specs "")
+    set(relatives "")
+    foreach(spec IN LISTS ARGN)
+        string(REPLACE "=" ";" fields "${spec}")
+        list(GET fields 0 name)
+        list(GET fields 1 span)
+        string(REPLACE "-" ";" bounds "${span}")
+        list(GET bounds 0 low)
+        list(GET bounds 1 high)
+        set(relative generated/${ASM_DATA_DIR}/main/parts/${name})
+        list(APPEND relatives ${relative})
+        list(APPEND outputs ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${relative})
+        list(APPEND specs ${BUILD_DIR}/${relative}:${low}-${high})
+    endforeach()
+    add_custom_command(
+        OUTPUT ${outputs}
+        COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/carve_part.py ${input} ${specs}
+        DEPENDS ${CMAKE_SOURCE_DIR}/${input}
+                ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/carve_part.py
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Carving ${part} around its decompiled units"
+        VERBATIM)
+    list(REMOVE_ITEM STATIC_SECTION_SOURCES ${input})
+    set(STATIC_SECTION_SOURCES ${STATIC_SECTION_SOURCES} PARENT_SCOPE)
+    set(CARVED_PART_SOURCES ${CARVED_PART_SOURCES} ${relatives} PARENT_SCOPE)
+endfunction()
+
+# The overlays' dumps are carved the same way, but their parts are named in
+# the overlay's own linker section rather than appended to main.
+set(OVERLAY_TAIL "")
+function(carve_dump image dump)
+    set(input ${ASM_DATA_DIR}/${image}/${dump})
+    set(outputs "")
+    set(specs "")
+    foreach(spec IN LISTS ARGN)
+        string(REPLACE "=" ";" fields "${spec}")
+        list(GET fields 0 name)
+        list(GET fields 1 span)
+        string(REPLACE "-" ";" bounds "${span}")
+        list(GET bounds 0 low)
+        list(GET bounds 1 high)
+        set(relative generated/${ASM_DATA_DIR}/${image}/${name})
+        list(APPEND outputs ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${relative})
+        list(APPEND specs ${BUILD_DIR}/${relative}:${low}-${high})
+        list(APPEND CARVED_DUMP_SOURCES ${relative})
+        list(APPEND OVERLAY_TAIL ${image}=${BUILD_DIR}/${relative}.o)
+    endforeach()
+    add_custom_command(
+        OUTPUT ${outputs}
+        COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/carve_part.py ${input} ${specs}
+        DEPENDS ${CMAKE_SOURCE_DIR}/${input}
+                ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/carve_part.py
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Carving ${image}/${dump} around its decompiled units"
+        VERBATIM)
+    set(CARVED_DUMP_SOURCES ${CARVED_DUMP_SOURCES} PARENT_SCOPE)
+    set(OVERLAY_TAIL ${OVERLAY_TAIL} PARENT_SCOPE)
+endfunction()
+
+set(CARVED_DUMP_SOURCES "")
+# The title overlay's constants stand where the whole unit once compiled them,
+# so the dump stops in front of each decompiled unit's run and picks up after.
+carve_dump(title data.data.s
+           data.data.part1.s=1DD5380-1DDBEC0
+           data.data.part1b.s=1DDBF60-1DDBF68
+           data.data.part2.s=1DDBF90-1DE1AFC)
+
+carve_part(main.data.part1.s
+           main.data.part1.s=24FAC0-250B30
+           main.data.part1b.s=250EB0-250F40)
+carve_part(main.data.part2.s
+           main.data.part2.s=2514C0-251580
+           main.data.part2c.s=251C50-253F20)
+# Retail's vtables come out in one run that alternates between the units that
+# now own theirs and the dump that still holds the rest, so the dump is cut
+# around each owned block rather than having the block removed from it.
+carve_part(main.rdata.part4.s
+           main.rdata.part4.s=2A1100-2A1130
+           main.rdata.part4b.s=2A1168-2A11E0)
+carve_part(main.data.part4.s
+           main.data.part4.s=25DF70-266810
+           main.data.part4b.s=2668C0-266F70
+           main.data.part4c.s=266FB0-279EB0)
+
+# These residual ranges are now fully owned by their decompiled translation
+# units. Keep the retail dumps intact as toolchain inputs, but do not assemble
+# them into the reconstructed executable.
+list(REMOVE_ITEM STATIC_SECTION_SOURCES
+     ${ASM_DATA_DIR}/main/parts/main.bss.part2b.s
+     ${ASM_DATA_DIR}/main/parts/main.bss.part3.s
+     ${ASM_DATA_DIR}/main/parts/main.sbss.part1.s
+     ${ASM_DATA_DIR}/main/parts/main.sbss.part1b.s
+     ${ASM_DATA_DIR}/main/parts/main.sbss.part2.s)
+
+set(FILTERED_SBSS_PART1 generated/asm/data/main/parts/main.sbss.part1.s)
+add_custom_command(
+    OUTPUT ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${FILTERED_SBSS_PART1}
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/filter_asm_symbols.py
+            ${ASM_DATA_DIR}/main/parts/main.sbss.part1.s
+            ${BUILD_DIR}/${FILTERED_SBSS_PART1}
+            dset_mds_packet dset_mds_objnum flag$332 init$333
+    DEPENDS ${CMAKE_SOURCE_DIR}/${ASM_DATA_DIR}/main/parts/main.sbss.part1.s
+            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/filter_asm_symbols.py
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Filtering source-owned globals from main.sbss.part1"
+    VERBATIM)
+list(APPEND ASM_SOURCES ${FILTERED_SBSS_PART1})
+
+list(APPEND ASM_SOURCES ${CARVED_PART_SOURCES})
+list(APPEND ASM_SOURCES ${CARVED_DUMP_SOURCES})
 list(APPEND ASM_SOURCES ${STATIC_SECTION_SOURCES})
 
 file(GLOB_RECURSE ALL_CPP_SOURCES CONFIGURE_DEPENDS
@@ -104,7 +223,7 @@ foreach(row IN LISTS unit_rows)
 endforeach()
 
 # Typed data carved from residual section dumps.
-list(APPEND CPP_SOURCES src/mglib_data.cpp src/texture_data.cpp)
+list(APPEND CPP_SOURCES src/texture_data.cpp)
 file(GLOB EXTRA_ASM_SOURCES CONFIGURE_DEPENDS
      RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/asm/handwritten/*.s)
 
@@ -136,8 +255,11 @@ set(MAIN_TAIL "")
 foreach(src IN LISTS STATIC_SECTION_SOURCES)
     list(APPEND MAIN_TAIL ${BUILD_DIR}/${src}.o)
 endforeach()
+list(APPEND MAIN_TAIL ${BUILD_DIR}/${FILTERED_SBSS_PART1}.o)
+foreach(src IN LISTS CARVED_PART_SOURCES)
+    list(APPEND MAIN_TAIL ${BUILD_DIR}/${src}.o)
+endforeach()
 list(APPEND MAIN_TAIL
-     ${BUILD_DIR}/src/mglib_data.cpp.o
      ${BUILD_DIR}/src/texture_data.cpp.o)
 foreach(src IN LISTS EXTRA_ASM_SOURCES)
     list(APPEND MAIN_TAIL ${BUILD_DIR}/${src}.o)
@@ -210,6 +332,7 @@ add_custom_command(
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/layout.py
             --link-order ${BUILD_DIR} --provenance ${PROVENANCE}
             --build-dir ${BUILD_DIR} --main-tail ${MAIN_TAIL}
+            --tail ${OVERLAY_TAIL}
             --carved ${REPLACED_SECTIONS} --lcf ${LD_TEMPLATE}
     DEPENDS ${CMAKE_SOURCE_DIR}/${LD_TEMPLATE} ${CPP_SOURCES}
             ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/layout.py

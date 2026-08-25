@@ -6,6 +6,7 @@ extern "C" {
 
 float sinf(float x);
 float cosf(float x);
+float acosf(float x);
 float sqrtf(float x);
 float atan2f(float y, float x);
 double sqrt(double x);

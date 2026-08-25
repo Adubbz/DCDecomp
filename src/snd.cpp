@@ -1,11 +1,45 @@
 #include "common.h"
 
+#include "editatra.hpp"
+
 /* The sound manager: BGM loading, playback and fading, and the SE table.
  * CSound itself is in src/sound.cpp. */
 
-INCLUDE_ASM("asm/nonmatchings/snd", GetEditAtraData__Fii);
-INCLUDE_ASM("asm/nonmatchings/snd", GetEditAtraPartsData__Fii);
-INCLUDE_ASM("asm/nonmatchings/snd", GetEditAtraChipData__Fii);
+EDIT_ELEMENT_ATRA *GetEditAtraData(int ground, int number) {
+    if (ground < 0 || ground >= 6)
+        return 0;
+    if (number < 0 || number >= 100)
+        return 0;
+    return &EditElementData[ground][number];
+}
+
+EDIT_PARTS_ATRA *GetEditAtraPartsData(int ground, int number) {
+    if (ground < 0 || ground >= 6)
+        return 0;
+    if (number < 0 || number >= 24)
+        return 0;
+    return &EditPartsData[ground].parts[number];
+}
+
+EDIT_ELEMENT_ATRA *GetEditAtraChipData(int ground, int number) {
+    return GetEditAtraData(ground, number + 40);
+}
+
+INCLUDE_RODATA("asm/nonmatchings/snd", LIT_348);
+INCLUDE_RODATA("asm/nonmatchings/snd", LIT_349);
+INCLUDE_RODATA("asm/nonmatchings/snd", LIT_350);
+INCLUDE_RODATA("asm/nonmatchings/snd", LIT_362);
+INCLUDE_RODATA("asm/nonmatchings/snd", LIT_363__2);
+INCLUDE_RODATA("asm/nonmatchings/snd", LIT_384__2);
+INCLUDE_RODATA("asm/nonmatchings/snd", LIT_514);
+INCLUDE_RODATA("asm/nonmatchings/snd", LIT_515);
+INCLUDE_RODATA("asm/nonmatchings/snd", LIT_725__2);
+INCLUDE_RODATA("asm/nonmatchings/snd", LIT_726__2);
+INCLUDE_RODATA("asm/nonmatchings/snd", LIT_751);
+INCLUDE_RODATA("asm/nonmatchings/snd", LIT_752);
+INCLUDE_RODATA("asm/nonmatchings/snd", LIT_799);
+INCLUDE_RODATA("asm/nonmatchings/snd", LIT_800);
+
 INCLUDE_ASM("asm/nonmatchings/snd", LensFlare__FP8CTexturePfUcUcUc);
 INCLUDE_ASM("asm/nonmatchings/snd", SndInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndInitialize__Fiiii);

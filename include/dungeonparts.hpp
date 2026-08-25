@@ -116,6 +116,7 @@ enum MapPartsNo {
     MAP_PARTS_KEY_UNGAGA = 68, /**< The part that only Ungaga opens. */
     MAP_PARTS_KEY_OSMOND = 69, /**< The part that only Osmond opens. */
 };
+
 // clang-format on
 
 /**
@@ -144,7 +145,7 @@ public:
     CFrame *unk_004;
     s16 unk_008;
     s16 unk_00A;
-    s32 unk_00C;
+    CFrame *collision; /**< Model that the collision of the part uses. */
     s16 unk_010;
     s16 fire_num; /**< Number of points of the part that show a fire. */
     u8 unk_014[12];

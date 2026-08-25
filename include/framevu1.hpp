@@ -9,13 +9,12 @@
 // names but not where they live.
 class CVisualVu1;
 
-
 /**
  * Draws a model with the VU1 microprogram.
  */
 class CFrameVu1 : public CFrame {
 public:
-    u8 unk_260[0x10];
+    CVisualVu1 *visual; /**< Model data drawn for this frame. */
 
     /**
      * @mangled DrawVu1__9CFrameVu1FPUiP10RenderInfo
@@ -23,7 +22,7 @@ public:
      * @size 0xD10
      * @unknownret
      */
-    virtual void DrawVu1(unsigned int *, RenderInfo *);
+    virtual int DrawVu1(unsigned int *, RenderInfo *);
 
     /**
      * @mangled DrawVu1__9CFrameVu1FP13sceVif1PacketP10RenderInfo
@@ -31,7 +30,7 @@ public:
      * @size 0x80
      * @unknownret
      */
-    virtual void DrawVu1(sceVif1Packet *, RenderInfo *);
+    virtual int DrawVu1(sceVif1Packet *, RenderInfo *);
 
     /**
      * @mangled SetVisual__9CFrameVu1FP10CVisualVu1
@@ -47,7 +46,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void GetVisual(void);
+    CVisualVu1 *GetVisual(void);
 
     /**
      * @mangled Initialize__9CFrameVu1Fv
@@ -70,7 +69,7 @@ public:
      * @size 0x50
      * @unknownret
      */
-    void __as(CFrameVu1 &);
+    CFrameVu1 &operator=(CFrameVu1 &);
 };
 
 STATIC_ASSERT(sizeof(CFrameVu1) == 0x270);

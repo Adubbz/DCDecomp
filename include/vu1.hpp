@@ -12,6 +12,8 @@
 // layout before implementing one of them.
 // clang-format off
 enum VU1_PROGRAM {
-    VU1_PROGRAM_UNKNOWN = 0
+    VU1_PROGRAM_UNKNOWN = 0,
+    VU1_PROGRAM_UNKNOWN6 = 6
 };
+
 // clang-format on

@@ -4,260 +4,115 @@
 
 #include <libvu0.h>
 
-// Forward declarations for the types these declarations name. The skeleton
-// headers are generated from the retail symbol table, which knows the type
-// names but not where they live.
 class CBoxVu0;
-class CCPoly;
 class CCollision;
-class CFrameAttr;
+class CVisualVu1;
+class CCPoly;
 struct RenderInfo;
-struct sceVif1Packet;
+class sceVif1Packet;
 
-class CFrame {
+/* The per-frame drawing attributes, kept inside the frame rather than beside it. SetAttr copies
+   them one field per mask bit, so a field's position and width are settled while its meaning is
+   not — which is why most of them are still unnamed. */
+class CFrameAttr {
 public:
-    s32 flags; /**< Bits that select how the frame draws and how it takes part in collision. */
-    u8 unk_004[172];
-    s16 draw_on; /**< 1 while the frame draws; 0 leaves it out of the scene. */
-    u8 unk_0B2[94];
-    CFrame *unk_110;
-    u8 unk_114[188];
-    sceVu0FMATRIX world; /**< Where the frame stands, in world space. */
-    u8 unk_210[16];
-    sceVu0FVECTOR pos; /**< World position of the frame. */
-    u8 unk_230[32];
+    CFrameAttr();
 
-    /**
-     * @mangled SetPosition__6CFrameFfff
-     * @address 0x127E80
-     * @size 0x60
-     * @unknownret
-     */
-    void SetPosition(float, float, float);
+    void Initialize();
 
-    /**
-     * @mangled SetPosition__6CFrameFPf
-     * @address 0x127EE0
-     * @size 0x70
-     * @unknownret
-     */
-    void SetPosition(float *);
-
-    /**
-     * @mangled SetScale__6CFrameFfff
-     * @address 0x127F50
-     * @size 0x60
-     * @unknownret
-     */
-    void SetScale(float, float, float);
-
-    /**
-     * @mangled SetScale__6CFrameFPf
-     * @address 0x127FB0
-     * @size 0x70
-     * @unknownret
-     */
-    void SetScale(float *);
-
-    /**
-     * @mangled GetFrameNum__6CFrameFv
-     * @address 0x128020
-     * @size 0x60
-     * @unknownret
-     */
-    void GetFrameNum(void);
-
-    /**
-     * @mangled SetParent__6CFrameFP6CFrame
-     * @address 0x128080
-     * @size 0x50
-     * @unknownret
-     */
-    void SetParent(CFrame *);
-
-    /**
-     * @mangled SetBrother__6CFrameFP6CFrame
-     * @address 0x1280D0
-     * @size 0x50
-     * @unknownret
-     */
-    void SetBrother(CFrame *);
-
-    /**
-     * @mangled SetChild__6CFrameFP6CFrame
-     * @address 0x128120
-     * @size 0x60
-     * @unknownret
-     */
-    void SetChild(CFrame *);
-
-    /**
-     * @mangled SetReference__6CFrameFP6CFrame
-     * @address 0x128180
-     * @size 0x20
-     * @unknownret
-     */
-    void SetReference(CFrame *);
-
-    /**
-     * @mangled DeleteReference__6CFrameFv
-     * @address 0x1281A0
-     * @size 0x10
-     * @unknownret
-     */
-    void DeleteReference(void);
-
-    /**
-     * @mangled GetLWMatrix__6CFrameFPA4_f
-     * @address 0x1281B0
-     * @size 0x360
-     * @unknownret
-     */
-    void GetLWMatrix(float (*)[4]);
-
-    /**
-     * @mangled GetInverseMatrix__6CFrameFv
-     * @address 0x128510
-     * @size 0x50
-     * @unknownret
-     */
-    void GetInverseMatrix(void);
-
-    /**
-     * @mangled SetTransMatrix__6CFrameFPA4_f
-     * @address 0x128560
-     * @size 0x40
-     * @unknownret
-     */
-    void SetTransMatrix(float (*)[4]);
-
-    /**
-     * @mangled SetTransMatrix__6CFrameFPf
-     * @address 0x1285A0
-     * @size 0x50
-     * @unknownret
-     */
-    void SetTransMatrix(float *);
-
-    /**
-     * Finds the frame of a name, at or below this one.
-     *
-     * @mangled SearchFrame__6CFrameFPc
-     * @address 0x128700
-     * @size 0x90
-     */
-    CFrame *SearchFrame(char *name);
-
-    /**
-     * @mangled GetBoundBox__6CFrameFP7CBoxVu0i
-     * @address 0x128790
-     * @size 0x190
-     * @unknownret
-     */
-    void GetBoundBox(CBoxVu0 *, int);
-
-    /**
-     * @mangled ScaleBoundBox__6CFrameFPf
-     * @address 0x128920
-     * @size 0x230
-     * @unknownret
-     */
-    void ScaleBoundBox(float *);
-
-    /**
-     * @mangled SetAttr__6CFrameFR10CFrameAttrii
-     * @address 0x128B50
-     * @size 0x210
-     * @unknownret
-     */
-    void SetAttr(CFrameAttr &, int, int);
-
-    /**
-     * @mangled GetWorldPosition__6CFrameFPfPf
-     * @address 0x128D60
-     * @size 0x60
-     * @unknownret
-     */
-    void GetWorldPosition(float *, float *);
-
-    /**
-     * @mangled SetRotation__6CFrameFfff
-     * @address 0x128DC0
-     * @size 0x70
-     * @unknownret
-     */
-    void SetRotation(float, float, float);
-
-    /**
-     * @mangled GetRotation__6CFrameFPf
-     * @address 0x128E30
-     * @size 0x50
-     * @unknownret
-     */
-    void GetRotation(float *);
-
-    /**
-     * @mangled SetRotType__6CFrameFi
-     * @address 0x128E80
-     * @size 0x30
-     * @unknownret
-     */
-    void SetRotType(int);
-
-    /**
-     * @mangled __as__6CFrameFR6CFrame
-     * @address 0x128EB0
-     * @size 0x50
-     * @unknownret
-     */
-    void __as(CFrame &);
-
-    /**
-     * @mangled SetCollision__6CFrameFP10CCollision
-     * @address 0x12A190
-     * @size 0x10
-     * @unknownret
-     */
-    void SetCollision(CCollision *);
-
-    /**
-     * @mangled DrawVu1__6CFrameFPUiP10RenderInfo
-     * @address 0x12A1A0
-     * @size 0x10
-     * @unknownret
-     */
-    virtual void DrawVu1(unsigned int *, RenderInfo *);
-
-    /**
-     * @mangled DrawVu1__6CFrameFP13sceVif1PacketP10RenderInfo
-     * @address 0x12A1B0
-     * @size 0x10
-     * @unknownret
-     */
-    virtual void DrawVu1(sceVif1Packet *, RenderInfo *);
-
-    /**
-     * @mangled Initialize__6CFrameFv
-     * @address 0x127D70
-     * @size 0x110
-     * @unknownret
-     */
-    virtual void Initialize(void);
-
-    /**
-     * @mangled __ct__6CFrameFv
-     * @address 0x12A1C0
-     * @size 0x50
-     */
-    CFrame(void);
-
-    /**
-     * @mangled PickUpNearPoly__6CFrameFP6CCPolyRC7CBoxVu0
-     * @address 0x12A390
-     * @size 0x280
-     * @unknownret
-     */
-    int PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box);
+    short draw_on;
+    float unk_04;
+    char unk_08;
+    char unk_09;
+    char unk_0A;
+    char unk_0B;
+    char unk_0C;
+    char unk_0D;
+    float unk_10;
+    char unk_14;
+    sceVu0FVECTOR color;
+    char unk_30;
+    char unk_31;
+    sceVu0FVECTOR unk_40;
+    short unk_50;
+    short unk_52;
+    char unk_54;
+    char unk_55;
+    short unk_56;
+    short unk_58;
 };
 
-STATIC_ASSERT(sizeof(CFrame) == 0x260);
+/* A node of the scene hierarchy: a transform with a name, linked to its neighbours rather than
+   held in an array. The world matrix is cached and world_valid says whether the cache still
+   holds; everything that moves a frame clears it. */
+class CFrame {
+public:
+    CFrame();
+
+    void SetPosition(float x, float y, float z);
+    void SetPosition(float *position);
+    void SetScale(float x, float y, float z);
+    void SetScale(float *scale);
+    int GetFrameNum();
+    void SetParent(CFrame *parent);
+    void SetBrother(CFrame *brother);
+    void SetChild(CFrame *child);
+    void SetReference(CFrame *reference);
+    void DeleteReference();
+    void GetLWMatrix(sceVu0FMATRIX matrix);
+    float (*GetInverseMatrix())[4];
+    void SetTransMatrix(sceVu0FMATRIX matrix);
+    void SetTransMatrix(float *quaternion);
+    CFrame *SearchFrame(char *name);
+    void GetBoundBox(CBoxVu0 *box, int children);
+    void ScaleBoundBox(float *scale);
+    void SetAttr(CFrameAttr &attr, int children, int mask);
+    void GetWorldPosition(float *world, float *local);
+    void SetRotation(float x, float y, float z);
+    void GetRotation(float *rotation);
+    void SetRotType(int type);
+    CFrame &operator=(CFrame &other);
+    void SetCollision(CCollision *collision);
+    int PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box);
+
+    int flags;
+    CCollision *collision;
+    sceVu0FVECTOR max;
+    sceVu0FVECTOR min;
+    sceVu0FVECTOR corner[8];
+    CFrameAttr attr;
+    CFrame *parent;
+    int reference;
+    char name[32];
+    CFrame *child;
+    CFrame *brother;
+    CFrame *elder;
+    sceVu0FMATRIX world;
+    sceVu0FMATRIX inverse;
+    sceVu0FMATRIX local;
+    sceVu0FVECTOR scale;
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR rotation;
+    int world_valid;
+    int no_rotation;
+    int rot_type;
+    int srt;
+
+    virtual int DrawVu1(unsigned int *packet, RenderInfo *info);
+    virtual int DrawVu1(sceVif1Packet *packet, RenderInfo *info);
+    virtual void Initialize();
+};
+
+class CFrameVu1;
+
+/* Which of a frame's own axes `LookAt` holds perpendicular to the direction of its target. */
+enum _FRAMECONSTRAINT {
+    FRAME_CONSTRAINT_Z,
+    FRAME_CONSTRAINT_Y,
+    FRAME_CONSTRAINT_X
+};
+
+int FrameNameComp(char *left, char *right);
+void SetFrameAttr(CFrame *frame, int children);
+int LookAt(CFrameVu1 *frame, float *target, _FRAMECONSTRAINT constraint);
+int LookAt(CFrameVu1 *frame, CFrameVu1 *target, _FRAMECONSTRAINT constraint);

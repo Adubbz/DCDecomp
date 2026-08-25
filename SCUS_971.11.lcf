@@ -24,7 +24,11 @@ SECTIONS
     .title:
     {
         // @OVERLAY title
-        script.cpp.o      (.ttext)   // 0x01dabd40
+        // Retail's first function stands on a 128-byte boundary, which leaves
+        // sixty-four bytes of nothing between the header and the overlay's own
+        // code.
+        . = ALIGN(128);
+        script.cpp.o      (.ttext)   // 0x01dabd80
         dispfade.cpp.o    (.ttext)   // 0x01dad1e0
         bombeffect.cpp.o  (.ttext)   // 0x01dad610
         majinbeem.cpp.o   (.ttext)   // 0x01dadd50
@@ -45,7 +49,24 @@ SECTIONS
 
         . = ALIGN(16);
         _title_data = .;
+
+        // Each datum takes the slot its own object asks for rather than the
+        // sixteen bytes MWLD would give it.
+        ALIGNALL(1);
+
+        // The overlay keeps its constants with its data, in the order the
+        // whole unit once compiled them, so the dump stops in front of each
+        // decompiled unit's run and picks up after it.
+        data.data.part1.s.o  (.tdata)     // 0x01dd5380
+        script.cpp.o         (.trodata)   // 0x01ddbec0
+        bombeffect.cpp.o     (.trodata)   // 0x01ddbf48
+        . = ALIGN(16);
+        data.data.part1b.s.o (.tdata)     // 0x01ddbf60
+        seireiking.cpp.o     (.trodata)   // 0x01ddbf68
+        . = ALIGN(16);
+        data.data.part2.s.o  (.tdata)     // 0x01ddbf90
         *(.tdata)
+        *(.trodata)
 
         ALIGNALL(1);
         _title_bss = .;
@@ -330,15 +351,32 @@ SECTIONS
         *(.vutext)
 
         # data
+        //
+        // Retail's .data is one run per translation unit, in the order the
+        // units link. A unit that is decompiled supplies its own run and the
+        // residual dump is carved around it.
         main.data.part1.s.o (.data)
+        frame.cpp.o (.data)
+        mglib.cpp.o (.data)
+        texture.cpp.o (.data)
+        visualvu1.cpp.o (.data)
+        main.data.part1b.s.o (.data)
         character.cpp.o (.data)
+        chararead.cpp.o (.data)
+        . = . + 0x4; // Retail padding after the character command tables.
         main.data.part2.s.o (.data)
+        dataread.cpp.o (.data)
+        main.data.part2c.s.o (.data)
         clsmes.cpp.o (.data)
         main.data.part2b.s.o (.data)
         mapobject.cpp.o (.data)
         main.data.part3.s.o (.data)
         savedata.cpp.o (.data)
         main.data.part4.s.o (.data)
+        sysmes.cpp.o (.data)
+        main.data.part4b.s.o (.data)
+        edit.cpp.o (.data)
+        main.data.part4c.s.o (.data)
         dungeonmap.cpp.o (.data)
         main.data.part5.s.o (.data)
         itemdata.cpp.o (.data)
@@ -368,8 +406,13 @@ SECTIONS
         camerafollow.cpp.o (.vtables)
         camera.cpp.o (.vtables)
         . = . + 0xC;
-        main.rdata.part4.s.o (.rdata)
-        character.cpp.o (.vtables)
+        collisionmdt.cpp.o (.vtables)    // 0x002a10d0
+        . = ALIGN(8);
+        main.rdata.part4.s.o (.rdata)    // 0x002a1100
+        frame.cpp.o (.vtables)           // 0x002a1130
+        . = ALIGN(8);
+        main.rdata.part4b.s.o (.rdata)   // 0x002a1168
+        character.cpp.o (.vtables)       // 0x002a11e0
         . = . + 0x8;
         main.rdata.part5.s.o (.rdata)
         mapobject.cpp.o (.vtables)
@@ -411,6 +454,32 @@ SECTIONS
 		# order. A constant retail's pool
 		# does not hold stays in its object and the LITERAL directive below
 		# appends it to the pool instead, which moves the small data after it.
+		_LIT_002A1880 = 0x002a1880;
+		_LIT_002A1884 = 0x002a1884;
+		_LIT_002A18A4 = 0x002a18a4;
+		_LIT_002A18A8 = 0x002a18a8;
+		_LIT_002A18AC = 0x002a18ac;
+		_LIT_002A18B0 = 0x002a18b0;
+		_LIT_002A18B4 = 0x002a18b4;
+		_LIT_002A18CC = 0x002a18cc;
+		_LIT_002A18D4 = 0x002a18d4;
+		_LIT_002A18D8 = 0x002a18d8;
+		_LIT_002A18DC = 0x002a18dc;
+		_LIT_002A18E0 = 0x002a18e0;
+		_LIT_002A1918 = 0x002a1918;
+		_LIT_002A1928 = 0x002a1928;
+		_LIT_002A192C = 0x002a192c;
+		_LIT_002A1930 = 0x002a1930;
+		_LIT_002A194C = 0x002a194c;
+		_LIT_002A1A04 = 0x002a1a04;
+		_LIT_002A1A14 = 0x002a1a14;
+		_LIT_002A1A1C = 0x002a1a1c;
+		_LIT_002A1A3C = 0x002a1a3c;
+		_LIT_002A1A40 = 0x002a1a40;
+		_LIT_002A1A94 = 0x002a1a94;
+		_LIT_002A1A98 = 0x002a1a98;
+		_LIT_002A1A9C = 0x002a1a9c;
+		_LIT_002A1AA0 = 0x002a1aa0;
 		_LIT_002A1800 = 0x002a1800;
 		_LIT_002A1868 = 0x002a1868;
 		_LIT_002A186C = 0x002a186c;
@@ -525,9 +594,7 @@ SECTIONS
 		// Retail rounds the end of a unit's small-bss run up to four bytes,
 		// which the last static -- a one-byte flag here -- leaves short.
 		. = ALIGN(4);
-		main.sbss.part1b.s.o (.sbss)
 		mglib.cpp.o (.sbss)
-		main.sbss.part2.s.o (.sbss)
 		character.cpp.o (.sbss)
 		main.sbss.part3.s.o (.sbss)
 		main.cpp.o (.sbss)
@@ -557,11 +624,8 @@ SECTIONS
 		water.cpp.o (.bss)
 		main.bss.part2.s.o (.bss)
 		gamepad.cpp.o (.padbss)
-		main.bss.part2b.s.o (.bss)
 		mglib.cpp.o (.bss)
-		mglib_data.cpp.o (.bss)
 		texture_data.cpp.o (.bss)
-		main.bss.part3.s.o (.bss)
 		mainselect.cpp.o (.bss)
 		gamepad.cpp.o (.bss)
 		main.cpp.o (.bss)

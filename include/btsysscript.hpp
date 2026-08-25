@@ -8,7 +8,6 @@
 class CDataAlloc2_1_;
 struct RS_STACKDATA;
 
-
 /**
  * @mangled BtSystemScriptEventInfoInit__Fv
  * @address 0x1BB060
@@ -55,7 +54,7 @@ void BtSystemScriptAfter(void);
  * @size 0x30
  * @unknownret
  */
-void BtSystemScriptRun(int, CDataAlloc2_1_ *);
+int BtSystemScriptRun(int, CDataAlloc2_1_ *);
 
 /**
  * @mangled BtSetMapJumpFloor__Fi

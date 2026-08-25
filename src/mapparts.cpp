@@ -52,7 +52,7 @@ void CMapParts::Initialize() {
     this->unk_100 = 0;
     this->unk_104 = NULL;
     this->unk_1D4 = 0;
-    this->unk_1D0 = 0;
+    this->kind = 0;
     this->rot_y = 0;
     this->unk_114 = 0;
     this->unk_118 = 0;
@@ -78,7 +78,7 @@ void CMapParts::FrameObjectOnOff(char *name, int on) {
     if (this->unk_104 != NULL) {
         found = this->unk_104->SearchFrame(name);
         if (found != NULL) {
-            found->draw_on = on;
+            found->attr.draw_on = on;
         }
     }
 }
@@ -196,16 +196,16 @@ int CMapParts::CheckBox(CBoxVu0 *box) {
     sceVu0ApplyMatrix(min, world, this->unk_140);
     VectorMaxMin(max, min, max, min);
 
-    if (max[0] < box->unk_10[0]) {
+    if (max[0] < box->min[0]) {
         return 0;
     }
-    if (max[2] < box->unk_10[2]) {
+    if (max[2] < box->min[2]) {
         return 0;
     }
-    if (min[0] > box->unk_00[0]) {
+    if (min[0] > box->max[0]) {
         return 0;
     }
-    if (min[2] > box->unk_00[2]) {
+    if (min[2] > box->max[2]) {
         return 0;
     }
     return 1;
@@ -238,16 +238,16 @@ int CMapParts::CheckBox2(CBoxVu0 *box) {
     sceVu0ApplyMatrix(corner[3], world, corner[3]);
     VectorMaxMin(max, min, corner[0], corner[1], corner[2], corner[3]);
 
-    if (max[0] < box->unk_10[0]) {
+    if (max[0] < box->min[0]) {
         return 0;
     }
-    if (max[2] < box->unk_10[2]) {
+    if (max[2] < box->min[2]) {
         return 0;
     }
-    if (min[0] > box->unk_00[0]) {
+    if (min[0] > box->max[0]) {
         return 0;
     }
-    if (min[2] > box->unk_00[2]) {
+    if (min[2] > box->max[2]) {
         return 0;
     }
     return 1;
@@ -276,7 +276,7 @@ void CMapParts::DrawLOD(float *distance, int lowest, int highest, int *out_level
     // stands on.
     if (this->unk_11C > 0.0f) {
         pos[3] = 1.0f;
-        sceVu0ApplyMatrix(eye, mgRenderInfo.world_to_eye, pos);
+        sceVu0ApplyMatrix(eye, mgRenderInfo.view_scaled, pos);
         depth = eye[2] / 1000.0f;
         if (depth < 0.1f) {
             depth = 0.02f;

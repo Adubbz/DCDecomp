@@ -21,6 +21,7 @@ struct DNG_ATRA_REGISTRY_ENTRY {
     s32 unk4;
     s32 refcount;
 };
+
 STATIC_ASSERT(sizeof(DNG_ATRA_REGISTRY_ENTRY) == 0xC);
 
 /* Consumable-item inventory slot (id is a s16 at offset 0). */
@@ -28,6 +29,16 @@ struct DNG_CONSUMABLE {
     s16 id;
     char unk_02[30];
 };
+
+/**
+ * Stores the editor-visible dungeon item capacity and item identifiers.
+ */
+struct ITEM_PACK {
+    s8 num;
+    char unk_01[13];
+    s16 item[103];
+};
+
 STATIC_ASSERT(sizeof(DNG_CONSUMABLE) == 0x20);
 
 class CDngStatusData {
@@ -225,6 +236,8 @@ private:
     s16 unk_field_2[6];
     float stat_float_a[6];
     float stat_float_b[6];
+
+public:
     s32 overflow_flag;
     s32 special_flag_238;
     s32 unk_field_3[6];
@@ -232,11 +245,16 @@ private:
     s8 equipped_weapon_slot[6];
     s16 dead_mask;
     s32 unk_field_1[6];
-    s8 item_capacity;
-    char unk_4361[1];
-    s16 quick_item_slot[3];
-    s16 quick_item_qty[3];
-    s16 dungeon_items[103];
+    union {
+        ITEM_PACK item_pack;
+        struct {
+            s8 item_capacity;
+            char unk_4361[1];
+            s16 quick_item_slot[3];
+            s16 quick_item_qty[3];
+            s16 dungeon_items[103];
+        } inventory;
+    };
     /* Per-slot "vol": how much is left in that copy of the item. Seeded from
      * ITEM_LIST +10 via ItemDataToHaveCopy, drained by CMenuItemStep::
      * CheckItemVolume, which advances the item id a stage when it empties. */
@@ -248,4 +266,5 @@ private:
     s32 res_limit_zone_current;
     char unk_8B14[392];
 };
+
 STATIC_ASSERT(sizeof(CDngStatusData) == 0x8C9C);

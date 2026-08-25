@@ -6,5 +6,7 @@ extern "C" {
 
 int rand(void);
 void srand(unsigned int seed);
+double atof(const char *text);
+int atoi(const char *text);
 void exit__2(int status);
 }

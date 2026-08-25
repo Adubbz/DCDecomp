@@ -2,9 +2,14 @@
 
 #include "common.h"
 
+#include "collision.hpp"
+#include "frame.hpp"
+#include "texture.hpp"
+
 class CCharacter;
 
 class CCPoly;
+class CBoxVu0;
 
 /**
  * @file
@@ -20,14 +25,87 @@ class CRect_i_;
 class CTexture;
 struct RECT;
 struct sceVif1Packet;
+struct i;
+
+/**
+ * Connects the EE client to the EZMIDI RPC server.
+ *
+ * @mangled ezMidiInit__Fv
+ * @address 0x147970
+ * @size 0x88
+ */
+int ezMidiInit(void);
+
+/**
+ * Sends one command to the EZMIDI RPC server and returns its response word.
+ *
+ * @mangled ezMidi__Fii
+ * @address 0x147A00
+ * @size 0xD4
+ */
+int ezMidi(int command, int argument);
+
+/**
+ * Transfers a buffer from EE memory into IOP memory and waits for completion.
+ *
+ * @mangled ezTransToIOP__FPvPvi
+ * @address 0x147AE0
+ * @size 0x90
+ */
+int ezTransToIOP(void *iop_address, void *ee_address, int size);
+
+/**
+ * Turns a model frame gradually towards a world-space target position.
+ *
+ * @mangled LookAt__FP9CFrameVu1Pf16_FRAMECONSTRAINT
+ * @address 0x149910
+ * @size 0x2BC
+ */
+int LookAt(CFrameVu1 *frame, float *target, _FRAMECONSTRAINT constraint);
+
+/**
+ * Turns a model frame gradually towards another frame's world position.
+ *
+ * @mangled LookAt__FP9CFrameVu1P9CFrameVu116_FRAMECONSTRAINT
+ * @address 0x149BD0
+ * @size 0x54
+ */
+int LookAt(CFrameVu1 *frame, CFrameVu1 *target, _FRAMECONSTRAINT constraint);
+
+/**
+ * Opens a batch of textured two-dimensional sprites in a VIF1 packet.
+ *
+ * @mangled set2DSprite_Start__FP13sceVif1PacketP8CTexture
+ * @address 0x14C220
+ * @size 0x19C
+ */
+void set2DSprite_Start(sceVif1Packet *packet, CTexture *texture);
+
+/**
+ * Closes the current two-dimensional sprite batch and fixes its tag lengths.
+ *
+ * @mangled set2DSprite_End__FP13sceVif1PacketP8CTexture
+ * @address 0x14C4F0
+ * @size 0xA4
+ */
+void set2DSprite_End(sceVif1Packet *packet, CTexture *texture);
+
+/**
+ * Uploads a texture's 16-by-16 colour lookup table through a VIF1 packet.
+ *
+ * @mangled SetClut__FP13sceVif1PacketP8CTextureP1i
+ * @address 0x14C5A0
+ * @size 0x60
+ */
+void SetClut(sceVif1Packet *packet, CTexture *texture, i *clut);
 
 /**
  * Describes one motion of a model: the range of frames it covers and how fast
  * it plays.
  */
 struct MOTION_INFO {
-    s32 start; /**< First frame of the motion. */
-    s32 end;   /**< Frame after the last one of the motion. */
+    s32 start;   /**< First frame of the motion. */
+    s32 end;     /**< Frame after the last one of the motion. */
     float speed; /**< Frames that the motion plays each step. */
     s32 unk_0C;
 };
@@ -43,8 +121,8 @@ struct MOTION_STATE {
     float unk_08;
     s32 unk_0C;
     s32 unk_10;
-    s32 motion_no;      /**< Motion that the character asks for. */
-    s32 playing_no;     /**< Motion that plays now. */
+    s32 motion_no;  /**< Motion that the character asks for. */
+    s32 playing_no; /**< Motion that plays now. */
     s32 unk_1C;
 };
 
@@ -168,8 +246,7 @@ void RollPos(float *centre, float *point, float angle, float *out);
  *
  * @mangled set2DSprite_Core__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_UcUcUcUc
  * @address 0x14C3C0
- * @size 0x130
- * @unknownret
+ * @size 0x128
  */
 void set2DSprite_Core(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
                       const CRect_i_ &texel, unsigned char r, unsigned char g,
@@ -211,3 +288,30 @@ float LinerInterpolation(float from, float to, float at);
  * @unknownret
  */
 void AreaAddPos(int *area, int *pos, int *out);
+
+/**
+ * Records what a step of a character ran into.
+ */
+struct MoveCheckInfo {
+    s32 unk_00; /**< 1 where the step landed on a polygon. */
+    u8 unk_04[0x5C];
+    s32 unk_60; /**< 1 where the step found ground below it. */
+    u8 unk_64[0xC];
+    CCPoly poly; /**< Polygon that the step landed on. */
+    u8 unk_c0[0x4];
+    float ground_height; /**< Height of the ground below the step. */
+    u8 unk_c8[0x8];
+};
+
+STATIC_ASSERT(sizeof(MoveCheckInfo) == 0xD0);
+
+/**
+ * Slides a position along a velocity, against a list of collision polygons.
+ *
+ * @mangled MoveCheck__FPfPfPfP13MoveCheckInfoP6CCPolyii
+ * @address 0x14A680
+ * @size 0x530
+ * @unknownret
+ */
+void MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_info, CCPoly *polys,
+               int poly_num, int mode);

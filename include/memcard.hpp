@@ -13,7 +13,6 @@ struct EDIT_CHIP_ATTACH_DATA;
 struct MC_CARD_INFO;
 struct RECT;
 
-
 /**
  * @mangled McCheckMCPs2__FP12MC_CARD_INFO
  * @address 0x216D50
@@ -220,7 +219,7 @@ void AtoraBoardGoToPos(int *, int, int);
  * @size 0xE0
  * @unknownret
  */
-void GetAtraMsgNo(int, int);
+int GetAtraMsgNo(int, int);
 
 /**
  * @mangled AtoraMsgNoGet__Fiii
@@ -564,7 +563,7 @@ void ExitSaveSelect(void);
  * @size 0x500
  * @unknownret
  */
-void MenuSaveKey(void);
+int MenuSaveKey(void);
 
 /**
  * @mangled DrawMenuSave__FPc

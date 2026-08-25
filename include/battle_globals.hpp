@@ -10,7 +10,6 @@ struct RS_STACKDATA;
 struct funcdata;
 struct spRGBA;
 
-
 /**
  * @mangled GlobalNameInit__Fv
  * @address 0x238450
@@ -193,7 +192,7 @@ void stkoverflow(void);
  * @size 0x70
  * @unknownret
  */
-void chk_int(RS_STACKDATA, funcdata *);
+int chk_int(RS_STACKDATA, funcdata *);
 
 /**
  * @mangled is_true__F12RS_STACKDATA
@@ -201,7 +200,7 @@ void chk_int(RS_STACKDATA, funcdata *);
  * @size 0x40
  * @unknownret
  */
-void is_true(RS_STACKDATA);
+int is_true(RS_STACKDATA);
 
 /**
  * @mangled divby0error__Fv

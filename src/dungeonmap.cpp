@@ -37,17 +37,6 @@ extern "C" CCharacter Trap_Circle;
 extern "C" CCharacter CharaMain;
 
 /**
- * Defines an integer rectangle.
- */
-class CRect_i_ {
-public:
-    int x;
-    int y;
-    int width;
-    int height;
-};
-
-/**
  * Defines one debug free-area rectangle.
  */
 struct ITEM_FREE_RECT {
@@ -194,6 +183,7 @@ void CDungeonMap::SetNPC(int npc_no, unsigned int *pack, int parts_no, sceVu0FVE
     this->npc[npc_no].chara.motion_speed = -1.0f;
 }
 #endif /* DNG_COMPILE_UNMATCHED */
+
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", SetNPC__11CDungeonMapFiPUiiPfPfiiP14CDataAlloc2_1_);
 INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_1008);
 
@@ -385,7 +375,7 @@ void CDungeonMap::DrawMap(CCameraFollow *camera, CFrameVu1 *player) {
     view_delta[2] = cam_ref[2] - cam_pos[2];
     view_delta[3] = 1.0f;
     sceVu0Normalize(view, view_delta);
-    sceVu0CopyVector(player_pos, player->pos);
+    sceVu0CopyVector(player_pos, player->position);
     player_cell_x = (int) (player_pos[0] / 160.0f);
     player_cell_y = (int) (player_pos[2] / 160.0f);
     free_area = ItemFreeAreaAll[selectMapNo];
@@ -829,7 +819,7 @@ void CDungeonMap::DrawFireFreeStyle(CFrameVu1 *frame, CCameraFollow *camera) {
     int j;
     int i;
 
-    sceVu0CopyVector(frame_pos, frame->pos);
+    sceVu0CopyVector(frame_pos, frame->position);
     ((CCamera *) camera)->GetPos(cam_pos);
     sceVu0ScaleVectorXYZ(cam_pos, cam_pos, 0.1f);
 
@@ -923,7 +913,7 @@ void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
     int row;
     int param;
 
-    sceVu0CopyVector(frame_pos, frame->pos);
+    sceVu0CopyVector(frame_pos, frame->position);
     ((CCamera *) camera)->GetPos(cam_pos);
     ((CCamera *) camera)->GetPos(cam_near);
     sceVu0ScaleVectorXYZ(cam_near, cam_near, 0.1f);
@@ -932,7 +922,7 @@ void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
                           TexManager.GetTexture("blender", -1));
     this->fire.FireCreate();
 
-    sceVu0CopyVector(frame_near, frame->pos);
+    sceVu0CopyVector(frame_near, frame->position);
     frame_near[0] /= 10.0f;
     frame_near[1] /= 10.0f;
     frame_near[2] /= 10.0f;
@@ -1027,7 +1017,7 @@ void CDungeonMap::DrawRaster(CFrameVu1 *frame) {
     int cell_z;
     int cell_x;
 
-    sceVu0CopyVector(pos, frame->pos);
+    sceVu0CopyVector(pos, frame->position);
     cell_x = (int) (pos[0] / 160.0f);
     cell_z = (int) (pos[2] / 160.0f);
 
@@ -1239,7 +1229,7 @@ void CDungeonMap::DrawItemBox(float *pos) {
         switch (this->boxes[i].kind) {
             case 0:
                 this->model[1]->SetPosition(this->boxes[i].pos);
-                sceVu0CopyVector(lid, this->model[1]->pos);
+                sceVu0CopyVector(lid, this->model[1]->position);
                 lid[1] += 8.0f;
                 lid[2] -= 5.0f;
                 this->model[0]->SetPosition(lid);
@@ -1250,7 +1240,7 @@ void CDungeonMap::DrawItemBox(float *pos) {
                 break;
             case 1:
                 this->model[4]->SetPosition(this->boxes[i].pos);
-                sceVu0CopyVector(lid, this->model[4]->pos);
+                sceVu0CopyVector(lid, this->model[4]->position);
                 lid[1] += 3.0f;
                 lid[2] -= 3.0f;
                 this->model[3]->SetPosition(lid);
@@ -1295,7 +1285,7 @@ int CDungeonMap::CreateCollision(CCPoly *poly, CBoxVu0 box, int num) {
     float pos[4];
     CFrame *frame;
 
-    sceVu0CopyVector(pos, CharaMain.frame->pos);
+    sceVu0CopyVector(pos, CharaMain.frame->position);
     frame = this->collision_model;
     // Retail returns no value here, which leaves whatever v0 happens to hold.
     if (frame == NULL) {
@@ -2052,7 +2042,7 @@ void CDungeonMap::DrawTrapCircle() {
     }
 }
 
-float *CDungeonMap::DistTrapCircle() {
+MAP_TRAP_CIRCLE *CDungeonMap::DistTrapCircle() {
     float pos[4];
 
     sceVu0CopyVector(pos, CharaMain.pos);
@@ -2060,7 +2050,7 @@ float *CDungeonMap::DistTrapCircle() {
         if (this->trap_circle[i].state == 1) {
             if (DistVector(this->trap_circle[i].pos, pos) <= 5.0f) {
                 this->trap_circle[i].state = 2;
-                return this->trap_circle[i].pos;
+                return &this->trap_circle[i];
             }
         }
     }
@@ -2389,7 +2379,7 @@ void CDungeonMap::RsetMimicEvent() {
 int CDungeonMap::GetActiveIvent(CFrameVu1 *frame) {
     float pos[4];
 
-    sceVu0CopyVector(pos, frame->pos);
+    sceVu0CopyVector(pos, frame->position);
 
     // The grid cell that the player stands on. Calculated but not used.
     (void) (int) ((float) (int) (80.0f + pos[0]) / 160.0f);

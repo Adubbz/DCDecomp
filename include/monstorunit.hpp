@@ -21,8 +21,8 @@ struct MONSTOR {
     s32 hp;     /**< Life the monster has left. */
     u8 unk_028[0x14];
     s32 unk_03C;
-    s16 kind;      /**< 2 for a monster the lock-on cursor leaves alone. */
-    s16 name_no;   /**< Identifies the name the lock-on cursor shows. */
+    s16 kind;    /**< 2 for a monster the lock-on cursor leaves alone. */
+    s16 name_no; /**< Identifies the name the lock-on cursor shows. */
     float unk_044;
     u8 unk_048[0x78];
     s32 unk_0C0;
@@ -52,7 +52,7 @@ STATIC_ASSERT(sizeof(CMonstorChara) == 0x3510);
 
 class CMonstorUnit {
 public:
-    void *script[16]; /**< Script working memory for each monster on the floor. */
+    void *script[16];  /**< Script working memory for each monster on the floor. */
     CFrame *collision; /**< Collision model that every monster on the floor shares. */
     u8 unk_044[4];
     s32 unk_048;
@@ -60,8 +60,8 @@ public:
     s32 unk_090;
     s32 unk_094;
     u8 unk_098[0x1E338];
-    MONSTOR monster[16];      /**< What each monster of the floor is doing. */
-    CMonstorChara chara[16];  /**< The model each monster draws with. */
+    MONSTOR monster[16];     /**< What each monster of the floor is doing. */
+    CMonstorChara chara[16]; /**< The model each monster draws with. */
     u8 unk_54DD0[0xB980];
 
     /**
@@ -70,7 +70,7 @@ public:
      * @size 0x60
      * @unknownret
      */
-    void GetMonstorNum(void);
+    int GetMonstorNum(void);
 
     /**
      * @mangled DrawMapSymbol__12CMonstorUnitFPf
@@ -94,7 +94,7 @@ public:
      * @size 0x90
      * @unknownret
      */
-    void CheckEventFlag2(void);
+    int CheckEventFlag2(void);
 
     /**
      * @mangled ArrangementPos__12CMonstorUnitFP11CDungeonMapiii

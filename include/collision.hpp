@@ -2,27 +2,104 @@
 
 #include "common.h"
 
-/**
- * @file
- * Declares the shapes that collision works in.
- */
+#include <libvu0.h>
+
+struct MDT_HEADER;
 
 /**
- * One polygon that something can collide with.
- */
-class CCPoly {
-public:
-    u8 unk_00[80];
-};
-
-/**
- * A box, held in the form that the VU0 routines take.
+ * Holds the maximum and minimum corners of an axis-aligned bound.
  */
 class CBoxVu0 {
 public:
-    float unk_00[4];
-    float unk_10[4];
+    sceVu0FVECTOR max; /**< Greater extent on each axis. */
+    sceVu0FVECTOR min; /**< Lesser extent on each axis. */
+};
+
+/**
+ * Stores the opaque metadata associated with a collision triangle.
+ */
+class CCPolyInfo {
+public:
+    float unk_00;
+    float unk_04;
+    float unk_08;
+    float unk_0c;
+};
+
+/**
+ * Stores a collision triangle, its plane normal, and its associated metadata.
+ */
+class CCPoly {
+public:
+    sceVu0FVECTOR vertex[3];
+    sceVu0FVECTOR normal;
+
+    union {
+        CCPolyInfo info;
+
+        struct {
+            s16 ground_kind; /**< What the surface is made of. */
+            s16 foot_sound;  /**< Sound the character's feet play on it. */
+            u8 unk_44[12];
+        } attr;
+    };
 } __attribute__((aligned(16)));
+
+/**
+ * Pairs a collision triangle with its axis-aligned bounding box.
+ */
+class CCPolyBox {
+public:
+    CCPoly poly;
+    CBoxVu0 box;
+};
+
+/**
+ * Provides the common query interface and bounds for collision geometry.
+ */
+class CCollision {
+public:
+    sceVu0FVECTOR max;
+    sceVu0FVECTOR min;
+
+    virtual int GetPolygon(int index, sceVu0FMATRIX v0, sceVu0FMATRIX v1, sceVu0FMATRIX v2);
+    virtual int GetMaxY(float *position);
+    virtual sceVu0FVECTOR *GetVertexAddress(int *count);
+    virtual int Intersection(float *from, float *to, float *hit);
+    virtual int PickUpNearPoly(CCPoly *poly, float *position, float radius);
+    virtual int PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box);
+    virtual int PickUpNearPoly(CCPoly *poly);
+    virtual void Initialize();
+
+    void CreateBBox();
+};
+
+/**
+ * Implements collision queries over geometry stored in an MDT resource.
+ */
+class CCollisionMDT : public CCollision {
+public:
+    /* The same three fields Initialize clears, cleared again here because construction cannot
+       reach a virtual of its own class. */
+    CCollisionMDT() {
+        data = 0;
+        mesh = 0;
+        num = 0;
+    }
+
+    virtual int GetPolygon(int index, sceVu0FMATRIX v0, sceVu0FMATRIX v1, sceVu0FMATRIX v2);
+    virtual int GetMaxY(float *position);
+    virtual sceVu0FVECTOR *GetVertexAddress(int *count);
+    virtual int Intersection(float *from, float *to, float *hit);
+    virtual int PickUpNearPoly(CCPoly *poly, float *position, float radius);
+    virtual int PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box);
+    virtual int PickUpNearPoly(CCPoly *poly);
+    virtual void Initialize();
+
+    MDT_HEADER *data;
+    CCPolyBox *mesh; /**< Bounded polygons the collision tests against. */
+    int num;
+};
 
 STATIC_ASSERT(sizeof(CCPoly) == 0x50);
 STATIC_ASSERT(sizeof(CBoxVu0) == 0x20);

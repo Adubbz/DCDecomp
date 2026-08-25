@@ -2,25 +2,12 @@
 
 #include "common.h"
 
+#include "dungeoneventdata.hpp"
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 class CDungeonMap;
-
-
-/**
- * Records what one placed dungeon event is doing.
- */
-struct DUNGEON_EVENT_STATE {
-    s32 unk_00;
-    u8 unk_04[0x2C];
-    s32 unk_30;
-    s32 unk_34;
-    s32 unk_38;
-    s32 unk_3C;
-};
-
-STATIC_ASSERT(sizeof(DUNGEON_EVENT_STATE) == 0x40);
 
 /**
  * Records what one dungeon event slot is doing.
@@ -41,7 +28,7 @@ STATIC_ASSERT(sizeof(DUNGEON_EVENT_SLOT) == 0x40);
 class CDungeonEventMan {
 public:
     DUNGEON_EVENT_SLOT slot[64]; /**< What each event slot is doing. */
-    DUNGEON_EVENT_STATE event[96]; /**< What each placed event is doing. */
+    CDungeonEventData event[96]; /**< What each placed event is doing. */
 
     /**
      * @mangled SearchPartsID__16CDungeonEventManFii
@@ -105,7 +92,7 @@ public:
      * @size 0x110
      * @unknownret
      */
-    void SearchDataSlotPos(float *);
+    CDungeonEventData *SearchDataSlotPos(float *);
 
     /**
      * @mangled SearchDataSlotPos2__16CDungeonEventManFPf
@@ -113,7 +100,7 @@ public:
      * @size 0x160
      * @unknownret
      */
-    void SearchDataSlotPos2(float *);
+    CDungeonEventData *SearchDataSlotPos2(float *);
 
     /**
      * @mangled SetupEvent__16CDungeonEventManFP11CDungeonMapi

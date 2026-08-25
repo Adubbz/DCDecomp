@@ -4,203 +4,137 @@
 
 #include <libgraph.h>
 
-typedef int TextureHandle;
+class sceVif1Packet;
+class CTexture;
+struct TM2_head;
 
-struct i {
-    u8 r;
-    u8 g;
-    u8 b;
-    u8 a;
+struct IMG_head {
+    char tag[4];      /**< IMG file signature. */
+    u_int pictures;   /**< Number of image entries in the file. */
+    u_int reserved[2];
 };
 
-class CTexture {
-    private:
-        s16 m_handle;
-        s16 m_width;
-        s16 m_height;
-        u16 m_bytes_per_pixel;
-        char m_name[32];
-    public:
-        sceGsTex0 m_tex0; /**< The register the texture draws through. */
-    private:
-        u64 m_tex1;
-        u8 *m_mip_data[4];
-        i *m_converted_data;
-        u32 m_is_converted;
-    public:
-        CTexture();
-        void Initialize();
+struct IMG_entry {
+    char name[32];  /**< Null-terminated texture name. */
+    u_int offset;   /**< Byte offset of the texture data. */
+    u_int reserved[3];
 };
-STATIC_ASSERT(sizeof(CTexture) == 0x50);
 
-class CTextureBlock {
-    private:
-        char m_name[32];
-        int m_gs_reserved_end_addr;
-        int m_gs_texture_end_addr;
-        u32 m_is_fully_loaded;
-        u32 m_is_extended;
-        int m_gs_reserved_start_addr;
-        i *m_texture_buffer_start;
-        i *m_texture_buffer_end;
-    public:
-        CTextureBlock();
-        void Initialize();
-};
-STATIC_ASSERT(sizeof(CTextureBlock) == 0x3C);
+void SetTextureInfo(CTexture *texture, char *name, TM2_head *head);
+void SetTextureInfo(CTexture *texture, char *name, u_char *buffer);
 
-struct sceVif1Packet;
-
-/**
- * Names one block of textures that a caller asks the manager to load.
- */
-/**
- * Names one texture file and the block it goes into, for the calls that read
- * the files themselves rather than a pack.
- */
+/* One texture file a block is built from, as the tables handed to EnterTextureFile hold them.
+   LoadTextureBlock walks a table from the front for each block in turn and stops at the first
+   entry whose name is null or empty, so a table states its own end rather than its length; the
+   third field is carried into EnterIMGFile unread by anything reconstructed. */
 struct LOADTEXTURE_INFO {
-    char *name;   /**< Names the texture file, or the image inside a pack. */
-    s32 block_no; /**< Block that the textures go into. */
-    s32 unk_08;
+    char *name;  /**< Texture file or synthetic frame-buffer specification. */
+    int block_no; /**< Destination texture block. */
+    int unk_08;
 };
 
-/**
- * Names one texture file and the block it goes into.
- *
- * The loading calls take an array of these and stop at the first entry with
- * no name, so a caller with one file to load passes two: the file and the
- * terminator.
- */
+/* The same three fields for the block loaders that take an image already in memory. The first
+   field is spelled as a name because that is what the loaders read it as — they compare its first
+   character and hand it to the archive reader — and a caller with pixels rather than a file name
+   casts on the way in. */
 struct LOADTEXTURE_INFO2 {
-    char *name;   /**< Names the texture file, or the image inside a pack. */
-    s32 block_no; /**< Block that the textures go into. */
-    s32 unk_08;
+    char *name;   /**< Texture file or synthetic frame-buffer specification. */
+    int block_no; /**< Destination texture block. */
+    int unk_08;
 };
 
+/* One texture the registry hands out: the name it answers to, the block that owns it, the `TEX0`
+   and `TEX1` already assembled for it, and where each of its four mip levels and its palette were
+   copied. A block number of -1 marks a texture no block owns, which is what the registry's own
+   entry at index zero and every fixed texture carry. */
+class CTexture {
+public:
+    CTexture();
+    void Initialize();
+
+    short block;      /**< Texture block containing this texture. */
+    short width;      /**< Texture width in pixels. */
+    short height;     /**< Texture height in pixels. */
+    short bpp;        /**< Bits per pixel. */
+    char name[32];    /**< Null-terminated texture name. */
+    u_long tex0;      /**< GS TEX0 register value. */
+    u_long tex1;      /**< GS TEX1 register value. */
+    u_int *image[4];  /**< Image data for each stored mip level. */
+    u_int *clut;      /**< Colour lookup table data. */
+    int swizzled;     /**< Whether image data uses GS swizzled ordering. */
+};
+
+/* One of the seventy-two texture blocks: the run of video memory its textures were given, the run
+   of the registry's buffer their pixels were copied into, and how far another block has since
+   written over the first. `vram_end` is where the next texture entered into the block goes and
+   `vram_top` is where one entered without pixels goes, which is why the two move apart. */
+class CTextureBlock {
+public:
+    CTextureBlock();
+    void Initialize();
+
+    char name[32];          /**< Null-terminated block name. */
+    int vram_top;           /**< First VRAM address assigned to the block. */
+    int vram_end;           /**< Address immediately after the block's VRAM range. */
+    int loaded;             /**< Whether the block has been uploaded. */
+    int extend;             /**< Whether the block uses extended allocation. */
+    int vram_dirty;         /**< Whether the VRAM copy requires reloading. */
+    u_long128 *buffer;      /**< Start of the source image buffer. */
+    u_long128 *buffer_end;  /**< End of the source image buffer. */
+};
+
+/* The registry itself, of which the game keeps exactly one. Seventy-two blocks and a hundred and
+   ninety-six textures, all of them constructed at start-up, over one buffer taken whole from
+   `TextureData` at Initialize. Video memory is handed out from the bottom for the blocks and from
+   `vram_fix` downwards for the fixed textures, and the two meeting is the error every entry
+   point checks for. */
 class CTextureManager {
-    private:
-        u8 data[0x4E48];
-    public:
-        void Initialize(int gs_addr);
-        // A size argument should also be included here, however it seems L5 had a mismatch between the header and implementation.
-        void SetBuffer(i *buffer); 
-        TextureHandle GetTextureHandle(char *name, TextureHandle handle);
-        CTexture *GetTexture(TextureHandle handle);
-        CTexture *GetTexture(char *name, TextureHandle handle);
+public:
+    CTextureManager() { Initialize(16352); }
 
-        /**
-         * @mangled DeleteTextureBlock__15CTextureManagerFi
-         * @address 0x133700
-         * @size 0xF0
-         * @unknownret
-         */
-        void DeleteTextureBlock(int block_no);
+    void Initialize(int size);
+    void SetBuffer(u_long128 *buffer, int size);
+    int SearchTextureName(char *name, int block);
+    int GetTextureHandle(char *name, int block);
+    CTexture *GetTexture(int handle);
+    CTexture *GetTexture(char *name, int block);
+    CTexture *SearchTexture(char *name);
+    void EnterTexture(int block, char *name, u_char *image, int width, int height, int bpp,
+                      u_char *clut, int clut_colors, int mipmap, u_char *mip1, u_char *mip2,
+                      u_char *mip3, u_long tex1, int swizzled);
+    void EnterTextureEX(int block, char *name, u_char *image, int width, int height, int bpp,
+                        u_char *clut, int clut_colors, int mipmap, u_char *mip1, u_char *mip2,
+                        u_char *mip3, u_long tex1, int swizzled);
+    void EnterFixTexture(char *name, u_char *image, int width, int height, int bpp, u_char *clut,
+                         int clut_colors, int mipmap, u_char *mip1, u_char *mip2, u_char *mip3,
+                         u_long tex1, int swizzled);
+    void EnterFixTextureZ(u_char *buffer);
+    void EnterIMGFile(u_char *buffer, int block, int mipmap, int extend);
+    void ReloadTexture(sceVif1Packet *packet, int block);
+    void BeginEnterTextureBlock(int block);
+    void EndEnterTextureBlock(int block);
+    int DeleteTextureBlock(int block);
+    int CleanUpBuffer();
+    int CleanUpTextureList();
+    int LoadTextureBlock(int block, u_int *buffer);
+    int LoadTextureBlock(int block, LOADTEXTURE_INFO *table, u_int *buffer);
+    int LoadTextureBlock(int block, LOADTEXTURE_INFO2 *table);
+    int LoadTextureBlockEX(int block, LOADTEXTURE_INFO2 *table);
+    int EnterTextureFile(LOADTEXTURE_INFO *table);
+    void print_buff_info();
 
-        /**
-         * Enters into the manager every texture an IMG file already read holds.
-         *
-         * @mangled EnterIMGFile__15CTextureManagerFPUciii
-         * @address 0x132BA0
-         * @size 0x2E4
-         * @unknownret
-         */
-        void EnterIMGFile(unsigned char *img, int block_no, int, int);
-
-        /**
-         * Enters into the manager the fixed textures a file already read holds.
-         *
-         * @mangled EnterFixTextureZ__15CTextureManagerFPUc
-         * @address 0x132930
-         * @size 0x264
-         * @unknownret
-         */
-        void EnterFixTextureZ(unsigned char *file);
-
-        /**
-         * Reads every texture a list names and enters it into the manager.
-         *
-         * @mangled EnterTextureFile__15CTextureManagerFP16LOADTEXTURE_INFO
-         * @address 0x134260
-         * @size 0x10
-         * @unknownret
-         */
-        void EnterTextureFile(LOADTEXTURE_INFO *info);
-
-        /**
-         * Loads into a block the textures a pack already read holds.
-         *
-         * @mangled LoadTextureBlock__15CTextureManagerFiPUi
-         * @address 0x133D30
-         * @size 0x28
-         * @unknownret
-         */
-        void LoadTextureBlock(int block_no, unsigned int *pack);
-
-        /**
-         * Frees every texture buffer that no block still holds.
-         *
-         * @mangled CleanUpBuffer__15CTextureManagerFv
-         * @address 0x1337F0
-         * @size 0x268
-         * @unknownret
-         */
-        void CleanUpBuffer(void);
-
-        /**
-         * Drops the entries of the texture list that no block still holds.
-         *
-         * @mangled CleanUpTextureList__15CTextureManagerFv
-         * @address 0x133A60
-         * @size 0xE4
-         * @unknownret
-         */
-        void CleanUpTextureList(void);
-
-        /**
-         * Prints how much of each texture buffer is in use.
-         *
-         * @mangled print_buff_info__15CTextureManagerFv
-         * @address 0x134750
-         * @size 0x8
-         * @unknownret
-         */
-        void print_buff_info(void);
-
-        /**
-         * Loads a list of textures into a block, replacing what is there.
-         *
-         * @mangled LoadTextureBlock__15CTextureManagerFiP17LOADTEXTURE_INFO2
-         * @address 0x133F20
-         * @size 0x194
-         * @unknownret
-         */
-        void LoadTextureBlock(int block_no, LOADTEXTURE_INFO2 *info);
-
-        /**
-         * @mangled LoadTextureBlockEX__15CTextureManagerFiP17LOADTEXTURE_INFO2
-         * @address 0x1340C0
-         * @size 0x1A0
-         * @unknownret
-         */
-        void LoadTextureBlockEX(int block_no, LOADTEXTURE_INFO2 *info);
-
-        /**
-         * @mangled ReloadTexture__15CTextureManagerFP13sceVif1Packeti
-         * @address 0x133070
-         * @size 0x1C0
-         * @unknownret
-         */
-        void ReloadTexture(sceVif1Packet *packet, int handle);
-    private:
-        TextureHandle SearchTextureName(char *name, TextureHandle handle);
-        CTexture *SearchTexture(char *name);
+    int texture_max;             /**< Number of occupied texture records. */
+    int vram_work;               /**< Next working VRAM allocation address. */
+    int vram_size;               /**< Size of the managed VRAM range. */
+    int last_block;              /**< Most recently selected texture block. */
+    int vram_max;                /**< Upper bound of working VRAM allocation. */
+    int vram_fix;                /**< Boundary of fixed VRAM allocation. */
+    CTextureBlock blocks[72];    /**< Managed texture blocks. */
+    CTexture textures[196];      /**< Registered textures. */
+    u_long128 *buffer;           /**< Texture staging buffer. */
+    int buffer_used;             /**< Occupied staging-buffer quadwords. */
+    int buffer_size;             /**< Available staging-buffer quadwords. */
+    LOADTEXTURE_INFO *file;      /**< Texture load table currently being processed. */
 };
-STATIC_ASSERT(sizeof(CTextureManager) == 0x4E48);
 
-/**
- * Manages the game's loaded textures.
- *
- * @address 0x1C75870
- * @size 0x4E48
- */
 extern CTextureManager TexManager;

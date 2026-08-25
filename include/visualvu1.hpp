@@ -3,6 +3,7 @@
 #include "common.h"
 
 #include <libvu0.h>
+
 #include "vu1.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
@@ -10,7 +11,6 @@
 // names but not where they live.
 struct RenderInfo;
 struct sceVif1Packet;
-
 
 /**
  * Draws the polygons of a water surface with the VU1 microprogram.
@@ -21,6 +21,8 @@ class CVisualPolyVu1;
 
 class CVisualVu1 {
 public:
+    s32 unk_00; /**< Unknown base-visual state preceding the virtual table pointer. */
+    s32 unk_04; /**< Unknown base-visual state preceding the virtual table pointer. */
     /**
      * @mangled Initialize__10CVisualVu1Fv
      * @address 0x134EC0
@@ -63,8 +65,8 @@ public:
      * @size 0x970
      * @unknownret
      */
-    virtual void DrawVu1(unsigned int *, float (*)[4], RenderInfo *, VU1_PROGRAM, RenderInfo *,
-                         int, int);
+    virtual int DrawVu1(unsigned int *, float (*)[4], RenderInfo *, VU1_PROGRAM, RenderInfo *,
+                        int, int);
 
     /**
      * @mangled DrawVu1__10CVisualVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii
@@ -72,8 +74,10 @@ public:
      * @size 0xD0
      * @unknownret
      */
-    virtual void DrawVu1(sceVif1Packet *, float (*)[4], RenderInfo *, VU1_PROGRAM, sceVif1Packet *,
-                         int, int);
+    virtual int DrawVu1(sceVif1Packet *, float (*)[4], RenderInfo *, VU1_PROGRAM, sceVif1Packet *,
+                        int, int);
+
+    s32 unk_0C; /**< Unknown base-visual state following the virtual table pointer. */
 
     /**
      * @mangled __ct__10CVisualVu1Fv
@@ -101,7 +105,6 @@ public:
 
 class CVisualPolyVu1 : public CVisualVu1 {
 public:
-    u8 unk_004[0xC];
     sceVu0FVECTOR unk_010;
 };
 

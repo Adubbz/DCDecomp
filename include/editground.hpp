@@ -10,13 +10,15 @@ class CCPoly;
 class CCamera;
 class CCameraFollow;
 class CEffectGroup;
+class CFrame;
 class CMapParts;
 class CRect_i_;
 class CSaveData;
 
-
 class CEditGround {
 public:
+    u8 unk_00000[0x16290];
+    CFrame *frame; /**< Root frame containing the editable ground model. */
     /**
      * @mangled SetMapParts__11CEditGroundFifffi
      * @address 0x1A0470
@@ -390,7 +392,7 @@ public:
      * @size 0x3D0
      * @unknownret
      */
-    void NornRequest(CMapParts * (*)[64]);
+    void NornRequest(CMapParts *(*) [64]);
 
     /**
      * @mangled MatatagiRequest__11CEditGroundFPA64_P9CMapParts
@@ -398,7 +400,7 @@ public:
      * @size 0x660
      * @unknownret
      */
-    void MatatagiRequest(CMapParts * (*)[64]);
+    void MatatagiRequest(CMapParts *(*) [64]);
 
     /**
      * @mangled QueensRequest__11CEditGroundFPA64_P9CMapParts
@@ -406,7 +408,7 @@ public:
      * @size 0x4A0
      * @unknownret
      */
-    void QueensRequest(CMapParts * (*)[64]);
+    void QueensRequest(CMapParts *(*) [64]);
 
     /**
      * @mangled MuskaRequest__11CEditGroundFPA64_P9CMapParts
@@ -414,7 +416,7 @@ public:
      * @size 0x620
      * @unknownret
      */
-    void MuskaRequest(CMapParts * (*)[64]);
+    void MuskaRequest(CMapParts *(*) [64]);
 
     /**
      * @mangled YellowRequest__11CEditGroundFPA64_P9CMapParts
@@ -422,7 +424,7 @@ public:
      * @size 0x8A0
      * @unknownret
      */
-    void YellowRequest(CMapParts * (*)[64]);
+    void YellowRequest(CMapParts *(*) [64]);
 };
 
 class CPartsCursor {

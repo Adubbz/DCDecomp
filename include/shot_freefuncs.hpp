@@ -7,7 +7,6 @@
 // names but not where they live.
 class CTexture;
 
-
 /**
  * @mangled WaterSplash_Init__Fv
  * @address 0x1AF360
@@ -62,7 +61,7 @@ void StepWaterLing(void);
  * @size 0x1D0
  * @unknownret
  */
-void SetBattleStyle(int, int);
+float SetBattleStyle(int, int);
 
 /**
  * @mangled ValuePrint__FiiiiUc
