@@ -161,6 +161,32 @@ carve_part(main.data.part2.s
 # Retail's vtables come out in one run that alternates between the units that
 # now own theirs and the dump that still holds the rest, so the dump is cut
 # around each owned block rather than having the block removed from it.
+carve_part(main.rdata.part1.s
+           main.rdata.part1.s=29FE80-29FF40)
+carve_part(main.rdata.part2.s
+           main.rdata.part2.s=2A00B0-2A1014)
+# .sdata: the same interleaving, one datum at a time.
+carve_part(main.sdata.part1.s
+           main.sdata.part1.s=2A1E88-2A1E8C)
+carve_part(main.sdata.part2.s
+           main.sdata.part2.s=2A1E98-2A1EC0)
+carve_part(main.sdata.part2b.s
+           main.sdata.part2b.s=2A1ED0-2A1F14
+           main.sdata.part2c.s=2A1F18-2A1F24
+           main.sdata.part2d.s=2A1F50-2A2218)
+# .sbss: the same again, one unit's run at a time.
+carve_part(main.bss.part1.s
+           main.bss.part1.s=2A3709-2AA010
+           main.bss.part1b.s=2AB010-2AB030)
+carve_part(main.bss.part3.s
+           main.bss.part3.s=1C7A6B8-1C7A6C0
+           main.bss.part3b.s=1C7B0C0-1CBB0C8)
+carve_part(main.sbss.part3.s
+           main.sbss.part3.s=2A24FC-2A2500)
+carve_part(main.sbss.part4b.s
+           main.sbss.part4b.s=2A25B8-2A2740
+           main.sbss.part4c.s=2A27AC-2A29F8
+           main.sbss.part4d.s=2A2A04-2A2BF0)
 carve_part(main.rdata.part4.s
            main.rdata.part4.s=2A1100-2A1130
            main.rdata.part4b.s=2A1168-2A11E0)
@@ -174,7 +200,6 @@ carve_part(main.data.part4.s
 # them into the reconstructed executable.
 list(REMOVE_ITEM STATIC_SECTION_SOURCES
      ${ASM_DATA_DIR}/main/parts/main.bss.part2b.s
-     ${ASM_DATA_DIR}/main/parts/main.bss.part3.s
      ${ASM_DATA_DIR}/main/parts/main.sbss.part1.s
      ${ASM_DATA_DIR}/main/parts/main.sbss.part1b.s
      ${ASM_DATA_DIR}/main/parts/main.sbss.part2.s)
@@ -185,7 +210,7 @@ add_custom_command(
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/filter_asm_symbols.py
             ${ASM_DATA_DIR}/main/parts/main.sbss.part1.s
             ${BUILD_DIR}/${FILTERED_SBSS_PART1}
-            dset_mds_packet dset_mds_objnum flag$332 init$333
+            dset_mds_packet dset_mds_objnum flag$332 init$333 D_002A239D
     DEPENDS ${CMAKE_SOURCE_DIR}/${ASM_DATA_DIR}/main/parts/main.sbss.part1.s
             ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/filter_asm_symbols.py
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}

@@ -17,7 +17,7 @@ from pathlib import Path
 
 # `/* ROM VRAM HEX */ .word ...` for a section with contents, `/* VRAM */
 # .space ...` for one without.
-ADDRESSED = re.compile(r"^\s*/\* (?:[0-9A-Fa-f]{5,8} )?([0-9A-Fa-f]{8})(?: [0-9A-Fa-f ]+)?\*/")
+ADDRESSED = re.compile(r"^\s*/\* (?:[0-9A-Fa-f]{5,8} )?([0-9A-Fa-f]{8})(?: [0-9A-Fa-f ]+)?\s*\*/")
 LABEL = re.compile(r"^\s*(?:glabel|jlabel|dlabel)\s+\S+\s*$|^\s*\.align\b|^\s*/\* Automatically")
 
 

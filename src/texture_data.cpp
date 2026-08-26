@@ -1,13 +1,7 @@
-#include "texture.hpp"
+#include "common.h"
 
-#include "dataalloc.hpp"
-
-/**
- * Supplies the main texture-loading allocation arena.
- */
-CDataAlloc2<1> TextureData;
-
-/**
- * Manages the game's loaded textures.
- */
-CTextureManager TexManager;
+/* Storage for the texture arena, and nothing more. dataset.cpp's own static initialiser is what
+   builds it, together with the six allocators standing beside it, so naming its type here would
+   ask for a second constructor call that retail does not make. postprocess_object.py gives this
+   block the name the rest of the game reaches it by. */
+u_long128 TextureDataStore[1];

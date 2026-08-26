@@ -40,7 +40,26 @@ MG_PICKZ mgPickZBuff[16];
 sceGifTag GiftagAD;
 sceGsDBuff mgDBuff;
 sceVu0FVECTOR mgBackColor;
-CRect_i_ mgWindowRect(0, 0, 0, 0);
+/* The window rectangle. Its four words are written back to front at static-initialisation time,
+   which CRect_i_'s own constructor does not do -- every rectangle handed to a drawing call has
+   them written front to back -- so the storage is declared through a type that writes them in
+   that order, and postprocess_object.py gives it the name the rest of the game reaches it by. */
+class CWindowRect {
+public:
+    CWindowRect() {
+        height = 0;
+        width = 0;
+        y = 0;
+        x = 0;
+    }
+
+    s32 x;
+    s32 y;
+    s32 width;
+    s32 height;
+} __attribute__((aligned(16)));
+
+CWindowRect mgWindowRectStore;
 RenderInfo mgRenderInfo;
 
 sceVu0FVECTOR mgZeroVector;
@@ -1476,3 +1495,8 @@ void MGEndDrawShadow(u_char alpha) {
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 }
+
+/* The one texture manager the game has. It is built here rather than beside the textures because
+   this is the unit that brings up the graphics, and its own storage is the last of what this unit
+   reserves. */
+CTextureManager TexManager;

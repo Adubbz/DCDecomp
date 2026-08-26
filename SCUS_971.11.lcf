@@ -397,17 +397,20 @@ SECTIONS
         // holds is what comes after -- the static initialisers, the vtables
         // and the literal pool -- so its placement follows.
         *(.rodata)
-        main.rdata.part1.s.o (.rdata)
-        main.cpp.o (.init)
+        main.rdata.part1.s.o (.rdata)    // 0x0029fe80  __sinit_dataset.cpp
+        mglib.cpp.o (.init)              // 0x0029ff40
+        . = . + 0x4;                     // the four bytes this unit's own initialiser is short
+        main.cpp.o (.init)               // 0x002a0050
         . = . + 0x8;
-        main.rdata.part2.s.o (.rdata)
-        main.cpp.o (.ctor)
+        main.rdata.part2.s.o (.rdata)    // 0x002a00b0
+        mglib.cpp.o (.ctor)              // 0x002a1014
+        main.cpp.o (.ctor)               // 0x002a1018
         main.rdata.part3.s.o (.rdata)
         camerafollow.cpp.o (.vtables)
         camera.cpp.o (.vtables)
         . = . + 0xC;
         collisionmdt.cpp.o (.vtables)    // 0x002a10d0
-        . = ALIGN(8);
+        . = ALIGN(16);
         main.rdata.part4.s.o (.rdata)    // 0x002a1100
         frame.cpp.o (.vtables)           // 0x002a1130
         . = ALIGN(8);
@@ -576,12 +579,18 @@ SECTIONS
 		LITERAL
 
 		# sdata
-		main.sdata.part1.s.o (.sdata)
-		mainselect.cpp.o (.sdata)
-		main.cpp.o (.sdata)
-		main.sdata.part2.s.o (.sdata)
-		clsmes.cpp.o (.sdata)
-		main.sdata.part2b.s.o (.sdata)
+		mathutil.cpp.o (.sdata)        // 0x002a1e80
+		main.sdata.part1.s.o (.sdata)  // 0x002a1e88
+		mainselect.cpp.o (.sdata)      // 0x002a1e8c
+		main.cpp.o (.sdata)            // 0x002a1e90
+		dataread.cpp.o (.sdata)        // 0x002a1e94
+		main.sdata.part2.s.o (.sdata)  // 0x002a1e98
+		clsmes.cpp.o (.sdata)          // 0x002a1ec0
+		main.sdata.part2b.s.o (.sdata) // 0x002a1ed0
+		ebattle_loop.cpp.o (.sdata)    // 0x002a1f14
+		main.sdata.part2c.s.o (.sdata) // 0x002a1f18
+		edit.cpp.o (.sdata)            // 0x002a1f24
+		main.sdata.part2d.s.o (.sdata) // 0x002a1f50
 		stockitem.cpp.o (.sdata)
 		main.sdata.part3.s.o (.sdata)
 		*(.sdata)
@@ -589,18 +598,29 @@ SECTIONS
 		# sbss
 		_fbss = .;
 		camera.cpp.o (.sbss)
-		main.sbss.part1.s.o (.sbss)
-		gamepad.cpp.o (.sbss)
+		main.sbss.part1.s.o (.sbss)    // 0x002a2384
+		dataset.cpp.o (.sbss)          // 0x002a2390
+		. = ALIGN(4);
+		gamepad.cpp.o (.sbss)          // 0x002a23a0
 		// Retail rounds the end of a unit's small-bss run up to four bytes,
 		// which the last static -- a one-byte flag here -- leaves short.
 		. = ALIGN(4);
-		mglib.cpp.o (.sbss)
-		character.cpp.o (.sbss)
-		main.sbss.part3.s.o (.sbss)
+		mglib.cpp.o (.sbss)            // 0x002a23b0
+		texture.cpp.o (.sbss)          // 0x002a2470
+		. = ALIGN(4);
+		character.cpp.o (.sbss)        // 0x002a2478
+		chararead.cpp.o (.sbss)        // 0x002a247c
+		dataread.cpp.o (.sbss)         // 0x002a24e4
+		main.sbss.part3.s.o (.sbss)    // 0x002a24fc
 		main.cpp.o (.sbss)
 		main.sbss.part4.s.o (.sbss)
 		clsmes.cpp.o (.sbss)
-		main.sbss.part4b.s.o (.sbss)
+		gameutil.cpp.o (.sbss)         // 0x002a25a8
+		main.sbss.part4b.s.o (.sbss)   // 0x002a25b8
+		edit.cpp.o (.sbss)             // 0x002a2740
+		main.sbss.part4c.s.o (.sbss)   // 0x002a27ac
+		edit.cpp.o (.fadebss)          // 0x002a29f8
+		main.sbss.part4d.s.o (.sbss)   // 0x002a2a04
 		dungeonmap.cpp.o (.sbss)
 		main.sbss.part5.s.o (.sbss)
 		charakey.cpp.o (.sbss)
@@ -619,13 +639,19 @@ SECTIONS
 		*(SCOMMON)
 
         # bss
-		main.bss.part1.s.o (.bss)
-		texture.cpp.o (.bss)
-		water.cpp.o (.bss)
-		main.bss.part2.s.o (.bss)
+		main.bss.part1.s.o (.bss)      // 0x002a3709
+		mathutil.cpp.o (.bss)          // 0x002aa010  SinTable
+		main.bss.part1b.s.o (.bss)     // 0x002ab010
+		texture_data.cpp.o (.bss)      // 0x002ab030  TextureData
+		water.cpp.o (.bss)             // 0x002ab040
+		main.bss.part2.s.o (.bss)      // 0x002ab050
 		gamepad.cpp.o (.padbss)
-		mglib.cpp.o (.bss)
-		texture_data.cpp.o (.bss)
+		mglib.cpp.o (.bss)             // 0x01c751c0, with TexManager at 0x01c75870
+		main.bss.part3.s.o (.bss)      // 0x01c7a6b8
+		mglib.cpp.o (.mgbss2)          // 0x01c7a6c0
+		texture.cpp.o (.bss)           // 0x01c7a830  texData
+		chararead.cpp.o (.bss)         // 0x01c7ae70
+		main.bss.part3b.s.o (.bss)     // 0x01c7b0c0
 		mainselect.cpp.o (.bss)
 		gamepad.cpp.o (.bss)
 		main.cpp.o (.bss)

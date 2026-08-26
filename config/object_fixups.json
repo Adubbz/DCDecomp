@@ -260,7 +260,22 @@
       "LIT_883",
       "LIT_884__3",
       "LIT_885"
-    ]
+    ],
+    "symbols": {
+      "SystemMesNo": "SystemMesNo__2",
+      "DebugFont": "DebugFont__2",
+      "SystemMesCount": "SystemMesCount__2",
+      "SystemMesPosition": "SystemMesPosition__2",
+      "SystemMesWait": "SystemMesWait__2",
+      "SystemMesInputKey": "SystemMesInputKey__2"
+    },
+    "sections": {
+      ".fadebss": [
+        "fade_in_out",
+        "fade_end",
+        "fade_step"
+      ]
+    }
   },
   "src/objanime.cpp": {
     "rodata_exports": [
@@ -289,7 +304,8 @@
   },
   "src/chararead.cpp": {
     "symbols": {
-      "ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2<1>P14CDataAlloc2<1>P14CDataAlloc2<1>iP14CDataAlloc2<1>ii": "ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P14CDataAlloc2_1_iP14CDataAlloc2_1_ii"
+      "ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2<1>P14CDataAlloc2<1>P14CDataAlloc2<1>iP14CDataAlloc2<1>ii": "ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P14CDataAlloc2_1_iP14CDataAlloc2_1_ii",
+      "buffer": "buffer__2"
     },
     "globalize_symbols": [
       "Command",
@@ -424,7 +440,8 @@
   },
   "src/mglib.cpp": {
     "symbols": {
-      "WorkBuffer": "WorkBuffer__2"
+      "WorkBuffer": "WorkBuffer__2",
+      "mgWindowRectStore": "mgWindowRect"
     },
     "rodata_exports": [
       "LIT_250",
@@ -435,7 +452,22 @@
       "LIT_416",
       "LIT_417",
       "LIT_418"
-    ]
+    ],
+    "globalize_symbols": [
+      "__sinit_mglib.cpp"
+    ],
+    "sections": {
+      ".mgbss2": [
+        "mgZeroVector",
+        "mgUnitVector",
+        "mgUnitVector2",
+        "mgZeroVector2",
+        "mgUnitMatrix",
+        "mgZeroMatrix",
+        "vifpacket",
+        "gs_simage"
+      ]
+    }
   },
   "src/dngstatusdata.cpp": {
     "rodata_exports": [
@@ -454,6 +486,14 @@
       "LIT_50",
       "LIT_51",
       "LIT_52"
+    ]
+  },
+  "src/texture_data.cpp": {
+    "symbols": {
+      "TextureDataStore": "TextureData"
+    },
+    "globalize_symbols": [
+      "TextureData"
     ]
   }
 }
