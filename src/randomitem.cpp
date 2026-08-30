@@ -1,7 +1,5 @@
 #include "randomitem.hpp"
 
-CRandomItem *RandomItem;
-
 INCLUDE_ASM("asm/nonmatchings/randomitem", Draw__11CRandomItemFv);
 INCLUDE_ASM("asm/nonmatchings/randomitem", MapSymbolDraw__11CRandomItemFv);
 INCLUDE_RODATA("asm/nonmatchings/randomitem", LIT_1383);

@@ -1,8 +1,5 @@
 #include "monstorunit.hpp"
 
-/* Pointer to the active CMonstorUnit instance (retail `NowMonstorUnit`, main.sbss). */
-CMonstorUnit *NowMonstorUnit;
-
 INCLUDE_ASM("asm/nonmatchings/monstorunit", GetMonstorNum__12CMonstorUnitFv);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawMapSymbol__12CMonstorUnitFPf);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", LIT_603__2);

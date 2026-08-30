@@ -11,6 +11,16 @@
  */
 class CObject {
 public:
+    /**
+     * Copies one object over another, field by field.
+     *
+     * @mangled __as__7CObjectFRC7CObject
+     * @address 0x1431E0
+     * @size 0x74
+     * @unknownret
+     */
+    CObject &operator=(const CObject &);
+
     float mass; /**< Mass of the object. */
     float unk_004[3];
     float pos[4];                 /**< World position of the object. */

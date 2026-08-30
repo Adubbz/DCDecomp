@@ -1165,12 +1165,12 @@ void CDungeonMap::DrawWater(float *pos, int mute) {
     if (best != NULL) {
 
         // A waterfall stands at the cell that the surface came from.
-        if (best->has_fall != 0 && this->model[6] != NULL) {
+        if (best->has_fall != 0 && this->fall_model != NULL) {
             float x = 160.0f * (float) best_col;
             float z = 160.0f * (float) best_row;
 
-            this->model[6]->SetPosition(x, 0.0f, z);
-            MGDraw(this->model[6]);
+            this->fall_model->SetPosition(x, 0.0f, z);
+            MGDraw(this->fall_model);
         }
         if (sound_dist < 300.0f) {
             SndGetVolPan(&vol, &pan, best_pos, 50.0f, 300.0f);
@@ -1210,10 +1210,10 @@ void CDungeonMap::DrawItemBox(float *pos) {
     float lid[4];
     int i;
 
-    if (this->model[0] == NULL || this->model[1] == NULL) {
+    if (this->box_lid_model == NULL || this->box_body_model == NULL) {
         return;
     }
-    if (this->model[4] == NULL || this->model[3] == NULL) {
+    if (this->chest_body_model == NULL || this->chest_lid_model == NULL) {
         return;
     }
 
@@ -1228,26 +1228,26 @@ void CDungeonMap::DrawItemBox(float *pos) {
         // The lid sits on the box, tilted by however far it has opened.
         switch (this->boxes[i].kind) {
             case 0:
-                this->model[1]->SetPosition(this->boxes[i].pos);
-                sceVu0CopyVector(lid, this->model[1]->position);
+                this->box_body_model->SetPosition(this->boxes[i].pos);
+                sceVu0CopyVector(lid, this->box_body_model->position);
                 lid[1] += 8.0f;
                 lid[2] -= 5.0f;
-                this->model[0]->SetPosition(lid);
-                this->model[0]->SetRotation(
+                this->box_lid_model->SetPosition(lid);
+                this->box_lid_model->SetRotation(
                     (3.1415927f * (float) this->boxes[i].lid_angle) / 180.0f, 0.0f, 0.0f);
-                MGDraw(this->model[1]);
-                MGDraw(this->model[0]);
+                MGDraw(this->box_body_model);
+                MGDraw(this->box_lid_model);
                 break;
             case 1:
-                this->model[4]->SetPosition(this->boxes[i].pos);
-                sceVu0CopyVector(lid, this->model[4]->position);
+                this->chest_body_model->SetPosition(this->boxes[i].pos);
+                sceVu0CopyVector(lid, this->chest_body_model->position);
                 lid[1] += 3.0f;
                 lid[2] -= 3.0f;
-                this->model[3]->SetPosition(lid);
-                this->model[3]->SetRotation(
+                this->chest_lid_model->SetPosition(lid);
+                this->chest_lid_model->SetRotation(
                     (3.1415927f * (float) this->boxes[i].lid_angle) / 180.0f, 0.0f, 0.0f);
-                MGDraw(this->model[4]);
-                MGDraw(this->model[3]);
+                MGDraw(this->chest_body_model);
+                MGDraw(this->chest_lid_model);
                 break;
         }
     }
@@ -2565,9 +2565,9 @@ void CDungeonMap::GetRoomLinkInfo(void) {
     y = door_pos[i][1];
     scanRoomInfoWork[y][x] = 9;
     buildMapDat[x + y * 20].unk_48 |= 0x400;
-    this->link_door_x = x;
-    this->link_door_y = y;
-    this->room_link[0].unk_04 = 0;
+    this->room_link[0].door_x = x;
+    this->room_link[0].door_y = y;
+    this->room_link[0].unk_14 = 0;
 
     direction_mask = (buildMapDat[x + (y - 1) * 20].unk_48 & 2) == 2;
     if ((buildMapDat[x + (y + 1) * 20].unk_48 & 2) == 2)
@@ -2712,10 +2712,10 @@ void CDungeonMap::GetRoomLinkInfo(void) {
         if (valid != 0) {
             if (this->SetTreasureBox(pos, selectMapNo + 216, 1, 0) == -1)
                 return;
-            this->link_item_x = (pos[0] + 80.0f) / 160.0f;
-            this->link_item_y = (pos[2] + 80.0f) / 160.0f;
-            this->cells[this->link_door_x + this->link_door_y * 20].parts_no = door_part;
-            this->cells[this->link_door_x + this->link_door_y * 20].direction = 0;
+            this->room_link[0].item_x = (pos[0] + 80.0f) / 160.0f;
+            this->room_link[0].item_y = (pos[2] + 80.0f) / 160.0f;
+            this->cells[this->room_link[0].door_x + this->room_link[0].door_y * 20].parts_no = door_part;
+            this->cells[this->room_link[0].door_x + this->room_link[0].door_y * 20].direction = 0;
             this->room_link[0].used = 1;
             result_no++;
             active = 0;
@@ -3276,13 +3276,13 @@ void CDungeonMap::initSubmap(CDataAlloc2_1_ *alloc) {
     for (i = 0; i < 3; i++) {
         this->dummy_frame[i] = NULL;
     }
-    this->model[0] = NULL;
-    this->model[1] = NULL;
-    this->model[2] = NULL;
-    this->model[3] = NULL;
-    this->model[4] = NULL;
-    this->model[5] = NULL;
-    this->model[6] = NULL;
+    this->box_lid_model = NULL;
+    this->box_body_model = NULL;
+    this->box_collision_model = NULL;
+    this->chest_lid_model = NULL;
+    this->chest_body_model = NULL;
+    this->unk_BC78 = NULL;
+    this->fall_model = NULL;
     for (i = 0; i < 24; i++) {
         this->boxes[i].used = 0;
     }
@@ -3339,13 +3339,13 @@ void CDungeonMap::initalize() {
     for (i = 0; i < 3; i++) {
         this->dummy_frame[i] = NULL;
     }
-    this->model[0] = NULL;
-    this->model[1] = NULL;
-    this->model[2] = NULL;
-    this->model[3] = NULL;
-    this->model[4] = NULL;
-    this->model[5] = NULL;
-    this->model[6] = NULL;
+    this->box_lid_model = NULL;
+    this->box_body_model = NULL;
+    this->box_collision_model = NULL;
+    this->chest_lid_model = NULL;
+    this->chest_body_model = NULL;
+    this->unk_BC78 = NULL;
+    this->fall_model = NULL;
     for (i = 0; i < 24; i++) {
         this->boxes[i].used = 0;
     }

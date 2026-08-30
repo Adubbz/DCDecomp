@@ -1,499 +1,602 @@
 {
-  "src/gamepad.cpp": {
-    "sections": {
-      ".padbss": [
-        "pad_dma_buf",
-        "pad_dma_buf2"
-      ]
-    }
-  },
-  "src/main.cpp": {
-    "rodata_exports": [
-      "LIT_873",
-      "LIT_874"
-    ]
-  },
-  "src/dungeonmap.cpp": {
-    "rodata_exports": [
-      "LIT_2283",
-      "LIT_2284",
-      "LIT_2338",
-      "LIT_2339",
-      "LIT_2448"
-    ]
-  },
-  "src/ebattle.cpp": {
-    "rodata_exports": [
-      "LIT_314__2",
-      "LIT_315__2"
-    ]
-  },
-  "src/hitmark.cpp": {
-    "rodata_exports": [
-      "LIT_1430",
-      "LIT_1522",
-      "LIT_1523",
-      "LIT_1524",
-      "LIT_1525",
-      "LIT_1526",
-      "LIT_1527",
-      "LIT_1528",
-      "LIT_1529",
-      "LIT_1530",
-      "LIT_1531",
-      "LIT_1532",
-      "LIT_1533",
-      "LIT_1534",
-      "LIT_1535"
-    ]
-  },
-  "src/clsmes.cpp": {
-    "rodata_exports": [
-      "LIT_821",
-      "LIT_822",
-      "LIT_1556",
-      "LIT_1557"
-    ]
-  },
-  "src/dun/gameloop.cpp": {
-    "symbols": {
-      "MainDraw__Fv": "MainDraw__Fv__3",
-      "MoveChara__Fv": "MoveChara__Fv__2"
-    }
-  },
-  "src/collisiondata.cpp": {
-    "rodata_exports": [
-      "LIT_1548",
-      "LIT_1549",
-      "LIT_1550",
-      "LIT_1551",
-      "LIT_1552",
-      "LIT_1553",
-      "LIT_1555",
-      "LIT_1556__2",
-      "LIT_1557__2"
-    ]
-  },
-  "src/edit_in.cpp": {
-    "rodata_exports": [
-      "LIT_1592",
-      "LIT_1593",
-      "LIT_1594",
-      "LIT_1595",
-      "LIT_1596",
-      "LIT_1597",
-      "LIT_1598",
-      "LIT_1599",
-      "LIT_1600",
-      "LIT_1601",
-      "LIT_1602",
-      "LIT_1603",
-      "LIT_1604",
-      "LIT_1605",
-      "LIT_1606"
-    ]
-  },
-  "src/edit.cpp": {
-    "rodata_exports": [
-      "LIT_2362",
-      "LIT_2363",
-      "LIT_2364",
-      "LIT_2449",
-      "LIT_2450",
-      "LIT_2451",
-      "LIT_257__3",
-      "LIT_258__3",
-      "LIT_259__3",
-      "LIT_260__3",
-      "LIT_261__3",
-      "LIT_262__2",
-      "LIT_263__3",
-      "LIT_264__3",
-      "LIT_265__2",
-      "LIT_266__3",
-      "LIT_267__3",
-      "LIT_268__3",
-      "LIT_269__3",
-      "LIT_270__5",
-      "LIT_271__3",
-      "LIT_272__2",
-      "LIT_2737",
-      "LIT_2738",
-      "LIT_2739",
-      "LIT_273__2",
-      "LIT_2740",
-      "LIT_2741",
-      "LIT_2742",
-      "LIT_2747",
-      "LIT_2748",
-      "LIT_2749",
-      "LIT_274__2",
-      "LIT_2750",
-      "LIT_2751",
-      "LIT_2752",
-      "LIT_2753",
-      "LIT_2754",
-      "LIT_2755",
-      "LIT_2756",
-      "LIT_275__2",
-      "LIT_276__2",
-      "LIT_277__2",
-      "LIT_278__2",
-      "LIT_279__2",
-      "LIT_280__2",
-      "LIT_281__2",
-      "LIT_282__2",
-      "LIT_283__2",
-      "LIT_284__3",
-      "LIT_2850",
-      "LIT_2851",
-      "LIT_2852",
-      "LIT_2853",
-      "LIT_285__4",
-      "LIT_286__3",
-      "LIT_287__3",
-      "LIT_288__3",
-      "LIT_289__3",
-      "LIT_290__3",
-      "LIT_291__2",
-      "LIT_292__2",
-      "LIT_293__2",
-      "LIT_294__2",
-      "LIT_295__2",
-      "LIT_296__2",
-      "LIT_297__2",
-      "LIT_298__4",
-      "LIT_299__4",
-      "LIT_300__3",
-      "LIT_301__2",
-      "LIT_302__2",
-      "LIT_303__2",
-      "LIT_304__2",
-      "LIT_305__2",
-      "LIT_306__2",
-      "LIT_307__2",
-      "LIT_308__3",
-      "LIT_309__2",
-      "LIT_310__2",
-      "LIT_311__2",
-      "LIT_312__2",
-      "LIT_314__3",
-      "LIT_315__3",
-      "LIT_316__2",
-      "LIT_317__2",
-      "LIT_318__2",
-      "LIT_319__3",
-      "LIT_320__3",
-      "LIT_321__2",
-      "LIT_322__2",
-      "LIT_323__2",
-      "LIT_324__2",
-      "LIT_325__3",
-      "LIT_326__2",
-      "LIT_327__2",
-      "LIT_328__3",
-      "LIT_329__2",
-      "LIT_330__3",
-      "LIT_331__3",
-      "LIT_332__4",
-      "LIT_333__4",
-      "LIT_334__4",
-      "LIT_335__3",
-      "LIT_336__2",
-      "LIT_337__2",
-      "LIT_338",
-      "LIT_339__2",
-      "LIT_340",
-      "LIT_341",
-      "LIT_342",
-      "LIT_343",
-      "LIT_344",
-      "LIT_345__3",
-      "LIT_346",
-      "LIT_347",
-      "LIT_348__2",
-      "LIT_349__2",
-      "LIT_350__2",
-      "LIT_351",
-      "LIT_352",
-      "LIT_353__2",
-      "LIT_353__3",
-      "LIT_354",
-      "LIT_355",
-      "LIT_356",
-      "LIT_357",
-      "LIT_358__2",
-      "LIT_359",
-      "LIT_360",
-      "LIT_361__2",
-      "LIT_362__3",
-      "LIT_363__4",
-      "LIT_364",
-      "LIT_365",
-      "LIT_366",
-      "LIT_367",
-      "LIT_368",
-      "LIT_369__2",
-      "LIT_369__3",
-      "LIT_370__2",
-      "LIT_371__3",
-      "LIT_372",
-      "LIT_373__2",
-      "LIT_374",
-      "LIT_377",
-      "LIT_399",
-      "LIT_582",
-      "LIT_687",
-      "LIT_688",
-      "LIT_689",
-      "LIT_690",
-      "LIT_690__2",
-      "LIT_717",
-      "LIT_875__2",
-      "LIT_876__2",
-      "LIT_877",
-      "LIT_878",
-      "LIT_879",
-      "LIT_880__2",
-      "LIT_881__2",
-      "LIT_882",
-      "LIT_883",
-      "LIT_884__3",
-      "LIT_885"
-    ],
-    "symbols": {
-      "SystemMesNo": "SystemMesNo__2",
-      "DebugFont": "DebugFont__2",
-      "SystemMesCount": "SystemMesCount__2",
-      "SystemMesPosition": "SystemMesPosition__2",
-      "SystemMesWait": "SystemMesWait__2",
-      "SystemMesInputKey": "SystemMesInputKey__2"
-    },
-    "sections": {
-      ".fadebss": [
-        "fade_in_out",
-        "fade_end",
-        "fade_step"
-      ]
-    }
-  },
-  "src/objanime.cpp": {
-    "rodata_exports": [
-      "LIT_447__2",
-      "LIT_448",
-      "LIT_449",
-      "LIT_450",
-      "LIT_451"
-    ]
-  },
-  "src/snd.cpp": {
-    "rodata_exports": [
-      "LIT_799",
-      "LIT_800"
-    ]
-  },
-  "src/btmisc.cpp": {
-    "rodata_exports": [
-      "LIT_887__4",
-      "LIT_888__3",
-      "LIT_889__3",
-      "LIT_890__3",
-      "LIT_891__3",
-      "LIT_892__3"
-    ]
-  },
-  "src/chararead.cpp": {
-    "symbols": {
-      "ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2<1>P14CDataAlloc2<1>P14CDataAlloc2<1>iP14CDataAlloc2<1>ii": "ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P14CDataAlloc2_1_iP14CDataAlloc2_1_ii",
-      "buffer": "buffer__2"
-    },
-    "globalize_symbols": [
-      "Command",
-      "ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P14CDataAlloc2_1_iP14CDataAlloc2_1_ii",
-      "CommandVERTEX_ANIME__FPPv",
-      "CommandSHADOW_VERTEX_ANIME__FPPv",
-      "CommandMODEL__FPPv",
-      "CommandSHADOW_MODEL__FPPv",
-      "CommandMOTION__FPPv",
-      "CommandSHADOW_MOTION__FPPv",
-      "CommandKEY__FPPv",
-      "CommandKEY_START__FPPv",
-      "CommandMOTION_END__FPPv",
-      "CommandCLOTH__FPPv",
-      "CommandBODY_SIZE__FPPv",
-      "CommandALLOC_MDT__FPPv",
-      "CommandALLOC_DBUFF__FPPv",
-      "CommandALLOC_SHADOW_MDT__FPPv",
-      "CommandALLOC_SHADOW_DBUFF__FPPv",
-      "CommandIMG__FPPv",
-      "CommandIMG_END__FPPv",
-      "CommandFOOT__FPPv",
-      "CommandEVENT__FPPv"
-    ]
-  },
-  "src/collisionmdt.cpp": {
-    "globalize_symbols": [
-      "GetVertexAddress__10CCollisionFPi"
-    ]
-  },
-  "src/dataset.cpp": {
-    "symbols": {
-      "CopyFrameVu1__FP9CFrameVu1P14CDataAlloc2<1>": "CopyFrameVu1__FP9CFrameVu1P14CDataAlloc2_1_",
-      "CopyFrame__FP6CFrameP14CDataAlloc2<1>": "CopyFrame__FP6CFrameP14CDataAlloc2_1_",
-      "CreateCollisionMDT__FPUiP14CDataAlloc2<1>": "CreateCollisionMDT__FPUiP14CDataAlloc2_1_",
-      "CreateVisual__FPUiP14CDataAlloc2<1>i": "CreateVisual__FPUiP14CDataAlloc2_1_i",
-      "LoadCollisionFile__FPUiP14CDataAlloc2<1>": "LoadCollisionFile__FPUiP14CDataAlloc2_1_",
-      "LoadMDSFileLOD__FPP9CFrameVu1PPUiP14CDataAlloc2<1>i": "LoadMDSFileLOD__FPP9CFrameVu1PPUiP14CDataAlloc2_1_i",
-      "LoadMDSFile__FPUiP14CDataAlloc2<1>iPPcPPc": "LoadMDSFile__FPUiP14CDataAlloc2_1_iPPcPPc"
-    },
-    "globalize_symbols": [
-      "LIT_199"
-    ],
-    "rodata_exports": [
-      "LIT_394",
-      "LIT_395",
-      "LIT_541"
-    ]
-  },
-  "src/dataalloc2_1.cpp": {
-    "symbols": {
-      "__ct__14CDataAlloc2<1>Fi": "__ct__14CDataAlloc2_1_Fi",
-      "Alloc__14CDataAlloc2<1>Fi": "Alloc__14CDataAlloc2_1_Fi",
-      "Alloc64__14CDataAlloc2<1>Fi": "Alloc64__14CDataAlloc2_1_Fi",
-      "Align64__14CDataAlloc2<1>Fv": "Align64__14CDataAlloc2_1_Fv",
-      "Alloc64__21CDataAlloc<1,1690000>Fi": "Alloc64__21CDataAlloc_1_1690000_Fi"
-    }
-  },
-  "src/dataread.cpp": {
-    "symbols": {
-      "CurrentDir": "CurrentDir__2",
-      "Command": "Command__2",
-      "CommandExe": "CommandExe__2"
-    },
-    "rodata_exports": [
-      "LIT_234",
-      "LIT_235",
-      "LIT_284",
-      "LIT_373",
-      "LIT_387",
-      "LIT_388",
-      "LIT_389",
-      "LIT_390",
-      "LIT_391",
-      "LIT_439",
-      "LIT_467",
-      "LIT_468",
-      "LIT_187",
-      "LIT_188",
-      "LIT_189",
-      "LIT_190",
-      "LIT_191",
-      "LIT_192",
-      "LIT_193",
-      "LIT_194",
-      "LIT_195",
-      "LIT_566",
-      "LIT_567",
-      "LIT_568",
-      "LIT_578",
-      "LIT_626",
-      "LIT_627",
-      "LIT_628",
-      "LIT_629",
-      "LIT_630",
-      "LIT_631",
-      "LIT_632",
-      "LIT_633",
-      "LIT_634",
-      "LIT_635",
-      "LIT_657",
-      "LIT_658",
-      "LIT_678",
-      "LIT_679",
-      "LIT_680"
-    ],
-    "globalize_symbols": [
-      "Command__2",
-      "CommandExe__2"
-    ]
-  },
-  "src/dispctrl.cpp": {
-    "rodata_exports": [
-      "LIT_230"
-    ]
-  },
-  "src/gameutil.cpp": {
-    "rodata_exports": [
-      "LIT_25"
-    ]
-  },
-  "src/mathutil.cpp": {
-    "rodata_exports": [
-      "LIT_245",
-      "LIT_424",
-      "LIT_425",
-      "LIT_1035",
-      "LIT_1036",
-      "LIT_1037",
-      "LIT_1039"
-    ]
-  },
-  "src/mglib.cpp": {
-    "symbols": {
-      "WorkBuffer": "WorkBuffer__2",
-      "mgWindowRectStore": "mgWindowRect"
-    },
-    "rodata_exports": [
-      "LIT_250",
-      "LIT_251",
-      "LIT_252",
-      "LIT_414",
-      "LIT_415",
-      "LIT_416",
-      "LIT_417",
-      "LIT_418"
-    ],
-    "globalize_symbols": [
-      "__sinit_mglib.cpp"
-    ],
-    "sections": {
-      ".mgbss2": [
-        "mgZeroVector",
-        "mgUnitVector",
-        "mgUnitVector2",
-        "mgZeroVector2",
-        "mgUnitMatrix",
-        "mgZeroMatrix",
-        "vifpacket",
-        "gs_simage"
-      ]
-    }
-  },
-  "src/dngstatusdata.cpp": {
-    "rodata_exports": [
-      "LIT_281__3",
-      "LIT_540__2",
-      "LIT_541__2"
-    ]
-  },
-  "src/battle_globals.cpp": {
-    "rodata_exports": [
-      "LIT_15",
-      "LIT_17",
-      "LIT_24",
-      "LIT_32",
-      "LIT_34",
-      "LIT_50",
-      "LIT_51",
-      "LIT_52"
-    ]
-  },
-  "src/texture_data.cpp": {
-    "symbols": {
-      "TextureDataStore": "TextureData"
-    },
-    "globalize_symbols": [
-      "TextureData"
-    ]
+ "src/gamepad.cpp": {
+  "sections": {
+   ".padbss": [
+    "pad_dma_buf",
+    "pad_dma_buf2"
+   ]
   }
+ },
+ "src/main.cpp": {
+  "rodata_exports": [
+   "LIT_873",
+   "LIT_874"
+  ]
+ },
+ "src/dungeonmap.cpp": {
+  "rodata_exports": [
+   "LIT_2283",
+   "LIT_2284",
+   "LIT_2338",
+   "LIT_2339",
+   "LIT_2448"
+  ]
+ },
+ "src/ebattle.cpp": {
+  "rodata_exports": [
+   "LIT_314__2",
+   "LIT_315__2"
+  ]
+ },
+ "src/hitmark.cpp": {
+  "rodata_exports": [
+   "LIT_1430",
+   "LIT_1522",
+   "LIT_1523",
+   "LIT_1524",
+   "LIT_1525",
+   "LIT_1526",
+   "LIT_1527",
+   "LIT_1528",
+   "LIT_1529",
+   "LIT_1530",
+   "LIT_1531",
+   "LIT_1532",
+   "LIT_1533",
+   "LIT_1534",
+   "LIT_1535"
+  ]
+ },
+ "src/clsmes.cpp": {
+  "rodata_exports": [
+   "LIT_821",
+   "LIT_822",
+   "LIT_1556",
+   "LIT_1557"
+  ]
+ },
+ "src/dun/gameloop.cpp": {
+  "symbols": {
+   "MainDraw__Fv": "MainDraw__Fv__3",
+   "MoveChara__Fv": "MoveChara__Fv__2",
+   "CameraAutoMove__FP13CCameraFollowP6CCPolyPfff": "CameraAutoMove__FP13CCameraFollowP6CCPolyPfff__2",
+   "LoadData__Fv": "LoadData__Fv__3"
+  },
+  "data_runs": {
+   ".ddata2": "LIT_656__7",
+   ".ddata3": "LIT_5176"
+  },
+  "rodata_exports": [
+   "LIT_1059__2",
+   "LIT_1797",
+   "LIT_1806",
+   "LIT_1807",
+   "LIT_4385",
+   "LIT_4395",
+   "LIT_4396",
+   "LIT_4400",
+   "LIT_4404",
+   "LIT_4405",
+   "LIT_4406",
+   "LIT_4407",
+   "LIT_4408",
+   "LIT_4409",
+   "LIT_4410",
+   "LIT_4411",
+   "LIT_4830",
+   "LIT_4831",
+   "LIT_4833",
+   "LIT_4974",
+   "LIT_4979",
+   "LIT_4980",
+   "LIT_4997",
+   "LIT_5159",
+   "LIT_5160",
+   "LIT_5197",
+   "LIT_5198",
+   "LIT_5199",
+   "LIT_5200",
+   "LIT_5201",
+   "LIT_5226",
+   "LIT_5227",
+   "LIT_5228",
+   "LIT_5229",
+   "LIT_5230",
+   "LIT_5231",
+   "LIT_5232",
+   "LIT_5233",
+   "LIT_5234",
+   "LIT_5235",
+   "LIT_5236",
+   "LIT_5237",
+   "LIT_5239",
+   "LIT_5240",
+   "LIT_5241",
+   "LIT_5242",
+   "LIT_5243",
+   "LIT_5244",
+   "LIT_5245",
+   "LIT_5246",
+   "LIT_5247",
+   "LIT_5627",
+   "LIT_5735",
+   "LIT_6367",
+   "LIT_653__6",
+   "LIT_654__6",
+   "LIT_655__4",
+   "LIT_670__4",
+   "LIT_671__4",
+   "LIT_672__4",
+   "LIT_673__4",
+   "LIT_6745",
+   "LIT_6746",
+   "LIT_6747",
+   "LIT_6748",
+   "LIT_6749",
+   "LIT_674__4",
+   "LIT_6750",
+   "LIT_6751",
+   "LIT_6753",
+   "LIT_6754",
+   "LIT_6755",
+   "LIT_6756",
+   "LIT_6757",
+   "LIT_6758",
+   "LIT_6759",
+   "LIT_675__4",
+   "LIT_676__3",
+   "LIT_677__3",
+   "LIT_678__3",
+   "LIT_679__3",
+   "LIT_6807",
+   "LIT_6808",
+   "LIT_6809",
+   "LIT_910",
+   "LIT_911",
+   "LIT_914__5",
+   "LIT_915__4",
+   "LIT_916__3",
+   "LIT_917",
+   "LIT_918",
+   "LIT_919__3",
+   "LIT_920__4",
+   "LIT_921__3",
+   "LIT_922__2"
+  ]
+ },
+ "src/collisiondata.cpp": {
+  "rodata_exports": [
+   "LIT_1548",
+   "LIT_1549",
+   "LIT_1550",
+   "LIT_1551",
+   "LIT_1552",
+   "LIT_1553",
+   "LIT_1555",
+   "LIT_1556__2",
+   "LIT_1557__2"
+  ]
+ },
+ "src/edit_in.cpp": {
+  "rodata_exports": [
+   "LIT_1592",
+   "LIT_1593",
+   "LIT_1594",
+   "LIT_1595",
+   "LIT_1596",
+   "LIT_1597",
+   "LIT_1598",
+   "LIT_1599",
+   "LIT_1600",
+   "LIT_1601",
+   "LIT_1602",
+   "LIT_1603",
+   "LIT_1604",
+   "LIT_1605",
+   "LIT_1606"
+  ]
+ },
+ "src/edit.cpp": {
+  "rodata_exports": [
+   "LIT_2362",
+   "LIT_2363",
+   "LIT_2364",
+   "LIT_2449",
+   "LIT_2450",
+   "LIT_2451",
+   "LIT_257__3",
+   "LIT_258__3",
+   "LIT_259__3",
+   "LIT_260__3",
+   "LIT_261__3",
+   "LIT_262__2",
+   "LIT_263__3",
+   "LIT_264__3",
+   "LIT_265__2",
+   "LIT_266__3",
+   "LIT_267__3",
+   "LIT_268__3",
+   "LIT_269__3",
+   "LIT_270__5",
+   "LIT_271__3",
+   "LIT_272__2",
+   "LIT_2737",
+   "LIT_2738",
+   "LIT_2739",
+   "LIT_273__2",
+   "LIT_2740",
+   "LIT_2741",
+   "LIT_2742",
+   "LIT_2747",
+   "LIT_2748",
+   "LIT_2749",
+   "LIT_274__2",
+   "LIT_2750",
+   "LIT_2751",
+   "LIT_2752",
+   "LIT_2753",
+   "LIT_2754",
+   "LIT_2755",
+   "LIT_2756",
+   "LIT_275__2",
+   "LIT_276__2",
+   "LIT_277__2",
+   "LIT_278__2",
+   "LIT_279__2",
+   "LIT_280__2",
+   "LIT_281__2",
+   "LIT_282__2",
+   "LIT_283__2",
+   "LIT_284__3",
+   "LIT_2850",
+   "LIT_2851",
+   "LIT_2852",
+   "LIT_2853",
+   "LIT_285__4",
+   "LIT_286__3",
+   "LIT_287__3",
+   "LIT_288__3",
+   "LIT_289__3",
+   "LIT_290__3",
+   "LIT_291__2",
+   "LIT_292__2",
+   "LIT_293__2",
+   "LIT_294__2",
+   "LIT_295__2",
+   "LIT_296__2",
+   "LIT_297__2",
+   "LIT_298__4",
+   "LIT_299__4",
+   "LIT_300__3",
+   "LIT_301__2",
+   "LIT_302__2",
+   "LIT_303__2",
+   "LIT_304__2",
+   "LIT_305__2",
+   "LIT_306__2",
+   "LIT_307__2",
+   "LIT_308__3",
+   "LIT_309__2",
+   "LIT_310__2",
+   "LIT_311__2",
+   "LIT_312__2",
+   "LIT_314__3",
+   "LIT_315__3",
+   "LIT_316__2",
+   "LIT_317__2",
+   "LIT_318__2",
+   "LIT_319__3",
+   "LIT_320__3",
+   "LIT_321__2",
+   "LIT_322__2",
+   "LIT_323__2",
+   "LIT_324__2",
+   "LIT_325__3",
+   "LIT_326__2",
+   "LIT_327__2",
+   "LIT_328__3",
+   "LIT_329__2",
+   "LIT_330__3",
+   "LIT_331__3",
+   "LIT_332__4",
+   "LIT_333__4",
+   "LIT_334__4",
+   "LIT_335__3",
+   "LIT_336__2",
+   "LIT_337__2",
+   "LIT_338",
+   "LIT_339__2",
+   "LIT_340",
+   "LIT_341",
+   "LIT_342",
+   "LIT_343",
+   "LIT_344",
+   "LIT_345__3",
+   "LIT_346",
+   "LIT_347",
+   "LIT_348__2",
+   "LIT_349__2",
+   "LIT_350__2",
+   "LIT_351",
+   "LIT_352",
+   "LIT_353__2",
+   "LIT_353__3",
+   "LIT_354",
+   "LIT_355",
+   "LIT_356",
+   "LIT_357",
+   "LIT_358__2",
+   "LIT_359",
+   "LIT_360",
+   "LIT_361__2",
+   "LIT_362__3",
+   "LIT_363__4",
+   "LIT_364",
+   "LIT_365",
+   "LIT_366",
+   "LIT_367",
+   "LIT_368",
+   "LIT_369__2",
+   "LIT_369__3",
+   "LIT_370__2",
+   "LIT_371__3",
+   "LIT_372",
+   "LIT_373__2",
+   "LIT_374",
+   "LIT_377",
+   "LIT_399",
+   "LIT_582",
+   "LIT_687",
+   "LIT_688",
+   "LIT_689",
+   "LIT_690",
+   "LIT_690__2",
+   "LIT_717",
+   "LIT_875__2",
+   "LIT_876__2",
+   "LIT_877",
+   "LIT_878",
+   "LIT_879",
+   "LIT_880__2",
+   "LIT_881__2",
+   "LIT_882",
+   "LIT_883",
+   "LIT_884__3",
+   "LIT_885"
+  ],
+  "symbols": {
+   "SystemMesNo": "SystemMesNo__2",
+   "DebugFont": "DebugFont__2",
+   "SystemMesCount": "SystemMesCount__2",
+   "SystemMesPosition": "SystemMesPosition__2",
+   "SystemMesWait": "SystemMesWait__2",
+   "SystemMesInputKey": "SystemMesInputKey__2"
+  },
+  "sections": {
+   ".fadebss": [
+    "fade_in_out",
+    "fade_end",
+    "fade_step"
+   ]
+  }
+ },
+ "src/objanime.cpp": {
+  "rodata_exports": [
+   "LIT_447__2",
+   "LIT_448",
+   "LIT_449",
+   "LIT_450",
+   "LIT_451"
+  ]
+ },
+ "src/snd.cpp": {
+  "rodata_exports": [
+   "LIT_799",
+   "LIT_800"
+  ]
+ },
+ "src/btmisc.cpp": {
+  "rodata_exports": [
+   "LIT_887__4",
+   "LIT_888__3",
+   "LIT_889__3",
+   "LIT_890__3",
+   "LIT_891__3",
+   "LIT_892__3"
+  ]
+ },
+ "src/chararead.cpp": {
+  "symbols": {
+   "ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2<1>P14CDataAlloc2<1>P14CDataAlloc2<1>iP14CDataAlloc2<1>ii": "ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P14CDataAlloc2_1_iP14CDataAlloc2_1_ii",
+   "buffer": "buffer__2"
+  },
+  "globalize_symbols": [
+   "Command",
+   "ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P14CDataAlloc2_1_iP14CDataAlloc2_1_ii",
+   "CommandVERTEX_ANIME__FPPv",
+   "CommandSHADOW_VERTEX_ANIME__FPPv",
+   "CommandMODEL__FPPv",
+   "CommandSHADOW_MODEL__FPPv",
+   "CommandMOTION__FPPv",
+   "CommandSHADOW_MOTION__FPPv",
+   "CommandKEY__FPPv",
+   "CommandKEY_START__FPPv",
+   "CommandMOTION_END__FPPv",
+   "CommandCLOTH__FPPv",
+   "CommandBODY_SIZE__FPPv",
+   "CommandALLOC_MDT__FPPv",
+   "CommandALLOC_DBUFF__FPPv",
+   "CommandALLOC_SHADOW_MDT__FPPv",
+   "CommandALLOC_SHADOW_DBUFF__FPPv",
+   "CommandIMG__FPPv",
+   "CommandIMG_END__FPPv",
+   "CommandFOOT__FPPv",
+   "CommandEVENT__FPPv"
+  ]
+ },
+ "src/collisionmdt.cpp": {
+  "globalize_symbols": [
+   "GetVertexAddress__10CCollisionFPi"
+  ]
+ },
+ "src/dataset.cpp": {
+  "symbols": {
+   "CopyFrameVu1__FP9CFrameVu1P14CDataAlloc2<1>": "CopyFrameVu1__FP9CFrameVu1P14CDataAlloc2_1_",
+   "CopyFrame__FP6CFrameP14CDataAlloc2<1>": "CopyFrame__FP6CFrameP14CDataAlloc2_1_",
+   "CreateCollisionMDT__FPUiP14CDataAlloc2<1>": "CreateCollisionMDT__FPUiP14CDataAlloc2_1_",
+   "CreateVisual__FPUiP14CDataAlloc2<1>i": "CreateVisual__FPUiP14CDataAlloc2_1_i",
+   "LoadCollisionFile__FPUiP14CDataAlloc2<1>": "LoadCollisionFile__FPUiP14CDataAlloc2_1_",
+   "LoadMDSFileLOD__FPP9CFrameVu1PPUiP14CDataAlloc2<1>i": "LoadMDSFileLOD__FPP9CFrameVu1PPUiP14CDataAlloc2_1_i",
+   "LoadMDSFile__FPUiP14CDataAlloc2<1>iPPcPPc": "LoadMDSFile__FPUiP14CDataAlloc2_1_iPPcPPc"
+  },
+  "globalize_symbols": [
+   "LIT_199"
+  ],
+  "rodata_exports": [
+   "LIT_394",
+   "LIT_395",
+   "LIT_541"
+  ]
+ },
+ "src/dataalloc2_1.cpp": {
+  "symbols": {
+   "__ct__14CDataAlloc2<1>Fi": "__ct__14CDataAlloc2_1_Fi",
+   "Alloc__14CDataAlloc2<1>Fi": "Alloc__14CDataAlloc2_1_Fi",
+   "Alloc64__14CDataAlloc2<1>Fi": "Alloc64__14CDataAlloc2_1_Fi",
+   "Align64__14CDataAlloc2<1>Fv": "Align64__14CDataAlloc2_1_Fv",
+   "Alloc64__21CDataAlloc<1,1690000>Fi": "Alloc64__21CDataAlloc_1_1690000_Fi"
+  }
+ },
+ "src/dataread.cpp": {
+  "symbols": {
+   "CurrentDir": "CurrentDir__2",
+   "Command": "Command__2",
+   "CommandExe": "CommandExe__2"
+  },
+  "rodata_exports": [
+   "LIT_234",
+   "LIT_235",
+   "LIT_284",
+   "LIT_373",
+   "LIT_387",
+   "LIT_388",
+   "LIT_389",
+   "LIT_390",
+   "LIT_391",
+   "LIT_439",
+   "LIT_467",
+   "LIT_468",
+   "LIT_187",
+   "LIT_188",
+   "LIT_189",
+   "LIT_190",
+   "LIT_191",
+   "LIT_192",
+   "LIT_193",
+   "LIT_194",
+   "LIT_195",
+   "LIT_566",
+   "LIT_567",
+   "LIT_568",
+   "LIT_578",
+   "LIT_626",
+   "LIT_627",
+   "LIT_628",
+   "LIT_629",
+   "LIT_630",
+   "LIT_631",
+   "LIT_632",
+   "LIT_633",
+   "LIT_634",
+   "LIT_635",
+   "LIT_657",
+   "LIT_658",
+   "LIT_678",
+   "LIT_679",
+   "LIT_680"
+  ],
+  "globalize_symbols": [
+   "Command__2",
+   "CommandExe__2"
+  ]
+ },
+ "src/dispctrl.cpp": {
+  "rodata_exports": [
+   "LIT_230"
+  ]
+ },
+ "src/gameutil.cpp": {
+  "rodata_exports": [
+   "LIT_25"
+  ]
+ },
+ "src/mathutil.cpp": {
+  "rodata_exports": [
+   "LIT_245",
+   "LIT_424",
+   "LIT_425",
+   "LIT_1035",
+   "LIT_1036",
+   "LIT_1037",
+   "LIT_1039"
+  ]
+ },
+ "src/mglib.cpp": {
+  "symbols": {
+   "WorkBuffer": "WorkBuffer__2",
+   "mgWindowRectStore": "mgWindowRect"
+  },
+  "rodata_exports": [
+   "LIT_250",
+   "LIT_251",
+   "LIT_252",
+   "LIT_414",
+   "LIT_415",
+   "LIT_416",
+   "LIT_417",
+   "LIT_418"
+  ],
+  "globalize_symbols": [
+   "__sinit_mglib.cpp"
+  ],
+  "sections": {
+   ".mgbss2": [
+    "mgZeroVector",
+    "mgUnitVector",
+    "mgUnitVector2",
+    "mgZeroVector2",
+    "mgUnitMatrix",
+    "mgZeroMatrix",
+    "vifpacket",
+    "gs_simage"
+   ]
+  }
+ },
+ "src/dngstatusdata.cpp": {
+  "rodata_exports": [
+   "LIT_281__3",
+   "LIT_540__2",
+   "LIT_541__2"
+  ]
+ },
+ "src/battle_globals.cpp": {
+  "rodata_exports": [
+   "LIT_15",
+   "LIT_17",
+   "LIT_24",
+   "LIT_32",
+   "LIT_34",
+   "LIT_50",
+   "LIT_51",
+   "LIT_52"
+  ]
+ },
+ "src/texture_data.cpp": {
+  "symbols": {
+   "TextureDataStore": "TextureData"
+  },
+  "globalize_symbols": [
+   "TextureData"
+  ]
+ }
 }

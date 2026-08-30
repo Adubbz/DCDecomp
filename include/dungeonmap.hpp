@@ -86,12 +86,15 @@ struct MAP_TRAP_CIRCLE {
 };
 
 /**
- * Records whether one special linked-room result is active.
+ * Places the door and the treasure box that link one pair of rooms.
  */
 struct ROOM_LINK_RESULT {
-    s32 used; /**< 1 after the linked-room item and door are placed. */
-    s32 unk_04;
-    u8 unk_08[16];
+    s32 door_x;     /**< Grid column of the door that the link opens. */
+    s32 door_y;     /**< Grid row of the door that the link opens. */
+    float item_x;   /**< Mini map position of the item that the link places. */
+    float item_y;   /**< Mini map position of the item that the link places. */
+    s32 used;       /**< 1 after the linked-room item and door are placed. */
+    s32 unk_14;
 };
 
 /**
@@ -114,6 +117,16 @@ struct DUNGEON_EVENT {
  * Describes one non-player character that walks in the dungeon.
  */
 struct MAP_NPC_MODEL {
+    /**
+     * Copies one slot over another, field by field.
+     *
+     * @mangled __as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL
+     * @address 0x142C90
+     * @size 0x104
+     * @unknownret
+     */
+    MAP_NPC_MODEL &operator=(const MAP_NPC_MODEL &);
+
     CCharacter chara; /**< Draws and moves the character. */
     float pos[4];     /**< World position of the character. */
     float unk_11C0[4];
@@ -155,18 +168,18 @@ public:
     s32 room_num;             /**< Number of rooms on the floor. */
     TREASURE_BOX boxes[24];   /**< Treasure boxes that stand on the floor. */
     s32 box_num;              /**< Number of treasure boxes on the floor. */
-    CFrame *model[7];         /**< Models that the boxes and the water use. */
+    CFrame *box_lid_model;       /**< Model that draws the lid of a wooden treasure box. */
+    CFrame *box_body_model;      /**< Model that draws a wooden treasure box. */
+    CFrame *box_collision_model; /**< Model that the collision of a treasure box uses. */
+    CFrame *chest_lid_model;     /**< Model that draws the lid of a metal treasure box. */
+    CFrame *chest_body_model;    /**< Model that draws a metal treasure box. */
+    CFrame *unk_BC78;
+    CFrame *fall_model;          /**< Model that draws the hole a fallen map part leaves. */
     ATRA_BOLL atra[8];        /**< Atla balls that lie on the floor. */
     s32 atra_num;             /**< Number of atla balls on the floor. */
     CFrame *atra_model;       /**< Model that draws an atla ball. */
     CFrame *collision_model;  /**< Model that the collision of an atla ball uses. */
-    s32 link_door_x;
-    s32 link_door_y;
-    float link_item_x;
-    float link_item_y;
-    ROOM_LINK_RESULT room_link[3];
-    s32 room_link_3_used;
-    u8 unk_BDE8[4];
+    ROOM_LINK_RESULT room_link[4]; /**< Rooms that a door and a treasure box link. */
     s32 unk_BDEC;
     MAP_NPC_MODEL npc[4];           /**< Characters that walk in the dungeon. */
     MAP_TRAP_CIRCLE trap_circle[3]; /**< Trap circles that lie on the floor. */

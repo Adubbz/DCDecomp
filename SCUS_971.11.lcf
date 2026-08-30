@@ -80,13 +80,34 @@ SECTIONS
         gameloop.cpp.o  (.dtext)   // 0x01dabd40
         *(.dtext)
 
-        . = ALIGN(16);
+        // Retail leaves 128 bytes of nops between the overlay's last function
+        // and its data, which starts on a 256-byte boundary.
+        . = ALIGN(256);
         _dun_data = .;
         ALIGNALL(1);
-        data.data.s.o   (.ddata)     // 0x01dc1b00
-        gameloop.cpp.o  (.drodata)   // 0x01dc2980
-        sinit.data.s.o  (.ddata)     // 0x01dc3580
+
+        // The unit's local array initialisers put their templates between the
+        // globals the dump still supplies, so the dump is cut into the runs
+        // either side of each of them.
+        dun.data.part1.s.o (.ddata)     // 0x01dc1b00
+        gameloop.cpp.o     (.ddata)     // 0x01dc1b20
+        . = ALIGN(16);
+        dun.data.part2.s.o (.ddata)     // 0x01dc1b60
+        gameloop.cpp.o     (.ddata2)    // 0x01dc26d0
+        . = ALIGN(16);
+        dun.data.part3.s.o (.ddata)     // 0x01dc2810
+        gameloop.cpp.o     (.ddata3)    // 0x01dc2820
+        . = ALIGN(16);
+        dun.data.part4.s.o (.ddata)     // 0x01dc2940
+        gameloop.cpp.o     (.drodata)   // 0x01dc2980
+
+        // Retail's last constant ends twenty bytes short of the static
+        // initialiser, which stands on a 32-byte boundary.
+        . = ALIGN(32);
+        sinit.data.s.o     (.ddata)     // 0x01dc3580
         *(.ddata)
+        *(.ddata2)
+        *(.ddata3)
         *(.drodata)
 
         ALIGNALL(1);
@@ -345,7 +366,6 @@ SECTIONS
         langset.cpp.o               (.text)   // 0x00244b30
         fader.cpp.o                 (.text)   // 0x002451f0
         mainselect.cpp.o            (.text)   // 0x002a1e8c
-        userstatus.cpp.o            (.text)   // 0x002a3468
         *(.text)
         ALIGNALL(1); // Perform no additional alignment
         *(.vutext)
@@ -457,66 +477,93 @@ SECTIONS
 		# order. A constant retail's pool
 		# does not hold stays in its object and the LITERAL directive below
 		# appends it to the pool instead, which moves the small data after it.
+		_LIT_002A1800 = 0x002a1800;
+		_LIT_002A1808 = 0x002a1808;
+		_LIT_002A1818 = 0x002a1818;
+		_LIT_002A1868 = 0x002a1868;
+		_LIT_002A186C = 0x002a186c;
+		_LIT_002A1870 = 0x002a1870;
+		_LIT_002A1874 = 0x002a1874;
 		_LIT_002A1880 = 0x002a1880;
 		_LIT_002A1884 = 0x002a1884;
+		_LIT_002A1888 = 0x002a1888;
+		_LIT_002A188C = 0x002a188c;
+		_LIT_002A1894 = 0x002a1894;
+		_LIT_002A18A0 = 0x002a18a0;
 		_LIT_002A18A4 = 0x002a18a4;
 		_LIT_002A18A8 = 0x002a18a8;
 		_LIT_002A18AC = 0x002a18ac;
 		_LIT_002A18B0 = 0x002a18b0;
 		_LIT_002A18B4 = 0x002a18b4;
-		_LIT_002A18CC = 0x002a18cc;
-		_LIT_002A18D4 = 0x002a18d4;
-		_LIT_002A18D8 = 0x002a18d8;
-		_LIT_002A18DC = 0x002a18dc;
-		_LIT_002A18E0 = 0x002a18e0;
-		_LIT_002A1918 = 0x002a1918;
-		_LIT_002A1928 = 0x002a1928;
-		_LIT_002A192C = 0x002a192c;
-		_LIT_002A1930 = 0x002a1930;
-		_LIT_002A194C = 0x002a194c;
-		_LIT_002A1A04 = 0x002a1a04;
-		_LIT_002A1A14 = 0x002a1a14;
-		_LIT_002A1A1C = 0x002a1a1c;
-		_LIT_002A1A3C = 0x002a1a3c;
-		_LIT_002A1A40 = 0x002a1a40;
-		_LIT_002A1A94 = 0x002a1a94;
-		_LIT_002A1A98 = 0x002a1a98;
-		_LIT_002A1A9C = 0x002a1a9c;
-		_LIT_002A1AA0 = 0x002a1aa0;
-		_LIT_002A1800 = 0x002a1800;
-		_LIT_002A1868 = 0x002a1868;
-		_LIT_002A186C = 0x002a186c;
-		_LIT_002A1870 = 0x002a1870;
-		_LIT_002A1874 = 0x002a1874;
-		_LIT_002A1888 = 0x002a1888;
-		_LIT_002A1894 = 0x002a1894;
-		_LIT_002A18A0 = 0x002a18a0;
 		_LIT_002A18B8 = 0x002a18b8;
 		_LIT_002A18BC = 0x002a18bc;
 		_LIT_002A18C0 = 0x002a18c0;
 		_LIT_002A18C4 = 0x002a18c4;
+		_LIT_002A18CC = 0x002a18cc;
 		_LIT_002A18D0 = 0x002a18d0;
+		_LIT_002A18D4 = 0x002a18d4;
+		_LIT_002A18D8 = 0x002a18d8;
+		_LIT_002A18DC = 0x002a18dc;
+		_LIT_002A18E0 = 0x002a18e0;
 		_LIT_002A18E4 = 0x002a18e4;
 		_LIT_002A18EC = 0x002a18ec;
 		_LIT_002A18F0 = 0x002a18f0;
 		_LIT_002A1908 = 0x002a1908;
+		_LIT_002A1918 = 0x002a1918;
+		_LIT_002A1928 = 0x002a1928;
+		_LIT_002A192C = 0x002a192c;
+		_LIT_002A1930 = 0x002a1930;
 		_LIT_002A1934 = 0x002a1934;
 		_LIT_002A1944 = 0x002a1944;
 		_LIT_002A1948 = 0x002a1948;
+		_LIT_002A194C = 0x002a194c;
 		_LIT_002A1950 = 0x002a1950;
 		_LIT_002A1954 = 0x002a1954;
 		_LIT_002A1958 = 0x002a1958;
 		_LIT_002A195C = 0x002a195c;
 		_LIT_002A1960 = 0x002a1960;
 		_LIT_002A1988 = 0x002a1988;
+		_LIT_002A1990 = 0x002a1990;
+		_LIT_002A19C0 = 0x002a19c0;
+		_LIT_002A19E0 = 0x002a19e0;
+		_LIT_002A19F0 = 0x002a19f0;
+		_LIT_002A19F4 = 0x002a19f4;
+		_LIT_002A1A04 = 0x002a1a04;
+		_LIT_002A1A14 = 0x002a1a14;
+		_LIT_002A1A1C = 0x002a1a1c;
+		_LIT_002A1A20 = 0x002a1a20;
+		_LIT_002A1A38 = 0x002a1a38;
+		_LIT_002A1A3C = 0x002a1a3c;
+		_LIT_002A1A40 = 0x002a1a40;
 		_LIT_002A1A80 = 0x002a1a80;
 		_LIT_002A1A8C = 0x002a1a8c;
+		_LIT_002A1A94 = 0x002a1a94;
+		_LIT_002A1A98 = 0x002a1a98;
+		_LIT_002A1A9C = 0x002a1a9c;
+		_LIT_002A1AA0 = 0x002a1aa0;
+		_LIT_002A1ACC = 0x002a1acc;
 		_LIT_002A1AF8 = 0x002a1af8;
+		_LIT_002A1B24 = 0x002a1b24;
+		_LIT_002A1B28 = 0x002a1b28;
 		_LIT_002A1B5C = 0x002a1b5c;
 		_LIT_002A1BCC = 0x002a1bcc;
 		_LIT_002A1BD0 = 0x002a1bd0;
 		_LIT_002A1C04 = 0x002a1c04;
+		_LIT_002A1C18 = 0x002a1c18;
+		_LIT_002A1C24 = 0x002a1c24;
+		_LIT_002A1C28 = 0x002a1c28;
+		_LIT_002A1C2C = 0x002a1c2c;
+		_LIT_002A1C30 = 0x002a1c30;
+		_LIT_002A1C34 = 0x002a1c34;
+		_LIT_002A1C38 = 0x002a1c38;
+		_LIT_002A1C3C = 0x002a1c3c;
+		_LIT_002A1C40 = 0x002a1c40;
+		_LIT_002A1C44 = 0x002a1c44;
+		_LIT_002A1C48 = 0x002a1c48;
 		_LIT_002A1C50 = 0x002a1c50;
+		_LIT_002A1C5C = 0x002a1c5c;
+		_LIT_002A1C60 = 0x002a1c60;
+		_LIT_002A1C64 = 0x002a1c64;
 		_LIT_002A1C68 = 0x002a1c68;
 		_LIT_002A1C6C = 0x002a1c6c;
 		_LIT_002A1C70 = 0x002a1c70;
@@ -544,6 +591,13 @@ SECTIONS
 		_LIT_002A1CC8 = 0x002a1cc8;
 		_LIT_002A1CCC = 0x002a1ccc;
 		_LIT_002A1CD0 = 0x002a1cd0;
+		_LIT_002A1CD4 = 0x002a1cd4;
+		_LIT_002A1CD8 = 0x002a1cd8;
+		_LIT_002A1CDC = 0x002a1cdc;
+		_LIT_002A1CE0 = 0x002a1ce0;
+		_LIT_002A1CE4 = 0x002a1ce4;
+		_LIT_002A1CE8 = 0x002a1ce8;
+		_LIT_002A1CEC = 0x002a1cec;
 		_LIT_002A1CF0 = 0x002a1cf0;
 		_LIT_002A1CF4 = 0x002a1cf4;
 		_LIT_002A1CF8 = 0x002a1cf8;
@@ -553,16 +607,28 @@ SECTIONS
 		_LIT_002A1D08 = 0x002a1d08;
 		_LIT_002A1D0C = 0x002a1d0c;
 		_LIT_002A1D10 = 0x002a1d10;
+		_LIT_002A1D14 = 0x002a1d14;
 		_LIT_002A1D1C = 0x002a1d1c;
 		_LIT_002A1D20 = 0x002a1d20;
 		_LIT_002A1D24 = 0x002a1d24;
+		_LIT_002A1D28 = 0x002a1d28;
 		_LIT_002A1D30 = 0x002a1d30;
+		_LIT_002A1D38 = 0x002a1d38;
 		_LIT_002A1D3C = 0x002a1d3c;
+		_LIT_002A1D40 = 0x002a1d40;
+		_LIT_002A1D44 = 0x002a1d44;
+		_LIT_002A1D48 = 0x002a1d48;
+		_LIT_002A1D64 = 0x002a1d64;
 		_LIT_002A1D70 = 0x002a1d70;
+		_LIT_002A1D90 = 0x002a1d90;
+		_LIT_002A1D94 = 0x002a1d94;
 		_LIT_002A1D98 = 0x002a1d98;
 		_LIT_002A1D9C = 0x002a1d9c;
 		_LIT_002A1DB0 = 0x002a1db0;
 		_LIT_002A1DBC = 0x002a1dbc;
+		_LIT_002A1DC0 = 0x002a1dc0;
+		_LIT_002A1DC4 = 0x002a1dc4;
+		_LIT_002A1DC8 = 0x002a1dc8;
 		_LIT_002A1DCC = 0x002a1dcc;
 		_LIT_002A1DD0 = 0x002a1dd0;
 		_LIT_002A1DD8 = 0x002a1dd8;
@@ -626,14 +692,10 @@ SECTIONS
 		charakey.cpp.o (.sbss)
 		. = ALIGN(4);
 		main.sbss.part5b.s.o (.sbss)
-		userstatus.cpp.o (.sbss)
-		main.sbss.part6.s.o (.sbss)
-		monstorunit.cpp.o (.sbss)
-		main.sbss.part7.s.o (.sbss)
-		randomitem.cpp.o (.sbss)
-		main.sbss.part8.s.o (.sbss)
-		hitvalue.cpp.o (.sbss)
-		main.sbss.part9.s.o (.sbss)
+
+		// The dun overlay's own small data: its file-scope globals and the
+		// statics of its functions, in one run to the end of retail's.
+		gameloop.cpp.o (.sbss)         // 0x002a3460
 		*(.sbss)
 		*(.scommon)
 		*(SCOMMON)

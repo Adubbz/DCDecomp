@@ -67,7 +67,7 @@ set(BIN_FLAGS -B mips:5900 -I binary -O elf32-littlemips)
 
 # Decompiled globals replace these retail section dumps.
 set(REPLACED_SECTIONS main.bss main.data main.rdata main.sbss main.sdata
-                      title.data)
+                      title.data dun.data)
 
 set(ASM_SOURCES "")
 foreach(section IN LISTS SECTIONS)
@@ -152,6 +152,15 @@ carve_dump(title data.data.s
            data.data.part1b.s=1DDBF60-1DDBF68
            data.data.part2.s=1DDBF90-1DE1AFC)
 
+# The dun overlay is one unit, and the templates its local array initialisers
+# emit stand between the globals the dump still supplies, so the dump is cut
+# into the four runs the unit leaves behind.
+carve_dump(dun data.data.s
+           dun.data.part1.s=1DC1B00-1DC1B20
+           dun.data.part2.s=1DC1B60-1DC26D0
+           dun.data.part3.s=1DC2810-1DC2820
+           dun.data.part4.s=1DC2940-1DC2980)
+
 carve_part(main.data.part1.s
            main.data.part1.s=24FAC0-250B30
            main.data.part1b.s=250EB0-250F40)
@@ -183,6 +192,10 @@ carve_part(main.bss.part3.s
            main.bss.part3b.s=1C7B0C0-1CBB0C8)
 carve_part(main.sbss.part3.s
            main.sbss.part3.s=2A24FC-2A2500)
+# The dun overlay's small data runs from GameEnv to the end of retail's .sbss,
+# and the unit supplies all of it, so the dump stops in front of it.
+carve_part(main.sbss.part5b.s
+           main.sbss.part5b.s=2A2FD8-2A3460)
 carve_part(main.sbss.part4b.s
            main.sbss.part4b.s=2A25B8-2A2740
            main.sbss.part4c.s=2A27AC-2A29F8
@@ -202,7 +215,11 @@ list(REMOVE_ITEM STATIC_SECTION_SOURCES
      ${ASM_DATA_DIR}/main/parts/main.bss.part2b.s
      ${ASM_DATA_DIR}/main/parts/main.sbss.part1.s
      ${ASM_DATA_DIR}/main/parts/main.sbss.part1b.s
-     ${ASM_DATA_DIR}/main/parts/main.sbss.part2.s)
+     ${ASM_DATA_DIR}/main/parts/main.sbss.part2.s
+     ${ASM_DATA_DIR}/main/parts/main.sbss.part6.s
+     ${ASM_DATA_DIR}/main/parts/main.sbss.part7.s
+     ${ASM_DATA_DIR}/main/parts/main.sbss.part8.s
+     ${ASM_DATA_DIR}/main/parts/main.sbss.part9.s)
 
 set(FILTERED_SBSS_PART1 generated/asm/data/main/parts/main.sbss.part1.s)
 add_custom_command(

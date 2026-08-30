@@ -67,6 +67,11 @@ segments:
     bss_size: 0x142680
     subsegments:
       - {start: 0x0, type: bin, name: header, dir: dun}
+      # The one switch for the overlay: `cpp` compiles src/dun/gameloop.cpp, which is
+      # written whole; `asmtu` takes retail's own bytes instead. It stays on `asmtu`
+      # until the ten functions build/sizes.py reports are retail's length, because
+      # until then the unit's data starts at the wrong address
+      # (re/ai/dun/gameloop.md).
       - {start: 0x40, type: cpp, name: dun/gameloop}
       - {start: 0x15e00, type: data, name: data, dir: dun}
       - {start: 0x16c80, type: .rodata, name: dun/gameloop}

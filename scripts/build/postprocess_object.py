@@ -20,8 +20,8 @@ from mwccgap.elf import Elf  # noqa: E402
 from scripts.build import disassemble  # noqa: E402
 
 
-LOCAL_STATIC = re.compile(r"^(.+)\$(\d+)$")
-STATIC_RELOCATION = re.compile(r"%(?:gp_rel|hi|lo)\(([^)]+\$\d+)\)")
+LOCAL_STATIC = re.compile(r"^(.+)\$(\d+)(?:__\d+)?$")
+STATIC_RELOCATION = re.compile(r"%(?:gp_rel|hi|lo)\(([^)]+\$\d+(?:__\d+)?)\)")
 
 
 def local_static_aliases(elf, source):
@@ -49,9 +49,25 @@ def local_static_aliases(elf, source):
         if match:
             retail_groups[match.group(1)].append(name)
 
+    # Two run-once guards in one scope cannot both be spelled `init`, so the
+    # source calls the second `init2`; retail's compiler had no such trouble
+    # and named both `init`. Fold a trailing digit into the retail base name so
+    # the two are matched as one family.
+    def family(base):
+        if base in retail_groups:
+            return base
+        stripped = base.rstrip("0123456789")
+        return stripped if stripped in retail_groups else None
+
+    families = defaultdict(list)
+    for base, compiled in compiled_groups.items():
+        name = family(base)
+        if name is not None:
+            families[name] += compiled
+
     aliases = {}
-    for key, compiled in compiled_groups.items():
-        expected = retail_groups.get(key, [])
+    for key, compiled in families.items():
+        expected = retail_groups[key]
         if len(compiled) != len(expected):
             continue
         compiled.sort(key=lambda name: int(LOCAL_STATIC.match(name).group(2)))
@@ -68,9 +84,20 @@ DUMP_BYTES = re.compile(
     r"^\s*/\*\s*[0-9A-Fa-f]+\s+[0-9A-Fa-f]+\s+([0-9A-Fa-f]{8})\s*\*/")
 
 
+@functools.lru_cache(maxsize=None)
+def unit_dumps():
+    """The reference dumps that hold a whole unit rather than one symbol each.
+
+    An overlay is disassembled as one file, so a constant of its only unit has
+    no dump of its own to be found by name.
+    """
+    return sorted(p for p in ROOT.glob("asm/*/*.s")
+                  if not p.parent.name.startswith(("nonmatchings", "matchings", "data")))
+
+
 def retail_constant(name):
     """The bytes retail's dump holds for one named constant."""
-    for path in sorted(ROOT.glob("asm/**/%s.s" % name)):
+    for path in list(sorted(ROOT.glob("asm/**/%s.s" % name))) + unit_dumps():
         text = path.read_text(encoding="utf-8", errors="ignore")
         match = re.search(r"^glabel %s$" % re.escape(name), text, re.M)
         if not match:
@@ -267,6 +294,59 @@ def rename_sections(elf, mappings, parser):
             renamed[index] = section_name
 
 
+# A datum the compiler invented a name for: `@N` in retail's own build shows
+# up in the dump as `LIT_N`, a function-local static as `name$N`.
+NUMBERED_DATUM = re.compile(r"^(?:LIT_\d+|[A-Za-z_]\w*\$\d+)(?:__\d+)?$")
+
+
+def dump_data_symbols(name):
+    """The symbols of the `.data` dump that defines `name`, in address order."""
+    for path in sorted(ROOT.glob("asm/data/*/*.data.s")):
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        if not re.search(r"^glabel %s$" % re.escape(name), text, re.M):
+            continue
+        out, pending = [], None
+        for line in text.splitlines():
+            label = re.match(r"glabel (\S+)\s*$", line)
+            if label:
+                pending = label.group(1)
+            elif pending and DUMP_BYTES.match(line):
+                out.append(pending)
+                pending = None
+        return out
+    return []
+
+
+def data_runs(elf, runs, parser):
+    """Give a unit's later runs of generated data a section name of their own.
+
+    MWLD hands every same-named section of an object to the first linker script
+    line that names it, so a unit whose generated data is interleaved with the
+    dump's own globals needs one name per run. A run is keyed by the retail name
+    of the constant it starts with: the object's data sections and the dump's
+    compiler-numbered symbols are both in emission order, so their positions
+    correspond, and a length that disagrees is a template the source has gained
+    or lost.
+    """
+    if not runs:
+        return
+    sections = [index for index, section in enumerate(elf.sections)
+                if section.name == ".data" and section.sh_size]
+    retail = [name for name in dump_data_symbols(next(iter(runs.values())))
+              if NUMBERED_DATUM.match(name)]
+    if len(sections) != len(retail):
+        parser.error("the object has %d generated data sections and the dump "
+                     "%d; the source has gained or lost a template"
+                     % (len(sections), len(retail)))
+    for section_name, start in runs.items():
+        if start not in retail:
+            parser.error(f"the dump defines no {start!r}")
+        name_index = elf.add_sh_symbol(section_name)
+        for index in sections[retail.index(start):]:
+            elf.sections[index].sh_name = name_index
+            elf.sections[index].name = section_name
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("object", type=Path)
@@ -288,6 +368,7 @@ def main():
     config = json.loads(args.config.read_text(encoding="utf-8"))
     fixups = config.get(args.source, {})
     rename_sections(elf, fixups.get("sections", {}), parser)
+    data_runs(elf, fixups.get("data_runs", {}), parser)
     args.object.write_bytes(elf.pack())
 
     # After the rewrite: objcopy reads the file, so these have to be last.

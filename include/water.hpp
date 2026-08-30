@@ -17,6 +17,16 @@ class CDataAlloc2_1_; /* disassembler's filesystem-safe spelling of CDataAlloc2<
  */
 class CWater {
 public:
+    /**
+     * Copies one surface over another, field by field.
+     *
+     * @mangled __as__6CWaterFR6CWater
+     * @address 0x143260
+     * @size 0xF4
+     * @unknownret
+     */
+    CWater &operator=(CWater &);
+
     s32 unk_000;
     s32 unk_004;
     s32 unk_008;
