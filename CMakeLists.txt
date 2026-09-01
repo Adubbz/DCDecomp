@@ -242,6 +242,10 @@ list(APPEND ASM_SOURCES ${STATIC_SECTION_SOURCES})
 file(GLOB_RECURSE ALL_CPP_SOURCES CONFIGURE_DEPENDS
      RELATIVE ${CMAKE_SOURCE_DIR}
      ${CMAKE_SOURCE_DIR}/${SRC_DIR}/*.cpp ${CMAKE_SOURCE_DIR}/${SRC_DIR}/*.c)
+# tools/mwccgap compiles a temporary beside the source it came from, so a glob
+# that runs while another unit is compiling sees a file that is gone by the
+# time anything tries to build it.
+list(FILTER ALL_CPP_SOURCES EXCLUDE REGEX "(^|/)tmp[^/]*$")
 
 # Classify units as compiled or assembly-only.
 derive_config(--list-units unit_rows)

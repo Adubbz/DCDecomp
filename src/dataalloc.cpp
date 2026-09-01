@@ -1,3 +1,6 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
+
 #include "dataalloc.hpp"
 
 /* @ 0x143820 (0x30 bytes) -- __ct__14CDataAlloc2<1>Fv

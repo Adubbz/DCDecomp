@@ -1,3 +1,7 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
+#pragma name_counter 199
+
 #include "collisionmdt.hpp"
 #include "dataalloc.hpp"
 #include "frame.hpp"
@@ -149,7 +153,6 @@ void SetFrameAttr(CFrame* frame, int children)
         }
     }
 }
-
 
 int dset_mds_packet;
 int dset_mds_objnum;

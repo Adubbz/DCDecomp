@@ -27,13 +27,17 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* 
 
 
-# Install build requirements
+# Install build requirements. gdb is one of them: scripts/build/statefix.py
+# drives the compiler under it to put back the state MWCC carries and never
+# resets, which the build compiles every unit through. It has to be the full
+# gdb rather than gdb-minimal -- statefix runs as a gdb Python script.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         python3 \
         python3-venv \
         cmake \
         ninja-build \
+        gdb \
     && rm -rf /var/lib/apt/lists/*
 
 # The binutils built for PS2 decompilation projects. This is the assembler the

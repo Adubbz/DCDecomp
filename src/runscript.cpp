@@ -1,3 +1,7 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
+#pragma name_counter 68
+
 #include "runscript.hpp"
 #include "battle_globals.hpp"
 
@@ -5,6 +9,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+
 CRunScript::CRunScript()
 {
     sp = stack;

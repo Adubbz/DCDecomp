@@ -26,6 +26,17 @@ STATIC_RELOCATION = re.compile(r"%(?:gp_rel|hi|lo)\(([^)]+\$\d+(?:__\d+)?)\)")
 
 def local_static_aliases(elf, source):
     """Pair MWCC local statics with the retail names used by their unit."""
+    # What the object holds decides whether there is anything to pair, and it
+    # is already in hand -- reading the unit's reference assembly and retail's
+    # symbol table costs more than compiling most objects does.
+    compiled_groups = defaultdict(list)
+    for symbol in elf.symtab.symbols:
+        match = LOCAL_STATIC.match(symbol.name)
+        if match:
+            compiled_groups[match.group(1)].append(symbol.name)
+    if not compiled_groups:
+        return {}
+
     unit = next(
         (row for row in disassemble.read_units() if row[2] == source), None
     )
@@ -38,12 +49,7 @@ def local_static_aliases(elf, source):
         Path(reference), text, disassemble.read_symbol_table(),
         disassemble.image_of_file())
     retail = set(STATIC_RELOCATION.findall(text))
-    compiled_groups = defaultdict(list)
     retail_groups = defaultdict(list)
-    for symbol in elf.symtab.symbols:
-        match = LOCAL_STATIC.match(symbol.name)
-        if match:
-            compiled_groups[match.group(1)].append(symbol.name)
     for name in retail:
         match = LOCAL_STATIC.match(name)
         if match:

@@ -163,7 +163,11 @@ def read_units(config_dir=CONFIG, src_dir=SRC):
     """
     sources = {}
     for path in sorted(Path(src_dir).rglob("*")):
-        if path.suffix in (".c", ".cpp"):
+        # tools/mwccgap writes its second compile to a temporary beside the
+        # source it came from. It is gone again a moment later, so a scan that
+        # catches one would make a translation unit of a file the next scan
+        # cannot find.
+        if path.suffix in (".c", ".cpp") and not path.name.startswith("tmp"):
             unit = path.with_suffix("").relative_to(src_dir).as_posix()
             sources[unit] = path.as_posix()
 
@@ -761,6 +765,10 @@ def drop_redundant_dumps():
     return removed
 
 
+# How many objects one nm invocation is given.
+NM_BATCH = 256
+
+
 def write_symbol_aliases(out, objects):
     """Map the sanitised spelling of a symbol back to the one MWCC emits.
 
@@ -769,14 +777,24 @@ def write_symbol_aliases(out, objects):
     its base; nothing that links is renamed.
     """
     prefix = os.environ.get("MIPS_TOOL_PREFIX", "mips-ps2-decompals-")
+    present = [obj for obj in objects if os.path.exists(obj)]
     pairs = {}
-    for obj in objects:
-        if not os.path.exists(obj):
-            continue
+    # One nm per few hundred objects rather than one per object: the whole
+    # build's objects are passed in, and the process launches cost more than
+    # the reading does. nm prefixes each object's names with a `<path>:` line,
+    # which carries none of the characters looked for below.
+    for start in range(0, len(present), NM_BATCH):
         text = subprocess.run(
-            [prefix + "nm", "--defined-only", obj], capture_output=True, text=True
+            [prefix + "nm", "--defined-only", *present[start:start + NM_BATCH]],
+            capture_output=True,
+            text=True,
         ).stdout
         for line in text.splitlines():
+            # The `<path>:` line that starts each object's names, and the blank
+            # line before it. A symbol line always has the type letter and the
+            # name separated by a space.
+            if " " not in line:
+                continue
             name = line.split(" ", 2)[-1].strip()
             # Only the templated names. The dot in a function-local static is
             # the other thing normalize_sym folds, and MWCC spells that with
@@ -787,10 +805,15 @@ def write_symbol_aliases(out, objects):
             if sanitised != name:
                 pairs[sanitised] = name
 
+    body = "".join(f"{sanitised} {real}\n" for sanitised, real in sorted(pairs.items()))
     os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
-    with open(out, "w") as f:
-        for sanitised, real in sorted(pairs.items()):
-            f.write(f"{sanitised} {real}\n")
+    # Only when it has actually changed. Every object objdiff compares against
+    # is rebuilt when this file is newer than it, and the names in it move only
+    # when a template is added or retired -- so rewriting it unconditionally
+    # reassembles a hundred objects on every edit to any source.
+    if not os.path.exists(out) or open(out, encoding="utf-8").read() != body:
+        with open(out, "w", encoding="utf-8") as f:
+            f.write(body)
     print(f"disassemble: {len(pairs)} templated symbols -> {out}")
 
 
@@ -847,6 +870,18 @@ def main():
     if args.single:
         split_one(Path(args.single))
         return 0
+
+    # Before anything is removed: clear_generated() takes out the whole of the
+    # previous split, and the reference assembly is checked in, so a run that
+    # cannot reach splat -- the dev image does not carry it -- would leave the
+    # tree needing `git checkout -- asm` to get back.
+    try:
+        import splat  # noqa: F401
+        import spimdisasm  # noqa: F401
+    except ImportError as missing:
+        print(f"disassemble: {missing.name} is not installed, so nothing can be "
+              f"split; leaving the checked-in asm/ alone.", file=sys.stderr)
+        return 1
 
     # splat keeps the symbol table and the disassembler's context in module
     # globals, so a second image would split against the first one's symbols.

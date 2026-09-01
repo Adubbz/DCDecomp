@@ -15,6 +15,9 @@
 # A marker names its file's directory outright -- `asm/nonmatchings/<unit>` --
 # so the prefix below is the source root and nothing has to be looked up.
 #
+# A unit's markers are assembled several at a time; MWCCGAP_AS_JOBS says how
+# many, and 1 makes it one after another again.
+#
 # The second compile reads a temporary file, always named `.c`, so mwcc can no
 # longer tell the language from the extension -- `-lang` is passed explicitly,
 # picked from the real source's. The game's own code is C++; everything under
@@ -23,6 +26,14 @@
 # Argument order matters. mwccgap takes the two positionals first and passes
 # everything it does not recognise to mwcc, and `--as-flags` takes a list, so
 # it has to come last or it swallows the compiler's flags.
+#
+# The compiler is reached through scripts/build/statefix-wibo.sh rather than
+# wibo directly. MWCC carries state between the source files of one invocation
+# and resets none of it, and it reads memory nothing ever wrote; retail compiled
+# a whole program at once and this build compiles one unit at a time, so that
+# state is empty here where retail's was not. Each unit states what it is
+# compiled under with `#pragma helper_mask_gpr` and its neighbours, and the shim
+# is what makes the compiler act on them; see re/ai/compiler/leaked_state.md.
 set -e
 
 obj=$1
@@ -51,11 +62,18 @@ fi
 # spelled `#include <libvu0.h>` while the game's own headers come through -i.
 : "${LIB_INCLUDE_DIRS:=include/std;include/sce}"
 
+# mwccgap's second pass compiles a temporary whose name says nothing about the
+# unit, so the source is named through the environment for the parts of the
+# model that are per-unit.
+: "${STATEFIX_WIBO:=scripts/build/statefix-wibo.sh}"
+
 MWCIncludes=$LIB_INCLUDE_DIRS \
 PYTHONPATH=$MWCCGAP_DIR \
+STATEFIX_SOURCE=$src \
 python3 "$MWCCGAP_DIR/mwccgap.py" "$src" "$obj" \
     --mwcc-path "$MW_DIR/mwccmips.exe" \
     --use-wibo \
+    --wibo-path "$STATEFIX_WIBO" \
     --as-path "${MIPS_TOOL_PREFIX}as" \
     --as-march r5900 \
     --as-mabi eabi \

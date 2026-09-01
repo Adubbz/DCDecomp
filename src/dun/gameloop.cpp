@@ -1,3 +1,7 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
+#pragma name_counter 910
+
 #include "dun/gameloop.hpp"
 
 #include <libvu0.h>
@@ -2503,7 +2507,7 @@ void MainDraw(void) {
 
         static float bic_posr = -3.141592f;
 
-        bic_posr += 0.10471976f;
+        bic_posr += 0.104719736f;
         if (bic_posr >= 3.141592f) {
             bic_posr -= 6.283184f;
         }
@@ -2539,7 +2543,7 @@ void MainDraw(void) {
 
             static float bic_posr = -3.141592f;
 
-            bic_posr += 0.10471976f;
+            bic_posr += 0.104719736f;
             if (bic_posr >= 3.141592f) {
                 bic_posr -= 6.283184f;
             }
@@ -3045,7 +3049,9 @@ void MoveChara(void) {
                     velo__2[2] = move_z * run_speed__2;
                 }
                 if (stickVector <= 0.01f) {
-                    UserStatus->water_drain_disable = 1;
+                    CUserStatus *drain = UserStatus;
+
+                    drain->water_drain_disable = 1;
                 } else {
                     UserStatus->water_drain_disable = 0;
                 }
@@ -3372,7 +3378,7 @@ void MoveChara(void) {
                                     sceVu0FVECTOR slot_dir;
 
                                     if (state != NULL && state->event->chara_no != -1 &&
-                                        (s32) state->chara_done == UserStatus->cur_chara) {
+                                        UserStatus->cur_chara == state->chara_done) {
                                         state = NULL;
                                     }
                                     BtEventInfo.unk_2C = -1;
@@ -3448,8 +3454,8 @@ void MoveChara(void) {
                                         autoCamTrial();
                                     } else {
                                         BtEventItemNo = -1;
-                                        iventActive = NowDngMap->GetActiveIvent(CharaFrame);
-                                        if (iventActive != -1 && BtActStatus.unk_064 != 0 &&
+                                        if ((iventActive = NowDngMap->GetActiveIvent(CharaFrame)) != -1 &&
+                                            BtActStatus.unk_064 != 0 &&
                                             BtActStatus.unk_098 == 0) {
                                             iventInfo = NowDngMap->events[iventActive].kind;
                                             BtEventInfo.unk_38 = 1;
@@ -3632,8 +3638,7 @@ void MoveChara(void) {
                                                         BtBySpeedFlag = 1;
                                                         vol = &UserStatus
                                                                    ->active_item_vol[itemNowSel - 1];
-                                                        *vol -= 1;
-                                                        if (*vol <= 0) {
+                                                        if ((*vol -= 1) <= 0) {
                                                             DelActiveItem(itemNowSel);
                                                             DngMessMan.unk_24 = 0xB6;
                                                             DngMessMan.unk_0C =
@@ -3647,8 +3652,10 @@ void MoveChara(void) {
                                             if (GamePad.Down(0x80) != 0 && BtActStatus.unk_098 == 0 &&
                                                 BtActStatus.action_on == 0 && gameTask != 0xF0 &&
                                                 BtActStatus.unk_064 != 0) {
+                                                int used;
                                                 s16 *slots = UserStatus->active_item;
-                                                int used = checkItemUsed(itemNowSel - 1);
+
+                                                used = checkItemUsed(itemNowSel - 1);
 
                                                 if (activeItem.CheckStatusType() == 2 && used != 0 &&
                                                     slots[itemNowSel + 3] > 0) {
@@ -3665,8 +3672,8 @@ void MoveChara(void) {
                                                 }
                                                 if (activeItem.CheckStatusType() == 4 && used != 0 &&
                                                     slots[itemNowSel + 3] > 0) {
-                                                    s16 *item;
                                                     s16 *left;
+                                                    s16 *item;
 
                                                     setUnitAmbientAnime(64.0f, 1.0f, 0.0f, 122.0f,
                                                                         208.0f);
@@ -3758,10 +3765,10 @@ void MoveChara(void) {
                                                     }
                                                 } else {
                                                 step:
-                                                    int ok = 1;
-
                                                     BattleActionThlow();
                                                     BattleActionDrink();
+
+                                                    int ok = 1;
                                                     if (BtActStatus.action_on != 0) {
                                                         ok = 0;
                                                     }
@@ -3911,8 +3918,10 @@ void MoveChara(void) {
                                                                 // polygons come off
                                                                 // each part's own
                                                                 // collision model.
+                                                                int i = 0;
+
                                                                 colPolyNum = 0;
-                                                                for (int i = 0; NowDngMap->parts[i].frame[0] != NULL;
+                                                                for (; NowDngMap->parts[i].frame[0] != NULL;
                                                                      i++) {
                                                                     CFrame *collision;
                                                                     int turn;
@@ -4018,9 +4027,9 @@ void MoveChara(void) {
                                                                 colPolyNum = 0;
                                                                 for (z = 0; z < 20; z++) {
                                                                     for (x = 0; x < 20; x++) {
+                                                                        CDungeonMap *cmap = NowDngMap;
                                                                         int parts_no =
-                                                                            NowDngMap
-                                                                                ->cells[x + z * 20]
+                                                                            cmap->cells[x + z * 20]
                                                                                 .parts_no;
                                                                         CFrame *collision;
                                                                         MAP_CELL *cell;
@@ -4335,7 +4344,10 @@ void MoveChara(void) {
                     effects[i].Initialize();
                 }
                 NowMonstorUnit->CleanViewMonstor(BtUraDongeon);
-                ((CMonstorUnit *) NowMonstorUnit)->unk_094 = -1;
+
+                CMonstorUnit *unit = (CMonstorUnit *) NowMonstorUnit;
+
+                unit->unk_094 = -1;
                 driveStepHold = 0;
                 gameTask = 0x190;
             }
@@ -4379,8 +4391,11 @@ void MoveChara(void) {
                 }
                 MainMonstorUnit.CleanViewMonstor(BtUraDongeon);
                 MonstorModelBuffer.used = 0;
-                BtCashBuffer.buffer = MonstorModelBuffer.buffer;
-                BtCashBuffer.size = MonstorModelBuffer.size + 0x88B8;
+                u8 *cash = MonstorModelBuffer.buffer;
+                s32 cash_size = MonstorModelBuffer.size;
+
+                BtCashBuffer.buffer = cash;
+                BtCashBuffer.size = cash_size + 0x88B8;
                 BtCashBuffer.used = 0;
                 read_buffer = old_read_buffer + 0x88B80 / 4;
             }
@@ -4793,16 +4808,19 @@ void MoveChara(void) {
                 SndSePlay(1, -1, 0);
                 gameTask = 0x9B;
             } else {
-                int hand_ok;
                 int next_task;
                 int leaving;
+                int hand_ok;
 
                 if (StatusErrCheck(4) != 0) {
                     BtActStatus.unk_098 = 1;
                 }
                 HealingWater();
+
+                CUserStatus *drain2 = UserStatus;
+
                 hand_ok = 1;
-                UserStatus->water_drain_disable = 1;
+                drain2->water_drain_disable = 1;
                 next_task = 0;
                 leaving = 0;
                 if (NowDngMap->unk_BDEC != 1 && selectMapNo == 0) {
@@ -4825,8 +4843,10 @@ void MoveChara(void) {
                     bound.min[0] = pos[0] - 20.0f;
                     bound.min[1] = pos[1] - 40.0f;
                     bound.min[2] = pos[2] - 20.0f;
+                    int i = 0;
+
                     colPolyNum = 0;
-                    for (int i = 0; NowDngMap->parts[i].frame[0] != NULL; i++) {
+                    for (; NowDngMap->parts[i].frame[0] != NULL; i++) {
                         CFrame *collision;
                         int turn;
 
@@ -4894,8 +4914,9 @@ void MoveChara(void) {
                     DngMessMan.unk_08 = 0x5A;
                     hand_ok = 0;
                 }
-                if ((UserStatus->cur_chara == 1 || UserStatus->cur_chara == 3 ||
-                     UserStatus->cur_chara == 5) &&
+                s8 who = UserStatus->cur_chara;
+
+                if ((UserStatus->cur_chara == 1 || who == 3 || who == 5) &&
                     hand_ok != 0 && BtActStatus.unk_098 == 0) {
                     float head = viewAngleH__2;
 
@@ -5305,7 +5326,9 @@ void MoveChara(void) {
         case 0xC8: {
             int slot;
 
-            UserStatus->step_disable = 1;
+            CUserStatus *step2 = UserStatus;
+
+            step2->step_disable = 1;
             BtActStatus.unk_06C = 1;
             DngMessMan.unk_00 = 0;
             if (ruby_effect_id != -1 && UserStatus->cur_chara == 3) {
@@ -5415,8 +5438,10 @@ void MoveChara(void) {
         case 0x212: {
             s8 chara = UserStatus->cur_chara;
 
-            if (UserStatus->hp[chara] >= (UserStatus->max_hp[chara] >> 1)) {
-                UserStatus->step_disable = 1;
+            if (!(UserStatus->hp[chara] < (UserStatus->max_hp[chara] >> 1))) {
+                CUserStatus *stepper = UserStatus;
+
+                stepper->step_disable = 1;
                 gameTask++;
             }
             autoCamTrial();
@@ -6019,7 +6044,7 @@ void BtCleatRandomMap(void) {
     NowDngMap->buildEventData(UserStatus->cur_floor, NowDngMap->unk_BDEC, 1);
     NowDngMap->FlushCheckMask();
     NowDngMap->DrawMapCalc(NowDngMap->unk_BDEC);
-    NowEventMan->SetupEvent(NowDngMap, NowDngMap->unk_BDEC);
+    NowEventMan->SetupEvent(NowDngMap, (s32) NowDngMap->unk_BDEC);
 
     // The back dungeon starts from the floor that was just built, then lays
     // out its own events and items on top.
@@ -6059,7 +6084,7 @@ void BtCleatRandomMap(void) {
     UraDungeonMap.buildEventData(UserStatus->cur_floor, UraDungeonMap.unk_BDEC, 0);
     UraDungeonMap.FlushCheckMask();
     UraDungeonMap.DrawMapCalc(UraDungeonMap.unk_BDEC);
-    UraEventMan.SetupEvent(&UraDungeonMap, UraDungeonMap.unk_BDEC);
+    UraEventMan.SetupEvent(&UraDungeonMap, (s32) UraDungeonMap.unk_BDEC);
 
     NowDngMap = &MainDungeonMap;
     NowEventMan = &DngEventMan;
@@ -6194,8 +6219,10 @@ void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out) {
         return;
     }
 
-    NowWeapon->SetPosition(0.0f, 0.0f, 0.0f);
-    NowWeapon->SetRotation(0.0f, 0.0f, 0.0f);
+    float zero = 0.0f;
+
+    NowWeapon->SetPosition(zero, zero, zero);
+    NowWeapon->SetRotation(zero, zero, zero);
     NowWeapon->frame->SetReference(hand);
     NowWeapon->Step();
 
@@ -6266,8 +6293,10 @@ void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned 
     CUserStatus *equipped = UserStatus;
     s8 chara_no = equipped->cur_chara;
 
-    MenuWeaponSpSet(NowWeapon,
-                    &equipped->chara_weapons[chara_no][equipped->equipped_weapon_slot[chara_no]]);
+    WEAPON_HAVE *have =
+        &equipped->chara_weapons[chara_no][equipped->equipped_weapon_slot[chara_no]];
+
+    MenuWeaponSpSet(NowWeapon, have);
     BtActStatus.unk_048 = 100.0f;
     BtActStatus.unk_0A4 = 0;
 }
@@ -6617,9 +6646,9 @@ static void LoadData(void) {
     wait_now_loading_vsync();
     LoadChara2(UserStatus->cur_chara, 1, read_buffer, weapon_data_0,
                weapon_data_1, equipped_weapon_data);
-    float chara_x = 200.0f;
+    float chara_z = 150.0f;
 
-    CharaFrame->SetPosition(chara_x, 0.0f, 150.0f);
+    CharaFrame->SetPosition(200.0f, 0.0f, chara_z);
 
     BT_SHOT_EFFECT *main_effect = Get_Main_EffectPtr(UserStatus->cur_chara, 0);
     LoadFile("dun/mainchara/wep_eff/c01_fuusya.chr", read_buffer, NULL);
@@ -7054,8 +7083,9 @@ void BattleActionThlow(void) {
 
             float heading = atan2f(aim[0] - stood[0], aim[2] - stood[2]);
             float turned = unitRotation((CFrameVu1 *) CharaFrame, heading);
+            float zero = 0.0f;
 
-            CharaFrame->SetRotation(0.0f, turned, 0.0f);
+            CharaFrame->SetRotation(zero, turned, zero);
             BtActStatus.unk_00C = 0x1A;
         } else {
             BombInfo.unk_14 = 0;
@@ -7074,14 +7104,12 @@ void BattleActionThlow(void) {
             SndSePlay(0x96, -1, 0);
 
             s16 *slots = UserStatus->active_item;
-            s16 *item = &slots[itemNowSel];
-            s16 *left = &item[3];
 
-            if (*left == 1) {
-                *item = -1;
+            if (slots[itemNowSel + 3] == 1) {
+                slots[itemNowSel] = -1;
                 slots[itemNowSel + 3] = 0;
             } else {
-                (*left)--;
+                slots[itemNowSel + 3]--;
             }
 
             if (lockOnTargetFlag == 0) {
@@ -7135,8 +7163,8 @@ void BattleActionThlow(void) {
                 }
                 BombInfo.unk_18++;
             }
-            BtActStatus.unk_00C = 0x1B;
         }
+        BtActStatus.unk_00C = 0x1B;
     }
 
     if (BombInfo.unk_18 == 2) {
@@ -7191,15 +7219,13 @@ void BattleActionDrink(void) {
         usedActiveItem(UserStatus, running);
 
         s16 *slots = UserStatus->active_item;
-        s16 *item = &slots[itemNowSel];
-        s16 *left = &item[3];
 
         // The last use takes the item away; anything else just spends one.
-        if (*left == 1) {
-            *item = -1;
+        if (slots[itemNowSel + 3] == 1) {
+            slots[itemNowSel] = -1;
             slots[itemNowSel + 3] = 0;
         } else {
-            (*left)--;
+            slots[itemNowSel + 3]--;
         }
 
         if (activeItem.model[8] != -1) {
@@ -7286,7 +7312,9 @@ void BattleActionPlay_Jinn(CCharacter *chara, int aimed) {
                 if (hand != NULL) {
                     hand->GetWorldPosition(world, offset);
                     if (lockOnTargetFlag == 0) {
-                        setShotVector(vector, 5.0f, CharaMain.GetRotation()->y, 0.0f);
+                        float y = CharaMain.GetRotation()->y;
+
+                        setShotVector(vector, 5.0f, y, 0.0f);
                     } else {
                         vector[0] = BtActStatus.unk_080[0] - world[0];
                         vector[1] = BtActStatus.unk_080[1] - world[1];
@@ -7431,11 +7459,12 @@ void BattleActionShotRuby(CCharacter *chara, int aimed, float scale, int repeat)
             shot_no = NowMainEffect->Set(ruby_effect_pos, ruby_effect_vec, 3, element, 0, NULL, 1);
         }
 
-        if (shot_no != -1) {
-            NowMainEffect->SetWepStatus(NowWeaponHave->flags);
-            NowMainEffect->SetVsMonster(NowWeaponHave->vs_monster);
-            NowMainEffect->SetDmg(damage);
+        if (shot_no == -1) {
+            return;
         }
+        NowMainEffect->SetWepStatus(NowWeaponHave->flags);
+        NowMainEffect->SetVsMonster(NowWeaponHave->vs_monster);
+        NowMainEffect->SetDmg(damage);
         return;
     }
 
@@ -8252,19 +8281,17 @@ void DelActiveItem(int slot) {
     // The two arrays are adjacent, and retail walks the second one off the
     // first rather than off the save data again.
     s16 *slots = UserStatus->active_item;
-    s16 *item = &slots[slot];
-    s16 *left = &item[3];
 
     // The last use takes the item away; anything else just spends one.
-    if (*left == 1) {
-        *item = -1;
-        *left = 0;
+    if (slots[slot + 3] == 1) {
+        slots[slot] = -1;
+        slots[slot + 3] = 0;
         if (activeItem.model[slot] != -1) {
             activeItem.models->DeleteModel(activeItem.model[slot]);
             activeItem.model[slot] = -1;
         }
     } else {
-        (*left)--;
+        slots[slot + 3]--;
     }
 }
 
@@ -8481,23 +8508,29 @@ int SetNearLockOnTarget(int from, int nearest_only) {
     sceVu0FVECTOR pos[16];
     float dist[16];
     int found[16];
-    sceVu0FVECTOR forward = {0.0f, 0.0f, 1.0f, 1.0f};
-    sceVu0FMATRIX unit;
-    sceVu0FMATRIX turn;
-    int order[16];
-    int screen[4];
     float away;
     float rate;
+    int k;
     int i;
     int count;
     int n;
-    int k;
     int j;
     int m;
 
     rate = CharaRangeRate(status);
 
     CharaFrame->GetRotation(at);
+
+    // Declared here rather than with the rest: mwcc emits a local array's
+    // template copy where the declaration stands, and retail's lands after
+    // the two calls above, not before them. The slots still come out where
+    // they do above, because everything ahead of these is still ahead of them.
+    sceVu0FVECTOR forward = {0.0f, 0.0f, 1.0f, 1.0f};
+    sceVu0FMATRIX unit;
+    sceVu0FMATRIX turn;
+    int order[16];
+    int screen[4];
+
     sceVu0UnitMatrix(unit);
     sceVu0RotMatrixY(turn, unit, at[1]);
     sceVu0ApplyMatrix(forward, turn, forward);
@@ -8562,12 +8595,16 @@ int SetNearLockOnTarget(int from, int nearest_only) {
         return 0;
     }
 
+    // Split from the loop below: mwcc emits the initialisation where the
+    // statement stands, which is ahead of the loop that clears order[].
+    k = 0;
+
     for (n = 0; n < 16; n++) {
         order[n] = -1;
     }
 
     // The nearest one that is still free goes into each place in turn.
-    for (k = 0; k < count; k++) {
+    for (; k < count; k++) {
         j = 0;
         while (found[j] == -1) {
             j++;

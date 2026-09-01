@@ -1,3 +1,7 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
+#pragma name_counter 744
+
 #include "dataalloc.hpp"
 
 u_char* CDataAlloc2<1>::Alloc(int quads)

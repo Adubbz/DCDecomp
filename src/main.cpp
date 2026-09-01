@@ -1,3 +1,7 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
+#pragma name_counter 873
+
 // C imports
 #include <cstring>
 // Our imports
@@ -9,7 +13,6 @@
 #include "debugfont.hpp"
 #include "sound.hpp"
 #include "runscript.hpp"
-
 
 /* Global, GLOBAL-linkage per retail `nm` (0x1cbc9b0, `T`). Purpose beyond
  * being constructed here is unanalyzed -- out of scope for this pass. */

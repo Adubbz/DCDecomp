@@ -1,3 +1,7 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
+#pragma name_counter 250
+
 #include "mglib.hpp"
 #include "types.h"
 
@@ -1372,7 +1376,6 @@ void MGStretchMoveImage(sceGsTex0 *src, const CRect_i_ &src_rect, sceGsTex0 *dst
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 }
-
 
 INCLUDE_ASM("asm/nonmatchings/mglib", MGMoveFrameBuffImage__FP9sceGsTex0iii);
 INCLUDE_ASM("asm/nonmatchings/mglib", MGFillBox__FRC8CRect_i_UcUcUcUc);

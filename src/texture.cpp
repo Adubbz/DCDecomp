@@ -1,3 +1,7 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
+#pragma name_counter 221
+
 #include "dataalloc.hpp"
 #include <eekernel.h>
 #include "common.h"
@@ -13,7 +17,6 @@
 
 #include <cstdlib>
 
-
 /* TEX0 with the block address ahead of the buffer width, which is not the order the SDK's own
    macro puts the two in. The order decides which term the compiler computes first, so the two
    spellings are not interchangeable and this file needs its own. */
@@ -22,7 +25,6 @@
      ((u_long)(tw) << 26) | ((u_long)(th) << 30) | ((u_long)(tcc) << 34) | \
      ((u_long)(tfx) << 35) | ((u_long)(cbp) << 37) | ((u_long)(cpsm) << 51) | \
      ((u_long)(csm) << 55) | ((u_long)(csa) << 56) | ((u_long)(cld) << 61))
-
 
 /* The IMG archive's directory as the registry walks it: a header at the start of the buffer the
    file was read into and one fixed-size entry per picture behind it. */

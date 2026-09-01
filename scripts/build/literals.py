@@ -126,6 +126,9 @@ PLACEMENT = re.compile(
 # has to be kept in step between the objects and the linker script.
 LITERAL_SYM = re.compile(r'^_LIT_([0-9A-F]{8})$')
 
+# The suffix splat puts on all but the first copy of a duplicated name.
+SUFFIX = re.compile(r'__\d+$')
+
 
 def literal_symbol(address):
     return f'_LIT_{address:08X}'
@@ -383,6 +386,7 @@ class Retail:
         self._units = None
         self._loads = {}
         self._unit_loads = {}
+        self._unit_names = {}
 
     def _path(self, *parts):
         return os.path.join(self.root, *parts)
@@ -506,6 +510,38 @@ class Retail:
         self._loads[name] = loads
         return loads
 
+    def local_name(self, obj_name, name, extent=None):
+        """Retail's name for one of an object's functions, inside its own unit.
+
+        A name retail uses more than once carries a `__N` suffix on all but
+        the first copy, and the object still spells it without one, so a bare
+        lookup finds whichever copy the symbol table lists first. For an
+        overlay that is the wrong one: a different unit, with different
+        literal loads. Resolving inside the unit's own span fixes it.
+        """
+        key = self._unit_names.get(obj_name)
+        if key is None:
+            key = {}
+            span = self.units.get(obj_name)
+            if span is not None:
+                start, end = span
+                if end is None and extent:
+                    end = start + extent
+                _by_name, by_address = self.functions
+                first = bisect.bisect_left(by_address, (start, ''))
+                window = []
+                for address, candidate in by_address[first:]:
+                    if end is not None and address >= end:
+                        break
+                    window.append(candidate)
+                # An exact name wins over one reached by stripping a suffix.
+                for candidate in window:
+                    key[candidate] = candidate
+                for candidate in window:
+                    key.setdefault(SUFFIX.sub('', candidate), candidate)
+            self._unit_names[obj_name] = key
+        return key.get(name, name)
+
     def unit_loads(self, obj_name):
         """{value: [address]} for everything one translation unit loads."""
         if obj_name in self._unit_loads:
@@ -569,8 +605,13 @@ def bind(path, retail, report):
     for group in sites.values():
         group.sort(key=lambda pair: pair[0])
 
+    # MWCC gives every function its own `.text`, so the unit's extent is the
+    # sum of them, not the largest.
+    extent = sum(sec.size for sec in obj.sections
+                 if sec.name == '.text' or sec.name.startswith('.text.'))
     for name, group in sorted(sites.items(), key=lambda kv: kv[0] or ''):
-        for _offset, rel, address, how in resolve(retail, obj_name, name,
+        local = retail.local_name(obj_name, name, extent) if name else name
+        for _offset, rel, address, how in resolve(retail, obj_name, local,
                                                   group, entries):
             report.note(how, path, name, entries[rel.sym][1])
             if address is None:

@@ -20,6 +20,7 @@ one of them names has no decompiled base for objdiff to compare against.
 """
 
 import argparse
+import bisect
 import json
 import os
 import re
@@ -302,10 +303,37 @@ def owners(placed, section):
 
 
 def owner_of(spans, address):
-    for start, end, source in spans:
-        if start <= address and (end is None or address < end):
-            return source
-    return None
+    """Which unit covers an address, from the spans one image was cut into.
+
+    `owners` returns the spans in address order, so the only candidate is the
+    last one starting at or below the address.
+    """
+    # A one-element key sorts ahead of any span that starts at the same
+    # address, so this counts the spans starting at or below `address` without
+    # comparing the `end` of any of them -- which is None for the last one.
+    i = bisect.bisect_right(spans, (address + 1,)) - 1
+    if i < 0:
+        return None
+    _start, end, source = spans[i]
+    if end is not None and address >= end:
+        return None
+    return source
+
+
+def owned_symbols(placed, functions, section):
+    """{source: [symbol]} for one image, each unit's functions in address order.
+
+    The same answer as calling `owner_of` for every function, resolved once for
+    the whole image: a caller that wants every unit's symbols would otherwise
+    re-cut the image and re-scan it per unit.
+    """
+    spans = owners(placed, section)
+    grouped = {}
+    for address, symbol, _size, _path in functions[section]:
+        source = owner_of(spans, address)
+        if source is not None:
+            grouped.setdefault(source, []).append(symbol)
+    return grouped
 
 
 def check(placed, functions, marked):
@@ -409,6 +437,8 @@ def objdiff(path, placed, functions, marked, build_dir, declared):
     kinds = {source: kind for kind, _image, source, _ref
              in disassemble.read_units()}
     reference = unit_references()
+    # Every unit's functions, resolved once per image rather than once per unit.
+    owned = {image: owned_symbols(placed, functions, image) for image in SECTIONS}
 
     unit_list, decompiled, fuzzy_units = [], 0, 0
     for address, image, source in placed:
@@ -437,11 +467,7 @@ def objdiff(path, placed, functions, marked, build_dir, declared):
         if kinds.get(source) != "asm":
             unit["base_path"] = f"{build_dir}/diff/{source}.o"
 
-        here = [
-            symbol
-            for _a, symbol, _s, _p in functions[image]
-            if owner_of(owners(placed, image), _a) == source
-        ]
+        here = owned[image].get(source, [])
         # `complete` says the unit is finished, and objdiff takes it at its
         # word -- so it is only set when nothing in the unit is still supplied
         # by a marker. Anything less and the whole unit would count as matched.

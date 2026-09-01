@@ -1,3 +1,5 @@
+#pragma helper_mask_fpr 0x1000
+
 #include "camera.hpp"
 
 #include <libvu0.h>

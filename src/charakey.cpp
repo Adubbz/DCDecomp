@@ -1,3 +1,7 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
+#pragma name_counter 836
+
 #include "common.h"
 
 /* The per-character special-attack key handlers: Toan's, Ungaga's and Goro's,

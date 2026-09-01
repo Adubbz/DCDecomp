@@ -1,3 +1,7 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
+#pragma name_counter 187
+
 #include "common.h"
 #include "sce/libcdvd.h"
 #include "sce/sifdev.h"
@@ -576,7 +580,6 @@ int GetPackFileExt(u_int *pack, char *ext, u_int **files, int max, int *sizes, c
     }
     return found;
 }
-
 
 static void CommandSIZE(void **argv);
 static void CommandFRAME(void **argv);

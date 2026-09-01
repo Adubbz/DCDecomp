@@ -1,3 +1,5 @@
+#pragma name_counter 245
+
 #include "mathutil.hpp"
 
 #include <cmath>

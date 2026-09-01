@@ -1,3 +1,7 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
+#pragma name_counter 775
+
 #include "character.hpp"
 #include "cloth.hpp"
 #include "dataalloc.hpp"
@@ -33,7 +37,6 @@ struct MOTION_FILE_INFO {
 };
 
 typedef MOTION_INFO tagMOTION_KEY;
-
 
 extern "C" double atof(const char* string);
 extern "C" int atoi(const char* string);
@@ -110,7 +113,6 @@ static char alloc_dbuff[9][16];
 static char alloc_smdt[9][16];
 static char alloc_sdbuff[9][16];
 static u_int* load_img[4];
-
 
 static COMMAND_INFO Command[19] = {
     {"VERTEX_ANIME", {1, -1}},
@@ -640,7 +642,6 @@ static void PreProcess(input_str& input)
         i++;
     }
 }
-
 
 INCLUDE_ASM("asm/nonmatchings/chararead", StopCloth__10CCharacterFi);
 INCLUDE_ASM("asm/nonmatchings/chararead", StretchBind2__FPfPfPf);
