@@ -5,7 +5,8 @@
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
-class CDataAlloc2_1_;
+template <int Kind>
+class CDataAlloc2;
 class CRunScript;
 struct RS_STACKDATA;
 struct SHOP_ITEMLIST;
@@ -791,7 +792,7 @@ void _SET_SHADOW_FLAG(RS_STACKDATA *, int);
  * @size 0xB0
  * @unknownret
  */
-void BtSetEventScript(CRunScript *, char *, CDataAlloc2_1_ *);
+void BtSetEventScript(CRunScript *, char *, CDataAlloc2<1> *);
 
 /**
  * @mangled BtSetEventExtendTable__Fv

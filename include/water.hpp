@@ -10,7 +10,8 @@
 
 struct RenderInfo;
 struct sceVif1Packet;
-class CDataAlloc2_1_; /* disassembler's filesystem-safe spelling of CDataAlloc2<1> (dataalloc.hpp) */
+template <int Kind>
+class CDataAlloc2; /* disassembler's filesystem-safe spelling of CDataAlloc2<1> (dataalloc.hpp) */
 
 /**
  * Draws the water surface of one map part.
@@ -115,7 +116,7 @@ public:
      * @size 0x1B0
      * @unknownret
      */
-    void SetSize(int, int, CDataAlloc2_1_ *);
+    void SetSize(int, int, CDataAlloc2<1> *);
 
     /**
      * @mangled __ct__6CWaterFv

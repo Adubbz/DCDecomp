@@ -25,6 +25,9 @@ public:
     u_char *Alloc64(int quads);
     void Align64();
 
+    /** Hands the whole arena back, without touching what is in it. */
+    void Reset() { used = 0; }
+
     u_char *base;   /**< Start of the allocator-owned storage. */
     u_char *buffer; /**< Current allocation cursor. */
     int used;       /**< Number of occupied quadwords. */
@@ -56,6 +59,9 @@ public:
     u_char *Alloc(int quads);
     u_char *Alloc64(int quads);
     void Align64();
+
+    /** Hands the whole arena back, without touching what is in it. */
+    void Reset() { used = 0; }
 
     u_char *base;   /**< Start of the allocator-owned storage. */
     u_char *buffer; /**< Current allocation cursor. */

@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include <libvu0.h>
+
 /**
  * @file
  * Declares the light that stands in for a point light.
@@ -12,12 +14,12 @@
  */
 class CFakePointLight {
 public:
-    u8 unk_00[16];
-    float unk_10[4];
-    float unk_20;
-    float unk_24;
-    s32 unk_28;
-    u8 unk_2c[4];
+    sceVu0FVECTOR pos; /**< World position that the light comes from. */
+    float colour[4];   /**< Colour that the light gives. */
+    float inner_range; /**< Distance up to which the light gives its whole colour. */
+    float outer_range; /**< Distance past which the light gives nothing. */
+    s32 used;          /**< 1 while the slot lights something. */
+    float unk_2C;
 
     /**
      * Makes a light that is white, and that reaches from ten units away to

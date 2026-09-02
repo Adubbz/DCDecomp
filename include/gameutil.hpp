@@ -132,8 +132,13 @@ STATIC_ASSERT(sizeof(MOTION_STATE) == 0x20);
  * Describes the frames of one model that a motion drives.
  */
 struct tagFRAME_INF {
-    u8 unk_00[4];
+    s32 frame;            /**< Frame of the model this entry drives. */
+    u8 unk_04[12];
+    sceVu0FMATRIX matrix; /**< Transform the driver interpolates into the frame. */
+    u8 unk_50[128];
 };
+
+STATIC_ASSERT(sizeof(tagFRAME_INF) == 0xD0);
 
 /**
  * Carries one set of motions, the state that plays them and the frames that

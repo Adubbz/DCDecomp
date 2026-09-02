@@ -7,7 +7,8 @@ class CFrame;
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
-class CDataAlloc2_1_;
+template <int Kind>
+class CDataAlloc2;
 struct MOTION_INFO;
 
 
@@ -22,7 +23,7 @@ public:
      * @size 0x2A0
      * @unknownret
      */
-    void LoadPack(unsigned int *, char *, CDataAlloc2_1_ *, CDataAlloc2_1_ *, MOTION_INFO *, int);
+    void LoadPack(unsigned int *, char *, CDataAlloc2<1> *, CDataAlloc2<1> *, MOTION_INFO *, int);
 
     /**
      * @mangled Step__12CMotionModelFv

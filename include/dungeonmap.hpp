@@ -17,7 +17,8 @@ class CBoxVu0;
 class CCPoly;
 class CCamera;
 class CCameraFollow;
-class CDataAlloc2_1_;
+template <int Kind>
+class CDataAlloc2;
 class CFrame;
 class CFrameVu1;
 
@@ -190,7 +191,7 @@ public:
      * @size 0x270
      * @unknownret
      */
-    void SetNPC(int, unsigned int *, int, sceVu0FVECTOR, sceVu0FVECTOR, int, int, CDataAlloc2_1_ *);
+    void SetNPC(int, unsigned int *, int, sceVu0FVECTOR, sceVu0FVECTOR, int, int, CDataAlloc2<1> *);
 
     /**
      * Sets the number of copies to draw of every character to zero.
@@ -569,7 +570,7 @@ public:
      * @size 0x3A0
      * @unknownret
      */
-    void initSubmap(CDataAlloc2_1_ *);
+    void initSubmap(CDataAlloc2<1> *);
 
     /**
      * @mangled initalize__11CDungeonMapFv

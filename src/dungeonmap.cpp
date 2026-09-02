@@ -151,7 +151,7 @@ s32 chainTableDividDoor[2][3] = {
 
 #if DNG_COMPILE_UNMATCHED
 void CDungeonMap::SetNPC(int npc_no, unsigned int *pack, int parts_no, sceVu0FVECTOR pos, sceVu0FVECTOR rot,
-                         int visible, int motion_no, CDataAlloc2_1_ *alloc) {
+                         int visible, int motion_no, CDataAlloc2<1> *alloc) {
     int i;
 
     if (this->npc[npc_no].used != 0) {
@@ -3270,7 +3270,7 @@ void CDungeonMap::buildRandomMap(int room_max, int full) {
 INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_3190);
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", buildRandomMap__11CDungeonMapFii);
 
-void CDungeonMap::initSubmap(CDataAlloc2_1_ *alloc) {
+void CDungeonMap::initSubmap(CDataAlloc2<1> *alloc) {
     int i;
     int j;
 

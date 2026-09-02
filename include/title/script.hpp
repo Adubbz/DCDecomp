@@ -147,5 +147,8 @@ public:
 
 STATIC_ASSERT(sizeof(CScript) == 0xE300);
 
+/** Command grammar recognized by the title script parser. */
 extern CSCRIPT_COMMAND Command[26];
+
+/** Shared title script parser and pending scene requests. */
 extern CScript CScript;

@@ -42,6 +42,10 @@ function(overlay_rename_flags name out_var)
         --rename-section .data=${p}data
         --rename-section .rodata=${p}rodata
         --rename-section .bss=${p}bss
+        # The static initialisers an overlay's units carry run from the
+        # overlay, not from main: retail keeps them with the overlay's data.
+        --rename-section .init=${p}init
+        --rename-section .ctor=${p}ctor
         PARENT_SCOPE)
 endfunction()
 
@@ -64,6 +68,8 @@ function(overlay_header name out_var)
         _${name}_data = 0;
         _${name}_bss = 0;
         _${name}_end = 0;
+        _${name}_static_init = 0;
+        _${name}_static_init_end = 0;
 
         _${name}_load = .;
         WRITEB 0x4D;                            // 'M'

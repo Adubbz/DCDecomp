@@ -11,7 +11,8 @@
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 class CCharacter;
-class CDataAlloc2_1_;
+template <int Kind>
+class CDataAlloc2;
 
 /**
  * Reads one character out of a pack file: its model, its motions, its textures
@@ -22,6 +23,6 @@ class CDataAlloc2_1_;
  * @size 0x260
  * @unknownret
  */
-void ReadInfo(CCharacter *chara, unsigned int *pack, char *name, CDataAlloc2_1_ *model_alloc,
-              CDataAlloc2_1_ *motion_alloc, CDataAlloc2_1_ *texture_alloc, int motion_set,
-              CDataAlloc2_1_ *extend_alloc, int texture_block, int preserve_texture);
+void ReadInfo(CCharacter *chara, unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc,
+              CDataAlloc2<1> *motion_alloc, CDataAlloc2<1> *texture_alloc, int motion_set,
+              CDataAlloc2<1> *extend_alloc, int texture_block, int preserve_texture);

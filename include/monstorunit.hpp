@@ -7,7 +7,8 @@
 #include "character.hpp"
 
 class CDungeonMap;
-class CDataAlloc2_1_; /* disassembler's filesystem-safe spelling of CDataAlloc2<1> (dataalloc.hpp) */
+template <int Kind>
+class CDataAlloc2; /* disassembler's filesystem-safe spelling of CDataAlloc2<1> (dataalloc.hpp) */
 
 class CFrame;
 
@@ -232,7 +233,7 @@ public:
      * @size 0x420
      * @unknownret
      */
-    int SetupBaseModel(int, int, int, CDataAlloc2_1_ *);
+    int SetupBaseModel(int, int, int, CDataAlloc2<1> *);
 
     /**
      * @mangled SetupViewMonstor__12CMonstorUnitFiPfi

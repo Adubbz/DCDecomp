@@ -6,7 +6,8 @@
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 struct BT_SHOT_EFFECT;
-class CDataAlloc2_1_;
+template <int Kind>
+class CDataAlloc2;
 class CFrame;
 
 class CSHOT_EFFECT {
@@ -51,7 +52,7 @@ public:
      * @size 0x5F0
      * @unknownret
      */
-    void Entry(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2_1_ *, int);
+    void Entry(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
 
     /**
      * @mangled Entry2__12CSHOT_EFFECTFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i
@@ -59,7 +60,7 @@ public:
      * @size 0x5B0
      * @unknownret
      */
-    int Entry2(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2_1_ *, int);
+    int Entry2(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
 
     /**
      * @mangled ReEntry__12CSHOT_EFFECTFP14BT_SHOT_EFFECTP14CDataAlloc2_1_
@@ -67,7 +68,7 @@ public:
      * @size 0x510
      * @unknownret
      */
-    void ReEntry(BT_SHOT_EFFECT *, CDataAlloc2_1_ *);
+    void ReEntry(BT_SHOT_EFFECT *, CDataAlloc2<1> *);
 
     /**
      * @mangled SetLoop__12CSHOT_EFFECTFi

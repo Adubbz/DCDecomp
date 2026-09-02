@@ -8,7 +8,7 @@
  * Older reconstructed units use this assembler-safe class spelling; its layout is identical to
  * the canonical template specialization declared in `dataalloc.hpp`.
  */
-class CDataAlloc2_1_ {
+class CDataAlloc2<1> {
 public:
     u8 *buffer;  /**< Points to the start of the external allocation buffer. */
     u32 backing; /**< Preserves the allocator's second pointer word. */

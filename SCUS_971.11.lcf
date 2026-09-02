@@ -40,6 +40,7 @@ SECTIONS
         op_d.cpp.o        (.ttext)   // 0x01dc3c90
         rushmovi.cpp.o    (.ttext)   // 0x01dc8930
         title.cpp.o       (.ttext)   // 0x01dcb2b0
+        titleloop.cpp.o   (.ttext)   // 0x01dd1ab0
         logo.cpp.o        (.ttext)   // 0x01dd3e00
         sprite.cpp.o      (.ttext)   // 0x01dd4420
         cursol.cpp.o      (.ttext)   // 0x01dd4cc0
@@ -47,29 +48,89 @@ SECTIONS
         tisound.cpp.o     (.ttext)   // 0x01dd5240
         *(.ttext)
 
-        . = ALIGN(16);
+        // The overlay's data starts on the segment alignment, not the
+        // sixteen bytes a function needs.
+        . = ALIGN(128);
         _title_data = .;
 
         // Each datum takes the slot its own object asks for rather than the
-        // sixteen bytes MWLD would give it.
+        // sixteen bytes MWLD would give it. Retail collects initialized data
+        // from every unit before collecting their constants.
         ALIGNALL(1);
+        script.cpp.o      (.tdata)
+        dispfade.cpp.o    (.tdata)
+        bombeffect.cpp.o  (.tdata)
+        majinbeem.cpp.o   (.tdata)
+        seireiking.cpp.o  (.tdata)
+        opening.cpp.o     (.tdata)
+        op_a.cpp.o        (.tdata)
+        op_b.cpp.o        (.tdata)
+        op_c.cpp.o        (.tdata)
+        op_d.cpp.o        (.tdata)
+        rushmovi.cpp.o    (.tdata)
+        title.cpp.o       (.tdata)
+        titleloop.cpp.o       (.tdata)
+        logo.cpp.o        (.tdata)
+        sprite.cpp.o      (.tdata)
+        cursol.cpp.o      (.tdata)
+        scfader.cpp.o     (.tdata)
+        tisound.cpp.o     (.tdata)
 
-        // The overlay keeps its constants with its data, in the order the
-        // whole unit once compiled them, so the dump stops in front of each
-        // decompiled unit's run and picks up after it.
-        data.data.part1.s.o  (.tdata)     // 0x01dd5380
-        script.cpp.o         (.trodata)   // 0x01ddbec0
-        bombeffect.cpp.o     (.trodata)   // 0x01ddbf48
+        // Retail starts the constants on the segment alignment, the way it
+        // starts the data and the static initialisers.
+        . = ALIGN(128);
+        script.cpp.o      (.trodata)   // 0x01ddbd80
+        dispfade.cpp.o    (.trodata)
+        bombeffect.cpp.o  (.trodata)
+        majinbeem.cpp.o   (.trodata)
+        seireiking.cpp.o  (.trodata)
+        opening.cpp.o     (.trodata)
+        op_a.cpp.o        (.trodata)
+        op_b.cpp.o        (.trodata)
+        op_c.cpp.o        (.trodata)
+        op_d.cpp.o        (.trodata)
+        rushmovi.cpp.o    (.trodata)
+        title.cpp.o       (.trodata)
+        titleloop.cpp.o     (.trodata)
+        logo.cpp.o        (.trodata)
+        sprite.cpp.o      (.trodata)
+        cursol.cpp.o      (.trodata)
+        scfader.cpp.o     (.trodata)
+        tisound.cpp.o     (.trodata)
+
+        // The overlay's static initialisers and the table that calls them.
+        // Retail starts them on the segment alignment rather than the sixteen
+        // bytes a function needs: its last constant ends at 0x01de0f16.
+        . = ALIGN(128);
+        *(.tinit)                         // 0x01de0f80
         . = ALIGN(16);
-        data.data.part1b.s.o (.tdata)     // 0x01ddbf60
-        seireiking.cpp.o     (.trodata)   // 0x01ddbf68
-        . = ALIGN(16);
-        data.data.part2.s.o  (.tdata)     // 0x01ddbf90
+        _title_static_init = .;           // 0x01de1ae0
+        *(.tctor)
+        _title_static_init_end = .;       // 0x01de1afc
+
         *(.tdata)
         *(.trodata)
 
         ALIGNALL(1);
         _title_bss = .;
+        script.cpp.o      (.tbss)
+        dispfade.cpp.o    (.tbss)
+        bombeffect.cpp.o  (.tbss)
+        majinbeem.cpp.o   (.tbss)
+        seireiking.cpp.o  (.tbss)
+        opening.cpp.o     (.tbss)
+        op_a.cpp.o        (.tbss)
+        op_b.cpp.o        (.tbss)
+        op_c.cpp.o        (.tbss)
+        op_d.cpp.o        (.tbss)
+        rushmovi.cpp.o    (.tbss)
+        title.cpp.o       (.tbss)
+        titleloop.cpp.o        (.tbss)
+        logo.cpp.o        (.tbss)
+        sprite.cpp.o      (.tbss)
+        cursol.cpp.o      (.tbss)
+        scfader.cpp.o     (.tbss)
+        tisound.cpp.o     (.tbss)
         *(.tbss)
         _title_end = .;
     } > title
@@ -480,14 +541,18 @@ SECTIONS
 		_LIT_002A1800 = 0x002a1800;
 		_LIT_002A1808 = 0x002a1808;
 		_LIT_002A1818 = 0x002a1818;
+		_LIT_002A1830 = 0x002a1830;
+		_LIT_002A1838 = 0x002a1838;
 		_LIT_002A1868 = 0x002a1868;
 		_LIT_002A186C = 0x002a186c;
 		_LIT_002A1870 = 0x002a1870;
 		_LIT_002A1874 = 0x002a1874;
+		_LIT_002A1878 = 0x002a1878;
 		_LIT_002A1880 = 0x002a1880;
 		_LIT_002A1884 = 0x002a1884;
 		_LIT_002A1888 = 0x002a1888;
 		_LIT_002A188C = 0x002a188c;
+		_LIT_002A1890 = 0x002a1890;
 		_LIT_002A1894 = 0x002a1894;
 		_LIT_002A18A0 = 0x002a18a0;
 		_LIT_002A18A4 = 0x002a18a4;
@@ -506,8 +571,14 @@ SECTIONS
 		_LIT_002A18DC = 0x002a18dc;
 		_LIT_002A18E0 = 0x002a18e0;
 		_LIT_002A18E4 = 0x002a18e4;
+		_LIT_002A18E8 = 0x002a18e8;
 		_LIT_002A18EC = 0x002a18ec;
 		_LIT_002A18F0 = 0x002a18f0;
+		_LIT_002A18F4 = 0x002a18f4;
+		_LIT_002A18F8 = 0x002a18f8;
+		_LIT_002A18FC = 0x002a18fc;
+		_LIT_002A1900 = 0x002a1900;
+		_LIT_002A1904 = 0x002a1904;
 		_LIT_002A1908 = 0x002a1908;
 		_LIT_002A1918 = 0x002a1918;
 		_LIT_002A1928 = 0x002a1928;
@@ -524,8 +595,18 @@ SECTIONS
 		_LIT_002A1960 = 0x002a1960;
 		_LIT_002A1988 = 0x002a1988;
 		_LIT_002A1990 = 0x002a1990;
+		_LIT_002A199C = 0x002a199c;
+		_LIT_002A19A0 = 0x002a19a0;
+		_LIT_002A19BC = 0x002a19bc;
 		_LIT_002A19C0 = 0x002a19c0;
+		_LIT_002A19C4 = 0x002a19c4;
+		_LIT_002A19C8 = 0x002a19c8;
+		_LIT_002A19CC = 0x002a19cc;
+		_LIT_002A19D0 = 0x002a19d0;
+		_LIT_002A19D4 = 0x002a19d4;
 		_LIT_002A19E0 = 0x002a19e0;
+		_LIT_002A19E4 = 0x002a19e4;
+		_LIT_002A19E8 = 0x002a19e8;
 		_LIT_002A19F0 = 0x002a19f0;
 		_LIT_002A19F4 = 0x002a19f4;
 		_LIT_002A1A04 = 0x002a1a04;
@@ -535,20 +616,62 @@ SECTIONS
 		_LIT_002A1A38 = 0x002a1a38;
 		_LIT_002A1A3C = 0x002a1a3c;
 		_LIT_002A1A40 = 0x002a1a40;
+		_LIT_002A1A58 = 0x002a1a58;
+		_LIT_002A1A7C = 0x002a1a7c;
 		_LIT_002A1A80 = 0x002a1a80;
+		_LIT_002A1A84 = 0x002a1a84;
 		_LIT_002A1A8C = 0x002a1a8c;
 		_LIT_002A1A94 = 0x002a1a94;
 		_LIT_002A1A98 = 0x002a1a98;
 		_LIT_002A1A9C = 0x002a1a9c;
 		_LIT_002A1AA0 = 0x002a1aa0;
+		_LIT_002A1AB8 = 0x002a1ab8;
 		_LIT_002A1ACC = 0x002a1acc;
 		_LIT_002A1AF8 = 0x002a1af8;
 		_LIT_002A1B24 = 0x002a1b24;
 		_LIT_002A1B28 = 0x002a1b28;
 		_LIT_002A1B5C = 0x002a1b5c;
+		_LIT_002A1B74 = 0x002a1b74;
+		_LIT_002A1B78 = 0x002a1b78;
+		_LIT_002A1B7C = 0x002a1b7c;
+		_LIT_002A1B80 = 0x002a1b80;
+		_LIT_002A1B84 = 0x002a1b84;
+		_LIT_002A1B88 = 0x002a1b88;
+		_LIT_002A1B8C = 0x002a1b8c;
+		_LIT_002A1B90 = 0x002a1b90;
+		_LIT_002A1B94 = 0x002a1b94;
+		_LIT_002A1B98 = 0x002a1b98;
+		_LIT_002A1B9C = 0x002a1b9c;
+		_LIT_002A1BA0 = 0x002a1ba0;
+		_LIT_002A1BA4 = 0x002a1ba4;
+		_LIT_002A1BA8 = 0x002a1ba8;
+		_LIT_002A1BAC = 0x002a1bac;
+		_LIT_002A1BB0 = 0x002a1bb0;
+		_LIT_002A1BB4 = 0x002a1bb4;
+		_LIT_002A1BB8 = 0x002a1bb8;
+		_LIT_002A1BBC = 0x002a1bbc;
+		_LIT_002A1BC0 = 0x002a1bc0;
+		_LIT_002A1BC4 = 0x002a1bc4;
+		_LIT_002A1BC8 = 0x002a1bc8;
 		_LIT_002A1BCC = 0x002a1bcc;
 		_LIT_002A1BD0 = 0x002a1bd0;
+		_LIT_002A1BD4 = 0x002a1bd4;
+		_LIT_002A1BD8 = 0x002a1bd8;
+		_LIT_002A1BDC = 0x002a1bdc;
+		_LIT_002A1BE0 = 0x002a1be0;
+		_LIT_002A1BE4 = 0x002a1be4;
+		_LIT_002A1BE8 = 0x002a1be8;
+		_LIT_002A1BEC = 0x002a1bec;
+		_LIT_002A1BF0 = 0x002a1bf0;
+		_LIT_002A1BF4 = 0x002a1bf4;
+		_LIT_002A1BF8 = 0x002a1bf8;
+		_LIT_002A1BFC = 0x002a1bfc;
+		_LIT_002A1C00 = 0x002a1c00;
 		_LIT_002A1C04 = 0x002a1c04;
+		_LIT_002A1C08 = 0x002a1c08;
+		_LIT_002A1C0C = 0x002a1c0c;
+		_LIT_002A1C10 = 0x002a1c10;
+		_LIT_002A1C14 = 0x002a1c14;
 		_LIT_002A1C18 = 0x002a1c18;
 		_LIT_002A1C24 = 0x002a1c24;
 		_LIT_002A1C28 = 0x002a1c28;
@@ -670,7 +793,18 @@ SECTIONS
 		edit.cpp.o (.sdata)            // 0x002a1f24
 		main.sdata.part2d.s.o (.sdata) // 0x002a1f50
 		stockitem.cpp.o (.sdata)
-		main.sdata.part3.s.o (.sdata)
+
+		// The title overlay's small data, reached through $gp like its small
+		// bss, one run per object in link order.
+		opening.cpp.o (.sdata)         // 0x002a2220
+		op_a.cpp.o (.sdata)            // 0x002a2248
+		op_b.cpp.o (.sdata)            // 0x002a2258
+		op_c.cpp.o (.sdata)            // 0x002a2260
+		op_d.cpp.o (.sdata)            // 0x002a2278
+		title.cpp.o (.sdata)           // 0x002a2280
+		titleloop.cpp.o (.sdata)
+		sprite.cpp.o (.sdata)          // 0x002a22d8
+		main.sdata.part3.s.o (.sdata)  // 0x002a22e0
 		*(.sdata)
 
 		# sbss
@@ -703,7 +837,23 @@ SECTIONS
 		main.sbss.part5.s.o (.sbss)
 		charakey.cpp.o (.sbss)
 		. = ALIGN(4);
-		main.sbss.part5b.s.o (.sbss)
+		main.sbss.part5b.s.o (.sbss)   // 0x002a2fd8
+
+		// The title overlay's small data. Its units keep it in main's image
+		// because it is reached through $gp, one contiguous run per object,
+		// so the dump is cut into the runs the units leave between them.
+		opening.cpp.o (.sbss)          // 0x002a2ff0
+		op_a.cpp.o (.sbss)             // 0x002a30a4
+		op_b.cpp.o (.sbss)             // 0x002a3194
+		op_c.cpp.o (.sbss)             // 0x002a31c8
+		op_d.cpp.o (.sbss)             // 0x002a3270
+		// Retail rounds the end of the run up; op_d's last static is a
+		// one-byte guard.
+		. = ALIGN(4);
+		main.sbss.part5d.s.o (.sbss)   // 0x002a33a0
+		rushmovi.cpp.o (.sbss)         // 0x002a33a4
+		title.cpp.o (.sbss)            // 0x002a340c
+		titleloop.cpp.o (.sbss)
 
 		// The dun overlay's own small data: its file-scope globals and the
 		// statics of its functions, in one run to the end of retail's.
@@ -725,15 +875,21 @@ SECTIONS
 		mglib.cpp.o (.mgbss2)          // 0x01c7a6c0
 		texture.cpp.o (.bss)           // 0x01c7a830  texData
 		chararead.cpp.o (.bss)         // 0x01c7ae70
-		main.bss.part3b.s.o (.bss)     // 0x01c7b0c0
+		dataread.cpp.o (.bss)          // 0x01c7b0c0  header_buff, bg_read_info
 		mainselect.cpp.o (.bss)
 		gamepad.cpp.o (.bss)
 		main.cpp.o (.bss)
-		main.bss.part4.s.o (.bss)
+		main.bss.part4.s.o (.bss)      // 0x01ce7570
+		gameutil.cpp.o (.bss)          // 0x01cece80
+		main.bss.part4d.s.o (.bss)     // 0x01cecf00
 		clsmes.cpp.o (.bss)
-		main.bss.part4b.s.o (.bss)
+		main.bss.part4b.s.o (.bss)     // 0x01cf91f0
+		edit.cpp.o (.bss)              // 0x01d19720
+		main.bss.part4c.s.o (.bss)     // 0x01d19aa0
 		editpartsinfo.cpp.o (.bss)
-		main.bss.part5.s.o (.bss)
+		main.bss.part5.s.o (.bss)      // 0x01d1b218
+		edit.cpp.o (.fadecolbss)       // 0x01d3d1c0
+		main.bss.part5b.s.o (.bss)     // 0x01d3d1d0
 		dungeonmap.cpp.o (.bss)
 		main.bss.part6.s.o (.bss)
 		*(.bss)

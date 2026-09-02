@@ -3,6 +3,8 @@
 #include "common.h"
 
 /**
+ *          Initializes title cinematic scene A.
+ *
  * @mangled InitProcA__Fv
  * @address 0x1DCB560
  * @size 0x830
@@ -11,6 +13,8 @@
 void InitProcA(void);
 
 /**
+ *          Draws title cinematic scene A.
+ *
  * @mangled DrawProcA__Fv
  * @address 0x1DCBD90
  * @size 0x7E0
@@ -184,9 +188,11 @@ void TitleInit(int);
  * @size 0x9F0
  * @unknownret
  */
-void TitleLoop(void);
+int TitleLoop(void);
 
 /**
+ *          Draws the active title cinematic or title-screen scene.
+ *
  * @mangled TitleDraw__Fv
  * @address 0x1DD2C10
  * @size 0x11F0

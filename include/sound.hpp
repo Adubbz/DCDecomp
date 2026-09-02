@@ -2,6 +2,36 @@
 
 #include "common.h"
 
+/**
+ *          One sequence the MIDI player holds, which is what the music is
+ *          played and faded through.
+ */
+struct MIDI_SEQUENCE {
+    u8 unk_00[12];
+    s32 volume; /**< Volume the sequence plays at, out of 256. */
+};
+
+/**
+ *          What the MIDI player is doing. Only what the title movie reads is
+ *          named; the extents are the gaps between those fields.
+ */
+struct MIDI_STATE {
+    u8 unk_00[48];
+    MIDI_SEQUENCE *sequence; /**< Sequence that plays now. */
+    u8 unk_34[40];
+    s32 unk_5C;
+    u8 unk_60[140];
+    s32 unk_EC;
+    u8 unk_F0[108];
+    s32 unk_15C;
+    u8 unk_160[268];
+    s32 unk_26C;
+    u8 unk_270[124];
+    s32 unk_2EC;
+    u8 unk_2F0[124];
+    s32 unk_36C;
+};
+
 class CSound {
 public:
     /**
@@ -10,7 +40,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void GetMidiState(void);
+    MIDI_STATE *GetMidiState(void);
 
     /**
      * @mangled GetSeInfTbl__6CSoundFv
@@ -18,7 +48,7 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void GetSeInfTbl(void);
+    short *GetSeInfTbl(void);
 
     /**
      * @mangled GetSeNo__6CSoundFii
@@ -26,7 +56,7 @@ public:
      * @size 0x80
      * @unknownret
      */
-    void GetSeNo(int, int);
+    int GetSeNo(int, int);
 
     /**
      * @mangled StopVoice__6CSoundFi

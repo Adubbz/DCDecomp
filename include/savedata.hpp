@@ -451,7 +451,7 @@ public:
 private:
     s32 config[18];         /**< Contains the configuration values. */
     char chara_name[6][64]; /**< Contains the name of each character. */
-    char unk_1C8[4];
+    s32 map_no; /**< Map that the game resumes on. */
     s32 unk_1CC;
     float now_time;             /**< Contains the time of day. */
     s32 play_time;              /**< Contains the play time. */

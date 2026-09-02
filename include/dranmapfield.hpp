@@ -9,7 +9,8 @@
 // names but not where they live.
 class CBoxVu0;
 class CCPoly;
-class CDataAlloc2_1_;
+template <int Kind>
+class CDataAlloc2;
 
 class CDranMapField : public CCharacter {
 public:
@@ -19,7 +20,7 @@ public:
      * @size 0x150
      * @unknownret
      */
-    void LoadModel(unsigned int *, CDataAlloc2_1_ *);
+    void LoadModel(unsigned int *, CDataAlloc2<1> *);
 
     /**
      * @mangled AddCollision__13CDranMapFieldFP6CCPolyi7CBoxVu0
@@ -35,7 +36,7 @@ public:
      * @size 0x110
      * @unknownret
      */
-    void LoadCollision(unsigned int *, CDataAlloc2_1_ *);
+    void LoadCollision(unsigned int *, CDataAlloc2<1> *);
 
     /**
      * @mangled Draw__13CDranMapFieldFv

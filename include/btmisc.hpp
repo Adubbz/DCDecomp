@@ -2,7 +2,8 @@
 
 #include "common.h"
 
-class CDataAlloc2_1_;
+template <int Kind>
+class CDataAlloc2;
 class CFrame;
 class CFrameVu1;
 
@@ -13,7 +14,7 @@ class CFrameVu1;
  * @address 0x1B6D70
  * @size 0x8C
  */
-CFrame *LoadMDSFilePack(unsigned int *pack, char *name, CDataAlloc2_1_ *buffer);
+CFrame *LoadMDSFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *buffer);
 
 /**
  * Loads a collision model from a pack file.
@@ -22,7 +23,7 @@ CFrame *LoadMDSFilePack(unsigned int *pack, char *name, CDataAlloc2_1_ *buffer);
  * @address 0x1B6E00
  * @size 0x80
  */
-CFrame *LoadCollisionFilePack(unsigned int *pack, char *name, CDataAlloc2_1_ *buffer);
+CFrame *LoadCollisionFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *buffer);
 
 /**
  * Reads the collision model a whole file holds.
@@ -31,7 +32,7 @@ CFrame *LoadCollisionFilePack(unsigned int *pack, char *name, CDataAlloc2_1_ *bu
  * @address 0x126F70
  * @size 0x2E0
  */
-CFrame *LoadCollisionFile(unsigned int *data, CDataAlloc2_1_ *buffer);
+CFrame *LoadCollisionFile(unsigned int *data, CDataAlloc2<1> *buffer);
 
 /**
  * Loads a model from memory.
@@ -40,7 +41,7 @@ CFrame *LoadCollisionFile(unsigned int *data, CDataAlloc2_1_ *buffer);
  * @address 0x1262B0
  * @size 0x4BC
  */
-CFrame *LoadMDSFile(unsigned int *data, CDataAlloc2_1_ *buffer, int flags,
+CFrame *LoadMDSFile(unsigned int *data, CDataAlloc2<1> *buffer, int flags,
                     char **model_name, char **texture_name);
 
 /**

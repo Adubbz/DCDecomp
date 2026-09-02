@@ -723,7 +723,7 @@ int ClsMes::MyTextureMake_sub(void) {
             return 0;
     }
 
-    if ((code >= -0x700 && code < -0x600) || (code >= -0x800 && code < -0x700) ||
+    if ((code >= -0x700 && code <= -0x601) || (code >= -0x800 && code <= -0x701) ||
         (code >= -0x900 && code < -0x800)) {
         this->text_at += 1.0f;
         return 0;
@@ -1236,14 +1236,14 @@ void ClsMes::InitMesWinTbl(void) {
 }
 
 int ClsMes::SetMesWinTbl(int code, int mode, short x, short y) {
-    if (code >= -0x200 && code < -0x100) {
+    if (code >= -0x200 && code <= -0x101) {
         if (this->win_line_num > 0) {
             this->win_line[this->win_line_num - 1].space += code + 0x200;
         }
         return 0;
     }
 
-    if (code >= -0x400 && code < -0x300) {
+    if (code >= -0x400 && code <= -0x301) {
         if (code + 0x400 == 0) {
             this->clut_now = this->clut_default;
         } else if (code == -0x301) {
@@ -1254,7 +1254,7 @@ int ClsMes::SetMesWinTbl(int code, int mode, short x, short y) {
         return 0;
     }
 
-    if (code >= -0xA00 && code < -0x900) {
+    if (code >= -0xA00 && code <= -0x901) {
         this->fukidashi_shape = code + 0xA00;
         return 0;
     }
@@ -1514,11 +1514,11 @@ void ClsMes::NeedMesWinWH(int mes_no, int *out) {
                 break;
 
             default:
-                if (code >= -0x200 && code < -0x100) {
+                if (code >= -0x200 && code <= -0x101) {
                     continue;
-                } else if (code >= -0x400 && code < -0x300) {
+                } else if (code >= -0x400 && code <= -0x301) {
                     continue;
-                } else if (code >= -0xA00 && code < -0x900) {
+                } else if (code >= -0xA00 && code <= -0x901) {
                     continue;
                 } else if (code >= -0x900 && code < -0x800) {
                     this->space_area = (code + 0x900) * 4;

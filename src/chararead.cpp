@@ -290,7 +290,7 @@ static void CommandMOTION(void** argv)
     character->ClearEvent(now_motion_data);
     if (now_motion_data < 0 || now_motion_data >= 8) return;
     if (now_motion_data > 0) character->motion_ptr[now_motion_data] =
-        (tagMOTION_TYPE *)character->unk_420[now_motion_data];
+        (tagMOTION_TYPE *)character->unk_420[now_motion_data].unk_00;
     tagMOTION_TYPE* motion = character->motion_ptr[now_motion_data];
     memset(motion, 0, sizeof(tagMOTION_TYPE));
     char* name1 = (char*)argv[1];
@@ -324,7 +324,7 @@ static void CommandSHADOW_MOTION(void** argv)
     if (character->shadow_model == 0) return;
     if (now_motion_data < 0 || now_motion_data >= 8) return;
     if (now_motion_data > 0) character->shadow_motion_ptr[now_motion_data] =
-        (tagMOTION_TYPE *)character->unk_820[now_motion_data];
+        (tagMOTION_TYPE *)character->unk_820[now_motion_data].unk_00;
     tagMOTION_TYPE* motion = character->shadow_motion_ptr[now_motion_data];
     memset(motion, 0, sizeof(tagMOTION_TYPE));
     shadow_motion = 1;
@@ -382,18 +382,18 @@ static void CommandMOTION_END(void**)
     motion_info[motion_info_num].speed = -1.0f;
     motion->motion_info = motion_info;
     motion->state.time = (float)motion->motion_info->start;
-    motion->state.unk_04 = 0.1f;
-    motion->state.unk_10 = 0;
+    motion->state.unk_08 = 0.1f;
     motion->state.motion_no = 0;
     motion->state.playing_no = 0;
+    motion->state.unk_1C = 0;
     if (shadow_motion != 0) {
         tagMOTION_TYPE* shadow = character->shadow_motion_ptr[now_motion_data];
         shadow->motion_info = motion_info;
         shadow->state.time = (float)shadow->motion_info->start;
-        shadow->state.unk_04 = 0.1f;
-        shadow->state.unk_10 = 0;
+        shadow->state.unk_08 = 0.1f;
         shadow->state.motion_no = 0;
         shadow->state.playing_no = 0;
+        shadow->state.unk_1C = 0;
     }
     character->motion_end[now_motion_data] = key_start + key_no;
 }

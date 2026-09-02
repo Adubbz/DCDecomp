@@ -6,7 +6,8 @@
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 struct BT_SHOT_EFFECT;
-class CDataAlloc2_1_;
+template <int Kind>
+class CDataAlloc2;
 
 
 class CSHOT_EFFECT_PACK {
@@ -17,7 +18,7 @@ public:
      * @size 0x100
      * @unknownret
      */
-    void Entry(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2_1_ *, int);
+    void Entry(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
 
     /**
      * @mangled SetUserID2__17CSHOT_EFFECT_PACKFi

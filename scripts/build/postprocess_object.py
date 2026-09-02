@@ -103,7 +103,10 @@ def unit_dumps():
 
 def retail_constant(name):
     """The bytes retail's dump holds for one named constant."""
-    for path in list(sorted(ROOT.glob("asm/**/%s.s" % name))) + unit_dumps():
+    paths = (list(sorted(ROOT.glob("asm/**/%s.s" % name)))
+             + list(sorted(ROOT.glob("asm/data/*/*.data.s")))
+             + unit_dumps())
+    for path in paths:
         text = path.read_text(encoding="utf-8", errors="ignore")
         match = re.search(r"^glabel %s$" % re.escape(name), text, re.M)
         if not match:
@@ -353,6 +356,170 @@ def data_runs(elf, runs, parser):
             elf.sections[index].name = section_name
 
 
+DISCARD_SECTION = ".discard"
+MWCATS_PREFIX = ".mwcats_"
+
+
+def drop_functions(elf, names, parser):
+    """Keep a function out of the link without keeping it out of the compile.
+
+    A few of the movie's units carry a function nothing calls and retail's link
+    removed. They cannot simply be deleted: the compiler carries state from one
+    definition to the next, and taking one out moves the constants of the
+    definitions after it. MWLD lays a section out whatever its flags say, so
+    the section is given a name of its own here and objcopy takes it away
+    below; the compiler still saw the definition.
+    """
+    if not names:
+        return
+    wanted = set(names)
+    # MWCC names a function the linker may merge in a `.mwcats` section of its
+    # own, under a section symbol spelling the function. Only the entry for a
+    # function going away may be taken with it: the rest are what let MWLD keep
+    # one copy of a constructor the compiler wrote itself.
+    markers = {MWCATS_PREFIX + name for name in names}
+    name_index = elf.add_sh_symbol(DISCARD_SECTION)
+    for symbol in elf.symtab.symbols:
+        if symbol.name in wanted | markers and symbol.st_shndx:
+            section = elf.sections[symbol.st_shndx]
+            section.sh_name = name_index
+            section.name = DISCARD_SECTION
+            wanted.discard(symbol.name)
+    if wanted:
+        parser.error("the object defines no %s" % ", ".join(sorted(wanted)))
+
+
+# Where a transplanted function's constants land. mwccgap gives them a section
+# of their own so the second compile can tell them from the ones it wrote; by
+# here they are ordinary constants again. Renaming it through objcopy rebuilds
+# the symbol table and turns MWCC's coalesced globals local, which costs the
+# link a copy of every constructor the compiler wrote itself, so it is done
+# here instead -- and only for the objects that carry one.
+TRANSPLANTED_RODATA = ".rodata.gap"
+
+
+def restore_transplanted_rodata(elf):
+    """Fold mwccgap's constants back into .rodata."""
+    renamed = [index for index, section in enumerate(elf.sections)
+               if section.name == TRANSPLANTED_RODATA]
+    if not renamed:
+        return
+    name_index = elf.add_sh_symbol(".rodata")
+    for index in renamed:
+        elf.sections[index].sh_name = name_index
+        elf.sections[index].name = ".rodata"
+    # The section symbol carries the name a second time, and MWLD reads it
+    # from there when it reports where a constant was meant to go.
+    for symbol in elf.symtab.symbols:
+        if symbol.name == TRANSPLANTED_RODATA and symbol.st_shndx in renamed:
+            symbol.name = ".rodata"
+            symbol.st_name = elf.strtab.add_symbol(".rodata")
+
+
+# A constructor or destructor MWCC writes itself, which every unit that needs
+# its address emits a copy of. Retail's overlay carries none of them: its units
+# reach the one copy main holds.
+GENERATED_MEMBER = re.compile(r"^__(?:ct|dt)__")
+
+
+def extern_functions(elf, names, parser):
+    """Let a unit reach main's copy instead of laying out its own.
+
+    MWLD keeps one copy of a constructor the compiler wrote itself only when
+    every copy is one the compiler wrote: retail's is assembled, at a fixed
+    address in main, so a compiled copy beside it is a second definition and
+    the link fails. The definition goes in the section objcopy takes away
+    below and the symbol is left undefined, which is what the relocation
+    needs to bind to main's.
+    """
+    if not names:
+        return
+    wanted = set(names)
+    name_index = elf.add_sh_symbol(DISCARD_SECTION)
+    for symbol in elf.symtab.symbols:
+        if symbol.name in wanted and symbol.st_shndx:
+            section = elf.sections[symbol.st_shndx]
+            section.sh_name = name_index
+            section.name = DISCARD_SECTION
+            symbol.st_shndx = 0
+            symbol.st_value = 0
+            symbol.st_size = 0
+            wanted.discard(symbol.name)
+    if wanted:
+        parser.error("the object defines no %s" % ", ".join(sorted(wanted)))
+
+
+def shared_constant_name(text):
+    """The name two units reach one constant by."""
+    return "_S_" + re.sub(r"\W", "_", text)
+
+
+def constant_sections(elf, wanted):
+    """{text: symbol} for each wanted string the object holds its own copy of."""
+    found = {}
+    for symbol in elf.symtab.symbols:
+        if not symbol.st_shndx or symbol.st_shndx >= len(elf.sections):
+            continue
+        data = elf.sections[symbol.st_shndx].data
+        for text in wanted:
+            if data is not None and data.startswith(text.encode() + b"\0") \
+                    and len(data) - len(text) - 1 < 16:
+                found.setdefault(text, symbol)
+    return found
+
+
+def share_constants(elf, exported, imported, parser):
+    """Keep one copy of a constant two units use, the way retail's link has it.
+
+    MWCC gives every unit its own copy of a string it names, and MWLD merges
+    none of them: retail's own image holds `opdat/chara/01p19a1a.chr` once, in
+    op_a, with op_b's table pointing at it. Whichever unit retail leaves it in
+    names it here and exports it; the others drop their copy and reach that one.
+    """
+    if not exported and not imported:
+        return
+    found = constant_sections(elf, list(exported) + list(imported))
+    missing = [t for t in list(exported) + list(imported) if t not in found]
+    if missing:
+        parser.error("the object holds no %s" % ", ".join(repr(m) for m in missing))
+    for text in exported:
+        symbol = found[text]
+        symbol.name = shared_constant_name(text)
+        symbol.st_name = elf.strtab.add_symbol(symbol.name)
+        symbol.st_info = (1 << 4) | (symbol.st_info & 0xF)     # STB_GLOBAL
+    if imported:
+        name_index = elf.add_sh_symbol(DISCARD_SECTION)
+        for text in imported:
+            symbol = found[text]
+            section = elf.sections[symbol.st_shndx]
+            section.sh_name = name_index
+            section.name = DISCARD_SECTION
+            symbol.name = shared_constant_name(text)
+            symbol.st_name = elf.strtab.add_symbol(symbol.name)
+            symbol.st_info = (1 << 4) | (symbol.st_info & 0xF)
+            symbol.st_shndx = 0
+            symbol.st_value = 0
+            symbol.st_size = 0
+
+
+def coalesced_functions(elf):
+    """The constructors MWCC wrote itself, which have to stay global.
+
+    MWCC emits one of these global but places it among the local symbols, and
+    every objcopy pass rebuilds the table from `sh_info` and so demotes it. A
+    local copy is a second definition, which MWLD lays out in full rather than
+    binding the reference to the one main already holds. Nothing else in the
+    catalogue needs this: a function the source wrote is global already, and
+    globalizing one is what it already is.
+    """
+    return sorted(
+        name[len(MWCATS_PREFIX):]
+        for name in {symbol.name for symbol in elf.symtab.symbols}
+        if name.startswith(MWCATS_PREFIX)
+        and GENERATED_MEMBER.match(name[len(MWCATS_PREFIX):])
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("object", type=Path)
@@ -373,11 +540,38 @@ def main():
 
     config = json.loads(args.config.read_text(encoding="utf-8"))
     fixups = config.get(args.source, {})
+    restore_transplanted_rodata(elf)
+    drop_functions(elf, fixups.get("drop_functions", []), parser)
+    extern_functions(elf, fixups.get("extern_functions", []), parser)
+    share_constants(elf, fixups.get("export_constants_shared", []),
+                    fixups.get("import_constants_shared", []), parser)
+    # Every objcopy pass rebuilds the symbol table from `sh_info`, and MWCC
+    # puts a global that belongs after it among the locals, so each pass
+    # demotes it. fixup_sections.sh is the last one over the object: it reads
+    # this list back and restores them there, after nothing else can undo it.
+    Path(str(args.object) + ".coal").write_text(
+        "".join(name + "\n" for name in
+                coalesced_functions(elf) +
+                [shared_constant_name(text)
+                 for text in fixups.get("export_constants_shared", [])]),
+        encoding="utf-8")
     rename_sections(elf, fixups.get("sections", {}), parser)
     data_runs(elf, fixups.get("data_runs", {}), parser)
     args.object.write_bytes(elf.pack())
 
     # After the rewrite: objcopy reads the file, so these have to be last.
+    dropped = fixups.get("drop_functions", [])
+    if dropped or fixups.get("extern_functions") \
+            or fixups.get("import_constants_shared"):
+        objcopy = os.environ.get("MIPS_TOOL_PREFIX", "mips-ps2-decompals-") + "objcopy"
+        arguments = ["--wildcard", "--remove-section", DISCARD_SECTION]
+        # the symbol has to go with the section it stood in, or objcopy calls
+        # it required but not present
+        for name in dropped:
+            arguments += ["--strip-symbol", name]
+        subprocess.run([objcopy] + arguments + [str(args.object), str(args.object)],
+                       check=True)
+
     rename_symbols(args.object, fixups.get("symbols", {}))
     # GNU assembly cannot spell MWCC's angle-bracket template names. Splat
     # uses the same deterministic safe spelling for definitions and callers.

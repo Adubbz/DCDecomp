@@ -60,7 +60,16 @@ remove=$("${MIPS_TOOL_PREFIX}readelf" -SW "$obj" | awk '
       printf "--remove-section=%s ", $1
   }')
 
-if [ -n "$remove" ] || [ -n "$refonly" ] || [ "$#" -gt 0 ]; then
+# 5. Restores the functions MWCC marked for the linker to keep one copy of.
+#    Their symbols are global in what the compiler wrote, but it places them
+#    among the locals, and every objcopy pass rebuilds the table from sh_info
+#    and demotes them. A local one is a second definition MWLD lays out in
+#    full, which costs the image a copy of every constructor the compiler
+#    wrote itself. postprocess_object.py leaves the names beside the object.
+coal=""
+[ -s "$obj.coal" ] && coal="--globalize-symbols=$obj.coal"
+
+if [ -n "$remove" ] || [ -n "$refonly" ] || [ -n "$coal" ] || [ "$#" -gt 0 ]; then
   "${MIPS_TOOL_PREFIX}objcopy" -I elf32-littlemips -O elf32-littlemips \
-    $refonly $remove "$@" "$obj"
+    $refonly $remove $coal "$@" "$obj"
 fi

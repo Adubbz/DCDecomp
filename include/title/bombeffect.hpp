@@ -11,6 +11,16 @@ class CCamera;
  */
 class CBombEffect {
 public:
+
+    /**
+     * Clears the effect. The compiler writes this one, for the members that
+     * have constructors of their own; retail's copy stands in main.
+     *
+     * @mangled __ct__11CBombEffectFv
+     * @address 0x143460
+     * @size 0x30
+     */
+    CBombEffect();
     sceVu0FVECTOR positions[8]; /**< Shared-origin positions of the eight billboards. */
     s32 phases[8];              /**< Envelope phase currently run by each billboard. */
     s32 counters[8];            /**< Frames elapsed in each billboard's current phase. */

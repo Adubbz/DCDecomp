@@ -204,7 +204,7 @@ tagMOTION_TYPE *CCharacter::GetMotionParam(int motion_no, int *out_index, int *o
             if (motion_no < this->motion_start[i]) {
                 continue;
             }
-            if (motion_no >= this->motion_end[i]) {
+            if (!(motion_no < this->motion_end[i])) {
                 continue;
             }
             index = motion_no - this->motion_start[i];
@@ -717,23 +717,23 @@ void CCharacter::DrawShadow() {
     MGDrawShadowFast(this->shadow_frame, transform, light);
 }
 
-void CCharacter::LoadPackData(unsigned int *pack, char *name, CDataAlloc2_1_ *model_alloc,
-                              CDataAlloc2_1_ *texture_alloc) {
+void CCharacter::LoadPackData(unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc,
+                              CDataAlloc2<1> *texture_alloc) {
     LoadPackData(pack, name, model_alloc, model_alloc, texture_alloc);
 }
 
-void CCharacter::LoadPackData(unsigned int *pack, char *name, CDataAlloc2_1_ *model_alloc,
-                              CDataAlloc2_1_ *motion_alloc, CDataAlloc2_1_ *texture_alloc) {
+void CCharacter::LoadPackData(unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc,
+                              CDataAlloc2<1> *motion_alloc, CDataAlloc2<1> *texture_alloc) {
     ReadInfo(this, pack, name, model_alloc, motion_alloc, texture_alloc, 0, NULL, 0, 0);
 }
 
-void CCharacter::LoadPackData2(unsigned int *pack, char *name, CDataAlloc2_1_ *alloc,
-                               int motion_set, CDataAlloc2_1_ *extend_alloc, int unk_08) {
+void CCharacter::LoadPackData2(unsigned int *pack, char *name, CDataAlloc2<1> *alloc,
+                               int motion_set, CDataAlloc2<1> *extend_alloc, int unk_08) {
     ReadInfo(this, pack, name, alloc, alloc, alloc, motion_set, extend_alloc, unk_08, 0);
 }
 
-void CCharacter::LoadPackData3(unsigned int *pack, char *name, CDataAlloc2_1_ *alloc,
-                               int motion_set, CDataAlloc2_1_ *extend_alloc, int unk_08,
+void CCharacter::LoadPackData3(unsigned int *pack, char *name, CDataAlloc2<1> *alloc,
+                               int motion_set, CDataAlloc2<1> *extend_alloc, int unk_08,
                                int unk_09) {
     ReadInfo(this, pack, name, alloc, alloc, alloc, motion_set, extend_alloc, unk_09, unk_08);
 }
@@ -775,9 +775,6 @@ void CCharacter::DeleteExtendMotion() {
 FUZZY_MATCH("asm/nonmatchings/character", Initialize__10CCharacterFv);
 
 void CCharacter::Initialize() {
-    int i;
-    int j;
-
     CObject::Initialize(1.0f);
     this->frame = NULL;
     this->motion_no = 0;
@@ -798,18 +795,18 @@ void CCharacter::Initialize() {
     this->flags = 0;
 
     this->cloth = this->cloth_buf;
-    for (j = 0; j < CHARA_CLOTH_MAX; j++) {
+    for (int j = 0; j < CHARA_CLOTH_MAX; j++) {
         this->cloth[j] = NULL;
     }
     this->unk_C98 = 0;
 
-    for (i = 0; i < CHARA_MOTION_MAX; i++) {
+    for (int i = 0; i < CHARA_MOTION_MAX; i++) {
         this->motion[i] = NULL;
         this->shadow_motion[i] = NULL;
         this->motion_start[i] = -1;
         this->motion_end[i] = -1;
-        memset(this->unk_420[i], 0, 128);
-        memset(this->unk_820[i], 0, 128);
+        memset(this->unk_420[i].unk_00, 0, 128);
+        memset(this->unk_820[i].unk_00, 0, 128);
     }
 
     this->unk_0B0 = 7.0f;
@@ -827,7 +824,7 @@ void CCharacter::Initialize() {
 
     sceVu0FVECTOR zero = {0.0f, 0.0f, 0.0f, 0.0f};
 
-    for (i = 0; i < 2; i++) {
+    for (int i = 0; i < 2; i++) {
         sceVu0CopyVector(this->unk_CB0[i], zero);
     }
     sceVu0CopyVector(this->unk_CD0, zero);
@@ -838,12 +835,12 @@ void CCharacter::Initialize() {
     this->motion_start[0] = 0;
     this->motion_end[0] = 256;
 
-    for (j = 0; j < 16; j++) {
+    for (int j = 0; j < 16; j++) {
         this->unk_1068[j].unk_04 = -1.0f;
         this->unk_1068[j].unk_00 = -1;
         this->unk_1068[j].unk_0C = 0;
     }
-    for (j = 0; j < CHARA_FOOT_SOUND_MAX; j++) {
+    for (int j = 0; j < CHARA_FOOT_SOUND_MAX; j++) {
         this->foot_sound[j].foot = -1;
         this->foot_sound[j].frame = -1;
     }

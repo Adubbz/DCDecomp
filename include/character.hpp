@@ -7,6 +7,10 @@
 #include "gameutil.hpp"
 #include "object.hpp"
 #include "textureanime.hpp"
+#include "fakepointlight.hpp"
+
+template <int Kind>
+class CDataAlloc2;
 
 /**
  * @file
@@ -20,7 +24,8 @@ class CCPoly;
 class CCloth;
 class CFrame;
 class CCamera;
-class CDataAlloc2_1_;
+template <int Kind>
+class CDataAlloc2;
 class CVector3_f_;
 
 /** Number of sets of motions that one character can hold. */
@@ -34,19 +39,6 @@ class CVector3_f_;
 /** Number of events that one motion can ask for. */
 #define CHARA_EVENT_MAX 32
 
-/**
- * Lights one character from a point, and fades the light out with distance.
- */
-struct CHARA_POINT_LIGHT {
-    sceVu0FVECTOR pos; /**< World position that the light comes from. */
-    float colour[4];   /**< Colour that the light gives. */
-    float inner_range; /**< Distance up to which the light gives its whole colour. */
-    float outer_range; /**< Distance past which the light gives nothing. */
-    s32 used;          /**< 1 while the slot lights the character. */
-    float unk_2C;
-};
-
-STATIC_ASSERT(sizeof(CHARA_POINT_LIGHT) == 0x30);
 
 /**
  * Names one sound that a motion plays as a foot reaches the ground.
@@ -88,10 +80,37 @@ struct CHARA_UNK_1068 {
 STATIC_ASSERT(sizeof(CHARA_UNK_1068) == 0x14);
 
 /**
+ * One motion set, as a character holds it while it plays.
+ */
+class MotionParam {
+public:
+    /**
+     * @mangled __ct__11MotionParamFv
+     * @address 0x143610
+     * @size 0xC
+     */
+    MotionParam();
+
+    u8 unk_00[128];
+};
+
+STATIC_ASSERT(sizeof(MotionParam) == 0x80);
+
+/**
  * Moves and animates one character in the world.
  */
 class CCharacter : public CObject {
 public:
+
+    /**
+     * Sets a character to the state it starts in. The call goes through the
+     * table: this compiler dispatches a virtual from a constructor rather
+     * than binding it to the class being built.
+     */
+    CCharacter() { Initialize(); }
+
+
+
     float unk_0B0;
     float unk_0B4;
     float unk_0B8;
@@ -110,8 +129,8 @@ public:
     tagMOTION_TYPE shadow_motion_type; /**< Motions of the shadow. */
     s32 motion_start[CHARA_MOTION_MAX]; /**< First motion number of each set; -1 where it holds none. */
     s32 motion_end[CHARA_MOTION_MAX];   /**< Motion number after the last one of each set. */
-    u8 unk_420[CHARA_MOTION_MAX][128];
-    u8 unk_820[CHARA_MOTION_MAX][128];
+    MotionParam unk_420[CHARA_MOTION_MAX];
+    MotionParam unk_820[CHARA_MOTION_MAX];
     tagMOTION_TYPE *motion[CHARA_MOTION_MAX];        /**< Motions of each set; zero where it holds none. */
     tagMOTION_TYPE *shadow_motion[CHARA_MOTION_MAX]; /**< Shadow motions of each set. */
     float motion_speed; /**< Speed of the motion; -1.0 for the speed the motion gives. */
@@ -135,7 +154,7 @@ public:
     float unk_CF4;
     float unk_CF8;
     float unk_CFC;
-    CHARA_POINT_LIGHT point_light[CHARA_POINT_LIGHT_MAX]; /**< Lights that the character stands in. */
+    CFakePointLight point_light[CHARA_POINT_LIGHT_MAX]; /**< Lights that the character stands in. */
     CHARA_FOOT_SOUND foot_sound[CHARA_FOOT_SOUND_MAX];    /**< Sounds that the feet play. */
     s32 foot_sound_id;     /**< Set of foot sounds that the ground asks for; below zero for none. */
     s32 foot_sound_enable; /**< 1 while the feet play a sound. */
@@ -469,8 +488,8 @@ public:
      * @address 0x1397F0
      * @size 0x30
      */
-    virtual void LoadPackData(unsigned int *pack, char *name, CDataAlloc2_1_ *model_alloc,
-                              CDataAlloc2_1_ *texture_alloc);
+    virtual void LoadPackData(unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc,
+                              CDataAlloc2<1> *texture_alloc);
 
     /**
      * Loads model, motion, and texture data from a character pack.
@@ -479,8 +498,8 @@ public:
      * @address 0x139820
      * @size 0x30
      */
-    virtual void LoadPackData(unsigned int *pack, char *name, CDataAlloc2_1_ *model_alloc,
-                              CDataAlloc2_1_ *motion_alloc, CDataAlloc2_1_ *texture_alloc);
+    virtual void LoadPackData(unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc,
+                              CDataAlloc2<1> *motion_alloc, CDataAlloc2<1> *texture_alloc);
 
     /**
      * Loads an additional motion set from a character pack.
@@ -489,8 +508,8 @@ public:
      * @address 0x139850
      * @size 0x40
      */
-    virtual void LoadPackData2(unsigned int *pack, char *name, CDataAlloc2_1_ *alloc,
-                               int motion_set, CDataAlloc2_1_ *extend_alloc, int unk_08);
+    virtual void LoadPackData2(unsigned int *pack, char *name, CDataAlloc2<1> *alloc,
+                               int motion_set, CDataAlloc2<1> *extend_alloc, int unk_08);
 
     /**
      * Loads an additional motion set with separate read flags.
@@ -499,8 +518,8 @@ public:
      * @address 0x139890
      * @size 0x40
      */
-    virtual void LoadPackData3(unsigned int *pack, char *name, CDataAlloc2_1_ *alloc,
-                               int motion_set, CDataAlloc2_1_ *extend_alloc, int unk_08,
+    virtual void LoadPackData3(unsigned int *pack, char *name, CDataAlloc2<1> *alloc,
+                               int motion_set, CDataAlloc2<1> *extend_alloc, int unk_08,
                                int unk_09);
 
     /**

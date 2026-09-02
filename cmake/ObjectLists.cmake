@@ -139,7 +139,6 @@ function(add_object obj)
                     sh ${SCRIPTS_DIR}/build/mwccgap.sh ${obj} ${obj}.d ${src}
                     ${CC_MW_FLAGS} -MD
             COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/literals.py --bind ${obj}
-            COMMAND ${OBJCOPY} --rename-section .rodata.gap=.rodata ${obj}
             COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/postprocess_object.py ${obj} ${src}
             ${fixup}
             DEPENDS ${CMAKE_SOURCE_DIR}/${src} ${REF_STAMP}

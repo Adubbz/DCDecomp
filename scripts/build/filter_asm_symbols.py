@@ -13,10 +13,16 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("input", type=Path)
     parser.add_argument("output", type=Path)
-    parser.add_argument("symbols", nargs="+")
+    parser.add_argument("symbols", nargs="*")
+    parser.add_argument("--symbols-from", type=Path,
+                        help="a file of symbol names, one per line")
     args = parser.parse_args()
 
     excluded = set(args.symbols)
+    if args.symbols_from:
+        excluded |= {line.strip() for line in
+                     args.symbols_from.read_text(encoding="utf-8").splitlines()
+                     if line.strip() and not line.startswith("#")}
     output = []
     skipping = False
     for line in args.input.read_text(encoding="utf-8").splitlines(keepends=True):

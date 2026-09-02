@@ -10,8 +10,39 @@
 /* The command table the parser matches a line against, in the order it matches them: a name is
    compared by the length the row carries rather than by its own, so a name that is another's prefix
    has to stand in front of it ([title-script.md](../../docs/formats/title-script.md)). */
+CSCRIPT_COMMAND Command[26] = {
+    { "OBJ_MOTION2", 11, 3, { 2, 1, 1 } },
+    { "OBJ_MOTION", 10, 3, { 2, 1, 0 } },
+    { "OBJ_MOVE", 8, 2, { 2, 1 } },
+    { "OBJ_TALK", 8, 7, { 2, 1, 1, 1, 1, 1, 1 } },
+    { "OBJ_EYE", 7, 3, { 2, 1, 1 } },
+    { "OBJ_MOUTH", 9, 3, { 2, 1, 1 } },
+    { "OBJ_DISP", 8, 2, { 2, 1 } },
+    { "OBJ_STEP", 8, 2, { 2, 1 } },
+    { "CAMERA", 6, 4, { 2, 1, 1, 1 } },
+    { "SE_STOP", 7, 3, { 2, 1, 1 } },
+    { "SE", 2, 4, { 2, 1, 1, 1 } },
+    { "SOUND_FADE", 10, 3, { 2, 1, 1 } },
+    { "FADE_IN", 7, 2, { 2, 1 } },
+    { "FADE_OUT", 8, 2, { 2, 1 } },
+    { "MESSAGE", 7, 6, { 2, 1, 1, 1, 1, 1 } },
+    { "NEXT_MES", 8, 1, { 2 } },
+    { "MES_CLR", 7, 0, { 0 } },
+    { "LOAD_OBJ", 8, 2, { 2, 1 } },
+    { "SPRITE", 6, 1, { 2 } },
+    { "BOM", 3, 4, { 2, 1, 1, 1 } },
+    { "BEEM", 4, 6, { 2, 1, 1, 1, 1, 1 } },
+    { "SCENE_LOAD", 10, 1, { 2 } },
+    { "SCENE", 5, 1, { 2 } },
+    { "END", 3, 0, { 0 } },
+    { "WAIT_KEY", 8, 1, { 2 } },
+    { "WAIT", 4, 1, { 2 } },
+};
+
 /* The one script the overlay runs. It is 58112 bytes because the file is held whole inside it and
    re-parsed from the cursor every tick. */
+class CScript CScript;
+
 /* Read the whole script in and put every actor back to a state nothing has asked anything of yet.
    Nothing is reset when the load fails, so a missing file leaves the previous script's state
    standing rather than an empty one. */

@@ -17,6 +17,11 @@ state it is compiled under, in its own source:
     #pragma helper_mask_gpr +0x20     or a bit into it
     #pragma constant_flag 1           what every later float constant reads
     #pragma constant_flag_next 1      what the next one reads, once
+    #pragma constant_flag_ones 3,17   which constants of the unit read 1 instead
+    #pragma argument_flag 0           what every float argument of a call reads
+    #pragma argument_flag_ones 4,9    which of those reads 1 instead
+    #pragma argument_flag_free 7,8    which of them to leave to the node's own byte
+    #pragma order_flag_zeros 3,7      which of the ordering pass's writes to drop
     #pragma name_counter 910          where the invented-name counter starts
 
 The compiler has no such pragmas. This runs it under gdb, stands at its pragma
@@ -73,6 +78,26 @@ HELPER_MASK = {'gpr': 0x0051CE00, 'fpr': 0x0051CE04}
 # materialise first.
 NODE_HOOK, NODE_FIELD = 0x004B290D, 5
 
+# Where call lowering reads that byte, all five of them: one per argument of a
+# call, then the two operands of a binary node, then the two the float path
+# takes. Each is a `cmp BYTE [<reg>+5],0` whose answer decides whether the
+# operand is emitted in the first walk or the second. Standing here rather than
+# at NODE_HOOK reaches every operand, not only the ones whose expression is a
+# float constant -- a local, or an integer converted to float, is decided by the
+# same byte and never passes through the constant case at all. One counter runs
+# across all five, in the order the compiler reaches them.
+ARGUMENT_READS = ((0x0049E925, 'ecx'), (0x0049E94F, 'eax'),
+                  (0x0049E97B, 'eax'), (0x0049EFFB, 'eax'),
+                  (0x0049F06C, 'eax'))
+
+# A pass of its own, at 0x004C78C0, that walks two lists and writes the same
+# byte: it clears it for one chain and then, for every node of the list at
+# 0x005570A8 whose byte is still zero, **sets it to one**. It runs after the
+# nodes are built and nothing else touches it, so a constant whose byte the
+# source pinned can still arrive at call lowering non-zero. ORDER_SET is that
+# store; skipping it to ORDER_NEXT leaves the byte alone.
+ORDER_SET, ORDER_NEXT, ORDER_REGISTER = 0x004C78ED, 0x004C78F1, 'eax'
+
 # The counter behind every name the compiler invents -- the `@<n>` a floating
 # constant is filed under, which retail's linker kept as `LIT_<n>`. 0x0042E540
 # hands out the value and increments it, and nothing resets it between units, so
@@ -88,13 +113,17 @@ CODEGEN = 0x004356B0
 NAME_ARGUMENT, NAME_RECORD = 4, 8
 
 PRAGMAS = ('helper_mask_gpr', 'helper_mask_fpr',
-           'constant_flag', 'constant_flag_next', 'name_counter')
+           'constant_flag', 'constant_flag_next', 'constant_flag_ones',
+           'argument_flag', 'argument_flag_ones', 'argument_flag_free',
+           'order_flag_zeros', 'name_counter')
 
 # Whether a source asks for the constant-flag pragmas at all. Standing at
 # NODE_HOOK costs a stop per floating-point constant, which is most of what
 # running under gdb costs, and a unit that says nothing about them wants the
 # compiler's own residue left alone.
 WANTS_NODE = re.compile(r'^\s*#\s*pragma\s+constant_flag', re.M)
+WANTS_ARGUMENT = re.compile(r'^\s*#\s*pragma\s+argument_flag', re.M)
+WANTS_ORDER = re.compile(r'^\s*#\s*pragma\s+order_flag', re.M)
 
 
 def source_of(arguments):
@@ -123,6 +152,30 @@ def asks_for_nodes(arguments):
         return False
 
 
+def asks_for_order(arguments):
+    """Whether the source asks about the ordering pass's own writes."""
+    path = source_of(arguments)
+    if not path:
+        return False
+    try:
+        with open(path, encoding='utf-8', errors='replace') as f:
+            return bool(WANTS_ORDER.search(f.read()))
+    except OSError:
+        return False
+
+
+def asks_for_arguments(arguments):
+    """Whether the source asks for the argument-read pragmas."""
+    path = source_of(arguments)
+    if not path:
+        return False
+    try:
+        with open(path, encoding='utf-8', errors='replace') as f:
+            return bool(WANTS_ARGUMENT.search(f.read()))
+    except OSError:
+        return False
+
+
 # -------------------------------------------------------------- the gdb side
 
 def install(arguments=()):
@@ -140,11 +193,16 @@ def install(arguments=()):
     # stays the compiler's; anything worth saying goes to the real stderr.
     quiet = os.environ.get('STATEFIX_QUIET') == '1'
     say = (lambda text: sys.stderr.write(text)) if quiet else gdb.write
-    counted = {'pragmas': 0, 'nodes': 0}
+    counted = {'pragmas': 0, 'nodes': 0, 'arguments': 0, 'order': 0}
     cur = {'name': '?'}
-    # What the source has asked for: a standing constant flag, and one that
-    # covers only the next constant.
-    said = {'flag': None, 'next': None}
+    # What the source has asked for: a standing constant flag, one that covers
+    # only the next constant, and the constants of the unit -- numbered from 1
+    # in the order the annotation pass reaches them -- that read 1 rather than
+    # the standing value. Retail's residue is not one value per unit but one
+    # per constant, so the standing flag alone cannot say it.
+    said = {'flag': None, 'next': None, 'ones': set(),
+            'argument': None, 'argument_ones': set(), 'argument_free': set(),
+            'order_zeros': set()}
 
     class Pragma(gdb.Breakpoint):
         def __init__(self):
@@ -164,6 +222,25 @@ def install(arguments=()):
                 rest = ''
             text = rest.split('/*')[0].split('//')[0].strip()
             combine = text.startswith('+')
+            if name in ('constant_flag_ones', 'argument_flag_ones',
+                        'argument_flag_free', 'order_flag_zeros'):
+                where = {'constant_flag_ones': 'ones',
+                         'argument_flag_ones': 'argument_ones',
+                         'argument_flag_free': 'argument_free',
+                         'order_flag_zeros': 'order_zeros'}[name]
+                # A list, and repeatable: the lexer hands over 96 characters at
+                # a time, so a long unit says its indices a line at a time.
+                try:
+                    said[where].update(
+                        int(item, 0) for item in text.replace(',', ' ').split())
+                except ValueError:
+                    say('statefix: #pragma %s: cannot read %r\n' % (name, text))
+                    return False
+                counted['pragmas'] += 1
+                if verify:
+                    say('statefix: #pragma %s %s\n' % (name, text))
+                gdb.execute('set $eip = %s' % hex(PRAGMA_IGNORE))
+                return False
             try:
                 value = int(text.lstrip('+').strip() or '0', 0)
             except ValueError:
@@ -183,6 +260,8 @@ def install(arguments=()):
                     NAME_COUNTER, value.to_bytes(4, 'little'))
             elif name == 'constant_flag':
                 said['flag'] = value & 0xFF
+            elif name == 'argument_flag':
+                said['argument'] = value & 0xFF
             else:
                 said['next'] = value & 0xFF
             counted['pragmas'] += 1
@@ -202,27 +281,91 @@ def install(arguments=()):
 
             def stop(self):
                 counted['nodes'] += 1
-                if said['next'] is not None:
+                if counted['nodes'] in said['ones']:
+                    want = 1
+                elif said['next'] is not None:
                     want, said['next'] = said['next'], None
                 elif said['flag'] is not None:
                     want = said['flag']
                 else:
-                    return False          # leave the compiler's own residue
+                    want = None           # leave the compiler's own residue
                 try:
                     node = int(gdb.parse_and_eval('$ebp')) & 0xffffffff
                     if verify:
                         was = bytes(gdb.selected_inferior().read_memory(
                             node + NODE_FIELD, 1))[0]
-                        if was != want:
-                            say('statefix: %-40s constant %02x -> %02x\n'
-                                % (cur['name'], was, want))
-                    gdb.selected_inferior().write_memory(
-                        node + NODE_FIELD, bytes([want]))
+                        say('statefix: node %4d %-40s constant %02x -> %s\n'
+                            % (counted['nodes'], cur['name'], was,
+                               '--' if want is None else '%02x' % want))
+                    if want is not None:
+                        gdb.selected_inferior().write_memory(
+                            node + NODE_FIELD, bytes([want]))
                 except gdb.MemoryError:
                     pass
                 return False
 
         Node()
+
+    if asks_for_arguments(arguments):
+        class Argument(gdb.Breakpoint):
+            def __init__(self, address, register):
+                self.register = register
+                super().__init__('*' + hex(address), internal=True)
+
+            def stop(self):
+                counted['arguments'] += 1
+                if counted['arguments'] in said['argument_ones']:
+                    # naming a read explicitly always wins: a whole range can be
+                    # freed for the constant flag and one read of it still said
+                    want = 1
+                elif counted['arguments'] in said['argument_free']:
+                    # left for whatever the node itself carries, which is what
+                    # `constant_flag` writes -- the one way the two axes meet
+                    want = None
+                elif said['argument'] is not None:
+                    want = said['argument']
+                else:
+                    want = None
+                try:
+                    record = int(gdb.parse_and_eval(
+                        '$' + self.register)) & 0xffffffff
+                    if verify:
+                        was = bytes(gdb.selected_inferior().read_memory(
+                            record + NODE_FIELD, 1))[0]
+                        kind = bytes(gdb.selected_inferior().read_memory(
+                            record, 1))[0]
+                        say('statefix: argument %4d %-30s kind %02x at %08x'
+                            ' %02x -> %s\n'
+                            % (counted['arguments'], cur['name'], kind, record,
+                               was, '--' if want is None else '%02x' % want))
+                    if want is not None:
+                        gdb.selected_inferior().write_memory(
+                            record + NODE_FIELD, bytes([want]))
+                except gdb.MemoryError:
+                    pass
+                return False
+
+        for address, register in ARGUMENT_READS:
+            Argument(address, register)
+
+    if asks_for_order(arguments):
+        class Order(gdb.Breakpoint):
+            def __init__(self):
+                super().__init__('*' + hex(ORDER_SET), internal=True)
+
+            def stop(self):
+                counted['order'] += 1
+                if counted['order'] in said['order_zeros']:
+                    if verify:
+                        say('statefix: order %4d %-30s dropped\n'
+                            % (counted['order'], cur['name']))
+                    gdb.execute('set $eip = %s' % hex(ORDER_NEXT))
+                elif verify:
+                    say('statefix: order %4d %-30s set\n'
+                        % (counted['order'], cur['name']))
+                return False
+
+        Order()
 
     if verify:
         class Entry(gdb.Breakpoint):
@@ -242,8 +385,8 @@ def install(arguments=()):
 
     gdb.execute('continue')
     if not quiet:
-        say('statefix: %d pragmas, %d constant nodes\n'
-            % (counted['pragmas'], counted['nodes']))
+        say('statefix: %d pragmas, %d constant nodes, %d argument reads\n'
+            % (counted['pragmas'], counted['nodes'], counted['arguments']))
 
 
 # ----------------------------------------------------------------- the driver

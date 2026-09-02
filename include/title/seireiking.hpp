@@ -11,6 +11,9 @@ class CCamera;
  */
 class CSeireiKing {
 public:
+
+    /** Stages the trail, the same way a caller may stage it again later. */
+    CSeireiKing() { Initialize(); }
     /**
      *          Draws the trailing sparks around a supplied world position.
      *
@@ -37,6 +40,19 @@ public:
      * @size 0x90
      */
     void Step(void);
+
+    /**
+     *          Stages the trail so that each spark starts a step behind the one
+     *          in front of it and the head is the only one drawn solid.
+     */
+    void Initialize(void) {
+        for (int i = 0; i < 20; i++) {
+            count[i] = -i;
+            alpha[i] = 128.0f - i * 6.4f;
+        }
+
+        alpha[19] = 128.0f;
+    }
 
     sceVu0FVECTOR position[20]; /**< Positions occupied by the trail and carried spirit. */
     int count[20];              /**< Ages of the trailing spark positions. */

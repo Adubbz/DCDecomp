@@ -70,20 +70,21 @@ segments:
       - {start: 0x40, type: cpp, name: title/script}
       - {start: 0x14e0, type: cpp, name: title/dispfade}
       - {start: 0x1910, type: cpp, name: title/bombeffect}
-      - {start: 0x2050, type: asmtu, name: title/majinbeem}
+      - {start: 0x2050, type: cpp, name: title/majinbeem}
       - {start: 0x2890, type: cpp, name: title/seireiking}
-      - {start: 0x34c0, type: asmtu, name: title/opening}
-      - {start: 0x91c0, type: asmtu, name: title/op_a}
-      - {start: 0xcad0, type: asmtu, name: title/op_b}
-      - {start: 0xfd90, type: asmtu, name: title/op_c}
-      - {start: 0x17f90, type: asmtu, name: title/op_d}
-      - {start: 0x1cc30, type: asmtu, name: title/rushmovi}
-      - {start: 0x1f5b0, type: asmtu, name: title/title}
-      - {start: 0x28100, type: asmtu, name: title/logo}
-      - {start: 0x28720, type: asmtu, name: title/sprite}
-      - {start: 0x28fc0, type: asmtu, name: title/cursol}
-      - {start: 0x29400, type: asmtu, name: title/scfader}
-      - {start: 0x29540, type: asmtu, name: title/tisound}
+      - {start: 0x34c0, type: cpp, name: title/opening}
+      - {start: 0x91c0, type: cpp, name: title/op_a}
+      - {start: 0xcad0, type: cpp, name: title/op_b}
+      - {start: 0xfd90, type: cpp, name: title/op_c}
+      - {start: 0x17f90, type: cpp, name: title/op_d}
+      - {start: 0x1cc30, type: cpp, name: title/rushmovi}
+      - {start: 0x1f5b0, type: cpp, name: title/title}
+      - {start: 0x25db0, type: cpp, name: title/titleloop}
+      - {start: 0x28100, type: cpp, name: title/logo}
+      - {start: 0x28720, type: cpp, name: title/sprite}
+      - {start: 0x28fc0, type: cpp, name: title/cursol}
+      - {start: 0x29400, type: cpp, name: title/scfader}
+      - {start: 0x29540, type: cpp, name: title/tisound}
       - {start: 0x29680, type: data, name: data, dir: title}
       - {start: 0x35dfc, type: bin, name: title_pad}
       - {start: 0x35e00, type: bss, name: bss, vram: 0x1de1afc, dir: title}

@@ -5,7 +5,8 @@
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
-class CDataAlloc2_1_;
+template <int Kind>
+class CDataAlloc2;
 struct RS_STACKDATA;
 
 /**
@@ -54,7 +55,7 @@ void BtSystemScriptAfter(void);
  * @size 0x30
  * @unknownret
  */
-int BtSystemScriptRun(int, CDataAlloc2_1_ *);
+int BtSystemScriptRun(int, CDataAlloc2<1> *);
 
 /**
  * @mangled BtSetMapJumpFloor__Fi

@@ -458,7 +458,7 @@ int main(int argc, const char **argv, const char **envp) {
          * store (see DMA_CHCR_BYTE above for why this exact source form
          * is required for the daddiu/li/and/or sequence to match). */
         ((volatile DMA_CHCR_BYTE *) d1)->str = 1;
-        /* CSaveData::unk_1C8 is private, and retail reaches it by offset
+        /* CSaveData::map_no is private, and retail reaches it by offset
          * from main() -- a different translation unit -- so this is direct
          * pointer arithmetic rather than a getter. Value and base both go
          * through named locals, value first: the only form whose temp

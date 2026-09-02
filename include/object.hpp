@@ -359,21 +359,13 @@ public:
     virtual void GetScale(float *out_scale);
 
     /**
-     * Makes an object with no data.
-     *
-     * @mangled __ct__7CObjectFv
-     * @address 0x143650
-     */
-    CObject();
-
-    /**
      * Makes an object of a mass, and puts it at rest at the world origin.
      *
      * @mangled __ct__7CObjectFf
      * @address 0x157010
      * @size 0x40
      */
-    CObject(float mass);
+    CObject(float mass = 1.0f);
 
     /**
      * Sets the mass of the object, puts it at the world origin at rest, and

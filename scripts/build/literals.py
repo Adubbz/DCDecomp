@@ -107,7 +107,9 @@ LCF = 'SCUS_971.11.lcf'
 # Where splat files a function's own assembly. A function still supplied by a
 # marker is under the first, one that is decompiled under the second; both are
 # retail's instructions either way, which is all this reads them for.
-ASM_DIRS = ('asm/nonmatchings', 'asm/matchings')
+# `config/reference_asm` holds the ones splat files under no name of their own;
+# see scripts/build/reference_asm.py.
+ASM_DIRS = ('asm/nonmatchings', 'asm/matchings', 'config/reference_asm')
 
 # The address comment spimdisasm puts on each line of a dump: `/* fileoffset
 # vaddr bytes */`. The bytes are in the order the file stores them, so a word

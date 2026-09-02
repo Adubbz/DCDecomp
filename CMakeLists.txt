@@ -67,7 +67,7 @@ set(BIN_FLAGS -B mips:5900 -I binary -O elf32-littlemips)
 
 # Decompiled globals replace these retail section dumps.
 set(REPLACED_SECTIONS main.bss main.data main.rdata main.sbss main.sdata
-                      title.data dun.data)
+                      title.data title.bss dun.data)
 
 set(ASM_SOURCES "")
 foreach(section IN LISTS SECTIONS)
@@ -145,13 +145,6 @@ function(carve_dump image dump)
 endfunction()
 
 set(CARVED_DUMP_SOURCES "")
-# The title overlay's constants stand where the whole unit once compiled them,
-# so the dump stops in front of each decompiled unit's run and picks up after.
-carve_dump(title data.data.s
-           data.data.part1.s=1DD5380-1DDBEC0
-           data.data.part1b.s=1DDBF60-1DDBF68
-           data.data.part2.s=1DDBF90-1DE1AFC)
-
 # The dun overlay is one unit, and the templates its local array initialisers
 # emit stand between the globals the dump still supplies, so the dump is cut
 # into the four runs the unit leaves behind.
@@ -183,19 +176,32 @@ carve_part(main.sdata.part2b.s
            main.sdata.part2b.s=2A1ED0-2A1F14
            main.sdata.part2c.s=2A1F18-2A1F24
            main.sdata.part2d.s=2A1F50-2A2218)
+carve_part(main.sdata.part3.s
+           main.sdata.part3.s=2A22E0-2A2380)
 # .sbss: the same again, one unit's run at a time.
 carve_part(main.bss.part1.s
            main.bss.part1.s=2A3709-2AA010
            main.bss.part1b.s=2AB010-2AB030)
 carve_part(main.bss.part3.s
-           main.bss.part3.s=1C7A6B8-1C7A6C0
-           main.bss.part3b.s=1C7B0C0-1CBB0C8)
+           main.bss.part3.s=1C7A6B8-1C7A6C0)
+# gameutil.cpp's own run stands in the middle of this one.
+carve_part(main.bss.part4.s
+           main.bss.part4.s=1CE7570-1CECE80
+           main.bss.part4d.s=1CECF00-1CF8F40)
+# edit.cpp's own runs stand in the middle of these two.
+carve_part(main.bss.part4b.s
+           main.bss.part4b.s=1CF91F0-1D19720
+           main.bss.part4c.s=1D19AA0-1D19BF0)
+carve_part(main.bss.part5.s
+           main.bss.part5.s=1D1B218-1D3D1C0
+           main.bss.part5b.s=1D3D1D0-1D569A0)
 carve_part(main.sbss.part3.s
            main.sbss.part3.s=2A24FC-2A2500)
 # The dun overlay's small data runs from GameEnv to the end of retail's .sbss,
 # and the unit supplies all of it, so the dump stops in front of it.
 carve_part(main.sbss.part5b.s
-           main.sbss.part5b.s=2A2FD8-2A3460)
+           main.sbss.part5b.s=2A2FD8-2A2FE4
+           main.sbss.part5d.s=2A33A0-2A33A4)
 carve_part(main.sbss.part4b.s
            main.sbss.part4b.s=2A25B8-2A2740
            main.sbss.part4c.s=2A27AC-2A29F8
@@ -212,6 +218,8 @@ carve_part(main.data.part4.s
 # units. Keep the retail dumps intact as toolchain inputs, but do not assemble
 # them into the reconstructed executable.
 list(REMOVE_ITEM STATIC_SECTION_SOURCES
+     ${ASM_DATA_DIR}/title/data.data.s
+     ${ASM_DATA_DIR}/title/bss.bss.s
      ${ASM_DATA_DIR}/main/parts/main.bss.part2b.s
      ${ASM_DATA_DIR}/main/parts/main.sbss.part1.s
      ${ASM_DATA_DIR}/main/parts/main.sbss.part1b.s

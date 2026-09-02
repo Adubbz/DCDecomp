@@ -51,17 +51,13 @@ public:
      */
     void Initialize(CTexAnimeData *, int);
 
-    /**
-     * Makes an animation that plays nothing.
-     */
-    CTextureAnime(void);
 
     /**
      * @mangled __ct__13CTextureAnimeFP13CTexAnimeDatai
      * @address 0x167870
      * @size 0x30
      */
-    CTextureAnime(CTexAnimeData *, int);
+    CTextureAnime(CTexAnimeData * = 0, int = 0);
 
     /**
      * @mangled NewTexAnimeData__13CTextureAnimeFv
