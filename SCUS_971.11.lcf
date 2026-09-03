@@ -462,6 +462,9 @@ SECTIONS
         main.data.part5.s.o (.data)
         itemdata.cpp.o (.data)
         main.data.part6.s.o (.data)
+        weaponlevelup.cpp.o (.data)  // 0x00295840
+        . = ALIGN(16);               // the tail of the unit's last template
+        main.data.part6b.s.o (.data) // 0x002959a0
         stockitem.cpp.o (.data)
         . = . + 0xC;
         fish.cpp.o (.data)
@@ -541,6 +544,7 @@ SECTIONS
 		_LIT_002A1800 = 0x002a1800;
 		_LIT_002A1808 = 0x002a1808;
 		_LIT_002A1818 = 0x002a1818;
+		_LIT_002A1828 = 0x002a1828;
 		_LIT_002A1830 = 0x002a1830;
 		_LIT_002A1838 = 0x002a1838;
 		_LIT_002A1868 = 0x002a1868;
@@ -630,6 +634,8 @@ SECTIONS
 		_LIT_002A1AB8 = 0x002a1ab8;
 		_LIT_002A1ACC = 0x002a1acc;
 		_LIT_002A1AF8 = 0x002a1af8;
+		_LIT_002A1AFC = 0x002a1afc;
+		_LIT_002A1B04 = 0x002a1b04;
 		_LIT_002A1B24 = 0x002a1b24;
 		_LIT_002A1B28 = 0x002a1b28;
 		_LIT_002A1B5C = 0x002a1b5c;
@@ -794,6 +800,8 @@ SECTIONS
 		main.sdata.part2c.s.o (.sdata) // 0x002a1f18
 		edit.cpp.o (.sdata)            // 0x002a1f24
 		main.sdata.part2d.s.o (.sdata) // 0x002a1f50
+		weaponlevelup.cpp.o (.sdata)   // 0x002a21d8
+		main.sdata.part2e.s.o (.sdata) // 0x002a21f0
 		stockitem.cpp.o (.sdata)
 
 		// The title overlay's small data, reached through $gp like its small

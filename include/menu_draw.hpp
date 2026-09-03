@@ -708,7 +708,7 @@ void BtlMenuBufferSet(int);
  * @size 0x40
  * @unknownret
  */
-void MenuCalcBufAlignment(void /* CW back-ref target unresolved */ *);
+u_long128 *MenuCalcBufAlignment(u_long128 *buffer);
 
 /**
  * @mangled GetAtoraMaxVillage__Fv
@@ -1089,3 +1089,13 @@ void PersonalBoardKey(void);
  * @unknownret
  */
 void PersonalBoardItemPush(IHAVEITEM *, int);
+
+/** Texture block the shadow and icon sheets load into. */
+extern int MenuShadowReadBlock;
+/** Texture block the battle menu loads into. */
+extern int BtlMenuReadBlock;
+
+/** Volume the battle menu drops the background music to. */
+extern int BtlMenuBGMvol;
+/** Set while the extra-menu texture has been read. */
+extern int MenuExTextureReadFlag;

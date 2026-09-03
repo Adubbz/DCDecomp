@@ -175,7 +175,8 @@ carve_part(main.sdata.part2.s
 carve_part(main.sdata.part2b.s
            main.sdata.part2b.s=2A1ED0-2A1F14
            main.sdata.part2c.s=2A1F18-2A1F24
-           main.sdata.part2d.s=2A1F50-2A2218)
+           main.sdata.part2d.s=2A1F50-2A21D8
+           main.sdata.part2e.s=2A21F0-2A2218)
 carve_part(main.sdata.part3.s
            main.sdata.part3.s=2A22E0-2A2380)
 # .sbss: the same again, one unit's run at a time.
@@ -209,6 +210,10 @@ carve_part(main.sbss.part4b.s
 carve_part(main.rdata.part4.s
            main.rdata.part4.s=2A1100-2A1130
            main.rdata.part4b.s=2A1168-2A11E0)
+# weaponlevelup.cpp's local array templates stand in the middle of this one.
+carve_part(main.data.part6.s
+           main.data.part6.s=27E790-295840
+           main.data.part6b.s=2959A0-295FF0)
 carve_part(main.data.part4.s
            main.data.part4.s=25DF70-266810
            main.data.part4b.s=2668C0-266F70

@@ -765,7 +765,7 @@ void GetDefaultWeaponNo(int);
  * @size 0x90
  * @unknownret
  */
-void IsDefaultWeapon(int);
+int IsDefaultWeapon(int);
 
 /**
  * @mangled SetNowEquipWeaponDataForMsg__Fii

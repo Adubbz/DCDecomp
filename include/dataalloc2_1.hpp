@@ -20,3 +20,6 @@ public:
     void Align64(void);
     CDataAlloc2_1_(int blocks);
 };
+
+/** Buffer the common-menu effect models are read into. */
+extern CDataAlloc2<1> MenuEffectCashBuffer;

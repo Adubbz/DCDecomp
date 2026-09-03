@@ -290,7 +290,7 @@ segments:
       - {start: 0x121830, type: cpp, name: menu_draw}
       - {start: 0x12f1a0, type: cpp, name: weapon_buildup}
       - {start: 0x135750, type: asmtu, name: menuitemstep}
-      - {start: 0x135b10, type: asmtu, name: weaponlevelup}
+      - {start: 0x135b10, type: cpp, name: weaponlevelup}
       - {start: 0x1381b0, type: asmtu, name: menuiconautoget}
       - {start: 0x138550, type: cpp, name: battle_globals}
       - {start: 0x13da40, type: cpp, name: runscript}

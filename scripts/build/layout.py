@@ -84,7 +84,16 @@ OBJDIFF = {
     ],
     # MWCC's own mangling -- `__ct__7CCameraFf` -- so objdiff can read those
     # names back if it is told which scheme to use.
-    "options": {"demangler": "codewarrior"},
+    # The retail splitter names anonymous constants `LIT_N`, while MWCC names
+    # the same per-compiland constants `@N`. Some of retail's constants also
+    # live in a separate data unit, so their values are unavailable while its
+    # code object is diffed. Ignore relocation targets in function scores;
+    # instructions and relocation types still differ, and the linked-image
+    # verification catches an incorrect target.
+    "options": {
+        "demangler": "codewarrior",
+        "functionRelocDiffs": "none",
+    },
 }
 
 

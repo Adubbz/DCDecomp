@@ -80,14 +80,21 @@ function(add_diff_base_object obj src)
     endif()
     add_custom_command(
         OUTPUT ${CMAKE_SOURCE_DIR}/${obj}
+        # Use the same compiler-state shim as the linked object. Otherwise the
+        # source-only object ignores the unit's state pragmas and objdiff
+        # reports register/order differences that are absent from the build.
         COMMAND ${CMAKE_COMMAND} -E env "MWCIncludes=${LIB_INCLUDE_DIRS}"
-                wibo ${MW}mwccmips.exe ${CC_MW_FLAGS} -o ${obj} ${src}
+                "STATEFIX_SOURCE=${src}"
+                ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix-wibo.sh
+                ${MW}mwccmips.exe ${CC_MW_FLAGS} -o ${obj} ${src}
         COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/literals.py --bind ${obj}
         COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/postprocess_object.py ${obj} ${src}
         COMMAND sh ${SCRIPTS_DIR}/build/fixup_sections.sh ${obj} ${fixup_flags}
         DEPENDS ${CMAKE_SOURCE_DIR}/${src} ${REF_STAMP}
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/literals.py
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/postprocess_object.py
+                ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix.py
+                ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix-wibo.sh
                 ${CMAKE_SOURCE_DIR}/config/object_fixups.json
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "CC (diff base) ${src}"

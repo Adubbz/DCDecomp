@@ -378,21 +378,8 @@ struct ATTACH_DATA {
     s16 endurance;
     s16 speed;
     s16 magic;
-    u8 fire;
-    u8 ice;
-    u8 thunder;
-    u8 wind;
-    u8 holy;
-    u8 dino;
-    u8 undead;
-    u8 sea;
-    u8 stone;
-    u8 plant;
-    u8 beast;
-    u8 sky;
-    u8 metal;
-    u8 mimic;
-    u8 mage;
+    u8 elem[5];          /**< AttachStat order: fire, ice, thunder, wind, holy. */
+    u8 vs_monster[10];   /**< Monster effectiveness, one byte per WEAPON_DATA entry. */
     u8 unk_1F;
 };
 STATIC_ASSERT(sizeof(ATTACH_DATA) == 0x20);
@@ -411,26 +398,14 @@ struct ATTACH_LIST {
     s16 item_no; /**< Identifies the attachment. */
     s16 unk_02;
     s16 unk_04;
-    s16 stat_00;
+    s8 stat_00;
+    s8 unk_07;
     s16 attack;
     s16 endurance;
     s16 speed;
     s16 magic;
-    u8 fire;
-    u8 ice;
-    u8 thunder;
-    u8 wind;
-    u8 holy;
-    u8 dino;
-    u8 undead;
-    u8 sea;
-    u8 stone;
-    u8 plant;
-    u8 beast;
-    u8 sky;
-    u8 metal;
-    u8 mimic;
-    u8 mage;
+    s8 elem[5];          /**< AttachStat order: fire, ice, thunder, wind, holy. */
+    s8 vs_monster[10];   /**< Monster effectiveness, one byte per WEAPON_DATA entry. */
     u8 unk_1F;
 };
 STATIC_ASSERT(sizeof(ATTACH_LIST) == 0x20);
@@ -492,7 +467,7 @@ struct WEAPON_DATA {
     s16 speed;          /**< Current speed. */
     s16 magic;          /**< Current magic. */
     u8 owner;           /**< The character who owns this weapon. @see Character. */
-    u8 hole[6];         /**< Attachment sockets. */
+    s8 hole[6];         /**< Attachment sockets. */
     u8 hole_num;        /**< The number of attachment sockets. */
     s16 elem[5];        /**< AttachStat order: fire, ice, thunder, wind, holy */
     s16 vs_monster[10]; /**< Monster effectiveness stats. */
@@ -531,13 +506,16 @@ struct WEAPON_HAVE {
     s16 durability; /**< Seeded from WEAPON_DATA::durability. */
     s16 unk_0E;
     float durability_f; /**< The durability again, converted on the way in. */
-    char unk_14[2];
+    s16 unk_14;
     s8 best_elem;      /**< Indexes the largest entry of `elem`, or -1 for none. */
-    u8 elem[5];        /**< AttachStat order: fire, ice, thunder, wind, holy. */
+    s8 elem[5];        /**< AttachStat order: fire, ice, thunder, wind, holy. */
     char vs_monster[10]; /**< Monster effectiveness, one byte per WEAPON_DATA entry. */
-    char unk_26[200];
+    char unk_26[2];
+    ATTACH_LIST attach[6];   /**< One entry per hole the weapon data gives it. */
+    s8 attach_kind[6];       /**< Three while the matching hole's attachment is doubled. */
     s16 flags; /**< Bit 3 and bit 4 each scale the water-drain rate (CUserStatus::Step). */
-    char unk_F0[8];
+    s32 unk_F0;
+    char unk_F4[4];
 };
 STATIC_ASSERT(sizeof(WEAPON_HAVE) == 0xF8);
 

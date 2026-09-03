@@ -170,7 +170,7 @@ void SearchBoardNowPosItemExist(int, int);
  * @size 0x200
  * @unknownret
  */
-void GetBoardSpace(int, int *);
+int GetBoardSpace(int, int *);
 
 /**
  * @mangled SwapItem__FP9ITEM_PACKii
@@ -502,7 +502,7 @@ void CompareBuildUpModelData2(WEAPON_HAVE *, WEAPON_HAVE *);
  * @size 0xB0
  * @unknownret
  */
-void IsLastWeapon(int);
+int IsLastWeapon(int);
 
 /**
  * @mangled IsNotBuildUpWeapon__Fi

@@ -495,3 +495,6 @@ public:
 };
 
 STATIC_ASSERT(sizeof(ClsMes) == 0x17B8);
+
+/** The message window the menus share. */
+extern ClsMes CommonMenuMes1;

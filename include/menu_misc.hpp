@@ -441,7 +441,7 @@ void SetWeaponElementStatus(WEAPON_HAVE *);
  * @size 0x90
  * @unknownret
  */
-void CheckWeaponOptionStatus(int);
+int CheckWeaponOptionStatus(int);
 
 /**
  * @mangled IsWeaponOptionGoodOrBad__Fi
@@ -457,7 +457,7 @@ void IsWeaponOptionGoodOrBad(int);
  * @size 0x40
  * @unknownret
  */
-void DefaultWeaponOptionSet(int);
+int DefaultWeaponOptionSet(int);
 
 /**
  * @mangled WeaponOptionStatusDraw__FP11WEAPON_HAVEiii

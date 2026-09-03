@@ -766,5 +766,15 @@
       "fish_file_05",
       "fish_file_06"
     ]
+  },
+  "src/weaponlevelup.cpp": {
+    "symbols": {
+      "WepRecover__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "WepRecover__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
+      "CMenuEffectDataLoad__14CWeaponLevelUpFP14CWeaponLevelUpi": "CMenuEffectDataLoad__14CWeaponLevelUpFP1i",
+      "CureEffect__14CWeaponLevelUpFiiP14CWeaponLevelUpii": "CureEffect__14CWeaponLevelUpFiiP1ii",
+      "SetBuildUp__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetBuildUp__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
+      "SetStatusBreak__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetStatusBreak__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
+      "SetLevelUpValue__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetLevelUpValue__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i"
+    }
   }
 }

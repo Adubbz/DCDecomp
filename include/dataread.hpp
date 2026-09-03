@@ -112,7 +112,7 @@ int LoadPackFile(char *path, u_int *buffer, int *out_size);
 /**
  * Finds a file in the current implicit pack.
  */
-u_int *GetPackFile(char *name, int *out_size);
+u_int *GetPackFile(u_int *pack, char *name, int *out_size);
 
 /**
  * Finds a file inside a pack that has already been read.

@@ -274,7 +274,13 @@ def main():
             print('total %d' % total)
             return
         theirs = retail_function(args.image, args.function)
-        mine = ours(obj, args.function.replace(stem[1], stem[0]))
+        # A unit whose retail name our compiler cannot spell is renamed on the
+        # way out; score it under the name the object actually carries.
+        fixups = json.load(open(os.path.join(REPO, 'config/object_fixups.json')))
+        renames = fixups.get(args.source, {}).get('symbols', {})
+        compiled = next((ours_name for ours_name, retail in renames.items()
+                         if retail == args.function), args.function)
+        mine = ours(obj, compiled.replace(stem[1], stem[0]))
         if not mine:
             raise SystemExit('%s: not in the object -- %s' % (args.function, log[-400:]))
         if args.diff:

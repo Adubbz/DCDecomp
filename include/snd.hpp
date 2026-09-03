@@ -281,3 +281,22 @@ void SndSetCamera(float *position, float *rotation);
  * Stops one playing sound-effect voice.
  */
 void SndSeStop(int se_no, int voice);
+
+/**
+ * Sets the background-music volume.
+ *
+ * @mangled SndSetBgmVol__Fi
+ */
+void SndSetBgmVol(int volume);
+
+/**
+ * Returns the background-music volume.
+ *
+ * @mangled SndGetBgmVol__Fv
+ */
+int SndGetBgmVol();
+
+/** Plays one menu sound effect. */
+void SndSPSePlay(int se_no, int voice);
+/** Returns zero once the background sound-effect load has finished. */
+int SndSPSeSyncBG(void);
