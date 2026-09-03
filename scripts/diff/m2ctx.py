@@ -242,6 +242,11 @@ def declarator(t, name=""):
     base = t.spelling
     for tag in ("class ", "struct ", "union ", "enum "):
         base = base.replace(tag, "")
+    # m2c's C parser cannot spell a C++ template-id.  CodeWarrior's legacy
+    # mangling already gives specializations stable C-compatible names, which
+    # are sufficient here because context types only describe ABI shapes.
+    base = re.sub(r'<\s*([^<>]+?)\s*>',
+                  lambda m: '_' + re.sub(r'\W+', '_', m.group(1)) + '_', base)
     return (base + " " + name).rstrip()
 
 
@@ -292,8 +297,10 @@ def record_fields(cur, depth=1):
                 pad, tag, "\n".join(body), pad,
                 f.spelling, array_suffix(f.type)))
         elif f.is_bitfield():
-            out.append("%s%s : %d;" % (pad, declarator(f.type, f.spelling),
-                                       f.get_bitfield_width()))
+            width = f.get_bitfield_width()
+            field = ("unsigned long long %s" % f.spelling
+                     if width > 32 else declarator(f.type, f.spelling))
+            out.append("%s%s : %d;" % (pad, field, width))
         else:
             out.append("%s%s;" % (pad, declarator(f.type, f.spelling)))
     return out
@@ -301,7 +308,7 @@ def record_fields(cur, depth=1):
 
 def usable(cur, root):
     """Named, declared in this project, and not one of the artefacts below."""
-    if not cur.spelling or "(" in cur.spelling:
+    if not cur.spelling or "(" in cur.spelling or cur.spelling.startswith("operator"):
         # Anonymous records: clang spells these "(unnamed struct at ...)".
         return False
 
@@ -337,6 +344,8 @@ def declarations(cursor):
 
 def convert(tu, root):
     enums, fwd, typedefs, records, rest = [], [], [], [], []
+    # Opaque project template specializations used by free-function ABIs.
+    fwd.append("typedef struct CDataAlloc2_1_ CDataAlloc2_1_;")
     tags = []
     defined = set()
 

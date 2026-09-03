@@ -229,6 +229,10 @@ list(REMOVE_ITEM STATIC_SECTION_SOURCES
      ${ASM_DATA_DIR}/main/parts/main.sbss.part8.s
      ${ASM_DATA_DIR}/main/parts/main.sbss.part9.s)
 
+# fish.cpp now owns the complete fish data run at 0x296050-0x2965C0.
+list(REMOVE_ITEM STATIC_SECTION_SOURCES
+     ${ASM_DATA_DIR}/main/parts/main.data.part7.s)
+
 set(FILTERED_SBSS_PART1 generated/asm/data/main/parts/main.sbss.part1.s)
 add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${FILTERED_SBSS_PART1}

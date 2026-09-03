@@ -118,6 +118,22 @@ def _asm_paths():
                     full = os.path.join(base, name)
                     paths.setdefault(name[:-2],
                                      os.path.relpath(full, REPO))
+
+    # A translation unit that is still wholly supplied by assembly is emitted
+    # as one asmtu file.  Index its glabels too so decompile.sh remains usable
+    # before the first INCLUDE_ASM marker has been migrated.
+    asm_root = os.path.join(REPO, 'asm')
+    if os.path.isdir(asm_root):
+        for name in os.listdir(asm_root):
+            if not name.endswith('.s'):
+                continue
+            full = os.path.join(asm_root, name)
+            with open(full, encoding='utf-8') as source:
+                for line in source:
+                    match = re.match(r'glabel\s+(\S+)', line)
+                    if match:
+                        paths.setdefault(match.group(1),
+                                         os.path.relpath(full, REPO))
     return paths
 
 

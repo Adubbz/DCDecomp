@@ -295,7 +295,7 @@ segments:
       - {start: 0x138550, type: cpp, name: battle_globals}
       - {start: 0x13da40, type: cpp, name: runscript}
       - {start: 0x13f690, type: cpp, name: stockitem}
-      - {start: 0x140150, type: asmtu, name: fish}
+      - {start: 0x140150, type: cpp, name: fish}
       - {start: 0x141420, type: cpp, name: charakey}
       - {start: 0x144c30, type: asmtu, name: langset}
       - {start: 0x1452f0, type: asmtu, name: fader}

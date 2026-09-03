@@ -464,7 +464,7 @@ SECTIONS
         main.data.part6.s.o (.data)
         stockitem.cpp.o (.data)
         . = . + 0xC;
-        main.data.part7.s.o (.data)
+        fish.cpp.o (.data)
         charakey.cpp.o (.data)
         main.data.part7b.s.o (.data)
         *(.data)
@@ -616,10 +616,12 @@ SECTIONS
 		_LIT_002A1A38 = 0x002a1a38;
 		_LIT_002A1A3C = 0x002a1a3c;
 		_LIT_002A1A40 = 0x002a1a40;
+		_LIT_002A1A50 = 0x002a1a50;
 		_LIT_002A1A58 = 0x002a1a58;
 		_LIT_002A1A7C = 0x002a1a7c;
 		_LIT_002A1A80 = 0x002a1a80;
 		_LIT_002A1A84 = 0x002a1a84;
+		_LIT_002A1A88 = 0x002a1a88;
 		_LIT_002A1A8C = 0x002a1a8c;
 		_LIT_002A1A94 = 0x002a1a94;
 		_LIT_002A1A98 = 0x002a1a98;

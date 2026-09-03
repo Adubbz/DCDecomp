@@ -756,5 +756,15 @@
       "CFire": "CFire__4",
       "Wind": "Wind__4"
     }
+  },
+  "src/fish.cpp": {
+    "drop_functions": [
+      "fish_file_01",
+      "fish_file_02",
+      "fish_file_03",
+      "fish_file_04",
+      "fish_file_05",
+      "fish_file_06"
+    ]
   }
 }
