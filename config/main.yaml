@@ -211,7 +211,7 @@ segments:
       - {start: 0x36390, type: asmtu, name: visualshadow}
       - {start: 0x374e0, type: cpp, name: character}
       - {start: 0x39e10, type: cpp, name: chararead}
-      - {start: 0x3b580, type: asmtu, name: wind}
+      - {start: 0x3b580, type: cpp, name: wind}
       - {start: 0x3b740, type: cpp, name: cloth}
       - {start: 0x3d350, type: asmtu, name: bound}
       - {start: 0x3df90, type: cpp, name: dispctrl}
@@ -264,7 +264,7 @@ segments:
       - {start: 0xb5e90, type: cpp, name: hitvalue}
       - {start: 0xb6af0, type: asmtu, name: motionmodel}
       - {start: 0xb6e70, type: asmtu, name: btmisc}
-      - {start: 0xb7900, type: asmtu, name: weaponelement}
+      - {start: 0xb7900, type: cpp, name: weaponelement}
       - {start: 0xbb160, type: asmtu, name: btsysscript}
       - {start: 0xbda00, type: cpp, name: dngstatusdata}
       - {start: 0xbfbb0, type: asmtu, name: dungeonparts}
@@ -276,7 +276,7 @@ segments:
       - {start: 0xd1130, type: asmtu, name: btitem}
       - {start: 0xd4640, type: asmtu, name: mainitemmodel}
       - {start: 0xd5680, type: asmtu, name: itembombeffect}
-      - {start: 0xd66c0, type: asmtu, name: weaponeffect}
+      - {start: 0xd66c0, type: cpp, name: weaponeffect}
       - {start: 0xd6ce0, type: cpp, name: randomitem}
       - {start: 0xd75e0, type: cpp, name: stealitem}
       - {start: 0xd7b40, type: cpp, name: monstorunit}
@@ -288,7 +288,9 @@ segments:
       - {start: 0x1136d0, type: asmtu, name: memorycardaccess}
       - {start: 0x116e50, type: asmtu, name: memcard}
       - {start: 0x121830, type: cpp, name: menu_draw}
-      - {start: 0x12f1a0, type: cpp, name: weapon_buildup}
+      - {start: 0x132930, type: cpp, name: eastking}
+      - {start: 0x133620, type: cpp, name: menu_manual}
+      - {start: 0x1350e0, type: cpp, name: weapon_buildup}
       - {start: 0x135750, type: asmtu, name: menuitemstep}
       - {start: 0x135b10, type: cpp, name: weaponlevelup}
       - {start: 0x1381b0, type: asmtu, name: menuiconautoget}
@@ -403,8 +405,9 @@ segments:
       - {start: 0x19e5d0, type: .rodata, name: memorycardaccess}
       - {start: 0x19eb00, type: .rodata, name: memcard}
       - {start: 0x19ecc0, type: .rodata, name: menu_draw}
-      - {start: 0x19f2d0, type: .rodata, name: weapon_buildup}
-      - {start: 0x19f4c8, type: .rodata, name: weaponlevelup}
+      - {start: 0x19f370, type: .rodata, name: eastking}
+      - {start: 0x19f3b8, type: .rodata, name: menu_manual}
+      - {start: 0x19f478, type: .rodata, name: weaponlevelup}
       - {start: 0x19f6d0, type: .rodata, name: battle_globals}
       - {start: 0x19f910, type: .rodata, name: runscript}
       - {start: 0x19fd00, type: .rodata, name: stockitem}

@@ -251,6 +251,18 @@ void setColSprite(sceVif1Packet *, int *, int *, int *, int *, unsigned char, un
                   unsigned char, unsigned char);
 
 /**
+ * Draws a four-cornered shape of the screen in a flat colour, giving each
+ * corner its own.
+ *
+ * @mangled set3DColSprite__FP13sceVif1PacketPiPiPiPiP6spRGBAP6spRGBAP6spRGBAP6spRGBA
+ * @address 0x15D1B0
+ * @size 0x2BC
+ * @unknownret
+ */
+void set3DColSprite(sceVif1Packet *, int *, int *, int *, int *, spRGBA *, spRGBA *, spRGBA *,
+                    spRGBA *);
+
+/**
  * Draws one part of a texture into a four-cornered shape of the screen, at one
  * alpha.
  *

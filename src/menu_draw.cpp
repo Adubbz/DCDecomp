@@ -7,6 +7,7 @@
 #include <cstring>
 
 #include "itemdata.hpp"
+#include "menu_inventory.hpp"
 
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeySaveCheck__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeySaveDecide__Fv);
@@ -255,4 +256,64 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardLimmitCheck__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardKeySub__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardItemPush__FP9IHAVEITEMi);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardWeaponPush__FP9IHAVEITEMi);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardAttachPush__FP9IHAVEITEMi);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardItemGetorSwap__Fi);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardItemCancel__Fv);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalRetMax__Fi);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawPersonalBoard__Fiiiii);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawNowEquipWeaponMark__Fiiiii);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonIconDraw__Fiiiiiii);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardDrawWaku__FiiP8CTexturei);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardOptionDraw__FiiiiP8CTexturei);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardTagDraw__FiiiP8CTextureii);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardScrlBarDraw__FiiiRfUcP8CTexturei);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardMaxDraw__FiiiP8CTexturei);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawPersonalBoardBase__FiiiiiP8CTexturei);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawPerBoardDraw__FiiiiiiP8CTexturei);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonTrushDraw__Fiii);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", IsEnableTrushThrow__Fi);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonMoneyBoardDraw__Fiiii);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", SearchBoardNowPosItemExist__Fii);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", GetBoardSpace__FiPi);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", SwapItem__FP9ITEM_PACKii);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", CompItem__Fii);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonItemBoardSub__FP9ITEM_PACK);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonItemBoard__FP9ITEM_PACK);
 
+int GetAttachKind(int item_no) {
+    if ((item_no >= ITEM_ATTACH_START) && (item_no < ITEM_ATTACH_ATTACK)) {
+        return ATTACHKIND_ELEMENT;
+    }
+
+    if ((item_no >= ITEM_ATTACH_ATTACK) && (item_no < ITEM_ATTACH_AMETHYST)) {
+        return ATTACHKIND_STAT;
+    }
+
+    if ((item_no >= ITEM_ATTACH_AMETHYST) && (item_no < 110)) {
+        return ATTACHKIND_GEM;
+    }
+
+    if ((item_no >= ITEM_ATTACH_DINOSLAYER) && (item_no < 122)) {
+        return ATTACHKIND_SLAYER;
+    }
+
+    return ATTACHKIND_OTHER;
+}
+
+INCLUDE_ASM("asm/nonmatchings/menu_draw", CompAttach__FP11ATTACH_LISTP11ATTACH_LIST);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonAttachBoardSub__FP11ATTACH_LIST__2);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonAttachBoard__FP11ATTACH_LIST);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", WhatIsKindofItem__Fi);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", WhoIsWeaponEquip__Fi);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", GetWeaponHoleNum__Fi);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowWeaponAttachNum__FP11WEAPON_HAVE);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", GetWeaponMaxExp__FP11WEAPON_HAVE);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowItemNum__FsP9ITEM_PACK);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", DeleteItemAfterUseItem__FsP9ITEM_PACK);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowModeMaxNum__FiPi);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", WepDataListToHaveCopy__FiP11WEAPON_HAVE);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", AttachDataListToHaveCopy__FiP11ATTACH_LIST);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", ItemDataToHaveCopy__Fi);
+INCLUDE_RODATA("asm/nonmatchings/menu_draw", LIT_2113__2);
+INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawFullSizePicture__FP8CTextureiii);

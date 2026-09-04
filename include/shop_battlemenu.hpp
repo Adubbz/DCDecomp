@@ -592,12 +592,13 @@ void SetAlreadyGetMardanWeapon(int);
 void SetFishMardanGarayanNum(int);
 
 /**
+ * Returns the number of fish counted toward the Mardan weapon requirement.
+ *
  * @mangled GetFishMardanGarayanNum__Fv
  * @address 0x1F1340
- * @size 0x30
- * @unknownret
+ * @size 0x28
  */
-void GetFishMardanGarayanNum(void);
+int GetFishMardanGarayanNum(void);
 
 /**
  * @mangled ClearFishMardanGarayanNum__Fv
@@ -752,12 +753,13 @@ void FishRecordViewDraw(void);
 void FishRecordViewLoop(void);
 
 /**
+ * Returns the first weapon identifier in a character's weapon chain.
+ *
  * @mangled GetDefaultWeaponNo__Fi
  * @address 0x1F3DA0
  * @size 0x20
- * @unknownret
  */
-void GetDefaultWeaponNo(int);
+int GetDefaultWeaponNo(int character_no);
 
 /**
  * @mangled IsDefaultWeapon__Fi

@@ -4,10 +4,8 @@ ColumnLimit: 0
 IndentWidth: 4
 TabWidth: 4
 UseTab: Never
-
-# Force a blank line between consecutive function definitions
 SeparateDefinitionBlocks: Always
-
+BreakBeforeBraces: Attach
 ---
 Language: Cpp
 

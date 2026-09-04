@@ -1870,7 +1870,7 @@ void GameInit(void) {
     DefaultWeapon.Initialize();
     CrashWeapon.Initialize();
     for (int i = 0; i < 32; i++) {
-        CWeaponFx.unk_490[i] = 0;
+        CWeaponFx.used[i] = 0;
     }
     CWeaponFx.colour[0].r = CWeaponFx.colour[2].r = 0x40;
     CWeaponFx.colour[0].g = CWeaponFx.colour[2].g = 0x40;
@@ -1878,8 +1878,8 @@ void GameInit(void) {
     CWeaponFx.colour[1].r = CWeaponFx.colour[3].r = 6;
     CWeaponFx.colour[1].g = CWeaponFx.colour[3].g = 6;
     CWeaponFx.colour[1].b = CWeaponFx.colour[3].b = 6;
-    CWeaponFx.unk_520 = 0;
-    CWeaponFx.unk_524 = 0;
+    CWeaponFx.cursor = 0;
+    CWeaponFx.timer = 0;
     for (int i = 0; i < 4; i++) {
         CWeaponElFx[i].Initialize();
     }
@@ -6271,7 +6271,7 @@ void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out) {
     NowWeapon->Step();
 
     for (i = 0; i < 32; i++) {
-        CWeaponFx.unk_490[i] = 0;
+        CWeaponFx.used[i] = 0;
     }
     CWeaponFx.colour[0].r = CWeaponFx.colour[2].r = 0x40;
     CWeaponFx.colour[0].g = CWeaponFx.colour[2].g = 0x40;
@@ -6279,8 +6279,8 @@ void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out) {
     CWeaponFx.colour[1].r = CWeaponFx.colour[3].r = 6;
     CWeaponFx.colour[1].g = CWeaponFx.colour[3].g = 6;
     CWeaponFx.colour[1].b = CWeaponFx.colour[3].b = 6;
-    CWeaponFx.unk_520 = 0;
-    CWeaponFx.unk_524 = 0;
+    CWeaponFx.cursor = 0;
+    CWeaponFx.timer = 0;
     CWeaponFx.InitSet(NowWeapon->frame, "dcol0", "dcol1");
     SetWeaponColor();
 }

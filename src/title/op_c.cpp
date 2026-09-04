@@ -32,6 +32,7 @@
 #include <cstdlib>
 #include "texture.hpp"
 #include "vector.hpp"
+#include "wind.hpp"
 
 extern CSound CSnd;
 
@@ -128,19 +129,6 @@ struct MAPOBJ_INFO
     char* lod_name;
     float position[3];
     float rotation[3];
-};
-
-/* The one wind this scene runs, which is the cloth simulation's own class. */
-class CWind
-{
-public:
-    CWind();
-
-    void Step();
-    void SetDir(float* direction);
-    void SetVelocity(float velocity);
-
-    char unk_00[48];
 };
 
 /* The river the scene draws, which is a grid the file sizes and colours once and then shakes every

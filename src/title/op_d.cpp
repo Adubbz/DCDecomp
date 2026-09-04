@@ -25,6 +25,7 @@
 #include "title/script.hpp"
 #include "title/seireiking.hpp"
 #include "visual.hpp"
+#include "wind.hpp"
 
 #include <libgraph.h>
 #include <libpkt.h>
@@ -107,19 +108,6 @@ struct MAPOBJ_INFO
     char* lod_name;
     float position[3];
     float rotation[3];
-};
-
-/* The one wind this scene runs, which is the cloth simulation's own class. */
-class CWind
-{
-public:
-    CWind();
-
-    void Step();
-    void SetDir(float* direction);
-    void SetVelocity(float velocity);
-
-    char unk_00[48];
 };
 
 /* One actor's face, as this scene animates it. The eyes and the mouth are two strips of frames

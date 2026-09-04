@@ -135,6 +135,7 @@ void DrawMenuOption();
 #include "object.hpp"
 #include "title/script.hpp"
 #include "texture.hpp"
+#include "wind.hpp"
 
 #define PI 3.14159265358979323846
 
@@ -249,19 +250,6 @@ public:
     char unk_18[32];
     sceVu0FVECTOR position;
     char unk_4C[16];
-};
-
-/* The wind the cloth simulation reads, which every scene points its cloth-carrying character at. */
-class CWind
-{
-public:
-    CWind();
-
-    void SetDir(float* dir);
-    void SetVelocity(float velocity);
-    void Step();
-
-    char unread[48];
 };
 
 /* A run of frames the world draws as one. */

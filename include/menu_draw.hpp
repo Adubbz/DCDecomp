@@ -309,12 +309,13 @@ void PlayerAllItemCheck(int);
 void GetAddAttachItem(int);
 
 /**
+ * Converts a weapon item identifier into its position in the owner's weapon chain.
+ *
  * @mangled TransWepNo__Fi
  * @address 0x225600
  * @size 0xE0
- * @unknownret
  */
-void TransWepNo(int);
+int TransWepNo(int weapon_no);
 
 /**
  * @mangled TransWepNoNewToOld__Fi
@@ -1090,8 +1091,19 @@ void PersonalBoardKey(void);
  */
 void PersonalBoardItemPush(IHAVEITEM *, int);
 
+/**
+ * Returns the sort category containing an attachment identifier.
+ *
+ * @mangled GetAttachKind__Fi
+ * @address 0x00231AD0
+ * @size 0x9C
+ */
+int GetAttachKind(int item_no);
+
 /** Texture block the shadow and icon sheets load into. */
 extern int MenuShadowReadBlock;
+/** Highest weapon-chain position available to each playable character. */
+extern s16 MenuCharaWeaponMax[];
 /** Texture block the battle menu loads into. */
 extern int BtlMenuReadBlock;
 

@@ -18,6 +18,7 @@ void SndSPSeLoadBG(int se_no, u_int *buffer, int *size);
 #include "dngstatusdata.hpp"
 #include "itemdata.hpp"
 #include "menu_draw.hpp"
+#include "menu_inventory.hpp"
 #include "menu_misc.hpp"
 #include "texture.hpp"
 #include "savedata.hpp"

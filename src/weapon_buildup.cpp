@@ -1,112 +1,209 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
-#pragma name_counter 453
 
 #include "weapon_buildup.hpp"
 
+#include <cstring>
+
 #include "itemdata.hpp"
+#include "menu_draw.hpp"
+#include "menu_inventory.hpp"
+#include "shop_battlemenu.hpp"
 
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", PersonalBoardWeaponPush__FP9IHAVEITEMi);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", PersonalBoardAttachPush__FP9IHAVEITEMi);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", PersonalBoardItemGetorSwap__Fi);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", PersonalBoardItemCancel__Fv);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", PersonalRetMax__Fi);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", DrawPersonalBoard__Fiiiii);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", DrawNowEquipWeaponMark__Fiiiii);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", CommonIconDraw__Fiiiiiii);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", PersonalBoardDrawWaku__FiiP8CTexturei);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", PersonalBoardOptionDraw__FiiiiP8CTexturei);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", PersonalBoardTagDraw__FiiiP8CTextureii);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", PersonalBoardScrlBarDraw__FiiiRfUcP8CTexturei);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", PersonalBoardMaxDraw__FiiiP8CTexturei);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", DrawPersonalBoardBase__FiiiiiP8CTexturei);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", DrawPerBoardDraw__FiiiiiiP8CTexturei);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", CommonTrushDraw__Fiii);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", IsEnableTrushThrow__Fi);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", CommonMoneyBoardDraw__Fiiii);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", SearchBoardNowPosItemExist__Fii);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", GetBoardSpace__FiPi);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", SwapItem__FP9ITEM_PACKii);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", CompItem__Fii);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", SeitonItemBoardSub__FP9ITEM_PACK);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", SeitonItemBoard__FP9ITEM_PACK);
-
-int GetAttachKind(int item_no) {
-    if ((item_no >= ITEM_ATTACH_START) && (item_no < ITEM_ATTACH_ATTACK)) {
-        return ATTACHKIND_ELEMENT;
+static int BuildMenuCompVolume(char current, char required) {
+    int result;
+    if (0 <= current) {
+        if (required >= current) {
+            result = 1;
+        } else {
+            result = 0;
+        }
+        return result;
     }
-
-    if ((item_no >= ITEM_ATTACH_ATTACK) && (item_no < ITEM_ATTACH_AMETHYST)) {
-        return ATTACHKIND_STAT;
-    }
-
-    if ((item_no >= ITEM_ATTACH_AMETHYST) && (item_no < 110)) {
-        return ATTACHKIND_GEM;
-    }
-
-    if ((item_no >= ITEM_ATTACH_DINOSLAYER) && (item_no < 122)) {
-        return ATTACHKIND_SLAYER;
-    }
-
-    return ATTACHKIND_OTHER;
+    current = -current;
+    return current < required ? 0 : 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", CompAttach__FP11ATTACH_LISTP11ATTACH_LIST);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", SeitonAttachBoardSub__FP11ATTACH_LIST__2);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", SeitonAttachBoard__FP11ATTACH_LIST);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", WhatIsKindofItem__Fi);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", WhoIsWeaponEquip__Fi);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", GetWeaponHoleNum__Fi);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", GetNowWeaponAttachNum__FP11WEAPON_HAVE);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", GetWeaponMaxExp__FP11WEAPON_HAVE);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", GetNowItemNum__FsP9ITEM_PACK);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", DeleteItemAfterUseItem__FsP9ITEM_PACK);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", GetNowModeMaxNum__FiPi);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", WepDataListToHaveCopy__FiP11WEAPON_HAVE);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", AttachDataListToHaveCopy__FiP11ATTACH_LIST);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", ItemDataToHaveCopy__Fi);
-INCLUDE_RODATA("asm/nonmatchings/weapon_buildup", LIT_2113__2);
-INCLUDE_RODATA("asm/nonmatchings/weapon_buildup", LIT_354__3);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", DrawFullSizePicture__FP8CTextureiii);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", EastKingTextureEnter__Fv);
-INCLUDE_RODATA("asm/nonmatchings/weapon_buildup", LIT_371__4);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", EastKingMsgDraw__Fv);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", GetPrevEastKingSndVol__Fv);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", InitEastKingEvent__FiPiP1);
-INCLUDE_RODATA("asm/nonmatchings/weapon_buildup", LIT_398__2);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", EastKingEventKey__Fv);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", EastKingEventDraw__Fv);
-INCLUDE_RODATA("asm/nonmatchings/weapon_buildup", LIT_453);
-INCLUDE_RODATA("asm/nonmatchings/weapon_buildup", LIT_454);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", GetNowManualPartTgaNum__Fv);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", GetGameFlagForManualMenu__Fv);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", ManualImgLoad__Fv);
-INCLUDE_RODATA("asm/nonmatchings/weapon_buildup", LIT_479__2);
-INCLUDE_RODATA("asm/nonmatchings/weapon_buildup", LIT_480__2);
-INCLUDE_RODATA("asm/nonmatchings/weapon_buildup", LIT_489__2);
-INCLUDE_RODATA("asm/nonmatchings/weapon_buildup", LIT_496__5);
-INCLUDE_RODATA("asm/nonmatchings/weapon_buildup", LIT_497__5);
-INCLUDE_RODATA("asm/nonmatchings/weapon_buildup", LIT_498__5);
-INCLUDE_RODATA("asm/nonmatchings/weapon_buildup", LIT_499__4);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", ManualImgEnter__Fv);
-INCLUDE_RODATA("asm/nonmatchings/weapon_buildup", LIT_505__3);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", DrawPrevNextCursor__Fv);
-INCLUDE_RODATA("asm/nonmatchings/weapon_buildup", LIT_535);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", DrawManualMsg__Fv);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", InitMenuManual__FPiP1);
-INCLUDE_RODATA("asm/nonmatchings/weapon_buildup", LIT_559__2);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", SetManualMsgBuffer__Fv);
-INCLUDE_RODATA("asm/nonmatchings/weapon_buildup", LIT_606__5);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", ExitManualMenu__Fv);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", GetNowManualMenuMode__Fv);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", MenuManualKey__Fv);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", MenuManualDraw__Fv);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", BuildMenuCompVolume__Fcc);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", BuildMenuCompVolume__Fss);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", CompareBuildUpModelData2__FP11WEAPON_HAVEP11WEAPON_HAVE);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", IsLastWeapon__Fi);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", IsNotBuildUpWeapon__Fi);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", SetWeaponBuildValue__FP11WEAPON_HAVEi);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", EnableBuildUpModelSpecial__FP16WEP_BUILDUP_INFOP11WEAPON_HAVE);
-INCLUDE_ASM("asm/nonmatchings/weapon_buildup", EnableBuildUpModel__FP16WEP_BUILDUP_INFOP11WEAPON_HAVE);
+static int BuildMenuCompVolume(short current, short required) {
+    int result;
+    if (0 <= current) {
+        if (required >= current) {
+            result = 1;
+        } else {
+            result = 0;
+        }
+        return result;
+    }
+    current = -current;
+    return current < required ? 0 : 1;
+}
 
+int CompareBuildUpModelData2(WEAPON_HAVE *candidate, WEAPON_HAVE *weapon) {
+    WEAPON_HAVE build_weapon;
+    WeaponAllValueSet(weapon, &build_weapon, 1);
+
+    s16 build_status[2] = {0, 0};
+    build_status[0] = build_weapon.attack;
+    build_status[1] = build_weapon.magic;
+
+    s16 current_status[2] = {0, 0};
+    current_status[0] = candidate->attack;
+    current_status[1] = candidate->magic;
+
+    for (int i = 0; i < 2; i++) {
+        if (!BuildMenuCompVolume(current_status[i], build_status[i])) {
+            return 0;
+        }
+    }
+
+    for (int i = 0; i < 5; i++) {
+        s8 have = candidate->elem[i];
+
+        if (!BuildMenuCompVolume(have, build_weapon.elem[i])) {
+            return 0;
+        }
+    }
+
+    for (int i = 0; i < 10; i++) {
+        s8 have = candidate->vs_monster[i];
+
+        if (!BuildMenuCompVolume(have, build_weapon.vs_monster[i])) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int IsLastWeapon(int weapon_no) {
+    int result = 0;
+    s16 last_weapons[15] = {
+        ITEM_WEAPON_ARISE_MARDAN,
+        ITEM_WEAPON_7THHEAVEN,
+        ITEM_WEAPON_SWORD_OF_ZEUS,
+        ITEM_WEAPON_CHRONICLE_SWORD,
+        ITEM_WEAPON_SUPER_STEVE,
+        ITEM_WEAPON_ANGE_GEAR,
+        ITEM_WEAPON_TALL_HAMMER,
+        ITEM_WEAPON_INFERNO,
+        ITEM_WEAPON_MOBIUS_RING,
+        ITEM_WEAPON_SECRET_ARMLET,
+        ITEM_WEAPON_HERCULES_WRATH,
+        ITEM_WEAPON_BABEL_S_SPEAR,
+        ITEM_WEAPON_STAR_BREAKER,
+        ITEM_WEAPON_SUPERNOVA,
+        -1,
+    };
+    int i = 0;
+
+    do {
+        int translated_no = TransWepNo(last_weapons[i]);
+        if (weapon_no == translated_no) {
+            result = 1;
+        } else {
+            i++;
+            if (translated_no > 0 && i < 15) {
+                continue;
+            }
+        }
+        break;
+    } while (true);
+
+    return result;
+}
+
+int IsNotBuildUpWeapon(int weapon_no) {
+    if (weapon_no < ITEM_WEAPON_START) {
+        return 1;
+    }
+
+    WEAPON_DATA *weapon = GetWeaponData(weapon_no);
+    if (weapon->buildup_mask0 != 0 || weapon->buildup_mask1 != 0) {
+        return 0;
+    }
+    return 1;
+}
+
+void SetWeaponBuildValue(WEAPON_HAVE *weapon, int destination_no) {
+    WEAPON_DATA *destination = GetWeaponData(destination_no);
+    if (weapon->endurance <= destination->endurance) {
+        weapon->endurance = destination->endurance;
+    }
+
+    if (weapon->speed <= destination->speed) {
+        weapon->speed = destination->speed;
+    }
+
+    if (weapon->durability < destination->durability) {
+        weapon->durability = destination->durability;
+    }
+}
+
+int EnableBuildUpModelSpecial(WEP_BUILDUP_INFO *build_info, WEAPON_HAVE *weapon) {
+    int result = 0;
+    if (weapon == NULL) {
+        return 0;
+    }
+
+    build_info[0].weapon_no = -1;
+    build_info[0].enabled = 0;
+    switch (weapon->item_no) {
+        case ITEM_WEAPON_MARDAN_EINS:
+        case ITEM_WEAPON_MARDAN_TWEI:
+            build_info[0].enabled = 0;
+            build_info[0].weapon_no = weapon->item_no + 1;
+
+            int fish_count = GetFishMardanGarayanNum();
+            int required_fish[2] = {5, 15};
+            if (required_fish[weapon->item_no - ITEM_WEAPON_MARDAN_EINS] > fish_count) {
+                break;
+            }
+            result = 1;
+            build_info[0].enabled = 1;
+            break;
+    }
+
+    build_info[1].weapon_no = -1;
+    build_info[1].enabled = 0;
+    return result;
+}
+
+int EnableBuildUpModel(WEP_BUILDUP_INFO *build_info, WEAPON_HAVE *weapon) {
+    if (weapon == NULL) {
+        return 0;
+    }
+
+    int weapon_no = weapon->item_no;
+    if (weapon_no != ITEM_WEAPON_MARDAN_EINS && weapon_no != ITEM_WEAPON_MARDAN_TWEI) {
+    } else {
+        EnableBuildUpModelSpecial(build_info, weapon);
+        return 1;
+    }
+
+    WEAPON_DATA *weapon_data = GetWeaponData(weapon_no);
+    WEAPON_HAVE weapon_copy;
+    memcpy(&weapon_copy, weapon, sizeof(WEAPON_HAVE));
+    s8 owner = weapon_data->owner;
+    int default_weapon_no = GetDefaultWeaponNo(owner);
+    int maximum = MenuCharaWeaponMax[owner];
+    int count = 0;
+
+    for (int position = 2; position <= maximum; position++) {
+        if ((position > 20 || (weapon_data->buildup_mask0 & (1 << position))) &&
+            (position <= 20 || (weapon_data->buildup_mask1 & (1 << (position - 20))))) {
+            build_info[count].weapon_no = default_weapon_no + position;
+
+            WEAPON_HAVE candidate;
+            WepDataListToHaveCopy(build_info[count].weapon_no, &candidate);
+            if (CompareBuildUpModelData2(&candidate, weapon)) {
+                build_info[count].enabled = 1;
+            } else {
+                build_info[count].enabled = 0;
+            }
+            count++;
+        }
+    }
+
+    build_info[count].weapon_no = -1;
+    return 1;
+}

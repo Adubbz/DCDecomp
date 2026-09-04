@@ -22,6 +22,7 @@
 #include <cstdlib>
 #include "texture.hpp"
 #include "vector3.hpp"
+#include "wind.hpp"
 
 #include <cmath>
 
@@ -160,18 +161,6 @@ struct MAPOBJ_INFO
     char* lod_name;
     float pos[3];
     float rotation[3];
-};
-
-/* The one wind this scene runs, which is the cloth simulation's own class. */
-class CWind
-{
-public:
-    CWind();
-
-    void SetDir(float* dir);
-    void SetVelocity(float velocity);
-
-    char unk_00[48];
 };
 
 void wait_now_loading_vsync();

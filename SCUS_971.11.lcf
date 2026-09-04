@@ -415,7 +415,9 @@ SECTIONS
         memorycardaccess.cpp.o      (.text)   // 0x002135d0
         memcard.cpp.o               (.text)   // 0x00216d50
         menu_draw.cpp.o             (.text)   // 0x00221730
-        weapon_buildup.cpp.o        (.text)   // 0x0022f0a0
+        eastking.cpp.o              (.text)   // 0x00232830
+        menu_manual.cpp.o           (.text)   // 0x00233520
+        weapon_buildup.cpp.o        (.text)   // 0x00234fe0
         menuitemstep.cpp.o          (.text)   // 0x00235650
         weaponlevelup.cpp.o         (.text)   // 0x00235a10
         menuiconautoget.cpp.o       (.text)   // 0x002380b0
@@ -458,10 +460,16 @@ SECTIONS
         main.data.part4b.s.o (.data)
         edit.cpp.o (.data)
         main.data.part4c.s.o (.data)
+        weaponelement.cpp.o (.data)  // 0x0026b2c0
+        main.data.part4d.s.o (.data) // 0x0026b2e0
         dungeonmap.cpp.o (.data)
         main.data.part5.s.o (.data)
         itemdata.cpp.o (.data)
         main.data.part6.s.o (.data)
+        weaponeffect.cpp.o (.data)   // 0x0027eb30
+        main.data.part6c.s.o (.data) // 0x0027eb50
+        weapon_buildup.cpp.o (.data) // 0x00295810
+        main.data.part6d.s.o (.data) // 0x00295830
         weaponlevelup.cpp.o (.data)  // 0x00295840
         . = ALIGN(16);               // the tail of the unit's last template
         main.data.part6b.s.o (.data) // 0x002959a0
@@ -547,6 +555,7 @@ SECTIONS
 		_LIT_002A1828 = 0x002a1828;
 		_LIT_002A1830 = 0x002a1830;
 		_LIT_002A1838 = 0x002a1838;
+		_LIT_002A1858 = 0x002a1858;
 		_LIT_002A1868 = 0x002a1868;
 		_LIT_002A186C = 0x002a186c;
 		_LIT_002A1870 = 0x002a1870;
@@ -746,6 +755,7 @@ SECTIONS
 		_LIT_002A1D24 = 0x002a1d24;
 		_LIT_002A1D28 = 0x002a1d28;
 		_LIT_002A1D30 = 0x002a1d30;
+		_LIT_002A1D34 = 0x002a1d34;
 		_LIT_002A1D38 = 0x002a1d38;
 		_LIT_002A1D3C = 0x002a1d3c;
 		_LIT_002A1D40 = 0x002a1d40;
@@ -754,6 +764,9 @@ SECTIONS
 		_LIT_002A1D4C = 0x002a1d4c;
 		_LIT_002A1D64 = 0x002a1d64;
 		_LIT_002A1D70 = 0x002a1d70;
+		_LIT_002A1D78 = 0x002a1d78;
+		_LIT_002A1D7C = 0x002a1d7c;
+		_LIT_002A1D80 = 0x002a1d80;
 		_LIT_002A1D90 = 0x002a1d90;
 		_LIT_002A1D94 = 0x002a1d94;
 		_LIT_002A1D98 = 0x002a1d98;
@@ -800,6 +813,7 @@ SECTIONS
 		main.sdata.part2c.s.o (.sdata) // 0x002a1f18
 		edit.cpp.o (.sdata)            // 0x002a1f24
 		main.sdata.part2d.s.o (.sdata) // 0x002a1f50
+		weapon_buildup.cpp.o (.sdata)  // 0x002a21c8
 		weaponlevelup.cpp.o (.sdata)   // 0x002a21d8
 		main.sdata.part2e.s.o (.sdata) // 0x002a21f0
 		stockitem.cpp.o (.sdata)

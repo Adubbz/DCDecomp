@@ -10,7 +10,6 @@
 
 #include "itemdata.hpp"
 #include "menu_draw.hpp"
-#include "weapon_buildup.hpp"
 
 /** Selects the first item type for the next stock sort operation. */
 int sort_top_type__3 = 1;
