@@ -27,4 +27,3 @@ INCLUDE_ASM("asm/nonmatchings/shot_effect", SetUserID2__17CSHOT_EFFECT_PACKFi);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", SetDmg__17CSHOT_EFFECT_PACKFi);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Set__15CSHOT_MACHINGUNFPfPfii);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Step__15CSHOT_MACHINGUNFv);
-

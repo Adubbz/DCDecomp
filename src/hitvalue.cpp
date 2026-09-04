@@ -12,4 +12,3 @@ INCLUDE_RODATA("asm/nonmatchings/hitvalue", LIT_804);
 INCLUDE_RODATA("asm/nonmatchings/hitvalue", LIT_805);
 INCLUDE_RODATA("asm/nonmatchings/hitvalue", LIT_863);
 INCLUDE_ASM("asm/nonmatchings/hitvalue", Step__9CHitValueFv);
-

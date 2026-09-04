@@ -279,6 +279,7 @@ enum Item {
     ITEM_WEAPON_SNAIL                  = 374,
     ITEM_WEAPON_SWALLOW                = 375,
 };
+
 // clang-format on
 
 /**
@@ -291,6 +292,7 @@ enum WeaponFlag {
     WEAPONFLAG_FRAGILE = 0x0100, /**< Double durability loss. */
     WEAPONFLAG_DURABLE = 0x0200, /**< Halved durability loss. */
 };
+
 // clang-format on
 
 /**
@@ -305,6 +307,7 @@ enum Character {
     CHARA_UNGAGA = 4,
     CHARA_OSMOND = 5,
 };
+
 // clang-format on
 
 /**
@@ -316,6 +319,7 @@ enum ItemKind {
     ITEMKIND_ITEM   = 1,
     ITEMKIND_WEAPON = 2,
 };
+
 // clang-format on
 
 /**
@@ -328,6 +332,7 @@ struct COM_ITEM_INFO {
     s16 icon_index;
     s16 msg; /**< Message id for the item's name. */
 };
+
 STATIC_ASSERT(sizeof(COM_ITEM_INFO) == 0x8);
 
 /** An entry in ITEM_LIST. */
@@ -342,6 +347,7 @@ struct ITEM_DATA {
     s16 shop;
     s16 unk_12;
 };
+
 STATIC_ASSERT(sizeof(ITEM_DATA) == 0x14);
 
 /**
@@ -353,6 +359,7 @@ enum ItemUseFlag {
     ITEMUSE_HEAL_HP = 0x0040, /**< Restores HP. */
     ITEMUSE_DRINK   = 0x0080, /**< Restores thirst. */
 };
+
 // clang-format on
 
 /**
@@ -364,6 +371,7 @@ enum ItemKindFlag {
     ITEMKINDF_THROWABLE  = 0x0010, /**< Item can be thrown. */
     ITEMKINDF_RANDOM     = 0x0020, /**< Item has random properties. */
 };
+
 // clang-format on
 
 /**
@@ -378,10 +386,11 @@ struct ATTACH_DATA {
     s16 endurance;
     s16 speed;
     s16 magic;
-    u8 elem[5];          /**< AttachStat order: fire, ice, thunder, wind, holy. */
-    u8 vs_monster[10];   /**< Monster effectiveness, one byte per WEAPON_DATA entry. */
+    u8 elem[5];        /**< AttachStat order: fire, ice, thunder, wind, holy. */
+    u8 vs_monster[10]; /**< Monster effectiveness, one byte per WEAPON_DATA entry. */
     u8 unk_1F;
 };
+
 STATIC_ASSERT(sizeof(ATTACH_DATA) == 0x20);
 
 /**
@@ -404,10 +413,11 @@ struct ATTACH_LIST {
     s16 endurance;
     s16 speed;
     s16 magic;
-    s8 elem[5];          /**< AttachStat order: fire, ice, thunder, wind, holy. */
-    s8 vs_monster[10];   /**< Monster effectiveness, one byte per WEAPON_DATA entry. */
+    s8 elem[5];        /**< AttachStat order: fire, ice, thunder, wind, holy. */
+    s8 vs_monster[10]; /**< Monster effectiveness, one byte per WEAPON_DATA entry. */
     u8 unk_1F;
 };
+
 STATIC_ASSERT(sizeof(ATTACH_LIST) == 0x20);
 
 // clang-format off
@@ -433,6 +443,7 @@ enum AttachStat {
     ATTACHSTAT_MIMIC     = 22,
     ATTACHSTAT_MAGE      = 23,
 };
+
 // clang-format on
 
 /**
@@ -455,6 +466,7 @@ enum AttachKind {
     ATTACHKIND_SLAYER  = 4, /**< 111-121: dinoslayer through mage slayer. */
     ATTACHKIND_OTHER   = 5, /**< Everything else, identifier 110 included. */
 };
+
 // clang-format on
 
 /**
@@ -484,6 +496,7 @@ struct WEAPON_DATA {
     s16 chain_pos;  /**< This weapon's position within its owner's chain. */
     s16 unk_4A;
 };
+
 STATIC_ASSERT(sizeof(WEAPON_DATA) == 0x4C);
 
 /**
@@ -507,16 +520,17 @@ struct WEAPON_HAVE {
     s16 unk_0E;
     float durability_f; /**< The durability again, converted on the way in. */
     s16 unk_14;
-    s8 best_elem;      /**< Indexes the largest entry of `elem`, or -1 for none. */
-    s8 elem[5];        /**< AttachStat order: fire, ice, thunder, wind, holy. */
+    s8 best_elem;        /**< Indexes the largest entry of `elem`, or -1 for none. */
+    s8 elem[5];          /**< AttachStat order: fire, ice, thunder, wind, holy. */
     char vs_monster[10]; /**< Monster effectiveness, one byte per WEAPON_DATA entry. */
     char unk_26[2];
-    ATTACH_LIST attach[6];   /**< One entry per hole the weapon data gives it. */
-    s8 attach_kind[6];       /**< Three while the matching hole's attachment is doubled. */
-    s16 flags; /**< Bit 3 and bit 4 each scale the water-drain rate (CUserStatus::Step). */
+    ATTACH_LIST attach[6]; /**< One entry per hole the weapon data gives it. */
+    s8 attach_kind[6];     /**< Three while the matching hole's attachment is doubled. */
+    s16 flags;             /**< Bit 3 and bit 4 each scale the water-drain rate (CUserStatus::Step). */
     s32 unk_F0;
     char unk_F4[4];
 };
+
 STATIC_ASSERT(sizeof(WEAPON_HAVE) == 0xF8);
 
 /**

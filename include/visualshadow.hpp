@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+
 #include "vu1.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
@@ -8,7 +9,6 @@
 // names but not where they live.
 struct RenderInfo;
 struct sceVif1Packet;
-
 
 class CVisualShadow {
 public:

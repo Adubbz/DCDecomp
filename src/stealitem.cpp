@@ -61,49 +61,49 @@ void CStealItem::Step(void) {
         int state = this->state[i];
 
         switch (state) {
-        case 0:
-            this->speed[i] += 0.05f;
-            this->pos[i][1] = this->base_height[i] + 12.0f * sinf(this->phase[i]);
-            this->phase[i] += 0.034906585f;
+            case 0:
+                this->speed[i] += 0.05f;
+                this->pos[i][1] = this->base_height[i] + 12.0f * sinf(this->phase[i]);
+                this->phase[i] += 0.034906585f;
 
-            vector[0] = target[0] - this->pos[i][0];
-            vector[1] = target[1] - this->pos[i][1];
-            vector[2] = target[2] - this->pos[i][2];
-            vector[3] = 1.0f;
-            sceVu0Normalize(vector, vector);
-            sceVu0ScaleVectorXYZ(vector, vector, this->speed[i]);
-            this->pos[i][0] += vector[0];
-            this->pos[i][1] += vector[1];
-            this->pos[i][2] += vector[2];
+                vector[0] = target[0] - this->pos[i][0];
+                vector[1] = target[1] - this->pos[i][1];
+                vector[2] = target[2] - this->pos[i][2];
+                vector[3] = 1.0f;
+                sceVu0Normalize(vector, vector);
+                sceVu0ScaleVectorXYZ(vector, vector, this->speed[i]);
+                this->pos[i][0] += vector[0];
+                this->pos[i][1] += vector[1];
+                this->pos[i][2] += vector[2];
 
-            if (this->phase[i] >= 1.5707964f) {
-                this->state[i] = 1;
-            }
-            break;
-
-        case 1:
-            if (DistVector(target, this->pos[i]) <= 5.0f) {
-                this->state[i] = 2;
+                if (this->phase[i] >= 1.5707964f) {
+                    this->state[i] = 1;
+                }
                 break;
-            }
 
-            this->speed[i] += 0.02f;
-            vector[0] = target[0] - this->pos[i][0];
-            vector[1] = target[1] - this->pos[i][1];
-            vector[2] = target[2] - this->pos[i][2];
-            vector[3] = 1.0f;
-            sceVu0Normalize(vector, vector);
-            sceVu0ScaleVectorXYZ(vector, vector, this->speed[i]);
-            this->pos[i][0] += vector[0];
-            this->pos[i][1] += vector[1];
-            this->pos[i][2] += vector[2];
-            break;
+            case 1:
+                if (DistVector(target, this->pos[i]) <= 5.0f) {
+                    this->state[i] = 2;
+                    break;
+                }
 
-        case 2:
-            break;
+                this->speed[i] += 0.02f;
+                vector[0] = target[0] - this->pos[i][0];
+                vector[1] = target[1] - this->pos[i][1];
+                vector[2] = target[2] - this->pos[i][2];
+                vector[3] = 1.0f;
+                sceVu0Normalize(vector, vector);
+                sceVu0ScaleVectorXYZ(vector, vector, this->speed[i]);
+                this->pos[i][0] += vector[0];
+                this->pos[i][1] += vector[1];
+                this->pos[i][2] += vector[2];
+                break;
 
-        case -1:
-            break;
+            case 2:
+                break;
+
+            case -1:
+                break;
         }
     }
 }

@@ -4,4 +4,3 @@ INCLUDE_ASM("asm/nonmatchings/dungeoneventdata", Set__17CDungeonEventDataFP13CDu
 INCLUDE_ASM("asm/nonmatchings/dungeoneventdata", CheckSwitch__17CDungeonEventDataFv);
 INCLUDE_ASM("asm/nonmatchings/dungeoneventdata", Stop__17CDungeonEventDataFv);
 INCLUDE_ASM("asm/nonmatchings/dungeoneventdata", Start__17CDungeonEventDataFv);
-

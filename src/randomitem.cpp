@@ -14,4 +14,3 @@ INCLUDE_ASM("asm/nonmatchings/randomitem", Set__11CRandomItemFPfiii);
 INCLUDE_ASM("asm/nonmatchings/randomitem", CheckID__11CRandomItemFv);
 INCLUDE_ASM("asm/nonmatchings/randomitem", CheckItemNo__11CRandomItemFi);
 INCLUDE_ASM("asm/nonmatchings/randomitem", Step__11CRandomItemFv);
-

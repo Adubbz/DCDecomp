@@ -9,8 +9,7 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-void CBombEffect::Draw(CCamera *camera, int dust_only)
-{
+void CBombEffect::Draw(CCamera *camera, int dust_only) {
     sceVu0FVECTOR camera_position;
     sceVu0FVECTOR direction;
     sceVu0FVECTOR position;
@@ -36,8 +35,10 @@ void CBombEffect::Draw(CCamera *camera, int dust_only)
     MGSetGsZBUF(&zbuf);
 
     for (i = 0; i < 8; i++) {
-        if (active[i] != 1) continue;
-        if (counters[i] < 0) continue;
+        if (active[i] != 1)
+            continue;
+        if (counters[i] < 0)
+            continue;
 
         direction[0] = camera_position[0] - positions[i][0];
         direction[1] = 0.0f;
@@ -52,8 +53,7 @@ void CBombEffect::Draw(CCamera *camera, int dust_only)
         position[3] = 1.0f;
 
         if (MGRotTransPers3DSprite(top_left, bottom_right, position, sizes[i], sizes[i] / 2.0f,
-                                  0)
-            != 1) {
+                                   0) != 1) {
             continue;
         }
 
@@ -69,7 +69,8 @@ void CBombEffect::Draw(CCamera *camera, int dust_only)
         if (i < 5) {
             CRect_i_ rect;
 
-            if (dust_only != 0) continue;
+            if (dust_only != 0)
+                continue;
             rect.x = 0;
             rect.y = 0;
             rect.width = 128;
@@ -92,8 +93,7 @@ void CBombEffect::Draw(CCamera *camera, int dust_only)
     MGSetGsZBUF(0);
 }
 
-void CBombEffect::Step(void)
-{
+void CBombEffect::Step(void) {
     s32 i;
 
     for (i = 0; i < 5; i++) {
@@ -102,43 +102,44 @@ void CBombEffect::Step(void)
         }
 
         switch (phases[i]) {
-        case 0:
-            counters[i]++;
-            sizes[i] += 8.0f;
-            alphas[i] += 4.0f;
-            if (counters[i] < 3) {
+            case 0:
+                counters[i]++;
+                sizes[i] += 8.0f;
+                alphas[i] += 4.0f;
+                if (counters[i] < 3) {
+                    break;
+                }
+                counters[i] = 0;
+                phases[i]++;
                 break;
-            }
-            counters[i] = 0;
-            phases[i]++;
-            break;
-        case 1:
-            counters[i]++;
-            sizes[i] += 1.0f;
-            alphas[i] += 8.0f;
-            if (counters[i] < 4) {
+            case 1:
+                counters[i]++;
+                sizes[i] += 1.0f;
+                alphas[i] += 8.0f;
+                if (counters[i] < 4) {
+                    break;
+                }
+                counters[i] = 0;
+                phases[i]++;
                 break;
-            }
-            counters[i] = 0;
-            phases[i]++;
-            break;
-        case 2:
-            counters[i]++;
-            sizes[i] += 0.3f;
-            alphas[i] -= 3.0f;
-            if (counters[i] < 20) {
+            case 2:
+                counters[i]++;
+                sizes[i] += 0.3f;
+                alphas[i] -= 3.0f;
+                if (counters[i] < 20) {
+                    break;
+                }
+                counters[i] = 0;
+                phases[i]++;
                 break;
-            }
-            counters[i] = 0;
-            phases[i]++;
-            break;
-        case 3:
-            counters[i]++;
-            sizes[i] -= 0.1f;
-            alphas[i] -= 2.0f;
-            if (counters[i] < 80) break;
-            active[i] = 0;
-            break;
+            case 3:
+                counters[i]++;
+                sizes[i] -= 0.1f;
+                alphas[i] -= 2.0f;
+                if (counters[i] < 80)
+                    break;
+                active[i] = 0;
+                break;
         }
     }
 
@@ -148,40 +149,41 @@ void CBombEffect::Step(void)
         }
 
         switch (phases[i]) {
-        case 0:
-            counters[i]++;
-            sizes[i] += 16.0f;
-            if (counters[i] < 3) {
+            case 0:
+                counters[i]++;
+                sizes[i] += 16.0f;
+                if (counters[i] < 3) {
+                    break;
+                }
+                counters[i] = 0;
+                phases[i]++;
                 break;
-            }
-            counters[i] = 0;
-            phases[i]++;
-            break;
-        case 1:
-            counters[i]++;
-            sizes[i] += 8.0f;
-            if (counters[i] < 4) {
+            case 1:
+                counters[i]++;
+                sizes[i] += 8.0f;
+                if (counters[i] < 4) {
+                    break;
+                }
+                counters[i] = 0;
+                phases[i]++;
                 break;
-            }
-            counters[i] = 0;
-            phases[i]++;
-            break;
-        case 2:
-            counters[i]++;
-            sizes[i] += 0.3f;
-            if (counters[i] < 20) {
+            case 2:
+                counters[i]++;
+                sizes[i] += 0.3f;
+                if (counters[i] < 20) {
+                    break;
+                }
+                counters[i] = 0;
+                phases[i]++;
                 break;
-            }
-            counters[i] = 0;
-            phases[i]++;
-            break;
-        case 3:
-            counters[i]++;
-            sizes[i] -= 0.1f;
-            alphas[i] -= 2.0f;
-            if (counters[i] < 80) break;
-            active[i] = 0;
-            break;
+            case 3:
+                counters[i]++;
+                sizes[i] -= 0.1f;
+                alphas[i] -= 2.0f;
+                if (counters[i] < 80)
+                    break;
+                active[i] = 0;
+                break;
         }
     }
 }

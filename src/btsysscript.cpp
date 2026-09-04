@@ -80,4 +80,3 @@ INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_IBOX_ANGLE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_IBOX_FINISH__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_PIERO_ITEM__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", AddSystemEventScript__Fv);
-

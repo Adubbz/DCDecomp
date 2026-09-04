@@ -9,14 +9,14 @@ class CTexture;
 struct TM2_head;
 
 struct IMG_head {
-    char tag[4];      /**< IMG file signature. */
-    u_int pictures;   /**< Number of image entries in the file. */
+    char tag[4];    /**< IMG file signature. */
+    u_int pictures; /**< Number of image entries in the file. */
     u_int reserved[2];
 };
 
 struct IMG_entry {
-    char name[32];  /**< Null-terminated texture name. */
-    u_int offset;   /**< Byte offset of the texture data. */
+    char name[32]; /**< Null-terminated texture name. */
+    u_int offset;  /**< Byte offset of the texture data. */
     u_int reserved[3];
 };
 
@@ -28,7 +28,7 @@ void SetTextureInfo(CTexture *texture, char *name, u_char *buffer);
    entry whose name is null or empty, so a table states its own end rather than its length; the
    third field is carried into EnterIMGFile unread by anything reconstructed. */
 struct LOADTEXTURE_INFO {
-    char *name;  /**< Texture file or synthetic frame-buffer specification. */
+    char *name;   /**< Texture file or synthetic frame-buffer specification. */
     int block_no; /**< Destination texture block. */
     int unk_08;
 };
@@ -52,16 +52,16 @@ public:
     CTexture();
     void Initialize();
 
-    short block;      /**< Texture block containing this texture. */
-    short width;      /**< Texture width in pixels. */
-    short height;     /**< Texture height in pixels. */
-    short bpp;        /**< Bits per pixel. */
-    char name[32];    /**< Null-terminated texture name. */
-    u_long tex0;      /**< GS TEX0 register value. */
-    u_long tex1;      /**< GS TEX1 register value. */
-    u_int *image[4];  /**< Image data for each stored mip level. */
-    u_int *clut;      /**< Colour lookup table data. */
-    int swizzled;     /**< Whether image data uses GS swizzled ordering. */
+    short block;     /**< Texture block containing this texture. */
+    short width;     /**< Texture width in pixels. */
+    short height;    /**< Texture height in pixels. */
+    short bpp;       /**< Bits per pixel. */
+    char name[32];   /**< Null-terminated texture name. */
+    u_long tex0;     /**< GS TEX0 register value. */
+    u_long tex1;     /**< GS TEX1 register value. */
+    u_int *image[4]; /**< Image data for each stored mip level. */
+    u_int *clut;     /**< Colour lookup table data. */
+    int swizzled;    /**< Whether image data uses GS swizzled ordering. */
 };
 
 /* One of the seventy-two texture blocks: the run of video memory its textures were given, the run
@@ -73,14 +73,14 @@ public:
     CTextureBlock();
     void Initialize();
 
-    char name[32];          /**< Null-terminated block name. */
-    int vram_top;           /**< First VRAM address assigned to the block. */
-    int vram_end;           /**< Address immediately after the block's VRAM range. */
-    int loaded;             /**< Whether the block has been uploaded. */
-    int extend;             /**< Whether the block uses extended allocation. */
-    int vram_dirty;         /**< Whether the VRAM copy requires reloading. */
-    u_long128 *buffer;      /**< Start of the source image buffer. */
-    u_long128 *buffer_end;  /**< End of the source image buffer. */
+    char name[32];         /**< Null-terminated block name. */
+    int vram_top;          /**< First VRAM address assigned to the block. */
+    int vram_end;          /**< Address immediately after the block's VRAM range. */
+    int loaded;            /**< Whether the block has been uploaded. */
+    int extend;            /**< Whether the block uses extended allocation. */
+    int vram_dirty;        /**< Whether the VRAM copy requires reloading. */
+    u_long128 *buffer;     /**< Start of the source image buffer. */
+    u_long128 *buffer_end; /**< End of the source image buffer. */
 };
 
 /* The registry itself, of which the game keeps exactly one. Seventy-two blocks and a hundred and
@@ -123,18 +123,18 @@ public:
     int EnterTextureFile(LOADTEXTURE_INFO *table);
     void print_buff_info();
 
-    int texture_max;             /**< Number of occupied texture records. */
-    int vram_work;               /**< Next working VRAM allocation address. */
-    int vram_size;               /**< Size of the managed VRAM range. */
-    int last_block;              /**< Most recently selected texture block. */
-    int vram_max;                /**< Upper bound of working VRAM allocation. */
-    int vram_fix;                /**< Boundary of fixed VRAM allocation. */
-    CTextureBlock blocks[72];    /**< Managed texture blocks. */
-    CTexture textures[196];      /**< Registered textures. */
-    u_long128 *buffer;           /**< Texture staging buffer. */
-    int buffer_used;             /**< Occupied staging-buffer quadwords. */
-    int buffer_size;             /**< Available staging-buffer quadwords. */
-    LOADTEXTURE_INFO *file;      /**< Texture load table currently being processed. */
+    int texture_max;          /**< Number of occupied texture records. */
+    int vram_work;            /**< Next working VRAM allocation address. */
+    int vram_size;            /**< Size of the managed VRAM range. */
+    int last_block;           /**< Most recently selected texture block. */
+    int vram_max;             /**< Upper bound of working VRAM allocation. */
+    int vram_fix;             /**< Boundary of fixed VRAM allocation. */
+    CTextureBlock blocks[72]; /**< Managed texture blocks. */
+    CTexture textures[196];   /**< Registered textures. */
+    u_long128 *buffer;        /**< Texture staging buffer. */
+    int buffer_used;          /**< Occupied staging-buffer quadwords. */
+    int buffer_size;          /**< Available staging-buffer quadwords. */
+    LOADTEXTURE_INFO *file;   /**< Texture load table currently being processed. */
 };
 
 extern CTextureManager TexManager;

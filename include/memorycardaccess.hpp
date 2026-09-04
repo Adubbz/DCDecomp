@@ -7,7 +7,6 @@
 // names but not where they live.
 struct MC_ICON_DATA;
 
-
 class CMemoryCardAccess {
 public:
     /**

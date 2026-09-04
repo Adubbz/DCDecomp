@@ -10,7 +10,6 @@ struct RECT;
 struct SPRITE_TABLE;
 struct sceGsTex0;
 
-
 class CSpriteTable {
 public:
     /**

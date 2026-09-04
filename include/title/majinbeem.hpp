@@ -11,7 +11,6 @@ class CCamera;
 
 class CMajinBeem {
 public:
-
     /**
      * Clears the effect. The compiler writes this one, for the members that
      * have constructors of their own; retail's copy stands in main.

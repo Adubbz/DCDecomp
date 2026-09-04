@@ -511,7 +511,7 @@ void CCharacter::ClothStep(int step) {
 
     for (i = 0; i < CHARA_CLOTH_MAX; i++) {
         if (this->cloth[i] != NULL) {
-            this->cloth[i]->wind = (void *)this->unk_C98;
+            this->cloth[i]->wind = (void *) this->unk_C98;
             this->cloth[i]->floor_y = world_pos[1];
             this->cloth[i]->Step(step);
         }
@@ -869,4 +869,3 @@ void CMainChara::Initialize() {
     this->unk_11C8 = 0;
     this->unk_11CC = 0;
 }
-

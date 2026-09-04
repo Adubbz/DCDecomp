@@ -90,11 +90,11 @@ struct MAP_TRAP_CIRCLE {
  * Places the door and the treasure box that link one pair of rooms.
  */
 struct ROOM_LINK_RESULT {
-    s32 door_x;     /**< Grid column of the door that the link opens. */
-    s32 door_y;     /**< Grid row of the door that the link opens. */
-    float item_x;   /**< Mini map position of the item that the link places. */
-    float item_y;   /**< Mini map position of the item that the link places. */
-    s32 used;       /**< 1 after the linked-room item and door are placed. */
+    s32 door_x;   /**< Grid column of the door that the link opens. */
+    s32 door_y;   /**< Grid row of the door that the link opens. */
+    float item_x; /**< Mini map position of the item that the link places. */
+    float item_y; /**< Mini map position of the item that the link places. */
+    s32 used;     /**< 1 after the linked-room item and door are placed. */
     s32 unk_14;
 };
 
@@ -158,28 +158,28 @@ public:
     s32 dummy_model[8];         /**< Index into dummy_frame of each dummy model. */
     s32 dummy_num;              /**< Number of dummy models on the floor. */
     s32 unk_0464;
-    s32 map_seed;             /**< Seed that the floor was built from. */
-    CFrame *dummy_frame[3];   /**< Models that a dummy model can draw with. */
-    CFrame *bg_model[6];      /**< Models that draw behind the floor. */
-    CDungeonParts parts[72];  /**< Map parts that the floor is built from. */
-    s32 mask[400];            /**< 1 for each grid cell that the mini map shows. */
-    DUNGEON_EVENT events[48]; /**< Places that start an event. */
-    MAP_CELL cells[400];      /**< 20 x 20 grid of the floor. */
-    ROOM_INFO rooms[16];      /**< Position and extent of each room. */
-    s32 room_num;             /**< Number of rooms on the floor. */
-    TREASURE_BOX boxes[24];   /**< Treasure boxes that stand on the floor. */
-    s32 box_num;              /**< Number of treasure boxes on the floor. */
+    s32 map_seed;                /**< Seed that the floor was built from. */
+    CFrame *dummy_frame[3];      /**< Models that a dummy model can draw with. */
+    CFrame *bg_model[6];         /**< Models that draw behind the floor. */
+    CDungeonParts parts[72];     /**< Map parts that the floor is built from. */
+    s32 mask[400];               /**< 1 for each grid cell that the mini map shows. */
+    DUNGEON_EVENT events[48];    /**< Places that start an event. */
+    MAP_CELL cells[400];         /**< 20 x 20 grid of the floor. */
+    ROOM_INFO rooms[16];         /**< Position and extent of each room. */
+    s32 room_num;                /**< Number of rooms on the floor. */
+    TREASURE_BOX boxes[24];      /**< Treasure boxes that stand on the floor. */
+    s32 box_num;                 /**< Number of treasure boxes on the floor. */
     CFrame *box_lid_model;       /**< Model that draws the lid of a wooden treasure box. */
     CFrame *box_body_model;      /**< Model that draws a wooden treasure box. */
     CFrame *box_collision_model; /**< Model that the collision of a treasure box uses. */
     CFrame *chest_lid_model;     /**< Model that draws the lid of a metal treasure box. */
     CFrame *chest_body_model;    /**< Model that draws a metal treasure box. */
     CFrame *unk_BC78;
-    CFrame *fall_model;          /**< Model that draws the hole a fallen map part leaves. */
-    ATRA_BOLL atra[8];        /**< Atla balls that lie on the floor. */
-    s32 atra_num;             /**< Number of atla balls on the floor. */
-    CFrame *atra_model;       /**< Model that draws an atla ball. */
-    CFrame *collision_model;  /**< Model that the collision of an atla ball uses. */
+    CFrame *fall_model;            /**< Model that draws the hole a fallen map part leaves. */
+    ATRA_BOLL atra[8];             /**< Atla balls that lie on the floor. */
+    s32 atra_num;                  /**< Number of atla balls on the floor. */
+    CFrame *atra_model;            /**< Model that draws an atla ball. */
+    CFrame *collision_model;       /**< Model that the collision of an atla ball uses. */
     ROOM_LINK_RESULT room_link[4]; /**< Rooms that a door and a treasure box link. */
     s32 unk_BDEC;
     MAP_NPC_MODEL npc[4];           /**< Characters that walk in the dungeon. */

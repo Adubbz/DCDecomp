@@ -7,8 +7,7 @@
 #include "rect.hpp"
 #include "snd.hpp"
 
-void CWeaponEffect::InitSet(CFrame *frame, char *root_name, char *tip_name)
-{
+void CWeaponEffect::InitSet(CFrame *frame, char *root_name, char *tip_name) {
     tip = NULL;
     root = NULL;
     if (frame != NULL) {
@@ -17,8 +16,7 @@ void CWeaponEffect::InitSet(CFrame *frame, char *root_name, char *tip_name)
     }
 }
 
-void CWeaponEffect::Set(int hold, float fade, float fade_out)
-{
+void CWeaponEffect::Set(int hold, float fade, float fade_out) {
     sceVu0FVECTOR centre = {0.0f, 0.0f, 0.0f, 1.0f};
 
     if (root == NULL || tip == NULL) {
@@ -44,8 +42,7 @@ void CWeaponEffect::Set(int hold, float fade, float fade_out)
     }
 }
 
-void CWeaponEffect::Step()
-{
+void CWeaponEffect::Step() {
     sceVu0FVECTOR centre = {0.0f, 0.0f, 0.0f, 1.0f};
     int i;
 
@@ -87,8 +84,7 @@ void CWeaponEffect::Step()
     }
 }
 
-void CWeaponEffect::Draw()
-{
+void CWeaponEffect::Draw() {
     int near_root[4];
     int near_tip[4];
     int far_root[4];
@@ -126,10 +122,10 @@ void CWeaponEffect::Draw()
             MGRotTransPers(near_tip, edge[prev * 2 + 1], 0) != 0 &&
             MGRotTransPers(far_root, edge[i * 2], 0) != 0 &&
             MGRotTransPers(far_tip, edge[i * 2 + 1], 0) != 0) {
-            colour[0].a = (u8)alpha[prev];
-            colour[1].a = (u8)alpha[prev];
-            colour[2].a = (u8)alpha[i];
-            colour[3].a = (u8)alpha[i];
+            colour[0].a = (u8) alpha[prev];
+            colour[1].a = (u8) alpha[prev];
+            colour[2].a = (u8) alpha[i];
+            colour[3].a = (u8) alpha[i];
             set3DColSprite(Vif1Packet, near_root, far_root, near_tip, far_tip, &colour[0],
                            &colour[2], &colour[1], &colour[3]);
         }

@@ -8,7 +8,6 @@
 class CCamera;
 class CUserStatus;
 
-
 class CItemBombEffect {
 private:
     u8 data[0xC0];

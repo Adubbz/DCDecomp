@@ -70,20 +70,20 @@ int CStockItem::SearchSpace(int slot_index, int search_space) {
 }
 
 void CStockItem::SetItemToPos(int slot_index, s16 *item_no, s16 *volume) {
-    s16 *item_slot  = &this->dungeon_items[slot_index];
+    s16 *item_slot = &this->dungeon_items[slot_index];
     s16 old_item_no = *item_slot;
-    *item_slot      = *item_no;
-    *item_no        = old_item_no;
+    *item_slot = *item_no;
+    *item_no = old_item_no;
 
     s16 *volume_slot = &this->dungeon_item_vols[slot_index];
-    s16 old_volume   = *volume_slot;
-    *volume_slot     = *volume;
-    *volume          = old_volume;
+    s16 old_volume = *volume_slot;
+    *volume_slot = *volume;
+    *volume = old_volume;
 }
 
 void CStockItem::GetItemInfo(int slot_index, s16 *item_no, s16 *volume) {
     *item_no = this->dungeon_items[slot_index];
-    *volume  = this->dungeon_item_vols[slot_index];
+    *volume = this->dungeon_item_vols[slot_index];
 }
 
 void CStockItem::SetWepToPos(int slot_index, WEAPON_HAVE *weapon) {
@@ -150,10 +150,10 @@ int CStockItem::SearchItem(int item_no) {
 }
 
 int CompChargeItem(int first_item_no, int second_item_no) {
-    ITEM_DATA *first  = GetItemData(first_item_no);
+    ITEM_DATA *first = GetItemData(first_item_no);
     ITEM_DATA *second = GetItemData(second_item_no);
 
-    int first_priority  = 0;
+    int first_priority = 0;
     int second_priority = 0;
 
     if (first != NULL) {
@@ -245,7 +245,7 @@ void CStockItem::SeitonItem(void) {
  * Compares two attachments with the current stock sort order.
  */
 static int CompChargeAttach(ATTACH_LIST *first, ATTACH_LIST *second) {
-    int first_priority  = asort_table__3[GetAttachKind(first->item_no)];
+    int first_priority = asort_table__3[GetAttachKind(first->item_no)];
     int second_priority = asort_table__3[GetAttachKind(second->item_no)];
     int second_item_no;
     int first_item_no;
@@ -299,7 +299,7 @@ static int SeitonAttachBoardSub(ATTACH_LIST *attachments) {
     }
 
     asort_table__3[0] = 5;
-    moved             = false;
+    moved = false;
 
     for (first_slot = 0; first_slot < 29; first_slot++) {
         for (second_slot = first_slot + 1; second_slot < 30; second_slot++) {
@@ -327,7 +327,7 @@ void CStockItem::SeitonAttach(void) {
 }
 
 int CStockItem::GetNowModeSpace(int search_space) {
-    int empty_slot              = -1;
+    int empty_slot = -1;
     StockSlotCounts slot_counts = LIT_459;
 
     for (int slot_index = 0; slot_index < slot_counts.values[search_space]; slot_index++) {

@@ -10,7 +10,6 @@
 class CCamera;
 class CTexture;
 
-
 /**
  * Draws a fire that gives off light in every direction, and the raster that it
  * casts on the floor.

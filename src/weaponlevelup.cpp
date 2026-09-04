@@ -20,14 +20,13 @@ void SndSPSeLoadBG(int se_no, u_int *buffer, int *size);
 #include "menu_draw.hpp"
 #include "menu_inventory.hpp"
 #include "menu_misc.hpp"
-#include "texture.hpp"
 #include "savedata.hpp"
 #include "shop_battlemenu.hpp"
 #include "snd.hpp"
+#include "texture.hpp"
 #include "weapon_buildup.hpp"
 
-void AttachMentValuePlus(ATTACH_LIST *total, ATTACH_LIST *attach, float scale)
-{
+void AttachMentValuePlus(ATTACH_LIST *total, ATTACH_LIST *attach, float scale) {
     WEAPON_DATA *data;
     int i;
     int value;
@@ -40,7 +39,7 @@ void AttachMentValuePlus(ATTACH_LIST *total, ATTACH_LIST *attach, float scale)
         limit[3] = data->magic_max;
     }
     for (i = 0; i < 4; i++) {
-        value = (&total->attack)[i] + (s16)(int)((float)(&attach->attack)[i] * scale);
+        value = (&total->attack)[i] + (s16) (int) ((float) (&attach->attack)[i] * scale);
         if (value >= limit[i]) {
             (&total->attack)[i] = limit[i];
         } else {
@@ -48,7 +47,7 @@ void AttachMentValuePlus(ATTACH_LIST *total, ATTACH_LIST *attach, float scale)
         }
     }
     for (i = 0; i < 5; i++) {
-        value = total->elem[i] + (int)((float)attach->elem[i] * scale);
+        value = total->elem[i] + (int) ((float) attach->elem[i] * scale);
         if (value >= 99) {
             total->elem[i] = 99;
         } else {
@@ -56,7 +55,7 @@ void AttachMentValuePlus(ATTACH_LIST *total, ATTACH_LIST *attach, float scale)
         }
     }
     for (i = 0; i < 10; i++) {
-        value = total->vs_monster[i] + (int)((float)attach->vs_monster[i] * scale);
+        value = total->vs_monster[i] + (int) ((float) attach->vs_monster[i] * scale);
         if (value >= 99) {
             total->vs_monster[i] = 99;
         } else {
@@ -65,8 +64,7 @@ void AttachMentValuePlus(ATTACH_LIST *total, ATTACH_LIST *attach, float scale)
     }
 }
 
-void WeaponLevelUpValueCalc(WEAPON_HAVE *src, WEAPON_HAVE *dst, int levels, int unused)
-{
+void WeaponLevelUpValueCalc(WEAPON_HAVE *src, WEAPON_HAVE *dst, int levels, int unused) {
     ATTACH_LIST total;
     int i;
     int synth_count;
@@ -125,7 +123,7 @@ void WeaponLevelUpValueCalc(WEAPON_HAVE *src, WEAPON_HAVE *dst, int levels, int 
             dst->magic = data->magic_max;
         }
         for (i = 0; i < 5; i++) {
-            value = (s8)dst->elem[i] + total.elem[i];
+            value = (s8) dst->elem[i] + total.elem[i];
             if (value >= 99) {
                 dst->elem[i] = 99;
             } else {
@@ -161,13 +159,13 @@ void WeaponLevelUpValueCalc(WEAPON_HAVE *src, WEAPON_HAVE *dst, int levels, int 
     dst->flags |= flags;
     dst->unk_F0 += synth_count;
 }
-void CWeaponLevelUp::CMenuEffectDataLoad(CWeaponLevelUp *buffer, int kind)
-{
+
+void CWeaponLevelUp::CMenuEffectDataLoad(CWeaponLevelUp *buffer, int kind) {
     int size;
     int index;
     int se;
 
-    effect_buffer = (u_long128 *)buffer;
+    effect_buffer = (u_long128 *) buffer;
     effect_buffer = MenuCalcBufAlignment(effect_buffer);
     {
         char *dir[5] = {"wlevelup.pak", "s_break.pak", "buildup.chr", "menu_ex.chr", "w_recover.chr"};
@@ -188,15 +186,14 @@ void CWeaponLevelUp::CMenuEffectDataLoad(CWeaponLevelUp *buffer, int kind)
     if (0 <= se) {
         effect_buffer += (size >> 4) + 1;
         effect_buffer = MenuCalcBufAlignment(effect_buffer);
-        SndSPSeLoadBG(se, (u_int *)effect_buffer, &size);
+        SndSPSeLoadBG(se, (u_int *) effect_buffer, &size);
         printf("effect snd size = %d\n", size);
         effect_buffer += (size >> 4) + 1;
     }
     ReadBG();
 }
 
-void CWeaponLevelUp::Initialize()
-{
+void CWeaponLevelUp::Initialize() {
     memset(this, -1, 0xF8);
     memset(&status_item_no, 0, 0x20);
     effect.frame = NULL;
@@ -216,8 +213,8 @@ void CWeaponLevelUp::Initialize()
     buildup_complete = 0;
     lost_default_weapon = 0;
 }
-void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *effect, int no)
-{
+
+void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *effect, int no) {
     ATTACH_LIST total;
     int i;
     WEAPON_DATA *data;
@@ -340,8 +337,8 @@ void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, C
     memcpy(weapon, &preview, 0xF8);
     effect_state = 1;
 }
-void CWeaponLevelUp::SetLevelUpWeaponData()
-{
+
+void CWeaponLevelUp::SetLevelUpWeaponData() {
     WEAPON_DATA *data = GetWeaponData(weapon->item_no);
 
     weapon->attack = weapon->attack + 1;
@@ -370,8 +367,7 @@ void CWeaponLevelUp::SetLevelUpWeaponData()
 FUZZY_MATCH("asm/nonmatchings/weaponlevelup",
             SetStatusBreak__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i);
 
-void CWeaponLevelUp::SetStatusBreak(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *effect, int no)
-{
+void CWeaponLevelUp::SetStatusBreak(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *effect, int no) {
     ATTACH_LIST total;
     int space;
     int i;
@@ -404,7 +400,7 @@ void CWeaponLevelUp::SetStatusBreak(WEAPON_HAVE *have, CCharacter *character, CW
     stat[2] = weapon->speed;
     stat[3] = weapon->magic;
     for (i = 0; i < 4; i++) {
-        status_stats[i] = 0.6f * (float)stat[i];
+        status_stats[i] = 0.6f * (float) stat[i];
     }
     for (i = 0; i < 5; i++) {
         status_elements[i] = weapon->elem[i] * 0.6f;
@@ -430,11 +426,11 @@ void CWeaponLevelUp::SetStatusBreak(WEAPON_HAVE *have, CCharacter *character, CW
             }
         }
     }
-    AttachMentValuePlus((ATTACH_LIST *)&status_item_no, &total, 0.6f);
+    AttachMentValuePlus((ATTACH_LIST *) &status_item_no, &total, 0.6f);
     flags = CheckWeaponOptionStatus(flags);
     status = SaveData->GetDngStatus();
     n = GetBoardSpace(0x5A, &space);
-    board = (ATTACH_LIST *)status->consumable_items;
+    board = (ATTACH_LIST *) status->consumable_items;
     slot = &board[n];
     memcpy(slot, &status_item_no, 0x20);
     slot->item_no = 0x5A;
@@ -442,8 +438,8 @@ void CWeaponLevelUp::SetStatusBreak(WEAPON_HAVE *have, CCharacter *character, CW
     board[n].unk_02 = weapon->item_no;
     board[n].unk_04 = flags;
 }
-void CWeaponLevelUp::SetBuildUp(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *effect, int no)
-{
+
+void CWeaponLevelUp::SetBuildUp(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *effect, int no) {
     if (have == NULL) {
         return;
     }
@@ -461,8 +457,8 @@ void CWeaponLevelUp::SetBuildUp(WEAPON_HAVE *have, CCharacter *character, CWeapo
         printf("mardan num clear!!\n");
     }
 }
-void CWeaponLevelUp::WepRecover(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *effect, int no)
-{
+
+void CWeaponLevelUp::WepRecover(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *effect, int no) {
     if (have == NULL || character == NULL || effect == NULL) {
         return;
     }
@@ -474,8 +470,8 @@ void CWeaponLevelUp::WepRecover(WEAPON_HAVE *have, CCharacter *character, CWeapo
     chara = character;
     weapon = have;
 }
-void CWeaponLevelUp::CureEffect(int x, int y, CWeaponLevelUp *effect, int no, int kind)
-{
+
+void CWeaponLevelUp::CureEffect(int x, int y, CWeaponLevelUp *effect, int no, int kind) {
     CMenuEffectDataLoad(effect, kind);
     texture_block = no;
     operation_kind = kind;
@@ -491,18 +487,18 @@ void CWeaponLevelUp::CureEffect(int x, int y, CWeaponLevelUp *effect, int no, in
             effect_motion = effect_motion - 1;
         }
     }
-    effect_x = (float)x;
-    effect_y = (float)y;
+    effect_x = (float) x;
+    effect_y = (float) y;
 }
-void CWeaponLevelUp::InitSnd()
-{
+
+void CWeaponLevelUp::InitSnd() {
     snd_from = -1;
     snd_volume = 0;
     snd_to = 0;
     snd_step = 0;
 }
-void CWeaponLevelUp::SetSnd(int from, int to, int step)
-{
+
+void CWeaponLevelUp::SetSnd(int from, int to, int step) {
     snd_from = from;
     snd_volume = snd_from;
     snd_to = to;
@@ -513,8 +509,8 @@ void CWeaponLevelUp::SetSnd(int from, int to, int step)
         snd_step = step;
     }
 }
-void CWeaponLevelUp::StepSnd()
-{
+
+void CWeaponLevelUp::StepSnd() {
     if (snd_step != 0) {
         snd_volume = snd_volume + snd_step;
         SndSetBgmVol(snd_volume);
@@ -532,8 +528,8 @@ void CWeaponLevelUp::StepSnd()
         }
     }
 }
-void CWeaponLevelUp::CheckSnd()
-{
+
+void CWeaponLevelUp::CheckSnd() {
     int volume;
 
     printf("snd check\n");
@@ -546,8 +542,7 @@ void CWeaponLevelUp::CheckSnd()
     InitSnd();
 }
 
-void CWeaponLevelUp::Step()
-{
+void CWeaponLevelUp::Step() {
     int size;
     int state;
     int ready;
@@ -569,260 +564,259 @@ void CWeaponLevelUp::Step()
         state = effect.motion_state;
     }
     switch (effect_state) {
-    default:
-        break;
-    case 0:
-        return;
-    case 1:
-    case 4:
-    case 7:
-    case 10:
-    case 12:
-    case 14:
-    case 16:
-    case 18:
-    case 20:
-    case 22:
-    case 24:
-    case 26:
-    case 28:
-    case 30:
-        ReadBG();
-        ready = 0;
-        if (ReadBGSync() == 0) {
-            ready++;
-        }
-        if (SndSPSeSyncBG() == 0) {
-            ready++;
-            if (operation_kind != 6 && operation_kind != 3 && operation_kind != 9 && operation_kind != 4 &&
-                operation_kind != 5) {
-                volume = BtlMenuBGMvol;
-                SetSnd(volume, volume >> 2, 7);
-            }
-        }
-        if (ready >= 2) {
-            LOADTEXTURE_INFO2 tex[3] = {{"#frame_menu_level#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
-            tex[0].block_no = texture_block;
-            tex[1].block_no = texture_block;
-            char sel[14] = {0, 1, 2, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
-            char *dir[5] = {"wlevelup", "s_break", "buildup", "menu_ex", "w_recover"};
-            char *file[14] = {"wlevelup", "info", "buildup", "info", "w_recover",
-                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-            char pack[0x20];
-            char name[0x20];
-
-            index = sel[operation_kind];
-            strcpy(pack, file[index]);
-            strcpy(name, dir[index]);
-            strcat(name, ".img");
-            strcat(pack, ".cfg");
-            read = GetReadBGFile(0);
-            tex[1].name = (char *)GetPackFile((u_int *)read->buffer, name, &size);
-            TexManager.DeleteTextureBlock(texture_block);
-            TexManager.CleanUpTextureList();
-            TexManager.LoadTextureBlockEX(-1, tex);
-            buffer = (u_int *)read->buffer;
-            aligned = read->buffer + (read->size >> 4) + 1;
-            aligned = MenuCalcBufAlignment(aligned);
-            effect.Initialize();
-            MenuEffectCashBuffer.buffer = (u8 *)aligned;
-            MenuEffectCashBuffer.size = 0x9100;
-            MenuEffectCashBuffer.used = 0;
-            effect.LoadPackData(buffer, pack, &MenuEffectCashBuffer, &MenuEffectCashBuffer);
-            effect_buffer = (u_long128 *)((MenuEffectCashBuffer.used << 4) +
-                                          MenuEffectCashBuffer.buffer);
-            effect_state++;
-            effect_timer = 0.0f;
-            effect_active = 1;
-
-            float position[4] = {0.0f, 0.0f, 1.0f, 1.0f};
-            switch (operation_kind) {
-            case 4:
-            case 5:
-            case 6:
-            case 8:
-            case 9:
-            case 10:
-            case 11:
-            case 12:
-            case 13:
-                position[0] = effect_x;
-                position[1] = effect_y;
-                break;
-            }
-            effect.SetPosition(position);
-
-            float scale[3] = {1.0f, 1.0f, 1.0f};
-            switch (operation_kind) {
-            case 1:
-                int i;
-                for (i = 0; i < 3; i++) {
-                    scale[i] = 1.38f;
-                }
-                break;
-            case 2:
-                int j;
-                for (j = 0; j < 3; j++) {
-                    scale[j] = 2.0f;
-                }
-                break;
-            }
-            effect.SetScale(scale);
-            effect.motion_no = effect_motion;
-            effect.flags = 6;
-            effect.motion_speed = -1.0f;
-            effect.Step();
-            se = -1;
-            switch (operation_kind) {
-            case 1:
-                se = 0x1A;
-                break;
-            case 0:
-                se = 0x19;
-                break;
-            case 2:
-                se = 0x1C;
-                if (IsLastWeapon(buildup_weapon_no) != 0) {
-                    se = 0x15;
-                }
-                break;
-            case 11:
-            case 12:
-            case 13:
-            case 8:
-            case 7:
-            case 10:
-                se = 0x14;
-                break;
-            }
-            if (se >= 0) {
-                SndSPSePlay(se, -1);
-            }
-            for (int i = 0; i < 4; i++) {
-                CommonMenuMes1.mes_no[i] = -1;
-                if (i >= 0 && i < 10) {
-                    CommonMenuMes1.line_pos[i].x = -1;
-                    CommonMenuMes1.line_pos[i].y = -1;
-                }
-            }
+        default:
+            break;
+        case 0:
             return;
-        }
-        break;
-    case 2:
-        effect_timer += 1.0f;
-        if (!(effect_timer < 140.0f)) {
-            effect_state = 3;
-            return;
-        }
-        break;
-    case 3:
-        effect_timer += 1.0f;
-        if (state == 3) {
-            effect_timer = 200.0f;
-            effect_active = 0;
-            return;
-        }
-        break;
-    case 5:
-        effect_timer += 1.0f;
-        if (state == 3) {
-            effect_motion++;
-            effect.motion_no = effect_motion;
-            effect.flags = 6;
-            effect.motion_speed = -1.0f;
-            effect_state++;
-            effect_timer = 0.0f;
-            lost = 1;
-            if (IsDefaultWeapon(weapon->item_no) >= 0) {
-                lost = 0;
-                weapon->unk_02 = 0;
-                lost_default_weapon = 1;
+        case 1:
+        case 4:
+        case 7:
+        case 10:
+        case 12:
+        case 14:
+        case 16:
+        case 18:
+        case 20:
+        case 22:
+        case 24:
+        case 26:
+        case 28:
+        case 30:
+            ReadBG();
+            ready = 0;
+            if (ReadBGSync() == 0) {
+                ready++;
             }
-            if (lost != 0) {
-                memset(weapon, 0, 0xF8);
-                weapon->item_no = -1;
+            if (SndSPSeSyncBG() == 0) {
+                ready++;
+                if (operation_kind != 6 && operation_kind != 3 && operation_kind != 9 && operation_kind != 4 &&
+                    operation_kind != 5) {
+                    volume = BtlMenuBGMvol;
+                    SetSnd(volume, volume >> 2, 7);
+                }
+            }
+            if (ready >= 2) {
+                LOADTEXTURE_INFO2 tex[3] = {{"#frame_menu_level#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+                tex[0].block_no = texture_block;
+                tex[1].block_no = texture_block;
+                char sel[14] = {0, 1, 2, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
+                char *dir[5] = {"wlevelup", "s_break", "buildup", "menu_ex", "w_recover"};
+                char *file[14] = {"wlevelup", "info", "buildup", "info", "w_recover",
+                                  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+                char pack[0x20];
+                char name[0x20];
+
+                index = sel[operation_kind];
+                strcpy(pack, file[index]);
+                strcpy(name, dir[index]);
+                strcat(name, ".img");
+                strcat(pack, ".cfg");
+                read = GetReadBGFile(0);
+                tex[1].name = (char *) GetPackFile((u_int *) read->buffer, name, &size);
+                TexManager.DeleteTextureBlock(texture_block);
+                TexManager.CleanUpTextureList();
+                TexManager.LoadTextureBlockEX(-1, tex);
+                buffer = (u_int *) read->buffer;
+                aligned = read->buffer + (read->size >> 4) + 1;
+                aligned = MenuCalcBufAlignment(aligned);
+                effect.Initialize();
+                MenuEffectCashBuffer.buffer = (u8 *) aligned;
+                MenuEffectCashBuffer.size = 0x9100;
+                MenuEffectCashBuffer.used = 0;
+                effect.LoadPackData(buffer, pack, &MenuEffectCashBuffer, &MenuEffectCashBuffer);
+                effect_buffer = (u_long128 *) ((MenuEffectCashBuffer.used << 4) +
+                                               MenuEffectCashBuffer.buffer);
+                effect_state++;
+                effect_timer = 0.0f;
+                effect_active = 1;
+
+                float position[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+                switch (operation_kind) {
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                        position[0] = effect_x;
+                        position[1] = effect_y;
+                        break;
+                }
+                effect.SetPosition(position);
+
+                float scale[3] = {1.0f, 1.0f, 1.0f};
+                switch (operation_kind) {
+                    case 1:
+                        int i;
+                        for (i = 0; i < 3; i++) {
+                            scale[i] = 1.38f;
+                        }
+                        break;
+                    case 2:
+                        int j;
+                        for (j = 0; j < 3; j++) {
+                            scale[j] = 2.0f;
+                        }
+                        break;
+                }
+                effect.SetScale(scale);
+                effect.motion_no = effect_motion;
+                effect.flags = 6;
+                effect.motion_speed = -1.0f;
+                effect.Step();
+                se = -1;
+                switch (operation_kind) {
+                    case 1:
+                        se = 0x1A;
+                        break;
+                    case 0:
+                        se = 0x19;
+                        break;
+                    case 2:
+                        se = 0x1C;
+                        if (IsLastWeapon(buildup_weapon_no) != 0) {
+                            se = 0x15;
+                        }
+                        break;
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 8:
+                    case 7:
+                    case 10:
+                        se = 0x14;
+                        break;
+                }
+                if (se >= 0) {
+                    SndSPSePlay(se, -1);
+                }
+                for (int i = 0; i < 4; i++) {
+                    CommonMenuMes1.mes_no[i] = -1;
+                    if (i >= 0 && i < 10) {
+                        CommonMenuMes1.line_pos[i].x = -1;
+                        CommonMenuMes1.line_pos[i].y = -1;
+                    }
+                }
                 return;
             }
-            WepDataListToHaveCopy(weapon->item_no, weapon);
-            return;
-        }
-        break;
-    case 6:
-        effect_timer += 1.0f;
-        if (state == 3) {
-            effect_timer = 12.0f;
-            effect_active = 0;
-            return;
-        }
-        break;
-    case 8:
-        if (state == 3) {
-            effect_motion++;
-            SetWeaponBuildValue(weapon, buildup_weapon_no);
-            weapon->item_no = buildup_weapon_no;
-            weapon->unk_02 = 0;
-            weapon->unk_14 = 0;
-            option = DefaultWeaponOptionSet(buildup_weapon_no);
-            if (option != 1) {
-                option = CheckWeaponOptionStatus(option);
-                weapon->flags = weapon->flags | option;
+            break;
+        case 2:
+            effect_timer += 1.0f;
+            if (!(effect_timer < 140.0f)) {
+                effect_state = 3;
+                return;
             }
-            MenuExTextureReadFlag = 0;
-            buildup_complete = 1;
-            effect.motion_no = effect_motion;
-            effect.flags = 6;
-            effect.motion_speed = -1.0f;
-            printf("effect setmotion tuuka \n");
-            effect_state++;
-            return;
-        }
-        break;
-    case 9:
-        if (state == 3) {
-            effect_active = 0;
-            return;
-        }
-        break;
-    case 11:
-        if (state == 3) {
-            effect_active = 0;
-            return;
-        }
-        break;
-    case 15:
-        now = effect.motion_type.state.time;
-        if (now > 52.0 && now < 52.3) {
-            ComMenuSePlay(0x13);
-        }
-        /* fallthrough */
-    case 13:
-    case 17:
-    case 19:
-    case 23:
-        if (state == 3) {
-            if (message_no >= 0x190) {
+            break;
+        case 3:
+            effect_timer += 1.0f;
+            if (state == 3) {
+                effect_timer = 200.0f;
                 effect_active = 0;
                 return;
             }
-            effect_active = 1;
-            Initialize();
-            return;
-        }
-        break;
-    case 21:
-    case 25:
-    case 27:
-    case 29:
-    case 31:
-        if (state == 3) {
-            effect_active = 0;
-        }
-        break;
+            break;
+        case 5:
+            effect_timer += 1.0f;
+            if (state == 3) {
+                effect_motion++;
+                effect.motion_no = effect_motion;
+                effect.flags = 6;
+                effect.motion_speed = -1.0f;
+                effect_state++;
+                effect_timer = 0.0f;
+                lost = 1;
+                if (IsDefaultWeapon(weapon->item_no) >= 0) {
+                    lost = 0;
+                    weapon->unk_02 = 0;
+                    lost_default_weapon = 1;
+                }
+                if (lost != 0) {
+                    memset(weapon, 0, 0xF8);
+                    weapon->item_no = -1;
+                    return;
+                }
+                WepDataListToHaveCopy(weapon->item_no, weapon);
+                return;
+            }
+            break;
+        case 6:
+            effect_timer += 1.0f;
+            if (state == 3) {
+                effect_timer = 12.0f;
+                effect_active = 0;
+                return;
+            }
+            break;
+        case 8:
+            if (state == 3) {
+                effect_motion++;
+                SetWeaponBuildValue(weapon, buildup_weapon_no);
+                weapon->item_no = buildup_weapon_no;
+                weapon->unk_02 = 0;
+                weapon->unk_14 = 0;
+                option = DefaultWeaponOptionSet(buildup_weapon_no);
+                if (option != 1) {
+                    option = CheckWeaponOptionStatus(option);
+                    weapon->flags = weapon->flags | option;
+                }
+                MenuExTextureReadFlag = 0;
+                buildup_complete = 1;
+                effect.motion_no = effect_motion;
+                effect.flags = 6;
+                effect.motion_speed = -1.0f;
+                printf("effect setmotion tuuka \n");
+                effect_state++;
+                return;
+            }
+            break;
+        case 9:
+            if (state == 3) {
+                effect_active = 0;
+                return;
+            }
+            break;
+        case 11:
+            if (state == 3) {
+                effect_active = 0;
+                return;
+            }
+            break;
+        case 15:
+            now = effect.motion_type.state.time;
+            if (now > 52.0 && now < 52.3) {
+                ComMenuSePlay(0x13);
+            }
+            /* fallthrough */
+        case 13:
+        case 17:
+        case 19:
+        case 23:
+            if (state == 3) {
+                if (message_no >= 0x190) {
+                    effect_active = 0;
+                    return;
+                }
+                effect_active = 1;
+                Initialize();
+                return;
+            }
+            break;
+        case 21:
+        case 25:
+        case 27:
+        case 29:
+        case 31:
+            if (state == 3) {
+                effect_active = 0;
+            }
+            break;
     }
 }
 
-void CWeaponLevelUp::Draw()
-{
+void CWeaponLevelUp::Draw() {
     s16 icon[5];
     s16 value[5];
     int i;
@@ -843,12 +837,12 @@ void CWeaponLevelUp::Draw()
     }
     alpha = 128;
     switch (effect_state) {
-    case 6:
-        if (!(effect.GetNowTime() < 134.0f)) {
-            MenuTextureReload(MenuShadowReadBlock);
-            DrawIconParts(0x5A, 0x132, 0xD0, 0, 0x280, alpha, status_weapon_no);
-        }
-        break;
+        case 6:
+            if (!(effect.GetNowTime() < 134.0f)) {
+                MenuTextureReload(MenuShadowReadBlock);
+                DrawIconParts(0x5A, 0x132, 0xD0, 0, 0x280, alpha, status_weapon_no);
+            }
+            break;
     }
     if (effect.frame != NULL) {
         MenuTextureReload(texture_block);
@@ -857,68 +851,68 @@ void CWeaponLevelUp::Draw()
     }
     MenuTextureReload(BtlMenuReadBlock);
     switch (effect_state) {
-    case 0:
-    case 1:
-    case 4:
-    case 7:
-        return;
-    case 2:
-        count = 0;
-        for (i = 0; i < 5; i++) {
-            if (attachment_icons[i] < 0x51) {
-                break;
-            }
-            icon[i] = attachment_icons[i];
-            value[i] = attachment_values[i];
-            count++;
-        }
-        if (count <= 0) {
+        case 0:
+        case 1:
+        case 4:
+        case 7:
             return;
-        }
-        step = 6.2831855f / (float)count;
-        angular_rate = step / 140.0f;
-        orbit_radius = 128.0f - 128.0f * (effect_timer / 140.0f);
-        if (!(effect_timer < 100.0f)) {
-            alpha = 128 - (int)(effect_timer - 100.0f) * 4;
-            if (alpha < 0) {
-                alpha = 0;
+        case 2:
+            count = 0;
+            for (i = 0; i < 5; i++) {
+                if (attachment_icons[i] < 0x51) {
+                    break;
+                }
+                icon[i] = attachment_icons[i];
+                value[i] = attachment_values[i];
+                count++;
             }
-        }
-        MenuTextureReload(MenuShadowReadBlock);
-        for (i = 0; i < count; i++) {
-            angle = angular_rate * effect_timer + step * (float)i;
-            x = orbit_radius * cosf(angle);
-            y = orbit_radius * sinf(angle);
-            x = 320.0f + x - 12.0f;
-            (int)x;
-            y = 224.0f + y - 12.0f;
-            (int)y;
-            DrawIconParts(icon[i], (int)x, (int)y, 0, 0x280, alpha, value[i]);
-        }
-        break;
-    case 3:
-    case 5:
-    case 6:
-    case 8:
-    case 9:
-        break;
+            if (count <= 0) {
+                return;
+            }
+            step = 6.2831855f / (float) count;
+            angular_rate = step / 140.0f;
+            orbit_radius = 128.0f - 128.0f * (effect_timer / 140.0f);
+            if (!(effect_timer < 100.0f)) {
+                alpha = 128 - (int) (effect_timer - 100.0f) * 4;
+                if (alpha < 0) {
+                    alpha = 0;
+                }
+            }
+            MenuTextureReload(MenuShadowReadBlock);
+            for (i = 0; i < count; i++) {
+                angle = angular_rate * effect_timer + step * (float) i;
+                x = orbit_radius * cosf(angle);
+                y = orbit_radius * sinf(angle);
+                x = 320.0f + x - 12.0f;
+                (int) x;
+                y = 224.0f + y - 12.0f;
+                (int) y;
+                DrawIconParts(icon[i], (int) x, (int) y, 0, 0x280, alpha, value[i]);
+            }
+            break;
+        case 3:
+        case 5:
+        case 6:
+        case 8:
+        case 9:
+            break;
     }
     DrawMes();
 }
-void CWeaponLevelUp::DrawMes()
-{
+
+void CWeaponLevelUp::DrawMes() {
     int x;
     int y;
 
     if (effect_active == 0 && operation_kind != -1) {
         switch (effect_state) {
-        case 0:
-        case 1:
-        case 2:
-        case 4:
-        case 5:
-        case 7:
-            return;
+            case 0:
+            case 1:
+            case 2:
+            case 4:
+            case 5:
+            case 7:
+                return;
         }
 
         int mes = 0;
@@ -926,50 +920,50 @@ void CWeaponLevelUp::DrawMes()
         int values[2] = {-1, -1};
 
         switch (effect_state) {
-        case 3:
-            mes = 0x190;
-            mes_no[0] = GetCommonItemInfo(preview.item_no)->msg + 100;
-            values[0] = preview.unk_02 + 1;
-            break;
-        case 6:
-            mes = 0x191;
-            mes_no[0] = GetCommonItemInfo(status_weapon_no)->msg + 100;
-            values[0] = status_weapon_kind;
-            break;
-        case 9:
-            mes = 0x192;
-            mes_no[0] = GetCommonItemInfo(weapon->item_no)->msg + 100;
-            values[0] = 0;
-            break;
-        case 11:
-            mes = 0x193;
-            mes_no[0] = GetCommonItemInfo(weapon->item_no)->msg + 100;
-            values[0] = weapon->unk_02;
-            break;
-        case 21:
-            mes = 0x194;
-            mes_no[0] = message_no + 50;
-            values[0] = message_value;
-            break;
-        case 23:
-            mes = message_no;
-            break;
-        case 29:
-            mes = 0x195;
-            mes_no[0] = message_no + 50;
-            break;
-        case 27:
-            mes = 0x196;
-            mes_no[0] = message_no + 50;
-            break;
-        case 31:
-            mes = 0x197;
-            values[0] = message_value;
-            break;
-        case 25:
-            mes = 0x198;
-            mes_no[0] = message_no + 50;
-            break;
+            case 3:
+                mes = 0x190;
+                mes_no[0] = GetCommonItemInfo(preview.item_no)->msg + 100;
+                values[0] = preview.unk_02 + 1;
+                break;
+            case 6:
+                mes = 0x191;
+                mes_no[0] = GetCommonItemInfo(status_weapon_no)->msg + 100;
+                values[0] = status_weapon_kind;
+                break;
+            case 9:
+                mes = 0x192;
+                mes_no[0] = GetCommonItemInfo(weapon->item_no)->msg + 100;
+                values[0] = 0;
+                break;
+            case 11:
+                mes = 0x193;
+                mes_no[0] = GetCommonItemInfo(weapon->item_no)->msg + 100;
+                values[0] = weapon->unk_02;
+                break;
+            case 21:
+                mes = 0x194;
+                mes_no[0] = message_no + 50;
+                values[0] = message_value;
+                break;
+            case 23:
+                mes = message_no;
+                break;
+            case 29:
+                mes = 0x195;
+                mes_no[0] = message_no + 50;
+                break;
+            case 27:
+                mes = 0x196;
+                mes_no[0] = message_no + 50;
+                break;
+            case 31:
+                mes = 0x197;
+                values[0] = message_value;
+                break;
+            case 25:
+                mes = 0x198;
+                mes_no[0] = message_no + 50;
+                break;
         }
         if (CommonMenuMes1.mes_made != mes || CommonMenuMes1.mes_no[0] != mes_no[0] ||
             CommonMenuMes1.values[0] != values[0]) {

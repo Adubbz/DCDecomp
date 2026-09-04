@@ -22,9 +22,9 @@ public:
     u_int visual_vu_size;
     int unk_20;
     u_int *vu_block[2]; /**< VU packet data for each display buffer. */
-    int num_i; /**< Number of active grid rows. */
-    int num_j; /**< Number of active grid columns. */
-    float pitch; /**< Rest spacing between adjacent vertices. */
+    int num_i;          /**< Number of active grid rows. */
+    int num_j;          /**< Number of active grid columns. */
+    float pitch;        /**< Rest spacing between adjacent vertices. */
     int stop;
     CFrame *frame; /**< Frame from which the cloth hangs. */
     int unk_30;
@@ -77,7 +77,7 @@ public:
     virtual void Initialize(CDataAlloc2<1> *alloc);
     virtual void Initialize(MDT_HEADER *header, CDataAlloc2<1> *alloc);
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
-        VU1_PROGRAM program, RenderInfo *unknown, int arg1, int arg2);
+                        VU1_PROGRAM program, RenderInfo *unknown, int arg1, int arg2);
     virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
-        VU1_PROGRAM program, sceVif1Packet *unknown, int arg1, int arg2);
+                        VU1_PROGRAM program, sceVif1Packet *unknown, int arg1, int arg2);
 };

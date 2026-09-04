@@ -13,7 +13,6 @@ class CRect_i_;
 class CVector3_f_;
 class CVector3_i_;
 
-
 class CEditArea {
 public:
     /**

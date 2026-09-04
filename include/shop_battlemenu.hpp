@@ -20,16 +20,16 @@ struct WEAPON_HAVE;
  * what that code uses; the names are what its arithmetic implies.
  */
 struct MAP_JUMP_COMPARE {
-    s8 index;         /**< Identifies the destination this entry stands for. */
-    s8 reachable;     /**< Is one when the destination can be jumped to, zero when it cannot. */
-    char unk_02[2];   /**< Contains the padding before `distance`. */
-    float distance;   /**< Orders the entries; GetNearWorldPos sorts on this ascending. */
-    s32 dx;           /**< Contains one axis of the offset to the destination. */
-    s32 dy;           /**< Contains the other axis of the offset to the destination. */
-    s32 distance_sq;  /**< Contains dx squared plus dy squared. */
+    s8 index;        /**< Identifies the destination this entry stands for. */
+    s8 reachable;    /**< Is one when the destination can be jumped to, zero when it cannot. */
+    char unk_02[2];  /**< Contains the padding before `distance`. */
+    float distance;  /**< Orders the entries; GetNearWorldPos sorts on this ascending. */
+    s32 dx;          /**< Contains one axis of the offset to the destination. */
+    s32 dy;          /**< Contains the other axis of the offset to the destination. */
+    s32 distance_sq; /**< Contains dx squared plus dy squared. */
 };
-STATIC_ASSERT(sizeof(MAP_JUMP_COMPARE) == 0x14);
 
+STATIC_ASSERT(sizeof(MAP_JUMP_COMPARE) == 0x14);
 
 /**
  * @mangled GetItemMoney__Fii

@@ -11,6 +11,7 @@ struct WEP_BUILDUP_INFO {
     s16 weapon_no; /**< Destination weapon identifier, or -1 after the final entry. */
     s16 enabled;   /**< Whether the held weapon meets this destination's requirements. */
 };
+
 STATIC_ASSERT(sizeof(WEP_BUILDUP_INFO) == 4);
 
 /**

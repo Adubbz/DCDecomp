@@ -7,7 +7,6 @@
 // names but not where they live.
 class CFrame;
 
-
 class CBound {
 public:
     /**

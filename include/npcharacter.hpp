@@ -9,12 +9,11 @@
 // names but not where they live.
 class CCPoly;
 
-
 class CNPCharacter {
 public:
     CCharacter chara; /**< The character that the walker draws and moves with. */
     u8 unk_11B0[0x2DC];
-    s32 unk_148C;     /**< Texture set that the walker's model animates with. */
+    s32 unk_148C; /**< Texture set that the walker's model animates with. */
     u8 unk_1490[0x10];
 
     /**

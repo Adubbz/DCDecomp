@@ -16,33 +16,28 @@ INCLUDE_ASM("asm/nonmatchings/dispctrl", Draw__10CDebugFontFv);
 INCLUDE_ASM("asm/nonmatchings/dispctrl", SearchPTS__FPUiPc);
 INCLUDE_ASM("asm/nonmatchings/dispctrl", SearchPTS__FPUii);
 
-void CDispCtrl::FadeOutStart(float speed)
-{
+void CDispCtrl::FadeOutStart(float speed) {
     this->speed = speed;
     rate = 0.0f;
     mode = 1;
 }
 
-void CDispCtrl::FadeInStart(float speed)
-{
+void CDispCtrl::FadeInStart(float speed) {
     this->speed = speed;
     rate = 128.0f;
     mode = 2;
 }
 
-void CDispCtrl::FadeInit(float rate)
-{
+void CDispCtrl::FadeInit(float rate) {
     this->rate = rate;
     mode = -1;
 }
 
-float CDispCtrl::GetRate(void)
-{
+float CDispCtrl::GetRate(void) {
     return rate;
 }
 
-float CDispCtrl::FadeOut(sceVif1Packet *packet)
-{
+float CDispCtrl::FadeOut(sceVif1Packet *packet) {
     if (mode != 1) {
         return rate;
     }
@@ -73,8 +68,7 @@ float CDispCtrl::FadeOut(sceVif1Packet *packet)
     return rate;
 }
 
-float CDispCtrl::FadeIn(sceVif1Packet *packet)
-{
+float CDispCtrl::FadeIn(sceVif1Packet *packet) {
     if (mode != 2) {
         return rate;
     }

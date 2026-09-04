@@ -7,6 +7,8 @@
 /* The per-character special-attack key handlers: Toan's, Ungaga's and Goro's,
  * with the two helpers they share. */
 
+#include <cmath>
+
 #include "btactstatus.hpp"
 #include "btmisc.hpp"
 #include "character.hpp"
@@ -23,8 +25,6 @@
 #include "snd.hpp"
 #include "userstatus.hpp"
 #include "weaponeffect.hpp"
-
-#include <cmath>
 
 /* The character that the player controls. */
 extern "C" CCharacter CharaMain;
@@ -593,6 +593,7 @@ void ToanKey_Play(void) {
         }
     }
 }
+
 void UngagaKey_On(void) {
     if (BtActStatus.unk_14C > 0) {
         return;
@@ -905,6 +906,7 @@ void UngagaKey_Play(void) {
         }
     }
 }
+
 void GoroKey_On(void) {
     if (BtActStatus.action_on == 0) {
         if (BtActStatus.unk_048 >= 100.0f) {

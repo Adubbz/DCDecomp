@@ -44,6 +44,7 @@ MG_PICKZ mgPickZBuff[16];
 sceGifTag GiftagAD;
 sceGsDBuff mgDBuff;
 sceVu0FVECTOR mgBackColor;
+
 /* The window rectangle. Its four words are written back to front at static-initialisation time,
    which CRect_i_'s own constructor does not do -- every rectangle handed to a drawing call has
    them written front to back -- so the storage is declared through a type that writes them in

@@ -40,12 +40,12 @@ public:
      * ends of the step before, then of the step after.
      */
     spRGBA colour[4];
-    s32 cursor;      /**< Slot the next step is written to. */
-    s32 timer;       /**< Steps the swing has run for. */
-    s32 hold;        /**< Steps the trail is laid down at full strength for. */
-    float strength;  /**< Brightness a new step is laid down at. */
-    float fade_out;  /**< Brightness the trail stops laying down each step, once held. */
-    float fade;      /**< Brightness every step already laid down loses each step. */
+    s32 cursor;     /**< Slot the next step is written to. */
+    s32 timer;      /**< Steps the swing has run for. */
+    s32 hold;       /**< Steps the trail is laid down at full strength for. */
+    float strength; /**< Brightness a new step is laid down at. */
+    float fade_out; /**< Brightness the trail stops laying down each step, once held. */
+    float fade;     /**< Brightness every step already laid down loses each step. */
     u8 unk_538[8];
 
     /**

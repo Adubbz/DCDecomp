@@ -6,19 +6,19 @@
  * Defines the state of one controller.
  */
 struct PAD_STATUS {
-    int button;                /**< Specifies the pressed buttons. */
-    int left_y;                /**< Specifies the left stick vertical position. */
-    int left_x;                /**< Specifies the left stick horizontal position. */
-    int right_y;               /**< Specifies the right stick vertical position. */
-    int right_x;               /**< Specifies the right stick horizontal position. */
-    int phase;                 /**< Specifies the controller setup phase. */
-    int state;                 /**< Specifies the controller connection state. */
-    int mode_count;            /**< Specifies the available controller mode count. */
-    int read_result;           /**< Specifies the current controller read mode. */
-    int previous_read_result;  /**< Specifies the previous controller read mode. */
+    int button;                 /**< Specifies the pressed buttons. */
+    int left_y;                 /**< Specifies the left stick vertical position. */
+    int left_x;                 /**< Specifies the left stick horizontal position. */
+    int right_y;                /**< Specifies the right stick vertical position. */
+    int right_x;                /**< Specifies the right stick horizontal position. */
+    int phase;                  /**< Specifies the controller setup phase. */
+    int state;                  /**< Specifies the controller connection state. */
+    int mode_count;             /**< Specifies the available controller mode count. */
+    int read_result;            /**< Specifies the current controller read mode. */
+    int previous_read_result;   /**< Specifies the previous controller read mode. */
     unsigned char vibration[6]; /**< Specifies the actuator strengths. */
-    unsigned char actuator[6]; /**< Specifies the actuator alignment. */
-    int vibration_timer[2];    /**< Specifies the remaining actuator times. */
+    unsigned char actuator[6];  /**< Specifies the actuator alignment. */
+    int vibration_timer[2];     /**< Specifies the remaining actuator times. */
     int unk_3C[3];
 };
 
@@ -34,7 +34,7 @@ union PAD_DATA {
     struct {
         int unk_00;
         PAD_STATUS status; /**< Specifies the current controller status. */
-    } input; /**< Provides the controller input view. */
+    } input;               /**< Provides the controller input view. */
 
     /**
      * Defines the actuator view of one controller port.
@@ -44,7 +44,7 @@ union PAD_DATA {
         unsigned char vibration[6]; /**< Specifies the actuator strengths. */
         unsigned char unk_32[6];
         int vibration_timer[5]; /**< Specifies the remaining actuator times. */
-    } actuator; /**< Provides the controller actuator view. */
+    } actuator;                 /**< Provides the controller actuator view. */
 };
 
 STATIC_ASSERT(sizeof(PAD_DATA) == 0x4C);
@@ -386,11 +386,11 @@ private:
     PAD_DATA pad[2];          /**< Specifies the current controller data. */
     PAD_DATA previous_pad[2]; /**< Specifies the previous controller data. */
     int unk_130[5];
-    PAD_REPEAT repeat[2];     /**< Specifies automatic repeat state for both controllers. */
-    int axis_threshold[2];    /**< Specifies analog-stick menu thresholds. */
-    int key_lock;             /**< Specifies the first controller input lock. */
-    int key_lock2;            /**< Specifies the second controller input lock. */
-    int vibration_enabled;    /**< Specifies whether vibration can run. */
+    PAD_REPEAT repeat[2];  /**< Specifies automatic repeat state for both controllers. */
+    int axis_threshold[2]; /**< Specifies analog-stick menu thresholds. */
+    int key_lock;          /**< Specifies the first controller input lock. */
+    int key_lock2;         /**< Specifies the second controller input lock. */
+    int vibration_enabled; /**< Specifies whether vibration can run. */
 };
 
 STATIC_ASSERT(sizeof(CGamePad) == 0x468);

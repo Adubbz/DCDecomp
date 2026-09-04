@@ -20,6 +20,7 @@ enum SearchSpace {
     SEARCHSPACE_WEAPONS       = 1, /**< Identifies the weapon section. */
     SEARCHSPACE_ATTACH        = 2, /**< Identifies the attachment section. */
 };
+
 // clang-format on
 
 /**
@@ -150,6 +151,7 @@ public:
      */
     int GetNowModeSpace(int search_space);
 };
+
 STATIC_ASSERT(sizeof(CStockItem) == 0x21C0);
 
 /**

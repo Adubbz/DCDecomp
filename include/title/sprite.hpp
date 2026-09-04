@@ -43,8 +43,8 @@ public:
      */
     int Se(void);
 
-    float x[12];  /**< Horizontal position of each trail point, newest first. */
-    float y[12];  /**< Vertical position of each trail point, newest first. */
-    float angle;  /**< Heading the head of the trail is turning towards. */
-    int started;  /**< Whether the trail has been let go. */
+    float x[12]; /**< Horizontal position of each trail point, newest first. */
+    float y[12]; /**< Vertical position of each trail point, newest first. */
+    float angle; /**< Heading the head of the trail is turning towards. */
+    int started; /**< Whether the trail has been let go. */
 };

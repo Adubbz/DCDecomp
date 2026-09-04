@@ -37,9 +37,9 @@ struct EDIT_EFFECT_INFO {
     sceVu0FVECTOR offset; /**< Distance from the frame to the effect; also the first end of a line sound source. */
     u8 unk_40[16];
     sceVu0FVECTOR colour; /**< Colour of the light that the effect gives; also the second end of a line sound source, whose fourth component says whether that end is set. */
-    float sound_no;      /**< Sound effect emitted by this effect. */
-    float near_distance; /**< Distance at which the sound has full volume. */
-    float far_distance;  /**< Distance beyond which the sound is inaudible. */
+    float sound_no;       /**< Sound effect emitted by this effect. */
+    float near_distance;  /**< Distance at which the sound has full volume. */
+    float far_distance;   /**< Distance beyond which the sound is inaudible. */
     u8 unk_6C[4];
 };
 

@@ -6,34 +6,29 @@
 #include "mglib.hpp"
 #include "rect.hpp"
 
-void CDispFade::FadeOutStart(float speed, int colour)
-{
+void CDispFade::FadeOutStart(float speed, int colour) {
     fade_speed = speed;
     mode = 1;
     fade_colour = colour;
 }
 
-void CDispFade::FadeInStart(float speed, int colour)
-{
+void CDispFade::FadeInStart(float speed, int colour) {
     fade_speed = speed;
     mode = 2;
     fade_colour = colour;
 }
 
-void CDispFade::FadeInit(float initial_rate)
-{
+void CDispFade::FadeInit(float initial_rate) {
     fade_rate = initial_rate;
     mode = -1;
     fade_colour = 0;
 }
 
-float CDispFade::GetRate(void)
-{
+float CDispFade::GetRate(void) {
     return fade_rate;
 }
 
-float CDispFade::FadeOut(sceVif1Packet *packet)
-{
+float CDispFade::FadeOut(sceVif1Packet *packet) {
     if (mode != 1) {
         return fade_rate;
     }
@@ -75,8 +70,7 @@ float CDispFade::FadeOut(sceVif1Packet *packet)
     return fade_rate;
 }
 
-float CDispFade::FadeIn(sceVif1Packet *packet)
-{
+float CDispFade::FadeIn(sceVif1Packet *packet) {
     if (mode != 2) {
         return fade_rate;
     }

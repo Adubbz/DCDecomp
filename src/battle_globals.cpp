@@ -3,10 +3,11 @@
 #pragma name_counter 15
 
 #include "battle_globals.hpp"
-#include "runscript.hpp"
 
 #include <cstdio>
 #include <cstdlib>
+
+#include "runscript.hpp"
 
 INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_348__4);
 INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_481__2);
@@ -48,19 +49,17 @@ INCLUDE_ASM("asm/nonmatchings/battle_globals", InitOpeningBook__FP1Pi);
 INCLUDE_ASM("asm/nonmatchings/battle_globals", OpeningBookKey__Fv);
 INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_1573);
 INCLUDE_ASM("asm/nonmatchings/battle_globals", OpeningBookDraw__Fv);
-void runerror(const char *message)
-{
+
+void runerror(const char *message) {
     fprintf(stderr, "RUNTIME ERROR: %s\n", message);
     exit__2(-1);
 }
 
-void stkoverflow()
-{
+void stkoverflow() {
     runerror("stack overflow");
 }
 
-int chk_int(RS_STACKDATA data, funcdata *function)
-{
+int chk_int(RS_STACKDATA data, funcdata *function) {
     if (data.type == RS_INT) {
         return data.i;
     }
@@ -70,23 +69,19 @@ int chk_int(RS_STACKDATA data, funcdata *function)
     return 0;
 }
 
-int is_true(RS_STACKDATA data)
-{
+int is_true(RS_STACKDATA data) {
     return !(data.type == RS_INT && data.i == 0);
 }
 
-void divby0error()
-{
+void divby0error() {
     runerror("Divide by 0");
 }
 
-void modby0error()
-{
+void modby0error() {
     runerror("Modulo by 0");
 }
 
-void print(RS_STACKDATA *data, int count)
-{
+void print(RS_STACKDATA *data, int count) {
     for (int index = 0; index < count; index++, data++) {
         if (data->type == RS_INT) {
             printf("%d", data->i);

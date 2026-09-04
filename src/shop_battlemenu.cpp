@@ -339,4 +339,3 @@ INCLUDE_ASM("asm/nonmatchings/shop_battlemenu", BattleManualKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop_battlemenu", BattleManualDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop_battlemenu", DrawStatusNumberNowAndMax__FPiiiii);
 INCLUDE_ASM("asm/nonmatchings/shop_battlemenu", DrawWepHole__FiiP11WEAPON_HAVEii);
-

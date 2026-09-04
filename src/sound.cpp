@@ -38,4 +38,3 @@ INCLUDE_ASM("asm/nonmatchings/sound", LoadHdBd_S__6CSoundFiiii);
 INCLUDE_ASM("asm/nonmatchings/sound", LoadSeq_A__6CSoundFii);
 INCLUDE_ASM("asm/nonmatchings/sound", LoadSeq_E__6CSoundFii);
 INCLUDE_ASM("asm/nonmatchings/sound", LoadSeq_I__6CSoundFii);
-

@@ -10,7 +10,6 @@ class CUserStatus;
 class ClsMes;
 struct WEAPON_HAVE;
 
-
 /**
  * @mangled NowGetGameFlagForBtlMenu__Fi
  * @address 0x20BEC0

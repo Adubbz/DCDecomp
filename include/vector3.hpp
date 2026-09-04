@@ -17,6 +17,7 @@
 class CVector3_f_ {
 public:
     CVector3_f_() {}
+
     CVector3_f_(float x_, float y_, float z_) : x(x_), y(y_), z(z_) {}
 
     float x; /**< Part of the vector along the first axis. */

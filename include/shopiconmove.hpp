@@ -7,7 +7,6 @@
 // names but not where they live.
 struct MENU_ITEMDATA;
 
-
 class ShopIconMove {
 public:
     /**

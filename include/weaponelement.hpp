@@ -36,31 +36,31 @@ class CWeaponElement {
 public:
     sceVu0FVECTOR *origin; /**< Point the cloud is drawn around, held by the weapon. */
     u8 unk_04[0xC];
-    sceVu0FVECTOR fire_pos; /**< Point the fire element was started at, which its sparks stay around. */
+    sceVu0FVECTOR fire_pos;                           /**< Point the fire element was started at, which its sparks stay around. */
     sceVu0FVECTOR offset[WEAPON_ELEMENT_SPARK_MAX];   /**< Distance of each spark from the origin. */
     sceVu0FVECTOR velocity[WEAPON_ELEMENT_SPARK_MAX]; /**< Distance each spark moves per step. */
-    float size[WEAPON_ELEMENT_SPARK_MAX];   /**< Width each spark draws at before it shrinks. */
-    float shrink[WEAPON_ELEMENT_SPARK_MAX]; /**< Share of the width left, from one down to nothing. */
-    float alpha[WEAPON_ELEMENT_SPARK_MAX];  /**< Blend each spark draws at; nothing means the slot is free. */
-    float spread;   /**< Distance from the origin that a new spark can start. */
-    s16 kind;       /**< Element the weapon is charged with. */
-    float power;    /**< Strength of the charge, which sets the count and the size. */
-    s16 on;         /**< 1 while any spark still draws. */
-    s16 count;      /**< Number of sparks the charge starts with. */
-    float scale;    /**< Width every spark is drawn at, over the size it carries. */
-    float spin[WEAPON_ELEMENT_SPARK_MAX];       /**< Angle each spark is turned about the vertical. */
-    float spin_speed[WEAPON_ELEMENT_SPARK_MAX]; /**< Angle the spin turns each step. */
-    s16 spawn_delay_max; /**< Longest wait between two sparks being started again. */
-    s16 spawn_delay;     /**< Steps left before the next spark is started again. */
-    s16 spawn_budget;    /**< Number of sparks the charge can still start again. */
-    s16 fading[WEAPON_ELEMENT_SPARK_MAX]; /**< 0 while a spark brightens, 1 once it is fading out. */
-    s16 frame[WEAPON_ELEMENT_SPARK_MAX];  /**< Row of the texture each spark draws. */
-    s16 frame_timer; /**< Counts four steps down, and the sparks pick new rows on the fourth. */
-    s16 bolt_head[WEAPON_ELEMENT_BOLT_MAX];  /**< Spark each bolt arcs from. */
-    s16 bolt_tail[WEAPON_ELEMENT_BOLT_MAX];  /**< Spark each bolt arcs to. */
-    s16 bolt_timer[WEAPON_ELEMENT_BOLT_MAX]; /**< Steps left before a bolt picks new ends. */
-    s16 bolt_frame[WEAPON_ELEMENT_BOLT_MAX]; /**< Part of the texture each bolt draws. */
-    s16 bolt_count; /**< Number of bolts the charge arcs between its sparks. */
+    float size[WEAPON_ELEMENT_SPARK_MAX];             /**< Width each spark draws at before it shrinks. */
+    float shrink[WEAPON_ELEMENT_SPARK_MAX];           /**< Share of the width left, from one down to nothing. */
+    float alpha[WEAPON_ELEMENT_SPARK_MAX];            /**< Blend each spark draws at; nothing means the slot is free. */
+    float spread;                                     /**< Distance from the origin that a new spark can start. */
+    s16 kind;                                         /**< Element the weapon is charged with. */
+    float power;                                      /**< Strength of the charge, which sets the count and the size. */
+    s16 on;                                           /**< 1 while any spark still draws. */
+    s16 count;                                        /**< Number of sparks the charge starts with. */
+    float scale;                                      /**< Width every spark is drawn at, over the size it carries. */
+    float spin[WEAPON_ELEMENT_SPARK_MAX];             /**< Angle each spark is turned about the vertical. */
+    float spin_speed[WEAPON_ELEMENT_SPARK_MAX];       /**< Angle the spin turns each step. */
+    s16 spawn_delay_max;                              /**< Longest wait between two sparks being started again. */
+    s16 spawn_delay;                                  /**< Steps left before the next spark is started again. */
+    s16 spawn_budget;                                 /**< Number of sparks the charge can still start again. */
+    s16 fading[WEAPON_ELEMENT_SPARK_MAX];             /**< 0 while a spark brightens, 1 once it is fading out. */
+    s16 frame[WEAPON_ELEMENT_SPARK_MAX];              /**< Row of the texture each spark draws. */
+    s16 frame_timer;                                  /**< Counts four steps down, and the sparks pick new rows on the fourth. */
+    s16 bolt_head[WEAPON_ELEMENT_BOLT_MAX];           /**< Spark each bolt arcs from. */
+    s16 bolt_tail[WEAPON_ELEMENT_BOLT_MAX];           /**< Spark each bolt arcs to. */
+    s16 bolt_timer[WEAPON_ELEMENT_BOLT_MAX];          /**< Steps left before a bolt picks new ends. */
+    s16 bolt_frame[WEAPON_ELEMENT_BOLT_MAX];          /**< Part of the texture each bolt draws. */
+    s16 bolt_count;                                   /**< Number of bolts the charge arcs between its sparks. */
 
     /**
      * Frees every spark slot, so that the cloud throws nothing.

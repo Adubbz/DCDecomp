@@ -11,13 +11,12 @@
    from one pass over the pair, so this costs less than the two the library would need. The
    pointers are register variables because that is how an assembly block reaches a value the
    compiler is holding. */
-static void vu_maxmin3(float* max, float* min, float* a, float* b, float* c)
-{
-    register float* out_max = max;
-    register float* out_min = min;
-    register float* p0 = a;
-    register float* p1 = b;
-    register float* p2 = c;
+static void vu_maxmin3(float *max, float *min, float *a, float *b, float *c) {
+    register float *out_max = max;
+    register float *out_min = min;
+    register float *p0 = a;
+    register float *p1 = b;
+    register float *p2 = c;
 
     asm {
         lqc2    vf15, 0(p0)
@@ -33,12 +32,11 @@ static void vu_maxmin3(float* max, float* min, float* a, float* b, float* c)
 }
 
 /* The plane normal of a triangle, as the outer product of two of its edges. */
-static void vu_normal(float* normal, float* a, float* b, float* c)
-{
-    register float* out = normal;
-    register float* p0 = a;
-    register float* p1 = b;
-    register float* p2 = c;
+static void vu_normal(float *normal, float *a, float *b, float *c) {
+    register float *out = normal;
+    register float *p0 = a;
+    register float *p1 = b;
+    register float *p2 = c;
 
     asm {
         lqc2    vf15, 0(p0)
@@ -54,10 +52,9 @@ static void vu_normal(float* normal, float* a, float* b, float* c)
 
 /* The query bound of a box search, parked in the unit's registers once instead of being reloaded
    per triangle. */
-static inline void vu_hold_box(float* max, float* min)
-{
-    register float* p0 = max;
-    register float* p1 = min;
+static inline void vu_hold_box(float *max, float *min) {
+    register float *p0 = max;
+    register float *p1 = min;
 
     asm {
         lqc2    vf10, 0(p0)
@@ -69,10 +66,9 @@ static inline void vu_hold_box(float* max, float* min)
    both have to come out positive for the two to overlap. Neither result is wanted — the answer is
    the unit's sticky sign and zero flags, cleared before the pair and read back after them, which
    is why the status register rather than a register file entry is what the block hands back. */
-static inline int vu_box_missed(float* max, float* min)
-{
-    register float* p0 = max;
-    register float* p1 = min;
+static inline int vu_box_missed(float *max, float *min) {
+    register float *p0 = max;
+    register float *p1 = min;
     register int status;
 
     asm {
@@ -97,11 +93,10 @@ static inline int vu_box_missed(float* max, float* min)
 
 /* The bound of whatever the shape is made of, which the base can build because the vertices are
    the one thing every shape answers. A shape with no vertices leaves the bound all zero. */
-void CCollision::CreateBBox()
-{
+void CCollision::CreateBBox() {
     int i;
     int num;
-    sceVu0FVECTOR* vertex;
+    sceVu0FVECTOR *vertex;
 
     vertex = GetVertexAddress(&num);
     if (vertex == 0) {
@@ -143,15 +138,14 @@ void CCollision::CreateBBox()
 
 INCLUDE_ASM("asm/nonmatchings/collisionmdt", GetVertexAddress__10CCollisionFPi);
 
-int CCollisionMDT::GetPolygon(int index, sceVu0FMATRIX v0, sceVu0FMATRIX v1, sceVu0FMATRIX v2)
-{
-    MDT_COLLISION* collision;
+int CCollisionMDT::GetPolygon(int index, sceVu0FMATRIX v0, sceVu0FMATRIX v1, sceVu0FMATRIX v2) {
+    MDT_COLLISION *collision;
 
     if (data == 0) {
         return 0;
     }
 
-    collision = (MDT_COLLISION*)((char*)data + data->mesh_ofs);
+    collision = (MDT_COLLISION *) ((char *) data + data->mesh_ofs);
     if (index >= collision->set.num) {
         return 0;
     }
@@ -162,8 +156,7 @@ int CCollisionMDT::GetPolygon(int index, sceVu0FMATRIX v0, sceVu0FMATRIX v1, sce
 /* The height of the mesh under a point, as the highest triangle a vertical line meets. The line is
    spelled from y zero to y one and the intersection treats it as infinite, so nothing bounds the
    search in y. */
-int CCollisionMDT::GetMaxY(float* position)
-{
+int CCollisionMDT::GetMaxY(float *position) {
     sceVu0FVECTOR v0;
     sceVu0FVECTOR v1;
     sceVu0FVECTOR v2;
@@ -175,9 +168,9 @@ int CCollisionMDT::GetMaxY(float* position)
     sceVu0FVECTOR min;
     int i;
     int found;
-    sceVu0FVECTOR* vertex;
-    MDT_CPOLY_SET* set;
-    MDT_CPOLY* poly;
+    sceVu0FVECTOR *vertex;
+    MDT_CPOLY_SET *set;
+    MDT_CPOLY *poly;
     float y;
 
     found = 0;
@@ -195,14 +188,14 @@ int CCollisionMDT::GetMaxY(float* position)
     from[1] = 0.0f;
     to[1] = 1.0f;
 
-    vertex = (sceVu0FVECTOR*)((char*)data + data->vertex_ofs);
-    set = &((MDT_COLLISION*)((char*)data + data->mesh_ofs))->set;
+    vertex = (sceVu0FVECTOR *) ((char *) data + data->vertex_ofs);
+    set = &((MDT_COLLISION *) ((char *) data + data->mesh_ofs))->set;
     poly = set->poly;
 
     for (i = 0; i < set->num; i++) {
-        *(u_long128*)v0 = *(u_long128*)vertex[poly->vertex[0]];
-        *(u_long128*)v1 = *(u_long128*)vertex[poly->vertex[1]];
-        *(u_long128*)v2 = *(u_long128*)vertex[poly->vertex[2]];
+        *(u_long128 *) v0 = *(u_long128 *) vertex[poly->vertex[0]];
+        *(u_long128 *) v1 = *(u_long128 *) vertex[poly->vertex[1]];
+        *(u_long128 *) v2 = *(u_long128 *) vertex[poly->vertex[2]];
         poly++;
 
         vu_maxmin3(max, min, v0, v1, v2);
@@ -235,8 +228,7 @@ int CCollisionMDT::GetMaxY(float* position)
 
 /* The nearest point at which a line meets the mesh. Each triangle is rejected first by its own
    bound and then by the plane it lies in, and only what survives both is intersected. */
-int CCollisionMDT::Intersection(float* from, float* to, float* hit)
-{
+int CCollisionMDT::Intersection(float *from, float *to, float *hit) {
     sceVu0FVECTOR v0;
     sceVu0FVECTOR v1;
     sceVu0FVECTOR v2;
@@ -248,9 +240,9 @@ int CCollisionMDT::Intersection(float* from, float* to, float* hit)
     sceVu0FVECTOR min;
     int i;
     int found;
-    sceVu0FVECTOR* vertex;
-    MDT_CPOLY_SET* set;
-    MDT_CPOLY* poly;
+    sceVu0FVECTOR *vertex;
+    MDT_CPOLY_SET *set;
+    MDT_CPOLY *poly;
     float plane;
     float start;
     float end;
@@ -262,14 +254,14 @@ int CCollisionMDT::Intersection(float* from, float* to, float* hit)
 
     found = 0;
 
-    vertex = (sceVu0FVECTOR*)((char*)data + data->vertex_ofs);
-    set = &((MDT_COLLISION*)((char*)data + data->mesh_ofs))->set;
+    vertex = (sceVu0FVECTOR *) ((char *) data + data->vertex_ofs);
+    set = &((MDT_COLLISION *) ((char *) data + data->mesh_ofs))->set;
     poly = set->poly;
 
     for (i = 0; i < set->num; i++) {
-        *(u_long128*)v0 = *(u_long128*)vertex[poly->vertex[0]];
-        *(u_long128*)v1 = *(u_long128*)vertex[poly->vertex[1]];
-        *(u_long128*)v2 = *(u_long128*)vertex[poly->vertex[2]];
+        *(u_long128 *) v0 = *(u_long128 *) vertex[poly->vertex[0]];
+        *(u_long128 *) v1 = *(u_long128 *) vertex[poly->vertex[1]];
+        *(u_long128 *) v2 = *(u_long128 *) vertex[poly->vertex[2]];
         poly++;
 
         vu_maxmin3(max, min, v0, v1, v2);
@@ -344,8 +336,7 @@ int CCollisionMDT::Intersection(float* from, float* to, float* hit)
     return found;
 }
 
-sceVu0FVECTOR* CCollisionMDT::GetVertexAddress(int* count)
-{
+sceVu0FVECTOR *CCollisionMDT::GetVertexAddress(int *count) {
     if (data == 0) {
         return 0;
     }
@@ -355,20 +346,19 @@ sceVu0FVECTOR* CCollisionMDT::GetVertexAddress(int* count)
         return 0;
     }
 
-    return (sceVu0FVECTOR*)((char*)data + data->vertex_ofs);
+    return (sceVu0FVECTOR *) ((char *) data + data->vertex_ofs);
 }
 
 /* Every triangle of the mesh whose own bound reaches a cube around the point. */
-int CCollisionMDT::PickUpNearPoly(CCPoly* poly, float* position, float radius)
-{
+int CCollisionMDT::PickUpNearPoly(CCPoly *poly, float *position, float radius) {
     sceVu0FVECTOR max;
     sceVu0FVECTOR min;
     int i;
     int num;
-    sceVu0FVECTOR* vertex;
-    MDT_CPOLY_SET* set;
-    MDT_CPOLY* box_poly;
-    CCPoly* out;
+    sceVu0FVECTOR *vertex;
+    MDT_CPOLY_SET *set;
+    MDT_CPOLY *box_poly;
+    CCPoly *out;
     float max_x;
     float max_y;
     float max_z;
@@ -386,14 +376,14 @@ int CCollisionMDT::PickUpNearPoly(CCPoly* poly, float* position, float radius)
     min_y = position[1] - radius;
     min_z = position[2] - radius;
 
-    vertex = (sceVu0FVECTOR*)((char*)data + data->vertex_ofs);
-    set = &((MDT_COLLISION*)((char*)data + data->mesh_ofs))->set;
+    vertex = (sceVu0FVECTOR *) ((char *) data + data->vertex_ofs);
+    set = &((MDT_COLLISION *) ((char *) data + data->mesh_ofs))->set;
     box_poly = set->poly;
 
     for (i = 0; i < set->num; i++) {
-        *(u_long128*)out->vertex[0] = *(u_long128*)vertex[box_poly->vertex[0]];
-        *(u_long128*)out->vertex[1] = *(u_long128*)vertex[box_poly->vertex[1]];
-        *(u_long128*)out->vertex[2] = *(u_long128*)vertex[box_poly->vertex[2]];
+        *(u_long128 *) out->vertex[0] = *(u_long128 *) vertex[box_poly->vertex[0]];
+        *(u_long128 *) out->vertex[1] = *(u_long128 *) vertex[box_poly->vertex[1]];
+        *(u_long128 *) out->vertex[2] = *(u_long128 *) vertex[box_poly->vertex[2]];
         box_poly++;
 
         vu_maxmin3(max, min, out->vertex[0], out->vertex[1], out->vertex[2]);
@@ -415,12 +405,11 @@ int CCollisionMDT::PickUpNearPoly(CCPoly* poly, float* position, float radius)
 
 /* Every built triangle whose bound overlaps the one the caller gives, tested two bounds at a time
    on the unit and read back through its sticky flags rather than as a value. */
-int CCollisionMDT::PickUpNearPoly(CCPoly* poly, const CBoxVu0& box)
-{
+int CCollisionMDT::PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box) {
     CBoxVu0 bound;
     int i;
     int num;
-    CCPolyBox* box_poly;
+    CCPolyBox *box_poly;
 
     if (box.min[0] > max[0]) {
         return 0;
@@ -455,11 +444,11 @@ int CCollisionMDT::PickUpNearPoly(CCPoly* poly, const CBoxVu0& box)
     box_poly = mesh;
     for (i = 0; i < this->num; i++, box_poly++) {
         if (vu_box_missed(box_poly->box.max, box_poly->box.min) == 0) {
-            *(u_long128*)poly->vertex[0] = *(u_long128*)box_poly->poly.vertex[0];
-            *(u_long128*)poly->vertex[1] = *(u_long128*)box_poly->poly.vertex[1];
-            *(u_long128*)poly->vertex[2] = *(u_long128*)box_poly->poly.vertex[2];
+            *(u_long128 *) poly->vertex[0] = *(u_long128 *) box_poly->poly.vertex[0];
+            *(u_long128 *) poly->vertex[1] = *(u_long128 *) box_poly->poly.vertex[1];
+            *(u_long128 *) poly->vertex[2] = *(u_long128 *) box_poly->poly.vertex[2];
             poly->info = box_poly->poly.info;
-            *(u_long128*)poly->normal = *(u_long128*)box_poly->poly.normal;
+            *(u_long128 *) poly->normal = *(u_long128 *) box_poly->poly.normal;
             poly++;
             num++;
         }
@@ -469,24 +458,23 @@ int CCollisionMDT::PickUpNearPoly(CCPoly* poly, const CBoxVu0& box)
 }
 
 /* The whole mesh, with no test at all. */
-int CCollisionMDT::PickUpNearPoly(CCPoly* poly)
-{
+int CCollisionMDT::PickUpNearPoly(CCPoly *poly) {
     int i;
     int num;
-    sceVu0FVECTOR* vertex;
-    MDT_CPOLY_SET* set;
-    MDT_CPOLY* box_poly;
+    sceVu0FVECTOR *vertex;
+    MDT_CPOLY_SET *set;
+    MDT_CPOLY *box_poly;
 
     num = 0;
 
-    vertex = (sceVu0FVECTOR*)((char*)data + data->vertex_ofs);
-    set = &((MDT_COLLISION*)((char*)data + data->mesh_ofs))->set;
+    vertex = (sceVu0FVECTOR *) ((char *) data + data->vertex_ofs);
+    set = &((MDT_COLLISION *) ((char *) data + data->mesh_ofs))->set;
     box_poly = set->poly;
 
     for (i = 0; i < set->num; i++) {
-        *(u_long128*)poly->vertex[0] = *(u_long128*)vertex[box_poly->vertex[0]];
-        *(u_long128*)poly->vertex[1] = *(u_long128*)vertex[box_poly->vertex[1]];
-        *(u_long128*)poly->vertex[2] = *(u_long128*)vertex[box_poly->vertex[2]];
+        *(u_long128 *) poly->vertex[0] = *(u_long128 *) vertex[box_poly->vertex[0]];
+        *(u_long128 *) poly->vertex[1] = *(u_long128 *) vertex[box_poly->vertex[1]];
+        *(u_long128 *) poly->vertex[2] = *(u_long128 *) vertex[box_poly->vertex[2]];
         box_poly++;
 
         vu_normal(poly->normal, poly->vertex[0], poly->vertex[1], poly->vertex[2]);

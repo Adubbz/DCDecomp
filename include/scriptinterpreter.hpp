@@ -8,7 +8,6 @@
 struct SPI_FUNC_PARAM;
 struct TAG_PARAM;
 
-
 class CScriptInterpreter {
 public:
     /**

@@ -50,8 +50,11 @@ float RandTbl2[64];
 /* Every pass of the outline the message window draws behind its text. The
  * last entry's alpha ends the run. */
 MES_FUCHI FuchiTbl_E[] = {
-    {0, -2, 0, 0, 0, 128}, {0, 2, 0, 0, 0, 128}, {2, 0, 0, 0, 0, 128},
-    {-2, 0, 0, 0, 0, 128}, {0, 0, 0, 0, 0, -1},
+    {0, -2, 0, 0, 0, 128},
+    {0, 2, 0, 0, 0, 128},
+    {2, 0, 0, 0, 0, 128},
+    {-2, 0, 0, 0, 0, 128},
+    {0, 0, 0, 0, 0, -1},
 };
 
 /* The palette the message window's font draws out of. */

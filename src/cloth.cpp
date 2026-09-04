@@ -11,8 +11,7 @@
 /**
  * Draws the simulated cloth through a temporary world-space frame.
  */
-void CCloth::Draw()
-{
+void CCloth::Draw() {
     CFrameVu1 draw_frame;
     int i;
 
@@ -45,21 +44,23 @@ void CCloth::Draw()
     draw_frame.SetPosition(origin, origin, origin);
     MGDraw(&draw_frame);
 }
+
 INCLUDE_ASM("asm/nonmatchings/cloth", Clear__6CClothFv);
 INCLUDE_ASM("asm/nonmatchings/cloth", Step__6CClothFi);
 INCLUDE_ASM("asm/nonmatchings/cloth", DrawVu1__6CClothFPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
 INCLUDE_ASM("asm/nonmatchings/cloth", DrawVu1__6CClothFP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
 INCLUDE_ASM("asm/nonmatchings/cloth", CreateVUData__6CClothFPUi);
 INCLUDE_ASM("asm/nonmatchings/cloth", InitParam__6CClothFv);
+
 /**
  * Constructs a cloth grid with the requested dimensions and spacing.
  */
-CCloth::CCloth(int grid_i, int grid_j, float grid_pitch)
-{
+CCloth::CCloth(int grid_i, int grid_j, float grid_pitch) {
     InitParam();
     num_i = grid_i;
     num_j = grid_j;
     pitch = grid_pitch;
 }
+
 INCLUDE_ASM("asm/nonmatchings/cloth", Initialize__6CClothFP14CDataAlloc2_1_);
 INCLUDE_ASM("asm/nonmatchings/cloth", Initialize__6CClothFP10MDT_HEADERP14CDataAlloc2_1_);

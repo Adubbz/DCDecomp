@@ -245,8 +245,10 @@ public:
     s8 equipped_weapon_slot[6];
     s16 dead_mask;
     s32 unk_field_1[6];
+
     union {
         ITEM_PACK item_pack;
+
         struct {
             s8 item_capacity;
             char unk_4361[1];
@@ -255,6 +257,7 @@ public:
             s16 dungeon_items[103];
         } inventory;
     };
+
     /* Per-slot "vol": how much is left in that copy of the item. Seeded from
      * ITEM_LIST +10 via ItemDataToHaveCopy, drained by CMenuItemStep::
      * CheckItemVolume, which advances the item id a stage when it empties. */

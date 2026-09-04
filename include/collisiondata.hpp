@@ -15,11 +15,11 @@ char *NameExchg(char *name, int block);
  * Records one hit that the collision test found.
  */
 struct COLLISION_HIT {
-    sceVu0FVECTOR pos;      /**< Where the hit landed. */
+    sceVu0FVECTOR pos; /**< Where the hit landed. */
     sceVu0FVECTOR unk_10;
     sceVu0FVECTOR velocity; /**< The way the hit throws what it hit. */
     u8 unk_30[4];
-    s32 damage;             /**< What the hit takes off. */
+    s32 damage; /**< What the hit takes off. */
     float unk_38;
     float unk_3C;
     float unk_40;

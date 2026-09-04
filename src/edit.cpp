@@ -39,14 +39,13 @@
    lighting it puts in that world, the town's menus as it reaches them, and the
    messages, treasure boxes and screen fades it owns outright. */
 
-void EdDPrint(char* str);
+void EdDPrint(char *str);
 
-static int AddStr(CDebugFont* font, char* str);
-static void DrawBound(CFrame* frame);
-static void DrawLine(int* from, int* to, u_char r, u_char g, u_char b, u_char a);
+static int AddStr(CDebugFont *font, char *str);
+static void DrawBound(CFrame *frame);
+static void DrawLine(int *from, int *to, u_char r, u_char g, u_char b, u_char a);
 
-struct SOUND_SRC
-{
+struct SOUND_SRC {
     int se;
     int num;
     float vol[16];
@@ -54,11 +53,11 @@ struct SOUND_SRC
 };
 
 float ConvertTime(float hour);
-void DepthOfField(float* dist, int level, int alpha, int blur);
+void DepthOfField(float *dist, int level, int alpha, int blur);
 
 struct EPARTS_FUNC_DATA;
 
-int InitEditEffect(CFrame* frame, EPARTS_FUNC_DATA* func, EDIT_EFFECT_INFO* info);
+int InitEditEffect(CFrame *frame, EPARTS_FUNC_DATA *func, EDIT_EFFECT_INFO *info);
 
 class CCamera;
 
@@ -68,24 +67,24 @@ void EdClearSystemMes();
 void ClearSystemMes();
 void SetInteriorOutFlag(int flag);
 void EdSaveFrameImage(CTexture texture);
-void EditMenuInit(int* texture_block, int first);
+void EditMenuInit(int *texture_block, int first);
 int BattleMenuCursor();
 void BattleMenuDraw();
-void BattleMenuInit(int* texture_block, int mode);
-int ShopNoInput(int* texture_block, int shop, int mode);
+void BattleMenuInit(int *texture_block, int mode);
+int ShopNoInput(int *texture_block, int shop, int mode);
 int CommonShopLoop();
-void InitEventItemSelect(int texture_block, int* list, ITEM_PACK* pack, int x, int y, int mode,
+void InitEventItemSelect(int texture_block, int *list, ITEM_PACK *pack, int x, int y, int mode,
                          int kind);
-int EventItemSelectLoop(int* item);
-void InitNameRegist(int chara, int texture_block, u_long128* buffer);
+int EventItemSelectLoop(int *item);
+void InitNameRegist(int chara, int texture_block, u_long128 *buffer);
 int NameEnterKey();
 void NameEnterDraw();
-void InitMenuMove(int mode, int texture_block, u_long128* buffer);
+void InitMenuMove(int mode, int texture_block, u_long128 *buffer);
 int MenuMoveKey();
 void DrawMenuMove();
-void InitFishingExchange(u_long128* buffer, int* texture_block, int mode);
+void InitFishingExchange(u_long128 *buffer, int *texture_block, int mode);
 int FishingExchangeLoop();
-void InitFishRecordView(u_long128* buffer, int* texture_block, int mode);
+void InitFishRecordView(u_long128 *buffer, int *texture_block, int mode);
 int FishRecordViewLoop();
 
 void EdClearItemOverFlag();
@@ -93,7 +92,7 @@ void EdClearItemOverFlag();
 /* 28 bytes nothing reads other than a word at a time, so it is spelled as words rather than as a
    layout nothing supports. */
 extern int EditMenuStatus[7];
-extern u_int* read_buffer;
+extern u_int *read_buffer;
 
 extern ClsMes EditSystemMes;
 extern int MapNo;
@@ -114,26 +113,25 @@ void setbilinear(int on);
    is null until somebody hands one over, and every entry point checks it, because the overlay
    writes into that object's buffer rather than one of its own. */
 static int Debug = 1;
-static CDebugFont* DebugFont;
-void EdDDebug(int on)
-{
+static CDebugFont *DebugFont;
+
+void EdDDebug(int on) {
     Debug = 0;
 }
 
-void EdDSetFont(CDebugFont* font)
-{
+void EdDSetFont(CDebugFont *font) {
     DebugFont = font;
 }
 
 /* The frame counter is printed first, so it stands at the top of whatever the frame appended
    after it. With the overlay switched off the buffer is still emptied every frame, which is what
    keeps a switched-off build from overrunning it. */
-void EdDDrawFont()
-{
+void EdDDrawFont() {
     char work[112];
     static int count = 0;
 
-    if (DebugFont == 0) return;
+    if (DebugFont == 0)
+        return;
 
     sprintf(work, "%d\n", count++);
     EdDPrint(work);
@@ -149,21 +147,24 @@ void EdDDrawFont()
 
 /* The overflow guard for the frames nothing draws the overlay on: the buffer is 512 bytes and a
    line is short, so emptying it at 500 leaves room for whatever is already on its way in. */
-void EdDCheck()
-{
-    if (DebugFont == 0) return;
-    if (DebugFont->len > 500) DebugFont->len = 0;
+void EdDCheck() {
+    if (DebugFont == 0)
+        return;
+    if (DebugFont->len > 500)
+        DebugFont->len = 0;
 }
 
-void EdOutPutFile()
-{
+void EdOutPutFile() {
     int fd;
 
-    if (Debug == 0) return;
-    if (DebugFont == 0) return;
+    if (Debug == 0)
+        return;
+    if (DebugFont == 0)
+        return;
 
     fd = sceOpen("host0:debug.txt", SCE_WRONLY | SCE_CREAT | SCE_TRUNC);
-    if (fd < 0) return;
+    if (fd < 0)
+        return;
 
     sceWrite(fd, DebugFont->text, DebugFont->len);
     sceClose(fd);
@@ -171,8 +172,7 @@ void EdOutPutFile()
 
 /* The append is length-counted on the way out, and the length it adds goes to whatever DebugFont
    points at now rather than to the object it was handed. */
-static int AddStr(CDebugFont* font, char* str)
-{
+static int AddStr(CDebugFont *font, char *str) {
     int len;
 
     len = strlen(str);
@@ -181,21 +181,23 @@ static int AddStr(CDebugFont* font, char* str)
     return len;
 }
 
-void EdDPrintVector(char* name, float* vector)
-{
+void EdDPrintVector(char *name, float *vector) {
     char work[128];
 
-    if (Debug == 0) return;
-    if (DebugFont == 0) return;
+    if (Debug == 0)
+        return;
+    if (DebugFont == 0)
+        return;
 
     sprintf(work, "%s %7.2f,%7.2f,%7.2f\n", name, vector[0], vector[1], vector[2]);
     AddStr(DebugFont, work);
 }
 
-void EdDPrint(char* str)
-{
-    if (Debug == 0) return;
-    if (DebugFont == 0) return;
+void EdDPrint(char *str) {
+    if (Debug == 0)
+        return;
+    if (DebugFont == 0)
+        return;
 
     AddStr(DebugFont, str);
 }
@@ -206,8 +208,7 @@ void EdDPrint(char* str)
    R1 drags the reference point along with the eye, which is what turns a swing into a pan, and
    the D-pad works the field of view. The box is drawn where the reference point is, so the point
    being orbited is visible. */
-void EdDMoveCamera(float* pos, float* ref)
-{
+void EdDMoveCamera(float *pos, float *ref) {
     sceVu0FVECTOR dir;
     sceVu0FVECTOR move;
     float dist;
@@ -218,36 +219,45 @@ void EdDMoveCamera(float* pos, float* ref)
     float projection;
     int i;
 
-    if (Debug == 0) return;
+    if (Debug == 0)
+        return;
 
     sceVu0SubVector(dir, ref, pos);
     dist = sqrtf(dir[0] * dir[0] + dir[2] * dir[2]);
     angle = atan2f(dir[0], dir[2]);
 
     x = -GamePad.GetLXf();
-    if (GamePad.On(8)) x = 0.02f * dist;
-    if (GamePad.On(4)) x = 0.02f * -dist;
+    if (GamePad.On(8))
+        x = 0.02f * dist;
+    if (GamePad.On(4))
+        x = 0.02f * -dist;
     y = -GamePad.GetRYf();
     z = -GamePad.GetLYf();
 
     move[0] = x * cosf(angle) + z * sinf(angle);
     move[1] = y;
     move[2] = z * cosf(angle) - x * sinf(angle);
-    if (GamePad.On(64)) sceVu0ScaleVector(move, move, 3.0f);
+    if (GamePad.On(64))
+        sceVu0ScaleVector(move, move, 3.0f);
 
     sceVu0AddVector(pos, pos, move);
-    if (GamePad.On(128) && !GamePad.On(12)) sceVu0AddVector(ref, ref, move);
+    if (GamePad.On(128) && !GamePad.On(12))
+        sceVu0AddVector(ref, ref, move);
 
     projection = MGGetProjection();
-    if (GamePad.On(8192)) projection += 1.0f;
-    if (GamePad.On(32768)) projection -= 1.0f;
-    if (projection < 100.0f) projection = 100.0f;
-    if (projection > 2000.0f) projection = 2000.0f;
+    if (GamePad.On(8192))
+        projection += 1.0f;
+    if (GamePad.On(32768))
+        projection -= 1.0f;
+    if (projection < 100.0f)
+        projection = 100.0f;
+    if (projection > 2000.0f)
+        projection = 2000.0f;
     MGSetProjection(projection);
 
     {
         CFrame frame;
-        float unit[2] = { -1.0f, 1.0f };
+        float unit[2] = {-1.0f, 1.0f};
 
         for (i = 0; i < 8; i++) {
             frame.corner[i][0] = unit[(i & 1) != 0];
@@ -262,8 +272,7 @@ void EdDMoveCamera(float* pos, float* ref)
 
 /* The same camera driven from the other end: the sticks move the reference point and R1 drags the
    eye after it, which is what lets the point being orbited be placed before it is orbited. */
-void EdDMoveCameraRef(float* pos, float* ref)
-{
+void EdDMoveCameraRef(float *pos, float *ref) {
     sceVu0FVECTOR dir;
     sceVu0FVECTOR move;
     float dist;
@@ -273,15 +282,18 @@ void EdDMoveCameraRef(float* pos, float* ref)
     float z;
     int i;
 
-    if (Debug == 0) return;
+    if (Debug == 0)
+        return;
 
     sceVu0SubVector(dir, ref, pos);
     dist = sqrtf(dir[0] * dir[0] + dir[2] * dir[2]);
     angle = atan2f(dir[0], dir[2]);
 
     x = -GamePad.GetLXf();
-    if (GamePad.On(8)) x = 0.02f * -dist;
-    if (GamePad.On(4)) x = 0.02f * dist;
+    if (GamePad.On(8))
+        x = 0.02f * -dist;
+    if (GamePad.On(4))
+        x = 0.02f * dist;
     y = GamePad.GetRYf();
     z = -GamePad.GetLYf();
 
@@ -290,11 +302,12 @@ void EdDMoveCameraRef(float* pos, float* ref)
     move[2] = z * cosf(angle) - x * sinf(angle);
 
     sceVu0AddVector(ref, ref, move);
-    if (GamePad.On(128) && !GamePad.On(12)) sceVu0AddVector(pos, pos, move);
+    if (GamePad.On(128) && !GamePad.On(12))
+        sceVu0AddVector(pos, pos, move);
 
     {
         CFrame frame;
-        float unit[2] = { -1.0f, 1.0f };
+        float unit[2] = {-1.0f, 1.0f};
 
         for (i = 0; i < 8; i++) {
             frame.corner[i][0] = unit[(i & 1) != 0];
@@ -313,8 +326,7 @@ void EdDMoveCameraRef(float* pos, float* ref)
    of the body is what the reference point is lifted by.
    The box is ten across and twenty tall - a stand-in for the body rather than the body's own
    size - and it is drawn with the character's own rotation so the facing can be seen. */
-void EdDMoveChara(CCharacter* chara, CCamera* camera)
-{
+void EdDMoveChara(CCharacter *chara, CCamera *camera) {
     sceVu0FVECTOR pos;
     sceVu0FVECTOR camera_pos;
     sceVu0FVECTOR camera_ref;
@@ -329,7 +341,8 @@ void EdDMoveChara(CCharacter* chara, CCamera* camera)
     float scale;
     int i;
 
-    if (chara == 0) return;
+    if (chara == 0)
+        return;
 
     chara->GetPosition(pos);
     chara->GetRotation(rot);
@@ -344,15 +357,20 @@ void EdDMoveChara(CCharacter* chara, CCamera* camera)
     y = -GamePad.GetRYf();
     z = -GamePad.GetLYf();
 
-    if (GamePad.On(8)) rot[1] += -0.06f;
-    if (GamePad.On(4)) rot[1] += 0.06f;
-    if (rot[1] > 3.141592f) rot[1] -= 6.283184f;
-    if (rot[1] < -3.141592f) rot[1] += 6.283184f;
+    if (GamePad.On(8))
+        rot[1] += -0.06f;
+    if (GamePad.On(4))
+        rot[1] += 0.06f;
+    if (rot[1] > 3.141592f)
+        rot[1] -= 6.283184f;
+    if (rot[1] < -3.141592f)
+        rot[1] += 6.283184f;
 
     move[0] = x * cosf(angle) + z * sinf(angle);
     move[1] = y;
     move[2] = z * cosf(angle) - x * sinf(angle);
-    if (GamePad.On(128)) speed = 1.0f;
+    if (GamePad.On(128))
+        speed = 1.0f;
 
     sceVu0ScaleVector(move, move, speed);
     sceVu0AddVector(pos, pos, move);
@@ -366,8 +384,10 @@ void EdDMoveChara(CCharacter* chara, CCamera* camera)
     }
 
     scale = chara->unk_CE0[0];
-    if (GamePad.On(2)) scale += 0.1f;
-    if (GamePad.On(1)) scale -= 0.1f;
+    if (GamePad.On(2))
+        scale += 0.1f;
+    if (GamePad.On(1))
+        scale -= 0.1f;
     if (scale != chara->unk_CE0[0]) {
         chara->unk_CE0[0] = scale;
         chara->unk_CE0[1] = scale;
@@ -376,8 +396,8 @@ void EdDMoveChara(CCharacter* chara, CCamera* camera)
 
     {
         CFrame frame;
-        float ground[2] = { -5.0f, 5.0f };
-        float height[2] = { 0.0f, 20.0f };
+        float ground[2] = {-5.0f, 5.0f};
+        float height[2] = {0.0f, 20.0f};
 
         for (i = 0; i < 8; i++) {
             frame.corner[i][0] = ground[(i & 1) != 0];
@@ -394,15 +414,15 @@ void EdDMoveChara(CCharacter* chara, CCamera* camera)
 /* The box drawn as twelve edges of the frame's own corner list, taken to the screen in one go and
    drawn only if every corner survived: a box with one corner behind the eye would otherwise be
    drawn through a projected point that means nothing. */
-static void DrawBound(CFrame* frame)
-{
+static void DrawBound(CFrame *frame) {
     int screen[8][4];
     sceVu0FVECTOR world[8];
     sceVu0FMATRIX matrix;
     int i;
     int visible;
 
-    if (frame == 0) return;
+    if (frame == 0)
+        return;
 
     frame->GetLWMatrix(matrix);
     visible = 1;
@@ -410,7 +430,8 @@ static void DrawBound(CFrame* frame)
     for (i = 0; i < 8; i++) {
         visible &= MGRotTransPers(screen[i], world[i], 0);
     }
-    if (visible == 0) return;
+    if (visible == 0)
+        return;
 
     DrawLine(screen[0], screen[1], 128, 64, 64, 80);
     DrawLine(screen[1], screen[5], 128, 64, 64, 80);
@@ -430,9 +451,8 @@ static void DrawBound(CFrame* frame)
    one at all. The depth test is left enabled with a comparison that never rejects, so the line
    comes out over whatever is already in front of it, and the two registers that costs are put back
    at the end of the same list, so whatever draws next finds the state this found. */
-static void DrawLine(int* from, int* to, u_char r, u_char g, u_char b, u_char a)
-{
-    sceVif1Packet* packet;
+static void DrawLine(int *from, int *to, u_char r, u_char g, u_char b, u_char a) {
+    sceVif1Packet *packet;
     sceGsTest test;
     sceGsZbuf zbuf;
     float q;
@@ -451,17 +471,17 @@ static void DrawLine(int* from, int* to, u_char r, u_char g, u_char b, u_char a)
 
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
-    sceVif1PkOpenGifTag(packet, *(u_long128*)&GiftagAD);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
 
-    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long*)&test);
-    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long*)&zbuf);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &test);
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
     sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
                      SCE_GS_SET_PRIM(SCE_GS_PRIM_LINE, 0, 0, 0, 1, 0, 1, 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(r, g, b, a, *(u_int*)&q));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(r, g, b, a, *(u_int *) &q));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(from[0], from[1], from[2], 0));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(to[0], to[1], to[2], 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long*)&mgPixelTest);
-    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long*)&mgZBuffer);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
 
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
@@ -478,8 +498,8 @@ INCLUDE_ASM("asm/nonmatchings/edit", EdSetAmbientVol__Ff);
 static SOUND_SRC sound_src[4];
 static int now_play_se[4];
 static int now_play_se_flag[4];
-static void init_sound_src()
-{
+
+static void init_sound_src() {
     int i;
 
     for (i = 0; i < 4; i++) {
@@ -490,15 +510,16 @@ static void init_sound_src()
 
 /* The slot a sound effect already occupies, or a free one, or nothing - which is what caps the
    world at four sounds at once. */
-static SOUND_SRC* get_sound_src(int se)
-{
+static SOUND_SRC *get_sound_src(int se) {
     int i;
 
     for (i = 0; i < 4; i++) {
-        if (se == sound_src[i].se) return &sound_src[i];
+        if (se == sound_src[i].se)
+            return &sound_src[i];
     }
     for (i = 0; i < 4; i++) {
-        if (sound_src[i].se < 0) return &sound_src[i];
+        if (sound_src[i].se < 0)
+            return &sound_src[i];
     }
     return 0;
 }
@@ -507,11 +528,11 @@ static SOUND_SRC* get_sound_src(int se)
    one for a sound that was playing, zero for one the caller now has to start, and -1 when every
    channel is spoken for. The flag beside the channel is what keeps this frame's sounds alive past
    the sweep at the end of the frame. */
-static int check_se_play(int se)
-{
+static int check_se_play(int se) {
     int i;
 
-    if (se < 0) return 0;
+    if (se < 0)
+        return 0;
     for (i = 0; i < 4; i++) {
         if (se == now_play_se[i]) {
             now_play_se_flag[i] = 1;
@@ -528,8 +549,7 @@ static int check_se_play(int se)
     return -1;
 }
 
-void EdInitSoundSrc()
-{
+void EdInitSoundSrc() {
     int i;
 
     for (i = 0; i < 4; i++) {
@@ -544,8 +564,7 @@ void EdInitSoundSrc()
    same volumes, so the nearer place decides where the sound sits. Whatever was playing and was not
    entered this frame is stopped at the end, which is what a source leaving the camera behind comes
    to. */
-void EdPlaySoundSrc()
-{
+void EdPlaySoundSrc() {
     int i;
     int j;
     int se;
@@ -558,10 +577,13 @@ void EdPlaySoundSrc()
     }
     for (i = 0; i < 4; i++) {
         se = sound_src[i].se;
-        if (se < 0) continue;
+        if (se < 0)
+            continue;
         playing = check_se_play(se);
-        if (playing < 0) continue;
-        if (playing == 0) SndSePlay(se, 0, 0);
+        if (playing < 0)
+            continue;
+        if (playing == 0)
+            SndSePlay(se, 0, 0);
         volume = 0.0f;
         for (j = 0; j < sound_src[i].num; j++) {
             volume += sound_src[i].vol[j];
@@ -570,26 +592,31 @@ void EdPlaySoundSrc()
         for (j = 0; j < sound_src[i].num; j++) {
             pan += sound_src[i].pan[j] * sound_src[i].vol[j] / volume;
         }
-        if (volume > 1.0f) volume = 1.0f;
+        if (volume > 1.0f)
+            volume = 1.0f;
         SndSetSeVolf(se, volume, 0);
-        if (pan > 1.0f) pan = 1.0f;
-        if (pan < -1.0f) pan = -1.0f;
+        if (pan > 1.0f)
+            pan = 1.0f;
+        if (pan < -1.0f)
+            pan = -1.0f;
         SndSetSePanf(se, pan, 0);
     }
     for (i = 0; i < 4; i++) {
-        if (now_play_se_flag[i]) continue;
-        if (now_play_se[i] < 0) continue;
+        if (now_play_se_flag[i])
+            continue;
+        if (now_play_se[i] < 0)
+            continue;
         SndSeStop(now_play_se[i], 0);
         now_play_se[i] = -1;
     }
 }
 
-void EdStopSoundSrc()
-{
+void EdStopSoundSrc() {
     int i;
 
     for (i = 0; i < 4; i++) {
-        if (now_play_se[i] < 0) continue;
+        if (now_play_se[i] < 0)
+            continue;
         SndSeStop(now_play_se[i], 0);
         now_play_se[i] = -1;
     }
@@ -600,8 +627,7 @@ void EdStopSoundSrc()
 /* How far a point is from a segment, and where on the segment it is nearest to. The projection is
    taken first and answers both when it falls inside the segment; outside it, the nearer end is the
    answer and the distance is the distance to that end. */
-static float GetDistLine(float* point, float* from, float* to, float* near_point)
-{
+static float GetDistLine(float *point, float *from, float *to, float *near_point) {
     sceVu0FVECTOR offset;
     sceVu0FVECTOR to_offset;
     sceVu0FVECTOR projection;
@@ -637,16 +663,15 @@ static float GetDistLine(float* point, float* from, float* to, float* near_point
    nothing survives a frame, so a part that stopped being audible simply is not entered again. The
    part's own frame is moved first because the effects hang off it, and a door is the one source
    the part itself carries rather than one of its effects. */
-void EdSetSoundSrcVol(float time, CMapParts** parts, int count, float* camera_pos,
-    float* camera_rot)
-{
+void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_pos,
+                      float *camera_rot) {
     int i;
     int j;
-    CFrame* frame;
-    EDIT_EFFECT_INFO* info;
+    CFrame *frame;
+    EDIT_EFFECT_INFO *info;
     int se;
-    SOUND_SRC* src;
-    SOUND_SRC* door_src;
+    SOUND_SRC *src;
+    SOUND_SRC *door_src;
     float dist;
     float far_dist;
     float near_dist;
@@ -663,20 +688,27 @@ void EdSetSoundSrcVol(float time, CMapParts** parts, int count, float* camera_po
     SndSetCamera(camera_pos, camera_rot);
     init_sound_src();
     for (i = 0; i < count; i++) {
-        if (parts[i] == 0) continue;
+        if (parts[i] == 0)
+            continue;
         frame = parts[i]->frame[0];
-        if (frame == 0) continue;
+        if (frame == 0)
+            continue;
         parts[i]->GetPosition(position);
         frame->SetPosition(position);
         parts[i]->GetRotation(rotation);
         frame->SetRotation(rotation[0], rotation[1], rotation[2]);
         for (j = 0; j < 24; j++) {
             info = parts[i]->effect[j];
-            if (parts[i]->effect_on[j] == 0) continue;
-            if (info == 0) continue;
-            if (info->kind != 7 && info->kind != 1 && info->kind != 2) continue;
-            if (info->frame == 0) continue;
-            if (CheckEditEffect(info, time) == 0) continue;
+            if (parts[i]->effect_on[j] == 0)
+                continue;
+            if (info == 0)
+                continue;
+            if (info->kind != 7 && info->kind != 1 && info->kind != 2)
+                continue;
+            if (info->frame == 0)
+                continue;
+            if (CheckEditEffect(info, time) == 0)
+                continue;
             info->frame->GetWorldPosition(from, info->offset);
             if (info->colour[3] == 1.0f) {
                 info->frame->GetWorldPosition(to, info->colour);
@@ -687,16 +719,18 @@ void EdSetSoundSrcVol(float time, CMapParts** parts, int count, float* camera_po
             }
             far_dist = info->far_distance;
             near_dist = info->near_distance;
-            se = (int)info->sound_no;
+            se = (int) info->sound_no;
             /* A torch and a fire are one sound at one range whatever the description says. */
             if (info->kind == 1 || info->kind == 2) {
                 se = 54;
                 near_dist = 20.0f;
                 far_dist = 150.0f;
             }
-            if (dist > far_dist) continue;
+            if (dist > far_dist)
+                continue;
             src = get_sound_src(se);
-            if (src == 0) continue;
+            if (src == 0)
+                continue;
             SndGetVolPan(&volume, &pan, from, near_dist, far_dist);
             src->se = se;
             if (src->num < 16) {
@@ -705,10 +739,13 @@ void EdSetSoundSrcVol(float time, CMapParts** parts, int count, float* camera_po
                 src->num++;
             }
         }
-        if (parts[i]->unk_118 != 2) continue;
-        if (DistVector(camera_pos, position) >= 300.0f) continue;
+        if (parts[i]->unk_118 != 2)
+            continue;
+        if (DistVector(camera_pos, position) >= 300.0f)
+            continue;
         door_src = get_sound_src(52);
-        if (door_src == 0) continue;
+        if (door_src == 0)
+            continue;
         SndGetVolPan(&door_volume, &door_pan, position, 100.0f, 300.0f);
         door_src->se = 52;
         if (door_src->num < 16) {
@@ -726,8 +763,8 @@ INCLUDE_ASM("asm/nonmatchings/edit", EdGetDoorMotion__Fii);
 /* The map editor's depth of field: one description at a time, taken from the map's own data or
    replaced by a default set, and handed every frame to the effect the rest of the game draws. */
 static DEPTH_OF_FIELD_INFO dof;
-void EdSetDOFLevel(int level)
-{
+
+void EdSetDOFLevel(int level) {
     dof.level = level;
     if (level == 0) {
         dof.start = ConvertTime(0.0f);
@@ -740,21 +777,21 @@ void EdSetDOFLevel(int level)
     }
 }
 
-void EdSetDOF(DEPTH_OF_FIELD_INFO* info)
-{
+void EdSetDOF(DEPTH_OF_FIELD_INFO *info) {
     dof = *info;
     EdSetDOFLevel(info->level);
 }
 
 /* The argument is a cap rather than the level to draw at, so a configuration that asks for less
    than the map does gets less and one that asks for more does not get more. */
-void EdDrawDOF(int level)
-{
+void EdDrawDOF(int level) {
     int lv;
 
     lv = dof.level;
-    if (lv < 0) return;
-    if (level < lv) lv = level;
+    if (lv < 0)
+        return;
+    if (level < lv)
+        lv = level;
     DepthOfField(dof.distance, lv, dof.alpha, dof.blur);
 }
 
@@ -766,16 +803,15 @@ static int start_thunder;
 static int next_thunder_cnt;
 static sceVu0FMATRIX thd_light;
 static sceVu0FMATRIX thd_color;
-void EdInitThunderEffect()
-{
+
+void EdInitThunderEffect() {
     thunder_count = 0;
     next_thunder_cnt = 60;
     start_thunder = 0;
 }
 
-void EdThunderEffect(int map, CEditGround* ground)
-{
-    CFrame* frame;
+void EdThunderEffect(int map, CEditGround *ground) {
+    CFrame *frame;
     sceVu0FMATRIX color;
     sceVu0FMATRIX light;
     int i;
@@ -785,11 +821,14 @@ void EdThunderEffect(int map, CEditGround* ground)
 
     if (map == 40 || map == 50 || map == 24) {
         frame = ground->frame;
-        if (frame) frame = frame->SearchFrame("inazuma");
-        if (frame == 0) return;
+        if (frame)
+            frame = frame->SearchFrame("inazuma");
+        if (frame == 0)
+            return;
         /* The lights the map itself is lit by, kept from the first flash so that every later one
            decays back to them rather than to whatever the previous flash left. */
-        if (start_thunder == 0) MGGetPLight(thd_light, thd_color);
+        if (start_thunder == 0)
+            MGGetPLight(thd_light, thd_color);
         MGGetPLight(light, color);
         if (thunder_count > 0) {
             frame->attr.draw_on = 1;
@@ -816,7 +855,8 @@ void EdThunderEffect(int map, CEditGround* ground)
         for (i = 0; i < 2; i++) {
             for (j = 0; j < 3; j++) {
                 thd_color[i][j] -= 6.0f;
-                if (thd_color[i][j] < color[i][j]) thd_color[i][j] = color[i][j];
+                if (thd_color[i][j] < color[i][j])
+                    thd_color[i][j] = color[i][j];
             }
         }
         MGSetPLight(light, thd_color);
@@ -826,21 +866,24 @@ void EdThunderEffect(int map, CEditGround* ground)
 INCLUDE_RODATA("asm/nonmatchings/edit", LIT_435);
 
 INCLUDE_ASM("asm/nonmatchings/edit", EdDrawCharacter__FP10CCharacteriiP12CNPCharacterPiiP13ED_EVENT_INFO);
+
 /* Giving a map part one more effect: the description table is scanned from the front for an entry
    nothing has claimed, the effect is built on the part's own frame, and the part is told which
    entry it now owns. The part's slot table is what the sound and the drawing walk later, so an
    effect that is built and not registered here is an effect nothing ever reaches. */
-void EnterPartsEffect(CMapParts* parts, EPARTS_FUNC_DATA* func, EDIT_EFFECT_INFO* info, int count)
-{
+void EnterPartsEffect(CMapParts *parts, EPARTS_FUNC_DATA *func, EDIT_EFFECT_INFO *info, int count) {
     int i;
     int j;
 
     /* The last entry is never handed out, so a full table refuses rather than overruns. */
     for (i = 1; i <= count; i++, info++) {
-        if (i == count) return;
-        if (info->kind <= 0) break;
+        if (i == count)
+            return;
+        if (info->kind <= 0)
+            break;
     }
-    if (InitEditEffect(parts->frame[0], func, info) == 0) return;
+    if (InitEditEffect(parts->frame[0], func, info) == 0)
+        return;
     for (j = 0; j < 24; j++) {
         if (parts->effect_on[j] == 0) {
             parts->effect_on[j] = 1;
@@ -861,56 +904,51 @@ static int use_item;
 static int shop_no;
 static int name_reg_chara;
 static int use_item_list[32];
+
 /* The item numbering the menus use is not the one the rest of the game passes around: weapons are
    renumbered on the way in and back again on the way out, so every item number crossing this gate
    goes through one of these two. */
-static int ConvertItemNo(int item)
-{
+static int ConvertItemNo(int item) {
     return TransWepNo(item);
 }
 
-static int InvertItemNo(int item)
-{
+static int InvertItemNo(int item) {
     return TransWepNoNewToOld(item);
 }
 
-void EdUseItemInit()
-{
+void EdUseItemInit() {
     use_item_list[0] = 100;
     use_item_list[1] = -1;
     use_item = -1;
 }
 
-void EdSetUseItem(int* list)
-{
+void EdSetUseItem(int *list) {
     int i;
 
     for (i = 0; i < 32; i++) {
         use_item_list[i] = ConvertItemNo(list[i]);
-        if (use_item_list[i] < 0) break;
+        if (use_item_list[i] < 0)
+            break;
     }
 }
 
-int EdGetUseItem()
-{
+int EdGetUseItem() {
     return InvertItemNo(use_item);
 }
 
-void EdSetNameRegChara(int chara)
-{
+void EdSetNameRegChara(int chara) {
     name_reg_chara = chara;
 }
 
-void EdSetShopNo(int shop)
-{
+void EdSetShopNo(int shop) {
     shop_no = shop;
 }
 
-int EdInitMenu(int mode)
-{
+int EdInitMenu(int mode) {
     menu_mode = mode;
     init_menu_cnt = 0;
-    if (mode <= 0) return 0;
+    if (mode <= 0)
+        return 0;
     MGFlipWaitVSync(1);
     EdClearSystemMes();
     ClearSystemMes();
@@ -920,106 +958,108 @@ int EdInitMenu(int mode)
 
 /* The frame the menu is actually built on: the picture behind it is kept first, because the menus
    draw over a still of the last game frame rather than over the game. */
-int EdInitModeFinish(CCamera* camera, CTexture* texture)
-{
+int EdInitModeFinish(CCamera *camera, CTexture *texture) {
     init_menu_cnt++;
-    if (init_menu_cnt > 3) init_menu_cnt = 4;
-    if (init_menu_cnt < 4) return 0;
-    if (texture) EdSaveFrameImage(*texture);
+    if (init_menu_cnt > 3)
+        init_menu_cnt = 4;
+    if (init_menu_cnt < 4)
+        return 0;
+    if (texture)
+        EdSaveFrameImage(*texture);
     GamePad.MenuModeOn(120);
 
-    int texture_block[5] = { 16, 17, 18, 25, 32 };
+    int texture_block[5] = {16, 17, 18, 25, 32};
 
     switch (menu_mode) {
-    case 1:
-        EditMenuInit(texture_block, EditMenuStatus[0] == 0);
-        return 6;
-    case 2:
-        BattleMenuInit(texture_block, 1);
-        break;
-    case 3:
-    case 4:
-        ShopNoInput(texture_block, shop_no, 1);
-        break;
-    case 5:
-        InitEventItemSelect(16, use_item_list, &SaveData->GetDngStatus()->item_pack, 180, 210, 1,
-                            0);
-        break;
-    case 9:
-        InitEventItemSelect(16, use_item_list, &SaveData->GetDngStatus()->item_pack, 180, 210, 1,
-                            1);
-        break;
-    case 6:
-        InitNameRegist(name_reg_chara, 16, 0);
-        break;
-    case 7:
-        InitMenuMove(5, 16, (u_long128*)read_buffer);
-        break;
-    case 8:
-        InitFishingExchange(0, texture_block, 0);
-        break;
-    case 10:
-        InitFishRecordView(0, texture_block, 0);
-        break;
+        case 1:
+            EditMenuInit(texture_block, EditMenuStatus[0] == 0);
+            return 6;
+        case 2:
+            BattleMenuInit(texture_block, 1);
+            break;
+        case 3:
+        case 4:
+            ShopNoInput(texture_block, shop_no, 1);
+            break;
+        case 5:
+            InitEventItemSelect(16, use_item_list, &SaveData->GetDngStatus()->item_pack, 180, 210, 1,
+                                0);
+            break;
+        case 9:
+            InitEventItemSelect(16, use_item_list, &SaveData->GetDngStatus()->item_pack, 180, 210, 1,
+                                1);
+            break;
+        case 6:
+            InitNameRegist(name_reg_chara, 16, 0);
+            break;
+        case 7:
+            InitMenuMove(5, 16, (u_long128 *) read_buffer);
+            break;
+        case 8:
+            InitFishingExchange(0, texture_block, 0);
+            break;
+        case 10:
+            InitFishRecordView(0, texture_block, 0);
+            break;
     }
     return 8;
 }
 
-void EdExitMenu()
-{
+void EdExitMenu() {
     GamePad.AutoRepeatOff();
     GamePad.MenuModeOff();
     MGFlipWaitVSync(0);
 }
 
-int EdMenuMode()
-{
+int EdMenuMode() {
     int end;
 
     end = 0;
     switch (menu_mode) {
-    case 2:
-        end = !BattleMenuCursor();
-        BattleMenuDraw();
-        if (end) EdClearItemOverFlag();
-        break;
-    case 3:
-    case 4:
-        end = CommonShopLoop();
-        break;
-    case 5:
-    case 9:
-        end = EventItemSelectLoop(&use_item);
-        break;
-    case 6:
-        end = NameEnterKey();
-        NameEnterDraw();
-        break;
-    case 7:
-        end = !MenuMoveKey();
-        DrawMenuMove();
-        break;
-    case 8:
-        end = FishingExchangeLoop();
-        break;
-    case 10:
-        end = FishRecordViewLoop();
-        break;
+        case 2:
+            end = !BattleMenuCursor();
+            BattleMenuDraw();
+            if (end)
+                EdClearItemOverFlag();
+            break;
+        case 3:
+        case 4:
+            end = CommonShopLoop();
+            break;
+        case 5:
+        case 9:
+            end = EventItemSelectLoop(&use_item);
+            break;
+        case 6:
+            end = NameEnterKey();
+            NameEnterDraw();
+            break;
+        case 7:
+            end = !MenuMoveKey();
+            DrawMenuMove();
+            break;
+        case 8:
+            end = FishingExchangeLoop();
+            break;
+        case 10:
+            end = FishRecordViewLoop();
+            break;
     }
     return end;
 }
 
 /* A count below zero means one, so a caller that has nothing to say about how many gets one. */
-void EdGetItem(int item, int count, int attach)
-{
-    CDngStatusData* status;
+void EdGetItem(int item, int count, int attach) {
+    CDngStatusData *status;
     int no;
     int i;
 
-    if (count < 0) count = 1;
+    if (count < 0)
+        count = 1;
     status = SaveData->GetDngStatus();
     no = ConvertItemNo(item);
-    if (no < 0) return;
+    if (no < 0)
+        return;
     for (i = 0; i < count; i++) {
         if (attach > 0)
             status->GetItem(no, attach);
@@ -1030,50 +1070,50 @@ void EdGetItem(int item, int count, int attach)
 
 /* Growing the pack clears the slots it opens rather than leaving what was in them, because a slot
    is read up to the count and an old number inside the new range would be an item again. */
-int EdAddMaxItem(int add)
-{
-    ITEM_PACK* pack;
+int EdAddMaxItem(int add) {
+    ITEM_PACK *pack;
     int num;
     int i;
 
     pack = &SaveData->GetDngStatus()->item_pack;
     num = pack->num + add;
-    if (num < 0) num = 0;
-    if (num > 100) num = 100;
-    for (i = pack->num; i < num; i++) pack->item[i] = -1;
-    pack->num = (char)num;
+    if (num < 0)
+        num = 0;
+    if (num > 100)
+        num = 100;
+    for (i = pack->num; i < num; i++)
+        pack->item[i] = -1;
+    pack->num = (char) num;
     return num;
 }
 
-int EdCheckItemOver()
-{
+int EdCheckItemOver() {
     return SaveData->GetDngStatus()->overflow_flag;
 }
 
-void EdClearItemOverFlag()
-{
+void EdClearItemOverFlag() {
     SaveData->GetDngStatus()->overflow_flag = 0;
 }
 
-int EdCheckItem(int item)
-{
-    CDngStatusData* status;
+int EdCheckItem(int item) {
+    CDngStatusData *status;
     int no;
 
     status = SaveData->GetDngStatus();
     no = ConvertItemNo(item);
-    if (no >= 0) return status->SearchItemIndexNo(no);
+    if (no >= 0)
+        return status->SearchItemIndexNo(no);
     return -1;
 }
 
-int EdCheckGetItem(int item)
-{
-    CDngStatusData* status;
+int EdCheckGetItem(int item) {
+    CDngStatusData *status;
     int no;
 
     status = SaveData->GetDngStatus();
     no = ConvertItemNo(item);
-    if (no >= 0) return status->CheckItemGet(no);
+    if (no >= 0)
+        return status->CheckItemGet(no);
     return 0;
 }
 
@@ -1098,8 +1138,8 @@ static int SystemMesInputKey;
 static int HelpMesCount;
 static int cnt1;
 static int cnt2;
-void EdSetSystemMes(int no, int count, int position, int input_key, int* arg, int number)
-{
+
+void EdSetSystemMes(int no, int count, int position, int input_key, int *arg, int number) {
     int i;
 
     SystemMesInputKey = input_key;
@@ -1107,11 +1147,13 @@ void EdSetSystemMes(int no, int count, int position, int input_key, int* arg, in
     if (arg) {
         for (i = 0; i < 4; i++) {
             EditSystemMes.mes_no[i] = -1;
-            if (*arg >= 0) EditSystemMes.mes_no[i] = *arg;
+            if (*arg >= 0)
+                EditSystemMes.mes_no[i] = *arg;
             arg++;
         }
     }
-    if (number >= 0) EditSystemMes.value = number;
+    if (number >= 0)
+        EditSystemMes.value = number;
     EditSystemMes.MakeMesWin(no);
     SystemMesNo = no;
     SystemMesCount = count;
@@ -1121,8 +1163,7 @@ void EdSetSystemMes(int no, int count, int position, int input_key, int* arg, in
    authored: the first is indented by however much narrower than the window the laid-out text came
    out, and the second a fixed distance to the right of it. Every other message says there is no
    choice by putting both off screen. */
-void EdSetHelpMes(int no, int count, int position, int* arg, int number)
-{
+void EdSetHelpMes(int no, int count, int position, int *arg, int number) {
     int x;
     int y;
     int indent;
@@ -1130,7 +1171,8 @@ void EdSetHelpMes(int no, int count, int position, int* arg, int number)
     if (no == 120) {
         indent = EditSystemMes.text_columns - 30;
         indent = 16 - indent;
-        if (indent < 0) indent = 0;
+        if (indent < 0)
+            indent = 0;
         y = SystemMesY;
         x = SystemMesX + ((indent * EditSystemMes.char_width) >> 1);
         EditSystemMes.line_pos[0].x = x;
@@ -1158,8 +1200,7 @@ void EdSetHelpMes(int no, int count, int position, int* arg, int number)
     SystemMesCount = 0;
 }
 
-void EdClearSystemMes()
-{
+void EdClearSystemMes() {
     ClearSystemMes();
     EditSystemMes.MakeMesWin(-1);
     SystemMesNo = -1;
@@ -1174,36 +1215,39 @@ void EdClearSystemMes()
     SystemMesY = 0;
 }
 
-int EdSystemMesCheck()
-{
+int EdSystemMesCheck() {
     return SystemMesCheck();
 }
 
 /* A message counts down to nothing and is cleared at one rather than at zero, so the frame that
    would have shown it empty is the frame it goes away on. A message that asked for a button holds
    at two until the button is pressed. */
-void EdSystemMesStep()
-{
+void EdSystemMesStep() {
     if (SystemMesWait > 0) {
         SystemMesWait--;
         return;
     }
     SystemMesStep();
-    if (SystemMesCount == 1 || HelpMesCount == 1) EdClearSystemMes();
-    if (SystemMesNo > 0 || HelpMesCount >= 0) EditSystemMes.Step();
+    if (SystemMesCount == 1 || HelpMesCount == 1)
+        EdClearSystemMes();
+    if (SystemMesNo > 0 || HelpMesCount >= 0)
+        EditSystemMes.Step();
     if (SystemMesInputKey == 0 || SystemMesCount != 2 || GamePad.Down(64)) {
-        if (SystemMesCount > 0) SystemMesCount--;
-        if (HelpMesCount > 0) HelpMesCount--;
+        if (SystemMesCount > 0)
+            SystemMesCount--;
+        if (HelpMesCount > 0)
+            HelpMesCount--;
     }
 }
 
 /* The window's own textures are put back every frame it is drawn, because whatever the game drew
    in between is free to have taken the video memory they were in. */
-void EdSystemMesDraw()
-{
-    if (SystemMesWait > 0) return;
+void EdSystemMesDraw() {
+    if (SystemMesWait > 0)
+        return;
     SystemMesDraw();
-    if (HelpMesNo <= 0) return;
+    if (HelpMesNo <= 0)
+        return;
     TexManager.ReloadTexture(Vif1Packet, EditSystemMes.tex_block);
     setbilinear(0);
     EditSystemMes.DrawMesWin();
@@ -1212,8 +1256,7 @@ void EdSystemMesDraw()
 /* The width the window will come to is not known before the text is laid out, so the messages
    below place it by hand: this one centres a forty-character line on the screen and the rest give
    a left edge outright. */
-void EdEditMainHelpMes(int building)
-{
+void EdEditMainHelpMes(int building) {
     SystemMesW = 0;
     SystemMesH = 0;
     SystemMesX = 320 - ((EditSystemMes.char_width * 40) >> 1);
@@ -1221,8 +1264,7 @@ void EdEditMainHelpMes(int building)
     EdSetHelpMes(100 + (building != 0), 2, -1, 0, -1);
 }
 
-void EdWalkToEditMes(int wait)
-{
+void EdWalkToEditMes(int wait) {
     SystemMesW = 0;
     SystemMesH = 0;
     SystemMesX = 40;
@@ -1233,9 +1275,9 @@ void EdWalkToEditMes(int wait)
 
 /* The build and move prompts take turns: each counts down the other's delay before showing itself
    and then arms the other, so the two alternate rather than both being up. */
-void EdEditBuildHelpMes(int parts)
-{
-    if (parts < 0) return;
+void EdEditBuildHelpMes(int parts) {
+    if (parts < 0)
+        return;
     if (cnt1 > 0) {
         cnt1--;
         return;
@@ -1243,7 +1285,7 @@ void EdEditBuildHelpMes(int parts)
     cnt1 = 0;
     cnt2 = 1;
 
-    int arg[4] = { -1, -1, -1, -1 };
+    int arg[4] = {-1, -1, -1, -1};
 
     arg[0] = GetAtraMsgNo(MapNo, parts);
     SystemMesW = 560;
@@ -1253,8 +1295,7 @@ void EdEditBuildHelpMes(int parts)
     EdSetHelpMes(120, 2, -1, arg, -1);
 }
 
-void EdEditMoveHelpMes()
-{
+void EdEditMoveHelpMes() {
     if (cnt2 > 0) {
         cnt2--;
         return;
@@ -1270,27 +1311,25 @@ void EdEditMoveHelpMes()
 
 /* Two messages a hundred apart for the same two states, since the argument names the fish and the
    message number says whether there is one. */
-void EdFishingWalkHelpMes(int fish)
-{
+void EdFishingWalkHelpMes(int fish) {
     int no;
 
     SystemMesW = 0;
     SystemMesH = 0;
 
-    int arg[4] = { -1, -1, -1, -1 };
+    int arg[4] = {-1, -1, -1, -1};
 
     arg[0] = fish + 100;
     no = 200;
-    if (fish >= 0) no++;
+    if (fish >= 0)
+        no++;
     EdSetHelpMes(no, 2, 9, arg, -1);
 }
 
-void EdFishingAngleHelpMEs(int angle)
-{
+void EdFishingAngleHelpMEs(int angle) {
 }
 
-void EdFishingLostEsaMes()
-{
+void EdFishingLostEsaMes() {
     SystemMesW = 0;
     SystemMesH = 0;
     EdSetHelpMes(210, 180, 8, 0, -1);
@@ -1298,8 +1337,7 @@ void EdFishingLostEsaMes()
 
 /* The second argument is dropped rather than forwarded, so a caller that passes one is passing it
    to nothing. */
-void EdItemGetMes(int item, int kind, int count, int attach)
-{
+void EdItemGetMes(int item, int kind, int count, int attach) {
     ItemGetMes(item, count, attach, 1);
 }
 
@@ -1310,12 +1348,12 @@ void EdItemGetMes(int item, int kind, int count, int attach)
 static int ibox_open_flag;
 static int ibox_open_close_flag;
 static int ibox_open_cnt;
-static CFrameVu1* ibox_frame;
-static CFrameVu1* ibox_base_frame;
+static CFrameVu1 *ibox_frame;
+static CFrameVu1 *ibox_base_frame;
 static sceVu0FVECTOR ibox_pos;
 static sceVu0FVECTOR ibox_rot;
-void EdInitOpenItemBox(CFrameVu1* frame, CFrameVu1* base)
-{
+
+void EdInitOpenItemBox(CFrameVu1 *frame, CFrameVu1 *base) {
     ibox_open_close_flag = 0;
     ibox_open_flag = 0;
     ibox_open_cnt = 0;
@@ -1323,8 +1361,7 @@ void EdInitOpenItemBox(CFrameVu1* frame, CFrameVu1* base)
     ibox_base_frame = base;
 }
 
-void EdSetOpenItemBox(float* position, float* rotation)
-{
+void EdSetOpenItemBox(float *position, float *rotation) {
     if (ibox_frame) {
         ibox_open_flag = 1;
         ibox_open_close_flag = 0;
@@ -1334,20 +1371,21 @@ void EdSetOpenItemBox(float* position, float* rotation)
     }
 }
 
-void EdStepOpenItemBox()
-{
-    CFrame* lid;
+void EdStepOpenItemBox() {
+    CFrame *lid;
     float open_angle;
     float close_angle;
 
-    if (ibox_open_flag == 0 && ibox_open_close_flag == 0) return;
+    if (ibox_open_flag == 0 && ibox_open_close_flag == 0)
+        return;
     ibox_open_cnt--;
     if (ibox_open_cnt < 0) {
         ibox_open_flag = 0;
         ibox_open_close_flag = 0;
         return;
     }
-    if (ibox_frame == 0) return;
+    if (ibox_frame == 0)
+        return;
     ibox_frame->SetPosition(ibox_pos);
     ibox_frame->SetRotation(ibox_rot[0], ibox_rot[1], ibox_rot[2]);
     lid = ibox_frame->SearchFrame("top");
@@ -1355,14 +1393,15 @@ void EdStepOpenItemBox()
     if (ibox_open_flag) {
         /* The lid swings over the first half of the count and then stands open through the second,
            which is the half the ambient is faded over. */
-        if (ibox_open_cnt <= 20) return;
-        open_angle = -(1.5707964f - 1.5707964f * (float)(ibox_open_cnt - 20) / 20.0f);
+        if (ibox_open_cnt <= 20)
+            return;
+        open_angle = -(1.5707964f - 1.5707964f * (float) (ibox_open_cnt - 20) / 20.0f);
         lid->SetRotation(open_angle, 0.0f, 0.0f);
     } else {
         if (ibox_open_cnt >= 6)
-            close_angle = 1.5707964f - 1.5707964f * (float)(ibox_open_cnt - 5) / 5.0f;
+            close_angle = 1.5707964f - 1.5707964f * (float) (ibox_open_cnt - 5) / 5.0f;
         else
-            close_angle = 1.5707964f * (float)ibox_open_cnt / 5.0f;
+            close_angle = 1.5707964f * (float) ibox_open_cnt / 5.0f;
         lid->SetRotation(0.2f * -close_angle, 0.0f, 0.0f);
     }
 }
@@ -1543,20 +1582,22 @@ INCLUDE_RODATA("asm/nonmatchings/edit", LIT_828);
 INCLUDE_RODATA("asm/nonmatchings/edit", LIT_1609);
 INCLUDE_RODATA("asm/nonmatchings/edit", LIT_1610);
 
-void EdDrawOpenItemBox()
-{
+void EdDrawOpenItemBox() {
     sceVu0FVECTOR ambient;
     sceVu0FVECTOR save;
 
-    if (ibox_open_flag == 0 && ibox_open_close_flag == 0) return;
+    if (ibox_open_flag == 0 && ibox_open_close_flag == 0)
+        return;
     if (ibox_frame) {
         ibox_frame->SetPosition(ibox_pos);
         ibox_frame->SetRotation(ibox_rot[0], ibox_rot[1], ibox_rot[2]);
     }
     MGGetAmbient(ambient);
     sceVu0CopyVector(save, ambient);
-    if (ibox_open_cnt < 20) ambient[3] = 128.0f * (float)ibox_open_cnt / 20.0f;
-    if (ibox_open_flag) MGSetAmbient(ambient);
+    if (ibox_open_cnt < 20)
+        ambient[3] = 128.0f * (float) ibox_open_cnt / 20.0f;
+    if (ibox_open_flag)
+        MGSetAmbient(ambient);
     MGDraw(ibox_frame);
     MGSetAmbient(save);
 }
@@ -1565,8 +1606,8 @@ INCLUDE_ASM("asm/nonmatchings/edit", EdSaveFrameImage__F8CTexture);
 INCLUDE_ASM("asm/nonmatchings/edit", EdSaveFrameImageTask__Fv);
 INCLUDE_ASM("asm/nonmatchings/edit", EdSaveFrameImageInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/edit", EdMenuLoop__FP6ClsMes);
-float ConvertTime(float hour)
-{
+
+float ConvertTime(float hour) {
     hour -= 10.0f;
 
     if (hour < 0.0f) {
@@ -1576,8 +1617,7 @@ float ConvertTime(float hour)
     return hour;
 }
 
-float InvertTime(float time)
-{
+float InvertTime(float time) {
     time *= 2.0f;
     time += 10.0f;
 
@@ -1867,8 +1907,8 @@ static float fade_col[4];
 static int fade_in_out;
 static int fade_end;
 static float fade_step;
-void EdFadeInit()
-{
+
+void EdFadeInit() {
     fade_col[3] = 0.0f;
     fade_col[2] = 0.0f;
     fade_col[1] = 0.0f;
@@ -1880,41 +1920,39 @@ void EdFadeInit()
 
 /* A negative frame count means no step at all: the alpha is forced to the end this call starts
    from and stays there, which is how a colour is held over the screen rather than faded through. */
-void EdFadeIn(int frames, float r, float g, float b)
-{
-    if (fade_in_out == 0 || frames < 0) fade_col[3] = 128.0f;
+void EdFadeIn(int frames, float r, float g, float b) {
+    if (fade_in_out == 0 || frames < 0)
+        fade_col[3] = 128.0f;
     fade_in_out = 1;
     fade_end = 0;
     if (frames < 0)
         fade_step = 0.0f;
     else
-        fade_step = 128.0f / (float)frames;
+        fade_step = 128.0f / (float) frames;
     fade_col[0] = r;
     fade_col[1] = g;
     fade_col[2] = b;
 }
 
-void EdFadeOut(int frames, float r, float g, float b)
-{
-    if (fade_in_out == 0 || frames < 0) fade_col[3] = 0.0f;
+void EdFadeOut(int frames, float r, float g, float b) {
+    if (fade_in_out == 0 || frames < 0)
+        fade_col[3] = 0.0f;
     fade_in_out = -1;
     fade_end = 0;
     if (frames < 0)
         fade_step = 0.0f;
     else
-        fade_step = 128.0f / (float)frames;
+        fade_step = 128.0f / (float) frames;
     fade_col[0] = r;
     fade_col[1] = g;
     fade_col[2] = b;
 }
 
-int EdFadeOutCheck()
-{
+int EdFadeOutCheck() {
     return fade_end;
 }
 
-void EdGetFadeColor(float* col)
-{
+void EdGetFadeColor(float *col) {
     col[0] = fade_col[0];
     col[1] = fade_col[1];
     col[2] = fade_col[2];
@@ -1923,8 +1961,7 @@ void EdGetFadeColor(float* col)
 
 /* The rectangle is in the sixteenths of a pixel the coordinate registers count in, which is what
    the multiplications are; why the cover is 70 boxes rather than one the code does not say. */
-void EdFadeInOut()
-{
+void EdFadeInOut() {
     int r;
     int g;
     int b;
@@ -1933,11 +1970,12 @@ void EdFadeInOut()
     int y;
     CRect_i_ rect;
 
-    if (fade_in_out == 0) return;
-    r = (int)fade_col[0];
-    g = (int)fade_col[1];
-    b = (int)fade_col[2];
-    a = (int)fade_col[3];
+    if (fade_in_out == 0)
+        return;
+    r = (int) fade_col[0];
+    g = (int) fade_col[1];
+    b = (int) fade_col[2];
+    a = (int) fade_col[3];
     if (fade_in_out > 0) {
         fade_col[3] -= fade_step;
         if (fade_col[3] <= 0.0f) {

@@ -78,9 +78,9 @@ public:
      */
     void Move(void);
 
-    int alpha[9];           /**< Opacity of each letter. */
-    int light[9];           /**< Light level each letter is drawn at. */
-    int count;              /**< Ticks the fade has run for. */
+    int alpha[9]; /**< Opacity of each letter. */
+    int light[9]; /**< Light level each letter is drawn at. */
+    int count;    /**< Ticks the fade has run for. */
     int unk_4C;
     sceVu0FVECTOR position; /**< Where the letters hang in the world. */
 };

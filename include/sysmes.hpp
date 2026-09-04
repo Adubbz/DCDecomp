@@ -9,13 +9,14 @@ class ClsMes;
  */
 struct input_str {
     input_str() : size(0), pos(0) {}
+
     input_str(int) {}
 
-    int get(int *value)
-    {
-        *value = (u_char)data[pos];
+    int get(int *value) {
+        *value = (u_char) data[pos];
         pos++;
-        if (size < pos) return 0;
+        if (size < pos)
+            return 0;
         return 1;
     }
 

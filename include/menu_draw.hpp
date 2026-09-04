@@ -19,7 +19,6 @@ struct SAVEDATA_INFO;
 struct WEAPON_HAVE;
 struct spRGBA;
 
-
 /**
  * @mangled SaveMenuKeySaveCheck__Fv
  * @address 0x221730

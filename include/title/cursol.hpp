@@ -66,9 +66,9 @@ public:
      */
     int GetPos(void);
 
-    float y;         /**< Height the cursor has eased to. */
-    float target_y;  /**< Height the cursor is easing towards. */
-    int alpha[5];    /**< Opacity of each menu row. */
-    int select;      /**< Row the cursor stands on. */
-    char arrived;    /**< Whether the cursor has reached its target. */
+    float y;        /**< Height the cursor has eased to. */
+    float target_y; /**< Height the cursor is easing towards. */
+    int alpha[5];   /**< Opacity of each menu row. */
+    int select;     /**< Row the cursor stands on. */
+    char arrived;   /**< Whether the cursor has reached its target. */
 };

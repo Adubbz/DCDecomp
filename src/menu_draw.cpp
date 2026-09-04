@@ -206,8 +206,8 @@ void MenuDataSwap(s16 *first, s16 *second) {
         return;
     }
 
-    temp    = *first;
-    *first  = *second;
+    temp = *first;
+    *first = *second;
     *second = temp;
 }
 
@@ -218,8 +218,8 @@ void MenuDataSwap(int *first, int *second) {
         return;
     }
 
-    temp    = *first;
-    *first  = *second;
+    temp = *first;
+    *first = *second;
     *second = temp;
 }
 

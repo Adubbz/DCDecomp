@@ -223,22 +223,22 @@ public:
      */
     void exe(vmcode_t *);
 
-    int ext_func_num;                      /**< Gives the number of registered external functions. */
+    int ext_func_num;                            /**< Gives the number of registered external functions. */
     int (**ext_func_table)(RS_STACKDATA *, int); /**< Points to the external function table. */
-    int stack_num;                         /**< Gives the operand stack capacity. */
-    RS_STACKDATA *stack;                   /**< Points to the operand stack storage. */
-    RS_STACKDATA *sp;                      /**< Points to the next operand stack slot. */
-    RS_STACKDATA *stack_end;               /**< Points one past the operand stack storage. */
-    int call_num;                          /**< Gives the call stack capacity. */
-    RS_CALLDATA *call;                     /**< Points to the call stack storage. */
-    RS_CALLDATA *call_sp;                  /**< Points to the next call stack entry. */
-    RS_CALLDATA *call_end;                 /**< Points one past the call stack storage. */
-    RS_STACKDATA *frame;                   /**< Points to the active operand frame. */
-    funcdata *func;                        /**< Describes the active script function. */
-    vmcode_t *pc;                          /**< Points to the next instruction. */
-    int end;                               /**< Records whether execution has completed. */
-    int skip_wait;                         /**< Records whether wait operations should be skipped. */
-    RS_PROG_HEADER *prog;                  /**< Points to the loaded program header. */
-    char *code;                            /**< Points to the loaded bytecode section. */
-    int result;                            /**< Stores the script's return value. */
+    int stack_num;                               /**< Gives the operand stack capacity. */
+    RS_STACKDATA *stack;                         /**< Points to the operand stack storage. */
+    RS_STACKDATA *sp;                            /**< Points to the next operand stack slot. */
+    RS_STACKDATA *stack_end;                     /**< Points one past the operand stack storage. */
+    int call_num;                                /**< Gives the call stack capacity. */
+    RS_CALLDATA *call;                           /**< Points to the call stack storage. */
+    RS_CALLDATA *call_sp;                        /**< Points to the next call stack entry. */
+    RS_CALLDATA *call_end;                       /**< Points one past the call stack storage. */
+    RS_STACKDATA *frame;                         /**< Points to the active operand frame. */
+    funcdata *func;                              /**< Describes the active script function. */
+    vmcode_t *pc;                                /**< Points to the next instruction. */
+    int end;                                     /**< Records whether execution has completed. */
+    int skip_wait;                               /**< Records whether wait operations should be skipped. */
+    RS_PROG_HEADER *prog;                        /**< Points to the loaded program header. */
+    char *code;                                  /**< Points to the loaded bytecode section. */
+    int result;                                  /**< Stores the script's return value. */
 };

@@ -22,4 +22,3 @@ INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", setItemToReserved__FPciiPcii);
 INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", BtMapJumpCashClear__Fv);
 INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", BtMapJumpLoad__FPc);
 INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", BtSet3DCellModel__FPfP8CTexturefiiiii);
-

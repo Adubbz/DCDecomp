@@ -8,7 +8,6 @@
 class CEffect;
 class CEffectParam;
 
-
 class CEffectGroup {
 public:
     /**

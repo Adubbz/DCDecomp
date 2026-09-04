@@ -7,7 +7,6 @@
 // names but not where they live.
 struct WEAPON_HAVE;
 
-
 class MenuClsMes {
 public:
     /**

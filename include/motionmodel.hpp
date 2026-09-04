@@ -11,7 +11,6 @@ template <int Kind>
 class CDataAlloc2;
 struct MOTION_INFO;
 
-
 class CMotionModel {
 public:
     CFrame *frame; /**< Frame that draws the model. */

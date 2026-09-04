@@ -11,9 +11,9 @@ class CCamera;
  */
 class CSeireiKing {
 public:
-
     /** Stages the trail, the same way a caller may stage it again later. */
     CSeireiKing() { Initialize(); }
+
     /**
      *          Draws the trailing sparks around a supplied world position.
      *

@@ -2,9 +2,10 @@
 
 #include "mathutil.hpp"
 
+#include <libvu0.h>
+
 #include <cmath>
 #include <cstdlib>
-#include <libvu0.h>
 
 INCLUDE_RODATA("asm/nonmatchings/mathutil", LIT_245);
 INCLUDE_RODATA("asm/nonmatchings/mathutil", LIT_424);
@@ -49,11 +50,10 @@ static float SinTable[1024];
 float Sinf(float angle);
 float Cosf(float angle);
 
-void VectorMax(float* max, float* a, float* b)
-{
-    register float* out = max;
-    register float* p0 = a;
-    register float* p1 = b;
+void VectorMax(float *max, float *a, float *b) {
+    register float *out = max;
+    register float *p0 = a;
+    register float *p1 = b;
 
     asm {
         lqc2    vf15, 0(p0)
@@ -63,12 +63,11 @@ void VectorMax(float* max, float* a, float* b)
     }
 }
 
-void VectorMax(float* max, float* a, float* b, float* c)
-{
-    register float* out = max;
-    register float* p0 = a;
-    register float* p1 = b;
-    register float* p2 = c;
+void VectorMax(float *max, float *a, float *b, float *c) {
+    register float *out = max;
+    register float *p0 = a;
+    register float *p1 = b;
+    register float *p2 = c;
 
     asm {
         lqc2    vf15, 0(p0)
@@ -80,13 +79,12 @@ void VectorMax(float* max, float* a, float* b, float* c)
     }
 }
 
-void VectorMax(float* max, float* a, float* b, float* c, float* d)
-{
-    register float* out = max;
-    register float* p0 = a;
-    register float* p1 = b;
-    register float* p2 = c;
-    register float* p3 = d;
+void VectorMax(float *max, float *a, float *b, float *c, float *d) {
+    register float *out = max;
+    register float *p0 = a;
+    register float *p1 = b;
+    register float *p2 = c;
+    register float *p3 = d;
 
     asm {
         lqc2    vf15, 0(p0)
@@ -100,11 +98,10 @@ void VectorMax(float* max, float* a, float* b, float* c, float* d)
     }
 }
 
-void VectorMin(float* min, float* a, float* b)
-{
-    register float* out = min;
-    register float* p0 = a;
-    register float* p1 = b;
+void VectorMin(float *min, float *a, float *b) {
+    register float *out = min;
+    register float *p0 = a;
+    register float *p1 = b;
 
     asm {
         lqc2    vf15, 0(p0)
@@ -114,13 +111,12 @@ void VectorMin(float* min, float* a, float* b)
     }
 }
 
-void VectorMin(float* min, float* a, float* b, float* c, float* d)
-{
-    register float* out = min;
-    register float* p0 = a;
-    register float* p1 = b;
-    register float* p2 = c;
-    register float* p3 = d;
+void VectorMin(float *min, float *a, float *b, float *c, float *d) {
+    register float *out = min;
+    register float *p0 = a;
+    register float *p1 = b;
+    register float *p2 = c;
+    register float *p3 = d;
 
     asm {
         lqc2    vf15, 0(p0)
@@ -134,12 +130,11 @@ void VectorMin(float* min, float* a, float* b, float* c, float* d)
     }
 }
 
-void VectorMaxMin(float* max, float* min, float* a, float* b)
-{
-    register float* out_max = max;
-    register float* out_min = min;
-    register float* p0 = a;
-    register float* p1 = b;
+void VectorMaxMin(float *max, float *min, float *a, float *b) {
+    register float *out_max = max;
+    register float *out_min = min;
+    register float *p0 = a;
+    register float *p1 = b;
 
     asm {
         lqc2    vf15, 0(p0)
@@ -151,13 +146,12 @@ void VectorMaxMin(float* max, float* min, float* a, float* b)
     }
 }
 
-void VectorMaxMin(float* max, float* min, float* a, float* b, float* c)
-{
-    register float* out_max = max;
-    register float* out_min = min;
-    register float* p0 = a;
-    register float* p1 = b;
-    register float* p2 = c;
+void VectorMaxMin(float *max, float *min, float *a, float *b, float *c) {
+    register float *out_max = max;
+    register float *out_min = min;
+    register float *p0 = a;
+    register float *p1 = b;
+    register float *p2 = c;
 
     asm {
         lqc2    vf15, 0(p0)
@@ -172,14 +166,13 @@ void VectorMaxMin(float* max, float* min, float* a, float* b, float* c)
     }
 }
 
-void VectorMaxMin(float* max, float* min, float* a, float* b, float* c, float* d)
-{
-    register float* out_max = max;
-    register float* out_min = min;
-    register float* p0 = a;
-    register float* p1 = b;
-    register float* p2 = c;
-    register float* p3 = d;
+void VectorMaxMin(float *max, float *min, float *a, float *b, float *c, float *d) {
+    register float *out_max = max;
+    register float *out_min = min;
+    register float *p0 = a;
+    register float *p1 = b;
+    register float *p2 = c;
+    register float *p3 = d;
 
     asm {
         lqc2    vf15, 0(p0)
@@ -197,12 +190,11 @@ void VectorMaxMin(float* max, float* min, float* a, float* b, float* c, float* d
     }
 }
 
-void PlaneNormal(float* normal, float* v0, float* v1, float* v2)
-{
-    register float* out = normal;
-    register float* p0 = v0;
-    register float* p1 = v1;
-    register float* p2 = v2;
+void PlaneNormal(float *normal, float *v0, float *v1, float *v2) {
+    register float *out = normal;
+    register float *p0 = v0;
+    register float *p1 = v1;
+    register float *p2 = v2;
 
     asm {
         lqc2    vf15, 0(p0)
@@ -216,16 +208,14 @@ void PlaneNormal(float* normal, float* v0, float* v1, float* v2)
     }
 }
 
-float DistPlanePoint(float* normal, float* on_plane, float* point)
-{
+float DistPlanePoint(float *normal, float *on_plane, float *point) {
     sceVu0FVECTOR offset;
 
     sceVu0SubVector(offset, point, on_plane);
     return sceVu0InnerProduct(normal, offset);
 }
 
-float ReflectionPlane(float* normal, float* on_plane, float* point, float* out)
-{
+float ReflectionPlane(float *normal, float *on_plane, float *point, float *out) {
     sceVu0FVECTOR step;
     float distance;
 
@@ -236,9 +226,8 @@ float ReflectionPlane(float* normal, float* on_plane, float* point, float* out)
     return distance;
 }
 
-int IntersectionPoint_line_poly3(float* from, float* to, float* v0, float* v1, float* v2,
-    float* normal, float* hit)
-{
+int IntersectionPoint_line_poly3(float *from, float *to, float *v0, float *v1, float *v2,
+                                 float *normal, float *hit) {
     sceVu0FVECTOR line;
     sceVu0FVECTOR e0;
     sceVu0FVECTOR e1;
@@ -252,14 +241,14 @@ int IntersectionPoint_line_poly3(float* from, float* to, float* v0, float* v1, f
     sceVu0SubVector(e2, v2, from);
     above = -sceVu0InnerProduct(normal, e0);
     along = sceVu0InnerProduct(normal, line);
-    if (along == 0.0f) return 0;
+    if (along == 0.0f)
+        return 0;
     sceVu0ScaleVector(hit, line, -above / along);
     sceVu0AddVector(hit, hit, from);
     return Check_Point_Poly3_XYZ(hit, v0, v1, v2, normal);
 }
 
-int Check_Point_Poly3_XYZ(float* point, float* v0, float* v1, float* v2, float* normal)
-{
+int Check_Point_Poly3_XYZ(float *point, float *v0, float *v1, float *v2, float *normal) {
     sceVu0FVECTOR p0;
     sceVu0FVECTOR p1;
     sceVu0FVECTOR p2;
@@ -285,8 +274,10 @@ int Check_Point_Poly3_XYZ(float* point, float* v0, float* v1, float* v2, float* 
     d0 = sceVu0InnerProduct(c0, normal);
     d1 = sceVu0InnerProduct(c1, normal);
     d2 = sceVu0InnerProduct(c2, normal);
-    if (d0 >= 0.0f && d1 >= 0.0f && d2 >= 0.0f) return 1;
-    if (d0 <= 0.0f && d1 <= 0.0f && d2 <= 0.0f) return 1;
+    if (d0 >= 0.0f && d1 >= 0.0f && d2 >= 0.0f)
+        return 1;
+    if (d0 <= 0.0f && d1 <= 0.0f && d2 <= 0.0f)
+        return 1;
     return 0;
 }
 
@@ -294,9 +285,8 @@ int Check_Point_Poly3_XYZ(float* point, float* v0, float* v1, float* v2, float* 
    so the block hands the bits over in an integer and reinterprets them where a float return value
    has to be. Both variables are the compiler's to place; the initializer is what stops it warning
    about the one nothing in C ever writes. */
-float DistVector(float* v0)
-{
-    register float* p0 = v0;
+float DistVector(float *v0) {
+    register float *p0 = v0;
     register int root;
     register float length = 0.0f;
 
@@ -316,10 +306,9 @@ float DistVector(float* v0)
     return length;
 }
 
-float DistVector(float* v0, float* v1)
-{
-    register float* p0 = v0;
-    register float* p1 = v1;
+float DistVector(float *v0, float *v1) {
+    register float *p0 = v0;
+    register float *p1 = v1;
     register int root;
     register float length = 0.0f;
 
@@ -341,11 +330,10 @@ float DistVector(float* v0, float* v1)
     return length;
 }
 
-void MulMatrix(sceVu0FMATRIX m0, sceVu0FMATRIX m1, sceVu0FMATRIX m2)
-{
-    register float* out = (float*)m0;
-    register float* left = (float*)m1;
-    register float* right = (float*)m2;
+void MulMatrix(sceVu0FMATRIX m0, sceVu0FMATRIX m1, sceVu0FMATRIX m2) {
+    register float *out = (float *) m0;
+    register float *left = (float *) m1;
+    register float *right = (float *) m2;
 
     asm {
         lqc2      vf1, 0(left)
@@ -379,9 +367,8 @@ void MulMatrix(sceVu0FMATRIX m0, sceVu0FMATRIX m1, sceVu0FMATRIX m2)
     }
 }
 
-void RotMatrixY(sceVu0FMATRIX m0, float ry)
-{
-    register float* out = (float*)m0;
+void RotMatrixY(sceVu0FMATRIX m0, float ry) {
+    register float *out = (float *) m0;
     float angle = ry;
 
     /* vf0 is the constant (0, 0, 0, 1), so three rotations of it are the other three rows and the
@@ -402,8 +389,7 @@ void RotMatrixY(sceVu0FMATRIX m0, float ry)
     m0[0][2] = -m0[2][0];
 }
 
-void LookAtMatrixZ(sceVu0FMATRIX m0, float* direction)
-{
+void LookAtMatrixZ(sceVu0FMATRIX m0, float *direction) {
     sceVu0FMATRIX pitch;
     sceVu0FMATRIX yaw;
     sceVu0FVECTOR unit;
@@ -439,11 +425,10 @@ void LookAtMatrixZ(sceVu0FMATRIX m0, float* direction)
     MulMatrix(m0, yaw, pitch);
 }
 
-void ApplyMatrixN(sceVu0FVECTOR* out, sceVu0FMATRIX matrix, sceVu0FVECTOR* in, int count)
-{
-    register float* dst = (float*)out;
-    register float* m = (float*)matrix;
-    register float* src = (float*)in;
+void ApplyMatrixN(sceVu0FVECTOR *out, sceVu0FMATRIX matrix, sceVu0FVECTOR *in, int count) {
+    register float *dst = (float *) out;
+    register float *m = (float *) matrix;
+    register float *src = (float *) in;
     register int left = count;
 
     /* Two blocks around a label, because the loop branches back into the middle of the sequence
@@ -459,25 +444,12 @@ void ApplyMatrixN(sceVu0FVECTOR* out, sceVu0FMATRIX matrix, sceVu0FVECTOR* in, i
         vnop
         vnop
     }
-row:
-    asm {
-        vmulax   ACC, vf10, vf16
-        vmadday  ACC, vf11, vf16
-        vmaddaz  ACC, vf12, vf16
-        vmaddw   vf17, vf13, vf16
-        addi     left, left, -1
-        addi     dst, dst, 16
-        addi     src, src, 16
-        sqc2     vf17, -16(dst)
-        lqc2     vf16, 0(src)
-        vnop
-        bgez     left, row
-        nop
+    row : asm {
+        vmulax ACC, vf10, vf16 vmadday ACC, vf11, vf16 vmaddaz ACC, vf12, vf16 vmaddw vf17, vf13, vf16 addi left, left, -1 addi dst, dst, 16 addi src, src, 16 sqc2 vf17, -16(dst) lqc2 vf16, 0(src) vnop bgez left, row nop
     }
 }
 
-void VectorInterpolate(float* out, float* from, float* to, float step, int mode)
-{
+void VectorInterpolate(float *out, float *from, float *to, float step, int mode) {
     sceVu0FVECTOR gap;
     int i;
     float size;
@@ -485,29 +457,31 @@ void VectorInterpolate(float* out, float* from, float* to, float step, int mode)
 
     sceVu0SubVector(gap, to, from);
     switch (mode) {
-    case 0:
-        for (i = 0; i < 3; i++) {
-            /* The signed difference and its magnitude are carried as two variables, and each
-               arm writes back the one the other arm would have changed - so the second assignment
-               stores nothing on a value that already agrees. */
-            d = gap[i];
-            size = d;
-            if (d < 0.0f) size = -d;
-            else d = size;
+        case 0:
+            for (i = 0; i < 3; i++) {
+                /* The signed difference and its magnitude are carried as two variables, and each
+                   arm writes back the one the other arm would have changed - so the second assignment
+                   stores nothing on a value that already agrees. */
+                d = gap[i];
+                size = d;
+                if (d < 0.0f)
+                    size = -d;
+                else
+                    d = size;
 
-            if (size < step) {
-                out[i] = to[i];
-            } else if (d < 0.0f) {
-                out[i] = from[i] - step;
-            } else {
-                out[i] = from[i] + step;
+                if (size < step) {
+                    out[i] = to[i];
+                } else if (d < 0.0f) {
+                    out[i] = from[i] - step;
+                } else {
+                    out[i] = from[i] + step;
+                }
             }
-        }
-        break;
-    case 1:
-        for (i = 0; i < 3; i++)
-            out[i] = from[i] + gap[i] / step;
-        break;
+            break;
+        case 1:
+            for (i = 0; i < 3; i++)
+                out[i] = from[i] + gap[i] / step;
+            break;
     }
 }
 
@@ -515,95 +489,102 @@ void VectorInterpolate(float* out, float* from, float* to, float step, int mode)
    that range by adding or subtracting one whole turn — once is enough because both operands are
    already in range, so a difference cannot leave it by more than a turn. */
 
-float AngleInterpolate(float from, float to, float step, int mode)
-{
+float AngleInterpolate(float from, float to, float step, int mode) {
     float d;
     float s;
     float r;
 
     d = to - from;
-    if (d > PI) d -= PI * 2.0f;
-    if (d <= -PI) d += PI * 2.0f;
+    if (d > PI)
+        d -= PI * 2.0f;
+    if (d <= -PI)
+        d += PI * 2.0f;
     s = 0.0f;
-    if (mode == 0 && (d < 0.0f ? -d : d) < step) return to;
+    if (mode == 0 && (d < 0.0f ? -d : d) < step)
+        return to;
     switch (mode) {
-    case 0:
-        if (d < 0.0f) {
-            if (step < d) return to;
-            s -= step;
-        }
-        if (d >= 0.0f) {
-            if (step > d) return to;
-            s += step;
-        }
-        break;
-    case 1:
-        s = d / step;
-        break;
+        case 0:
+            if (d < 0.0f) {
+                if (step < d)
+                    return to;
+                s -= step;
+            }
+            if (d >= 0.0f) {
+                if (step > d)
+                    return to;
+                s += step;
+            }
+            break;
+        case 1:
+            s = d / step;
+            break;
     }
     r = from + s;
-    if (r > PI) r -= PI * 2.0f;
-    if (r <= -PI) r += PI * 2.0f;
+    if (r > PI)
+        r -= PI * 2.0f;
+    if (r <= -PI)
+        r += PI * 2.0f;
     return r;
 }
 
-int AngleCmp(float left, float right, float slack)
-{
+int AngleCmp(float left, float right, float slack) {
     float d;
 
     d = left - right;
-    if (d == 0.0f) return 0;
-    if (d > PI) d -= PI * 2.0f;
-    if (d < -PI) d += PI * 2.0f;
-    if (d > slack) return 1;
-    if (d < -slack) return -1;
+    if (d == 0.0f)
+        return 0;
+    if (d > PI)
+        d -= PI * 2.0f;
+    if (d < -PI)
+        d += PI * 2.0f;
+    if (d > slack)
+        return 1;
+    if (d < -slack)
+        return -1;
     return 0;
 }
 
-float AngleLimit(float angle)
-{
+float AngleLimit(float angle) {
     float turns;
     int whole;
 
-    if (angle < PI && angle > -PI) return angle;
+    if (angle < PI && angle > -PI)
+        return angle;
     turns = angle / (PI * 2.0f);
     /* The first truncation is a call whose result nothing reads, and it is kept because it is one
        the function makes: each conversion in the source is its own call. */
-    whole = (int)turns;
-    angle -= PI * 2.0f * (int)turns;
-    if (angle > PI) angle -= PI * 2.0f;
-    if (angle < -PI) angle += PI * 2.0f;
+    whole = (int) turns;
+    angle -= PI * 2.0f * (int) turns;
+    if (angle > PI)
+        angle -= PI * 2.0f;
+    if (angle < -PI)
+        angle += PI * 2.0f;
     return angle;
 }
 
-float rnd()
-{
-    return (float)rand() / 2147483648.0f;
+float rnd() {
+    return (float) rand() / 2147483648.0f;
 }
 
-float nrnd()
-{
-    return rnd() + rnd() + rnd() + rnd() + rnd() + rnd()
-         + rnd() + rnd() + rnd() + rnd() + rnd() + rnd() - 6.0f;
+float nrnd() {
+    return rnd() + rnd() + rnd() + rnd() + rnd() + rnd() + rnd() + rnd() + rnd() + rnd() + rnd() + rnd() - 6.0f;
 }
 
-void CreateSinTable()
-{
+void CreateSinTable() {
     int i;
 
     sin_table_num = 1024.0f;
     sin_table_unit_1 = 162.97466f;
     for (i = 0; i < 1024; i++)
-        SinTable[i] = sinf(PI * (2.0f * (float)i) / sin_table_num);
+        SinTable[i] = sinf(PI * (2.0f * (float) i) / sin_table_num);
 }
 
-float Sinf(float angle)
-{
-    if (angle >= 0.0f) return SinTable[(int)(angle * sin_table_unit_1) % 1024];
-    return -SinTable[(int)(-angle * sin_table_unit_1) % 1024];
+float Sinf(float angle) {
+    if (angle >= 0.0f)
+        return SinTable[(int) (angle * sin_table_unit_1) % 1024];
+    return -SinTable[(int) (-angle * sin_table_unit_1) % 1024];
 }
 
-float Cosf(float angle)
-{
+float Cosf(float angle) {
     return Sinf(PI / 2.0f + angle);
 }

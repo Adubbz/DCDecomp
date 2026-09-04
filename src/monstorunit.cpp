@@ -42,4 +42,3 @@ INCLUDE_RODATA("asm/nonmatchings/monstorunit", LIT_2329);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", LIT_2330);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", LIT_2331);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", SetupViewMonstor__12CMonstorUnitFiPfi);
-

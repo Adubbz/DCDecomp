@@ -11,9 +11,9 @@
 #include <cstdio>
 #include <cstring>
 
-#include "dataread.hpp"
 #include "btsysscript.hpp"
 #include "dataalloc.hpp"
+#include "dataread.hpp"
 #include "dataset.hpp"
 #include "mathutil.hpp"
 #include "mglib.hpp"
@@ -617,8 +617,15 @@ static COMMAND_INFO Command[9] = {
 
 /* What each of those keywords does, in the same order. */
 static void (*CommandExe[9])(void **) = {
-    CommandSIZE,  CommandFRAME,   CommandNORMAL,   CommandFOLLOW, CommandK,
-    CommandWINDEFFECT, CommandGRAVITY, CommandPOLYDIVE, CommandBOUND,
+    CommandSIZE,
+    CommandFRAME,
+    CommandNORMAL,
+    CommandFOLLOW,
+    CommandK,
+    CommandWINDEFFECT,
+    CommandGRAVITY,
+    CommandPOLYDIVE,
+    CommandBOUND,
 };
 
 INCLUDE_RODATA("asm/nonmatchings/dataread", LIT_254);
@@ -644,8 +651,8 @@ INCLUDE_ASM("asm/nonmatchings/dataread", unitRotation__FP9CFrameVu1f);
 /* The overlay each map number is served from; an empty name means the map runs out of the
    executable itself. */
 static char *binfile[15] = {"TITLE.BIN", "TITLE.BIN", "", "DUN.BIN", "DUN.BIN",
-                            "TITLE.BIN", "",          "", "DUN.BIN", "DUN.BIN",
-                            "",          "",          "", "",        ""};
+                            "TITLE.BIN", "", "", "DUN.BIN", "DUN.BIN",
+                            "", "", "", "", ""};
 
 /* The overlay that is loaded now, so asking for it again costs nothing. */
 static char now_binfile[128] = "";
@@ -668,21 +675,32 @@ void init_all() {
     sceSifInitRpc(0);
     sceCdInit(0);
     sceCdMmode(2);
-    while (!sceSifRebootIop("cdrom0:\\MODULES\\IOPRP211.IMG;1")) {}
-    while (!sceSifSyncIop()) {}
+    while (!sceSifRebootIop("cdrom0:\\MODULES\\IOPRP211.IMG;1")) {
+    }
+    while (!sceSifSyncIop()) {
+    }
     sceSifInitRpc(0);
     sceCdInit(0);
     sceCdMmode(2);
     sceFsReset();
-    while (sceSifLoadModule("cdrom0:\\MODULES\\SIO2MAN.IRX;1", 0, 0) < 0) {}
-    while (sceSifLoadModule("cdrom0:\\MODULES\\PADMAN.IRX;1", 0, 0) < 0) {}
-    while (sceSifLoadModule("cdrom0:\\MODULES\\MCMAN.IRX;1", 0, 0) < 0) {}
-    while (sceSifLoadModule("cdrom0:\\MODULES\\MCSERV.IRX;1", 0, 0) < 0) {}
-    while (sceSifLoadModule("cdrom0:\\MODULES\\LIBSD.IRX;1", 0, 0) < 0) {}
-    while (sceSifLoadModule("cdrom0:\\MODULES\\SDRDRV.IRX;1", 0, 0) < 0) {}
-    while (sceSifLoadModule("cdrom0:\\MODULES\\MODMIDI.IRX;1", 0, 0) < 0) {}
-    while (sceSifLoadModule("cdrom0:\\MODULES\\MODHSYN.IRX;1", 0, 0) < 0) {}
-    while (sceSifLoadModule("cdrom0:\\MODULES\\EZMIDI.IRX;1", 0, 0) < 0) {}
+    while (sceSifLoadModule("cdrom0:\\MODULES\\SIO2MAN.IRX;1", 0, 0) < 0) {
+    }
+    while (sceSifLoadModule("cdrom0:\\MODULES\\PADMAN.IRX;1", 0, 0) < 0) {
+    }
+    while (sceSifLoadModule("cdrom0:\\MODULES\\MCMAN.IRX;1", 0, 0) < 0) {
+    }
+    while (sceSifLoadModule("cdrom0:\\MODULES\\MCSERV.IRX;1", 0, 0) < 0) {
+    }
+    while (sceSifLoadModule("cdrom0:\\MODULES\\LIBSD.IRX;1", 0, 0) < 0) {
+    }
+    while (sceSifLoadModule("cdrom0:\\MODULES\\SDRDRV.IRX;1", 0, 0) < 0) {
+    }
+    while (sceSifLoadModule("cdrom0:\\MODULES\\MODMIDI.IRX;1", 0, 0) < 0) {
+    }
+    while (sceSifLoadModule("cdrom0:\\MODULES\\MODHSYN.IRX;1", 0, 0) < 0) {
+    }
+    while (sceSifLoadModule("cdrom0:\\MODULES\\EZMIDI.IRX;1", 0, 0) < 0) {
+    }
     InitCDFile();
     DevInit();
     sceDmaGetChan(1);

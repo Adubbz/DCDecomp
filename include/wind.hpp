@@ -73,9 +73,9 @@ public:
      */
     void Step(void);
 
-    float gust;          /**< Share of the speed the wind blows at now, from zero to one. */
-    sceVu0FVECTOR dir;   /**< Unit vector the wind blows along. */
-    float velocity;      /**< Speed the wind blows at when the gust is at full strength. */
+    float gust;        /**< Share of the speed the wind blows at now, from zero to one. */
+    sceVu0FVECTOR dir; /**< Unit vector the wind blows along. */
+    float velocity;    /**< Speed the wind blows at when the gust is at full strength. */
 };
 
 STATIC_ASSERT(sizeof(CWind) == 0x30);

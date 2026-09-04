@@ -8,7 +8,6 @@
 struct ACT_SEQ;
 class CCharacter;
 
-
 class CActionSeq {
 public:
     /**

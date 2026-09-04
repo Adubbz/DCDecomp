@@ -1,6 +1,6 @@
 #pragma constant_flag 0
 #pragma argument_flag 0
-#pragma argument_flag_ones 71,99,109,124,144,182,223,240,274,305
+#pragma argument_flag_ones 71, 99, 109, 124, 144, 182, 223, 240, 274, 305
 
 #include "weaponelement.hpp"
 
@@ -13,8 +13,7 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-void CWeaponElement::Initialize()
-{
+void CWeaponElement::Initialize() {
     int i;
 
     for (i = 0; i < WEAPON_ELEMENT_SPARK_MAX; i++) {
@@ -25,8 +24,7 @@ void CWeaponElement::Initialize()
 }
 
 void CWeaponElement::Set(sceVu0FVECTOR *origin, float *position, float power, int kind,
-                         float spread)
-{
+                         float spread) {
     this->power = 0.01f * (1.0f + power);
     this->kind = kind;
     this->spread = spread;
@@ -53,8 +51,7 @@ void CWeaponElement::Set(sceVu0FVECTOR *origin, float *position, float power, in
     on = 1;
 }
 
-void CWeaponElement::Step()
-{
+void CWeaponElement::Step() {
     if (on != 0) {
         switch (kind) {
             default:
@@ -77,8 +74,7 @@ void CWeaponElement::Step()
     }
 }
 
-void CWeaponElement::Draw()
-{
+void CWeaponElement::Draw() {
     if (on != 0) {
         switch (kind) {
             default:
@@ -101,14 +97,13 @@ void CWeaponElement::Draw()
     }
 }
 
-void CWeaponElement::Init_Holy(float *position)
-{
-    count = (int)(12.0f * power) + 2;
-    spawn_budget = (int)(20.0f * power) + 10;
-    spawn_delay_max = 6 - (int)(3.0f * power);
+void CWeaponElement::Init_Holy(float *position) {
+    count = (int) (12.0f * power) + 2;
+    spawn_budget = (int) (20.0f * power) + 10;
+    spawn_delay_max = 6 - (int) (3.0f * power);
     spawn_delay = 0;
     frame_timer = 4;
-    spread = spread * (float)(0.8 + 0.4f * power);
+    spread = spread * (float) (0.8 + 0.4f * power);
     scale = 0.5f + 0.7f * power;
 
     for (int i = 0; i < WEAPON_ELEMENT_SPARK_MAX; i++) {
@@ -125,12 +120,11 @@ void CWeaponElement::Init_Holy(float *position)
         offset[i][1] = spread * rand() / 2147483648.0f - spread / 2.0f;
         offset[i][2] = 2.0f * (spread * rand()) / 2147483648.0f - spread;
         offset[i][3] = 1.0f;
-        frame[i] = (int)(5.0f * rand() / 2147483648.0f) * 0x30;
+        frame[i] = (int) (5.0f * rand() / 2147483648.0f) * 0x30;
     }
 }
 
-void CWeaponElement::Step_Holy()
-{
+void CWeaponElement::Step_Holy() {
     int dead;
     int i;
 
@@ -146,7 +140,7 @@ void CWeaponElement::Step_Holy()
                 alpha[i] = 0.0f;
             }
             if (frame_timer == 4) {
-                frame[i] = (int)(5.0f * rand() / 2147483648.0f) * 0x30;
+                frame[i] = (int) (5.0f * rand() / 2147483648.0f) * 0x30;
             }
             if (fading[i] != 0) {
                 alpha[i] -= 8.0f;
@@ -182,8 +176,8 @@ void CWeaponElement::Step_Holy()
                     offset[i][1] = spread * rand() / 2147483648.0f - spread / 2.0f;
                     offset[i][2] = 2.0f * (spread * rand()) / 2147483648.0f - spread;
                     offset[i][3] = 1.0f;
-                    frame[i] = (int)(5.0f * rand() / 2147483648.0f) * 0x30;
-                    spawn_delay = (int)((float)spawn_delay_max * rand() / 2147483648.0f) + 1;
+                    frame[i] = (int) (5.0f * rand() / 2147483648.0f) * 0x30;
+                    spawn_delay = (int) ((float) spawn_delay_max * rand() / 2147483648.0f) + 1;
                     break;
                 }
             }
@@ -195,8 +189,7 @@ void CWeaponElement::Step_Holy()
     }
 }
 
-void CWeaponElement::Draw_Holy()
-{
+void CWeaponElement::Draw_Holy() {
     // The four screen corners of one sprite: top left, top right, bottom
     // left, bottom right.
     int corner[4][4];
@@ -239,18 +232,17 @@ void CWeaponElement::Draw_Holy()
         rect.width = 0x30;
         rect.height = 0x30;
         set3DSprite(Vif1Packet, texture, rect, corner[0], corner[1], corner[2], corner[3],
-                    (u8)alpha[i]);
+                    (u8) alpha[i]);
     }
 }
 
-void CWeaponElement::Init_Cold(float *position)
-{
-    count = (int)(12.0f * power) + 2;
-    spawn_budget = (int)(20.0f * power) + 10;
-    spawn_delay_max = 6 - (int)(3.0f * power);
+void CWeaponElement::Init_Cold(float *position) {
+    count = (int) (12.0f * power) + 2;
+    spawn_budget = (int) (20.0f * power) + 10;
+    spawn_delay_max = 6 - (int) (3.0f * power);
     spawn_delay = 0;
     frame_timer = 4;
-    spread = spread * (float)(0.8 + 0.4f * power);
+    spread = spread * (float) (0.8 + 0.4f * power);
     scale = 0.5f + 0.7f * power;
 
     for (int i = 0; i < WEAPON_ELEMENT_SPARK_MAX; i++) {
@@ -267,12 +259,11 @@ void CWeaponElement::Init_Cold(float *position)
         offset[i][1] = spread / 2.0f + spread * rand() / 2147483648.0f;
         offset[i][2] = 2.0f * (spread * rand()) / 2147483648.0f - spread;
         offset[i][3] = 1.0f;
-        frame[i] = (int)(5.0f * rand() / 2147483648.0f) * 0x30;
+        frame[i] = (int) (5.0f * rand() / 2147483648.0f) * 0x30;
     }
 }
 
-void CWeaponElement::Step_Cold()
-{
+void CWeaponElement::Step_Cold() {
     int dead;
     int i;
 
@@ -288,7 +279,7 @@ void CWeaponElement::Step_Cold()
                 alpha[i] = 0.0f;
             }
             if (frame_timer == 4) {
-                frame[i] = (int)(5.0f * rand() / 2147483648.0f) * 0x30;
+                frame[i] = (int) (5.0f * rand() / 2147483648.0f) * 0x30;
             }
             if (fading[i] != 0) {
                 alpha[i] -= 6.0f;
@@ -323,8 +314,8 @@ void CWeaponElement::Step_Cold()
                     offset[i][1] = spread / 2.0f + spread * rand() / 2147483648.0f;
                     offset[i][2] = 2.0f * (spread * rand()) / 2147483648.0f - spread;
                     offset[i][3] = 1.0f;
-                    frame[i] = (int)(5.0f * rand() / 2147483648.0f) * 0x30;
-                    spawn_delay = (int)((float)spawn_delay_max * rand() / 2147483648.0f) + 1;
+                    frame[i] = (int) (5.0f * rand() / 2147483648.0f) * 0x30;
+                    spawn_delay = (int) ((float) spawn_delay_max * rand() / 2147483648.0f) + 1;
                     break;
                 }
             }
@@ -336,8 +327,7 @@ void CWeaponElement::Step_Cold()
     }
 }
 
-void CWeaponElement::Draw_Cold()
-{
+void CWeaponElement::Draw_Cold() {
     // The four screen corners of one sprite: top left, top right, bottom
     // left, bottom right.
     int corner[4][4];
@@ -380,18 +370,17 @@ void CWeaponElement::Draw_Cold()
         rect.width = 0x30;
         rect.height = 0x30;
         set3DSprite(Vif1Packet, texture, rect, corner[0], corner[1], corner[2], corner[3],
-                    (u8)alpha[i]);
+                    (u8) alpha[i]);
     }
 }
 
-void CWeaponElement::Init_Wind(float *position)
-{
-    count = (int)(10.0f * power) + 1;
-    spawn_budget = (int)(20.0f * power) + 10;
-    spawn_delay_max = 8 - (int)(4.0f * power);
+void CWeaponElement::Init_Wind(float *position) {
+    count = (int) (10.0f * power) + 1;
+    spawn_budget = (int) (20.0f * power) + 10;
+    spawn_delay_max = 8 - (int) (4.0f * power);
     spawn_delay = 0;
     frame_timer = 4;
-    spread = spread * (float)(0.8 + 0.4f * power);
+    spread = spread * (float) (0.8 + 0.4f * power);
     scale = 0.5f + 1.3f * (0.7f * power);
 
     for (int i = 0; i < WEAPON_ELEMENT_SPARK_MAX; i++) {
@@ -415,12 +404,11 @@ void CWeaponElement::Init_Wind(float *position)
         sceVu0ScaleVector(velocity[i], velocity[i], 0.3f * rand() / 2147483648.0f);
         spin[i] = 2.0f * (3.141592f * rand()) / 2147483648.0f - 3.141592f;
         spin_speed[i] = 0.09817475f + 0.1963495f * rand() / 2147483648.0f;
-        frame[i] = (int)(5.0f * rand() / 2147483648.0f) * 0x30;
+        frame[i] = (int) (5.0f * rand() / 2147483648.0f) * 0x30;
     }
 }
 
-void CWeaponElement::Step_Wind()
-{
+void CWeaponElement::Step_Wind() {
     int dead;
     int i;
 
@@ -441,7 +429,7 @@ void CWeaponElement::Step_Wind()
                 }
             }
             if (frame_timer == 4) {
-                frame[i] = (int)(5.0f * rand() / 2147483648.0f) * 0x30;
+                frame[i] = (int) (5.0f * rand() / 2147483648.0f) * 0x30;
             }
             spin[i] += spin_speed[i];
             if (!(spin[i] <= 3.141592f)) {
@@ -477,8 +465,8 @@ void CWeaponElement::Step_Wind()
                     sceVu0ScaleVector(velocity[i], velocity[i], 0.3f * rand() / 2147483648.0f);
                     spin[i] = 2.0f * (3.141592f * rand()) / 2147483648.0f - 3.141592f;
                     spin_speed[i] = 0.09817475f + 0.1963495f * rand() / 2147483648.0f;
-                    frame[i] = (int)(5.0f * rand() / 2147483648.0f) * 0x30;
-                    spawn_delay = (int)((float)spawn_delay_max * rand() / 2147483648.0f) + 1;
+                    frame[i] = (int) (5.0f * rand() / 2147483648.0f) * 0x30;
+                    spawn_delay = (int) ((float) spawn_delay_max * rand() / 2147483648.0f) + 1;
                     break;
                 }
             }
@@ -490,8 +478,7 @@ void CWeaponElement::Step_Wind()
     }
 }
 
-void CWeaponElement::Draw_Wind()
-{
+void CWeaponElement::Draw_Wind() {
     // The four screen corners of one sprite: top left, top right, bottom
     // left, bottom right.
     int corner[4][4];
@@ -541,18 +528,17 @@ void CWeaponElement::Draw_Wind()
         rect.width = 0x40;
         rect.height = 0x30;
         set3DSprite(Vif1Packet, texture, rect, corner[0], corner[1], corner[2], corner[3],
-                    (u8)alpha[i]);
+                    (u8) alpha[i]);
     }
 }
 
-void CWeaponElement::Init_Fire(float *position)
-{
-    count = (int)(12.0f * power) + 2;
-    spawn_budget = (int)(20.0f * power) + 10;
-    spawn_delay_max = 6 - (int)(3.0f * power);
+void CWeaponElement::Init_Fire(float *position) {
+    count = (int) (12.0f * power) + 2;
+    spawn_budget = (int) (20.0f * power) + 10;
+    spawn_delay_max = 6 - (int) (3.0f * power);
     spawn_delay = 0;
     frame_timer = 4;
-    spread = spread * (float)(0.8 + 0.4f * power);
+    spread = spread * (float) (0.8 + 0.4f * power);
     scale = 0.5f + 0.7f * power;
 
     // Fire stays where it was lit rather than following the weapon.
@@ -572,12 +558,11 @@ void CWeaponElement::Init_Fire(float *position)
         offset[i][1] = spread * rand() / 2147483648.0f - spread / 2.0f;
         offset[i][2] = 2.0f * (spread * rand()) / 2147483648.0f - spread;
         offset[i][3] = 1.0f;
-        frame[i] = (int)(5.0f * rand() / 2147483648.0f) * 0x30;
+        frame[i] = (int) (5.0f * rand() / 2147483648.0f) * 0x30;
     }
 }
 
-void CWeaponElement::Step_Fire()
-{
+void CWeaponElement::Step_Fire() {
     int dead;
     int i;
 
@@ -593,7 +578,7 @@ void CWeaponElement::Step_Fire()
                 alpha[i] = 0.0f;
             }
             if (frame_timer == 4) {
-                frame[i] = (int)(5.0f * rand() / 2147483648.0f) * 0x30;
+                frame[i] = (int) (5.0f * rand() / 2147483648.0f) * 0x30;
             }
             if (fading[i] != 0) {
                 alpha[i] -= 8.0f;
@@ -628,8 +613,8 @@ void CWeaponElement::Step_Fire()
                     offset[i][1] = spread * rand() / 2147483648.0f - spread / 2.0f;
                     offset[i][2] = 2.0f * (spread * rand()) / 2147483648.0f - spread;
                     offset[i][3] = 1.0f;
-                    frame[i] = (int)(5.0f * rand() / 2147483648.0f) * 0x30;
-                    spawn_delay = (int)((float)spawn_delay_max * rand() / 2147483648.0f) + 1;
+                    frame[i] = (int) (5.0f * rand() / 2147483648.0f) * 0x30;
+                    spawn_delay = (int) ((float) spawn_delay_max * rand() / 2147483648.0f) + 1;
                     break;
                 }
             }
@@ -641,8 +626,7 @@ void CWeaponElement::Step_Fire()
     }
 }
 
-void CWeaponElement::Draw_Fire()
-{
+void CWeaponElement::Draw_Fire() {
     // The four screen corners of one sprite: top left, top right, bottom
     // left, bottom right.
     int corner[4][4];
@@ -685,18 +669,17 @@ void CWeaponElement::Draw_Fire()
         rect.width = 0x30;
         rect.height = 0x30;
         set3DSprite(Vif1Packet, texture, rect, corner[0], corner[1], corner[2], corner[3],
-                    (u8)alpha[i]);
+                    (u8) alpha[i]);
     }
 }
 
-void CWeaponElement::Init_Thunder(float *position)
-{
+void CWeaponElement::Init_Thunder(float *position) {
     sceVu0FVECTOR reach;
     sceVu0FVECTOR dir;
 
-    count = (int)(18.0f * power) + 6;
-    bolt_count = (int)(7.0f * power) + 1;
-    spread = spread * (float)(0.8 + 0.4f * power);
+    count = (int) (18.0f * power) + 6;
+    bolt_count = (int) (7.0f * power) + 1;
+    spread = spread * (float) (0.8 + 0.4f * power);
 
     for (int i = 0; i < count; i++) {
         velocity[i][0] = 8.0f * rand() / 2147483648.0f - 4.0f;
@@ -713,19 +696,18 @@ void CWeaponElement::Init_Thunder(float *position)
         sceVu0ScaleVectorXYZ(velocity[i], dir, 0.3f * rand() / 2147483648.0f);
         size[i] = 0.5f + 2.5f * rand() / 2147483648.0f;
         shrink[i] = 1.0f;
-        alpha[i] = 96.0f + (int)(64.0f * rand() / 2147483648.0f);
+        alpha[i] = 96.0f + (int) (64.0f * rand() / 2147483648.0f);
     }
 
     for (int i = 0; i < bolt_count; i++) {
-        bolt_head[i] = (int)((float)count * rand() / 2147483648.0f);
-        bolt_tail[i] = (int)((float)count * rand() / 2147483648.0f);
-        bolt_timer[i] = (int)(6.0f * rand() / 2147483648.0f) * 3 + 3;
-        bolt_frame[i] = (int)(4.0f * rand() / 2147483648.0f);
+        bolt_head[i] = (int) ((float) count * rand() / 2147483648.0f);
+        bolt_tail[i] = (int) ((float) count * rand() / 2147483648.0f);
+        bolt_timer[i] = (int) (6.0f * rand() / 2147483648.0f) * 3 + 3;
+        bolt_frame[i] = (int) (4.0f * rand() / 2147483648.0f);
     }
 }
 
-void CWeaponElement::Step_Thunder()
-{
+void CWeaponElement::Step_Thunder() {
     int dead;
 
     dead = 0;
@@ -752,10 +734,10 @@ void CWeaponElement::Step_Thunder()
     for (int i = 0; i < bolt_count; i++) {
         bolt_timer[i] = bolt_timer[i] - 1;
         if (bolt_timer[i] <= 0) {
-            bolt_head[i] = (int)((float)count * rand() / 2147483648.0f);
-            bolt_tail[i] = (int)((float)count * rand() / 2147483648.0f);
-            bolt_timer[i] = (int)(6.0f * rand() / 2147483648.0f) * 3 + 3;
-            bolt_frame[i] = (int)(4.0f * rand() / 2147483648.0f);
+            bolt_head[i] = (int) ((float) count * rand() / 2147483648.0f);
+            bolt_tail[i] = (int) ((float) count * rand() / 2147483648.0f);
+            bolt_timer[i] = (int) (6.0f * rand() / 2147483648.0f) * 3 + 3;
+            bolt_frame[i] = (int) (4.0f * rand() / 2147483648.0f);
         } else if (bolt_timer[i] % 3 == 0) {
             bolt_frame[i] = bolt_frame[i] + 1;
             if (bolt_frame[i] >= 4) {
@@ -765,8 +747,7 @@ void CWeaponElement::Step_Thunder()
     }
 }
 
-void CWeaponElement::Draw_Thunder()
-{
+void CWeaponElement::Draw_Thunder() {
     // The four screen corners of one sprite: top left, top right, bottom
     // left, bottom right. A bolt uses the same four as the ends of its arc.
     int corner[4][4];
@@ -805,7 +786,7 @@ void CWeaponElement::Draw_Thunder()
         rect.width = 0x30;
         rect.height = 0x30;
         set3DSprite(Vif1Packet, texture, rect, corner[0], corner[1], corner[2], corner[3],
-                    (u8)alpha[i]);
+                    (u8) alpha[i]);
     }
 
     for (i = 0; i < bolt_count; i++) {
@@ -831,6 +812,6 @@ void CWeaponElement::Draw_Thunder()
         rect.width = 0x18;
         rect.height = 0x68;
         set3DSprite(Vif1Packet, texture, rect, corner[0], corner[1], corner[2], corner[3],
-                    (u8)(1.6f * alpha[bolt_head[i]]));
+                    (u8) (1.6f * alpha[bolt_head[i]]));
     }
 }

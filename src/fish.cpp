@@ -30,9 +30,10 @@ FishInfo fish_info[18] = {
     {21.0f, 10.0f, 30.0f, 600, 1000, {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f}},
 };
 
-#include <cstdlib>
-#include <cmath>
 #include <libvu0.h>
+
+#include <cmath>
+#include <cstdlib>
 
 #include "collision.hpp"
 #include "mathutil.hpp"
@@ -44,8 +45,8 @@ void CheckWidth(CCPoly *polys, int count, float *position, float width, float *o
 int rand_check(float probability) {
     int value = rand();
     float threshold = probability * 1000.0f;
-    (int)threshold;
-    return value % 1000 < (int)threshold ? 1 : 0;
+    (int) threshold;
+    return value % 1000 < (int) threshold ? 1 : 0;
 }
 
 int GetActCnt() {
@@ -115,6 +116,7 @@ int CFish::LeaveHook() {
     }
     return rand_check(0.1f) != 0 ? 1 : 0;
 }
+
 void CFish::SetCPoly(CCPoly *polys, int count) {
     collision_polys = polys;
     collision_poly_count = count;
@@ -140,35 +142,35 @@ void CFish::Step() {
     if (action_timer < 0 || action == FISH_ACTION_NONE) {
         action_timer = GetActCnt2();
         switch (action) {
-        case FISH_ACTION_NONE:
-            if (FindFood()) {
-                action = FISH_ACTION_APPROACH_FOOD;
-            }
-            break;
-        case FISH_ACTION_APPROACH_FOOD:
-            if (EatFood()) {
-                action = FISH_ACTION_EAT_FOOD;
-            }
-            if (LeaveFood()) {
+            case FISH_ACTION_NONE:
+                if (FindFood()) {
+                    action = FISH_ACTION_APPROACH_FOOD;
+                }
+                break;
+            case FISH_ACTION_APPROACH_FOOD:
+                if (EatFood()) {
+                    action = FISH_ACTION_EAT_FOOD;
+                }
+                if (LeaveFood()) {
+                    action = FISH_ACTION_LEAVE;
+                    action_timer >>= 1;
+                }
+                break;
+            case FISH_ACTION_EAT_FOOD:
+                if (BiteHook()) {
+                    action = FISH_ACTION_BITE_HOOK;
+                }
+                if (LeaveHook()) {
+                    action = FISH_ACTION_LEAVE;
+                }
+                break;
+            case FISH_ACTION_BITE_HOOK:
                 action = FISH_ACTION_LEAVE;
-                action_timer >>= 1;
-            }
-            break;
-        case FISH_ACTION_EAT_FOOD:
-            if (BiteHook()) {
-                action = FISH_ACTION_BITE_HOOK;
-            }
-            if (LeaveHook()) {
-                action = FISH_ACTION_LEAVE;
-            }
-            break;
-        case FISH_ACTION_BITE_HOOK:
-            action = FISH_ACTION_LEAVE;
-            action_timer *= 2;
-            break;
-        case FISH_ACTION_LEAVE:
-            action = FISH_ACTION_NONE;
-            break;
+                action_timer *= 2;
+                break;
+            case FISH_ACTION_LEAVE:
+                action = FISH_ACTION_NONE;
+                break;
         }
     }
 
@@ -176,15 +178,15 @@ void CFish::Step() {
         if (move_mode == -1) {
             move_mode = FISH_MOVE_SWIM;
         } else {
-            move_mode = (FishMoveMode)(rand() % 2);
+            move_mode = (FishMoveMode) (rand() % 2);
         }
         move_timer = GetActCnt();
         target_speed = 0.0f;
         if (move_mode != 0) {
-            target_yaw = 6.2831855f * ((float)rand() / 2147483648.0f);
+            target_yaw = 6.2831855f * ((float) rand() / 2147483648.0f);
             target_yaw = AngleLimit(target_yaw);
             move_timer += 30;
-            target_speed = 0.2f + (0.5f * (float)rand() / 2147483648.0f);
+            target_speed = 0.2f + (0.5f * (float) rand() / 2147483648.0f);
         }
     }
 
@@ -201,12 +203,12 @@ void CFish::Step() {
     }
     if (action == FISH_ACTION_BITE_HOOK) {
         float food_yaw = atan2f(food_position[0] - position[0], food_position[2] - position[2]);
-        target_yaw = food_yaw + 0.2f * ((float)rand() / 2147483648.0f);
+        target_yaw = food_yaw + 0.2f * ((float) rand() / 2147483648.0f);
         target_yaw = AngleLimit(target_yaw);
         target_speed = 0.0f;
     }
     if (action == FISH_ACTION_BATTLE) {
-        target_yaw = 6.2831855f * ((float)rand() / 2147483648.0f);
+        target_yaw = 6.2831855f * ((float) rand() / 2147483648.0f);
         target_yaw = AngleLimit(target_yaw);
         target_speed = 0.5f;
         turn_step *= 2.0f;
@@ -245,15 +247,15 @@ void CFish::Step() {
     velocity[3] = 0.0f;
 
     switch (move_mode) {
-    case 0:
-        SetMotion(6, 0);
-        break;
-    case 1:
-        SetMotion(0, 0);
-        break;
-    case 2:
-        SetMotion(1, 0);
-        break;
+        case 0:
+            SetMotion(6, 0);
+            break;
+        case 1:
+            SetMotion(0, 0);
+            break;
+        case 2:
+            SetMotion(1, 0);
+            break;
     }
     if (action == FISH_ACTION_BITE_HOOK || action == FISH_ACTION_BATTLE) {
         SetMotion(1, 0);
@@ -291,10 +293,14 @@ void CFish::Step() {
         SetRotation(zero);
     }
 }
+
 void CFish::Draw() {
-    if (fish_kind < 0) return;
-    if (use_angle_model != 0) angle_model.Draw();
-    else model.Draw();
+    if (fish_kind < 0)
+        return;
+    if (use_angle_model != 0)
+        angle_model.Draw();
+    else
+        model.Draw();
 }
 
 void CFish::SetFoodPos(int food, float *position, float radius) {
@@ -322,8 +328,10 @@ void CFish::SetScale() {
     } else {
         size += random * (info.max_size - info.min_size) / 8.0f;
     }
-    if (size < 0.5f * info.min_size) size = 0.5f * info.min_size;
-    if (size > info.max_size) size = info.max_size;
+    if (size < 0.5f * info.min_size)
+        size = 0.5f * info.min_size;
+    if (size > info.max_size)
+        size = info.max_size;
     angle_model_scale = size / info.model_size;
     model_scale = size / 25.0f;
 }
@@ -335,7 +343,7 @@ int CFish::GetFP() {
                                    (info.max_size - info.min_size);
     } else {
         points = info.min_fp - 0.5f * (info.min_fp * (info.min_size - size) /
-                                      (info.min_size - 0.5f * info.min_size));
+                                       (info.min_size - 0.5f * info.min_size));
     }
     return (int) points;
 }
@@ -364,13 +372,17 @@ void CFish::SetRotation(float *rotation) {
 void CFish::GetRotation(float *rotation) { angle_model.GetRotation(rotation); }
 
 void CFish::SetReference(CFrame *reference) {
-    if (model.frame != NULL) model.frame->SetReference(reference);
-    if (angle_model.frame != NULL) angle_model.frame->SetReference(reference);
+    if (model.frame != NULL)
+        model.frame->SetReference(reference);
+    if (angle_model.frame != NULL)
+        angle_model.frame->SetReference(reference);
 }
 
 void CFish::DeleteReference() {
-    if (model.frame != NULL) model.frame->DeleteReference();
-    if (angle_model.frame != NULL) angle_model.frame->DeleteReference();
+    if (model.frame != NULL)
+        model.frame->DeleteReference();
+    if (angle_model.frame != NULL)
+        angle_model.frame->DeleteReference();
 }
 
 void CFish::Initialize() {
@@ -406,7 +418,8 @@ static char *fish_file_05 = "chara/f05a.chr";
 static char *fish_file_06 = "chara/f06a.chr";
 
 void LoadFish(CFish *fish, int kind, int model_kind, CDataAlloc2<1> *alloc, int alloc_kind) {
-    if (kind < 0 || kind >= 18) return;
+    if (kind < 0 || kind >= 18)
+        return;
     LoadFile("chara/f00s.chr", read_buffer, NULL);
     fish->Initialize();
     fish->model.LoadPackData3(read_buffer, "info.cfg", alloc, model_kind, alloc, alloc_kind, 0);
@@ -417,12 +430,26 @@ void LoadFish(CFish *fish, int kind, int model_kind, CDataAlloc2<1> *alloc, int 
 
 char *GetFishFileName(int kind) {
     static char *name[18] = {
-        "chara/f01a.chr", "chara/f02a.chr", "chara/f03a.chr", "chara/f04a.chr",
-        "chara/f05a.chr", "chara/f06a.chr", "chara/f07a.chr", "chara/f08a.chr",
-        "chara/f09a.chr", "chara/f10a.chr", "chara/f11a.chr", "chara/f12a.chr",
-        "chara/f13a.chr", "chara/f14a.chr", "chara/f15a.chr", "chara/f16a.chr",
-        "chara/f17a.chr", "chara/f18a.chr",
+        "chara/f01a.chr",
+        "chara/f02a.chr",
+        "chara/f03a.chr",
+        "chara/f04a.chr",
+        "chara/f05a.chr",
+        "chara/f06a.chr",
+        "chara/f07a.chr",
+        "chara/f08a.chr",
+        "chara/f09a.chr",
+        "chara/f10a.chr",
+        "chara/f11a.chr",
+        "chara/f12a.chr",
+        "chara/f13a.chr",
+        "chara/f14a.chr",
+        "chara/f15a.chr",
+        "chara/f16a.chr",
+        "chara/f17a.chr",
+        "chara/f18a.chr",
     };
-    if (kind < 0 || kind >= 18) return NULL;
+    if (kind < 0 || kind >= 18)
+        return NULL;
     return name[kind];
 }

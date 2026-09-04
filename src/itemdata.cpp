@@ -790,8 +790,8 @@ int GetItemTypeInfo(int item_no, s8 *kind) {
         index = not_found;
     } else {
         COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
-        *kind               = info->kind;
-        index               = info->index;
+        *kind = info->kind;
+        index = info->index;
     }
 
     return index;
@@ -831,7 +831,7 @@ WEAPON_DATA *GetWeaponData(int item_no) {
 }
 
 int GetCommonItemDataMsg(int item_no) {
-    int msg             = 0;
+    int msg = 0;
     COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
 
     if (info != 0) {

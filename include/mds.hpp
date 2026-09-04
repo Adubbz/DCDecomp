@@ -30,10 +30,10 @@ struct MDS_HEADER {
  */
 struct MDS_OBJECT {
     int unk_00[2];
-    char name[32];         /**< Null-terminated object name. */
-    int data_ofs;          /**< Model-data offset from the start of the MDS image. */
-    int parent;            /**< Parent object index, or a negative value for no parent. */
-    sceVu0FMATRIX matrix;  /**< Transform relative to the parent object. */
+    char name[32];        /**< Null-terminated object name. */
+    int data_ofs;         /**< Model-data offset from the start of the MDS image. */
+    int parent;           /**< Parent object index, or a negative value for no parent. */
+    sceVu0FMATRIX matrix; /**< Transform relative to the parent object. */
 };
 
 /**

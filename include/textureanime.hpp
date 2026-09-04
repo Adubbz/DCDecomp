@@ -2,7 +2,6 @@
 
 #include "common.h"
 
-
 /**
  * Animates the texture of one part of a model.
  */
@@ -30,7 +29,6 @@ public:
 
 STATIC_ASSERT(sizeof(CTexAnimeData) == 0x58);
 
-
 class CTextureAnime {
 public:
     u8 unk_000[496];
@@ -50,7 +48,6 @@ public:
      * @unknownret
      */
     void Initialize(CTexAnimeData *, int);
-
 
     /**
      * @mangled __ct__13CTextureAnimeFP13CTexAnimeDatai

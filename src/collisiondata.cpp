@@ -9,4 +9,3 @@ INCLUDE_ASM("asm/nonmatchings/collisiondata", NameExchg__FPci);
 INCLUDE_ASM("asm/nonmatchings/collisiondata", Set__14CCollisionDataFPfiiffiiii);
 INCLUDE_ASM("asm/nonmatchings/collisiondata", CheckHitUser__14CCollisionDataFPfif);
 INCLUDE_ASM("asm/nonmatchings/collisiondata", SetKickBack__14CCollisionDataFPfffi);
-

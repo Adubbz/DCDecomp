@@ -98,4 +98,3 @@ INCLUDE_ASM("asm/nonmatchings/menu_misc", EdMenuManualKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EdMenuManualDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", InitSaveFileInfoTbl__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetOpenAttribute__FPc);
-

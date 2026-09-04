@@ -81,7 +81,7 @@ public:
     void Align64();
 
     u_long128 block[6000]; /**< Embedded allocation storage. */
-    int used; /**< Number of occupied quadwords in the embedded arena. */
+    int used;              /**< Number of occupied quadwords in the embedded arena. */
 };
 
 template <>
@@ -94,7 +94,7 @@ public:
     void Align64();
 
     u_long128 block[1690000]; /**< Embedded allocation storage. */
-    int used;                   /**< Number of occupied quadwords. */
+    int used;                 /**< Number of occupied quadwords. */
 };
 
 template <int Kind, int Size>

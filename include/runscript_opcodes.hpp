@@ -11,7 +11,6 @@ class CRunScript;
 struct RS_STACKDATA;
 struct SHOP_ITEMLIST;
 
-
 /**
  * @mangled GetStackInt__FP12RS_STACKDATA__3
  * @address 0x1E1640

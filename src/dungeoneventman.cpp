@@ -10,4 +10,3 @@ INCLUDE_ASM("asm/nonmatchings/dungeoneventman", CheckCollisionDataHit__16CDungeo
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchDataSlotPos__16CDungeonEventManFPf);
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchDataSlotPos2__16CDungeonEventManFPf);
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SetupEvent__16CDungeonEventManFP11CDungeonMapi);
-

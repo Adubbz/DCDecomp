@@ -100,4 +100,3 @@ INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", BtSetEventScript__FP10CRunScri
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", BtSetEventExtendTable__Fv);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", GetItemShopList__Fi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", InitShopItemListData__FP13SHOP_ITEMLIST);
-

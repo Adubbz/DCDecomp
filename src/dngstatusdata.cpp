@@ -59,6 +59,7 @@ extern "C" s8 ItemPutListTbl12[];
 struct StatTable6 {
     s32 v[6];
 };
+
 extern "C" StatTable6 LIT_781;
 extern "C" StatTable6 LIT_782;
 extern "C" StatTable6 LIT_783__2;
@@ -76,10 +77,10 @@ static inline int GetMaxAtraSlotNo() {
 void CDngStatusData::SetNowFloor(int floor) {
 
     this->prev_floor = this->cur_floor;
-    this->cur_floor  = floor;
+    this->cur_floor = floor;
 
-    int cur_georama   = this->cur_georama;
-    s8 *base          = this->floor_reached;
+    int cur_georama = this->cur_georama;
+    s8 *base = this->floor_reached;
     s8 *floor_reached = base + cur_georama;
     if (floor > *floor_reached) {
         *floor_reached = floor;
@@ -166,7 +167,7 @@ int CDngStatusData::LostItem(int item_id) {
     for (i = 0; (valid = i < 103) != 0; i++) {
         if (this->inventory.dungeon_items[i] == item_id) {
             this->inventory.dungeon_items[i] = -1;
-            this->item_vol[i]      = 0;
+            this->item_vol[i] = 0;
             return i;
         }
     }
@@ -396,13 +397,13 @@ int CDngStatusData::GetItem(int item_id, int qty) {
                     for (m = 0; (valid = m < 3) != 0; m++) {
                         if (this->inventory.dungeon_items[this->inventory.item_capacity + m] == -1) {
                             this->inventory.dungeon_items[this->inventory.item_capacity + m] = item_id;
-                            this->item_vol[this->inventory.item_capacity + m]      = have_copy;
+                            this->item_vol[this->inventory.item_capacity + m] = have_copy;
                             return i;
                         }
                     }
                 } else {
                     this->inventory.dungeon_items[i] = item_id;
-                    this->item_vol[i]      = have_copy;
+                    this->item_vol[i] = have_copy;
                 }
                 return i;
             }
@@ -493,7 +494,7 @@ int CDngStatusData::CheckDefaultWeapon(int chara_no) {
 /* @ 0x1BE510 (0x200 bytes) -- AddDrink__11CUserStatusFisf */
 void CUserStatus::AddDrink(int chara_no, s16 amount, float ratio) {
     if (this->drink_step[chara_no] != 0) {
-        this->water_now[chara_no]  = (float) this->drink_next[chara_no];
+        this->water_now[chara_no] = (float) this->drink_next[chara_no];
         this->drink_step[chara_no] = 0;
     }
 
@@ -533,7 +534,7 @@ void CUserStatus::AddNowLife(int chara_no, s16 amount, float ratio) {
     int valid;
 
     if (this->life_step[chara_no] != 0) {
-        this->hp[chara_no]        = this->next_hp[chara_no];
+        this->hp[chara_no] = this->next_hp[chara_no];
         this->life_step[chara_no] = 0;
     }
 
@@ -596,7 +597,7 @@ void CUserStatus::SetNextLife(int chara_no, s16 value, float ratio) {
     int valid;
 
     if (this->life_step[chara_no] != 0) {
-        this->hp[chara_no]        = this->next_hp[chara_no];
+        this->hp[chara_no] = this->next_hp[chara_no];
         this->life_step[chara_no] = 0;
     }
 
@@ -635,7 +636,7 @@ void CUserStatus::Step(int paused) {
     }
 
     float rate = 1.0f + 0.2f * (float) this->cur_georama;
-    rate       = 0.003f * rate;
+    rate = 0.003f * rate;
 
     if (this->water_drain_disable == 0 && paused == 0) {
         if (this->water_now[this->cur_chara] <= 0.0f) {
@@ -680,13 +681,13 @@ void CUserStatus::Step(int paused) {
 
             if (this->drink_step[i] < 0) {
                 if (this->water_now[i] <= (float) this->drink_next[i]) {
-                    this->water_now[i]  = (float) this->drink_next[i];
+                    this->water_now[i] = (float) this->drink_next[i];
                     this->drink_step[i] = 0;
                 }
             }
             if (this->drink_step[i] > 0) {
                 if (this->water_now[i] >= (float) this->drink_next[i]) {
-                    this->water_now[i]  = (float) this->drink_next[i];
+                    this->water_now[i] = (float) this->drink_next[i];
                     this->drink_step[i] = 0;
                 }
             }
@@ -699,13 +700,13 @@ void CUserStatus::Step(int paused) {
 
             if (this->life_step[i] < 0) {
                 if (this->hp[i] <= this->next_hp[i]) {
-                    this->hp[i]        = this->next_hp[i];
+                    this->hp[i] = this->next_hp[i];
                     this->life_step[i] = 0;
                 }
             }
             if (this->life_step[i] > 0) {
                 if (this->hp[i] >= this->next_hp[i]) {
-                    this->hp[i]        = this->next_hp[i];
+                    this->hp[i] = this->next_hp[i];
                     this->life_step[i] = 0;
                 }
             }
@@ -727,8 +728,8 @@ void CUserStatus::Init(void) {
         this->damage_accum[i] = 0.0f;
     }
 
-    this->water_drain_disable    = 0;
-    this->step_disable           = 0;
+    this->water_drain_disable = 0;
+    this->step_disable = 0;
     this->res_limit_zone_current = -1;
 
     this->ClearEventFlag();
@@ -739,8 +740,8 @@ void CUserStatus::Init(void) {
     }
 
     for (j = 0; (valid = j < 6) != 0; j++) {
-        this->unk_8A8C[j]   = 0;
-        this->unk_8A74[j]   = 0;
+        this->unk_8A8C[j] = 0;
+        this->unk_8A74[j] = 0;
         this->drink_step[j] = 0;
     }
 }
@@ -779,13 +780,13 @@ void CDngStatusData::InitResLimmitZone(void) {
 
     for (i = 0; (valid = i < 3) != 0; i++) {
         int zone;
-        idx  = (int) ((15.0f * (float) rand()) / 2147483648.0f);
+        idx = (int) ((15.0f * (float) rand()) / 2147483648.0f);
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
         if (!(valid = roll < 50)) {
-            zone  = 10;
+            zone = 10;
             valid = 0;
         } else {
-            zone  = 11;
+            zone = 11;
             valid = 1;
         }
         this->res_limit_zone_id[1][idx] = zone;
@@ -793,13 +794,13 @@ void CDngStatusData::InitResLimmitZone(void) {
 
     for (i = 0; (valid = i < 3) != 0; i++) {
         int zone;
-        idx  = (int) ((16.0f * (float) rand()) / 2147483648.0f);
+        idx = (int) ((16.0f * (float) rand()) / 2147483648.0f);
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
         if (!(valid = roll < 50)) {
-            zone  = 10;
+            zone = 10;
             valid = 0;
         } else {
-            zone  = 11;
+            zone = 11;
             valid = 1;
         }
         this->res_limit_zone_id[2][idx] = zone;
@@ -807,13 +808,13 @@ void CDngStatusData::InitResLimmitZone(void) {
 
     for (i = 0; (valid = i < 3) != 0; i++) {
         int zone;
-        idx  = (int) ((16.0f * (float) rand()) / 2147483648.0f);
+        idx = (int) ((16.0f * (float) rand()) / 2147483648.0f);
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
         if (!(valid = roll < 50)) {
-            zone  = 10;
+            zone = 10;
             valid = 0;
         } else {
-            zone  = 11;
+            zone = 11;
             valid = 1;
         }
         this->res_limit_zone_id[3][idx] = zone;
@@ -821,13 +822,13 @@ void CDngStatusData::InitResLimmitZone(void) {
 
     for (i = 0; (valid = i < 4) != 0; i++) {
         int zone;
-        idx  = (int) ((14.0f * (float) rand()) / 2147483648.0f);
+        idx = (int) ((14.0f * (float) rand()) / 2147483648.0f);
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
         if (!(valid = roll < 50)) {
-            zone  = 10;
+            zone = 10;
             valid = 0;
         } else {
-            zone  = 11;
+            zone = 11;
             valid = 1;
         }
         this->res_limit_zone_id[4][idx] = zone;
@@ -835,13 +836,13 @@ void CDngStatusData::InitResLimmitZone(void) {
 
     for (i = 0; (valid = i < 4) != 0; i++) {
         int zone;
-        idx  = (int) ((23.0f * (float) rand()) / 2147483648.0f);
+        idx = (int) ((23.0f * (float) rand()) / 2147483648.0f);
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
         if (!(valid = roll < 50)) {
-            zone  = 10;
+            zone = 10;
             valid = 0;
         } else {
-            zone  = 11;
+            zone = 11;
             valid = 1;
         }
         this->res_limit_zone_id[5][idx] = zone;
@@ -870,11 +871,11 @@ struct DNG_ITEM_BLOCK {
 /* @ 0x1BF340 (0x3C0 bytes) -- Initialize__14CDngStatusDataFv */
 void CDngStatusData::Initialize(void) {
     this->cur_georama = -1;
-    this->unk_01      = 0;
-    this->cur_floor   = -1;
-    this->prev_floor  = -1;
-    this->unk_04      = 0;
-    this->party_size  = 1;
+    this->unk_01 = 0;
+    this->cur_floor = -1;
+    this->prev_floor = -1;
+    this->unk_04 = 0;
+    this->party_size = 1;
 
     StatTable6 local1 = LIT_781;
     StatTable6 local2 = LIT_782;
@@ -889,11 +890,11 @@ void CDngStatusData::Initialize(void) {
     int valid;
 
     for (t = 0; (valid = t < 6) != 0; t++) {
-        this->max_hp[t]               = local2.v[t];
-        this->hp[t]                   = local2.v[t];
-        this->unk_field_1[t]          = local3.v[t];
-        this->unk_field_4468[t]       = 0;
-        this->unk_field_2[t]          = 0;
+        this->max_hp[t] = local2.v[t];
+        this->hp[t] = local2.v[t];
+        this->unk_field_1[t] = local3.v[t];
+        this->unk_field_4468[t] = 0;
+        this->unk_field_2[t] = 0;
         this->equipped_weapon_slot[t] = -1;
 
         for (q = 0; (valid = q < 11) != 0; q++) {
@@ -902,14 +903,14 @@ void CDngStatusData::Initialize(void) {
 
         this->stat_float_a[t] = 30.0f;
         this->stat_float_b[t] = 30.0f;
-        this->unk_field_3[t]  = 0;
+        this->unk_field_3[t] = 0;
     }
 
     this->equipped_weapon_slot[0] = 0;
     this->GetItem(258, 0);
     this->special_flag_238 = 0;
-    this->config_mirror    = 1;
-    this->overflow_flag    = 0;
+    this->config_mirror = 1;
+    this->overflow_flag = 0;
 
     for (k = 0; (valid = k < 7) != 0; k++) {
         this->floor_reached[k] = -1;
@@ -943,16 +944,16 @@ void CDngStatusData::Initialize(void) {
         }
     }
 
-    this->dead_mask            = 0;
+    this->dead_mask = 0;
     DNG_ITEM_BLOCK *item_block = (DNG_ITEM_BLOCK *) &this->inventory.item_capacity;
-    this->inventory.item_capacity        = 50;
-    this->inventory.quick_item_slot[0]   = -1;
-    this->inventory.quick_item_slot[1]   = -1;
-    this->inventory.quick_item_slot[2]   = -1;
+    this->inventory.item_capacity = 50;
+    this->inventory.quick_item_slot[0] = -1;
+    this->inventory.quick_item_slot[1] = -1;
+    this->inventory.quick_item_slot[2] = -1;
 
     for (t = 0; (valid = t < 103) != 0; t++) {
         item_block->dungeon_items[t] = -1;
-        item_block->item_vol[t]      = 0;
+        item_block->item_vol[t] = 0;
     }
 
     for (i = 0; (valid = i < 43) != 0; i++) {

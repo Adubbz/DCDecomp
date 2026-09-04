@@ -28,8 +28,7 @@ static s32 midi_buffer[16];          // RPC argument and response storage shared
 static sceSifClientData midi_client; // Client state bound to the EZMIDI IOP server.
 static sceSifDmaData iop_transfer;   // Descriptor reused for synchronous EE-to-IOP transfers.
 
-int ezMidiInit(void)
-{
+int ezMidiInit(void) {
     s32 wait;
 
     sceSifInitRpc(0);
@@ -49,8 +48,7 @@ int ezMidiInit(void)
     return 1;
 }
 
-int ezMidi(int command, int argument)
-{
+int ezMidi(int command, int argument) {
     s32 wait;
     s32 receive_size;
 
@@ -71,8 +69,7 @@ int ezMidi(int command, int argument)
     return midi_buffer[0];
 }
 
-int ezTransToIOP(void *iop_address, void *ee_address, int size)
-{
+int ezTransToIOP(void *iop_address, void *ee_address, int size) {
     s32 id;
 
     iop_transfer.data = ee_address;
@@ -89,6 +86,7 @@ int ezTransToIOP(void *iop_address, void *ee_address, int size)
     }
     return 0;
 }
+
 INCLUDE_RODATA("asm/nonmatchings/gameutil", LIT_414__4);
 
 INCLUDE_ASM("asm/nonmatchings/gameutil", QuatSlerp__FPfPffPf);
@@ -99,11 +97,11 @@ INCLUDE_ASM("asm/nonmatchings/gameutil", CreateAnimeDataEX__FP14tagMOTION_TYPEP1
 INCLUDE_ASM("asm/nonmatchings/gameutil", AnimeDataInit__FP6CFrameP14tagMOTION_TYPEP14CDataAlloc2_1_PP12tagFRAME_INF);
 INCLUDE_ASM("asm/nonmatchings/gameutil", AnimeDataInit__FP6CFrameP14tagMOTION_TYPEP14CDataAlloc2_1_P12tagFRAME_INF);
 INCLUDE_ASM("asm/nonmatchings/gameutil", NextMotionTime_GET_EX__FP11MOTION_INFOP12MOTION_STATE);
+
 /**
  * Builds a matrix that rotates by an angle around an arbitrary direction.
  */
-static void SetRotationMatrixFromDir(sceVu0FMATRIX matrix, float *direction, float angle)
-{
+static void SetRotationMatrixFromDir(sceVu0FMATRIX matrix, float *direction, float angle) {
     float cosine = cosf(angle);
     float sine = sinf(angle);
     float inverse_cosine = 1.0f - cosine;
@@ -122,8 +120,7 @@ static void SetRotationMatrixFromDir(sceVu0FMATRIX matrix, float *direction, flo
     matrix[2][2] = cosine + inverse_cosine * (axis[2] * axis[2]);
 }
 
-int LookAt(CFrameVu1 *frame, float *target, _FRAMECONSTRAINT constraint)
-{
+int LookAt(CFrameVu1 *frame, float *target, _FRAMECONSTRAINT constraint) {
     sceVu0FVECTOR up;
     sceVu0FVECTOR local;
     sceVu0FVECTOR axis;
@@ -141,9 +138,12 @@ int LookAt(CFrameVu1 *frame, float *target, _FRAMECONSTRAINT constraint)
     frame->parent->GetLWMatrix(parent);
     sceVu0UnitMatrix(matrix);
     sceVu0CopyMatrix(matrix, frame->local);
-    if (constraint == FRAME_CONSTRAINT_X) sceVu0Normalize(up, matrix[0]);
-    if (constraint == FRAME_CONSTRAINT_Y) sceVu0Normalize(up, matrix[1]);
-    if (constraint == FRAME_CONSTRAINT_Z) sceVu0Normalize(up, matrix[2]);
+    if (constraint == FRAME_CONSTRAINT_X)
+        sceVu0Normalize(up, matrix[0]);
+    if (constraint == FRAME_CONSTRAINT_Y)
+        sceVu0Normalize(up, matrix[1]);
+    if (constraint == FRAME_CONSTRAINT_Z)
+        sceVu0Normalize(up, matrix[2]);
     up[3] = 1.0f;
     delta[3] = 1.0f;
     sceVu0SubVector(delta, target, parent[3]);
@@ -166,7 +166,8 @@ int LookAt(CFrameVu1 *frame, float *target, _FRAMECONSTRAINT constraint)
         if (angle < 0.99999f) {
             sceVu0UnitMatrix(rotation);
             angle = acosf(angle);
-            if (angle > 0.7853982f) angle = 0.7853982f;
+            if (angle > 0.7853982f)
+                angle = 0.7853982f;
             if (acosf(sceVu0InnerProduct(axis, direction)) > 1.5707964f)
                 SetRotationMatrixFromDir(rotation, side, -angle);
             else
@@ -178,13 +179,13 @@ int LookAt(CFrameVu1 *frame, float *target, _FRAMECONSTRAINT constraint)
     return 0;
 }
 
-int LookAt(CFrameVu1 *frame, CFrameVu1 *target, _FRAMECONSTRAINT constraint)
-{
+int LookAt(CFrameVu1 *frame, CFrameVu1 *target, _FRAMECONSTRAINT constraint) {
     sceVu0FMATRIX matrix;
 
     target->GetLWMatrix(matrix);
     return LookAt(frame, matrix[3], constraint);
 }
+
 INCLUDE_ASM("asm/nonmatchings/gameutil", PickUpNearPoly__FP6CCPoly7CBoxVu0P6CCPolyi);
 INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHit__FP6CCPolyiPfPfPfii);
 INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHitVertical__FP6CCPolyiPffPfi);
@@ -194,19 +195,19 @@ INCLUDE_ASM("asm/nonmatchings/gameutil", GetFootPoly__FPffP6CCPolyPfP6CCPolyii);
 INCLUDE_ASM("asm/nonmatchings/gameutil", GetEventPoly__FPfPfP6CCPolyPiPfP6CCPolyii);
 INCLUDE_ASM("asm/nonmatchings/gameutil", CheckWidth__FP6CCPolyiPffPfi);
 INCLUDE_ASM("asm/nonmatchings/gameutil", CheckCameraWidth__FP6CCPolyiPffPfi);
-static s32 linear_filter;                 // Nonzero selects linear filtering for sprite batches.
-static u_long128 *sprite_data_top;        // First quadword of the open sprite batch.
-static u_long128 *sprite_data;            // Current write cursor of the open sprite batch.
-static u_int *sprite_dma_count;           // DMA and VIF tag words patched when the batch closes.
+static s32 linear_filter;          // Nonzero selects linear filtering for sprite batches.
+static u_long128 *sprite_data_top; // First quadword of the open sprite batch.
+static u_long128 *sprite_data;     // Current write cursor of the open sprite batch.
+static u_int *sprite_dma_count;    // DMA and VIF tag words patched when the batch closes.
 
-void set2DSprite_Start(sceVif1Packet *packet, CTexture *texture)
-{
+void set2DSprite_Start(sceVif1Packet *packet, CTexture *texture) {
     u_int *p;
     u_long *ad;
     sceGsTest test;
     sceGsZbuf zbuf;
 
-    if (texture == 0) return;
+    if (texture == 0)
+        return;
     sceVif1PkTerminate(packet);
     sprite_data_top = (u_long128 *) packet->pCurrent;
     sprite_data = sprite_data_top;
@@ -244,11 +245,11 @@ void set2DSprite_Start(sceVif1Packet *packet, CTexture *texture)
 }
 
 void set2DSprite_Core(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &position,
-                      const CRect_i_ &uv, u8 red, u8 green, u8 blue, u8 alpha)
-{
+                      const CRect_i_ &uv, u8 red, u8 green, u8 blue, u8 alpha) {
     u_long *ad;
 
-    if (texture == 0) return;
+    if (texture == 0)
+        return;
     ad = (u_long *) sprite_data;
     ad[0] = SCE_GS_SET_RGBAQ(red, green, blue, alpha, 0);
     ad[1] = SCE_GS_RGBAQ;
@@ -259,13 +260,12 @@ void set2DSprite_Core(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &
     ad[6] = SCE_GS_SET_UV((uv.x + uv.width) << 4, (uv.y + uv.height) << 4);
     ad[7] = SCE_GS_UV;
     ad[8] = SCE_GS_SET_XYZF2(((position.x + position.width) << 4) + 27647,
-                              ((position.y + position.height) << 3) + 30976, 0, 0);
+                             ((position.y + position.height) << 3) + 30976, 0, 0);
     ad[9] = SCE_GS_XYZF2;
     sprite_data = (u_long128 *) (ad + 10);
 }
 
-void set2DSprite_End(sceVif1Packet *packet, CTexture *texture)
-{
+void set2DSprite_End(sceVif1Packet *packet, CTexture *texture) {
     u_long *ad;
     u_int *dma_count;
     s32 qwc;
@@ -284,12 +284,12 @@ void set2DSprite_End(sceVif1Packet *packet, CTexture *texture)
     sceVif1PkReserve(packet, (sprite_data - sprite_data_top) * 4);
 }
 
-void SetClut(sceVif1Packet *packet, CTexture *texture, i *clut)
-{
+void SetClut(sceVif1Packet *packet, CTexture *texture, i *clut) {
     sceGsTex0 tex0 = *(sceGsTex0 *) &texture->tex0;
     sceVif1PkRefLoadImage(packet, tex0.bits.cbp, SCE_GS_PSMCT32, 1,
                           (u_long128 *) clut, 64, 0, 0, 16, 16);
 }
+
 INCLUDE_ASM("asm/nonmatchings/gameutil", LinerInterpolation__Ffff);
 INCLUDE_ASM("asm/nonmatchings/gameutil", AreaAddPos__FPiPiPi);
 INCLUDE_ASM("asm/nonmatchings/gameutil", RollPos__FPfPffPf);

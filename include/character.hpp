@@ -4,10 +4,10 @@
 
 #include <libvu0.h>
 
+#include "fakepointlight.hpp"
 #include "gameutil.hpp"
 #include "object.hpp"
 #include "textureanime.hpp"
-#include "fakepointlight.hpp"
 
 template <int Kind>
 class CDataAlloc2;
@@ -39,7 +39,6 @@ class CVector3_f_;
 /** Number of events that one motion can ask for. */
 #define CHARA_EVENT_MAX 32
 
-
 /**
  * Names one sound that a motion plays as a foot reaches the ground.
  */
@@ -57,9 +56,9 @@ STATIC_ASSERT(sizeof(CHARA_FOOT_SOUND) == 0x14);
  * Names one thing that a motion does as it reaches a frame.
  */
 struct CHARA_EVENT {
-    s32 frame; /**< Frame of the motion that fires the event; below zero where the slot is free. */
-    s32 kind;  /**< 0 to play a foot sound, 1 to play a sound effect. */
-    s32 no;    /**< Sound that the event plays. */
+    s32 frame;     /**< Frame of the motion that fires the event; below zero where the slot is free. */
+    s32 kind;      /**< 0 to play a foot sound, 1 to play a sound effect. */
+    s32 no;        /**< Sound that the event plays. */
     s32 motion_no; /**< Motion that fires the event. */
     s32 unk_10;
 };
@@ -101,15 +100,12 @@ STATIC_ASSERT(sizeof(MotionParam) == 0x80);
  */
 class CCharacter : public CObject {
 public:
-
     /**
      * Sets a character to the state it starts in. The call goes through the
      * table: this compiler dispatches a virtual from a constructor rather
      * than binding it to the class being built.
      */
     CCharacter() { Initialize(); }
-
-
 
     float unk_0B0;
     float unk_0B4;
@@ -125,15 +121,15 @@ public:
     s32 unk_2D4;
     s32 unk_2D8;
     s32 unk_2DC;
-    tagMOTION_TYPE motion_type;        /**< Motions of the model. */
-    tagMOTION_TYPE shadow_motion_type; /**< Motions of the shadow. */
+    tagMOTION_TYPE motion_type;         /**< Motions of the model. */
+    tagMOTION_TYPE shadow_motion_type;  /**< Motions of the shadow. */
     s32 motion_start[CHARA_MOTION_MAX]; /**< First motion number of each set; -1 where it holds none. */
     s32 motion_end[CHARA_MOTION_MAX];   /**< Motion number after the last one of each set. */
     MotionParam unk_420[CHARA_MOTION_MAX];
     MotionParam unk_820[CHARA_MOTION_MAX];
     tagMOTION_TYPE *motion[CHARA_MOTION_MAX];        /**< Motions of each set; zero where it holds none. */
     tagMOTION_TYPE *shadow_motion[CHARA_MOTION_MAX]; /**< Shadow motions of each set. */
-    float motion_speed; /**< Speed of the motion; -1.0 for the speed the motion gives. */
+    float motion_speed;                              /**< Speed of the motion; -1.0 for the speed the motion gives. */
     s32 flags;
     s32 motion_no; /**< Identifier of the motion that the character plays. */
     s32 unk_C6C;
@@ -155,11 +151,11 @@ public:
     float unk_CF8;
     float unk_CFC;
     CFakePointLight point_light[CHARA_POINT_LIGHT_MAX]; /**< Lights that the character stands in. */
-    CHARA_FOOT_SOUND foot_sound[CHARA_FOOT_SOUND_MAX];    /**< Sounds that the feet play. */
-    s32 foot_sound_id;     /**< Set of foot sounds that the ground asks for; below zero for none. */
-    s32 foot_sound_enable; /**< 1 while the feet play a sound. */
+    CHARA_FOOT_SOUND foot_sound[CHARA_FOOT_SOUND_MAX];  /**< Sounds that the feet play. */
+    s32 foot_sound_id;                                  /**< Set of foot sounds that the ground asks for; below zero for none. */
+    s32 foot_sound_enable;                              /**< 1 while the feet play a sound. */
     s32 unk_DE0;
-    s32 event_enable;                 /**< 1 while the motion fires its events. */
+    s32 event_enable;                   /**< 1 while the motion fires its events. */
     CHARA_EVENT event[CHARA_EVENT_MAX]; /**< Events that the motions fire. */
     CHARA_UNK_1068 unk_1068[16];
     u8 unk_11A8[8];

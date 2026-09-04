@@ -9,7 +9,6 @@ struct BT_SHOT_EFFECT;
 template <int Kind>
 class CDataAlloc2;
 
-
 class CSHOT_EFFECT_PACK {
 public:
     /**

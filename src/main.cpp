@@ -5,14 +5,14 @@
 // C imports
 #include <cstring>
 // Our imports
-#include "savedata.hpp"
-#include "mainselect.hpp"
-#include "gamepad.hpp"
 #include "dataalloc.hpp"
-#include "mglib.hpp"
 #include "debugfont.hpp"
-#include "sound.hpp"
+#include "gamepad.hpp"
+#include "mainselect.hpp"
+#include "mglib.hpp"
 #include "runscript.hpp"
+#include "savedata.hpp"
+#include "sound.hpp"
 
 /* Global, GLOBAL-linkage per retail `nm` (0x1cbc9b0, `T`). Purpose beyond
  * being constructed here is unanalyzed -- out of scope for this pass. */

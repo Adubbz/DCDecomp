@@ -1,7 +1,9 @@
 #include "common.h"
+
+#include <libmc.h>
+
 #include <cstdio>
 #include <cstring>
-#include <libmc.h>
 
 #include "clsmes.hpp"
 #include "dataalloc.hpp"
@@ -75,9 +77,8 @@ void MenuInit() {
 /**
  * Draws and operates the developer's top-level map and mode selector.
  */
-int MenuLoop()
-{
-    static char* menu[10] = {
+int MenuLoop() {
+    static char *menu[10] = {
         "game start",
         "%se0%d\n",
         "%ss%d\n",
@@ -87,9 +88,8 @@ int MenuLoop()
         "%sevent%d\n",
         "%smemory card %d\n",
         "%sLanguage %d\n",
-        ""
-    };
-    static int map_no[10] = { 800, 0, 11, 99, 200, 400, 0, 0, 0, -1 };
+        ""};
+    static int map_no[10] = {800, 0, 11, 99, 200, 400, 0, 0, 0, -1};
 
     DebugFont.len = 0;
 
@@ -100,7 +100,7 @@ int MenuLoop()
         i++;
     }
 
-    char* cursor[2] = { " ", ">" };
+    char *cursor[2] = {" ", ">"};
 
     if (GamePad.Down(16384)) {
         select++;
@@ -203,34 +203,34 @@ int MenuLoop()
     }
 
     DebugFont.len += sprintf(&DebugFont.text[DebugFont.len],
-                               "Dark Cloud Ver2.17 2001/05/11\n");
+                             "Dark Cloud Ver2.17 2001/05/11\n");
     DebugFont.len += sprintf(&DebugFont.text[DebugFont.len], "%s%s\n", cursor[select == 0],
-                               menu[0]);
+                             menu[0]);
     DebugFont.len += sprintf(&DebugFont.text[DebugFont.len], menu[1], cursor[select == 1],
-                               edit_map + 1);
+                             edit_map + 1);
     DebugFont.len += sprintf(&DebugFont.text[DebugFont.len], menu[2], cursor[select == 2],
-                               sub_map + 1);
+                             sub_map + 1);
 
     for (i = 3; i < 6; i++) {
         DebugFont.len += sprintf(&DebugFont.text[DebugFont.len], "%s%s\n",
-                                   cursor[i == select], menu[i]);
+                                 cursor[i == select], menu[i]);
     }
 
     DebugFont.len += sprintf(&DebugFont.text[DebugFont.len], menu[i], cursor[i == select],
-                               event_no);
+                             event_no);
     i++;
     DebugFont.len += sprintf(&DebugFont.text[DebugFont.len], menu[i], cursor[i == select],
-                               mc_mode);
+                             mc_mode);
     i++;
     DebugFont.len += sprintf(&DebugFont.text[DebugFont.len], menu[i], cursor[i == select],
-                               LanguageCode);
+                             LanguageCode);
 
     TexManager.ReloadTexture(GetVif1Packet(), 0);
     DebugFont.Draw();
 
     if (GamePad.Down(32) || GamePad.Down(16)) {
-        static int map[3] = { 23, 41, 19 };
-        static int event[3] = { 310, 150, 305 };
+        static int map[3] = {23, 41, 19};
+        static int event[3] = {310, 150, 305};
 
         main_select_padrup = 0;
         if (GamePad.Down(16)) {
@@ -305,37 +305,42 @@ int MemCheckLoop() {
     DebugFont.len = 0;
     TexManager.ReloadTexture(GetVif1Packet(), 0);
     switch (mem_check_mode) {
-    case 0:
-        if (check_cancel > 0)
+        case 0:
+            if (check_cancel > 0)
+                break;
+            switch (SaveEnableCheck()) {
+                case 1:
+                    return 1;
+                case 0:
+                    mem_check_mode = 2;
+                    break;
+                case -1:
+                    mem_check_mode = 3;
+                    break;
+            }
             break;
-        switch (SaveEnableCheck()) {
-        case 1: return 1;
-        case 0: mem_check_mode = 2; break;
-        case -1: mem_check_mode = 3; break;
+        case 1:
+            break;
+        case 2:
+        case 3: {
+            CRect_i_ rect;
+            rect.x = 0;
+            rect.y = 0;
+            rect.width = 640;
+            rect.height = 448;
+            set2DSprite(GetVif1Packet(),
+                        TexManager.GetTexture(mem_check_mode == 2 ? "memory01" : "memory02", -1),
+                        rect, 0, 0);
+            if (GamePad.Down(32)) {
+                mem_check_mode = 0;
+                check_cancel = 3;
+            }
+            if (GamePad.Down(64))
+                mem_check_mode = 4;
+            break;
         }
-        break;
-    case 1:
-        break;
-    case 2:
-    case 3: {
-        CRect_i_ rect;
-        rect.x = 0;
-        rect.y = 0;
-        rect.width = 640;
-        rect.height = 448;
-        set2DSprite(GetVif1Packet(),
-                    TexManager.GetTexture(mem_check_mode == 2 ? "memory01" : "memory02", -1),
-                    rect, 0, 0);
-        if (GamePad.Down(32)) {
-            mem_check_mode = 0;
-            check_cancel = 3;
-        }
-        if (GamePad.Down(64))
-            mem_check_mode = 4;
-        break;
-    }
-    case 4:
-        return 1;
+        case 4:
+            return 1;
     }
     check_cancel--;
     if (check_cancel < 0)
@@ -371,9 +376,13 @@ int LoopSave() {
 }
 
 void TrialEndInit() {}
+
 int TrialEndLoop() { return 1; }
+
 void TrialStart() {}
+
 int CheckTrialEnd() { return 0; }
+
 INCLUDE_ASM("asm/nonmatchings/gamemode", __as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL);
 INCLUDE_ASM("asm/nonmatchings/gamemode", __as__10CCharacterFRC10CCharacter);
 INCLUDE_ASM("asm/nonmatchings/gamemode", __as__7CObjectFRC7CObject);

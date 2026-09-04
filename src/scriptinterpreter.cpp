@@ -9,4 +9,3 @@ INCLUDE_ASM("asm/nonmatchings/scriptinterpreter", ControlCode__18CScriptInterpre
 INCLUDE_ASM("asm/nonmatchings/scriptinterpreter", CallFunction__18CScriptInterpreterFPi);
 INCLUDE_ASM("asm/nonmatchings/scriptinterpreter", GetArg__18CScriptInterpreterFPi);
 INCLUDE_ASM("asm/nonmatchings/scriptinterpreter", SearchCommand__18CScriptInterpreterFPi);
-
