@@ -431,6 +431,7 @@ void ApplyMatrixN(sceVu0FVECTOR *out, sceVu0FMATRIX matrix, sceVu0FVECTOR *in, i
     register float *src = (float *) in;
     register int left = count;
 
+    // clang-format off
     /* Two blocks around a label, because the loop branches back into the middle of the sequence
        and a block can only be entered at its top. */
     asm {
@@ -444,9 +445,22 @@ void ApplyMatrixN(sceVu0FVECTOR *out, sceVu0FMATRIX matrix, sceVu0FVECTOR *in, i
         vnop
         vnop
     }
-    row : asm {
-        vmulax ACC, vf10, vf16 vmadday ACC, vf11, vf16 vmaddaz ACC, vf12, vf16 vmaddw vf17, vf13, vf16 addi left, left, -1 addi dst, dst, 16 addi src, src, 16 sqc2 vf17, -16(dst) lqc2 vf16, 0(src) vnop bgez left, row nop
+row:
+    asm {
+        vmulax   ACC, vf10, vf16
+        vmadday  ACC, vf11, vf16
+        vmaddaz  ACC, vf12, vf16
+        vmaddw   vf17, vf13, vf16
+        addi     left, left, -1
+        addi     dst, dst, 16
+        addi     src, src, 16
+        sqc2     vf17, -16(dst)
+        lqc2     vf16, 0(src)
+        vnop
+        bgez     left, row
+        nop
     }
+    // clang-format on
 }
 
 void VectorInterpolate(float *out, float *from, float *to, float step, int mode) {
