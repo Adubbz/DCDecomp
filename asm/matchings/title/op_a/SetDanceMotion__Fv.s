@@ -7,16 +7,16 @@ glabel SetDanceMotion__Fv
     /* 009A50 01DB5750 F0FFBD27 */  addiu      $29, $29, -0x10
     /* 009A54 01DB5754 0000BF7F */  sq         $31, 0x0($29)
     /* 009A58 01DB5758 948B858F */  lw         $5, -0x746C($28)
-    /* 009A5C 01DB575C DE01023C */  lui        $2, %hi(LIT_344__3)
-    /* 009A60 01DB5760 50DD4424 */  addiu      $4, $2, %lo(LIT_344__3)
+    /* 009A5C 01DB575C DE01023C */  lui        $2, %hi("@344__3")
+    /* 009A60 01DB5760 50DD4424 */  addiu      $4, $2, %lo("@344__3")
     /* 009A64 01DB5764 28360070 */  paddub     $6, $0, $0
     /* 009A68 01DB5768 D8FC040C */  jal        LoadFile__FPcPvPi
     /* 009A6C 01DB576C 00000000 */   nop
     /* 009A70 01DB5770 DF01023C */  lui        $2, %hi(Chara__3 + 0x6A20)
     /* 009A74 01DB5774 00694424 */  addiu      $4, $2, %lo(Chara__3 + 0x6A20)
     /* 009A78 01DB5778 948B858F */  lw         $5, -0x746C($28)
-    /* 009A7C 01DB577C DE01023C */  lui        $2, %hi(LIT_345__8)
-    /* 009A80 01DB5780 70DD4624 */  addiu      $6, $2, %lo(LIT_345__8)
+    /* 009A7C 01DB577C DE01023C */  lui        $2, %hi("@345__8")
+    /* 009A80 01DB5780 70DD4624 */  addiu      $6, $2, %lo("@345__8")
     /* 009A84 01DB5784 DF01023C */  lui        $2, %hi(CharaDataBuffer__2 + 0x40)
     /* 009A88 01DB5788 40FE4724 */  addiu      $7, $2, %lo(CharaDataBuffer__2 + 0x40)
     /* 009A8C 01DB578C DF01023C */  lui        $2, %hi(CharaDataBuffer__2 + 0x60)
@@ -45,16 +45,16 @@ glabel SetDanceMotion__Fv
     /* 009AE8 01DB57E8 446C228C */  lw         $2, %lo(Chara__3 + 0x6D64)($1)
     /* 009AEC 01DB57EC 040043AC */  sw         $3, 0x4($2)
     /* 009AF0 01DB57F0 948B858F */  lw         $5, -0x746C($28)
-    /* 009AF4 01DB57F4 DE01023C */  lui        $2, %hi(LIT_347__4)
-    /* 009AF8 01DB57F8 80DD4424 */  addiu      $4, $2, %lo(LIT_347__4)
+    /* 009AF4 01DB57F4 DE01023C */  lui        $2, %hi("@347__4")
+    /* 009AF8 01DB57F8 80DD4424 */  addiu      $4, $2, %lo("@347__4")
     /* 009AFC 01DB57FC 28360070 */  paddub     $6, $0, $0
     /* 009B00 01DB5800 D8FC040C */  jal        LoadFile__FPcPvPi
     /* 009B04 01DB5804 00000000 */   nop
     /* 009B08 01DB5808 DF01023C */  lui        $2, %hi(Chara__3 + 0x7BD0)
     /* 009B0C 01DB580C B07A4424 */  addiu      $4, $2, %lo(Chara__3 + 0x7BD0)
     /* 009B10 01DB5810 948B858F */  lw         $5, -0x746C($28)
-    /* 009B14 01DB5814 DE01023C */  lui        $2, %hi(LIT_348__5)
-    /* 009B18 01DB5818 A0DD4624 */  addiu      $6, $2, %lo(LIT_348__5)
+    /* 009B14 01DB5814 DE01023C */  lui        $2, %hi("@348__5")
+    /* 009B18 01DB5818 A0DD4624 */  addiu      $6, $2, %lo("@348__5")
     /* 009B1C 01DB581C DF01023C */  lui        $2, %hi(CharaDataBuffer__2 + 0x40)
     /* 009B20 01DB5820 40FE4724 */  addiu      $7, $2, %lo(CharaDataBuffer__2 + 0x40)
     /* 009B24 01DB5824 DF01023C */  lui        $2, %hi(CharaDataBuffer__2 + 0x60)

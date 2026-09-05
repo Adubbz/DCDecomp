@@ -17,8 +17,8 @@ glabel InitPersonalBoardMode__FP11CUserStatusP14PERSONAL_BOARDii
     /* 12E868 0022E768 00000000 */   nop
     /* 12E86C 0022E76C C701023C */  lui        $2, %hi(TexManager)
     /* 12E870 0022E770 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 12E874 0022E774 2A00023C */  lui        $2, %hi(LIT_1073)
-    /* 12E878 0022E778 C8F14524 */  addiu      $5, $2, %lo(LIT_1073)
+    /* 12E874 0022E774 2A00023C */  lui        $2, %hi("@1073")
+    /* 12E878 0022E778 C8F14524 */  addiu      $5, $2, %lo("@1073")
     /* 12E87C 0022E77C FFFF0624 */  addiu      $6, $0, -0x1
     /* 12E880 0022E780 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 12E884 0022E784 00000000 */   nop

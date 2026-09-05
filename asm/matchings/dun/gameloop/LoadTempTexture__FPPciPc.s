@@ -14,8 +14,8 @@ glabel LoadTempTexture__FPPciPc
     /* 0001EC 01DABEEC 28A68070 */  paddub     $20, $4, $0
     /* 0001F0 01DABEF0 289EA070 */  paddub     $19, $5, $0
     /* 0001F4 01DABEF4 2896C070 */  paddub     $18, $6, $0
-    /* 0001F8 01DABEF8 DC01023C */  lui        $2, %hi(LIT_656__7)
-    /* 0001FC 01DABEFC D0264524 */  addiu      $5, $2, %lo(LIT_656__7)
+    /* 0001F8 01DABEF8 DC01023C */  lui        $2, %hi("@656__7")
+    /* 0001FC 01DABEFC D0264524 */  addiu      $5, $2, %lo("@656__7")
     /* 000200 01DABF00 6000A427 */  addiu      $4, $29, 0x60
     /* 000204 01DABF04 05000324 */  addiu      $3, $0, 0x5
   .L01DABF08:

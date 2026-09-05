@@ -50,8 +50,8 @@ glabel ParamDraw__Fv
     /* 07CB5C 0017CA5C 5C00A2AF */  sw         $2, 0x5C($29)
     /* 07CB60 0017CA60 C701023C */  lui        $2, %hi(TexManager)
     /* 07CB64 0017CA64 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 07CB68 0017CA68 2A00023C */  lui        $2, %hi(LIT_1871)
-    /* 07CB6C 0017CA6C F8AB4524 */  addiu      $5, $2, %lo(LIT_1871)
+    /* 07CB68 0017CA68 2A00023C */  lui        $2, %hi("@1871")
+    /* 07CB6C 0017CA6C F8AB4524 */  addiu      $5, $2, %lo("@1871")
     /* 07CB70 0017CA70 FFFF0624 */  addiu      $6, $0, -0x1
     /* 07CB74 0017CA74 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 07CB78 0017CA78 00000000 */   nop
@@ -125,8 +125,8 @@ glabel ParamDraw__Fv
     /* 07CC7C 0017CB7C 6C00A2AF */  sw         $2, 0x6C($29)
     /* 07CC80 0017CB80 C701023C */  lui        $2, %hi(TexManager)
     /* 07CC84 0017CB84 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 07CC88 0017CB88 2A00023C */  lui        $2, %hi(LIT_1872)
-    /* 07CC8C 0017CB8C 00AC4524 */  addiu      $5, $2, %lo(LIT_1872)
+    /* 07CC88 0017CB88 2A00023C */  lui        $2, %hi("@1872")
+    /* 07CC8C 0017CB8C 00AC4524 */  addiu      $5, $2, %lo("@1872")
     /* 07CC90 0017CB90 FFFF0624 */  addiu      $6, $0, -0x1
     /* 07CC94 0017CB94 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 07CC98 0017CB98 00000000 */   nop

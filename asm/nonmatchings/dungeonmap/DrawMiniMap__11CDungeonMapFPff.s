@@ -63,16 +63,16 @@ glabel DrawMiniMap__11CDungeonMapFPff
     /* 0C335C 001C325C 0AA84300 */  movz       $21, $2, $3
     /* 0C3360 001C3260 C701023C */  lui        $2, %hi(TexManager)
     /* 0C3364 001C3264 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0C3368 001C3268 2A00023C */  lui        $2, %hi(LIT_1470)
-    /* 0C336C 001C326C 28BE4524 */  addiu      $5, $2, %lo(LIT_1470)
+    /* 0C3368 001C3268 2A00023C */  lui        $2, %hi("@1470")
+    /* 0C336C 001C326C 28BE4524 */  addiu      $5, $2, %lo("@1470")
     /* 0C3370 001C3270 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0C3374 001C3274 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0C3378 001C3278 00000000 */   nop
     /* 0C337C 001C327C 28BE4070 */  paddub     $23, $2, $0
     /* 0C3380 001C3280 C701023C */  lui        $2, %hi(TexManager)
     /* 0C3384 001C3284 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0C3388 001C3288 2A00023C */  lui        $2, %hi(LIT_1471)
-    /* 0C338C 001C328C 38BE4524 */  addiu      $5, $2, %lo(LIT_1471)
+    /* 0C3388 001C3288 2A00023C */  lui        $2, %hi("@1471")
+    /* 0C338C 001C328C 38BE4524 */  addiu      $5, $2, %lo("@1471")
     /* 0C3390 001C3290 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0C3394 001C3294 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0C3398 001C3298 00000000 */   nop

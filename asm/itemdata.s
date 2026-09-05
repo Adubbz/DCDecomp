@@ -22,8 +22,8 @@ glabel skipSpace__FPci__2
   .L001CD934:
     /* 0CDA34 001CD934 28860070 */  paddub     $16, $0, $0
     /* 0CDA38 001CD938 21205102 */  addu       $4, $18, $17
-    /* 0CDA3C 001CD93C 2A00023C */  lui        $2, %hi(LIT_549__3)
-    /* 0CDA40 001CD940 E0C14524 */  addiu      $5, $2, %lo(LIT_549__3)
+    /* 0CDA3C 001CD93C 2A00023C */  lui        $2, %hi("@549__3")
+    /* 0CDA40 001CD940 E0C14524 */  addiu      $5, $2, %lo("@549__3")
     /* 0CDA44 001CD944 02000624 */  addiu      $6, $0, 0x2
     /* 0CDA48 001CD948 C60C040C */  jal        memcmp
     /* 0CDA4C 001CD94C 00000000 */   nop
@@ -50,8 +50,8 @@ glabel skipSpace__FPci__2
     /* 0CDA94 001CD994 01001024 */  addiu      $16, $0, 0x1
   .L001CD998:
     /* 0CDA98 001CD998 21205102 */  addu       $4, $18, $17
-    /* 0CDA9C 001CD99C 2A00023C */  lui        $2, %hi(LIT_550__2)
-    /* 0CDAA0 001CD9A0 E8C14524 */  addiu      $5, $2, %lo(LIT_550__2)
+    /* 0CDA9C 001CD99C 2A00023C */  lui        $2, %hi("@550__2")
+    /* 0CDAA0 001CD9A0 E8C14524 */  addiu      $5, $2, %lo("@550__2")
     /* 0CDAA4 001CD9A4 02000624 */  addiu      $6, $0, 0x2
     /* 0CDAA8 001CD9A8 C60C040C */  jal        memcmp
     /* 0CDAAC 001CD9AC 00000000 */   nop
@@ -214,8 +214,8 @@ glabel checkArg__FPciPi__2
     /* 0CDCD4 001CDBD4 289E4070 */  paddub     $19, $2, $0
     /* 0CDCD8 001CDBD8 21A82202 */  addu       $21, $17, $2
     /* 0CDCDC 001CDBDC 2826A072 */  paddub     $4, $21, $0
-    /* 0CDCE0 001CDBE0 2A00023C */  lui        $2, %hi(LIT_653)
-    /* 0CDCE4 001CDBE4 F0C14524 */  addiu      $5, $2, %lo(LIT_653)
+    /* 0CDCE0 001CDBE0 2A00023C */  lui        $2, %hi("@653")
+    /* 0CDCE4 001CDBE4 F0C14524 */  addiu      $5, $2, %lo("@653")
     /* 0CDCE8 001CDBE8 02000624 */  addiu      $6, $0, 0x2
     /* 0CDCEC 001CDBEC C60C040C */  jal        memcmp
     /* 0CDCF0 001CDBF0 00000000 */   nop
@@ -234,8 +234,8 @@ glabel checkArg__FPciPi__2
     /* 0CDD24 001CDC24 2000422A */  slti       $2, $18, 0x20
     /* 0CDD28 001CDC28 05004014 */  bnez       $2, .L001CDC40
     /* 0CDD2C 001CDC2C 00000000 */   nop
-    /* 0CDD30 001CDC30 2A00023C */  lui        $2, %hi(LIT_654)
-    /* 0CDD34 001CDC34 00C24424 */  addiu      $4, $2, %lo(LIT_654)
+    /* 0CDD30 001CDC30 2A00023C */  lui        $2, %hi("@654")
+    /* 0CDD34 001CDC34 00C24424 */  addiu      $4, $2, %lo("@654")
     /* 0CDD38 001CDC38 A611040C */  jal        printf
     /* 0CDD3C 001CDC3C 00000000 */   nop
   .L001CDC40:
@@ -244,8 +244,8 @@ glabel checkArg__FPciPi__2
     /* 0CDD48 001CDC48 00000000 */   nop
   .L001CDC4C:
     /* 0CDD4C 001CDC4C 2826A072 */  paddub     $4, $21, $0
-    /* 0CDD50 001CDC50 2A00023C */  lui        $2, %hi(LIT_655)
-    /* 0CDD54 001CDC54 18C24524 */  addiu      $5, $2, %lo(LIT_655)
+    /* 0CDD50 001CDC50 2A00023C */  lui        $2, %hi("@655")
+    /* 0CDD54 001CDC54 18C24524 */  addiu      $5, $2, %lo("@655")
     /* 0CDD58 001CDC58 03000624 */  addiu      $6, $0, 0x3
     /* 0CDD5C 001CDC5C C60C040C */  jal        memcmp
     /* 0CDD60 001CDC60 00000000 */   nop
@@ -263,8 +263,8 @@ glabel checkArg__FPciPi__2
     /* 0CDD90 001CDC90 2000422A */  slti       $2, $18, 0x20
     /* 0CDD94 001CDC94 05004014 */  bnez       $2, .L001CDCAC
     /* 0CDD98 001CDC98 00000000 */   nop
-    /* 0CDD9C 001CDC9C 2A00023C */  lui        $2, %hi(LIT_654)
-    /* 0CDDA0 001CDCA0 00C24424 */  addiu      $4, $2, %lo(LIT_654)
+    /* 0CDD9C 001CDC9C 2A00023C */  lui        $2, %hi("@654")
+    /* 0CDDA0 001CDCA0 00C24424 */  addiu      $4, $2, %lo("@654")
     /* 0CDDA4 001CDCA4 A611040C */  jal        printf
     /* 0CDDA8 001CDCA8 00000000 */   nop
   .L001CDCAC:
@@ -311,8 +311,8 @@ glabel checkArg__FPciPi__2
     /* 0CDE3C 001CDD3C 2000422A */  slti       $2, $18, 0x20
     /* 0CDE40 001CDD40 05004014 */  bnez       $2, .L001CDD58
     /* 0CDE44 001CDD44 00000000 */   nop
-    /* 0CDE48 001CDD48 2A00023C */  lui        $2, %hi(LIT_654)
-    /* 0CDE4C 001CDD4C 00C24424 */  addiu      $4, $2, %lo(LIT_654)
+    /* 0CDE48 001CDD48 2A00023C */  lui        $2, %hi("@654")
+    /* 0CDE4C 001CDD4C 00C24424 */  addiu      $4, $2, %lo("@654")
     /* 0CDE50 001CDD50 A611040C */  jal        printf
     /* 0CDE54 001CDD54 00000000 */   nop
   .L001CDD58:
@@ -373,8 +373,8 @@ glabel checkArg__FPciPi__2
   .L001CDE14:
     /* 0CDF14 001CDE14 21A83302 */  addu       $21, $17, $19
     /* 0CDF18 001CDE18 2826A072 */  paddub     $4, $21, $0
-    /* 0CDF1C 001CDE1C 2A00023C */  lui        $2, %hi(LIT_653)
-    /* 0CDF20 001CDE20 F0C14524 */  addiu      $5, $2, %lo(LIT_653)
+    /* 0CDF1C 001CDE1C 2A00023C */  lui        $2, %hi("@653")
+    /* 0CDF20 001CDE20 F0C14524 */  addiu      $5, $2, %lo("@653")
     /* 0CDF24 001CDE24 C60C040C */  jal        memcmp
     /* 0CDF28 001CDE28 00000000 */   nop
     /* 0CDF2C 001CDE2C 15004014 */  bnez       $2, .L001CDE84
@@ -392,8 +392,8 @@ glabel checkArg__FPciPi__2
     /* 0CDF5C 001CDE5C 2000422A */  slti       $2, $18, 0x20
     /* 0CDF60 001CDE60 05004014 */  bnez       $2, .L001CDE78
     /* 0CDF64 001CDE64 00000000 */   nop
-    /* 0CDF68 001CDE68 2A00023C */  lui        $2, %hi(LIT_654)
-    /* 0CDF6C 001CDE6C 00C24424 */  addiu      $4, $2, %lo(LIT_654)
+    /* 0CDF68 001CDE68 2A00023C */  lui        $2, %hi("@654")
+    /* 0CDF6C 001CDE6C 00C24424 */  addiu      $4, $2, %lo("@654")
     /* 0CDF70 001CDE70 A611040C */  jal        printf
     /* 0CDF74 001CDE74 00000000 */   nop
   .L001CDE78:
@@ -402,8 +402,8 @@ glabel checkArg__FPciPi__2
     /* 0CDF80 001CDE80 00000000 */   nop
   .L001CDE84:
     /* 0CDF84 001CDE84 2826A072 */  paddub     $4, $21, $0
-    /* 0CDF88 001CDE88 2A00023C */  lui        $2, %hi(LIT_655)
-    /* 0CDF8C 001CDE8C 18C24524 */  addiu      $5, $2, %lo(LIT_655)
+    /* 0CDF88 001CDE88 2A00023C */  lui        $2, %hi("@655")
+    /* 0CDF8C 001CDE8C 18C24524 */  addiu      $5, $2, %lo("@655")
     /* 0CDF90 001CDE90 03000624 */  addiu      $6, $0, 0x3
     /* 0CDF94 001CDE94 C60C040C */  jal        memcmp
     /* 0CDF98 001CDE98 00000000 */   nop
@@ -421,8 +421,8 @@ glabel checkArg__FPciPi__2
     /* 0CDFC8 001CDEC8 2000422A */  slti       $2, $18, 0x20
     /* 0CDFCC 001CDECC 05004014 */  bnez       $2, .L001CDEE4
     /* 0CDFD0 001CDED0 00000000 */   nop
-    /* 0CDFD4 001CDED4 2A00023C */  lui        $2, %hi(LIT_654)
-    /* 0CDFD8 001CDED8 00C24424 */  addiu      $4, $2, %lo(LIT_654)
+    /* 0CDFD4 001CDED4 2A00023C */  lui        $2, %hi("@654")
+    /* 0CDFD8 001CDED8 00C24424 */  addiu      $4, $2, %lo("@654")
     /* 0CDFDC 001CDEDC A611040C */  jal        printf
     /* 0CDFE0 001CDEE0 00000000 */   nop
   .L001CDEE4:
@@ -469,8 +469,8 @@ glabel checkArg__FPciPi__2
     /* 0CE074 001CDF74 2000422A */  slti       $2, $18, 0x20
     /* 0CE078 001CDF78 05004014 */  bnez       $2, .L001CDF90
     /* 0CE07C 001CDF7C 00000000 */   nop
-    /* 0CE080 001CDF80 2A00023C */  lui        $2, %hi(LIT_654)
-    /* 0CE084 001CDF84 00C24424 */  addiu      $4, $2, %lo(LIT_654)
+    /* 0CE080 001CDF80 2A00023C */  lui        $2, %hi("@654")
+    /* 0CE084 001CDF84 00C24424 */  addiu      $4, $2, %lo("@654")
     /* 0CE088 001CDF88 A611040C */  jal        printf
     /* 0CE08C 001CDF8C 00000000 */   nop
   .L001CDF90:
@@ -719,8 +719,8 @@ glabel TEIGIAnalyz__FPc
     /* 0CE404 001CE304 FFFF0224 */  addiu      $2, $0, -0x1
     /* 0CE408 001CE308 09000216 */  bne        $16, $2, .L001CE330
     /* 0CE40C 001CE30C 00000000 */   nop
-    /* 0CE410 001CE310 2A00023C */  lui        $2, %hi(LIT_762)
-    /* 0CE414 001CE314 20C24424 */  addiu      $4, $2, %lo(LIT_762)
+    /* 0CE410 001CE310 2A00023C */  lui        $2, %hi("@762")
+    /* 0CE414 001CE314 20C24424 */  addiu      $4, $2, %lo("@762")
     /* 0CE418 001CE318 0000A58E */  lw         $5, 0x0($21)
     /* 0CE41C 001CE31C A611040C */  jal        printf
     /* 0CE420 001CE320 00000000 */   nop
@@ -741,8 +741,8 @@ glabel TEIGIAnalyz__FPc
     /* 0CE454 001CE354 80024228 */  slti       $2, $2, 0x280
     /* 0CE458 001CE358 07004014 */  bnez       $2, .L001CE378
     /* 0CE45C 001CE35C 00000000 */   nop
-    /* 0CE460 001CE360 2A00023C */  lui        $2, %hi(LIT_763)
-    /* 0CE464 001CE364 30C24424 */  addiu      $4, $2, %lo(LIT_763)
+    /* 0CE460 001CE360 2A00023C */  lui        $2, %hi("@763")
+    /* 0CE464 001CE364 30C24424 */  addiu      $4, $2, %lo("@763")
     /* 0CE468 001CE368 A611040C */  jal        printf
     /* 0CE46C 001CE36C 00000000 */   nop
   .L001CE370:
@@ -766,8 +766,8 @@ glabel TEIGIAnalyz__FPc
     /* 0CE4A4 001CE3A4 09004016 */  bnez       $18, .L001CE3CC
     /* 0CE4A8 001CE3A8 00000000 */   nop
     /* 0CE4AC 001CE3AC 21289002 */  addu       $5, $20, $16
-    /* 0CE4B0 001CE3B0 2A00023C */  lui        $2, %hi(LIT_764)
-    /* 0CE4B4 001CE3B4 50C24424 */  addiu      $4, $2, %lo(LIT_764)
+    /* 0CE4B0 001CE3B0 2A00023C */  lui        $2, %hi("@764")
+    /* 0CE4B4 001CE3B4 50C24424 */  addiu      $4, $2, %lo("@764")
     /* 0CE4B8 001CE3B8 A611040C */  jal        printf
     /* 0CE4BC 001CE3BC 00000000 */   nop
     /* 0CE4C0 001CE3C0 FFFF0424 */  addiu      $4, $0, -0x1
@@ -788,8 +788,8 @@ glabel TEIGIAnalyz__FPc
     /* 0CE4F4 001CE3F4 7E000324 */  addiu      $3, $0, 0x7E
     /* 0CE4F8 001CE3F8 07008310 */  beq        $4, $3, .L001CE418
     /* 0CE4FC 001CE3FC 00000000 */   nop
-    /* 0CE500 001CE400 2A00023C */  lui        $2, %hi(LIT_765)
-    /* 0CE504 001CE404 70C24424 */  addiu      $4, $2, %lo(LIT_765)
+    /* 0CE500 001CE400 2A00023C */  lui        $2, %hi("@765")
+    /* 0CE504 001CE404 70C24424 */  addiu      $4, $2, %lo("@765")
     /* 0CE508 001CE408 A611040C */  jal        printf
     /* 0CE50C 001CE40C 00000000 */   nop
   .L001CE410:
@@ -827,12 +827,12 @@ glabel TEIGIImgLoad__FPUiP14CDataAlloc2_1_
     /* 0CE580 001CE480 288E0070 */  paddub     $17, $0, $0
     /* 0CE584 001CE484 D801023C */  lui        $2, %hi(pathName)
     /* 0CE588 001CE488 201E4424 */  addiu      $4, $2, %lo(pathName)
-    /* 0CE58C 001CE48C 2A00023C */  lui        $2, %hi(LIT_766__2)
-    /* 0CE590 001CE490 88C24524 */  addiu      $5, $2, %lo(LIT_766__2)
+    /* 0CE58C 001CE48C 2A00023C */  lui        $2, %hi("@766__2")
+    /* 0CE590 001CE490 88C24524 */  addiu      $5, $2, %lo("@766__2")
     /* 0CE594 001CE494 5A15040C */  jal        strcpy
     /* 0CE598 001CE498 00000000 */   nop
-    /* 0CE59C 001CE49C 2800023C */  lui        $2, %hi(LIT_767)
-    /* 0CE5A0 001CE4A0 10A64524 */  addiu      $5, $2, %lo(LIT_767)
+    /* 0CE59C 001CE49C 2800023C */  lui        $2, %hi("@767")
+    /* 0CE5A0 001CE4A0 10A64524 */  addiu      $5, $2, %lo("@767")
     /* 0CE5A4 001CE4A4 9001A427 */  addiu      $4, $29, 0x190
     /* 0CE5A8 001CE4A8 03000324 */  addiu      $3, $0, 0x3
   .L001CE4AC:
@@ -847,8 +847,8 @@ glabel TEIGIImgLoad__FPUiP14CDataAlloc2_1_
     /* 0CE5CC 001CE4CC 0800A2C4 */  lwc1       $f2, 0x8($5)
     /* 0CE5D0 001CE4D0 000083FC */  sd         $3, 0x0($4)
     /* 0CE5D4 001CE4D4 080082E4 */  swc1       $f2, 0x8($4)
-    /* 0CE5D8 001CE4D8 2800023C */  lui        $2, %hi(LIT_769)
-    /* 0CE5DC 001CE4DC 50A64524 */  addiu      $5, $2, %lo(LIT_769)
+    /* 0CE5D8 001CE4D8 2800023C */  lui        $2, %hi("@769")
+    /* 0CE5DC 001CE4DC 50A64524 */  addiu      $5, $2, %lo("@769")
     /* 0CE5E0 001CE4E0 D001A427 */  addiu      $4, $29, 0x1D0
     /* 0CE5E4 001CE4E4 02000324 */  addiu      $3, $0, 0x2
   .L001CE4E8:
@@ -861,8 +861,8 @@ glabel TEIGIImgLoad__FPUiP14CDataAlloc2_1_
     /* 0CE600 001CE500 00000000 */   nop
     /* 0CE604 001CE504 0000A2C4 */  lwc1       $f2, 0x0($5)
     /* 0CE608 001CE508 000082E4 */  swc1       $f2, 0x0($4)
-    /* 0CE60C 001CE50C 2800023C */  lui        $2, %hi(LIT_770)
-    /* 0CE610 001CE510 80A64224 */  addiu      $2, $2, %lo(LIT_770)
+    /* 0CE60C 001CE50C 2800023C */  lui        $2, %hi("@770")
+    /* 0CE610 001CE510 80A64224 */  addiu      $2, $2, %lo("@770")
     /* 0CE614 001CE514 0002A427 */  addiu      $4, $29, 0x200
     /* 0CE618 001CE518 00004378 */  lq         $3, 0x0($2)
     /* 0CE61C 001CE51C 100042DC */  ld         $2, 0x10($2)
@@ -1015,8 +1015,8 @@ glabel TEIGIImgLoad__FPUiP14CDataAlloc2_1_
     /* 0CE858 001CE758 089E050C */  jal        Initialize__13CTextureAnimeFP13CTexAnimeDatai
     /* 0CE85C 001CE75C 00000000 */   nop
     /* 0CE860 001CE760 2826A072 */  paddub     $4, $21, $0
-    /* 0CE864 001CE764 2A00023C */  lui        $2, %hi(LIT_809__2)
-    /* 0CE868 001CE768 A8C24524 */  addiu      $5, $2, %lo(LIT_809__2)
+    /* 0CE864 001CE764 2A00023C */  lui        $2, %hi("@809__2")
+    /* 0CE868 001CE768 A8C24524 */  addiu      $5, $2, %lo("@809__2")
     /* 0CE86C 001CE76C 1C02A627 */  addiu      $6, $29, 0x21C
     /* 0CE870 001CE770 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0CE874 001CE774 00000000 */   nop
@@ -1071,14 +1071,14 @@ glabel TEIGIImgLoad__FPUiP14CDataAlloc2_1_
     /* 0CE92C 001CE82C 282E4072 */  paddub     $5, $18, $0
     /* 0CE930 001CE830 BC14040C */  jal        strcat
     /* 0CE934 001CE834 00000000 */   nop
-    /* 0CE938 001CE838 2A00023C */  lui        $2, %hi(LIT_810)
-    /* 0CE93C 001CE83C B8C24424 */  addiu      $4, $2, %lo(LIT_810)
+    /* 0CE938 001CE838 2A00023C */  lui        $2, %hi("@810")
+    /* 0CE93C 001CE83C B8C24424 */  addiu      $4, $2, %lo("@810")
     /* 0CE940 001CE840 282E4072 */  paddub     $5, $18, $0
     /* 0CE944 001CE844 A611040C */  jal        printf
     /* 0CE948 001CE848 00000000 */   nop
     /* 0CE94C 001CE84C 2826A072 */  paddub     $4, $21, $0
-    /* 0CE950 001CE850 2A00023C */  lui        $2, %hi(LIT_811)
-    /* 0CE954 001CE854 C0C24524 */  addiu      $5, $2, %lo(LIT_811)
+    /* 0CE950 001CE850 2A00023C */  lui        $2, %hi("@811")
+    /* 0CE954 001CE854 C0C24524 */  addiu      $5, $2, %lo("@811")
     /* 0CE958 001CE858 1C02A627 */  addiu      $6, $29, 0x21C
     /* 0CE95C 001CE85C C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0CE960 001CE860 00000000 */   nop
@@ -1243,8 +1243,8 @@ glabel TEIGIMdsLoad__FPUii
   .L001CEAB8:
     /* 0CEBB8 001CEAB8 D801023C */  lui        $2, %hi(pathName)
     /* 0CEBBC 001CEABC 201E4424 */  addiu      $4, $2, %lo(pathName)
-    /* 0CEBC0 001CEAC0 2A00023C */  lui        $2, %hi(LIT_766__2)
-    /* 0CEBC4 001CEAC4 88C24524 */  addiu      $5, $2, %lo(LIT_766__2)
+    /* 0CEBC0 001CEAC0 2A00023C */  lui        $2, %hi("@766__2")
+    /* 0CEBC4 001CEAC4 88C24524 */  addiu      $5, $2, %lo("@766__2")
     /* 0CEBC8 001CEAC8 5A15040C */  jal        strcpy
     /* 0CEBCC 001CEACC 00000000 */   nop
     /* 0CEBD0 001CEAD0 289E0070 */  paddub     $19, $0, $0
@@ -1271,8 +1271,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0CEC20 001CEB20 2C44040C */  jal        fptosi
     /* 0CEC24 001CEB24 00000000 */   nop
     /* 0CEC28 001CEB28 DC8782AF */  sw         $2, -0x7824($28)
-    /* 0CEC2C 001CEB2C 2A00023C */  lui        $2, %hi(LIT_1149)
-    /* 0CEC30 001CEB30 D0C24424 */  addiu      $4, $2, %lo(LIT_1149)
+    /* 0CEC2C 001CEB2C 2A00023C */  lui        $2, %hi("@1149")
+    /* 0CEC30 001CEB30 D0C24424 */  addiu      $4, $2, %lo("@1149")
     /* 0CEC34 001CEB34 DC87858F */  lw         $5, -0x7824($28)
     /* 0CEC38 001CEB38 A611040C */  jal        printf
     /* 0CEC3C 001CEB3C 00000000 */   nop
@@ -1792,8 +1792,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0CF3FC 001CF2FC 28A64070 */  paddub     $20, $2, $0
     /* 0CF400 001CF300 06008016 */  bnez       $20, .L001CF31C
     /* 0CF404 001CF304 00000000 */   nop
-    /* 0CF408 001CF308 2A00023C */  lui        $2, %hi(LIT_1150__2)
-    /* 0CF40C 001CF30C E0C24424 */  addiu      $4, $2, %lo(LIT_1150__2)
+    /* 0CF408 001CF308 2A00023C */  lui        $2, %hi("@1150__2")
+    /* 0CF40C 001CF30C E0C24424 */  addiu      $4, $2, %lo("@1150__2")
     /* 0CF410 001CF310 F001A527 */  addiu      $5, $29, 0x1F0
     /* 0CF414 001CF314 A611040C */  jal        printf
     /* 0CF418 001CF318 00000000 */   nop
@@ -1839,8 +1839,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0CF4B0 001CF3B0 28BE4070 */  paddub     $23, $2, $0
     /* 0CF4B4 001CF3B4 0800E016 */  bnez       $23, .L001CF3D8
     /* 0CF4B8 001CF3B8 00000000 */   nop
-    /* 0CF4BC 001CF3BC 2A00023C */  lui        $2, %hi(LIT_1151__2)
-    /* 0CF4C0 001CF3C0 F0C24424 */  addiu      $4, $2, %lo(LIT_1151__2)
+    /* 0CF4BC 001CF3BC 2A00023C */  lui        $2, %hi("@1151__2")
+    /* 0CF4C0 001CF3C0 F0C24424 */  addiu      $4, $2, %lo("@1151__2")
     /* 0CF4C4 001CF3C4 282E8072 */  paddub     $5, $20, $0
     /* 0CF4C8 001CF3C8 A611040C */  jal        printf
     /* 0CF4CC 001CF3CC 00000000 */   nop
@@ -1886,8 +1886,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0CF55C 001CF45C 28A64070 */  paddub     $20, $2, $0
     /* 0CF560 001CF460 06008016 */  bnez       $20, .L001CF47C
     /* 0CF564 001CF464 00000000 */   nop
-    /* 0CF568 001CF468 2A00023C */  lui        $2, %hi(LIT_1150__2)
-    /* 0CF56C 001CF46C E0C24424 */  addiu      $4, $2, %lo(LIT_1150__2)
+    /* 0CF568 001CF468 2A00023C */  lui        $2, %hi("@1150__2")
+    /* 0CF56C 001CF46C E0C24424 */  addiu      $4, $2, %lo("@1150__2")
     /* 0CF570 001CF470 F001A527 */  addiu      $5, $29, 0x1F0
     /* 0CF574 001CF474 A611040C */  jal        printf
     /* 0CF578 001CF478 00000000 */   nop
@@ -1944,14 +1944,14 @@ glabel TEIGIMdsLoad__FPUii
     /* 0CF63C 001CF53C 28A64070 */  paddub     $20, $2, $0
     /* 0CF640 001CF540 06008016 */  bnez       $20, .L001CF55C
     /* 0CF644 001CF544 00000000 */   nop
-    /* 0CF648 001CF548 2A00023C */  lui        $2, %hi(LIT_1150__2)
-    /* 0CF64C 001CF54C E0C24424 */  addiu      $4, $2, %lo(LIT_1150__2)
+    /* 0CF648 001CF548 2A00023C */  lui        $2, %hi("@1150__2")
+    /* 0CF64C 001CF54C E0C24424 */  addiu      $4, $2, %lo("@1150__2")
     /* 0CF650 001CF550 F001A527 */  addiu      $5, $29, 0x1F0
     /* 0CF654 001CF554 A611040C */  jal        printf
     /* 0CF658 001CF558 00000000 */   nop
   .L001CF55C:
-    /* 0CF65C 001CF55C 2A00023C */  lui        $2, %hi(LIT_1152__2)
-    /* 0CF660 001CF560 10C34424 */  addiu      $4, $2, %lo(LIT_1152__2)
+    /* 0CF65C 001CF55C 2A00023C */  lui        $2, %hi("@1152__2")
+    /* 0CF660 001CF560 10C34424 */  addiu      $4, $2, %lo("@1152__2")
     /* 0CF664 001CF564 282EE072 */  paddub     $5, $23, $0
     /* 0CF668 001CF568 A611040C */  jal        printf
     /* 0CF66C 001CF56C 00000000 */   nop
@@ -1982,8 +1982,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0CF6CC 001CF5CC 28A64070 */  paddub     $20, $2, $0
     /* 0CF6D0 001CF5D0 06008016 */  bnez       $20, .L001CF5EC
     /* 0CF6D4 001CF5D4 00000000 */   nop
-    /* 0CF6D8 001CF5D8 2A00023C */  lui        $2, %hi(LIT_1150__2)
-    /* 0CF6DC 001CF5DC E0C24424 */  addiu      $4, $2, %lo(LIT_1150__2)
+    /* 0CF6D8 001CF5D8 2A00023C */  lui        $2, %hi("@1150__2")
+    /* 0CF6DC 001CF5DC E0C24424 */  addiu      $4, $2, %lo("@1150__2")
     /* 0CF6E0 001CF5E0 F001A527 */  addiu      $5, $29, 0x1F0
     /* 0CF6E4 001CF5E4 A611040C */  jal        printf
     /* 0CF6E8 001CF5E8 00000000 */   nop
@@ -2017,8 +2017,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0CF74C 001CF64C 48004228 */  slti       $2, $2, 0x48
     /* 0CF750 001CF650 07004014 */  bnez       $2, .L001CF670
     /* 0CF754 001CF654 00000000 */   nop
-    /* 0CF758 001CF658 2A00023C */  lui        $2, %hi(LIT_1153__2)
-    /* 0CF75C 001CF65C 20C34424 */  addiu      $4, $2, %lo(LIT_1153__2)
+    /* 0CF758 001CF658 2A00023C */  lui        $2, %hi("@1153__2")
+    /* 0CF75C 001CF65C 20C34424 */  addiu      $4, $2, %lo("@1153__2")
     /* 0CF760 001CF660 A611040C */  jal        printf
     /* 0CF764 001CF664 00000000 */   nop
   .L001CF668:
@@ -2036,8 +2036,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0CF790 001CF690 06004228 */  slti       $2, $2, 0x6
     /* 0CF794 001CF694 08004014 */  bnez       $2, .L001CF6B8
     /* 0CF798 001CF698 00000000 */   nop
-    /* 0CF79C 001CF69C 2A00023C */  lui        $2, %hi(LIT_1154__2)
-    /* 0CF7A0 001CF6A0 30C34424 */  addiu      $4, $2, %lo(LIT_1154__2)
+    /* 0CF79C 001CF69C 2A00023C */  lui        $2, %hi("@1154__2")
+    /* 0CF7A0 001CF6A0 30C34424 */  addiu      $4, $2, %lo("@1154__2")
     /* 0CF7A4 001CF6A4 1494858F */  lw         $5, -0x6BEC($28)
     /* 0CF7A8 001CF6A8 A611040C */  jal        printf
     /* 0CF7AC 001CF6AC 00000000 */   nop
@@ -2049,8 +2049,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0CF7BC 001CF6BC 4800A228 */  slti       $2, $5, 0x48
     /* 0CF7C0 001CF6C0 07004014 */  bnez       $2, .L001CF6E0
     /* 0CF7C4 001CF6C4 00000000 */   nop
-    /* 0CF7C8 001CF6C8 2A00023C */  lui        $2, %hi(LIT_1155__2)
-    /* 0CF7CC 001CF6CC 50C34424 */  addiu      $4, $2, %lo(LIT_1155__2)
+    /* 0CF7C8 001CF6C8 2A00023C */  lui        $2, %hi("@1155__2")
+    /* 0CF7CC 001CF6CC 50C34424 */  addiu      $4, $2, %lo("@1155__2")
     /* 0CF7D0 001CF6D0 A611040C */  jal        printf
     /* 0CF7D4 001CF6D4 00000000 */   nop
   .L001CF6D8:
@@ -2107,8 +2107,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0CF88C 001CF78C 2C01A28F */  lw         $2, 0x12C($29)
     /* 0CF890 001CF790 09004010 */  beqz       $2, .L001CF7B8
     /* 0CF894 001CF794 00000000 */   nop
-    /* 0CF898 001CF798 2A00023C */  lui        $2, %hi(LIT_1156__2)
-    /* 0CF89C 001CF79C 68C34424 */  addiu      $4, $2, %lo(LIT_1156__2)
+    /* 0CF898 001CF798 2A00023C */  lui        $2, %hi("@1156__2")
+    /* 0CF89C 001CF79C 68C34424 */  addiu      $4, $2, %lo("@1156__2")
     /* 0CF8A0 001CF7A0 F001A527 */  addiu      $5, $29, 0x1F0
     /* 0CF8A4 001CF7A4 A611040C */  jal        printf
     /* 0CF8A8 001CF7A8 00000000 */   nop
@@ -2126,8 +2126,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0CF8D4 001CF7D4 28A64070 */  paddub     $20, $2, $0
     /* 0CF8D8 001CF7D8 06008016 */  bnez       $20, .L001CF7F4
     /* 0CF8DC 001CF7DC 00000000 */   nop
-    /* 0CF8E0 001CF7E0 2A00023C */  lui        $2, %hi(LIT_1150__2)
-    /* 0CF8E4 001CF7E4 E0C24424 */  addiu      $4, $2, %lo(LIT_1150__2)
+    /* 0CF8E0 001CF7E0 2A00023C */  lui        $2, %hi("@1150__2")
+    /* 0CF8E4 001CF7E4 E0C24424 */  addiu      $4, $2, %lo("@1150__2")
     /* 0CF8E8 001CF7E8 F001A527 */  addiu      $5, $29, 0x1F0
     /* 0CF8EC 001CF7EC A611040C */  jal        printf
     /* 0CF8F0 001CF7F0 00000000 */   nop
@@ -2264,8 +2264,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0CFAE4 001CF9E4 4800A228 */  slti       $2, $5, 0x48
     /* 0CFAE8 001CF9E8 07004014 */  bnez       $2, .L001CFA08
     /* 0CFAEC 001CF9EC 00000000 */   nop
-    /* 0CFAF0 001CF9F0 2A00023C */  lui        $2, %hi(LIT_1157)
-    /* 0CFAF4 001CF9F4 80C34424 */  addiu      $4, $2, %lo(LIT_1157)
+    /* 0CFAF0 001CF9F0 2A00023C */  lui        $2, %hi("@1157")
+    /* 0CFAF4 001CF9F4 80C34424 */  addiu      $4, $2, %lo("@1157")
     /* 0CFAF8 001CF9F8 A611040C */  jal        printf
     /* 0CFAFC 001CF9FC 00000000 */   nop
   .L001CFA00:
@@ -2322,8 +2322,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0CFBB4 001CFAB4 2C01A28F */  lw         $2, 0x12C($29)
     /* 0CFBB8 001CFAB8 09004010 */  beqz       $2, .L001CFAE0
     /* 0CFBBC 001CFABC 00000000 */   nop
-    /* 0CFBC0 001CFAC0 2A00023C */  lui        $2, %hi(LIT_1158)
-    /* 0CFBC4 001CFAC4 A0C34424 */  addiu      $4, $2, %lo(LIT_1158)
+    /* 0CFBC0 001CFAC0 2A00023C */  lui        $2, %hi("@1158")
+    /* 0CFBC4 001CFAC4 A0C34424 */  addiu      $4, $2, %lo("@1158")
     /* 0CFBC8 001CFAC8 F001A527 */  addiu      $5, $29, 0x1F0
     /* 0CFBCC 001CFACC A611040C */  jal        printf
     /* 0CFBD0 001CFAD0 00000000 */   nop
@@ -2341,8 +2341,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0CFBFC 001CFAFC 28A64070 */  paddub     $20, $2, $0
     /* 0CFC00 001CFB00 06008016 */  bnez       $20, .L001CFB1C
     /* 0CFC04 001CFB04 00000000 */   nop
-    /* 0CFC08 001CFB08 2A00023C */  lui        $2, %hi(LIT_1150__2)
-    /* 0CFC0C 001CFB0C E0C24424 */  addiu      $4, $2, %lo(LIT_1150__2)
+    /* 0CFC08 001CFB08 2A00023C */  lui        $2, %hi("@1150__2")
+    /* 0CFC0C 001CFB0C E0C24424 */  addiu      $4, $2, %lo("@1150__2")
     /* 0CFC10 001CFB10 F001A527 */  addiu      $5, $29, 0x1F0
     /* 0CFC14 001CFB14 A611040C */  jal        printf
     /* 0CFC18 001CFB18 00000000 */   nop
@@ -2373,14 +2373,14 @@ glabel TEIGIMdsLoad__FPUii
     /* 0CFC70 001CFB70 01000224 */  addiu      $2, $0, 0x1
     /* 0CFC74 001CFB74 0000A2AE */  sw         $2, 0x0($21)
     /* 0CFC78 001CFB78 2826A072 */  paddub     $4, $21, $0
-    /* 0CFC7C 001CFB7C 2A00023C */  lui        $2, %hi(LIT_1159__2)
-    /* 0CFC80 001CFB80 B8C34524 */  addiu      $5, $2, %lo(LIT_1159__2)
+    /* 0CFC7C 001CFB7C 2A00023C */  lui        $2, %hi("@1159__2")
+    /* 0CFC80 001CFB80 B8C34524 */  addiu      $5, $2, %lo("@1159__2")
     /* 0CFC84 001CFB84 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 0CFC88 001CFB88 00000000 */   nop
     /* 0CFC8C 001CFB8C 05004010 */  beqz       $2, .L001CFBA4
     /* 0CFC90 001CFB90 00000000 */   nop
-    /* 0CFC94 001CFB94 2A00023C */  lui        $2, %hi(LIT_1160)
-    /* 0CFC98 001CFB98 D0C34424 */  addiu      $4, $2, %lo(LIT_1160)
+    /* 0CFC94 001CFB94 2A00023C */  lui        $2, %hi("@1160")
+    /* 0CFC98 001CFB98 D0C34424 */  addiu      $4, $2, %lo("@1160")
     /* 0CFC9C 001CFB9C A611040C */  jal        printf
     /* 0CFCA0 001CFBA0 00000000 */   nop
   .L001CFBA4:
@@ -2430,8 +2430,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0CFD48 001CFC48 4800A228 */  slti       $2, $5, 0x48
     /* 0CFD4C 001CFC4C 07004014 */  bnez       $2, .L001CFC6C
     /* 0CFD50 001CFC50 00000000 */   nop
-    /* 0CFD54 001CFC54 2A00023C */  lui        $2, %hi(LIT_1157)
-    /* 0CFD58 001CFC58 80C34424 */  addiu      $4, $2, %lo(LIT_1157)
+    /* 0CFD54 001CFC54 2A00023C */  lui        $2, %hi("@1157")
+    /* 0CFD58 001CFC58 80C34424 */  addiu      $4, $2, %lo("@1157")
     /* 0CFD5C 001CFC5C A611040C */  jal        printf
     /* 0CFD60 001CFC60 00000000 */   nop
   .L001CFC64:
@@ -2488,8 +2488,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0CFE18 001CFD18 2C01A28F */  lw         $2, 0x12C($29)
     /* 0CFE1C 001CFD1C 09004010 */  beqz       $2, .L001CFD44
     /* 0CFE20 001CFD20 00000000 */   nop
-    /* 0CFE24 001CFD24 2A00023C */  lui        $2, %hi(LIT_1161)
-    /* 0CFE28 001CFD28 F0C34424 */  addiu      $4, $2, %lo(LIT_1161)
+    /* 0CFE24 001CFD24 2A00023C */  lui        $2, %hi("@1161")
+    /* 0CFE28 001CFD28 F0C34424 */  addiu      $4, $2, %lo("@1161")
     /* 0CFE2C 001CFD2C F001A527 */  addiu      $5, $29, 0x1F0
     /* 0CFE30 001CFD30 A611040C */  jal        printf
     /* 0CFE34 001CFD34 00000000 */   nop
@@ -2507,8 +2507,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0CFE60 001CFD60 28A64070 */  paddub     $20, $2, $0
     /* 0CFE64 001CFD64 08008016 */  bnez       $20, .L001CFD88
     /* 0CFE68 001CFD68 00000000 */   nop
-    /* 0CFE6C 001CFD6C 2A00023C */  lui        $2, %hi(LIT_1150__2)
-    /* 0CFE70 001CFD70 E0C24424 */  addiu      $4, $2, %lo(LIT_1150__2)
+    /* 0CFE6C 001CFD6C 2A00023C */  lui        $2, %hi("@1150__2")
+    /* 0CFE70 001CFD70 E0C24424 */  addiu      $4, $2, %lo("@1150__2")
     /* 0CFE74 001CFD74 F001A527 */  addiu      $5, $29, 0x1F0
     /* 0CFE78 001CFD78 A611040C */  jal        printf
     /* 0CFE7C 001CFD7C 00000000 */   nop
@@ -2596,8 +2596,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0CFFAC 001CFEAC 28BE4070 */  paddub     $23, $2, $0
     /* 0CFFB0 001CFEB0 0800E016 */  bnez       $23, .L001CFED4
     /* 0CFFB4 001CFEB4 00000000 */   nop
-    /* 0CFFB8 001CFEB8 2A00023C */  lui        $2, %hi(LIT_1151__2)
-    /* 0CFFBC 001CFEBC F0C24424 */  addiu      $4, $2, %lo(LIT_1151__2)
+    /* 0CFFB8 001CFEB8 2A00023C */  lui        $2, %hi("@1151__2")
+    /* 0CFFBC 001CFEBC F0C24424 */  addiu      $4, $2, %lo("@1151__2")
     /* 0CFFC0 001CFEC0 282E8072 */  paddub     $5, $20, $0
     /* 0CFFC4 001CFEC4 A611040C */  jal        printf
     /* 0CFFC8 001CFEC8 00000000 */   nop
@@ -2630,13 +2630,13 @@ glabel TEIGIMdsLoad__FPUii
     /* 0D0024 001CFF24 00000000 */   nop
     /* 0D0028 001CFF28 50008216 */  bne        $20, $2, .L001D006C
     /* 0D002C 001CFF2C 00000000 */   nop
-    /* 0D0030 001CFF30 2800023C */  lui        $2, %hi(LIT_983)
-    /* 0D0034 001CFF34 A0A64224 */  addiu      $2, $2, %lo(LIT_983)
+    /* 0D0030 001CFF30 2800023C */  lui        $2, %hi("@983")
+    /* 0D0034 001CFF34 A0A64224 */  addiu      $2, $2, %lo("@983")
     /* 0D0038 001CFF38 9002A327 */  addiu      $3, $29, 0x290
     /* 0D003C 001CFF3C 00004278 */  lq         $2, 0x0($2)
     /* 0D0040 001CFF40 0000627C */  sq         $2, 0x0($3)
-    /* 0D0044 001CFF44 2800023C */  lui        $2, %hi(LIT_984)
-    /* 0D0048 001CFF48 B0A64224 */  addiu      $2, $2, %lo(LIT_984)
+    /* 0D0044 001CFF44 2800023C */  lui        $2, %hi("@984")
+    /* 0D0048 001CFF48 B0A64224 */  addiu      $2, $2, %lo("@984")
     /* 0D004C 001CFF4C A002A327 */  addiu      $3, $29, 0x2A0
     /* 0D0050 001CFF50 00004278 */  lq         $2, 0x0($2)
     /* 0D0054 001CFF54 0000627C */  sq         $2, 0x0($3)
@@ -2644,8 +2644,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0D005C 001CFF5C 30006228 */  slti       $2, $3, 0x30
     /* 0D0060 001CFF60 07004014 */  bnez       $2, .L001CFF80
     /* 0D0064 001CFF64 00000000 */   nop
-    /* 0D0068 001CFF68 2A00023C */  lui        $2, %hi(LIT_1162)
-    /* 0D006C 001CFF6C 10C44424 */  addiu      $4, $2, %lo(LIT_1162)
+    /* 0D0068 001CFF68 2A00023C */  lui        $2, %hi("@1162")
+    /* 0D006C 001CFF6C 10C44424 */  addiu      $4, $2, %lo("@1162")
     /* 0D0070 001CFF70 A611040C */  jal        printf
     /* 0D0074 001CFF74 00000000 */   nop
     /* 0D0078 001CFF78 3C000010 */  b          .L001D006C
@@ -2990,8 +2990,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0D05B0 001D04B0 1400828E */  lw         $2, 0x14($20)
     /* 0D05B4 001D04B4 08004014 */  bnez       $2, .L001D04D8
     /* 0D05B8 001D04B8 00000000 */   nop
-    /* 0D05BC 001D04BC 2A00023C */  lui        $2, %hi(LIT_1163)
-    /* 0D05C0 001D04C0 30C44424 */  addiu      $4, $2, %lo(LIT_1163)
+    /* 0D05BC 001D04BC 2A00023C */  lui        $2, %hi("@1163")
+    /* 0D05C0 001D04C0 30C44424 */  addiu      $4, $2, %lo("@1163")
     /* 0D05C4 001D04C4 0003A527 */  addiu      $5, $29, 0x300
     /* 0D05C8 001D04C8 A611040C */  jal        printf
     /* 0D05CC 001D04CC 00000000 */   nop
@@ -3098,8 +3098,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0D0754 001D0654 1400828E */  lw         $2, 0x14($20)
     /* 0D0758 001D0658 08004014 */  bnez       $2, .L001D067C
     /* 0D075C 001D065C 00000000 */   nop
-    /* 0D0760 001D0660 2A00023C */  lui        $2, %hi(LIT_1163)
-    /* 0D0764 001D0664 30C44424 */  addiu      $4, $2, %lo(LIT_1163)
+    /* 0D0760 001D0660 2A00023C */  lui        $2, %hi("@1163")
+    /* 0D0764 001D0664 30C44424 */  addiu      $4, $2, %lo("@1163")
     /* 0D0768 001D0668 2003A527 */  addiu      $5, $29, 0x320
     /* 0D076C 001D066C A611040C */  jal        printf
     /* 0D0770 001D0670 00000000 */   nop
@@ -3137,8 +3137,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0D07E8 001D06E8 30006228 */  slti       $2, $3, 0x30
     /* 0D07EC 001D06EC 07004014 */  bnez       $2, .L001D070C
     /* 0D07F0 001D06F0 00000000 */   nop
-    /* 0D07F4 001D06F4 2A00023C */  lui        $2, %hi(LIT_1162)
-    /* 0D07F8 001D06F8 10C44424 */  addiu      $4, $2, %lo(LIT_1162)
+    /* 0D07F4 001D06F4 2A00023C */  lui        $2, %hi("@1162")
+    /* 0D07F8 001D06F8 10C44424 */  addiu      $4, $2, %lo("@1162")
     /* 0D07FC 001D06FC A611040C */  jal        printf
     /* 0D0800 001D0700 00000000 */   nop
     /* 0D0804 001D0704 5D000010 */  b          .L001D087C
@@ -3248,8 +3248,8 @@ glabel TEIGIMdsLoad__FPUii
     /* 0D099C 001D089C 30006228 */  slti       $2, $3, 0x30
     /* 0D09A0 001D08A0 07004014 */  bnez       $2, .L001D08C0
     /* 0D09A4 001D08A4 00000000 */   nop
-    /* 0D09A8 001D08A8 2A00023C */  lui        $2, %hi(LIT_1162)
-    /* 0D09AC 001D08AC 10C44424 */  addiu      $4, $2, %lo(LIT_1162)
+    /* 0D09A8 001D08A8 2A00023C */  lui        $2, %hi("@1162")
+    /* 0D09AC 001D08AC 10C44424 */  addiu      $4, $2, %lo("@1162")
     /* 0D09B0 001D08B0 A611040C */  jal        printf
     /* 0D09B4 001D08B4 00000000 */   nop
     /* 0D09B8 001D08B8 76000010 */  b          .L001D0A94
@@ -3776,21 +3776,21 @@ glabel GetCommonItemDataSystemMsg__Fi
 
 /* Generated by spimdisasm 1.42.4 */
 
-glabel LIT_549__3
+glabel "@549__3"
     /* 19C2E0 0029C1E0 81400000 */ .word 0x00004081
     /* 19C2E4 0029C1E4 00000000 */ .word 0x00000000
 
-glabel LIT_550__2
+glabel "@550__2"
     /* 19C2E8 0029C1E8 2F2F0000 */ .word 0x00002F2F
     /* 19C2EC 0029C1EC 00000000 */ .word 0x00000000
 
-glabel LIT_653
+glabel "@653"
     /* 19C2F0 0029C1F0 4F4E0000 */ .word 0x00004E4F
     /* 19C2F4 0029C1F4 00000000 */ .word 0x00000000
     /* 19C2F8 0029C1F8 00000000 */ .word 0x00000000
     /* 19C2FC 0029C1FC 00000000 */ .word 0x00000000
 
-glabel LIT_654
+glabel "@654"
     /* 19C300 0029C200 2A2A2A2A */ .word 0x2A2A2A2A
     /* 19C304 0029C204 2A2A2A2A */ .word 0x2A2A2A2A
     /* 19C308 0029C208 2A2A2A2A */ .word 0x2A2A2A2A
@@ -3798,17 +3798,17 @@ glabel LIT_654
     /* 19C310 0029C210 4F564552 */ .word 0x5245564F
     /* 19C314 0029C214 21210A00 */ .word 0x000A2121
 
-glabel LIT_655
+glabel "@655"
     /* 19C318 0029C218 4F464600 */ .word 0x0046464F
     /* 19C31C 0029C21C 00000000 */ .word 0x00000000
 
-glabel LIT_762
+glabel "@762"
     /* 19C320 0029C220 64656620 */ .word 0x20666564
     /* 19C324 0029C224 4572726F */ .word 0x6F727245
     /* 19C328 0029C228 723A2573 */ .word 0x73253A72
     /* 19C32C 0029C22C 0A000000 */ .word 0x0000000A
 
-glabel LIT_763
+glabel "@763"
     /* 19C330 0029C230 61726720 */ .word 0x20677261
     /* 19C334 0029C234 6C696E65 */ .word 0x656E696C
     /* 19C338 0029C238 206C6576 */ .word 0x76656C20
@@ -3818,7 +3818,7 @@ glabel LIT_763
     /* 19C348 0029C248 00000000 */ .word 0x00000000
     /* 19C34C 0029C24C 00000000 */ .word 0x00000000
 
-glabel LIT_764
+glabel "@764"
     /* 19C350 0029C250 54414720 */ .word 0x20474154
     /* 19C354 0029C254 53796E74 */ .word 0x746E7953
     /* 19C358 0029C258 61784572 */ .word 0x72457861
@@ -3828,7 +3828,7 @@ glabel LIT_764
     /* 19C368 0029C268 00000000 */ .word 0x00000000
     /* 19C36C 0029C26C 00000000 */ .word 0x00000000
 
-glabel LIT_765
+glabel "@765"
     /* 19C370 0029C270 54414720 */ .word 0x20474154
     /* 19C374 0029C274 4D454D20 */ .word 0x204D454D
     /* 19C378 0029C278 45525232 */ .word 0x32525245
@@ -3836,11 +3836,11 @@ glabel LIT_765
     /* 19C380 0029C280 00000000 */ .word 0x00000000
     /* 19C384 0029C284 00000000 */ .word 0x00000000
 
-glabel LIT_766__2
+glabel "@766__2"
     /* 19C388 0029C288 00000000 */ .word 0x00000000
     /* 19C38C 0029C28C 00000000 */ .word 0x00000000
 
-glabel LIT_768
+glabel "@768"
     /* 19C390 0029C290 23626C65 */ .word 0x656C6223
     /* 19C394 0029C294 6E646572 */ .word 0x7265646E
     /* 19C398 0029C298 23363430 */ .word 0x30343623
@@ -3848,35 +3848,35 @@ glabel LIT_768
     /* 19C3A0 0029C2A0 23340000 */ .word 0x00003423
     /* 19C3A4 0029C2A4 00000000 */ .word 0x00000000
 
-glabel LIT_809__2
+glabel "@809__2"
     /* 19C3A8 0029C2A8 74657861 */ .word 0x61786574
     /* 19C3AC 0029C2AC 6E696D65 */ .word 0x656D696E
     /* 19C3B0 0029C2B0 2E636667 */ .word 0x6766632E
     /* 19C3B4 0029C2B4 00000000 */ .word 0x00000000
 
-glabel LIT_810
+glabel "@810"
     /* 19C3B8 0029C2B8 25730A00 */ .word 0x000A7325
     /* 19C3BC 0029C2BC 00000000 */ .word 0x00000000
 
-glabel LIT_811
+glabel "@811"
     /* 19C3C0 0029C2C0 66697265 */ .word 0x65726966
     /* 19C3C4 0029C2C4 2E696D67 */ .word 0x676D692E
     /* 19C3C8 0029C2C8 00000000 */ .word 0x00000000
     /* 19C3CC 0029C2CC 00000000 */ .word 0x00000000
 
-glabel LIT_1149
+glabel "@1149"
     /* 19C3D0 0029C2D0 64656275 */ .word 0x75626564
     /* 19C3D4 0029C2D4 67203D20 */ .word 0x203D2067
     /* 19C3D8 0029C2D8 25640A00 */ .word 0x000A6425
     /* 19C3DC 0029C2DC 00000000 */ .word 0x00000000
 
-glabel LIT_1150__2
+glabel "@1150__2"
     /* 19C3E0 0029C2E0 45525220 */ .word 0x20525245
     /* 19C3E4 0029C2E4 3D202573 */ .word 0x7325203D
     /* 19C3E8 0029C2E8 0A000000 */ .word 0x0000000A
     /* 19C3EC 0029C2EC 00000000 */ .word 0x00000000
 
-glabel LIT_1151__2
+glabel "@1151__2"
     /* 19C3F0 0029C2F0 2A2A2A2A */ .word 0x2A2A2A2A
     /* 19C3F4 0029C2F4 2044464C */ .word 0x4C464420
     /* 19C3F8 0029C2F8 41473A25 */ .word 0x253A4741
@@ -3886,19 +3886,19 @@ glabel LIT_1151__2
     /* 19C408 0029C308 2A2A2A0A */ .word 0x0A2A2A2A
     /* 19C40C 0029C30C 00000000 */ .word 0x00000000
 
-glabel LIT_1152__2
+glabel "@1152__2"
     /* 19C410 0029C310 6C6F6164 */ .word 0x64616F6C
     /* 19C414 0029C314 20647261 */ .word 0x61726420
     /* 19C418 0029C318 6E202573 */ .word 0x7325206E
     /* 19C41C 0029C31C 0A000000 */ .word 0x0000000A
 
-glabel LIT_1153__2
+glabel "@1153__2"
     /* 19C420 0029C320 70617274 */ .word 0x74726170
     /* 19C424 0029C324 7320636E */ .word 0x6E632073
     /* 19C428 0029C328 74206F76 */ .word 0x766F2074
     /* 19C42C 0029C32C 65720A00 */ .word 0x000A7265
 
-glabel LIT_1154__2
+glabel "@1154__2"
     /* 19C430 0029C330 5B25645D */ .word 0x5D64255B
     /* 19C434 0029C334 70617274 */ .word 0x74726170
     /* 19C438 0029C338 73206E75 */ .word 0x756E2073
@@ -3908,7 +3908,7 @@ glabel LIT_1154__2
     /* 19C448 0029C348 00000000 */ .word 0x00000000
     /* 19C44C 0029C34C 00000000 */ .word 0x00000000
 
-glabel LIT_1155__2
+glabel "@1155__2"
     /* 19C450 0029C350 66696C65 */ .word 0x656C6966
     /* 19C454 0029C354 50617468 */ .word 0x68746150
     /* 19C458 0029C358 4E756D4F */ .word 0x4F6D754E
@@ -3916,7 +3916,7 @@ glabel LIT_1155__2
     /* 19C460 0029C360 3D202564 */ .word 0x6425203D
     /* 19C464 0029C364 0A000000 */ .word 0x0000000A
 
-glabel LIT_1156__2
+glabel "@1156__2"
     /* 19C468 0029C368 4D495353 */ .word 0x5353494D
     /* 19C46C 0029C36C 20444154 */ .word 0x54414420
     /* 19C470 0029C370 41202573 */ .word 0x73252041
@@ -3924,7 +3924,7 @@ glabel LIT_1156__2
     /* 19C478 0029C378 00000000 */ .word 0x00000000
     /* 19C47C 0029C37C 00000000 */ .word 0x00000000
 
-glabel LIT_1157
+glabel "@1157"
     /* 19C480 0029C380 636F6C4E */ .word 0x4E6C6F63
     /* 19C484 0029C384 756D4F76 */ .word 0x764F6D75
     /* 19C488 0029C388 6572203D */ .word 0x3D207265
@@ -3934,7 +3934,7 @@ glabel LIT_1157
     /* 19C498 0029C398 00000000 */ .word 0x00000000
     /* 19C49C 0029C39C 00000000 */ .word 0x00000000
 
-glabel LIT_1158
+glabel "@1158"
     /* 19C4A0 0029C3A0 4D495353 */ .word 0x5353494D
     /* 19C4A4 0029C3A4 20434F4C */ .word 0x4C4F4320
     /* 19C4A8 0029C3A8 20444154 */ .word 0x54414420
@@ -3942,7 +3942,7 @@ glabel LIT_1158
     /* 19C4B0 0029C3B0 0A000000 */ .word 0x0000000A
     /* 19C4B4 0029C3B4 00000000 */ .word 0x00000000
 
-glabel LIT_1159__2
+glabel "@1159__2"
     /* 19C4B8 0029C3B8 63646F6F */ .word 0x6F6F6463
     /* 19C4BC 0029C3BC 725F616C */ .word 0x6C615F72
     /* 19C4C0 0029C3C0 00000000 */ .word 0x00000000
@@ -3950,7 +3950,7 @@ glabel LIT_1159__2
     /* 19C4C8 0029C3C8 00000000 */ .word 0x00000000
     /* 19C4CC 0029C3CC 00000000 */ .word 0x00000000
 
-glabel LIT_1160
+glabel "@1160"
     /* 19C4D0 0029C3D0 2A2A2A2A */ .word 0x2A2A2A2A
     /* 19C4D4 0029C3D4 2A2A2063 */ .word 0x63202A2A
     /* 19C4D8 0029C3D8 646F6F72 */ .word 0x726F6F64
@@ -3960,7 +3960,7 @@ glabel LIT_1160
     /* 19C4E8 0029C3E8 00000000 */ .word 0x00000000
     /* 19C4EC 0029C3EC 00000000 */ .word 0x00000000
 
-glabel LIT_1161
+glabel "@1161"
     /* 19C4F0 0029C3F0 4D495353 */ .word 0x5353494D
     /* 19C4F4 0029C3F4 2043414D */ .word 0x4D414320
     /* 19C4F8 0029C3F8 20444154 */ .word 0x54414420
@@ -3970,7 +3970,7 @@ glabel LIT_1161
     /* 19C508 0029C408 00000000 */ .word 0x00000000
     /* 19C50C 0029C40C 00000000 */ .word 0x00000000
 
-glabel LIT_1162
+glabel "@1162"
     /* 19C510 0029C410 6F766572 */ .word 0x7265766F
     /* 19C514 0029C414 20667261 */ .word 0x61726620
     /* 19C518 0029C418 6D652061 */ .word 0x6120656D
@@ -3980,7 +3980,7 @@ glabel LIT_1162
     /* 19C528 0029C428 00000000 */ .word 0x00000000
     /* 19C52C 0029C42C 00000000 */ .word 0x00000000
 
-glabel LIT_1163
+glabel "@1163"
     /* 19C530 0029C430 2A2A2A2A */ .word 0x2A2A2A2A
     /* 19C534 0029C434 2A2A2A2A */ .word 0x2A2A2A2A
     /* 19C538 0029C438 2A2A2A20 */ .word 0x202A2A2A
@@ -3994,7 +3994,7 @@ glabel LIT_1163
     /* 19C558 0029C458 00000000 */ .word 0x00000000
     /* 19C55C 0029C45C 00000000 */ .word 0x00000000
 
-glabel LIT_585
+glabel "@585"
     /* 19C560 0029C460 64756E2F */ .word 0x2F6E7564
     /* 19C564 0029C464 6D61696E */ .word 0x6E69616D
     /* 19C568 0029C468 63686172 */ .word 0x72616863
@@ -4004,7 +4004,7 @@ glabel LIT_585
     /* 19C578 0029C478 00000000 */ .word 0x00000000
     /* 19C57C 0029C47C 00000000 */ .word 0x00000000
 
-glabel LIT_586
+glabel "@586"
     /* 19C580 0029C480 64756E2F */ .word 0x2F6E7564
     /* 19C584 0029C484 6D61696E */ .word 0x6E69616D
     /* 19C588 0029C488 63686172 */ .word 0x72616863
@@ -4014,7 +4014,7 @@ glabel LIT_586
     /* 19C598 0029C498 00000000 */ .word 0x00000000
     /* 19C59C 0029C49C 00000000 */ .word 0x00000000
 
-glabel LIT_587
+glabel "@587"
     /* 19C5A0 0029C4A0 64756E2F */ .word 0x2F6E7564
     /* 19C5A4 0029C4A4 6D61696E */ .word 0x6E69616D
     /* 19C5A8 0029C4A8 63686172 */ .word 0x72616863
@@ -4024,7 +4024,7 @@ glabel LIT_587
     /* 19C5B8 0029C4B8 00000000 */ .word 0x00000000
     /* 19C5BC 0029C4BC 00000000 */ .word 0x00000000
 
-glabel LIT_588
+glabel "@588"
     /* 19C5C0 0029C4C0 64756E2F */ .word 0x2F6E7564
     /* 19C5C4 0029C4C4 6D61696E */ .word 0x6E69616D
     /* 19C5C8 0029C4C8 63686172 */ .word 0x72616863
@@ -4034,7 +4034,7 @@ glabel LIT_588
     /* 19C5D8 0029C4D8 00000000 */ .word 0x00000000
     /* 19C5DC 0029C4DC 00000000 */ .word 0x00000000
 
-glabel LIT_589__2
+glabel "@589__2"
     /* 19C5E0 0029C4E0 64756E2F */ .word 0x2F6E7564
     /* 19C5E4 0029C4E4 6D61696E */ .word 0x6E69616D
     /* 19C5E8 0029C4E8 63686172 */ .word 0x72616863
@@ -4044,7 +4044,7 @@ glabel LIT_589__2
     /* 19C5F8 0029C4F8 00000000 */ .word 0x00000000
     /* 19C5FC 0029C4FC 00000000 */ .word 0x00000000
 
-glabel LIT_590__2
+glabel "@590__2"
     /* 19C600 0029C500 64756E2F */ .word 0x2F6E7564
     /* 19C604 0029C504 6D61696E */ .word 0x6E69616D
     /* 19C608 0029C508 63686172 */ .word 0x72616863

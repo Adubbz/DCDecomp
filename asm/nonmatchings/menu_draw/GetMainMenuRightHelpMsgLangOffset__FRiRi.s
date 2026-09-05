@@ -10,8 +10,8 @@ glabel GetMainMenuRightHelpMsgLangOffset__FRiRi
     /* 12E4CC 0022E3CC 0000B07F */  sq         $16, 0x0($29)
     /* 12E4D0 0022E3D0 288E8070 */  paddub     $17, $4, $0
     /* 12E4D4 0022E3D4 2886A070 */  paddub     $16, $5, $0
-    /* 12E4D8 0022E3D8 2900023C */  lui        $2, %hi(LIT_998__2)
-    /* 12E4DC 0022E3DC 60554224 */  addiu      $2, $2, %lo(LIT_998__2)
+    /* 12E4D8 0022E3D8 2900023C */  lui        $2, %hi("@998__2")
+    /* 12E4DC 0022E3DC 60554224 */  addiu      $2, $2, %lo("@998__2")
     /* 12E4E0 0022E3E0 3000A427 */  addiu      $4, $29, 0x30
     /* 12E4E4 0022E3E4 000043DC */  ld         $3, 0x0($2)
     /* 12E4E8 0022E3E8 080040C4 */  lwc1       $f0, 0x8($2)

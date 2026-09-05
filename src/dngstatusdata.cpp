@@ -51,10 +51,10 @@ extern "C" s32 defWeapon__3[];
 extern "C" s8 ItemPutListTbl12[];
 
 /* Three 24-byte (6 x s32) per-character tables read by Initialize, labelled in
- * ref/asm/sections/main/main.data.s. LIT_781 holds the six weapon-id range
+ * ref/asm/sections/main/main.data.s. @781 holds the six weapon-id range
  * boundaries CheckWeaponUser uses; retail copies it to the stack and never
- * reads it (a dead copy that must be reproduced). LIT_782 holds per-character
- * starting HP, read as the low 16 bits of each slot. LIT_783__2 holds a second
+ * reads it (a dead copy that must be reproduced). @782 holds per-character
+ * starting HP, read as the low 16 bits of each slot. @783__2 holds a second
  * per-character s32 stat of unconfirmed meaning. */
 struct StatTable6 {
     s32 v[6];

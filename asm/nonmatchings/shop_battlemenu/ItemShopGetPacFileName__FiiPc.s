@@ -8,8 +8,8 @@ glabel ItemShopGetPacFileName__FiiPc
     /* 0EDB84 001EDA84 1000BF7F */  sq         $31, 0x10($29)
     /* 0EDB88 001EDA88 0000B07F */  sq         $16, 0x0($29)
     /* 0EDB8C 001EDA8C 2886C070 */  paddub     $16, $6, $0
-    /* 0EDB90 001EDA90 2900023C */  lui        $2, %hi(LIT_2123)
-    /* 0EDB94 001EDA94 50284724 */  addiu      $7, $2, %lo(LIT_2123)
+    /* 0EDB90 001EDA90 2900023C */  lui        $2, %hi("@2123")
+    /* 0EDB94 001EDA94 50284724 */  addiu      $7, $2, %lo("@2123")
     /* 0EDB98 001EDA98 2000A627 */  addiu      $6, $29, 0x20
     /* 0EDB9C 001EDA9C 09000324 */  addiu      $3, $0, 0x9
   .L001EDAA0:
@@ -31,12 +31,12 @@ glabel ItemShopGetPacFileName__FiiPc
     /* 0EDBDC 001EDADC 5A15040C */  jal        strcpy
     /* 0EDBE0 001EDAE0 00000000 */   nop
     /* 0EDBE4 001EDAE4 B000A427 */  addiu      $4, $29, 0xB0
-    /* 0EDBE8 001EDAE8 2A00023C */  lui        $2, %hi(LIT_2126)
-    /* 0EDBEC 001EDAEC D8D24524 */  addiu      $5, $2, %lo(LIT_2126)
+    /* 0EDBE8 001EDAE8 2A00023C */  lui        $2, %hi("@2126")
+    /* 0EDBEC 001EDAEC D8D24524 */  addiu      $5, $2, %lo("@2126")
     /* 0EDBF0 001EDAF0 BC14040C */  jal        strcat
     /* 0EDBF4 001EDAF4 00000000 */   nop
-    /* 0EDBF8 001EDAF8 2900023C */  lui        $2, %hi(LIT_2124)
-    /* 0EDBFC 001EDAFC E0284524 */  addiu      $5, $2, %lo(LIT_2124)
+    /* 0EDBF8 001EDAF8 2900023C */  lui        $2, %hi("@2124")
+    /* 0EDBFC 001EDAFC E0284524 */  addiu      $5, $2, %lo("@2124")
     /* 0EDC00 001EDB00 D000A427 */  addiu      $4, $29, 0xD0
     /* 0EDC04 001EDB04 04000324 */  addiu      $3, $0, 0x4
   .L001EDB08:

@@ -23,8 +23,8 @@ glabel InitNameRegist__FiiP1
     /* 1385DC 002384DC 28262072 */  paddub     $4, $17, $0
     /* 1385E0 002384E0 00AF080C */  jal        MenuCalcBufAlignment__FP1
     /* 1385E4 002384E4 00000000 */   nop
-    /* 1385E8 002384E8 2A00033C */  lui        $3, %hi(LIT_348__4)
-    /* 1385EC 002384EC D0F56424 */  addiu      $4, $3, %lo(LIT_348__4)
+    /* 1385E8 002384E8 2A00033C */  lui        $3, %hi("@348__4")
+    /* 1385EC 002384EC D0F56424 */  addiu      $4, $3, %lo("@348__4")
     /* 1385F0 002384F0 282E4070 */  paddub     $5, $2, $0
     /* 1385F4 002384F4 ACAE080C */  jal        LoadFileBGMenuData__FPcP1
     /* 1385F8 002384F8 00000000 */   nop

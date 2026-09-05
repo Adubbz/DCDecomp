@@ -15,8 +15,8 @@ glabel EquipWeaponFrame__FP10CCharacterii
     /* 00D980 01DB9680 00000000 */   nop
     /* 00D984 01DB9684 EA01013C */  lui        $1, %hi(CharaHand + 0xBC)
     /* 00D988 01DB9688 8C2F248C */  lw         $4, %lo(CharaHand + 0xBC)($1)
-    /* 00D98C 01DB968C DC01023C */  lui        $2, %hi(LIT_4979)
-    /* 00D990 01DB9690 D8304524 */  addiu      $5, $2, %lo(LIT_4979)
+    /* 00D98C 01DB968C DC01023C */  lui        $2, %hi("@4979")
+    /* 00D990 01DB9690 D8304524 */  addiu      $5, $2, %lo("@4979")
     /* 00D994 01DB9694 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00D998 01DB9698 00000000 */   nop
     /* 00D99C 01DB969C 28864070 */  paddub     $16, $2, $0
@@ -25,16 +25,16 @@ glabel EquipWeaponFrame__FP10CCharacterii
   .L01DB96A8:
     /* 00D9A8 01DB96A8 EA01013C */  lui        $1, %hi(CharaMain + 0xBC)
     /* 00D9AC 01DB96AC DC1D248C */  lw         $4, %lo(CharaMain + 0xBC)($1)
-    /* 00D9B0 01DB96B0 DC01023C */  lui        $2, %hi(LIT_4980)
-    /* 00D9B4 01DB96B4 E0304524 */  addiu      $5, $2, %lo(LIT_4980)
+    /* 00D9B0 01DB96B0 DC01023C */  lui        $2, %hi("@4980")
+    /* 00D9B4 01DB96B4 E0304524 */  addiu      $5, $2, %lo("@4980")
     /* 00D9B8 01DB96B8 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00D9BC 01DB96BC 00000000 */   nop
     /* 00D9C0 01DB96C0 28864070 */  paddub     $16, $2, $0
   .L01DB96C4:
     /* 00D9C4 01DB96C4 07000016 */  bnez       $16, .L01DB96E4
     /* 00D9C8 01DB96C8 00000000 */   nop
-    /* 00D9CC 01DB96CC DC01023C */  lui        $2, %hi(LIT_4997)
-    /* 00D9D0 01DB96D0 F0304424 */  addiu      $4, $2, %lo(LIT_4997)
+    /* 00D9CC 01DB96CC DC01023C */  lui        $2, %hi("@4997")
+    /* 00D9D0 01DB96D0 F0304424 */  addiu      $4, $2, %lo("@4997")
     /* 00D9D4 01DB96D4 A611040C */  jal        printf
     /* 00D9D8 01DB96D8 00000000 */   nop
     /* 00D9DC 01DB96DC 53000010 */  b          .L01DB982C
@@ -116,10 +116,10 @@ glabel EquipWeaponFrame__FP10CCharacterii
     /* 00DB00 01DB9800 E601023C */  lui        $2, %hi(CWeaponFx)
     /* 00DB04 01DB9804 408F4424 */  addiu      $4, $2, %lo(CWeaponFx)
     /* 00DB08 01DB9808 BC00658C */  lw         $5, 0xBC($3)
-    /* 00DB0C 01DB980C DC01023C */  lui        $2, %hi(LIT_4408)
-    /* 00DB10 01DB9810 982F4624 */  addiu      $6, $2, %lo(LIT_4408)
-    /* 00DB14 01DB9814 DC01023C */  lui        $2, %hi(LIT_4409)
-    /* 00DB18 01DB9818 A02F4724 */  addiu      $7, $2, %lo(LIT_4409)
+    /* 00DB0C 01DB980C DC01023C */  lui        $2, %hi("@4408")
+    /* 00DB10 01DB9810 982F4624 */  addiu      $6, $2, %lo("@4408")
+    /* 00DB14 01DB9814 DC01023C */  lui        $2, %hi("@4409")
+    /* 00DB18 01DB9818 A02F4724 */  addiu      $7, $2, %lo("@4409")
     /* 00DB1C 01DB981C 7059070C */  jal        InitSet__13CWeaponEffectFP6CFramePcPc
     /* 00DB20 01DB9820 00000000 */   nop
     /* 00DB24 01DB9824 80E7760C */  jal        SetWeaponColor__Fv

@@ -26,8 +26,8 @@ glabel SetFishMardanGarayanNum__Fi
     /* 0F1404 001F1304 00000000 */   nop
     /* 0F1408 001F1308 D0C4070C */  jal        GetFishMardanGarayanNum__Fv
     /* 0F140C 001F130C 00000000 */   nop
-    /* 0F1410 001F1310 2A00033C */  lui        $3, %hi(LIT_2912)
-    /* 0F1414 001F1314 E0D36424 */  addiu      $4, $3, %lo(LIT_2912)
+    /* 0F1410 001F1310 2A00033C */  lui        $3, %hi("@2912")
+    /* 0F1414 001F1314 E0D36424 */  addiu      $4, $3, %lo("@2912")
     /* 0F1418 001F1318 282E4070 */  paddub     $5, $2, $0
     /* 0F141C 001F131C A611040C */  jal        printf
     /* 0F1420 001F1320 00000000 */   nop

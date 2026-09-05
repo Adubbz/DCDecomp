@@ -10,8 +10,8 @@ glabel DrawDunEnterBack__Fi
     /* 12845C 0022835C 28868070 */  paddub     $16, $4, $0
     /* 128460 00228360 C701023C */  lui        $2, %hi(TexManager)
     /* 128464 00228364 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 128468 00228368 2A00023C */  lui        $2, %hi(LIT_1255__2)
-    /* 12846C 0022836C 60EF4524 */  addiu      $5, $2, %lo(LIT_1255__2)
+    /* 128468 00228368 2A00023C */  lui        $2, %hi("@1255__2")
+    /* 12846C 0022836C 60EF4524 */  addiu      $5, $2, %lo("@1255__2")
     /* 128470 00228370 FFFF0624 */  addiu      $6, $0, -0x1
     /* 128474 00228374 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 128478 00228378 00000000 */   nop

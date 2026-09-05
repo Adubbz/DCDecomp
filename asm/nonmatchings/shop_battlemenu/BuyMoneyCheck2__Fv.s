@@ -7,8 +7,8 @@ glabel BuyMoneyCheck2__Fv
     /* 0EB4A0 001EB3A0 E0FFBD27 */  addiu      $29, $29, -0x20
     /* 0EB4A4 001EB3A4 0000BF7F */  sq         $31, 0x0($29)
     /* 0EB4A8 001EB3A8 284E0070 */  paddub     $9, $0, $0
-    /* 0EB4AC 001EB3AC 2900023C */  lui        $2, %hi(LIT_1465__2)
-    /* 0EB4B0 001EB3B0 A0274424 */  addiu      $4, $2, %lo(LIT_1465__2)
+    /* 0EB4AC 001EB3AC 2900023C */  lui        $2, %hi("@1465__2")
+    /* 0EB4B0 001EB3B0 A0274424 */  addiu      $4, $2, %lo("@1465__2")
     /* 0EB4B4 001EB3B4 1000A327 */  addiu      $3, $29, 0x10
     /* 0EB4B8 001EB3B8 000082DC */  ld         $2, 0x0($4)
     /* 0EB4BC 001EB3BC 080080C4 */  lwc1       $f0, 0x8($4)

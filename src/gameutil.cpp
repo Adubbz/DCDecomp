@@ -87,7 +87,7 @@ int ezTransToIOP(void *iop_address, void *ee_address, int size) {
     return 0;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/gameutil", LIT_414__4);
+INCLUDE_RODATA("asm/nonmatchings/gameutil", @414__4);
 
 INCLUDE_ASM("asm/nonmatchings/gameutil", QuatSlerp__FPfPffPf);
 INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc__FP6CFrameP12MOTION_STATEP8Mot_List);

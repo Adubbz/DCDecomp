@@ -7,15 +7,15 @@
 #include <cmath>
 #include <cstdlib>
 
-INCLUDE_RODATA("asm/nonmatchings/mathutil", LIT_245);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", LIT_424);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", LIT_425);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", LIT_1035);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", LIT_1037);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @245);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @424);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @425);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @1035);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @1037);
 INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std9exception__2);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", LIT_1036);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @1036);
 INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std13bad_exception);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", LIT_1039);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @1039);
 
 INCLUDE_ASM("asm/nonmatchings/mathutil", __construct_array);
 INCLUDE_ASM("asm/nonmatchings/mathutil", __construct_new_array);
@@ -432,8 +432,6 @@ void ApplyMatrixN(sceVu0FVECTOR *out, sceVu0FMATRIX matrix, sceVu0FVECTOR *in, i
     register int left = count;
 
     // clang-format off
-    /* Two blocks around a label, because the loop branches back into the middle of the sequence
-       and a block can only be entered at its top. */
     asm {
         addi     left, left, -1
         lqc2     vf10, 0(m)

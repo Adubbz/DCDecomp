@@ -443,8 +443,8 @@ glabel Draw1__10MenuClsMesFiii
     /* 10BCBC 0020BBBC 000044AC */  sw         $4, 0x0($2)
     /* 10BCC0 0020BBC0 C701023C */  lui        $2, %hi(TexManager)
     /* 10BCC4 0020BBC4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 10BCC8 0020BBC8 2A00023C */  lui        $2, %hi(LIT_926__2)
-    /* 10BCCC 0020BBCC F8D44524 */  addiu      $5, $2, %lo(LIT_926__2)
+    /* 10BCC8 0020BBC8 2A00023C */  lui        $2, %hi("@926__2")
+    /* 10BCCC 0020BBCC F8D44524 */  addiu      $5, $2, %lo("@926__2")
     /* 10BCD0 0020BBD0 FFFF0624 */  addiu      $6, $0, -0x1
     /* 10BCD4 0020BBD4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 10BCD8 0020BBD8 00000000 */   nop

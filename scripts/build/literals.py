@@ -2,7 +2,7 @@
 """Bind an object's float constants to retail's literal pool.
 
     literals.py --bind <object> [<object> ...]
-    literals.py --symbols <objdir>
+    literals.py --resolve-names <image> <object> [<object> ...]
     literals.py --report <source or object>
 
 A source writes the number. Nothing in it names an address, and nothing has to
@@ -78,9 +78,11 @@ A constant retail's pool does not hold at all is left where MWCC put it. MWLD
 appends it, the small data after the pool moves, and `scripts/build/verify.py`
 reports that as the failure it is.
 
-`--symbols` reports every entry the objects in a directory named. The checked-in
-linker script defines those absolute symbols in pool order. `--report` shows
-what a source's unit loads in retail, and what its object binds to.
+Each bound relocation keeps the compiler's original `@<digits>` name as a
+local absolute symbol at the selected retail address. `--resolve-names` does
+the same for undefined `@` references introduced by generated assembly.
+`--report` shows what a source's unit loads in retail, and what its object binds
+to.
 """
 
 import argparse
@@ -124,16 +126,12 @@ GP_RE = re.compile(r'^\s*_gp\s*=\s*(0x[0-9A-Fa-f]+)\s*;', re.M)
 PLACEMENT = re.compile(
     r'^\s*(\S+)\.o\s*\(\s*(\.[td]?text)\s*\)\s*//\s*(0x[0-9a-fA-F]+)\s*$', re.M)
 
-# The symbol a bound relocation points at. The address is the name, so nothing
-# has to be kept in step between the objects and the linker script.
-LITERAL_SYM = re.compile(r'^_LIT_([0-9A-F]{8})$')
+# Compiler-invented datum names. The disassembler adds `__N` when retail has
+# more than one symbol with the same original name.
+NUMBERED_DATUM = re.compile(r'^@\d+(?:__\d+)?$')
 
 # The suffix splat puts on all but the first copy of a duplicated name.
 SUFFIX = re.compile(r'__\d+$')
-
-
-def literal_symbol(address):
-    return f'_LIT_{address:08X}'
 
 
 # ------------------------------------------------------------------ ELF32
@@ -144,8 +142,8 @@ def literal_symbol(address):
 # all have the same one.
 
 SHT_SYMTAB, SHT_STRTAB, SHT_REL, SHT_NOBITS = 2, 3, 9, 8
-SHN_UNDEF, SHN_LORESERVE = 0, 0xFF00
-STB_GLOBAL, STT_NOTYPE, STT_OBJECT, STT_FUNC = 1, 0, 1, 2
+SHN_UNDEF, SHN_ABS, SHN_LORESERVE = 0, 0xFFF1, 0xFF00
+STB_GLOBAL, STT_OBJECT, STT_FUNC = 1, 1, 2
 R_MIPS_GPREL16, R_MIPS_LITERAL = 7, 8
 
 SHDR = struct.Struct('<10I')
@@ -255,13 +253,14 @@ class Object:
 
     # -- edits
 
-    def add_undefined(self, name):
-        """Index of an undefined global of that name, adding one if needed."""
-        for i, sym in enumerate(self.symbols):
-            if sym.name == name and sym.shndx == SHN_UNDEF:
-                return i
-        self.symbols.append(Symbol(0, 0, 0, (STB_GLOBAL << 4) | STT_NOTYPE,
-                                   0, SHN_UNDEF))
+    def add_absolute(self, name, address):
+        """Add a local absolute object symbol and return its table index.
+
+        This deliberately does not deduplicate names: two loads against one
+        compiler `@N` can select different retail pool entries, and each
+        relocation identifies its intended value by symbol-table index.
+        """
+        self.symbols.append(Symbol(0, address, 0, STT_OBJECT, 0, SHN_ABS))
         self.symbols[-1].name = name
         return len(self.symbols) - 1
 
@@ -618,7 +617,8 @@ def bind(path, retail, report):
             report.note(how, path, name, entries[rel.sym][1])
             if address is None:
                 continue
-            rel.sym = obj.add_undefined(literal_symbol(address))
+            literal_name = obj.symbols[rel.sym].name
+            rel.sym = obj.add_absolute(literal_name, address)
             # An absolute symbol is not a literal section any more, so the
             # relocation becomes the plain gp-relative one MWLD applies to any
             # small-data reference.
@@ -711,22 +711,48 @@ class Report:
 # ------------------------------------------------------------------ reporting
 
 
-def named_addresses(objdir):
-    """Every pool address the objects under a directory name, in pool order."""
-    found = set()
-    for root, _dirs, files in os.walk(objdir):
-        for name in sorted(files):
-            if not name.endswith('.o'):
-                continue
+def resolve_names(path, addresses):
+    """Resolve generated assembly's external `@N` names inside one object.
+
+    MWLD otherwise binds these references to whichever global definition its
+    packing selected. An absolute local retains the literal name while fixing
+    the relocation to the address recorded for that retail symbol. Definitions
+    are localized as well; exported constants retain explicit retail padding
+    so MWLD's local-literal packing keeps their placement.
+    """
+    obj = Object(path)
+    changed = False
+    for sym in obj.symbols:
+        if not NUMBERED_DATUM.match(sym.name):
+            continue
+        if sym.shndx == SHN_UNDEF:
             try:
-                obj = Object(os.path.join(root, name))
-            except (OSError, ValueError, struct.error, IndexError):
-                continue
-            for sym in obj.symbols:
-                m = LITERAL_SYM.match(sym.name)
-                if m and sym.shndx == SHN_UNDEF:
-                    found.add(int(m.group(1), 16))
-    return sorted(found)
+                sym.value = addresses[sym.name]
+            except KeyError:
+                raise SystemExit(
+                    f'literals: {path}: no retail address for {sym.name}')
+            sym.size = 0
+            sym.info = STT_OBJECT
+            sym.shndx = SHN_ABS
+            changed = True
+        elif sym.bind == STB_GLOBAL:
+            # Retail's numbered data is unit-local. Keeping it local also
+            # prevents MWLD from accidentally binding another unit's same
+            # compiler-invented spelling to this definition.
+            sym.info = sym.type
+            changed = True
+    if changed:
+        obj.write()
+
+
+def retail_addresses(image, config='config'):
+    """Return the numbered datum addresses recorded for one retail image."""
+    try:
+        rows = disassemble.read_symbol_table(config)[image]
+    except KeyError:
+        raise SystemExit(f'literals: unknown image {image!r}')
+    return {name: address for name, (address, _type, _size) in rows.items()
+            if NUMBERED_DATUM.match(name)}
 
 
 def unit_report(target, root='.'):
@@ -755,14 +781,17 @@ def main():
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--bind', action='store_true')
-    ap.add_argument('--symbols', action='store_true')
+    ap.add_argument('--resolve-names', action='store_true')
     ap.add_argument('--report', action='store_true')
     ap.add_argument('args', nargs='+')
     a = ap.parse_args()
 
-    if a.symbols:
-        for address in named_addresses(a.args[0]):
-            print(f'{literal_symbol(address)} {address:#010x}')
+    if a.resolve_names:
+        if len(a.args) < 2:
+            ap.error('--resolve-names requires an image and at least one object')
+        addresses = retail_addresses(a.args[0])
+        for path in a.args[1:]:
+            resolve_names(path, addresses)
         return 0
 
     if a.report:
@@ -776,7 +805,7 @@ def main():
         report.emit()
         return 0
 
-    ap.error('one of --bind/--symbols/--report is required')
+    ap.error('one of --bind/--resolve-names/--report is required')
 
 
 if __name__ == '__main__':

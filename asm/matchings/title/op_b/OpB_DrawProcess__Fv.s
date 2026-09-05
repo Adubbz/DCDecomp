@@ -213,8 +213,8 @@ glabel OpB_DrawProcess__Fv
     /* 00F824 01DBB524 00000000 */   nop
     /* 00F828 01DBB528 E001013C */  lui        $1, %hi(Chara__3 + 0x8E3C)
     /* 00F82C 01DBB52C 1C8D248C */  lw         $4, %lo(Chara__3 + 0x8E3C)($1)
-    /* 00F830 01DBB530 DE01023C */  lui        $2, %hi(LIT_776__4)
-    /* 00F834 01DBB534 48EB4524 */  addiu      $5, $2, %lo(LIT_776__4)
+    /* 00F830 01DBB530 DE01023C */  lui        $2, %hi("@776__4")
+    /* 00F834 01DBB534 48EB4524 */  addiu      $5, $2, %lo("@776__4")
     /* 00F838 01DBB538 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00F83C 01DBB53C 00000000 */   nop
     /* 00F840 01DBB540 02004010 */  beqz       $2, .L01DBB54C
@@ -229,8 +229,8 @@ glabel OpB_DrawProcess__Fv
     /* 00F860 01DBB560 00000000 */   nop
     /* 00F864 01DBB564 C701023C */  lui        $2, %hi(TexManager)
     /* 00F868 01DBB568 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 00F86C 01DBB56C DE01023C */  lui        $2, %hi(LIT_777__3)
-    /* 00F870 01DBB570 58EB4524 */  addiu      $5, $2, %lo(LIT_777__3)
+    /* 00F86C 01DBB56C DE01023C */  lui        $2, %hi("@777__3")
+    /* 00F870 01DBB570 58EB4524 */  addiu      $5, $2, %lo("@777__3")
     /* 00F874 01DBB574 FFFF0624 */  addiu      $6, $0, -0x1
     /* 00F878 01DBB578 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 00F87C 01DBB57C 00000000 */   nop
@@ -376,8 +376,8 @@ glabel OpB_DrawProcess__Fv
     /* 00FA80 01DBB780 00000000 */   nop
     /* 00FA84 01DBB784 C701023C */  lui        $2, %hi(TexManager)
     /* 00FA88 01DBB788 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 00FA8C 01DBB78C DE01023C */  lui        $2, %hi(LIT_777__3)
-    /* 00FA90 01DBB790 58EB4524 */  addiu      $5, $2, %lo(LIT_777__3)
+    /* 00FA8C 01DBB78C DE01023C */  lui        $2, %hi("@777__3")
+    /* 00FA90 01DBB790 58EB4524 */  addiu      $5, $2, %lo("@777__3")
     /* 00FA94 01DBB794 FFFF0624 */  addiu      $6, $0, -0x1
     /* 00FA98 01DBB798 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 00FA9C 01DBB79C 00000000 */   nop

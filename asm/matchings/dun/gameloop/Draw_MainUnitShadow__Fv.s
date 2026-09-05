@@ -34,8 +34,8 @@ glabel Draw_MainUnitShadow__Fv
     /* 001FAC 01DADCAC 00000000 */   nop
     /* 001FB0 01DADCB0 C701023C */  lui        $2, %hi(TexManager)
     /* 001FB4 01DADCB4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 001FB8 01DADCB8 DC01023C */  lui        $2, %hi(LIT_919__3)
-    /* 001FBC 01DADCBC 382E4524 */  addiu      $5, $2, %lo(LIT_919__3)
+    /* 001FB8 01DADCB8 DC01023C */  lui        $2, %hi("@919__3")
+    /* 001FBC 01DADCBC 382E4524 */  addiu      $5, $2, %lo("@919__3")
     /* 001FC0 01DADCC0 FFFF0624 */  addiu      $6, $0, -0x1
     /* 001FC4 01DADCC4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 001FC8 01DADCC8 00000000 */   nop

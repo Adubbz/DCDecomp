@@ -14,8 +14,8 @@ glabel CharaChangeLoop__Fv
     /* 128CCC 00228BCC 84978287 */  lh         $2, -0x687C($28)
     /* 128CD0 00228BD0 6F004014 */  bnez       $2, .L00228D90
     /* 128CD4 00228BD4 00000000 */   nop
-    /* 128CD8 00228BD8 2900023C */  lui        $2, %hi(LIT_1356__2)
-    /* 128CDC 00228BDC 50424524 */  addiu      $5, $2, %lo(LIT_1356__2)
+    /* 128CD8 00228BD8 2900023C */  lui        $2, %hi("@1356__2")
+    /* 128CDC 00228BDC 50424524 */  addiu      $5, $2, %lo("@1356__2")
     /* 128CE0 00228BE0 2000A427 */  addiu      $4, $29, 0x20
     /* 128CE4 00228BE4 02000324 */  addiu      $3, $0, 0x2
   .L00228BE8:
@@ -42,8 +42,8 @@ glabel CharaChangeLoop__Fv
     /* 128D38 00228C38 00000000 */   nop
   .L00228C3C:
     /* 128D3C 00228C3C 8C00048E */  lw         $4, 0x8C($16)
-    /* 128D40 00228C40 2A00023C */  lui        $2, %hi(LIT_1373)
-    /* 128D44 00228C44 C8EF4524 */  addiu      $5, $2, %lo(LIT_1373)
+    /* 128D40 00228C40 2A00023C */  lui        $2, %hi("@1373")
+    /* 128D44 00228C44 C8EF4524 */  addiu      $5, $2, %lo("@1373")
     /* 128D48 00228C48 28360070 */  paddub     $6, $0, $0
     /* 128D4C 00228C4C C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 128D50 00228C50 00000000 */   nop
@@ -65,8 +65,8 @@ glabel CharaChangeLoop__Fv
     /* 128D90 00228C90 00000000 */   nop
     /* 128D94 00228C94 C701023C */  lui        $2, %hi(TexManager)
     /* 128D98 00228C98 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 128D9C 00228C9C 2A00023C */  lui        $2, %hi(LIT_1374)
-    /* 128DA0 00228CA0 D8EF4524 */  addiu      $5, $2, %lo(LIT_1374)
+    /* 128D9C 00228C9C 2A00023C */  lui        $2, %hi("@1374")
+    /* 128DA0 00228CA0 D8EF4524 */  addiu      $5, $2, %lo("@1374")
     /* 128DA4 00228CA4 FFFF0624 */  addiu      $6, $0, -0x1
     /* 128DA8 00228CA8 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 128DAC 00228CAC 00000000 */   nop
@@ -85,8 +85,8 @@ glabel CharaChangeLoop__Fv
     /* 128DE0 00228CE0 01000224 */  addiu      $2, $0, 0x1
     /* 128DE4 00228CE4 849782A7 */  sh         $2, -0x687C($28)
     /* 128DE8 00228CE8 8C00048E */  lw         $4, 0x8C($16)
-    /* 128DEC 00228CEC 2A00023C */  lui        $2, %hi(LIT_1375)
-    /* 128DF0 00228CF0 E8EF4524 */  addiu      $5, $2, %lo(LIT_1375)
+    /* 128DEC 00228CEC 2A00023C */  lui        $2, %hi("@1375")
+    /* 128DF0 00228CF0 E8EF4524 */  addiu      $5, $2, %lo("@1375")
     /* 128DF4 00228CF4 28360070 */  paddub     $6, $0, $0
     /* 128DF8 00228CF8 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 128DFC 00228CFC 00000000 */   nop
@@ -173,8 +173,8 @@ glabel CharaChangeLoop__Fv
     /* 128F30 00228E30 70584424 */  addiu      $4, $2, %lo(TexManager)
     /* 128F34 00228E34 98CE040C */  jal        CleanUpTextureList__15CTextureManagerFv
     /* 128F38 00228E38 00000000 */   nop
-    /* 128F3C 00228E3C 2900023C */  lui        $2, %hi(LIT_1368__2)
-    /* 128F40 00228E40 80424224 */  addiu      $2, $2, %lo(LIT_1368__2)
+    /* 128F3C 00228E3C 2900023C */  lui        $2, %hi("@1368__2")
+    /* 128F40 00228E40 80424224 */  addiu      $2, $2, %lo("@1368__2")
     /* 128F44 00228E44 5000A627 */  addiu      $6, $29, 0x50
     /* 128F48 00228E48 00004378 */  lq         $3, 0x0($2)
     /* 128F4C 00228E4C 100042DC */  ld         $2, 0x10($2)

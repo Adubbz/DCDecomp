@@ -21,8 +21,8 @@ glabel InitOpeningBook__FP1Pi
     /* 13CF94 0023CE94 28864070 */  paddub     $16, $2, $0
     /* 13CF98 0023CE98 30FB040C */  jal        StartReadBG__Fv
     /* 13CF9C 0023CE9C 00000000 */   nop
-    /* 13CFA0 0023CEA0 2A00023C */  lui        $2, %hi(LIT_1505)
-    /* 13CFA4 0023CEA4 C8F64424 */  addiu      $4, $2, %lo(LIT_1505)
+    /* 13CFA0 0023CEA0 2A00023C */  lui        $2, %hi("@1505")
+    /* 13CFA4 0023CEA4 C8F64424 */  addiu      $4, $2, %lo("@1505")
     /* 13CFA8 0023CEA8 282E0072 */  paddub     $5, $16, $0
     /* 13CFAC 0023CEAC ACAE080C */  jal        LoadFileBGMenuData__FPcP1
     /* 13CFB0 0023CEB0 00000000 */   nop

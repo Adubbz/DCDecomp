@@ -20,8 +20,8 @@ glabel SetNearLockOnTarget__Fii
     /* 014494 01DC0194 28AE8070 */  paddub     $21, $4, $0
     /* 014498 01DC0198 28A6A070 */  paddub     $20, $5, $0
     /* 01449C 01DC019C 789C858F */  lw         $5, -0x6388($28)
-    /* 0144A0 01DC01A0 DC01023C */  lui        $2, %hi(LIT_344__6)
-    /* 0144A4 01DC01A4 201B4224 */  addiu      $2, $2, %lo(LIT_344__6)
+    /* 0144A0 01DC01A0 DC01023C */  lui        $2, %hi("@344__6")
+    /* 0144A4 01DC01A4 201B4224 */  addiu      $2, $2, %lo("@344__6")
     /* 0144A8 01DC01A8 4003A427 */  addiu      $4, $29, 0x340
     /* 0144AC 01DC01AC 00004378 */  lq         $3, 0x0($2)
     /* 0144B0 01DC01B0 100042DC */  ld         $2, 0x10($2)
@@ -35,8 +35,8 @@ glabel SetNearLockOnTarget__Fii
     /* 0144D0 01DC01D0 C000A527 */  addiu      $5, $29, 0xC0
     /* 0144D4 01DC01D4 8CA3040C */  jal        GetRotation__6CFrameFPf
     /* 0144D8 01DC01D8 00000000 */   nop
-    /* 0144DC 01DC01DC DC01023C */  lui        $2, %hi(LIT_6368)
-    /* 0144E0 01DC01E0 F0284224 */  addiu      $2, $2, %lo(LIT_6368)
+    /* 0144DC 01DC01DC DC01023C */  lui        $2, %hi("@6368")
+    /* 0144E0 01DC01E0 F0284224 */  addiu      $2, $2, %lo("@6368")
     /* 0144E4 01DC01E4 6002A327 */  addiu      $3, $29, 0x260
     /* 0144E8 01DC01E8 00004278 */  lq         $2, 0x0($2)
     /* 0144EC 01DC01EC 0000627C */  sq         $2, 0x0($3)

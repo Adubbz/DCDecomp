@@ -40,8 +40,8 @@ glabel DrawSelCharaStatus__Fffiiiiii
     /* 0F55A4 001F54A4 288E4070 */  paddub     $17, $2, $0
     /* 0F55A8 001F54A8 C701023C */  lui        $2, %hi(TexManager)
     /* 0F55AC 001F54AC 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0F55B0 001F54B0 2A00023C */  lui        $2, %hi(LIT_885__2)
-    /* 0F55B4 001F54B4 D8D44524 */  addiu      $5, $2, %lo(LIT_885__2)
+    /* 0F55B0 001F54B0 2A00023C */  lui        $2, %hi("@885__2")
+    /* 0F55B4 001F54B4 D8D44524 */  addiu      $5, $2, %lo("@885__2")
     /* 0F55B8 001F54B8 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0F55BC 001F54BC B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0F55C0 001F54C0 00000000 */   nop
@@ -63,8 +63,8 @@ glabel DrawSelCharaStatus__Fffiiiiii
     /* 0F5600 001F5500 283E8072 */  paddub     $7, $20, $0
     /* 0F5604 001F5504 C8B3080C */  jal        DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i
     /* 0F5608 001F5508 00000000 */   nop
-    /* 0F560C 001F550C 2900023C */  lui        $2, %hi(LIT_889__4)
-    /* 0F5610 001F5510 902E4224 */  addiu      $2, $2, %lo(LIT_889__4)
+    /* 0F560C 001F550C 2900023C */  lui        $2, %hi("@889__4")
+    /* 0F5610 001F5510 902E4224 */  addiu      $2, $2, %lo("@889__4")
     /* 0F5614 001F5514 9000A827 */  addiu      $8, $29, 0x90
     /* 0F5618 001F5518 00004278 */  lq         $2, 0x0($2)
     /* 0F561C 001F551C 0000027D */  sq         $2, 0x0($8)
@@ -113,8 +113,8 @@ glabel DrawSelCharaStatus__Fffiiiiii
     /* 0F56C8 001F55C8 2C44040C */  jal        fptosi
     /* 0F56CC 001F55CC 00000000 */   nop
     /* 0F56D0 001F55D0 288E4070 */  paddub     $17, $2, $0
-    /* 0F56D4 001F55D4 2900023C */  lui        $2, %hi(LIT_890__4)
-    /* 0F56D8 001F55D8 A02E4424 */  addiu      $4, $2, %lo(LIT_890__4)
+    /* 0F56D4 001F55D4 2900023C */  lui        $2, %hi("@890__4")
+    /* 0F56D8 001F55D8 A02E4424 */  addiu      $4, $2, %lo("@890__4")
     /* 0F56DC 001F55DC E801A327 */  addiu      $3, $29, 0x1E8
     /* 0F56E0 001F55E0 000082DC */  ld         $2, 0x0($4)
     /* 0F56E4 001F55E4 080080C4 */  lwc1       $f0, 0x8($4)

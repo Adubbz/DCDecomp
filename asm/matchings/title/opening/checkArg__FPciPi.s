@@ -121,8 +121,8 @@ glabel checkArg__FPciPi
     /* 008DDC 01DB4ADC 289E4070 */  paddub     $19, $2, $0
     /* 008DE0 01DB4AE0 21A82202 */  addu       $21, $17, $2
     /* 008DE4 01DB4AE4 2826A072 */  paddub     $4, $21, $0
-    /* 008DE8 01DB4AE8 DE01023C */  lui        $2, %hi(LIT_1125)
-    /* 008DEC 01DB4AEC 00DA4524 */  addiu      $5, $2, %lo(LIT_1125)
+    /* 008DE8 01DB4AE8 DE01023C */  lui        $2, %hi("@1125")
+    /* 008DEC 01DB4AEC 00DA4524 */  addiu      $5, $2, %lo("@1125")
     /* 008DF0 01DB4AF0 02000624 */  addiu      $6, $0, 0x2
     /* 008DF4 01DB4AF4 C60C040C */  jal        memcmp
     /* 008DF8 01DB4AF8 00000000 */   nop
@@ -141,8 +141,8 @@ glabel checkArg__FPciPi
     /* 008E2C 01DB4B2C 00000000 */   nop
   .L01DB4B30:
     /* 008E30 01DB4B30 2826A072 */  paddub     $4, $21, $0
-    /* 008E34 01DB4B34 DE01023C */  lui        $2, %hi(LIT_1126__2)
-    /* 008E38 01DB4B38 08DA4524 */  addiu      $5, $2, %lo(LIT_1126__2)
+    /* 008E34 01DB4B34 DE01023C */  lui        $2, %hi("@1126__2")
+    /* 008E38 01DB4B38 08DA4524 */  addiu      $5, $2, %lo("@1126__2")
     /* 008E3C 01DB4B3C 03000624 */  addiu      $6, $0, 0x3
     /* 008E40 01DB4B40 C60C040C */  jal        memcmp
     /* 008E44 01DB4B44 00000000 */   nop
@@ -250,8 +250,8 @@ glabel checkArg__FPciPi
   .L01DB4CB0:
     /* 008FB0 01DB4CB0 21A83302 */  addu       $21, $17, $19
     /* 008FB4 01DB4CB4 2826A072 */  paddub     $4, $21, $0
-    /* 008FB8 01DB4CB8 DE01023C */  lui        $2, %hi(LIT_1125)
-    /* 008FBC 01DB4CBC 00DA4524 */  addiu      $5, $2, %lo(LIT_1125)
+    /* 008FB8 01DB4CB8 DE01023C */  lui        $2, %hi("@1125")
+    /* 008FBC 01DB4CBC 00DA4524 */  addiu      $5, $2, %lo("@1125")
     /* 008FC0 01DB4CC0 C60C040C */  jal        memcmp
     /* 008FC4 01DB4CC4 00000000 */   nop
     /* 008FC8 01DB4CC8 0C004014 */  bnez       $2, .L01DB4CFC
@@ -269,8 +269,8 @@ glabel checkArg__FPciPi
     /* 008FF8 01DB4CF8 00000000 */   nop
   .L01DB4CFC:
     /* 008FFC 01DB4CFC 2826A072 */  paddub     $4, $21, $0
-    /* 009000 01DB4D00 DE01023C */  lui        $2, %hi(LIT_1126__2)
-    /* 009004 01DB4D04 08DA4524 */  addiu      $5, $2, %lo(LIT_1126__2)
+    /* 009000 01DB4D00 DE01023C */  lui        $2, %hi("@1126__2")
+    /* 009004 01DB4D04 08DA4524 */  addiu      $5, $2, %lo("@1126__2")
     /* 009008 01DB4D08 03000624 */  addiu      $6, $0, 0x3
     /* 00900C 01DB4D0C C60C040C */  jal        memcmp
     /* 009010 01DB4D10 00000000 */   nop

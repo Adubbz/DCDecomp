@@ -71,8 +71,8 @@ glabel SetMimicEvent__11CDungeonMapFfffii
     /* 0C8DA4 001C8CA4 3000A328 */  slti       $3, $5, 0x30
     /* 0C8DA8 001C8CA8 F0FF6014 */  bnez       $3, .L001C8C6C
     /* 0C8DAC 001C8CAC 00000000 */   nop
-    /* 0C8DB0 001C8CB0 2A00023C */  lui        $2, %hi(LIT_2448)
-    /* 0C8DB4 001C8CB4 C0BE4424 */  addiu      $4, $2, %lo(LIT_2448)
+    /* 0C8DB0 001C8CB0 2A00023C */  lui        $2, %hi("@2448")
+    /* 0C8DB4 001C8CB4 C0BE4424 */  addiu      $4, $2, %lo("@2448")
     /* 0C8DB8 001C8CB8 A611040C */  jal        printf
     /* 0C8DBC 001C8CBC 00000000 */   nop
     /* 0C8DC0 001C8CC0 FFFF0424 */  addiu      $4, $0, -0x1

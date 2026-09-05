@@ -76,16 +76,16 @@ glabel _LOAD_FISHING_DATA__FP12RS_STACKDATAi
     /* 096BB4 00196AB4 D493060C */  jal        PickUpPoly__11CEditGroundFP6CCPoly7CBoxVu0i
     /* 096BB8 00196AB8 00000000 */   nop
     /* 096BBC 00196ABC 28864070 */  paddub     $16, $2, $0
-    /* 096BC0 00196AC0 2A00023C */  lui        $2, %hi(LIT_2236)
-    /* 096BC4 00196AC4 00B14424 */  addiu      $4, $2, %lo(LIT_2236)
+    /* 096BC0 00196AC0 2A00023C */  lui        $2, %hi("@2236")
+    /* 096BC4 00196AC4 00B14424 */  addiu      $4, $2, %lo("@2236")
     /* 096BC8 00196AC8 282E0072 */  paddub     $5, $16, $0
     /* 096BCC 00196ACC A611040C */  jal        printf
     /* 096BD0 00196AD0 00000000 */   nop
     /* 096BD4 00196AD4 0104012A */  slti       $1, $16, 0x401
     /* 096BD8 00196AD8 07002014 */  bnez       $1, .L00196AF8
     /* 096BDC 00196ADC 00000000 */   nop
-    /* 096BE0 00196AE0 2A00023C */  lui        $2, %hi(LIT_2237)
-    /* 096BE4 00196AE4 10B14424 */  addiu      $4, $2, %lo(LIT_2237)
+    /* 096BE0 00196AE0 2A00023C */  lui        $2, %hi("@2237")
+    /* 096BE4 00196AE4 10B14424 */  addiu      $4, $2, %lo("@2237")
     /* 096BE8 00196AE8 A611040C */  jal        printf
     /* 096BEC 00196AEC 00000000 */   nop
   .L00196AF0:

@@ -13,13 +13,13 @@ glabel LoadBaseTexture__Fv
     /* 000098 01DABD98 01004624 */  addiu      $6, $2, 0x1
     /* 00009C 01DABD9C DC01013C */  lui        $1, %hi(texdata__2 + 0x18)
     /* 0000A0 01DABDA0 9825248C */  lw         $4, %lo(texdata__2 + 0x18)($1)
-    /* 0000A4 01DABDA4 DC01023C */  lui        $2, %hi(LIT_653__6)
-    /* 0000A8 01DABDA8 E02B4524 */  addiu      $5, $2, %lo(LIT_653__6)
+    /* 0000A4 01DABDA4 DC01023C */  lui        $2, %hi("@653__6")
+    /* 0000A8 01DABDA8 E02B4524 */  addiu      $5, $2, %lo("@653__6")
     /* 0000AC 01DABDAC 1614040C */  jal        sprintf
     /* 0000B0 01DABDB0 00000000 */   nop
     /* 0000B4 01DABDB4 948B858F */  lw         $5, -0x746C($28)
-    /* 0000B8 01DABDB8 DC01023C */  lui        $2, %hi(LIT_654__6)
-    /* 0000BC 01DABDBC F02B4424 */  addiu      $4, $2, %lo(LIT_654__6)
+    /* 0000B8 01DABDB8 DC01023C */  lui        $2, %hi("@654__6")
+    /* 0000BC 01DABDBC F02B4424 */  addiu      $4, $2, %lo("@654__6")
     /* 0000C0 01DABDC0 28360070 */  paddub     $6, $0, $0
     /* 0000C4 01DABDC4 D8FC040C */  jal        LoadFile__FPcPvPi
     /* 0000C8 01DABDC8 00000000 */   nop
@@ -50,8 +50,8 @@ glabel LoadBaseTexture__Fv
     /* 000124 01DABE24 0A000010 */  b          .L01DABE50
     /* 000128 01DABE28 00000000 */   nop
   .L01DABE2C:
-    /* 00012C 01DABE2C DC01023C */  lui        $2, %hi(LIT_655__4)
-    /* 000130 01DABE30 102C4424 */  addiu      $4, $2, %lo(LIT_655__4)
+    /* 00012C 01DABE2C DC01023C */  lui        $2, %hi("@655__4")
+    /* 000130 01DABE30 102C4424 */  addiu      $4, $2, %lo("@655__4")
     /* 000134 01DABE34 282E0072 */  paddub     $5, $16, $0
     /* 000138 01DABE38 28362072 */  paddub     $6, $17, $0
     /* 00013C 01DABE3C A611040C */  jal        printf

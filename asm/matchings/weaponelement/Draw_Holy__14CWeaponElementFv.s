@@ -17,8 +17,8 @@ glabel Draw_Holy__14CWeaponElementFv
     /* 0B83B8 001B82B8 28AE8070 */  paddub     $21, $4, $0
     /* 0B83BC 001B82BC C701023C */  lui        $2, %hi(TexManager)
     /* 0B83C0 001B82C0 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0B83C4 001B82C4 2A00023C */  lui        $2, %hi(LIT_1182)
-    /* 0B83C8 001B82C8 88BC4524 */  addiu      $5, $2, %lo(LIT_1182)
+    /* 0B83C4 001B82C4 2A00023C */  lui        $2, %hi("@1182")
+    /* 0B83C8 001B82C8 88BC4524 */  addiu      $5, $2, %lo("@1182")
     /* 0B83CC 001B82CC FFFF0624 */  addiu      $6, $0, -0x1
     /* 0B83D0 001B82D0 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0B83D4 001B82D4 00000000 */   nop

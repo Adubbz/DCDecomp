@@ -21,8 +21,8 @@ glabel InitMenuManual__FPiP1
     /* 133F08 00233E08 A0A8308C */  lw         $16, %lo(ManualMenu + 0x30)($1)
     /* 133F0C 00233E0C 30FB040C */  jal        StartReadBG__Fv
     /* 133F10 00233E10 00000000 */   nop
-    /* 133F14 00233E14 2A00023C */  lui        $2, %hi(LIT_559__2)
-    /* 133F18 00233E18 30F34424 */  addiu      $4, $2, %lo(LIT_559__2)
+    /* 133F14 00233E14 2A00023C */  lui        $2, %hi("@559__2")
+    /* 133F18 00233E18 30F34424 */  addiu      $4, $2, %lo("@559__2")
     /* 133F1C 00233E1C 282E0072 */  paddub     $5, $16, $0
     /* 133F20 00233E20 ACAE080C */  jal        LoadFileBGMenuData__FPcP1
     /* 133F24 00233E24 00000000 */   nop

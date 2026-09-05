@@ -218,8 +218,8 @@ glabel EdEventMode__FP13CCameraFollowi
     /* 097EEC 00197DEC 6C2D060C */  jal        GetLocalRot__FPfPf
     /* 097EF0 00197DF0 00000000 */   nop
     /* 097EF4 00197DF4 8000A427 */  addiu      $4, $29, 0x80
-    /* 097EF8 00197DF8 2A00023C */  lui        $2, %hi(LIT_2604)
-    /* 097EFC 00197DFC A0B14524 */  addiu      $5, $2, %lo(LIT_2604)
+    /* 097EF8 00197DF8 2A00023C */  lui        $2, %hi("@2604")
+    /* 097EFC 00197DFC A0B14524 */  addiu      $5, $2, %lo("@2604")
     /* 097F00 00197E00 6C92868F */  lw         $6, %gp_rel(select_chara$2452)($28)
     /* 097F04 00197E04 0000278E */  lw         $7, 0x0($17)
     /* 097F08 00197E08 1614040C */  jal        sprintf
@@ -227,13 +227,13 @@ glabel EdEventMode__FP13CCameraFollowi
     /* 097F10 00197E10 8000A427 */  addiu      $4, $29, 0x80
     /* 097F14 00197E14 44C1050C */  jal        EdDPrint__FPc
     /* 097F18 00197E18 00000000 */   nop
-    /* 097F1C 00197E1C 2A00023C */  lui        $2, %hi(LIT_2605)
-    /* 097F20 00197E20 C0B14424 */  addiu      $4, $2, %lo(LIT_2605)
+    /* 097F1C 00197E1C 2A00023C */  lui        $2, %hi("@2605")
+    /* 097F20 00197E20 C0B14424 */  addiu      $4, $2, %lo("@2605")
     /* 097F24 00197E24 0001A527 */  addiu      $5, $29, 0x100
     /* 097F28 00197E28 14C1050C */  jal        EdDPrintVector__FPcPf
     /* 097F2C 00197E2C 00000000 */   nop
-    /* 097F30 00197E30 2A00023C */  lui        $2, %hi(LIT_2606)
-    /* 097F34 00197E34 C8B14424 */  addiu      $4, $2, %lo(LIT_2606)
+    /* 097F30 00197E30 2A00023C */  lui        $2, %hi("@2606")
+    /* 097F34 00197E34 C8B14424 */  addiu      $4, $2, %lo("@2606")
     /* 097F38 00197E38 1001A527 */  addiu      $5, $29, 0x110
     /* 097F3C 00197E3C 14C1050C */  jal        EdDPrintVector__FPcPf
     /* 097F40 00197E40 00000000 */   nop
@@ -253,8 +253,8 @@ glabel EdEventMode__FP13CCameraFollowi
     /* 097F78 00197E78 9044040C */  jal        fptodp
     /* 097F7C 00197E7C 00000000 */   nop
     /* 097F80 00197E80 8000A427 */  addiu      $4, $29, 0x80
-    /* 097F84 00197E84 2A00033C */  lui        $3, %hi(LIT_2607)
-    /* 097F88 00197E88 D0B16524 */  addiu      $5, $3, %lo(LIT_2607)
+    /* 097F84 00197E84 2A00033C */  lui        $3, %hi("@2607")
+    /* 097F88 00197E88 D0B16524 */  addiu      $5, $3, %lo("@2607")
     /* 097F8C 00197E8C 28368072 */  paddub     $6, $20, $0
     /* 097F90 00197E90 283E6072 */  paddub     $7, $19, $0
     /* 097F94 00197E94 28462072 */  paddub     $8, $17, $0
@@ -264,8 +264,8 @@ glabel EdEventMode__FP13CCameraFollowi
     /* 097FA4 00197EA4 8000A427 */  addiu      $4, $29, 0x80
     /* 097FA8 00197EA8 44C1050C */  jal        EdDPrint__FPc
     /* 097FAC 00197EAC 00000000 */   nop
-    /* 097FB0 00197EB0 2A00023C */  lui        $2, %hi(LIT_2608)
-    /* 097FB4 00197EB4 F0B14424 */  addiu      $4, $2, %lo(LIT_2608)
+    /* 097FB0 00197EB0 2A00023C */  lui        $2, %hi("@2608")
+    /* 097FB4 00197EB4 F0B14424 */  addiu      $4, $2, %lo("@2608")
     /* 097FB8 00197EB8 44C1050C */  jal        EdDPrint__FPc
     /* 097FBC 00197EBC 00000000 */   nop
     /* 097FC0 00197EC0 6000A427 */  addiu      $4, $29, 0x60
@@ -276,13 +276,13 @@ glabel EdEventMode__FP13CCameraFollowi
     /* 097FD4 00197ED4 282E8070 */  paddub     $5, $4, $0
     /* 097FD8 00197ED8 442D060C */  jal        GetLocalPos__FPfPf
     /* 097FDC 00197EDC 00000000 */   nop
-    /* 097FE0 00197EE0 2A00023C */  lui        $2, %hi(LIT_2605)
-    /* 097FE4 00197EE4 C0B14424 */  addiu      $4, $2, %lo(LIT_2605)
+    /* 097FE0 00197EE0 2A00023C */  lui        $2, %hi("@2605")
+    /* 097FE4 00197EE4 C0B14424 */  addiu      $4, $2, %lo("@2605")
     /* 097FE8 00197EE8 6000A527 */  addiu      $5, $29, 0x60
     /* 097FEC 00197EEC 14C1050C */  jal        EdDPrintVector__FPcPf
     /* 097FF0 00197EF0 00000000 */   nop
-    /* 097FF4 00197EF4 2A00023C */  lui        $2, %hi(LIT_2609)
-    /* 097FF8 00197EF8 F8B14424 */  addiu      $4, $2, %lo(LIT_2609)
+    /* 097FF4 00197EF4 2A00023C */  lui        $2, %hi("@2609")
+    /* 097FF8 00197EF8 F8B14424 */  addiu      $4, $2, %lo("@2609")
     /* 097FFC 00197EFC 7000A527 */  addiu      $5, $29, 0x70
     /* 098000 00197F00 14C1050C */  jal        EdDPrintVector__FPcPf
     /* 098004 00197F04 00000000 */   nop
@@ -301,8 +301,8 @@ glabel EdEventMode__FP13CCameraFollowi
     /* 098038 00197F38 9044040C */  jal        fptodp
     /* 09803C 00197F3C 00000000 */   nop
     /* 098040 00197F40 8000A427 */  addiu      $4, $29, 0x80
-    /* 098044 00197F44 2A00033C */  lui        $3, %hi(LIT_2610)
-    /* 098048 00197F48 00B26524 */  addiu      $5, $3, %lo(LIT_2610)
+    /* 098044 00197F44 2A00033C */  lui        $3, %hi("@2610")
+    /* 098048 00197F48 00B26524 */  addiu      $5, $3, %lo("@2610")
     /* 09804C 00197F4C 28364070 */  paddub     $6, $2, $0
     /* 098050 00197F50 1614040C */  jal        sprintf
     /* 098054 00197F54 00000000 */   nop
@@ -317,8 +317,8 @@ glabel EdEventMode__FP13CCameraFollowi
     /* 098078 00197F78 9044040C */  jal        fptodp
     /* 09807C 00197F7C 00000000 */   nop
     /* 098080 00197F80 8000A427 */  addiu      $4, $29, 0x80
-    /* 098084 00197F84 2A00033C */  lui        $3, %hi(LIT_2611)
-    /* 098088 00197F88 10B26524 */  addiu      $5, $3, %lo(LIT_2611)
+    /* 098084 00197F84 2A00033C */  lui        $3, %hi("@2611")
+    /* 098088 00197F88 10B26524 */  addiu      $5, $3, %lo("@2611")
     /* 09808C 00197F8C 28364070 */  paddub     $6, $2, $0
     /* 098090 00197F90 1614040C */  jal        sprintf
     /* 098094 00197F94 00000000 */   nop
@@ -335,8 +335,8 @@ glabel EdEventMode__FP13CCameraFollowi
     /* 0980C0 00197FC0 9044040C */  jal        fptodp
     /* 0980C4 00197FC4 00000000 */   nop
     /* 0980C8 00197FC8 8000A427 */  addiu      $4, $29, 0x80
-    /* 0980CC 00197FCC 2A00033C */  lui        $3, %hi(LIT_2612)
-    /* 0980D0 00197FD0 30B26524 */  addiu      $5, $3, %lo(LIT_2612)
+    /* 0980CC 00197FCC 2A00033C */  lui        $3, %hi("@2612")
+    /* 0980D0 00197FD0 30B26524 */  addiu      $5, $3, %lo("@2612")
     /* 0980D4 00197FD4 28364070 */  paddub     $6, $2, $0
     /* 0980D8 00197FD8 1614040C */  jal        sprintf
     /* 0980DC 00197FDC 00000000 */   nop
@@ -349,8 +349,8 @@ glabel EdEventMode__FP13CCameraFollowi
     /* 0980F8 00197FF8 9044040C */  jal        fptodp
     /* 0980FC 00197FFC 00000000 */   nop
     /* 098100 00198000 8000A427 */  addiu      $4, $29, 0x80
-    /* 098104 00198004 2A00033C */  lui        $3, %hi(LIT_2613)
-    /* 098108 00198008 50B26524 */  addiu      $5, $3, %lo(LIT_2613)
+    /* 098104 00198004 2A00033C */  lui        $3, %hi("@2613")
+    /* 098108 00198008 50B26524 */  addiu      $5, $3, %lo("@2613")
     /* 09810C 0019800C 28364070 */  paddub     $6, $2, $0
     /* 098110 00198010 1614040C */  jal        sprintf
     /* 098114 00198014 00000000 */   nop
@@ -628,8 +628,8 @@ glabel EdEventMode__FP13CCameraFollowi
     /* 0984F8 001983F8 249282AF */  sw         $2, -0x6DDC($28)
     /* 0984FC 001983FC C701023C */  lui        $2, %hi(TexManager)
     /* 098500 00198400 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 098504 00198404 2A00023C */  lui        $2, %hi(LIT_2614)
-    /* 098508 00198408 68B24524 */  addiu      $5, $2, %lo(LIT_2614)
+    /* 098504 00198404 2A00023C */  lui        $2, %hi("@2614")
+    /* 098508 00198408 68B24524 */  addiu      $5, $2, %lo("@2614")
     /* 09850C 0019840C FFFF0624 */  addiu      $6, $0, -0x1
     /* 098510 00198410 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 098514 00198414 00000000 */   nop
@@ -804,8 +804,8 @@ glabel EdEventMode__FP13CCameraFollowi
     /* 09877C 0019867C 4C92848F */  lw         $4, -0x6DB4($28)
     /* 098780 00198680 1B008010 */  beqz       $4, .L001986F0
     /* 098784 00198684 00000000 */   nop
-    /* 098788 00198688 2700023C */  lui        $2, %hi(LIT_2570)
-    /* 09878C 0019868C 00A64224 */  addiu      $2, $2, %lo(LIT_2570)
+    /* 098788 00198688 2700023C */  lui        $2, %hi("@2570")
+    /* 09878C 0019868C 00A64224 */  addiu      $2, $2, %lo("@2570")
     /* 098790 00198690 3001A527 */  addiu      $5, $29, 0x130
     /* 098794 00198694 00004278 */  lq         $2, 0x0($2)
     /* 098798 00198698 0000A27C */  sq         $2, 0x0($5)

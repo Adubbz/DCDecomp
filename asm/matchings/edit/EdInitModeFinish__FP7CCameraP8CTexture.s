@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_507__2
+glabel "@507__2"
     /* 19A3B0 0029A2B0 1C2F1700 */ .word .L00172F1C
     /* 19A3B4 0029A2B4 E82D1700 */ .word .L00172DE8
     /* 19A3B8 0029A2B8 102E1700 */ .word .L00172E10
@@ -55,8 +55,8 @@ glabel EdInitModeFinish__FP7CCameraP8CTexture
     /* 072E94 00172D94 78000524 */  addiu      $5, $0, 0x78
     /* 072E98 00172D98 48AE040C */  jal        MenuModeOn__8CGamePadFi
     /* 072E9C 00172D9C 00000000 */   nop
-    /* 072EA0 00172DA0 2600023C */  lui        $2, %hi(LIT_494__2)
-    /* 072EA4 00172DA4 706F4224 */  addiu      $2, $2, %lo(LIT_494__2)
+    /* 072EA0 00172DA0 2600023C */  lui        $2, %hi("@494__2")
+    /* 072EA4 00172DA4 706F4224 */  addiu      $2, $2, %lo("@494__2")
     /* 072EA8 00172DA8 1000A527 */  addiu      $5, $29, 0x10
     /* 072EAC 00172DAC 00004378 */  lq         $3, 0x0($2)
     /* 072EB0 00172DB0 100042C4 */  lwc1       $f2, 0x10($2)
@@ -66,8 +66,8 @@ glabel EdInitModeFinish__FP7CCameraP8CTexture
     /* 072EC0 00172DC0 0B00812C */  sltiu      $1, $4, 0xB
     /* 072EC4 00172DC4 55002010 */  beqz       $1, .L00172F1C
     /* 072EC8 00172DC8 00000000 */   nop
-    /* 072ECC 00172DCC 2A00023C */  lui        $2, %hi(LIT_507__2)
-    /* 072ED0 00172DD0 B0A24324 */  addiu      $3, $2, %lo(LIT_507__2)
+    /* 072ECC 00172DCC 2A00023C */  lui        $2, %hi("@507__2")
+    /* 072ED0 00172DD0 B0A24324 */  addiu      $3, $2, %lo("@507__2")
     /* 072ED4 00172DD4 80100400 */  sll        $2, $4, 2
     /* 072ED8 00172DD8 21104300 */  addu       $2, $2, $3
     /* 072EDC 00172DDC 0000428C */  lw         $2, 0x0($2)

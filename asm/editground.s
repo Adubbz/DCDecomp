@@ -384,8 +384,8 @@ glabel SetMapParts__11CEditGroundFifffi
     /* 0A0AC8 001A09C8 80C0050C */  jal        GetUnitSize__9CEditAreaFv
     /* 0A0ACC 001A09CC 00000000 */   nop
     /* 0A0AD0 001A09D0 D00160E6 */  swc1       $f0, 0x1D0($19)
-    /* 0A0AD4 001A09D4 2700023C */  lui        $2, %hi(LIT_335__4)
-    /* 0A0AD8 001A09D8 40AE4224 */  addiu      $2, $2, %lo(LIT_335__4)
+    /* 0A0AD4 001A09D4 2700023C */  lui        $2, %hi("@335__4")
+    /* 0A0AD8 001A09D8 40AE4224 */  addiu      $2, $2, %lo("@335__4")
     /* 0A0ADC 001A09DC E000A527 */  addiu      $5, $29, 0xE0
     /* 0A0AE0 001A09E0 00004278 */  lq         $2, 0x0($2)
     /* 0A0AE4 001A09E4 0000A27C */  sq         $2, 0x0($5)
@@ -1799,8 +1799,8 @@ glabel EditAreaClip__11CEditGroundFP7CCameraf
     /* 0A1F60 001A1E60 28868070 */  paddub     $16, $4, $0
     /* 0A1F64 001A1E64 288EA070 */  paddub     $17, $5, $0
     /* 0A1F68 001A1E68 46650046 */  mov.s      $f21, $f12
-    /* 0A1F6C 001A1E6C 2700023C */  lui        $2, %hi(LIT_575__2)
-    /* 0A1F70 001A1E70 50AE4224 */  addiu      $2, $2, %lo(LIT_575__2)
+    /* 0A1F6C 001A1E6C 2700023C */  lui        $2, %hi("@575__2")
+    /* 0A1F70 001A1E70 50AE4224 */  addiu      $2, $2, %lo("@575__2")
     /* 0A1F74 001A1E74 B000A527 */  addiu      $5, $29, 0xB0
     /* 0A1F78 001A1E78 00004278 */  lq         $2, 0x0($2)
     /* 0A1F7C 001A1E7C 0000A27C */  sq         $2, 0x0($5)
@@ -2983,8 +2983,8 @@ glabel Draw__11CEditGroundFfiiiii
     /* 0A3048 001A2F48 2886E070 */  paddub     $16, $7, $0
     /* 0A304C 001A2F4C 28B60071 */  paddub     $22, $8, $0
     /* 0A3050 001A2F50 28AE2071 */  paddub     $21, $9, $0
-    /* 0A3054 001A2F54 2700033C */  lui        $3, %hi(LIT_886__3)
-    /* 0A3058 001A2F58 60AE6324 */  addiu      $3, $3, %lo(LIT_886__3)
+    /* 0A3054 001A2F54 2700033C */  lui        $3, %hi("@886__3")
+    /* 0A3058 001A2F58 60AE6324 */  addiu      $3, $3, %lo("@886__3")
     /* 0A305C 001A2F5C 9000A427 */  addiu      $4, $29, 0x90
     /* 0A3060 001A2F60 00006378 */  lq         $3, 0x0($3)
     /* 0A3064 001A2F64 0000837C */  sq         $3, 0x0($4)
@@ -3071,8 +3071,8 @@ glabel Draw__11CEditGroundFfiiiii
     /* 0A3194 001A3094 1C004010 */  beqz       $2, .L001A3108
     /* 0A3198 001A3098 00000000 */   nop
   .L001A309C:
-    /* 0A319C 001A309C 2700023C */  lui        $2, %hi(LIT_912)
-    /* 0A31A0 001A30A0 70AE4224 */  addiu      $2, $2, %lo(LIT_912)
+    /* 0A319C 001A309C 2700023C */  lui        $2, %hi("@912")
+    /* 0A31A0 001A30A0 70AE4224 */  addiu      $2, $2, %lo("@912")
     /* 0A31A4 001A30A4 C000A327 */  addiu      $3, $29, 0xC0
     /* 0A31A8 001A30A8 00004278 */  lq         $2, 0x0($2)
     /* 0A31AC 001A30AC 0000627C */  sq         $2, 0x0($3)
@@ -4305,8 +4305,8 @@ glabel DrawPartsCursor__11CEditGroundFiPfPfiPfi
     /* 0A439C 001A429C 4001A527 */  addiu      $5, $29, 0x140
     /* 0A43A0 001A42A0 2CB7040C */  jal        MGGetPLight__FPA4_fPA4_f
     /* 0A43A4 001A42A4 00000000 */   nop
-    /* 0A43A8 001A42A8 2700023C */  lui        $2, %hi(LIT_1159)
-    /* 0A43AC 001A42AC 80AE4224 */  addiu      $2, $2, %lo(LIT_1159)
+    /* 0A43A8 001A42A8 2700023C */  lui        $2, %hi("@1159")
+    /* 0A43AC 001A42AC 80AE4224 */  addiu      $2, $2, %lo("@1159")
     /* 0A43B0 001A42B0 9001A427 */  addiu      $4, $29, 0x190
     /* 0A43B4 001A42B4 00004278 */  lq         $2, 0x0($2)
     /* 0A43B8 001A42B8 0000827C */  sq         $2, 0x0($4)
@@ -4480,8 +4480,8 @@ glabel DrawPartsCursor__11CEditGroundFiPfPfiPfi
     /* 0A461C 001A451C 1B008214 */  bne        $4, $2, .L001A458C
     /* 0A4620 001A4520 00000000 */   nop
     /* 0A4624 001A4524 2826C072 */  paddub     $4, $22, $0
-    /* 0A4628 001A4528 2A00023C */  lui        $2, %hi(LIT_1207)
-    /* 0A462C 001A452C 28B44524 */  addiu      $5, $2, %lo(LIT_1207)
+    /* 0A4628 001A4528 2A00023C */  lui        $2, %hi("@1207")
+    /* 0A462C 001A452C 28B44524 */  addiu      $5, $2, %lo("@1207")
     /* 0A4630 001A4530 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 0A4634 001A4534 00000000 */   nop
     /* 0A4638 001A4538 288E4070 */  paddub     $17, $2, $0
@@ -4735,8 +4735,8 @@ glabel Save__11CEditGroundFPc
     /* 0A49C4 001A48C4 23104500 */  subu       $2, $2, $5
     /* 0A49C8 001A48C8 020002A6 */  sh         $2, 0x2($16)
     /* 0A49CC 001A48CC 02000686 */  lh         $6, 0x2($16)
-    /* 0A49D0 001A48D0 2A00023C */  lui        $2, %hi(LIT_1263)
-    /* 0A49D4 001A48D4 30B44424 */  addiu      $4, $2, %lo(LIT_1263)
+    /* 0A49D0 001A48D0 2A00023C */  lui        $2, %hi("@1263")
+    /* 0A49D4 001A48D4 30B44424 */  addiu      $4, $2, %lo("@1263")
     /* 0A49D8 001A48D8 88FD040C */  jal        WriteFile__FPcPvi
     /* 0A49DC 001A48DC 00000000 */   nop
     /* 0A49E0 001A48E0 6000BF7B */  lq         $31, 0x60($29)
@@ -4767,8 +4767,8 @@ glabel Load__11CEditGroundFPc
     /* 0A4A3C 001A493C 6000B027 */  addiu      $16, $29, 0x60
     /* 0A4A40 001A4940 0C002016 */  bnez       $17, .L001A4974
     /* 0A4A44 001A4944 00000000 */   nop
-    /* 0A4A48 001A4948 2A00023C */  lui        $2, %hi(LIT_1325)
-    /* 0A4A4C 001A494C 50B44424 */  addiu      $4, $2, %lo(LIT_1325)
+    /* 0A4A48 001A4948 2A00023C */  lui        $2, %hi("@1325")
+    /* 0A4A4C 001A494C 50B44424 */  addiu      $4, $2, %lo("@1325")
     /* 0A4A50 001A4950 282E0072 */  paddub     $5, $16, $0
     /* 0A4A54 001A4954 28360070 */  paddub     $6, $0, $0
     /* 0A4A58 001A4958 283E0070 */  paddub     $7, $0, $0
@@ -9006,8 +9006,8 @@ glabel YellowRequest__11CEditGroundFPA64_P9CMapParts
     /* 0A87F4 001A86F4 21088102 */  addu       $1, $20, $1
     /* 0A87F8 001A86F8 305F228C */  lw         $2, (0x15F30 & 0xFFFF)($1)
     /* 0A87FC 001A86FC 21205200 */  addu       $4, $2, $18
-    /* 0A8800 001A8700 2A00023C */  lui        $2, %hi(LIT_2120)
-    /* 0A8804 001A8704 60B44524 */  addiu      $5, $2, %lo(LIT_2120)
+    /* 0A8800 001A8700 2A00023C */  lui        $2, %hi("@2120")
+    /* 0A8804 001A8704 60B44524 */  addiu      $5, $2, %lo("@2120")
     /* 0A8808 001A8708 28362072 */  paddub     $6, $17, $0
     /* 0A880C 001A870C A000998C */  lw         $25, 0xA0($4)
     /* 0A8810 001A8710 9000398F */  lw         $25, 0x90($25)
@@ -9043,8 +9043,8 @@ glabel YellowRequest__11CEditGroundFPA64_P9CMapParts
     /* 0A8884 001A8784 21088102 */  addu       $1, $20, $1
     /* 0A8888 001A8788 305F228C */  lw         $2, (0x15F30 & 0xFFFF)($1)
     /* 0A888C 001A878C 21205200 */  addu       $4, $2, $18
-    /* 0A8890 001A8790 2A00023C */  lui        $2, %hi(LIT_2120)
-    /* 0A8894 001A8794 60B44524 */  addiu      $5, $2, %lo(LIT_2120)
+    /* 0A8890 001A8790 2A00023C */  lui        $2, %hi("@2120")
+    /* 0A8894 001A8794 60B44524 */  addiu      $5, $2, %lo("@2120")
     /* 0A8898 001A8798 28362072 */  paddub     $6, $17, $0
     /* 0A889C 001A879C A000998C */  lw         $25, 0xA0($4)
     /* 0A88A0 001A87A0 9000398F */  lw         $25, 0x90($25)
@@ -9072,11 +9072,11 @@ glabel YellowRequest__11CEditGroundFPA64_P9CMapParts
 
 /* Generated by spimdisasm 1.42.4 */
 
-glabel LIT_1207
+glabel "@1207"
     /* 19B528 0029B428 6B617761 */ .word 0x6177616B
     /* 19B52C 0029B42C 00000000 */ .word 0x00000000
 
-glabel LIT_1263
+glabel "@1263"
     /* 19B530 0029B430 686F7374 */ .word 0x74736F68
     /* 19B534 0029B434 303A793A */ .word 0x3A793A30
     /* 19B538 0029B438 2F707332 */ .word 0x3273702F
@@ -9086,13 +9086,13 @@ glabel LIT_1263
     /* 19B548 0029B448 7461302E */ .word 0x2E306174
     /* 19B54C 0029B44C 65647400 */ .word 0x00746465
 
-glabel LIT_1325
+glabel "@1325"
     /* 19B550 0029B450 67646174 */ .word 0x74616467
     /* 19B554 0029B454 61302E65 */ .word 0x652E3061
     /* 19B558 0029B458 64740000 */ .word 0x00007464
     /* 19B55C 0029B45C 00000000 */ .word 0x00000000
 
-glabel LIT_2120
+glabel "@2120"
     /* 19B560 0029B460 73657475 */ .word 0x75746573
     /* 19B564 0029B464 7A6F6B75 */ .word 0x756B6F7A
     /* 19B568 0029B468 00000000 */ .word 0x00000000

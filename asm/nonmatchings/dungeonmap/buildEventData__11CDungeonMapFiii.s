@@ -380,8 +380,8 @@ glabel buildEventData__11CDungeonMapFiii
     /* 0C8BB4 001C8AB4 30008228 */  slti       $2, $4, 0x30
     /* 0C8BB8 001C8AB8 F0FF4014 */  bnez       $2, .L001C8A7C
     /* 0C8BBC 001C8ABC 00000000 */   nop
-    /* 0C8BC0 001C8AC0 2A00023C */  lui        $2, %hi(LIT_2448)
-    /* 0C8BC4 001C8AC4 C0BE4424 */  addiu      $4, $2, %lo(LIT_2448)
+    /* 0C8BC0 001C8AC0 2A00023C */  lui        $2, %hi("@2448")
+    /* 0C8BC4 001C8AC4 C0BE4424 */  addiu      $4, $2, %lo("@2448")
     /* 0C8BC8 001C8AC8 A611040C */  jal        printf
     /* 0C8BCC 001C8ACC 00000000 */   nop
     /* 0C8BD0 001C8AD0 FFFF0424 */  addiu      $4, $0, -0x1

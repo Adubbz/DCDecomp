@@ -139,8 +139,8 @@ glabel create_word_tree__FPciPc
     /* 03F2B4 0013F1B4 23183002 */  subu       $3, $17, $16
     /* 03F2B8 0013F1B8 AC00A28F */  lw         $2, 0xAC($29)
     /* 03F2BC 0013F1BC 23284300 */  subu       $5, $2, $3
-    /* 03F2C0 0013F1C0 2A00023C */  lui        $2, %hi(LIT_373)
-    /* 03F2C4 0013F1C4 D0904424 */  addiu      $4, $2, %lo(LIT_373)
+    /* 03F2C0 0013F1C0 2A00023C */  lui        $2, %hi("@373")
+    /* 03F2C4 0013F1C4 D0904424 */  addiu      $4, $2, %lo("@373")
     /* 03F2C8 0013F1C8 A611040C */  jal        printf
     /* 03F2CC 0013F1CC 00000000 */   nop
     /* 03F2D0 0013F1D0 2816A072 */  paddub     $2, $21, $0

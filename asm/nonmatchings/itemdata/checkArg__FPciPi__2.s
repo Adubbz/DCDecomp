@@ -127,8 +127,8 @@ glabel checkArg__FPciPi__2
     /* 0CDCD4 001CDBD4 289E4070 */  paddub     $19, $2, $0
     /* 0CDCD8 001CDBD8 21A82202 */  addu       $21, $17, $2
     /* 0CDCDC 001CDBDC 2826A072 */  paddub     $4, $21, $0
-    /* 0CDCE0 001CDBE0 2A00023C */  lui        $2, %hi(LIT_653)
-    /* 0CDCE4 001CDBE4 F0C14524 */  addiu      $5, $2, %lo(LIT_653)
+    /* 0CDCE0 001CDBE0 2A00023C */  lui        $2, %hi("@653")
+    /* 0CDCE4 001CDBE4 F0C14524 */  addiu      $5, $2, %lo("@653")
     /* 0CDCE8 001CDBE8 02000624 */  addiu      $6, $0, 0x2
     /* 0CDCEC 001CDBEC C60C040C */  jal        memcmp
     /* 0CDCF0 001CDBF0 00000000 */   nop
@@ -147,8 +147,8 @@ glabel checkArg__FPciPi__2
     /* 0CDD24 001CDC24 2000422A */  slti       $2, $18, 0x20
     /* 0CDD28 001CDC28 05004014 */  bnez       $2, .L001CDC40
     /* 0CDD2C 001CDC2C 00000000 */   nop
-    /* 0CDD30 001CDC30 2A00023C */  lui        $2, %hi(LIT_654)
-    /* 0CDD34 001CDC34 00C24424 */  addiu      $4, $2, %lo(LIT_654)
+    /* 0CDD30 001CDC30 2A00023C */  lui        $2, %hi("@654")
+    /* 0CDD34 001CDC34 00C24424 */  addiu      $4, $2, %lo("@654")
     /* 0CDD38 001CDC38 A611040C */  jal        printf
     /* 0CDD3C 001CDC3C 00000000 */   nop
   .L001CDC40:
@@ -157,8 +157,8 @@ glabel checkArg__FPciPi__2
     /* 0CDD48 001CDC48 00000000 */   nop
   .L001CDC4C:
     /* 0CDD4C 001CDC4C 2826A072 */  paddub     $4, $21, $0
-    /* 0CDD50 001CDC50 2A00023C */  lui        $2, %hi(LIT_655)
-    /* 0CDD54 001CDC54 18C24524 */  addiu      $5, $2, %lo(LIT_655)
+    /* 0CDD50 001CDC50 2A00023C */  lui        $2, %hi("@655")
+    /* 0CDD54 001CDC54 18C24524 */  addiu      $5, $2, %lo("@655")
     /* 0CDD58 001CDC58 03000624 */  addiu      $6, $0, 0x3
     /* 0CDD5C 001CDC5C C60C040C */  jal        memcmp
     /* 0CDD60 001CDC60 00000000 */   nop
@@ -176,8 +176,8 @@ glabel checkArg__FPciPi__2
     /* 0CDD90 001CDC90 2000422A */  slti       $2, $18, 0x20
     /* 0CDD94 001CDC94 05004014 */  bnez       $2, .L001CDCAC
     /* 0CDD98 001CDC98 00000000 */   nop
-    /* 0CDD9C 001CDC9C 2A00023C */  lui        $2, %hi(LIT_654)
-    /* 0CDDA0 001CDCA0 00C24424 */  addiu      $4, $2, %lo(LIT_654)
+    /* 0CDD9C 001CDC9C 2A00023C */  lui        $2, %hi("@654")
+    /* 0CDDA0 001CDCA0 00C24424 */  addiu      $4, $2, %lo("@654")
     /* 0CDDA4 001CDCA4 A611040C */  jal        printf
     /* 0CDDA8 001CDCA8 00000000 */   nop
   .L001CDCAC:
@@ -224,8 +224,8 @@ glabel checkArg__FPciPi__2
     /* 0CDE3C 001CDD3C 2000422A */  slti       $2, $18, 0x20
     /* 0CDE40 001CDD40 05004014 */  bnez       $2, .L001CDD58
     /* 0CDE44 001CDD44 00000000 */   nop
-    /* 0CDE48 001CDD48 2A00023C */  lui        $2, %hi(LIT_654)
-    /* 0CDE4C 001CDD4C 00C24424 */  addiu      $4, $2, %lo(LIT_654)
+    /* 0CDE48 001CDD48 2A00023C */  lui        $2, %hi("@654")
+    /* 0CDE4C 001CDD4C 00C24424 */  addiu      $4, $2, %lo("@654")
     /* 0CDE50 001CDD50 A611040C */  jal        printf
     /* 0CDE54 001CDD54 00000000 */   nop
   .L001CDD58:
@@ -286,8 +286,8 @@ glabel checkArg__FPciPi__2
   .L001CDE14:
     /* 0CDF14 001CDE14 21A83302 */  addu       $21, $17, $19
     /* 0CDF18 001CDE18 2826A072 */  paddub     $4, $21, $0
-    /* 0CDF1C 001CDE1C 2A00023C */  lui        $2, %hi(LIT_653)
-    /* 0CDF20 001CDE20 F0C14524 */  addiu      $5, $2, %lo(LIT_653)
+    /* 0CDF1C 001CDE1C 2A00023C */  lui        $2, %hi("@653")
+    /* 0CDF20 001CDE20 F0C14524 */  addiu      $5, $2, %lo("@653")
     /* 0CDF24 001CDE24 C60C040C */  jal        memcmp
     /* 0CDF28 001CDE28 00000000 */   nop
     /* 0CDF2C 001CDE2C 15004014 */  bnez       $2, .L001CDE84
@@ -305,8 +305,8 @@ glabel checkArg__FPciPi__2
     /* 0CDF5C 001CDE5C 2000422A */  slti       $2, $18, 0x20
     /* 0CDF60 001CDE60 05004014 */  bnez       $2, .L001CDE78
     /* 0CDF64 001CDE64 00000000 */   nop
-    /* 0CDF68 001CDE68 2A00023C */  lui        $2, %hi(LIT_654)
-    /* 0CDF6C 001CDE6C 00C24424 */  addiu      $4, $2, %lo(LIT_654)
+    /* 0CDF68 001CDE68 2A00023C */  lui        $2, %hi("@654")
+    /* 0CDF6C 001CDE6C 00C24424 */  addiu      $4, $2, %lo("@654")
     /* 0CDF70 001CDE70 A611040C */  jal        printf
     /* 0CDF74 001CDE74 00000000 */   nop
   .L001CDE78:
@@ -315,8 +315,8 @@ glabel checkArg__FPciPi__2
     /* 0CDF80 001CDE80 00000000 */   nop
   .L001CDE84:
     /* 0CDF84 001CDE84 2826A072 */  paddub     $4, $21, $0
-    /* 0CDF88 001CDE88 2A00023C */  lui        $2, %hi(LIT_655)
-    /* 0CDF8C 001CDE8C 18C24524 */  addiu      $5, $2, %lo(LIT_655)
+    /* 0CDF88 001CDE88 2A00023C */  lui        $2, %hi("@655")
+    /* 0CDF8C 001CDE8C 18C24524 */  addiu      $5, $2, %lo("@655")
     /* 0CDF90 001CDE90 03000624 */  addiu      $6, $0, 0x3
     /* 0CDF94 001CDE94 C60C040C */  jal        memcmp
     /* 0CDF98 001CDE98 00000000 */   nop
@@ -334,8 +334,8 @@ glabel checkArg__FPciPi__2
     /* 0CDFC8 001CDEC8 2000422A */  slti       $2, $18, 0x20
     /* 0CDFCC 001CDECC 05004014 */  bnez       $2, .L001CDEE4
     /* 0CDFD0 001CDED0 00000000 */   nop
-    /* 0CDFD4 001CDED4 2A00023C */  lui        $2, %hi(LIT_654)
-    /* 0CDFD8 001CDED8 00C24424 */  addiu      $4, $2, %lo(LIT_654)
+    /* 0CDFD4 001CDED4 2A00023C */  lui        $2, %hi("@654")
+    /* 0CDFD8 001CDED8 00C24424 */  addiu      $4, $2, %lo("@654")
     /* 0CDFDC 001CDEDC A611040C */  jal        printf
     /* 0CDFE0 001CDEE0 00000000 */   nop
   .L001CDEE4:
@@ -382,8 +382,8 @@ glabel checkArg__FPciPi__2
     /* 0CE074 001CDF74 2000422A */  slti       $2, $18, 0x20
     /* 0CE078 001CDF78 05004014 */  bnez       $2, .L001CDF90
     /* 0CE07C 001CDF7C 00000000 */   nop
-    /* 0CE080 001CDF80 2A00023C */  lui        $2, %hi(LIT_654)
-    /* 0CE084 001CDF84 00C24424 */  addiu      $4, $2, %lo(LIT_654)
+    /* 0CE080 001CDF80 2A00023C */  lui        $2, %hi("@654")
+    /* 0CE084 001CDF84 00C24424 */  addiu      $4, $2, %lo("@654")
     /* 0CE088 001CDF88 A611040C */  jal        printf
     /* 0CE08C 001CDF8C 00000000 */   nop
   .L001CDF90:

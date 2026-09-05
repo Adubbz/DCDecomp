@@ -181,8 +181,8 @@ glabel EdDrawCharacter__FP10CCharacteriiP12CNPCharacterPiiP13ED_EVENT_INFO
     /* 07296C 0017286C 00000000 */   nop
     /* 072970 00172870 C701023C */  lui        $2, %hi(TexManager)
     /* 072974 00172874 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 072978 00172878 2A00023C */  lui        $2, %hi(LIT_435)
-    /* 07297C 0017287C A0A24524 */  addiu      $5, $2, %lo(LIT_435)
+    /* 072978 00172878 2A00023C */  lui        $2, %hi("@435")
+    /* 07297C 0017287C A0A24524 */  addiu      $5, $2, %lo("@435")
     /* 072980 00172880 FFFF0624 */  addiu      $6, $0, -0x1
     /* 072984 00172884 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 072988 00172888 00000000 */   nop

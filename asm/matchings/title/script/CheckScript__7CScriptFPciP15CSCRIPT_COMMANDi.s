@@ -23,8 +23,8 @@ glabel CheckScript__7CScriptFPciP15CSCRIPT_COMMANDi
     /* 00044C 01DAC14C 1A00012E */  sltiu      $1, $16, 0x1A
     /* 000450 01DAC150 B6022010 */  beqz       $1, .L01DACC2C
     /* 000454 01DAC154 00000000 */   nop
-    /* 000458 01DAC158 DE01023C */  lui        $2, %hi(LIT_336__3)
-    /* 00045C 01DAC15C C0BE4324 */  addiu      $3, $2, %lo(LIT_336__3)
+    /* 000458 01DAC158 DE01023C */  lui        $2, %hi("@336__3")
+    /* 00045C 01DAC15C C0BE4324 */  addiu      $3, $2, %lo("@336__3")
     /* 000460 01DAC160 80101000 */  sll        $2, $16, 2
     /* 000464 01DAC164 21104300 */  addu       $2, $2, $3
     /* 000468 01DAC168 0000428C */  lw         $2, 0x0($2)

@@ -41,8 +41,8 @@ glabel checkCollision__FPfPfPfif
     /* 0AB8C8 001AB7C8 0001222A */  slti       $2, $17, 0x100
     /* 0AB8CC 001AB7CC 06004014 */  bnez       $2, .L001AB7E8
     /* 0AB8D0 001AB7D0 00000000 */   nop
-    /* 0AB8D4 001AB7D4 2A00023C */  lui        $2, %hi(LIT_604)
-    /* 0AB8D8 001AB7D8 C0B44424 */  addiu      $4, $2, %lo(LIT_604)
+    /* 0AB8D4 001AB7D4 2A00023C */  lui        $2, %hi("@604")
+    /* 0AB8D8 001AB7D8 C0B44424 */  addiu      $4, $2, %lo("@604")
     /* 0AB8DC 001AB7DC 282E2072 */  paddub     $5, $17, $0
     /* 0AB8E0 001AB7E0 A611040C */  jal        printf
     /* 0AB8E4 001AB7E4 00000000 */   nop
@@ -68,8 +68,8 @@ glabel checkCollision__FPfPfPfif
     /* 0AB930 001AB830 0C86040C */  jal        sceVu0CopyVector
     /* 0AB934 001AB834 00000000 */   nop
     /* 0AB938 001AB838 789C858F */  lw         $5, -0x6388($28)
-    /* 0AB93C 001AB83C 2700023C */  lui        $2, %hi(LIT_345__4)
-    /* 0AB940 001AB840 E0AF4224 */  addiu      $2, $2, %lo(LIT_345__4)
+    /* 0AB93C 001AB83C 2700023C */  lui        $2, %hi("@345__4")
+    /* 0AB940 001AB840 E0AF4224 */  addiu      $2, $2, %lo("@345__4")
     /* 0AB944 001AB844 E000A427 */  addiu      $4, $29, 0xE0
     /* 0AB948 001AB848 00004378 */  lq         $3, 0x0($2)
     /* 0AB94C 001AB84C 100042DC */  ld         $2, 0x10($2)

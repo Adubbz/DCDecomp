@@ -52,15 +52,15 @@ glabel MainChara_Effect__FP14BT_SHOT_EFFECTPUii
     /* 00E5E0 01DBA2E0 00000000 */   nop
     /* 00E5E4 01DBA2E4 07004014 */  bnez       $2, .L01DBA304
     /* 00E5E8 01DBA2E8 00000000 */   nop
-    /* 00E5EC 01DBA2EC DC01023C */  lui        $2, %hi(LIT_5159)
-    /* 00E5F0 01DBA2F0 30314424 */  addiu      $4, $2, %lo(LIT_5159)
+    /* 00E5EC 01DBA2EC DC01023C */  lui        $2, %hi("@5159")
+    /* 00E5F0 01DBA2F0 30314424 */  addiu      $4, $2, %lo("@5159")
     /* 00E5F4 01DBA2F4 A611040C */  jal        printf
     /* 00E5F8 01DBA2F8 00000000 */   nop
     /* 00E5FC 01DBA2FC 05000010 */  b          .L01DBA314
     /* 00E600 01DBA300 00000000 */   nop
   .L01DBA304:
-    /* 00E604 01DBA304 DC01023C */  lui        $2, %hi(LIT_5160)
-    /* 00E608 01DBA308 50314424 */  addiu      $4, $2, %lo(LIT_5160)
+    /* 00E604 01DBA304 DC01023C */  lui        $2, %hi("@5160")
+    /* 00E608 01DBA308 50314424 */  addiu      $4, $2, %lo("@5160")
     /* 00E60C 01DBA30C A611040C */  jal        printf
     /* 00E610 01DBA310 00000000 */   nop
   .L01DBA314:

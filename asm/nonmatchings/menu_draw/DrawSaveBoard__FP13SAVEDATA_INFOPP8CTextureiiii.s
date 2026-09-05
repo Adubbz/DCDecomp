@@ -65,8 +65,8 @@ glabel DrawSaveBoard__FP13SAVEDATA_INFOPP8CTextureiiii
     /* 122C88 00222B88 00000000 */   nop
     /* 122C8C 00222B8C 5400F026 */  addiu      $16, $23, 0x54
     /* 122C90 00222B90 08009126 */  addiu      $17, $20, 0x8
-    /* 122C94 00222B94 2900023C */  lui        $2, %hi(LIT_3139)
-    /* 122C98 00222B98 50404224 */  addiu      $2, $2, %lo(LIT_3139)
+    /* 122C94 00222B94 2900023C */  lui        $2, %hi("@3139")
+    /* 122C98 00222B98 50404224 */  addiu      $2, $2, %lo("@3139")
     /* 122C9C 00222B9C 7001A327 */  addiu      $3, $29, 0x170
     /* 122CA0 00222BA0 00004278 */  lq         $2, 0x0($2)
     /* 122CA4 00222BA4 0000627C */  sq         $2, 0x0($3)
@@ -181,8 +181,8 @@ glabel DrawSaveBoard__FP13SAVEDATA_INFOPP8CTextureiiii
     /* 122E48 00222D48 D4F2080C */  jal        DrawSaveBoardCharaName2__FiiPsPP8CTexture6spRGBA6spRGBA
     /* 122E4C 00222D4C 00000000 */   nop
   .L00222D50:
-    /* 122E50 00222D50 2900023C */  lui        $2, %hi(LIT_3148)
-    /* 122E54 00222D54 60404224 */  addiu      $2, $2, %lo(LIT_3148)
+    /* 122E50 00222D50 2900023C */  lui        $2, %hi("@3148")
+    /* 122E54 00222D54 60404224 */  addiu      $2, $2, %lo("@3148")
     /* 122E58 00222D58 8001A327 */  addiu      $3, $29, 0x180
     /* 122E5C 00222D5C 00004278 */  lq         $2, 0x0($2)
     /* 122E60 00222D60 0000627C */  sq         $2, 0x0($3)
@@ -470,8 +470,8 @@ glabel DrawSaveBoard__FP13SAVEDATA_INFOPP8CTextureiiii
     /* 1232A0 002231A0 C3FF4014 */  bnez       $2, .L002230B0
     /* 1232A4 002231A4 00000000 */   nop
     /* 1232A8 002231A8 3000A68E */  lw         $6, 0x30($21)
-    /* 1232AC 002231AC 2900023C */  lui        $2, %hi(LIT_3160)
-    /* 1232B0 002231B0 70404524 */  addiu      $5, $2, %lo(LIT_3160)
+    /* 1232AC 002231AC 2900023C */  lui        $2, %hi("@3160")
+    /* 1232B0 002231B0 70404524 */  addiu      $5, $2, %lo("@3160")
     /* 1232B4 002231B4 A001A427 */  addiu      $4, $29, 0x1A0
     /* 1232B8 002231B8 07000324 */  addiu      $3, $0, 0x7
   .L002231BC:

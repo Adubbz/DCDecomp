@@ -11,8 +11,8 @@ glabel MajinBeemProcess__Fv
     /* 0167B0 01DC24B0 2000B17F */  sq         $17, 0x20($29)
     /* 0167B4 01DC24B4 1000B07F */  sq         $16, 0x10($29)
     /* 0167B8 01DC24B8 0000B4E7 */  swc1       $f20, 0x0($29)
-    /* 0167BC 01DC24BC DE01023C */  lui        $2, %hi(LIT_1657)
-    /* 0167C0 01DC24C0 60A94524 */  addiu      $5, $2, %lo(LIT_1657)
+    /* 0167BC 01DC24BC DE01023C */  lui        $2, %hi("@1657")
+    /* 0167C0 01DC24C0 60A94524 */  addiu      $5, $2, %lo("@1657")
     /* 0167C4 01DC24C4 6000A427 */  addiu      $4, $29, 0x60
     /* 0167C8 01DC24C8 02000324 */  addiu      $3, $0, 0x2
   .L01DC24CC:
@@ -82,8 +82,8 @@ glabel MajinBeemProcess__Fv
     /* 0168BC 01DC25BC 8C994224 */  addiu      $2, $2, %lo(Cam__2 + 0xBC)
     /* 0168C0 01DC25C0 21104300 */  addu       $2, $2, $3
     /* 0168C4 01DC25C4 0000448C */  lw         $4, 0x0($2)
-    /* 0168C8 01DC25C8 DE01023C */  lui        $2, %hi(LIT_1735)
-    /* 0168CC 01DC25CC B0F94524 */  addiu      $5, $2, %lo(LIT_1735)
+    /* 0168C8 01DC25C8 DE01023C */  lui        $2, %hi("@1735")
+    /* 0168CC 01DC25CC B0F94524 */  addiu      $5, $2, %lo("@1735")
     /* 0168D0 01DC25D0 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 0168D4 01DC25D4 00000000 */   nop
     /* 0168D8 01DC25D8 0E004010 */  beqz       $2, .L01DC2614

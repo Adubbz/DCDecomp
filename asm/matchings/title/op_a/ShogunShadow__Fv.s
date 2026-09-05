@@ -17,8 +17,8 @@ glabel ShogunShadow__Fv
     /* 00BC08 01DB7908 00000000 */   nop
     /* 00BC0C 01DB790C DF01013C */  lui        $1, %hi(Chara__3 + 0x35CC)
     /* 00BC10 01DB7910 AC34248C */  lw         $4, %lo(Chara__3 + 0x35CC)($1)
-    /* 00BC14 01DB7914 DE01023C */  lui        $2, %hi(LIT_897)
-    /* 00BC18 01DB7918 30DF4524 */  addiu      $5, $2, %lo(LIT_897)
+    /* 00BC14 01DB7914 DE01023C */  lui        $2, %hi("@897")
+    /* 00BC18 01DB7918 30DF4524 */  addiu      $5, $2, %lo("@897")
     /* 00BC1C 01DB791C C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00BC20 01DB7920 00000000 */   nop
     /* 00BC24 01DB7924 28264070 */  paddub     $4, $2, $0
@@ -35,8 +35,8 @@ glabel ShogunShadow__Fv
     /* 00BC50 01DB7950 00000000 */   nop
     /* 00BC54 01DB7954 DF01013C */  lui        $1, %hi(Chara__3 + 0x35CC)
     /* 00BC58 01DB7958 AC34248C */  lw         $4, %lo(Chara__3 + 0x35CC)($1)
-    /* 00BC5C 01DB795C DE01023C */  lui        $2, %hi(LIT_898)
-    /* 00BC60 01DB7960 38DF4524 */  addiu      $5, $2, %lo(LIT_898)
+    /* 00BC5C 01DB795C DE01023C */  lui        $2, %hi("@898")
+    /* 00BC60 01DB7960 38DF4524 */  addiu      $5, $2, %lo("@898")
     /* 00BC64 01DB7964 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00BC68 01DB7968 00000000 */   nop
     /* 00BC6C 01DB796C 28264070 */  paddub     $4, $2, $0

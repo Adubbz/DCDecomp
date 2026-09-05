@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_692__3
+glabel "@692__3"
     /* 19F260 0029F160 60CB2200 */ .word .L0022CB60
     /* 19F264 0029F164 DCCB2200 */ .word .L0022CBDC
     /* 19F268 0029F168 38CC2200 */ .word .L0022CC38
@@ -688,8 +688,8 @@ glabel InitMenuMesSet__FiPs
     /* 12CC38 0022CB38 0800212E */  sltiu      $1, $17, 0x8
     /* 12CC3C 0022CB3C D0002010 */  beqz       $1, .L0022CE80
     /* 12CC40 0022CB40 00000000 */   nop
-    /* 12CC44 0022CB44 2A00033C */  lui        $3, %hi(LIT_692__3)
-    /* 12CC48 0022CB48 60F16424 */  addiu      $4, $3, %lo(LIT_692__3)
+    /* 12CC44 0022CB44 2A00033C */  lui        $3, %hi("@692__3")
+    /* 12CC48 0022CB48 60F16424 */  addiu      $4, $3, %lo("@692__3")
     /* 12CC4C 0022CB4C 80181100 */  sll        $3, $17, 2
     /* 12CC50 0022CB50 21186400 */  addu       $3, $3, $4
     /* 12CC54 0022CB54 0000638C */  lw         $3, 0x0($3)

@@ -36,15 +36,15 @@ glabel WeaponMenuCheckElemValue__FP11WEAPON_HAVEP11WEAPON_HAVE
     /* 0FC1C0 001FC0C0 00000000 */   nop
   .L001FC0C4:
     /* 0FC1C4 001FC0C4 16000582 */  lb         $5, 0x16($16)
-    /* 0FC1C8 001FC0C8 2A00023C */  lui        $2, %hi(LIT_2339__2)
-    /* 0FC1CC 001FC0CC 90D84424 */  addiu      $4, $2, %lo(LIT_2339__2)
+    /* 0FC1C8 001FC0C8 2A00023C */  lui        $2, %hi("@2339__2")
+    /* 0FC1CC 001FC0CC 90D84424 */  addiu      $4, $2, %lo("@2339__2")
     /* 0FC1D0 001FC0D0 A611040C */  jal        printf
     /* 0FC1D4 001FC0D4 00000000 */   nop
     /* 0FC1D8 001FC0D8 16000282 */  lb         $2, 0x16($16)
     /* 0FC1DC 001FC0DC 21105000 */  addu       $2, $2, $16
     /* 0FC1E0 001FC0E0 17004580 */  lb         $5, 0x17($2)
-    /* 0FC1E4 001FC0E4 2A00023C */  lui        $2, %hi(LIT_2340__2)
-    /* 0FC1E8 001FC0E8 B0D84424 */  addiu      $4, $2, %lo(LIT_2340__2)
+    /* 0FC1E4 001FC0E4 2A00023C */  lui        $2, %hi("@2340__2")
+    /* 0FC1E8 001FC0E8 B0D84424 */  addiu      $4, $2, %lo("@2340__2")
     /* 0FC1EC 001FC0EC A611040C */  jal        printf
     /* 0FC1F0 001FC0F0 00000000 */   nop
     /* 0FC1F4 001FC0F4 1000BF7B */  lq         $31, 0x10($29)

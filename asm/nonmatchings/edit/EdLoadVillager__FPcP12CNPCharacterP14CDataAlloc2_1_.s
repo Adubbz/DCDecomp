@@ -26,8 +26,8 @@ glabel EdLoadVillager__FPcP12CNPCharacterP14CDataAlloc2_1_
     /* 0863D4 001862D4 F4DD050C */  jal        GetEditDataDir__FPc
     /* 0863D8 001862D8 00000000 */   nop
     /* 0863DC 001862DC 4000A427 */  addiu      $4, $29, 0x40
-    /* 0863E0 001862E0 2A00023C */  lui        $2, %hi(LIT_1026)
-    /* 0863E4 001862E4 A8B04524 */  addiu      $5, $2, %lo(LIT_1026)
+    /* 0863E0 001862E0 2A00023C */  lui        $2, %hi("@1026")
+    /* 0863E4 001862E4 A8B04524 */  addiu      $5, $2, %lo("@1026")
     /* 0863E8 001862E8 8000A627 */  addiu      $6, $29, 0x80
     /* 0863EC 001862EC 283E4072 */  paddub     $7, $18, $0
     /* 0863F0 001862F0 1614040C */  jal        sprintf

@@ -22,8 +22,8 @@ glabel WaterProcess__Fv
     /* 0175DC 01DC32DC 2C00A2AF */  sw         $2, 0x2C($29)
     /* 0175E0 01DC32E0 C701023C */  lui        $2, %hi(TexManager)
     /* 0175E4 01DC32E4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0175E8 01DC32E8 DE01023C */  lui        $2, %hi(LIT_1793)
-    /* 0175EC 01DC32EC C8F94524 */  addiu      $5, $2, %lo(LIT_1793)
+    /* 0175E8 01DC32E8 DE01023C */  lui        $2, %hi("@1793")
+    /* 0175EC 01DC32EC C8F94524 */  addiu      $5, $2, %lo("@1793")
     /* 0175F0 01DC32F0 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0175F4 01DC32F4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0175F8 01DC32F8 00000000 */   nop

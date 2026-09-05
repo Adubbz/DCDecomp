@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_3075
+glabel "@3075"
     /* 19C030 0029BF30 70B21C00 */ .word .L001CB270
     /* 19C034 0029BF34 28B31C00 */ .word .L001CB328
     /* 19C038 0029BF38 CCB31C00 */ .word .L001CB3CC
@@ -29,8 +29,8 @@ glabel SetCharaDoor__11CDungeonMapFi
     /* 0CB348 001CB248 0600A12C */  sltiu      $1, $5, 0x6
     /* 0CB34C 001CB24C FF002010 */  beqz       $1, .L001CB64C
     /* 0CB350 001CB250 00000000 */   nop
-    /* 0CB354 001CB254 2A00023C */  lui        $2, %hi(LIT_3075)
-    /* 0CB358 001CB258 30BF4324 */  addiu      $3, $2, %lo(LIT_3075)
+    /* 0CB354 001CB254 2A00023C */  lui        $2, %hi("@3075")
+    /* 0CB358 001CB258 30BF4324 */  addiu      $3, $2, %lo("@3075")
     /* 0CB35C 001CB25C 80100500 */  sll        $2, $5, 2
     /* 0CB360 001CB260 21104300 */  addu       $2, $2, $3
     /* 0CB364 001CB264 0000428C */  lw         $2, 0x0($2)

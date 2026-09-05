@@ -18,8 +18,8 @@ glabel MenuTextureDelete__FPi
     /* 12D258 0022D158 70584424 */  addiu      $4, $2, %lo(TexManager)
     /* 12D25C 0022D15C C0CD040C */  jal        DeleteTextureBlock__15CTextureManagerFi
     /* 12D260 0022D160 00000000 */   nop
-    /* 12D264 0022D164 2A00023C */  lui        $2, %hi(LIT_728__6)
-    /* 12D268 0022D168 80F14424 */  addiu      $4, $2, %lo(LIT_728__6)
+    /* 12D264 0022D164 2A00023C */  lui        $2, %hi("@728__6")
+    /* 12D268 0022D168 80F14424 */  addiu      $4, $2, %lo("@728__6")
     /* 12D26C 0022D16C 0000258E */  lw         $5, 0x0($17)
     /* 12D270 0022D170 A611040C */  jal        printf
     /* 12D274 0022D174 00000000 */   nop

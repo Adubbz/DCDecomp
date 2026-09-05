@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_5137
+glabel "@5137"
     /* 017410 01DC3110 88A0DB01 */ .word .L01DBA088
     /* 017414 01DC3114 98A0DB01 */ .word .L01DBA098
     /* 017418 01DC3118 A8A0DB01 */ .word .L01DBA0A8
@@ -23,8 +23,8 @@ glabel Get_Main_EffectPtr__Fii
     /* 00E360 01DBA060 0600812C */  sltiu      $1, $4, 0x6
     /* 00E364 01DBA064 6E002010 */  beqz       $1, .L01DBA220
     /* 00E368 01DBA068 00000000 */   nop
-    /* 00E36C 01DBA06C DC01023C */  lui        $2, %hi(LIT_5137)
-    /* 00E370 01DBA070 10314324 */  addiu      $3, $2, %lo(LIT_5137)
+    /* 00E36C 01DBA06C DC01023C */  lui        $2, %hi("@5137")
+    /* 00E370 01DBA070 10314324 */  addiu      $3, $2, %lo("@5137")
     /* 00E374 01DBA074 80100400 */  sll        $2, $4, 2
     /* 00E378 01DBA078 21104300 */  addu       $2, $2, $3
     /* 00E37C 01DBA07C 0000428C */  lw         $2, 0x0($2)

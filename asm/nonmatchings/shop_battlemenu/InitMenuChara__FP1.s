@@ -10,8 +10,8 @@ glabel InitMenuChara__FP1
     /* 0F73EC 001F72EC 28868070 */  paddub     $16, $4, $0
     /* 0F73F0 001F72F0 30FB040C */  jal        StartReadBG__Fv
     /* 0F73F4 001F72F4 00000000 */   nop
-    /* 0F73F8 001F72F8 2A00023C */  lui        $2, %hi(LIT_1348)
-    /* 0F73FC 001F72FC 48D74424 */  addiu      $4, $2, %lo(LIT_1348)
+    /* 0F73F8 001F72F8 2A00023C */  lui        $2, %hi("@1348")
+    /* 0F73FC 001F72FC 48D74424 */  addiu      $4, $2, %lo("@1348")
     /* 0F7400 001F7300 282E0072 */  paddub     $5, $16, $0
     /* 0F7404 001F7304 ACAE080C */  jal        LoadFileBGMenuData__FPcP1
     /* 0F7408 001F7308 00000000 */   nop

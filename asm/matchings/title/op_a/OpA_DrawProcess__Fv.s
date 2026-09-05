@@ -285,8 +285,8 @@ glabel OpA_DrawProcess__Fv
     /* 00A0CC 01DB5DCC 70F64524 */  addiu      $5, $2, %lo(lcolor$404)
     /* 00A0D0 01DB5DD0 08B7040C */  jal        MGSetPLight__FPA4_fPA4_f
     /* 00A0D4 01DB5DD4 00000000 */   nop
-    /* 00A0D8 01DB5DD8 DD01023C */  lui        $2, %hi(LIT_421__5)
-    /* 00A0DC 01DB5DDC 50664224 */  addiu      $2, $2, %lo(LIT_421__5)
+    /* 00A0D8 01DB5DD8 DD01023C */  lui        $2, %hi("@421__5")
+    /* 00A0DC 01DB5DDC 50664224 */  addiu      $2, $2, %lo("@421__5")
     /* 00A0E0 01DB5DE0 7000A327 */  addiu      $3, $29, 0x70
     /* 00A0E4 01DB5DE4 00004278 */  lq         $2, 0x0($2)
     /* 00A0E8 01DB5DE8 0000627C */  sq         $2, 0x0($3)
@@ -791,8 +791,8 @@ glabel OpA_DrawProcess__Fv
     /* 00A838 01DB6538 288E4070 */  paddub     $17, $2, $0
     /* 00A83C 01DB653C C701023C */  lui        $2, %hi(TexManager)
     /* 00A840 01DB6540 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 00A844 01DB6544 DE01023C */  lui        $2, %hi(LIT_654__5)
-    /* 00A848 01DB6548 B0DD4524 */  addiu      $5, $2, %lo(LIT_654__5)
+    /* 00A844 01DB6544 DE01023C */  lui        $2, %hi("@654__5")
+    /* 00A848 01DB6548 B0DD4524 */  addiu      $5, $2, %lo("@654__5")
     /* 00A84C 01DB654C FFFF0624 */  addiu      $6, $0, -0x1
     /* 00A850 01DB6550 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 00A854 01DB6554 00000000 */   nop

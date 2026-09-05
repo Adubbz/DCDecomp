@@ -15,8 +15,8 @@ glabel EffectSeireiKing__Ff
     /* 01AF90 01DC6C90 8C994224 */  addiu      $2, $2, %lo(Cam__2 + 0xBC)
     /* 01AF94 01DC6C94 21104300 */  addu       $2, $2, $3
     /* 01AF98 01DC6C98 0000448C */  lw         $4, 0x0($2)
-    /* 01AF9C 01DC6C9C DE01023C */  lui        $2, %hi(LIT_986__4)
-    /* 01AFA0 01DC6CA0 18FE4524 */  addiu      $5, $2, %lo(LIT_986__4)
+    /* 01AF9C 01DC6C9C DE01023C */  lui        $2, %hi("@986__4")
+    /* 01AFA0 01DC6CA0 18FE4524 */  addiu      $5, $2, %lo("@986__4")
     /* 01AFA4 01DC6CA4 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 01AFA8 01DC6CA8 00000000 */   nop
     /* 01AFAC 01DC6CAC 28264070 */  paddub     $4, $2, $0

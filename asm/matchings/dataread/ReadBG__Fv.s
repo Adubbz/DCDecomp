@@ -77,8 +77,8 @@ glabel ReadBG__Fv
     /* 03EEE0 0013EDE0 00000000 */   nop
     /* 03EEE4 0013EDE4 09004010 */  beqz       $2, .L0013EE0C
     /* 03EEE8 0013EDE8 00000000 */   nop
-    /* 03EEEC 0013EDEC 2A00023C */  lui        $2, %hi(LIT_284)
-    /* 03EEF0 0013EDF0 B8904424 */  addiu      $4, $2, %lo(LIT_284)
+    /* 03EEEC 0013EDEC 2A00023C */  lui        $2, %hi("@284")
+    /* 03EEF0 0013EDF0 B8904424 */  addiu      $4, $2, %lo("@284")
     /* 03EEF4 0013EDF4 0C000526 */  addiu      $5, $16, 0xC
     /* 03EEF8 0013EDF8 A611040C */  jal        printf
     /* 03EEFC 0013EDFC 00000000 */   nop

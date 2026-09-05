@@ -628,8 +628,8 @@ static void (*CommandExe[9])(void **) = {
     CommandBOUND,
 };
 
-INCLUDE_RODATA("asm/nonmatchings/dataread", LIT_254);
-INCLUDE_RODATA("asm/nonmatchings/dataread", LIT_255);
+INCLUDE_RODATA("asm/nonmatchings/dataread", @254);
+INCLUDE_RODATA("asm/nonmatchings/dataread", @255);
 
 INCLUDE_ASM("asm/nonmatchings/dataread", InitCloth__FP9CFrameVu1R9input_strP14CDataAlloc2_1_);
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandSIZE__FPPv);

@@ -20,8 +20,8 @@ glabel CreateVUdataFromMDT__10CVisualVu1FPUiPUiii
     /* 035BD4 00135AD4 01000224 */  addiu      $2, $0, 0x1
     /* 035BD8 00135AD8 B000A2AF */  sw         $2, 0xB0($29)
     /* 035BDC 00135ADC 288E0070 */  paddub     $17, $0, $0
-    /* 035BE0 00135AE0 2500023C */  lui        $2, %hi(LIT_264)
-    /* 035BE4 00135AE4 C00E4224 */  addiu      $2, $2, %lo(LIT_264)
+    /* 035BE0 00135AE0 2500023C */  lui        $2, %hi("@264")
+    /* 035BE4 00135AE4 C00E4224 */  addiu      $2, $2, %lo("@264")
     /* 035BE8 00135AE8 3001A327 */  addiu      $3, $29, 0x130
     /* 035BEC 00135AEC 00004278 */  lq         $2, 0x0($2)
     /* 035BF0 00135AF0 0000627C */  sq         $2, 0x0($3)

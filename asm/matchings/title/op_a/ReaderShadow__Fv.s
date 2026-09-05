@@ -14,8 +14,8 @@ glabel ReaderShadow__Fv
     /* 00BA7C 01DB777C 00000000 */   nop
     /* 00BA80 01DB7780 DF01013C */  lui        $1, %hi(Chara__3 + 0x6ADC)
     /* 00BA84 01DB7784 BC69248C */  lw         $4, %lo(Chara__3 + 0x6ADC)($1)
-    /* 00BA88 01DB7788 DE01023C */  lui        $2, %hi(LIT_885__3)
-    /* 00BA8C 01DB778C 10DF4524 */  addiu      $5, $2, %lo(LIT_885__3)
+    /* 00BA88 01DB7788 DE01023C */  lui        $2, %hi("@885__3")
+    /* 00BA8C 01DB778C 10DF4524 */  addiu      $5, $2, %lo("@885__3")
     /* 00BA90 01DB7790 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00BA94 01DB7794 00000000 */   nop
     /* 00BA98 01DB7798 28264070 */  paddub     $4, $2, $0
@@ -32,8 +32,8 @@ glabel ReaderShadow__Fv
   .L01DB77C4:
     /* 00BAC4 01DB77C4 DF01013C */  lui        $1, %hi(Chara__3 + 0x6ADC)
     /* 00BAC8 01DB77C8 BC69248C */  lw         $4, %lo(Chara__3 + 0x6ADC)($1)
-    /* 00BACC 01DB77CC DE01023C */  lui        $2, %hi(LIT_886__5)
-    /* 00BAD0 01DB77D0 18DF4524 */  addiu      $5, $2, %lo(LIT_886__5)
+    /* 00BACC 01DB77CC DE01023C */  lui        $2, %hi("@886__5")
+    /* 00BAD0 01DB77D0 18DF4524 */  addiu      $5, $2, %lo("@886__5")
     /* 00BAD4 01DB77D4 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00BAD8 01DB77D8 00000000 */   nop
     /* 00BADC 01DB77DC 28264070 */  paddub     $4, $2, $0

@@ -17,8 +17,8 @@ glabel Draw_Fire__14CWeaponElementFv
     /* 0BA428 001BA328 28AE8070 */  paddub     $21, $4, $0
     /* 0BA42C 001BA32C C701023C */  lui        $2, %hi(TexManager)
     /* 0BA430 001BA330 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0BA434 001BA334 2A00023C */  lui        $2, %hi(LIT_1182)
-    /* 0BA438 001BA338 88BC4524 */  addiu      $5, $2, %lo(LIT_1182)
+    /* 0BA434 001BA334 2A00023C */  lui        $2, %hi("@1182")
+    /* 0BA438 001BA338 88BC4524 */  addiu      $5, $2, %lo("@1182")
     /* 0BA43C 001BA33C FFFF0624 */  addiu      $6, $0, -0x1
     /* 0BA440 001BA340 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0BA444 001BA344 00000000 */   nop

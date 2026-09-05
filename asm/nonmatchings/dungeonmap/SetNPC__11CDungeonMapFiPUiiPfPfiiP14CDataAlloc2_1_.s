@@ -88,8 +88,8 @@ glabel SetNPC__11CDungeonMapFiPUiiPfPfiiP14CDataAlloc2_1_
     /* 0C1E34 001C1D34 4000A826 */  addiu      $8, $21, 0x40
     /* 0C1E38 001C1D38 28262072 */  paddub     $4, $17, $0
     /* 0C1E3C 001C1D3C 282EE072 */  paddub     $5, $23, $0
-    /* 0C1E40 001C1D40 2A00023C */  lui        $2, %hi(LIT_1007__2)
-    /* 0C1E44 001C1D44 F8BD4624 */  addiu      $6, $2, %lo(LIT_1007__2)
+    /* 0C1E40 001C1D40 2A00023C */  lui        $2, %hi("@1007__2")
+    /* 0C1E44 001C1D44 F8BD4624 */  addiu      $6, $2, %lo("@1007__2")
     /* 0C1E48 001C1D48 3001A78F */  lw         $7, 0x130($29)
     /* 0C1E4C 001C1D4C 284EE070 */  paddub     $9, $7, $0
     /* 0C1E50 001C1D50 28560070 */  paddub     $10, $0, $0
@@ -103,8 +103,8 @@ glabel SetNPC__11CDungeonMapFiPUiiPfPfiiP14CDataAlloc2_1_
     /* 0C1E70 001C1D70 0000228E */  lw         $2, 0x0($17)
     /* 0C1E74 001C1D74 05004014 */  bnez       $2, .L001C1D8C
     /* 0C1E78 001C1D78 00000000 */   nop
-    /* 0C1E7C 001C1D7C 2A00023C */  lui        $2, %hi(LIT_1008)
-    /* 0C1E80 001C1D80 10BE4424 */  addiu      $4, $2, %lo(LIT_1008)
+    /* 0C1E7C 001C1D7C 2A00023C */  lui        $2, %hi("@1008")
+    /* 0C1E80 001C1D80 10BE4424 */  addiu      $4, $2, %lo("@1008")
     /* 0C1E84 001C1D84 A611040C */  jal        printf
     /* 0C1E88 001C1D88 00000000 */   nop
   .L001C1D8C:

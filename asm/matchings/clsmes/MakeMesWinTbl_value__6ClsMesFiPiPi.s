@@ -32,8 +32,8 @@ glabel MakeMesWinTbl_value__6ClsMesFiPiPi
     /* 04EA90 0014E990 0800C018 */  blez       $6, .L0014E9B4
     /* 04EA94 0014E994 00000000 */   nop
     /* 04EA98 0014E998 6000A427 */  addiu      $4, $29, 0x60
-    /* 04EA9C 0014E99C 2A00023C */  lui        $2, %hi(LIT_821)
-    /* 04EAA0 0014E9A0 689A4524 */  addiu      $5, $2, %lo(LIT_821)
+    /* 04EA9C 0014E99C 2A00023C */  lui        $2, %hi("@821")
+    /* 04EAA0 0014E9A0 689A4524 */  addiu      $5, $2, %lo("@821")
     /* 04EAA4 0014E9A4 1614040C */  jal        sprintf
     /* 04EAA8 0014E9A8 00000000 */   nop
     /* 04EAAC 0014E9AC 09000010 */  b          .L0014E9D4
@@ -42,8 +42,8 @@ glabel MakeMesWinTbl_value__6ClsMesFiPiPi
     /* 04EAB4 0014E9B4 80100500 */  sll        $2, $5, 2
     /* 04EAB8 0014E9B8 21185400 */  addu       $3, $2, $20
     /* 04EABC 0014E9BC 6000A427 */  addiu      $4, $29, 0x60
-    /* 04EAC0 0014E9C0 2A00023C */  lui        $2, %hi(LIT_822)
-    /* 04EAC4 0014E9C4 709A4524 */  addiu      $5, $2, %lo(LIT_822)
+    /* 04EAC0 0014E9C0 2A00023C */  lui        $2, %hi("@822")
+    /* 04EAC4 0014E9C4 709A4524 */  addiu      $5, $2, %lo("@822")
     /* 04EAC8 0014E9C8 0817668C */  lw         $6, 0x1708($3)
     /* 04EACC 0014E9CC 1614040C */  jal        sprintf
     /* 04EAD0 0014E9D0 00000000 */   nop

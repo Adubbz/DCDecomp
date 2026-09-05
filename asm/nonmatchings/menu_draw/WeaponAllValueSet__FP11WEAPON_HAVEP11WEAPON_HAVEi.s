@@ -97,8 +97,8 @@ glabel WeaponAllValueSet__FP11WEAPON_HAVEP11WEAPON_HAVEi
     /* 125DB0 00225CB0 B83D080C */  jal        CheckWeaponOptionStatus__Fi
     /* 125DB4 00225CB4 00000000 */   nop
     /* 125DB8 00225CB8 EE00A2A6 */  sh         $2, 0xEE($21)
-    /* 125DBC 00225CBC 2900023C */  lui        $2, %hi(LIT_657__4)
-    /* 125DC0 00225CC0 70414224 */  addiu      $2, $2, %lo(LIT_657__4)
+    /* 125DBC 00225CBC 2900023C */  lui        $2, %hi("@657__4")
+    /* 125DC0 00225CC0 70414224 */  addiu      $2, $2, %lo("@657__4")
     /* 125DC4 00225CC4 C000A327 */  addiu      $3, $29, 0xC0
     /* 125DC8 00225CC8 00004278 */  lq         $2, 0x0($2)
     /* 125DCC 00225CCC 0000627C */  sq         $2, 0x0($3)

@@ -58,8 +58,8 @@ glabel DrawMesWin__6ClsMesFv
     /* 0534D4 001533D4 00000000 */   nop
     /* 0534D8 001533D8 C701023C */  lui        $2, %hi(TexManager)
     /* 0534DC 001533DC 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0534E0 001533E0 2A00023C */  lui        $2, %hi(LIT_1556)
-    /* 0534E4 001533E4 789A4524 */  addiu      $5, $2, %lo(LIT_1556)
+    /* 0534E0 001533E0 2A00023C */  lui        $2, %hi("@1556")
+    /* 0534E4 001533E4 789A4524 */  addiu      $5, $2, %lo("@1556")
     /* 0534E8 001533E8 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0534EC 001533EC B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0534F0 001533F0 00000000 */   nop
@@ -185,8 +185,8 @@ glabel DrawMesWin__6ClsMesFv
     /* 0536C0 001535C0 00000000 */   nop
     /* 0536C4 001535C4 C701023C */  lui        $2, %hi(TexManager)
     /* 0536C8 001535C8 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0536CC 001535CC 2A00023C */  lui        $2, %hi(LIT_2094)
-    /* 0536D0 001535D0 789B4524 */  addiu      $5, $2, %lo(LIT_2094)
+    /* 0536CC 001535CC 2A00023C */  lui        $2, %hi("@2094")
+    /* 0536D0 001535D0 789B4524 */  addiu      $5, $2, %lo("@2094")
     /* 0536D4 001535D4 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0536D8 001535D8 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0536DC 001535DC 00000000 */   nop
@@ -204,8 +204,8 @@ glabel DrawMesWin__6ClsMesFv
     /* 053708 00153608 2826A072 */  paddub     $4, $21, $0
     /* 05370C 0015360C E038050C */  jal        MyTextureMake__6ClsMesFv
     /* 053710 00153610 00000000 */   nop
-    /* 053714 00153614 2500023C */  lui        $2, %hi(LIT_1959)
-    /* 053718 00153618 20404224 */  addiu      $2, $2, %lo(LIT_1959)
+    /* 053714 00153614 2500023C */  lui        $2, %hi("@1959")
+    /* 053718 00153618 20404224 */  addiu      $2, $2, %lo("@1959")
     /* 05371C 0015361C A000A327 */  addiu      $3, $29, 0xA0
     /* 053720 00153620 00004278 */  lq         $2, 0x0($2)
     /* 053724 00153624 0000627C */  sq         $2, 0x0($3)
@@ -235,8 +235,8 @@ glabel DrawMesWin__6ClsMesFv
     /* 053784 00153684 00000000 */   nop
     /* 053788 00153688 C701023C */  lui        $2, %hi(TexManager)
     /* 05378C 0015368C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 053790 00153690 2A00023C */  lui        $2, %hi(LIT_2095)
-    /* 053794 00153694 889B4524 */  addiu      $5, $2, %lo(LIT_2095)
+    /* 053790 00153690 2A00023C */  lui        $2, %hi("@2095")
+    /* 053794 00153694 889B4524 */  addiu      $5, $2, %lo("@2095")
     /* 053798 00153698 FFFF0624 */  addiu      $6, $0, -0x1
     /* 05379C 0015369C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0537A0 001536A0 00000000 */   nop
@@ -283,8 +283,8 @@ glabel DrawMesWin__6ClsMesFv
     /* 053834 00153734 B416A2AE */  sw         $2, 0x16B4($21)
     /* 053838 00153738 C701023C */  lui        $2, %hi(TexManager)
     /* 05383C 0015373C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 053840 00153740 2A00023C */  lui        $2, %hi(LIT_2096)
-    /* 053844 00153744 989B4524 */  addiu      $5, $2, %lo(LIT_2096)
+    /* 053840 00153740 2A00023C */  lui        $2, %hi("@2096")
+    /* 053844 00153744 989B4524 */  addiu      $5, $2, %lo("@2096")
     /* 053848 00153748 FFFF0624 */  addiu      $6, $0, -0x1
     /* 05384C 0015374C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 053850 00153750 00000000 */   nop
@@ -652,8 +652,8 @@ glabel DrawMesWin__6ClsMesFv
     /* 053D98 00153C98 00000000 */   nop
     /* 053D9C 00153C9C C701023C */  lui        $2, %hi(TexManager)
     /* 053DA0 00153CA0 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 053DA4 00153CA4 2A00023C */  lui        $2, %hi(LIT_2097)
-    /* 053DA8 00153CA8 A09B4524 */  addiu      $5, $2, %lo(LIT_2097)
+    /* 053DA4 00153CA4 2A00023C */  lui        $2, %hi("@2097")
+    /* 053DA8 00153CA8 A09B4524 */  addiu      $5, $2, %lo("@2097")
     /* 053DAC 00153CAC FFFF0624 */  addiu      $6, $0, -0x1
     /* 053DB0 00153CB0 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 053DB4 00153CB4 00000000 */   nop
@@ -706,8 +706,8 @@ glabel DrawMesWin__6ClsMesFv
     /* 053E64 00153D64 00000000 */   nop
     /* 053E68 00153D68 C701023C */  lui        $2, %hi(TexManager)
     /* 053E6C 00153D6C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 053E70 00153D70 2A00023C */  lui        $2, %hi(LIT_2097)
-    /* 053E74 00153D74 A09B4524 */  addiu      $5, $2, %lo(LIT_2097)
+    /* 053E70 00153D70 2A00023C */  lui        $2, %hi("@2097")
+    /* 053E74 00153D74 A09B4524 */  addiu      $5, $2, %lo("@2097")
     /* 053E78 00153D78 FFFF0624 */  addiu      $6, $0, -0x1
     /* 053E7C 00153D7C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 053E80 00153D80 00000000 */   nop
@@ -760,8 +760,8 @@ glabel DrawMesWin__6ClsMesFv
     /* 053F30 00153E30 00000000 */   nop
     /* 053F34 00153E34 C701023C */  lui        $2, %hi(TexManager)
     /* 053F38 00153E38 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 053F3C 00153E3C 2A00023C */  lui        $2, %hi(LIT_2096)
-    /* 053F40 00153E40 989B4524 */  addiu      $5, $2, %lo(LIT_2096)
+    /* 053F3C 00153E3C 2A00023C */  lui        $2, %hi("@2096")
+    /* 053F40 00153E40 989B4524 */  addiu      $5, $2, %lo("@2096")
     /* 053F44 00153E44 FFFF0624 */  addiu      $6, $0, -0x1
     /* 053F48 00153E48 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 053F4C 00153E4C 00000000 */   nop

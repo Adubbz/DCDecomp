@@ -13,8 +13,8 @@ glabel EquipReAttach__FP10CCharacteri
     /* 00D8A8 01DB95A8 00000000 */   nop
     /* 00D8AC 01DB95AC EA01013C */  lui        $1, %hi(CharaHand + 0xBC)
     /* 00D8B0 01DB95B0 8C2F248C */  lw         $4, %lo(CharaHand + 0xBC)($1)
-    /* 00D8B4 01DB95B4 DC01023C */  lui        $2, %hi(LIT_4979)
-    /* 00D8B8 01DB95B8 D8304524 */  addiu      $5, $2, %lo(LIT_4979)
+    /* 00D8B4 01DB95B4 DC01023C */  lui        $2, %hi("@4979")
+    /* 00D8B8 01DB95B8 D8304524 */  addiu      $5, $2, %lo("@4979")
     /* 00D8BC 01DB95BC C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00D8C0 01DB95C0 00000000 */   nop
     /* 00D8C4 01DB95C4 07000010 */  b          .L01DB95E4
@@ -22,8 +22,8 @@ glabel EquipReAttach__FP10CCharacteri
   .L01DB95CC:
     /* 00D8CC 01DB95CC EA01013C */  lui        $1, %hi(CharaMain + 0xBC)
     /* 00D8D0 01DB95D0 DC1D248C */  lw         $4, %lo(CharaMain + 0xBC)($1)
-    /* 00D8D4 01DB95D4 DC01023C */  lui        $2, %hi(LIT_4980)
-    /* 00D8D8 01DB95D8 E0304524 */  addiu      $5, $2, %lo(LIT_4980)
+    /* 00D8D4 01DB95D4 DC01023C */  lui        $2, %hi("@4980")
+    /* 00D8D8 01DB95D8 E0304524 */  addiu      $5, $2, %lo("@4980")
     /* 00D8DC 01DB95DC C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00D8E0 01DB95E0 00000000 */   nop
   .L01DB95E4:

@@ -678,8 +678,8 @@ glabel OpC_DrawProcess__Fv
     /* 01522C 01DC0F2C 00000000 */   nop
     /* 015230 01DC0F30 C701023C */  lui        $2, %hi(TexManager)
     /* 015234 01DC0F34 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 015238 01DC0F38 DE01023C */  lui        $2, %hi(LIT_1557__4)
-    /* 01523C 01DC0F3C 38F94524 */  addiu      $5, $2, %lo(LIT_1557__4)
+    /* 015238 01DC0F38 DE01023C */  lui        $2, %hi("@1557__4")
+    /* 01523C 01DC0F3C 38F94524 */  addiu      $5, $2, %lo("@1557__4")
     /* 015240 01DC0F40 FFFF0624 */  addiu      $6, $0, -0x1
     /* 015244 01DC0F44 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 015248 01DC0F48 00000000 */   nop
@@ -856,8 +856,8 @@ glabel OpC_DrawProcess__Fv
     /* 0154C8 01DC11C8 00000000 */   nop
     /* 0154CC 01DC11CC C701023C */  lui        $2, %hi(TexManager)
     /* 0154D0 01DC11D0 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0154D4 01DC11D4 DE01023C */  lui        $2, %hi(LIT_1557__4)
-    /* 0154D8 01DC11D8 38F94524 */  addiu      $5, $2, %lo(LIT_1557__4)
+    /* 0154D4 01DC11D4 DE01023C */  lui        $2, %hi("@1557__4")
+    /* 0154D8 01DC11D8 38F94524 */  addiu      $5, $2, %lo("@1557__4")
     /* 0154DC 01DC11DC FFFF0624 */  addiu      $6, $0, -0x1
     /* 0154E0 01DC11E0 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0154E4 01DC11E4 00000000 */   nop

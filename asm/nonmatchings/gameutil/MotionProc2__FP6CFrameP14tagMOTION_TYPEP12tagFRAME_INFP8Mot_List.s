@@ -65,8 +65,8 @@ glabel MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List
     /* 048A44 00148944 B90BA12C */  sltiu      $1, $5, 0xBB9
     /* 048A48 00148948 06002014 */  bnez       $1, .L00148964
     /* 048A4C 0014894C 00000000 */   nop
-    /* 048A50 00148950 2A00023C */  lui        $2, %hi(LIT_414__4)
-    /* 048A54 00148954 409A4424 */  addiu      $4, $2, %lo(LIT_414__4)
+    /* 048A50 00148950 2A00023C */  lui        $2, %hi("@414__4")
+    /* 048A54 00148954 409A4424 */  addiu      $4, $2, %lo("@414__4")
     /* 048A58 00148958 B80B0624 */  addiu      $6, $0, 0xBB8
     /* 048A5C 0014895C A611040C */  jal        printf
     /* 048A60 00148960 00000000 */   nop

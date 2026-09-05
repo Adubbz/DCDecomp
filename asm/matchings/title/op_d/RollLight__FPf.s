@@ -28,8 +28,8 @@ glabel RollLight__FPf
     /* 01AC44 01DC6944 8C994224 */  addiu      $2, $2, %lo(Cam__2 + 0xBC)
     /* 01AC48 01DC6948 21104300 */  addu       $2, $2, $3
     /* 01AC4C 01DC694C 0000448C */  lw         $4, 0x0($2)
-    /* 01AC50 01DC6950 DE01023C */  lui        $2, %hi(LIT_986__4)
-    /* 01AC54 01DC6954 18FE4524 */  addiu      $5, $2, %lo(LIT_986__4)
+    /* 01AC50 01DC6950 DE01023C */  lui        $2, %hi("@986__4")
+    /* 01AC54 01DC6954 18FE4524 */  addiu      $5, $2, %lo("@986__4")
     /* 01AC58 01DC6958 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 01AC5C 01DC695C 00000000 */   nop
     /* 01AC60 01DC6960 07000010 */  b          .L01DC6980
@@ -37,8 +37,8 @@ glabel RollLight__FPf
   .L01DC6968:
     /* 01AC68 01DC6968 E001013C */  lui        $1, %hi(Chara__3 + 0xC34C)
     /* 01AC6C 01DC696C 2CC2248C */  lw         $4, %lo(Chara__3 + 0xC34C)($1)
-    /* 01AC70 01DC6970 DE01023C */  lui        $2, %hi(LIT_964)
-    /* 01AC74 01DC6974 10FE4524 */  addiu      $5, $2, %lo(LIT_964)
+    /* 01AC70 01DC6970 DE01023C */  lui        $2, %hi("@964")
+    /* 01AC74 01DC6974 10FE4524 */  addiu      $5, $2, %lo("@964")
     /* 01AC78 01DC6978 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 01AC7C 01DC697C 00000000 */   nop
   .L01DC6980:

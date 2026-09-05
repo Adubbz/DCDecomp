@@ -18,8 +18,8 @@ glabel WaterProcess__Fv__2
     /* 01F34C 01DCB04C 2C00A2AF */  sw         $2, 0x2C($29)
     /* 01F350 01DCB050 C701023C */  lui        $2, %hi(TexManager)
     /* 01F354 01DCB054 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01F358 01DCB058 DE01023C */  lui        $2, %hi(LIT_824)
-    /* 01F35C 01DCB05C A0FF4524 */  addiu      $5, $2, %lo(LIT_824)
+    /* 01F358 01DCB058 DE01023C */  lui        $2, %hi("@824")
+    /* 01F35C 01DCB05C A0FF4524 */  addiu      $5, $2, %lo("@824")
     /* 01F360 01DCB060 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01F364 01DCB064 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01F368 01DCB068 00000000 */   nop
@@ -49,8 +49,8 @@ glabel WaterProcess__Fv__2
     /* 01F3C8 01DCB0C8 01000224 */  addiu      $2, $0, 0x1
     /* 01F3CC 01DCB0CC 30006214 */  bne        $3, $2, .L01DCB190
     /* 01F3D0 01DCB0D0 00000000 */   nop
-    /* 01F3D4 01DCB0D4 DE01023C */  lui        $2, %hi(LIT_820__3)
-    /* 01F3D8 01DCB0D8 80B14224 */  addiu      $2, $2, %lo(LIT_820__3)
+    /* 01F3D4 01DCB0D4 DE01023C */  lui        $2, %hi("@820__3")
+    /* 01F3D8 01DCB0D8 80B14224 */  addiu      $2, $2, %lo("@820__3")
     /* 01F3DC 01DCB0DC 3000A527 */  addiu      $5, $29, 0x30
     /* 01F3E0 01DCB0E0 00004278 */  lq         $2, 0x0($2)
     /* 01F3E4 01DCB0E4 0000A27C */  sq         $2, 0x0($5)

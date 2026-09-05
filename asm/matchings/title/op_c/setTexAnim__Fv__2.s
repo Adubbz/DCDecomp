@@ -54,16 +54,16 @@ glabel setTexAnim__Fv__2
     /* 017E84 01DC3B84 789A82AF */  sw         $2, -0x6588($28)
     /* 017E88 01DC3B88 C701023C */  lui        $2, %hi(TexManager)
     /* 017E8C 01DC3B8C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 017E90 01DC3B90 DE01023C */  lui        $2, %hi(LIT_1873)
-    /* 017E94 01DC3B94 E8F94524 */  addiu      $5, $2, %lo(LIT_1873)
+    /* 017E90 01DC3B90 DE01023C */  lui        $2, %hi("@1873")
+    /* 017E94 01DC3B94 E8F94524 */  addiu      $5, $2, %lo("@1873")
     /* 017E98 01DC3B98 FFFF0624 */  addiu      $6, $0, -0x1
     /* 017E9C 01DC3B9C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 017EA0 01DC3BA0 00000000 */   nop
     /* 017EA4 01DC3BA4 28864070 */  paddub     $16, $2, $0
     /* 017EA8 01DC3BA8 C701023C */  lui        $2, %hi(TexManager)
     /* 017EAC 01DC3BAC 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 017EB0 01DC3BB0 DE01023C */  lui        $2, %hi(LIT_1874)
-    /* 017EB4 01DC3BB4 F0F94524 */  addiu      $5, $2, %lo(LIT_1874)
+    /* 017EB0 01DC3BB0 DE01023C */  lui        $2, %hi("@1874")
+    /* 017EB4 01DC3BB4 F0F94524 */  addiu      $5, $2, %lo("@1874")
     /* 017EB8 01DC3BB8 FFFF0624 */  addiu      $6, $0, -0x1
     /* 017EBC 01DC3BBC B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 017EC0 01DC3BC0 00000000 */   nop

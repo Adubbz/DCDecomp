@@ -5,8 +5,8 @@
 
 glabel NameRegistCodeJtoE__Fi
     /* 04CB60 0014CA60 B0FEBD27 */  addiu      $29, $29, -0x150
-    /* 04CB64 0014CA64 2500023C */  lui        $2, %hi(LIT_363)
-    /* 04CB68 0014CA68 D03D4724 */  addiu      $7, $2, %lo(LIT_363)
+    /* 04CB64 0014CA64 2500023C */  lui        $2, %hi("@363")
+    /* 04CB68 0014CA68 D03D4724 */  addiu      $7, $2, %lo("@363")
     /* 04CB6C 0014CA6C 0000A627 */  addiu      $6, $29, 0x0
     /* 04CB70 0014CA70 0A000524 */  addiu      $5, $0, 0xA
   .L0014CA74:

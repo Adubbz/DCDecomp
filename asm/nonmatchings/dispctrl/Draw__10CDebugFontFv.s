@@ -25,8 +25,8 @@ glabel Draw__10CDebugFontFv
     /* 03E088 0013DF88 1C00B126 */  addiu      $17, $21, 0x1C
     /* 03E08C 0013DF8C C701023C */  lui        $2, %hi(TexManager)
     /* 03E090 0013DF90 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 03E094 0013DF94 2A00023C */  lui        $2, %hi(LIT_230)
-    /* 03E098 0013DF98 68904524 */  addiu      $5, $2, %lo(LIT_230)
+    /* 03E094 0013DF94 2A00023C */  lui        $2, %hi("@230")
+    /* 03E098 0013DF98 68904524 */  addiu      $5, $2, %lo("@230")
     /* 03E09C 0013DF9C FFFF0624 */  addiu      $6, $0, -0x1
     /* 03E0A0 0013DFA0 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 03E0A4 0013DFA4 00000000 */   nop

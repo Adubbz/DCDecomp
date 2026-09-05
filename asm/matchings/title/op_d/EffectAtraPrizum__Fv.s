@@ -105,8 +105,8 @@ glabel EffectAtraPrizum__Fv
     /* 01A9B8 01DC66B8 00000000 */   nop
     /* 01A9BC 01DC66BC E001013C */  lui        $1, %hi(Chara__3 + 0xC34C)
     /* 01A9C0 01DC66C0 2CC2248C */  lw         $4, %lo(Chara__3 + 0xC34C)($1)
-    /* 01A9C4 01DC66C4 DE01023C */  lui        $2, %hi(LIT_964)
-    /* 01A9C8 01DC66C8 10FE4524 */  addiu      $5, $2, %lo(LIT_964)
+    /* 01A9C4 01DC66C4 DE01023C */  lui        $2, %hi("@964")
+    /* 01A9C8 01DC66C8 10FE4524 */  addiu      $5, $2, %lo("@964")
     /* 01A9CC 01DC66CC C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 01A9D0 01DC66D0 00000000 */   nop
     /* 01A9D4 01DC66D4 28864070 */  paddub     $16, $2, $0

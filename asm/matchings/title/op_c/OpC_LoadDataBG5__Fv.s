@@ -12,8 +12,8 @@ glabel OpC_LoadDataBG5__Fv
     /* 0102F0 01DBBFF0 FDFF4014 */  bnez       $2, .L01DBBFE8
     /* 0102F4 01DBBFF4 00000000 */   nop
     /* 0102F8 01DBBFF8 948B858F */  lw         $5, -0x746C($28)
-    /* 0102FC 01DBBFFC DE01023C */  lui        $2, %hi(LIT_387__5)
-    /* 010300 01DBC000 30EC4424 */  addiu      $4, $2, %lo(LIT_387__5)
+    /* 0102FC 01DBBFFC DE01023C */  lui        $2, %hi("@387__5")
+    /* 010300 01DBC000 30EC4424 */  addiu      $4, $2, %lo("@387__5")
     /* 010304 01DBC004 28360070 */  paddub     $6, $0, $0
     /* 010308 01DBC008 ACFA040C */  jal        LoadFileBG__FPcP1Pi
     /* 01030C 01DBC00C 00000000 */   nop

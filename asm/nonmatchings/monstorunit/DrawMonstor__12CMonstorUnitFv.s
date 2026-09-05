@@ -13,8 +13,8 @@ glabel DrawMonstor__12CMonstorUnitFv
     /* 0D8DE8 001D8CE8 1000B17F */  sq         $17, 0x10($29)
     /* 0D8DEC 001D8CEC 0000B07F */  sq         $16, 0x0($29)
     /* 0D8DF0 001D8CF0 28968070 */  paddub     $18, $4, $0
-    /* 0D8DF4 001D8CF4 2900023C */  lui        $2, %hi(LIT_798)
-    /* 0D8DF8 001D8CF8 00184224 */  addiu      $2, $2, %lo(LIT_798)
+    /* 0D8DF4 001D8CF4 2900023C */  lui        $2, %hi("@798")
+    /* 0D8DF8 001D8CF8 00184224 */  addiu      $2, $2, %lo("@798")
     /* 0D8DFC 001D8CFC 7000A327 */  addiu      $3, $29, 0x70
     /* 0D8E00 001D8D00 00004278 */  lq         $2, 0x0($2)
     /* 0D8E04 001D8D04 0000627C */  sq         $2, 0x0($3)

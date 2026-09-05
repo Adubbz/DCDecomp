@@ -132,8 +132,6 @@ def normalize_sym(sym):
     A symbol has to be a file name, so the characters a C++ mangling carries
     that a path cannot are folded to '_'.
     """
-    if sym.startswith("@"):
-        sym = sym.replace("@", "LIT_")
     sym = sym.replace(",", "_").replace("<", "_").replace(">", "_")
     return LOCAL_STATIC_SUFFIX.sub("_", sym)
 
@@ -607,6 +605,31 @@ def globalize_shared_labels(texts):
     return out, len(shared)
 
 
+# Retail and MWCC call compiler-invented constants `@<n>`, but spimdisasm
+# rewrites the leading `@` to `LIT_`. Restore the original spelling and quote
+# it so GNU as does not interpret `@` as syntax.
+INVENTED_MENTION = re.compile(r"\bLIT_(\d+(?:__\d+)?)\b")
+
+
+def restore_invented_names(text):
+    """Restore quoted retail names for compiler-invented constants."""
+    return INVENTED_MENTION.sub(r'"@\1"', text)
+
+
+def restore_invented_names_in_parts(root="asm"):
+    """Restore invented names in residual dumps excluded from label passes."""
+    changed = 0
+    for path in sorted(Path(root).rglob("*.s")):
+        if "parts" not in path.parts:
+            continue
+        text = path.read_text(encoding="utf-8")
+        restored = restore_invented_names(text)
+        if restored != text:
+            path.write_text(restored, encoding="utf-8")
+            changed += 1
+    return changed
+
+
 def fix_branches(root):
     """Apply every label pass to the assembly splat wrote.
 
@@ -623,8 +646,10 @@ def fix_branches(root):
     texts, shared = globalize_shared_labels(original)
     for path, text in texts.items():
         text = restore_gp_relative_relocations(path, text, symbols, image_of)
-        texts[path] = twin_branched_labels(
-            localize_alt_labels(globalize_addressed_labels(text))
+        texts[path] = restore_invented_names(
+            twin_branched_labels(
+                localize_alt_labels(globalize_addressed_labels(text))
+            )
         )
 
     changed = 0
@@ -917,6 +942,7 @@ def main():
         print(f"disassemble: aligned the constants in {aligned} file(s)")
     removed = drop_redundant_dumps()
     changed, shared = fix_branches("asm")
+    changed += restore_invented_names_in_parts()
     if removed:
         print(f"disassemble: dropped {removed} duplicate per-unit section dump(s)")
     print(

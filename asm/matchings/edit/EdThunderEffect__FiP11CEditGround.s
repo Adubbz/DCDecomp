@@ -23,8 +23,8 @@ glabel EdThunderEffect__FiP11CEditGround
     /* 0724AC 001723AC 07000012 */  beqz       $16, .L001723CC
     /* 0724B0 001723B0 00000000 */   nop
     /* 0724B4 001723B4 28260072 */  paddub     $4, $16, $0
-    /* 0724B8 001723B8 2A00023C */  lui        $2, %hi(LIT_582)
-    /* 0724BC 001723BC 98A24524 */  addiu      $5, $2, %lo(LIT_582)
+    /* 0724B8 001723B8 2A00023C */  lui        $2, %hi("@582")
+    /* 0724BC 001723BC 98A24524 */  addiu      $5, $2, %lo("@582")
     /* 0724C0 001723C0 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 0724C4 001723C4 00000000 */   nop
     /* 0724C8 001723C8 28864070 */  paddub     $16, $2, $0

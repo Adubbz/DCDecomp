@@ -65,8 +65,8 @@ glabel ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P14CDataAl
     /* 039EF0 00139DF0 00000000 */   nop
     /* 039EF4 00139DF4 08004014 */  bnez       $2, .L00139E18
     /* 039EF8 00139DF8 00000000 */   nop
-    /* 039EFC 00139DFC 2A00023C */  lui        $2, %hi(LIT_775)
-    /* 039F00 00139E00 48904424 */  addiu      $4, $2, %lo(LIT_775)
+    /* 039EFC 00139DFC 2A00023C */  lui        $2, %hi("@775")
+    /* 039F00 00139E00 48904424 */  addiu      $4, $2, %lo("@775")
     /* 039F04 00139E04 282E0072 */  paddub     $5, $16, $0
     /* 039F08 00139E08 A611040C */  jal        printf
     /* 039F0C 00139E0C 00000000 */   nop
@@ -135,8 +135,8 @@ glabel ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P14CDataAl
     /* 039FF8 00139EF8 2500023C */  lui        $2, %hi(Command)
     /* 039FFC 00139EFC 600F4224 */  addiu      $2, $2, %lo(Command)
     /* 03A000 00139F00 21184300 */  addu       $3, $2, $3
-    /* 03A004 00139F04 2A00023C */  lui        $2, %hi(LIT_776)
-    /* 03A008 00139F08 58904424 */  addiu      $4, $2, %lo(LIT_776)
+    /* 03A004 00139F04 2A00023C */  lui        $2, %hi("@776")
+    /* 03A008 00139F08 58904424 */  addiu      $4, $2, %lo("@776")
     /* 03A00C 00139F0C 0000658C */  lw         $5, 0x0($3)
     /* 03A010 00139F10 A611040C */  jal        printf
     /* 03A014 00139F14 00000000 */   nop

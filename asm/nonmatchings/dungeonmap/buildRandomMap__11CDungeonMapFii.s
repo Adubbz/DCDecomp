@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_3191
+glabel "@3191"
     /* 19C070 0029BF70 B8BF1C00 */ .word .L001CBFB8
     /* 19C074 0029BF74 10C01C00 */ .word .L001CC010
     /* 19C078 0029BF78 C8BF1C00 */ .word .L001CBFC8
@@ -648,8 +648,8 @@ glabel buildRandomMap__11CDungeonMapFii
     /* 0CC090 001CBF90 0700812C */  sltiu      $1, $4, 0x7
     /* 0CC094 001CBF94 1E002010 */  beqz       $1, .L001CC010
     /* 0CC098 001CBF98 00000000 */   nop
-    /* 0CC09C 001CBF9C 2A00023C */  lui        $2, %hi(LIT_3191)
-    /* 0CC0A0 001CBFA0 70BF4324 */  addiu      $3, $2, %lo(LIT_3191)
+    /* 0CC09C 001CBF9C 2A00023C */  lui        $2, %hi("@3191")
+    /* 0CC0A0 001CBFA0 70BF4324 */  addiu      $3, $2, %lo("@3191")
     /* 0CC0A4 001CBFA4 80100400 */  sll        $2, $4, 2
     /* 0CC0A8 001CBFA8 21104300 */  addu       $2, $2, $3
     /* 0CC0AC 001CBFAC 0000428C */  lw         $2, 0x0($2)
@@ -703,8 +703,8 @@ glabel buildRandomMap__11CDungeonMapFii
     /* 0CC150 001CC050 030B0046 */  div.s      $f12, $f1, $f0
     /* 0CC154 001CC054 2C44040C */  jal        fptosi
     /* 0CC158 001CC058 00000000 */   nop
-    /* 0CC15C 001CC05C 2800033C */  lui        $3, %hi(LIT_3162)
-    /* 0CC160 001CC060 90A06524 */  addiu      $5, $3, %lo(LIT_3162)
+    /* 0CC15C 001CC05C 2800033C */  lui        $3, %hi("@3162")
+    /* 0CC160 001CC060 90A06524 */  addiu      $5, $3, %lo("@3162")
     /* 0CC164 001CC064 A000A427 */  addiu      $4, $29, 0xA0
     /* 0CC168 001CC068 0000A3DC */  ld         $3, 0x0($5)
     /* 0CC16C 001CC06C 0800A0C4 */  lwc1       $f0, 0x8($5)
@@ -726,8 +726,8 @@ glabel buildRandomMap__11CDungeonMapFii
     /* 0CC1A0 001CC0A0 2826A072 */  paddub     $4, $21, $0
     /* 0CC1A4 001CC0A4 9028070C */  jal        SetUnderLoad__11CDungeonMapFv
     /* 0CC1A8 001CC0A8 00000000 */   nop
-    /* 0CC1AC 001CC0AC 2A00023C */  lui        $2, %hi(LIT_3190)
-    /* 0CC1B0 001CC0B0 50BF4424 */  addiu      $4, $2, %lo(LIT_3190)
+    /* 0CC1AC 001CC0AC 2A00023C */  lui        $2, %hi("@3190")
+    /* 0CC1B0 001CC0B0 50BF4424 */  addiu      $4, $2, %lo("@3190")
     /* 0CC1B4 001CC0B4 A611040C */  jal        printf
     /* 0CC1B8 001CC0B8 00000000 */   nop
     /* 0CC1BC 001CC0BC 9000BF7B */  lq         $31, 0x90($29)

@@ -16,8 +16,8 @@ glabel ext__10CRunScriptFP12RS_STACKDATAi
     /* 13DE24 0023DD24 07004014 */  bnez       $2, .L0023DD44
     /* 13DE28 0023DD28 00000000 */   nop
   .L0023DD2C:
-    /* 13DE2C 0023DD2C 2A00023C */  lui        $2, %hi(LIT_79)
-    /* 13DE30 0023DD30 40F84424 */  addiu      $4, $2, %lo(LIT_79)
+    /* 13DE2C 0023DD2C 2A00023C */  lui        $2, %hi("@79")
+    /* 13DE30 0023DD30 40F84424 */  addiu      $4, $2, %lo("@79")
     /* 13DE34 0023DD34 A611040C */  jal        printf
     /* 13DE38 0023DD38 00000000 */   nop
     /* 13DE3C 0023DD3C 18000010 */  b          .L0023DDA0
@@ -29,8 +29,8 @@ glabel ext__10CRunScriptFP12RS_STACKDATAi
     /* 13DE50 0023DD50 0000428C */  lw         $2, 0x0($2)
     /* 13DE54 0023DD54 07004014 */  bnez       $2, .L0023DD74
     /* 13DE58 0023DD58 00000000 */   nop
-    /* 13DE5C 0023DD5C 2A00023C */  lui        $2, %hi(LIT_79)
-    /* 13DE60 0023DD60 40F84424 */  addiu      $4, $2, %lo(LIT_79)
+    /* 13DE5C 0023DD5C 2A00023C */  lui        $2, %hi("@79")
+    /* 13DE60 0023DD60 40F84424 */  addiu      $4, $2, %lo("@79")
     /* 13DE64 0023DD64 A611040C */  jal        printf
     /* 13DE68 0023DD68 00000000 */   nop
     /* 13DE6C 0023DD6C 0C000010 */  b          .L0023DDA0
@@ -42,8 +42,8 @@ glabel ext__10CRunScriptFP12RS_STACKDATAi
     /* 13DE80 0023DD80 00000000 */   nop
     /* 13DE84 0023DD84 06004014 */  bnez       $2, .L0023DDA0
     /* 13DE88 0023DD88 00000000 */   nop
-    /* 13DE8C 0023DD8C 2A00023C */  lui        $2, %hi(LIT_80)
-    /* 13DE90 0023DD90 60F84424 */  addiu      $4, $2, %lo(LIT_80)
+    /* 13DE8C 0023DD8C 2A00023C */  lui        $2, %hi("@80")
+    /* 13DE90 0023DD90 60F84424 */  addiu      $4, $2, %lo("@80")
     /* 13DE94 0023DD94 0400058E */  lw         $5, 0x4($16)
     /* 13DE98 0023DD98 A611040C */  jal        printf
     /* 13DE9C 0023DD9C 00000000 */   nop

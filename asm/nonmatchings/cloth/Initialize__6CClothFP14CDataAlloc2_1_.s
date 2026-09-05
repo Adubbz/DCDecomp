@@ -58,8 +58,8 @@ glabel Initialize__6CClothFP14CDataAlloc2_1_
     /* 03CDB4 0013CCB4 1F000010 */  b          .L0013CD34
     /* 03CDB8 0013CCB8 00000000 */   nop
   .L0013CCBC:
-    /* 03CDBC 0013CCBC 2500023C */  lui        $2, %hi(LIT_482)
-    /* 03CDC0 0013CCC0 40154224 */  addiu      $2, $2, %lo(LIT_482)
+    /* 03CDBC 0013CCBC 2500023C */  lui        $2, %hi("@482")
+    /* 03CDC0 0013CCC0 40154224 */  addiu      $2, $2, %lo("@482")
     /* 03CDC4 0013CCC4 8000A527 */  addiu      $5, $29, 0x80
     /* 03CDC8 0013CCC8 00004278 */  lq         $2, 0x0($2)
     /* 03CDCC 0013CCCC 0000A27C */  sq         $2, 0x0($5)
@@ -132,8 +132,8 @@ glabel Initialize__6CClothFP14CDataAlloc2_1_
     /* 03CEC0 0013CDC0 2A182302 */  slt        $3, $17, $3
     /* 03CEC4 0013CDC4 E7FF6014 */  bnez       $3, .L0013CD64
     /* 03CEC8 0013CDC8 00000000 */   nop
-    /* 03CECC 0013CDCC 2500033C */  lui        $3, %hi(LIT_497)
-    /* 03CED0 0013CDD0 50156324 */  addiu      $3, $3, %lo(LIT_497)
+    /* 03CECC 0013CDCC 2500033C */  lui        $3, %hi("@497")
+    /* 03CED0 0013CDD0 50156324 */  addiu      $3, $3, %lo("@497")
     /* 03CED4 0013CDD4 9000A427 */  addiu      $4, $29, 0x90
     /* 03CED8 0013CDD8 00006378 */  lq         $3, 0x0($3)
     /* 03CEDC 0013CDDC 0000837C */  sq         $3, 0x0($4)

@@ -90,8 +90,8 @@ glabel LoadPTS__FP9CMapPartsPUiP14MAP_PARTS_INFOP13OBJ_ANIME_SEQP16EDIT_EFFECT_I
     /* 082AE8 001829E8 4F000010 */  b          .L00182B28
     /* 082AEC 001829EC 00000000 */   nop
   .L001829F0:
-    /* 082AF0 001829F0 2700023C */  lui        $2, %hi(LIT_3104)
-    /* 082AF4 001829F4 F0984524 */  addiu      $5, $2, %lo(LIT_3104)
+    /* 082AF0 001829F0 2700023C */  lui        $2, %hi("@3104")
+    /* 082AF4 001829F4 F0984524 */  addiu      $5, $2, %lo("@3104")
     /* 082AF8 001829F8 B000A427 */  addiu      $4, $29, 0xB0
     /* 082AFC 001829FC 02000324 */  addiu      $3, $0, 0x2
   .L00182A00:
@@ -473,8 +473,8 @@ glabel LoadPTS__FP9CMapPartsPUiP14MAP_PARTS_INFOP13OBJ_ANIME_SEQP16EDIT_EFFECT_I
     /* 083060 00182F60 2A104202 */  slt        $2, $18, $2
     /* 083064 00182F64 8EFF4014 */  bnez       $2, .L00182DA0
     /* 083068 00182F68 00000000 */   nop
-    /* 08306C 00182F6C 2700023C */  lui        $2, %hi(LIT_3166)
-    /* 083070 00182F70 20994224 */  addiu      $2, $2, %lo(LIT_3166)
+    /* 08306C 00182F6C 2700023C */  lui        $2, %hi("@3166")
+    /* 083070 00182F70 20994224 */  addiu      $2, $2, %lo("@3166")
     /* 083074 00182F74 5001A527 */  addiu      $5, $29, 0x150
     /* 083078 00182F78 00004278 */  lq         $2, 0x0($2)
     /* 08307C 00182F7C 0000A27C */  sq         $2, 0x0($5)

@@ -89,8 +89,8 @@ glabel BattleActionPlay_Ozumond__Fi
     /* 01212C 01DBDE2C 00000000 */   nop
     /* 012130 01DBDE30 009D828F */  lw         $2, -0x6300($28)
     /* 012134 01DBDE34 BC00448C */  lw         $4, 0xBC($2)
-    /* 012138 01DBDE38 DC01023C */  lui        $2, %hi(LIT_4408)
-    /* 01213C 01DBDE3C 982F4524 */  addiu      $5, $2, %lo(LIT_4408)
+    /* 012138 01DBDE38 DC01023C */  lui        $2, %hi("@4408")
+    /* 01213C 01DBDE3C 982F4524 */  addiu      $5, $2, %lo("@4408")
     /* 012140 01DBDE40 4000A627 */  addiu      $6, $29, 0x40
     /* 012144 01DBDE44 CCDB060C */  jal        getFramePos__FP9CFrameVu1PcPf
     /* 012148 01DBDE48 00000000 */   nop
@@ -171,8 +171,8 @@ glabel BattleActionPlay_Ozumond__Fi
     /* 012264 01DBDF64 00000000 */   nop
     /* 012268 01DBDF68 009D828F */  lw         $2, -0x6300($28)
     /* 01226C 01DBDF6C BC00448C */  lw         $4, 0xBC($2)
-    /* 012270 01DBDF70 DC01023C */  lui        $2, %hi(LIT_4408)
-    /* 012274 01DBDF74 982F4524 */  addiu      $5, $2, %lo(LIT_4408)
+    /* 012270 01DBDF70 DC01023C */  lui        $2, %hi("@4408")
+    /* 012274 01DBDF74 982F4524 */  addiu      $5, $2, %lo("@4408")
     /* 012278 01DBDF78 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 01227C 01DBDF7C 00000000 */   nop
     /* 012280 01DBDF80 FC9C848F */  lw         $4, -0x6304($28)

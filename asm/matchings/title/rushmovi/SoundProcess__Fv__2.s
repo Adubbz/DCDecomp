@@ -104,8 +104,8 @@ glabel SoundProcess__Fv__2
     /* 01E620 01DCA320 ACC44224 */  addiu      $2, $2, %lo(Cam + 0xBC)
     /* 01E624 01DCA324 21104600 */  addu       $2, $2, $6
     /* 01E628 01DCA328 0000448C */  lw         $4, 0x0($2)
-    /* 01E62C 01DCA32C DE01023C */  lui        $2, %hi(LIT_450__4)
-    /* 01E630 01DCA330 A0FE4524 */  addiu      $5, $2, %lo(LIT_450__4)
+    /* 01E62C 01DCA32C DE01023C */  lui        $2, %hi("@450__4")
+    /* 01E630 01DCA330 A0FE4524 */  addiu      $5, $2, %lo("@450__4")
     /* 01E634 01DCA334 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 01E638 01DCA338 00000000 */   nop
     /* 01E63C 01DCA33C 13004010 */  beqz       $2, .L01DCA38C
@@ -195,8 +195,8 @@ glabel SoundProcess__Fv__2
     /* 01E774 01DCA474 ACC44224 */  addiu      $2, $2, %lo(Cam + 0xBC)
     /* 01E778 01DCA478 21104300 */  addu       $2, $2, $3
     /* 01E77C 01DCA47C 0000448C */  lw         $4, 0x0($2)
-    /* 01E780 01DCA480 DE01023C */  lui        $2, %hi(LIT_444__4)
-    /* 01E784 01DCA484 70FE4524 */  addiu      $5, $2, %lo(LIT_444__4)
+    /* 01E780 01DCA480 DE01023C */  lui        $2, %hi("@444__4")
+    /* 01E784 01DCA484 70FE4524 */  addiu      $5, $2, %lo("@444__4")
     /* 01E788 01DCA488 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 01E78C 01DCA48C 00000000 */   nop
     /* 01E790 01DCA490 28864070 */  paddub     $16, $2, $0
@@ -252,8 +252,8 @@ glabel SoundProcess__Fv__2
     /* 01E84C 01DCA54C ACC44224 */  addiu      $2, $2, %lo(Cam + 0xBC)
     /* 01E850 01DCA550 21104300 */  addu       $2, $2, $3
     /* 01E854 01DCA554 0000448C */  lw         $4, 0x0($2)
-    /* 01E858 01DCA558 DE01023C */  lui        $2, %hi(LIT_452__3)
-    /* 01E85C 01DCA55C A8FE4524 */  addiu      $5, $2, %lo(LIT_452__3)
+    /* 01E858 01DCA558 DE01023C */  lui        $2, %hi("@452__3")
+    /* 01E85C 01DCA55C A8FE4524 */  addiu      $5, $2, %lo("@452__3")
     /* 01E860 01DCA560 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 01E864 01DCA564 00000000 */   nop
     /* 01E868 01DCA568 28864070 */  paddub     $16, $2, $0
@@ -326,8 +326,8 @@ glabel SoundProcess__Fv__2
     /* 01E964 01DCA664 1000A12C */  sltiu      $1, $5, 0x10
     /* 01E968 01DCA668 0D022010 */  beqz       $1, .L01DCAEA0
     /* 01E96C 01DCA66C 00000000 */   nop
-    /* 01E970 01DCA670 DE01033C */  lui        $3, %hi(LIT_815__3)
-    /* 01E974 01DCA674 60FF6424 */  addiu      $4, $3, %lo(LIT_815__3)
+    /* 01E970 01DCA670 DE01033C */  lui        $3, %hi("@815__3")
+    /* 01E974 01DCA674 60FF6424 */  addiu      $4, $3, %lo("@815__3")
     /* 01E978 01DCA678 80180500 */  sll        $3, $5, 2
     /* 01E97C 01DCA67C 21186400 */  addu       $3, $3, $4
     /* 01E980 01DCA680 0000638C */  lw         $3, 0x0($3)

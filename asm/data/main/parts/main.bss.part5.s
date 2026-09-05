@@ -129,7 +129,7 @@ glabel MainChara
 glabel RunEffect
     /* 01D34460 */ .space 0xD0
 
-glabel LIT_372__2
+glabel "@372__2"
     /* 01D34530 */ .space 0x0C
 
 /* Automatically generated and unreferenced pad */
@@ -139,7 +139,7 @@ glabel D_01D3453C
 glabel MainCamera
     /* 01D34540 */ .space 0x2F0
 
-glabel LIT_373__3
+glabel "@373__3"
     /* 01D34830 */ .space 0x0C
 
 /* Automatically generated and unreferenced pad */
@@ -149,7 +149,7 @@ glabel D_01D3483C
 glabel EditCamera
     /* 01D34840 */ .space 0x2F0
 
-glabel LIT_374__2
+glabel "@374__2"
     /* 01D34B30 */ .space 0x0C
 
 /* Automatically generated and unreferenced pad */
@@ -159,7 +159,7 @@ glabel D_01D34B3C
 glabel IntroCamera
     /* 01D34B40 */ .space 0x2F0
 
-glabel LIT_375__2
+glabel "@375__2"
     /* 01D34E30 */ .space 0x0C
 
 /* Automatically generated and unreferenced pad */
@@ -169,7 +169,7 @@ glabel D_01D34E3C
 glabel TalkCamera
     /* 01D34E40 */ .space 0x2F0
 
-glabel LIT_376__2
+glabel "@376__2"
     /* 01D35130 */ .space 0x0C
 
 /* Automatically generated and unreferenced pad */
@@ -179,7 +179,7 @@ glabel D_01D3513C
 glabel EventCamera
     /* 01D35140 */ .space 0x2F0
 
-glabel LIT_377__2
+glabel "@377__2"
     /* 01D35430 */ .space 0x0C
 
 /* Automatically generated and unreferenced pad */
@@ -341,7 +341,7 @@ glabel D_01D48FA4
 glabel SceneData
     /* 01D48FB0 */ .space 0x11B0
 
-glabel LIT_391__4
+glabel "@391__4"
     /* 01D4A160 */ .space 0x0C
 
 /* Automatically generated and unreferenced pad */
@@ -404,7 +404,7 @@ glabel MotionParts__2
 glabel Water__3
     /* 01D536F0 */ .space 0x3B0
 
-glabel LIT_347__2
+glabel "@347__2"
     /* 01D53AA0 */ .space 0x0C
 
 /* Automatically generated and unreferenced pad */
@@ -414,7 +414,7 @@ glabel D_01D53AAC
 glabel MainCamera__2
     /* 01D53AB0 */ .space 0x2F0
 
-glabel LIT_348__3
+glabel "@348__3"
     /* 01D53DA0 */ .space 0x0C
 
 /* Automatically generated and unreferenced pad */
@@ -424,7 +424,7 @@ glabel D_01D53DAC
 glabel TalkCamera__2
     /* 01D53DB0 */ .space 0x2F0
 
-glabel LIT_349__3
+glabel "@349__3"
     /* 01D540A0 */ .space 0x0C
 
 /* Automatically generated and unreferenced pad */
@@ -434,7 +434,7 @@ glabel D_01D540AC
 glabel EventCamera__2
     /* 01D540B0 */ .space 0x2F0
 
-glabel LIT_350__3
+glabel "@350__3"
     /* 01D543A0 */ .space 0x0C
 
 /* Automatically generated and unreferenced pad */
@@ -444,7 +444,7 @@ glabel D_01D543AC
 glabel ViewCamera__2
     /* 01D543B0 */ .space 0x2C0
 
-glabel LIT_351__2
+glabel "@351__2"
     /* 01D54670 */ .space 0x0C
 
 /* Automatically generated and unreferenced pad */

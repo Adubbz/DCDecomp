@@ -75,8 +75,8 @@ glabel BtLoadMonstor__Fi
     /* 00D730 01DB9430 70584424 */  addiu      $4, $2, %lo(TexManager)
     /* 00D734 01DB9434 98CE040C */  jal        CleanUpTextureList__15CTextureManagerFv
     /* 00D738 01DB9438 00000000 */   nop
-    /* 00D73C 01DB943C DC01023C */  lui        $2, %hi(LIT_4974)
-    /* 00D740 01DB9440 C0304424 */  addiu      $4, $2, %lo(LIT_4974)
+    /* 00D73C 01DB943C DC01023C */  lui        $2, %hi("@4974")
+    /* 00D740 01DB9440 C0304424 */  addiu      $4, $2, %lo("@4974")
     /* 00D744 01DB9444 948B858F */  lw         $5, -0x746C($28)
     /* 00D748 01DB9448 28360070 */  paddub     $6, $0, $0
     /* 00D74C 01DB944C D8FC040C */  jal        LoadFile__FPcPvPi

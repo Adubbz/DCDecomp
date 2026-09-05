@@ -33,8 +33,8 @@ glabel NameEnterDraw__Fv
     /* 139D04 00239C04 00000000 */   nop
     /* 139D08 00239C08 8C004014 */  bnez       $2, .L00239E3C
     /* 139D0C 00239C0C 00000000 */   nop
-    /* 139D10 00239C10 2900023C */  lui        $2, %hi(LIT_664__4)
-    /* 139D14 00239C14 A05A4524 */  addiu      $5, $2, %lo(LIT_664__4)
+    /* 139D10 00239C10 2900023C */  lui        $2, %hi("@664__4")
+    /* 139D14 00239C14 A05A4524 */  addiu      $5, $2, %lo("@664__4")
     /* 139D18 00239C18 6000A427 */  addiu      $4, $29, 0x60
     /* 139D1C 00239C1C 02000324 */  addiu      $3, $0, 0x2
   .L00239C20:
@@ -56,8 +56,8 @@ glabel NameEnterDraw__Fv
     /* 139D5C 00239C5C 00000000 */   nop
     /* 139D60 00239C60 28864070 */  paddub     $16, $2, $0
     /* 139D64 00239C64 8C00448C */  lw         $4, 0x8C($2)
-    /* 139D68 00239C68 2A00023C */  lui        $2, %hi(LIT_781__3)
-    /* 139D6C 00239C6C 10F64524 */  addiu      $5, $2, %lo(LIT_781__3)
+    /* 139D68 00239C68 2A00023C */  lui        $2, %hi("@781__3")
+    /* 139D6C 00239C6C 10F64524 */  addiu      $5, $2, %lo("@781__3")
     /* 139D70 00239C70 28360070 */  paddub     $6, $0, $0
     /* 139D74 00239C74 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 139D78 00239C78 00000000 */   nop
@@ -76,40 +76,40 @@ glabel NameEnterDraw__Fv
     /* 139DAC 00239CAC 00000000 */   nop
     /* 139DB0 00239CB0 C701023C */  lui        $2, %hi(TexManager)
     /* 139DB4 00239CB4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 139DB8 00239CB8 2A00023C */  lui        $2, %hi(LIT_782__3)
-    /* 139DBC 00239CBC 20F64524 */  addiu      $5, $2, %lo(LIT_782__3)
+    /* 139DB8 00239CB8 2A00023C */  lui        $2, %hi("@782__3")
+    /* 139DBC 00239CBC 20F64524 */  addiu      $5, $2, %lo("@782__3")
     /* 139DC0 00239CC0 FFFF0624 */  addiu      $6, $0, -0x1
     /* 139DC4 00239CC4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 139DC8 00239CC8 00000000 */   nop
     /* 139DCC 00239CCC C49782AF */  sw         $2, -0x683C($28)
     /* 139DD0 00239CD0 C701023C */  lui        $2, %hi(TexManager)
     /* 139DD4 00239CD4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 139DD8 00239CD8 2A00023C */  lui        $2, %hi(LIT_783__5)
-    /* 139DDC 00239CDC 30F64524 */  addiu      $5, $2, %lo(LIT_783__5)
+    /* 139DD8 00239CD8 2A00023C */  lui        $2, %hi("@783__5")
+    /* 139DDC 00239CDC 30F64524 */  addiu      $5, $2, %lo("@783__5")
     /* 139DE0 00239CE0 FFFF0624 */  addiu      $6, $0, -0x1
     /* 139DE4 00239CE4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 139DE8 00239CE8 00000000 */   nop
     /* 139DEC 00239CEC C89782AF */  sw         $2, -0x6838($28)
     /* 139DF0 00239CF0 C701023C */  lui        $2, %hi(TexManager)
     /* 139DF4 00239CF4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 139DF8 00239CF8 2A00023C */  lui        $2, %hi(LIT_784__3)
-    /* 139DFC 00239CFC 38F64524 */  addiu      $5, $2, %lo(LIT_784__3)
+    /* 139DF8 00239CF8 2A00023C */  lui        $2, %hi("@784__3")
+    /* 139DFC 00239CFC 38F64524 */  addiu      $5, $2, %lo("@784__3")
     /* 139E00 00239D00 FFFF0624 */  addiu      $6, $0, -0x1
     /* 139E04 00239D04 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 139E08 00239D08 00000000 */   nop
     /* 139E0C 00239D0C CC9782AF */  sw         $2, -0x6834($28)
     /* 139E10 00239D10 C701023C */  lui        $2, %hi(TexManager)
     /* 139E14 00239D14 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 139E18 00239D18 2A00023C */  lui        $2, %hi(LIT_785)
-    /* 139E1C 00239D1C 40F64524 */  addiu      $5, $2, %lo(LIT_785)
+    /* 139E18 00239D18 2A00023C */  lui        $2, %hi("@785")
+    /* 139E1C 00239D1C 40F64524 */  addiu      $5, $2, %lo("@785")
     /* 139E20 00239D20 FFFF0624 */  addiu      $6, $0, -0x1
     /* 139E24 00239D24 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 139E28 00239D28 00000000 */   nop
     /* 139E2C 00239D2C D09782AF */  sw         $2, -0x6830($28)
     /* 139E30 00239D30 C701023C */  lui        $2, %hi(TexManager)
     /* 139E34 00239D34 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 139E38 00239D38 2A00023C */  lui        $2, %hi(LIT_786)
-    /* 139E3C 00239D3C 50F64524 */  addiu      $5, $2, %lo(LIT_786)
+    /* 139E38 00239D38 2A00023C */  lui        $2, %hi("@786")
+    /* 139E3C 00239D3C 50F64524 */  addiu      $5, $2, %lo("@786")
     /* 139E40 00239D40 FFFF0624 */  addiu      $6, $0, -0x1
     /* 139E44 00239D44 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 139E48 00239D48 00000000 */   nop
@@ -118,15 +118,15 @@ glabel NameEnterDraw__Fv
     /* 139E54 00239D54 DB01013C */  lui        $1, %hi(NameSelect + 0x28)
     /* 139E58 00239D58 68BC22A4 */  sh         $2, %lo(NameSelect + 0x28)($1)
     /* 139E5C 00239D5C 8C00048E */  lw         $4, 0x8C($16)
-    /* 139E60 00239D60 2A00023C */  lui        $2, %hi(LIT_787__2)
-    /* 139E64 00239D64 60F64524 */  addiu      $5, $2, %lo(LIT_787__2)
+    /* 139E60 00239D60 2A00023C */  lui        $2, %hi("@787__2")
+    /* 139E64 00239D64 60F64524 */  addiu      $5, $2, %lo("@787__2")
     /* 139E68 00239D68 28360070 */  paddub     $6, $0, $0
     /* 139E6C 00239D6C C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 139E70 00239D70 00000000 */   nop
     /* 139E74 00239D74 288E4070 */  paddub     $17, $2, $0
     /* 139E78 00239D78 8C00048E */  lw         $4, 0x8C($16)
-    /* 139E7C 00239D7C 2A00023C */  lui        $2, %hi(LIT_788__2)
-    /* 139E80 00239D80 70F64524 */  addiu      $5, $2, %lo(LIT_788__2)
+    /* 139E7C 00239D7C 2A00023C */  lui        $2, %hi("@788__2")
+    /* 139E80 00239D80 70F64524 */  addiu      $5, $2, %lo("@788__2")
     /* 139E84 00239D84 28360070 */  paddub     $6, $0, $0
     /* 139E88 00239D88 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 139E8C 00239D8C 00000000 */   nop
@@ -140,8 +140,8 @@ glabel NameEnterDraw__Fv
     /* 139EAC 00239DAC 282E0072 */  paddub     $5, $16, $0
     /* 139EB0 00239DB0 8036050C */  jal        SetBuff__6ClsMesFPs
     /* 139EB4 00239DB4 00000000 */   nop
-    /* 139EB8 00239DB8 2900023C */  lui        $2, %hi(LIT_665__3)
-    /* 139EBC 00239DBC C85A4224 */  addiu      $2, $2, %lo(LIT_665__3)
+    /* 139EB8 00239DB8 2900023C */  lui        $2, %hi("@665__3")
+    /* 139EBC 00239DBC C85A4224 */  addiu      $2, $2, %lo("@665__3")
     /* 139EC0 00239DC0 8001A427 */  addiu      $4, $29, 0x180
     /* 139EC4 00239DC4 000043DC */  ld         $3, 0x0($2)
     /* 139EC8 00239DC8 080040C4 */  lwc1       $f0, 0x8($2)
@@ -217,8 +217,8 @@ glabel NameEnterDraw__Fv
   .L00239ED0:
     /* 139FD0 00239ED0 C701023C */  lui        $2, %hi(TexManager)
     /* 139FD4 00239ED4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 139FD8 00239ED8 2A00023C */  lui        $2, %hi(LIT_789__4)
-    /* 139FDC 00239EDC 80F64524 */  addiu      $5, $2, %lo(LIT_789__4)
+    /* 139FD8 00239ED8 2A00023C */  lui        $2, %hi("@789__4")
+    /* 139FDC 00239EDC 80F64524 */  addiu      $5, $2, %lo("@789__4")
     /* 139FE0 00239EE0 FFFF0624 */  addiu      $6, $0, -0x1
     /* 139FE4 00239EE4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 139FE8 00239EE8 00000000 */   nop
@@ -324,8 +324,8 @@ glabel NameEnterDraw__Fv
     /* 13A168 0023A068 14000010 */  b          .L0023A0BC
     /* 13A16C 0023A06C 00000000 */   nop
   .L0023A070:
-    /* 13A170 0023A070 2900023C */  lui        $2, %hi(LIT_691__5)
-    /* 13A174 0023A074 E05A4224 */  addiu      $2, $2, %lo(LIT_691__5)
+    /* 13A170 0023A070 2900023C */  lui        $2, %hi("@691__5")
+    /* 13A174 0023A074 E05A4224 */  addiu      $2, $2, %lo("@691__5")
     /* 13A178 0023A078 9000A827 */  addiu      $8, $29, 0x90
     /* 13A17C 0023A07C 00004778 */  lq         $7, 0x0($2)
     /* 13A180 0023A080 100046C4 */  lwc1       $f6, 0x10($2)
@@ -344,8 +344,8 @@ glabel NameEnterDraw__Fv
     /* 13A1B4 0023A0B4 12000010 */  b          .L0023A100
     /* 13A1B8 0023A0B8 00000000 */   nop
   .L0023A0BC:
-    /* 13A1BC 0023A0BC 2900023C */  lui        $2, %hi(LIT_694__2)
-    /* 13A1C0 0023A0C0 005B4224 */  addiu      $2, $2, %lo(LIT_694__2)
+    /* 13A1BC 0023A0BC 2900023C */  lui        $2, %hi("@694__2")
+    /* 13A1C0 0023A0C0 005B4224 */  addiu      $2, $2, %lo("@694__2")
     /* 13A1C4 0023A0C4 B000A827 */  addiu      $8, $29, 0xB0
     /* 13A1C8 0023A0C8 00004778 */  lq         $7, 0x0($2)
     /* 13A1CC 0023A0CC 100046C4 */  lwc1       $f6, 0x10($2)

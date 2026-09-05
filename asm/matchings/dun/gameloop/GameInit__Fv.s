@@ -568,8 +568,8 @@ glabel GameInit__Fv
     /* 000D08 01DACA08 60AF760C */  jal        LoadBaseTexture__Fv
     /* 000D0C 01DACA0C 00000000 */   nop
     /* 000D10 01DACA10 948B858F */  lw         $5, -0x746C($28)
-    /* 000D14 01DACA14 DC01023C */  lui        $2, %hi(LIT_910)
-    /* 000D18 01DACA18 782D4424 */  addiu      $4, $2, %lo(LIT_910)
+    /* 000D14 01DACA14 DC01023C */  lui        $2, %hi("@910")
+    /* 000D18 01DACA18 782D4424 */  addiu      $4, $2, %lo("@910")
     /* 000D1C 01DACA1C D0AE080C */  jal        LoadFileMenuData__FPcPUi
     /* 000D20 01DACA20 00000000 */   nop
     /* 000D24 01DACA24 DC4F050C */  jal        wait_now_loading_vsync__Fv
@@ -583,8 +583,8 @@ glabel GameInit__Fv
     /* 000D44 01DACA44 E8CA040C */  jal        EnterIMGFile__15CTextureManagerFPUciii
     /* 000D48 01DACA48 00000000 */   nop
     /* 000D4C 01DACA4C 948B858F */  lw         $5, -0x746C($28)
-    /* 000D50 01DACA50 DC01023C */  lui        $2, %hi(LIT_911)
-    /* 000D54 01DACA54 882D4424 */  addiu      $4, $2, %lo(LIT_911)
+    /* 000D50 01DACA50 DC01023C */  lui        $2, %hi("@911")
+    /* 000D54 01DACA54 882D4424 */  addiu      $4, $2, %lo("@911")
     /* 000D58 01DACA58 D0AE080C */  jal        LoadFileMenuData__FPcPUi
     /* 000D5C 01DACA5C 00000000 */   nop
     /* 000D60 01DACA60 DC4F050C */  jal        wait_now_loading_vsync__Fv
@@ -1068,8 +1068,8 @@ glabel GameInit__Fv
     /* 0014AC 01DAD1AC A066228C */  lw         $2, %lo(BtMesBuffer)($1)
     /* 0014B0 01DAD1B0 21804300 */  addu       $16, $2, $3
     /* 0014B4 01DAD1B4 2000A427 */  addiu      $4, $29, 0x20
-    /* 0014B8 01DAD1B8 DC01023C */  lui        $2, %hi(LIT_914__5)
-    /* 0014BC 01DAD1BC A02D4524 */  addiu      $5, $2, %lo(LIT_914__5)
+    /* 0014B8 01DAD1B8 DC01023C */  lui        $2, %hi("@914__5")
+    /* 0014BC 01DAD1BC A02D4524 */  addiu      $5, $2, %lo("@914__5")
     /* 0014C0 01DAD1C0 9886868F */  lw         $6, -0x7968($28)
     /* 0014C4 01DAD1C4 1614040C */  jal        sprintf
     /* 0014C8 01DAD1C8 00000000 */   nop
@@ -1122,8 +1122,8 @@ glabel GameInit__Fv
     /* 001584 01DAD284 A066228C */  lw         $2, %lo(BtMesBuffer)($1)
     /* 001588 01DAD288 21804300 */  addu       $16, $2, $3
     /* 00158C 01DAD28C 2000A427 */  addiu      $4, $29, 0x20
-    /* 001590 01DAD290 DC01023C */  lui        $2, %hi(LIT_915__4)
-    /* 001594 01DAD294 D02D4524 */  addiu      $5, $2, %lo(LIT_915__4)
+    /* 001590 01DAD290 DC01023C */  lui        $2, %hi("@915__4")
+    /* 001594 01DAD294 D02D4524 */  addiu      $5, $2, %lo("@915__4")
     /* 001598 01DAD298 9886868F */  lw         $6, -0x7968($28)
     /* 00159C 01DAD29C 1614040C */  jal        sprintf
     /* 0015A0 01DAD2A0 00000000 */   nop
@@ -1158,8 +1158,8 @@ glabel GameInit__Fv
     /* 001614 01DAD314 F001013C */  lui        $1, %hi(BtMesBuffer)
     /* 001618 01DAD318 A066228C */  lw         $2, %lo(BtMesBuffer)($1)
     /* 00161C 01DAD31C 21804300 */  addu       $16, $2, $3
-    /* 001620 01DAD320 DC01023C */  lui        $2, %hi(LIT_916__3)
-    /* 001624 01DAD324 002E4424 */  addiu      $4, $2, %lo(LIT_916__3)
+    /* 001620 01DAD320 DC01023C */  lui        $2, %hi("@916__3")
+    /* 001624 01DAD324 002E4424 */  addiu      $4, $2, %lo("@916__3")
     /* 001628 01DAD328 282E0072 */  paddub     $5, $16, $0
     /* 00162C 01DAD32C 8C00A627 */  addiu      $6, $29, 0x8C
     /* 001630 01DAD330 D8FC040C */  jal        LoadFile__FPcPvPi
@@ -1468,23 +1468,23 @@ glabel GameInit__Fv
     /* 001AB4 01DAD7B4 7C9C80AF */  sw         $0, -0x6384($28)
     /* 001AB8 01DAD7B8 C701023C */  lui        $2, %hi(TexManager)
     /* 001ABC 01DAD7BC 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 001AC0 01DAD7C0 DC01023C */  lui        $2, %hi(LIT_917)
-    /* 001AC4 01DAD7C4 182E4524 */  addiu      $5, $2, %lo(LIT_917)
+    /* 001AC0 01DAD7C0 DC01023C */  lui        $2, %hi("@917")
+    /* 001AC4 01DAD7C4 182E4524 */  addiu      $5, $2, %lo("@917")
     /* 001AC8 01DAD7C8 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 001ACC 01DAD7CC 00000000 */   nop
     /* 001AD0 01DAD7D0 209E82AF */  sw         $2, -0x61E0($28)
     /* 001AD4 01DAD7D4 C701023C */  lui        $2, %hi(TexManager)
     /* 001AD8 01DAD7D8 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 001ADC 01DAD7DC DC01023C */  lui        $2, %hi(LIT_918)
-    /* 001AE0 01DAD7E0 282E4524 */  addiu      $5, $2, %lo(LIT_918)
+    /* 001ADC 01DAD7DC DC01023C */  lui        $2, %hi("@918")
+    /* 001AE0 01DAD7E0 282E4524 */  addiu      $5, $2, %lo("@918")
     /* 001AE4 01DAD7E4 FFFF0624 */  addiu      $6, $0, -0x1
     /* 001AE8 01DAD7E8 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 001AEC 01DAD7EC 00000000 */   nop
     /* 001AF0 01DAD7F0 249E82AF */  sw         $2, -0x61DC($28)
     /* 001AF4 01DAD7F4 C701023C */  lui        $2, %hi(TexManager)
     /* 001AF8 01DAD7F8 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 001AFC 01DAD7FC DC01023C */  lui        $2, %hi(LIT_919__3)
-    /* 001B00 01DAD800 382E4524 */  addiu      $5, $2, %lo(LIT_919__3)
+    /* 001AFC 01DAD7FC DC01023C */  lui        $2, %hi("@919__3")
+    /* 001B00 01DAD800 382E4524 */  addiu      $5, $2, %lo("@919__3")
     /* 001B04 01DAD804 FFFF0624 */  addiu      $6, $0, -0x1
     /* 001B08 01DAD808 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 001B0C 01DAD80C 00000000 */   nop
@@ -1492,8 +1492,8 @@ glabel GameInit__Fv
     /* 001B14 01DAD814 A49D828F */  lw         $2, -0x625C($28)
     /* 001B18 01DAD818 01004624 */  addiu      $6, $2, 0x1
     /* 001B1C 01DAD81C 6000A427 */  addiu      $4, $29, 0x60
-    /* 001B20 01DAD820 DC01023C */  lui        $2, %hi(LIT_920__4)
-    /* 001B24 01DAD824 482E4524 */  addiu      $5, $2, %lo(LIT_920__4)
+    /* 001B20 01DAD820 DC01023C */  lui        $2, %hi("@920__4")
+    /* 001B24 01DAD824 482E4524 */  addiu      $5, $2, %lo("@920__4")
     /* 001B28 01DAD828 1614040C */  jal        sprintf
     /* 001B2C 01DAD82C 00000000 */   nop
     /* 001B30 01DAD830 C701023C */  lui        $2, %hi(TexManager)
@@ -1506,8 +1506,8 @@ glabel GameInit__Fv
     /* 001B4C 01DAD84C 2C9E828F */  lw         $2, -0x61D4($28)
     /* 001B50 01DAD850 05004014 */  bnez       $2, .L01DAD868
     /* 001B54 01DAD854 00000000 */   nop
-    /* 001B58 01DAD858 DC01023C */  lui        $2, %hi(LIT_921__3)
-    /* 001B5C 01DAD85C 582E4424 */  addiu      $4, $2, %lo(LIT_921__3)
+    /* 001B58 01DAD858 DC01023C */  lui        $2, %hi("@921__3")
+    /* 001B5C 01DAD85C 582E4424 */  addiu      $4, $2, %lo("@921__3")
     /* 001B60 01DAD860 A611040C */  jal        printf
     /* 001B64 01DAD864 00000000 */   nop
   .L01DAD868:
@@ -1523,8 +1523,8 @@ glabel GameInit__Fv
     /* 001B8C 01DAD88C 789C838F */  lw         $3, -0x6388($28)
     /* 001B90 01DAD890 FFFF0224 */  addiu      $2, $0, -0x1
     /* 001B94 01DAD894 030062A0 */  sb         $2, 0x3($3)
-    /* 001B98 01DAD898 DC01023C */  lui        $2, %hi(LIT_922__2)
-    /* 001B9C 01DAD89C 682E4224 */  addiu      $2, $2, %lo(LIT_922__2)
+    /* 001B98 01DAD898 DC01023C */  lui        $2, %hi("@922__2")
+    /* 001B9C 01DAD89C 682E4224 */  addiu      $2, $2, %lo("@922__2")
     /* 001BA0 01DAD8A0 EB01013C */  lui        $1, %hi(DbgMsg + 0x10)
     /* 001BA4 01DAD8A4 E06022AC */  sw         $2, %lo(DbgMsg + 0x10)($1)
     /* 001BA8 01DAD8A8 20000224 */  addiu      $2, $0, 0x20

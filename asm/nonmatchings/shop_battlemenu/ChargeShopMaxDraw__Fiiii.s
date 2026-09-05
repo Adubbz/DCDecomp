@@ -34,8 +34,8 @@ glabel ChargeShopMaxDraw__Fiiii
     /* 0EAEBC 001EADBC 7000A627 */  addiu      $6, $29, 0x70
     /* 0EAEC0 001EADC0 C8B3080C */  jal        DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i
     /* 0EAEC4 001EADC4 00000000 */   nop
-    /* 0EAEC8 001EADC8 2900023C */  lui        $2, %hi(LIT_1377)
-    /* 0EAECC 001EADCC 90274224 */  addiu      $2, $2, %lo(LIT_1377)
+    /* 0EAEC8 001EADC8 2900023C */  lui        $2, %hi("@1377")
+    /* 0EAECC 001EADCC 90274224 */  addiu      $2, $2, %lo("@1377")
     /* 0EAED0 001EADD0 5000A827 */  addiu      $8, $29, 0x50
     /* 0EAED4 001EADD4 00004278 */  lq         $2, 0x0($2)
     /* 0EAED8 001EADD8 0000027D */  sq         $2, 0x0($8)

@@ -235,8 +235,8 @@ glabel CheckDmg__12CMonstorUnitFv
     /* 0DA38C 001DA28C 808580C7 */  lwc1       $f0, -0x7A80($28)
     /* 0DA390 001DA290 00A50046 */  add.s      $f20, $f20, $f0
   .L001DA294:
-    /* 0DA394 001DA294 2900023C */  lui        $2, %hi(LIT_1076)
-    /* 0DA398 001DA298 20184224 */  addiu      $2, $2, %lo(LIT_1076)
+    /* 0DA394 001DA294 2900023C */  lui        $2, %hi("@1076")
+    /* 0DA398 001DA298 20184224 */  addiu      $2, $2, %lo("@1076")
     /* 0DA39C 001DA29C 3001A327 */  addiu      $3, $29, 0x130
     /* 0DA3A0 001DA2A0 00004278 */  lq         $2, 0x0($2)
     /* 0DA3A4 001DA2A4 0000627C */  sq         $2, 0x0($3)
@@ -1176,8 +1176,8 @@ glabel CheckDmg__12CMonstorUnitFv
     /* 0DB1C4 001DB0C4 2110C202 */  addu       $2, $22, $2
     /* 0DB1C8 001DB0C8 5000428C */  lw         $2, 0x50($2)
     /* 0DB1CC 001DB0CC E000A2AF */  sw         $2, 0xE0($29)
-    /* 0DB1D0 001DB0D0 2A00023C */  lui        $2, %hi(LIT_1518)
-    /* 0DB1D4 001DB0D4 68CF4424 */  addiu      $4, $2, %lo(LIT_1518)
+    /* 0DB1D0 001DB0D0 2A00023C */  lui        $2, %hi("@1518")
+    /* 0DB1D4 001DB0D4 68CF4424 */  addiu      $4, $2, %lo("@1518")
     /* 0DB1D8 001DB0D8 E000A58F */  lw         $5, 0xE0($29)
     /* 0DB1DC 001DB0DC A611040C */  jal        printf
     /* 0DB1E0 001DB0E0 00000000 */   nop
@@ -2060,8 +2060,8 @@ glabel CheckDmg__12CMonstorUnitFv
     /* 0DBF08 001DBE08 02A50046 */  mul.s      $f20, $f20, $f0
     /* 0DBF0C 001DBE0C F83F023C */  lui        $2, (0x3FF80000 >> 16)
     /* 0DBF10 001DBE10 3C280200 */  dsll32     $5, $2, 0
-    /* 0DBF14 001DBE14 2A00023C */  lui        $2, %hi(LIT_1521)
-    /* 0DBF18 001DBE18 78CF4424 */  addiu      $4, $2, %lo(LIT_1521)
+    /* 0DBF14 001DBE14 2A00023C */  lui        $2, %hi("@1521")
+    /* 0DBF18 001DBE18 78CF4424 */  addiu      $4, $2, %lo("@1521")
     /* 0DBF1C 001DBE1C A611040C */  jal        printf
     /* 0DBF20 001DBE20 00000000 */   nop
   .L001DBE24:
@@ -2091,8 +2091,8 @@ glabel CheckDmg__12CMonstorUnitFv
     /* 0DBF7C 001DBE7C 06AB0046 */  mov.s      $f12, $f21
     /* 0DBF80 001DBE80 9044040C */  jal        fptodp
     /* 0DBF84 001DBE84 00000000 */   nop
-    /* 0DBF88 001DBE88 2A00033C */  lui        $3, %hi(LIT_1521)
-    /* 0DBF8C 001DBE8C 78CF6424 */  addiu      $4, $3, %lo(LIT_1521)
+    /* 0DBF88 001DBE88 2A00033C */  lui        $3, %hi("@1521")
+    /* 0DBF8C 001DBE8C 78CF6424 */  addiu      $4, $3, %lo("@1521")
     /* 0DBF90 001DBE90 282E4070 */  paddub     $5, $2, $0
     /* 0DBF94 001DBE94 A611040C */  jal        printf
     /* 0DBF98 001DBE98 00000000 */   nop

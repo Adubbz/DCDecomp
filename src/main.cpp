@@ -369,7 +369,7 @@ int main(int argc, const char **argv, const char **envp) {
         GamePad.StopVibration();
 
         /* Case bodies are in retail's physical body order rather than
-         * case-value order, taken from the LIT_875 table in
+         * case-value order, taken from the @875 table in
          * ref/asm/sections/main/main.rodata.s. MWCC lays bodies out in
          * written order, and a jump table's indices are right regardless of
          * that order while the bodies' own addresses are not. */
@@ -734,5 +734,5 @@ int main(int argc, const char **argv, const char **envp) {
     }
 }
 
-INCLUDE_RODATA("asm/nonmatchings/main", LIT_880);
-INCLUDE_RODATA("asm/nonmatchings/main", LIT_881);
+INCLUDE_RODATA("asm/nonmatchings/main", @880);
+INCLUDE_RODATA("asm/nonmatchings/main", @881);

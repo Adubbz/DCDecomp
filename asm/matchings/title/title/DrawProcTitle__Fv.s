@@ -29,8 +29,8 @@ glabel DrawProcTitle__Fv
     /* 025B58 01DD1858 28864070 */  paddub     $16, $2, $0
     /* 025B5C 01DD185C C701023C */  lui        $2, %hi(TexManager)
     /* 025B60 01DD1860 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 025B64 01DD1864 DE01023C */  lui        $2, %hi(LIT_1699__2)
-    /* 025B68 01DD1868 D80B4524 */  addiu      $5, $2, %lo(LIT_1699__2)
+    /* 025B64 01DD1864 DE01023C */  lui        $2, %hi("@1699__2")
+    /* 025B68 01DD1868 D80B4524 */  addiu      $5, $2, %lo("@1699__2")
     /* 025B6C 01DD186C FFFF0624 */  addiu      $6, $0, -0x1
     /* 025B70 01DD1870 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 025B74 01DD1874 00000000 */   nop
@@ -63,8 +63,8 @@ glabel DrawProcTitle__Fv
     /* 025BE0 01DD18E0 28864070 */  paddub     $16, $2, $0
     /* 025BE4 01DD18E4 C701023C */  lui        $2, %hi(TexManager)
     /* 025BE8 01DD18E8 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 025BEC 01DD18EC DE01023C */  lui        $2, %hi(LIT_1701__2)
-    /* 025BF0 01DD18F0 E00B4524 */  addiu      $5, $2, %lo(LIT_1701__2)
+    /* 025BEC 01DD18EC DE01023C */  lui        $2, %hi("@1701__2")
+    /* 025BF0 01DD18F0 E00B4524 */  addiu      $5, $2, %lo("@1701__2")
     /* 025BF4 01DD18F4 FFFF0624 */  addiu      $6, $0, -0x1
     /* 025BF8 01DD18F8 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 025BFC 01DD18FC 00000000 */   nop
@@ -93,8 +93,8 @@ glabel DrawProcTitle__Fv
     /* 025C58 01DD1958 28864070 */  paddub     $16, $2, $0
     /* 025C5C 01DD195C C701023C */  lui        $2, %hi(TexManager)
     /* 025C60 01DD1960 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 025C64 01DD1964 DE01023C */  lui        $2, %hi(LIT_1701__2)
-    /* 025C68 01DD1968 E00B4524 */  addiu      $5, $2, %lo(LIT_1701__2)
+    /* 025C64 01DD1964 DE01023C */  lui        $2, %hi("@1701__2")
+    /* 025C68 01DD1968 E00B4524 */  addiu      $5, $2, %lo("@1701__2")
     /* 025C6C 01DD196C FFFF0624 */  addiu      $6, $0, -0x1
     /* 025C70 01DD1970 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 025C74 01DD1974 00000000 */   nop
@@ -122,8 +122,8 @@ glabel DrawProcTitle__Fv
     /* 025CCC 01DD19CC 28864070 */  paddub     $16, $2, $0
     /* 025CD0 01DD19D0 C701023C */  lui        $2, %hi(TexManager)
     /* 025CD4 01DD19D4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 025CD8 01DD19D8 DE01023C */  lui        $2, %hi(LIT_1701__2)
-    /* 025CDC 01DD19DC E00B4524 */  addiu      $5, $2, %lo(LIT_1701__2)
+    /* 025CD8 01DD19D8 DE01023C */  lui        $2, %hi("@1701__2")
+    /* 025CDC 01DD19DC E00B4524 */  addiu      $5, $2, %lo("@1701__2")
     /* 025CE0 01DD19E0 FFFF0624 */  addiu      $6, $0, -0x1
     /* 025CE4 01DD19E4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 025CE8 01DD19E8 00000000 */   nop
@@ -157,8 +157,8 @@ glabel DrawProcTitle__Fv
     /* 025D54 01DD1A54 16000624 */  addiu      $6, $0, 0x16
     /* 025D58 01DD1A58 1CCC040C */  jal        ReloadTexture__15CTextureManagerFP13sceVif1Packeti
     /* 025D5C 01DD1A5C 00000000 */   nop
-    /* 025D60 01DD1A60 DE01023C */  lui        $2, %hi(LIT_1681)
-    /* 025D64 01DD1A64 B0BA4324 */  addiu      $3, $2, %lo(LIT_1681)
+    /* 025D60 01DD1A60 DE01023C */  lui        $2, %hi("@1681")
+    /* 025D64 01DD1A64 B0BA4324 */  addiu      $3, $2, %lo("@1681")
     /* 025D68 01DD1A68 A000A427 */  addiu      $4, $29, 0xA0
     /* 025D6C 01DD1A6C 000062DC */  ld         $2, 0x0($3)
     /* 025D70 01DD1A70 080060C4 */  lwc1       $f0, 0x8($3)

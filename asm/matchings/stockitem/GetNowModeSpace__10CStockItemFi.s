@@ -13,8 +13,8 @@ glabel GetNowModeSpace__10CStockItemFi
     /* 1400A8 0023FFA8 289E8070 */  paddub     $19, $4, $0
     /* 1400AC 0023FFAC 2896A070 */  paddub     $18, $5, $0
     /* 1400B0 0023FFB0 FFFF1024 */  addiu      $16, $0, -0x1
-    /* 1400B4 0023FFB4 2900023C */  lui        $2, %hi(LIT_459)
-    /* 1400B8 0023FFB8 38604424 */  addiu      $4, $2, %lo(LIT_459)
+    /* 1400B4 0023FFB4 2900023C */  lui        $2, %hi("@459")
+    /* 1400B8 0023FFB8 38604424 */  addiu      $4, $2, %lo("@459")
     /* 1400BC 0023FFBC 5000A327 */  addiu      $3, $29, 0x50
     /* 1400C0 0023FFC0 000082DC */  ld         $2, 0x0($4)
     /* 1400C4 0023FFC4 080080C4 */  lwc1       $f0, 0x8($4)

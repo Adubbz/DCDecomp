@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_3607
+glabel "@3607"
     /* 19DAA0 0029D9A0 6CE31F00 */ .word .L001FE36C
     /* 19DAA4 0029D9A4 BCE41F00 */ .word .L001FE4BC
     /* 19DAA8 0029D9A8 30E81F00 */ .word .L001FE830
@@ -15,7 +15,7 @@ glabel LIT_3607
     /* 19DAB8 0029D9B8 24EB1F00 */ .word .L001FEB24
     /* 19DABC 0029D9BC 00000000 */ .word 0x00000000
 
-glabel LIT_3606__2
+glabel "@3606__2"
     /* 19DAC0 0029D9C0 7CDF1F00 */ .word .L001FDF7C
     /* 19DAC4 0029D9C4 D8E11F00 */ .word .L001FE1D8
     /* 19DAC8 0029D9C8 84EB1F00 */ .word .L001FEB84
@@ -46,8 +46,8 @@ glabel WeaponSelectKey__Fv
     /* 0FE054 001FDF54 0800812C */  sltiu      $1, $4, 0x8
     /* 0FE058 001FDF58 4C052010 */  beqz       $1, .L001FF48C
     /* 0FE05C 001FDF5C 00000000 */   nop
-    /* 0FE060 001FDF60 2A00023C */  lui        $2, %hi(LIT_3606__2)
-    /* 0FE064 001FDF64 C0D94324 */  addiu      $3, $2, %lo(LIT_3606__2)
+    /* 0FE060 001FDF60 2A00023C */  lui        $2, %hi("@3606__2")
+    /* 0FE064 001FDF64 C0D94324 */  addiu      $3, $2, %lo("@3606__2")
     /* 0FE068 001FDF68 80100400 */  sll        $2, $4, 2
     /* 0FE06C 001FDF6C 21104300 */  addu       $2, $2, $3
     /* 0FE070 001FDF70 0000428C */  lw         $2, 0x0($2)
@@ -316,8 +316,8 @@ glabel WeaponSelectKey__Fv
     /* 0FE444 001FE344 0700812C */  sltiu      $1, $4, 0x7
     /* 0FE448 001FE348 50042010 */  beqz       $1, .L001FF48C
     /* 0FE44C 001FE34C 00000000 */   nop
-    /* 0FE450 001FE350 2A00023C */  lui        $2, %hi(LIT_3607)
-    /* 0FE454 001FE354 A0D94324 */  addiu      $3, $2, %lo(LIT_3607)
+    /* 0FE450 001FE350 2A00023C */  lui        $2, %hi("@3607")
+    /* 0FE454 001FE354 A0D94324 */  addiu      $3, $2, %lo("@3607")
     /* 0FE458 001FE358 80100400 */  sll        $2, $4, 2
     /* 0FE45C 001FE35C 21104300 */  addu       $2, $2, $3
     /* 0FE460 001FE360 0000428C */  lw         $2, 0x0($2)

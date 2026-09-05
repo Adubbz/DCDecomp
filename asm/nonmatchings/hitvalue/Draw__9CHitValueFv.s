@@ -43,16 +43,16 @@ glabel Draw__9CHitValueFv
   .L001B65E8:
     /* 0B66E8 001B65E8 C701023C */  lui        $2, %hi(TexManager)
     /* 0B66EC 001B65EC 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0B66F0 001B65F0 2A00023C */  lui        $2, %hi(LIT_804)
-    /* 0B66F4 001B65F4 18BB4524 */  addiu      $5, $2, %lo(LIT_804)
+    /* 0B66F0 001B65F0 2A00023C */  lui        $2, %hi("@804")
+    /* 0B66F4 001B65F4 18BB4524 */  addiu      $5, $2, %lo("@804")
     /* 0B66F8 001B65F8 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0B66FC 001B65FC B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0B6700 001B6600 00000000 */   nop
     /* 0B6704 001B6604 28864070 */  paddub     $16, $2, $0
     /* 0B6708 001B6608 C701023C */  lui        $2, %hi(TexManager)
     /* 0B670C 001B660C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0B6710 001B6610 2A00023C */  lui        $2, %hi(LIT_805)
-    /* 0B6714 001B6614 28BB4524 */  addiu      $5, $2, %lo(LIT_805)
+    /* 0B6710 001B6610 2A00023C */  lui        $2, %hi("@805")
+    /* 0B6714 001B6614 28BB4524 */  addiu      $5, $2, %lo("@805")
     /* 0B6718 001B6618 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0B671C 001B661C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0B6720 001B6620 00000000 */   nop

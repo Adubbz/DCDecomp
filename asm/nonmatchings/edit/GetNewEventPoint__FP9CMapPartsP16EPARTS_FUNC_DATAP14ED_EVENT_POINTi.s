@@ -18,8 +18,8 @@ glabel GetNewEventPoint__FP9CMapPartsP16EPARTS_FUNC_DATAP14ED_EVENT_POINTi
     /* 083D6C 00183C6C 28864070 */  paddub     $16, $2, $0
     /* 083D70 00183C70 08000016 */  bnez       $16, .L00183C94
     /* 083D74 00183C74 00000000 */   nop
-    /* 083D78 00183C78 2A00023C */  lui        $2, %hi(LIT_447__3)
-    /* 083D7C 00183C7C 40B04424 */  addiu      $4, $2, %lo(LIT_447__3)
+    /* 083D78 00183C78 2A00023C */  lui        $2, %hi("@447__3")
+    /* 083D7C 00183C7C 40B04424 */  addiu      $4, $2, %lo("@447__3")
     /* 083D80 00183C80 A611040C */  jal        printf
     /* 083D84 00183C84 00000000 */   nop
     /* 083D88 00183C88 28160070 */  paddub     $2, $0, $0

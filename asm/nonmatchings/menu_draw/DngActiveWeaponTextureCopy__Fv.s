@@ -24,8 +24,8 @@ glabel DngActiveWeaponTextureCopy__Fv
     /* 12A7F4 0022A6F4 2180A200 */  addu       $16, $5, $2
     /* 12A7F8 0022A6F8 68CF070C */  jal        GetDefaultWeaponNo__Fi
     /* 12A7FC 0022A6FC 00000000 */   nop
-    /* 12A800 0022A700 2900033C */  lui        $3, %hi(LIT_1731)
-    /* 12A804 0022A704 E0426524 */  addiu      $5, $3, %lo(LIT_1731)
+    /* 12A800 0022A700 2900033C */  lui        $3, %hi("@1731")
+    /* 12A804 0022A704 E0426524 */  addiu      $5, $3, %lo("@1731")
     /* 12A808 0022A708 2800A427 */  addiu      $4, $29, 0x28
     /* 12A80C 0022A70C 0000A3DC */  ld         $3, 0x0($5)
     /* 12A810 0022A710 0800A0C4 */  lwc1       $f0, 0x8($5)
@@ -68,8 +68,8 @@ glabel DngActiveWeaponTextureCopy__Fv
     /* 12A89C 0022A79C 28004884 */  lh         $8, 0x28($2)
     /* 12A8A0 0022A7A0 2A004984 */  lh         $9, 0x2A($2)
     /* 12A8A4 0022A7A4 2000A427 */  addiu      $4, $29, 0x20
-    /* 12A8A8 0022A7A8 2A00023C */  lui        $2, %hi(LIT_1728__2)
-    /* 12A8AC 0022A7AC 40F04724 */  addiu      $7, $2, %lo(LIT_1728__2)
+    /* 12A8A8 0022A7A8 2A00023C */  lui        $2, %hi("@1728__2")
+    /* 12A8AC 0022A7AC 40F04724 */  addiu      $7, $2, %lo("@1728__2")
     /* 12A8B0 0022A7B0 BCC7060C */  jal        setItemToReserved__FPciiPcii
     /* 12A8B4 0022A7B4 00000000 */   nop
   .L0022A7B8:

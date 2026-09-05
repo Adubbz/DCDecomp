@@ -6,8 +6,8 @@
 glabel CreatPartsList__11CDungeonMapFPiiii
     /* 0CA390 001CA290 E0FFBD27 */  addiu      $29, $29, -0x20
     /* 0CA394 001CA294 28160070 */  paddub     $2, $0, $0
-    /* 0CA398 001CA298 2800033C */  lui        $3, %hi(LIT_2868)
-    /* 0CA39C 001CA29C 70A06324 */  addiu      $3, $3, %lo(LIT_2868)
+    /* 0CA398 001CA298 2800033C */  lui        $3, %hi("@2868")
+    /* 0CA39C 001CA29C 70A06324 */  addiu      $3, $3, %lo("@2868")
     /* 0CA3A0 001CA2A0 0000AA27 */  addiu      $10, $29, 0x0
     /* 0CA3A4 001CA2A4 00006978 */  lq         $9, 0x0($3)
     /* 0CA3A8 001CA2A8 10006378 */  lq         $3, 0x10($3)

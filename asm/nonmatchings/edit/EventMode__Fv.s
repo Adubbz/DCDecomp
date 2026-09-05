@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_2340
+glabel "@2340"
     /* 19AD30 0029AC30 C8E91700 */ .word .L0017E9C8
     /* 19AD34 0029AC34 F8E91700 */ .word .L0017E9F8
     /* 19AD38 0029AC38 C4EC1700 */ .word .L0017ECC4
@@ -36,8 +36,8 @@ glabel EventMode__Fv
     /* 07EAA0 0017E9A0 0800A12C */  sltiu      $1, $5, 0x8
     /* 07EAA4 0017E9A4 28002010 */  beqz       $1, .L0017EA48
     /* 07EAA8 0017E9A8 00000000 */   nop
-    /* 07EAAC 0017E9AC 2A00033C */  lui        $3, %hi(LIT_2340)
-    /* 07EAB0 0017E9B0 30AC6424 */  addiu      $4, $3, %lo(LIT_2340)
+    /* 07EAAC 0017E9AC 2A00033C */  lui        $3, %hi("@2340")
+    /* 07EAB0 0017E9B0 30AC6424 */  addiu      $4, $3, %lo("@2340")
     /* 07EAB4 0017E9B4 80180500 */  sll        $3, $5, 2
     /* 07EAB8 0017E9B8 21186400 */  addu       $3, $3, $4
     /* 07EABC 0017E9BC 0000638C */  lw         $3, 0x0($3)

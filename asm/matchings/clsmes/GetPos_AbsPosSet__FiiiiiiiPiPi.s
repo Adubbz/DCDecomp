@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_1838
+glabel "@1838"
     /* 199B90 00299A90 CC2E1500 */ .word .L00152ECC
     /* 199B94 00299A94 E82D1500 */ .word .L00152DE8
     /* 199B98 00299A98 E82D1500 */ .word .L00152DE8
@@ -19,7 +19,7 @@ glabel LIT_1838
     /* 199BB8 00299AB8 00000000 */ .word 0x00000000
     /* 199BBC 00299ABC 00000000 */ .word 0x00000000
 
-glabel LIT_1837
+glabel "@1837"
     /* 199BC0 00299AC0 C02D1500 */ .word .L00152DC0
     /* 199BC4 00299AC4 DC2C1500 */ .word .L00152CDC
     /* 199BC8 00299AC8 3C2D1500 */ .word .L00152D3C
@@ -42,8 +42,8 @@ glabel GetPos_AbsPosSet__FiiiiiiiPiPi
     /* 052DB4 00152CB4 0A00412D */  sltiu      $1, $10, 0xA
     /* 052DB8 00152CB8 41002010 */  beqz       $1, .L00152DC0
     /* 052DBC 00152CBC 00000000 */   nop
-    /* 052DC0 00152CC0 2A000C3C */  lui        $12, %hi(LIT_1837)
-    /* 052DC4 00152CC4 C09A8D25 */  addiu      $13, $12, %lo(LIT_1837)
+    /* 052DC0 00152CC0 2A000C3C */  lui        $12, %hi("@1837")
+    /* 052DC4 00152CC4 C09A8D25 */  addiu      $13, $12, %lo("@1837")
     /* 052DC8 00152CC8 80600A00 */  sll        $12, $10, 2
     /* 052DCC 00152CCC 21608D01 */  addu       $12, $12, $13
     /* 052DD0 00152CD0 00008C8D */  lw         $12, 0x0($12)
@@ -119,8 +119,8 @@ glabel GetPos_AbsPosSet__FiiiiiiiPiPi
     /* 052EC0 00152DC0 0A00412D */  sltiu      $1, $10, 0xA
     /* 052EC4 00152DC4 41002010 */  beqz       $1, .L00152ECC
     /* 052EC8 00152DC8 00000000 */   nop
-    /* 052ECC 00152DCC 2A00043C */  lui        $4, %hi(LIT_1838)
-    /* 052ED0 00152DD0 909A8624 */  addiu      $6, $4, %lo(LIT_1838)
+    /* 052ECC 00152DCC 2A00043C */  lui        $4, %hi("@1838")
+    /* 052ED0 00152DD0 909A8624 */  addiu      $6, $4, %lo("@1838")
     /* 052ED4 00152DD4 80200A00 */  sll        $4, $10, 2
     /* 052ED8 00152DD8 21208600 */  addu       $4, $4, $6
     /* 052EDC 00152DDC 0000848C */  lw         $4, 0x0($4)

@@ -15,8 +15,8 @@ glabel SetWeaponAttachStatus__FP11WEAPON_HAVE
     /* 125BC0 00225AC0 00000000 */   nop
     /* 125BC4 00225AC4 07004014 */  bnez       $2, .L00225AE4
     /* 125BC8 00225AC8 00000000 */   nop
-    /* 125BCC 00225ACC 2A00023C */  lui        $2, %hi(LIT_638__3)
-    /* 125BD0 00225AD0 50EE4424 */  addiu      $4, $2, %lo(LIT_638__3)
+    /* 125BCC 00225ACC 2A00023C */  lui        $2, %hi("@638__3")
+    /* 125BD0 00225AD0 50EE4424 */  addiu      $4, $2, %lo("@638__3")
     /* 125BD4 00225AD4 A611040C */  jal        printf
     /* 125BD8 00225AD8 00000000 */   nop
     /* 125BDC 00225ADC 18000010 */  b          .L00225B40
@@ -35,8 +35,8 @@ glabel SetWeaponAttachStatus__FP11WEAPON_HAVE
     /* 125C0C 00225B0C 21206200 */  addu       $4, $3, $2
     /* 125C10 00225B10 07008014 */  bnez       $4, .L00225B30
     /* 125C14 00225B14 00000000 */   nop
-    /* 125C18 00225B18 2A00023C */  lui        $2, %hi(LIT_639__4)
-    /* 125C1C 00225B1C 70EE4424 */  addiu      $4, $2, %lo(LIT_639__4)
+    /* 125C18 00225B18 2A00023C */  lui        $2, %hi("@639__4")
+    /* 125C1C 00225B1C 70EE4424 */  addiu      $4, $2, %lo("@639__4")
     /* 125C20 00225B20 A611040C */  jal        printf
     /* 125C24 00225B24 00000000 */   nop
     /* 125C28 00225B28 05000010 */  b          .L00225B40

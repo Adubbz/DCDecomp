@@ -37,8 +37,8 @@ glabel MakeFukidashi__6ClsMesFP13sceVif1Packet
     /* 051C48 00151B48 00000000 */   nop
     /* 051C4C 00151B4C C701023C */  lui        $2, %hi(TexManager)
     /* 051C50 00151B50 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 051C54 00151B54 2A00023C */  lui        $2, %hi(LIT_1556)
-    /* 051C58 00151B58 789A4524 */  addiu      $5, $2, %lo(LIT_1556)
+    /* 051C54 00151B54 2A00023C */  lui        $2, %hi("@1556")
+    /* 051C58 00151B58 789A4524 */  addiu      $5, $2, %lo("@1556")
     /* 051C5C 00151B5C FFFF0624 */  addiu      $6, $0, -0x1
     /* 051C60 00151B60 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 051C64 00151B64 00000000 */   nop
@@ -222,8 +222,8 @@ glabel MakeFukidashi__6ClsMesFP13sceVif1Packet
     /* 051F2C 00151E2C 00000000 */   nop
     /* 051F30 00151E30 C701023C */  lui        $2, %hi(TexManager)
     /* 051F34 00151E34 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 051F38 00151E38 2A00023C */  lui        $2, %hi(LIT_1557)
-    /* 051F3C 00151E3C 889A4524 */  addiu      $5, $2, %lo(LIT_1557)
+    /* 051F38 00151E38 2A00023C */  lui        $2, %hi("@1557")
+    /* 051F3C 00151E3C 889A4524 */  addiu      $5, $2, %lo("@1557")
     /* 051F40 00151E40 FFFF0624 */  addiu      $6, $0, -0x1
     /* 051F44 00151E44 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 051F48 00151E48 00000000 */   nop

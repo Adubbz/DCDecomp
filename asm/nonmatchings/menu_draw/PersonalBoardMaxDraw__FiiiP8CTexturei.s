@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_1559__2
+glabel "@1559__2"
     /* 19F330 0029F230 E40A2300 */ .word .L00230AE4
     /* 19F334 0029F234 E40A2300 */ .word .L00230AE4
     /* 19F338 0029F238 E40A2300 */ .word .L00230AE4
@@ -57,8 +57,8 @@ glabel PersonalBoardMaxDraw__FiiiP8CTexturei
     /* 130B40 00230A40 283EC072 */  paddub     $7, $22, $0
     /* 130B44 00230A44 C8B3080C */  jal        DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i
     /* 130B48 00230A48 00000000 */   nop
-    /* 130B4C 00230A4C 2900023C */  lui        $2, %hi(LIT_1521__2)
-    /* 130B50 00230A50 D0554224 */  addiu      $2, $2, %lo(LIT_1521__2)
+    /* 130B4C 00230A4C 2900023C */  lui        $2, %hi("@1521__2")
+    /* 130B50 00230A50 D0554224 */  addiu      $2, $2, %lo("@1521__2")
     /* 130B54 00230A54 8000A327 */  addiu      $3, $29, 0x80
     /* 130B58 00230A58 00004278 */  lq         $2, 0x0($2)
     /* 130B5C 00230A5C 0000627C */  sq         $2, 0x0($3)
@@ -89,8 +89,8 @@ glabel PersonalBoardMaxDraw__FiiiP8CTexturei
     /* 130BBC 00230ABC 0900812C */  sltiu      $1, $4, 0x9
     /* 130BC0 00230AC0 32002010 */  beqz       $1, .L00230B8C
     /* 130BC4 00230AC4 00000000 */   nop
-    /* 130BC8 00230AC8 2A00023C */  lui        $2, %hi(LIT_1559__2)
-    /* 130BCC 00230ACC 30F24324 */  addiu      $3, $2, %lo(LIT_1559__2)
+    /* 130BC8 00230AC8 2A00023C */  lui        $2, %hi("@1559__2")
+    /* 130BCC 00230ACC 30F24324 */  addiu      $3, $2, %lo("@1559__2")
     /* 130BD0 00230AD0 80100400 */  sll        $2, $4, 2
     /* 130BD4 00230AD4 21104300 */  addu       $2, $2, $3
     /* 130BD8 00230AD8 0000428C */  lw         $2, 0x0($2)

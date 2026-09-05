@@ -21,8 +21,8 @@ glabel DrawSellTicket22__Fiiiii
     /* 0ECE48 001ECD48 28BE0071 */  paddub     $23, $8, $0
     /* 0ECE4C 001ECD4C D901013C */  lui        $1, %hi(ShopMenu + 0xC)
     /* 0ECE50 001ECD50 DC00268C */  lw         $6, %lo(ShopMenu + 0xC)($1)
-    /* 0ECE54 001ECD54 2900033C */  lui        $3, %hi(LIT_1894)
-    /* 0ECE58 001ECD58 40286524 */  addiu      $5, $3, %lo(LIT_1894)
+    /* 0ECE54 001ECD54 2900033C */  lui        $3, %hi("@1894")
+    /* 0ECE58 001ECD58 40286524 */  addiu      $5, $3, %lo("@1894")
     /* 0ECE5C 001ECD5C 9000A427 */  addiu      $4, $29, 0x90
     /* 0ECE60 001ECD60 0000A3DC */  ld         $3, 0x0($5)
     /* 0ECE64 001ECD64 0800A0C4 */  lwc1       $f0, 0x8($5)

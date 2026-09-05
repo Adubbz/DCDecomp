@@ -322,12 +322,12 @@ glabel EnterTextureEX__15CTextureManagerFiPcPUciiiPUciiPUcPUcPUcUli
     /* 0320DC 00131FDC 2A084300 */  slt        $1, $2, $3
     /* 0320E0 00131FE0 0D002010 */  beqz       $1, .L00132018
     /* 0320E4 00131FE4 00000000 */   nop
-    /* 0320E8 00131FE8 2A00023C */  lui        $2, %hi(LIT_409)
-    /* 0320EC 00131FEC D08E4424 */  addiu      $4, $2, %lo(LIT_409)
+    /* 0320E8 00131FE8 2A00023C */  lui        $2, %hi("@409")
+    /* 0320EC 00131FEC D08E4424 */  addiu      $4, $2, %lo("@409")
     /* 0320F0 00131FF0 A611040C */  jal        printf
     /* 0320F4 00131FF4 00000000 */   nop
-    /* 0320F8 00131FF8 2A00023C */  lui        $2, %hi(LIT_410)
-    /* 0320FC 00131FFC E88E4424 */  addiu      $4, $2, %lo(LIT_410)
+    /* 0320F8 00131FF8 2A00023C */  lui        $2, %hi("@410")
+    /* 0320FC 00131FFC E88E4424 */  addiu      $4, $2, %lo("@410")
     /* 032100 00132000 282EE072 */  paddub     $5, $23, $0
     /* 032104 00132004 0000C68F */  lw         $6, 0x0($30)
     /* 032108 00132008 A611040C */  jal        printf

@@ -66,15 +66,15 @@ glabel CheckBuyItemFunc2__Fv
     /* 0EB974 001EB874 2A28C400 */  slt        $5, $6, $4
     /* 0EB978 001EB878 F5FFA014 */  bnez       $5, .L001EB850
     /* 0EB97C 001EB87C 00000000 */   nop
-    /* 0EB980 001EB880 2900053C */  lui        $5, %hi(LIT_1581__2)
-    /* 0EB984 001EB884 B027A724 */  addiu      $7, $5, %lo(LIT_1581__2)
+    /* 0EB980 001EB880 2900053C */  lui        $5, %hi("@1581__2")
+    /* 0EB984 001EB884 B027A724 */  addiu      $7, $5, %lo("@1581__2")
     /* 0EB988 001EB888 0000A627 */  addiu      $6, $29, 0x0
     /* 0EB98C 001EB88C 0000E5DC */  ld         $5, 0x0($7)
     /* 0EB990 001EB890 0800E0C4 */  lwc1       $f0, 0x8($7)
     /* 0EB994 001EB894 0000C5FC */  sd         $5, 0x0($6)
     /* 0EB998 001EB898 0800C0E4 */  swc1       $f0, 0x8($6)
-    /* 0EB99C 001EB89C 2900053C */  lui        $5, %hi(LIT_1582)
-    /* 0EB9A0 001EB8A0 C027A724 */  addiu      $7, $5, %lo(LIT_1582)
+    /* 0EB99C 001EB89C 2900053C */  lui        $5, %hi("@1582")
+    /* 0EB9A0 001EB8A0 C027A724 */  addiu      $7, $5, %lo("@1582")
     /* 0EB9A4 001EB8A4 1000A627 */  addiu      $6, $29, 0x10
     /* 0EB9A8 001EB8A8 0000E5DC */  ld         $5, 0x0($7)
     /* 0EB9AC 001EB8AC 0800E0C4 */  lwc1       $f0, 0x8($7)

@@ -82,13 +82,13 @@ glabel _LOAD_IN_VILLAGER__FP12RS_STACKDATAi
     /* 08CF7C 0018CE7C 7C1422AE */  sw         $2, 0x147C($17)
     /* 08CF80 0018CE80 0043023C */  lui        $2, (0x43000000 >> 16)
     /* 08CF84 0018CE84 EC0C22AE */  sw         $2, 0xCEC($17)
-    /* 08CF88 0018CE88 2700023C */  lui        $2, %hi(LIT_932)
-    /* 08CF8C 0018CE8C 609B4224 */  addiu      $2, $2, %lo(LIT_932)
+    /* 08CF88 0018CE88 2700023C */  lui        $2, %hi("@932")
+    /* 08CF8C 0018CE8C 609B4224 */  addiu      $2, $2, %lo("@932")
     /* 08CF90 0018CE90 6000A527 */  addiu      $5, $29, 0x60
     /* 08CF94 0018CE94 00004278 */  lq         $2, 0x0($2)
     /* 08CF98 0018CE98 0000A27C */  sq         $2, 0x0($5)
-    /* 08CF9C 0018CE9C 2700023C */  lui        $2, %hi(LIT_933)
-    /* 08CFA0 0018CEA0 709B4224 */  addiu      $2, $2, %lo(LIT_933)
+    /* 08CF9C 0018CE9C 2700023C */  lui        $2, %hi("@933")
+    /* 08CFA0 0018CEA0 709B4224 */  addiu      $2, $2, %lo("@933")
     /* 08CFA4 0018CEA4 7000A327 */  addiu      $3, $29, 0x70
     /* 08CFA8 0018CEA8 00004278 */  lq         $2, 0x0($2)
     /* 08CFAC 0018CEAC 0000627C */  sq         $2, 0x0($3)

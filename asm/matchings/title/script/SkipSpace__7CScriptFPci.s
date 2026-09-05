@@ -18,8 +18,8 @@ glabel SkipSpace__7CScriptFPci
   .L01DAD0BC:
     /* 0013BC 01DAD0BC 01001064 */  daddiu     $16, $0, 0x1
     /* 0013C0 01DAD0C0 21205102 */  addu       $4, $18, $17
-    /* 0013C4 01DAD0C4 DE01023C */  lui        $2, %hi(LIT_440)
-    /* 0013C8 01DAD0C8 38BF4524 */  addiu      $5, $2, %lo(LIT_440)
+    /* 0013C4 01DAD0C4 DE01023C */  lui        $2, %hi("@440")
+    /* 0013C8 01DAD0C8 38BF4524 */  addiu      $5, $2, %lo("@440")
     /* 0013CC 01DAD0CC 02000624 */  addiu      $6, $0, 0x2
     /* 0013D0 01DAD0D0 C60C040C */  jal        memcmp
     /* 0013D4 01DAD0D4 00000000 */   nop
@@ -55,8 +55,8 @@ glabel SkipSpace__7CScriptFPci
     /* 00143C 01DAD13C 28860070 */  paddub     $16, $0, $0
   .L01DAD140:
     /* 001440 01DAD140 21205102 */  addu       $4, $18, $17
-    /* 001444 01DAD144 DE01023C */  lui        $2, %hi(LIT_441)
-    /* 001448 01DAD148 40BF4524 */  addiu      $5, $2, %lo(LIT_441)
+    /* 001444 01DAD144 DE01023C */  lui        $2, %hi("@441")
+    /* 001448 01DAD148 40BF4524 */  addiu      $5, $2, %lo("@441")
     /* 00144C 01DAD14C 02000624 */  addiu      $6, $0, 0x2
     /* 001450 01DAD150 C60C040C */  jal        memcmp
     /* 001454 01DAD154 00000000 */   nop

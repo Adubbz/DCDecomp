@@ -22,16 +22,16 @@ glabel OpA_InitProcess__Fv
     /* 0091E4 01DB4EE4 50A44424 */  addiu      $4, $2, %lo(OP_BuildingMap)
     /* 0091E8 01DB4EE8 A80E050C */  jal        Initialize__4CMapFv
     /* 0091EC 01DB4EEC 00000000 */   nop
-    /* 0091F0 01DB4EF0 DE01023C */  lui        $2, %hi(LIT_286__4)
-    /* 0091F4 01DB4EF4 10DA4424 */  addiu      $4, $2, %lo(LIT_286__4)
+    /* 0091F0 01DB4EF0 DE01023C */  lui        $2, %hi("@286__4")
+    /* 0091F4 01DB4EF4 10DA4424 */  addiu      $4, $2, %lo("@286__4")
     /* 0091F8 01DB4EF8 00C5760C */  jal        OPAnalyz__FPc
     /* 0091FC 01DB4EFC 00000000 */   nop
     /* 009200 01DB4F00 1CD4760C */  jal        LoadTexture__Fv__3
     /* 009204 01DB4F04 00000000 */   nop
     /* 009208 01DB4F08 4CCA760C */  jal        OPMdsLoad__Fv
     /* 00920C 01DB4F0C 00000000 */   nop
-    /* 009210 01DB4F10 DE01023C */  lui        $2, %hi(LIT_287__4)
-    /* 009214 01DB4F14 30DA4424 */  addiu      $4, $2, %lo(LIT_287__4)
+    /* 009210 01DB4F10 DE01023C */  lui        $2, %hi("@287__4")
+    /* 009214 01DB4F14 30DA4424 */  addiu      $4, $2, %lo("@287__4")
     /* 009218 01DB4F18 948B858F */  lw         $5, -0x746C($28)
     /* 00921C 01DB4F1C 28360070 */  paddub     $6, $0, $0
     /* 009220 01DB4F20 D8FC040C */  jal        LoadFile__FPcPvPi
@@ -53,8 +53,8 @@ glabel OpA_InitProcess__Fv
     /* 009260 01DB4F60 140F050C */  jal        SetReverb__6CSoundFiii
     /* 009264 01DB4F64 00000000 */   nop
     /* 009268 01DB4F68 3C8D8427 */  addiu      $4, $28, -0x72C4
-    /* 00926C 01DB4F6C DE01023C */  lui        $2, %hi(LIT_288__4)
-    /* 009270 01DB4F70 50DA4524 */  addiu      $5, $2, %lo(LIT_288__4)
+    /* 00926C 01DB4F6C DE01023C */  lui        $2, %hi("@288__4")
+    /* 009270 01DB4F70 50DA4524 */  addiu      $5, $2, %lo("@288__4")
     /* 009274 01DB4F74 948B868F */  lw         $6, -0x746C($28)
     /* 009278 01DB4F78 3410050C */  jal        LoadSoundFileFromPack__6CSoundFPcPUi
     /* 00927C 01DB4F7C 00000000 */   nop
@@ -94,14 +94,14 @@ glabel OpA_InitProcess__Fv
     /* 009304 01DB5004 1000013C */  lui        $1, (0x10C900 >> 16)
     /* 009308 01DB5008 00C92134 */  ori        $1, $1, (0x10C900 & 0xFFFF)
     /* 00930C 01DB500C 21284100 */  addu       $5, $2, $1
-    /* 009310 01DB5010 DE01023C */  lui        $2, %hi(LIT_289__4)
-    /* 009314 01DB5014 60DA4424 */  addiu      $4, $2, %lo(LIT_289__4)
+    /* 009310 01DB5010 DE01023C */  lui        $2, %hi("@289__4")
+    /* 009314 01DB5014 60DA4424 */  addiu      $4, $2, %lo("@289__4")
     /* 009318 01DB5018 28360070 */  paddub     $6, $0, $0
     /* 00931C 01DB501C D8FC040C */  jal        LoadFile__FPcPvPi
     /* 009320 01DB5020 00000000 */   nop
     /* 009324 01DB5024 948B858F */  lw         $5, -0x746C($28)
-    /* 009328 01DB5028 DE01023C */  lui        $2, %hi(LIT_290__4)
-    /* 00932C 01DB502C 80DA4424 */  addiu      $4, $2, %lo(LIT_290__4)
+    /* 009328 01DB5028 DE01023C */  lui        $2, %hi("@290__4")
+    /* 00932C 01DB502C 80DA4424 */  addiu      $4, $2, %lo("@290__4")
     /* 009330 01DB5030 28360070 */  paddub     $6, $0, $0
     /* 009334 01DB5034 D8FC040C */  jal        LoadFile__FPcPvPi
     /* 009338 01DB5038 00000000 */   nop
@@ -122,8 +122,8 @@ glabel OpA_InitProcess__Fv
 glabel LoadTexture__Fv__3
     /* 009370 01DB5070 80FEBD27 */  addiu      $29, $29, -0x180
     /* 009374 01DB5074 0000BF7F */  sq         $31, 0x0($29)
-    /* 009378 01DB5078 DD01023C */  lui        $2, %hi(LIT_296__3)
-    /* 00937C 01DB507C 80624624 */  addiu      $6, $2, %lo(LIT_296__3)
+    /* 009378 01DB5078 DD01023C */  lui        $2, %hi("@296__3")
+    /* 00937C 01DB507C 80624624 */  addiu      $6, $2, %lo("@296__3")
     /* 009380 01DB5080 1000A527 */  addiu      $5, $29, 0x10
     /* 009384 01DB5084 0B000424 */  addiu      $4, $0, 0xB
   .L01DB5088:
@@ -144,182 +144,182 @@ glabel LoadTexture__Fv__3
     /* 0093C0 01DB50C0 F0C3040C */  jal        Initialize__15CTextureManagerFi
     /* 0093C4 01DB50C4 00000000 */   nop
     /* 0093C8 01DB50C8 948B858F */  lw         $5, -0x746C($28)
-    /* 0093CC 01DB50CC DE01023C */  lui        $2, %hi(LIT_298__5)
-    /* 0093D0 01DB50D0 20DB4424 */  addiu      $4, $2, %lo(LIT_298__5)
+    /* 0093CC 01DB50CC DE01023C */  lui        $2, %hi("@298__5")
+    /* 0093D0 01DB50D0 20DB4424 */  addiu      $4, $2, %lo("@298__5")
     /* 0093D4 01DB50D4 28360070 */  paddub     $6, $0, $0
     /* 0093D8 01DB50D8 D8FC040C */  jal        LoadFile__FPcPvPi
     /* 0093DC 01DB50DC 00000000 */   nop
     /* 0093E0 01DB50E0 948B848F */  lw         $4, -0x746C($28)
-    /* 0093E4 01DB50E4 DE01023C */  lui        $2, %hi(LIT_299__5)
-    /* 0093E8 01DB50E8 40DB4524 */  addiu      $5, $2, %lo(LIT_299__5)
+    /* 0093E4 01DB50E4 DE01023C */  lui        $2, %hi("@299__5")
+    /* 0093E8 01DB50E8 40DB4524 */  addiu      $5, $2, %lo("@299__5")
     /* 0093EC 01DB50EC 28360070 */  paddub     $6, $0, $0
     /* 0093F0 01DB50F0 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0093F4 01DB50F4 00000000 */   nop
     /* 0093F8 01DB50F8 4000A2AF */  sw         $2, 0x40($29)
     /* 0093FC 01DB50FC 948B848F */  lw         $4, -0x746C($28)
-    /* 009400 01DB5100 DE01023C */  lui        $2, %hi(LIT_300__4)
-    /* 009404 01DB5104 50DB4524 */  addiu      $5, $2, %lo(LIT_300__4)
+    /* 009400 01DB5100 DE01023C */  lui        $2, %hi("@300__4")
+    /* 009404 01DB5104 50DB4524 */  addiu      $5, $2, %lo("@300__4")
     /* 009408 01DB5108 28360070 */  paddub     $6, $0, $0
     /* 00940C 01DB510C C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 009410 01DB5110 00000000 */   nop
     /* 009414 01DB5114 4C00A2AF */  sw         $2, 0x4C($29)
     /* 009418 01DB5118 948B848F */  lw         $4, -0x746C($28)
-    /* 00941C 01DB511C DE01023C */  lui        $2, %hi(LIT_301__3)
-    /* 009420 01DB5120 60DB4524 */  addiu      $5, $2, %lo(LIT_301__3)
+    /* 00941C 01DB511C DE01023C */  lui        $2, %hi("@301__3")
+    /* 009420 01DB5120 60DB4524 */  addiu      $5, $2, %lo("@301__3")
     /* 009424 01DB5124 28360070 */  paddub     $6, $0, $0
     /* 009428 01DB5128 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 00942C 01DB512C 00000000 */   nop
     /* 009430 01DB5130 5800A2AF */  sw         $2, 0x58($29)
     /* 009434 01DB5134 948B848F */  lw         $4, -0x746C($28)
-    /* 009438 01DB5138 DE01023C */  lui        $2, %hi(LIT_302__3)
-    /* 00943C 01DB513C 70DB4524 */  addiu      $5, $2, %lo(LIT_302__3)
+    /* 009438 01DB5138 DE01023C */  lui        $2, %hi("@302__3")
+    /* 00943C 01DB513C 70DB4524 */  addiu      $5, $2, %lo("@302__3")
     /* 009440 01DB5140 28360070 */  paddub     $6, $0, $0
     /* 009444 01DB5144 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 009448 01DB5148 00000000 */   nop
     /* 00944C 01DB514C 6400A2AF */  sw         $2, 0x64($29)
     /* 009450 01DB5150 948B848F */  lw         $4, -0x746C($28)
-    /* 009454 01DB5154 DE01023C */  lui        $2, %hi(LIT_303__3)
-    /* 009458 01DB5158 80DB4524 */  addiu      $5, $2, %lo(LIT_303__3)
+    /* 009454 01DB5154 DE01023C */  lui        $2, %hi("@303__3")
+    /* 009458 01DB5158 80DB4524 */  addiu      $5, $2, %lo("@303__3")
     /* 00945C 01DB515C 28360070 */  paddub     $6, $0, $0
     /* 009460 01DB5160 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 009464 01DB5164 00000000 */   nop
     /* 009468 01DB5168 7000A2AF */  sw         $2, 0x70($29)
     /* 00946C 01DB516C 948B848F */  lw         $4, -0x746C($28)
-    /* 009470 01DB5170 DE01023C */  lui        $2, %hi(LIT_304__3)
-    /* 009474 01DB5174 90DB4524 */  addiu      $5, $2, %lo(LIT_304__3)
+    /* 009470 01DB5170 DE01023C */  lui        $2, %hi("@304__3")
+    /* 009474 01DB5174 90DB4524 */  addiu      $5, $2, %lo("@304__3")
     /* 009478 01DB5178 28360070 */  paddub     $6, $0, $0
     /* 00947C 01DB517C C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 009480 01DB5180 00000000 */   nop
     /* 009484 01DB5184 7C00A2AF */  sw         $2, 0x7C($29)
     /* 009488 01DB5188 948B848F */  lw         $4, -0x746C($28)
-    /* 00948C 01DB518C DE01023C */  lui        $2, %hi(LIT_305__3)
-    /* 009490 01DB5190 A0DB4524 */  addiu      $5, $2, %lo(LIT_305__3)
+    /* 00948C 01DB518C DE01023C */  lui        $2, %hi("@305__3")
+    /* 009490 01DB5190 A0DB4524 */  addiu      $5, $2, %lo("@305__3")
     /* 009494 01DB5194 28360070 */  paddub     $6, $0, $0
     /* 009498 01DB5198 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 00949C 01DB519C 00000000 */   nop
     /* 0094A0 01DB51A0 8800A2AF */  sw         $2, 0x88($29)
     /* 0094A4 01DB51A4 948B848F */  lw         $4, -0x746C($28)
-    /* 0094A8 01DB51A8 DE01023C */  lui        $2, %hi(LIT_306__3)
-    /* 0094AC 01DB51AC B0DB4524 */  addiu      $5, $2, %lo(LIT_306__3)
+    /* 0094A8 01DB51A8 DE01023C */  lui        $2, %hi("@306__3")
+    /* 0094AC 01DB51AC B0DB4524 */  addiu      $5, $2, %lo("@306__3")
     /* 0094B0 01DB51B0 28360070 */  paddub     $6, $0, $0
     /* 0094B4 01DB51B4 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0094B8 01DB51B8 00000000 */   nop
     /* 0094BC 01DB51BC 9400A2AF */  sw         $2, 0x94($29)
     /* 0094C0 01DB51C0 948B848F */  lw         $4, -0x746C($28)
-    /* 0094C4 01DB51C4 DE01023C */  lui        $2, %hi(LIT_307__3)
-    /* 0094C8 01DB51C8 C0DB4524 */  addiu      $5, $2, %lo(LIT_307__3)
+    /* 0094C4 01DB51C4 DE01023C */  lui        $2, %hi("@307__3")
+    /* 0094C8 01DB51C8 C0DB4524 */  addiu      $5, $2, %lo("@307__3")
     /* 0094CC 01DB51CC 28360070 */  paddub     $6, $0, $0
     /* 0094D0 01DB51D0 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0094D4 01DB51D4 00000000 */   nop
     /* 0094D8 01DB51D8 A000A2AF */  sw         $2, 0xA0($29)
     /* 0094DC 01DB51DC 948B848F */  lw         $4, -0x746C($28)
-    /* 0094E0 01DB51E0 DE01023C */  lui        $2, %hi(LIT_308__4)
-    /* 0094E4 01DB51E4 D0DB4524 */  addiu      $5, $2, %lo(LIT_308__4)
+    /* 0094E0 01DB51E0 DE01023C */  lui        $2, %hi("@308__4")
+    /* 0094E4 01DB51E4 D0DB4524 */  addiu      $5, $2, %lo("@308__4")
     /* 0094E8 01DB51E8 28360070 */  paddub     $6, $0, $0
     /* 0094EC 01DB51EC C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0094F0 01DB51F0 00000000 */   nop
     /* 0094F4 01DB51F4 AC00A2AF */  sw         $2, 0xAC($29)
     /* 0094F8 01DB51F8 948B848F */  lw         $4, -0x746C($28)
-    /* 0094FC 01DB51FC DE01023C */  lui        $2, %hi(LIT_309__3)
-    /* 009500 01DB5200 E0DB4524 */  addiu      $5, $2, %lo(LIT_309__3)
+    /* 0094FC 01DB51FC DE01023C */  lui        $2, %hi("@309__3")
+    /* 009500 01DB5200 E0DB4524 */  addiu      $5, $2, %lo("@309__3")
     /* 009504 01DB5204 28360070 */  paddub     $6, $0, $0
     /* 009508 01DB5208 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 00950C 01DB520C 00000000 */   nop
     /* 009510 01DB5210 B800A2AF */  sw         $2, 0xB8($29)
     /* 009514 01DB5214 948B848F */  lw         $4, -0x746C($28)
-    /* 009518 01DB5218 DE01023C */  lui        $2, %hi(LIT_310__3)
-    /* 00951C 01DB521C F0DB4524 */  addiu      $5, $2, %lo(LIT_310__3)
+    /* 009518 01DB5218 DE01023C */  lui        $2, %hi("@310__3")
+    /* 00951C 01DB521C F0DB4524 */  addiu      $5, $2, %lo("@310__3")
     /* 009520 01DB5220 28360070 */  paddub     $6, $0, $0
     /* 009524 01DB5224 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 009528 01DB5228 00000000 */   nop
     /* 00952C 01DB522C C400A2AF */  sw         $2, 0xC4($29)
     /* 009530 01DB5230 948B848F */  lw         $4, -0x746C($28)
-    /* 009534 01DB5234 DE01023C */  lui        $2, %hi(LIT_311__3)
-    /* 009538 01DB5238 00DC4524 */  addiu      $5, $2, %lo(LIT_311__3)
+    /* 009534 01DB5234 DE01023C */  lui        $2, %hi("@311__3")
+    /* 009538 01DB5238 00DC4524 */  addiu      $5, $2, %lo("@311__3")
     /* 00953C 01DB523C 28360070 */  paddub     $6, $0, $0
     /* 009540 01DB5240 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 009544 01DB5244 00000000 */   nop
     /* 009548 01DB5248 D000A2AF */  sw         $2, 0xD0($29)
     /* 00954C 01DB524C 948B848F */  lw         $4, -0x746C($28)
-    /* 009550 01DB5250 DE01023C */  lui        $2, %hi(LIT_312__3)
-    /* 009554 01DB5254 10DC4524 */  addiu      $5, $2, %lo(LIT_312__3)
+    /* 009550 01DB5250 DE01023C */  lui        $2, %hi("@312__3")
+    /* 009554 01DB5254 10DC4524 */  addiu      $5, $2, %lo("@312__3")
     /* 009558 01DB5258 28360070 */  paddub     $6, $0, $0
     /* 00955C 01DB525C C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 009560 01DB5260 00000000 */   nop
     /* 009564 01DB5264 DC00A2AF */  sw         $2, 0xDC($29)
     /* 009568 01DB5268 948B848F */  lw         $4, -0x746C($28)
-    /* 00956C 01DB526C DE01023C */  lui        $2, %hi(LIT_313__2)
-    /* 009570 01DB5270 18DC4524 */  addiu      $5, $2, %lo(LIT_313__2)
+    /* 00956C 01DB526C DE01023C */  lui        $2, %hi("@313__2")
+    /* 009570 01DB5270 18DC4524 */  addiu      $5, $2, %lo("@313__2")
     /* 009574 01DB5274 28360070 */  paddub     $6, $0, $0
     /* 009578 01DB5278 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 00957C 01DB527C 00000000 */   nop
     /* 009580 01DB5280 E800A2AF */  sw         $2, 0xE8($29)
     /* 009584 01DB5284 948B848F */  lw         $4, -0x746C($28)
-    /* 009588 01DB5288 DE01023C */  lui        $2, %hi(LIT_314__4)
-    /* 00958C 01DB528C 28DC4524 */  addiu      $5, $2, %lo(LIT_314__4)
+    /* 009588 01DB5288 DE01023C */  lui        $2, %hi("@314__4")
+    /* 00958C 01DB528C 28DC4524 */  addiu      $5, $2, %lo("@314__4")
     /* 009590 01DB5290 28360070 */  paddub     $6, $0, $0
     /* 009594 01DB5294 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 009598 01DB5298 00000000 */   nop
     /* 00959C 01DB529C F400A2AF */  sw         $2, 0xF4($29)
     /* 0095A0 01DB52A0 948B848F */  lw         $4, -0x746C($28)
-    /* 0095A4 01DB52A4 DE01023C */  lui        $2, %hi(LIT_315__4)
-    /* 0095A8 01DB52A8 38DC4524 */  addiu      $5, $2, %lo(LIT_315__4)
+    /* 0095A4 01DB52A4 DE01023C */  lui        $2, %hi("@315__4")
+    /* 0095A8 01DB52A8 38DC4524 */  addiu      $5, $2, %lo("@315__4")
     /* 0095AC 01DB52AC 28360070 */  paddub     $6, $0, $0
     /* 0095B0 01DB52B0 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0095B4 01DB52B4 00000000 */   nop
     /* 0095B8 01DB52B8 0001A2AF */  sw         $2, 0x100($29)
     /* 0095BC 01DB52BC 948B848F */  lw         $4, -0x746C($28)
-    /* 0095C0 01DB52C0 DE01023C */  lui        $2, %hi(LIT_316__3)
-    /* 0095C4 01DB52C4 48DC4524 */  addiu      $5, $2, %lo(LIT_316__3)
+    /* 0095C0 01DB52C0 DE01023C */  lui        $2, %hi("@316__3")
+    /* 0095C4 01DB52C4 48DC4524 */  addiu      $5, $2, %lo("@316__3")
     /* 0095C8 01DB52C8 28360070 */  paddub     $6, $0, $0
     /* 0095CC 01DB52CC C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0095D0 01DB52D0 00000000 */   nop
     /* 0095D4 01DB52D4 0C01A2AF */  sw         $2, 0x10C($29)
     /* 0095D8 01DB52D8 948B848F */  lw         $4, -0x746C($28)
-    /* 0095DC 01DB52DC DE01023C */  lui        $2, %hi(LIT_317__3)
-    /* 0095E0 01DB52E0 58DC4524 */  addiu      $5, $2, %lo(LIT_317__3)
+    /* 0095DC 01DB52DC DE01023C */  lui        $2, %hi("@317__3")
+    /* 0095E0 01DB52E0 58DC4524 */  addiu      $5, $2, %lo("@317__3")
     /* 0095E4 01DB52E4 28360070 */  paddub     $6, $0, $0
     /* 0095E8 01DB52E8 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0095EC 01DB52EC 00000000 */   nop
     /* 0095F0 01DB52F0 1801A2AF */  sw         $2, 0x118($29)
     /* 0095F4 01DB52F4 948B848F */  lw         $4, -0x746C($28)
-    /* 0095F8 01DB52F8 DE01023C */  lui        $2, %hi(LIT_318__3)
-    /* 0095FC 01DB52FC 68DC4524 */  addiu      $5, $2, %lo(LIT_318__3)
+    /* 0095F8 01DB52F8 DE01023C */  lui        $2, %hi("@318__3")
+    /* 0095FC 01DB52FC 68DC4524 */  addiu      $5, $2, %lo("@318__3")
     /* 009600 01DB5300 28360070 */  paddub     $6, $0, $0
     /* 009604 01DB5304 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 009608 01DB5308 00000000 */   nop
     /* 00960C 01DB530C 2401A2AF */  sw         $2, 0x124($29)
     /* 009610 01DB5310 948B848F */  lw         $4, -0x746C($28)
-    /* 009614 01DB5314 DE01023C */  lui        $2, %hi(LIT_319__4)
-    /* 009618 01DB5318 78DC4524 */  addiu      $5, $2, %lo(LIT_319__4)
+    /* 009614 01DB5314 DE01023C */  lui        $2, %hi("@319__4")
+    /* 009618 01DB5318 78DC4524 */  addiu      $5, $2, %lo("@319__4")
     /* 00961C 01DB531C 28360070 */  paddub     $6, $0, $0
     /* 009620 01DB5320 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 009624 01DB5324 00000000 */   nop
     /* 009628 01DB5328 3001A2AF */  sw         $2, 0x130($29)
     /* 00962C 01DB532C 948B848F */  lw         $4, -0x746C($28)
-    /* 009630 01DB5330 DE01023C */  lui        $2, %hi(LIT_320__4)
-    /* 009634 01DB5334 88DC4524 */  addiu      $5, $2, %lo(LIT_320__4)
+    /* 009630 01DB5330 DE01023C */  lui        $2, %hi("@320__4")
+    /* 009634 01DB5334 88DC4524 */  addiu      $5, $2, %lo("@320__4")
     /* 009638 01DB5338 28360070 */  paddub     $6, $0, $0
     /* 00963C 01DB533C C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 009640 01DB5340 00000000 */   nop
     /* 009644 01DB5344 3C01A2AF */  sw         $2, 0x13C($29)
     /* 009648 01DB5348 948B848F */  lw         $4, -0x746C($28)
-    /* 00964C 01DB534C DE01023C */  lui        $2, %hi(LIT_321__3)
-    /* 009650 01DB5350 98DC4524 */  addiu      $5, $2, %lo(LIT_321__3)
+    /* 00964C 01DB534C DE01023C */  lui        $2, %hi("@321__3")
+    /* 009650 01DB5350 98DC4524 */  addiu      $5, $2, %lo("@321__3")
     /* 009654 01DB5354 28360070 */  paddub     $6, $0, $0
     /* 009658 01DB5358 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 00965C 01DB535C 00000000 */   nop
     /* 009660 01DB5360 4801A2AF */  sw         $2, 0x148($29)
     /* 009664 01DB5364 948B848F */  lw         $4, -0x746C($28)
-    /* 009668 01DB5368 DE01023C */  lui        $2, %hi(LIT_322__3)
-    /* 00966C 01DB536C A8DC4524 */  addiu      $5, $2, %lo(LIT_322__3)
+    /* 009668 01DB5368 DE01023C */  lui        $2, %hi("@322__3")
+    /* 00966C 01DB536C A8DC4524 */  addiu      $5, $2, %lo("@322__3")
     /* 009670 01DB5370 28360070 */  paddub     $6, $0, $0
     /* 009674 01DB5374 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 009678 01DB5378 00000000 */   nop
     /* 00967C 01DB537C 5401A2AF */  sw         $2, 0x154($29)
     /* 009680 01DB5380 948B848F */  lw         $4, -0x746C($28)
-    /* 009684 01DB5384 DE01023C */  lui        $2, %hi(LIT_323__3)
-    /* 009688 01DB5388 B8DC4524 */  addiu      $5, $2, %lo(LIT_323__3)
+    /* 009684 01DB5384 DE01023C */  lui        $2, %hi("@323__3")
+    /* 009688 01DB5388 B8DC4524 */  addiu      $5, $2, %lo("@323__3")
     /* 00968C 01DB538C 28360070 */  paddub     $6, $0, $0
     /* 009690 01DB5390 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 009694 01DB5394 00000000 */   nop
@@ -363,8 +363,8 @@ glabel LoadData__Fv__2
     /* 009724 01DB5424 2000BF7F */  sq         $31, 0x20($29)
     /* 009728 01DB5428 1000B17F */  sq         $17, 0x10($29)
     /* 00972C 01DB542C 0000B07F */  sq         $16, 0x0($29)
-    /* 009730 01DB5430 DD01023C */  lui        $2, %hi(LIT_328__4)
-    /* 009734 01DB5434 F0634224 */  addiu      $2, $2, %lo(LIT_328__4)
+    /* 009730 01DB5430 DD01023C */  lui        $2, %hi("@328__4")
+    /* 009734 01DB5434 F0634224 */  addiu      $2, $2, %lo("@328__4")
     /* 009738 01DB5438 3000A327 */  addiu      $3, $29, 0x30
     /* 00973C 01DB543C 00004278 */  lq         $2, 0x0($2)
     /* 009740 01DB5440 0000627C */  sq         $2, 0x0($3)
@@ -432,8 +432,8 @@ glabel LoadData__Fv__2
     /* 009830 01DB5530 74E6040C */  jal        Initialize__10CCharacterFv
     /* 009834 01DB5534 00000000 */   nop
     /* 009838 01DB5538 948B848F */  lw         $4, -0x746C($28)
-    /* 00983C 01DB553C DE01023C */  lui        $2, %hi(LIT_338__2)
-    /* 009840 01DB5540 08DD4524 */  addiu      $5, $2, %lo(LIT_338__2)
+    /* 00983C 01DB553C DE01023C */  lui        $2, %hi("@338__2")
+    /* 009840 01DB5540 08DD4524 */  addiu      $5, $2, %lo("@338__2")
     /* 009844 01DB5544 28360070 */  paddub     $6, $0, $0
     /* 009848 01DB5548 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 00984C 01DB554C 00000000 */   nop
@@ -465,8 +465,8 @@ glabel LoadData__Fv__2
     /* 0098B4 01DB55B4 74E6040C */  jal        Initialize__10CCharacterFv
     /* 0098B8 01DB55B8 00000000 */   nop
     /* 0098BC 01DB55BC 948B848F */  lw         $4, -0x746C($28)
-    /* 0098C0 01DB55C0 DE01023C */  lui        $2, %hi(LIT_339__3)
-    /* 0098C4 01DB55C4 18DD4524 */  addiu      $5, $2, %lo(LIT_339__3)
+    /* 0098C0 01DB55C0 DE01023C */  lui        $2, %hi("@339__3")
+    /* 0098C4 01DB55C4 18DD4524 */  addiu      $5, $2, %lo("@339__3")
     /* 0098C8 01DB55C8 28360070 */  paddub     $6, $0, $0
     /* 0098CC 01DB55CC C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0098D0 01DB55D0 00000000 */   nop
@@ -491,15 +491,15 @@ glabel LoadData__Fv__2
     /* 00991C 01DB561C 04000724 */  addiu      $7, $0, 0x4
     /* 009920 01DB5620 D4A2040C */  jal        SetAttr__6CFrameFR10CFrameAttrii
     /* 009924 01DB5624 00000000 */   nop
-    /* 009928 01DB5628 DD01023C */  lui        $2, %hi(LIT_334__5)
-    /* 00992C 01DB562C 00644224 */  addiu      $2, $2, %lo(LIT_334__5)
+    /* 009928 01DB5628 DD01023C */  lui        $2, %hi("@334__5")
+    /* 00992C 01DB562C 00644224 */  addiu      $2, $2, %lo("@334__5")
     /* 009930 01DB5630 6001A327 */  addiu      $3, $29, 0x160
     /* 009934 01DB5634 00004278 */  lq         $2, 0x0($2)
     /* 009938 01DB5638 0000627C */  sq         $2, 0x0($3)
     /* 00993C 01DB563C DF01013C */  lui        $1, %hi(Chara__3 + 0x7C8C)
     /* 009940 01DB5640 6C7B248C */  lw         $4, %lo(Chara__3 + 0x7C8C)($1)
-    /* 009944 01DB5644 DE01023C */  lui        $2, %hi(LIT_340__2)
-    /* 009948 01DB5648 28DD4524 */  addiu      $5, $2, %lo(LIT_340__2)
+    /* 009944 01DB5644 DE01023C */  lui        $2, %hi("@340__2")
+    /* 009948 01DB5648 28DD4524 */  addiu      $5, $2, %lo("@340__2")
     /* 00994C 01DB564C C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 009950 01DB5650 00000000 */   nop
     /* 009954 01DB5654 28264070 */  paddub     $4, $2, $0
@@ -511,8 +511,8 @@ glabel LoadData__Fv__2
     /* 00996C 01DB566C DC4F050C */  jal        wait_now_loading_vsync__Fv
     /* 009970 01DB5670 00000000 */   nop
     /* 009974 01DB5674 948B848F */  lw         $4, -0x746C($28)
-    /* 009978 01DB5678 DE01023C */  lui        $2, %hi(LIT_341__2)
-    /* 00997C 01DB567C 30DD4524 */  addiu      $5, $2, %lo(LIT_341__2)
+    /* 009978 01DB5678 DE01023C */  lui        $2, %hi("@341__2")
+    /* 00997C 01DB567C 30DD4524 */  addiu      $5, $2, %lo("@341__2")
     /* 009980 01DB5680 28360070 */  paddub     $6, $0, $0
     /* 009984 01DB5684 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 009988 01DB5688 00000000 */   nop
@@ -547,8 +547,8 @@ glabel LoadData__Fv__2
     /* 0099FC 01DB56FC B092050C */  jal        Clear__12CEffectGroupFv
     /* 009A00 01DB5700 00000000 */   nop
     /* 009A04 01DB5704 948B848F */  lw         $4, -0x746C($28)
-    /* 009A08 01DB5708 DE01023C */  lui        $2, %hi(LIT_342__2)
-    /* 009A0C 01DB570C 40DD4524 */  addiu      $5, $2, %lo(LIT_342__2)
+    /* 009A08 01DB5708 DE01023C */  lui        $2, %hi("@342__2")
+    /* 009A0C 01DB570C 40DD4524 */  addiu      $5, $2, %lo("@342__2")
     /* 009A10 01DB5710 28360070 */  paddub     $6, $0, $0
     /* 009A14 01DB5714 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 009A18 01DB5718 00000000 */   nop
@@ -570,16 +570,16 @@ glabel SetDanceMotion__Fv
     /* 009A50 01DB5750 F0FFBD27 */  addiu      $29, $29, -0x10
     /* 009A54 01DB5754 0000BF7F */  sq         $31, 0x0($29)
     /* 009A58 01DB5758 948B858F */  lw         $5, -0x746C($28)
-    /* 009A5C 01DB575C DE01023C */  lui        $2, %hi(LIT_344__3)
-    /* 009A60 01DB5760 50DD4424 */  addiu      $4, $2, %lo(LIT_344__3)
+    /* 009A5C 01DB575C DE01023C */  lui        $2, %hi("@344__3")
+    /* 009A60 01DB5760 50DD4424 */  addiu      $4, $2, %lo("@344__3")
     /* 009A64 01DB5764 28360070 */  paddub     $6, $0, $0
     /* 009A68 01DB5768 D8FC040C */  jal        LoadFile__FPcPvPi
     /* 009A6C 01DB576C 00000000 */   nop
     /* 009A70 01DB5770 DF01023C */  lui        $2, %hi(Chara__3 + 0x6A20)
     /* 009A74 01DB5774 00694424 */  addiu      $4, $2, %lo(Chara__3 + 0x6A20)
     /* 009A78 01DB5778 948B858F */  lw         $5, -0x746C($28)
-    /* 009A7C 01DB577C DE01023C */  lui        $2, %hi(LIT_345__8)
-    /* 009A80 01DB5780 70DD4624 */  addiu      $6, $2, %lo(LIT_345__8)
+    /* 009A7C 01DB577C DE01023C */  lui        $2, %hi("@345__8")
+    /* 009A80 01DB5780 70DD4624 */  addiu      $6, $2, %lo("@345__8")
     /* 009A84 01DB5784 DF01023C */  lui        $2, %hi(CharaDataBuffer__2 + 0x40)
     /* 009A88 01DB5788 40FE4724 */  addiu      $7, $2, %lo(CharaDataBuffer__2 + 0x40)
     /* 009A8C 01DB578C DF01023C */  lui        $2, %hi(CharaDataBuffer__2 + 0x60)
@@ -608,16 +608,16 @@ glabel SetDanceMotion__Fv
     /* 009AE8 01DB57E8 446C228C */  lw         $2, %lo(Chara__3 + 0x6D64)($1)
     /* 009AEC 01DB57EC 040043AC */  sw         $3, 0x4($2)
     /* 009AF0 01DB57F0 948B858F */  lw         $5, -0x746C($28)
-    /* 009AF4 01DB57F4 DE01023C */  lui        $2, %hi(LIT_347__4)
-    /* 009AF8 01DB57F8 80DD4424 */  addiu      $4, $2, %lo(LIT_347__4)
+    /* 009AF4 01DB57F4 DE01023C */  lui        $2, %hi("@347__4")
+    /* 009AF8 01DB57F8 80DD4424 */  addiu      $4, $2, %lo("@347__4")
     /* 009AFC 01DB57FC 28360070 */  paddub     $6, $0, $0
     /* 009B00 01DB5800 D8FC040C */  jal        LoadFile__FPcPvPi
     /* 009B04 01DB5804 00000000 */   nop
     /* 009B08 01DB5808 DF01023C */  lui        $2, %hi(Chara__3 + 0x7BD0)
     /* 009B0C 01DB580C B07A4424 */  addiu      $4, $2, %lo(Chara__3 + 0x7BD0)
     /* 009B10 01DB5810 948B858F */  lw         $5, -0x746C($28)
-    /* 009B14 01DB5814 DE01023C */  lui        $2, %hi(LIT_348__5)
-    /* 009B18 01DB5818 A0DD4624 */  addiu      $6, $2, %lo(LIT_348__5)
+    /* 009B14 01DB5814 DE01023C */  lui        $2, %hi("@348__5")
+    /* 009B18 01DB5818 A0DD4624 */  addiu      $6, $2, %lo("@348__5")
     /* 009B1C 01DB581C DF01023C */  lui        $2, %hi(CharaDataBuffer__2 + 0x40)
     /* 009B20 01DB5820 40FE4724 */  addiu      $7, $2, %lo(CharaDataBuffer__2 + 0x40)
     /* 009B24 01DB5824 DF01023C */  lui        $2, %hi(CharaDataBuffer__2 + 0x60)
@@ -655,8 +655,8 @@ glabel SetDanceMotion__Fv
 glabel InitDancerPos__Fv
     /* 009BA0 01DB58A0 C0FDBD27 */  addiu      $29, $29, -0x240
     /* 009BA4 01DB58A4 0000BF7F */  sq         $31, 0x0($29)
-    /* 009BA8 01DB58A8 DD01023C */  lui        $2, %hi(LIT_349__4)
-    /* 009BAC 01DB58AC 10644524 */  addiu      $5, $2, %lo(LIT_349__4)
+    /* 009BA8 01DB58A8 DD01023C */  lui        $2, %hi("@349__4")
+    /* 009BAC 01DB58AC 10644524 */  addiu      $5, $2, %lo("@349__4")
     /* 009BB0 01DB58B0 1000A427 */  addiu      $4, $29, 0x10
     /* 009BB4 01DB58B4 23000324 */  addiu      $3, $0, 0x23
   .L01DB58B8:
@@ -1015,8 +1015,8 @@ glabel OpA_DrawProcess__Fv
     /* 00A0CC 01DB5DCC 70F64524 */  addiu      $5, $2, %lo(lcolor$404)
     /* 00A0D0 01DB5DD0 08B7040C */  jal        MGSetPLight__FPA4_fPA4_f
     /* 00A0D4 01DB5DD4 00000000 */   nop
-    /* 00A0D8 01DB5DD8 DD01023C */  lui        $2, %hi(LIT_421__5)
-    /* 00A0DC 01DB5DDC 50664224 */  addiu      $2, $2, %lo(LIT_421__5)
+    /* 00A0D8 01DB5DD8 DD01023C */  lui        $2, %hi("@421__5")
+    /* 00A0DC 01DB5DDC 50664224 */  addiu      $2, $2, %lo("@421__5")
     /* 00A0E0 01DB5DE0 7000A327 */  addiu      $3, $29, 0x70
     /* 00A0E4 01DB5DE4 00004278 */  lq         $2, 0x0($2)
     /* 00A0E8 01DB5DE8 0000627C */  sq         $2, 0x0($3)
@@ -1521,8 +1521,8 @@ glabel OpA_DrawProcess__Fv
     /* 00A838 01DB6538 288E4070 */  paddub     $17, $2, $0
     /* 00A83C 01DB653C C701023C */  lui        $2, %hi(TexManager)
     /* 00A840 01DB6540 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 00A844 01DB6544 DE01023C */  lui        $2, %hi(LIT_654__5)
-    /* 00A848 01DB6548 B0DD4524 */  addiu      $5, $2, %lo(LIT_654__5)
+    /* 00A844 01DB6544 DE01023C */  lui        $2, %hi("@654__5")
+    /* 00A848 01DB6548 B0DD4524 */  addiu      $5, $2, %lo("@654__5")
     /* 00A84C 01DB654C FFFF0624 */  addiu      $6, $0, -0x1
     /* 00A850 01DB6550 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 00A854 01DB6554 00000000 */   nop
@@ -1825,13 +1825,13 @@ glabel SmokeProcess__Fv
     /* 00ACA4 01DB69A4 2499828F */  lw         $2, %gp_rel(cnt$681)($28)
     /* 00ACA8 01DB69A8 70004014 */  bnez       $2, .L01DB6B6C
     /* 00ACAC 01DB69AC 00000000 */   nop
-    /* 00ACB0 01DB69B0 DD01023C */  lui        $2, %hi(LIT_688__3)
-    /* 00ACB4 01DB69B4 70664224 */  addiu      $2, $2, %lo(LIT_688__3)
+    /* 00ACB0 01DB69B0 DD01023C */  lui        $2, %hi("@688__3")
+    /* 00ACB4 01DB69B4 70664224 */  addiu      $2, $2, %lo("@688__3")
     /* 00ACB8 01DB69B8 0001A527 */  addiu      $5, $29, 0x100
     /* 00ACBC 01DB69BC 00004278 */  lq         $2, 0x0($2)
     /* 00ACC0 01DB69C0 0000A27C */  sq         $2, 0x0($5)
-    /* 00ACC4 01DB69C4 DD01023C */  lui        $2, %hi(LIT_689__4)
-    /* 00ACC8 01DB69C8 80664224 */  addiu      $2, $2, %lo(LIT_689__4)
+    /* 00ACC4 01DB69C4 DD01023C */  lui        $2, %hi("@689__4")
+    /* 00ACC8 01DB69C8 80664224 */  addiu      $2, $2, %lo("@689__4")
     /* 00ACCC 01DB69CC 1001A627 */  addiu      $6, $29, 0x110
     /* 00ACD0 01DB69D0 00004278 */  lq         $2, 0x0($2)
     /* 00ACD4 01DB69D4 0000C27C */  sq         $2, 0x0($6)
@@ -1914,8 +1914,8 @@ glabel SmokeProcess__Fv
     /* 00AE00 01DB6B00 2000A2AF */  sw         $2, 0x20($29)
     /* 00AE04 01DB6B04 C701023C */  lui        $2, %hi(TexManager)
     /* 00AE08 01DB6B08 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 00AE0C 01DB6B0C DE01023C */  lui        $2, %hi(LIT_704__4)
-    /* 00AE10 01DB6B10 B8DD4524 */  addiu      $5, $2, %lo(LIT_704__4)
+    /* 00AE0C 01DB6B0C DE01023C */  lui        $2, %hi("@704__4")
+    /* 00AE10 01DB6B10 B8DD4524 */  addiu      $5, $2, %lo("@704__4")
     /* 00AE14 01DB6B14 FFFF0624 */  addiu      $6, $0, -0x1
     /* 00AE18 01DB6B18 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 00AE1C 01DB6B1C 00000000 */   nop
@@ -1949,8 +1949,8 @@ glabel SmokeProcess__Fv
     /* 00AE88 01DB6B88 2499828F */  lw         $2, %gp_rel(cnt$681)($28)
     /* 00AE8C 01DB6B8C 0D004014 */  bnez       $2, .L01DB6BC4
     /* 00AE90 01DB6B90 00000000 */   nop
-    /* 00AE94 01DB6B94 DD01023C */  lui        $2, %hi(LIT_695__2)
-    /* 00AE98 01DB6B98 90664224 */  addiu      $2, $2, %lo(LIT_695__2)
+    /* 00AE94 01DB6B94 DD01023C */  lui        $2, %hi("@695__2")
+    /* 00AE98 01DB6B98 90664224 */  addiu      $2, $2, %lo("@695__2")
     /* 00AE9C 01DB6B9C 2001A527 */  addiu      $5, $29, 0x120
     /* 00AEA0 01DB6BA0 00004278 */  lq         $2, 0x0($2)
     /* 00AEA4 01DB6BA4 0000A27C */  sq         $2, 0x0($5)
@@ -2380,8 +2380,8 @@ glabel OpA_MotionProcess__Fv
     /* 00B4D8 01DB71D8 38E4760C */  jal        LoadMotionData__Fv
     /* 00B4DC 01DB71DC 00000000 */   nop
   .L01DB71E0:
-    /* 00B4E0 01DB71E0 DD01033C */  lui        $3, %hi(LIT_762__3)
-    /* 00B4E4 01DB71E4 A0666624 */  addiu      $6, $3, %lo(LIT_762__3)
+    /* 00B4E0 01DB71E0 DD01033C */  lui        $3, %hi("@762__3")
+    /* 00B4E4 01DB71E4 A0666624 */  addiu      $6, $3, %lo("@762__3")
     /* 00B4E8 01DB71E8 5000A527 */  addiu      $5, $29, 0x50
     /* 00B4EC 01DB71EC 05000424 */  addiu      $4, $0, 0x5
   .L01DB71F0:
@@ -2655,8 +2655,8 @@ glabel MoveDancers__Fv
     /* 00B8D4 01DB75D4 2000BF7F */  sq         $31, 0x20($29)
     /* 00B8D8 01DB75D8 1000B17F */  sq         $17, 0x10($29)
     /* 00B8DC 01DB75DC 0000B07F */  sq         $16, 0x0($29)
-    /* 00B8E0 01DB75E0 DD01033C */  lui        $3, %hi(LIT_868__3)
-    /* 00B8E4 01DB75E4 00676724 */  addiu      $7, $3, %lo(LIT_868__3)
+    /* 00B8E0 01DB75E0 DD01033C */  lui        $3, %hi("@868__3")
+    /* 00B8E4 01DB75E4 00676724 */  addiu      $7, $3, %lo("@868__3")
     /* 00B8E8 01DB75E8 3000A627 */  addiu      $6, $29, 0x30
     /* 00B8EC 01DB75EC 04000524 */  addiu      $5, $0, 0x4
   .L01DB75F0:
@@ -2768,8 +2768,8 @@ glabel ReaderShadow__Fv
     /* 00BA7C 01DB777C 00000000 */   nop
     /* 00BA80 01DB7780 DF01013C */  lui        $1, %hi(Chara__3 + 0x6ADC)
     /* 00BA84 01DB7784 BC69248C */  lw         $4, %lo(Chara__3 + 0x6ADC)($1)
-    /* 00BA88 01DB7788 DE01023C */  lui        $2, %hi(LIT_885__3)
-    /* 00BA8C 01DB778C 10DF4524 */  addiu      $5, $2, %lo(LIT_885__3)
+    /* 00BA88 01DB7788 DE01023C */  lui        $2, %hi("@885__3")
+    /* 00BA8C 01DB778C 10DF4524 */  addiu      $5, $2, %lo("@885__3")
     /* 00BA90 01DB7790 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00BA94 01DB7794 00000000 */   nop
     /* 00BA98 01DB7798 28264070 */  paddub     $4, $2, $0
@@ -2786,8 +2786,8 @@ glabel ReaderShadow__Fv
   .L01DB77C4:
     /* 00BAC4 01DB77C4 DF01013C */  lui        $1, %hi(Chara__3 + 0x6ADC)
     /* 00BAC8 01DB77C8 BC69248C */  lw         $4, %lo(Chara__3 + 0x6ADC)($1)
-    /* 00BACC 01DB77CC DE01023C */  lui        $2, %hi(LIT_886__5)
-    /* 00BAD0 01DB77D0 18DF4524 */  addiu      $5, $2, %lo(LIT_886__5)
+    /* 00BACC 01DB77CC DE01023C */  lui        $2, %hi("@886__5")
+    /* 00BAD0 01DB77D0 18DF4524 */  addiu      $5, $2, %lo("@886__5")
     /* 00BAD4 01DB77D4 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00BAD8 01DB77D8 00000000 */   nop
     /* 00BADC 01DB77DC 28264070 */  paddub     $4, $2, $0
@@ -2817,8 +2817,8 @@ glabel DancerShadow__Fv
     /* 00BB30 01DB7830 0000B07F */  sq         $16, 0x0($29)
     /* 00BB34 01DB7834 DF01013C */  lui        $1, %hi(Chara__3 + 0x7C8C)
     /* 00BB38 01DB7838 6C7B248C */  lw         $4, %lo(Chara__3 + 0x7C8C)($1)
-    /* 00BB3C 01DB783C DE01023C */  lui        $2, %hi(LIT_891__5)
-    /* 00BB40 01DB7840 20DF4524 */  addiu      $5, $2, %lo(LIT_891__5)
+    /* 00BB3C 01DB783C DE01023C */  lui        $2, %hi("@891__5")
+    /* 00BB40 01DB7840 20DF4524 */  addiu      $5, $2, %lo("@891__5")
     /* 00BB44 01DB7844 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00BB48 01DB7848 00000000 */   nop
     /* 00BB4C 01DB784C 28264070 */  paddub     $4, $2, $0
@@ -2835,8 +2835,8 @@ glabel DancerShadow__Fv
     /* 00BB78 01DB7878 00000000 */   nop
     /* 00BB7C 01DB787C DF01013C */  lui        $1, %hi(Chara__3 + 0x7C8C)
     /* 00BB80 01DB7880 6C7B248C */  lw         $4, %lo(Chara__3 + 0x7C8C)($1)
-    /* 00BB84 01DB7884 DE01023C */  lui        $2, %hi(LIT_892__6)
-    /* 00BB88 01DB7888 28DF4524 */  addiu      $5, $2, %lo(LIT_892__6)
+    /* 00BB84 01DB7884 DE01023C */  lui        $2, %hi("@892__6")
+    /* 00BB88 01DB7888 28DF4524 */  addiu      $5, $2, %lo("@892__6")
     /* 00BB8C 01DB788C C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00BB90 01DB7890 00000000 */   nop
     /* 00BB94 01DB7894 28264070 */  paddub     $4, $2, $0
@@ -2873,8 +2873,8 @@ glabel ShogunShadow__Fv
     /* 00BC08 01DB7908 00000000 */   nop
     /* 00BC0C 01DB790C DF01013C */  lui        $1, %hi(Chara__3 + 0x35CC)
     /* 00BC10 01DB7910 AC34248C */  lw         $4, %lo(Chara__3 + 0x35CC)($1)
-    /* 00BC14 01DB7914 DE01023C */  lui        $2, %hi(LIT_897)
-    /* 00BC18 01DB7918 30DF4524 */  addiu      $5, $2, %lo(LIT_897)
+    /* 00BC14 01DB7914 DE01023C */  lui        $2, %hi("@897")
+    /* 00BC18 01DB7918 30DF4524 */  addiu      $5, $2, %lo("@897")
     /* 00BC1C 01DB791C C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00BC20 01DB7920 00000000 */   nop
     /* 00BC24 01DB7924 28264070 */  paddub     $4, $2, $0
@@ -2891,8 +2891,8 @@ glabel ShogunShadow__Fv
     /* 00BC50 01DB7950 00000000 */   nop
     /* 00BC54 01DB7954 DF01013C */  lui        $1, %hi(Chara__3 + 0x35CC)
     /* 00BC58 01DB7958 AC34248C */  lw         $4, %lo(Chara__3 + 0x35CC)($1)
-    /* 00BC5C 01DB795C DE01023C */  lui        $2, %hi(LIT_898)
-    /* 00BC60 01DB7960 38DF4524 */  addiu      $5, $2, %lo(LIT_898)
+    /* 00BC5C 01DB795C DE01023C */  lui        $2, %hi("@898")
+    /* 00BC60 01DB7960 38DF4524 */  addiu      $5, $2, %lo("@898")
     /* 00BC64 01DB7964 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00BC68 01DB7968 00000000 */   nop
     /* 00BC6C 01DB796C 28264070 */  paddub     $4, $2, $0
@@ -2927,8 +2927,8 @@ glabel ShisaiShadow__Fv
     /* 00BCD8 01DB79D8 00000000 */   nop
     /* 00BCDC 01DB79DC DF01013C */  lui        $1, %hi(Chara__3 + 0x241C)
     /* 00BCE0 01DB79E0 FC22248C */  lw         $4, %lo(Chara__3 + 0x241C)($1)
-    /* 00BCE4 01DB79E4 DE01023C */  lui        $2, %hi(LIT_903__3)
-    /* 00BCE8 01DB79E8 40DF4524 */  addiu      $5, $2, %lo(LIT_903__3)
+    /* 00BCE4 01DB79E4 DE01023C */  lui        $2, %hi("@903__3")
+    /* 00BCE8 01DB79E8 40DF4524 */  addiu      $5, $2, %lo("@903__3")
     /* 00BCEC 01DB79EC C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00BCF0 01DB79F0 00000000 */   nop
     /* 00BCF4 01DB79F4 28264070 */  paddub     $4, $2, $0
@@ -2945,8 +2945,8 @@ glabel ShisaiShadow__Fv
     /* 00BD20 01DB7A20 00000000 */   nop
     /* 00BD24 01DB7A24 DF01013C */  lui        $1, %hi(Chara__3 + 0x241C)
     /* 00BD28 01DB7A28 FC22248C */  lw         $4, %lo(Chara__3 + 0x241C)($1)
-    /* 00BD2C 01DB7A2C DE01023C */  lui        $2, %hi(LIT_904__3)
-    /* 00BD30 01DB7A30 48DF4524 */  addiu      $5, $2, %lo(LIT_904__3)
+    /* 00BD2C 01DB7A2C DE01023C */  lui        $2, %hi("@904__3")
+    /* 00BD30 01DB7A30 48DF4524 */  addiu      $5, $2, %lo("@904__3")
     /* 00BD34 01DB7A34 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00BD38 01DB7A38 00000000 */   nop
     /* 00BD3C 01DB7A3C 28264070 */  paddub     $4, $2, $0
@@ -2975,8 +2975,8 @@ glabel DrawShadow__Ffff
     /* 00BD90 01DB7A90 0000B4E7 */  swc1       $f20, 0x0($29)
     /* 00BD94 01DB7A94 86650046 */  mov.s      $f22, $f12
     /* 00BD98 01DB7A98 46750046 */  mov.s      $f21, $f14
-    /* 00BD9C 01DB7A9C DD01033C */  lui        $3, %hi(LIT_905__3)
-    /* 00BDA0 01DB7AA0 90676324 */  addiu      $3, $3, %lo(LIT_905__3)
+    /* 00BD9C 01DB7A9C DD01033C */  lui        $3, %hi("@905__3")
+    /* 00BDA0 01DB7AA0 90676324 */  addiu      $3, $3, %lo("@905__3")
     /* 00BDA4 01DB7AA4 2000A427 */  addiu      $4, $29, 0x20
     /* 00BDA8 01DB7AA8 00006378 */  lq         $3, 0x0($3)
     /* 00BDAC 01DB7AAC 0000837C */  sq         $3, 0x0($4)
@@ -3358,8 +3358,8 @@ glabel OpA_SoundProcess__Fv
     /* 00C330 01DB8030 FFFF6224 */  addiu      $2, $3, -0x1
     /* 00C334 01DB8034 549982AF */  sw         $2, %gp_rel(wait$970)($28)
   .L01DB8038:
-    /* 00C338 01DB8038 DD01023C */  lui        $2, %hi(LIT_987__2)
-    /* 00C33C 01DB803C A0674224 */  addiu      $2, $2, %lo(LIT_987__2)
+    /* 00C338 01DB8038 DD01023C */  lui        $2, %hi("@987__2")
+    /* 00C33C 01DB803C A0674224 */  addiu      $2, $2, %lo("@987__2")
     /* 00C340 01DB8040 4000A427 */  addiu      $4, $29, 0x40
     /* 00C344 01DB8044 00004278 */  lq         $2, 0x0($2)
     /* 00C348 01DB8048 0000827C */  sq         $2, 0x0($4)
@@ -3417,8 +3417,8 @@ glabel OpA_SoundProcess__Fv
     /* 00C408 01DB8108 2C000324 */  addiu      $3, $0, 0x2C
     /* 00C40C 01DB810C 1500C310 */  beq        $6, $3, .L01DB8164
     /* 00C410 01DB8110 00000000 */   nop
-    /* 00C414 01DB8114 DD01023C */  lui        $2, %hi(LIT_1004__3)
-    /* 00C418 01DB8118 B0674224 */  addiu      $2, $2, %lo(LIT_1004__3)
+    /* 00C414 01DB8114 DD01023C */  lui        $2, %hi("@1004__3")
+    /* 00C418 01DB8118 B0674224 */  addiu      $2, $2, %lo("@1004__3")
     /* 00C41C 01DB811C 5000A427 */  addiu      $4, $29, 0x50
     /* 00C420 01DB8120 00004278 */  lq         $2, 0x0($2)
     /* 00C424 01DB8124 0000827C */  sq         $2, 0x0($4)
@@ -3479,8 +3479,8 @@ glabel OpA_SoundProcess__Fv
     /* 00C4F0 01DB81F0 FDFF4014 */  bnez       $2, .L01DB81E8
     /* 00C4F4 01DB81F4 00000000 */   nop
     /* 00C4F8 01DB81F8 948B858F */  lw         $5, -0x746C($28)
-    /* 00C4FC 01DB81FC DE01023C */  lui        $2, %hi(LIT_1030)
-    /* 00C500 01DB8200 50DF4424 */  addiu      $4, $2, %lo(LIT_1030)
+    /* 00C4FC 01DB81FC DE01023C */  lui        $2, %hi("@1030")
+    /* 00C500 01DB8200 50DF4424 */  addiu      $4, $2, %lo("@1030")
     /* 00C504 01DB8204 28360070 */  paddub     $6, $0, $0
     /* 00C508 01DB8208 ACFA040C */  jal        LoadFileBG__FPcP1Pi
     /* 00C50C 01DB820C 00000000 */   nop
@@ -3517,8 +3517,8 @@ glabel OpA_SoundProcess__Fv
     /* 00C57C 01DB827C 140F050C */  jal        SetReverb__6CSoundFiii
     /* 00C580 01DB8280 00000000 */   nop
     /* 00C584 01DB8284 3C8D8427 */  addiu      $4, $28, -0x72C4
-    /* 00C588 01DB8288 DE01023C */  lui        $2, %hi(LIT_1031__2)
-    /* 00C58C 01DB828C 70DF4524 */  addiu      $5, $2, %lo(LIT_1031__2)
+    /* 00C588 01DB8288 DE01023C */  lui        $2, %hi("@1031__2")
+    /* 00C58C 01DB828C 70DF4524 */  addiu      $5, $2, %lo("@1031__2")
     /* 00C590 01DB8290 948B868F */  lw         $6, -0x746C($28)
     /* 00C594 01DB8294 3410050C */  jal        LoadSoundFileFromPack__6CSoundFPcPUi
     /* 00C598 01DB8298 00000000 */   nop
@@ -3559,8 +3559,8 @@ glabel setTexScroll__Fv
     /* 00C610 01DB8310 01000224 */  addiu      $2, $0, 0x1
     /* 00C614 01DB8314 909982A3 */  sb         $2, %gp_rel(init$1036)($28)
   .L01DB8318:
-    /* 00C618 01DB8318 DD01023C */  lui        $2, %hi(LIT_1038__3)
-    /* 00C61C 01DB831C C0674224 */  addiu      $2, $2, %lo(LIT_1038__3)
+    /* 00C618 01DB8318 DD01023C */  lui        $2, %hi("@1038__3")
+    /* 00C61C 01DB831C C0674224 */  addiu      $2, $2, %lo("@1038__3")
     /* 00C620 01DB8320 7000A327 */  addiu      $3, $29, 0x70
     /* 00C624 01DB8324 00004278 */  lq         $2, 0x0($2)
     /* 00C628 01DB8328 0000627C */  sq         $2, 0x0($3)
@@ -3615,16 +3615,16 @@ glabel setTexScroll__Fv
     /* 00C6E4 01DB83E4 849982AF */  sw         $2, %gp_rel(setTexScrollCnt$1032)($28)
     /* 00C6E8 01DB83E8 C701023C */  lui        $2, %hi(TexManager)
     /* 00C6EC 01DB83EC 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 00C6F0 01DB83F0 DE01023C */  lui        $2, %hi(LIT_1060)
-    /* 00C6F4 01DB83F4 80DF4524 */  addiu      $5, $2, %lo(LIT_1060)
+    /* 00C6F0 01DB83F0 DE01023C */  lui        $2, %hi("@1060")
+    /* 00C6F4 01DB83F4 80DF4524 */  addiu      $5, $2, %lo("@1060")
     /* 00C6F8 01DB83F8 FFFF0624 */  addiu      $6, $0, -0x1
     /* 00C6FC 01DB83FC B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 00C700 01DB8400 00000000 */   nop
     /* 00C704 01DB8404 28864070 */  paddub     $16, $2, $0
     /* 00C708 01DB8408 C701023C */  lui        $2, %hi(TexManager)
     /* 00C70C 01DB840C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 00C710 01DB8410 DE01023C */  lui        $2, %hi(LIT_1061__2)
-    /* 00C714 01DB8414 88DF4524 */  addiu      $5, $2, %lo(LIT_1061__2)
+    /* 00C710 01DB8410 DE01023C */  lui        $2, %hi("@1061__2")
+    /* 00C714 01DB8414 88DF4524 */  addiu      $5, $2, %lo("@1061__2")
     /* 00C718 01DB8418 FFFF0624 */  addiu      $6, $0, -0x1
     /* 00C71C 01DB841C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 00C720 01DB8420 00000000 */   nop
@@ -3729,8 +3729,8 @@ glabel setCloudTexScroll__Fv
     /* 00C890 01DB8590 01000224 */  addiu      $2, $0, 0x1
     /* 00C894 01DB8594 A09982A3 */  sb         $2, %gp_rel(init$1066)($28)
   .L01DB8598:
-    /* 00C898 01DB8598 DD01023C */  lui        $2, %hi(LIT_1068)
-    /* 00C89C 01DB859C D0674224 */  addiu      $2, $2, %lo(LIT_1068)
+    /* 00C898 01DB8598 DD01023C */  lui        $2, %hi("@1068")
+    /* 00C89C 01DB859C D0674224 */  addiu      $2, $2, %lo("@1068")
     /* 00C8A0 01DB85A0 7000A327 */  addiu      $3, $29, 0x70
     /* 00C8A4 01DB85A4 00004278 */  lq         $2, 0x0($2)
     /* 00C8A8 01DB85A8 0000627C */  sq         $2, 0x0($3)
@@ -3785,16 +3785,16 @@ glabel setCloudTexScroll__Fv
     /* 00C964 01DB8664 949982AF */  sw         $2, %gp_rel(setTexScrollCnt$1062)($28)
     /* 00C968 01DB8668 C701023C */  lui        $2, %hi(TexManager)
     /* 00C96C 01DB866C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 00C970 01DB8670 DE01023C */  lui        $2, %hi(LIT_1090__3)
-    /* 00C974 01DB8674 90DF4524 */  addiu      $5, $2, %lo(LIT_1090__3)
+    /* 00C970 01DB8670 DE01023C */  lui        $2, %hi("@1090__3")
+    /* 00C974 01DB8674 90DF4524 */  addiu      $5, $2, %lo("@1090__3")
     /* 00C978 01DB8678 FFFF0624 */  addiu      $6, $0, -0x1
     /* 00C97C 01DB867C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 00C980 01DB8680 00000000 */   nop
     /* 00C984 01DB8684 28864070 */  paddub     $16, $2, $0
     /* 00C988 01DB8688 C701023C */  lui        $2, %hi(TexManager)
     /* 00C98C 01DB868C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 00C990 01DB8690 DE01023C */  lui        $2, %hi(LIT_1091__2)
-    /* 00C994 01DB8694 98DF4524 */  addiu      $5, $2, %lo(LIT_1091__2)
+    /* 00C990 01DB8690 DE01023C */  lui        $2, %hi("@1091__2")
+    /* 00C994 01DB8694 98DF4524 */  addiu      $5, $2, %lo("@1091__2")
     /* 00C998 01DB8698 FFFF0624 */  addiu      $6, $0, -0x1
     /* 00C99C 01DB869C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 00C9A0 01DB86A0 00000000 */   nop

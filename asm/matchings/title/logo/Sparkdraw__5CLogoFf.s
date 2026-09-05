@@ -8,8 +8,8 @@ glabel Sparkdraw__5CLogoFf
     /* 0282C4 01DD3FC4 1000BF7F */  sq         $31, 0x10($29)
     /* 0282C8 01DD3FC8 0000B4E7 */  swc1       $f20, 0x0($29)
     /* 0282CC 01DD3FCC 06650046 */  mov.s      $f20, $f12
-    /* 0282D0 01DD3FD0 DE01023C */  lui        $2, %hi(LIT_822__3)
-    /* 0282D4 01DD3FD4 10BD4224 */  addiu      $2, $2, %lo(LIT_822__3)
+    /* 0282D0 01DD3FD0 DE01023C */  lui        $2, %hi("@822__3")
+    /* 0282D4 01DD3FD4 10BD4224 */  addiu      $2, $2, %lo("@822__3")
     /* 0282D8 01DD3FD8 2000A427 */  addiu      $4, $29, 0x20
     /* 0282DC 01DD3FDC 00004278 */  lq         $2, 0x0($2)
     /* 0282E0 01DD3FE0 0000827C */  sq         $2, 0x0($4)

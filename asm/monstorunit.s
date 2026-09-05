@@ -49,8 +49,8 @@ glabel DrawMapSymbol__12CMonstorUnitFPf
     /* 0D7BBC 001D7ABC 28968070 */  paddub     $18, $4, $0
     /* 0D7BC0 001D7AC0 C701023C */  lui        $2, %hi(TexManager)
     /* 0D7BC4 001D7AC4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0D7BC8 001D7AC8 2A00023C */  lui        $2, %hi(LIT_603__2)
-    /* 0D7BCC 001D7ACC 00CF4524 */  addiu      $5, $2, %lo(LIT_603__2)
+    /* 0D7BC8 001D7AC8 2A00023C */  lui        $2, %hi("@603__2")
+    /* 0D7BCC 001D7ACC 00CF4524 */  addiu      $5, $2, %lo("@603__2")
     /* 0D7BD0 001D7AD0 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0D7BD4 001D7AD4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0D7BD8 001D7AD8 00000000 */   nop
@@ -179,8 +179,8 @@ glabel SetKey__12CMonstorUnitFv
     /* 0D7DA0 001D7CA0 0000B07F */  sq         $16, 0x0($29)
     /* 0D7DA4 001D7CA4 28AE8070 */  paddub     $21, $4, $0
     /* 0D7DA8 001D7CA8 288E0070 */  paddub     $17, $0, $0
-    /* 0D7DAC 001D7CAC 2900033C */  lui        $3, %hi(LIT_606__4)
-    /* 0D7DB0 001D7CB0 F0176624 */  addiu      $6, $3, %lo(LIT_606__4)
+    /* 0D7DAC 001D7CAC 2900033C */  lui        $3, %hi("@606__4")
+    /* 0D7DB0 001D7CB0 F0176624 */  addiu      $6, $3, %lo("@606__4")
     /* 0D7DB4 001D7CB4 8000A527 */  addiu      $5, $29, 0x80
     /* 0D7DB8 001D7CB8 0000C3DC */  ld         $3, 0x0($6)
     /* 0D7DBC 001D7CBC 0800C0C4 */  lwc1       $f0, 0x8($6)
@@ -250,8 +250,8 @@ glabel SetKey__12CMonstorUnitFv
     /* 0D7EA8 001D7DA8 0700812C */  sltiu      $1, $4, 0x7
     /* 0D7EAC 001D7DAC 1F002010 */  beqz       $1, .L001D7E2C
     /* 0D7EB0 001D7DB0 00000000 */   nop
-    /* 0D7EB4 001D7DB4 2A00023C */  lui        $2, %hi(LIT_654__3)
-    /* 0D7EB8 001D7DB8 20CF4324 */  addiu      $3, $2, %lo(LIT_654__3)
+    /* 0D7EB4 001D7DB4 2A00023C */  lui        $2, %hi("@654__3")
+    /* 0D7EB8 001D7DB8 20CF4324 */  addiu      $3, $2, %lo("@654__3")
     /* 0D7EBC 001D7DBC 80100400 */  sll        $2, $4, 2
     /* 0D7EC0 001D7DC0 21104300 */  addu       $2, $2, $3
     /* 0D7EC4 001D7DC4 0000428C */  lw         $2, 0x0($2)
@@ -307,8 +307,8 @@ glabel SetKey__12CMonstorUnitFv
     /* 0D7F68 001D7E68 282E0072 */  paddub     $5, $16, $0
     /* 0D7F6C 001D7E6C 50F6060C */  jal        SearchItemIndexNo__14CDngStatusDataFi
     /* 0D7F70 001D7E70 00000000 */   nop
-    /* 0D7F74 001D7E74 2A00033C */  lui        $3, %hi(LIT_653__3)
-    /* 0D7F78 001D7E78 10CF6424 */  addiu      $4, $3, %lo(LIT_653__3)
+    /* 0D7F74 001D7E74 2A00033C */  lui        $3, %hi("@653__3")
+    /* 0D7F78 001D7E78 10CF6424 */  addiu      $4, $3, %lo("@653__3")
     /* 0D7F7C 001D7E7C 282E4070 */  paddub     $5, $2, $0
     /* 0D7F80 001D7E80 A611040C */  jal        printf
     /* 0D7F84 001D7E84 00000000 */   nop
@@ -1289,8 +1289,8 @@ glabel DrawMonstor__12CMonstorUnitFv
     /* 0D8DE8 001D8CE8 1000B17F */  sq         $17, 0x10($29)
     /* 0D8DEC 001D8CEC 0000B07F */  sq         $16, 0x0($29)
     /* 0D8DF0 001D8CF0 28968070 */  paddub     $18, $4, $0
-    /* 0D8DF4 001D8CF4 2900023C */  lui        $2, %hi(LIT_798)
-    /* 0D8DF8 001D8CF8 00184224 */  addiu      $2, $2, %lo(LIT_798)
+    /* 0D8DF4 001D8CF4 2900023C */  lui        $2, %hi("@798")
+    /* 0D8DF8 001D8CF8 00184224 */  addiu      $2, $2, %lo("@798")
     /* 0D8DFC 001D8CFC 7000A327 */  addiu      $3, $29, 0x70
     /* 0D8E00 001D8D00 00004278 */  lq         $2, 0x0($2)
     /* 0D8E04 001D8D04 0000627C */  sq         $2, 0x0($3)
@@ -1793,8 +1793,8 @@ glabel InitBee__FP6CFramei
     /* 0D9544 001D9444 08A0040C */  jal        GetFrameNum__6CFrameFv
     /* 0D9548 001D9448 00000000 */   nop
     /* 0D954C 001D944C 28864070 */  paddub     $16, $2, $0
-    /* 0D9550 001D9450 2A00023C */  lui        $2, %hi(LIT_915)
-    /* 0D9554 001D9454 40CF4424 */  addiu      $4, $2, %lo(LIT_915)
+    /* 0D9550 001D9450 2A00023C */  lui        $2, %hi("@915")
+    /* 0D9554 001D9454 40CF4424 */  addiu      $4, $2, %lo("@915")
     /* 0D9558 001D9458 282E0072 */  paddub     $5, $16, $0
     /* 0D955C 001D945C A611040C */  jal        printf
     /* 0D9560 001D9460 00000000 */   nop
@@ -1861,8 +1861,8 @@ glabel InitBee__FP6CFramei
     /* 0D9644 001D9544 2A103002 */  slt        $2, $17, $16
     /* 0D9648 001D9548 F6FF4014 */  bnez       $2, .L001D9524
     /* 0D964C 001D954C 00000000 */   nop
-    /* 0D9650 001D9550 2A00023C */  lui        $2, %hi(LIT_916)
-    /* 0D9654 001D9554 50CF4424 */  addiu      $4, $2, %lo(LIT_916)
+    /* 0D9650 001D9550 2A00023C */  lui        $2, %hi("@916")
+    /* 0D9654 001D9554 50CF4424 */  addiu      $4, $2, %lo("@916")
     /* 0D9658 001D9558 A611040C */  jal        printf
     /* 0D965C 001D955C 00000000 */   nop
     /* 0D9660 001D9560 5000BF7B */  lq         $31, 0x50($29)
@@ -1994,8 +1994,8 @@ glabel DrawBee__FP6CFramei
     /* 0D9848 001D9748 4000C824 */  addiu      $8, $6, 0x40
     /* 0D984C 001D974C 4000E924 */  addiu      $9, $7, 0x40
     /* 0D9850 001D9750 1001A427 */  addiu      $4, $29, 0x110
-    /* 0D9854 001D9754 2A00023C */  lui        $2, %hi(LIT_935)
-    /* 0D9858 001D9758 60CF4524 */  addiu      $5, $2, %lo(LIT_935)
+    /* 0D9854 001D9754 2A00023C */  lui        $2, %hi("@935")
+    /* 0D9858 001D9758 60CF4524 */  addiu      $5, $2, %lo("@935")
     /* 0D985C 001D975C BC64070C */  jal        set3DCellModel__FPfPcfiiii
     /* 0D9860 001D9760 00000000 */   nop
     /* 0D9864 001D9764 000081C6 */  lwc1       $f1, 0x0($20)
@@ -2050,8 +2050,8 @@ glabel DrawShadowMonstor__12CMonstorUnitFv
     /* 0D9914 001D9814 1000B17F */  sq         $17, 0x10($29)
     /* 0D9918 001D9818 0000B07F */  sq         $16, 0x0($29)
     /* 0D991C 001D981C 289E8070 */  paddub     $19, $4, $0
-    /* 0D9920 001D9820 2900033C */  lui        $3, %hi(LIT_937__2)
-    /* 0D9924 001D9824 10186324 */  addiu      $3, $3, %lo(LIT_937__2)
+    /* 0D9920 001D9820 2900033C */  lui        $3, %hi("@937__2")
+    /* 0D9924 001D9824 10186324 */  addiu      $3, $3, %lo("@937__2")
     /* 0D9928 001D9828 8000A427 */  addiu      $4, $29, 0x80
     /* 0D992C 001D982C 00006378 */  lq         $3, 0x0($3)
     /* 0D9930 001D9830 0000837C */  sq         $3, 0x0($4)
@@ -2760,8 +2760,8 @@ glabel CheckDmg__12CMonstorUnitFv
     /* 0DA38C 001DA28C 808580C7 */  lwc1       $f0, -0x7A80($28)
     /* 0DA390 001DA290 00A50046 */  add.s      $f20, $f20, $f0
   .L001DA294:
-    /* 0DA394 001DA294 2900023C */  lui        $2, %hi(LIT_1076)
-    /* 0DA398 001DA298 20184224 */  addiu      $2, $2, %lo(LIT_1076)
+    /* 0DA394 001DA294 2900023C */  lui        $2, %hi("@1076")
+    /* 0DA398 001DA298 20184224 */  addiu      $2, $2, %lo("@1076")
     /* 0DA39C 001DA29C 3001A327 */  addiu      $3, $29, 0x130
     /* 0DA3A0 001DA2A0 00004278 */  lq         $2, 0x0($2)
     /* 0DA3A4 001DA2A4 0000627C */  sq         $2, 0x0($3)
@@ -3701,8 +3701,8 @@ glabel CheckDmg__12CMonstorUnitFv
     /* 0DB1C4 001DB0C4 2110C202 */  addu       $2, $22, $2
     /* 0DB1C8 001DB0C8 5000428C */  lw         $2, 0x50($2)
     /* 0DB1CC 001DB0CC E000A2AF */  sw         $2, 0xE0($29)
-    /* 0DB1D0 001DB0D0 2A00023C */  lui        $2, %hi(LIT_1518)
-    /* 0DB1D4 001DB0D4 68CF4424 */  addiu      $4, $2, %lo(LIT_1518)
+    /* 0DB1D0 001DB0D0 2A00023C */  lui        $2, %hi("@1518")
+    /* 0DB1D4 001DB0D4 68CF4424 */  addiu      $4, $2, %lo("@1518")
     /* 0DB1D8 001DB0D8 E000A58F */  lw         $5, 0xE0($29)
     /* 0DB1DC 001DB0DC A611040C */  jal        printf
     /* 0DB1E0 001DB0E0 00000000 */   nop
@@ -4585,8 +4585,8 @@ glabel CheckDmg__12CMonstorUnitFv
     /* 0DBF08 001DBE08 02A50046 */  mul.s      $f20, $f20, $f0
     /* 0DBF0C 001DBE0C F83F023C */  lui        $2, (0x3FF80000 >> 16)
     /* 0DBF10 001DBE10 3C280200 */  dsll32     $5, $2, 0
-    /* 0DBF14 001DBE14 2A00023C */  lui        $2, %hi(LIT_1521)
-    /* 0DBF18 001DBE18 78CF4424 */  addiu      $4, $2, %lo(LIT_1521)
+    /* 0DBF14 001DBE14 2A00023C */  lui        $2, %hi("@1521")
+    /* 0DBF18 001DBE18 78CF4424 */  addiu      $4, $2, %lo("@1521")
     /* 0DBF1C 001DBE1C A611040C */  jal        printf
     /* 0DBF20 001DBE20 00000000 */   nop
   .L001DBE24:
@@ -4616,8 +4616,8 @@ glabel CheckDmg__12CMonstorUnitFv
     /* 0DBF7C 001DBE7C 06AB0046 */  mov.s      $f12, $f21
     /* 0DBF80 001DBE80 9044040C */  jal        fptodp
     /* 0DBF84 001DBE84 00000000 */   nop
-    /* 0DBF88 001DBE88 2A00033C */  lui        $3, %hi(LIT_1521)
-    /* 0DBF8C 001DBE8C 78CF6424 */  addiu      $4, $3, %lo(LIT_1521)
+    /* 0DBF88 001DBE88 2A00033C */  lui        $3, %hi("@1521")
+    /* 0DBF8C 001DBE8C 78CF6424 */  addiu      $4, $3, %lo("@1521")
     /* 0DBF90 001DBE90 282E4070 */  paddub     $5, $2, $0
     /* 0DBF94 001DBE94 A611040C */  jal        printf
     /* 0DBF98 001DBE98 00000000 */   nop
@@ -5307,8 +5307,8 @@ glabel MoveCheck__12CMonstorUnitFPfPfi
     /* 0DC9DC 001DC8DC 0C86040C */  jal        sceVu0CopyVector
     /* 0DC9E0 001DC8E0 00000000 */   nop
     /* 0DC9E4 001DC8E4 789C868F */  lw         $6, -0x6388($28)
-    /* 0DC9E8 001DC8E8 2800033C */  lui        $3, %hi(LIT_345__6)
-    /* 0DC9EC 001DC8EC 70EB6324 */  addiu      $3, $3, %lo(LIT_345__6)
+    /* 0DC9E8 001DC8E8 2800033C */  lui        $3, %hi("@345__6")
+    /* 0DC9EC 001DC8EC 70EB6324 */  addiu      $3, $3, %lo("@345__6")
     /* 0DC9F0 001DC8F0 3001A527 */  addiu      $5, $29, 0x130
     /* 0DC9F4 001DC8F4 00006478 */  lq         $4, 0x0($3)
     /* 0DC9F8 001DC8F8 100063DC */  ld         $3, 0x10($3)
@@ -6774,8 +6774,8 @@ glabel Step__12CMonstorUnitFi
     /* 0DDFE0 001DDEE0 9001A228 */  slti       $2, $5, 0x190
     /* 0DDFE4 001DDEE4 05004014 */  bnez       $2, .L001DDEFC
     /* 0DDFE8 001DDEE8 00000000 */   nop
-    /* 0DDFEC 001DDEEC 2A00023C */  lui        $2, %hi(LIT_2233__2)
-    /* 0DDFF0 001DDEF0 88CF4424 */  addiu      $4, $2, %lo(LIT_2233__2)
+    /* 0DDFEC 001DDEEC 2A00023C */  lui        $2, %hi("@2233__2")
+    /* 0DDFF0 001DDEF0 88CF4424 */  addiu      $4, $2, %lo("@2233__2")
     /* 0DDFF4 001DDEF4 A611040C */  jal        printf
     /* 0DDFF8 001DDEF8 00000000 */   nop
   .L001DDEFC:
@@ -8212,8 +8212,8 @@ glabel Step__12CMonstorUnitFi
     /* 0DF5C8 001DF4C8 0200013C */  lui        $1, (0x20000 >> 16)
     /* 0DF5CC 001DF4CC 2108A100 */  addu       $1, $5, $1
     /* 0DF5D0 001DF4D0 70E42584 */  lh         $5, -0x1B90($1)
-    /* 0DF5D4 001DF4D4 2A00023C */  lui        $2, %hi(LIT_2237__2)
-    /* 0DF5D8 001DF4D8 90CF4424 */  addiu      $4, $2, %lo(LIT_2237__2)
+    /* 0DF5D4 001DF4D4 2A00023C */  lui        $2, %hi("@2237__2")
+    /* 0DF5D8 001DF4D8 90CF4424 */  addiu      $4, $2, %lo("@2237__2")
     /* 0DF5DC 001DF4DC A611040C */  jal        printf
     /* 0DF5E0 001DF4E0 00000000 */   nop
     /* 0DF5E4 001DF4E4 9000A38E */  lw         $3, 0x90($21)
@@ -8888,8 +8888,8 @@ glabel SetupBaseModel__12CMonstorUnitFiiiP14CDataAlloc2_1_
     /* 0DFFF8 001DFEF8 01000224 */  addiu      $2, $0, 0x1
     /* 0DFFFC 001DFEFC EC00A2A3 */  sb         $2, 0xEC($29)
     /* 0E0000 001DFF00 A000A427 */  addiu      $4, $29, 0xA0
-    /* 0E0004 001DFF04 2A00023C */  lui        $2, %hi(LIT_2328)
-    /* 0E0008 001DFF08 C0CF4524 */  addiu      $5, $2, %lo(LIT_2328)
+    /* 0E0004 001DFF04 2A00023C */  lui        $2, %hi("@2328")
+    /* 0E0008 001DFF08 C0CF4524 */  addiu      $5, $2, %lo("@2328")
     /* 0E000C 001DFF0C 28368072 */  paddub     $6, $20, $0
     /* 0E0010 001DFF10 1614040C */  jal        sprintf
     /* 0E0014 001DFF14 00000000 */   nop
@@ -8912,8 +8912,8 @@ glabel SetupBaseModel__12CMonstorUnitFiiiP14CDataAlloc2_1_
     /* 0E0058 001DFF58 00000000 */   nop
     /* 0E005C 001DFF5C 2826A072 */  paddub     $4, $21, $0
     /* 0E0060 001DFF60 948B858F */  lw         $5, -0x746C($28)
-    /* 0E0064 001DFF64 2A00023C */  lui        $2, %hi(LIT_2329)
-    /* 0E0068 001DFF68 D8CF4624 */  addiu      $6, $2, %lo(LIT_2329)
+    /* 0E0064 001DFF64 2A00023C */  lui        $2, %hi("@2329")
+    /* 0E0068 001DFF68 D8CF4624 */  addiu      $6, $2, %lo("@2329")
     /* 0E006C 001DFF6C 283E2072 */  paddub     $7, $17, $0
     /* 0E0070 001DFF70 2A000824 */  addiu      $8, $0, 0x2A
     /* 0E0074 001DFF74 284E2072 */  paddub     $9, $17, $0
@@ -8948,8 +8948,8 @@ glabel SetupBaseModel__12CMonstorUnitFiiiP14CDataAlloc2_1_
     /* 0E00E4 001DFFE4 00110200 */  sll        $2, $2, 4
     /* 0E00E8 001DFFE8 21308202 */  addu       $6, $20, $2
     /* 0E00EC 001DFFEC A000A427 */  addiu      $4, $29, 0xA0
-    /* 0E00F0 001DFFF0 2A00023C */  lui        $2, %hi(LIT_2328)
-    /* 0E00F4 001DFFF4 C0CF4524 */  addiu      $5, $2, %lo(LIT_2328)
+    /* 0E00F0 001DFFF0 2A00023C */  lui        $2, %hi("@2328")
+    /* 0E00F4 001DFFF4 C0CF4524 */  addiu      $5, $2, %lo("@2328")
     /* 0E00F8 001DFFF8 1614040C */  jal        sprintf
     /* 0E00FC 001DFFFC 00000000 */   nop
     /* 0E0100 001E0000 A000A427 */  addiu      $4, $29, 0xA0
@@ -8965,8 +8965,8 @@ glabel SetupBaseModel__12CMonstorUnitFiiiP14CDataAlloc2_1_
     /* 0E0128 001E0028 2118E202 */  addu       $3, $23, $2
     /* 0E012C 001E002C A0006424 */  addiu      $4, $3, 0xA0
     /* 0E0130 001E0030 948B858F */  lw         $5, -0x746C($28)
-    /* 0E0134 001E0034 2A00023C */  lui        $2, %hi(LIT_2329)
-    /* 0E0138 001E0038 D8CF4624 */  addiu      $6, $2, %lo(LIT_2329)
+    /* 0E0134 001E0034 2A00023C */  lui        $2, %hi("@2329")
+    /* 0E0138 001E0038 D8CF4624 */  addiu      $6, $2, %lo("@2329")
     /* 0E013C 001E003C 283E2072 */  paddub     $7, $17, $0
     /* 0E0140 001E0040 28462072 */  paddub     $8, $17, $0
     /* 0E0144 001E0044 4001798C */  lw         $25, 0x140($3)
@@ -8995,8 +8995,8 @@ glabel SetupBaseModel__12CMonstorUnitFiiiP14CDataAlloc2_1_
     /* 0E0198 001E0098 CCFF4014 */  bnez       $2, .L001DFFCC
     /* 0E019C 001E009C 00000000 */   nop
     /* 0E01A0 001E00A0 A000A427 */  addiu      $4, $29, 0xA0
-    /* 0E01A4 001E00A4 2A00023C */  lui        $2, %hi(LIT_2330)
-    /* 0E01A8 001E00A8 F0CF4524 */  addiu      $5, $2, %lo(LIT_2330)
+    /* 0E01A4 001E00A4 2A00023C */  lui        $2, %hi("@2330")
+    /* 0E01A8 001E00A8 F0CF4524 */  addiu      $5, $2, %lo("@2330")
     /* 0E01AC 001E00AC 40008626 */  addiu      $6, $20, 0x40
     /* 0E01B0 001E00B0 1614040C */  jal        sprintf
     /* 0E01B4 001E00B4 00000000 */   nop
@@ -9068,8 +9068,8 @@ glabel SetupBaseModel__12CMonstorUnitFiiiP14CDataAlloc2_1_
     /* 0E02B8 001E01B8 FFFF0324 */  addiu      $3, $0, -0x1
     /* 0E02BC 001E01BC 07004314 */  bne        $2, $3, .L001E01DC
     /* 0E02C0 001E01C0 00000000 */   nop
-    /* 0E02C4 001E01C4 2A00023C */  lui        $2, %hi(LIT_2331)
-    /* 0E02C8 001E01C8 10D04424 */  addiu      $4, $2, %lo(LIT_2331)
+    /* 0E02C4 001E01C4 2A00023C */  lui        $2, %hi("@2331")
+    /* 0E02C8 001E01C8 10D04424 */  addiu      $4, $2, %lo("@2331")
     /* 0E02CC 001E01CC A611040C */  jal        printf
     /* 0E02D0 001E01D0 00000000 */   nop
     /* 0E02D4 001E01D4 05000010 */  b          .L001E01EC
@@ -9099,8 +9099,8 @@ glabel SetupBaseModel__12CMonstorUnitFiiiP14CDataAlloc2_1_
     /* 0E032C 001E022C FFFF0324 */  addiu      $3, $0, -0x1
     /* 0E0330 001E0230 07004314 */  bne        $2, $3, .L001E0250
     /* 0E0334 001E0234 00000000 */   nop
-    /* 0E0338 001E0238 2A00023C */  lui        $2, %hi(LIT_2331)
-    /* 0E033C 001E023C 10D04424 */  addiu      $4, $2, %lo(LIT_2331)
+    /* 0E0338 001E0238 2A00023C */  lui        $2, %hi("@2331")
+    /* 0E033C 001E023C 10D04424 */  addiu      $4, $2, %lo("@2331")
     /* 0E0340 001E0240 A611040C */  jal        printf
     /* 0E0344 001E0244 00000000 */   nop
     /* 0E0348 001E0248 05000010 */  b          .L001E0260
@@ -10444,19 +10444,19 @@ glabel SetupViewMonstor__12CMonstorUnitFiPfi
 
 /* Generated by spimdisasm 1.42.4 */
 
-glabel LIT_603__2
+glabel "@603__2"
     /* 19D000 0029CF00 6974656D */ .word 0x6D657469
     /* 19D004 0029CF04 7061636B */ .word 0x6B636170
     /* 19D008 0029CF08 00000000 */ .word 0x00000000
     /* 19D00C 0029CF0C 00000000 */ .word 0x00000000
 
-glabel LIT_653__3
+glabel "@653__3"
     /* 19D010 0029CF10 63686563 */ .word 0x63656863
     /* 19D014 0029CF14 6B202D2D */ .word 0x2D2D206B
     /* 19D018 0029CF18 2D3E2025 */ .word 0x25203E2D
     /* 19D01C 0029CF1C 640A0000 */ .word 0x00000A64
 
-glabel LIT_654__3
+glabel "@654__3"
     /* 19D020 0029CF20 D07D1D00 */ .word .L001D7DD0
     /* 19D024 0029CF24 DC7D1D00 */ .word .L001D7DDC
     /* 19D028 0029CF28 F07D1D00 */ .word .L001D7DF0
@@ -10466,39 +10466,39 @@ glabel LIT_654__3
     /* 19D038 0029CF38 207E1D00 */ .word .L001D7E20
     /* 19D03C 0029CF3C 00000000 */ .word 0x00000000
 
-glabel LIT_915
+glabel "@915"
     /* 19D040 0029CF40 62656520 */ .word 0x20656562
     /* 19D044 0029CF44 6E756D20 */ .word 0x206D756E
     /* 19D048 0029CF48 3D202564 */ .word 0x6425203D
     /* 19D04C 0029CF4C 0A000000 */ .word 0x0000000A
 
-glabel LIT_916
+glabel "@916"
     /* 19D050 0029CF50 494E4954 */ .word 0x54494E49
     /* 19D054 0029CF54 20424545 */ .word 0x45454220
     /* 19D058 0029CF58 20454E44 */ .word 0x444E4520
     /* 19D05C 0029CF5C 21210A00 */ .word 0x000A2121
 
-glabel LIT_935
+glabel "@935"
     /* 19D060 0029CF60 63313561 */ .word 0x61353163
     /* 19D064 0029CF64 30330000 */ .word 0x00003330
 
-glabel LIT_1518
+glabel "@1518"
     /* 19D068 0029CF68 656C656D */ .word 0x6D656C65
     /* 19D06C 0029CF6C 656E7420 */ .word 0x20746E65
     /* 19D070 0029CF70 3D202564 */ .word 0x6425203D
     /* 19D074 0029CF74 0A000000 */ .word 0x0000000A
 
-glabel LIT_1521
+glabel "@1521"
     /* 19D078 0029CF78 635F6469 */ .word 0x69645F63
     /* 19D07C 0029CF7C 7374203D */ .word 0x3D207473
     /* 19D080 0029CF80 20252E33 */ .word 0x332E2520
     /* 19D084 0029CF84 660A0000 */ .word 0x00000A66
 
-glabel LIT_2233__2
+glabel "@2233__2"
     /* 19D088 0029CF88 65727220 */ .word 0x20727265
     /* 19D08C 0029CF8C 25640A00 */ .word 0x000A6425
 
-glabel LIT_2237__2
+glabel "@2237__2"
     /* 19D090 0029CF90 2A2A2A2A */ .word 0x2A2A2A2A
     /* 19D094 0029CF94 2A2A2A2A */ .word 0x2A2A2A2A
     /* 19D098 0029CF98 2A2A2A2A */ .word 0x2A2A2A2A
@@ -10512,7 +10512,7 @@ glabel LIT_2237__2
     /* 19D0B8 0029CFB8 00000000 */ .word 0x00000000
     /* 19D0BC 0029CFBC 00000000 */ .word 0x00000000
 
-glabel LIT_2328
+glabel "@2328"
     /* 19D0C0 0029CFC0 64756E2F */ .word 0x2F6E7564
     /* 19D0C4 0029CFC4 6D6F6E73 */ .word 0x736E6F6D
     /* 19D0C8 0029CFC8 746F722F */ .word 0x2F726F74
@@ -10520,7 +10520,7 @@ glabel LIT_2328
     /* 19D0D0 0029CFD0 68720000 */ .word 0x00007268
     /* 19D0D4 0029CFD4 00000000 */ .word 0x00000000
 
-glabel LIT_2329
+glabel "@2329"
     /* 19D0D8 0029CFD8 696E666F */ .word 0x6F666E69
     /* 19D0DC 0029CFDC 2E636667 */ .word 0x6766632E
     /* 19D0E0 0029CFE0 00000000 */ .word 0x00000000
@@ -10528,7 +10528,7 @@ glabel LIT_2329
     /* 19D0E8 0029CFE8 00000000 */ .word 0x00000000
     /* 19D0EC 0029CFEC 00000000 */ .word 0x00000000
 
-glabel LIT_2330
+glabel "@2330"
     /* 19D0F0 0029CFF0 64756E2F */ .word 0x2F6E7564
     /* 19D0F4 0029CFF4 6D6F6E73 */ .word 0x736E6F6D
     /* 19D0F8 0029CFF8 746F722F */ .word 0x2F726F74
@@ -10538,7 +10538,7 @@ glabel LIT_2330
     /* 19D108 0029D008 00000000 */ .word 0x00000000
     /* 19D10C 0029D00C 00000000 */ .word 0x00000000
 
-glabel LIT_2331
+glabel "@2331"
     /* 19D110 0029D010 2A2A2A2A */ .word 0x2A2A2A2A
     /* 19D114 0029D014 2A2A2A20 */ .word 0x202A2A2A
     /* 19D118 0029D018 53686F74 */ .word 0x746F6853

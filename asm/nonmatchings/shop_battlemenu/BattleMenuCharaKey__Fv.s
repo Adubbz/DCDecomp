@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_1515__2
+glabel "@1515__2"
     /* 19D8C0 0029D7C0 AC7A1F00 */ .word .L001F7AAC
     /* 19D8C4 0029D7C4 50751F00 */ .word .L001F7550
     /* 19D8C8 0029D7C8 D4771F00 */ .word .L001F77D4
@@ -28,8 +28,8 @@ glabel BattleMenuCharaKey__Fv
     /* 0F7554 001F7454 0700812C */  sltiu      $1, $4, 0x7
     /* 0F7558 001F7458 6E022010 */  beqz       $1, .L001F7E14
     /* 0F755C 001F745C 00000000 */   nop
-    /* 0F7560 001F7460 2A00023C */  lui        $2, %hi(LIT_1515__2)
-    /* 0F7564 001F7464 C0D74324 */  addiu      $3, $2, %lo(LIT_1515__2)
+    /* 0F7560 001F7460 2A00023C */  lui        $2, %hi("@1515__2")
+    /* 0F7564 001F7464 C0D74324 */  addiu      $3, $2, %lo("@1515__2")
     /* 0F7568 001F7468 80100400 */  sll        $2, $4, 2
     /* 0F756C 001F746C 21104300 */  addu       $2, $2, $3
     /* 0F7570 001F7470 0000428C */  lw         $2, 0x0($2)
@@ -98,8 +98,8 @@ glabel BattleMenuCharaKey__Fv
     /* 0F7660 001F7560 00000000 */   nop
     /* 0F7664 001F7564 68004014 */  bnez       $2, .L001F7708
     /* 0F7668 001F7568 00000000 */   nop
-    /* 0F766C 001F756C 2900023C */  lui        $2, %hi(LIT_1364__2)
-    /* 0F7670 001F7570 F02F4524 */  addiu      $5, $2, %lo(LIT_1364__2)
+    /* 0F766C 001F756C 2900023C */  lui        $2, %hi("@1364__2")
+    /* 0F7670 001F7570 F02F4524 */  addiu      $5, $2, %lo("@1364__2")
     /* 0F7674 001F7574 2000A427 */  addiu      $4, $29, 0x20
     /* 0F7678 001F7578 02000324 */  addiu      $3, $0, 0x2
   .L001F757C:
@@ -152,48 +152,48 @@ glabel BattleMenuCharaKey__Fv
     /* 0F7734 001F7634 00000000 */   nop
     /* 0F7738 001F7638 C701023C */  lui        $2, %hi(TexManager)
     /* 0F773C 001F763C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0F7740 001F7640 2A00023C */  lui        $2, %hi(LIT_926__2)
-    /* 0F7744 001F7644 F8D44524 */  addiu      $5, $2, %lo(LIT_926__2)
+    /* 0F7740 001F7640 2A00023C */  lui        $2, %hi("@926__2")
+    /* 0F7744 001F7644 F8D44524 */  addiu      $5, $2, %lo("@926__2")
     /* 0F7748 001F7648 F894868F */  lw         $6, -0x6B08($28)
     /* 0F774C 001F764C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0F7750 001F7650 00000000 */   nop
     /* 0F7754 001F7654 209582AF */  sw         $2, -0x6AE0($28)
     /* 0F7758 001F7658 C701023C */  lui        $2, %hi(TexManager)
     /* 0F775C 001F765C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0F7760 001F7660 2A00023C */  lui        $2, %hi(LIT_927__2)
-    /* 0F7764 001F7664 08D54524 */  addiu      $5, $2, %lo(LIT_927__2)
+    /* 0F7760 001F7660 2A00023C */  lui        $2, %hi("@927__2")
+    /* 0F7764 001F7664 08D54524 */  addiu      $5, $2, %lo("@927__2")
     /* 0F7768 001F7668 F894868F */  lw         $6, -0x6B08($28)
     /* 0F776C 001F766C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0F7770 001F7670 00000000 */   nop
     /* 0F7774 001F7674 289582AF */  sw         $2, -0x6AD8($28)
     /* 0F7778 001F7678 C701023C */  lui        $2, %hi(TexManager)
     /* 0F777C 001F767C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0F7780 001F7680 2A00023C */  lui        $2, %hi(LIT_1511__3)
-    /* 0F7784 001F7684 88D74524 */  addiu      $5, $2, %lo(LIT_1511__3)
+    /* 0F7780 001F7680 2A00023C */  lui        $2, %hi("@1511__3")
+    /* 0F7784 001F7684 88D74524 */  addiu      $5, $2, %lo("@1511__3")
     /* 0F7788 001F7688 F894868F */  lw         $6, -0x6B08($28)
     /* 0F778C 001F768C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0F7790 001F7690 00000000 */   nop
     /* 0F7794 001F7694 249582AF */  sw         $2, -0x6ADC($28)
     /* 0F7798 001F7698 C701023C */  lui        $2, %hi(TexManager)
     /* 0F779C 001F769C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0F77A0 001F76A0 2A00023C */  lui        $2, %hi(LIT_1512__3)
-    /* 0F77A4 001F76A4 98D74524 */  addiu      $5, $2, %lo(LIT_1512__3)
+    /* 0F77A0 001F76A0 2A00023C */  lui        $2, %hi("@1512__3")
+    /* 0F77A4 001F76A4 98D74524 */  addiu      $5, $2, %lo("@1512__3")
     /* 0F77A8 001F76A8 F894868F */  lw         $6, -0x6B08($28)
     /* 0F77AC 001F76AC B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0F77B0 001F76B0 00000000 */   nop
     /* 0F77B4 001F76B4 309582AF */  sw         $2, -0x6AD0($28)
     /* 0F77B8 001F76B8 C701023C */  lui        $2, %hi(TexManager)
     /* 0F77BC 001F76BC 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0F77C0 001F76C0 2A00023C */  lui        $2, %hi(LIT_1513__2)
-    /* 0F77C4 001F76C4 A8D74524 */  addiu      $5, $2, %lo(LIT_1513__2)
+    /* 0F77C0 001F76C0 2A00023C */  lui        $2, %hi("@1513__2")
+    /* 0F77C4 001F76C4 A8D74524 */  addiu      $5, $2, %lo("@1513__2")
     /* 0F77C8 001F76C8 F894868F */  lw         $6, -0x6B08($28)
     /* 0F77CC 001F76CC B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0F77D0 001F76D0 00000000 */   nop
     /* 0F77D4 001F76D4 349582AF */  sw         $2, -0x6ACC($28)
     /* 0F77D8 001F76D8 C701023C */  lui        $2, %hi(TexManager)
     /* 0F77DC 001F76DC 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0F77E0 001F76E0 2A00023C */  lui        $2, %hi(LIT_1514__2)
-    /* 0F77E4 001F76E4 B0D74524 */  addiu      $5, $2, %lo(LIT_1514__2)
+    /* 0F77E0 001F76E0 2A00023C */  lui        $2, %hi("@1514__2")
+    /* 0F77E4 001F76E4 B0D74524 */  addiu      $5, $2, %lo("@1514__2")
     /* 0F77E8 001F76E8 F894868F */  lw         $6, -0x6B08($28)
     /* 0F77EC 001F76EC B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0F77F0 001F76F0 00000000 */   nop
@@ -296,16 +296,16 @@ glabel BattleMenuCharaKey__Fv
     /* 0F7960 001F7860 00000000 */   nop
     /* 0F7964 001F7864 C701023C */  lui        $2, %hi(TexManager)
     /* 0F7968 001F7868 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0F796C 001F786C 2A00023C */  lui        $2, %hi(LIT_926__2)
-    /* 0F7970 001F7870 F8D44524 */  addiu      $5, $2, %lo(LIT_926__2)
+    /* 0F796C 001F786C 2A00023C */  lui        $2, %hi("@926__2")
+    /* 0F7970 001F7870 F8D44524 */  addiu      $5, $2, %lo("@926__2")
     /* 0F7974 001F7874 E094868F */  lw         $6, -0x6B20($28)
     /* 0F7978 001F7878 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0F797C 001F787C 00000000 */   nop
     /* 0F7980 001F7880 209582AF */  sw         $2, -0x6AE0($28)
     /* 0F7984 001F7884 C701023C */  lui        $2, %hi(TexManager)
     /* 0F7988 001F7888 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0F798C 001F788C 2A00023C */  lui        $2, %hi(LIT_927__2)
-    /* 0F7990 001F7890 08D54524 */  addiu      $5, $2, %lo(LIT_927__2)
+    /* 0F798C 001F788C 2A00023C */  lui        $2, %hi("@927__2")
+    /* 0F7990 001F7890 08D54524 */  addiu      $5, $2, %lo("@927__2")
     /* 0F7994 001F7894 E094868F */  lw         $6, -0x6B20($28)
     /* 0F7998 001F7898 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0F799C 001F789C 00000000 */   nop

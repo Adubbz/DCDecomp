@@ -30,8 +30,8 @@ glabel DrawWeaponStatusTag__FiiP11WEAPON_HAVEiii
     /* 0FA20C 001FA10C 00000000 */   nop
     /* 0FA210 001FA110 28864070 */  paddub     $16, $2, $0
   .L001FA114:
-    /* 0FA214 001FA114 2900023C */  lui        $2, %hi(LIT_1909)
-    /* 0FA218 001FA118 90304224 */  addiu      $2, $2, %lo(LIT_1909)
+    /* 0FA214 001FA114 2900023C */  lui        $2, %hi("@1909")
+    /* 0FA218 001FA118 90304224 */  addiu      $2, $2, %lo("@1909")
     /* 0FA21C 001FA11C C000A327 */  addiu      $3, $29, 0xC0
     /* 0FA220 001FA120 00004278 */  lq         $2, 0x0($2)
     /* 0FA224 001FA124 0000627C */  sq         $2, 0x0($3)
@@ -296,8 +296,8 @@ glabel DrawWeaponStatusTag__FiiP11WEAPON_HAVEiii
     /* 0FA608 001FA508 28568072 */  paddub     $10, $20, $0
     /* 0FA60C 001FA50C 705F080C */  jal        DrawMenuNumber__FiiiP8CTexture4RECTii
     /* 0FA610 001FA510 00000000 */   nop
-    /* 0FA614 001FA514 2900023C */  lui        $2, %hi(LIT_1925)
-    /* 0FA618 001FA518 A0304224 */  addiu      $2, $2, %lo(LIT_1925)
+    /* 0FA614 001FA514 2900023C */  lui        $2, %hi("@1925")
+    /* 0FA618 001FA518 A0304224 */  addiu      $2, $2, %lo("@1925")
     /* 0FA61C 001FA51C E000A327 */  addiu      $3, $29, 0xE0
     /* 0FA620 001FA520 00004278 */  lq         $2, 0x0($2)
     /* 0FA624 001FA524 0000627C */  sq         $2, 0x0($3)
@@ -309,13 +309,13 @@ glabel DrawWeaponStatusTag__FiiP11WEAPON_HAVEiii
     /* 0FA63C 001FA53C E800A2AF */  sw         $2, 0xE8($29)
     /* 0FA640 001FA540 0A00A286 */  lh         $2, 0xA($21)
     /* 0FA644 001FA544 EC00A2AF */  sw         $2, 0xEC($29)
-    /* 0FA648 001FA548 2900023C */  lui        $2, %hi(LIT_1926)
-    /* 0FA64C 001FA54C B0304224 */  addiu      $2, $2, %lo(LIT_1926)
+    /* 0FA648 001FA548 2900023C */  lui        $2, %hi("@1926")
+    /* 0FA64C 001FA54C B0304224 */  addiu      $2, $2, %lo("@1926")
     /* 0FA650 001FA550 F000A327 */  addiu      $3, $29, 0xF0
     /* 0FA654 001FA554 00004278 */  lq         $2, 0x0($2)
     /* 0FA658 001FA558 0000627C */  sq         $2, 0x0($3)
-    /* 0FA65C 001FA55C 2900023C */  lui        $2, %hi(LIT_1927)
-    /* 0FA660 001FA560 C0304224 */  addiu      $2, $2, %lo(LIT_1927)
+    /* 0FA65C 001FA55C 2900023C */  lui        $2, %hi("@1927")
+    /* 0FA660 001FA560 C0304224 */  addiu      $2, $2, %lo("@1927")
     /* 0FA664 001FA564 0001A327 */  addiu      $3, $29, 0x100
     /* 0FA668 001FA568 00004278 */  lq         $2, 0x0($2)
     /* 0FA66C 001FA56C 0000627C */  sq         $2, 0x0($3)
@@ -336,8 +336,8 @@ glabel DrawWeaponStatusTag__FiiP11WEAPON_HAVEiii
     /* 0FA6A4 001FA5A4 0000A486 */  lh         $4, 0x0($21)
     /* 0FA6A8 001FA5A8 D443070C */  jal        GetWeaponData__Fi
     /* 0FA6AC 001FA5AC 00000000 */   nop
-    /* 0FA6B0 001FA5B0 2900033C */  lui        $3, %hi(LIT_1931)
-    /* 0FA6B4 001FA5B4 D0306324 */  addiu      $3, $3, %lo(LIT_1931)
+    /* 0FA6B0 001FA5B0 2900033C */  lui        $3, %hi("@1931")
+    /* 0FA6B4 001FA5B4 D0306324 */  addiu      $3, $3, %lo("@1931")
     /* 0FA6B8 001FA5B8 1001A427 */  addiu      $4, $29, 0x110
     /* 0FA6BC 001FA5BC 00006378 */  lq         $3, 0x0($3)
     /* 0FA6C0 001FA5C0 0000837C */  sq         $3, 0x0($4)
@@ -401,8 +401,8 @@ glabel DrawWeaponStatusTag__FiiP11WEAPON_HAVEiii
     /* 0FA794 001FA694 00000000 */   nop
     /* 0FA798 001FA698 000002AE */  sw         $2, 0x0($16)
   .L001FA69C:
-    /* 0FA79C 001FA69C 2900033C */  lui        $3, %hi(LIT_1945)
-    /* 0FA7A0 001FA6A0 E0306324 */  addiu      $3, $3, %lo(LIT_1945)
+    /* 0FA79C 001FA69C 2900033C */  lui        $3, %hi("@1945")
+    /* 0FA7A0 001FA6A0 E0306324 */  addiu      $3, $3, %lo("@1945")
     /* 0FA7A4 001FA6A4 2001A627 */  addiu      $6, $29, 0x120
     /* 0FA7A8 001FA6A8 00006378 */  lq         $3, 0x0($3)
     /* 0FA7AC 001FA6AC 0000C37C */  sq         $3, 0x0($6)
@@ -413,8 +413,8 @@ glabel DrawWeaponStatusTag__FiiP11WEAPON_HAVEiii
     /* 0FA7C0 001FA6C0 60006324 */  addiu      $3, $3, 0x60
     /* 0FA7C4 001FA6C4 2401B527 */  addiu      $21, $29, 0x124
     /* 0FA7C8 001FA6C8 0000A3AE */  sw         $3, 0x0($21)
-    /* 0FA7CC 001FA6CC 2900033C */  lui        $3, %hi(LIT_1946)
-    /* 0FA7D0 001FA6D0 F0306724 */  addiu      $7, $3, %lo(LIT_1946)
+    /* 0FA7CC 001FA6CC 2900033C */  lui        $3, %hi("@1946")
+    /* 0FA7D0 001FA6D0 F0306724 */  addiu      $7, $3, %lo("@1946")
     /* 0FA7D4 001FA6D4 B001A627 */  addiu      $6, $29, 0x1B0
     /* 0FA7D8 001FA6D8 0000E3DC */  ld         $3, 0x0($7)
     /* 0FA7DC 001FA6DC 0800E0C4 */  lwc1       $f0, 0x8($7)

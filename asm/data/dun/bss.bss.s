@@ -12,7 +12,7 @@ glabel _dun_static_init_end
 glabel BtActStatus
     /* 01DC4480 */ .space 0x150
 
-glabel LIT_614__5
+glabel "@614__5"
     /* 01DC45D0 */ .space 0x0C
 
 /* Automatically generated and unreferenced pad */
@@ -22,7 +22,7 @@ glabel D_01DC45DC
 glabel MainCamera__4
     /* 01DC45E0 */ .space 0x2F0
 
-glabel LIT_615__6
+glabel "@615__6"
     /* 01DC48D0 */ .space 0x0C
 
 /* Automatically generated and unreferenced pad */

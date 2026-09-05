@@ -58,8 +58,8 @@ glabel BattleActionPlay_Ozumond_F__Fi
     /* 012764 01DBE464 00000000 */   nop
     /* 012768 01DBE468 009D828F */  lw         $2, -0x6300($28)
     /* 01276C 01DBE46C BC00448C */  lw         $4, 0xBC($2)
-    /* 012770 01DBE470 DC01023C */  lui        $2, %hi(LIT_4408)
-    /* 012774 01DBE474 982F4524 */  addiu      $5, $2, %lo(LIT_4408)
+    /* 012770 01DBE470 DC01023C */  lui        $2, %hi("@4408")
+    /* 012774 01DBE474 982F4524 */  addiu      $5, $2, %lo("@4408")
     /* 012778 01DBE478 3000A627 */  addiu      $6, $29, 0x30
     /* 01277C 01DBE47C CCDB060C */  jal        getFramePos__FP9CFrameVu1PcPf
     /* 012780 01DBE480 00000000 */   nop
@@ -168,8 +168,8 @@ glabel BattleActionPlay_Ozumond_F__Fi
     /* 012904 01DBE604 00000000 */   nop
     /* 012908 01DBE608 009D828F */  lw         $2, -0x6300($28)
     /* 01290C 01DBE60C BC00448C */  lw         $4, 0xBC($2)
-    /* 012910 01DBE610 DC01023C */  lui        $2, %hi(LIT_4408)
-    /* 012914 01DBE614 982F4524 */  addiu      $5, $2, %lo(LIT_4408)
+    /* 012910 01DBE610 DC01023C */  lui        $2, %hi("@4408")
+    /* 012914 01DBE614 982F4524 */  addiu      $5, $2, %lo("@4408")
     /* 012918 01DBE618 5000A627 */  addiu      $6, $29, 0x50
     /* 01291C 01DBE61C CCDB060C */  jal        getFramePos__FP9CFrameVu1PcPf
     /* 012920 01DBE620 00000000 */   nop

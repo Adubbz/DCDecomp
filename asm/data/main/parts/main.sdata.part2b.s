@@ -18,7 +18,7 @@ glabel CommandExe__3
 glabel linear__2
     /* 1A1FE8 002A1EE8 01000000 */ .word 0x00000001
 
-glabel LIT_211__2
+glabel "@211__2"
     /* 1A1FEC 002A1EEC 80808000 */ .word GlobalDataBuffer + 0x55D000
 
 glabel SystemMesNo
@@ -27,13 +27,13 @@ glabel SystemMesNo
 glabel SystemMesPosition
     /* 1A1FF4 002A1EF4 08000000 */ .word 0x00000008
 
-glabel LIT_270__4
+glabel "@270__4"
     /* 1A1FF8 002A1EF8 80808080 */ .word 0x80808080
 
-glabel LIT_442__2
+glabel "@442__2"
     /* 1A1FFC 002A1EFC 80808080 */ .word 0x80808080
 
-glabel LIT_531
+glabel "@531"
     /* 1A2000 002A1F00 68808000 */ .word GlobalDataBuffer + 0x55CFE8
 
 glabel eb_cool_flag
@@ -63,19 +63,19 @@ glabel EdDebugEventEnable
 glabel Debug
     /* 1A2024 002A1F24 01000000 */ .word 0x00000001
 
-glabel LIT_425__2
+glabel "@425__2"
     /* 1A2028 002A1F28 000080BF */ .word 0xBF800000
     /* 1A202C 002A1F2C 0000803F */ .word 0x3F800000
 
-glabel LIT_449__2
+glabel "@449__2"
     /* 1A2030 002A1F30 000080BF */ .word 0xBF800000
     /* 1A2034 002A1F34 0000803F */ .word 0x3F800000
 
-glabel LIT_483__2
+glabel "@483__2"
     /* 1A2038 002A1F38 0000A0C0 */ .word 0xC0A00000
     /* 1A203C 002A1F3C 0000A040 */ .word 0x40A00000
 
-glabel LIT_484
+glabel "@484"
     /* 1A2040 002A1F40 00000000 */ .word 0x00000000
     /* 1A2044 002A1F44 0000A041 */ .word 0x41A00000
 
@@ -103,23 +103,23 @@ glabel ECursorFrame
 glabel PartsNameNum
     /* 1A2064 002A1F64 FFFFFFFF */ .word 0xFFFFFFFF
 
-glabel LIT_829
-    /* 1A2068 002A1F68 C8AA2900 */ .word LIT_827
-    /* 1A206C 002A1F6C D0AA2900 */ .word LIT_828
+glabel "@829"
+    /* 1A2068 002A1F68 C8AA2900 */ .word "@827"
+    /* 1A206C 002A1F6C D0AA2900 */ .word "@828"
 
-glabel LIT_1652
+glabel "@1652"
     /* 1A2070 002A1F70 0000C843 */ .word 0x43C80000
     /* 1A2074 002A1F74 00007A44 */ .word 0x447A0000
 
-glabel LIT_2127
+glabel "@2127"
     /* 1A2078 002A1F78 70617573 */ .word 0x73756170
     /* 1A207C 002A1F7C 65000000 */ .word 0x00000065
 
-glabel LIT_732__3
+glabel "@732__3"
     /* 1A2080 002A1F80 02000000 */ .word 0x00000002
     /* 1A2084 002A1F84 01000000 */ .word 0x00000001
 
-glabel LIT_733__3
+glabel "@733__3"
     /* 1A2088 002A1F88 04000000 */ .word 0x00000004
     /* 1A208C 002A1F8C 01000000 */ .word 0x00000001
 
@@ -129,7 +129,7 @@ glabel fix_camera
 glabel camera_dist_mode__2
     /* 1A2094 002A1F94 01000000 */ .word 0x00000001
 
-glabel LIT_986
+glabel "@986"
     /* 1A2098 002A1F98 70617573 */ .word 0x73756170
     /* 1A209C 002A1F9C 65000000 */ .word 0x00000065
 
@@ -139,25 +139,25 @@ glabel draw_under_water
 glabel distp
     /* 1A20A4 002A1FA4 5555D53F */ .word 0x3FD55555
 
-glabel LIT_1544
-    /* 1A20A8 002A1FA8 C8B82900 */ .word LIT_1542
-    /* 1A20AC 002A1FAC D0B82900 */ .word LIT_1543
+glabel "@1544"
+    /* 1A20A8 002A1FA8 C8B82900 */ .word "@1542"
+    /* 1A20AC 002A1FAC D0B82900 */ .word "@1543"
 
-glabel LIT_1547
-    /* 1A20B0 002A1FB0 D8B82900 */ .word LIT_1545
-    /* 1A20B4 002A1FB4 E0B82900 */ .word LIT_1546
+glabel "@1547"
+    /* 1A20B0 002A1FB0 D8B82900 */ .word "@1545"
+    /* 1A20B4 002A1FB4 E0B82900 */ .word "@1546"
 
 glabel LanguageStr
-    /* 1A20B8 002A1FB8 F8BA2900 */ .word LIT_511
-    /* 1A20BC 002A1FBC 08BB2900 */ .word LIT_512
+    /* 1A20B8 002A1FB8 F8BA2900 */ .word "@511"
+    /* 1A20BC 002A1FBC 08BB2900 */ .word "@512"
 
-glabel LIT_1292
+glabel "@1292"
     /* 1A20C0 002A1FC0 20406000 */ .word GlobalDataBuffer + 0x358FA0
 
-glabel LIT_1293
+glabel "@1293"
     /* 1A20C4 002A1FC4 6080A200 */ .word GlobalDataBuffer + 0x77CFE0
 
-glabel LIT_1294
+glabel "@1294"
     /* 1A20C8 002A1FC8 4060A200 */ .word GlobalDataBuffer + 0x77AFC0
 
 glabel debugModeFlag__2
@@ -175,7 +175,7 @@ glabel TEIGI_DEF_ENDS__2
     /* 1A20E0 002A1FE0 33000000 */ .word 0x00000033
     /* 1A20E4 002A1FE4 00000000 */ .word 0x00000000
 
-glabel LIT_914
+glabel "@914"
     /* 1A20E8 002A1FE8 28010000 */ .word 0x00000128
     /* 1A20EC 002A1FEC D8000000 */ .word 0x000000D8
 
@@ -183,7 +183,7 @@ glabel ChargeShopMax
     /* 1A20F0 002A1FF0 3C001E00 */ .word 0x001E003C
     /* 1A20F4 002A1FF4 1E000000 */ .word 0x0000001E
 
-glabel LIT_1350__2
+glabel "@1350__2"
     /* 1A20F8 002A1FF8 16050000 */ .word 0x00000516
     /* 1A20FC 002A1FFC 17050000 */ .word 0x00000517
 
@@ -193,7 +193,7 @@ glabel sort_top_type
 glabel asort_top_type
     /* 1A2104 002A2004 01000000 */ .word 0x00000001
 
-glabel LIT_2857
+glabel "@2857"
     /* 1A2108 002A2008 B404B504 */ .word 0x04B504B4
 
 glabel BtlMenuNowLang
@@ -213,91 +213,91 @@ glabel BtlEffectFlag
     /* 1A2120 002A2020 FFFFFFFF */ .word 0xFFFFFFFF
     /* 1A2124 002A2024 00000000 */ .word 0x00000000
 
-glabel LIT_702__2
+glabel "@702__2"
     /* 1A2128 002A2028 1B001C00 */ .word 0x001C001B
     /* 1A212C 002A202C 0F000000 */ .word 0x0000000F
 
-glabel LIT_782__2
+glabel "@782__2"
     /* 1A2130 002A2030 00000000 */ .word 0x00000000
     /* 1A2134 002A2034 00000000 */ .word 0x00000000
 
-glabel LIT_790__2
+glabel "@790__2"
     /* 1A2138 002A2038 00004843 */ .word 0x43480000
     /* 1A213C 002A203C 0000C642 */ .word 0x42C60000
 
-glabel LIT_792__4
+glabel "@792__4"
     /* 1A2140 002A2040 16000000 */ .word 0x00000016
     /* 1A2144 002A2044 19000000 */ .word 0x00000019
 
-glabel LIT_937__3
+glabel "@937__3"
     /* 1A2148 002A2048 00000000 */ .word 0x00000000
     /* 1A214C 002A204C FFFFFFFF */ .word 0xFFFFFFFF
 
-glabel LIT_1249
+glabel "@1249"
     /* 1A2150 002A2050 00000000 */ .word 0x00000000
     /* 1A2154 002A2054 00000000 */ .word 0x00000000
 
-glabel LIT_1365__2
+glabel "@1365__2"
     /* 1A2158 002A2058 00000000 */ .word 0x00000000
     /* 1A215C 002A205C FFFFFFFF */ .word 0xFFFFFFFF
 
-glabel LIT_1379
+glabel "@1379"
     /* 1A2160 002A2060 00000000 */ .word 0x00000000
     /* 1A2164 002A2064 FFFFFFFF */ .word 0xFFFFFFFF
 
-glabel LIT_1910
+glabel "@1910"
     /* 1A2168 002A2068 00000000 */ .word 0x00000000
     /* 1A216C 002A206C 00000000 */ .word 0x00000000
 
-glabel LIT_2169
+glabel "@2169"
     /* 1A2170 002A2070 0000403F */ .word 0x3F400000
     /* 1A2174 002A2074 0000803F */ .word 0x3F800000
 
-glabel LIT_3682
+glabel "@3682"
     /* 1A2178 002A2078 05000400 */ .word 0x00040005
     /* 1A217C 002A207C 0A000000 */ .word 0x0000000A
 
-glabel LIT_3929
+glabel "@3929"
     /* 1A2180 002A2080 B1000000 */ .word 0x000000B1
     /* 1A2184 002A2084 B2000000 */ .word 0x000000B2
 
-glabel LIT_4560
+glabel "@4560"
     /* 1A2188 002A2088 01000000 */ .word 0x00000001
     /* 1A218C 002A208C 18000000 */ .word 0x00000018
 
-glabel LIT_4725
+glabel "@4725"
     /* 1A2190 002A2090 01001800 */ .word 0x00180001
     /* 1A2194 002A2094 00000000 */ .word 0x00000000
 
-glabel LIT_5556
+glabel "@5556"
     /* 1A2198 002A2098 00000000 */ .word 0x00000000
     /* 1A219C 002A209C 00000000 */ .word 0x00000000
 
-glabel LIT_5592
+glabel "@5592"
     /* 1A21A0 002A20A0 08060606 */ .word 0x06060608
     /* 1A21A4 002A20A4 06060600 */ .word 0x00060606
 
-glabel LIT_5593
+glabel "@5593"
     /* 1A21A8 002A20A8 00060606 */ .word 0x06060600
     /* 1A21AC 002A20AC 06060600 */ .word 0x00060606
 
-glabel LIT_5711
+glabel "@5711"
     /* 1A21B0 002A20B0 00000000 */ .word 0x00000000
     /* 1A21B4 002A20B4 00000000 */ .word 0x00000000
 
-glabel LIT_5977
+glabel "@5977"
     /* 1A21B8 002A20B8 31013001 */ .word GlobalDataBuffer + 0x10550B1
     /* 1A21BC 002A20BC 2F010000 */ .word 0x0000012F
 
-glabel LIT_6236
+glabel "@6236"
     /* 1A21C0 002A20C0 00000000 */ .word 0x00000000
     /* 1A21C4 002A20C4 FFFFFFFF */ .word 0xFFFFFFFF
 
-glabel LIT_6395
+glabel "@6395"
     /* 1A21C8 002A20C8 00010203 */ .word 0x03020100
     /* 1A21CC 002A20CC 04050000 */ .word 0x00000504
 
-glabel LIT_6415
+glabel "@6415"
     /* 1A21D0 002A20D0 01030609 */ .word 0x09060301
     /* 1A21D4 002A20D4 0C0E0000 */ .word 0x00000E0C
 
@@ -311,11 +311,11 @@ glabel DngEscapeSelect
     /* 1A21E0 002A20E0 01000000 */ .word 0x00000001
     /* 1A21E4 002A20E4 00000000 */ .word 0x00000000
 
-glabel LIT_1334
+glabel "@1334"
     /* 1A21E8 002A20E8 64302564 */ .word 0x64253064
     /* 1A21EC 002A20EC 6F000000 */ .word 0x0000006F
 
-glabel LIT_1335
+glabel "@1335"
     /* 1A21F0 002A20F0 B4A0A0A0 */ .word 0xA0A0A0B4
     /* 1A21F4 002A20F4 A0A0A000 */ .word GlobalDataBuffer + 0x75F020
 
@@ -323,69 +323,69 @@ glabel EditMenuIconID
     /* 1A21F8 002A20F8 0D0A0B05 */ .word 0x050B0A0D
     /* 1A21FC 002A20FC 04060000 */ .word 0x00000604
 
-glabel LIT_365__2
+glabel "@365__2"
     /* 1A2200 002A2100 50607080 */ .word 0x80706050
     /* 1A2204 002A2104 80700000 */ .word 0x00007080
 
-glabel LIT_366__2
+glabel "@366__2"
     /* 1A2208 002A2108 50607080 */ .word 0x80706050
     /* 1A220C 002A210C 70000000 */ .word 0x00000070
 
-glabel LIT_367__2
+glabel "@367__2"
     /* 1A2210 002A2110 50607080 */ .word 0x80706050
     /* 1A2214 002A2114 80700000 */ .word 0x00007080
 
-glabel LIT_447__4
+glabel "@447__4"
     /* 1A2218 002A2118 00000000 */ .word 0x00000000
     /* 1A221C 002A211C 00000000 */ .word 0x00000000
 
-glabel LIT_537__2
+glabel "@537__2"
     /* 1A2220 002A2120 50607080 */ .word 0x80706050
     /* 1A2224 002A2124 80700000 */ .word 0x00007080
 
-glabel LIT_538__2
+glabel "@538__2"
     /* 1A2228 002A2128 50607080 */ .word 0x80706050
     /* 1A222C 002A212C 70000000 */ .word 0x00000070
 
-glabel LIT_539
+glabel "@539"
     /* 1A2230 002A2130 50607080 */ .word 0x80706050
     /* 1A2234 002A2134 80700000 */ .word 0x00007080
 
-glabel LIT_630__5
+glabel "@630__5"
     /* 1A2238 002A2138 00000000 */ .word 0x00000000
     /* 1A223C 002A213C 00000000 */ .word 0x00000000
 
-glabel LIT_1322
+glabel "@1322"
     /* 1A2240 002A2140 100C0C0C */ .word 0x0C0C0C10
     /* 1A2244 002A2144 0C0C0C00 */ .word 0x000C0C0C
 
 glabel tip_sort_type
     /* 1A2248 002A2148 01000000 */ .word 0x00000001
 
-glabel LIT_1752
+glabel "@1752"
     /* 1A224C 002A214C 00000000 */ .word 0x00000000
 
-glabel LIT_2183
+glabel "@2183"
     /* 1A2250 002A2150 20000000 */ .word 0x00000020
     /* 1A2254 002A2154 08020000 */ .word 0x00000208
 
-glabel LIT_2647
+glabel "@2647"
     /* 1A2258 002A2158 0000A0C1 */ .word 0xC1A00000
     /* 1A225C 002A215C 0000A0C1 */ .word 0xC1A00000
 
-glabel LIT_3137
+glabel "@3137"
     /* 1A2260 002A2160 80808000 */ .word GlobalDataBuffer + 0x55D000
 
-glabel LIT_3138
+glabel "@3138"
     /* 1A2264 002A2164 80808000 */ .word GlobalDataBuffer + 0x55D000
 
-glabel LIT_3260
+glabel "@3260"
     /* 1A2268 002A2168 80808000 */ .word GlobalDataBuffer + 0x55D000
 
-glabel LIT_3261__2
+glabel "@3261__2"
     /* 1A226C 002A216C 80808000 */ .word GlobalDataBuffer + 0x55D000
 
-glabel LIT_3395
+glabel "@3395"
     /* 1A2270 002A2170 00F0F0F0 */ .word 0xF0F0F000
     /* 1A2274 002A2174 F0F0F000 */ .word GlobalDataBuffer + 0xC64070
 
@@ -401,19 +401,19 @@ glabel changeMenu_long
     /* 1A2288 002A2188 00007042 */ .word 0x42700000
     /* 1A228C 002A218C 00000000 */ .word 0x00000000
 
-glabel LIT_1730
+glabel "@1730"
     /* 1A2290 002A2190 77657069 */ .word 0x69706577
     /* 1A2294 002A2194 636F6E00 */ .word GlobalDataBuffer + 0x43BEE3
 
-glabel LIT_1732
+glabel "@1732"
     /* 1A2298 002A2198 00000000 */ .word 0x00000000
     /* 1A229C 002A219C 00000000 */ .word 0x00000000
 
-glabel LIT_619__4
+glabel "@619__4"
     /* 1A22A0 002A21A0 100B0B0B */ .word 0x0B0B0B10
     /* 1A22A4 002A21A4 0B0B0B00 */ .word 0x000B0B0B
 
-glabel LIT_955
+glabel "@955"
     /* 1A22A8 002A21A8 30002000 */ .word 0x00200030
     /* 1A22AC 002A21AC 3A002800 */ .word MonstorTable + 0x53A
 
@@ -423,33 +423,33 @@ glabel sort_top_type__2
 glabel asort_top_type__2
     /* 1A22B4 002A21B4 01000000 */ .word 0x00000001
 
-glabel LIT_357__2
+glabel "@357__2"
     /* 1A22B8 002A21B8 100E0E0E */ .word 0x0E0E0E10
     /* 1A22BC 002A21BC 0E0E0E00 */ .word 0x000E0E0E
 
-glabel LIT_510__3
+glabel "@510__3"
     /* 1A22C0 002A21C0 40000000 */ .word 0x00000040
     /* 1A22C4 002A21C4 22020000 */ .word 0x00000222
 
-glabel LIT_374__4
+glabel "@374__4"
     /* 1A22C8 002A21C8 00000000 */ .word 0x00000000
 
-glabel LIT_375__5
+glabel "@375__5"
     /* 1A22CC 002A21CC 00000000 */ .word 0x00000000
 
-glabel LIT_433
+glabel "@433"
     /* 1A22D0 002A21D0 05000000 */ .word 0x00000005
     /* 1A22D4 002A21D4 0F000000 */ .word 0x0000000F
 
-glabel LIT_971
+glabel "@971"
     /* 1A22D8 002A21D8 00000000 */ .word 0x00000000
     /* 1A22DC 002A21DC 00000000 */ .word 0x00000000
 
-glabel LIT_1418__2
+glabel "@1418__2"
     /* 1A22E0 002A21E0 FFFFFFFF */ .word 0xFFFFFFFF
     /* 1A22E4 002A21E4 FFFFFFFF */ .word 0xFFFFFFFF
 
-glabel LIT_1419__2
+glabel "@1419__2"
     /* 1A22E8 002A21E8 FFFFFFFF */ .word 0xFFFFFFFF
     /* 1A22EC 002A21EC FFFFFFFF */ .word 0xFFFFFFFF
 
@@ -457,20 +457,20 @@ glabel InputModeOrikaeshi
     /* 1A22F0 002A21F0 0A000A00 */ .word 0x000A000A
     /* 1A22F4 002A21F4 0D000A00 */ .word 0x000A000D
 
-glabel LIT_353__5
+glabel "@353__5"
     /* 1A22F8 002A21F8 00000000 */ .word 0x00000000
     /* 1A22FC 002A21FC FFFFFFFF */ .word 0xFFFFFFFF
 
-glabel LIT_484__2
+glabel "@484__2"
     /* 1A2300 002A2200 59005800 */ .word GlobalDataBuffer + 0x2D4FD9
     /* 1A2304 002A2204 3E001800 */ .word 0x0018003E
 
-glabel LIT_1453__2
+glabel "@1453__2"
     /* 1A2308 002A2208 0A0A0A00 */ .word 0x000A0A0A
 
-glabel LIT_1454
+glabel "@1454"
     /* 1A230C 002A220C 0A0A0A00 */ .word 0x000A0A0A
 
-glabel LIT_1515__4
+glabel "@1515__4"
     /* 1A2310 002A2210 14101010 */ .word 0x10101014
     /* 1A2314 002A2214 10101000 */ .word 0x00101010

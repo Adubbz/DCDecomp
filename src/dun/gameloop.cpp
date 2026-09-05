@@ -1376,29 +1376,29 @@ s32 MonstorNameOff;
 
 INCLUDE_ASM("asm/nonmatchings/dun/gameloop", _dun_text_start);
 
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_617__7);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_618__4);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_619__7);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_620__5);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_621__7);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_622__6);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_623__6);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_624__6);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_625__7);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_626__8);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_627__8);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_628__8);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_629__7);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_630__9);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_631__8);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_632__6);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_633__6);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_634__6);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_635__7);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_636__6);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_637__5);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_638__7);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_639__9);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @617__7);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @618__4);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @619__7);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @620__5);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @621__7);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @622__6);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @623__6);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @624__6);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @625__7);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @626__8);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @627__8);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @628__8);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @629__7);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @630__9);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @631__8);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @632__6);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @633__6);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @634__6);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @635__7);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @636__6);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @637__5);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @638__7);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @639__9);
 
 void LoadBaseTexture(void) {
     LOADTEXTURE_INFO2 info[97];
@@ -8978,13 +8978,13 @@ int LoadStartLogo(int map) {
     return blocks;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_6774);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_6775);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_6776);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_6777);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_6778);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_6779);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", LIT_6780);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @6774);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @6775);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @6776);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @6777);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @6778);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @6779);
+INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @6780);
 
 void FloorTitleOn(void) {
     rogoAlphaA[2] = 0;

@@ -24,8 +24,8 @@ glabel DrawMainMenuIcon__Fiiiiii
     /* 12E0E4 0022DFE4 00000000 */   nop
     /* 12E0E8 0022DFE8 C701023C */  lui        $2, %hi(TexManager)
     /* 12E0EC 0022DFEC 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 12E0F0 0022DFF0 2A00023C */  lui        $2, %hi(LIT_981)
-    /* 12E0F4 0022DFF4 B0F14524 */  addiu      $5, $2, %lo(LIT_981)
+    /* 12E0F0 0022DFF0 2A00023C */  lui        $2, %hi("@981")
+    /* 12E0F4 0022DFF4 B0F14524 */  addiu      $5, $2, %lo("@981")
     /* 12E0F8 0022DFF8 FFFF0624 */  addiu      $6, $0, -0x1
     /* 12E0FC 0022DFFC B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 12E100 0022E000 00000000 */   nop

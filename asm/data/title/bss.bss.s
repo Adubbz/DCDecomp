@@ -40,7 +40,7 @@ glabel CharaTex__2
 glabel D_01E095C7
     /* 01E095C7 */ .space 0x01
 
-glabel LIT_363__5
+glabel "@363__5"
     /* 01E095C8 */ .space 0x0C
 
 /* Automatically generated and unreferenced pad */
@@ -228,7 +228,7 @@ glabel Effect
 glabel SeireiKing
     /* 01E2E490 */ .space 0x1E0
 
-glabel LIT_362__5
+glabel "@362__5"
     /* 01E2E670 */ .space 0x0C
 
 /* Automatically generated and unreferenced pad */
@@ -287,7 +287,7 @@ glabel TexAnimeData__3
 glabel CRunFx
     /* 01E51540 */ .space 0xD0
 
-glabel LIT_339__4
+glabel "@339__4"
     /* 01E51610 */ .space 0x0C
 
 /* Automatically generated and unreferenced pad */
@@ -297,7 +297,7 @@ glabel D_01E5161C
 glabel Camera
     /* 01E51620 */ .space 0x2C0
 
-glabel LIT_340__3
+glabel "@340__3"
     /* 01E518E0 */ .space 0x0C
 
 /* Automatically generated and unreferenced pad */

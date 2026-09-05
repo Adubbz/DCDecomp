@@ -50,8 +50,8 @@ glabel CheckArg__7CScriptFPciP15CSCRIPT_COMMAND
     /* 000FF0 01DACCF0 289E4070 */  paddub     $19, $2, $0
     /* 000FF4 01DACCF4 21B02202 */  addu       $22, $17, $2
     /* 000FF8 01DACCF8 2826C072 */  paddub     $4, $22, $0
-    /* 000FFC 01DACCFC DE01023C */  lui        $2, %hi(LIT_411__2)
-    /* 001000 01DACD00 28BF4524 */  addiu      $5, $2, %lo(LIT_411__2)
+    /* 000FFC 01DACCFC DE01023C */  lui        $2, %hi("@411__2")
+    /* 001000 01DACD00 28BF4524 */  addiu      $5, $2, %lo("@411__2")
     /* 001004 01DACD04 02000624 */  addiu      $6, $0, 0x2
     /* 001008 01DACD08 C60C040C */  jal        memcmp
     /* 00100C 01DACD0C 00000000 */   nop
@@ -67,8 +67,8 @@ glabel CheckArg__7CScriptFPciP15CSCRIPT_COMMAND
     /* 001034 01DACD34 00000000 */   nop
   .L01DACD38:
     /* 001038 01DACD38 2826C072 */  paddub     $4, $22, $0
-    /* 00103C 01DACD3C DE01023C */  lui        $2, %hi(LIT_412__2)
-    /* 001040 01DACD40 30BF4524 */  addiu      $5, $2, %lo(LIT_412__2)
+    /* 00103C 01DACD3C DE01023C */  lui        $2, %hi("@412__2")
+    /* 001040 01DACD40 30BF4524 */  addiu      $5, $2, %lo("@412__2")
     /* 001044 01DACD44 03000624 */  addiu      $6, $0, 0x3
     /* 001048 01DACD48 C60C040C */  jal        memcmp
     /* 00104C 01DACD4C 00000000 */   nop
@@ -171,8 +171,8 @@ glabel CheckArg__7CScriptFPciP15CSCRIPT_COMMAND
   .L01DACEA4:
     /* 0011A4 01DACEA4 21B03302 */  addu       $22, $17, $19
     /* 0011A8 01DACEA8 2826C072 */  paddub     $4, $22, $0
-    /* 0011AC 01DACEAC DE01023C */  lui        $2, %hi(LIT_411__2)
-    /* 0011B0 01DACEB0 28BF4524 */  addiu      $5, $2, %lo(LIT_411__2)
+    /* 0011AC 01DACEAC DE01023C */  lui        $2, %hi("@411__2")
+    /* 0011B0 01DACEB0 28BF4524 */  addiu      $5, $2, %lo("@411__2")
     /* 0011B4 01DACEB4 C60C040C */  jal        memcmp
     /* 0011B8 01DACEB8 00000000 */   nop
     /* 0011BC 01DACEBC 09004014 */  bnez       $2, .L01DACEE4
@@ -187,8 +187,8 @@ glabel CheckArg__7CScriptFPciP15CSCRIPT_COMMAND
     /* 0011E0 01DACEE0 00000000 */   nop
   .L01DACEE4:
     /* 0011E4 01DACEE4 2826C072 */  paddub     $4, $22, $0
-    /* 0011E8 01DACEE8 DE01023C */  lui        $2, %hi(LIT_412__2)
-    /* 0011EC 01DACEEC 30BF4524 */  addiu      $5, $2, %lo(LIT_412__2)
+    /* 0011E8 01DACEE8 DE01023C */  lui        $2, %hi("@412__2")
+    /* 0011EC 01DACEEC 30BF4524 */  addiu      $5, $2, %lo("@412__2")
     /* 0011F0 01DACEF0 03000624 */  addiu      $6, $0, 0x3
     /* 0011F4 01DACEF4 C60C040C */  jal        memcmp
     /* 0011F8 01DACEF8 00000000 */   nop

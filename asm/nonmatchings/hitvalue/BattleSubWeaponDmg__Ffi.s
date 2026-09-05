@@ -15,8 +15,8 @@ glabel BattleSubWeaponDmg__Ffi
     /* 0B5EB0 001B5DB0 0000B4E7 */  swc1       $f20, 0x0($29)
     /* 0B5EB4 001B5DB4 46650046 */  mov.s      $f21, $f12
     /* 0B5EB8 001B5DB8 28A68070 */  paddub     $20, $4, $0
-    /* 0B5EBC 001B5DBC 2700023C */  lui        $2, %hi(LIT_612)
-    /* 0B5EC0 001B5DC0 D0B14224 */  addiu      $2, $2, %lo(LIT_612)
+    /* 0B5EBC 001B5DBC 2700023C */  lui        $2, %hi("@612")
+    /* 0B5EC0 001B5DC0 D0B14224 */  addiu      $2, $2, %lo("@612")
     /* 0B5EC4 001B5DC4 7000A427 */  addiu      $4, $29, 0x70
     /* 0B5EC8 001B5DC8 00004378 */  lq         $3, 0x0($2)
     /* 0B5ECC 001B5DCC 100042DC */  ld         $2, 0x10($2)

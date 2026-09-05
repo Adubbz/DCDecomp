@@ -17,8 +17,8 @@ glabel ShisaiShadow__Fv
     /* 00BCD8 01DB79D8 00000000 */   nop
     /* 00BCDC 01DB79DC DF01013C */  lui        $1, %hi(Chara__3 + 0x241C)
     /* 00BCE0 01DB79E0 FC22248C */  lw         $4, %lo(Chara__3 + 0x241C)($1)
-    /* 00BCE4 01DB79E4 DE01023C */  lui        $2, %hi(LIT_903__3)
-    /* 00BCE8 01DB79E8 40DF4524 */  addiu      $5, $2, %lo(LIT_903__3)
+    /* 00BCE4 01DB79E4 DE01023C */  lui        $2, %hi("@903__3")
+    /* 00BCE8 01DB79E8 40DF4524 */  addiu      $5, $2, %lo("@903__3")
     /* 00BCEC 01DB79EC C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00BCF0 01DB79F0 00000000 */   nop
     /* 00BCF4 01DB79F4 28264070 */  paddub     $4, $2, $0
@@ -35,8 +35,8 @@ glabel ShisaiShadow__Fv
     /* 00BD20 01DB7A20 00000000 */   nop
     /* 00BD24 01DB7A24 DF01013C */  lui        $1, %hi(Chara__3 + 0x241C)
     /* 00BD28 01DB7A28 FC22248C */  lw         $4, %lo(Chara__3 + 0x241C)($1)
-    /* 00BD2C 01DB7A2C DE01023C */  lui        $2, %hi(LIT_904__3)
-    /* 00BD30 01DB7A30 48DF4524 */  addiu      $5, $2, %lo(LIT_904__3)
+    /* 00BD2C 01DB7A2C DE01023C */  lui        $2, %hi("@904__3")
+    /* 00BD30 01DB7A30 48DF4524 */  addiu      $5, $2, %lo("@904__3")
     /* 00BD34 01DB7A34 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00BD38 01DB7A38 00000000 */   nop
     /* 00BD3C 01DB7A3C 28264070 */  paddub     $4, $2, $0

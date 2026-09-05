@@ -96,8 +96,8 @@ glabel SetTreasureBox__11CDungeonMapFPfiii
     /* 0C8484 001C8384 3000C228 */  slti       $2, $6, 0x30
     /* 0C8488 001C8388 F0FF4014 */  bnez       $2, .L001C834C
     /* 0C848C 001C838C 00000000 */   nop
-    /* 0C8490 001C8390 2A00023C */  lui        $2, %hi(LIT_2448)
-    /* 0C8494 001C8394 C0BE4424 */  addiu      $4, $2, %lo(LIT_2448)
+    /* 0C8490 001C8390 2A00023C */  lui        $2, %hi("@2448")
+    /* 0C8494 001C8394 C0BE4424 */  addiu      $4, $2, %lo("@2448")
     /* 0C8498 001C8398 A611040C */  jal        printf
     /* 0C849C 001C839C 00000000 */   nop
     /* 0C84A0 001C83A0 FFFF0424 */  addiu      $4, $0, -0x1

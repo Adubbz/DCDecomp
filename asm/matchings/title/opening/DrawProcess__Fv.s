@@ -74,8 +74,8 @@ glabel DrawProcess__Fv
     /* 004B7C 01DB087C 0A00812C */  sltiu      $1, $4, 0xA
     /* 004B80 01DB0880 2E002010 */  beqz       $1, .L01DB093C
     /* 004B84 01DB0884 00000000 */   nop
-    /* 004B88 01DB0888 DE01023C */  lui        $2, %hi(LIT_915__3)
-    /* 004B8C 01DB088C 00D84324 */  addiu      $3, $2, %lo(LIT_915__3)
+    /* 004B88 01DB0888 DE01023C */  lui        $2, %hi("@915__3")
+    /* 004B8C 01DB088C 00D84324 */  addiu      $3, $2, %lo("@915__3")
     /* 004B90 01DB0890 80100400 */  sll        $2, $4, 2
     /* 004B94 01DB0894 21104300 */  addu       $2, $2, $3
     /* 004B98 01DB0898 0000428C */  lw         $2, 0x0($2)
@@ -164,8 +164,8 @@ glabel DrawProcess__Fv
     /* 004CE0 01DB09E0 28864070 */  paddub     $16, $2, $0
     /* 004CE4 01DB09E4 C701023C */  lui        $2, %hi(TexManager)
     /* 004CE8 01DB09E8 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 004CEC 01DB09EC DE01023C */  lui        $2, %hi(LIT_914__3)
-    /* 004CF0 01DB09F0 F8D74524 */  addiu      $5, $2, %lo(LIT_914__3)
+    /* 004CEC 01DB09EC DE01023C */  lui        $2, %hi("@914__3")
+    /* 004CF0 01DB09F0 F8D74524 */  addiu      $5, $2, %lo("@914__3")
     /* 004CF4 01DB09F4 FFFF0624 */  addiu      $6, $0, -0x1
     /* 004CF8 01DB09F8 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 004CFC 01DB09FC 00000000 */   nop

@@ -33,8 +33,8 @@ glabel SetupBaseModel__12CMonstorUnitFiiiP14CDataAlloc2_1_
     /* 0DFFF8 001DFEF8 01000224 */  addiu      $2, $0, 0x1
     /* 0DFFFC 001DFEFC EC00A2A3 */  sb         $2, 0xEC($29)
     /* 0E0000 001DFF00 A000A427 */  addiu      $4, $29, 0xA0
-    /* 0E0004 001DFF04 2A00023C */  lui        $2, %hi(LIT_2328)
-    /* 0E0008 001DFF08 C0CF4524 */  addiu      $5, $2, %lo(LIT_2328)
+    /* 0E0004 001DFF04 2A00023C */  lui        $2, %hi("@2328")
+    /* 0E0008 001DFF08 C0CF4524 */  addiu      $5, $2, %lo("@2328")
     /* 0E000C 001DFF0C 28368072 */  paddub     $6, $20, $0
     /* 0E0010 001DFF10 1614040C */  jal        sprintf
     /* 0E0014 001DFF14 00000000 */   nop
@@ -57,8 +57,8 @@ glabel SetupBaseModel__12CMonstorUnitFiiiP14CDataAlloc2_1_
     /* 0E0058 001DFF58 00000000 */   nop
     /* 0E005C 001DFF5C 2826A072 */  paddub     $4, $21, $0
     /* 0E0060 001DFF60 948B858F */  lw         $5, -0x746C($28)
-    /* 0E0064 001DFF64 2A00023C */  lui        $2, %hi(LIT_2329)
-    /* 0E0068 001DFF68 D8CF4624 */  addiu      $6, $2, %lo(LIT_2329)
+    /* 0E0064 001DFF64 2A00023C */  lui        $2, %hi("@2329")
+    /* 0E0068 001DFF68 D8CF4624 */  addiu      $6, $2, %lo("@2329")
     /* 0E006C 001DFF6C 283E2072 */  paddub     $7, $17, $0
     /* 0E0070 001DFF70 2A000824 */  addiu      $8, $0, 0x2A
     /* 0E0074 001DFF74 284E2072 */  paddub     $9, $17, $0
@@ -93,8 +93,8 @@ glabel SetupBaseModel__12CMonstorUnitFiiiP14CDataAlloc2_1_
     /* 0E00E4 001DFFE4 00110200 */  sll        $2, $2, 4
     /* 0E00E8 001DFFE8 21308202 */  addu       $6, $20, $2
     /* 0E00EC 001DFFEC A000A427 */  addiu      $4, $29, 0xA0
-    /* 0E00F0 001DFFF0 2A00023C */  lui        $2, %hi(LIT_2328)
-    /* 0E00F4 001DFFF4 C0CF4524 */  addiu      $5, $2, %lo(LIT_2328)
+    /* 0E00F0 001DFFF0 2A00023C */  lui        $2, %hi("@2328")
+    /* 0E00F4 001DFFF4 C0CF4524 */  addiu      $5, $2, %lo("@2328")
     /* 0E00F8 001DFFF8 1614040C */  jal        sprintf
     /* 0E00FC 001DFFFC 00000000 */   nop
     /* 0E0100 001E0000 A000A427 */  addiu      $4, $29, 0xA0
@@ -110,8 +110,8 @@ glabel SetupBaseModel__12CMonstorUnitFiiiP14CDataAlloc2_1_
     /* 0E0128 001E0028 2118E202 */  addu       $3, $23, $2
     /* 0E012C 001E002C A0006424 */  addiu      $4, $3, 0xA0
     /* 0E0130 001E0030 948B858F */  lw         $5, -0x746C($28)
-    /* 0E0134 001E0034 2A00023C */  lui        $2, %hi(LIT_2329)
-    /* 0E0138 001E0038 D8CF4624 */  addiu      $6, $2, %lo(LIT_2329)
+    /* 0E0134 001E0034 2A00023C */  lui        $2, %hi("@2329")
+    /* 0E0138 001E0038 D8CF4624 */  addiu      $6, $2, %lo("@2329")
     /* 0E013C 001E003C 283E2072 */  paddub     $7, $17, $0
     /* 0E0140 001E0040 28462072 */  paddub     $8, $17, $0
     /* 0E0144 001E0044 4001798C */  lw         $25, 0x140($3)
@@ -140,8 +140,8 @@ glabel SetupBaseModel__12CMonstorUnitFiiiP14CDataAlloc2_1_
     /* 0E0198 001E0098 CCFF4014 */  bnez       $2, .L001DFFCC
     /* 0E019C 001E009C 00000000 */   nop
     /* 0E01A0 001E00A0 A000A427 */  addiu      $4, $29, 0xA0
-    /* 0E01A4 001E00A4 2A00023C */  lui        $2, %hi(LIT_2330)
-    /* 0E01A8 001E00A8 F0CF4524 */  addiu      $5, $2, %lo(LIT_2330)
+    /* 0E01A4 001E00A4 2A00023C */  lui        $2, %hi("@2330")
+    /* 0E01A8 001E00A8 F0CF4524 */  addiu      $5, $2, %lo("@2330")
     /* 0E01AC 001E00AC 40008626 */  addiu      $6, $20, 0x40
     /* 0E01B0 001E00B0 1614040C */  jal        sprintf
     /* 0E01B4 001E00B4 00000000 */   nop
@@ -213,8 +213,8 @@ glabel SetupBaseModel__12CMonstorUnitFiiiP14CDataAlloc2_1_
     /* 0E02B8 001E01B8 FFFF0324 */  addiu      $3, $0, -0x1
     /* 0E02BC 001E01BC 07004314 */  bne        $2, $3, .L001E01DC
     /* 0E02C0 001E01C0 00000000 */   nop
-    /* 0E02C4 001E01C4 2A00023C */  lui        $2, %hi(LIT_2331)
-    /* 0E02C8 001E01C8 10D04424 */  addiu      $4, $2, %lo(LIT_2331)
+    /* 0E02C4 001E01C4 2A00023C */  lui        $2, %hi("@2331")
+    /* 0E02C8 001E01C8 10D04424 */  addiu      $4, $2, %lo("@2331")
     /* 0E02CC 001E01CC A611040C */  jal        printf
     /* 0E02D0 001E01D0 00000000 */   nop
     /* 0E02D4 001E01D4 05000010 */  b          .L001E01EC
@@ -244,8 +244,8 @@ glabel SetupBaseModel__12CMonstorUnitFiiiP14CDataAlloc2_1_
     /* 0E032C 001E022C FFFF0324 */  addiu      $3, $0, -0x1
     /* 0E0330 001E0230 07004314 */  bne        $2, $3, .L001E0250
     /* 0E0334 001E0234 00000000 */   nop
-    /* 0E0338 001E0238 2A00023C */  lui        $2, %hi(LIT_2331)
-    /* 0E033C 001E023C 10D04424 */  addiu      $4, $2, %lo(LIT_2331)
+    /* 0E0338 001E0238 2A00023C */  lui        $2, %hi("@2331")
+    /* 0E033C 001E023C 10D04424 */  addiu      $4, $2, %lo("@2331")
     /* 0E0340 001E0240 A611040C */  jal        printf
     /* 0E0344 001E0244 00000000 */   nop
     /* 0E0348 001E0248 05000010 */  b          .L001E0260

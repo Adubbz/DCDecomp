@@ -18,8 +18,8 @@ glabel chk_int__F12RS_STACKDATAP8funcdata
     /* 13D868 0023D768 2500013C */  lui        $1, %hi(_impure_ptr)
     /* 13D86C 0023D76C ECFD228C */  lw         $2, %lo(_impure_ptr)($1)
     /* 13D870 0023D770 0C00448C */  lw         $4, 0xC($2)
-    /* 13D874 0023D774 2A00023C */  lui        $2, %hi(LIT_24)
-    /* 13D878 0023D778 A0F74524 */  addiu      $5, $2, %lo(LIT_24)
+    /* 13D874 0023D774 2A00023C */  lui        $2, %hi("@24")
+    /* 13D878 0023D778 A0F74524 */  addiu      $5, $2, %lo("@24")
     /* 13D87C 0023D77C 0400C68C */  lw         $6, 0x4($6)
     /* 13D880 0023D780 EE06040C */  jal        fprintf
     /* 13D884 0023D784 00000000 */   nop

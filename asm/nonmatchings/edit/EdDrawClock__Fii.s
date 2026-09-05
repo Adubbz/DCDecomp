@@ -45,8 +45,8 @@ glabel EdDrawClock__Fii
     /* 07DCF8 0017DBF8 28964070 */  paddub     $18, $2, $0
     /* 07DCFC 0017DBFC C701023C */  lui        $2, %hi(TexManager)
     /* 07DD00 0017DC00 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 07DD04 0017DC04 2A00023C */  lui        $2, %hi(LIT_2151)
-    /* 07DD08 0017DC08 18AC4524 */  addiu      $5, $2, %lo(LIT_2151)
+    /* 07DD04 0017DC04 2A00023C */  lui        $2, %hi("@2151")
+    /* 07DD08 0017DC08 18AC4524 */  addiu      $5, $2, %lo("@2151")
     /* 07DD0C 0017DC0C FFFF0624 */  addiu      $6, $0, -0x1
     /* 07DD10 0017DC10 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 07DD14 0017DC14 00000000 */   nop
@@ -88,8 +88,8 @@ glabel EdDrawClock__Fii
     /* 07DDA4 0017DCA4 28864070 */  paddub     $16, $2, $0
     /* 07DDA8 0017DCA8 C701023C */  lui        $2, %hi(TexManager)
     /* 07DDAC 0017DCAC 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 07DDB0 0017DCB0 2A00023C */  lui        $2, %hi(LIT_2151)
-    /* 07DDB4 0017DCB4 18AC4524 */  addiu      $5, $2, %lo(LIT_2151)
+    /* 07DDB0 0017DCB0 2A00023C */  lui        $2, %hi("@2151")
+    /* 07DDB4 0017DCB4 18AC4524 */  addiu      $5, $2, %lo("@2151")
     /* 07DDB8 0017DCB8 FFFF0624 */  addiu      $6, $0, -0x1
     /* 07DDBC 0017DCBC B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 07DDC0 0017DCC0 00000000 */   nop

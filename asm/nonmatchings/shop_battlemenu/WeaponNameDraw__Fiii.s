@@ -298,8 +298,8 @@ glabel WeaponNameDraw__Fiii
     /* 0F9BF8 001F9AF8 00000000 */   nop
     /* 0F9BFC 001F9AFC C701023C */  lui        $2, %hi(TexManager)
     /* 0F9C00 001F9B00 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0F9C04 001F9B04 2A00023C */  lui        $2, %hi(LIT_924__2)
-    /* 0F9C08 001F9B08 E8D44524 */  addiu      $5, $2, %lo(LIT_924__2)
+    /* 0F9C04 001F9B04 2A00023C */  lui        $2, %hi("@924__2")
+    /* 0F9C08 001F9B08 E8D44524 */  addiu      $5, $2, %lo("@924__2")
     /* 0F9C0C 001F9B0C FFFF0624 */  addiu      $6, $0, -0x1
     /* 0F9C10 001F9B10 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0F9C14 001F9B14 00000000 */   nop

@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_1416__2
+glabel "@1416__2"
     /* 19F300 0029F200 70FC2200 */ .word .L0022FC70
     /* 19F304 0029F204 64FD2200 */ .word .L0022FD64
     /* 19F308 0029F208 44FB2200 */ .word .L0022FB44
@@ -46,8 +46,8 @@ glabel CommonIconDraw__Fiiiiiii
     /* 12FC1C 0022FB1C 0900812C */  sltiu      $1, $4, 0x9
     /* 12FC20 0022FB20 1A012010 */  beqz       $1, .L0022FF8C
     /* 12FC24 0022FB24 00000000 */   nop
-    /* 12FC28 0022FB28 2A00033C */  lui        $3, %hi(LIT_1416__2)
-    /* 12FC2C 0022FB2C 00F26524 */  addiu      $5, $3, %lo(LIT_1416__2)
+    /* 12FC28 0022FB28 2A00033C */  lui        $3, %hi("@1416__2")
+    /* 12FC2C 0022FB2C 00F26524 */  addiu      $5, $3, %lo("@1416__2")
     /* 12FC30 0022FB30 80180400 */  sll        $3, $4, 2
     /* 12FC34 0022FB34 21186500 */  addu       $3, $3, $5
     /* 12FC38 0022FB38 0000638C */  lw         $3, 0x0($3)
@@ -67,8 +67,8 @@ glabel CommonIconDraw__Fiiiiiii
   .L0022FB6C:
     /* 12FC6C 0022FB6C C701023C */  lui        $2, %hi(TexManager)
     /* 12FC70 0022FB70 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 12FC74 0022FB74 2A00023C */  lui        $2, %hi(LIT_852__4)
-    /* 12FC78 0022FB78 A8F14524 */  addiu      $5, $2, %lo(LIT_852__4)
+    /* 12FC74 0022FB74 2A00023C */  lui        $2, %hi("@852__4")
+    /* 12FC78 0022FB78 A8F14524 */  addiu      $5, $2, %lo("@852__4")
     /* 12FC7C 0022FB7C FFFF0624 */  addiu      $6, $0, -0x1
     /* 12FC80 0022FB80 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 12FC84 0022FB84 00000000 */   nop
@@ -211,8 +211,8 @@ glabel CommonIconDraw__Fiiiiiii
     /* 12FE70 0022FD70 D000A2AF */  sw         $2, 0xD0($29)
     /* 12FE74 0022FD74 C701023C */  lui        $2, %hi(TexManager)
     /* 12FE78 0022FD78 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 12FE7C 0022FD7C 2A00023C */  lui        $2, %hi(LIT_852__4)
-    /* 12FE80 0022FD80 A8F14524 */  addiu      $5, $2, %lo(LIT_852__4)
+    /* 12FE7C 0022FD7C 2A00023C */  lui        $2, %hi("@852__4")
+    /* 12FE80 0022FD80 A8F14524 */  addiu      $5, $2, %lo("@852__4")
     /* 12FE84 0022FD84 FFFF0624 */  addiu      $6, $0, -0x1
     /* 12FE88 0022FD88 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 12FE8C 0022FD8C 00000000 */   nop

@@ -174,8 +174,8 @@ glabel Draw__11CBombEffectFP7CCamerai
     /* 001B90 01DAD890 1C01A2AF */  sw         $2, 0x11C($29)
     /* 001B94 01DAD894 C701023C */  lui        $2, %hi(TexManager)
     /* 001B98 01DAD898 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 001B9C 01DAD89C DE01023C */  lui        $2, %hi(LIT_359__3)
-    /* 001BA0 01DAD8A0 48BF4524 */  addiu      $5, $2, %lo(LIT_359__3)
+    /* 001B9C 01DAD89C DE01023C */  lui        $2, %hi("@359__3")
+    /* 001BA0 01DAD8A0 48BF4524 */  addiu      $5, $2, %lo("@359__3")
     /* 001BA4 01DAD8A4 FFFF0624 */  addiu      $6, $0, -0x1
     /* 001BA8 01DAD8A8 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 001BAC 01DAD8AC 00000000 */   nop
@@ -204,8 +204,8 @@ glabel Draw__11CBombEffectFP7CCamerai
     /* 001C04 01DAD904 2C01A2AF */  sw         $2, 0x12C($29)
     /* 001C08 01DAD908 C701023C */  lui        $2, %hi(TexManager)
     /* 001C0C 01DAD90C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 001C10 01DAD910 DE01023C */  lui        $2, %hi(LIT_360__3)
-    /* 001C14 01DAD914 50BF4524 */  addiu      $5, $2, %lo(LIT_360__3)
+    /* 001C10 01DAD910 DE01023C */  lui        $2, %hi("@360__3")
+    /* 001C14 01DAD914 50BF4524 */  addiu      $5, $2, %lo("@360__3")
     /* 001C18 01DAD918 FFFF0624 */  addiu      $6, $0, -0x1
     /* 001C1C 01DAD91C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 001C20 01DAD920 00000000 */   nop

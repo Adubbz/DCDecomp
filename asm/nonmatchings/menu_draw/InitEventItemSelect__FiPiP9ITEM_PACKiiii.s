@@ -35,8 +35,8 @@ glabel InitEventItemSelect__FiPiP9ITEM_PACKiiii
     /* 123DD0 00223CD0 00000000 */   nop
     /* 123DD4 00223CD4 C701023C */  lui        $2, %hi(TexManager)
     /* 123DD8 00223CD8 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 123DDC 00223CDC 2A00023C */  lui        $2, %hi(LIT_594__2)
-    /* 123DE0 00223CE0 F0E94524 */  addiu      $5, $2, %lo(LIT_594__2)
+    /* 123DDC 00223CDC 2A00023C */  lui        $2, %hi("@594__2")
+    /* 123DE0 00223CE0 F0E94524 */  addiu      $5, $2, %lo("@594__2")
     /* 123DE4 00223CE4 FFFF0624 */  addiu      $6, $0, -0x1
     /* 123DE8 00223CE8 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 123DEC 00223CEC 00000000 */   nop
@@ -112,8 +112,8 @@ glabel InitEventItemSelect__FiPiP9ITEM_PACKiiii
     /* 123EF4 00223DF4 658B2280 */  lb         $2, %lo(MiniMenu + 0x45)($1)
     /* 123EF8 00223DF8 80100200 */  sll        $2, $2, 2
     /* 123EFC 00223DFC 21188202 */  addu       $3, $20, $2
-    /* 123F00 00223E00 2A00023C */  lui        $2, %hi(LIT_3427)
-    /* 123F04 00223E04 38ED4424 */  addiu      $4, $2, %lo(LIT_3427)
+    /* 123F00 00223E00 2A00023C */  lui        $2, %hi("@3427")
+    /* 123F04 00223E04 38ED4424 */  addiu      $4, $2, %lo("@3427")
     /* 123F08 00223E08 0000658C */  lw         $5, 0x0($3)
     /* 123F0C 00223E0C A611040C */  jal        printf
     /* 123F10 00223E10 00000000 */   nop
@@ -143,20 +143,20 @@ glabel InitEventItemSelect__FiPiP9ITEM_PACKiiii
     /* 123F68 00223E68 688B228C */  lw         $2, %lo(MiniMenu + 0x48)($1)
     /* 123F6C 00223E6C 07004010 */  beqz       $2, .L00223E8C
     /* 123F70 00223E70 00000000 */   nop
-    /* 123F74 00223E74 2A00023C */  lui        $2, %hi(LIT_3428)
-    /* 123F78 00223E78 50ED4424 */  addiu      $4, $2, %lo(LIT_3428)
+    /* 123F74 00223E74 2A00023C */  lui        $2, %hi("@3428")
+    /* 123F78 00223E78 50ED4424 */  addiu      $4, $2, %lo("@3428")
     /* 123F7C 00223E7C A611040C */  jal        printf
     /* 123F80 00223E80 00000000 */   nop
     /* 123F84 00223E84 05000010 */  b          .L00223E9C
     /* 123F88 00223E88 00000000 */   nop
   .L00223E8C:
-    /* 123F8C 00223E8C 2A00023C */  lui        $2, %hi(LIT_3429)
-    /* 123F90 00223E90 70ED4424 */  addiu      $4, $2, %lo(LIT_3429)
+    /* 123F8C 00223E8C 2A00023C */  lui        $2, %hi("@3429")
+    /* 123F90 00223E90 70ED4424 */  addiu      $4, $2, %lo("@3429")
     /* 123F94 00223E94 A611040C */  jal        printf
     /* 123F98 00223E98 00000000 */   nop
   .L00223E9C:
-    /* 123F9C 00223E9C 2900023C */  lui        $2, %hi(LIT_3414)
-    /* 123FA0 00223EA0 F0404224 */  addiu      $2, $2, %lo(LIT_3414)
+    /* 123F9C 00223E9C 2900023C */  lui        $2, %hi("@3414")
+    /* 123FA0 00223EA0 F0404224 */  addiu      $2, $2, %lo("@3414")
     /* 123FA4 00223EA4 9000A427 */  addiu      $4, $29, 0x90
     /* 123FA8 00223EA8 00004378 */  lq         $3, 0x0($2)
     /* 123FAC 00223EAC 100042DC */  ld         $2, 0x10($2)
@@ -184,8 +184,8 @@ glabel InitEventItemSelect__FiPiP9ITEM_PACKiiii
     /* 124004 00223F04 28264070 */  paddub     $4, $2, $0
     /* 124008 00223F08 00AF080C */  jal        MenuCalcBufAlignment__FP1
     /* 12400C 00223F0C 00000000 */   nop
-    /* 124010 00223F10 2A00033C */  lui        $3, %hi(LIT_3430)
-    /* 124014 00223F14 88ED6424 */  addiu      $4, $3, %lo(LIT_3430)
+    /* 124010 00223F10 2A00033C */  lui        $3, %hi("@3430")
+    /* 124014 00223F14 88ED6424 */  addiu      $4, $3, %lo("@3430")
     /* 124018 00223F18 282E4070 */  paddub     $5, $2, $0
     /* 12401C 00223F1C ACAE080C */  jal        LoadFileBGMenuData__FPcP1
     /* 124020 00223F20 00000000 */   nop

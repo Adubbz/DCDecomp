@@ -54,8 +54,8 @@ glabel MoveCheck__12CMonstorUnitFPfPfi
     /* 0DC9DC 001DC8DC 0C86040C */  jal        sceVu0CopyVector
     /* 0DC9E0 001DC8E0 00000000 */   nop
     /* 0DC9E4 001DC8E4 789C868F */  lw         $6, -0x6388($28)
-    /* 0DC9E8 001DC8E8 2800033C */  lui        $3, %hi(LIT_345__6)
-    /* 0DC9EC 001DC8EC 70EB6324 */  addiu      $3, $3, %lo(LIT_345__6)
+    /* 0DC9E8 001DC8E8 2800033C */  lui        $3, %hi("@345__6")
+    /* 0DC9EC 001DC8EC 70EB6324 */  addiu      $3, $3, %lo("@345__6")
     /* 0DC9F0 001DC8F0 3001A527 */  addiu      $5, $29, 0x130
     /* 0DC9F4 001DC8F4 00006478 */  lq         $4, 0x0($3)
     /* 0DC9F8 001DC8F8 100063DC */  ld         $3, 0x10($3)

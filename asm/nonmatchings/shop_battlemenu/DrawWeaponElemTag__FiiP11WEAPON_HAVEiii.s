@@ -61,8 +61,8 @@ glabel DrawWeaponElemTag__FiiP11WEAPON_HAVEiii
     /* 0FAA44 001FA944 C8B3080C */  jal        DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i
     /* 0FAA48 001FA948 00000000 */   nop
   .L001FA94C:
-    /* 0FAA4C 001FA94C 2900023C */  lui        $2, %hi(LIT_2002)
-    /* 0FAA50 001FA950 00314224 */  addiu      $2, $2, %lo(LIT_2002)
+    /* 0FAA4C 001FA94C 2900023C */  lui        $2, %hi("@2002")
+    /* 0FAA50 001FA950 00314224 */  addiu      $2, $2, %lo("@2002")
     /* 0FAA54 001FA954 D000A327 */  addiu      $3, $29, 0xD0
     /* 0FAA58 001FA958 00004278 */  lq         $2, 0x0($2)
     /* 0FAA5C 001FA95C 0000627C */  sq         $2, 0x0($3)
@@ -75,15 +75,15 @@ glabel DrawWeaponElemTag__FiiP11WEAPON_HAVEiii
     /* 0FAA78 001FA978 7433080C */  jal        GetNowWeaponRate__FP11WEAPON_HAVE
     /* 0FAA7C 001FA97C 00000000 */   nop
     /* 0FAA80 001FA980 06050046 */  mov.s      $f20, $f0
-    /* 0FAA84 001FA984 2900033C */  lui        $3, %hi(LIT_2003)
-    /* 0FAA88 001FA988 10316324 */  addiu      $3, $3, %lo(LIT_2003)
+    /* 0FAA84 001FA984 2900033C */  lui        $3, %hi("@2003")
+    /* 0FAA88 001FA988 10316324 */  addiu      $3, $3, %lo("@2003")
     /* 0FAA8C 001FA98C E000A727 */  addiu      $7, $29, 0xE0
     /* 0FAA90 001FA990 00006678 */  lq         $6, 0x0($3)
     /* 0FAA94 001FA994 100063C4 */  lwc1       $f3, 0x10($3)
     /* 0FAA98 001FA998 0000E67C */  sq         $6, 0x0($7)
     /* 0FAA9C 001FA99C 1000E3E4 */  swc1       $f3, 0x10($7)
-    /* 0FAAA0 001FA9A0 2900033C */  lui        $3, %hi(LIT_2004)
-    /* 0FAAA4 001FA9A4 30316324 */  addiu      $3, $3, %lo(LIT_2004)
+    /* 0FAAA0 001FA9A0 2900033C */  lui        $3, %hi("@2004")
+    /* 0FAAA4 001FA9A4 30316324 */  addiu      $3, $3, %lo("@2004")
     /* 0FAAA8 001FA9A8 0001A727 */  addiu      $7, $29, 0x100
     /* 0FAAAC 001FA9AC 00006678 */  lq         $6, 0x0($3)
     /* 0FAAB0 001FA9B0 100063C4 */  lwc1       $f3, 0x10($3)
@@ -129,8 +129,8 @@ glabel DrawWeaponElemTag__FiiP11WEAPON_HAVEiii
     /* 0FAB3C 001FAA3C F7FF6014 */  bnez       $3, .L001FAA1C
     /* 0FAB40 001FAA40 00000000 */   nop
   .L001FAA44:
-    /* 0FAB44 001FAA44 2900033C */  lui        $3, %hi(LIT_2020)
-    /* 0FAB48 001FAA48 48316724 */  addiu      $7, $3, %lo(LIT_2020)
+    /* 0FAB44 001FAA44 2900033C */  lui        $3, %hi("@2020")
+    /* 0FAB48 001FAA48 48316724 */  addiu      $7, $3, %lo("@2020")
     /* 0FAB4C 001FAA4C 6001A627 */  addiu      $6, $29, 0x160
     /* 0FAB50 001FAA50 0000E3DC */  ld         $3, 0x0($7)
     /* 0FAB54 001FAA54 0800E0C4 */  lwc1       $f0, 0x8($7)

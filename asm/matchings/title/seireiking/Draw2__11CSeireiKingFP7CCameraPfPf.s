@@ -188,8 +188,8 @@ glabel Draw2__11CSeireiKingFP7CCameraPfPf
     /* 003380 01DAF080 2C01A2AF */  sw         $2, 0x12C($29)
     /* 003384 01DAF084 C701023C */  lui        $2, %hi(TexManager)
     /* 003388 01DAF088 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 00338C 01DAF08C DE01023C */  lui        $2, %hi(LIT_514__3)
-    /* 003390 01DAF090 68BF4524 */  addiu      $5, $2, %lo(LIT_514__3)
+    /* 00338C 01DAF08C DE01023C */  lui        $2, %hi("@514__3")
+    /* 003390 01DAF090 68BF4524 */  addiu      $5, $2, %lo("@514__3")
     /* 003394 01DAF094 FFFF0624 */  addiu      $6, $0, -0x1
     /* 003398 01DAF098 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 00339C 01DAF09C 00000000 */   nop

@@ -38,8 +38,8 @@ glabel DrawWepStatus__FiiP11WEAPON_HAVEii
     /* 0F9368 001F9268 283E0072 */  paddub     $7, $16, $0
     /* 0F936C 001F926C C8B3080C */  jal        DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i
     /* 0F9370 001F9270 00000000 */   nop
-    /* 0F9374 001F9274 2900023C */  lui        $2, %hi(LIT_1717)
-    /* 0F9378 001F9278 30304224 */  addiu      $2, $2, %lo(LIT_1717)
+    /* 0F9374 001F9274 2900023C */  lui        $2, %hi("@1717")
+    /* 0F9378 001F9278 30304224 */  addiu      $2, $2, %lo("@1717")
     /* 0F937C 001F927C 5000A427 */  addiu      $4, $29, 0x50
     /* 0F9380 001F9280 00004278 */  lq         $2, 0x0($2)
     /* 0F9384 001F9284 0000827C */  sq         $2, 0x0($4)

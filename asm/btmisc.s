@@ -23,8 +23,8 @@ glabel LoadMDSFilePack__FPUiPcP14CDataAlloc2_1_
     /* 0B6E98 001B6D98 28864070 */  paddub     $16, $2, $0
     /* 0B6E9C 001B6D9C 09000016 */  bnez       $16, .L001B6DC4
     /* 0B6EA0 001B6DA0 00000000 */   nop
-    /* 0B6EA4 001B6DA4 2A00023C */  lui        $2, %hi(LIT_879__2)
-    /* 0B6EA8 001B6DA8 90BB4424 */  addiu      $4, $2, %lo(LIT_879__2)
+    /* 0B6EA4 001B6DA4 2A00023C */  lui        $2, %hi("@879__2")
+    /* 0B6EA8 001B6DA8 90BB4424 */  addiu      $4, $2, %lo("@879__2")
     /* 0B6EAC 001B6DAC 282E4072 */  paddub     $5, $18, $0
     /* 0B6EB0 001B6DB0 A611040C */  jal        printf
     /* 0B6EB4 001B6DB4 00000000 */   nop
@@ -62,8 +62,8 @@ glabel LoadCollisionFilePack__FPUiPcP14CDataAlloc2_1_
     /* 0B6F28 001B6E28 28864070 */  paddub     $16, $2, $0
     /* 0B6F2C 001B6E2C 09000016 */  bnez       $16, .L001B6E54
     /* 0B6F30 001B6E30 00000000 */   nop
-    /* 0B6F34 001B6E34 2A00023C */  lui        $2, %hi(LIT_879__2)
-    /* 0B6F38 001B6E38 90BB4424 */  addiu      $4, $2, %lo(LIT_879__2)
+    /* 0B6F34 001B6E34 2A00023C */  lui        $2, %hi("@879__2")
+    /* 0B6F38 001B6E38 90BB4424 */  addiu      $4, $2, %lo("@879__2")
     /* 0B6F3C 001B6E3C 282E4072 */  paddub     $5, $18, $0
     /* 0B6F40 001B6E40 A611040C */  jal        printf
     /* 0B6F44 001B6E44 00000000 */   nop
@@ -159,15 +159,15 @@ glabel makeWeaponName__FPci
     /* 0B7090 001B6F90 0000B07F */  sq         $16, 0x0($29)
     /* 0B7094 001B6F94 28968070 */  paddub     $18, $4, $0
     /* 0B7098 001B6F98 288EA070 */  paddub     $17, $5, $0
-    /* 0B709C 001B6F9C 2700023C */  lui        $2, %hi(LIT_893__3)
-    /* 0B70A0 001B6FA0 F0B14224 */  addiu      $2, $2, %lo(LIT_893__3)
+    /* 0B709C 001B6F9C 2700023C */  lui        $2, %hi("@893__3")
+    /* 0B70A0 001B6FA0 F0B14224 */  addiu      $2, $2, %lo("@893__3")
     /* 0B70A4 001B6FA4 4000A427 */  addiu      $4, $29, 0x40
     /* 0B70A8 001B6FA8 00004378 */  lq         $3, 0x0($2)
     /* 0B70AC 001B6FAC 100042DC */  ld         $2, 0x10($2)
     /* 0B70B0 001B6FB0 0000837C */  sq         $3, 0x0($4)
     /* 0B70B4 001B6FB4 100082FC */  sd         $2, 0x10($4)
-    /* 0B70B8 001B6FB8 2700023C */  lui        $2, %hi(LIT_894__2)
-    /* 0B70BC 001B6FBC 10B24224 */  addiu      $2, $2, %lo(LIT_894__2)
+    /* 0B70B8 001B6FB8 2700023C */  lui        $2, %hi("@894__2")
+    /* 0B70BC 001B6FBC 10B24224 */  addiu      $2, $2, %lo("@894__2")
     /* 0B70C0 001B6FC0 6000A427 */  addiu      $4, $29, 0x60
     /* 0B70C4 001B6FC4 00004378 */  lq         $3, 0x0($2)
     /* 0B70C8 001B6FC8 100042DC */  ld         $2, 0x10($2)
@@ -221,8 +221,8 @@ glabel makeWeaponName__FPci
     /* 0B7174 001B7074 05001024 */  addiu      $16, $0, 0x5
   .L001B7078:
     /* 0B7178 001B7078 28264072 */  paddub     $4, $18, $0
-    /* 0B717C 001B707C 2A00023C */  lui        $2, %hi(LIT_919__2)
-    /* 0B7180 001B7080 E0BB4524 */  addiu      $5, $2, %lo(LIT_919__2)
+    /* 0B717C 001B707C 2A00023C */  lui        $2, %hi("@919__2")
+    /* 0B7180 001B7080 E0BB4524 */  addiu      $5, $2, %lo("@919__2")
     /* 0B7184 001B7084 5A15040C */  jal        strcpy
     /* 0B7188 001B7088 00000000 */   nop
     /* 0B718C 001B708C 80801000 */  sll        $16, $16, 2
@@ -238,16 +238,16 @@ glabel makeWeaponName__FPci
     /* 0B71B4 001B70B4 08002010 */  beqz       $1, .L001B70D8
     /* 0B71B8 001B70B8 00000000 */   nop
     /* 0B71BC 001B70BC 8000A427 */  addiu      $4, $29, 0x80
-    /* 0B71C0 001B70C0 2A00023C */  lui        $2, %hi(LIT_920__2)
-    /* 0B71C4 001B70C4 F8BB4524 */  addiu      $5, $2, %lo(LIT_920__2)
+    /* 0B71C0 001B70C0 2A00023C */  lui        $2, %hi("@920__2")
+    /* 0B71C4 001B70C4 F8BB4524 */  addiu      $5, $2, %lo("@920__2")
     /* 0B71C8 001B70C8 1614040C */  jal        sprintf
     /* 0B71CC 001B70CC 00000000 */   nop
     /* 0B71D0 001B70D0 06000010 */  b          .L001B70EC
     /* 0B71D4 001B70D4 00000000 */   nop
   .L001B70D8:
     /* 0B71D8 001B70D8 8000A427 */  addiu      $4, $29, 0x80
-    /* 0B71DC 001B70DC 2A00023C */  lui        $2, %hi(LIT_921__2)
-    /* 0B71E0 001B70E0 00BC4524 */  addiu      $5, $2, %lo(LIT_921__2)
+    /* 0B71DC 001B70DC 2A00023C */  lui        $2, %hi("@921__2")
+    /* 0B71E0 001B70E0 00BC4524 */  addiu      $5, $2, %lo("@921__2")
     /* 0B71E4 001B70E4 1614040C */  jal        sprintf
     /* 0B71E8 001B70E8 00000000 */   nop
   .L001B70EC:
@@ -298,8 +298,8 @@ glabel BtGetItemNamePath__FPcPci
     /* 0B7290 001B7190 91001024 */  addiu      $16, $0, 0x91
   .L001B7194:
     /* 0B7294 001B7194 28264072 */  paddub     $4, $18, $0
-    /* 0B7298 001B7198 2A00023C */  lui        $2, %hi(LIT_928__2)
-    /* 0B729C 001B719C 10BC4524 */  addiu      $5, $2, %lo(LIT_928__2)
+    /* 0B7298 001B7198 2A00023C */  lui        $2, %hi("@928__2")
+    /* 0B729C 001B719C 10BC4524 */  addiu      $5, $2, %lo("@928__2")
     /* 0B72A0 001B71A0 5A15040C */  jal        strcpy
     /* 0B72A4 001B71A4 00000000 */   nop
     /* 0B72A8 001B71A8 80181000 */  sll        $3, $16, 2
@@ -316,22 +316,22 @@ glabel BtGetItemNamePath__FPcPci
     /* 0B72D0 001B71D0 5A15040C */  jal        strcpy
     /* 0B72D4 001B71D4 00000000 */   nop
     /* 0B72D8 001B71D8 28264072 */  paddub     $4, $18, $0
-    /* 0B72DC 001B71DC 2A00023C */  lui        $2, %hi(LIT_863)
-    /* 0B72E0 001B71E0 38BB4524 */  addiu      $5, $2, %lo(LIT_863)
+    /* 0B72DC 001B71DC 2A00023C */  lui        $2, %hi("@863")
+    /* 0B72E0 001B71E0 38BB4524 */  addiu      $5, $2, %lo("@863")
     /* 0B72E4 001B71E4 BC14040C */  jal        strcat
     /* 0B72E8 001B71E8 00000000 */   nop
     /* 0B72EC 001B71EC 28262072 */  paddub     $4, $17, $0
-    /* 0B72F0 001B71F0 2A00023C */  lui        $2, %hi(LIT_929__2)
-    /* 0B72F4 001B71F4 28BC4524 */  addiu      $5, $2, %lo(LIT_929__2)
+    /* 0B72F0 001B71F0 2A00023C */  lui        $2, %hi("@929__2")
+    /* 0B72F4 001B71F4 28BC4524 */  addiu      $5, $2, %lo("@929__2")
     /* 0B72F8 001B71F8 BC14040C */  jal        strcat
     /* 0B72FC 001B71FC 00000000 */   nop
-    /* 0B7300 001B7200 2A00023C */  lui        $2, %hi(LIT_930__2)
-    /* 0B7304 001B7204 30BC4424 */  addiu      $4, $2, %lo(LIT_930__2)
+    /* 0B7300 001B7200 2A00023C */  lui        $2, %hi("@930__2")
+    /* 0B7304 001B7204 30BC4424 */  addiu      $4, $2, %lo("@930__2")
     /* 0B7308 001B7208 282E4072 */  paddub     $5, $18, $0
     /* 0B730C 001B720C A611040C */  jal        printf
     /* 0B7310 001B7210 00000000 */   nop
-    /* 0B7314 001B7214 2A00023C */  lui        $2, %hi(LIT_931__3)
-    /* 0B7318 001B7218 40BC4424 */  addiu      $4, $2, %lo(LIT_931__3)
+    /* 0B7314 001B7214 2A00023C */  lui        $2, %hi("@931__3")
+    /* 0B7318 001B7218 40BC4424 */  addiu      $4, $2, %lo("@931__3")
     /* 0B731C 001B721C 282E2072 */  paddub     $5, $17, $0
     /* 0B7320 001B7220 A611040C */  jal        printf
     /* 0B7324 001B7224 00000000 */   nop
@@ -356,8 +356,8 @@ glabel BtGetWeaponNamePath2__FPcPcii
     /* 0B7368 001B7268 28968070 */  paddub     $18, $4, $0
     /* 0B736C 001B726C 288EA070 */  paddub     $17, $5, $0
     /* 0B7370 001B7270 2886E070 */  paddub     $16, $7, $0
-    /* 0B7374 001B7274 2700023C */  lui        $2, %hi(LIT_940)
-    /* 0B7378 001B7278 30B24224 */  addiu      $2, $2, %lo(LIT_940)
+    /* 0B7374 001B7274 2700023C */  lui        $2, %hi("@940")
+    /* 0B7378 001B7278 30B24224 */  addiu      $2, $2, %lo("@940")
     /* 0B737C 001B727C 5000A427 */  addiu      $4, $29, 0x50
     /* 0B7380 001B7280 00004378 */  lq         $3, 0x0($2)
     /* 0B7384 001B7284 100042DC */  ld         $2, 0x10($2)
@@ -380,8 +380,8 @@ glabel BtGetWeaponNamePath2__FPcPcii
     /* 0B73C8 001B72C8 09002010 */  beqz       $1, .L001B72F0
     /* 0B73CC 001B72CC 00000000 */   nop
     /* 0B73D0 001B72D0 7000A427 */  addiu      $4, $29, 0x70
-    /* 0B73D4 001B72D4 2A00023C */  lui        $2, %hi(LIT_920__2)
-    /* 0B73D8 001B72D8 F8BB4524 */  addiu      $5, $2, %lo(LIT_920__2)
+    /* 0B73D4 001B72D4 2A00023C */  lui        $2, %hi("@920__2")
+    /* 0B73D8 001B72D8 F8BB4524 */  addiu      $5, $2, %lo("@920__2")
     /* 0B73DC 001B72DC 28360072 */  paddub     $6, $16, $0
     /* 0B73E0 001B72E0 1614040C */  jal        sprintf
     /* 0B73E4 001B72E4 00000000 */   nop
@@ -389,8 +389,8 @@ glabel BtGetWeaponNamePath2__FPcPcii
     /* 0B73EC 001B72EC 00000000 */   nop
   .L001B72F0:
     /* 0B73F0 001B72F0 7000A427 */  addiu      $4, $29, 0x70
-    /* 0B73F4 001B72F4 2A00023C */  lui        $2, %hi(LIT_921__2)
-    /* 0B73F8 001B72F8 00BC4524 */  addiu      $5, $2, %lo(LIT_921__2)
+    /* 0B73F4 001B72F4 2A00023C */  lui        $2, %hi("@921__2")
+    /* 0B73F8 001B72F8 00BC4524 */  addiu      $5, $2, %lo("@921__2")
     /* 0B73FC 001B72FC 28360072 */  paddub     $6, $16, $0
     /* 0B7400 001B7300 1614040C */  jal        sprintf
     /* 0B7404 001B7304 00000000 */   nop
@@ -402,8 +402,8 @@ glabel BtGetWeaponNamePath2__FPcPcii
     /* 0B7418 001B7318 00000000 */   nop
     /* 0B741C 001B731C D501023C */  lui        $2, %hi(nameWepBuff_mds)
     /* 0B7420 001B7320 C0664424 */  addiu      $4, $2, %lo(nameWepBuff_mds)
-    /* 0B7424 001B7324 2A00023C */  lui        $2, %hi(LIT_946)
-    /* 0B7428 001B7328 50BC4524 */  addiu      $5, $2, %lo(LIT_946)
+    /* 0B7424 001B7324 2A00023C */  lui        $2, %hi("@946")
+    /* 0B7428 001B7328 50BC4524 */  addiu      $5, $2, %lo("@946")
     /* 0B742C 001B732C BC14040C */  jal        strcat
     /* 0B7430 001B7330 00000000 */   nop
     /* 0B7434 001B7334 D501023C */  lui        $2, %hi(nameWepBuff_img)
@@ -413,8 +413,8 @@ glabel BtGetWeaponNamePath2__FPcPcii
     /* 0B7444 001B7344 00000000 */   nop
     /* 0B7448 001B7348 D501023C */  lui        $2, %hi(nameWepBuff_img)
     /* 0B744C 001B734C 00674424 */  addiu      $4, $2, %lo(nameWepBuff_img)
-    /* 0B7450 001B7350 2A00023C */  lui        $2, %hi(LIT_947)
-    /* 0B7454 001B7354 58BC4524 */  addiu      $5, $2, %lo(LIT_947)
+    /* 0B7450 001B7350 2A00023C */  lui        $2, %hi("@947")
+    /* 0B7454 001B7354 58BC4524 */  addiu      $5, $2, %lo("@947")
     /* 0B7458 001B7358 BC14040C */  jal        strcat
     /* 0B745C 001B735C 00000000 */   nop
     /* 0B7460 001B7360 28264072 */  paddub     $4, $18, $0
@@ -466,8 +466,8 @@ glabel BtGetWeaponNamePath3__FPcPci
     /* 0B750C 001B740C 21104300 */  addu       $2, $2, $3
     /* 0B7510 001B7410 0000428C */  lw         $2, 0x0($2)
     /* 0B7514 001B7414 23882202 */  subu       $17, $17, $2
-    /* 0B7518 001B7418 2A00023C */  lui        $2, %hi(LIT_953)
-    /* 0B751C 001B741C 60BC4424 */  addiu      $4, $2, %lo(LIT_953)
+    /* 0B7518 001B7418 2A00023C */  lui        $2, %hi("@953")
+    /* 0B751C 001B741C 60BC4424 */  addiu      $4, $2, %lo("@953")
     /* 0B7520 001B7420 282E2072 */  paddub     $5, $17, $0
     /* 0B7524 001B7424 A611040C */  jal        printf
     /* 0B7528 001B7428 00000000 */   nop
@@ -503,8 +503,8 @@ glabel getAtraToSaveData__FiiP9CSaveDataii
     /* 0B7594 001B7494 2896C070 */  paddub     $18, $6, $0
     /* 0B7598 001B7498 288EE070 */  paddub     $17, $7, $0
     /* 0B759C 001B749C 28860071 */  paddub     $16, $8, $0
-    /* 0B75A0 001B74A0 2A00023C */  lui        $2, %hi(LIT_958)
-    /* 0B75A4 001B74A4 70BC4424 */  addiu      $4, $2, %lo(LIT_958)
+    /* 0B75A0 001B74A0 2A00023C */  lui        $2, %hi("@958")
+    /* 0B75A4 001B74A4 70BC4424 */  addiu      $4, $2, %lo("@958")
     /* 0B75A8 001B74A8 282E8072 */  paddub     $5, $20, $0
     /* 0B75AC 001B74AC A611040C */  jal        printf
     /* 0B75B0 001B74B0 00000000 */   nop
@@ -750,7 +750,7 @@ glabel BtGetFloorLevel__Fi
 
 /* Generated by spimdisasm 1.42.4 */
 
-glabel LIT_879__2
+glabel "@879__2"
     /* 19BC90 0029BB90 4D6F6465 */ .word 0x65646F4D
     /* 19BC94 0029BB94 6C204E6F */ .word 0x6F4E206C
     /* 19BC98 0029BB98 74466F75 */ .word 0x756F4674
@@ -758,33 +758,33 @@ glabel LIT_879__2
     /* 19BCA0 0029BBA0 25730A00 */ .word 0x000A7325
     /* 19BCA4 0029BBA4 00000000 */ .word 0x00000000
 
-glabel LIT_887__4
+glabel "@887__4"
     /* 19BCA8 0029BBA8 63303177 */ .word 0x77313063
     /* 19BCAC 0029BBAC 00000000 */ .word 0x00000000
 
-glabel LIT_888__3
+glabel "@888__3"
     /* 19BCB0 0029BBB0 63303477 */ .word 0x77343063
     /* 19BCB4 0029BBB4 00000000 */ .word 0x00000000
 
-glabel LIT_889__3
+glabel "@889__3"
     /* 19BCB8 0029BBB8 63303677 */ .word 0x77363063
     /* 19BCBC 0029BBBC 00000000 */ .word 0x00000000
 
-glabel LIT_890__3
+glabel "@890__3"
     /* 19BCC0 0029BBC0 63303577 */ .word 0x77353063
     /* 19BCC4 0029BBC4 00000000 */ .word 0x00000000
 
-glabel LIT_891__3
+glabel "@891__3"
     /* 19BCC8 0029BBC8 63313077 */ .word 0x77303163
     /* 19BCCC 0029BBCC 00000000 */ .word 0x00000000
 
-glabel LIT_892__3
+glabel "@892__3"
     /* 19BCD0 0029BBD0 63313877 */ .word 0x77383163
     /* 19BCD4 0029BBD4 00000000 */ .word 0x00000000
     /* 19BCD8 0029BBD8 00000000 */ .word 0x00000000
     /* 19BCDC 0029BBDC 00000000 */ .word 0x00000000
 
-glabel LIT_919__2
+glabel "@919__2"
     /* 19BCE0 0029BBE0 64756E2F */ .word 0x2F6E7564
     /* 19BCE4 0029BBE4 6974656D */ .word 0x6D657469
     /* 19BCE8 0029BBE8 2F6D6169 */ .word 0x69616D2F
@@ -792,17 +792,17 @@ glabel LIT_919__2
     /* 19BCF0 0029BBF0 702F0000 */ .word 0x00002F70
     /* 19BCF4 0029BBF4 00000000 */ .word 0x00000000
 
-glabel LIT_920__2
+glabel "@920__2"
     /* 19BCF8 0029BBF8 30256400 */ .word 0x00642530
     /* 19BCFC 0029BBFC 00000000 */ .word 0x00000000
 
-glabel LIT_921__2
+glabel "@921__2"
     /* 19BD00 0029BC00 25326400 */ .word 0x00643225
     /* 19BD04 0029BC04 00000000 */ .word 0x00000000
     /* 19BD08 0029BC08 00000000 */ .word 0x00000000
     /* 19BD0C 0029BC0C 00000000 */ .word 0x00000000
 
-glabel LIT_928__2
+glabel "@928__2"
     /* 19BD10 0029BC10 64756E2F */ .word 0x2F6E7564
     /* 19BD14 0029BC14 6974656D */ .word 0x6D657469
     /* 19BD18 0029BC18 2F6D6169 */ .word 0x69616D2F
@@ -810,37 +810,37 @@ glabel LIT_928__2
     /* 19BD20 0029BC20 74612F00 */ .word 0x002F6174
     /* 19BD24 0029BC24 00000000 */ .word 0x00000000
 
-glabel LIT_929__2
+glabel "@929__2"
     /* 19BD28 0029BC28 2E696D67 */ .word 0x676D692E
     /* 19BD2C 0029BC2C 00000000 */ .word 0x00000000
 
-glabel LIT_930__2
+glabel "@930__2"
     /* 19BD30 0029BC30 6D647320 */ .word 0x2073646D
     /* 19BD34 0029BC34 3D202573 */ .word 0x7325203D
     /* 19BD38 0029BC38 0A000000 */ .word 0x0000000A
     /* 19BD3C 0029BC3C 00000000 */ .word 0x00000000
 
-glabel LIT_931__3
+glabel "@931__3"
     /* 19BD40 0029BC40 696D6720 */ .word 0x20676D69
     /* 19BD44 0029BC44 3D202573 */ .word 0x7325203D
     /* 19BD48 0029BC48 0A000000 */ .word 0x0000000A
     /* 19BD4C 0029BC4C 00000000 */ .word 0x00000000
 
-glabel LIT_946
+glabel "@946"
     /* 19BD50 0029BC50 2E636872 */ .word 0x7268632E
     /* 19BD54 0029BC54 00000000 */ .word 0x00000000
 
-glabel LIT_947
+glabel "@947"
     /* 19BD58 0029BC58 2E636667 */ .word 0x6766632E
     /* 19BD5C 0029BC5C 00000000 */ .word 0x00000000
 
-glabel LIT_953
+glabel "@953"
     /* 19BD60 0029BC60 6F666673 */ .word 0x7366666F
     /* 19BD64 0029BC64 65742025 */ .word 0x25207465
     /* 19BD68 0029BC68 640A0000 */ .word 0x00000A64
     /* 19BD6C 0029BC6C 00000000 */ .word 0x00000000
 
-glabel LIT_958
+glabel "@958"
     /* 19BD70 0029BC70 47455420 */ .word 0x20544547
     /* 19BD74 0029BC74 41545241 */ .word 0x41525441
     /* 19BD78 0029BC78 205B2564 */ .word 0x64255B20

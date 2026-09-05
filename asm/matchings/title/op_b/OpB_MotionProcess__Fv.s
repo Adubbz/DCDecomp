@@ -97,8 +97,8 @@ glabel OpB_MotionProcess__Fv
     /* 00ED14 01DBAA14 0C004328 */  slti       $3, $2, 0xC
     /* 00ED18 01DBAA18 B1FF6014 */  bnez       $3, .L01DBA8E0
     /* 00ED1C 01DBAA1C 00000000 */   nop
-    /* 00ED20 01DBAA20 DD01023C */  lui        $2, %hi(LIT_581__2)
-    /* 00ED24 01DBAA24 90774224 */  addiu      $2, $2, %lo(LIT_581__2)
+    /* 00ED20 01DBAA20 DD01023C */  lui        $2, %hi("@581__2")
+    /* 00ED24 01DBAA24 90774224 */  addiu      $2, $2, %lo("@581__2")
     /* 00ED28 01DBAA28 4000A327 */  addiu      $3, $29, 0x40
     /* 00ED2C 01DBAA2C 00004278 */  lq         $2, 0x0($2)
     /* 00ED30 01DBAA30 0000627C */  sq         $2, 0x0($3)

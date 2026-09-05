@@ -8,8 +8,8 @@ glabel MapNoTransFunc__Fi
     /* 10AE84 0020AD84 0A008128 */  slti       $1, $4, 0xA
     /* 10AE88 0020AD88 0C002010 */  beqz       $1, .L0020ADBC
     /* 10AE8C 0020AD8C 00000000 */   nop
-    /* 10AE90 0020AD90 2900023C */  lui        $2, %hi(LIT_6408)
-    /* 10AE94 0020AD94 F0384224 */  addiu      $2, $2, %lo(LIT_6408)
+    /* 10AE90 0020AD90 2900023C */  lui        $2, %hi("@6408")
+    /* 10AE94 0020AD94 F0384224 */  addiu      $2, $2, %lo("@6408")
     /* 10AE98 0020AD98 4800A527 */  addiu      $5, $29, 0x48
     /* 10AE9C 0020AD9C 000043DC */  ld         $3, 0x0($2)
     /* 10AEA0 0020ADA0 08004284 */  lh         $2, 0x8($2)
@@ -26,8 +26,8 @@ glabel MapNoTransFunc__Fi
     /* 10AEC8 0020ADC8 C8008128 */  slti       $1, $4, 0xC8
     /* 10AECC 0020ADCC 13002010 */  beqz       $1, .L0020AE1C
     /* 10AED0 0020ADD0 00000000 */   nop
-    /* 10AED4 0020ADD4 2900023C */  lui        $2, %hi(LIT_6412)
-    /* 10AED8 0020ADD8 00394624 */  addiu      $6, $2, %lo(LIT_6412)
+    /* 10AED4 0020ADD4 2900023C */  lui        $2, %hi("@6412")
+    /* 10AED8 0020ADD8 00394624 */  addiu      $6, $2, %lo("@6412")
     /* 10AEDC 0020ADDC 0000A527 */  addiu      $5, $29, 0x0
     /* 10AEE0 0020ADE0 04000324 */  addiu      $3, $0, 0x4
   .L0020ADE4:

@@ -16,8 +16,8 @@ glabel skipSpace__FPci__2
   .L001CD934:
     /* 0CDA34 001CD934 28860070 */  paddub     $16, $0, $0
     /* 0CDA38 001CD938 21205102 */  addu       $4, $18, $17
-    /* 0CDA3C 001CD93C 2A00023C */  lui        $2, %hi(LIT_549__3)
-    /* 0CDA40 001CD940 E0C14524 */  addiu      $5, $2, %lo(LIT_549__3)
+    /* 0CDA3C 001CD93C 2A00023C */  lui        $2, %hi("@549__3")
+    /* 0CDA40 001CD940 E0C14524 */  addiu      $5, $2, %lo("@549__3")
     /* 0CDA44 001CD944 02000624 */  addiu      $6, $0, 0x2
     /* 0CDA48 001CD948 C60C040C */  jal        memcmp
     /* 0CDA4C 001CD94C 00000000 */   nop
@@ -44,8 +44,8 @@ glabel skipSpace__FPci__2
     /* 0CDA94 001CD994 01001024 */  addiu      $16, $0, 0x1
   .L001CD998:
     /* 0CDA98 001CD998 21205102 */  addu       $4, $18, $17
-    /* 0CDA9C 001CD99C 2A00023C */  lui        $2, %hi(LIT_550__2)
-    /* 0CDAA0 001CD9A0 E8C14524 */  addiu      $5, $2, %lo(LIT_550__2)
+    /* 0CDA9C 001CD99C 2A00023C */  lui        $2, %hi("@550__2")
+    /* 0CDAA0 001CD9A0 E8C14524 */  addiu      $5, $2, %lo("@550__2")
     /* 0CDAA4 001CD9A4 02000624 */  addiu      $6, $0, 0x2
     /* 0CDAA8 001CD9A8 C60C040C */  jal        memcmp
     /* 0CDAAC 001CD9AC 00000000 */   nop

@@ -15,8 +15,8 @@ glabel FishRecordTextureEnter__Fv
     /* 0F3120 001F3020 18FB040C */  jal        GetReadBGFile__Fi
     /* 0F3124 001F3024 00000000 */   nop
     /* 0F3128 001F3028 28864070 */  paddub     $16, $2, $0
-    /* 0F312C 001F302C 2900023C */  lui        $2, %hi(LIT_3261)
-    /* 0F3130 001F3030 C02A4524 */  addiu      $5, $2, %lo(LIT_3261)
+    /* 0F312C 001F302C 2900023C */  lui        $2, %hi("@3261")
+    /* 0F3130 001F3030 C02A4524 */  addiu      $5, $2, %lo("@3261")
     /* 0F3134 001F3034 2000A427 */  addiu      $4, $29, 0x20
     /* 0F3138 001F3038 02000324 */  addiu      $3, $0, 0x2
   .L001F303C:
@@ -34,8 +34,8 @@ glabel FishRecordTextureEnter__Fv
     /* 0F3168 001F3068 2400A2AF */  sw         $2, 0x24($29)
     /* 0F316C 001F306C 3000A2AF */  sw         $2, 0x30($29)
     /* 0F3170 001F3070 8C00048E */  lw         $4, 0x8C($16)
-    /* 0F3174 001F3074 2A00023C */  lui        $2, %hi(LIT_3274)
-    /* 0F3178 001F3078 78D44524 */  addiu      $5, $2, %lo(LIT_3274)
+    /* 0F3174 001F3074 2A00023C */  lui        $2, %hi("@3274")
+    /* 0F3178 001F3078 78D44524 */  addiu      $5, $2, %lo("@3274")
     /* 0F317C 001F307C 28360070 */  paddub     $6, $0, $0
     /* 0F3180 001F3080 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0F3184 001F3084 00000000 */   nop
@@ -58,15 +58,15 @@ glabel FishRecordTextureEnter__Fv
     /* 0F31C8 001F30C8 00000000 */   nop
     /* 0F31CC 001F30CC C701023C */  lui        $2, %hi(TexManager)
     /* 0F31D0 001F30D0 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0F31D4 001F30D4 2A00023C */  lui        $2, %hi(LIT_3275)
-    /* 0F31D8 001F30D8 88D44524 */  addiu      $5, $2, %lo(LIT_3275)
+    /* 0F31D4 001F30D4 2A00023C */  lui        $2, %hi("@3275")
+    /* 0F31D8 001F30D8 88D44524 */  addiu      $5, $2, %lo("@3275")
     /* 0F31DC 001F30DC FFFF0624 */  addiu      $6, $0, -0x1
     /* 0F31E0 001F30E0 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0F31E4 001F30E4 00000000 */   nop
     /* 0F31E8 001F30E8 C89482AF */  sw         $2, -0x6B38($28)
     /* 0F31EC 001F30EC 8C00048E */  lw         $4, 0x8C($16)
-    /* 0F31F0 001F30F0 2A00023C */  lui        $2, %hi(LIT_2964)
-    /* 0F31F4 001F30F4 40D44524 */  addiu      $5, $2, %lo(LIT_2964)
+    /* 0F31F0 001F30F0 2A00023C */  lui        $2, %hi("@2964")
+    /* 0F31F4 001F30F4 40D44524 */  addiu      $5, $2, %lo("@2964")
     /* 0F31F8 001F30F8 28360070 */  paddub     $6, $0, $0
     /* 0F31FC 001F30FC C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0F3200 001F3100 00000000 */   nop

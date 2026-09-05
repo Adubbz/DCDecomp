@@ -11,8 +11,8 @@ glabel ChkEventFlag__11CUserStatusFi
     /* 0BDBD0 001BDAD0 3300A128 */  slti       $1, $5, 0x33
     /* 0BDBD4 001BDAD4 08002014 */  bnez       $1, .L001BDAF8
     /* 0BDBD8 001BDAD8 00000000 */   nop
-    /* 0BDBDC 001BDADC 2A00023C */  lui        $2, %hi(LIT_281__3)
-    /* 0BDBE0 001BDAE0 90BD4424 */  addiu      $4, $2, %lo(LIT_281__3)
+    /* 0BDBDC 001BDADC 2A00023C */  lui        $2, %hi("@281__3")
+    /* 0BDBE0 001BDAE0 90BD4424 */  addiu      $4, $2, %lo("@281__3")
     /* 0BDBE4 001BDAE4 A611040C */  jal        printf
     /* 0BDBE8 001BDAE8 00000000 */   nop
     /* 0BDBEC 001BDAEC 28160070 */  paddub     $2, $0, $0

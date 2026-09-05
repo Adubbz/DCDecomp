@@ -12,8 +12,8 @@ glabel setTargetCursor__Fi
     /* 014AB4 01DC07B4 0400B5E7 */  swc1       $f21, 0x4($29)
     /* 014AB8 01DC07B8 0000B4E7 */  swc1       $f20, 0x0($29)
     /* 014ABC 01DC07BC 789C868F */  lw         $6, -0x6388($28)
-    /* 014AC0 01DC07C0 DC01023C */  lui        $2, %hi(LIT_344__6)
-    /* 014AC4 01DC07C4 201B4224 */  addiu      $2, $2, %lo(LIT_344__6)
+    /* 014AC0 01DC07C0 DC01023C */  lui        $2, %hi("@344__6")
+    /* 014AC4 01DC07C4 201B4224 */  addiu      $2, $2, %lo("@344__6")
     /* 014AC8 01DC07C8 A000A527 */  addiu      $5, $29, 0xA0
     /* 014ACC 01DC07CC 00004378 */  lq         $3, 0x0($2)
     /* 014AD0 01DC07D0 100042DC */  ld         $2, 0x10($2)

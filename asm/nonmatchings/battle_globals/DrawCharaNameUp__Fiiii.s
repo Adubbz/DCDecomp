@@ -50,8 +50,8 @@ glabel DrawCharaNameUp__Fiiii
     /* 138C18 00238B18 00000000 */   nop
     /* 138C1C 00238B1C C701023C */  lui        $2, %hi(TexManager)
     /* 138C20 00238B20 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 138C24 00238B24 2A00023C */  lui        $2, %hi(LIT_481__2)
-    /* 138C28 00238B28 E0F54524 */  addiu      $5, $2, %lo(LIT_481__2)
+    /* 138C24 00238B24 2A00023C */  lui        $2, %hi("@481__2")
+    /* 138C28 00238B28 E0F54524 */  addiu      $5, $2, %lo("@481__2")
     /* 138C2C 00238B2C FFFF0624 */  addiu      $6, $0, -0x1
     /* 138C30 00238B30 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 138C34 00238B34 00000000 */   nop
@@ -146,8 +146,8 @@ glabel DrawCharaNameUp__Fiiii
     /* 138D98 00238C98 D0524424 */  addiu      $4, $2, %lo(AtoraNameMes)
     /* 138D9C 00238C9C FC3B050C */  jal        GetMesLen_system__6ClsMesFi
     /* 138DA0 00238CA0 00000000 */   nop
-    /* 138DA4 00238CA4 2900033C */  lui        $3, %hi(LIT_417__2)
-    /* 138DA8 00238CA8 F0596324 */  addiu      $3, $3, %lo(LIT_417__2)
+    /* 138DA4 00238CA4 2900033C */  lui        $3, %hi("@417__2")
+    /* 138DA8 00238CA8 F0596324 */  addiu      $3, $3, %lo("@417__2")
     /* 138DAC 00238CAC 9000A827 */  addiu      $8, $29, 0x90
     /* 138DB0 00238CB0 00006778 */  lq         $7, 0x0($3)
     /* 138DB4 00238CB4 100066DC */  ld         $6, 0x10($3)

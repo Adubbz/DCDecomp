@@ -71,8 +71,8 @@ glabel WeaponMenuAttachModeKey__Fv
     /* 0FFA44 001FF944 E8EB2580 */  lb         $5, %lo(WepMenu + 0x178)($1)
     /* 0FFA48 001FF948 17000512 */  beq        $16, $5, .L001FF9A8
     /* 0FFA4C 001FF94C 00000000 */   nop
-    /* 0FFA50 001FF950 2900023C */  lui        $2, %hi(LIT_3657)
-    /* 0FFA54 001FF954 08334424 */  addiu      $4, $2, %lo(LIT_3657)
+    /* 0FFA50 001FF950 2900023C */  lui        $2, %hi("@3657")
+    /* 0FFA54 001FF954 08334424 */  addiu      $4, $2, %lo("@3657")
     /* 0FFA58 001FF958 3000A327 */  addiu      $3, $29, 0x30
     /* 0FFA5C 001FF95C 000082DC */  ld         $2, 0x0($4)
     /* 0FFA60 001FF960 080080C4 */  lwc1       $f0, 0x8($4)

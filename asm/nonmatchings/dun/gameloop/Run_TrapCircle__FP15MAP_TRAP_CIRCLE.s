@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_6309
+glabel "@6309"
     /* 0176A0 01DC33A0 4CFBDB01 */ .word .L01DBFB4C
     /* 0176A4 01DC33A4 64FBDB01 */ .word .L01DBFB64
     /* 0176A8 01DC33A8 BCFBDB01 */ .word .L01DBFBBC
@@ -72,8 +72,8 @@ glabel Run_TrapCircle__FP15MAP_TRAP_CIRCLE
     /* 013E24 01DBFB24 0A00412E */  sltiu      $1, $18, 0xA
     /* 013E28 01DBFB28 4F002010 */  beqz       $1, .L01DBFC68
     /* 013E2C 01DBFB2C 00000000 */   nop
-    /* 013E30 01DBFB30 DC01033C */  lui        $3, %hi(LIT_6309)
-    /* 013E34 01DBFB34 A0336624 */  addiu      $6, $3, %lo(LIT_6309)
+    /* 013E30 01DBFB30 DC01033C */  lui        $3, %hi("@6309")
+    /* 013E34 01DBFB34 A0336624 */  addiu      $6, $3, %lo("@6309")
     /* 013E38 01DBFB38 80181200 */  sll        $3, $18, 2
     /* 013E3C 01DBFB3C 21186600 */  addu       $3, $3, $6
     /* 013E40 01DBFB40 0000638C */  lw         $3, 0x0($3)

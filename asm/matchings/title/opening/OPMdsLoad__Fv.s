@@ -578,8 +578,8 @@ glabel OPMdsLoad__Fv
     /* 0074B0 01DB31B0 16002216 */  bne        $17, $2, .L01DB320C
     /* 0074B4 01DB31B4 00000000 */   nop
     /* 0074B8 01DB31B8 7001A427 */  addiu      $4, $29, 0x170
-    /* 0074BC 01DB31BC DE01023C */  lui        $2, %hi(LIT_965)
-    /* 0074C0 01DB31C0 E0D94524 */  addiu      $5, $2, %lo(LIT_965)
+    /* 0074BC 01DB31BC DE01023C */  lui        $2, %hi("@965")
+    /* 0074C0 01DB31C0 E0D94524 */  addiu      $5, $2, %lo("@965")
     /* 0074C4 01DB31C4 5A15040C */  jal        strcpy
     /* 0074C8 01DB31C8 00000000 */   nop
     /* 0074CC 01DB31CC 80191000 */  sll        $3, $16, 6
@@ -836,8 +836,8 @@ glabel OPMdsLoad__Fv
     /* 0078A8 01DB35A8 67002216 */  bne        $17, $2, .L01DB3748
     /* 0078AC 01DB35AC 00000000 */   nop
     /* 0078B0 01DB35B0 7001A427 */  addiu      $4, $29, 0x170
-    /* 0078B4 01DB35B4 DE01023C */  lui        $2, %hi(LIT_965)
-    /* 0078B8 01DB35B8 E0D94524 */  addiu      $5, $2, %lo(LIT_965)
+    /* 0078B4 01DB35B4 DE01023C */  lui        $2, %hi("@965")
+    /* 0078B8 01DB35B8 E0D94524 */  addiu      $5, $2, %lo("@965")
     /* 0078BC 01DB35BC 5A15040C */  jal        strcpy
     /* 0078C0 01DB35C0 00000000 */   nop
     /* 0078C4 01DB35C4 80191000 */  sll        $3, $16, 6
@@ -946,8 +946,8 @@ glabel OPMdsLoad__Fv
     /* 007A5C 01DB375C 2C002216 */  bne        $17, $2, .L01DB3810
     /* 007A60 01DB3760 00000000 */   nop
     /* 007A64 01DB3764 7001A427 */  addiu      $4, $29, 0x170
-    /* 007A68 01DB3768 DE01023C */  lui        $2, %hi(LIT_965)
-    /* 007A6C 01DB376C E0D94524 */  addiu      $5, $2, %lo(LIT_965)
+    /* 007A68 01DB3768 DE01023C */  lui        $2, %hi("@965")
+    /* 007A6C 01DB376C E0D94524 */  addiu      $5, $2, %lo("@965")
     /* 007A70 01DB3770 5A15040C */  jal        strcpy
     /* 007A74 01DB3774 00000000 */   nop
     /* 007A78 01DB3778 80191000 */  sll        $3, $16, 6
@@ -1020,8 +1020,8 @@ glabel OPMdsLoad__Fv
     /* 007B7C 01DB387C 70000045 */  bc1f       .L01DB3A40
     /* 007B80 01DB3880 00000000 */   nop
     /* 007B84 01DB3884 7001A427 */  addiu      $4, $29, 0x170
-    /* 007B88 01DB3888 DE01023C */  lui        $2, %hi(LIT_965)
-    /* 007B8C 01DB388C E0D94524 */  addiu      $5, $2, %lo(LIT_965)
+    /* 007B88 01DB3888 DE01023C */  lui        $2, %hi("@965")
+    /* 007B8C 01DB388C E0D94524 */  addiu      $5, $2, %lo("@965")
     /* 007B90 01DB3890 5A15040C */  jal        strcpy
     /* 007B94 01DB3894 00000000 */   nop
     /* 007B98 01DB3898 80191000 */  sll        $3, $16, 6
@@ -1147,8 +1147,8 @@ glabel OPMdsLoad__Fv
     /* 007D70 01DB3A70 21105D00 */  addu       $2, $2, $29
     /* 007D74 01DB3A74 70015324 */  addiu      $19, $2, 0x170
     /* 007D78 01DB3A78 28266072 */  paddub     $4, $19, $0
-    /* 007D7C 01DB3A7C DE01023C */  lui        $2, %hi(LIT_965)
-    /* 007D80 01DB3A80 E0D94524 */  addiu      $5, $2, %lo(LIT_965)
+    /* 007D7C 01DB3A7C DE01023C */  lui        $2, %hi("@965")
+    /* 007D80 01DB3A80 E0D94524 */  addiu      $5, $2, %lo("@965")
     /* 007D84 01DB3A84 5A15040C */  jal        strcpy
     /* 007D88 01DB3A88 00000000 */   nop
     /* 007D8C 01DB3A8C 28266072 */  paddub     $4, $19, $0
@@ -1238,8 +1238,8 @@ glabel OPMdsLoad__Fv
     /* 007EC4 01DB3BC4 BC97040C */  jal        SetFrameAttr__FP6CFramei
     /* 007EC8 01DB3BC8 00000000 */   nop
     /* 007ECC 01DB3BCC 28264072 */  paddub     $4, $18, $0
-    /* 007ED0 01DB3BD0 DE01023C */  lui        $2, %hi(LIT_967)
-    /* 007ED4 01DB3BD4 E8D94524 */  addiu      $5, $2, %lo(LIT_967)
+    /* 007ED0 01DB3BD0 DE01023C */  lui        $2, %hi("@967")
+    /* 007ED4 01DB3BD4 E8D94524 */  addiu      $5, $2, %lo("@967")
     /* 007ED8 01DB3BD8 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 007EDC 01DB3BDC 00000000 */   nop
     /* 007EE0 01DB3BE0 28B64070 */  paddub     $22, $2, $0
@@ -1365,8 +1365,8 @@ glabel OPMdsLoad__Fv
     /* 0080A8 01DB3DA8 6F000045 */  bc1f       .L01DB3F68
     /* 0080AC 01DB3DAC 00000000 */   nop
     /* 0080B0 01DB3DB0 7001A427 */  addiu      $4, $29, 0x170
-    /* 0080B4 01DB3DB4 DE01023C */  lui        $2, %hi(LIT_965)
-    /* 0080B8 01DB3DB8 E0D94524 */  addiu      $5, $2, %lo(LIT_965)
+    /* 0080B4 01DB3DB4 DE01023C */  lui        $2, %hi("@965")
+    /* 0080B8 01DB3DB8 E0D94524 */  addiu      $5, $2, %lo("@965")
     /* 0080BC 01DB3DBC 5A15040C */  jal        strcpy
     /* 0080C0 01DB3DC0 00000000 */   nop
     /* 0080C4 01DB3DC4 80191000 */  sll        $3, $16, 6
@@ -1491,8 +1491,8 @@ glabel OPMdsLoad__Fv
     /* 008298 01DB3F98 21105D00 */  addu       $2, $2, $29
     /* 00829C 01DB3F9C 70015324 */  addiu      $19, $2, 0x170
     /* 0082A0 01DB3FA0 28266072 */  paddub     $4, $19, $0
-    /* 0082A4 01DB3FA4 DE01023C */  lui        $2, %hi(LIT_965)
-    /* 0082A8 01DB3FA8 E0D94524 */  addiu      $5, $2, %lo(LIT_965)
+    /* 0082A4 01DB3FA4 DE01023C */  lui        $2, %hi("@965")
+    /* 0082A8 01DB3FA8 E0D94524 */  addiu      $5, $2, %lo("@965")
     /* 0082AC 01DB3FAC 5A15040C */  jal        strcpy
     /* 0082B0 01DB3FB0 00000000 */   nop
     /* 0082B4 01DB3FB4 28266072 */  paddub     $4, $19, $0
@@ -1582,8 +1582,8 @@ glabel OPMdsLoad__Fv
     /* 0083EC 01DB40EC BC97040C */  jal        SetFrameAttr__FP6CFramei
     /* 0083F0 01DB40F0 00000000 */   nop
     /* 0083F4 01DB40F4 28264072 */  paddub     $4, $18, $0
-    /* 0083F8 01DB40F8 DE01023C */  lui        $2, %hi(LIT_967)
-    /* 0083FC 01DB40FC E8D94524 */  addiu      $5, $2, %lo(LIT_967)
+    /* 0083F8 01DB40F8 DE01023C */  lui        $2, %hi("@967")
+    /* 0083FC 01DB40FC E8D94524 */  addiu      $5, $2, %lo("@967")
     /* 008400 01DB4100 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 008404 01DB4104 00000000 */   nop
     /* 008408 01DB4108 28B64070 */  paddub     $22, $2, $0
@@ -1686,8 +1686,8 @@ glabel OPMdsLoad__Fv
     /* 008578 01DB4278 52002216 */  bne        $17, $2, .L01DB43C4
     /* 00857C 01DB427C 00000000 */   nop
     /* 008580 01DB4280 7001A427 */  addiu      $4, $29, 0x170
-    /* 008584 01DB4284 DE01023C */  lui        $2, %hi(LIT_965)
-    /* 008588 01DB4288 E0D94524 */  addiu      $5, $2, %lo(LIT_965)
+    /* 008584 01DB4284 DE01023C */  lui        $2, %hi("@965")
+    /* 008588 01DB4288 E0D94524 */  addiu      $5, $2, %lo("@965")
     /* 00858C 01DB428C 5A15040C */  jal        strcpy
     /* 008590 01DB4290 00000000 */   nop
     /* 008594 01DB4294 80191000 */  sll        $3, $16, 6
@@ -1775,8 +1775,8 @@ glabel OPMdsLoad__Fv
     /* 0086D8 01DB43D8 50002216 */  bne        $17, $2, .L01DB451C
     /* 0086DC 01DB43DC 00000000 */   nop
     /* 0086E0 01DB43E0 7001A427 */  addiu      $4, $29, 0x170
-    /* 0086E4 01DB43E4 DE01023C */  lui        $2, %hi(LIT_965)
-    /* 0086E8 01DB43E8 E0D94524 */  addiu      $5, $2, %lo(LIT_965)
+    /* 0086E4 01DB43E4 DE01023C */  lui        $2, %hi("@965")
+    /* 0086E8 01DB43E8 E0D94524 */  addiu      $5, $2, %lo("@965")
     /* 0086EC 01DB43EC 5A15040C */  jal        strcpy
     /* 0086F0 01DB43F0 00000000 */   nop
     /* 0086F4 01DB43F4 80191000 */  sll        $3, $16, 6

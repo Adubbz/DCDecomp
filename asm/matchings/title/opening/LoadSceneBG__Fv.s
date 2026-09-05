@@ -6,8 +6,8 @@
 glabel LoadSceneBG__Fv
     /* 003AE0 01DAF7E0 00FCBD27 */  addiu      $29, $29, -0x400
     /* 003AE4 01DAF7E4 0000BF7F */  sq         $31, 0x0($29)
-    /* 003AE8 01DAF7E8 DD01033C */  lui        $3, %hi(LIT_636__3)
-    /* 003AEC 01DAF7EC 20586624 */  addiu      $6, $3, %lo(LIT_636__3)
+    /* 003AE8 01DAF7E8 DD01033C */  lui        $3, %hi("@636__3")
+    /* 003AEC 01DAF7EC 20586624 */  addiu      $6, $3, %lo("@636__3")
     /* 003AF0 01DAF7F0 1000A527 */  addiu      $5, $29, 0x10
     /* 003AF4 01DAF7F4 3F000424 */  addiu      $4, $0, 0x3F
   .L01DAF7F8:
@@ -22,8 +22,8 @@ glabel LoadSceneBG__Fv
     /* 003B18 01DAF818 C0180300 */  sll        $3, $3, 3
     /* 003B1C 01DAF81C 21187D00 */  addu       $3, $3, $29
     /* 003B20 01DAF820 1000648C */  lw         $4, 0x10($3)
-    /* 003B24 01DAF824 DE01033C */  lui        $3, %hi(LIT_635__4)
-    /* 003B28 01DAF828 38D76324 */  addiu      $3, $3, %lo(LIT_635__4)
+    /* 003B24 01DAF824 DE01033C */  lui        $3, %hi("@635__4")
+    /* 003B28 01DAF828 38D76324 */  addiu      $3, $3, %lo("@635__4")
     /* 003B2C 01DAF82C 4A008310 */  beq        $4, $3, .L01DAF958
     /* 003B30 01DAF830 00000000 */   nop
     /* 003B34 01DAF834 1898848F */  lw         $4, -0x67E8($28)

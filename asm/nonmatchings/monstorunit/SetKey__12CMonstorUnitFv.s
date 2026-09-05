@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_654__3
+glabel "@654__3"
     /* 19D020 0029CF20 D07D1D00 */ .word .L001D7DD0
     /* 19D024 0029CF24 DC7D1D00 */ .word .L001D7DDC
     /* 19D028 0029CF28 F07D1D00 */ .word .L001D7DF0
@@ -31,8 +31,8 @@ glabel SetKey__12CMonstorUnitFv
     /* 0D7DA0 001D7CA0 0000B07F */  sq         $16, 0x0($29)
     /* 0D7DA4 001D7CA4 28AE8070 */  paddub     $21, $4, $0
     /* 0D7DA8 001D7CA8 288E0070 */  paddub     $17, $0, $0
-    /* 0D7DAC 001D7CAC 2900033C */  lui        $3, %hi(LIT_606__4)
-    /* 0D7DB0 001D7CB0 F0176624 */  addiu      $6, $3, %lo(LIT_606__4)
+    /* 0D7DAC 001D7CAC 2900033C */  lui        $3, %hi("@606__4")
+    /* 0D7DB0 001D7CB0 F0176624 */  addiu      $6, $3, %lo("@606__4")
     /* 0D7DB4 001D7CB4 8000A527 */  addiu      $5, $29, 0x80
     /* 0D7DB8 001D7CB8 0000C3DC */  ld         $3, 0x0($6)
     /* 0D7DBC 001D7CBC 0800C0C4 */  lwc1       $f0, 0x8($6)
@@ -102,8 +102,8 @@ glabel SetKey__12CMonstorUnitFv
     /* 0D7EA8 001D7DA8 0700812C */  sltiu      $1, $4, 0x7
     /* 0D7EAC 001D7DAC 1F002010 */  beqz       $1, .L001D7E2C
     /* 0D7EB0 001D7DB0 00000000 */   nop
-    /* 0D7EB4 001D7DB4 2A00023C */  lui        $2, %hi(LIT_654__3)
-    /* 0D7EB8 001D7DB8 20CF4324 */  addiu      $3, $2, %lo(LIT_654__3)
+    /* 0D7EB4 001D7DB4 2A00023C */  lui        $2, %hi("@654__3")
+    /* 0D7EB8 001D7DB8 20CF4324 */  addiu      $3, $2, %lo("@654__3")
     /* 0D7EBC 001D7DBC 80100400 */  sll        $2, $4, 2
     /* 0D7EC0 001D7DC0 21104300 */  addu       $2, $2, $3
     /* 0D7EC4 001D7DC4 0000428C */  lw         $2, 0x0($2)
@@ -159,8 +159,8 @@ glabel SetKey__12CMonstorUnitFv
     /* 0D7F68 001D7E68 282E0072 */  paddub     $5, $16, $0
     /* 0D7F6C 001D7E6C 50F6060C */  jal        SearchItemIndexNo__14CDngStatusDataFi
     /* 0D7F70 001D7E70 00000000 */   nop
-    /* 0D7F74 001D7E74 2A00033C */  lui        $3, %hi(LIT_653__3)
-    /* 0D7F78 001D7E78 10CF6424 */  addiu      $4, $3, %lo(LIT_653__3)
+    /* 0D7F74 001D7E74 2A00033C */  lui        $3, %hi("@653__3")
+    /* 0D7F78 001D7E78 10CF6424 */  addiu      $4, $3, %lo("@653__3")
     /* 0D7F7C 001D7E7C 282E4070 */  paddub     $5, $2, $0
     /* 0D7F80 001D7E80 A611040C */  jal        printf
     /* 0D7F84 001D7E84 00000000 */   nop

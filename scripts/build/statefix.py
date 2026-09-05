@@ -99,7 +99,7 @@ ARGUMENT_READS = ((0x0049E925, 'ecx'), (0x0049E94F, 'eax'),
 ORDER_SET, ORDER_NEXT, ORDER_REGISTER = 0x004C78ED, 0x004C78F1, 'eax'
 
 # The counter behind every name the compiler invents -- the `@<n>` a floating
-# constant is filed under, which retail's linker kept as `LIT_<n>`. 0x0042E540
+# constant is filed under, which retail's linker kept as `@<n>`. 0x0042E540
 # hands out the value and increments it, and nothing resets it between units, so
 # retail's ran for the whole program. The compiler initialises it at startup,
 # which is before any pragma of the source is read, so writing it here holds.

@@ -18,8 +18,8 @@ glabel Draw_Wind__14CWeaponElementFv
     /* 0B99AC 001B98AC 28AE8070 */  paddub     $21, $4, $0
     /* 0B99B0 001B98B0 C701023C */  lui        $2, %hi(TexManager)
     /* 0B99B4 001B98B4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0B99B8 001B98B8 2A00023C */  lui        $2, %hi(LIT_1182)
-    /* 0B99BC 001B98BC 88BC4524 */  addiu      $5, $2, %lo(LIT_1182)
+    /* 0B99B8 001B98B8 2A00023C */  lui        $2, %hi("@1182")
+    /* 0B99BC 001B98BC 88BC4524 */  addiu      $5, $2, %lo("@1182")
     /* 0B99C0 001B98C0 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0B99C4 001B98C4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0B99C8 001B98C8 00000000 */   nop

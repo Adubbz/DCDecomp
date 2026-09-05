@@ -14,8 +14,8 @@ glabel DrawMapSymbol__12CMonstorUnitFPf
     /* 0D7BBC 001D7ABC 28968070 */  paddub     $18, $4, $0
     /* 0D7BC0 001D7AC0 C701023C */  lui        $2, %hi(TexManager)
     /* 0D7BC4 001D7AC4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0D7BC8 001D7AC8 2A00023C */  lui        $2, %hi(LIT_603__2)
-    /* 0D7BCC 001D7ACC 00CF4524 */  addiu      $5, $2, %lo(LIT_603__2)
+    /* 0D7BC8 001D7AC8 2A00023C */  lui        $2, %hi("@603__2")
+    /* 0D7BCC 001D7ACC 00CF4524 */  addiu      $5, $2, %lo("@603__2")
     /* 0D7BD0 001D7AD0 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0D7BD4 001D7AD4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0D7BD8 001D7AD8 00000000 */   nop

@@ -12,8 +12,8 @@ glabel StartBGReadItemMenuWepIcon__FP1Ri
     /* 1025C4 002024C4 2886A070 */  paddub     $16, $5, $0
     /* 1025C8 002024C8 30FB040C */  jal        StartReadBG__Fv
     /* 1025CC 002024CC 00000000 */   nop
-    /* 1025D0 002024D0 2A00023C */  lui        $2, %hi(LIT_4330)
-    /* 1025D4 002024D4 70DA4424 */  addiu      $4, $2, %lo(LIT_4330)
+    /* 1025D0 002024D0 2A00023C */  lui        $2, %hi("@4330")
+    /* 1025D4 002024D4 70DA4424 */  addiu      $4, $2, %lo("@4330")
     /* 1025D8 002024D8 282E2072 */  paddub     $5, $17, $0
     /* 1025DC 002024DC ACAE080C */  jal        LoadFileBGMenuData__FPcP1
     /* 1025E0 002024E0 00000000 */   nop

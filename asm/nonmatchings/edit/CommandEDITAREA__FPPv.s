@@ -25,8 +25,8 @@ glabel CommandEDITAREA__FPPv
     /* 075B58 00175A58 0A006010 */  beqz       $3, .L00175A84
     /* 075B5C 00175A5C 00000000 */   nop
     /* 075B60 00175A60 28260072 */  paddub     $4, $16, $0
-    /* 075B64 00175A64 2A00023C */  lui        $2, %hi(LIT_501__2)
-    /* 075B68 00175A68 E0A74524 */  addiu      $5, $2, %lo(LIT_501__2)
+    /* 075B64 00175A64 2A00023C */  lui        $2, %hi("@501__2")
+    /* 075B68 00175A68 E0A74524 */  addiu      $5, $2, %lo("@501__2")
     /* 075B6C 00175A6C D201023C */  lui        $2, %hi(CurrentDir__3)
     /* 075B70 00175A70 F09A4624 */  addiu      $6, $2, %lo(CurrentDir__3)
     /* 075B74 00175A74 1614040C */  jal        sprintf

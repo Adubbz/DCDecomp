@@ -180,8 +180,8 @@ glabel DrawWepDamageDraw__F4RECTP11WEAPON_HAVEi
     /* 0F90C8 001F8FC8 BC00A227 */  addiu      $2, $29, 0xBC
     /* 0F90CC 001F8FCC 0000428C */  lw         $2, 0x0($2)
     /* 0F90D0 001F8FD0 21986202 */  addu       $19, $19, $2
-    /* 0F90D4 001F8FD4 2900023C */  lui        $2, %hi(LIT_1684__2)
-    /* 0F90D8 001F8FD8 20304224 */  addiu      $2, $2, %lo(LIT_1684__2)
+    /* 0F90D4 001F8FD4 2900023C */  lui        $2, %hi("@1684__2")
+    /* 0F90D8 001F8FD8 20304224 */  addiu      $2, $2, %lo("@1684__2")
     /* 0F90DC 001F8FDC D000A827 */  addiu      $8, $29, 0xD0
     /* 0F90E0 001F8FE0 00004278 */  lq         $2, 0x0($2)
     /* 0F90E4 001F8FE4 0000027D */  sq         $2, 0x0($8)

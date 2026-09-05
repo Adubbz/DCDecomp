@@ -17,8 +17,8 @@ glabel Draw_Cold__14CWeaponElementFv
     /* 0B8DC8 001B8CC8 28AE8070 */  paddub     $21, $4, $0
     /* 0B8DCC 001B8CCC C701023C */  lui        $2, %hi(TexManager)
     /* 0B8DD0 001B8CD0 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0B8DD4 001B8CD4 2A00023C */  lui        $2, %hi(LIT_1182)
-    /* 0B8DD8 001B8CD8 88BC4524 */  addiu      $5, $2, %lo(LIT_1182)
+    /* 0B8DD4 001B8CD4 2A00023C */  lui        $2, %hi("@1182")
+    /* 0B8DD8 001B8CD8 88BC4524 */  addiu      $5, $2, %lo("@1182")
     /* 0B8DDC 001B8CDC FFFF0624 */  addiu      $6, $0, -0x1
     /* 0B8DE0 001B8CE0 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0B8DE4 001B8CE4 00000000 */   nop

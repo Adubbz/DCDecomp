@@ -6,8 +6,8 @@
 glabel LoadMotionData__Fv
     /* 00D3E0 01DB90E0 50FFBD27 */  addiu      $29, $29, -0xB0
     /* 00D3E4 01DB90E4 0000BF7F */  sq         $31, 0x0($29)
-    /* 00D3E8 01DB90E8 DD01033C */  lui        $3, %hi(LIT_1256)
-    /* 00D3EC 01DB90EC 80696724 */  addiu      $7, $3, %lo(LIT_1256)
+    /* 00D3E8 01DB90E8 DD01033C */  lui        $3, %hi("@1256")
+    /* 00D3EC 01DB90EC 80696724 */  addiu      $7, $3, %lo("@1256")
     /* 00D3F0 01DB90F0 1000A627 */  addiu      $6, $29, 0x10
     /* 00D3F4 01DB90F4 05000524 */  addiu      $5, $0, 0x5
   .L01DB90F8:

@@ -67,8 +67,8 @@ glabel SetSoundFile__FiPUiPc
   .L0015A3A8:
     /* 05A4A8 0015A3A8 000080A0 */  sb         $0, 0x0($4)
     /* 05A4AC 0015A3AC 4000A427 */  addiu      $4, $29, 0x40
-    /* 05A4B0 0015A3B0 2A00023C */  lui        $2, %hi(LIT_362)
-    /* 05A4B4 0015A3B4 809F4524 */  addiu      $5, $2, %lo(LIT_362)
+    /* 05A4B0 0015A3B0 2A00023C */  lui        $2, %hi("@362")
+    /* 05A4B4 0015A3B4 809F4524 */  addiu      $5, $2, %lo("@362")
     /* 05A4B8 0015A3B8 BC14040C */  jal        strcat
     /* 05A4BC 0015A3BC 00000000 */   nop
     /* 05A4C0 0015A3C0 28262072 */  paddub     $4, $17, $0

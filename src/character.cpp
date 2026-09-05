@@ -49,7 +49,7 @@ void zcross(float z, float *from, float *to, float *out) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/character", scissior__FPA4_fPA4_fPA4_ff);
-INCLUDE_RODATA("asm/nonmatchings/character", LIT_648);
+INCLUDE_RODATA("asm/nonmatchings/character", @648);
 
 void CVisualVu1::SetMDTDataAddress(unsigned int *data) {
 }

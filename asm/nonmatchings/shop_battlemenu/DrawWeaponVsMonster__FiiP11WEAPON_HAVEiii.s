@@ -33,8 +33,8 @@ glabel DrawWeaponVsMonster__FiiP11WEAPON_HAVEiii
   .L001FAD08:
     /* 0FAE08 001FAD08 30002226 */  addiu      $2, $17, 0x30
     /* 0FAE0C 001FAD0C B000A2AF */  sw         $2, 0xB0($29)
-    /* 0FAE10 001FAD10 2900023C */  lui        $2, %hi(LIT_2056)
-    /* 0FAE14 001FAD14 60314224 */  addiu      $2, $2, %lo(LIT_2056)
+    /* 0FAE10 001FAD10 2900023C */  lui        $2, %hi("@2056")
+    /* 0FAE14 001FAD14 60314224 */  addiu      $2, $2, %lo("@2056")
     /* 0FAE18 001FAD18 D000A327 */  addiu      $3, $29, 0xD0
     /* 0FAE1C 001FAD1C 00004278 */  lq         $2, 0x0($2)
     /* 0FAE20 001FAD20 0000627C */  sq         $2, 0x0($3)
@@ -43,15 +43,15 @@ glabel DrawWeaponVsMonster__FiiP11WEAPON_HAVEiii
     /* 0FAE2C 001FAD2C D400B327 */  addiu      $19, $29, 0xD4
     /* 0FAE30 001FAD30 B000A28F */  lw         $2, 0xB0($29)
     /* 0FAE34 001FAD34 000062AE */  sw         $2, 0x0($19)
-    /* 0FAE38 001FAD38 2900023C */  lui        $2, %hi(LIT_2057)
-    /* 0FAE3C 001FAD3C 70314424 */  addiu      $4, $2, %lo(LIT_2057)
+    /* 0FAE38 001FAD38 2900023C */  lui        $2, %hi("@2057")
+    /* 0FAE3C 001FAD3C 70314424 */  addiu      $4, $2, %lo("@2057")
     /* 0FAE40 001FAD40 4001A327 */  addiu      $3, $29, 0x140
     /* 0FAE44 001FAD44 000082DC */  ld         $2, 0x0($4)
     /* 0FAE48 001FAD48 080080C4 */  lwc1       $f0, 0x8($4)
     /* 0FAE4C 001FAD4C 000062FC */  sd         $2, 0x0($3)
     /* 0FAE50 001FAD50 080060E4 */  swc1       $f0, 0x8($3)
-    /* 0FAE54 001FAD54 2900023C */  lui        $2, %hi(LIT_2058)
-    /* 0FAE58 001FAD58 80314524 */  addiu      $5, $2, %lo(LIT_2058)
+    /* 0FAE54 001FAD54 2900023C */  lui        $2, %hi("@2058")
+    /* 0FAE58 001FAD58 80314524 */  addiu      $5, $2, %lo("@2058")
     /* 0FAE5C 001FAD5C E000A427 */  addiu      $4, $29, 0xE0
     /* 0FAE60 001FAD60 02000324 */  addiu      $3, $0, 0x2
   .L001FAD64:
@@ -64,8 +64,8 @@ glabel DrawWeaponVsMonster__FiiP11WEAPON_HAVEiii
     /* 0FAE7C 001FAD7C 00000000 */   nop
     /* 0FAE80 001FAD80 0000A2DC */  ld         $2, 0x0($5)
     /* 0FAE84 001FAD84 000082FC */  sd         $2, 0x0($4)
-    /* 0FAE88 001FAD88 2900023C */  lui        $2, %hi(LIT_2059)
-    /* 0FAE8C 001FAD8C B0314524 */  addiu      $5, $2, %lo(LIT_2059)
+    /* 0FAE88 001FAD88 2900023C */  lui        $2, %hi("@2059")
+    /* 0FAE8C 001FAD8C B0314524 */  addiu      $5, $2, %lo("@2059")
     /* 0FAE90 001FAD90 1001A427 */  addiu      $4, $29, 0x110
     /* 0FAE94 001FAD94 02000324 */  addiu      $3, $0, 0x2
   .L001FAD98:

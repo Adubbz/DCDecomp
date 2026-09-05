@@ -1,0 +1,11 @@
+.include "macro.inc"
+.section .rodata
+.align 3
+
+glabel "@4411"
+    /* 0172B8 01DC2FB8 6974656D */ .word 0x6D657469
+    /* 0172BC 01DC2FBC 6E6F203D */ .word 0x3D206F6E
+    /* 0172C0 01DC2FC0 2025640A */ .word 0x0A642520
+    /* 0172C4 01DC2FC4 00000000 */ .word 0x00000000
+    /* 0172C8 01DC2FC8 00000000 */ .word 0x00000000
+    /* 0172CC 01DC2FCC 00000000 */ .word 0x00000000

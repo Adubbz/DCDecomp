@@ -191,8 +191,8 @@ glabel BattleActionThlow__Fv
     /* 0104B4 01DBC1B4 01000324 */  addiu      $3, $0, 0x1
     /* 0104B8 01DBC1B8 DC008314 */  bne        $4, $3, .L01DBC52C
     /* 0104BC 01DBC1BC 00000000 */   nop
-    /* 0104C0 01DBC1C0 DC01033C */  lui        $3, %hi(LIT_5574)
-    /* 0104C4 01DBC1C4 60286324 */  addiu      $3, $3, %lo(LIT_5574)
+    /* 0104C0 01DBC1C0 DC01033C */  lui        $3, %hi("@5574")
+    /* 0104C4 01DBC1C4 60286324 */  addiu      $3, $3, %lo("@5574")
     /* 0104C8 01DBC1C8 6000A527 */  addiu      $5, $29, 0x60
     /* 0104CC 01DBC1CC 00006478 */  lq         $4, 0x0($3)
     /* 0104D0 01DBC1D0 100063DC */  ld         $3, 0x10($3)
@@ -261,15 +261,15 @@ glabel BattleActionThlow__Fv
     /* 0105C0 01DBC2C0 FFFF0224 */  addiu      $2, $0, -0x1
     /* 0105C4 01DBC2C4 EC01013C */  lui        $1, %hi(activeItem + 0x34)
     /* 0105C8 01DBC2C8 A47822AC */  sw         $2, %lo(activeItem + 0x34)($1)
-    /* 0105CC 01DBC2CC DC01023C */  lui        $2, %hi(LIT_5583)
-    /* 0105D0 01DBC2D0 80284224 */  addiu      $2, $2, %lo(LIT_5583)
+    /* 0105CC 01DBC2CC DC01023C */  lui        $2, %hi("@5583")
+    /* 0105D0 01DBC2D0 80284224 */  addiu      $2, $2, %lo("@5583")
     /* 0105D4 01DBC2D4 A000A327 */  addiu      $3, $29, 0xA0
     /* 0105D8 01DBC2D8 00004278 */  lq         $2, 0x0($2)
     /* 0105DC 01DBC2DC 0000627C */  sq         $2, 0x0($3)
     /* 0105E0 01DBC2E0 EA01013C */  lui        $1, %hi(CharaMain + 0xBC)
     /* 0105E4 01DBC2E4 DC1D248C */  lw         $4, %lo(CharaMain + 0xBC)($1)
-    /* 0105E8 01DBC2E8 DC01023C */  lui        $2, %hi(LIT_5627)
-    /* 0105EC 01DBC2EC 90334524 */  addiu      $5, $2, %lo(LIT_5627)
+    /* 0105E8 01DBC2E8 DC01023C */  lui        $2, %hi("@5627")
+    /* 0105EC 01DBC2EC 90334524 */  addiu      $5, $2, %lo("@5627")
     /* 0105F0 01DBC2F0 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 0105F4 01DBC2F4 00000000 */   nop
     /* 0105F8 01DBC2F8 28264070 */  paddub     $4, $2, $0
@@ -336,15 +336,15 @@ glabel BattleActionThlow__Fv
     /* 0106E0 01DBC3E0 FFFF0224 */  addiu      $2, $0, -0x1
     /* 0106E4 01DBC3E4 EC01013C */  lui        $1, %hi(activeItem + 0x34)
     /* 0106E8 01DBC3E8 A47822AC */  sw         $2, %lo(activeItem + 0x34)($1)
-    /* 0106EC 01DBC3EC DC01023C */  lui        $2, %hi(LIT_5585)
-    /* 0106F0 01DBC3F0 90284224 */  addiu      $2, $2, %lo(LIT_5585)
+    /* 0106EC 01DBC3EC DC01023C */  lui        $2, %hi("@5585")
+    /* 0106F0 01DBC3F0 90284224 */  addiu      $2, $2, %lo("@5585")
     /* 0106F4 01DBC3F4 D000A327 */  addiu      $3, $29, 0xD0
     /* 0106F8 01DBC3F8 00004278 */  lq         $2, 0x0($2)
     /* 0106FC 01DBC3FC 0000627C */  sq         $2, 0x0($3)
     /* 010700 01DBC400 EA01013C */  lui        $1, %hi(CharaMain + 0xBC)
     /* 010704 01DBC404 DC1D248C */  lw         $4, %lo(CharaMain + 0xBC)($1)
-    /* 010708 01DBC408 DC01023C */  lui        $2, %hi(LIT_5627)
-    /* 01070C 01DBC40C 90334524 */  addiu      $5, $2, %lo(LIT_5627)
+    /* 010708 01DBC408 DC01023C */  lui        $2, %hi("@5627")
+    /* 01070C 01DBC40C 90334524 */  addiu      $5, $2, %lo("@5627")
     /* 010710 01DBC410 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 010714 01DBC414 00000000 */   nop
     /* 010718 01DBC418 06004010 */  beqz       $2, .L01DBC434

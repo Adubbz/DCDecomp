@@ -8,8 +8,8 @@ glabel DrawMapCheck__Fi
     /* 10AAB4 0020A9B4 2000BF7F */  sq         $31, 0x20($29)
     /* 10AAB8 0020A9B8 1000B17F */  sq         $17, 0x10($29)
     /* 10AABC 0020A9BC 0000B07F */  sq         $16, 0x0($29)
-    /* 10AAC0 0020A9C0 2900033C */  lui        $3, %hi(LIT_6344)
-    /* 10AAC4 0020A9C4 60386624 */  addiu      $6, $3, %lo(LIT_6344)
+    /* 10AAC0 0020A9C0 2900033C */  lui        $3, %hi("@6344")
+    /* 10AAC4 0020A9C4 60386624 */  addiu      $6, $3, %lo("@6344")
     /* 10AAC8 0020A9C8 3000A527 */  addiu      $5, $29, 0x30
     /* 10AACC 0020A9CC 04000424 */  addiu      $4, $0, 0x4
   .L0020A9D0:

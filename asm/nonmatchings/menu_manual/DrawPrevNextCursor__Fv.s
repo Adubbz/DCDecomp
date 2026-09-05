@@ -14,8 +14,8 @@ glabel DrawPrevNextCursor__Fv
     /* 133BAC 00233AAC 0000B07F */  sq         $16, 0x0($29)
     /* 133BB0 00233AB0 C701023C */  lui        $2, %hi(TexManager)
     /* 133BB4 00233AB4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 133BB8 00233AB8 2A00023C */  lui        $2, %hi(LIT_535)
-    /* 133BBC 00233ABC 20F34524 */  addiu      $5, $2, %lo(LIT_535)
+    /* 133BB8 00233AB8 2A00023C */  lui        $2, %hi("@535")
+    /* 133BBC 00233ABC 20F34524 */  addiu      $5, $2, %lo("@535")
     /* 133BC0 00233AC0 FFFF0624 */  addiu      $6, $0, -0x1
     /* 133BC4 00233AC4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 133BC8 00233AC8 00000000 */   nop

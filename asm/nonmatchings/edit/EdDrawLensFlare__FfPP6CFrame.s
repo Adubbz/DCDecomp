@@ -36,8 +36,8 @@ glabel EdDrawLensFlare__FfPP6CFrame
     /* 088B94 00188A94 0000238E */  lw         $3, 0x0($17)
     /* 088B98 00188A98 A1006010 */  beqz       $3, .L00188D20
     /* 088B9C 00188A9C 00000000 */   nop
-    /* 088BA0 00188AA0 2700033C */  lui        $3, %hi(LIT_1647)
-    /* 088BA4 00188AA4 309A6324 */  addiu      $3, $3, %lo(LIT_1647)
+    /* 088BA0 00188AA0 2700033C */  lui        $3, %hi("@1647")
+    /* 088BA4 00188AA4 309A6324 */  addiu      $3, $3, %lo("@1647")
     /* 088BA8 00188AA8 8000A627 */  addiu      $6, $29, 0x80
     /* 088BAC 00188AAC 00006378 */  lq         $3, 0x0($3)
     /* 088BB0 00188AB0 0000C37C */  sq         $3, 0x0($6)
@@ -45,8 +45,8 @@ glabel EdDrawLensFlare__FfPP6CFrame
     /* 088BB8 00188AB8 07000016 */  bnez       $16, .L00188AD8
     /* 088BBC 00188ABC 00000000 */   nop
     /* 088BC0 00188AC0 0000248E */  lw         $4, 0x0($17)
-    /* 088BC4 00188AC4 2A00023C */  lui        $2, %hi(LIT_1673)
-    /* 088BC8 00188AC8 C8B04524 */  addiu      $5, $2, %lo(LIT_1673)
+    /* 088BC4 00188AC4 2A00023C */  lui        $2, %hi("@1673")
+    /* 088BC8 00188AC8 C8B04524 */  addiu      $5, $2, %lo("@1673")
     /* 088BCC 00188ACC C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 088BD0 00188AD0 00000000 */   nop
     /* 088BD4 00188AD4 28364070 */  paddub     $6, $2, $0
@@ -55,8 +55,8 @@ glabel EdDrawLensFlare__FfPP6CFrame
     /* 088BDC 00188ADC 07000316 */  bne        $16, $3, .L00188AFC
     /* 088BE0 00188AE0 00000000 */   nop
     /* 088BE4 00188AE4 0000248E */  lw         $4, 0x0($17)
-    /* 088BE8 00188AE8 2A00023C */  lui        $2, %hi(LIT_1674)
-    /* 088BEC 00188AEC D0B04524 */  addiu      $5, $2, %lo(LIT_1674)
+    /* 088BE8 00188AE8 2A00023C */  lui        $2, %hi("@1674")
+    /* 088BEC 00188AEC D0B04524 */  addiu      $5, $2, %lo("@1674")
     /* 088BF0 00188AF0 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 088BF4 00188AF4 00000000 */   nop
     /* 088BF8 00188AF8 28364070 */  paddub     $6, $2, $0
@@ -65,8 +65,8 @@ glabel EdDrawLensFlare__FfPP6CFrame
     /* 088C00 00188B00 07000316 */  bne        $16, $3, .L00188B20
     /* 088C04 00188B04 00000000 */   nop
     /* 088C08 00188B08 0000248E */  lw         $4, 0x0($17)
-    /* 088C0C 00188B0C 2A00023C */  lui        $2, %hi(LIT_1675)
-    /* 088C10 00188B10 D8B04524 */  addiu      $5, $2, %lo(LIT_1675)
+    /* 088C0C 00188B0C 2A00023C */  lui        $2, %hi("@1675")
+    /* 088C10 00188B10 D8B04524 */  addiu      $5, $2, %lo("@1675")
     /* 088C14 00188B14 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 088C18 00188B18 00000000 */   nop
     /* 088C1C 00188B1C 28364070 */  paddub     $6, $2, $0
@@ -187,8 +187,8 @@ glabel EdDrawLensFlare__FfPP6CFrame
     /* 088DDC 00188CDC 00000000 */   nop
     /* 088DE0 00188CE0 C701023C */  lui        $2, %hi(TexManager)
     /* 088DE4 00188CE4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 088DE8 00188CE8 2A00023C */  lui        $2, %hi(LIT_1676)
-    /* 088DEC 00188CEC E0B04524 */  addiu      $5, $2, %lo(LIT_1676)
+    /* 088DE8 00188CE8 2A00023C */  lui        $2, %hi("@1676")
+    /* 088DEC 00188CEC E0B04524 */  addiu      $5, $2, %lo("@1676")
     /* 088DF0 00188CF0 17000624 */  addiu      $6, $0, 0x17
     /* 088DF4 00188CF4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 088DF8 00188CF8 00000000 */   nop

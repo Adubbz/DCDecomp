@@ -121,8 +121,8 @@ glabel Draw__10CMajinBeemFP7CCamera
     /* 0021FC 01DADEFC BC00A2AF */  sw         $2, 0xBC($29)
     /* 002200 01DADF00 C701023C */  lui        $2, %hi(TexManager)
     /* 002204 01DADF04 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 002208 01DADF08 DE01023C */  lui        $2, %hi(LIT_435__3)
-    /* 00220C 01DADF0C 60BF4524 */  addiu      $5, $2, %lo(LIT_435__3)
+    /* 002208 01DADF08 DE01023C */  lui        $2, %hi("@435__3")
+    /* 00220C 01DADF0C 60BF4524 */  addiu      $5, $2, %lo("@435__3")
     /* 002210 01DADF10 FFFF0624 */  addiu      $6, $0, -0x1
     /* 002214 01DADF14 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 002218 01DADF18 00000000 */   nop
@@ -355,8 +355,8 @@ glabel Draw2__10CMajinBeemFP7CCameraPfPf
     /* 002590 01DAE290 2C01A2AF */  sw         $2, 0x12C($29)
     /* 002594 01DAE294 C701023C */  lui        $2, %hi(TexManager)
     /* 002598 01DAE298 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 00259C 01DAE29C DE01023C */  lui        $2, %hi(LIT_435__3)
-    /* 0025A0 01DAE2A0 60BF4524 */  addiu      $5, $2, %lo(LIT_435__3)
+    /* 00259C 01DAE29C DE01023C */  lui        $2, %hi("@435__3")
+    /* 0025A0 01DAE2A0 60BF4524 */  addiu      $5, $2, %lo("@435__3")
     /* 0025A4 01DAE2A4 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0025A8 01DAE2A8 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0025AC 01DAE2AC 00000000 */   nop

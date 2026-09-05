@@ -58,8 +58,8 @@ glabel BattleActionPlay_Ozumond_H__Fi
     /* 012484 01DBE184 00000000 */   nop
     /* 012488 01DBE188 009D828F */  lw         $2, -0x6300($28)
     /* 01248C 01DBE18C BC00448C */  lw         $4, 0xBC($2)
-    /* 012490 01DBE190 DC01023C */  lui        $2, %hi(LIT_4408)
-    /* 012494 01DBE194 982F4524 */  addiu      $5, $2, %lo(LIT_4408)
+    /* 012490 01DBE190 DC01023C */  lui        $2, %hi("@4408")
+    /* 012494 01DBE194 982F4524 */  addiu      $5, $2, %lo("@4408")
     /* 012498 01DBE198 4000A627 */  addiu      $6, $29, 0x40
     /* 01249C 01DBE19C CCDB060C */  jal        getFramePos__FP9CFrameVu1PcPf
     /* 0124A0 01DBE1A0 00000000 */   nop

@@ -8,8 +8,8 @@ glabel ShopTextureLoadFix__Fv
     /* 0E7DD4 001E7CD4 2000BF7F */  sq         $31, 0x20($29)
     /* 0E7DD8 001E7CD8 1000B17F */  sq         $17, 0x10($29)
     /* 0E7DDC 001E7CDC 0000B07F */  sq         $16, 0x0($29)
-    /* 0E7DE0 001E7CE0 2900023C */  lui        $2, %hi(LIT_784__2)
-    /* 0E7DE4 001E7CE4 E0264524 */  addiu      $5, $2, %lo(LIT_784__2)
+    /* 0E7DE0 001E7CE0 2900023C */  lui        $2, %hi("@784__2")
+    /* 0E7DE4 001E7CE4 E0264524 */  addiu      $5, $2, %lo("@784__2")
     /* 0E7DE8 001E7CE8 3000A427 */  addiu      $4, $29, 0x30
     /* 0E7DEC 001E7CEC 02000324 */  addiu      $3, $0, 0x2
   .L001E7CF0:
@@ -31,8 +31,8 @@ glabel ShopTextureLoadFix__Fv
     /* 0E7E2C 001E7D2C 00000000 */   nop
     /* 0E7E30 001E7D30 28864070 */  paddub     $16, $2, $0
     /* 0E7E34 001E7D34 8C00448C */  lw         $4, 0x8C($2)
-    /* 0E7E38 001E7D38 2A00023C */  lui        $2, %hi(LIT_787)
-    /* 0E7E3C 001E7D3C 90D14524 */  addiu      $5, $2, %lo(LIT_787)
+    /* 0E7E38 001E7D38 2A00023C */  lui        $2, %hi("@787")
+    /* 0E7E3C 001E7D3C 90D14524 */  addiu      $5, $2, %lo("@787")
     /* 0E7E40 001E7D40 28360070 */  paddub     $6, $0, $0
     /* 0E7E44 001E7D44 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0E7E48 001E7D48 00000000 */   nop
@@ -57,8 +57,8 @@ glabel ShopTextureLoadFix__Fv
     /* 0E7E94 001E7D94 5A022684 */  lh         $6, %lo(ShopMenu + 0x18A)($1)
     /* 0E7E98 001E7D98 C701023C */  lui        $2, %hi(TexManager)
     /* 0E7E9C 001E7D9C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0E7EA0 001E7DA0 2A00023C */  lui        $2, %hi(LIT_788)
-    /* 0E7EA4 001E7DA4 A0D14524 */  addiu      $5, $2, %lo(LIT_788)
+    /* 0E7EA0 001E7DA0 2A00023C */  lui        $2, %hi("@788")
+    /* 0E7EA4 001E7DA4 A0D14524 */  addiu      $5, $2, %lo("@788")
     /* 0E7EA8 001E7DA8 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0E7EAC 001E7DAC 00000000 */   nop
     /* 0E7EB0 001E7DB0 889482AF */  sw         $2, -0x6B78($28)
@@ -66,8 +66,8 @@ glabel ShopTextureLoadFix__Fv
     /* 0E7EB8 001E7DB8 5A022684 */  lh         $6, %lo(ShopMenu + 0x18A)($1)
     /* 0E7EBC 001E7DBC C701023C */  lui        $2, %hi(TexManager)
     /* 0E7EC0 001E7DC0 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0E7EC4 001E7DC4 2A00023C */  lui        $2, %hi(LIT_789__2)
-    /* 0E7EC8 001E7DC8 A8D14524 */  addiu      $5, $2, %lo(LIT_789__2)
+    /* 0E7EC4 001E7DC4 2A00023C */  lui        $2, %hi("@789__2")
+    /* 0E7EC8 001E7DC8 A8D14524 */  addiu      $5, $2, %lo("@789__2")
     /* 0E7ECC 001E7DCC B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0E7ED0 001E7DD0 00000000 */   nop
     /* 0E7ED4 001E7DD4 A49782AF */  sw         $2, -0x685C($28)
@@ -75,8 +75,8 @@ glabel ShopTextureLoadFix__Fv
     /* 0E7EDC 001E7DDC 5A022684 */  lh         $6, %lo(ShopMenu + 0x18A)($1)
     /* 0E7EE0 001E7DE0 C701023C */  lui        $2, %hi(TexManager)
     /* 0E7EE4 001E7DE4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0E7EE8 001E7DE8 2A00023C */  lui        $2, %hi(LIT_790)
-    /* 0E7EEC 001E7DEC B0D14524 */  addiu      $5, $2, %lo(LIT_790)
+    /* 0E7EE8 001E7DE8 2A00023C */  lui        $2, %hi("@790")
+    /* 0E7EEC 001E7DEC B0D14524 */  addiu      $5, $2, %lo("@790")
     /* 0E7EF0 001E7DF0 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0E7EF4 001E7DF4 00000000 */   nop
     /* 0E7EF8 001E7DF8 B09682AF */  sw         $2, -0x6950($28)
@@ -84,8 +84,8 @@ glabel ShopTextureLoadFix__Fv
     /* 0E7F00 001E7E00 5A022684 */  lh         $6, %lo(ShopMenu + 0x18A)($1)
     /* 0E7F04 001E7E04 C701023C */  lui        $2, %hi(TexManager)
     /* 0E7F08 001E7E08 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0E7F0C 001E7E0C 2A00023C */  lui        $2, %hi(LIT_791)
-    /* 0E7F10 001E7E10 B8D14524 */  addiu      $5, $2, %lo(LIT_791)
+    /* 0E7F0C 001E7E0C 2A00023C */  lui        $2, %hi("@791")
+    /* 0E7F10 001E7E10 B8D14524 */  addiu      $5, $2, %lo("@791")
     /* 0E7F14 001E7E14 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0E7F18 001E7E18 00000000 */   nop
     /* 0E7F1C 001E7E1C A89682AF */  sw         $2, -0x6958($28)
@@ -93,15 +93,15 @@ glabel ShopTextureLoadFix__Fv
     /* 0E7F24 001E7E24 D901013C */  lui        $1, %hi(ShopMenu + 0x188)
     /* 0E7F28 001E7E28 580222A4 */  sh         $2, %lo(ShopMenu + 0x188)($1)
     /* 0E7F2C 001E7E2C 8C00048E */  lw         $4, 0x8C($16)
-    /* 0E7F30 001E7E30 2A00023C */  lui        $2, %hi(LIT_792__3)
-    /* 0E7F34 001E7E34 C8D14524 */  addiu      $5, $2, %lo(LIT_792__3)
+    /* 0E7F30 001E7E30 2A00023C */  lui        $2, %hi("@792__3")
+    /* 0E7F34 001E7E34 C8D14524 */  addiu      $5, $2, %lo("@792__3")
     /* 0E7F38 001E7E38 28360070 */  paddub     $6, $0, $0
     /* 0E7F3C 001E7E3C C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0E7F40 001E7E40 00000000 */   nop
     /* 0E7F44 001E7E44 288E4070 */  paddub     $17, $2, $0
     /* 0E7F48 001E7E48 8C00048E */  lw         $4, 0x8C($16)
-    /* 0E7F4C 001E7E4C 2A00023C */  lui        $2, %hi(LIT_793__2)
-    /* 0E7F50 001E7E50 D8D14524 */  addiu      $5, $2, %lo(LIT_793__2)
+    /* 0E7F4C 001E7E4C 2A00023C */  lui        $2, %hi("@793__2")
+    /* 0E7F50 001E7E50 D8D14524 */  addiu      $5, $2, %lo("@793__2")
     /* 0E7F54 001E7E54 28360070 */  paddub     $6, $0, $0
     /* 0E7F58 001E7E58 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0E7F5C 001E7E5C 00000000 */   nop

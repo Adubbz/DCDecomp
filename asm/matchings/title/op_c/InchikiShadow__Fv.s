@@ -12,8 +12,8 @@ glabel InchikiShadow__Fv
     /* 0161F4 01DC1EF4 00000000 */   nop
     /* 0161F8 01DC1EF8 E001013C */  lui        $1, %hi(Chara__3 + 0xF85C)
     /* 0161FC 01DC1EFC 3CF7248C */  lw         $4, %lo(Chara__3 + 0xF85C)($1)
-    /* 016200 01DC1F00 DE01023C */  lui        $2, %hi(LIT_1595__2)
-    /* 016204 01DC1F04 50F94524 */  addiu      $5, $2, %lo(LIT_1595__2)
+    /* 016200 01DC1F00 DE01023C */  lui        $2, %hi("@1595__2")
+    /* 016204 01DC1F04 50F94524 */  addiu      $5, $2, %lo("@1595__2")
     /* 016208 01DC1F08 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 01620C 01DC1F0C 00000000 */   nop
     /* 016210 01DC1F10 28264070 */  paddub     $4, $2, $0
@@ -31,8 +31,8 @@ glabel InchikiShadow__Fv
   .L01DC1F40:
     /* 016240 01DC1F40 E001013C */  lui        $1, %hi(Chara__3 + 0xF85C)
     /* 016244 01DC1F44 3CF7248C */  lw         $4, %lo(Chara__3 + 0xF85C)($1)
-    /* 016248 01DC1F48 DE01023C */  lui        $2, %hi(LIT_1596__2)
-    /* 01624C 01DC1F4C 58F94524 */  addiu      $5, $2, %lo(LIT_1596__2)
+    /* 016248 01DC1F48 DE01023C */  lui        $2, %hi("@1596__2")
+    /* 01624C 01DC1F4C 58F94524 */  addiu      $5, $2, %lo("@1596__2")
     /* 016250 01DC1F50 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 016254 01DC1F54 00000000 */   nop
     /* 016258 01DC1F58 28264070 */  paddub     $4, $2, $0
@@ -54,8 +54,8 @@ glabel InchikiShadow__Fv
     /* 016294 01DC1F94 00000000 */   nop
     /* 016298 01DC1F98 E001013C */  lui        $1, %hi(Chara__3 + 0x10A0C)
     /* 01629C 01DC1F9C EC08248C */  lw         $4, %lo(Chara__3 + 0x10A0C)($1)
-    /* 0162A0 01DC1FA0 DE01023C */  lui        $2, %hi(LIT_1595__2)
-    /* 0162A4 01DC1FA4 50F94524 */  addiu      $5, $2, %lo(LIT_1595__2)
+    /* 0162A0 01DC1FA0 DE01023C */  lui        $2, %hi("@1595__2")
+    /* 0162A4 01DC1FA4 50F94524 */  addiu      $5, $2, %lo("@1595__2")
     /* 0162A8 01DC1FA8 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 0162AC 01DC1FAC 00000000 */   nop
     /* 0162B0 01DC1FB0 28264070 */  paddub     $4, $2, $0
@@ -73,8 +73,8 @@ glabel InchikiShadow__Fv
   .L01DC1FE0:
     /* 0162E0 01DC1FE0 E001013C */  lui        $1, %hi(Chara__3 + 0x10A0C)
     /* 0162E4 01DC1FE4 EC08248C */  lw         $4, %lo(Chara__3 + 0x10A0C)($1)
-    /* 0162E8 01DC1FE8 DE01023C */  lui        $2, %hi(LIT_1596__2)
-    /* 0162EC 01DC1FEC 58F94524 */  addiu      $5, $2, %lo(LIT_1596__2)
+    /* 0162E8 01DC1FE8 DE01023C */  lui        $2, %hi("@1596__2")
+    /* 0162EC 01DC1FEC 58F94524 */  addiu      $5, $2, %lo("@1596__2")
     /* 0162F0 01DC1FF0 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 0162F4 01DC1FF4 00000000 */   nop
     /* 0162F8 01DC1FF8 28264070 */  paddub     $4, $2, $0
@@ -96,8 +96,8 @@ glabel InchikiShadow__Fv
     /* 016334 01DC2034 00000000 */   nop
     /* 016338 01DC2038 E001013C */  lui        $1, %hi(Chara__3 + 0x11BBC)
     /* 01633C 01DC203C 9C1A248C */  lw         $4, %lo(Chara__3 + 0x11BBC)($1)
-    /* 016340 01DC2040 DE01023C */  lui        $2, %hi(LIT_1595__2)
-    /* 016344 01DC2044 50F94524 */  addiu      $5, $2, %lo(LIT_1595__2)
+    /* 016340 01DC2040 DE01023C */  lui        $2, %hi("@1595__2")
+    /* 016344 01DC2044 50F94524 */  addiu      $5, $2, %lo("@1595__2")
     /* 016348 01DC2048 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 01634C 01DC204C 00000000 */   nop
     /* 016350 01DC2050 28264070 */  paddub     $4, $2, $0
@@ -115,8 +115,8 @@ glabel InchikiShadow__Fv
   .L01DC2080:
     /* 016380 01DC2080 E001013C */  lui        $1, %hi(Chara__3 + 0x11BBC)
     /* 016384 01DC2084 9C1A248C */  lw         $4, %lo(Chara__3 + 0x11BBC)($1)
-    /* 016388 01DC2088 DE01023C */  lui        $2, %hi(LIT_1596__2)
-    /* 01638C 01DC208C 58F94524 */  addiu      $5, $2, %lo(LIT_1596__2)
+    /* 016388 01DC2088 DE01023C */  lui        $2, %hi("@1596__2")
+    /* 01638C 01DC208C 58F94524 */  addiu      $5, $2, %lo("@1596__2")
     /* 016390 01DC2090 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 016394 01DC2094 00000000 */   nop
     /* 016398 01DC2098 28264070 */  paddub     $4, $2, $0
@@ -138,8 +138,8 @@ glabel InchikiShadow__Fv
     /* 0163D4 01DC20D4 00000000 */   nop
     /* 0163D8 01DC20D8 E001013C */  lui        $1, %hi(Chara__3 + 0x12D6C)
     /* 0163DC 01DC20DC 4C2C248C */  lw         $4, %lo(Chara__3 + 0x12D6C)($1)
-    /* 0163E0 01DC20E0 DE01023C */  lui        $2, %hi(LIT_1642)
-    /* 0163E4 01DC20E4 70F94524 */  addiu      $5, $2, %lo(LIT_1642)
+    /* 0163E0 01DC20E0 DE01023C */  lui        $2, %hi("@1642")
+    /* 0163E4 01DC20E4 70F94524 */  addiu      $5, $2, %lo("@1642")
     /* 0163E8 01DC20E8 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 0163EC 01DC20EC 00000000 */   nop
     /* 0163F0 01DC20F0 28264070 */  paddub     $4, $2, $0
@@ -157,8 +157,8 @@ glabel InchikiShadow__Fv
   .L01DC2120:
     /* 016420 01DC2120 E001013C */  lui        $1, %hi(Chara__3 + 0x12D6C)
     /* 016424 01DC2124 4C2C248C */  lw         $4, %lo(Chara__3 + 0x12D6C)($1)
-    /* 016428 01DC2128 DE01023C */  lui        $2, %hi(LIT_1643__2)
-    /* 01642C 01DC212C 78F94524 */  addiu      $5, $2, %lo(LIT_1643__2)
+    /* 016428 01DC2128 DE01023C */  lui        $2, %hi("@1643__2")
+    /* 01642C 01DC212C 78F94524 */  addiu      $5, $2, %lo("@1643__2")
     /* 016430 01DC2130 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 016434 01DC2134 00000000 */   nop
     /* 016438 01DC2138 28264070 */  paddub     $4, $2, $0
@@ -180,8 +180,8 @@ glabel InchikiShadow__Fv
     /* 016474 01DC2174 00000000 */   nop
     /* 016478 01DC2178 E001013C */  lui        $1, %hi(Chara__3 + 0x13F1C)
     /* 01647C 01DC217C FC3D248C */  lw         $4, %lo(Chara__3 + 0x13F1C)($1)
-    /* 016480 01DC2180 DE01023C */  lui        $2, %hi(LIT_1595__2)
-    /* 016484 01DC2184 50F94524 */  addiu      $5, $2, %lo(LIT_1595__2)
+    /* 016480 01DC2180 DE01023C */  lui        $2, %hi("@1595__2")
+    /* 016484 01DC2184 50F94524 */  addiu      $5, $2, %lo("@1595__2")
     /* 016488 01DC2188 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 01648C 01DC218C 00000000 */   nop
     /* 016490 01DC2190 28264070 */  paddub     $4, $2, $0
@@ -199,8 +199,8 @@ glabel InchikiShadow__Fv
   .L01DC21C0:
     /* 0164C0 01DC21C0 E001013C */  lui        $1, %hi(Chara__3 + 0x13F1C)
     /* 0164C4 01DC21C4 FC3D248C */  lw         $4, %lo(Chara__3 + 0x13F1C)($1)
-    /* 0164C8 01DC21C8 DE01023C */  lui        $2, %hi(LIT_1596__2)
-    /* 0164CC 01DC21CC 58F94524 */  addiu      $5, $2, %lo(LIT_1596__2)
+    /* 0164C8 01DC21C8 DE01023C */  lui        $2, %hi("@1596__2")
+    /* 0164CC 01DC21CC 58F94524 */  addiu      $5, $2, %lo("@1596__2")
     /* 0164D0 01DC21D0 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 0164D4 01DC21D4 00000000 */   nop
     /* 0164D8 01DC21D8 28264070 */  paddub     $4, $2, $0
@@ -222,8 +222,8 @@ glabel InchikiShadow__Fv
     /* 016514 01DC2214 00000000 */   nop
     /* 016518 01DC2218 E001013C */  lui        $1, %hi(Chara__3 + 0x150CC)
     /* 01651C 01DC221C AC4F248C */  lw         $4, %lo(Chara__3 + 0x150CC)($1)
-    /* 016520 01DC2220 DE01023C */  lui        $2, %hi(LIT_1595__2)
-    /* 016524 01DC2224 50F94524 */  addiu      $5, $2, %lo(LIT_1595__2)
+    /* 016520 01DC2220 DE01023C */  lui        $2, %hi("@1595__2")
+    /* 016524 01DC2224 50F94524 */  addiu      $5, $2, %lo("@1595__2")
     /* 016528 01DC2228 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 01652C 01DC222C 00000000 */   nop
     /* 016530 01DC2230 28264070 */  paddub     $4, $2, $0
@@ -241,8 +241,8 @@ glabel InchikiShadow__Fv
   .L01DC2260:
     /* 016560 01DC2260 E001013C */  lui        $1, %hi(Chara__3 + 0x150CC)
     /* 016564 01DC2264 AC4F248C */  lw         $4, %lo(Chara__3 + 0x150CC)($1)
-    /* 016568 01DC2268 DE01023C */  lui        $2, %hi(LIT_1596__2)
-    /* 01656C 01DC226C 58F94524 */  addiu      $5, $2, %lo(LIT_1596__2)
+    /* 016568 01DC2268 DE01023C */  lui        $2, %hi("@1596__2")
+    /* 01656C 01DC226C 58F94524 */  addiu      $5, $2, %lo("@1596__2")
     /* 016570 01DC2270 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 016574 01DC2274 00000000 */   nop
     /* 016578 01DC2278 28264070 */  paddub     $4, $2, $0
@@ -264,8 +264,8 @@ glabel InchikiShadow__Fv
     /* 0165B4 01DC22B4 00000000 */   nop
     /* 0165B8 01DC22B8 E001013C */  lui        $1, %hi(Chara__3 + 0x1627C)
     /* 0165BC 01DC22BC 5C61248C */  lw         $4, %lo(Chara__3 + 0x1627C)($1)
-    /* 0165C0 01DC22C0 DE01023C */  lui        $2, %hi(LIT_1595__2)
-    /* 0165C4 01DC22C4 50F94524 */  addiu      $5, $2, %lo(LIT_1595__2)
+    /* 0165C0 01DC22C0 DE01023C */  lui        $2, %hi("@1595__2")
+    /* 0165C4 01DC22C4 50F94524 */  addiu      $5, $2, %lo("@1595__2")
     /* 0165C8 01DC22C8 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 0165CC 01DC22CC 00000000 */   nop
     /* 0165D0 01DC22D0 28264070 */  paddub     $4, $2, $0
@@ -283,8 +283,8 @@ glabel InchikiShadow__Fv
   .L01DC2300:
     /* 016600 01DC2300 E001013C */  lui        $1, %hi(Chara__3 + 0x1627C)
     /* 016604 01DC2304 5C61248C */  lw         $4, %lo(Chara__3 + 0x1627C)($1)
-    /* 016608 01DC2308 DE01023C */  lui        $2, %hi(LIT_1596__2)
-    /* 01660C 01DC230C 58F94524 */  addiu      $5, $2, %lo(LIT_1596__2)
+    /* 016608 01DC2308 DE01023C */  lui        $2, %hi("@1596__2")
+    /* 01660C 01DC230C 58F94524 */  addiu      $5, $2, %lo("@1596__2")
     /* 016610 01DC2310 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 016614 01DC2314 00000000 */   nop
     /* 016618 01DC2318 28264070 */  paddub     $4, $2, $0

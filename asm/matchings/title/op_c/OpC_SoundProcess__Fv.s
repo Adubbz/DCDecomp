@@ -76,8 +76,8 @@ glabel OpC_SoundProcess__Fv
     /* 014018 01DBFD18 45006128 */  slti       $1, $3, 0x45
     /* 01401C 01DBFD1C 2B002010 */  beqz       $1, .L01DBFDCC
     /* 014020 01DBFD20 00000000 */   nop
-    /* 014024 01DBFD24 DE01023C */  lui        $2, %hi(LIT_1014__2)
-    /* 014028 01DBFD28 10A54224 */  addiu      $2, $2, %lo(LIT_1014__2)
+    /* 014024 01DBFD24 DE01023C */  lui        $2, %hi("@1014__2")
+    /* 014028 01DBFD28 10A54224 */  addiu      $2, $2, %lo("@1014__2")
     /* 01402C 01DBFD2C 2000A427 */  addiu      $4, $29, 0x20
     /* 014030 01DBFD30 00004278 */  lq         $2, 0x0($2)
     /* 014034 01DBFD34 0000827C */  sq         $2, 0x0($4)
@@ -90,8 +90,8 @@ glabel OpC_SoundProcess__Fv
     /* 014050 01DBFD50 15000724 */  addiu      $7, $0, 0x15
     /* 014054 01DBFD54 28C4760C */  jal        OpSetVolPanSE__FPfffiii
     /* 014058 01DBFD58 00000000 */   nop
-    /* 01405C 01DBFD5C DE01023C */  lui        $2, %hi(LIT_1015)
-    /* 014060 01DBFD60 20A54224 */  addiu      $2, $2, %lo(LIT_1015)
+    /* 01405C 01DBFD5C DE01023C */  lui        $2, %hi("@1015")
+    /* 014060 01DBFD60 20A54224 */  addiu      $2, $2, %lo("@1015")
     /* 014064 01DBFD64 3000A427 */  addiu      $4, $29, 0x30
     /* 014068 01DBFD68 00004278 */  lq         $2, 0x0($2)
     /* 01406C 01DBFD6C 0000827C */  sq         $2, 0x0($4)
@@ -104,8 +104,8 @@ glabel OpC_SoundProcess__Fv
     /* 014088 01DBFD88 16000724 */  addiu      $7, $0, 0x16
     /* 01408C 01DBFD8C 28C4760C */  jal        OpSetVolPanSE__FPfffiii
     /* 014090 01DBFD90 00000000 */   nop
-    /* 014094 01DBFD94 DE01023C */  lui        $2, %hi(LIT_1016)
-    /* 014098 01DBFD98 30A54224 */  addiu      $2, $2, %lo(LIT_1016)
+    /* 014094 01DBFD94 DE01023C */  lui        $2, %hi("@1016")
+    /* 014098 01DBFD98 30A54224 */  addiu      $2, $2, %lo("@1016")
     /* 01409C 01DBFD9C 4000A427 */  addiu      $4, $29, 0x40
     /* 0140A0 01DBFDA0 00004278 */  lq         $2, 0x0($2)
     /* 0140A4 01DBFDA4 0000827C */  sq         $2, 0x0($4)

@@ -51,8 +51,8 @@ glabel FishRecordViewBoard__Fiii
     /* 0F37A0 001F36A0 1C000224 */  addiu      $2, $0, 0x1C
     /* 0F37A4 001F36A4 AC00B627 */  addiu      $22, $29, 0xAC
     /* 0F37A8 001F36A8 0000C2AE */  sw         $2, 0x0($22)
-    /* 0F37AC 001F36AC 2900023C */  lui        $2, %hi(LIT_3333)
-    /* 0F37B0 001F36B0 E82A4624 */  addiu      $6, $2, %lo(LIT_3333)
+    /* 0F37AC 001F36AC 2900023C */  lui        $2, %hi("@3333")
+    /* 0F37B0 001F36B0 E82A4624 */  addiu      $6, $2, %lo("@3333")
     /* 0F37B4 001F36B4 9001A327 */  addiu      $3, $29, 0x190
     /* 0F37B8 001F36B8 0000C2DC */  ld         $2, 0x0($6)
     /* 0F37BC 001F36BC 0800C0C4 */  lwc1       $f0, 0x8($6)
@@ -184,8 +184,8 @@ glabel FishRecordViewBoard__Fiii
     /* 0F39A4 001F38A4 94CB070C */  jal        GetFishingRankData__Fi
     /* 0F39A8 001F38A8 00000000 */   nop
     /* 0F39AC 001F38AC 28F64070 */  paddub     $30, $2, $0
-    /* 0F39B0 001F38B0 2900023C */  lui        $2, %hi(LIT_3345)
-    /* 0F39B4 001F38B4 002B4224 */  addiu      $2, $2, %lo(LIT_3345)
+    /* 0F39B0 001F38B0 2900023C */  lui        $2, %hi("@3345")
+    /* 0F39B4 001F38B4 002B4224 */  addiu      $2, $2, %lo("@3345")
     /* 0F39B8 001F38B8 C000A327 */  addiu      $3, $29, 0xC0
     /* 0F39BC 001F38BC 00004278 */  lq         $2, 0x0($2)
     /* 0F39C0 001F38C0 0000627C */  sq         $2, 0x0($3)

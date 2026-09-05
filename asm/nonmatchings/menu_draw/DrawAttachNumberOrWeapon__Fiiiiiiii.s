@@ -25,8 +25,8 @@ glabel DrawAttachNumberOrWeapon__Fiiiiiiii
     /* 12D8C8 0022D7C8 28BE6071 */  paddub     $23, $11, $0
     /* 12D8CC 0022D7CC C701023C */  lui        $2, %hi(TexManager)
     /* 12D8D0 0022D7D0 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 12D8D4 0022D7D4 2A00023C */  lui        $2, %hi(LIT_852__4)
-    /* 12D8D8 0022D7D8 A8F14524 */  addiu      $5, $2, %lo(LIT_852__4)
+    /* 12D8D4 0022D7D4 2A00023C */  lui        $2, %hi("@852__4")
+    /* 12D8D8 0022D7D8 A8F14524 */  addiu      $5, $2, %lo("@852__4")
     /* 12D8DC 0022D7DC FFFF0624 */  addiu      $6, $0, -0x1
     /* 12D8E0 0022D7E0 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 12D8E4 0022D7E4 00000000 */   nop

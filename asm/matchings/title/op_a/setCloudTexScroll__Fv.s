@@ -24,8 +24,8 @@ glabel setCloudTexScroll__Fv
     /* 00C890 01DB8590 01000224 */  addiu      $2, $0, 0x1
     /* 00C894 01DB8594 A09982A3 */  sb         $2, %gp_rel(init$1066)($28)
   .L01DB8598:
-    /* 00C898 01DB8598 DD01023C */  lui        $2, %hi(LIT_1068)
-    /* 00C89C 01DB859C D0674224 */  addiu      $2, $2, %lo(LIT_1068)
+    /* 00C898 01DB8598 DD01023C */  lui        $2, %hi("@1068")
+    /* 00C89C 01DB859C D0674224 */  addiu      $2, $2, %lo("@1068")
     /* 00C8A0 01DB85A0 7000A327 */  addiu      $3, $29, 0x70
     /* 00C8A4 01DB85A4 00004278 */  lq         $2, 0x0($2)
     /* 00C8A8 01DB85A8 0000627C */  sq         $2, 0x0($3)
@@ -80,16 +80,16 @@ glabel setCloudTexScroll__Fv
     /* 00C964 01DB8664 949982AF */  sw         $2, %gp_rel(setTexScrollCnt$1062)($28)
     /* 00C968 01DB8668 C701023C */  lui        $2, %hi(TexManager)
     /* 00C96C 01DB866C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 00C970 01DB8670 DE01023C */  lui        $2, %hi(LIT_1090__3)
-    /* 00C974 01DB8674 90DF4524 */  addiu      $5, $2, %lo(LIT_1090__3)
+    /* 00C970 01DB8670 DE01023C */  lui        $2, %hi("@1090__3")
+    /* 00C974 01DB8674 90DF4524 */  addiu      $5, $2, %lo("@1090__3")
     /* 00C978 01DB8678 FFFF0624 */  addiu      $6, $0, -0x1
     /* 00C97C 01DB867C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 00C980 01DB8680 00000000 */   nop
     /* 00C984 01DB8684 28864070 */  paddub     $16, $2, $0
     /* 00C988 01DB8688 C701023C */  lui        $2, %hi(TexManager)
     /* 00C98C 01DB868C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 00C990 01DB8690 DE01023C */  lui        $2, %hi(LIT_1091__2)
-    /* 00C994 01DB8694 98DF4524 */  addiu      $5, $2, %lo(LIT_1091__2)
+    /* 00C990 01DB8690 DE01023C */  lui        $2, %hi("@1091__2")
+    /* 00C994 01DB8694 98DF4524 */  addiu      $5, $2, %lo("@1091__2")
     /* 00C998 01DB8698 FFFF0624 */  addiu      $6, $0, -0x1
     /* 00C99C 01DB869C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 00C9A0 01DB86A0 00000000 */   nop

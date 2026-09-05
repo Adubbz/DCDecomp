@@ -47,8 +47,8 @@ glabel Draw__13CHitPointMarkFv
     /* 0B37B0 001B36B0 6C00A2AF */  sw         $2, 0x6C($29)
     /* 0B37B4 001B36B4 C701023C */  lui        $2, %hi(TexManager)
     /* 0B37B8 001B36B8 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0B37BC 001B36BC 2A00023C */  lui        $2, %hi(LIT_1430)
-    /* 0B37C0 001B36C0 F8B64524 */  addiu      $5, $2, %lo(LIT_1430)
+    /* 0B37BC 001B36BC 2A00023C */  lui        $2, %hi("@1430")
+    /* 0B37C0 001B36C0 F8B64524 */  addiu      $5, $2, %lo("@1430")
     /* 0B37C4 001B36C4 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0B37C8 001B36C8 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0B37CC 001B36CC 00000000 */   nop

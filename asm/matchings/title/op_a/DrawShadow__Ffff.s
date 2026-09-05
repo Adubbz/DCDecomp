@@ -11,8 +11,8 @@ glabel DrawShadow__Ffff
     /* 00BD90 01DB7A90 0000B4E7 */  swc1       $f20, 0x0($29)
     /* 00BD94 01DB7A94 86650046 */  mov.s      $f22, $f12
     /* 00BD98 01DB7A98 46750046 */  mov.s      $f21, $f14
-    /* 00BD9C 01DB7A9C DD01033C */  lui        $3, %hi(LIT_905__3)
-    /* 00BDA0 01DB7AA0 90676324 */  addiu      $3, $3, %lo(LIT_905__3)
+    /* 00BD9C 01DB7A9C DD01033C */  lui        $3, %hi("@905__3")
+    /* 00BDA0 01DB7AA0 90676324 */  addiu      $3, $3, %lo("@905__3")
     /* 00BDA4 01DB7AA4 2000A427 */  addiu      $4, $29, 0x20
     /* 00BDA8 01DB7AA8 00006378 */  lq         $3, 0x0($3)
     /* 00BDAC 01DB7AAC 0000837C */  sq         $3, 0x0($4)

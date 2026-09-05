@@ -29,8 +29,8 @@ glabel LoadTexture__Fv
     /* 080D58 00180C58 00E24634 */  ori        $6, $2, (0x4E200 & 0xFFFF)
     /* 080D5C 00180C5C 4CC4040C */  jal        SetBuffer__15CTextureManagerFP1i
     /* 080D60 00180C60 00000000 */   nop
-    /* 080D64 00180C64 2700023C */  lui        $2, %hi(LIT_2743)
-    /* 080D68 00180C68 E0944624 */  addiu      $6, $2, %lo(LIT_2743)
+    /* 080D64 00180C64 2700023C */  lui        $2, %hi("@2743")
+    /* 080D68 00180C68 E0944624 */  addiu      $6, $2, %lo("@2743")
     /* 080D6C 00180C6C 6000A527 */  addiu      $5, $29, 0x60
     /* 080D70 00180C70 03000424 */  addiu      $4, $0, 0x3
   .L00180C74:
@@ -43,8 +43,8 @@ glabel LoadTexture__Fv
     /* 080D8C 00180C8C 2000A524 */  addiu      $5, $5, 0x20
     /* 080D90 00180C90 F8FF801C */  bgtz       $4, .L00180C74
     /* 080D94 00180C94 00000000 */   nop
-    /* 080D98 00180C98 2A00023C */  lui        $2, %hi(LIT_2803)
-    /* 080D9C 00180C9C 60AE4424 */  addiu      $4, $2, %lo(LIT_2803)
+    /* 080D98 00180C98 2A00023C */  lui        $2, %hi("@2803")
+    /* 080D9C 00180C9C 60AE4424 */  addiu      $4, $2, %lo("@2803")
     /* 080DA0 00180CA0 948B858F */  lw         $5, -0x746C($28)
     /* 080DA4 00180CA4 28360070 */  paddub     $6, $0, $0
     /* 080DA8 00180CA8 D8FC040C */  jal        LoadFile__FPcPvPi
@@ -52,22 +52,22 @@ glabel LoadTexture__Fv
     /* 080DB0 00180CB0 DC4F050C */  jal        wait_now_loading_vsync__Fv
     /* 080DB4 00180CB4 00000000 */   nop
     /* 080DB8 00180CB8 948B848F */  lw         $4, -0x746C($28)
-    /* 080DBC 00180CBC 2A00023C */  lui        $2, %hi(LIT_2804)
-    /* 080DC0 00180CC0 78AE4524 */  addiu      $5, $2, %lo(LIT_2804)
+    /* 080DBC 00180CBC 2A00023C */  lui        $2, %hi("@2804")
+    /* 080DC0 00180CC0 78AE4524 */  addiu      $5, $2, %lo("@2804")
     /* 080DC4 00180CC4 28360070 */  paddub     $6, $0, $0
     /* 080DC8 00180CC8 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 080DCC 00180CCC 00000000 */   nop
     /* 080DD0 00180CD0 8400A2AF */  sw         $2, 0x84($29)
     /* 080DD4 00180CD4 948B848F */  lw         $4, -0x746C($28)
-    /* 080DD8 00180CD8 2A00023C */  lui        $2, %hi(LIT_2805)
-    /* 080DDC 00180CDC 88AE4524 */  addiu      $5, $2, %lo(LIT_2805)
+    /* 080DD8 00180CD8 2A00023C */  lui        $2, %hi("@2805")
+    /* 080DDC 00180CDC 88AE4524 */  addiu      $5, $2, %lo("@2805")
     /* 080DE0 00180CE0 28360070 */  paddub     $6, $0, $0
     /* 080DE4 00180CE4 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 080DE8 00180CE8 00000000 */   nop
     /* 080DEC 00180CEC 9000A2AF */  sw         $2, 0x90($29)
     /* 080DF0 00180CF0 948B848F */  lw         $4, -0x746C($28)
-    /* 080DF4 00180CF4 2A00023C */  lui        $2, %hi(LIT_2806)
-    /* 080DF8 00180CF8 98AE4524 */  addiu      $5, $2, %lo(LIT_2806)
+    /* 080DF4 00180CF4 2A00023C */  lui        $2, %hi("@2806")
+    /* 080DF8 00180CF8 98AE4524 */  addiu      $5, $2, %lo("@2806")
     /* 080DFC 00180CFC 28360070 */  paddub     $6, $0, $0
     /* 080E00 00180D00 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 080E04 00180D04 00000000 */   nop
@@ -78,8 +78,8 @@ glabel LoadTexture__Fv
     /* 080E18 00180D18 6000A627 */  addiu      $6, $29, 0x60
     /* 080E1C 00180D1C C8CF040C */  jal        LoadTextureBlock__15CTextureManagerFiP17LOADTEXTURE_INFO2
     /* 080E20 00180D20 00000000 */   nop
-    /* 080E24 00180D24 2700023C */  lui        $2, %hi(LIT_2744)
-    /* 080E28 00180D28 40954524 */  addiu      $5, $2, %lo(LIT_2744)
+    /* 080E24 00180D24 2700023C */  lui        $2, %hi("@2744")
+    /* 080E28 00180D28 40954524 */  addiu      $5, $2, %lo("@2744")
     /* 080E2C 00180D2C C000A427 */  addiu      $4, $29, 0xC0
     /* 080E30 00180D30 04000324 */  addiu      $3, $0, 0x4
   .L00180D34:
@@ -94,8 +94,8 @@ glabel LoadTexture__Fv
     /* 080E54 00180D54 0600C018 */  blez       $6, .L00180D70
     /* 080E58 00180D58 00000000 */   nop
     /* 080E5C 00180D5C C000A427 */  addiu      $4, $29, 0xC0
-    /* 080E60 00180D60 2A00023C */  lui        $2, %hi(LIT_2807)
-    /* 080E64 00180D64 B0AE4524 */  addiu      $5, $2, %lo(LIT_2807)
+    /* 080E60 00180D60 2A00023C */  lui        $2, %hi("@2807")
+    /* 080E64 00180D64 B0AE4524 */  addiu      $5, $2, %lo("@2807")
     /* 080E68 00180D68 1614040C */  jal        sprintf
     /* 080E6C 00180D6C 00000000 */   nop
   .L00180D70:
@@ -107,8 +107,8 @@ glabel LoadTexture__Fv
     /* 080E84 00180D84 DC4F050C */  jal        wait_now_loading_vsync__Fv
     /* 080E88 00180D88 00000000 */   nop
     /* 080E8C 00180D8C 948B848F */  lw         $4, -0x746C($28)
-    /* 080E90 00180D90 2A00023C */  lui        $2, %hi(LIT_2808)
-    /* 080E94 00180D94 D0AE4524 */  addiu      $5, $2, %lo(LIT_2808)
+    /* 080E90 00180D90 2A00023C */  lui        $2, %hi("@2808")
+    /* 080E94 00180D94 D0AE4524 */  addiu      $5, $2, %lo("@2808")
     /* 080E98 00180D98 28360070 */  paddub     $6, $0, $0
     /* 080E9C 00180D9C C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 080EA0 00180DA0 00000000 */   nop
@@ -121,8 +121,8 @@ glabel LoadTexture__Fv
     /* 080EBC 00180DBC E8CA040C */  jal        EnterIMGFile__15CTextureManagerFPUciii
     /* 080EC0 00180DC0 00000000 */   nop
     /* 080EC4 00180DC4 948B848F */  lw         $4, -0x746C($28)
-    /* 080EC8 00180DC8 2A00023C */  lui        $2, %hi(LIT_2809)
-    /* 080ECC 00180DCC E0AE4524 */  addiu      $5, $2, %lo(LIT_2809)
+    /* 080EC8 00180DC8 2A00023C */  lui        $2, %hi("@2809")
+    /* 080ECC 00180DCC E0AE4524 */  addiu      $5, $2, %lo("@2809")
     /* 080ED0 00180DD0 28360070 */  paddub     $6, $0, $0
     /* 080ED4 00180DD4 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 080ED8 00180DD8 00000000 */   nop
@@ -134,8 +134,8 @@ glabel LoadTexture__Fv
     /* 080EF0 00180DF0 28460070 */  paddub     $8, $0, $0
     /* 080EF4 00180DF4 E8CA040C */  jal        EnterIMGFile__15CTextureManagerFPUciii
     /* 080EF8 00180DF8 00000000 */   nop
-    /* 080EFC 00180DFC 2700023C */  lui        $2, %hi(LIT_2757)
-    /* 080F00 00180E00 80954624 */  addiu      $6, $2, %lo(LIT_2757)
+    /* 080EFC 00180DFC 2700023C */  lui        $2, %hi("@2757")
+    /* 080F00 00180E00 80954624 */  addiu      $6, $2, %lo("@2757")
     /* 080F04 00180E04 0001A527 */  addiu      $5, $29, 0x100
     /* 080F08 00180E08 18000424 */  addiu      $4, $0, 0x18
   .L00180E0C:
@@ -149,36 +149,36 @@ glabel LoadTexture__Fv
     /* 080F28 00180E28 F8FF801C */  bgtz       $4, .L00180E0C
     /* 080F2C 00180E2C 00000000 */   nop
     /* 080F30 00180E30 948B848F */  lw         $4, -0x746C($28)
-    /* 080F34 00180E34 2A00023C */  lui        $2, %hi(LIT_2810)
-    /* 080F38 00180E38 F0AE4524 */  addiu      $5, $2, %lo(LIT_2810)
+    /* 080F34 00180E34 2A00023C */  lui        $2, %hi("@2810")
+    /* 080F38 00180E38 F0AE4524 */  addiu      $5, $2, %lo("@2810")
     /* 080F3C 00180E3C 28360070 */  paddub     $6, $0, $0
     /* 080F40 00180E40 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 080F44 00180E44 00000000 */   nop
     /* 080F48 00180E48 3001A2AF */  sw         $2, 0x130($29)
     /* 080F4C 00180E4C 948B848F */  lw         $4, -0x746C($28)
-    /* 080F50 00180E50 2A00023C */  lui        $2, %hi(LIT_2811)
-    /* 080F54 00180E54 00AF4524 */  addiu      $5, $2, %lo(LIT_2811)
+    /* 080F50 00180E50 2A00023C */  lui        $2, %hi("@2811")
+    /* 080F54 00180E54 00AF4524 */  addiu      $5, $2, %lo("@2811")
     /* 080F58 00180E58 28360070 */  paddub     $6, $0, $0
     /* 080F5C 00180E5C C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 080F60 00180E60 00000000 */   nop
     /* 080F64 00180E64 3C01A2AF */  sw         $2, 0x13C($29)
     /* 080F68 00180E68 948B848F */  lw         $4, -0x746C($28)
-    /* 080F6C 00180E6C 2A00023C */  lui        $2, %hi(LIT_2753)
-    /* 080F70 00180E70 08AE4524 */  addiu      $5, $2, %lo(LIT_2753)
+    /* 080F6C 00180E6C 2A00023C */  lui        $2, %hi("@2753")
+    /* 080F70 00180E70 08AE4524 */  addiu      $5, $2, %lo("@2753")
     /* 080F74 00180E74 28360070 */  paddub     $6, $0, $0
     /* 080F78 00180E78 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 080F7C 00180E7C 00000000 */   nop
     /* 080F80 00180E80 4801A2AF */  sw         $2, 0x148($29)
     /* 080F84 00180E84 948B848F */  lw         $4, -0x746C($28)
-    /* 080F88 00180E88 2A00023C */  lui        $2, %hi(LIT_2754)
-    /* 080F8C 00180E8C 18AE4524 */  addiu      $5, $2, %lo(LIT_2754)
+    /* 080F88 00180E88 2A00023C */  lui        $2, %hi("@2754")
+    /* 080F8C 00180E8C 18AE4524 */  addiu      $5, $2, %lo("@2754")
     /* 080F90 00180E90 28360070 */  paddub     $6, $0, $0
     /* 080F94 00180E94 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 080F98 00180E98 00000000 */   nop
     /* 080F9C 00180E9C 5401A2AF */  sw         $2, 0x154($29)
     /* 080FA0 00180EA0 948B848F */  lw         $4, -0x746C($28)
-    /* 080FA4 00180EA4 2A00023C */  lui        $2, %hi(LIT_2812)
-    /* 080FA8 00180EA8 10AF4524 */  addiu      $5, $2, %lo(LIT_2812)
+    /* 080FA4 00180EA4 2A00023C */  lui        $2, %hi("@2812")
+    /* 080FA8 00180EA8 10AF4524 */  addiu      $5, $2, %lo("@2812")
     /* 080FAC 00180EAC 28360070 */  paddub     $6, $0, $0
     /* 080FB0 00180EB0 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 080FB4 00180EB4 00000000 */   nop
@@ -197,8 +197,8 @@ glabel LoadTexture__Fv
     /* 080FE8 00180EE8 01000224 */  addiu      $2, $0, 0x1
     /* 080FEC 00180EEC 1404A2A3 */  sb         $2, 0x414($29)
     /* 080FF0 00180EF0 948B848F */  lw         $4, -0x746C($28)
-    /* 080FF4 00180EF4 2A00023C */  lui        $2, %hi(LIT_2813)
-    /* 080FF8 00180EF8 20AF4524 */  addiu      $5, $2, %lo(LIT_2813)
+    /* 080FF4 00180EF4 2A00023C */  lui        $2, %hi("@2813")
+    /* 080FF8 00180EF8 20AF4524 */  addiu      $5, $2, %lo("@2813")
     /* 080FFC 00180EFC 28360070 */  paddub     $6, $0, $0
     /* 081000 00180F00 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 081004 00180F04 00000000 */   nop
@@ -218,8 +218,8 @@ glabel LoadTexture__Fv
     /* 08103C 00180F3C D4A2040C */  jal        SetAttr__6CFrameFR10CFrameAttrii
     /* 081040 00180F40 00000000 */   nop
     /* 081044 00180F44 948B848F */  lw         $4, -0x746C($28)
-    /* 081048 00180F48 2A00023C */  lui        $2, %hi(LIT_2814)
-    /* 08104C 00180F4C 30AF4524 */  addiu      $5, $2, %lo(LIT_2814)
+    /* 081048 00180F48 2A00023C */  lui        $2, %hi("@2814")
+    /* 08104C 00180F4C 30AF4524 */  addiu      $5, $2, %lo("@2814")
     /* 081050 00180F50 28360070 */  paddub     $6, $0, $0
     /* 081054 00180F54 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 081058 00180F58 00000000 */   nop
@@ -247,8 +247,8 @@ glabel LoadTexture__Fv
     /* 0810B0 00180FB0 D49F040C */  jal        SetScale__6CFrameFfff
     /* 0810B4 00180FB4 00000000 */   nop
     /* 0810B8 00180FB8 948B848F */  lw         $4, -0x746C($28)
-    /* 0810BC 00180FBC 2A00023C */  lui        $2, %hi(LIT_2815)
-    /* 0810C0 00180FC0 40AF4524 */  addiu      $5, $2, %lo(LIT_2815)
+    /* 0810BC 00180FBC 2A00023C */  lui        $2, %hi("@2815")
+    /* 0810C0 00180FC0 40AF4524 */  addiu      $5, $2, %lo("@2815")
     /* 0810C4 00180FC4 28360070 */  paddub     $6, $0, $0
     /* 0810C8 00180FC8 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0810CC 00180FCC 00000000 */   nop
@@ -268,8 +268,8 @@ glabel LoadTexture__Fv
     /* 081104 00181004 D4A2040C */  jal        SetAttr__6CFrameFR10CFrameAttrii
     /* 081108 00181008 00000000 */   nop
     /* 08110C 0018100C 948B848F */  lw         $4, -0x746C($28)
-    /* 081110 00181010 2A00023C */  lui        $2, %hi(LIT_2816)
-    /* 081114 00181014 48AF4524 */  addiu      $5, $2, %lo(LIT_2816)
+    /* 081110 00181010 2A00023C */  lui        $2, %hi("@2816")
+    /* 081114 00181014 48AF4524 */  addiu      $5, $2, %lo("@2816")
     /* 081118 00181018 28360070 */  paddub     $6, $0, $0
     /* 08111C 0018101C C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 081120 00181020 00000000 */   nop
@@ -283,8 +283,8 @@ glabel LoadTexture__Fv
     /* 081140 00181040 00000000 */   nop
     /* 081144 00181044 189182AF */  sw         $2, -0x6EE8($28)
     /* 081148 00181048 948B848F */  lw         $4, -0x746C($28)
-    /* 08114C 0018104C 2A00023C */  lui        $2, %hi(LIT_2817)
-    /* 081150 00181050 58AF4524 */  addiu      $5, $2, %lo(LIT_2817)
+    /* 08114C 0018104C 2A00023C */  lui        $2, %hi("@2817")
+    /* 081150 00181050 58AF4524 */  addiu      $5, $2, %lo("@2817")
     /* 081154 00181054 28360070 */  paddub     $6, $0, $0
     /* 081158 00181058 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 08115C 0018105C 00000000 */   nop
@@ -322,8 +322,8 @@ glabel LoadTexture__Fv
   .L001810D8:
     /* 0811D8 001810D8 C701023C */  lui        $2, %hi(TexManager)
     /* 0811DC 001810DC 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0811E0 001810E0 2A00023C */  lui        $2, %hi(LIT_2818)
-    /* 0811E4 001810E4 68AF4524 */  addiu      $5, $2, %lo(LIT_2818)
+    /* 0811E0 001810E0 2A00023C */  lui        $2, %hi("@2818")
+    /* 0811E4 001810E4 68AF4524 */  addiu      $5, $2, %lo("@2818")
     /* 0811E8 001810E8 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0811EC 001810EC B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0811F0 001810F0 00000000 */   nop
@@ -348,8 +348,8 @@ glabel LoadTexture__Fv
     /* 08123C 0018113C F4DD050C */  jal        GetEditDataDir__FPc
     /* 081240 00181140 00000000 */   nop
     /* 081244 00181144 C004A427 */  addiu      $4, $29, 0x4C0
-    /* 081248 00181148 2A00023C */  lui        $2, %hi(LIT_2819)
-    /* 08124C 0018114C 70AF4524 */  addiu      $5, $2, %lo(LIT_2819)
+    /* 081248 00181148 2A00023C */  lui        $2, %hi("@2819")
+    /* 08124C 0018114C 70AF4524 */  addiu      $5, $2, %lo("@2819")
     /* 081250 00181150 BC14040C */  jal        strcat
     /* 081254 00181154 00000000 */   nop
     /* 081258 00181158 D201013C */  lui        $1, %hi(EdNPCBuffer + 0x8)
@@ -358,8 +358,8 @@ glabel LoadTexture__Fv
     /* 081264 00181164 D201013C */  lui        $1, %hi(EdNPCBuffer)
     /* 081268 00181168 50B3228C */  lw         $2, %lo(EdNPCBuffer)($1)
     /* 08126C 0018116C 21984300 */  addu       $19, $2, $3
-    /* 081270 00181170 2A00023C */  lui        $2, %hi(LIT_2820)
-    /* 081274 00181174 78AF4424 */  addiu      $4, $2, %lo(LIT_2820)
+    /* 081270 00181170 2A00023C */  lui        $2, %hi("@2820")
+    /* 081274 00181174 78AF4424 */  addiu      $4, $2, %lo("@2820")
     /* 081278 00181178 282E6072 */  paddub     $5, $19, $0
     /* 08127C 0018117C D0AE080C */  jal        LoadFileMenuData__FPcPUi
     /* 081280 00181180 00000000 */   nop
@@ -372,8 +372,8 @@ glabel LoadTexture__Fv
     /* 08129C 0018119C 00000000 */   nop
     /* 0812A0 001811A0 C701023C */  lui        $2, %hi(TexManager)
     /* 0812A4 001811A4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0812A8 001811A8 2A00023C */  lui        $2, %hi(LIT_2821)
-    /* 0812AC 001811AC 88AF4524 */  addiu      $5, $2, %lo(LIT_2821)
+    /* 0812A8 001811A8 2A00023C */  lui        $2, %hi("@2821")
+    /* 0812AC 001811AC 88AF4524 */  addiu      $5, $2, %lo("@2821")
     /* 0812B0 001811B0 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0812B4 001811B4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0812B8 001811B8 00000000 */   nop
@@ -442,8 +442,8 @@ glabel LoadTexture__Fv
     /* 0813AC 001812AC 089E050C */  jal        Initialize__13CTextureAnimeFP13CTexAnimeDatai
     /* 0813B0 001812B0 00000000 */   nop
     /* 0813B4 001812B4 28266072 */  paddub     $4, $19, $0
-    /* 0813B8 001812B8 2A00023C */  lui        $2, %hi(LIT_2822)
-    /* 0813BC 001812BC 98AF4524 */  addiu      $5, $2, %lo(LIT_2822)
+    /* 0813B8 001812B8 2A00023C */  lui        $2, %hi("@2822")
+    /* 0813BC 001812BC 98AF4524 */  addiu      $5, $2, %lo("@2822")
     /* 0813C0 001812C0 5C08A627 */  addiu      $6, $29, 0x85C
     /* 0813C4 001812C4 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0813C8 001812C8 00000000 */   nop

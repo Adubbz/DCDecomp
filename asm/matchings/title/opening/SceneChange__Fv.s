@@ -11,8 +11,8 @@ glabel SceneChange__Fv
     /* 003DB0 01DAFAB0 0A00A12C */  sltiu      $1, $5, 0xA
     /* 003DB4 01DAFAB4 2A002010 */  beqz       $1, .L01DAFB60
     /* 003DB8 01DAFAB8 00000000 */   nop
-    /* 003DBC 01DAFABC DE01033C */  lui        $3, %hi(LIT_705__2)
-    /* 003DC0 01DAFAC0 70D76424 */  addiu      $4, $3, %lo(LIT_705__2)
+    /* 003DBC 01DAFABC DE01033C */  lui        $3, %hi("@705__2")
+    /* 003DC0 01DAFAC0 70D76424 */  addiu      $4, $3, %lo("@705__2")
     /* 003DC4 01DAFAC4 80180500 */  sll        $3, $5, 2
     /* 003DC8 01DAFAC8 21186400 */  addu       $3, $3, $4
     /* 003DCC 01DAFACC 0000638C */  lw         $3, 0x0($3)
@@ -58,8 +58,8 @@ glabel SceneChange__Fv
     /* 003E68 01DAFB68 0A00A12C */  sltiu      $1, $5, 0xA
     /* 003E6C 01DAFB6C 34002010 */  beqz       $1, .L01DAFC40
     /* 003E70 01DAFB70 00000000 */   nop
-    /* 003E74 01DAFB74 DE01033C */  lui        $3, %hi(LIT_706__2)
-    /* 003E78 01DAFB78 40D76424 */  addiu      $4, $3, %lo(LIT_706__2)
+    /* 003E74 01DAFB74 DE01033C */  lui        $3, %hi("@706__2")
+    /* 003E78 01DAFB78 40D76424 */  addiu      $4, $3, %lo("@706__2")
     /* 003E7C 01DAFB7C 80180500 */  sll        $3, $5, 2
     /* 003E80 01DAFB80 21186400 */  addu       $3, $3, $4
     /* 003E84 01DAFB84 0000638C */  lw         $3, 0x0($3)

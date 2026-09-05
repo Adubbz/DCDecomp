@@ -115,8 +115,8 @@ glabel EdInitEventPoint__FP9CMapPartsPsP16EPARTS_FUNC_DATAiP14ED_EVENT_POINTi
     /* 083FEC 00183EEC A000A28F */  lw         $2, 0xA0($29)
     /* 083FF0 00183EF0 18004014 */  bnez       $2, .L00183F54
     /* 083FF4 00183EF4 00000000 */   nop
-    /* 083FF8 00183EF8 2700023C */  lui        $2, %hi(LIT_475__2)
-    /* 083FFC 00183EFC 30994224 */  addiu      $2, $2, %lo(LIT_475__2)
+    /* 083FF8 00183EF8 2700023C */  lui        $2, %hi("@475__2")
+    /* 083FFC 00183EFC 30994224 */  addiu      $2, $2, %lo("@475__2")
     /* 084000 00183F00 E000A327 */  addiu      $3, $29, 0xE0
     /* 084004 00183F04 00004278 */  lq         $2, 0x0($2)
     /* 084008 00183F08 0000627C */  sq         $2, 0x0($3)

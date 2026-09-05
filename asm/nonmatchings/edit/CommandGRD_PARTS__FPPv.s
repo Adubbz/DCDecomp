@@ -32,8 +32,8 @@ glabel CommandGRD_PARTS__FPPv
     /* 075EDC 00175DDC 0E006010 */  beqz       $3, .L00175E18
     /* 075EE0 00175DE0 00000000 */   nop
     /* 075EE4 00175DE4 3000A427 */  addiu      $4, $29, 0x30
-    /* 075EE8 00175DE8 2A00023C */  lui        $2, %hi(LIT_501__2)
-    /* 075EEC 00175DEC E0A74524 */  addiu      $5, $2, %lo(LIT_501__2)
+    /* 075EE8 00175DE8 2A00023C */  lui        $2, %hi("@501__2")
+    /* 075EEC 00175DEC E0A74524 */  addiu      $5, $2, %lo("@501__2")
     /* 075EF0 00175DF0 D201023C */  lui        $2, %hi(CurrentDir__3)
     /* 075EF4 00175DF4 F09A4624 */  addiu      $6, $2, %lo(CurrentDir__3)
     /* 075EF8 00175DF8 1614040C */  jal        sprintf

@@ -15,8 +15,8 @@ glabel GetItem__14CDngStatusDataFii
     /* 0BE180 001BE080 288E8070 */  paddub     $17, $4, $0
     /* 0BE184 001BE084 2886A070 */  paddub     $16, $5, $0
     /* 0BE188 001BE088 28AEC070 */  paddub     $21, $6, $0
-    /* 0BE18C 001BE08C 2A00023C */  lui        $2, %hi(LIT_540__2)
-    /* 0BE190 001BE090 A0BD4424 */  addiu      $4, $2, %lo(LIT_540__2)
+    /* 0BE18C 001BE08C 2A00023C */  lui        $2, %hi("@540__2")
+    /* 0BE190 001BE090 A0BD4424 */  addiu      $4, $2, %lo("@540__2")
     /* 0BE194 001BE094 A611040C */  jal        printf
     /* 0BE198 001BE098 00000000 */   nop
     /* 0BE19C 001BE09C 8400022A */  slti       $2, $16, 0x84
@@ -209,8 +209,8 @@ glabel GetItem__14CDngStatusDataFii
     /* 0BE424 001BE324 0101022A */  slti       $2, $16, 0x101
     /* 0BE428 001BE328 40004014 */  bnez       $2, .L001BE42C
     /* 0BE42C 001BE32C 00000000 */   nop
-    /* 0BE430 001BE330 2A00023C */  lui        $2, %hi(LIT_541__2)
-    /* 0BE434 001BE334 C0BD4424 */  addiu      $4, $2, %lo(LIT_541__2)
+    /* 0BE430 001BE330 2A00023C */  lui        $2, %hi("@541__2")
+    /* 0BE434 001BE334 C0BD4424 */  addiu      $4, $2, %lo("@541__2")
     /* 0BE438 001BE338 282E0072 */  paddub     $5, $16, $0
     /* 0BE43C 001BE33C A611040C */  jal        printf
     /* 0BE440 001BE340 00000000 */   nop

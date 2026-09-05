@@ -24,7 +24,7 @@ void CCollisionMDT::Initialize(void) {
     num = 0;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/dataset", LIT_199);
+INCLUDE_RODATA("asm/nonmatchings/dataset", @199);
 
 INCLUDE_ASM("asm/nonmatchings/dataset", InitializeDataBuffer__Fv);
 INCLUDE_ASM("asm/nonmatchings/dataset", SetDataBuffer__FP14CDataAlloc2_1_i);

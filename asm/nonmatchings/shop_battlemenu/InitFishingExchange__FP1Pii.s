@@ -34,8 +34,8 @@ glabel InitFishingExchange__FP1Pii
     /* 0F157C 001F147C A00330A4 */  sh         $16, %lo(FishMenu + 0x10)($1)
     /* 0F1580 001F1480 30FB040C */  jal        StartReadBG__Fv
     /* 0F1584 001F1484 00000000 */   nop
-    /* 0F1588 001F1488 2A00023C */  lui        $2, %hi(LIT_2943)
-    /* 0F158C 001F148C 00D44424 */  addiu      $4, $2, %lo(LIT_2943)
+    /* 0F1588 001F1488 2A00023C */  lui        $2, %hi("@2943")
+    /* 0F158C 001F148C 00D44424 */  addiu      $4, $2, %lo("@2943")
     /* 0F1590 001F1490 D901013C */  lui        $1, %hi(FishMenu + 0x24)
     /* 0F1594 001F1494 B403258C */  lw         $5, %lo(FishMenu + 0x24)($1)
     /* 0F1598 001F1498 ACAE080C */  jal        LoadFileBGMenuData__FPcP1
@@ -94,8 +94,8 @@ glabel InitFishingExchange__FP1Pii
   .L001F1568:
     /* 0F1668 001F1568 C701023C */  lui        $2, %hi(TexManager)
     /* 0F166C 001F156C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0F1670 001F1570 2A00023C */  lui        $2, %hi(LIT_761)
-    /* 0F1674 001F1574 60D14524 */  addiu      $5, $2, %lo(LIT_761)
+    /* 0F1670 001F1570 2A00023C */  lui        $2, %hi("@761")
+    /* 0F1674 001F1574 60D14524 */  addiu      $5, $2, %lo("@761")
     /* 0F1678 001F1578 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0F167C 001F157C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0F1680 001F1580 00000000 */   nop

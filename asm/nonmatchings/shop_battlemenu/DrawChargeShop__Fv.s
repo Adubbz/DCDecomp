@@ -326,8 +326,8 @@ glabel DrawChargeShop__Fv
     /* 0EAD40 001EAC40 31002010 */  beqz       $1, .L001EAD08
     /* 0EAD44 001EAC44 00000000 */   nop
     /* 0EAD48 001EAC48 19050524 */  addiu      $5, $0, 0x519
-    /* 0EAD4C 001EAC4C 2900023C */  lui        $2, %hi(LIT_1363__2)
-    /* 0EAD50 001EAC50 70274224 */  addiu      $2, $2, %lo(LIT_1363__2)
+    /* 0EAD4C 001EAC4C 2900023C */  lui        $2, %hi("@1363__2")
+    /* 0EAD50 001EAC50 70274224 */  addiu      $2, $2, %lo("@1363__2")
     /* 0EAD54 001EAC54 4000A627 */  addiu      $6, $29, 0x40
     /* 0EAD58 001EAC58 00004478 */  lq         $4, 0x0($2)
     /* 0EAD5C 001EAC5C 100043DC */  ld         $3, 0x10($2)

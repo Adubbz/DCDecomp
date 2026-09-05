@@ -7,9 +7,11 @@
 .ifndef MACRO_INC
 .set MACRO_INC, 1
 
+# GNU as treats a bare leading `@` as syntax, so quote every global label.
+# Quotes are discarded in the ELF name and do not affect ordinary labels.
 .macro glabel label
-    .global \label
-    \label:
+    .global "\label"
+    "\label":
 .endm
 
 # Jump-table targets. Global, unlike the branch labels below: the table itself

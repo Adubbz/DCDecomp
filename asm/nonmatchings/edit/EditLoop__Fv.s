@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_1612
+glabel "@1612"
     /* 19ABF0 0029AAF0 C0AB1700 */ .word .L0017ABC0
     /* 19ABF4 0029AAF4 C0AB1700 */ .word .L0017ABC0
     /* 19ABF8 0029AAF8 C0AB1700 */ .word .L0017ABC0
@@ -27,7 +27,7 @@ glabel LIT_1612
     /* 19AC38 0029AB38 00000000 */ .word 0x00000000
     /* 19AC3C 0029AB3C 00000000 */ .word 0x00000000
 
-glabel LIT_1611
+glabel "@1611"
     /* 19AC40 0029AB40 C8AA1700 */ .word .L0017AAC8
     /* 19AC44 0029AB44 C8A11700 */ .word .L0017A1C8
     /* 19AC48 0029AB48 04A31700 */ .word .L0017A304
@@ -579,8 +579,8 @@ glabel EditLoop__Fv
     /* 07A0A0 00179FA0 50B84224 */  addiu      $2, $2, %lo(menu$807)
     /* 07A0A4 00179FA4 21184300 */  addu       $3, $2, $3
     /* 07A0A8 00179FA8 1C008424 */  addiu      $4, $4, 0x1C
-    /* 07A0AC 00179FAC 2A00023C */  lui        $2, %hi(LIT_1609)
-    /* 07A0B0 00179FB0 D8AA4524 */  addiu      $5, $2, %lo(LIT_1609)
+    /* 07A0AC 00179FAC 2A00023C */  lui        $2, %hi("@1609")
+    /* 07A0B0 00179FB0 D8AA4524 */  addiu      $5, $2, %lo("@1609")
     /* 07A0B4 00179FB4 E803C68C */  lw         $6, 0x3E8($6)
     /* 07A0B8 00179FB8 0000678C */  lw         $7, 0x0($3)
     /* 07A0BC 00179FBC 1614040C */  jal        sprintf
@@ -683,8 +683,8 @@ glabel EditLoop__Fv
     /* 07A22C 0017A12C 1100812C */  sltiu      $1, $4, 0x11
     /* 07A230 0017A130 65022010 */  beqz       $1, .L0017AAC8
     /* 07A234 0017A134 00000000 */   nop
-    /* 07A238 0017A138 2A00023C */  lui        $2, %hi(LIT_1611)
-    /* 07A23C 0017A13C 40AB4324 */  addiu      $3, $2, %lo(LIT_1611)
+    /* 07A238 0017A138 2A00023C */  lui        $2, %hi("@1611")
+    /* 07A23C 0017A13C 40AB4324 */  addiu      $3, $2, %lo("@1611")
     /* 07A240 0017A140 80100400 */  sll        $2, $4, 2
     /* 07A244 0017A144 21104300 */  addu       $2, $2, $3
     /* 07A248 0017A148 0000428C */  lw         $2, 0x0($2)
@@ -1389,8 +1389,8 @@ glabel EditLoop__Fv
     /* 07AC70 0017AB70 1100812C */  sltiu      $1, $4, 0x11
     /* 07AC74 0017AB74 27002010 */  beqz       $1, .L0017AC14
     /* 07AC78 0017AB78 00000000 */   nop
-    /* 07AC7C 0017AB7C 2A00023C */  lui        $2, %hi(LIT_1612)
-    /* 07AC80 0017AB80 F0AA4324 */  addiu      $3, $2, %lo(LIT_1612)
+    /* 07AC7C 0017AB7C 2A00023C */  lui        $2, %hi("@1612")
+    /* 07AC80 0017AB80 F0AA4324 */  addiu      $3, $2, %lo("@1612")
     /* 07AC84 0017AB84 80100400 */  sll        $2, $4, 2
     /* 07AC88 0017AB88 21104300 */  addu       $2, $2, $3
     /* 07AC8C 0017AB8C 0000428C */  lw         $2, 0x0($2)
@@ -1720,8 +1720,8 @@ glabel EditLoop__Fv
   .L0017B054:
     /* 07B154 0017B054 C701023C */  lui        $2, %hi(TexManager)
     /* 07B158 0017B058 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 07B15C 0017B05C 2A00023C */  lui        $2, %hi(LIT_1610)
-    /* 07B160 0017B060 E0AA4524 */  addiu      $5, $2, %lo(LIT_1610)
+    /* 07B15C 0017B05C 2A00023C */  lui        $2, %hi("@1610")
+    /* 07B160 0017B060 E0AA4524 */  addiu      $5, $2, %lo("@1610")
     /* 07B164 0017B064 FFFF0624 */  addiu      $6, $0, -0x1
     /* 07B168 0017B068 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 07B16C 0017B06C 00000000 */   nop

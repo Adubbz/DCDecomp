@@ -64,8 +64,8 @@ glabel ExitBattleMenu__Fi
     /* 0F5CC4 001F5BC4 00000000 */   nop
     /* 0F5CC8 001F5BC8 6095828F */  lw         $2, -0x6AA0($28)
     /* 0F5CCC 001F5BCC 010044A0 */  sb         $4, 0x1($2)
-    /* 0F5CD0 001F5BD0 2900023C */  lui        $2, %hi(LIT_959)
-    /* 0F5CD4 001F5BD4 E02E4224 */  addiu      $2, $2, %lo(LIT_959)
+    /* 0F5CD0 001F5BD0 2900023C */  lui        $2, %hi("@959")
+    /* 0F5CD4 001F5BD4 E02E4224 */  addiu      $2, $2, %lo("@959")
     /* 0F5CD8 001F5BD8 1000A427 */  addiu      $4, $29, 0x10
     /* 0F5CDC 001F5BDC 00004378 */  lq         $3, 0x0($2)
     /* 0F5CE0 001F5BE0 100042DC */  ld         $2, 0x10($2)
@@ -105,8 +105,8 @@ glabel ExitBattleMenu__Fi
     /* 0F5D68 001F5C68 0F000010 */  b          .L001F5CA8
     /* 0F5D6C 001F5C6C 00000000 */   nop
   .L001F5C70:
-    /* 0F5D70 001F5C70 2900023C */  lui        $2, %hi(LIT_963)
-    /* 0F5D74 001F5C74 002F4224 */  addiu      $2, $2, %lo(LIT_963)
+    /* 0F5D70 001F5C70 2900023C */  lui        $2, %hi("@963")
+    /* 0F5D74 001F5C74 002F4224 */  addiu      $2, $2, %lo("@963")
     /* 0F5D78 001F5C78 3000A627 */  addiu      $6, $29, 0x30
     /* 0F5D7C 001F5C7C 00004378 */  lq         $3, 0x0($2)
     /* 0F5D80 001F5C80 100042DC */  ld         $2, 0x10($2)

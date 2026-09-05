@@ -62,8 +62,8 @@ glabel BattleActionPlay_Ruby__FP10CCharacteri
     /* 011728 01DBD428 DC01013C */  lui        $1, %hi(BtActStatus + 0x1C)
     /* 01172C 01DBD42C 9C4420AC */  sw         $0, %lo(BtActStatus + 0x1C)($1)
     /* 011730 01DBD430 BC00448E */  lw         $4, 0xBC($18)
-    /* 011734 01DBD434 DC01023C */  lui        $2, %hi(LIT_5627)
-    /* 011738 01DBD438 90334524 */  addiu      $5, $2, %lo(LIT_5627)
+    /* 011734 01DBD434 DC01023C */  lui        $2, %hi("@5627")
+    /* 011738 01DBD438 90334524 */  addiu      $5, $2, %lo("@5627")
     /* 01173C 01DBD43C C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 011740 01DBD440 00000000 */   nop
     /* 011744 01DBD444 FC9C848F */  lw         $4, -0x6304($28)
@@ -144,8 +144,8 @@ glabel BattleActionPlay_Ruby__FP10CCharacteri
     /* 011868 01DBD568 DC01013C */  lui        $1, %hi(BtActStatus + 0x1C)
     /* 01186C 01DBD56C 9C4420AC */  sw         $0, %lo(BtActStatus + 0x1C)($1)
     /* 011870 01DBD570 BC00448E */  lw         $4, 0xBC($18)
-    /* 011874 01DBD574 DC01023C */  lui        $2, %hi(LIT_5627)
-    /* 011878 01DBD578 90334524 */  addiu      $5, $2, %lo(LIT_5627)
+    /* 011874 01DBD574 DC01023C */  lui        $2, %hi("@5627")
+    /* 011878 01DBD578 90334524 */  addiu      $5, $2, %lo("@5627")
     /* 01187C 01DBD57C C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 011880 01DBD580 00000000 */   nop
     /* 011884 01DBD584 FC9C848F */  lw         $4, -0x6304($28)

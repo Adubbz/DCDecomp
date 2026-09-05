@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_1366__2
+glabel "@1366__2"
     /* 19CFC0 0029CEC0 D46C1D00 */ .word .L001D6CD4
     /* 19CFC4 0029CEC4 E46C1D00 */ .word .L001D6CE4
     /* 19CFC8 0029CEC8 046D1D00 */ .word .L001D6D04
@@ -81,8 +81,8 @@ glabel Draw__11CRandomItemFv
     /* 0D6DAC 001D6CAC 0C00812C */  sltiu      $1, $4, 0xC
     /* 0D6DB0 001D6CB0 14002010 */  beqz       $1, .L001D6D04
     /* 0D6DB4 001D6CB4 00000000 */   nop
-    /* 0D6DB8 001D6CB8 2A00023C */  lui        $2, %hi(LIT_1366__2)
-    /* 0D6DBC 001D6CBC C0CE4324 */  addiu      $3, $2, %lo(LIT_1366__2)
+    /* 0D6DB8 001D6CB8 2A00023C */  lui        $2, %hi("@1366__2")
+    /* 0D6DBC 001D6CBC C0CE4324 */  addiu      $3, $2, %lo("@1366__2")
     /* 0D6DC0 001D6CC0 80100400 */  sll        $2, $4, 2
     /* 0D6DC4 001D6CC4 21104300 */  addu       $2, $2, $3
     /* 0D6DC8 001D6CC8 0000428C */  lw         $2, 0x0($2)

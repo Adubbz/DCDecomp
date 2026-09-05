@@ -16,8 +16,8 @@ glabel DngActiveItemTextureCopy__Fv
     /* 12A6C4 0022A5C4 31000010 */  b          .L0022A68C
     /* 12A6C8 0022A5C8 00000000 */   nop
   .L0022A5CC:
-    /* 12A6CC 0022A5CC 2900023C */  lui        $2, %hi(LIT_1707)
-    /* 12A6D0 0022A5D0 D0424224 */  addiu      $2, $2, %lo(LIT_1707)
+    /* 12A6CC 0022A5CC 2900023C */  lui        $2, %hi("@1707")
+    /* 12A6D0 0022A5D0 D0424224 */  addiu      $2, $2, %lo("@1707")
     /* 12A6D4 0022A5D4 3000A427 */  addiu      $4, $29, 0x30
     /* 12A6D8 0022A5D8 000043DC */  ld         $3, 0x0($2)
     /* 12A6DC 0022A5DC 08004290 */  lbu        $2, 0x8($2)
@@ -56,8 +56,8 @@ glabel DngActiveItemTextureCopy__Fv
     /* 12A758 0022A658 40111000 */  sll        $2, $16, 5
     /* 12A75C 0022A65C 20004824 */  addiu      $8, $2, 0x20
     /* 12A760 0022A660 3000A427 */  addiu      $4, $29, 0x30
-    /* 12A764 0022A664 2A00023C */  lui        $2, %hi(LIT_1728__2)
-    /* 12A768 0022A668 40F04724 */  addiu      $7, $2, %lo(LIT_1728__2)
+    /* 12A764 0022A664 2A00023C */  lui        $2, %hi("@1728__2")
+    /* 12A768 0022A668 40F04724 */  addiu      $7, $2, %lo("@1728__2")
     /* 12A76C 0022A66C 284E0070 */  paddub     $9, $0, $0
     /* 12A770 0022A670 BCC7060C */  jal        setItemToReserved__FPciiPcii
     /* 12A774 0022A674 00000000 */   nop

@@ -20,8 +20,8 @@ glabel LoadCharaMajin__Fv
     /* 013E44 01DBFB44 00000000 */   nop
   .L01DBFB48:
     /* 013E48 01DBFB48 948B858F */  lw         $5, -0x746C($28)
-    /* 013E4C 01DBFB4C DE01023C */  lui        $2, %hi(LIT_990__3)
-    /* 013E50 01DBFB50 10F94424 */  addiu      $4, $2, %lo(LIT_990__3)
+    /* 013E4C 01DBFB4C DE01023C */  lui        $2, %hi("@990__3")
+    /* 013E50 01DBFB50 10F94424 */  addiu      $4, $2, %lo("@990__3")
     /* 013E54 01DBFB54 28360070 */  paddub     $6, $0, $0
     /* 013E58 01DBFB58 ACFA040C */  jal        LoadFileBG__FPcP1Pi
     /* 013E5C 01DBFB5C 00000000 */   nop
@@ -48,8 +48,8 @@ glabel LoadCharaMajin__Fv
     /* 013EA8 01DBFBA8 DF01023C */  lui        $2, %hi(Chara__3 + 0x46C0)
     /* 013EAC 01DBFBAC A0454424 */  addiu      $4, $2, %lo(Chara__3 + 0x46C0)
     /* 013EB0 01DBFBB0 948B858F */  lw         $5, -0x746C($28)
-    /* 013EB4 01DBFBB4 DE01023C */  lui        $2, %hi(LIT_991__2)
-    /* 013EB8 01DBFBB8 28F94624 */  addiu      $6, $2, %lo(LIT_991__2)
+    /* 013EB4 01DBFBB4 DE01023C */  lui        $2, %hi("@991__2")
+    /* 013EB8 01DBFBB8 28F94624 */  addiu      $6, $2, %lo("@991__2")
     /* 013EBC 01DBFBBC DF01023C */  lui        $2, %hi(CharaDataBuffer__2 + 0x60)
     /* 013EC0 01DBFBC0 60FE4724 */  addiu      $7, $2, %lo(CharaDataBuffer__2 + 0x60)
     /* 013EC4 01DBFBC4 28460070 */  paddub     $8, $0, $0

@@ -236,17 +236,17 @@ void CHitPointMark::Step() {
 
 /* The debug strings the rest of the unit prints; the functions that name
  * them are still assembly, and a table in `.data` points at them. */
-INCLUDE_RODATA("asm/nonmatchings/hitmark", LIT_1522);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", LIT_1523);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", LIT_1524);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", LIT_1525);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", LIT_1526);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", LIT_1527);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", LIT_1528);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", LIT_1529);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", LIT_1530);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", LIT_1531);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", LIT_1532);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", LIT_1533);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", LIT_1534);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", LIT_1535);
+INCLUDE_RODATA("asm/nonmatchings/hitmark", @1522);
+INCLUDE_RODATA("asm/nonmatchings/hitmark", @1523);
+INCLUDE_RODATA("asm/nonmatchings/hitmark", @1524);
+INCLUDE_RODATA("asm/nonmatchings/hitmark", @1525);
+INCLUDE_RODATA("asm/nonmatchings/hitmark", @1526);
+INCLUDE_RODATA("asm/nonmatchings/hitmark", @1527);
+INCLUDE_RODATA("asm/nonmatchings/hitmark", @1528);
+INCLUDE_RODATA("asm/nonmatchings/hitmark", @1529);
+INCLUDE_RODATA("asm/nonmatchings/hitmark", @1530);
+INCLUDE_RODATA("asm/nonmatchings/hitmark", @1531);
+INCLUDE_RODATA("asm/nonmatchings/hitmark", @1532);
+INCLUDE_RODATA("asm/nonmatchings/hitmark", @1533);
+INCLUDE_RODATA("asm/nonmatchings/hitmark", @1534);
+INCLUDE_RODATA("asm/nonmatchings/hitmark", @1535);

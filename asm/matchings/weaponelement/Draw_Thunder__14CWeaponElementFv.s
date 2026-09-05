@@ -17,8 +17,8 @@ glabel Draw_Thunder__14CWeaponElementFv
     /* 0BAE28 001BAD28 28AE8070 */  paddub     $21, $4, $0
     /* 0BAE2C 001BAD2C C701023C */  lui        $2, %hi(TexManager)
     /* 0BAE30 001BAD30 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0BAE34 001BAD34 2A00023C */  lui        $2, %hi(LIT_1182)
-    /* 0BAE38 001BAD38 88BC4524 */  addiu      $5, $2, %lo(LIT_1182)
+    /* 0BAE34 001BAD34 2A00023C */  lui        $2, %hi("@1182")
+    /* 0BAE38 001BAD38 88BC4524 */  addiu      $5, $2, %lo("@1182")
     /* 0BAE3C 001BAD3C FFFF0624 */  addiu      $6, $0, -0x1
     /* 0BAE40 001BAD40 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0BAE44 001BAD44 00000000 */   nop
@@ -99,8 +99,8 @@ glabel Draw_Thunder__14CWeaponElementFv
     /* 0BAF64 001BAE64 2A182302 */  slt        $3, $17, $3
     /* 0BAF68 001BAE68 BFFF6014 */  bnez       $3, .L001BAD68
     /* 0BAF6C 001BAE6C 00000000 */   nop
-    /* 0BAF70 001BAE70 2700033C */  lui        $3, %hi(LIT_1497__2)
-    /* 0BAF74 001BAE74 C0B26324 */  addiu      $3, $3, %lo(LIT_1497__2)
+    /* 0BAF70 001BAE70 2700033C */  lui        $3, %hi("@1497__2")
+    /* 0BAF74 001BAE74 C0B26324 */  addiu      $3, $3, %lo("@1497__2")
     /* 0BAF78 001BAE78 E000A527 */  addiu      $5, $29, 0xE0
     /* 0BAF7C 001BAE7C 00006478 */  lq         $4, 0x0($3)
     /* 0BAF80 001BAE80 10006378 */  lq         $3, 0x10($3)

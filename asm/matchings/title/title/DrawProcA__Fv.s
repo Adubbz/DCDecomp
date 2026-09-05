@@ -8,8 +8,8 @@ glabel DrawProcA__Fv
     /* 020094 01DCBD94 2000BF7F */  sq         $31, 0x20($29)
     /* 020098 01DCBD98 1000B17F */  sq         $17, 0x10($29)
     /* 02009C 01DCBD9C 0000B07F */  sq         $16, 0x0($29)
-    /* 0200A0 01DCBDA0 DE01023C */  lui        $2, %hi(LIT_957__3)
-    /* 0200A4 01DCBDA4 50B24524 */  addiu      $5, $2, %lo(LIT_957__3)
+    /* 0200A0 01DCBDA0 DE01023C */  lui        $2, %hi("@957__3")
+    /* 0200A4 01DCBDA4 50B24524 */  addiu      $5, $2, %lo("@957__3")
     /* 0200A8 01DCBDA8 3000A427 */  addiu      $4, $29, 0x30
     /* 0200AC 01DCBDAC 04000324 */  addiu      $3, $0, 0x4
   .L01DCBDB0:
@@ -304,8 +304,8 @@ glabel DrawProcA__Fv
     /* 0204EC 01DCC1EC 0B004010 */  beqz       $2, .L01DCC21C
     /* 0204F0 01DCC1F0 00000000 */   nop
     /* 0204F4 01DCC1F4 28260072 */  paddub     $4, $16, $0
-    /* 0204F8 01DCC1F8 DE01023C */  lui        $2, %hi(LIT_952__2)
-    /* 0204FC 01DCC1FC C8024524 */  addiu      $5, $2, %lo(LIT_952__2)
+    /* 0204F8 01DCC1F8 DE01023C */  lui        $2, %hi("@952__2")
+    /* 0204FC 01DCC1FC C8024524 */  addiu      $5, $2, %lo("@952__2")
     /* 020500 01DCC200 01000624 */  addiu      $6, $0, 0x1
     /* 020504 01DCC204 A000198E */  lw         $25, 0xA0($16)
     /* 020508 01DCC208 9000398F */  lw         $25, 0x90($25)
@@ -315,8 +315,8 @@ glabel DrawProcA__Fv
     /* 020518 01DCC218 00000000 */   nop
   .L01DCC21C:
     /* 02051C 01DCC21C 28260072 */  paddub     $4, $16, $0
-    /* 020520 01DCC220 DE01023C */  lui        $2, %hi(LIT_952__2)
-    /* 020524 01DCC224 C8024524 */  addiu      $5, $2, %lo(LIT_952__2)
+    /* 020520 01DCC220 DE01023C */  lui        $2, %hi("@952__2")
+    /* 020524 01DCC224 C8024524 */  addiu      $5, $2, %lo("@952__2")
     /* 020528 01DCC228 28360070 */  paddub     $6, $0, $0
     /* 02052C 01DCC22C A000198E */  lw         $25, 0xA0($16)
     /* 020530 01DCC230 9000398F */  lw         $25, 0x90($25)
@@ -360,8 +360,8 @@ glabel DrawProcA__Fv
     /* 0205C4 01DCC2C4 FFFF4224 */  addiu      $2, $2, -0x1
     /* 0205C8 01DCC2C8 1C9C82AF */  sw         $2, %gp_rel(lightning$958)($28)
   .L01DCC2CC:
-    /* 0205CC 01DCC2CC DE01023C */  lui        $2, %hi(LIT_1006)
-    /* 0205D0 01DCC2D0 90B24224 */  addiu      $2, $2, %lo(LIT_1006)
+    /* 0205CC 01DCC2CC DE01023C */  lui        $2, %hi("@1006")
+    /* 0205D0 01DCC2D0 90B24224 */  addiu      $2, $2, %lo("@1006")
     /* 0205D4 01DCC2D4 0001A427 */  addiu      $4, $29, 0x100
     /* 0205D8 01DCC2D8 00004278 */  lq         $2, 0x0($2)
     /* 0205DC 01DCC2DC 0000827C */  sq         $2, 0x0($4)
@@ -510,8 +510,8 @@ glabel DrawProcA__Fv
     /* 020810 01DCC510 16000624 */  addiu      $6, $0, 0x16
     /* 020814 01DCC514 1CCC040C */  jal        ReloadTexture__15CTextureManagerFP13sceVif1Packeti
     /* 020818 01DCC518 00000000 */   nop
-    /* 02081C 01DCC51C DE01023C */  lui        $2, %hi(LIT_1012__3)
-    /* 020820 01DCC520 A0B24324 */  addiu      $3, $2, %lo(LIT_1012__3)
+    /* 02081C 01DCC51C DE01023C */  lui        $2, %hi("@1012__3")
+    /* 020820 01DCC520 A0B24324 */  addiu      $3, $2, %lo("@1012__3")
     /* 020824 01DCC524 3001A427 */  addiu      $4, $29, 0x130
     /* 020828 01DCC528 000062DC */  ld         $2, 0x0($3)
     /* 02082C 01DCC52C 080060C4 */  lwc1       $f0, 0x8($3)

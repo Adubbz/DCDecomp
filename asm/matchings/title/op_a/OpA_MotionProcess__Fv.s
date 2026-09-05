@@ -409,8 +409,8 @@ glabel OpA_MotionProcess__Fv
     /* 00B4D8 01DB71D8 38E4760C */  jal        LoadMotionData__Fv
     /* 00B4DC 01DB71DC 00000000 */   nop
   .L01DB71E0:
-    /* 00B4E0 01DB71E0 DD01033C */  lui        $3, %hi(LIT_762__3)
-    /* 00B4E4 01DB71E4 A0666624 */  addiu      $6, $3, %lo(LIT_762__3)
+    /* 00B4E0 01DB71E0 DD01033C */  lui        $3, %hi("@762__3")
+    /* 00B4E4 01DB71E4 A0666624 */  addiu      $6, $3, %lo("@762__3")
     /* 00B4E8 01DB71E8 5000A527 */  addiu      $5, $29, 0x50
     /* 00B4EC 01DB71EC 05000424 */  addiu      $4, $0, 0x5
   .L01DB71F0:

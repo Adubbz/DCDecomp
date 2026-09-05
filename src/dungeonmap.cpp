@@ -189,7 +189,7 @@ void CDungeonMap::SetNPC(int npc_no, unsigned int *pack, int parts_no, sceVu0FVE
 #endif /* DNG_COMPILE_UNMATCHED */
 
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", SetNPC__11CDungeonMapFiPUiiPfPfiiP14CDataAlloc2_1_);
-INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_1008);
+INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @1008);
 
 void CDungeonMap::ClearNPC_Cash() {
     for (int i = 0; i < 4; i++) {
@@ -751,8 +751,8 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
 }
 #endif
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawMiniMap__11CDungeonMapFPff);
-INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_1470);
-INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_1471);
+INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @1470);
+INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @1471);
 
 void CDungeonMap::checkMask(float x, float z) {
     int cell_x;
@@ -896,8 +896,8 @@ void CDungeonMap::DrawFireFreeStyle(CFrameVu1 *frame, CCameraFollow *camera) {
 }
 #endif /* DNG_COMPILE_UNMATCHED */
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawFireFreeStyle__11CDungeonMapFP9CFrameVu1P13CCameraFollow);
-INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_1559);
-INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_1560);
+INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @1559);
+INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @1560);
 
 #if DNG_COMPILE_UNMATCHED
 void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
@@ -2728,8 +2728,8 @@ void CDungeonMap::GetRoomLinkInfo(void) {
 }
 #endif
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", GetRoomLinkInfo__11CDungeonMapFv);
-INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_2859);
-INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_2860);
+INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @2859);
+INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @2860);
 
 void CDungeonMap::SetUnderLoad() {
     for (int i = 0; i < 20; i++) {
@@ -3074,10 +3074,10 @@ int CDungeonMap::SetCharaDoor(int chara_no) {
  * ordering of the declarations reproduces which one.
  *
  * Compiling this also moves data. MWCC emits its own jump table for the
- * switch, which has to land where retail keeps LIT_3191 -- so that marker
- * comes out and the LIT_3190 one moves above the function -- and it emits a
+ * switch, which has to land where retail keeps @3191 -- so that marker
+ * comes out and the @3190 one moves above the function -- and it emits a
  * .data template for `map_no`, which expands this unit's source-owned data
- * range through LIT_3162. Both are undone here. */
+ * range through @3162. Both are undone here. */
 void CDungeonMap::buildRandomMap(int room_max, int full) {
     int w;
     int h;
@@ -3267,7 +3267,7 @@ void CDungeonMap::buildRandomMap(int room_max, int full) {
     printf("map build success!!\n");
 }
 #endif /* DNG_COMPILE_UNMATCHED */
-INCLUDE_RODATA("asm/nonmatchings/dungeonmap", LIT_3190);
+INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @3190);
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", buildRandomMap__11CDungeonMapFii);
 
 void CDungeonMap::initSubmap(CDataAlloc2<1> *alloc) {

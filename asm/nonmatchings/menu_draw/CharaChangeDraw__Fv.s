@@ -29,8 +29,8 @@ glabel CharaChangeDraw__Fv
     /* 129898 00229798 00000000 */   nop
     /* 12989C 0022979C C701023C */  lui        $2, %hi(TexManager)
     /* 1298A0 002297A0 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 1298A4 002297A4 2A00023C */  lui        $2, %hi(LIT_1349)
-    /* 1298A8 002297A8 98EF4524 */  addiu      $5, $2, %lo(LIT_1349)
+    /* 1298A4 002297A4 2A00023C */  lui        $2, %hi("@1349")
+    /* 1298A8 002297A8 98EF4524 */  addiu      $5, $2, %lo("@1349")
     /* 1298AC 002297AC FFFF0624 */  addiu      $6, $0, -0x1
     /* 1298B0 002297B0 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 1298B4 002297B4 00000000 */   nop
@@ -569,8 +569,8 @@ glabel CharaChangeDraw__Fv
     /* 12A0B4 00229FB4 00000000 */   nop
     /* 12A0B8 00229FB8 9097828F */  lw         $2, -0x6870($28)
     /* 12A0BC 00229FBC 46434494 */  lhu        $4, 0x4346($2)
-    /* 12A0C0 00229FC0 2900023C */  lui        $2, %hi(LIT_1581__3)
-    /* 12A0C4 00229FC4 A0424224 */  addiu      $2, $2, %lo(LIT_1581__3)
+    /* 12A0C0 00229FC0 2900023C */  lui        $2, %hi("@1581__3")
+    /* 12A0C4 00229FC4 A0424224 */  addiu      $2, $2, %lo("@1581__3")
     /* 12A0C8 00229FC8 8000A827 */  addiu      $8, $29, 0x80
     /* 12A0CC 00229FCC 00004278 */  lq         $2, 0x0($2)
     /* 12A0D0 00229FD0 0000027D */  sq         $2, 0x0($8)
@@ -649,8 +649,8 @@ glabel CharaChangeDraw__Fv
     /* 12A1F4 0022A0F4 900B4424 */  addiu      $4, $2, %lo(CommonMenuMes1)
     /* 12A1F8 0022A0F8 C44C050C */  jal        DrawMesWin__6ClsMesFv
     /* 12A1FC 0022A0FC 00000000 */   nop
-    /* 12A200 0022A100 2900023C */  lui        $2, %hi(LIT_1582__2)
-    /* 12A204 0022A104 B0424224 */  addiu      $2, $2, %lo(LIT_1582__2)
+    /* 12A200 0022A100 2900023C */  lui        $2, %hi("@1582__2")
+    /* 12A204 0022A104 B0424224 */  addiu      $2, $2, %lo("@1582__2")
     /* 12A208 0022A108 9000A327 */  addiu      $3, $29, 0x90
     /* 12A20C 0022A10C 00004278 */  lq         $2, 0x0($2)
     /* 12A210 0022A110 0000627C */  sq         $2, 0x0($3)

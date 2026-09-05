@@ -23,8 +23,8 @@ glabel CommandSHADOW_MODEL__FPPv
     /* 03A2CC 0013A1CC 08004014 */  bnez       $2, .L0013A1F0
     /* 03A2D0 0013A1D0 00000000 */   nop
     /* 03A2D4 0013A1D4 0000258E */  lw         $5, 0x0($17)
-    /* 03A2D8 0013A1D8 2A00023C */  lui        $2, %hi(LIT_775)
-    /* 03A2DC 0013A1DC 48904424 */  addiu      $4, $2, %lo(LIT_775)
+    /* 03A2D8 0013A1D8 2A00023C */  lui        $2, %hi("@775")
+    /* 03A2DC 0013A1DC 48904424 */  addiu      $4, $2, %lo("@775")
     /* 03A2E0 0013A1E0 A611040C */  jal        printf
     /* 03A2E4 0013A1E4 00000000 */   nop
     /* 03A2E8 0013A1E8 0A000010 */  b          .L0013A214

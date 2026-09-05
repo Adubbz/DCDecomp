@@ -203,8 +203,8 @@ glabel Setsumei__Fv
     /* 01B430 01DC7130 28864070 */  paddub     $16, $2, $0
     /* 01B434 01DC7134 C701023C */  lui        $2, %hi(TexManager)
     /* 01B438 01DC7138 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01B43C 01DC713C DE01023C */  lui        $2, %hi(LIT_1286__2)
-    /* 01B440 01DC7140 38FE4524 */  addiu      $5, $2, %lo(LIT_1286__2)
+    /* 01B43C 01DC713C DE01023C */  lui        $2, %hi("@1286__2")
+    /* 01B440 01DC7140 38FE4524 */  addiu      $5, $2, %lo("@1286__2")
     /* 01B444 01DC7144 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01B448 01DC7148 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01B44C 01DC714C 00000000 */   nop
@@ -234,8 +234,8 @@ glabel Setsumei__Fv
     /* 01B4AC 01DC71AC 28864070 */  paddub     $16, $2, $0
     /* 01B4B0 01DC71B0 C701023C */  lui        $2, %hi(TexManager)
     /* 01B4B4 01DC71B4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01B4B8 01DC71B8 DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01B4BC 01DC71BC 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01B4B8 01DC71B8 DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01B4BC 01DC71BC 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01B4C0 01DC71C0 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01B4C4 01DC71C4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01B4C8 01DC71C8 00000000 */   nop
@@ -264,8 +264,8 @@ glabel Setsumei__Fv
     /* 01B524 01DC7224 28864070 */  paddub     $16, $2, $0
     /* 01B528 01DC7228 C701023C */  lui        $2, %hi(TexManager)
     /* 01B52C 01DC722C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01B530 01DC7230 DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01B534 01DC7234 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01B530 01DC7230 DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01B534 01DC7234 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01B538 01DC7238 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01B53C 01DC723C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01B540 01DC7240 00000000 */   nop
@@ -294,8 +294,8 @@ glabel Setsumei__Fv
     /* 01B59C 01DC729C 28864070 */  paddub     $16, $2, $0
     /* 01B5A0 01DC72A0 C701023C */  lui        $2, %hi(TexManager)
     /* 01B5A4 01DC72A4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01B5A8 01DC72A8 DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01B5AC 01DC72AC 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01B5A8 01DC72A8 DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01B5AC 01DC72AC 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01B5B0 01DC72B0 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01B5B4 01DC72B4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01B5B8 01DC72B8 00000000 */   nop
@@ -324,8 +324,8 @@ glabel Setsumei__Fv
     /* 01B614 01DC7314 28864070 */  paddub     $16, $2, $0
     /* 01B618 01DC7318 C701023C */  lui        $2, %hi(TexManager)
     /* 01B61C 01DC731C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01B620 01DC7320 DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01B624 01DC7324 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01B620 01DC7320 DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01B624 01DC7324 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01B628 01DC7328 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01B62C 01DC732C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01B630 01DC7330 00000000 */   nop
@@ -354,8 +354,8 @@ glabel Setsumei__Fv
     /* 01B68C 01DC738C 28864070 */  paddub     $16, $2, $0
     /* 01B690 01DC7390 C701023C */  lui        $2, %hi(TexManager)
     /* 01B694 01DC7394 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01B698 01DC7398 DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01B69C 01DC739C 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01B698 01DC7398 DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01B69C 01DC739C 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01B6A0 01DC73A0 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01B6A4 01DC73A4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01B6A8 01DC73A8 00000000 */   nop
@@ -385,8 +385,8 @@ glabel Setsumei__Fv
     /* 01B708 01DC7408 28864070 */  paddub     $16, $2, $0
     /* 01B70C 01DC740C C701023C */  lui        $2, %hi(TexManager)
     /* 01B710 01DC7410 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01B714 01DC7414 DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01B718 01DC7418 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01B714 01DC7414 DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01B718 01DC7418 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01B71C 01DC741C FFFF0624 */  addiu      $6, $0, -0x1
     /* 01B720 01DC7420 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01B724 01DC7424 00000000 */   nop
@@ -416,8 +416,8 @@ glabel Setsumei__Fv
     /* 01B784 01DC7484 28864070 */  paddub     $16, $2, $0
     /* 01B788 01DC7488 C701023C */  lui        $2, %hi(TexManager)
     /* 01B78C 01DC748C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01B790 01DC7490 DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01B794 01DC7494 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01B790 01DC7490 DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01B794 01DC7494 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01B798 01DC7498 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01B79C 01DC749C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01B7A0 01DC74A0 00000000 */   nop
@@ -447,8 +447,8 @@ glabel Setsumei__Fv
     /* 01B800 01DC7500 28864070 */  paddub     $16, $2, $0
     /* 01B804 01DC7504 C701023C */  lui        $2, %hi(TexManager)
     /* 01B808 01DC7508 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01B80C 01DC750C DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01B810 01DC7510 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01B80C 01DC750C DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01B810 01DC7510 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01B814 01DC7514 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01B818 01DC7518 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01B81C 01DC751C 00000000 */   nop
@@ -477,8 +477,8 @@ glabel Setsumei__Fv
     /* 01B878 01DC7578 28864070 */  paddub     $16, $2, $0
     /* 01B87C 01DC757C C701023C */  lui        $2, %hi(TexManager)
     /* 01B880 01DC7580 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01B884 01DC7584 DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01B888 01DC7588 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01B884 01DC7584 DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01B888 01DC7588 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01B88C 01DC758C FFFF0624 */  addiu      $6, $0, -0x1
     /* 01B890 01DC7590 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01B894 01DC7594 00000000 */   nop
@@ -507,8 +507,8 @@ glabel Setsumei__Fv
     /* 01B8F0 01DC75F0 28864070 */  paddub     $16, $2, $0
     /* 01B8F4 01DC75F4 C701023C */  lui        $2, %hi(TexManager)
     /* 01B8F8 01DC75F8 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01B8FC 01DC75FC DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01B900 01DC7600 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01B8FC 01DC75FC DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01B900 01DC7600 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01B904 01DC7604 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01B908 01DC7608 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01B90C 01DC760C 00000000 */   nop
@@ -541,8 +541,8 @@ glabel Setsumei__Fv
     /* 01B978 01DC7678 28864070 */  paddub     $16, $2, $0
     /* 01B97C 01DC767C C701023C */  lui        $2, %hi(TexManager)
     /* 01B980 01DC7680 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01B984 01DC7684 DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01B988 01DC7688 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01B984 01DC7684 DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01B988 01DC7688 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01B98C 01DC768C FFFF0624 */  addiu      $6, $0, -0x1
     /* 01B990 01DC7690 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01B994 01DC7694 00000000 */   nop
@@ -570,8 +570,8 @@ glabel Setsumei__Fv
     /* 01B9EC 01DC76EC 28864070 */  paddub     $16, $2, $0
     /* 01B9F0 01DC76F0 C701023C */  lui        $2, %hi(TexManager)
     /* 01B9F4 01DC76F4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01B9F8 01DC76F8 DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01B9FC 01DC76FC 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01B9F8 01DC76F8 DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01B9FC 01DC76FC 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01BA00 01DC7700 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01BA04 01DC7704 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01BA08 01DC7708 00000000 */   nop
@@ -599,8 +599,8 @@ glabel Setsumei__Fv
     /* 01BA60 01DC7760 28864070 */  paddub     $16, $2, $0
     /* 01BA64 01DC7764 C701023C */  lui        $2, %hi(TexManager)
     /* 01BA68 01DC7768 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01BA6C 01DC776C DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01BA70 01DC7770 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01BA6C 01DC776C DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01BA70 01DC7770 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01BA74 01DC7774 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01BA78 01DC7778 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01BA7C 01DC777C 00000000 */   nop
@@ -628,8 +628,8 @@ glabel Setsumei__Fv
     /* 01BAD4 01DC77D4 28864070 */  paddub     $16, $2, $0
     /* 01BAD8 01DC77D8 C701023C */  lui        $2, %hi(TexManager)
     /* 01BADC 01DC77DC 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01BAE0 01DC77E0 DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01BAE4 01DC77E4 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01BAE0 01DC77E0 DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01BAE4 01DC77E4 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01BAE8 01DC77E8 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01BAEC 01DC77EC B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01BAF0 01DC77F0 00000000 */   nop
@@ -657,8 +657,8 @@ glabel Setsumei__Fv
     /* 01BB48 01DC7848 28864070 */  paddub     $16, $2, $0
     /* 01BB4C 01DC784C C701023C */  lui        $2, %hi(TexManager)
     /* 01BB50 01DC7850 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01BB54 01DC7854 DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01BB58 01DC7858 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01BB54 01DC7854 DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01BB58 01DC7858 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01BB5C 01DC785C FFFF0624 */  addiu      $6, $0, -0x1
     /* 01BB60 01DC7860 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01BB64 01DC7864 00000000 */   nop
@@ -686,8 +686,8 @@ glabel Setsumei__Fv
     /* 01BBBC 01DC78BC 28864070 */  paddub     $16, $2, $0
     /* 01BBC0 01DC78C0 C701023C */  lui        $2, %hi(TexManager)
     /* 01BBC4 01DC78C4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01BBC8 01DC78C8 DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01BBCC 01DC78CC 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01BBC8 01DC78C8 DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01BBCC 01DC78CC 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01BBD0 01DC78D0 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01BBD4 01DC78D4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01BBD8 01DC78D8 00000000 */   nop
@@ -913,8 +913,8 @@ glabel Setsumei__Fv
     /* 01BF08 01DC7C08 288E4070 */  paddub     $17, $2, $0
     /* 01BF0C 01DC7C0C C701023C */  lui        $2, %hi(TexManager)
     /* 01BF10 01DC7C10 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01BF14 01DC7C14 DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01BF18 01DC7C18 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01BF14 01DC7C14 DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01BF18 01DC7C18 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01BF1C 01DC7C1C FFFF0624 */  addiu      $6, $0, -0x1
     /* 01BF20 01DC7C20 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01BF24 01DC7C24 00000000 */   nop
@@ -1067,8 +1067,8 @@ glabel Setsumei__Fv
     /* 01C158 01DC7E58 288E4070 */  paddub     $17, $2, $0
     /* 01C15C 01DC7E5C C701023C */  lui        $2, %hi(TexManager)
     /* 01C160 01DC7E60 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01C164 01DC7E64 DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01C168 01DC7E68 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01C164 01DC7E64 DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01C168 01DC7E68 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01C16C 01DC7E6C FFFF0624 */  addiu      $6, $0, -0x1
     /* 01C170 01DC7E70 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01C174 01DC7E74 00000000 */   nop
@@ -1221,8 +1221,8 @@ glabel Setsumei__Fv
     /* 01C3A8 01DC80A8 288E4070 */  paddub     $17, $2, $0
     /* 01C3AC 01DC80AC C701023C */  lui        $2, %hi(TexManager)
     /* 01C3B0 01DC80B0 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01C3B4 01DC80B4 DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01C3B8 01DC80B8 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01C3B4 01DC80B4 DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01C3B8 01DC80B8 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01C3BC 01DC80BC FFFF0624 */  addiu      $6, $0, -0x1
     /* 01C3C0 01DC80C0 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01C3C4 01DC80C4 00000000 */   nop
@@ -1384,8 +1384,8 @@ glabel Setsumei__Fv
     /* 01C614 01DC8314 288E4070 */  paddub     $17, $2, $0
     /* 01C618 01DC8318 C701023C */  lui        $2, %hi(TexManager)
     /* 01C61C 01DC831C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01C620 01DC8320 DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01C624 01DC8324 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01C620 01DC8320 DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01C624 01DC8324 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01C628 01DC8328 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01C62C 01DC832C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01C630 01DC8330 00000000 */   nop
@@ -1514,8 +1514,8 @@ glabel Setsumei__Fv
     /* 01C810 01DC8510 288E4070 */  paddub     $17, $2, $0
     /* 01C814 01DC8514 C701023C */  lui        $2, %hi(TexManager)
     /* 01C818 01DC8518 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01C81C 01DC851C DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01C820 01DC8520 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01C81C 01DC851C DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01C820 01DC8520 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01C824 01DC8524 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01C828 01DC8528 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01C82C 01DC852C 00000000 */   nop
@@ -1550,8 +1550,8 @@ glabel Setsumei__Fv
     /* 01C8A0 01DC85A0 28864070 */  paddub     $16, $2, $0
     /* 01C8A4 01DC85A4 C701023C */  lui        $2, %hi(TexManager)
     /* 01C8A8 01DC85A8 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01C8AC 01DC85AC DE01023C */  lui        $2, %hi(LIT_1287__3)
-    /* 01C8B0 01DC85B0 40FE4524 */  addiu      $5, $2, %lo(LIT_1287__3)
+    /* 01C8AC 01DC85AC DE01023C */  lui        $2, %hi("@1287__3")
+    /* 01C8B0 01DC85B0 40FE4524 */  addiu      $5, $2, %lo("@1287__3")
     /* 01C8B4 01DC85B4 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01C8B8 01DC85B8 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01C8BC 01DC85BC 00000000 */   nop

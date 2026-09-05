@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_1840
+glabel "@1840"
     /* 19ACB0 0029ABB0 C4C41700 */ .word .L0017C4C4
     /* 19ACB4 0029ABB4 C4C41700 */ .word .L0017C4C4
     /* 19ACB8 0029ABB8 C4C41700 */ .word .L0017C4C4
@@ -108,8 +108,8 @@ glabel MainDraw__Fv
     /* 07B9EC 0017B8EC E890848F */  lw         $4, -0x6F18($28)
     /* 07B9F0 0017B8F0 A88B060C */  jal        DrawBaseGround__11CEditGroundFv
     /* 07B9F4 0017B8F4 00000000 */   nop
-    /* 07B9F8 0017B8F8 2700023C */  lui        $2, %hi(LIT_1627)
-    /* 07B9FC 0017B8FC 00944224 */  addiu      $2, $2, %lo(LIT_1627)
+    /* 07B9F8 0017B8F8 2700023C */  lui        $2, %hi("@1627")
+    /* 07B9FC 0017B8FC 00944224 */  addiu      $2, $2, %lo("@1627")
     /* 07BA00 0017B900 C000A327 */  addiu      $3, $29, 0xC0
     /* 07BA04 0017B904 00004278 */  lq         $2, 0x0($2)
     /* 07BA08 0017B908 0000627C */  sq         $2, 0x0($3)
@@ -154,8 +154,8 @@ glabel MainDraw__Fv
     /* 07BAA0 0017B9A0 BC90828F */  lw         $2, -0x6F44($28)
     /* 07BAA4 0017B9A4 1F004010 */  beqz       $2, .L0017BA24
     /* 07BAA8 0017B9A8 00000000 */   nop
-    /* 07BAAC 0017B9AC 2700023C */  lui        $2, %hi(LIT_1632)
-    /* 07BAB0 0017B9B0 10944224 */  addiu      $2, $2, %lo(LIT_1632)
+    /* 07BAAC 0017B9AC 2700023C */  lui        $2, %hi("@1632")
+    /* 07BAB0 0017B9B0 10944224 */  addiu      $2, $2, %lo("@1632")
     /* 07BAB4 0017B9B4 E000A327 */  addiu      $3, $29, 0xE0
     /* 07BAB8 0017B9B8 00004278 */  lq         $2, 0x0($2)
     /* 07BABC 0017B9BC 0000627C */  sq         $2, 0x0($3)
@@ -215,8 +215,8 @@ glabel MainDraw__Fv
     /* 07BB90 0017BA90 BC90828F */  lw         $2, -0x6F44($28)
     /* 07BB94 0017BA94 1F004010 */  beqz       $2, .L0017BB14
     /* 07BB98 0017BA98 00000000 */   nop
-    /* 07BB9C 0017BA9C 2700023C */  lui        $2, %hi(LIT_1635)
-    /* 07BBA0 0017BAA0 20944224 */  addiu      $2, $2, %lo(LIT_1635)
+    /* 07BB9C 0017BA9C 2700023C */  lui        $2, %hi("@1635")
+    /* 07BBA0 0017BAA0 20944224 */  addiu      $2, $2, %lo("@1635")
     /* 07BBA4 0017BAA4 0001A327 */  addiu      $3, $29, 0x100
     /* 07BBA8 0017BAA8 00004278 */  lq         $2, 0x0($2)
     /* 07BBAC 0017BAAC 0000627C */  sq         $2, 0x0($3)
@@ -318,8 +318,8 @@ glabel MainDraw__Fv
     /* 07BD20 0017BC20 1C01A2AF */  sw         $2, 0x11C($29)
     /* 07BD24 0017BC24 C701023C */  lui        $2, %hi(TexManager)
     /* 07BD28 0017BC28 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 07BD2C 0017BC2C 2A00023C */  lui        $2, %hi(LIT_1837__2)
-    /* 07BD30 0017BC30 88AB4524 */  addiu      $5, $2, %lo(LIT_1837__2)
+    /* 07BD2C 0017BC2C 2A00023C */  lui        $2, %hi("@1837__2")
+    /* 07BD30 0017BC30 88AB4524 */  addiu      $5, $2, %lo("@1837__2")
     /* 07BD34 0017BC34 FFFF0624 */  addiu      $6, $0, -0x1
     /* 07BD38 0017BC38 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 07BD3C 0017BC3C 00000000 */   nop
@@ -739,8 +739,8 @@ glabel MainDraw__Fv
     /* 07C344 0017C244 16000624 */  addiu      $6, $0, 0x16
     /* 07C348 0017C248 1CCC040C */  jal        ReloadTexture__15CTextureManagerFP13sceVif1Packeti
     /* 07C34C 0017C24C 00000000 */   nop
-    /* 07C350 0017C250 2700023C */  lui        $2, %hi(LIT_1724)
-    /* 07C354 0017C254 30944224 */  addiu      $2, $2, %lo(LIT_1724)
+    /* 07C350 0017C250 2700023C */  lui        $2, %hi("@1724")
+    /* 07C354 0017C254 30944224 */  addiu      $2, $2, %lo("@1724")
     /* 07C358 0017C258 7003A327 */  addiu      $3, $29, 0x370
     /* 07C35C 0017C25C 00004278 */  lq         $2, 0x0($2)
     /* 07C360 0017C260 0000627C */  sq         $2, 0x0($3)
@@ -758,8 +758,8 @@ glabel MainDraw__Fv
     /* 07C390 0017C290 00000000 */   nop
     /* 07C394 0017C294 C701023C */  lui        $2, %hi(TexManager)
     /* 07C398 0017C298 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 07C39C 0017C29C 2A00023C */  lui        $2, %hi(LIT_1838__2)
-    /* 07C3A0 0017C2A0 98AB4524 */  addiu      $5, $2, %lo(LIT_1838__2)
+    /* 07C39C 0017C29C 2A00023C */  lui        $2, %hi("@1838__2")
+    /* 07C3A0 0017C2A0 98AB4524 */  addiu      $5, $2, %lo("@1838__2")
     /* 07C3A4 0017C2A4 FFFF0624 */  addiu      $6, $0, -0x1
     /* 07C3A8 0017C2A8 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 07C3AC 0017C2AC 00000000 */   nop
@@ -789,8 +789,8 @@ glabel MainDraw__Fv
     /* 07C408 0017C308 00000000 */   nop
     /* 07C40C 0017C30C C701023C */  lui        $2, %hi(TexManager)
     /* 07C410 0017C310 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 07C414 0017C314 2A00023C */  lui        $2, %hi(LIT_1838__2)
-    /* 07C418 0017C318 98AB4524 */  addiu      $5, $2, %lo(LIT_1838__2)
+    /* 07C414 0017C314 2A00023C */  lui        $2, %hi("@1838__2")
+    /* 07C418 0017C318 98AB4524 */  addiu      $5, $2, %lo("@1838__2")
     /* 07C41C 0017C31C FFFF0624 */  addiu      $6, $0, -0x1
     /* 07C420 0017C320 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 07C424 0017C324 00000000 */   nop
@@ -819,8 +819,8 @@ glabel MainDraw__Fv
     /* 07C47C 0017C37C 00000000 */   nop
     /* 07C480 0017C380 C701023C */  lui        $2, %hi(TexManager)
     /* 07C484 0017C384 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 07C488 0017C388 2A00023C */  lui        $2, %hi(LIT_1838__2)
-    /* 07C48C 0017C38C 98AB4524 */  addiu      $5, $2, %lo(LIT_1838__2)
+    /* 07C488 0017C388 2A00023C */  lui        $2, %hi("@1838__2")
+    /* 07C48C 0017C38C 98AB4524 */  addiu      $5, $2, %lo("@1838__2")
     /* 07C490 0017C390 FFFF0624 */  addiu      $6, $0, -0x1
     /* 07C494 0017C394 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 07C498 0017C398 00000000 */   nop
@@ -895,8 +895,8 @@ glabel MainDraw__Fv
     /* 07C59C 0017C49C 1100812C */  sltiu      $1, $4, 0x11
     /* 07C5A0 0017C4A0 4A002010 */  beqz       $1, .L0017C5CC
     /* 07C5A4 0017C4A4 00000000 */   nop
-    /* 07C5A8 0017C4A8 2A00023C */  lui        $2, %hi(LIT_1840)
-    /* 07C5AC 0017C4AC B0AB4324 */  addiu      $3, $2, %lo(LIT_1840)
+    /* 07C5A8 0017C4A8 2A00023C */  lui        $2, %hi("@1840")
+    /* 07C5AC 0017C4AC B0AB4324 */  addiu      $3, $2, %lo("@1840")
     /* 07C5B0 0017C4B0 80100400 */  sll        $2, $4, 2
     /* 07C5B4 0017C4B4 21104300 */  addu       $2, $2, $3
     /* 07C5B8 0017C4B8 0000428C */  lw         $2, 0x0($2)
@@ -928,13 +928,13 @@ glabel MainDraw__Fv
     /* 07C61C 0017C51C 01000224 */  addiu      $2, $0, 0x1
     /* 07C620 0017C520 1F006214 */  bne        $3, $2, .L0017C5A0
     /* 07C624 0017C524 00000000 */   nop
-    /* 07C628 0017C528 2700023C */  lui        $2, %hi(LIT_1754)
-    /* 07C62C 0017C52C 40944224 */  addiu      $2, $2, %lo(LIT_1754)
+    /* 07C628 0017C528 2700023C */  lui        $2, %hi("@1754")
+    /* 07C62C 0017C52C 40944224 */  addiu      $2, $2, %lo("@1754")
     /* 07C630 0017C530 9003A327 */  addiu      $3, $29, 0x390
     /* 07C634 0017C534 00004278 */  lq         $2, 0x0($2)
     /* 07C638 0017C538 0000627C */  sq         $2, 0x0($3)
-    /* 07C63C 0017C53C 2700023C */  lui        $2, %hi(LIT_1755)
-    /* 07C640 0017C540 50944224 */  addiu      $2, $2, %lo(LIT_1755)
+    /* 07C63C 0017C53C 2700023C */  lui        $2, %hi("@1755")
+    /* 07C640 0017C540 50944224 */  addiu      $2, $2, %lo("@1755")
     /* 07C644 0017C544 A003A327 */  addiu      $3, $29, 0x3A0
     /* 07C648 0017C548 00004278 */  lq         $2, 0x0($2)
     /* 07C64C 0017C54C 0000627C */  sq         $2, 0x0($3)

@@ -32,8 +32,8 @@ glabel Draw__21CHIT_MACHINGUN_EFFECTFv
     /* 0AEB7C 001AEA7C A040023C */  lui        $2, (0x40A00000 >> 16)
     /* 0AEB80 001AEA80 00608244 */  mtc1       $2, $f12
     /* 0AEB84 001AEA84 00310300 */  sll        $6, $3, 4
-    /* 0AEB88 001AEA88 2A00023C */  lui        $2, %hi(LIT_1116)
-    /* 0AEB8C 001AEA8C 20B54524 */  addiu      $5, $2, %lo(LIT_1116)
+    /* 0AEB88 001AEA88 2A00023C */  lui        $2, %hi("@1116")
+    /* 0AEB8C 001AEA8C 20B54524 */  addiu      $5, $2, %lo("@1116")
     /* 0AEB90 001AEA90 70000724 */  addiu      $7, $0, 0x70
     /* 0AEB94 001AEA94 10000824 */  addiu      $8, $0, 0x10
     /* 0AEB98 001AEA98 284E0071 */  paddub     $9, $8, $0

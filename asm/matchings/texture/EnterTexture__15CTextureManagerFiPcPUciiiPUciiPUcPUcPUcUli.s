@@ -455,8 +455,8 @@ glabel EnterTexture__15CTextureManagerFiPcPUciiiPUciiPUcPUcPUcUli
     /* 031B24 00131A24 2A106200 */  slt        $2, $3, $2
     /* 031B28 00131A28 07004014 */  bnez       $2, .L00131A48
     /* 031B2C 00131A2C 00000000 */   nop
-    /* 031B30 00131A30 2A00023C */  lui        $2, %hi(LIT_408)
-    /* 031B34 00131A34 B08E4424 */  addiu      $4, $2, %lo(LIT_408)
+    /* 031B30 00131A30 2A00023C */  lui        $2, %hi("@408")
+    /* 031B34 00131A34 B08E4424 */  addiu      $4, $2, %lo("@408")
     /* 031B38 00131A38 A611040C */  jal        printf
     /* 031B3C 00131A3C 00000000 */   nop
   .L00131A40:
@@ -469,12 +469,12 @@ glabel EnterTexture__15CTextureManagerFiPcPUciiiPUciiPUcPUcPUcUli
     /* 031B54 00131A54 2A084300 */  slt        $1, $2, $3
     /* 031B58 00131A58 0E002010 */  beqz       $1, .L00131A94
     /* 031B5C 00131A5C 00000000 */   nop
-    /* 031B60 00131A60 2A00023C */  lui        $2, %hi(LIT_409)
-    /* 031B64 00131A64 D08E4424 */  addiu      $4, $2, %lo(LIT_409)
+    /* 031B60 00131A60 2A00023C */  lui        $2, %hi("@409")
+    /* 031B64 00131A64 D08E4424 */  addiu      $4, $2, %lo("@409")
     /* 031B68 00131A68 A611040C */  jal        printf
     /* 031B6C 00131A6C 00000000 */   nop
-    /* 031B70 00131A70 2A00023C */  lui        $2, %hi(LIT_410)
-    /* 031B74 00131A74 E88E4424 */  addiu      $4, $2, %lo(LIT_410)
+    /* 031B70 00131A70 2A00023C */  lui        $2, %hi("@410")
+    /* 031B74 00131A74 E88E4424 */  addiu      $4, $2, %lo("@410")
     /* 031B78 00131A78 4801A58F */  lw         $5, 0x148($29)
     /* 031B7C 00131A7C 2001A28F */  lw         $2, 0x120($29)
     /* 031B80 00131A80 0000468C */  lw         $6, 0x0($2)

@@ -78,13 +78,13 @@ glabel SwordDmgCheck1__Ffi
   .L01DB9C4C:
     /* 00DF4C 01DB9C4C 61000012 */  beqz       $16, .L01DB9DD4
     /* 00DF50 01DB9C50 00000000 */   nop
-    /* 00DF54 01DB9C54 DC01023C */  lui        $2, %hi(LIT_5034)
-    /* 00DF58 01DB9C58 F0274224 */  addiu      $2, $2, %lo(LIT_5034)
+    /* 00DF54 01DB9C54 DC01023C */  lui        $2, %hi("@5034")
+    /* 00DF58 01DB9C58 F0274224 */  addiu      $2, $2, %lo("@5034")
     /* 00DF5C 01DB9C5C 4000A327 */  addiu      $3, $29, 0x40
     /* 00DF60 01DB9C60 00004278 */  lq         $2, 0x0($2)
     /* 00DF64 01DB9C64 0000627C */  sq         $2, 0x0($3)
-    /* 00DF68 01DB9C68 DC01023C */  lui        $2, %hi(LIT_5035)
-    /* 00DF6C 01DB9C6C 00284224 */  addiu      $2, $2, %lo(LIT_5035)
+    /* 00DF68 01DB9C68 DC01023C */  lui        $2, %hi("@5035")
+    /* 00DF6C 01DB9C6C 00284224 */  addiu      $2, $2, %lo("@5035")
     /* 00DF70 01DB9C70 5000A327 */  addiu      $3, $29, 0x50
     /* 00DF74 01DB9C74 00004278 */  lq         $2, 0x0($2)
     /* 00DF78 01DB9C78 0000627C */  sq         $2, 0x0($3)
@@ -95,8 +95,8 @@ glabel SwordDmgCheck1__Ffi
     /* 00DF8C 01DB9C8C 00000000 */   nop
     /* 00DF90 01DB9C90 EA01013C */  lui        $1, %hi(CharaMain + 0xBC)
     /* 00DF94 01DB9C94 DC1D248C */  lw         $4, %lo(CharaMain + 0xBC)($1)
-    /* 00DF98 01DB9C98 DC01023C */  lui        $2, %hi(LIT_4980)
-    /* 00DF9C 01DB9C9C E0304524 */  addiu      $5, $2, %lo(LIT_4980)
+    /* 00DF98 01DB9C98 DC01023C */  lui        $2, %hi("@4980")
+    /* 00DF9C 01DB9C9C E0304524 */  addiu      $5, $2, %lo("@4980")
     /* 00DFA0 01DB9CA0 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00DFA4 01DB9CA4 00000000 */   nop
     /* 00DFA8 01DB9CA8 28264070 */  paddub     $4, $2, $0

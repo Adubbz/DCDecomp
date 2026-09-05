@@ -18,8 +18,8 @@ glabel DrawtargetCursor__FPffff
     /* 0141FC 01DBFEFC 06750046 */  mov.s      $f20, $f14
     /* 014200 01DBFF00 C701023C */  lui        $2, %hi(TexManager)
     /* 014204 01DBFF04 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 014208 01DBFF08 DC01023C */  lui        $2, %hi(LIT_6367)
-    /* 01420C 01DBFF0C C8334524 */  addiu      $5, $2, %lo(LIT_6367)
+    /* 014208 01DBFF08 DC01023C */  lui        $2, %hi("@6367")
+    /* 01420C 01DBFF0C C8334524 */  addiu      $5, $2, %lo("@6367")
     /* 014210 01DBFF10 FFFF0624 */  addiu      $6, $0, -0x1
     /* 014214 01DBFF14 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 014218 01DBFF18 00000000 */   nop

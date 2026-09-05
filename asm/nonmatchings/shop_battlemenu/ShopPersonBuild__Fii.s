@@ -38,8 +38,8 @@ glabel ShopPersonBuild__Fii
     /* 0E81B8 001E80B8 01004224 */  addiu      $2, $2, 0x1
     /* 0E81BC 001E80BC 00110200 */  sll        $2, $2, 4
     /* 0E81C0 001E80C0 21880202 */  addu       $17, $16, $2
-    /* 0E81C4 001E80C4 2900023C */  lui        $2, %hi(LIT_820__2)
-    /* 0E81C8 001E80C8 10274524 */  addiu      $5, $2, %lo(LIT_820__2)
+    /* 0E81C4 001E80C4 2900023C */  lui        $2, %hi("@820__2")
+    /* 0E81C8 001E80C8 10274524 */  addiu      $5, $2, %lo("@820__2")
     /* 0E81CC 001E80CC 9000A427 */  addiu      $4, $29, 0x90
     /* 0E81D0 001E80D0 02000324 */  addiu      $3, $0, 0x2
   .L001E80D4:
@@ -94,8 +94,8 @@ glabel ShopPersonBuild__Fii
     /* 0E8294 001E8194 D901023C */  lui        $2, %hi(MenuCharaFrame)
     /* 0E8298 001E8198 80044424 */  addiu      $4, $2, %lo(MenuCharaFrame)
     /* 0E829C 001E819C 282E0072 */  paddub     $5, $16, $0
-    /* 0E82A0 001E81A0 2A00023C */  lui        $2, %hi(LIT_837__3)
-    /* 0E82A4 001E81A4 10D24624 */  addiu      $6, $2, %lo(LIT_837__3)
+    /* 0E82A0 001E81A0 2A00023C */  lui        $2, %hi("@837__3")
+    /* 0E82A4 001E81A4 10D24624 */  addiu      $6, $2, %lo("@837__3")
     /* 0E82A8 001E81A8 D901023C */  lui        $2, %hi(ShopCashBuffer2)
     /* 0E82AC 001E81AC C0004724 */  addiu      $7, $2, %lo(ShopCashBuffer2)
     /* 0E82B0 001E81B0 D901023C */  lui        $2, %hi(ShopCashBuffer2)
@@ -103,8 +103,8 @@ glabel ShopPersonBuild__Fii
     /* 0E82B8 001E81B8 284E0070 */  paddub     $9, $0, $0
     /* 0E82BC 001E81BC 08E6040C */  jal        LoadPackData__10CCharacterFPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P14CDataAlloc2_1_
     /* 0E82C0 001E81C0 00000000 */   nop
-    /* 0E82C4 001E81C4 2900023C */  lui        $2, %hi(LIT_821__2)
-    /* 0E82C8 001E81C8 40274224 */  addiu      $2, $2, %lo(LIT_821__2)
+    /* 0E82C4 001E81C4 2900023C */  lui        $2, %hi("@821__2")
+    /* 0E82C8 001E81C8 40274224 */  addiu      $2, $2, %lo("@821__2")
     /* 0E82CC 001E81CC C000A527 */  addiu      $5, $29, 0xC0
     /* 0E82D0 001E81D0 00004278 */  lq         $2, 0x0($2)
     /* 0E82D4 001E81D4 0000A27C */  sq         $2, 0x0($5)
@@ -120,8 +120,8 @@ glabel ShopPersonBuild__Fii
     /* 0E82FC 001E81FC 3C05228C */  lw         $2, %lo(MenuCharaFrame + 0xBC)($1)
     /* 0E8300 001E8200 08004014 */  bnez       $2, .L001E8224
     /* 0E8304 001E8204 00000000 */   nop
-    /* 0E8308 001E8208 2A00023C */  lui        $2, %hi(LIT_838__2)
-    /* 0E830C 001E820C 20D24424 */  addiu      $4, $2, %lo(LIT_838__2)
+    /* 0E8308 001E8208 2A00023C */  lui        $2, %hi("@838__2")
+    /* 0E830C 001E820C 20D24424 */  addiu      $4, $2, %lo("@838__2")
     /* 0E8310 001E8210 A611040C */  jal        printf
     /* 0E8314 001E8214 00000000 */   nop
     /* 0E8318 001E8218 28160070 */  paddub     $2, $0, $0

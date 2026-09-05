@@ -89,8 +89,8 @@ glabel setUnderDungeonStart__Fv
     /* 0C74C8 001C73C8 2C44040C */  jal        fptosi
     /* 0C74CC 001C73CC 00000000 */   nop
     /* 0C74D0 001C73D0 289E4070 */  paddub     $19, $2, $0
-    /* 0C74D4 001C73D4 2A00023C */  lui        $2, %hi(LIT_2283)
-    /* 0C74D8 001C73D8 60BE4424 */  addiu      $4, $2, %lo(LIT_2283)
+    /* 0C74D4 001C73D4 2A00023C */  lui        $2, %hi("@2283")
+    /* 0C74D8 001C73D8 60BE4424 */  addiu      $4, $2, %lo("@2283")
     /* 0C74DC 001C73DC 282E6072 */  paddub     $5, $19, $0
     /* 0C74E0 001C73E0 A611040C */  jal        printf
     /* 0C74E4 001C73E4 00000000 */   nop
@@ -164,8 +164,8 @@ glabel setUnderDungeonStart__Fv
     /* 0C75EC 001C74EC 00000000 */   nop
     /* 0C75F0 001C74F0 07002016 */  bnez       $17, .L001C7510
     /* 0C75F4 001C74F4 00000000 */   nop
-    /* 0C75F8 001C74F8 2A00023C */  lui        $2, %hi(LIT_2284)
-    /* 0C75FC 001C74FC 70BE4424 */  addiu      $4, $2, %lo(LIT_2284)
+    /* 0C75F8 001C74F8 2A00023C */  lui        $2, %hi("@2284")
+    /* 0C75FC 001C74FC 70BE4424 */  addiu      $4, $2, %lo("@2284")
     /* 0C7600 001C7500 282E0072 */  paddub     $5, $16, $0
     /* 0C7604 001C7504 28364072 */  paddub     $6, $18, $0
     /* 0C7608 001C7508 A611040C */  jal        printf

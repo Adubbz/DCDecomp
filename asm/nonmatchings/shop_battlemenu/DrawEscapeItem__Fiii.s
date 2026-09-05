@@ -14,8 +14,8 @@ glabel DrawEscapeItem__Fiii
     /* 109DDC 00209CDC 28A68070 */  paddub     $20, $4, $0
     /* 109DE0 00209CE0 288EA070 */  paddub     $17, $5, $0
     /* 109DE4 00209CE4 289EC070 */  paddub     $19, $6, $0
-    /* 109DE8 00209CE8 2900023C */  lui        $2, %hi(LIT_6185)
-    /* 109DEC 00209CEC 90374224 */  addiu      $2, $2, %lo(LIT_6185)
+    /* 109DE8 00209CE8 2900023C */  lui        $2, %hi("@6185")
+    /* 109DEC 00209CEC 90374224 */  addiu      $2, $2, %lo("@6185")
     /* 109DF0 00209CF0 6000A827 */  addiu      $8, $29, 0x60
     /* 109DF4 00209CF4 00004778 */  lq         $7, 0x0($2)
     /* 109DF8 00209CF8 100043DC */  ld         $3, 0x10($2)
@@ -40,8 +40,8 @@ glabel DrawEscapeItem__Fiii
     /* 109E44 00209D44 00000000 */   nop
     /* 109E48 00209D48 C701023C */  lui        $2, %hi(TexManager)
     /* 109E4C 00209D4C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 109E50 00209D50 2A00023C */  lui        $2, %hi(LIT_930__3)
-    /* 109E54 00209D54 30D54524 */  addiu      $5, $2, %lo(LIT_930__3)
+    /* 109E50 00209D50 2A00023C */  lui        $2, %hi("@930__3")
+    /* 109E54 00209D54 30D54524 */  addiu      $5, $2, %lo("@930__3")
     /* 109E58 00209D58 FFFF0624 */  addiu      $6, $0, -0x1
     /* 109E5C 00209D5C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 109E60 00209D60 00000000 */   nop
@@ -119,8 +119,8 @@ glabel DrawEscapeItem__Fiii
     /* 109F7C 00209E7C 28566072 */  paddub     $10, $19, $0
     /* 109F80 00209E80 705F080C */  jal        DrawMenuNumber__FiiiP8CTexture4RECTii
     /* 109F84 00209E84 00000000 */   nop
-    /* 109F88 00209E88 2900023C */  lui        $2, %hi(LIT_6188)
-    /* 109F8C 00209E8C B0374224 */  addiu      $2, $2, %lo(LIT_6188)
+    /* 109F88 00209E88 2900023C */  lui        $2, %hi("@6188")
+    /* 109F8C 00209E8C B0374224 */  addiu      $2, $2, %lo("@6188")
     /* 109F90 00209E90 C800A427 */  addiu      $4, $29, 0xC8
     /* 109F94 00209E94 000043DC */  ld         $3, 0x0($2)
     /* 109F98 00209E98 080040C4 */  lwc1       $f0, 0x8($2)

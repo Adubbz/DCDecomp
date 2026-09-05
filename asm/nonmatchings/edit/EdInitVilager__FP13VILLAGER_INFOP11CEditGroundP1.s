@@ -58,8 +58,8 @@ glabel EdInitVilager__FP13VILLAGER_INFOP11CEditGroundP1
     /* 086104 00186004 F4DD050C */  jal        GetEditDataDir__FPc
     /* 086108 00186008 00000000 */   nop
     /* 08610C 0018600C B000A427 */  addiu      $4, $29, 0xB0
-    /* 086110 00186010 2A00023C */  lui        $2, %hi(LIT_1026)
-    /* 086114 00186014 A8B04524 */  addiu      $5, $2, %lo(LIT_1026)
+    /* 086110 00186010 2A00023C */  lui        $2, %hi("@1026")
+    /* 086114 00186014 A8B04524 */  addiu      $5, $2, %lo("@1026")
     /* 086118 00186018 F000A627 */  addiu      $6, $29, 0xF0
     /* 08611C 0018601C 283E8072 */  paddub     $7, $20, $0
     /* 086120 00186020 1614040C */  jal        sprintf

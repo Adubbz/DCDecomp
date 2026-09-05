@@ -27,8 +27,8 @@ glabel ToFromSelect__Fi
     /* 0F70AC 001F6FAC 85000010 */  b          .L001F71C4
     /* 0F70B0 001F6FB0 00000000 */   nop
   .L001F6FB4:
-    /* 0F70B4 001F6FB4 2900023C */  lui        $2, %hi(LIT_1292__2)
-    /* 0F70B8 001F6FB8 B02F4524 */  addiu      $5, $2, %lo(LIT_1292__2)
+    /* 0F70B4 001F6FB4 2900023C */  lui        $2, %hi("@1292__2")
+    /* 0F70B8 001F6FB8 B02F4524 */  addiu      $5, $2, %lo("@1292__2")
     /* 0F70BC 001F6FBC A000A427 */  addiu      $4, $29, 0xA0
     /* 0F70C0 001F6FC0 04000324 */  addiu      $3, $0, 0x4
   .L001F6FC4:

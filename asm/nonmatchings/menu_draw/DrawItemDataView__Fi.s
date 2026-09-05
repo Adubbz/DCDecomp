@@ -27,8 +27,8 @@ glabel DrawItemDataView__Fi
     /* 12B904 0022B804 38B4080C */  jal        MenuTextureReload__Fi
     /* 12B908 0022B808 00000000 */   nop
     /* 12B90C 0022B80C 28860070 */  paddub     $16, $0, $0
-    /* 12B910 0022B810 2900033C */  lui        $3, %hi(LIT_2122__3)
-    /* 12B914 0022B814 E0436724 */  addiu      $7, $3, %lo(LIT_2122__3)
+    /* 12B910 0022B810 2900033C */  lui        $3, %hi("@2122__3")
+    /* 12B914 0022B814 E0436724 */  addiu      $7, $3, %lo("@2122__3")
     /* 12B918 0022B818 3000A627 */  addiu      $6, $29, 0x30
     /* 12B91C 0022B81C 04000524 */  addiu      $5, $0, 0x4
   .L0022B820:
@@ -67,8 +67,8 @@ glabel DrawItemDataView__Fi
     /* 12B998 0022B898 A08D4224 */  addiu      $2, $2, %lo(MenuDbgMsg)
     /* 12B99C 0022B89C 21104300 */  addu       $2, $2, $3
     /* 12B9A0 0022B8A0 1C004424 */  addiu      $4, $2, 0x1C
-    /* 12B9A4 0022B8A4 2A00023C */  lui        $2, %hi(LIT_2140__2)
-    /* 12B9A8 0022B8A8 00F14524 */  addiu      $5, $2, %lo(LIT_2140__2)
+    /* 12B9A4 0022B8A4 2A00023C */  lui        $2, %hi("@2140__2")
+    /* 12B9A8 0022B8A8 00F14524 */  addiu      $5, $2, %lo("@2140__2")
     /* 12B9AC 0022B8AC 1614040C */  jal        sprintf
     /* 12B9B0 0022B8B0 00000000 */   nop
     /* 12B9B4 0022B8B4 DB01013C */  lui        $1, %hi(MenuDbgMsg + 0x18)

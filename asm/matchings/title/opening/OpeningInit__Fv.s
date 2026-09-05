@@ -147,8 +147,8 @@ glabel OpeningInit__Fv
     /* 0036F0 01DAF3F0 00000000 */   nop
     /* 0036F4 01DAF3F4 DE01023C */  lui        $2, %hi(CScript__2)
     /* 0036F8 01DAF3F8 001B4424 */  addiu      $4, $2, %lo(CScript__2)
-    /* 0036FC 01DAF3FC DE01023C */  lui        $2, %hi(LIT_365__5)
-    /* 003700 01DAF400 90BF4524 */  addiu      $5, $2, %lo(LIT_365__5)
+    /* 0036FC 01DAF3FC DE01023C */  lui        $2, %hi("@365__5")
+    /* 003700 01DAF400 90BF4524 */  addiu      $5, $2, %lo("@365__5")
     /* 003704 01DAF404 60AF760C */  jal        Load__7CScriptFPCc
     /* 003708 01DAF408 00000000 */   nop
     /* 00370C 01DAF40C DC4F050C */  jal        wait_now_loading_vsync__Fv

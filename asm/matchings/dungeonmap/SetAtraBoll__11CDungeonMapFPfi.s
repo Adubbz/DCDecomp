@@ -70,8 +70,8 @@ glabel SetAtraBoll__11CDungeonMapFPfi
     /* 0C8270 001C8170 30008228 */  slti       $2, $4, 0x30
     /* 0C8274 001C8174 F0FF4014 */  bnez       $2, .L001C8138
     /* 0C8278 001C8178 00000000 */   nop
-    /* 0C827C 001C817C 2A00023C */  lui        $2, %hi(LIT_2448)
-    /* 0C8280 001C8180 C0BE4424 */  addiu      $4, $2, %lo(LIT_2448)
+    /* 0C827C 001C817C 2A00023C */  lui        $2, %hi("@2448")
+    /* 0C8280 001C8180 C0BE4424 */  addiu      $4, $2, %lo("@2448")
     /* 0C8284 001C8184 A611040C */  jal        printf
     /* 0C8288 001C8188 00000000 */   nop
     /* 0C828C 001C818C FFFF0424 */  addiu      $4, $0, -0x1

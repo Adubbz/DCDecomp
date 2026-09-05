@@ -81,8 +81,8 @@ glabel BattleActionShotRuby__FP10CCharacterifi
     /* 01139C 01DBD09C 58006016 */  bnez       $19, .L01DBD200
     /* 0113A0 01DBD0A0 00000000 */   nop
     /* 0113A4 01DBD0A4 BC00848E */  lw         $4, 0xBC($20)
-    /* 0113A8 01DBD0A8 DC01023C */  lui        $2, %hi(LIT_4980)
-    /* 0113AC 01DBD0AC E0304524 */  addiu      $5, $2, %lo(LIT_4980)
+    /* 0113A8 01DBD0A8 DC01023C */  lui        $2, %hi("@4980")
+    /* 0113AC 01DBD0AC E0304524 */  addiu      $5, $2, %lo("@4980")
     /* 0113B0 01DBD0B0 F001023C */  lui        $2, %hi(ruby_effect_pos)
     /* 0113B4 01DBD0B4 B0684624 */  addiu      $6, $2, %lo(ruby_effect_pos)
     /* 0113B8 01DBD0B8 CCDB060C */  jal        getFramePos__FP9CFrameVu1PcPf
@@ -170,14 +170,14 @@ glabel BattleActionShotRuby__FP10CCharacterifi
     /* 0114F8 01DBD1F8 4B000010 */  b          .L01DBD328
     /* 0114FC 01DBD1FC 00000000 */   nop
   .L01DBD200:
-    /* 011500 01DBD200 DC01023C */  lui        $2, %hi(LIT_5755)
-    /* 011504 01DBD204 E0284224 */  addiu      $2, $2, %lo(LIT_5755)
+    /* 011500 01DBD200 DC01023C */  lui        $2, %hi("@5755")
+    /* 011504 01DBD204 E0284224 */  addiu      $2, $2, %lo("@5755")
     /* 011508 01DBD208 6000A327 */  addiu      $3, $29, 0x60
     /* 01150C 01DBD20C 00004278 */  lq         $2, 0x0($2)
     /* 011510 01DBD210 0000627C */  sq         $2, 0x0($3)
     /* 011514 01DBD214 BC00848E */  lw         $4, 0xBC($20)
-    /* 011518 01DBD218 DC01023C */  lui        $2, %hi(LIT_4980)
-    /* 01151C 01DBD21C E0304524 */  addiu      $5, $2, %lo(LIT_4980)
+    /* 011518 01DBD218 DC01023C */  lui        $2, %hi("@4980")
+    /* 01151C 01DBD21C E0304524 */  addiu      $5, $2, %lo("@4980")
     /* 011520 01DBD220 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 011524 01DBD224 00000000 */   nop
     /* 011528 01DBD228 28264070 */  paddub     $4, $2, $0

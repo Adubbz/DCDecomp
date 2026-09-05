@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_2194
+glabel "@2194"
     /* 19D900 0029D800 0CB51F00 */ .word .L001FB50C
     /* 19D904 0029D804 0CB51F00 */ .word .L001FB50C
     /* 19D908 0029D808 0CB51F00 */ .word .L001FB50C
@@ -51,8 +51,8 @@ glabel DrawAallWeapon__FiifP10CCharacterP11WEAPON_HAVEiii
     /* 0FB360 001FB260 38B4080C */  jal        MenuTextureReload__Fi
     /* 0FB364 001FB264 00000000 */   nop
     /* 0FB368 001FB268 00A08044 */  mtc1       $0, $f20
-    /* 0FB36C 001FB26C 2900023C */  lui        $2, %hi(LIT_2127__3)
-    /* 0FB370 001FB270 E0314224 */  addiu      $2, $2, %lo(LIT_2127__3)
+    /* 0FB36C 001FB26C 2900023C */  lui        $2, %hi("@2127__3")
+    /* 0FB370 001FB270 E0314224 */  addiu      $2, $2, %lo("@2127__3")
     /* 0FB374 001FB274 A000A327 */  addiu      $3, $29, 0xA0
     /* 0FB378 001FB278 00004278 */  lq         $2, 0x0($2)
     /* 0FB37C 001FB27C 0000627C */  sq         $2, 0x0($3)
@@ -221,8 +221,8 @@ glabel DrawAallWeapon__FiifP10CCharacterP11WEAPON_HAVEiii
     /* 0FB5E4 001FB4E4 0C00812C */  sltiu      $1, $4, 0xC
     /* 0FB5E8 001FB4E8 16002010 */  beqz       $1, .L001FB544
     /* 0FB5EC 001FB4EC 00000000 */   nop
-    /* 0FB5F0 001FB4F0 2A00023C */  lui        $2, %hi(LIT_2194)
-    /* 0FB5F4 001FB4F4 00D84324 */  addiu      $3, $2, %lo(LIT_2194)
+    /* 0FB5F0 001FB4F0 2A00023C */  lui        $2, %hi("@2194")
+    /* 0FB5F4 001FB4F4 00D84324 */  addiu      $3, $2, %lo("@2194")
     /* 0FB5F8 001FB4F8 80100400 */  sll        $2, $4, 2
     /* 0FB5FC 001FB4FC 21104300 */  addu       $2, $2, $3
     /* 0FB600 001FB500 0000428C */  lw         $2, 0x0($2)

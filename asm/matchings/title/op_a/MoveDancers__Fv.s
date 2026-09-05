@@ -8,8 +8,8 @@ glabel MoveDancers__Fv
     /* 00B8D4 01DB75D4 2000BF7F */  sq         $31, 0x20($29)
     /* 00B8D8 01DB75D8 1000B17F */  sq         $17, 0x10($29)
     /* 00B8DC 01DB75DC 0000B07F */  sq         $16, 0x0($29)
-    /* 00B8E0 01DB75E0 DD01033C */  lui        $3, %hi(LIT_868__3)
-    /* 00B8E4 01DB75E4 00676724 */  addiu      $7, $3, %lo(LIT_868__3)
+    /* 00B8E0 01DB75E0 DD01033C */  lui        $3, %hi("@868__3")
+    /* 00B8E4 01DB75E4 00676724 */  addiu      $7, $3, %lo("@868__3")
     /* 00B8E8 01DB75E8 3000A627 */  addiu      $6, $29, 0x30
     /* 00B8EC 01DB75EC 04000524 */  addiu      $5, $0, 0x4
   .L01DB75F0:

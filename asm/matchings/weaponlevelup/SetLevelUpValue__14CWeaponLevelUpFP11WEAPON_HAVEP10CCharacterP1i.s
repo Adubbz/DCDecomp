@@ -16,8 +16,8 @@ glabel SetLevelUpValue__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i
     /* 1363A4 002362A4 2886C070 */  paddub     $16, $6, $0
     /* 1363A8 002362A8 07002016 */  bnez       $17, .L002362C8
     /* 1363AC 002362AC 00000000 */   nop
-    /* 1363B0 002362B0 2A00023C */  lui        $2, %hi(LIT_949__2)
-    /* 1363B4 002362B4 F8F34424 */  addiu      $4, $2, %lo(LIT_949__2)
+    /* 1363B0 002362B0 2A00023C */  lui        $2, %hi("@949__2")
+    /* 1363B4 002362B4 F8F34424 */  addiu      $4, $2, %lo("@949__2")
     /* 1363B8 002362B8 A611040C */  jal        printf
     /* 1363BC 002362BC 00000000 */   nop
     /* 1363C0 002362C0 20010010 */  b          .L00236744

@@ -28,8 +28,8 @@ glabel OpC_InitProcess2__Fv
     /* 011120 01DBCE20 70584424 */  addiu      $4, $2, %lo(TexManager)
     /* 011124 01DBCE24 FCCD040C */  jal        CleanUpBuffer__15CTextureManagerFv
     /* 011128 01DBCE28 00000000 */   nop
-    /* 01112C 01DBCE2C DD01023C */  lui        $2, %hi(LIT_513__4)
-    /* 011130 01DBCE30 F07C4524 */  addiu      $5, $2, %lo(LIT_513__4)
+    /* 01112C 01DBCE2C DD01023C */  lui        $2, %hi("@513__4")
+    /* 011130 01DBCE30 F07C4524 */  addiu      $5, $2, %lo("@513__4")
     /* 011134 01DBCE34 4000A427 */  addiu      $4, $29, 0x40
     /* 011138 01DBCE38 0B000324 */  addiu      $3, $0, 0xB
   .L01DBCE3C:
@@ -43,8 +43,8 @@ glabel OpC_InitProcess2__Fv
     /* 011158 01DBCE58 0000A2C4 */  lwc1       $f2, 0x0($5)
     /* 01115C 01DBCE5C 000082E4 */  swc1       $f2, 0x0($4)
     /* 011160 01DBCE60 948B848F */  lw         $4, -0x746C($28)
-    /* 011164 01DBCE64 DE01023C */  lui        $2, %hi(LIT_468__5)
-    /* 011168 01DBCE68 08ED4524 */  addiu      $5, $2, %lo(LIT_468__5)
+    /* 011164 01DBCE64 DE01023C */  lui        $2, %hi("@468__5")
+    /* 011168 01DBCE68 08ED4524 */  addiu      $5, $2, %lo("@468__5")
     /* 01116C 01DBCE6C 28360070 */  paddub     $6, $0, $0
     /* 011170 01DBCE70 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 011174 01DBCE74 00000000 */   nop
@@ -60,8 +60,8 @@ glabel OpC_InitProcess2__Fv
     /* 01119C 01DBCE9C C8CF040C */  jal        LoadTextureBlock__15CTextureManagerFiP17LOADTEXTURE_INFO2
     /* 0111A0 01DBCEA0 00000000 */   nop
     /* 0111A4 01DBCEA4 948B848F */  lw         $4, -0x746C($28)
-    /* 0111A8 01DBCEA8 DE01023C */  lui        $2, %hi(LIT_524__4)
-    /* 0111AC 01DBCEAC 68EF4524 */  addiu      $5, $2, %lo(LIT_524__4)
+    /* 0111A8 01DBCEA8 DE01023C */  lui        $2, %hi("@524__4")
+    /* 0111AC 01DBCEAC 68EF4524 */  addiu      $5, $2, %lo("@524__4")
     /* 0111B0 01DBCEB0 28360070 */  paddub     $6, $0, $0
     /* 0111B4 01DBCEB4 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0111B8 01DBCEB8 00000000 */   nop
@@ -80,8 +80,8 @@ glabel OpC_InitProcess2__Fv
     /* 0111EC 01DBCEEC DF01013C */  lui        $1, %hi(CharaDataBuffer__2 + 0x68)
     /* 0111F0 01DBCEF0 68FE20AC */  sw         $0, %lo(CharaDataBuffer__2 + 0x68)($1)
     /* 0111F4 01DBCEF4 948B848F */  lw         $4, -0x746C($28)
-    /* 0111F8 01DBCEF8 DE01023C */  lui        $2, %hi(LIT_525__4)
-    /* 0111FC 01DBCEFC 78EF4524 */  addiu      $5, $2, %lo(LIT_525__4)
+    /* 0111F8 01DBCEF8 DE01023C */  lui        $2, %hi("@525__4")
+    /* 0111FC 01DBCEFC 78EF4524 */  addiu      $5, $2, %lo("@525__4")
     /* 011200 01DBCF00 28360070 */  paddub     $6, $0, $0
     /* 011204 01DBCF04 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 011208 01DBCF08 00000000 */   nop
@@ -108,8 +108,8 @@ glabel OpC_InitProcess2__Fv
     /* 011254 01DBCF54 F8FF6014 */  bnez       $3, .L01DBCF38
     /* 011258 01DBCF58 00000000 */   nop
     /* 01125C 01DBCF5C 948B848F */  lw         $4, -0x746C($28)
-    /* 011260 01DBCF60 DE01023C */  lui        $2, %hi(LIT_526__3)
-    /* 011264 01DBCF64 88EF4524 */  addiu      $5, $2, %lo(LIT_526__3)
+    /* 011260 01DBCF60 DE01023C */  lui        $2, %hi("@526__3")
+    /* 011264 01DBCF64 88EF4524 */  addiu      $5, $2, %lo("@526__3")
     /* 011268 01DBCF68 28360070 */  paddub     $6, $0, $0
     /* 01126C 01DBCF6C C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 011270 01DBCF70 00000000 */   nop
@@ -126,8 +126,8 @@ glabel OpC_InitProcess2__Fv
     /* 01129C 01DBCF9C E001023C */  lui        $2, %hi(Chara__3 + 0xF7A0)
     /* 0112A0 01DBCFA0 80F64424 */  addiu      $4, $2, %lo(Chara__3 + 0xF7A0)
     /* 0112A4 01DBCFA4 948B858F */  lw         $5, -0x746C($28)
-    /* 0112A8 01DBCFA8 DE01023C */  lui        $2, %hi(LIT_527__3)
-    /* 0112AC 01DBCFAC 98EF4624 */  addiu      $6, $2, %lo(LIT_527__3)
+    /* 0112A8 01DBCFA8 DE01023C */  lui        $2, %hi("@527__3")
+    /* 0112AC 01DBCFAC 98EF4624 */  addiu      $6, $2, %lo("@527__3")
     /* 0112B0 01DBCFB0 DF01023C */  lui        $2, %hi(CharaDataBuffer__2 + 0x60)
     /* 0112B4 01DBCFB4 60FE4724 */  addiu      $7, $2, %lo(CharaDataBuffer__2 + 0x60)
     /* 0112B8 01DBCFB8 28460070 */  paddub     $8, $0, $0
@@ -154,8 +154,8 @@ glabel OpC_InitProcess2__Fv
     /* 01130C 01DBD00C E001013C */  lui        $1, %hi(Chara__3 + 0xFAA8)
     /* 011310 01DBD010 88F920AC */  sw         $0, %lo(Chara__3 + 0xFAA8)($1)
     /* 011314 01DBD014 948B848F */  lw         $4, -0x746C($28)
-    /* 011318 01DBD018 DE01023C */  lui        $2, %hi(LIT_528__3)
-    /* 01131C 01DBD01C A8EF4524 */  addiu      $5, $2, %lo(LIT_528__3)
+    /* 011318 01DBD018 DE01023C */  lui        $2, %hi("@528__3")
+    /* 01131C 01DBD01C A8EF4524 */  addiu      $5, $2, %lo("@528__3")
     /* 011320 01DBD020 28360070 */  paddub     $6, $0, $0
     /* 011324 01DBD024 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 011328 01DBD028 00000000 */   nop
@@ -172,8 +172,8 @@ glabel OpC_InitProcess2__Fv
     /* 011354 01DBD054 E001023C */  lui        $2, %hi(Chara__3 + 0x15010)
     /* 011358 01DBD058 F04E4424 */  addiu      $4, $2, %lo(Chara__3 + 0x15010)
     /* 01135C 01DBD05C 948B858F */  lw         $5, -0x746C($28)
-    /* 011360 01DBD060 DE01023C */  lui        $2, %hi(LIT_529__3)
-    /* 011364 01DBD064 B8EF4624 */  addiu      $6, $2, %lo(LIT_529__3)
+    /* 011360 01DBD060 DE01023C */  lui        $2, %hi("@529__3")
+    /* 011364 01DBD064 B8EF4624 */  addiu      $6, $2, %lo("@529__3")
     /* 011368 01DBD068 DF01023C */  lui        $2, %hi(CharaDataBuffer__2 + 0x60)
     /* 01136C 01DBD06C 60FE4724 */  addiu      $7, $2, %lo(CharaDataBuffer__2 + 0x60)
     /* 011370 01DBD070 28460070 */  paddub     $8, $0, $0
@@ -202,8 +202,8 @@ glabel OpC_InitProcess2__Fv
     /* 0113CC 01DBD0CC E001023C */  lui        $2, %hi(Chara__3 + 0x161C0)
     /* 0113D0 01DBD0D0 A0604424 */  addiu      $4, $2, %lo(Chara__3 + 0x161C0)
     /* 0113D4 01DBD0D4 948B858F */  lw         $5, -0x746C($28)
-    /* 0113D8 01DBD0D8 DE01023C */  lui        $2, %hi(LIT_530__4)
-    /* 0113DC 01DBD0DC C8EF4624 */  addiu      $6, $2, %lo(LIT_530__4)
+    /* 0113D8 01DBD0D8 DE01023C */  lui        $2, %hi("@530__4")
+    /* 0113DC 01DBD0DC C8EF4624 */  addiu      $6, $2, %lo("@530__4")
     /* 0113E0 01DBD0E0 DF01023C */  lui        $2, %hi(CharaDataBuffer__2 + 0x60)
     /* 0113E4 01DBD0E4 60FE4724 */  addiu      $7, $2, %lo(CharaDataBuffer__2 + 0x60)
     /* 0113E8 01DBD0E8 28460070 */  paddub     $8, $0, $0
@@ -230,8 +230,8 @@ glabel OpC_InitProcess2__Fv
     /* 01143C 01DBD13C E001013C */  lui        $1, %hi(Chara__3 + 0x164C8)
     /* 011440 01DBD140 A86320AC */  sw         $0, %lo(Chara__3 + 0x164C8)($1)
     /* 011444 01DBD144 948B848F */  lw         $4, -0x746C($28)
-    /* 011448 01DBD148 DE01023C */  lui        $2, %hi(LIT_531__5)
-    /* 01144C 01DBD14C D8EF4524 */  addiu      $5, $2, %lo(LIT_531__5)
+    /* 011448 01DBD148 DE01023C */  lui        $2, %hi("@531__5")
+    /* 01144C 01DBD14C D8EF4524 */  addiu      $5, $2, %lo("@531__5")
     /* 011450 01DBD150 28360070 */  paddub     $6, $0, $0
     /* 011454 01DBD154 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 011458 01DBD158 00000000 */   nop
@@ -248,8 +248,8 @@ glabel OpC_InitProcess2__Fv
     /* 011484 01DBD184 E001023C */  lui        $2, %hi(Chara__3 + 0x10950)
     /* 011488 01DBD188 30084424 */  addiu      $4, $2, %lo(Chara__3 + 0x10950)
     /* 01148C 01DBD18C 948B858F */  lw         $5, -0x746C($28)
-    /* 011490 01DBD190 DE01023C */  lui        $2, %hi(LIT_532__5)
-    /* 011494 01DBD194 E8EF4624 */  addiu      $6, $2, %lo(LIT_532__5)
+    /* 011490 01DBD190 DE01023C */  lui        $2, %hi("@532__5")
+    /* 011494 01DBD194 E8EF4624 */  addiu      $6, $2, %lo("@532__5")
     /* 011498 01DBD198 DF01023C */  lui        $2, %hi(CharaDataBuffer__2 + 0x60)
     /* 01149C 01DBD19C 60FE4724 */  addiu      $7, $2, %lo(CharaDataBuffer__2 + 0x60)
     /* 0114A0 01DBD1A0 28460070 */  paddub     $8, $0, $0
@@ -277,8 +277,8 @@ glabel OpC_InitProcess2__Fv
     /* 0114F8 01DBD1F8 E001013C */  lui        $1, %hi(Chara__3 + 0x10C58)
     /* 0114FC 01DBD1FC 380B20AC */  sw         $0, %lo(Chara__3 + 0x10C58)($1)
     /* 011500 01DBD200 948B848F */  lw         $4, -0x746C($28)
-    /* 011504 01DBD204 DE01023C */  lui        $2, %hi(LIT_533__3)
-    /* 011508 01DBD208 F8EF4524 */  addiu      $5, $2, %lo(LIT_533__3)
+    /* 011504 01DBD204 DE01023C */  lui        $2, %hi("@533__3")
+    /* 011508 01DBD208 F8EF4524 */  addiu      $5, $2, %lo("@533__3")
     /* 01150C 01DBD20C 28360070 */  paddub     $6, $0, $0
     /* 011510 01DBD210 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 011514 01DBD214 00000000 */   nop
@@ -295,8 +295,8 @@ glabel OpC_InitProcess2__Fv
     /* 011540 01DBD240 E001023C */  lui        $2, %hi(Chara__3 + 0x11B00)
     /* 011544 01DBD244 E0194424 */  addiu      $4, $2, %lo(Chara__3 + 0x11B00)
     /* 011548 01DBD248 948B858F */  lw         $5, -0x746C($28)
-    /* 01154C 01DBD24C DE01023C */  lui        $2, %hi(LIT_534__4)
-    /* 011550 01DBD250 08F04624 */  addiu      $6, $2, %lo(LIT_534__4)
+    /* 01154C 01DBD24C DE01023C */  lui        $2, %hi("@534__4")
+    /* 011550 01DBD250 08F04624 */  addiu      $6, $2, %lo("@534__4")
     /* 011554 01DBD254 DF01023C */  lui        $2, %hi(CharaDataBuffer__2 + 0x60)
     /* 011558 01DBD258 60FE4724 */  addiu      $7, $2, %lo(CharaDataBuffer__2 + 0x60)
     /* 01155C 01DBD25C 28460070 */  paddub     $8, $0, $0

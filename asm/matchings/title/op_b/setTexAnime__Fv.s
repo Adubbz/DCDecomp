@@ -10,8 +10,8 @@ glabel setTexAnime__Fv
     /* 00FBAC 01DBB8AC 4000B27F */  sq         $18, 0x40($29)
     /* 00FBB0 01DBB8B0 3000B17F */  sq         $17, 0x30($29)
     /* 00FBB4 01DBB8B4 2000B07F */  sq         $16, 0x20($29)
-    /* 00FBB8 01DBB8B8 DD01023C */  lui        $2, %hi(LIT_778__3)
-    /* 00FBBC 01DBB8BC B0774224 */  addiu      $2, $2, %lo(LIT_778__3)
+    /* 00FBB8 01DBB8B8 DD01023C */  lui        $2, %hi("@778__3")
+    /* 00FBBC 01DBB8BC B0774224 */  addiu      $2, $2, %lo("@778__3")
     /* 00FBC0 01DBB8C0 7000A327 */  addiu      $3, $29, 0x70
     /* 00FBC4 01DBB8C4 00004278 */  lq         $2, 0x0($2)
     /* 00FBC8 01DBB8C8 0000627C */  sq         $2, 0x0($3)
@@ -44,16 +44,16 @@ glabel setTexAnime__Fv
     /* 00FC34 01DBB934 00000000 */   nop
     /* 00FC38 01DBB938 C701023C */  lui        $2, %hi(TexManager)
     /* 00FC3C 01DBB93C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 00FC40 01DBB940 DE01023C */  lui        $2, %hi(LIT_798__3)
-    /* 00FC44 01DBB944 68EB4524 */  addiu      $5, $2, %lo(LIT_798__3)
+    /* 00FC40 01DBB940 DE01023C */  lui        $2, %hi("@798__3")
+    /* 00FC44 01DBB944 68EB4524 */  addiu      $5, $2, %lo("@798__3")
     /* 00FC48 01DBB948 FFFF0624 */  addiu      $6, $0, -0x1
     /* 00FC4C 01DBB94C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 00FC50 01DBB950 00000000 */   nop
     /* 00FC54 01DBB954 288E4070 */  paddub     $17, $2, $0
     /* 00FC58 01DBB958 C701023C */  lui        $2, %hi(TexManager)
     /* 00FC5C 01DBB95C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 00FC60 01DBB960 DE01023C */  lui        $2, %hi(LIT_799__3)
-    /* 00FC64 01DBB964 70EB4524 */  addiu      $5, $2, %lo(LIT_799__3)
+    /* 00FC60 01DBB960 DE01023C */  lui        $2, %hi("@799__3")
+    /* 00FC64 01DBB964 70EB4524 */  addiu      $5, $2, %lo("@799__3")
     /* 00FC68 01DBB968 FFFF0624 */  addiu      $6, $0, -0x1
     /* 00FC6C 01DBB96C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 00FC70 01DBB970 00000000 */   nop

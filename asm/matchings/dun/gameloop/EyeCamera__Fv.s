@@ -130,8 +130,8 @@ glabel EyeCamera__Fv
     /* 015CBC 01DC19BC 0C86040C */  jal        sceVu0CopyVector
     /* 015CC0 01DC19C0 00000000 */   nop
     /* 015CC4 01DC19C4 789C858F */  lw         $5, -0x6388($28)
-    /* 015CC8 01DC19C8 DC01023C */  lui        $2, %hi(LIT_345__11)
-    /* 015CCC 01DC19CC 401B4224 */  addiu      $2, $2, %lo(LIT_345__11)
+    /* 015CC8 01DC19C8 DC01023C */  lui        $2, %hi("@345__11")
+    /* 015CCC 01DC19CC 401B4224 */  addiu      $2, $2, %lo("@345__11")
     /* 015CD0 01DC19D0 E000A427 */  addiu      $4, $29, 0xE0
     /* 015CD4 01DC19D4 00004378 */  lq         $3, 0x0($2)
     /* 015CD8 01DC19D8 100042DC */  ld         $2, 0x10($2)

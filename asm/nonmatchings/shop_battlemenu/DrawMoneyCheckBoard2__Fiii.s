@@ -41,8 +41,8 @@ glabel DrawMoneyCheckBoard2__Fiii
     /* 0EC7C8 001EC6C8 50AD070C */  jal        SellMoneyCheck2__Fv
     /* 0EC7CC 001EC6CC 00000000 */   nop
     /* 0EC7D0 001EC6D0 23804C00 */  subu       $16, $2, $12
-    /* 0EC7D4 001EC6D4 2900023C */  lui        $2, %hi(LIT_1809)
-    /* 0EC7D8 001EC6D8 20284224 */  addiu      $2, $2, %lo(LIT_1809)
+    /* 0EC7D4 001EC6D4 2900023C */  lui        $2, %hi("@1809")
+    /* 0EC7D8 001EC6D8 20284224 */  addiu      $2, $2, %lo("@1809")
     /* 0EC7DC 001EC6DC 7000A327 */  addiu      $3, $29, 0x70
     /* 0EC7E0 001EC6E0 00004278 */  lq         $2, 0x0($2)
     /* 0EC7E4 001EC6E4 0000627C */  sq         $2, 0x0($3)

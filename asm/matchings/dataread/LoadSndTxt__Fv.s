@@ -23,14 +23,14 @@ glabel LoadSndTxt__Fv
     /* 040FCC 00140ECC 21800202 */  addu       $16, $16, $2
   .L00140ED0:
     /* 040FD0 00140ED0 3C8D8427 */  addiu      $4, $28, -0x72C4
-    /* 040FD4 00140ED4 2A00023C */  lui        $2, %hi(LIT_657)
-    /* 040FD8 00140ED8 60934524 */  addiu      $5, $2, %lo(LIT_657)
+    /* 040FD4 00140ED4 2A00023C */  lui        $2, %hi("@657")
+    /* 040FD8 00140ED8 60934524 */  addiu      $5, $2, %lo("@657")
     /* 040FDC 00140EDC 28360072 */  paddub     $6, $16, $0
     /* 040FE0 00140EE0 F012050C */  jal        LoadSeInf__6CSoundFPcPUi
     /* 040FE4 00140EE4 00000000 */   nop
     /* 040FE8 00140EE8 3C8D8427 */  addiu      $4, $28, -0x72C4
-    /* 040FEC 00140EEC 2A00023C */  lui        $2, %hi(LIT_658)
-    /* 040FF0 00140EF0 80934524 */  addiu      $5, $2, %lo(LIT_658)
+    /* 040FEC 00140EEC 2A00023C */  lui        $2, %hi("@658")
+    /* 040FF0 00140EF0 80934524 */  addiu      $5, $2, %lo("@658")
     /* 040FF4 00140EF4 28360072 */  paddub     $6, $16, $0
     /* 040FF8 00140EF8 A412050C */  jal        LoadSqInf__6CSoundFPcPUi
     /* 040FFC 00140EFC 00000000 */   nop

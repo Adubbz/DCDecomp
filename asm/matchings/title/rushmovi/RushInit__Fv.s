@@ -121,8 +121,8 @@ glabel RushInit__Fv
     /* 01D118 01DC8E18 00000000 */   nop
     /* 01D11C 01DC8E1C E301023C */  lui        $2, %hi(CScript)
     /* 01D120 01DC8E20 C0E94424 */  addiu      $4, $2, %lo(CScript)
-    /* 01D124 01DC8E24 DE01023C */  lui        $2, %hi(LIT_364__4)
-    /* 01D128 01DC8E28 60FE4524 */  addiu      $5, $2, %lo(LIT_364__4)
+    /* 01D124 01DC8E24 DE01023C */  lui        $2, %hi("@364__4")
+    /* 01D128 01DC8E28 60FE4524 */  addiu      $5, $2, %lo("@364__4")
     /* 01D12C 01DC8E2C 60AF760C */  jal        Load__7CScriptFPCc
     /* 01D130 01DC8E30 00000000 */   nop
     /* 01D134 01DC8E34 0043023C */  lui        $2, (0x43000000 >> 16)

@@ -23,8 +23,8 @@ glabel DngComStatus__Fiiii
     /* 0F4E40 001F4D40 28A6E070 */  paddub     $20, $7, $0
     /* 0F4E44 001F4D44 C701023C */  lui        $2, %hi(TexManager)
     /* 0F4E48 001F4D48 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0F4E4C 001F4D4C 2A00023C */  lui        $2, %hi(LIT_885__2)
-    /* 0F4E50 001F4D50 D8D44524 */  addiu      $5, $2, %lo(LIT_885__2)
+    /* 0F4E4C 001F4D4C 2A00023C */  lui        $2, %hi("@885__2")
+    /* 0F4E50 001F4D50 D8D44524 */  addiu      $5, $2, %lo("@885__2")
     /* 0F4E54 001F4D54 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0F4E58 001F4D58 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0F4E5C 001F4D5C 00000000 */   nop
@@ -82,8 +82,8 @@ glabel DngComStatus__Fiiii
     /* 0F4F28 001F4E28 0042023C */  lui        $2, (0x42000000 >> 16)
     /* 0F4F2C 001F4E2C 00108244 */  mtc1       $2, $f2
   .L001F4E30:
-    /* 0F4F30 001F4E30 2900023C */  lui        $2, %hi(LIT_789__3)
-    /* 0F4F34 001F4E34 602E4224 */  addiu      $2, $2, %lo(LIT_789__3)
+    /* 0F4F30 001F4E30 2900023C */  lui        $2, %hi("@789__3")
+    /* 0F4F34 001F4E34 602E4224 */  addiu      $2, $2, %lo("@789__3")
     /* 0F4F38 001F4E38 0001A327 */  addiu      $3, $29, 0x100
     /* 0F4F3C 001F4E3C 00004278 */  lq         $2, 0x0($2)
     /* 0F4F40 001F4E40 0000627C */  sq         $2, 0x0($3)
@@ -94,8 +94,8 @@ glabel DngComStatus__Fiiii
     /* 0F4F54 001F4E54 3802A327 */  addiu      $3, $29, 0x238
     /* 0F4F58 001F4E58 488882DF */  ld         $2, -0x77B8($28)
     /* 0F4F5C 001F4E5C 000062FC */  sd         $2, 0x0($3)
-    /* 0F4F60 001F4E60 2900023C */  lui        $2, %hi(LIT_791__2)
-    /* 0F4F64 001F4E64 702E4224 */  addiu      $2, $2, %lo(LIT_791__2)
+    /* 0F4F60 001F4E60 2900023C */  lui        $2, %hi("@791__2")
+    /* 0F4F64 001F4E64 702E4224 */  addiu      $2, $2, %lo("@791__2")
     /* 0F4F68 001F4E68 1001A627 */  addiu      $6, $29, 0x110
     /* 0F4F6C 001F4E6C 00004378 */  lq         $3, 0x0($2)
     /* 0F4F70 001F4E70 100042DC */  ld         $2, 0x10($2)

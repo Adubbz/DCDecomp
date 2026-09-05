@@ -32,8 +32,8 @@ glabel CommandRIVER_PARTS__FPPv
     /* 0763BC 001762BC 0E006010 */  beqz       $3, .L001762F8
     /* 0763C0 001762C0 00000000 */   nop
     /* 0763C4 001762C4 3000A427 */  addiu      $4, $29, 0x30
-    /* 0763C8 001762C8 2A00023C */  lui        $2, %hi(LIT_501__2)
-    /* 0763CC 001762CC E0A74524 */  addiu      $5, $2, %lo(LIT_501__2)
+    /* 0763C8 001762C8 2A00023C */  lui        $2, %hi("@501__2")
+    /* 0763CC 001762CC E0A74524 */  addiu      $5, $2, %lo("@501__2")
     /* 0763D0 001762D0 D201023C */  lui        $2, %hi(CurrentDir__3)
     /* 0763D4 001762D4 F09A4624 */  addiu      $6, $2, %lo(CurrentDir__3)
     /* 0763D8 001762D8 1614040C */  jal        sprintf

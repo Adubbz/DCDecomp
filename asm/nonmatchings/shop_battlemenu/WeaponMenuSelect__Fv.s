@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_2808__2
+glabel "@2808__2"
     /* 19DA00 0029D900 B8D81F00 */ .word .L001FD8B8
     /* 19DA04 0029D904 A8D71F00 */ .word .L001FD7A8
     /* 19DA08 0029D908 88D91F00 */ .word .L001FD988
@@ -19,7 +19,7 @@ glabel LIT_2808__2
     /* 19DA28 0029D928 DCD91F00 */ .word .L001FD9DC
     /* 19DA2C 0029D92C A8D91F00 */ .word .L001FD9A8
 
-glabel LIT_2807__2
+glabel "@2807__2"
     /* 19DA30 0029D930 A0D51F00 */ .word .L001FD5A0
     /* 19DA34 0029D934 A0D51F00 */ .word .L001FD5A0
     /* 19DA38 0029D938 A0D51F00 */ .word .L001FD5A0
@@ -33,7 +33,7 @@ glabel LIT_2807__2
     /* 19DA58 0029D958 E4D51F00 */ .word .L001FD5E4
     /* 19DA5C 0029D95C E4D51F00 */ .word .L001FD5E4
 
-glabel LIT_2806__2
+glabel "@2806__2"
     /* 19DA60 0029D960 50D51F00 */ .word .L001FD550
     /* 19DA64 0029D964 C0CF1F00 */ .word .L001FCFC0
     /* 19DA68 0029D968 1CD01F00 */ .word .L001FD01C
@@ -175,8 +175,8 @@ glabel WeaponMenuSelect__Fv
     /* 0FD098 001FCF98 0F00A12C */  sltiu      $1, $5, 0xF
     /* 0FD09C 001FCF9C AA012010 */  beqz       $1, .L001FD648
     /* 0FD0A0 001FCFA0 00000000 */   nop
-    /* 0FD0A4 001FCFA4 2A00033C */  lui        $3, %hi(LIT_2806__2)
-    /* 0FD0A8 001FCFA8 60D96424 */  addiu      $4, $3, %lo(LIT_2806__2)
+    /* 0FD0A4 001FCFA4 2A00033C */  lui        $3, %hi("@2806__2")
+    /* 0FD0A8 001FCFA8 60D96424 */  addiu      $4, $3, %lo("@2806__2")
     /* 0FD0AC 001FCFAC 80180500 */  sll        $3, $5, 2
     /* 0FD0B0 001FCFB0 21186400 */  addu       $3, $3, $4
     /* 0FD0B4 001FCFB4 0000638C */  lw         $3, 0x0($3)
@@ -582,8 +582,8 @@ glabel WeaponMenuSelect__Fv
     /* 0FD678 001FD578 0C00812E */  sltiu      $1, $20, 0xC
     /* 0FD67C 001FD57C 1B002010 */  beqz       $1, .L001FD5EC
     /* 0FD680 001FD580 00000000 */   nop
-    /* 0FD684 001FD584 2A00033C */  lui        $3, %hi(LIT_2807__2)
-    /* 0FD688 001FD588 30D96424 */  addiu      $4, $3, %lo(LIT_2807__2)
+    /* 0FD684 001FD584 2A00033C */  lui        $3, %hi("@2807__2")
+    /* 0FD688 001FD588 30D96424 */  addiu      $4, $3, %lo("@2807__2")
     /* 0FD68C 001FD58C 80181400 */  sll        $3, $20, 2
     /* 0FD690 001FD590 21186400 */  addu       $3, $3, $4
     /* 0FD694 001FD594 0000638C */  lw         $3, 0x0($3)
@@ -659,8 +659,8 @@ glabel WeaponMenuSelect__Fv
     /* 0FD790 001FD690 00000000 */   nop
     /* 0FD794 001FD694 28364070 */  paddub     $6, $2, $0
   .L001FD698:
-    /* 0FD798 001FD698 2900033C */  lui        $3, %hi(LIT_2612__2)
-    /* 0FD79C 001FD69C C0326324 */  addiu      $3, $3, %lo(LIT_2612__2)
+    /* 0FD798 001FD698 2900033C */  lui        $3, %hi("@2612__2")
+    /* 0FD79C 001FD69C C0326324 */  addiu      $3, $3, %lo("@2612__2")
     /* 0FD7A0 001FD6A0 A000A527 */  addiu      $5, $29, 0xA0
     /* 0FD7A4 001FD6A4 00006478 */  lq         $4, 0x0($3)
     /* 0FD7A8 001FD6A8 100063DC */  ld         $3, 0x10($3)
@@ -701,8 +701,8 @@ glabel WeaponMenuSelect__Fv
     /* 0FD834 001FD734 08004129 */  slti       $1, $10, 0x8
     /* 0FD838 001FD738 11002010 */  beqz       $1, .L001FD780
     /* 0FD83C 001FD73C 00000000 */   nop
-    /* 0FD840 001FD740 2900063C */  lui        $6, %hi(LIT_2616)
-    /* 0FD844 001FD744 D832C624 */  addiu      $6, $6, %lo(LIT_2616)
+    /* 0FD840 001FD740 2900063C */  lui        $6, %hi("@2616")
+    /* 0FD844 001FD744 D832C624 */  addiu      $6, $6, %lo("@2616")
     /* 0FD848 001FD748 D800A827 */  addiu      $8, $29, 0xD8
     /* 0FD84C 001FD74C 0000C7DC */  ld         $7, 0x0($6)
     /* 0FD850 001FD750 0800C684 */  lh         $6, 0x8($6)
@@ -721,8 +721,8 @@ glabel WeaponMenuSelect__Fv
     /* 0FD880 001FD780 0C00412D */  sltiu      $1, $10, 0xC
     /* 0FD884 001FD784 D1002010 */  beqz       $1, .L001FDACC
     /* 0FD888 001FD788 00000000 */   nop
-    /* 0FD88C 001FD78C 2A00063C */  lui        $6, %hi(LIT_2808__2)
-    /* 0FD890 001FD790 00D9C724 */  addiu      $7, $6, %lo(LIT_2808__2)
+    /* 0FD88C 001FD78C 2A00063C */  lui        $6, %hi("@2808__2")
+    /* 0FD890 001FD790 00D9C724 */  addiu      $7, $6, %lo("@2808__2")
     /* 0FD894 001FD794 80300A00 */  sll        $6, $10, 2
     /* 0FD898 001FD798 2130C700 */  addu       $6, $6, $7
     /* 0FD89C 001FD79C 0000C68C */  lw         $6, 0x0($6)
@@ -953,8 +953,8 @@ glabel WeaponMenuSelect__Fv
     /* 0FDBD4 001FDAD4 0B000324 */  addiu      $3, $0, 0xB
     /* 0FDBD8 001FDAD8 0E00C314 */  bne        $6, $3, .L001FDB14
     /* 0FDBDC 001FDADC 00000000 */   nop
-    /* 0FDBE0 001FDAE0 2900033C */  lui        $3, %hi(LIT_2679)
-    /* 0FDBE4 001FDAE4 F0326324 */  addiu      $3, $3, %lo(LIT_2679)
+    /* 0FDBE0 001FDAE0 2900033C */  lui        $3, %hi("@2679")
+    /* 0FDBE4 001FDAE4 F0326324 */  addiu      $3, $3, %lo("@2679")
     /* 0FDBE8 001FDAE8 C000A527 */  addiu      $5, $29, 0xC0
     /* 0FDBEC 001FDAEC 00006478 */  lq         $4, 0x0($3)
     /* 0FDBF0 001FDAF0 100063C4 */  lwc1       $f3, 0x10($3)

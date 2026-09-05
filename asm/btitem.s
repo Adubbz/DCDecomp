@@ -20,8 +20,8 @@ glabel selectChrUnit__Fii
     /* 0D114C 001D104C 2886A070 */  paddub     $16, $5, $0
     /* 0D1150 001D1050 789C828F */  lw         $2, -0x6388($28)
     /* 0D1154 001D1054 04004580 */  lb         $5, 0x4($2)
-    /* 0D1158 001D1058 2A00023C */  lui        $2, %hi(LIT_635__2)
-    /* 0D115C 001D105C 18C54424 */  addiu      $4, $2, %lo(LIT_635__2)
+    /* 0D1158 001D1058 2A00023C */  lui        $2, %hi("@635__2")
+    /* 0D115C 001D105C 18C54424 */  addiu      $4, $2, %lo("@635__2")
     /* 0D1160 001D1060 28364072 */  paddub     $6, $18, $0
     /* 0D1164 001D1064 A611040C */  jal        printf
     /* 0D1168 001D1068 00000000 */   nop
@@ -85,8 +85,8 @@ glabel selectChrUnit__Fii
     /* 0D124C 001D114C ECDC060C */  jal        BtGetWeaponNamePath3__FPcPci
     /* 0D1250 001D1150 00000000 */   nop
     /* 0D1254 001D1154 1001A427 */  addiu      $4, $29, 0x110
-    /* 0D1258 001D1158 2A00023C */  lui        $2, %hi(LIT_636)
-    /* 0D125C 001D115C 30C54524 */  addiu      $5, $2, %lo(LIT_636)
+    /* 0D1258 001D1158 2A00023C */  lui        $2, %hi("@636")
+    /* 0D125C 001D115C 30C54524 */  addiu      $5, $2, %lo("@636")
     /* 0D1260 001D1160 5000A627 */  addiu      $6, $29, 0x50
     /* 0D1264 001D1164 1614040C */  jal        sprintf
     /* 0D1268 001D1168 00000000 */   nop
@@ -103,8 +103,8 @@ glabel selectChrUnit__Fii
     /* 0D1294 001D1194 80100200 */  sll        $2, $2, 2
     /* 0D1298 001D1198 21880202 */  addu       $17, $16, $2
     /* 0D129C 001D119C 1001A427 */  addiu      $4, $29, 0x110
-    /* 0D12A0 001D11A0 2A00023C */  lui        $2, %hi(LIT_636)
-    /* 0D12A4 001D11A4 30C54524 */  addiu      $5, $2, %lo(LIT_636)
+    /* 0D12A0 001D11A0 2A00023C */  lui        $2, %hi("@636")
+    /* 0D12A4 001D11A4 30C54524 */  addiu      $5, $2, %lo("@636")
     /* 0D12A8 001D11A8 9000A627 */  addiu      $6, $29, 0x90
     /* 0D12AC 001D11AC 1614040C */  jal        sprintf
     /* 0D12B0 001D11B0 00000000 */   nop
@@ -121,8 +121,8 @@ glabel selectChrUnit__Fii
     /* 0D12DC 001D11DC 80100200 */  sll        $2, $2, 2
     /* 0D12E0 001D11E0 21982202 */  addu       $19, $17, $2
     /* 0D12E4 001D11E4 1001A427 */  addiu      $4, $29, 0x110
-    /* 0D12E8 001D11E8 2A00023C */  lui        $2, %hi(LIT_636)
-    /* 0D12EC 001D11EC 30C54524 */  addiu      $5, $2, %lo(LIT_636)
+    /* 0D12E8 001D11E8 2A00023C */  lui        $2, %hi("@636")
+    /* 0D12EC 001D11EC 30C54524 */  addiu      $5, $2, %lo("@636")
     /* 0D12F0 001D11F0 D000A627 */  addiu      $6, $29, 0xD0
     /* 0D12F4 001D11F4 1614040C */  jal        sprintf
     /* 0D12F8 001D11F8 00000000 */   nop
@@ -151,13 +151,13 @@ glabel selectChrUnit__Fii
     /* 0D1354 001D1254 00000000 */   nop
     /* 0D1358 001D1258 28864070 */  paddub     $16, $2, $0
     /* 0D135C 001D125C 5001A427 */  addiu      $4, $29, 0x150
-    /* 0D1360 001D1260 2A00023C */  lui        $2, %hi(LIT_637)
-    /* 0D1364 001D1264 50C54524 */  addiu      $5, $2, %lo(LIT_637)
+    /* 0D1360 001D1260 2A00023C */  lui        $2, %hi("@637")
+    /* 0D1364 001D1264 50C54524 */  addiu      $5, $2, %lo("@637")
     /* 0D1368 001D1268 28360072 */  paddub     $6, $16, $0
     /* 0D136C 001D126C 1614040C */  jal        sprintf
     /* 0D1370 001D1270 00000000 */   nop
-    /* 0D1374 001D1274 2A00023C */  lui        $2, %hi(LIT_638)
-    /* 0D1378 001D1278 70C54424 */  addiu      $4, $2, %lo(LIT_638)
+    /* 0D1374 001D1274 2A00023C */  lui        $2, %hi("@638")
+    /* 0D1378 001D1278 70C54424 */  addiu      $4, $2, %lo("@638")
     /* 0D137C 001D127C 282E4072 */  paddub     $5, $18, $0
     /* 0D1380 001D1280 5001A627 */  addiu      $6, $29, 0x150
     /* 0D1384 001D1284 A611040C */  jal        printf
@@ -169,8 +169,8 @@ glabel selectChrUnit__Fii
     /* 0D139C 001D129C 00000000 */   nop
     /* 0D13A0 001D12A0 DC4F050C */  jal        wait_now_loading_vsync__Fv
     /* 0D13A4 001D12A4 00000000 */   nop
-    /* 0D13A8 001D12A8 2A00023C */  lui        $2, %hi(LIT_639__2)
-    /* 0D13AC 001D12AC 80C54424 */  addiu      $4, $2, %lo(LIT_639__2)
+    /* 0D13A8 001D12A8 2A00023C */  lui        $2, %hi("@639__2")
+    /* 0D13AC 001D12AC 80C54424 */  addiu      $4, $2, %lo("@639__2")
     /* 0D13B0 001D12B0 9C01A58F */  lw         $5, 0x19C($29)
     /* 0D13B4 001D12B4 A611040C */  jal        printf
     /* 0D13B8 001D12B8 00000000 */   nop
@@ -183,10 +183,10 @@ glabel selectChrUnit__Fii
     /* 0D13D4 001D12D4 E601023C */  lui        $2, %hi(CWeaponFx)
     /* 0D13D8 001D12D8 408F4424 */  addiu      $4, $2, %lo(CWeaponFx)
     /* 0D13DC 001D12DC BC00658C */  lw         $5, 0xBC($3)
-    /* 0D13E0 001D12E0 2A00023C */  lui        $2, %hi(LIT_640__2)
-    /* 0D13E4 001D12E4 90C54624 */  addiu      $6, $2, %lo(LIT_640__2)
-    /* 0D13E8 001D12E8 2A00023C */  lui        $2, %hi(LIT_641)
-    /* 0D13EC 001D12EC 98C54724 */  addiu      $7, $2, %lo(LIT_641)
+    /* 0D13E0 001D12E0 2A00023C */  lui        $2, %hi("@640__2")
+    /* 0D13E4 001D12E4 90C54624 */  addiu      $6, $2, %lo("@640__2")
+    /* 0D13E8 001D12E8 2A00023C */  lui        $2, %hi("@641")
+    /* 0D13EC 001D12EC 98C54724 */  addiu      $7, $2, %lo("@641")
     /* 0D13F0 001D12F0 7059070C */  jal        InitSet__13CWeaponEffectFP6CFramePcPc
     /* 0D13F4 001D12F4 00000000 */   nop
     /* 0D13F8 001D12F8 80E7760C */  jal        SetWeaponColor__Fv
@@ -196,8 +196,8 @@ glabel selectChrUnit__Fii
     /* 0D1408 001D1308 FC6C050C */  jal        SndVoiceLoad__Fi
     /* 0D140C 001D130C 00000000 */   nop
     /* 0D1410 001D1310 948B858F */  lw         $5, -0x746C($28)
-    /* 0D1414 001D1314 2A00023C */  lui        $2, %hi(LIT_642__2)
-    /* 0D1418 001D1318 A0C54424 */  addiu      $4, $2, %lo(LIT_642__2)
+    /* 0D1414 001D1314 2A00023C */  lui        $2, %hi("@642__2")
+    /* 0D1418 001D1318 A0C54424 */  addiu      $4, $2, %lo("@642__2")
     /* 0D141C 001D131C D0AE080C */  jal        LoadFileMenuData__FPcPUi
     /* 0D1420 001D1320 00000000 */   nop
     /* 0D1424 001D1324 DC4F050C */  jal        wait_now_loading_vsync__Fv
@@ -237,8 +237,8 @@ glabel LoadActiveItemIcon__Fv
     /* 0D14A0 001D13A0 F0FFBD27 */  addiu      $29, $29, -0x10
     /* 0D14A4 001D13A4 0000BF7F */  sq         $31, 0x0($29)
     /* 0D14A8 001D13A8 948B858F */  lw         $5, -0x746C($28)
-    /* 0D14AC 001D13AC 2A00023C */  lui        $2, %hi(LIT_642__2)
-    /* 0D14B0 001D13B0 A0C54424 */  addiu      $4, $2, %lo(LIT_642__2)
+    /* 0D14AC 001D13AC 2A00023C */  lui        $2, %hi("@642__2")
+    /* 0D14B0 001D13B0 A0C54424 */  addiu      $4, $2, %lo("@642__2")
     /* 0D14B4 001D13B4 D0AE080C */  jal        LoadFileMenuData__FPcPUi
     /* 0D14B8 001D13B8 00000000 */   nop
     /* 0D14BC 001D13BC DC4F050C */  jal        wait_now_loading_vsync__Fv
@@ -379,8 +379,8 @@ glabel BtGetTreasureboxBig_Init__Fv
     /* 0D16C0 001D15C0 00000000 */   nop
     /* 0D16C4 001D15C4 349483AF */  sw         $3, -0x6BCC($28)
   .L001D15C8:
-    /* 0D16C8 001D15C8 2800023C */  lui        $2, %hi(LIT_662)
-    /* 0D16CC 001D15CC D0E74224 */  addiu      $2, $2, %lo(LIT_662)
+    /* 0D16C8 001D15C8 2800023C */  lui        $2, %hi("@662")
+    /* 0D16CC 001D15CC D0E74224 */  addiu      $2, $2, %lo("@662")
     /* 0D16D0 001D15D0 2000A427 */  addiu      $4, $29, 0x20
     /* 0D16D4 001D15D4 00004378 */  lq         $3, 0x0($2)
     /* 0D16D8 001D15D8 100042DC */  ld         $2, 0x10($2)
@@ -575,8 +575,8 @@ glabel BtGetTreasureboxBig_Loop__Fv
     /* 0D19BC 001D18BC 549D858F */  lw         $5, -0x62AC($28)
     /* 0D19C0 001D18C0 EA01023C */  lui        $2, %hi(CharaMain)
     /* 0D19C4 001D18C4 201D4424 */  addiu      $4, $2, %lo(CharaMain)
-    /* 0D19C8 001D18C8 2A00023C */  lui        $2, %hi(LIT_747)
-    /* 0D19CC 001D18CC 70C64624 */  addiu      $6, $2, %lo(LIT_747)
+    /* 0D19C8 001D18C8 2A00023C */  lui        $2, %hi("@747")
+    /* 0D19CC 001D18CC 70C64624 */  addiu      $6, $2, %lo("@747")
     /* 0D19D0 001D18D0 F001023C */  lui        $2, %hi(BtCashBuffer)
     /* 0D19D4 001D18D4 50684724 */  addiu      $7, $2, %lo(BtCashBuffer)
     /* 0D19D8 001D18D8 F001023C */  lui        $2, %hi(BtCashBuffer)
@@ -811,10 +811,10 @@ glabel BtGetTreasureboxBig_Loop__Fv
     /* 0D1D4C 001D1C4C A89C858F */  lw         $5, -0x6358($28)
     /* 0D1D50 001D1C50 EB01013C */  lui        $1, (0x1EB6030 >> 16)
     /* 0D1D54 001D1C54 3060248C */  lw         $4, (0x1EB6030 & 0xFFFF)($1)
-    /* 0D1D58 001D1C58 2A00023C */  lui        $2, %hi(LIT_754)
-    /* 0D1D5C 001D1C5C 80C64624 */  addiu      $6, $2, %lo(LIT_754)
-    /* 0D1D60 001D1C60 2A00023C */  lui        $2, %hi(LIT_755)
-    /* 0D1D64 001D1C64 88C64724 */  addiu      $7, $2, %lo(LIT_755)
+    /* 0D1D58 001D1C58 2A00023C */  lui        $2, %hi("@754")
+    /* 0D1D5C 001D1C5C 80C64624 */  addiu      $6, $2, %lo("@754")
+    /* 0D1D60 001D1C60 2A00023C */  lui        $2, %hi("@755")
+    /* 0D1D64 001D1C64 88C64724 */  addiu      $7, $2, %lo("@755")
     /* 0D1D68 001D1C68 A0DB060C */  jal        setCameraPassData__FP9CFrameVu1P7CCameraPcPc
     /* 0D1D6C 001D1C6C 00000000 */   nop
     /* 0D1D70 001D1C70 EB01013C */  lui        $1, (0x1EB6050 >> 16)
@@ -901,10 +901,10 @@ glabel BtGetTreasureboxBig_Loop__Fv
     /* 0D1EA8 001D1DA8 A89C858F */  lw         $5, -0x6358($28)
     /* 0D1EAC 001D1DAC EB01013C */  lui        $1, (0x1EB6030 >> 16)
     /* 0D1EB0 001D1DB0 3060248C */  lw         $4, (0x1EB6030 & 0xFFFF)($1)
-    /* 0D1EB4 001D1DB4 2A00023C */  lui        $2, %hi(LIT_754)
-    /* 0D1EB8 001D1DB8 80C64624 */  addiu      $6, $2, %lo(LIT_754)
-    /* 0D1EBC 001D1DBC 2A00023C */  lui        $2, %hi(LIT_755)
-    /* 0D1EC0 001D1DC0 88C64724 */  addiu      $7, $2, %lo(LIT_755)
+    /* 0D1EB4 001D1DB4 2A00023C */  lui        $2, %hi("@754")
+    /* 0D1EB8 001D1DB8 80C64624 */  addiu      $6, $2, %lo("@754")
+    /* 0D1EBC 001D1DBC 2A00023C */  lui        $2, %hi("@755")
+    /* 0D1EC0 001D1DC0 88C64724 */  addiu      $7, $2, %lo("@755")
     /* 0D1EC4 001D1DC4 A0DB060C */  jal        setCameraPassData__FP9CFrameVu1P7CCameraPcPc
     /* 0D1EC8 001D1DC8 00000000 */   nop
     /* 0D1ECC 001D1DCC CC01023C */  lui        $2, %hi(GamePad)
@@ -1136,8 +1136,8 @@ glabel BtGetTreasureboxSmall_Init__Fi
     /* 0D223C 001D213C C1000010 */  b          .L001D2444
     /* 0D2240 001D2140 00000000 */   nop
   .L001D2144:
-    /* 0D2244 001D2144 2800023C */  lui        $2, %hi(LIT_763__2)
-    /* 0D2248 001D2148 F0E74224 */  addiu      $2, $2, %lo(LIT_763__2)
+    /* 0D2244 001D2144 2800023C */  lui        $2, %hi("@763__2")
+    /* 0D2248 001D2148 F0E74224 */  addiu      $2, $2, %lo("@763__2")
     /* 0D224C 001D214C 4000A427 */  addiu      $4, $29, 0x40
     /* 0D2250 001D2150 00004378 */  lq         $3, 0x0($2)
     /* 0D2254 001D2154 100042DC */  ld         $2, 0x10($2)
@@ -1167,16 +1167,16 @@ glabel BtGetTreasureboxSmall_Init__Fi
     /* 0D22B0 001D21B0 4CDD060C */  jal        createAttachVolume__Fii
     /* 0D22B4 001D21B4 00000000 */   nop
     /* 0D22B8 001D21B8 288E4070 */  paddub     $17, $2, $0
-    /* 0D22BC 001D21BC 2A00023C */  lui        $2, %hi(LIT_792)
-    /* 0D22C0 001D21C0 90C64424 */  addiu      $4, $2, %lo(LIT_792)
+    /* 0D22BC 001D21BC 2A00023C */  lui        $2, %hi("@792")
+    /* 0D22C0 001D21C0 90C64424 */  addiu      $4, $2, %lo("@792")
     /* 0D22C4 001D21C4 282E2072 */  paddub     $5, $17, $0
     /* 0D22C8 001D21C8 A611040C */  jal        printf
     /* 0D22CC 001D21CC 00000000 */   nop
     /* 0D22D0 001D21D0 3C9490AF */  sw         $16, -0x6BC4($28)
     /* 0D22D4 001D21D4 409491AF */  sw         $17, -0x6BC0($28)
     /* 0D22D8 001D21D8 6000A427 */  addiu      $4, $29, 0x60
-    /* 0D22DC 001D21DC 2A00023C */  lui        $2, %hi(LIT_793)
-    /* 0D22E0 001D21E0 B0C64524 */  addiu      $5, $2, %lo(LIT_793)
+    /* 0D22DC 001D21DC 2A00023C */  lui        $2, %hi("@793")
+    /* 0D22E0 001D21E0 B0C64524 */  addiu      $5, $2, %lo("@793")
     /* 0D22E4 001D21E4 5A15040C */  jal        strcpy
     /* 0D22E8 001D21E8 00000000 */   nop
     /* 0D22EC 001D21EC 80181000 */  sll        $3, $16, 2
@@ -1192,23 +1192,23 @@ glabel BtGetTreasureboxSmall_Init__Fi
     /* 0D2314 001D2214 5A15040C */  jal        strcpy
     /* 0D2318 001D2218 00000000 */   nop
     /* 0D231C 001D221C 6000A427 */  addiu      $4, $29, 0x60
-    /* 0D2320 001D2220 2A00023C */  lui        $2, %hi(LIT_794__2)
-    /* 0D2324 001D2224 C8C64524 */  addiu      $5, $2, %lo(LIT_794__2)
+    /* 0D2320 001D2220 2A00023C */  lui        $2, %hi("@794__2")
+    /* 0D2324 001D2224 C8C64524 */  addiu      $5, $2, %lo("@794__2")
     /* 0D2328 001D2228 BC14040C */  jal        strcat
     /* 0D232C 001D222C 00000000 */   nop
     /* 0D2330 001D2230 A000A427 */  addiu      $4, $29, 0xA0
-    /* 0D2334 001D2234 2A00023C */  lui        $2, %hi(LIT_795__2)
-    /* 0D2338 001D2238 D0C64524 */  addiu      $5, $2, %lo(LIT_795__2)
+    /* 0D2334 001D2234 2A00023C */  lui        $2, %hi("@795__2")
+    /* 0D2338 001D2238 D0C64524 */  addiu      $5, $2, %lo("@795__2")
     /* 0D233C 001D223C BC14040C */  jal        strcat
     /* 0D2340 001D2240 00000000 */   nop
-    /* 0D2344 001D2244 2A00023C */  lui        $2, %hi(LIT_796)
-    /* 0D2348 001D2248 D8C64424 */  addiu      $4, $2, %lo(LIT_796)
+    /* 0D2344 001D2244 2A00023C */  lui        $2, %hi("@796")
+    /* 0D2348 001D2248 D8C64424 */  addiu      $4, $2, %lo("@796")
     /* 0D234C 001D224C 282E0072 */  paddub     $5, $16, $0
     /* 0D2350 001D2250 6000A627 */  addiu      $6, $29, 0x60
     /* 0D2354 001D2254 A611040C */  jal        printf
     /* 0D2358 001D2258 00000000 */   nop
-    /* 0D235C 001D225C 2A00023C */  lui        $2, %hi(LIT_796)
-    /* 0D2360 001D2260 D8C64424 */  addiu      $4, $2, %lo(LIT_796)
+    /* 0D235C 001D225C 2A00023C */  lui        $2, %hi("@796")
+    /* 0D2360 001D2260 D8C64424 */  addiu      $4, $2, %lo("@796")
     /* 0D2364 001D2264 282E0072 */  paddub     $5, $16, $0
     /* 0D2368 001D2268 A000A627 */  addiu      $6, $29, 0xA0
     /* 0D236C 001D226C A611040C */  jal        printf
@@ -1384,8 +1384,8 @@ glabel BtGetTreasureboxSmall_Loop__Fv
     /* 0D2604 001D2504 549D858F */  lw         $5, -0x62AC($28)
     /* 0D2608 001D2508 EA01023C */  lui        $2, %hi(CharaMain)
     /* 0D260C 001D250C 201D4424 */  addiu      $4, $2, %lo(CharaMain)
-    /* 0D2610 001D2510 2A00023C */  lui        $2, %hi(LIT_747)
-    /* 0D2614 001D2514 70C64624 */  addiu      $6, $2, %lo(LIT_747)
+    /* 0D2610 001D2510 2A00023C */  lui        $2, %hi("@747")
+    /* 0D2614 001D2514 70C64624 */  addiu      $6, $2, %lo("@747")
     /* 0D2618 001D2518 F001023C */  lui        $2, %hi(BtCashBuffer)
     /* 0D261C 001D251C 50684724 */  addiu      $7, $2, %lo(BtCashBuffer)
     /* 0D2620 001D2520 F001023C */  lui        $2, %hi(BtCashBuffer)
@@ -1529,10 +1529,10 @@ glabel BtGetTreasureboxSmall_Loop__Fv
     /* 0D283C 001D273C EB01013C */  lui        $1, (0x1EB5EF0 >> 16)
     /* 0D2840 001D2740 F05E248C */  lw         $4, (0x1EB5EF0 & 0xFFFF)($1)
     /* 0D2844 001D2744 A89C858F */  lw         $5, -0x6358($28)
-    /* 0D2848 001D2748 2A00023C */  lui        $2, %hi(LIT_754)
-    /* 0D284C 001D274C 80C64624 */  addiu      $6, $2, %lo(LIT_754)
-    /* 0D2850 001D2750 2A00023C */  lui        $2, %hi(LIT_755)
-    /* 0D2854 001D2754 88C64724 */  addiu      $7, $2, %lo(LIT_755)
+    /* 0D2848 001D2748 2A00023C */  lui        $2, %hi("@754")
+    /* 0D284C 001D274C 80C64624 */  addiu      $6, $2, %lo("@754")
+    /* 0D2850 001D2750 2A00023C */  lui        $2, %hi("@755")
+    /* 0D2854 001D2754 88C64724 */  addiu      $7, $2, %lo("@755")
     /* 0D2858 001D2758 A0DB060C */  jal        setCameraPassData__FP9CFrameVu1P7CCameraPcPc
     /* 0D285C 001D275C 00000000 */   nop
     /* 0D2860 001D2760 EB01013C */  lui        $1, (0x1EB5F10 >> 16)
@@ -1626,10 +1626,10 @@ glabel BtGetTreasureboxSmall_Loop__Fv
     /* 0D29AC 001D28AC EB01013C */  lui        $1, (0x1EB5EF0 >> 16)
     /* 0D29B0 001D28B0 F05E248C */  lw         $4, (0x1EB5EF0 & 0xFFFF)($1)
     /* 0D29B4 001D28B4 A89C858F */  lw         $5, -0x6358($28)
-    /* 0D29B8 001D28B8 2A00023C */  lui        $2, %hi(LIT_754)
-    /* 0D29BC 001D28BC 80C64624 */  addiu      $6, $2, %lo(LIT_754)
-    /* 0D29C0 001D28C0 2A00023C */  lui        $2, %hi(LIT_755)
-    /* 0D29C4 001D28C4 88C64724 */  addiu      $7, $2, %lo(LIT_755)
+    /* 0D29B8 001D28B8 2A00023C */  lui        $2, %hi("@754")
+    /* 0D29BC 001D28BC 80C64624 */  addiu      $6, $2, %lo("@754")
+    /* 0D29C0 001D28C0 2A00023C */  lui        $2, %hi("@755")
+    /* 0D29C4 001D28C4 88C64724 */  addiu      $7, $2, %lo("@755")
     /* 0D29C8 001D28C8 A0DB060C */  jal        setCameraPassData__FP9CFrameVu1P7CCameraPcPc
     /* 0D29CC 001D28CC 00000000 */   nop
     /* 0D29D0 001D28D0 CC01023C */  lui        $2, %hi(GamePad)
@@ -1797,8 +1797,8 @@ glabel BtAtraGetShort_Init__Fv
     /* 0D2C3C 001D2B3C 5068228C */  lw         $2, (0x1F06850 & 0xFFFF)($1)
     /* 0D2C40 001D2B40 21284300 */  addu       $5, $2, $3
     /* 0D2C44 001D2B44 549D85AF */  sw         $5, -0x62AC($28)
-    /* 0D2C48 001D2B48 2A00023C */  lui        $2, %hi(LIT_656__4)
-    /* 0D2C4C 001D2B4C B0C54424 */  addiu      $4, $2, %lo(LIT_656__4)
+    /* 0D2C48 001D2B48 2A00023C */  lui        $2, %hi("@656__4")
+    /* 0D2C4C 001D2B4C B0C54424 */  addiu      $4, $2, %lo("@656__4")
     /* 0D2C50 001D2B50 1C00A627 */  addiu      $6, $29, 0x1C
     /* 0D2C54 001D2B54 ACFA040C */  jal        LoadFileBG__FPcP1Pi
     /* 0D2C58 001D2B58 00000000 */   nop
@@ -1818,8 +1818,8 @@ glabel BtAtraGetShort_Init__Fv
     /* 0D2C90 001D2B90 5068228C */  lw         $2, (0x1F06850 & 0xFFFF)($1)
     /* 0D2C94 001D2B94 21284300 */  addu       $5, $2, $3
     /* 0D2C98 001D2B98 409D85AF */  sw         $5, -0x62C0($28)
-    /* 0D2C9C 001D2B9C 2A00023C */  lui        $2, %hi(LIT_866__2)
-    /* 0D2CA0 001D2BA0 E0C64424 */  addiu      $4, $2, %lo(LIT_866__2)
+    /* 0D2C9C 001D2B9C 2A00023C */  lui        $2, %hi("@866__2")
+    /* 0D2CA0 001D2BA0 E0C64424 */  addiu      $4, $2, %lo("@866__2")
     /* 0D2CA4 001D2BA4 1C00A627 */  addiu      $6, $29, 0x1C
     /* 0D2CA8 001D2BA8 ACFA040C */  jal        LoadFileBG__FPcP1Pi
     /* 0D2CAC 001D2BAC 00000000 */   nop
@@ -1886,8 +1886,8 @@ glabel BtAtraGetShort_Loop__Fii
     /* 0D2D98 001D2C98 0600812C */  sltiu      $1, $4, 0x6
     /* 0D2D9C 001D2C9C 72012010 */  beqz       $1, .L001D3268
     /* 0D2DA0 001D2CA0 00000000 */   nop
-    /* 0D2DA4 001D2CA4 2A00023C */  lui        $2, %hi(LIT_904__2)
-    /* 0D2DA8 001D2CA8 10C74324 */  addiu      $3, $2, %lo(LIT_904__2)
+    /* 0D2DA4 001D2CA4 2A00023C */  lui        $2, %hi("@904__2")
+    /* 0D2DA8 001D2CA8 10C74324 */  addiu      $3, $2, %lo("@904__2")
     /* 0D2DAC 001D2CAC 80100400 */  sll        $2, $4, 2
     /* 0D2DB0 001D2CB0 21104300 */  addu       $2, $2, $3
     /* 0D2DB4 001D2CB4 0000428C */  lw         $2, 0x0($2)
@@ -1905,8 +1905,8 @@ glabel BtAtraGetShort_Loop__Fii
     /* 0D2DE0 001D2CE0 549D858F */  lw         $5, -0x62AC($28)
     /* 0D2DE4 001D2CE4 EA01023C */  lui        $2, %hi(CharaMain)
     /* 0D2DE8 001D2CE8 201D4424 */  addiu      $4, $2, %lo(CharaMain)
-    /* 0D2DEC 001D2CEC 2A00023C */  lui        $2, %hi(LIT_747)
-    /* 0D2DF0 001D2CF0 70C64624 */  addiu      $6, $2, %lo(LIT_747)
+    /* 0D2DEC 001D2CEC 2A00023C */  lui        $2, %hi("@747")
+    /* 0D2DF0 001D2CF0 70C64624 */  addiu      $6, $2, %lo("@747")
     /* 0D2DF4 001D2CF4 F001023C */  lui        $2, %hi(BtCashBuffer)
     /* 0D2DF8 001D2CF8 50684724 */  addiu      $7, $2, %lo(BtCashBuffer)
     /* 0D2DFC 001D2CFC F001023C */  lui        $2, %hi(BtCashBuffer)
@@ -1918,8 +1918,8 @@ glabel BtAtraGetShort_Loop__Fii
     /* 0D2E14 001D2D14 409D858F */  lw         $5, -0x62C0($28)
     /* 0D2E18 001D2D18 EB01023C */  lui        $2, %hi(shortAtraEffect)
     /* 0D2E1C 001D2D1C A04C4424 */  addiu      $4, $2, %lo(shortAtraEffect)
-    /* 0D2E20 001D2D20 2A00023C */  lui        $2, %hi(LIT_902)
-    /* 0D2E24 001D2D24 F8C64624 */  addiu      $6, $2, %lo(LIT_902)
+    /* 0D2E20 001D2D20 2A00023C */  lui        $2, %hi("@902")
+    /* 0D2E24 001D2D24 F8C64624 */  addiu      $6, $2, %lo("@902")
     /* 0D2E28 001D2D28 F001023C */  lui        $2, %hi(BtCashBuffer)
     /* 0D2E2C 001D2D2C 50684724 */  addiu      $7, $2, %lo(BtCashBuffer)
     /* 0D2E30 001D2D30 1C000824 */  addiu      $8, $0, 0x1C
@@ -2597,8 +2597,8 @@ glabel BtGetGateKey_Loop__Fv
     /* 0D3828 001D3728 589D82AF */  sw         $2, -0x62A8($28)
     /* 0D382C 001D372C EA01013C */  lui        $1, (0x1EA1DDC >> 16)
     /* 0D3830 001D3730 DC1D248C */  lw         $4, (0x1EA1DDC & 0xFFFF)($1)
-    /* 0D3834 001D3734 2A00023C */  lui        $2, %hi(LIT_969)
-    /* 0D3838 001D3738 28C74524 */  addiu      $5, $2, %lo(LIT_969)
+    /* 0D3834 001D3734 2A00023C */  lui        $2, %hi("@969")
+    /* 0D3838 001D3738 28C74524 */  addiu      $5, $2, %lo("@969")
     /* 0D383C 001D373C C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 0D3840 001D3740 00000000 */   nop
     /* 0D3844 001D3744 589D848F */  lw         $4, -0x62A8($28)
@@ -2935,8 +2935,8 @@ glabel BtEscape_Init__Fv
     /* 0D3D34 001D3C34 5068228C */  lw         $2, (0x1F06850 & 0xFFFF)($1)
     /* 0D3D38 001D3C38 21284300 */  addu       $5, $2, $3
     /* 0D3D3C 001D3C3C 6C9485AF */  sw         $5, -0x6B94($28)
-    /* 0D3D40 001D3C40 2A00023C */  lui        $2, %hi(LIT_996)
-    /* 0D3D44 001D3C44 30C74424 */  addiu      $4, $2, %lo(LIT_996)
+    /* 0D3D40 001D3C40 2A00023C */  lui        $2, %hi("@996")
+    /* 0D3D44 001D3C44 30C74424 */  addiu      $4, $2, %lo("@996")
     /* 0D3D48 001D3C48 1C00A627 */  addiu      $6, $29, 0x1C
     /* 0D3D4C 001D3C4C ACFA040C */  jal        LoadFileBG__FPcP1Pi
     /* 0D3D50 001D3C50 00000000 */   nop
@@ -3025,8 +3025,8 @@ glabel BtEscape_Loop__Fv
     /* 0D3E90 001D3D90 6C94858F */  lw         $5, -0x6B94($28)
     /* 0D3E94 001D3D94 EB01023C */  lui        $2, %hi(EscapeEffect)
     /* 0D3E98 001D3D98 00294424 */  addiu      $4, $2, %lo(EscapeEffect)
-    /* 0D3E9C 001D3D9C 2A00023C */  lui        $2, %hi(LIT_902)
-    /* 0D3EA0 001D3DA0 F8C64624 */  addiu      $6, $2, %lo(LIT_902)
+    /* 0D3E9C 001D3D9C 2A00023C */  lui        $2, %hi("@902")
+    /* 0D3EA0 001D3DA0 F8C64624 */  addiu      $6, $2, %lo("@902")
     /* 0D3EA4 001D3DA4 F001023C */  lui        $2, %hi(BtCashBuffer)
     /* 0D3EA8 001D3DA8 50684724 */  addiu      $7, $2, %lo(BtCashBuffer)
     /* 0D3EAC 001D3DAC 1C000824 */  addiu      $8, $0, 0x1C
@@ -3305,8 +3305,8 @@ glabel getCharacterVector__FPff
     /* 0D42AC 001D41AC 0000B4E7 */  swc1       $f20, 0x0($29)
     /* 0D42B0 001D41B0 28868070 */  paddub     $16, $4, $0
     /* 0D42B4 001D41B4 06650046 */  mov.s      $f20, $f12
-    /* 0D42B8 001D41B8 2800023C */  lui        $2, %hi(LIT_792__2)
-    /* 0D42BC 001D41BC D0EA4224 */  addiu      $2, $2, %lo(LIT_792__2)
+    /* 0D42B8 001D41B8 2800023C */  lui        $2, %hi("@792__2")
+    /* 0D42BC 001D41BC D0EA4224 */  addiu      $2, $2, %lo("@792__2")
     /* 0D42C0 001D41C0 3000A327 */  addiu      $3, $29, 0x30
     /* 0D42C4 001D41C4 00004278 */  lq         $2, 0x0($2)
     /* 0D42C8 001D41C8 0000627C */  sq         $2, 0x0($3)
@@ -3546,7 +3546,7 @@ glabel ItemThrowStep__FPfPf
 
 /* Generated by spimdisasm 1.42.4 */
 
-glabel LIT_635__2
+glabel "@635__2"
     /* 19C618 0029C518 2564202D */ .word 0x2D206425
     /* 19C61C 0029C51C 3E202564 */ .word 0x6425203E
     /* 19C620 0029C520 0A000000 */ .word 0x0000000A
@@ -3554,7 +3554,7 @@ glabel LIT_635__2
     /* 19C628 0029C528 00000000 */ .word 0x00000000
     /* 19C62C 0029C52C 00000000 */ .word 0x00000000
 
-glabel LIT_636
+glabel "@636"
     /* 19C630 0029C530 636F6D6D */ .word 0x6D6D6F63
     /* 19C634 0029C534 656E752F */ .word 0x2F756E65
     /* 19C638 0029C538 77656170 */ .word 0x70616577
@@ -3564,7 +3564,7 @@ glabel LIT_636
     /* 19C648 0029C548 00000000 */ .word 0x00000000
     /* 19C64C 0029C54C 00000000 */ .word 0x00000000
 
-glabel LIT_637
+glabel "@637"
     /* 19C650 0029C550 64756E2F */ .word 0x2F6E7564
     /* 19C654 0029C554 6D61696E */ .word 0x6E69616D
     /* 19C658 0029C558 63686172 */ .word 0x72616863
@@ -3574,33 +3574,33 @@ glabel LIT_637
     /* 19C668 0029C568 2E636872 */ .word 0x7268632E
     /* 19C66C 0029C56C 00000000 */ .word 0x00000000
 
-glabel LIT_638
+glabel "@638"
     /* 19C670 0029C570 5B25645D */ .word 0x5D64255B
     /* 19C674 0029C574 2025730A */ .word 0x0A732520
     /* 19C678 0029C578 00000000 */ .word 0x00000000
     /* 19C67C 0029C57C 00000000 */ .word 0x00000000
 
-glabel LIT_639__2
+glabel "@639__2"
     /* 19C680 0029C580 6673697A */ .word 0x7A697366
     /* 19C684 0029C584 65203D20 */ .word 0x203D2065
     /* 19C688 0029C588 25640A00 */ .word 0x000A6425
     /* 19C68C 0029C58C 00000000 */ .word 0x00000000
 
-glabel LIT_640__2
+glabel "@640__2"
     /* 19C690 0029C590 64636F6C */ .word 0x6C6F6364
     /* 19C694 0029C594 30000000 */ .word 0x00000030
 
-glabel LIT_641
+glabel "@641"
     /* 19C698 0029C598 64636F6C */ .word 0x6C6F6364
     /* 19C69C 0029C59C 31000000 */ .word 0x00000031
 
-glabel LIT_642__2
+glabel "@642__2"
     /* 19C6A0 0029C5A0 6974656D */ .word 0x6D657469
     /* 19C6A4 0029C5A4 6C73742E */ .word 0x2E74736C
     /* 19C6A8 0029C5A8 696D6700 */ .word 0x00676D69
     /* 19C6AC 0029C5AC 00000000 */ .word 0x00000000
 
-glabel LIT_656__4
+glabel "@656__4"
     /* 19C6B0 0029C5B0 64756E2F */ .word 0x2F6E7564
     /* 19C6B4 0029C5B4 6D61696E */ .word 0x6E69616D
     /* 19C6B8 0029C5B8 63686172 */ .word 0x72616863
@@ -3610,7 +3610,7 @@ glabel LIT_656__4
     /* 19C6C8 0029C5C8 63687200 */ .word 0x00726863
     /* 19C6CC 0029C5CC 00000000 */ .word 0x00000000
 
-glabel LIT_657__2
+glabel "@657__2"
     /* 19C6D0 0029C5D0 64756E2F */ .word 0x2F6E7564
     /* 19C6D4 0029C5D4 6D61696E */ .word 0x6E69616D
     /* 19C6D8 0029C5D8 63686172 */ .word 0x72616863
@@ -3620,7 +3620,7 @@ glabel LIT_657__2
     /* 19C6E8 0029C5E8 63687200 */ .word 0x00726863
     /* 19C6EC 0029C5EC 00000000 */ .word 0x00000000
 
-glabel LIT_658__2
+glabel "@658__2"
     /* 19C6F0 0029C5F0 64756E2F */ .word 0x2F6E7564
     /* 19C6F4 0029C5F4 6D61696E */ .word 0x6E69616D
     /* 19C6F8 0029C5F8 63686172 */ .word 0x72616863
@@ -3630,7 +3630,7 @@ glabel LIT_658__2
     /* 19C708 0029C608 63687200 */ .word 0x00726863
     /* 19C70C 0029C60C 00000000 */ .word 0x00000000
 
-glabel LIT_659__2
+glabel "@659__2"
     /* 19C710 0029C610 64756E2F */ .word 0x2F6E7564
     /* 19C714 0029C614 6D61696E */ .word 0x6E69616D
     /* 19C718 0029C618 63686172 */ .word 0x72616863
@@ -3640,7 +3640,7 @@ glabel LIT_659__2
     /* 19C728 0029C628 63687200 */ .word 0x00726863
     /* 19C72C 0029C62C 00000000 */ .word 0x00000000
 
-glabel LIT_660
+glabel "@660"
     /* 19C730 0029C630 64756E2F */ .word 0x2F6E7564
     /* 19C734 0029C634 6D61696E */ .word 0x6E69616D
     /* 19C738 0029C638 63686172 */ .word 0x72616863
@@ -3650,7 +3650,7 @@ glabel LIT_660
     /* 19C748 0029C648 63687200 */ .word 0x00726863
     /* 19C74C 0029C64C 00000000 */ .word 0x00000000
 
-glabel LIT_661
+glabel "@661"
     /* 19C750 0029C650 64756E2F */ .word 0x2F6E7564
     /* 19C754 0029C654 6D61696E */ .word 0x6E69616D
     /* 19C758 0029C658 63686172 */ .word 0x72616863
@@ -3660,21 +3660,21 @@ glabel LIT_661
     /* 19C768 0029C668 63687200 */ .word 0x00726863
     /* 19C76C 0029C66C 00000000 */ .word 0x00000000
 
-glabel LIT_747
+glabel "@747"
     /* 19C770 0029C670 62617365 */ .word 0x65736162
     /* 19C774 0029C674 322E6366 */ .word 0x66632E32
     /* 19C778 0029C678 67000000 */ .word 0x00000067
     /* 19C77C 0029C67C 00000000 */ .word 0x00000000
 
-glabel LIT_754
+glabel "@754"
     /* 19C780 0029C680 63616D00 */ .word 0x006D6163
     /* 19C784 0029C684 00000000 */ .word 0x00000000
 
-glabel LIT_755
+glabel "@755"
     /* 19C788 0029C688 696E7400 */ .word 0x00746E69
     /* 19C78C 0029C68C 00000000 */ .word 0x00000000
 
-glabel LIT_792
+glabel "@792"
     /* 19C790 0029C690 67657420 */ .word 0x20746567
     /* 19C794 0029C694 61747461 */ .word 0x61747461
     /* 19C798 0029C698 63682076 */ .word 0x76206863
@@ -3684,7 +3684,7 @@ glabel LIT_792
     /* 19C7A8 0029C6A8 00000000 */ .word 0x00000000
     /* 19C7AC 0029C6AC 00000000 */ .word 0x00000000
 
-glabel LIT_793
+glabel "@793"
     /* 19C7B0 0029C6B0 64756E2F */ .word 0x2F6E7564
     /* 19C7B4 0029C6B4 6974656D */ .word 0x6D657469
     /* 19C7B8 0029C6B8 2F6D6169 */ .word 0x69616D2F
@@ -3692,19 +3692,19 @@ glabel LIT_793
     /* 19C7C0 0029C6C0 74612F00 */ .word 0x002F6174
     /* 19C7C4 0029C6C4 00000000 */ .word 0x00000000
 
-glabel LIT_794__2
+glabel "@794__2"
     /* 19C7C8 0029C6C8 2E6D6473 */ .word 0x73646D2E
     /* 19C7CC 0029C6CC 00000000 */ .word 0x00000000
 
-glabel LIT_795__2
+glabel "@795__2"
     /* 19C7D0 0029C6D0 2E696D67 */ .word 0x676D692E
     /* 19C7D4 0029C6D4 00000000 */ .word 0x00000000
 
-glabel LIT_796
+glabel "@796"
     /* 19C7D8 0029C6D8 5B25645D */ .word 0x5D64255B
     /* 19C7DC 0029C6DC 25730A00 */ .word 0x000A7325
 
-glabel LIT_866__2
+glabel "@866__2"
     /* 19C7E0 0029C6E0 64756E2F */ .word 0x2F6E7564
     /* 19C7E4 0029C6E4 65666665 */ .word 0x65666665
     /* 19C7E8 0029C6E8 63742F73 */ .word 0x732F7463
@@ -3712,7 +3712,7 @@ glabel LIT_866__2
     /* 19C7F0 0029C6F0 2E636872 */ .word 0x7268632E
     /* 19C7F4 0029C6F4 00000000 */ .word 0x00000000
 
-glabel LIT_902
+glabel "@902"
     /* 19C7F8 0029C6F8 696E666F */ .word 0x6F666E69
     /* 19C7FC 0029C6FC 2E636667 */ .word 0x6766632E
     /* 19C800 0029C700 00000000 */ .word 0x00000000
@@ -3720,7 +3720,7 @@ glabel LIT_902
     /* 19C808 0029C708 00000000 */ .word 0x00000000
     /* 19C80C 0029C70C 00000000 */ .word 0x00000000
 
-glabel LIT_904__2
+glabel "@904__2"
     /* 19C810 0029C710 C02C1D00 */ .word .L001D2CC0
     /* 19C814 0029C714 C42F1D00 */ .word .L001D2FC4
     /* 19C818 0029C718 AC301D00 */ .word .L001D30AC
@@ -3728,11 +3728,11 @@ glabel LIT_904__2
     /* 19C820 0029C720 54311D00 */ .word .L001D3154
     /* 19C824 0029C724 B4311D00 */ .word .L001D31B4
 
-glabel LIT_969
+glabel "@969"
     /* 19C828 0029C728 6974656D */ .word 0x6D657469
     /* 19C82C 0029C72C 00000000 */ .word 0x00000000
 
-glabel LIT_996
+glabel "@996"
     /* 19C830 0029C730 64756E2F */ .word 0x2F6E7564
     /* 19C834 0029C734 65666665 */ .word 0x65666665
     /* 19C838 0029C738 63742F65 */ .word 0x652F7463
@@ -3740,747 +3740,747 @@ glabel LIT_996
     /* 19C840 0029C740 652E6368 */ .word 0x68632E65
     /* 19C844 0029C744 72000000 */ .word 0x00000072
 
-glabel LIT_549__4
+glabel "@549__4"
     /* 19C848 0029C748 00000000 */ .word 0x00000000
     /* 19C84C 0029C74C 00000000 */ .word 0x00000000
 
-glabel LIT_595__2
+glabel "@595__2"
     /* 19C850 0029C750 61746669 */ .word 0x69667461
     /* 19C854 0029C754 72650000 */ .word 0x00006572
 
-glabel LIT_596__3
+glabel "@596__3"
     /* 19C858 0029C758 61746963 */ .word 0x63697461
     /* 19C85C 0029C75C 65000000 */ .word 0x00000065
 
-glabel LIT_597__2
+glabel "@597__2"
     /* 19C860 0029C760 61747468 */ .word 0x68747461
     /* 19C864 0029C764 756E6465 */ .word 0x65646E75
     /* 19C868 0029C768 00000000 */ .word 0x00000000
     /* 19C86C 0029C76C 00000000 */ .word 0x00000000
 
-glabel LIT_598
+glabel "@598"
     /* 19C870 0029C770 61747769 */ .word 0x69777461
     /* 19C874 0029C774 6E640000 */ .word 0x0000646E
 
-glabel LIT_599__2
+glabel "@599__2"
     /* 19C878 0029C778 6174686F */ .word 0x6F687461
     /* 19C87C 0029C77C 6C790000 */ .word 0x0000796C
 
-glabel LIT_600
+glabel "@600"
     /* 19C880 0029C780 6174706F */ .word 0x6F707461
     /* 19C884 0029C784 77657200 */ .word 0x00726577
 
-glabel LIT_601
+glabel "@601"
     /* 19C888 0029C788 61746461 */ .word 0x61647461
     /* 19C88C 0029C78C 6D616765 */ .word 0x6567616D
     /* 19C890 0029C790 00000000 */ .word 0x00000000
     /* 19C894 0029C794 00000000 */ .word 0x00000000
 
-glabel LIT_602
+glabel "@602"
     /* 19C898 0029C798 61747370 */ .word 0x70737461
     /* 19C89C 0029C79C 65656400 */ .word 0x00646565
 
-glabel LIT_603
+glabel "@603"
     /* 19C8A0 0029C7A0 61746D61 */ .word 0x616D7461
     /* 19C8A4 0029C7A4 67696300 */ .word 0x00636967
 
-glabel LIT_604__2
+glabel "@604__2"
     /* 19C8A8 0029C7A8 6A75656C */ .word 0x6C65756A
     /* 19C8AC 0029C7AC 676E6574 */ .word 0x74656E67
     /* 19C8B0 0029C7B0 00000000 */ .word 0x00000000
     /* 19C8B4 0029C7B4 00000000 */ .word 0x00000000
 
-glabel LIT_605
+glabel "@605"
     /* 19C8B8 0029C7B8 6A75656C */ .word 0x6C65756A
     /* 19C8BC 0029C7BC 616D7374 */ .word 0x74736D61
     /* 19C8C0 0029C7C0 00000000 */ .word 0x00000000
     /* 19C8C4 0029C7C4 00000000 */ .word 0x00000000
 
-glabel LIT_606__3
+glabel "@606__3"
     /* 19C8C8 0029C7C8 6A75656C */ .word 0x6C65756A
     /* 19C8CC 0029C7CC 61717561 */ .word 0x61757161
     /* 19C8D0 0029C7D0 00000000 */ .word 0x00000000
     /* 19C8D4 0029C7D4 00000000 */ .word 0x00000000
 
-glabel LIT_607__2
+glabel "@607__2"
     /* 19C8D8 0029C7D8 6A75656C */ .word 0x6C65756A
     /* 19C8DC 0029C7DC 64616961 */ .word 0x61696164
     /* 19C8E0 0029C7E0 00000000 */ .word 0x00000000
     /* 19C8E4 0029C7E4 00000000 */ .word 0x00000000
 
-glabel LIT_608__2
+glabel "@608__2"
     /* 19C8E8 0029C7E8 6A75656C */ .word 0x6C65756A
     /* 19C8EC 0029C7EC 656D7264 */ .word 0x64726D65
     /* 19C8F0 0029C7F0 00000000 */ .word 0x00000000
     /* 19C8F4 0029C7F4 00000000 */ .word 0x00000000
 
-glabel LIT_609
+glabel "@609"
     /* 19C8F8 0029C7F8 6A75656C */ .word 0x6C65756A
     /* 19C8FC 0029C7FC 7061726C */ .word 0x6C726170
     /* 19C900 0029C800 00000000 */ .word 0x00000000
     /* 19C904 0029C804 00000000 */ .word 0x00000000
 
-glabel LIT_610__2
+glabel "@610__2"
     /* 19C908 0029C808 6A75656C */ .word 0x6C65756A
     /* 19C90C 0029C80C 72756279 */ .word 0x79627572
     /* 19C910 0029C810 00000000 */ .word 0x00000000
     /* 19C914 0029C814 00000000 */ .word 0x00000000
 
-glabel LIT_611__2
+glabel "@611__2"
     /* 19C918 0029C818 6A75656C */ .word 0x6C65756A
     /* 19C91C 0029C81C 70726474 */ .word 0x74647270
     /* 19C920 0029C820 00000000 */ .word 0x00000000
     /* 19C924 0029C824 00000000 */ .word 0x00000000
 
-glabel LIT_612__2
+glabel "@612__2"
     /* 19C928 0029C828 6A75656C */ .word 0x6C65756A
     /* 19C92C 0029C82C 73706872 */ .word 0x72687073
     /* 19C930 0029C830 00000000 */ .word 0x00000000
     /* 19C934 0029C834 00000000 */ .word 0x00000000
 
-glabel LIT_613
+glabel "@613"
     /* 19C938 0029C838 6A75656C */ .word 0x6C65756A
     /* 19C93C 0029C83C 6F70616C */ .word 0x6C61706F
     /* 19C940 0029C840 00000000 */ .word 0x00000000
     /* 19C944 0029C844 00000000 */ .word 0x00000000
 
-glabel LIT_614__2
+glabel "@614__2"
     /* 19C948 0029C848 6A75656C */ .word 0x6C65756A
     /* 19C94C 0029C84C 7470617A */ .word 0x7A617074
     /* 19C950 0029C850 00000000 */ .word 0x00000000
     /* 19C954 0029C854 00000000 */ .word 0x00000000
 
-glabel LIT_615__2
+glabel "@615__2"
     /* 19C958 0029C858 6A75656C */ .word 0x6C65756A
     /* 19C95C 0029C85C 74727175 */ .word 0x75717274
     /* 19C960 0029C860 00000000 */ .word 0x00000000
     /* 19C964 0029C864 00000000 */ .word 0x00000000
 
-glabel LIT_616__2
+glabel "@616__2"
     /* 19C968 0029C868 74616979 */ .word 0x79696174
     /* 19C96C 0029C86C 6F750000 */ .word 0x0000756F
 
-glabel LIT_617__2
+glabel "@617__2"
     /* 19C970 0029C870 7A617464 */ .word 0x6474617A
     /* 19C974 0029C874 696E6F00 */ .word 0x006F6E69
 
-glabel LIT_618
+glabel "@618"
     /* 19C978 0029C878 7A617475 */ .word 0x7574617A
     /* 19C97C 0029C87C 6E646564 */ .word 0x6465646E
     /* 19C980 0029C880 00000000 */ .word 0x00000000
     /* 19C984 0029C884 00000000 */ .word 0x00000000
 
-glabel LIT_619__3
+glabel "@619__3"
     /* 19C988 0029C888 7A617473 */ .word 0x7374617A
     /* 19C98C 0029C88C 65610000 */ .word 0x00006165
 
-glabel LIT_620__2
+glabel "@620__2"
     /* 19C990 0029C890 7A617473 */ .word 0x7374617A
     /* 19C994 0029C894 746F726E */ .word 0x6E726F74
     /* 19C998 0029C898 00000000 */ .word 0x00000000
     /* 19C99C 0029C89C 00000000 */ .word 0x00000000
 
-glabel LIT_621__3
+glabel "@621__3"
     /* 19C9A0 0029C8A0 7A617470 */ .word 0x7074617A
     /* 19C9A4 0029C8A4 6C616E74 */ .word 0x746E616C
     /* 19C9A8 0029C8A8 00000000 */ .word 0x00000000
     /* 19C9AC 0029C8AC 00000000 */ .word 0x00000000
 
-glabel LIT_622__2
+glabel "@622__2"
     /* 19C9B0 0029C8B0 7A617462 */ .word 0x6274617A
     /* 19C9B4 0029C8B4 65617374 */ .word 0x74736165
     /* 19C9B8 0029C8B8 00000000 */ .word 0x00000000
     /* 19C9BC 0029C8BC 00000000 */ .word 0x00000000
 
-glabel LIT_623__2
+glabel "@623__2"
     /* 19C9C0 0029C8C0 7A617473 */ .word 0x7374617A
     /* 19C9C4 0029C8C4 6B790000 */ .word 0x0000796B
 
-glabel LIT_624__2
+glabel "@624__2"
     /* 19C9C8 0029C8C8 7A61746D */ .word 0x6D74617A
     /* 19C9CC 0029C8CC 6574616C */ .word 0x6C617465
     /* 19C9D0 0029C8D0 00000000 */ .word 0x00000000
     /* 19C9D4 0029C8D4 00000000 */ .word 0x00000000
 
-glabel LIT_625__3
+glabel "@625__3"
     /* 19C9D8 0029C8D8 7A61746D */ .word 0x6D74617A
     /* 19C9DC 0029C8DC 696D6963 */ .word 0x63696D69
     /* 19C9E0 0029C8E0 00000000 */ .word 0x00000000
     /* 19C9E4 0029C8E4 00000000 */ .word 0x00000000
 
-glabel LIT_626__3
+glabel "@626__3"
     /* 19C9E8 0029C8E8 7A61746D */ .word 0x6D74617A
     /* 19C9EC 0029C8EC 616A6900 */ .word 0x00696A61
 
-glabel LIT_627__3
+glabel "@627__3"
     /* 19C9F0 0029C8F0 6D61796F */ .word 0x6F79616D
     /* 19C9F4 0029C8F4 6B657374 */ .word 0x7473656B
     /* 19C9F8 0029C8F8 00000000 */ .word 0x00000000
     /* 19C9FC 0029C8FC 00000000 */ .word 0x00000000
 
-glabel LIT_628__4
+glabel "@628__4"
     /* 19CA00 0029C900 6D61796F */ .word 0x6F79616D
     /* 19CA04 0029C904 6B656E72 */ .word 0x726E656B
     /* 19CA08 0029C908 00000000 */ .word 0x00000000
     /* 19CA0C 0029C90C 00000000 */ .word 0x00000000
 
-glabel LIT_629__3
+glabel "@629__3"
     /* 19CA10 0029C910 6D61796F */ .word 0x6F79616D
     /* 19CA14 0029C914 6B656E62 */ .word 0x626E656B
     /* 19CA18 0029C918 00000000 */ .word 0x00000000
     /* 19CA1C 0029C91C 00000000 */ .word 0x00000000
 
-glabel LIT_630__4
+glabel "@630__4"
     /* 19CA20 0029C920 6D61796F */ .word 0x6F79616D
     /* 19CA24 0029C924 6B65646B */ .word 0x6B64656B
     /* 19CA28 0029C928 00000000 */ .word 0x00000000
     /* 19CA2C 0029C92C 00000000 */ .word 0x00000000
 
-glabel LIT_631__3
+glabel "@631__3"
     /* 19CA30 0029C930 646F756E */ .word 0x6E756F64
     /* 19CA34 0029C934 75740000 */ .word 0x00007475
 
-glabel LIT_632__2
+glabel "@632__2"
     /* 19CA38 0029C938 736B616E */ .word 0x6E616B73
     /* 19CA3C 0029C93C 61636E64 */ .word 0x646E6361
     /* 19CA40 0029C940 00000000 */ .word 0x00000000
     /* 19CA44 0029C944 00000000 */ .word 0x00000000
 
-glabel LIT_633__2
+glabel "@633__2"
     /* 19CA48 0029C948 6B757361 */ .word 0x6173756B
     /* 19CA4C 0029C94C 6D6F7469 */ .word 0x69746F6D
     /* 19CA50 0029C950 00000000 */ .word 0x00000000
     /* 19CA54 0029C954 00000000 */ .word 0x00000000
 
-glabel LIT_634__2
+glabel "@634__2"
     /* 19CA58 0029C958 6D616A6F */ .word 0x6F6A616D
     /* 19CA5C 0029C95C 70616665 */ .word 0x65666170
     /* 19CA60 0029C960 00000000 */ .word 0x00000000
     /* 19CA64 0029C964 00000000 */ .word 0x00000000
 
-glabel LIT_635__3
+glabel "@635__3"
     /* 19CA68 0029C968 7361736F */ .word 0x6F736173
     /* 19CA6C 0029C96C 72696A6B */ .word 0x6B6A6972
     /* 19CA70 0029C970 00000000 */ .word 0x00000000
     /* 19CA74 0029C974 00000000 */ .word 0x00000000
 
-glabel LIT_636__2
+glabel "@636__2"
     /* 19CA78 0029C978 6E696E6A */ .word 0x6A6E696E
     /* 19CA7C 0029C97C 6E636B69 */ .word 0x696B636E
     /* 19CA80 0029C980 00000000 */ .word 0x00000000
     /* 19CA84 0029C984 00000000 */ .word 0x00000000
 
-glabel LIT_637__2
+glabel "@637__2"
     /* 19CA88 0029C988 6D697A75 */ .word 0x757A696D
     /* 19CA8C 0029C98C 66757475 */ .word 0x75747566
     /* 19CA90 0029C990 00000000 */ .word 0x00000000
     /* 19CA94 0029C994 00000000 */ .word 0x00000000
 
-glabel LIT_638__2
+glabel "@638__2"
     /* 19CA98 0029C998 6D697A75 */ .word 0x757A696D
     /* 19CA9C 0029C99C 6F697369 */ .word 0x6973696F
     /* 19CAA0 0029C9A0 00000000 */ .word 0x00000000
     /* 19CAA4 0029C9A4 00000000 */ .word 0x00000000
 
-glabel LIT_639__3
+glabel "@639__3"
     /* 19CAA8 0029C9A8 6D697A75 */ .word 0x757A696D
     /* 19CAAC 0029C9AC 676F6B75 */ .word 0x756B6F67
     /* 19CAB0 0029C9B0 00000000 */ .word 0x00000000
     /* 19CAB4 0029C9B4 00000000 */ .word 0x00000000
 
-glabel LIT_640__3
+glabel "@640__3"
     /* 19CAB8 0029C9B8 70616E00 */ .word 0x006E6170
     /* 19CABC 0029C9BC 00000000 */ .word 0x00000000
 
-glabel LIT_641__2
+glabel "@641__2"
     /* 19CAC0 0029C9C0 63686963 */ .word 0x63696863
     /* 19CAC4 0029C9C4 6B656E00 */ .word 0x006E656B
 
-glabel LIT_642__3
+glabel "@642__3"
     /* 19CAC8 0029C9C8 62696E32 */ .word 0x326E6962
     /* 19CACC 0029C9CC 64726E6B */ .word 0x6B6E7264
     /* 19CAD0 0029C9D0 00000000 */ .word 0x00000000
     /* 19CAD4 0029C9D4 00000000 */ .word 0x00000000
 
-glabel LIT_643__2
+glabel "@643__2"
     /* 19CAD8 0029C9D8 646F6B75 */ .word 0x756B6F64
     /* 19CADC 0029C9DC 6B657369 */ .word 0x6973656B
     /* 19CAE0 0029C9E0 00000000 */ .word 0x00000000
     /* 19CAE4 0029C9E4 00000000 */ .word 0x00000000
 
-glabel LIT_644__2
+glabel "@644__2"
     /* 19CAE8 0029C9E8 73656973 */ .word 0x73696573
     /* 19CAEC 0029C9EC 75690000 */ .word 0x00006975
 
-glabel LIT_645__2
+glabel "@645__2"
     /* 19CAF0 0029C9F0 73656B6B */ .word 0x6B6B6573
     /* 19CAF4 0029C9F4 656E0000 */ .word 0x00006E65
 
-glabel LIT_646__3
+glabel "@646__3"
     /* 19CAF8 0029C9F8 6D697479 */ .word 0x7974696D
     /* 19CAFC 0029C9FC 6865616C */ .word 0x6C616568
     /* 19CB00 0029CA00 00000000 */ .word 0x00000000
     /* 19CB04 0029CA04 00000000 */ .word 0x00000000
 
-glabel LIT_647__2
+glabel "@647__2"
     /* 19CB08 0029CA08 63686565 */ .word 0x65656863
     /* 19CB0C 0029CA0C 73650000 */ .word 0x00006573
 
-glabel LIT_648__2
+glabel "@648__2"
     /* 19CB10 0029CA10 62616B75 */ .word 0x756B6162
     /* 19CB14 0029CA14 64616E00 */ .word 0x006E6164
 
-glabel LIT_649
+glabel "@649"
     /* 19CB18 0029CA18 69736869 */ .word 0x69687369
     /* 19CB1C 0029CA1C 00000000 */ .word 0x00000000
 
-glabel LIT_650__3
+glabel "@650__3"
     /* 19CB20 0029CA20 6D617365 */ .word 0x6573616D
     /* 19CB24 0029CA24 6B696669 */ .word 0x6966696B
     /* 19CB28 0029CA28 00000000 */ .word 0x00000000
     /* 19CB2C 0029CA2C 00000000 */ .word 0x00000000
 
-glabel LIT_651
+glabel "@651"
     /* 19CB30 0029CA30 6D617365 */ .word 0x6573616D
     /* 19CB34 0029CA34 6B696963 */ .word 0x6369696B
     /* 19CB38 0029CA38 00000000 */ .word 0x00000000
     /* 19CB3C 0029CA3C 00000000 */ .word 0x00000000
 
-glabel LIT_652
+glabel "@652"
     /* 19CB40 0029CA40 6D617365 */ .word 0x6573616D
     /* 19CB44 0029CA44 6B697464 */ .word 0x6474696B
     /* 19CB48 0029CA48 00000000 */ .word 0x00000000
     /* 19CB4C 0029CA4C 00000000 */ .word 0x00000000
 
-glabel LIT_653__2
+glabel "@653__2"
     /* 19CB50 0029CA50 6D617365 */ .word 0x6573616D
     /* 19CB54 0029CA54 6B697764 */ .word 0x6477696B
     /* 19CB58 0029CA58 00000000 */ .word 0x00000000
     /* 19CB5C 0029CA5C 00000000 */ .word 0x00000000
 
-glabel LIT_654__2
+glabel "@654__2"
     /* 19CB60 0029CA60 6D617365 */ .word 0x6573616D
     /* 19CB64 0029CA64 6B69686F */ .word 0x6F68696B
     /* 19CB68 0029CA68 00000000 */ .word 0x00000000
     /* 19CB6C 0029CA6C 00000000 */ .word 0x00000000
 
-glabel LIT_655__2
+glabel "@655__2"
     /* 19CB70 0029CA70 69736972 */ .word 0x72697369
     /* 19CB74 0029CA74 616E626F */ .word 0x6F626E61
     /* 19CB78 0029CA78 00000000 */ .word 0x00000000
     /* 19CB7C 0029CA7C 00000000 */ .word 0x00000000
 
-glabel LIT_656__5
+glabel "@656__5"
     /* 19CB80 0029CA80 6E656261 */ .word 0x6162656E
     /* 19CB84 0029CA84 70656163 */ .word 0x63616570
     /* 19CB88 0029CA88 00000000 */ .word 0x00000000
     /* 19CB8C 0029CA8C 00000000 */ .word 0x00000000
 
-glabel LIT_657__3
+glabel "@657__3"
     /* 19CB90 0029CA90 626F6D6E */ .word 0x6E6D6F62
     /* 19CB94 0029CA94 75747300 */ .word 0x00737475
 
-glabel LIT_658__3
+glabel "@658__3"
     /* 19CB98 0029CA98 646F6B75 */ .word 0x756B6F64
     /* 19CB9C 0029CA9C 72696E67 */ .word 0x676E6972
     /* 19CBA0 0029CAA0 00000000 */ .word 0x00000000
     /* 19CBA4 0029CAA4 00000000 */ .word 0x00000000
 
-glabel LIT_659__3
+glabel "@659__3"
     /* 19CBA8 0029CAA8 62616E61 */ .word 0x616E6162
     /* 19CBAC 0029CAAC 6E610000 */ .word 0x0000616E
 
-glabel LIT_660__2
+glabel "@660__2"
     /* 19CBB0 0029CAB0 6B6F6E61 */ .word 0x616E6F6B
     /* 19CBB4 0029CAB4 6D656475 */ .word 0x7564656D
     /* 19CBB8 0029CAB8 00000000 */ .word 0x00000000
     /* 19CBBC 0029CABC 00000000 */ .word 0x00000000
 
-glabel LIT_661__2
+glabel "@661__2"
     /* 19CBC0 0029CAC0 6B6F6E61 */ .word 0x616E6F6B
     /* 19CBC4 0029CAC4 6B617461 */ .word 0x6174616B
     /* 19CBC8 0029CAC8 00000000 */ .word 0x00000000
     /* 19CBCC 0029CACC 00000000 */ .word 0x00000000
 
-glabel LIT_662__2
+glabel "@662__2"
     /* 19CBD0 0029CAD0 6B6F6E61 */ .word 0x616E6F6B
     /* 19CBD4 0029CAD4 77617270 */ .word 0x70726177
     /* 19CBD8 0029CAD8 00000000 */ .word 0x00000000
     /* 19CBDC 0029CADC 00000000 */ .word 0x00000000
 
-glabel LIT_663
+glabel "@663"
     /* 19CBE0 0029CAE0 6B6F6E61 */ .word 0x616E6F6B
     /* 19CBE4 0029CAE4 6B617761 */ .word 0x6177616B
     /* 19CBE8 0029CAE8 00000000 */ .word 0x00000000
     /* 19CBEC 0029CAEC 00000000 */ .word 0x00000000
 
-glabel LIT_664__3
+glabel "@664__3"
     /* 19CBF0 0029CAF0 6B6F6E61 */ .word 0x616E6F6B
     /* 19CBF4 0029CAF4 65786974 */ .word 0x74697865
     /* 19CBF8 0029CAF8 00000000 */ .word 0x00000000
     /* 19CBFC 0029CAFC 00000000 */ .word 0x00000000
 
-glabel LIT_665__2
+glabel "@665__2"
     /* 19CC00 0029CB00 6B6F6E61 */ .word 0x616E6F6B
     /* 19CC04 0029CB04 66756B61 */ .word 0x616B7566
     /* 19CC08 0029CB08 00000000 */ .word 0x00000000
     /* 19CC0C 0029CB0C 00000000 */ .word 0x00000000
 
-glabel LIT_666__2
+glabel "@666__2"
     /* 19CC10 0029CB10 6B6F6E61 */ .word 0x616E6F6B
     /* 19CC14 0029CB14 72657065 */ .word 0x65706572
     /* 19CC18 0029CB18 00000000 */ .word 0x00000000
     /* 19CC1C 0029CB1C 00000000 */ .word 0x00000000
 
-glabel LIT_667__2
+glabel "@667__2"
     /* 19CC20 0029CB20 6B6F6E61 */ .word 0x616E6F6B
     /* 19CC24 0029CB24 6C767570 */ .word 0x7075766C
     /* 19CC28 0029CB28 00000000 */ .word 0x00000000
     /* 19CC2C 0029CB2C 00000000 */ .word 0x00000000
 
-glabel LIT_668
+glabel "@668"
     /* 19CC30 0029CB30 706F636B */ .word 0x6B636F70
     /* 19CC34 0029CB34 65740000 */ .word 0x00007465
 
-glabel LIT_669
+glabel "@669"
     /* 19CC38 0029CB38 6564656E */ .word 0x6E656465
     /* 19CC3C 0029CB3C 66757274 */ .word 0x74727566
     /* 19CC40 0029CB40 00000000 */ .word 0x00000000
     /* 19CC44 0029CB44 00000000 */ .word 0x00000000
 
-glabel LIT_670
+glabel "@670"
     /* 19CC48 0029CB48 74616B61 */ .word 0x616B6174
     /* 19CC4C 0029CB4C 72616B79 */ .word 0x796B6172
     /* 19CC50 0029CB50 00000000 */ .word 0x00000000
     /* 19CC54 0029CB54 00000000 */ .word 0x00000000
 
-glabel LIT_671
+glabel "@671"
     /* 19CC58 0029CB58 68796F75 */ .word 0x756F7968
     /* 19CC5C 0029CB5C 74616E00 */ .word 0x006E6174
 
-glabel LIT_672
+glabel "@672"
     /* 19CC60 0029CB60 6B6F6E61 */ .word 0x616E6F6B
     /* 19CC64 0029CB64 72657065 */ .word 0x65706572
     /* 19CC68 0029CB68 5F617400 */ .word 0x0074615F
     /* 19CC6C 0029CB6C 00000000 */ .word 0x00000000
 
-glabel LIT_673
+glabel "@673"
     /* 19CC70 0029CB70 74757269 */ .word 0x69727574
     /* 19CC74 0029CB74 73616F00 */ .word 0x006F6173
 
-glabel LIT_674
+glabel "@674"
     /* 19CC78 0029CB78 6E696E7A */ .word 0x7A6E696E
     /* 19CC7C 0029CB7C 696E0000 */ .word 0x00006E69
 
-glabel LIT_675
+glabel "@675"
     /* 19CC80 0029CB80 696D6F64 */ .word 0x646F6D69
     /* 19CC84 0029CB84 616E676F */ .word 0x6F676E61
     /* 19CC88 0029CB88 00000000 */ .word 0x00000000
     /* 19CC8C 0029CB8C 00000000 */ .word 0x00000000
 
-glabel LIT_676
+glabel "@676"
     /* 19CC90 0029CB90 6D696E6F */ .word 0x6F6E696D
     /* 19CC94 0029CB94 6E000000 */ .word 0x0000006E
 
-glabel LIT_677
+glabel "@677"
     /* 19CC98 0029CB98 62617474 */ .word 0x74746162
     /* 19CC9C 0029CB9C 616E0000 */ .word 0x00006E61
 
-glabel LIT_678__2
+glabel "@678__2"
     /* 19CCA0 0029CBA0 70757469 */ .word 0x69747570
     /* 19CCA4 0029CBA4 00000000 */ .word 0x00000000
 
-glabel LIT_679__2
+glabel "@679__2"
     /* 19CCA8 0029CBA8 73617665 */ .word 0x65766173
     /* 19CCAC 0029CBAC 73796F00 */ .word 0x006F7973
 
-glabel LIT_680__2
+glabel "@680__2"
     /* 19CCB0 0029CBB0 65626900 */ .word 0x00696265
     /* 19CCB4 0029CBB4 00000000 */ .word 0x00000000
 
-glabel LIT_681__2
+glabel "@681__2"
     /* 19CCB8 0029CBB8 676B6579 */ .word 0x79656B67
     /* 19CCBC 0029CBBC 6472616E */ .word 0x6E617264
     /* 19CCC0 0029CBC0 00000000 */ .word 0x00000000
     /* 19CCC4 0029CBC4 00000000 */ .word 0x00000000
 
-glabel LIT_682__2
+glabel "@682__2"
     /* 19CCC8 0029CBC8 68696B61 */ .word 0x616B6968
     /* 19CCCC 0029CBCC 72756973 */ .word 0x73697572
     /* 19CCD0 0029CBD0 00000000 */ .word 0x00000000
     /* 19CCD4 0029CBD4 00000000 */ .word 0x00000000
 
-glabel LIT_683
+glabel "@683"
     /* 19CCD8 0029CBD8 676B6579 */ .word 0x79656B67
     /* 19CCDC 0029CBDC 6D696D69 */ .word 0x696D696D
     /* 19CCE0 0029CBE0 00000000 */ .word 0x00000000
     /* 19CCE4 0029CBE4 00000000 */ .word 0x00000000
 
-glabel LIT_684
+glabel "@684"
     /* 19CCE8 0029CBE8 616B6169 */ .word 0x69616B61
     /* 19CCEC 0029CBEC 6B696D69 */ .word 0x696D696B
     /* 19CCF0 0029CBF0 00000000 */ .word 0x00000000
     /* 19CCF4 0029CBF4 00000000 */ .word 0x00000000
 
-glabel LIT_685
+glabel "@685"
     /* 19CCF8 0029CBF8 746F6765 */ .word 0x65676F74
     /* 19CCFC 0029CBFC 63636869 */ .word 0x69686363
     /* 19CD00 0029CC00 00000000 */ .word 0x00000000
     /* 19CD04 0029CC04 00000000 */ .word 0x00000000
 
-glabel LIT_686__2
+glabel "@686__2"
     /* 19CD08 0029CC08 63616E64 */ .word 0x646E6163
     /* 19CD0C 0029CC0C 79000000 */ .word 0x00000079
 
-glabel LIT_687__2
+glabel "@687__2"
     /* 19CD10 0029CC10 686F6F6B */ .word 0x6B6F6F68
     /* 19CD14 0029CC14 00000000 */ .word 0x00000000
 
-glabel LIT_688__2
+glabel "@688__2"
     /* 19CD18 0029CC18 6F756B65 */ .word 0x656B756F
     /* 19CD1C 0029CC1C 6E6F7374 */ .word 0x74736F6E
     /* 19CD20 0029CC20 00000000 */ .word 0x00000000
     /* 19CD24 0029CC24 00000000 */ .word 0x00000000
 
-glabel LIT_689__3
+glabel "@689__3"
     /* 19CD28 0029CC28 6B617961 */ .word 0x6179616B
     /* 19CD2C 0029CC2C 6B750000 */ .word 0x0000756B
 
-glabel LIT_690__4
+glabel "@690__4"
     /* 19CD30 0029CC30 746F6B65 */ .word 0x656B6F74
     /* 19CD34 0029CC34 6973696E */ .word 0x6E697369
     /* 19CD38 0029CC38 00000000 */ .word 0x00000000
     /* 19CD3C 0029CC3C 00000000 */ .word 0x00000000
 
-glabel LIT_691__3
+glabel "@691__3"
     /* 19CD40 0029CC40 746F6E67 */ .word 0x676E6F74
     /* 19CD44 0029CC44 726D726E */ .word 0x6E726D72
     /* 19CD48 0029CC48 00000000 */ .word 0x00000000
     /* 19CD4C 0029CC4C 00000000 */ .word 0x00000000
 
-glabel LIT_692__2
+glabel "@692__2"
     /* 19CD50 0029CC50 676B6579 */ .word 0x79656B67
     /* 19CD54 0029CC54 5F647300 */ .word 0x0073645F
 
-glabel LIT_693
+glabel "@693"
     /* 19CD58 0029CC58 6B657974 */ .word 0x7479656B
     /* 19CD5C 0029CC5C 756E6F00 */ .word 0x006F6E75
 
-glabel LIT_694
+glabel "@694"
     /* 19CD60 0029CC60 6D696B61 */ .word 0x616B696D
     /* 19CD64 0029CC64 7A756B69 */ .word 0x696B757A
     /* 19CD68 0029CC68 00000000 */ .word 0x00000000
     /* 19CD6C 0029CC6C 00000000 */ .word 0x00000000
 
-glabel LIT_695
+glabel "@695"
     /* 19CD70 0029CC70 6F726765 */ .word 0x6567726F
     /* 19CD74 0029CC74 6C6E656A */ .word 0x6A656E6C
     /* 19CD78 0029CC78 00000000 */ .word 0x00000000
     /* 19CD7C 0029CC7C 00000000 */ .word 0x00000000
 
-glabel LIT_696
+glabel "@696"
     /* 19CD80 0029CC80 74616979 */ .word 0x79696174
     /* 19CD84 0029CC84 73697273 */ .word 0x73726973
     /* 19CD88 0029CC88 00000000 */ .word 0x00000000
     /* 19CD8C 0029CC8C 00000000 */ .word 0x00000000
 
-glabel LIT_697
+glabel "@697"
     /* 19CD90 0029CC90 74756B69 */ .word 0x696B7574
     /* 19CD94 0029CC94 73697273 */ .word 0x73726973
     /* 19CD98 0029CC98 00000000 */ .word 0x00000000
     /* 19CD9C 0029CC9C 00000000 */ .word 0x00000000
 
-glabel LIT_698
+glabel "@698"
     /* 19CDA0 0029CCA0 7469636B */ .word 0x6B636974
     /* 19CDA4 0029CCA4 65740000 */ .word 0x00007465
 
-glabel LIT_699
+glabel "@699"
     /* 19CDA8 0029CCA8 6B657968 */ .word 0x6879656B
     /* 19CDAC 0029CCAC 6F6E6500 */ .word 0x00656E6F
 
-glabel LIT_700__2
+glabel "@700__2"
     /* 19CDB0 0029CCB0 6B657968 */ .word 0x6879656B
     /* 19CDB4 0029CCB4 69676500 */ .word 0x00656769
 
-glabel LIT_701__2
+glabel "@701__2"
     /* 19CDB8 0029CCB8 6B657973 */ .word 0x7379656B
     /* 19CDBC 0029CCBC 656E7374 */ .word 0x74736E65
     /* 19CDC0 0029CCC0 00000000 */ .word 0x00000000
     /* 19CDC4 0029CCC4 00000000 */ .word 0x00000000
 
-glabel LIT_702
+glabel "@702"
     /* 19CDC8 0029CCC8 6B657969 */ .word 0x6979656B
     /* 19CDCC 0029CCCC 73686900 */ .word 0x00696873
 
-glabel LIT_703__2
+glabel "@703__2"
     /* 19CDD0 0029CCD0 68616E64 */ .word 0x646E6168
     /* 19CDD4 0029CCD4 6F6C0000 */ .word 0x00006C6F
 
-glabel LIT_704__2
+glabel "@704__2"
     /* 19CDD8 0029CCD8 6B657973 */ .word 0x7379656B
     /* 19CDDC 0029CCDC 696B6F6B */ .word 0x6B6F6B69
     /* 19CDE0 0029CCE0 00000000 */ .word 0x00000000
     /* 19CDE4 0029CCE4 00000000 */ .word 0x00000000
 
-glabel LIT_705
+glabel "@705"
     /* 19CDE8 0029CCE8 666B6579 */ .word 0x79656B66
     /* 19CDEC 0029CCEC 5F647300 */ .word 0x0073645F
 
-glabel LIT_706
+glabel "@706"
     /* 19CDF0 0029CCF0 746F726F */ .word 0x6F726F74
     /* 19CDF4 0029CCF4 6B6F696C */ .word 0x6C696F6B
     /* 19CDF8 0029CCF8 00000000 */ .word 0x00000000
     /* 19CDFC 0029CCFC 00000000 */ .word 0x00000000
 
-glabel LIT_707__2
+glabel "@707__2"
     /* 19CE00 0029CD00 74616979 */ .word 0x79696174
     /* 19CE04 0029CD04 73697A6B */ .word 0x6B7A6973
     /* 19CE08 0029CD08 00000000 */ .word 0x00000000
     /* 19CE0C 0029CD0C 00000000 */ .word 0x00000000
 
-glabel LIT_708__3
+glabel "@708__3"
     /* 19CE10 0029CD10 70697469 */ .word 0x69746970
     /* 19CE14 0029CD14 73616B6E */ .word 0x6E6B6173
     /* 19CE18 0029CD18 00000000 */ .word 0x00000000
     /* 19CE1C 0029CD1C 00000000 */ .word 0x00000000
 
-glabel LIT_709__2
+glabel "@709__2"
     /* 19CE20 0029CD20 6B757361 */ .word 0x6173756B
     /* 19CE24 0029CD24 73616B6E */ .word 0x6E6B6173
     /* 19CE28 0029CD28 00000000 */ .word 0x00000000
     /* 19CE2C 0029CD2C 00000000 */ .word 0x00000000
 
-glabel LIT_710
+glabel "@710"
     /* 19CE30 0029CD30 6B657968 */ .word 0x6879656B
     /* 19CE34 0029CD34 69747567 */ .word 0x67757469
     /* 19CE38 0029CD38 00000000 */ .word 0x00000000
     /* 19CE3C 0029CD3C 00000000 */ .word 0x00000000
 
-glabel LIT_711
+glabel "@711"
     /* 19CE40 0029CD40 7975756B */ .word 0x6B757579
     /* 19CE44 0029CD44 69697461 */ .word 0x61746969
     /* 19CE48 0029CD48 00000000 */ .word 0x00000000
     /* 19CE4C 0029CD4C 00000000 */ .word 0x00000000
 
-glabel LIT_712
+glabel "@712"
     /* 19CE50 0029CD50 70617461 */ .word 0x61746170
     /* 19CE54 0029CD54 70617461 */ .word 0x61746170
     /* 19CE58 0029CD58 00000000 */ .word 0x00000000
     /* 19CE5C 0029CD5C 00000000 */ .word 0x00000000
 
-glabel LIT_713
+glabel "@713"
     /* 19CE60 0029CD60 6B65795F */ .word 0x5F79656B
     /* 19CE64 0029CD64 65796500 */ .word 0x00657965
 
-glabel LIT_714__3
+glabel "@714__3"
     /* 19CE68 0029CD68 6D617000 */ .word 0x0070616D
     /* 19CE6C 0029CD6C 00000000 */ .word 0x00000000
 
-glabel LIT_715__3
+glabel "@715__3"
     /* 19CE70 0029CD70 6D617375 */ .word 0x7573616D
     /* 19CE74 0029CD74 6973796F */ .word 0x6F797369
     /* 19CE78 0029CD78 00000000 */ .word 0x00000000
     /* 19CE7C 0029CD7C 00000000 */ .word 0x00000000
 
-glabel LIT_716__3
+glabel "@716__3"
     /* 19CE80 0029CD80 646F7261 */ .word 0x61726F64
     /* 19CE84 0029CD84 68616E65 */ .word 0x656E6168
     /* 19CE88 0029CD88 00000000 */ .word 0x00000000
     /* 19CE8C 0029CD8C 00000000 */ .word 0x00000000
 
-glabel LIT_717__3
+glabel "@717__3"
     /* 19CE90 0029CD90 6B657964 */ .word 0x6479656B
     /* 19CE94 0029CD94 6F6B7574 */ .word 0x74756B6F
     /* 19CE98 0029CD98 00000000 */ .word 0x00000000
     /* 19CE9C 0029CD9C 00000000 */ .word 0x00000000
 
-glabel LIT_718__2
+glabel "@718__2"
     /* 19CEA0 0029CDA0 68656E67 */ .word 0x676E6568
     /* 19CEA4 0029CDA4 656D697A */ .word 0x7A696D65
     /* 19CEA8 0029CDA8 00000000 */ .word 0x00000000
     /* 19CEAC 0029CDAC 00000000 */ .word 0x00000000
 
-glabel LIT_719__3
+glabel "@719__3"
     /* 19CEB0 0029CDB0 776F726C */ .word 0x6C726F77
     /* 19CEB4 0029CDB4 646D6170 */ .word 0x70616D64
     /* 19CEB8 0029CDB8 00000000 */ .word 0x00000000
     /* 19CEBC 0029CDBC 00000000 */ .word 0x00000000
 
-glabel LIT_720__2
+glabel "@720__2"
     /* 19CEC0 0029CDC0 686F6E65 */ .word 0x656E6F68
     /* 19CEC4 0029CDC4 70656E64 */ .word 0x646E6570
     /* 19CEC8 0029CDC8 00000000 */ .word 0x00000000
     /* 19CECC 0029CDCC 00000000 */ .word 0x00000000
 
-glabel LIT_721__2
+glabel "@721__2"
     /* 19CED0 0029CDD0 74756B69 */ .word 0x696B7574
     /* 19CED4 0029CDD4 66756500 */ .word 0x00657566
 
-glabel LIT_722__2
+glabel "@722__2"
     /* 19CED8 0029CDD8 6D61686F */ .word 0x6F68616D
     /* 19CEDC 0029CDDC 72616E70 */ .word 0x706E6172
     /* 19CEE0 0029CDE0 00000000 */ .word 0x00000000
     /* 19CEE4 0029CDE4 00000000 */ .word 0x00000000
 
-glabel LIT_723__3
+glabel "@723__3"
     /* 19CEE8 0029CDE8 74756B69 */ .word 0x696B7574
     /* 19CEEC 0029CDEC 6E6F6F62 */ .word 0x626F6F6E
     /* 19CEF0 0029CDF0 00000000 */ .word 0x00000000
     /* 19CEF4 0029CDF4 00000000 */ .word 0x00000000
 
-glabel LIT_724__2
+glabel "@724__2"
     /* 19CEF8 0029CDF8 6B616972 */ .word 0x7269616B
     /* 19CEFC 0029CDFC 696E6700 */ .word 0x00676E69
 
-glabel LIT_725__5
+glabel "@725__5"
     /* 19CF00 0029CE00 736F7361 */ .word 0x61736F73
     /* 19CF04 0029CE04 7265696A */ .word 0x6A696572
     /* 19CF08 0029CE08 00000000 */ .word 0x00000000
     /* 19CF0C 0029CE0C 00000000 */ .word 0x00000000
 
-glabel LIT_726__4
+glabel "@726__4"
     /* 19CF10 0029CE10 69636562 */ .word 0x62656369
     /* 19CF14 0029CE14 69670000 */ .word 0x00006769
 
-glabel LIT_727__4
+glabel "@727__4"
     /* 19CF18 0029CE18 6963656D */ .word 0x6D656369
     /* 19CF1C 0029CE1C 69640000 */ .word 0x00006469
 
-glabel LIT_728__5
+glabel "@728__5"
     /* 19CF20 0029CE20 69636573 */ .word 0x73656369
     /* 19CF24 0029CE24 6D6C0000 */ .word 0x00006C6D
 
-glabel LIT_729__4
+glabel "@729__4"
     /* 19CF28 0029CE28 6B657968 */ .word 0x6879656B
     /* 19CF2C 0029CE2C 6F6E6F6F */ .word 0x6F6F6E6F
     /* 19CF30 0029CE30 00000000 */ .word 0x00000000
     /* 19CF34 0029CE34 00000000 */ .word 0x00000000
 
-glabel LIT_730__5
+glabel "@730__5"
     /* 19CF38 0029CE38 68616E74 */ .word 0x746E6168
     /* 19CF3C 0029CE3C 6D696D69 */ .word 0x696D696D
     /* 19CF40 0029CE40 00000000 */ .word 0x00000000
     /* 19CF44 0029CE44 00000000 */ .word 0x00000000
 
-glabel LIT_731__5
+glabel "@731__5"
     /* 19CF48 0029CE48 6B6F7579 */ .word 0x79756F6B
     /* 19CF4C 0029CE4C 616B7500 */ .word 0x00756B61
 
-glabel LIT_732__5
+glabel "@732__5"
     /* 19CF50 0029CE50 66756E64 */ .word 0x646E7566
     /* 19CF54 0029CE54 74696F6E */ .word 0x6E6F6974
     /* 19CF58 0029CE58 00000000 */ .word 0x00000000
     /* 19CF5C 0029CE5C 00000000 */ .word 0x00000000
 
-glabel LIT_733__4
+glabel "@733__4"
     /* 19CF60 0029CE60 68616E69 */ .word 0x696E6168
     /* 19CF64 0029CE64 77610000 */ .word 0x00006177
 
-glabel LIT_734__4
+glabel "@734__4"
     /* 19CF68 0029CE68 6D616E75 */ .word 0x756E616D
     /* 19CF6C 0029CE6C 616C0000 */ .word 0x00006C61
 
-glabel LIT_735__3
+glabel "@735__3"
     /* 19CF70 0029CE70 70657A75 */ .word 0x757A6570
     /* 19CF74 0029CE74 74616D61 */ .word 0x616D6174
     /* 19CF78 0029CE78 00000000 */ .word 0x00000000

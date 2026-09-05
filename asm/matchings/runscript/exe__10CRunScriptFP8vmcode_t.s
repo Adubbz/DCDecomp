@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_378__2
+glabel "@378__2"
     /* 19FC40 0029FB40 E0E82300 */ .word .L0023E8E0
     /* 19FC44 0029FB44 0CE92300 */ .word .L0023E90C
     /* 19FC48 0029FB48 38E92300 */ .word .L0023E938
@@ -15,7 +15,7 @@ glabel LIT_378__2
     /* 19FC58 0029FB58 00000000 */ .word 0x00000000
     /* 19FC5C 0029FB5C 00000000 */ .word 0x00000000
 
-glabel LIT_377__4
+glabel "@377__4"
     /* 19FC60 0029FB60 5CE72300 */ .word .L0023E75C
     /* 19FC64 0029FB64 78E72300 */ .word .L0023E778
     /* 19FC68 0029FB68 94E72300 */ .word .L0023E794
@@ -25,7 +25,7 @@ glabel LIT_377__4
     /* 19FC78 0029FB78 00000000 */ .word 0x00000000
     /* 19FC7C 0029FB7C 00000000 */ .word 0x00000000
 
-glabel LIT_376__5
+glabel "@376__5"
     /* 19FC80 0029FB80 54F52300 */ .word .L0023F554
     /* 19FC84 0029FB84 D0E02300 */ .word .L0023E0D0
     /* 19FC88 0029FB88 2CE32300 */ .word .L0023E32C
@@ -79,8 +79,8 @@ glabel exe__10CRunScriptFP8vmcode_t
     /* 13E1A8 0023E0A8 1F00A12C */  sltiu      $1, $5, 0x1F
     /* 13E1AC 0023E0AC 29052010 */  beqz       $1, .L0023F554
     /* 13E1B0 0023E0B0 00000000 */   nop
-    /* 13E1B4 0023E0B4 2A00033C */  lui        $3, %hi(LIT_376__5)
-    /* 13E1B8 0023E0B8 80FB6424 */  addiu      $4, $3, %lo(LIT_376__5)
+    /* 13E1B4 0023E0B4 2A00033C */  lui        $3, %hi("@376__5")
+    /* 13E1B8 0023E0B8 80FB6424 */  addiu      $4, $3, %lo("@376__5")
     /* 13E1BC 0023E0BC 80180500 */  sll        $3, $5, 2
     /* 13E1C0 0023E0C0 21186400 */  addu       $3, $3, $4
     /* 13E1C4 0023E0C4 0000638C */  lw         $3, 0x0($3)
@@ -523,8 +523,8 @@ glabel exe__10CRunScriptFP8vmcode_t
     /* 13E834 0023E734 0600A12C */  sltiu      $1, $5, 0x6
     /* 13E838 0023E738 86032010 */  beqz       $1, .L0023F554
     /* 13E83C 0023E73C 00000000 */   nop
-    /* 13E840 0023E740 2A00033C */  lui        $3, %hi(LIT_377__4)
-    /* 13E844 0023E744 60FB6424 */  addiu      $4, $3, %lo(LIT_377__4)
+    /* 13E840 0023E740 2A00033C */  lui        $3, %hi("@377__4")
+    /* 13E844 0023E744 60FB6424 */  addiu      $4, $3, %lo("@377__4")
     /* 13E848 0023E748 80180500 */  sll        $3, $5, 2
     /* 13E84C 0023E74C 21186400 */  addu       $3, $3, $4
     /* 13E850 0023E750 0000638C */  lw         $3, 0x0($3)
@@ -616,8 +616,8 @@ glabel exe__10CRunScriptFP8vmcode_t
     /* 13E980 0023E880 ECFD228C */  lw         $2, %lo(_impure_ptr)($1)
     /* 13E984 0023E884 2C00238E */  lw         $3, 0x2C($17)
     /* 13E988 0023E888 0C00448C */  lw         $4, 0xC($2)
-    /* 13E98C 0023E88C 2A00023C */  lui        $2, %hi(LIT_365__4)
-    /* 13E990 0023E890 A0F84524 */  addiu      $5, $2, %lo(LIT_365__4)
+    /* 13E98C 0023E88C 2A00023C */  lui        $2, %hi("@365__4")
+    /* 13E990 0023E890 A0F84524 */  addiu      $5, $2, %lo("@365__4")
     /* 13E994 0023E894 0400668C */  lw         $6, 0x4($3)
     /* 13E998 0023E898 EE06040C */  jal        fprintf
     /* 13E99C 0023E89C 00000000 */   nop
@@ -631,8 +631,8 @@ glabel exe__10CRunScriptFP8vmcode_t
     /* 13E9B8 0023E8B8 0600A12C */  sltiu      $1, $5, 0x6
     /* 13E9BC 0023E8BC 25032010 */  beqz       $1, .L0023F554
     /* 13E9C0 0023E8C0 00000000 */   nop
-    /* 13E9C4 0023E8C4 2A00033C */  lui        $3, %hi(LIT_378__2)
-    /* 13E9C8 0023E8C8 40FB6424 */  addiu      $4, $3, %lo(LIT_378__2)
+    /* 13E9C4 0023E8C4 2A00033C */  lui        $3, %hi("@378__2")
+    /* 13E9C8 0023E8C8 40FB6424 */  addiu      $4, $3, %lo("@378__2")
     /* 13E9CC 0023E8CC 80180500 */  sll        $3, $5, 2
     /* 13E9D0 0023E8D0 21186400 */  addu       $3, $3, $4
     /* 13E9D4 0023E8D4 0000638C */  lw         $3, 0x0($3)
@@ -791,8 +791,8 @@ glabel exe__10CRunScriptFP8vmcode_t
     /* 13EBF4 0023EAF4 ECFD228C */  lw         $2, %lo(_impure_ptr)($1)
     /* 13EBF8 0023EAF8 2C00238E */  lw         $3, 0x2C($17)
     /* 13EBFC 0023EAFC 0C00448C */  lw         $4, 0xC($2)
-    /* 13EC00 0023EB00 2A00023C */  lui        $2, %hi(LIT_366__3)
-    /* 13EC04 0023EB04 E0F84524 */  addiu      $5, $2, %lo(LIT_366__3)
+    /* 13EC00 0023EB00 2A00023C */  lui        $2, %hi("@366__3")
+    /* 13EC04 0023EB04 E0F84524 */  addiu      $5, $2, %lo("@366__3")
     /* 13EC08 0023EB08 0400668C */  lw         $6, 0x4($3)
     /* 13EC0C 0023EB0C EE06040C */  jal        fprintf
     /* 13EC10 0023EB10 00000000 */   nop
@@ -876,8 +876,8 @@ glabel exe__10CRunScriptFP8vmcode_t
     /* 13ED34 0023EC34 ECFD228C */  lw         $2, %lo(_impure_ptr)($1)
     /* 13ED38 0023EC38 2C00238E */  lw         $3, 0x2C($17)
     /* 13ED3C 0023EC3C 0C00448C */  lw         $4, 0xC($2)
-    /* 13ED40 0023EC40 2A00023C */  lui        $2, %hi(LIT_367__3)
-    /* 13ED44 0023EC44 20F94524 */  addiu      $5, $2, %lo(LIT_367__3)
+    /* 13ED40 0023EC40 2A00023C */  lui        $2, %hi("@367__3")
+    /* 13ED44 0023EC44 20F94524 */  addiu      $5, $2, %lo("@367__3")
     /* 13ED48 0023EC48 0400668C */  lw         $6, 0x4($3)
     /* 13ED4C 0023EC4C EE06040C */  jal        fprintf
     /* 13ED50 0023EC50 00000000 */   nop
@@ -961,8 +961,8 @@ glabel exe__10CRunScriptFP8vmcode_t
     /* 13EE74 0023ED74 ECFD228C */  lw         $2, %lo(_impure_ptr)($1)
     /* 13EE78 0023ED78 2C00238E */  lw         $3, 0x2C($17)
     /* 13EE7C 0023ED7C 0C00448C */  lw         $4, 0xC($2)
-    /* 13EE80 0023ED80 2A00023C */  lui        $2, %hi(LIT_368__2)
-    /* 13EE84 0023ED84 60F94524 */  addiu      $5, $2, %lo(LIT_368__2)
+    /* 13EE80 0023ED80 2A00023C */  lui        $2, %hi("@368__2")
+    /* 13EE84 0023ED84 60F94524 */  addiu      $5, $2, %lo("@368__2")
     /* 13EE88 0023ED88 0400668C */  lw         $6, 0x4($3)
     /* 13EE8C 0023ED8C EE06040C */  jal        fprintf
     /* 13EE90 0023ED90 00000000 */   nop
@@ -1058,8 +1058,8 @@ glabel exe__10CRunScriptFP8vmcode_t
     /* 13EFDC 0023EEDC ECFD228C */  lw         $2, %lo(_impure_ptr)($1)
     /* 13EFE0 0023EEE0 2C00238E */  lw         $3, 0x2C($17)
     /* 13EFE4 0023EEE4 0C00448C */  lw         $4, 0xC($2)
-    /* 13EFE8 0023EEE8 2A00023C */  lui        $2, %hi(LIT_369__4)
-    /* 13EFEC 0023EEEC 90F94524 */  addiu      $5, $2, %lo(LIT_369__4)
+    /* 13EFE8 0023EEE8 2A00023C */  lui        $2, %hi("@369__4")
+    /* 13EFEC 0023EEEC 90F94524 */  addiu      $5, $2, %lo("@369__4")
     /* 13EFF0 0023EEF0 0400668C */  lw         $6, 0x4($3)
     /* 13EFF4 0023EEF4 EE06040C */  jal        fprintf
     /* 13EFF8 0023EEF8 00000000 */   nop
@@ -1181,8 +1181,8 @@ glabel exe__10CRunScriptFP8vmcode_t
     /* 13F1A8 0023F0A8 ECFD228C */  lw         $2, %lo(_impure_ptr)($1)
     /* 13F1AC 0023F0AC 2C00238E */  lw         $3, 0x2C($17)
     /* 13F1B0 0023F0B0 0C00448C */  lw         $4, 0xC($2)
-    /* 13F1B4 0023F0B4 2A00023C */  lui        $2, %hi(LIT_370__3)
-    /* 13F1B8 0023F0B8 D0F94524 */  addiu      $5, $2, %lo(LIT_370__3)
+    /* 13F1B4 0023F0B4 2A00023C */  lui        $2, %hi("@370__3")
+    /* 13F1B8 0023F0B8 D0F94524 */  addiu      $5, $2, %lo("@370__3")
     /* 13F1BC 0023F0BC 0400668C */  lw         $6, 0x4($3)
     /* 13F1C0 0023F0C0 EE06040C */  jal        fprintf
     /* 13F1C4 0023F0C4 00000000 */   nop
@@ -1227,8 +1227,8 @@ glabel exe__10CRunScriptFP8vmcode_t
     /* 13F254 0023F154 ECFD228C */  lw         $2, %lo(_impure_ptr)($1)
     /* 13F258 0023F158 2C00238E */  lw         $3, 0x2C($17)
     /* 13F25C 0023F15C 0C00448C */  lw         $4, 0xC($2)
-    /* 13F260 0023F160 2A00023C */  lui        $2, %hi(LIT_371__5)
-    /* 13F264 0023F164 10FA4524 */  addiu      $5, $2, %lo(LIT_371__5)
+    /* 13F260 0023F160 2A00023C */  lui        $2, %hi("@371__5")
+    /* 13F264 0023F164 10FA4524 */  addiu      $5, $2, %lo("@371__5")
     /* 13F268 0023F168 0400668C */  lw         $6, 0x4($3)
     /* 13F26C 0023F16C EE06040C */  jal        fprintf
     /* 13F270 0023F170 00000000 */   nop
@@ -1273,8 +1273,8 @@ glabel exe__10CRunScriptFP8vmcode_t
     /* 13F300 0023F200 ECFD228C */  lw         $2, %lo(_impure_ptr)($1)
     /* 13F304 0023F204 2C00238E */  lw         $3, 0x2C($17)
     /* 13F308 0023F208 0C00448C */  lw         $4, 0xC($2)
-    /* 13F30C 0023F20C 2A00023C */  lui        $2, %hi(LIT_372__4)
-    /* 13F310 0023F210 50FA4524 */  addiu      $5, $2, %lo(LIT_372__4)
+    /* 13F30C 0023F20C 2A00023C */  lui        $2, %hi("@372__4")
+    /* 13F310 0023F210 50FA4524 */  addiu      $5, $2, %lo("@372__4")
     /* 13F314 0023F214 0400668C */  lw         $6, 0x4($3)
     /* 13F318 0023F218 EE06040C */  jal        fprintf
     /* 13F31C 0023F21C 00000000 */   nop
@@ -1305,8 +1305,8 @@ glabel exe__10CRunScriptFP8vmcode_t
     /* 13F378 0023F278 ECFD228C */  lw         $2, %lo(_impure_ptr)($1)
     /* 13F37C 0023F27C 2C00238E */  lw         $3, 0x2C($17)
     /* 13F380 0023F280 0C00448C */  lw         $4, 0xC($2)
-    /* 13F384 0023F284 2A00023C */  lui        $2, %hi(LIT_373__5)
-    /* 13F388 0023F288 90FA4524 */  addiu      $5, $2, %lo(LIT_373__5)
+    /* 13F384 0023F284 2A00023C */  lui        $2, %hi("@373__5")
+    /* 13F388 0023F288 90FA4524 */  addiu      $5, $2, %lo("@373__5")
     /* 13F38C 0023F28C 0400668C */  lw         $6, 0x4($3)
     /* 13F390 0023F290 EE06040C */  jal        fprintf
     /* 13F394 0023F294 00000000 */   nop
@@ -1345,8 +1345,8 @@ glabel exe__10CRunScriptFP8vmcode_t
     /* 13F40C 0023F30C ECFD228C */  lw         $2, %lo(_impure_ptr)($1)
     /* 13F410 0023F310 2C00238E */  lw         $3, 0x2C($17)
     /* 13F414 0023F314 0C00448C */  lw         $4, 0xC($2)
-    /* 13F418 0023F318 2A00023C */  lui        $2, %hi(LIT_374__5)
-    /* 13F41C 0023F31C C0FA4524 */  addiu      $5, $2, %lo(LIT_374__5)
+    /* 13F418 0023F318 2A00023C */  lui        $2, %hi("@374__5")
+    /* 13F41C 0023F31C C0FA4524 */  addiu      $5, $2, %lo("@374__5")
     /* 13F420 0023F320 0400668C */  lw         $6, 0x4($3)
     /* 13F424 0023F324 EE06040C */  jal        fprintf
     /* 13F428 0023F328 00000000 */   nop
@@ -1387,8 +1387,8 @@ glabel exe__10CRunScriptFP8vmcode_t
     /* 13F4A8 0023F3A8 ECFD228C */  lw         $2, %lo(_impure_ptr)($1)
     /* 13F4AC 0023F3AC 2C00238E */  lw         $3, 0x2C($17)
     /* 13F4B0 0023F3B0 0C00448C */  lw         $4, 0xC($2)
-    /* 13F4B4 0023F3B4 2A00023C */  lui        $2, %hi(LIT_375__6)
-    /* 13F4B8 0023F3B8 00FB4524 */  addiu      $5, $2, %lo(LIT_375__6)
+    /* 13F4B4 0023F3B4 2A00023C */  lui        $2, %hi("@375__6")
+    /* 13F4B8 0023F3B8 00FB4524 */  addiu      $5, $2, %lo("@375__6")
     /* 13F4BC 0023F3BC 0400668C */  lw         $6, 0x4($3)
     /* 13F4C0 0023F3C0 EE06040C */  jal        fprintf
     /* 13F4C4 0023F3C4 00000000 */   nop

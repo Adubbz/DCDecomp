@@ -16,16 +16,16 @@ glabel FishingLoad__FP14CDataAlloc2_1_i
     /* 0A88EC 001A87EC 0000B07F */  sq         $16, 0x0($29)
     /* 0A88F0 001A87F0 288E8070 */  paddub     $17, $4, $0
     /* 0A88F4 001A87F4 2886A070 */  paddub     $16, $5, $0
-    /* 0A88F8 001A87F8 2A00023C */  lui        $2, %hi(LIT_353__4)
-    /* 0A88FC 001A87FC 70B44424 */  addiu      $4, $2, %lo(LIT_353__4)
+    /* 0A88F8 001A87F8 2A00023C */  lui        $2, %hi("@353__4")
+    /* 0A88FC 001A87FC 70B44424 */  addiu      $4, $2, %lo("@353__4")
     /* 0A8900 001A8800 948B858F */  lw         $5, -0x746C($28)
     /* 0A8904 001A8804 28360070 */  paddub     $6, $0, $0
     /* 0A8908 001A8808 D8FC040C */  jal        LoadFile__FPcPvPi
     /* 0A890C 001A880C 00000000 */   nop
     /* 0A8910 001A8810 5C9390AF */  sw         $16, -0x6CA4($28)
     /* 0A8914 001A8814 948B848F */  lw         $4, -0x746C($28)
-    /* 0A8918 001A8818 2A00023C */  lui        $2, %hi(LIT_354__2)
-    /* 0A891C 001A881C 88B44524 */  addiu      $5, $2, %lo(LIT_354__2)
+    /* 0A8918 001A8818 2A00023C */  lui        $2, %hi("@354__2")
+    /* 0A891C 001A881C 88B44524 */  addiu      $5, $2, %lo("@354__2")
     /* 0A8920 001A8820 28360070 */  paddub     $6, $0, $0
     /* 0A8924 001A8824 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0A8928 001A8828 00000000 */   nop
@@ -38,8 +38,8 @@ glabel FishingLoad__FP14CDataAlloc2_1_i
     /* 0A8944 001A8844 00000000 */   nop
     /* 0A8948 001A8848 549382AF */  sw         $2, -0x6CAC($28)
     /* 0A894C 001A884C 948B848F */  lw         $4, -0x746C($28)
-    /* 0A8950 001A8850 2A00023C */  lui        $2, %hi(LIT_355__2)
-    /* 0A8954 001A8854 98B44524 */  addiu      $5, $2, %lo(LIT_355__2)
+    /* 0A8950 001A8850 2A00023C */  lui        $2, %hi("@355__2")
+    /* 0A8954 001A8854 98B44524 */  addiu      $5, $2, %lo("@355__2")
     /* 0A8958 001A8858 28360070 */  paddub     $6, $0, $0
     /* 0A895C 001A885C C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0A8960 001A8860 00000000 */   nop
@@ -166,8 +166,8 @@ glabel FishingLoadFish__FiP14CDataAlloc2_1_i
     /* 0A8B1C 001A8A1C 19001024 */  addiu      $16, $0, 0x19
   .L001A8A20:
     /* 0A8B20 001A8A20 288E0070 */  paddub     $17, $0, $0
-    /* 0A8B24 001A8A24 2A00023C */  lui        $2, %hi(LIT_436__2)
-    /* 0A8B28 001A8A28 A0B44424 */  addiu      $4, $2, %lo(LIT_436__2)
+    /* 0A8B24 001A8A24 2A00023C */  lui        $2, %hi("@436__2")
+    /* 0A8B28 001A8A28 A0B44424 */  addiu      $4, $2, %lo("@436__2")
     /* 0A8B2C 001A8A2C 948B858F */  lw         $5, -0x746C($28)
     /* 0A8B30 001A8A30 28360070 */  paddub     $6, $0, $0
     /* 0A8B34 001A8A34 D8FC040C */  jal        LoadFile__FPcPvPi
@@ -821,8 +821,8 @@ glabel FishingPickUpPoly__FP6CCPoly
     /* 0A944C 001A934C 08008228 */  slti       $2, $4, 0x8
     /* 0A9450 001A9350 E7FF4014 */  bnez       $2, .L001A92F0
     /* 0A9454 001A9354 00000000 */   nop
-    /* 0A9458 001A9358 2700023C */  lui        $2, %hi(LIT_498__3)
-    /* 0A945C 001A935C 00AF4624 */  addiu      $6, $2, %lo(LIT_498__3)
+    /* 0A9458 001A9358 2700023C */  lui        $2, %hi("@498__3")
+    /* 0A945C 001A935C 00AF4624 */  addiu      $6, $2, %lo("@498__3")
     /* 0A9460 001A9360 F000A527 */  addiu      $5, $29, 0xF0
     /* 0A9464 001A9364 03000424 */  addiu      $4, $0, 0x3
   .L001A9368:
@@ -1104,8 +1104,8 @@ glabel FishingBattleToAngleFish__FPUiP14CDataAlloc2_1_
     /* 0A9844 001A9744 6093828F */  lw         $2, -0x6CA0($28)
     /* 0A9848 001A9748 01004824 */  addiu      $8, $2, 0x1
     /* 0A984C 001A974C 282EC070 */  paddub     $5, $6, $0
-    /* 0A9850 001A9750 2A00023C */  lui        $2, %hi(LIT_578__3)
-    /* 0A9854 001A9754 B0B44624 */  addiu      $6, $2, %lo(LIT_578__3)
+    /* 0A9850 001A9750 2A00023C */  lui        $2, %hi("@578__3")
+    /* 0A9854 001A9754 B0B44624 */  addiu      $6, $2, %lo("@578__3")
     /* 0A9858 001A9758 284EE070 */  paddub     $9, $7, $0
     /* 0A985C 001A975C 28560070 */  paddub     $10, $0, $0
     /* 0A9860 001A9760 F012798C */  lw         $25, 0x12F0($3)
@@ -1360,13 +1360,13 @@ glabel FishingDrawFish__Fv
     /* 0A9BCC 001A9ACC 5493858F */  lw         $5, -0x6CAC($28)
     /* 0A9BD0 001A9AD0 2404090C */  jal        SetReference__5CFishFP6CFrame
     /* 0A9BD4 001A9AD4 00000000 */   nop
-    /* 0A9BD8 001A9AD8 2700023C */  lui        $2, %hi(LIT_643)
-    /* 0A9BDC 001A9ADC 60AF4224 */  addiu      $2, $2, %lo(LIT_643)
+    /* 0A9BD8 001A9AD8 2700023C */  lui        $2, %hi("@643")
+    /* 0A9BDC 001A9ADC 60AF4224 */  addiu      $2, $2, %lo("@643")
     /* 0A9BE0 001A9AE0 2000A527 */  addiu      $5, $29, 0x20
     /* 0A9BE4 001A9AE4 00004278 */  lq         $2, 0x0($2)
     /* 0A9BE8 001A9AE8 0000A27C */  sq         $2, 0x0($5)
-    /* 0A9BEC 001A9AEC 2700023C */  lui        $2, %hi(LIT_644)
-    /* 0A9BF0 001A9AF0 70AF4224 */  addiu      $2, $2, %lo(LIT_644)
+    /* 0A9BEC 001A9AEC 2700023C */  lui        $2, %hi("@644")
+    /* 0A9BF0 001A9AF0 70AF4224 */  addiu      $2, $2, %lo("@644")
     /* 0A9BF4 001A9AF4 3000A327 */  addiu      $3, $29, 0x30
     /* 0A9BF8 001A9AF8 00004278 */  lq         $2, 0x0($2)
     /* 0A9BFC 001A9AFC 0000627C */  sq         $2, 0x0($3)
@@ -1446,8 +1446,8 @@ glabel FishLineInit__FPf
     /* 0A9D04 001A9C04 849380AF */  sw         $0, -0x6C7C($28)
     /* 0A9D08 001A9C08 809380AF */  sw         $0, -0x6C80($28)
     /* 0A9D0C 001A9C0C 889380AF */  sw         $0, -0x6C78($28)
-    /* 0A9D10 001A9C10 2700023C */  lui        $2, %hi(LIT_656__3)
-    /* 0A9D14 001A9C14 D0AF4224 */  addiu      $2, $2, %lo(LIT_656__3)
+    /* 0A9D10 001A9C10 2700023C */  lui        $2, %hi("@656__3")
+    /* 0A9D14 001A9C14 D0AF4224 */  addiu      $2, $2, %lo("@656__3")
     /* 0A9D18 001A9C18 4000A327 */  addiu      $3, $29, 0x40
     /* 0A9D1C 001A9C1C 00004278 */  lq         $2, 0x0($2)
     /* 0A9D20 001A9C20 0000627C */  sq         $2, 0x0($3)
@@ -3298,7 +3298,7 @@ glabel FishLineDraw__Fi
 
 /* Generated by spimdisasm 1.42.4 */
 
-glabel LIT_353__4
+glabel "@353__4"
     /* 19B570 0029B470 63686172 */ .word 0x72616863
     /* 19B574 0029B474 612F6669 */ .word 0x69662F61
     /* 19B578 0029B478 7368696E */ .word 0x6E696873
@@ -3306,28 +3306,28 @@ glabel LIT_353__4
     /* 19B580 0029B480 6B000000 */ .word 0x0000006B
     /* 19B584 0029B484 00000000 */ .word 0x00000000
 
-glabel LIT_354__2
+glabel "@354__2"
     /* 19B588 0029B488 68617269 */ .word 0x69726168
     /* 19B58C 0029B48C 2E6D6473 */ .word 0x73646D2E
     /* 19B590 0029B490 00000000 */ .word 0x00000000
     /* 19B594 0029B494 00000000 */ .word 0x00000000
 
-glabel LIT_355__2
+glabel "@355__2"
     /* 19B598 0029B498 756B692E */ .word 0x2E696B75
     /* 19B59C 0029B49C 6D647300 */ .word 0x0073646D
 
-glabel LIT_436__2
+glabel "@436__2"
     /* 19B5A0 0029B4A0 63686172 */ .word 0x72616863
     /* 19B5A4 0029B4A4 612F6630 */ .word 0x30662F61
     /* 19B5A8 0029B4A8 30732E63 */ .word 0x632E7330
     /* 19B5AC 0029B4AC 68720000 */ .word 0x00007268
 
-glabel LIT_578__3
+glabel "@578__3"
     /* 19B5B0 0029B4B0 696E666F */ .word 0x6F666E69
     /* 19B5B4 0029B4B4 2E636667 */ .word 0x6766632E
     /* 19B5B8 0029B4B8 00000000 */ .word 0x00000000
     /* 19B5BC 0029B4BC 00000000 */ .word 0x00000000
 
-glabel LIT_604
+glabel "@604"
     /* 19B5C0 0029B4C0 65727220 */ .word 0x20727265
     /* 19B5C4 0029B4C4 25640A00 */ .word 0x000A6425

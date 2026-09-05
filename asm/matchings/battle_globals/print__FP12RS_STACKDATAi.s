@@ -18,8 +18,8 @@ glabel print__FP12RS_STACKDATAi
     /* 13D978 0023D878 0000438E */  lw         $3, 0x0($18)
     /* 13D97C 0023D87C 08006014 */  bnez       $3, .L0023D8A0
     /* 13D980 0023D880 00000000 */   nop
-    /* 13D984 0023D884 2A00023C */  lui        $2, %hi(LIT_50)
-    /* 13D988 0023D888 F0F74424 */  addiu      $4, $2, %lo(LIT_50)
+    /* 13D984 0023D884 2A00023C */  lui        $2, %hi("@50")
+    /* 13D988 0023D888 F0F74424 */  addiu      $4, $2, %lo("@50")
     /* 13D98C 0023D88C 0400458E */  lw         $5, 0x4($18)
     /* 13D990 0023D890 A611040C */  jal        printf
     /* 13D994 0023D894 00000000 */   nop
@@ -29,8 +29,8 @@ glabel print__FP12RS_STACKDATAi
     /* 13D9A0 0023D8A0 02000224 */  addiu      $2, $0, 0x2
     /* 13D9A4 0023D8A4 08006214 */  bne        $3, $2, .L0023D8C8
     /* 13D9A8 0023D8A8 00000000 */   nop
-    /* 13D9AC 0023D8AC 2A00023C */  lui        $2, %hi(LIT_51)
-    /* 13D9B0 0023D8B0 F8F74424 */  addiu      $4, $2, %lo(LIT_51)
+    /* 13D9AC 0023D8AC 2A00023C */  lui        $2, %hi("@51")
+    /* 13D9B0 0023D8B0 F8F74424 */  addiu      $4, $2, %lo("@51")
     /* 13D9B4 0023D8B4 0400458E */  lw         $5, 0x4($18)
     /* 13D9B8 0023D8B8 A611040C */  jal        printf
     /* 13D9BC 0023D8BC 00000000 */   nop
@@ -43,8 +43,8 @@ glabel print__FP12RS_STACKDATAi
     /* 13D9D4 0023D8D4 04004CC6 */  lwc1       $f12, 0x4($18)
     /* 13D9D8 0023D8D8 9044040C */  jal        fptodp
     /* 13D9DC 0023D8DC 00000000 */   nop
-    /* 13D9E0 0023D8E0 2A00033C */  lui        $3, %hi(LIT_52)
-    /* 13D9E4 0023D8E4 00F86424 */  addiu      $4, $3, %lo(LIT_52)
+    /* 13D9E0 0023D8E0 2A00033C */  lui        $3, %hi("@52")
+    /* 13D9E4 0023D8E4 00F86424 */  addiu      $4, $3, %lo("@52")
     /* 13D9E8 0023D8E8 282E4070 */  paddub     $5, $2, $0
     /* 13D9EC 0023D8EC A611040C */  jal        printf
     /* 13D9F0 0023D8F0 00000000 */   nop

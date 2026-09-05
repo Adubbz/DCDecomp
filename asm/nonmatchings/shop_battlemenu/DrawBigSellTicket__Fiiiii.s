@@ -15,8 +15,8 @@ glabel DrawBigSellTicket__Fiiiii
     /* 0ECA70 001EC970 1200D024 */  addiu      $16, $6, 0x12
     /* 0ECA74 001EC974 1400F124 */  addiu      $17, $7, 0x14
     /* 0ECA78 001EC978 A0010524 */  addiu      $5, $0, 0x1A0
-    /* 0ECA7C 001EC97C 2900023C */  lui        $2, %hi(LIT_1852)
-    /* 0ECA80 001EC980 30284224 */  addiu      $2, $2, %lo(LIT_1852)
+    /* 0ECA7C 001EC97C 2900023C */  lui        $2, %hi("@1852")
+    /* 0ECA80 001EC980 30284224 */  addiu      $2, $2, %lo("@1852")
     /* 0ECA84 001EC984 5000A327 */  addiu      $3, $29, 0x50
     /* 0ECA88 001EC988 00004278 */  lq         $2, 0x0($2)
     /* 0ECA8C 001EC98C 0000627C */  sq         $2, 0x0($3)

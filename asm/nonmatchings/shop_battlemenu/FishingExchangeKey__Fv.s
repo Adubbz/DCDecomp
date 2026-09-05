@@ -504,8 +504,8 @@ glabel FishingExchangeKey__Fv
   .L001F1FAC:
     /* 0F20AC 001F1FAC 07006016 */  bnez       $19, .L001F1FCC
     /* 0F20B0 001F1FB0 00000000 */   nop
-    /* 0F20B4 001F1FB4 2A00023C */  lui        $2, %hi(LIT_3159)
-    /* 0F20B8 001F1FB8 50D44424 */  addiu      $4, $2, %lo(LIT_3159)
+    /* 0F20B4 001F1FB4 2A00023C */  lui        $2, %hi("@3159")
+    /* 0F20B8 001F1FB8 50D44424 */  addiu      $4, $2, %lo("@3159")
     /* 0F20BC 001F1FBC A611040C */  jal        printf
     /* 0F20C0 001F1FC0 00000000 */   nop
     /* 0F20C4 001F1FC4 0E000010 */  b          .L001F2000

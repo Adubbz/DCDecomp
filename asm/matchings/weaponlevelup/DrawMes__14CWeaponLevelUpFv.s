@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_1458
+glabel "@1458"
     /* 19F6B0 0029F5B0 FC7C2300 */ .word .L00237CFC
     /* 19F6B4 0029F5B4 FC7C2300 */ .word .L00237CFC
     /* 19F6B8 0029F5B8 FC7C2300 */ .word .L00237CFC
@@ -36,8 +36,8 @@ glabel DrawMes__14CWeaponLevelUpFv
     /* 137DD4 00237CD4 0800A12C */  sltiu      $1, $5, 0x8
     /* 137DD8 00237CD8 0A002010 */  beqz       $1, .L00237D04
     /* 137DDC 00237CDC 00000000 */   nop
-    /* 137DE0 00237CE0 2A00033C */  lui        $3, %hi(LIT_1458)
-    /* 137DE4 00237CE4 B0F56424 */  addiu      $4, $3, %lo(LIT_1458)
+    /* 137DE0 00237CE0 2A00033C */  lui        $3, %hi("@1458")
+    /* 137DE4 00237CE4 B0F56424 */  addiu      $4, $3, %lo("@1458")
     /* 137DE8 00237CE8 80180500 */  sll        $3, $5, 2
     /* 137DEC 00237CEC 21186400 */  addu       $3, $3, $4
     /* 137DF0 00237CF0 0000638C */  lw         $3, 0x0($3)

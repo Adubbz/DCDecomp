@@ -41,16 +41,16 @@ glabel DrawFire__11CDungeonMapFP9CFrameVu1P13CCameraFollow
     /* 0C4248 001C4148 00000000 */   nop
     /* 0C424C 001C414C C701023C */  lui        $2, %hi(TexManager)
     /* 0C4250 001C4150 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0C4254 001C4154 2A00023C */  lui        $2, %hi(LIT_1559)
-    /* 0C4258 001C4158 48BE4524 */  addiu      $5, $2, %lo(LIT_1559)
+    /* 0C4254 001C4154 2A00023C */  lui        $2, %hi("@1559")
+    /* 0C4258 001C4158 48BE4524 */  addiu      $5, $2, %lo("@1559")
     /* 0C425C 001C415C FFFF0624 */  addiu      $6, $0, -0x1
     /* 0C4260 001C4160 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0C4264 001C4164 00000000 */   nop
     /* 0C4268 001C4168 288E4070 */  paddub     $17, $2, $0
     /* 0C426C 001C416C C701023C */  lui        $2, %hi(TexManager)
     /* 0C4270 001C4170 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0C4274 001C4174 2A00023C */  lui        $2, %hi(LIT_1560)
-    /* 0C4278 001C4178 58BE4524 */  addiu      $5, $2, %lo(LIT_1560)
+    /* 0C4274 001C4174 2A00023C */  lui        $2, %hi("@1560")
+    /* 0C4278 001C4178 58BE4524 */  addiu      $5, $2, %lo("@1560")
     /* 0C427C 001C417C FFFF0624 */  addiu      $6, $0, -0x1
     /* 0C4280 001C4180 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0C4284 001C4184 00000000 */   nop

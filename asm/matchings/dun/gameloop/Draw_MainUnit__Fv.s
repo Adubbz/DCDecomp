@@ -39,8 +39,8 @@ glabel Draw_MainUnit__Fv
     /* 00218C 01DADE8C 00000000 */   nop
     /* 002190 01DADE90 EB01013C */  lui        $1, %hi(shortAtraEffect + 0xBC)
     /* 002194 01DADE94 5C4D248C */  lw         $4, %lo(shortAtraEffect + 0xBC)($1)
-    /* 002198 01DADE98 DC01023C */  lui        $2, %hi(LIT_1059__2)
-    /* 00219C 01DADE9C 902E4524 */  addiu      $5, $2, %lo(LIT_1059__2)
+    /* 002198 01DADE98 DC01023C */  lui        $2, %hi("@1059__2")
+    /* 00219C 01DADE9C 902E4524 */  addiu      $5, $2, %lo("@1059__2")
     /* 0021A0 01DADEA0 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 0021A4 01DADEA4 00000000 */   nop
     /* 0021A8 01DADEA8 28864070 */  paddub     $16, $2, $0

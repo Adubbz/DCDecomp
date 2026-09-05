@@ -16,8 +16,8 @@ glabel InitEastKingEvent__FiPiP1
     /* 132F54 00232E54 94AE080C */  jal        GetPathReadDifferntLang__FPc
     /* 132F58 00232E58 00000000 */   nop
     /* 132F5C 00232E5C 4000A427 */  addiu      $4, $29, 0x40
-    /* 132F60 00232E60 2A00023C */  lui        $2, %hi(LIT_398__2)
-    /* 132F64 00232E64 98F24524 */  addiu      $5, $2, %lo(LIT_398__2)
+    /* 132F60 00232E60 2A00023C */  lui        $2, %hi("@398__2")
+    /* 132F64 00232E64 98F24524 */  addiu      $5, $2, %lo("@398__2")
     /* 132F68 00232E68 BC14040C */  jal        strcat
     /* 132F6C 00232E6C 00000000 */   nop
     /* 132F70 00232E70 01002626 */  addiu      $6, $17, 0x1

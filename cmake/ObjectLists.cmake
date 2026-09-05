@@ -47,8 +47,10 @@ endfunction()
 # Assemble a unit that has no decompiled source.
 function(add_unit_asm_object obj src)
     overlay_for_object(${obj} overlay)
+    set(image main)
     set(fixup_flags "")
     if(overlay)
+        set(image ${overlay})
         overlay_rename_flags(${overlay} rename_flags)
         list(APPEND fixup_flags ${rename_flags})
     endif()
@@ -63,8 +65,12 @@ function(add_unit_asm_object obj src)
         OUTPUT ${CMAKE_SOURCE_DIR}/${obj}
         COMMAND ${AS} ${AS_FLAGS} -o ${obj} ${src}
         COMMAND sh ${SCRIPTS_DIR}/build/fixup_sections.sh ${obj} ${fixup_flags}
+        COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/literals.py
+                --resolve-names ${image} ${obj}
         DEPENDS ${CMAKE_SOURCE_DIR}/${src}
                 ${CMAKE_SOURCE_DIR}/${INCLUDE_DIR}/macro.inc ${REF_STAMP}
+                ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/literals.py
+                ${CMAKE_SOURCE_DIR}/config/${image}.symbols.txt
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "AS ${src}"
         VERBATIM)
@@ -73,8 +79,10 @@ endfunction()
 # Compile a source-only object for objdiff.
 function(add_diff_base_object obj src)
     overlay_for_object(${obj} overlay)
+    set(image main)
     set(fixup_flags "")
     if(overlay)
+        set(image ${overlay})
         overlay_rename_flags(${overlay} rename_flags)
         list(APPEND fixup_flags ${rename_flags})
     endif()
@@ -90,12 +98,15 @@ function(add_diff_base_object obj src)
         COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/literals.py --bind ${obj}
         COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/postprocess_object.py ${obj} ${src}
         COMMAND sh ${SCRIPTS_DIR}/build/fixup_sections.sh ${obj} ${fixup_flags}
+        COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/literals.py
+                --resolve-names ${image} ${obj}
         DEPENDS ${CMAKE_SOURCE_DIR}/${src} ${REF_STAMP}
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/literals.py
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/postprocess_object.py
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix.py
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix-wibo.sh
                 ${CMAKE_SOURCE_DIR}/config/object_fixups.json
+                ${CMAKE_SOURCE_DIR}/config/${image}.symbols.txt
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "CC (diff base) ${src}"
         VERBATIM)
@@ -112,8 +123,10 @@ function(add_object obj)
     endif()
 
     overlay_for_object(${obj} overlay)
+    set(image main)
     set(fixup_flags "")
     if(overlay)
+        set(image ${overlay})
         overlay_rename_flags(${overlay} rename_flags)
         list(APPEND fixup_flags ${rename_flags})
     endif()
@@ -130,8 +143,12 @@ function(add_object obj)
             OUTPUT ${CMAKE_SOURCE_DIR}/${obj}
             COMMAND ${AS} ${AS_FLAGS} -o ${obj} ${src}
             ${fixup}
+            COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/literals.py
+                    --resolve-names ${image} ${obj}
             DEPENDS ${CMAKE_SOURCE_DIR}/${src} ${CMAKE_SOURCE_DIR}/${INCLUDE_DIR}/macro.inc
                     ${ASM_OBJECT_EXTRA_DEPENDS} ${REF_STAMP}
+                    ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/literals.py
+                    ${CMAKE_SOURCE_DIR}/config/${image}.symbols.txt
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "AS ${src}"
             VERBATIM)
@@ -148,10 +165,13 @@ function(add_object obj)
             COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/literals.py --bind ${obj}
             COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/postprocess_object.py ${obj} ${src}
             ${fixup}
+            COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/literals.py
+                    --resolve-names ${image} ${obj}
             DEPENDS ${CMAKE_SOURCE_DIR}/${src} ${REF_STAMP}
                     ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/literals.py
                     ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/postprocess_object.py
                     ${CMAKE_SOURCE_DIR}/config/object_fixups.json
+                    ${CMAKE_SOURCE_DIR}/config/${image}.symbols.txt
                     ${CMAKE_SOURCE_DIR}/${TOOLS_DIR}/mwccgap/mwccgap/mwccgap.py
                     ${CMAKE_SOURCE_DIR}/${TOOLS_DIR}/mwccgap/mwccgap/elf.py
             DEPFILE ${CMAKE_SOURCE_DIR}/${obj}.d

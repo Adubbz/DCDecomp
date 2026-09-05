@@ -29,8 +29,8 @@ glabel SndBgmLoadBG__FiPUiPi
     /* 059B40 00159A40 90B44624 */  addiu      $6, $2, %lo(bgm_cfg_file)
     /* 059B44 00159A44 E465050C */  jal        GetBGMFile__FiPcPc
     /* 059B48 00159A48 00000000 */   nop
-    /* 059B4C 00159A4C 2A00023C */  lui        $2, %hi(LIT_384__2)
-    /* 059B50 00159A50 A89F4424 */  addiu      $4, $2, %lo(LIT_384__2)
+    /* 059B4C 00159A4C 2A00023C */  lui        $2, %hi("@384__2")
+    /* 059B50 00159A50 A89F4424 */  addiu      $4, $2, %lo("@384__2")
     /* 059B54 00159A54 282E4072 */  paddub     $5, $18, $0
     /* 059B58 00159A58 A611040C */  jal        printf
     /* 059B5C 00159A5C 00000000 */   nop

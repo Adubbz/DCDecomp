@@ -153,8 +153,8 @@ glabel DrawDay__Fv
     /* 07D35C 0017D25C 00000000 */   nop
     /* 07D360 0017D260 C701023C */  lui        $2, %hi(TexManager)
     /* 07D364 0017D264 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 07D368 0017D268 2A00023C */  lui        $2, %hi(LIT_2122)
-    /* 07D36C 0017D26C 08AC4524 */  addiu      $5, $2, %lo(LIT_2122)
+    /* 07D368 0017D268 2A00023C */  lui        $2, %hi("@2122")
+    /* 07D36C 0017D26C 08AC4524 */  addiu      $5, $2, %lo("@2122")
     /* 07D370 0017D270 FFFF0624 */  addiu      $6, $0, -0x1
     /* 07D374 0017D274 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 07D378 0017D278 00000000 */   nop

@@ -202,8 +202,8 @@ glabel FishExchangeItemDraw__Fiii
     /* 0F287C 001F277C 283E6072 */  paddub     $7, $19, $0
     /* 0F2880 001F2780 C8B3080C */  jal        DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i
     /* 0F2884 001F2784 00000000 */   nop
-    /* 0F2888 001F2788 2900023C */  lui        $2, %hi(LIT_3177)
-    /* 0F288C 001F278C 902A4224 */  addiu      $2, $2, %lo(LIT_3177)
+    /* 0F2888 001F2788 2900023C */  lui        $2, %hi("@3177")
+    /* 0F288C 001F278C 902A4224 */  addiu      $2, $2, %lo("@3177")
     /* 0F2890 001F2790 B000A827 */  addiu      $8, $29, 0xB0
     /* 0F2894 001F2794 00004278 */  lq         $2, 0x0($2)
     /* 0F2898 001F2798 0000027D */  sq         $2, 0x0($8)

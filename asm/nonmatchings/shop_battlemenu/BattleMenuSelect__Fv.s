@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_1288
+glabel "@1288"
     /* 19D820 0029D720 E46E1F00 */ .word .L001F6EE4
     /* 19D824 0029D724 1C6D1F00 */ .word .L001F6D1C
     /* 19D828 0029D728 086D1F00 */ .word .L001F6D08
@@ -93,8 +93,8 @@ glabel BattleMenuSelect__Fv
     /* 0F6D1C 001F6C1C 00000000 */   nop
     /* 0F6D20 001F6C20 BA004010 */  beqz       $2, .L001F6F0C
     /* 0F6D24 001F6C24 00000000 */   nop
-    /* 0F6D28 001F6C28 2900023C */  lui        $2, %hi(LIT_1239__2)
-    /* 0F6D2C 001F6C2C 602F4524 */  addiu      $5, $2, %lo(LIT_1239__2)
+    /* 0F6D28 001F6C28 2900023C */  lui        $2, %hi("@1239__2")
+    /* 0F6D2C 001F6C2C 602F4524 */  addiu      $5, $2, %lo("@1239__2")
     /* 0F6D30 001F6C30 3000A427 */  addiu      $4, $29, 0x30
     /* 0F6D34 001F6C34 04000324 */  addiu      $3, $0, 0x4
   .L001F6C38:
@@ -122,8 +122,8 @@ glabel BattleMenuSelect__Fv
     /* 0F6D8C 001F6C8C 0900C12C */  sltiu      $1, $6, 0x9
     /* 0F6D90 001F6C90 94002010 */  beqz       $1, .L001F6EE4
     /* 0F6D94 001F6C94 00000000 */   nop
-    /* 0F6D98 001F6C98 2A00023C */  lui        $2, %hi(LIT_1288)
-    /* 0F6D9C 001F6C9C 20D74324 */  addiu      $3, $2, %lo(LIT_1288)
+    /* 0F6D98 001F6C98 2A00023C */  lui        $2, %hi("@1288")
+    /* 0F6D9C 001F6C9C 20D74324 */  addiu      $3, $2, %lo("@1288")
     /* 0F6DA0 001F6CA0 80100600 */  sll        $2, $6, 2
     /* 0F6DA4 001F6CA4 21104300 */  addu       $2, $2, $3
     /* 0F6DA8 001F6CA8 0000428C */  lw         $2, 0x0($2)
@@ -269,8 +269,8 @@ glabel BattleMenuSelect__Fv
     /* 0F6F9C 001F6E9C 00000000 */   nop
   .L001F6EA0:
     /* 0F6FA0 001F6EA0 489580A3 */  sb         $0, -0x6AB8($28)
-    /* 0F6FA4 001F6EA4 2900023C */  lui        $2, %hi(LIT_1270)
-    /* 0F6FA8 001F6EA8 A02F4324 */  addiu      $3, $2, %lo(LIT_1270)
+    /* 0F6FA4 001F6EA4 2900023C */  lui        $2, %hi("@1270")
+    /* 0F6FA8 001F6EA8 A02F4324 */  addiu      $3, $2, %lo("@1270")
     /* 0F6FAC 001F6EAC 8000A427 */  addiu      $4, $29, 0x80
     /* 0F6FB0 001F6EB0 000062DC */  ld         $2, 0x0($3)
     /* 0F6FB4 001F6EB4 080060C4 */  lwc1       $f0, 0x8($3)

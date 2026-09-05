@@ -22,24 +22,24 @@ glabel EffectMacroStep__FPf
     /* 064C54 00164B54 7C8E82AF */  sw         $2, -0x7184($28)
     /* 064C58 00164B58 C701023C */  lui        $2, %hi(TexManager)
     /* 064C5C 00164B5C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 064C60 00164B60 2A00023C */  lui        $2, %hi(LIT_621__2)
-    /* 064C64 00164B64 08A14524 */  addiu      $5, $2, %lo(LIT_621__2)
+    /* 064C60 00164B60 2A00023C */  lui        $2, %hi("@621__2")
+    /* 064C64 00164B64 08A14524 */  addiu      $5, $2, %lo("@621__2")
     /* 064C68 00164B68 FFFF0624 */  addiu      $6, $0, -0x1
     /* 064C6C 00164B6C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 064C70 00164B70 00000000 */   nop
     /* 064C74 00164B74 808E82AF */  sw         $2, -0x7180($28)
     /* 064C78 00164B78 C701023C */  lui        $2, %hi(TexManager)
     /* 064C7C 00164B7C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 064C80 00164B80 2A00023C */  lui        $2, %hi(LIT_622)
-    /* 064C84 00164B84 10A14524 */  addiu      $5, $2, %lo(LIT_622)
+    /* 064C80 00164B80 2A00023C */  lui        $2, %hi("@622")
+    /* 064C84 00164B84 10A14524 */  addiu      $5, $2, %lo("@622")
     /* 064C88 00164B88 FFFF0624 */  addiu      $6, $0, -0x1
     /* 064C8C 00164B8C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 064C90 00164B90 00000000 */   nop
     /* 064C94 00164B94 848E82AF */  sw         $2, -0x717C($28)
     /* 064C98 00164B98 C701023C */  lui        $2, %hi(TexManager)
     /* 064C9C 00164B9C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 064CA0 00164BA0 2A00023C */  lui        $2, %hi(LIT_623)
-    /* 064CA4 00164BA4 18A14524 */  addiu      $5, $2, %lo(LIT_623)
+    /* 064CA0 00164BA0 2A00023C */  lui        $2, %hi("@623")
+    /* 064CA4 00164BA4 18A14524 */  addiu      $5, $2, %lo("@623")
     /* 064CA8 00164BA8 FFFF0624 */  addiu      $6, $0, -0x1
     /* 064CAC 00164BAC B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 064CB0 00164BB0 00000000 */   nop
@@ -534,8 +534,8 @@ glabel DepthOfField__FPfiii
     /* 065404 00165304 00000000 */   nop
     /* 065408 00165308 C701023C */  lui        $2, %hi(TexManager)
     /* 06540C 0016530C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 065410 00165310 2A00023C */  lui        $2, %hi(LIT_766)
-    /* 065414 00165314 20A14524 */  addiu      $5, $2, %lo(LIT_766)
+    /* 065410 00165310 2A00023C */  lui        $2, %hi("@766")
+    /* 065414 00165314 20A14524 */  addiu      $5, $2, %lo("@766")
     /* 065418 00165318 FFFF0624 */  addiu      $6, $0, -0x1
     /* 06541C 0016531C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 065420 00165320 00000000 */   nop
@@ -581,8 +581,8 @@ glabel DepthOfField__FPfiii
     /* 0654C0 001653C0 9001A727 */  addiu      $7, $29, 0x190
     /* 0654C4 001653C4 0CBD040C */  jal        MGStretchMoveImage__FP9sceGsTex0RC8CRect_i_P9sceGsTex0RC8CRect_i_
     /* 0654C8 001653C8 00000000 */   nop
-    /* 0654CC 001653CC 2600023C */  lui        $2, %hi(LIT_667)
-    /* 0654D0 001653D0 30694524 */  addiu      $5, $2, %lo(LIT_667)
+    /* 0654CC 001653CC 2600023C */  lui        $2, %hi("@667")
+    /* 0654D0 001653D0 30694524 */  addiu      $5, $2, %lo("@667")
     /* 0654D4 001653D4 E000A427 */  addiu      $4, $29, 0xE0
     /* 0654D8 001653D8 04000324 */  addiu      $3, $0, 0x4
   .L001653DC:
@@ -1720,8 +1720,8 @@ glabel ObjAnimePlay__FP13OBJ_ANIME_SEQ
     /* 06651C 0016641C 0800A12C */  sltiu      $1, $5, 0x8
     /* 066520 00166420 F6002010 */  beqz       $1, .L001667FC
     /* 066524 00166424 00000000 */   nop
-    /* 066528 00166428 2A00033C */  lui        $3, %hi(LIT_538)
-    /* 06652C 0016642C 30A16424 */  addiu      $4, $3, %lo(LIT_538)
+    /* 066528 00166428 2A00033C */  lui        $3, %hi("@538")
+    /* 06652C 0016642C 30A16424 */  addiu      $4, $3, %lo("@538")
     /* 066530 00166430 80180500 */  sll        $3, $5, 2
     /* 066534 00166434 21186400 */  addu       $3, $3, $4
     /* 066538 00166438 0000638C */  lw         $3, 0x0($3)
@@ -2369,8 +2369,8 @@ glabel EditEffectStep__Fv
     /* 066E38 00166D38 00000000 */   nop
     /* 066E3C 00166D3C C701023C */  lui        $2, %hi(TexManager)
     /* 066E40 00166D40 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 066E44 00166D44 2A00023C */  lui        $2, %hi(LIT_606)
-    /* 066E48 00166D48 50A14524 */  addiu      $5, $2, %lo(LIT_606)
+    /* 066E44 00166D44 2A00023C */  lui        $2, %hi("@606")
+    /* 066E48 00166D48 50A14524 */  addiu      $5, $2, %lo("@606")
     /* 066E4C 00166D4C FFFF0624 */  addiu      $6, $0, -0x1
     /* 066E50 00166D50 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 066E54 00166D54 00000000 */   nop
@@ -2381,16 +2381,16 @@ glabel EditEffectStep__Fv
     /* 066E68 00166D68 00000000 */   nop
     /* 066E6C 00166D6C C701023C */  lui        $2, %hi(TexManager)
     /* 066E70 00166D70 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 066E74 00166D74 2A00023C */  lui        $2, %hi(LIT_607)
-    /* 066E78 00166D78 58A14524 */  addiu      $5, $2, %lo(LIT_607)
+    /* 066E74 00166D74 2A00023C */  lui        $2, %hi("@607")
+    /* 066E78 00166D78 58A14524 */  addiu      $5, $2, %lo("@607")
     /* 066E7C 00166D7C FFFF0624 */  addiu      $6, $0, -0x1
     /* 066E80 00166D80 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 066E84 00166D84 00000000 */   nop
     /* 066E88 00166D88 28864070 */  paddub     $16, $2, $0
     /* 066E8C 00166D8C C701023C */  lui        $2, %hi(TexManager)
     /* 066E90 00166D90 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 066E94 00166D94 2A00023C */  lui        $2, %hi(LIT_608)
-    /* 066E98 00166D98 68A14524 */  addiu      $5, $2, %lo(LIT_608)
+    /* 066E94 00166D94 2A00023C */  lui        $2, %hi("@608")
+    /* 066E98 00166D98 68A14524 */  addiu      $5, $2, %lo("@608")
     /* 066E9C 00166D9C FFFF0624 */  addiu      $6, $0, -0x1
     /* 066EA0 00166DA0 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 066EA4 00166DA4 00000000 */   nop
@@ -2586,25 +2586,25 @@ glabel DrawEditEffect__FP16EDIT_EFFECT_INFOP7CCameraP12CEffectGroup
 
 /* Generated by spimdisasm 1.42.4 */
 
-glabel LIT_621__2
+glabel "@621__2"
     /* 19A208 0029A108 736D6F6B */ .word 0x6B6F6D73
     /* 19A20C 0029A10C 65000000 */ .word 0x00000065
 
-glabel LIT_622
+glabel "@622"
     /* 19A210 0029A110 73686962 */ .word 0x62696873
     /* 19A214 0029A114 756B6900 */ .word 0x00696B75
 
-glabel LIT_623
+glabel "@623"
     /* 19A218 0029A118 68616D6F */ .word 0x6F6D6168
     /* 19A21C 0029A11C 6E000000 */ .word 0x0000006E
 
-glabel LIT_766
+glabel "@766"
     /* 19A220 0029A120 6672616D */ .word 0x6D617266
     /* 19A224 0029A124 655F696D */ .word 0x6D695F65
     /* 19A228 0029A128 61676500 */ .word 0x00656761
     /* 19A22C 0029A12C 00000000 */ .word 0x00000000
 
-glabel LIT_538
+glabel "@538"
     /* 19A230 0029A130 44641600 */ .word .L00166444
     /* 19A234 0029A134 60641600 */ .word .L00166460
     /* 19A238 0029A138 E8641600 */ .word .L001664E8
@@ -2614,45 +2614,45 @@ glabel LIT_538
     /* 19A248 0029A148 68661600 */ .word .L00166668
     /* 19A24C 0029A14C 70671600 */ .word .L00166770
 
-glabel LIT_606
+glabel "@606"
     /* 19A250 0029A150 726F7573 */ .word 0x73756F72
     /* 19A254 0029A154 6F6B7500 */ .word 0x00756B6F
 
-glabel LIT_607
+glabel "@607"
     /* 19A258 0029A158 6C696768 */ .word 0x6867696C
     /* 19A25C 0029A15C 746C696E */ .word 0x6E696C74
     /* 19A260 0029A160 67000000 */ .word 0x00000067
     /* 19A264 0029A164 00000000 */ .word 0x00000000
 
-glabel LIT_608
+glabel "@608"
     /* 19A268 0029A168 626C656E */ .word 0x6E656C62
     /* 19A26C 0029A16C 64657200 */ .word 0x00726564
 
-glabel LIT_447__2
+glabel "@447__2"
     /* 19A270 0029A170 5445585F */ .word 0x5F584554
     /* 19A274 0029A174 414E494D */ .word 0x4D494E41
     /* 19A278 0029A178 45000000 */ .word 0x00000045
     /* 19A27C 0029A17C 00000000 */ .word 0x00000000
 
-glabel LIT_448
+glabel "@448"
     /* 19A280 0029A180 5445585F */ .word 0x5F584554
     /* 19A284 0029A184 414E494D */ .word 0x4D494E41
     /* 19A288 0029A188 455F4441 */ .word 0x41445F45
     /* 19A28C 0029A18C 54410000 */ .word 0x00004154
 
-glabel LIT_449
+glabel "@449"
     /* 19A290 0029A190 5445585F */ .word 0x5F584554
     /* 19A294 0029A194 414E494D */ .word 0x4D494E41
     /* 19A298 0029A198 455F4441 */ .word 0x41445F45
     /* 19A29C 0029A19C 54413200 */ .word 0x00324154
 
-glabel LIT_450
+glabel "@450"
     /* 19A2A0 0029A1A0 5445585F */ .word 0x5F584554
     /* 19A2A4 0029A1A4 5343524F */ .word 0x4F524353
     /* 19A2A8 0029A1A8 4C4C5F44 */ .word 0x445F4C4C
     /* 19A2AC 0029A1AC 41544100 */ .word 0x00415441
 
-glabel LIT_451
+glabel "@451"
     /* 19A2B0 0029A1B0 5445585F */ .word 0x5F584554
     /* 19A2B4 0029A1B4 414E494D */ .word 0x4D494E41
     /* 19A2B8 0029A1B8 455F454E */ .word 0x4E455F45

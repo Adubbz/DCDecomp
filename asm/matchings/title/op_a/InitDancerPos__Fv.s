@@ -6,8 +6,8 @@
 glabel InitDancerPos__Fv
     /* 009BA0 01DB58A0 C0FDBD27 */  addiu      $29, $29, -0x240
     /* 009BA4 01DB58A4 0000BF7F */  sq         $31, 0x0($29)
-    /* 009BA8 01DB58A8 DD01023C */  lui        $2, %hi(LIT_349__4)
-    /* 009BAC 01DB58AC 10644524 */  addiu      $5, $2, %lo(LIT_349__4)
+    /* 009BA8 01DB58A8 DD01023C */  lui        $2, %hi("@349__4")
+    /* 009BAC 01DB58AC 10644524 */  addiu      $5, $2, %lo("@349__4")
     /* 009BB0 01DB58B0 1000A427 */  addiu      $4, $29, 0x10
     /* 009BB4 01DB58B4 23000324 */  addiu      $3, $0, 0x23
   .L01DB58B8:

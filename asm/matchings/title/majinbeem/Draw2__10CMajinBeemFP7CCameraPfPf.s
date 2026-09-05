@@ -196,8 +196,8 @@ glabel Draw2__10CMajinBeemFP7CCameraPfPf
     /* 002590 01DAE290 2C01A2AF */  sw         $2, 0x12C($29)
     /* 002594 01DAE294 C701023C */  lui        $2, %hi(TexManager)
     /* 002598 01DAE298 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 00259C 01DAE29C DE01023C */  lui        $2, %hi(LIT_435__3)
-    /* 0025A0 01DAE2A0 60BF4524 */  addiu      $5, $2, %lo(LIT_435__3)
+    /* 00259C 01DAE29C DE01023C */  lui        $2, %hi("@435__3")
+    /* 0025A0 01DAE2A0 60BF4524 */  addiu      $5, $2, %lo("@435__3")
     /* 0025A4 01DAE2A4 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0025A8 01DAE2A8 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0025AC 01DAE2AC 00000000 */   nop

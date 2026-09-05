@@ -15,8 +15,8 @@ glabel FaceChange__Fi
     /* 00CAF0 01DB87F0 3000B17F */  sq         $17, 0x30($29)
     /* 00CAF4 01DB87F4 2000B07F */  sq         $16, 0x20($29)
     /* 00CAF8 01DB87F8 28AE8070 */  paddub     $21, $4, $0
-    /* 00CAFC 01DB87FC DD01023C */  lui        $2, %hi(LIT_1092)
-    /* 00CB00 01DB8800 E0674224 */  addiu      $2, $2, %lo(LIT_1092)
+    /* 00CAFC 01DB87FC DD01023C */  lui        $2, %hi("@1092")
+    /* 00CB00 01DB8800 E0674224 */  addiu      $2, $2, %lo("@1092")
     /* 00CB04 01DB8804 B000A327 */  addiu      $3, $29, 0xB0
     /* 00CB08 01DB8808 00004278 */  lq         $2, 0x0($2)
     /* 00CB0C 01DB880C 0000627C */  sq         $2, 0x0($3)

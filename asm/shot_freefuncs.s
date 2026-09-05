@@ -527,8 +527,8 @@ glabel DrawWaterLing__Fv
     /* 0AFBF8 001AFAF8 0000B07F */  sq         $16, 0x0($29)
     /* 0AFBFC 001AFAFC C701023C */  lui        $2, %hi(TexManager)
     /* 0AFC00 001AFB00 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0AFC04 001AFB04 2A00023C */  lui        $2, %hi(LIT_703)
-    /* 0AFC08 001AFB08 38B54524 */  addiu      $5, $2, %lo(LIT_703)
+    /* 0AFC04 001AFB04 2A00023C */  lui        $2, %hi("@703")
+    /* 0AFC08 001AFB08 38B54524 */  addiu      $5, $2, %lo("@703")
     /* 0AFC0C 001AFB0C FFFF0624 */  addiu      $6, $0, -0x1
     /* 0AFC10 001AFB10 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0AFC14 001AFB14 00000000 */   nop
@@ -913,8 +913,8 @@ glabel ValuePrint__FiiiiUc
     /* 0B0198 001B0098 28960071 */  paddub     $18, $8, $0
     /* 0B019C 001B009C C701023C */  lui        $2, %hi(TexManager)
     /* 0B01A0 001B00A0 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0B01A4 001B00A4 2A00023C */  lui        $2, %hi(LIT_778)
-    /* 0B01A8 001B00A8 40B54524 */  addiu      $5, $2, %lo(LIT_778)
+    /* 0B01A4 001B00A4 2A00023C */  lui        $2, %hi("@778")
+    /* 0B01A8 001B00A8 40B54524 */  addiu      $5, $2, %lo("@778")
     /* 0B01AC 001B00AC FFFF0624 */  addiu      $6, $0, -0x1
     /* 0B01B0 001B00B0 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0B01B4 001B00B4 00000000 */   nop
@@ -1235,16 +1235,16 @@ glabel topStatusInfo__Fiii
     /* 0B0640 001B0540 21A8A202 */  addu       $21, $21, $2
     /* 0B0644 001B0544 C701023C */  lui        $2, %hi(TexManager)
     /* 0B0648 001B0548 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0B064C 001B054C 2A00023C */  lui        $2, %hi(LIT_1150)
-    /* 0B0650 001B0550 50B54524 */  addiu      $5, $2, %lo(LIT_1150)
+    /* 0B064C 001B054C 2A00023C */  lui        $2, %hi("@1150")
+    /* 0B0650 001B0550 50B54524 */  addiu      $5, $2, %lo("@1150")
     /* 0B0654 001B0554 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0B0658 001B0558 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0B065C 001B055C 00000000 */   nop
     /* 0B0660 001B0560 288E4070 */  paddub     $17, $2, $0
     /* 0B0664 001B0564 C701023C */  lui        $2, %hi(TexManager)
     /* 0B0668 001B0568 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0B066C 001B056C 2A00023C */  lui        $2, %hi(LIT_778)
-    /* 0B0670 001B0570 40B54524 */  addiu      $5, $2, %lo(LIT_778)
+    /* 0B066C 001B056C 2A00023C */  lui        $2, %hi("@778")
+    /* 0B0670 001B0570 40B54524 */  addiu      $5, $2, %lo("@778")
     /* 0B0674 001B0574 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0B0678 001B0578 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0B067C 001B057C 00000000 */   nop
@@ -2680,14 +2680,14 @@ glabel BtStatusErrStep__Fv
     /* 0B1BFC 001B1AFC 28262072 */  paddub     $4, $17, $0
     /* 0B1C00 001B1B00 C4F9060C */  jal        AddNowLife__11CUserStatusFisf
     /* 0B1C04 001B1B04 00000000 */   nop
-    /* 0B1C08 001B1B08 2700023C */  lui        $2, %hi(LIT_1188__2)
-    /* 0B1C0C 001B1B0C 60B04224 */  addiu      $2, $2, %lo(LIT_1188__2)
+    /* 0B1C08 001B1B08 2700023C */  lui        $2, %hi("@1188__2")
+    /* 0B1C0C 001B1B0C 60B04224 */  addiu      $2, $2, %lo("@1188__2")
     /* 0B1C10 001B1B10 4000A527 */  addiu      $5, $29, 0x40
     /* 0B1C14 001B1B14 00004278 */  lq         $2, 0x0($2)
     /* 0B1C18 001B1B18 0000A27C */  sq         $2, 0x0($5)
     /* 0B1C1C 001B1B1C 789C868F */  lw         $6, -0x6388($28)
-    /* 0B1C20 001B1B20 2700023C */  lui        $2, %hi(LIT_345__5)
-    /* 0B1C24 001B1B24 40B04224 */  addiu      $2, $2, %lo(LIT_345__5)
+    /* 0B1C20 001B1B20 2700023C */  lui        $2, %hi("@345__5")
+    /* 0B1C24 001B1B24 40B04224 */  addiu      $2, $2, %lo("@345__5")
     /* 0B1C28 001B1B28 5000A427 */  addiu      $4, $29, 0x50
     /* 0B1C2C 001B1B2C 00004378 */  lq         $3, 0x0($2)
     /* 0B1C30 001B1B30 100042DC */  ld         $2, 0x10($2)
@@ -2859,21 +2859,21 @@ glabel BtStatusErrDraw__Fi
     /* 0B1E98 001B1D98 289E8070 */  paddub     $19, $4, $0
     /* 0B1E9C 001B1D9C C701023C */  lui        $2, %hi(TexManager)
     /* 0B1EA0 001B1DA0 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0B1EA4 001B1DA4 2A00023C */  lui        $2, %hi(LIT_1150)
-    /* 0B1EA8 001B1DA8 50B54524 */  addiu      $5, $2, %lo(LIT_1150)
+    /* 0B1EA4 001B1DA4 2A00023C */  lui        $2, %hi("@1150")
+    /* 0B1EA8 001B1DA8 50B54524 */  addiu      $5, $2, %lo("@1150")
     /* 0B1EAC 001B1DAC FFFF0624 */  addiu      $6, $0, -0x1
     /* 0B1EB0 001B1DB0 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0B1EB4 001B1DB4 00000000 */   nop
     /* 0B1EB8 001B1DB8 28864070 */  paddub     $16, $2, $0
-    /* 0B1EBC 001B1DBC 2700033C */  lui        $3, %hi(LIT_1238)
-    /* 0B1EC0 001B1DC0 70B06324 */  addiu      $3, $3, %lo(LIT_1238)
+    /* 0B1EBC 001B1DBC 2700033C */  lui        $3, %hi("@1238")
+    /* 0B1EC0 001B1DC0 70B06324 */  addiu      $3, $3, %lo("@1238")
     /* 0B1EC4 001B1DC4 5000A527 */  addiu      $5, $29, 0x50
     /* 0B1EC8 001B1DC8 00006478 */  lq         $4, 0x0($3)
     /* 0B1ECC 001B1DCC 100063C4 */  lwc1       $f3, 0x10($3)
     /* 0B1ED0 001B1DD0 0000A47C */  sq         $4, 0x0($5)
     /* 0B1ED4 001B1DD4 1000A3E4 */  swc1       $f3, 0x10($5)
-    /* 0B1ED8 001B1DD8 2700033C */  lui        $3, %hi(LIT_1239)
-    /* 0B1EDC 001B1DDC 90B06624 */  addiu      $6, $3, %lo(LIT_1239)
+    /* 0B1ED8 001B1DD8 2700033C */  lui        $3, %hi("@1239")
+    /* 0B1EDC 001B1DDC 90B06624 */  addiu      $6, $3, %lo("@1239")
     /* 0B1EE0 001B1DE0 7000A527 */  addiu      $5, $29, 0x70
     /* 0B1EE4 001B1DE4 02000424 */  addiu      $4, $0, 0x2
   .L001B1DE8:
@@ -3126,8 +3126,8 @@ glabel BtMapJumpLoad__FPc
     /* 0B228C 001B218C 00000000 */   nop
     /* 0B2290 001B2190 FBFF0626 */  addiu      $6, $16, -0x5
     /* 0B2294 001B2194 D000A427 */  addiu      $4, $29, 0xD0
-    /* 0B2298 001B2198 2A00023C */  lui        $2, %hi(LIT_1353__2)
-    /* 0B229C 001B219C 60B54524 */  addiu      $5, $2, %lo(LIT_1353__2)
+    /* 0B2298 001B2198 2A00023C */  lui        $2, %hi("@1353__2")
+    /* 0B229C 001B219C 60B54524 */  addiu      $5, $2, %lo("@1353__2")
     /* 0B22A0 001B21A0 9886878F */  lw         $7, -0x7968($28)
     /* 0B22A4 001B21A4 1614040C */  jal        sprintf
     /* 0B22A8 001B21A8 00000000 */   nop
@@ -3136,8 +3136,8 @@ glabel BtMapJumpLoad__FPc
   .L001B21B4:
     /* 0B22B4 001B21B4 01000626 */  addiu      $6, $16, 0x1
     /* 0B22B8 001B21B8 D000A427 */  addiu      $4, $29, 0xD0
-    /* 0B22BC 001B21BC 2A00023C */  lui        $2, %hi(LIT_1354)
-    /* 0B22C0 001B21C0 90B54524 */  addiu      $5, $2, %lo(LIT_1354)
+    /* 0B22BC 001B21BC 2A00023C */  lui        $2, %hi("@1354")
+    /* 0B22C0 001B21C0 90B54524 */  addiu      $5, $2, %lo("@1354")
     /* 0B22C4 001B21C4 9886878F */  lw         $7, -0x7968($28)
     /* 0B22C8 001B21C8 1614040C */  jal        sprintf
     /* 0B22CC 001B21CC 00000000 */   nop
@@ -3286,8 +3286,8 @@ glabel BtMapJumpLoad__FPc
     /* 0B24E4 001B23E4 F3FF4014 */  bnez       $2, .L001B23B4
     /* 0B24E8 001B23E8 00000000 */   nop
     /* 0B24EC 001B23EC 5000A427 */  addiu      $4, $29, 0x50
-    /* 0B24F0 001B23F0 2A00023C */  lui        $2, %hi(LIT_1355)
-    /* 0B24F4 001B23F4 B8B54524 */  addiu      $5, $2, %lo(LIT_1355)
+    /* 0B24F0 001B23F0 2A00023C */  lui        $2, %hi("@1355")
+    /* 0B24F4 001B23F4 B8B54524 */  addiu      $5, $2, %lo("@1355")
     /* 0B24F8 001B23F8 5A15040C */  jal        strcpy
     /* 0B24FC 001B23FC 00000000 */   nop
     /* 0B2500 001B2400 5000A427 */  addiu      $4, $29, 0x50
@@ -3295,13 +3295,13 @@ glabel BtMapJumpLoad__FPc
     /* 0B2508 001B2408 BC14040C */  jal        strcat
     /* 0B250C 001B240C 00000000 */   nop
     /* 0B2510 001B2410 5000A427 */  addiu      $4, $29, 0x50
-    /* 0B2514 001B2414 2A00023C */  lui        $2, %hi(LIT_1356)
-    /* 0B2518 001B2418 C8B54524 */  addiu      $5, $2, %lo(LIT_1356)
+    /* 0B2514 001B2414 2A00023C */  lui        $2, %hi("@1356")
+    /* 0B2518 001B2418 C8B54524 */  addiu      $5, $2, %lo("@1356")
     /* 0B251C 001B241C BC14040C */  jal        strcat
     /* 0B2520 001B2420 00000000 */   nop
     /* 0B2524 001B2424 9000A427 */  addiu      $4, $29, 0x90
-    /* 0B2528 001B2428 2A00023C */  lui        $2, %hi(LIT_1357)
-    /* 0B252C 001B242C D0B54524 */  addiu      $5, $2, %lo(LIT_1357)
+    /* 0B2528 001B2428 2A00023C */  lui        $2, %hi("@1357")
+    /* 0B252C 001B242C D0B54524 */  addiu      $5, $2, %lo("@1357")
     /* 0B2530 001B2430 5A15040C */  jal        strcpy
     /* 0B2534 001B2434 00000000 */   nop
     /* 0B2538 001B2438 9000A427 */  addiu      $4, $29, 0x90
@@ -3309,8 +3309,8 @@ glabel BtMapJumpLoad__FPc
     /* 0B2540 001B2440 BC14040C */  jal        strcat
     /* 0B2544 001B2444 00000000 */   nop
     /* 0B2548 001B2448 9000A427 */  addiu      $4, $29, 0x90
-    /* 0B254C 001B244C 2A00023C */  lui        $2, %hi(LIT_1358)
-    /* 0B2550 001B2450 D8B54524 */  addiu      $5, $2, %lo(LIT_1358)
+    /* 0B254C 001B244C 2A00023C */  lui        $2, %hi("@1358")
+    /* 0B2550 001B2450 D8B54524 */  addiu      $5, $2, %lo("@1358")
     /* 0B2554 001B2454 BC14040C */  jal        strcat
     /* 0B2558 001B2458 00000000 */   nop
     /* 0B255C 001B245C 9000A427 */  addiu      $4, $29, 0x90
@@ -3330,8 +3330,8 @@ glabel BtMapJumpLoad__FPc
     /* 0B2594 001B2494 2A10A200 */  slt        $2, $5, $2
     /* 0B2598 001B2498 08004014 */  bnez       $2, .L001B24BC
     /* 0B259C 001B249C 00000000 */   nop
-    /* 0B25A0 001B24A0 2A00023C */  lui        $2, %hi(LIT_1359)
-    /* 0B25A4 001B24A4 E0B54424 */  addiu      $4, $2, %lo(LIT_1359)
+    /* 0B25A0 001B24A0 2A00023C */  lui        $2, %hi("@1359")
+    /* 0B25A4 001B24A4 E0B54424 */  addiu      $4, $2, %lo("@1359")
     /* 0B25A8 001B24A8 A611040C */  jal        printf
     /* 0B25AC 001B24AC 00000000 */   nop
     /* 0B25B0 001B24B0 01000424 */  addiu      $4, $0, 0x1
@@ -3357,8 +3357,8 @@ glabel BtMapJumpLoad__FPc
     /* 0B25FC 001B24FC 1801A0A3 */  sb         $0, 0x118($29)
     /* 0B2600 001B2500 1B01A0A3 */  sb         $0, 0x11B($29)
     /* 0B2604 001B2504 948B848F */  lw         $4, -0x746C($28)
-    /* 0B2608 001B2508 2A00023C */  lui        $2, %hi(LIT_1360)
-    /* 0B260C 001B250C 00B64524 */  addiu      $5, $2, %lo(LIT_1360)
+    /* 0B2608 001B2508 2A00023C */  lui        $2, %hi("@1360")
+    /* 0B260C 001B250C 00B64524 */  addiu      $5, $2, %lo("@1360")
     /* 0B2610 001B2510 F001023C */  lui        $2, %hi(MapModelBuffer)
     /* 0B2614 001B2514 50664624 */  addiu      $6, $2, %lo(MapModelBuffer)
     /* 0B2618 001B2518 5CDB060C */  jal        LoadMDSFilePack__FPUiPcP14CDataAlloc2_1_
@@ -3368,8 +3368,8 @@ glabel BtMapJumpLoad__FPc
     /* 0B2628 001B2528 21086100 */  addu       $1, $3, $1
     /* 0B262C 001B252C 68BC22AC */  sw         $2, -0x4398($1)
     /* 0B2630 001B2530 948B848F */  lw         $4, -0x746C($28)
-    /* 0B2634 001B2534 2A00023C */  lui        $2, %hi(LIT_1361)
-    /* 0B2638 001B2538 10B64524 */  addiu      $5, $2, %lo(LIT_1361)
+    /* 0B2634 001B2534 2A00023C */  lui        $2, %hi("@1361")
+    /* 0B2638 001B2538 10B64524 */  addiu      $5, $2, %lo("@1361")
     /* 0B263C 001B253C F001023C */  lui        $2, %hi(MapModelBuffer)
     /* 0B2640 001B2540 50664624 */  addiu      $6, $2, %lo(MapModelBuffer)
     /* 0B2644 001B2544 5CDB060C */  jal        LoadMDSFilePack__FPUiPcP14CDataAlloc2_1_
@@ -3379,8 +3379,8 @@ glabel BtMapJumpLoad__FPc
     /* 0B2654 001B2554 21086100 */  addu       $1, $3, $1
     /* 0B2658 001B2558 64BC22AC */  sw         $2, -0x439C($1)
     /* 0B265C 001B255C 948B848F */  lw         $4, -0x746C($28)
-    /* 0B2660 001B2560 2A00023C */  lui        $2, %hi(LIT_1362)
-    /* 0B2664 001B2564 20B64524 */  addiu      $5, $2, %lo(LIT_1362)
+    /* 0B2660 001B2560 2A00023C */  lui        $2, %hi("@1362")
+    /* 0B2664 001B2564 20B64524 */  addiu      $5, $2, %lo("@1362")
     /* 0B2668 001B2568 F001023C */  lui        $2, %hi(MapModelBuffer)
     /* 0B266C 001B256C 50664624 */  addiu      $6, $2, %lo(MapModelBuffer)
     /* 0B2670 001B2570 80DB060C */  jal        LoadCollisionFilePack__FPUiPcP14CDataAlloc2_1_
@@ -3408,8 +3408,8 @@ glabel BtMapJumpLoad__FPc
     /* 0B26C8 001B25C8 D4A2040C */  jal        SetAttr__6CFrameFR10CFrameAttrii
     /* 0B26CC 001B25CC 00000000 */   nop
     /* 0B26D0 001B25D0 948B848F */  lw         $4, -0x746C($28)
-    /* 0B26D4 001B25D4 2A00023C */  lui        $2, %hi(LIT_1363)
-    /* 0B26D8 001B25D8 30B64524 */  addiu      $5, $2, %lo(LIT_1363)
+    /* 0B26D4 001B25D4 2A00023C */  lui        $2, %hi("@1363")
+    /* 0B26D8 001B25D8 30B64524 */  addiu      $5, $2, %lo("@1363")
     /* 0B26DC 001B25DC F001023C */  lui        $2, %hi(MapModelBuffer)
     /* 0B26E0 001B25E0 50664624 */  addiu      $6, $2, %lo(MapModelBuffer)
     /* 0B26E4 001B25E4 5CDB060C */  jal        LoadMDSFilePack__FPUiPcP14CDataAlloc2_1_
@@ -3419,8 +3419,8 @@ glabel BtMapJumpLoad__FPc
     /* 0B26F4 001B25F4 21086100 */  addu       $1, $3, $1
     /* 0B26F8 001B25F8 74BC22AC */  sw         $2, -0x438C($1)
     /* 0B26FC 001B25FC 948B848F */  lw         $4, -0x746C($28)
-    /* 0B2700 001B2600 2A00023C */  lui        $2, %hi(LIT_1364)
-    /* 0B2704 001B2604 40B64524 */  addiu      $5, $2, %lo(LIT_1364)
+    /* 0B2700 001B2600 2A00023C */  lui        $2, %hi("@1364")
+    /* 0B2704 001B2604 40B64524 */  addiu      $5, $2, %lo("@1364")
     /* 0B2708 001B2608 F001023C */  lui        $2, %hi(MapModelBuffer)
     /* 0B270C 001B260C 50664624 */  addiu      $6, $2, %lo(MapModelBuffer)
     /* 0B2710 001B2610 5CDB060C */  jal        LoadMDSFilePack__FPUiPcP14CDataAlloc2_1_
@@ -3430,8 +3430,8 @@ glabel BtMapJumpLoad__FPc
     /* 0B2720 001B2620 21086100 */  addu       $1, $3, $1
     /* 0B2724 001B2624 70BC22AC */  sw         $2, -0x4390($1)
     /* 0B2728 001B2628 948B848F */  lw         $4, -0x746C($28)
-    /* 0B272C 001B262C 2A00023C */  lui        $2, %hi(LIT_1365)
-    /* 0B2730 001B2630 50B64524 */  addiu      $5, $2, %lo(LIT_1365)
+    /* 0B272C 001B262C 2A00023C */  lui        $2, %hi("@1365")
+    /* 0B2730 001B2630 50B64524 */  addiu      $5, $2, %lo("@1365")
     /* 0B2734 001B2634 F001023C */  lui        $2, %hi(MapModelBuffer)
     /* 0B2738 001B2638 50664624 */  addiu      $6, $2, %lo(MapModelBuffer)
     /* 0B273C 001B263C 80DB060C */  jal        LoadCollisionFilePack__FPUiPcP14CDataAlloc2_1_
@@ -3461,8 +3461,8 @@ glabel BtMapJumpLoad__FPc
     /* 0B279C 001B269C EB01023C */  lui        $2, %hi(itemOpenSmall)
     /* 0B27A0 001B26A0 505E4424 */  addiu      $4, $2, %lo(itemOpenSmall)
     /* 0B27A4 001B26A4 948B858F */  lw         $5, -0x746C($28)
-    /* 0B27A8 001B26A8 2A00023C */  lui        $2, %hi(LIT_1366)
-    /* 0B27AC 001B26AC 60B64624 */  addiu      $6, $2, %lo(LIT_1366)
+    /* 0B27A8 001B26A8 2A00023C */  lui        $2, %hi("@1366")
+    /* 0B27AC 001B26AC 60B64624 */  addiu      $6, $2, %lo("@1366")
     /* 0B27B0 001B26B0 F001023C */  lui        $2, %hi(MapModelBuffer)
     /* 0B27B4 001B26B4 50664724 */  addiu      $7, $2, %lo(MapModelBuffer)
     /* 0B27B8 001B26B8 F001023C */  lui        $2, %hi(MapModelBuffer)
@@ -3475,8 +3475,8 @@ glabel BtMapJumpLoad__FPc
     /* 0B27D4 001B26D4 EB01023C */  lui        $2, %hi(itemOpenBig)
     /* 0B27D8 001B26D8 905F4424 */  addiu      $4, $2, %lo(itemOpenBig)
     /* 0B27DC 001B26DC 948B858F */  lw         $5, -0x746C($28)
-    /* 0B27E0 001B26E0 2A00023C */  lui        $2, %hi(LIT_1367)
-    /* 0B27E4 001B26E4 80B64624 */  addiu      $6, $2, %lo(LIT_1367)
+    /* 0B27E0 001B26E0 2A00023C */  lui        $2, %hi("@1367")
+    /* 0B27E4 001B26E4 80B64624 */  addiu      $6, $2, %lo("@1367")
     /* 0B27E8 001B26E8 F001023C */  lui        $2, %hi(MapModelBuffer)
     /* 0B27EC 001B26EC 50664724 */  addiu      $7, $2, %lo(MapModelBuffer)
     /* 0B27F0 001B26F0 F001023C */  lui        $2, %hi(MapModelBuffer)
@@ -3504,8 +3504,8 @@ glabel BtMapJumpLoad__FPc
     /* 0B2848 001B2748 F001013C */  lui        $1, (0x1F066D8 >> 16)
     /* 0B284C 001B274C D86620AC */  sw         $0, (0x1F066D8 & 0xFFFF)($1)
     /* 0B2850 001B2750 948B90AF */  sw         $16, -0x746C($28)
-    /* 0B2854 001B2754 2A00023C */  lui        $2, %hi(LIT_1368)
-    /* 0B2858 001B2758 A0B64424 */  addiu      $4, $2, %lo(LIT_1368)
+    /* 0B2854 001B2754 2A00023C */  lui        $2, %hi("@1368")
+    /* 0B2858 001B2758 A0B64424 */  addiu      $4, $2, %lo("@1368")
     /* 0B285C 001B275C A611040C */  jal        printf
     /* 0B2860 001B2760 00000000 */   nop
     /* 0B2864 001B2764 F001013C */  lui        $1, (0x1F0665C >> 16)
@@ -3516,8 +3516,8 @@ glabel BtMapJumpLoad__FPc
     /* 0B2878 001B2778 F001013C */  lui        $1, (0x1F06650 >> 16)
     /* 0B287C 001B277C 5066228C */  lw         $2, (0x1F06650 & 0xFFFF)($1)
     /* 0B2880 001B2780 21284300 */  addu       $5, $2, $3
-    /* 0B2884 001B2784 2A00023C */  lui        $2, %hi(LIT_1369__2)
-    /* 0B2888 001B2788 B0B64424 */  addiu      $4, $2, %lo(LIT_1369__2)
+    /* 0B2884 001B2784 2A00023C */  lui        $2, %hi("@1369__2")
+    /* 0B2888 001B2788 B0B64424 */  addiu      $4, $2, %lo("@1369__2")
     /* 0B288C 001B278C A611040C */  jal        printf
     /* 0B2890 001B2790 00000000 */   nop
     /* 0B2894 001B2794 F001013C */  lui        $1, (0x1F066DC >> 16)
@@ -3528,8 +3528,8 @@ glabel BtMapJumpLoad__FPc
     /* 0B28A8 001B27A8 F001013C */  lui        $1, (0x1F066D0 >> 16)
     /* 0B28AC 001B27AC D066228C */  lw         $2, (0x1F066D0 & 0xFFFF)($1)
     /* 0B28B0 001B27B0 21284300 */  addu       $5, $2, $3
-    /* 0B28B4 001B27B4 2A00023C */  lui        $2, %hi(LIT_1370)
-    /* 0B28B8 001B27B8 D0B64424 */  addiu      $4, $2, %lo(LIT_1370)
+    /* 0B28B4 001B27B4 2A00023C */  lui        $2, %hi("@1370")
+    /* 0B28B8 001B27B8 D0B64424 */  addiu      $4, $2, %lo("@1370")
     /* 0B28BC 001B27BC A611040C */  jal        printf
     /* 0B28C0 001B27C0 00000000 */   nop
     /* 0B28C4 001B27C4 01000224 */  addiu      $2, $0, 0x1
@@ -3621,23 +3621,23 @@ glabel BtSet3DCellModel__FPfP8CTexturefiiiii
 
 /* Generated by spimdisasm 1.42.4 */
 
-glabel LIT_703
+glabel "@703"
     /* 19B638 0029B538 64303065 */ .word 0x65303064
     /* 19B63C 0029B53C 30310000 */ .word 0x00003130
 
-glabel LIT_778
+glabel "@778"
     /* 19B640 0029B540 73746179 */ .word 0x79617473
     /* 19B644 0029B544 6672616D */ .word 0x6D617266
     /* 19B648 0029B548 65000000 */ .word 0x00000065
     /* 19B64C 0029B54C 00000000 */ .word 0x00000000
 
-glabel LIT_1150
+glabel "@1150"
     /* 19B650 0029B550 6974656D */ .word 0x6D657469
     /* 19B654 0029B554 7061636B */ .word 0x6B636170
     /* 19B658 0029B558 00000000 */ .word 0x00000000
     /* 19B65C 0029B55C 00000000 */ .word 0x00000000
 
-glabel LIT_1353__2
+glabel "@1353__2"
     /* 19B660 0029B560 64756E2F */ .word 0x2F6E7564
     /* 19B664 0029B564 6D657373 */ .word 0x7373656D
     /* 19B668 0029B568 6167652F */ .word 0x2F656761
@@ -3651,7 +3651,7 @@ glabel LIT_1353__2
     /* 19B688 0029B588 00000000 */ .word 0x00000000
     /* 19B68C 0029B58C 00000000 */ .word 0x00000000
 
-glabel LIT_1354
+glabel "@1354"
     /* 19B690 0029B590 64756E2F */ .word 0x2F6E7564
     /* 19B694 0029B594 6D657373 */ .word 0x7373656D
     /* 19B698 0029B598 6167652F */ .word 0x2F656761
@@ -3663,25 +3663,25 @@ glabel LIT_1354
     /* 19B6B0 0029B5B0 65730000 */ .word 0x00007365
     /* 19B6B4 0029B5B4 00000000 */ .word 0x00000000
 
-glabel LIT_1355
+glabel "@1355"
     /* 19B6B8 0029B5B8 64756E2F */ .word 0x2F6E7564
     /* 19B6BC 0029B5BC 6D70645F */ .word 0x5F64706D
     /* 19B6C0 0029B5C0 7061636B */ .word 0x6B636170
     /* 19B6C4 0029B5C4 2F000000 */ .word 0x0000002F
 
-glabel LIT_1356
+glabel "@1356"
     /* 19B6C8 0029B5C8 2E6D7064 */ .word 0x64706D2E
     /* 19B6CC 0029B5CC 00000000 */ .word 0x00000000
 
-glabel LIT_1357
+glabel "@1357"
     /* 19B6D0 0029B5D0 64756E2F */ .word 0x2F6E7564
     /* 19B6D4 0029B5D4 00000000 */ .word 0x00000000
 
-glabel LIT_1358
+glabel "@1358"
     /* 19B6D8 0029B5D8 2E636667 */ .word 0x6766632E
     /* 19B6DC 0029B5DC 00000000 */ .word 0x00000000
 
-glabel LIT_1359
+glabel "@1359"
     /* 19B6E0 0029B5E0 4D415044 */ .word 0x4450414D
     /* 19B6E4 0029B5E4 41544120 */ .word 0x20415441
     /* 19B6E8 0029B5E8 42554646 */ .word 0x46465542
@@ -3691,43 +3691,43 @@ glabel LIT_1359
     /* 19B6F8 0029B5F8 0A000000 */ .word 0x0000000A
     /* 19B6FC 0029B5FC 00000000 */ .word 0x00000000
 
-glabel LIT_1360
+glabel "@1360"
     /* 19B700 0029B600 69626F78 */ .word 0x786F6269
     /* 19B704 0029B604 5F302E6D */ .word 0x6D2E305F
     /* 19B708 0029B608 64730000 */ .word 0x00007364
     /* 19B70C 0029B60C 00000000 */ .word 0x00000000
 
-glabel LIT_1361
+glabel "@1361"
     /* 19B710 0029B610 69626F78 */ .word 0x786F6269
     /* 19B714 0029B614 5F742E6D */ .word 0x6D2E745F
     /* 19B718 0029B618 64730000 */ .word 0x00007364
     /* 19B71C 0029B61C 00000000 */ .word 0x00000000
 
-glabel LIT_1362
+glabel "@1362"
     /* 19B720 0029B620 69626F78 */ .word 0x786F6269
     /* 19B724 0029B624 5F612E6D */ .word 0x6D2E615F
     /* 19B728 0029B628 64730000 */ .word 0x00007364
     /* 19B72C 0029B62C 00000000 */ .word 0x00000000
 
-glabel LIT_1363
+glabel "@1363"
     /* 19B730 0029B630 69626F78 */ .word 0x786F6269
     /* 19B734 0029B634 735F302E */ .word 0x2E305F73
     /* 19B738 0029B638 6D647300 */ .word 0x0073646D
     /* 19B73C 0029B63C 00000000 */ .word 0x00000000
 
-glabel LIT_1364
+glabel "@1364"
     /* 19B740 0029B640 69626F78 */ .word 0x786F6269
     /* 19B744 0029B644 735F742E */ .word 0x2E745F73
     /* 19B748 0029B648 6D647300 */ .word 0x0073646D
     /* 19B74C 0029B64C 00000000 */ .word 0x00000000
 
-glabel LIT_1365
+glabel "@1365"
     /* 19B750 0029B650 69626F78 */ .word 0x786F6269
     /* 19B754 0029B654 735F612E */ .word 0x2E615F73
     /* 19B758 0029B658 6D647300 */ .word 0x0073646D
     /* 19B75C 0029B65C 00000000 */ .word 0x00000000
 
-glabel LIT_1366
+glabel "@1366"
     /* 19B760 0029B660 64756E2F */ .word 0x2F6E7564
     /* 19B764 0029B664 6574632F */ .word 0x2F637465
     /* 19B768 0029B668 6974656D */ .word 0x6D657469
@@ -3737,7 +3737,7 @@ glabel LIT_1366
     /* 19B778 0029B678 6D000000 */ .word 0x0000006D
     /* 19B77C 0029B67C 00000000 */ .word 0x00000000
 
-glabel LIT_1367
+glabel "@1367"
     /* 19B780 0029B680 64756E2F */ .word 0x2F6E7564
     /* 19B784 0029B684 6574632F */ .word 0x2F637465
     /* 19B788 0029B688 6974656D */ .word 0x6D657469
@@ -3747,13 +3747,13 @@ glabel LIT_1367
     /* 19B798 0029B698 6D000000 */ .word 0x0000006D
     /* 19B79C 0029B69C 00000000 */ .word 0x00000000
 
-glabel LIT_1368
+glabel "@1368"
     /* 19B7A0 0029B6A0 546F7461 */ .word 0x61746F54
     /* 19B7A4 0029B6A4 6C4D656D */ .word 0x6D654D6C
     /* 19B7A8 0029B6A8 203D2025 */ .word 0x25203D20
     /* 19B7AC 0029B6AC 640A0000 */ .word 0x00000A64
 
-glabel LIT_1369__2
+glabel "@1369__2"
     /* 19B7B0 0029B6B0 4D617056 */ .word 0x5670614D
     /* 19B7B4 0029B6B4 69737561 */ .word 0x61757369
     /* 19B7B8 0029B6B8 6C446174 */ .word 0x7461446C
@@ -3763,7 +3763,7 @@ glabel LIT_1369__2
     /* 19B7C8 0029B6C8 2F25640A */ .word 0x0A64252F
     /* 19B7CC 0029B6CC 00000000 */ .word 0x00000000
 
-glabel LIT_1370
+glabel "@1370"
     /* 19B7D0 0029B6D0 4D6F6E73 */ .word 0x736E6F4D
     /* 19B7D4 0029B6D4 746F7244 */ .word 0x44726F74
     /* 19B7D8 0029B6D8 61746120 */ .word 0x20617461

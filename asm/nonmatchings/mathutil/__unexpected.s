@@ -75,8 +75,8 @@ glabel __unexpected
     /* 022D38 00122C38 01002792 */  lbu        $7, 0x1($17)
     /* 022D3C 00122C3C 00002692 */  lbu        $6, 0x0($17)
     /* 022D40 00122C40 02002592 */  lbu        $5, 0x2($17)
-    /* 022D44 00122C44 2A00023C */  lui        $2, %hi(LIT_424)
-    /* 022D48 00122C48 E08C4424 */  addiu      $4, $2, %lo(LIT_424)
+    /* 022D44 00122C44 2A00023C */  lui        $2, %hi("@424")
+    /* 022D48 00122C48 E08C4424 */  addiu      $4, $2, %lo("@424")
     /* 022D4C 00122C4C 03002392 */  lbu        $3, 0x3($17)
     /* 022D50 00122C50 00120700 */  sll        $2, $7, 8
     /* 022D54 00122C54 2530C200 */  or         $6, $6, $2
@@ -105,8 +105,8 @@ glabel __unexpected
     /* 022DA4 00122CA4 2A00023C */  lui        $2, %hi(__vt__Q23std13bad_exception)
     /* 022DA8 00122CA8 80104224 */  addiu      $2, $2, %lo(__vt__Q23std13bad_exception)
     /* 022DAC 00122CAC 9C00C2AF */  sw         $2, 0x9C($30)
-    /* 022DB0 00122CB0 2A00023C */  lui        $2, %hi(LIT_425)
-    /* 022DB4 00122CB4 008D4424 */  addiu      $4, $2, %lo(LIT_425)
+    /* 022DB0 00122CB0 2A00023C */  lui        $2, %hi("@425")
+    /* 022DB4 00122CB4 008D4424 */  addiu      $4, $2, %lo("@425")
     /* 022DB8 00122CB8 1200023C */  lui        $2, %hi(__dt__Q23std13bad_exceptionFv)
     /* 022DBC 00122CBC 9C00C527 */  addiu      $5, $30, 0x9C
     /* 022DC0 00122CC0 4A38040C */  jal        __throw

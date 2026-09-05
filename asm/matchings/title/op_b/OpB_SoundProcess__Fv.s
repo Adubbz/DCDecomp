@@ -130,8 +130,8 @@ glabel OpB_SoundProcess__Fv
     /* 00F1F0 01DBAEF0 FFFF6224 */  addiu      $2, $3, -0x1
     /* 00F1F4 01DBAEF4 BC9982AF */  sw         $2, %gp_rel(wait$644)($28)
   .L01DBAEF8:
-    /* 00F1F8 01DBAEF8 DD01023C */  lui        $2, %hi(LIT_663__3)
-    /* 00F1FC 01DBAEFC A0774224 */  addiu      $2, $2, %lo(LIT_663__3)
+    /* 00F1F8 01DBAEF8 DD01023C */  lui        $2, %hi("@663__3")
+    /* 00F1FC 01DBAEFC A0774224 */  addiu      $2, $2, %lo("@663__3")
     /* 00F200 01DBAF00 3000A427 */  addiu      $4, $29, 0x30
     /* 00F204 01DBAF04 00004278 */  lq         $2, 0x0($2)
     /* 00F208 01DBAF08 0000827C */  sq         $2, 0x0($4)

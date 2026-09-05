@@ -23,8 +23,8 @@ glabel _SET_NPC_AMBIENT__FP12RS_STACKDATAi
     /* 08F5C0 0018F4C0 43000010 */  b          .L0018F5D0
     /* 08F5C4 0018F4C4 00000000 */   nop
   .L0018F4C8:
-    /* 08F5C8 0018F4C8 2700023C */  lui        $2, %hi(LIT_1347)
-    /* 08F5CC 0018F4CC B09B4224 */  addiu      $2, $2, %lo(LIT_1347)
+    /* 08F5C8 0018F4C8 2700023C */  lui        $2, %hi("@1347")
+    /* 08F5CC 0018F4CC B09B4224 */  addiu      $2, $2, %lo("@1347")
     /* 08F5D0 0018F4D0 4000A527 */  addiu      $5, $29, 0x40
     /* 08F5D4 0018F4D4 00004278 */  lq         $2, 0x0($2)
     /* 08F5D8 0018F4D8 0000A27C */  sq         $2, 0x0($5)

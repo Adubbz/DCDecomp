@@ -652,8 +652,8 @@ glabel Step__12CMonstorUnitFi
     /* 0DDFE0 001DDEE0 9001A228 */  slti       $2, $5, 0x190
     /* 0DDFE4 001DDEE4 05004014 */  bnez       $2, .L001DDEFC
     /* 0DDFE8 001DDEE8 00000000 */   nop
-    /* 0DDFEC 001DDEEC 2A00023C */  lui        $2, %hi(LIT_2233__2)
-    /* 0DDFF0 001DDEF0 88CF4424 */  addiu      $4, $2, %lo(LIT_2233__2)
+    /* 0DDFEC 001DDEEC 2A00023C */  lui        $2, %hi("@2233__2")
+    /* 0DDFF0 001DDEF0 88CF4424 */  addiu      $4, $2, %lo("@2233__2")
     /* 0DDFF4 001DDEF4 A611040C */  jal        printf
     /* 0DDFF8 001DDEF8 00000000 */   nop
   .L001DDEFC:
@@ -2090,8 +2090,8 @@ glabel Step__12CMonstorUnitFi
     /* 0DF5C8 001DF4C8 0200013C */  lui        $1, (0x20000 >> 16)
     /* 0DF5CC 001DF4CC 2108A100 */  addu       $1, $5, $1
     /* 0DF5D0 001DF4D0 70E42584 */  lh         $5, -0x1B90($1)
-    /* 0DF5D4 001DF4D4 2A00023C */  lui        $2, %hi(LIT_2237__2)
-    /* 0DF5D8 001DF4D8 90CF4424 */  addiu      $4, $2, %lo(LIT_2237__2)
+    /* 0DF5D4 001DF4D4 2A00023C */  lui        $2, %hi("@2237__2")
+    /* 0DF5D8 001DF4D8 90CF4424 */  addiu      $4, $2, %lo("@2237__2")
     /* 0DF5DC 001DF4DC A611040C */  jal        printf
     /* 0DF5E0 001DF4E0 00000000 */   nop
     /* 0DF5E4 001DF4E4 9000A38E */  lw         $3, 0x90($21)

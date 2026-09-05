@@ -14,8 +14,8 @@ glabel LoadCharaData__Fii
     /* 00D21C 01DB8F1C 0000B07F */  sq         $16, 0x0($29)
     /* 00D220 01DB8F20 28AE8070 */  paddub     $21, $4, $0
     /* 00D224 01DB8F24 28A6A070 */  paddub     $20, $5, $0
-    /* 00D228 01DB8F28 DD01033C */  lui        $3, %hi(LIT_1206__2)
-    /* 00D22C 01DB8F2C 50696624 */  addiu      $6, $3, %lo(LIT_1206__2)
+    /* 00D228 01DB8F28 DD01033C */  lui        $3, %hi("@1206__2")
+    /* 00D22C 01DB8F2C 50696624 */  addiu      $6, $3, %lo("@1206__2")
     /* 00D230 01DB8F30 7000A527 */  addiu      $5, $29, 0x70
     /* 00D234 01DB8F34 03000424 */  addiu      $4, $0, 0x3
   .L01DB8F38:

@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_994__3
+glabel "@994__3"
     /* 017170 01DC2E70 ECDADA01 */ .word .L01DADAEC
     /* 017174 01DC2E74 00DADA01 */ .word .L01DADA00
     /* 017178 01DC2E78 10DADA01 */ .word .L01DADA10
@@ -48,8 +48,8 @@ glabel GameLoop__Fv
     /* 001CD8 01DAD9D8 0800812C */  sltiu      $1, $4, 0x8
     /* 001CDC 01DAD9DC 43002010 */  beqz       $1, .L01DADAEC
     /* 001CE0 01DAD9E0 00000000 */   nop
-    /* 001CE4 01DAD9E4 DC01023C */  lui        $2, %hi(LIT_994__3)
-    /* 001CE8 01DAD9E8 702E4324 */  addiu      $3, $2, %lo(LIT_994__3)
+    /* 001CE4 01DAD9E4 DC01023C */  lui        $2, %hi("@994__3")
+    /* 001CE8 01DAD9E8 702E4324 */  addiu      $3, $2, %lo("@994__3")
     /* 001CEC 01DAD9EC 80100400 */  sll        $2, $4, 2
     /* 001CF0 01DAD9F0 21104300 */  addu       $2, $2, $3
     /* 001CF4 01DAD9F4 0000428C */  lw         $2, 0x0($2)

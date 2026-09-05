@@ -171,7 +171,7 @@ glabel mcdmybuf
 glabel sys_config
     /* 01DA0880 */ .space 0x40
 
-glabel LIT_567__2
+glabel "@567__2"
     /* 01DA08C0 */ .space 0x0C
 
 /* Automatically generated and unreferenced pad */

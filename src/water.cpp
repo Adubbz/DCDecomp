@@ -8,7 +8,7 @@ char WaterData[0x10];
 INCLUDE_ASM("asm/nonmatchings/water", SetParam__6CWaterFffff);
 INCLUDE_ASM("asm/nonmatchings/water", SetColor__6CWaterFUcUcUcUc);
 INCLUDE_ASM("asm/nonmatchings/water", CreateVUData__6CWaterFPUiP10RenderInfo);
-INCLUDE_RODATA("asm/nonmatchings/water", LIT_345__2);
+INCLUDE_RODATA("asm/nonmatchings/water", @345__2);
 INCLUDE_ASM("asm/nonmatchings/water", DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1);
 INCLUDE_ASM("asm/nonmatchings/water", CheckClip__6CWaterFv);
 INCLUDE_ASM("asm/nonmatchings/water", Hamon__6CWaterFv);

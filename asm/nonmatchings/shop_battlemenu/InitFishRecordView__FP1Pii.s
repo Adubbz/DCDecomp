@@ -35,8 +35,8 @@ glabel InitFishRecordView__FP1Pii
     /* 0F2FEC 001F2EEC C80331AC */  sw         $17, %lo(FishRecordMenu + 0x8)($1)
     /* 0F2FF0 001F2EF0 30FB040C */  jal        StartReadBG__Fv
     /* 0F2FF4 001F2EF4 00000000 */   nop
-    /* 0F2FF8 001F2EF8 2A00023C */  lui        $2, %hi(LIT_3257)
-    /* 0F2FFC 001F2EFC 68D44424 */  addiu      $4, $2, %lo(LIT_3257)
+    /* 0F2FF8 001F2EF8 2A00023C */  lui        $2, %hi("@3257")
+    /* 0F2FFC 001F2EFC 68D44424 */  addiu      $4, $2, %lo("@3257")
     /* 0F3000 001F2F00 282E0072 */  paddub     $5, $16, $0
     /* 0F3004 001F2F04 ACAE080C */  jal        LoadFileBGMenuData__FPcP1
     /* 0F3008 001F2F08 00000000 */   nop
@@ -52,8 +52,8 @@ glabel InitFishRecordView__FP1Pii
     /* 0F3030 001F2F30 CC0320AC */  sw         $0, %lo(FishRecordMenu + 0xC)($1)
     /* 0F3034 001F2F34 C701023C */  lui        $2, %hi(TexManager)
     /* 0F3038 001F2F38 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0F303C 001F2F3C 2A00023C */  lui        $2, %hi(LIT_761)
-    /* 0F3040 001F2F40 60D14524 */  addiu      $5, $2, %lo(LIT_761)
+    /* 0F303C 001F2F3C 2A00023C */  lui        $2, %hi("@761")
+    /* 0F3040 001F2F40 60D14524 */  addiu      $5, $2, %lo("@761")
     /* 0F3044 001F2F44 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0F3048 001F2F48 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0F304C 001F2F4C 00000000 */   nop

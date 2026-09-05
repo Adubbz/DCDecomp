@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_1929
+glabel "@1929"
     /* 199BF0 00299AF0 E8311500 */ .word .L001531E8
     /* 199BF4 00299AF4 F8311500 */ .word .L001531F8
     /* 199BF8 00299AF8 48321500 */ .word .L00153248
@@ -252,8 +252,8 @@ glabel DrawGaijiFont__6ClsMesFP8CTextureiRC8CRect_i_RC8CRect_i_ii
     /* 0532C0 001531C0 2100A12C */  sltiu      $1, $5, 0x21
     /* 0532C4 001531C4 20002010 */  beqz       $1, .L00153248
     /* 0532C8 001531C8 00000000 */   nop
-    /* 0532CC 001531CC 2A00033C */  lui        $3, %hi(LIT_1929)
-    /* 0532D0 001531D0 F09A6424 */  addiu      $4, $3, %lo(LIT_1929)
+    /* 0532CC 001531CC 2A00033C */  lui        $3, %hi("@1929")
+    /* 0532D0 001531D0 F09A6424 */  addiu      $4, $3, %lo("@1929")
     /* 0532D4 001531D4 80180500 */  sll        $3, $5, 2
     /* 0532D8 001531D8 21186400 */  addu       $3, $3, $4
     /* 0532DC 001531DC 0000638C */  lw         $3, 0x0($3)

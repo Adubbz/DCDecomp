@@ -197,8 +197,8 @@ glabel OpD_DrawProcess__Fv
     /* 01A12C 01DC5E2C E201023C */  lui        $2, %hi(OP_NornMapObj + 0x690)
     /* 01A130 01DC5E30 40FD5024 */  addiu      $16, $2, %lo(OP_NornMapObj + 0x690)
     /* 01A134 01DC5E34 28260072 */  paddub     $4, $16, $0
-    /* 01A138 01DC5E38 DE01023C */  lui        $2, %hi(LIT_503__5)
-    /* 01A13C 01DC5E3C 88FD4524 */  addiu      $5, $2, %lo(LIT_503__5)
+    /* 01A138 01DC5E38 DE01023C */  lui        $2, %hi("@503__5")
+    /* 01A13C 01DC5E3C 88FD4524 */  addiu      $5, $2, %lo("@503__5")
     /* 01A140 01DC5E40 28360070 */  paddub     $6, $0, $0
     /* 01A144 01DC5E44 A000198E */  lw         $25, 0xA0($16)
     /* 01A148 01DC5E48 9000398F */  lw         $25, 0x90($25)
@@ -210,16 +210,16 @@ glabel OpD_DrawProcess__Fv
     /* 01A160 01DC5E60 09F82003 */  jalr       $25
     /* 01A164 01DC5E64 00000000 */   nop
     /* 01A168 01DC5E68 28260072 */  paddub     $4, $16, $0
-    /* 01A16C 01DC5E6C DE01023C */  lui        $2, %hi(LIT_503__5)
-    /* 01A170 01DC5E70 88FD4524 */  addiu      $5, $2, %lo(LIT_503__5)
+    /* 01A16C 01DC5E6C DE01023C */  lui        $2, %hi("@503__5")
+    /* 01A170 01DC5E70 88FD4524 */  addiu      $5, $2, %lo("@503__5")
     /* 01A174 01DC5E74 01000624 */  addiu      $6, $0, 0x1
     /* 01A178 01DC5E78 A000198E */  lw         $25, 0xA0($16)
     /* 01A17C 01DC5E7C 9000398F */  lw         $25, 0x90($25)
     /* 01A180 01DC5E80 09F82003 */  jalr       $25
     /* 01A184 01DC5E84 00000000 */   nop
     /* 01A188 01DC5E88 B000048E */  lw         $4, 0xB0($16)
-    /* 01A18C 01DC5E8C DE01023C */  lui        $2, %hi(LIT_503__5)
-    /* 01A190 01DC5E90 88FD4524 */  addiu      $5, $2, %lo(LIT_503__5)
+    /* 01A18C 01DC5E8C DE01023C */  lui        $2, %hi("@503__5")
+    /* 01A190 01DC5E90 88FD4524 */  addiu      $5, $2, %lo("@503__5")
     /* 01A194 01DC5E94 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 01A198 01DC5E98 00000000 */   nop
     /* 01A19C 01DC5E9C 28864070 */  paddub     $16, $2, $0
@@ -300,8 +300,8 @@ glabel OpD_DrawProcess__Fv
     /* 01A2B8 01DC5FB8 00000000 */   nop
     /* 01A2BC 01DC5FBC C701023C */  lui        $2, %hi(TexManager)
     /* 01A2C0 01DC5FC0 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01A2C4 01DC5FC4 DE01023C */  lui        $2, %hi(LIT_926__3)
-    /* 01A2C8 01DC5FC8 E8FD4524 */  addiu      $5, $2, %lo(LIT_926__3)
+    /* 01A2C4 01DC5FC4 DE01023C */  lui        $2, %hi("@926__3")
+    /* 01A2C8 01DC5FC8 E8FD4524 */  addiu      $5, $2, %lo("@926__3")
     /* 01A2CC 01DC5FCC FFFF0624 */  addiu      $6, $0, -0x1
     /* 01A2D0 01DC5FD0 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01A2D4 01DC5FD4 00000000 */   nop
@@ -565,8 +565,8 @@ glabel OpD_DrawProcess__Fv
     /* 01A680 01DC6380 28864070 */  paddub     $16, $2, $0
     /* 01A684 01DC6384 C701023C */  lui        $2, %hi(TexManager)
     /* 01A688 01DC6388 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01A68C 01DC638C DE01023C */  lui        $2, %hi(LIT_927__3)
-    /* 01A690 01DC6390 F8FD4524 */  addiu      $5, $2, %lo(LIT_927__3)
+    /* 01A68C 01DC638C DE01023C */  lui        $2, %hi("@927__3")
+    /* 01A690 01DC6390 F8FD4524 */  addiu      $5, $2, %lo("@927__3")
     /* 01A694 01DC6394 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01A698 01DC6398 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01A69C 01DC639C 00000000 */   nop
@@ -602,8 +602,8 @@ glabel OpD_DrawProcess__Fv
     /* 01A710 01DC6410 28864070 */  paddub     $16, $2, $0
     /* 01A714 01DC6414 C701023C */  lui        $2, %hi(TexManager)
     /* 01A718 01DC6418 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01A71C 01DC641C DE01023C */  lui        $2, %hi(LIT_928__4)
-    /* 01A720 01DC6420 00FE4524 */  addiu      $5, $2, %lo(LIT_928__4)
+    /* 01A71C 01DC641C DE01023C */  lui        $2, %hi("@928__4")
+    /* 01A720 01DC6420 00FE4524 */  addiu      $5, $2, %lo("@928__4")
     /* 01A724 01DC6424 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01A728 01DC6428 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01A72C 01DC642C 00000000 */   nop
@@ -639,8 +639,8 @@ glabel OpD_DrawProcess__Fv
     /* 01A7A0 01DC64A0 28864070 */  paddub     $16, $2, $0
     /* 01A7A4 01DC64A4 C701023C */  lui        $2, %hi(TexManager)
     /* 01A7A8 01DC64A8 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01A7AC 01DC64AC DE01023C */  lui        $2, %hi(LIT_929__4)
-    /* 01A7B0 01DC64B0 08FE4524 */  addiu      $5, $2, %lo(LIT_929__4)
+    /* 01A7AC 01DC64AC DE01023C */  lui        $2, %hi("@929__4")
+    /* 01A7B0 01DC64B0 08FE4524 */  addiu      $5, $2, %lo("@929__4")
     /* 01A7B4 01DC64B4 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01A7B8 01DC64B8 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01A7BC 01DC64BC 00000000 */   nop

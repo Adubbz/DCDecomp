@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_2794
+glabel "@2794"
     /* 19D470 0029D370 D8F81E00 */ .word .L001EF8D8
     /* 19D474 0029D374 14EE1E00 */ .word .L001EEE14
     /* 19D478 0029D378 90EE1E00 */ .word .L001EEE90
@@ -75,8 +75,8 @@ glabel ItemShopKey2__Fv
     /* 0EEEEC 001EEDEC 1A00812C */  sltiu      $1, $4, 0x1A
     /* 0EEEF0 001EEDF0 75062010 */  beqz       $1, .L001F07C8
     /* 0EEEF4 001EEDF4 00000000 */   nop
-    /* 0EEEF8 001EEDF8 2A00023C */  lui        $2, %hi(LIT_2794)
-    /* 0EEEFC 001EEDFC 70D34324 */  addiu      $3, $2, %lo(LIT_2794)
+    /* 0EEEF8 001EEDF8 2A00023C */  lui        $2, %hi("@2794")
+    /* 0EEEFC 001EEDFC 70D34324 */  addiu      $3, $2, %lo("@2794")
     /* 0EEF00 001EEE00 80100400 */  sll        $2, $4, 2
     /* 0EEF04 001EEE04 21104300 */  addu       $2, $2, $3
     /* 0EEF08 001EEE08 0000428C */  lw         $2, 0x0($2)

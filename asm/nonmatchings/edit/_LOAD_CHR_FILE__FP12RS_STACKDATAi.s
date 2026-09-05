@@ -43,8 +43,8 @@ glabel _LOAD_CHR_FILE__FP12RS_STACKDATAi
     /* 08C4D4 0018C3D4 282E4070 */  paddub     $5, $2, $0
     /* 08C4D8 0018C3D8 EC2D060C */  jal        GetFileName__FPcPc
     /* 08C4DC 0018C3DC 00000000 */   nop
-    /* 08C4E0 0018C3E0 2A00023C */  lui        $2, %hi(LIT_853)
-    /* 08C4E4 0018C3E4 F0B04424 */  addiu      $4, $2, %lo(LIT_853)
+    /* 08C4E0 0018C3E0 2A00023C */  lui        $2, %hi("@853")
+    /* 08C4E4 0018C3E4 F0B04424 */  addiu      $4, $2, %lo("@853")
     /* 08C4E8 0018C3E8 5000A527 */  addiu      $5, $29, 0x50
     /* 08C4EC 0018C3EC A611040C */  jal        printf
     /* 08C4F0 0018C3F0 00000000 */   nop

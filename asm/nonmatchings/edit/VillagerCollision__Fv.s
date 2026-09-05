@@ -122,8 +122,8 @@ glabel VillagerCollision__Fv
     /* 07FC54 0017FB54 C900812A */  slti       $1, $20, 0xC9
     /* 07FC58 0017FB58 06002014 */  bnez       $1, .L0017FB74
     /* 07FC5C 0017FB5C 00000000 */   nop
-    /* 07FC60 0017FB60 2A00023C */  lui        $2, %hi(LIT_2533)
-    /* 07FC64 0017FB64 90AC4424 */  addiu      $4, $2, %lo(LIT_2533)
+    /* 07FC60 0017FB60 2A00023C */  lui        $2, %hi("@2533")
+    /* 07FC64 0017FB64 90AC4424 */  addiu      $4, $2, %lo("@2533")
     /* 07FC68 0017FB68 282E8072 */  paddub     $5, $20, $0
     /* 07FC6C 0017FB6C A611040C */  jal        printf
     /* 07FC70 0017FB70 00000000 */   nop

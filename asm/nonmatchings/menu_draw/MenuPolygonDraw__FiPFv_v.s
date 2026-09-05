@@ -10,13 +10,13 @@ glabel MenuPolygonDraw__FiPFv_v
     /* 12BF9C 0022BE9C 0000B07F */  sq         $16, 0x0($29)
     /* 12BFA0 0022BEA0 288E8070 */  paddub     $17, $4, $0
     /* 12BFA4 0022BEA4 2886A070 */  paddub     $16, $5, $0
-    /* 12BFA8 0022BEA8 2900023C */  lui        $2, %hi(LIT_611__3)
-    /* 12BFAC 0022BEAC E0444224 */  addiu      $2, $2, %lo(LIT_611__3)
+    /* 12BFA8 0022BEA8 2900023C */  lui        $2, %hi("@611__3")
+    /* 12BFAC 0022BEAC E0444224 */  addiu      $2, $2, %lo("@611__3")
     /* 12BFB0 0022BEB0 3000A527 */  addiu      $5, $29, 0x30
     /* 12BFB4 0022BEB4 00004278 */  lq         $2, 0x0($2)
     /* 12BFB8 0022BEB8 0000A27C */  sq         $2, 0x0($5)
-    /* 12BFBC 0022BEBC 2900023C */  lui        $2, %hi(LIT_612__3)
-    /* 12BFC0 0022BEC0 F0444224 */  addiu      $2, $2, %lo(LIT_612__3)
+    /* 12BFBC 0022BEBC 2900023C */  lui        $2, %hi("@612__3")
+    /* 12BFC0 0022BEC0 F0444224 */  addiu      $2, $2, %lo("@612__3")
     /* 12BFC4 0022BEC4 4000A327 */  addiu      $3, $29, 0x40
     /* 12BFC8 0022BEC8 00004278 */  lq         $2, 0x0($2)
     /* 12BFCC 0022BECC 0000627C */  sq         $2, 0x0($3)
@@ -29,8 +29,8 @@ glabel MenuPolygonDraw__FiPFv_v
     /* 12BFE8 0022BEE8 4000A527 */  addiu      $5, $29, 0x40
     /* 12BFEC 0022BEEC A490040C */  jal        SetPos__7CCameraFPf
     /* 12BFF0 0022BEF0 00000000 */   nop
-    /* 12BFF4 0022BEF4 2900023C */  lui        $2, %hi(LIT_613__2)
-    /* 12BFF8 0022BEF8 00454524 */  addiu      $5, $2, %lo(LIT_613__2)
+    /* 12BFF4 0022BEF4 2900023C */  lui        $2, %hi("@613__2")
+    /* 12BFF8 0022BEF8 00454524 */  addiu      $5, $2, %lo("@613__2")
     /* 12BFFC 0022BEFC 5000A427 */  addiu      $4, $29, 0x50
     /* 12C000 0022BF00 04000324 */  addiu      $3, $0, 0x4
   .L0022BF04:
@@ -41,8 +41,8 @@ glabel MenuPolygonDraw__FiPFv_v
     /* 12C014 0022BF14 10008424 */  addiu      $4, $4, 0x10
     /* 12C018 0022BF18 FAFF601C */  bgtz       $3, .L0022BF04
     /* 12C01C 0022BF1C 00000000 */   nop
-    /* 12C020 0022BF20 2900023C */  lui        $2, %hi(LIT_614__3)
-    /* 12C024 0022BF24 40454524 */  addiu      $5, $2, %lo(LIT_614__3)
+    /* 12C020 0022BF20 2900023C */  lui        $2, %hi("@614__3")
+    /* 12C024 0022BF24 40454524 */  addiu      $5, $2, %lo("@614__3")
     /* 12C028 0022BF28 9000A427 */  addiu      $4, $29, 0x90
     /* 12C02C 0022BF2C 04000324 */  addiu      $3, $0, 0x4
   .L0022BF30:
@@ -68,8 +68,8 @@ glabel MenuPolygonDraw__FiPFv_v
     /* 12C07C 0022BF7C 00000000 */  nop
     /* 12C080 0022BF80 20008046 */  cvt.s.w    $f0, $f0
     /* 12C084 0022BF84 EC00A0E7 */  swc1       $f0, 0xEC($29)
-    /* 12C088 0022BF88 2900023C */  lui        $2, %hi(LIT_615__3)
-    /* 12C08C 0022BF8C 80454224 */  addiu      $2, $2, %lo(LIT_615__3)
+    /* 12C088 0022BF88 2900023C */  lui        $2, %hi("@615__3")
+    /* 12C08C 0022BF8C 80454224 */  addiu      $2, $2, %lo("@615__3")
     /* 12C090 0022BF90 7001A527 */  addiu      $5, $29, 0x170
     /* 12C094 0022BF94 00004278 */  lq         $2, 0x0($2)
     /* 12C098 0022BF98 0000A27C */  sq         $2, 0x0($5)

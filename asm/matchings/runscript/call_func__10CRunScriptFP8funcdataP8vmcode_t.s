@@ -17,8 +17,8 @@ glabel call_func__10CRunScriptFP8funcdataP8vmcode_t
     /* 13DCD8 0023DBD8 2B106200 */  sltu       $2, $3, $2
     /* 13DCDC 0023DBDC 08004014 */  bnez       $2, .L0023DC00
     /* 13DCE0 0023DBE0 00000000 */   nop
-    /* 13DCE4 0023DBE4 2A00023C */  lui        $2, %hi(LIT_68)
-    /* 13DCE8 0023DBE8 10F84424 */  addiu      $4, $2, %lo(LIT_68)
+    /* 13DCE4 0023DBE4 2A00023C */  lui        $2, %hi("@68")
+    /* 13DCE8 0023DBE8 10F84424 */  addiu      $4, $2, %lo("@68")
     /* 13DCEC 0023DBEC A611040C */  jal        printf
     /* 13DCF0 0023DBF0 00000000 */   nop
     /* 13DCF4 0023DBF4 FEFF0424 */  addiu      $4, $0, -0x2

@@ -23,8 +23,8 @@ glabel EnterIMGFile__15CTextureManagerFPUciii
     /* 032CE0 00132BE0 00000000 */   nop
     /* 032CE4 00132BE4 288E0070 */  paddub     $17, $0, $0
     /* 032CE8 00132BE8 2826A072 */  paddub     $4, $21, $0
-    /* 032CEC 00132BEC 2A00023C */  lui        $2, %hi(LIT_619)
-    /* 032CF0 00132BF0 F08E4524 */  addiu      $5, $2, %lo(LIT_619)
+    /* 032CEC 00132BEC 2A00023C */  lui        $2, %hi("@619")
+    /* 032CF0 00132BF0 F08E4524 */  addiu      $5, $2, %lo("@619")
     /* 032CF4 00132BF4 03000624 */  addiu      $6, $0, 0x3
     /* 032CF8 00132BF8 C60C040C */  jal        memcmp
     /* 032CFC 00132BFC 00000000 */   nop
@@ -92,8 +92,8 @@ glabel EnterIMGFile__15CTextureManagerFPUciii
     /* 032DD0 00132CD0 0800648C */  lw         $4, 0x8($3)
     /* 032DD4 00132CD4 2158E400 */  addu       $11, $7, $4
   .L00132CD8:
-    /* 032DD8 00132CD8 2500043C */  lui        $4, %hi(LIT_599)
-    /* 032DDC 00132CDC 700B8424 */  addiu      $4, $4, %lo(LIT_599)
+    /* 032DD8 00132CD8 2500043C */  lui        $4, %hi("@599")
+    /* 032DDC 00132CDC 700B8424 */  addiu      $4, $4, %lo("@599")
     /* 032DE0 00132CE0 D000A527 */  addiu      $5, $29, 0xD0
     /* 032DE4 00132CE4 00008478 */  lq         $4, 0x0($4)
     /* 032DE8 00132CE8 0000A47C */  sq         $4, 0x0($5)

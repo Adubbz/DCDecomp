@@ -48,8 +48,8 @@ glabel DrawWepVolumeDisplay__FiiP11WEAPON_HAVEi
     /* 0F9474 001F9374 000034AE */  sw         $20, 0x0($17)
     /* 0F9478 001F9378 C801A2AF */  sw         $2, 0x1C8($29)
     /* 0F947C 001F937C CC01A3AF */  sw         $3, 0x1CC($29)
-    /* 0F9480 001F9380 2900023C */  lui        $2, %hi(LIT_1725)
-    /* 0F9484 001F9384 40304224 */  addiu      $2, $2, %lo(LIT_1725)
+    /* 0F9480 001F9380 2900023C */  lui        $2, %hi("@1725")
+    /* 0F9484 001F9384 40304224 */  addiu      $2, $2, %lo("@1725")
     /* 0F9488 001F9388 D001A327 */  addiu      $3, $29, 0x1D0
     /* 0F948C 001F938C 00004278 */  lq         $2, 0x0($2)
     /* 0F9490 001F9390 0000627C */  sq         $2, 0x0($3)
@@ -76,8 +76,8 @@ glabel DrawWepVolumeDisplay__FiiP11WEAPON_HAVEi
     /* 0F94E4 001F93E4 C8B3080C */  jal        DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i
     /* 0F94E8 001F93E8 00000000 */   nop
   .L001F93EC:
-    /* 0F94EC 001F93EC 2900023C */  lui        $2, %hi(LIT_1728)
-    /* 0F94F0 001F93F0 50304224 */  addiu      $2, $2, %lo(LIT_1728)
+    /* 0F94EC 001F93EC 2900023C */  lui        $2, %hi("@1728")
+    /* 0F94F0 001F93F0 50304224 */  addiu      $2, $2, %lo("@1728")
     /* 0F94F4 001F93F4 E001A327 */  addiu      $3, $29, 0x1E0
     /* 0F94F8 001F93F8 00004278 */  lq         $2, 0x0($2)
     /* 0F94FC 001F93FC 0000627C */  sq         $2, 0x0($3)
@@ -93,8 +93,8 @@ glabel DrawWepVolumeDisplay__FiiP11WEAPON_HAVEi
     /* 0F9524 001F9424 7433080C */  jal        GetNowWeaponRate__FP11WEAPON_HAVE
     /* 0F9528 001F9428 00000000 */   nop
     /* 0F952C 001F942C 06050046 */  mov.s      $f20, $f0
-    /* 0F9530 001F9430 2900023C */  lui        $2, %hi(LIT_1729)
-    /* 0F9534 001F9434 60304224 */  addiu      $2, $2, %lo(LIT_1729)
+    /* 0F9530 001F9430 2900023C */  lui        $2, %hi("@1729")
+    /* 0F9534 001F9434 60304224 */  addiu      $2, $2, %lo("@1729")
     /* 0F9538 001F9438 F001A327 */  addiu      $3, $29, 0x1F0
     /* 0F953C 001F943C 00004278 */  lq         $2, 0x0($2)
     /* 0F9540 001F9440 0000627C */  sq         $2, 0x0($3)

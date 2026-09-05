@@ -17,8 +17,8 @@ glabel GotoInterior__FPciiP14ED_EVENT_PARAMi
     /* 07EF08 0017EE08 289EC070 */  paddub     $19, $6, $0
     /* 07EF0C 0017EE0C 2896E070 */  paddub     $18, $7, $0
     /* 07EF10 0017EE10 288E0071 */  paddub     $17, $8, $0
-    /* 07EF14 0017EE14 2700023C */  lui        $2, %hi(LIT_2365)
-    /* 07EF18 0017EE18 80944224 */  addiu      $2, $2, %lo(LIT_2365)
+    /* 07EF14 0017EE14 2700023C */  lui        $2, %hi("@2365")
+    /* 07EF18 0017EE18 80944224 */  addiu      $2, $2, %lo("@2365")
     /* 07EF1C 0017EE1C 7000A427 */  addiu      $4, $29, 0x70
     /* 07EF20 0017EE20 00004378 */  lq         $3, 0x0($2)
     /* 07EF24 0017EE24 100042C4 */  lwc1       $f2, 0x10($2)
@@ -36,8 +36,8 @@ glabel GotoInterior__FPciiP14ED_EVENT_PARAMi
     /* 07EF54 0017EE54 80101000 */  sll        $2, $16, 2
     /* 07EF58 0017EE58 21185D00 */  addu       $3, $2, $29
     /* 07EF5C 0017EE5C 9000A427 */  addiu      $4, $29, 0x90
-    /* 07EF60 0017EE60 2A00023C */  lui        $2, %hi(LIT_2389)
-    /* 07EF64 0017EE64 68AC4524 */  addiu      $5, $2, %lo(LIT_2389)
+    /* 07EF60 0017EE60 2A00023C */  lui        $2, %hi("@2389")
+    /* 07EF64 0017EE64 68AC4524 */  addiu      $5, $2, %lo("@2389")
     /* 07EF68 0017EE68 D201023C */  lui        $2, %hi(EditDataDir)
     /* 07EF6C 0017EE6C E0B34624 */  addiu      $6, $2, %lo(EditDataDir)
     /* 07EF70 0017EE70 283EA072 */  paddub     $7, $21, $0
@@ -47,8 +47,8 @@ glabel GotoInterior__FPciiP14ED_EVENT_PARAMi
     /* 07EF80 0017EE80 00000000 */   nop
     /* 07EF84 0017EE84 D301023C */  lui        $2, %hi(interior_map_name)
     /* 07EF88 0017EE88 80594424 */  addiu      $4, $2, %lo(interior_map_name)
-    /* 07EF8C 0017EE8C 2A00023C */  lui        $2, %hi(LIT_2390)
-    /* 07EF90 0017EE90 78AC4524 */  addiu      $5, $2, %lo(LIT_2390)
+    /* 07EF8C 0017EE8C 2A00023C */  lui        $2, %hi("@2390")
+    /* 07EF90 0017EE90 78AC4524 */  addiu      $5, $2, %lo("@2390")
     /* 07EF94 0017EE94 9000A627 */  addiu      $6, $29, 0x90
     /* 07EF98 0017EE98 1614040C */  jal        sprintf
     /* 07EF9C 0017EE9C 00000000 */   nop

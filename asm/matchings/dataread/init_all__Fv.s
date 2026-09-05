@@ -16,8 +16,8 @@ glabel init_all__Fv
     /* 040CB4 00140BB4 542E040C */  jal        sceCdMmode
     /* 040CB8 00140BB8 00000000 */   nop
   .L00140BBC:
-    /* 040CBC 00140BBC 2A00023C */  lui        $2, %hi(LIT_626)
-    /* 040CC0 00140BC0 20924424 */  addiu      $4, $2, %lo(LIT_626)
+    /* 040CBC 00140BBC 2A00023C */  lui        $2, %hi("@626")
+    /* 040CC0 00140BC0 20924424 */  addiu      $4, $2, %lo("@626")
     /* 040CC4 00140BC4 5665040C */  jal        sceSifRebootIop
     /* 040CC8 00140BC8 00000000 */   nop
     /* 040CCC 00140BCC FBFF4010 */  beqz       $2, .L00140BBC
@@ -39,8 +39,8 @@ glabel init_all__Fv
     /* 040D08 00140C08 785F040C */  jal        sceFsReset
     /* 040D0C 00140C0C 00000000 */   nop
   .L00140C10:
-    /* 040D10 00140C10 2A00023C */  lui        $2, %hi(LIT_627)
-    /* 040D14 00140C14 40924424 */  addiu      $4, $2, %lo(LIT_627)
+    /* 040D10 00140C10 2A00023C */  lui        $2, %hi("@627")
+    /* 040D14 00140C14 40924424 */  addiu      $4, $2, %lo("@627")
     /* 040D18 00140C18 282E0070 */  paddub     $5, $0, $0
     /* 040D1C 00140C1C 28360070 */  paddub     $6, $0, $0
     /* 040D20 00140C20 1E64040C */  jal        sceSifLoadModule
@@ -48,8 +48,8 @@ glabel init_all__Fv
     /* 040D28 00140C28 F9FF4004 */  bltz       $2, .L00140C10
     /* 040D2C 00140C2C 00000000 */   nop
   .L00140C30:
-    /* 040D30 00140C30 2A00023C */  lui        $2, %hi(LIT_628)
-    /* 040D34 00140C34 60924424 */  addiu      $4, $2, %lo(LIT_628)
+    /* 040D30 00140C30 2A00023C */  lui        $2, %hi("@628")
+    /* 040D34 00140C34 60924424 */  addiu      $4, $2, %lo("@628")
     /* 040D38 00140C38 282E0070 */  paddub     $5, $0, $0
     /* 040D3C 00140C3C 28360070 */  paddub     $6, $0, $0
     /* 040D40 00140C40 1E64040C */  jal        sceSifLoadModule
@@ -57,8 +57,8 @@ glabel init_all__Fv
     /* 040D48 00140C48 F9FF4004 */  bltz       $2, .L00140C30
     /* 040D4C 00140C4C 00000000 */   nop
   .L00140C50:
-    /* 040D50 00140C50 2A00023C */  lui        $2, %hi(LIT_629)
-    /* 040D54 00140C54 80924424 */  addiu      $4, $2, %lo(LIT_629)
+    /* 040D50 00140C50 2A00023C */  lui        $2, %hi("@629")
+    /* 040D54 00140C54 80924424 */  addiu      $4, $2, %lo("@629")
     /* 040D58 00140C58 282E0070 */  paddub     $5, $0, $0
     /* 040D5C 00140C5C 28360070 */  paddub     $6, $0, $0
     /* 040D60 00140C60 1E64040C */  jal        sceSifLoadModule
@@ -66,8 +66,8 @@ glabel init_all__Fv
     /* 040D68 00140C68 F9FF4004 */  bltz       $2, .L00140C50
     /* 040D6C 00140C6C 00000000 */   nop
   .L00140C70:
-    /* 040D70 00140C70 2A00023C */  lui        $2, %hi(LIT_630)
-    /* 040D74 00140C74 A0924424 */  addiu      $4, $2, %lo(LIT_630)
+    /* 040D70 00140C70 2A00023C */  lui        $2, %hi("@630")
+    /* 040D74 00140C74 A0924424 */  addiu      $4, $2, %lo("@630")
     /* 040D78 00140C78 282E0070 */  paddub     $5, $0, $0
     /* 040D7C 00140C7C 28360070 */  paddub     $6, $0, $0
     /* 040D80 00140C80 1E64040C */  jal        sceSifLoadModule
@@ -75,8 +75,8 @@ glabel init_all__Fv
     /* 040D88 00140C88 F9FF4004 */  bltz       $2, .L00140C70
     /* 040D8C 00140C8C 00000000 */   nop
   .L00140C90:
-    /* 040D90 00140C90 2A00023C */  lui        $2, %hi(LIT_631)
-    /* 040D94 00140C94 C0924424 */  addiu      $4, $2, %lo(LIT_631)
+    /* 040D90 00140C90 2A00023C */  lui        $2, %hi("@631")
+    /* 040D94 00140C94 C0924424 */  addiu      $4, $2, %lo("@631")
     /* 040D98 00140C98 282E0070 */  paddub     $5, $0, $0
     /* 040D9C 00140C9C 28360070 */  paddub     $6, $0, $0
     /* 040DA0 00140CA0 1E64040C */  jal        sceSifLoadModule
@@ -84,8 +84,8 @@ glabel init_all__Fv
     /* 040DA8 00140CA8 F9FF4004 */  bltz       $2, .L00140C90
     /* 040DAC 00140CAC 00000000 */   nop
   .L00140CB0:
-    /* 040DB0 00140CB0 2A00023C */  lui        $2, %hi(LIT_632)
-    /* 040DB4 00140CB4 E0924424 */  addiu      $4, $2, %lo(LIT_632)
+    /* 040DB0 00140CB0 2A00023C */  lui        $2, %hi("@632")
+    /* 040DB4 00140CB4 E0924424 */  addiu      $4, $2, %lo("@632")
     /* 040DB8 00140CB8 282E0070 */  paddub     $5, $0, $0
     /* 040DBC 00140CBC 28360070 */  paddub     $6, $0, $0
     /* 040DC0 00140CC0 1E64040C */  jal        sceSifLoadModule
@@ -93,8 +93,8 @@ glabel init_all__Fv
     /* 040DC8 00140CC8 F9FF4004 */  bltz       $2, .L00140CB0
     /* 040DCC 00140CCC 00000000 */   nop
   .L00140CD0:
-    /* 040DD0 00140CD0 2A00023C */  lui        $2, %hi(LIT_633)
-    /* 040DD4 00140CD4 00934424 */  addiu      $4, $2, %lo(LIT_633)
+    /* 040DD0 00140CD0 2A00023C */  lui        $2, %hi("@633")
+    /* 040DD4 00140CD4 00934424 */  addiu      $4, $2, %lo("@633")
     /* 040DD8 00140CD8 282E0070 */  paddub     $5, $0, $0
     /* 040DDC 00140CDC 28360070 */  paddub     $6, $0, $0
     /* 040DE0 00140CE0 1E64040C */  jal        sceSifLoadModule
@@ -102,8 +102,8 @@ glabel init_all__Fv
     /* 040DE8 00140CE8 F9FF4004 */  bltz       $2, .L00140CD0
     /* 040DEC 00140CEC 00000000 */   nop
   .L00140CF0:
-    /* 040DF0 00140CF0 2A00023C */  lui        $2, %hi(LIT_634)
-    /* 040DF4 00140CF4 20934424 */  addiu      $4, $2, %lo(LIT_634)
+    /* 040DF0 00140CF0 2A00023C */  lui        $2, %hi("@634")
+    /* 040DF4 00140CF4 20934424 */  addiu      $4, $2, %lo("@634")
     /* 040DF8 00140CF8 282E0070 */  paddub     $5, $0, $0
     /* 040DFC 00140CFC 28360070 */  paddub     $6, $0, $0
     /* 040E00 00140D00 1E64040C */  jal        sceSifLoadModule
@@ -111,8 +111,8 @@ glabel init_all__Fv
     /* 040E08 00140D08 F9FF4004 */  bltz       $2, .L00140CF0
     /* 040E0C 00140D0C 00000000 */   nop
   .L00140D10:
-    /* 040E10 00140D10 2A00023C */  lui        $2, %hi(LIT_635)
-    /* 040E14 00140D14 40934424 */  addiu      $4, $2, %lo(LIT_635)
+    /* 040E10 00140D10 2A00023C */  lui        $2, %hi("@635")
+    /* 040E14 00140D14 40934424 */  addiu      $4, $2, %lo("@635")
     /* 040E18 00140D18 282E0070 */  paddub     $5, $0, $0
     /* 040E1C 00140D1C 28360070 */  paddub     $6, $0, $0
     /* 040E20 00140D20 1E64040C */  jal        sceSifLoadModule

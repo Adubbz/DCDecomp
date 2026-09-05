@@ -19,12 +19,12 @@ glabel TEIGIImgLoad__FPUiP14CDataAlloc2_1_
     /* 0CE580 001CE480 288E0070 */  paddub     $17, $0, $0
     /* 0CE584 001CE484 D801023C */  lui        $2, %hi(pathName)
     /* 0CE588 001CE488 201E4424 */  addiu      $4, $2, %lo(pathName)
-    /* 0CE58C 001CE48C 2A00023C */  lui        $2, %hi(LIT_766__2)
-    /* 0CE590 001CE490 88C24524 */  addiu      $5, $2, %lo(LIT_766__2)
+    /* 0CE58C 001CE48C 2A00023C */  lui        $2, %hi("@766__2")
+    /* 0CE590 001CE490 88C24524 */  addiu      $5, $2, %lo("@766__2")
     /* 0CE594 001CE494 5A15040C */  jal        strcpy
     /* 0CE598 001CE498 00000000 */   nop
-    /* 0CE59C 001CE49C 2800023C */  lui        $2, %hi(LIT_767)
-    /* 0CE5A0 001CE4A0 10A64524 */  addiu      $5, $2, %lo(LIT_767)
+    /* 0CE59C 001CE49C 2800023C */  lui        $2, %hi("@767")
+    /* 0CE5A0 001CE4A0 10A64524 */  addiu      $5, $2, %lo("@767")
     /* 0CE5A4 001CE4A4 9001A427 */  addiu      $4, $29, 0x190
     /* 0CE5A8 001CE4A8 03000324 */  addiu      $3, $0, 0x3
   .L001CE4AC:
@@ -39,8 +39,8 @@ glabel TEIGIImgLoad__FPUiP14CDataAlloc2_1_
     /* 0CE5CC 001CE4CC 0800A2C4 */  lwc1       $f2, 0x8($5)
     /* 0CE5D0 001CE4D0 000083FC */  sd         $3, 0x0($4)
     /* 0CE5D4 001CE4D4 080082E4 */  swc1       $f2, 0x8($4)
-    /* 0CE5D8 001CE4D8 2800023C */  lui        $2, %hi(LIT_769)
-    /* 0CE5DC 001CE4DC 50A64524 */  addiu      $5, $2, %lo(LIT_769)
+    /* 0CE5D8 001CE4D8 2800023C */  lui        $2, %hi("@769")
+    /* 0CE5DC 001CE4DC 50A64524 */  addiu      $5, $2, %lo("@769")
     /* 0CE5E0 001CE4E0 D001A427 */  addiu      $4, $29, 0x1D0
     /* 0CE5E4 001CE4E4 02000324 */  addiu      $3, $0, 0x2
   .L001CE4E8:
@@ -53,8 +53,8 @@ glabel TEIGIImgLoad__FPUiP14CDataAlloc2_1_
     /* 0CE600 001CE500 00000000 */   nop
     /* 0CE604 001CE504 0000A2C4 */  lwc1       $f2, 0x0($5)
     /* 0CE608 001CE508 000082E4 */  swc1       $f2, 0x0($4)
-    /* 0CE60C 001CE50C 2800023C */  lui        $2, %hi(LIT_770)
-    /* 0CE610 001CE510 80A64224 */  addiu      $2, $2, %lo(LIT_770)
+    /* 0CE60C 001CE50C 2800023C */  lui        $2, %hi("@770")
+    /* 0CE610 001CE510 80A64224 */  addiu      $2, $2, %lo("@770")
     /* 0CE614 001CE514 0002A427 */  addiu      $4, $29, 0x200
     /* 0CE618 001CE518 00004378 */  lq         $3, 0x0($2)
     /* 0CE61C 001CE51C 100042DC */  ld         $2, 0x10($2)
@@ -207,8 +207,8 @@ glabel TEIGIImgLoad__FPUiP14CDataAlloc2_1_
     /* 0CE858 001CE758 089E050C */  jal        Initialize__13CTextureAnimeFP13CTexAnimeDatai
     /* 0CE85C 001CE75C 00000000 */   nop
     /* 0CE860 001CE760 2826A072 */  paddub     $4, $21, $0
-    /* 0CE864 001CE764 2A00023C */  lui        $2, %hi(LIT_809__2)
-    /* 0CE868 001CE768 A8C24524 */  addiu      $5, $2, %lo(LIT_809__2)
+    /* 0CE864 001CE764 2A00023C */  lui        $2, %hi("@809__2")
+    /* 0CE868 001CE768 A8C24524 */  addiu      $5, $2, %lo("@809__2")
     /* 0CE86C 001CE76C 1C02A627 */  addiu      $6, $29, 0x21C
     /* 0CE870 001CE770 C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0CE874 001CE774 00000000 */   nop
@@ -263,14 +263,14 @@ glabel TEIGIImgLoad__FPUiP14CDataAlloc2_1_
     /* 0CE92C 001CE82C 282E4072 */  paddub     $5, $18, $0
     /* 0CE930 001CE830 BC14040C */  jal        strcat
     /* 0CE934 001CE834 00000000 */   nop
-    /* 0CE938 001CE838 2A00023C */  lui        $2, %hi(LIT_810)
-    /* 0CE93C 001CE83C B8C24424 */  addiu      $4, $2, %lo(LIT_810)
+    /* 0CE938 001CE838 2A00023C */  lui        $2, %hi("@810")
+    /* 0CE93C 001CE83C B8C24424 */  addiu      $4, $2, %lo("@810")
     /* 0CE940 001CE840 282E4072 */  paddub     $5, $18, $0
     /* 0CE944 001CE844 A611040C */  jal        printf
     /* 0CE948 001CE848 00000000 */   nop
     /* 0CE94C 001CE84C 2826A072 */  paddub     $4, $21, $0
-    /* 0CE950 001CE850 2A00023C */  lui        $2, %hi(LIT_811)
-    /* 0CE954 001CE854 C0C24524 */  addiu      $5, $2, %lo(LIT_811)
+    /* 0CE950 001CE850 2A00023C */  lui        $2, %hi("@811")
+    /* 0CE954 001CE854 C0C24524 */  addiu      $5, $2, %lo("@811")
     /* 0CE958 001CE858 1C02A627 */  addiu      $6, $29, 0x21C
     /* 0CE95C 001CE85C C8FD040C */  jal        GetPackFile__FPUiPcPi
     /* 0CE960 001CE860 00000000 */   nop

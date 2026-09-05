@@ -32,8 +32,8 @@ glabel DrawDancer__Fv
     /* 015D64 01DC1A64 8C994224 */  addiu      $2, $2, %lo(Cam__2 + 0xBC)
     /* 015D68 01DC1A68 21104300 */  addu       $2, $2, $3
     /* 015D6C 01DC1A6C 0000448C */  lw         $4, 0x0($2)
-    /* 015D70 01DC1A70 DE01023C */  lui        $2, %hi(LIT_1594__2)
-    /* 015D74 01DC1A74 48F94524 */  addiu      $5, $2, %lo(LIT_1594__2)
+    /* 015D70 01DC1A70 DE01023C */  lui        $2, %hi("@1594__2")
+    /* 015D74 01DC1A74 48F94524 */  addiu      $5, $2, %lo("@1594__2")
     /* 015D78 01DC1A78 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 015D7C 01DC1A7C 00000000 */   nop
     /* 015D80 01DC1A80 28264070 */  paddub     $4, $2, $0
@@ -76,8 +76,8 @@ glabel DrawDancer__Fv
     /* 015E14 01DC1B14 00000000 */   nop
     /* 015E18 01DC1B18 E301013C */  lui        $1, %hi(CharaF)
     /* 015E1C 01DC1B1C 70D2248C */  lw         $4, %lo(CharaF)($1)
-    /* 015E20 01DC1B20 DE01023C */  lui        $2, %hi(LIT_1595__2)
-    /* 015E24 01DC1B24 50F94524 */  addiu      $5, $2, %lo(LIT_1595__2)
+    /* 015E20 01DC1B20 DE01023C */  lui        $2, %hi("@1595__2")
+    /* 015E24 01DC1B24 50F94524 */  addiu      $5, $2, %lo("@1595__2")
     /* 015E28 01DC1B28 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 015E2C 01DC1B2C 00000000 */   nop
     /* 015E30 01DC1B30 28264070 */  paddub     $4, $2, $0
@@ -95,8 +95,8 @@ glabel DrawDancer__Fv
   .L01DC1B60:
     /* 015E60 01DC1B60 E301013C */  lui        $1, %hi(CharaF)
     /* 015E64 01DC1B64 70D2248C */  lw         $4, %lo(CharaF)($1)
-    /* 015E68 01DC1B68 DE01023C */  lui        $2, %hi(LIT_1596__2)
-    /* 015E6C 01DC1B6C 58F94524 */  addiu      $5, $2, %lo(LIT_1596__2)
+    /* 015E68 01DC1B68 DE01023C */  lui        $2, %hi("@1596__2")
+    /* 015E6C 01DC1B6C 58F94524 */  addiu      $5, $2, %lo("@1596__2")
     /* 015E70 01DC1B70 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 015E74 01DC1B74 00000000 */   nop
     /* 015E78 01DC1B78 28264070 */  paddub     $4, $2, $0
@@ -130,8 +130,8 @@ glabel DrawDancer__Fv
     /* 015EE4 01DC1BE4 8C994224 */  addiu      $2, $2, %lo(Cam__2 + 0xBC)
     /* 015EE8 01DC1BE8 21104300 */  addu       $2, $2, $3
     /* 015EEC 01DC1BEC 0000448C */  lw         $4, 0x0($2)
-    /* 015EF0 01DC1BF0 DE01023C */  lui        $2, %hi(LIT_1597__2)
-    /* 015EF4 01DC1BF4 60F94524 */  addiu      $5, $2, %lo(LIT_1597__2)
+    /* 015EF0 01DC1BF0 DE01023C */  lui        $2, %hi("@1597__2")
+    /* 015EF4 01DC1BF4 60F94524 */  addiu      $5, $2, %lo("@1597__2")
     /* 015EF8 01DC1BF8 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 015EFC 01DC1BFC 00000000 */   nop
     /* 015F00 01DC1C00 28264070 */  paddub     $4, $2, $0
@@ -174,8 +174,8 @@ glabel DrawDancer__Fv
     /* 015F94 01DC1C94 00000000 */   nop
     /* 015F98 01DC1C98 E301013C */  lui        $1, %hi(CharaF + 0x4)
     /* 015F9C 01DC1C9C 74D2248C */  lw         $4, %lo(CharaF + 0x4)($1)
-    /* 015FA0 01DC1CA0 DE01023C */  lui        $2, %hi(LIT_1595__2)
-    /* 015FA4 01DC1CA4 50F94524 */  addiu      $5, $2, %lo(LIT_1595__2)
+    /* 015FA0 01DC1CA0 DE01023C */  lui        $2, %hi("@1595__2")
+    /* 015FA4 01DC1CA4 50F94524 */  addiu      $5, $2, %lo("@1595__2")
     /* 015FA8 01DC1CA8 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 015FAC 01DC1CAC 00000000 */   nop
     /* 015FB0 01DC1CB0 28264070 */  paddub     $4, $2, $0
@@ -193,8 +193,8 @@ glabel DrawDancer__Fv
   .L01DC1CE0:
     /* 015FE0 01DC1CE0 E301013C */  lui        $1, %hi(CharaF + 0x4)
     /* 015FE4 01DC1CE4 74D2248C */  lw         $4, %lo(CharaF + 0x4)($1)
-    /* 015FE8 01DC1CE8 DE01023C */  lui        $2, %hi(LIT_1596__2)
-    /* 015FEC 01DC1CEC 58F94524 */  addiu      $5, $2, %lo(LIT_1596__2)
+    /* 015FE8 01DC1CE8 DE01023C */  lui        $2, %hi("@1596__2")
+    /* 015FEC 01DC1CEC 58F94524 */  addiu      $5, $2, %lo("@1596__2")
     /* 015FF0 01DC1CF0 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 015FF4 01DC1CF4 00000000 */   nop
     /* 015FF8 01DC1CF8 28264070 */  paddub     $4, $2, $0
@@ -232,8 +232,8 @@ glabel DrawDancer__Fv
     /* 016074 01DC1D74 8C994224 */  addiu      $2, $2, %lo(Cam__2 + 0xBC)
     /* 016078 01DC1D78 21104300 */  addu       $2, $2, $3
     /* 01607C 01DC1D7C 0000448C */  lw         $4, 0x0($2)
-    /* 016080 01DC1D80 DE01023C */  lui        $2, %hi(LIT_1598__2)
-    /* 016084 01DC1D84 68F94524 */  addiu      $5, $2, %lo(LIT_1598__2)
+    /* 016080 01DC1D80 DE01023C */  lui        $2, %hi("@1598__2")
+    /* 016084 01DC1D84 68F94524 */  addiu      $5, $2, %lo("@1598__2")
     /* 016088 01DC1D88 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 01608C 01DC1D8C 00000000 */   nop
     /* 016090 01DC1D90 28264070 */  paddub     $4, $2, $0
@@ -276,8 +276,8 @@ glabel DrawDancer__Fv
     /* 016124 01DC1E24 00000000 */   nop
     /* 016128 01DC1E28 E301013C */  lui        $1, %hi(CharaF + 0x8)
     /* 01612C 01DC1E2C 78D2248C */  lw         $4, %lo(CharaF + 0x8)($1)
-    /* 016130 01DC1E30 DE01023C */  lui        $2, %hi(LIT_1595__2)
-    /* 016134 01DC1E34 50F94524 */  addiu      $5, $2, %lo(LIT_1595__2)
+    /* 016130 01DC1E30 DE01023C */  lui        $2, %hi("@1595__2")
+    /* 016134 01DC1E34 50F94524 */  addiu      $5, $2, %lo("@1595__2")
     /* 016138 01DC1E38 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 01613C 01DC1E3C 00000000 */   nop
     /* 016140 01DC1E40 28264070 */  paddub     $4, $2, $0
@@ -295,8 +295,8 @@ glabel DrawDancer__Fv
   .L01DC1E70:
     /* 016170 01DC1E70 E301013C */  lui        $1, %hi(CharaF + 0x8)
     /* 016174 01DC1E74 78D2248C */  lw         $4, %lo(CharaF + 0x8)($1)
-    /* 016178 01DC1E78 DE01023C */  lui        $2, %hi(LIT_1596__2)
-    /* 01617C 01DC1E7C 58F94524 */  addiu      $5, $2, %lo(LIT_1596__2)
+    /* 016178 01DC1E78 DE01023C */  lui        $2, %hi("@1596__2")
+    /* 01617C 01DC1E7C 58F94524 */  addiu      $5, $2, %lo("@1596__2")
     /* 016180 01DC1E80 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 016184 01DC1E84 00000000 */   nop
     /* 016188 01DC1E88 28264070 */  paddub     $4, $2, $0

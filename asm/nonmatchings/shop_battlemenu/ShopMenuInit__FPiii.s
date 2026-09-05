@@ -40,8 +40,8 @@ glabel ShopMenuInit__FPiii
     /* 0E7AD4 001E79D4 600222A4 */  sh         $2, %lo(ShopMenu + 0x190)($1)
     /* 0E7AD8 001E79D8 30FB040C */  jal        StartReadBG__Fv
     /* 0E7ADC 001E79DC 00000000 */   nop
-    /* 0E7AE0 001E79E0 2A00023C */  lui        $2, %hi(LIT_760)
-    /* 0E7AE4 001E79E4 50D14424 */  addiu      $4, $2, %lo(LIT_760)
+    /* 0E7AE0 001E79E0 2A00023C */  lui        $2, %hi("@760")
+    /* 0E7AE4 001E79E4 50D14424 */  addiu      $4, $2, %lo("@760")
     /* 0E7AE8 001E79E8 282E6072 */  paddub     $5, $19, $0
     /* 0E7AEC 001E79EC ACAE080C */  jal        LoadFileBGMenuData__FPcP1
     /* 0E7AF0 001E79F0 00000000 */   nop
@@ -97,8 +97,8 @@ glabel ShopMenuInit__FPiii
     /* 0E7BB8 001E7AB8 500222A4 */  sh         $2, %lo(ShopMenu + 0x180)($1)
     /* 0E7BBC 001E7ABC C701023C */  lui        $2, %hi(TexManager)
     /* 0E7BC0 001E7AC0 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0E7BC4 001E7AC4 2A00023C */  lui        $2, %hi(LIT_761)
-    /* 0E7BC8 001E7AC8 60D14524 */  addiu      $5, $2, %lo(LIT_761)
+    /* 0E7BC4 001E7AC4 2A00023C */  lui        $2, %hi("@761")
+    /* 0E7BC8 001E7AC8 60D14524 */  addiu      $5, $2, %lo("@761")
     /* 0E7BCC 001E7ACC FFFF0624 */  addiu      $6, $0, -0x1
     /* 0E7BD0 001E7AD0 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0E7BD4 001E7AD4 00000000 */   nop

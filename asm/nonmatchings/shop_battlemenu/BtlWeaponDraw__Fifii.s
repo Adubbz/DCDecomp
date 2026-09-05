@@ -25,13 +25,13 @@ glabel BtlWeaponDraw__Fifii
     /* 0FB8A8 001FB7A8 B000A2AF */  sw         $2, 0xB0($29)
     /* 0FB8AC 001FB7AC DA01013C */  lui        $1, %hi(WepMenu + 0x4)
     /* 0FB8B0 001FB7B0 74EA3E80 */  lb         $30, %lo(WepMenu + 0x4)($1)
-    /* 0FB8B4 001FB7B4 2900023C */  lui        $2, %hi(LIT_2195)
-    /* 0FB8B8 001FB7B8 F0314224 */  addiu      $2, $2, %lo(LIT_2195)
+    /* 0FB8B4 001FB7B4 2900023C */  lui        $2, %hi("@2195")
+    /* 0FB8B8 001FB7B8 F0314224 */  addiu      $2, $2, %lo("@2195")
     /* 0FB8BC 001FB7BC C000A527 */  addiu      $5, $29, 0xC0
     /* 0FB8C0 001FB7C0 00004278 */  lq         $2, 0x0($2)
     /* 0FB8C4 001FB7C4 0000A27C */  sq         $2, 0x0($5)
-    /* 0FB8C8 001FB7C8 2900023C */  lui        $2, %hi(LIT_2196)
-    /* 0FB8CC 001FB7CC 00324224 */  addiu      $2, $2, %lo(LIT_2196)
+    /* 0FB8C8 001FB7C8 2900023C */  lui        $2, %hi("@2196")
+    /* 0FB8CC 001FB7CC 00324224 */  addiu      $2, $2, %lo("@2196")
     /* 0FB8D0 001FB7D0 D000A327 */  addiu      $3, $29, 0xD0
     /* 0FB8D4 001FB7D4 00004278 */  lq         $2, 0x0($2)
     /* 0FB8D8 001FB7D8 0000627C */  sq         $2, 0x0($3)
@@ -55,16 +55,16 @@ glabel BtlWeaponDraw__Fifii
     /* 0FB920 001FB820 F800A2AF */  sw         $2, 0xF8($29)
     /* 0FB924 001FB824 F400A2AF */  sw         $2, 0xF4($29)
     /* 0FB928 001FB828 F000A2AF */  sw         $2, 0xF0($29)
-    /* 0FB92C 001FB82C 2900023C */  lui        $2, %hi(LIT_2197)
-    /* 0FB930 001FB830 10324224 */  addiu      $2, $2, %lo(LIT_2197)
+    /* 0FB92C 001FB82C 2900023C */  lui        $2, %hi("@2197")
+    /* 0FB930 001FB830 10324224 */  addiu      $2, $2, %lo("@2197")
     /* 0FB934 001FB834 8001A527 */  addiu      $5, $29, 0x180
     /* 0FB938 001FB838 00004278 */  lq         $2, 0x0($2)
     /* 0FB93C 001FB83C 0000A27C */  sq         $2, 0x0($5)
     /* 0FB940 001FB840 9001A427 */  addiu      $4, $29, 0x190
     /* 0FB944 001FB844 9285040C */  jal        sceVu0Normalize
     /* 0FB948 001FB848 00000000 */   nop
-    /* 0FB94C 001FB84C 2900023C */  lui        $2, %hi(LIT_2198)
-    /* 0FB950 001FB850 20324524 */  addiu      $5, $2, %lo(LIT_2198)
+    /* 0FB94C 001FB84C 2900023C */  lui        $2, %hi("@2198")
+    /* 0FB950 001FB850 20324524 */  addiu      $5, $2, %lo("@2198")
     /* 0FB954 001FB854 A001A427 */  addiu      $4, $29, 0x1A0
     /* 0FB958 001FB858 04000324 */  addiu      $3, $0, 0x4
   .L001FB85C:
@@ -75,8 +75,8 @@ glabel BtlWeaponDraw__Fifii
     /* 0FB96C 001FB86C 10008424 */  addiu      $4, $4, 0x10
     /* 0FB970 001FB870 FAFF601C */  bgtz       $3, .L001FB85C
     /* 0FB974 001FB874 00000000 */   nop
-    /* 0FB978 001FB878 2900023C */  lui        $2, %hi(LIT_2199)
-    /* 0FB97C 001FB87C 60324524 */  addiu      $5, $2, %lo(LIT_2199)
+    /* 0FB978 001FB878 2900023C */  lui        $2, %hi("@2199")
+    /* 0FB97C 001FB87C 60324524 */  addiu      $5, $2, %lo("@2199")
     /* 0FB980 001FB880 E001A427 */  addiu      $4, $29, 0x1E0
     /* 0FB984 001FB884 04000324 */  addiu      $3, $0, 0x4
   .L001FB888:
@@ -243,8 +243,8 @@ glabel BtlWeaponDraw__Fifii
     /* 0FBBCC 001FBACC F494848F */  lw         $4, -0x6B0C($28)
     /* 0FBBD0 001FBAD0 38B4080C */  jal        MenuTextureReload__Fi
     /* 0FBBD4 001FBAD4 00000000 */   nop
-    /* 0FBBD8 001FBAD8 2900023C */  lui        $2, %hi(LIT_2250)
-    /* 0FBBDC 001FBADC A0324224 */  addiu      $2, $2, %lo(LIT_2250)
+    /* 0FBBD8 001FBAD8 2900023C */  lui        $2, %hi("@2250")
+    /* 0FBBDC 001FBADC A0324224 */  addiu      $2, $2, %lo("@2250")
     /* 0FBBE0 001FBAE0 2002A427 */  addiu      $4, $29, 0x220
     /* 0FBBE4 001FBAE4 00004378 */  lq         $3, 0x0($2)
     /* 0FBBE8 001FBAE8 100042DC */  ld         $2, 0x10($2)
@@ -335,8 +335,8 @@ glabel BtlWeaponDraw__Fifii
     /* 0FBD28 001FBC28 82000524 */  addiu      $5, $0, 0x82
     /* 0FBD2C 001FBC2C B4000624 */  addiu      $6, $0, 0xB4
     /* 0FBD30 001FBC30 96000724 */  addiu      $7, $0, 0x96
-    /* 0FBD34 001FBC34 2A00023C */  lui        $2, %hi(LIT_931__4)
-    /* 0FBD38 001FBC38 38D54824 */  addiu      $8, $2, %lo(LIT_931__4)
+    /* 0FBD34 001FBC34 2A00023C */  lui        $2, %hi("@931__4")
+    /* 0FBD38 001FBC38 38D54824 */  addiu      $8, $2, %lo("@931__4")
     /* 0FBD3C 001FBC3C 284E0070 */  paddub     $9, $0, $0
     /* 0FBD40 001FBC40 28562072 */  paddub     $10, $17, $0
     /* 0FBD44 001FBC44 1C30080C */  jal        DrawMenuNothing__FiiiiPcii
@@ -467,8 +467,8 @@ glabel BtlWeaponDraw__Fifii
     /* 0FBF08 001FBE08 CC000524 */  addiu      $5, $0, 0xCC
     /* 0FBF0C 001FBE0C AE010624 */  addiu      $6, $0, 0x1AE
     /* 0FBF10 001FBE10 D2000724 */  addiu      $7, $0, 0xD2
-    /* 0FBF14 001FBE14 2A00023C */  lui        $2, %hi(LIT_924__2)
-    /* 0FBF18 001FBE18 E8D44824 */  addiu      $8, $2, %lo(LIT_924__2)
+    /* 0FBF14 001FBE14 2A00023C */  lui        $2, %hi("@924__2")
+    /* 0FBF18 001FBE18 E8D44824 */  addiu      $8, $2, %lo("@924__2")
     /* 0FBF1C 001FBE1C 7CB6080C */  jal        FadeTexX__FiiiiPci
     /* 0FBF20 001FBE20 00000000 */   nop
   .L001FBE24:

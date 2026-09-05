@@ -324,8 +324,8 @@ glabel GetRoomLinkInfo__11CDungeonMapFv
     /* 0C9B64 001C9A64 07000010 */  b          .L001C9A84
     /* 0C9B68 001C9A68 00000000 */   nop
   .L001C9A6C:
-    /* 0C9B6C 001C9A6C 2A00023C */  lui        $2, %hi(LIT_2859)
-    /* 0C9B70 001C9A70 D8BE4424 */  addiu      $4, $2, %lo(LIT_2859)
+    /* 0C9B6C 001C9A6C 2A00023C */  lui        $2, %hi("@2859")
+    /* 0C9B70 001C9A70 D8BE4424 */  addiu      $4, $2, %lo("@2859")
     /* 0C9B74 001C9A74 A611040C */  jal        printf
     /* 0C9B78 001C9A78 00000000 */   nop
     /* 0C9B7C 001C9A7C E5010010 */  b          .L001CA214
@@ -696,8 +696,8 @@ glabel GetRoomLinkInfo__11CDungeonMapFv
     /* 0CA0B8 001C9FB8 00000000 */   nop
     /* 0CA0BC 001C9FBC 93000016 */  bnez       $16, .L001CA20C
     /* 0CA0C0 001C9FC0 00000000 */   nop
-    /* 0CA0C4 001C9FC4 2A00023C */  lui        $2, %hi(LIT_2860)
-    /* 0CA0C8 001C9FC8 F0BE4424 */  addiu      $4, $2, %lo(LIT_2860)
+    /* 0CA0C4 001C9FC4 2A00023C */  lui        $2, %hi("@2860")
+    /* 0CA0C8 001C9FC8 F0BE4424 */  addiu      $4, $2, %lo("@2860")
     /* 0CA0CC 001C9FCC A611040C */  jal        printf
     /* 0CA0D0 001C9FD0 00000000 */   nop
     /* 0CA0D4 001C9FD4 28A60070 */  paddub     $20, $0, $0

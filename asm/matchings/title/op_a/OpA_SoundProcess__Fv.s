@@ -322,8 +322,8 @@ glabel OpA_SoundProcess__Fv
     /* 00C330 01DB8030 FFFF6224 */  addiu      $2, $3, -0x1
     /* 00C334 01DB8034 549982AF */  sw         $2, %gp_rel(wait$970)($28)
   .L01DB8038:
-    /* 00C338 01DB8038 DD01023C */  lui        $2, %hi(LIT_987__2)
-    /* 00C33C 01DB803C A0674224 */  addiu      $2, $2, %lo(LIT_987__2)
+    /* 00C338 01DB8038 DD01023C */  lui        $2, %hi("@987__2")
+    /* 00C33C 01DB803C A0674224 */  addiu      $2, $2, %lo("@987__2")
     /* 00C340 01DB8040 4000A427 */  addiu      $4, $29, 0x40
     /* 00C344 01DB8044 00004278 */  lq         $2, 0x0($2)
     /* 00C348 01DB8048 0000827C */  sq         $2, 0x0($4)
@@ -381,8 +381,8 @@ glabel OpA_SoundProcess__Fv
     /* 00C408 01DB8108 2C000324 */  addiu      $3, $0, 0x2C
     /* 00C40C 01DB810C 1500C310 */  beq        $6, $3, .L01DB8164
     /* 00C410 01DB8110 00000000 */   nop
-    /* 00C414 01DB8114 DD01023C */  lui        $2, %hi(LIT_1004__3)
-    /* 00C418 01DB8118 B0674224 */  addiu      $2, $2, %lo(LIT_1004__3)
+    /* 00C414 01DB8114 DD01023C */  lui        $2, %hi("@1004__3")
+    /* 00C418 01DB8118 B0674224 */  addiu      $2, $2, %lo("@1004__3")
     /* 00C41C 01DB811C 5000A427 */  addiu      $4, $29, 0x50
     /* 00C420 01DB8120 00004278 */  lq         $2, 0x0($2)
     /* 00C424 01DB8124 0000827C */  sq         $2, 0x0($4)
@@ -443,8 +443,8 @@ glabel OpA_SoundProcess__Fv
     /* 00C4F0 01DB81F0 FDFF4014 */  bnez       $2, .L01DB81E8
     /* 00C4F4 01DB81F4 00000000 */   nop
     /* 00C4F8 01DB81F8 948B858F */  lw         $5, -0x746C($28)
-    /* 00C4FC 01DB81FC DE01023C */  lui        $2, %hi(LIT_1030)
-    /* 00C500 01DB8200 50DF4424 */  addiu      $4, $2, %lo(LIT_1030)
+    /* 00C4FC 01DB81FC DE01023C */  lui        $2, %hi("@1030")
+    /* 00C500 01DB8200 50DF4424 */  addiu      $4, $2, %lo("@1030")
     /* 00C504 01DB8204 28360070 */  paddub     $6, $0, $0
     /* 00C508 01DB8208 ACFA040C */  jal        LoadFileBG__FPcP1Pi
     /* 00C50C 01DB820C 00000000 */   nop
@@ -481,8 +481,8 @@ glabel OpA_SoundProcess__Fv
     /* 00C57C 01DB827C 140F050C */  jal        SetReverb__6CSoundFiii
     /* 00C580 01DB8280 00000000 */   nop
     /* 00C584 01DB8284 3C8D8427 */  addiu      $4, $28, -0x72C4
-    /* 00C588 01DB8288 DE01023C */  lui        $2, %hi(LIT_1031__2)
-    /* 00C58C 01DB828C 70DF4524 */  addiu      $5, $2, %lo(LIT_1031__2)
+    /* 00C588 01DB8288 DE01023C */  lui        $2, %hi("@1031__2")
+    /* 00C58C 01DB828C 70DF4524 */  addiu      $5, $2, %lo("@1031__2")
     /* 00C590 01DB8290 948B868F */  lw         $6, -0x746C($28)
     /* 00C594 01DB8294 3410050C */  jal        LoadSoundFileFromPack__6CSoundFPcPUi
     /* 00C598 01DB8298 00000000 */   nop

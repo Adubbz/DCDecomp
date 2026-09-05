@@ -108,7 +108,7 @@ def retail_constant(name):
              + unit_dumps())
     for path in paths:
         text = path.read_text(encoding="utf-8", errors="ignore")
-        match = re.search(r"^glabel %s$" % re.escape(name), text, re.M)
+        match = re.search(glabel_pattern(name), text, re.M)
         if not match:
             continue
         out = bytearray()
@@ -170,13 +170,24 @@ def export_constants(path, names, parser, assembly_constants=()):
     # INCLUDE_RODATA may already have spliced an undecompiled constant into
     # the object. In that case it has its retail name and needs no compiler
     # constant alias.
+    elf = Elf(path.read_bytes())
     defined = {
         symbol.name
-        for symbol in Elf(path.read_bytes()).symtab.symbols
+        for symbol in elf.symtab.symbols
         if symbol.st_shndx != 0
     }
-    compiled = compiled_constants(path)
+    compiled_symbols = {
+        symbol.name: symbol
+        for symbol in elf.symtab.symbols
+        if symbol.bind == 0 and symbol.name.startswith("@")
+        and 0 < symbol.st_shndx < len(elf.sections)
+    }
+    compiled = {
+        name: elf.sections[symbol.st_shndx].data
+        for name, symbol in compiled_symbols.items()
+    }
     arguments = []
+    padded = False
     for name in names:
         if name in defined:
             continue
@@ -189,8 +200,25 @@ def export_constants(path, names, parser, assembly_constants=()):
             continue
         if len(matches) != 1:
             parser.error(f"{name!r} matches {len(matches)} constants in {path}")
-        arguments += ["--redefine-sym", f"{matches[0]}={name}",
+        # MWLD recognizes a local `@N` as a compiler constant and rounds its
+        # contribution to eight bytes, ignoring a larger section alignment.
+        # Preserve the explicit zero tail in retail's dump inside the section
+        # itself so the following constant still begins at its retail address.
+        old = matches[0]
+        section = elf.sections[compiled_symbols[old].st_shndx]
+        if len(wanted) > len(section.data):
+            tail = wanted[len(section.data):]
+            if any(tail):
+                parser.error(f"{name!r} has nonzero bytes beyond its compiler "
+                             f"constant in {path}")
+            section.data = wanted
+            section.sh_size = len(wanted)
+            compiled[old] = wanted
+            padded = True
+        arguments += ["--redefine-sym", f"{old}={name}",
                       "--globalize-symbol", name]
+    if padded:
+        path.write_bytes(elf.pack())
     objcopy = os.environ.get("MIPS_TOOL_PREFIX", "mips-ps2-decompals-") + "objcopy"
     subprocess.run([objcopy] + arguments + [str(path), str(path)], check=True)
 
@@ -261,6 +289,13 @@ def retail_addresses():
 def rodata_alignment(names):
     """The slot retail gave a constant, or none where it names no address."""
     for name in names:
+        # MWCC assigns @N independently in every translation unit. A compiled
+        # @N can share a spelling with an unrelated retail constant, so its
+        # number cannot be used as an address-stable identity. Transplanted
+        # retail constants are still named .rodata.gap at this point and do
+        # not pass through this fallback.
+        if name.startswith("@"):
+            continue
         address = retail_addresses().get(name)
         if address:
             return next(a for a in RODATA_ALIGNMENTS if address % a == 0)
@@ -303,20 +338,25 @@ def rename_sections(elf, mappings, parser):
             renamed[index] = section_name
 
 
-# A datum the compiler invented a name for: `@N` in retail's own build shows
-# up in the dump as `LIT_N`, a function-local static as `name$N`.
-NUMBERED_DATUM = re.compile(r"^(?:LIT_\d+|[A-Za-z_]\w*\$\d+)(?:__\d+)?$")
+# A datum the compiler invented a name for: `@N`, or a function-local static
+# named `name$N`.
+NUMBERED_DATUM = re.compile(r"^(?:@\d+|[A-Za-z_]\w*\$\d+)(?:__\d+)?$")
+
+
+def glabel_pattern(name):
+    """Match an assembly global label with an optional pair of quotes."""
+    return r'^glabel "?%s"?$' % re.escape(name)
 
 
 def dump_data_symbols(name):
     """The symbols of the `.data` dump that defines `name`, in address order."""
     for path in sorted(ROOT.glob("asm/data/*/*.data.s")):
         text = path.read_text(encoding="utf-8", errors="ignore")
-        if not re.search(r"^glabel %s$" % re.escape(name), text, re.M):
+        if not re.search(glabel_pattern(name), text, re.M):
             continue
         out, pending = [], None
         for line in text.splitlines():
-            label = re.match(r"glabel (\S+)\s*$", line)
+            label = re.match(r'glabel "?([^"\s]+)"?\s*$', line)
             if label:
                 pending = label.group(1)
             elif pending and DUMP_BYTES.match(line):

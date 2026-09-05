@@ -102,15 +102,15 @@ glabel SearchItem__10CStockItemFi
   .L0023F9D4:
     /* 13FAD4 0023F9D4 07000012 */  beqz       $16, .L0023F9F4
     /* 13FAD8 0023F9D8 00000000 */   nop
-    /* 13FADC 0023F9DC 2A00023C */  lui        $2, %hi(LIT_352__2)
-    /* 13FAE0 0023F9E0 00FC4424 */  addiu      $4, $2, %lo(LIT_352__2)
+    /* 13FADC 0023F9DC 2A00023C */  lui        $2, %hi("@352__2")
+    /* 13FAE0 0023F9E0 00FC4424 */  addiu      $4, $2, %lo("@352__2")
     /* 13FAE4 0023F9E4 A611040C */  jal        printf
     /* 13FAE8 0023F9E8 00000000 */   nop
     /* 13FAEC 0023F9EC 05000010 */  b          .L0023FA04
     /* 13FAF0 0023F9F0 00000000 */   nop
   .L0023F9F4:
-    /* 13FAF4 0023F9F4 2A00023C */  lui        $2, %hi(LIT_353__6)
-    /* 13FAF8 0023F9F8 20FC4424 */  addiu      $4, $2, %lo(LIT_353__6)
+    /* 13FAF4 0023F9F4 2A00023C */  lui        $2, %hi("@353__6")
+    /* 13FAF8 0023F9F8 20FC4424 */  addiu      $4, $2, %lo("@353__6")
     /* 13FAFC 0023F9FC A611040C */  jal        printf
     /* 13FB00 0023FA00 00000000 */   nop
   .L0023FA04:

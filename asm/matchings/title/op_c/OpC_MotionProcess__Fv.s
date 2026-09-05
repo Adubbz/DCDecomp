@@ -97,8 +97,8 @@ glabel OpC_MotionProcess__Fv
     /* 013754 01DBF454 17004328 */  slti       $3, $2, 0x17
     /* 013758 01DBF458 B1FF6014 */  bnez       $3, .L01DBF320
     /* 01375C 01DBF45C 00000000 */   nop
-    /* 013760 01DBF460 DE01023C */  lui        $2, %hi(LIT_886__6)
-    /* 013764 01DBF464 B0A44524 */  addiu      $5, $2, %lo(LIT_886__6)
+    /* 013760 01DBF460 DE01023C */  lui        $2, %hi("@886__6")
+    /* 013764 01DBF464 B0A44524 */  addiu      $5, $2, %lo("@886__6")
     /* 013768 01DBF468 4000A427 */  addiu      $4, $29, 0x40
     /* 01376C 01DBF46C 05000324 */  addiu      $3, $0, 0x5
   .L01DBF470:
@@ -178,8 +178,8 @@ glabel OpC_MotionProcess__Fv
     /* 013888 01DBF588 00000000 */   nop
     /* 01388C 01DBF58C DF01013C */  lui        $1, %hi(Chara__3 + 0x126C)
     /* 013890 01DBF590 4C11248C */  lw         $4, %lo(Chara__3 + 0x126C)($1)
-    /* 013894 01DBF594 DE01023C */  lui        $2, %hi(LIT_976)
-    /* 013898 01DBF598 00F94524 */  addiu      $5, $2, %lo(LIT_976)
+    /* 013894 01DBF594 DE01023C */  lui        $2, %hi("@976")
+    /* 013898 01DBF598 00F94524 */  addiu      $5, $2, %lo("@976")
     /* 01389C 01DBF59C C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 0138A0 01DBF5A0 00000000 */   nop
     /* 0138A4 01DBF5A4 26004010 */  beqz       $2, .L01DBF640

@@ -173,8 +173,8 @@ glabel TEIGIAnalyz__FPc
     /* 0CE404 001CE304 FFFF0224 */  addiu      $2, $0, -0x1
     /* 0CE408 001CE308 09000216 */  bne        $16, $2, .L001CE330
     /* 0CE40C 001CE30C 00000000 */   nop
-    /* 0CE410 001CE310 2A00023C */  lui        $2, %hi(LIT_762)
-    /* 0CE414 001CE314 20C24424 */  addiu      $4, $2, %lo(LIT_762)
+    /* 0CE410 001CE310 2A00023C */  lui        $2, %hi("@762")
+    /* 0CE414 001CE314 20C24424 */  addiu      $4, $2, %lo("@762")
     /* 0CE418 001CE318 0000A58E */  lw         $5, 0x0($21)
     /* 0CE41C 001CE31C A611040C */  jal        printf
     /* 0CE420 001CE320 00000000 */   nop
@@ -195,8 +195,8 @@ glabel TEIGIAnalyz__FPc
     /* 0CE454 001CE354 80024228 */  slti       $2, $2, 0x280
     /* 0CE458 001CE358 07004014 */  bnez       $2, .L001CE378
     /* 0CE45C 001CE35C 00000000 */   nop
-    /* 0CE460 001CE360 2A00023C */  lui        $2, %hi(LIT_763)
-    /* 0CE464 001CE364 30C24424 */  addiu      $4, $2, %lo(LIT_763)
+    /* 0CE460 001CE360 2A00023C */  lui        $2, %hi("@763")
+    /* 0CE464 001CE364 30C24424 */  addiu      $4, $2, %lo("@763")
     /* 0CE468 001CE368 A611040C */  jal        printf
     /* 0CE46C 001CE36C 00000000 */   nop
   .L001CE370:
@@ -220,8 +220,8 @@ glabel TEIGIAnalyz__FPc
     /* 0CE4A4 001CE3A4 09004016 */  bnez       $18, .L001CE3CC
     /* 0CE4A8 001CE3A8 00000000 */   nop
     /* 0CE4AC 001CE3AC 21289002 */  addu       $5, $20, $16
-    /* 0CE4B0 001CE3B0 2A00023C */  lui        $2, %hi(LIT_764)
-    /* 0CE4B4 001CE3B4 50C24424 */  addiu      $4, $2, %lo(LIT_764)
+    /* 0CE4B0 001CE3B0 2A00023C */  lui        $2, %hi("@764")
+    /* 0CE4B4 001CE3B4 50C24424 */  addiu      $4, $2, %lo("@764")
     /* 0CE4B8 001CE3B8 A611040C */  jal        printf
     /* 0CE4BC 001CE3BC 00000000 */   nop
     /* 0CE4C0 001CE3C0 FFFF0424 */  addiu      $4, $0, -0x1
@@ -242,8 +242,8 @@ glabel TEIGIAnalyz__FPc
     /* 0CE4F4 001CE3F4 7E000324 */  addiu      $3, $0, 0x7E
     /* 0CE4F8 001CE3F8 07008310 */  beq        $4, $3, .L001CE418
     /* 0CE4FC 001CE3FC 00000000 */   nop
-    /* 0CE500 001CE400 2A00023C */  lui        $2, %hi(LIT_765)
-    /* 0CE504 001CE404 70C24424 */  addiu      $4, $2, %lo(LIT_765)
+    /* 0CE500 001CE400 2A00023C */  lui        $2, %hi("@765")
+    /* 0CE504 001CE404 70C24424 */  addiu      $4, $2, %lo("@765")
     /* 0CE508 001CE408 A611040C */  jal        printf
     /* 0CE50C 001CE40C 00000000 */   nop
   .L001CE410:

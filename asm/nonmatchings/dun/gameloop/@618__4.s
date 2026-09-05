@@ -1,0 +1,11 @@
+.include "macro.inc"
+.section .rodata
+.align 4
+
+glabel "@618__4"
+    /* 016CA0 01DC29A0 64756E2F */ .word 0x2F6E7564
+    /* 016CA4 01DC29A4 6574632F */ .word 0x2F637465
+    /* 016CA8 01DC29A8 63757273 */ .word 0x73727563
+    /* 016CAC 01DC29AC 6F722E69 */ .word 0x692E726F
+    /* 016CB0 01DC29B0 6D670000 */ .word 0x0000676D
+    /* 016CB4 01DC29B4 00000000 */ .word 0x00000000

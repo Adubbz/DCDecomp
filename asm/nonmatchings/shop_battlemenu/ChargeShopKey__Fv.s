@@ -284,8 +284,8 @@ glabel ChargeShopKey__Fv
     /* 0E8E30 001E8D30 DC005524 */  addiu      $21, $2, 0xDC
     /* 0E8E34 001E8D34 DC004284 */  lh         $2, 0xDC($2)
     /* 0E8E38 001E8D38 9000A2AF */  sw         $2, 0x90($29)
-    /* 0E8E3C 001E8D3C 2A00023C */  lui        $2, %hi(LIT_1180)
-    /* 0E8E40 001E8D40 30D24424 */  addiu      $4, $2, %lo(LIT_1180)
+    /* 0E8E3C 001E8D3C 2A00023C */  lui        $2, %hi("@1180")
+    /* 0E8E40 001E8D40 30D24424 */  addiu      $4, $2, %lo("@1180")
     /* 0E8E44 001E8D44 9000A58F */  lw         $5, 0x90($29)
     /* 0E8E48 001E8D48 A611040C */  jal        printf
     /* 0E8E4C 001E8D4C 00000000 */   nop
@@ -1477,8 +1477,8 @@ glabel ChargeShopKey__Fv
     /* 0E9F6C 001E9E6C 00000000 */   nop
     /* 0E9F70 001E9E70 288E0070 */  paddub     $17, $0, $0
   .L001E9E74:
-    /* 0E9F74 001E9E74 2A00023C */  lui        $2, %hi(LIT_1181)
-    /* 0E9F78 001E9E78 48D24424 */  addiu      $4, $2, %lo(LIT_1181)
+    /* 0E9F74 001E9E74 2A00023C */  lui        $2, %hi("@1181")
+    /* 0E9F78 001E9E78 48D24424 */  addiu      $4, $2, %lo("@1181")
     /* 0E9F7C 001E9E7C 282E2072 */  paddub     $5, $17, $0
     /* 0E9F80 001E9E80 A611040C */  jal        printf
     /* 0E9F84 001E9E84 00000000 */   nop

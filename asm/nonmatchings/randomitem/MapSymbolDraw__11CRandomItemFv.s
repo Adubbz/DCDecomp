@@ -14,8 +14,8 @@ glabel MapSymbolDraw__11CRandomItemFv
     /* 0D6EBC 001D6DBC 28A68070 */  paddub     $20, $4, $0
     /* 0D6EC0 001D6DC0 C701023C */  lui        $2, %hi(TexManager)
     /* 0D6EC4 001D6DC4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0D6EC8 001D6DC8 2A00023C */  lui        $2, %hi(LIT_1383)
-    /* 0D6ECC 001D6DCC F0CE4524 */  addiu      $5, $2, %lo(LIT_1383)
+    /* 0D6EC8 001D6DC8 2A00023C */  lui        $2, %hi("@1383")
+    /* 0D6ECC 001D6DCC F0CE4524 */  addiu      $5, $2, %lo("@1383")
     /* 0D6ED0 001D6DD0 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0D6ED4 001D6DD4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0D6ED8 001D6DD8 00000000 */   nop

@@ -14,8 +14,8 @@ glabel MapLoad__Fv
     /* 0128BC 01DBE5BC 2000B27F */  sq         $18, 0x20($29)
     /* 0128C0 01DBE5C0 1000B17F */  sq         $17, 0x10($29)
     /* 0128C4 01DBE5C4 0000B07F */  sq         $16, 0x0($29)
-    /* 0128C8 01DBE5C8 DD01023C */  lui        $2, %hi(LIT_649__4)
-    /* 0128CC 01DBE5CC 307F4624 */  addiu      $6, $2, %lo(LIT_649__4)
+    /* 0128C8 01DBE5C8 DD01023C */  lui        $2, %hi("@649__4")
+    /* 0128CC 01DBE5CC 307F4624 */  addiu      $6, $2, %lo("@649__4")
     /* 0128D0 01DBE5D0 9000A527 */  addiu      $5, $29, 0x90
     /* 0128D4 01DBE5D4 4B000424 */  addiu      $4, $0, 0x4B
   .L01DBE5D8:
@@ -205,16 +205,16 @@ glabel MapLoad__Fv
     /* 012BA0 01DBE8A0 09F82003 */  jalr       $25
     /* 012BA4 01DBE8A4 00000000 */   nop
     /* 012BA8 01DBE8A8 28266072 */  paddub     $4, $19, $0
-    /* 012BAC 01DBE8AC DE01023C */  lui        $2, %hi(LIT_739__2)
-    /* 012BB0 01DBE8B0 E8F54524 */  addiu      $5, $2, %lo(LIT_739__2)
+    /* 012BAC 01DBE8AC DE01023C */  lui        $2, %hi("@739__2")
+    /* 012BB0 01DBE8B0 E8F54524 */  addiu      $5, $2, %lo("@739__2")
     /* 012BB4 01DBE8B4 28360070 */  paddub     $6, $0, $0
     /* 012BB8 01DBE8B8 A000798E */  lw         $25, 0xA0($19)
     /* 012BBC 01DBE8BC 9000398F */  lw         $25, 0x90($25)
     /* 012BC0 01DBE8C0 09F82003 */  jalr       $25
     /* 012BC4 01DBE8C4 00000000 */   nop
     /* 012BC8 01DBE8C8 28266072 */  paddub     $4, $19, $0
-    /* 012BCC 01DBE8CC DE01023C */  lui        $2, %hi(LIT_740__2)
-    /* 012BD0 01DBE8D0 F0F54524 */  addiu      $5, $2, %lo(LIT_740__2)
+    /* 012BCC 01DBE8CC DE01023C */  lui        $2, %hi("@740__2")
+    /* 012BD0 01DBE8D0 F0F54524 */  addiu      $5, $2, %lo("@740__2")
     /* 012BD4 01DBE8D4 28360070 */  paddub     $6, $0, $0
     /* 012BD8 01DBE8D8 A000798E */  lw         $25, 0xA0($19)
     /* 012BDC 01DBE8DC 9000398F */  lw         $25, 0x90($25)
@@ -245,8 +245,8 @@ glabel MapLoad__Fv
     /* 012C38 01DBE938 4B00232A */  slti       $3, $17, 0x4B
     /* 012C3C 01DBE93C 39FF6014 */  bnez       $3, .L01DBE624
     /* 012C40 01DBE940 00000000 */   nop
-    /* 012C44 01DBE944 DE01033C */  lui        $3, %hi(LIT_677__2)
-    /* 012C48 01DBE948 90886724 */  addiu      $7, $3, %lo(LIT_677__2)
+    /* 012C44 01DBE944 DE01033C */  lui        $3, %hi("@677__2")
+    /* 012C48 01DBE948 90886724 */  addiu      $7, $3, %lo("@677__2")
     /* 012C4C 01DBE94C 500AA627 */  addiu      $6, $29, 0xA50
     /* 012C50 01DBE950 57000524 */  addiu      $5, $0, 0x57
   .L01DBE954:
@@ -304,8 +304,8 @@ glabel MapLoad__Fv
     /* 012D10 01DBEA10 0F000016 */  bnez       $16, .L01DBEA50
     /* 012D14 01DBEA14 00000000 */   nop
     /* 012D18 01DBEA18 28264072 */  paddub     $4, $18, $0
-    /* 012D1C 01DBEA1C DE01023C */  lui        $2, %hi(LIT_741__3)
-    /* 012D20 01DBEA20 F8F54524 */  addiu      $5, $2, %lo(LIT_741__3)
+    /* 012D1C 01DBEA1C DE01023C */  lui        $2, %hi("@741__3")
+    /* 012D20 01DBEA20 F8F54524 */  addiu      $5, $2, %lo("@741__3")
     /* 012D24 01DBEA24 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 012D28 01DBEA28 00000000 */   nop
     /* 012D2C 01DBEA2C C843033C */  lui        $3, (0x43C80000 >> 16)

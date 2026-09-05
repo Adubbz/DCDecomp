@@ -6,8 +6,8 @@
 glabel DrawWeaponStatusWaku__Fiiii
     /* 0F9F40 001F9E40 D0FFBD27 */  addiu      $29, $29, -0x30
     /* 0F9F44 001F9E44 0000BF7F */  sq         $31, 0x0($29)
-    /* 0F9F48 001F9E48 2900023C */  lui        $2, %hi(LIT_1879)
-    /* 0F9F4C 001F9E4C 80304224 */  addiu      $2, $2, %lo(LIT_1879)
+    /* 0F9F48 001F9E48 2900023C */  lui        $2, %hi("@1879")
+    /* 0F9F4C 001F9E4C 80304224 */  addiu      $2, $2, %lo("@1879")
     /* 0F9F50 001F9E50 1000A327 */  addiu      $3, $29, 0x10
     /* 0F9F54 001F9E54 00004278 */  lq         $2, 0x0($2)
     /* 0F9F58 001F9E58 0000627C */  sq         $2, 0x0($3)

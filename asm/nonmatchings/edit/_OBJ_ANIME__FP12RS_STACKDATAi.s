@@ -32,8 +32,8 @@ glabel _OBJ_ANIME__FP12RS_STACKDATAi
     /* 094DD4 00194CD4 D428060C */  jal        GetStackInt__FP12RS_STACKDATA
     /* 094DD8 00194CD8 00000000 */   nop
     /* 094DDC 00194CDC 289E4070 */  paddub     $19, $2, $0
-    /* 094DE0 00194CE0 2700023C */  lui        $2, %hi(LIT_2032)
-    /* 094DE4 00194CE4 309C4224 */  addiu      $2, $2, %lo(LIT_2032)
+    /* 094DE0 00194CE0 2700023C */  lui        $2, %hi("@2032")
+    /* 094DE4 00194CE4 309C4224 */  addiu      $2, $2, %lo("@2032")
     /* 094DE8 00194CE8 7000A527 */  addiu      $5, $29, 0x70
     /* 094DEC 00194CEC 00004278 */  lq         $2, 0x0($2)
     /* 094DF0 00194CF0 0000A27C */  sq         $2, 0x0($5)

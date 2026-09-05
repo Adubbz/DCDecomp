@@ -9,24 +9,24 @@
 
 #include "runscript.hpp"
 
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_348__4);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_481__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_663__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_781__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_782__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_783__5);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_784__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_785);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_786);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_787__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_788__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_789__4);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_1349__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_1350__5);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_1505);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_1511__4);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_1558__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_1559__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @348__4);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @481__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @663__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @781__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @782__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @783__5);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @784__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @785);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @786);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @787__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @788__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @789__4);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1349__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1350__5);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1505);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1511__4);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1558__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1559__3);
 
 INCLUDE_ASM("asm/nonmatchings/battle_globals", GlobalNameInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/battle_globals", InitNameRegist__FiiP1);
@@ -47,7 +47,7 @@ INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawSaveBoardCharaName2__FiiPsPP8
 INCLUDE_ASM("asm/nonmatchings/battle_globals", GetMsgLengthCharaName__Fi);
 INCLUDE_ASM("asm/nonmatchings/battle_globals", InitOpeningBook__FP1Pi);
 INCLUDE_ASM("asm/nonmatchings/battle_globals", OpeningBookKey__Fv);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", LIT_1573);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1573);
 INCLUDE_ASM("asm/nonmatchings/battle_globals", OpeningBookDraw__Fv);
 
 void runerror(const char *message) {

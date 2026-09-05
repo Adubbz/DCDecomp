@@ -6,8 +6,8 @@
 glabel OpBgmPlay__Fv
     /* 0051B0 01DB0EB0 D0FFBD27 */  addiu      $29, $29, -0x30
     /* 0051B4 01DB0EB4 0000BF7F */  sq         $31, 0x0($29)
-    /* 0051B8 01DB0EB8 DD01023C */  lui        $2, %hi(LIT_970__3)
-    /* 0051BC 01DB0EBC 105C4224 */  addiu      $2, $2, %lo(LIT_970__3)
+    /* 0051B8 01DB0EB8 DD01023C */  lui        $2, %hi("@970__3")
+    /* 0051BC 01DB0EBC 105C4224 */  addiu      $2, $2, %lo("@970__3")
     /* 0051C0 01DB0EC0 1000A427 */  addiu      $4, $29, 0x10
     /* 0051C4 01DB0EC4 00004378 */  lq         $3, 0x0($2)
     /* 0051C8 01DB0EC8 10004278 */  lq         $2, 0x10($2)

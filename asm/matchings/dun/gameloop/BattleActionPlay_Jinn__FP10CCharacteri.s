@@ -106,15 +106,15 @@ glabel BattleActionPlay_Jinn__FP10CCharacteri
     /* 010DAC 01DBCAAC 28360070 */  paddub     $6, $0, $0
     /* 010DB0 01DBCAB0 AC69050C */  jal        SndSePlay__Fiii
     /* 010DB4 01DBCAB4 00000000 */   nop
-    /* 010DB8 01DBCAB8 DC01023C */  lui        $2, %hi(LIT_5687)
-    /* 010DBC 01DBCABC C0284224 */  addiu      $2, $2, %lo(LIT_5687)
+    /* 010DB8 01DBCAB8 DC01023C */  lui        $2, %hi("@5687")
+    /* 010DBC 01DBCABC C0284224 */  addiu      $2, $2, %lo("@5687")
     /* 010DC0 01DBCAC0 A000A327 */  addiu      $3, $29, 0xA0
     /* 010DC4 01DBCAC4 00004278 */  lq         $2, 0x0($2)
     /* 010DC8 01DBCAC8 0000627C */  sq         $2, 0x0($3)
     /* 010DCC 01DBCACC 009D828F */  lw         $2, -0x6300($28)
     /* 010DD0 01DBCAD0 BC00448C */  lw         $4, 0xBC($2)
-    /* 010DD4 01DBCAD4 DC01023C */  lui        $2, %hi(LIT_5735)
-    /* 010DD8 01DBCAD8 98334524 */  addiu      $5, $2, %lo(LIT_5735)
+    /* 010DD4 01DBCAD4 DC01023C */  lui        $2, %hi("@5735")
+    /* 010DD8 01DBCAD8 98334524 */  addiu      $5, $2, %lo("@5735")
     /* 010DDC 01DBCADC C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 010DE0 01DBCAE0 00000000 */   nop
     /* 010DE4 01DBCAE4 5C004010 */  beqz       $2, .L01DBCC58
@@ -249,15 +249,15 @@ glabel BattleActionPlay_Jinn__FP10CCharacteri
     /* 010FC8 01DBCCC8 28360070 */  paddub     $6, $0, $0
     /* 010FCC 01DBCCCC AC69050C */  jal        SndSePlay__Fiii
     /* 010FD0 01DBCCD0 00000000 */   nop
-    /* 010FD4 01DBCCD4 DC01023C */  lui        $2, %hi(LIT_5697)
-    /* 010FD8 01DBCCD8 D0284224 */  addiu      $2, $2, %lo(LIT_5697)
+    /* 010FD4 01DBCCD4 DC01023C */  lui        $2, %hi("@5697")
+    /* 010FD8 01DBCCD8 D0284224 */  addiu      $2, $2, %lo("@5697")
     /* 010FDC 01DBCCDC D000A327 */  addiu      $3, $29, 0xD0
     /* 010FE0 01DBCCE0 00004278 */  lq         $2, 0x0($2)
     /* 010FE4 01DBCCE4 0000627C */  sq         $2, 0x0($3)
     /* 010FE8 01DBCCE8 009D828F */  lw         $2, -0x6300($28)
     /* 010FEC 01DBCCEC BC00448C */  lw         $4, 0xBC($2)
-    /* 010FF0 01DBCCF0 DC01023C */  lui        $2, %hi(LIT_5735)
-    /* 010FF4 01DBCCF4 98334524 */  addiu      $5, $2, %lo(LIT_5735)
+    /* 010FF0 01DBCCF0 DC01023C */  lui        $2, %hi("@5735")
+    /* 010FF4 01DBCCF4 98334524 */  addiu      $5, $2, %lo("@5735")
     /* 010FF8 01DBCCF8 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 010FFC 01DBCCFC 00000000 */   nop
     /* 011000 01DBCD00 33004010 */  beqz       $2, .L01DBCDD0

@@ -13,8 +13,8 @@ glabel FrameImageDraw__Fii
     /* 12D3C8 0022D2C8 288EA070 */  paddub     $17, $5, $0
     /* 12D3CC 0022D2CC C701023C */  lui        $2, %hi(TexManager)
     /* 12D3D0 0022D2D0 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 12D3D4 0022D2D4 2A00023C */  lui        $2, %hi(LIT_764__3)
-    /* 12D3D8 0022D2D8 98F14524 */  addiu      $5, $2, %lo(LIT_764__3)
+    /* 12D3D4 0022D2D4 2A00023C */  lui        $2, %hi("@764__3")
+    /* 12D3D8 0022D2D8 98F14524 */  addiu      $5, $2, %lo("@764__3")
     /* 12D3DC 0022D2DC FFFF0624 */  addiu      $6, $0, -0x1
     /* 12D3E0 0022D2E0 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 12D3E4 0022D2E4 00000000 */   nop

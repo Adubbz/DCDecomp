@@ -101,8 +101,8 @@ glabel DrawProcI__Fv
     /* 02592C 01DD162C 00000000 */   nop
     /* 025930 01DD1630 C701023C */  lui        $2, %hi(TexManager)
     /* 025934 01DD1634 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 025938 01DD1638 DE01023C */  lui        $2, %hi(LIT_1137)
-    /* 02593C 01DD163C 88044524 */  addiu      $5, $2, %lo(LIT_1137)
+    /* 025938 01DD1638 DE01023C */  lui        $2, %hi("@1137")
+    /* 02593C 01DD163C 88044524 */  addiu      $5, $2, %lo("@1137")
     /* 025940 01DD1640 FFFF0624 */  addiu      $6, $0, -0x1
     /* 025944 01DD1644 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 025948 01DD1648 00000000 */   nop

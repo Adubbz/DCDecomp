@@ -10,8 +10,8 @@ glabel runerror__FPCc
     /* 13D7CC 0023D6CC 2500013C */  lui        $1, %hi(_impure_ptr)
     /* 13D7D0 0023D6D0 ECFD228C */  lw         $2, %lo(_impure_ptr)($1)
     /* 13D7D4 0023D6D4 0C00448C */  lw         $4, 0xC($2)
-    /* 13D7D8 0023D6D8 2A00023C */  lui        $2, %hi(LIT_15)
-    /* 13D7DC 0023D6DC 70F74524 */  addiu      $5, $2, %lo(LIT_15)
+    /* 13D7D8 0023D6D8 2A00023C */  lui        $2, %hi("@15")
+    /* 13D7DC 0023D6DC 70F74524 */  addiu      $5, $2, %lo("@15")
     /* 13D7E0 0023D6E0 EE06040C */  jal        fprintf
     /* 13D7E4 0023D6E4 00000000 */   nop
     /* 13D7E8 0023D6E8 FFFF0424 */  addiu      $4, $0, -0x1

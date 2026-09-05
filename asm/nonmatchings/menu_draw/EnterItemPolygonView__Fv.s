@@ -18,8 +18,8 @@ glabel EnterItemPolygonView__Fv
     /* 12AE4C 0022AD4C 9897828F */  lw         $2, -0x6868($28)
     /* 12AE50 0022AD50 73004014 */  bnez       $2, .L0022AF20
     /* 12AE54 0022AD54 00000000 */   nop
-    /* 12AE58 0022AD58 2900023C */  lui        $2, %hi(LIT_1842)
-    /* 12AE5C 0022AD5C 20434524 */  addiu      $5, $2, %lo(LIT_1842)
+    /* 12AE58 0022AD58 2900023C */  lui        $2, %hi("@1842")
+    /* 12AE5C 0022AD5C 20434524 */  addiu      $5, $2, %lo("@1842")
     /* 12AE60 0022AD60 3000A427 */  addiu      $4, $29, 0x30
     /* 12AE64 0022AD64 02000324 */  addiu      $3, $0, 0x2
   .L0022AD68:
@@ -96,20 +96,20 @@ glabel EnterItemPolygonView__Fv
     /* 12AF78 0022AE78 AC98040C */  jal        LoadMDSFile__FPUiP14CDataAlloc2_1_iPPcPPc
     /* 12AF7C 0022AE7C 00000000 */   nop
     /* 12AF80 0022AE80 949782AF */  sw         $2, -0x686C($28)
-    /* 12AF84 0022AE84 2900023C */  lui        $2, %hi(LIT_1849)
-    /* 12AF88 0022AE88 50434224 */  addiu      $2, $2, %lo(LIT_1849)
+    /* 12AF84 0022AE84 2900023C */  lui        $2, %hi("@1849")
+    /* 12AF88 0022AE88 50434224 */  addiu      $2, $2, %lo("@1849")
     /* 12AF8C 0022AE8C 6000A527 */  addiu      $5, $29, 0x60
     /* 12AF90 0022AE90 00004278 */  lq         $2, 0x0($2)
     /* 12AF94 0022AE94 0000A27C */  sq         $2, 0x0($5)
-    /* 12AF98 0022AE98 2900023C */  lui        $2, %hi(LIT_1850)
-    /* 12AF9C 0022AE9C 60434424 */  addiu      $4, $2, %lo(LIT_1850)
+    /* 12AF98 0022AE98 2900023C */  lui        $2, %hi("@1850")
+    /* 12AF9C 0022AE9C 60434424 */  addiu      $4, $2, %lo("@1850")
     /* 12AFA0 0022AEA0 7000A327 */  addiu      $3, $29, 0x70
     /* 12AFA4 0022AEA4 000082DC */  ld         $2, 0x0($4)
     /* 12AFA8 0022AEA8 080080C4 */  lwc1       $f0, 0x8($4)
     /* 12AFAC 0022AEAC 000062FC */  sd         $2, 0x0($3)
     /* 12AFB0 0022AEB0 080060E4 */  swc1       $f0, 0x8($3)
-    /* 12AFB4 0022AEB4 2900023C */  lui        $2, %hi(LIT_1851)
-    /* 12AFB8 0022AEB8 70434424 */  addiu      $4, $2, %lo(LIT_1851)
+    /* 12AFB4 0022AEB4 2900023C */  lui        $2, %hi("@1851")
+    /* 12AFB8 0022AEB8 70434424 */  addiu      $4, $2, %lo("@1851")
     /* 12AFBC 0022AEBC 8000A327 */  addiu      $3, $29, 0x80
     /* 12AFC0 0022AEC0 000082DC */  ld         $2, 0x0($4)
     /* 12AFC4 0022AEC4 080080C4 */  lwc1       $f0, 0x8($4)

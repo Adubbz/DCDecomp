@@ -45,8 +45,8 @@ glabel SetBuildUp__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i
   .L00236CC8:
     /* 136DC8 00236CC8 DCC4070C */  jal        ClearFishMardanGarayanNum__Fv
     /* 136DCC 00236CCC 00000000 */   nop
-    /* 136DD0 00236CD0 2A00023C */  lui        $2, %hi(LIT_1019)
-    /* 136DD4 00236CD4 10F44424 */  addiu      $4, $2, %lo(LIT_1019)
+    /* 136DD0 00236CD0 2A00023C */  lui        $2, %hi("@1019")
+    /* 136DD4 00236CD4 10F44424 */  addiu      $4, $2, %lo("@1019")
     /* 136DD8 00236CD8 A611040C */  jal        printf
     /* 136DDC 00236CDC 00000000 */   nop
   .L00236CE0:

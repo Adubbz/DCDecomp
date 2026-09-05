@@ -35,8 +35,8 @@ glabel DrawMenuVibeItem__Fiiiii
     /* 12E2F0 0022E1F0 00000000 */   nop
     /* 12E2F4 0022E1F4 C701023C */  lui        $2, %hi(TexManager)
     /* 12E2F8 0022E1F8 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 12E2FC 0022E1FC 2A00023C */  lui        $2, %hi(LIT_994__2)
-    /* 12E300 0022E200 C0F14524 */  addiu      $5, $2, %lo(LIT_994__2)
+    /* 12E2FC 0022E1FC 2A00023C */  lui        $2, %hi("@994__2")
+    /* 12E300 0022E200 C0F14524 */  addiu      $5, $2, %lo("@994__2")
     /* 12E304 0022E204 FFFF0624 */  addiu      $6, $0, -0x1
     /* 12E308 0022E208 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 12E30C 0022E20C 00000000 */   nop

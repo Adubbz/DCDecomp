@@ -84,8 +84,8 @@ glabel _MES_MAKE__FP12RS_STACKDATAi
     /* 08FBEC 0018FAEC 21187000 */  addu       $3, $3, $16
     /* 08FBF0 0018FAF0 D01662AC */  sw         $2, 0x16D0($3)
     /* 08FBF4 0018FAF4 FCFF8526 */  addiu      $5, $20, -0x4
-    /* 08FBF8 0018FAF8 2A00033C */  lui        $3, %hi(LIT_1424)
-    /* 08FBFC 0018FAFC F8B06424 */  addiu      $4, $3, %lo(LIT_1424)
+    /* 08FBF8 0018FAF8 2A00033C */  lui        $3, %hi("@1424")
+    /* 08FBFC 0018FAFC F8B06424 */  addiu      $4, $3, %lo("@1424")
     /* 08FC00 0018FB00 28364070 */  paddub     $6, $2, $0
     /* 08FC04 0018FB04 A611040C */  jal        printf
     /* 08FC08 0018FB08 00000000 */   nop

@@ -16,8 +16,8 @@ glabel skipSpace__FPci
   .L01DB4854:
     /* 008B54 01DB4854 28860070 */  paddub     $16, $0, $0
     /* 008B58 01DB4858 21205102 */  addu       $4, $18, $17
-    /* 008B5C 01DB485C DE01023C */  lui        $2, %hi(LIT_1033__3)
-    /* 008B60 01DB4860 F0D94524 */  addiu      $5, $2, %lo(LIT_1033__3)
+    /* 008B5C 01DB485C DE01023C */  lui        $2, %hi("@1033__3")
+    /* 008B60 01DB4860 F0D94524 */  addiu      $5, $2, %lo("@1033__3")
     /* 008B64 01DB4864 02000624 */  addiu      $6, $0, 0x2
     /* 008B68 01DB4868 C60C040C */  jal        memcmp
     /* 008B6C 01DB486C 00000000 */   nop
@@ -44,8 +44,8 @@ glabel skipSpace__FPci
     /* 008BB4 01DB48B4 01001024 */  addiu      $16, $0, 0x1
   .L01DB48B8:
     /* 008BB8 01DB48B8 21205102 */  addu       $4, $18, $17
-    /* 008BBC 01DB48BC DE01023C */  lui        $2, %hi(LIT_1034__3)
-    /* 008BC0 01DB48C0 F8D94524 */  addiu      $5, $2, %lo(LIT_1034__3)
+    /* 008BBC 01DB48BC DE01023C */  lui        $2, %hi("@1034__3")
+    /* 008BC0 01DB48C0 F8D94524 */  addiu      $5, $2, %lo("@1034__3")
     /* 008BC4 01DB48C4 02000624 */  addiu      $6, $0, 0x2
     /* 008BC8 01DB48C8 C60C040C */  jal        memcmp
     /* 008BCC 01DB48CC 00000000 */   nop

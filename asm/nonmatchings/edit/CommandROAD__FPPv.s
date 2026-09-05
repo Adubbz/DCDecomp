@@ -32,8 +32,8 @@ glabel CommandROAD__FPPv
     /* 0762CC 001761CC 0E006010 */  beqz       $3, .L00176208
     /* 0762D0 001761D0 00000000 */   nop
     /* 0762D4 001761D4 3000A427 */  addiu      $4, $29, 0x30
-    /* 0762D8 001761D8 2A00023C */  lui        $2, %hi(LIT_501__2)
-    /* 0762DC 001761DC E0A74524 */  addiu      $5, $2, %lo(LIT_501__2)
+    /* 0762D8 001761D8 2A00023C */  lui        $2, %hi("@501__2")
+    /* 0762DC 001761DC E0A74524 */  addiu      $5, $2, %lo("@501__2")
     /* 0762E0 001761E0 D201023C */  lui        $2, %hi(CurrentDir__3)
     /* 0762E4 001761E4 F09A4624 */  addiu      $6, $2, %lo(CurrentDir__3)
     /* 0762E8 001761E8 1614040C */  jal        sprintf

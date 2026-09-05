@@ -19,8 +19,8 @@ glabel EastKingEventDraw__Fv
     /* 133470 00233370 00000000 */   nop
     /* 133474 00233374 C701023C */  lui        $2, %hi(TexManager)
     /* 133478 00233378 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 13347C 0023337C 2A00023C */  lui        $2, %hi(LIT_453)
-    /* 133480 00233380 A8F24524 */  addiu      $5, $2, %lo(LIT_453)
+    /* 13347C 0023337C 2A00023C */  lui        $2, %hi("@453")
+    /* 133480 00233380 A8F24524 */  addiu      $5, $2, %lo("@453")
     /* 133484 00233384 DB01013C */  lui        $1, %hi(EastKing)
     /* 133488 00233388 40A8268C */  lw         $6, %lo(EastKing)($1)
     /* 13348C 0023338C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
@@ -37,8 +37,8 @@ glabel EastKingEventDraw__Fv
     /* 1334B8 002333B8 00000000 */   nop
     /* 1334BC 002333BC C701023C */  lui        $2, %hi(TexManager)
     /* 1334C0 002333C0 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 1334C4 002333C4 2A00023C */  lui        $2, %hi(LIT_454)
-    /* 1334C8 002333C8 B0F24524 */  addiu      $5, $2, %lo(LIT_454)
+    /* 1334C4 002333C4 2A00023C */  lui        $2, %hi("@454")
+    /* 1334C8 002333C8 B0F24524 */  addiu      $5, $2, %lo("@454")
     /* 1334CC 002333CC DB01013C */  lui        $1, %hi(EastKing)
     /* 1334D0 002333D0 40A8268C */  lw         $6, %lo(EastKing)($1)
     /* 1334D4 002333D4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci

@@ -130,15 +130,15 @@ glabel motionDrive__Fv
     /* 00B920 01DB7620 00000000 */   nop
     /* 00B924 01DB7624 EA01013C */  lui        $1, %hi(CharaMain + 0xBC)
     /* 00B928 01DB7628 DC1D248C */  lw         $4, %lo(CharaMain + 0xBC)($1)
-    /* 00B92C 01DB762C DC01023C */  lui        $2, %hi(LIT_4830)
-    /* 00B930 01DB7630 A0304524 */  addiu      $5, $2, %lo(LIT_4830)
+    /* 00B92C 01DB762C DC01023C */  lui        $2, %hi("@4830")
+    /* 00B930 01DB7630 A0304524 */  addiu      $5, $2, %lo("@4830")
     /* 00B934 01DB7634 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00B938 01DB7638 00000000 */   nop
     /* 00B93C 01DB763C 288E4070 */  paddub     $17, $2, $0
     /* 00B940 01DB7640 EA01013C */  lui        $1, %hi(CharaMain + 0xC0)
     /* 00B944 01DB7644 E01D248C */  lw         $4, %lo(CharaMain + 0xC0)($1)
-    /* 00B948 01DB7648 DC01023C */  lui        $2, %hi(LIT_4831)
-    /* 00B94C 01DB764C A8304524 */  addiu      $5, $2, %lo(LIT_4831)
+    /* 00B948 01DB7648 DC01023C */  lui        $2, %hi("@4831")
+    /* 00B94C 01DB764C A8304524 */  addiu      $5, $2, %lo("@4831")
     /* 00B950 01DB7650 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00B954 01DB7654 00000000 */   nop
     /* 00B958 01DB7658 28964070 */  paddub     $18, $2, $0
@@ -208,8 +208,8 @@ glabel motionDrive__Fv
     /* 00BA4C 01DB774C 16004014 */  bnez       $2, .L01DB77A8
     /* 00BA50 01DB7750 00000000 */   nop
     /* 00BA54 01DB7754 109D848F */  lw         $4, -0x62F0($28)
-    /* 00BA58 01DB7758 DC01023C */  lui        $2, %hi(LIT_4833)
-    /* 00BA5C 01DB775C B0304524 */  addiu      $5, $2, %lo(LIT_4833)
+    /* 00BA58 01DB7758 DC01023C */  lui        $2, %hi("@4833")
+    /* 00BA5C 01DB775C B0304524 */  addiu      $5, $2, %lo("@4833")
     /* 00BA60 01DB7760 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 00BA64 01DB7764 00000000 */   nop
     /* 00BA68 01DB7768 EA01013C */  lui        $1, %hi(CharaMain + 0x318)
@@ -275,8 +275,8 @@ glabel motionDrive__Fv
     /* 00BB40 01DB7840 0C86040C */  jal        sceVu0CopyVector
     /* 00BB44 01DB7844 00000000 */   nop
     /* 00BB48 01DB7848 789C858F */  lw         $5, -0x6388($28)
-    /* 00BB4C 01DB784C DC01023C */  lui        $2, %hi(LIT_345__11)
-    /* 00BB50 01DB7850 401B4224 */  addiu      $2, $2, %lo(LIT_345__11)
+    /* 00BB4C 01DB784C DC01023C */  lui        $2, %hi("@345__11")
+    /* 00BB50 01DB7850 401B4224 */  addiu      $2, $2, %lo("@345__11")
     /* 00BB54 01DB7854 8000A427 */  addiu      $4, $29, 0x80
     /* 00BB58 01DB7858 00004378 */  lq         $3, 0x0($2)
     /* 00BB5C 01DB785C 100042DC */  ld         $2, 0x10($2)

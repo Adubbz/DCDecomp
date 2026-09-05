@@ -9,12 +9,12 @@
 
 /* The rest of the ebattle module: the intro, the main loop and the draw pass. */
 
-INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", LIT_1686);
-INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", LIT_1700);
-INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", LIT_1701);
-INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", LIT_1702);
-INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", LIT_1703);
-INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", LIT_1704);
+INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", @1686);
+INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", @1700);
+INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", @1701);
+INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", @1702);
+INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", @1703);
+INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", @1704);
 
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBInitIntro__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBSetMotion__FP10CCharacterPi);

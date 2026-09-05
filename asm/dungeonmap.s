@@ -94,8 +94,8 @@ glabel SetNPC__11CDungeonMapFiPUiiPfPfiiP14CDataAlloc2_1_
     /* 0C1E34 001C1D34 4000A826 */  addiu      $8, $21, 0x40
     /* 0C1E38 001C1D38 28262072 */  paddub     $4, $17, $0
     /* 0C1E3C 001C1D3C 282EE072 */  paddub     $5, $23, $0
-    /* 0C1E40 001C1D40 2A00023C */  lui        $2, %hi(LIT_1007__2)
-    /* 0C1E44 001C1D44 F8BD4624 */  addiu      $6, $2, %lo(LIT_1007__2)
+    /* 0C1E40 001C1D40 2A00023C */  lui        $2, %hi("@1007__2")
+    /* 0C1E44 001C1D44 F8BD4624 */  addiu      $6, $2, %lo("@1007__2")
     /* 0C1E48 001C1D48 3001A78F */  lw         $7, 0x130($29)
     /* 0C1E4C 001C1D4C 284EE070 */  paddub     $9, $7, $0
     /* 0C1E50 001C1D50 28560070 */  paddub     $10, $0, $0
@@ -109,8 +109,8 @@ glabel SetNPC__11CDungeonMapFiPUiiPfPfiiP14CDataAlloc2_1_
     /* 0C1E70 001C1D70 0000228E */  lw         $2, 0x0($17)
     /* 0C1E74 001C1D74 05004014 */  bnez       $2, .L001C1D8C
     /* 0C1E78 001C1D78 00000000 */   nop
-    /* 0C1E7C 001C1D7C 2A00023C */  lui        $2, %hi(LIT_1008)
-    /* 0C1E80 001C1D80 10BE4424 */  addiu      $4, $2, %lo(LIT_1008)
+    /* 0C1E7C 001C1D7C 2A00023C */  lui        $2, %hi("@1008")
+    /* 0C1E80 001C1D80 10BE4424 */  addiu      $4, $2, %lo("@1008")
     /* 0C1E84 001C1D84 A611040C */  jal        printf
     /* 0C1E88 001C1D88 00000000 */   nop
   .L001C1D8C:
@@ -1547,16 +1547,16 @@ glabel DrawMiniMap__11CDungeonMapFPff
     /* 0C335C 001C325C 0AA84300 */  movz       $21, $2, $3
     /* 0C3360 001C3260 C701023C */  lui        $2, %hi(TexManager)
     /* 0C3364 001C3264 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0C3368 001C3268 2A00023C */  lui        $2, %hi(LIT_1470)
-    /* 0C336C 001C326C 28BE4524 */  addiu      $5, $2, %lo(LIT_1470)
+    /* 0C3368 001C3268 2A00023C */  lui        $2, %hi("@1470")
+    /* 0C336C 001C326C 28BE4524 */  addiu      $5, $2, %lo("@1470")
     /* 0C3370 001C3270 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0C3374 001C3274 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0C3378 001C3278 00000000 */   nop
     /* 0C337C 001C327C 28BE4070 */  paddub     $23, $2, $0
     /* 0C3380 001C3280 C701023C */  lui        $2, %hi(TexManager)
     /* 0C3384 001C3284 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0C3388 001C3288 2A00023C */  lui        $2, %hi(LIT_1471)
-    /* 0C338C 001C328C 38BE4524 */  addiu      $5, $2, %lo(LIT_1471)
+    /* 0C3388 001C3288 2A00023C */  lui        $2, %hi("@1471")
+    /* 0C338C 001C328C 38BE4524 */  addiu      $5, $2, %lo("@1471")
     /* 0C3390 001C3290 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0C3394 001C3294 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0C3398 001C3298 00000000 */   nop
@@ -2282,16 +2282,16 @@ glabel DrawFireFreeStyle__11CDungeonMapFP9CFrameVu1P13CCameraFollow
     /* 0C3E30 001C3D30 00000000 */   nop
     /* 0C3E34 001C3D34 C701023C */  lui        $2, %hi(TexManager)
     /* 0C3E38 001C3D38 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0C3E3C 001C3D3C 2A00023C */  lui        $2, %hi(LIT_1559)
-    /* 0C3E40 001C3D40 48BE4524 */  addiu      $5, $2, %lo(LIT_1559)
+    /* 0C3E3C 001C3D3C 2A00023C */  lui        $2, %hi("@1559")
+    /* 0C3E40 001C3D40 48BE4524 */  addiu      $5, $2, %lo("@1559")
     /* 0C3E44 001C3D44 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0C3E48 001C3D48 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0C3E4C 001C3D4C 00000000 */   nop
     /* 0C3E50 001C3D50 28864070 */  paddub     $16, $2, $0
     /* 0C3E54 001C3D54 C701023C */  lui        $2, %hi(TexManager)
     /* 0C3E58 001C3D58 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0C3E5C 001C3D5C 2A00023C */  lui        $2, %hi(LIT_1560)
-    /* 0C3E60 001C3D60 58BE4524 */  addiu      $5, $2, %lo(LIT_1560)
+    /* 0C3E5C 001C3D5C 2A00023C */  lui        $2, %hi("@1560")
+    /* 0C3E60 001C3D60 58BE4524 */  addiu      $5, $2, %lo("@1560")
     /* 0C3E64 001C3D64 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0C3E68 001C3D68 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0C3E6C 001C3D6C 00000000 */   nop
@@ -2555,16 +2555,16 @@ glabel DrawFire__11CDungeonMapFP9CFrameVu1P13CCameraFollow
     /* 0C4248 001C4148 00000000 */   nop
     /* 0C424C 001C414C C701023C */  lui        $2, %hi(TexManager)
     /* 0C4250 001C4150 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0C4254 001C4154 2A00023C */  lui        $2, %hi(LIT_1559)
-    /* 0C4258 001C4158 48BE4524 */  addiu      $5, $2, %lo(LIT_1559)
+    /* 0C4254 001C4154 2A00023C */  lui        $2, %hi("@1559")
+    /* 0C4258 001C4158 48BE4524 */  addiu      $5, $2, %lo("@1559")
     /* 0C425C 001C415C FFFF0624 */  addiu      $6, $0, -0x1
     /* 0C4260 001C4160 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0C4264 001C4164 00000000 */   nop
     /* 0C4268 001C4168 288E4070 */  paddub     $17, $2, $0
     /* 0C426C 001C416C C701023C */  lui        $2, %hi(TexManager)
     /* 0C4270 001C4170 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0C4274 001C4174 2A00023C */  lui        $2, %hi(LIT_1560)
-    /* 0C4278 001C4178 58BE4524 */  addiu      $5, $2, %lo(LIT_1560)
+    /* 0C4274 001C4174 2A00023C */  lui        $2, %hi("@1560")
+    /* 0C4278 001C4178 58BE4524 */  addiu      $5, $2, %lo("@1560")
     /* 0C427C 001C417C FFFF0624 */  addiu      $6, $0, -0x1
     /* 0C4280 001C4180 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0C4284 001C4184 00000000 */   nop
@@ -6054,8 +6054,8 @@ glabel setUnderDungeonStart__Fv
     /* 0C74C8 001C73C8 2C44040C */  jal        fptosi
     /* 0C74CC 001C73CC 00000000 */   nop
     /* 0C74D0 001C73D0 289E4070 */  paddub     $19, $2, $0
-    /* 0C74D4 001C73D4 2A00023C */  lui        $2, %hi(LIT_2283)
-    /* 0C74D8 001C73D8 60BE4424 */  addiu      $4, $2, %lo(LIT_2283)
+    /* 0C74D4 001C73D4 2A00023C */  lui        $2, %hi("@2283")
+    /* 0C74D8 001C73D8 60BE4424 */  addiu      $4, $2, %lo("@2283")
     /* 0C74DC 001C73DC 282E6072 */  paddub     $5, $19, $0
     /* 0C74E0 001C73E0 A611040C */  jal        printf
     /* 0C74E4 001C73E4 00000000 */   nop
@@ -6129,8 +6129,8 @@ glabel setUnderDungeonStart__Fv
     /* 0C75EC 001C74EC 00000000 */   nop
     /* 0C75F0 001C74F0 07002016 */  bnez       $17, .L001C7510
     /* 0C75F4 001C74F4 00000000 */   nop
-    /* 0C75F8 001C74F8 2A00023C */  lui        $2, %hi(LIT_2284)
-    /* 0C75FC 001C74FC 70BE4424 */  addiu      $4, $2, %lo(LIT_2284)
+    /* 0C75F8 001C74F8 2A00023C */  lui        $2, %hi("@2284")
+    /* 0C75FC 001C74FC 70BE4424 */  addiu      $4, $2, %lo("@2284")
     /* 0C7600 001C7500 282E0072 */  paddub     $5, $16, $0
     /* 0C7604 001C7504 28364072 */  paddub     $6, $18, $0
     /* 0C7608 001C7508 A611040C */  jal        printf
@@ -6237,8 +6237,8 @@ glabel setStair__Fv
     /* 0C7774 001C7674 00000000 */   nop
     /* 0C7778 001C7678 0900001E */  bgtz       $16, .L001C76A0
     /* 0C777C 001C767C 00000000 */   nop
-    /* 0C7780 001C7680 2A00023C */  lui        $2, %hi(LIT_2338)
-    /* 0C7784 001C7684 90BE4424 */  addiu      $4, $2, %lo(LIT_2338)
+    /* 0C7780 001C7680 2A00023C */  lui        $2, %hi("@2338")
+    /* 0C7784 001C7684 90BE4424 */  addiu      $4, $2, %lo("@2338")
     /* 0C7788 001C7688 A611040C */  jal        printf
     /* 0C778C 001C768C 00000000 */   nop
     /* 0C7790 001C7690 01000424 */  addiu      $4, $0, 0x1
@@ -6384,8 +6384,8 @@ glabel setStair__Fv
     /* 0C799C 001C789C 00000000 */   nop
     /* 0C79A0 001C78A0 0900001E */  bgtz       $16, .L001C78C8
     /* 0C79A4 001C78A4 00000000 */   nop
-    /* 0C79A8 001C78A8 2A00023C */  lui        $2, %hi(LIT_2339)
-    /* 0C79AC 001C78AC B0BE4424 */  addiu      $4, $2, %lo(LIT_2339)
+    /* 0C79A8 001C78A8 2A00023C */  lui        $2, %hi("@2339")
+    /* 0C79AC 001C78AC B0BE4424 */  addiu      $4, $2, %lo("@2339")
     /* 0C79B0 001C78B0 A611040C */  jal        printf
     /* 0C79B4 001C78B4 00000000 */   nop
     /* 0C79B8 001C78B8 01000424 */  addiu      $4, $0, 0x1
@@ -7003,8 +7003,8 @@ glabel SetAtraBoll__11CDungeonMapFPfi
     /* 0C8270 001C8170 30008228 */  slti       $2, $4, 0x30
     /* 0C8274 001C8174 F0FF4014 */  bnez       $2, .L001C8138
     /* 0C8278 001C8178 00000000 */   nop
-    /* 0C827C 001C817C 2A00023C */  lui        $2, %hi(LIT_2448)
-    /* 0C8280 001C8180 C0BE4424 */  addiu      $4, $2, %lo(LIT_2448)
+    /* 0C827C 001C817C 2A00023C */  lui        $2, %hi("@2448")
+    /* 0C8280 001C8180 C0BE4424 */  addiu      $4, $2, %lo("@2448")
     /* 0C8284 001C8184 A611040C */  jal        printf
     /* 0C8288 001C8188 00000000 */   nop
     /* 0C828C 001C818C FFFF0424 */  addiu      $4, $0, -0x1
@@ -7147,8 +7147,8 @@ glabel SetTreasureBox__11CDungeonMapFPfiii
     /* 0C8484 001C8384 3000C228 */  slti       $2, $6, 0x30
     /* 0C8488 001C8388 F0FF4014 */  bnez       $2, .L001C834C
     /* 0C848C 001C838C 00000000 */   nop
-    /* 0C8490 001C8390 2A00023C */  lui        $2, %hi(LIT_2448)
-    /* 0C8494 001C8394 C0BE4424 */  addiu      $4, $2, %lo(LIT_2448)
+    /* 0C8490 001C8390 2A00023C */  lui        $2, %hi("@2448")
+    /* 0C8494 001C8394 C0BE4424 */  addiu      $4, $2, %lo("@2448")
     /* 0C8498 001C8398 A611040C */  jal        printf
     /* 0C849C 001C839C 00000000 */   nop
     /* 0C84A0 001C83A0 FFFF0424 */  addiu      $4, $0, -0x1
@@ -7638,8 +7638,8 @@ glabel buildEventData__11CDungeonMapFiii
     /* 0C8BB4 001C8AB4 30008228 */  slti       $2, $4, 0x30
     /* 0C8BB8 001C8AB8 F0FF4014 */  bnez       $2, .L001C8A7C
     /* 0C8BBC 001C8ABC 00000000 */   nop
-    /* 0C8BC0 001C8AC0 2A00023C */  lui        $2, %hi(LIT_2448)
-    /* 0C8BC4 001C8AC4 C0BE4424 */  addiu      $4, $2, %lo(LIT_2448)
+    /* 0C8BC0 001C8AC0 2A00023C */  lui        $2, %hi("@2448")
+    /* 0C8BC4 001C8AC4 C0BE4424 */  addiu      $4, $2, %lo("@2448")
     /* 0C8BC8 001C8AC8 A611040C */  jal        printf
     /* 0C8BCC 001C8ACC 00000000 */   nop
     /* 0C8BD0 001C8AD0 FFFF0424 */  addiu      $4, $0, -0x1
@@ -7774,8 +7774,8 @@ glabel SetMimicEvent__11CDungeonMapFfffii
     /* 0C8DA4 001C8CA4 3000A328 */  slti       $3, $5, 0x30
     /* 0C8DA8 001C8CA8 F0FF6014 */  bnez       $3, .L001C8C6C
     /* 0C8DAC 001C8CAC 00000000 */   nop
-    /* 0C8DB0 001C8CB0 2A00023C */  lui        $2, %hi(LIT_2448)
-    /* 0C8DB4 001C8CB4 C0BE4424 */  addiu      $4, $2, %lo(LIT_2448)
+    /* 0C8DB0 001C8CB0 2A00023C */  lui        $2, %hi("@2448")
+    /* 0C8DB4 001C8CB4 C0BE4424 */  addiu      $4, $2, %lo("@2448")
     /* 0C8DB8 001C8CB8 A611040C */  jal        printf
     /* 0C8DBC 001C8CBC 00000000 */   nop
     /* 0C8DC0 001C8CC0 FFFF0424 */  addiu      $4, $0, -0x1
@@ -8730,8 +8730,8 @@ glabel GetRoomLinkInfo__11CDungeonMapFv
     /* 0C9B64 001C9A64 07000010 */  b          .L001C9A84
     /* 0C9B68 001C9A68 00000000 */   nop
   .L001C9A6C:
-    /* 0C9B6C 001C9A6C 2A00023C */  lui        $2, %hi(LIT_2859)
-    /* 0C9B70 001C9A70 D8BE4424 */  addiu      $4, $2, %lo(LIT_2859)
+    /* 0C9B6C 001C9A6C 2A00023C */  lui        $2, %hi("@2859")
+    /* 0C9B70 001C9A70 D8BE4424 */  addiu      $4, $2, %lo("@2859")
     /* 0C9B74 001C9A74 A611040C */  jal        printf
     /* 0C9B78 001C9A78 00000000 */   nop
     /* 0C9B7C 001C9A7C E5010010 */  b          .L001CA214
@@ -9102,8 +9102,8 @@ glabel GetRoomLinkInfo__11CDungeonMapFv
     /* 0CA0B8 001C9FB8 00000000 */   nop
     /* 0CA0BC 001C9FBC 93000016 */  bnez       $16, .L001CA20C
     /* 0CA0C0 001C9FC0 00000000 */   nop
-    /* 0CA0C4 001C9FC4 2A00023C */  lui        $2, %hi(LIT_2860)
-    /* 0CA0C8 001C9FC8 F0BE4424 */  addiu      $4, $2, %lo(LIT_2860)
+    /* 0CA0C4 001C9FC4 2A00023C */  lui        $2, %hi("@2860")
+    /* 0CA0C8 001C9FC8 F0BE4424 */  addiu      $4, $2, %lo("@2860")
     /* 0CA0CC 001C9FCC A611040C */  jal        printf
     /* 0CA0D0 001C9FD0 00000000 */   nop
     /* 0CA0D4 001C9FD4 28A60070 */  paddub     $20, $0, $0
@@ -9298,8 +9298,8 @@ glabel SetUnderLoad__11CDungeonMapFv
 glabel CreatPartsList__11CDungeonMapFPiiii
     /* 0CA390 001CA290 E0FFBD27 */  addiu      $29, $29, -0x20
     /* 0CA394 001CA294 28160070 */  paddub     $2, $0, $0
-    /* 0CA398 001CA298 2800033C */  lui        $3, %hi(LIT_2868)
-    /* 0CA39C 001CA29C 70A06324 */  addiu      $3, $3, %lo(LIT_2868)
+    /* 0CA398 001CA298 2800033C */  lui        $3, %hi("@2868")
+    /* 0CA39C 001CA29C 70A06324 */  addiu      $3, $3, %lo("@2868")
     /* 0CA3A0 001CA2A0 0000AA27 */  addiu      $10, $29, 0x0
     /* 0CA3A4 001CA2A4 00006978 */  lq         $9, 0x0($3)
     /* 0CA3A8 001CA2A8 10006378 */  lq         $3, 0x10($3)
@@ -10340,8 +10340,8 @@ glabel SetCharaDoor__11CDungeonMapFi
     /* 0CB348 001CB248 0600A12C */  sltiu      $1, $5, 0x6
     /* 0CB34C 001CB24C FF002010 */  beqz       $1, .L001CB64C
     /* 0CB350 001CB250 00000000 */   nop
-    /* 0CB354 001CB254 2A00023C */  lui        $2, %hi(LIT_3075)
-    /* 0CB358 001CB258 30BF4324 */  addiu      $3, $2, %lo(LIT_3075)
+    /* 0CB354 001CB254 2A00023C */  lui        $2, %hi("@3075")
+    /* 0CB358 001CB258 30BF4324 */  addiu      $3, $2, %lo("@3075")
     /* 0CB35C 001CB25C 80100500 */  sll        $2, $5, 2
     /* 0CB360 001CB260 21104300 */  addu       $2, $2, $3
     /* 0CB364 001CB264 0000428C */  lw         $2, 0x0($2)
@@ -11240,8 +11240,8 @@ glabel buildRandomMap__11CDungeonMapFii
     /* 0CC090 001CBF90 0700812C */  sltiu      $1, $4, 0x7
     /* 0CC094 001CBF94 1E002010 */  beqz       $1, .L.L001CC010$b
     /* 0CC098 001CBF98 00000000 */   nop
-    /* 0CC09C 001CBF9C 2A00023C */  lui        $2, %hi(LIT_3191)
-    /* 0CC0A0 001CBFA0 70BF4324 */  addiu      $3, $2, %lo(LIT_3191)
+    /* 0CC09C 001CBF9C 2A00023C */  lui        $2, %hi("@3191")
+    /* 0CC0A0 001CBFA0 70BF4324 */  addiu      $3, $2, %lo("@3191")
     /* 0CC0A4 001CBFA4 80100400 */  sll        $2, $4, 2
     /* 0CC0A8 001CBFA8 21104300 */  addu       $2, $2, $3
     /* 0CC0AC 001CBFAC 0000428C */  lw         $2, 0x0($2)
@@ -11296,8 +11296,8 @@ glabel buildRandomMap__11CDungeonMapFii
     /* 0CC150 001CC050 030B0046 */  div.s      $f12, $f1, $f0
     /* 0CC154 001CC054 2C44040C */  jal        fptosi
     /* 0CC158 001CC058 00000000 */   nop
-    /* 0CC15C 001CC05C 2800033C */  lui        $3, %hi(LIT_3162)
-    /* 0CC160 001CC060 90A06524 */  addiu      $5, $3, %lo(LIT_3162)
+    /* 0CC15C 001CC05C 2800033C */  lui        $3, %hi("@3162")
+    /* 0CC160 001CC060 90A06524 */  addiu      $5, $3, %lo("@3162")
     /* 0CC164 001CC064 A000A427 */  addiu      $4, $29, 0xA0
     /* 0CC168 001CC068 0000A3DC */  ld         $3, 0x0($5)
     /* 0CC16C 001CC06C 0800A0C4 */  lwc1       $f0, 0x8($5)
@@ -11319,8 +11319,8 @@ glabel buildRandomMap__11CDungeonMapFii
     /* 0CC1A0 001CC0A0 2826A072 */  paddub     $4, $21, $0
     /* 0CC1A4 001CC0A4 9028070C */  jal        SetUnderLoad__11CDungeonMapFv
     /* 0CC1A8 001CC0A8 00000000 */   nop
-    /* 0CC1AC 001CC0AC 2A00023C */  lui        $2, %hi(LIT_3190)
-    /* 0CC1B0 001CC0B0 50BF4424 */  addiu      $4, $2, %lo(LIT_3190)
+    /* 0CC1AC 001CC0AC 2A00023C */  lui        $2, %hi("@3190")
+    /* 0CC1B0 001CC0B0 50BF4424 */  addiu      $4, $2, %lo("@3190")
     /* 0CC1B4 001CC0B4 A611040C */  jal        printf
     /* 0CC1B8 001CC0B8 00000000 */   nop
     /* 0CC1BC 001CC0BC 9000BF7B */  lq         $31, 0x90($29)
@@ -11854,7 +11854,7 @@ glabel initalize__11CDungeonMapFv
 
 /* Generated by spimdisasm 1.42.4 */
 
-glabel LIT_1008
+glabel "@1008"
     /* 19BF10 0029BE10 2A2A2A2A */ .word 0x2A2A2A2A
     /* 19BF14 0029BE14 2A2A2A20 */ .word 0x202A2A2A
     /* 19BF18 0029BE18 4E504345 */ .word 0x4543504E
@@ -11862,35 +11862,35 @@ glabel LIT_1008
     /* 19BF20 0029BE20 4572720A */ .word 0x0A727245
     /* 19BF24 0029BE24 00000000 */ .word 0x00000000
 
-glabel LIT_1470
+glabel "@1470"
     /* 19BF28 0029BE28 6D696E69 */ .word 0x696E696D
     /* 19BF2C 0029BE2C 6D617031 */ .word 0x3170616D
     /* 19BF30 0029BE30 00000000 */ .word 0x00000000
     /* 19BF34 0029BE34 00000000 */ .word 0x00000000
 
-glabel LIT_1471
+glabel "@1471"
     /* 19BF38 0029BE38 6974656D */ .word 0x6D657469
     /* 19BF3C 0029BE3C 7061636B */ .word 0x6B636170
     /* 19BF40 0029BE40 00000000 */ .word 0x00000000
     /* 19BF44 0029BE44 00000000 */ .word 0x00000000
 
-glabel LIT_1559
+glabel "@1559"
     /* 19BF48 0029BE48 6C696768 */ .word 0x6867696C
     /* 19BF4C 0029BE4C 746C696E */ .word 0x6E696C74
     /* 19BF50 0029BE50 67000000 */ .word 0x00000067
     /* 19BF54 0029BE54 00000000 */ .word 0x00000000
 
-glabel LIT_1560
+glabel "@1560"
     /* 19BF58 0029BE58 626C656E */ .word 0x6E656C62
     /* 19BF5C 0029BE5C 64657200 */ .word 0x00726564
 
-glabel LIT_2283
+glabel "@2283"
     /* 19BF60 0029BE60 5B735D25 */ .word 0x255D735B
     /* 19BF64 0029BE64 640A0000 */ .word 0x00000A64
     /* 19BF68 0029BE68 00000000 */ .word 0x00000000
     /* 19BF6C 0029BE6C 00000000 */ .word 0x00000000
 
-glabel LIT_2284
+glabel "@2284"
     /* 19BF70 0029BE70 73616665 */ .word 0x65666173
     /* 19BF74 0029BE74 4E756D20 */ .word 0x206D754E
     /* 19BF78 0029BE78 3D202564 */ .word 0x6425203D
@@ -11900,7 +11900,7 @@ glabel LIT_2284
     /* 19BF88 0029BE88 3D202564 */ .word 0x6425203D
     /* 19BF8C 0029BE8C 0A000000 */ .word 0x0000000A
 
-glabel LIT_2338
+glabel "@2338"
     /* 19BF90 0029BE90 4552523A */ .word 0x3A525245
     /* 19BF94 0029BE94 20446F77 */ .word 0x776F4420
     /* 19BF98 0029BE98 6E537461 */ .word 0x6174536E
@@ -11910,13 +11910,13 @@ glabel LIT_2338
     /* 19BFA8 0029BEA8 00000000 */ .word 0x00000000
     /* 19BFAC 0029BEAC 00000000 */ .word 0x00000000
 
-glabel LIT_2339
+glabel "@2339"
     /* 19BFB0 0029BEB0 4552523A */ .word 0x3A525245
     /* 19BFB4 0029BEB4 20557053 */ .word 0x53705520
     /* 19BFB8 0029BEB8 74616972 */ .word 0x72696174
     /* 19BFBC 0029BEBC 21210A00 */ .word 0x000A2121
 
-glabel LIT_2448
+glabel "@2448"
     /* 19BFC0 0029BEC0 6976656E */ .word 0x6E657669
     /* 19BFC4 0029BEC4 74206275 */ .word 0x75622074
     /* 19BFC8 0029BEC8 66666572 */ .word 0x72656666
@@ -11924,7 +11924,7 @@ glabel LIT_2448
     /* 19BFD0 0029BED0 72202121 */ .word 0x21212072
     /* 19BFD4 0029BED4 0A000000 */ .word 0x0000000A
 
-glabel LIT_2859
+glabel "@2859"
     /* 19BFD8 0029BED8 4552524F */ .word 0x4F525245
     /* 19BFDC 0029BEDC 52202121 */ .word 0x21212052
     /* 19BFE0 0029BEE0 0A000000 */ .word 0x0000000A
@@ -11932,7 +11932,7 @@ glabel LIT_2859
     /* 19BFE8 0029BEE8 00000000 */ .word 0x00000000
     /* 19BFEC 0029BEEC 00000000 */ .word 0x00000000
 
-glabel LIT_2860
+glabel "@2860"
     /* 19BFF0 0029BEF0 2F2F2F2F */ .word 0x2F2F2F2F
     /* 19BFF4 0029BEF4 2F2F2D2D */ .word 0x2D2D2F2F
     /* 19BFF8 0029BEF8 2D2D2D2D */ .word 0x2D2D2D2D
@@ -11950,7 +11950,7 @@ glabel LIT_2860
     /* 19C028 0029BF28 00000000 */ .word 0x00000000
     /* 19C02C 0029BF2C 00000000 */ .word 0x00000000
 
-glabel LIT_3075
+glabel "@3075"
     /* 19C030 0029BF30 70B21C00 */ .word .L001CB270
     /* 19C034 0029BF34 28B31C00 */ .word .L001CB328
     /* 19C038 0029BF38 CCB31C00 */ .word .L001CB3CC
@@ -11960,7 +11960,7 @@ glabel LIT_3075
     /* 19C048 0029BF48 00000000 */ .word 0x00000000
     /* 19C04C 0029BF4C 00000000 */ .word 0x00000000
 
-glabel LIT_3190
+glabel "@3190"
     /* 19C050 0029BF50 6D617020 */ .word 0x2070616D
     /* 19C054 0029BF54 6275696C */ .word 0x6C697562
     /* 19C058 0029BF58 64207375 */ .word 0x75732064
@@ -11970,7 +11970,7 @@ glabel LIT_3190
     /* 19C068 0029BF68 00000000 */ .word 0x00000000
     /* 19C06C 0029BF6C 00000000 */ .word 0x00000000
 
-glabel LIT_3191
+glabel "@3191"
     /* 19C070 0029BF70 B8BF1C00 */ .word .L001CBFB8
     /* 19C074 0029BF74 10C01C00 */ .word .L001CC010
     /* 19C078 0029BF78 C8BF1C00 */ .word .L001CBFC8

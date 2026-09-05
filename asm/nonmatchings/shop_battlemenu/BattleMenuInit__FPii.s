@@ -41,8 +41,8 @@ glabel BattleMenuInit__FPii
     /* 0F5E78 001F5D78 2A000010 */  b          .L001F5E24
     /* 0F5E7C 001F5D7C 00000000 */   nop
   .L001F5D80:
-    /* 0F5E80 001F5D80 2900023C */  lui        $2, %hi(LIT_969__2)
-    /* 0F5E84 001F5D84 202F4224 */  addiu      $2, $2, %lo(LIT_969__2)
+    /* 0F5E80 001F5D80 2900023C */  lui        $2, %hi("@969__2")
+    /* 0F5E84 001F5D84 202F4224 */  addiu      $2, $2, %lo("@969__2")
     /* 0F5E88 001F5D88 2000A427 */  addiu      $4, $29, 0x20
     /* 0F5E8C 001F5D8C 00004378 */  lq         $3, 0x0($2)
     /* 0F5E90 001F5D90 100042DC */  ld         $2, 0x10($2)
@@ -50,8 +50,8 @@ glabel BattleMenuInit__FPii
     /* 0F5E98 001F5D98 100082FC */  sd         $2, 0x10($4)
     /* 0F5E9C 001F5D9C E094858F */  lw         $5, -0x6B20($28)
     /* 0F5EA0 001F5DA0 2400A5AF */  sw         $5, 0x24($29)
-    /* 0F5EA4 001F5DA4 2900023C */  lui        $2, %hi(LIT_970)
-    /* 0F5EA8 001F5DA8 402F4224 */  addiu      $2, $2, %lo(LIT_970)
+    /* 0F5EA4 001F5DA4 2900023C */  lui        $2, %hi("@970")
+    /* 0F5EA8 001F5DA8 402F4224 */  addiu      $2, $2, %lo("@970")
     /* 0F5EAC 001F5DAC 4000A427 */  addiu      $4, $29, 0x40
     /* 0F5EB0 001F5DB0 00004378 */  lq         $3, 0x0($2)
     /* 0F5EB4 001F5DB4 100042DC */  ld         $2, 0x10($2)
@@ -93,8 +93,8 @@ glabel BattleMenuInit__FPii
     /* 0F5F40 001F5E40 E49482AF */  sw         $2, -0x6B1C($28)
     /* 0F5F44 001F5E44 30FB040C */  jal        StartReadBG__Fv
     /* 0F5F48 001F5E48 00000000 */   nop
-    /* 0F5F4C 001F5E4C 2A00023C */  lui        $2, %hi(LIT_1011__2)
-    /* 0F5F50 001F5E50 F0D54424 */  addiu      $4, $2, %lo(LIT_1011__2)
+    /* 0F5F4C 001F5E4C 2A00023C */  lui        $2, %hi("@1011__2")
+    /* 0F5F50 001F5E50 F0D54424 */  addiu      $4, $2, %lo("@1011__2")
     /* 0F5F54 001F5E54 E494858F */  lw         $5, -0x6B1C($28)
     /* 0F5F58 001F5E58 ACAE080C */  jal        LoadFileBGMenuData__FPcP1
     /* 0F5F5C 001F5E5C 00000000 */   nop
@@ -122,8 +122,8 @@ glabel BattleMenuInit__FPii
     /* 0F5FB4 001F5EB4 E494828F */  lw         $2, -0x6B1C($28)
     /* 0F5FB8 001F5EB8 D901013C */  lui        $1, %hi(MenuMes + 0x18)
     /* 0F5FBC 001F5EBC 080422AC */  sw         $2, %lo(MenuMes + 0x18)($1)
-    /* 0F5FC0 001F5EC0 2A00023C */  lui        $2, %hi(LIT_1012)
-    /* 0F5FC4 001F5EC4 08D64424 */  addiu      $4, $2, %lo(LIT_1012)
+    /* 0F5FC0 001F5EC0 2A00023C */  lui        $2, %hi("@1012")
+    /* 0F5FC4 001F5EC4 08D64424 */  addiu      $4, $2, %lo("@1012")
     /* 0F5FC8 001F5EC8 A611040C */  jal        printf
     /* 0F5FCC 001F5ECC 00000000 */   nop
     /* 0F5FD0 001F5ED0 E494828F */  lw         $2, -0x6B1C($28)
@@ -135,8 +135,8 @@ glabel BattleMenuInit__FPii
     /* 0F5FE8 001F5EE8 E49482AF */  sw         $2, -0x6B1C($28)
     /* 0F5FEC 001F5EEC C701023C */  lui        $2, %hi(TexManager)
     /* 0F5FF0 001F5EF0 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0F5FF4 001F5EF4 2A00023C */  lui        $2, %hi(LIT_1013)
-    /* 0F5FF8 001F5EF8 18D64524 */  addiu      $5, $2, %lo(LIT_1013)
+    /* 0F5FF4 001F5EF4 2A00023C */  lui        $2, %hi("@1013")
+    /* 0F5FF8 001F5EF8 18D64524 */  addiu      $5, $2, %lo("@1013")
     /* 0F5FFC 001F5EFC FFFF0624 */  addiu      $6, $0, -0x1
     /* 0F6000 001F5F00 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0F6004 001F5F04 00000000 */   nop

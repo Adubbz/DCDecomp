@@ -59,8 +59,8 @@ glabel BtCheckDamageProc__Fv
     /* 00F394 01DBB094 0C86040C */  jal        sceVu0CopyVector
     /* 00F398 01DBB098 00000000 */   nop
     /* 00F39C 01DBB09C 789C858F */  lw         $5, -0x6388($28)
-    /* 00F3A0 01DBB0A0 DC01023C */  lui        $2, %hi(LIT_345__11)
-    /* 00F3A4 01DBB0A4 401B4224 */  addiu      $2, $2, %lo(LIT_345__11)
+    /* 00F3A0 01DBB0A0 DC01023C */  lui        $2, %hi("@345__11")
+    /* 00F3A4 01DBB0A4 401B4224 */  addiu      $2, $2, %lo("@345__11")
     /* 00F3A8 01DBB0A8 1001A427 */  addiu      $4, $29, 0x110
     /* 00F3AC 01DBB0AC 00004378 */  lq         $3, 0x0($2)
     /* 00F3B0 01DBB0B0 100042DC */  ld         $2, 0x10($2)
@@ -633,14 +633,14 @@ glabel BtCheckDamageProc__Fv
     /* 00FC30 01DBB930 00608244 */  mtc1       $2, $f12
     /* 00FC34 01DBB934 C4F9060C */  jal        AddNowLife__11CUserStatusFisf
     /* 00FC38 01DBB938 00000000 */   nop
-    /* 00FC3C 01DBB93C DC01023C */  lui        $2, %hi(LIT_5329)
-    /* 00FC40 01DBB940 40284224 */  addiu      $2, $2, %lo(LIT_5329)
+    /* 00FC3C 01DBB93C DC01023C */  lui        $2, %hi("@5329")
+    /* 00FC40 01DBB940 40284224 */  addiu      $2, $2, %lo("@5329")
     /* 00FC44 01DBB944 D000A527 */  addiu      $5, $29, 0xD0
     /* 00FC48 01DBB948 00004278 */  lq         $2, 0x0($2)
     /* 00FC4C 01DBB94C 0000A27C */  sq         $2, 0x0($5)
     /* 00FC50 01DBB950 789C868F */  lw         $6, -0x6388($28)
-    /* 00FC54 01DBB954 DC01023C */  lui        $2, %hi(LIT_345__11)
-    /* 00FC58 01DBB958 401B4224 */  addiu      $2, $2, %lo(LIT_345__11)
+    /* 00FC54 01DBB954 DC01023C */  lui        $2, %hi("@345__11")
+    /* 00FC58 01DBB958 401B4224 */  addiu      $2, $2, %lo("@345__11")
     /* 00FC5C 01DBB95C 3001A427 */  addiu      $4, $29, 0x130
     /* 00FC60 01DBB960 00004378 */  lq         $3, 0x0($2)
     /* 00FC64 01DBB964 100042DC */  ld         $2, 0x10($2)
@@ -863,14 +863,14 @@ glabel BtCheckDamageProc__Fv
     /* 00FFA4 01DBBCA4 21104400 */  addu       $2, $2, $4
     /* 00FFA8 01DBBCA8 003C40AC */  sw         $0, 0x3C00($2)
   .L01DBBCAC:
-    /* 00FFAC 01DBBCAC DC01023C */  lui        $2, %hi(LIT_5344)
-    /* 00FFB0 01DBBCB0 50284224 */  addiu      $2, $2, %lo(LIT_5344)
+    /* 00FFAC 01DBBCAC DC01023C */  lui        $2, %hi("@5344")
+    /* 00FFB0 01DBBCB0 50284224 */  addiu      $2, $2, %lo("@5344")
     /* 00FFB4 01DBBCB4 0001A527 */  addiu      $5, $29, 0x100
     /* 00FFB8 01DBBCB8 00004278 */  lq         $2, 0x0($2)
     /* 00FFBC 01DBBCBC 0000A27C */  sq         $2, 0x0($5)
     /* 00FFC0 01DBBCC0 789C868F */  lw         $6, -0x6388($28)
-    /* 00FFC4 01DBBCC4 DC01023C */  lui        $2, %hi(LIT_345__11)
-    /* 00FFC8 01DBBCC8 401B4224 */  addiu      $2, $2, %lo(LIT_345__11)
+    /* 00FFC4 01DBBCC4 DC01023C */  lui        $2, %hi("@345__11")
+    /* 00FFC8 01DBBCC8 401B4224 */  addiu      $2, $2, %lo("@345__11")
     /* 00FFCC 01DBBCCC 5001A427 */  addiu      $4, $29, 0x150
     /* 00FFD0 01DBBCD0 00004378 */  lq         $3, 0x0($2)
     /* 00FFD4 01DBBCD4 100042DC */  ld         $2, 0x10($2)

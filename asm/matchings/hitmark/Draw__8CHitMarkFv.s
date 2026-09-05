@@ -19,8 +19,8 @@ glabel Draw__8CHitMarkFv
     /* 0B32D0 001B31D0 00000000 */   nop
     /* 0B32D4 001B31D4 C701023C */  lui        $2, %hi(TexManager)
     /* 0B32D8 001B31D8 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0B32DC 001B31DC 2A00023C */  lui        $2, %hi(LIT_1430)
-    /* 0B32E0 001B31E0 F8B64524 */  addiu      $5, $2, %lo(LIT_1430)
+    /* 0B32DC 001B31DC 2A00023C */  lui        $2, %hi("@1430")
+    /* 0B32E0 001B31E0 F8B64524 */  addiu      $5, $2, %lo("@1430")
     /* 0B32E4 001B31E4 FFFF0624 */  addiu      $6, $0, -0x1
     /* 0B32E8 001B31E8 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0B32EC 001B31EC 00000000 */   nop

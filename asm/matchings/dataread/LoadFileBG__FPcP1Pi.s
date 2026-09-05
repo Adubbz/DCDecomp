@@ -59,8 +59,8 @@ glabel LoadFileBG__FPcP1Pi
     /* 03EC64 0013EB64 2A086102 */  slt        $1, $19, $1
     /* 03EC68 0013EB68 07002014 */  bnez       $1, .L0013EB88
     /* 03EC6C 0013EB6C 00000000 */   nop
-    /* 03EC70 0013EB70 2A00023C */  lui        $2, %hi(LIT_234)
-    /* 03EC74 0013EB74 78904424 */  addiu      $4, $2, %lo(LIT_234)
+    /* 03EC70 0013EB70 2A00023C */  lui        $2, %hi("@234")
+    /* 03EC74 0013EB74 78904424 */  addiu      $4, $2, %lo("@234")
     /* 03EC78 0013EB78 A611040C */  jal        printf
     /* 03EC7C 0013EB7C 00000000 */   nop
   .L0013EB80:
@@ -76,8 +76,8 @@ glabel LoadFileBG__FPcP1Pi
   .L0013EBA0:
     /* 03ECA0 0013EBA0 07004010 */  beqz       $2, .L0013EBC0
     /* 03ECA4 0013EBA4 00000000 */   nop
-    /* 03ECA8 0013EBA8 2A00023C */  lui        $2, %hi(LIT_235)
-    /* 03ECAC 0013EBAC 90904424 */  addiu      $4, $2, %lo(LIT_235)
+    /* 03ECA8 0013EBA8 2A00023C */  lui        $2, %hi("@235")
+    /* 03ECAC 0013EBAC 90904424 */  addiu      $4, $2, %lo("@235")
     /* 03ECB0 0013EBB0 282E6072 */  paddub     $5, $19, $0
     /* 03ECB4 0013EBB4 28368072 */  paddub     $6, $20, $0
     /* 03ECB8 0013EBB8 A611040C */  jal        printf

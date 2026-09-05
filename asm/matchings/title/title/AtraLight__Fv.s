@@ -20,8 +20,8 @@ glabel AtraLight__Fv
     /* 021504 01DCD204 00000000 */   nop
     /* 021508 01DCD208 DF01013C */  lui        $1, %hi(Chara__3 + 0x241C)
     /* 02150C 01DCD20C FC22248C */  lw         $4, %lo(Chara__3 + 0x241C)($1)
-    /* 021510 01DCD210 DE01023C */  lui        $2, %hi(LIT_1155__3)
-    /* 021514 01DCD214 98044524 */  addiu      $5, $2, %lo(LIT_1155__3)
+    /* 021510 01DCD210 DE01023C */  lui        $2, %hi("@1155__3")
+    /* 021514 01DCD214 98044524 */  addiu      $5, $2, %lo("@1155__3")
     /* 021518 01DCD218 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 02151C 01DCD21C 00000000 */   nop
     /* 021520 01DCD220 28864070 */  paddub     $16, $2, $0

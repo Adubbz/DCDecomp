@@ -34,13 +34,13 @@ glabel SmokeProcess__Fv
     /* 00ACA4 01DB69A4 2499828F */  lw         $2, %gp_rel(cnt$681)($28)
     /* 00ACA8 01DB69A8 70004014 */  bnez       $2, .L01DB6B6C
     /* 00ACAC 01DB69AC 00000000 */   nop
-    /* 00ACB0 01DB69B0 DD01023C */  lui        $2, %hi(LIT_688__3)
-    /* 00ACB4 01DB69B4 70664224 */  addiu      $2, $2, %lo(LIT_688__3)
+    /* 00ACB0 01DB69B0 DD01023C */  lui        $2, %hi("@688__3")
+    /* 00ACB4 01DB69B4 70664224 */  addiu      $2, $2, %lo("@688__3")
     /* 00ACB8 01DB69B8 0001A527 */  addiu      $5, $29, 0x100
     /* 00ACBC 01DB69BC 00004278 */  lq         $2, 0x0($2)
     /* 00ACC0 01DB69C0 0000A27C */  sq         $2, 0x0($5)
-    /* 00ACC4 01DB69C4 DD01023C */  lui        $2, %hi(LIT_689__4)
-    /* 00ACC8 01DB69C8 80664224 */  addiu      $2, $2, %lo(LIT_689__4)
+    /* 00ACC4 01DB69C4 DD01023C */  lui        $2, %hi("@689__4")
+    /* 00ACC8 01DB69C8 80664224 */  addiu      $2, $2, %lo("@689__4")
     /* 00ACCC 01DB69CC 1001A627 */  addiu      $6, $29, 0x110
     /* 00ACD0 01DB69D0 00004278 */  lq         $2, 0x0($2)
     /* 00ACD4 01DB69D4 0000C27C */  sq         $2, 0x0($6)
@@ -123,8 +123,8 @@ glabel SmokeProcess__Fv
     /* 00AE00 01DB6B00 2000A2AF */  sw         $2, 0x20($29)
     /* 00AE04 01DB6B04 C701023C */  lui        $2, %hi(TexManager)
     /* 00AE08 01DB6B08 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 00AE0C 01DB6B0C DE01023C */  lui        $2, %hi(LIT_704__4)
-    /* 00AE10 01DB6B10 B8DD4524 */  addiu      $5, $2, %lo(LIT_704__4)
+    /* 00AE0C 01DB6B0C DE01023C */  lui        $2, %hi("@704__4")
+    /* 00AE10 01DB6B10 B8DD4524 */  addiu      $5, $2, %lo("@704__4")
     /* 00AE14 01DB6B14 FFFF0624 */  addiu      $6, $0, -0x1
     /* 00AE18 01DB6B18 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 00AE1C 01DB6B1C 00000000 */   nop
@@ -158,8 +158,8 @@ glabel SmokeProcess__Fv
     /* 00AE88 01DB6B88 2499828F */  lw         $2, %gp_rel(cnt$681)($28)
     /* 00AE8C 01DB6B8C 0D004014 */  bnez       $2, .L01DB6BC4
     /* 00AE90 01DB6B90 00000000 */   nop
-    /* 00AE94 01DB6B94 DD01023C */  lui        $2, %hi(LIT_695__2)
-    /* 00AE98 01DB6B98 90664224 */  addiu      $2, $2, %lo(LIT_695__2)
+    /* 00AE94 01DB6B94 DD01023C */  lui        $2, %hi("@695__2")
+    /* 00AE98 01DB6B98 90664224 */  addiu      $2, $2, %lo("@695__2")
     /* 00AE9C 01DB6B9C 2001A527 */  addiu      $5, $29, 0x120
     /* 00AEA0 01DB6BA0 00004278 */  lq         $2, 0x0($2)
     /* 00AEA4 01DB6BA4 0000A27C */  sq         $2, 0x0($5)

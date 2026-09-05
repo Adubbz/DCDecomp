@@ -5,7 +5,7 @@
 
 .section .rodata
 .align 4
-glabel LIT_1574
+glabel "@1574"
     /* 19F850 0029F750 24D62300 */ .word .L0023D624
     /* 19F854 0029F754 24D62300 */ .word .L0023D624
     /* 19F858 0029F758 24D62300 */ .word .L0023D624
@@ -38,8 +38,8 @@ glabel OpeningBookDraw__Fv
     /* 13D6BC 0023D5BC 00000000 */   nop
     /* 13D6C0 0023D5C0 C701023C */  lui        $2, %hi(TexManager)
     /* 13D6C4 0023D5C4 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 13D6C8 0023D5C8 2A00023C */  lui        $2, %hi(LIT_1573)
-    /* 13D6CC 0023D5CC 38F74524 */  addiu      $5, $2, %lo(LIT_1573)
+    /* 13D6C8 0023D5C8 2A00023C */  lui        $2, %hi("@1573")
+    /* 13D6CC 0023D5CC 38F74524 */  addiu      $5, $2, %lo("@1573")
     /* 13D6D0 0023D5D0 FFFF0624 */  addiu      $6, $0, -0x1
     /* 13D6D4 0023D5D4 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 13D6D8 0023D5D8 00000000 */   nop
@@ -54,8 +54,8 @@ glabel OpeningBookDraw__Fv
     /* 13D6FC 0023D5FC 0700A12C */  sltiu      $1, $5, 0x7
     /* 13D700 0023D600 28002010 */  beqz       $1, .L0023D6A4
     /* 13D704 0023D604 00000000 */   nop
-    /* 13D708 0023D608 2A00033C */  lui        $3, %hi(LIT_1574)
-    /* 13D70C 0023D60C 50F76424 */  addiu      $4, $3, %lo(LIT_1574)
+    /* 13D708 0023D608 2A00033C */  lui        $3, %hi("@1574")
+    /* 13D70C 0023D60C 50F76424 */  addiu      $4, $3, %lo("@1574")
     /* 13D710 0023D610 80180500 */  sll        $3, $5, 2
     /* 13D714 0023D614 21186400 */  addu       $3, $3, $4
     /* 13D718 0023D618 0000638C */  lw         $3, 0x0($3)

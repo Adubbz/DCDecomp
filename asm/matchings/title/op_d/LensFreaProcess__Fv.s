@@ -6,14 +6,14 @@
 glabel LensFreaProcess__Fv
     /* 01B090 01DC6D90 C0FFBD27 */  addiu      $29, $29, -0x40
     /* 01B094 01DC6D94 0000BF7F */  sq         $31, 0x0($29)
-    /* 01B098 01DC6D98 DE01023C */  lui        $2, %hi(LIT_1004__4)
-    /* 01B09C 01DC6D9C C0B04224 */  addiu      $2, $2, %lo(LIT_1004__4)
+    /* 01B098 01DC6D98 DE01023C */  lui        $2, %hi("@1004__4")
+    /* 01B09C 01DC6D9C C0B04224 */  addiu      $2, $2, %lo("@1004__4")
     /* 01B0A0 01DC6DA0 3000A327 */  addiu      $3, $29, 0x30
     /* 01B0A4 01DC6DA4 00004278 */  lq         $2, 0x0($2)
     /* 01B0A8 01DC6DA8 0000627C */  sq         $2, 0x0($3)
     /* 01B0AC 01DC6DAC 849A848F */  lw         $4, -0x657C($28)
-    /* 01B0B0 01DC6DB0 DE01023C */  lui        $2, %hi(LIT_1012__2)
-    /* 01B0B4 01DC6DB4 20FE4524 */  addiu      $5, $2, %lo(LIT_1012__2)
+    /* 01B0B0 01DC6DB0 DE01023C */  lui        $2, %hi("@1012__2")
+    /* 01B0B4 01DC6DB4 20FE4524 */  addiu      $5, $2, %lo("@1012__2")
     /* 01B0B8 01DC6DB8 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 01B0BC 01DC6DBC 00000000 */   nop
     /* 01B0C0 01DC6DC0 28264070 */  paddub     $4, $2, $0
@@ -32,8 +32,8 @@ glabel LensFreaProcess__Fv
     /* 01B0F4 01DC6DF4 00000000 */   nop
     /* 01B0F8 01DC6DF8 C701023C */  lui        $2, %hi(TexManager)
     /* 01B0FC 01DC6DFC 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01B100 01DC6E00 DE01023C */  lui        $2, %hi(LIT_1013__2)
-    /* 01B104 01DC6E04 28FE4524 */  addiu      $5, $2, %lo(LIT_1013__2)
+    /* 01B100 01DC6E00 DE01023C */  lui        $2, %hi("@1013__2")
+    /* 01B104 01DC6E04 28FE4524 */  addiu      $5, $2, %lo("@1013__2")
     /* 01B108 01DC6E08 FFFF0624 */  addiu      $6, $0, -0x1
     /* 01B10C 01DC6E0C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01B110 01DC6E10 00000000 */   nop
@@ -41,8 +41,8 @@ glabel LensFreaProcess__Fv
     /* 01B118 01DC6E18 00000000 */   nop
     /* 01B11C 01DC6E1C C701023C */  lui        $2, %hi(TexManager)
     /* 01B120 01DC6E20 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01B124 01DC6E24 DE01023C */  lui        $2, %hi(LIT_1013__2)
-    /* 01B128 01DC6E28 28FE4524 */  addiu      $5, $2, %lo(LIT_1013__2)
+    /* 01B124 01DC6E24 DE01023C */  lui        $2, %hi("@1013__2")
+    /* 01B128 01DC6E28 28FE4524 */  addiu      $5, $2, %lo("@1013__2")
     /* 01B12C 01DC6E2C FFFF0624 */  addiu      $6, $0, -0x1
     /* 01B130 01DC6E30 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01B134 01DC6E34 00000000 */   nop

@@ -26,8 +26,8 @@ glabel SmokeProcess__Fv__2
     /* 017074 01DC2D74 689A828F */  lw         $2, %gp_rel(cnt$1744)($28)
     /* 017078 01DC2D78 3A014014 */  bnez       $2, .L01DC3264
     /* 01707C 01DC2D7C 00000000 */   nop
-    /* 017080 01DC2D80 DE01023C */  lui        $2, %hi(LIT_1751)
-    /* 017084 01DC2D84 B0A94224 */  addiu      $2, $2, %lo(LIT_1751)
+    /* 017080 01DC2D80 DE01023C */  lui        $2, %hi("@1751")
+    /* 017084 01DC2D84 B0A94224 */  addiu      $2, $2, %lo("@1751")
     /* 017088 01DC2D88 2000A327 */  addiu      $3, $29, 0x20
     /* 01708C 01DC2D8C 00004278 */  lq         $2, 0x0($2)
     /* 017090 01DC2D90 0000627C */  sq         $2, 0x0($3)
@@ -107,8 +107,8 @@ glabel SmokeProcess__Fv__2
     /* 0171B8 01DC2EB8 3000A2AF */  sw         $2, 0x30($29)
     /* 0171BC 01DC2EBC C701023C */  lui        $2, %hi(TexManager)
     /* 0171C0 01DC2EC0 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 0171C4 01DC2EC4 DE01023C */  lui        $2, %hi(LIT_1788)
-    /* 0171C8 01DC2EC8 B8F94524 */  addiu      $5, $2, %lo(LIT_1788)
+    /* 0171C4 01DC2EC4 DE01023C */  lui        $2, %hi("@1788")
+    /* 0171C8 01DC2EC8 B8F94524 */  addiu      $5, $2, %lo("@1788")
     /* 0171CC 01DC2ECC FFFF0624 */  addiu      $6, $0, -0x1
     /* 0171D0 01DC2ED0 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 0171D4 01DC2ED4 00000000 */   nop
@@ -271,8 +271,8 @@ glabel SmokeProcess__Fv__2
     /* 017430 01DC3130 1001A2AF */  sw         $2, 0x110($29)
     /* 017434 01DC3134 C701023C */  lui        $2, %hi(TexManager)
     /* 017438 01DC3138 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 01743C 01DC313C DE01023C */  lui        $2, %hi(LIT_1788)
-    /* 017440 01DC3140 B8F94524 */  addiu      $5, $2, %lo(LIT_1788)
+    /* 01743C 01DC313C DE01023C */  lui        $2, %hi("@1788")
+    /* 017440 01DC3140 B8F94524 */  addiu      $5, $2, %lo("@1788")
     /* 017444 01DC3144 FFFF0624 */  addiu      $6, $0, -0x1
     /* 017448 01DC3148 B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 01744C 01DC314C 00000000 */   nop

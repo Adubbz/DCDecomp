@@ -53,8 +53,8 @@ glabel WeaponMenuCheckEnableSetElem__FP11WEAPON_HAVEP11WEAPON_HAVEi
     /* 0FC2B8 001FC1B8 10004012 */  beqz       $18, .L001FC1FC
     /* 0FC2BC 001FC1BC 00000000 */   nop
     /* 0FC2C0 001FC1C0 16004582 */  lb         $5, 0x16($18)
-    /* 0FC2C4 001FC1C4 2A00023C */  lui        $2, %hi(LIT_2356)
-    /* 0FC2C8 001FC1C8 C8D84424 */  addiu      $4, $2, %lo(LIT_2356)
+    /* 0FC2C4 001FC1C4 2A00023C */  lui        $2, %hi("@2356")
+    /* 0FC2C8 001FC1C8 C8D84424 */  addiu      $4, $2, %lo("@2356")
     /* 0FC2CC 001FC1CC A611040C */  jal        printf
     /* 0FC2D0 001FC1D0 00000000 */   nop
     /* 0FC2D4 001FC1D4 16004382 */  lb         $3, 0x16($18)
@@ -63,8 +63,8 @@ glabel WeaponMenuCheckEnableSetElem__FP11WEAPON_HAVEP11WEAPON_HAVEi
     /* 0FC2E0 001FC1E0 00000000 */   nop
     /* 0FC2E4 001FC1E4 21107100 */  addu       $2, $3, $17
     /* 0FC2E8 001FC1E8 17004580 */  lb         $5, 0x17($2)
-    /* 0FC2EC 001FC1EC 2A00023C */  lui        $2, %hi(LIT_2357)
-    /* 0FC2F0 001FC1F0 E0D84424 */  addiu      $4, $2, %lo(LIT_2357)
+    /* 0FC2EC 001FC1EC 2A00023C */  lui        $2, %hi("@2357")
+    /* 0FC2F0 001FC1F0 E0D84424 */  addiu      $4, $2, %lo("@2357")
     /* 0FC2F4 001FC1F4 A611040C */  jal        printf
     /* 0FC2F8 001FC1F8 00000000 */   nop
   .L001FC1FC:

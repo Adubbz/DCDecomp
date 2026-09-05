@@ -23,12 +23,12 @@ glabel StartLoadWorldMap__FiP1
     /* 10A0B8 00209FB8 94AE080C */  jal        GetPathReadDifferntLang__FPc
     /* 10A0BC 00209FBC 00000000 */   nop
     /* 10A0C0 00209FC0 3000A427 */  addiu      $4, $29, 0x30
-    /* 10A0C4 00209FC4 2A00023C */  lui        $2, %hi(LIT_6229)
-    /* 10A0C8 00209FC8 00DD4524 */  addiu      $5, $2, %lo(LIT_6229)
+    /* 10A0C4 00209FC4 2A00023C */  lui        $2, %hi("@6229")
+    /* 10A0C8 00209FC8 00DD4524 */  addiu      $5, $2, %lo("@6229")
     /* 10A0CC 00209FCC BC14040C */  jal        strcat
     /* 10A0D0 00209FD0 00000000 */   nop
-    /* 10A0D4 00209FD4 2900023C */  lui        $2, %hi(LIT_6227)
-    /* 10A0D8 00209FD8 C0374224 */  addiu      $2, $2, %lo(LIT_6227)
+    /* 10A0D4 00209FD4 2900023C */  lui        $2, %hi("@6227")
+    /* 10A0D8 00209FD8 C0374224 */  addiu      $2, $2, %lo("@6227")
     /* 10A0DC 00209FDC 7000A427 */  addiu      $4, $29, 0x70
     /* 10A0E0 00209FE0 00004378 */  lq         $3, 0x0($2)
     /* 10A0E4 00209FE4 100042DC */  ld         $2, 0x10($2)

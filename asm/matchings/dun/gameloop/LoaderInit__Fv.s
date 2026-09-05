@@ -35,8 +35,8 @@ glabel LoaderInit__Fv
     /* 015790 01DC1490 948B868F */  lw         $6, -0x746C($28)
     /* 015794 01DC1494 4CCF040C */  jal        LoadTextureBlock__15CTextureManagerFiPUi
     /* 015798 01DC1498 00000000 */   nop
-    /* 01579C 01DC149C DC01033C */  lui        $3, %hi(LIT_922__2)
-    /* 0157A0 01DC14A0 682E6324 */  addiu      $3, $3, %lo(LIT_922__2)
+    /* 01579C 01DC149C DC01033C */  lui        $3, %hi("@922__2")
+    /* 0157A0 01DC14A0 682E6324 */  addiu      $3, $3, %lo("@922__2")
     /* 0157A4 01DC14A4 F001013C */  lui        $1, %hi(CDbgMsg + 0x10)
     /* 0157A8 01DC14A8 F06823AC */  sw         $3, %lo(CDbgMsg + 0x10)($1)
     /* 0157AC 01DC14AC 20000324 */  addiu      $3, $0, 0x20

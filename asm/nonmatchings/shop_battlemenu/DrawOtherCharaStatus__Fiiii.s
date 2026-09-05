@@ -83,8 +83,8 @@ glabel DrawOtherCharaStatus__Fiiii
     /* 0F4A94 001F4994 2C44040C */  jal        fptosi
     /* 0F4A98 001F4998 00000000 */   nop
     /* 0F4A9C 001F499C 28BE4070 */  paddub     $23, $2, $0
-    /* 0F4AA0 001F49A0 2900023C */  lui        $2, %hi(LIT_731__6)
-    /* 0F4AA4 001F49A4 502E4224 */  addiu      $2, $2, %lo(LIT_731__6)
+    /* 0F4AA0 001F49A0 2900023C */  lui        $2, %hi("@731__6")
+    /* 0F4AA4 001F49A4 502E4224 */  addiu      $2, $2, %lo("@731__6")
     /* 0F4AA8 001F49A8 A000A327 */  addiu      $3, $29, 0xA0
     /* 0F4AAC 001F49AC 00004278 */  lq         $2, 0x0($2)
     /* 0F4AB0 001F49B0 0000627C */  sq         $2, 0x0($3)

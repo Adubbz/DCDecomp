@@ -24,8 +24,8 @@ glabel setTexScroll__Fv
     /* 00C610 01DB8310 01000224 */  addiu      $2, $0, 0x1
     /* 00C614 01DB8314 909982A3 */  sb         $2, %gp_rel(init$1036)($28)
   .L01DB8318:
-    /* 00C618 01DB8318 DD01023C */  lui        $2, %hi(LIT_1038__3)
-    /* 00C61C 01DB831C C0674224 */  addiu      $2, $2, %lo(LIT_1038__3)
+    /* 00C618 01DB8318 DD01023C */  lui        $2, %hi("@1038__3")
+    /* 00C61C 01DB831C C0674224 */  addiu      $2, $2, %lo("@1038__3")
     /* 00C620 01DB8320 7000A327 */  addiu      $3, $29, 0x70
     /* 00C624 01DB8324 00004278 */  lq         $2, 0x0($2)
     /* 00C628 01DB8328 0000627C */  sq         $2, 0x0($3)
@@ -80,16 +80,16 @@ glabel setTexScroll__Fv
     /* 00C6E4 01DB83E4 849982AF */  sw         $2, %gp_rel(setTexScrollCnt$1032)($28)
     /* 00C6E8 01DB83E8 C701023C */  lui        $2, %hi(TexManager)
     /* 00C6EC 01DB83EC 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 00C6F0 01DB83F0 DE01023C */  lui        $2, %hi(LIT_1060)
-    /* 00C6F4 01DB83F4 80DF4524 */  addiu      $5, $2, %lo(LIT_1060)
+    /* 00C6F0 01DB83F0 DE01023C */  lui        $2, %hi("@1060")
+    /* 00C6F4 01DB83F4 80DF4524 */  addiu      $5, $2, %lo("@1060")
     /* 00C6F8 01DB83F8 FFFF0624 */  addiu      $6, $0, -0x1
     /* 00C6FC 01DB83FC B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 00C700 01DB8400 00000000 */   nop
     /* 00C704 01DB8404 28864070 */  paddub     $16, $2, $0
     /* 00C708 01DB8408 C701023C */  lui        $2, %hi(TexManager)
     /* 00C70C 01DB840C 70584424 */  addiu      $4, $2, %lo(TexManager)
-    /* 00C710 01DB8410 DE01023C */  lui        $2, %hi(LIT_1061__2)
-    /* 00C714 01DB8414 88DF4524 */  addiu      $5, $2, %lo(LIT_1061__2)
+    /* 00C710 01DB8410 DE01023C */  lui        $2, %hi("@1061__2")
+    /* 00C714 01DB8414 88DF4524 */  addiu      $5, $2, %lo("@1061__2")
     /* 00C718 01DB8418 FFFF0624 */  addiu      $6, $0, -0x1
     /* 00C71C 01DB841C B4C4040C */  jal        GetTexture__15CTextureManagerFPci
     /* 00C720 01DB8420 00000000 */   nop

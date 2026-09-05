@@ -235,8 +235,8 @@ glabel OpD_SoundProcess__Fv
     /* 019C50 01DC5950 140F050C */  jal        SetReverb__6CSoundFiii
     /* 019C54 01DC5954 00000000 */   nop
     /* 019C58 01DC5958 3C8D8427 */  addiu      $4, $28, -0x72C4
-    /* 019C5C 01DC595C DE01023C */  lui        $2, %hi(LIT_693__3)
-    /* 019C60 01DC5960 D8FD4524 */  addiu      $5, $2, %lo(LIT_693__3)
+    /* 019C5C 01DC595C DE01023C */  lui        $2, %hi("@693__3")
+    /* 019C60 01DC5960 D8FD4524 */  addiu      $5, $2, %lo("@693__3")
     /* 019C64 01DC5964 948B868F */  lw         $6, -0x746C($28)
     /* 019C68 01DC5968 3410050C */  jal        LoadSoundFileFromPack__6CSoundFPcPUi
     /* 019C6C 01DC596C 00000000 */   nop

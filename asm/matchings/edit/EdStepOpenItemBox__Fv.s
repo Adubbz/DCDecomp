@@ -42,8 +42,8 @@ glabel EdStepOpenItemBox__Fv
     /* 073CB4 00173BB4 70A3040C */  jal        SetRotation__6CFrameFfff
     /* 073CB8 00173BB8 00000000 */   nop
     /* 073CBC 00173BBC B48F848F */  lw         $4, -0x704C($28)
-    /* 073CC0 00173BC0 2A00023C */  lui        $2, %hi(LIT_690)
-    /* 073CC4 00173BC4 10A34524 */  addiu      $5, $2, %lo(LIT_690)
+    /* 073CC0 00173BC0 2A00023C */  lui        $2, %hi("@690")
+    /* 073CC4 00173BC4 10A34524 */  addiu      $5, $2, %lo("@690")
     /* 073CC8 00173BC8 C0A1040C */  jal        SearchFrame__6CFrameFPc
     /* 073CCC 00173BCC 00000000 */   nop
     /* 073CD0 00173BD0 28864070 */  paddub     $16, $2, $0

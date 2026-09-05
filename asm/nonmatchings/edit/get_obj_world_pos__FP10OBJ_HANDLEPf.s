@@ -26,8 +26,8 @@ glabel get_obj_world_pos__FP10OBJ_HANDLEPf
     /* 08AB28 0018AA28 18000010 */  b          .L0018AA8C
     /* 08AB2C 0018AA2C 00000000 */   nop
   .L0018AA30:
-    /* 08AB30 0018AA30 2700033C */  lui        $3, %hi(LIT_554)
-    /* 08AB34 0018AA34 D09A6324 */  addiu      $3, $3, %lo(LIT_554)
+    /* 08AB30 0018AA30 2700033C */  lui        $3, %hi("@554")
+    /* 08AB34 0018AA34 D09A6324 */  addiu      $3, $3, %lo("@554")
     /* 08AB38 0018AA38 1000A627 */  addiu      $6, $29, 0x10
     /* 08AB3C 0018AA3C 00006378 */  lq         $3, 0x0($3)
     /* 08AB40 0018AA40 0000C37C */  sq         $3, 0x0($6)

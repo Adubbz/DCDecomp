@@ -16,8 +16,8 @@ glabel _GOTO_CHANGE_ESA__FP12RS_STACKDATAi
   .L0018C1E4:
     /* 08C2E4 0018C1E4 0400828C */  lw         $2, 0x4($4)
     /* 08C2E8 0018C1E8 309282AF */  sw         $2, -0x6DD0($28)
-    /* 08C2EC 0018C1EC 2700023C */  lui        $2, %hi(LIT_820)
-    /* 08C2F0 0018C1F0 E09A4624 */  addiu      $6, $2, %lo(LIT_820)
+    /* 08C2EC 0018C1EC 2700023C */  lui        $2, %hi("@820")
+    /* 08C2F0 0018C1F0 E09A4624 */  addiu      $6, $2, %lo("@820")
     /* 08C2F4 0018C1F4 1000A527 */  addiu      $5, $29, 0x10
     /* 08C2F8 0018C1F8 04000424 */  addiu      $4, $0, 0x4
   .L0018C1FC:

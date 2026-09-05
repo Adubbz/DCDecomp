@@ -72,8 +72,8 @@ glabel InitCloth__FP9CFrameVu1R9input_strP14CDataAlloc2_1_
     /* 03FBAC 0013FAAC 07006104 */  bgez       $3, .L0013FACC
     /* 03FBB0 0013FAB0 00000000 */   nop
   .L0013FAB4:
-    /* 03FBB4 0013FAB4 2A00023C */  lui        $2, %hi(LIT_254)
-    /* 03FBB8 0013FAB8 D0914424 */  addiu      $4, $2, %lo(LIT_254)
+    /* 03FBB4 0013FAB4 2A00023C */  lui        $2, %hi("@254")
+    /* 03FBB8 0013FAB8 D0914424 */  addiu      $4, $2, %lo("@254")
     /* 03FBBC 0013FABC A611040C */  jal        printf
     /* 03FBC0 0013FAC0 00000000 */   nop
     /* 03FBC4 0013FAC4 1D000010 */  b          .L0013FB3C
@@ -94,8 +94,8 @@ glabel InitCloth__FP9CFrameVu1R9input_strP14CDataAlloc2_1_
     /* 03FBFC 0013FAFC 00000000 */   nop
     /* 03FC00 0013FB00 05004104 */  bgez       $2, .L0013FB18
     /* 03FC04 0013FB04 00000000 */   nop
-    /* 03FC08 0013FB08 2A00023C */  lui        $2, %hi(LIT_255)
-    /* 03FC0C 0013FB0C E8914424 */  addiu      $4, $2, %lo(LIT_255)
+    /* 03FC08 0013FB08 2A00023C */  lui        $2, %hi("@255")
+    /* 03FC0C 0013FB0C E8914424 */  addiu      $4, $2, %lo("@255")
     /* 03FC10 0013FB10 A611040C */  jal        printf
     /* 03FC14 0013FB14 00000000 */   nop
   .L0013FB18:

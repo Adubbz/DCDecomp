@@ -12,8 +12,8 @@ glabel OpB_LoadDataBG__Fv
     /* 00D6E0 01DB93E0 FDFF4014 */  bnez       $2, .L01DB93D8
     /* 00D6E4 01DB93E4 00000000 */   nop
     /* 00D6E8 01DB93E8 948B858F */  lw         $5, -0x746C($28)
-    /* 00D6EC 01DB93EC DE01023C */  lui        $2, %hi(LIT_337__4)
-    /* 00D6F0 01DB93F0 D0E34424 */  addiu      $4, $2, %lo(LIT_337__4)
+    /* 00D6EC 01DB93EC DE01023C */  lui        $2, %hi("@337__4")
+    /* 00D6F0 01DB93F0 D0E34424 */  addiu      $4, $2, %lo("@337__4")
     /* 00D6F4 01DB93F4 28360070 */  paddub     $6, $0, $0
     /* 00D6F8 01DB93F8 ACFA040C */  jal        LoadFileBG__FPcP1Pi
     /* 00D6FC 01DB93FC 00000000 */   nop
