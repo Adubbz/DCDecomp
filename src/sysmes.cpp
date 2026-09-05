@@ -110,13 +110,13 @@ void InitSystemMes() {
     SystemMessage.stay_frame = 1;
     SystemMessage.text_rate = 0;
     SystemMessage.text_rate_set = 0;
-    SystemMessage.edge_alpha = 0;
+    SystemMessage.style = 0;
     SystemMessage.page_arrow = 0;
     SystemMessage.fade_speed = 1.0f;
     SystemMessage.columns = 26;
     SystemMessage.rows = 1;
     SystemMessage.centre_rows = 0;
-    SystemMessage.edge_alpha = 2;
+    SystemMessage.style = 2;
     SystemMessage.unk_17B0 = mes_buff;
     SystemMessage.tex_block = 26;
     SystemMessage.SetBuff(data);

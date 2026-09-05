@@ -79,6 +79,8 @@ void MGEndDrawShadow(unsigned char alpha);
  */
 void MGSetBGColor(float red, float green, float blue, float alpha);
 
+extern sceDmaChan *DmaCH1;
+extern sceDmaChan *DmaCH2;
 extern sceDmaChan *DmaCH8;
 extern sceVif1Packet *Vif1Packet;
 /* Retail has two distinct `VSyncField` symbols (0x2A23C8 GLOBAL -- this one

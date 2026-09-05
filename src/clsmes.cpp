@@ -1893,8 +1893,9 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
         } else {
             int ww = (int) w - this->char_width;
             int half = (int) h >> 1;
+            float half_float = (float) half;
 
-            DrawMaru(packet, x, y, ww, (int) (half + 1.5f * this->char_height), top, 0x20, 0,
+            DrawMaru(packet, x, y, ww, (int) (half_float + 1.5f * this->char_height), top, 0x20, 0,
                      prim);
 
             float pad = 1.5f * this->char_height;

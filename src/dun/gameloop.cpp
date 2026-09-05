@@ -6285,6 +6285,7 @@ void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out) {
     SetWeaponColor();
 }
 
+FUZZY_MATCH("asm/nonmatchings/dun/gameloop", LoadWeapon2__FPUiPUiPUiii)
 void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned int *main_data,
                  int chara, int reload) {
     int weapon_kind[6] = {1, 4, 6, 5, 10, 7};

@@ -656,7 +656,7 @@ void UngagaKey_Play(void) {
     }
 
     if (time >= 674 && time <= 677) {
-        NowColData->Set(hit_left, damage, 1, 6.0f, 0.0f, 2, 2, 0, 0);
+        NowColData->Set(hit_left, damage, 1, 6.0f, 0, 2, 2, 0, 0);
         basic_damage(0, 4);
         NowColData->SetKickBack(chara_pos, 1.2f, 0.1f, 2);
         NowColData->Set(hit_right, damage, 1, 6.0f, 0.0f, 2, 2, 0, 0);

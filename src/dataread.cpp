@@ -703,9 +703,9 @@ void init_all() {
     }
     InitCDFile();
     DevInit();
-    sceDmaGetChan(1);
-    sceDmaGetChan(2);
-    sceDmaGetChan(8);
+    DmaCH1 = sceDmaGetChan(1);
+    DmaCH2 = sceDmaGetChan(2);
+    DmaCH8 = sceDmaGetChan(8);
     MGInit();
     InitMemoryFile();
     BufferAllClear();
