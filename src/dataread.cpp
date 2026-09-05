@@ -671,6 +671,11 @@ void LoadOverlay(int mode) {
     mwLoadOverlay(path, address);
 }
 
+/* Defined by main.cpp, whose .sbss run holds them. */
+extern sceDmaChan *d1;
+extern sceDmaChan *d2;
+extern sceDmaChan *d8;
+
 void init_all() {
     sceSifInitRpc(0);
     sceCdInit(0);
@@ -703,9 +708,9 @@ void init_all() {
     }
     InitCDFile();
     DevInit();
-    DmaCH1 = sceDmaGetChan(1);
-    DmaCH2 = sceDmaGetChan(2);
-    DmaCH8 = sceDmaGetChan(8);
+    d1 = sceDmaGetChan(1);
+    d2 = sceDmaGetChan(2);
+    d8 = sceDmaGetChan(8);
     MGInit();
     InitMemoryFile();
     BufferAllClear();

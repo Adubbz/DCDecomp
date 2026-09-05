@@ -44,6 +44,7 @@
 #pragma argument_flag_ones 3522, 3561, 3565, 3584, 3585, 3590, 3891, 3911, 3922, 3944
 #pragma argument_flag_ones 3946, 3947, 3999, 4058, 4069, 4077, 4097, 4100, 4135, 4142
 #pragma argument_flag_ones 4157, 4160, 4185, 4213, 4220, 4234, 4253, 4265, 4269, 4271
+#pragma argument_flag_ones 4736
 #pragma argument_flag_ones 4340, 4346, 4393, 4415, 4422, 4429, 4688, 4689, 4690, 4733
 
 #include "dun/gameloop.hpp"
@@ -5720,7 +5721,7 @@ void motionDrive(void) {
         s8 owner = status->cur_chara;
         s8 owner2 = status->cur_chara;
         s8 *slots = status->equipped_weapon_slot;
-        WEAPON_HAVE *weapon = &status->chara_weapons[owner][slots[owner]];
+        WEAPON_HAVE *weapon = &status->chara_weapons[owner][(s8)slots[owner]];
 
         if (weapon->durability_f <= 10.0f &&
             status->chara_weapons[owner2][slots[owner2]].item_no != defWeapon__6[owner]) {
@@ -5814,8 +5815,8 @@ void motionDrive(void) {
 
     if (StatusErrCheck(4) != 0 || StatusErrCheck(8) != 0) {
         CUserStatus *status = UserStatus;
-        s16 *left = status->unk_42E0;
         s8 owner = status->cur_chara;
+        s16 *left = status->unk_42E0;
 
         if (left[status->cur_chara] > 0) {
             left[owner]--;
@@ -5931,8 +5932,9 @@ void motionDrive(void) {
     }
 
     UserStatus->Step(0);
-    DngMessMan.SetStatus_Dry(water_max, water_now,
-                             UserStatus->water_now[UserStatus->cur_chara]);
+    float dry = UserStatus->water_now[UserStatus->cur_chara];
+
+    DngMessMan.SetStatus_Dry(water_max, water_now, dry);
     BtStatusAlarmAnime();
 
     for (int i = 0; i < FrameObjAnimCnt; i++) {
@@ -8158,9 +8160,10 @@ void autoCamTrial(void) {
     }
 
     if (hits > 0) {
-        int last = -1;
+        int last;
 
         sceVu0InnerProduct(forward, poly[hit_poly[0]].normal);
+        last = -1;
 
         for (i = 0; i < hits; i++) {
             sceVu0SubVector(towards, hit_point[i], pos);
@@ -8776,13 +8779,13 @@ void setTargetCursor(int on) {
                 !(stood[1] <= 10.0f + target[1])) {
                 keep = 0;
             }
-        }
 
-        float drop = stood[1] - target[1];
+            float drop = stood[1] - target[1];
 
-        drop = drop < 0.0f ? -drop : drop;
-        if (!(drop < 80.0f)) {
-            keep = 0;
+            drop = drop < 0.0f ? -drop : drop;
+            if (!(drop < 80.0f)) {
+                keep = 0;
+            }
         }
 
         target[1] += 8.0f;

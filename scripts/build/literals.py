@@ -130,6 +130,13 @@ PLACEMENT = re.compile(
 # more than one symbol with the same original name.
 NUMBERED_DATUM = re.compile(r'^@\d+(?:__\d+)?$')
 
+# tools/mwccgap marks a `@<n>` that spliced assembly only *references* -- so
+# retail's constant rather than the one MWCC invented for this unit's compiled
+# half, which would otherwise absorb the reference. The suffix keeps the two
+# apart through the assembler; the address to pin is still retail's.
+EXTERNAL_INVENTED = '$ext'
+EXTERNAL_DATUM = re.compile(r'^(@\d+(?:__\d+)?)%s$' % re.escape(EXTERNAL_INVENTED))
+
 # The suffix splat puts on all but the first copy of a duplicated name.
 SUFFIX = re.compile(r'__\d+$')
 
@@ -723,14 +730,17 @@ def resolve_names(path, addresses):
     obj = Object(path)
     changed = False
     for sym in obj.symbols:
-        if not NUMBERED_DATUM.match(sym.name):
+        external = EXTERNAL_DATUM.match(sym.name)
+        if not external and not NUMBERED_DATUM.match(sym.name):
             continue
         if sym.shndx == SHN_UNDEF:
+            # A marked reference carries retail's name under the suffix.
+            wanted = external.group(1) if external else sym.name
             try:
-                sym.value = addresses[sym.name]
+                sym.value = addresses[wanted]
             except KeyError:
                 raise SystemExit(
-                    f'literals: {path}: no retail address for {sym.name}')
+                    f'literals: {path}: no retail address for {wanted}')
             sym.size = 0
             sym.info = STT_OBJECT
             sym.shndx = SHN_ABS

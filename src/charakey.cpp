@@ -1,6 +1,11 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 836
+#pragma constant_flag 0
+#pragma constant_flag_ones 130,132,138,143,210,211,212
+#pragma argument_flag 0
+#pragma argument_flag_ones 189,248,267,286,342,348,410,430,470,490
+#pragma argument_flag_ones 540,545,617,622,693,699,746,747,749
 
 #include "common.h"
 

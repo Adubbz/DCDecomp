@@ -167,9 +167,9 @@ void TrialStart__Fv();
  * their retail byte range. See re/ai/build_pipeline.md. */
 /** Top-level game mode currently being updated. */
 s32 mode;
-static sceDmaChan *d1;
-static sceDmaChan *d2;
-static sceDmaChan *d8;
+sceDmaChan *d1;
+sceDmaChan *d2;
+sceDmaChan *d8;
 /** Memory-card operation selected by the developer menu. */
 s32 mc_mode;
 
