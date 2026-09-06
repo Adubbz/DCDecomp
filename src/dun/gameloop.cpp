@@ -32,20 +32,19 @@
 #pragma argument_flag_free 3860, 3861, 3862, 3863, 3864, 3865, 3866, 3867, 3868, 3869
 #pragma argument_flag_free 3870, 3871, 3872, 3873, 3874, 3875, 3876, 3877, 3878, 3879
 #pragma argument_flag_free 3880
-#pragma argument_flag 0
 #pragma argument_flag_ones 154, 451, 493, 573, 574, 575, 591, 592, 593, 594
 #pragma argument_flag_ones 1155, 1173, 1174, 1175, 1176, 1239, 1249, 1250, 1285, 1289
-#pragma argument_flag_ones 1314, 1318, 1326, 1330, 1339, 1364, 1366, 1411, 1454, 1456
-#pragma argument_flag_ones 1459, 1460, 1464, 1470, 1471, 1473, 1478, 1489, 1491, 1505
-#pragma argument_flag_ones 1687, 1688, 1690, 1755, 1756, 1810, 1811, 1815, 1817, 1878
-#pragma argument_flag_ones 1906, 1937, 2045, 2197, 2243, 2244, 2411, 2426, 2433, 2444
-#pragma argument_flag_ones 2450, 2473, 2474, 2475, 2476, 2477, 2484, 2485, 2521, 2578
-#pragma argument_flag_ones 2614, 2624, 2627, 2897, 3024, 3309, 3337, 3513, 3514, 3517
-#pragma argument_flag_ones 3522, 3561, 3565, 3584, 3585, 3590, 3891, 3911, 3922, 3944
-#pragma argument_flag_ones 3946, 3947, 3999, 4058, 4069, 4077, 4097, 4100, 4135, 4142
-#pragma argument_flag_ones 4157, 4160, 4185, 4213, 4220, 4234, 4253, 4265, 4269, 4271
-#pragma argument_flag_ones 4736
-#pragma argument_flag_ones 4340, 4346, 4393, 4415, 4422, 4429, 4688, 4689, 4690, 4733
+#pragma argument_flag_ones 1314, 1318, 1326, 1330, 1339, 1364, 1366, 1411, 1456, 1459
+#pragma argument_flag_ones 1460, 1464, 1471, 1473, 1489, 1491, 1505, 1755, 1756, 1810
+#pragma argument_flag_ones 1811, 1815, 1816, 1817, 1877, 1880, 1906, 1937, 1988, 2045
+#pragma argument_flag_ones 2197, 2243, 2244, 2362, 2411, 2426, 2433, 2444, 2450, 2473
+#pragma argument_flag_ones 2474, 2475, 2476, 2477, 2521, 2578, 2581, 2582, 2614, 2624
+#pragma argument_flag_ones 2700, 2897, 3024, 3309, 3337, 3513, 3515, 3587, 3589, 3684
+#pragma argument_flag_ones 3685, 3687, 3688, 3891, 3911, 3922, 3943, 3946, 3947, 3999
+#pragma argument_flag_ones 4058, 4069, 4077, 4097, 4100, 4135, 4142, 4157, 4160, 4185
+#pragma argument_flag_ones 4213, 4220, 4234, 4253, 4265, 4269, 4270, 4340, 4346, 4355
+#pragma argument_flag_ones 4367, 4393, 4415, 4422, 4429, 4688, 4689, 4690, 4733, 4736
+#pragma argument_flag 0
 
 #include "dun/gameloop.hpp"
 
@@ -75,6 +74,7 @@
 #include "dungeoneventman.hpp"
 #include "dungeonmap.hpp"
 #include "edit.hpp"
+#include "editloop3.hpp"
 #include "frame.hpp"
 #include "frameattr.hpp"
 #include "gamepad.hpp"
@@ -810,20 +810,6 @@ int checkItemUsed(int slot);
  */
 int EdEventMode(CCameraFollow *camera, int unk);
 
-/**
- * Fades the picture out through the Georama editor's fade.
- *
- * @mangled EdFadeOut__Fifff
- */
-void EdFadeOut(int frames, float red, float green, float blue);
-
-/**
- * Tells whether that fade has finished.
- *
- * @mangled EdFadeOutCheck__Fv
- */
-int EdFadeOutCheck(void);
-
 extern void MapJump(int map_no, int event_no);
 
 /* The lighting the dungeon draws the field and the models under. */
@@ -999,13 +985,6 @@ unsigned int Color2Clut(unsigned int colour);
  * @mangled BtSetActiveItemModel__FPUi
  */
 void BtSetActiveItemModel(unsigned int *pack);
-
-/**
- * Puts the Georama editor's fade back to the start.
- *
- * @mangled EdFadeInit__Fv
- */
-void EdFadeInit(void);
 
 /**
  * Forgets every gate key the player carried into the dungeon.
@@ -3571,7 +3550,7 @@ void MoveChara(void) {
                                                                 .used != 0) {
                                                             s8 chara = UserStatus->cur_chara;
 
-                                                            if (chara == 0) {
+                                                            if (UserStatus->cur_chara == 0) {
                                                                 gameTask = 0x8C;
                                                                 done = 1;
                                                                 SndSePlay(1, -1, 0);
@@ -3734,8 +3713,9 @@ void MoveChara(void) {
                                                         item[0] = -1;
                                                         slots[itemNowSel + 3] = 0;
                                                         if (activeItem.model[itemNowSel] != -1) {
-                                                            model = &activeItem.model[itemNowSel];
-                                                            activeItem.models->DeleteModel(*model);
+                                                            model = &activeItem.model[(s32) itemNowSel];
+                                                            activeItem.models->DeleteModel(
+                                                                activeItem.model[itemNowSel]);
                                                             *model = -1;
                                                         }
                                                     } else {
@@ -5717,14 +5697,21 @@ void motionDrive(void) {
 
     // A weapon that is nearly broken keeps saying so.
     if (BtEventMode == 0) {
-        CUserStatus *status = UserStatus;
-        s8 owner = status->cur_chara;
-        s8 owner2 = status->cur_chara;
-        s8 *slots = status->equipped_weapon_slot;
-        WEAPON_HAVE *weapon = &status->chara_weapons[owner][(s8)slots[owner]];
+        WEAPON_HAVE *weapon;
+        CUserStatus *status;
+        s8 *slots;
+        s8 *slots2;
+        s8 owner;
+        s8 owner2;
+
+        status = UserStatus;
+        owner = owner2 = status->cur_chara;
+        slots = status->equipped_weapon_slot;
+        slots2 = status->equipped_weapon_slot;
+        weapon = &status->chara_weapons[owner][(s8) slots[owner]];
 
         if (weapon->durability_f <= 10.0f &&
-            status->chara_weapons[owner2][slots[owner2]].item_no != defWeapon__6[owner]) {
+            status->chara_weapons[owner2][(s8) slots2[owner2]].item_no != defWeapon__6[(s8) owner]) {
             static int warning_cnt;
             static char init;
             int wait;
@@ -5855,9 +5842,6 @@ void motionDrive(void) {
 
         CUserStatus *status = UserStatus;
         s8 *pwho = &status->cur_chara;
-        s8 who = status->cur_chara;
-        s8 who2 = status->cur_chara;
-
         if (status->cur_chara == 0) {
             if (BtActStatus.unk_14A == 0) {
                 gain *= 0.25f;
@@ -5874,6 +5858,9 @@ void motionDrive(void) {
             }
             BtActStatus.unk_14A = 0;
         }
+        s8 who = *pwho;
+        s8 who2 = *pwho;
+
         if (*pwho == 5) {
             if (BtActStatus.unk_0A0 != 1) {
                 if (BtActStatus.unk_0A4 == 0) {
@@ -5918,15 +5905,14 @@ void motionDrive(void) {
 
     CUserStatus *status = UserStatus;
     s8 *phealed = &status->cur_chara;
-    s8 healed = *phealed;
-    float water_max = status->water_max[status->cur_chara];
-    float water_now = status->water_now[status->cur_chara];
+    float water_max = status->water_max[*phealed];
+    float water_now = status->water_now[*phealed];
     static int heal_counter = 0;
 
     heal_counter++;
     if (!(heal_counter < 240)) {
         if ((NowWeaponHave->flags & 0x800) && status->hp[*phealed] > 0) {
-            status->AddNowLife(healed, 1, 255.0f);
+            status->AddNowLife((s8) *phealed, 1, 255.0f);
         }
         heal_counter = 0;
     }
@@ -6034,60 +6020,72 @@ void motionDrive(void) {
 }
 
 void BtCleatRandomMap(void) {
-    int i;
-
     NowDngMap = &MainDungeonMap;
     NowEventMan = &DngEventMan;
     ((CDngStatusData *) UserStatus)->LostGateKey();
 
-    CDungeonEventMan *events = NowEventMan;
+    {
+        int i;
+        CDungeonEventMan *events = NowEventMan;
 
-    for (i = 0; i < 96; i++) {
-        events->event[i].event = NULL;
-        events->event[i].unk_34 = 0;
-        events->event[i].unk_38 = 0;
-        events->event[i].unk_30 = 0;
-        events->event[i].chara_done = -1;
-    }
+        for (i = 0; i < 96; i++) {
+            CDungeonEventData *slot = &events->event[i];
 
-    CDungeonMap *map = NowDngMap;
-
-    for (i = 0; i < 48; i++) {
-        map->events[i].kind = -1;
-        map->events[i].unk_2C = 0;
-    }
-    for (i = 0; i < 24; i++) {
-        map->boxes[i].used = 0;
-        map->boxes[i].lid_angle = 0.0f;
-        map->boxes[i].unk_30 = 0;
-    }
-    map->box_num = 0;
-    for (i = 0; i < 8; i++) {
-        map->atra[i].used = 0;
-    }
-    map->atra_num = 0;
-    for (i = 0; i < 4; i++) {
-        map->room_link[i].used = 0;
+            slot->event = NULL;
+            slot->unk_34 = 0;
+            slot->unk_38 = 0;
+            slot->unk_30 = 0;
+            slot->chara_done = -1;
+        }
     }
 
-    CTexture *gold = GoldTex;
+    {
+        int i;
+        CDungeonMap *map = NowDngMap;
 
-    for (i = 0; i < 32; i++) {
-        MainRandomItem.unk_290[i] = -1;
-        MainRandomItem.unk_494[i] = -1;
-        MainRandomItem.unk_514[i] = 0;
+        for (i = 0; i < 48; i++) {
+            map->events[i].kind = -1;
+            map->events[i].unk_2C = 0;
+        }
+        for (i = 0; i < 24; i++) {
+            map->boxes[i].used = 0;
+            map->boxes[i].lid_angle = 0.0f;
+            map->boxes[i].unk_30 = 0;
+        }
+        map->box_num = 0;
+        for (i = 0; i < 8; i++) {
+            map->atra[i].used = 0;
+        }
+        map->atra_num = 0;
+        for (i = 0; i < 4; i++) {
+            map->room_link[i].used = 0;
+        }
     }
-    MainRandomItem.gold_texture = gold;
-    for (i = 0; i < 32; i++) {
-        SubRandomItem.unk_290[i] = -1;
-        SubRandomItem.unk_494[i] = -1;
-        SubRandomItem.unk_514[i] = 0;
+
+    {
+        CTexture *gold = GoldTex;
+        int i;
+
+        for (i = 0; i < 32; i++) {
+            MainRandomItem.unk_290[i] = -1;
+            MainRandomItem.unk_494[i] = -1;
+            MainRandomItem.unk_514[i] = 0;
+        }
+        MainRandomItem.gold_texture = gold;
+        for (i = 0; i < 32; i++) {
+            SubRandomItem.unk_290[i] = -1;
+            SubRandomItem.unk_494[i] = -1;
+            SubRandomItem.unk_514[i] = 0;
+        }
+        SubRandomItem.gold_texture = gold;
     }
-    SubRandomItem.gold_texture = gold;
     RandomItem = &MainRandomItem;
 
     NowDngMap->buildRandomMap(6, 1);
-    NowDngMap->buildEventData(UserStatus->cur_floor, NowDngMap->unk_BDEC, 1);
+
+    s32 map_no = NowDngMap->unk_BDEC;
+
+    NowDngMap->buildEventData(UserStatus->cur_floor, map_no, 1);
     NowDngMap->FlushCheckMask();
     NowDngMap->DrawMapCalc(NowDngMap->unk_BDEC);
     NowEventMan->SetupEvent(NowDngMap, (s32) NowDngMap->unk_BDEC);
@@ -6099,37 +6097,46 @@ void BtCleatRandomMap(void) {
     UraDungeonMap = MainDungeonMap;
     UraEventMan = DngEventMan;
 
-    CDungeonEventMan *ura_events = &UraEventMan;
+    {
+        int i;
 
-    for (i = 0; i < 96; i++) {
-        ura_events->event[i].event = NULL;
-        ura_events->event[i].unk_34 = 0;
-        ura_events->event[i].unk_38 = 0;
-        ura_events->event[i].unk_30 = 0;
-        ura_events->event[i].chara_done = -1;
-    }
-    for (i = 0; i < 48; i++) {
-        UraDungeonMap.events[i].kind = -1;
-        UraDungeonMap.events[i].unk_2C = 0;
-    }
-    for (i = 0; i < 24; i++) {
-        UraDungeonMap.boxes[i].used = 0;
-        UraDungeonMap.boxes[i].lid_angle = 0.0f;
-        UraDungeonMap.boxes[i].unk_30 = 0;
-    }
-    UraDungeonMap.box_num = 0;
-    for (i = 0; i < 8; i++) {
-        UraDungeonMap.atra[i].used = 0;
-    }
-    UraDungeonMap.atra_num = 0;
-    for (i = 0; i < 4; i++) {
-        UraDungeonMap.room_link[i].used = 0;
+        for (i = 0; i < 96; i++) {
+            CDungeonEventData *slot = &UraEventMan.event[i];
+
+            slot->event = NULL;
+            slot->unk_34 = 0;
+            slot->unk_38 = 0;
+            slot->unk_30 = 0;
+            slot->chara_done = -1;
+        }
+        for (i = 0; i < 48; i++) {
+            UraDungeonMap.events[i].kind = -1;
+            UraDungeonMap.events[i].unk_2C = 0;
+        }
+        for (i = 0; i < 24; i++) {
+            UraDungeonMap.boxes[i].used = 0;
+            UraDungeonMap.boxes[i].lid_angle = 0.0f;
+            UraDungeonMap.boxes[i].unk_30 = 0;
+        }
+        UraDungeonMap.box_num = 0;
+        for (i = 0; i < 8; i++) {
+            UraDungeonMap.atra[i].used = 0;
+        }
+        UraDungeonMap.atra_num = 0;
+        for (i = 0; i < 4; i++) {
+            UraDungeonMap.room_link[i].used = 0;
+        }
     }
 
     UraDungeonMap.buildRandomMap(6, 0);
-    UraDungeonMap.buildEventData(UserStatus->cur_floor, UraDungeonMap.unk_BDEC, 0);
+
+    s32 ura_map_no = UraDungeonMap.unk_BDEC;
+
+    UraDungeonMap.buildEventData(UserStatus->cur_floor, ura_map_no, 0);
     UraDungeonMap.FlushCheckMask();
-    UraDungeonMap.DrawMapCalc(UraDungeonMap.unk_BDEC);
+    s32 ura_draw_no = UraDungeonMap.unk_BDEC;
+
+    UraDungeonMap.DrawMapCalc(ura_draw_no);
     UraEventMan.SetupEvent(&UraDungeonMap, (s32) UraDungeonMap.unk_BDEC);
 
     NowDngMap = &MainDungeonMap;
@@ -6288,6 +6295,7 @@ void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out) {
 }
 
 FUZZY_MATCH("asm/nonmatchings/dun/gameloop", LoadWeapon2__FPUiPUiPUiii)
+
 void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned int *main_data,
                  int chara, int reload) {
     int weapon_kind[6] = {1, 4, 6, 5, 10, 7};
@@ -6766,8 +6774,6 @@ int BtCheckDamageProc(void) {
     sceVu0FVECTOR pos;
     sceVu0FVECTOR from;
     sceVu0FVECTOR blow;
-    sceVu0FVECTOR at;
-    sceVu0FVECTOR away;
     int taken = 0;
     int blown = 0;
 
@@ -6819,8 +6825,10 @@ int BtCheckDamageProc(void) {
             }
 
             int damage = NowColData->hit[no].damage;
-            COLLISION_HIT *hit = &NowColData->hit[no];
             int guard = UserStatus->unk_4348[UserStatus->cur_chara];
+            int monster;
+            int roll;
+            COLLISION_HIT *hit = &NowColData->hit[no];
 
             if (StatusErrCheck(8) != 0) {
                 guard *= 2;
@@ -6830,17 +6838,17 @@ int BtCheckDamageProc(void) {
                 damage = 0;
             }
 
-            int monster = -1;
+            monster = -1;
 
-            if (hit->owner != -1) {
-                monster = (hit->owner - 200) / 5;
+            if (NowColData->hit[no].owner != -1) {
+                monster = (NowColData->hit[no].owner - 200) / 5;
                 if (monster >= 0 && monster < 16) {
                     NowMonstorUnit->monster[monster].unk_0C0 = damage;
                 }
                 NowMonstorUnit->chara[monster].GetPosition(from);
             }
 
-            int roll = (int) (100.0f * (float) rand() / 2147483648.0f);
+            roll = (int) (100.0f * (float) rand() / 2147483648.0f);
 
             // A hit that drains takes water off the player and gives it to
             // whatever landed it.
@@ -6873,10 +6881,9 @@ int BtCheckDamageProc(void) {
                 if (slot == -1) {
                     BtSetStatusErr(4);
                 } else {
-                    s32 *vol = &UserStatus->active_item_vol[slot];
+                    s32 *vol = &((CUserStatus *) UserStatus)->active_item_vol[slot];
 
-                    (*vol)--;
-                    if (*vol <= 0) {
+                    if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
                         DngMessMan.unk_24 = 0xB7;
                         DngMessMan.unk_0C = GetCommonItemDataSystemMsg(0x84);
@@ -6896,10 +6903,9 @@ int BtCheckDamageProc(void) {
                     DngMessMan.unk_04 = 0xB4;
                     DngMessMan.unk_1C = 0;
                 } else {
-                    s32 *vol = &UserStatus->active_item_vol[slot];
+                    s32 *vol = &((CUserStatus *) UserStatus)->active_item_vol[slot];
 
-                    (*vol)--;
-                    if (*vol <= 0) {
+                    if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
                         DngMessMan.unk_24 = 0xB7;
                         DngMessMan.unk_0C = GetCommonItemDataSystemMsg(0x87);
@@ -6919,10 +6925,9 @@ int BtCheckDamageProc(void) {
                     DngMessMan.unk_04 = 0xB4;
                     DngMessMan.unk_1C = 0;
                 } else {
-                    s32 *vol = &UserStatus->active_item_vol[slot];
+                    s32 *vol = &((CUserStatus *) UserStatus)->active_item_vol[slot];
 
-                    (*vol)--;
-                    if (*vol <= 0) {
+                    if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
                         DngMessMan.unk_24 = 0xB7;
                         DngMessMan.unk_0C = GetCommonItemDataSystemMsg(0x85);
@@ -6942,10 +6947,9 @@ int BtCheckDamageProc(void) {
                     DngMessMan.unk_04 = 0xB4;
                     DngMessMan.unk_1C = 0;
                 } else {
-                    s32 *vol = &UserStatus->active_item_vol[slot];
+                    s32 *vol = &((CUserStatus *) UserStatus)->active_item_vol[slot];
 
-                    (*vol)--;
-                    if (*vol <= 0) {
+                    if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
                         DngMessMan.unk_24 = 0xB7;
                         DngMessMan.unk_0C = GetCommonItemDataSystemMsg(0x86);
@@ -7013,6 +7017,9 @@ int BtCheckDamageProc(void) {
             int kind = NowColData->hit[no].kind;
 
             if (kind == 2 || kind == 4) {
+                sceVu0FVECTOR at;
+                sceVu0FVECTOR away;
+
                 sceVu0CopyVector(at, NowColData->hit[no].pos);
                 GamePad.SetVibration(1, 0xDC, 0xC);
 
@@ -8042,7 +8049,6 @@ void autoCamTrial(void) {
     float world[4][4];
     CCPoly *poly;
     int i;
-    int j;
     int count;
 
     if (DebugStatus[5] == 0) {
@@ -8077,9 +8083,12 @@ void autoCamTrial(void) {
     box.min[2] = look[2] < eye[2] ? look[2] : eye[2];
 
     if (NowDngMap->unk_BDEC != 1) {
+        CFrame *frame;
+        int i;
+
         i = 0;
         while (NowDngMap->parts[i].frame[0] != NULL) {
-            CFrame *frame = i == -1 ? NULL : NowDngMap->parts[i].unk_004;
+            frame = i == -1 ? NULL : NowDngMap->parts[i].unk_004;
 
             if (frame != NULL) {
                 CDungeonParts *part = &NowDngMap->parts[i];
@@ -8087,7 +8096,7 @@ void autoCamTrial(void) {
                 sceVu0CopyVector(eye, part->unk_110);
 
                 CDungeonMap *map = NowDngMap;
-                int turn = (int) map->parts[i].unk_170;
+                int turn = (int) ((CDungeonMap *) map)->parts[i].unk_170;
 
                 turn += i == -1 ? 0 : map->parts[i].unk_008;
 
@@ -8104,11 +8113,16 @@ void autoCamTrial(void) {
             i++;
         }
     } else {
+        CFrame *frame;
+        int j;
+        int i;
+
         for (j = 0; j < 20; j++) {
             for (i = 0; i < 20; i++) {
                 CDungeonMap *map = NowDngMap;
                 s32 parts_no = map->cells[i + j * 20].parts_no;
-                CFrame *frame = parts_no == -1 ? NULL : map->parts[parts_no].unk_004;
+
+                frame = parts_no == -1 ? NULL : map->parts[parts_no].unk_004;
 
                 if (frame == NULL) {
                     continue;
@@ -8227,7 +8241,8 @@ void autoCamTrial(void) {
         }
         if (!(NowCamera__3->GetHeight() <= 5.0f)) {
             float rate = 0.05f;
-            float step = (NowCamera__3->GetHeight() - 5.0f) * rate;
+            float over = NowCamera__3->GetHeight() - 5.0f;
+            float step = over * rate;
 
             if (step < 0.15f) {
                 step = 0.15f;
@@ -8324,8 +8339,6 @@ void autoCamTrial(void) {
 FUZZY_MATCH("asm/nonmatchings/dun/gameloop", DelActiveItem__Fi);
 
 void DelActiveItem(int slot) {
-    // The two arrays are adjacent, and retail walks the second one off the
-    // first rather than off the save data again.
     // The two arrays are adjacent, and retail walks the second one off the
     // first rather than off the save data again.
     s16 *slots = UserStatus->active_item;

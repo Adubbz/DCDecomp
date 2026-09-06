@@ -247,6 +247,8 @@ segments:
       - {start: 0x68300, type: cpp, name: ebattle_loop}
       - {start: 0x6d960, type: asmtu, name: editarea}
       - {start: 0x70350, type: cpp, name: edit}
+      - {start: 0x742a0, type: cpp, name: editloop}
+      - {start: 0x83d40, type: cpp, name: editloop3}
       - {start: 0x9a0d0, type: cpp, name: editpartsinfo}
       - {start: 0x9a8b0, type: cpp, name: mapparts}
       - {start: 0x9b780, type: asmtu, name: edit_in}
@@ -372,6 +374,8 @@ segments:
       - {start: 0x19a2c0, type: .rodata, name: ebattle}
       - {start: 0x19a2e0, type: .rodata, name: ebattle_loop}
       - {start: 0x19a368, type: .rodata, name: edit}
+      - {start: 0x19a8c8, type: .rodata, name: editloop}
+      - {start: 0x19b140, type: .rodata, name: editloop3}
       - {start: 0x19b378, type: .rodata, name: edit_in}
       - {start: 0x19b528, type: .rodata, name: editground}
       - {start: 0x19b570, type: .rodata, name: fishing}

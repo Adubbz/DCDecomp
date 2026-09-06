@@ -374,6 +374,8 @@ SECTIONS
         ebattle_loop.cpp.o          (.text)   // 0x00168200
         editarea.cpp.o              (.text)   // 0x0016d860
         edit.cpp.o                  (.text)   // 0x00170250
+        editloop.cpp.o              (.text)   // 0x001741a0
+        editloop3.cpp.o             (.text)   // 0x00183c40
         editpartsinfo.cpp.o         (.text)   // 0x00199fd0
         mapparts.cpp.o              (.text)   // 0x0019a7b0
         edit_in.cpp.o               (.text)   // 0x0019b680
@@ -616,7 +618,7 @@ SECTIONS
 		main.sbss.part4b.s.o (.sbss)   // 0x002a25b8
 		edit.cpp.o (.sbss)             // 0x002a2740
 		main.sbss.part4c.s.o (.sbss)   // 0x002a27ac
-		edit.cpp.o (.fadebss)          // 0x002a29f8
+		editloop3.cpp.o (.fadebss)     // 0x002a29f8
 		main.sbss.part4d.s.o (.sbss)   // 0x002a2a04
 		dungeonmap.cpp.o (.sbss)
 		main.sbss.part5.s.o (.sbss)
@@ -673,7 +675,7 @@ SECTIONS
 		main.bss.part4c.s.o (.bss)     // 0x01d19aa0
 		editpartsinfo.cpp.o (.bss)
 		main.bss.part5.s.o (.bss)      // 0x01d1b218
-		edit.cpp.o (.fadecolbss)       // 0x01d3d1c0
+		editloop3.cpp.o (.fadecolbss)  // 0x01d3d1c0
 		main.bss.part5b.s.o (.bss)     // 0x01d3d1d0
 		dungeonmap.cpp.o (.bss)
 		main.bss.part6.s.o (.bss)
