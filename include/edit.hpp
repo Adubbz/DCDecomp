@@ -16,6 +16,15 @@ struct EDIT_EFFECT_INFO;
 struct EPARTS_FUNC_DATA;
 
 /**
+ * Starts the editor's ambient sound at the requested volume.
+ *
+ * @mangled EdAmbientPlay__Ff
+ * @address 0x1715D0
+ * @size 0x40
+ */
+void EdAmbientPlay(float volume);
+
+/**
  * Describes the time range and rendering parameters of depth of field.
  */
 struct DEPTH_OF_FIELD_INFO {

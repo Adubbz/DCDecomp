@@ -111,8 +111,12 @@ int LoadPackFile(char *path, u_int *buffer, int *out_size);
 
 /**
  * Finds a file in the current implicit pack.
+ *
+ * @mangled GetPackFile__FPcPi
+ * @address 0x13F6F0
+ * @size 0x30
  */
-u_int *GetPackFile(u_int *pack, char *name, int *out_size);
+u_int *GetPackFile(char *name, int *out_size);
 
 /**
  * Finds a file inside a pack that has already been read.
@@ -133,6 +137,9 @@ u_int *GetPackFile(u_int *pack, int index, char **out_name, int *out_size);
  */
 int GetPackFileExt(u_int *pack, char *extension, u_int **files, int max_files, int *sizes,
                    char **names);
+
+/** Shared buffer used for synchronous game-data reads. */
+extern u_int *read_buffer;
 
 /**
  * Turns a model towards one heading, a step at a time, and gives back the

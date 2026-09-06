@@ -3082,7 +3082,7 @@ void MoveChara(void) {
                 if (UserStatus->unk_431C != 0) {
                     UserStatus->unk_431C = 0;
                     gameTask = 0x1E;
-                    EnemyLifeGage.on = 0;
+                    EnemyLifeGage.draw = 0;
                     driveStepHold = 1;
                     SetMIniMapStatus(0);
                     iventInfo = -1;
@@ -3103,7 +3103,7 @@ void MoveChara(void) {
                     if (ok != 0) {
                         UserStatus->unk_431C = 0;
                         gameTask = 0x1E;
-                        EnemyLifeGage.on = 0;
+                        EnemyLifeGage.draw = 0;
                         driveStepHold = 1;
                         SetMIniMapStatus(0);
                         iventInfo = -1;
@@ -3142,7 +3142,7 @@ void MoveChara(void) {
                         DngMessMan.unk_20 = 0;
                         DngMessMan.unk_08 = 0;
                         MonstorNameOff = 0;
-                        EnemyLifeGage.on = 0;
+                        EnemyLifeGage.draw = 0;
                         BtMiniChrSelect_Init(0);
                         oldUnitNow = UserStatus->cur_chara;
                         gameTask = 0x127;
@@ -3234,7 +3234,8 @@ void MoveChara(void) {
 
                                 BtActStatus.unk_00C = 0x12;
                                 CharaMain.motion_type.motion_info[18].speed = 0.2f;
-                                turn = face - atan2f(move_x, move_z);
+                                turn = atan2f(move_x, move_z);
+                                turn = face - turn;
                                 if (turn < -3.141592f) {
                                     turn += 6.283184f;
                                 }
@@ -3562,12 +3563,12 @@ void MoveChara(void) {
                                                         break;
                                                     case 8:
                                                         index = NowDngMap->events[iventActive].index;
+
+                                                        CMonstorUnit *unit = NowMonstorUnit;
+
                                                         if (NowDngMap->boxes[index].item_no >= 0 &&
                                                             NowDngMap->boxes[index].item_no < 0x11) {
-                                                            NowMonstorUnit
-                                                                ->monster[NowDngMap->boxes[index]
-                                                                              .item_no]
-                                                                .unk_0D4 = 1;
+                                                            unit->monster[NowDngMap->boxes[index].item_no].unk_0D4 = 1;
                                                         }
                                                         NowDngMap->boxes[index].used = 0;
                                                         NowDngMap->events[iventActive].kind = -1;
@@ -3702,16 +3703,20 @@ void MoveChara(void) {
                                                     setUnitAmbientAnime(64.0f, 1.0f, 0.0f, 122.0f,
                                                                         208.0f);
                                                     SndSePlay(0x13, -1, 0);
-                                                    usedActiveItem(UserStatus,
-                                                                   activeItem.item[activeItem.now]);
-                                                    slots = UserStatus->active_item;
-                                                    item = &slots[itemNowSel];
+
+                                                    s32 taken = activeItem.item[activeItem.now];
+
+                                                    usedActiveItem(UserStatus, taken);
+
+                                                    s16 *inner = UserStatus->active_item;
+
+                                                    item = &inner[itemNowSel];
                                                     left = &item[3];
                                                     if (*left == 1) {
                                                         s32 *model;
 
                                                         item[0] = -1;
-                                                        slots[itemNowSel + 3] = 0;
+                                                        inner[itemNowSel + 3] = 0;
                                                         if (activeItem.model[itemNowSel] != -1) {
                                                             model = &activeItem.model[(s32) itemNowSel];
                                                             activeItem.models->DeleteModel(
@@ -3883,8 +3888,10 @@ void MoveChara(void) {
                                                             for (int i = 0; i < 3; i++) {
                                                                 float speed = blowVelo[i];
 
+                                                                float step = 0.018f;
+
                                                                 if (speed < 0.0f) {
-                                                                    blowVelo[i] = speed + 0.018f;
+                                                                    blowVelo[i] = speed + step;
                                                                     if (blowVelo[i] >= -0.01f) {
                                                                         blowVelo[i] = 0.0f;
                                                                     }
@@ -3966,8 +3973,8 @@ void MoveChara(void) {
                                                                         CDungeonParts *part2 =
                                                                             &map->parts[i];
 
-                                                                        turn = (int) part2->unk_170 +
-                                                                               part2->unk_010;
+                                                                        turn = (int) part2->unk_170;
+                                                                        turn += part2->unk_010;
                                                                         if (turn > 3) {
                                                                             turn -= 3;
                                                                         }
@@ -4078,7 +4085,8 @@ void MoveChara(void) {
                                                                             int dir = NowDngMap->cells[x + z * 20].direction;
                                                                             int base = parts_no == -1 ? 0 : NowDngMap->parts[parts_no].unk_010;
 
-                                                                            turn = dir + base;
+                                                                            turn = dir;
+                                                                            turn += base;
                                                                             if (turn > 3) {
                                                                                 turn -= 3;
                                                                             }
@@ -4403,6 +4411,7 @@ void MoveChara(void) {
                 BtCashBuffer.used = 0;
             }
             if (BtEventInfo.unk_34 != 0) {
+                int i;
                 CSHOT_EFFECT *effects;
 
                 printf("********** ext mem !!!\n");
@@ -4411,13 +4420,13 @@ void MoveChara(void) {
                 TexManager.CleanUpBuffer();
                 TexManager.CleanUpTextureList();
                 effects = NowShotEffect;
-                for (int i = 0; i < 5; i++) {
+                for (i = 0; i < 5; i++) {
                     effects[i].Initialize();
                 }
                 MainMonstorUnit.CleanViewMonstor(BtUraDongeon);
                 MonstorModelBuffer.used = 0;
-                u8 *cash = MonstorModelBuffer.buffer;
                 s32 cash_size = MonstorModelBuffer.size;
+                u8 *cash = MonstorModelBuffer.buffer;
 
                 BtCashBuffer.buffer = cash;
                 BtCashBuffer.size = cash_size + 0x88B8;
@@ -4635,9 +4644,10 @@ void MoveChara(void) {
                         int atra_no = NowDngMap->atra[i].atra_no;
 
                         if (atra_no != -1) {
-                            getAtraToSaveData(
-                                UserStatus->atra_data[selectMapNo][atra_no].unk_00, atra_no, SaveData,
-                                selectMapNo, UserStatus->cur_floor);
+                            CUserStatus *who = UserStatus;
+
+                            getAtraToSaveData(who->atra_data[selectMapNo][atra_no].unk_00, atra_no,
+                                              SaveData, selectMapNo, who->cur_floor);
                         }
                     }
                     driveStepHold = 0;
@@ -4690,6 +4700,7 @@ void MoveChara(void) {
             gameTask = 0x190;
             break;
         case 0xE3: {
+            int ura = BtUraDongeon;
             CMonstorUnit *unit = NowMonstorUnit;
 
             unit->unk_048 = 0;
@@ -4698,7 +4709,7 @@ void MoveChara(void) {
                 unit->script[i] = &MonstorScriptBuffer[i];
             }
             unit->unk_094 = -1;
-            unit->CleanViewMonstor(BtUraDongeon);
+            unit->CleanViewMonstor(ura);
             BtSetEventExtendTable();
             BtLoadMonstor(0);
             NowMonstorUnit->CleanViewMonstor(BtUraDongeon);
@@ -4707,6 +4718,7 @@ void MoveChara(void) {
             break;
         }
         case 0xE4: {
+            int ura = BtUraDongeon;
             CMonstorUnit *unit = NowMonstorUnit;
 
             unit->unk_048 = 0;
@@ -4715,7 +4727,7 @@ void MoveChara(void) {
                 unit->script[i] = &MonstorScriptBuffer[i];
             }
             unit->unk_094 = -1;
-            unit->CleanViewMonstor(BtUraDongeon);
+            unit->CleanViewMonstor(ura);
             BtSetEventExtendTable();
             BtLoadMonstor(0);
             NowMonstorUnit->CleanViewMonstor(BtUraDongeon);
@@ -4883,7 +4895,8 @@ void MoveChara(void) {
 
                             CDungeonParts *part2 = &NowDngMap->parts[i];
 
-                            turn = (int) part2->unk_170 + part2->unk_010;
+                            turn = (int) part2->unk_170;
+                            turn += part2->unk_010;
                             if (turn > 3) {
                                 turn -= 3;
                             }
@@ -5189,7 +5202,7 @@ void MoveChara(void) {
             DngMessMan.unk_20 = 0;
             DngMessMan.unk_08 = 0xA;
             MonstorNameOff = 0;
-            EnemyLifeGage.on = 1;
+            EnemyLifeGage.draw = 1;
             autoCamTrial();
             gameTask++;
             break;
@@ -5282,7 +5295,7 @@ void MoveChara(void) {
                         Mes2MakeFlg = 1;
                         DngMessMan.unk_00 = 1;
                         MonstorNameOff = 0;
-                        EnemyLifeGage.on = 1;
+                        EnemyLifeGage.draw = 1;
                         gameTask = 0;
                     } else {
                         DngMes1.mes_made = -1;
@@ -5292,7 +5305,7 @@ void MoveChara(void) {
                         Mes2MakeFlg = 1;
                         DngMessMan.unk_00 = 1;
                         MonstorNameOff = 0;
-                        EnemyLifeGage.on = 1;
+                        EnemyLifeGage.draw = 1;
                         gameTask = 0x122;
                     }
                     goto chr_selected;
@@ -5330,14 +5343,18 @@ void MoveChara(void) {
                 gameTask = 0;
             }
             break;
-        case 0x8E:
+        case 0x8E: {
             CMonUnitHold = 1;
             CEffectHold = 1;
-            UserStatus->step_disable = 1;
+
+            CUserStatus *user = UserStatus;
+
+            user->step_disable = 1;
             DngMessMan.unk_00 = 0;
             NotGetAtraMes(UserStatus->cur_chara, -1);
             gameTask++;
             break;
+        }
         case 0x8F:
             if (GamePad.Down(PadInput_OK | PadInput_NO) != 0) {
                 CMonUnitHold = 0;
@@ -5598,7 +5615,7 @@ void motionDrive(void) {
             if (tail != NULL) {
                 static float y = 0.0f;
 
-                y = y + 0.35699910f;
+                y += 0.35699910f;
                 if (!(y < 3.141592f)) {
                     y = y - 6.283184f;
                 }
@@ -6881,7 +6898,8 @@ int BtCheckDamageProc(void) {
                 if (slot == -1) {
                     BtSetStatusErr(4);
                 } else {
-                    s32 *vol = &((CUserStatus *) UserStatus)->active_item_vol[slot];
+                    CUserStatus *who = UserStatus;
+                    s32 *vol = &who->active_item_vol[slot];
 
                     if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
@@ -6903,7 +6921,8 @@ int BtCheckDamageProc(void) {
                     DngMessMan.unk_04 = 0xB4;
                     DngMessMan.unk_1C = 0;
                 } else {
-                    s32 *vol = &((CUserStatus *) UserStatus)->active_item_vol[slot];
+                    CUserStatus *who = UserStatus;
+                    s32 *vol = &who->active_item_vol[slot];
 
                     if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
@@ -6925,7 +6944,8 @@ int BtCheckDamageProc(void) {
                     DngMessMan.unk_04 = 0xB4;
                     DngMessMan.unk_1C = 0;
                 } else {
-                    s32 *vol = &((CUserStatus *) UserStatus)->active_item_vol[slot];
+                    CUserStatus *who = UserStatus;
+                    s32 *vol = &who->active_item_vol[slot];
 
                     if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
@@ -6947,7 +6967,8 @@ int BtCheckDamageProc(void) {
                     DngMessMan.unk_04 = 0xB4;
                     DngMessMan.unk_1C = 0;
                 } else {
-                    s32 *vol = &((CUserStatus *) UserStatus)->active_item_vol[slot];
+                    CUserStatus *who = UserStatus;
+                    s32 *vol = &who->active_item_vol[slot];
 
                     if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
