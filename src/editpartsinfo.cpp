@@ -3,7 +3,7 @@
 
 #include "editpartsinfo.hpp"
 
-char EditPartsInfo[0x1628];
+CEditPartsInfo EditPartsInfo;
 
 INCLUDE_ASM("asm/nonmatchings/editpartsinfo", GetPartsInfo__14CEditPartsInfoFi);
 INCLUDE_ASM("asm/nonmatchings/editpartsinfo", CheckComplete__14CEditPartsInfoFi);

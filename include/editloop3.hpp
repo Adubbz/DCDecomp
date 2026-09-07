@@ -1,5 +1,26 @@
 #pragma once
 
+class CMapParts;
+struct EDITPARTS_INFO;
+
+/**
+ * Applies one editable part definition's object visibility to its map part.
+ *
+ * @mangled EdPartsObjectOnOff__FP9CMapPartsP14EDITPARTS_INFOi
+ * @address 0x18EC60
+ * @size 0x138
+ */
+void EdPartsObjectOnOff(CMapParts *, EDITPARTS_INFO *, int);
+
+/**
+ * Installs the common and map-specific event bytecode streams.
+ *
+ * @mangled EdSetEventScript__FPcPcP14CDataAlloc2_1_
+ * @address 0x196CF0
+ * @size 0x208
+ */
+void EdSetEventScript(char *common_script, char *map_script, CDataAlloc2<1> *allocator);
+
 /**
  * Initializes the editor's full-screen fade state.
  *

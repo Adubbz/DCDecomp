@@ -191,42 +191,6 @@ public:
 STATIC_ASSERT(sizeof(CDebugFont) == 0x21C);
 
 /**
- * Names what the Georama editor is doing; the dungeon reads a few of its
- * fields on the way in and out.
- */
-struct ED_EVENT_INFO {
-    u8 unk_000[0x30];
-    s32 unk_030;
-    s32 fukidashi;
-    u8 unk_038[0x4];
-    float unk_03C;
-    u8 unk_040[0x10];
-    s32 unk_050;
-    u8 unk_054[0xC];
-    s32 unk_060;
-    s32 unk_064;
-    s32 unk_068;
-    s32 unk_06C;
-    u8 unk_070[0x44];
-    s32 unk_0B4[6];
-    u8 unk_0CC[0x28];
-    s32 unk_0F4[6];
-    u8 unk_10C[0x68];
-    s32 unk_174[6];
-    u8 unk_18C[0xD0];
-    CFrame *unk_25C[1];
-    u8 unk_260[0xA0];
-    s32 unk_300;
-    u8 unk_304[0xC];
-    sceVu0FVECTOR unk_09;
-    u8 unk_0C[0x128];
-    s32 unk_448;
-    u8 unk_44C[0x4];
-};
-
-STATIC_ASSERT(sizeof(ED_EVENT_INFO) == 0x450);
-
-/**
  * Names what the dungeon event running now is waiting on.
  */
 struct BT_EVENT_INFO {
@@ -266,7 +230,6 @@ extern "C" BT_EVENT_INFO BtEventInfo;
 extern "C" CDebugFont CDbgMsg;
 
 /* What the Georama editor is doing. */
-extern "C" ED_EVENT_INFO EdEventInfo;
 
 /* The models of the items the player is running. */
 extern "C" CActiveItemPack activeItem;
@@ -6117,7 +6080,7 @@ void BtCleatRandomMap(void) {
     {
         int i;
 
-        for (i = 0; i < 96; i++) {
+        for (int i = 0; i < 96; i++) {
             CDungeonEventData *slot = &UraEventMan.event[i];
 
             slot->event = NULL;
@@ -6345,18 +6308,22 @@ void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned 
     CUserStatus *status = UserStatus;
     s8 owner = status->cur_chara;
 
-    BtGetWeaponNamePath2(weapon_name, weapon_model_path, chara,
-                         status->chara_weapons[owner][status->equipped_weapon_slot[owner]].item_no -
-                             weapon_first[chara]);
+    // One scratch integer serves the weapon's place in the table and then the
+    // block count the effect models start from.
+    int work = status->chara_weapons[owner][status->equipped_weapon_slot[owner]].item_no;
+
+    work -= weapon_first[chara];
+    BtGetWeaponNamePath2(weapon_name, weapon_model_path, chara, work);
     MainWeapon.Initialize();
     MainWeapon.LoadPackData3(main_data, weapon_model_path, &WeaponModelBuffer, 0x1D,
                              &WeaponModelBuffer, 1, 0);
     EquipWeaponFrame(&MainWeapon, chara, CharaMainHandViewFlag);
 
     // The effect models take whatever the weapon models leave.
-    s32 used = WeaponModelBuffer.used;
-    u8 *free_start = WeaponModelBuffer.buffer + used * 16;
-    s64 free_size = 0x33450 - CharaModelBuffer.used - used;
+    work = WeaponModelBuffer.used;
+
+    u8 *free_start = WeaponModelBuffer.buffer + work * 16;
+    s64 free_size = 0x33450 - CharaModelBuffer.used - work;
 
     WEffectModelBuffer.buffer = free_start;
     WEffectModelBuffer.size = free_size;

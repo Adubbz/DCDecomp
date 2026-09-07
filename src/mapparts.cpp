@@ -59,7 +59,7 @@ void CMapParts::Initialize() {
     this->rot_y = 0;
     this->unk_114 = 0;
     this->unk_118 = 0;
-    this->unk_0F0 = this->unk_0F4 = -1;
+    this->parts_no = this->unk_0F4 = -1;
     this->unk_11C = 0.0f;
     this->unk_120 = -1.0f;
     for (i = 0; i < MAP_PARTS_EFFECT_MAX; i++) {
@@ -193,10 +193,10 @@ int CMapParts::CheckBox(CBoxVu0 *box) {
     RotMatrixY(world, this->rotation.y);
     sceVu0CopyVector(world[3], this->pos);
     world[3][3] = 1.0f;
-    this->unk_140[3] = 1.0f;
-    this->unk_130[3] = 1.0f;
-    sceVu0ApplyMatrix(max, world, this->unk_130);
-    sceVu0ApplyMatrix(min, world, this->unk_140);
+    this->bound.min[3] = 1.0f;
+    this->bound.max[3] = 1.0f;
+    sceVu0ApplyMatrix(max, world, this->bound.max);
+    sceVu0ApplyMatrix(min, world, this->bound.min);
     VectorMaxMin(max, min, max, min);
 
     if (max[0] < box->min[0]) {
@@ -224,17 +224,17 @@ int CMapParts::CheckBox2(CBoxVu0 *box) {
 
     // All four corners take part, so that a part turned away from the axes
     // still meets the box on the ground it really covers.
-    sceVu0CopyVector(corner[0], this->unk_140);
-    sceVu0CopyVector(corner[1], this->unk_140);
-    sceVu0CopyVector(corner[2], this->unk_130);
-    sceVu0CopyVector(corner[3], this->unk_130);
-    corner[1][2] = this->unk_130[2];
-    corner[2][2] = this->unk_140[2];
+    sceVu0CopyVector(corner[0], this->bound.min);
+    sceVu0CopyVector(corner[1], this->bound.min);
+    sceVu0CopyVector(corner[2], this->bound.max);
+    sceVu0CopyVector(corner[3], this->bound.max);
+    corner[1][2] = this->bound.max[2];
+    corner[2][2] = this->bound.min[2];
 
     sceVu0CopyVector(world[3], this->pos);
     world[3][3] = 1.0f;
-    this->unk_140[3] = 1.0f;
-    this->unk_130[3] = 1.0f;
+    this->bound.min[3] = 1.0f;
+    this->bound.max[3] = 1.0f;
     sceVu0ApplyMatrix(corner[0], world, corner[0]);
     sceVu0ApplyMatrix(corner[1], world, corner[1]);
     sceVu0ApplyMatrix(corner[2], world, corner[2]);
@@ -327,8 +327,8 @@ void CMapParts::DrawParts(float time, float *distance, int lowest, int highest, 
 
     // A part that covers more ground goes to a coarser level of detail later,
     // so that its size rather than its distance decides.
-    extent = this->unk_130[0] - this->unk_140[0];
-    extent += this->unk_130[2] - this->unk_140[2];
+    extent = this->bound.max[0] - this->bound.min[0];
+    extent += this->bound.max[2] - this->bound.min[2];
     extent *= 0.25f;
     for (i = 0; i < 4; i++) {
         parts_distance[i] = extent + distance[i];

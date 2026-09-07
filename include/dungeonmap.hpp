@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include "dataalloc_fwd.hpp"
+
 #include <libvu0.h>
 
 #include "character.hpp"
@@ -17,8 +19,6 @@ class CBoxVu0;
 class CCPoly;
 class CCamera;
 class CCameraFollow;
-template <int Kind>
-class CDataAlloc2;
 class CFrame;
 class CFrameVu1;
 

@@ -2,13 +2,13 @@
 
 #include "common.h"
 
+#include "dataalloc_fwd.hpp"
+
 #include <libvu0.h>
 
 #include "character.hpp"
 
 class CDungeonMap;
-template <int Kind>
-class CDataAlloc2; /* disassembler's filesystem-safe spelling of CDataAlloc2<1> (dataalloc.hpp) */
 
 class CFrame;
 

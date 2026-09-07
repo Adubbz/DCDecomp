@@ -230,7 +230,11 @@ private:
     char unk_4148[200];
     char res_limit_zone_id[6][25];
     char unk_42A6[25];
-    s8 floor_reached[7];
+
+public:
+    s8 floor_reached[7]; /**< Deepest floor the player has reached in each dungeon. */
+
+private:
     char unk_42C6[2];
     s32 unk_field_4468[6];
     s16 unk_field_2[6];

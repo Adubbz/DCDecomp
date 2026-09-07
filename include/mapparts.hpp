@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include "collision.hpp"
+
 #include "mapobject.hpp"
 
 /**
@@ -12,7 +14,6 @@
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
-class CBoxVu0;
 class CCamera;
 class CEffectGroup;
 struct EDIT_EFFECT_INFO;
@@ -33,7 +34,7 @@ struct EDITPARTS_INFO;
  */
 class CMapParts : public CMapObject {
 public:
-    s32 unk_0F0;
+    s32 parts_no; /**< Plot the part stands on, as the part catalogue numbers it. */
     s32 unk_0F4;
     s32 rot_y; /**< Quarter turns about the vertical axis that the part faces. */
     s32 unk_0FC;
@@ -49,8 +50,7 @@ public:
     s32 unk_124;
     s32 unk_128;
     s32 unk_12C;
-    sceVu0FVECTOR unk_130;
-    sceVu0FVECTOR unk_140;
+    CBoxVu0 bound; /**< Extremes of everything the part draws, in its own space. */
     u8 unk_150[128];
     s32 kind; /**< Kind of map part. */
     s32 unk_1D4;

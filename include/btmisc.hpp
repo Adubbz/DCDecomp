@@ -2,8 +2,8 @@
 
 #include "common.h"
 
-template <int Kind>
-class CDataAlloc2;
+#include "dataalloc_fwd.hpp"
+
 class CFrame;
 class CFrameVu1;
 

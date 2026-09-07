@@ -40,7 +40,8 @@ public:
         struct {
             s16 ground_kind; /**< What the surface is made of. */
             s16 foot_sound;  /**< Sound the character's feet play on it. */
-            u8 unk_44[12];
+            s16 unk_44;      /**< Light or ambience the surface puts the character in. */
+            u8 unk_46[10];
         } attr;
     };
 } __attribute__((aligned(16)));
@@ -103,3 +104,24 @@ public:
 
 STATIC_ASSERT(sizeof(CCPoly) == 0x50);
 STATIC_ASSERT(sizeof(CBoxVu0) == 0x20);
+
+/**
+ * Reports whether a ray meets any polygon of a set, and where.
+ *
+ * @mangled CheckHit__FP6CCPolyiPfPfPfii
+ * @address 0x149D50
+ * @size 0x324
+ * @unknownret
+ */
+int CheckHit(CCPoly *polys, int count, float *from, float *to, float *hit, int mask, int flags);
+
+/**
+ * Finds the collision polygon under a point, and the one above it.
+ *
+ * @mangled GetFootPoly__FPffP6CCPolyPfP6CCPolyii
+ * @address 0x14ABB0
+ * @size 0x1DC
+ * @unknownret
+ */
+int GetFootPoly(float *position, float height, CCPoly *polys, float *ground, CCPoly *found, int count, int flags);
+

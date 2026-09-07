@@ -2,13 +2,13 @@
 
 #include "common.h"
 
+#include "dataalloc_fwd.hpp"
+
 class CFrame;
 
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
-template <int Kind>
-class CDataAlloc2;
 struct MOTION_INFO;
 
 class CMotionModel {

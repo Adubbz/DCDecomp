@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include "dataalloc_fwd.hpp"
+
 #include <libvu0.h>
 
 #include "fakepointlight.hpp"
@@ -9,8 +11,6 @@
 #include "object.hpp"
 #include "textureanime.hpp"
 
-template <int Kind>
-class CDataAlloc2;
 
 /**
  * @file
@@ -24,8 +24,6 @@ class CCPoly;
 class CCloth;
 class CFrame;
 class CCamera;
-template <int Kind>
-class CDataAlloc2;
 class CVector3_f_;
 
 /** Number of sets of motions that one character can hold. */

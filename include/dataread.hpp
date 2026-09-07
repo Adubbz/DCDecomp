@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include "dataalloc_fwd.hpp"
+
 class CFrameVu1;
 struct sceVif1Packet;
 
@@ -222,3 +224,51 @@ void LoadSystemMessage(void);
  * @size 0x30
  */
 void initialize_data(void);
+
+/**
+ * Resets the shared read buffers the loaders hand out.
+ *
+ * @mangled InitializeDataBuffer__Fv
+ * @address 0x125990
+ * @size 0xF4
+ */
+void InitializeDataBuffer(void);
+
+/**
+ * Finds one named record inside a loaded PTS archive.
+ *
+ * @mangled SearchPTS__FPUiPc
+ * @address 0x13E4E0
+ * @size 0xD8
+ * @unknownret
+ */
+unsigned int *SearchPTS(unsigned int *archive, char *name);
+
+/**
+ * Gives one arena to the loader as its working buffer.
+ *
+ * @mangled SetDataBuffer__FP14CDataAlloc2_1_i
+ * @address 0x125A90
+ * @size 0x4C
+ */
+void SetDataBuffer(CDataAlloc2<1> *arena, int kind);
+
+/**
+ * Sets where packet reads land, and how much room they have.
+ *
+ * @mangled SetPacketReadBuffer__Fii
+ * @address 0x125AE0
+ * @size 0xD8
+ */
+void SetPacketReadBuffer(int address, int size);
+
+/**
+ * Reports whether a background read is still running.
+ *
+ * @mangled check_now_loading__Fv
+ * @address 0x153F40
+ * @size 0xC
+ * @unknownret
+ */
+int check_now_loading(void);
+

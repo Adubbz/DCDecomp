@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include "dataalloc_fwd.hpp"
+
 #include "character.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
@@ -9,8 +11,6 @@
 // names but not where they live.
 class CBoxVu0;
 class CCPoly;
-template <int Kind>
-class CDataAlloc2;
 
 class CDranMapField : public CCharacter {
 public:

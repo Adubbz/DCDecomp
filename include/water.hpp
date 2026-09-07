@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include "dataalloc_fwd.hpp"
+
 #include <libvu0.h>
 
 #include "frame.hpp"
@@ -10,8 +12,6 @@
 
 struct RenderInfo;
 struct sceVif1Packet;
-template <int Kind>
-class CDataAlloc2; /* disassembler's filesystem-safe spelling of CDataAlloc2<1> (dataalloc.hpp) */
 
 /**
  * Draws the water surface of one map part.

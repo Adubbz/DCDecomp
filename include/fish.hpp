@@ -2,14 +2,14 @@
 
 #include "common.h"
 
+#include "dataalloc_fwd.hpp"
+
 #include <libvu0.h>
 
 #include "character.hpp"
 
 class CCPoly;
 class CFrame;
-template <int Kind>
-class CDataAlloc2;
 
 /** Number of bait kinds for which each fish records an attraction value. */
 enum {

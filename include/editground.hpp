@@ -17,7 +17,9 @@ class CSaveData;
 
 class CEditGround {
 public:
-    u8 unk_00000[0x16290];
+    u8 unk_00000[0x15f2c];
+    float unk_15f2c;
+    u8 unk_15f30[0x360];
     CFrame *frame; /**< Root frame containing the editable ground model. */
     /**
      * @mangled SetMapParts__11CEditGroundFifffi
@@ -57,7 +59,7 @@ public:
      * @size 0xB0
      * @unknownret
      */
-    void GetAreaCode(float, float, float);
+    int GetAreaCode(float, float, float);
 
     /**
      * @mangled GetAlt__11CEditGroundFfff
@@ -65,7 +67,7 @@ public:
      * @size 0x90
      * @unknownret
      */
-    void GetAlt(float, float, float);
+    float GetAlt(float, float, float);
 
     /**
      * @mangled GetAlt_i__11CEditGroundFfff
@@ -97,7 +99,7 @@ public:
      * @size 0x60
      * @unknownret
      */
-    void GetParts(float, float, float);
+    CMapParts *GetParts(float, float, float);
 
     /**
      * @mangled CheckEffect__11CEditGroundFv
@@ -289,7 +291,7 @@ public:
      * @size 0x70
      * @unknownret
      */
-    void PickUpPoly(CCPoly *, float, float, float);
+    int PickUpPoly(CCPoly *, float, float, float);
 
     /**
      * @mangled PickUpPoly__11CEditGroundFP6CCPoly7CBoxVu0i
@@ -297,7 +299,7 @@ public:
      * @size 0x220
      * @unknownret
      */
-    void PickUpPoly(CCPoly *, CBoxVu0, int);
+    int PickUpPoly(CCPoly *, CBoxVu0, int);
 
     /**
      * @mangled PickUpEditAreaPoly__11CEditGroundFP6CCPolyfff

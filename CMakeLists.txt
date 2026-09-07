@@ -175,7 +175,8 @@ carve_part(main.sdata.part2.s
 carve_part(main.sdata.part2b.s
            main.sdata.part2b.s=2A1ED0-2A1F14
            main.sdata.part2c.s=2A1F18-2A1F24
-           main.sdata.part2d.s=2A1F50-2A21C8
+           main.sdata.part2d.s=2A1F50-2A1F78
+           main.sdata.part2f.s=2A1F80-2A21C8
            main.sdata.part2e.s=2A21F0-2A2218)
 carve_part(main.sdata.part3.s
            main.sdata.part3.s=2A22E0-2A2380)

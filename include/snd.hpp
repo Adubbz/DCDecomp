@@ -65,6 +65,36 @@ void SndBgmInit(void);
 void SndStopAllSe(void);
 
 /**
+ * Stops the background music at once.
+ *
+ * @mangled SndBgmStop__Fv
+ * @address 0x159BA0
+ * @size 0x58
+ * @unknownret
+ */
+void SndBgmStop(void);
+
+/**
+ * Fades the background music out and then stops it.
+ *
+ * @mangled SndBgmFadeOutStop__Fv
+ * @address 0x159C50
+ * @size 0xA8
+ * @unknownret
+ */
+void SndBgmFadeOutStop(void);
+
+/**
+ * Stops the ambient loop.
+ *
+ * @mangled SndAmbientStop__Fv
+ * @address 0x15B190
+ * @size 0x44
+ * @unknownret
+ */
+void SndAmbientStop(void);
+
+/**
  * Works out the volume and the pan of a sound at a position.
  *
  * @mangled SndGetVolPan__FPfPfPfff
@@ -312,3 +342,50 @@ int SndGetBgmVol();
 void SndSPSePlay(int se_no, int voice);
 /** Returns zero once the background sound-effect load has finished. */
 int SndSPSeSyncBG(void);
+
+/**
+ * Starts loading one background music set.
+ *
+ * @mangled SndBgmLoad__Fi
+ * @address 0x159960
+ * @size 0x90
+ */
+void SndBgmLoad(int set_no);
+
+/**
+ * Plays one track of the loaded background music set.
+ *
+ * @mangled SndBgmPlay__Fi
+ * @address 0x159B30
+ * @size 0x68
+ */
+void SndBgmPlay(int track_no);
+
+/**
+ * Gives back the sound set that is loaded now.
+ *
+ * @mangled SndGetNowSetNo__Fv
+ * @address 0x15A440
+ * @size 0xC
+ * @unknownret
+ */
+int SndGetNowSetNo(void);
+
+/**
+ * Points the sound loader at its read buffer.
+ *
+ * @mangled SndSetReadBuffer__FPUi
+ * @address 0x159630
+ * @size 0x38
+ */
+void SndSetReadBuffer(unsigned int *buffer);
+
+/**
+ * Starts loading one sound-effect set.
+ *
+ * @mangled SndSoundLoad__Fi
+ * @address 0x15A4F0
+ * @size 0x90
+ */
+void SndSoundLoad(int set_no);
+

@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include "dataalloc_fwd.hpp"
+
 /**
  * @file
  * Declares the reader that fills a character out of a pack file.
@@ -11,8 +13,6 @@
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 class CCharacter;
-template <int Kind>
-class CDataAlloc2;
 
 /**
  * Reads one character out of a pack file: its model, its motions, its textures

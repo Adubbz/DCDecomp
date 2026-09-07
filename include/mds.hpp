@@ -2,10 +2,10 @@
 
 #include "common.h"
 
+#include "dataalloc_fwd.hpp"
+
 #include <libvu0.h>
 
-template <int Kind>
-class CDataAlloc2;
 class CCollisionMDT;
 class CFrame;
 class CFrameVu1;

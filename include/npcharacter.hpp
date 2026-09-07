@@ -12,7 +12,10 @@ class CCPoly;
 class CNPCharacter {
 public:
     CCharacter chara; /**< The character that the walker draws and moves with. */
-    u8 unk_11B0[0x2DC];
+    u8 unk_11B0[0x2c4];
+    s32 unk_1474;
+    u8 unk_1478[0x10];
+    s32 unk_1488;
     s32 unk_148C; /**< Texture set that the walker's model animates with. */
     u8 unk_1490[0x10];
 
@@ -118,7 +121,7 @@ public:
      * @size 0x60
      * @unknownret
      */
-    void CheckDraw(void);
+    int CheckDraw(void);
 
     /**
      * @mangled PickUpPoly__12CNPCharacterFPfP6CCPoly

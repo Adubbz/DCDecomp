@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include <libvu0.h>
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -16,7 +18,14 @@ struct EPARTS_FUNC_DATA;
  * 0x1B00 bytes hold 48 of them at `FrameObjAnim`.
  */
 struct OBJ_ANIME_SEQ {
-    u8 unk_00[0x90];
+    char name[0x10];        /**< Animation resource name. */
+    int type;               /**< Kind of animation the sequence plays. */
+    int number;             /**< Animation number selected within that kind. */
+    u8 unk_18[0x8];
+    sceVu0FVECTOR range;    /**< Extent over which the animation moves. */
+    sceVu0FVECTOR speed;    /**< Rate at which the animation advances. */
+    sceVu0FVECTOR offset;   /**< Displacement applied to the animated frame. */
+    u8 unk_50[0x40];
 };
 
 STATIC_ASSERT(sizeof(OBJ_ANIME_SEQ) == 0x90);
