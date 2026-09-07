@@ -127,9 +127,8 @@ void SaveMenuKeyDelete(void);
  * @mangled SaveMenuKeyCopy__Fv
  * @address 0x222260
  * @size 0x10
- * @unknownret
  */
-void SaveMenuKeyCopy(void);
+s32 SaveMenuKeyCopy(void);
 
 /**
  * @mangled SaveMenuKeyAfterEnding__Fv

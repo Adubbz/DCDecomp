@@ -22,7 +22,9 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeyFormat__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeyUnFormat__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeyDifVersion__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeyDelete__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeyCopy__Fv);
+s32 SaveMenuKeyCopy(void) {
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeyAfterEnding__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeySaveDecideEnding__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeySaveEnding__Fv);
