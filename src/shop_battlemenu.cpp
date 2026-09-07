@@ -226,7 +226,9 @@ INCLUDE_ASM("asm/nonmatchings/shop_battlemenu", DrawWepDamageDraw__F4RECTP11WEAP
 INCLUDE_ASM("asm/nonmatchings/shop_battlemenu", DrawWepStatus__FiiP11WEAPON_HAVEii);
 INCLUDE_ASM("asm/nonmatchings/shop_battlemenu", DrawWepVolumeDisplay__FiiP11WEAPON_HAVEi);
 INCLUDE_ASM("asm/nonmatchings/shop_battlemenu", DrawWeaponNameBoard__Fiiiii);
-INCLUDE_ASM("asm/nonmatchings/shop_battlemenu", GetWeaponNamePutX__Fii);
+s32 GetWeaponNamePutX(s32 arg0, s32 arg1) {
+    return arg0 - (arg1 >> 1);
+}
 INCLUDE_ASM("asm/nonmatchings/shop_battlemenu", WeaponNameDraw__Fiii);
 INCLUDE_ASM("asm/nonmatchings/shop_battlemenu", WepStatusVolumeDraw__F4RECTiPiiiii);
 INCLUDE_ASM("asm/nonmatchings/shop_battlemenu", DrawWeaponStatusWaku__Fiiii);
