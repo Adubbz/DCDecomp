@@ -756,4 +756,5 @@ INCLUDE_ASM("asm/nonmatchings/dataset", Intersection__10CCollisionFPfPfPf);
 INCLUDE_ASM("asm/nonmatchings/dataset", PickUpNearPoly__10CCollisionFP6CCPoly);
 INCLUDE_ASM("asm/nonmatchings/dataset", PickUpNearPoly__10CCollisionFP6CCPolyRC7CBoxVu0);
 INCLUDE_ASM("asm/nonmatchings/dataset", PickUpNearPoly__10CCollisionFP6CCPolyPff);
-INCLUDE_ASM("asm/nonmatchings/dataset", Initialize__10CCollisionFv);
+void CCollision::Initialize() {
+}
