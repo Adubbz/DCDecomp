@@ -210,7 +210,10 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMainMenuRightHelpMsgLangOffset__FRi
 void InitHaveData(IHAVEITEM *arg0) {
     memset(arg0, -1, 0x14U);
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", InitHaveWep__FP11WEAPON_HAVE);
+void InitHaveWep(WEAPON_HAVE *arg0) {
+    memset(arg0, 0, 0xF8U);
+    arg0->item_no = -1;
+}
 void InitHaveAttach(ATTACH_LIST *arg0) {
     memset(arg0, 0, 0x20U);
 }
