@@ -209,7 +209,9 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMainMenuRightHelpWinLangOffset__FRf
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMainMenuRightHelpMsgLangOffset__FRiRi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", InitHaveData__FP9IHAVEITEM);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", InitHaveWep__FP11WEAPON_HAVE);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", InitHaveAttach__FP11ATTACH_LIST);
+void InitHaveAttach(ATTACH_LIST *arg0) {
+    memset(arg0, 0, 0x20U);
+}
 
 void MenuDataSwap(s16 *first, s16 *second) {
     s16 temp;
