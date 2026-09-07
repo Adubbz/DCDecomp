@@ -759,6 +759,8 @@ int CCollision::PickUpNearPoly(CCPoly *arg0) {
     return 0;
 }
 INCLUDE_ASM("asm/nonmatchings/dataset", PickUpNearPoly__10CCollisionFP6CCPolyRC7CBoxVu0);
-INCLUDE_ASM("asm/nonmatchings/dataset", PickUpNearPoly__10CCollisionFP6CCPolyPff);
+int CCollision::PickUpNearPoly(CCPoly *poly, float *position, float radius) {
+    return 0;
+}
 void CCollision::Initialize() {
 }
