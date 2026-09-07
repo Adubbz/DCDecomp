@@ -21,7 +21,9 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeyNewDir__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeyFormat__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeyUnFormat__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeyDifVersion__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeyDelete__Fv);
+s32 SaveMenuKeyDelete(void) {
+    return 1;
+}
 s32 SaveMenuKeyCopy(void) {
     return 1;
 }
