@@ -207,7 +207,9 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenuVibeItem__Fiiiii);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @994__2);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMainMenuRightHelpWinLangOffset__FRfRfRfRf);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMainMenuRightHelpMsgLangOffset__FRiRi);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", InitHaveData__FP9IHAVEITEM);
+void InitHaveData(IHAVEITEM *arg0) {
+    memset(arg0, -1, 0x14U);
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", InitHaveWep__FP11WEAPON_HAVE);
 void InitHaveAttach(ATTACH_LIST *arg0) {
     memset(arg0, 0, 0x20U);
