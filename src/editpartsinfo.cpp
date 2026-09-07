@@ -5,7 +5,12 @@
 
 CEditPartsInfo EditPartsInfo;
 
-INCLUDE_ASM("asm/nonmatchings/editpartsinfo", GetPartsInfo__14CEditPartsInfoFi);
+EDITPARTS_INFO *CEditPartsInfo::GetPartsInfo(int index) {
+    if ((index < 0) || (index >= 0x18)) {
+        return NULL;
+    }
+    return (EDITPARTS_INFO *)((u8 *)this + (index * 0xE8) + 0x64);
+}
 INCLUDE_ASM("asm/nonmatchings/editpartsinfo", CheckComplete__14CEditPartsInfoFi);
 INCLUDE_ASM("asm/nonmatchings/editpartsinfo", SetCompEvent__14CEditPartsInfoFii);
 INCLUDE_ASM("asm/nonmatchings/editpartsinfo", GetCompEvent__14CEditPartsInfoFi);

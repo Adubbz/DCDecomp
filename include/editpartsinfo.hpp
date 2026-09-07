@@ -46,7 +46,6 @@ public:
      * @mangled GetPartsInfo__14CEditPartsInfoFi
      * @address 0x199FD0
      * @size 0x50
-     * @unknownret
      */
     EDITPARTS_INFO *GetPartsInfo(int);
 
