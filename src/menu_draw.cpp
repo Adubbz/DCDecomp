@@ -79,7 +79,27 @@ s32 GetAddAttachItem(s32 arg0) {
     }
     return var_2;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", TransWepNo__Fi);
+int TransWepNo(int weapon_no) {
+    s32 var_4;
+
+    var_4 = weapon_no;
+    if (var_4 > 0) {
+        if ((var_4 > 0) && (var_4 < 0x15)) {
+            var_4 += 0x100;
+        } else if ((var_4 >= 0x15) && (var_4 < 0x21)) {
+            var_4 += 0x116;
+        } else if ((var_4 >= 0x21) && (var_4 < 0x2E)) {
+            var_4 += 0x119;
+        } else if ((var_4 >= 0x2E) && (var_4 < 0x3A)) {
+            var_4 += 0x11D;
+        } else if ((var_4 >= 0x3A) && (var_4 < 0x46)) {
+            var_4 += 0x121;
+        } else if ((var_4 >= 0x46) && (var_4 < 0x51)) {
+            var_4 += 0x125;
+        }
+    }
+    return var_4;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", TransWepNoNewToOld__Fi);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @3735);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @3736);
