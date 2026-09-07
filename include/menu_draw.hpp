@@ -301,9 +301,8 @@ void PlayerAllItemCheck(int);
  * @mangled GetAddAttachItem__Fi
  * @address 0x2255D0
  * @size 0x30
- * @unknownret
  */
-void GetAddAttachItem(int);
+s32 GetAddAttachItem(int);
 
 /**
  * Converts a weapon item identifier into its position in the owner's weapon chain.

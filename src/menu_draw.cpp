@@ -70,7 +70,15 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawEventAndFishMenuBoard__FP8CTexture
 INCLUDE_ASM("asm/nonmatchings/menu_draw", EventItemSelectDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawEventItemBoard__FiiiiiP8CTexture);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PlayerAllItemCheck__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetAddAttachItem__Fi);
+s32 GetAddAttachItem(s32 arg0) {
+    s32 var_2;
+
+    var_2 = 0;
+    if ((arg0 >= 0x5B) && (arg0 < 0x5F)) {
+        var_2 = 1;
+    }
+    return var_2;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", TransWepNo__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", TransWepNoNewToOld__Fi);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @3735);
