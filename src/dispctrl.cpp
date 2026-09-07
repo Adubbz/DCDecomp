@@ -11,7 +11,10 @@ INCLUDE_RODATA("asm/nonmatchings/dispctrl", @230);
 
 INCLUDE_ASM("asm/nonmatchings/dispctrl", Sizeof__6CBoundFv);
 INCLUDE_ASM("asm/nonmatchings/dispctrl", openGiftag__FP13sceVif1Packet);
-INCLUDE_ASM("asm/nonmatchings/dispctrl", closeGiftag__FP13sceVif1Packet);
+void closeGiftag(sceVif1Packet *arg0) {
+    sceVif1PkCloseGifTag(arg0);
+    sceVif1PkCloseDirectCode(arg0);
+}
 INCLUDE_ASM("asm/nonmatchings/dispctrl", Draw__10CDebugFontFv);
 INCLUDE_ASM("asm/nonmatchings/dispctrl", SearchPTS__FPUiPc);
 INCLUDE_ASM("asm/nonmatchings/dispctrl", SearchPTS__FPUii);
