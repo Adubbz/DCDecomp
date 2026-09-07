@@ -290,7 +290,9 @@ void SetClut(sceVif1Packet *packet, CTexture *texture, i *clut) {
                           (u_long128 *) clut, 64, 0, 0, 16, 16);
 }
 
-INCLUDE_ASM("asm/nonmatchings/gameutil", LinerInterpolation__Ffff);
+float LinerInterpolation(float from, float to, float at) {
+    return from + (at * (to - from));
+}
 INCLUDE_ASM("asm/nonmatchings/gameutil", AreaAddPos__FPiPiPi);
 INCLUDE_ASM("asm/nonmatchings/gameutil", RollPos__FPfPffPf);
 INCLUDE_ASM("asm/nonmatchings/gameutil", CheckPosInOutForRect__FP4RECTii);
