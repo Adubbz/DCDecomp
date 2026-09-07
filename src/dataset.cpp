@@ -752,7 +752,9 @@ INCLUDE_ASM("asm/nonmatchings/dataset", GetPolygon__10CCollisionFiPA4_fPA4_fPA4_
 int CCollision::GetMaxY(float *position) {
     return 0;
 }
-INCLUDE_ASM("asm/nonmatchings/dataset", Intersection__10CCollisionFPfPfPf);
+int CCollision::Intersection(float *from, float *to, float *hit) {
+    return 0;
+}
 INCLUDE_ASM("asm/nonmatchings/dataset", PickUpNearPoly__10CCollisionFP6CCPoly);
 INCLUDE_ASM("asm/nonmatchings/dataset", PickUpNearPoly__10CCollisionFP6CCPolyRC7CBoxVu0);
 INCLUDE_ASM("asm/nonmatchings/dataset", PickUpNearPoly__10CCollisionFP6CCPolyPff);
