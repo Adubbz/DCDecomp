@@ -755,7 +755,9 @@ int CCollision::GetMaxY(float *position) {
 int CCollision::Intersection(float *from, float *to, float *hit) {
     return 0;
 }
-INCLUDE_ASM("asm/nonmatchings/dataset", PickUpNearPoly__10CCollisionFP6CCPoly);
+int CCollision::PickUpNearPoly(CCPoly *arg0) {
+    return 0;
+}
 INCLUDE_ASM("asm/nonmatchings/dataset", PickUpNearPoly__10CCollisionFP6CCPolyRC7CBoxVu0);
 INCLUDE_ASM("asm/nonmatchings/dataset", PickUpNearPoly__10CCollisionFP6CCPolyPff);
 void CCollision::Initialize() {
