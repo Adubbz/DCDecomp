@@ -36,8 +36,59 @@ void CMonstorUnit::AllBin2() {
         monster[i].unk_010 = 300;
     }
 }
-INCLUDE_ASM("asm/nonmatchings/monstorunit", PalletSet__12CMonstorUnitFv);
-INCLUDE_ASM("asm/nonmatchings/monstorunit", PalletStep__12CMonstorUnitFv);
+void CMonstorUnit::PalletSet() {
+    sceVu0FVECTOR ambient;
+    MGGetAmbient(ambient);
+    if (monster[unk_090].palette_cycles > 0) {
+        ambient[0] = monster[unk_090].palette_color[0];
+        ambient[1] = monster[unk_090].palette_color[1];
+        ambient[2] = monster[unk_090].palette_color[2];
+    }
+    ambient[3] = monster[unk_090].palette_alpha;
+    if (monster[unk_090].palette_override_pending != 0) {
+        ambient[0] = monster[unk_090].palette_override[0];
+        ambient[1] = monster[unk_090].palette_override[1];
+        ambient[2] = monster[unk_090].palette_override[2];
+        monster[unk_090].palette_override_pending = 0;
+    }
+    MGSetAmbient(ambient);
+}
+void CMonstorUnit::PalletStep() {
+    sceVu0FVECTOR ambient;
+    if (monster[unk_090].palette_delay == 0) {
+        monster[unk_090].palette_alpha -= monster[unk_090].palette_alpha_step;
+        if (monster[unk_090].palette_alpha <= 0.0f) {
+            monster[unk_090].palette_alpha = 0.0f;
+        }
+        if (!(monster[unk_090].palette_alpha < 128.0f)) {
+            monster[unk_090].palette_alpha = 128.0f;
+        }
+    } else {
+        monster[unk_090].palette_delay--;
+    }
+    monster[unk_090].unk_0D0 = monster[unk_090].unk_0D2;
+    if (monster[unk_090].palette_alpha <= 32.0f) {
+        monster[unk_090].unk_0D0 = 0;
+    }
+    MGGetAmbient(ambient);
+    sceVu0CopyVector(monster[unk_090].palette_color, ambient);
+    if (monster[unk_090].palette_cycles > 0) {
+        monster[unk_090].palette_blend += monster[unk_090].palette_step;
+        if (!(monster[unk_090].palette_step <= 0.0f)) {
+            if (!(monster[unk_090].palette_blend < 1.0f)) {
+                monster[unk_090].palette_blend = 1.0f;
+                monster[unk_090].palette_step *= -1.0f;
+            }
+        } else if (monster[unk_090].palette_blend <= 0.0f) {
+            monster[unk_090].palette_blend = 0.0f;
+            monster[unk_090].palette_step *= -1.0f;
+            monster[unk_090].palette_cycles--;
+        }
+        for (int i = 0; i < 3; i++) {
+            monster[unk_090].palette_color[i] += monster[unk_090].palette_blend * (monster[unk_090].palette_target[i] - ambient[i]);
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/monstorunit", SoundCheck__12CMonstorUnitFv);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawMonstor__12CMonstorUnitFv);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawMonstorCursor__12CMonstorUnitFv);
