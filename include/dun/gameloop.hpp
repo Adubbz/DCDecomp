@@ -10,6 +10,9 @@ class CCameraFollow;
 class CCPoly;
 struct BT_SHOT_EFFECT;
 class CFrame;
+
+/** Model used to draw the monster cursor. */
+extern CFrame *cursorFrame;
 struct MAP_TRAP_CIRCLE;
 
 /**

@@ -8,6 +8,10 @@
 #include "mglib.hpp"
 #include "snd.hpp"
 #include "dataalloc.hpp"
+#include "dun/gameloop.hpp"
+#include "frame.hpp"
+#include "texture.hpp"
+#include "rect.hpp"
 #include <cstdlib>
 
 int CMonstorUnit::GetMonstorNum() {
