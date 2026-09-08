@@ -7,6 +7,7 @@
 #include <libvu0.h>
 
 #include "character.hpp"
+#include "runscript.hpp"
 
 class CDungeonMap;
 
@@ -17,9 +18,12 @@ class CFrame;
  */
 struct MONSTOR {
     s32 state; /**< 2 while the monster stands on the floor and takes part. */
-    u8 unk_004[0x0C];
+    u8 unk_004[4];
+    s32 unk_008;
+    s32 unk_00C;
     s32 unk_010; /**< Set to 300 by AllBin2; cleared when the monster is released. */
-    u8 unk_014[0x0C];
+    s32 unk_014;
+    u8 unk_018[8];
     s32 max_hp; /**< Life the monster has at full health. */
     s32 hp;     /**< Life the monster has left. */
     s16 attachment_kind; // 0x028
@@ -30,17 +34,42 @@ struct MONSTOR {
     s16 name_no; /**< Identifies the name the lock-on cursor shows. */
     float unk_044;
     float collision_radius; // 0x048
-    u8 unk_04C[0x14];
+    u8 unk_04C[4];
+    s32 unk_050;
+    u8 unk_054[0x0C];
     sceVu0FVECTOR movement; // 0x060
     sceVu0FVECTOR unk_070;
     float movement_speed; // 0x080
-    u8 unk_084[0x3C];
+    s32 unk_084;
+    s32 unk_088;
+    u8 unk_08C[4];
+    s16 unk_090;
+    s16 unk_092;
+    s16 unk_094;
+    u8 unk_096[2];
+    s32 unk_098;
+    u8 unk_09C[4];
+    s16 unk_0A0;
+    u8 unk_0A2[2];
+    float unk_0A4;
+    s32 unk_0A8;
+    s16 unk_0AC;
+    s16 unk_0AE;
+    s32 unk_0B0;
+    s16 unk_0B4;
+    u8 unk_0B6[0x0A];
     s32 unk_0C0;
-    u8 unk_0C4[0x0C];
+    u8 unk_0C4[8];
+    float unk_0CC;
     s16 unk_0D0;
     s16 unk_0D2;
     s16 unk_0D4;
-    u8 unk_0D6[0x20];
+    s16 unk_0D6;
+    s16 unk_0D8;
+    u8 unk_0DA[0x0E];
+    s32 unk_0E8;
+    u8 unk_0EC[8];
+    s16 unk_0F4;
     s16 event_flag2;         /**< Value returned when CheckEventFlag2 consumes the event. */
     s16 event_flag2_pending; /**< Nonzero until CheckEventFlag2 consumes the event. */
     u8 unk_0FA[2];
@@ -62,7 +91,8 @@ struct MONSTOR {
     s32 palette_cycles; // 0x164
     float palette_step; // 0x168
     float palette_blend; // 0x16C
-    u8 unk_170[0x20];
+    sceVu0FVECTOR unk_170;
+    sceVu0FVECTOR unk_180;
 };
 
 STATIC_ASSERT(sizeof(MONSTOR) == 0x190);
@@ -94,7 +124,13 @@ STATIC_ASSERT(sizeof(MONSTOR_SOUND) == 0x110);
 /** Model and script description copied into a loaded monster slot. */
 struct MONSTOR_MODEL {
     char model_name[4][16];
-    char script_name[40];
+    char script_name[16];
+    s32 max_hp;
+    s16 attachment_kind;
+    s16 attachment_weight[5];
+    float collision_radius;
+    s16 unk_064;
+    s16 unk_066;
     s16 shot_effect[2];
     u8 unk_06C[0x0C];
     s16 kind;
@@ -103,13 +139,51 @@ struct MONSTOR_MODEL {
 
 STATIC_ASSERT(sizeof(MONSTOR_MODEL) == 0x9C);
 
+/** Per-monster effect slots; unused members retain their retail space. */
+struct MONSTOR_EFFECT_STATE {
+    u8 unk_000[0x180];
+    s32 active[16];
+    u8 unk_1C0[0x40];
+    s32 timer[16];
+    u8 unk_240[0x140];
+    s32 parameter[16][6];
+    u8 unk_500[0x10];
+};
+STATIC_ASSERT(sizeof(MONSTOR_EFFECT_STATE) == 0x510);
+
+struct MONSTOR_EFFECT_STATE2 {
+    u8 unk_000[0x300];
+    s32 active[16];
+    u8 unk_340[0x10];
+};
+STATIC_ASSERT(sizeof(MONSTOR_EFFECT_STATE2) == 0x350);
+
+struct MONSTOR_EFFECT_STATE3 {
+    u8 unk_000[0xC0];
+    s32 active[12];
+    u8 unk_0F0[0x30];
+    s32 timer[12];
+    s32 count;
+    u8 unk_154[0x0C];
+};
+STATIC_ASSERT(sizeof(MONSTOR_EFFECT_STATE3) == 0x160);
+
+struct MONSTOR_EVENT_STATE {
+    u8 unk_000[0x20];
+    s32 active;
+    s32 timer;
+    u8 unk_028[8];
+};
+STATIC_ASSERT(sizeof(MONSTOR_EVENT_STATE) == 0x30);
+
 class CMonstorUnit {
 public:
-    void *script[16];  /**< Script working memory for each monster on the floor. */
+    CDataAlloc2<1> *script[16];  /**< Script working memory for each monster on the floor. */
     CFrame *collision; /**< Collision model that every monster on the floor shares. */
-    u8 unk_044[4];
+    s32 unk_044;
     s32 unk_048;
-    u8 unk_04C[0x44];
+    s32 unk_04C;
+    s32 script_state[16];
     s32 unk_090;
     s32 unk_094;
     u8 unk_098[8];
@@ -118,9 +192,14 @@ public:
     void *script_data[9]; // 0x1E3AC
     MONSTOR monster[16];     /**< What each monster of the floor is doing. */
     CMonstorChara chara[16]; /**< The model each monster draws with. */
-    u8 unk_54DD0[0xA080];
+    CRunScript interpreter[16]; // 0x54DD0
+    MONSTOR_EFFECT_STATE effect[16]; // 0x55250
+    MONSTOR_EFFECT_STATE2 effect2[16]; // 0x5A350
+    MONSTOR_EFFECT_STATE3 effect3[16]; // 0x5D850
     MONSTOR_SOUND sound[16]; // 0x5EE50
-    u8 unk_5FF50[0x800];
+    MONSTOR_EVENT_STATE event[16]; // 0x5FF50
+    MONSTOR_EVENT_STATE event2[16]; // 0x60250
+    s16 event_flags[16][16]; // 0x60550
 
     /**
      * @mangled GetMonstorNum__12CMonstorUnitFv
@@ -296,3 +375,5 @@ public:
      */
     void SetupViewMonstor(int, float *, int);
 };
+
+STATIC_ASSERT(sizeof(CMonstorUnit) == 0x60750);
