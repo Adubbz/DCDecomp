@@ -3,6 +3,10 @@
 #pragma name_counter 798
 
 #include "monstorunit.hpp"
+#include "dungeonmap.hpp"
+#include "mathutil.hpp"
+#include "mglib.hpp"
+#include "snd.hpp"
 
 int CMonstorUnit::GetMonstorNum() {
     int count = 0;

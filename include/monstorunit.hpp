@@ -22,14 +22,18 @@ struct MONSTOR {
     u8 unk_014[0x0C];
     s32 max_hp; /**< Life the monster has at full health. */
     s32 hp;     /**< Life the monster has left. */
-    u8 unk_028[0x14];
+    s16 attachment_kind; // 0x028
+    s16 attachment_weight[5]; // 0x02A
+    u8 unk_034[8];
     s32 unk_03C;
     s16 kind;    /**< 2 for a monster the lock-on cursor leaves alone. */
     s16 name_no; /**< Identifies the name the lock-on cursor shows. */
     float unk_044;
     u8 unk_048[0x78];
     s32 unk_0C0;
-    u8 unk_0C4[0x10];
+    u8 unk_0C4[0x0C];
+    s16 unk_0D0;
+    s16 unk_0D2;
     s16 unk_0D4;
     u8 unk_0D6[0x20];
     s16 event_flag2;         /**< Value returned when CheckEventFlag2 consumes the event. */
@@ -41,7 +45,19 @@ struct MONSTOR {
     float unk_114;
     float lock_range; /**< Distance up to which the monster can be locked on to. */
     s16 unk_11C;
-    u8 unk_11E[0x72];
+    u8 unk_11E[2];
+    float palette_alpha; // 0x120
+    float palette_alpha_step; // 0x124
+    s32 palette_delay; // 0x128
+    u8 unk_12C[0x04];
+    sceVu0FVECTOR palette_target; // 0x130
+    sceVu0FVECTOR palette_color; // 0x140
+    sceVu0FVECTOR palette_override; // 0x150
+    s32 palette_override_pending; // 0x160
+    s32 palette_cycles; // 0x164
+    float palette_step; // 0x168
+    float palette_blend; // 0x16C
+    u8 unk_170[0x20];
 };
 
 STATIC_ASSERT(sizeof(MONSTOR) == 0x190);
