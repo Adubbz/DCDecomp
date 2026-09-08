@@ -194,6 +194,10 @@ carve_part(main.bss.part4.s
 carve_part(main.bss.part4b.s
            main.bss.part4b.s=1CF91F0-1D19720
            main.bss.part4c.s=1D19AA0-1D19BF0)
+# monstorunit owns the bee animation table; retain its BSS neighbours.
+carve_part(main.bss.part6.s
+           main.bss.part6.s=1D65C20-1D87380
+           main.bss.part6b.s=1D88C80-1DABD00)
 carve_part(main.bss.part5.s
            main.bss.part5.s=1D1B218-1D3D1C0
            main.bss.part5b.s=1D3D1D0-1D569A0)

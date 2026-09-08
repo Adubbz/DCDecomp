@@ -14,6 +14,8 @@
 #include "rect.hpp"
 #include <cstdlib>
 
+BEE_STATE BeeTbl[800];
+
 int CMonstorUnit::GetMonstorNum() {
     int count = 0;
     for (int i = 0; i < 16; i++) {

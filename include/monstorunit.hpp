@@ -371,3 +371,11 @@ public:
 };
 
 STATIC_ASSERT(sizeof(CMonstorUnit) == 0x60750);
+
+/** Animation frame and phase of one rendered bee. */
+struct BEE_STATE {
+    s32 row;
+    float phase;
+};
+STATIC_ASSERT(sizeof(BEE_STATE) == 8);
+extern BEE_STATE BeeTbl[800];
