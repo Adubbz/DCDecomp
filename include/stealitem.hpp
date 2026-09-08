@@ -80,3 +80,5 @@ public:
 };
 
 STATIC_ASSERT(sizeof(CStealItem) == 0x160);
+
+extern "C" CStealItem StealItem;

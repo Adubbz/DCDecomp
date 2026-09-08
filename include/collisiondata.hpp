@@ -36,7 +36,12 @@ struct COLLISION_HIT {
     s32 unk_6C;
     s32 unk_70;
     s32 unk_74;
-    u8 unk_78[0x28];
+    u8 unk_78[8];
+    sceVu0FVECTOR knockback_origin; // 0x80
+    float knockback_speed; // 0x90
+    float knockback_decay; // 0x94
+    s32 knockback_mode; // 0x98
+    u8 unk_9C[4];
 };
 
 STATIC_ASSERT(sizeof(COLLISION_HIT) == 0xA0);
@@ -44,8 +49,7 @@ STATIC_ASSERT(sizeof(COLLISION_HIT) == 0xA0);
 class CCollisionData {
 public:
     COLLISION_HIT hit[96]; /**< Every hit the test found this frame. */
-    s32 unk_3C00[16];
-    u8 unk_3C40[0x140];
+    s32 unk_3C00[96]; // One active word per hit.
     s32 now_hit; /**< Indexes the hit record being filled in. */
     u8 unk_3D84[0xC];
 
@@ -53,9 +57,8 @@ public:
      * @mangled Set__14CCollisionDataFPfiiffiiii
      * @address 0x1B57A0
      * @size 0x180
-     * @unknownret
      */
-    void Set(float *, int, int, float, float, int, int, int, int);
+    int Set(float *, int, int, float, float, int, int, int, int);
 
     /**
      * @mangled CheckHitUser__14CCollisionDataFPfif
@@ -78,3 +81,5 @@ STATIC_ASSERT(sizeof(CCollisionData) == 0x3D90);
 
 /** @mangled SetGateKeyStack__Fi */
 int SetGateKeyStack(int item);
+
+extern "C" CCollisionData *NowColData;

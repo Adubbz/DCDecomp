@@ -32,6 +32,10 @@
 #include "savedata.hpp"
 #include "menu_inventory.hpp"
 #include "itemdata.hpp"
+#include "hitmark.hpp"
+#include "hitvalue.hpp"
+#include "stealitem.hpp"
+#include "weaponelement.hpp"
 
 BEE_STATE BeeTbl[800];
 CTexAnimeData MonsterTexAnim[320];
@@ -1001,7 +1005,7 @@ void CMonstorUnit::CleanViewMonstor(int mode) {
         }
         for (int j = 0; j < 16; j++) {
             effect[i].timer[j] = 0;
-            effect[i].active[j] = 0;
+            effect[i].motion_start[j] = 0;
         }
         for (int j = 0; j < 16; j++) {
             effect2[i].active[j] = 0;

@@ -63,7 +63,8 @@ struct MONSTOR {
     float ground_distance; // 0x0B8
     float ground_y; // 0x0BC
     s32 unk_0C0;
-    u8 unk_0C4[8];
+    s32 last_hit_id; // 0x0C4
+    s32 hit_element; // 0x0C8
     float unk_0CC;
     s16 unk_0D0;
     s16 unk_0D2;
@@ -163,13 +164,13 @@ STATIC_ASSERT(sizeof(MONSTOR_MODEL) == 0x9C);
 struct MONSTOR_EFFECT_STATE {
     sceVu0FVECTOR position[16]; // 0x000
     CFrame *frame[16]; // 0x100
-    u8 unk_140[0x40];
-    s32 active[16];
-    u8 unk_1C0[0x40];
+    float radius[16]; // 0x140
+    float motion_start[16]; // 0x180
+    float motion_end[16]; // 0x1C0
     s32 timer[16];
     u8 unk_240[0x140];
     s32 parameter[16][6];
-    u8 unk_500[4];
+    s32 hit_slot; // 0x500
     s32 hit_attributes; // 0x504
     u8 unk_508[8];
 };
@@ -178,7 +179,13 @@ STATIC_ASSERT(sizeof(MONSTOR_EFFECT_STATE) == 0x510);
 struct MONSTOR_EFFECT_STATE2 {
     sceVu0FVECTOR position[16]; // 0x000
     CFrame *frame[16]; // 0x100
-    u8 unk_140[0x1C0];
+    float radius[16]; // 0x140
+    s32 damage[16]; // 0x180
+    s32 kind[16]; // 0x1C0
+    float angle[16]; // 0x200
+    s32 flags[16]; // 0x240
+    float motion_start[16]; // 0x280
+    float motion_end[16]; // 0x2C0
     s32 active[16];
     u8 unk_340[0x10];
 };
@@ -204,6 +211,14 @@ struct MONSTOR_EVENT_STATE {
 };
 STATIC_ASSERT(sizeof(MONSTOR_EVENT_STATE) == 0x30);
 
+struct MONSTOR_GUARD_WINDOW {
+    s16 active[3];
+    u8 unk_006[2];
+    float motion_start[3]; // 0x008
+    float motion_end[3]; // 0x014
+};
+STATIC_ASSERT(sizeof(MONSTOR_GUARD_WINDOW) == 0x20);
+
 class CMonstorUnit {
 public:
     CDataAlloc2<1> *script[16];  /**< Script working memory for each monster on the floor. */
@@ -228,7 +243,10 @@ public:
     MONSTOR_SOUND sound[16]; // 0x5EE50
     MONSTOR_EVENT_STATE event[16]; // 0x5FF50
     MONSTOR_EVENT_STATE event2[16]; // 0x60250
-    s16 event_flags[16][16]; // 0x60550
+    union {
+        s16 event_flags[16][16]; // 0x60550; raw initialization view
+        MONSTOR_GUARD_WINDOW guard[16];
+    };
 
     /**
      * @mangled GetMonstorNum__12CMonstorUnitFv

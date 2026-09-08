@@ -105,3 +105,7 @@ public:
 };
 
 STATIC_ASSERT(sizeof(CHitPointMark) == 0x20);
+
+extern "C" CHitMark HitMark[16];
+extern "C" CHitPointMark HitPointMark[16];
+extern "C" int hitCnt;
