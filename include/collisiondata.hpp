@@ -30,7 +30,7 @@ struct COLLISION_HIT {
     s32 flags; /**< What the hit does besides damage. */
     s32 unk_54;
     s32 owner; /**< Identifies what dealt the hit, or -1. */
-    s32 unk_5C;
+    s32 unk_5C; // owning monster index, or -1 for a non-monster hit
     s32 unk_60;
     char *vs_monster; /**< The attacker's monster-effectiveness table. */
     s32 unk_68;
@@ -49,6 +49,10 @@ STATIC_ASSERT(sizeof(COLLISION_HIT) == 0xA0);
 
 class CCollisionData {
 public:
+    /** Read the ownership and attributes stored with a hit. */
+    int GetMonsterOwner(int index) { return hit[index].unk_5C; }
+    int GetFlags(int index) { return hit[index].flags; }
+    int GetUserID(int index) { return hit[index].owner; }
     void SetUserID(int id, int sub_id) {
         hit[now_hit].owner = id;
         hit[now_hit].unk_60 = sub_id;

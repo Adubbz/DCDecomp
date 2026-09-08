@@ -221,10 +221,14 @@ carve_part(main.sbss.part4b.s
            main.sbss.part4e.s=2A2A30-2A2BF0)
 carve_part(main.rdata.part4.s
            main.rdata.part4b.s=2A1168-2A11E0)
+# CheckDmg owns its local static effect index and initialization guard.
+carve_part(main.sbss.part5.s
+           main.sbss.part5.s=2A2BF8-2A2C68
+           main.sbss.part5c.s=2A2C70-2A2FD0)
 # The weapon build-up and level-up local templates stand in this residual run.
 carve_part(main.data.part6.s
            main.data.part6.s=27E790-27EB30
-           main.data.part6f.s=291820-295810
+           main.data.part6f.s=291830-295810
            main.data.part6d.s=295830-295840
            main.data.part6b.s=2959A0-295FF0)
 carve_part(main.data.part4.s

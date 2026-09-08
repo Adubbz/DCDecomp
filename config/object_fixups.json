@@ -831,7 +831,8 @@
       "@345__6",
       "@937__2",
       "@606__4",
-      "@798"
+      "@798",
+      "@1076"
     ],
     "constant_sections": {
       "@345__6": ".playerheights",
@@ -890,7 +891,8 @@
       "BtEntryEffect32": ".BtEntryEffect32",
       "BtEntryEffect33": ".BtEntryEffect33",
       "BtEntryEffectTbl": ".entryeffecttbl",
-      "@798": ".draworigin"
+      "@798": ".draworigin",
+      "@1076": ".damageforward"
     }
   }
 }

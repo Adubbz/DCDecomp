@@ -222,6 +222,8 @@ STATIC_ASSERT(sizeof(MONSTOR_GUARD_WINDOW) == 0x20);
 
 class CMonstorUnit {
 public:
+    /** Index of the monster whose behavior is being evaluated. */
+    int GetCurrentMonsterIndex() { return unk_090; }
     CDataAlloc2<1> *script[16];  /**< Script working memory for each monster on the floor. */
     CFrame *collision; /**< Collision model that every monster on the floor shares. */
     s32 unk_044;

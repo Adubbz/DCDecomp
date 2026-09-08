@@ -532,7 +532,8 @@ SECTIONS
         monstorunit.cpp.o (.monsterkeys) // 0x002917f0
         monstorunit.cpp.o (.draworigin) // 0x00291800
         monstorunit.cpp.o (.shadowlight) // 0x00291810
-        main.data.part6f.s.o (.data) // 0x00291820
+        monstorunit.cpp.o (.damageforward) // 0x00291820
+        main.data.part6f.s.o (.data) // 0x00291830
         weapon_buildup.cpp.o (.data) // 0x00295810
         main.data.part6d.s.o (.data) // 0x00295830
         weaponlevelup.cpp.o (.data)  // 0x00295840
@@ -695,6 +696,9 @@ SECTIONS
 		main.sbss.part4e.s.o (.sbss)   // 0x002a2a30
 		dungeonmap.cpp.o (.sbss)
 		main.sbss.part5.s.o (.sbss)
+		monstorunit.cpp.o (.sbss) // 0x002a2c68, counter and guard
+		. = ALIGN(4);
+		main.sbss.part5c.s.o (.sbss) // 0x002a2c70
 		charakey.cpp.o (.sbss)
 		. = ALIGN(4);
 		main.sbss.part5b.s.o (.sbss)   // 0x002a2fd8
