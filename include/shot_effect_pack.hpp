@@ -8,9 +8,13 @@
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 #include "bt_shot_effect.hpp"
+#include "shot_effect.hpp"
 
 class CSHOT_EFFECT_PACK {
 public:
+    CSHOT_EFFECT effect[5];
+    s32 current_effect; // 0x326E0, selected by SetUserID2/SetDmg
+
     /**
      * @mangled Entry__17CSHOT_EFFECT_PACKFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i
      * @address 0x1AE4C0
@@ -36,4 +40,5 @@ public:
     void SetDmg(int);
 };
 
+STATIC_ASSERT(sizeof(CSHOT_EFFECT_PACK) == 0x326F0);
 extern "C" CSHOT_EFFECT_PACK *NowShotEffect;

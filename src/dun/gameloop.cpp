@@ -102,6 +102,7 @@
 #include "savedata.hpp"
 #include "shop_battlemenu.hpp"
 #include "shot_effect.hpp"
+#include "shot_effect_pack.hpp"
 #include "shot_firebar.hpp"
 #include "shot_freefuncs.hpp"
 #include "snd.hpp"
@@ -808,7 +809,7 @@ extern "C" CCollisionData CColData;
 extern "C" CSHOT ShotData;
 
 /* The shot effects the dungeon can run. */
-extern "C" CSHOT_EFFECT ShotEffect[5];
+extern "C" CSHOT_EFFECT_PACK ShotEffect;
 
 /* The shock wave the dungeon can run. */
 extern "C" CShockWave ShockWave;
@@ -1253,7 +1254,7 @@ CHitValue *NowHitValue;
 CSHOT *NowShotData;
 
 /* The shot effects the dungeon has running. */
-CSHOT_EFFECT *NowShotEffect;
+CSHOT_EFFECT_PACK *NowShotEffect;
 
 /* The effect data Osmond's default weapon shoots. */
 unsigned int *ozumond_default_effect;
@@ -1522,9 +1523,9 @@ void GameInit(void) {
     HealEffect.unk_510 = 0;
     WaterSplash_Init();
     for (int i = 0; i < 5; i++) {
-        ShotEffect[i].Initialize();
+        ShotEffect.effect[i].Initialize();
     }
-    NowShotEffect = ShotEffect;
+    NowShotEffect = &ShotEffect;
     for (int i = 0; i < 5; i++) {
         MasekiEffect[i].Initialize();
     }
@@ -2367,7 +2368,7 @@ void MainDraw(void) {
             MasekiEffect[i].Draw();
         }
 
-        CSHOT_EFFECT *shot = NowShotEffect;
+        CSHOT_EFFECT *shot = NowShotEffect->effect;
 
         for (i = 0; i < 5; i++) {
             shot[i].Draw();
@@ -4317,7 +4318,7 @@ void MoveChara(void) {
         case 0x226:
             if (EdFadeOutCheck() != 0) {
                 int i;
-                CSHOT_EFFECT *effects = NowShotEffect;
+                CSHOT_EFFECT *effects = NowShotEffect->effect;
 
                 for (i = 0; i < 5; i++) {
                     effects[i].Initialize();
@@ -4365,7 +4366,7 @@ void MoveChara(void) {
                 TexManager.DeleteTextureBlock(0x26);
                 TexManager.CleanUpBuffer();
                 TexManager.CleanUpTextureList();
-                effects = NowShotEffect;
+                effects = NowShotEffect->effect;
                 for (i = 0; i < 5; i++) {
                     effects[i].Initialize();
                 }
@@ -5969,7 +5970,7 @@ void motionDrive(void) {
     }
     NowShockWave->Step();
 
-    CSHOT_EFFECT *effects = NowShotEffect;
+    CSHOT_EFFECT *effects = NowShotEffect->effect;
 
     for (i = 0; i < 5; i++) {
         effects[i].Step();
@@ -6181,7 +6182,7 @@ void BtLoadMonstor(int ura) {
     wait_now_loading_vsync();
     NowMonstorUnit->collision = LoadCollisionFile(read_buffer, &MonstorModelBuffer);
 
-    CSHOT_EFFECT *effects = NowShotEffect;
+    CSHOT_EFFECT *effects = NowShotEffect->effect;
 
     for (i = 0; i < 5; i++) {
         effects[i].Initialize();

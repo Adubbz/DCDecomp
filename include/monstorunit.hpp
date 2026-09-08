@@ -18,7 +18,7 @@ class CFrame;
  */
 struct MONSTOR {
     s32 state; /**< 2 while the monster stands on the floor and takes part. */
-    u8 unk_004[4];
+    s32 last_attacker; // 0x004: character credited with the kill
     s32 unk_008;
     s32 unk_00C;
     s32 unk_010; /**< Set to 300 by AllBin2; cleared when the monster is released. */
@@ -36,13 +36,13 @@ struct MONSTOR {
     s16 name_no; /**< Identifies the name the lock-on cursor shows. */
     float unk_044;
     float collision_radius; // 0x048
-    u8 unk_04C[4];
+    CCPoly *collision_poly; // 0x04C
     s32 unk_050;
     u8 unk_054[0x0C];
     sceVu0FVECTOR movement; // 0x060
     sceVu0FVECTOR unk_070;
     float movement_speed; // 0x080
-    s32 unk_084;
+    float unk_084;
     s32 unk_088;
     u8 unk_08C[4];
     s16 unk_090;
@@ -59,7 +59,9 @@ struct MONSTOR {
     s16 unk_0AE;
     s32 unk_0B0;
     s16 unk_0B4;
-    u8 unk_0B6[0x0A];
+    u8 unk_0B6[2];
+    float ground_distance; // 0x0B8
+    float ground_y; // 0x0BC
     s32 unk_0C0;
     u8 unk_0C4[8];
     float unk_0CC;
@@ -74,7 +76,9 @@ struct MONSTOR {
     s16 unk_0E0;
     u8 unk_0E2[6];
     s32 unk_0E8;
-    u8 unk_0EC[8];
+    s16 requested_motion; // 0x0EC
+    s16 requested_motion_flags; // 0x0EE
+    float requested_motion_speed; // 0x0F0
     s16 unk_0F4;
     s16 event_flag2;         /**< Value returned when CheckEventFlag2 consumes the event. */
     s16 event_flag2_pending; /**< Nonzero until CheckEventFlag2 consumes the event. */
@@ -165,7 +169,9 @@ struct MONSTOR_EFFECT_STATE {
     s32 timer[16];
     u8 unk_240[0x140];
     s32 parameter[16][6];
-    u8 unk_500[0x10];
+    u8 unk_500[4];
+    s32 hit_attributes; // 0x504
+    u8 unk_508[8];
 };
 STATIC_ASSERT(sizeof(MONSTOR_EFFECT_STATE) == 0x510);
 
@@ -193,7 +199,8 @@ struct MONSTOR_EVENT_STATE {
     sceVu0FVECTOR position;
     CFrame *frame;
     s32 timer;
-    u8 unk_028[8];
+    s32 damage_override; // 0x028
+    u8 unk_02C[4];
 };
 STATIC_ASSERT(sizeof(MONSTOR_EVENT_STATE) == 0x30);
 
@@ -330,9 +337,8 @@ public:
      * @mangled CheckDmg__12CMonstorUnitFv
      * @address 0x1D9F10
      * @size 0x2910
-     * @unknownret
      */
-    void CheckDmg(void);
+    int CheckDmg(void);
 
     /**
      * @mangled MoveCheck__12CMonstorUnitFPfPfi

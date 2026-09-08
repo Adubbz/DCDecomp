@@ -12,7 +12,7 @@ class CFrame;
 
 class CSHOT_EFFECT {
 public:
-    u8 unk_0000[0xA160];
+    u8 unk_0000[0xA160] __attribute__((aligned(16)));
 
     /**
      * @mangled Draw__12CSHOT_EFFECTFv
