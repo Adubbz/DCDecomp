@@ -4,8 +4,8 @@ import json
 from pathlib import Path
 
 
-def percentage(measures, name):
-    return f"{float(measures.get(name, 0.0)):.2f}%"
+def percentage(value):
+    return f"{float(value):.2f}%"
 
 
 def function_count(count):
@@ -24,12 +24,31 @@ def fuzzy_function_count(units):
     )
 
 
-def progress_line(measures, units):
+def slices(measures, units):
+    """Perfect, fuzzy and unmatched shares, exclusive of each other."""
+    perfect = float(measures.get("matched_code_percent", 0.0))
+    matched = float(measures.get("fuzzy_match_percent", 0.0))
+    total_functions = int(measures.get("total_functions", 0))
+    perfect_functions = int(measures.get("matched_functions", 0))
+    fuzzy_functions = fuzzy_function_count(units)
     return (
-        f"Perfect **{percentage(measures, 'matched_code_percent')}** "
-        f"({function_count(measures.get('matched_functions', 0))})"
-        f" · Fuzzy **{percentage(measures, 'fuzzy_match_percent')}** "
-        f"({function_count(fuzzy_function_count(units))})"
+        ("Perfect", perfect, perfect_functions),
+        ("Fuzzy", matched - perfect, fuzzy_functions),
+        ("Other", 100.0 - matched, total_functions - perfect_functions - fuzzy_functions),
+    )
+
+
+def heading(name, measures):
+    return (
+        f"{name} — {percentage(measures.get('fuzzy_match_percent', 0.0))} "
+        f"of {function_count(measures.get('total_functions', 0))}"
+    )
+
+
+def progress_line(measures, units):
+    return " · ".join(
+        f"{label} **{percentage(share)}** ({function_count(count)})"
+        for label, share, count in slices(measures, units)
     )
 
 
@@ -60,7 +79,7 @@ def payload(report):
                 "color": 0x5865F2,
                 "fields": [
                     {
-                        "name": name,
+                        "name": heading(name, measures),
                         "value": progress_line(measures, section_units),
                         "inline": False,
                     }
