@@ -129,8 +129,27 @@ INCLUDE_RODATA("asm/nonmatchings/menu_draw", @763__3);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @764__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @765__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @776__3);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", ExitDunEnterMenu__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DunEnterMenuLoop__Fv);
+void ExitDunEnterMenu() {
+    GamePad.AutoRepeatOff();
+    GamePad.MenuModeOff();
+    MenuTextureReload(DEnterMenu.texture_block);
+    DngActiveItemTextureCopy();
+    DngActiveWeaponTextureCopy();
+    TexManager.DeleteTextureBlock(DEnterMenu.texture_block);
+}
+int DunEnterMenuLoop() {
+    rand();
+    ReadBG();
+    int result = DunEnterMenuKey();
+    DunEnterDraw();
+    ItemVolumeStep.LoopStep(60);
+    if (0 <= result) {
+        ExitDunEnterMenu();
+        ItemVolumeStep.CheckItemVolume();
+        result = DEnterMenu.result;
+    }
+    return result;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DunEnterMenuKey__Fv);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @843__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @844);
