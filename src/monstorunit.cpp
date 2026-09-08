@@ -90,7 +90,37 @@ void CMonstorUnit::PalletStep() {
         }
     }
 }
-INCLUDE_ASM("asm/nonmatchings/monstorunit", SoundCheck__12CMonstorUnitFv);
+void CMonstorUnit::SoundCheck() {
+    sceVu0FVECTOR position;
+    CMonstorChara *character = &chara[unk_090];
+    character->GetPosition(position);
+    float frame = chara[unk_090].motion_type.state.time;
+    float near_distance = 50.0f;
+    float far_distance = 500.0f;
+    if (monster[unk_090].kind == 2) {
+        near_distance = 350.0f;
+        far_distance = 1000.0f;
+    }
+    if (sound[unk_090].sequence_start <= frame && !(sound[unk_090].sequence_end <= frame)) {
+        float volume, pan;
+        SndSeSeqPlayStop(sound[unk_090].sequence_id, sound[unk_090].sequence_step, unk_090 * 2);
+        SndGetVolPan(&volume, &pan, position, near_distance, far_distance);
+        SndSetSeVolf(sound[unk_090].sequence_id, volume, unk_090 * 2);
+        SndSetSePanf(sound[unk_090].sequence_id, pan, unk_090 * 2);
+    }
+    for (int i = 0; i < 16; i++) {
+        if (sound[unk_090].cooldown[i] > 0) {
+            sound[unk_090].cooldown[i]--;
+        } else if (sound[unk_090].id[i] != -1 && sound[unk_090].start[i] <= frame && !(sound[unk_090].end[i] <= frame)) {
+            float volume, pan;
+            SndSePlay(sound[unk_090].id[i], -1, 0);
+            SndGetVolPan(&volume, &pan, position, near_distance, far_distance);
+            SndSetSeVolf(sound[unk_090].id[i], volume, 0);
+            SndSetSePanf(sound[unk_090].id[i], pan, 0);
+            sound[unk_090].cooldown[i] = 10;
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawMonstor__12CMonstorUnitFv);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawMonstorCursor__12CMonstorUnitFv);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", set3DCellModel__FPfPcfiiii);
