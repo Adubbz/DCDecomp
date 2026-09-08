@@ -199,7 +199,28 @@ void CMonstorUnit::DrawMonstorCursor() {
         }
     }
 }
-INCLUDE_ASM("asm/nonmatchings/monstorunit", set3DCellModel__FPfPcfiiii);
+void set3DCellModel(float *world, char *name, float size, int x, int y, int width, int height) {
+    int top_left[4];
+    int top_right[4];
+    int bottom_left[4];
+    int bottom_right[4];
+    CRect_i_ clip;
+    CTexture *texture = TexManager.GetTexture(name, -1);
+    world[3] = 1;
+    if (MGRotTransPers3DSprite(top_left, bottom_right, world, size, size / 2.0f, 0) == 1) {
+        top_right[0] = bottom_right[0];
+        top_right[1] = top_left[1];
+        top_right[2] = top_left[2];
+        bottom_left[0] = top_left[0];
+        bottom_left[1] = bottom_right[1];
+        bottom_left[2] = bottom_right[2];
+        clip.x = x;
+        clip.y = y;
+        clip.width = width;
+        clip.height = height;
+        set3DSprite(Vif1Packet, texture, clip, top_left, top_right, bottom_left, bottom_right, 128);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/monstorunit", InitBee__FP6CFramei);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @915);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @916);
