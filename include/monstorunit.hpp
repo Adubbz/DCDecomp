@@ -191,9 +191,8 @@ public:
      * @mangled SelectAttachi__12CMonstorUnitFv
      * @address 0x1D9D60
      * @size 0x1B0
-     * @unknownret
      */
-    void SelectAttachi(void);
+    int SelectAttachi(void);
 
     /**
      * @mangled CheckDmg__12CMonstorUnitFv

@@ -7,6 +7,7 @@
 #include "mathutil.hpp"
 #include "mglib.hpp"
 #include "snd.hpp"
+#include <cstdlib>
 
 int CMonstorUnit::GetMonstorNum() {
     int count = 0;
@@ -100,7 +101,35 @@ INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawBee__FP6CFramei);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @935);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawShadowMonstor__12CMonstorUnitFv);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", CheckViewLevel__12CMonstorUnitFv);
-INCLUDE_ASM("asm/nonmatchings/monstorunit", SelectAttachi__12CMonstorUnitFv);
+int CMonstorUnit::SelectAttachi() {
+    int item;
+    int chance = (int)(100.0f * (float)rand() / 2147483648.0f);
+    if (chance > 70) {
+        return -1;
+    }
+    chance = (int)(100.0f * (float)rand() / 2147483648.0f);
+    int changed = 0;
+    int best = 0;
+    for (int i = 1; i < 5; i++) {
+        int greater = monster[unk_090].attachment_weight[best] < monster[unk_090].attachment_weight[i];
+        if (greater) {
+            best = i;
+            changed = 1;
+        }
+    }
+    if (chance < 30 && changed != 0) {
+        item = best + 0x51;
+        if (item < 0x51 || item >= 0x56) {
+            item = -1;
+        }
+    } else {
+        item = monster[unk_090].attachment_kind + 0x6f;
+        if (item < 0x6f || item >= 0x79) {
+            item = -1;
+        }
+    }
+    return item;
+}
 INCLUDE_ASM("asm/nonmatchings/monstorunit", CheckDmg__12CMonstorUnitFv);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @1518);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @1521);
