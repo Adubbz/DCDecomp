@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "actionseq.hpp"
 #include "boxvu0.hpp"
 #include "camera.hpp"
 #include "character.hpp"
