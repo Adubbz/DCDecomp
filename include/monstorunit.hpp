@@ -17,7 +17,9 @@ class CFrame;
  */
 struct MONSTOR {
     s32 state; /**< 2 while the monster stands on the floor and takes part. */
-    u8 unk_004[0x1C];
+    u8 unk_004[0x0C];
+    s32 unk_010; /**< Set to 300 by AllBin2; cleared when the monster is released. */
+    u8 unk_014[0x0C];
     s32 max_hp; /**< Life the monster has at full health. */
     s32 hp;     /**< Life the monster has left. */
     u8 unk_028[0x14];
@@ -29,7 +31,10 @@ struct MONSTOR {
     s32 unk_0C0;
     u8 unk_0C4[0x10];
     s16 unk_0D4;
-    u8 unk_0D6[0x26];
+    u8 unk_0D6[0x20];
+    s16 event_flag2;         /**< Value returned when CheckEventFlag2 consumes the event. */
+    s16 event_flag2_pending; /**< Nonzero until CheckEventFlag2 consumes the event. */
+    u8 unk_0FA[2];
     s32 unk_0FC;
     sceVu0FVECTOR unk_100;
     float unk_110;
