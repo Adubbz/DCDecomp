@@ -829,11 +829,13 @@
     ],
     "rodata_exports": [
       "@345__6",
-      "@937__2"
+      "@937__2",
+      "@606__4"
     ],
     "constant_sections": {
       "@345__6": ".playerheights",
-      "@937__2": ".shadowlight"
+      "@937__2": ".shadowlight",
+      "@606__4": ".monsterkeys"
     }
   }
 }

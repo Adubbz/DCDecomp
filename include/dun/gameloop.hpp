@@ -14,6 +14,8 @@ class CFrame;
 /** Model used to draw the monster cursor. */
 extern CFrame *cursorFrame;
 extern s32 selectMapNo;
+class CRandomItem;
+extern CRandomItem *RandomItem;
 extern s32 BtEquipMasuisyou;
 /** Debug switches shared by dungeon rendering. */
 extern "C" s32 DebugStatus[21];

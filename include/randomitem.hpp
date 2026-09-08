@@ -75,7 +75,7 @@ public:
      * @size 0x60
      * @unknownret
      */
-    void CheckItemNo(int);
+    int CheckItemNo(int);
 
     /**
      * @mangled Step__11CRandomItemFv

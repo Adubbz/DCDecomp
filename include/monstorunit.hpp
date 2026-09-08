@@ -67,7 +67,8 @@ struct MONSTOR {
     s16 unk_0D4;
     s16 unk_0D6;
     s16 unk_0D8;
-    u8 unk_0DA[0x0E];
+    s16 unk_0DA; // permits assignment of a dungeon key
+    u8 unk_0DC[0x0C];
     s32 unk_0E8;
     u8 unk_0EC[8];
     s16 unk_0F4;

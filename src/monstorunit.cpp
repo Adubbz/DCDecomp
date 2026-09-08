@@ -15,6 +15,9 @@
 #include "texture.hpp"
 #include "rect.hpp"
 #include <cstdlib>
+#include <cstdio>
+#include "dngstatusdata.hpp"
+#include "randomitem.hpp"
 
 BEE_STATE BeeTbl[800];
 CTexAnimeData MonsterTexAnim[320];
@@ -64,8 +67,43 @@ void CMonstorUnit::DrawMapSymbol(float *offset) {
 }
 
 
-INCLUDE_RODATA("asm/nonmatchings/monstorunit", @653__3);
-INCLUDE_ASM("asm/nonmatchings/monstorunit", SetKey__12CMonstorUnitFv);
+void CMonstorUnit::SetKey() {
+    int key;
+    int key_index = 0;
+    int keys[3] = {0xC4, 0xC6, 0xCD};
+    if (unk_044 != 0) return;
+    if (selectMapNo == 2 && UserStatus->cur_floor == 16) return;
+    int remaining = 1;
+    if (selectMapNo == 1) remaining = 3;
+    if (unk_04C <= 1) return;
+    int attempts = 0;
+    for (;;) {
+        int index = (int)((float)unk_04C * (float)rand() / 2147483648.0f);
+        if (index < 0 || index >= unk_04C) index = 0;
+        if (monster[index].state == -1) continue;
+        switch (selectMapNo) {
+        case 0: key = 0xC3; break;
+        case 1: key = keys[key_index]; break;
+        case 2: key = 0xC9; break;
+        case 3: key = 0xCA; break;
+        case 4: key = 0xCB; break;
+        case 5: key = 0xCC; break;
+        case 6: key = 0xCE; break;
+        default: key = -1; break;
+        }
+        if (monster[index].unk_0A0 == -1 && monster[index].unk_0DA != 0) {
+            printf("check ---> %d\n", ((CDngStatusData *)UserStatus)->SearchItemIndexNo(key));
+            if (((CDngStatusData *)UserStatus)->SearchItemIndexNo(key) < 0 && RandomItem->CheckItemNo(key) == 0) {
+                monster[index].unk_0A0 = key;
+            }
+            key_index++;
+            if (--remaining <= 0) return;
+        }
+        attempts++;
+        if (attempts >= 9999) monster[index].unk_0DA = 1;
+    }
+}
+
 int CMonstorUnit::CheckEventFlag2() {
     for (int i = 0; i < 16; i++) {
         if (monster[i].state == 2 && monster[i].event_flag2_pending != 0) {

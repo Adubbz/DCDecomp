@@ -473,6 +473,8 @@ SECTIONS
         monstorunit.cpp.o (.playerheights) // 0x0027eb70, MoveCheck player heights
         . = ALIGN(0x10);
         main.data.part6e.s.o (.data) // 0x0027eb90
+        monstorunit.cpp.o (.monsterkeys) // 0x002917f0
+        main.data.part6g.s.o (.data) // 0x00291800
         monstorunit.cpp.o (.shadowlight) // 0x00291810
         main.data.part6f.s.o (.data) // 0x00291820
         weapon_buildup.cpp.o (.data) // 0x00295810
