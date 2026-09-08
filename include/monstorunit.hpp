@@ -160,9 +160,9 @@ struct MONSTOR_EFFECT_STATE2 {
 STATIC_ASSERT(sizeof(MONSTOR_EFFECT_STATE2) == 0x350);
 
 struct MONSTOR_EFFECT_STATE3 {
-    u8 unk_000[0xC0];
+    sceVu0FVECTOR position[12]; // 0x000: collision sphere centers
     s32 active[12];
-    u8 unk_0F0[0x30];
+    float radius[12]; // 0x0F0
     s32 timer[12];
     s32 count;
     u8 unk_154[0x0C];
