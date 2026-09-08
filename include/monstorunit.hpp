@@ -29,7 +29,12 @@ struct MONSTOR {
     s16 kind;    /**< 2 for a monster the lock-on cursor leaves alone. */
     s16 name_no; /**< Identifies the name the lock-on cursor shows. */
     float unk_044;
-    u8 unk_048[0x78];
+    float collision_radius; // 0x048
+    u8 unk_04C[0x14];
+    sceVu0FVECTOR movement; // 0x060
+    sceVu0FVECTOR unk_070;
+    float movement_speed; // 0x080
+    u8 unk_084[0x3C];
     s32 unk_0C0;
     u8 unk_0C4[0x0C];
     s16 unk_0D0;
@@ -72,6 +77,20 @@ public:
 
 STATIC_ASSERT(sizeof(CMonstorChara) == 0x3510);
 
+/** Frame windows and retrigger delays for one monster's sounds. */
+struct MONSTOR_SOUND {
+    float start[16];
+    float end[16];
+    s32 id[16];
+    s32 cooldown[16];
+    float sequence_start;
+    float sequence_end;
+    s32 sequence_step;
+    s32 sequence_id;
+};
+
+STATIC_ASSERT(sizeof(MONSTOR_SOUND) == 0x110);
+
 class CMonstorUnit {
 public:
     void *script[16];  /**< Script working memory for each monster on the floor. */
@@ -84,7 +103,9 @@ public:
     u8 unk_098[0x1E338];
     MONSTOR monster[16];     /**< What each monster of the floor is doing. */
     CMonstorChara chara[16]; /**< The model each monster draws with. */
-    u8 unk_54DD0[0xB980];
+    u8 unk_54DD0[0xA080];
+    MONSTOR_SOUND sound[16]; // 0x5EE50
+    u8 unk_5FF50[0x800];
 
     /**
      * @mangled GetMonstorNum__12CMonstorUnitFv
