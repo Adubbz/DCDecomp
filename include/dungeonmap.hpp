@@ -599,3 +599,5 @@ STATIC_ASSERT(sizeof(ROOM_LINK_RESULT) == 0x18);
 STATIC_ASSERT(sizeof(DUNGEON_EVENT) == 0x50);
 STATIC_ASSERT(sizeof(MAP_NPC_MODEL) == 0x1330);
 STATIC_ASSERT(sizeof(CDungeonMap) == 0x10B10);
+
+extern "C" CDungeonMap *NowDngMap;

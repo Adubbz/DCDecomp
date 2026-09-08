@@ -20,6 +20,7 @@
 #include "randomitem.hpp"
 #include "dataread.hpp"
 #include "nowload.hpp"
+#include "runscript_opcodes.hpp"
 #include "shot_effect_pack.hpp"
 #include <cstring>
 
@@ -771,7 +772,7 @@ int CMonstorUnit::SetupBaseModel(int slot, int model_no, int effect_mode, CDataA
     sprintf(filename, "dun/monstor/%s.stb", description->script_name);
     LoadFile(filename, read_buffer, &file_size);
     wait_now_loading_vsync();
-    script_data[slot] = alloc->base + alloc->used * 16;
+    script_data[slot] = (char *)(alloc->base + alloc->used * 16);
     alloc->Alloc((((file_size >> 6) + 1) << 6) >> 4);
     memcpy(script_data[slot], read_buffer, file_size);
     memcpy(&model[slot], description, sizeof(MONSTOR_MODEL));
@@ -799,4 +800,88 @@ int CMonstorUnit::SetupBaseModel(int slot, int model_no, int effect_mode, CDataA
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/monstorunit", SetupViewMonstor__12CMonstorUnitFiPfi);
+int CMonstorUnit::SetupViewMonstor(int model_no, float *position, int event_flag) {
+    unk_090 = -1;
+    for (int i = 0; i < 16; i++) {
+        if (monster[i].state == -1) {
+            unk_090 = i;
+            break;
+        }
+    }
+    if (unk_090 == -1) {
+        return 0;
+    }
+    script[unk_090]->Reset();
+    BtSetEventScript(&interpreter[unk_090], script_data[model_no], script[unk_090]);
+    chara[unk_090][0] = base_chara[model_no][0];
+    chara[unk_090][0].motion[0] = &chara[unk_090][0].motion_type;
+    chara[unk_090][0].SetPosition(position);
+    float zero = 0.0f;
+    chara[unk_090][0].SetRotation(zero, zero, zero);
+    if (UserStatus->cur_georama == 3 && UserStatus->cur_floor == 17 && unk_090 == 1) {
+        InitBee(chara[1][0].frame, 15);
+    }
+    monster[unk_090].unk_0B4 = 0;
+    for (int j = 0; j < 3; j++) {
+        if (model[model_no].model_name[j + 1][0] != 0) {
+            chara[unk_090][j + 1] = base_chara[model_no][j + 1];
+            chara[unk_090][j + 1].motion[0] = &chara[unk_090][j + 1].motion_type;
+            chara[unk_090][j + 1].frame->SetParent(chara[unk_090][0].frame);
+            monster[unk_090].unk_0B4++;
+        }
+    }
+    monster[unk_090].state = 1;
+    monster[unk_090].base_model = model_no;
+    monster[unk_090].max_hp = model[model_no].max_hp;
+    monster[unk_090].hp = model[model_no].max_hp;
+    monster[unk_090].attachment_kind = model[model_no].attachment_kind;
+    for (int j = 0; j < 5; j++) {
+        monster[unk_090].attachment_weight[j] = model[model_no].attachment_weight[j];
+    }
+    monster[unk_090].unk_090 = model[model_no].unk_064;
+    monster[unk_090].unk_092 = model[model_no].unk_066;
+    monster[unk_090].unk_034 = model[model_no].unk_070;
+    monster[unk_090].unk_038 = model[model_no].unk_074;
+    monster[unk_090].kind = model[model_no].kind;
+    monster[unk_090].name_no = model[model_no].name_no;
+    monster[unk_090].unk_044 = model[model_no].collision_radius;
+    monster[unk_090].collision_radius = model[model_no].collision_radius;
+    monster[unk_090].unk_0AC = model[model_no].shot_effect[0];
+    monster[unk_090].unk_0AE = model[model_no].shot_effect[1];
+    monster[unk_090].unk_0B0 = model[model_no].unk_06C;
+    monster[unk_090].unk_0D8 = model[model_no].unk_080;
+    monster[unk_090].unk_0DA = model[model_no].unk_082;
+    monster[unk_090].unk_0DC = model[model_no].unk_084;
+    monster[unk_090].unk_0DE = model[model_no].unk_086;
+    monster[unk_090].unk_0E0 = model[model_no].unk_088;
+    monster[unk_090].event_flag2 = event_flag;
+    monster[unk_090].unk_180[2] = model[model_no].unk_098;
+    for (int i = 0; i < 16; i++) {
+        for (int j = 0; j < 6; j++) {
+            effect[unk_090].parameter[i][j] = model[model_no].effect_parameter[j];
+        }
+    }
+    if (model[model_no].attachment_kind == 8) {
+        monster[unk_090].unk_0D4 = 0;
+        switch (model[model_no].kind) {
+        case 3:
+            NowDngMap->SetMimicEvent(position[0], position[1], position[2], unk_090, 1);
+            break;
+        case 4:
+            NowDngMap->SetMimicEvent(position[0], position[1], position[2], unk_090, 0);
+            break;
+        }
+    } else {
+        monster[unk_090].unk_0D4 = -1;
+    }
+    for (int i = 0; i < 3; i++) {
+        event_flags[unk_090][i] = 0;
+    }
+    if (interpreter[unk_090].check_program(1) != 0) {
+        interpreter[unk_090].run(1);
+    }
+    script_state[unk_090] = 0;
+    unk_04C++;
+    return 1;
+}
+

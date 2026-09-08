@@ -24,12 +24,13 @@ struct MONSTOR {
     s32 unk_010; /**< Set to 300 by AllBin2; cleared when the monster is released. */
     s32 unk_014;
     float player_distance; // 0x018
-    u8 unk_01C[4];
+    s32 base_model; // 0x01C
     s32 max_hp; /**< Life the monster has at full health. */
     s32 hp;     /**< Life the monster has left. */
     s16 attachment_kind; // 0x028
     s16 attachment_weight[5]; // 0x02A
-    u8 unk_034[8];
+    s32 unk_034;
+    s32 unk_038;
     s32 unk_03C;
     s16 kind;    /**< 2 for a monster the lock-on cursor leaves alone. */
     s16 name_no; /**< Identifies the name the lock-on cursor shows. */
@@ -68,7 +69,10 @@ struct MONSTOR {
     s16 unk_0D6;
     s16 unk_0D8;
     s16 unk_0DA; // permits assignment of a dungeon key
-    u8 unk_0DC[0x0C];
+    s16 unk_0DC;
+    s16 unk_0DE;
+    s16 unk_0E0;
+    u8 unk_0E2[6];
     s32 unk_0E8;
     u8 unk_0EC[8];
     s16 unk_0F4;
@@ -131,9 +135,22 @@ struct MONSTOR_MODEL {
     s16 unk_064;
     s16 unk_066;
     s16 shot_effect[2];
-    u8 unk_06C[0x0C];
+    s16 unk_06C;
+    u8 unk_06E[2];
+    s32 unk_070;
+    s32 unk_074;
     s16 kind;
-    u8 unk_07A[0x22];
+    u8 unk_07A[2];
+    s16 name_no; // 0x07C
+    u8 unk_07E[2];
+    s16 unk_080;
+    s16 unk_082;
+    s16 unk_084;
+    s16 unk_086;
+    s16 unk_088;
+    s16 effect_parameter[6]; // 0x08A
+    u8 unk_096[2];
+    float unk_098;
 };
 
 STATIC_ASSERT(sizeof(MONSTOR_MODEL) == 0x9C);
@@ -194,7 +211,7 @@ public:
     s32 unk_09C;
     CMonstorChara base_chara[9]; // 0x0A0
     MONSTOR_MODEL model[9]; // 0x1DE30
-    void *script_data[9]; // 0x1E3AC
+    char *script_data[9]; // 0x1E3AC
     MONSTOR monster[16];     /**< What each monster of the floor is doing. */
     CMonstorChara chara[16]; /**< The model each monster draws with. */
     CRunScript interpreter[16]; // 0x54DD0
@@ -370,7 +387,7 @@ public:
      * @size 0x1390
      * @unknownret
      */
-    void SetupViewMonstor(int, float *, int);
+    int SetupViewMonstor(int, float *, int);
 };
 
 STATIC_ASSERT(sizeof(CMonstorUnit) == 0x60750);
