@@ -826,6 +826,9 @@
     },
     "globalize_symbols": [
       "__sinit_monstorunit.cpp"
+    ],
+    "rodata_exports": [
+      "@345__6"
     ]
   }
 }

@@ -470,6 +470,9 @@ SECTIONS
         main.data.part6.s.o (.data)
         weaponeffect.cpp.o (.data)   // 0x0027eb30
         main.data.part6c.s.o (.data) // 0x0027eb50
+        monstorunit.cpp.o (.data)   // 0x0027eb70, MoveCheck player heights
+        . = ALIGN(0x10);
+        main.data.part6e.s.o (.data) // 0x0027eb90
         weapon_buildup.cpp.o (.data) // 0x00295810
         main.data.part6d.s.o (.data) // 0x00295830
         weaponlevelup.cpp.o (.data)  // 0x00295840

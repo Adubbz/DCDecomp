@@ -408,7 +408,101 @@ int CMonstorUnit::SelectAttachi() {
 INCLUDE_ASM("asm/nonmatchings/monstorunit", CheckDmg__12CMonstorUnitFv);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @1518);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @1521);
-INCLUDE_ASM("asm/nonmatchings/monstorunit", MoveCheck__12CMonstorUnitFPfPfi);
+void CMonstorUnit::MoveCheck(float *position, float *movement, int flat) {
+    sceVu0FVECTOR start;
+    sceVu0FVECTOR center;
+    sceVu0FVECTOR ground;
+    sceVu0FVECTOR end;
+    sceVu0FVECTOR toward;
+    sceVu0FVECTOR direction;
+    sceVu0FVECTOR top;
+    sceVu0FVECTOR end_ground;
+    sceVu0CopyVector(start, position);
+    end[0] = start[0] + movement[0];
+    end[1] = start[1] + movement[1];
+    end[2] = start[2] + movement[2];
+    movement[3] = 1.0f;
+    sceVu0Normalize(direction, movement);
+    direction[1] = 1.0f;
+    sceVu0CopyVector(top, end);
+    sceVu0CopyVector(end_ground, end);
+    CUserStatus *status = UserStatus;
+    float height[6] = {16.0f, 14.0f, 16.0f, 16.0f, 18.0f, 15.0f};
+    top[1] += height[status->cur_chara];
+    end_ground[1] = 1.0f;
+    float upper = top[1];
+    float lower = end[1];
+    for (int i = 0; i < 16; i++) {
+        if (monster[i].state == 2 && monster[i].unk_0D4 != 0) {
+            if (effect3[i].count == 0) {
+                CMonstorChara *character = &chara[i];
+                character->GetPosition(center);
+                character->GetPosition(ground);
+                ground[1] = 1.0f;
+                if (flat != 0) {
+                    center[1] = 1.0f;
+                    lower = 1.0f;
+                }
+                float distance = DistVector(ground, end_ground);
+                float radius = monster[i].unk_044;
+                if (distance < 6.0f + radius) {
+                    int clear = 1;
+                    float ceiling = center[1] + 2.0f * radius;
+                    if (!(ceiling < upper) && center[1] < upper) clear = 0;
+                    if (!(ceiling < lower) && center[1] < lower) clear = 0;
+                    if (ceiling <= upper && !(center[1] <= lower)) clear = 0;
+                    if (!(ceiling < upper) && center[1] < lower) clear = 0;
+                    if (clear == 0) {
+                        toward[0] = center[0] - start[0];
+                        toward[2] = center[2] - start[2];
+                        toward[1] = 0.0f;
+                        toward[3] = 1.0f;
+                        sceVu0Normalize(toward, toward);
+                        if (!(sceVu0InnerProduct(direction, toward) <= 0.33333334f)) {
+                            movement[0] = 0.0f;
+                            movement[1] -= 2.0f;
+                            movement[2] = 0.0f;
+                            return;
+                        }
+                    }
+                }
+            } else {
+                for (int j = 0; j < effect3[i].count; j++) {
+                    sceVu0CopyVector(center, effect3[i].position[j]);
+                    sceVu0CopyVector(ground, effect3[i].position[j]);
+                    ground[1] = 1.0f;
+                    if (DistVector(ground, end_ground) <= 6.0f + effect3[i].radius[j]) {
+                        if (flat != 0) {
+                            center[1] = 1.0f;
+                            lower = 1.0f;
+                        }
+                        int clear = 1;
+                        float bottom = center[1] - effect3[i].radius[j];
+                        float ceiling = center[1] + effect3[i].radius[j];
+                        if (!(bottom <= upper) && ceiling < upper) clear = 0;
+                        if (!(bottom <= lower) && ceiling < lower) clear = 0;
+                        if (bottom < upper && !(ceiling <= lower)) clear = 0;
+                        if (!(bottom <= upper) && ceiling < lower) clear = 0;
+                        if (clear == 0) {
+                            toward[0] = center[0] - start[0];
+                            toward[2] = center[2] - start[2];
+                            toward[1] = 0.0f;
+                            toward[3] = 1.0f;
+                            sceVu0Normalize(toward, toward);
+                            if (!(sceVu0InnerProduct(direction, toward) <= 0.33333334f)) {
+                                movement[0] = 0.0f;
+                                movement[1] -= 2.0f;
+                                movement[2] = 0.0f;
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 void CMonstorUnit::MoveCheck2() {
     sceVu0FVECTOR player_position;
     sceVu0FVECTOR next_position;
