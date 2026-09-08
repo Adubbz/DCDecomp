@@ -834,7 +834,6 @@ void AllFillBoxForMenu(unsigned char, unsigned char, unsigned char, unsigned cha
  * @mangled AllFadeForMenu__Fi
  * @address 0x22D280
  * @size 0x30
- * @unknownret
  */
 void AllFadeForMenu(int);
 

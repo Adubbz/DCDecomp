@@ -234,7 +234,9 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuTextureReload__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuTextureDelete__FPi);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @728__6);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", AllFillBoxForMenu__FUcUcUcUc);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", AllFadeForMenu__Fi);
+void AllFadeForMenu(int alpha) {
+    AllFillBoxForMenu(0, 0, 0, (unsigned char)alpha);
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", FrameImageDraw__Fii);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @764__3);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenuColorGradation__FR8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBA);
