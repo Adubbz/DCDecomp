@@ -748,7 +748,9 @@ CFrameVu1 *LoadCollisionFile(u_int *data) {
     return LoadCollisionFile(data, &VisualData);
 }
 
-INCLUDE_ASM("asm/nonmatchings/dataset", GetPolygon__10CCollisionFiPA4_fPA4_fPA4_f);
+int CCollision::GetPolygon(int index, sceVu0FMATRIX v0, sceVu0FMATRIX v1, sceVu0FMATRIX v2) {
+    return 0;
+}
 int CCollision::GetMaxY(float *position) {
     return 0;
 }

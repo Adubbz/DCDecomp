@@ -505,7 +505,8 @@ SECTIONS
         . = . + 0xC;
         collisionmdt.cpp.o (.vtables)    // 0x002a10d0
         . = ALIGN(16);
-        main.rdata.part4.s.o (.rdata)    // 0x002a1100
+        dataset.cpp.o (.vtables)         // 0x002a1100
+        . = ALIGN(16);
         frame.cpp.o (.vtables)           // 0x002a1130
         . = ALIGN(8);
         main.rdata.part4b.s.o (.rdata)   // 0x002a1168
