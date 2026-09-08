@@ -23,6 +23,15 @@
 #include "runscript_opcodes.hpp"
 #include "shot_effect_pack.hpp"
 #include <cstring>
+#include <cmath>
+#include "gameutil.hpp"
+#include "dungeonparts.hpp"
+#include "collisiondata.hpp"
+#include "btactstatus.hpp"
+#include "dngmessageman.hpp"
+#include "savedata.hpp"
+#include "menu_inventory.hpp"
+#include "itemdata.hpp"
 
 BEE_STATE BeeTbl[800];
 CTexAnimeData MonsterTexAnim[320];

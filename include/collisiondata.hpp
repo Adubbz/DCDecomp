@@ -75,3 +75,6 @@ public:
 };
 
 STATIC_ASSERT(sizeof(CCollisionData) == 0x3D90);
+
+/** @mangled SetGateKeyStack__Fi */
+int SetGateKeyStack(int item);

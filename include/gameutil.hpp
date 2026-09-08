@@ -320,3 +320,8 @@ STATIC_ASSERT(sizeof(MoveCheckInfo) == 0xD0);
  */
 void MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_info, CCPoly *polys,
                int poly_num, int mode);
+
+/** @mangled CheckHit__FP6CCPolyiPfPfPfii */
+int CheckHit(CCPoly *poly, int count, float *from, float *to, float *hit, int mode, int flags);
+/** @mangled CheckWidth__FP6CCPolyiPffPfi */
+int CheckWidth(CCPoly *poly, int count, float *position, float radius, float *hit, int mode);

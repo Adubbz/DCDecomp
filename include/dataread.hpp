@@ -274,3 +274,5 @@ int check_now_loading(void);
 
 
 extern "C" unsigned int *read_buffer;
+
+extern "C" CDataAlloc2<1> *WorkBuffer__2;
