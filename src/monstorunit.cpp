@@ -9,6 +9,7 @@
 #include "snd.hpp"
 #include "dataalloc.hpp"
 #include "dun/gameloop.hpp"
+#include "userstatus.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "texture.hpp"

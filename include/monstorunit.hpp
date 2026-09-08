@@ -23,7 +23,8 @@ struct MONSTOR {
     s32 unk_00C;
     s32 unk_010; /**< Set to 300 by AllBin2; cleared when the monster is released. */
     s32 unk_014;
-    u8 unk_018[8];
+    float player_distance; // 0x018
+    u8 unk_01C[4];
     s32 max_hp; /**< Life the monster has at full health. */
     s32 hp;     /**< Life the monster has left. */
     s16 attachment_kind; // 0x028
@@ -379,3 +380,6 @@ struct BEE_STATE {
 };
 STATIC_ASSERT(sizeof(BEE_STATE) == 8);
 extern BEE_STATE BeeTbl[800];
+
+/** Retail initialized floor limits; data ownership still pending. */
+extern "C" int maxFloorTbl__3[7];
