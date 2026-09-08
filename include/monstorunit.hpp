@@ -381,3 +381,6 @@ extern BEE_STATE BeeTbl[800];
 
 /** Retail initialized floor limits; data ownership still pending. */
 extern "C" int maxFloorTbl__3[7];
+
+/** Shared pool constructed by retail's monstor translation-unit initializer. */
+extern "C" CTexAnimeData MonsterTexAnim[320];

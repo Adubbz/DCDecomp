@@ -497,9 +497,14 @@ SECTIONS
         main.cpp.o (.init)               // 0x002a0050
         . = . + 0x8;
         main.rdata.part2.s.o (.rdata)    // 0x002a00b0
+        monstorunit.cpp.o (.init)        // 0x002a0c60, retail monstor.cpp
+        . = . + 0x4;                    // initializer payload is 0x3c, retail slot 0x40
+        main.rdata.part2b.s.o (.rdata)   // 0x002a0ca0
         mglib.cpp.o (.ctor)              // 0x002a1014
         main.cpp.o (.ctor)               // 0x002a1018
         main.rdata.part3.s.o (.rdata)
+        monstorunit.cpp.o (.ctor)        // 0x002a1048
+        main.rdata.part3b.s.o (.rdata)
         camerafollow.cpp.o (.vtables)
         camera.cpp.o (.vtables)
         . = . + 0xC;
@@ -688,7 +693,7 @@ SECTIONS
 		main.bss.part5d.s.o (.bss)     // 0x01d3f010
 		dungeonmap.cpp.o (.bss)
 		main.bss.part6.s.o (.bss)
-		monstorunit.cpp.o (.bss)       // 0x01d87380 BeeTbl
+		monstorunit.cpp.o (.bss)       // 0x01d87380 BeeTbl, then MonsterTexAnim
 		main.bss.part6b.s.o (.bss)
 		*(.bss)
 		*(.common)

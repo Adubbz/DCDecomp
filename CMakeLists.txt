@@ -166,7 +166,11 @@ carve_part(main.data.part2.s
 carve_part(main.rdata.part1.s
            main.rdata.part1.s=29FE80-29FF40)
 carve_part(main.rdata.part2.s
-           main.rdata.part2.s=2A00B0-2A1014)
+           main.rdata.part2.s=2A00B0-2A0C60
+           main.rdata.part2b.s=2A0CA0-2A1014)
+carve_part(main.rdata.part3.s
+           main.rdata.part3.s=2A101C-2A1048
+           main.rdata.part3b.s=2A104C-2A1090)
 # .sdata: the same interleaving, one datum at a time.
 carve_part(main.sdata.part1.s
            main.sdata.part1.s=2A1E88-2A1E8C)
@@ -197,7 +201,7 @@ carve_part(main.bss.part4b.s
 # monstorunit owns the bee animation table; retain its BSS neighbours.
 carve_part(main.bss.part6.s
            main.bss.part6.s=1D65C20-1D87380
-           main.bss.part6b.s=1D88C80-1DABD00)
+           main.bss.part6b.s=1D8FA80-1DABD00)
 carve_part(main.bss.part5.s
            main.bss.part5.s=1D1B218-1D3D1C0
            main.bss.part5b.s=1D3D1D0-1D3DD20

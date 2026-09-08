@@ -17,6 +17,7 @@
 #include <cstdlib>
 
 BEE_STATE BeeTbl[800];
+CTexAnimeData MonsterTexAnim[320];
 
 int CMonstorUnit::GetMonstorNum() {
     int count = 0;

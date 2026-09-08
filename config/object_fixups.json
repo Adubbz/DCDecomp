@@ -818,5 +818,14 @@
       "SetStatusBreak__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetStatusBreak__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
       "SetLevelUpValue__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetLevelUpValue__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i"
     }
+  },
+  "src/monstorunit.cpp": {
+    "symbols": {
+      "__sinit_monstorunit.cpp": "__sinit_monstor.cpp",
+      ".p__sinit_monstorunit.cpp": ".p__sinit_monstor.cpp"
+    },
+    "globalize_symbols": [
+      "__sinit_monstorunit.cpp"
+    ]
   }
 }
