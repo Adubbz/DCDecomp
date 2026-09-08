@@ -15,9 +15,9 @@ public:
      * @mangled Entry__17CSHOT_EFFECT_PACKFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i
      * @address 0x1AE4C0
      * @size 0x100
-     * @unknownret
+     * Returns an existing/new slot (0..4), or -1 when full.
      */
-    void Entry(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
+    int Entry(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
 
     /**
      * @mangled SetUserID2__17CSHOT_EFFECT_PACKFi
@@ -35,3 +35,5 @@ public:
      */
     void SetDmg(int);
 };
+
+extern "C" CSHOT_EFFECT_PACK *NowShotEffect;

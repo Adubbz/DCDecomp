@@ -272,3 +272,5 @@ void SetPacketReadBuffer(int address, int size);
  */
 int check_now_loading(void);
 
+
+extern "C" unsigned int *read_buffer;

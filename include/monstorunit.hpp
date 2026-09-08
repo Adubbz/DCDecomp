@@ -409,3 +409,7 @@ struct BT_ENEMY_FLOOR {
 
 STATIC_ASSERT(sizeof(BT_ENEMY_LAYOUT) == 0x0C);
 STATIC_ASSERT(sizeof(BT_ENEMY_FLOOR) == 0x70);
+
+extern "C" MONSTOR_MODEL MonstorTable[167];
+struct BT_SHOT_EFFECT;
+extern "C" BT_SHOT_EFFECT *BtEntryEffectTbl[34];

@@ -18,6 +18,10 @@
 #include <cstdio>
 #include "dngstatusdata.hpp"
 #include "randomitem.hpp"
+#include "dataread.hpp"
+#include "nowload.hpp"
+#include "shot_effect_pack.hpp"
+#include <cstring>
 
 BEE_STATE BeeTbl[800];
 CTexAnimeData MonsterTexAnim[320];
@@ -740,9 +744,59 @@ void CMonstorUnit::CleanViewMonstor(int mode) {
     unk_044 = mode;
     unk_04C = 0;
 }
-INCLUDE_ASM("asm/nonmatchings/monstorunit", SetupBaseModel__12CMonstorUnitFiiiP14CDataAlloc2_1_);
-INCLUDE_RODATA("asm/nonmatchings/monstorunit", @2328);
-INCLUDE_RODATA("asm/nonmatchings/monstorunit", @2329);
-INCLUDE_RODATA("asm/nonmatchings/monstorunit", @2330);
-INCLUDE_RODATA("asm/nonmatchings/monstorunit", @2331);
+int CMonstorUnit::SetupBaseModel(int slot, int model_no, int effect_mode, CDataAlloc2<1> *alloc) {
+    MONSTOR_MODEL *description = &MonstorTable[model_no];
+    char filename[64];
+    CFrameAttr attr;
+    int file_size;
+    attr.unk_0C = 1;
+    sprintf(filename, "dun/monstor/%s.chr", description->model_name[0]);
+    LoadFile(filename, read_buffer, NULL);
+    wait_now_loading_vsync();
+    CCharacter *character = &base_chara[slot][0];
+    character->InitializeTexAnime(MonsterTexAnim, 320);
+    character->LoadPackData3(read_buffer, "info.cfg", alloc, 42, alloc, 1, 0);
+    base_chara[slot][0].frame->SetAttr(attr, 1, 64);
+    SetFrameAttr(base_chara[slot][0].frame, 1);
+    for (int j = 0; j < 3; j++) {
+        if (description->model_name[j + 1][0] != 0) {
+            sprintf(filename, "dun/monstor/%s.chr", description->model_name[j + 1]);
+            LoadFile(filename, read_buffer, NULL);
+            wait_now_loading_vsync();
+            base_chara[slot][j + 1].LoadPackData(read_buffer, "info.cfg", alloc, alloc);
+            base_chara[slot][j + 1].frame->SetAttr(attr, 1, 64);
+            SetFrameAttr(base_chara[slot][j + 1].frame, 1);
+        }
+    }
+    sprintf(filename, "dun/monstor/%s.stb", description->script_name);
+    LoadFile(filename, read_buffer, &file_size);
+    wait_now_loading_vsync();
+    script_data[slot] = alloc->base + alloc->used * 16;
+    alloc->Alloc((((file_size >> 6) + 1) << 6) >> 4);
+    memcpy(script_data[slot], read_buffer, file_size);
+    memcpy(&model[slot], description, sizeof(MONSTOR_MODEL));
+    int count = 2;
+    if (description->kind == 2) {
+        count = 6;
+    }
+    if (description->shot_effect[0] != -1) {
+        int effect = NowShotEffect->Entry(BtEntryEffectTbl[description->shot_effect[0]], read_buffer, effect_mode, alloc, count);
+        if (effect == -1) {
+            printf("******* ShotEntry Error !!***********\n");
+        } else {
+            model[slot].shot_effect[0] = effect;
+        }
+    }
+    if (description->shot_effect[1] != -1) {
+        int effect = NowShotEffect->Entry(BtEntryEffectTbl[description->shot_effect[1]], read_buffer, effect_mode, alloc, count);
+        if (effect == -1) {
+            printf("******* ShotEntry Error !!***********\n");
+        } else {
+            model[slot].shot_effect[1] = effect;
+        }
+    }
+    unk_048++;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/monstorunit", SetupViewMonstor__12CMonstorUnitFiPfi);
