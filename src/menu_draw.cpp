@@ -258,7 +258,16 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawAttachNumberOrWeapon__Fiiiiiiii);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @852__4);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", FadeTexX__FiiiiPci);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", RetCTex__FsRiRi);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuTextureClip__FRiRiRiii);
+void MenuTextureClip(int &position, int &source, int &length, int minimum, int maximum) {
+    if (position < minimum && position + length > minimum) {
+        length = position + length - minimum;
+        source += minimum - position;
+        position = minimum;
+    }
+    if (position < maximum && position + length > maximum) {
+        length = maximum - position;
+    }
+}
 int GetNumberKeta(int value) {
     int digits = 1;
     while (value >= 10) {

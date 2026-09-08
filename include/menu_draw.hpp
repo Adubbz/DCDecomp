@@ -903,7 +903,6 @@ void RetCTex(short, int &, int &);
  * @mangled MenuTextureClip__FRiRiRiii
  * @address 0x22DE80
  * @size 0x80
- * @unknownret
  */
 void MenuTextureClip(int &, int &, int &, int, int);
 
