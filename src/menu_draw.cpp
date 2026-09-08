@@ -422,7 +422,17 @@ s8 WhoIsWeaponEquip(int weapon_no) {
     return -1;
 }
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetWeaponHoleNum__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowWeaponAttachNum__FP11WEAPON_HAVE);
+int GetNowWeaponAttachNum(WEAPON_HAVE *weapon) {
+    int count = 0;
+    if (weapon == NULL) return 0;
+    WEAPON_DATA *data = GetWeaponData(weapon->item_no);
+    if (data != NULL) {
+        for (int i = 0; i < 6; i++) {
+            if (data->hole[i] > 0 && weapon->attach[i].item_no >= 0x51) count++;
+        }
+    }
+    return count;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetWeaponMaxExp__FP11WEAPON_HAVE);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowItemNum__FsP9ITEM_PACK);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DeleteItemAfterUseItem__FsP9ITEM_PACK);
