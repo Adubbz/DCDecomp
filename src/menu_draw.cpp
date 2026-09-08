@@ -5,14 +5,21 @@
 #include "menu_draw.hpp"
 
 #include <cstring>
+#include <cstdlib>
 
 #include "camera.hpp"
+#include "dataread.hpp"
+#include "gamepad.hpp"
+#include "menuitemstep.hpp"
+#include "texture.hpp"
 #include "clsmes.hpp"
 #include "itemdata.hpp"
 #include "menu_inventory.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "snd.hpp"
+
+DUN_ENTER_MENU DEnterMenu;
 
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeySaveCheck__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeySaveDecide__Fv);

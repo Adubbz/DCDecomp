@@ -33,3 +33,5 @@ public:
 };
 
 STATIC_ASSERT(sizeof(CMenuItemStep) == 0x2C);
+
+extern CMenuItemStep ItemVolumeStep;

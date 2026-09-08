@@ -19,6 +19,31 @@ struct SAVEDATA_INFO;
 struct WEAPON_HAVE;
 struct spRGBA;
 
+/** State and per-floor counters for the dungeon entrance menu. */
+struct DUN_ENTER_MENU {
+    s8 dungeon;
+    s8 scroll_top;
+    s8 selected_floor;
+    s8 requested_floor;
+    float unk_004;
+    float unk_008;
+    s8 unk_00C;
+    s8 texture_block;
+    s8 unk_00E;
+    s8 floor_count;
+    s8 result;
+    s8 max_atra[100]; // 0x011
+    s8 collected_atra[100]; // 0x075
+    u8 unk_0D9;
+    s16 kills[100]; // 0x0DA
+    u8 unk_1A2[2];
+    s16 state; // 0x1A4
+    u8 unk_1A6[2];
+    s32 counter; // 0x1A8
+};
+STATIC_ASSERT(sizeof(DUN_ENTER_MENU) == 0x1AC);
+extern DUN_ENTER_MENU DEnterMenu;
+
 /**
  * @mangled SaveMenuKeySaveCheck__Fv
  * @address 0x221730
@@ -409,7 +434,7 @@ int DunEnterMenuLoop(void);
  * @size 0x6F0
  * @unknownret
  */
-void DunEnterMenuKey(void);
+int DunEnterMenuKey(void);
 
 /**
  * @mangled DunEnterDraw__Fv

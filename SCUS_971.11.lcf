@@ -762,6 +762,9 @@ SECTIONS
 		main.bss.part6.s.o (.bss)
 		monstorunit.cpp.o (.bss)       // 0x01d87380 BeeTbl, then MonsterTexAnim
 		main.bss.part6b.s.o (.bss)
+		menu_draw.cpp.o (.bss)        // 0x01da8b80 DEnterMenu
+		. = ALIGN(0x10);
+		main.bss.part6c.s.o (.bss)     // 0x01da8d30 ChangeMenu and following storage
 		*(.bss)
 		*(.common)
 		*(COMMON)
