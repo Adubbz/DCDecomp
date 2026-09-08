@@ -770,7 +770,6 @@ void InitMenuMesSet(int, short *);
  * @mangled DrawMenuClsMes__FP6ClsMesii
  * @address 0x22CEA0
  * @size 0x50
- * @unknownret
  */
 void DrawMenuClsMes(ClsMes *, int, int);
 

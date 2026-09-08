@@ -225,7 +225,14 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", Get3DPosTo2DPos__FP6CFramePi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuCommonFontW__Fii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuCommonPutXY__FP6ClsMesi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", InitMenuMesSet__FiPs);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenuClsMes__FP6ClsMesii);
+void DrawMenuClsMes(ClsMes *message, int x, int y) {
+    if (message != NULL) {
+        message->text_x = x;
+        message->text_y = y;
+        message->Step();
+        message->DrawMesWin();
+    }
+}
 void ComMenuSePlay(int sound) {
     if (sound >= 0) {
         SndSePlay(sound, -1, 0);
