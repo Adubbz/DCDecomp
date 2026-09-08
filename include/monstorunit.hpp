@@ -75,7 +75,8 @@ struct MONSTOR {
     s16 unk_0DC;
     s16 unk_0DE;
     s16 unk_0E0;
-    u8 unk_0E2[6];
+    u8 unk_0E2[2];
+    s32 unk_0E4;
     s32 unk_0E8;
     s16 requested_motion; // 0x0EC
     s16 requested_motion_flags; // 0x0EE

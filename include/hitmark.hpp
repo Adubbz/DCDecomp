@@ -79,6 +79,12 @@ STATIC_ASSERT(sizeof(CHitMark) == 0x660);
  */
 class CHitPointMark {
 public:
+    void Set(float *position) {
+        sceVu0CopyVector(pos, position);
+        on = 1;
+        blink = 0;
+        timer = 16;
+    }
     float pos[4]; /**< World position of the mark. */
     s32 timer;    /**< Steps that the mark still draws for. */
     s32 blink;    /**< 1 while the mark shows; 0 while it is hidden. */

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+#include "mathutil.hpp"
 
 #include <libvu0.h>
 
@@ -48,6 +49,23 @@ STATIC_ASSERT(sizeof(COLLISION_HIT) == 0xA0);
 
 class CCollisionData {
 public:
+    void SetUserID(int id, int sub_id) {
+        hit[now_hit].owner = id;
+        hit[now_hit].unk_60 = sub_id;
+    }
+    COLLISION_HIT *Get(int index) { return &hit[index]; }
+    void SetVelocity(int index, float *direction, float scale) {
+        sceVu0FVECTOR normalized;
+        sceVu0Normalize(normalized, direction);
+        sceVu0ScaleVectorXYZ(hit[index].velocity, normalized, scale);
+    }
+    int FindMonsterHit(float *position, float radius) {
+        for (int i = 0; i < 96; i++) {
+            if (unk_3C00[i] != 0 && (hit[i].unk_48 & 2) && hit[i].unk_70 == hit[i].unk_74 && DistVector(position, hit[i].pos) <= radius + hit[i].unk_3C) return i;
+        }
+        return -1;
+    }
+
     COLLISION_HIT hit[96]; /**< Every hit the test found this frame. */
     s32 unk_3C00[96]; // One active word per hit.
     s32 now_hit; /**< Indexes the hit record being filled in. */
