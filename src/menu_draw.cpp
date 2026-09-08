@@ -198,7 +198,10 @@ INCLUDE_RODATA("asm/nonmatchings/menu_draw", @559);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuTextureDir__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuLangFlag__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowSelectLanguage__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetPathReadDifferntLang__FPc);
+void GetPathReadDifferntLang(s8 *arg0) {
+    strcpy(arg0, GetMenuTextureDir());
+    strcat(arg0, GetNowSelectLanguage(GetMenuLangFlag()));
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", LoadFileBGMenuData__FPcP1);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", LoadFileMenuData__FPcPUi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", BtlMenuBufferSet__Fi);
