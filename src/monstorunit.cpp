@@ -31,7 +31,67 @@ int CMonstorUnit::CheckEventFlag2() {
     }
     return -1;
 }
-INCLUDE_ASM("asm/nonmatchings/monstorunit", ArrangementPos__12CMonstorUnitFP11CDungeonMapiii);
+void CMonstorUnit::ArrangementPos(CDungeonMap *map, int count, int model_no, int unused) {
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR existing;
+    int used[10];
+    for (int i = 0; i < 10; i++) {
+        used[i] = 0;
+    }
+    int placed;
+    int attempts;
+    int n;
+    for (n = 0; n < count; n++) {
+        placed = 0;
+        attempts = 0;
+        while (placed == 0) {
+            attempts++;
+            if (attempts >= 65000) {
+                placed = 1;
+            }
+            SearchiDoPutArea(map->cells, 0, 0, 20, 20, position);
+            if (map->CheckTreasureBox(position, 20.0f) != 0 && map->CheckAtra(position, 20.0f) != 0 && map->CheckTrapCircle(position, 20.0f) == 0) {
+                int close = 0;
+                for (int i = 0; i < 16; i++) {
+                    if (monster[i].state != -1) {
+                        CMonstorChara *character = &chara[i];
+                        character->GetPosition(existing);
+                        if (DistVector(existing, position) <= 25.0f) {
+                            close = 1;
+                        }
+                    }
+                }
+                if (close == 0) {
+                    int nearby = 0;
+                    for (int i = 0; i < 16; i++) {
+                        if (monster[i].state != -1) {
+                            CMonstorChara *character = &chara[i];
+                            character->GetPosition(existing);
+                            if (DistVector(existing, position) <= 480.0f) {
+                                nearby++;
+                            }
+                        }
+                    }
+                    if (nearby < 3) {
+                        int selected = model_no;
+                        if (model_no == -1) {
+                            selected = (int)((float)unk_048 * (float)rand() / 2147483648.0f);
+                            if (model[selected].kind != 0 && model[selected].kind != 3) {
+                                if (used[selected] != 0) {
+                                    continue;
+                                }
+                                used[selected] = 1;
+                            }
+                        }
+                        SetupViewMonstor(selected, position, -1);
+                        placed = 1;
+                    }
+                }
+            }
+        }
+    }
+    SetKey();
+}
 void CMonstorUnit::AllBin2() {
     for (int i = 0; i < 16; i++) {
         monster[i].unk_010 = 300;
