@@ -167,7 +167,15 @@ INCLUDE_RODATA("asm/nonmatchings/menu_draw", @2050);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @2051);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DngActiveWeaponTextureCopy__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetWeaponMsgNo__FP11WEAPON_HAVE);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetWeaponMsgNo2__Fi);
+s16 GetWeaponMsgNo2(s32 arg0) {
+    COM_ITEM_INFO *temp_2;
+
+    temp_2 = GetCommonItemInfo(arg0);
+    if (temp_2 != NULL) {
+        return temp_2->msg;
+    }
+    return 0;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawWepAttach__FiiP11WEAPON_HAVEii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetAtraTipNowHave__Fii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetDispVolumeForFloat__Ff);

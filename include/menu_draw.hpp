@@ -551,9 +551,8 @@ void GetWeaponMsgNo(WEAPON_HAVE *);
  * @mangled GetWeaponMsgNo2__Fi
  * @address 0x22A840
  * @size 0x40
- * @unknownret
  */
-void GetWeaponMsgNo2(int);
+s16 GetWeaponMsgNo2(int);
 
 /**
  * @mangled DrawWepAttach__FiiP11WEAPON_HAVEii
