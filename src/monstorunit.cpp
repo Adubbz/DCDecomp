@@ -17,7 +17,15 @@ INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawMapSymbol__12CMonstorUnitFPf);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @603__2);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @653__3);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", SetKey__12CMonstorUnitFv);
-INCLUDE_ASM("asm/nonmatchings/monstorunit", CheckEventFlag2__12CMonstorUnitFv);
+int CMonstorUnit::CheckEventFlag2() {
+    for (int i = 0; i < 16; i++) {
+        if (monster[i].state == 2 && monster[i].event_flag2_pending != 0) {
+            monster[i].event_flag2_pending = 0;
+            return monster[i].event_flag2;
+        }
+    }
+    return -1;
+}
 INCLUDE_ASM("asm/nonmatchings/monstorunit", ArrangementPos__12CMonstorUnitFP11CDungeonMapiii);
 void CMonstorUnit::AllBin2() {
     for (int i = 0; i < 16; i++) {

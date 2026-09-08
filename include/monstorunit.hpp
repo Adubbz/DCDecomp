@@ -97,7 +97,6 @@ public:
      * @mangled CheckEventFlag2__12CMonstorUnitFv
      * @address 0x1D7F30
      * @size 0x90
-     * @unknownret
      */
     int CheckEventFlag2(void);
 
