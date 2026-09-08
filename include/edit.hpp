@@ -86,6 +86,7 @@ class CMapParts;
 /** Names the sound effects the editor plays for itself. */
 enum ED_SOUND_ID {
     ED_SOUND_NONE,
+    ED_SOUND_COUNT = 15,
 };
 
 class CFrame;
@@ -899,4 +900,3 @@ int EdTalkMode(CCharacter *chara, CCameraFollow *camera, int mode, int *state);
  * @size 0x588
  */
 void LimitEditCursorPos(float *position, float *limit);
-

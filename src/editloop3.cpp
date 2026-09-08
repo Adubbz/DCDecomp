@@ -21,7 +21,9 @@
 #include "debugfont.hpp"
 #include "dngstatusdata.hpp"
 #include "editloop3.hpp"
+#include "editloop.hpp"
 #include "editground.hpp"
+#include "editpartsinfo.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "gamepad.hpp"
@@ -29,8 +31,9 @@
 #include "mathutil.hpp"
 #include "mglib.hpp"
 #include "objanime.hpp"
+#include "snd.hpp"
 
-/* Retail editloop3.cpp: event points, villagers and the main Georama editor loop. */
+/* Retail editloop3.cpp: editor event points, villagers, script opcodes and talk handling. */
 
 INCLUDE_RODATA("asm/nonmatchings/editloop3", @447__3);
 INCLUDE_RODATA("asm/nonmatchings/editloop3", @687);
@@ -69,7 +72,32 @@ INCLUDE_RODATA("asm/nonmatchings/editloop3", @2611);
 INCLUDE_RODATA("asm/nonmatchings/editloop3", @2612);
 INCLUDE_RODATA("asm/nonmatchings/editloop3", @2613);
 INCLUDE_RODATA("asm/nonmatchings/editloop3", @2614);
-INCLUDE_ASM("asm/nonmatchings/editloop3", GetNewEventPoint__FP9CMapPartsP16EPARTS_FUNC_DATAP14ED_EVENT_POINTi);
+ED_EVENT_POINT *GetNewEventPoint(CMapParts *parts, EPARTS_FUNC_DATA *function,
+                                 ED_EVENT_POINT *points, int count) {
+    ED_EVENT_POINT *point = GetNewEventPoint(points, count);
+    if (point == NULL) {
+        printf("event over!!\n");
+        return NULL;
+    }
+
+    point->enabled = 1;
+    if (parts->effect_on[2] >= 0) {
+        point->map_object = NULL;
+        point->parts_no = parts->effect_on[2];
+    } else {
+        point->map_object = parts;
+        point->parts_no = -1;
+    }
+    sceVu0CopyVector(point->position, function->position);
+    sceVu0CopyVector(point->rotation, function->rotation);
+    point->start_time = ConvertTime(function->start_time);
+    point->end_time = ConvertTime(function->end_time);
+    point->completion_flag = function->completion_flag;
+    point->frame = NULL;
+    if (parts->frame[0] != NULL)
+        point->frame = parts->frame[0]->SearchFrame(function->frame_name);
+    return point;
+}
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdInitEventPoint__FP9CMapPartsPsP16EPARTS_FUNC_DATAiP14ED_EVENT_POINTi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdGetEvent__FP14ED_EVENT_POINTiP14ED_EVENT_PARAMPfPff);
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdEventPointDraw__FP14ED_EVENT_POINTif);
@@ -100,9 +128,35 @@ INCLUDE_ASM("asm/nonmatchings/editloop3", GetNearVill__FP7CCameraP10CCharacterP1
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdMoveVillager__FP13VILLAGER_INFO);
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdMoveVillagerSubMap__FP13VILLAGER_INFO);
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdSetVillagerNextPos__FP12CNPCharacterP13VILLAGER_INFOP11CEditGround);
-INCLUDE_ASM("asm/nonmatchings/editloop3", EdCheckTime__Ffff);
-INCLUDE_ASM("asm/nonmatchings/editloop3", EdGetTime__Ff);
-INCLUDE_ASM("asm/nonmatchings/editloop3", EdLimitShadowLight__FPA4_ff);
+int EdCheckTime(float time, float start, float end) {
+    if (!(start <= end) && !(start <= time) && end <= time)
+        return 0;
+    if (start < end && (!(start <= time) || end <= time))
+        return 0;
+    return 1;
+}
+
+int EdGetTime(float time) {
+    int period;
+    float period_end;
+
+    period = (int) (time / 3.0f);
+    if (EdCheckTime(time, 11.5f, 2.5f) != 0)
+        period = 0;
+    period_end = 5.5f;
+    if (EdCheckTime(time, 2.5f, period_end) != 0)
+        period = 1;
+    if (EdCheckTime(time, (0, 5.5f), 8.5f) != 0)
+        period = 2;
+    if (EdCheckTime(time, (0, 8.5f), 11.5f) != 0)
+        period = 3;
+    return period;
+}
+void EdLimitShadowLight(float light[][4], float scale) {
+    light[1][0] = light[1][0] * scale;
+    if (light[1][0] < 1.0f)
+        light[1][0] = 1.0f;
+}
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdDrawSky__FfPP9CFrameVu1PP6CFrameP9CFrameVu1P7CCameraPi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdDrawLensFlare__FfPP6CFrame);
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdSetLightParam__FfiP13EDIT_MAP_INFOP9CFrameVu1);
@@ -212,22 +266,237 @@ void EdFadeInOut() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/editloop3", GetMaxHeightCursor__FPf);
-INCLUDE_ASM("asm/nonmatchings/editloop3", LimitEditCursorPos__FPfPf);
-INCLUDE_ASM("asm/nonmatchings/editloop3", EdSePlay__F11ED_SOUND_IDi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", GetSprite__Fi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", InitSprite__FP9ED_SPRITE);
-INCLUDE_ASM("asm/nonmatchings/editloop3", GetObjAnime__Fi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", ClearObjAnime__Fi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", EdEventPause__Fv);
-INCLUDE_ASM("asm/nonmatchings/editloop3", SetWorkFlag__Fii);
-INCLUDE_ASM("asm/nonmatchings/editloop3", GetWorkFlag__Fi);
+float GetMaxHeightCursor(float *position) {
+    int height = 0;
+    int count;
+    for (count = 0; count < 8; count++) {
+        EDIT_AREA_RECT_INFO *area = &edit_info->edit_area_rects[count];
+        if (area->maximum[0] == area->minimum[0] || area->maximum[2] == area->minimum[0])
+            break;
+    }
+    if (count == 0)
+        return 0.0f;
+    for (int i = 0; i < count; i++) {
+        EDIT_AREA_RECT_INFO *area = &edit_info->edit_area_rects[i];
+        if (position[0] <= area->maximum[0] && position[2] <= area->maximum[2]
+            && position[0] >= area->minimum[0] && position[2] >= area->minimum[2]
+            && height < area->minimum[1]) {
+            height = area->minimum[1];
+        }
+    }
+    return height;
+}
+void LimitEditCursorPos(float *position, float *movement) {
+    sceVu0FVECTOR previous;
+    sceVu0FVECTOR clamped;
+    sceVu0FVECTOR displacement;
+
+    sceVu0CopyVector(previous, position);
+    sceVu0AddVector(position, position, movement);
+
+    int count;
+    for (count = 0; count < 8; count++) {
+        EDIT_AREA_RECT_INFO *area = &edit_info->edit_area_rects[count];
+        if (area->maximum[0] == area->minimum[0] || area->maximum[2] == area->minimum[0])
+            break;
+    }
+    if (count == 0) {
+        position[1] = 0.0f;
+        return;
+    }
+
+    for (int i = 0; i < count; i++) {
+        EDIT_AREA_RECT_INFO *area = &edit_info->edit_area_rects[i];
+        if (position[0] <= area->maximum[0] && position[2] <= area->maximum[2]
+            && position[0] >= area->minimum[0] && position[2] >= area->minimum[2]) {
+            position[1] = GetMaxHeightCursor(position);
+            return;
+        }
+    }
+
+    float nearest_distance = -1.0f;
+    int nearest = -1;
+    for (int i = 0; i < count; i++) {
+        EDIT_AREA_RECT_INFO *area = &edit_info->edit_area_rects[i];
+        if (previous[0] <= area->maximum[0] && previous[2] <= area->maximum[2]
+            && previous[0] >= area->minimum[0] && previous[2] >= area->minimum[2]) {
+            VectorMin(clamped, position, area->maximum);
+            VectorMax(clamped, clamped, area->minimum);
+            sceVu0SubVector(displacement, clamped, position);
+            displacement[1] = 0.0f;
+            float distance = DistVector(displacement);
+            if (nearest < 0) {
+                nearest = i;
+                nearest_distance = distance;
+            } else if (distance < nearest_distance) {
+                nearest = i;
+                nearest_distance = distance;
+            }
+        }
+    }
+    if (nearest >= 0) {
+        EDIT_AREA_RECT_INFO *area = &edit_info->edit_area_rects[nearest];
+        VectorMin(position, position, area->maximum);
+        VectorMax(position, position, area->minimum);
+        position[1] = GetMaxHeightCursor(position);
+        return;
+    }
+
+    nearest = 0;
+    EDIT_AREA_RECT_INFO *area = &edit_info->edit_area_rects[0];
+    float max_x_distance;
+    float min_x_distance;
+    float min_z_distance;
+    float max_z_distance;
+    float x = position[0];
+    max_x_distance = x - area->maximum[0];
+    if (max_x_distance < 0.0f)
+        max_x_distance = -max_x_distance;
+    else
+        max_x_distance = max_x_distance;
+    min_x_distance = x - area->minimum[0];
+    if (min_x_distance < 0.0f)
+        min_x_distance = -min_x_distance;
+    else
+        min_x_distance = min_x_distance;
+    float z = position[2];
+    max_z_distance = z - area->maximum[2];
+    if (max_z_distance < 0.0f)
+        max_z_distance = -max_z_distance;
+    else
+        max_z_distance = max_z_distance;
+    min_z_distance = z - area->minimum[2];
+    if (min_z_distance < 0.0f)
+        min_z_distance = -min_z_distance;
+    else
+        min_z_distance = min_z_distance;
+    if (max_z_distance < min_z_distance)
+        max_z_distance = max_z_distance;
+    else
+        max_z_distance = min_z_distance;
+    if (max_x_distance < min_x_distance)
+        max_x_distance = max_x_distance;
+    else
+        max_x_distance = min_x_distance;
+    nearest_distance = max_x_distance + max_z_distance;
+
+    for (int i = 1; i < count; i++) {
+        area = &edit_info->edit_area_rects[i];
+        max_x_distance = x - area->maximum[0];
+        if (max_x_distance < 0.0f)
+            max_x_distance = -max_x_distance;
+        else
+            max_x_distance = max_x_distance;
+        min_x_distance = x - area->minimum[0];
+        if (min_x_distance < 0.0f)
+            min_x_distance = -min_x_distance;
+        else
+            min_x_distance = min_x_distance;
+        max_z_distance = z - area->maximum[2];
+        if (max_z_distance < 0.0f)
+            max_z_distance = -max_z_distance;
+        else
+            max_z_distance = max_z_distance;
+        min_z_distance = z - area->minimum[2];
+        if (min_z_distance < 0.0f)
+            min_z_distance = -min_z_distance;
+        else
+            min_z_distance = min_z_distance;
+        if (max_z_distance < min_z_distance)
+            max_z_distance = max_z_distance;
+        else
+            max_z_distance = min_z_distance;
+        if (max_x_distance < min_x_distance)
+            max_x_distance = max_x_distance;
+        else
+            max_x_distance = min_x_distance;
+        float distance = max_x_distance + max_z_distance;
+        if (distance < nearest_distance) {
+            nearest_distance = distance;
+            nearest = i;
+        }
+    }
+    area = &edit_info->edit_area_rects[nearest];
+    VectorMin(position, position, area->maximum);
+    VectorMax(position, position, area->minimum);
+    position[1] = GetMaxHeightCursor(position);
+}
+void EdSePlay(ED_SOUND_ID sound, int pan) {
+    if (sound < 0 || sound >= ED_SOUND_COUNT)
+        return;
+    SndSePlay(sound, pan, 0);
+}
+
+/** Script-controlled sprites used by editor events. */
+static ED_SPRITE Sprite[16];
+
+ED_SPRITE *GetSprite(int index) {
+    if (index < 0 || index >= 16)
+        return NULL;
+    return &Sprite[index];
+}
+
+void InitSprite(ED_SPRITE *sprite) {
+    if (sprite == NULL)
+        return;
+    memset(sprite, 0, sizeof(ED_SPRITE));
+    sprite->alpha = 128;
+    sprite->blue = 128;
+    sprite->green = 128;
+    sprite->red = 128;
+    sprite->height = -1;
+    sprite->width = -1;
+}
+
+/** Object-animation slots used by editor event scripts. */
+static OBJ_ANIME_SEQ obj_anime[16];
+
+OBJ_ANIME_SEQ *GetObjAnime(int index) {
+    if (index < 0 || index >= 16)
+        return NULL;
+    return &obj_anime[index];
+}
+
+void ClearObjAnime(int index) {
+    if (index < 0) {
+        for (int i = 0; i < 16; i++)
+            obj_anime[i].type = -1;
+        return;
+    }
+    OBJ_ANIME_SEQ *anime = GetObjAnime(index);
+    if (anime != NULL)
+        anime->type = -1;
+}
+
+/** Whether advancement of the current editor event is paused. */
+static int event_pause;
+
+void EdEventPause() {
+    event_pause = !event_pause;
+}
+
+/** Integer scratch flags exposed to editor event scripts. */
+static int work_flag[32];
+
+int SetWorkFlag(int index, int value) {
+    if (index < 0 || index >= 32)
+        return 0;
+    work_flag[index] = value;
+    return 1;
+}
+
+int GetWorkFlag(int index) {
+    if (index < 0 || index >= 32)
+        return 0;
+    return work_flag[index];
+}
 INCLUDE_ASM("asm/nonmatchings/editloop3", GetStackInt__FP12RS_STACKDATA);
 INCLUDE_ASM("asm/nonmatchings/editloop3", GetStackFloat__FP12RS_STACKDATA);
 INCLUDE_ASM("asm/nonmatchings/editloop3", GetStackString__FP12RS_STACKDATA);
 INCLUDE_ASM("asm/nonmatchings/editloop3", SetStack__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", SetStack__FP12RS_STACKDATAf);
-INCLUDE_ASM("asm/nonmatchings/editloop3", PrintMemory__Fv);
+void PrintMemory() {
+}
 INCLUDE_ASM("asm/nonmatchings/editloop3", GetObjHandle__Fi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", SetObjHandle__FiP9CMapPartsPc);
 INCLUDE_ASM("asm/nonmatchings/editloop3", SetObjHandle__FiP10CCharacterPc);
@@ -264,7 +533,9 @@ INCLUDE_ASM("asm/nonmatchings/editloop3", SetPosition__FP12RS_STACKDATAPf);
 INCLUDE_ASM("asm/nonmatchings/editloop3", GetRotation__FP12RS_STACKDATAPf);
 INCLUDE_ASM("asm/nonmatchings/editloop3", SetRotation__FP12RS_STACKDATAPf);
 INCLUDE_ASM("asm/nonmatchings/editloop3", GetFileName__FPcPc);
-INCLUDE_ASM("asm/nonmatchings/editloop3", _TEST__FP12RS_STACKDATAi);
+int _TEST(RS_STACKDATA *, int) {
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/editloop3", exch_ok_cancel__Fi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _GET_PADON__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _GET_PADDOWN__FP12RS_STACKDATAi);
@@ -595,5 +866,12 @@ INCLUDE_ASM("asm/nonmatchings/editloop3", EdTalkModeInit__FP12CNPCharacteri);
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdNowTalkChara__Fv);
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdNowTalkCharaInfoID__Fv);
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdTalkMode__FP10CCharacterP13CCameraFollowiPi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", __ct__9ED_SPRITEFv);
-INCLUDE_ASM("asm/nonmatchings/editloop3", CheckPartsInfo__FP14EDITPARTS_INFO);
+ED_SPRITE::ED_SPRITE() {
+}
+int CheckPartsInfo(EDITPARTS_INFO *info) {
+    if (info->unk_08 == 0)
+        return 0;
+    if (info->unk_18 <= 0)
+        return 0;
+    return 1;
+}

@@ -10,7 +10,30 @@
 class CCamera;
 class CEffectGroup;
 class CFrame;
-struct EPARTS_FUNC_DATA;
+
+/**
+ * Stores one function marker extracted from a map-part resource.
+ *
+ * Each record is copied verbatim from the resource before its owning part index is installed.
+ */
+struct EPARTS_FUNC_DATA {
+    u8 unk_00[0x10];
+    int kind;                  /**< Selects how the marker is interpreted by map setup. */
+    int parts_index;           /**< Identifies the map part from which the marker was extracted. */
+    float start_time;          /**< Beginning of the marker's active time interval. */
+    float end_time;            /**< End of the marker's active time interval. */
+    int link_id;               /**< Associates related markers belonging to one event. */
+    int completion_flag;       /**< Map flag which suppresses the resulting event after completion. */
+    u8 unk_28[0x8];
+    char frame_name[0x10];     /**< Optional frame whose visibility gates the resulting event. */
+    sceVu0FVECTOR position;    /**< Primary position carried by the marker. */
+    sceVu0FVECTOR rotation;    /**< Primary rotation carried by the marker. */
+    sceVu0FVECTOR parameters;  /**< Secondary vector whose meaning depends on the marker kind. */
+    sceVu0FVECTOR values;      /**< Scalar parameters whose meaning depends on the marker kind. */
+    u8 unk_80[0x40];
+};
+
+STATIC_ASSERT(sizeof(EPARTS_FUNC_DATA) == 0xC0);
 
 /**
  * Plays one animation of a map object.

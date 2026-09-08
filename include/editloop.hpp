@@ -379,6 +379,15 @@ STATIC_ASSERT(sizeof(ED_EVENT_POINT) == 0x90);
 STATIC_ASSERT(sizeof(VILLAGER_INFO) == 0x90);
 
 /**
+ * Returns the first unused event-point slot after the reserved first entry.
+ *
+ * @mangled GetNewEventPoint__FP14ED_EVENT_POINTi
+ * @address 0x183A10
+ * @size 0x4C
+ */
+ED_EVENT_POINT *GetNewEventPoint(ED_EVENT_POINT *points, int count);
+
+/**
  * Returns the integer value addressed by a script argument slot.
  *
  * @mangled test__FPPv

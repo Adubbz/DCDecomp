@@ -31,7 +31,7 @@ struct EDITPARTS_INFO {
     s32 unk_0C;
     u8 unk_10[4];
     s32 kind;   /**< What the plot holds: 2 where a story building stands on it. */
-    u8 unk_18[4];
+    s32 unk_18;
     s32 width;  /**< Cells that the part covers from west to east. */
     s32 height; /**< Cells that the part covers from north to south. */
     u8 unk_24[192];
