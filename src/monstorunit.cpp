@@ -4,7 +4,15 @@
 
 #include "monstorunit.hpp"
 
-INCLUDE_ASM("asm/nonmatchings/monstorunit", GetMonstorNum__12CMonstorUnitFv);
+int CMonstorUnit::GetMonstorNum() {
+    int count = 0;
+    for (int i = 0; i < 16; i++) {
+        if (monster[i].state != -1) {
+            count++;
+        }
+    }
+    return count;
+}
 INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawMapSymbol__12CMonstorUnitFPf);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @603__2);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @653__3);

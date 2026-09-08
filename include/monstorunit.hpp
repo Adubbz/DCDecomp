@@ -74,7 +74,6 @@ public:
      * @mangled GetMonstorNum__12CMonstorUnitFv
      * @address 0x1D7A40
      * @size 0x60
-     * @unknownret
      */
     int GetMonstorNum(void);
 
