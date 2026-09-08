@@ -1,40 +1,54 @@
 #!/usr/bin/env python3
 import argparse
 import json
-from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
 
 def percentage(measures, name):
-    return f"{float(measures.get(name, 0.0)):.4f}%"
+    return f"{float(measures.get(name, 0.0)):.2f}%"
 
 
-def integer(measures, name):
-    return f"{int(measures.get(name, 0)):,}"
+def function_count(count):
+    count = int(count)
+    suffix = "" if count == 1 else "s"
+    return f"{count:,} function{suffix}"
 
 
-def fuzzy_code(measures):
-    total = Decimal(str(measures.get("total_code", 0)))
-    percent = Decimal(str(measures.get("fuzzy_match_percent", 0)))
-    return int((total * percent / 100).quantize(Decimal("1"), ROUND_HALF_UP))
+def fuzzy_function_count(units):
+    return sum(
+        1
+        for unit in units
+        for function in unit.get("functions", ())
+        if "fuzzy_match_percent" in function
+        and function["fuzzy_match_percent"] != 100.0
+    )
 
 
-def progress_line(measures):
+def progress_line(measures, units):
     return (
         f"Perfect **{percentage(measures, 'matched_code_percent')}** "
-        f"({integer(measures, 'matched_code')}/{integer(measures, 'total_code')})"
+        f"({function_count(measures.get('matched_functions', 0))})"
         f" · Fuzzy **{percentage(measures, 'fuzzy_match_percent')}** "
-        f"({fuzzy_code(measures):,}/{integer(measures, 'total_code')})"
+        f"({function_count(fuzzy_function_count(units))})"
     )
 
 
 def payload(report):
     categories = {category["id"]: category for category in report["categories"]}
+    units = report["units"]
+
+    def category_units(category):
+        return [
+            unit
+            for unit in units
+            if category in unit.get("metadata", {}).get("progress_categories", ())
+        ]
+
     sections = (
-        ("Overall", report["measures"]),
-        ("Game", categories["game"]["measures"]),
-        ("Title", categories["title"]["measures"]),
-        ("DUN", categories["dun"]["measures"]),
+        ("Overall", report["measures"], units),
+        ("Game", categories["game"]["measures"], category_units("game")),
+        ("Title", categories["title"]["measures"], category_units("title")),
+        ("DUN", categories["dun"]["measures"], category_units("dun")),
     )
 
     return {
@@ -47,10 +61,10 @@ def payload(report):
                 "fields": [
                     {
                         "name": name,
-                        "value": progress_line(measures),
+                        "value": progress_line(measures, section_units),
                         "inline": False,
                     }
-                    for name, measures in sections
+                    for name, measures, section_units in sections
                 ],
             }
         ],
