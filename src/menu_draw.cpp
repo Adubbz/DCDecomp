@@ -166,7 +166,18 @@ INCLUDE_RODATA("asm/nonmatchings/menu_draw", @2049);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @2050);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @2051);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DngActiveWeaponTextureCopy__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetWeaponMsgNo__FP11WEAPON_HAVE);
+s32 GetWeaponMsgNo(WEAPON_HAVE *arg0) {
+    s16 temp_4;
+
+    if (arg0 == NULL) {
+        return 0;
+    }
+    temp_4 = arg0->item_no;
+    if (temp_4 < 0x101) {
+        return 0x3E7;
+    }
+    return GetCommonItemInfo((s32) temp_4)->msg + 0x64;
+}
 s16 GetWeaponMsgNo2(s32 arg0) {
     COM_ITEM_INFO *temp_2;
 

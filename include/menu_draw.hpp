@@ -543,9 +543,8 @@ void DngActiveWeaponTextureCopy(void);
  * @mangled GetWeaponMsgNo__FP11WEAPON_HAVE
  * @address 0x22A7E0
  * @size 0x60
- * @unknownret
  */
-void GetWeaponMsgNo(WEAPON_HAVE *);
+s32 GetWeaponMsgNo(WEAPON_HAVE *);
 
 /**
  * @mangled GetWeaponMsgNo2__Fi
