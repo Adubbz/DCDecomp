@@ -642,7 +642,9 @@
       "OP_CharaFrame": "OP_CharaFrame__2",
       "SceneNp": "SceneNp__2",
       "CScript": "CScript__2",
-      "CharaDataBuffer": "CharaDataBuffer__2"
+      "CharaDataBuffer": "CharaDataBuffer__2",
+      "LoadData__Fv": "LoadData__Fv__2",
+      "LoadTexture__Fv": "LoadTexture__Fv__3"
     },
     "export_constants_shared": [
       "opdat/chara/01p19a1a.chr",
@@ -692,7 +694,10 @@
       "OP_CharaFrame": "OP_CharaFrame__2",
       "CharaDataBuffer": "CharaDataBuffer__2",
       "FaceChange__Fi": "FaceChange__Fi__2",
-      "FaceChangeD__Fi": "FaceChange__Fi__3"
+      "FaceChangeD__Fi": "FaceChange__Fi__3",
+      "SmokeProcess__Fv": "SmokeProcess__Fv__2",
+      "setTexAnim__Fv": "setTexAnim__Fv__2",
+      "setTexScroll__Fv": "setTexScroll__Fv__2"
     }
   },
   "src/title/op_d.cpp": {
