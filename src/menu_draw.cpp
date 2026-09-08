@@ -379,7 +379,14 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowItemNum__FsP9ITEM_PACK);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DeleteItemAfterUseItem__FsP9ITEM_PACK);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowModeMaxNum__FiPi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", WepDataListToHaveCopy__FiP11WEAPON_HAVE);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", AttachDataListToHaveCopy__FiP11ATTACH_LIST);
+void AttachDataListToHaveCopy(int attachment_no, ATTACH_LIST *attachment) {
+    if ((attachment_no < 0x51) || (attachment_no >= 0x84)) {
+        return;
+    }
+    if (attachment != NULL) {
+        memcpy(attachment, GetAttachData(attachment_no), 0x20U);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", ItemDataToHaveCopy__Fi);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @2113__2);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawFullSizePicture__FP8CTextureiii);
