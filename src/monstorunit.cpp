@@ -27,8 +27,42 @@ int CMonstorUnit::GetMonstorNum() {
     }
     return count;
 }
-INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawMapSymbol__12CMonstorUnitFPf);
-INCLUDE_RODATA("asm/nonmatchings/monstorunit", @603__2);
+void CMonstorUnit::DrawMapSymbol(float *offset) {
+    sceVu0FVECTOR position;
+    CRect_i_ screen;
+    CRect_i_ clip;
+    int i;
+    CTexture *texture = TexManager.GetTexture("itempack", -1);
+    for (i = 0; i < 16; i++) {
+        if (monster[i].state != -1 && monster[i].unk_0D4 != 0) {
+            int draw;
+            if (BtEquipMasuisyou != 0 || DebugStatus[3] != 0) {
+                draw = 1;
+            } else if (monster[i].state == 2) {
+                draw = 1;
+            } else {
+                draw = 0;
+            }
+            if (draw == 1) {
+                CMonstorChara *character = &chara[i];
+                character->GetPosition(position);
+                int x = (int)(0.1f * position[0]);
+                int y = (int)(0.1f * position[2]);
+                clip.x = 72;
+                clip.y = 96;
+                clip.width = 8;
+                clip.height = 8;
+                screen.x = (int)(0.1f * position[0]) + 384;
+                screen.y = (int)(0.1f * position[2]) + 68;
+                screen.width = 8;
+                screen.height = 8;
+                set2DSprite(Vif1Packet, texture, screen, clip);
+            }
+        }
+    }
+}
+
+
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @653__3);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", SetKey__12CMonstorUnitFv);
 int CMonstorUnit::CheckEventFlag2() {
