@@ -778,7 +778,6 @@ void DrawMenuClsMes(ClsMes *, int, int);
  * @mangled ComMenuSePlay__Fi
  * @address 0x22CEF0
  * @size 0x30
- * @unknownret
  */
 void ComMenuSePlay(int);
 

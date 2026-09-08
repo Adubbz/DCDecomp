@@ -226,7 +226,11 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuCommonFontW__Fii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuCommonPutXY__FP6ClsMesi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", InitMenuMesSet__FiPs);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenuClsMes__FP6ClsMesii);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", ComMenuSePlay__Fi);
+void ComMenuSePlay(int sound) {
+    if (sound >= 0) {
+        SndSePlay(sound, -1, 0);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_UcUcUci);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBA);
