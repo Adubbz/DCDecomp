@@ -224,8 +224,7 @@ carve_part(main.rdata.part4.s
 # The weapon build-up and level-up local templates stand in this residual run.
 carve_part(main.data.part6.s
            main.data.part6.s=27E790-27EB30
-           main.data.part6c.s=27EB50-27EB70
-           main.data.part6e.s=27EB90-2917F0
+           main.data.part6e.s=27EB90-2860D0
            main.data.part6g.s=291800-291810
            main.data.part6f.s=291820-295810
            main.data.part6d.s=295830-295840

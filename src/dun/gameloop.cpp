@@ -149,23 +149,6 @@ struct BOMB_INFO {
 STATIC_ASSERT(sizeof(BOMB_INFO) == 0x20);
 
 /**
- * Names one monster of a floor's enemy layout.
- */
-struct BT_ENEMY_LAYOUT {
-    s32 unk_00;
-    s32 monster_no; /**< Identifies the monster, or -1 where the list ends. */
-    s32 unk_08;
-};
-
-/**
- * Names every monster one floor lays out.
- */
-struct BT_ENEMY_FLOOR {
-    BT_ENEMY_LAYOUT monster[9]; /**< The monsters the floor can hold. */
-    s32 unk_6C;
-};
-
-/**
  * Draws a window of debug text over the picture.
  */
 class CDebugFont {

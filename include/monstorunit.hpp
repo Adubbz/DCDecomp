@@ -388,3 +388,24 @@ extern "C" int maxFloorTbl__3[7];
 
 /** Shared pool constructed by retail's monstor translation-unit initializer. */
 extern "C" CTexAnimeData MonsterTexAnim[320];
+
+/**
+ * Names one monster of a floor's enemy layout.
+ */
+struct BT_ENEMY_LAYOUT {
+    s32 unk_00;
+    s32 monster_no; /**< Identifies the monster, or -1 where the list ends. */
+    s32 unk_08;
+};
+
+/**
+ * Names every monster one floor lays out.
+ */
+struct BT_ENEMY_FLOOR {
+    BT_ENEMY_LAYOUT monster[9]; /**< The monsters the floor can hold. */
+    s32 unk_6C;
+};
+
+
+STATIC_ASSERT(sizeof(BT_ENEMY_LAYOUT) == 0x0C);
+STATIC_ASSERT(sizeof(BT_ENEMY_FLOOR) == 0x70);

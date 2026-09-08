@@ -835,7 +835,24 @@
     "constant_sections": {
       "@345__6": ".playerheights",
       "@937__2": ".shadowlight",
-      "@606__4": ".monsterkeys"
+      "@606__4": ".monsterkeys",
+      "maxFloorTbl__3": ".monsterfloormax",
+      "BtEnemyLayout00": ".BtEnemyLayout00",
+      "BtUraEnemyLayout00": ".BtUraEnemyLayout00",
+      "BtEnemyLayout01": ".BtEnemyLayout01",
+      "BtUraEnemyLayout01": ".BtUraEnemyLayout01",
+      "BtEnemyLayout02": ".BtEnemyLayout02",
+      "BtUraEnemyLayout02": ".BtUraEnemyLayout02",
+      "BtEnemyLayout03": ".BtEnemyLayout03",
+      "BtUraEnemyLayout03": ".BtUraEnemyLayout03",
+      "BtEnemyLayout04": ".BtEnemyLayout04",
+      "BtUraEnemyLayout04": ".BtUraEnemyLayout04",
+      "BtEnemyLayout05": ".BtEnemyLayout05",
+      "BtUraEnemyLayout05": ".BtUraEnemyLayout05",
+      "BtEnemyLayout06": ".BtEnemyLayout06",
+      "BtUraEnemyLayout06": ".BtUraEnemyLayout06",
+      "BtEnemyLayoutList": ".BtEnemyLayoutList",
+      "BtUraEnemyLayoutList": ".BtUraEnemyLayoutList"
     }
   }
 }

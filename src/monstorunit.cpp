@@ -22,6 +22,8 @@
 BEE_STATE BeeTbl[800];
 CTexAnimeData MonsterTexAnim[320];
 
+#include "monstorunit_floor_data.inc"
+
 int CMonstorUnit::GetMonstorNum() {
     int count = 0;
     for (int i = 0; i < 16; i++) {

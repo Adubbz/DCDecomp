@@ -469,10 +469,29 @@ SECTIONS
         itemdata.cpp.o (.data)
         main.data.part6.s.o (.data)
         weaponeffect.cpp.o (.data)   // 0x0027eb30
-        main.data.part6c.s.o (.data) // 0x0027eb50
+        monstorunit.cpp.o (.monsterfloormax) // 0x0027eb50
+        . = ALIGN(0x10);
         monstorunit.cpp.o (.playerheights) // 0x0027eb70, MoveCheck player heights
         . = ALIGN(0x10);
         main.data.part6e.s.o (.data) // 0x0027eb90
+        monstorunit.cpp.o (.BtEnemyLayout00)
+        monstorunit.cpp.o (.BtUraEnemyLayout00)
+        monstorunit.cpp.o (.BtEnemyLayout01)
+        monstorunit.cpp.o (.BtUraEnemyLayout01)
+        monstorunit.cpp.o (.BtEnemyLayout02)
+        monstorunit.cpp.o (.BtUraEnemyLayout02)
+        monstorunit.cpp.o (.BtEnemyLayout03)
+        monstorunit.cpp.o (.BtUraEnemyLayout03)
+        monstorunit.cpp.o (.BtEnemyLayout04)
+        monstorunit.cpp.o (.BtUraEnemyLayout04)
+        monstorunit.cpp.o (.BtEnemyLayout05)
+        monstorunit.cpp.o (.BtUraEnemyLayout05)
+        monstorunit.cpp.o (.BtEnemyLayout06)
+        monstorunit.cpp.o (.BtUraEnemyLayout06)
+        monstorunit.cpp.o (.BtEnemyLayoutList)
+        . = ALIGN(0x10);
+        monstorunit.cpp.o (.BtUraEnemyLayoutList)
+        . = ALIGN(0x10);
         monstorunit.cpp.o (.monsterkeys) // 0x002917f0
         main.data.part6g.s.o (.data) // 0x00291800
         monstorunit.cpp.o (.shadowlight) // 0x00291810
