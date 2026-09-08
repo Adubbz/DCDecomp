@@ -237,8 +237,43 @@ void InitBee(CFrame *frame, int count) {
     }
     printf("INIT BEE END!!\n");
 }
-INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawBee__FP6CFramei);
-INCLUDE_RODATA("asm/nonmatchings/monstorunit", @935);
+void DrawBee(CFrame *frame, int count) {
+    sceVu0FMATRIX world;
+    sceVu0FMATRIX parent_world;
+    sceVu0FVECTOR position;
+    sceGsZbuf zbuf;
+    sceGsAlpha alpha;
+    int frame_num = frame->GetFrameNum();
+    zbuf = mgZBuffer;
+    zbuf.bits.zmsk = 1;
+    MGSetGsZBUF(&zbuf);
+    alpha = mgAlpha;
+    alpha.bits.a = 2;
+    alpha.bits.b = 0;
+    alpha.bits.c = 0;
+    alpha.bits.d = 1;
+    setAlphaFlag(Vif1Packet, &alpha);
+    int bee = 0;
+    for (int i = 2; i < frame_num; i++) {
+        ((CFrameVu1 *)frame)[i].GetLWMatrix(world);
+        ((CFrameVu1 *)frame)[i].parent->GetLWMatrix(parent_world);
+        for (int j = 0; j < count; j++) {
+            sceVu0InterVectorXYZ(position, parent_world[3], world[3], (1.0f / (float)count) * (float)j);
+            position[3] = 1;
+            int x = (int)BeeTbl[bee].phase;
+            int y = BeeTbl[bee].row;
+            set3DCellModel(position, "c15a03", 7.0f, x << 6, y << 6, (x << 6) + 64, (y << 6) + 64);
+            BeeTbl[bee].phase += 0.2f;
+            if (BeeTbl[bee].phase > 5.0f) {
+                BeeTbl[bee].phase = 0;
+            }
+            bee++;
+        }
+    }
+    MGSetGsALPHA(NULL);
+    MGSetGsZBUF(NULL);
+}
+
 INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawShadowMonstor__12CMonstorUnitFv);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", CheckViewLevel__12CMonstorUnitFv);
 int CMonstorUnit::SelectAttachi() {
