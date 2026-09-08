@@ -647,25 +647,22 @@ void DrawItemDataView(int);
  * @mangled GetMenuTextureDir__Fv
  * @address 0x22B9F0
  * @size 0x10
- * @unknownret
  */
-void GetMenuTextureDir(void);
+char * GetMenuTextureDir(void);
 
 /**
  * @mangled GetMenuLangFlag__Fv
  * @address 0x22BA00
  * @size 0x10
- * @unknownret
  */
-void GetMenuLangFlag(void);
+int GetMenuLangFlag(void);
 
 /**
  * @mangled GetNowSelectLanguage__Fi
  * @address 0x22BA10
  * @size 0x40
- * @unknownret
  */
-void GetNowSelectLanguage(int);
+char * GetNowSelectLanguage(int);
 
 /**
  * @mangled GetPathReadDifferntLang__FPc
@@ -1051,9 +1048,8 @@ void InitPersonalBoardMode(CUserStatus *, PERSONAL_BOARD *, int, int);
  * @mangled BoardModeChangeKey__Fv
  * @address 0x22E9B0
  * @size 0x130
- * @unknownret
  */
-void BoardModeChangeKey(void);
+int BoardModeChangeKey(void);
 
 /**
  * @mangled PersonalBoardLimmitCheck__Fv

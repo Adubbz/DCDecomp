@@ -6,8 +6,13 @@
 
 #include <cstring>
 
+#include "camera.hpp"
+#include "clsmes.hpp"
 #include "itemdata.hpp"
 #include "menu_inventory.hpp"
+#include "mglib.hpp"
+#include "rect.hpp"
+#include "snd.hpp"
 
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeySaveCheck__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeySaveDecide__Fv);
