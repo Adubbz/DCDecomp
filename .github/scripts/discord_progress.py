@@ -10,8 +10,7 @@ def percentage(value):
 
 def function_count(count):
     count = int(count)
-    suffix = "" if count == 1 else "s"
-    return f"{count:,} function{suffix}"
+    return f"{count:,}"
 
 
 def fuzzy_function_count(units):
@@ -34,14 +33,18 @@ def slices(measures, units):
     return (
         ("Perfect", perfect, perfect_functions),
         ("Fuzzy", matched - perfect, fuzzy_functions),
-        ("Other", 100.0 - matched, total_functions - perfect_functions - fuzzy_functions),
+        (
+            "Other",
+            100.0 - matched,
+            total_functions - perfect_functions - fuzzy_functions,
+        ),
     )
 
 
 def heading(name, measures):
     return (
         f"{name} — {percentage(measures.get('fuzzy_match_percent', 0.0))} "
-        f"of {function_count(measures.get('total_functions', 0))}"
+        f"· {function_count(measures.get('total_functions', 0))}"
     )
 
 
