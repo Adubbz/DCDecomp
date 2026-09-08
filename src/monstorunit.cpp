@@ -165,7 +165,54 @@ INCLUDE_RODATA("asm/nonmatchings/monstorunit", @1518);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @1521);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", MoveCheck__12CMonstorUnitFPfPfi);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", MoveCheck2__12CMonstorUnitFv);
-INCLUDE_ASM("asm/nonmatchings/monstorunit", MoveChecMonster__12CMonstorUnitFv);
+void CMonstorUnit::MoveChecMonster() {
+    sceVu0FVECTOR other_position;
+    sceVu0FVECTOR next_position;
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR direction;
+    sceVu0FVECTOR displacement;
+    sceVu0FVECTOR towards_other;
+    sceVu0FVECTOR flat_other;
+    sceVu0FVECTOR flat_next;
+    CMonstorChara *character = &chara[unk_090];
+    character->GetPosition(position);
+    next_position[0] = position[0] + monster[unk_090].movement[0] * monster[unk_090].movement_speed;
+    next_position[1] = position[1] + monster[unk_090].movement[1] * monster[unk_090].movement_speed;
+    next_position[2] = position[2] + monster[unk_090].movement[2] * monster[unk_090].movement_speed;
+    displacement[0] = next_position[0] - position[0];
+    displacement[1] = 0;
+    displacement[2] = next_position[2] - position[2];
+    displacement[3] = 1;
+    sceVu0Normalize(displacement, displacement);
+    sceVu0Normalize(direction, monster[unk_090].movement);
+    sceVu0CopyVector(flat_next, next_position);
+    flat_next[1] = 1;
+    for (int i = 0; i < 16; i++) {
+        if (monster[i].state == 2 && i != unk_090) {
+            CMonstorChara *other = &chara[i];
+            other->GetPosition(other_position);
+            sceVu0CopyVector(flat_other, other_position);
+            flat_other[1] = 1;
+            float distance = DistVector(flat_other, flat_next);
+            float own_radius = monster[unk_090].collision_radius;
+            float radius = monster[i].collision_radius;
+            if (distance <= radius + own_radius && next_position[1] < other_position[1] + 2.0f * radius) {
+                towards_other[0] = other_position[0] - position[0];
+                towards_other[2] = other_position[2] - position[2];
+                towards_other[1] = 0;
+                towards_other[3] = 1;
+                sceVu0Normalize(towards_other, towards_other);
+                if (!(sceVu0InnerProduct(displacement, towards_other) <= 0.0f)) {
+                    monster[unk_090].movement[0] = 0;
+                    monster[unk_090].movement[1] = 0;
+                    monster[unk_090].movement[2] = 0;
+                    monster[unk_090].movement_speed = 0;
+                    return;
+                }
+            }
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/monstorunit", Step__12CMonstorUnitFi);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @2233__2);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @2237__2);
