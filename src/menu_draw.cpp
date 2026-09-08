@@ -433,7 +433,19 @@ int GetNowWeaponAttachNum(WEAPON_HAVE *weapon) {
     }
     return count;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetWeaponMaxExp__FP11WEAPON_HAVE);
+int GetWeaponMaxExp(WEAPON_HAVE *weapon) {
+    if (weapon == NULL) return 0;
+    WEAPON_DATA *data = GetWeaponData(weapon->item_no);
+    if (data == NULL) return 1;
+    // Retail reads the signed low byte here, despite exp_base's s16 storage.
+    int experience = *(s8 *)&data->exp_base;
+    for (int i = 0; i < weapon->unk_02; i++) {
+        experience += data->exp_per_level;
+    }
+    if (experience > 999) experience = 999;
+    if (experience <= 0) experience = 99;
+    return experience;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowItemNum__FsP9ITEM_PACK);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DeleteItemAfterUseItem__FsP9ITEM_PACK);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowModeMaxNum__FiPi);
