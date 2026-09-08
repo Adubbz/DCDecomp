@@ -421,7 +421,18 @@ s8 WhoIsWeaponEquip(int weapon_no) {
     }
     return -1;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetWeaponHoleNum__Fi);
+int GetWeaponHoleNum(int item) {
+    COM_ITEM_INFO *info = GetCommonItemInfo(item);
+    if (info == NULL) return 0;
+    if (info->kind != 2) return 0;
+    WEAPON_DATA *data = GetWeaponData(item);
+    if (data == NULL) return 0;
+    int count = 0;
+    for (int i = 0; i <= 5; i++) {
+        if (data->hole[i] > 0) count++;
+    }
+    return count;
+}
 int GetNowWeaponAttachNum(WEAPON_HAVE *weapon) {
     int count = 0;
     if (weapon == NULL) return 0;
