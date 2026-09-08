@@ -374,7 +374,47 @@ INCLUDE_ASM("asm/nonmatchings/monstorunit", CheckDmg__12CMonstorUnitFv);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @1518);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @1521);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", MoveCheck__12CMonstorUnitFPfPfi);
-INCLUDE_ASM("asm/nonmatchings/monstorunit", MoveCheck2__12CMonstorUnitFv);
+void CMonstorUnit::MoveCheck2() {
+    sceVu0FVECTOR player_position;
+    sceVu0FVECTOR next_position;
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR direction;
+    sceVu0FVECTOR displacement;
+    sceVu0FVECTOR towards_player;
+    sceVu0FVECTOR flat_player;
+    sceVu0FVECTOR flat_next;
+    sceVu0CopyVector(player_position, CharaMain.pos);
+    CMonstorChara *character = &chara[unk_090];
+    character->GetPosition(position);
+    next_position[0] = position[0] + monster[unk_090].movement[0] * monster[unk_090].movement_speed;
+    next_position[1] = position[1] + monster[unk_090].movement[1] * monster[unk_090].movement_speed;
+    next_position[2] = position[2] + monster[unk_090].movement[2] * monster[unk_090].movement_speed;
+    displacement[0] = next_position[0] - position[0];
+    displacement[1] = 0;
+    displacement[2] = next_position[2] - position[2];
+    displacement[3] = 1;
+    sceVu0Normalize(displacement, displacement);
+    sceVu0Normalize(direction, monster[unk_090].movement);
+    sceVu0CopyVector(flat_player, player_position);
+    sceVu0CopyVector(flat_next, next_position);
+    flat_player[1] = 1;
+    flat_next[1] = 1;
+    if (DistVector(flat_player, flat_next) <= 6.0f + monster[unk_090].unk_044 && next_position[1] < 18.0f + player_position[1]) {
+        towards_player[0] = player_position[0] - position[0];
+        towards_player[2] = player_position[2] - position[2];
+        towards_player[1] = 0;
+        towards_player[3] = 1;
+        sceVu0Normalize(towards_player, towards_player);
+        if (!(sceVu0InnerProduct(displacement, towards_player) <= 0.0f)) {
+            monster[unk_090].movement[0] = 0;
+            monster[unk_090].movement[1] = 0;
+            monster[unk_090].movement[2] = 0;
+            monster[unk_090].movement_speed = 0;
+            return;
+        }
+    }
+}
+
 void CMonstorUnit::MoveChecMonster() {
     sceVu0FVECTOR other_position;
     sceVu0FVECTOR next_position;
