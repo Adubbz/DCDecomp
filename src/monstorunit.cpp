@@ -187,7 +187,18 @@ void CMonstorUnit::SoundCheck() {
     }
 }
 INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawMonstor__12CMonstorUnitFv);
-INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawMonstorCursor__12CMonstorUnitFv);
+void CMonstorUnit::DrawMonstorCursor() {
+    sceVu0FVECTOR position;
+    for (int i = 0; i < 16; i++) {
+        if (monster[i].unk_0E8 != 0) {
+            CMonstorChara *character = &chara[i];
+            character->GetPosition(position);
+            position[1] += chara[i].unk_0B4;
+            cursorFrame->SetPosition(position);
+            MGDraw(cursorFrame);
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/monstorunit", set3DCellModel__FPfPcfiiii);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", InitBee__FP6CFramei);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @915);
