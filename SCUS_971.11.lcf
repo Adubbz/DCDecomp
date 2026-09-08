@@ -474,6 +474,8 @@ SECTIONS
         monstorunit.cpp.o (.playerheights) // 0x0027eb70, MoveCheck player heights
         . = ALIGN(0x10);
         main.data.part6e.s.o (.data) // 0x0027eb90
+        monstorunit.cpp.o (.monstortable) // 0x0027fb00, 167 records
+        . = ALIGN(0x10);
         monstorunit.cpp.o (.BtEnemyLayout00)
         monstorunit.cpp.o (.BtUraEnemyLayout00)
         monstorunit.cpp.o (.BtEnemyLayout01)

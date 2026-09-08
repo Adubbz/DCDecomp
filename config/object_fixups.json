@@ -852,7 +852,8 @@
       "BtEnemyLayout06": ".BtEnemyLayout06",
       "BtUraEnemyLayout06": ".BtUraEnemyLayout06",
       "BtEnemyLayoutList": ".BtEnemyLayoutList",
-      "BtUraEnemyLayoutList": ".BtUraEnemyLayoutList"
+      "BtUraEnemyLayoutList": ".BtUraEnemyLayoutList",
+      "MonstorTable": ".monstortable"
     }
   }
 }

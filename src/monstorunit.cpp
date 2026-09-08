@@ -28,6 +28,7 @@ BEE_STATE BeeTbl[800];
 CTexAnimeData MonsterTexAnim[320];
 
 #include "monstorunit_floor_data.inc"
+#include "monstorunit_model_data.inc"
 
 int CMonstorUnit::GetMonstorNum() {
     int count = 0;
