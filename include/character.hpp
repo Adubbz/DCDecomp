@@ -105,6 +105,13 @@ public:
      */
     CCharacter() { Initialize(); }
 
+    /** Selects the motion parameters without advancing the character. */
+    void SetMotion(int no, int mode, float speed = -1.0f) {
+        motion_no = no;
+        flags = mode;
+        motion_speed = speed;
+    }
+
     float unk_0B0;
     float unk_0B4;
     float unk_0B8;

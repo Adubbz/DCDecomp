@@ -48,7 +48,7 @@ void CMonstorUnit::DrawMapSymbol(float *offset) {
                 draw = 0;
             }
             if (draw == 1) {
-                CMonstorChara *character = &chara[i];
+                CCharacter *character = &chara[i][0];
                 character->GetPosition(position);
                 int x = (int)(0.1f * position[0]);
                 int y = (int)(0.1f * position[2]);
@@ -136,7 +136,7 @@ void CMonstorUnit::ArrangementPos(CDungeonMap *map, int count, int model_no, int
                 int close = 0;
                 for (int i = 0; i < 16; i++) {
                     if (monster[i].state != -1) {
-                        CMonstorChara *character = &chara[i];
+                        CCharacter *character = &chara[i][0];
                         character->GetPosition(existing);
                         if (DistVector(existing, position) <= 25.0f) {
                             close = 1;
@@ -147,7 +147,7 @@ void CMonstorUnit::ArrangementPos(CDungeonMap *map, int count, int model_no, int
                     int nearby = 0;
                     for (int i = 0; i < 16; i++) {
                         if (monster[i].state != -1) {
-                            CMonstorChara *character = &chara[i];
+                            CCharacter *character = &chara[i][0];
                             character->GetPosition(existing);
                             if (DistVector(existing, position) <= 480.0f) {
                                 nearby++;
@@ -234,9 +234,9 @@ void CMonstorUnit::PalletStep() {
 }
 void CMonstorUnit::SoundCheck() {
     sceVu0FVECTOR position;
-    CMonstorChara *character = &chara[unk_090];
+    CCharacter *character = &chara[unk_090][0];
     character->GetPosition(position);
-    float frame = chara[unk_090].motion_type.state.time;
+    float frame = chara[unk_090][0].motion_type.state.time;
     float near_distance = 50.0f;
     float far_distance = 500.0f;
     if (monster[unk_090].kind == 2) {
@@ -264,13 +264,14 @@ void CMonstorUnit::SoundCheck() {
     }
 }
 INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawMonstor__12CMonstorUnitFv);
+
 void CMonstorUnit::DrawMonstorCursor() {
     sceVu0FVECTOR position;
     for (int i = 0; i < 16; i++) {
         if (monster[i].unk_0E8 != 0) {
-            CMonstorChara *character = &chara[i];
+            CCharacter *character = &chara[i][0];
             character->GetPosition(position);
-            position[1] += chara[i].unk_0B4;
+            position[1] += chara[i][0].unk_0B4;
             cursorFrame->SetPosition(position);
             MGDraw(cursorFrame);
         }
@@ -354,15 +355,15 @@ void CMonstorUnit::DrawShadowMonstor() {
     sceVu0FVECTOR light = {0.0f, 1.0f, 0.0f, 0.0f};
     for (int i = 0; i < 16; i++) {
         if (monster[i].state == 2 && monster[i].unk_0D0 != 0 && monster[i].unk_0D4 != 0) {
-            if (chara[i].shadow_frame != NULL) {
-                CMonstorChara *character = &chara[i];
+            if (chara[i][0].shadow_frame != NULL) {
+                CCharacter *character = &chara[i][0];
                 character->ShadowStep();
                 character->GetPosition(position);
                 character->GetRotation(rotation);
-                chara[i].shadow_frame->SetPosition(position);
-                chara[i].shadow_frame->SetRotation(0.0f, rotation[1], 0.0f);
+                chara[i][0].shadow_frame->SetPosition(position);
+                chara[i][0].shadow_frame->SetRotation(0.0f, rotation[1], 0.0f);
                 position[1] -= monster[i].unk_0CC;
-                MGDrawShadowFast(chara[i].shadow_frame, position, light);
+                MGDrawShadowFast(chara[i][0].shadow_frame, position, light);
             }
         }
     }
@@ -384,7 +385,7 @@ void CMonstorUnit::CheckViewLevel() {
         if (monster[i].state == -1 || monster[i].unk_0D4 == 0) {
             continue;
         }
-        CMonstorChara *character = &chara[i];
+        CCharacter *character = &chara[i][0];
         character->GetPosition(monster_position);
         monster_position[3] = 1;
         player_position[3] = 1;
@@ -492,7 +493,7 @@ void CMonstorUnit::MoveCheck(float *position, float *movement, int flat) {
     for (int i = 0; i < 16; i++) {
         if (monster[i].state == 2 && monster[i].unk_0D4 != 0) {
             if (effect3[i].count == 0) {
-                CMonstorChara *character = &chara[i];
+                CCharacter *character = &chara[i][0];
                 character->GetPosition(center);
                 character->GetPosition(ground);
                 ground[1] = 1.0f;
@@ -570,7 +571,7 @@ void CMonstorUnit::MoveCheck2() {
     sceVu0FVECTOR flat_player;
     sceVu0FVECTOR flat_next;
     sceVu0CopyVector(player_position, CharaMain.pos);
-    CMonstorChara *character = &chara[unk_090];
+    CCharacter *character = &chara[unk_090][0];
     character->GetPosition(position);
     next_position[0] = position[0] + monster[unk_090].movement[0] * monster[unk_090].movement_speed;
     next_position[1] = position[1] + monster[unk_090].movement[1] * monster[unk_090].movement_speed;
@@ -610,7 +611,7 @@ void CMonstorUnit::MoveChecMonster() {
     sceVu0FVECTOR towards_other;
     sceVu0FVECTOR flat_other;
     sceVu0FVECTOR flat_next;
-    CMonstorChara *character = &chara[unk_090];
+    CCharacter *character = &chara[unk_090][0];
     character->GetPosition(position);
     next_position[0] = position[0] + monster[unk_090].movement[0] * monster[unk_090].movement_speed;
     next_position[1] = position[1] + monster[unk_090].movement[1] * monster[unk_090].movement_speed;
@@ -625,7 +626,7 @@ void CMonstorUnit::MoveChecMonster() {
     flat_next[1] = 1;
     for (int i = 0; i < 16; i++) {
         if (monster[i].state == 2 && i != unk_090) {
-            CMonstorChara *other = &chara[i];
+            CCharacter *other = &chara[i][0];
             other->GetPosition(other_position);
             sceVu0CopyVector(flat_other, other_position);
             flat_other[1] = 1;
@@ -720,7 +721,7 @@ void CMonstorUnit::CleanViewMonstor(int mode) {
             effect2[i].active[j] = 0;
         }
         for (int j = 0; j < 12; j++) {
-            effect3[i].active[j] = 0;
+            effect3[i].frame[j] = 0;
             effect3[i].timer[j] = 0;
             effect3[i].count = 0;
         }
@@ -729,9 +730,9 @@ void CMonstorUnit::CleanViewMonstor(int mode) {
             sound[i].cooldown[j] = 0;
         }
         sound[i].sequence_id = -1;
-        event[i].active = 0;
+        event[i].frame = 0;
         event[i].timer = 0;
-        event2[i].active = 0;
+        event2[i].frame = 0;
         event2[i].timer = 0;
     }
     unk_044 = mode;

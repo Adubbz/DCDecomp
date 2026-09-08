@@ -75,7 +75,7 @@ struct MONSTOR {
     s16 event_flag2;         /**< Value returned when CheckEventFlag2 consumes the event. */
     s16 event_flag2_pending; /**< Nonzero until CheckEventFlag2 consumes the event. */
     u8 unk_0FA[2];
-    s32 unk_0FC;
+    CFrame *unk_0FC; // frame supplying the monster target position
     sceVu0FVECTOR unk_100;
     float unk_110;
     float unk_114;
@@ -102,10 +102,7 @@ STATIC_ASSERT(sizeof(MONSTOR) == 0x190);
 /**
  * Draws one monster of the floor.
  */
-class CMonstorChara : public CCharacter {
-public:
-    u8 unk_11B0[0x2360];
-};
+typedef CCharacter CMonstorChara[3];
 
 STATIC_ASSERT(sizeof(CMonstorChara) == 0x3510);
 
@@ -143,7 +140,9 @@ STATIC_ASSERT(sizeof(MONSTOR_MODEL) == 0x9C);
 
 /** Per-monster effect slots; unused members retain their retail space. */
 struct MONSTOR_EFFECT_STATE {
-    u8 unk_000[0x180];
+    sceVu0FVECTOR position[16]; // 0x000
+    CFrame *frame[16]; // 0x100
+    u8 unk_140[0x40];
     s32 active[16];
     u8 unk_1C0[0x40];
     s32 timer[16];
@@ -154,7 +153,9 @@ struct MONSTOR_EFFECT_STATE {
 STATIC_ASSERT(sizeof(MONSTOR_EFFECT_STATE) == 0x510);
 
 struct MONSTOR_EFFECT_STATE2 {
-    u8 unk_000[0x300];
+    sceVu0FVECTOR position[16]; // 0x000
+    CFrame *frame[16]; // 0x100
+    u8 unk_140[0x1C0];
     s32 active[16];
     u8 unk_340[0x10];
 };
@@ -162,7 +163,7 @@ STATIC_ASSERT(sizeof(MONSTOR_EFFECT_STATE2) == 0x350);
 
 struct MONSTOR_EFFECT_STATE3 {
     sceVu0FVECTOR position[12]; // 0x000: collision sphere centers
-    s32 active[12];
+    CFrame *frame[12]; // 0x0C0
     float radius[12]; // 0x0F0
     s32 timer[12];
     s32 count;
@@ -171,8 +172,9 @@ struct MONSTOR_EFFECT_STATE3 {
 STATIC_ASSERT(sizeof(MONSTOR_EFFECT_STATE3) == 0x160);
 
 struct MONSTOR_EVENT_STATE {
-    u8 unk_000[0x20];
-    s32 active;
+    sceVu0FVECTOR local_position;
+    sceVu0FVECTOR position;
+    CFrame *frame;
     s32 timer;
     u8 unk_028[8];
 };
@@ -188,7 +190,8 @@ public:
     s32 script_state[16];
     s32 unk_090;
     s32 unk_094;
-    u8 unk_098[8];
+    s32 unk_098;
+    s32 unk_09C;
     CMonstorChara base_chara[9]; // 0x0A0
     MONSTOR_MODEL model[9]; // 0x1DE30
     void *script_data[9]; // 0x1E3AC

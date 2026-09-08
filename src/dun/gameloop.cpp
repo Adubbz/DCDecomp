@@ -3178,7 +3178,7 @@ void MoveChara(void) {
                             BtActStatus.unk_00C = 0x12;
                         }
                         if (lockOnTargetFlag != 0) {
-                            CCharacter *locked = &NowMonstorUnit->chara[lockOnTargetNo];
+                            CCharacter *locked = &NowMonstorUnit->chara[lockOnTargetNo][0];
                             sceVu0FVECTOR target;
                             float face;
 
@@ -4286,7 +4286,7 @@ void MoveChara(void) {
                                                                 if (lockOnTargetFlag != 0) {
                                                                     CCharacter *locked =
                                                                         &NowMonstorUnit
-                                                                             ->chara[lockOnTargetNo];
+                                                                             ->chara[lockOnTargetNo][0];
                                                                     sceVu0FVECTOR to_target;
                                                                     sceVu0FVECTOR target;
                                                                     float dist;
@@ -6829,7 +6829,7 @@ int BtCheckDamageProc(void) {
                 if (monster >= 0 && monster < 16) {
                     NowMonstorUnit->monster[monster].unk_0C0 = damage;
                 }
-                NowMonstorUnit->chara[monster].GetPosition(from);
+                NowMonstorUnit->chara[monster][0].GetPosition(from);
             }
 
             roll = (int) (100.0f * (float) rand() / 2147483648.0f);
@@ -8282,7 +8282,7 @@ void autoCamTrial(void) {
     // A locked-on monster pulls the camera round behind the player.
     if (lockOnTargetFlag != 0) {
         sceVu0CopyVector(near_chara, CharaMain.pos);
-        NowMonstorUnit->chara[lockOnTargetNo].GetPosition(locked);
+        NowMonstorUnit->chara[lockOnTargetNo][0].GetPosition(locked);
 
         float away = DistVector(near_chara, locked);
 
@@ -8615,7 +8615,7 @@ int SetNearLockOnTarget(int from, int nearest_only) {
             continue;
         }
 
-        monsters->chara[i].GetPosition(pos[i]);
+        monsters->chara[i][0].GetPosition(pos[i]);
 
         away = DistVector(at, pos[i]);
 
@@ -8707,8 +8707,8 @@ int SetNearLockOnTarget(int from, int nearest_only) {
     }
 
     if (target != -1) {
-        NowMonstorUnit->chara[target].GetPosition(at);
-        at[1] += NowMonstorUnit->chara[target].unk_0B4;
+        NowMonstorUnit->chara[target][0].GetPosition(at);
+        at[1] += NowMonstorUnit->chara[target][0].unk_0B4;
         cursorFrame->SetPosition(at);
         lockOnTargetDraw = 1;
         targetCursorCnt = 8.0f;
@@ -8759,7 +8759,7 @@ void setTargetCursor(int on) {
         }
 
         sceVu0CopyVector(stood, CharaFrame->position);
-        NowMonstorUnit->chara[lockOnTargetNo].GetPosition(target);
+        NowMonstorUnit->chara[lockOnTargetNo][0].GetPosition(target);
 
         float away = DistVector(stood, target);
 
