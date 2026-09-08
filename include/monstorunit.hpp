@@ -91,6 +91,18 @@ struct MONSTOR_SOUND {
 
 STATIC_ASSERT(sizeof(MONSTOR_SOUND) == 0x110);
 
+/** Model and script description copied into a loaded monster slot. */
+struct MONSTOR_MODEL {
+    char model_name[4][16];
+    char script_name[40];
+    s16 shot_effect[2];
+    u8 unk_06C[0x0C];
+    s16 kind;
+    u8 unk_07A[0x22];
+};
+
+STATIC_ASSERT(sizeof(MONSTOR_MODEL) == 0x9C);
+
 class CMonstorUnit {
 public:
     void *script[16];  /**< Script working memory for each monster on the floor. */
@@ -100,7 +112,10 @@ public:
     u8 unk_04C[0x44];
     s32 unk_090;
     s32 unk_094;
-    u8 unk_098[0x1E338];
+    u8 unk_098[8];
+    CMonstorChara base_chara[9]; // 0x0A0
+    MONSTOR_MODEL model[9]; // 0x1DE30
+    void *script_data[9]; // 0x1E3AC
     MONSTOR monster[16];     /**< What each monster of the floor is doing. */
     CMonstorChara chara[16]; /**< The model each monster draws with. */
     u8 unk_54DD0[0xA080];
