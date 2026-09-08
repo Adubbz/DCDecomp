@@ -371,7 +371,23 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", CompAttach__FP11ATTACH_LISTP11ATTACH_L
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonAttachBoardSub__FP11ATTACH_LIST__2);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonAttachBoard__FP11ATTACH_LIST);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", WhatIsKindofItem__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", WhoIsWeaponEquip__Fi);
+s8 WhoIsWeaponEquip(int weapon_no) {
+    COM_ITEM_INFO *temp_2_2;
+    WEAPON_DATA *temp_2;
+
+    temp_2_2 = GetCommonItemInfo(weapon_no);
+    if (temp_2_2 == NULL) {
+        return -1;
+    }
+    if (temp_2_2->kind != 2) {
+        return -1;
+    }
+    temp_2 = GetWeaponDataInfo((s32) temp_2_2->index);
+    if (temp_2 != NULL) {
+        return (s8) temp_2->owner;
+    }
+    return -1;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetWeaponHoleNum__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowWeaponAttachNum__FP11WEAPON_HAVE);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetWeaponMaxExp__FP11WEAPON_HAVE);
