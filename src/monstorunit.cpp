@@ -276,7 +276,71 @@ void DrawBee(CFrame *frame, int count) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawShadowMonstor__12CMonstorUnitFv);
-INCLUDE_ASM("asm/nonmatchings/monstorunit", CheckViewLevel__12CMonstorUnitFv);
+void CMonstorUnit::CheckViewLevel() {
+    sceVu0FVECTOR player_position;
+    sceVu0FVECTOR monster_position;
+    int sorted[16];
+    int active[16];
+    sceVu0CopyVector(player_position, CharaMain.pos);
+    int active_count = 0;
+    for (int i = 0; i < 16; i++) {
+        active[i] = -1;
+    }
+    for (int i = 0; i < 16; i++) {
+        sorted[i] = -1;
+        monster[i].unk_0E8 = 0;
+        if (monster[i].state == -1 || monster[i].unk_0D4 == 0) {
+            continue;
+        }
+        CMonstorChara *character = &chara[i];
+        character->GetPosition(monster_position);
+        monster_position[3] = 1;
+        player_position[3] = 1;
+        float distance = DistVector(player_position, monster_position);
+        monster[i].player_distance = distance;
+        if (monster[i].state == 1 && distance < monster[i].unk_0A4) {
+            monster[i].state = 2;
+        }
+        if (monster[i].state == 2 && distance > 10.0f + monster[i].unk_0A4) {
+            monster[i].state = 1;
+        }
+        if (monster[i].hp <= 0) {
+            monster[i].state = 2;
+        }
+        if (monster[i].state == 2) {
+            active[active_count] = i;
+            active_count++;
+        }
+    }
+    int sorted_count = 0;
+    if (active_count > 4) {
+        int floor = UserStatus->cur_floor;
+        int max_floor = maxFloorTbl__3[selectMapNo];
+        if (floor + 1 == max_floor) return;
+        for (int i = 0; i < active_count; i++) {
+            int closest = -1;
+            float distance = 3200.0f;
+            for (int j = 0; j < active_count; j++) {
+                if (active[j] != -1 && !(distance <= monster[active[j]].player_distance)) {
+                    distance = monster[active[j]].player_distance;
+                    closest = j;
+                }
+            }
+            if (closest != -1) {
+                sorted[sorted_count] = active[closest];
+                active[closest] = -1;
+                sorted_count++;
+            }
+        }
+        for (int i = 4; i < active_count; i++) {
+            if (sorted[i] != -1 && monster[sorted[i]].state == 2 && monster[sorted[i]].hp > 0 && monster[sorted[i]].kind != 2) {
+                monster[sorted[i]].state = 1;
+                monster[sorted[i]].unk_0E8 = 1;
+            }
+        }
+    }
+}
+
 int CMonstorUnit::SelectAttachi() {
     int item;
     int chance = (int)(100.0f * (float)rand() / 2147483648.0f);
