@@ -1136,7 +1136,9 @@ INCLUDE_ASM("asm/nonmatchings/editloop3", _NPC_DRAW__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _NPC_DRAW_SHADOW__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _SET_NPC_FOOT_SOUND__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _SET_NPC_FLOOR_ID__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", _NPC_STEP__FP12RS_STACKDATAi);
+s32 _NPC_STEP(RS_STACKDATA *arg0, s32 arg1) {
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/editloop3", _NPC_COL__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _NPC_STOP__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _NPC_DRAW_BEFORE__FP12RS_STACKDATAi);
