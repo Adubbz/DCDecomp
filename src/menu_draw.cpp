@@ -326,7 +326,11 @@ INCLUDE_RODATA("asm/nonmatchings/menu_draw", @1073);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", BoardModeChangeKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardLimmitCheck__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardKeySub__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardKey__Fv);
+void PersonalBoardKey() {
+    BoardModeChangeKey();
+    PersonalBoardLimmitCheck();
+    PersonalBoardKeySub();
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardItemPush__FP9IHAVEITEMi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardWeaponPush__FP9IHAVEITEMi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardAttachPush__FP9IHAVEITEMi);

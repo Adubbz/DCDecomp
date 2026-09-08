@@ -1067,7 +1067,6 @@ void PersonalBoardKeySub(void);
  * @mangled PersonalBoardKey__Fv
  * @address 0x22EF60
  * @size 0x30
- * @unknownret
  */
 void PersonalBoardKey(void);
 
