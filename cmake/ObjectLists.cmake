@@ -133,6 +133,12 @@ function(add_object obj)
     if(src MATCHES "^${SRC_DIR}/lib/")
         list(APPEND fixup_flags --set-section-alignment .text=4)
     endif()
+    # The first BSS dump begins at retail's unaligned byte 0x2a3709.
+    # GAS defaults .bss to 16-byte alignment even without an .align directive;
+    # that padding would displace all later BSS allocations.
+    if(src MATCHES "/main[.]bss[.]part1[.]s$")
+        list(APPEND fixup_flags --set-section-alignment .bss=1)
+    endif()
     if(OBJDIFF_TARGET_ONLY)
         list(APPEND fixup_flags -w --localize-symbol=.L*)
     endif()

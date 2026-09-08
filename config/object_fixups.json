@@ -394,8 +394,21 @@
       ],
       ".fadecolbss": [
         "fade_col"
+      ],
+      ".spritebss": [
+        "Sprite"
+      ],
+      ".workbss": [
+        "work_flag"
+      ],
+      ".eventbss": [
+        "event_pause"
       ]
-    }
+    },
+    "drop_functions": [
+      "__sinit_editloop3.cpp",
+      ".p__sinit_editloop3.cpp"
+    ]
   },
   "src/objanime.cpp": {
     "rodata_exports": [

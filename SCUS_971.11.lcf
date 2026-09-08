@@ -623,6 +623,8 @@ SECTIONS
 		main.sbss.part4c.s.o (.sbss)   // 0x002a27ac
 		editloop3.cpp.o (.fadebss)     // 0x002a29f8
 		main.sbss.part4d.s.o (.sbss)   // 0x002a2a04
+		editloop3.cpp.o (.eventbss)    // 0x002a2a2c
+		main.sbss.part4e.s.o (.sbss)   // 0x002a2a30
 		dungeonmap.cpp.o (.sbss)
 		main.sbss.part5.s.o (.sbss)
 		charakey.cpp.o (.sbss)
@@ -680,6 +682,10 @@ SECTIONS
 		main.bss.part5.s.o (.bss)      // 0x01d1b218
 		editloop3.cpp.o (.fadecolbss)  // 0x01d3d1c0
 		main.bss.part5b.s.o (.bss)     // 0x01d3d1d0
+		editloop3.cpp.o (.spritebss)  // 0x01d3dd20
+		main.bss.part5c.s.o (.bss)     // 0x01d3e5a0
+		editloop3.cpp.o (.workbss)    // 0x01d3ef90
+		main.bss.part5d.s.o (.bss)     // 0x01d3f010
 		dungeonmap.cpp.o (.bss)
 		main.bss.part6.s.o (.bss)
 		monstorunit.cpp.o (.bss)       // 0x01d87380 BeeTbl
