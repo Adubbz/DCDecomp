@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import json
+from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
 
@@ -12,55 +13,45 @@ def integer(measures, name):
     return f"{int(measures.get(name, 0)):,}"
 
 
-def progress_lines(measures):
-    return (
-        f"Overall progress: **{percentage(measures, 'fuzzy_match_percent')}**\n"
-        f"Perfect code: **{percentage(measures, 'matched_code_percent')}** "
-        f"({integer(measures, 'matched_code')} / "
-        f"{integer(measures, 'total_code')} bytes)\n"
-        f"Perfect functions: **{integer(measures, 'matched_functions')} / "
-        f"{integer(measures, 'total_functions')}** "
-        f"({percentage(measures, 'matched_functions_percent')})\n"
-        f"Complete code: **{percentage(measures, 'complete_code_percent')}**"
-    )
+def fuzzy_code(measures):
+    total = Decimal(str(measures.get("total_code", 0)))
+    percent = Decimal(str(measures.get("fuzzy_match_percent", 0)))
+    return int((total * percent / 100).quantize(Decimal("1"), ROUND_HALF_UP))
 
 
-def category_lines(measures):
+def progress_line(measures):
     return (
-        f"Perfect functions: **{integer(measures, 'matched_functions')} / "
-        f"{integer(measures, 'total_functions')}** "
-        f"({percentage(measures, 'matched_functions_percent')})\n"
-        f"Perfect code: **{percentage(measures, 'matched_code_percent')}** · "
-        f"Fuzzy: **{percentage(measures, 'fuzzy_match_percent')}** · "
-        f"Complete: **{percentage(measures, 'complete_code_percent')}**"
+        f"Perfect **{percentage(measures, 'matched_code_percent')}** "
+        f"({integer(measures, 'matched_code')}/{integer(measures, 'total_code')})"
+        f" · Fuzzy **{percentage(measures, 'fuzzy_match_percent')}** "
+        f"({fuzzy_code(measures):,}/{integer(measures, 'total_code')})"
     )
 
 
 def payload(report):
-    fields = [
-        {
-            "name": "Overall",
-            "value": progress_lines(report["measures"]),
-            "inline": False,
-        }
-    ]
-    fields.extend(
-        {
-            "name": category["name"],
-            "value": category_lines(category["measures"]),
-            "inline": False,
-        }
-        for category in report.get("categories", [])
+    categories = {category["id"]: category for category in report["categories"]}
+    sections = (
+        ("Overall", report["measures"]),
+        ("Game", categories["game"]["measures"]),
+        ("Title", categories["title"]["measures"]),
+        ("DUN", categories["dun"]["measures"]),
     )
 
     return {
-        "username": "DCDecomp Progress",
+        "username": "Osmond",
         "allowed_mentions": {"parse": []},
         "embeds": [
             {
-                "title": "Dark Cloud NTSC 1.02 Progress",
+                "title": "Dark Cloud NTSC 1.02",
                 "color": 0x5865F2,
-                "fields": fields,
+                "fields": [
+                    {
+                        "name": name,
+                        "value": progress_line(measures),
+                        "inline": False,
+                    }
+                    for name, measures in sections
+                ],
             }
         ],
     }
