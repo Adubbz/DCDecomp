@@ -14,6 +14,9 @@ class CFrame;
 /** Model used to draw the monster cursor. */
 extern CFrame *cursorFrame;
 extern s32 selectMapNo;
+extern s32 BtEquipMasuisyou;
+/** Debug switches shared by dungeon rendering. */
+extern "C" s32 DebugStatus[21];
 /** Player character storage supplied by the dungeon overlay. */
 extern "C" CCharacter CharaMain;
 struct MAP_TRAP_CIRCLE;

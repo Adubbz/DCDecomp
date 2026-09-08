@@ -397,3 +397,10 @@ void SndSoundLoad(int set_no);
  * @size 0xE0
  */
 void setAlphaFlag(sceVif1Packet *packet, sceGsAlpha *alpha);
+
+/** Draw a sprite with the default alpha.
+ * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_
+ * @address 0x15C000
+ * @size 0x304
+ */
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, const CRect_i_ &clip);

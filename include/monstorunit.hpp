@@ -295,7 +295,6 @@ public:
      * @mangled CheckViewLevel__12CMonstorUnitFv
      * @address 0x1D99A0
      * @size 0x3C0
-     * @unknownret
      */
     void CheckViewLevel(void);
 
@@ -326,7 +325,6 @@ public:
      * @mangled MoveCheck2__12CMonstorUnitFv
      * @address 0x1DCDD0
      * @size 0x370
-     * @unknownret
      */
     void MoveCheck2(void);
 
