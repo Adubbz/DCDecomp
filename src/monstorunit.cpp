@@ -285,7 +285,68 @@ void CMonstorUnit::SoundCheck() {
         }
     }
 }
-INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawMonstor__12CMonstorUnitFv);
+void CMonstorUnit::DrawMonstor() {
+    CCharacter *character;
+    sceVu0FVECTOR origin = {0.0f, 0.0f, 0.0f, 0.0f};
+    sceVu0FVECTOR ambient;
+    MGGetAmbient(ambient);
+    TexManager.ReloadTexture(Vif1Packet, 42);
+    for (int i = 0; i < 16; i++) {
+        if (monster[i].state == 2 && monster[i].unk_0D4 != 0) {
+            unk_090 = i;
+            character = &chara[i][0];
+            character->TextureAnime(42);
+            PalletSet();
+            if (unk_098 != 0 || monster[i].unk_008 > 0) {
+                chara[i][0].SetMotion(chara[i][0].motion_no, 1);
+                for (int j = 0; j < monster[i].unk_0B4; j++) {
+                    if (chara[i][j + 1].frame != NULL) {
+                        chara[i][j + 1].SetMotion(chara[i][j + 1].motion_no, 1);
+                    }
+                }
+            }
+            chara[i][0].Step();
+            character->Draw();
+            for (int j = 0; j < monster[i].unk_0B4; j++) {
+                if (chara[i][j + 1].frame != NULL) {
+                    chara[i][j + 1].Step();
+                }
+            }
+            if (UserStatus->cur_georama == 3 && UserStatus->cur_floor == 17 && i == 1) {
+                DrawBee(chara[i][0].frame, 15);
+            }
+            MGSetAmbient(ambient);
+            for (int j = 0; j < 16; j++) {
+                if (effect[i].timer[j] != 0) {
+                    effect[i].frame[j]->GetWorldPosition(effect[i].position[j], origin);
+                }
+            }
+            for (int j = 0; j < 16; j++) {
+                if (effect2[i].active[j] != 0) {
+                    effect2[i].frame[j]->GetWorldPosition(effect2[i].position[j], origin);
+                }
+            }
+            if (event[i].timer == 1) {
+                event[i].frame->GetWorldPosition(event[i].position, origin);
+                event[i].timer = 2;
+            }
+            if (event2[i].timer == 1) {
+                event2[i].frame->GetWorldPosition(event2[i].position, origin);
+                event2[i].timer = 2;
+            }
+            if (monster[i].unk_0FC != NULL) {
+                monster[i].unk_0FC->GetWorldPosition(monster[i].unk_100, origin);
+            }
+            for (int j = 0; j < effect3[i].count; j++) {
+                if (effect3[i].frame[j] != NULL) {
+                    effect3[i].frame[j]->GetWorldPosition(effect3[i].position[j], origin);
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+}
 
 void CMonstorUnit::DrawMonstorCursor() {
     sceVu0FVECTOR position;

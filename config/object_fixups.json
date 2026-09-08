@@ -830,7 +830,8 @@
     "rodata_exports": [
       "@345__6",
       "@937__2",
-      "@606__4"
+      "@606__4",
+      "@798"
     ],
     "constant_sections": {
       "@345__6": ".playerheights",
@@ -888,7 +889,8 @@
       "BtEntryEffect31": ".BtEntryEffect31",
       "BtEntryEffect32": ".BtEntryEffect32",
       "BtEntryEffect33": ".BtEntryEffect33",
-      "BtEntryEffectTbl": ".entryeffecttbl"
+      "BtEntryEffectTbl": ".entryeffecttbl",
+      "@798": ".draworigin"
     }
   }
 }
