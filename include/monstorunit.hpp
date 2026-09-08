@@ -113,7 +113,6 @@ public:
      * @mangled AllBin2__12CMonstorUnitFv
      * @address 0x1D8360
      * @size 0x50
-     * @unknownret
      */
     void AllBin2(void);
 

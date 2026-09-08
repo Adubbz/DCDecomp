@@ -19,7 +19,11 @@ INCLUDE_RODATA("asm/nonmatchings/monstorunit", @653__3);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", SetKey__12CMonstorUnitFv);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", CheckEventFlag2__12CMonstorUnitFv);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", ArrangementPos__12CMonstorUnitFP11CDungeonMapiii);
-INCLUDE_ASM("asm/nonmatchings/monstorunit", AllBin2__12CMonstorUnitFv);
+void CMonstorUnit::AllBin2() {
+    for (int i = 0; i < 16; i++) {
+        monster[i].unk_010 = 300;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/monstorunit", PalletSet__12CMonstorUnitFv);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", PalletStep__12CMonstorUnitFv);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", SoundCheck__12CMonstorUnitFv);
