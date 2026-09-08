@@ -911,9 +911,8 @@ void MenuTextureClip(int &, int &, int &, int, int);
  * @mangled GetNumberKeta__Fi
  * @address 0x22DF00
  * @size 0x40
- * @unknownret
  */
-void GetNumberKeta(int);
+int GetNumberKeta(int);
 
 /**
  * @mangled GetMenuIconInfo__Fi

@@ -259,7 +259,14 @@ INCLUDE_RODATA("asm/nonmatchings/menu_draw", @852__4);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", FadeTexX__FiiiiPci);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", RetCTex__FsRiRi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuTextureClip__FRiRiRiii);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNumberKeta__Fi);
+int GetNumberKeta(int value) {
+    int digits = 1;
+    while (value >= 10) {
+        value /= 10;
+        digits++;
+    }
+    return digits;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuIconInfo__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMainMenuIcon__Fiiiiii);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @981);
