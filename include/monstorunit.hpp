@@ -235,7 +235,6 @@ public:
      * @mangled ArrangementPos__12CMonstorUnitFP11CDungeonMapiii
      * @address 0x1D7FC0
      * @size 0x3A0
-     * @unknownret
      */
     void ArrangementPos(CDungeonMap *, int, int, int);
 
@@ -250,7 +249,6 @@ public:
      * @mangled PalletSet__12CMonstorUnitFv
      * @address 0x1D83B0
      * @size 0x1C0
-     * @unknownret
      */
     void PalletSet(void);
 
@@ -258,7 +256,6 @@ public:
      * @mangled PalletStep__12CMonstorUnitFv
      * @address 0x1D8570
      * @size 0x420
-     * @unknownret
      */
     void PalletStep(void);
 
@@ -266,7 +263,6 @@ public:
      * @mangled SoundCheck__12CMonstorUnitFv
      * @address 0x1D8990
      * @size 0x340
-     * @unknownret
      */
     void SoundCheck(void);
 
@@ -337,7 +333,6 @@ public:
      * @mangled MoveChecMonster__12CMonstorUnitFv
      * @address 0x1DD140
      * @size 0x400
-     * @unknownret
      */
     void MoveChecMonster(void);
 
@@ -353,7 +348,6 @@ public:
      * @mangled CleanViewMonstor__12CMonstorUnitFi
      * @address 0x1DF9F0
      * @size 0x4A0
-     * @unknownret
      */
     void CleanViewMonstor(int);
 

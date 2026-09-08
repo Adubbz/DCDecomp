@@ -7,6 +7,7 @@
 #include "mathutil.hpp"
 #include "mglib.hpp"
 #include "snd.hpp"
+#include "dataalloc.hpp"
 #include <cstdlib>
 
 int CMonstorUnit::GetMonstorNum() {
@@ -276,7 +277,91 @@ void CMonstorUnit::MoveChecMonster() {
 INCLUDE_ASM("asm/nonmatchings/monstorunit", Step__12CMonstorUnitFi);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @2233__2);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @2237__2);
-INCLUDE_ASM("asm/nonmatchings/monstorunit", CleanViewMonstor__12CMonstorUnitFi);
+void CMonstorUnit::CleanViewMonstor(int mode) {
+    for (int i = 0; i < 16; i++) {
+        monster[i].state = -1;
+        monster[i].unk_008 = 0;
+        monster[i].unk_00C = 0;
+        monster[i].unk_010 = 0;
+        monster[i].unk_014 = 0;
+        monster[i].unk_050 = 0;
+        monster[i].movement[2] = 0;
+        monster[i].movement[1] = 0;
+        monster[i].movement[0] = 0;
+        monster[i].unk_070[2] = 0;
+        monster[i].unk_070[1] = 0;
+        monster[i].unk_070[0] = 0;
+        monster[i].movement_speed = 0;
+        monster[i].unk_084 = 0;
+        monster[i].unk_088 = 1;
+        monster[i].unk_044 = 13.0f;
+        monster[i].collision_radius = 13.0f;
+        monster[i].unk_094 = 0;
+        monster[i].unk_098 = 0;
+        monster[i].unk_0A0 = -1;
+        monster[i].unk_0A4 = 300.0f;
+        monster[i].unk_0A8 = 0;
+        monster[i].unk_0AC = -1;
+        monster[i].unk_0AE = -1;
+        monster[i].unk_0C0 = -1;
+        monster[i].unk_0CC = 1.0f;
+        monster[i].unk_0FC = 0;
+        monster[i].unk_110 = 1.0f;
+        monster[i].unk_114 = 1.0f;
+        monster[i].lock_range = 120.0f;
+        monster[i].unk_11C = 1;
+        monster[i].unk_0D4 = -1;
+        monster[i].unk_0D8 = -1;
+        monster[i].unk_03C = 0;
+        monster[i].event_flag2 = -1;
+        monster[i].event_flag2_pending = 0;
+        monster[i].palette_alpha = 128.0f;
+        monster[i].palette_alpha_step = 0;
+        monster[i].palette_delay = 0;
+        monster[i].palette_cycles = 0;
+        monster[i].unk_0D6 = 0;
+        monster[i].palette_override_pending = 0;
+        monster[i].unk_0F4 = 0;
+        monster[i].unk_0E8 = 0;
+        monster[i].unk_0B4 = 0;
+        monster[i].unk_0D0 = 1;
+        monster[i].unk_0D2 = 1;
+        monster[i].unk_170[0] = 0;
+        monster[i].unk_170[1] = 0;
+        monster[i].unk_170[2] = 0;
+        monster[i].unk_170[3] = 1;
+        monster[i].unk_180[0] = 0;
+        monster[i].unk_180[1] = 0;
+        monster[i].unk_180[2] = 1;
+        script_state[i] = 0;
+        if (script[i] != 0) {
+            script[i]->used = 0;
+        }
+        for (int j = 0; j < 16; j++) {
+            effect[i].timer[j] = 0;
+            effect[i].active[j] = 0;
+        }
+        for (int j = 0; j < 16; j++) {
+            effect2[i].active[j] = 0;
+        }
+        for (int j = 0; j < 12; j++) {
+            effect3[i].active[j] = 0;
+            effect3[i].timer[j] = 0;
+            effect3[i].count = 0;
+        }
+        for (int j = 0; j < 16; j++) {
+            sound[i].id[j] = -1;
+            sound[i].cooldown[j] = 0;
+        }
+        sound[i].sequence_id = -1;
+        event[i].active = 0;
+        event[i].timer = 0;
+        event2[i].active = 0;
+        event2[i].timer = 0;
+    }
+    unk_044 = mode;
+    unk_04C = 0;
+}
 INCLUDE_ASM("asm/nonmatchings/monstorunit", SetupBaseModel__12CMonstorUnitFiiiP14CDataAlloc2_1_);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @2328);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @2329);
