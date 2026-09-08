@@ -473,7 +473,42 @@ SECTIONS
         . = ALIGN(0x10);
         monstorunit.cpp.o (.playerheights) // 0x0027eb70, MoveCheck player heights
         . = ALIGN(0x10);
-        main.data.part6e.s.o (.data) // 0x0027eb90
+        monstorunit.cpp.o (.BtEntryEffect00)
+        monstorunit.cpp.o (.BtEntryEffect01)
+        monstorunit.cpp.o (.BtEntryEffect02)
+        monstorunit.cpp.o (.BtEntryEffect03)
+        monstorunit.cpp.o (.BtEntryEffect04)
+        monstorunit.cpp.o (.BtEntryEffect05)
+        monstorunit.cpp.o (.BtEntryEffect06)
+        monstorunit.cpp.o (.BtEntryEffect07)
+        monstorunit.cpp.o (.BtEntryEffect08)
+        monstorunit.cpp.o (.BtEntryEffect09)
+        monstorunit.cpp.o (.BtEntryEffect10)
+        monstorunit.cpp.o (.BtEntryEffect11)
+        monstorunit.cpp.o (.BtEntryEffect12)
+        monstorunit.cpp.o (.BtEntryEffect13)
+        monstorunit.cpp.o (.BtEntryEffect14)
+        monstorunit.cpp.o (.BtEntryEffect15)
+        monstorunit.cpp.o (.BtEntryEffect16)
+        monstorunit.cpp.o (.BtEntryEffect17)
+        monstorunit.cpp.o (.BtEntryEffect18)
+        monstorunit.cpp.o (.BtEntryEffect19)
+        monstorunit.cpp.o (.BtEntryEffect20)
+        monstorunit.cpp.o (.BtEntryEffect21)
+        monstorunit.cpp.o (.BtEntryEffect22)
+        monstorunit.cpp.o (.BtEntryEffect23)
+        monstorunit.cpp.o (.BtEntryEffect24)
+        monstorunit.cpp.o (.BtEntryEffect25)
+        monstorunit.cpp.o (.BtEntryEffect26)
+        monstorunit.cpp.o (.BtEntryEffect27)
+        monstorunit.cpp.o (.BtEntryEffect28)
+        monstorunit.cpp.o (.BtEntryEffect29)
+        monstorunit.cpp.o (.BtEntryEffect30)
+        monstorunit.cpp.o (.BtEntryEffect31)
+        monstorunit.cpp.o (.BtEntryEffect32)
+        monstorunit.cpp.o (.BtEntryEffect33)
+        monstorunit.cpp.o (.entryeffecttbl)
+        . = ALIGN(0x10);
         monstorunit.cpp.o (.monstortable) // 0x0027fb00, 167 records
         . = ALIGN(0x10);
         monstorunit.cpp.o (.BtEnemyLayout00)

@@ -29,6 +29,7 @@ CTexAnimeData MonsterTexAnim[320];
 
 #include "monstorunit_floor_data.inc"
 #include "monstorunit_model_data.inc"
+#include "monstorunit_effect_data.inc"
 
 int CMonstorUnit::GetMonstorNum() {
     int count = 0;
