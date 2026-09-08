@@ -112,6 +112,8 @@ public:
         motion_speed = speed;
     }
 
+    void SetMotionSpeed(float speed) { motion_speed = speed; }
+
     float unk_0B0;
     float unk_0B4;
     float unk_0B8;

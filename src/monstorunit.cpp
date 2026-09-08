@@ -668,9 +668,277 @@ void CMonstorUnit::MoveChecMonster() {
         }
     }
 }
-INCLUDE_ASM("asm/nonmatchings/monstorunit", Step__12CMonstorUnitFi);
-INCLUDE_RODATA("asm/nonmatchings/monstorunit", @2233__2);
-INCLUDE_RODATA("asm/nonmatchings/monstorunit", @2237__2);
+void CMonstorUnit::Step(int pause) {
+    sceVu0FVECTOR position, destination, hit;
+    CBoxVu0 box;
+    sceVu0FVECTOR other_position, width_start, width_hit;
+    sceVu0FVECTOR turn_position, rotation, direction;
+    sceVu0FVECTOR drop_position, key_position, attachment_position, money_position;
+    CheckViewLevel();
+    if (pause != 0) {
+        unk_098 = 1;
+        return;
+    }
+    if (unk_098 != 0) {
+        for (int i = 0; i < 16; i++) {
+            if (monster[i].state == 2) {
+                monster[i].requested_motion_flags &= ~4;
+                if (monster[i].requested_motion_flags == 2) {
+                    chara[i][0].SetMotion(monster[i].requested_motion, 2);
+                    if (!(monster[i].requested_motion_speed < 0.0f))
+                        chara[i][0].SetMotionSpeed(monster[i].requested_motion_speed);
+                    for (int j = 0; j < monster[i].unk_0B4; j++) {
+                        chara[i][j + 1].SetMotion(monster[i].requested_motion, 2);
+                        if (!(monster[i].requested_motion_speed < 0.0f))
+                            chara[i][j + 1].SetMotionSpeed(monster[i].requested_motion_speed);
+                    }
+                } else {
+                    chara[i][0].SetMotion(monster[i].requested_motion, 0);
+                    if (!(monster[i].requested_motion_speed < 0.0f))
+                        chara[i][0].SetMotionSpeed(monster[i].requested_motion_speed);
+                    for (int j = 0; j < monster[i].unk_0B4; j++) {
+                        chara[i][j + 1].SetMotion(monster[i].requested_motion, 0);
+                        if (!(monster[i].requested_motion_speed < 0.0f))
+                            chara[i][j + 1].SetMotionSpeed(monster[i].requested_motion_speed);
+                    }
+                }
+            }
+        }
+        unk_098 = 0;
+    }
+    BtActStatus.monstor_target = -1;
+    for (int i = 0; i < 16; i++) {
+        if (monster[i].state == 2) {
+            unk_090 = i;
+            if (monster[unk_090].unk_0F4 != 0) {
+                monster[unk_090].requested_motion_flags &= ~4;
+                if (monster[unk_090].requested_motion_flags == 2) {
+                    chara[unk_090][0].SetMotion(monster[unk_090].requested_motion, 2);
+                    if (!(monster[unk_090].requested_motion_speed < 0.0f))
+                        chara[unk_090][0].SetMotionSpeed(monster[unk_090].requested_motion_speed);
+                    for (int j = 0; j < monster[unk_090].unk_0B4; j++) {
+                        chara[unk_090][j + 1].SetMotion(monster[unk_090].requested_motion, 2);
+                        if (!(monster[unk_090].requested_motion_speed < 0.0f))
+                            chara[unk_090][j + 1].SetMotionSpeed(monster[unk_090].requested_motion_speed);
+                    }
+                } else {
+                    chara[unk_090][0].SetMotion(monster[unk_090].requested_motion, 0);
+                    for (int j = 0; j < monster[unk_090].unk_0B4; j++) {
+                        chara[unk_090][j + 1].SetMotion(monster[unk_090].requested_motion, 0);
+                        if (!(monster[unk_090].requested_motion_speed < 0.0f))
+                            chara[unk_090][j + 1].SetMotionSpeed(monster[unk_090].requested_motion_speed);
+                    }
+                }
+                monster[unk_090].unk_0F4 = 0;
+            }
+            if (monster[unk_090].unk_0D4 != 0) {
+                if (unk_044 != 0) monster[unk_090].unk_010 = 180;
+                WorkBuffer__2->Reset();
+                monster[unk_090].collision_poly = (CCPoly *)WorkBuffer__2->Alloc(2000);
+                chara[unk_090][0].GetPosition(position);
+                // These locals preserve MWCC's retail float-argument scheduling.
+                float collision_radius = 30.0f;
+                float collision_height = 5.0f;
+                monster[unk_090].unk_050 = setCollisionData(NowDngMap, monster[unk_090].collision_poly, position, 30, 5);
+                int original_count = monster[unk_090].unk_050;
+                box.max[0] = 30.0f + position[0];
+                box.max[1] = 80.0f + position[1];
+                box.max[2] = 30.0f + position[2];
+                box.min[0] = position[0] - 30.0f;
+                box.min[1] = position[1] - 80.0f;
+                box.min[2] = position[2] - 30.0f;
+                for (int j = 0; j < 16; j++) {
+                    if (j != unk_090 && monster[j].state == 2) {
+                        chara[j][0].GetPosition(other_position);
+                        collision->SetPosition(other_position);
+                        float scale = 2.0f * (0.1f * monster[j].collision_radius);
+                        collision->SetScale(scale, scale, scale);
+                        monster[unk_090].unk_050 += collision->PickUpNearPoly(monster[unk_090].collision_poly + monster[unk_090].unk_050, box);
+                    }
+                }
+                if (monster[unk_090].unk_050 >= 400) printf("err %d\n", monster[unk_090].unk_050);
+                switch (CheckDmg()) {
+                case 0: break;
+                case 1: interpreter[unk_090].run(110); script_state[unk_090] = 1; break;
+                case 2: interpreter[unk_090].run(120); script_state[unk_090] = 1; break;
+                }
+                if (monster[unk_090].unk_008 > 0) {
+                    PalletStep();
+                    if (monster[unk_090].unk_098 > 0) monster[unk_090].unk_098--;
+                } else {
+                    if (script_state[unk_090] == 0) {
+                        if (monster[unk_090].unk_0D4 == 1) {
+                            interpreter[unk_090].run(50);
+                            monster[unk_090].unk_0D4 = -1;
+                        } else interpreter[unk_090].run(100);
+                        script_state[unk_090] = 1;
+                    } else {
+                        interpreter[unk_090].resume();
+                        if (interpreter[unk_090].IsEnd() != 0) script_state[unk_090] = 0;
+                    }
+                    chara[unk_090][0].GetPosition(position);
+                    if (!(monster[unk_090].unk_180[0] <= 0.0f)) {
+                        sceVu0CopyVector(monster[unk_090].movement, monster[unk_090].unk_170);
+                        monster[unk_090].movement_speed = monster[unk_090].unk_180[0];
+                        monster[unk_090].unk_180[0] -= monster[unk_090].unk_180[1];
+                        if (monster[unk_090].unk_180[0] <= 0.0f) {
+                            monster[unk_090].unk_180[0] = 0.0f;
+                            monster[unk_090].movement_speed = 0.0f;
+                        }
+                    }
+                    if (monster[unk_090].unk_0A8 <= 0) MoveCheck2();
+                    if (monster[unk_090].unk_0A8 <= 0) MoveChecMonster();
+                    monster[unk_090].unk_050 = original_count;
+                    if (monster[unk_090].movement_speed != 0.0f || (monster[unk_090].unk_088 != 0 && monster[unk_090].movement_speed == 0.0f)) {
+                        destination[0] = position[0] + 10.0f * monster[unk_090].movement[0];
+                        destination[1] = position[1] + 10.0f * monster[unk_090].movement[1];
+                        destination[2] = position[2] + 10.0f * monster[unk_090].movement[2];
+                        position[1] += 5.0f; destination[1] += 5.0f;
+                        if (CheckHit(monster[unk_090].collision_poly, monster[unk_090].unk_050, position, destination, hit, 0, 0) >= 0 && monster[unk_090].unk_0A8 <= 0) {
+                            position[1] -= 5.0f;
+                            monster[unk_090].movement_speed = 0.0f;
+                            chara[unk_090][0].SetPosition(position);
+                        } else {
+                            position[1] -= 5.0f;
+                            if (monster[unk_090].unk_088 != 0 && !(monster[unk_090].ground_distance <= 0.0001f)) {
+                                destination[0] = position[0] + monster[unk_090].movement[0] * monster[unk_090].movement_speed;
+                                destination[1] = position[1] + (monster[unk_090].movement[1] * monster[unk_090].movement_speed - 0.2f);
+                                destination[2] = position[2] + monster[unk_090].movement[2] * monster[unk_090].movement_speed;
+                            } else {
+                                destination[0] = position[0] + monster[unk_090].movement[0] * monster[unk_090].movement_speed;
+                                destination[1] = position[1] + monster[unk_090].movement[1] * monster[unk_090].movement_speed;
+                                destination[2] = position[2] + monster[unk_090].movement[2] * monster[unk_090].movement_speed;
+                            }
+                            chara[unk_090][0].SetPosition(destination);
+                            if (monster[unk_090].unk_088 != 0 && !(monster[unk_090].ground_distance <= 0.0001f)) {
+                                monster[unk_090].movement_speed = DistVector(destination, position);
+                                destination[0] -= position[0]; destination[1] -= position[1]; destination[2] -= position[2];
+                                sceVu0Normalize(monster[unk_090].movement, destination);
+                            }
+                        }
+                        chara[unk_090][0].GetPosition(width_start); width_start[1] += 5.0f;
+                        if (CheckWidth(monster[unk_090].collision_poly, monster[unk_090].unk_050, width_start, monster[unk_090].unk_044, width_hit, 0) != 0) {
+                            width_hit[1] -= 5.0f; chara[unk_090][0].SetPosition(width_hit);
+                        }
+                    }
+                    monster[unk_090].ground_distance = 0.0f;
+                    chara[unk_090][0].GetPosition(position); position[1] += 10.0f;
+                    float ground_depth = -130.0f;
+                    if (CheckHitVertical(monster[unk_090].collision_poly, monster[unk_090].unk_050, position, ground_depth, hit, 0) >= 0) {
+                        position[1] -= 10.0f;
+                        if (position[1] < hit[1]) {
+                            position[1] = hit[1];
+                            if (monster[unk_090].unk_088 != 0) {
+                                monster[unk_090].movement[1] *= -1.0f;
+                                if (!(monster[unk_090].movement[1] <= 0.0f)) {
+                                    monster[unk_090].movement_speed *= 0.5f * (2.0f - monster[unk_090].movement[1]);
+                                    if (monster[unk_090].movement_speed < 0.2f) monster[unk_090].movement_speed = 0.0f;
+                                }
+                            }
+                        }
+                        monster[unk_090].ground_distance = position[1] - hit[1];
+                        monster[unk_090].ground_y = hit[1];
+                        if (monster[unk_090].unk_088 != 0) {
+                            chara[unk_090][0].SetPosition(position);
+                            if (monster[unk_090].unk_0D6 == 0) chara[unk_090][0].SetPosition(hit);
+                        }
+                    }
+                    if (monster[unk_090].unk_084 != 0.0f) {
+                        chara[unk_090][0].GetPosition(turn_position); chara[unk_090][0].GetRotation(rotation);
+                        sceVu0SubVector(direction, monster[unk_090].unk_070, turn_position);
+                        float angle = atan2f(direction[0], direction[2]);
+                        rotation[1] = AngleInterpolate(rotation[1], angle, monster[unk_090].unk_084, 0);
+                        chara[unk_090][0].SetRotation(rotation);
+                        if (AngleCmp(rotation[1], angle, 0.052359879f) == 0) monster[unk_090].unk_084 = 0.0f;
+                    }
+                    if (monster[unk_090].unk_098 > 0) monster[unk_090].unk_098--;
+                    if (monster[unk_090].unk_0A8 > 0) monster[unk_090].unk_0A8--;
+                    if (event[unk_090].timer == 2) {
+                        NowShotEffect->Set(monster[unk_090].unk_0AC, event[unk_090].position, event[unk_090].local_position);
+                        NowShotEffect->SetUserID2(unk_090);
+                        if (event[unk_090].damage_override != -1) NowShotEffect->SetDmg(event[unk_090].damage_override);
+                        event[unk_090].timer = 0;
+                    }
+                    if (event2[unk_090].timer == 2) {
+                        NowShotEffect->Set(monster[unk_090].unk_0AE, event2[unk_090].position, event2[unk_090].local_position);
+                        NowShotEffect->SetUserID2(unk_090);
+                        if (event2[unk_090].damage_override != -1) NowShotEffect->SetDmg(event2[unk_090].damage_override);
+                        event2[unk_090].timer = 0;
+                    }
+                    PalletStep(); SoundCheck();
+                    if (monster[unk_090].state == -1) {
+                        CDngStatusData *status = (CDngStatusData *)UserStatus;
+                        int current_chara = UserStatus->cur_chara;
+                        int no_exp;
+                        WEAPON_HAVE *weapon = &status->chara_weapons[current_chara][status->equipped_weapon_slot[current_chara]];
+                        no_exp = 0;
+                        if (status->CheckDefaultWeapon(current_chara) == 0) no_exp = 1;
+                        if (weapon->item_no == 0x10C && SaveData->GetGameFlag(0x30) == 0) no_exp = 1;
+                        if (monster[unk_090].last_attacker == current_chara && no_exp == 0) {
+                            int max_exp = GetWeaponMaxExp(weapon);
+                            int exp = monster[unk_090].unk_0B0;
+                            if (unk_044 != 0) exp *= 2;
+                            if (effect[unk_090].hit_attributes & 0x2000) exp *= 1.2f;
+                            if (UserStatus->res_limit_zone_current == 10) {
+                                weapon->unk_14 -= exp;
+                                if (weapon->unk_14 <= 0) weapon->unk_14 = 0;
+                            } else if (weapon->unk_14 < max_exp) {
+                                int updated = weapon->unk_14 + exp;
+                                if (updated >= max_exp) {
+                                    weapon->unk_14 = max_exp;
+                                    DngMessMan.unk_0C = GetCommonItemDataSystemMsg(weapon->item_no);
+                                    DngMessMan.unk_14 = weapon->unk_02;
+                                    DngMessMan.unk_24 = 150; DngMessMan.unk_04 = 480; DngMessMan.unk_1C = 0;
+                                    weapon->unk_14 = max_exp;
+                                } else weapon->unk_14 = updated;
+                            }
+                        }
+                        if (effect[unk_090].hit_attributes & 0x10) UserStatus->AddDrink(current_chara, 10, 255.0f);
+                        if (monster[unk_090].unk_03C > 0) {
+                            chara[unk_090][0].GetPosition(drop_position);
+                            drop_position[0] += 1.5f; drop_position[1] -= monster[unk_090].ground_distance; drop_position[0] += 1.5f;
+                            RandomItem->Set(drop_position, 1, monster[unk_090].unk_03C, -1);
+                            monster[unk_090].unk_038 = 0;
+                        }
+                        if (monster[unk_090].kind != 2 && monster[unk_090].unk_0DA != 0) {
+                            printf("************ item = %d ************ \n", monster[unk_090].unk_0A0);
+                            if (monster[unk_090].unk_0A0 == -1 && monster[unk_090].unk_0E0 != -1 && (100.0f * (float)rand() / 2147483648.0f) < 10.0f)
+                                monster[unk_090].unk_0A0 = monster[unk_090].unk_0E0;
+                            if (monster[unk_090].unk_0A0 != -1) {
+                                if (SetGateKeyStack(monster[unk_090].unk_0A0) != 0) {
+                                    chara[unk_090][0].GetPosition(key_position); key_position[1] -= monster[unk_090].ground_distance;
+                                    RandomItem->Set(key_position, 1, -1, monster[unk_090].unk_0A0);
+                                }
+                            } else {
+                                int attachment = SelectAttachi();
+                                if (monster[unk_090].last_attacker == -1 && attachment != -1) {
+                                    chara[unk_090][0].GetPosition(attachment_position); attachment_position[1] -= monster[unk_090].ground_distance;
+                                    RandomItem->Set(attachment_position, 1, -1, attachment);
+                                    monster[unk_090].unk_0A0 = attachment;
+                                } else monster[unk_090].unk_0A0 = -1;
+                            }
+                            if (monster[unk_090].unk_0A0 == -1) {
+                                if ((int)(100.0f * (float)rand() / 2147483648.0f) < monster[unk_090].unk_038) {
+                                    int index = unk_090;
+                                    int base = monster[index].unk_034;
+                                    int money = base + (int)(((float)base * (float)rand() / 2.0f) / 2147483648.0f);
+                                    int attributes = effect[index].hit_attributes;
+                                    if (attributes & 2) money *= 2;
+                                    if ((attributes & 4) && money >= 2) money *= 0.5;
+                                    chara[index][0].GetPosition(money_position); money_position[1] -= monster[unk_090].ground_distance;
+                                    RandomItem->Set(money_position, 1, money, -1);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
 void CMonstorUnit::CleanViewMonstor(int mode) {
     for (int i = 0; i < 16; i++) {
         monster[i].state = -1;

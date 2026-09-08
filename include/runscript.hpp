@@ -72,6 +72,7 @@ struct RS_PROG_HEADER {
 
 class CRunScript {
 public:
+    int IsEnd() { return end; }
     /**
      * @mangled __ct__10CRunScriptFv
      * @address 0x23D940

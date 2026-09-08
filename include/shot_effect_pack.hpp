@@ -13,6 +13,11 @@
 class CSHOT_EFFECT_PACK {
 public:
     CSHOT_EFFECT effect[5];
+    void Set(int index, float *position, float *direction) {
+        effect[index].Set(position, direction, -1, -1, 0, NULL, -1);
+        current_effect = index;
+    }
+
     s32 current_effect; // 0x326E0, selected by SetUserID2/SetDmg
 
     /**
