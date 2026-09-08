@@ -63,8 +63,23 @@ jobs:
       - name: Upload the progress report
         uses: actions/upload-artifact@v4
         with:
-          # decomp.dev looks this name up; it is the executable's name, which is
-          # what identifies this project's version there.
           name: SCUS_971.11_report
           path: progress/report.json
           if-no-files-found: error
+
+      - name: Create the Discord progress message
+        if: github.event_name != 'pull_request'
+        run: |
+          python3 .github/scripts/discord_progress.py \
+            progress/report.json "$RUNNER_TEMP/discord-progress.json"
+
+      - name: Send the progress message to Discord
+        if: github.event_name != 'pull_request'
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl --fail-with-body --show-error --silent \
+            --retry 3 \
+            -H 'Content-Type: application/json' \
+            --data-binary "@$RUNNER_TEMP/discord-progress.json" \
+            "$DISCORD_WEBHOOK_URL"
