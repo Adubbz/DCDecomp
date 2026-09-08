@@ -10,6 +10,7 @@
 #include "dataalloc.hpp"
 #include "dun/gameloop.hpp"
 #include "frame.hpp"
+#include "framevu1.hpp"
 #include "texture.hpp"
 #include "rect.hpp"
 #include <cstdlib>
@@ -223,9 +224,19 @@ void set3DCellModel(float *world, char *name, float size, int x, int y, int widt
         set3DSprite(Vif1Packet, texture, clip, top_left, top_right, bottom_left, bottom_right, 128);
     }
 }
-INCLUDE_ASM("asm/nonmatchings/monstorunit", InitBee__FP6CFramei);
-INCLUDE_RODATA("asm/nonmatchings/monstorunit", @915);
-INCLUDE_RODATA("asm/nonmatchings/monstorunit", @916);
+void InitBee(CFrame *frame, int count) {
+    int frame_num = frame->GetFrameNum();
+    printf("bee num = %d\n", frame_num);
+    int i;
+    for (i = 0; i < frame_num * count; i++) {
+        BeeTbl[i].phase = 6.0f * (float)rand() / 2147483648.0f;
+        BeeTbl[i].row = (int)(2.0f * (float)rand() / 2147483648.0f);
+    }
+    for (i = 0; i < frame_num; i++) {
+        ((CFrameVu1 *)frame)[i].attr.draw_on = 0;
+    }
+    printf("INIT BEE END!!\n");
+}
 INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawBee__FP6CFramei);
 INCLUDE_RODATA("asm/nonmatchings/monstorunit", @935);
 INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawShadowMonstor__12CMonstorUnitFv);
