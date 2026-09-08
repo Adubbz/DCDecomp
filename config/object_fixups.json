@@ -828,7 +828,12 @@
       "__sinit_monstorunit.cpp"
     ],
     "rodata_exports": [
-      "@345__6"
-    ]
+      "@345__6",
+      "@937__2"
+    ],
+    "constant_sections": {
+      "@345__6": ".playerheights",
+      "@937__2": ".shadowlight"
+    }
   }
 }

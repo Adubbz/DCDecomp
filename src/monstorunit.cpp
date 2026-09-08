@@ -310,7 +310,26 @@ void DrawBee(CFrame *frame, int count) {
     MGSetGsZBUF(NULL);
 }
 
-INCLUDE_ASM("asm/nonmatchings/monstorunit", DrawShadowMonstor__12CMonstorUnitFv);
+void CMonstorUnit::DrawShadowMonstor() {
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR rotation;
+    sceVu0FVECTOR light = {0.0f, 1.0f, 0.0f, 0.0f};
+    for (int i = 0; i < 16; i++) {
+        if (monster[i].state == 2 && monster[i].unk_0D0 != 0 && monster[i].unk_0D4 != 0) {
+            if (chara[i].shadow_frame != NULL) {
+                CMonstorChara *character = &chara[i];
+                character->ShadowStep();
+                character->GetPosition(position);
+                character->GetRotation(rotation);
+                chara[i].shadow_frame->SetPosition(position);
+                chara[i].shadow_frame->SetRotation(0.0f, rotation[1], 0.0f);
+                position[1] -= monster[i].unk_0CC;
+                MGDrawShadowFast(chara[i].shadow_frame, position, light);
+            }
+        }
+    }
+}
+
 void CMonstorUnit::CheckViewLevel() {
     sceVu0FVECTOR player_position;
     sceVu0FVECTOR monster_position;

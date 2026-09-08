@@ -223,6 +223,32 @@ def export_constants(path, names, parser, assembly_constants=()):
     subprocess.run([objcopy] + arguments + [str(path), str(path)], check=True)
 
 
+
+def place_exported_constants(path, sections, parser):
+    """Place individually exported templates without relying on compiler numbers."""
+    if not sections:
+        return
+    elf = Elf(path.read_bytes())
+    for name, section_name in sections.items():
+        matches = [symbol for symbol in elf.symtab.symbols
+                   if symbol.name == name and 0 < symbol.st_shndx < len(elf.sections)]
+        if len(matches) != 1:
+            parser.error(f"constant section placement requires one definition of {name!r}")
+        symbol = matches[0]
+        section = elf.sections[symbol.st_shndx]
+        if not section_name.startswith(".") or symbol.st_value != 0:
+            parser.error(f"invalid standalone constant section for {name!r}")
+        # Moving a shared section would silently relocate another datum.
+        peers = [other for other in elf.symtab.symbols
+                 if other.st_shndx == symbol.st_shndx and other.name != name
+                 and other.st_size and other.type != 3]
+        if peers:
+            parser.error(f"constant {name!r} shares its section with another symbol")
+        section.sh_name = elf.add_sh_symbol(section_name)
+        section.name = section_name
+    path.write_bytes(elf.pack())
+
+
 def rename_symbols(path, mappings):
     """Spell the unit's own symbols the way the reference assembly does.
 
@@ -631,6 +657,7 @@ def main():
         r"INCLUDE_RODATA\([^,]+,\s*([^)\s]+)\s*\)", source_text))
     export_constants(args.object, fixups.get("rodata_exports", []), parser,
                      assembly_constants)
+    place_exported_constants(args.object, fixups.get("constant_sections", {}), parser)
 
 
 if __name__ == "__main__":
