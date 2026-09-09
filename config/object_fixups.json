@@ -384,7 +384,9 @@
       "@687",
       "@688",
       "@689",
-      "@690__2"
+      "@690__2",
+      "@475__2",
+      "@554"
     ],
     "sections": {
       ".fadebss": [
@@ -403,12 +405,19 @@
       ],
       ".eventbss": [
         "event_pause"
+      ],
+      ".objanimebss": [
+        "obj_anime"
       ]
     },
     "drop_functions": [
       "__sinit_editloop3.cpp",
       ".p__sinit_editloop3.cpp"
-    ]
+    ],
+    "constant_sections": {
+      "@475__2": ".eventoffset",
+      "@554": ".objworldorigin"
+    }
   },
   "src/objanime.cpp": {
     "rodata_exports": [

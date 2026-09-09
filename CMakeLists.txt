@@ -206,7 +206,7 @@ carve_part(main.bss.part6.s
 carve_part(main.bss.part5.s
            main.bss.part5.s=1D1B218-1D3D1C0
            main.bss.part5b.s=1D3D1D0-1D3DD20
-           main.bss.part5c.s=1D3E5A0-1D3EF90
+           main.bss.part5c.s=1D3EEA0-1D3EF90
            main.bss.part5d.s=1D3F010-1D569A0)
 carve_part(main.sbss.part3.s
            main.sbss.part3.s=2A24FC-2A2500)
@@ -235,7 +235,9 @@ carve_part(main.data.part6.s
 carve_part(main.data.part4.s
            main.data.part4.s=25DF70-266810
            main.data.part4b.s=2668C0-266F70
-           main.data.part4c.s=266FB0-26B2C0
+           main.data.part4c.s=266FB0-269930
+           main.data.part4e.s=269940-269AD0
+           main.data.part4f.s=269AE0-26B2C0
            main.data.part4d.s=26B2E0-279EB0)
 
 # These residual ranges are now fully owned by their decompiled translation
