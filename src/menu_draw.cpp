@@ -228,7 +228,18 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", InitItemPolygonView__FiP1);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", EnterItemPolygonView__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", LocalDrawItemPolygonView__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawItemPolygonView__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", ConvDebugSelectToExcelListNo__Fi);
+int ConvDebugSelectToExcelListNo(int selection) {
+    int item_no;
+
+    item_no = selection + 0x81;
+    if ((item_no > 0x160) && (item_no < 0x138)) {
+        return -1;
+    }
+    if ((selection >= 0xF8) && (selection < 0x120)) {
+        item_no = selection - 0xA7;
+    }
+    return item_no;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DebugItemGetKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DebugItemGetDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawItemDataView__Fi);

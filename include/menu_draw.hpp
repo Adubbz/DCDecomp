@@ -48,7 +48,7 @@ extern DUN_ENTER_MENU DEnterMenu;
 /** Dungeon progress shown by the entrance menu. */
 extern CDngStatusData *DEnterStatusPt;
 
-/** Number of consecutive menu operation errors. */
+/** Counter used by menu error handling. */
 extern int MenuEtcErrCnt;
 
 /**
@@ -638,12 +638,13 @@ void LocalDrawItemPolygonView(void);
 void DrawItemPolygonView(void);
 
 /**
+ * Maps a debug item selection to its spreadsheet item number.
+ *
  * @mangled ConvDebugSelectToExcelListNo__Fi
  * @address 0x22B1F0
  * @size 0x50
- * @unknownret
  */
-void ConvDebugSelectToExcelListNo(int);
+int ConvDebugSelectToExcelListNo(int selection);
 
 /**
  * @mangled DebugItemGetKey__Fv
