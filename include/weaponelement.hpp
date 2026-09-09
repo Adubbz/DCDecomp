@@ -236,4 +236,5 @@ public:
 
 STATIC_ASSERT(sizeof(CWeaponElement) == 0x7C0);
 
+/** Elemental weapon effects the dungeon can run. */
 extern "C" CWeaponElement CWeaponElFx[4];

@@ -66,7 +66,7 @@ void sound_play(float from, float to, float now, int se_no) {
 
 void basic_damage(int kind, int owner) {
     NowColData->hit[NowColData->now_hit].vs_monster = NowWeaponHave->vs_monster;
-    NowColData->hit[NowColData->now_hit].unk_6C = NowWeaponHave->flags;
+    NowColData->hit[NowColData->now_hit].weapon_flags = NowWeaponHave->flags;
 
     s8 elem = NowWeaponHave->best_elem;
     CCollisionData *attr_col = NowColData;
@@ -970,7 +970,7 @@ void GoroKey_Play(void) {
         NowColData->Set(hit_pos, damage, 1, 5.0f, 0.0f, 2, 2, 0, 0);
 
         NowColData->hit[NowColData->now_hit].vs_monster = NowWeaponHave->vs_monster;
-        NowColData->hit[NowColData->now_hit].unk_6C = NowWeaponHave->flags;
+        NowColData->hit[NowColData->now_hit].weapon_flags = NowWeaponHave->flags;
 
         s8 elem = NowWeaponHave->best_elem;
         CCollisionData *attr_col = NowColData;

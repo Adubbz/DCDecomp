@@ -21,9 +21,9 @@
 #include "clsmes.hpp"
 #include "debugfont.hpp"
 #include "dngstatusdata.hpp"
-#include "editloop3.hpp"
-#include "editloop.hpp"
 #include "editground.hpp"
+#include "editloop.hpp"
+#include "editloop3.hpp"
 #include "editpartsinfo.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
@@ -60,8 +60,9 @@ ED_EVENT_POINT *GetNewEventPoint(CMapParts *parts, EPARTS_FUNC_DATA *function,
     point->completion_flag = function->completion_flag;
     CFrame *frame = parts->frame[0];
     point->frame = NULL;
-    if (frame != NULL)
+    if (frame != NULL) {
         point->frame = frame->SearchFrame(function->frame_name);
+    }
     return point;
 }
 INCLUDE_RODATA("asm/nonmatchings/editloop3", @687);
@@ -568,8 +569,6 @@ void EdSePlay(ED_SOUND_ID sound, int pan) {
 }
 
 /** Script-controlled sprites used by editor events. */
-// Retail's preserved __sinit_editloop3.cpp constructs Sprite at its carved BSS
-// address. object_fixups suppresses only the duplicate generated initializer.
 static ED_SPRITE Sprite[16];
 
 ED_SPRITE *GetSprite(int index) {
@@ -1138,7 +1137,15 @@ INCLUDE_ASM("asm/nonmatchings/editloop3", _NPC_DRAW__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _NPC_DRAW_SHADOW__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _SET_NPC_FOOT_SOUND__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _SET_NPC_FLOOR_ID__FP12RS_STACKDATAi);
-s32 _NPC_STEP(RS_STACKDATA *arg0, s32 arg1) {
+
+/**
+ * Script opcode that steps a villager; the step happens elsewhere.
+ *
+ * @mangled _NPC_STEP__FP12RS_STACKDATAi
+ * @address 0x18F0A0
+ * @size 0xC
+ */
+s32 _NPC_STEP(RS_STACKDATA *stack, s32 argument_count) {
     return 1;
 }
 INCLUDE_ASM("asm/nonmatchings/editloop3", _NPC_COL__FP12RS_STACKDATAi);

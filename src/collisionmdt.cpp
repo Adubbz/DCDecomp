@@ -136,7 +136,7 @@ void CCollision::CreateBBox() {
     }
 }
 
-sceVu0FVECTOR * CCollision::GetVertexAddress(int *count) {
+sceVu0FVECTOR *CCollision::GetVertexAddress(int *count) {
     return 0;
 }
 

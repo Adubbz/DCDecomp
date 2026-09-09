@@ -224,31 +224,6 @@ def export_constants(path, names, parser, assembly_constants=()):
 
 
 
-def place_exported_constants(path, sections, parser):
-    """Place individually exported templates without relying on compiler numbers."""
-    if not sections:
-        return
-    elf = Elf(path.read_bytes())
-    for name, section_name in sections.items():
-        matches = [symbol for symbol in elf.symtab.symbols
-                   if symbol.name == name and 0 < symbol.st_shndx < len(elf.sections)]
-        if len(matches) != 1:
-            parser.error(f"constant section placement requires one definition of {name!r}")
-        symbol = matches[0]
-        section = elf.sections[symbol.st_shndx]
-        if not section_name.startswith(".") or symbol.st_value != 0:
-            parser.error(f"invalid standalone constant section for {name!r}")
-        # Moving a shared section would silently relocate another datum.
-        peers = [other for other in elf.symtab.symbols
-                 if other.st_shndx == symbol.st_shndx and other.name != name
-                 and other.st_size and other.type != 3]
-        if peers:
-            parser.error(f"constant {name!r} shares its section with another symbol")
-        section.sh_name = elf.add_sh_symbol(section_name)
-        section.name = section_name
-    path.write_bytes(elf.pack())
-
-
 def rename_symbols(path, mappings):
     """Spell the unit's own symbols the way the reference assembly does.
 
@@ -347,14 +322,23 @@ def align_small_data(elf):
 
 
 def rename_sections(elf, mappings, parser):
-    """Rename the sections that define configured symbols."""
+    """Rename the sections that define configured symbols.
+
+    A compiler-numbered constant only carries its retail name once
+    export_constants has bound it, so an entry naming one is handed back for
+    a second pass over the written object.
+    """
     symbols = {symbol.name: symbol for symbol in elf.symtab.symbols}
     renamed = {}
+    deferred = {}
     for section_name, names in mappings.items():
         name_index = elf.add_sh_symbol(section_name)
         for symbol_name in names:
             symbol = symbols.get(symbol_name)
             if symbol is None:
+                if NUMBERED_DATUM.match(symbol_name):
+                    deferred.setdefault(section_name, []).append(symbol_name)
+                    continue
                 parser.error(f"{symbol_name!r} is not defined")
             index = symbol.st_shndx
             if index in renamed and renamed[index] != section_name:
@@ -362,6 +346,7 @@ def rename_sections(elf, mappings, parser):
             elf.sections[index].sh_name = name_index
             elf.sections[index].name = section_name
             renamed[index] = section_name
+    return deferred
 
 
 # A datum the compiler invented a name for: `@N`, or a function-local static
@@ -621,7 +606,7 @@ def main():
                 [shared_constant_name(text)
                  for text in fixups.get("export_constants_shared", [])]),
         encoding="utf-8")
-    rename_sections(elf, fixups.get("sections", {}), parser)
+    deferred_sections = rename_sections(elf, fixups.get("sections", {}), parser)
     data_runs(elf, fixups.get("data_runs", {}), parser)
     args.object.write_bytes(elf.pack())
 
@@ -657,7 +642,11 @@ def main():
         r"INCLUDE_RODATA\([^,]+,\s*([^)\s]+)\s*\)", source_text))
     export_constants(args.object, fixups.get("rodata_exports", []), parser,
                      assembly_constants)
-    place_exported_constants(args.object, fixups.get("constant_sections", {}), parser)
+    if deferred_sections:
+        elf = Elf(args.object.read_bytes())
+        if rename_sections(elf, deferred_sections, parser):
+            parser.error("a numbered constant in `sections` is not exported")
+        args.object.write_bytes(elf.pack())
 
 
 if __name__ == "__main__":

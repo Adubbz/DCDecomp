@@ -1098,6 +1098,8 @@ void DrawWepVolumeDisplay(int, int, WEAPON_HAVE *, int);
 void DrawWeaponNameBoard(int, int, int, int, int);
 
 /**
+ * Returns the x position that centers a weapon name of a width.
+ *
  * @mangled GetWeaponNamePutX__Fii
  * @address 0x1F96C0
  * @size 0x10

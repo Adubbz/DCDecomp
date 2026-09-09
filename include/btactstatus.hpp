@@ -48,7 +48,7 @@ struct BT_ACT_STATUS {
     s32 unk_09C;
     s32 unk_0A0;
     s32 unk_0A4;
-    s32 monstor_target; // 0x0A8; cleared before stepping monsters
+    s32 monstor_target; /**< Character the monsters last hit, or -1. */
     u8 unk_0AC[8];
     float unk_0B4;
     float unk_0B8;

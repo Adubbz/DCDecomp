@@ -751,18 +751,23 @@ CFrameVu1 *LoadCollisionFile(u_int *data) {
 int CCollision::GetPolygon(int index, sceVu0FMATRIX v0, sceVu0FMATRIX v1, sceVu0FMATRIX v2) {
     return 0;
 }
+
 int CCollision::GetMaxY(float *position) {
     return 0;
 }
+
 int CCollision::Intersection(float *from, float *to, float *hit) {
     return 0;
 }
-int CCollision::PickUpNearPoly(CCPoly *arg0) {
+
+int CCollision::PickUpNearPoly(CCPoly *poly) {
     return 0;
 }
 INCLUDE_ASM("asm/nonmatchings/dataset", PickUpNearPoly__10CCollisionFP6CCPolyRC7CBoxVu0);
+
 int CCollision::PickUpNearPoly(CCPoly *poly, float *position, float radius) {
     return 0;
 }
+
 void CCollision::Initialize() {
 }

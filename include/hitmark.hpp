@@ -79,12 +79,16 @@ STATIC_ASSERT(sizeof(CHitMark) == 0x660);
  */
 class CHitPointMark {
 public:
+    /**
+     * Starts the mark over a point.
+     */
     void Set(float *position) {
         sceVu0CopyVector(pos, position);
         on = 1;
         blink = 0;
         timer = 16;
     }
+
     float pos[4]; /**< World position of the mark. */
     s32 timer;    /**< Steps that the mark still draws for. */
     s32 blink;    /**< 1 while the mark shows; 0 while it is hidden. */
@@ -112,6 +116,11 @@ public:
 
 STATIC_ASSERT(sizeof(CHitPointMark) == 0x20);
 
+/** Marks drawn where the player's hits land. */
 extern "C" CHitMark HitMark[16];
+
+/** Marks blinked where the player's hits land. */
 extern "C" CHitPointMark HitPointMark[16];
+
+/** Mark that the next hit takes. */
 extern "C" int hitCnt;

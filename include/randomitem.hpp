@@ -70,6 +70,8 @@ public:
     void CheckID(void);
 
     /**
+     * Tells whether an item already lies on the floor.
+     *
      * @mangled CheckItemNo__11CRandomItemFi
      * @address 0x1D7320
      * @size 0x60

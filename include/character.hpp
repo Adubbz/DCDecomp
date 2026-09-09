@@ -105,13 +105,18 @@ public:
      */
     CCharacter() { Initialize(); }
 
-    /** Selects the motion parameters without advancing the character. */
+    /**
+     * Selects the motion the character plays next, without advancing it.
+     */
     void SetMotion(int no, int mode, float speed = -1.0f) {
         motion_no = no;
         flags = mode;
         motion_speed = speed;
     }
 
+    /**
+     * Sets the speed of the motion the character plays.
+     */
     void SetMotionSpeed(float speed) { motion_speed = speed; }
 
     float unk_0B0;
@@ -139,14 +144,14 @@ public:
     float unk_C6C;
     s32 motion_state; /**< 0 while no motion plays, 2 while one plays, 3 as one ends. */
     CCloth **cloth;   /**< Pieces of cloth that the character wears. */
-    CCloth *cloth_buf[8]; // copied as a 0x20-byte member; Initialize clears first four
+    CCloth *cloth_buf[8]; /**< Storage the cloth pointers start in. */
     s32 unk_C98;
     s32 unk_C9C;
     s32 unk_CA0;
     sceVu0FVECTOR unk_CB0[2];
     sceVu0FVECTOR unk_CD0;
     sceVu0FVECTOR unk_CE0;
-    float fade[4]; // current alpha, two parameters, lower alpha limit
+    float fade[4];                                      /**< Alpha the character draws with, two spare values, and the alpha it fades down to. */
     CFakePointLight point_light[CHARA_POINT_LIGHT_MAX]; /**< Lights that the character stands in. */
     CHARA_FOOT_SOUND foot_sound[CHARA_FOOT_SOUND_MAX];  /**< Sounds that the feet play. */
     s32 foot_sound_id;                                  /**< Set of foot sounds that the ground asks for; below zero for none. */

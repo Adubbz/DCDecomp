@@ -321,7 +321,20 @@ STATIC_ASSERT(sizeof(MoveCheckInfo) == 0xD0);
 void MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_info, CCPoly *polys,
                int poly_num, int mode);
 
-/** @mangled CheckHit__FP6CCPolyiPfPfPfii */
+/**
+ * Finds the polygon a line from one point to another crosses, or -1.
+ *
+ * @mangled CheckHit__FP6CCPolyiPfPfPfii
+ * @address 0x149D50
+ * @size 0x324
+ */
 int CheckHit(CCPoly *poly, int count, float *from, float *to, float *hit, int mode, int flags);
-/** @mangled CheckWidth__FP6CCPolyiPffPfi */
+
+/**
+ * Pushes a position out of the polygons within a radius of it.
+ *
+ * @mangled CheckWidth__FP6CCPolyiPffPfi
+ * @address 0x14AF70
+ * @size 0x8B8
+ */
 int CheckWidth(CCPoly *poly, int count, float *position, float radius, float *hit, int mode);

@@ -12,7 +12,15 @@ INCLUDE_ASM("asm/nonmatchings/ebattle", CommandTEX_ANIME__FPPv);
 INCLUDE_ASM("asm/nonmatchings/ebattle", CommandTEX_ANIME_DATA__FPPv);
 INCLUDE_ASM("asm/nonmatchings/ebattle", CommandTEX_ANIME_DATA2__FPPv);
 INCLUDE_ASM("asm/nonmatchings/ebattle", CommandTEX_SCROLL_DATA__FPPv);
-void CommandTEX_ANIME_END(void **arg0) {
+
+/**
+ * Ends a texture animation command; nothing remains to be done.
+ *
+ * @mangled CommandTEX_ANIME_END__FPPv
+ * @address 0x1680F0
+ * @size 0x8
+ */
+void CommandTEX_ANIME_END(void **arguments) {
 }
 
 /* External */

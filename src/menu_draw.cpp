@@ -4,22 +4,23 @@
 
 #include "menu_draw.hpp"
 
-#include <cstring>
-#include <cstdlib>
 #include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include "camera.hpp"
-#include "dataread.hpp"
-#include "gamepad.hpp"
-#include "menuitemstep.hpp"
-#include "texture.hpp"
 #include "clsmes.hpp"
+#include "dataread.hpp"
+#include "dun/gameloop.hpp"
+#include "gamepad.hpp"
 #include "itemdata.hpp"
 #include "menu_inventory.hpp"
+#include "menuitemstep.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
-#include "snd.hpp"
 #include "savedata.hpp"
+#include "snd.hpp"
+#include "texture.hpp"
 #include "userstatus.hpp"
 
 DUN_ENTER_MENU DEnterMenu;
@@ -41,9 +42,11 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeyNewDir__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeyFormat__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeyUnFormat__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeyDifVersion__Fv);
+
 s32 SaveMenuKeyDelete(void) {
     return 1;
 }
+
 s32 SaveMenuKeyCopy(void) {
     return 1;
 }
@@ -90,35 +93,37 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawEventAndFishMenuBoard__FP8CTexture
 INCLUDE_ASM("asm/nonmatchings/menu_draw", EventItemSelectDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawEventItemBoard__FiiiiiP8CTexture);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PlayerAllItemCheck__Fi);
-s32 GetAddAttachItem(s32 arg0) {
-    s32 var_2;
 
-    var_2 = 0;
-    if ((arg0 >= 0x5B) && (arg0 < 0x5F)) {
-        var_2 = 1;
+s32 GetAddAttachItem(s32 item_no) {
+    s32 result;
+
+    result = 0;
+    if ((item_no >= 0x5B) && (item_no < 0x5F)) {
+        result = 1;
     }
-    return var_2;
+    return result;
 }
-int TransWepNo(int weapon_no) {
-    s32 var_4;
 
-    var_4 = weapon_no;
-    if (var_4 > 0) {
-        if ((var_4 > 0) && (var_4 < 0x15)) {
-            var_4 += 0x100;
-        } else if ((var_4 >= 0x15) && (var_4 < 0x21)) {
-            var_4 += 0x116;
-        } else if ((var_4 >= 0x21) && (var_4 < 0x2E)) {
-            var_4 += 0x119;
-        } else if ((var_4 >= 0x2E) && (var_4 < 0x3A)) {
-            var_4 += 0x11D;
-        } else if ((var_4 >= 0x3A) && (var_4 < 0x46)) {
-            var_4 += 0x121;
-        } else if ((var_4 >= 0x46) && (var_4 < 0x51)) {
-            var_4 += 0x125;
+int TransWepNo(int weapon_no) {
+    s32 item_no;
+
+    item_no = weapon_no;
+    if (item_no > 0) {
+        if ((item_no > 0) && (item_no < 0x15)) {
+            item_no += 0x100;
+        } else if ((item_no >= 0x15) && (item_no < 0x21)) {
+            item_no += 0x116;
+        } else if ((item_no >= 0x21) && (item_no < 0x2E)) {
+            item_no += 0x119;
+        } else if ((item_no >= 0x2E) && (item_no < 0x3A)) {
+            item_no += 0x11D;
+        } else if ((item_no >= 0x3A) && (item_no < 0x46)) {
+            item_no += 0x121;
+        } else if ((item_no >= 0x46) && (item_no < 0x51)) {
+            item_no += 0x125;
         }
     }
-    return var_4;
+    return item_no;
 }
 INCLUDE_ASM("asm/nonmatchings/menu_draw", TransWepNoNewToOld__Fi);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @3735);
@@ -137,6 +142,7 @@ INCLUDE_RODATA("asm/nonmatchings/menu_draw", @763__3);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @764__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @765__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @776__3);
+
 void ExitDunEnterMenu() {
     GamePad.AutoRepeatOff();
     GamePad.MenuModeOff();
@@ -145,6 +151,7 @@ void ExitDunEnterMenu() {
     DngActiveWeaponTextureCopy();
     TexManager.DeleteTextureBlock(DEnterMenu.texture_block);
 }
+
 int DunEnterMenuLoop() {
     rand();
     ReadBG();
@@ -200,24 +207,26 @@ INCLUDE_RODATA("asm/nonmatchings/menu_draw", @2049);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @2050);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @2051);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DngActiveWeaponTextureCopy__Fv);
-s32 GetWeaponMsgNo(WEAPON_HAVE *arg0) {
-    s16 temp_4;
 
-    if (arg0 == NULL) {
+s32 GetWeaponMsgNo(WEAPON_HAVE *weapon) {
+    s16 item_no;
+
+    if (weapon == NULL) {
         return 0;
     }
-    temp_4 = arg0->item_no;
-    if (temp_4 < 0x101) {
+    item_no = weapon->item_no;
+    if (item_no < 0x101) {
         return 0x3E7;
     }
-    return GetCommonItemInfo((s32) temp_4)->msg + 0x64;
+    return GetCommonItemInfo((s32) item_no)->msg + 0x64;
 }
-s16 GetWeaponMsgNo2(s32 arg0) {
-    COM_ITEM_INFO *temp_2;
 
-    temp_2 = GetCommonItemInfo(arg0);
-    if (temp_2 != NULL) {
-        return temp_2->msg;
+s16 GetWeaponMsgNo2(s32 item_no) {
+    COM_ITEM_INFO *info;
+
+    info = GetCommonItemInfo(item_no);
+    if (info != NULL) {
+        return info->msg;
     }
     return 0;
 }
@@ -228,6 +237,7 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", InitItemPolygonView__FiP1);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", EnterItemPolygonView__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", LocalDrawItemPolygonView__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawItemPolygonView__Fv);
+
 int ConvDebugSelectToExcelListNo(int selection) {
     int item_no;
 
@@ -254,9 +264,10 @@ INCLUDE_RODATA("asm/nonmatchings/menu_draw", @559);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuTextureDir__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuLangFlag__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowSelectLanguage__Fi);
-void GetPathReadDifferntLang(s8 *arg0) {
-    strcpy(arg0, GetMenuTextureDir());
-    strcat(arg0, GetNowSelectLanguage(GetMenuLangFlag()));
+
+void GetPathReadDifferntLang(char *path) {
+    strcpy(path, GetMenuTextureDir());
+    strcat(path, GetNowSelectLanguage(GetMenuLangFlag()));
 }
 INCLUDE_ASM("asm/nonmatchings/menu_draw", LoadFileBGMenuData__FPcP1);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", LoadFileMenuData__FPcPUi);
@@ -270,6 +281,7 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", Get3DPosTo2DPos__FP6CFramePi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuCommonFontW__Fii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuCommonPutXY__FP6ClsMesi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", InitMenuMesSet__FiPs);
+
 void DrawMenuClsMes(ClsMes *message, int x, int y) {
     if (message != NULL) {
         message->text_x = x;
@@ -278,6 +290,7 @@ void DrawMenuClsMes(ClsMes *message, int x, int y) {
         message->DrawMesWin();
     }
 }
+
 void ComMenuSePlay(int sound) {
     if (sound >= 0) {
         SndSePlay(sound, -1, 0);
@@ -290,8 +303,9 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuTextureReload__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuTextureDelete__FPi);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @728__6);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", AllFillBoxForMenu__FUcUcUcUc);
+
 void AllFadeForMenu(int alpha) {
-    AllFillBoxForMenu(0, 0, 0, (unsigned char)alpha);
+    AllFillBoxForMenu(0, 0, 0, (unsigned char) alpha);
 }
 INCLUDE_ASM("asm/nonmatchings/menu_draw", FrameImageDraw__Fii);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @764__3);
@@ -303,6 +317,7 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawAttachNumberOrWeapon__Fiiiiiiii);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @852__4);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", FadeTexX__FiiiiPci);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", RetCTex__FsRiRi);
+
 void MenuTextureClip(int &position, int &source, int &length, int minimum, int maximum) {
     if (position < minimum && position + length > minimum) {
         length = position + length - minimum;
@@ -313,6 +328,7 @@ void MenuTextureClip(int &position, int &source, int &length, int minimum, int m
         length = maximum - position;
     }
 }
+
 int GetNumberKeta(int value) {
     int digits = 1;
     while (value >= 10) {
@@ -328,15 +344,18 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenuVibeItem__Fiiiii);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @994__2);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMainMenuRightHelpWinLangOffset__FRfRfRfRf);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMainMenuRightHelpMsgLangOffset__FRiRi);
-void InitHaveData(IHAVEITEM *arg0) {
-    memset(arg0, -1, 0x14U);
+
+void InitHaveData(IHAVEITEM *item) {
+    memset(item, -1, 0x14U);
 }
-void InitHaveWep(WEAPON_HAVE *arg0) {
-    memset(arg0, 0, 0xF8U);
-    arg0->item_no = -1;
+
+void InitHaveWep(WEAPON_HAVE *weapon) {
+    memset(weapon, 0, 0xF8U);
+    weapon->item_no = -1;
 }
-void InitHaveAttach(ATTACH_LIST *arg0) {
-    memset(arg0, 0, 0x20U);
+
+void InitHaveAttach(ATTACH_LIST *attachment) {
+    memset(attachment, 0, 0x20U);
 }
 
 void MenuDataSwap(s16 *first, s16 *second) {
@@ -394,6 +413,7 @@ INCLUDE_RODATA("asm/nonmatchings/menu_draw", @1073);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", BoardModeChangeKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardLimmitCheck__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardKeySub__Fv);
+
 void PersonalBoardKey() {
     BoardModeChangeKey();
     PersonalBoardLimmitCheck();
@@ -449,63 +469,87 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", CompAttach__FP11ATTACH_LISTP11ATTACH_L
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonAttachBoardSub__FP11ATTACH_LIST__2);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonAttachBoard__FP11ATTACH_LIST);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", WhatIsKindofItem__Fi);
-s8 WhoIsWeaponEquip(int weapon_no) {
-    COM_ITEM_INFO *temp_2_2;
-    WEAPON_DATA *temp_2;
 
-    temp_2_2 = GetCommonItemInfo(weapon_no);
-    if (temp_2_2 == NULL) {
+s8 WhoIsWeaponEquip(int weapon_no) {
+    COM_ITEM_INFO *info;
+    WEAPON_DATA *data;
+
+    info = GetCommonItemInfo(weapon_no);
+    if (info == NULL) {
         return -1;
     }
-    if (temp_2_2->kind != 2) {
+    if (info->kind != 2) {
         return -1;
     }
-    temp_2 = GetWeaponDataInfo((s32) temp_2_2->index);
-    if (temp_2 != NULL) {
-        return (s8) temp_2->owner;
+    data = GetWeaponDataInfo((s32) info->index);
+    if (data != NULL) {
+        return (s8) data->owner;
     }
     return -1;
 }
+
 int GetWeaponHoleNum(int item) {
     COM_ITEM_INFO *info = GetCommonItemInfo(item);
-    if (info == NULL) return 0;
-    if (info->kind != 2) return 0;
+    if (info == NULL) {
+        return 0;
+    }
+    if (info->kind != 2) {
+        return 0;
+    }
     WEAPON_DATA *data = GetWeaponData(item);
-    if (data == NULL) return 0;
+    if (data == NULL) {
+        return 0;
+    }
     int count = 0;
     for (int i = 0; i <= 5; i++) {
-        if (data->hole[i] > 0) count++;
-    }
-    return count;
-}
-int GetNowWeaponAttachNum(WEAPON_HAVE *weapon) {
-    int count = 0;
-    if (weapon == NULL) return 0;
-    WEAPON_DATA *data = GetWeaponData(weapon->item_no);
-    if (data != NULL) {
-        for (int i = 0; i < 6; i++) {
-            if (data->hole[i] > 0 && weapon->attach[i].item_no >= 0x51) count++;
+        if (data->hole[i] > 0) {
+            count++;
         }
     }
     return count;
 }
-int GetWeaponMaxExp(WEAPON_HAVE *weapon) {
-    if (weapon == NULL) return 0;
+
+int GetNowWeaponAttachNum(WEAPON_HAVE *weapon) {
+    int count = 0;
+    if (weapon == NULL) {
+        return 0;
+    }
     WEAPON_DATA *data = GetWeaponData(weapon->item_no);
-    if (data == NULL) return 1;
-    // Retail reads the signed low byte here, despite exp_base's s16 storage.
-    int experience = *(s8 *)&data->exp_base;
+    if (data != NULL) {
+        for (int i = 0; i < 6; i++) {
+            if (data->hole[i] > 0 && weapon->attach[i].item_no >= 0x51) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int GetWeaponMaxExp(WEAPON_HAVE *weapon) {
+    if (weapon == NULL) {
+        return 0;
+    }
+    WEAPON_DATA *data = GetWeaponData(weapon->item_no);
+    if (data == NULL) {
+        return 1;
+    }
+    int experience = *(s8 *) &data->exp_base;
     for (int i = 0; i < weapon->unk_02; i++) {
         experience += data->exp_per_level;
     }
-    if (experience > 999) experience = 999;
-    if (experience <= 0) experience = 99;
+    if (experience > 999) {
+        experience = 999;
+    }
+    if (experience <= 0) {
+        experience = 99;
+    }
     return experience;
 }
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowItemNum__FsP9ITEM_PACK);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DeleteItemAfterUseItem__FsP9ITEM_PACK);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowModeMaxNum__FiPi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", WepDataListToHaveCopy__FiP11WEAPON_HAVE);
+
 void AttachDataListToHaveCopy(int attachment_no, ATTACH_LIST *attachment) {
     if ((attachment_no < 0x51) || (attachment_no >= 0x84)) {
         return;

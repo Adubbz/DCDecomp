@@ -295,22 +295,23 @@ float LinerInterpolation(float from, float to, float at) {
 }
 INCLUDE_ASM("asm/nonmatchings/gameutil", AreaAddPos__FPiPiPi);
 INCLUDE_ASM("asm/nonmatchings/gameutil", RollPos__FPfPffPf);
-int CheckPosInOutForRect(RECT *rect, int x, int y) {
-    s32 temp_3;
-    s32 temp_3_2;
 
-    temp_3_2 = rect->x;
-    if (x < temp_3_2) {
+int CheckPosInOutForRect(RECT *rect, int x, int y) {
+    s32 top;
+    s32 left;
+
+    left = rect->x;
+    if (x < left) {
         return 0;
     }
-    if ((temp_3_2 + rect->width) < x) {
+    if ((left + rect->width) < x) {
         return 0;
     }
-    temp_3 = rect->y;
-    if (y < temp_3) {
+    top = rect->y;
+    if (y < top) {
         return 0;
     }
-    return ((temp_3 + rect->height) < y) ? 0 : 1;
+    return ((top + rect->height) < y) ? 0 : 1;
 }
 INCLUDE_ASM("asm/nonmatchings/gameutil", GetDisPosToRect__FP4RECTii);
 INCLUDE_ASM("asm/nonmatchings/gameutil", GetScrPosFromChar__FP10CCharacterPi);

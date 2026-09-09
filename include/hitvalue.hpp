@@ -47,5 +47,3 @@ public:
 void HitValueEntry(CHitValue *values, float *position, int amount, int kind, CFrame *frame);
 
 STATIC_ASSERT(sizeof(CHitValue) == 0x60);
-
-extern "C" CHitValue *NowHitValue;

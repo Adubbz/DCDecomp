@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+
 #include <libgraph.h>
 
 class CCamera;
@@ -390,15 +391,18 @@ void SndSetReadBuffer(unsigned int *buffer);
  */
 void SndSoundLoad(int set_no);
 
-
-/** Submit the sprite blending register.
+/**
+ * Submits the blending register that sprites draw with.
+ *
  * @mangled setAlphaFlag__FP13sceVif1PacketP10sceGsAlpha
  * @address 0x15BC20
  * @size 0xE0
  */
 void setAlphaFlag(sceVif1Packet *packet, sceGsAlpha *alpha);
 
-/** Draw a sprite with the default alpha.
+/**
+ * Draws a sprite with the default alpha.
+ *
  * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_
  * @address 0x15C000
  * @size 0x304

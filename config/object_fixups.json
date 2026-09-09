@@ -408,16 +408,18 @@
       ],
       ".objanimebss": [
         "obj_anime"
+      ],
+      ".eventoffset": [
+        "@475__2"
+      ],
+      ".objworldorigin": [
+        "@554"
       ]
     },
     "drop_functions": [
       "__sinit_editloop3.cpp",
       ".p__sinit_editloop3.cpp"
-    ],
-    "constant_sections": {
-      "@475__2": ".eventoffset",
-      "@554": ".objworldorigin"
-    }
+    ]
   },
   "src/objanime.cpp": {
     "rodata_exports": [
@@ -842,67 +844,7 @@
       "@606__4",
       "@798",
       "@1076"
-    ],
-    "constant_sections": {
-      "@345__6": ".playerheights",
-      "@937__2": ".shadowlight",
-      "@606__4": ".monsterkeys",
-      "maxFloorTbl__3": ".monsterfloormax",
-      "BtEnemyLayout00": ".BtEnemyLayout00",
-      "BtUraEnemyLayout00": ".BtUraEnemyLayout00",
-      "BtEnemyLayout01": ".BtEnemyLayout01",
-      "BtUraEnemyLayout01": ".BtUraEnemyLayout01",
-      "BtEnemyLayout02": ".BtEnemyLayout02",
-      "BtUraEnemyLayout02": ".BtUraEnemyLayout02",
-      "BtEnemyLayout03": ".BtEnemyLayout03",
-      "BtUraEnemyLayout03": ".BtUraEnemyLayout03",
-      "BtEnemyLayout04": ".BtEnemyLayout04",
-      "BtUraEnemyLayout04": ".BtUraEnemyLayout04",
-      "BtEnemyLayout05": ".BtEnemyLayout05",
-      "BtUraEnemyLayout05": ".BtUraEnemyLayout05",
-      "BtEnemyLayout06": ".BtEnemyLayout06",
-      "BtUraEnemyLayout06": ".BtUraEnemyLayout06",
-      "BtEnemyLayoutList": ".BtEnemyLayoutList",
-      "BtUraEnemyLayoutList": ".BtUraEnemyLayoutList",
-      "MonstorTable": ".monstortable",
-      "BtEntryEffect00": ".BtEntryEffect00",
-      "BtEntryEffect01": ".BtEntryEffect01",
-      "BtEntryEffect02": ".BtEntryEffect02",
-      "BtEntryEffect03": ".BtEntryEffect03",
-      "BtEntryEffect04": ".BtEntryEffect04",
-      "BtEntryEffect05": ".BtEntryEffect05",
-      "BtEntryEffect06": ".BtEntryEffect06",
-      "BtEntryEffect07": ".BtEntryEffect07",
-      "BtEntryEffect08": ".BtEntryEffect08",
-      "BtEntryEffect09": ".BtEntryEffect09",
-      "BtEntryEffect10": ".BtEntryEffect10",
-      "BtEntryEffect11": ".BtEntryEffect11",
-      "BtEntryEffect12": ".BtEntryEffect12",
-      "BtEntryEffect13": ".BtEntryEffect13",
-      "BtEntryEffect14": ".BtEntryEffect14",
-      "BtEntryEffect15": ".BtEntryEffect15",
-      "BtEntryEffect16": ".BtEntryEffect16",
-      "BtEntryEffect17": ".BtEntryEffect17",
-      "BtEntryEffect18": ".BtEntryEffect18",
-      "BtEntryEffect19": ".BtEntryEffect19",
-      "BtEntryEffect20": ".BtEntryEffect20",
-      "BtEntryEffect21": ".BtEntryEffect21",
-      "BtEntryEffect22": ".BtEntryEffect22",
-      "BtEntryEffect23": ".BtEntryEffect23",
-      "BtEntryEffect24": ".BtEntryEffect24",
-      "BtEntryEffect25": ".BtEntryEffect25",
-      "BtEntryEffect26": ".BtEntryEffect26",
-      "BtEntryEffect27": ".BtEntryEffect27",
-      "BtEntryEffect28": ".BtEntryEffect28",
-      "BtEntryEffect29": ".BtEntryEffect29",
-      "BtEntryEffect30": ".BtEntryEffect30",
-      "BtEntryEffect31": ".BtEntryEffect31",
-      "BtEntryEffect32": ".BtEntryEffect32",
-      "BtEntryEffect33": ".BtEntryEffect33",
-      "BtEntryEffectTbl": ".entryeffecttbl",
-      "@798": ".draworigin",
-      "@1076": ".damageforward"
-    }
+    ]
   },
   "src/menu_draw.cpp": {
     "sections": {
@@ -911,9 +853,6 @@
       ],
       ".menuerrorcnt": [
         "MenuEtcErrCnt"
-      ],
-      ".menufloormax": [
-        "maxFloorTbl__4"
       ]
     }
   }

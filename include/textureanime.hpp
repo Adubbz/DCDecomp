@@ -31,7 +31,7 @@ STATIC_ASSERT(sizeof(CTexAnimeData) == 0x58);
 
 class CTextureAnime {
 public:
-    s32 unk_000[124]; // retail character assignment copies 0x1F0 bytes in words
+    s32 unk_000[124];
 
     /**
      * @mangled TexAnime__13CTextureAnimeFi

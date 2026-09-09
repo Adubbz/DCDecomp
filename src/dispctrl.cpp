@@ -11,9 +11,17 @@ INCLUDE_RODATA("asm/nonmatchings/dispctrl", @230);
 
 INCLUDE_ASM("asm/nonmatchings/dispctrl", Sizeof__6CBoundFv);
 INCLUDE_ASM("asm/nonmatchings/dispctrl", openGiftag__FP13sceVif1Packet);
-void closeGiftag(sceVif1Packet *arg0) {
-    sceVif1PkCloseGifTag(arg0);
-    sceVif1PkCloseDirectCode(arg0);
+
+/**
+ * Closes the GIF tag and the direct code that openGiftag began.
+ *
+ * @mangled closeGiftag__FP13sceVif1Packet
+ * @address 0x13DF00
+ * @size 0x38
+ */
+void closeGiftag(sceVif1Packet *packet) {
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
 }
 INCLUDE_ASM("asm/nonmatchings/dispctrl", Draw__10CDebugFontFv);
 INCLUDE_ASM("asm/nonmatchings/dispctrl", SearchPTS__FPUiPc);

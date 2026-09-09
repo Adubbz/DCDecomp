@@ -5743,7 +5743,7 @@ void motionDrive(void) {
     CCollisionData *collision = NowColData;
 
     for (i = 0; i < 96; i++) {
-        if (collision->unk_3C00[i] == 0) {
+        if (collision->active[i] == 0) {
             continue;
         }
         if (collision->hit[i].unk_70 > 0) {
@@ -5753,11 +5753,11 @@ void motionDrive(void) {
         }
         collision->hit[i].life--;
         if (collision->hit[i].life <= 0) {
-            collision->unk_3C00[i] = 0;
+            collision->active[i] = 0;
             collision->hit[i].unk_38 = 0.0f;
             continue;
         }
-        collision->hit[i].unk_3C += collision->hit[i].unk_40;
+        collision->hit[i].radius += collision->hit[i].unk_40;
         if (collision->hit[i].unk_38 != 0.0f) {
             sceVu0ScaleVectorXYZ(collision->hit[i].unk_10, collision->hit[i].unk_10,
                                  collision->hit[i].unk_38);
@@ -6945,7 +6945,7 @@ int BtCheckDamageProc(void) {
                     velo__2[0] = blowVelo[0] / 10.0f;
                     velo__2[2] = blowVelo[2] / 10.0f;
                     if (NowColData->hit[no].unk_48 != 3) {
-                        NowColData->unk_3C00[no] = 0;
+                        NowColData->active[no] = 0;
                     }
                     if (dmgSnd <= 0) {
                         SndSePlay(0xA2, -1, 0);
@@ -6966,7 +6966,7 @@ int BtCheckDamageProc(void) {
                     sceVu0CopyVector(blowVelo, NowColData->hit[no].velocity);
                     unitBlowActionRot(blowVelo);
                     if (NowColData->hit[no].unk_48 != 3) {
-                        NowColData->unk_3C00[no] = 0;
+                        NowColData->active[no] = 0;
                     }
 
                     if (damage < UserStatus->hp[UserStatus->cur_chara]) {
@@ -7014,7 +7014,7 @@ int BtCheckDamageProc(void) {
                     velo__2[0] = away[0] / 2.0f;
                     velo__2[2] = away[2] / 2.0f;
                     if (NowColData->hit[no].unk_48 != 3) {
-                        NowColData->unk_3C00[no] = 0;
+                        NowColData->active[no] = 0;
                     }
                     if (dmgSnd <= 0) {
                         SndSePlay(0xA2, -1, 0);
@@ -7027,7 +7027,7 @@ int BtCheckDamageProc(void) {
                     setUnitAmbientAnime(80.0f, 1.0f, 255.0f, 0.0f, 0.0f);
                     UserStatus->AddNowLife(UserStatus->cur_chara, -damage, 10.0f);
                     if (NowColData->hit[no].unk_48 != 3) {
-                        NowColData->unk_3C00[no] = 0;
+                        NowColData->active[no] = 0;
                     }
 
                     float heavy_value[4] = {0.0f, 0.0f, 0.0f, 1.0f};

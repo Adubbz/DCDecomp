@@ -10,18 +10,54 @@ class CCameraFollow;
 class CCPoly;
 struct BT_SHOT_EFFECT;
 class CFrame;
+class CCollisionData;
+class CDngMessageMan;
+class CDungeonMap;
+class CHitValue;
+class CMenuItemStep;
+class CRandomItem;
+class CSHOT_EFFECT_PACK;
+class CStealItem;
+struct MAP_TRAP_CIRCLE;
+
+/** Player character. */
+extern "C" CCharacter CharaMain;
+
+/** Debug switches shared by dungeon rendering. */
+extern "C" s32 DebugStatus[21];
+
+/** Message window the dungeon shows. */
+extern "C" CDngMessageMan DngMessMan;
+
+/** Item the player is stealing back from a monster. */
+extern "C" CStealItem StealItem;
+
+/** Item count animation of the dungeon's menus. */
+extern "C" CMenuItemStep ItemVolumeStep;
 
 /** Model used to draw the monster cursor. */
 extern CFrame *cursorFrame;
+
+/** Dungeon the player is in. */
 extern s32 selectMapNo;
-class CRandomItem;
+
+/** Items lying on the floor. */
 extern CRandomItem *RandomItem;
+
+/** Nonzero while the player wears the item that reveals every monster on the minimap. */
 extern s32 BtEquipMasuisyou;
-/** Debug switches shared by dungeon rendering. */
-extern "C" s32 DebugStatus[21];
-/** Player character storage supplied by the dungeon overlay. */
-extern "C" CCharacter CharaMain;
-struct MAP_TRAP_CIRCLE;
+
+/** Map of the floor the player is on. */
+extern CDungeonMap *NowDngMap;
+
+/** Damage numbers the dungeon shows. */
+extern CHitValue *NowHitValue;
+
+/** Projectile effects the dungeon has running. */
+extern CSHOT_EFFECT_PACK *NowShotEffect;
+
+/** Hits the collision test found this frame. */
+extern CCollisionData *NowColData;
 
 /**
  * @mangled LoadBaseTexture__Fv

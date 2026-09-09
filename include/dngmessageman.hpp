@@ -39,5 +39,3 @@ public:
      */
     void SetSteevMes(int);
 };
-
-extern "C" CDngMessageMan DngMessMan;
