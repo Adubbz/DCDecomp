@@ -8344,7 +8344,6 @@ void DelActiveItem(int slot) {
     }
 }
 
-#if DUN_COMPILE_UNMATCHED
 int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
     if (trap == NULL) {
         return;
@@ -8362,8 +8361,8 @@ int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
     s8 slot;
 
     status = UserStatus;
-    gauge = &status->unk_4346;
     had = status->unk_4346;
+    gauge = &status->unk_4346;
     chara = status->cur_chara;
     slots = status->equipped_weapon_slot;
     slot = slots[chara];
@@ -8444,9 +8443,6 @@ int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
     SndSePlay(se, -1, 0);
     return kind;
 }
-#endif /* DUN_COMPILE_UNMATCHED */
-
-INCLUDE_ASM("asm/nonmatchings/dun/gameloop", Run_TrapCircle__FP15MAP_TRAP_CIRCLE);
 
 void LockOffTargte(void) {
     lockOnTargetDraw = 0;
