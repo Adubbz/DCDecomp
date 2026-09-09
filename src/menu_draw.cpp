@@ -6,6 +6,7 @@
 
 #include <cstring>
 #include <cstdlib>
+#include <cstdio>
 
 #include "camera.hpp"
 #include "dataread.hpp"
@@ -18,8 +19,15 @@
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "snd.hpp"
+#include "savedata.hpp"
+#include "userstatus.hpp"
 
 DUN_ENTER_MENU DEnterMenu;
+CDngStatusData *DEnterStatusPt;
+int MenuEtcErrCnt;
+
+/** Number of floors available in each dungeon. */
+static int maxFloorTbl__4[7] = {15, 17, 18, 18, 15, 25, 100};
 
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeySaveCheck__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SaveMenuKeySaveDecide__Fv);

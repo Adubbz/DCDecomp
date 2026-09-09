@@ -903,5 +903,18 @@
       "@798": ".draworigin",
       "@1076": ".damageforward"
     }
+  },
+  "src/menu_draw.cpp": {
+    "sections": {
+      ".denterstatus": [
+        "DEnterStatusPt"
+      ],
+      ".menuerrorcnt": [
+        "MenuEtcErrCnt"
+      ],
+      ".menufloormax": [
+        "maxFloorTbl__4"
+      ]
+    }
   }
 }

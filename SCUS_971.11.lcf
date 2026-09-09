@@ -538,6 +538,9 @@ SECTIONS
         monstorunit.cpp.o (.shadowlight) // 0x00291810
         monstorunit.cpp.o (.damageforward) // 0x00291820
         main.data.part6f.s.o (.data) // 0x00291830
+        menu_draw.cpp.o (.menufloormax) // 0x00294150
+        . = ALIGN(0x10);
+        main.data.part6g.s.o (.data) // 0x00294170
         weapon_buildup.cpp.o (.data) // 0x00295810
         main.data.part6d.s.o (.data) // 0x00295830
         weaponlevelup.cpp.o (.data)  // 0x00295840
@@ -703,6 +706,10 @@ SECTIONS
 		monstorunit.cpp.o (.sbss) // 0x002a2c68, counter and guard
 		. = ALIGN(4);
 		main.sbss.part5c.s.o (.sbss) // 0x002a2c70
+		menu_draw.cpp.o (.menuerrorcnt) // 0x002a2f50
+		main.sbss.denter-gap.s.o (.sbss) // 0x002a2f54
+		menu_draw.cpp.o (.denterstatus) // 0x002a2f5c
+		main.sbss.denter-tail.s.o (.sbss) // 0x002a2f60
 		charakey.cpp.o (.sbss)
 		. = ALIGN(4);
 		main.sbss.part5b.s.o (.sbss)   // 0x002a2fd8
@@ -760,7 +767,7 @@ SECTIONS
 		main.bss.part5b.s.o (.bss)     // 0x01d3d1d0
 		editloop3.cpp.o (.spritebss)  // 0x01d3dd20
 		editloop3.cpp.o (.objanimebss) // 0x01d3e5a0
-		main.bss.part5c.s.o (.bss)     // 0x01d3e5a0
+		main.bss.part5c.s.o (.bss)     // 0x01d3eea0
 		editloop3.cpp.o (.workbss)    // 0x01d3ef90
 		main.bss.part5d.s.o (.bss)     // 0x01d3f010
 		dungeonmap.cpp.o (.bss)

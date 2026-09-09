@@ -11,6 +11,7 @@ class CFrame;
 class CRect_i_;
 class CTexture;
 class CUserStatus;
+class CDngStatusData;
 class ClsMes;
 struct IHAVEITEM;
 struct ITEM_PACK;
@@ -43,6 +44,12 @@ struct DUN_ENTER_MENU {
 };
 STATIC_ASSERT(sizeof(DUN_ENTER_MENU) == 0x1AC);
 extern DUN_ENTER_MENU DEnterMenu;
+
+/** Dungeon progress shown by the entrance menu. */
+extern CDngStatusData *DEnterStatusPt;
+
+/** Number of consecutive menu operation errors. */
+extern int MenuEtcErrCnt;
 
 /**
  * @mangled SaveMenuKeySaveCheck__Fv
@@ -408,15 +415,13 @@ void GetAttachVolumeForMsg(ATTACH_LIST *);
  * @mangled InitDunEnterMenu__Fiii
  * @address 0x226110
  * @size 0x410
- * @unknownret
  */
-void InitDunEnterMenu(int, int, int);
+int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor);
 
 /**
  * @mangled ExitDunEnterMenu__Fv
  * @address 0x226520
  * @size 0x70
- * @unknownret
  */
 void ExitDunEnterMenu(void);
 
@@ -424,7 +429,6 @@ void ExitDunEnterMenu(void);
  * @mangled DunEnterMenuLoop__Fv
  * @address 0x226590
  * @size 0x90
- * @unknownret
  */
 int DunEnterMenuLoop(void);
 
@@ -432,7 +436,6 @@ int DunEnterMenuLoop(void);
  * @mangled DunEnterMenuKey__Fv
  * @address 0x226620
  * @size 0x6F0
- * @unknownret
  */
 int DunEnterMenuKey(void);
 
