@@ -7,12 +7,12 @@
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
-struct BT_SHOT_EFFECT;
+#include "bt_shot_effect.hpp"
 class CFrame;
 
 class CSHOT_EFFECT {
 public:
-    u8 unk_0000[0xA160];
+    u8 unk_0000[0xA160] __attribute__((aligned(16)));
 
     /**
      * @mangled Draw__12CSHOT_EFFECTFv

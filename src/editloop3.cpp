@@ -14,15 +14,16 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "actionseq.hpp"
 #include "boxvu0.hpp"
 #include "camera.hpp"
 #include "character.hpp"
 #include "clsmes.hpp"
 #include "debugfont.hpp"
 #include "dngstatusdata.hpp"
-#include "editloop3.hpp"
-#include "editloop.hpp"
 #include "editground.hpp"
+#include "editloop.hpp"
+#include "editloop3.hpp"
 #include "editpartsinfo.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
@@ -36,7 +37,34 @@
 
 /* Retail editloop3.cpp: editor event points, villagers, script opcodes and talk handling. */
 
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @447__3);
+ED_EVENT_POINT *GetNewEventPoint(CMapParts *parts, EPARTS_FUNC_DATA *function,
+                                 ED_EVENT_POINT *points, int count) {
+    ED_EVENT_POINT *point = GetNewEventPoint(points, count);
+    if (point == NULL) {
+        printf("event over!!\n");
+        return NULL;
+    }
+
+    point->enabled = 1;
+    if (parts->parts_no >= 0) {
+        point->map_object = NULL;
+        point->parts_no = parts->parts_no;
+    } else {
+        point->map_object = parts;
+        point->parts_no = -1;
+    }
+    sceVu0CopyVector(point->position, function->position);
+    sceVu0CopyVector(point->rotation, function->rotation);
+    point->start_time = ConvertTime(function->start_time);
+    point->end_time = ConvertTime(function->end_time);
+    point->completion_flag = function->completion_flag;
+    CFrame *frame = parts->frame[0];
+    point->frame = NULL;
+    if (frame != NULL) {
+        point->frame = frame->SearchFrame(function->frame_name);
+    }
+    return point;
+}
 INCLUDE_RODATA("asm/nonmatchings/editloop3", @687);
 INCLUDE_RODATA("asm/nonmatchings/editloop3", @688);
 INCLUDE_RODATA("asm/nonmatchings/editloop3", @689);
@@ -73,33 +101,7 @@ INCLUDE_RODATA("asm/nonmatchings/editloop3", @2611);
 INCLUDE_RODATA("asm/nonmatchings/editloop3", @2612);
 INCLUDE_RODATA("asm/nonmatchings/editloop3", @2613);
 INCLUDE_RODATA("asm/nonmatchings/editloop3", @2614);
-ED_EVENT_POINT *GetNewEventPoint(CMapParts *parts, EPARTS_FUNC_DATA *function,
-                                 ED_EVENT_POINT *points, int count) {
-    ED_EVENT_POINT *point = GetNewEventPoint(points, count);
-    if (point == NULL) {
-        printf("event over!!\n");
-        return NULL;
-    }
 
-    point->enabled = 1;
-    if (parts->parts_no >= 0) {
-        point->map_object = NULL;
-        point->parts_no = parts->parts_no;
-    } else {
-        point->map_object = parts;
-        point->parts_no = -1;
-    }
-    sceVu0CopyVector(point->position, function->position);
-    sceVu0CopyVector(point->rotation, function->rotation);
-    point->start_time = ConvertTime(function->start_time);
-    point->end_time = ConvertTime(function->end_time);
-    point->completion_flag = function->completion_flag;
-    CFrame *frame = parts->frame[0];
-    point->frame = NULL;
-    if (frame != NULL)
-        point->frame = frame->SearchFrame(function->frame_name);
-    return point;
-}
 int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functions,
                      int function_count, ED_EVENT_POINT *points, int point_count) {
     int created;
@@ -1135,7 +1137,17 @@ INCLUDE_ASM("asm/nonmatchings/editloop3", _NPC_DRAW__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _NPC_DRAW_SHADOW__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _SET_NPC_FOOT_SOUND__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _SET_NPC_FLOOR_ID__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", _NPC_STEP__FP12RS_STACKDATAi);
+
+/**
+ * Script opcode that steps a villager; the step happens elsewhere.
+ *
+ * @mangled _NPC_STEP__FP12RS_STACKDATAi
+ * @address 0x18F0A0
+ * @size 0xC
+ */
+s32 _NPC_STEP(RS_STACKDATA *stack, s32 argument_count) {
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/editloop3", _NPC_COL__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _NPC_STOP__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _NPC_DRAW_BEFORE__FP12RS_STACKDATAi);

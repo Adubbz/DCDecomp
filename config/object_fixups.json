@@ -384,7 +384,9 @@
       "@687",
       "@688",
       "@689",
-      "@690__2"
+      "@690__2",
+      "@475__2",
+      "@554"
     ],
     "sections": {
       ".fadebss": [
@@ -394,8 +396,30 @@
       ],
       ".fadecolbss": [
         "fade_col"
+      ],
+      ".spritebss": [
+        "Sprite"
+      ],
+      ".workbss": [
+        "work_flag"
+      ],
+      ".eventbss": [
+        "event_pause"
+      ],
+      ".objanimebss": [
+        "obj_anime"
+      ],
+      ".eventoffset": [
+        "@475__2"
+      ],
+      ".objworldorigin": [
+        "@554"
       ]
-    }
+    },
+    "drop_functions": [
+      "__sinit_editloop3.cpp",
+      ".p__sinit_editloop3.cpp"
+    ]
   },
   "src/objanime.cpp": {
     "rodata_exports": [
@@ -629,7 +653,9 @@
       "OP_CharaFrame": "OP_CharaFrame__2",
       "SceneNp": "SceneNp__2",
       "CScript": "CScript__2",
-      "CharaDataBuffer": "CharaDataBuffer__2"
+      "CharaDataBuffer": "CharaDataBuffer__2",
+      "LoadData__Fv": "LoadData__Fv__2",
+      "LoadTexture__Fv": "LoadTexture__Fv__3"
     },
     "export_constants_shared": [
       "opdat/chara/01p19a1a.chr",
@@ -679,7 +705,10 @@
       "OP_CharaFrame": "OP_CharaFrame__2",
       "CharaDataBuffer": "CharaDataBuffer__2",
       "FaceChange__Fi": "FaceChange__Fi__2",
-      "FaceChangeD__Fi": "FaceChange__Fi__3"
+      "FaceChangeD__Fi": "FaceChange__Fi__3",
+      "SmokeProcess__Fv": "SmokeProcess__Fv__2",
+      "setTexAnim__Fv": "setTexAnim__Fv__2",
+      "setTexScroll__Fv": "setTexScroll__Fv__2"
     }
   },
   "src/title/op_d.cpp": {
@@ -799,6 +828,32 @@
       "SetBuildUp__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetBuildUp__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
       "SetStatusBreak__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetStatusBreak__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
       "SetLevelUpValue__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetLevelUpValue__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i"
+    }
+  },
+  "src/monstorunit.cpp": {
+    "symbols": {
+      "__sinit_monstorunit.cpp": "__sinit_monstor.cpp",
+      ".p__sinit_monstorunit.cpp": ".p__sinit_monstor.cpp"
+    },
+    "globalize_symbols": [
+      "__sinit_monstorunit.cpp"
+    ],
+    "rodata_exports": [
+      "@345__6",
+      "@937__2",
+      "@606__4",
+      "@798",
+      "@1076"
+    ]
+  },
+  "src/menu_draw.cpp": {
+    "sections": {
+      ".denterstatus": [
+        "DEnterStatusPt"
+      ],
+      ".menuerrorcnt": [
+        "MenuEtcErrCnt"
+      ]
     }
   }
 }

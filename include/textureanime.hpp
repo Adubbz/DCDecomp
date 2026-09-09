@@ -31,7 +31,7 @@ STATIC_ASSERT(sizeof(CTexAnimeData) == 0x58);
 
 class CTextureAnime {
 public:
-    u8 unk_000[496];
+    s32 unk_000[124];
 
     /**
      * @mangled TexAnime__13CTextureAnimeFi

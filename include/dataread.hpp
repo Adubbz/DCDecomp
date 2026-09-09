@@ -272,3 +272,5 @@ void SetPacketReadBuffer(int address, int size);
  */
 int check_now_loading(void);
 
+/** Allocator that dungeon monsters take their collision polygons from. */
+extern "C" CDataAlloc2<1> *WorkBuffer__2;

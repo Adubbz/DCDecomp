@@ -336,14 +336,14 @@ void CCharacter::Step() {
     }
 
     if (this->unk_C9C != 0) {
-        this->unk_CF0 -= 0.08f;
-        if (this->unk_CF0 < this->unk_CFC) {
-            this->unk_CF0 = this->unk_CFC;
+        this->fade[0] -= 0.08f;
+        if (this->fade[0] < this->fade[3]) {
+            this->fade[0] = this->fade[3];
         }
     } else {
-        this->unk_CF0 += 0.08f;
-        if (this->unk_CF0 > 1.0f) {
-            this->unk_CF0 = 1.0f;
+        this->fade[0] += 0.08f;
+        if (this->fade[0] > 1.0f) {
+            this->fade[0] = 1.0f;
         }
     }
 
@@ -613,7 +613,7 @@ void CCharacter::Draw() {
         this->frame->SetScale(this->scale[0], this->scale[1], this->scale[2]);
     }
 
-    fade = this->unk_CF0 < 1.0f;
+    fade = this->fade[0] < 1.0f;
 
     // The scene keeps the lights it had, so that the character can put them
     // back once it has drawn.
@@ -669,9 +669,9 @@ void CCharacter::Draw() {
     }
 
     if (fade) {
-        sceVu0ScaleVectorXYZ(ambient, ambient, this->unk_CF0);
+        sceVu0ScaleVectorXYZ(ambient, ambient, this->fade[0]);
         for (i = 0; i < 4; i++) {
-            sceVu0ScaleVectorXYZ(light_colour[i], light_colour[i], this->unk_CF0);
+            sceVu0ScaleVectorXYZ(light_colour[i], light_colour[i], this->fade[0]);
         }
     }
 
@@ -813,10 +813,10 @@ void CCharacter::Initialize() {
     this->unk_0B4 = 17.0f;
     this->unk_0B8 = 60.0f;
     this->unk_C9C = 0;
-    this->unk_CF0 = 1.0f;
-    this->unk_CF4 = 0.0f;
-    this->unk_CF8 = 0.0f;
-    this->unk_CFC = 0.7f;
+    this->fade[0] = 1.0f;
+    this->fade[1] = 0.0f;
+    this->fade[2] = 0.0f;
+    this->fade[3] = 0.7f;
     this->unk_CE0[0] = 0.0f;
     this->unk_CE0[1] = 0.0f;
     this->unk_CE0[2] = 0.0f;

@@ -105,6 +105,20 @@ public:
      */
     CCharacter() { Initialize(); }
 
+    /**
+     * Selects the motion the character plays next, without advancing it.
+     */
+    void SetMotion(int no, int mode, float speed = -1.0f) {
+        motion_no = no;
+        flags = mode;
+        motion_speed = speed;
+    }
+
+    /**
+     * Sets the speed of the motion the character plays.
+     */
+    void SetMotionSpeed(float speed) { motion_speed = speed; }
+
     float unk_0B0;
     float unk_0B4;
     float unk_0B8;
@@ -116,9 +130,6 @@ public:
     CTextureAnime tex_anime; /**< Animation of every texture that the character draws. */
     tagFRAME_INF *unk_2cc;
     tagFRAME_INF *unk_2d0;
-    s32 unk_2D4;
-    s32 unk_2D8;
-    s32 unk_2DC;
     tagMOTION_TYPE motion_type;         /**< Motions of the model. */
     tagMOTION_TYPE shadow_motion_type;  /**< Motions of the shadow. */
     s32 motion_start[CHARA_MOTION_MAX]; /**< First motion number of each set; -1 where it holds none. */
@@ -130,24 +141,17 @@ public:
     float motion_speed;                              /**< Speed of the motion; -1.0 for the speed the motion gives. */
     s32 flags;
     s32 motion_no; /**< Identifier of the motion that the character plays. */
-    s32 unk_C6C;
+    float unk_C6C;
     s32 motion_state; /**< 0 while no motion plays, 2 while one plays, 3 as one ends. */
     CCloth **cloth;   /**< Pieces of cloth that the character wears. */
-    CCloth *cloth_buf[CHARA_CLOTH_MAX];
-    u8 unk_C88[16];
+    CCloth *cloth_buf[8]; /**< Storage the cloth pointers start in. */
     s32 unk_C98;
     s32 unk_C9C;
     s32 unk_CA0;
-    s32 unk_CA4;
-    s32 unk_CA8;
-    s32 unk_CAC;
     sceVu0FVECTOR unk_CB0[2];
     sceVu0FVECTOR unk_CD0;
     sceVu0FVECTOR unk_CE0;
-    float unk_CF0;
-    float unk_CF4;
-    float unk_CF8;
-    float unk_CFC;
+    float fade[4];                                      /**< Alpha the character draws with, two spare values, and the alpha it fades down to. */
     CFakePointLight point_light[CHARA_POINT_LIGHT_MAX]; /**< Lights that the character stands in. */
     CHARA_FOOT_SOUND foot_sound[CHARA_FOOT_SOUND_MAX];  /**< Sounds that the feet play. */
     s32 foot_sound_id;                                  /**< Set of foot sounds that the ground asks for; below zero for none. */
@@ -156,7 +160,6 @@ public:
     s32 event_enable;                   /**< 1 while the motion fires its events. */
     CHARA_EVENT event[CHARA_EVENT_MAX]; /**< Events that the motions fire. */
     CHARA_UNK_1068 unk_1068[16];
-    u8 unk_11A8[8];
 
     /**
      * Clears every point light that affects the character.

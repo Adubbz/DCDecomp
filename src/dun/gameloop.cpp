@@ -102,6 +102,7 @@
 #include "savedata.hpp"
 #include "shop_battlemenu.hpp"
 #include "shot_effect.hpp"
+#include "shot_effect_pack.hpp"
 #include "shot_firebar.hpp"
 #include "shot_freefuncs.hpp"
 #include "snd.hpp"
@@ -147,23 +148,6 @@ struct BOMB_INFO {
 };
 
 STATIC_ASSERT(sizeof(BOMB_INFO) == 0x20);
-
-/**
- * Names one monster of a floor's enemy layout.
- */
-struct BT_ENEMY_LAYOUT {
-    s32 unk_00;
-    s32 monster_no; /**< Identifies the monster, or -1 where the list ends. */
-    s32 unk_08;
-};
-
-/**
- * Names every monster one floor lays out.
- */
-struct BT_ENEMY_FLOOR {
-    BT_ENEMY_LAYOUT monster[9]; /**< The monsters the floor can hold. */
-    s32 unk_6C;
-};
 
 /**
  * Draws a window of debug text over the picture.
@@ -825,7 +809,7 @@ extern "C" CCollisionData CColData;
 extern "C" CSHOT ShotData;
 
 /* The shot effects the dungeon can run. */
-extern "C" CSHOT_EFFECT ShotEffect[5];
+extern "C" CSHOT_EFFECT_PACK ShotEffect;
 
 /* The shock wave the dungeon can run. */
 extern "C" CShockWave ShockWave;
@@ -1270,7 +1254,7 @@ CHitValue *NowHitValue;
 CSHOT *NowShotData;
 
 /* The shot effects the dungeon has running. */
-CSHOT_EFFECT *NowShotEffect;
+CSHOT_EFFECT_PACK *NowShotEffect;
 
 /* The effect data Osmond's default weapon shoots. */
 unsigned int *ozumond_default_effect;
@@ -1539,9 +1523,9 @@ void GameInit(void) {
     HealEffect.unk_510 = 0;
     WaterSplash_Init();
     for (int i = 0; i < 5; i++) {
-        ShotEffect[i].Initialize();
+        ShotEffect.effect[i].Initialize();
     }
-    NowShotEffect = ShotEffect;
+    NowShotEffect = &ShotEffect;
     for (int i = 0; i < 5; i++) {
         MasekiEffect[i].Initialize();
     }
@@ -2384,7 +2368,7 @@ void MainDraw(void) {
             MasekiEffect[i].Draw();
         }
 
-        CSHOT_EFFECT *shot = NowShotEffect;
+        CSHOT_EFFECT *shot = NowShotEffect->effect;
 
         for (i = 0; i < 5; i++) {
             shot[i].Draw();
@@ -3178,7 +3162,7 @@ void MoveChara(void) {
                             BtActStatus.unk_00C = 0x12;
                         }
                         if (lockOnTargetFlag != 0) {
-                            CCharacter *locked = &NowMonstorUnit->chara[lockOnTargetNo];
+                            CCharacter *locked = &NowMonstorUnit->chara[lockOnTargetNo][0];
                             sceVu0FVECTOR target;
                             float face;
 
@@ -4286,7 +4270,7 @@ void MoveChara(void) {
                                                                 if (lockOnTargetFlag != 0) {
                                                                     CCharacter *locked =
                                                                         &NowMonstorUnit
-                                                                             ->chara[lockOnTargetNo];
+                                                                             ->chara[lockOnTargetNo][0];
                                                                     sceVu0FVECTOR to_target;
                                                                     sceVu0FVECTOR target;
                                                                     float dist;
@@ -4334,7 +4318,7 @@ void MoveChara(void) {
         case 0x226:
             if (EdFadeOutCheck() != 0) {
                 int i;
-                CSHOT_EFFECT *effects = NowShotEffect;
+                CSHOT_EFFECT *effects = NowShotEffect->effect;
 
                 for (i = 0; i < 5; i++) {
                     effects[i].Initialize();
@@ -4382,7 +4366,7 @@ void MoveChara(void) {
                 TexManager.DeleteTextureBlock(0x26);
                 TexManager.CleanUpBuffer();
                 TexManager.CleanUpTextureList();
-                effects = NowShotEffect;
+                effects = NowShotEffect->effect;
                 for (i = 0; i < 5; i++) {
                     effects[i].Initialize();
                 }
@@ -5759,7 +5743,7 @@ void motionDrive(void) {
     CCollisionData *collision = NowColData;
 
     for (i = 0; i < 96; i++) {
-        if (collision->unk_3C00[i] == 0) {
+        if (collision->active[i] == 0) {
             continue;
         }
         if (collision->hit[i].unk_70 > 0) {
@@ -5769,11 +5753,11 @@ void motionDrive(void) {
         }
         collision->hit[i].life--;
         if (collision->hit[i].life <= 0) {
-            collision->unk_3C00[i] = 0;
+            collision->active[i] = 0;
             collision->hit[i].unk_38 = 0.0f;
             continue;
         }
-        collision->hit[i].unk_3C += collision->hit[i].unk_40;
+        collision->hit[i].radius += collision->hit[i].unk_40;
         if (collision->hit[i].unk_38 != 0.0f) {
             sceVu0ScaleVectorXYZ(collision->hit[i].unk_10, collision->hit[i].unk_10,
                                  collision->hit[i].unk_38);
@@ -5986,7 +5970,7 @@ void motionDrive(void) {
     }
     NowShockWave->Step();
 
-    CSHOT_EFFECT *effects = NowShotEffect;
+    CSHOT_EFFECT *effects = NowShotEffect->effect;
 
     for (i = 0; i < 5; i++) {
         effects[i].Step();
@@ -6198,7 +6182,7 @@ void BtLoadMonstor(int ura) {
     wait_now_loading_vsync();
     NowMonstorUnit->collision = LoadCollisionFile(read_buffer, &MonstorModelBuffer);
 
-    CSHOT_EFFECT *effects = NowShotEffect;
+    CSHOT_EFFECT *effects = NowShotEffect->effect;
 
     for (i = 0; i < 5; i++) {
         effects[i].Initialize();
@@ -6829,7 +6813,7 @@ int BtCheckDamageProc(void) {
                 if (monster >= 0 && monster < 16) {
                     NowMonstorUnit->monster[monster].unk_0C0 = damage;
                 }
-                NowMonstorUnit->chara[monster].GetPosition(from);
+                NowMonstorUnit->chara[monster][0].GetPosition(from);
             }
 
             roll = (int) (100.0f * (float) rand() / 2147483648.0f);
@@ -6961,7 +6945,7 @@ int BtCheckDamageProc(void) {
                     velo__2[0] = blowVelo[0] / 10.0f;
                     velo__2[2] = blowVelo[2] / 10.0f;
                     if (NowColData->hit[no].unk_48 != 3) {
-                        NowColData->unk_3C00[no] = 0;
+                        NowColData->active[no] = 0;
                     }
                     if (dmgSnd <= 0) {
                         SndSePlay(0xA2, -1, 0);
@@ -6982,7 +6966,7 @@ int BtCheckDamageProc(void) {
                     sceVu0CopyVector(blowVelo, NowColData->hit[no].velocity);
                     unitBlowActionRot(blowVelo);
                     if (NowColData->hit[no].unk_48 != 3) {
-                        NowColData->unk_3C00[no] = 0;
+                        NowColData->active[no] = 0;
                     }
 
                     if (damage < UserStatus->hp[UserStatus->cur_chara]) {
@@ -7030,7 +7014,7 @@ int BtCheckDamageProc(void) {
                     velo__2[0] = away[0] / 2.0f;
                     velo__2[2] = away[2] / 2.0f;
                     if (NowColData->hit[no].unk_48 != 3) {
-                        NowColData->unk_3C00[no] = 0;
+                        NowColData->active[no] = 0;
                     }
                     if (dmgSnd <= 0) {
                         SndSePlay(0xA2, -1, 0);
@@ -7043,7 +7027,7 @@ int BtCheckDamageProc(void) {
                     setUnitAmbientAnime(80.0f, 1.0f, 255.0f, 0.0f, 0.0f);
                     UserStatus->AddNowLife(UserStatus->cur_chara, -damage, 10.0f);
                     if (NowColData->hit[no].unk_48 != 3) {
-                        NowColData->unk_3C00[no] = 0;
+                        NowColData->active[no] = 0;
                     }
 
                     float heavy_value[4] = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -8282,7 +8266,7 @@ void autoCamTrial(void) {
     // A locked-on monster pulls the camera round behind the player.
     if (lockOnTargetFlag != 0) {
         sceVu0CopyVector(near_chara, CharaMain.pos);
-        NowMonstorUnit->chara[lockOnTargetNo].GetPosition(locked);
+        NowMonstorUnit->chara[lockOnTargetNo][0].GetPosition(locked);
 
         float away = DistVector(near_chara, locked);
 
@@ -8611,7 +8595,7 @@ int SetNearLockOnTarget(int from, int nearest_only) {
             continue;
         }
 
-        monsters->chara[i].GetPosition(pos[i]);
+        monsters->chara[i][0].GetPosition(pos[i]);
 
         away = DistVector(at, pos[i]);
 
@@ -8703,8 +8687,8 @@ int SetNearLockOnTarget(int from, int nearest_only) {
     }
 
     if (target != -1) {
-        NowMonstorUnit->chara[target].GetPosition(at);
-        at[1] += NowMonstorUnit->chara[target].unk_0B4;
+        NowMonstorUnit->chara[target][0].GetPosition(at);
+        at[1] += NowMonstorUnit->chara[target][0].unk_0B4;
         cursorFrame->SetPosition(at);
         lockOnTargetDraw = 1;
         targetCursorCnt = 8.0f;
@@ -8755,7 +8739,7 @@ void setTargetCursor(int on) {
         }
 
         sceVu0CopyVector(stood, CharaFrame->position);
-        NowMonstorUnit->chara[lockOnTargetNo].GetPosition(target);
+        NowMonstorUnit->chara[lockOnTargetNo][0].GetPosition(target);
 
         float away = DistVector(stood, target);
 

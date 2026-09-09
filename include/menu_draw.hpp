@@ -11,6 +11,7 @@ class CFrame;
 class CRect_i_;
 class CTexture;
 class CUserStatus;
+class CDngStatusData;
 class ClsMes;
 struct IHAVEITEM;
 struct ITEM_PACK;
@@ -18,6 +19,42 @@ struct PERSONAL_BOARD;
 struct SAVEDATA_INFO;
 struct WEAPON_HAVE;
 struct spRGBA;
+
+/**
+ * State of the dungeon entrance menu, and what it shows of each floor.
+ */
+struct DUN_ENTER_MENU {
+    s8 dungeon;         /**< Dungeon the menu is for. */
+    s8 scroll_top;      /**< First floor the list shows. */
+    s8 selected_floor;  /**< Floor the cursor stands on. */
+    s8 requested_floor; /**< Floor the player asked to enter. */
+    float unk_004;
+    float unk_008;
+    s8 unk_00C;
+    s8 texture_block; /**< Texture block the menu loads into. */
+    s8 unk_00E;
+    s8 floor_count;         /**< Floors the list holds. */
+    s8 result;              /**< Floor chosen, or a negative value while the menu runs. */
+    s8 max_atra[100];       /**< Atla each floor holds. */
+    s8 collected_atra[100]; /**< Atla the player has taken from each floor. */
+    u8 unk_0D9;
+    s16 kills[100]; /**< Monsters the player has defeated on each floor. */
+    u8 unk_1A2[2];
+    s16 state; /**< Step of the menu's state machine. */
+    u8 unk_1A6[2];
+    s32 counter; /**< Frames spent in the current step. */
+};
+
+STATIC_ASSERT(sizeof(DUN_ENTER_MENU) == 0x1AC);
+
+/** The dungeon entrance menu. */
+extern DUN_ENTER_MENU DEnterMenu;
+
+/** Dungeon progress the entrance menu shows. */
+extern CDngStatusData *DEnterStatusPt;
+
+/** Frames a menu error message has shown for. */
+extern int MenuEtcErrCnt;
 
 /**
  * @mangled SaveMenuKeySaveCheck__Fv
@@ -116,20 +153,22 @@ void SaveMenuKeyUnFormat(void);
 void SaveMenuKeyDifVersion(void);
 
 /**
+ * Steps the delete choice of the save menu.
+ *
  * @mangled SaveMenuKeyDelete__Fv
  * @address 0x222250
  * @size 0x10
- * @unknownret
  */
-void SaveMenuKeyDelete(void);
+s32 SaveMenuKeyDelete(void);
 
 /**
+ * Steps the copy choice of the save menu.
+ *
  * @mangled SaveMenuKeyCopy__Fv
  * @address 0x222260
  * @size 0x10
- * @unknownret
  */
-void SaveMenuKeyCopy(void);
+s32 SaveMenuKeyCopy(void);
 
 /**
  * @mangled SaveMenuKeyAfterEnding__Fv
@@ -300,12 +339,13 @@ void DrawEventItemBoard(int, int, int, int, int, CTexture *);
 void PlayerAllItemCheck(int);
 
 /**
+ * Tells whether an item identifier is an additive attachment.
+ *
  * @mangled GetAddAttachItem__Fi
  * @address 0x2255D0
  * @size 0x30
- * @unknownret
  */
-void GetAddAttachItem(int);
+s32 GetAddAttachItem(int);
 
 /**
  * Converts a weapon item identifier into its position in the owner's weapon chain.
@@ -383,36 +423,40 @@ void SetAttachMentValue(int, int, short, ATTACH_LIST *);
 void GetAttachVolumeForMsg(ATTACH_LIST *);
 
 /**
+ * Opens the dungeon entrance menu for a dungeon and floor.
+ *
  * @mangled InitDunEnterMenu__Fiii
  * @address 0x226110
  * @size 0x410
- * @unknownret
  */
-void InitDunEnterMenu(int, int, int);
+int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor);
 
 /**
+ * Restores the pad and textures when the dungeon entrance menu closes.
+ *
  * @mangled ExitDunEnterMenu__Fv
  * @address 0x226520
  * @size 0x70
- * @unknownret
  */
 void ExitDunEnterMenu(void);
 
 /**
+ * Runs one frame of the dungeon entrance menu, and returns its result once it closes.
+ *
  * @mangled DunEnterMenuLoop__Fv
  * @address 0x226590
  * @size 0x90
- * @unknownret
  */
 int DunEnterMenuLoop(void);
 
 /**
+ * Handles key input on the dungeon entrance menu.
+ *
  * @mangled DunEnterMenuKey__Fv
  * @address 0x226620
  * @size 0x6F0
- * @unknownret
  */
-void DunEnterMenuKey(void);
+int DunEnterMenuKey(void);
 
 /**
  * @mangled DunEnterDraw__Fv
@@ -543,20 +587,22 @@ void DngActiveItemTextureCopy(void);
 void DngActiveWeaponTextureCopy(void);
 
 /**
+ * Returns the message number of a held weapon's name.
+ *
  * @mangled GetWeaponMsgNo__FP11WEAPON_HAVE
  * @address 0x22A7E0
  * @size 0x60
- * @unknownret
  */
-void GetWeaponMsgNo(WEAPON_HAVE *);
+s32 GetWeaponMsgNo(WEAPON_HAVE *);
 
 /**
+ * Returns the message number of an item's name.
+ *
  * @mangled GetWeaponMsgNo2__Fi
  * @address 0x22A840
  * @size 0x40
- * @unknownret
  */
-void GetWeaponMsgNo2(int);
+s16 GetWeaponMsgNo2(int);
 
 /**
  * @mangled DrawWepAttach__FiiP11WEAPON_HAVEii
@@ -615,12 +661,13 @@ void LocalDrawItemPolygonView(void);
 void DrawItemPolygonView(void);
 
 /**
+ * Maps a debug item selection to its spreadsheet item number.
+ *
  * @mangled ConvDebugSelectToExcelListNo__Fi
  * @address 0x22B1F0
  * @size 0x50
- * @unknownret
  */
-void ConvDebugSelectToExcelListNo(int);
+int ConvDebugSelectToExcelListNo(int selection);
 
 /**
  * @mangled DebugItemGetKey__Fv
@@ -647,30 +694,35 @@ void DebugItemGetDraw(void);
 void DrawItemDataView(int);
 
 /**
+ * Returns the directory that menu textures load from.
+ *
  * @mangled GetMenuTextureDir__Fv
  * @address 0x22B9F0
  * @size 0x10
- * @unknownret
  */
-void GetMenuTextureDir(void);
+char *GetMenuTextureDir(void);
 
 /**
+ * Returns the language the menus display in.
+ *
  * @mangled GetMenuLangFlag__Fv
  * @address 0x22BA00
  * @size 0x10
- * @unknownret
  */
-void GetMenuLangFlag(void);
+int GetMenuLangFlag(void);
 
 /**
+ * Returns the path fragment of a language.
+ *
  * @mangled GetNowSelectLanguage__Fi
  * @address 0x22BA10
  * @size 0x40
- * @unknownret
  */
-void GetNowSelectLanguage(int);
+char *GetNowSelectLanguage(int);
 
 /**
+ * Builds the menu texture path of the selected language.
+ *
  * @mangled GetPathReadDifferntLang__FPc
  * @address 0x22BA50
  * @size 0x60
@@ -775,18 +827,20 @@ void GetMenuCommonPutXY(ClsMes *, int);
 void InitMenuMesSet(int, short *);
 
 /**
+ * Steps and draws a message window at a position.
+ *
  * @mangled DrawMenuClsMes__FP6ClsMesii
  * @address 0x22CEA0
  * @size 0x50
- * @unknownret
  */
 void DrawMenuClsMes(ClsMes *, int, int);
 
 /**
+ * Plays a menu sound effect, unless the identifier is negative.
+ *
  * @mangled ComMenuSePlay__Fi
  * @address 0x22CEF0
  * @size 0x30
- * @unknownret
  */
 void ComMenuSePlay(int);
 
@@ -839,10 +893,11 @@ void MenuTextureDelete(int *);
 void AllFillBoxForMenu(unsigned char, unsigned char, unsigned char, unsigned char);
 
 /**
+ * Darkens the whole screen behind a menu.
+ *
  * @mangled AllFadeForMenu__Fi
  * @address 0x22D280
  * @size 0x30
- * @unknownret
  */
 void AllFadeForMenu(int);
 
@@ -911,20 +966,22 @@ void FadeTexX(int, int, int, int, char *, int);
 void RetCTex(short, int &, int &);
 
 /**
+ * Clips a texture strip to a range of screen positions.
+ *
  * @mangled MenuTextureClip__FRiRiRiii
  * @address 0x22DE80
  * @size 0x80
- * @unknownret
  */
 void MenuTextureClip(int &, int &, int &, int, int);
 
 /**
+ * Counts the decimal digits of a number.
+ *
  * @mangled GetNumberKeta__Fi
  * @address 0x22DF00
  * @size 0x40
- * @unknownret
  */
-void GetNumberKeta(int);
+int GetNumberKeta(int);
 
 /**
  * @mangled GetMenuIconInfo__Fi
@@ -967,6 +1024,8 @@ void GetMainMenuRightHelpWinLangOffset(float &, float &, float &, float &);
 void GetMainMenuRightHelpMsgLangOffset(int &, int &);
 
 /**
+ * Empties an inventory record.
+ *
  * @mangled InitHaveData__FP9IHAVEITEM
  * @address 0x22E440
  * @size 0x30
@@ -975,6 +1034,8 @@ void GetMainMenuRightHelpMsgLangOffset(int &, int &);
 void InitHaveData(IHAVEITEM *);
 
 /**
+ * Empties a held-weapon record.
+ *
  * @mangled InitHaveWep__FP11WEAPON_HAVE
  * @address 0x22E470
  * @size 0x40
@@ -983,6 +1044,8 @@ void InitHaveData(IHAVEITEM *);
 void InitHaveWep(WEAPON_HAVE *);
 
 /**
+ * Empties a held-attachment record.
+ *
  * @mangled InitHaveAttach__FP11ATTACH_LIST
  * @address 0x22E4B0
  * @size 0x30
@@ -1051,12 +1114,13 @@ void DeleteMenuTrushMark(void);
 void InitPersonalBoardMode(CUserStatus *, PERSONAL_BOARD *, int, int);
 
 /**
+ * Handles the key input that changes the personal board's mode.
+ *
  * @mangled BoardModeChangeKey__Fv
  * @address 0x22E9B0
  * @size 0x130
- * @unknownret
  */
-void BoardModeChangeKey(void);
+int BoardModeChangeKey(void);
 
 /**
  * @mangled PersonalBoardLimmitCheck__Fv
@@ -1075,10 +1139,11 @@ void PersonalBoardLimmitCheck(void);
 void PersonalBoardKeySub(void);
 
 /**
+ * Handles key input on the personal board.
+ *
  * @mangled PersonalBoardKey__Fv
  * @address 0x22EF60
  * @size 0x30
- * @unknownret
  */
 void PersonalBoardKey(void);
 

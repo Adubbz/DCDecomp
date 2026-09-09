@@ -166,7 +166,11 @@ carve_part(main.data.part2.s
 carve_part(main.rdata.part1.s
            main.rdata.part1.s=29FE80-29FF40)
 carve_part(main.rdata.part2.s
-           main.rdata.part2.s=2A00B0-2A1014)
+           main.rdata.part2.s=2A00B0-2A0C60
+           main.rdata.part2b.s=2A0CA0-2A1014)
+carve_part(main.rdata.part3.s
+           main.rdata.part3.s=2A101C-2A1048
+           main.rdata.part3b.s=2A104C-2A1090)
 # .sdata: the same interleaving, one datum at a time.
 carve_part(main.sdata.part1.s
            main.sdata.part1.s=2A1E88-2A1E8C)
@@ -194,9 +198,16 @@ carve_part(main.bss.part4.s
 carve_part(main.bss.part4b.s
            main.bss.part4b.s=1CF91F0-1D19720
            main.bss.part4c.s=1D19AA0-1D19BF0)
+# monstorunit owns the bee animation table; retain its BSS neighbours.
+carve_part(main.bss.part6.s
+           main.bss.part6.s=1D65C20-1D87380
+           main.bss.part6b.s=1D8FA80-1DA8B80
+           main.bss.part6c.s=1DA8D30-1DABD00)
 carve_part(main.bss.part5.s
            main.bss.part5.s=1D1B218-1D3D1C0
-           main.bss.part5b.s=1D3D1D0-1D569A0)
+           main.bss.part5b.s=1D3D1D0-1D3DD20
+           main.bss.part5c.s=1D3EEA0-1D3EF90
+           main.bss.part5d.s=1D3F010-1D569A0)
 carve_part(main.sbss.part3.s
            main.sbss.part3.s=2A24FC-2A2500)
 # The dun overlay's small data runs from GameEnv to the end of retail's .sbss,
@@ -207,20 +218,29 @@ carve_part(main.sbss.part5b.s
 carve_part(main.sbss.part4b.s
            main.sbss.part4b.s=2A25B8-2A2740
            main.sbss.part4c.s=2A27AC-2A29F8
-           main.sbss.part4d.s=2A2A04-2A2BF0)
+           main.sbss.part4d.s=2A2A04-2A2A2C
+           main.sbss.part4e.s=2A2A30-2A2BF0)
 carve_part(main.rdata.part4.s
-           main.rdata.part4.s=2A1100-2A1130
            main.rdata.part4b.s=2A1168-2A11E0)
+# CheckDmg owns its local static effect index and initialization guard.
+carve_part(main.sbss.part5.s
+           main.sbss.part5.s=2A2BF8-2A2C68
+           main.sbss.part5c.s=2A2C70-2A2F50
+           main.sbss.denter-gap.s=2A2F54-2A2F5C
+           main.sbss.denter-tail.s=2A2F60-2A2FD0)
 # The weapon build-up and level-up local templates stand in this residual run.
 carve_part(main.data.part6.s
            main.data.part6.s=27E790-27EB30
-           main.data.part6c.s=27EB50-295810
+           main.data.part6f.s=291830-294150
+           main.data.part6g.s=294170-295810
            main.data.part6d.s=295830-295840
            main.data.part6b.s=2959A0-295FF0)
 carve_part(main.data.part4.s
            main.data.part4.s=25DF70-266810
            main.data.part4b.s=2668C0-266F70
-           main.data.part4c.s=266FB0-26B2C0
+           main.data.part4c.s=266FB0-269930
+           main.data.part4e.s=269940-269AD0
+           main.data.part4f.s=269AE0-26B2C0
            main.data.part4d.s=26B2E0-279EB0)
 
 # These residual ranges are now fully owned by their decompiled translation
