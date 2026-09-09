@@ -477,13 +477,10 @@ def objdiff(path, placed, functions, marked, build_dir, declared):
             unit["base_path"] = f"{build_dir}/diff/{source}.o"
 
         here = owned[image].get(source, [])
-        # `complete` says the unit is finished, and objdiff takes it at its
-        # word -- so it is only set when nothing in the unit is still supplied
-        # by a marker. Anything less and the whole unit would count as matched.
-        finished = bool(here) and not any(marked.get(symbol) for symbol in here)
-
+        # Absence of assembly markers means implemented, not object-exact.
+        # objdiff's `complete` flag overrides measured percentages; omit it
+        # so regressions and unresolved symbol aliases remain visible.
         unit["metadata"] = {
-            "complete": finished,
             "progress_categories": [category_of(source)],
             "source_path": source,
         }

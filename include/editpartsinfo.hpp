@@ -42,11 +42,16 @@ STATIC_ASSERT(sizeof(EDITPARTS_INFO) == 0xE8);
 
 class CEditPartsInfo {
 public:
+    u8 unk_00[0x64];
+    EDITPARTS_INFO parts[24]; /**< Every part the map can hold. */
+    u8 unk_1624[4];
+
     /**
+     * Returns the record of one editable map part, or NULL.
+     *
      * @mangled GetPartsInfo__14CEditPartsInfoFi
      * @address 0x199FD0
      * @size 0x50
-     * @unknownret
      */
     EDITPARTS_INFO *GetPartsInfo(int);
 
@@ -139,7 +144,6 @@ public:
     void Initialize(int, EPARTS_INFO_HEADER *);
 
 private:
-    u8 unk_0000[0x1628];
 };
 
 /** Shared editable-map part catalogue. */

@@ -239,3 +239,15 @@ void SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, floa
  * @size 0x2A0
  */
 int BtAtraFloorCyoice(int map_no, int floor_no, int *atra_no);
+
+class CDungeonMap;
+class CCPoly;
+
+/**
+ * Gathers the floor's polygons within reach of a position, and returns how many.
+ *
+ * @mangled setCollisionData__FP11CDungeonMapP6CCPolyPfff
+ * @address 0x1C0FC0
+ * @size 0x5D0
+ */
+int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radius, float height);

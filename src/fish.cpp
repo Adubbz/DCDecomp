@@ -39,8 +39,6 @@ FishInfo fish_info[18] = {
 #include "mathutil.hpp"
 
 int PickUpNearPoly(CCPoly *out, CBoxVu0 box, CCPoly *polys, int count);
-int CheckHit(CCPoly *polys, int count, float *from, float *to, float *hit, int, int);
-void CheckWidth(CCPoly *polys, int count, float *position, float width, float *out, int);
 
 int rand_check(float probability) {
     int value = rand();

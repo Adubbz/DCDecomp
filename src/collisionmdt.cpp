@@ -136,7 +136,9 @@ void CCollision::CreateBBox() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/collisionmdt", GetVertexAddress__10CCollisionFPi);
+sceVu0FVECTOR *CCollision::GetVertexAddress(int *count) {
+    return 0;
+}
 
 int CCollisionMDT::GetPolygon(int index, sceVu0FMATRIX v0, sceVu0FMATRIX v1, sceVu0FMATRIX v2) {
     MDT_COLLISION *collision;

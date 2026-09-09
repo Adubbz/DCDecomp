@@ -294,7 +294,7 @@ int GetNowWeaponAttachNum(WEAPON_HAVE *weapon);
  * @address 0x00232080
  * @size 0xA4
  */
-s8 GetWeaponMaxExp(WEAPON_HAVE *weapon);
+int GetWeaponMaxExp(WEAPON_HAVE *weapon);
 
 /**
  * Counts the requested item in an item pack.

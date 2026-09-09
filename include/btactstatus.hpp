@@ -48,7 +48,8 @@ struct BT_ACT_STATUS {
     s32 unk_09C;
     s32 unk_0A0;
     s32 unk_0A4;
-    u8 unk_0A8[0xC];
+    s32 monstor_target; /**< Character the monsters last hit, or -1. */
+    u8 unk_0AC[8];
     float unk_0B4;
     float unk_0B8;
     float unk_0BC;
