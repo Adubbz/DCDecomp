@@ -44,7 +44,7 @@ def slices(measures, units):
 def heading(name, measures):
     return (
         f"{name} — {percentage(measures.get('fuzzy_match_percent', 0.0))} "
-        f"· {function_count(measures.get('total_functions', 0))}"
+        f" ({function_count(measures.get('total_functions', 0))} functions)"
     )
 
 

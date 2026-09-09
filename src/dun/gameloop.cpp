@@ -4420,7 +4420,7 @@ void MoveChara(void) {
                 DngMessMan.unk_00 = 1;
                 gameTask = 0;
                 printf("exit script\n");
-                if (EdEventInfo.unk_448 == 8) {
+                if (EdEventInfo.return_code == 8) {
                     existFlag = 1;
                 }
             }

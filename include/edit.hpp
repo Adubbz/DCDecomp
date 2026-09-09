@@ -129,7 +129,7 @@ struct ED_EVENT_INFO {
     char unk_2b0[0x20];
     s32 unk_2d0;
     s32 unk_2d4;
-    s32 unk_2d8;
+    s32 draw_exclamation_mark; /**< Whether the event requests the attention marker. */
     s32 unk_2dc;
     s32 unk_2e0;
     u8 unk_2e4[0x1c];
@@ -138,9 +138,9 @@ struct ED_EVENT_INFO {
     sceVu0FVECTOR unk_09;
     u8 unk_0C[0x120];
     s32 unk_440;
-    u8 unk_444[0x4];
-    s32 unk_448;
-    u8 unk_44C[0x4];
+    s32 next_event; /**< Event number requested by the NEXT_EVENT opcode. */
+    s32 return_code; /**< Result code passed from an editor event back to the game loop. */
+    s32 exit_code; /**< Exit status supplied by the event script. */
 };
 
 STATIC_ASSERT(sizeof(ED_EVENT_INFO) == 0x450);

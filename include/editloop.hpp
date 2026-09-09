@@ -207,9 +207,10 @@ struct ED_EVENT_POINT {
     CMapObject *map_object;   /**< Optional map object associated with the event. */
     CFrame *frame;            /**< Optional frame whose draw state gates the event. */
     int side;                 /**< Which side of the entrance the player arrives on. */
-    u8 unk_20[0x4];
+    int linked_value;         /**< Parameter supplied by a paired or directional marker. */
     int minimum_progress;     /**< Minimum story-progress value required by this event. */
-    u8 unk_28[0x8];
+    int secondary_progress;   /**< Additional progress parameter used by scripted event points. */
+    u8 unk_2c[0x4];
     char destination[0x10];   /**< Name of the map the event leads to. */
     float start_time;         /**< Beginning of the event's active time interval. */
     float end_time;           /**< End of the event's active time interval. */

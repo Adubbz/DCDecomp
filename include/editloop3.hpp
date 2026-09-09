@@ -3,12 +3,33 @@
 #include "common.h"
 #include "texture.hpp"
 
+class CCharacter;
+class CFrame;
 class CMapParts;
 struct ED_EVENT_POINT;
 struct EDITPARTS_INFO;
 struct EPARTS_FUNC_DATA;
 struct RS_STACKDATA;
 struct OBJ_ANIME_SEQ;
+
+/**
+ * Collects every object or frame controlled by one event-script object slot.
+ */
+struct OBJ_HANDLE {
+    CMapParts *map_parts;   /**< Map part controlled directly by the slot. */
+    CCharacter *character;  /**< Character controlled directly by the slot. */
+    CFrame *frames[12];     /**< Model frames controlled when no complete object is retained. */
+};
+
+STATIC_ASSERT(sizeof(OBJ_HANDLE) == 0x38);
+
+/**
+ * Identifies the abstract confirm and cancel bits exposed to editor scripts.
+ */
+enum ED_PAD_BUTTON {
+    ED_PAD_CONFIRM = 0x20,
+    ED_PAD_CANCEL = 0x40,
+};
 
 /**
  * Allocates and initializes an event point from one map-part function marker.
@@ -88,15 +109,6 @@ ED_SPRITE *GetSprite(int index);
 void InitSprite(ED_SPRITE *sprite);
 
 /**
- * Returns one of the object-animation slots available to editor event scripts.
- *
- * @mangled GetObjAnime__Fi
- * @address 0x18A1F0
- * @size 0x40
- */
-OBJ_ANIME_SEQ *GetObjAnime(int index);
-
-/**
  * Releases one object-animation slot or every slot when given a negative index.
  *
  * @mangled ClearObjAnime__Fi
@@ -131,6 +143,143 @@ int SetWorkFlag(int index, int value);
  * @size 0x40
  */
 int GetWorkFlag(int index);
+
+/**
+ * Associates an object handle with a map part or its named model frames.
+ *
+ * @mangled SetObjHandle__FiP9CMapPartsPc
+ * @address 0x18A470
+ * @size 0x1C4
+ */
+int SetObjHandle(int index, CMapParts *map_parts, char *frame_name);
+
+/**
+ * Associates an object handle with a character or its named model frames.
+ *
+ * @mangled SetObjHandle__FiP10CCharacterPc
+ * @address 0x18A640
+ * @size 0x13C
+ */
+int SetObjHandle(int index, CCharacter *character, char *frame_name);
+
+/**
+ * Associates an object handle with one frame.
+ *
+ * @mangled SetObjHandle__FiP6CFrame
+ * @address 0x18A780
+ * @size 0x68
+ */
+int SetObjHandle(int index, CFrame *frame);
+
+/**
+ * Enables or disables drawing of everything held by an object handle.
+ *
+ * @mangled obj_draw__FP10OBJ_HANDLEi
+ * @address 0x18A7F0
+ * @size 0x80
+ */
+void obj_draw(OBJ_HANDLE *handle, int draw);
+
+/**
+ * Moves everything held by an object handle to a position.
+ *
+ * @mangled set_obj_pos__FP10OBJ_HANDLEPf
+ * @address 0x18A870
+ * @size 0xBC
+ */
+void set_obj_pos(OBJ_HANDLE *handle, float *position);
+
+/**
+ * Reads the local position of the first object or frame in a handle.
+ *
+ * @mangled get_obj_pos__FP10OBJ_HANDLEPf
+ * @address 0x18A930
+ * @size 0xA8
+ */
+void get_obj_pos(OBJ_HANDLE *handle, float *out_position);
+
+/**
+ * Reads the world position of the first object or frame in a handle.
+ *
+ * @mangled get_obj_world_pos__FP10OBJ_HANDLEPf
+ * @address 0x18A9E0
+ * @size 0xBC
+ */
+void get_obj_world_pos(OBJ_HANDLE *handle, float *out_position);
+
+/**
+ * Rotates everything held by an object handle.
+ *
+ * @mangled set_obj_rot__FP10OBJ_HANDLEPf
+ * @address 0x18AAA0
+ * @size 0xF8
+ */
+void set_obj_rot(OBJ_HANDLE *handle, float *rotation);
+
+/**
+ * Reads the rotation of the first object or frame in a handle.
+ *
+ * @mangled get_obj_rot__FP10OBJ_HANDLEPf
+ * @address 0x18ABA0
+ * @size 0xAC
+ */
+void get_obj_rot(OBJ_HANDLE *handle, float *out_rotation);
+
+/**
+ * Scales everything held by an object handle.
+ *
+ * @mangled set_obj_scale__FP10OBJ_HANDLEPf
+ * @address 0x18AC50
+ * @size 0xBC
+ */
+void set_obj_scale(OBJ_HANDLE *handle, float *scale);
+
+/**
+ * Reads the scale of the first object or frame in a handle.
+ *
+ * @mangled get_obj_scale__FP10OBJ_HANDLEPf
+ * @address 0x18AD10
+ * @size 0xB8
+ */
+void get_obj_scale(OBJ_HANDLE *handle, float *out_scale);
+
+/**
+ * Configures an object-animation slot to animate the frames in an object handle.
+ *
+ * @mangled init_obj_anime__FiiiiPfPfPf
+ * @address 0x18ADD0
+ * @size 0xC8
+ * @unknownret
+ */
+int init_obj_anime(int anime_index, int handle_index, int type, int number,
+                   float *offset, float *range, float *speed);
+
+/**
+ * Makes every frame in one object handle follow the first frame in another.
+ *
+ * @mangled sync_obj_obj__FP10OBJ_HANDLEP10OBJ_HANDLE
+ * @address 0x18AEA0
+ * @size 0xB8
+ */
+void sync_obj_obj(OBJ_HANDLE *source, OBJ_HANDLE *targets);
+
+/**
+ * Removes frame references from every frame in an object handle.
+ *
+ * @mangled release_obj_obj__FP10OBJ_HANDLE
+ * @address 0x18AF60
+ * @size 0x64
+ */
+void release_obj_obj(OBJ_HANDLE *handle);
+
+/**
+ * Applies drawing attributes to the character or frames in an object handle.
+ *
+ * @mangled set_attr_obj__FP10OBJ_HANDLER10CFrameAttrii
+ * @address 0x18AFD0
+ * @size 0xBC
+ */
+void set_attr_obj(OBJ_HANDLE *handle, CFrameAttr &attr, int children, int mask);
 
 /**
  * Applies one editable part definition's object visibility to its map part.
@@ -257,3 +406,111 @@ int CheckPartsInfo(EDITPARTS_INFO *info);
  * @size 0xC
  */
 int _TEST(RS_STACKDATA *stack, int argument_count);
+
+/**
+ * Exchanges the abstract confirm and cancel bits in a controller mask.
+ *
+ * @mangled exch_ok_cancel__Fi
+ * @address 0x18B840
+ * @size 0x34
+ */
+int exch_ok_cancel(int buttons);
+
+/**
+ * Writes the currently held controller buttons to an event-script result slot.
+ *
+ * @mangled _GET_PADON__FP12RS_STACKDATAi
+ * @address 0x18B880
+ * @size 0x68
+ */
+int _GET_PADON(RS_STACKDATA *stack, int argument_count);
+
+/**
+ * Writes the newly pressed controller buttons to an event-script result slot.
+ *
+ * @mangled _GET_PADDOWN__FP12RS_STACKDATAi
+ * @address 0x18B8F0
+ * @size 0x68
+ */
+int _GET_PADDOWN(RS_STACKDATA *stack, int argument_count);
+
+/**
+ * Writes the newly released controller buttons to an event-script result slot.
+ *
+ * @mangled _GET_PADUP__FP12RS_STACKDATAi
+ * @address 0x18B960
+ * @size 0x68
+ */
+int _GET_PADUP(RS_STACKDATA *stack, int argument_count);
+
+/**
+ * Writes a pseudorandom integer to an event-script result slot.
+ *
+ * @mangled _GET_RANDOM__FP12RS_STACKDATAi
+ * @address 0x18BAC0
+ * @size 0x54
+ */
+int _GET_RANDOM(RS_STACKDATA *stack, int argument_count);
+
+/**
+ * Sets the result code returned by the current editor event.
+ *
+ * @mangled _SET_RETURN_CODE__FP12RS_STACKDATAi
+ * @address 0x18BB20
+ * @size 0x2C
+ */
+int _SET_RETURN_CODE(RS_STACKDATA *stack, int argument_count);
+
+/**
+ * Selects the event that follows the current editor event.
+ *
+ * @mangled _NEXT_EVENT__FP12RS_STACKDATAi
+ * @address 0x18BB50
+ * @size 0x2C
+ */
+int _NEXT_EVENT(RS_STACKDATA *stack, int argument_count);
+
+/**
+ * Reinitializes the shared editor-event parameters.
+ *
+ * @mangled _INITIALIZE__FP12RS_STACKDATAi
+ * @address 0x18BD70
+ * @size 0x24
+ */
+int _INITIALIZE(RS_STACKDATA *stack, int argument_count);
+
+/**
+ * Stores an exit status in the current editor event.
+ *
+ * @mangled _EXIT_CODE__FP12RS_STACKDATAi
+ * @address 0x18BDA0
+ * @size 0x2C
+ */
+int _EXIT_CODE(RS_STACKDATA *stack, int argument_count);
+
+/**
+ * Requests the editor event's attention marker.
+ *
+ * @mangled _DRAW_EXCLAMATION_MARK__FP12RS_STACKDATAi
+ * @address 0x18BDD0
+ * @size 0x14
+ */
+int _DRAW_EXCLAMATION_MARK(RS_STACKDATA *stack, int argument_count);
+
+/**
+ * Clears all editor-event execution state and reports successful dispatch.
+ *
+ * @mangled _FINISH__FP12RS_STACKDATAi
+ * @address 0x18BFB0
+ * @size 0x24
+ */
+int _FINISH(RS_STACKDATA *stack, int argument_count);
+
+/**
+ * Clears every active editor event and its associated presentation state.
+ *
+ * @mangled EdEventAllClear__Fv
+ * @address 0x197810
+ * @size 0x234
+ */
+void EdEventAllClear();

@@ -31,6 +31,7 @@
 #include "mathutil.hpp"
 #include "mglib.hpp"
 #include "objanime.hpp"
+#include "runscript.hpp"
 #include "snd.hpp"
 
 /* Retail editloop3.cpp: editor event points, villagers, script opcodes and talk handling. */
@@ -81,9 +82,9 @@ ED_EVENT_POINT *GetNewEventPoint(CMapParts *parts, EPARTS_FUNC_DATA *function,
     }
 
     point->enabled = 1;
-    if (parts->effect_on[2] >= 0) {
+    if (parts->parts_no >= 0) {
         point->map_object = NULL;
-        point->parts_no = parts->effect_on[2];
+        point->parts_no = parts->parts_no;
     } else {
         point->map_object = parts;
         point->parts_no = -1;
@@ -93,12 +94,150 @@ ED_EVENT_POINT *GetNewEventPoint(CMapParts *parts, EPARTS_FUNC_DATA *function,
     point->start_time = ConvertTime(function->start_time);
     point->end_time = ConvertTime(function->end_time);
     point->completion_flag = function->completion_flag;
+    CFrame *frame = parts->frame[0];
     point->frame = NULL;
-    if (parts->frame[0] != NULL)
-        point->frame = parts->frame[0]->SearchFrame(function->frame_name);
+    if (frame != NULL)
+        point->frame = frame->SearchFrame(function->frame_name);
     return point;
 }
-INCLUDE_ASM("asm/nonmatchings/editloop3", EdInitEventPoint__FP9CMapPartsPsP16EPARTS_FUNC_DATAiP14ED_EVENT_POINTi);
+int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functions,
+                     int function_count, ED_EVENT_POINT *points, int point_count) {
+    int created;
+
+    for (int i = 0; i < 8 && indices != NULL; i++) {
+        int point_index = indices[i];
+        if (point_index <= 0)
+            continue;
+
+        volatile int point_offset[4];
+        point_offset[0] = point_index * sizeof(ED_EVENT_POINT);
+        ED_EVENT_POINT *point = (ED_EVENT_POINT *) ((int) points + point_offset[0]);
+        if (point->event_type != 1)
+            continue;
+
+        point->enabled = 1;
+        if (parts->parts_no >= 0) {
+            point->map_object = NULL;
+            point->parts_no = parts->parts_no;
+        } else {
+            point->map_object = parts;
+            point->parts_no = -1;
+        }
+
+        int has_extent = 0;
+        EPARTS_FUNC_DATA *function = functions;
+        for (int j = 0; j < function_count; j++, function++) {
+            int kind = function->kind;
+            if (kind != 16 && kind != 11 && kind != 10 && kind != 2) {
+                kind = function->kind;
+            } else if (function->link_id ==
+                       ((ED_EVENT_POINT *) ((int) points + point_offset[0]))->map_no) {
+              if (kind == 2) {
+                sceVu0CopyVector(point->position, function->position);
+                sceVu0CopyVector(point->rotation, function->rotation);
+                point->unk_60[2] = 10.0f;
+                point->unk_60[1] = 10.0f;
+                point->unk_60[0] = 10.0f;
+                point->minimum_progress = (int) function->values[0];
+                point->start_time = ConvertTime(function->start_time);
+                point->end_time = ConvertTime(function->end_time);
+                point->completion_flag = function->completion_flag;
+                if (has_extent == 0) {
+                    sceVu0FVECTOR offset = {40.0f, 50.0f, -80.0f, 1.0f};
+                    sceVu0FMATRIX matrix;
+                    sceVu0UnitMatrix(matrix);
+                    sceVu0RotMatrixY(matrix, matrix, point->rotation[1]);
+                    sceVu0ApplyMatrix(offset, matrix, offset);
+                    sceVu0AddVector(point->extent, offset, point->position);
+                }
+              }
+              if (function->kind == 16) {
+                sceVu0CopyVector(point->extent, function->position);
+                has_extent = 1;
+            }
+              if (function->kind == 10)
+                point->side = 1;
+              if (function->kind == 11)
+                point->side = -1;
+              if (function->kind == 10 || function->kind == 11)
+                point->linked_value = (int) function->values[0];
+            }
+        }
+    }
+
+    created = 0;
+    EPARTS_FUNC_DATA *function = functions;
+    for (int i = 0; i < function_count; i++, function++) {
+        ED_EVENT_POINT *point = NULL;
+        switch (function->kind) {
+        case 17:
+            point = GetNewEventPoint(parts, function, points, point_count);
+            if (point != NULL) {
+                point->event_type = 2;
+                point->unk_60[2] = 15.0f;
+                point->unk_60[1] = 15.0f;
+                point->unk_60[0] = 15.0f;
+                point->side = (int) function->values[0];
+                point->linked_value = (int) function->values[1];
+                point->minimum_progress = (int) function->values[2];
+                point->secondary_progress = (int) function->values[3];
+            }
+            break;
+        case 18:
+            if ((int) function->values[0] > 0) {
+                point = GetNewEventPoint(parts, function, points, point_count);
+                if (point != NULL) {
+                    point->event_type = 3;
+                    sceVu0CopyVector(point->unk_60, function->parameters);
+                    point->side = (int) function->values[0];
+                    point->linked_value = (int) function->values[1];
+                }
+            }
+            break;
+        case 19:
+            point = GetNewEventPoint(parts, function, points, point_count);
+            if (point != NULL) {
+                point->event_type = 4;
+                point->unk_60[2] = 6.0f;
+                point->unk_60[1] = 6.0f;
+                point->unk_60[0] = 6.0f;
+                point->unk_60[3] = function->values[0];
+                point->side = (int) function->values[1];
+                for (int j = 0; j < function_count; j++) {
+                    EPARTS_FUNC_DATA *other = &functions[j];
+                    if (other->kind == 20 && other->link_id == function->link_id) {
+                        sceVu0CopyVector(point->extent, other->position);
+                        point->linked_value = (int) other->values[1];
+                        break;
+                    }
+                }
+            }
+            break;
+        case 20:
+            point = GetNewEventPoint(parts, function, points, point_count);
+            if (point != NULL) {
+                point->event_type = 5;
+                point->unk_60[2] = 6.0f;
+                point->unk_60[1] = 6.0f;
+                point->unk_60[0] = 6.0f;
+                point->unk_60[3] = function->values[0];
+                point->linked_value = (int) function->values[1];
+                for (int j = 0; j < function_count; j++) {
+                    EPARTS_FUNC_DATA *other = &functions[j];
+                    if (other->kind == 19 && other->link_id == function->link_id) {
+                        sceVu0CopyVector(point->extent, other->position);
+                        point->side = (int) other->values[1];
+                        break;
+                    }
+                }
+            }
+            break;
+        }
+        if (point != NULL)
+            created++;
+    }
+    return created;
+}
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdGetEvent__FP14ED_EVENT_POINTiP14ED_EVENT_PARAMPfPff);
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdEventPointDraw__FP14ED_EVENT_POINTif);
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdEventPointCpPoly__FPfP14ED_EVENT_POINTiP6CCPolyf);
@@ -451,7 +590,7 @@ void InitSprite(ED_SPRITE *sprite) {
 /** Object-animation slots used by editor event scripts. */
 static OBJ_ANIME_SEQ obj_anime[16];
 
-OBJ_ANIME_SEQ *GetObjAnime(int index) {
+static OBJ_ANIME_SEQ *GetObjAnime(int index) {
     if (index < 0 || index >= 16)
         return NULL;
     return &obj_anime[index];
@@ -490,29 +629,332 @@ int GetWorkFlag(int index) {
         return 0;
     return work_flag[index];
 }
-INCLUDE_ASM("asm/nonmatchings/editloop3", GetStackInt__FP12RS_STACKDATA);
-INCLUDE_ASM("asm/nonmatchings/editloop3", GetStackFloat__FP12RS_STACKDATA);
-INCLUDE_ASM("asm/nonmatchings/editloop3", GetStackString__FP12RS_STACKDATA);
-INCLUDE_ASM("asm/nonmatchings/editloop3", SetStack__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", SetStack__FP12RS_STACKDATAf);
+
+/**
+ * Reads a script stack value as an integer, converting a tagged float when necessary.
+ */
+static int GetStackInt(RS_STACKDATA *stack) {
+    if (stack->type == RS_FLOAT)
+        return (int) stack->f;
+    return stack->i;
+}
+
+/**
+ * Reads a script stack value as a float, converting a tagged integer when necessary.
+ */
+static float GetStackFloat(RS_STACKDATA *stack) {
+    if (stack->type == RS_INT)
+        return (float) stack->i;
+    return stack->f;
+}
+
+/**
+ * Reads the string pointer stored in a script stack value.
+ */
+static char *GetStackString(RS_STACKDATA *stack) {
+    return stack->s;
+}
+
+/**
+ * Writes an integer through a script stack reference value.
+ */
+static void SetStack(RS_STACKDATA *stack, int value) {
+    if (stack->type == RS_PTR)
+        stack->p->i = value;
+}
+
+/**
+ * Writes a float through a script stack reference value.
+ */
+static void SetStack(RS_STACKDATA *stack, float value) {
+    if (stack->type == RS_PTR)
+        stack->p->f = value;
+}
+
 void PrintMemory() {
 }
-INCLUDE_ASM("asm/nonmatchings/editloop3", GetObjHandle__Fi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", SetObjHandle__FiP9CMapPartsPc);
-INCLUDE_ASM("asm/nonmatchings/editloop3", SetObjHandle__FiP10CCharacterPc);
-INCLUDE_ASM("asm/nonmatchings/editloop3", SetObjHandle__FiP6CFrame);
-INCLUDE_ASM("asm/nonmatchings/editloop3", obj_draw__FP10OBJ_HANDLEi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", set_obj_pos__FP10OBJ_HANDLEPf);
-INCLUDE_ASM("asm/nonmatchings/editloop3", get_obj_pos__FP10OBJ_HANDLEPf);
-INCLUDE_ASM("asm/nonmatchings/editloop3", get_obj_world_pos__FP10OBJ_HANDLEPf);
-INCLUDE_ASM("asm/nonmatchings/editloop3", set_obj_rot__FP10OBJ_HANDLEPf);
-INCLUDE_ASM("asm/nonmatchings/editloop3", get_obj_rot__FP10OBJ_HANDLEPf);
-INCLUDE_ASM("asm/nonmatchings/editloop3", set_obj_scale__FP10OBJ_HANDLEPf);
-INCLUDE_ASM("asm/nonmatchings/editloop3", get_obj_scale__FP10OBJ_HANDLEPf);
-INCLUDE_ASM("asm/nonmatchings/editloop3", init_obj_anime__FiiiiPfPfPf);
-INCLUDE_ASM("asm/nonmatchings/editloop3", sync_obj_obj__FP10OBJ_HANDLEP10OBJ_HANDLE);
-INCLUDE_ASM("asm/nonmatchings/editloop3", release_obj_obj__FP10OBJ_HANDLE);
-INCLUDE_ASM("asm/nonmatchings/editloop3", set_attr_obj__FP10OBJ_HANDLER10CFrameAttrii);
+/** Object handles exposed to editor event scripts. */
+extern OBJ_HANDLE ObjHandle[32];
+
+static OBJ_HANDLE *GetObjHandle(int index) {
+    if (index < 0 || index >= 32)
+        return NULL;
+    return &ObjHandle[index];
+}
+
+int SetObjHandle(int index, CMapParts *map_parts, char *frame_name) {
+    OBJ_HANDLE *handle = GetObjHandle(index);
+    if (handle == NULL)
+        return 0;
+    if (map_parts == NULL)
+        return 0;
+    if (frame_name == NULL)
+        return 0;
+
+    memset(handle, 0, sizeof(OBJ_HANDLE));
+    int i = 0;
+    handle->frames[0] = map_parts->frame[0];
+    handle->frames[1] = map_parts->frame[1];
+    handle->frames[2] = map_parts->frame[2];
+    handle->frames[3] = map_parts->frame[3];
+    handle->frames[4] = map_parts->GetCollisionFrame();
+    handle->frames[5] = map_parts->shadow_frame;
+    handle->frames[6] = map_parts->shade_frame;
+    CFrame *extra_frame;
+    if (map_parts->unk_0DC == NULL) {
+        extra_frame = NULL;
+    } else {
+        map_parts->unk_0DC->SetPosition(map_parts->pos[0], map_parts->pos[1], map_parts->pos[2]);
+        map_parts->unk_0DC->SetRotation(map_parts->rotation.x, map_parts->rotation.y, map_parts->rotation.z);
+        extra_frame = map_parts->unk_0DC;
+    }
+    handle->frames[7] = extra_frame;
+    handle->frames[8] = map_parts->unk_104;
+    i += 9;
+    for (; i < 12; i++)
+        handle->frames[i] = NULL;
+
+    if (frame_name[0] != '\0') {
+        for (i = 0; i < 12; i++) {
+            if (handle->frames[i] != NULL)
+                handle->frames[i] = handle->frames[i]->SearchFrame(frame_name);
+        }
+        handle->map_parts = NULL;
+    } else {
+        handle->map_parts = map_parts;
+    }
+    return 1;
+}
+
+int SetObjHandle(int index, CCharacter *character, char *frame_name) {
+    OBJ_HANDLE *handle = GetObjHandle(index);
+    if (handle == NULL)
+        return 0;
+    if (character == NULL)
+        return 0;
+    if (frame_name == NULL)
+        return 0;
+
+    memset(handle, 0, sizeof(OBJ_HANDLE));
+    int i = 0;
+    handle->frames[0] = character->frame;
+    handle->frames[1] = character->shadow_frame;
+    i += 2;
+    for (; i < 12; i++)
+        handle->frames[i] = NULL;
+
+    if (frame_name[0] != '\0') {
+        for (i = 0; i < 12; i++) {
+            if (handle->frames[i] != NULL)
+                handle->frames[i] = handle->frames[i]->SearchFrame(frame_name);
+        }
+        handle->map_parts = NULL;
+    } else {
+        handle->character = character;
+    }
+    return 1;
+}
+
+int SetObjHandle(int index, CFrame *frame) {
+    OBJ_HANDLE *handle = GetObjHandle(index);
+    if (frame == NULL)
+        return 0;
+    memset(handle, 0, sizeof(OBJ_HANDLE));
+    handle->frames[0] = frame;
+    return 1;
+}
+
+void obj_draw(OBJ_HANDLE *handle, int draw) {
+    if (handle == NULL)
+        return;
+
+    int frame_draw = 2;
+    int frame_flags = 4;
+    if (draw != 0) {
+        frame_draw = 1;
+        frame_flags = 1;
+    }
+    if (handle->map_parts != NULL) {
+        handle->map_parts->draw_on = draw;
+        return;
+    }
+    for (int i = 0; i < 12; i++) {
+        if (handle->frames[i] != NULL) {
+            handle->frames[i]->attr.draw_on = frame_draw;
+            handle->frames[i]->flags = frame_flags;
+        }
+    }
+}
+
+void set_obj_pos(OBJ_HANDLE *handle, float *position) {
+    if (handle->map_parts != NULL) {
+        handle->map_parts->SetPosition(position);
+        return;
+    }
+    if (handle->character != NULL) {
+        handle->character->SetPosition(position);
+        return;
+    }
+    for (int i = 0; i < 12; i++) {
+        if (handle->frames[i] != NULL)
+            handle->frames[i]->SetPosition(position);
+    }
+}
+
+void get_obj_pos(OBJ_HANDLE *handle, float *out_position) {
+    if (handle->map_parts != NULL) {
+        handle->map_parts->GetPosition(out_position);
+        return;
+    }
+    if (handle->character != NULL) {
+        handle->character->GetPosition(out_position);
+        return;
+    }
+    for (int i = 0; i < 12; i++) {
+        if (handle->frames[i] != NULL) {
+            sceVu0CopyVector(out_position, handle->frames[i]->position);
+            return;
+        }
+    }
+}
+
+void get_obj_world_pos(OBJ_HANDLE *handle, float *out_position) {
+    if (handle->map_parts != NULL) {
+        handle->map_parts->GetPosition(out_position);
+        return;
+    }
+    if (handle->character != NULL) {
+        handle->character->GetPosition(out_position);
+        return;
+    }
+    sceVu0FVECTOR local = {0.0f, 0.0f, 0.0f, 1.0f};
+    for (int i = 0; i < 12; i++) {
+        if (handle->frames[i] != NULL) {
+            handle->frames[i]->GetWorldPosition(out_position, local);
+            return;
+        }
+    }
+}
+
+void set_obj_rot(OBJ_HANDLE *handle, float *rotation) {
+    if (handle->map_parts != NULL) {
+        handle->map_parts->SetRotation(rotation[0], rotation[1], rotation[2]);
+        return;
+    }
+    if (handle->character != NULL) {
+        handle->character->SetRotation(rotation[0], rotation[1], rotation[2]);
+        return;
+    }
+    for (int i = 0; i < 12; i++) {
+        if (handle->frames[i] != NULL) {
+            handle->frames[i]->SetRotType(2);
+            handle->frames[i]->SetRotation(rotation[0], rotation[1], rotation[2]);
+        }
+    }
+}
+
+void get_obj_rot(OBJ_HANDLE *handle, float *out_rotation) {
+    if (handle->map_parts != NULL) {
+        handle->map_parts->GetRotation(out_rotation);
+        return;
+    }
+    if (handle->character != NULL) {
+        handle->character->GetRotation(out_rotation);
+        return;
+    }
+    for (int i = 0; i < 12; i++) {
+        if (handle->frames[i] != NULL) {
+            handle->frames[i]->GetRotation(out_rotation);
+            return;
+        }
+    }
+}
+
+void set_obj_scale(OBJ_HANDLE *handle, float *scale) {
+    if (handle->map_parts != NULL) {
+        handle->map_parts->SetScale(scale);
+        return;
+    }
+    if (handle->character != NULL) {
+        handle->character->SetScale(scale);
+        return;
+    }
+    for (int i = 0; i < 12; i++) {
+        if (handle->frames[i] != NULL)
+            handle->frames[i]->SetScale(scale);
+    }
+}
+
+void get_obj_scale(OBJ_HANDLE *handle, float *out_scale) {
+    if (handle->map_parts != NULL) {
+        handle->map_parts->GetScale(out_scale);
+        return;
+    }
+    if (handle->character != NULL) {
+        handle->character->GetScale(out_scale);
+        return;
+    }
+    for (int i = 0; i < 12; i++) {
+        CFrame *frame = handle->frames[i];
+        if (frame != NULL) {
+            out_scale[0] = frame->scale[0];
+            out_scale[1] = frame->scale[1];
+            out_scale[2] = frame->scale[2];
+            return;
+        }
+    }
+}
+int init_obj_anime(int anime_index, int handle_index, int type, int number,
+                   float *offset, float *range, float *speed) {
+    OBJ_ANIME_SEQ *anime = GetObjAnime(anime_index);
+    OBJ_HANDLE *handle = GetObjHandle(handle_index);
+    if (anime == NULL || handle == NULL)
+        return 0;
+
+    anime->type = type;
+    anime->number = number;
+    anime->name[0] = '\0';
+    sceVu0CopyVector(anime->offset, offset);
+    sceVu0CopyVector(anime->range, range);
+    sceVu0CopyVector(anime->speed, speed);
+    InitObjAnime(handle->frames, 12, anime);
+}
+
+void sync_obj_obj(OBJ_HANDLE *source, OBJ_HANDLE *targets) {
+    CFrame *reference = NULL;
+    int i;
+    for (i = 0; i < 12; i++) {
+        if (source->frames[i] != NULL) {
+            reference = source->frames[i];
+            break;
+        }
+    }
+    if (reference != NULL) {
+        for (i = 0; i < 12; i++) {
+            if (targets->frames[i] != NULL)
+                targets->frames[i]->SetReference(reference);
+        }
+    }
+}
+
+void release_obj_obj(OBJ_HANDLE *handle) {
+    for (int i = 0; i < 12; i++) {
+        if (handle->frames[i] != NULL)
+            handle->frames[i]->DeleteReference();
+    }
+}
+
+void set_attr_obj(OBJ_HANDLE *handle, CFrameAttr &attr, int children, int mask) {
+    if (handle->character != NULL) {
+        if (handle->character->frame != NULL)
+            handle->character->frame->SetAttr(attr, children, mask);
+    } else {
+        for (int i = 0; i < 12; i++) {
+            if (handle->frames[i] != NULL)
+                handle->frames[i]->SetAttr(attr, children, mask);
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/editloop3", GetActSeq__Fi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", turn_chara__FP10CCharacterPff);
 INCLUDE_ASM("asm/nonmatchings/editloop3", GetScene__Fi);
@@ -536,25 +978,92 @@ INCLUDE_ASM("asm/nonmatchings/editloop3", GetFileName__FPcPc);
 int _TEST(RS_STACKDATA *, int) {
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/editloop3", exch_ok_cancel__Fi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", _GET_PADON__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", _GET_PADDOWN__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", _GET_PADUP__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", _GET_APAD__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", _GET_RANDOM__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", _SET_RETURN_CODE__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", _NEXT_EVENT__FP12RS_STACKDATAi);
+int exch_ok_cancel(int buttons) {
+    int confirm = buttons & ED_PAD_CONFIRM;
+    int cancel = buttons & ED_PAD_CANCEL;
+    buttons &= ~(ED_PAD_CONFIRM | ED_PAD_CANCEL);
+    if (confirm)
+        buttons |= ED_PAD_CANCEL;
+    if (cancel)
+        buttons |= ED_PAD_CONFIRM;
+    return buttons;
+}
+int _GET_PADON(RS_STACKDATA *stack, int argument_count) {
+    if (argument_count <= 0)
+        return 0;
+    SetStack(stack, exch_ok_cancel(GamePad.GetPadOn()));
+    return 1;
+}
+
+int _GET_PADDOWN(RS_STACKDATA *stack, int argument_count) {
+    if (argument_count <= 0)
+        return 0;
+    SetStack(stack, exch_ok_cancel(GamePad.GetPadDown()));
+    return 1;
+}
+
+int _GET_PADUP(RS_STACKDATA *stack, int argument_count) {
+    if (argument_count <= 0)
+        return 0;
+    SetStack(stack, exch_ok_cancel(GamePad.GetPadUp()));
+    return 1;
+}
+
+int _GET_APAD(RS_STACKDATA *const arguments, const int argument_count) {
+    RS_STACKDATA *stack = arguments;
+    int count = argument_count;
+
+    if (count > 0)
+        SetStack(stack++, GamePad.GetLXf());
+    if (count > 1)
+        SetStack(stack++, GamePad.GetLYf());
+    if (count > 2)
+        SetStack(stack++, GamePad.GetRXf());
+    if (count > 3)
+        SetStack(stack, GamePad.GetRYf());
+    return 1;
+}
+
+int _GET_RANDOM(RS_STACKDATA *stack, int argument_count) {
+    if (argument_count <= 0)
+        return 0;
+    SetStack(stack, rand());
+    return 1;
+}
+
+int _SET_RETURN_CODE(RS_STACKDATA *stack, int) {
+    EdEventInfo.return_code = GetStackInt(stack);
+    return 1;
+}
+int _NEXT_EVENT(RS_STACKDATA *stack, int) {
+    EdEventInfo.next_event = GetStackInt(stack);
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/editloop3", _GOTO_INTERIOR__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _SET_WORLD_COORD__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", _INITIALIZE__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", _EXIT_CODE__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", _DRAW_EXCLAMATION_MARK__FP12RS_STACKDATAi);
+int _INITIALIZE(RS_STACKDATA *, int) {
+    EdInitEventParam();
+    return 1;
+}
+
+int _EXIT_CODE(RS_STACKDATA *stack, int) {
+    EdEventInfo.exit_code = GetStackInt(stack);
+    return 1;
+}
+
+int _DRAW_EXCLAMATION_MARK(RS_STACKDATA *, int) {
+    EdEventInfo.draw_exclamation_mark = 1;
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/editloop3", _GOTO_USE_ITEM__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _NAME_REGISTRY__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _WORLD_MAP__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _SKIP__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _GOTO_OUTSIDE__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/editloop3", _FINISH__FP12RS_STACKDATAi);
+int _FINISH(RS_STACKDATA *, int) {
+    EdEventAllClear();
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/editloop3", _MAP_JUMP__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _GET_OLD_MAPNO__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _SET_DUNGEON_FLOOR__FP12RS_STACKDATAi);
