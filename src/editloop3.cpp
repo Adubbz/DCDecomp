@@ -1591,6 +1591,8 @@ int _GET_CHARA_ROT(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
+int _TURN_CHARA(RS_STACKDATA *stack, int argument_count);
+#ifdef NON_MATCHING
 int _TURN_CHARA(RS_STACKDATA *stack, int) {
     sceVu0FVECTOR position;
     GetPosition(stack, position);
@@ -1598,6 +1600,9 @@ int _TURN_CHARA(RS_STACKDATA *stack, int) {
     turn_chara(EdEventInfo.main_character, position, GetStackFloat(stack));
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/editloop3", _TURN_CHARA__FP12RS_STACKDATAi);
+#endif
 
 int _GET_NPC_TALK_POS(RS_STACKDATA *stack, int argument_count) {
     int position[2];
@@ -1808,6 +1813,7 @@ int _TURN_NPC(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
+#ifdef NON_MATCHING
 int _NPC_DRAW(RS_STACKDATA *stack, int argument_count) {
     int draw = GetStackInt(stack++);
     for (int i = 0; i < argument_count - 1; i++) {
@@ -1821,7 +1827,11 @@ int _NPC_DRAW(RS_STACKDATA *stack, int argument_count) {
     }
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/editloop3", _NPC_DRAW__FP12RS_STACKDATAi);
+#endif
 
+#ifdef NON_MATCHING
 int _NPC_DRAW_SHADOW(RS_STACKDATA *stack, int argument_count) {
     int draw = GetStackInt(stack++);
     for (int i = 0; i < argument_count - 1; i++) {
@@ -1835,7 +1845,11 @@ int _NPC_DRAW_SHADOW(RS_STACKDATA *stack, int argument_count) {
     }
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/editloop3", _NPC_DRAW_SHADOW__FP12RS_STACKDATAi);
+#endif
 
+#ifdef NON_MATCHING
 int _SET_NPC_FOOT_SOUND(RS_STACKDATA *stack, int argument_count) {
     int mode = GetStackInt(stack++);
     for (int i = 0; i < argument_count - 1; i++) {
@@ -1852,6 +1866,9 @@ int _SET_NPC_FOOT_SOUND(RS_STACKDATA *stack, int argument_count) {
     }
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/editloop3", _SET_NPC_FOOT_SOUND__FP12RS_STACKDATAi);
+#endif
 
 int _SET_NPC_FLOOR_ID(RS_STACKDATA *stack, int) {
     RS_STACKDATA *argument = (0, stack + 1);
@@ -2093,6 +2110,7 @@ int _MES_NEXTPAGE(RS_STACKDATA *stack, int) {
     return 1;
 }
 
+#ifdef NON_MATCHING
 int _SET_MES_AUTOSET(RS_STACKDATA *stack, int argument_count) {
     ClsMes *message = GetMes(GetStackInt(stack++));
     if (message == NULL)
@@ -2124,6 +2142,9 @@ int _SET_MES_AUTOSET(RS_STACKDATA *stack, int argument_count) {
     }
     return 0;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/editloop3", _SET_MES_AUTOSET__FP12RS_STACKDATAi);
+#endif
 
 int _SET_MES_SHIPPO(RS_STACKDATA *stack, int argument_count) {
     ClsMes *message = GetMes(GetStackInt(stack++));
@@ -2393,6 +2414,7 @@ int _HOBJ_ITEM(RS_STACKDATA *stack, int) {
     return SetObjHandle(handle_index, frame) != 0 ? 1 : 0;
 }
 
+#ifdef NON_MATCHING
 int _OBJ_DRAW(RS_STACKDATA *stack, int argument_count) {
     int draw = GetStackInt(stack++);
     for (int i = 0; i < argument_count - 1; i++) {
@@ -2402,6 +2424,9 @@ int _OBJ_DRAW(RS_STACKDATA *stack, int argument_count) {
     }
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/editloop3", _OBJ_DRAW__FP12RS_STACKDATAi);
+#endif
 
 int _SET_OBJ_POS(RS_STACKDATA *stack, int) {
     sceVu0FVECTOR position;
@@ -2529,6 +2554,7 @@ int _GET_TALKNPC_ID(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
+#ifdef NON_MATCHING
 int _GET_TALKNPC_STATUS(RS_STACKDATA *stack, int) {
     int index = EdEventInfo.talk_npc_id;
     int status = 0;
@@ -2539,6 +2565,9 @@ int _GET_TALKNPC_STATUS(RS_STACKDATA *stack, int) {
     SetStack(stack, status);
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/editloop3", _GET_TALKNPC_STATUS__FP12RS_STACKDATAi);
+#endif
 
 int _SET_TALK_CAMERA(RS_STACKDATA *stack, int) {
     static sceVu0FVECTOR vv[3] = {
@@ -2604,6 +2633,7 @@ int _SET_TALK_SELECT_MES(RS_STACKDATA *stack, int) {
     return 1;
 }
 
+#ifdef NON_MATCHING
 int _EVERY_TALK_EVENT(RS_STACKDATA *stack, int argument_count) {
     int villager_id = GetStackInt(stack++);
     if (villager_id < 0 || villager_id >= 16)
@@ -2618,6 +2648,9 @@ int _EVERY_TALK_EVENT(RS_STACKDATA *stack, int argument_count) {
     }
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/editloop3", _EVERY_TALK_EVENT__FP12RS_STACKDATAi);
+#endif
 
 CCameraFollow *GetCamera() {
     CCameraFollow *camera = EdEventInfo.camera;
@@ -2971,6 +3004,7 @@ int _DRAW_SHADOW(RS_STACKDATA *stack, int) {
     return 1;
 }
 
+#ifdef NON_MATCHING
 int _SET_CLIP_POINT(RS_STACKDATA *stack, int) {
     sceVu0FVECTOR plane;
     RS_STACKDATA *distance_argument = stack + 3;
@@ -2982,6 +3016,9 @@ int _SET_CLIP_POINT(RS_STACKDATA *stack, int) {
     }
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/editloop3", _SET_CLIP_POINT__FP12RS_STACKDATAi);
+#endif
 
 int _DRAW_EDIT_WATER(RS_STACKDATA *stack, int) {
     if (EdEventInfo.edit_ground != NULL)
@@ -3239,6 +3276,7 @@ int _ASQ_INIT(RS_STACKDATA *stack, int) {
     return 1;
 }
 
+#ifdef NON_MATCHING
 int _ASQ_SYNC_CHARA(RS_STACKDATA *stack, int) {
     int sequence_index = GetStackInt(stack++);
     int character_index = GetStackInt(stack);
@@ -3255,6 +3293,9 @@ int _ASQ_SYNC_CHARA(RS_STACKDATA *stack, int) {
     sequence->SyncChara(character);
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/editloop3", _ASQ_SYNC_CHARA__FP12RS_STACKDATAi);
+#endif
 
 int _ASQ_SET_POS(RS_STACKDATA *stack, int) {
     RS_STACKDATA *arguments = (0, stack + 1);
@@ -3282,6 +3323,7 @@ int _ASQ_MOVE(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
+#ifdef NON_MATCHING
 int _ASQ_MOVE_STEP(RS_STACKDATA *stack, int) {
     RS_STACKDATA *arguments = (0, stack + 1);
     CActionSeq *sequence = GetActSeq(GetStackInt(stack));
@@ -3292,7 +3334,11 @@ int _ASQ_MOVE_STEP(RS_STACKDATA *stack, int) {
     sequence->MoveSeq(position, GetStackFloat(arguments + 3));
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/editloop3", _ASQ_MOVE_STEP__FP12RS_STACKDATAi);
+#endif
 
+#ifdef NON_MATCHING
 int _ASQ_ROT_REF(RS_STACKDATA *stack, int) {
     RS_STACKDATA *arguments = (0, stack + 1);
     CActionSeq *sequence = GetActSeq(GetStackInt(stack));
@@ -3303,6 +3349,9 @@ int _ASQ_ROT_REF(RS_STACKDATA *stack, int) {
     sequence->RotRefSeq(position, GetStackFloat(arguments + 3));
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/editloop3", _ASQ_ROT_REF__FP12RS_STACKDATAi);
+#endif
 
 int _ASQ_ROT_ANGLE(RS_STACKDATA *stack, int) {
     sceVu0FVECTOR rotation;
@@ -3441,6 +3490,7 @@ int _ASQ_ANIME(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
+#ifdef NON_MATCHING
 int _ASQ_CHECK(RS_STACKDATA *stack, int) {
     RS_STACKDATA *result = (0, stack + 1);
     CActionSeq *sequence = GetActSeq(GetStackInt(stack));
@@ -3450,6 +3500,9 @@ int _ASQ_CHECK(RS_STACKDATA *stack, int) {
     SetStack(result, (0, ((ended != 0) ^ 1) & 0xFF));
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/editloop3", _ASQ_CHECK__FP12RS_STACKDATAi);
+#endif
 
 int _OBJ_ANIME_INIT(RS_STACKDATA *stack, int argument_count) {
     for (int i = 0; i < argument_count; i++)
@@ -3596,11 +3649,15 @@ int _SGET_DUNGEON_STATUS(RS_STACKDATA *stack, int) {
     return 1;
 }
 
+#ifdef NON_MATCHING
 int _SGET_PARTY_NUM(RS_STACKDATA *stack, int) {
     CDngStatusData *status = SaveData->GetDngStatus();
     SetStack(stack, status->party_size);
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/editloop3", _SGET_PARTY_NUM__FP12RS_STACKDATAi);
+#endif
 
 int _SSET_PARTY_NUM(RS_STACKDATA *stack, int) {
     CDngStatusData *status = SaveData->GetDngStatus();
@@ -3618,6 +3675,7 @@ int _SSET_REQUEST_EVENT_FLAG(RS_STACKDATA *stack, int) {
     return 1;
 }
 
+#ifdef NON_MATCHING
 int _SADD_VISIT_MAP(RS_STACKDATA *stack, int argument_count) {
     int map = GetStackInt(stack++) - 1;
     int add = 1;
@@ -3632,6 +3690,9 @@ int _SADD_VISIT_MAP(RS_STACKDATA *stack, int argument_count) {
         SetStack(stack, visits);
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/editloop3", _SADD_VISIT_MAP__FP12RS_STACKDATAi);
+#endif
 
 int _SSKILL_GET(RS_STACKDATA *stack, int) {
     CDngStatusData *status = SaveData->GetDngStatus();
@@ -3676,6 +3737,7 @@ int _SATRA_CHIP_GET(RS_STACKDATA *stack, int) {
     SaveData->AtraChipGet(georama, GetStackInt(next));
 }
 
+#ifdef NON_MATCHING
 int _SGET_REQUEST(RS_STACKDATA *stack, int) {
     RS_STACKDATA *result = (0, stack + 1);
     SV_GEORAMA_DATA *georama = SaveData->GetGrdData(GetStackInt(stack) - 1);
@@ -3698,6 +3760,9 @@ int _SGET_REQUEST(RS_STACKDATA *stack, int) {
         SetStack(result, completed * 100 / total);
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/editloop3", _SGET_REQUEST__FP12RS_STACKDATAi);
+#endif
 
 int _SGET_ATRA_PARTS_NUM(RS_STACKDATA *stack, int) {
     int count = 0;
@@ -4053,6 +4118,7 @@ int _LOAD_FISHING_DATA(RS_STACKDATA *stack, int) {
     return 1;
 }
 
+#ifdef NON_MATCHING
 int _GOTO_FISHING(RS_STACKDATA *, int) {
     CCharacter *character = GetChara(-1);
     if (character == NULL)
@@ -4068,6 +4134,9 @@ int _GOTO_FISHING(RS_STACKDATA *, int) {
     EdEventInfo.return_code = 11;
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/editloop3", _GOTO_FISHING__FP12RS_STACKDATAi);
+#endif
 
 int _INIT_FISH(RS_STACKDATA *stack, int) {
     CBoxVu0 bounds;
@@ -4098,6 +4167,8 @@ INCLUDE_ASM("asm/nonmatchings/editloop3", EdInitEventParamSimple__Fv);
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdInitEventParam__Fv);
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdEventInit__FiP14CDataAlloc2_1_Pc);
 
+void RunEvent(CRunScript *script, int program, CDataAlloc2<1> *arena);
+#ifdef NON_MATCHING
 void RunEvent(CRunScript *script, int program, CDataAlloc2<1> *arena) {
     int used = arena->used;
     EdEventBuffer.base = arena->base + used * 16;
@@ -4110,6 +4181,9 @@ void RunEvent(CRunScript *script, int program, CDataAlloc2<1> *arena) {
     p_jump_map_no = 0;
     script->run(program);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/editloop3", RunEvent__FP10CRunScriptiP14CDataAlloc2_1_);
+#endif
 
 void EdRunEvent(int program, CDataAlloc2<1> *arena) {
     RunEvent(&EdEventScript, program, arena);

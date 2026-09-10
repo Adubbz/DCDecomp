@@ -39,6 +39,17 @@
  * branch offsets, differing only in register fields. A function that drifts
  * further, or one that differs without the declaration, is a failure, and any
  * difference in data is a failure whether declared or not.
+ *
+ * `NON_MATCHING` is neither: it keeps a decompiled function that does not
+ * reproduce retail's code yet, without letting it into the build. The build
+ * never defines it, so the `#else` branch's `INCLUDE_ASM` is what links and the
+ * image is unaffected. A function whose compiled length differs from retail's
+ * cannot simply be left in the build -- mwcc emits a unit's functions as one
+ * contiguous .text, so it would move every function and every section after it.
+ * The guarded code is kept so the draft can be worked on until it matches.
+ * Note that mwccgap cannot yet compile a unit with the macro defined: it pairs
+ * each `INCLUDE_ASM` it finds in the source text with a gap in the compiled
+ * object, and there is no gap when the C++ was compiled instead.
  */
 
 #define INCLUDE_ASM(FOLDER, NAME)
