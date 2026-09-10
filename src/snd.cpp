@@ -5,6 +5,7 @@
 #include "common.h"
 
 #include "editatra.hpp"
+#include "snd.hpp"
 
 /* The sound manager: BGM loading, playback and fading, and the SE table.
  * CSound itself is in src/sound.cpp. */

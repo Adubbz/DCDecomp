@@ -103,6 +103,15 @@ void SndAmbientPlay(int ambient_no);
 void SndAmbientSetVolf(float volume);
 
 /**
+ * Starts the ambient system from nothing, and reports whether it came up.
+ *
+ * @mangled SndAmbientInit__Fv
+ * @address 0x15B0F0
+ * @size 0x1C
+ */
+int SndAmbientInit(void);
+
+/**
  * Works out the volume and the pan of a sound at a position.
  *
  * @mangled SndGetVolPan__FPfPfPfff
@@ -110,6 +119,15 @@ void SndAmbientSetVolf(float volume);
  * @size 0x200
  */
 void SndGetVolPan(float *vol, float *pan, float *pos, float near, float far);
+
+/**
+ * Converts a normalized pan into the hardware pan the sound calls take.
+ *
+ * @mangled SndGetPanf__Ff
+ * @address 0x15AA30
+ * @size 0x74
+ */
+int SndGetPanf(float pan);
 
 /**
  * Sets the volume of a sound effect.
@@ -161,6 +179,15 @@ int SndSePlay(int se_no, int voice, int pan);
 void SndSePlay(int se_no, float *position, float near, float far);
 
 /**
+ * Plays a sound effect at an explicit volume and pan.
+ *
+ * @mangled SndSePlay__Fiffi
+ * @address 0x15A760
+ * @size 0xBC
+ */
+void SndSePlay(int se_no, float volume, float pan, int voice);
+
+/**
  * Plays the sound of one foot at a world position.
  *
  * @mangled SndPlayFootSound__FiiPf
@@ -179,6 +206,24 @@ void SndPlayFootSound(int sound_id, int foot, float *position);
  * @unknownret
  */
 void SndSeSeqPlayStop(int sound_id, int step, int flag);
+
+/**
+ * Clears every sound-effect sequence slot.
+ *
+ * @mangled SndSeSeqInit__Fv
+ * @address 0x15AED0
+ * @size 0x4C
+ */
+void SndSeSeqInit(void);
+
+/**
+ * Advances every sound-effect sequence that is running.
+ *
+ * @mangled SndSeSeqStep__Fv
+ * @address 0x15AFA0
+ * @size 0xB8
+ */
+void SndSeSeqStep(void);
 
 /**
  * Turns the bilinear filter on or off for the sprites that follow.
@@ -366,6 +411,42 @@ int SndCheckFade();
 /** Polls the background sound loader. */
 int SndSyncBG();
 
+/**
+ * Returns the background-music volume the configuration asks for.
+ *
+ * @mangled SndGetDefaultBgmVol__Fv
+ * @address 0x159DF0
+ * @size 0x48
+ */
+int SndGetDefaultBgmVol(void);
+
+/**
+ * Polls the background-music bank load, and hands the file to the driver once it lands.
+ *
+ * @mangled SndBgmSyncBG__Fv
+ * @address 0x159AB0
+ * @size 0x80
+ */
+int SndBgmSyncBG(void);
+
+/**
+ * Polls the sound-effect bank load, and hands the file to the driver once it lands.
+ *
+ * @mangled SndSoundSyncBG__Fv
+ * @address 0x15A630
+ * @size 0x80
+ */
+int SndSoundSyncBG(void);
+
+/**
+ * Polls the voice bank load, and hands the file to the driver once it lands.
+ *
+ * @mangled SndVoiceSyncBG__Fv
+ * @address 0x15B530
+ * @size 0x80
+ */
+int SndVoiceSyncBG(void);
+
 /** Plays one menu sound effect. */
 void SndSPSePlay(int se_no, int voice);
 
@@ -449,6 +530,15 @@ void SndBgmFadeIn(int bgm_no, int frames, int mode);
 
 /** Fades a background-music stream out. */
 void SndBgmFadeOut(int bgm_no, int frames);
+
+/**
+ * Steps the background-music fade, and applies the volume it reaches.
+ *
+ * @mangled SndBgmFadeInOut__Fv
+ * @address 0x159F90
+ * @size 0xF4
+ */
+void SndBgmFadeInOut(void);
 
 /**
  * Submits the blending register that sprites draw with.
