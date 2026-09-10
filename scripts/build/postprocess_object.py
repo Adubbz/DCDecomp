@@ -156,7 +156,8 @@ def compiled_constants(path):
     return out
 
 
-def export_constants(path, names, parser, assembly_constants=()):
+def export_constants(path, names, parser, assembly_constants=(),
+                     reserved_constants=()):
     """Rename the object's own constants to the names retail's other units use.
 
     A translation unit that is only half decompiled has its string constants
@@ -186,6 +187,10 @@ def export_constants(path, names, parser, assembly_constants=()):
         name: elf.sections[symbol.st_shndx].data
         for name, symbol in compiled_symbols.items()
     }
+    # A configured symbol rename may already have assigned one compiled
+    # constant its retail name. Reserve such constants so an identical byte
+    # sequence cannot also satisfy a later content-based export.
+    reserved = set(reserved_constants) & defined
     arguments = []
     padded = False
     for name in names:
@@ -195,7 +200,7 @@ def export_constants(path, names, parser, assembly_constants=()):
         if wanted is None:
             parser.error(f"no reference assembly defines {name!r}")
         matches = [symbol for symbol, body in compiled.items()
-                   if body and wanted.startswith(body)]
+                   if symbol not in reserved and body and wanted.startswith(body)]
         if not matches and name in assembly_constants:
             continue
         if len(matches) != 1:
@@ -641,7 +646,7 @@ def main():
     assembly_constants = set(re.findall(
         r"INCLUDE_RODATA\([^,]+,\s*([^)\s]+)\s*\)", source_text))
     export_constants(args.object, fixups.get("rodata_exports", []), parser,
-                     assembly_constants)
+                     assembly_constants, fixups.get("symbols", {}).values())
     if deferred_sections:
         elf = Elf(args.object.read_bytes())
         if rename_sections(elf, deferred_sections, parser):

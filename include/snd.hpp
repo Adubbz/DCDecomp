@@ -96,6 +96,12 @@ void SndBgmFadeOutStop(void);
  */
 void SndAmbientStop(void);
 
+/** Starts the requested ambient loop. */
+void SndAmbientPlay(int ambient_no);
+
+/** Sets the ambient loop's normalized volume. */
+void SndAmbientSetVolf(float volume);
+
 /**
  * Works out the volume and the pan of a sound at a position.
  *
@@ -144,6 +150,15 @@ void SndSetSePanf(int se_no, float pan, int voice);
  * @unknownret
  */
 int SndSePlay(int se_no, int voice, int pan);
+
+/**
+ * Plays a positional sound effect with distance attenuation.
+ *
+ * @mangled SndSePlay__FiPfff
+ * @address 0x15A810
+ * @size 0xF0
+ */
+void SndSePlay(int se_no, float *position, float near, float far);
 
 /**
  * Plays the sound of one foot at a world position.
@@ -333,6 +348,9 @@ void SndSeStop(int se_no, int voice);
  */
 void SndSetBgmVol(int volume);
 
+/** Sets the background-music normalized volume. */
+void SndSetBgmVolf(float volume);
+
 /**
  * Returns the background-music volume.
  *
@@ -340,8 +358,32 @@ void SndSetBgmVol(int volume);
  */
 int SndGetBgmVol();
 
+/** Returns the playing background-music number. */
+int SndGetBgmNo();
+
+/** Returns whether a background-music fade is still active. */
+int SndCheckFade();
+
+/** Polls the background sound loader. */
+int SndSyncBG();
+
 /** Plays one menu sound effect. */
 void SndSPSePlay(int se_no, int voice);
+
+/**
+ * Stops a playing special sound effect.
+ *
+ * @mangled SndSPSeStop__Fi
+ * @address 0x15B900
+ * @size 0x44
+ */
+void SndSPSeStop(int se_no);
+
+/** Sets the normalized volume of a playing special sound effect. */
+void SndSetSPSeVolf(int se_no, float volume);
+
+/** Sets the normalized pan of a playing special sound effect. */
+void SndSetSPSePanf(int se_no, float pan);
 /** Returns zero once the background sound-effect load has finished. */
 int SndSPSeSyncBG(void);
 
@@ -390,6 +432,24 @@ void SndSetReadBuffer(unsigned int *buffer);
  * @size 0x90
  */
 void SndSoundLoad(int set_no);
+
+/** Starts loading a background-music bank into a caller-provided buffer. */
+void SndBgmLoadBG(int bgm_no, u_int *buffer, int *size);
+
+/** Starts loading a sound-effect bank into a caller-provided buffer. */
+void SndSoundLoadBG(int set_no, u_int *buffer, int *size);
+
+/** Starts loading a voice bank into a caller-provided buffer. */
+void SndVoiceLoadBG(int set_no, u_int *buffer, int *size);
+
+/** Starts loading a special-effect sound bank into a caller-provided buffer. */
+void SndSPSeLoadBG(int set_no, u_int *buffer, int *size);
+
+/** Fades a background-music stream in. */
+void SndBgmFadeIn(int bgm_no, int frames, int mode);
+
+/** Fades a background-music stream out. */
+void SndBgmFadeOut(int bgm_no, int frames);
 
 /**
  * Submits the blending register that sprites draw with.

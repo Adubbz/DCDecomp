@@ -2,16 +2,19 @@
 
 #include "common.h"
 
+#include <libgraph.h>
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 struct MG_SPRITE;
 struct RECT;
 struct SPRITE_TABLE;
-struct sceGsTex0;
 
 class CSpriteTable {
 public:
+    u8 unk_00[0x94];
+
     /**
      * @mangled DrawTable__12CSpriteTableFv
      * @address 0x12BA20
@@ -60,3 +63,5 @@ public:
      */
     void ClearPointer(void);
 };
+
+STATIC_ASSERT(sizeof(CSpriteTable) == 0x94);

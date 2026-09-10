@@ -12,12 +12,17 @@ class CCPoly;
 class CNPCharacter {
 public:
     CCharacter chara; /**< The character that the walker draws and moves with. */
-    u8 unk_11B0[0x2c4];
+    u8 unk_11B0[0x294];
+    s32 villager_id; /**< Villager-table identifier represented by this event NPC. */
+    u8 unk_1448[0x2C];
     s32 unk_1474;
-    u8 unk_1478[0x10];
+    u8 unk_1478[0x4];
+    s32 event_status; /**< Status value exposed to an event script for the talking NPC. */
+    u8 unk_1480[0x8];
     s32 unk_1488;
     s32 unk_148C; /**< Texture set that the walker's model animates with. */
-    u8 unk_1490[0x10];
+    s32 recurring_talk_event; /**< Event number used for repeated conversations with this villager. */
+    u8 unk_1494[0xC];
 
     /**
      * @mangled Step__12CNPCharacterFv

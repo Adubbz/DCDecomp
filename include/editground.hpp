@@ -15,12 +15,23 @@ class CMapParts;
 class CRect_i_;
 class CSaveData;
 
+/**
+ * Holds the render controls for one editable-ground water surface.
+ */
+struct EDIT_WATER_SURFACE_RENDER {
+    s32 draw; /**< Whether this water surface is drawn. */
+    u8 unk_004[0x3AC];
+};
+
 class CEditGround {
 public:
-    u8 unk_00000[0x15f2c];
-    float unk_15f2c;
+    u8 unk_00000[0x15060];
+    EDIT_WATER_SURFACE_RENDER water_surfaces[4]; /**< Render controls for the four ground water surfaces. */
+    sceVu0FVECTOR clip_plane; /**< Plane used to clip the editable ground's rendered geometry. */
     u8 unk_15f30[0x360];
     CFrame *frame; /**< Root frame containing the editable ground model. */
+    u8 unk_16294[0xA6C8];
+    s32 suppress_water; /**< Whether rendering of the editable ground's water is disabled. */
     /**
      * @mangled SetMapParts__11CEditGroundFifffi
      * @address 0x1A0470
@@ -83,7 +94,7 @@ public:
      * @size 0x50
      * @unknownret
      */
-    void GetPartsObject(int);
+    CMapParts *GetPartsObject(int);
 
     /**
      * @mangled GetPartsID__11CEditGroundFfff

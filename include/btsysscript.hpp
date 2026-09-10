@@ -65,50 +65,8 @@ int BtSystemScriptRun(int, CDataAlloc2<1> *);
  */
 void BtSetMapJumpFloor(int);
 
-/**
- * @mangled GetStackInt__FP12RS_STACKDATA__2
- * @address 0x1BB930
- * @size 0x50
- * @unknownret
- * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
- */
-void GetStackInt(RS_STACKDATA *);
-
-/**
- * @mangled GetStackFloat__FP12RS_STACKDATA__2
- * @address 0x1BB980
- * @size 0x30
- * @unknownret
- * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
- */
-void GetStackFloat(RS_STACKDATA *);
-
-/**
- * @mangled GetStackString__FP12RS_STACKDATA__2
- * @address 0x1BB9B0
- * @size 0x10
- * @unknownret
- * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
- */
-void GetStackString(RS_STACKDATA *);
-
-/**
- * @mangled SetStack__FP12RS_STACKDATAi__2
- * @address 0x1BB9C0
- * @size 0x20
- * @unknownret
- * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
- */
-void SetStack(RS_STACKDATA *, int);
-
-/**
- * @mangled SetStack__FP12RS_STACKDATAf__2
- * @address 0x1BB9E0
- * @size 0x20
- * @unknownret
- * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
- */
-void SetStack(RS_STACKDATA *, float);
+/** Floor requested for the next battle-map jump. */
+extern int BtMapJumpFloor;
 
 /**
  * @mangled _GET_FLOOR_LEVEL__FP12RS_STACKDATAi

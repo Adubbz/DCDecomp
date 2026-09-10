@@ -89,14 +89,17 @@ struct SV_GRD_PART {
  * Contains one NPC slot of a Georama town.
  */
 struct SV_GRD_NPC {
-    char unk_0[12];
+    char unk_0[8];
+    s32 talk_message; /**< Message number currently assigned to this NPC slot. */
 };
 
 /**
  * Contains the Georama save data of one town.
  */
 struct SV_GEORAMA_DATA {
-    char unk_0[104];
+    s32 request_count; /**< Number of requests defined for this town. */
+    s32 request_complete[24]; /**< Completion state of each town request. */
+    s32 request_event_flag; /**< Event request stored for this Georama town. */
     SV_EDIT_PARTS_INFO parts_info[24]; /**< Contains the state of each plot. */
     SV_GRD_PART placed_parts[130];     /**< Contains the parts that the player put on the map. */
     SV_GRD_NPC npc[20];                /**< Contains the NPC slots of the town. */
@@ -294,7 +297,7 @@ public:
      * @address 0x1580D0
      * @size 0xD0
      */
-    void *GetGrdNPCData(int map_no, int npc_no);
+    SV_GRD_NPC *GetGrdNPCData(int map_no, int npc_no);
 
     /**
      * Returns the chips of a town, or NULL if the town number is not valid.

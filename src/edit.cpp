@@ -371,19 +371,19 @@ void EdDMoveChara(CCharacter *chara, CCamera *camera) {
 
     if (GamePad.Down(16)) {
         sceVu0CopyVector(camera_ref, pos);
-        camera_ref[1] += 0.7f * chara->unk_0B4;
+        camera_ref[1] += 0.7f * chara->body_height;
         camera->SetRef(camera_ref);
     }
 
-    scale = chara->unk_CE0[0];
+    scale = chara->ambient_offset[0];
     if (GamePad.On(2))
         scale += 0.1f;
     if (GamePad.On(1))
         scale -= 0.1f;
-    if (scale != chara->unk_CE0[0]) {
-        chara->unk_CE0[0] = scale;
-        chara->unk_CE0[1] = scale;
-        chara->unk_CE0[2] = scale;
+    if (scale != chara->ambient_offset[0]) {
+        chara->ambient_offset[0] = scale;
+        chara->ambient_offset[1] = scale;
+        chara->ambient_offset[2] = scale;
     }
 
     {

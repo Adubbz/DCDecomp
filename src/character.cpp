@@ -675,11 +675,11 @@ void CCharacter::Draw() {
         }
     }
 
-    ambient[0] += this->unk_CE0[0] + this->unk_CD0[0];
-    ambient[1] += this->unk_CE0[1] + this->unk_CD0[1];
-    ambient[2] += this->unk_CE0[2] + this->unk_CD0[2];
-    if (!(this->unk_CE0[3] < 0.0f)) {
-        ambient[3] = this->unk_CE0[3];
+    ambient[0] += this->ambient_offset[0] + this->unk_CD0[0];
+    ambient[1] += this->ambient_offset[1] + this->unk_CD0[1];
+    ambient[2] += this->ambient_offset[2] + this->unk_CD0[2];
+    if (!(this->ambient_offset[3] < 0.0f)) {
+        ambient[3] = this->ambient_offset[3];
     }
 
     MGSetAmbient(ambient);
@@ -809,18 +809,18 @@ void CCharacter::Initialize() {
         memset(this->unk_820[i].unk_00, 0, 128);
     }
 
-    this->unk_0B0 = 7.0f;
-    this->unk_0B4 = 17.0f;
-    this->unk_0B8 = 60.0f;
+    this->body_width = 7.0f;
+    this->body_height = 17.0f;
+    this->body_depth = 60.0f;
     this->unk_C9C = 0;
     this->fade[0] = 1.0f;
     this->fade[1] = 0.0f;
     this->fade[2] = 0.0f;
     this->fade[3] = 0.7f;
-    this->unk_CE0[0] = 0.0f;
-    this->unk_CE0[1] = 0.0f;
-    this->unk_CE0[2] = 0.0f;
-    this->unk_CE0[3] = -1.0f;
+    this->ambient_offset[0] = 0.0f;
+    this->ambient_offset[1] = 0.0f;
+    this->ambient_offset[2] = 0.0f;
+    this->ambient_offset[3] = -1.0f;
 
     sceVu0FVECTOR zero = {0.0f, 0.0f, 0.0f, 0.0f};
 

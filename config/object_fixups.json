@@ -377,6 +377,9 @@
     ]
   },
   "src/editloop3.cpp": {
+    "symbols": {
+      "fishing_line_origin": "@2242"
+    },
     "rodata_exports": [
       "@2449",
       "@2450",
@@ -386,6 +389,7 @@
       "@689",
       "@690__2",
       "@475__2",
+      "@2242",
       "@554"
     ],
     "sections": {
@@ -414,6 +418,14 @@
       ],
       ".objworldorigin": [
         "@554"
+      ],
+      ".fishinglineorigin": [
+        "fishing_line_origin"
+      ],
+      ".edbuffers": [
+        "EdVillagerBuffer",
+        "EdEventBuffer",
+        "EdEventExBuffer"
       ]
     },
     "drop_functions": [

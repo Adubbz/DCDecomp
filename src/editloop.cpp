@@ -1486,7 +1486,7 @@ void EditExit() {
     while (ReadBGSync() != 0) {
     }
     SndAmbientStop();
-    if (EdEventInfo.unk_030 != 0) {
+    if (EdEventInfo.map_jump_bgm_stop != 0) {
         SndBgmFadeOutStop();
         SndBgmStop();
         SndBgmInit();
@@ -2017,16 +2017,16 @@ void EventMode() {
         break;
     default:
         GameMode = 1;
-        if (EdEventInfo.unk_044 > 0) {
+        if (EdEventInfo.reset_camera_angle > 0) {
             Chara->GetPosition(pos);
             Chara->GetRotation(ref);
             MainCamera.FollowOn();
-            MainCamera.SetAngleSoon(AngleLimit(ref[1] + EdEventInfo.unk_048));
-            MainCamera.SetFollow(pos[0], pos[1] + Chara->unk_0B4 - 3.0f, pos[2]);
+            MainCamera.SetAngleSoon(AngleLimit(ref[1] + EdEventInfo.reset_camera_yaw));
+            MainCamera.SetFollow(pos[0], pos[1] + Chara->body_height - 3.0f, pos[2]);
             EdInitCameraParam(&MainCamera);
             MainCamera.Step(-1);
         }
-        if (EdEventInfo.unk_044 < 0) {
+        if (EdEventInfo.reset_camera_angle < 0) {
             EventCamera.GetPos(pos);
             EventCamera.GetRef(ref);
             MainCamera.FollowOff();
@@ -2041,11 +2041,11 @@ void EventMode() {
             MainCamera.Step(-1);
             MainCamera.Step(1);
         }
-        if (EdEventInfo.unk_440 >= 0) {
-            FadeOutToEvent(EdEventInfo.unk_440, 0);
+        if (EdEventInfo.fadeout_event_no >= 0) {
+            FadeOutToEvent(EdEventInfo.fadeout_event_no, 0);
         }
         CEditGround *ground = pEditGround;
-        ground->unk_15f2c = -1.0f;
+        ground->clip_plane[3] = -1.0f;
         break;
     }
 }
@@ -2230,16 +2230,16 @@ void VillagerCollision() {
         int sound;
         if (i >= 0) {
             villager = &EdVillager[i];
-            move = EdEventInfo.unk_074[i];
+            move = EdEventInfo.npc_collision[i];
             if (villager->CheckDraw() == 0) {
                 continue;
             }
             villager->chara.GetPosition(pos);
-            sound = EdEventInfo.unk_134[i];
+            sound = EdEventInfo.npc_foot_sound[i];
         } else {
-            move = EdEventInfo.unk_05C;
+            move = EdEventInfo.player_collision;
             Chara->GetPosition(pos);
-            sound = EdEventInfo.unk_068;
+            sound = EdEventInfo.player_foot_sound;
         }
         WorkBuffer__2->used = 0;
         CCPoly *polys = (CCPoly *) WorkBuffer__2->Alloc(2000);
@@ -2443,7 +2443,7 @@ void EdLoadMainChara(char *pack, char *name, CDataAlloc2<1> *arena) {
     MainChara.LoadPackData2(read_buffer, name, arena, 8, arena, 0);
     CFrameAttr attr;
     attr.unk_08 = 0;
-    attr.unk_0C = 1;
+    attr.fog_enable = 1;
     MainChara.frame->SetAttr(attr, 1, 4);
     float origin = 0.0f;
     MainChara.SetPosition(origin, origin, origin);

@@ -605,7 +605,7 @@ static void InitProcA() {
 
     CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s1402.mds", 0), &MapDataBuffer, 2, 0, 0);
 
-    map_attr.unk_0C = 1;
+    map_attr.fog_enable = 1;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
 
@@ -909,7 +909,7 @@ static void InitProcB() {
 
     CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s4201.mds", 0), &MapDataBuffer, 2, 0, 0);
 
-    map_attr.unk_0C = 1;
+    map_attr.fog_enable = 1;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
 
@@ -1189,7 +1189,7 @@ static void InitProcC() {
     for (int i = 0; i < 26; i++) {
         map = LoadMDSFile(GetPackFile(read_buffer, norn[i].name, 0), &MapDataBuffer, 2, 0, 0);
 
-        map_attr.unk_0C = 1;
+        map_attr.fog_enable = 1;
         map->SetAttr(map_attr, 1, 64);
         SetFrameAttr(map, 1);
 
@@ -1368,7 +1368,7 @@ static void InitProcD() {
     CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s44g01_0.mds", 0), &MapDataBuffer, 2, 0,
                                  0);
 
-    map_attr.unk_0C = 1;
+    map_attr.fog_enable = 1;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
 
@@ -1505,7 +1505,7 @@ static void InitProcE() {
 
     CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s4501.mds", 0), &MapDataBuffer, 2, 0, 0);
 
-    map_attr.unk_0C = 1;
+    map_attr.fog_enable = 1;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
 
@@ -1647,7 +1647,7 @@ static void InitProcF() {
 
     CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s4601.mds", 0), &MapDataBuffer, 2, 0, 0);
 
-    map_attr.unk_0C = 1;
+    map_attr.fog_enable = 1;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
 
@@ -1796,7 +1796,7 @@ static void InitProcG() {
 
     CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s4701.mds", 0), &MapDataBuffer, 2, 0, 0);
 
-    map_attr.unk_0C = 1;
+    map_attr.fog_enable = 1;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
 
@@ -1949,7 +1949,7 @@ static void InitProcH() {
 
     CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s4801.mds", 0), &MapDataBuffer, 2, 0, 0);
 
-    map_attr.unk_0C = 1;
+    map_attr.fog_enable = 1;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
 
@@ -1959,7 +1959,7 @@ static void InitProcH() {
     object->SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
     map = LoadMDSFile(GetPackFile(read_buffer, "s4802.mds", 0), &MapDataBuffer, 2, 0, 0);
-    map_attr.unk_0C = 1;
+    map_attr.fog_enable = 1;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
     object = OP_BuildingMap.SetObject(0, map, 0, 0);
@@ -1967,7 +1967,7 @@ static void InitProcH() {
     object->SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
     map = LoadMDSFile(GetPackFile(read_buffer, "s4803.mds", 0), &MapDataBuffer, 2, 0, 0);
-    map_attr.unk_0C = 1;
+    map_attr.fog_enable = 1;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
     object = OP_BuildingMap.SetObject(1, map, 0, 0);
@@ -1975,7 +1975,7 @@ static void InitProcH() {
     object->SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
     map = LoadMDSFile(GetPackFile(read_buffer, "s4804.mds", 0), &MapDataBuffer, 2, 0, 0);
-    map_attr.unk_0C = 1;
+    map_attr.fog_enable = 1;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
     object = OP_BuildingMap.SetObject(2, map, 0, 0);
@@ -1983,7 +1983,7 @@ static void InitProcH() {
     object->SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
     map = LoadMDSFile(GetPackFile(read_buffer, "s4805.mds", 0), &MapDataBuffer, 2, 0, 0);
-    map_attr.unk_0C = 1;
+    map_attr.fog_enable = 1;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
     object = OP_BuildingMap.SetObject(3, map, 0, 0);
@@ -1991,7 +1991,7 @@ static void InitProcH() {
     object->SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
     map = LoadMDSFile(GetPackFile(read_buffer, "s4806.mds", 0), &MapDataBuffer, 2, 0, 0);
-    map_attr.unk_0C = 1;
+    map_attr.fog_enable = 1;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
     object = OP_BuildingMap.SetObject(4, map, 0, 0);
@@ -2142,7 +2142,7 @@ static void InitProcI() {
     CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s24g01_0.mds", 0), &MapDataBuffer, 2, 0,
                                  0);
 
-    map_attr.unk_0C = 1;
+    map_attr.fog_enable = 1;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
 
@@ -2152,7 +2152,7 @@ static void InitProcI() {
     object->SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
     map = LoadMDSFile(GetPackFile(read_buffer, "s24g02_0.mds", 0), &MapDataBuffer, 2, 0, 0);
-    map_attr.unk_0C = 1;
+    map_attr.fog_enable = 1;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
     object = OP_BuildingMap.SetObject(0, map, 0, 0);
@@ -2160,7 +2160,7 @@ static void InitProcI() {
     object->SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
     map = LoadMDSFile(GetPackFile(read_buffer, "s24g03_0.mds", 0), &MapDataBuffer, 2, 0, 0);
-    map_attr.unk_0C = 1;
+    map_attr.fog_enable = 1;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
     object = OP_BuildingMap.SetObject(1, map, 0, 0);
@@ -2168,7 +2168,7 @@ static void InitProcI() {
     object->SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
     map = LoadMDSFile(GetPackFile(read_buffer, "ship.mds", 0), &MapDataBuffer, 2, 0, 0);
-    map_attr.unk_0C = 1;
+    map_attr.fog_enable = 1;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
     object = OP_BuildingMap.SetObject(2, map, 0, 0);
@@ -2176,7 +2176,7 @@ static void InitProcI() {
     object->SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
     map = LoadMDSFile(GetPackFile(read_buffer, "s24g04_0.mds", 0), &MapDataBuffer, 2, 0, 0);
-    map_attr.unk_0C = 1;
+    map_attr.fog_enable = 1;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
     object = OP_BuildingMap2.SetObject(0, map, 0, 0);

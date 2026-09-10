@@ -10,6 +10,8 @@ class CCharacter;
 
 class CActionSeq {
 public:
+    u8 unk_00[0xD0];
+
     /**
      * @mangled Initialize__10CActionSeqFP7ACT_SEQi
      * @address 0x154B30
@@ -199,7 +201,7 @@ public:
      * @size 0x70
      * @unknownret
      */
-    void CheckEnd(void);
+    int CheckEnd(void);
 
     /**
      * @mangled Play__10CActionSeqFv
@@ -209,3 +211,5 @@ public:
      */
     void Play(void);
 };
+
+STATIC_ASSERT(sizeof(CActionSeq) == 0xD0);

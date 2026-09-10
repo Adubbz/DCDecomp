@@ -245,7 +245,7 @@ static void QuatToMat(float *quaternion, sceVu0FMATRIX matrix) {
 
 void CFrameAttr::Initialize() {
     unk_04 = 0.0f;
-    unk_0D = unk_0B = unk_08 = unk_0A = unk_09 = unk_0C = 0;
+    unk_0D = unk_0B = unk_08 = unk_0A = unk_09 = fog_enable = 0;
     unk_10 = 0.0f;
     unk_14 = 0;
     color[0] = color[1] = color[2] = color[3] = 128.0f;
@@ -726,7 +726,7 @@ void CFrame::SetAttr(CFrameAttr &attr, int children, int mask) {
             this->attr.unk_0B = attr.unk_0B;
         }
         if (mask & 0x40) {
-            this->attr.unk_0C = attr.unk_0C;
+            this->attr.fog_enable = attr.fog_enable;
         }
         if (mask & 0x80) {
             this->attr.unk_0D = attr.unk_0D;
@@ -1139,7 +1139,7 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
 
     info->unk_31C = attr.unk_04;
     info->unk_314 = (near_clip && far_clip < 8) && (attr.unk_08 || info->scissoring);
-    info->unk_324 = attr.unk_0C;
+    info->unk_324 = attr.fog_enable;
     info->unk_33C = attr.unk_56;
     info->unk_310 = 0;
 

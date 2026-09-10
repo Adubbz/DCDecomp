@@ -17,9 +17,6 @@
 #include "sysmes.hpp"
 #include "texture.hpp"
 
-#define body_width unk_0B0
-#define body_height unk_0B4
-#define body_depth unk_0B8
 #define model frame
 #define shadow_model shadow_frame
 #define config unk_0D4

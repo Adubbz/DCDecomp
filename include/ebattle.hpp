@@ -1,8 +1,38 @@
 #pragma once
 
+class CCharacter;
+
 void EBInitialize();
 void EBInit(float speed_mult);
+/** Starts the enemy-battle introduction sequence. */
+void EBInitIntro();
+/** Ends the enemy-battle sequence. */
+void EBExit();
+/** Selects the enemy-battle diagnostic display. */
+void EBDebug(int mode);
+/** Advances the enemy-battle introduction and returns its state. */
+int EBIntroLoop();
+/** Advances the active enemy-battle sequence and returns its state. */
+int EBLoop();
 void EBFinishSound(int fade_bgm, int play_fanfare);
+
+/**
+ * Assigns the enemy-battle motion sequence for a character.
+ *
+ * @mangled EBSetMotion__FP10CCharacterPi
+ * @address 0x1682B0
+ * @size 0x168
+ */
+void EBSetMotion(CCharacter *character, int *motions);
+
+/**
+ * Adds a timed key command to the enemy-battle sequence.
+ *
+ * @mangled EBSetKey__Ffii
+ * @address 0x168430
+ * @size 0x12C
+ */
+void EBSetKey(float time, int key, int mode);
 
 /**
  * Selects the editor input modes that currently own controller input.

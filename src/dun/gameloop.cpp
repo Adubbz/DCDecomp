@@ -1565,8 +1565,8 @@ void GameInit(void) {
     NowWeaponHave = &WeaponHave;
     SetWeaponAttachStatus(NowWeaponHave);
     BtEventMode = 0;
-    EdEventInfo.unk_03C = -1.0f;
-    EdEventInfo.unk_300 = 0;
+    EdEventInfo.projection = -1.0f;
+    EdEventInfo.screen_filter = 0;
     EdFadeInit();
     ClearGateKeyStack();
     TexManager.Initialize(0x3FE0);
@@ -1630,8 +1630,8 @@ void GameInit(void) {
     BtActStatus.unk_128 = 0;
     BtActStatus.unk_148 = 0;
     BtActStatus.unk_14A = 0;
-    EdEventInfo.unk_060 = 1;
-    EdEventInfo.unk_064 = 1;
+    EdEventInfo.player_draw = 1;
+    EdEventInfo.player_shadow_draw = 1;
     camera_dist_mode__3 = 2;
     cameraAuto = 0;
     faceEyeCount = 0;
@@ -2004,7 +2004,7 @@ int GameLoop(void) {
 
         // A floor the player is thrown out of keeps its music; one they leave
         // on their own starts the town music again.
-        if (EdEventInfo.unk_030 != 0) {
+        if (EdEventInfo.map_jump_bgm_stop != 0) {
             SndExit();
             SndBgmInit();
         } else {
@@ -2065,8 +2065,8 @@ void Draw_MainUnitShadow(void) {
     TexManager.ReloadTexture(Vif1Packet, 15);
     MGBeginDrawShadow(*(sceGsTex0 *) &TexManager.GetTexture("shadow_buf", -1)->tex0);
 
-    if (BtActStatus.unk_054 != 0 && EdEventInfo.unk_064 != 0 &&
-        EdEventInfo.unk_060 != 0 && BtActStatus.unk_000 != 0) {
+    if (BtActStatus.unk_054 != 0 && EdEventInfo.player_shadow_draw != 0 &&
+        EdEventInfo.player_draw != 0 && BtActStatus.unk_000 != 0) {
         CharaMain.DrawShadow();
     }
 
@@ -2076,7 +2076,7 @@ void Draw_MainUnitShadow(void) {
 
     if (BtEventMode != 0) {
         for (i = 0; i < 6; i++) {
-            if (EdEventInfo.unk_0F4[i] != 0 && EdEventInfo.unk_0B4[i] != 0) {
+            if (EdEventInfo.npc_shadow_draw[i] != 0 && EdEventInfo.npc_draw[i] != 0) {
                 NPCUnit[i].DrawShadow();
             }
         }
@@ -2100,7 +2100,7 @@ void Draw_MainUnit(void) {
     sceVu0FVECTOR ambient;
     sceVu0FVECTOR saved_ambient;
 
-    if (BtActStatus.unk_000 == 0 && EdEventInfo.unk_060 != 0 && EdEventInfo.unk_064 != 0) {
+    if (BtActStatus.unk_000 == 0 && EdEventInfo.player_draw != 0 && EdEventInfo.player_shadow_draw != 0) {
         return;
     }
 
@@ -2296,7 +2296,7 @@ void MainDraw(void) {
 
     Draw_MainUnitShadow();
 
-    if (BtActStatus.unk_000 != 0 && EdEventInfo.unk_060 != 0) {
+    if (BtActStatus.unk_000 != 0 && EdEventInfo.player_draw != 0) {
         Draw_MainUnit();
     }
 
@@ -2320,7 +2320,7 @@ void MainDraw(void) {
 
     if (BtEventMode != 0) {
         for (i = 0; i < 6; i++) {
-            if (EdEventInfo.unk_0B4[i] != 0) {
+            if (EdEventInfo.npc_draw[i] != 0) {
                 TexManager.ReloadTexture(Vif1Packet, i + 0x20);
                 NPCUnit[i].chara.TextureAnime(NPCUnit[i].unk_148C);
                 NPCUnit[i].Draw();
@@ -2790,10 +2790,10 @@ void MainDraw(void) {
 
     SetMonsterNameDrawFlag(0);
 
-    if (EdEventInfo.unk_300 != 0) {
+    if (EdEventInfo.screen_filter != 0) {
         sceVu0FVECTOR fade;
 
-        sceVu0CopyVector(fade, EdEventInfo.unk_09);
+        sceVu0CopyVector(fade, EdEventInfo.screen_filter_color);
         MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), (int) fade[0], (int) fade[1], (int) fade[2],
                   (int) fade[3]);
     }
@@ -2807,9 +2807,9 @@ void MainDraw(void) {
     }
 
     for (i = 0; i < 1; i++) {
-        if (EdEventInfo.unk_25C[i] != NULL) {
+        if (EdEventInfo.item_frame[i] != NULL) {
             TexManager.ReloadTexture(Vif1Packet, i + 0x28);
-            MGDraw(EdEventInfo.unk_25C[i]);
+            MGDraw(EdEventInfo.item_frame[i]);
         }
     }
 
@@ -2922,8 +2922,8 @@ void MoveChara(void) {
 
     // An event that sets its own draw distance keeps it; anything else draws
     // the whole floor.
-    if (BtEventMode != 0 && EdEventInfo.unk_03C > 0.0f) {
-        MGSetRenderInfo(EdEventInfo.unk_03C, 1.0f, (float) 0xFFFF);
+    if (BtEventMode != 0 && EdEventInfo.projection > 0.0f) {
+        MGSetRenderInfo(EdEventInfo.projection, 1.0f, (float) 0xFFFF);
     } else {
         MGSetRenderInfo(800.0f, 1.0f, (float) 0xFFFF);
     }
@@ -5513,7 +5513,7 @@ void motionDrive(void) {
         NowMonstorUnit->Step(driveStepHold | CMonUnitHold);
     }
 
-    if (BtActStatus.unk_000 != 0 && EdEventInfo.unk_060 != 0) {
+    if (BtActStatus.unk_000 != 0 && EdEventInfo.player_draw != 0) {
         sceVu0CopyVector(pos, CharaFrame->position);
         CharaFrame->GetRotation(rotation);
         CharaMain.SetPosition(pos);
@@ -5528,7 +5528,7 @@ void motionDrive(void) {
 
         // A held step, an event or a status ailment restarts the motion
         // outright; otherwise it only changes where it differs.
-        if (driveStepHold != 0 || EdEventInfo.unk_06C != 0 || BtActStatus.unk_098 != 0) {
+        if (driveStepHold != 0 || EdEventInfo.player_stop != 0 || BtActStatus.unk_098 != 0) {
             CharaMain.motion_no = BtActStatus.unk_00C;
             CharaMain.flags = 1;
             CharaMain.motion_speed = -1.0f;
@@ -5644,7 +5644,7 @@ void motionDrive(void) {
 
     if (BtEventMode != 0) {
         for (int i = 0; i < 6; i++) {
-            if (EdEventInfo.unk_174[i] == 0) {
+            if (EdEventInfo.npc_stop[i] == 0) {
                 NPCUnit[i].ShadowStep();
                 NPCUnit[i].Step();
             }
@@ -5697,7 +5697,7 @@ void motionDrive(void) {
         }
     }
 
-    if (BtActStatus.unk_000 != 0 && EdEventInfo.unk_060 != 0) {
+    if (BtActStatus.unk_000 != 0 && EdEventInfo.player_draw != 0) {
         CharaMain.ClothStep(0);
     }
     if (BtActStatus.unk_06C == 0) {
@@ -6519,7 +6519,7 @@ void LoadChara2(int chara, int keep_place, unsigned int *chara_data, unsigned in
     sceVu0FVECTOR rotation;
     int i;
 
-    frame_attr.unk_0C = 1;
+    frame_attr.fog_enable = 1;
     frame_attr.unk_08 = 0;
     frame_attr.unk_0B = 0;
 
@@ -6635,7 +6635,7 @@ static void LoadData(void) {
     int equipped_weapon_size;
 
     // Configure the model attributes used by the loaded dungeon objects.
-    frame_attr.unk_0C = 1;
+    frame_attr.fog_enable = 1;
     frame_attr.unk_04 = 100.0f;
     frame_attr.unk_08 = 0;
     frame_attr.unk_0B = 0;
@@ -8692,7 +8692,7 @@ int SetNearLockOnTarget(int from, int nearest_only) {
 
     if (target != -1) {
         NowMonstorUnit->chara[target][0].GetPosition(at);
-        at[1] += NowMonstorUnit->chara[target][0].unk_0B4;
+        at[1] += NowMonstorUnit->chara[target][0].body_height;
         cursorFrame->SetPosition(at);
         lockOnTargetDraw = 1;
         targetCursorCnt = 8.0f;

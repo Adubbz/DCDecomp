@@ -19,6 +19,18 @@ class CTexture;
 class CRect_i_;
 struct sceVif1Packet;
 
+/** Working arena used to load event villagers and the event player model. */
+extern CDataAlloc2<1> EdVillagerBuffer;
+
+/**
+ * Loads the player model and motion archive used by an editor event.
+ *
+ * @mangled EdLoadMainChara__FPcPcP14CDataAlloc2_1_
+ * @address 0x17E4B0
+ * @size 0x2CC
+ */
+void EdLoadMainChara(char *model, char *motion, CDataAlloc2<1> *arena);
+
 /**
  * Describes one image resource assigned while loading an editor map.
  */
@@ -497,3 +509,66 @@ int GotoDungeon();
  * @size 0x8
  */
 void LoadMapObject(CMapParts *map_parts, char **script);
+
+/**
+ * Sets the town clock to the requested time of day.
+ *
+ * @mangled EdSetClock__Ff
+ * @address 0x178170
+ * @size 0x60
+ */
+void EdSetClock(float time);
+
+/**
+ * Returns the town clock's current time of day.
+ *
+ * @mangled EdGetClock__Fv
+ * @address 0x178140
+ * @size 0x24
+ */
+float EdGetClock();
+
+/**
+ * Starts the editor's day-transition display.
+ *
+ * @mangled EdStartDrawDay__Fv
+ * @address 0x17D010
+ * @size 0x18
+ */
+void EdStartDrawDay();
+
+/**
+ * Resets the editor's day-transition display.
+ *
+ * @mangled EdInitDrawDay__Fv
+ * @address 0x17D030
+ * @size 0x10
+ */
+void EdInitDrawDay();
+
+/** Whether the current editor map is an interior. */
+extern int EdInteriorFlag;
+
+/** Whether the editor's thunder effect is active. */
+extern int EdThunderEffectFlag;
+
+/** Background music remembered before entering an interior. */
+extern int EdBeforeInBgmNo;
+
+/** Georama map currently being edited. */
+extern int NowEditMap;
+
+/** Returns a map-completion flag from the active Georama map. */
+int EdGetMapFlag(int flag_no);
+
+/** Sets a map-completion flag on the active Georama map. */
+int EdSetMapFlag(int flag_no, int value);
+
+/**
+ * Removes the event-specific robot-part models.
+ *
+ * @mangled EdDeleteE05RoboParts__Fv
+ * @address 0x17ECF0
+ * @size 0xE8
+ */
+void EdDeleteE05RoboParts();

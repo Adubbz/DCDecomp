@@ -90,6 +90,10 @@ enum ED_SOUND_ID {
 };
 
 class CFrame;
+class CFrameVu1;
+class CCharacter;
+class CNPCharacter;
+class ClsMes;
 
 /**
  * Names what the Georama editor is doing; the dungeon reads a few of its
@@ -97,47 +101,69 @@ class CFrame;
  */
 struct ED_EVENT_INFO {
     u8 unk_000[0x30];
-    s32 unk_030;
+    s32 map_jump_bgm_stop; /**< Whether a map jump stops the current background music. */
     s32 fukidashi;
-    u8 unk_038[0x4];
-    float unk_03C;
-    u8 unk_040[0x4];
-    s32 unk_044;
-    float unk_048;
-    u8 unk_04c[0x4];
+    s32 sound_off_count; /**< Number of sound channels suppressed by the event. */
+    float projection; /**< Projection distance used while rendering an event. */
+    CCameraFollow *camera; /**< Camera controller used by the active event. */
+    s32 reset_camera_angle; /**< Camera-angle reset mode requested by the event. */
+    float reset_camera_yaw; /**< Yaw offset used by the requested camera reset. */
+    CCharacter *main_character; /**< Player character controlled by the active event. */
     s32 unk_050;
-    u8 unk_054[0x8];
-    s32 unk_05C;
-    s32 unk_060;
-    s32 unk_064;
-    s32 unk_068;
-    s32 unk_06C;
+    u8 unk_054[0x4];
+    CNPCharacter *npcs; /**< Contiguous array of event NPC characters. */
+    s32 player_collision; /**< Whether ground collision is applied to the player during the event. */
+    s32 player_draw; /**< Whether the player model is drawn during the event. */
+    s32 player_shadow_draw; /**< Whether the player's shadow is drawn during the event. */
+    s32 player_foot_sound; /**< Footstep mode applied to the player during the event. */
+    s32 player_stop; /**< Whether the player's event motion is held. */
     u8 unk_070[0x4];
-    s32 unk_074[10];
-    u8 unk_09c[0x18];
-    s32 unk_0B4[6];
-    u8 unk_0CC[0x28];
-    s32 unk_0F4[6];
-    u8 unk_10C[0x28];
-    s32 unk_134[10];
-    u8 unk_15c[0x18];
-    s32 unk_174[6];
-    u8 unk_18C[0xD0];
-    CFrame *unk_25C[1];
-    u8 unk_260[0x4c];
+    s32 npc_collision[16]; /**< Ground-collision mode assigned to each event NPC. */
+    s32 npc_draw[16]; /**< Whether each event NPC model is drawn. */
+    s32 npc_shadow_draw[16]; /**< Whether each event NPC shadow is drawn. */
+    s32 npc_foot_sound[16]; /**< Footstep mode assigned to each event NPC. */
+    s32 npc_stop[16]; /**< Whether each event NPC's motion is held. */
+    s32 npc_draw_before[17]; /**< Draw-order group assigned to each event character. */
+    s32 npc_count; /**< Number of valid entries in the event NPC array. */
+    VILLAGER_INFO *villagers; /**< Metadata array for the event villagers. */
+    ClsMes *messages[8]; /**< Message windows owned by the active event. */
+    float current_time; /**< Current editor time used by time-of-day opcodes. */
+    u8 unk_224[0xC];
+    sceVu0FVECTOR wind; /**< Wind vector applied while the event is active. */
+    CEditGround *edit_ground; /**< Ground and placed-part database used by the active event. */
+    s32 fixed_parts_count; /**< Number of fixed map parts available to object-handle opcodes. */
+    CMapParts *fixed_parts; /**< Fixed map parts available to object-handle opcodes. */
+    s32 edit_parts_count; /**< Number of placed map parts available to object-handle opcodes. */
+    CMapParts *edit_parts; /**< Placed map parts available to object-handle opcodes. */
+    s32 interior_parts_count; /**< Number of interior parts available to object-handle opcodes. */
+    CMapParts *interior_parts; /**< Interior parts available to object-handle opcodes. */
+    CFrameVu1 *item_frame[1]; /**< VU1 frame used for the single event-held item. */
+    s32 talk_npc_id; /**< Identifier of the NPC currently engaged in conversation. */
+    s32 talk_messages[16]; /**< Message identifiers assigned to the current conversation sequence. */
+    s32 talk_select_message; /**< Message selected after a conversation choice. */
+    s32 talk_select_prompt; /**< Message containing the current conversation choices. */
     s32 unk_2ac;
     char unk_2b0[0x20];
     s32 unk_2d0;
-    s32 unk_2d4;
+    s32 outside_map_no; /**< Map requested when an event exits to the outside. */
     s32 draw_exclamation_mark; /**< Whether the event requests the attention marker. */
-    s32 unk_2dc;
-    s32 unk_2e0;
-    u8 unk_2e4[0x1c];
-    s32 unk_300;
+    s32 suppress_background; /**< Whether event rendering suppresses the scene background. */
+    s32 suppress_shadows; /**< Whether event rendering suppresses character shadows. */
+    u8 unk_2e4[0xC];
+    float background_color[3]; /**< RGB override for the event background. */
+    u8 unk_2fc[4];
+    s32 screen_filter; /**< Whether a full-screen event colour filter is active. */
     u8 unk_304[0xC];
-    sceVu0FVECTOR unk_09;
-    u8 unk_0C[0x120];
-    s32 unk_440;
+    sceVu0FVECTOR screen_filter_color; /**< RGBA colour of the event screen filter. */
+    s32 lighting_override; /**< Whether script-provided scene lighting replaces the map lighting. */
+    u8 unk_324[0xC];
+    sceVu0FMATRIX light_direction; /**< Direction vectors for the four event point lights. */
+    sceVu0FMATRIX light_color; /**< RGB intensities for the four event point lights. */
+    sceVu0FVECTOR ambient_color; /**< RGBA ambient-light colour for the event scene. */
+    sceVu0FVECTOR vector_arguments[4]; /**< Vector arguments supplied to the active event. */
+    s32 integer_arguments[8]; /**< Integer arguments supplied to the active event. */
+    s32 flag_arguments[8]; /**< Flag-like arguments supplied to the active event. */
+    s32 fadeout_event_no; /**< Event started after the current fade-out completes. */
     s32 next_event; /**< Event number requested by the NEXT_EVENT opcode. */
     s32 return_code; /**< Result code passed from an editor event back to the game loop. */
     s32 exit_code; /**< Exit status supplied by the event script. */
@@ -494,6 +520,15 @@ void EdClearItemOverFlag();
  * @size 0x6C
  */
 int EdCheckItem(int item);
+
+/**
+ * Sets the number of event sound channels which remain disabled.
+ *
+ * @mangled EdSetSoundOffCount__Fi
+ * @address 0x177760
+ * @size 0x28
+ */
+void EdSetSoundOffCount(int count);
 
 /**
  * Returns whether the requested item can be awarded.
