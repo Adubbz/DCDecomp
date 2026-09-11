@@ -149,7 +149,6 @@ sceVif1Packet *GetVif1Packet();
 void DepthOfField(float *dist, int level, int alpha, int blur);
 int SndSyncBG();
 void SndBgmPlay(int no);
-int SndBgmLoadBG(int no, u_int *buffer, int *size);
 
 extern CSound CSnd;
 extern sceVif1Packet *Vif1Packet;
@@ -503,7 +502,7 @@ void OpD_InitProcess2() {
     CFrameVu1 *frame;
     int i;
 
-    attr.unk_0C = 1;
+    attr.fog_enable = 1;
 
     for (i = 1; i < 11; i++) {
         frame = LoadMDSFile((u_int *) GetPackFile(read_buffer, map[i - 1].name, 0),

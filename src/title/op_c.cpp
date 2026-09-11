@@ -1386,7 +1386,7 @@ static void MapLoad() {
     int i;
     CFrameVu1 *ground_frame;
 
-    attr.unk_0C = 1;
+    attr.fog_enable = 1;
     MapDataBuffer.used = 0;
 
     for (i = 0; i < 75; i++) {
@@ -1645,7 +1645,7 @@ static void MapLoad2() {
     int i;
     CFrameVu1 *ground_frame;
 
-    attr.unk_0C = 1;
+    attr.fog_enable = 1;
     CharaDataBuffer[0].used = 0;
 
     for (i = 0; i < 76; i++) {

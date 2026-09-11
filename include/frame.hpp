@@ -26,7 +26,7 @@ public:
     char unk_09;
     char unk_0A;
     char unk_0B;
-    char unk_0C;
+    char fog_enable; /**< Whether fog affects the frame during rendering. */
     char unk_0D;
     float unk_10;
     char unk_14;

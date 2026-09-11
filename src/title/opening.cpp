@@ -1879,7 +1879,7 @@ void OPMdsLoad() {
             op_fogColor[2] = argValBuff[i][5];
             MGSetFogParm(op_fogRate[0], op_fogRate[1], op_fogColor[0], op_fogColor[1],
                          op_fogColor[2], op_fogRate[2], op_fogRate[3]);
-            attr.unk_0C = 1;
+            attr.fog_enable = 1;
         }
 
         if (TEIGI_EDIT_FOG[0] == (int) argValBuff[i][0]) {
@@ -1890,7 +1890,7 @@ void OPMdsLoad() {
             editFogColor[0] = argValBuff[i][3];
             editFogColor[1] = argValBuff[i][4];
             editFogColor[2] = argValBuff[i][5];
-            attr.unk_0C = 1;
+            attr.fog_enable = 1;
         }
 
         if (TEIGI_PLIGHT[0] == (int) argValBuff[i][0]) {

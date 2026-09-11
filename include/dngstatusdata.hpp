@@ -43,6 +43,11 @@ STATIC_ASSERT(sizeof(DNG_CONSUMABLE) == 0x20);
 
 class CDngStatusData {
 public:
+    /** Returns the number of active party members. */
+    s8 GetPartySize() const { return party_size; }
+
+    /** Sets the number of active party members. */
+    void SetPartySize(s8 size) { party_size = size; }
     /**
      * @mangled SetNowFloor__14CDngStatusDataFi
      * @address 0x1BD900
@@ -204,7 +209,7 @@ public:
      */
     void GetAtraData(int georama_no, int floor, int atra_id);
 
-private:
+public:
     // CSaveData embeds this class and mirrors config_mirror into its own
     // config[15]. That must stay a direct member access to keep retail's
     // >0x7FFF `lui at,0x1; addu at,<this>,at; lw/sw reg,-0x68b8(at)` idiom,
@@ -244,7 +249,7 @@ private:
 public:
     s32 overflow_flag;
     s32 special_flag_238;
-    s32 unk_field_3[6];
+    s32 skill_owned[6]; /**< Whether each playable character has received their event skill. */
     s32 config_mirror;
     s8 equipped_weapon_slot[6];
     s16 dead_mask;

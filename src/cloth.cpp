@@ -35,7 +35,7 @@ void CCloth::Draw() {
 
     CFrameAttr attr;
 
-    attr.unk_0C = 0;
+    attr.fog_enable = 0;
     attr.unk_0B = 0;
     attr.unk_08 = 0;
     float origin = 0.0f;

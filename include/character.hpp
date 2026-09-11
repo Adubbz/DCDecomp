@@ -119,9 +119,9 @@ public:
      */
     void SetMotionSpeed(float speed) { motion_speed = speed; }
 
-    float unk_0B0;
-    float unk_0B4;
-    float unk_0B8;
+    float body_width;  /**< Width of the character collision body. */
+    float body_height; /**< Height used for targeting and camera framing. */
+    float body_depth;  /**< Depth of the character collision body. */
     CFrame *frame;        /**< Frame that draws the character; zero if it has no model. */
     CFrame *shadow_frame; /**< Frame that draws the shadow; zero if it casts none. */
     u_int *images[4];
@@ -150,7 +150,7 @@ public:
     s32 unk_CA0;
     sceVu0FVECTOR unk_CB0[2];
     sceVu0FVECTOR unk_CD0;
-    sceVu0FVECTOR unk_CE0;
+    sceVu0FVECTOR ambient_offset; /**< Ambient RGB added while drawing and an optional alpha override. */
     float fade[4];                                      /**< Alpha the character draws with, two spare values, and the alpha it fades down to. */
     CFakePointLight point_light[CHARA_POINT_LIGHT_MAX]; /**< Lights that the character stands in. */
     CHARA_FOOT_SOUND foot_sound[CHARA_FOOT_SOUND_MAX];  /**< Sounds that the feet play. */

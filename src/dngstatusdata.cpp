@@ -903,7 +903,7 @@ void CDngStatusData::Initialize(void) {
 
         this->stat_float_a[t] = 30.0f;
         this->stat_float_b[t] = 30.0f;
-        this->unk_field_3[t] = 0;
+        this->skill_owned[t] = 0;
     }
 
     this->equipped_weapon_slot[0] = 0;

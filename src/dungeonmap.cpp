@@ -163,7 +163,7 @@ void CDungeonMap::SetNPC(int npc_no, unsigned int *pack, int parts_no, sceVu0FVE
 
     CFrameAttr attr;
 
-    attr.unk_0C = 1;
+    attr.fog_enable = 1;
     for (i = 0; i < 32; i++) {
         BtNPCTexAnimeData[npc_no][i].Initialize();
     }

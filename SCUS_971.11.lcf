@@ -466,6 +466,8 @@ SECTIONS
         main.data.part4e.s.o (.data)
         editloop3.cpp.o (.objworldorigin) // 0x00269ad0
         main.data.part4f.s.o (.data)
+        editloop3.cpp.o (.fishinglineorigin) // 0x00269c40
+        main.data.part4g.s.o (.data)
         weaponelement.cpp.o (.data)  // 0x0026b2c0
         main.data.part4d.s.o (.data) // 0x0026b2e0
         dungeonmap.cpp.o (.data)
@@ -700,6 +702,8 @@ SECTIONS
 		main.bss.part4c.s.o (.bss)     // 0x01d19aa0
 		editpartsinfo.cpp.o (.bss)
 		main.bss.part5.s.o (.bss)      // 0x01d1b218
+		editloop3.cpp.o (.edbuffers)    // 0x01d1b360
+		main.bss.part5e.s.o (.bss)     // 0x01d1b390
 		editloop3.cpp.o (.fadecolbss)  // 0x01d3d1c0
 		main.bss.part5b.s.o (.bss)     // 0x01d3d1d0
 		editloop3.cpp.o (.spritebss)  // 0x01d3dd20

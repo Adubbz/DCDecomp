@@ -16,3 +16,12 @@
  * @unknownret
  */
 void wait_now_loading_vsync(void);
+
+/**
+ * Hides the active loading-screen overlay.
+ *
+ * @mangled now_loading_off__Fv
+ * @address 0x153FB0
+ * @size 0x10
+ */
+void now_loading_off();

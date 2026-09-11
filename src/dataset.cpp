@@ -122,7 +122,7 @@ void SetFrameAttr(CFrame *frame, int children) {
                 break;
             case 'f':
             case 'F':
-                frame->attr.unk_0C = 0;
+                frame->attr.fog_enable = 0;
                 break;
             case 's':
             case 'S':

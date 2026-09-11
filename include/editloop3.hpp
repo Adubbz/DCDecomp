@@ -6,11 +6,23 @@
 class CCharacter;
 class CFrame;
 class CMapParts;
+class CNPCharacter;
 struct ED_EVENT_POINT;
 struct EDITPARTS_INFO;
 struct EPARTS_FUNC_DATA;
 struct RS_STACKDATA;
 struct OBJ_ANIME_SEQ;
+struct VILLAGER_INFO;
+class CEditGround;
+
+/**
+ * Tests whether one villager is currently permitted to appear.
+ *
+ * @mangled EdCheckVillager__FiP13VILLAGER_INFOP11CEditGround
+ * @address 0x187E50
+ * @size 0x184
+ */
+int EdCheckVillager(int index, VILLAGER_INFO *villager, CEditGround *ground);
 
 /**
  * Collects every object or frame controlled by one event-script object slot.
@@ -514,3 +526,21 @@ int _FINISH(RS_STACKDATA *stack, int argument_count);
  * @size 0x234
  */
 void EdEventAllClear();
+
+/**
+ * Returns the villager involved in the active conversation.
+ *
+ * @mangled EdNowTalkChara__Fv
+ * @address 0x199070
+ * @size 0xC
+ */
+CNPCharacter *EdNowTalkChara();
+
+/**
+ * Returns the metadata identifier of the active conversation character.
+ *
+ * @mangled EdNowTalkCharaInfoID__Fv
+ * @address 0x199080
+ * @size 0xC
+ */
+int EdNowTalkCharaInfoID();

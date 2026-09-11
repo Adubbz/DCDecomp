@@ -77,7 +77,7 @@ public:
      * @size 0x40
      * @unknownret
      */
-    void GetCompEvent(int);
+    int GetCompEvent(int);
 
     /**
      * @mangled GetRequest__14CEditPartsInfoFi
@@ -85,7 +85,7 @@ public:
      * @size 0x40
      * @unknownret
      */
-    void GetRequest(int);
+    int GetRequest(int);
 
     /**
      * @mangled GetNextPartsNum__14CEditPartsInfoFi

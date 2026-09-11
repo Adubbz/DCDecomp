@@ -408,7 +408,7 @@ void CMonstorUnit::DrawMonstorCursor() {
         if (monster[i].unk_0E8 != 0) {
             CCharacter *character = &chara[i][0];
             character->GetPosition(position);
-            position[1] += chara[i][0].unk_0B4;
+            position[1] += chara[i][0].body_height;
             cursorFrame->SetPosition(position);
             MGDraw(cursorFrame);
         }
@@ -715,7 +715,7 @@ int CMonstorUnit::CheckDmg() {
                 ((CDngStatusData *) UserStatus)->AddKills();
             }
             chara[unk_090][0].GetPosition(poison_position);
-            poison_position[1] += chara[unk_090][0].unk_0B4;
+            poison_position[1] += chara[unk_090][0].body_height;
             HitValueEntry(NowHitValue, poison_position, (int) damage, 0, NULL);
         }
     }
@@ -1717,7 +1717,7 @@ int CMonstorUnit::SetupBaseModel(int slot, int model_no, int effect_mode, CDataA
     char filename[64];
     CFrameAttr attr;
     int file_size;
-    attr.unk_0C = 1;
+    attr.fog_enable = 1;
     sprintf(filename, "dun/monstor/%s.chr", description->model_name[0]);
     LoadFile(filename, read_buffer, NULL);
     wait_now_loading_vsync();

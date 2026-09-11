@@ -660,7 +660,7 @@ void OpB_InitProcess() {
     CFrameVu1 *frame;
     CMapObject *object;
 
-    attr.unk_0C = 1;
+    attr.fog_enable = 1;
     MapDataBuffer.used = 0;
 
     for (int i = 0; i < 68; i++) {

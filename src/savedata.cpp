@@ -206,7 +206,7 @@ SV_GRD_PART *CSaveData::GetParts(int georama_no, int *out_count) {
     return parts;
 }
 
-void *CSaveData::GetGrdNPCData(int map_no, int npc_no) {
+SV_GRD_NPC *CSaveData::GetGrdNPCData(int map_no, int npc_no) {
     static s32 sub_map[] = {14, 23, 11, 19, 42, 38, -1, 0};
     int i;
 
@@ -217,7 +217,7 @@ void *CSaveData::GetGrdNPCData(int map_no, int npc_no) {
             }
 
             if (map_no == sub_map[i]) {
-                return this->special_npc + i * 12;
+                return (SV_GRD_NPC *) (this->special_npc + i * 12);
             }
         }
     }

@@ -336,7 +336,7 @@ void DrawEventItemBoard(int, int, int, int, int, CTexture *);
  * @size 0xA0
  * @unknownret
  */
-void PlayerAllItemCheck(int);
+int PlayerAllItemCheck(int item);
 
 /**
  * Tells whether an item identifier is an additive attachment.
@@ -362,7 +362,7 @@ int TransWepNo(int weapon_no);
  * @size 0x130
  * @unknownret
  */
-void TransWepNoNewToOld(int);
+int TransWepNoNewToOld(int weapon_no);
 
 /**
  * @mangled PlusAttachmentVolume__FP11ATTACH_LISTP11ATTACH_LISTf
