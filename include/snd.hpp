@@ -121,6 +121,16 @@ int SndAmbientInit(void);
 void SndGetVolPan(float *vol, float *pan, float *pos, float near, float far);
 
 /**
+ * Scales a sound effect's table volume by a normalized factor, and clamps the
+ * result to the range the sound calls take.
+ *
+ * @mangled SndGetVolf__Fif
+ * @address 0x15A970
+ * @size 0xB4
+ */
+int SndGetVolf(int se_no, float vol);
+
+/**
  * Converts a normalized pan into the hardware pan the sound calls take.
  *
  * @mangled SndGetPanf__Ff
@@ -203,9 +213,8 @@ void SndPlayFootSound(int sound_id, int foot, float *position);
  * @mangled SndSeSeqPlayStop__Fiii
  * @address 0x15AF20
  * @size 0x74
- * @unknownret
  */
-void SndSeSeqPlayStop(int sound_id, int step, int flag);
+int SndSeSeqPlayStop(int se_no, int length, int voice);
 
 /**
  * Clears every sound-effect sequence slot.
@@ -215,15 +224,6 @@ void SndSeSeqPlayStop(int sound_id, int step, int flag);
  * @size 0x4C
  */
 void SndSeSeqInit(void);
-
-/**
- * Advances every sound-effect sequence that is running.
- *
- * @mangled SndSeSeqStep__Fv
- * @address 0x15AFA0
- * @size 0xB8
- */
-void SndSeSeqStep(void);
 
 /**
  * Turns the bilinear filter on or off for the sprites that follow.
@@ -448,7 +448,7 @@ int SndSoundSyncBG(void);
 int SndVoiceSyncBG(void);
 
 /** Plays one menu sound effect. */
-void SndSPSePlay(int se_no, int voice);
+void SndSPSePlay(int se_no, int vol);
 
 /**
  * Stops a playing special sound effect.

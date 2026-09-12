@@ -6,6 +6,7 @@
 
 #include "editatra.hpp"
 #include "snd.hpp"
+#include "sound.hpp"
 
 /* The sound manager: BGM loading, playback and fading, and the SE table.
  * CSound itself is in src/sound.cpp. */
@@ -38,6 +39,33 @@ struct SND_SE_SEQ {
 };
 
 STATIC_ASSERT(sizeof(SND_SE_SEQ) == 8);
+
+/** The fixed sound-effect table, addressed by sound number. */
+extern SND_SE_INFO se_info[2801];
+
+/** The two basic sound-effect sets, one of which is loaded at a time. */
+extern SND_SE_INFO *basic_se_info[2];
+
+/** The chapter sound-effect sets; entries the game never loads are zero. */
+extern SND_SE_INFO *cap_se_info[101];
+
+/** The character voice sets; entries the game never loads are zero. */
+extern SND_SE_INFO *voice_info[11];
+
+/** The menu sound-effect table, addressed by menu sound number. */
+extern SND_SE_INFO special_se_info[65];
+
+/** The sound-effect sequence slots. */
+extern SND_SE_SEQ se_seq[32];
+
+/** The basic sound-effect set that is loaded, or -1 for none. */
+extern int basic_se_table_no;
+
+/** The chapter sound-effect set that is loaded, or -1 for none. */
+extern int se_table_no;
+
+/** The voice set that is loaded, or -1 for none. */
+extern int now_voice_set;
 
 /**
  * Returns the table row for a sound effect, or zero when the number names no
@@ -80,6 +108,15 @@ static SND_SE_INFO *GetSPInfo(int se_no);
  * @size 0xC0
  */
 static SND_SE_SEQ *GetSeSeq(int *found, int se_no, int voice);
+
+/**
+ * Advances every sound-effect sequence that is running.
+ *
+ * @mangled SndSeSeqStep__Fv
+ * @address 0x15AFA0
+ * @size 0xB8
+ */
+static void SndSeSeqStep(void);
 
 /**
  * Frees one sound-effect sequence slot.
