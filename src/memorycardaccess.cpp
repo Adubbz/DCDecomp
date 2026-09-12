@@ -80,7 +80,9 @@ INCLUDE_ASM("asm/nonmatchings/memorycardaccess", MakeMcIconSysInfo__17CMemoryCar
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @404);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @405__2);
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SetFuncNo__17CMemoryCardAccessFi);
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", GetFuncNo__17CMemoryCardAccessFv);
+int CMemoryCardAccess::GetFuncNo() {
+    return this->func_no;
+}
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", Step__17CMemoryCardAccessFv);
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SetVersion__17CMemoryCardAccessFPc);
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", GetVersion__17CMemoryCardAccessFv);
