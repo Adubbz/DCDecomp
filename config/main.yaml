@@ -204,7 +204,7 @@ segments:
       - {start: 0x279a0, type: cpp, name: dataalloc2_1}
       - {start: 0x27c80, type: cpp, name: frame}
       - {start: 0x2a710, type: cpp, name: gamepad}
-      - {start: 0x2bb20, type: asmtu, name: spritetable}
+      - {start: 0x2bb20, type: cpp, name: spritetable}
       - {start: 0x2c270, type: cpp, name: mglib}
       - {start: 0x30ff0, type: cpp, name: texture}
       - {start: 0x34860, type: cpp, name: visualvu1}
