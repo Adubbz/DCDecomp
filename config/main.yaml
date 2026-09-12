@@ -223,7 +223,7 @@ segments:
       - {start: 0x43c50, type: cpp, name: sound}
       - {start: 0x47a70, type: cpp, name: gameutil}
       - {start: 0x4cc30, type: cpp, name: clsmes}
-      - {start: 0x54040, type: asmtu, name: nowload}
+      - {start: 0x54040, type: cpp, name: nowload}
       - {start: 0x54c30, type: cpp, name: actionseq}
       - {start: 0x560b0, type: cpp, name: npcharacter}
       - {start: 0x56c60, type: cpp, name: fakepointlight}
