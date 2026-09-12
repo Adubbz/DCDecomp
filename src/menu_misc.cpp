@@ -1,5 +1,22 @@
 #include "menu_misc.hpp"
 
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
+#include "clsmes.hpp"
+#include "dataread.hpp"
+#include "dun/gameloop.hpp"
+#include "frame.hpp"
+#include "gamepad.hpp"
+#include "itemdata.hpp"
+#include "menu_draw.hpp"
+#include "menu_manual.hpp"
+#include "shop_battlemenu.hpp"
+#include "snd.hpp"
+#include "texture.hpp"
+#include "weapon_buildup.hpp"
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", NowGetGameFlagForBtlMenu__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetMenuHebikiriFlag__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EquipDefaultWeapon__Fi);
