@@ -56,7 +56,7 @@ public:
      * @address 0x134BB0
      * @size 0x10
      */
-    virtual s32 RemakeData(unsigned int *);
+    virtual int RemakeData(unsigned int *);
 
     /**
      * @mangled DrawVu1__10CVisualVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii

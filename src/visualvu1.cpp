@@ -129,7 +129,8 @@ void SetTextureInfo(CTexture *tex, char *name, u_char *buffer) {
 
 INCLUDE_ASM("asm/nonmatchings/visualvu1", Initialize__7CVisualFv);
 INCLUDE_ASM("asm/nonmatchings/visualvu1", __ct__7CVisualFv);
-s32 CVisualVu1::RemakeData(u32 *arg0) {
+
+int CVisualVu1::RemakeData(unsigned int *data) {
     return 0;
 }
 INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__10CVisualVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
