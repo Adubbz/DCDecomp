@@ -1,6 +1,8 @@
 #pragma once
 
 #include "common.h"
+
+#include "dataalloc_fwd.hpp"
 #include "texture.hpp"
 
 class CCharacter;
@@ -591,3 +593,33 @@ int EdInitEventParamSimple();
  * @size 0x104
  */
 void GetElementObjName(EDITPARTS_INFO *info, char **names, int element, int index);
+
+/**
+ * Reads one villager's model and motion out of an already loaded archive and
+ * gives them to the villager character.
+ *
+ * @mangled EdLoadVillager__FPUiPcP12CNPCharacterP14CDataAlloc2_1_
+ * @address 0x1860C0
+ * @size 0x1CC
+ */
+int EdLoadVillager(u_int *pack, char *name, CNPCharacter *villager, CDataAlloc2<1> *arena);
+
+/**
+ * Reads one villager's archive from the editor data directory and loads the
+ * villager out of it.
+ *
+ * @mangled EdLoadVillager__FPcP12CNPCharacterP14CDataAlloc2_1_
+ * @address 0x186290
+ * @size 0xC8
+ */
+int EdLoadVillager(char *name, CNPCharacter *villager, CDataAlloc2<1> *arena);
+
+/**
+ * Starts one editor event: clears the event parameters, takes the light and
+ * ambient colour the map is drawn with, loads the event script and runs it.
+ *
+ * @mangled EdEventInit__FiP14CDataAlloc2_1_Pc
+ * @address 0x1973B0
+ * @size 0x2E8
+ */
+int EdEventInit(int event_no, CDataAlloc2<1> *arena, char *name);
