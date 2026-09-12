@@ -1,5 +1,11 @@
 #include "memorycardaccess.hpp"
 
+#include <cstdio>
+#include <cstring>
+#include <libmc.h>
+
+#include "savedata.hpp"
+
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", Initialize__17CMemoryCardAccessFv);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @372__3);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @373__4);
