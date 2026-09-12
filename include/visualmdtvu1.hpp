@@ -60,10 +60,11 @@ public:
     void DrawVu1(sceVif1Packet *, float (*)[4], RenderInfo *, VU1_PROGRAM, sceVif1Packet *, int, int);
 
     /**
+     * Rebuilds VU data and returns its size in quadwords, or zero if no MDT model is retained.
+     *
      * @mangled RemakeData__13CVisualMDTVu1FPUi
      * @address 0x136240
      * @size 0x50
-     * @unknownret
      */
-    void RemakeData(unsigned int *);
+    int RemakeData(unsigned int *);
 };

@@ -227,10 +227,12 @@ void SaveMenuTextureEnter(void);
 void SaveMenuEffectFadeOut(void);
 
 /**
+ * Computes the save board's alpha ramp at a position and at that position
+ * offset by the second argument.
+ *
  * @mangled GetSaveBoardAlphaInfo__FiiRiRii
  * @address 0x222940
  * @size 0x160
- * @unknownret
  */
 void GetSaveBoardAlphaInfo(int, int, int &, int &, int);
 
@@ -275,10 +277,11 @@ void SaveEnableCheck(void);
 void InitEventItemSelect(int, int *, ITEM_PACK *, int, int, int, int);
 
 /**
+ * Frees the event item selection menu's textures and releases the pad.
+ *
  * @mangled EventItemSelectExit__Fv
  * @address 0x2240E0
  * @size 0x60
- * @unknownret
  */
 void EventItemSelectExit(void);
 
@@ -291,12 +294,13 @@ void EventItemSelectExit(void);
 int EventItemSelectLoop(int *);
 
 /**
+ * Handles pad input for the event item selection menu.
+ *
  * @mangled EventItemSelectKey__FPi
  * @address 0x224260
  * @size 0x6B0
- * @unknownret
  */
-void EventItemSelectKey(int *);
+int EventItemSelectKey(int *);
 
 /**
  * @mangled DrawEventAndFishMenuBoard_Ver__FP8CTexture8CRect_i_iiii
@@ -315,10 +319,11 @@ void DrawEventAndFishMenuBoard_Ver(CTexture *, CRect_i_, int, int, int, int);
 void DrawEventAndFishMenuBoard(CTexture *, int, int, int, int);
 
 /**
+ * Draws the event item selection menu.
+ *
  * @mangled EventItemSelectDraw__Fv
  * @address 0x224D50
  * @size 0x6D0
- * @unknownret
  */
 void EventItemSelectDraw(void);
 
@@ -399,10 +404,12 @@ int BattleSubWeaponDmg(float amount, int kind);
 void SetWeaponAttachStatus(WEAPON_HAVE *);
 
 /**
+ * Applies a weapon's attachments to its stats and writes the result into a
+ * second weapon record.
+ *
  * @mangled WeaponAllValueSet__FP11WEAPON_HAVEP11WEAPON_HAVEi
  * @address 0x225B60
  * @size 0x3F0
- * @unknownret
  */
 void WeaponAllValueSet(WEAPON_HAVE *, WEAPON_HAVE *, int);
 
@@ -415,12 +422,13 @@ void WeaponAllValueSet(WEAPON_HAVE *, WEAPON_HAVE *, int);
 void SetAttachMentValue(int, int, short, ATTACH_LIST *);
 
 /**
+ * Returns the stat value an attachment adds, for its message line.
+ *
  * @mangled GetAttachVolumeForMsg__FP11ATTACH_LIST
  * @address 0x2260B0
  * @size 0x60
- * @unknownret
  */
-void GetAttachVolumeForMsg(ATTACH_LIST *);
+int GetAttachVolumeForMsg(ATTACH_LIST *);
 
 /**
  * Opens the dungeon entrance menu for a dungeon and floor.
@@ -475,18 +483,20 @@ void DunEnterDraw(void);
 void DunEnterBoardWaku(int, int, int);
 
 /**
+ * Draws the dungeon entry board.
+ *
  * @mangled DunEnterBoard__Fiii
  * @address 0x227700
  * @size 0x7C0
- * @unknownret
  */
 void DunEnterBoard(int, int, int);
 
 /**
+ * Draws a number right to left, one digit at a time, clipped to the board.
+ *
  * @mangled DrawEnemyNum__Fiiiiii
  * @address 0x227EC0
  * @size 0x160
- * @unknownret
  */
 void DrawEnemyNum(int, int, int, int, int, int);
 
@@ -499,26 +509,29 @@ void DrawEnemyNum(int, int, int, int, int, int);
 void DrawGetAtoraNumBoard(int, int, int, int, int, int);
 
 /**
+ * Draws one digit of the dungeon board's numbers, clipped to the board.
+ *
  * @mangled DrawDunNumberClip__Fiiiiii
  * @address 0x228270
  * @size 0xE0
- * @unknownret
  */
 void DrawDunNumberClip(int, int, int, int, int, int);
 
 /**
+ * Draws the dungeon entry screen's background and its darkening box.
+ *
  * @mangled DrawDunEnterBack__Fi
  * @address 0x228350
  * @size 0xA0
- * @unknownret
  */
 void DrawDunEnterBack(int);
 
 /**
+ * Draws the floor's name and number on the dungeon entry board.
+ *
  * @mangled DrawDunEnterFloorName__Fiiiiii
  * @address 0x2283F0
  * @size 0x290
- * @unknownret
  */
 void DrawDunEnterFloorName(int, int, int, int, int, int);
 
@@ -645,10 +658,11 @@ void InitItemPolygonView(int, void /* CW back-ref target unresolved */ *);
 void EnterItemPolygonView(void);
 
 /**
+ * Turns and scales the item model under pad control, then draws it.
+ *
  * @mangled LocalDrawItemPolygonView__Fv
  * @address 0x22AF40
  * @size 0x270
- * @unknownret
  */
 void LocalDrawItemPolygonView(void);
 
@@ -686,10 +700,11 @@ void DebugItemGetKey(void);
 void DebugItemGetDraw(void);
 
 /**
+ * Draws the debug overlay listing an item's data.
+ *
  * @mangled DrawItemDataView__Fi
  * @address 0x22B7C0
  * @size 0x230
- * @unknownret
  */
 void DrawItemDataView(int);
 
@@ -726,7 +741,6 @@ char *GetNowSelectLanguage(int);
  * @mangled GetPathReadDifferntLang__FPc
  * @address 0x22BA50
  * @size 0x60
- * @unknownret
  */
 void GetPathReadDifferntLang(char *);
 
@@ -763,12 +777,13 @@ void BtlMenuBufferSet(int);
 u_long128 *MenuCalcBufAlignment(u_long128 *buffer);
 
 /**
+ * Returns the upper village bound for Atla selection based on story progress.
+ *
  * @mangled GetAtoraMaxVillage__Fv
  * @address 0x22BC40
  * @size 0xD0
- * @unknownret
  */
-void GetAtoraMaxVillage(void);
+int GetAtoraMaxVillage(void);
 
 /**
  * @mangled GetNowMapTransAtraMap__Fi
@@ -869,10 +884,11 @@ void DrawMenu2DSprite(CTexture *, CRect_i_, CRect_i_, unsigned char, unsigned ch
 void DrawMenu2DSprite(CTexture *, CRect_i_, CRect_i_, spRGBA *, spRGBA *, spRGBA *, spRGBA *);
 
 /**
+ * Reloads one menu texture block through the texture manager.
+ *
  * @mangled MenuTextureReload__Fi
  * @address 0x22D0E0
  * @size 0x50
- * @unknownret
  */
 void MenuTextureReload(int);
 
@@ -902,10 +918,11 @@ void AllFillBoxForMenu(unsigned char, unsigned char, unsigned char, unsigned cha
 void AllFadeForMenu(int);
 
 /**
+ * Draws the menu frame image over the whole screen at the given tint and alpha.
+ *
  * @mangled FrameImageDraw__Fii
  * @address 0x22D2B0
  * @size 0x120
- * @unknownret
  */
 void FrameImageDraw(int, int);
 
@@ -942,10 +959,11 @@ void DrawDontSetItemMark(int, int, int, int, int);
 void DrawIconParts(int, int, int, int, int, int, int);
 
 /**
+ * Draws the attachment count or the weapon mark over one menu item slot.
+ *
  * @mangled DrawAttachNumberOrWeapon__Fiiiiiiii
  * @address 0x22D780
  * @size 0x270
- * @unknownret
  */
 void DrawAttachNumberOrWeapon(int, int, int, int, int, int, int, int);
 
@@ -958,12 +976,13 @@ void DrawAttachNumberOrWeapon(int, int, int, int, int, int, int, int);
 void FadeTexX(int, int, int, int, char *, int);
 
 /**
+ * Looks up the icon sheet for an item and the icon's offset within it.
+ *
  * @mangled RetCTex__FsRiRi
  * @address 0x22DD90
  * @size 0xF0
- * @unknownret
  */
-void RetCTex(short, int &, int &);
+CTexture *RetCTex(short, int &, int &);
 
 /**
  * Clips a texture strip to a range of screen positions.
@@ -1029,7 +1048,6 @@ void GetMainMenuRightHelpMsgLangOffset(int &, int &);
  * @mangled InitHaveData__FP9IHAVEITEM
  * @address 0x22E440
  * @size 0x30
- * @unknownret
  */
 void InitHaveData(IHAVEITEM *);
 
@@ -1148,12 +1166,13 @@ void PersonalBoardKeySub(void);
 void PersonalBoardKey(void);
 
 /**
+ * Swaps an inventory entry into a personal board slot.
+ *
  * @mangled PersonalBoardItemPush__FP9IHAVEITEMi
  * @address 0x22EF90
  * @size 0x110
- * @unknownret
  */
-void PersonalBoardItemPush(IHAVEITEM *, int);
+int PersonalBoardItemPush(IHAVEITEM *, int);
 
 /**
  * Returns the sort category containing an attachment identifier.
