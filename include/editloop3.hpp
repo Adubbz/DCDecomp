@@ -263,7 +263,6 @@ void get_obj_scale(OBJ_HANDLE *handle, float *out_scale);
  * @mangled init_obj_anime__FiiiiPfPfPf
  * @address 0x18ADD0
  * @size 0xC8
- * @unknownret
  */
 int init_obj_anime(int anime_index, int handle_index, int type, int number,
                    float *offset, float *range, float *speed);
@@ -623,3 +622,12 @@ int EdLoadVillager(char *name, CNPCharacter *villager, CDataAlloc2<1> *arena);
  * @size 0x2E8
  */
 int EdEventInit(int event_no, CDataAlloc2<1> *arena, char *name);
+
+/**
+ * Copies the editor's current resource directory into a caller buffer.
+ *
+ * @mangled GetEditDataDir__FPc
+ * @address 0x1777D0
+ * @size 0x28
+ */
+void GetEditDataDir(char *name);
