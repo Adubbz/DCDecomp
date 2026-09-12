@@ -269,7 +269,7 @@ segments:
       - {start: 0xb7900, type: cpp, name: weaponelement}
       - {start: 0xbb160, type: cpp, name: btsysscript}
       - {start: 0xbda00, type: cpp, name: dngstatusdata}
-      - {start: 0xbfbb0, type: asmtu, name: dungeonparts}
+      - {start: 0xbfbb0, type: cpp, name: dungeonparts}
       - {start: 0xc1d00, type: cpp, name: dungeonmap}
       - {start: 0xcc920, type: asmtu, name: dungeoneventdata}
       - {start: 0xcc9f0, type: asmtu, name: dungeoneventman}

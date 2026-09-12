@@ -2,6 +2,8 @@
 
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", GetPieroItem__FiiPiPi);
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", PresetSmallItemNo_Get__Fiiii);
+INCLUDE_RODATA("asm/nonmatchings/dungeonparts", @646__2);
+INCLUDE_RODATA("asm/nonmatchings/dungeonparts", @1007__2);
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", SearchiDoPutArea__FP8MAPPARTSiiiiPf);
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", chkAtraFloor__Fii);
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", BtAtraListMake__Fi);
