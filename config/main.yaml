@@ -275,7 +275,7 @@ segments:
       - {start: 0xcc9f0, type: asmtu, name: dungeoneventman}
       - {start: 0xcd4c0, type: asmtu, name: dranmapfield}
       - {start: 0xcda10, type: cpp, name: itemdata}
-      - {start: 0xd1130, type: asmtu, name: btitem}
+      - {start: 0xd1130, type: cpp, name: btitem}
       - {start: 0xd4640, type: asmtu, name: mainitemmodel}
       - {start: 0xd5680, type: asmtu, name: itembombeffect}
       - {start: 0xd66c0, type: cpp, name: weaponeffect}
