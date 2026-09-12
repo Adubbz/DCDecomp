@@ -5,6 +5,8 @@
 
 #include <cstring>
 
+#include "menu_manual.hpp"
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetDefaultWeaponNo__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", IsDefaultWeapon__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", SetNowEquipWeaponDataForMsg__Fii);
@@ -188,7 +190,11 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuOptionKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuSaveKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleManualInit__FPiP1);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleManualKey__Fv);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleManualDraw__Fv);
+
+static void BattleManualDraw() {
+    MenuManualDraw();
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawStatusNumberNowAndMax__FPiiiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWepHole__FiiP11WEAPON_HAVEii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", InitMes__10MenuClsMesFv);

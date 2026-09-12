@@ -962,14 +962,6 @@ void BattleManualInit(int *, void /* CW back-ref target unresolved */ *);
 void BattleManualKey(void);
 
 /**
- * @mangled BattleManualDraw__Fv
- * @address 0x20B190
- * @size 0x20
- * @unknownret
- */
-void BattleManualDraw(void);
-
-/**
  * @mangled DrawStatusNumberNowAndMax__FPiiiii
  * @address 0x20B1B0
  * @size 0x130
