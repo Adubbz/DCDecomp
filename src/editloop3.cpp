@@ -33,6 +33,7 @@
 #include "fishing.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
+#include "gamemode.hpp"
 #include "gamepad.hpp"
 #include "gameutil.hpp"
 #include "mainselect.hpp"
