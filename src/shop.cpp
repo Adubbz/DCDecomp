@@ -4,6 +4,8 @@
 
 #include "shop.hpp"
 
+#include "dataread.hpp"
+
 INCLUDE_ASM("asm/nonmatchings/shop", GetItemShopList__Fi);
 INCLUDE_ASM("asm/nonmatchings/shop", InitShopItemListData__FP13SHOP_ITEMLIST);
 INCLUDE_ASM("asm/nonmatchings/shop", IconMoveTarSet__12ShopIconMoveFiiiP13MENU_ITEMDATAffi);
@@ -38,7 +40,18 @@ static void ExitChargeShop() {
     ShopMenuExit();
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopLoop__Fv);
+int ChargeShopLoop() {
+    int done;
+
+    ReadBG();
+    done = ChargeShopKey();
+    DrawChargeShop();
+    if (done) {
+        ExitChargeShop();
+    }
+    return done;
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeSelectKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", DrawChargeShop__Fv);
