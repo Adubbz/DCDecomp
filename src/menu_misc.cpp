@@ -4,7 +4,9 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "character.hpp"
 #include "clsmes.hpp"
+#include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dun/gameloop.hpp"
 #include "frame.hpp"
@@ -16,6 +18,16 @@
 #include "snd.hpp"
 #include "texture.hpp"
 #include "weapon_buildup.hpp"
+#include "weaponeffect.hpp"
+
+extern ClsMes CommonMenuMes2;
+extern ClsMes CommonMenuMes3;
+extern int EditMenuStatus[7];
+extern CDataAlloc2<1> EdMenuBuffer;
+extern CDataAlloc2<1> MenuExCashBuffer;
+extern CCharacter MenuCharaFrame;
+extern CCharacter DngWeaponFrm[12];
+extern "C" CWeaponEffect CWeaponFx;
 
 /**
  * Sets the buffer the menu reads weapon effect files into.
