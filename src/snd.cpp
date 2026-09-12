@@ -277,7 +277,24 @@ static SND_SE_SEQ *GetSeSeq(int *found, int se_no, int voice) {
     return slot;
 }
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqInit__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqPlayStop__Fiii);
+int SndSeSeqPlayStop(int se_no, int length, int voice) {
+    int found;
+    SND_SE_SEQ *slot = GetSeSeq(&found, se_no, voice);
+
+    if (slot == 0) {
+        return 0;
+    }
+
+    slot->se_no = se_no;
+    slot->length = length;
+    if (found) {
+        slot->step = 1;
+    } else {
+        slot->step = 0;
+    }
+    slot->voice = voice;
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqStep__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqAllStop__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientInit__Fv);
