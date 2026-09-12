@@ -48,6 +48,15 @@ int sceMcUnformat(int port, int slot);
 int sceMcSync(int mode, int *command, int *result);
 }
 
+/** Returns the language that the title screen selected. */
+int GetMenuLangFlag(void);
+
+/** Empties the table that holds the entries of the save directory. */
+void InitSaveFileInfoTbl(void);
+
+/** Returns one when the table holds an entry with the given name. */
+int GetOpenAttribute(char *name);
+
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", Initialize__17CMemoryCardAccessFv);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @372__3);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @373__4);
