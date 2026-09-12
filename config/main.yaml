@@ -301,7 +301,7 @@ segments:
       - {start: 0x13f690, type: cpp, name: stockitem}
       - {start: 0x140150, type: cpp, name: fish}
       - {start: 0x141420, type: cpp, name: charakey}
-      - {start: 0x144c30, type: asmtu, name: langset}
+      - {start: 0x144c30, type: cpp, name: langset}
       - {start: 0x1452f0, type: asmtu, name: fader}
       - {start: 0x145400, type: data, name: vutext, dir: main, linker_section: .vutext}
       - {start: 0x14fbc0, type: data, name: data, dir: main}
