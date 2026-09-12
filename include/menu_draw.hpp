@@ -80,6 +80,9 @@ extern CDngStatusData *DEnterStatusPt;
 /** Frames a menu error message has shown for. */
 extern int MenuEtcErrCnt;
 
+/** Path buffer the menu file loaders build a language directory and file name in. */
+extern char MenuGrobalDir[64];
+
 /**
  * Checks the memory card before a save and picks the save menu's next step.
  *
