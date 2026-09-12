@@ -408,7 +408,18 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @869);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @870__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @871__2);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetNowWeaponRate__FP11WEAPON_HAVE);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponStatusBreakEnable__FP11WEAPON_HAVE);
+int WeaponStatusBreakEnable(WEAPON_HAVE *arg0) {
+    s32 var_2;
+
+    if (arg0 == NULL) {
+        return 0;
+    }
+    var_2 = 0;
+    if (arg0->unk_02 >= 5) {
+        var_2 = 1;
+    }
+    return var_2;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponStatusBuildUp__FP11WEAPON_HAVERi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", MenuWeaponSpSet__FP10CCharacterP11WEAPON_HAVE);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @914__2);
