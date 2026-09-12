@@ -239,7 +239,7 @@ segments:
       - {start: 0x61750, type: cpp, name: fireomni}
       - {start: 0x62680, type: cpp, name: runeffect}
       - {start: 0x63b30, type: asmtu, name: candleeffect}
-      - {start: 0x63e20, type: asmtu, name: effect}
+      - {start: 0x63e20, type: cpp, name: effect}
       - {start: 0x64a80, type: asmtu, name: effectgroup}
       - {start: 0x64c30, type: cpp, name: objanime}
       - {start: 0x67160, type: cpp, name: textureanime}
