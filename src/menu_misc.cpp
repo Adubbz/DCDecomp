@@ -551,7 +551,15 @@ int CheckWeaponOptionStatus(int options) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/menu_misc", IsWeaponOptionGoodOrBad__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", DefaultWeaponOptionSet__Fi);
+int DefaultWeaponOptionSet(s32 arg0) {
+    WEAPON_DATA *temp_2;
+
+    temp_2 = GetWeaponData(arg0);
+    if (temp_2 == NULL) {
+        return 1;
+    }
+    return temp_2->flags;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponOptionStatusDraw__FP11WEAPON_HAVEiii);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1507);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponStarDraw__FiiP11WEAPON_HAVEi);
