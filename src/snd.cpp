@@ -201,6 +201,7 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeIn__Fiii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeOut__Fii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeInOut__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndCheckFade__Fv);
+#ifdef NON_MATCHING
 static SND_SE_INFO *GetSeInfo(int se_no) {
     SND_SE_INFO *table;
 
@@ -228,6 +229,9 @@ static SND_SE_INFO *GetSeInfo(int se_no) {
 
     return &se_info[se_no];
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/snd", GetSeInfo__Fi);
+#endif
 static int GetPortNo(int se_no) {
     SND_SE_INFO *info = GetSeInfo(se_no);
 
@@ -244,6 +248,7 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSoundLoad__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSoundLoadBG__FiPUiPi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSoundSyncBG__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSePlay__Fiii);
+#ifdef NON_MATCHING
 void SndSePlay(int se_no, float volume, float pan, int voice) {
     SND_SE_INFO *info = GetSeInfo(se_no);
 
@@ -257,7 +262,11 @@ void SndSePlay(int se_no, float volume, float pan, int voice) {
         CSnd.SE_Play(GetPortNo(se_no), info->bank, info->prog, hw_pan, 127, vol, voice);
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/snd", SndSePlay__Fiffi);
+#endif
 INCLUDE_ASM("asm/nonmatchings/snd", SndSePlay__FiPfff);
+#ifdef NON_MATCHING
 void SndSeStop(int se_no, int voice) {
     SND_SE_INFO *info = GetSeInfo(se_no);
 
@@ -265,14 +274,22 @@ void SndSeStop(int se_no, int voice) {
         CSnd.SE_Stop(GetPortNo(se_no), info->bank, info->prog, voice);
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/snd", SndSeStop__Fii);
+#endif
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetSeVol__Fiii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetVolf__Fif);
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetPanf__Ff);
+#ifdef NON_MATCHING
 void SndSetSeVolf(int se_no, float vol, int voice) {
     if (GetSeInfo(se_no) != 0) {
         SndSetSeVol(se_no, SndGetVolf(se_no, vol), voice);
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/snd", SndSetSeVolf__Fifi);
+#endif
+#ifdef NON_MATCHING
 void SndSetSePanf(int se_no, float pan, int voice) {
     SND_SE_INFO *info = GetSeInfo(se_no);
 
@@ -282,11 +299,15 @@ void SndSetSePanf(int se_no, float pan, int voice) {
         CSnd.SE_SetPan(GetPortNo(se_no), info->bank, info->prog, hw_pan, voice);
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/snd", SndSetSePanf__Fifi);
+#endif
 INCLUDE_ASM("asm/nonmatchings/snd", SndPlayFootSound__FiiPf);
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetVolPan__FPfPfPfff);
 static void InitSeSeq(SND_SE_SEQ *seq) {
     seq->se_no = -1;
 }
+#ifdef NON_MATCHING
 static SND_SE_SEQ *GetSeSeq(int *found, int se_no, int voice) {
     int i;
     SND_SE_SEQ *slot = 0;
@@ -309,7 +330,11 @@ static SND_SE_SEQ *GetSeSeq(int *found, int se_no, int voice) {
     }
     return slot;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/snd", GetSeSeq__FPiii);
+#endif
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqInit__Fv);
+#ifdef NON_MATCHING
 int SndSeSeqPlayStop(int se_no, int length, int voice) {
     int found;
     SND_SE_SEQ *slot = GetSeSeq(&found, se_no, voice);
@@ -328,6 +353,9 @@ int SndSeSeqPlayStop(int se_no, int length, int voice) {
     slot->voice = voice;
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqPlayStop__Fiii);
+#endif
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqStep__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqAllStop__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientInit__Fv);
@@ -352,6 +380,7 @@ INCLUDE_ASM("asm/nonmatchings/snd", SetSPSeFile__FiPUiPc);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoad__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoadBG__FiPUiPi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeSyncBG__Fv);
+#ifdef NON_MATCHING
 void SndSPSePlay(int se_no, int vol) {
     SND_SE_INFO *info = GetSPInfo(se_no);
 
@@ -366,6 +395,10 @@ void SndSPSePlay(int se_no, int vol) {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/snd", SndSPSePlay__Fii);
+#endif
+#ifdef NON_MATCHING
 void SndSPSeStop(int se_no) {
     SND_SE_INFO *info = GetSPInfo(se_no);
 
@@ -373,7 +406,11 @@ void SndSPSeStop(int se_no) {
         CSnd.SE_Stop(12, info->bank, info->prog, 0);
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeStop__Fi);
+#endif
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetSPSeVolf__Fif);
+#ifdef NON_MATCHING
 void SndSetSPSePanf(int se_no, float pan) {
     if (pan < -1.0f) {
         pan = -1.0f;
@@ -387,6 +424,9 @@ void SndSetSPSePanf(int se_no, float pan) {
         CSnd.SE_SetPan(12, info->vol_no, (int)(63.0f * pan) + 64, 0);
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/snd", SndSetSPSePanf__Fif);
+#endif
 INCLUDE_ASM("asm/nonmatchings/snd", LoadSoundInfo__FP8SND_INFOPci);
 INCLUDE_ASM("asm/nonmatchings/snd", CommandREVERBE__FPPv);
 INCLUDE_ASM("asm/nonmatchings/snd", CommandTABLE__FPPv);
