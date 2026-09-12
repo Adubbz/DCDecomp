@@ -247,7 +247,7 @@ void DngWeaponEquipModelBuild(int, int, void /* CW back-ref target unresolved */
  * @address 0x20DE80
  * @size 0x40
  */
-s32 GetNowMotionStepCnt(int);
+int GetNowMotionStepCnt(int);
 
 /**
  * @mangled GetNowActiveCharaStatus__Fi

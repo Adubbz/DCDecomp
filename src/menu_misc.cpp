@@ -79,18 +79,18 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1109);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1110);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1111);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", DngWeaponEquipModelBuild__FiiP1);
-s32 GetNowMotionStepCnt(s32 arg0) {
-    s32 var_2;
 
-    var_2 = 0;
-    if (arg0 & 0x40) {
-        var_2 = 1;
+int GetNowMotionStepCnt(int status) {
+    int step = 0;
+    if (status & 0x40) {
+        step = 1;
     }
-    if ((arg0 & 4) || (arg0 & 2)) {
-        var_2 = 2;
+    if ((status & 4) || (status & 2)) {
+        step = 2;
     }
-    return var_2;
+    return step;
 }
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetNowActiveCharaStatus__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", SetNowCharaMotionNo__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", SetItemMenuColor__Fi);
@@ -134,24 +134,24 @@ INCLUDE_ASM("asm/nonmatchings/menu_misc", DngEscapeMsgDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", DngEscapeMsgLoop__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", CheckItemThrow__FPiPi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", SetWeaponElementStatus__FP11WEAPON_HAVE);
-int CheckWeaponOptionStatus(s32 arg0) {
-    s32 var_4;
 
-    var_4 = arg0;
-    if ((var_4 & 2) && (var_4 & 4)) {
-        var_4 &= ~6;
+int CheckWeaponOptionStatus(int options) {
+    // Each pair of opposed options cancels out when both are set.
+    if ((options & 2) && (options & 4)) {
+        options &= ~6;
     }
-    if ((var_4 & 8) && (var_4 & 0x10)) {
-        var_4 &= ~0x18;
+    if ((options & 8) && (options & 0x10)) {
+        options &= ~0x18;
     }
-    if ((var_4 & 0x100) && (var_4 & 0x200)) {
-        var_4 &= ~0x300;
+    if ((options & 0x100) && (options & 0x200)) {
+        options &= ~0x300;
     }
-    if ((var_4 & 0x400) && (var_4 & 0x800)) {
-        var_4 &= ~0xC00;
+    if ((options & 0x400) && (options & 0x800)) {
+        options &= ~0xC00;
     }
-    return var_4;
+    return options;
 }
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", IsWeaponOptionGoodOrBad__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", DefaultWeaponOptionSet__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponOptionStatusDraw__FP11WEAPON_HAVEiii);
@@ -202,8 +202,9 @@ INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuToExitDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuToExit__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AtoraSelectDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AtoraSelect__Fv);
-void AtoraMoveDraw(void) {
-}
+
+void AtoraMoveDraw() {}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AtoraMove__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AnalyzeBackDraw__Fii);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AnalyzeRequestPer__Fv);
