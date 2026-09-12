@@ -57,6 +57,12 @@ void InitSaveFileInfoTbl(void);
 /** Returns one when the table holds an entry with the given name. */
 int GetOpenAttribute(char *name);
 
+/** Holds the entries of the save directory that sceMcGetDir last wrote. */
+extern u8 SaveFileInfo[99][64];
+
+/** Holds the configuration in the format that the memory card carries. */
+extern SV_CONFIG_SYS sys_config;
+
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", Initialize__17CMemoryCardAccessFv);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @372__3);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @373__4);
