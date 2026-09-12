@@ -13,6 +13,39 @@
 
 /* The rest of the ebattle module: the intro, the main loop and the draw pass. */
 
+/* Three of the module's own statics are still supplied by the reference
+ * assembly below, so their callers reach each by the name the assembler
+ * resolves, the way main.cpp and title/titleloop.cpp reach theirs.
+ * Each declaration goes when its own body is written. */
+
+/**
+ * Draws one 32x32 button glyph from the ebattle texture, centred on a point
+ * and scaled about it.
+ *
+ * @mangled DrawButtonSub__Fiiiif
+ * @address 0x169340
+ * @size 0xE0
+ */
+extern "C" void DrawButtonSub__Fiiiif(int x, int y, int tex_x, int tex_y, float scale);
+
+/**
+ * Clears the OK prompt: no button owns it, and its countdown is spent.
+ *
+ * @mangled init_draw_ok__Fv
+ * @address 0x169420
+ * @size 0x14
+ */
+extern "C" void init_draw_ok__Fv();
+
+/**
+ * Says whether either of the two editor key locks currently holds the pad.
+ *
+ * @mangled keylock__Fv
+ * @address 0x1699E0
+ * @size 0x10
+ */
+extern "C" int keylock__Fv();
+
 INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", @1686);
 INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", @1700);
 INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", @1701);
