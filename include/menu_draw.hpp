@@ -57,100 +57,112 @@ extern CDngStatusData *DEnterStatusPt;
 extern int MenuEtcErrCnt;
 
 /**
+ * Checks the memory card before a save and picks the save menu's next step.
+ *
  * @mangled SaveMenuKeySaveCheck__Fv
  * @address 0x221730
  * @size 0x170
- * @unknownret
  */
-void SaveMenuKeySaveCheck(void);
+int SaveMenuKeySaveCheck(void);
 
 /**
+ * Handles the save menu's prompt to confirm a save.
+ *
  * @mangled SaveMenuKeySaveDecide__Fv
  * @address 0x2218A0
  * @size 0xE0
- * @unknownret
  */
-void SaveMenuKeySaveDecide(void);
+int SaveMenuKeySaveDecide(void);
 
 /**
+ * Steps the save menu while the game is written to the memory card.
+ *
  * @mangled SaveMenuKeySave__Fv
  * @address 0x221980
  * @size 0x130
- * @unknownret
  */
-void SaveMenuKeySave(void);
+int SaveMenuKeySave(void);
 
 /**
+ * Waits for a button press once a save has finished.
+ *
  * @mangled SaveMenuKeyEndSave__Fv
  * @address 0x221AB0
  * @size 0x80
- * @unknownret
  */
-void SaveMenuKeyEndSave(void);
+int SaveMenuKeyEndSave(void);
 
 /**
+ * Handles the save menu's prompt to confirm a load.
+ *
  * @mangled SaveMenuKeyLoadDecide__Fv
  * @address 0x221B30
  * @size 0x100
- * @unknownret
  */
-void SaveMenuKeyLoadDecide(void);
+int SaveMenuKeyLoadDecide(void);
 
 /**
+ * Steps the save menu while a save is read from the memory card.
+ *
  * @mangled SaveMenuKeyLoad__Fv
  * @address 0x221C30
  * @size 0xE0
- * @unknownret
  */
-void SaveMenuKeyLoad(void);
+int SaveMenuKeyLoad(void);
 
 /**
+ * Waits for a button press while the save menu shows an alert.
+ *
  * @mangled SaveMenuKeyArart__Fv
  * @address 0x221D10
  * @size 0x130
- * @unknownret
  */
-void SaveMenuKeyArart(void);
+int SaveMenuKeyArart(void);
 
 /**
+ * Handles the save menu's prompt to create new save data.
+ *
  * @mangled SaveMenuKeyNewDirSelect__Fv
  * @address 0x221E40
  * @size 0xD0
- * @unknownret
  */
-void SaveMenuKeyNewDirSelect(void);
+int SaveMenuKeyNewDirSelect(void);
 
 /**
+ * Steps the save menu while new save data is created on the memory card.
+ *
  * @mangled SaveMenuKeyNewDir__Fv
  * @address 0x221F10
  * @size 0x110
- * @unknownret
  */
-void SaveMenuKeyNewDir(void);
+int SaveMenuKeyNewDir(void);
 
 /**
+ * Handles the save menu's memory card format step.
+ *
  * @mangled SaveMenuKeyFormat__Fv
  * @address 0x222020
  * @size 0x150
- * @unknownret
  */
-void SaveMenuKeyFormat(void);
+int SaveMenuKeyFormat(void);
 
 /**
+ * Steps the save menu when the memory card is not formatted.
+ *
  * @mangled SaveMenuKeyUnFormat__Fv
  * @address 0x222170
  * @size 0x80
- * @unknownret
  */
-void SaveMenuKeyUnFormat(void);
+int SaveMenuKeyUnFormat(void);
 
 /**
+ * Waits for a button press when the save data is of a different version.
+ *
  * @mangled SaveMenuKeyDifVersion__Fv
  * @address 0x2221F0
  * @size 0x60
- * @unknownret
  */
-void SaveMenuKeyDifVersion(void);
+int SaveMenuKeyDifVersion(void);
 
 /**
  * Steps the delete choice of the save menu.
@@ -171,60 +183,67 @@ s32 SaveMenuKeyDelete(void);
 s32 SaveMenuKeyCopy(void);
 
 /**
+ * Handles key input on the save menu offered after the ending.
+ *
  * @mangled SaveMenuKeyAfterEnding__Fv
  * @address 0x222270
  * @size 0x80
- * @unknownret
  */
-void SaveMenuKeyAfterEnding(void);
+int SaveMenuKeyAfterEnding(void);
 
 /**
+ * Handles the prompt to confirm a save after the ending.
+ *
  * @mangled SaveMenuKeySaveDecideEnding__Fv
  * @address 0x2222F0
  * @size 0x80
- * @unknownret
  */
-void SaveMenuKeySaveDecideEnding(void);
+int SaveMenuKeySaveDecideEnding(void);
 
 /**
+ * Steps the save menu while saving after the ending.
+ *
  * @mangled SaveMenuKeySaveEnding__Fv
  * @address 0x222370
  * @size 0x40
- * @unknownret
  */
-void SaveMenuKeySaveEnding(void);
+int SaveMenuKeySaveEnding(void);
 
 /**
+ * Waits for a button press once the save after the ending has finished.
+ *
  * @mangled SaveMenuKeyEndSaveEnding__Fv
  * @address 0x2223B0
  * @size 0x60
- * @unknownret
  */
-void SaveMenuKeyEndSaveEnding(void);
+int SaveMenuKeyEndSaveEnding(void);
 
 /**
+ * Returns the message number the save menu shows for its current step.
+ *
  * @mangled GetSaveMenuMsgNo__Fv
  * @address 0x222410
  * @size 0x230
- * @unknownret
  */
-void GetSaveMenuMsgNo(void);
+int GetSaveMenuMsgNo(void);
 
 /**
+ * Loads the save menu's textures, messages and memory card icon.
+ *
  * @mangled SaveMenuTextureEnter__Fv
  * @address 0x222640
  * @size 0x2D0
- * @unknownret
  */
-void SaveMenuTextureEnter(void);
+int SaveMenuTextureEnter(void);
 
 /**
+ * Tells whether the save menu's fade-out is running.
+ *
  * @mangled SaveMenuEffectFadeOut__Fv
  * @address 0x222910
  * @size 0x30
- * @unknownret
  */
-void SaveMenuEffectFadeOut(void);
+int SaveMenuEffectFadeOut(void);
 
 /**
  * Computes the save board's alpha ramp at a position and at that position
@@ -237,42 +256,47 @@ void SaveMenuEffectFadeOut(void);
 void GetSaveBoardAlphaInfo(int, int, int &, int &, int);
 
 /**
+ * Draws the board of one save slot with its save data summary.
+ *
  * @mangled DrawSaveBoard__FP13SAVEDATA_INFOPP8CTextureiiii
  * @address 0x222AA0
  * @size 0x9C0
- * @unknownret
  */
 void DrawSaveBoard(SAVEDATA_INFO *, CTexture **, int, int, int, int);
 
 /**
+ * Draws the board of a save slot that holds no save data.
+ *
  * @mangled DrawNewFileTemplete__Fiii
  * @address 0x223460
  * @size 0x4E0
- * @unknownret
  */
 void DrawNewFileTemplete(int, int, int);
 
 /**
+ * Starts memory card access and checks the card for existing save data.
+ *
  * @mangled InitExistData__Fv
  * @address 0x223940
  * @size 0x180
- * @unknownret
  */
-void InitExistData(void);
+int InitExistData(void);
 
 /**
+ * Checks whether the memory card can take a save.
+ *
  * @mangled SaveEnableCheck__Fv
  * @address 0x223AC0
  * @size 0x1A0
- * @unknownret
  */
-void SaveEnableCheck(void);
+int SaveEnableCheck(void);
 
 /**
+ * Opens the event item selection menu.
+ *
  * @mangled InitEventItemSelect__FiPiP9ITEM_PACKiiii
  * @address 0x223C60
  * @size 0x480
- * @unknownret
  */
 void InitEventItemSelect(int, int *, ITEM_PACK *, int, int, int, int);
 
@@ -286,10 +310,11 @@ void InitEventItemSelect(int, int *, ITEM_PACK *, int, int, int, int);
 void EventItemSelectExit(void);
 
 /**
+ * Runs one frame of the event item selection menu, and returns its result.
+ *
  * @mangled EventItemSelectLoop__FPi
  * @address 0x224140
  * @size 0x120
- * @unknownret
  */
 int EventItemSelectLoop(int *);
 
@@ -303,18 +328,20 @@ int EventItemSelectLoop(int *);
 int EventItemSelectKey(int *);
 
 /**
+ * Draws one vertical section of the board the event and fishing menus share.
+ *
  * @mangled DrawEventAndFishMenuBoard_Ver__FP8CTexture8CRect_i_iiii
  * @address 0x224910
  * @size 0x150
- * @unknownret
  */
 void DrawEventAndFishMenuBoard_Ver(CTexture *, CRect_i_, int, int, int, int);
 
 /**
+ * Draws the board the event and fishing menus share.
+ *
  * @mangled DrawEventAndFishMenuBoard__FP8CTextureiiii
  * @address 0x224A60
  * @size 0x2F0
- * @unknownret
  */
 void DrawEventAndFishMenuBoard(CTexture *, int, int, int, int);
 
@@ -328,18 +355,20 @@ void DrawEventAndFishMenuBoard(CTexture *, int, int, int, int);
 void EventItemSelectDraw(void);
 
 /**
+ * Draws a section of the event item board, clipped to a range.
+ *
  * @mangled DrawEventItemBoard__FiiiiiP8CTexture
  * @address 0x225420
  * @size 0x110
- * @unknownret
  */
 void DrawEventItemBoard(int, int, int, int, int, CTexture *);
 
 /**
+ * Tells whether the player holds an item, in the dungeon inventory or in storage.
+ *
  * @mangled PlayerAllItemCheck__Fi
  * @address 0x225530
  * @size 0xA0
- * @unknownret
  */
 int PlayerAllItemCheck(int item);
 
@@ -362,28 +391,31 @@ s32 GetAddAttachItem(int);
 int TransWepNo(int weapon_no);
 
 /**
+ * Converts a position in an owner's weapon chain back into the weapon's item identifier.
+ *
  * @mangled TransWepNoNewToOld__Fi
  * @address 0x2256E0
  * @size 0x130
- * @unknownret
  */
 int TransWepNoNewToOld(int weapon_no);
 
 /**
+ * Adds one attachment's values into another, scaled by a factor.
+ *
  * @mangled PlusAttachmentVolume__FP11ATTACH_LISTP11ATTACH_LISTf
  * @address 0x225810
  * @size 0x160
- * @unknownret
  */
 void PlusAttachmentVolume(ATTACH_LIST *, ATTACH_LIST *, float);
 
 /**
+ * Returns how much a weapon's attachments raise one of its values.
+ *
  * @mangled GetWeaponAttachStatusUp__FP11WEAPON_HAVEi
  * @address 0x225970
  * @size 0x130
- * @unknownret
  */
-void GetWeaponAttachStatusUp(WEAPON_HAVE *, int);
+int GetWeaponAttachStatusUp(WEAPON_HAVE *, int);
 
 /**
  * Takes one hit off the weapon the player holds and gives back what broke:
@@ -396,10 +428,11 @@ void GetWeaponAttachStatusUp(WEAPON_HAVE *, int);
 int BattleSubWeaponDmg(float amount, int kind);
 
 /**
+ * Recomputes a held weapon's values from its attachments.
+ *
  * @mangled SetWeaponAttachStatus__FP11WEAPON_HAVE
  * @address 0x225AA0
  * @size 0xC0
- * @unknownret
  */
 void SetWeaponAttachStatus(WEAPON_HAVE *);
 
@@ -414,12 +447,13 @@ void SetWeaponAttachStatus(WEAPON_HAVE *);
 void WeaponAllValueSet(WEAPON_HAVE *, WEAPON_HAVE *, int);
 
 /**
+ * Fills an attachment record from the attachment data table.
+ *
  * @mangled SetAttachMentValue__FiisP11ATTACH_LIST
  * @address 0x225F50
  * @size 0x160
- * @unknownret
  */
-void SetAttachMentValue(int, int, short, ATTACH_LIST *);
+int SetAttachMentValue(int, int, short, ATTACH_LIST *);
 
 /**
  * Returns the stat value an attachment adds, for its message line.
@@ -467,18 +501,20 @@ int DunEnterMenuLoop(void);
 int DunEnterMenuKey(void);
 
 /**
+ * Draws the dungeon entrance menu.
+ *
  * @mangled DunEnterDraw__Fv
  * @address 0x226D10
  * @size 0x540
- * @unknownret
  */
 void DunEnterDraw(void);
 
 /**
+ * Draws the frame of the dungeon entrance board.
+ *
  * @mangled DunEnterBoardWaku__Fiii
  * @address 0x227250
  * @size 0x4B0
- * @unknownret
  */
 void DunEnterBoardWaku(int, int, int);
 
@@ -501,10 +537,11 @@ void DunEnterBoard(int, int, int);
 void DrawEnemyNum(int, int, int, int, int, int);
 
 /**
+ * Draws the collected Atla count on the dungeon entrance board.
+ *
  * @mangled DrawGetAtoraNumBoard__Fiiiiii
  * @address 0x228020
  * @size 0x250
- * @unknownret
  */
 void DrawGetAtoraNumBoard(int, int, int, int, int, int);
 
@@ -536,52 +573,58 @@ void DrawDunEnterBack(int);
 void DrawDunEnterFloorName(int, int, int, int, int, int);
 
 /**
+ * Opens the character change menu.
+ *
  * @mangled StartQuickChange__FP1iPii
  * @address 0x228680
  * @size 0x530
- * @unknownret
  */
 void StartQuickChange(void /* CW back-ref target unresolved */ *, int, int *, int);
 
 /**
+ * Runs one frame of the character change menu, and returns its result.
+ *
  * @mangled CharaChangeLoop__Fv
  * @address 0x228BB0
  * @size 0x2E0
- * @unknownret
  */
 int CharaChangeLoop(void);
 
 /**
+ * Handles key input on the character change menu.
+ *
  * @mangled CharaChangeKey__Fv
  * @address 0x228E90
  * @size 0x8B0
- * @unknownret
  */
-void CharaChangeKey(void);
+int CharaChangeKey(void);
 
 /**
+ * Draws the character change menu.
+ *
  * @mangled CharaChangeDraw__Fv
  * @address 0x229740
  * @size 0xAD0
- * @unknownret
  */
 void CharaChangeDraw(void);
 
 /**
+ * Starts reading the model of the active item.
+ *
  * @mangled DngActItemModelReadStart__FP1
  * @address 0x22A210
  * @size 0x180
- * @unknownret
  */
-void DngActItemModelReadStart(void /* CW back-ref target unresolved */ *);
+int DngActItemModelReadStart(void /* CW back-ref target unresolved */ *);
 
 /**
+ * Builds the active item's model once its file has been read.
+ *
  * @mangled DngActItemModelBuild__Fi
  * @address 0x22A390
  * @size 0x210
- * @unknownret
  */
-void DngActItemModelBuild(int);
+int DngActItemModelBuild(int);
 
 /**
  * @mangled DngActiveItemTextureCopy__Fv
@@ -618,44 +661,49 @@ s32 GetWeaponMsgNo(WEAPON_HAVE *);
 s16 GetWeaponMsgNo2(int);
 
 /**
+ * Draws the attachments set in a weapon's holes.
+ *
  * @mangled DrawWepAttach__FiiP11WEAPON_HAVEii
  * @address 0x22A880
  * @size 0x1C0
- * @unknownret
  */
 void DrawWepAttach(int, int, WEAPON_HAVE *, int, int);
 
 /**
+ * Tells whether the player has an Atla piece, held or placed.
+ *
  * @mangled GetAtraTipNowHave__Fii
  * @address 0x22AA40
  * @size 0x180
- * @unknownret
  */
-void GetAtraTipNowHave(int, int);
+int GetAtraTipNowHave(int, int);
 
 /**
+ * Converts a value into the whole number the menus display for it.
+ *
  * @mangled GetDispVolumeForFloat__Ff
  * @address 0x22ABC0
  * @size 0x70
- * @unknownret
  */
-void GetDispVolumeForFloat(float);
+int GetDispVolumeForFloat(float);
 
 /**
+ * Starts reading the model the item preview shows.
+ *
  * @mangled InitItemPolygonView__FiP1
  * @address 0x22AC30
  * @size 0xF0
- * @unknownret
  */
-void InitItemPolygonView(int, void /* CW back-ref target unresolved */ *);
+int InitItemPolygonView(int, void /* CW back-ref target unresolved */ *);
 
 /**
+ * Sets up the item preview's model and textures once they have been read.
+ *
  * @mangled EnterItemPolygonView__Fv
  * @address 0x22AD20
  * @size 0x220
- * @unknownret
  */
-void EnterItemPolygonView(void);
+int EnterItemPolygonView(void);
 
 /**
  * Turns and scales the item model under pad control, then draws it.
@@ -667,10 +715,11 @@ void EnterItemPolygonView(void);
 void LocalDrawItemPolygonView(void);
 
 /**
+ * Draws the item preview model.
+ *
  * @mangled DrawItemPolygonView__Fv
  * @address 0x22B1B0
  * @size 0x40
- * @unknownret
  */
 void DrawItemPolygonView(void);
 
@@ -684,18 +733,20 @@ void DrawItemPolygonView(void);
 int ConvDebugSelectToExcelListNo(int selection);
 
 /**
+ * Handles key input on the debug item menu.
+ *
  * @mangled DebugItemGetKey__Fv
  * @address 0x22B240
  * @size 0x370
- * @unknownret
  */
-void DebugItemGetKey(void);
+int DebugItemGetKey(void);
 
 /**
+ * Draws the debug item menu.
+ *
  * @mangled DebugItemGetDraw__Fv
  * @address 0x22B5B0
  * @size 0x210
- * @unknownret
  */
 void DebugItemGetDraw(void);
 
@@ -745,34 +796,38 @@ char *GetNowSelectLanguage(int);
 void GetPathReadDifferntLang(char *);
 
 /**
+ * Loads a menu file from the selected language's directory, and returns its size or -1.
+ *
  * @mangled LoadFileBGMenuData__FPcP1
  * @address 0x22BAB0
  * @size 0x90
- * @unknownret
  */
-void LoadFileBGMenuData(char *, void /* CW back-ref target unresolved */ *);
+int LoadFileBGMenuData(char *, void /* CW back-ref target unresolved */ *);
 
 /**
+ * Loads a menu file from the selected language's directory, and returns its size.
+ *
  * @mangled LoadFileMenuData__FPcPUi
  * @address 0x22BB40
  * @size 0x70
- * @unknownret
  */
-void LoadFileMenuData(char *, unsigned int *);
+int LoadFileMenuData(char *, unsigned int *);
 
 /**
+ * Returns the buffer the battle menu or the edit menu loads its files into.
+ *
  * @mangled BtlMenuBufferSet__Fi
  * @address 0x22BBB0
  * @size 0x50
- * @unknownret
  */
-void BtlMenuBufferSet(int);
+u_long128 *BtlMenuBufferSet(int);
 
 /**
+ * Rounds a buffer pointer up to the next 64-byte boundary.
+ *
  * @mangled MenuCalcBufAlignment__FP1
  * @address 0x22BC00
  * @size 0x40
- * @unknownret
  */
 u_long128 *MenuCalcBufAlignment(u_long128 *buffer);
 
@@ -786,58 +841,65 @@ u_long128 *MenuCalcBufAlignment(u_long128 *buffer);
 int GetAtoraMaxVillage(void);
 
 /**
+ * Converts a map number into the village the Atla menu shows, capped at the villages available.
+ *
  * @mangled GetNowMapTransAtraMap__Fi
  * @address 0x22BD10
  * @size 0xE0
- * @unknownret
  */
-void GetNowMapTransAtraMap(int);
+int GetNowMapTransAtraMap(int);
 
 /**
+ * Sets the menu's projection and view matrices from a camera.
+ *
  * @mangled MenuWorldTrans__FP7CCamera
  * @address 0x22BDF0
  * @size 0xA0
- * @unknownret
  */
 void MenuWorldTrans(CCamera *);
 
 /**
+ * Draws a menu model through a callback under the menu's camera and lights.
+ *
  * @mangled MenuPolygonDraw__FiPFv_v
  * @address 0x22BE90
  * @size 0x190
- * @unknownret
  */
 void MenuPolygonDraw(int, void (*)(void));
 
 /**
+ * Projects a frame's world position to screen coordinates.
+ *
  * @mangled Get3DPosTo2DPos__FP6CFramePi
  * @address 0x22C020
  * @size 0x70
- * @unknownret
  */
 void Get3DPosTo2DPos(CFrame *, int *);
 
 /**
+ * Returns the common menu font width of a style.
+ *
  * @mangled GetMenuCommonFontW__Fii
  * @address 0x22C090
  * @size 0x40
- * @unknownret
  */
-void GetMenuCommonFontW(int, int);
+int GetMenuCommonFontW(int, int);
 
 /**
+ * Centres a message window on a horizontal position.
+ *
  * @mangled GetMenuCommonPutXY__FP6ClsMesi
  * @address 0x22C0D0
  * @size 0x70
- * @unknownret
  */
-void GetMenuCommonPutXY(ClsMes *, int);
+int GetMenuCommonPutXY(ClsMes *, int);
 
 /**
+ * Sets up the common menu message windows.
+ *
  * @mangled InitMenuMesSet__FiPs
  * @address 0x22C140
  * @size 0xD60
- * @unknownret
  */
 void InitMenuMesSet(int, short *);
 
@@ -860,26 +922,29 @@ void DrawMenuClsMes(ClsMes *, int, int);
 void ComMenuSePlay(int);
 
 /**
+ * Draws a part of a menu texture with an alpha.
+ *
  * @mangled DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i
  * @address 0x22CF20
  * @size 0x70
- * @unknownret
  */
 void DrawMenu2DSprite(CTexture *, CRect_i_, CRect_i_, int);
 
 /**
+ * Draws a part of a menu texture tinted by a colour.
+ *
  * @mangled DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_UcUcUci
  * @address 0x22CF90
  * @size 0xA0
- * @unknownret
  */
 void DrawMenu2DSprite(CTexture *, CRect_i_, CRect_i_, unsigned char, unsigned char, unsigned char, int);
 
 /**
+ * Draws a part of a menu texture with a colour at each corner.
+ *
  * @mangled DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBA
  * @address 0x22D030
  * @size 0xB0
- * @unknownret
  */
 void DrawMenu2DSprite(CTexture *, CRect_i_, CRect_i_, spRGBA *, spRGBA *, spRGBA *, spRGBA *);
 
@@ -893,18 +958,20 @@ void DrawMenu2DSprite(CTexture *, CRect_i_, CRect_i_, spRGBA *, spRGBA *, spRGBA
 void MenuTextureReload(int);
 
 /**
+ * Deletes the texture block a menu holds.
+ *
  * @mangled MenuTextureDelete__FPi
  * @address 0x22D130
  * @size 0x80
- * @unknownret
  */
 void MenuTextureDelete(int *);
 
 /**
+ * Fills the whole screen with a colour.
+ *
  * @mangled AllFillBoxForMenu__FUcUcUcUc
  * @address 0x22D1B0
  * @size 0xD0
- * @unknownret
  */
 void AllFillBoxForMenu(unsigned char, unsigned char, unsigned char, unsigned char);
 
@@ -927,34 +994,38 @@ void AllFadeForMenu(int);
 void FrameImageDraw(int, int);
 
 /**
+ * Draws a rectangle shaded between a colour at each corner.
+ *
  * @mangled DrawMenuColorGradation__FR8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBA
  * @address 0x22D3D0
  * @size 0x80
- * @unknownret
  */
 void DrawMenuColorGradation(CRect_i_ &, spRGBA *, spRGBA *, spRGBA *, spRGBA *);
 
 /**
+ * Draws a rectangle shaded between two colours from side to side.
+ *
  * @mangled DrawMenuSideGradation__FR8CRect_i_P6spRGBAP6spRGBA
  * @address 0x22D450
  * @size 0x70
- * @unknownret
  */
 void DrawMenuSideGradation(CRect_i_ &, spRGBA *, spRGBA *);
 
 /**
+ * Draws the mark over an item that cannot be set.
+ *
  * @mangled DrawDontSetItemMark__Fiiiii
  * @address 0x22D4C0
  * @size 0xE0
- * @unknownret
  */
 void DrawDontSetItemMark(int, int, int, int, int);
 
 /**
+ * Draws an item's icon with its attachment count or weapon mark.
+ *
  * @mangled DrawIconParts__Fiiiiiii
  * @address 0x22D5A0
  * @size 0x1E0
- * @unknownret
  */
 void DrawIconParts(int, int, int, int, int, int, int);
 
@@ -968,10 +1039,11 @@ void DrawIconParts(int, int, int, int, int, int, int);
 void DrawAttachNumberOrWeapon(int, int, int, int, int, int, int, int);
 
 /**
+ * Draws a named texture with its alpha fading from one side to the other.
+ *
  * @mangled FadeTexX__FiiiiPci
  * @address 0x22D9F0
  * @size 0x3A0
- * @unknownret
  */
 void FadeTexX(int, int, int, int, char *, int);
 
@@ -1011,36 +1083,40 @@ int GetNumberKeta(int);
 void GetMenuIconInfo(int);
 
 /**
+ * Draws one of the main menu's icons.
+ *
  * @mangled DrawMainMenuIcon__Fiiiiii
  * @address 0x22DFA0
  * @size 0x1E0
- * @unknownret
  */
 void DrawMainMenuIcon(int, int, int, int, int, int);
 
 /**
+ * Draws a shaking item icon with its attachment count or weapon mark.
+ *
  * @mangled DrawMenuVibeItem__Fiiiii
  * @address 0x22E180
  * @size 0x190
- * @unknownret
  */
 void DrawMenuVibeItem(int, int, int, int, int);
 
 /**
+ * Reads the selected language's offsets for the main menu's help window.
+ *
  * @mangled GetMainMenuRightHelpWinLangOffset__FRfRfRfRf
  * @address 0x22E310
  * @size 0xB0
- * @unknownret
  */
-void GetMainMenuRightHelpWinLangOffset(float &, float &, float &, float &);
+int GetMainMenuRightHelpWinLangOffset(float &, float &, float &, float &);
 
 /**
+ * Reads the selected language's offsets for the main menu's help message.
+ *
  * @mangled GetMainMenuRightHelpMsgLangOffset__FRiRi
  * @address 0x22E3C0
  * @size 0x80
- * @unknownret
  */
-void GetMainMenuRightHelpMsgLangOffset(int &, int &);
+int GetMainMenuRightHelpMsgLangOffset(int &, int &);
 
 /**
  * Empties an inventory record.
@@ -1057,7 +1133,6 @@ void InitHaveData(IHAVEITEM *);
  * @mangled InitHaveWep__FP11WEAPON_HAVE
  * @address 0x22E470
  * @size 0x40
- * @unknownret
  */
 void InitHaveWep(WEAPON_HAVE *);
 
@@ -1067,7 +1142,6 @@ void InitHaveWep(WEAPON_HAVE *);
  * @mangled InitHaveAttach__FP11ATTACH_LIST
  * @address 0x22E4B0
  * @size 0x30
- * @unknownret
  */
 void InitHaveAttach(ATTACH_LIST *);
 
@@ -1108,26 +1182,29 @@ void MenuDataSwap(WEAPON_HAVE *first, WEAPON_HAVE *second);
 void MenuDataSwap(ATTACH_LIST *first, ATTACH_LIST *second);
 
 /**
+ * Marks which entries of an item pack the menu shows as disposable.
+ *
  * @mangled SetMenuTrushMark__FP9ITEM_PACK
  * @address 0x22E660
  * @size 0xB0
- * @unknownret
  */
 void SetMenuTrushMark(ITEM_PACK *);
 
 /**
+ * Clears the menu's disposable-item marks.
+ *
  * @mangled DeleteMenuTrushMark__Fv
  * @address 0x22E710
  * @size 0x30
- * @unknownret
  */
 void DeleteMenuTrushMark(void);
 
 /**
+ * Sets up a personal inventory board for a character.
+ *
  * @mangled InitPersonalBoardMode__FP11CUserStatusP14PERSONAL_BOARDii
  * @address 0x22E740
  * @size 0x270
- * @unknownret
  */
 void InitPersonalBoardMode(CUserStatus *, PERSONAL_BOARD *, int, int);
 
@@ -1141,20 +1218,22 @@ void InitPersonalBoardMode(CUserStatus *, PERSONAL_BOARD *, int, int);
 int BoardModeChangeKey(void);
 
 /**
+ * Keeps the personal board's cursor and scroll inside the list.
+ *
  * @mangled PersonalBoardLimmitCheck__Fv
  * @address 0x22EAE0
  * @size 0x1A0
- * @unknownret
  */
 void PersonalBoardLimmitCheck(void);
 
 /**
+ * Handles cursor movement on the personal board.
+ *
  * @mangled PersonalBoardKeySub__Fv
  * @address 0x22EC80
  * @size 0x2E0
- * @unknownret
  */
-void PersonalBoardKeySub(void);
+int PersonalBoardKeySub(void);
 
 /**
  * Handles key input on the personal board.
