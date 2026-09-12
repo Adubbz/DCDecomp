@@ -277,7 +277,7 @@ segments:
       - {start: 0xcda10, type: cpp, name: itemdata}
       - {start: 0xd1130, type: cpp, name: btitem}
       - {start: 0xd4640, type: cpp, name: mainitemmodel}
-      - {start: 0xd5680, type: asmtu, name: itembombeffect}
+      - {start: 0xd5680, type: cpp, name: itembombeffect}
       - {start: 0xd66c0, type: cpp, name: weaponeffect}
       - {start: 0xd6ce0, type: cpp, name: randomitem}
       - {start: 0xd75e0, type: cpp, name: stealitem}
