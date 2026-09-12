@@ -130,7 +130,6 @@ extern float mgUnitMatrix[4][4];
  * @mangled MGGetAmbient__FPf
  * @address 0x12DD30
  * @size 0x28
- * @unknownret
  */
 void MGGetAmbient(float *ambient);
 
@@ -160,7 +159,6 @@ void MGSetPLight(float (*direction)[4], float (*colour)[4]);
  * @mangled MGGetPLight__FPA4_fPA4_f
  * @address 0x12DCB0
  * @size 0x48
- * @unknownret
  */
 void MGGetPLight(float (*direction)[4], float (*colour)[4]);
 

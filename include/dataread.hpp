@@ -59,6 +59,10 @@ int LoadFileBG(char *name, u_long128 *buffer, int *out_size);
 
 /**
  * Returns an allocated background-read queue slot.
+ *
+ * @mangled GetReadBGFile__Fi
+ * @address 0x13EC60
+ * @size 0x58
  */
 BG_READ_INFO *GetReadBGFile(int index);
 

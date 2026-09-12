@@ -26,7 +26,13 @@ void FishingSetCPoly(CCPoly *polygons, int count);
 /** Initializes a fish inside the supplied rectangular bounds. */
 void FishingInitFish(CBoxVu0 bounds);
 
-/** Initializes the fishing line at a world-space point. */
+/**
+ * Initializes the fishing line at a world-space point.
+ *
+ * @mangled FishLineInit__FPf
+ * @address 0x1A9BF0
+ * @size 0x43C
+ */
 void FishLineInit(float *position);
 
 /** Loads the bait model attached to the fishing rod. */
