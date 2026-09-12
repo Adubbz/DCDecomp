@@ -73,7 +73,7 @@ public:
      * @address 0x2135D0
      * @size 0x180
      */
-    void Initialize(void);
+    void Initialize();
 
     /**
      * Starts the memory card library, resets the class, and returns one when
@@ -83,7 +83,7 @@ public:
      * @address 0x213750
      * @size 0x100
      */
-    int InitForMC(void);
+    int InitForMC();
 
     /**
      * Builds the save image in the given buffer out of the save data, the
@@ -111,7 +111,7 @@ public:
      * @address 0x213A00
      * @size 0x190
      */
-    void MakeMcIconSysInfo(void);
+    void MakeMcIconSysInfo();
 
     /**
      * Starts the given operation from its first step and polls the memory
@@ -130,7 +130,7 @@ public:
      * @address 0x213BE0
      * @size 0x10
      */
-    int GetFuncNo(void);
+    int GetFuncNo();
 
     /**
      * Runs one step of the current operation, returns to the idle operation
@@ -140,7 +140,7 @@ public:
      * @address 0x213BF0
      * @size 0x44
      */
-    int Step(void);
+    int Step();
 
     /**
      * Copies the given version string into the class.
@@ -158,7 +158,7 @@ public:
      * @address 0x213DE0
      * @size 0x10
      */
-    char *GetVersion(void);
+    char *GetVersion();
 
     /**
      * Reads the type, the free space and the format flag of the card in the
@@ -168,7 +168,7 @@ public:
      * @address 0x213DF0
      * @size 0x2A0
      */
-    int SearchMcType(void);
+    int SearchMcType();
 
     /**
      * Enters the save directory of the card and reads its entries into the
@@ -178,7 +178,7 @@ public:
      * @address 0x214090
      * @size 0x2A0
      */
-    int GetDir(void);
+    int GetDir();
 
     /**
      * Reads the configuration file of the save directory and applies it to
@@ -188,7 +188,7 @@ public:
      * @address 0x214330
      * @size 0x2A0
      */
-    int LoadSysConfig(void);
+    int LoadSysConfig();
 
     /**
      * Writes the configuration of the save data to the configuration file of
@@ -198,7 +198,7 @@ public:
      * @address 0x2145D0
      * @size 0x310
      */
-    int SaveSysConfig(void);
+    int SaveSysConfig();
 
     /**
      * Writes the save image to a test file in the root directory of the card.
@@ -207,7 +207,7 @@ public:
      * @address 0x2148E0
      * @size 0x100
      */
-    int Write(void);
+    int Write();
 
     /**
      * Rebuilds the save directory and writes every save file of the card
@@ -217,7 +217,7 @@ public:
      * @address 0x2149E0
      * @size 0x340
      */
-    int Convert(void);
+    int Convert();
 
     /**
      * Creates the save directory and writes the icon files and icon.sys into
@@ -227,7 +227,7 @@ public:
      * @address 0x214D20
      * @size 0x5C
      */
-    int MakeDir(void);
+    int MakeDir();
 
     /**
      * Reads the save file with the given number and fills its entry of the
@@ -246,7 +246,7 @@ public:
      * @address 0x215A30
      * @size 0xE0
      */
-    int GetAllSaveFileInfo(void);
+    int GetAllSaveFileInfo();
 
     /**
      * Returns one when the directory table already holds the save file with
@@ -283,7 +283,7 @@ public:
      * @address 0x216650
      * @size 0x1D0
      */
-    int FormatForMc(void);
+    int FormatForMc();
 
     /**
      * Deletes the save file with the given number.
@@ -321,7 +321,7 @@ public:
      * @address 0x216BF0
      * @size 0x50
      */
-    void DmySync(void);
+    void DmySync();
 
     /**
      * Unformats the card in the current port.
@@ -330,7 +330,7 @@ public:
      * @address 0x216C40
      * @size 0x110
      */
-    int McUnFormatForDebug(void);
+    int McUnFormatForDebug();
 
 public:
     s32 port;               /**< Port that every command of the class names. */

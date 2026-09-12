@@ -49,10 +49,10 @@ int sceMcSync(int mode, int *command, int *result);
 }
 
 /** Returns the language that the title screen selected. */
-int GetMenuLangFlag(void);
+int GetMenuLangFlag();
 
 /** Empties the table that holds the entries of the save directory. */
-void InitSaveFileInfoTbl(void);
+void InitSaveFileInfoTbl();
 
 /** Returns one when the table holds an entry with the given name. */
 int GetOpenAttribute(char *name);
