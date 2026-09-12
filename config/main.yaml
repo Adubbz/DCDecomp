@@ -267,7 +267,7 @@ segments:
       - {start: 0xb6af0, type: asmtu, name: motionmodel}
       - {start: 0xb6e70, type: asmtu, name: btmisc}
       - {start: 0xb7900, type: cpp, name: weaponelement}
-      - {start: 0xbb160, type: asmtu, name: btsysscript}
+      - {start: 0xbb160, type: cpp, name: btsysscript}
       - {start: 0xbda00, type: cpp, name: dngstatusdata}
       - {start: 0xbfbb0, type: asmtu, name: dungeonparts}
       - {start: 0xc1d00, type: cpp, name: dungeonmap}
