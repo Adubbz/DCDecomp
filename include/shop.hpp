@@ -242,15 +242,6 @@ void InitChargeShop(int *, int, int);
 void ChargeShopLimmitCheck(void);
 
 /**
- * Leaves the charge shop.
- *
- * @mangled ExitChargeShop__Fv
- * @address 0x1E88A0
- * @size 0x20
- */
-void ExitChargeShop(void);
-
-/**
  * Runs one frame of the charge shop and returns the mode its input handler left.
  *
  * @mangled ChargeShopLoop__Fv

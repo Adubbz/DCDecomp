@@ -33,7 +33,11 @@ INCLUDE_ASM("asm/nonmatchings/shop", ShopPersonDraw__Fi);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopMasterVectorSet__Fi);
 INCLUDE_ASM("asm/nonmatchings/shop", InitChargeShop__FPiii);
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopLimmitCheck__Fv);
-INCLUDE_ASM("asm/nonmatchings/shop", ExitChargeShop__Fv);
+
+static void ExitChargeShop() {
+    ShopMenuExit();
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopLoop__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeSelectKey__Fv);
