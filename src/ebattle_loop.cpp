@@ -160,4 +160,9 @@ INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdAGetViewAngleV__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdASetViewAngle__Fff);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdMoveChara__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdInitHashigo__FP13ED_EVENT_INFOP14ED_EVENT_PARAM);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdInitGotoInterior__FP13ED_EVENT_INFOP14ED_EVENT_PARAM);
+int EdInitGotoInterior(ED_EVENT_INFO *info, ED_EVENT_PARAM *param) {
+    sceVu0CopyVector(info->vector_arguments[0], param->position);
+    sceVu0CopyVector(info->vector_arguments[1], param->rotation);
+    sceVu0CopyVector(info->vector_arguments[2], param->camera_pos);
+    return param->point->minimum_progress;
+}
