@@ -450,7 +450,7 @@ int CheckWeaponOptionStatus(int);
 int IsWeaponOptionGoodOrBad(int);
 
 /**
- * Returns the default option value of a weapon, or 1 when it has no data.
+ * Returns the option flags a weapon's data gives it, or 1 when the weapon has no data.
  *
  * @mangled DefaultWeaponOptionSet__Fi
  * @address 0x20F7B0

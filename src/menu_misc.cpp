@@ -408,18 +408,20 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @869);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @870__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @871__2);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetNowWeaponRate__FP11WEAPON_HAVE);
-int WeaponStatusBreakEnable(WEAPON_HAVE *arg0) {
-    s32 var_2;
 
-    if (arg0 == NULL) {
+int WeaponStatusBreakEnable(WEAPON_HAVE *weapon) {
+    int enable;
+
+    if (weapon == NULL) {
         return 0;
     }
-    var_2 = 0;
-    if (arg0->unk_02 >= 5) {
-        var_2 = 1;
+    enable = 0;
+    if (weapon->unk_02 >= 5) {
+        enable = 1;
     }
-    return var_2;
+    return enable;
 }
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponStatusBuildUp__FP11WEAPON_HAVERi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", MenuWeaponSpSet__FP10CCharacterP11WEAPON_HAVE);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @914__2);
@@ -562,15 +564,15 @@ int CheckWeaponOptionStatus(int options) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/menu_misc", IsWeaponOptionGoodOrBad__Fi);
-int DefaultWeaponOptionSet(s32 arg0) {
-    WEAPON_DATA *temp_2;
 
-    temp_2 = GetWeaponData(arg0);
-    if (temp_2 == NULL) {
+int DefaultWeaponOptionSet(int weapon_no) {
+    WEAPON_DATA *data = GetWeaponData(weapon_no);
+    if (data == NULL) {
         return 1;
     }
-    return temp_2->flags;
+    return data->flags;
 }
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponOptionStatusDraw__FP11WEAPON_HAVEiii);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1507);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponStarDraw__FiiP11WEAPON_HAVEi);
@@ -615,9 +617,11 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @590__3);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @650__5);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuSelectDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuSelect__Fv);
-void EditMenuToExitDraw(void) {
+
+static void EditMenuToExitDraw() {
     DrawMoveMenuIcon();
 }
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuToExit__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AtoraSelectDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AtoraSelect__Fv);
