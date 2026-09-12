@@ -14,11 +14,6 @@
 
 /* The rest of the ebattle module: the intro, the main loop and the draw pass. */
 
-/* Three of the module's own statics are still supplied by the reference
- * assembly below, so their callers reach each by the name the assembler
- * resolves, the way main.cpp and title/titleloop.cpp reach theirs.
- * Each declaration goes when its own body is written. */
-
 /**
  * Draws one 32x32 button glyph from the ebattle texture, centred on a point
  * and scaled about it.
@@ -122,6 +117,9 @@ int EdPadDown(int keys, int mode) {
 
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", keylock__Fv);
 
+/**
+ * Returns the right stick's horizontal input, or zero while editor input is locked.
+ */
 static float GetRXf() {
     if (keylock__Fv() != 0) {
         return 0.0f;
@@ -129,6 +127,9 @@ static float GetRXf() {
     return EdGetRXf(1);
 }
 
+/**
+ * Returns the right stick's vertical input, or zero while editor input is locked.
+ */
 static float GetRYf() {
     if (keylock__Fv() != 0) {
         return 0.0f;
@@ -136,6 +137,9 @@ static float GetRYf() {
     return EdGetRYf(1);
 }
 
+/**
+ * Returns the left stick's horizontal input, or zero while editor input is locked.
+ */
 static float GetLXf() {
     if (keylock__Fv() != 0) {
         return 0.0f;
@@ -143,6 +147,9 @@ static float GetLXf() {
     return EdGetLXf(1);
 }
 
+/**
+ * Returns the left stick's vertical input, or zero while editor input is locked.
+ */
 static float GetLYf() {
     if (keylock__Fv() != 0) {
         return 0.0f;

@@ -10,9 +10,7 @@
 #include "visual.hpp"
 
 /**
- * Writes the fixed drawing packet a silhouette pass needs, over the transform it is drawn with,
- * and answers the words written. It is file-local to this unit, so no header declares it and the
- * builders that call it need it declared here.
+ * Writes a shadow drawing packet using the supplied transform and returns its word count.
  *
  * @mangled SetShadowData__FPUiPA4_f
  * @address 0x134C90
@@ -133,6 +131,7 @@ INCLUDE_ASM("asm/nonmatchings/visualvu1", __ct__7CVisualFv);
 int CVisualVu1::RemakeData(unsigned int *data) {
     return 0;
 }
+
 INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__10CVisualVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
 INCLUDE_ASM("asm/nonmatchings/visualvu1", SetShadowData__FPUiPA4_f);
 INCLUDE_ASM("asm/nonmatchings/visualvu1", SetMaterial__FPUiP12MDT_MATERIAL);

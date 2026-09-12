@@ -1256,11 +1256,12 @@ void SetRotation(RS_STACKDATA *stack, float *rotation) {
 }
 
 /**
- * Builds the full path of an event-script file, taking the name as it
- * stands when it is already absolute and appending it to the event's
- * current directory otherwise.
+ * Resolves an event-script file path relative to the current directory, stripping a leading slash
+ * for an absolute path.
  *
  * @mangled GetFileName__FPcPc
+ * @address 0x18B7B0
+ * @size 0x74
  */
 static void GetFileName(char *path, char *name);
 
@@ -1432,6 +1433,8 @@ INCLUDE_ASM("asm/nonmatchings/editloop3", _SET_CURRENT_DIR__FP12RS_STACKDATAi);
  * Gives the archive the event script is loading its files out of.
  *
  * @mangled get_pack_file__Fv
+ * @address 0x18C2A0
+ * @size 0x20
  */
 static u_int *get_pack_file();
 

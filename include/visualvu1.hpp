@@ -52,9 +52,11 @@ public:
     virtual unsigned int *GetMDTDataAddress(void);
 
     /**
+     * Returns zero because this visual has no retained model data to rebuild.
+     *
      * @mangled RemakeData__10CVisualVu1FPUi
      * @address 0x134BB0
-     * @size 0x10
+     * @size 0xC
      */
     virtual int RemakeData(unsigned int *);
 

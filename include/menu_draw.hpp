@@ -777,7 +777,7 @@ void BtlMenuBufferSet(int);
 u_long128 *MenuCalcBufAlignment(u_long128 *buffer);
 
 /**
- * Returns how many villages the save file has opened up.
+ * Returns the upper village bound for Atla selection based on story progress.
  *
  * @mangled GetAtoraMaxVillage__Fv
  * @address 0x22BC40

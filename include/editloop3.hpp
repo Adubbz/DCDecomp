@@ -556,7 +556,7 @@ int EdNowTalkCharaInfoID();
 void EdGetItemFile(int item_no, char *model_path, char *texture_path);
 
 /**
- * Tests whether one villager slot is still free to be brought into the map.
+ * Tests whether a villager can appear under the current selection and part availability.
  *
  * @mangled EdCheckVillagerIn__FiP13VILLAGER_INFO
  * @address 0x185AF0
@@ -574,8 +574,7 @@ int EdCheckVillagerIn(int index, VILLAGER_INFO *villager);
 void turn_chara(CCharacter *character, float *position, float speed);
 
 /**
- * Returns every editor-event parameter, sprite table and action sequence to
- * its idle state without releasing what the event has loaded.
+ * Resets editor-event parameters, action sequences, sprites and object handles.
  *
  * @mangled EdInitEventParamSimple__Fv
  * @address 0x196F00
