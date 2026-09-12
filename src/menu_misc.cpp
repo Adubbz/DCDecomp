@@ -174,7 +174,8 @@ INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuToExitDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuToExit__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AtoraSelectDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AtoraSelect__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", AtoraMoveDraw__Fv);
+void AtoraMoveDraw(void) {
+}
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AtoraMove__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AnalyzeBackDraw__Fii);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AnalyzeRequestPer__Fv);
