@@ -4,7 +4,11 @@
 
 #include "common.h"
 
+#include <libvu0.h>
+
 #include "ebattle.hpp"
+#include "edit.hpp"
+#include "editloop.hpp"
 #include "gamepad.hpp"
 
 /* The rest of the ebattle module: the intro, the main loop and the draw pass. */
