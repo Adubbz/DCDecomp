@@ -198,10 +198,12 @@ void EquipReAttach(CCharacter *, int);
 void EquipWeaponFrame(CCharacter *, int, int);
 
 /**
+ * Loads a character's crash, default and equipped weapon models, releasing the
+ * old weapon textures first on a reload.
+ *
  * @mangled LoadWeapon2__FPUiPUiPUiii
  * @address 0x1DB9840
  * @size 0x2F0
- * @unknownret
  */
 void LoadWeapon2(unsigned int *, unsigned int *, unsigned int *, int, int);
 
