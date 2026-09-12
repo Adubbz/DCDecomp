@@ -16,6 +16,7 @@
 #include "gamepad.hpp"
 #include "itemdata.hpp"
 #include "mainitemmodel.hpp"
+#include "memcard.hpp"
 #include "memorycardaccess.hpp"
 #include "menu_inventory.hpp"
 #include "menuitemstep.hpp"
