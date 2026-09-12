@@ -235,7 +235,19 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSoundLoad__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSoundLoadBG__FiPUiPi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSoundSyncBG__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSePlay__Fiii);
-INCLUDE_ASM("asm/nonmatchings/snd", SndSePlay__Fiffi);
+void SndSePlay(int se_no, float volume, float pan, int voice) {
+    SND_SE_INFO *info = GetSeInfo(se_no);
+
+    if (info != 0) {
+        int vol = SndGetVolf(se_no, volume);
+        int hw_pan = SndGetPanf(pan);
+
+        if (info->vol_no < 0) {
+            vol = 127;
+        }
+        CSnd.SE_Play(GetPortNo(se_no), info->bank, info->prog, hw_pan, 127, vol, voice);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/snd", SndSePlay__FiPfff);
 void SndSeStop(int se_no, int voice) {
     SND_SE_INFO *info = GetSeInfo(se_no);
