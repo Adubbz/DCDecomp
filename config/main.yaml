@@ -233,7 +233,7 @@ segments:
       - {start: 0x57ae0, type: cpp, name: objectframe2}
       - {start: 0x57c00, type: cpp, name: savedata}
       - {start: 0x58e80, type: cpp, name: snd}
-      - {start: 0x5f200, type: asmtu, name: scriptinterpreter}
+      - {start: 0x5f200, type: cpp, name: scriptinterpreter}
       - {start: 0x5fe30, type: cpp, name: sysmes}
       - {start: 0x608a0, type: cpp, name: water}
       - {start: 0x61750, type: asmtu, name: fireomni}
