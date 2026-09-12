@@ -8,6 +8,7 @@
 #include "gamepad.hpp"
 #include "memorycardaccess.hpp"
 #include "menu_draw.hpp"
+#include "mglib.hpp"
 #include "rect.hpp"
 #include "savedata.hpp"
 #include "texture.hpp"
