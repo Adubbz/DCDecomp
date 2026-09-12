@@ -410,9 +410,8 @@ SECTIONS
         stealitem.cpp.o             (.text)   // 0x001d74e0
         monstorunit.cpp.o           (.text)   // 0x001d7a40
         runscript_opcodes.cpp.o     (.text)   // 0x001e1640
-        shopiconmove.cpp.o          (.text)   // 0x001e6930
-        shop_battlemenu.cpp.o       (.text)   // 0x001e6ef0
-        menuclsmes.cpp.o            (.text)   // 0x0020b580
+        shop.cpp.o                  (.text)   // 0x001e68d0
+        battlemenu.cpp.o            (.text)   // 0x001f3da0
         menu_misc.cpp.o             (.text)   // 0x0020bec0
         memorycardaccess.cpp.o      (.text)   // 0x002135d0
         memcard.cpp.o               (.text)   // 0x00216d50

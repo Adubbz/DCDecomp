@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "battlemenu.hpp"
 #include "clsmes.hpp"
 #include "dataalloc2_1.hpp"
 #include "dataread.hpp"
@@ -17,7 +18,7 @@
 #include "menu_inventory.hpp"
 #include "menu_misc.hpp"
 #include "savedata.hpp"
-#include "shop_battlemenu.hpp"
+#include "shop.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
 #include "weapon_buildup.hpp"

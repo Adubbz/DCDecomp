@@ -9,7 +9,6 @@
 // names but not where they live.
 class CRunScript;
 struct RS_STACKDATA;
-struct SHOP_ITEMLIST;
 
 /**
  * @mangled GetStackInt__FP12RS_STACKDATA__3
@@ -800,19 +799,3 @@ void BtSetEventScript(CRunScript *, char *, CDataAlloc2<1> *);
  * @unknownret
  */
 void BtSetEventExtendTable(void);
-
-/**
- * @mangled GetItemShopList__Fi
- * @address 0x1E68D0
- * @size 0x20
- * @unknownret
- */
-void GetItemShopList(int);
-
-/**
- * @mangled InitShopItemListData__FP13SHOP_ITEMLIST
- * @address 0x1E68F0
- * @size 0x40
- * @unknownret
- */
-void InitShopItemListData(SHOP_ITEMLIST *);

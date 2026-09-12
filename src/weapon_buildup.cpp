@@ -5,10 +5,11 @@
 
 #include <cstring>
 
+#include "battlemenu.hpp"
 #include "itemdata.hpp"
 #include "menu_draw.hpp"
 #include "menu_inventory.hpp"
-#include "shop_battlemenu.hpp"
+#include "shop.hpp"
 
 static int BuildMenuCompVolume(char current, char required) {
     int result;

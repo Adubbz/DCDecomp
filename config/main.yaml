@@ -283,9 +283,8 @@ segments:
       - {start: 0xd75e0, type: cpp, name: stealitem}
       - {start: 0xd7b40, type: cpp, name: monstorunit}
       - {start: 0xe1740, type: asmtu, name: runscript_opcodes}
-      - {start: 0xe6a30, type: asmtu, name: shopiconmove}
-      - {start: 0xe6ff0, type: cpp, name: shop_battlemenu}
-      - {start: 0x10b680, type: asmtu, name: menuclsmes}
+      - {start: 0xe69d0, type: cpp, name: shop}
+      - {start: 0xf3ea0, type: cpp, name: battlemenu}
       - {start: 0x10bfc0, type: cpp, name: menu_misc}
       - {start: 0x1136d0, type: cpp, name: memorycardaccess}
       - {start: 0x116e50, type: cpp, name: memcard}
@@ -404,7 +403,8 @@ segments:
       - {start: 0x19cfc0, type: .rodata, name: randomitem}
       - {start: 0x19d000, type: .rodata, name: monstorunit}
       - {start: 0x19d138, type: .rodata, name: runscript_opcodes}
-      - {start: 0x19d250, type: .rodata, name: shop_battlemenu}
+      - {start: 0x19d250, type: .rodata, name: shop}
+      - {start: 0x19d5a0, type: .rodata, name: battlemenu}
       - {start: 0x19de60, type: .rodata, name: menu_misc}
       - {start: 0x19e5d0, type: .rodata, name: memorycardaccess}
       - {start: 0x19eb00, type: .rodata, name: memcard}
