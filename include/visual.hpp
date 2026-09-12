@@ -46,7 +46,12 @@ class CVisualVu1 : public CVisual {
 public:
     CVisualVu1();
 
-    void CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int unknown1);
+    /**
+     * Builds the Vector Unit data block for a model into `block` and answers the size it
+       wrote, in quadwords: the loader reserves exactly that much and the visual keeps the
+       same number in vu_size.
+     */
+    int CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int unknown1);
 
     /**
  * The one it takes over from its base and the five it adds, in the order the vtable holds them —
@@ -56,7 +61,7 @@ public:
     virtual void Initialize();
     virtual void SetMDTDataAddress(u_int *data);
     virtual u_int *GetMDTDataAddress();
-    virtual void RemakeData(u_int *data);
+    virtual int RemakeData(u_int *data);
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
                         u_long128 *unknown0, int unknown1, int unknown2);
     virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
@@ -81,7 +86,7 @@ public:
     virtual void Initialize();
     virtual void SetMDTDataAddress(u_int *data);
     virtual u_int *GetMDTDataAddress();
-    virtual void RemakeData(u_int *data);
+    virtual int RemakeData(u_int *data);
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
                         u_long128 *unknown0, int unknown1, int unknown2);
     virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
@@ -101,7 +106,7 @@ class CVisualShadow : public CVisualMDTVu1 {
 public:
     /* The three the silhouette builds differently; how the block is kept is its base's business,
        so the three that answer that are the ones it leaves alone. */
-    virtual void RemakeData(u_int *data);
+    virtual int RemakeData(u_int *data);
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
                         u_long128 *unknown0, int unknown1, int unknown2);
     virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
