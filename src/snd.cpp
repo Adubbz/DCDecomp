@@ -4,7 +4,13 @@
 
 #include "common.h"
 
+#include <libpkt.h>
+#include <libvu0.h>
+
+#include <cmath>
+
 #include "editatra.hpp"
+#include "mglib.hpp"
 #include "rect.hpp"
 #include "scriptinterpreter.hpp"
 #include "snd.hpp"
