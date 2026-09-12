@@ -162,4 +162,11 @@ INCLUDE_RODATA("asm/nonmatchings/shop", @3275);
 INCLUDE_ASM("asm/nonmatchings/shop", FishRecordViewKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", FishRecordViewBoard__Fiii);
 INCLUDE_ASM("asm/nonmatchings/shop", FishRecordViewDraw__Fv);
-INCLUDE_ASM("asm/nonmatchings/shop", FishRecordViewLoop__Fv);
+
+int FishRecordViewLoop() {
+    int done;
+
+    done = FishRecordViewKey();
+    FishRecordViewDraw();
+    return done;
+}

@@ -810,9 +810,10 @@ void FishRecordViewBoard(int, int, int);
 void FishRecordViewDraw(void);
 
 /**
+ * Runs one frame of the fish record view and returns the mode its input handler left.
+ *
  * @mangled FishRecordViewLoop__Fv
  * @address 0x1F3D60
  * @size 0x40
- * @unknownret
  */
-void FishRecordViewLoop(void);
+int FishRecordViewLoop(void);
