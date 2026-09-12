@@ -17,6 +17,375 @@
 #include "texture.hpp"
 #include "weapon_buildup.hpp"
 
+/**
+ * Sets the buffer the menu reads weapon effect files into.
+ *
+ * @mangled SetWepEffectMenuReadBuf__FP1
+ * @address 0x20D0A0
+ * @size 0x10
+ */
+static void SetWepEffectMenuReadBuf(u_long128 *);
+
+/**
+ * Returns one entry of the menu's weapon model table.
+ *
+ * @mangled GetMenuWeaponModelData__Fi
+ * @address 0x20D3B0
+ * @size 0x20
+ */
+static int *GetMenuWeaponModelData(int);
+
+/**
+ * Clears the menu's weapon model table.
+ *
+ * @mangled InitMenuWeaponModelData__Fv
+ * @address 0x20D3D0
+ * @size 0x30
+ */
+static void InitMenuWeaponModelData();
+
+/**
+ * Returns the two-value reference entry for one weapon model.
+ *
+ * @mangled GetMenuWeaponModelInfo__Fi
+ * @address 0x20D400
+ * @size 0x20
+ */
+static int *GetMenuWeaponModelInfo(int);
+
+/**
+ * Returns the motion step a character's status bits select.
+ *
+ * @mangled GetNowMotionStepCnt__Fi
+ * @address 0x20DE80
+ * @size 0x40
+ */
+static int GetNowMotionStepCnt(int status);
+
+/**
+ * Writes the file path of one character's model into a buffer.
+ *
+ * @mangled GetCharaChangeReadCharaFilePath__FPci
+ * @address 0x20E530
+ * @size 0x80
+ */
+static void GetCharaChangeReadCharaFilePath(char *, int);
+
+/**
+ * Randomly adjusts one value of a weapon being changed into another.
+ *
+ * @mangled LocalWeaponDataChange__FPciii
+ * @address 0x20FBE0
+ * @size 0x100
+ */
+static void LocalWeaponDataChange(char *, int, int, int);
+
+/**
+ * Returns the number of edit menu icons, one fewer until the manual is available.
+ *
+ * @mangled GetEditMenuMax__Fv
+ * @address 0x2102E0
+ * @size 0x40
+ */
+static int GetEditMenuMax();
+
+/**
+ * Draws one edit menu icon at its resting position.
+ *
+ * @mangled DrawMenuIcon__Fi
+ * @address 0x210320
+ * @size 0xD0
+ */
+static void DrawMenuIcon(int);
+
+/**
+ * Writes the screen position of one edit menu icon.
+ *
+ * @mangled GetEditMenuIconPos__FiPi
+ * @address 0x2103F0
+ * @size 0x100
+ */
+static void GetEditMenuIconPos(int, int *);
+
+/**
+ * Draws the edit menu icons at their current positions.
+ *
+ * @mangled DrawMoveMenuIcon__Fv
+ * @address 0x2104F0
+ * @size 0x1C0
+ */
+static void DrawMoveMenuIcon();
+
+/**
+ * Moves the edit menu icons one step away from their resting positions and reports when they have arrived.
+ *
+ * @mangled CalMoveFromMenuIcon__Fv
+ * @address 0x2106B0
+ * @size 0x240
+ */
+static int CalMoveFromMenuIcon();
+
+/**
+ * Moves the edit menu icons one step back to their resting positions and reports when they have arrived.
+ *
+ * @mangled CalMoveToMenuIcon__Fv
+ * @address 0x2108F0
+ * @size 0x1C0
+ */
+static int CalMoveToMenuIcon();
+
+/**
+ * Releases the edit menu's textures and returns the pad to normal mode.
+ *
+ * @mangled EditMenuExit__Fv
+ * @address 0x210DA0
+ * @size 0x90
+ */
+static void EditMenuExit();
+
+/**
+ * Reports whether the edit menu draws its help window for a page.
+ *
+ * @mangled GetDrawHelpWindow__Fi
+ * @address 0x210E30
+ * @size 0x70
+ */
+static int GetDrawHelpWindow(int);
+
+/**
+ * Draws the edit menu's opening and enters its page textures once they have been read.
+ *
+ * @mangled EditMenuStart__Fv
+ * @address 0x2112C0
+ * @size 0x4C0
+ */
+static int EditMenuStart();
+
+/**
+ * Draws the edit menu's icon selection.
+ *
+ * @mangled EditMenuSelectDraw__Fv
+ * @address 0x211780
+ * @size 0x230
+ */
+static void EditMenuSelectDraw();
+
+/**
+ * Handles pad input in the edit menu's icon selection and returns the result.
+ *
+ * @mangled EditMenuSelect__Fv
+ * @address 0x2119B0
+ * @size 0x390
+ */
+static int EditMenuSelect();
+
+/**
+ * Draws the edit menu while it closes.
+ *
+ * @mangled EditMenuToExitDraw__Fv
+ * @address 0x211D40
+ * @size 0x20
+ */
+static void EditMenuToExitDraw();
+
+/**
+ * Runs the edit menu's closing and reports when it is finished.
+ *
+ * @mangled EditMenuToExit__Fv
+ * @address 0x211D60
+ * @size 0x150
+ */
+static int EditMenuToExit();
+
+/**
+ * Draws the Atla selection page.
+ *
+ * @mangled AtoraSelectDraw__Fv
+ * @address 0x211EB0
+ * @size 0x90
+ */
+static void AtoraSelectDraw();
+
+/**
+ * Runs the Atla selection page and returns the result.
+ *
+ * @mangled AtoraSelect__Fv
+ * @address 0x211F40
+ * @size 0x190
+ */
+static int AtoraSelect();
+
+/**
+ * Draws the Atla move state, which has nothing to draw.
+ *
+ * @mangled AtoraMoveDraw__Fv
+ * @address 0x2120D0
+ * @size 0x10
+ */
+static void AtoraMoveDraw();
+
+/**
+ * Leaves the edit menu for the Atla move and returns the result.
+ *
+ * @mangled AtoraMove__Fv
+ * @address 0x2120E0
+ * @size 0x30
+ */
+static int AtoraMove();
+
+/**
+ * Draws the background panels of the analysis page.
+ *
+ * @mangled AnalyzeBackDraw__Fii
+ * @address 0x212110
+ * @size 0x160
+ */
+static void AnalyzeBackDraw(int, int);
+
+/**
+ * Returns the analysis page's completion percentage, capped at 100.
+ *
+ * @mangled AnalyzeRequestPer__Fv
+ * @address 0x212270
+ * @size 0xB0
+ */
+static float AnalyzeRequestPer();
+
+/**
+ * Draws the analysis page's bars and reports whether the fill has reached its target.
+ *
+ * @mangled AnalyzeBarDraw__Fv
+ * @address 0x212320
+ * @size 0x6A0
+ */
+static int AnalyzeBarDraw();
+
+/**
+ * Draws the transition into the analysis page.
+ *
+ * @mangled ToAnalyzeEditDraw__Fv
+ * @address 0x2129C0
+ * @size 0x350
+ */
+static void ToAnalyzeEditDraw();
+
+/**
+ * Advances the transition into the analysis page.
+ *
+ * @mangled ToAnalyzeEdit__Fv
+ * @address 0x212D10
+ * @size 0x50
+ */
+static void ToAnalyzeEdit();
+
+/**
+ * Draws the analysis page.
+ *
+ * @mangled AnalyzeEditDraw__Fv
+ * @address 0x212D60
+ * @size 0x1C0
+ */
+static void AnalyzeEditDraw();
+
+/**
+ * Handles pad input on the analysis page and returns the result.
+ *
+ * @mangled AnalyzeEdit__Fv
+ * @address 0x212F20
+ * @size 0x60
+ */
+static int AnalyzeEdit();
+
+/**
+ * Draws the transition out of the analysis page.
+ *
+ * @mangled FromAnalyzeEditDraw__Fv
+ * @address 0x212F80
+ * @size 0x50
+ */
+static void FromAnalyzeEditDraw();
+
+/**
+ * Advances the transition out of the analysis page.
+ *
+ * @mangled FromAnalyzeEdit__Fv
+ * @address 0x212FD0
+ * @size 0xB0
+ */
+static void FromAnalyzeEdit();
+
+/**
+ * Draws the edit menu's save page.
+ *
+ * @mangled EditSaveDraw__Fv
+ * @address 0x213080
+ * @size 0x80
+ */
+static void EditSaveDraw();
+
+/**
+ * Handles pad input on the edit menu's save page.
+ *
+ * @mangled EditSaveKey__Fv
+ * @address 0x213100
+ * @size 0xE0
+ */
+static void EditSaveKey();
+
+/**
+ * Draws the edit menu's option page.
+ *
+ * @mangled OptionDraw__Fv
+ * @address 0x2131E0
+ * @size 0x70
+ */
+static void OptionDraw();
+
+/**
+ * Handles pad input on the edit menu's option page.
+ *
+ * @mangled EdOptionSelect__Fv
+ * @address 0x213250
+ * @size 0x100
+ */
+static void EdOptionSelect();
+
+/**
+ * Handles pad input on the edit menu's manual page.
+ *
+ * @mangled EdMenuManualKey__Fv
+ * @address 0x213350
+ * @size 0x100
+ */
+static int EdMenuManualKey();
+
+/**
+ * Draws the edit menu's manual page.
+ *
+ * @mangled EdMenuManualDraw__Fv
+ * @address 0x213450
+ * @size 0x70
+ */
+static void EdMenuManualDraw();
+
+/**
+ * Clears the table of save file information.
+ *
+ * @mangled InitSaveFileInfoTbl__Fv
+ * @address 0x2134C0
+ * @size 0x80
+ */
+static void InitSaveFileInfoTbl();
+
+/**
+ * Returns the attribute recorded for a save file name, or zero when the name is not in the table.
+ *
+ * @mangled GetOpenAttribute__FPc
+ * @address 0x213540
+ * @size 0x90
+ */
+static int GetOpenAttribute(char *);
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", NowGetGameFlagForBtlMenu__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetMenuHebikiriFlag__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EquipDefaultWeapon__Fi);
@@ -97,7 +466,7 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1110);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1111);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", DngWeaponEquipModelBuild__FiiP1);
 
-int GetNowMotionStepCnt(int status) {
+static int GetNowMotionStepCnt(int status) {
     int step = 0;
     if (status & 0x40) {
         step = 1;
@@ -220,7 +589,7 @@ INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuToExit__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AtoraSelectDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AtoraSelect__Fv);
 
-void AtoraMoveDraw() {}
+static void AtoraMoveDraw() {}
 
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AtoraMove__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AnalyzeBackDraw__Fii);

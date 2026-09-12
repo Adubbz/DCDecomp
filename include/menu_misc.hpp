@@ -144,15 +144,6 @@ u_long128 *GetWepEffectMenuReadBuf();
 void SetOldEffectKind(int);
 
 /**
- * Sets the buffer the menu reads weapon effect files into.
- *
- * @mangled SetWepEffectMenuReadBuf__FP1
- * @address 0x20D0A0
- * @size 0x10
- */
-void SetWepEffectMenuReadBuf(u_long128 *);
-
-/**
  * Starts reading the active character's weapon effect file and returns the effect it is for.
  *
  * @mangled DngWepEffectReadStart__Fv
@@ -187,33 +178,6 @@ int GetNowTestNo();
  * @size 0x1E0
  */
 int StartReadWepMDS(u_long128 *, int);
-
-/**
- * Returns one entry of the menu's weapon model table.
- *
- * @mangled GetMenuWeaponModelData__Fi
- * @address 0x20D3B0
- * @size 0x20
- */
-int *GetMenuWeaponModelData(int);
-
-/**
- * Clears the menu's weapon model table.
- *
- * @mangled InitMenuWeaponModelData__Fv
- * @address 0x20D3D0
- * @size 0x30
- */
-void InitMenuWeaponModelData();
-
-/**
- * Returns the two-value reference entry for one weapon model.
- *
- * @mangled GetMenuWeaponModelInfo__Fi
- * @address 0x20D400
- * @size 0x20
- */
-int *GetMenuWeaponModelInfo(int);
 
 /**
  * Marks every weapon model reference entry unused.
@@ -270,15 +234,6 @@ void WeaponModelBuildFunc(int, int);
 int DngWeaponEquipModelBuild(int, int, u_long128 *);
 
 /**
- * Returns the motion step a character's status bits select.
- *
- * @mangled GetNowMotionStepCnt__Fi
- * @address 0x20DE80
- * @size 0x40
- */
-int GetNowMotionStepCnt(int);
-
-/**
  * Returns the status bits of one character, or zero when there is no dungeon status.
  *
  * @mangled GetNowActiveCharaStatus__Fi
@@ -331,15 +286,6 @@ int StartLoadCharaMDS(u_long128 *, int, int);
  * @size 0x2B0
  */
 void MenuCharaMDSBuild2(int, int);
-
-/**
- * Writes the file path of one character's model into a buffer.
- *
- * @mangled GetCharaChangeReadCharaFilePath__FPci
- * @address 0x20E530
- * @size 0x80
- */
-void GetCharaChangeReadCharaFilePath(char *, int);
 
 /**
  * Starts the background reads of the character change screen and reports whether they were started.
@@ -531,15 +477,6 @@ void WeaponOptionStatusDraw(WEAPON_HAVE *, int, int, int);
 void WeaponStarDraw(int, int, WEAPON_HAVE *, int);
 
 /**
- * Randomly adjusts one value of a weapon being changed into another.
- *
- * @mangled LocalWeaponDataChange__FPciii
- * @address 0x20FBE0
- * @size 0x100
- */
-void LocalWeaponDataChange(char *, int, int, int);
-
-/**
  * Changes a weapon into another one, carrying over and adjusting its values, and reports success.
  *
  * @mangled WeaponDataChangeByRGate__FP11WEAPON_HAVEi
@@ -558,60 +495,6 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *, int);
 int GetNumHowManyItemsHave(int);
 
 /**
- * Returns the number of edit menu icons, one fewer until the manual is available.
- *
- * @mangled GetEditMenuMax__Fv
- * @address 0x2102E0
- * @size 0x40
- */
-int GetEditMenuMax();
-
-/**
- * Draws one edit menu icon at its resting position.
- *
- * @mangled DrawMenuIcon__Fi
- * @address 0x210320
- * @size 0xD0
- */
-void DrawMenuIcon(int);
-
-/**
- * Writes the screen position of one edit menu icon.
- *
- * @mangled GetEditMenuIconPos__FiPi
- * @address 0x2103F0
- * @size 0x100
- */
-void GetEditMenuIconPos(int, int *);
-
-/**
- * Draws the edit menu icons at their current positions.
- *
- * @mangled DrawMoveMenuIcon__Fv
- * @address 0x2104F0
- * @size 0x1C0
- */
-void DrawMoveMenuIcon();
-
-/**
- * Moves the edit menu icons one step away from their resting positions and reports when they have arrived.
- *
- * @mangled CalMoveFromMenuIcon__Fv
- * @address 0x2106B0
- * @size 0x240
- */
-int CalMoveFromMenuIcon();
-
-/**
- * Moves the edit menu icons one step back to their resting positions and reports when they have arrived.
- *
- * @mangled CalMoveToMenuIcon__Fv
- * @address 0x2108F0
- * @size 0x1C0
- */
-int CalMoveToMenuIcon();
-
-/**
  * Loads the edit menu's data and textures and sets up its windows, pad and cursor.
  *
  * @mangled EditMenuInit__FPii
@@ -619,24 +502,6 @@ int CalMoveToMenuIcon();
  * @size 0x2F0
  */
 void EditMenuInit(int *, int);
-
-/**
- * Releases the edit menu's textures and returns the pad to normal mode.
- *
- * @mangled EditMenuExit__Fv
- * @address 0x210DA0
- * @size 0x90
- */
-void EditMenuExit();
-
-/**
- * Reports whether the edit menu draws its help window for a page.
- *
- * @mangled GetDrawHelpWindow__Fi
- * @address 0x210E30
- * @size 0x70
- */
-int GetDrawHelpWindow(int);
 
 /**
  * Runs one frame of the edit menu for its current state and returns the result.
@@ -655,237 +520,3 @@ int EditMenuLoop();
  * @size 0x310
  */
 void EditMenuDraw();
-
-/**
- * Draws the edit menu's opening and enters its page textures once they have been read.
- *
- * @mangled EditMenuStart__Fv
- * @address 0x2112C0
- * @size 0x4C0
- */
-int EditMenuStart();
-
-/**
- * Draws the edit menu's icon selection.
- *
- * @mangled EditMenuSelectDraw__Fv
- * @address 0x211780
- * @size 0x230
- */
-void EditMenuSelectDraw();
-
-/**
- * Handles pad input in the edit menu's icon selection and returns the result.
- *
- * @mangled EditMenuSelect__Fv
- * @address 0x2119B0
- * @size 0x390
- */
-int EditMenuSelect();
-
-/**
- * Draws the edit menu while it closes.
- *
- * @mangled EditMenuToExitDraw__Fv
- * @address 0x211D40
- * @size 0x20
- */
-void EditMenuToExitDraw();
-
-/**
- * Runs the edit menu's closing and reports when it is finished.
- *
- * @mangled EditMenuToExit__Fv
- * @address 0x211D60
- * @size 0x150
- */
-int EditMenuToExit();
-
-/**
- * Draws the Atla selection page.
- *
- * @mangled AtoraSelectDraw__Fv
- * @address 0x211EB0
- * @size 0x90
- */
-void AtoraSelectDraw();
-
-/**
- * Runs the Atla selection page and returns the result.
- *
- * @mangled AtoraSelect__Fv
- * @address 0x211F40
- * @size 0x190
- */
-int AtoraSelect();
-
-/**
- * Draws the Atla move state, which has nothing to draw.
- *
- * @mangled AtoraMoveDraw__Fv
- * @address 0x2120D0
- * @size 0x10
- */
-void AtoraMoveDraw();
-
-/**
- * Leaves the edit menu for the Atla move and returns the result.
- *
- * @mangled AtoraMove__Fv
- * @address 0x2120E0
- * @size 0x30
- */
-int AtoraMove();
-
-/**
- * Draws the background panels of the analysis page.
- *
- * @mangled AnalyzeBackDraw__Fii
- * @address 0x212110
- * @size 0x160
- */
-void AnalyzeBackDraw(int, int);
-
-/**
- * Returns the analysis page's completion percentage, capped at 100.
- *
- * @mangled AnalyzeRequestPer__Fv
- * @address 0x212270
- * @size 0xB0
- */
-float AnalyzeRequestPer();
-
-/**
- * Draws the analysis page's bars and reports whether the fill has reached its target.
- *
- * @mangled AnalyzeBarDraw__Fv
- * @address 0x212320
- * @size 0x6A0
- */
-int AnalyzeBarDraw();
-
-/**
- * Draws the transition into the analysis page.
- *
- * @mangled ToAnalyzeEditDraw__Fv
- * @address 0x2129C0
- * @size 0x350
- */
-void ToAnalyzeEditDraw();
-
-/**
- * Advances the transition into the analysis page.
- *
- * @mangled ToAnalyzeEdit__Fv
- * @address 0x212D10
- * @size 0x50
- */
-void ToAnalyzeEdit();
-
-/**
- * Draws the analysis page.
- *
- * @mangled AnalyzeEditDraw__Fv
- * @address 0x212D60
- * @size 0x1C0
- */
-void AnalyzeEditDraw();
-
-/**
- * Handles pad input on the analysis page and returns the result.
- *
- * @mangled AnalyzeEdit__Fv
- * @address 0x212F20
- * @size 0x60
- */
-int AnalyzeEdit();
-
-/**
- * Draws the transition out of the analysis page.
- *
- * @mangled FromAnalyzeEditDraw__Fv
- * @address 0x212F80
- * @size 0x50
- */
-void FromAnalyzeEditDraw();
-
-/**
- * Advances the transition out of the analysis page.
- *
- * @mangled FromAnalyzeEdit__Fv
- * @address 0x212FD0
- * @size 0xB0
- */
-void FromAnalyzeEdit();
-
-/**
- * Draws the edit menu's save page.
- *
- * @mangled EditSaveDraw__Fv
- * @address 0x213080
- * @size 0x80
- */
-void EditSaveDraw();
-
-/**
- * Handles pad input on the edit menu's save page.
- *
- * @mangled EditSaveKey__Fv
- * @address 0x213100
- * @size 0xE0
- */
-void EditSaveKey();
-
-/**
- * Draws the edit menu's option page.
- *
- * @mangled OptionDraw__Fv
- * @address 0x2131E0
- * @size 0x70
- */
-void OptionDraw();
-
-/**
- * Handles pad input on the edit menu's option page.
- *
- * @mangled EdOptionSelect__Fv
- * @address 0x213250
- * @size 0x100
- */
-void EdOptionSelect();
-
-/**
- * Handles pad input on the edit menu's manual page.
- *
- * @mangled EdMenuManualKey__Fv
- * @address 0x213350
- * @size 0x100
- */
-int EdMenuManualKey();
-
-/**
- * Draws the edit menu's manual page.
- *
- * @mangled EdMenuManualDraw__Fv
- * @address 0x213450
- * @size 0x70
- */
-void EdMenuManualDraw();
-
-/**
- * Clears the table of save file information.
- *
- * @mangled InitSaveFileInfoTbl__Fv
- * @address 0x2134C0
- * @size 0x80
- */
-void InitSaveFileInfoTbl();
-
-/**
- * Returns the attribute recorded for a save file name, or zero when the name is not in the table.
- *
- * @mangled GetOpenAttribute__FPc
- * @address 0x213540
- * @size 0x90
- */
-int GetOpenAttribute(char *);
