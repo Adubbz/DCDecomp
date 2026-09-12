@@ -5,6 +5,7 @@
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
+class CMemoryCardAccess;
 class CRect_i_;
 class CTexture;
 class ClsMes;
@@ -282,3 +283,22 @@ int MenuSaveKey();
  */
 void DrawMenuSave(char *);
 
+/**
+ * The second message window the menus share.
+ */
+extern ClsMes CommonMenuMes2;
+
+/**
+ * The third message window the menus share.
+ */
+extern ClsMes CommonMenuMes3;
+
+/**
+ * The message window that names the selected georama element.
+ */
+extern ClsMes AtoraNameMes;
+
+/**
+ * The memory card state the save, load and option screens work through.
+ */
+extern CMemoryCardAccess McAccess;

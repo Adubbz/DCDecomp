@@ -12,6 +12,7 @@
 #include "frame.hpp"
 #include "gamepad.hpp"
 #include "itemdata.hpp"
+#include "memcard.hpp"
 #include "menu_draw.hpp"
 #include "menu_manual.hpp"
 #include "shop_battlemenu.hpp"
@@ -20,8 +21,6 @@
 #include "weapon_buildup.hpp"
 #include "weaponeffect.hpp"
 
-extern ClsMes CommonMenuMes2;
-extern ClsMes CommonMenuMes3;
 extern int EditMenuStatus[7];
 extern CDataAlloc2<1> EdMenuBuffer;
 extern CDataAlloc2<1> MenuExCashBuffer;
