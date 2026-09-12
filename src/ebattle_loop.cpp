@@ -121,7 +121,12 @@ int EdPadDown(int keys, int mode) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", keylock__Fv);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", GetRXf__Fv);
+float GetRXf(void) {
+    if (keylock__Fv() != 0) {
+        return 0.0f;
+    }
+    return EdGetRXf(1);
+}
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", GetRYf__Fv);
 float GetLXf(void) {
     if (keylock__Fv() != 0) {
