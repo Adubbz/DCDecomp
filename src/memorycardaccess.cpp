@@ -79,7 +79,14 @@ INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SetIconData__17CMemoryCardAcces
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", MakeMcIconSysInfo__17CMemoryCardAccessFv);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @404);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @405__2);
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SetFuncNo__17CMemoryCardAccessFi);
+void CMemoryCardAccess::SetFuncNo(int func_no) {
+    this->func_no = func_no;
+    this->step = 0;
+    if (func_no == 1) {
+        this->unk_E0 = 0x3D;
+    }
+    sceMcSync(1, 0, 0);
+}
 int CMemoryCardAccess::GetFuncNo() {
     return this->func_no;
 }
