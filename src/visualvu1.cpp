@@ -4,8 +4,10 @@
 
 #include <cstring>
 
+#include "mdt.hpp"
 #include "texture.hpp"
 #include "tim2.hpp"
+#include "visual.hpp"
 
 void SetTextureInfo(CTexture *tex, char *name, TM2_head *head) {
     TM2_picture *pic = (TM2_picture *) ((u_char *) head + 16);
