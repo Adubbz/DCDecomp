@@ -127,5 +127,23 @@ public:
    Vector Unit lights with, and the texture registers the GS needs. Both answer how many words
    they wrote, so a builder adds rather than tracks.
  */
+/**
+ * Writes the material the Vector Unit lights with into the packet and answers the words written.
+ * A visual reached with no material of its own gets the fixed empty one, which is the same length,
+ * so a builder can add the answer without looking at which was written.
+ *
+ * @mangled SetMaterial__FPUiP12MDT_MATERIAL
+ * @address 0x134D40
+ * @size 0x74
+ */
 int SetMaterial(u_int *packet, MDT_MATERIAL *material);
+
+/**
+ * Writes the pair of texture registers the GS samples the visual with into the packet and answers
+ * the words written.
+ *
+ * @mangled SetTEX0__FPUiUlUl
+ * @address 0x134DC0
+ * @size 0xFC
+ */
 int SetTEX0(u_int *packet, u_long tex0, u_long tex1);
