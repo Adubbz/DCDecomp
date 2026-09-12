@@ -520,14 +520,26 @@ void SndSetReadBuffer(unsigned int *buffer);
  */
 void SndSoundLoad(int set_no);
 
-/** Starts loading a background-music bank into a caller-provided buffer. */
-void SndBgmLoadBG(int bgm_no, u_int *buffer, int *size);
+/**
+ * Starts loading a background-music bank into a caller-provided buffer, and
+ * returns whether it did: zero when that bank is already the one loaded, or
+ * when the load could not be started.
+ */
+int SndBgmLoadBG(int bgm_no, u_int *buffer, int *size);
 
-/** Starts loading a sound-effect bank into a caller-provided buffer. */
-void SndSoundLoadBG(int set_no, u_int *buffer, int *size);
+/**
+ * Starts loading a sound-effect bank into a caller-provided buffer, and
+ * returns whether it did: zero when that set is already the one loaded, or
+ * when the load could not be started.
+ */
+int SndSoundLoadBG(int set_no, u_int *buffer, int *size);
 
-/** Starts loading a voice bank into a caller-provided buffer. */
-void SndVoiceLoadBG(int set_no, u_int *buffer, int *size);
+/**
+ * Starts loading a voice bank into a caller-provided buffer, and returns
+ * whether it did: zero when that set is already the one loaded, or when the
+ * load could not be started.
+ */
+int SndVoiceLoadBG(int set_no, u_int *buffer, int *size);
 
 /** Starts loading a special-effect sound bank into a caller-provided buffer. */
 void SndSPSeLoadBG(int set_no, u_int *buffer, int *size);
