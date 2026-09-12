@@ -192,7 +192,33 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeIn__Fiii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeOut__Fii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeInOut__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndCheckFade__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", GetSeInfo__Fi);
+static SND_SE_INFO *GetSeInfo(int se_no) {
+    SND_SE_INFO *table;
+
+    if (se_no < 0 || se_no >= 2800) {
+        return 0;
+    }
+
+    if (basic_se_table_no >= 0 && se_no >= 100 && se_no < 300) {
+        return basic_se_info[basic_se_table_no] + (se_no - 100);
+    }
+
+    if (se_no >= 300 && se_no < 400 && se_table_no >= 0) {
+        table = cap_se_info[se_table_no];
+        if (table != 0) {
+            return table + (se_no - 300);
+        }
+    }
+
+    if (se_no >= 400 && se_no < 500 && now_voice_set >= 0) {
+        table = voice_info[now_voice_set];
+        if (table != 0) {
+            return table + (se_no - 400);
+        }
+    }
+
+    return &se_info[se_no];
+}
 static int GetPortNo(int se_no) {
     SND_SE_INFO *info = GetSeInfo(se_no);
 
