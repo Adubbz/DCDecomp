@@ -255,7 +255,7 @@ segments:
       - {start: 0xa0570, type: asmtu, name: editground}
       - {start: 0xa88e0, type: cpp, name: fishing}
       - {start: 0xab840, type: cpp, name: shot_utils}
-      - {start: 0xabd40, type: asmtu, name: shot_effect}
+      - {start: 0xabd40, type: cpp, name: shot_effect}
       - {start: 0xaea80, type: cpp, name: hit_machingun_effect}
       - {start: 0xaec20, type: asmtu, name: shot_firebar}
       - {start: 0xaf460, type: asmtu, name: shot_freefuncs}

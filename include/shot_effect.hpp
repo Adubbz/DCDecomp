@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include <libvu0.h>
+
 #include "dataalloc_fwd.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
