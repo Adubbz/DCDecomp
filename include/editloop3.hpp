@@ -544,3 +544,50 @@ CNPCharacter *EdNowTalkChara();
  * @size 0xC
  */
 int EdNowTalkCharaInfoID();
+
+/**
+ * Builds the model and texture file paths an editor event loads one item from.
+ *
+ * @mangled EdGetItemFile__FiPcPc
+ * @address 0x173350
+ * @size 0x30
+ */
+void EdGetItemFile(int item_no, char *model_path, char *texture_path);
+
+/**
+ * Tests whether one villager slot is still free to be brought into the map.
+ *
+ * @mangled EdCheckVillagerIn__FiP13VILLAGER_INFO
+ * @address 0x185AF0
+ * @size 0x158
+ */
+int EdCheckVillagerIn(int index, VILLAGER_INFO *villager);
+
+/**
+ * Turns a character towards a world position, a limited step each call.
+ *
+ * @mangled turn_chara__FP10CCharacterPff
+ * @address 0x18B0E0
+ * @size 0xC4
+ */
+void turn_chara(CCharacter *character, float *position, float speed);
+
+/**
+ * Returns every editor-event parameter, sprite table and action sequence to
+ * its idle state without releasing what the event has loaded.
+ *
+ * @mangled EdInitEventParamSimple__Fv
+ * @address 0x196F00
+ * @size 0x31C
+ */
+int EdInitEventParamSimple();
+
+/**
+ * Splits the space-separated object names one editable part element carries
+ * into the supplied buffers.
+ *
+ * @mangled GetElementObjName__FP14EDITPARTS_INFOPPcii
+ * @address 0x19B680
+ * @size 0x104
+ */
+void GetElementObjName(EDITPARTS_INFO *info, char **names, int element, int index);
