@@ -280,7 +280,7 @@ int SaveMenuEffectFadeOut(void);
  * @address 0x222940
  * @size 0x160
  */
-void GetSaveBoardAlphaInfo(int, int, int &, int &, int);
+void GetSaveBoardAlphaInfo(int x, int width, int &start_alpha, int &end_alpha, int alpha);
 
 /**
  * Draws the board of one save slot with its save data summary.
@@ -642,7 +642,7 @@ void CharaChangeDraw(void);
  * @address 0x22A210
  * @size 0x180
  */
-int DngActItemModelReadStart(u_long128 *);
+int DngActItemModelReadStart(u_long128 *buffer);
 
 /**
  * Builds the active item's model once its file has been read.
@@ -721,7 +721,7 @@ int GetDispVolumeForFloat(float);
  * @address 0x22AC30
  * @size 0xF0
  */
-int InitItemPolygonView(int, u_long128 *);
+int InitItemPolygonView(int item_no, u_long128 *buffer);
 
 /**
  * Sets up the item preview's model and textures once they have been read.
@@ -829,7 +829,7 @@ void GetPathReadDifferntLang(char *);
  * @address 0x22BAB0
  * @size 0x90
  */
-int LoadFileBGMenuData(char *, u_long128 *);
+int LoadFileBGMenuData(char *name, u_long128 *buffer);
 
 /**
  * Loads a menu file from the selected language's directory, and returns its size.
