@@ -63,7 +63,6 @@ public:
      * @mangled RemakeData__13CVisualMDTVu1FPUi
      * @address 0x136240
      * @size 0x50
-     * @unknownret
      */
-    void RemakeData(unsigned int *);
+    int RemakeData(unsigned int *);
 };

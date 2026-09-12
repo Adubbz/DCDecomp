@@ -40,9 +40,8 @@ public:
      * @mangled RemakeData__13CVisualShadowFPUi
      * @address 0x136840
      * @size 0x50
-     * @unknownret
      */
-    void RemakeData(unsigned int *);
+    int RemakeData(unsigned int *);
 
     /**
      * @mangled CreateVUdataShadowCLIP__13CVisualShadowFPUiPUiP10RenderInfoPA4_f

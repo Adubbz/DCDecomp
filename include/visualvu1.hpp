@@ -56,7 +56,7 @@ public:
      *
      * @mangled RemakeData__10CVisualVu1FPUi
      * @address 0x134BB0
-     * @size 0xC
+     * @size 0x10
      */
     virtual int RemakeData(unsigned int *);
 
