@@ -36,7 +36,7 @@ struct MC_CARD_INFO {
     s32 unk_10;
     u8 unk_14[4];
     s32 free_size; /**< Free space that sceMcGetInfo writes. */
-    u8 unk_1C[4];
+    s32 unk_1C;
     s32 result; /**< Result that sceMcSync reported for the last command on the card. */
 };
 
@@ -353,7 +353,7 @@ public:
     char *check_sum;        /**< One checksum byte of the save image for every 64 bytes of it. */
     char *unk_D8;
     char *read_buffer; /**< Area behind the save image that a read fills. */
-    u8 unk_E0[4];
+    s32 unk_E0;
     s32 transferred;                 /**< Bytes that the current read or write has moved. */
     s32 transfer_size;               /**< Bytes that the current read or write is to move. */
     u8 icon_sys[0x3C4];              /**< icon.sys image that MakeDir writes into the save directory. */
