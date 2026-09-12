@@ -579,7 +579,7 @@ void DrawDunEnterFloorName(int, int, int, int, int, int);
  * @address 0x228680
  * @size 0x530
  */
-void StartQuickChange(void /* CW back-ref target unresolved */ *, int, int *, int);
+void StartQuickChange(u_long128 *, int, int *, int);
 
 /**
  * Runs one frame of the character change menu, and returns its result.
@@ -615,7 +615,7 @@ void CharaChangeDraw(void);
  * @address 0x22A210
  * @size 0x180
  */
-int DngActItemModelReadStart(void /* CW back-ref target unresolved */ *);
+int DngActItemModelReadStart(u_long128 *);
 
 /**
  * Builds the active item's model once its file has been read.
@@ -694,7 +694,7 @@ int GetDispVolumeForFloat(float);
  * @address 0x22AC30
  * @size 0xF0
  */
-int InitItemPolygonView(int, void /* CW back-ref target unresolved */ *);
+int InitItemPolygonView(int, u_long128 *);
 
 /**
  * Sets up the item preview's model and textures once they have been read.
@@ -802,7 +802,7 @@ void GetPathReadDifferntLang(char *);
  * @address 0x22BAB0
  * @size 0x90
  */
-int LoadFileBGMenuData(char *, void /* CW back-ref target unresolved */ *);
+int LoadFileBGMenuData(char *, u_long128 *);
 
 /**
  * Loads a menu file from the selected language's directory, and returns its size.
