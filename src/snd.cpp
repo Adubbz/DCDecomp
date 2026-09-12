@@ -248,7 +248,15 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSetSeVol__Fiii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetVolf__Fif);
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetPanf__Ff);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetSeVolf__Fifi);
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetSePanf__Fifi);
+void SndSetSePanf(int se_no, float pan, int voice) {
+    SND_SE_INFO *info = GetSeInfo(se_no);
+
+    if (info != 0) {
+        int hw_pan = SndGetPanf(pan);
+
+        CSnd.SE_SetPan(GetPortNo(se_no), info->bank, info->prog, hw_pan, voice);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/snd", SndPlayFootSound__FiiPf);
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetVolPan__FPfPfPfff);
 static void InitSeSeq(SND_SE_SEQ *seq) {
