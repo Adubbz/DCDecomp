@@ -365,7 +365,19 @@ void SndSPSeStop(int se_no) {
     }
 }
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetSPSeVolf__Fif);
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetSPSePanf__Fif);
+void SndSetSPSePanf(int se_no, float pan) {
+    if (pan < -1.0f) {
+        pan = -1.0f;
+    }
+    if (pan > 1.0f) {
+        pan = 1.0f;
+    }
+
+    SND_SE_INFO *info = GetSPInfo(se_no);
+    if (info != 0) {
+        CSnd.SE_SetPan(12, info->vol_no, (int)(63.0f * pan) + 64, 0);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/snd", LoadSoundInfo__FP8SND_INFOPci);
 INCLUDE_ASM("asm/nonmatchings/snd", CommandREVERBE__FPPv);
 INCLUDE_ASM("asm/nonmatchings/snd", CommandTABLE__FPPv);
