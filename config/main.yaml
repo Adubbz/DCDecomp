@@ -241,7 +241,7 @@ segments:
       - {start: 0x63b30, type: asmtu, name: candleeffect}
       - {start: 0x63e20, type: asmtu, name: effect}
       - {start: 0x64a80, type: asmtu, name: effectgroup}
-      - {start: 0x64c30, type: asmtu, name: objanime}
+      - {start: 0x64c30, type: cpp, name: objanime}
       - {start: 0x67160, type: asmtu, name: textureanime}
       - {start: 0x67d80, type: cpp, name: ebattle}
       - {start: 0x68300, type: cpp, name: ebattle_loop}
