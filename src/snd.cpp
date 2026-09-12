@@ -302,7 +302,20 @@ INCLUDE_ASM("asm/nonmatchings/snd", SetSPSeFile__FiPUiPc);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoad__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoadBG__FiPUiPi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeSyncBG__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndSPSePlay__Fii);
+void SndSPSePlay(int se_no, int vol) {
+    SND_SE_INFO *info = GetSPInfo(se_no);
+
+    if (info != 0) {
+        if (info->vol_no < 0) {
+            vol = 64;
+        }
+        if (vol < 0) {
+            CSnd.SE_Play(12, info->vol_no, 0);
+        } else {
+            CSnd.SE_Play(12, info->bank, info->prog, vol, 0);
+        }
+    }
+}
 void SndSPSeStop(int se_no) {
     SND_SE_INFO *info = GetSPInfo(se_no);
 
