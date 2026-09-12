@@ -596,7 +596,9 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @590__3);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @650__5);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuSelectDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuSelect__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuToExitDraw__Fv);
+void EditMenuToExitDraw(void) {
+    DrawMoveMenuIcon();
+}
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuToExit__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AtoraSelectDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AtoraSelect__Fv);
