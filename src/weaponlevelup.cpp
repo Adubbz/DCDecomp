@@ -3,10 +3,6 @@
 
 #include "weaponlevelup.hpp"
 
-// Retail's own name for these two is a CodeWarrior back-reference our compiler
-// cannot spell; config/object_fixups.json puts it back.
-void SndSPSeLoadBG(int se_no, u_int *buffer, int *size);
-
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>

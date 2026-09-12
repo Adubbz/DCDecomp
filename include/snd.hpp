@@ -541,8 +541,15 @@ int SndSoundLoadBG(int set_no, u_int *buffer, int *size);
  */
 int SndVoiceLoadBG(int set_no, u_int *buffer, int *size);
 
-/** Starts loading a special-effect sound bank into a caller-provided buffer. */
-void SndSPSeLoadBG(int set_no, u_int *buffer, int *size);
+/**
+ * Starts loading a special-effect sound bank into a caller-provided buffer, and
+ * returns whether the load was started.
+ *
+ * @mangled SndSPSeLoadBG__FiPUiPi
+ * @address 0x15B760
+ * @size 0x94
+ */
+int SndSPSeLoadBG(int set_no, u_int *buffer, int *size);
 
 /** Fades a background-music stream in. */
 void SndBgmFadeIn(int bgm_no, int frames, int mode);
