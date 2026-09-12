@@ -237,7 +237,13 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSoundSyncBG__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSePlay__Fiii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSePlay__Fiffi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSePlay__FiPfff);
-INCLUDE_ASM("asm/nonmatchings/snd", SndSeStop__Fii);
+void SndSeStop(int se_no, int voice) {
+    SND_SE_INFO *info = GetSeInfo(se_no);
+
+    if (info != 0) {
+        CSnd.SE_Stop(GetPortNo(se_no), info->bank, info->prog, voice);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetSeVol__Fiii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetVolf__Fif);
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetPanf__Ff);
