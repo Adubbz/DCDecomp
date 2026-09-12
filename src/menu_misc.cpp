@@ -134,7 +134,24 @@ INCLUDE_ASM("asm/nonmatchings/menu_misc", DngEscapeMsgDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", DngEscapeMsgLoop__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", CheckItemThrow__FPiPi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", SetWeaponElementStatus__FP11WEAPON_HAVE);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", CheckWeaponOptionStatus__Fi);
+int CheckWeaponOptionStatus(s32 arg0) {
+    s32 var_4;
+
+    var_4 = arg0;
+    if ((var_4 & 2) && (var_4 & 4)) {
+        var_4 &= ~6;
+    }
+    if ((var_4 & 8) && (var_4 & 0x10)) {
+        var_4 &= ~0x18;
+    }
+    if ((var_4 & 0x100) && (var_4 & 0x200)) {
+        var_4 &= ~0x300;
+    }
+    if ((var_4 & 0x400) && (var_4 & 0x800)) {
+        var_4 &= ~0xC00;
+    }
+    return var_4;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_misc", IsWeaponOptionGoodOrBad__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", DefaultWeaponOptionSet__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponOptionStatusDraw__FP11WEAPON_HAVEiii);
