@@ -380,24 +380,6 @@ static int EdMenuManualKey();
  */
 static void EdMenuManualDraw();
 
-/**
- * Clears the table of save file information.
- *
- * @mangled InitSaveFileInfoTbl__Fv
- * @address 0x2134C0
- * @size 0x80
- */
-static void InitSaveFileInfoTbl();
-
-/**
- * Returns the attribute recorded for a save file name, or zero when the name is not in the table.
- *
- * @mangled GetOpenAttribute__FPc
- * @address 0x213540
- * @size 0x90
- */
-static int GetOpenAttribute(char *);
-
 INCLUDE_ASM("asm/nonmatchings/menu_misc", NowGetGameFlagForBtlMenu__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetMenuHebikiriFlag__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EquipDefaultWeapon__Fi);
