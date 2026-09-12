@@ -75,32 +75,40 @@ INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @385__2);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @386__2);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @387__2);
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SetBuff__17CMemoryCardAccessFPc);
+
 void CMemoryCardAccess::SetIconData(MC_ICON_DATA *icon) {
-    memcpy(&this->icon, icon, 0xCU);
-    memcpy(&this->icon.copy, &icon->copy, 0xCU);
-    memcpy(&this->icon.del, &icon->del, 0xCU);
+    memcpy(&this->icon.view, &icon->view, sizeof(MC_ICON_FILE));
+    memcpy(&this->icon.copy, &icon->copy, sizeof(MC_ICON_FILE));
+    memcpy(&this->icon.del, &icon->del, sizeof(MC_ICON_FILE));
 }
+
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", MakeMcIconSysInfo__17CMemoryCardAccessFv);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @404);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @405__2);
+
 void CMemoryCardAccess::SetFuncNo(int func_no) {
     this->func_no = func_no;
     this->step = 0;
     if (func_no == 1) {
         this->unk_E0 = 0x3D;
     }
-    sceMcSync(1, 0, 0);
+    sceMcSync(1, NULL, NULL);
 }
+
 int CMemoryCardAccess::GetFuncNo() {
     return this->func_no;
 }
+
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", Step__17CMemoryCardAccessFv);
+
 void CMemoryCardAccess::SetVersion(char *version) {
     strcpy(this->version, version);
 }
-char * CMemoryCardAccess::GetVersion() {
+
+char *CMemoryCardAccess::GetVersion() {
     return this->version;
 }
+
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SearchMcType__17CMemoryCardAccessFv);
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", GetDir__17CMemoryCardAccessFv);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @531__2);
