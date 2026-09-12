@@ -220,7 +220,7 @@ segments:
       - {start: 0x41e30, type: asmtu, name: gamemode}
       - {start: 0x43920, type: cpp, name: dataalloc}
       - {start: 0x43970, type: asmtu, name: map}
-      - {start: 0x43c50, type: asmtu, name: sound}
+      - {start: 0x43c50, type: cpp, name: sound}
       - {start: 0x47a70, type: cpp, name: gameutil}
       - {start: 0x4cc30, type: cpp, name: clsmes}
       - {start: 0x54040, type: asmtu, name: nowload}
