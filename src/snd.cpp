@@ -264,7 +264,12 @@ INCLUDE_ASM("asm/nonmatchings/snd", SetVoiceFile__FiPUiPc);
 INCLUDE_ASM("asm/nonmatchings/snd", SndVoiceLoad__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndVoiceLoadBG__FiPUiPi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndVoiceSyncBG__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", GetSPInfo__Fi);
+static SND_SE_INFO *GetSPInfo(int se_no) {
+    if (se_no < 0 || se_no >= 64) {
+        return 0;
+    }
+    return &special_se_info[se_no];
+}
 INCLUDE_ASM("asm/nonmatchings/snd", GetSPSeFile__FiPcPc);
 INCLUDE_ASM("asm/nonmatchings/snd", SetSPSeFile__FiPUiPc);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoad__Fi);
