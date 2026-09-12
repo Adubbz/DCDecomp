@@ -75,7 +75,11 @@ INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @385__2);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @386__2);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @387__2);
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SetBuff__17CMemoryCardAccessFPc);
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SetIconData__17CMemoryCardAccessFP12MC_ICON_DATA);
+void CMemoryCardAccess::SetIconData(MC_ICON_DATA *icon) {
+    memcpy(&this->icon, icon, 0xCU);
+    memcpy(&this->icon.copy, &icon->copy, 0xCU);
+    memcpy(&this->icon.del, &icon->del, 0xCU);
+}
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", MakeMcIconSysInfo__17CMemoryCardAccessFv);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @404);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @405__2);
