@@ -139,12 +139,14 @@ void CharaSelectNameDraw2(int, int, short *, CTexture **, int);
 void DrawSaveBoardCharaName2(int, int, short *, CTexture **, spRGBA, spRGBA);
 
 /**
+ * Counts the characters of a party member's name, up to ten, or gives zero for
+ * an index outside the party.
+ *
  * @mangled GetMsgLengthCharaName__Fi
  * @address 0x23CDE0
  * @size 0x80
- * @unknownret
  */
-void GetMsgLengthCharaName(int);
+int GetMsgLengthCharaName(int);
 
 /**
  * @mangled InitOpeningBook__FP1Pi
