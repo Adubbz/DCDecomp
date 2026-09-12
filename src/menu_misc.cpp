@@ -79,7 +79,18 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1109);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1110);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1111);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", DngWeaponEquipModelBuild__FiiP1);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", GetNowMotionStepCnt__Fi);
+s32 GetNowMotionStepCnt(s32 arg0) {
+    s32 var_2;
+
+    var_2 = 0;
+    if (arg0 & 0x40) {
+        var_2 = 1;
+    }
+    if ((arg0 & 4) || (arg0 & 2)) {
+        var_2 = 2;
+    }
+    return var_2;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetNowActiveCharaStatus__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", SetNowCharaMotionNo__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", SetItemMenuColor__Fi);
