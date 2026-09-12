@@ -46,7 +46,23 @@ class CVisualVu1 : public CVisual {
 public:
     CVisualVu1();
 
-    void CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int unknown1);
+    /**
+     * Builds a model's VU data block and returns its size in quadwords.
+     *
+     * @mangled CreateVUdataFromMDT__10CVisualVu1FPUiPUiii
+     * @address 0x135AA0
+     * @size 0x3A8
+     */
+    int CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int unknown1);
+
+    /**
+     * Rebuilds a VU data block from retained model data and returns its size in quadwords.
+     *
+     * @mangled CreateVUdataFromMDTRemake__10CVisualVu1FPUiPUii
+     * @address 0x135E50
+     * @size 0x288
+     */
+    int CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown0);
 
     /**
  * The one it takes over from its base and the five it adds, in the order the vtable holds them —
@@ -56,7 +72,14 @@ public:
     virtual void Initialize();
     virtual void SetMDTDataAddress(u_int *data);
     virtual u_int *GetMDTDataAddress();
-    virtual void RemakeData(u_int *data);
+    /**
+     * Returns zero because this visual has no retained model data to rebuild.
+     *
+     * @mangled RemakeData__10CVisualVu1FPUi
+     * @address 0x134BB0
+     * @size 0xC
+     */
+    virtual int RemakeData(u_int *data);
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
                         u_long128 *unknown0, int unknown1, int unknown2);
     virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
@@ -81,7 +104,14 @@ public:
     virtual void Initialize();
     virtual void SetMDTDataAddress(u_int *data);
     virtual u_int *GetMDTDataAddress();
-    virtual void RemakeData(u_int *data);
+    /**
+     * Rebuilds VU data and returns its size in quadwords, or zero if no MDT model is retained.
+     *
+     * @mangled RemakeData__13CVisualMDTVu1FPUi
+     * @address 0x136240
+     * @size 0x4C
+     */
+    virtual int RemakeData(u_int *data);
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
                         u_long128 *unknown0, int unknown1, int unknown2);
     virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
@@ -101,7 +131,14 @@ class CVisualShadow : public CVisualMDTVu1 {
 public:
     /* The three the silhouette builds differently; how the block is kept is its base's business,
        so the three that answer that are the ones it leaves alone. */
-    virtual void RemakeData(u_int *data);
+    /**
+     * Rebuilds shadow VU data and returns its size in quadwords, or zero if no MDT model is retained.
+     *
+     * @mangled RemakeData__13CVisualShadowFPUi
+     * @address 0x136840
+     * @size 0x48
+     */
+    virtual int RemakeData(u_int *data);
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
                         u_long128 *unknown0, int unknown1, int unknown2);
     virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
@@ -111,9 +148,19 @@ public:
 };
 
 /**
- * The two pieces of a drawing packet that a visual's own data does not carry: the material the
-   Vector Unit lights with, and the texture registers the GS needs. Both answer how many words
-   they wrote, so a builder adds rather than tracks.
+ * Writes material lighting data when supplied and returns the reserved packet length in words.
+ *
+ * @mangled SetMaterial__FPUiP12MDT_MATERIAL
+ * @address 0x134D40
+ * @size 0x74
  */
 int SetMaterial(u_int *packet, MDT_MATERIAL *material);
+
+/**
+ * Writes the GS texture-register packet and returns its length in words.
+ *
+ * @mangled SetTEX0__FPUiUlUl
+ * @address 0x134DC0
+ * @size 0xFC
+ */
 int SetTEX0(u_int *packet, u_long tex0, u_long tex1);

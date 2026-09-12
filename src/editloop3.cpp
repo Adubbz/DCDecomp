@@ -1095,31 +1095,31 @@ void set_attr_obj(OBJ_HANDLE *handle, CFrameAttr &attr, int children, int mask) 
 /** Action sequencers available to event scripts. */
 static CActionSeq ActSeq[10];
 
-CActionSeq *GetActSeq(int index) {
+static CActionSeq *GetActSeq(int index) {
     if (index < 0 || index >= 10)
         return NULL;
     return &ActSeq[index];
 }
 
 INCLUDE_ASM("asm/nonmatchings/editloop3", turn_chara__FP10CCharacterPff);
-void turn_chara(CCharacter *character, float *position, float speed);
+
 /** Character container used for script-loaded scene animation data. */
 extern CCharacter SceneData;
 
 /** Camera used when no scene motion camera remains attached. */
 extern CCamera DmmyCamera;
 
-CCharacter *GetScene(int) {
+static CCharacter *GetScene(int) {
     return &SceneData;
 }
 
-CNPCharacter *GetNPC(int index) {
+static CNPCharacter *GetNPC(int index) {
     if (index < 0 || index >= EdEventInfo.npc_count)
         return NULL;
     return &EdEventInfo.npcs[index];
 }
 
-CCharacter *GetChara(int index) {
+static CCharacter *GetChara(int index) {
     if (index == -1)
         return EdEventInfo.main_character;
     if (index < 0 || index >= EdEventInfo.npc_count)
@@ -1127,7 +1127,7 @@ CCharacter *GetChara(int index) {
     return &EdEventInfo.npcs[index].chara;
 }
 
-CFrame *GetItemFrame(int index) {
+static CFrame *GetItemFrame(int index) {
     if (index < 0 || index > 0)
         return NULL;
     return EdEventInfo.item_frame[index];
@@ -1144,7 +1144,7 @@ void DeleteItemFrame(int index) {
     }
 }
 
-VILLAGER_INFO *GetVillagerInfo(int index) {
+static VILLAGER_INFO *GetVillagerInfo(int index) {
     if (index < 0 || index >= 16)
         return NULL;
     return &EdEventInfo.villagers[index];
@@ -1165,7 +1165,7 @@ static sceVu0FMATRIX local_world;
 /** Whether event-local/world coordinate conversion is enabled. */
 static int set_wl_matrix;
 
-void SetWorldCoord(float *position, float *rotation) {
+static void SetWorldCoord(float *position, float *rotation) {
     sceVu0CopyVector(world_pos, position);
     world_pos[3] = 1.0f;
     sceVu0CopyVector(world_rot, rotation);
@@ -1186,7 +1186,7 @@ void GetWorldPos(float *out, float *position) {
     sceVu0ApplyMatrix(out, world_local, position);
 }
 
-float GetWorldRotY(float rotation) {
+static float GetWorldRotY(float rotation) {
     rotation += world_rot[1];
     if (rotation > 3.1415927f)
         rotation -= 6.2831855f;
@@ -1195,7 +1195,7 @@ float GetWorldRotY(float rotation) {
     return rotation;
 }
 
-void GetWorldRot(float *out, float *rotation) {
+static void GetWorldRot(float *out, float *rotation) {
     sceVu0CopyVector(out, rotation);
     out[1] = GetWorldRotY(out[1]);
 }
@@ -1209,7 +1209,7 @@ void GetLocalPos(float *out, float *position) {
     sceVu0ApplyMatrix(out, local_world, position);
 }
 
-float GetLocalRotY(float rotation) {
+static float GetLocalRotY(float rotation) {
     rotation -= world_rot[1];
     if (rotation > 3.1415927f)
         rotation -= 6.2831855f;
@@ -1223,7 +1223,7 @@ void GetLocalRot(float *out, float *rotation) {
     out[1] = GetLocalRotY(out[1]);
 }
 
-void GetPosition(RS_STACKDATA *stack, float *position) {
+static void GetPosition(RS_STACKDATA *stack, float *position) {
     position[0] = GetStackFloat(stack++);
     position[1] = GetStackFloat(stack++);
     position[2] = GetStackFloat(stack);
@@ -1239,7 +1239,7 @@ void SetPosition(RS_STACKDATA *stack, float *position) {
     SetStack(stack, position[2]);
 }
 
-void GetRotation(RS_STACKDATA *stack, float *rotation) {
+static void GetRotation(RS_STACKDATA *stack, float *rotation) {
     rotation[0] = GetStackFloat(stack++);
     rotation[1] = GetStackFloat(stack++);
     rotation[2] = GetStackFloat(stack);
@@ -2059,7 +2059,7 @@ int _SSET_NPC_TALK_MES(RS_STACKDATA *stack, int) {
     return 1;
 }
 
-ClsMes *GetMes(int index) {
+static ClsMes *GetMes(int index) {
     if (index < 0 || index >= 8)
         return NULL;
     return EdEventInfo.messages[index];
@@ -2652,7 +2652,7 @@ int _EVERY_TALK_EVENT(RS_STACKDATA *stack, int argument_count) {
 INCLUDE_ASM("asm/nonmatchings/editloop3", _EVERY_TALK_EVENT__FP12RS_STACKDATAi);
 #endif
 
-CCameraFollow *GetCamera() {
+static CCameraFollow *GetCamera() {
     CCameraFollow *camera = EdEventInfo.camera;
     if (camera == NULL)
         return NULL;
