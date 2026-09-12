@@ -247,7 +247,11 @@ void SndSeStop(int se_no, int voice) {
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetSeVol__Fiii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetVolf__Fif);
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetPanf__Ff);
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetSeVolf__Fifi);
+void SndSetSeVolf(int se_no, float vol, int voice) {
+    if (GetSeInfo(se_no) != 0) {
+        SndSetSeVol(se_no, SndGetVolf(se_no, vol), voice);
+    }
+}
 void SndSetSePanf(int se_no, float pan, int voice) {
     SND_SE_INFO *info = GetSeInfo(se_no);
 
