@@ -248,7 +248,28 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndGetVolPan__FPfPfPfff);
 static void InitSeSeq(SND_SE_SEQ *seq) {
     seq->se_no = -1;
 }
-INCLUDE_ASM("asm/nonmatchings/snd", GetSeSeq__FPiii);
+static SND_SE_SEQ *GetSeSeq(int *found, int se_no, int voice) {
+    int i;
+    SND_SE_SEQ *slot = 0;
+
+    *found = 0;
+    for (i = 0; i < 32; i++) {
+        if (se_seq[i].se_no < 0) {
+            slot = &se_seq[i];
+            break;
+        }
+    }
+
+    if (se_no >= 0) {
+        for (i = 0; i < 32; i++) {
+            if (se_seq[i].se_no == se_no && se_seq[i].voice == voice) {
+                *found = 1;
+                return &se_seq[i];
+            }
+        }
+    }
+    return slot;
+}
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqPlayStop__Fiii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqStep__Fv);
