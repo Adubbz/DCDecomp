@@ -54,6 +54,13 @@ public:
     int CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int unknown1);
 
     /**
+     * Builds the block again from a model image the visual already holds, and answers its size
+       in quadwords the same way. Only the visual that keeps its model reaches this; the block
+       is written back over the one the loader reserved, so the size answered is the same one.
+     */
+    int CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown0);
+
+    /**
  * The one it takes over from its base and the five it adds, in the order the vtable holds them —
        which is what decides the slot each call site reaches, so the order is evidence rather than
        layout.
