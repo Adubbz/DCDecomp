@@ -273,7 +273,7 @@ segments:
       - {start: 0xc1d00, type: cpp, name: dungeonmap}
       - {start: 0xcc920, type: asmtu, name: dungeoneventdata}
       - {start: 0xcc9f0, type: cpp, name: dungeoneventman}
-      - {start: 0xcd4c0, type: asmtu, name: dranmapfield}
+      - {start: 0xcd4c0, type: cpp, name: dranmapfield}
       - {start: 0xcda10, type: cpp, name: itemdata}
       - {start: 0xd1130, type: cpp, name: btitem}
       - {start: 0xd4640, type: cpp, name: mainitemmodel}
