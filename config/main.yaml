@@ -245,7 +245,7 @@ segments:
       - {start: 0x67160, type: asmtu, name: textureanime}
       - {start: 0x67d80, type: cpp, name: ebattle}
       - {start: 0x68300, type: cpp, name: ebattle_loop}
-      - {start: 0x6d960, type: asmtu, name: editarea}
+      - {start: 0x6d960, type: cpp, name: editarea}
       - {start: 0x70350, type: cpp, name: edit}
       - {start: 0x742a0, type: cpp, name: editloop}
       - {start: 0x83d40, type: cpp, name: editloop3}
