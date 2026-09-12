@@ -71,7 +71,19 @@ INCLUDE_ASM("asm/nonmatchings/shop", SeitonShopItemBoard__FP9ITEM_PACK);
 INCLUDE_ASM("asm/nonmatchings/shop", CompAttach1__FP11ATTACH_LISTP11ATTACH_LIST);
 INCLUDE_ASM("asm/nonmatchings/shop", SeitonShopAttachBoardSub__FP11ATTACH_LIST);
 INCLUDE_ASM("asm/nonmatchings/shop", SeitonShopAttachBoard__FP11ATTACH_LIST);
-INCLUDE_ASM("asm/nonmatchings/shop", ItemShopLoop2__Fv);
+
+int ItemShopLoop2() {
+    int done;
+
+    ReadBG();
+    done = ItemShopKey2();
+    ItemShopDraw2();
+    if (done) {
+        ExitItemShop2();
+    }
+    return done;
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", CheckSideKey2__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", DrawItemShopBoard2__Fiii);
 INCLUDE_ASM("asm/nonmatchings/shop", DrawMoneyCheckBoard2__Fiii);
