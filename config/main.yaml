@@ -208,7 +208,7 @@ segments:
       - {start: 0x2c270, type: cpp, name: mglib}
       - {start: 0x30ff0, type: cpp, name: texture}
       - {start: 0x34860, type: cpp, name: visualvu1}
-      - {start: 0x36390, type: asmtu, name: visualshadow}
+      - {start: 0x36390, type: cpp, name: visualshadow}
       - {start: 0x374e0, type: cpp, name: character}
       - {start: 0x39e10, type: cpp, name: chararead}
       - {start: 0x3b580, type: cpp, name: wind}
