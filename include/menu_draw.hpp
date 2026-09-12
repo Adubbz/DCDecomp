@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include "itemdata.hpp"
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -15,7 +17,6 @@ class CDngStatusData;
 class ClsMes;
 struct IHAVEITEM;
 struct ITEM_PACK;
-struct PERSONAL_BOARD;
 struct SAVEDATA_INFO;
 struct WEAPON_HAVE;
 struct spRGBA;
@@ -46,6 +47,29 @@ struct DUN_ENTER_MENU {
 };
 
 STATIC_ASSERT(sizeof(DUN_ENTER_MENU) == 0x1AC);
+
+/**
+ * State of a personal inventory board, the item list that the item, shop and Atla menus share.
+ */
+struct PERSONAL_BOARD {
+    s32 unk_00;
+    s32 unk_04;
+    s32 unk_08;
+    s32 unk_0C;
+    float unk_10;
+    float scroll; /**< Scroll bar position the board draws. */
+    s32 unk_18;
+    s16 unk_1C;
+    u8 unk_1E[2];
+    s32 unk_20;
+    ITEM_PACK *item_pack; /**< Item pack the board lists. */
+    s32 unk_28;
+    s32 unk_2C;
+    u8 unk_30[0x14];
+    WEAPON_HAVE weapon; /**< Weapon record the board holds. */
+    u8 unk_13C[0x20];
+    s32 unk_15C;
+};
 
 /** The dungeon entrance menu. */
 extern DUN_ENTER_MENU DEnterMenu;
