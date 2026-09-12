@@ -732,12 +732,13 @@ void FishingExchangeDraw(void);
 void ExitFishingExchange(void);
 
 /**
+ * Runs one frame of the fishing exchange and returns one once its input handler has closed it.
+ *
  * @mangled FishingExchangeLoop__Fv
  * @address 0x1F2DB0
  * @size 0x60
- * @unknownret
  */
-void FishingExchangeLoop(void);
+int FishingExchangeLoop(void);
 
 /**
  * @mangled GetFishMsgNo__Fi

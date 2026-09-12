@@ -175,7 +175,19 @@ INCLUDE_ASM("asm/nonmatchings/shop", FishImageIconDraw__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/shop", FishExchangeItemDraw__Fiii);
 INCLUDE_ASM("asm/nonmatchings/shop", FishingExchangeDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", ExitFishingExchange__Fv);
-INCLUDE_ASM("asm/nonmatchings/shop", FishingExchangeLoop__Fv);
+
+int FishingExchangeLoop() {
+    int done;
+
+    done = FishingExchangeKey();
+    FishingExchangeDraw();
+    if (done) {
+        ExitFishingExchange();
+        return 1;
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", GetFishMsgNo__Fi);
 INCLUDE_ASM("asm/nonmatchings/shop", GetFishingRankData__Fi);
 INCLUDE_ASM("asm/nonmatchings/shop", InitFishRecordView__FP1Pii);
