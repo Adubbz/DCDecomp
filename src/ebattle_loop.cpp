@@ -127,7 +127,12 @@ float GetRXf(void) {
     }
     return EdGetRXf(1);
 }
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", GetRYf__Fv);
+float GetRYf(void) {
+    if (keylock__Fv() != 0) {
+        return 0.0f;
+    }
+    return EdGetRYf(1);
+}
 float GetLXf(void) {
     if (keylock__Fv() != 0) {
         return 0.0f;
