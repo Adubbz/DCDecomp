@@ -271,7 +271,7 @@ segments:
       - {start: 0xbda00, type: cpp, name: dngstatusdata}
       - {start: 0xbfbb0, type: cpp, name: dungeonparts}
       - {start: 0xc1d00, type: cpp, name: dungeonmap}
-      - {start: 0xcc920, type: asmtu, name: dungeoneventdata}
+      - {start: 0xcc920, type: cpp, name: dungeoneventdata}
       - {start: 0xcc9f0, type: cpp, name: dungeoneventman}
       - {start: 0xcd4c0, type: cpp, name: dranmapfield}
       - {start: 0xcda10, type: cpp, name: itemdata}
