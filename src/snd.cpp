@@ -5,6 +5,8 @@
 #include "common.h"
 
 #include "editatra.hpp"
+#include "rect.hpp"
+#include "scriptinterpreter.hpp"
 #include "snd.hpp"
 #include "sound.hpp"
 
