@@ -27,12 +27,23 @@ int SndVoiceLoad(int voice_no);
  */
 
 /**
+ * Resets the sound manager: the background music, the ambient loop and the
+ * sound-effect sequences start again from nothing, no sound-effect, voice or
+ * music set counts as loaded, and the configuration file names are cleared.
+ * None of the four arguments is read.
+ *
+ * @mangled SndInitialize__Fiiii
+ * @address 0x159200
+ * @size 0x8C
+ */
+void SndInitialize(int, int, int, int);
+
+/**
  * Gives the sound system back what it holds, on the way out of an area.
  *
  * @mangled SndExit__Fv
  * @address 0x159290
  * @size 0xC0
- * @unknownret
  */
 void SndExit(void);
 
@@ -42,7 +53,6 @@ void SndExit(void);
  * @mangled SndStep__Fv
  * @address 0x159350
  * @size 0x100
- * @unknownret
  */
 void SndStep(void);
 
@@ -62,7 +72,6 @@ void SndBgmInit(void);
  * @mangled SndStopAllSe__Fv
  * @address 0x15A450
  * @size 0xA0
- * @unknownret
  */
 void SndStopAllSe(void);
 
@@ -72,7 +81,6 @@ void SndStopAllSe(void);
  * @mangled SndBgmStop__Fv
  * @address 0x159BA0
  * @size 0x58
- * @unknownret
  */
 void SndBgmStop(void);
 
@@ -82,7 +90,6 @@ void SndBgmStop(void);
  * @mangled SndBgmFadeOutStop__Fv
  * @address 0x159C50
  * @size 0xA8
- * @unknownret
  */
 void SndBgmFadeOutStop(void);
 
@@ -92,7 +99,6 @@ void SndBgmFadeOutStop(void);
  * @mangled SndAmbientStop__Fv
  * @address 0x15B190
  * @size 0x44
- * @unknownret
  */
 void SndAmbientStop(void);
 
@@ -101,6 +107,16 @@ void SndAmbientPlay(int ambient_no);
 
 /** Sets the ambient loop's normalized volume. */
 void SndAmbientSetVolf(float volume);
+
+/**
+ * Returns the default volume of the ambient loop that is playing, as its MIDI
+ * state records it, or 64 when that loop has no state.
+ *
+ * @mangled SndGetAmbientDefaultVol__Fv
+ * @address 0x15B2A0
+ * @size 0x68
+ */
+int SndGetAmbientDefaultVol();
 
 /**
  * Starts the ambient system from nothing, and reports whether it came up.
