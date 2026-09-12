@@ -85,7 +85,9 @@ int CMemoryCardAccess::GetFuncNo() {
 }
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", Step__17CMemoryCardAccessFv);
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SetVersion__17CMemoryCardAccessFPc);
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", GetVersion__17CMemoryCardAccessFv);
+char * CMemoryCardAccess::GetVersion() {
+    return this->version;
+}
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SearchMcType__17CMemoryCardAccessFv);
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", GetDir__17CMemoryCardAccessFv);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @531__2);
