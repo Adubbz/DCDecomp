@@ -121,30 +121,35 @@ int EdPadDown(int keys, int mode) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", keylock__Fv);
+
 float GetRXf(void) {
     if (keylock__Fv() != 0) {
         return 0.0f;
     }
     return EdGetRXf(1);
 }
+
 float GetRYf(void) {
     if (keylock__Fv() != 0) {
         return 0.0f;
     }
     return EdGetRYf(1);
 }
+
 float GetLXf(void) {
     if (keylock__Fv() != 0) {
         return 0.0f;
     }
     return EdGetLXf(1);
 }
+
 float GetLYf(void) {
     if (keylock__Fv() != 0) {
         return 0.0f;
     }
     return EdGetLYf(1);
 }
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", PadOn__Fi);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", PadDown__Fi);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", CameraAutoMove__FP13CCameraFollowP6CCPolyPfff);
@@ -160,6 +165,7 @@ INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdAGetViewAngleV__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdASetViewAngle__Fff);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdMoveChara__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdInitHashigo__FP13ED_EVENT_INFOP14ED_EVENT_PARAM);
+
 int EdInitGotoInterior(ED_EVENT_INFO *info, ED_EVENT_PARAM *param) {
     sceVu0CopyVector(info->vector_arguments[0], param->position);
     sceVu0CopyVector(info->vector_arguments[1], param->rotation);
