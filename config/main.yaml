@@ -258,7 +258,7 @@ segments:
       - {start: 0xabd40, type: cpp, name: shot_effect}
       - {start: 0xaea80, type: cpp, name: hit_machingun_effect}
       - {start: 0xaec20, type: asmtu, name: shot_firebar}
-      - {start: 0xaf460, type: asmtu, name: shot_freefuncs}
+      - {start: 0xaf460, type: cpp, name: shot_freefuncs}
       - {start: 0xb2a00, type: asmtu, name: healeffect}
       - {start: 0xb2f90, type: cpp, name: hitmark}
       - {start: 0xb3880, type: asmtu, name: collisiondata}
