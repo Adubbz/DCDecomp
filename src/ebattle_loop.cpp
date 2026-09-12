@@ -6,6 +6,7 @@
 
 #include <libvu0.h>
 
+#include "collision.hpp"
 #include "ebattle.hpp"
 #include "edit.hpp"
 #include "editloop.hpp"
