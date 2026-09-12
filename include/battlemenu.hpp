@@ -47,10 +47,11 @@ int GetDefaultWeaponNo(int character_no);
 int IsDefaultWeapon(int);
 
 /**
+ * Records the weapon the item menu's message is about.
+ *
  * @mangled SetNowEquipWeaponDataForMsg__Fii
  * @address 0x1F3E50
  * @size 0x20
- * @unknownret
  */
 void SetNowEquipWeaponDataForMsg(int, int);
 
@@ -71,12 +72,13 @@ void GetNowEquipWeaponDataForMsg(int &, int &);
 void GetGradationColorInfo2(int);
 
 /**
+ * Returns the weapon the weapon menu's cursor is on.
+ *
  * @mangled GetNowSelectWeapon__Fv
  * @address 0x1F3F00
  * @size 0x40
- * @unknownret
  */
-void GetNowSelectWeapon(void);
+WEAPON_HAVE *GetNowSelectWeapon(void);
 
 /**
  * @mangled EscapeDungeonMode__Fv
@@ -95,12 +97,13 @@ void EscapeDungeonMode(void);
 void SetEscapeDngFlag(int);
 
 /**
+ * Returns the flag that says the party is escaping the dungeon.
+ *
  * @mangled GetEscapeDngFlag__Fv
  * @address 0x1F3FB0
  * @size 0x10
- * @unknownret
  */
-void GetEscapeDngFlag(void);
+s16 GetEscapeDngFlag(void);
 
 /**
  * @mangled SetInteriorOutFlag__Fi
@@ -127,18 +130,20 @@ void GetInteriorOutFlag(void);
 void DrawDngYesNoDialog(int, int, int);
 
 /**
+ * Returns how many icons the battle menu ring currently offers.
+ *
  * @mangled GetMenuModeMax__Fv
  * @address 0x1F40A0
  * @size 0x70
- * @unknownret
  */
-void GetMenuModeMax(void);
+int GetMenuModeMax(void);
 
 /**
+ * Writes the screen position of one battle menu icon into the pair of integers it is given.
+ *
  * @mangled GetMenuIconPos__FiPi
  * @address 0x1F4110
  * @size 0x50
- * @unknownret
  */
 void GetMenuIconPos(int, int *);
 
@@ -223,26 +228,29 @@ void BtlDrawOption(void);
 void BtlDrawSave(void);
 
 /**
+ * Looks the battle menu's fixed textures up in the texture manager and keeps them.
+ *
  * @mangled BtlMenuTexBlockEnter__Fv
  * @address 0x1F58A0
  * @size 0x120
- * @unknownret
  */
 void BtlMenuTexBlockEnter(void);
 
 /**
+ * Loads the battle menu's texture blocks and message buffers.
+ *
  * @mangled BattleMenuTexEnter__Fv
  * @address 0x1F59C0
  * @size 0x140
- * @unknownret
  */
 void BattleMenuTexEnter(void);
 
 /**
+ * Tears the battle menu down: its textures, its buffers, the gamepad and the BGM volume.
+ *
  * @mangled ExitBattleMenu__Fi
  * @address 0x1F5B00
  * @size 0x1F0
- * @unknownret
  */
 void ExitBattleMenu(int);
 
@@ -303,18 +311,20 @@ void BattleMenuExit(void);
 void BattleMenuSelect(void);
 
 /**
+ * Steps the battle menu ring towards the icon it is given and returns the icon it settles on.
+ *
  * @mangled ToFromSelect__Fi
  * @address 0x1F6F60
  * @size 0x2A0
- * @unknownret
  */
-void ToFromSelect(int);
+int ToFromSelect(int);
 
 /**
+ * Puts the menu cursor back on the icon of the mode the menu is returning to.
+ *
  * @mangled ForBackMenu__Fv
  * @address 0x1F7200
  * @size 0xE0
- * @unknownret
  */
 void ForBackMenu(void);
 
@@ -424,26 +434,29 @@ void DrawLimmitMax(int, int, int);
 void DrawBtlMenuLRCursor(int, int, int, int);
 
 /**
+ * Draws one weapon's status tags: their values, their gradation bars and their experience numbers.
+ *
  * @mangled DrawWeaponStatusTag__FiiP11WEAPON_HAVEiii
  * @address 0x1FA0B0
  * @size 0x7C0
- * @unknownret
  */
 void DrawWeaponStatusTag(int, int, WEAPON_HAVE *, int, int, int);
 
 /**
+ * Draws one weapon's elemental tags with their volume bars.
+ *
  * @mangled DrawWeaponElemTag__FiiP11WEAPON_HAVEiii
  * @address 0x1FA870
  * @size 0x430
- * @unknownret
  */
 void DrawWeaponElemTag(int, int, WEAPON_HAVE *, int, int, int);
 
 /**
+ * Draws one weapon's anti-monster tags with their volume bars.
+ *
  * @mangled DrawWeaponVsMonster__FiiP11WEAPON_HAVEiii
  * @address 0x1FACA0
  * @size 0x350
- * @unknownret
  */
 void DrawWeaponVsMonster(int, int, WEAPON_HAVE *, int, int, int);
 
@@ -560,10 +573,11 @@ void WeaponMenuKastumSelectDown(int, int);
 void WeaponSelectKey(void);
 
 /**
+ * Puts the attachment the weapon menu is holding back where it came from.
+ *
  * @mangled WepAttachHaveCancel__Fv
  * @address 0x1FF6B0
  * @size 0x1A0
- * @unknownret
  */
 void WepAttachHaveCancel(void);
 
@@ -576,34 +590,38 @@ void WepAttachHaveCancel(void);
 void WeaponMenuAttachModeKey(void);
 
 /**
+ * Handles input on the weapon menu's equipped weapon row.
+ *
  * @mangled WeaponMenuActWepKey__Fv
  * @address 0x1FFA90
  * @size 0xD0
- * @unknownret
  */
 void WeaponMenuActWepKey(void);
 
 /**
+ * Handles input on the weapon menu's tag row, fitting and removing tags.
+ *
  * @mangled WeaponMenuTagKey__Fv
  * @address 0x1FFB60
  * @size 0x5C0
- * @unknownret
  */
 void WeaponMenuTagKey(void);
 
 /**
+ * Handles input while an attachment is being fitted to a weapon.
+ *
  * @mangled WeaponMenuAttachWepKey__Fv
  * @address 0x200120
  * @size 0x420
- * @unknownret
  */
 void WeaponMenuAttachWepKey(void);
 
 /**
+ * Handles input while an attachment is being moved on the weapon menu.
+ *
  * @mangled WeaponMenuAttachKey__Fv
  * @address 0x200540
  * @size 0x270
- * @unknownret
  */
 void WeaponMenuAttachKey(void);
 
@@ -808,10 +826,11 @@ void MenuMoveKey(void);
 void DrawMenuMove(void);
 
 /**
+ * Draws the escape item dialog with its count, its money board and its help window.
+ *
  * @mangled DrawEscapeItem__Fiii
  * @address 0x209CC0
  * @size 0x2C0
- * @unknownret
  */
 void DrawEscapeItem(int, int, int);
 
@@ -832,10 +851,11 @@ void StartLoadWorldMap(int, void /* CW back-ref target unresolved */ *);
 void LoadWorldMap(void);
 
 /**
+ * Draws the world map's menu character.
+ *
  * @mangled LocalDrawWorldMap__Fv
  * @address 0x20A370
  * @size 0x70
- * @unknownret
  */
 void LocalDrawWorldMap(void);
 
@@ -860,12 +880,14 @@ void DrawWorldMap(int);
 void MenuDataSwap(MAP_JUMP_COMPARE *first, MAP_JUMP_COMPARE *second);
 
 /**
+ * Returns the reachable world map destination nearest the one it is given, or -1 when there
+ * is none.
+ *
  * @mangled GetNearWorldPos__FiPi
  * @address 0x20A4A0
  * @size 0x3C0
- * @unknownret
  */
-void GetNearWorldPos(int, int *);
+int GetNearWorldPos(int, int *);
 
 /**
  * @mangled WorldMapMoveKey__Fv
