@@ -156,7 +156,14 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeOut__Fii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeInOut__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndCheckFade__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", GetSeInfo__Fi);
-INCLUDE_ASM("asm/nonmatchings/snd", GetPortNo__Fi);
+static int GetPortNo(int se_no) {
+    SND_SE_INFO *info = GetSeInfo(se_no);
+
+    if (info->port >= 0) {
+        return info->port;
+    }
+    return 14;
+}
 INCLUDE_ASM("asm/nonmatchings/snd", GetSoundFile__FiPcPc);
 INCLUDE_ASM("asm/nonmatchings/snd", SetSoundFile__FiPUiPc);
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetNowSetNo__Fv);
