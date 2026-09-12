@@ -110,6 +110,15 @@ static SND_SE_INFO *GetSPInfo(int se_no);
 static SND_SE_SEQ *GetSeSeq(int *found, int se_no, int voice);
 
 /**
+ * Plays a sound effect at an explicit volume and pan.
+ *
+ * @mangled SndSePlay__Fiffi
+ * @address 0x15A760
+ * @size 0xBC
+ */
+void SndSePlay(int se_no, float volume, float pan, int voice);
+
+/**
  * Advances every sound-effect sequence that is running.
  *
  * @mangled SndSeSeqStep__Fv

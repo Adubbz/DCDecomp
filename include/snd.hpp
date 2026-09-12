@@ -189,15 +189,6 @@ int SndSePlay(int se_no, int voice, int pan);
 void SndSePlay(int se_no, float *position, float near, float far);
 
 /**
- * Plays a sound effect at an explicit volume and pan.
- *
- * @mangled SndSePlay__Fiffi
- * @address 0x15A760
- * @size 0xBC
- */
-void SndSePlay(int se_no, float volume, float pan, int voice);
-
-/**
  * Plays the sound of one foot at a world position.
  *
  * @mangled SndPlayFootSound__FiiPf
