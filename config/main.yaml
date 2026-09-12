@@ -253,7 +253,7 @@ segments:
       - {start: 0x9a8b0, type: cpp, name: mapparts}
       - {start: 0x9b780, type: asmtu, name: edit_in}
       - {start: 0xa0570, type: asmtu, name: editground}
-      - {start: 0xa88e0, type: asmtu, name: fishing}
+      - {start: 0xa88e0, type: cpp, name: fishing}
       - {start: 0xab840, type: cpp, name: shot_utils}
       - {start: 0xabd40, type: asmtu, name: shot_effect}
       - {start: 0xaea80, type: cpp, name: hit_machingun_effect}
