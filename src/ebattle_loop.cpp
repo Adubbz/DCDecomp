@@ -129,7 +129,12 @@ float GetLXf(void) {
     }
     return EdGetLXf(1);
 }
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", GetLYf__Fv);
+float GetLYf(void) {
+    if (keylock__Fv() != 0) {
+        return 0.0f;
+    }
+    return EdGetLYf(1);
+}
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", PadOn__Fi);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", PadDown__Fi);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", CameraAutoMove__FP13CCameraFollowP6CCPolyPfff);
