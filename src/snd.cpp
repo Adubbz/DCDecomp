@@ -303,7 +303,13 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoad__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoadBG__FiPUiPi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeSyncBG__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSePlay__Fii);
-INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeStop__Fi);
+void SndSPSeStop(int se_no) {
+    SND_SE_INFO *info = GetSPInfo(se_no);
+
+    if (info != 0) {
+        CSnd.SE_Stop(12, info->bank, info->prog, 0);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetSPSeVolf__Fif);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetSPSePanf__Fif);
 INCLUDE_ASM("asm/nonmatchings/snd", LoadSoundInfo__FP8SND_INFOPci);
