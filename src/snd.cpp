@@ -10,6 +10,86 @@
 /* The sound manager: BGM loading, playback and fading, and the SE table.
  * CSound itself is in src/sound.cpp. */
 
+/**
+ * One row of a sound-effect table: what the sound driver is asked to play,
+ * which port it plays on, and where its level comes from. A row the game does
+ * not use holds -1 in every signed field.
+ */
+struct SND_SE_INFO {
+    s8 bank; /**< Bank the sound driver loads the effect from. */
+    s8 prog; /**< Program within that bank. */
+    s8 unk_2;
+    s8 port;    /**< Port to play on; negative asks for the default port. */
+    s16 vol_no; /**< Row of the sound object's effect table to take the level
+                     from, or negative to play at full volume. */
+};
+
+STATIC_ASSERT(sizeof(SND_SE_INFO) == 6);
+
+/**
+ * One sound-effect sequence slot: a sound the game starts once and stops again
+ * a fixed number of steps later. A slot whose sound number is negative is free.
+ */
+struct SND_SE_SEQ {
+    s16 se_no;  /**< Sound effect the slot plays, or -1 while the slot is free. */
+    s16 length; /**< Steps the sound is left playing for. */
+    s16 step;   /**< Steps taken so far; the sound starts on step zero. */
+    s16 voice;  /**< Voice the sound plays on. */
+};
+
+STATIC_ASSERT(sizeof(SND_SE_SEQ) == 8);
+
+/**
+ * Returns the table row for a sound effect, or zero when the number names no
+ * row. The number selects between the fixed table, the current basic set, the
+ * current chapter set and the current voice set.
+ *
+ * @mangled GetSeInfo__Fi
+ * @address 0x15A0B0
+ * @size 0x148
+ */
+static SND_SE_INFO *GetSeInfo(int se_no);
+
+/**
+ * Returns the port a sound effect plays on, or the default port when its row
+ * does not name one.
+ *
+ * @mangled GetPortNo__Fi
+ * @address 0x15A200
+ * @size 0x38
+ */
+static int GetPortNo(int se_no);
+
+/**
+ * Returns the table row for a menu sound effect, or zero when the number names
+ * no row.
+ *
+ * @mangled GetSPInfo__Fi
+ * @address 0x15B5B0
+ * @size 0x40
+ */
+static SND_SE_INFO *GetSPInfo(int se_no);
+
+/**
+ * Finds the sequence slot already playing a sound on a voice, and reports
+ * through found that it did. Returns the first free slot instead when there is
+ * no such slot, or zero when every slot is taken.
+ *
+ * @mangled GetSeSeq__FPiii
+ * @address 0x15AE10
+ * @size 0xC0
+ */
+static SND_SE_SEQ *GetSeSeq(int *found, int se_no, int voice);
+
+/**
+ * Frees one sound-effect sequence slot.
+ *
+ * @mangled InitSeSeq__FP10SND_SE_SEQ
+ * @address 0x15AE00
+ * @size 0x10
+ */
+static void InitSeSeq(SND_SE_SEQ *seq);
+
 EDIT_ELEMENT_ATRA *GetEditAtraData(int ground, int number) {
     if (ground < 0 || ground >= 6)
         return 0;
