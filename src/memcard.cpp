@@ -1,5 +1,17 @@
 #include "memcard.hpp"
 
+#include "battle_globals.hpp"
+#include "clsmes.hpp"
+#include "dataread.hpp"
+#include "editatra.hpp"
+#include "editpartsinfo.hpp"
+#include "gamepad.hpp"
+#include "memorycardaccess.hpp"
+#include "menu_draw.hpp"
+#include "rect.hpp"
+#include "savedata.hpp"
+#include "texture.hpp"
+
 INCLUDE_ASM("asm/nonmatchings/memcard", McCheckMCPs2__FP12MC_CARD_INFO);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawObjectVibe__FiiP8CTexture8CRect_i_Uci);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawObjectVibe__FiiP8CTexture4RECTUci);
