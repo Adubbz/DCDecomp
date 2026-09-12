@@ -175,7 +175,9 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSetSeVolf__Fifi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetSePanf__Fifi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndPlayFootSound__FiiPf);
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetVolPan__FPfPfPfff);
-INCLUDE_ASM("asm/nonmatchings/snd", InitSeSeq__FP10SND_SE_SEQ);
+static void InitSeSeq(SND_SE_SEQ *seq) {
+    seq->se_no = -1;
+}
 INCLUDE_ASM("asm/nonmatchings/snd", GetSeSeq__FPiii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqPlayStop__Fiii);
