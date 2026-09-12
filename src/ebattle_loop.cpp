@@ -6,41 +6,12 @@
 
 #include <libvu0.h>
 
-#include "collision.hpp"
 #include "ebattle.hpp"
 #include "edit.hpp"
 #include "editloop.hpp"
 #include "gamepad.hpp"
 
 /* The rest of the ebattle module: the intro, the main loop and the draw pass. */
-
-/**
- * Draws one 32x32 button glyph from the ebattle texture, centred on a point
- * and scaled about it.
- *
- * @mangled DrawButtonSub__Fiiiif
- * @address 0x169340
- * @size 0xE0
- */
-extern "C" void DrawButtonSub__Fiiiif(int x, int y, int tex_x, int tex_y, float scale);
-
-/**
- * Clears the OK prompt: no button owns it, and its countdown is spent.
- *
- * @mangled init_draw_ok__Fv
- * @address 0x169420
- * @size 0x14
- */
-extern "C" void init_draw_ok__Fv();
-
-/**
- * Says whether either of the two editor key locks currently holds the pad.
- *
- * @mangled keylock__Fv
- * @address 0x1699E0
- * @size 0x10
- */
-extern "C" int keylock__Fv();
 
 INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", @1686);
 INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", @1700);
@@ -115,13 +86,15 @@ int EdPadDown(int keys, int mode) {
     return 0;
 }
 
+static int keylock();
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", keylock__Fv);
 
 /**
  * Returns the right stick's horizontal input, or zero while editor input is locked.
  */
 static float GetRXf() {
-    if (keylock__Fv() != 0) {
+    if (keylock() != 0) {
         return 0.0f;
     }
     return EdGetRXf(1);
@@ -131,7 +104,7 @@ static float GetRXf() {
  * Returns the right stick's vertical input, or zero while editor input is locked.
  */
 static float GetRYf() {
-    if (keylock__Fv() != 0) {
+    if (keylock() != 0) {
         return 0.0f;
     }
     return EdGetRYf(1);
@@ -141,7 +114,7 @@ static float GetRYf() {
  * Returns the left stick's horizontal input, or zero while editor input is locked.
  */
 static float GetLXf() {
-    if (keylock__Fv() != 0) {
+    if (keylock() != 0) {
         return 0.0f;
     }
     return EdGetLXf(1);
@@ -151,7 +124,7 @@ static float GetLXf() {
  * Returns the left stick's vertical input, or zero while editor input is locked.
  */
 static float GetLYf() {
-    if (keylock__Fv() != 0) {
+    if (keylock() != 0) {
         return 0.0f;
     }
     return EdGetLYf(1);

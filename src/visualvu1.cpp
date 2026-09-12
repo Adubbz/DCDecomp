@@ -9,15 +9,6 @@
 #include "tim2.hpp"
 #include "visual.hpp"
 
-/**
- * Writes a shadow drawing packet using the supplied transform and returns its word count.
- *
- * @mangled SetShadowData__FPUiPA4_f
- * @address 0x134C90
- * @size 0xA4
- */
-static int SetShadowData(u_int *packet, float (*matrix)[4]);
-
 void SetTextureInfo(CTexture *tex, char *name, TM2_head *head) {
     TM2_picture *pic = (TM2_picture *) ((u_char *) head + 16);
     int width = head->image_width;

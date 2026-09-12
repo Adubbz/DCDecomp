@@ -33,7 +33,6 @@
 #include "fishing.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
-#include "gamemode.hpp"
 #include "gamepad.hpp"
 #include "gameutil.hpp"
 #include "mainselect.hpp"
@@ -1103,6 +1102,7 @@ static CActionSeq *GetActSeq(int index) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/editloop3", turn_chara__FP10CCharacterPff);
+
 /** Character container used for script-loaded scene animation data. */
 extern CCharacter SceneData;
 
@@ -1254,16 +1254,6 @@ void SetRotation(RS_STACKDATA *stack, float *rotation) {
     SetStack(stack++, rotation[1]);
     SetStack(stack, rotation[2]);
 }
-
-/**
- * Resolves an event-script file path relative to the current directory, stripping a leading slash
- * for an absolute path.
- *
- * @mangled GetFileName__FPcPc
- * @address 0x18B7B0
- * @size 0x74
- */
-static void GetFileName(char *path, char *name);
 
 INCLUDE_ASM("asm/nonmatchings/editloop3", GetFileName__FPcPc);
 
@@ -1429,15 +1419,6 @@ int _GOTO_FISH_RANKING(RS_STACKDATA *, int) {
 
 INCLUDE_ASM("asm/nonmatchings/editloop3", _GOTO_CHANGE_ESA__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _SET_CURRENT_DIR__FP12RS_STACKDATAi);
-/**
- * Gives the archive the event script is loading its files out of.
- *
- * @mangled get_pack_file__Fv
- * @address 0x18C2A0
- * @size 0x20
- */
-static u_int *get_pack_file();
-
 INCLUDE_ASM("asm/nonmatchings/editloop3", get_pack_file__Fv);
 INCLUDE_ASM("asm/nonmatchings/editloop3", get_buffer__Fv);
 INCLUDE_ASM("asm/nonmatchings/editloop3", _ACTIVE_FILE_BUFFER__FP12RS_STACKDATAi);

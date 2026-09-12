@@ -547,15 +547,6 @@ CNPCharacter *EdNowTalkChara();
 int EdNowTalkCharaInfoID();
 
 /**
- * Builds the model and texture file paths an editor event loads one item from.
- *
- * @mangled EdGetItemFile__FiPcPc
- * @address 0x173350
- * @size 0x30
- */
-void EdGetItemFile(int item_no, char *model_path, char *texture_path);
-
-/**
  * Tests whether a villager can appear under the current selection and part availability.
  *
  * @mangled EdCheckVillagerIn__FiP13VILLAGER_INFO
@@ -581,16 +572,6 @@ void turn_chara(CCharacter *character, float *position, float speed);
  * @size 0x31C
  */
 int EdInitEventParamSimple();
-
-/**
- * Splits the space-separated object names one editable part element carries
- * into the supplied buffers.
- *
- * @mangled GetElementObjName__FP14EDITPARTS_INFOPPcii
- * @address 0x19B680
- * @size 0x104
- */
-void GetElementObjName(EDITPARTS_INFO *info, char **names, int element, int index);
 
 /**
  * Reads one villager's model and motion out of an already loaded archive and
@@ -621,12 +602,3 @@ int EdLoadVillager(char *name, CNPCharacter *villager, CDataAlloc2<1> *arena);
  * @size 0x2E8
  */
 int EdEventInit(int event_no, CDataAlloc2<1> *arena, char *name);
-
-/**
- * Copies the editor's current resource directory into a caller buffer.
- *
- * @mangled GetEditDataDir__FPc
- * @address 0x1777D0
- * @size 0x28
- */
-void GetEditDataDir(char *name);
