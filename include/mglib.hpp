@@ -154,7 +154,7 @@ void MGSetAmbient(float *ambient);
 void MGSetPLight(float (*direction)[4], float (*colour)[4]);
 
 /**
- * Reads the direction and the colour of each of the four point lights.
+ * Reads the lighting direction and colour matrices.
  *
  * @mangled MGGetPLight__FPA4_fPA4_f
  * @address 0x12DCB0

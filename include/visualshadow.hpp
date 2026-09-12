@@ -37,6 +37,8 @@ public:
     void CreateVUdataShadow(unsigned int *, unsigned int *);
 
     /**
+     * Rebuilds shadow VU data and returns its size in quadwords, or zero if no MDT model is retained.
+     *
      * @mangled RemakeData__13CVisualShadowFPUi
      * @address 0x136840
      * @size 0x50
