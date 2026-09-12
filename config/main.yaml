@@ -213,7 +213,7 @@ segments:
       - {start: 0x39e10, type: cpp, name: chararead}
       - {start: 0x3b580, type: cpp, name: wind}
       - {start: 0x3b740, type: cpp, name: cloth}
-      - {start: 0x3d350, type: asmtu, name: bound}
+      - {start: 0x3d350, type: cpp, name: bound}
       - {start: 0x3df90, type: cpp, name: dispctrl}
       - {start: 0x3ea50, type: cpp, name: dataread}
       - {start: 0x411b0, type: cpp, name: main}
