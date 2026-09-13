@@ -740,16 +740,6 @@ float ConvertTime(float hour);
 float InvertTime(float time);
 
 /**
- * Reports whether the editor clock stands between two times.
- *
- * @mangled EdCheckTime__Ffff
- * @address 0x187DD0
- * @size 0x84
- * @unknownret
- */
-int EdCheckTime(float now, float from, float to);
-
-/**
  * Gives back which of the editor views is on screen.
  *
  * @mangled EdCheckViewMode__Fv
@@ -788,16 +778,6 @@ void EdEventPointDraw(ED_EVENT_POINT *point, int kind, float size);
 int EdGetDoorMotion(int door_no, int state);
 
 /**
- * Turns a clock reading into the time band it falls in.
- *
- * @mangled EdGetTime__Ff
- * @address 0x187E60
- * @size 0xEC
- * @unknownret
- */
-int EdGetTime(float clock);
-
-/**
  * Clears the parameters an editor event script reads.
  *
  * @mangled EdInitEventParam__Fv
@@ -822,7 +802,6 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *funcs, 
  * @mangled EdInitGotoInterior__FP13ED_EVENT_INFOP14ED_EVENT_PARAM
  * @address 0x16D7F0
  * @size 0x68
- * @unknownret
  */
 int EdInitGotoInterior(ED_EVENT_INFO *info, ED_EVENT_PARAM *param);
 

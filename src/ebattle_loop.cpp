@@ -4,7 +4,11 @@
 
 #include "common.h"
 
+#include <libvu0.h>
+
 #include "ebattle.hpp"
+#include "edit.hpp"
+#include "editloop.hpp"
 #include "gamepad.hpp"
 
 /* The rest of the ebattle module: the intro, the main loop and the draw pass. */
@@ -82,11 +86,50 @@ int EdPadDown(int keys, int mode) {
     return 0;
 }
 
+static int keylock();
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", keylock__Fv);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", GetRXf__Fv);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", GetRYf__Fv);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", GetLXf__Fv);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", GetLYf__Fv);
+
+/**
+ * Returns the right stick's horizontal input, or zero while editor input is locked.
+ */
+static float GetRXf() {
+    if (keylock() != 0) {
+        return 0.0f;
+    }
+    return EdGetRXf(1);
+}
+
+/**
+ * Returns the right stick's vertical input, or zero while editor input is locked.
+ */
+static float GetRYf() {
+    if (keylock() != 0) {
+        return 0.0f;
+    }
+    return EdGetRYf(1);
+}
+
+/**
+ * Returns the left stick's horizontal input, or zero while editor input is locked.
+ */
+static float GetLXf() {
+    if (keylock() != 0) {
+        return 0.0f;
+    }
+    return EdGetLXf(1);
+}
+
+/**
+ * Returns the left stick's vertical input, or zero while editor input is locked.
+ */
+static float GetLYf() {
+    if (keylock() != 0) {
+        return 0.0f;
+    }
+    return EdGetLYf(1);
+}
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", PadOn__Fi);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", PadDown__Fi);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", CameraAutoMove__FP13CCameraFollowP6CCPolyPfff);
@@ -102,4 +145,10 @@ INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdAGetViewAngleV__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdASetViewAngle__Fff);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdMoveChara__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdInitHashigo__FP13ED_EVENT_INFOP14ED_EVENT_PARAM);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdInitGotoInterior__FP13ED_EVENT_INFOP14ED_EVENT_PARAM);
+
+int EdInitGotoInterior(ED_EVENT_INFO *info, ED_EVENT_PARAM *param) {
+    sceVu0CopyVector(info->vector_arguments[0], param->position);
+    sceVu0CopyVector(info->vector_arguments[1], param->rotation);
+    sceVu0CopyVector(info->vector_arguments[2], param->camera_pos);
+    return param->point->minimum_progress;
+}

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "common.h"
+
+#include "dataalloc_fwd.hpp"
 #include "texture.hpp"
 
 class CCharacter;
@@ -217,25 +219,6 @@ void EdPartsObjectOnOff(CMapParts *, EDITPARTS_INFO *, int);
 void GetElementObjName(EDITPARTS_INFO *info, char **names, int element, int mode);
 
 /**
- * Loads one villager from an already resident character pack.
- *
- * @mangled EdLoadVillager__FPUiPcP12CNPCharacterP14CDataAlloc2_1_
- * @address 0x1860C0
- * @size 0x1CC
- */
-int EdLoadVillager(unsigned int *pack, char *name, CNPCharacter *villager,
-                   CDataAlloc2<1> *arena);
-
-/**
- * Loads one villager's character pack from the editor data directory.
- *
- * @mangled EdLoadVillager__FPcP12CNPCharacterP14CDataAlloc2_1_
- * @address 0x186290
- * @size 0xC8
- */
-int EdLoadVillager(char *name, CNPCharacter *villager, CDataAlloc2<1> *arena);
-
-/**
  * Installs the common and map-specific event bytecode streams.
  *
  * @mangled EdSetEventScript__FPcPcP14CDataAlloc2_1_
@@ -351,6 +334,43 @@ CNPCharacter *EdNowTalkChara();
  * @size 0xC
  */
 int EdNowTalkCharaInfoID();
+
+/**
+ * Tests whether a villager can appear under the current selection and part availability.
+ *
+ * @mangled EdCheckVillagerIn__FiP13VILLAGER_INFO
+ * @address 0x185AF0
+ * @size 0x158
+ */
+int EdCheckVillagerIn(int index, VILLAGER_INFO *villager);
+
+/**
+ * Turns a character towards a world position, a limited step each call.
+ *
+ * @mangled turn_chara__FP10CCharacterPff
+ * @address 0x18B0E0
+ * @size 0xC4
+ */
+void turn_chara(CCharacter *character, float *position, float speed);
+
+/**
+ * Resets editor-event parameters, action sequences, sprites and object handles.
+ *
+ * @mangled EdInitEventParamSimple__Fv
+ * @address 0x196F00
+ * @size 0x31C
+ */
+int EdInitEventParamSimple();
+
+/**
+ * Starts one editor event: clears the event parameters, takes the light and
+ * ambient colour the map is drawn with, loads the event script and runs it.
+ *
+ * @mangled EdEventInit__FiP14CDataAlloc2_1_Pc
+ * @address 0x1973B0
+ * @size 0x2E8
+ */
+int EdEventInit(int event_no, CDataAlloc2<1> *arena, char *name);
 
 /**
  * Reports whether an editable part has been placed and still has work left.

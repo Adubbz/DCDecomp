@@ -4,8 +4,10 @@
 
 #include <cstring>
 
+#include "mdt.hpp"
 #include "texture.hpp"
 #include "tim2.hpp"
+#include "visual.hpp"
 
 void SetTextureInfo(CTexture *tex, char *name, TM2_head *head) {
     TM2_picture *pic = (TM2_picture *) ((u_char *) head + 16);
@@ -116,7 +118,11 @@ void SetTextureInfo(CTexture *tex, char *name, u_char *buffer) {
 
 INCLUDE_ASM("asm/nonmatchings/visualvu1", Initialize__7CVisualFv);
 INCLUDE_ASM("asm/nonmatchings/visualvu1", __ct__7CVisualFv);
-INCLUDE_ASM("asm/nonmatchings/visualvu1", RemakeData__10CVisualVu1FPUi);
+
+int CVisualVu1::RemakeData(unsigned int *data) {
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__10CVisualVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
 INCLUDE_ASM("asm/nonmatchings/visualvu1", SetShadowData__FPUiPA4_f);
 INCLUDE_ASM("asm/nonmatchings/visualvu1", SetMaterial__FPUiP12MDT_MATERIAL);

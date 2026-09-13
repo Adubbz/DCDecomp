@@ -186,7 +186,6 @@ void SndSeSeqPlayStop(int sound_id, int step, int flag);
  * @mangled setbilinear__Fi
  * @address 0x15BC10
  * @size 0xC
- * @unknownret
  */
 void setbilinear(int on);
 

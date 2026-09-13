@@ -1,14 +1,105 @@
 #pragma once
 
 #include "common.h"
+#include "sce/libmc.h"
 
-// Forward declarations for the types these declarations name. The skeleton
-// headers are generated from the retail symbol table, which knows the type
-// names but not where they live.
-struct MC_ICON_DATA;
+/**
+ * One icon file the memory-card browser draws a save with.
+ */
+struct MC_ICON_FILE {
+    char *name; /**< Icon file the browser reads. */
+    s32 unk_4;
+    s32 unk_8;
+};
 
+STATIC_ASSERT(sizeof(MC_ICON_FILE) == 0xC);
+
+/**
+ * The three icons one save is written with, which SetIconData takes and
+ * MakeMcIconSysInfo names in the icon.sys it builds.
+ */
+struct MC_ICON_DATA {
+    MC_ICON_FILE view; /**< Icon the browser draws while viewing the save. */
+    MC_ICON_FILE copy; /**< Icon the browser draws while copying the save. */
+    MC_ICON_FILE del;  /**< Icon the browser draws while deleting the save. */
+};
+
+STATIC_ASSERT(sizeof(MC_ICON_DATA) == 0x24);
+
+/**
+ * What the library reports about the card in one slot.
+ */
+struct MC_CARD_INFO {
+    s32 exist;  /**< Whether the slot holds a card the game can use. */
+    s32 type;   /**< Which kind of card the slot holds. */
+    s32 format; /**< Whether that card is formatted. */
+    s32 unk_0C; /**< Whether the save on the card is an older layout. */
+    s32 unk_10;
+    s32 unk_14;
+    s32 free; /**< Clusters the card has left. */
+    s32 unk_1C;
+    s32 result; /**< What the library's last call on the slot returned. */
+};
+
+STATIC_ASSERT(sizeof(MC_CARD_INFO) == 0x24);
+
+/**
+ * What one save on a card holds, as the load menu lists it.
+ */
+struct MC_SAVE_FILE_INFO {
+    s32 unk_00;      /**< Whether the slot holds a save this build can read. */
+    s32 unk_04;      /**< Whether the slot holds a save this build can read. */
+    char name[0x20]; /**< Name of the character the save was made by. */
+    float play_time; /**< How long that save has been played for. */
+    s8 dng_status;   /**< How far into the dungeon the save has reached. */
+    u8 unk_2D[3];
+    s32 unk_30;
+    s32 quest; /**< Which of the save's quests are open. */
+};
+
+STATIC_ASSERT(sizeof(MC_SAVE_FILE_INFO) == 0x38);
+
+/** Slots the library reads cards from. */
+#define MC_CARD_MAX 2
+
+/** Saves one card holds. */
+#define MC_SAVE_FILE_MAX 12
+
+/**
+ * Drives every memory-card operation the game asks for. SetFuncNo picks which
+ * one runs, and Step carries it a little further each frame until it reports
+ * that it has finished or failed.
+ */
 class CMemoryCardAccess {
 public:
+    s32 port;    /**< Slot the operation runs against. */
+    s32 file_no; /**< Save the operation runs against. */
+    s32 unk_008;
+    s32 unk_00C;
+    s32 unk_010;
+    s32 unk_014;
+    s32 unk_018;
+    char version[0x20];   /**< Build the save was written by, which a load checks. */
+    char dir_name[0x20];  /**< Directory the game's saves sit in, which differs by region. */
+    char file_name[0x20]; /**< File the operation reads or writes. */
+    char cur_dir[0x40];   /**< Directory the card was in before the operation changed it. */
+    s32 func_no;          /**< Operation Step is carrying out. */
+    s32 unk_0C0;
+    s32 step; /**< How far through that operation Step has got. */
+    s32 unk_0C8;
+    void *save_file_info; /**< The table the loaded save details are kept in. */
+    char *buf;            /**< Where the save is built up before it is written. */
+    char *unk_0D4;
+    s32 unk_0D8;
+    s32 unk_0DC;
+    s32 unk_0E0;
+    s32 unk_0E4;
+    s32 unk_0E8;
+    sceMcIconSys icon_sys;                         /**< The icon.sys written alongside the save. */
+    MC_ICON_DATA icon_data;                        /**< Icons that icon.sys names. */
+    MC_CARD_INFO card[MC_CARD_MAX];                /**< What the library reports about each slot. */
+    MC_SAVE_FILE_INFO file_info[MC_SAVE_FILE_MAX]; /**< What each save on the card holds. */
+
     /**
      * @mangled Initialize__17CMemoryCardAccessFv
      * @address 0x2135D0
@@ -50,20 +141,21 @@ public:
     void MakeMcIconSysInfo(void);
 
     /**
+     * Picks the operation Step carries out, and waits for whatever the library
+     * was doing before to finish.
+     *
      * @mangled SetFuncNo__17CMemoryCardAccessFi
      * @address 0x213B90
      * @size 0x50
-     * @unknownret
      */
-    void SetFuncNo(int);
+    void SetFuncNo(int no);
 
     /**
      * @mangled GetFuncNo__17CMemoryCardAccessFv
      * @address 0x213BE0
      * @size 0x10
-     * @unknownret
      */
-    void GetFuncNo(void);
+    int GetFuncNo(void);
 
     /**
      * @mangled Step__17CMemoryCardAccessFv
@@ -77,17 +169,15 @@ public:
      * @mangled SetVersion__17CMemoryCardAccessFPc
      * @address 0x213DB0
      * @size 0x30
-     * @unknownret
      */
-    void SetVersion(char *);
+    void SetVersion(char *version);
 
     /**
      * @mangled GetVersion__17CMemoryCardAccessFv
      * @address 0x213DE0
      * @size 0x10
-     * @unknownret
      */
-    void GetVersion(void);
+    char *GetVersion(void);
 
     /**
      * @mangled SearchMcType__17CMemoryCardAccessFv
@@ -218,10 +308,12 @@ public:
     void McError(int);
 
     /**
+     * Spins until the library has finished whatever it was doing, throwing
+     * away what that call returned.
+     *
      * @mangled DmySync__17CMemoryCardAccessFv
      * @address 0x216BF0
      * @size 0x50
-     * @unknownret
      */
     void DmySync(void);
 
@@ -233,3 +325,5 @@ public:
      */
     void McUnFormatForDebug(void);
 };
+
+STATIC_ASSERT(sizeof(CMemoryCardAccess) == 0x7BC);
