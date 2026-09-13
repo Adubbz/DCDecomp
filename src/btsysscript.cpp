@@ -15,7 +15,9 @@ INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSystemScriptInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSystemScriptAfter__Fv);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSystemScriptRun__FiP14CDataAlloc2_1_);
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSetMapJumpFloor__Fi);
+void BtSetMapJumpFloor(int floor) {
+    BtMapJumpFloor = floor;
+}
 
 INCLUDE_ASM("asm/nonmatchings/btsysscript", GetStackInt__FP12RS_STACKDATA__2);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", GetStackFloat__FP12RS_STACKDATA__2);
