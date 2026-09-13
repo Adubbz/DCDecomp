@@ -199,7 +199,18 @@ void CActionSeq::AnimeTrg(int delay) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/actionseq", MotionSeq__10CActionSeqFiifi);
+void CActionSeq::MotionSeq(int motion, int mode, float speed, int flags) {
+    ACT_SEQ *sequence = NextMotionSeq();
+    if (sequence != NULL) {
+        sequence->operation = ACT_SEQ_MOTION;
+        sequence->duration = 0;
+        sequence->arguments.animation.id = motion;
+        sequence->arguments.animation.mode = mode;
+        sequence->arguments.animation.playback.speed = speed;
+        sequence->arguments.animation.flags = flags & 4;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/actionseq", AnimeSeq__10CActionSeqFiiii);
 INCLUDE_ASM("asm/nonmatchings/actionseq", CheckEnd__10CActionSeqFv);
 INCLUDE_ASM("asm/nonmatchings/actionseq", DeleteSeq__FP7ACT_SEQ);
