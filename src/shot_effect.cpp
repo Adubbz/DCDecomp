@@ -107,7 +107,11 @@ void CSHOT_EFFECT::SetUserID2(s32 id) {
 }
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Initialize__12CSHOT_EFFECTFv);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Entry__17CSHOT_EFFECT_PACKFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i);
-INCLUDE_ASM("asm/nonmatchings/shot_effect", SetUserID2__17CSHOT_EFFECT_PACKFi);
+void CSHOT_EFFECT_PACK::SetUserID2(s32 id) {
+    if (current_effect != -1) {
+        effect[current_effect].SetUserID2(id);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/shot_effect", SetDmg__17CSHOT_EFFECT_PACKFi);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Set__15CSHOT_MACHINGUNFPfPfii);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Step__15CSHOT_MACHINGUNFv);
