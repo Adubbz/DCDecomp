@@ -418,7 +418,10 @@ void SetMenuCharaEffectReadFlag(int flag) {
     MenuCharaEffectReadFlag = flag;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu_misc", GetMenuCharaEffectReadFlag__Fv);
+int GetMenuCharaEffectReadFlag() {
+    return MenuCharaEffectReadFlag;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetDngWepEffectPointer__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetWepEffectMenuReadBuf__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", SetOldEffectKind__Fi);
