@@ -406,12 +406,13 @@ void _SET_SND_FRM(RS_STACKDATA *, int);
 void _SET_LOOP_SND(RS_STACKDATA *, int);
 
 /**
+ * Stops the current monster's active sound sequence.
+ *
  * @mangled _STOP_LOOP_SND__FP12RS_STACKDATAi
  * @address 0x1E4740
  * @size 0x70
- * @unknownret
  */
-void _STOP_LOOP_SND(RS_STACKDATA *, int);
+int _STOP_LOOP_SND(RS_STACKDATA *, int);
 
 /**
  * Clears the current monster's active sound sequence.
