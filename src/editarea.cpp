@@ -80,7 +80,15 @@ void CEditArea::SetAlt(int x, int y, int altitude_) {
     }
     grid[x][y].altitude = altitude_;
 }
-INCLUDE_ASM("asm/nonmatchings/editarea", GetAlt_i__9CEditAreaFii);
+int CEditArea::GetAlt_i(int x, int y) {
+    if (x < 0 || x >= width) {
+        return 0;
+    }
+    if (y < 0 || y >= height) {
+        return 0;
+    }
+    return grid[x][y].altitude;
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", GetAlt__9CEditAreaFii);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetAlt__9CEditAreaFfff);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetAlt_i__9CEditAreaFfff);
