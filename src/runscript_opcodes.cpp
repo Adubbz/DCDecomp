@@ -45,7 +45,13 @@ INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_FALL__FP12RS_STACK
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_MUTEKI__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_ALPHA__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_CHK_ALPHA__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_DEAD__FP12RS_STACKDATAi);
+
+int _STATUS_SET_DEAD(RS_STACKDATA *, int) {
+    NowMonstorUnit->monster[NowMonstorUnit->GetCurrentMonsterIndex()].state = -1;
+    NowMonstorUnit->unk_04C--;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_EVENT__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _RUN_SCRIPT__FP12RS_STACKDATAi);
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @870);
