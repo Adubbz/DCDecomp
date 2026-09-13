@@ -1,4 +1,5 @@
 #include "actionseq.hpp"
+#include "sce/libvu0.h"
 
 void CActionSeq::Initialize(ACT_SEQ *records, int count) {
     ClearSeq();
@@ -92,7 +93,16 @@ ACT_SEQ *CActionSeq::NextAnimeSeq() {
     return sequence;
 }
 
-INCLUDE_ASM("asm/nonmatchings/actionseq", MoveSeq__10CActionSeqFPfi);
+void CActionSeq::MoveSeq(float *destination, int frames) {
+    ACT_SEQ *sequence = NextMoveSeq();
+    if (sequence != NULL) {
+        sequence->operation = ACT_SEQ_MOVE;
+        sceVu0CopyVector(sequence->arguments.vector, destination);
+        sceVu0CopyVector(queued_position, destination);
+        sequence->duration = frames;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/actionseq", MoveSeq__10CActionSeqFPff);
 INCLUDE_ASM("asm/nonmatchings/actionseq", MoveSeq__10CActionSeqFi);
 INCLUDE_ASM("asm/nonmatchings/actionseq", SetPos__10CActionSeqFPf);
