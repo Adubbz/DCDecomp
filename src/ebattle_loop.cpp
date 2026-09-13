@@ -53,7 +53,14 @@ void set_draw_ok(int type, int button) {
     ok_draw_cnt = 30;
     ok_type = type;
 }
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", draw_ok_loop__Fv);
+void draw_ok_loop() {
+    if (ok_draw_cnt > 0) {
+        --ok_draw_cnt;
+        if (ok_draw_cnt < 0) {
+            ok_draw_cnt = 0;
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", draw_ok__Fi);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", button_scale__Fi);
 static int key_mode = 0xFFFF;
