@@ -23,6 +23,12 @@ INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", @1704);
 /** Enemy-battle diagnostic display mode. */
 extern int debug_mode;
 
+/** Frames remaining for the enemy-battle confirmation effect. */
+extern int ok_draw_cnt;
+
+/** Button shown by the enemy-battle confirmation effect, or -1 for none. */
+extern int ok_effect_button;
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBInitIntro__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBSetMotion__FP10CCharacterPi);
 void EBDebug(int mode) {
@@ -35,7 +41,10 @@ INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBLoop__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", DrawButton__Fiiifi);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", DrawButtonSub__Fiiiif);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", init_draw_ok__Fv);
+void init_draw_ok() {
+    ok_draw_cnt = 0;
+    ok_effect_button = -1;
+}
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", set_draw_ok__Fii);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", draw_ok_loop__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", draw_ok__Fi);
