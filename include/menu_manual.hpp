@@ -63,7 +63,7 @@ void DrawManualMsg();
  * @address 0x00233DD0
  * @size 0x130
  */
-void InitMenuManual(int *result, int *load_buffer);
+void InitMenuManual(int *result, u_long128 *load_buffer);
 
 /**
  * Builds the message buffer for the current manual entry.

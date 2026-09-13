@@ -18,9 +18,12 @@ ignore the return register and their bodies do not return a defined value.
 `BtLoadMonstor(int)` likewise has the existing void contract; its stale
 unknown-return tag is removed.
 
-`InitMenuManual__FPiP1` takes two `int *` arguments. The repeated-type encoding
-P1 refers back to Pi. BattleManualInit forwards both argument registers
-unchanged; the initializer uses the second as its load-buffer address.
+`InitMenuManual__FPiP1` takes `int *` and `u_long128 *` arguments. P1 is
+the MWCC pointer-to-unsigned-128-bit spelling, independently demonstrated
+by the existing PERFECT `MGInitVif1Packet(u_long128 *, u_long128 *)`
+(`__FP1P1`). It is not a repeated-type back-reference; two `int *` arguments
+compile as PiPi. BattleManualInit forwards both argument registers unchanged;
+the initializer uses the second as its load-buffer address.
 
 Exposing the new declarations changes MWCC's allocation of two identical zero
 arguments in EdDrawSky. Giving the second argument an explicit local preserves
