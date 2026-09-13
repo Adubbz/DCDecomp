@@ -23,6 +23,7 @@
 
 extern int MenuItemUseVolume;
 extern s16 MenuCharaEffectReadFlag;
+extern BT_SHOT_EFFECT *WepEffectMenuPt;
 extern int EditMenuStatus[7];
 extern CDataAlloc2<1> EdMenuBuffer;
 extern CDataAlloc2<1> MenuExCashBuffer;
@@ -422,7 +423,10 @@ int GetMenuCharaEffectReadFlag() {
     return MenuCharaEffectReadFlag;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu_misc", GetDngWepEffectPointer__Fv);
+BT_SHOT_EFFECT *GetDngWepEffectPointer() {
+    return WepEffectMenuPt;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetWepEffectMenuReadBuf__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", SetOldEffectKind__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", SetWepEffectMenuReadBuf__FP1);
