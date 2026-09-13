@@ -22,7 +22,10 @@ void *operator new(u_int, u_long128 *block) {
     return block;
 }
 
-INCLUDE_ASM("asm/nonmatchings/frame", __nwa__FUiP1);
+void *operator new[](u_int, u_long128 *block) {
+    return block;
+}
+
 void DevInit() {
     sceDmaEnv env;
 
