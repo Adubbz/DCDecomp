@@ -98,5 +98,3 @@ INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _DEL_REFERENCE__FP12RS_STACKDA
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SHADOW_FLAG__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", BtSetEventScript__FP10CRunScriptPcP14CDataAlloc2_1_);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", BtSetEventExtendTable__Fv);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", GetItemShopList__Fi);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", InitShopItemListData__FP13SHOP_ITEMLIST);

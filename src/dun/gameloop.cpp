@@ -55,6 +55,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "battlemenu.hpp"
 #include "btactstatus.hpp"
 #include "btmisc.hpp"
 #include "btsysscript.hpp"
@@ -100,7 +101,6 @@
 #include "runeffect.hpp"
 #include "runscript_opcodes.hpp"
 #include "savedata.hpp"
-#include "shop_battlemenu.hpp"
 #include "shot_effect.hpp"
 #include "shot_effect_pack.hpp"
 #include "shot_firebar.hpp"

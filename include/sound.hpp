@@ -322,3 +322,14 @@ public:
      */
     void LoadSeq_I(int, int);
 };
+
+STATIC_ASSERT(sizeof(CSound) == 1);
+
+/**
+ * The sound driver the whole game plays through. It holds nothing of its own:
+ * every call reaches the IOP module behind it.
+ *
+ * @address 0x2A252C
+ * @size 0x1
+ */
+extern CSound CSnd;

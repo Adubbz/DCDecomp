@@ -1,10 +1,14 @@
 #include "objanime.hpp"
 
 INCLUDE_ASM("asm/nonmatchings/objanime", EffectMacroStep__FPf);
+INCLUDE_RODATA("asm/nonmatchings/objanime", @621__2);
+INCLUDE_RODATA("asm/nonmatchings/objanime", @622);
+INCLUDE_RODATA("asm/nonmatchings/objanime", @623);
 INCLUDE_ASM("asm/nonmatchings/objanime", EffectSmoke__FP12CEffectGroupPffi);
 INCLUDE_ASM("asm/nonmatchings/objanime", EffectWaterSpray__FP12CEffectGroupPfPfii);
 INCLUDE_ASM("asm/nonmatchings/objanime", EffectHamon__FP12CEffectGroupPff);
 INCLUDE_ASM("asm/nonmatchings/objanime", DepthOfField__FPfiii);
+INCLUDE_RODATA("asm/nonmatchings/objanime", @766);
 INCLUDE_ASM("asm/nonmatchings/objanime", Initialize__13OBJ_ANIME_SEQFv);
 INCLUDE_ASM("asm/nonmatchings/objanime", __ct__13OBJ_ANIME_SEQFv);
 INCLUDE_ASM("asm/nonmatchings/objanime", ObjAnimeAllStop__Fv);
@@ -19,5 +23,13 @@ INCLUDE_ASM("asm/nonmatchings/objanime", InitEditEffect__FP6CFrameP16EDIT_EFFECT
 INCLUDE_ASM("asm/nonmatchings/objanime", InitEditEffect__FP6CFrameP16EPARTS_FUNC_DATAP16EDIT_EFFECT_INFO);
 INCLUDE_ASM("asm/nonmatchings/objanime", CheckEditEffect__FP16EDIT_EFFECT_INFOf);
 INCLUDE_ASM("asm/nonmatchings/objanime", EditEffectStep__Fv);
+INCLUDE_RODATA("asm/nonmatchings/objanime", @606);
+INCLUDE_RODATA("asm/nonmatchings/objanime", @607);
+INCLUDE_RODATA("asm/nonmatchings/objanime", @608);
+INCLUDE_RODATA("asm/nonmatchings/objanime", @447__2);
+INCLUDE_RODATA("asm/nonmatchings/objanime", @448);
+INCLUDE_RODATA("asm/nonmatchings/objanime", @449);
+INCLUDE_RODATA("asm/nonmatchings/objanime", @450);
+INCLUDE_RODATA("asm/nonmatchings/objanime", @451);
 INCLUDE_ASM("asm/nonmatchings/objanime", EditEffectStep2__Fv);
 INCLUDE_ASM("asm/nonmatchings/objanime", DrawEditEffect__FP16EDIT_EFFECT_INFOP7CCameraP12CEffectGroup);

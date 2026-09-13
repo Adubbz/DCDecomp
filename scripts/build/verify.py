@@ -95,6 +95,10 @@ def _scan(pattern, src_dir):
         for name in sorted(files):
             if not name.endswith(('.c', '.cpp')):
                 continue
+            # Compiler temporaries live beside sources and can disappear
+            # during a scan. Match CMake, layout.py and disassemble.py.
+            if name.startswith('tmp'):
+                continue
             path = os.path.join(root, name)
             text = open(path, encoding='utf-8', errors='replace').read()
             for symbol in pattern.findall(text):
