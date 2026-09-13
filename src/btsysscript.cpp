@@ -1,8 +1,10 @@
 #include "btsysscript.hpp"
+
+#include "btmisc.hpp"
 #include "camera.hpp"
 #include "camerafollow.hpp"
-#include "dungeonmap.hpp"
 #include "dun/gameloop.hpp"
+#include "dungeonmap.hpp"
 #include "frame.hpp"
 #include "runscript.hpp"
 
@@ -58,7 +60,17 @@ int _OPEN_ENTRANCE_WINDOW(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _OPEN_ESCAPE_WINDOW__FP12RS_STACKDATAi);
+int _OPEN_ESCAPE_WINDOW(RS_STACKDATA *stack, int argument_count) {
+    if (stack->type != RS_PTR) {
+        return 0;
+    }
+
+    BtEventInfo.escape_result = stack->p;
+    BtBattleMusic_Stop();
+    BtEventInfo.request = 6;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GO_DUNGEON__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_DUNGEON_MAP__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _LOAD_DUNGEON_MAP2__FP12RS_STACKDATAi);

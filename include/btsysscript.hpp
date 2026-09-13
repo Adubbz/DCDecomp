@@ -217,12 +217,13 @@ void _GET_EVENT_ROT(RS_STACKDATA *, int);
 int _OPEN_ENTRANCE_WINDOW(RS_STACKDATA *stack, int argument_count);
 
 /**
+ * Opens the dungeon escape window and retains its result slot.
+ *
  * @mangled _OPEN_ESCAPE_WINDOW__FP12RS_STACKDATAi
  * @address 0x1BC420
  * @size 0x60
- * @unknownret
  */
-void _OPEN_ESCAPE_WINDOW(RS_STACKDATA *, int);
+int _OPEN_ESCAPE_WINDOW(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _GO_DUNGEON__FP12RS_STACKDATAi
