@@ -1053,9 +1053,8 @@ static void GetNearVill(CCamera *camera, CCharacter *player, CNPCharacter *villa
     for (i = 0; i < 10; i++) {
         indices[i] = i;
         distances[i] = -1.0f;
-        int *near_camera = &villagers[i].near_camera;
         if (villagers[i].near_camera != 0) {
-            *near_camera = 0;
+            villagers[i].near_camera = 0;
             villagers[i].chara.GetPosition(villager_position);
             sceVu0SubVector(camera_offset, villager_position, camera_position);
             if (sceVu0InnerProduct(camera_offset, camera_direction) > 0.0f)
@@ -1066,18 +1065,14 @@ static void GetNearVill(CCamera *camera, CCharacter *player, CNPCharacter *villa
     while (i < 9) {
         int compare_index = i + 1;
         while (compare_index < 10) {
-            float *compare_distance = &distances[compare_index];
-            if (*compare_distance >= 0.0f) {
-                float *sort_distance = &distances[i];
-                if (*sort_distance > *compare_distance || *sort_distance < 0.0f) {
-                    int *sort_number = &indices[i];
-                    int index = *sort_number;
-                    int *compare_number = &indices[compare_index];
-                    *sort_number = *compare_number;
-                    *compare_number = index;
-                    float distance = *sort_distance;
-                    *sort_distance = *compare_distance;
-                    *compare_distance = distance;
+            if (distances[compare_index] >= 0.0f) {
+                if (distances[i] > distances[compare_index] || distances[i] < 0.0f) {
+                    int index = indices[i];
+                    indices[i] = indices[compare_index];
+                    indices[compare_index] = index;
+                    float distance = distances[i];
+                    distances[i] = distances[compare_index];
+                    distances[compare_index] = distance;
                 }
             }
             compare_index++;
