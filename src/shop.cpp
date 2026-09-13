@@ -5,6 +5,7 @@
 #include "shop.hpp"
 
 #include "dataread.hpp"
+#include "menu_draw.hpp"
 #include "savedata.hpp"
 
 INCLUDE_ASM("asm/nonmatchings/shop", GetItemShopList__Fi);
@@ -21,7 +22,13 @@ INCLUDE_ASM("asm/nonmatchings/shop", IconAutoMove__12ShopIconMoveFii);
 INCLUDE_ASM("asm/nonmatchings/shop", IconAutoMoveDraw__12ShopIconMoveFv);
 INCLUDE_ASM("asm/nonmatchings/shop", GetItemMoney__Fii);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopNoInput__FPiii);
-INCLUDE_ASM("asm/nonmatchings/shop", InitAllHaveData__Fv);
+
+void InitAllHaveData() {
+    InitHaveData(ShopHaveItemPt);
+    InitHaveWep(ShopHaveWepPt);
+    InitHaveAttach(ShopHaveAttachPt);
+    ShopHaveItemPt->unk_00 = 0;
+}
 INCLUDE_ASM("asm/nonmatchings/shop", CommonShopLoop__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopPolySetInit__Fii);
 INCLUDE_ASM("asm/nonmatchings/shop", SetItemShopTalkMode__Fii);

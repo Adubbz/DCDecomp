@@ -23,6 +23,31 @@ struct SHOP_ITEMLIST {
 STATIC_ASSERT(sizeof(SHOP_ITEMLIST) == 0xFC);
 
 /**
+ * Stores one item held temporarily by a menu.
+ */
+struct IHAVEITEM {
+    s32 unk_00;
+    u8 unk_04[0x10];
+};
+
+STATIC_ASSERT(sizeof(IHAVEITEM) == 0x14);
+
+/**
+ * Points to the item record held by the shop menu.
+ */
+extern IHAVEITEM *ShopHaveItemPt;
+
+/**
+ * Points to the weapon record held by the shop menu.
+ */
+extern WEAPON_HAVE *ShopHaveWepPt;
+
+/**
+ * Points to the attachment record held by the shop menu.
+ */
+extern ATTACH_LIST *ShopHaveAttachPt;
+
+/**
  * @mangled GetItemShopList__Fi
  * @address 0x1E68D0
  * @size 0x20
