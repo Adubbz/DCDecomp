@@ -1,8 +1,8 @@
 #pragma once
 
-#include <libvu0.h>
-
 #include "common.h"
+
+#include <libvu0.h>
 
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type

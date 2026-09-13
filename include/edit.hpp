@@ -172,7 +172,9 @@ struct ED_EVENT_INFO {
 
 STATIC_ASSERT(sizeof(ED_EVENT_INFO) == 0x450);
 
-/** What the Georama editor is doing now. */
+/**
+ * What the Georama editor is doing now.
+ */
 extern "C" ED_EVENT_INFO EdEventInfo;
 
 /**
@@ -877,10 +879,14 @@ void EdMoveVillager(VILLAGER_INFO *villager);
  */
 void EdMoveVillagerSubMap(VILLAGER_INFO *villager);
 
-/** Texture used to hold a captured editor frame. */
+/**
+ * Texture used to hold a captured editor frame.
+ */
 extern CTexture frame_image_tex;
 
-/** Whether the editor has a pending frame capture. */
+/**
+ * Whether the editor has a pending frame capture.
+ */
 extern int frame_image_flag;
 
 /**

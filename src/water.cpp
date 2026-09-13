@@ -11,6 +11,7 @@ void CWater::SetParam(float param_0, float param_1, float param_2, float param_3
     unk_09C = param_2;
     unk_0A0 = param_3;
 }
+
 void CWater::SetColor(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha) {
     color[0] = red;
     color[1] = green;

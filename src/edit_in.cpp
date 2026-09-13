@@ -41,6 +41,10 @@ INCLUDE_RODATA("asm/nonmatchings/edit_in", @1369);
 INCLUDE_ASM("asm/nonmatchings/edit_in", LoadTexture__Fv__2);
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @1399);
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @1400);
+
+/**
+ * Reserved character-loading hook with no operation.
+ */
 static void LoadChara() {
 }
 INCLUDE_ASM("asm/nonmatchings/edit_in", LoadData__Fv);
@@ -76,6 +80,9 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", CommandCD__FPPv__2);
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @1627__2);
 INCLUDE_ASM("asm/nonmatchings/edit_in", CommandOBJ_ANIME__FPPv__2);
 
+/**
+ * Reserved effect-setup hook with no operation.
+ */
 static void SetEffect(EFFECT_TYPE, char *, float *, float *, float *) {
 }
 INCLUDE_ASM("asm/nonmatchings/edit_in", CommandFIRE__FPPv__2);

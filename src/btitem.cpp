@@ -7,10 +7,14 @@
 
 /* Battle item handling: treasure boxes, pickups and thrown items. */
 
-/** Item identifier shown by the small-treasure and attachment pickup flows. */
+/**
+ * Item identifier shown by the small-treasure and attachment pickup flows.
+ */
 extern int BtGetTreasureboxSmall_itemNo;
 
-/** Item quantity shown by the small-treasure and attachment pickup flows. */
+/**
+ * Item quantity shown by the small-treasure and attachment pickup flows.
+ */
 extern int BtGetTreasureboxSmall_itemVolume;
 
 /**
@@ -57,6 +61,7 @@ INCLUDE_ASM("asm/nonmatchings/btitem", BtMiniItemSelect_Loop__Fv);
 INCLUDE_ASM("asm/nonmatchings/btitem", BtGetGateKey_Init__Fi);
 INCLUDE_ASM("asm/nonmatchings/btitem", BtGetGateKey_Loop__Fv);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @969);
+
 void BtGetAttach_Init(int dungeon, int item_no) {
     int volume = 0;
 

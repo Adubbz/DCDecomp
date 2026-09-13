@@ -27,8 +27,8 @@ class CMap {
 public:
     CMapCategoryAttr category[16]; /**< Level-of-detail ranges for the map's
                                       object categories. */
-    CMapObject object[10]; /**< Scenery objects placed in this map. */
-    s32 draw_on; /**< Selects level-of-detail drawing when nonzero. */
+    CMapObject object[10];         /**< Scenery objects placed in this map. */
+    s32 draw_on;                   /**< Selects level-of-detail drawing when nonzero. */
 
     /**
      * @mangled SetObject__4CMapFiP9CFrameVu1ii

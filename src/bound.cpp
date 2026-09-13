@@ -1,5 +1,8 @@
 #include "bound.hpp"
 
+/**
+ * Returns the length of a three-component vector.
+ */
 float vuabs(float *);
 
 int CBound::InCheck(float *point, float *result) {
@@ -47,6 +50,7 @@ int CBound::InCheck(float *point, float *result) {
     return 0;
 }
 INCLUDE_ASM("asm/nonmatchings/bound", SetDir__6CBoundFP6CFramePfPfPfff);
+
 void CBound::ChangeDir(float *from_position, float *to_position, float *up_direction) {
     sceVu0CopyVector(from, from_position);
     sceVu0CopyVector(to, to_position);
@@ -57,18 +61,20 @@ INCLUDE_ASM("asm/nonmatchings/bound", UpDateDir__6CBoundFv);
 INCLUDE_ASM("asm/nonmatchings/bound", SetDir__6CBoundFPfPf);
 INCLUDE_ASM("asm/nonmatchings/bound", SetDir__6CBoundFPf);
 INCLUDE_ASM("asm/nonmatchings/bound", UpDateDirPos__6CBoundFv);
+
 void CBound::UpDate() {
     switch (state) {
-    case 1:
-        UpDateDir();
-        break;
-    case 2:
-        UpDateDirPos();
-        break;
+        case 1:
+            UpDateDir();
+            break;
+        case 2:
+            UpDateDirPos();
+            break;
     }
     if (next)
         next->UpDate();
 }
+
 void CBound::InitParam() {
     position[0] = 0.0f;
     position[1] = 0.0f;

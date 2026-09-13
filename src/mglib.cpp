@@ -1515,9 +1515,21 @@ void MGClearScreen(u_char r, u_char g, u_char b, u_char a) {
     sceVif1PkCloseDirectCode(Vif1Packet);
 }
 
+/**
+ * VU microprogram used for the fast shadow pass.
+ */
 extern u_int Vu_shadow[];
+/**
+ * VU microprogram used for the perspective-preserving shadow pass.
+ */
 extern u_int Vu_shadow2[];
+/**
+ * VU microprogram used for the second fast shadow pass.
+ */
 extern u_int Vu_shadow3[];
+/**
+ * VU microprogram restored after a shadow pass.
+ */
 extern u_int Vu_prog0f[];
 
 /* Draws a model's shadow with the fast shadow microprogram. */

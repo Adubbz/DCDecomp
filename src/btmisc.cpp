@@ -5,13 +5,19 @@
 
 /* Battle support: pack loading, item name paths, battle music, floor queries. */
 
-/** Whether the battle-music transition is active. */
+/**
+ * Whether the battle-music transition is active.
+ */
 extern int BtBattleMusic_Flag;
 
-/** The delay before the next battle-music transition. */
+/**
+ * The delay before the next battle-music transition.
+ */
 extern int BtBattleMusic_Wait;
 
-/** The current battle-music volume. */
+/**
+ * The current battle-music volume.
+ */
 extern int BtBattleMusic_Vol;
 
 INCLUDE_ASM("asm/nonmatchings/btmisc", LoadMDSFilePack__FPUiPcP14CDataAlloc2_1_);

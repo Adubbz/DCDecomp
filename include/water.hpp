@@ -38,7 +38,7 @@ public:
     float unk_064;
     float unk_068;
     CVisualPolyVu1 visual; /**< Draws the polygons of the surface. */
-    u8 color[4]; /**< Red, green, blue and alpha channels of the surface. */
+    u8 color[4];           /**< Red, green, blue and alpha channels of the surface. */
     float unk_094;
     float unk_098;
     float unk_09C;

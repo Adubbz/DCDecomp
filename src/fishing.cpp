@@ -2,19 +2,29 @@
 
 #include "fish.hpp"
 
-/** The water surface height used by the fishing simulation. */
+/**
+ * The water surface height used by the fishing simulation.
+ */
 extern float WaterLevel;
 
-/** The terrain height used by the fishing simulation. */
+/**
+ * The terrain height used by the fishing simulation.
+ */
 extern float GroundLevel;
 
-/** The fish selected for battle, or a negative value when none is selected. */
+/**
+ * The fish selected for battle, or a negative value when none is selected.
+ */
 extern int BattleFish;
 
-/** The fish displayed after an angling battle, or null when none is displayed. */
+/**
+ * The fish displayed after an angling battle, or null when none is displayed.
+ */
 extern CFish *AngleFish;
 
-/** The current tension applied to the fishing hook. */
+/**
+ * The current tension applied to the fishing hook.
+ */
 extern float pull_hook;
 
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingLoad__FP14CDataAlloc2_1_i);
@@ -71,6 +81,7 @@ INCLUDE_ASM("asm/nonmatchings/fishing", GetHookPos__FPf);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineInit__FPf);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineSetUki__FPff);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineSetHook__FPff);
+
 void FishPullHook(float tension) {
     pull_hook = tension;
 }

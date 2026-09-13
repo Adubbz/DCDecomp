@@ -77,5 +77,7 @@ struct DRAN_MAP_FIELD_SET {
 
 STATIC_ASSERT(sizeof(DRAN_MAP_FIELD_SET) == 0xD4B0);
 
-/** Drainage-field models and runtime state for the current dungeon. */
+/**
+ * Drainage-field models and runtime state for the current dungeon.
+ */
 extern "C" DRAN_MAP_FIELD_SET DranMapField;

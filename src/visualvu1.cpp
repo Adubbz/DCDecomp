@@ -125,6 +125,9 @@ int CVisualVu1::RemakeData(unsigned int *data) {
 
 INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__10CVisualVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
 
+/**
+ * Writes the shadow draw packet and its transform matrix.
+ */
 static int SetShadowData(u_int *packet, float (*matrix)[4]) {
     packet[0] = 0;
     packet[1] = 0;

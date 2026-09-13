@@ -2,12 +2,7 @@
 
 #include "collisiondata.hpp"
 #include "dun/gameloop.hpp"
-#include "dungeonmap.hpp"
-#include "frame.hpp"
 #include "mathutil.hpp"
-
-#include <cmath>
-#include <cstdio>
 
 DUNGEON_EVENT_SLOT *CDungeonEventMan::SearchPartsID(int index, int parts_id) {
     int slot_parts_id;
@@ -96,6 +91,7 @@ CDungeonEventData *CDungeonEventMan::CheckCollisionDataHit(int index) {
     }
     return NULL;
 }
+
 CDungeonEventData *CDungeonEventMan::SearchDataSlotPos(float *position) {
     for (int i = 0; i < 96; i++) {
         CDungeonEventData *event_data = &event[i];

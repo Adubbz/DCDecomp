@@ -12,6 +12,7 @@ CMapObject *CMap::SetObject(int index, CFrameVu1 *frame, int category_no, int ha
     map_object->SetFrame(frame, 0);
     return map_object;
 }
+
 CMapObject *CMap::SetObject(CFrameVu1 *frame, int category_no, int handle) {
     int index;
 
@@ -54,6 +55,7 @@ void CMap::Draw(void) {
         }
     }
 }
+
 void CMap::Initialize(void) {
     int index;
 

@@ -19,6 +19,7 @@ void CDngMessageMan::LimmitZone(void) {
     unk_04 = 0xF0;
     unk_1C = 0;
 }
+
 void CDngMessageMan::SetStatus_Dry(float water_max, float water_before, float water_now) {
     float threshold = 0.1f * water_max;
 
