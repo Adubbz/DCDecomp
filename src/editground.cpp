@@ -28,9 +28,12 @@ INCLUDE_ASM("asm/nonmatchings/editground", DrawWater__11CEditGroundFi);
 INCLUDE_ASM("asm/nonmatchings/editground", DrawRipple__11CEditGroundFi);
 INCLUDE_ASM("asm/nonmatchings/editground", DrawShadow__11CEditGroundFiff);
 INCLUDE_ASM("asm/nonmatchings/editground", DrawPartsCursor__11CEditGroundFiPfPfiPfi);
+INCLUDE_RODATA("asm/nonmatchings/editground", @1207);
 INCLUDE_ASM("asm/nonmatchings/editground", DrawEffect__11CEditGroundFP13CCameraFollowfP12CEffectGroup);
 INCLUDE_ASM("asm/nonmatchings/editground", Save__11CEditGroundFPc);
+INCLUDE_RODATA("asm/nonmatchings/editground", @1263);
 INCLUDE_ASM("asm/nonmatchings/editground", Load__11CEditGroundFPc);
+INCLUDE_RODATA("asm/nonmatchings/editground", @1325);
 INCLUDE_ASM("asm/nonmatchings/editground", Save__11CEditGroundFiP9CSaveData);
 INCLUDE_ASM("asm/nonmatchings/editground", Load__11CEditGroundFiP9CSaveData);
 INCLUDE_ASM("asm/nonmatchings/editground", PickUpPoly__11CEditGroundFP6CCPolyfff);
@@ -55,3 +58,4 @@ INCLUDE_ASM("asm/nonmatchings/editground", QueensRequest__11CEditGroundFPA64_P9C
 INCLUDE_ASM("asm/nonmatchings/editground", CheckRot__FP9CMapPartsP9CMapPartsi);
 INCLUDE_ASM("asm/nonmatchings/editground", MuskaRequest__11CEditGroundFPA64_P9CMapParts);
 INCLUDE_ASM("asm/nonmatchings/editground", YellowRequest__11CEditGroundFPA64_P9CMapParts);
+INCLUDE_RODATA("asm/nonmatchings/editground", @2120);

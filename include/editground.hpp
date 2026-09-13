@@ -1,5 +1,7 @@
 #pragma once
 
+#include <libvu0.h>
+
 #include "common.h"
 
 // Forward declarations for the types these declarations name. The skeleton
