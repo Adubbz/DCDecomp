@@ -1548,7 +1548,15 @@ void EdDrawOpenItemBox() {
 }
 
 INCLUDE_ASM("asm/nonmatchings/edit", EdSaveFrameImage__F8CTexture);
-INCLUDE_ASM("asm/nonmatchings/edit", EdSaveFrameImageTask__Fv);
+
+void EdSaveFrameImageTask() {
+    if (frame_image_flag != 0) {
+        MGMoveFrameBuffImage((sceGsTex0 *) &frame_image_tex.tex0, 0, 0, 0);
+        frame_image_tex.Initialize();
+        frame_image_flag = 0;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/edit", EdSaveFrameImageInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/edit", EdMenuLoop__FP6ClsMes);
 

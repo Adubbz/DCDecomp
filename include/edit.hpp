@@ -877,6 +877,21 @@ void EdMoveVillager(VILLAGER_INFO *villager);
  */
 void EdMoveVillagerSubMap(VILLAGER_INFO *villager);
 
+/** Texture used to hold a captured editor frame. */
+extern CTexture frame_image_tex;
+
+/** Whether the editor has a pending frame capture. */
+extern int frame_image_flag;
+
+/**
+ * Captures a pending editor frame and clears the request.
+ *
+ * @mangled EdSaveFrameImageTask__Fv
+ * @address 0x173E70
+ * @size 0x60
+ */
+void EdSaveFrameImageTask(void);
+
 /**
  * Prepares the frame capture the editor writes to a file.
  *
