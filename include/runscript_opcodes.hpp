@@ -11,51 +11,6 @@ class CRunScript;
 struct RS_STACKDATA;
 
 /**
- * @mangled GetStackInt__FP12RS_STACKDATA__3
- * @address 0x1E1640
- * @size 0x50
- * @unknownret
- * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
- */
-void GetStackInt(RS_STACKDATA *);
-
-/**
- * @mangled GetStackFloat__FP12RS_STACKDATA__3
- * @address 0x1E1690
- * @size 0x30
- * @unknownret
- * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
- */
-void GetStackFloat(RS_STACKDATA *);
-
-/**
- * @mangled GetStackString__FP12RS_STACKDATA__3
- * @address 0x1E16C0
- * @size 0x10
- * @unknownret
- * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
- */
-void GetStackString(RS_STACKDATA *);
-
-/**
- * @mangled SetStack__FP12RS_STACKDATAi__3
- * @address 0x1E16D0
- * @size 0x20
- * @unknownret
- * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
- */
-void SetStack(RS_STACKDATA *, int);
-
-/**
- * @mangled SetStack__FP12RS_STACKDATAf__3
- * @address 0x1E16F0
- * @size 0x20
- * @unknownret
- * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
- */
-void SetStack(RS_STACKDATA *, float);
-
-/**
  * @mangled _SET_MOTION__FP12RS_STACKDATAi
  * @address 0x1E1710
  * @size 0x480
