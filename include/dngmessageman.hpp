@@ -16,18 +16,21 @@ public:
     s32 unk_24;
 
     /**
+     * Selects the warning for the current dungeon restriction zone and
+     * resets its display timer.
+     *
      * @mangled LimmitZone__14CDngMessageManFv
      * @address 0x1B5B90
      * @size 0xA0
-     * @unknownret
      */
     void LimmitZone(void);
 
     /**
+     * Starts or clears the warnings for a character's remaining water.
+     *
      * @mangled SetStatus_Dry__14CDngMessageManFfff
      * @address 0x1B5C30
      * @size 0x110
-     * @unknownret
      */
     void SetStatus_Dry(float, float, float);
 
