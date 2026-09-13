@@ -158,7 +158,9 @@ void CEditArea::Clear(void) {
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", Initialize__9CEditAreaFv);
 INCLUDE_ASM("asm/nonmatchings/editarea", SetMapInfo__9CEditAreaFii);
-INCLUDE_ASM("asm/nonmatchings/editarea", GetMapNo__9CEditAreaFv);
+int CEditArea::GetMapNo() {
+    return this->map_no;
+}
 int CEditArea::GetAreaID() {
     return this->area_id;
 }
