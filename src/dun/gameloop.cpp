@@ -6349,8 +6349,6 @@ void SwordDmgCheck1(float amount, int kind) {
     }
 }
 
-FUZZY_MATCH("asm/nonmatchings/dun/gameloop", SetWeaponColor__Fv);
-
 void SetWeaponColor(void) {
     u8 red, green, blue;
     s8 element = NowWeaponHave->best_elem;
