@@ -1,5 +1,6 @@
 #include "btsysscript.hpp"
 
+#include "btitem.hpp"
 #include "btmisc.hpp"
 #include "camera.hpp"
 #include "camerafollow.hpp"
@@ -144,7 +145,12 @@ int _STOP_BATTLE_BGM(RS_STACKDATA *stack, int argument_count) {
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _NO_STATUS_RECOVER__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_QUEST_DUNGEON__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_MAP_CODE__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_ACTIVE_ITEM_ICON__FP12RS_STACKDATAi);
+
+int _SET_ACTIVE_ITEM_ICON(RS_STACKDATA *stack, int argument_count) {
+    LoadActiveItemIcon();
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_ITEM_UNIT_NO__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_IBOX_ANGLE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_IBOX_FINISH__FP12RS_STACKDATAi);

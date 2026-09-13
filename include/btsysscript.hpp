@@ -583,12 +583,13 @@ void _SET_QUEST_DUNGEON(RS_STACKDATA *, int);
 void _GET_MAP_CODE(RS_STACKDATA *, int);
 
 /**
+ * Loads the icons used by the active item slots.
+ *
  * @mangled _SET_ACTIVE_ITEM_ICON__FP12RS_STACKDATAi
  * @address 0x1BD5D0
  * @size 0x30
- * @unknownret
  */
-void _SET_ACTIVE_ITEM_ICON(RS_STACKDATA *, int);
+int _SET_ACTIVE_ITEM_ICON(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _GET_ITEM_UNIT_NO__FP12RS_STACKDATAi
