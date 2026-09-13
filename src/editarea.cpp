@@ -127,7 +127,21 @@ void CEditArea::ChainWorkClear(void) {
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", CheckRiverChain__9CEditAreaFiiii);
 INCLUDE_ASM("asm/nonmatchings/editarea", DrawGrid__9CEditAreaFv);
-INCLUDE_ASM("asm/nonmatchings/editarea", Clear__9CEditAreaFv);
+void CEditArea::Clear(void) {
+    for (int x = 0; x < width; x++) {
+        for (int y = 0; y < height; y++) {
+            grid[x][y].parts_no = -1;
+            grid[x][y].altitude = 0;
+            grid[x][y].unk_08 = 0;
+            grid[x][y].parts_id = -1;
+            grid[x][y].code = -1;
+            grid[x][y].parts_extra = -1;
+            grid[x][y].unk_18 = -1;
+        }
+    }
+    unk_2050 = 1;
+    unk_2054 = 4;
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", Initialize__9CEditAreaFv);
 INCLUDE_ASM("asm/nonmatchings/editarea", SetMapInfo__9CEditAreaFii);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetMapNo__9CEditAreaFv);
