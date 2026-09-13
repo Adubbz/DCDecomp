@@ -1378,7 +1378,30 @@ void MGStretchMoveImage(sceGsTex0 *src, const CRect_i_ &src_rect, sceGsTex0 *dst
     sceVif1PkCloseDirectCode(packet);
 }
 
-INCLUDE_ASM("asm/nonmatchings/mglib", MGMoveFrameBuffImage__FP9sceGsTex0iii);
+/* Copies both interlaced fields into the destination, one 640-by-1 line at a time. */
+void MGMoveFrameBuffImage(sceGsTex0 *dst, int x, int y, int dir) {
+    sceGsTex0 tex[2];
+    CRect_i_ even;
+    CRect_i_ odd;
+    int i;
+
+    MGGetFBuffTex(&tex[0]);
+    MGGetFBuffBackTex(&tex[1]);
+
+    for (i = 0; i < 224; i++) {
+        even.x = 0;
+        even.y = i;
+        even.width = 640;
+        even.height = 1;
+        MGMoveImage(&tex[!VSyncField__2], even, dst, 0, i * 2, 0);
+
+        odd.x = 0;
+        odd.y = i;
+        odd.width = 640;
+        odd.height = 1;
+        MGMoveImage(&tex[VSyncField__2], odd, dst, 0, i * 2 + 1, 0);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/mglib", MGFillBox__FRC8CRect_i_UcUcUcUc);
 INCLUDE_ASM("asm/nonmatchings/mglib", MGClearZBuffer__Fi);
 INCLUDE_ASM("asm/nonmatchings/mglib", MGClearScreen__FUcUcUcUc);
