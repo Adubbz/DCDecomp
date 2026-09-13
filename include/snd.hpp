@@ -419,7 +419,14 @@ void SndSetBgmVolf(float volume);
  */
 int SndGetBgmVol();
 
-/** Returns the playing background-music number. */
+/**
+ * Returns the number of the background music that is loaded now, or -1 when
+ * no set counts as loaded.
+ *
+ * @mangled SndGetBgmNo__Fv
+ * @address 0x159D10
+ * @size 0xC
+ */
 int SndGetBgmNo();
 
 /** Returns whether a background-music fade is still active. */
