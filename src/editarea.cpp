@@ -182,7 +182,9 @@ void CEditArea::AddAlt(int x, int y, int altitude_) {
     SetAlt(x, y, GetAlt_i(x, y) + altitude_);
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", GetUnitSize__9CEditAreaFv);
-INCLUDE_ASM("asm/nonmatchings/editarea", GetUnitAlt__9CEditAreaFv);
+float CEditArea::GetUnitAlt() {
+    return this->unit_alt;
+}
 CEditArea::CEditArea(void) {
     Initialize();
 }
