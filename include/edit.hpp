@@ -745,7 +745,6 @@ float InvertTime(float time);
  * @mangled EdCheckViewMode__Fv
  * @address 0x16A120
  * @size 0xC
- * @unknownret
  */
 int EdCheckViewMode(void);
 

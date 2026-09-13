@@ -6,9 +6,21 @@ void EBInitialize();
 void EBInit(float speed_mult);
 /** Starts the enemy-battle introduction sequence. */
 void EBInitIntro();
-/** Ends the enemy-battle sequence. */
+/**
+ * Ends the enemy-battle sequence.
+ *
+ * @mangled EBExit__Fv
+ * @address 0x168560
+ * @size 0x58
+ */
 void EBExit();
-/** Selects the enemy-battle diagnostic display. */
+/**
+ * Selects the enemy-battle diagnostic display.
+ *
+ * @mangled EBDebug__Fi
+ * @address 0x168420
+ * @size 0xC
+ */
 void EBDebug(int mode);
 /** Advances the enemy-battle introduction and returns its state. */
 int EBIntroLoop();

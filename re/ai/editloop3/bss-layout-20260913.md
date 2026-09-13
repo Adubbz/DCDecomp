@@ -48,3 +48,9 @@ Complete snapshot against b8ba7b90: main 1579 PERFECT, 10 fuzzy, 1320 asm,
 1 fuzzy, 1 asm, 4 unmatched. Zero function, data or objdiff regressions.
 The object-exact/main-not-linked-perfect census is 368 to 20.
 EdMapJump, AnalyzeEdit and ToAnalyzeEdit each judge PERFECT.
+
+The later shared-header pass affected register allocation in the existing
+partial EdDrawSky body. Retaining a named zero-valued second rotation argument
+restored its prior score and improved it from 97.405045 to 97.4273. This is a
+matching detail in an existing partial function, not an additional port or a
+new PERFECT claim.

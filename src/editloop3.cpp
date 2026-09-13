@@ -2113,7 +2113,9 @@ static sceVu0FMATRIX local_world;
  */
 static sceVu0FVECTOR sync_camera_ref_offset;
 
-/** Archive slots populated by event character-file loads. */
+/**
+ * Archive slots populated by event character-file loads.
+ */
 static u_int *chr_file[16];
 
 /** Saved point-light direction presets available to event scripts. */
