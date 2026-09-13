@@ -1808,7 +1808,7 @@ void LimitEditCursorPos(float *position, float *movement) {
 
     int count;
     for (count = 0; count < 8; count++) {
-        EDIT_AREA_RECT_INFO *area = &edit_info->edit_area_rects[count];
+        EDIT_AREA_RECT_INFO *area = &EditMapInfo->edit_area_rects[count];
         if (area->maximum[0] == area->minimum[0] || area->maximum[2] == area->minimum[0])
             break;
     }
@@ -1818,7 +1818,7 @@ void LimitEditCursorPos(float *position, float *movement) {
     }
 
     for (int i = 0; i < count; i++) {
-        EDIT_AREA_RECT_INFO *area = &edit_info->edit_area_rects[i];
+        EDIT_AREA_RECT_INFO *area = &EditMapInfo->edit_area_rects[i];
         if (position[0] <= area->maximum[0] && position[2] <= area->maximum[2] && position[0] >= area->minimum[0] && position[2] >= area->minimum[2]) {
             position[1] = GetMaxHeightCursor(position);
             return;
@@ -1828,7 +1828,7 @@ void LimitEditCursorPos(float *position, float *movement) {
     float nearest_distance = -1.0f;
     int nearest = -1;
     for (int i = 0; i < count; i++) {
-        EDIT_AREA_RECT_INFO *area = &edit_info->edit_area_rects[i];
+        EDIT_AREA_RECT_INFO *area = &EditMapInfo->edit_area_rects[i];
         if (previous[0] <= area->maximum[0] && previous[2] <= area->maximum[2] && previous[0] >= area->minimum[0] && previous[2] >= area->minimum[2]) {
             VectorMin(clamped, position, area->maximum);
             VectorMax(clamped, clamped, area->minimum);
@@ -1845,7 +1845,7 @@ void LimitEditCursorPos(float *position, float *movement) {
         }
     }
     if (nearest >= 0) {
-        EDIT_AREA_RECT_INFO *area = &edit_info->edit_area_rects[nearest];
+        EDIT_AREA_RECT_INFO *area = &EditMapInfo->edit_area_rects[nearest];
         VectorMin(position, position, area->maximum);
         VectorMax(position, position, area->minimum);
         position[1] = GetMaxHeightCursor(position);
@@ -1853,7 +1853,7 @@ void LimitEditCursorPos(float *position, float *movement) {
     }
 
     nearest = 0;
-    EDIT_AREA_RECT_INFO *area = &edit_info->edit_area_rects[0];
+    EDIT_AREA_RECT_INFO *area = &EditMapInfo->edit_area_rects[0];
     float max_x_distance;
     float min_x_distance;
     float min_z_distance;
@@ -1891,7 +1891,7 @@ void LimitEditCursorPos(float *position, float *movement) {
     nearest_distance = max_x_distance + max_z_distance;
 
     for (int i = 1; i < count; i++) {
-        area = &edit_info->edit_area_rects[i];
+        area = &EditMapInfo->edit_area_rects[i];
         max_x_distance = x - area->maximum[0];
         if (max_x_distance < 0.0f)
             max_x_distance = -max_x_distance;
@@ -1926,7 +1926,7 @@ void LimitEditCursorPos(float *position, float *movement) {
             nearest = i;
         }
     }
-    area = &edit_info->edit_area_rects[nearest];
+    area = &EditMapInfo->edit_area_rects[nearest];
     VectorMin(position, position, area->maximum);
     VectorMax(position, position, area->minimum);
     position[1] = GetMaxHeightCursor(position);
