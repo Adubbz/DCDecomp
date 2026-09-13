@@ -211,7 +211,20 @@ void CActionSeq::MotionSeq(int motion, int mode, float speed, int flags) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/actionseq", AnimeSeq__10CActionSeqFiiii);
+void CActionSeq::AnimeSeq(int animation, int enabled, int frames, int disable_after) {
+    ACT_SEQ *sequence = NextAnimeSeq();
+    if (sequence != NULL) {
+        sequence->operation = ACT_SEQ_ANIMATION;
+        sequence->duration = frames;
+        sequence->arguments.animation.id = animation;
+        sequence->arguments.animation.mode = enabled;
+        sequence->arguments.animation.playback.disable_after = 0;
+        if (frames > 0) {
+            sequence->arguments.animation.playback.disable_after = disable_after;
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/actionseq", CheckEnd__10CActionSeqFv);
 INCLUDE_ASM("asm/nonmatchings/actionseq", DeleteSeq__FP7ACT_SEQ);
 INCLUDE_ASM("asm/nonmatchings/actionseq", Play__10CActionSeqFv);
