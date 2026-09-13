@@ -469,14 +469,6 @@ void BtlWeaponDraw(int, float, int, int);
 void NowWeaponStatusValue(WEAPON_HAVE *);
 
 /**
- * @mangled EnableWeaponElemNone__Fi
- * @address 0x1FBFD0
- * @size 0x80
- * @unknownret
- */
-void EnableWeaponElemNone(int);
-
-/**
  * @mangled WeaponMenuCheckElemValue__FP11WEAPON_HAVEP11WEAPON_HAVE
  * @address 0x1FC050
  * @size 0xC0

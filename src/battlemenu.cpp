@@ -6,7 +6,9 @@
 #include <cstring>
 
 #include "clsmes.hpp"
+#include "itemdata.hpp"
 #include "memcard.hpp"
+#include "menu_inventory.hpp"
 #include "menu_manual.hpp"
 #include "snd.hpp"
 
@@ -130,7 +132,20 @@ INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2248);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2249);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlWeaponDraw__Fifii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", NowWeaponStatusValue__FP11WEAPON_HAVE);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", EnableWeaponElemNone__Fi);
+/**
+ * Returns the restriction on selecting no element for a weapon.
+ */
+static int EnableWeaponElemNone(int weapon_no) {
+    if (WhoIsWeaponEquip(weapon_no) == CHARA_RUBY) {
+        return 1;
+    }
+    if ((unsigned int)(weapon_no - ITEM_WEAPON_BLESSING_GUN) <= 1U ||
+        weapon_no == ITEM_WEAPON_HEXA_BLASTER || weapon_no == ITEM_WEAPON_SUPERNOVA) {
+        return 2;
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuCheckElemValue__FP11WEAPON_HAVEP11WEAPON_HAVE);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2339__2);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2340__2);
@@ -141,6 +156,7 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponSelectDialog__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", InitWeaponSelect__Fii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ExitWeaponMenuSelect__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuSelect__Fv);
+
 /**
  * Finds the preceding enabled customization row, wrapping from the top row.
  */
