@@ -36,7 +36,14 @@ void CSHOT_EFFECT::SetNoSound() {
         this->unk_A130[temp_6] = 1;
     }
 }
-INCLUDE_ASM("asm/nonmatchings/shot_effect", SetRandomRate__12CSHOT_EFFECTFf);
+void CSHOT_EFFECT::SetRandomRate(float arg0) {
+    s32 temp_5;
+
+    temp_5 = this->unk_A150;
+    if (temp_5 != -1) {
+        this->unk_A0D0[temp_5] = arg0;
+    }
+}
 void CSHOT_EFFECT::SetLifeTime(s32 arg0) {
     s32 temp_6;
 
