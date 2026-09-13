@@ -527,16 +527,26 @@ def shared_constant_name(text):
 
 
 def constant_sections(elf, wanted):
-    """{text: symbol} for each wanted string the object holds its own copy of."""
+    """{text: symbol} for each wanted string the object holds its own copy of.
+
+    The empty string is a prefix of every constant that begins with a zero
+    byte, so where several sections fit, the shortest is the one that holds
+    the string and nothing more.
+    """
     found = {}
     for symbol in elf.symtab.symbols:
         if not symbol.st_shndx or symbol.st_shndx >= len(elf.sections):
             continue
-        data = elf.sections[symbol.st_shndx].data
+        section = elf.sections[symbol.st_shndx]
+        data = section.data
         for text in wanted:
-            if data is not None and data.startswith(text.encode() + b"\0") \
+            if data is None or not section.name.startswith(".rodata"):
+                continue
+            if data.startswith(text.encode() + b"\0") \
                     and len(data) - len(text) - 1 < 16:
-                found.setdefault(text, symbol)
+                held = found.get(text)
+                if held is None or len(data) < len(elf.sections[held.st_shndx].data):
+                    found[text] = symbol
     return found
 
 
@@ -550,23 +560,35 @@ def share_constants(elf, exported, imported, parser):
     """
     if not exported and not imported:
         return
-    found = constant_sections(elf, list(exported) + list(imported))
-    missing = [t for t in list(exported) + list(imported) if t not in found]
+    # An entry is the constant's text, or `[text, name]` where the name is what
+    # both units reach it by -- which is how a constant retail's dump already
+    # names, such as one an INCLUDE_RODATA marker supplies, keeps that name.
+    exported = [(e, None) if isinstance(e, str) else tuple(e) for e in exported]
+    imported = [(e, None) if isinstance(e, str) else tuple(e) for e in imported]
+    entries = exported + imported
+    by_name = {symbol.name: symbol for symbol in elf.symtab.symbols}
+    found = constant_sections(elf, [text for text, _name in entries])
+    # The unit retail leaves the constant in already carries the shared name,
+    # so name it outright rather than looking for it by content.
+    for text, name in entries:
+        if name is not None and name in by_name:
+            found[text] = by_name[name]
+    missing = [text for text, _name in entries if text not in found]
     if missing:
         parser.error("the object holds no %s" % ", ".join(repr(m) for m in missing))
-    for text in exported:
+    for text, name in exported:
         symbol = found[text]
-        symbol.name = shared_constant_name(text)
+        symbol.name = name or shared_constant_name(text)
         symbol.st_name = elf.strtab.add_symbol(symbol.name)
         symbol.st_info = (1 << 4) | (symbol.st_info & 0xF)     # STB_GLOBAL
     if imported:
         name_index = elf.add_sh_symbol(DISCARD_SECTION)
-        for text in imported:
+        for text, name in imported:
             symbol = found[text]
             section = elf.sections[symbol.st_shndx]
             section.sh_name = name_index
             section.name = DISCARD_SECTION
-            symbol.name = shared_constant_name(text)
+            symbol.name = name or shared_constant_name(text)
             symbol.st_name = elf.strtab.add_symbol(symbol.name)
             symbol.st_info = (1 << 4) | (symbol.st_info & 0xF)
             symbol.st_shndx = 0
@@ -624,8 +646,9 @@ def main():
     Path(str(args.object) + ".coal").write_text(
         "".join(name + "\n" for name in
                 coalesced_functions(elf) +
-                [shared_constant_name(text)
-                 for text in fixups.get("export_constants_shared", [])]),
+                [shared_constant_name(entry) if isinstance(entry, str)
+                 else entry[1]
+                 for entry in fixups.get("export_constants_shared", [])]),
         encoding="utf-8")
     deferred_sections = rename_sections(elf, fixups.get("sections", {}), parser)
     data_runs(elf, fixups.get("data_runs", {}), parser)

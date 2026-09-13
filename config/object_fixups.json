@@ -197,6 +197,9 @@
     ]
   },
   "src/edit.cpp": {
+    "export_constants_shared": [
+      ["", "@272__2"]
+    ],
     "rodata_exports": [
       "@257__3",
       "@258__3",
@@ -333,6 +336,9 @@
     "sections": {}
   },
   "src/editloop.cpp": {
+    "import_constants_shared": [
+      ["", "@272__2"]
+    ],
     "symbols": {
       "CommandIMG__FPPv": "CommandIMG__FPPv__2",
       "CommandREVERBE__FPPv": "CommandREVERBE__FPPv__2"
