@@ -35,7 +35,7 @@ ACT_SEQ *CActionSeq::GetNextSeq() {
     ACT_SEQ *sequence = pool;
     int index = 0;
     for (; index < capacity; index++, sequence++) {
-        if (sequence->operation == 0) {
+        if (sequence->operation == ACT_SEQ_UNUSED) {
             sequence->next = NULL;
             return sequence;
         }

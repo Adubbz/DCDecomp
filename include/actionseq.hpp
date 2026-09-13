@@ -2,12 +2,34 @@
 
 #include "common.h"
 
+// clang-format off
+/**
+ * Identifies the operation performed by a queued action.
+ */
+enum ACT_SEQ_OPERATION {
+    ACT_SEQ_UNUSED = 0,
+    ACT_SEQ_SET_POSITION = 1,
+    ACT_SEQ_MOVE = 2,
+    ACT_SEQ_ROTATE_REFERENCE = 4,
+    ACT_SEQ_ROTATE_MOVEMENT = 5,
+    ACT_SEQ_ROTATE_ANGLE = 6,
+    ACT_SEQ_CLEAR_ROTATION = 7,
+    ACT_SEQ_WAIT_ROTATION = 8,
+    ACT_SEQ_SET_ROTATION = 10,
+    ACT_SEQ_DELAY_ROTATION = 11,
+    ACT_SEQ_MOTION = 12,
+    ACT_SEQ_TRIGGER_MOTION = 14,
+    ACT_SEQ_ANIMATION = 15,
+    ACT_SEQ_TRIGGER_ANIMATION = 18
+};
+// clang-format on
+
 /**
  * Stores a queued action and its operation-specific arguments.
  */
 struct ACT_SEQ {
-    int operation; /**< Selects the queued action. */
-    int duration;  /**< Frame count or trigger delay. */
+    ACT_SEQ_OPERATION operation; /**< Selects the queued action. */
+    int duration;                /**< Frame count or trigger delay. */
     int unk_08;
     ACT_SEQ *next; /**< Next action in the same queue. */
 
