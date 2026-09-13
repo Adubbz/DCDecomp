@@ -90,6 +90,15 @@ extern int now_bgm_vol;
 /** The background-music fade that runs: 1 while it fades in, -1 while it fades out, 0 for none. */
 extern int bgm_fade;
 
+/** The ambient loop that is playing, or -1 for none. */
+extern int now_amb_no;
+
+/** The ambient loop's volume that is set now. */
+extern int now_amb_vol;
+
+/** Whether the ambient loop plays: zero while it is stopped, one while it plays. */
+extern int now_amb_play;
+
 /** Whether the sprites that follow draw with the bilinear filter. */
 extern int linear__2;
 
@@ -403,7 +412,14 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqPlayStop__Fiii);
 #endif
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqStep__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqAllStop__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientInit__Fv);
+
+int SndAmbientInit() {
+    now_amb_no = -1;
+    now_amb_play = 0;
+    now_amb_vol = 0;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientPlay__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientStop__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientSetVol__Fi);

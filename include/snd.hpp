@@ -119,7 +119,7 @@ void SndAmbientSetVolf(float volume);
 int SndGetAmbientDefaultVol();
 
 /**
- * Starts the ambient system from nothing, and reports whether it came up.
+ * Resets the ambient loop so that none counts as playing, and returns 1.
  *
  * @mangled SndAmbientInit__Fv
  * @address 0x15B0F0
