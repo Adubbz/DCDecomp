@@ -664,7 +664,9 @@ static void CommandK(void **argv) {
     pCloth->stiffness[1] = *(float *) argv[1];
     pCloth->stiffness[2] = *(float *) argv[2];
 }
-INCLUDE_ASM("asm/nonmatchings/dataread", CommandWINDEFFECT__FPPv);
+static void CommandWINDEFFECT(void **argv) {
+    pCloth->wind_effect = *(float *) argv[0];
+}
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandGRAVITY__FPPv);
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandPOLYDIVE__FPPv);
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandBOUND__FPPv);

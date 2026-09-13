@@ -26,3 +26,9 @@ at `0x0013FC80`.
 The cloth `K` command copies three floating-point arguments into the cloth
 stiffness vector. The compiled function matches the 0x38-byte retail body at
 `0x0013FCC0`.
+
+## `CommandWINDEFFECT`
+
+The cloth `WINDEFFECT` command copies its floating-point argument into the
+cloth wind-effect scale. The compiled function matches the 0x18-byte retail
+body at `0x0013FD00`.
