@@ -94,10 +94,11 @@ public:
     void EnterTexAnime(CTexAnimeData *);
 
     /**
+     * Stops and resets every animation group.
+     *
      * @mangled DisableAll__13CTextureAnimeFv
      * @address 0x167AE0
      * @size 0x60
-     * @unknownret
      */
     void DisableAll(void);
 
