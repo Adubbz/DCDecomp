@@ -399,12 +399,13 @@ void _SET_DEAD_FLAG(RS_STACKDATA *, int);
 void _ALL_DRAW_FLAG(RS_STACKDATA *, int);
 
 /**
+ * Opens the current floor's title display.
+ *
  * @mangled _SET_FLOOR_TITLE__FP12RS_STACKDATAi
  * @address 0x1BCFE0
  * @size 0x30
- * @unknownret
  */
-void _SET_FLOOR_TITLE(RS_STACKDATA *, int);
+int _SET_FLOOR_TITLE(RS_STACKDATA *, int);
 
 /**
  * @mangled _GET_RUBY_ELEMENT__FP12RS_STACKDATAi

@@ -72,7 +72,10 @@ INCLUDE_ASM("asm/nonmatchings/btsysscript", _RESET_MAIN_CHR__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_LIMMIT_ZONE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_DEAD_FLAG__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _ALL_DRAW_FLAG__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_FLOOR_TITLE__FP12RS_STACKDATAi);
+int _SET_FLOOR_TITLE(RS_STACKDATA *, int) {
+    FloorTitleOn();
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_RUBY_ELEMENT__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_RUBY_ELEMENT__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_FLOOR_TITLE_OFF__FP12RS_STACKDATAi);
