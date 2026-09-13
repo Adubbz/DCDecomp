@@ -173,7 +173,11 @@ void CEditArea::SetGridFrame(CFrameVu1 *arg0) {
 CFrameVu1 * CEditArea::GetGridFrame() {
     return this->grid_frame;
 }
-INCLUDE_ASM("asm/nonmatchings/editarea", SetOffset__9CEditAreaFfff);
+void CEditArea::SetOffset(float arg0, float arg1, float arg2) {
+    this->offset_x = arg0;
+    this->offset_y = arg1;
+    this->offset_z = arg2;
+}
 void CEditArea::GetOffset(float *offset) {
     offset[0] = offset_x;
     offset[1] = offset_y;
