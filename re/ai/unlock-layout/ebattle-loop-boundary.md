@@ -26,10 +26,15 @@ not implement that separate part of the broader P11 proposal.
   script now places `ebattle.cpp.o (.sdata)` in that slot.
 - The split and linker script no longer create or place an
   `ebattle_loop.cpp.o` object.
+- `init_draw_ok`, `set_draw_ok`, `check_key_mode`, and `keylock` are local
+  functions in the retail symbol table. Merging the source restores the first
+  three to `static`; the old split had required public linkage for calls that
+  crossed its artificial translation-unit boundary.
 
 ## Verification
 
 All 31 compiled functions in the merged object report `PERFECT` through
 `check.sh`. A fresh split and full `elf objdiff` build produced loaded
 `SCUS_971.11`, `TITLE.BIN`, and `DUN.BIN` images identical to the immutable wave
-baseline. Postflight reported zero regressions.
+baseline. The four local helpers remain `FUNC LOCAL` in the rebuilt object.
+Postflight reported zero regressions.

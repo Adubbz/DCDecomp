@@ -53,7 +53,7 @@ extern CTexture *tex;
 extern CTexture *tex2;
 extern int eb_key_num;
 
-void init_draw_ok();
+static void init_draw_ok();
 
 /* @ 0x168100 (0x10 bytes) -- EBInitialize__Fv */
 void EBInitialize() {
@@ -145,7 +145,7 @@ INCLUDE_ASM("asm/nonmatchings/ebattle", DrawButtonSub__Fiiiif);
  * @address 0x169420
  * @size 0x14
  */
-void init_draw_ok() {
+static void init_draw_ok() {
     ok_draw_cnt = 0;
     ok_effect_button = -1;
 }
@@ -157,7 +157,7 @@ void init_draw_ok() {
  * @address 0x169440
  * @size 0x18
  */
-void set_draw_ok(int type, int button) {
+static void set_draw_ok(int type, int button) {
     ok_effect_button = button;
     ok_draw_cnt = 30;
     ok_type = type;
@@ -239,7 +239,7 @@ int EdPadDown(int keys, int mode) {
  * @address 0x1699E0
  * @size 0x10
  */
-int keylock() {
+static int keylock() {
     return chara_mode & 3;
 }
 
