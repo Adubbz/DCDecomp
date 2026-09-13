@@ -34,6 +34,9 @@ extern int EditSwitch;
 extern int EdEffectCt;
 extern s16 AnalyzeSelect;
 extern s16 ButtonAdd;
+extern s16 EdMenuEffectFlag;
+extern float EdMenuEffectCt;
+extern s16 MakeWin2Flag;
 extern int EditMenuStatus[7];
 extern CDataAlloc2<1> EdMenuBuffer;
 extern CDataAlloc2<1> MenuExCashBuffer;
@@ -721,7 +724,39 @@ INCLUDE_ASM("asm/nonmatchings/menu_misc", FromAnalyzeEdit__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditSaveDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditSaveKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", OptionDraw__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", EdOptionSelect__Fv);
+
+static void EdOptionSelect() {
+    int arrived = 0;
+    int key;
+
+    switch (EdMenuEffectFlag) {
+        case 1:
+            arrived = CalMoveFromMenuIcon();
+            if (arrived) {
+                EdMenuEffectFlag = 0;
+                EdMenuEffectCt = 0.0f;
+            }
+            break;
+        case 2:
+            arrived = CalMoveToMenuIcon();
+            break;
+    }
+    if (EdMenuEffectFlag != 0) {
+        EdMenuEffectCt += 1.0f;
+    } else {
+        EdMenuEffectCt = 0.0f;
+    }
+    key = MenuOptionKey();
+    if (OptionMenuFadeOutStart()) {
+        EdMenuEffectFlag = 2;
+        if (arrived && key) {
+            EdEffectCt = 0;
+            EditSwitch = 2;
+            MakeWin2Flag = 1;
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EdMenuManualKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EdMenuManualDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", InitSaveFileInfoTbl__Fv);
