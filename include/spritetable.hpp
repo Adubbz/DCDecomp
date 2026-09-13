@@ -89,10 +89,11 @@ public:
     SPRITE_TABLE *GetNext(void);
 
     /**
+     * Resets every sprite layer and rewinds the command pool.
+     *
      * @mangled ClearPointer__12CSpriteTableFv
      * @address 0x12C0F0
-     * @size 0x80
-     * @unknownret
+     * @size 0x7C
      */
     void ClearPointer(void);
 };

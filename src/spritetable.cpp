@@ -15,4 +15,11 @@ SPRITE_TABLE *CSpriteTable::GetNext() {
     return next;
 }
 
-INCLUDE_ASM("asm/nonmatchings/spritetable", ClearPointer__12CSpriteTableFv);
+void CSpriteTable::ClearPointer() {
+    current = pool;
+    for (int list = 0; list < list_count; list++) {
+        heads[list] = GetNext();
+        heads[list]->next = NULL;
+        tails[list] = heads[list];
+    }
+}
