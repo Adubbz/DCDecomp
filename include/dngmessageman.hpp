@@ -32,10 +32,11 @@ public:
     void SetStatus_Dry(float, float, float);
 
     /**
+     * Queues one rotating dungeon message when the display is idle.
+     *
      * @mangled SetSteevMes__14CDngMessageManFi
      * @address 0x1B5D40
      * @size 0x50
-     * @unknownret
      */
     void SetSteevMes(int);
 };
