@@ -51,7 +51,20 @@ void CSpriteTable::AddTable(int x, int y, MG_SPRITE *sprite, int list, int flags
     *tail = node->next;
 }
 
-INCLUDE_ASM("asm/nonmatchings/spritetable", AddTable__12CSpriteTableFiiP9sceGsTex0P4RECTii);
+void CSpriteTable::AddTable(int x, int y, sceGsTex0 *tex0, RECT *source, int list, int flags) {
+    union {
+        MG_SPRITE sprite;
+        u_long128 padding[3];
+    } local;
+
+    *(sceGsTex0 *) &local.sprite.tex0 = *tex0;
+    local.sprite.source = *source;
+    local.sprite.red = 128;
+    local.sprite.green = 128;
+    local.sprite.blue = 128;
+    local.sprite.alpha = 128;
+    AddTable(x, y, &local.sprite, list, flags);
+}
 
 void CSpriteTable::Initialize(SPRITE_TABLE *new_pool, int count, int lists) {
     list_count = lists;

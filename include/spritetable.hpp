@@ -75,12 +75,13 @@ public:
     void AddTable(int x, int y, MG_SPRITE *sprite, int list, int flags);
 
     /**
+     * Queues a texture rectangle with neutral colour on one clamped layer.
+     *
      * @mangled AddTable__12CSpriteTableFiiP9sceGsTex0P4RECTii
      * @address 0x12BFF0
      * @size 0x70
-     * @unknownret
      */
-    void AddTable(int, int, sceGsTex0 *, RECT *, int, int);
+    void AddTable(int x, int y, sceGsTex0 *tex0, RECT *source, int list, int flags);
 
     /**
      * Assigns a command pool and initializes up to sixteen sprite layers.
