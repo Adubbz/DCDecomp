@@ -146,7 +146,20 @@ static int WeaponMenuKastumSelectUp(int row, int enabled_rows) {
     return selected_row;
 }
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuKastumSelectDown__Fii);
+/**
+ * Finds the following enabled customization row, wrapping to the top row.
+ */
+static int WeaponMenuKastumSelectDown(int row, int enabled_rows) {
+    int selected_row = 0;
+    while (row <= 6) {
+        if (enabled_rows & (1 << (row - 3))) {
+            selected_row = row;
+            break;
+        }
+        row++;
+    }
+    return selected_row;
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponSelectKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WepAttachHaveCancel__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuAttachModeKey__Fv);
