@@ -398,7 +398,15 @@ int CEditArea::CheckArea(float x, float, float z) {
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", CheckAreaRect__9CEditAreaFfffii);
 INCLUDE_ASM("asm/nonmatchings/editarea", CheckParts__9CEditAreaFP9CMapPartsfffi);
-INCLUDE_ASM("asm/nonmatchings/editarea", PickUpPoly__9CEditAreaFP6CCPolyfff);
+int CEditArea::PickUpPoly(CCPoly *polygons, float x, float y, float z) {
+    CVector3_i_ position;
+    if (CheckArea(x, y, z) == 0) {
+        return 0;
+    }
+    GetPos(&position, x, y, z);
+    CRect_i_ rect(position.x - 1, position.z - 1, 2, 2);
+    return PickUpPoly(polygons, rect);
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", PickUpPoly__9CEditAreaFP6CCPoly8CRect_i_);
 INCLUDE_ASM("asm/nonmatchings/editarea", PickUpPoly__9CEditAreaFP6CCPoly7CBoxVu0);
 
