@@ -13,7 +13,16 @@ void CNPCharacter::ClearSeq() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/npcharacter", SetSeq__12CNPCharacterFPff);
+int CNPCharacter::SetSeq(float *destination, float speed) {
+    NP_SEQUENCE *sequence = GetNextSeq();
+    sequence->operation = NP_SEQUENCE_MOVE;
+    sceVu0CopyVector(sequence->destination, destination);
+    sequence->speed[0] = speed;
+    sequence->speed[1] = speed;
+    sequence->speed[2] = speed;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/npcharacter", SetWait__12CNPCharacterFi);
 
 int CNPCharacter::CheckSeq() {
