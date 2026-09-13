@@ -174,7 +174,9 @@ void CEditArea::GetOffset(float *offset) {
     offset[1] = offset_y;
     offset[2] = offset_z;
 }
-INCLUDE_ASM("asm/nonmatchings/editarea", GetWidth__9CEditAreaFv);
+int CEditArea::GetWidth() {
+    return this->width;
+}
 int CEditArea::GetHeight() {
     return this->height;
 }
