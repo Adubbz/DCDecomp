@@ -5,6 +5,7 @@
 
 #include <cstring>
 
+#include "clsmes.hpp"
 #include "menu_manual.hpp"
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetDefaultWeaponNo__Fi);
@@ -208,5 +209,18 @@ void MenuClsMes::InitData() {
 }
 INCLUDE_ASM("asm/nonmatchings/battlemenu", SetBuffInfo__10MenuClsMesFPs);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", NowWeaponStatus__10MenuClsMesFP11WEAPON_HAVE);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", Step__10MenuClsMesFv);
+void MenuClsMes::Step() {
+    if (message != NULL) {
+        switch (mode) {
+        case 0:
+            break;
+        case 1:
+        case 2:
+            NowWeaponStatus(GetNowSelectWeapon());
+            message->Step();
+            break;
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", Draw1__10MenuClsMesFiii);
