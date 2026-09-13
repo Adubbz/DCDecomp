@@ -24,3 +24,18 @@ at 0xCEC. The default alpha step is the integer at 0x1484, and the flag at
 CNPCharacter currently embeds CCharacter instead of inheriting it. Its retail
 constructor installs a derived vtable, requiring separate inheritance/layout
 work before that constructor can be represented faithfully.
+
+The movement/wait helpers, PlaySeq, Step, visibility/draw wrappers,
+initialization, and both collision-query functions now match exactly.
+CCharacter::PickUpPoly constructs two CCPoly triangles facing the query
+position, using the existing collision.hpp definition; it returns two when
+within the horizontal and vertical range and zero otherwise. No shared
+header was changed. PlaySeq retains the retail transition that sets motion
+0 at a completed destination and then sets motion 1 later in the same frame.
+A separate interpolated-angle local preserves the original floating argument
+register ordering. The 0.1f rotation rate is the retail word 0x3DCCCCCD at
+0x2A1870 (_gp - 0x7F80).
+
+Final retained work: 16 PERFECT functions, 2,652 ELF symbol bytes or 2,752
+bytes including function-slot padding. The constructor remains in assembly
+because its derived vtable cannot be emitted from the current composed class.
