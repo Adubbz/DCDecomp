@@ -3,12 +3,11 @@
 #define MC_WAIT 0
 #define MC_NOWAIT 1
 
-/* Vendor SDK declarations. The reconstruction is given no system include path at all — only the
-   game's own headers — which is why this is reached with quotes rather than as <libmc.h>. */
-
 #include "common.h"
 
-/** One colour of an icon.sys, held as four full words. */
+/**
+ * One colour of an icon.sys, held as four full words.
+ */
 struct sceMcColor {
     u_int r; /**< Red the colour draws with. */
     u_int g; /**< Green the colour draws with. */
@@ -18,17 +17,21 @@ struct sceMcColor {
 
 STATIC_ASSERT(sizeof(sceMcColor) == 0x10);
 
-/** One colour of an icon.sys's lighting, held as floats. */
+/**
+ * One colour of an icon.sys's lighting, held as floats.
+ */
 typedef float sceMcColorF[4];
 
-/** One direction of an icon.sys's lighting. */
+/**
+ * One direction of an icon.sys's lighting.
+ */
 typedef float sceMcVu0FVECTOR[4];
 
 /**
  * The icon.sys the browser reads to draw one save, written alongside it.
  */
 struct sceMcIconSys {
-    char head[4];                 /**< Always "PS2D"; the copy of it overruns into Unknown1. */
+    char head[4];                 /**< The "PS2D" file identifier. */
     u_short unknown1;             /**< Reserved. */
     u_short nl_offset;            /**< Byte the second line of the title starts at. */
     u_int unknown2;               /**< Reserved. */

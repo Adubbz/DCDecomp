@@ -28,10 +28,10 @@ struct MC_ICON_DATA {
 STATIC_ASSERT(sizeof(MC_ICON_DATA) == 0x24);
 
 /**
- * Holds what SearchMcType and GetDir found out about the card in one port.
+ * Holds what the class found out about the card in one port.
  */
 struct MC_CARD_INFO {
-    s32 present;   /**< One once sceMcSync reported a command on the card. */
+    s32 present;   /**< One while the last sceMcGetInfo found a card in the port. */
     s32 type;      /**< Card type that sceMcGetInfo writes. */
     s32 formatted; /**< Format flag that sceMcGetInfo writes. */
     s32 unk_0C;
@@ -39,7 +39,7 @@ struct MC_CARD_INFO {
     u8 unk_14[4];
     s32 free_size; /**< Free space that sceMcGetInfo writes. */
     s32 unk_1C;
-    s32 result; /**< Result that sceMcSync reported for the last command on the card. */
+    s32 result; /**< Result of the last sceMcGetInfo on the card. */
 };
 
 STATIC_ASSERT(sizeof(MC_CARD_INFO) == 0x24);
@@ -60,30 +60,36 @@ struct SAVEDATA_INFO {
 
 STATIC_ASSERT(sizeof(SAVEDATA_INFO) == 0x38);
 
-/** Slots the library reads cards from. */
+/**
+ * Slots the library reads cards from.
+ */
 #define MC_CARD_MAX 2
 
-/** Saves one card holds. */
+/**
+ * Saves one card holds.
+ */
 #define MC_SAVE_FILE_MAX 12
 
 /**
  * Names the operation dispatched by CMemoryCardAccess::Step.
  */
+// clang-format off
 enum MC_OPERATION {
-    MC_OPERATION_SEARCH_TYPE = 0,
-    MC_OPERATION_IDLE = 1,
-    MC_OPERATION_GET_DIR = 2,
-    MC_OPERATION_MAKE_DIR = 3,
+    MC_OPERATION_SEARCH_TYPE            = 0,
+    MC_OPERATION_IDLE                   = 1,
+    MC_OPERATION_GET_DIR                = 2,
+    MC_OPERATION_MAKE_DIR               = 3,
     MC_OPERATION_GET_ALL_SAVE_FILE_INFO = 4,
-    MC_OPERATION_SAVE = 5,
-    MC_OPERATION_LOAD = 6,
-    MC_OPERATION_FORMAT = 8,
-    MC_OPERATION_UNFORMAT = 9,
-    MC_OPERATION_WRITE_TEST = 11,
-    MC_OPERATION_LOAD_CONFIG = 12,
-    MC_OPERATION_SAVE_CONFIG = 13,
-    MC_OPERATION_CONVERT = 14
+    MC_OPERATION_SAVE                   = 5,
+    MC_OPERATION_LOAD                   = 6,
+    MC_OPERATION_FORMAT                 = 8,
+    MC_OPERATION_UNFORMAT               = 9,
+    MC_OPERATION_WRITE_TEST              = 11,
+    MC_OPERATION_LOAD_CONFIG            = 12,
+    MC_OPERATION_SAVE_CONFIG            = 13,
+    MC_OPERATION_CONVERT                = 14
 };
+// clang-format on
 
 /**
  * Runs the memory card operations of the game one step at a time.
@@ -92,7 +98,7 @@ class CMemoryCardAccess {
 public:
     /**
      * Fills the class with its starting values and names the save directory
-     * after the language that the title screen selected.
+     * after the menu language.
      *
      * @mangled Initialize__17CMemoryCardAccessFv
      * @address 0x2135D0
@@ -101,8 +107,8 @@ public:
     void Initialize();
 
     /**
-     * Starts the memory card library, resets the class, and returns one when
-     * the library fails to start or one of its modules is too old.
+     * Starts the memory card library and the class, and returns one if the
+     * library fails to start.
      *
      * @mangled InitForMC__17CMemoryCardAccessFv
      * @address 0x213750
@@ -158,12 +164,11 @@ public:
     int GetFuncNo();
 
     /**
-     * Runs one step of the current operation, returns to the idle operation
-     * once it finished, and hands anything else to McError.
+     * Runs one step of the current operation and returns its result.
      *
      * @mangled Step__17CMemoryCardAccessFv
      * @address 0x213BF0
-     * @size 0x44
+     * @size 0x1C0
      */
     int Step();
 
@@ -186,8 +191,8 @@ public:
     char *GetVersion();
 
     /**
-     * Reads the type, the free space and the format flag of the card in the
-     * current port, and tells whether its format changed.
+     * Reads the type, the free space and the format of the card in the current
+     * port.
      *
      * @mangled SearchMcType__17CMemoryCardAccessFv
      * @address 0x213DF0
@@ -226,7 +231,7 @@ public:
     int SaveSysConfig();
 
     /**
-     * Writes the save image to a test file in the root directory of the card.
+     * Writes a test file of 0x76F800 bytes into the root directory of the card.
      *
      * @mangled Write__17CMemoryCardAccessFv
      * @address 0x2148E0
@@ -235,8 +240,8 @@ public:
     int Write();
 
     /**
-     * Rebuilds the save directory and writes every save file of the card
-     * again in the current format.
+     * Creates the save directory and copies the save files of the
+     * BASCUS-97112dkcloud directory into it.
      *
      * @mangled Convert__17CMemoryCardAccessFv
      * @address 0x2149E0
@@ -245,12 +250,12 @@ public:
     int Convert();
 
     /**
-     * Creates the save directory and writes the icon files and icon.sys into
-     * it.
+     * Creates the save directory and writes a default configuration file,
+     * icon.sys and the icon files into it.
      *
      * @mangled MakeDir__17CMemoryCardAccessFv
      * @address 0x214D20
-     * @size 0x5C
+     * @size 0x778
      */
     int MakeDir();
 
@@ -265,7 +270,7 @@ public:
     int GetSaveFileInfoFromMc(int file_no);
 
     /**
-     * Reads every save file of the card in turn into the save file table.
+     * Reads the twelve save files of the card in turn into the save file table.
      *
      * @mangled GetAllSaveFileInfo__17CMemoryCardAccessFv
      * @address 0x215A30
@@ -284,11 +289,12 @@ public:
     int CheckFileNo(int file_no);
 
     /**
-     * Writes the save image to the save file with the given number.
+     * Writes the save image to the save file with the given number and the
+     * configuration to the configuration file.
      *
      * @mangled SaveToMc__17CMemoryCardAccessFi
      * @address 0x215B90
-     * @size 0x80
+     * @size 0x6B0
      */
     int SaveToMc(int file_no);
 
@@ -320,18 +326,18 @@ public:
     int DeleteFile(int file_no);
 
     /**
-     * Returns the message that the given error carries for the operation that
-     * the class is running.
+     * Returns the message of the operation that the class is running, counted
+     * from the given message number.
      *
      * @mangled GetMsgNo__17CMemoryCardAccessFi
      * @address 0x216980
-     * @size 0x48
+     * @size 0xC8
      */
-    int GetMsgNo(int error);
+    int GetMsgNo(int msg_no);
 
     /**
-     * Records the operation, the file and the step that the given error
-     * stopped, and prints it.
+     * Records the kind of the given error and the operation, file and step that
+     * it stopped.
      *
      * @mangled McError__17CMemoryCardAccessFi
      * @address 0x216A50
@@ -360,11 +366,11 @@ public:
 public:
     s32 port;               /**< Port that every command of the class names. */
     s32 file_no;            /**< Save file that the current operation works on. */
-    s32 error_code;         /**< Error that stopped the last operation, zero while none did. */
+    s32 error_code;         /**< Kind of error that stopped the last operation, zero while none did. */
     s32 error_func_no;      /**< Operation that the class was running when the error came. */
     s32 error_file_no;      /**< Save file that the class was working on when the error came. */
     s32 error_step;         /**< Step that the operation had reached when the error came. */
-    s32 read_wait;          /**< Counts the steps that waited for a read, which gives up at 101. */
+    s32 retry_count;        /**< Failed polls of the current read or delete, which stop at 101 and 121. */
     char version[0x20];     /**< Version string that every save file carries after its data. */
     char dir_name[0x20];    /**< Name of the save directory on the card. */
     char file_name[0x20];   /**< Name that every save file of the game starts with. */
@@ -372,10 +378,10 @@ public:
     s32 func_no;            /**< Operation that the class is running. */
     u8 unk_C0[4];
     s32 step;               /**< Step that the current operation has reached. */
-    s32 fd;                 /**< File that sceMcOpen returned, or -1 while none is open. */
-    u8 (*dir_table)[64];    /**< Entries of the save directory that sceMcGetDir wrote. */
+    s32 fd;                 /**< File that the last sceMcOpen returned, -1 until one does. */
+    u8 (*dir_table)[64];    /**< Table that GetDir fills with the entries of the save directory. */
     CSaveData *save_buffer; /**< Save data at the start of the save image. */
-    char *check_sum;        /**< One checksum byte of the save image for every 64 bytes of it. */
+    char *check_sum;        /**< Checksum bytes of the save image, one for every 64 bytes of the save data. */
     char *unk_D8;
     char *read_buffer; /**< Area behind the save image that a read fills. */
     s32 unk_E0;

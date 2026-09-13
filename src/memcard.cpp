@@ -17,11 +17,9 @@
 // functions take a pointer to it.
 struct EDIT_CHIP_ATTACH_DATA;
 
-/* The unit's own functions, in the order retail defines them. Each is static in
-   retail's symbol table, so it is declared here rather than in the header. */
-
 /**
- * Returns the georama part record the board's n-th occupied slot holds.
+ * Returns the record of the n-th valid part in the georama's part list, or NULL
+ * when there are fewer.
  *
  * @mangled SearchAtoraInfo__Fi
  * @address 0x218470
@@ -48,7 +46,8 @@ static int AtoraAllTipGet(int);
 static int AlreadyPeopleTalk(int, int);
 
 /**
- * Returns whether a georama part is complete or is still waiting on its event.
+ * Returns one when a georama part is fully built, its residents have all been
+ * spoken to, and its completion event has not been flagged yet.
  *
  * @mangled AtoraCompOrEvent__FP14EDITPARTS_INFO
  * @address 0x218610
@@ -57,7 +56,8 @@ static int AlreadyPeopleTalk(int, int);
 static int AtoraCompOrEvent(EDITPARTS_INFO *);
 
 /**
- * Returns how many board slots a georama ground offers.
+ * Returns how many parts a georama ground defines, or zero for an invalid
+ * ground.
  *
  * @mangled AtraBoardMaxNum__Fi
  * @address 0x218780
@@ -66,7 +66,8 @@ static int AtoraCompOrEvent(EDITPARTS_INFO *);
 static int AtraBoardMaxNum(int);
 
 /**
- * Returns the placement state of one chip of a georama part.
+ * Returns the link code of a chip slot: -1 when empty, 0 without a pending
+ * link, otherwise 1 or 2 by link kind plus 10 for each unplaced chip above it.
  *
  * @mangled AtoraTipStatusSearch__FP14EDITPARTS_INFOi
  * @address 0x218810
@@ -84,7 +85,8 @@ static int AtoraTipStatusSearch(EDITPARTS_INFO *, int);
 static int AtraTipCanDisplay(EDIT_CHIP_ATTACH_DATA *);
 
 /**
- * Draws the links between a georama chip and the chips it is attached to.
+ * Draws the arrow from a chip slot to the chip it hangs off, covering the slot
+ * while that chip is missing, as the slot's link code directs.
  *
  * @mangled AtoraTipRelationDraw__FiiP14EDITPARTS_INFOiii
  * @address 0x218960
@@ -93,7 +95,7 @@ static int AtraTipCanDisplay(EDIT_CHIP_ATTACH_DATA *);
 static void AtoraTipRelationDraw(int, int, EDITPARTS_INFO *, int, int, int);
 
 /**
- * Fills in which of the six board directions the cursor may move in.
+ * Marks which of the six chip slots of a georama part can be selected.
  *
  * @mangled AtoraBoardEnableMovePos__FiPi
  * @address 0x218B60
@@ -102,7 +104,8 @@ static void AtoraTipRelationDraw(int, int, EDITPARTS_INFO *, int, int, int);
 static void AtoraBoardEnableMovePos(int, int *);
 
 /**
- * Returns the nearest occupied board slot at or below a position.
+ * Returns the first index at or below a start whose entry in a slot table is
+ * set, or the lower bound when none is.
  *
  * @mangled AtoraBoardGoToPos__FPiii
  * @address 0x218C70
@@ -111,7 +114,8 @@ static void AtoraBoardEnableMovePos(int, int *);
 static int AtoraBoardGoToPos(int *, int, int);
 
 /**
- * Returns the message number the board shows for the selected part.
+ * Returns the message number that the board shows for a georama part or one of
+ * its chip slots, or -1 when the part has no record.
  *
  * @mangled AtoraMsgNoGet__Fiii
  * @address 0x218DA0
@@ -120,7 +124,8 @@ static int AtoraBoardGoToPos(int *, int, int);
 static int AtoraMsgNoGet(int, int, int);
 
 /**
- * Returns the message number for a chip on its own.
+ * Returns the message number of a chip from its attribute record alone, or -1
+ * when it has none.
  *
  * @mangled AtoraTipOnlyMsgNoGet__Fii
  * @address 0x218FA0
@@ -138,16 +143,18 @@ static int AtoraTipOnlyMsgNoGet(int, int);
 static void AtoraTipObjectOrPerson(int, int, int, int, int);
 
 /**
- * Answers which socket graphic a chip slot uses.
+ * Returns the gold socket texture when its flag is set and the grey one
+ * otherwise, and writes the colour to draw it with.
  *
  * @mangled AtoraTipHoleTexInfoGet__FiPUc
  * @address 0x2191C0
  * @size 0x50
  */
-static int AtoraTipHoleTexInfoGet(int, unsigned char *);
+static CTexture *AtoraTipHoleTexInfoGet(int, unsigned char *);
 
 /**
- * Draws the placement bar under a georama part's plate.
+ * Draws the placement gauge of a georama part, filled in proportion to what has
+ * been placed, with the placed-over-total count beside it.
  *
  * @mangled AtoraPlateDrawHaichiBar__FP14EDITPARTS_INFOiii
  * @address 0x219210
@@ -156,7 +163,7 @@ static int AtoraTipHoleTexInfoGet(int, unsigned char *);
 static void AtoraPlateDrawHaichiBar(EDITPARTS_INFO *, int, int, int);
 
 /**
- * Draws the empty georama board.
+ * Draws an empty plate of the georama board with a caption in its centre.
  *
  * @mangled DrawAtoraNothing__Fiii
  * @address 0x219CC0
@@ -165,7 +172,7 @@ static void AtoraPlateDrawHaichiBar(EDITPARTS_INFO *, int, int, int);
 static void DrawAtoraNothing(int, int, int);
 
 /**
- * Draws the georama warning message window.
+ * Shows message 200 in a message window at a position.
  *
  * @mangled DrawMsgAtraWarning__FP6ClsMesii
  * @address 0x219FC0
@@ -192,7 +199,7 @@ static void AtoraTipInfoInit();
 static void SetMenuAtraEventFlag(int);
 
 /**
- * Puts up the board's message window once the screen has faded in.
+ * Opens the board's message window on the message of the selected part.
  *
  * @mangled MenuAtoraAfterFadeIn__Fv
  * @address 0x21A0B0
@@ -201,7 +208,8 @@ static void SetMenuAtraEventFlag(int);
 static void MenuAtoraAfterFadeIn();
 
 /**
- * Releases the georama board screen's message windows and cursor.
+ * Stores the board cursor in the save data when cursor memory is on and gives
+ * back the message windows that the board screen took over.
  *
  * @mangled ExitAtoraSelect__Fv
  * @address 0x21A890
@@ -246,7 +254,8 @@ static int AtoraTextureEnter();
 static int GetTipKind(int);
 
 /**
- * Orders two chips by group and number for the board's sort.
+ * Compares two chips for the board's sort by group, with empty slots last, and
+ * then by number.
  *
  * @mangled CompTip__Fii
  * @address 0x21C090
@@ -255,7 +264,8 @@ static int GetTipKind(int);
 static int CompTip(int, int);
 
 /**
- * Makes one pass of the chip board's sort, and says whether it swapped.
+ * Sorts the chip list with the current group first and empty slots last, and
+ * returns whether any chip moved.
  *
  * @mangled SeitonAtoraTipBoardSub__Fv
  * @address 0x21C160
@@ -264,7 +274,8 @@ static int CompTip(int, int);
 static int SeitonAtoraTipBoardSub();
 
 /**
- * Sorts the chip board into group and number order.
+ * Sorts the chip list, switching which chip group comes first whenever the list
+ * is already in order, up to three times.
  *
  * @mangled SeitonAtoraTipBoard__Fv
  * @address 0x21C270
@@ -273,7 +284,8 @@ static int SeitonAtoraTipBoardSub();
 static void SeitonAtoraTipBoard();
 
 /**
- * Steps the board cursor, and says whether the board is still in control.
+ * Moves the board cursor and handles its buttons, returning 10 when a part is
+ * picked for placing, 100 when the screen is to close and zero otherwise.
  *
  * @mangled AtoraBoardKey__Fv
  * @address 0x21CA90
@@ -282,7 +294,8 @@ static void SeitonAtoraTipBoard();
 static int AtoraBoardKey();
 
 /**
- * Steps the chip cursor, and says whether the chip board is still in control.
+ * Moves the chip cursor and swaps, sorts or puts back chips, returning 100 when
+ * the screen is to close and zero otherwise.
  *
  * @mangled AtoraTipKey__Fv
  * @address 0x21D4C0
@@ -291,7 +304,7 @@ static int AtoraBoardKey();
 static int AtoraTipKey();
 
 /**
- * Returns control from the chip board to the part board.
+ * Puts the chip that the cursor holds back where it was picked up.
  *
  * @mangled AtoraMenuTipCancel__Fv
  * @address 0x21D7C0
@@ -309,7 +322,8 @@ static void AtoraMenuTipCancel();
 static void AtoraBoardFadeEffect();
 
 /**
- * Draws one option row's label and setting.
+ * Draws the twelve option rows, each label with its current setting, as two
+ * pages from the given position.
  *
  * @mangled OptionMenuDraw__Fiiiii
  * @address 0x21E020
@@ -318,7 +332,7 @@ static void AtoraBoardFadeEffect();
 static void OptionMenuDraw(int, int, int, int, int);
 
 /**
- * Draws the left and right arrows beside the selected option.
+ * Draws the arrow that points to the other option page.
  *
  * @mangled DrawOptionLRCur__Fii
  * @address 0x21E450
@@ -327,7 +341,8 @@ static void OptionMenuDraw(int, int, int, int, int);
 static void DrawOptionLRCur(int, int);
 
 /**
- * Applies the option settings and releases the screen.
+ * Writes the option rows back to the configuration and the menu cursor, sets
+ * the stereo mode from them and restores the pad's menu repeat.
  *
  * @mangled ExitMenuOption__Fv
  * @address 0x21E780
@@ -336,7 +351,7 @@ static void DrawOptionLRCur(int, int);
 static void ExitMenuOption();
 
 /**
- * Loads the option rows from the saved configuration.
+ * Resets the option rows to their defaults.
  *
  * @mangled InitOptionFlag__Fv
  * @address 0x21E910
@@ -345,7 +360,7 @@ static void ExitMenuOption();
 static void InitOptionFlag();
 
 /**
- * Writes the option rows back to the saved configuration.
+ * Restores the option rows to the values they had when the screen opened.
  *
  * @mangled PrevOptionSetFunc__Fv
  * @address 0x21E960
@@ -354,7 +369,8 @@ static void InitOptionFlag();
 static void PrevOptionSetFunc();
 
 /**
- * Applies the configuration the save screen loaded and releases it.
+ * Closes the save screen's message window and restores the pad, and after a
+ * load sets the stereo mode from the loaded configuration.
  *
  * @mangled ExitSaveSelect__Fv
  * @address 0x21FD80
@@ -363,7 +379,8 @@ static void PrevOptionSetFunc();
 static void ExitSaveSelect();
 
 /**
- * Steps the save screen's fade in, and says whether it is done.
+ * Waits out the save screen's fade-in and then moves on to the save file
+ * choice.
  *
  * @mangled SaveMenuKeyFadeIn__Fv
  * @address 0x220D90
@@ -372,7 +389,8 @@ static void ExitSaveSelect();
 static int SaveMenuKeyFadeIn();
 
 /**
- * Steps the save screen's fade out, and says whether it is done.
+ * Waits out the save screen's fade-out, then closes the screen and records the
+ * result that MenuSaveKey returns.
  *
  * @mangled SaveMenuKeyFadeOut__Fv
  * @address 0x220DD0
@@ -381,7 +399,8 @@ static int SaveMenuKeyFadeIn();
 static int SaveMenuKeyFadeOut();
 
 /**
- * Steps the save or load choice, and says whether it is done.
+ * Lets the player choose between saving and loading, then moves on to the slot
+ * choice or closes the screen.
  *
  * @mangled SaveMenuKeyModeSelect__Fv
  * @address 0x220E40
@@ -390,7 +409,8 @@ static int SaveMenuKeyFadeOut();
 static int SaveMenuKeyModeSelect();
 
 /**
- * Steps the memory card slot choice, and says whether it is done.
+ * Lets the player pick memory card slot 1 or 2, then starts the card type check
+ * on it or backs out.
  *
  * @mangled SaveMenuKeyMcSelect__Fv
  * @address 0x220F70
@@ -399,7 +419,8 @@ static int SaveMenuKeyModeSelect();
 static int SaveMenuKeyMcSelect();
 
 /**
- * Steps the card type check, and says whether it is done.
+ * Moves on to reading the save directory when the chosen slot holds a
+ * PlayStation 2 card, and to an alert otherwise.
  *
  * @mangled SaveMenuKeyCheckMcType__Fv
  * @address 0x2211A0
@@ -408,7 +429,8 @@ static int SaveMenuKeyMcSelect();
 static int SaveMenuKeyCheckMcType();
 
 /**
- * Steps the card contents check, and says whether it is done.
+ * Checks the chosen card again and starts reading its configuration for a load
+ * or its save files for a save, returning zero when the card is gone.
  *
  * @mangled SaveMenuKeyCheckMc__Fv
  * @address 0x221260
@@ -417,7 +439,8 @@ static int SaveMenuKeyCheckMcType();
 static int SaveMenuKeyCheckMc();
 
 /**
- * Applies the configuration read from the card, and says it is done.
+ * Starts reading the save files of the card and moves on to the file choice,
+ * with the cursor on the last file that the configuration records.
  *
  * @mangled SaveMenuKeyLoadConfig__Fv
  * @address 0x2214B0
@@ -426,7 +449,8 @@ static int SaveMenuKeyCheckMc();
 static int SaveMenuKeyLoadConfig();
 
 /**
- * Steps the save file choice, and says whether it is done.
+ * Lets the player pick one of the twelve save files for the save check or the
+ * load confirmation, or go back to the slot choice.
  *
  * @mangled SaveMenuKeyFileSelect__Fv
  * @address 0x221530

@@ -19,8 +19,8 @@ The class has size `0x7C0`. The member offsets come from the loads and stores
 across the unit, with the following useful producers and consumers:
 
 - `Initialize` clears the error fields, assigns the version and names, sets
-  `func_no` to the idle operation, sets `fd` to `-1`, points `file_info` at the
-  file table, and clears the icon and card records.
+  `func_no` to the idle operation, sets `fd` to `-1`, initializes the file table,
+  and clears the icon and card records.
 - `SetBuff` establishes `save_buffer`, `check_sum`, and `read_buffer` within the
   caller-provided save image.
 - `SearchMcType` fills the two `MC_CARD_INFO` records from `sceMcGetInfo` and
@@ -88,8 +88,10 @@ completed command state before the next operation begins.
 - `SetFuncNo` stores the operation, resets `step`, restores `unk_E0` to `0x3D`
   for the idle operation, and polls the memory-card library once.
 - `SetIconData` copies the three 12-byte icon descriptors individually.
+- `DmySync` waits until `sceMcSync(MC_WAIT, ...)` reports that the pending
+  command has completed; this implementation was accepted in upstream PR #8.
 
-Each of these five definitions scores 100% in objdiff and is byte-perfect in
+Each of these six definitions scores 100% in objdiff and is byte-perfect in
 the linked image. `SetFuncNo` is `void`: it deliberately does not compute a
 result after calling `sceMcSync`, and no caller consumes a return value.
 
