@@ -90,12 +90,13 @@ WEAPON_HAVE *GetNowSelectWeapon(void);
 void EscapeDungeonMode(void);
 
 /**
+ * Sets whether the party is escaping the dungeon.
+ *
  * @mangled SetEscapeDngFlag__Fi
  * @address 0x1F3FA0
- * @size 0x10
- * @unknownret
+ * @size 0xC
  */
-void SetEscapeDngFlag(int);
+void SetEscapeDngFlag(int flag);
 
 /**
  * Returns the flag that says the party is escaping the dungeon.

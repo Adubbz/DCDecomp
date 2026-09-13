@@ -13,6 +13,8 @@
 #include "menu_misc.hpp"
 #include "snd.hpp"
 
+extern s16 EscapeDngFlg;
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetDefaultWeaponNo__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", IsDefaultWeapon__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", SetNowEquipWeaponDataForMsg__Fii);
@@ -20,7 +22,10 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", GetNowEquipWeaponDataForMsg__FRiRi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetGradationColorInfo2__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetNowSelectWeapon__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", EscapeDungeonMode__Fv);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", SetEscapeDngFlag__Fi);
+
+void SetEscapeDngFlag(int flag) {
+    EscapeDngFlg = flag;
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetEscapeDngFlag__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", SetInteriorOutFlag__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetInteriorOutFlag__Fv);
