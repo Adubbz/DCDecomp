@@ -58,10 +58,11 @@ public:
     SPRITE_TABLE *end;       /**< Address just past the command pool. */
 
     /**
+     * Draws every queued sprite layer and restores the graphics register state.
+     *
      * @mangled DrawTable__12CSpriteTableFv
      * @address 0x12BA20
-     * @size 0x470
-     * @unknownret
+     * @size 0x46C
      */
     void DrawTable(void);
 
