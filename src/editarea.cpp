@@ -157,7 +157,10 @@ void CEditArea::Clear(void) {
     unk_2054 = 4;
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", Initialize__9CEditAreaFv);
-INCLUDE_ASM("asm/nonmatchings/editarea", SetMapInfo__9CEditAreaFii);
+void CEditArea::SetMapInfo(s32 arg0, s32 arg1) {
+    this->map_no = arg0;
+    this->area_id = arg1;
+}
 int CEditArea::GetMapNo() {
     return this->map_no;
 }
