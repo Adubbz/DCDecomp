@@ -203,6 +203,13 @@ def export_constants(path, names, parser, assembly_constants=(),
                    if symbol not in reserved and body and wanted.startswith(body)]
         if not matches and name in assembly_constants:
             continue
+        # A shorter constant is a prefix of every longer one that begins with
+        # the same bytes -- the empty string is a prefix of a zero vector -- so
+        # a constant of exactly retail's length is the one meant, and every
+        # other candidate belongs to a name still to come.
+        exact = [symbol for symbol in matches if compiled[symbol] == wanted]
+        if len(exact) == 1:
+            matches = exact
         if len(matches) != 1:
             parser.error(f"{name!r} matches {len(matches)} constants in {path}")
         # MWLD recognizes a local `@N` as a compiler constant and rounds its
@@ -220,6 +227,8 @@ def export_constants(path, names, parser, assembly_constants=(),
             section.sh_size = len(wanted)
             compiled[old] = wanted
             padded = True
+        # One compiled constant stands for one of retail's, so it is spent.
+        reserved.add(old)
         arguments += ["--redefine-sym", f"{old}={name}",
                       "--globalize-symbol", name]
     if padded:
