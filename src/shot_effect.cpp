@@ -1,5 +1,8 @@
 #include "shot_effect.hpp"
 
+#include "collisiondata.hpp"
+#include "shot_effect_pack.hpp"
+
 INCLUDE_ASM("asm/nonmatchings/shot_effect", draw__5CSHOTFv);
 INCLUDE_RODATA("asm/nonmatchings/shot_effect", @625__2);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", step__5CSHOTFv);
