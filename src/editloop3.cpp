@@ -2655,10 +2655,7 @@ static int _GET_PADUP(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-static int _GET_APAD(RS_STACKDATA *arguments, int argument_count) {
-    RS_STACKDATA *stack = arguments;
-    int count = argument_count;
-
+static int _GET_APAD(RS_STACKDATA *stack, int count) {
     if (count > 0)
         SetStack(stack++, GamePad.GetLXf());
     if (count > 1)
