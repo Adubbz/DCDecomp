@@ -212,7 +212,21 @@ INCLUDE_RODATA("asm/nonmatchings/snd", @800);
 INCLUDE_ASM("asm/nonmatchings/snd", LensFlare__FP8CTexturePfUcUcUc);
 INCLUDE_ASM("asm/nonmatchings/snd", SndInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndInitialize__Fiiii);
-INCLUDE_ASM("asm/nonmatchings/snd", SndExit__Fv);
+
+void SndExit() {
+    CSnd.Stop(0);
+    CSnd.Stop(15);
+    CSnd.Stop(1);
+    CSnd.Stop(14);
+    CSnd.Stop(10);
+    CSnd.Stop(13);
+    CSnd.Stop(12);
+    CSnd.StopVoice(0);
+    CSnd.StopVoice(1);
+    SndSeSeqInit();
+    SndBgmInit();
+    SndAmbientInit();
+}
 
 void SndStep() {
     SndBgmFadeInOut();

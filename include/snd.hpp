@@ -39,7 +39,8 @@ int SndVoiceLoad(int voice_no);
 void SndInitialize(int, int, int, int);
 
 /**
- * Gives the sound system back what it holds, on the way out of an area.
+ * Stops the music, the ambient loop, the sound effects and both voices, and
+ * resets the sound-effect sequences, the background music and the ambient loop.
  *
  * @mangled SndExit__Fv
  * @address 0x159290
