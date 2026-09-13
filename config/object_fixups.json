@@ -439,14 +439,16 @@
         "@521"
       ],
       ".eddata2": [
-        "@851",
-        "@867"
+        "@849",
+        "@866",
+        "@908",
+        "@909"
       ],
       ".eddata3": [
         "@1126"
       ],
       ".eddata4": [
-        "@2064"
+        "@2063"
       ],
       ".eddata5": [
         "@2384"
@@ -473,6 +475,14 @@
         "EdVillagerInfo"
       ]
     },
+    "rekey_sections": [
+      [".eddata1", [16]],
+      [".eddata2", [40, 40, 16, 16]],
+      [".eddata3", [64]],
+      [".eddata4", [128]],
+      [".eddata5", [16]],
+      [".eddata6", [16, 48, 16, 16, 16, 16, 16]]
+    ],
     "drop_functions": [
       "__sinit_editloop3.cpp",
       ".p__sinit_editloop3.cpp"

@@ -137,14 +137,15 @@ INCLUDE_RODATA("asm/nonmatchings/editloop3", @2613);
 INCLUDE_RODATA("asm/nonmatchings/editloop3", @2614);
 int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functions,
                      int function_count, ED_EVENT_POINT *points, int point_count) {
+    int has_extent;
     int created;
+    volatile int point_offset[4];
 
     for (int i = 0; i < 8 && indices != NULL; i++) {
         int point_index = indices[i];
         if (point_index <= 0)
             continue;
 
-        volatile int point_offset[4];
         point_offset[0] = point_index * sizeof(ED_EVENT_POINT);
         ED_EVENT_POINT *point = (ED_EVENT_POINT *) ((int) points + point_offset[0]);
         if (point->event_type != 1)
@@ -159,7 +160,7 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
             point->parts_no = -1;
         }
 
-        int has_extent = 0;
+        has_extent = 0;
         EPARTS_FUNC_DATA *function = functions;
         for (int j = 0; j < function_count; j++, function++) {
             int kind = function->kind;
@@ -354,9 +355,9 @@ int EdGetEvent(ED_EVENT_POINT *points, int count, ED_EVENT_PARAM *param, float *
             param->point = point;
         }
     }
-    if (nearest <= 0.0f)
-        return 0;
-    return 1;
+    if (nearest > 0.0f)
+        return 1;
+    return 0;
 }
 void EdEventPointDraw(ED_EVENT_POINT *point, int count, float time) {
     if (EdDrawOffMap != 0)
@@ -717,8 +718,8 @@ int EdCheckVillagerIn(int index, VILLAGER_INFO *villagers) {
     if (index < 0 || index >= 16)
         return 0;
     switch (appear[index].action) {
-        case 2:
         case 3:
+        case 2:
             return 0;
         case 0:
             for (int i = 0; i < 10; i++) {
@@ -735,7 +736,7 @@ int EdCheckVillagerIn(int index, VILLAGER_INFO *villagers) {
             int model = villagers->model_no;
             if (model < 0)
                 return 0;
-            return parts->elements[model].enabled != 0;
+            return parts->elements[model].enabled != 0 ? 1 : 0;
         }
         default:
             return 0;
@@ -758,7 +759,7 @@ int EdCheckVillager(int index, VILLAGER_INFO *villager, CEditGround *ground) {
     int model = villager->model_no;
     if (model < 0)
         return 0;
-    return parts->elements[model].enabled != 0;
+    return parts->elements[model].enabled != 0 ? 1 : 0;
 }
 
 static int GetRandomVillager(VILLAGER_INFO *villagers) {
@@ -766,8 +767,7 @@ static int GetRandomVillager(VILLAGER_INFO *villagers) {
     int count = 0;
     int i;
     for (i = 0; i < 10; i++) {
-        VILLAGER_INFO *villager = &villagers[i];
-        if (villager->placed == 0 && villager->name[0] != '\0')
+        if (villagers[i].placed == 0 && villagers[i].name[0] != '\0')
             candidates[count++] = i;
     }
     if (count <= 0)
@@ -780,9 +780,8 @@ static int GetRandomMoveVillager(VILLAGER_INFO *villagers) {
     int count = 0;
     int i;
     for (i = 0; i < 10; i++) {
-        VILLAGER_INFO *villager = &villagers[i];
-        if (villager->placed == 0 && villager->name[0] != '\0' &&
-            villager->initial_motion != 0) {
+        if (villagers[i].placed == 0 && villagers[i].name[0] != '\0' &&
+            villagers[i].initial_motion != 0) {
             candidates[count++] = i;
         }
     }
@@ -826,7 +825,7 @@ int EdLoadVillager(u_int *pack, char *name, CNPCharacter *villager, CDataAlloc2<
         sprintf(config_name, "info.cfg");
     else
         sprintf(config_name, "%s.cfg", name);
-    villager->chara.LoadPackData3(pack, config_name, arena, texture_set, arena, 0, 0);
+    villager->chara.LoadPackData2(pack, config_name, arena, texture_set, arena, 0);
     if (villager->chara.frame != NULL) {
         CFrameAttr attr;
         attr.unk_08 = 0;
@@ -835,13 +834,15 @@ int EdLoadVillager(u_int *pack, char *name, CNPCharacter *villager, CDataAlloc2<
     }
     villager->initialized = 1;
     villager->sequence_state = 8;
-    if (MapNo >= 11) {
+    if (MapNo > 10) {
         villager->initialized = 1;
         villager->draw_enabled = 1;
         villager->event_status = 0;
         villager->chara.ambient_offset[3] = 128.0f;
-        villager->chara.SetVelocity(CVector3_f_(0.0f, 0.0f, 0.0f));
-        villager->chara.SetRotAcceleration(CVector3_f_(0.0f, 0.0f, 0.0f));
+        sceVu0FVECTOR origin = {0.0f, 0.0f, 0.0f, 0.0f};
+        sceVu0FVECTOR no_rotation = {0.0f, 0.0f, 0.0f, 0.0f};
+        villager->chara.SetPosition(origin);
+        villager->chara.SetRotation(no_rotation);
         villager->chara.motion_no = 0;
         villager->chara.flags = 0;
         villager->chara.motion_speed = -1.0f;
@@ -851,13 +852,13 @@ int EdLoadVillager(u_int *pack, char *name, CNPCharacter *villager, CDataAlloc2<
 }
 
 int EdLoadVillager(char *name, CNPCharacter *villager, CDataAlloc2<1> *arena) {
-    char directory[64];
     char path[64];
+    char directory[64];
     if (name == NULL || *name == '\0')
         return 0;
     GetEditDataDir(directory);
     sprintf(path, "%schara/%s.chr", directory, name);
-    if (LoadFile2(path, read_buffer, NULL, 0) != 0)
+    if (LoadFile2(path, (void *) read_buffer, NULL, 0) != 0)
         return EdLoadVillager(read_buffer, name, villager, arena);
     return 0;
 }
@@ -891,7 +892,7 @@ void EdInitVillagerOnOff(CNPCharacter *characters, VILLAGER_INFO *villagers,
 }
 void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
                            CEditGround *ground, float (*transform)[4]) {
-    if (MapNo >= 11) {
+    if (MapNo > 10) {
         RestoreVillagerInfo(info);
         for (int i = 0; i < 10; i++) {
             int draw = 1;
@@ -987,14 +988,14 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
         for (;;) {
             if (ground->GetRandomPlanePos(random_position, avoid_positions,
                                           avoid_count, reference) != 0) {
-                sceVu0CopyVector(info[selected].position, random_position);
+                sceVu0CopyVector(((VILLAGER_INFO *) info)[selected].position, random_position);
                 break;
             }
             if (reference[3] > 500.0f) {
                 reference[3] = -1.0f;
                 if (ground->GetRandomPlanePos(random_position, avoid_positions,
                                               avoid_count, reference) != 0) {
-                    sceVu0CopyVector(info[selected].position, random_position);
+                    sceVu0CopyVector(((VILLAGER_INFO *) info)[selected].position, random_position);
                     break;
                 }
                 failed = 1;
@@ -1075,28 +1076,28 @@ static void GetNearVill(CCamera *camera, CCharacter *player, CNPCharacter *villa
     player->GetPosition(player_position);
     camera->GetDir(camera_direction);
     camera->GetPos(camera_position);
-    for (int i = 0; i < 10; i++) {
+    int i;
+    for (i = 0; i < 10; i++) {
         indices[i] = i;
         distances[i] = -1.0f;
-        CNPCharacter *villager = &i[villagers];
-        int *near_camera = &villager->near_camera;
-        if (*near_camera != 0) {
+        int *near_camera = &villagers[i].near_camera;
+        if (villagers[i].near_camera != 0) {
             *near_camera = 0;
-            villager->chara.GetPosition(villager_position);
+            villagers[i].chara.GetPosition(villager_position);
             sceVu0SubVector(camera_offset, villager_position, camera_position);
             if (sceVu0InnerProduct(camera_offset, camera_direction) > 0.0f)
                 distances[i] = DistVector(player_position, villager_position);
         }
     }
-    int sort_index = 0;
-    while (sort_index < 9) {
-        int compare_index = sort_index + 1;
+    i = 0;
+    while (i < 9) {
+        int compare_index = i + 1;
         while (compare_index < 10) {
             float *compare_distance = &distances[compare_index];
             if (*compare_distance >= 0.0f) {
-                float *sort_distance = &distances[sort_index];
+                float *sort_distance = &distances[i];
                 if (*sort_distance > *compare_distance || *sort_distance < 0.0f) {
-                    int *sort_number = &indices[sort_index];
+                    int *sort_number = &indices[i];
                     int index = *sort_number;
                     int *compare_number = &indices[compare_index];
                     *sort_number = *compare_number;
@@ -1108,7 +1109,7 @@ static void GetNearVill(CCamera *camera, CCharacter *player, CNPCharacter *villa
             }
             compare_index++;
         }
-        sort_index++;
+        i++;
     }
 }
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdMoveVillager__FP13VILLAGER_INFO);
@@ -1322,11 +1323,11 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
     if (next_sky > 3)
         next_sky = 0;
     if (previous_sky < 0)
-        previous_sky = sky_index - 1;
+        previous_sky = (int) previous_sky;
     CFrameVu1 *current_sky = sky[sky_index];
     CFrameVu1 *following_sky = sky[next_sky];
     if (current_sky != NULL && following_sky == NULL)
-        following_sky = sky[next_sky];
+        following_sky = (CFrameVu1 *) following_sky;
 
     sceVu0FVECTOR position;
     camera->GetPos(position);
@@ -1379,7 +1380,7 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
         moon = following_sun;
     }
     if (current_sun != NULL && following_sun != NULL && moon == NULL)
-        moon = following_sun;
+        moon = (CFrame *) moon;
 
     if (clock > 11.5f && clock < 12.0f) {
         ambient[3] = 2.0f * (128.0f * (12.0f - clock));
@@ -1559,9 +1560,9 @@ void EdSetLightParam(float clock, int fixed, EDIT_MAP_INFO *info, CFrameVu1 *sky
     EDIT_FOG_INFO fixed_fog;
     EDIT_FOG_INFO *current_fog;
     EDIT_FOG_INFO *next_fog;
+    sceVu0FVECTOR background;
     sceVu0FVECTOR current_background;
     sceVu0FVECTOR next_background;
-    sceVu0FVECTOR background;
     if (fixed != 0) {
         MGSetBGColor(0.0f, 0.0f, 0.0f, 0.0f);
         fixed_fog = info->fog[current];
@@ -1597,9 +1598,9 @@ void EdSetLightParam(float clock, int fixed, EDIT_MAP_INFO *info, CFrameVu1 *sky
     MGSetFogParm(fog_near, fog_far, (unsigned char) fog_red, (unsigned char) fog_green,
                  (unsigned char) fog_blue, fog_intensity, fog_exponent);
 
+    sceVu0FVECTOR ambient;
     sceVu0FVECTOR current_ambient;
     sceVu0FVECTOR next_ambient;
-    sceVu0FVECTOR ambient;
     sceVu0CopyVector(current_ambient, info->ambient[current]);
     sceVu0CopyVector(next_ambient, info->ambient[next]);
     sceVu0ScaleVector(current_ambient, current_ambient, current_weight);
@@ -1607,12 +1608,12 @@ void EdSetLightParam(float clock, int fixed, EDIT_MAP_INFO *info, CFrameVu1 *sky
     sceVu0AddVector(ambient, current_ambient, next_ambient);
     MGSetAmbient(ambient);
 
-    sceVu0FMATRIX current_colour;
-    sceVu0FMATRIX next_colour;
+    sceVu0FMATRIX direction;
     sceVu0FMATRIX current_direction;
     sceVu0FMATRIX next_direction;
     sceVu0FMATRIX colour;
-    sceVu0FMATRIX direction;
+    sceVu0FMATRIX current_colour;
+    sceVu0FMATRIX next_colour;
     sceVu0CopyMatrix(current_colour, info->light_colour[current]);
     sceVu0CopyMatrix(next_colour, info->light_colour[next]);
     sceVu0TransposeMatrix(current_direction, info->light_direction[current]);
@@ -2722,14 +2723,11 @@ static int _NEXT_EVENT(RS_STACKDATA *stack, int) {
 }
 
 static int _GOTO_INTERIOR(RS_STACKDATA *stack, int argument_count) {
-    RS_STACKDATA *next;
-    int count = argument_count;
-    next = stack + 1;
-    EdEventInfo.unk_2ac = GetStackInt(stack);
-    char *destination = GetStackString(next++);
+    EdEventInfo.unk_2ac = GetStackInt(stack++);
+    char *destination = GetStackString(stack++);
     strcpy(EdEventInfo.unk_2b0, destination);
-    if (count >= 3)
-        EdEventInfo.unk_2d0 = GetStackInt(next);
+    if (argument_count > 2)
+        EdEventInfo.unk_2d0 = GetStackInt(stack);
     else
         EdEventInfo.unk_2d0 = -1;
     EdEventInfo.return_code = 4;
@@ -2818,14 +2816,10 @@ static int _FINISH(RS_STACKDATA *, int) {
 }
 
 static int _MAP_JUMP(RS_STACKDATA *stack, int argument_count) {
-    RS_STACKDATA *next;
-    int map;
-    int count = argument_count;
-    next = stack + 1;
-    map = GetStackInt(stack) - 1;
+    int map = GetStackInt(stack++) - 1;
     int event = -1;
-    if (count >= 2)
-        event = GetStackInt(next);
+    if (argument_count >= 2)
+        event = GetStackInt(stack);
     MapJump(map, event);
     EdEventInfo.return_code = 8;
     return 1;
@@ -2911,15 +2905,16 @@ static int _LOAD_CHR_FILE(RS_STACKDATA *stack, int argument_count) {
     int size;
     StartReadBG();
     u_long128 *buffer = (u_long128 *) read_buffer;
-    for (int i = 0; i < 16; i++)
+    int i;
+    for (i = 0; i < 16; i++)
         chr_file[i] = NULL;
-    for (int i = 0; i < argument_count; i++) {
+    for (i = 0; i < argument_count; i++) {
         char *name = GetStackString(stack++);
         if (name != NULL) {
             GetFileName(path, name);
             printf("%s\n", path);
             chr_file[i] = (u_int *) buffer;
-            LoadFileBG(path, buffer, &size);
+            LoadFileBG(path, (u_long128 *) chr_file[i], &size);
             buffer += (((size >> 6) + 1) << 6) >> 4;
         }
     }
@@ -2961,13 +2956,12 @@ static int _LOAD_CHARA(RS_STACKDATA *stack, int) {
         return 0;
     CDataAlloc2<1> *first = get_buffer();
     CDataAlloc2<1> *second = get_buffer();
-    int block = EdEventInfo.npc_count + index;
-    npc->chara.LoadPackData2(pack, name, first, block, second, 0);
-    npc->unk_148C = block;
+    npc->chara.LoadPackData2(pack, name, first, EdEventInfo.npc_count + index, second, 0);
+    npc->unk_148C = EdEventInfo.npc_count + index;
     npc->initialized = 1;
     npc->draw_enabled = 1;
     npc->near_camera = 1;
-    npc->chara.foot_sound[3].frame = 128.0f;
+    npc->chara.ambient_offset[3] = 128.0f;
     CFrameAttr attr;
     attr.unk_08 = 0;
     attr.fog_enable = 1;
@@ -2982,26 +2976,25 @@ static int _LOAD_CHARA(RS_STACKDATA *stack, int) {
 static int _LOAD_CHARA_TEXTURE(RS_STACKDATA *stack, int argument_count) {
     LOADTEXTURE_INFO2 textures[16];
     int size;
-    RS_STACKDATA *names = stack + 1;
-    int index = GetStackInt(stack);
+    int index = GetStackInt(stack++);
     CNPCharacter *npc = GetNPC(index);
     if (npc == NULL)
         return 0;
     if (npc->chara.images[0] != NULL)
         return 1;
     int block = EdEventInfo.npc_count + index;
+    int i;
     u_int *pack = get_pack_file();
     if (pack == NULL)
         return 0;
-    int i;
     for (i = 0; i < argument_count - 1; i++) {
-        u_int *file = GetPackFile(pack, GetStackString(names++), &size);
+        u_int *file = GetPackFile(pack, GetStackString(stack++), &size);
         if (file != NULL) {
             void *copy = get_buffer()->Alloc((size >> 4) + 1);
             memcpy(copy, file, size);
-            textures[i].name = (char *) copy;
             textures[i].block_no = block;
             textures[i].unk_08 = 0;
+            textures[i].name = (char *) copy;
         }
     }
     textures[i].name = NULL;
@@ -3015,18 +3008,18 @@ static int _LOAD_CHARA_TEXTURE(RS_STACKDATA *stack, int argument_count) {
 static int _LOAD_SPRITE_TEXTURE(RS_STACKDATA *stack, int argument_count) {
     LOADTEXTURE_INFO2 textures[16];
     int size;
+    int i;
     u_int *pack = get_pack_file();
     if (pack == NULL)
         return 0;
-    int i;
     for (i = 0; i < argument_count; i++) {
         u_int *file = GetPackFile(pack, GetStackString(stack++), &size);
         if (file != NULL) {
             void *copy = get_buffer()->Alloc((size >> 4) + 1);
             memcpy(copy, file, size);
-            textures[i].name = (char *) copy;
             textures[i].block_no = 45;
             textures[i].unk_08 = 0;
+            textures[i].name = (char *) copy;
         }
     }
     textures[i].name = NULL;
@@ -3039,18 +3032,18 @@ static int _LOAD_SPRITE_TEXTURE(RS_STACKDATA *stack, int argument_count) {
 static int _LOAD_BG_SPRITE_TEXTURE(RS_STACKDATA *stack, int argument_count) {
     LOADTEXTURE_INFO2 textures[16];
     int size;
+    int i;
     u_int *pack = get_pack_file();
     if (pack == NULL)
         return 0;
-    int i;
     for (i = 0; i < argument_count; i++) {
         u_int *file = GetPackFile(pack, GetStackString(stack++), &size);
         if (file != NULL) {
             void *copy = get_buffer()->Alloc((size >> 4) + 1);
             memcpy(copy, file, size);
-            textures[i].name = (char *) copy;
             textures[i].block_no = 46;
             textures[i].unk_08 = 0;
+            textures[i].name = (char *) copy;
         }
     }
     textures[i].name = NULL;
@@ -3064,20 +3057,20 @@ static int _LOAD_TEXTURE(RS_STACKDATA *stack, int argument_count) {
     LOADTEXTURE_INFO2 textures[16];
     int size;
     int block = GetStackInt(stack++) + 45;
-    if (block < 45 || block >= 50)
+    if (block > 49 || block < 45)
         return 0;
+    int i;
     u_int *pack = get_pack_file();
     if (pack == NULL)
         return 0;
-    int i;
     for (i = 0; i < argument_count - 1; i++) {
         u_int *file = GetPackFile(pack, GetStackString(stack++), &size);
         if (file != NULL) {
             void *copy = get_buffer()->Alloc((size >> 4) + 1);
             memcpy(copy, file, size);
-            textures[i].name = (char *) copy;
             textures[i].block_no = block;
             textures[i].unk_08 = 0;
+            textures[i].name = (char *) copy;
         }
     }
     textures[i].name = NULL;
@@ -3173,8 +3166,9 @@ static int _LOAD_VILLAGER(RS_STACKDATA *, int) {
 }
 
 static int _CHECK_IN_VILLAGER(RS_STACKDATA *stack, int) {
-    int index = GetStackInt(stack);
-    SetStack(stack + 1, EdCheckVillagerIn(index, &EdEventInfo.villagers[index]));
+    int index = GetStackInt(stack++);
+    int in = EdCheckVillagerIn(index, &EdEventInfo.villagers[index]);
+    SetStack(stack, in);
     return 1;
 }
 
@@ -3258,11 +3252,10 @@ static int _CLEAR_EVENT_EXBUFF(RS_STACKDATA *, int) {
 }
 
 static int _LOAD_SCENE(RS_STACKDATA *stack, int argument_count) {
-    RS_STACKDATA *next = stack + 1;
-    CCharacter *scene = GetScene(GetStackInt(stack));
+    CCharacter *scene = GetScene(GetStackInt(stack++));
     if (scene == NULL)
         return 0;
-    char *name = GetStackString(next++);
+    char *name = GetStackString(stack++);
     if (name == NULL)
         return 0;
     u_int *pack = get_pack_file();
@@ -3273,7 +3266,7 @@ static int _LOAD_SCENE(RS_STACKDATA *stack, int argument_count) {
     scene->LoadPackData(pack, name, first, second);
     scene->motion_type.camera = &DmmyCamera;
     if (argument_count >= 3)
-        scene->motion_speed = GetStackFloat(next);
+        scene->motion_speed = GetStackFloat(stack);
     return 1;
 }
 
@@ -3334,8 +3327,7 @@ static int _RELEASE_SCENE_CAMERA(RS_STACKDATA *stack, int) {
 }
 
 static int _SET_SCENE_POS(RS_STACKDATA *stack, int) {
-    stack++;
-    CCharacter *scene = GetScene(GetStackInt(stack - 1));
+    CCharacter *scene = GetScene(GetStackInt(stack++));
     if (scene == NULL)
         return 0;
     sceVu0FVECTOR position;
@@ -3345,8 +3337,7 @@ static int _SET_SCENE_POS(RS_STACKDATA *stack, int) {
 }
 
 static int _SET_SCENE_ROT(RS_STACKDATA *stack, int) {
-    stack++;
-    CCharacter *scene = GetScene(GetStackInt(stack - 1));
+    CCharacter *scene = GetScene(GetStackInt(stack++));
     if (scene == NULL)
         return 0;
     sceVu0FVECTOR rotation;
@@ -3395,14 +3386,14 @@ static int _LOAD_ITEM(RS_STACKDATA *stack, int) {
     return EdEventInfo.item_frame[index] != NULL ? 1 : 0;
 }
 static int _SYNC_CHARA_ITEM(RS_STACKDATA *stack, int) {
-    CCharacter *character = GetChara(GetStackInt(stack));
-    char *name = GetStackString(stack + 1);
+    CCharacter *character = GetChara(GetStackInt(stack++));
+    char *name = GetStackString(stack++);
     CFrame *reference = NULL;
     if (name != NULL && name[0] != '\0')
         reference = character->frame->SearchFrame(name);
     if (reference == NULL)
         reference = character->frame;
-    CFrame *item = GetItemFrame(GetStackInt(stack + 2));
+    CFrame *item = GetItemFrame(GetStackInt(stack));
     if (item == NULL)
         return 0;
     item->SetReference(reference);
@@ -6565,9 +6556,13 @@ int EdSetEventScript(char *common_script, char *map_script, CDataAlloc2<1> *allo
     if (EdEventInfo.messages[1] != NULL)
         EdEventInfo.messages[1]->SetBuff((short *) map_script);
 
-    for (int i = 0; i < 1500; i++)
+    int i;
+    for (i = 0; i < 1500; i++)
         ext_func__2[i] = NULL;
-    for (int i = 0; ext_func_info[i].function != NULL; i++) {
+    for (i = 0;; i++) {
+        int (*function)(RS_STACKDATA *, int) = ext_func_info[i].function;
+        if (function == NULL)
+            break;
         int j;
         for (j = 0; j < i; j++) {
             if (ext_func_info[i].operation == ext_func_info[j].operation) {
@@ -6580,7 +6575,7 @@ int EdSetEventScript(char *common_script, char *map_script, CDataAlloc2<1> *allo
         if (operation < 0 || operation >= 1500)
             printf("ext func over!!");
         else
-            ext_func__2[operation] = ext_func_info[i].function;
+            ext_func__2[operation] = function;
     }
     EdEventScript.ext_func(ext_func__2, 1500);
     run_system_event = 0;
@@ -6588,6 +6583,7 @@ int EdSetEventScript(char *common_script, char *map_script, CDataAlloc2<1> *allo
 }
 
 int EdInitEventParamSimple() {
+    int i;
     EdEventInfo.next_event = -1;
     EdEventInfo.fadeout_event_no = -1;
     EdEventInfo.unk_2ac = -1;
@@ -6596,6 +6592,8 @@ int EdInitEventParamSimple() {
     motion_stop_flag = 0;
     menu_mode = 0;
     CurrentDir[0] = '\0';
+    actv_file = 0;
+    actv_buffer = 0;
     follow_chara = NULL;
     sync_camera_ref_chara = NULL;
     sync_camera_ref_obj = NULL;
@@ -6608,7 +6606,7 @@ int EdInitEventParamSimple() {
     EdEventInfo.player_shadow_draw = 1;
     EdEventInfo.player_foot_sound = 1;
     EdEventInfo.player_stop = 0;
-    for (int i = 0; i < 16; i++) {
+    for (i = 0; i < 16; i++) {
         EdEventInfo.npc_collision[i] = 0;
         EdEventInfo.npc_draw[i] = 1;
         EdEventInfo.npc_shadow_draw[i] = 1;
@@ -6616,25 +6614,25 @@ int EdInitEventParamSimple() {
         EdEventInfo.npc_stop[i] = 0;
         EdEventInfo.npc_draw_before[i + 1] = 0;
     }
-    for (int i = 0; i < 266; i++) {
+    for (i = 0; i < 266; i++) {
         asq_table[i].active = 0;
         asq_table[i].character = 0;
     }
-    for (int i = 0; i < 10; i++)
+    for (i = 0; i < 10; i++)
         ActSeq[i].Initialize(asq_table, 266);
     SpriteTable.Initialize(sprite_table, 32, 4);
     SpriteTable.ClearPointer();
     SpriteTableBack.Initialize(sprite_table, 32, 4);
     SpriteTableBack.ClearPointer();
-    for (int i = 45; i < 50; i++)
+    for (i = 45; i <= 49; i++)
         TexManager.DeleteTextureBlock(i);
     memset(ObjHandle, 0, sizeof(ObjHandle));
-    actv_file = 0;
-    actv_buffer = 0;
-    for (int i = 0; i <= 0; i++)
+    event_stop = 0;
+    event_pause = 0;
+    for (i = 0; i <= 0; i++)
         EdEventInfo.item_frame[i] = NULL;
     SceneData.Initialize();
-    for (int i = 0; i < 16; i++) {
+    for (i = 0; i < 16; i++) {
         ED_SPRITE *sprite = GetSprite(i);
         if (sprite != NULL)
             InitSprite(sprite);
@@ -6680,10 +6678,15 @@ INCLUDE_ASM("asm/nonmatchings/editloop3", EdEventInit__FiP14CDataAlloc2_1_Pc);
 void RunEvent(CRunScript *script, int program, CDataAlloc2<1> *arena);
 void RunEvent(CRunScript *script, int program, CDataAlloc2<1> *arena) {
     int used = arena->used;
-    EdEventBuffer.base = arena->base + used * 16;
-    EdEventBuffer.limit = arena->limit - used;
+    u_char *base = arena->base + used * 16;
+    int limit = arena->limit - used;
+    EdEventBuffer.base = base;
+    EdEventBuffer.limit = limit;
     EdEventBuffer.used = 0;
-    world_rot[3] = world_rot[2] = world_rot[1] = world_rot[0] = 0.0f;
+    world_rot[3] = 0.0f;
+    world_rot[2] = 0.0f;
+    world_rot[1] = 0.0f;
+    world_rot[0] = 0.0f;
     sceVu0CopyVector(world_pos, world_rot);
     sceVu0UnitMatrix(world_local);
     sceVu0UnitMatrix(local_world);
@@ -6764,7 +6767,7 @@ int EdEventNPCStep() {
     for (int i = 0; i < EdEventInfo.npc_count; i++) {
         EdEventInfo.npcs[i].chara.unk_C98 = wind;
         if (EdEventInfo.npc_stop[i] == 0) {
-            EdEventInfo.npcs[i].unk_11B0 = 0;
+            ((CNPCharacter *) EdEventInfo.npcs)[i].unk_11B0 = 0;
             EdEventInfo.npcs[i].chara.Step();
             EdEventInfo.npcs[i].chara.ShadowStep();
         }
@@ -6780,7 +6783,7 @@ int EdEventNPCStep() {
 }
 
 int EdEventSpriteDraw() {
-    for (int block = 45; block < 50; block++) {
+    for (int block = 45; block <= 49; block++) {
         int texture_loaded = 0;
         for (int i = 0; i < 16; i++) {
             ED_SPRITE *sprite = GetSprite(i);
@@ -6862,8 +6865,8 @@ int EdSearchNearNPC(CCharacter *character, CNPCharacter *npcs, int count) {
             height = height;
         if (height > character->body_height)
             continue;
-        character_position[1] = 0.0f;
         npc_position[1] = 0.0f;
+        character_position[1] = 0.0f;
         float distance = DistVector(character_position, npc_position);
         if (distance > 5.0f + 1.2f * npcs[i].chara.body_width)
             continue;
@@ -6910,7 +6913,10 @@ int EdTalkModeInit(CNPCharacter *villager, int character_info_id) {
     if (villager->villager_id < 0)
         return 0;
     talk_villager__2 = villager;
-    talk_chara_info_id = character_info_id < 0 ? villager->villager_id : character_info_id;
+    if (character_info_id < 0)
+        talk_chara_info_id = villager->villager_id;
+    else
+        talk_chara_info_id = character_info_id;
     talk_mode = 0;
     TalkMesMake = 1;
     talk_select = 0;

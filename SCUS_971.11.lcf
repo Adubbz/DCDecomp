@@ -466,7 +466,6 @@ SECTIONS
         editloop3.cpp.o (.eddata1)     // 0x00269940
         main.data.part4e.s.o (.data)   // 0x00269950
         editloop3.cpp.o (.eddata2)     // 0x00269970
-        main.data.part4h.s.o (.data)   // 0x002699d0
         editloop3.cpp.o (.eddata3)     // 0x002699f0
         main.data.part4i.s.o (.data)   // 0x00269a30
         editloop3.cpp.o (.objworldorigin) // 0x00269ad0

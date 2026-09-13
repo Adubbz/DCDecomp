@@ -650,7 +650,10 @@ def main():
     if deferred_sections:
         elf = Elf(args.object.read_bytes())
         if rename_sections(elf, deferred_sections, parser):
-            parser.error("a numbered constant in `sections` is not exported")
+            parser.error(
+                "a numbered constant in `sections` is not exported; if the "
+                "edit renamed it, empty the entries and re-key them with "
+                "scripts/build/rekey_sections.py")
         args.object.write_bytes(elf.pack())
 
 
