@@ -2147,13 +2147,6 @@ struct ED_EVENT_EXTERNAL_FUNCTION {
 /** Dispatch table built from the editor-event external-function registry. */
 extern int (*ext_func__2[1500])(RS_STACKDATA *, int);
 
-/** Stores one queued event-sprite command consumed by a sprite table. */
-struct SPRITE_TABLE {
-    u8 unk_00[0x38];
-};
-
-STATIC_ASSERT(sizeof(SPRITE_TABLE) == 0x38);
-
 /**
  * Action records supplied to each editor-event sequencer.
  */

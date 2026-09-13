@@ -9,7 +9,12 @@
 // names but not where they live.
 struct MG_SPRITE;
 struct RECT;
-struct SPRITE_TABLE;
+/** Stores one queued event-sprite command consumed by a sprite table. */
+struct SPRITE_TABLE {
+    u8 unk_00[0x38];
+};
+
+STATIC_ASSERT(sizeof(SPRITE_TABLE) == 0x38);
 
 class CSpriteTable {
 public:
