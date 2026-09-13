@@ -8268,8 +8268,6 @@ void autoCamTrial(void) {
     }
 }
 
-FUZZY_MATCH("asm/nonmatchings/dun/gameloop", DelActiveItem__Fi);
-
 void DelActiveItem(int slot) {
     // The two arrays are adjacent, and retail walks the second one off the
     // first rather than off the save data again.
