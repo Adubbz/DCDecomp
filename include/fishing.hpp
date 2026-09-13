@@ -57,6 +57,15 @@ void FishLineInit(float *position);
 void FishingLoadEsa(int item_no, CFrameVu1 *frame, int slot);
 
 /**
+ * Returns the fish selected for the active battle.
+ *
+ * @mangled FishingGetBattleFish__Fv
+ * @address 0x1A97A0
+ * @size 0xC
+ */
+int FishingGetBattleFish();
+
+/**
  * Leaves the fishing minigame and releases its active state.
  *
  * @mangled FishingExit__Fv
