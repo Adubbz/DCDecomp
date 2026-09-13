@@ -87,6 +87,9 @@ extern int now_bgm_play;
 /** The background-music volume that is set now. */
 extern int now_bgm_vol;
 
+/** Whether the sprites that follow draw with the bilinear filter. */
+extern int linear__2;
+
 /**
  * Returns the table row for a sound effect, or zero when the number names no
  * row. The number selects between the fixed table, the current basic set, the
@@ -465,7 +468,11 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSetSPSePanf__Fif);
 INCLUDE_ASM("asm/nonmatchings/snd", LoadSoundInfo__FP8SND_INFOPci);
 INCLUDE_ASM("asm/nonmatchings/snd", CommandREVERBE__FPPv);
 INCLUDE_ASM("asm/nonmatchings/snd", CommandTABLE__FPPv);
-INCLUDE_ASM("asm/nonmatchings/snd", setbilinear__Fi);
+
+void setbilinear(int on) {
+    linear__2 = on;
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", setAlphaFlag__FP13sceVif1PacketP10sceGsAlpha);
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_ii);
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_);
