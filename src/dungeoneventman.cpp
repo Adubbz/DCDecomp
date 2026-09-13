@@ -2,7 +2,12 @@
 
 #include "collisiondata.hpp"
 #include "dun/gameloop.hpp"
+#include "dungeonmap.hpp"
+#include "frame.hpp"
 #include "mathutil.hpp"
+
+#include <cmath>
+#include <cstdio>
 
 DUNGEON_EVENT_SLOT *CDungeonEventMan::SearchPartsID(int index, int parts_id) {
     int slot_parts_id;

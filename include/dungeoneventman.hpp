@@ -8,13 +8,17 @@
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 class CDungeonMap;
+class CFrame;
 
 /**
  * Records what one dungeon event slot is doing.
  */
 struct DUNGEON_EVENT_SLOT {
     s8 unk_00;
-    u8 unk_01[0x1B];
+    u8 unk_01[0xF];
+    CFrame *unk_10;
+    CFrame *unk_14;
+    u8 unk_18[0x4];
     s32 unk_1C;
     s32 unk_20;
     u8 unk_24[0x10];
