@@ -1,6 +1,7 @@
 #include "common.h"
 
 #include "btmisc.hpp"
+#include "snd.hpp"
 
 /* Battle support: pack loading, item name paths, battle music, floor queries. */
 
@@ -48,6 +49,13 @@ void BtBattleMusic_Init() {
     BtBattleMusic_Vol = 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btmisc", BtBattleMusic_Stop__Fv);
+void BtBattleMusic_Stop() {
+    if (BtBattleMusic_Flag != 0) {
+        SndSetBgmVolf(1.0f);
+        SndAmbientSetVolf(0.0f);
+        BtBattleMusic_Init();
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/btmisc", BtBattleMusic_Excg__FfPfPf);
 INCLUDE_ASM("asm/nonmatchings/btmisc", BtGetFloorLevel__Fi);
