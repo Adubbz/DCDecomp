@@ -3,6 +3,11 @@
 #include "common.h"
 
 /**
+ * Stores the background-music volume saved before the East King event.
+ */
+extern s16 PrevEastKingSndVol;
+
+/**
  * Finalizes the East King event's asynchronously loaded texture and sound data.
  *
  * @mangled EastKingTextureEnter__Fv

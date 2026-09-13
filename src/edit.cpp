@@ -81,6 +81,11 @@ int FishingExchangeLoop();
 void InitFishRecordView(u_long128 *buffer, int *texture_block, int mode);
 int FishRecordViewLoop();
 
+/**
+ * Resolves the model and texture paths for a battle item.
+ */
+void BtGetItemNamePath(char *model_path, char *texture_path, int item_no);
+
 /* 28 bytes nothing reads other than a word at a time, so it is spelled as words rather than as a
    layout nothing supports. */
 extern int EditMenuStatus[7];
@@ -481,7 +486,10 @@ static void DrawLine(int *from, int *to, u_char r, u_char g, u_char b, u_char a)
 
 INCLUDE_ASM("asm/nonmatchings/edit", EdSetBgmVol__Ff);
 INCLUDE_ASM("asm/nonmatchings/edit", EdAmbientPlay__Ff);
-INCLUDE_ASM("asm/nonmatchings/edit", EdSetAmbientVol__Ff);
+
+void EdSetAmbientVol(float volume) {
+    SndAmbientSetVolf(volume);
+}
 /* The sound the map editor puts in the world: every effect a map part carries that names a sound
    is measured against the camera each frame, and what survives is entered into one of four
    sources. A source is one sound effect and the set of places it is coming from at once, so a
@@ -1109,7 +1117,9 @@ int EdCheckGetItem(int item) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/edit", EdGetItemFile__FiPcPc);
+void EdGetItemFile(int item_no, char *model_path, char *texture_path) {
+    BtGetItemNamePath(model_path, texture_path, item_no);
+}
 INCLUDE_ASM("asm/nonmatchings/edit", EdDrawItem__Fv);
 /* The map editor's own system and help messages, in front of the ones the town runs: every call
    here reaches the town's message code first and then does the same thing again to a window of the
@@ -1538,8 +1548,19 @@ void EdDrawOpenItemBox() {
 }
 
 INCLUDE_ASM("asm/nonmatchings/edit", EdSaveFrameImage__F8CTexture);
-INCLUDE_ASM("asm/nonmatchings/edit", EdSaveFrameImageTask__Fv);
-INCLUDE_ASM("asm/nonmatchings/edit", EdSaveFrameImageInit__Fv);
+
+void EdSaveFrameImageTask() {
+    if (frame_image_flag != 0) {
+        MGMoveFrameBuffImage((sceGsTex0 *) &frame_image_tex.tex0, 0, 0, 0);
+        frame_image_tex.Initialize();
+        frame_image_flag = 0;
+    }
+}
+
+void EdSaveFrameImageInit() {
+    frame_image_tex.Initialize();
+    frame_image_flag = 0;
+}
 INCLUDE_ASM("asm/nonmatchings/edit", EdMenuLoop__FP6ClsMes);
 
 float ConvertTime(float hour) {

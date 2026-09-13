@@ -12,21 +12,17 @@
  * CheckDefaultWeapon, AddDrink..Init, SetDead..GetAtraData), so both classes
  * live in this one translation unit, in that order.
  *
- * `#if DNG_COMPILE_UNMATCHED` guards C++ that is written but does not yet
- * compile to retail's bytes; it is off, and the marker below each guard
- * supplies the function instead. See re/ai/adddrink_matching_progress.md. */
+ * `#if DNG_COMPILE_UNMATCHED` guards remaining C++ that is written but does
+ * not yet compile to retail's bytes; it is off, and the marker below each
+ * guard supplies the function instead. */
 
 #include <cstdio>
 #include <cstdlib>
 
-/* Named only so the `asm` bodies at the bottom of this file can branch to
- * them. `fptosi` is MWCC's float-to-int helper, which the compiler calls by
- * itself from ordinary C++; the second is this file's own
- * CUserStatus::AddNowLife, spelled the way it is mangled because an asm body
- * resolves names through the assembler, not through C++ lookup. Both go when
- * the four unmatched functions do. */
+/* Named only so the `asm` bodies at the bottom of this file can branch to it.
+ * `fptosi` is MWCC's float-to-int helper, which the compiler calls by itself
+ * from ordinary C++. It goes when the remaining unmatched functions do. */
 extern "C" void fptosi(void);
-extern "C" void AddNowLife__11CUserStatusFisf(void);
 
 extern "C" int ItemDataToHaveCopy__Fi(int item_id);
 struct ATTACH_LIST;
@@ -485,7 +481,6 @@ int CDngStatusData::CheckDefaultWeapon(int chara_no) {
     return 1;
 }
 
-#if DNG_COMPILE_UNMATCHED
 /* Adds to a character's water gauge. With ratio == 0 the gauge moves
  * instantly; otherwise the target is latched into drink_next[] and
  * drink_step[] holds the per-frame delta CUserStatus::Step applies, signed so
@@ -522,12 +517,7 @@ void CUserStatus::AddDrink(int chara_no, s16 amount, float ratio) {
         }
     }
 }
-#else
 
-INCLUDE_ASM("asm/nonmatchings/dngstatusdata", AddDrink__11CUserStatusFisf);
-#endif /* DNG_COMPILE_UNMATCHED */
-
-#if DNG_COMPILE_UNMATCHED
 /* Same instant/interpolated split as AddDrink, for HP. */
 /* @ 0x1BE710 (0x180 bytes) -- AddNowLife__11CUserStatusFisf */
 void CUserStatus::AddNowLife(int chara_no, s16 amount, float ratio) {
@@ -571,9 +561,6 @@ void CUserStatus::AddNowLife(int chara_no, s16 amount, float ratio) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dngstatusdata", AddNowLife__11CUserStatusFisf);
-#endif /* DNG_COMPILE_UNMATCHED */
 
 /* Alive iff the active character has HP left -- and, while an interpolated HP
  * change is in flight, iff its target is above zero too. */
@@ -589,31 +576,28 @@ int CUserStatus::CheckLife(void) {
     return 1;
 }
 
-#if DNG_COMPILE_UNMATCHED
 /* Sets an absolute HP target (clamped to 0..max_hp), instantly or
  * interpolated, per the same rules as AddNowLife. */
 /* @ 0x1BE900 (0x150 bytes) -- SetNextLife__11CUserStatusFisf */
 void CUserStatus::SetNextLife(int chara_no, s16 value, float ratio) {
-    int valid;
-
     if (this->life_step[chara_no] != 0) {
         this->hp[chara_no] = this->next_hp[chara_no];
         this->life_step[chara_no] = 0;
     }
 
-    if ((int) value <= 0) {
+    if (value <= 0) {
         value = 0;
     }
-    if (!(valid = (int) value < (int) this->max_hp[chara_no])) {
+    if (value >= this->max_hp[chara_no]) {
         value = this->max_hp[chara_no];
     }
 
-    if (0.0f == ratio) {
+    if (ratio == 0.0f) {
         this->hp[chara_no] = value;
     } else {
         this->next_hp[chara_no] = value;
 
-        this->life_step[chara_no] = ratio * ((float) (this->next_hp[chara_no] - this->hp[chara_no]) / 100.0f);
+        this->life_step[chara_no] = ratio * ((this->next_hp[chara_no] - this->hp[chara_no]) / 100.0f);
         if (this->life_step[chara_no] == 0) {
             if (this->next_hp[chara_no] - this->hp[chara_no] < 0) {
                 this->life_step[chara_no] = -1;
@@ -630,32 +614,33 @@ void CUserStatus::SetNextLife(int chara_no, s16 value, float ratio) {
  * gauge is empty, then advances every character's in-flight water and HP
  * interpolations by one step. */
 /* @ 0x1BEA50 (0x390 bytes) -- Step__11CUserStatusFi */
-void CUserStatus::Step(int paused) {
+void CUserStatus::Step(int mode) {
+    float drain;
+    int dungeon;
+
     if (this->step_disable != 0) {
         return;
     }
 
-    float rate = 1.0f + 0.2f * (float) this->cur_georama;
-    rate = 0.003f * rate;
+    dungeon = this->cur_georama;
+    drain = 1.0f + 0.2f * dungeon;
+    drain = 0.003f * drain;
 
-    if (this->water_drain_disable == 0 && paused == 0) {
+    if (this->water_drain_disable == 0 && mode == 0) {
         if (this->water_now[this->cur_chara] <= 0.0f) {
             this->water_now[this->cur_chara] = 0.0f;
         } else {
             if (this->res_limit_zone_current == 11) {
-                rate = 5.0f * rate;
+                drain = 5.0f * drain;
             }
-
-            int weapon_flags = NowWeaponHave->flags;
-            if ((weapon_flags & 8) != 0) {
-                rate *= 0.8f;
+            if (NowWeaponHave->flags & 0x8) {
+                drain *= 0.8f;
             }
-            if ((weapon_flags & 0x10) != 0) {
-                rate *= 2.0f;
+            if (NowWeaponHave->flags & 0x10) {
+                drain *= 2.0f;
             }
-
-            if (paused == 0) {
-                this->water_now[this->cur_chara] -= rate;
+            if (mode == 0) {
+                this->water_now[this->cur_chara] -= drain;
             }
             if (this->water_now[this->cur_chara] <= 0.0f) {
                 this->water_now[this->cur_chara] = 0.0f;
@@ -672,32 +657,27 @@ void CUserStatus::Step(int paused) {
         }
     }
 
-    int i;
-    int valid;
-
-    for (i = 0; (valid = i < 6) != 0; i++) {
+    for (int i = 0; i < 6; i++) {
         if (this->drink_step[i] != 0) {
-            this->water_now[i] = this->water_now[i] + (float) this->drink_step[i];
-
+            this->water_now[i] += this->drink_step[i];
             if (this->drink_step[i] < 0) {
-                if (this->water_now[i] <= (float) this->drink_next[i]) {
-                    this->water_now[i] = (float) this->drink_next[i];
+                if (this->water_now[i] <= this->drink_next[i]) {
+                    this->water_now[i] = this->drink_next[i];
                     this->drink_step[i] = 0;
                 }
             }
             if (this->drink_step[i] > 0) {
-                if (this->water_now[i] >= (float) this->drink_next[i]) {
-                    this->water_now[i] = (float) this->drink_next[i];
+                if (this->water_now[i] >= this->drink_next[i]) {
+                    this->water_now[i] = this->drink_next[i];
                     this->drink_step[i] = 0;
                 }
             }
         }
     }
 
-    for (i = 0; (valid = i < 6) != 0; i++) {
+    for (int i = 0; i < 6; i++) {
         if (this->life_step[i] != 0) {
-            this->hp[i] = this->hp[i] + this->life_step[i];
-
+            this->hp[i] += this->life_step[i];
             if (this->life_step[i] < 0) {
                 if (this->hp[i] <= this->next_hp[i]) {
                     this->hp[i] = this->next_hp[i];
@@ -713,11 +693,6 @@ void CUserStatus::Step(int paused) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dngstatusdata", SetNextLife__11CUserStatusFisf);
-
-INCLUDE_ASM("asm/nonmatchings/dngstatusdata", Step__11CUserStatusFi);
-#endif /* DNG_COMPILE_UNMATCHED */
 
 /* @ 0x1BEDE0 (0x110 bytes) -- Init__11CUserStatusFv */
 void CUserStatus::Init(void) {

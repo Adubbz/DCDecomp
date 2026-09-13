@@ -58,7 +58,7 @@ STATIC_ASSERT(sizeof(OBJ_ANIME_SEQ) == 0x90);
  * that carries it.
  */
 struct EDIT_EFFECT_INFO {
-    u8 unk_00[16];
+    char frame_name[16]; /**< Names the child frame that carries the effect. */
     s32 kind;      /**< Number that names the effect; zero or below where the slot is free. */
     s32 map_flag;  /**< Map flag that stops the effect while it is set; zero or below where none does. */
     float start;   /**< Time of day that the effect starts at. */
@@ -78,18 +78,20 @@ struct EDIT_EFFECT_INFO {
 STATIC_ASSERT(sizeof(EDIT_EFFECT_INFO) == 0x70);
 
 /**
+ * Stops every object animation.
+ *
  * @mangled ObjAnimeAllStop__Fv
  * @address 0x165CE0
  * @size 0x10
- * @unknownret
  */
 void ObjAnimeAllStop(void);
 
 /**
+ * Starts every object animation.
+ *
  * @mangled ObjAnimeAllStart__Fv
  * @address 0x165CF0
  * @size 0x10
- * @unknownret
  */
 void ObjAnimeAllStart(void);
 
@@ -142,10 +144,11 @@ void end_check(float, float, float);
 void ObjAnimePlay(OBJ_ANIME_SEQ *);
 
 /**
+ * Selects the frame that carries an edited map effect.
+ *
  * @mangled InitEditEffect__FP6CFrameP16EDIT_EFFECT_INFO
  * @address 0x166970
  * @size 0x60
- * @unknownret
  */
 void InitEditEffect(CFrame *, EDIT_EFFECT_INFO *);
 

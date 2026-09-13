@@ -19,6 +19,7 @@ class CDngMessageMan;
 class CDungeonMap;
 class CHitValue;
 class CMenuItemStep;
+class CMonstorUnit;
 class CRandomItem;
 class CSHOT_EFFECT_PACK;
 class CStealItem;
@@ -67,6 +68,11 @@ extern "C" BT_EVENT_INFO BtEventInfo;
  * Player status shared by the dungeon loop and battle commands.
  */
 extern CUserStatus *UserStatus;
+
+/**
+ * Monster unit currently used by the dungeon loop and its scripts.
+ */
+extern CMonstorUnit *NowMonstorUnit;
 
 /** Player character. */
 extern "C" CCharacter CharaMain;

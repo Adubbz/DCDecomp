@@ -17,7 +17,7 @@ class CTexture;
 class CFireOmni {
 public:
     s32 unk_00;
-    s32 unk_04;
+    float unk_04;
     s32 unk_08;
     float unk_0C;
     s32 unk_10;
@@ -71,10 +71,11 @@ public:
     void DrawFire(int, int, CCamera *, float *, float, int, float);
 
     /**
+     * Advances and wraps the fire raster animation phase.
+     *
      * @mangled RasterStep__9CFireOmniFv
      * @address 0x162280
      * @size 0x90
-     * @unknownret
      */
     void RasterStep(void);
 

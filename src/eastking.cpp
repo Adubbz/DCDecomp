@@ -3,11 +3,16 @@
 
 #include "eastking.hpp"
 
+#include "snd.hpp"
+
 INCLUDE_RODATA("asm/nonmatchings/eastking", @354__3);
 INCLUDE_ASM("asm/nonmatchings/eastking", EastKingTextureEnter__Fv);
 INCLUDE_RODATA("asm/nonmatchings/eastking", @371__4);
 INCLUDE_ASM("asm/nonmatchings/eastking", EastKingMsgDraw__Fv);
-INCLUDE_ASM("asm/nonmatchings/eastking", GetPrevEastKingSndVol__Fv);
+
+void GetPrevEastKingSndVol() {
+    PrevEastKingSndVol = SndGetBgmVol();
+}
 INCLUDE_ASM("asm/nonmatchings/eastking", InitEastKingEvent__FiPiP1);
 INCLUDE_RODATA("asm/nonmatchings/eastking", @398__2);
 INCLUDE_ASM("asm/nonmatchings/eastking", EastKingEventKey__Fv);

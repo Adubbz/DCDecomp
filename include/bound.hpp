@@ -62,12 +62,13 @@ public:
     void SetDir(CFrame *, float *, float *, float *, float, float);
 
     /**
+     * Stores the endpoints and up vector used to orient the box.
+     *
      * @mangled ChangeDir__6CBoundFPfPfPf
      * @address 0x13D5C0
      * @size 0x70
-     * @unknownret
      */
-    void ChangeDir(float *, float *, float *);
+    void ChangeDir(float *from_position, float *to_position, float *up_direction);
 
     /**
      * @mangled UpDateDir__6CBoundFv
@@ -102,18 +103,20 @@ public:
     void UpDateDirPos(void);
 
     /**
+     * Updates this box and the remaining boxes in its linked list.
+     *
      * @mangled UpDate__6CBoundFv
      * @address 0x13DC70
      * @size 0x80
-     * @unknownret
      */
     void UpDate(void);
 
     /**
+     * Initializes the box's links, transform inputs, friction, and extension scales.
+     *
      * @mangled InitParam__6CBoundFv
      * @address 0x13DCF0
      * @size 0x80
-     * @unknownret
      */
     void InitParam(void);
 

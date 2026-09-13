@@ -217,7 +217,6 @@ segments:
       - {start: 0x3df90, type: cpp, name: dispctrl}
       - {start: 0x3ea50, type: cpp, name: dataread}
       - {start: 0x411b0, type: cpp, name: main}
-      - {start: 0x41e30, type: asmtu, name: gamemode}
       - {start: 0x43920, type: cpp, name: dataalloc}
       - {start: 0x43970, type: cpp, name: map}
       - {start: 0x43c50, type: cpp, name: sound}
@@ -244,15 +243,14 @@ segments:
       - {start: 0x64c30, type: cpp, name: objanime}
       - {start: 0x67160, type: cpp, name: textureanime}
       - {start: 0x67d80, type: cpp, name: ebattle}
-      - {start: 0x68300, type: cpp, name: ebattle_loop}
       - {start: 0x6d960, type: cpp, name: editarea}
       - {start: 0x70350, type: cpp, name: edit}
       - {start: 0x742a0, type: cpp, name: editloop}
       - {start: 0x83d40, type: cpp, name: editloop3}
       - {start: 0x9a0d0, type: cpp, name: editpartsinfo}
       - {start: 0x9a8b0, type: cpp, name: mapparts}
-      - {start: 0x9b780, type: asmtu, name: edit_in}
-      - {start: 0xa0570, type: asmtu, name: editground}
+      - {start: 0x9b780, type: cpp, name: edit_in}
+      - {start: 0xa0570, type: cpp, name: editground}
       - {start: 0xa88e0, type: cpp, name: fishing}
       - {start: 0xab840, type: cpp, name: shot_utils}
       - {start: 0xabd40, type: cpp, name: shot_effect}
@@ -282,7 +280,7 @@ segments:
       - {start: 0xd6ce0, type: cpp, name: randomitem}
       - {start: 0xd75e0, type: cpp, name: stealitem}
       - {start: 0xd7b40, type: cpp, name: monstorunit}
-      - {start: 0xe1740, type: asmtu, name: runscript_opcodes}
+      - {start: 0xe1740, type: cpp, name: runscript_opcodes}
       - {start: 0xe69d0, type: cpp, name: shop}
       - {start: 0xf3ea0, type: cpp, name: battlemenu}
       - {start: 0x10bfc0, type: cpp, name: menu_misc}
@@ -301,7 +299,7 @@ segments:
       - {start: 0x140150, type: cpp, name: fish}
       - {start: 0x141420, type: cpp, name: charakey}
       - {start: 0x144c30, type: cpp, name: langset}
-      - {start: 0x1452f0, type: asmtu, name: fader}
+      - {start: 0x1452f0, type: cpp, name: fader}
       - {start: 0x145400, type: data, name: vutext, dir: main, linker_section: .vutext}
       - {start: 0x14fbc0, type: data, name: data, dir: main}
       - {start: 0x196780, type: data, name: vudata, dir: main, linker_section: .vudata}
@@ -358,7 +356,6 @@ segments:
       - {start: 0x199168, type: .rodata, name: dispctrl}
       - {start: 0x199178, type: .rodata, name: dataread}
       - {start: 0x1994d8, type: .rodata, name: main}
-      - {start: 0x1995a0, type: .rodata, name: gamemode}
       - {start: 0x1997d0, type: .rodata, name: sound}
       - {start: 0x199b20, type: .rodata, name: gameutil}
       - {start: 0x199b68, type: .rodata, name: clsmes}
@@ -371,7 +368,6 @@ segments:
       - {start: 0x19a1f0, type: .rodata, name: runeffect}
       - {start: 0x19a208, type: .rodata, name: objanime}
       - {start: 0x19a2c0, type: .rodata, name: ebattle}
-      - {start: 0x19a2e0, type: .rodata, name: ebattle_loop}
       - {start: 0x19a368, type: .rodata, name: edit}
       - {start: 0x19a8c8, type: .rodata, name: editloop}
       - {start: 0x19b140, type: .rodata, name: editloop3}

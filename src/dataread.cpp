@@ -12,9 +12,12 @@
 #include <cstring>
 
 #include "btsysscript.hpp"
+#include "cloth.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dataset.hpp"
+#include "framevu1.hpp"
+#include "gameutil.hpp"
 #include "mathutil.hpp"
 #include "mglib.hpp"
 #include "savedata.hpp"
@@ -28,6 +31,11 @@ extern short *SystemMes;
 extern int LanguageCode;
 extern int BtMapJumpFloor;
 extern CDataAlloc<1, 6000> SystemMesBuffer;
+
+/**
+ * Cloth instance currently receiving configuration commands.
+ */
+extern CCloth *pCloth;
 
 void DevInit(void);
 void SndInitSeTable(void);
@@ -581,14 +589,41 @@ int GetPackFileExt(u_int *pack, char *ext, u_int **files, int max, int *sizes, c
     return found;
 }
 
+/**
+ * Sets and clamps the cloth grid dimensions.
+ */
 static void CommandSIZE(void **argv);
+/**
+ * Attaches the cloth to the frame named by the command.
+ */
 static void CommandFRAME(void **argv);
+/**
+ * Sets the scale used when calculating cloth normals.
+ */
 static void CommandNORMAL(void **argv);
+/**
+ * Sets the cloth follow vector.
+ */
 static void CommandFOLLOW(void **argv);
+/**
+ * Sets the cloth stiffness vector.
+ */
 static void CommandK(void **argv);
+/**
+ * Sets the cloth response to wind.
+ */
 static void CommandWINDEFFECT(void **argv);
+/**
+ * Sets the cloth gravity vector.
+ */
 static void CommandGRAVITY(void **argv);
+/**
+ * Selects which cloth rows divide their polygons.
+ */
 static void CommandPOLYDIVE(void **argv);
+/**
+ * Creates and attaches an exclusion bound for the cloth.
+ */
 static void CommandBOUND(void **argv);
 
 /**
@@ -632,22 +667,154 @@ INCLUDE_RODATA("asm/nonmatchings/dataread", @254);
 INCLUDE_RODATA("asm/nonmatchings/dataread", @255);
 
 INCLUDE_ASM("asm/nonmatchings/dataread", InitCloth__FP9CFrameVu1R9input_strP14CDataAlloc2_1_);
-INCLUDE_ASM("asm/nonmatchings/dataread", CommandSIZE__FPPv);
+
+static void CommandSIZE(void **argv) {
+    int num_i = *(int *) argv[0];
+    int num_j = *(int *) argv[1];
+
+    if (num_i <= 0)
+        num_i = 1;
+    if (num_i > 16)
+        num_i = 16;
+    if (num_j <= 0)
+        num_j = 1;
+    if (num_j > 16)
+        num_j = 16;
+    pCloth->num_i = num_i;
+    pCloth->num_j = num_j;
+}
+
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandFRAME__FPPv);
-INCLUDE_ASM("asm/nonmatchings/dataread", CommandNORMAL__FPPv);
-INCLUDE_ASM("asm/nonmatchings/dataread", CommandFOLLOW__FPPv);
-INCLUDE_ASM("asm/nonmatchings/dataread", CommandK__FPPv);
-INCLUDE_ASM("asm/nonmatchings/dataread", CommandWINDEFFECT__FPPv);
-INCLUDE_ASM("asm/nonmatchings/dataread", CommandGRAVITY__FPPv);
-INCLUDE_ASM("asm/nonmatchings/dataread", CommandPOLYDIVE__FPPv);
+
+static void CommandNORMAL(void **argv) {
+    pCloth->normal_scale = *(float *) argv[0];
+}
+
+static void CommandFOLLOW(void **argv) {
+    pCloth->follow[0] = *(float *) argv[0];
+    pCloth->follow[1] = *(float *) argv[1];
+    pCloth->follow[2] = *(float *) argv[2];
+}
+
+static void CommandK(void **argv) {
+    pCloth->stiffness[0] = *(float *) argv[0];
+    pCloth->stiffness[1] = *(float *) argv[1];
+    pCloth->stiffness[2] = *(float *) argv[2];
+}
+
+static void CommandWINDEFFECT(void **argv) {
+    pCloth->wind_effect = *(float *) argv[0];
+}
+
+static void CommandGRAVITY(void **argv) {
+    pCloth->gravity[0] = *(float *) argv[0];
+    pCloth->gravity[1] = *(float *) argv[1];
+    pCloth->gravity[2] = *(float *) argv[2];
+}
+
+static void CommandPOLYDIVE(void **argv) {
+    char *s = (char *) argv[0];
+    int i = 0;
+
+    while (i < 16) {
+        char c = *s;
+        if (c == 0)
+            break;
+        pCloth->polygon_divide[i] = (c != '0');
+        s++;
+        i++;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandBOUND__FPPv);
 INCLUDE_ASM("asm/nonmatchings/dataread", GetArg__FR9input_strPiPPv__2);
 INCLUDE_ASM("asm/nonmatchings/dataread", SearchCommand__FR9input_strPi__2);
 INCLUDE_ASM("asm/nonmatchings/dataread", SkipSpace__FR9input_str__2);
 INCLUDE_ASM("asm/nonmatchings/dataread", CheckChar__Fc__2);
-INCLUDE_ASM("asm/nonmatchings/dataread", keyCtrl__FffP11MOTION_INFO);
+
+/**
+ * Converts analog-stick displacement into a motion speed and movement state.
+ */
+int keyCtrl(float x, float y, MOTION_INFO *motion) {
+    int result = 0;
+
+    if (y != 0.0f || x != 0.0f) {
+        float m;
+        float speed;
+
+        result = 2;
+
+        if (x < 0.0f)
+            x *= -1.0f;
+        if (y < 0.0f)
+            y *= -1.0f;
+
+        if (x >= y)
+            m = x;
+        else
+            m = y;
+
+        speed = 0.8f * (0.1f + m);
+        motion[2].speed = speed;
+        if (speed >= 0.7f)
+            motion[2].speed = 0.7f;
+
+        if (x + y >= 0.85f)
+            result = 1;
+    }
+
+    return result;
+}
+
 INCLUDE_ASM("asm/nonmatchings/dataread", MoveImageTest__FP13sceVif1PacketiiiRC8CRect_i_iiiiii);
-INCLUDE_ASM("asm/nonmatchings/dataread", unitRotation__FP9CFrameVu1f);
+
+/**
+ * Turns a frame toward a heading by one angular step and returns the new yaw.
+ */
+float unitRotation(CFrameVu1 *frame, float heading) {
+    float rotation[4];
+    float delta;
+    float abs_delta;
+
+    frame->GetRotation(rotation);
+    delta = heading - rotation[1];
+    if (delta <= 0.0f)
+        abs_delta = -1.0f * delta;
+    else
+        abs_delta = delta;
+
+    if (abs_delta <= 3.141592653589793) {
+        if (abs_delta <= 0.2617993877991494)
+            delta = 0.0f;
+    } else {
+        abs_delta = 6.283185307179586 - abs_delta;
+        if (abs_delta <= 0.2617993877991494)
+            delta = 0.0f;
+    }
+
+    if (delta > 0.0f) {
+        if (delta <= 3.141592653589793)
+            rotation[1] += 0.2617994f;
+        else
+            rotation[1] -= 0.2617994f;
+    }
+
+    if (delta < 0.0f) {
+        if (delta >= -3.141592653589793)
+            rotation[1] -= 0.2617994f;
+        else
+            rotation[1] += 0.2617994f;
+    }
+
+    if (0.0f == delta)
+        rotation[1] = heading;
+
+    if (rotation[1] <= -3.141592653589793)
+        rotation[1] += 6.2831855f;
+    if (rotation[1] >= 3.141592653589793)
+        rotation[1] -= 6.2831855f;
+
+    return rotation[1];
+}
 /* The overlay each map number is served from; an empty name means the map runs out of the
    executable itself. */
 static char *binfile[15] = {"TITLE.BIN", "TITLE.BIN", "", "DUN.BIN", "DUN.BIN",

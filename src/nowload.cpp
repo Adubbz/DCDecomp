@@ -1,10 +1,44 @@
 #include "common.h"
 
-INCLUDE_ASM("asm/nonmatchings/nowload", check_now_loading__Fv);
-INCLUDE_ASM("asm/nonmatchings/nowload", clear_now_loading_vsync_end__Fv);
-INCLUDE_ASM("asm/nonmatchings/nowload", check_now_loading_vsync_end__Fv);
-INCLUDE_ASM("asm/nonmatchings/nowload", wait_now_loading_vsync__Fv);
-INCLUDE_ASM("asm/nonmatchings/nowload", now_loading_off__Fv);
+#include "nowload.hpp"
+
+/**
+ * Whether the loading-screen operation has ended.
+ */
+extern int end_flag;
+/**
+ * Requests that the loading display be disabled.
+ */
+extern int now_loding_off;
+/**
+ * Whether the loading display has completed a field.
+ */
+extern int now_loading_vsync_end;
+
+int check_now_loading(void) {
+    return end_flag;
+}
+
+void clear_now_loading_vsync_end(void) {
+    now_loading_vsync_end = 0;
+}
+
+int check_now_loading_vsync_end(void) {
+    return now_loading_vsync_end;
+}
+
+void wait_now_loading_vsync(void) {
+    if (end_flag == 0) {
+        clear_now_loading_vsync_end();
+        do {
+
+        } while (check_now_loading_vsync_end() == 0);
+    }
+}
+
+void now_loading_off(void) {
+    now_loding_off = 1;
+}
 INCLUDE_ASM("asm/nonmatchings/nowload", init_now_loading__Fi);
 INCLUDE_RODATA("asm/nonmatchings/nowload", @285__2);
 INCLUDE_RODATA("asm/nonmatchings/nowload", @286);

@@ -29,6 +29,7 @@ INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_CHK_ALPHA__FP12RS_STAC
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_DEAD__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_EVENT__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _RUN_SCRIPT__FP12RS_STACKDATAi);
+INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @870);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_COL_OFF__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_GET_LIFE_RATE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_GET_USER_VECTOR__FP12RS_STACKDATAi);
@@ -45,13 +46,19 @@ INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_GET_DMG_ID__FP12RS_STA
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_LOCKON_DIST__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_SHADOW_LEN__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_LOCKON_TRG__FP12RS_STACKDATAi);
+INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @960);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MOV_COL__FP12RS_STACKDATAi);
+INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @979__2);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_BODY_COL__FP12RS_STACKDATAi);
+INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1010);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_BODY_COL_PARA__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_DMG_COL__FP12RS_STACKDATAi);
+INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1040);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_DMG_PARA__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SHOT__FP12RS_STACKDATAi);
+INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1069);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SHOT2__FP12RS_STACKDATAi);
+INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1086__2);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SND_FRM__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_LOOP_SND__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STOP_LOOP_SND__FP12RS_STACKDATAi);
@@ -81,6 +88,8 @@ INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_LIFE__FP12RS_STACK
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_BIN2__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_STATUS_CHANGE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_TEX_ANIME_SW__FP12RS_STACKDATAi);
+INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1311);
+INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1312);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_STATUS_BIN2__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_COLLISION_WIDTH__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_NEAR_MONSTER__FP12RS_STACKDATAi);
@@ -98,3 +107,5 @@ INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _DEL_REFERENCE__FP12RS_STACKDA
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SHADOW_FLAG__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", BtSetEventScript__FP10CRunScriptPcP14CDataAlloc2_1_);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", BtSetEventExtendTable__Fv);
+INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1452);
+INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1453);
