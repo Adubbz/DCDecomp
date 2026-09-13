@@ -1402,7 +1402,9 @@ void MGMoveFrameBuffImage(sceGsTex0 *dst, int x, int y, int dir) {
         MGMoveImage(&tex[VSyncField__2], odd, dst, 0, i * 2 + 1, 0);
     }
 }
+
 INCLUDE_ASM("asm/nonmatchings/mglib", MGFillBox__FRC8CRect_i_UcUcUcUc);
+
 /* Writes depth over the 640-by-224 field while leaving colour unchanged. */
 void MGClearZBuffer(int mode) {
     sceGsTest test;
@@ -1451,6 +1453,7 @@ void MGClearZBuffer(int mode) {
     sceVif1PkCloseGifTag(Vif1Packet);
     sceVif1PkCloseDirectCode(Vif1Packet);
 }
+
 /* Writes colour and zero depth over the 640-by-224 field in 16-pixel-wide strips. */
 void MGClearScreen(u_char r, u_char g, u_char b, u_char a) {
     sceGsTest test;
@@ -1511,6 +1514,7 @@ void MGClearScreen(u_char r, u_char g, u_char b, u_char a) {
     sceVif1PkCloseGifTag(Vif1Packet);
     sceVif1PkCloseDirectCode(Vif1Packet);
 }
+
 extern u_int Vu_shadow[];
 extern u_int Vu_shadow2[];
 extern u_int Vu_shadow3[];
@@ -1542,6 +1546,7 @@ void MGDrawShadowFast(CFrame *frame, float *position, float *normal) {
     mgRenderInfo.unk_320 = 0;
     sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
 }
+
 /* Draws a model's shadow with the second fast shadow microprogram. */
 void MGDrawShadowFast2(CFrame *frame, float *position, float *normal) {
     sceGsZbuf zbuf;
@@ -1568,6 +1573,7 @@ void MGDrawShadowFast2(CFrame *frame, float *position, float *normal) {
     mgRenderInfo.unk_320 = 0;
     sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
 }
+
 /* Draws a model's shadow while preserving the perspective and viewport matrices. */
 void MGDrawShadow(CFrame *frame, float *position, float *normal) {
     sceVu0FMATRIX perspective;
@@ -1600,7 +1606,36 @@ void MGDrawShadow(CFrame *frame, float *position, float *normal) {
     mgRenderInfo.unk_320 = 0;
     sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
 }
-INCLUDE_ASM("asm/nonmatchings/mglib", MGDrawShade__FP6CFrame);
+
+/* Draws the shade pass for one model. */
+void MGDrawShade(CFrame *frame) {
+    sceGsZbuf zbuf;
+    sceGsTest test;
+    sceGsAlpha alpha;
+
+    if (!frame)
+        return;
+
+    zbuf = mgZBuffer;
+    test = mgPixelTest;
+    zbuf.bits.zmsk = 1;
+    MGSetGsZBUF(&zbuf);
+
+    test.bits.ate = 0;
+    test.bits.date = 0;
+    MGSetGsTEST(&test);
+
+    alpha = mgAlpha;
+    alpha.bits.a = 2;
+    alpha.bits.b = 2;
+    alpha.bits.c = 2;
+    alpha.bits.d = 0;
+    MGSetGsALPHA(&alpha);
+
+    mgRenderInfo.unk_320 = 8;
+    MGDraw(frame);
+    mgRenderInfo.unk_320 = 0;
+}
 
 static sceGsTex0 Shadow_SaveFrameBuff;
 static sceGsTex0 Shadow_WorkTex;
