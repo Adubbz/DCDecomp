@@ -127,12 +127,13 @@ public:
     void GetNextPartsNum(int);
 
     /**
+     * Returns the next valid editable part after an index, or -1.
+     *
      * @mangled GetNextParts__14CEditPartsInfoFi
      * @address 0x19A210
      * @size 0x70
-     * @unknownret
      */
-    int GetNextParts(int);
+    int GetNextParts(int index);
 
     /**
      * @mangled Clear__14CEditPartsInfoFv
