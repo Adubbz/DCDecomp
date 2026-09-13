@@ -364,7 +364,11 @@ int CEditArea::SearchPartsID(float x, float y, float z) {
     GetPos(&position, x, y, z);
     return grid[position.x][position.z].parts_id;
 }
-INCLUDE_ASM("asm/nonmatchings/editarea", SearchPartsExtra__9CEditAreaFfff);
+int CEditArea::SearchPartsExtra(float x, float y, float z) {
+    CVector3_i_ position;
+    GetPos(&position, x, y, z);
+    return GetPartsExtra(position.x, position.z);
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", GetGrid__9CEditAreaFP11CVector3_f_fff);
 INCLUDE_ASM("asm/nonmatchings/editarea", RemakeGrid__9CEditAreaFv);
 
