@@ -66,6 +66,8 @@ Including `collisiondata.hpp` and `shot_effect_pack.hpp` resolved the six
 missing-type failures from the initial sweep. A source-local typedef from
 `CDataAlloc2<1>` to m2c's assembly spelling `CDataAlloc2_1_` resolves the
 remaining three allocator-type failures without changing the public type.
+Including `texture.hpp` and `<cstdlib>` also gives the larger drafts the
+existing `TexManager` and `rand` declarations.
 
 The large `Entry`, `Entry2`, `ReEntry`, `Draw`, and `Step` methods now reach
 body reconstruction issues rather than the layout failures fixed here. The
@@ -103,3 +105,15 @@ The retail assembly for each method loads `current_effect` at 0x326E0,
 compares it with -1, indexes `effect` with stride 0xA160, calls the
 corresponding `CSHOT_EFFECT` method, and returns without setting a return
 register.
+
+Two typework causes remain outside the allowance:
+
+- `include/nowload.hpp` should drop `@unknownret` from
+  `void wait_now_loading_vsync(void)`. The function's assembly at 0x153F70
+  reaches `jr $31` without assigning `$2` or `$f0`; `CSHOT_EFFECT::Entry`
+  calls it at 0x1ACCF4.
+- The header owning dungeon `gameloop` globals should declare
+  `extern CHIT_MACHINGUN_EFFECT OzumondShotEffect;`, with the type declared or
+  included there. `src/dun/gameloop.cpp` already names the same exact global
+  and uses it at its own call sites; `CSHOT_MACHINGUN::Step` loads its address
+  before calling `CHIT_MACHINGUN_EFFECT::Set`.
