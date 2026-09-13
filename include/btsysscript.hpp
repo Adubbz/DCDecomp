@@ -453,12 +453,13 @@ void _SET_FLOOR_TITLE_OFF(RS_STACKDATA *, int);
 void _SET_RES_LIMMIT_ZONE(RS_STACKDATA *, int);
 
 /**
+ * Clears the recorded progress through the Demon Shaft.
+ *
  * @mangled _CLEAR_DEAMON_SHAFT__FP12RS_STACKDATAi
  * @address 0x1BD0E0
  * @size 0x30
- * @unknownret
  */
-void _CLEAR_DEAMON_SHAFT(RS_STACKDATA *, int);
+int _CLEAR_DEAMON_SHAFT(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _INIT_BEE__FP12RS_STACKDATAi

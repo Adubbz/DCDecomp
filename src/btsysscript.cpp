@@ -3,6 +3,7 @@
 #include "btmisc.hpp"
 #include "camera.hpp"
 #include "camerafollow.hpp"
+#include "dngstatusdata.hpp"
 #include "dun/gameloop.hpp"
 #include "dungeonmap.hpp"
 #include "frame.hpp"
@@ -117,7 +118,12 @@ INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_RUBY_ELEMENT__FP12RS_STACKDATAi
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_RUBY_ELEMENT__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_FLOOR_TITLE_OFF__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_RES_LIMMIT_ZONE__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _CLEAR_DEAMON_SHAFT__FP12RS_STACKDATAi);
+
+int _CLEAR_DEAMON_SHAFT(RS_STACKDATA *stack, int argument_count) {
+    ((CDngStatusData *) UserStatus)->ClearDeamonShaft();
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _INIT_BEE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _END_BEE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _EASTKING_COMPLETE__FP12RS_STACKDATAi);
