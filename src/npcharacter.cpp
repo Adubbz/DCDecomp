@@ -83,7 +83,13 @@ int CNPCharacter::CheckDraw() {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/npcharacter", PickUpPoly__12CNPCharacterFPfP6CCPoly);
+int CNPCharacter::PickUpPoly(float *position, CCPoly *polygons) {
+    if (enabled) {
+        return chara.CCharacter::PickUpPoly(position, polygons);
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/npcharacter", PickUpPoly__10CCharacterFPfP6CCPoly);
 INCLUDE_ASM("asm/nonmatchings/npcharacter", Initialize__12CNPCharacterFv);
 INCLUDE_ASM("asm/nonmatchings/npcharacter", __ct__12CNPCharacterFv);
