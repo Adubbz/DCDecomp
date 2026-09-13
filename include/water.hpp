@@ -38,7 +38,7 @@ public:
     float unk_064;
     float unk_068;
     CVisualPolyVu1 visual; /**< Draws the polygons of the surface. */
-    float unk_090;
+    u8 color[4]; /**< Red, green, blue and alpha channels of the surface. */
     float unk_094;
     float unk_098;
     float unk_09C;
@@ -50,7 +50,7 @@ public:
      * @mangled SetParam__6CWaterFffff
      * @address 0x1607A0
      * @size 0x20
-     * @unknownret
+     * Stores the four parameters used by the water simulation.
      */
     void SetParam(float, float, float, float);
 
@@ -58,9 +58,9 @@ public:
      * @mangled SetColor__6CWaterFUcUcUcUc
      * @address 0x1607C0
      * @size 0x20
-     * @unknownret
+     * Sets the red, green, blue and alpha channels of the surface.
      */
-    void SetColor(unsigned char, unsigned char, unsigned char, unsigned char);
+    void SetColor(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha);
 
     /**
      * @mangled CreateVUData__6CWaterFPUiP10RenderInfo
