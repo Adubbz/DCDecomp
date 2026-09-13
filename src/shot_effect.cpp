@@ -28,7 +28,14 @@ void CSHOT_EFFECT::SetLoop(s32 arg0) {
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Set__12CSHOT_EFFECTFPfPfiiiP6CFramei);
 INCLUDE_RODATA("asm/nonmatchings/shot_effect", @977__2);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", SetWait__12CSHOT_EFFECTFi);
-INCLUDE_ASM("asm/nonmatchings/shot_effect", SetNoSound__12CSHOT_EFFECTFv);
+void CSHOT_EFFECT::SetNoSound() {
+    s32 temp_6;
+
+    temp_6 = this->unk_A150;
+    if (temp_6 != -1) {
+        this->unk_A130[temp_6] = 1;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/shot_effect", SetRandomRate__12CSHOT_EFFECTFf);
 void CSHOT_EFFECT::SetLifeTime(s32 arg0) {
     s32 temp_6;
