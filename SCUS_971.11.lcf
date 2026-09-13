@@ -463,7 +463,6 @@ SECTIONS
         main.data.part4c.s.o (.data)
         editloop3.cpp.o (.eventoffset) // 0x00269930
         editloop3.cpp.o (.eddata1)     // 0x00269940
-        main.data.part4e.s.o (.data)   // 0x00269950
         editloop3.cpp.o (.eddata2)     // 0x00269970
         editloop3.cpp.o (.eddata3)     // 0x002699f0
         main.data.part4i.s.o (.data)   // 0x00269a30
