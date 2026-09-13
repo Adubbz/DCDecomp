@@ -379,7 +379,38 @@ INCLUDE_ASM("asm/nonmatchings/editarea", RemakeGrid__9CEditAreaFv);
 void CEditArea::GetPartsBox(CBoxVu0 *box) {
     memcpy(box, &this->parts_box, sizeof(CBoxVu0));
 }
-INCLUDE_ASM("asm/nonmatchings/editarea", MakePartsBox__9CEditAreaFv);
+
+void CEditArea::MakePartsBox() {
+    CVector3_f_ position;
+    int min_x = 0;
+    int max_x = 0;
+    int max_z = 0;
+    int min_z = 0;
+    for (int x = 0; x < width; x++) {
+        for (int z = 0; z < height; z++) {
+            if (grid[x][z].parts_no >= 0 && grid[x][z].parts_id >= 0) {
+                if (max_x < x)
+                    max_x = x;
+                if (max_z < z)
+                    max_z = z;
+                if (min_x > x)
+                    max_x = x;
+                if (z < min_z)
+                    min_z = z;
+            }
+        }
+    }
+    GetPos(&position, max_x, 0, max_z);
+    parts_box.max[0] = position.x + unit_size;
+    parts_box.max[1] = position.y;
+    parts_box.max[2] = position.z + unit_size;
+    parts_box.max[3] = 1.0f;
+    GetPos(&position, 0, 0, min_z);
+    parts_box.min[0] = position.x;
+    parts_box.min[1] = position.y;
+    parts_box.min[2] = position.z;
+    parts_box.min[3] = 1.0f;
+}
 
 int CEditArea::CheckArea(float x, float, float z) {
     if (x < offset_x) {

@@ -93,3 +93,21 @@ neighbor attributes 2, 3, and 5 as connections. It uses the same six
 shape codes as roads, with different rotations for corners and three-way
 junctions. The staged Boolean assignments preserve the retail ordering of
 neighbor classification.
+
+## Rectangle and polygon queries
+
+`GetPartsRect` scans X then Z, collecting each nonnegative part identifier
+once up to the supplied capacity. `SearchPartsID` converts coordinates and
+reads the cell directly without the bounds checks of `GetPartsID`. The
+position polygon overload checks area bounds, converts the coordinate,
+and gathers a 2-by-2 rectangle beginning one cell before the coordinate.
+The box overload converts its minimum and maximum, then uses a rectangle
+beginning one cell before the minimum and extending two cells beyond the
+difference.
+
+`MakePartsBox` expands the grid extrema of cells with both a nonnegative
+part number and part identifier. Retail initializes both minimum coordinates
+to zero. Its minimum-X comparison writes the maximum-X accumulator instead
+of the minimum; the C++ preserves that behavior even though nonnegative
+loop coordinates make the branch unreachable. Minimum Z also remains zero
+for nonnegative coordinates. The maximum world X/Z includes one cell size.
