@@ -173,7 +173,9 @@ void CEditArea::GetOffset(float *offset) {
     offset[2] = offset_z;
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", GetWidth__9CEditAreaFv);
-INCLUDE_ASM("asm/nonmatchings/editarea", GetHeight__9CEditAreaFv);
+int CEditArea::GetHeight() {
+    return this->height;
+}
 void CEditArea::AddAlt(int x, int y, int altitude_) {
     SetAlt(x, y, GetAlt_i(x, y) + altitude_);
 }
