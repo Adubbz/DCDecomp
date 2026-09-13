@@ -3,7 +3,17 @@
 INCLUDE_ASM("asm/nonmatchings/spritetable", DrawTable__12CSpriteTableFv);
 INCLUDE_ASM("asm/nonmatchings/spritetable", AddTable__12CSpriteTableFiiP9MG_SPRITEii);
 INCLUDE_ASM("asm/nonmatchings/spritetable", AddTable__12CSpriteTableFiiP9sceGsTex0P4RECTii);
-INCLUDE_ASM("asm/nonmatchings/spritetable", Initialize__12CSpriteTableFP12SPRITE_TABLEii);
+
+void CSpriteTable::Initialize(SPRITE_TABLE *new_pool, int count, int lists) {
+    list_count = lists;
+    if (list_count > 16) {
+        list_count = 16;
+    }
+    pool = new_pool;
+    pool_count = count;
+    end = new_pool + count;
+    ClearPointer();
+}
 
 SPRITE_TABLE *CSpriteTable::GetNext() {
     SPRITE_TABLE *next = NULL;

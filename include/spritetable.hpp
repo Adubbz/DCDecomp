@@ -72,12 +72,13 @@ public:
     void AddTable(int, int, sceGsTex0 *, RECT *, int, int);
 
     /**
+     * Assigns a command pool and initializes up to sixteen sprite layers.
+     *
      * @mangled Initialize__12CSpriteTableFP12SPRITE_TABLEii
      * @address 0x12C060
-     * @size 0x60
-     * @unknownret
+     * @size 0x58
      */
-    void Initialize(SPRITE_TABLE *, int, int);
+    void Initialize(SPRITE_TABLE *new_pool, int count, int lists);
 
     /**
      * Returns the next unused sprite command, or null when the pool is full.
