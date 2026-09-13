@@ -26,7 +26,16 @@ NP_SEQUENCE *CNPCharacter::GetNowSeq() {
     return &sequences[read_index];
 }
 
-INCLUDE_ASM("asm/nonmatchings/npcharacter", NextSeq__12CNPCharacterFv);
+void CNPCharacter::NextSeq() {
+    GetNowSeq()->operation = NP_SEQUENCE_UNUSED;
+    if (CheckSeq()) {
+        read_index++;
+        if (read_index >= 8) {
+            read_index = 0;
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/npcharacter", Draw__12CNPCharacterFv);
 INCLUDE_ASM("asm/nonmatchings/npcharacter", DrawShadow__12CNPCharacterFv);
 INCLUDE_ASM("asm/nonmatchings/npcharacter", CheckDraw__12CNPCharacterFv);
