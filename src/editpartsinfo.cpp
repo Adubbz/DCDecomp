@@ -12,7 +12,18 @@ EDITPARTS_INFO *CEditPartsInfo::GetPartsInfo(int index) {
     return &parts[index];
 }
 INCLUDE_ASM("asm/nonmatchings/editpartsinfo", CheckComplete__14CEditPartsInfoFi);
-INCLUDE_ASM("asm/nonmatchings/editpartsinfo", SetCompEvent__14CEditPartsInfoFii);
+
+void CEditPartsInfo::SetCompEvent(int index, int completed) {
+    EDITPARTS_INFO *info = GetPartsInfo(index);
+    if (info != NULL) {
+        if (completed != 0) {
+            info->completion_flags |= 1;
+            return;
+        }
+        info->completion_flags &= ~1;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/editpartsinfo", GetCompEvent__14CEditPartsInfoFi);
 INCLUDE_ASM("asm/nonmatchings/editpartsinfo", GetRequest__14CEditPartsInfoFi);
 INCLUDE_ASM("asm/nonmatchings/editpartsinfo", GetNextPartsNum__14CEditPartsInfoFi);

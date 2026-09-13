@@ -93,12 +93,13 @@ public:
     int CheckComplete(int);
 
     /**
+     * Sets whether one editable part has completed its associated event.
+     *
      * @mangled SetCompEvent__14CEditPartsInfoFii
      * @address 0x19A0A0
      * @size 0x60
-     * @unknownret
      */
-    void SetCompEvent(int, int);
+    void SetCompEvent(int index, int completed);
 
     /**
      * @mangled GetCompEvent__14CEditPartsInfoFi
