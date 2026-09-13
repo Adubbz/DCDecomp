@@ -428,7 +428,15 @@ void CEditArea::Clear(void) {
     unk_2050 = 1;
     unk_2054 = 4;
 }
-INCLUDE_ASM("asm/nonmatchings/editarea", Initialize__9CEditAreaFv);
+void CEditArea::Initialize() {
+    float zero = 0.0f;
+    SetOffset(zero, zero, zero);
+    SetSize(16, 16, 1.0f, 1.0f);
+    grid_frame = NULL;
+    Clear();
+    map_no = 0;
+    area_id = 0;
+}
 
 void CEditArea::SetMapInfo(s32 map_no, s32 area_id) {
     this->map_no = map_no;
