@@ -29,6 +29,9 @@ extern int ok_draw_cnt;
 /** Button shown by the enemy-battle confirmation effect, or -1 for none. */
 extern int ok_effect_button;
 
+/** Kind of enemy-battle confirmation effect to draw. */
+extern int ok_type;
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBInitIntro__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBSetMotion__FP10CCharacterPi);
 void EBDebug(int mode) {
@@ -45,7 +48,11 @@ void init_draw_ok() {
     ok_draw_cnt = 0;
     ok_effect_button = -1;
 }
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", set_draw_ok__Fii);
+void set_draw_ok(int type, int button) {
+    ok_effect_button = button;
+    ok_draw_cnt = 30;
+    ok_type = type;
+}
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", draw_ok_loop__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", draw_ok__Fi);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", button_scale__Fi);
