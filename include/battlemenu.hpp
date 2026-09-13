@@ -140,15 +140,6 @@ void DrawDngYesNoDialog(int, int, int);
 int GetMenuModeMax(void);
 
 /**
- * Writes the screen position of one battle menu icon into the pair of integers it is given.
- *
- * @mangled GetMenuIconPos__FiPi
- * @address 0x1F4110
- * @size 0x50
- */
-void GetMenuIconPos(int, int *);
-
-/**
  * @mangled BtlMenuMekeIconInfo__FPii
  * @address 0x1F4160
  * @size 0xF0

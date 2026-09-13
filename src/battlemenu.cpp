@@ -24,7 +24,20 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", GetInteriorOutFlag__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawDngYesNoDialog__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetMenuModeMax__Fv);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", GetMenuIconPos__FiPi);
+/**
+ * Writes the screen coordinates of one icon on the battle menu ring.
+ */
+static void GetMenuIconPos(int icon, int *position) {
+    int next = icon + 1;
+    int x = next * 16 + 80;
+    int y = icon * 40 + 54;
+    if (next > 4) {
+        x -= ((icon - 4) << 5) + 16;
+    }
+    position[0] = x;
+    position[1] = y;
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlMenuMekeIconInfo__FPii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBtlMenuBar__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetLimmitMsg__Fv);
