@@ -29,9 +29,19 @@ public:
 
 STATIC_ASSERT(sizeof(CTexAnimeData) == 0x58);
 
+/**
+ * Plays groups of texture animation records from a caller-supplied pool.
+ */
 class CTextureAnime {
 public:
-    s32 unk_000[124];
+    s32 enabled[24];            /**< Enables playback for each animation group. */
+    CTexAnimeData *first[24];   /**< Points to each group's first animation record. */
+    CTexAnimeData *last[24];    /**< Points to each group's last animation record. */
+    CTexAnimeData *current[24]; /**< Points to the record being played by each group. */
+    s32 frame[24];              /**< Counts playback frames for each group's current record. */
+    CTexAnimeData *data;        /**< Holds the animation record pool. */
+    s32 data_count;             /**< Gives the number of records in the pool. */
+    u8 unk_1e8[8];
 
     /**
      * @mangled TexAnime__13CTextureAnimeFi
@@ -42,12 +52,13 @@ public:
     void TexAnime(int);
 
     /**
+     * Assigns the record pool and clears every animation group.
+     *
      * @mangled Initialize__13CTextureAnimeFP13CTexAnimeDatai
      * @address 0x167820
      * @size 0x50
-     * @unknownret
      */
-    void Initialize(CTexAnimeData *, int);
+    void Initialize(CTexAnimeData *records, int count);
 
     /**
      * @mangled __ct__13CTextureAnimeFP13CTexAnimeDatai
