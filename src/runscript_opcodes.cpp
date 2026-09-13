@@ -27,7 +27,13 @@ INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_VECTOR__FP12RS_STACKDATAi
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_DIRECTION__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MOVE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _CHK_MOVE_INFO__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MOVE_CANSEL__FP12RS_STACKDATAi);
+
+int _SET_MOVE_CANSEL(RS_STACKDATA *, int) {
+    CMonstorUnit *unit = NowMonstorUnit;
+    unit->monster[unit->GetCurrentMonsterIndex()].movement_speed = 0.0f;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_ROT_CANSEL__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_POSITION__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_FALL__FP12RS_STACKDATAi);
