@@ -1,4 +1,8 @@
 #include "btsysscript.hpp"
+#include "camera.hpp"
+#include "camerafollow.hpp"
+#include "dungeonmap.hpp"
+#include "frame.hpp"
 #include "runscript.hpp"
 
 INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSystemScriptEventInfoInit__Fv);
