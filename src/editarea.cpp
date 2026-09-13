@@ -136,7 +136,9 @@ void CEditArea::GetOffset(float *offset) {
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", GetWidth__9CEditAreaFv);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetHeight__9CEditAreaFv);
-INCLUDE_ASM("asm/nonmatchings/editarea", AddAlt__9CEditAreaFiii);
+void CEditArea::AddAlt(int x, int y, int altitude_) {
+    SetAlt(x, y, GetAlt_i(x, y) + altitude_);
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", GetUnitSize__9CEditAreaFv);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetUnitAlt__9CEditAreaFv);
 CEditArea::CEditArea(void) {
