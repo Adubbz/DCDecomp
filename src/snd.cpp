@@ -229,7 +229,15 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndBgmLoad__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmLoadBG__FiPUiPi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmSyncBG__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmPlay__Fi);
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmStop__Fv);
+
+void SndBgmStop() {
+    if (now_bgm_no >= 0 && now_bgm_play != 0) {
+        CSnd.Stop(0);
+        CSnd.StopVoice(0);
+        now_bgm_vol = 0;
+        now_bgm_play = 0;
+    }
+}
 
 void SndBgmRePlay() {
     if (now_bgm_no >= 0 && now_bgm_play == 2) {
