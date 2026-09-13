@@ -141,7 +141,15 @@ void CActionSeq::RotAngleSeq(float angle, float speed) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/actionseq", RotMoveSeq__10CActionSeqFf);
+void CActionSeq::RotMoveSeq(float speed) {
+    ACT_SEQ *sequence = NextMoveSeq();
+    if (sequence != NULL) {
+        sequence->operation = ACT_SEQ_ROTATE_MOVEMENT;
+        sequence->arguments.vector[3] = speed;
+        sequence->duration = 0;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/actionseq", ClearRotSeq__10CActionSeqFv);
 INCLUDE_ASM("asm/nonmatchings/actionseq", WaitRotSeq__10CActionSeqFv);
 INCLUDE_ASM("asm/nonmatchings/actionseq", SetRot__10CActionSeqFPf);
