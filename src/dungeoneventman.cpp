@@ -43,7 +43,21 @@ int CDungeonEventMan::GetDataNum(void) {
     return count;
 }
 
-INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchDataSlot__16CDungeonEventManFv);
+CDungeonEventData *CDungeonEventMan::SearchDataSlot(void) {
+    for (int i = 0; i < 96; i++) {
+        int active;
+        if (event[i].event != NULL) {
+            active = event[i].unk_38;
+        } else {
+            active = 0;
+        }
+        if (active == 0) {
+            return &event[i];
+        }
+    }
+    return NULL;
+}
+
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", CheckCollisionDataHit__16CDungeonEventManFi);
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchDataSlotPos__16CDungeonEventManFPf);
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchDataSlotPos2__16CDungeonEventManFPf);
