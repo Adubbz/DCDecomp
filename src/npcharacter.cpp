@@ -1,7 +1,19 @@
 #include "npcharacter.hpp"
+#include "mathutil.hpp"
+#include "mglib.hpp"
+#include <cmath>
 
 INCLUDE_ASM("asm/nonmatchings/npcharacter", Step__12CNPCharacterFv);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", ShadowStep__12CNPCharacterFv);
+
+void CNPCharacter::ShadowStep() {
+    if (!enabled || chara.frame == NULL) {
+        return;
+    }
+    if (unk_1474) {
+        chara.CCharacter::ShadowStep();
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/npcharacter", PlaySeq__12CNPCharacterFv);
 
 void CNPCharacter::ClearSeq() {
