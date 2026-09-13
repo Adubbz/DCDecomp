@@ -8,7 +8,12 @@
 #include "rect.hpp"
 #include "vector3.hpp"
 
-INCLUDE_ASM("asm/nonmatchings/editarea", SetSize__9CEditAreaFiiff);
+void CEditArea::SetSize(s32 arg0, s32 arg1, float arg2, float arg3) {
+    this->width = arg0;
+    this->height = arg1;
+    this->unit_size = arg2;
+    this->unit_alt = arg3;
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", GetPos__9CEditAreaFP11CVector3_i_fff);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetPos__9CEditAreaFP11CVector3_f_iii);
 void CEditArea::SetPartsNo(int x, int y, int parts_no_) {
