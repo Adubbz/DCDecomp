@@ -26,7 +26,11 @@ INCLUDE_ASM("asm/nonmatchings/shot_effect", SetRandomRate__12CSHOT_EFFECTFf);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", SetLifeTime__12CSHOT_EFFECTFi);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", SetEnemyAttr__12CSHOT_EFFECTFi);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", SetDmg__12CSHOT_EFFECTFi);
-INCLUDE_ASM("asm/nonmatchings/shot_effect", SetAttribute__12CSHOT_EFFECTFi);
+void CSHOT_EFFECT::SetAttribute(s32 arg0) {
+    if (this->unk_A150 != -1) {
+        this->unk_0000->unk_040 = arg0;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/shot_effect", SetWepStatus__12CSHOT_EFFECTFi);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", SetVsMonster__12CSHOT_EFFECTFPc);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", SetUserID2__12CSHOT_EFFECTFi);
