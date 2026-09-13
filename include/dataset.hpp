@@ -36,7 +36,6 @@ void SetPacketReadBuffer(int packet_quads, int read_quads);
  * @mangled BufferAllClear__Fv
  * @address 0x125BC0
  * @size 0x254
- * @unknownret
  */
 void BufferAllClear(void);
 

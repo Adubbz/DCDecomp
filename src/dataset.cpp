@@ -29,6 +29,8 @@ void CCollisionMDT::Initialize(void) {
 
 /** Embedded arena that supplies storage to the scene allocators. */
 extern CDataAlloc<1, 1690000> GlobalDataBuffer;
+/** Allocator used for model motion data. */
+extern CDataAlloc2<1> MotionData;
 /** Allocator used for water geometry. */
 extern CDataAlloc2<1> WaterData;
 /** First bank used for active scene data. */
@@ -91,7 +93,64 @@ void SetPacketReadBuffer(int packet_quads, int read_quads) {
     printf("%d/%d\n", GlobalDataBuffer.used, 1690000);
 }
 
-INCLUDE_ASM("asm/nonmatchings/dataset", BufferAllClear__Fv);
+void BufferAllClear(void) {
+    GlobalDataBuffer.used = 0;
+    asm {
+        lw $2, GlobalDataBuffer+27040000
+        sll $3, $2, 4
+        la $2, GlobalDataBuffer
+        addu $2, $2, $3
+        paddub $4, $0, $0
+        beq $0, $0, clear_test
+clear_loop:
+        sq $0, 0($2)
+        addiu $2, $2, 16
+        addiu $4, $4, 1
+clear_test:
+        lui $3, 0x19
+        ori $3, $3, 0xc990
+        slt $3, $4, $3
+        bne $3, $0, clear_loop
+    }
+
+    VisualData.base = GlobalDataBuffer.Alloc64(600000);
+    VisualData.limit = 600000;
+    VisualData.used = 0;
+
+    MotionData.base = GlobalDataBuffer.Alloc64(200000);
+    MotionData.limit = 200000;
+    MotionData.used = 0;
+
+    TextureData.base = GlobalDataBuffer.Alloc64(300000);
+    TextureData.limit = 300000;
+    TextureData.used = 0;
+
+    WaterData.base = GlobalDataBuffer.Alloc64(90000);
+    WaterData.limit = 90000;
+    WaterData.used = 0;
+
+    ActiveData0.base = GlobalDataBuffer.Alloc64(25000);
+    ActiveData0.limit = 25000;
+    ActiveData0.used = 0;
+
+    ActiveData1.base = GlobalDataBuffer.Alloc64(25000);
+    ActiveData1.limit = 25000;
+    ActiveData1.used = 0;
+
+    read_buffer = (u_int *) GlobalDataBuffer.Alloc64(100000);
+    workbuffer.base = GlobalDataBuffer.Alloc64(4096);
+    workbuffer.limit = 4096;
+    WorkBuffer__2 = &workbuffer;
+    WorkBuffer__2->used = 0;
+
+    u_long128 *buffer0 = (u_long128 *) GlobalDataBuffer.Alloc64(50000);
+    u_long128 *buffer1 = (u_long128 *) GlobalDataBuffer.Alloc64(50000);
+    MGInitVif1Packet(buffer0, buffer1);
+
+    WaterData.used = 0;
+    ActiveData0.used = 0;
+    ActiveData1.used = 0;
+}
 
 static int htoi(char *s) {
     char *p;
