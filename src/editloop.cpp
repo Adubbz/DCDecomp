@@ -2248,8 +2248,9 @@ void VillagerCollision() {
 
     for (int i = -1; i < 10; i++) {
         int move;
-        int sound;
+        CCharacter *chara;
         CNPCharacter *villager = NULL;
+        int sound;
         if (i >= 0) {
             villager = &EdVillager[i];
             move = EdEventInfo.npc_collision[i];
@@ -2273,7 +2274,6 @@ void VillagerCollision() {
         float top = 1000.0f + height;
         box.max[1] = 10.0f + top;
         box.min[1] = 10.0f + (height - 1000.0f);
-        CCharacter *chara;
         if (i >= 0) {
             chara = &villager->chara;
         } else {
@@ -2283,7 +2283,7 @@ void VillagerCollision() {
             chara->FootSoundEnable(0);
         }
         int count = GetCollision(polys, &box);
-        if (count >= 201) {
+        if (count > 200) {
             printf("cpoly over!!!! %d\n", count);
         }
         if (count > 0) {
