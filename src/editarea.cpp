@@ -8,6 +8,30 @@
 #include "rect.hpp"
 #include "vector3.hpp"
 
+/**
+ * Identifies map-part attributes used by connection queries.
+ */
+// clang-format off
+enum MapConnectionAttribute {
+    MAP_CONNECTION_ROAD = 1,
+    MAP_CONNECTION_RIVER = 2
+};
+// clang-format on
+
+/**
+ * Identifies the shape encoded by connected map-part neighbors.
+ */
+// clang-format off
+enum MapConnectionShape {
+    MAP_CONNECTION_CORNER = 1,
+    MAP_CONNECTION_STRAIGHT = 2,
+    MAP_CONNECTION_THREE_WAY = 3,
+    MAP_CONNECTION_FOUR_WAY = 4,
+    MAP_CONNECTION_ISOLATED = 5,
+    MAP_CONNECTION_END = 6
+};
+// clang-format on
+
 void CEditArea::SetSize(s32 width, s32 height, float unit_size, float unit_alt) {
     this->width = width;
     this->height = height;
@@ -117,22 +141,304 @@ float CEditArea::GetAlt(int x, int y) {
     }
     return offset_y + static_cast<float>(grid[x][y].altitude) * unit_alt;
 }
-INCLUDE_ASM("asm/nonmatchings/editarea", GetAlt__9CEditAreaFfff);
-INCLUDE_ASM("asm/nonmatchings/editarea", GetAlt_i__9CEditAreaFfff);
-INCLUDE_ASM("asm/nonmatchings/editarea", GetPartsExtra__9CEditAreaFii);
+
+float CEditArea::GetAlt(float x, float y, float z) {
+    CVector3_i_ position;
+    GetPos(&position, x, y, z);
+    return GetAlt(position.x, position.z);
+}
+
+int CEditArea::GetAlt_i(float x, float y, float z) {
+    CVector3_i_ position;
+    GetPos(&position, x, y, z);
+    return GetAlt_i(position.x, position.z);
+}
+
+int CEditArea::GetPartsExtra(int x, int y) {
+    switch (map_no) {
+        case 1:
+            switch (area_id) {
+                case 0:
+                    if (x == 5 && y == -1)
+                        return MAP_CONNECTION_RIVER;
+                    if (x == 2 && y == 8)
+                        return MAP_CONNECTION_RIVER;
+                    break;
+                case 1:
+                    if (x == 3 && y == 6)
+                        return MAP_CONNECTION_RIVER;
+                    if (x == 12 && y == 3)
+                        return MAP_CONNECTION_RIVER;
+                    break;
+                case 2:
+                    if (x == 4 && y == -1)
+                        return MAP_CONNECTION_RIVER;
+                    if (x == 3 && y == 8)
+                        return MAP_CONNECTION_RIVER;
+                    break;
+            }
+    }
+    if (x < 0 || x >= width)
+        return -1;
+    if (y < 0 || y >= height)
+        return -1;
+    return grid[x][y].parts_extra;
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", SetMapParts__9CEditAreaFiP9CMapPartsfffi);
 INCLUDE_ASM("asm/nonmatchings/editarea", DeleteMapParts__9CEditAreaFiP9CMapPartsfff);
-INCLUDE_ASM("asm/nonmatchings/editarea", SetRiverParts__9CEditAreaFii);
-INCLUDE_ASM("asm/nonmatchings/editarea", SetRoadParts__9CEditAreaFii);
-INCLUDE_ASM("asm/nonmatchings/editarea", SearchPartsID__9CEditAreaFfff);
-INCLUDE_ASM("asm/nonmatchings/editarea", SearchPartsExtra__9CEditAreaFfff);
-INCLUDE_ASM("asm/nonmatchings/editarea", GetGrid__9CEditAreaFP11CVector3_f_fff);
+
+int CEditArea::SetRiverParts(int x, int y) {
+    int neighbors[4];
+    int negative_z, positive_x, positive_z, negative_x;
+    int count, shape, direction, i;
+
+    if ((x < 0) || (x >= this->width)) {
+        return -1;
+    }
+    if ((y < 0) || (y >= this->height)) {
+        return -1;
+    }
+    if (GetPartsExtra(x, y) != MAP_CONNECTION_RIVER) {
+        return -1;
+    }
+    negative_z = GetPartsExtra(x, y - 1);
+    positive_x = GetPartsExtra(x + 1, y);
+    positive_z = GetPartsExtra(x, y + 1);
+    negative_x = GetPartsExtra(x - 1, y);
+    neighbors[0] = negative_z == MAP_CONNECTION_RIVER;
+    neighbors[1] = positive_x == MAP_CONNECTION_RIVER;
+    neighbors[2] = positive_z == MAP_CONNECTION_RIVER;
+    neighbors[3] = negative_x == MAP_CONNECTION_RIVER;
+    neighbors[0] = neighbors[0] || negative_z == 3;
+    neighbors[1] = neighbors[1] || positive_x == 3;
+    neighbors[2] = neighbors[2] || positive_z == 3;
+    neighbors[3] = neighbors[3] || negative_x == 3;
+    neighbors[0] = neighbors[0] || negative_z == 5;
+    neighbors[1] = neighbors[1] || positive_x == 5;
+    neighbors[2] = neighbors[2] || positive_z == 5;
+    neighbors[3] = neighbors[3] || negative_x == 5;
+    count = 0;
+    for (i = 0; i < 4; i++) {
+        count += neighbors[i];
+    }
+    shape = -1;
+    direction = 0;
+    if (count == 4) {
+        shape = MAP_CONNECTION_FOUR_WAY;
+    }
+    if (count == 3) {
+        shape = MAP_CONNECTION_THREE_WAY;
+        if (neighbors[0] == 0) {
+            direction = 3;
+        }
+        if (neighbors[1] == 0) {
+            direction = 2;
+        }
+        if (neighbors[2] == 0) {
+            direction = 1;
+        }
+        if (neighbors[3] == 0) {
+            direction = 0;
+        }
+    }
+    if (count == 2) {
+        if (((neighbors[0] != 0) && (neighbors[2] != 0)) || ((neighbors[1] != 0) && (neighbors[3] != 0))) {
+            shape = MAP_CONNECTION_STRAIGHT;
+            if (neighbors[0] != 0) {
+                direction = 0;
+            }
+            if (neighbors[1] != 0) {
+                direction = 1;
+            }
+        } else {
+            shape = MAP_CONNECTION_CORNER;
+            if ((neighbors[1] != 0) && (neighbors[2] != 0)) {
+                direction = 3;
+            }
+            if ((neighbors[2] != 0) && (neighbors[3] != 0)) {
+                direction = 2;
+            }
+            if ((neighbors[3] != 0) && (neighbors[0] != 0)) {
+                direction = 1;
+            }
+            if ((neighbors[0] != 0) && (neighbors[1] != 0)) {
+                direction = 0;
+            }
+        }
+    }
+    if (count == 1) {
+        shape = MAP_CONNECTION_END;
+        if (neighbors[0] != 0) {
+            direction = 2;
+        }
+        if (neighbors[1] != 0) {
+            direction = 1;
+        }
+        if (neighbors[2] != 0) {
+            direction = 0;
+        }
+        if (neighbors[3] != 0) {
+            direction = 3;
+        }
+    }
+    if (count == 0) {
+        shape = MAP_CONNECTION_ISOLATED;
+    }
+    if (shape < 0) {
+        return -1;
+    }
+    shape = (shape << 4) & 0xFF0;
+    return shape | (direction & 0xF);
+}
+
+int CEditArea::SetRoadParts(int x, int y) {
+    int neighbors[4];
+    int count;
+    int shape;
+    int direction;
+    int i;
+
+    if ((x < 0) || (x >= this->width)) {
+        return -1;
+    }
+    if ((y < 0) || (y >= this->height)) {
+        return -1;
+    }
+    if (GetPartsExtra(x, y) != MAP_CONNECTION_ROAD) {
+        return -1;
+    }
+    neighbors[0] = GetPartsExtra(x, y - 1) == MAP_CONNECTION_ROAD;
+    neighbors[1] = GetPartsExtra(x + 1, y) == MAP_CONNECTION_ROAD;
+    neighbors[2] = GetPartsExtra(x, y + 1) == MAP_CONNECTION_ROAD;
+    neighbors[3] = GetPartsExtra(x - 1, y) == MAP_CONNECTION_ROAD;
+    count = 0;
+    for (i = 0; i < 4; i++) {
+        count += neighbors[i];
+    }
+    shape = -1;
+    direction = 0;
+    if (count == 4) {
+        shape = MAP_CONNECTION_FOUR_WAY;
+    }
+    if (count == 3) {
+        shape = MAP_CONNECTION_THREE_WAY;
+        if (neighbors[0] == 0) {
+            direction = 0;
+        }
+        if (neighbors[1] == 0) {
+            direction = 3;
+        }
+        if (neighbors[2] == 0) {
+            direction = 2;
+        }
+        if (neighbors[3] == 0) {
+            direction = 1;
+        }
+    }
+    if (count == 2) {
+        if (((neighbors[0] != 0) && (neighbors[2] != 0)) || ((neighbors[1] != 0) && (neighbors[3] != 0))) {
+            shape = MAP_CONNECTION_STRAIGHT;
+            if (neighbors[0] != 0) {
+                direction = 0;
+            }
+            if (neighbors[1] != 0) {
+                direction = 1;
+            }
+        } else {
+            shape = MAP_CONNECTION_CORNER;
+            if ((neighbors[1] != 0) && (neighbors[2] != 0)) {
+                direction = 0;
+            }
+            if ((neighbors[2] != 0) && (neighbors[3] != 0)) {
+                direction = 3;
+            }
+            if ((neighbors[3] != 0) && (neighbors[0] != 0)) {
+                direction = 2;
+            }
+            if ((neighbors[0] != 0) && (neighbors[1] != 0)) {
+                direction = 1;
+            }
+        }
+    }
+    if (count == 1) {
+        shape = MAP_CONNECTION_END;
+        if (neighbors[0] != 0) {
+            direction = 2;
+        }
+        if (neighbors[1] != 0) {
+            direction = 1;
+        }
+        if (neighbors[2] != 0) {
+            direction = 0;
+        }
+        if (neighbors[3] != 0) {
+            direction = 3;
+        }
+    }
+    if (count == 0) {
+        shape = MAP_CONNECTION_ISOLATED;
+    }
+    if (shape < 0) {
+        return -1;
+    }
+    shape = (shape << 4) & 0xFF0;
+    return shape | (direction & 0xF);
+}
+
+int CEditArea::SearchPartsID(float x, float y, float z) {
+    CVector3_i_ position;
+    GetPos(&position, x, y, z);
+    return grid[position.x][position.z].parts_id;
+}
+
+int CEditArea::SearchPartsExtra(float x, float y, float z) {
+    CVector3_i_ position;
+    GetPos(&position, x, y, z);
+    return GetPartsExtra(position.x, position.z);
+}
+
+void CEditArea::GetGrid(CVector3_f_ *position, float x, float y, float z) {
+    CVector3_i_ grid_position;
+    GetPos(&grid_position, x, y, z);
+    GetPos(position, grid_position.x, grid_position.y, grid_position.z);
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", RemakeGrid__9CEditAreaFv);
 
 void CEditArea::GetPartsBox(CBoxVu0 *box) {
     memcpy(box, &this->parts_box, sizeof(CBoxVu0));
 }
-INCLUDE_ASM("asm/nonmatchings/editarea", MakePartsBox__9CEditAreaFv);
+
+void CEditArea::MakePartsBox() {
+    CVector3_f_ position;
+    int min_x = 0;
+    int max_x = 0;
+    int max_z = 0;
+    int min_z = 0;
+    for (int x = 0; x < width; x++) {
+        for (int z = 0; z < height; z++) {
+            if (grid[x][z].parts_no >= 0 && grid[x][z].parts_id >= 0) {
+                if (max_x < x)
+                    max_x = x;
+                if (max_z < z)
+                    max_z = z;
+                if (min_x > x)
+                    max_x = x;
+                if (z < min_z)
+                    min_z = z;
+            }
+        }
+    }
+    GetPos(&position, max_x, 0, max_z);
+    parts_box.max[0] = position.x + unit_size;
+    parts_box.max[1] = position.y;
+    parts_box.max[2] = position.z + unit_size;
+    parts_box.max[3] = 1.0f;
+    GetPos(&position, 0, 0, min_z);
+    parts_box.min[0] = position.x;
+    parts_box.min[1] = position.y;
+    parts_box.min[2] = position.z;
+    parts_box.min[3] = 1.0f;
+}
 
 int CEditArea::CheckArea(float x, float, float z) {
     if (x < offset_x) {
@@ -151,10 +457,60 @@ int CEditArea::CheckArea(float x, float, float z) {
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", CheckAreaRect__9CEditAreaFfffii);
 INCLUDE_ASM("asm/nonmatchings/editarea", CheckParts__9CEditAreaFP9CMapPartsfffi);
-INCLUDE_ASM("asm/nonmatchings/editarea", PickUpPoly__9CEditAreaFP6CCPolyfff);
+
+int CEditArea::PickUpPoly(CCPoly *polygons, float x, float y, float z) {
+    CVector3_i_ position;
+    if (CheckArea(x, y, z) == 0) {
+        return 0;
+    }
+    GetPos(&position, x, y, z);
+    CRect_i_ rect(position.x - 1, position.z - 1, 2, 2);
+    return PickUpPoly(polygons, rect);
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", PickUpPoly__9CEditAreaFP6CCPoly8CRect_i_);
-INCLUDE_ASM("asm/nonmatchings/editarea", PickUpPoly__9CEditAreaFP6CCPoly7CBoxVu0);
-INCLUDE_ASM("asm/nonmatchings/editarea", GetPartsRect__9CEditAreaFR8CRect_i_Pii);
+
+int CEditArea::PickUpPoly(CCPoly *polygons, CBoxVu0 box) {
+    int left, top;
+    CVector3_i_ position;
+    GetPos(&position, box.min[0], box.min[1], box.min[2]);
+    left = position.x;
+    top = position.z;
+    GetPos(&position, box.max[0], box.max[1], box.max[2]);
+    int right = position.x;
+    int bottom = position.z;
+    CRect_i_ rect;
+    rect.x = left - 1;
+    rect.y = top - 1;
+    rect.width = right - left + 2;
+    rect.height = bottom - top + 2;
+    return PickUpPoly(polygons, rect);
+}
+
+int CEditArea::GetPartsRect(CRect_i_ &rect, int *parts_ids, int max_parts) {
+    int x, y;
+    int count = 0;
+    for (x = rect.x; x < rect.x + rect.width; x++) {
+        for (y = rect.y; y < rect.y + rect.height; y++) {
+            if (count >= max_parts)
+                break;
+            int parts_id = GetPartsID(x, y);
+            if (parts_id >= 0) {
+                if (count == 0) {
+                    parts_ids[count++] = parts_id;
+                } else {
+                    int found = 0;
+                    for (int i = 0; i < count; i++) {
+                        if (parts_id == parts_ids[i])
+                            found = 1;
+                    }
+                    if (!found)
+                        parts_ids[count++] = parts_id;
+                }
+            }
+        }
+    }
+    return count;
+}
 
 void CEditArea::ChainWorkClear(void) {
     for (int x = 0; x < 16; x++) {
@@ -181,7 +537,16 @@ void CEditArea::Clear(void) {
     unk_2050 = 1;
     unk_2054 = 4;
 }
-INCLUDE_ASM("asm/nonmatchings/editarea", Initialize__9CEditAreaFv);
+
+void CEditArea::Initialize() {
+    float zero = 0.0f;
+    SetOffset(zero, zero, zero);
+    SetSize(16, 16, 1.0f, 1.0f);
+    grid_frame = NULL;
+    Clear();
+    map_no = 0;
+    area_id = 0;
+}
 
 void CEditArea::SetMapInfo(s32 map_no, s32 area_id) {
     this->map_no = map_no;

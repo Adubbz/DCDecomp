@@ -5,7 +5,13 @@
 
 #include <cstring>
 
+#include "clsmes.hpp"
+#include "itemdata.hpp"
+#include "memcard.hpp"
+#include "menu_inventory.hpp"
 #include "menu_manual.hpp"
+#include "menu_misc.hpp"
+#include "snd.hpp"
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetDefaultWeaponNo__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", IsDefaultWeapon__Fi);
@@ -20,7 +26,21 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", SetInteriorOutFlag__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetInteriorOutFlag__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawDngYesNoDialog__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetMenuModeMax__Fv);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", GetMenuIconPos__FiPi);
+
+/**
+ * Writes the screen coordinates of one icon on the battle menu ring.
+ */
+static void GetMenuIconPos(int icon, int *position) {
+    int next = icon + 1;
+    int x = next * 16 + 80;
+    int y = icon * 40 + 54;
+    if (next > 4) {
+        x -= ((icon - 4) << 5) + 16;
+    }
+    position[0] = x;
+    position[1] = y;
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlMenuMekeIconInfo__FPii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBtlMenuBar__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetLimmitMsg__Fv);
@@ -29,8 +49,22 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawOtherCharaStatus__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DngComStatus__Fiiii);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @885__2);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawSelCharaStatus__Fffiiiiii);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBtlAtoraSelect__Fv);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlDrawOption__Fv);
+
+/**
+ * Draws the battle menu's Atora selection screen.
+ */
+static void DrawBtlAtoraSelect() {
+    DrawMenuAtoraSelect();
+}
+
+/**
+ * Draws the battle menu options and restores unfiltered rendering.
+ */
+static void BtlDrawOption() {
+    DrawMenuOption();
+    setbilinear(0);
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlDrawSave__Fv);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @924__2);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlMenuTexBlockEnter__Fv);
@@ -99,7 +133,21 @@ INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2248);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2249);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlWeaponDraw__Fifii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", NowWeaponStatusValue__FP11WEAPON_HAVE);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", EnableWeaponElemNone__Fi);
+
+/**
+ * Returns the restriction on selecting no element for a weapon.
+ */
+static int EnableWeaponElemNone(int weapon_no) {
+    if (WhoIsWeaponEquip(weapon_no) == CHARA_RUBY) {
+        return 1;
+    }
+    if ((unsigned int) (weapon_no - ITEM_WEAPON_BLESSING_GUN) <= 1U ||
+        weapon_no == ITEM_WEAPON_HEXA_BLASTER || weapon_no == ITEM_WEAPON_SUPERNOVA) {
+        return 2;
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuCheckElemValue__FP11WEAPON_HAVEP11WEAPON_HAVE);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2339__2);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2340__2);
@@ -110,8 +158,40 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponSelectDialog__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", InitWeaponSelect__Fii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ExitWeaponMenuSelect__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuSelect__Fv);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuKastumSelectUp__Fii);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuKastumSelectDown__Fii);
+
+/**
+ * Finds the preceding enabled customization row, wrapping from the top row.
+ */
+static int WeaponMenuKastumSelectUp(int row, int enabled_rows) {
+    if (row == 0) {
+        row = 7;
+    }
+    int selected_row = 3;
+    while (row >= 4) {
+        if (enabled_rows & (1 << (row - 4))) {
+            selected_row = row - 1;
+            break;
+        }
+        row--;
+    }
+    return selected_row;
+}
+
+/**
+ * Finds the following enabled customization row, wrapping to the top row.
+ */
+static int WeaponMenuKastumSelectDown(int row, int enabled_rows) {
+    int selected_row = 0;
+    while (row <= 6) {
+        if (enabled_rows & (1 << (row - 3))) {
+            selected_row = row;
+            break;
+        }
+        row++;
+    }
+    return selected_row;
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponSelectKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WepAttachHaveCancel__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuAttachModeKey__Fv);
@@ -198,8 +278,70 @@ static void BattleManualDraw() {
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawStatusNumberNowAndMax__FPiiiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWepHole__FiiP11WEAPON_HAVEii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", InitMes__10MenuClsMesFv);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", InitData__10MenuClsMesFv);
+
+void MenuClsMes::InitData() {
+    unk_08 = 366;
+    unk_0C = 166;
+    mode = 0;
+    option_flags = 0;
+    option_count = 0;
+    unk_06 = 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", SetBuffInfo__10MenuClsMesFPs);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", NowWeaponStatus__10MenuClsMesFP11WEAPON_HAVE);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", Step__10MenuClsMesFv);
+
+void MenuClsMes::NowWeaponStatus(WEAPON_HAVE *selected_weapon) {
+    weapon = selected_weapon;
+    option_flags = 1;
+    option_count = 0;
+    if (selected_weapon != NULL) {
+        option_flags = selected_weapon->flags;
+        for (int slot = 0; slot < 6; slot++) {
+            ATTACH_LIST *attachment = &weapon->attach[slot];
+            s16 attachment_flags = attachment->unk_04;
+            if (attachment_flags != 0 && attachment_flags != 1) {
+                option_flags |= attachment_flags;
+            }
+        }
+        option_flags = CheckWeaponOptionStatus(option_flags);
+        option_count = 0;
+        int clear_slot;
+        int changed = 0;
+        for (int bit = 1; bit <= 13; bit++) {
+            if (option_flags & (1 << bit)) {
+                int message_no = bit + 69;
+                ClsMes *window = message;
+                int index = option_count;
+                if (message_no != window->mes_no[index]) {
+                    changed = 1;
+                }
+                window->mes_no[index] = message_no;
+                option_count++;
+            }
+        }
+        for (clear_slot = option_count; clear_slot < 10; clear_slot++) {
+            ClsMes *window = message;
+            window->mes_no[clear_slot] = 0;
+        }
+        if (changed != 0) {
+            message->mes_made = -1;
+            message->MakeMesWin(422);
+        }
+    }
+}
+
+void MenuClsMes::Step() {
+    if (message != NULL) {
+        switch (mode) {
+            case 0:
+                break;
+            case 1:
+            case 2:
+                NowWeaponStatus(GetNowSelectWeapon());
+                message->Step();
+                break;
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", Draw1__10MenuClsMesFiii);

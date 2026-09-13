@@ -261,13 +261,13 @@ void SeitonAttachBoard(ATTACH_LIST *attachments);
 int WhatIsKindofItem(int item_no);
 
 /**
- * Returns the character currently equipping a weapon identifier.
+ * Returns the character associated with a weapon definition, or -1 if unavailable.
  *
  * @mangled WhoIsWeaponEquip__Fi
  * @address 0x00231E90
  * @size 0x74
  */
-s8 WhoIsWeaponEquip(int weapon_no);
+int WhoIsWeaponEquip(int weapon_no);
 
 /**
  * Returns the number of attachment holes on a weapon definition.

@@ -6,6 +6,7 @@
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 class CCharacter;
+class ClsMes;
 struct RECT;
 struct WEAPON_HAVE;
 
@@ -139,15 +140,6 @@ void DrawDngYesNoDialog(int, int, int);
 int GetMenuModeMax(void);
 
 /**
- * Writes the screen position of one battle menu icon into the pair of integers it is given.
- *
- * @mangled GetMenuIconPos__FiPi
- * @address 0x1F4110
- * @size 0x50
- */
-void GetMenuIconPos(int, int *);
-
-/**
  * @mangled BtlMenuMekeIconInfo__FPii
  * @address 0x1F4160
  * @size 0xF0
@@ -202,22 +194,6 @@ void DngComStatus(int, int, int, int);
  * @unknownret
  */
 void DrawSelCharaStatus(float, float, int, int, int, int, int, int);
-
-/**
- * @mangled DrawBtlAtoraSelect__Fv
- * @address 0x1F5810
- * @size 0x20
- * @unknownret
- */
-void DrawBtlAtoraSelect(void);
-
-/**
- * @mangled BtlDrawOption__Fv
- * @address 0x1F5830
- * @size 0x30
- * @unknownret
- */
-void BtlDrawOption(void);
 
 /**
  * @mangled BtlDrawSave__Fv
@@ -493,14 +469,6 @@ void BtlWeaponDraw(int, float, int, int);
 void NowWeaponStatusValue(WEAPON_HAVE *);
 
 /**
- * @mangled EnableWeaponElemNone__Fi
- * @address 0x1FBFD0
- * @size 0x80
- * @unknownret
- */
-void EnableWeaponElemNone(int);
-
-/**
  * @mangled WeaponMenuCheckElemValue__FP11WEAPON_HAVEP11WEAPON_HAVE
  * @address 0x1FC050
  * @size 0xC0
@@ -547,22 +515,6 @@ void ExitWeaponMenuSelect(void);
  * @unknownret
  */
 void WeaponMenuSelect(void);
-
-/**
- * @mangled WeaponMenuKastumSelectUp__Fii
- * @address 0x1FDE70
- * @size 0x60
- * @unknownret
- */
-void WeaponMenuKastumSelectUp(int, int);
-
-/**
- * @mangled WeaponMenuKastumSelectDown__Fii
- * @address 0x1FDED0
- * @size 0x50
- * @unknownret
- */
-void WeaponMenuKastumSelectDown(int, int);
 
 /**
  * @mangled WeaponSelectKey__Fv
@@ -977,21 +929,37 @@ void DrawStatusNumberNowAndMax(int *, int, int, int, int);
  */
 void DrawWepHole(int, int, WEAPON_HAVE *, int, int);
 
+/**
+ * Displays the selected weapon's option messages in the battle menu.
+ */
 class MenuClsMes {
 public:
+    s8 mode; /**< Selects the weapon option display mode. */
+    char unk_01;
+    s16 alpha;        /**< Opacity used for the option icons and message window. */
+    s16 option_count; /**< Number of option messages selected for the weapon. */
+    s16 unk_06;
+    s32 unk_08;
+    s32 unk_0C;
+    s32 option_flags;    /**< Combined option bits of the weapon and its attachments. */
+    WEAPON_HAVE *weapon; /**< Weapon whose option messages are displayed. */
+    s32 unk_18;
+    ClsMes *message; /**< Message window that holds the option text. */
     /**
+     * Selects the shared East King message window for weapon option text.
+     *
      * @mangled InitMes__10MenuClsMesFv
      * @address 0x20B580
-     * @size 0x20
-     * @unknownret
+     * @size 0x14
      */
     void InitMes(void);
 
     /**
+     * Resets the weapon option display state and position.
+     *
      * @mangled InitData__10MenuClsMesFv
      * @address 0x20B5A0
-     * @size 0x30
-     * @unknownret
+     * @size 0x28
      */
     void InitData(void);
 
@@ -1004,18 +972,20 @@ public:
     void SetBuffInfo(short *);
 
     /**
+     * Updates option messages from the weapon and its attachments.
+     *
      * @mangled NowWeaponStatus__10MenuClsMesFP11WEAPON_HAVE
      * @address 0x20B7F0
-     * @size 0x170
-     * @unknownret
+     * @size 0x164
      */
     void NowWeaponStatus(WEAPON_HAVE *);
 
     /**
+     * Updates the active weapon option messages and advances their window.
+     *
      * @mangled Step__10MenuClsMesFv
      * @address 0x20B960
      * @size 0x80
-     * @unknownret
      */
     void Step(void);
 
@@ -1027,3 +997,5 @@ public:
      */
     void Draw1(int, int, int);
 };
+
+STATIC_ASSERT(sizeof(MenuClsMes) == 0x20);

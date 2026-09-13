@@ -1,19 +1,261 @@
 #include "npcharacter.hpp"
 
-INCLUDE_ASM("asm/nonmatchings/npcharacter", Step__12CNPCharacterFv);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", ShadowStep__12CNPCharacterFv);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", PlaySeq__12CNPCharacterFv);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", ClearSeq__12CNPCharacterFv);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", SetSeq__12CNPCharacterFPff);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", SetWait__12CNPCharacterFi);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", CheckSeq__12CNPCharacterFv);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", GetNextSeq__12CNPCharacterFv);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", GetNowSeq__12CNPCharacterFv);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", NextSeq__12CNPCharacterFv);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", Draw__12CNPCharacterFv);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", DrawShadow__12CNPCharacterFv);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", CheckDraw__12CNPCharacterFv);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", PickUpPoly__12CNPCharacterFPfP6CCPoly);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", PickUpPoly__10CCharacterFPfP6CCPoly);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", Initialize__12CNPCharacterFv);
+#include <cmath>
+
+#include "collision.hpp"
+#include "mathutil.hpp"
+#include "mglib.hpp"
+
+void CNPCharacter::Step() {
+    if (!initialized || chara.frame == NULL) {
+        return;
+    }
+    if (near_camera || step_hidden) {
+        chara.CCharacter::Step();
+    }
+    int fade_step = alpha_step;
+    int override_step = unk_1488;
+    if (!(float(override_step) <= 0.0f)) {
+        fade_step = override_step;
+    }
+    unk_1488 = -1;
+    if (near_camera) {
+        chara.ambient_offset[3] += float(fade_step);
+    } else {
+        chara.ambient_offset[3] -= float(fade_step);
+    }
+    if (chara.ambient_offset[3] < 0.0f) {
+        chara.ambient_offset[3] = 0;
+    }
+    if (!(chara.ambient_offset[3] <= 128.0f)) {
+        chara.ambient_offset[3] = 128.0f;
+    }
+    PlaySeq();
+}
+
+void CNPCharacter::ShadowStep() {
+    if (!initialized || chara.frame == NULL) {
+        return;
+    }
+    if (near_camera) {
+        chara.CCharacter::ShadowStep();
+    }
+}
+
+void CNPCharacter::PlaySeq() {
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR movement;
+    sceVu0FVECTOR destination;
+    sceVu0FVECTOR flat_position;
+    if (!CheckSeq() || !sequence_enabled) {
+        return;
+    }
+    NP_SEQUENCE *sequence = GetNowSeq();
+    chara.GetPosition(position);
+    switch (sequence->operation) {
+        case NP_SEQUENCE_MOVE: {
+            sceVu0SubVector(movement, sequence->destination, position);
+            movement[1] = 0;
+            sceVu0Normalize(movement, movement);
+            sceVu0ScaleVector(movement, movement, sequence->speed[0]);
+            sceVu0CopyVector(flat_position, position);
+            flat_position[1] = sequence->destination[1];
+            if (DistVector(sequence->destination, flat_position) <= sequence->speed[0]) {
+                sceVu0CopyVector(destination, sequence->destination);
+                NextSeq();
+                chara.SetMotion(0, 0);
+            } else {
+                sceVu0AddVector(destination, position, movement);
+            }
+            float angle = AngleInterpolate(chara.rotation.y, atan2f(movement[0], movement[2]), 0.1f, 0);
+            chara.SetRotation(0, angle, 0);
+            chara.SetPosition(destination);
+            chara.SetMotion(1, 0);
+            return;
+        }
+        case NP_SEQUENCE_WAIT:
+            sequence->wait_frames--;
+            if (sequence->wait_frames < 0) {
+                NextSeq();
+            }
+            chara.SetMotion(0, 0);
+            break;
+    }
+}
+
+void CNPCharacter::ClearSeq() {
+    read_index = 0;
+    write_index = 0;
+    sequence_enabled = 1;
+    for (int index = 0; index < 8; index++) {
+        sequences[index].operation = NP_SEQUENCE_UNUSED;
+    }
+}
+
+int CNPCharacter::SetSeq(float *destination, float speed) {
+    NP_SEQUENCE *sequence = GetNextSeq();
+    sequence->operation = NP_SEQUENCE_MOVE;
+    sceVu0CopyVector(sequence->destination, destination);
+    sequence->speed[0] = speed;
+    sequence->speed[1] = speed;
+    sequence->speed[2] = speed;
+    return 1;
+}
+
+int CNPCharacter::SetWait(int frames) {
+    NP_SEQUENCE *sequence = GetNextSeq();
+    sequence->operation = NP_SEQUENCE_WAIT;
+    sequence->wait_frames = frames;
+    return 1;
+}
+
+int CNPCharacter::CheckSeq() {
+    return read_index != write_index;
+}
+
+NP_SEQUENCE *CNPCharacter::GetNextSeq() {
+    NP_SEQUENCE *sequence = &sequences[write_index];
+    write_index++;
+    if (write_index >= 8) {
+        write_index = 0;
+    }
+    return sequence;
+}
+
+NP_SEQUENCE *CNPCharacter::GetNowSeq() {
+    return &sequences[read_index];
+}
+
+void CNPCharacter::NextSeq() {
+    GetNowSeq()->operation = NP_SEQUENCE_UNUSED;
+    if (CheckSeq()) {
+        read_index++;
+        if (read_index >= 8) {
+            read_index = 0;
+        }
+    }
+}
+
+void CNPCharacter::Draw() {
+    sceVu0FVECTOR saved_ambient;
+    sceVu0FVECTOR ambient;
+    if (!initialized || chara.frame == NULL) {
+        return;
+    }
+    if (!(chara.ambient_offset[3] <= 0.0f)) {
+        MGGetAmbient(saved_ambient);
+        sceVu0CopyVector(ambient, saved_ambient);
+        ambient[0] += chara.ambient_offset[0];
+        ambient[1] += chara.ambient_offset[1];
+        ambient[2] += chara.ambient_offset[2];
+        ambient[3] = chara.ambient_offset[3];
+        MGSetAmbient(ambient);
+        chara.CCharacter::Draw();
+        MGSetAmbient(saved_ambient);
+    }
+}
+
+void CNPCharacter::DrawShadow() {
+    if (!initialized || chara.frame == NULL) {
+        return;
+    }
+    if (near_camera) {
+        chara.CCharacter::DrawShadow();
+    }
+}
+
+int CNPCharacter::CheckDraw() {
+    if (!initialized || chara.frame == NULL) {
+        return 0;
+    }
+    if (chara.ambient_offset[3] <= 0.0f) {
+        return 0;
+    }
+    return 1;
+}
+
+int CNPCharacter::PickUpPoly(float *position, CCPoly *polygons) {
+    if (initialized) {
+        return chara.CCharacter::PickUpPoly(position, polygons);
+    }
+    return 0;
+}
+
+int CCharacter::PickUpPoly(float *position, CCPoly *polygons) {
+    sceVu0FVECTOR origin;
+    sceVu0FVECTOR direction;
+    sceVu0FVECTOR centre;
+    sceVu0FVECTOR upper_left;
+    sceVu0FVECTOR upper_right;
+    sceVu0FVECTOR lower_left;
+    sceVu0FVECTOR lower_right;
+    GetPosition(origin);
+    float radius = body_width;
+    if (radius < 2.0f) {
+        radius = 2.0f;
+    }
+    sceVu0SubVector(direction, position, origin);
+    direction[1] = 0;
+    float distance = DistVector(direction);
+    if (!(distance <= 4.0f * radius) || distance < radius) {
+        return 0;
+    }
+    if (origin[1] + body_height < position[1]) {
+        return 0;
+    }
+    if (!(origin[1] - body_height <= position[1])) {
+        return 0;
+    }
+    sceVu0Normalize(direction, direction);
+    upper_left[0] = 20.0f * -direction[2];
+    upper_left[1] = 30.0f;
+    upper_left[2] = 20.0f * direction[0];
+    upper_left[3] = 1.0f;
+    sceVu0CopyVector(upper_right, upper_left);
+    upper_right[0] = -upper_left[0];
+    upper_right[2] = -upper_left[2];
+    sceVu0CopyVector(lower_left, upper_left);
+    lower_left[1] = -30.0f;
+    sceVu0CopyVector(lower_right, upper_right);
+    lower_right[1] = -30.0f;
+    sceVu0ScaleVector(centre, direction, radius);
+    sceVu0AddVector(centre, centre, origin);
+    sceVu0AddVector(upper_left, upper_left, centre);
+    sceVu0AddVector(upper_right, upper_right, centre);
+    sceVu0AddVector(lower_left, lower_left, centre);
+    sceVu0AddVector(lower_right, lower_right, centre);
+    sceVu0CopyVector(polygons[0].vertex[0], upper_left);
+    sceVu0CopyVector(polygons[0].vertex[1], upper_right);
+    sceVu0CopyVector(polygons[0].vertex[2], lower_left);
+    sceVu0CopyVector(polygons[0].normal, direction);
+    sceVu0CopyVector(polygons[1].vertex[0], lower_left);
+    sceVu0CopyVector(polygons[1].vertex[1], upper_right);
+    sceVu0CopyVector(polygons[1].vertex[2], lower_right);
+    sceVu0CopyVector(polygons[1].normal, direction);
+    return 2;
+}
+
+void CNPCharacter::Initialize() {
+    chara.CCharacter::Initialize();
+    initialized = 0;
+    near_camera = 0;
+    chara.ambient_offset[0] = 0;
+    chara.ambient_offset[1] = 0;
+    chara.ambient_offset[2] = 0;
+    chara.ambient_offset[3] = 0;
+    alpha_step = 0;
+    unk_1488 = -1;
+    chara.body_width = 7.0f;
+    unk_148C = 0;
+    unk_1468 = 0;
+    event_status = 0;
+    draw_enabled = 0;
+    resource_name[0] = 0;
+    ClearSeq();
+    map_parts_no = 0;
+    unk_1480 = 0;
+    step_hidden = 0;
+    recurring_talk_event = -1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/npcharacter", __ct__12CNPCharacterFv);

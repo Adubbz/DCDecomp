@@ -243,7 +243,7 @@ public:
     int SearchPartsExtra(float x, float y, float z);
 
     /**
-     * Returns floating grid coordinates for one world position.
+     * Snaps a world-space position to the editable grid.
      *
      * @mangled GetGrid__9CEditAreaFP11CVector3_f_fff
      * @address 0x16EC90

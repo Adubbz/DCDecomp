@@ -4,12 +4,42 @@ INCLUDE_ASM("asm/nonmatchings/textureanime", Copy__16CTextureTexAnimeFP8CTexture
 INCLUDE_ASM("asm/nonmatchings/textureanime", __ct__13CTexAnimeDataFv);
 INCLUDE_ASM("asm/nonmatchings/textureanime", Initialize__13CTexAnimeDataFv);
 INCLUDE_ASM("asm/nonmatchings/textureanime", TexAnime__13CTextureAnimeFi);
-INCLUDE_ASM("asm/nonmatchings/textureanime", Initialize__13CTextureAnimeFP13CTexAnimeDatai);
-INCLUDE_ASM("asm/nonmatchings/textureanime", __ct__13CTextureAnimeFP13CTexAnimeDatai);
+
+void CTextureAnime::Initialize(CTexAnimeData *records, int count) {
+    data = records;
+    data_count = count;
+    for (int group = 0; group < 24; group++) {
+        first[group] = 0;
+        current[group] = 0;
+        last[group] = 0;
+        frame[group] = 0;
+        enabled[group] = 0;
+    }
+}
+
+CTextureAnime::CTextureAnime(CTexAnimeData *records, int count) {
+    Initialize(records, count);
+}
 INCLUDE_ASM("asm/nonmatchings/textureanime", NewTexAnimeData__13CTextureAnimeFv);
 INCLUDE_ASM("asm/nonmatchings/textureanime", NewTexAnimeGroupData__13CTextureAnimeFi);
 INCLUDE_ASM("asm/nonmatchings/textureanime", EnterTexAnime__13CTextureAnimeFP13CTexAnimeData);
-INCLUDE_ASM("asm/nonmatchings/textureanime", DisableAll__13CTextureAnimeFv);
-INCLUDE_ASM("asm/nonmatchings/textureanime", Enable__13CTextureAnimeFi);
-INCLUDE_ASM("asm/nonmatchings/textureanime", Disable__13CTextureAnimeFi);
+void CTextureAnime::DisableAll() {
+    for (int group = 0; group < 24; group++) {
+        Disable(group);
+    }
+}
+void CTextureAnime::Enable(int group) {
+    if (group < 0 || group >= 24) {
+        return;
+    }
+    enabled[group] = 1;
+}
+void CTextureAnime::Disable(int group) {
+    if (group < 0 || group >= 24) {
+        return;
+    }
+    enabled[group] = 0;
+    current[group] = first[group];
+    frame[group] = 0;
+}
 INCLUDE_ASM("asm/nonmatchings/textureanime", LoadCFGFile__13CTextureAnimeFPci);

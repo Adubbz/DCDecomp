@@ -60,13 +60,59 @@ calls `Initialize` and returns the constructed object.
 
 ## Remaining dependencies and blockers
 
-`CVector3_i_` has no definition in the current shared vector headers. Its use
-in `GetPos`, the coordinate-based search/altitude wrappers, and the polygon
-helpers proves three consecutive 32-bit coordinate fields at offsets `0x00`,
-`0x04`, and `0x08`; stack allocation and quadword copies indicate a `0x10`
-size/alignment, matching `CVector3_f_`. The definition belongs in the shared
-vector header and is intentionally not added from this unit-owned shard.
+`CVector3_i_` is defined in `include/vector3.hpp`: three integer coordinates
+at 0x00/0x04/0x08 and an unresolved fourth word. `GetPos` writes those three
+coordinates; the float-coordinate `GetAlt` wrapper reserves one 0x10-byte
+stack slot at a 16-byte boundary and reads X/Z at +0x20/+0x28. Other polygon
+helpers copy the vector by quadword. Its 0x10 size and alignment are pinned.
+The float-coordinate altitude wrapper returns the corresponding integer-grid
+altitude after converting its input through `GetPos`.
 
 The remaining larger drafts contain control-flow reconstruction artifacts or
 member/field expressions that m2c does not express as the proven grid arrays.
 They remain assembly until a clean C++ body reaches a byte-perfect result.
+
+## Grid connection attributes
+
+`GetPartsExtra` first handles six map 1 endpoints before checking grid bounds.
+Area 0 gives river attribute 2 at (5, -1) and (2, 8); area 1 at (3, 6)
+and (12, 3); area 2 at (4, -1) and (3, 8). These off-grid overrides
+are intentional inputs to river connectivity. All other requests return
+-1 outside the active grid or the cell's stored `parts_extra`. Nested
+map/area switches reproduce the retail branch layout; a map `if` removes
+one of its unconditional branches.
+
+`SetRoadParts` accepts attribute 1, samples neighbors in negative Z/positive X/positive Z/negative X
+order, and encodes the connection shape in bits 4–11 and rotation in bits
+0–3. Shapes 1/2 are corners/straight segments, 3/4 are three/four-way
+junctions, and 5/6 are isolated/end segments. The final shift-and-mask
+is evaluated before the rotation mask to preserve retail register allocation.
+
+`SetRiverParts` requires attribute 2 in the selected cell, and accepts
+neighbor attributes 2, 3, and 5 as connections. It uses the same six
+shape codes as roads, with different rotations for corners and three-way
+junctions. The staged Boolean assignments preserve the retail ordering of
+neighbor classification.
+
+## Rectangle and polygon queries
+
+`GetPartsRect` scans X then Z, collecting each nonnegative part identifier
+once up to the supplied capacity. `SearchPartsID` converts coordinates and
+reads the cell directly without the bounds checks of `GetPartsID`. The
+position polygon overload checks area bounds, converts the coordinate,
+and gathers a 2-by-2 rectangle beginning one cell before the coordinate.
+The box overload converts its minimum and maximum, then uses a rectangle
+beginning one cell before the minimum and extending two cells beyond the
+difference.
+
+`MakePartsBox` expands the grid extrema of cells with both a nonnegative
+part number and part identifier. Retail initializes both minimum coordinates
+to zero. Its minimum-X comparison writes the maximum-X accumulator instead
+of the minimum; the C++ preserves that behavior even though nonnegative
+loop coordinates make the branch unreachable. Minimum Z also remains zero
+for nonnegative coordinates. The maximum world X/Z includes one cell size.
+
+The connection enums name only observed road/river attributes and shapes.
+Attributes 3 and 5 are accepted river neighbors but their wider meaning is
+not established here; their numeric tests remain. Axis names describe grid
+indices without claiming geographic directions.

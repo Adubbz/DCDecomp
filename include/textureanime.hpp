@@ -29,9 +29,19 @@ public:
 
 STATIC_ASSERT(sizeof(CTexAnimeData) == 0x58);
 
+/**
+ * Plays groups of texture animation records from a caller-supplied pool.
+ */
 class CTextureAnime {
 public:
-    s32 unk_000[124];
+    s32 enabled[24];            /**< Enables playback for each animation group. */
+    CTexAnimeData *first[24];   /**< Points to each group's first animation record. */
+    CTexAnimeData *last[24];    /**< Points to each group's last animation record. */
+    CTexAnimeData *current[24]; /**< Points to the record being played by each group. */
+    s32 frame[24];              /**< Counts playback frames for each group's current record. */
+    CTexAnimeData *data;        /**< Holds the animation record pool. */
+    s32 data_count;             /**< Gives the number of records in the pool. */
+    u8 unk_1e8[8];
 
     /**
      * @mangled TexAnime__13CTextureAnimeFi
@@ -42,19 +52,22 @@ public:
     void TexAnime(int);
 
     /**
+     * Assigns the record pool and clears every animation group.
+     *
      * @mangled Initialize__13CTextureAnimeFP13CTexAnimeDatai
      * @address 0x167820
      * @size 0x50
-     * @unknownret
      */
-    void Initialize(CTexAnimeData *, int);
+    void Initialize(CTexAnimeData *records, int count);
 
     /**
+     * Creates an animation player using the supplied record pool.
+     *
      * @mangled __ct__13CTextureAnimeFP13CTexAnimeDatai
      * @address 0x167870
      * @size 0x30
      */
-    CTextureAnime(CTexAnimeData * = 0, int = 0);
+    CTextureAnime(CTexAnimeData *records = 0, int count = 0);
 
     /**
      * @mangled NewTexAnimeData__13CTextureAnimeFv
@@ -81,28 +94,31 @@ public:
     void EnterTexAnime(CTexAnimeData *);
 
     /**
+     * Stops and resets every animation group.
+     *
      * @mangled DisableAll__13CTextureAnimeFv
      * @address 0x167AE0
      * @size 0x60
-     * @unknownret
      */
     void DisableAll(void);
 
     /**
+     * Enables playback of one animation group.
+     *
      * @mangled Enable__13CTextureAnimeFi
      * @address 0x167B40
      * @size 0x40
-     * @unknownret
      */
-    void Enable(int);
+    void Enable(int group);
 
     /**
+     * Stops one animation group and resets its playback position.
+     *
      * @mangled Disable__13CTextureAnimeFi
      * @address 0x167B80
      * @size 0x40
-     * @unknownret
      */
-    void Disable(int);
+    void Disable(int group);
 
     /**
      * @mangled LoadCFGFile__13CTextureAnimeFPci

@@ -833,7 +833,7 @@ int EdLoadVillager(u_int *pack, char *name, CNPCharacter *villager, CDataAlloc2<
         villager->chara.frame->SetAttr(attr, 1, 4);
     }
     villager->initialized = 1;
-    villager->sequence_state = 8;
+    villager->alpha_step = 8;
     if (MapNo > 10) {
         villager->initialized = 1;
         villager->draw_enabled = 1;
@@ -2086,16 +2086,6 @@ struct ED_EVENT_EXTERNAL_FUNCTION {
 
 /** Dispatch table built from the editor-event external-function registry. */
 extern int (*ext_func__2[1500])(RS_STACKDATA *, int);
-
-/** Scratch action records shared by the ten event action sequencers. */
-struct ACT_SEQ {
-    int active;       /**< Whether this action record is occupied. */
-    u8 unk_04[8];
-    int character;    /**< Character slot associated with this action record. */
-    u8 unk_10[0x10];
-};
-
-STATIC_ASSERT(sizeof(ACT_SEQ) == 0x20);
 
 /** Action records supplied to each editor-event sequencer. */
 static ACT_SEQ asq_table[266];
@@ -6615,8 +6605,8 @@ int EdInitEventParamSimple() {
         EdEventInfo.npc_draw_before[i + 1] = 0;
     }
     for (i = 0; i < 266; i++) {
-        asq_table[i].active = 0;
-        asq_table[i].character = 0;
+        asq_table[i].operation = ACT_SEQ_UNUSED;
+        asq_table[i].next = NULL;
     }
     for (i = 0; i < 10; i++)
         ActSeq[i].Initialize(asq_table, 266);
@@ -6767,7 +6757,7 @@ int EdEventNPCStep() {
     for (int i = 0; i < EdEventInfo.npc_count; i++) {
         EdEventInfo.npcs[i].chara.unk_C98 = wind;
         if (EdEventInfo.npc_stop[i] == 0) {
-            ((CNPCharacter *) EdEventInfo.npcs)[i].unk_11B0 = 0;
+            ((CNPCharacter *) EdEventInfo.npcs)[i].sequence_enabled = 0;
             EdEventInfo.npcs[i].chara.Step();
             EdEventInfo.npcs[i].chara.ShadowStep();
         }
