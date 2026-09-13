@@ -124,7 +124,35 @@ int CVisualVu1::RemakeData(unsigned int *data) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__10CVisualVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
-INCLUDE_ASM("asm/nonmatchings/visualvu1", SetShadowData__FPUiPA4_f);
+
+static int SetShadowData(u_int *packet, float (*matrix)[4]) {
+    packet[0] = 0;
+    packet[1] = 0;
+    packet[2] = 0;
+    packet[3] = 0x6C080029;
+    packet[4] = 0x8001;
+    packet[5] = 0x102E8000;
+    packet[6] = 0xE;
+    packet[7] = 0;
+    packet[8] = 0x68;
+    packet[9] = 0x80;
+    packet[10] = 0x42;
+    packet[11] = 0;
+    packet[12] = 0x8001;
+    packet[13] = 0x102E8000;
+    packet[14] = 0xE;
+    packet[15] = 0;
+    packet[16] = 0x62;
+    packet[17] = 0x80;
+    packet[18] = 0x42;
+    packet[19] = 0;
+    ((u_long128 *) packet)[5] = ((u_long128 *) matrix)[0];
+    ((u_long128 *) packet)[6] = ((u_long128 *) matrix)[1];
+    ((u_long128 *) packet)[7] = ((u_long128 *) matrix)[2];
+    ((u_long128 *) packet)[8] = ((u_long128 *) matrix)[3];
+    return 0x24;
+}
+
 INCLUDE_ASM("asm/nonmatchings/visualvu1", SetMaterial__FPUiP12MDT_MATERIAL);
 INCLUDE_ASM("asm/nonmatchings/visualvu1", SetTEX0__FPUiUlUl);
 INCLUDE_ASM("asm/nonmatchings/visualvu1", Initialize__10CVisualVu1Fv);
