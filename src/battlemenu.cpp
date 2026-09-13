@@ -26,7 +26,10 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", EscapeDungeonMode__Fv);
 void SetEscapeDngFlag(int flag) {
     EscapeDngFlg = flag;
 }
-INCLUDE_ASM("asm/nonmatchings/battlemenu", GetEscapeDngFlag__Fv);
+
+s16 GetEscapeDngFlag() {
+    return EscapeDngFlg;
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", SetInteriorOutFlag__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetInteriorOutFlag__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawDngYesNoDialog__Fiii);

@@ -103,7 +103,7 @@ void SetEscapeDngFlag(int flag);
  *
  * @mangled GetEscapeDngFlag__Fv
  * @address 0x1F3FB0
- * @size 0x10
+ * @size 0xC
  */
 s16 GetEscapeDngFlag(void);
 
