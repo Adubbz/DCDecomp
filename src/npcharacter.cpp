@@ -63,7 +63,16 @@ void CNPCharacter::NextSeq() {
 }
 
 INCLUDE_ASM("asm/nonmatchings/npcharacter", Draw__12CNPCharacterFv);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", DrawShadow__12CNPCharacterFv);
+
+void CNPCharacter::DrawShadow() {
+    if (!enabled || chara.frame == NULL) {
+        return;
+    }
+    if (unk_1474) {
+        chara.CCharacter::DrawShadow();
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/npcharacter", CheckDraw__12CNPCharacterFv);
 INCLUDE_ASM("asm/nonmatchings/npcharacter", PickUpPoly__12CNPCharacterFPfP6CCPoly);
 INCLUDE_ASM("asm/nonmatchings/npcharacter", PickUpPoly__10CCharacterFPfP6CCPoly);
