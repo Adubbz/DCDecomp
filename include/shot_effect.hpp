@@ -12,6 +12,9 @@
 #include "bt_shot_effect.hpp"
 class CFrame;
 
+/**
+ * Manages the eight active projectile-effect slots.
+ */
 class CSHOT_EFFECT {
 public:
     BT_SHOT_EFFECT *unk_0000;
@@ -37,6 +40,8 @@ public:
     u8 unk_A158[8];
 
     /**
+     * Draws every active projectile-effect slot.
+     *
      * @mangled Draw__12CSHOT_EFFECTFv
      * @address 0x1ABF20
      * @size 0x260
@@ -45,6 +50,8 @@ public:
     void Draw(void);
 
     /**
+     * Advances every active projectile-effect slot.
+     *
      * @mangled Step__12CSHOT_EFFECTFv
      * @address 0x1AC180
      * @size 0x9B0
@@ -53,6 +60,8 @@ public:
     void Step(void);
 
     /**
+     * Moves eligible active projectile effects into their ending phase.
+     *
      * @mangled EndEffect__12CSHOT_EFFECTFv
      * @address 0x1ACB30
      * @size 0xE0
@@ -61,6 +70,8 @@ public:
     void EndEffect(void);
 
     /**
+     * Disables one projectile-effect slot, or every slot when given -1.
+     *
      * @mangled OffEffect__12CSHOT_EFFECTFi
      * @address 0x1ACC10
      * @size 0x60
@@ -69,6 +80,8 @@ public:
     void OffEffect(int);
 
     /**
+     * Loads projectile-effect resources and initializes their runtime slots.
+     *
      * @mangled Entry__12CSHOT_EFFECTFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i
      * @address 0x1ACC70
      * @size 0x5F0
@@ -77,6 +90,8 @@ public:
     void Entry(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
 
     /**
+     * Initializes projectile-effect slots from an already loaded resource.
+     *
      * @mangled Entry2__12CSHOT_EFFECTFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i
      * @address 0x1AD260
      * @size 0x5B0
@@ -85,6 +100,8 @@ public:
     int Entry2(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
 
     /**
+     * Reinitializes projectile-effect slots from a replacement description.
+     *
      * @mangled ReEntry__12CSHOT_EFFECTFP14BT_SHOT_EFFECTP14CDataAlloc2_1_
      * @address 0x1AD810
      * @size 0x510
@@ -93,10 +110,11 @@ public:
     void ReEntry(BT_SHOT_EFFECT *, CDataAlloc2<1> *);
 
     /**
+     * Selects whether the current projectile effect loops.
+     *
      * @mangled SetLoop__12CSHOT_EFFECTFi
      * @address 0x1ADD20
      * @size 0x40
-     * @unknownret
      */
     void SetLoop(int);
 
@@ -111,82 +129,92 @@ public:
     int Set(float *, float *, int, int, int, CFrame *, int);
 
     /**
+     * Delays the current projectile effect and clears its secondary wait state.
+     *
      * @mangled SetWait__12CSHOT_EFFECTFi
      * @address 0x1AE1C0
      * @size 0x50
-     * @unknownret
      */
     void SetWait(int);
 
     /**
+     * Suppresses sound for the current projectile effect.
+     *
      * @mangled SetNoSound__12CSHOT_EFFECTFv
      * @address 0x1AE210
      * @size 0x40
-     * @unknownret
      */
     void SetNoSound(void);
 
     /**
+     * Sets the randomization rate for the current projectile effect.
+     *
      * @mangled SetRandomRate__12CSHOT_EFFECTFf
      * @address 0x1AE250
      * @size 0x40
-     * @unknownret
      */
     void SetRandomRate(float);
 
     /**
+     * Sets the lifetime of the current projectile effect.
+     *
      * @mangled SetLifeTime__12CSHOT_EFFECTFi
      * @address 0x1AE290
      * @size 0x40
-     * @unknownret
      */
     void SetLifeTime(int);
 
     /**
+     * Sets the enemy attribute of the current projectile effect.
+     *
      * @mangled SetEnemyAttr__12CSHOT_EFFECTFi
      * @address 0x1AE2D0
      * @size 0x40
-     * @unknownret
      */
     void SetEnemyAttr(int);
 
     /**
+     * Sets the damage dealt by the current projectile effect.
+     *
      * @mangled SetDmg__12CSHOT_EFFECTFi
      * @address 0x1AE310
      * @size 0x40
-     * @unknownret
      */
     void SetDmg(int);
 
     /**
+     * Sets the source effect's attribute when an effect slot is selected.
+     *
      * @mangled SetAttribute__12CSHOT_EFFECTFi
      * @address 0x1AE350
      * @size 0x30
-     * @unknownret
      */
     void SetAttribute(int);
 
     /**
+     * Sets the weapon status of the current projectile effect.
+     *
      * @mangled SetWepStatus__12CSHOT_EFFECTFi
      * @address 0x1AE380
      * @size 0x40
-     * @unknownret
      */
     void SetWepStatus(int);
 
     /**
+     * Sets the monster-effectiveness table of the current projectile effect.
+     *
      * @mangled SetVsMonster__12CSHOT_EFFECTFPc
      * @address 0x1AE3C0
      * @size 0x40
-     * @unknownret
      */
     void SetVsMonster(char *);
 
     /**
+     * Sets the secondary user identifier of the current projectile effect.
+     *
      * @mangled SetUserID2__12CSHOT_EFFECTFi
      * @address 0x1AE400
      * @size 0x40
-     * @unknownret
      */
     void SetUserID2(int);
 
