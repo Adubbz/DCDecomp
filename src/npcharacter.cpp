@@ -23,7 +23,12 @@ int CNPCharacter::SetSeq(float *destination, float speed) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/npcharacter", SetWait__12CNPCharacterFi);
+int CNPCharacter::SetWait(int frames) {
+    NP_SEQUENCE *sequence = GetNextSeq();
+    sequence->operation = NP_SEQUENCE_WAIT;
+    sequence->wait_frames = frames;
+    return 1;
+}
 
 int CNPCharacter::CheckSeq() {
     return read_index != write_index;
