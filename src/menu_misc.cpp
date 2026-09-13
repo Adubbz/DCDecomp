@@ -16,6 +16,7 @@
 #include "memcard.hpp"
 #include "menu_draw.hpp"
 #include "menu_manual.hpp"
+#include "savedata.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
 #include "weapon_buildup.hpp"
@@ -387,7 +388,11 @@ static int EdMenuManualKey();
 static void EdMenuManualDraw();
 
 INCLUDE_ASM("asm/nonmatchings/menu_misc", NowGetGameFlagForBtlMenu__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", GetMenuHebikiriFlag__Fv);
+
+int GetMenuHebikiriFlag() {
+    return SaveData->GetGameFlag(0x30);
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EquipDefaultWeapon__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", DrawMenuNothing__FiiiiPcii);
 
