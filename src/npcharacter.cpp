@@ -1,4 +1,5 @@
 #include "npcharacter.hpp"
+#include "collision.hpp"
 #include "mathutil.hpp"
 #include "mglib.hpp"
 #include <cmath>
@@ -132,7 +133,59 @@ int CNPCharacter::PickUpPoly(float *position, CCPoly *polygons) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/npcharacter", PickUpPoly__10CCharacterFPfP6CCPoly);
+int CCharacter::PickUpPoly(float *position, CCPoly *polygons) {
+    sceVu0FVECTOR origin;
+    sceVu0FVECTOR direction;
+    sceVu0FVECTOR centre;
+    sceVu0FVECTOR upper_left;
+    sceVu0FVECTOR upper_right;
+    sceVu0FVECTOR lower_left;
+    sceVu0FVECTOR lower_right;
+    GetPosition(origin);
+    float radius = body_width;
+    if (radius < 2.0f) {
+        radius = 2.0f;
+    }
+    sceVu0SubVector(direction, position, origin);
+    direction[1] = 0;
+    float distance = DistVector(direction);
+    if (!(distance <= 4.0f * radius) || distance < radius) {
+        return 0;
+    }
+    if (origin[1] + body_height < position[1]) {
+        return 0;
+    }
+    if (!(origin[1] - body_height <= position[1])) {
+        return 0;
+    }
+    sceVu0Normalize(direction, direction);
+    upper_left[0] = 20.0f * -direction[2];
+    upper_left[1] = 30.0f;
+    upper_left[2] = 20.0f * direction[0];
+    upper_left[3] = 1.0f;
+    sceVu0CopyVector(upper_right, upper_left);
+    upper_right[0] = -upper_left[0];
+    upper_right[2] = -upper_left[2];
+    sceVu0CopyVector(lower_left, upper_left);
+    lower_left[1] = -30.0f;
+    sceVu0CopyVector(lower_right, upper_right);
+    lower_right[1] = -30.0f;
+    sceVu0ScaleVector(centre, direction, radius);
+    sceVu0AddVector(centre, centre, origin);
+    sceVu0AddVector(upper_left, upper_left, centre);
+    sceVu0AddVector(upper_right, upper_right, centre);
+    sceVu0AddVector(lower_left, lower_left, centre);
+    sceVu0AddVector(lower_right, lower_right, centre);
+    sceVu0CopyVector(polygons[0].vertex[0], upper_left);
+    sceVu0CopyVector(polygons[0].vertex[1], upper_right);
+    sceVu0CopyVector(polygons[0].vertex[2], lower_left);
+    sceVu0CopyVector(polygons[0].normal, direction);
+    sceVu0CopyVector(polygons[1].vertex[0], lower_left);
+    sceVu0CopyVector(polygons[1].vertex[1], upper_right);
+    sceVu0CopyVector(polygons[1].vertex[2], lower_right);
+    sceVu0CopyVector(polygons[1].normal, direction);
+    return 2;
+}
 
 void CNPCharacter::Initialize() {
     chara.CCharacter::Initialize();
