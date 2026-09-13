@@ -119,7 +119,16 @@ void CActionSeq::SetPos(float *destination) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/actionseq", RotRefSeq__10CActionSeqFPff);
+void CActionSeq::RotRefSeq(float *reference, float speed) {
+    ACT_SEQ *sequence = NextMoveSeq();
+    if (sequence != NULL) {
+        sequence->operation = ACT_SEQ_ROTATE_REFERENCE;
+        sceVu0CopyVector(sequence->arguments.vector, reference);
+        sequence->arguments.vector[3] = speed;
+        sequence->duration = 0;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/actionseq", RotAngleSeq__10CActionSeqFff);
 INCLUDE_ASM("asm/nonmatchings/actionseq", RotMoveSeq__10CActionSeqFf);
 INCLUDE_ASM("asm/nonmatchings/actionseq", ClearRotSeq__10CActionSeqFv);
