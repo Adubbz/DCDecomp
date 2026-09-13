@@ -672,7 +672,19 @@ static void CommandGRAVITY(void **argv) {
     pCloth->gravity[1] = *(float *) argv[1];
     pCloth->gravity[2] = *(float *) argv[2];
 }
-INCLUDE_ASM("asm/nonmatchings/dataread", CommandPOLYDIVE__FPPv);
+static void CommandPOLYDIVE(void **argv) {
+    char *s = (char *) argv[0];
+    int i = 0;
+
+    while (i < 16) {
+        char c = *s;
+        if (c == 0)
+            break;
+        pCloth->polygon_divide[i] = (c != '0');
+        s++;
+        i++;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandBOUND__FPPv);
 INCLUDE_ASM("asm/nonmatchings/dataread", GetArg__FR9input_strPiPPv__2);
 INCLUDE_ASM("asm/nonmatchings/dataread", SearchCommand__FR9input_strPi__2);

@@ -38,3 +38,9 @@ body at `0x0013FD00`.
 The cloth `GRAVITY` command copies three floating-point arguments into the
 cloth gravity vector. The compiled function matches the 0x38-byte retail body
 at `0x0013FD20`.
+
+## `CommandPOLYDIVE`
+
+The cloth `POLYDIV` command converts up to sixteen characters into per-row
+polygon-division flags, stopping at the input terminator. The compiled function
+matches the 0x50-byte retail body at `0x0013FD60`.
