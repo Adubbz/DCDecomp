@@ -1,18 +1,36 @@
+// C imports
+#include <libmc.h>
+
+#include <cstdio>
+#include <cstring>
+
+// Our imports
+#include "clsmes.hpp"
+#include "dataalloc.hpp"
+#include "dataread.hpp"
+#include "dataset.hpp"
+#include "debugfont.hpp"
+#include "editloop.hpp"
+#include "gamemode.hpp"
+#include "gamepad.hpp"
+#include "mainselect.hpp"
+#include "memcard.hpp"
+#include "menu_draw.hpp"
+#include "mglib.hpp"
+#include "rect.hpp"
+#include "runscript.hpp"
+#include "savedata.hpp"
+#include "snd.hpp"
+#include "sound.hpp"
+#include "texture.hpp"
+
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 873
 
-// C imports
-#include <cstring>
-// Our imports
-#include "dataalloc.hpp"
-#include "debugfont.hpp"
-#include "gamepad.hpp"
-#include "mainselect.hpp"
-#include "mglib.hpp"
-#include "runscript.hpp"
-#include "savedata.hpp"
-#include "sound.hpp"
+extern CTexture *StayTexture;
+extern char MesWinTexBuff_01[256];
+extern char gamemode_empty_string[];
 
 /* Global, GLOBAL-linkage per retail `nm` (0x1cbc9b0, `T`). Purpose beyond
  * being constructed here is unanalyzed -- out of scope for this pass. */
@@ -733,31 +751,6 @@ int main(int argc, const char **argv, const char **envp) {
         }
     }
 }
-
-#include <libmc.h>
-
-#include <cstdio>
-
-#include "clsmes.hpp"
-#include "gamemode.hpp"
-#include "memcard.hpp"
-#include "rect.hpp"
-#include "snd.hpp"
-#include "texture.hpp"
-
-extern u_int *read_buffer;
-extern CTexture *StayTexture;
-extern ClsMes CommonMenuMes2;
-extern ClsMes EditSystemMes;
-extern char MesWinTexBuff_01[256];
-extern char gamemode_empty_string[];
-
-void InitializeDataBuffer(void);
-void SetDataBuffer(CDataAlloc2<1> *buffer, int quads);
-void SetPacketReadBuffer(int packet_quads, int read_quads);
-void LoadFileMenuData(char *name, u_int *buffer);
-int SaveEnableCheck(void);
-void DrawMenuSave(char *name);
 
 static int edit_map;
 static int sub_map;
