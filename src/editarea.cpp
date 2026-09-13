@@ -114,7 +114,9 @@ INCLUDE_ASM("asm/nonmatchings/editarea", SearchPartsID__9CEditAreaFfff);
 INCLUDE_ASM("asm/nonmatchings/editarea", SearchPartsExtra__9CEditAreaFfff);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetGrid__9CEditAreaFP11CVector3_f_fff);
 INCLUDE_ASM("asm/nonmatchings/editarea", RemakeGrid__9CEditAreaFv);
-INCLUDE_ASM("asm/nonmatchings/editarea", GetPartsBox__9CEditAreaFP7CBoxVu0);
+void CEditArea::GetPartsBox(CBoxVu0 *arg0) {
+    memcpy(arg0, &this->parts_box, 0x20U);
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", MakePartsBox__9CEditAreaFv);
 int CEditArea::CheckArea(float x, float, float z) {
     if (x < offset_x) {
