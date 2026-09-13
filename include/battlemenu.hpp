@@ -534,14 +534,6 @@ void ExitWeaponMenuSelect(void);
 void WeaponMenuSelect(void);
 
 /**
- * @mangled WeaponMenuKastumSelectUp__Fii
- * @address 0x1FDE70
- * @size 0x60
- * @unknownret
- */
-void WeaponMenuKastumSelectUp(int, int);
-
-/**
  * @mangled WeaponMenuKastumSelectDown__Fii
  * @address 0x1FDED0
  * @size 0x50

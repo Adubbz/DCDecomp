@@ -23,6 +23,7 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", SetInteriorOutFlag__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetInteriorOutFlag__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawDngYesNoDialog__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetMenuModeMax__Fv);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetMenuIconPos__FiPi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlMenuMekeIconInfo__FPii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBtlMenuBar__Fv);
@@ -127,7 +128,24 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponSelectDialog__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", InitWeaponSelect__Fii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ExitWeaponMenuSelect__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuSelect__Fv);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuKastumSelectUp__Fii);
+/**
+ * Finds the preceding enabled customization row, wrapping from the top row.
+ */
+static int WeaponMenuKastumSelectUp(int row, int enabled_rows) {
+    if (row == 0) {
+        row = 7;
+    }
+    int selected_row = 3;
+    while (row >= 4) {
+        if (enabled_rows & (1 << (row - 4))) {
+            selected_row = row - 1;
+            break;
+        }
+        row--;
+    }
+    return selected_row;
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuKastumSelectDown__Fii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponSelectKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WepAttachHaveCancel__Fv);
