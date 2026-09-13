@@ -311,7 +311,10 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", IsLoadMapNo__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", MapNoTransFunc__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuOptionKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuSaveKey__Fv);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleManualInit__FPiP1);
+
+void BattleManualInit(int *result, u_long128 *load_buffer) {
+    InitMenuManual(result, load_buffer);
+}
 
 int BattleManualKey() {
     int transition_done = 0;

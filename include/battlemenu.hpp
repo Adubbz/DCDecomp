@@ -901,12 +901,13 @@ void BattleMenuOptionKey(void);
 void BattleMenuSaveKey(void);
 
 /**
+ * Initializes the battle manual menu from its placement data and load buffer.
+ *
  * @mangled BattleManualInit__FPiP1
  * @address 0x20B070
  * @size 0x20
- * @unknownret
  */
-void BattleManualInit(int *, void /* CW back-ref target unresolved */ *);
+void BattleManualInit(int *result, u_long128 *load_buffer);
 
 /**
  * Processes battle-manual input and returns zero after updating transitions.
