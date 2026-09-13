@@ -122,7 +122,11 @@ float CEditArea::GetAlt(float x, float y, float z) {
     GetPos(&position, x, y, z);
     return GetAlt(position.x, position.z);
 }
-INCLUDE_ASM("asm/nonmatchings/editarea", GetAlt_i__9CEditAreaFfff);
+int CEditArea::GetAlt_i(float x, float y, float z) {
+    CVector3_i_ position;
+    GetPos(&position, x, y, z);
+    return GetAlt_i(position.x, position.z);
+}
 
 int CEditArea::GetPartsExtra(int x, int y) {
     switch (map_no) {
