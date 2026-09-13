@@ -8,9 +8,19 @@
 struct ATTACH_LIST;
 struct ITEM_PACK;
 struct MENU_ITEMDATA;
-struct SHOP_ITEMLIST;
 struct SV_FISH_DATA;
 struct WEAPON_HAVE;
+
+/**
+ * Stores one shop's item-list state.
+ */
+struct SHOP_ITEMLIST {
+    s16 unk_00;
+    u8 unk_02[2];
+    u8 unk_04[0xF8];
+};
+
+STATIC_ASSERT(sizeof(SHOP_ITEMLIST) == 0xFC);
 
 /**
  * @mangled GetItemShopList__Fi
@@ -21,10 +31,11 @@ struct WEAPON_HAVE;
 void GetItemShopList(int);
 
 /**
+ * Clears an item-list record when the supplied pointer is valid.
+ *
  * @mangled InitShopItemListData__FP13SHOP_ITEMLIST
  * @address 0x1E68F0
  * @size 0x40
- * @unknownret
  */
 void InitShopItemListData(SHOP_ITEMLIST *);
 

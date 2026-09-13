@@ -8,7 +8,14 @@
 #include "savedata.hpp"
 
 INCLUDE_ASM("asm/nonmatchings/shop", GetItemShopList__Fi);
-INCLUDE_ASM("asm/nonmatchings/shop", InitShopItemListData__FP13SHOP_ITEMLIST);
+
+void InitShopItemListData(SHOP_ITEMLIST *item_list) {
+    if (item_list != NULL) {
+        item_list->unk_00 = 0;
+        memset(item_list->unk_04, 0, sizeof(item_list->unk_04));
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", IconMoveTarSet__12ShopIconMoveFiiiP13MENU_ITEMDATAffi);
 INCLUDE_ASM("asm/nonmatchings/shop", IconAutoMove__12ShopIconMoveFii);
 INCLUDE_ASM("asm/nonmatchings/shop", IconAutoMoveDraw__12ShopIconMoveFv);
