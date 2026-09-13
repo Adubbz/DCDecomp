@@ -19,5 +19,24 @@ void CDngMessageMan::LimmitZone(void) {
     unk_04 = 0xF0;
     unk_1C = 0;
 }
-INCLUDE_ASM("asm/nonmatchings/dngmessageman", SetStatus_Dry__14CDngMessageManFfff);
+void CDngMessageMan::SetStatus_Dry(float water_max, float water_before, float water_now) {
+    float threshold = 0.1f * water_max;
+
+    if (threshold < water_now && unk_24 == 0xAA) {
+        unk_24 = -1;
+    }
+    if (0.0f < water_now && unk_24 == 0xAB) {
+        unk_24 = -1;
+    }
+    if (threshold <= water_before + 0.5f && !(threshold <= water_now - 0.5f) && unk_24 == -1) {
+        unk_24 = 0xAA;
+        unk_04 = 0xF0;
+        unk_1C = 0;
+    }
+    if (water_now <= 0.0f && (unk_24 == -1 || unk_24 == 0xAB)) {
+        unk_24 = 0xAB;
+        unk_04 = 0x9FFF6;
+        unk_1C = 0;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/dngmessageman", SetSteevMes__14CDngMessageManFi);
