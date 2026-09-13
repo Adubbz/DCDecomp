@@ -13,19 +13,27 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-/** Stores the fixed header at the front of a PTS archive. */
+/**
+ * Stores the fixed header at the front of a PTS archive.
+ */
 struct PTS_HEADER {
     int unk_00;
     int count; /**< Number of file records in the archive. */
     int unk_08[2];
 };
 
-/** Stores one named file record in a PTS archive. */
+STATIC_ASSERT(sizeof(PTS_HEADER) == 0x10);
+
+/**
+ * Stores one named file record in a PTS archive.
+ */
 struct PTS_ENTRY {
     char name[16]; /**< Null-terminated file name. */
     int offset;    /**< Byte offset of the file from the archive start. */
     int unk_14[7];
 };
+
+STATIC_ASSERT(sizeof(PTS_ENTRY) == 0x30);
 
 int CBound::Sizeof() {
     return sizeof(CBound);
