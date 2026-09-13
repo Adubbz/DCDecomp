@@ -481,7 +481,10 @@ static void DrawLine(int *from, int *to, u_char r, u_char g, u_char b, u_char a)
 
 INCLUDE_ASM("asm/nonmatchings/edit", EdSetBgmVol__Ff);
 INCLUDE_ASM("asm/nonmatchings/edit", EdAmbientPlay__Ff);
-INCLUDE_ASM("asm/nonmatchings/edit", EdSetAmbientVol__Ff);
+
+void EdSetAmbientVol(float volume) {
+    SndAmbientSetVolf(volume);
+}
 /* The sound the map editor puts in the world: every effect a map part carries that names a sound
    is measured against the camera each frame, and what survives is entered into one of four
    sources. A source is one sound effect and the set of places it is coming from at once, so a

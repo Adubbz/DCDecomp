@@ -203,6 +203,15 @@ void EdInitCameraParam(CCameraFollow *camera);
 void EdAmbientPlay(float volume);
 
 /**
+ * Sets the volume of the active editor ambient sound.
+ *
+ * @mangled EdSetAmbientVol__Ff
+ * @address 0x171610
+ * @size 0x20
+ */
+void EdSetAmbientVol(float volume);
+
+/**
  * Writes the root directory used by editor map resources.
  *
  * @mangled GetEditDataDir__FPc
