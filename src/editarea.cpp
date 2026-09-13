@@ -1,5 +1,13 @@
 #include "editarea.hpp"
 
+#include <cstring>
+
+#include "collision.hpp"
+#include "frame.hpp"
+#include "mapparts.hpp"
+#include "rect.hpp"
+#include "vector3.hpp"
+
 INCLUDE_ASM("asm/nonmatchings/editarea", SetSize__9CEditAreaFiiff);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetPos__9CEditAreaFP11CVector3_i_fff);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetPos__9CEditAreaFP11CVector3_f_iii);
