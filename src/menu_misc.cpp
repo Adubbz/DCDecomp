@@ -21,6 +21,7 @@
 #include "weapon_buildup.hpp"
 #include "weaponeffect.hpp"
 
+extern int MenuWeaponTestCase;
 extern int MenuItemUseVolume;
 extern s16 MenuCharaEffectReadFlag;
 extern s16 MenuCharaOldEffect;
@@ -456,7 +457,11 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @959__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @960__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @961);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", MenuWeaponEffectSet__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", GetNowTestNo__Fv);
+
+int GetNowTestNo() {
+    return MenuWeaponTestCase;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", StartReadWepMDS__FP1i);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @969__3);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @970__2);
