@@ -91,7 +91,23 @@ CDungeonEventData *CDungeonEventMan::CheckCollisionDataHit(int index) {
     }
     return NULL;
 }
-INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchDataSlotPos__16CDungeonEventManFPf);
+CDungeonEventData *CDungeonEventMan::SearchDataSlotPos(float *position) {
+    for (int i = 0; i < 96; i++) {
+        CDungeonEventData *event_data = &event[i];
+        if (event_data->CheckSwitch() != 0) {
+            float radius = event[i].event->radius;
+            if (DistVector(event[i].pos, position) <= radius && event[i].event->chara_no == -1) {
+                return event_data;
+            }
+
+            CDungeonEventData *collision_event = CheckCollisionDataHit(i);
+            if (collision_event != NULL) {
+                return collision_event;
+            }
+        }
+    }
+    return NULL;
+}
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchDataSlotPos2__16CDungeonEventManFPf);
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SetupEvent__16CDungeonEventManFP11CDungeonMapi);
 INCLUDE_RODATA("asm/nonmatchings/dungeoneventman", @3600);
