@@ -1,4 +1,5 @@
 #include "btsysscript.hpp"
+#include "runscript.hpp"
 
 INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSystemScriptEventInfoInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", GetObjHDL__Fi);
