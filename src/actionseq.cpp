@@ -1,4 +1,6 @@
 #include "actionseq.hpp"
+#include "character.hpp"
+#include "mathutil.hpp"
 #include "sce/libvu0.h"
 
 void CActionSeq::Initialize(ACT_SEQ *records, int count) {
@@ -103,7 +105,14 @@ void CActionSeq::MoveSeq(float *destination, int frames) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/actionseq", MoveSeq__10CActionSeqFPff);
+void CActionSeq::MoveSeq(float *destination, float speed) {
+    float duration = DistVector(destination, queued_position) / speed;
+    int frames = duration;
+    if (duration - frames > 0.0) {
+        frames++;
+    }
+    MoveSeq(destination, frames);
+}
 
 void CActionSeq::MoveSeq(int frames) {
     MoveSeq(queued_position, frames);
