@@ -111,7 +111,21 @@ INCLUDE_ASM("asm/nonmatchings/editarea", GetGrid__9CEditAreaFP11CVector3_f_fff);
 INCLUDE_ASM("asm/nonmatchings/editarea", RemakeGrid__9CEditAreaFv);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetPartsBox__9CEditAreaFP7CBoxVu0);
 INCLUDE_ASM("asm/nonmatchings/editarea", MakePartsBox__9CEditAreaFv);
-INCLUDE_ASM("asm/nonmatchings/editarea", CheckArea__9CEditAreaFfff);
+int CEditArea::CheckArea(float x, float, float z) {
+    if (x < offset_x) {
+        return 0;
+    }
+    if (z < offset_z) {
+        return 0;
+    }
+    if (x > offset_x + unit_size * static_cast<float>(width)) {
+        return 0;
+    }
+    if (z > offset_z + unit_size * static_cast<float>(height)) {
+        return 0;
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", CheckAreaRect__9CEditAreaFfffii);
 INCLUDE_ASM("asm/nonmatchings/editarea", CheckParts__9CEditAreaFP9CMapPartsfffi);
 INCLUDE_ASM("asm/nonmatchings/editarea", PickUpPoly__9CEditAreaFP6CCPolyfff);
