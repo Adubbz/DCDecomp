@@ -465,7 +465,6 @@ void SndSPSePlay(int se_no, int vol) {
 #else
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSePlay__Fii);
 #endif
-#ifdef NON_MATCHING
 void SndSPSeStop(int se_no) {
     SND_SE_INFO *info = GetSPInfo(se_no);
 
@@ -473,9 +472,6 @@ void SndSPSeStop(int se_no) {
         CSnd.SE_Stop(12, info->bank, info->prog, 0);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeStop__Fi);
-#endif
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetSPSeVolf__Fif);
 #ifdef NON_MATCHING
 void SndSetSPSePanf(int se_no, float pan) {
