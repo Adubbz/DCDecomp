@@ -61,4 +61,6 @@ INCLUDE_ASM("asm/nonmatchings/editarea", GetHeight__9CEditAreaFv);
 INCLUDE_ASM("asm/nonmatchings/editarea", AddAlt__9CEditAreaFiii);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetUnitSize__9CEditAreaFv);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetUnitAlt__9CEditAreaFv);
-INCLUDE_ASM("asm/nonmatchings/editarea", __ct__9CEditAreaFv);
+CEditArea::CEditArea(void) {
+    Initialize();
+}
