@@ -32,6 +32,9 @@ extern int ok_effect_button;
 /** Kind of enemy-battle confirmation effect to draw. */
 extern int ok_type;
 
+/** Character-control state whose low bits lock editor input. */
+extern int chara_mode;
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBInitIntro__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBSetMotion__FP10CCharacterPi);
 void EBDebug(int mode) {
@@ -114,9 +117,9 @@ int EdPadDown(int keys, int mode) {
     return 0;
 }
 
-static int keylock();
-
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", keylock__Fv);
+int keylock() {
+    return chara_mode & 3;
+}
 
 /**
  * Returns the right stick's horizontal input, or zero while editor input is locked.
