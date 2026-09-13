@@ -61,11 +61,13 @@ public:
     void Initialize(CTexAnimeData *records, int count);
 
     /**
+     * Creates an animation player using the supplied record pool.
+     *
      * @mangled __ct__13CTextureAnimeFP13CTexAnimeDatai
      * @address 0x167870
      * @size 0x30
      */
-    CTextureAnime(CTexAnimeData * = 0, int = 0);
+    CTextureAnime(CTexAnimeData *records = 0, int count = 0);
 
     /**
      * @mangled NewTexAnimeData__13CTextureAnimeFv

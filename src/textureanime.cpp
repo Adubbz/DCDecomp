@@ -17,7 +17,9 @@ void CTextureAnime::Initialize(CTexAnimeData *records, int count) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/textureanime", __ct__13CTextureAnimeFP13CTexAnimeDatai);
+CTextureAnime::CTextureAnime(CTexAnimeData *records, int count) {
+    Initialize(records, count);
+}
 INCLUDE_ASM("asm/nonmatchings/textureanime", NewTexAnimeData__13CTextureAnimeFv);
 INCLUDE_ASM("asm/nonmatchings/textureanime", NewTexAnimeGroupData__13CTextureAnimeFi);
 INCLUDE_ASM("asm/nonmatchings/textureanime", EnterTexAnime__13CTextureAnimeFP13CTexAnimeData);
