@@ -117,12 +117,13 @@ s16 GetEscapeDngFlag(void);
 void SetInteriorOutFlag(int flag);
 
 /**
+ * Returns the flag that says the party is leaving an interior area.
+ *
  * @mangled GetInteriorOutFlag__Fv
  * @address 0x1F3FD0
- * @size 0x10
- * @unknownret
+ * @size 0xC
  */
-void GetInteriorOutFlag(void);
+s16 GetInteriorOutFlag(void);
 
 /**
  * @mangled DrawDngYesNoDialog__Fiii

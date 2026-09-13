@@ -36,7 +36,10 @@ void SetInteriorOutFlag(int flag) {
     RoomOutFlag = flag;
 }
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", GetInteriorOutFlag__Fv);
+s16 GetInteriorOutFlag() {
+    return RoomOutFlag;
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawDngYesNoDialog__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetMenuModeMax__Fv);
 
