@@ -11,7 +11,15 @@
 INCLUDE_ASM("asm/nonmatchings/editarea", SetSize__9CEditAreaFiiff);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetPos__9CEditAreaFP11CVector3_i_fff);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetPos__9CEditAreaFP11CVector3_f_iii);
-INCLUDE_ASM("asm/nonmatchings/editarea", SetPartsNo__9CEditAreaFiii);
+void CEditArea::SetPartsNo(int x, int y, int parts_no_) {
+    if (x < 0 || x >= width) {
+        return;
+    }
+    if (y < 0 || y >= height) {
+        return;
+    }
+    grid[x][y].parts_no = parts_no_;
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", SetPartsID__9CEditAreaFiii);
 INCLUDE_ASM("asm/nonmatchings/editarea", SetPartsExtra__9CEditAreaFiii);
 INCLUDE_ASM("asm/nonmatchings/editarea", SetCode__9CEditAreaFiii);
