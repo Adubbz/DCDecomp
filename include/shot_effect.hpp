@@ -75,7 +75,6 @@ public:
      * @mangled OffEffect__12CSHOT_EFFECTFi
      * @address 0x1ACC10
      * @size 0x60
-     * @unknownret
      */
     void OffEffect(int);
 
@@ -219,10 +218,11 @@ public:
     void SetUserID2(int);
 
     /**
+     * Clears the loaded effect and resets all projectile-effect slots.
+     *
      * @mangled Initialize__12CSHOT_EFFECTFv
      * @address 0x1AE440
      * @size 0x80
-     * @unknownret
      */
     void Initialize(void);
 } __attribute__((aligned(16)));
