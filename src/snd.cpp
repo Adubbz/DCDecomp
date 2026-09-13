@@ -370,7 +370,17 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSeStop__Fii);
 #endif
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetSeVol__Fiii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetVolf__Fif);
-INCLUDE_ASM("asm/nonmatchings/snd", SndGetPanf__Ff);
+
+int SndGetPanf(float pan) {
+    if (pan < -1.0f) {
+        pan = -1.0f;
+    }
+    if (pan > 1.0f) {
+        pan = 1.0f;
+    }
+    return (int) (63.0f * pan) + 64;
+}
+
 #ifdef NON_MATCHING
 void SndSetSeVolf(int se_no, float vol, int voice) {
     if (GetSeInfo(se_no) != 0) {

@@ -158,7 +158,8 @@ void SndGetVolPan(float *vol, float *pan, float *pos, float near, float far);
 int SndGetVolf(int se_no, float vol);
 
 /**
- * Converts a normalized pan into the hardware pan the sound calls take.
+ * Converts a pan from -1 to 1, clamped to that range, into the pan from 1 to
+ * 127 that the sound calls take.
  *
  * @mangled SndGetPanf__Ff
  * @address 0x15AA30
