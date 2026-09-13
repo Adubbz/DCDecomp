@@ -287,7 +287,7 @@ segments:
       - {start: 0xe6ff0, type: cpp, name: shop_battlemenu}
       - {start: 0x10b680, type: asmtu, name: menuclsmes}
       - {start: 0x10bfc0, type: asmtu, name: menu_misc}
-      - {start: 0x1136d0, type: asmtu, name: memorycardaccess}
+      - {start: 0x1136d0, type: cpp, name: memorycardaccess}
       - {start: 0x116e50, type: asmtu, name: memcard}
       - {start: 0x121830, type: cpp, name: menu_draw}
       - {start: 0x132930, type: cpp, name: eastking}
