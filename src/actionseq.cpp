@@ -23,7 +23,17 @@ void CActionSeq::ClearSeq() {
     anime_trigger = 0;
     anime_delay = 0;
 }
-INCLUDE_ASM("asm/nonmatchings/actionseq", GetNextSeq__10CActionSeqFv);
+ACT_SEQ *CActionSeq::GetNextSeq() {
+    ACT_SEQ *sequence = pool;
+    int index = 0;
+    for (; index < capacity; index++, sequence++) {
+        if (sequence->operation == 0) {
+            sequence->next = NULL;
+            return sequence;
+        }
+    }
+    return NULL;
+}
 INCLUDE_ASM("asm/nonmatchings/actionseq", SyncChara__10CActionSeqFP10CCharacter);
 INCLUDE_ASM("asm/nonmatchings/actionseq", NextMoveSeq__10CActionSeqFv);
 INCLUDE_ASM("asm/nonmatchings/actionseq", NextMotionSeq__10CActionSeqFv);
