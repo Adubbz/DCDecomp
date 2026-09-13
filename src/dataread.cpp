@@ -667,7 +667,11 @@ static void CommandK(void **argv) {
 static void CommandWINDEFFECT(void **argv) {
     pCloth->wind_effect = *(float *) argv[0];
 }
-INCLUDE_ASM("asm/nonmatchings/dataread", CommandGRAVITY__FPPv);
+static void CommandGRAVITY(void **argv) {
+    pCloth->gravity[0] = *(float *) argv[0];
+    pCloth->gravity[1] = *(float *) argv[1];
+    pCloth->gravity[2] = *(float *) argv[2];
+}
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandPOLYDIVE__FPPv);
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandBOUND__FPPv);
 INCLUDE_ASM("asm/nonmatchings/dataread", GetArg__FR9input_strPiPPv__2);
