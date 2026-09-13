@@ -25,7 +25,24 @@ DUNGEON_EVENT_SLOT *CDungeonEventMan::SearchSlot(void) {
 
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchDataSwitch__16CDungeonEventManFii);
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchItemEventHold__16CDungeonEventManFi);
-INCLUDE_ASM("asm/nonmatchings/dungeoneventman", GetDataNum__16CDungeonEventManFv);
+
+int CDungeonEventMan::GetDataNum(void) {
+    int count = 0;
+
+    for (int i = 0; i < 96; i++) {
+        int active;
+        if (event[i].event != NULL) {
+            active = event[i].unk_38;
+        } else {
+            active = 0;
+        }
+        if (active == 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchDataSlot__16CDungeonEventManFv);
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", CheckCollisionDataHit__16CDungeonEventManFi);
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchDataSlotPos__16CDungeonEventManFPf);
