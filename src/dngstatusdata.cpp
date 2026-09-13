@@ -12,9 +12,9 @@
  * CheckDefaultWeapon, AddDrink..Init, SetDead..GetAtraData), so both classes
  * live in this one translation unit, in that order.
  *
- * `#if DNG_COMPILE_UNMATCHED` guards C++ that is written but does not yet
- * compile to retail's bytes; it is off, and the marker below each guard
- * supplies the function instead. See re/ai/adddrink_matching_progress.md. */
+ * `#if DNG_COMPILE_UNMATCHED` guards remaining C++ that is written but does
+ * not yet compile to retail's bytes; it is off, and the marker below each
+ * guard supplies the function instead. */
 
 #include <cstdio>
 #include <cstdlib>
@@ -485,7 +485,6 @@ int CDngStatusData::CheckDefaultWeapon(int chara_no) {
     return 1;
 }
 
-#if DNG_COMPILE_UNMATCHED
 /* Adds to a character's water gauge. With ratio == 0 the gauge moves
  * instantly; otherwise the target is latched into drink_next[] and
  * drink_step[] holds the per-frame delta CUserStatus::Step applies, signed so
@@ -522,10 +521,6 @@ void CUserStatus::AddDrink(int chara_no, s16 amount, float ratio) {
         }
     }
 }
-#else
-
-INCLUDE_ASM("asm/nonmatchings/dngstatusdata", AddDrink__11CUserStatusFisf);
-#endif /* DNG_COMPILE_UNMATCHED */
 
 #if DNG_COMPILE_UNMATCHED
 /* Same instant/interpolated split as AddDrink, for HP. */
