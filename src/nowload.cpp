@@ -23,7 +23,9 @@ void wait_now_loading_vsync(void) {
         } while (check_now_loading_vsync_end() == 0);
     }
 }
-INCLUDE_ASM("asm/nonmatchings/nowload", now_loading_off__Fv);
+void now_loading_off(void) {
+    now_loding_off = 1;
+}
 INCLUDE_ASM("asm/nonmatchings/nowload", init_now_loading__Fi);
 INCLUDE_RODATA("asm/nonmatchings/nowload", @285__2);
 INCLUDE_RODATA("asm/nonmatchings/nowload", @286);
