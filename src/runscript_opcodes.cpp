@@ -34,7 +34,12 @@ int _SET_MOVE_CANSEL(RS_STACKDATA *, int) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_ROT_CANSEL__FP12RS_STACKDATAi);
+int _SET_ROT_CANSEL(RS_STACKDATA *, int) {
+    CMonstorUnit *unit = NowMonstorUnit;
+    unit->monster[unit->GetCurrentMonsterIndex()].unk_084 = 0.0f;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_POSITION__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_FALL__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_MUTEKI__FP12RS_STACKDATAi);
