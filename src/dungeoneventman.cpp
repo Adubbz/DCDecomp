@@ -62,7 +62,35 @@ CDungeonEventData *CDungeonEventMan::SearchDataSlot(void) {
     return NULL;
 }
 
-INCLUDE_ASM("asm/nonmatchings/dungeoneventman", CheckCollisionDataHit__16CDungeonEventManFi);
+CDungeonEventData *CDungeonEventMan::CheckCollisionDataHit(int index) {
+    int i;
+    int owner;
+    int sub_id;
+
+    owner = event[index].event->chara_no;
+    sub_id = event[index].event->unk_30;
+    if (owner != -1) {
+        for (i = 0; i < 96; i++) {
+            if (NowColData->active[i] == 0) {
+                continue;
+            }
+            if (NowColData->hit[i].owner != owner) {
+                continue;
+            }
+            if (sub_id != -1 && NowColData->hit[i].unk_60 != sub_id) {
+                continue;
+            }
+
+            sceVu0FVECTOR hit_position;
+            sceVu0CopyVector(hit_position, NowColData->hit[i].pos);
+            float radius = event[index].event->radius;
+            if (DistVector(hit_position, event[index].pos) <= radius) {
+                return &event[index];
+            }
+        }
+    }
+    return NULL;
+}
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchDataSlotPos__16CDungeonEventManFPf);
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchDataSlotPos2__16CDungeonEventManFPf);
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SetupEvent__16CDungeonEventManFP11CDungeonMapi);
