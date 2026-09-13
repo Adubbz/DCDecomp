@@ -1,7 +1,16 @@
 #include "dungeoneventman.hpp"
 
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchPartsID__16CDungeonEventManFii);
-INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchSlot__16CDungeonEventManFv);
+
+DUNGEON_EVENT_SLOT *CDungeonEventMan::SearchSlot(void) {
+    for (int i = 0; i < 64; i++) {
+        if (slot[i].unk_3C == 0) {
+            return &slot[i];
+        }
+    }
+    return NULL;
+}
+
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchDataSwitch__16CDungeonEventManFii);
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchItemEventHold__16CDungeonEventManFi);
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", GetDataNum__16CDungeonEventManFv);
