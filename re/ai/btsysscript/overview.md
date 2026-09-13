@@ -48,9 +48,10 @@ reconstructed C++ is byte-perfect.
 It is deliberately a `void` setter: `_SET_DUNGEON_FLOOR` calls it only for
 the store, then immediately replaces the call result with its own return value
 of `1`; the corresponding C++ caller likewise uses it as a statement.
-Its instructions and objdiff score are exact, but the whole-image verifier
-classifies it as layout-blocked because the current build places the global
-at `0x2A2CA4`, `0xC0` above retail's `0x2A2BE4`.
+Although the reconstructed instructions and objdiff score are exact, the body
+must remain assembly-backed until the BSS layout is repaired: the current
+build places the global at `0x2A2CA4`, `0xC0` above retail's `0x2A2BE4`, so a
+C++ body produces a differing GP-relative store.
 
 ## Battle object handles
 
