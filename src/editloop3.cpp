@@ -871,9 +871,9 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
             int draw = 1;
             VILLAGER_INFO *entry = &info[i];
             if (entry->index >= 0) {
-                sceVu0FVECTOR people_position;
                 sceVu0FVECTOR position;
                 sceVu0FVECTOR rotation;
+                sceVu0FVECTOR people_position;
                 if (ground->GetPeoplePos(entry->index, people_position) != 0) {
                     rotation[2] = 0.0f;
                     rotation[0] = 0.0f;
@@ -886,12 +886,11 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
                 } else {
                     draw = 0;
                 }
-                CNPCharacter *character = &villagers[i];
-                character->ClearSeq();
+                villagers[i].ClearSeq();
                 villagers[i].event_status = 0;
                 villagers[i].villager_id = entry->index;
-                character->chara.SetPosition(position);
-                character->chara.SetRotation(rotation[0], rotation[1], rotation[2]);
+                villagers[i].chara.SetPosition(position);
+                villagers[i].chara.SetRotation(rotation[0], rotation[1], rotation[2]);
                 villagers[i].draw_enabled = draw;
             }
         }
@@ -940,7 +939,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
         info[selected].initial_motion = 1;
         int failed = 0;
         int avoid_count = 0;
-        sceVu0FVECTOR avoid_positions[10];
+        sceVu0FVECTOR avoid_positions[11];
         if (transform != NULL)
             sceVu0CopyVector(avoid_positions[avoid_count++], *transform);
         for (int i = 0; i < 10; i++) {
