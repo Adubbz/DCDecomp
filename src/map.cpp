@@ -54,4 +54,16 @@ void CMap::Draw(void) {
         }
     }
 }
-INCLUDE_ASM("asm/nonmatchings/map", Initialize__4CMapFv);
+void CMap::Initialize(void) {
+    int index;
+
+    for (index = 0; index < 16; index++) {
+        category[index].lod[0] = -1.0f;
+        category[index].lowest = 0;
+        category[index].highest = 3;
+    }
+    for (index = 0; index < 10; index++) {
+        object[index].Initialize();
+    }
+    draw_on = 1;
+}
