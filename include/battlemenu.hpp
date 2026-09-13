@@ -205,14 +205,6 @@ void DngComStatus(int, int, int, int);
 void DrawSelCharaStatus(float, float, int, int, int, int, int, int);
 
 /**
- * @mangled DrawBtlAtoraSelect__Fv
- * @address 0x1F5810
- * @size 0x20
- * @unknownret
- */
-void DrawBtlAtoraSelect(void);
-
-/**
  * @mangled BtlDrawOption__Fv
  * @address 0x1F5830
  * @size 0x30

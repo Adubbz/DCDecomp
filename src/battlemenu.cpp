@@ -6,6 +6,7 @@
 #include <cstring>
 
 #include "clsmes.hpp"
+#include "memcard.hpp"
 #include "menu_manual.hpp"
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetDefaultWeaponNo__Fi);
@@ -30,7 +31,14 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawOtherCharaStatus__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DngComStatus__Fiiii);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @885__2);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawSelCharaStatus__Fffiiiiii);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBtlAtoraSelect__Fv);
+
+/**
+ * Draws the battle menu's Atora selection screen.
+ */
+static void DrawBtlAtoraSelect() {
+    DrawMenuAtoraSelect();
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlDrawOption__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlDrawSave__Fv);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @924__2);
