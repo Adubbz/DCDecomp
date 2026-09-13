@@ -62,7 +62,24 @@ void CNPCharacter::NextSeq() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/npcharacter", Draw__12CNPCharacterFv);
+void CNPCharacter::Draw() {
+    sceVu0FVECTOR saved_ambient;
+    sceVu0FVECTOR ambient;
+    if (!enabled || chara.frame == NULL) {
+        return;
+    }
+    if (!(chara.ambient_offset[3] <= 0.0f)) {
+        MGGetAmbient(saved_ambient);
+        sceVu0CopyVector(ambient, saved_ambient);
+        ambient[0] += chara.ambient_offset[0];
+        ambient[1] += chara.ambient_offset[1];
+        ambient[2] += chara.ambient_offset[2];
+        ambient[3] = chara.ambient_offset[3];
+        MGSetAmbient(ambient);
+        chara.CCharacter::Draw();
+        MGSetAmbient(saved_ambient);
+    }
+}
 
 void CNPCharacter::DrawShadow() {
     if (!enabled || chara.frame == NULL) {
