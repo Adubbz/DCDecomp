@@ -80,3 +80,9 @@ are intentional inputs to river connectivity. All other requests return
 -1 outside the active grid or the cell's stored `parts_extra`. Nested
 map/area switches reproduce the retail branch layout; a map `if` removes
 one of its unconditional branches.
+
+`SetRoadParts` accepts attribute 1, samples neighbors in north/east/south/west
+order, and encodes the connection shape in bits 4–11 and rotation in bits
+0–3. Shapes 1/2 are corners/straight segments, 3/4 are three/four-way
+junctions, and 5/6 are isolated/end segments. The final shift-and-mask
+is evaluated before the rotation mask to preserve retail register allocation.
