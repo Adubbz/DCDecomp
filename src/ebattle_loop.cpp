@@ -7,10 +7,12 @@
 #include <libvu0.h>
 
 #include "camerafollow.hpp"
+#include "dataread.hpp"
 #include "ebattle.hpp"
 #include "edit.hpp"
 #include "editloop.hpp"
 #include "gamepad.hpp"
+#include "snd.hpp"
 
 /* The rest of the ebattle module: the intro, the main loop and the draw pass. */
 
@@ -54,13 +56,40 @@ extern float viewAngleV;
 /** Default near-follow distance for the editor camera. */
 extern float camera_near_dist;
 
+/** Whether an enemy-battle sequence is active. */
+extern int ebattle_flag;
+
+/** Whether the enemy-battle introduction is active. */
+extern int ebattle_intro_flag;
+
+/** Enemy-battle introduction frame counter. */
+extern int eb_intro_cnt;
+
+/** Enemy-battle finish frame counter. */
+extern int eb_finish_cnt;
+
+/**
+ * Clears the enemy-battle confirmation effect.
+ */
+void init_draw_ok();
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBInitIntro__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBSetMotion__FP10CCharacterPi);
 void EBDebug(int mode) {
     debug_mode = mode;
 }
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBSetKey__Ffii);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBExit__Fv);
+void EBExit() {
+    ebattle_flag = 0;
+    eb_intro_cnt = 0;
+    GamePad.MenuModeOff();
+    ebattle_intro_flag = 0;
+    eb_finish_cnt = 0;
+    init_draw_ok();
+    do {
+    } while (SndSPSeSyncBG() != 0);
+    InitReadBG();
+}
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBIntroLoop__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBLoop__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBDraw__Fv);
