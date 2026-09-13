@@ -87,10 +87,11 @@ STATIC_ASSERT(sizeof(EDIT_EFFECT_INFO) == 0x70);
 void ObjAnimeAllStop(void);
 
 /**
+ * Starts every object animation.
+ *
  * @mangled ObjAnimeAllStart__Fv
  * @address 0x165CF0
  * @size 0x10
- * @unknownret
  */
 void ObjAnimeAllStart(void);
 

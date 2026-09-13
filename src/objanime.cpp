@@ -21,7 +21,9 @@ void ObjAnimeAllStop(void) {
     all_stop = 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/objanime", ObjAnimeAllStart__Fv);
+void ObjAnimeAllStart(void) {
+    all_stop = 0;
+}
 INCLUDE_ASM("asm/nonmatchings/objanime", InitObjAnime__FP6CFrameP13OBJ_ANIME_SEQ);
 INCLUDE_ASM("asm/nonmatchings/objanime", InitObjAnime__FPP6CFrameP13OBJ_ANIME_SEQ);
 INCLUDE_ASM("asm/nonmatchings/objanime", InitObjAnime__FPP6CFrameiP13OBJ_ANIME_SEQ);
