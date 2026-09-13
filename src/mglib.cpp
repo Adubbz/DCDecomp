@@ -1568,7 +1568,38 @@ void MGDrawShadowFast2(CFrame *frame, float *position, float *normal) {
     mgRenderInfo.unk_320 = 0;
     sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
 }
-INCLUDE_ASM("asm/nonmatchings/mglib", MGDrawShadow__FP6CFramePfPf);
+/* Draws a model's shadow while preserving the perspective and viewport matrices. */
+void MGDrawShadow(CFrame *frame, float *position, float *normal) {
+    sceVu0FMATRIX perspective;
+    sceVu0FMATRIX viewport;
+    sceGsZbuf zbuf;
+    sceGsTest test;
+
+    if (!frame)
+        return;
+
+    sceVu0CopyVector(mgRenderInfo.shadow_point, position);
+    sceVu0CopyVector(mgRenderInfo.shadow_normal, normal);
+
+    zbuf = mgZBuffer;
+    test = mgPixelTest;
+    zbuf.bits.zmsk = 1;
+    MGSetGsZBUF(&zbuf);
+
+    test.bits.ate = 0;
+    test.bits.date = 0;
+    MGSetGsTEST(&test);
+
+    sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_shadow2, 0);
+    mgRenderInfo.unk_320 = 2;
+    sceVu0CopyMatrix(perspective, mgRenderInfo.perspective);
+    sceVu0CopyMatrix(viewport, mgRenderInfo.viewport);
+    MGDraw(frame);
+    sceVu0CopyMatrix(mgRenderInfo.perspective, perspective);
+    sceVu0CopyMatrix(mgRenderInfo.viewport, viewport);
+    mgRenderInfo.unk_320 = 0;
+    sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
+}
 INCLUDE_ASM("asm/nonmatchings/mglib", MGDrawShade__FP6CFrame);
 
 static sceGsTex0 Shadow_SaveFrameBuff;
