@@ -1542,7 +1542,32 @@ void MGDrawShadowFast(CFrame *frame, float *position, float *normal) {
     mgRenderInfo.unk_320 = 0;
     sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
 }
-INCLUDE_ASM("asm/nonmatchings/mglib", MGDrawShadowFast2__FP6CFramePfPf);
+/* Draws a model's shadow with the second fast shadow microprogram. */
+void MGDrawShadowFast2(CFrame *frame, float *position, float *normal) {
+    sceGsZbuf zbuf;
+    sceGsTest test;
+
+    if (!frame)
+        return;
+
+    sceVu0CopyVector(mgRenderInfo.shadow_point, position);
+    sceVu0CopyVector(mgRenderInfo.shadow_normal, normal);
+
+    zbuf = mgZBuffer;
+    test = mgPixelTest;
+    zbuf.bits.zmsk = 1;
+    MGSetGsZBUF(&zbuf);
+
+    test.bits.ate = 0;
+    test.bits.date = 0;
+    MGSetGsTEST(&test);
+
+    sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_shadow3, 0);
+    mgRenderInfo.unk_320 = 1;
+    MGDraw(frame);
+    mgRenderInfo.unk_320 = 0;
+    sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
+}
 INCLUDE_ASM("asm/nonmatchings/mglib", MGDrawShadow__FP6CFramePfPf);
 INCLUDE_ASM("asm/nonmatchings/mglib", MGDrawShade__FP6CFrame);
 
