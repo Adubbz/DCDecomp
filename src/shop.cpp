@@ -163,7 +163,10 @@ void SetAlreadyGetMardanWeapon(int value) {
 }
 INCLUDE_ASM("asm/nonmatchings/shop", SetFishMardanGarayanNum__Fi);
 INCLUDE_RODATA("asm/nonmatchings/shop", @2912);
-INCLUDE_ASM("asm/nonmatchings/shop", GetFishMardanGarayanNum__Fv);
+
+int GetFishMardanGarayanNum() {
+    return SaveData->GetGameIntFlag(0x14);
+}
 INCLUDE_ASM("asm/nonmatchings/shop", ClearFishMardanGarayanNum__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", AlreadyGetMardanWeapon__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", InitFishingExchange__FP1Pii);
