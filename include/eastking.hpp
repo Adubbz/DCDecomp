@@ -2,13 +2,6 @@
 
 #include "common.h"
 
-class ClsMes;
-
-/**
- * Message window shared by the East King event and battle menu weapon options.
- */
-extern ClsMes EastKingMsgCls;
-
 /**
  * Finalizes the East King event's asynchronously loaded texture and sound data.
  *

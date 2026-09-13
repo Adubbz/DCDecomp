@@ -132,6 +132,7 @@ INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2248);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2249);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlWeaponDraw__Fifii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", NowWeaponStatusValue__FP11WEAPON_HAVE);
+
 /**
  * Returns the restriction on selecting no element for a weapon.
  */
@@ -139,7 +140,7 @@ static int EnableWeaponElemNone(int weapon_no) {
     if (WhoIsWeaponEquip(weapon_no) == CHARA_RUBY) {
         return 1;
     }
-    if ((unsigned int)(weapon_no - ITEM_WEAPON_BLESSING_GUN) <= 1U ||
+    if ((unsigned int) (weapon_no - ITEM_WEAPON_BLESSING_GUN) <= 1U ||
         weapon_no == ITEM_WEAPON_HEXA_BLASTER || weapon_no == ITEM_WEAPON_SUPERNOVA) {
         return 2;
     }
