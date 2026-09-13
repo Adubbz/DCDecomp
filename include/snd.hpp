@@ -48,11 +48,12 @@ void SndInitialize(int, int, int, int);
 void SndExit(void);
 
 /**
- * Steps every sound that is playing.
+ * Steps the background-music fade, the sound-effect sequences and the sound
+ * driver.
  *
  * @mangled SndStep__Fv
  * @address 0x159350
- * @size 0x100
+ * @size 0x34
  */
 void SndStep(void);
 

@@ -210,7 +210,13 @@ INCLUDE_ASM("asm/nonmatchings/snd", LensFlare__FP8CTexturePfUcUcUc);
 INCLUDE_ASM("asm/nonmatchings/snd", SndInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndInitialize__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndExit__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndStep__Fv);
+
+void SndStep() {
+    SndBgmFadeInOut();
+    SndSeSeqStep();
+    CSnd.Step();
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndInitSeTable__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetReadBuffer__FPUi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSyncBG__Fv);
