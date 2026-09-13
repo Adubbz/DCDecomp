@@ -319,7 +319,7 @@ int EdGetEvent(ED_EVENT_POINT *points, int count, ED_EVENT_PARAM *param, float *
             sceVu0CopyVector(param->position, event_position);
             sceVu0CopyVector(param->camera_pos, camera_position);
             sceVu0CopyVector(param->rotation, event_rotation);
-            sceVu0FVECTOR offset = {0.0f, 0.0f, -1.0f, 1.0f};
+            sceVu0FVECTOR offset = {40.0f, 50.0f, -80.0f, 1.0f};
             sceVu0FMATRIX matrix;
             sceVu0UnitMatrix(matrix);
             sceVu0RotMatrixY(matrix, matrix, event_rotation[1]);
@@ -340,22 +340,22 @@ void EdEventPointDraw(ED_EVENT_POINT *point, int count, float time) {
     CEditGround *ground = EdExchangeInfo.ground;
     CFrame *marker = EdExchangeInfo.event_marker;
     C3DSprite *effect = EdExchangeInfo.system_effect;
-    static float rotation_y = 0.0f;
-    rotation_y += 0.01f;
-    if (rotation_y > 6.283184f)
-        rotation_y -= 6.283184f;
+    static float roty = 0.0f;
+    roty += 0.01f;
+    if (roty > 6.283184f)
+        roty -= 6.283184f;
 
-    static float effect_scale = 0.0f;
-    static int effect_count = 0;
-    if (effect_scale > 1.0f) {
-        effect_scale = 0.0f;
-        effect_count = rand() % 20 + 10;
+    static float sys_eff_sc = 0.0f;
+    static int sys_eff_cnt = 0;
+    if (sys_eff_sc > 1.0f) {
+        sys_eff_sc = 0.0f;
+        sys_eff_cnt = rand() % 20 + 10;
     }
-    if (effect_count < 0) {
-        effect_scale += 0.1f;
-        effect_count = 0;
+    if (sys_eff_cnt < 0) {
+        sys_eff_sc += 0.1f;
+        sys_eff_cnt = 0;
     }
-    effect_count--;
+    sys_eff_cnt--;
 
     for (int i = 0; i < count; i++, point++) {
         if (CheckEventPoint(point, time) == 0)
@@ -385,8 +385,8 @@ void EdEventPointDraw(ED_EVENT_POINT *point, int count, float time) {
                 }
                 if (point->event_type == 3) {
                     sceVu0CopyVector(effect->position, position);
-                    effect->half_width = 2.0f * effect_scale;
-                    effect->half_height = effect_scale;
+                    effect->half_width = 2.0f * sys_eff_sc;
+                    effect->half_height = sys_eff_sc;
                     effect->position[1] += 1.0f;
                     effect->Draw();
                 }
@@ -1979,14 +1979,44 @@ static void ClearObjAnime(int index) {
         anime->type = -1;
 }
 
+/** Whether the current event uses the lightweight initialization path. */
+int simple_event;
+
+/** Whether an editor-event program has been installed. */
+static int event_enable;
+
+/** Whether a system event is currently being run. */
+static int run_system_event;
+
+/** Whether the current asynchronous load may continue without waiting. */
+static int not_wait_load;
+
+/** Whether event character motion is globally held. */
+static int motion_stop_flag;
+
 /** Menu mode requested by the active event. */
 static int menu_mode;
+
+/** State of the menu temporarily opened by an event. */
+static int menu_mode_status;
+
+/** Item-list string supplied to the editor's use-item menu. */
+static char *p_use_item;
 
 /** Map requested by the world-map event command. */
 static int p_jump_map_no;
 
+/** Whether execution of the current event has stopped. */
+static int event_stop;
+
+/** Whether advancement of the current editor event is paused. */
+static int event_pause;
+
 /** Whether the active script permits event skipping. */
 static int skip_enable;
+
+/** Whether event-local/world coordinate conversion is enabled. */
+static int set_wl_matrix;
 
 /** Character followed by the event camera. */
 static CCharacter *follow_chara;
@@ -2000,14 +2030,8 @@ static OBJ_HANDLE *sync_camera_ref_obj;
 /** Object used as the event camera's position target. */
 static OBJ_HANDLE *sync_camera_pos_obj;
 
-/** Offset added to the event camera's synchronized reference target. */
-static sceVu0FVECTOR sync_camera_ref_offset;
-
 /** Shared destination buffer used by asynchronous event resource loads. */
 static u_int *BaseBuffer;
-
-/** Archive slots populated by event character-file loads. */
-static u_int *chr_file[16];
 
 /** Character-file slot selected by subsequent event load commands. */
 static int actv_file;
@@ -2015,11 +2039,11 @@ static int actv_file;
 /** Resource arena selected by subsequent event load commands. */
 static int actv_buffer;
 
-/** Whether the current asynchronous load may continue without waiting. */
-static int not_wait_load;
+/** Offset added to the event camera's synchronized reference target. */
+static sceVu0FVECTOR sync_camera_ref_offset;
 
-/** Item-list string supplied to the editor's use-item menu. */
-static char *p_use_item;
+/** Archive slots populated by event character-file loads. */
+static u_int *chr_file[16];
 
 /** Directory prepended to relative event resource names. */
 static char CurrentDir[0x40];
@@ -2032,9 +2056,6 @@ static sceVu0FMATRIX save_c[2];
 
 /** Saved ambient-light colour presets available to event scripts. */
 static sceVu0FVECTOR save_a[2];
-
-/** Whether advancement of the current editor event is paused. */
-static int event_pause;
 
 void EdEventPause() {
     event_pause = !event_pause;
@@ -2076,24 +2097,6 @@ STATIC_ASSERT(sizeof(SPRITE_TABLE) == 0x38);
 
 /** Sprite-table entries shared by foreground and background event sprites. */
 static SPRITE_TABLE sprite_table[32];
-
-/** Whether an editor-event program has been installed. */
-static int event_enable;
-
-/** Whether the current event uses the lightweight initialization path. */
-static int simple_event;
-
-/** Whether a system event is currently being run. */
-static int run_system_event;
-
-/** Whether event character motion is globally held. */
-static int motion_stop_flag;
-
-/** State of the menu temporarily opened by an event. */
-static int menu_mode_status;
-
-/** Whether execution of the current event has stopped. */
-static int event_stop;
 
 static int SetWorkFlag(int index, int value) {
     if (index < 0 || index >= 32)
@@ -2515,9 +2518,6 @@ static sceVu0FMATRIX world_local;
 
 /** Matrix that converts world coordinates to event-local coordinates. */
 static sceVu0FMATRIX local_world;
-
-/** Whether event-local/world coordinate conversion is enabled. */
-static int set_wl_matrix;
 
 static void SetWorldCoord(float *position, float *rotation) {
     sceVu0CopyVector(world_pos, position);

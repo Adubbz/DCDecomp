@@ -193,7 +193,14 @@ def export_constants(path, names, parser, assembly_constants=(),
     reserved = (set(reserved_constants) | set(assembly_constants)) & defined
     arguments = []
     padded = False
-    for name in names:
+    # Both halves of the unit emit their constants in source order, so taking
+    # retail's in address order and ours in emission order pairs duplicates --
+    # a template a second function initialises identically -- with the copy
+    # retail's assembly actually names.
+    addresses = retail_addresses()
+    order = {name: index for index, name in enumerate(names)}
+    emitted = {name: symbol.st_shndx for name, symbol in compiled_symbols.items()}
+    for name in sorted(names, key=lambda n: (addresses.get(n, 0), order[n])):
         if name in defined:
             continue
         wanted = retail_constant(name)
@@ -208,8 +215,8 @@ def export_constants(path, names, parser, assembly_constants=(),
         # a constant of exactly retail's length is the one meant, and every
         # other candidate belongs to a name still to come.
         exact = [symbol for symbol in matches if compiled[symbol] == wanted]
-        if len(exact) == 1:
-            matches = exact
+        if exact:
+            matches = sorted(exact, key=lambda symbol: emitted[symbol])[:1]
         if len(matches) != 1:
             parser.error(f"{name!r} matches {len(matches)} constants in {path}")
         # MWLD recognizes a local `@N` as a compiler constant and rounds its

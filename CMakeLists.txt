@@ -221,9 +221,9 @@ carve_part(main.sbss.part5b.s
            main.sbss.part5d.s=2A33A0-2A33A4)
 carve_part(main.sbss.part4b.s
            main.sbss.part4b.s=2A25B8-2A2740
-           main.sbss.part4c.s=2A27AC-2A29F8
-           main.sbss.part4d.s=2A2A04-2A2A2C
-           main.sbss.part4e.s=2A2A30-2A2BF0)
+           main.sbss.part4c.s=2A27AC-2A29DC
+           main.sbss.part4e.s=2A2A54-2A2A64
+           main.sbss.part4f.s=2A2A7C-2A2BF0)
 carve_part(main.rdata.part4.s
            main.rdata.part4b.s=2A1168-2A11E0)
 # CheckDmg owns its local static effect index and initialization guard.

@@ -407,6 +407,46 @@
       "@2289"
     ],
     "sections": {
+      ".edsbss1": [
+        "roty$585",
+        "init$586",
+        "sys_eff_sc$590",
+        "init$591",
+        "sys_eff_cnt$593",
+        "init$594",
+        "init$632"
+      ],
+      ".edsbss2": [
+        "simple_event",
+        "event_enable",
+        "run_system_event",
+        "not_wait_load",
+        "motion_stop_flag",
+        "menu_mode",
+        "menu_mode_status",
+        "p_use_item",
+        "p_jump_map_no",
+        "event_stop"
+      ],
+      ".edsbss3": [
+        "skip_enable",
+        "set_wl_matrix",
+        "follow_chara",
+        "sync_camera_ref_chara",
+        "sync_camera_ref_obj",
+        "sync_camera_pos_obj",
+        "BaseBuffer",
+        "actv_file",
+        "actv_buffer"
+      ],
+      ".edsbss4": [
+        "talk_villager__2",
+        "talk_chara_info_id",
+        "talk_camera",
+        "talk_mode",
+        "talk_select",
+        "TalkMesMake"
+      ],
       ".fadebss": [
         "fade_in_out",
         "fade_end",
