@@ -112,6 +112,10 @@ void CSHOT_EFFECT_PACK::SetUserID2(s32 id) {
         effect[current_effect].SetUserID2(id);
     }
 }
-INCLUDE_ASM("asm/nonmatchings/shot_effect", SetDmg__17CSHOT_EFFECT_PACKFi);
+void CSHOT_EFFECT_PACK::SetDmg(s32 damage) {
+    if (current_effect != -1) {
+        effect[current_effect].SetDmg(damage);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Set__15CSHOT_MACHINGUNFPfPfii);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Step__15CSHOT_MACHINGUNFv);
