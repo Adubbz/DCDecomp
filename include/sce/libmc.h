@@ -1,10 +1,15 @@
 #pragma once
 
+#define MC_WAIT 0
+#define MC_NOWAIT 1
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/** Initializes the memory-card library and returns its status. */
+/**
+ * Initializes the memory-card library and returns its status.
+ */
 int sceMcInit(void);
 
 /**

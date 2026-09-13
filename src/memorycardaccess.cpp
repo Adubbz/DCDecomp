@@ -47,10 +47,10 @@ INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @405__2);
 void CMemoryCardAccess::SetFuncNo(int func_no) {
     this->func_no = func_no;
     this->step = 0;
-    if (func_no == 1) {
+    if (func_no == MC_OPERATION_IDLE) {
         this->unk_E0 = 0x3D;
     }
-    sceMcSync(1, NULL, NULL);
+    sceMcSync(MC_NOWAIT, NULL, NULL);
 }
 
 int CMemoryCardAccess::GetFuncNo() {

@@ -5,17 +5,18 @@
 class CSaveData;
 
 /**
- * Names one of the icon files that the memory card browser shows for a save.
+ * Describes one browser-icon file written into the save directory.
  */
 struct MC_ICON_FILE {
     char *name; /**< Name of the icon file inside the save directory. */
-    u8 unk_04[8];
+    char *data; /**< Data written to the icon file. */
+    int size;   /**< Size of the icon data in bytes. */
 };
 
 STATIC_ASSERT(sizeof(MC_ICON_FILE) == 0xC);
 
 /**
- * Holds the three icon files that MakeMcIconSysInfo writes into icon.sys.
+ * Describes the browser icons used when viewing, copying and deleting the save.
  */
 struct MC_ICON_DATA {
     MC_ICON_FILE view; /**< Icon that the browser shows for the save. */
@@ -45,23 +46,40 @@ STATIC_ASSERT(sizeof(MC_CARD_INFO) == 0x24);
 /**
  * Describes one save file of the card to the save and load menus.
  */
-struct MC_SAVE_FILE_INFO {
-    s32 state;       /**< Zero while the file is missing, one once it is read, three once it is damaged. */
+struct SAVEDATA_INFO {
+    s32 state;       /**< One once the file is read and its version matches, zero otherwise. */
     s32 file_no;     /**< Number that the file carries in its name, counted from one. */
-    char name[0x20]; /**< Name of the character that the save holds. */
+    char name[0x20]; /**< Name of the first character of the save. */
     float play_time; /**< Play time of the save. */
-    s8 dungeon_no;   /**< Sixth byte of the dungeon status of the save. */
+    s8 party_size;   /**< Characters in the party of the save. */
     u8 unk_2D[3];
     s32 unk_30;
-    s32 quest_total; /**< Quests that the save finished in the seven dungeons, held below 10000. */
+    s32 quest_total; /**< Sum of the quest counts of the seven dungeons of the save, held below 10000. */
 };
 
-STATIC_ASSERT(sizeof(MC_SAVE_FILE_INFO) == 0x38);
+STATIC_ASSERT(sizeof(SAVEDATA_INFO) == 0x38);
 
 /**
- * Runs every memory card operation of the game as a step machine: SetFuncNo
- * picks the operation, Step runs one step of it per frame, and GetFuncNo and
- * GetMsgNo tell the menus what it is doing.
+ * Names the operation dispatched by CMemoryCardAccess::Step.
+ */
+enum MC_OPERATION {
+    MC_OPERATION_SEARCH_TYPE = 0,
+    MC_OPERATION_IDLE = 1,
+    MC_OPERATION_GET_DIR = 2,
+    MC_OPERATION_MAKE_DIR = 3,
+    MC_OPERATION_GET_ALL_SAVE_FILE_INFO = 4,
+    MC_OPERATION_SAVE = 5,
+    MC_OPERATION_LOAD = 6,
+    MC_OPERATION_FORMAT = 8,
+    MC_OPERATION_UNFORMAT = 9,
+    MC_OPERATION_WRITE_TEST = 11,
+    MC_OPERATION_LOAD_CONFIG = 12,
+    MC_OPERATION_SAVE_CONFIG = 13,
+    MC_OPERATION_CONVERT = 14
+};
+
+/**
+ * Runs the memory card operations of the game one step at a time.
  */
 class CMemoryCardAccess {
 public:
@@ -96,7 +114,7 @@ public:
     void SetBuff(char *buffer);
 
     /**
-     * Copies the three icon files that the save directory is to carry.
+     * Sets the file descriptors for the save directory's browser icons.
      *
      * @mangled SetIconData__17CMemoryCardAccessFP12MC_ICON_DATA
      * @address 0x213990
@@ -359,7 +377,7 @@ public:
     u8 icon_sys[0x3C4];              /**< icon.sys image that MakeDir writes into the save directory. */
     MC_ICON_DATA icon;               /**< Icon files that the save directory is to carry. */
     MC_CARD_INFO card[2];            /**< What the class found out about the card in each port. */
-    MC_SAVE_FILE_INFO file_info[12]; /**< Save files of the card, as the menus show them. */
+    SAVEDATA_INFO file_info[12]; /**< Save files of the card, as the menus show them. */
     u8 unk_7BC[4];
 };
 
