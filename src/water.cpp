@@ -12,7 +12,14 @@ INCLUDE_RODATA("asm/nonmatchings/water", @345__2);
 INCLUDE_ASM("asm/nonmatchings/water", DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1);
 INCLUDE_ASM("asm/nonmatchings/water", CheckClip__6CWaterFv);
 INCLUDE_ASM("asm/nonmatchings/water", Hamon__6CWaterFv);
-INCLUDE_ASM("asm/nonmatchings/water", SetVertex__6CWaterFPfPfPfPf);
+
+void CWater::SetVertex(float *v0, float *v1, float *v2, float *v3) {
+    sceVu0CopyVector(vertex[0], v0);
+    sceVu0CopyVector(vertex[1], v1);
+    sceVu0CopyVector(vertex[2], v2);
+    sceVu0CopyVector(vertex[3], v3);
+}
+
 INCLUDE_ASM("asm/nonmatchings/water", Shake__6CWaterFiif);
 INCLUDE_ASM("asm/nonmatchings/water", SetSize__6CWaterFiiP14CDataAlloc2_1_);
 INCLUDE_ASM("asm/nonmatchings/water", __ct__6CWaterFv);
