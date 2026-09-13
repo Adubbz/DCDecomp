@@ -12,6 +12,7 @@
 #include <cstring>
 
 #include "btsysscript.hpp"
+#include "cloth.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dataset.hpp"
@@ -28,6 +29,7 @@ extern short *SystemMes;
 extern int LanguageCode;
 extern int BtMapJumpFloor;
 extern CDataAlloc<1, 6000> SystemMesBuffer;
+extern CCloth *pCloth;
 
 void DevInit(void);
 void SndInitSeTable(void);
@@ -632,7 +634,21 @@ INCLUDE_RODATA("asm/nonmatchings/dataread", @254);
 INCLUDE_RODATA("asm/nonmatchings/dataread", @255);
 
 INCLUDE_ASM("asm/nonmatchings/dataread", InitCloth__FP9CFrameVu1R9input_strP14CDataAlloc2_1_);
-INCLUDE_ASM("asm/nonmatchings/dataread", CommandSIZE__FPPv);
+static void CommandSIZE(void **argv) {
+    int num_i = *(int *) argv[0];
+    int num_j = *(int *) argv[1];
+
+    if (num_i <= 0)
+        num_i = 1;
+    if (num_i > 16)
+        num_i = 16;
+    if (num_j <= 0)
+        num_j = 1;
+    if (num_j > 16)
+        num_j = 16;
+    pCloth->num_i = num_i;
+    pCloth->num_j = num_j;
+}
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandFRAME__FPPv);
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandNORMAL__FPPv);
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandFOLLOW__FPPv);
