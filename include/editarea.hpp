@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+
 #include "collision.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
@@ -18,8 +19,8 @@ class CVector3_i_;
  */
 class CEditAreaCell {
 public:
-    int parts_no;    /**< Selects the map-part instance occupying the cell. */
-    int altitude;    /**< Stores the cell height in vertical grid units. */
+    int parts_no; /**< Selects the map-part instance occupying the cell. */
+    int altitude; /**< Stores the cell height in vertical grid units. */
     int unk_08;
     int parts_id;    /**< Identifies the map-part definition occupying the cell. */
     int code;        /**< Stores the map-part geometry code for the cell. */
@@ -34,21 +35,21 @@ STATIC_ASSERT(sizeof(CEditAreaCell) == 0x1C);
  */
 class CEditArea {
 public:
-    int area_id;                 /**< Selects the area's special grid rules. */
-    int map_no;                  /**< Identifies the map represented by the grid. */
-    int width;                   /**< Gives the active grid width in cells. */
-    int height;                  /**< Gives the active grid height in cells. */
-    float offset_x;              /**< Gives the grid origin on the world X axis. */
-    float offset_y;              /**< Gives the grid origin on the world Y axis. */
-    float offset_z;              /**< Gives the grid origin on the world Z axis. */
+    int area_id;    /**< Selects the area's special grid rules. */
+    int map_no;     /**< Identifies the map represented by the grid. */
+    int width;      /**< Gives the active grid width in cells. */
+    int height;     /**< Gives the active grid height in cells. */
+    float offset_x; /**< Gives the grid origin on the world X axis. */
+    float offset_y; /**< Gives the grid origin on the world Y axis. */
+    float offset_z; /**< Gives the grid origin on the world Z axis. */
     int unk_1c;
-    float unit_size;             /**< Gives one cell's horizontal world-space extent. */
-    float unit_alt;              /**< Gives one elevation unit's world-space extent. */
-    CEditAreaCell grid[16][16];  /**< Stores the editable cells in grid coordinates. */
-    int chain_work[16][16];      /**< Marks cells visited while following river chains. */
-    CFrameVu1 *grid_frame;       /**< Holds the frame used to render the grid overlay. */
+    float unit_size;            /**< Gives one cell's horizontal world-space extent. */
+    float unit_alt;             /**< Gives one elevation unit's world-space extent. */
+    CEditAreaCell grid[16][16]; /**< Stores the editable cells in grid coordinates. */
+    int chain_work[16][16];     /**< Marks cells visited while following river chains. */
+    CFrameVu1 *grid_frame;      /**< Holds the frame used to render the grid overlay. */
     int unk_202c;
-    CBoxVu0 parts_box;           /**< Bounds all occupied cells in world space. */
+    CBoxVu0 parts_box; /**< Bounds all occupied cells in world space. */
     int unk_2050;
     int unk_2054;
 
