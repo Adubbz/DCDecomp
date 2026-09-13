@@ -1,6 +1,17 @@
 #include "common.h"
 
+#include "btmisc.hpp"
+
 /* Battle support: pack loading, item name paths, battle music, floor queries. */
+
+/** Whether the battle-music transition is active. */
+extern int BtBattleMusic_Flag;
+
+/** The delay before the next battle-music transition. */
+extern int BtBattleMusic_Wait;
+
+/** The current battle-music volume. */
+extern int BtBattleMusic_Vol;
 
 INCLUDE_ASM("asm/nonmatchings/btmisc", LoadMDSFilePack__FPUiPcP14CDataAlloc2_1_);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @879__2);
@@ -30,7 +41,13 @@ INCLUDE_RODATA("asm/nonmatchings/btmisc", @953);
 INCLUDE_ASM("asm/nonmatchings/btmisc", getAtraToSaveData__FiiP9CSaveDataii);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @958);
 INCLUDE_ASM("asm/nonmatchings/btmisc", createAttachVolume__Fii);
-INCLUDE_ASM("asm/nonmatchings/btmisc", BtBattleMusic_Init__Fv);
+
+void BtBattleMusic_Init() {
+    BtBattleMusic_Flag = 0;
+    BtBattleMusic_Wait = 0;
+    BtBattleMusic_Vol = 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btmisc", BtBattleMusic_Stop__Fv);
 INCLUDE_ASM("asm/nonmatchings/btmisc", BtBattleMusic_Excg__FfPfPf);
 INCLUDE_ASM("asm/nonmatchings/btmisc", BtGetFloorLevel__Fi);
