@@ -2,7 +2,27 @@
 
 INCLUDE_ASM("asm/nonmatchings/actionseq", Initialize__10CActionSeqFP7ACT_SEQi);
 INCLUDE_ASM("asm/nonmatchings/actionseq", __ct__10CActionSeqFv);
-INCLUDE_ASM("asm/nonmatchings/actionseq", ClearSeq__10CActionSeqFv);
+void CActionSeq::ClearSeq() {
+    character = NULL;
+    move_tail = NULL;
+    move_head = NULL;
+    move_frame = 0;
+    rotation_mode = 0;
+    rotation_complete = 0;
+    rotation_tail = NULL;
+    rotation_head = NULL;
+    rotation_frame = 0;
+    motion_tail = NULL;
+    motion_head = NULL;
+    anime_tail = NULL;
+    anime_head = NULL;
+    rotation_delay = 0;
+    anime_frame = 0;
+    motion_trigger = 0;
+    motion_delay = 0;
+    anime_trigger = 0;
+    anime_delay = 0;
+}
 INCLUDE_ASM("asm/nonmatchings/actionseq", GetNextSeq__10CActionSeqFv);
 INCLUDE_ASM("asm/nonmatchings/actionseq", SyncChara__10CActionSeqFP10CCharacter);
 INCLUDE_ASM("asm/nonmatchings/actionseq", NextMoveSeq__10CActionSeqFv);
