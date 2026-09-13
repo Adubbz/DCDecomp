@@ -159,7 +159,9 @@ void CEditArea::Clear(void) {
 INCLUDE_ASM("asm/nonmatchings/editarea", Initialize__9CEditAreaFv);
 INCLUDE_ASM("asm/nonmatchings/editarea", SetMapInfo__9CEditAreaFii);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetMapNo__9CEditAreaFv);
-INCLUDE_ASM("asm/nonmatchings/editarea", GetAreaID__9CEditAreaFv);
+int CEditArea::GetAreaID() {
+    return this->area_id;
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", SetGridFrame__9CEditAreaFP9CFrameVu1);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetGridFrame__9CEditAreaFv);
 INCLUDE_ASM("asm/nonmatchings/editarea", SetOffset__9CEditAreaFfff);
