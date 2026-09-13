@@ -2166,7 +2166,7 @@ void MoveChara() {
             if (parts != NULL) {
                 int plot = parts->parts_no;
                 EDITPARTS_INFO *plot_info = EditPartsInfo.GetPartsInfo(plot);
-                if (plot_info != NULL && plot_info->kind == 2 && !(plot_info->unk_04 & 1) &&
+                if (plot_info != NULL && plot_info->kind == 2 && !(plot_info->completion_flags & 1) &&
                     EditPartsInfo.CheckComplete(plot) != 0) {
                     FadeOutToEvent(plot + 200, 0);
                 }

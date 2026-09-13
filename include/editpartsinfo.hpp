@@ -55,7 +55,7 @@ struct INIT_PARTSINFO {
  */
 struct EDITPARTS_INFO {
     s32 parts_no; /**< Number that names the part. */
-    s32 unk_04;
+    s32 completion_flags; /**< Bit zero records whether the completion event has run. */
     s32 unk_08;
     s32 unk_0C;
     u8 unk_10[4];
