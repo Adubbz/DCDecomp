@@ -469,8 +469,8 @@ SECTIONS
         main.data.part4i.s.o (.data)   // 0x00269a30
         editloop3.cpp.o (.objworldorigin) // 0x00269ad0
         editloop3.cpp.o (.eddata4)     // 0x00269ae0
-        editloop3.cpp.o (.eddata5)     // 0x00269b60
-        main.data.part4f.s.o (.data)   // 0x00269b70
+        main.data.part4f.s.o (.data)   // 0x00269b60
+        editloop3.cpp.o (.eddata5)     // 0x00269ba0
         editloop3.cpp.o (.eddata6)     // 0x00269bb0
         editloop3.cpp.o (.fishinglineorigin) // 0x00269c40
         editloop3.cpp.o (.extfuncinfo) // 0x00269c50

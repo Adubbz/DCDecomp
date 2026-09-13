@@ -124,7 +124,8 @@ struct ED_EVENT_INFO {
     s32 npc_shadow_draw[16]; /**< Whether each event NPC shadow is drawn. */
     s32 npc_foot_sound[16]; /**< Footstep mode assigned to each event NPC. */
     s32 npc_stop[16]; /**< Whether each event NPC's motion is held. */
-    s32 npc_draw_before[17]; /**< Draw-order group assigned to each event character. */
+    s32 npc_draw_before[16]; /**< Draw-order group assigned to each event NPC. */
+    s32 npc_texture_block; /**< First texture block assigned to the event NPC models. */
     s32 npc_count; /**< Number of valid entries in the event NPC array. */
     VILLAGER_INFO *villagers; /**< Metadata array for the event villagers. */
     ClsMes *messages[8]; /**< Message windows owned by the active event. */

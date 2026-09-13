@@ -1784,14 +1784,14 @@ static float GetMaxHeightCursor(float *position) {
     int height = 0;
     int count;
     for (count = 0; count < 8; count++) {
-        EDIT_AREA_RECT_INFO *area = &edit_info->edit_area_rects[count];
+        EDIT_AREA_RECT_INFO *area = &EditMapInfo->edit_area_rects[count];
         if (area->maximum[0] == area->minimum[0] || area->maximum[2] == area->minimum[0])
             break;
     }
     if (count == 0)
         return 0.0f;
     for (int i = 0; i < count; i++) {
-        EDIT_AREA_RECT_INFO *area = &edit_info->edit_area_rects[i];
+        EDIT_AREA_RECT_INFO *area = &EditMapInfo->edit_area_rects[i];
         if (position[0] <= area->maximum[0] && position[2] <= area->maximum[2] && position[0] >= area->minimum[0] && position[2] >= area->minimum[2] && height < area->minimum[1]) {
             height = area->minimum[1];
         }
@@ -2921,8 +2921,8 @@ static int _LOAD_CHARA(RS_STACKDATA *stack, int) {
         return 0;
     CDataAlloc2<1> *first = get_buffer();
     CDataAlloc2<1> *second = get_buffer();
-    npc->chara.LoadPackData2(pack, name, first, EdEventInfo.npc_count + index, second, 0);
-    npc->unk_148C = EdEventInfo.npc_count + index;
+    npc->chara.LoadPackData2(pack, name, first, EdEventInfo.npc_texture_block + index, second, 0);
+    npc->unk_148C = EdEventInfo.npc_texture_block + index;
     npc->initialized = 1;
     npc->draw_enabled = 1;
     npc->near_camera = 1;
@@ -2947,7 +2947,7 @@ static int _LOAD_CHARA_TEXTURE(RS_STACKDATA *stack, int argument_count) {
         return 0;
     if (npc->chara.images[0] != NULL)
         return 1;
-    int block = EdEventInfo.npc_count + index;
+    int block = EdEventInfo.npc_texture_block + index;
     int i;
     u_int *pack = get_pack_file();
     if (pack == NULL)
@@ -6577,7 +6577,7 @@ int EdInitEventParamSimple() {
         EdEventInfo.npc_shadow_draw[i] = 1;
         EdEventInfo.npc_foot_sound[i] = 1;
         EdEventInfo.npc_stop[i] = 0;
-        EdEventInfo.npc_draw_before[i + 1] = 0;
+        EdEventInfo.npc_draw_before[i] = 0;
     }
     for (i = 0; i < 266; i++) {
         asq_table[i].operation = ACT_SEQ_UNUSED;
@@ -6628,7 +6628,7 @@ int EdInitEventParam() {
     for (int i = 0; i < EdEventInfo.npc_count; i++) {
         EdEventInfo.npcs[i].chara.Initialize();
         EdEventInfo.npcs[i].chara.InitializeTexAnime(anime_data, 320);
-        TexManager.DeleteTextureBlock(EdEventInfo.player_texture_block + i);
+        TexManager.DeleteTextureBlock(EdEventInfo.npc_texture_block + i);
     }
     if (EdEventInfo.main_character != NULL)
         EdEventInfo.main_character->SetMotion(0, 0);
