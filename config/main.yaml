@@ -204,28 +204,28 @@ segments:
       - {start: 0x279a0, type: cpp, name: dataalloc2_1}
       - {start: 0x27c80, type: cpp, name: frame}
       - {start: 0x2a710, type: cpp, name: gamepad}
-      - {start: 0x2bb20, type: asmtu, name: spritetable}
+      - {start: 0x2bb20, type: cpp, name: spritetable}
       - {start: 0x2c270, type: cpp, name: mglib}
       - {start: 0x30ff0, type: cpp, name: texture}
       - {start: 0x34860, type: cpp, name: visualvu1}
-      - {start: 0x36390, type: asmtu, name: visualshadow}
+      - {start: 0x36390, type: cpp, name: visualshadow}
       - {start: 0x374e0, type: cpp, name: character}
       - {start: 0x39e10, type: cpp, name: chararead}
       - {start: 0x3b580, type: cpp, name: wind}
       - {start: 0x3b740, type: cpp, name: cloth}
-      - {start: 0x3d350, type: asmtu, name: bound}
+      - {start: 0x3d350, type: cpp, name: bound}
       - {start: 0x3df90, type: cpp, name: dispctrl}
       - {start: 0x3ea50, type: cpp, name: dataread}
       - {start: 0x411b0, type: cpp, name: main}
       - {start: 0x41e30, type: asmtu, name: gamemode}
       - {start: 0x43920, type: cpp, name: dataalloc}
-      - {start: 0x43970, type: asmtu, name: map}
-      - {start: 0x43c50, type: asmtu, name: sound}
+      - {start: 0x43970, type: cpp, name: map}
+      - {start: 0x43c50, type: cpp, name: sound}
       - {start: 0x47a70, type: cpp, name: gameutil}
       - {start: 0x4cc30, type: cpp, name: clsmes}
-      - {start: 0x54040, type: asmtu, name: nowload}
-      - {start: 0x54c30, type: asmtu, name: actionseq}
-      - {start: 0x560b0, type: asmtu, name: npcharacter}
+      - {start: 0x54040, type: cpp, name: nowload}
+      - {start: 0x54c30, type: cpp, name: actionseq}
+      - {start: 0x560b0, type: cpp, name: npcharacter}
       - {start: 0x56c60, type: cpp, name: fakepointlight}
       - {start: 0x56ca0, type: cpp, name: object}
       - {start: 0x571c0, type: cpp, name: objectframe}
@@ -233,19 +233,19 @@ segments:
       - {start: 0x57ae0, type: cpp, name: objectframe2}
       - {start: 0x57c00, type: cpp, name: savedata}
       - {start: 0x58e80, type: cpp, name: snd}
-      - {start: 0x5f200, type: asmtu, name: scriptinterpreter}
+      - {start: 0x5f200, type: cpp, name: scriptinterpreter}
       - {start: 0x5fe30, type: cpp, name: sysmes}
       - {start: 0x608a0, type: cpp, name: water}
-      - {start: 0x61750, type: asmtu, name: fireomni}
-      - {start: 0x62680, type: asmtu, name: runeffect}
-      - {start: 0x63b30, type: asmtu, name: candleeffect}
-      - {start: 0x63e20, type: asmtu, name: effect}
-      - {start: 0x64a80, type: asmtu, name: effectgroup}
-      - {start: 0x64c30, type: asmtu, name: objanime}
-      - {start: 0x67160, type: asmtu, name: textureanime}
+      - {start: 0x61750, type: cpp, name: fireomni}
+      - {start: 0x62680, type: cpp, name: runeffect}
+      - {start: 0x63b30, type: cpp, name: candleeffect}
+      - {start: 0x63e20, type: cpp, name: effect}
+      - {start: 0x64a80, type: cpp, name: effectgroup}
+      - {start: 0x64c30, type: cpp, name: objanime}
+      - {start: 0x67160, type: cpp, name: textureanime}
       - {start: 0x67d80, type: cpp, name: ebattle}
       - {start: 0x68300, type: cpp, name: ebattle_loop}
-      - {start: 0x6d960, type: asmtu, name: editarea}
+      - {start: 0x6d960, type: cpp, name: editarea}
       - {start: 0x70350, type: cpp, name: edit}
       - {start: 0x742a0, type: cpp, name: editloop}
       - {start: 0x83d40, type: cpp, name: editloop3}
@@ -253,55 +253,54 @@ segments:
       - {start: 0x9a8b0, type: cpp, name: mapparts}
       - {start: 0x9b780, type: asmtu, name: edit_in}
       - {start: 0xa0570, type: asmtu, name: editground}
-      - {start: 0xa88e0, type: asmtu, name: fishing}
+      - {start: 0xa88e0, type: cpp, name: fishing}
       - {start: 0xab840, type: cpp, name: shot_utils}
-      - {start: 0xabd40, type: asmtu, name: shot_effect}
+      - {start: 0xabd40, type: cpp, name: shot_effect}
       - {start: 0xaea80, type: cpp, name: hit_machingun_effect}
-      - {start: 0xaec20, type: asmtu, name: shot_firebar}
-      - {start: 0xaf460, type: asmtu, name: shot_freefuncs}
-      - {start: 0xb2a00, type: asmtu, name: healeffect}
+      - {start: 0xaec20, type: cpp, name: shot_firebar}
+      - {start: 0xaf460, type: cpp, name: shot_freefuncs}
+      - {start: 0xb2a00, type: cpp, name: healeffect}
       - {start: 0xb2f90, type: cpp, name: hitmark}
-      - {start: 0xb3880, type: asmtu, name: collisiondata}
-      - {start: 0xb5c90, type: asmtu, name: dngmessageman}
+      - {start: 0xb3880, type: cpp, name: collisiondata}
+      - {start: 0xb5c90, type: cpp, name: dngmessageman}
       - {start: 0xb5e90, type: cpp, name: hitvalue}
-      - {start: 0xb6af0, type: asmtu, name: motionmodel}
-      - {start: 0xb6e70, type: asmtu, name: btmisc}
+      - {start: 0xb6af0, type: cpp, name: motionmodel}
+      - {start: 0xb6e70, type: cpp, name: btmisc}
       - {start: 0xb7900, type: cpp, name: weaponelement}
-      - {start: 0xbb160, type: asmtu, name: btsysscript}
+      - {start: 0xbb160, type: cpp, name: btsysscript}
       - {start: 0xbda00, type: cpp, name: dngstatusdata}
-      - {start: 0xbfbb0, type: asmtu, name: dungeonparts}
+      - {start: 0xbfbb0, type: cpp, name: dungeonparts}
       - {start: 0xc1d00, type: cpp, name: dungeonmap}
-      - {start: 0xcc920, type: asmtu, name: dungeoneventdata}
-      - {start: 0xcc9f0, type: asmtu, name: dungeoneventman}
-      - {start: 0xcd4c0, type: asmtu, name: dranmapfield}
+      - {start: 0xcc920, type: cpp, name: dungeoneventdata}
+      - {start: 0xcc9f0, type: cpp, name: dungeoneventman}
+      - {start: 0xcd4c0, type: cpp, name: dranmapfield}
       - {start: 0xcda10, type: cpp, name: itemdata}
-      - {start: 0xd1130, type: asmtu, name: btitem}
-      - {start: 0xd4640, type: asmtu, name: mainitemmodel}
-      - {start: 0xd5680, type: asmtu, name: itembombeffect}
+      - {start: 0xd1130, type: cpp, name: btitem}
+      - {start: 0xd4640, type: cpp, name: mainitemmodel}
+      - {start: 0xd5680, type: cpp, name: itembombeffect}
       - {start: 0xd66c0, type: cpp, name: weaponeffect}
       - {start: 0xd6ce0, type: cpp, name: randomitem}
       - {start: 0xd75e0, type: cpp, name: stealitem}
       - {start: 0xd7b40, type: cpp, name: monstorunit}
       - {start: 0xe1740, type: asmtu, name: runscript_opcodes}
-      - {start: 0xe6a30, type: asmtu, name: shopiconmove}
-      - {start: 0xe6ff0, type: cpp, name: shop_battlemenu}
-      - {start: 0x10b680, type: asmtu, name: menuclsmes}
-      - {start: 0x10bfc0, type: asmtu, name: menu_misc}
+      - {start: 0xe69d0, type: cpp, name: shop}
+      - {start: 0xf3ea0, type: cpp, name: battlemenu}
+      - {start: 0x10bfc0, type: cpp, name: menu_misc}
       - {start: 0x1136d0, type: cpp, name: memorycardaccess}
-      - {start: 0x116e50, type: asmtu, name: memcard}
+      - {start: 0x116e50, type: cpp, name: memcard}
       - {start: 0x121830, type: cpp, name: menu_draw}
       - {start: 0x132930, type: cpp, name: eastking}
       - {start: 0x133620, type: cpp, name: menu_manual}
       - {start: 0x1350e0, type: cpp, name: weapon_buildup}
-      - {start: 0x135750, type: asmtu, name: menuitemstep}
+      - {start: 0x135750, type: cpp, name: menuitemstep}
       - {start: 0x135b10, type: cpp, name: weaponlevelup}
-      - {start: 0x1381b0, type: asmtu, name: menuiconautoget}
+      - {start: 0x1381b0, type: cpp, name: menuiconautoget}
       - {start: 0x138550, type: cpp, name: battle_globals}
       - {start: 0x13da40, type: cpp, name: runscript}
       - {start: 0x13f690, type: cpp, name: stockitem}
       - {start: 0x140150, type: cpp, name: fish}
       - {start: 0x141420, type: cpp, name: charakey}
-      - {start: 0x144c30, type: asmtu, name: langset}
+      - {start: 0x144c30, type: cpp, name: langset}
       - {start: 0x1452f0, type: asmtu, name: fader}
       - {start: 0x145400, type: data, name: vutext, dir: main, linker_section: .vutext}
       - {start: 0x14fbc0, type: data, name: data, dir: main}
@@ -404,7 +403,8 @@ segments:
       - {start: 0x19cfc0, type: .rodata, name: randomitem}
       - {start: 0x19d000, type: .rodata, name: monstorunit}
       - {start: 0x19d138, type: .rodata, name: runscript_opcodes}
-      - {start: 0x19d250, type: .rodata, name: shop_battlemenu}
+      - {start: 0x19d250, type: .rodata, name: shop}
+      - {start: 0x19d5a0, type: .rodata, name: battlemenu}
       - {start: 0x19de60, type: .rodata, name: menu_misc}
       - {start: 0x19e5d0, type: .rodata, name: memorycardaccess}
       - {start: 0x19eb00, type: .rodata, name: memcard}

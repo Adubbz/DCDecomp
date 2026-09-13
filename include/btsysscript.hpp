@@ -67,12 +67,13 @@ void BtSystemScriptAfter(void);
 int BtSystemScriptRun(int, CDataAlloc2<1> *);
 
 /**
+ * Selects the floor used by the next battle-map jump.
+ *
  * @mangled BtSetMapJumpFloor__Fi
  * @address 0x1BB920
  * @size 0x10
- * @unknownret
  */
-void BtSetMapJumpFloor(int);
+void BtSetMapJumpFloor(int floor);
 
 /** Floor requested for the next battle-map jump. */
 extern int BtMapJumpFloor;
@@ -246,12 +247,13 @@ void _SET_DUNGEON_MAP(RS_STACKDATA *, int);
 void _LOAD_DUNGEON_MAP2(RS_STACKDATA *, int);
 
 /**
+ * Reloads and arranges the monsters on the current floor.
+ *
  * @mangled _LOAD_MONSTOR__FP12RS_STACKDATAi
  * @address 0x1BC550
  * @size 0x30
- * @unknownret
  */
-void _LOAD_MONSTOR(RS_STACKDATA *, int);
+int _LOAD_MONSTOR(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _SET_RANDOM_MAP__FP12RS_STACKDATAi
@@ -406,12 +408,13 @@ void _SET_DEAD_FLAG(RS_STACKDATA *, int);
 void _ALL_DRAW_FLAG(RS_STACKDATA *, int);
 
 /**
+ * Opens the current floor's title display.
+ *
  * @mangled _SET_FLOOR_TITLE__FP12RS_STACKDATAi
  * @address 0x1BCFE0
  * @size 0x30
- * @unknownret
  */
-void _SET_FLOOR_TITLE(RS_STACKDATA *, int);
+int _SET_FLOOR_TITLE(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _GET_RUBY_ELEMENT__FP12RS_STACKDATAi

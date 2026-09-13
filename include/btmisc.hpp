@@ -53,3 +53,13 @@ CFrameVu1 *LoadMDSFile(unsigned int *data, CDataAlloc2<1> *buffer, int flags,
  * @unknownret
  */
 void getFramePos(CFrameVu1 *frame, char *name, float *position);
+
+/**
+ * Builds the model and texture file names of one of a character's weapons into
+ * the two given buffers.
+ *
+ * @mangled BtGetWeaponNamePath2__FPcPcii
+ * @address 0x1B7250
+ * @size 0x158
+ */
+void BtGetWeaponNamePath2(char *name, char *path, int chara, int weapon);

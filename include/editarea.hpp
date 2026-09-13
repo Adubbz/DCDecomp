@@ -2,10 +2,11 @@
 
 #include "common.h"
 
+#include "collision.hpp"
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
-class CBoxVu0;
 class CCPoly;
 class CFrameVu1;
 class CMapParts;
@@ -13,404 +14,494 @@ class CRect_i_;
 class CVector3_f_;
 class CVector3_i_;
 
+/**
+ * Stores the map-part and elevation state for one editable grid cell.
+ */
+class CEditAreaCell {
+public:
+    int parts_no; /**< Selects the map-part instance occupying the cell. */
+    int altitude; /**< Stores the cell height in vertical grid units. */
+    int unk_08;
+    int parts_id;    /**< Identifies the map-part definition occupying the cell. */
+    int code;        /**< Stores the map-part geometry code for the cell. */
+    int parts_extra; /**< Stores the area-specific map-part attribute. */
+    int unk_18;
+};
+
+STATIC_ASSERT(sizeof(CEditAreaCell) == 0x1C);
+
+/**
+ * Maintains the editable map grid and its world-space dimensions.
+ */
 class CEditArea {
 public:
+    int area_id;    /**< Selects the area's special grid rules. */
+    int map_no;     /**< Identifies the map represented by the grid. */
+    int width;      /**< Gives the active grid width in cells. */
+    int height;     /**< Gives the active grid height in cells. */
+    float offset_x; /**< Gives the grid origin on the world X axis. */
+    float offset_y; /**< Gives the grid origin on the world Y axis. */
+    float offset_z; /**< Gives the grid origin on the world Z axis. */
+    int unk_1c;
+    float unit_size;            /**< Gives one cell's horizontal world-space extent. */
+    float unit_alt;             /**< Gives one elevation unit's world-space extent. */
+    CEditAreaCell grid[16][16]; /**< Stores the editable cells in grid coordinates. */
+    int chain_work[16][16];     /**< Marks cells visited while following river chains. */
+    CFrameVu1 *grid_frame;      /**< Holds the frame used to render the grid overlay. */
+    int unk_202c;
+    CBoxVu0 parts_box; /**< Bounds all occupied cells in world space. */
+    int unk_2050;
+    int unk_2054;
+
     /**
+     * Sets the active grid dimensions and world-space unit scales.
+     *
      * @mangled SetSize__9CEditAreaFiiff
      * @address 0x16D860
      * @size 0x20
-     * @unknownret
      */
-    void SetSize(int, int, float, float);
+    void SetSize(int width, int height, float unit_size, float unit_alt);
 
     /**
+     * Converts a world-space position to integral grid coordinates.
+     *
      * @mangled GetPos__9CEditAreaFP11CVector3_i_fff
      * @address 0x16D880
      * @size 0xA0
-     * @unknownret
      */
-    void GetPos(CVector3_i_ *, float, float, float);
+    void GetPos(CVector3_i_ *position, float x, float y, float z);
 
     /**
+     * Converts grid coordinates to a world-space position.
+     *
      * @mangled GetPos__9CEditAreaFP11CVector3_f_iii
      * @address 0x16D920
      * @size 0x70
-     * @unknownret
      */
-    void GetPos(CVector3_f_ *, int, int, int);
+    void GetPos(CVector3_f_ *position, int x, int y, int z);
 
     /**
+     * Sets the map-part number stored at one grid coordinate.
+     *
      * @mangled SetPartsNo__9CEditAreaFiii
      * @address 0x16D990
      * @size 0x70
-     * @unknownret
      */
-    void SetPartsNo(int, int, int);
+    void SetPartsNo(int x, int y, int parts_no);
 
     /**
+     * Sets the map-part identifier stored at one grid coordinate.
+     *
      * @mangled SetPartsID__9CEditAreaFiii
      * @address 0x16DA00
      * @size 0x70
-     * @unknownret
      */
-    void SetPartsID(int, int, int);
+    void SetPartsID(int x, int y, int parts_id);
 
     /**
+     * Sets the area-specific part attribute at one grid coordinate.
+     *
      * @mangled SetPartsExtra__9CEditAreaFiii
      * @address 0x16DA70
      * @size 0x70
-     * @unknownret
      */
-    void SetPartsExtra(int, int, int);
+    void SetPartsExtra(int x, int y, int parts_extra);
 
     /**
+     * Sets the geometry code stored at one grid coordinate.
+     *
      * @mangled SetCode__9CEditAreaFiii
      * @address 0x16DAE0
      * @size 0x70
-     * @unknownret
      */
-    void SetCode(int, int, int);
+    void SetCode(int x, int y, int code);
 
     /**
+     * Returns the map-part identifier at one grid coordinate.
+     *
      * @mangled GetPartsID__9CEditAreaFii
      * @address 0x16DB50
      * @size 0x80
-     * @unknownret
      */
-    void GetPartsID(int, int);
+    int GetPartsID(int x, int y);
 
     /**
+     * Returns the geometry code at one grid coordinate.
+     *
      * @mangled GetCode__9CEditAreaFii
      * @address 0x16DBD0
      * @size 0x80
-     * @unknownret
      */
-    void GetCode(int, int);
+    int GetCode(int x, int y);
 
     /**
+     * Sets a clamped integral altitude at one grid coordinate.
+     *
      * @mangled SetAlt__9CEditAreaFiii
      * @address 0x16DC50
      * @size 0x90
-     * @unknownret
      */
-    void SetAlt(int, int, int);
+    void SetAlt(int x, int y, int altitude);
 
     /**
+     * Returns the integral altitude at one grid coordinate.
+     *
      * @mangled GetAlt_i__9CEditAreaFii
      * @address 0x16DCE0
      * @size 0x80
-     * @unknownret
      */
-    void GetAlt_i(int, int);
+    int GetAlt_i(int x, int y);
 
     /**
+     * Returns the world-space altitude at one grid coordinate.
+     *
      * @mangled GetAlt__9CEditAreaFii
      * @address 0x16DD60
      * @size 0x90
-     * @unknownret
      */
-    void GetAlt(int, int);
+    float GetAlt(int x, int y);
 
     /**
+     * Returns the world-space altitude at one world position.
+     *
      * @mangled GetAlt__9CEditAreaFfff
      * @address 0x16DDF0
      * @size 0x50
-     * @unknownret
      */
-    void GetAlt(float, float, float);
+    float GetAlt(float x, float y, float z);
 
     /**
+     * Returns the integral altitude at one world position.
+     *
      * @mangled GetAlt_i__9CEditAreaFfff
      * @address 0x16DE40
      * @size 0x50
-     * @unknownret
      */
-    void GetAlt_i(float, float, float);
+    int GetAlt_i(float x, float y, float z);
 
     /**
+     * Returns the area-specific part attribute at one grid coordinate.
+     *
      * @mangled GetPartsExtra__9CEditAreaFii
      * @address 0x16DE90
      * @size 0x180
-     * @unknownret
      */
-    void GetPartsExtra(int, int);
+    int GetPartsExtra(int x, int y);
 
     /**
+     * Projects one map part into the editable grid.
+     *
      * @mangled SetMapParts__9CEditAreaFiP9CMapPartsfffi
      * @address 0x16E010
      * @size 0x200
-     * @unknownret
      */
-    void SetMapParts(int, CMapParts *, float, float, float, int);
+    void SetMapParts(int parts_no, CMapParts *parts, float x, float y, float z, int parts_extra);
 
     /**
+     * Removes one map part from the editable grid.
+     *
      * @mangled DeleteMapParts__9CEditAreaFiP9CMapPartsfff
      * @address 0x16E210
      * @size 0x260
-     * @unknownret
      */
-    void DeleteMapParts(int, CMapParts *, float, float, float);
+    int DeleteMapParts(int parts_no, CMapParts *parts, float x, float y, float z);
 
     /**
+     * Determines the river connection code at one grid coordinate.
+     *
      * @mangled SetRiverParts__9CEditAreaFii
      * @address 0x16E470
      * @size 0x440
-     * @unknownret
      */
-    void SetRiverParts(int, int);
+    int SetRiverParts(int x, int y);
 
     /**
+     * Determines the road connection code at one grid coordinate.
+     *
      * @mangled SetRoadParts__9CEditAreaFii
      * @address 0x16E8B0
      * @size 0x330
-     * @unknownret
      */
-    void SetRoadParts(int, int);
+    int SetRoadParts(int x, int y);
 
     /**
+     * Returns the map-part identifier at one world position.
+     *
      * @mangled SearchPartsID__9CEditAreaFfff
      * @address 0x16EBE0
      * @size 0x60
-     * @unknownret
      */
-    void SearchPartsID(float, float, float);
+    int SearchPartsID(float x, float y, float z);
 
     /**
+     * Returns the area-specific part attribute at one world position.
+     *
      * @mangled SearchPartsExtra__9CEditAreaFfff
      * @address 0x16EC40
      * @size 0x50
-     * @unknownret
      */
-    void SearchPartsExtra(float, float, float);
+    int SearchPartsExtra(float x, float y, float z);
 
     /**
+     * Returns floating grid coordinates for one world position.
+     *
      * @mangled GetGrid__9CEditAreaFP11CVector3_f_fff
      * @address 0x16EC90
      * @size 0x60
-     * @unknownret
      */
-    void GetGrid(CVector3_f_ *, float, float, float);
+    void GetGrid(CVector3_f_ *grid_position, float x, float y, float z);
 
     /**
+     * Rebuilds the frame geometry used to draw the grid.
+     *
      * @mangled RemakeGrid__9CEditAreaFv
      * @address 0x16ECF0
      * @size 0x1E0
-     * @unknownret
      */
     void RemakeGrid(void);
 
     /**
+     * Copies the occupied-parts bounding box to the caller.
+     *
      * @mangled GetPartsBox__9CEditAreaFP7CBoxVu0
      * @address 0x16EED0
      * @size 0x30
-     * @unknownret
      */
-    void GetPartsBox(CBoxVu0 *);
+    void GetPartsBox(CBoxVu0 *box);
 
     /**
+     * Recomputes the occupied-parts bounding box.
+     *
      * @mangled MakePartsBox__9CEditAreaFv
      * @address 0x16EF00
      * @size 0x190
-     * @unknownret
      */
     void MakePartsBox(void);
 
     /**
+     * Returns whether a world position lies inside the editable area.
+     *
      * @mangled CheckArea__9CEditAreaFfff
      * @address 0x16F090
      * @size 0xB0
-     * @unknownret
      */
-    void CheckArea(float, float, float);
+    int CheckArea(float x, float y, float z);
 
     /**
+     * Returns whether a centered grid rectangle fits inside the area.
+     *
      * @mangled CheckAreaRect__9CEditAreaFfffii
      * @address 0x16F140
      * @size 0xC0
-     * @unknownret
      */
-    void CheckAreaRect(float, float, float, int, int);
+    int CheckAreaRect(float x, float y, float z, int width, int height);
 
     /**
+     * Returns whether a map part can occupy the requested world position.
+     *
      * @mangled CheckParts__9CEditAreaFP9CMapPartsfffi
      * @address 0x16F200
      * @size 0x460
-     * @unknownret
      */
-    void CheckParts(CMapParts *, float, float, float, int);
+    int CheckParts(CMapParts *parts, float x, float y, float z, int parts_extra);
 
     /**
+     * Collects collision polygons around one world position.
+     *
      * @mangled PickUpPoly__9CEditAreaFP6CCPolyfff
      * @address 0x16F660
      * @size 0xD0
-     * @unknownret
      */
-    void PickUpPoly(CCPoly *, float, float, float);
+    int PickUpPoly(CCPoly *polygons, float x, float y, float z);
 
     /**
+     * Collects collision polygons from one grid rectangle.
+     *
      * @mangled PickUpPoly__9CEditAreaFP6CCPoly8CRect_i_
      * @address 0x16F730
      * @size 0x340
-     * @unknownret
      */
-    void PickUpPoly(CCPoly *, CRect_i_);
+    int PickUpPoly(CCPoly *polygons, CRect_i_ rect);
 
     /**
+     * Collects collision polygons overlapping one world-space box.
+     *
      * @mangled PickUpPoly__9CEditAreaFP6CCPoly7CBoxVu0
      * @address 0x16FA70
      * @size 0xE0
-     * @unknownret
      */
-    void PickUpPoly(CCPoly *, CBoxVu0);
+    int PickUpPoly(CCPoly *polygons, CBoxVu0 box);
 
     /**
+     * Collects part identifiers from one grid rectangle.
+     *
      * @mangled GetPartsRect__9CEditAreaFR8CRect_i_Pii
      * @address 0x16FB50
      * @size 0x150
-     * @unknownret
      */
-    void GetPartsRect(CRect_i_ &, int *, int);
+    int GetPartsRect(CRect_i_ &rect, int *parts_ids, int capacity);
 
     /**
+     * Clears the river-chain traversal marks.
+     *
      * @mangled ChainWorkClear__9CEditAreaFv
      * @address 0x16FCA0
      * @size 0x60
-     * @unknownret
      */
     void ChainWorkClear(void);
 
     /**
+     * Returns whether two river cells belong to one connected chain.
+     *
      * @mangled CheckRiverChain__9CEditAreaFiiii
      * @address 0x16FD00
      * @size 0x1F0
-     * @unknownret
      */
-    void CheckRiverChain(int, int, int, int);
+    int CheckRiverChain(int start_x, int start_y, int target_x, int target_y);
 
     /**
+     * Updates and draws the editable grid overlay.
+     *
      * @mangled DrawGrid__9CEditAreaFv
      * @address 0x16FEF0
      * @size 0xD0
-     * @unknownret
      */
     void DrawGrid(void);
 
     /**
+     * Resets every active grid cell to its empty state.
+     *
      * @mangled Clear__9CEditAreaFv
      * @address 0x16FFC0
      * @size 0xA0
-     * @unknownret
      */
     void Clear(void);
 
     /**
+     * Initializes the editable area to an empty 16 by 16 grid.
+     *
      * @mangled Initialize__9CEditAreaFv
      * @address 0x170060
      * @size 0x80
-     * @unknownret
      */
     void Initialize(void);
 
     /**
+     * Selects the map number and area identifier represented by the grid.
+     *
      * @mangled SetMapInfo__9CEditAreaFii
      * @address 0x1700E0
      * @size 0x10
-     * @unknownret
      */
-    void SetMapInfo(int, int);
+    void SetMapInfo(int map_no, int area_id);
 
     /**
+     * Returns the selected map number.
+     *
      * @mangled GetMapNo__9CEditAreaFv
      * @address 0x1700F0
      * @size 0x10
-     * @unknownret
      */
-    void GetMapNo(void);
+    int GetMapNo(void);
 
     /**
+     * Returns the selected area identifier.
+     *
      * @mangled GetAreaID__9CEditAreaFv
      * @address 0x170100
      * @size 0x10
-     * @unknownret
      */
-    void GetAreaID(void);
+    int GetAreaID(void);
 
     /**
+     * Selects the frame used to render the grid overlay.
+     *
      * @mangled SetGridFrame__9CEditAreaFP9CFrameVu1
      * @address 0x170110
      * @size 0x10
-     * @unknownret
      */
-    void SetGridFrame(CFrameVu1 *);
+    void SetGridFrame(CFrameVu1 *frame);
 
     /**
+     * Returns the frame used to render the grid overlay.
+     *
      * @mangled GetGridFrame__9CEditAreaFv
      * @address 0x170120
      * @size 0x10
-     * @unknownret
      */
-    void GetGridFrame(void);
+    CFrameVu1 *GetGridFrame(void);
 
     /**
+     * Sets the world-space origin of the editable grid.
+     *
      * @mangled SetOffset__9CEditAreaFfff
      * @address 0x170130
      * @size 0x20
-     * @unknownret
      */
-    void SetOffset(float, float, float);
+    void SetOffset(float x, float y, float z);
 
     /**
+     * Copies the world-space grid origin to the caller.
+     *
      * @mangled GetOffset__9CEditAreaFPf
      * @address 0x170150
      * @size 0x20
-     * @unknownret
      */
-    void GetOffset(float *);
+    void GetOffset(float *offset);
 
     /**
+     * Returns the active grid width.
+     *
      * @mangled GetWidth__9CEditAreaFv
      * @address 0x170170
      * @size 0x10
-     * @unknownret
      */
-    void GetWidth(void);
+    int GetWidth(void);
 
     /**
+     * Returns the active grid height.
+     *
      * @mangled GetHeight__9CEditAreaFv
      * @address 0x170180
      * @size 0x10
-     * @unknownret
      */
-    void GetHeight(void);
+    int GetHeight(void);
 
     /**
+     * Adds an integral altitude delta to one grid coordinate.
+     *
      * @mangled AddAlt__9CEditAreaFiii
      * @address 0x170190
      * @size 0x70
-     * @unknownret
      */
-    void AddAlt(int, int, int);
+    void AddAlt(int x, int y, int altitude_delta);
 
     /**
+     * Returns one cell's horizontal world-space extent.
+     *
      * @mangled GetUnitSize__9CEditAreaFv
      * @address 0x170200
      * @size 0x10
-     * @unknownret
      */
-    void GetUnitSize(void);
+    float GetUnitSize(void);
 
     /**
+     * Returns one elevation unit's world-space extent.
+     *
      * @mangled GetUnitAlt__9CEditAreaFv
      * @address 0x170210
      * @size 0x10
-     * @unknownret
      */
-    void GetUnitAlt(void);
+    float GetUnitAlt(void);
 
     /**
+     * Constructs an initialized editable area.
+     *
      * @mangled __ct__9CEditAreaFv
      * @address 0x170220
      * @size 0x30
      */
     CEditArea(void);
 };
+
+STATIC_ASSERT(sizeof(CEditArea) == 0x2060);

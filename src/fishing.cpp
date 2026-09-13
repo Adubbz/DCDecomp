@@ -1,7 +1,11 @@
 #include "common.h"
 
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingLoad__FP14CDataAlloc2_1_i);
+INCLUDE_RODATA("asm/nonmatchings/fishing", @353__4);
+INCLUDE_RODATA("asm/nonmatchings/fishing", @354__2);
+INCLUDE_RODATA("asm/nonmatchings/fishing", @355__2);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingLoadFish__FiP14CDataAlloc2_1_i);
+INCLUDE_RODATA("asm/nonmatchings/fishing", @436__2);
 INCLUDE_ASM("asm/nonmatchings/fishing", __ct__5CFishFv);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingLoadEsa__FiP9CFrameVu1i);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingDeleteEsa__Fv);
@@ -19,6 +23,8 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishingFishStatus__FPi);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingBattleFish__Fi);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingFishKind__Fi);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingBattleToAngleFish__FPUiP14CDataAlloc2_1_);
+INCLUDE_RODATA("asm/nonmatchings/fishing", @578__3);
+INCLUDE_RODATA("asm/nonmatchings/fishing", @604);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingGetBattleFish__Fv);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingAngleFish__Fi);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingGetAngleFishSize__FPiPi);

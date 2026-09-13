@@ -5648,35 +5648,6 @@ glabel BtSetEventExtendTable__Fv
     /* 0E69C8 001E68C8 00000000 */   nop
     /* 0E69CC 001E68CC 00000000 */  nop
 
-glabel GetItemShopList__Fi
-    /* 0E69D0 001E68D0 80100400 */  sll        $2, $4, 2
-    /* 0E69D4 001E68D4 21104400 */  addu       $2, $2, $4
-    /* 0E69D8 001E68D8 C0180200 */  sll        $3, $2, 3
-    /* 0E69DC 001E68DC 2900023C */  lui        $2, %hi(ItemShopList2)
-    /* 0E69E0 001E68E0 20204224 */  addiu      $2, $2, %lo(ItemShopList2)
-    /* 0E69E4 001E68E4 21104300 */  addu       $2, $2, $3
-    /* 0E69E8 001E68E8 0800E003 */  jr         $31
-    /* 0E69EC 001E68EC 00000000 */   nop
-
-glabel InitShopItemListData__FP13SHOP_ITEMLIST
-    /* 0E69F0 001E68F0 F0FFBD27 */  addiu      $29, $29, -0x10
-    /* 0E69F4 001E68F4 0000BF7F */  sq         $31, 0x0($29)
-    /* 0E69F8 001E68F8 07008010 */  beqz       $4, .L001E6918
-    /* 0E69FC 001E68FC 00000000 */   nop
-    /* 0E6A00 001E6900 000080A4 */  sh         $0, 0x0($4)
-    /* 0E6A04 001E6904 04008424 */  addiu      $4, $4, 0x4
-    /* 0E6A08 001E6908 282E0070 */  paddub     $5, $0, $0
-    /* 0E6A0C 001E690C F8000624 */  addiu      $6, $0, 0xF8
-    /* 0E6A10 001E6910 5A0D040C */  jal        memset
-    /* 0E6A14 001E6914 00000000 */   nop
-  .L001E6918:
-    /* 0E6A18 001E6918 0000BF7B */  lq         $31, 0x0($29)
-    /* 0E6A1C 001E691C 1000BD27 */  addiu      $29, $29, 0x10
-    /* 0E6A20 001E6920 0800E003 */  jr         $31
-    /* 0E6A24 001E6924 00000000 */   nop
-    /* 0E6A28 001E6928 00000000 */  nop
-    /* 0E6A2C 001E692C 00000000 */  nop
-
 .section .rodata, "a"
 .align 3
 

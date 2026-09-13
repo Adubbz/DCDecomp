@@ -140,7 +140,6 @@ void MGGetAmbient(float *ambient);
  * @mangled MGSetAmbient__FPf
  * @address 0x12DD00
  * @size 0x2C
- * @unknownret
  */
 void MGSetAmbient(float *ambient);
 

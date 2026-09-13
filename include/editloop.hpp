@@ -458,6 +458,15 @@ int RunEvent(int event_no, CCamera *camera);
 void RunSystemEvent(int event_no, CCamera *camera);
 
 /**
+ * Writes the editor's part progress and clock back to the save data.
+ *
+ * @mangled EditSave__Fv
+ * @address 0x177BF0
+ * @size 0x84
+ */
+void EditSave();
+
+/**
  * Draws one textured rectangle rotated about a caller-supplied pivot.
  *
  * @mangled set2DSpriteRot__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_iifUc
