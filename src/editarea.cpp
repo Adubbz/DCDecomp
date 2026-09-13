@@ -8,17 +8,17 @@
 #include "rect.hpp"
 #include "vector3.hpp"
 
-void CEditArea::SetSize(s32 arg0, s32 arg1, float arg2, float arg3) {
-    this->width = arg0;
-    this->height = arg1;
-    this->unit_size = arg2;
-    this->unit_alt = arg3;
+void CEditArea::SetSize(s32 width_, s32 height_, float unit_size_, float unit_alt_) {
+    this->width = width_;
+    this->height = height_;
+    this->unit_size = unit_size_;
+    this->unit_alt = unit_alt_;
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", GetPos__9CEditAreaFP11CVector3_i_fff);
-void CEditArea::GetPos(CVector3_f_ *arg0, s32 arg1, s32 arg2, s32 arg3) {
-    arg0->x = this->offset_x + ((float) arg1 * this->unit_size);
-    arg0->y = this->offset_y + ((float) arg2 * this->unit_alt);
-    arg0->z = this->offset_z + ((float) arg3 * this->unit_size);
+void CEditArea::GetPos(CVector3_f_ *position, s32 x, s32 y, s32 z) {
+    position->x = this->offset_x + ((float) x * this->unit_size);
+    position->y = this->offset_y + ((float) y * this->unit_alt);
+    position->z = this->offset_z + ((float) z * this->unit_size);
 }
 void CEditArea::SetPartsNo(int x, int y, int parts_no_) {
     if (x < 0 || x >= width) {
@@ -118,8 +118,8 @@ INCLUDE_ASM("asm/nonmatchings/editarea", SearchPartsID__9CEditAreaFfff);
 INCLUDE_ASM("asm/nonmatchings/editarea", SearchPartsExtra__9CEditAreaFfff);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetGrid__9CEditAreaFP11CVector3_f_fff);
 INCLUDE_ASM("asm/nonmatchings/editarea", RemakeGrid__9CEditAreaFv);
-void CEditArea::GetPartsBox(CBoxVu0 *arg0) {
-    memcpy(arg0, &this->parts_box, 0x20U);
+void CEditArea::GetPartsBox(CBoxVu0 *box) {
+    memcpy(box, &this->parts_box, 0x20U);
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", MakePartsBox__9CEditAreaFv);
 int CEditArea::CheckArea(float x, float, float z) {
@@ -168,9 +168,9 @@ void CEditArea::Clear(void) {
     unk_2054 = 4;
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", Initialize__9CEditAreaFv);
-void CEditArea::SetMapInfo(s32 arg0, s32 arg1) {
-    this->map_no = arg0;
-    this->area_id = arg1;
+void CEditArea::SetMapInfo(s32 map_no_, s32 area_id_) {
+    this->map_no = map_no_;
+    this->area_id = area_id_;
 }
 int CEditArea::GetMapNo() {
     return this->map_no;
@@ -178,16 +178,16 @@ int CEditArea::GetMapNo() {
 int CEditArea::GetAreaID() {
     return this->area_id;
 }
-void CEditArea::SetGridFrame(CFrameVu1 *arg0) {
-    this->grid_frame = arg0;
+void CEditArea::SetGridFrame(CFrameVu1 *frame) {
+    this->grid_frame = frame;
 }
-CFrameVu1 * CEditArea::GetGridFrame() {
+CFrameVu1 *CEditArea::GetGridFrame() {
     return this->grid_frame;
 }
-void CEditArea::SetOffset(float arg0, float arg1, float arg2) {
-    this->offset_x = arg0;
-    this->offset_y = arg1;
-    this->offset_z = arg2;
+void CEditArea::SetOffset(float x, float y, float z) {
+    this->offset_x = x;
+    this->offset_y = y;
+    this->offset_z = z;
 }
 void CEditArea::GetOffset(float *offset) {
     offset[0] = offset_x;
