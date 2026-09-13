@@ -1,11 +1,11 @@
 #pragma once
 
 #include "common.h"
+#include "collision.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
-class CBoxVu0;
 class CCPoly;
 class CFrameVu1;
 class CMapParts;
@@ -13,8 +13,45 @@ class CRect_i_;
 class CVector3_f_;
 class CVector3_i_;
 
+/**
+ * Stores the map-part and elevation state for one editable grid cell.
+ */
+class CEditAreaCell {
+public:
+    int parts_no;    /**< Selects the map-part instance occupying the cell. */
+    int altitude;    /**< Stores the cell height in vertical grid units. */
+    int unk_08;
+    int parts_id;    /**< Identifies the map-part definition occupying the cell. */
+    int code;        /**< Stores the map-part geometry code for the cell. */
+    int parts_extra; /**< Stores the area-specific map-part attribute. */
+    int unk_18;
+};
+
+STATIC_ASSERT(sizeof(CEditAreaCell) == 0x1C);
+
+/**
+ * Maintains the editable map grid and its world-space dimensions.
+ */
 class CEditArea {
 public:
+    int area_id;                 /**< Selects the area's special grid rules. */
+    int map_no;                  /**< Identifies the map represented by the grid. */
+    int width;                   /**< Gives the active grid width in cells. */
+    int height;                  /**< Gives the active grid height in cells. */
+    float offset_x;              /**< Gives the grid origin on the world X axis. */
+    float offset_y;              /**< Gives the grid origin on the world Y axis. */
+    float offset_z;              /**< Gives the grid origin on the world Z axis. */
+    int unk_1c;
+    float unit_size;             /**< Gives one cell's horizontal world-space extent. */
+    float unit_alt;              /**< Gives one elevation unit's world-space extent. */
+    CEditAreaCell grid[16][16];  /**< Stores the editable cells in grid coordinates. */
+    int chain_work[16][16];      /**< Marks cells visited while following river chains. */
+    CFrameVu1 *grid_frame;       /**< Holds the frame used to render the grid overlay. */
+    int unk_202c;
+    CBoxVu0 parts_box;           /**< Bounds all occupied cells in world space. */
+    int unk_2050;
+    int unk_2054;
+
     /**
      * @mangled SetSize__9CEditAreaFiiff
      * @address 0x16D860
@@ -365,3 +402,5 @@ public:
      */
     CEditArea(void);
 };
+
+STATIC_ASSERT(sizeof(CEditArea) == 0x2060);
