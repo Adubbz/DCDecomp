@@ -654,7 +654,11 @@ INCLUDE_ASM("asm/nonmatchings/dataread", CommandFRAME__FPPv);
 static void CommandNORMAL(void **argv) {
     pCloth->normal_scale = *(float *) argv[0];
 }
-INCLUDE_ASM("asm/nonmatchings/dataread", CommandFOLLOW__FPPv);
+static void CommandFOLLOW(void **argv) {
+    pCloth->follow[0] = *(float *) argv[0];
+    pCloth->follow[1] = *(float *) argv[1];
+    pCloth->follow[2] = *(float *) argv[2];
+}
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandK__FPPv);
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandWINDEFFECT__FPPv);
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandGRAVITY__FPPv);
