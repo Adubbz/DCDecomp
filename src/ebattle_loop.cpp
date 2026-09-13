@@ -47,6 +47,9 @@ extern int fishing_mes;
 /** Horizontal editor camera angle. */
 extern float viewAngleH;
 
+/** Vertical editor camera angle. */
+extern float viewAngleV;
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBInitIntro__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBSetMotion__FP10CCharacterPi);
 void EBDebug(int mode) {
@@ -195,7 +198,9 @@ int EdCheckViewMode() {
 float EdAGetViewAngleH() {
     return viewAngleH;
 }
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdAGetViewAngleV__Fv);
+float EdAGetViewAngleV() {
+    return viewAngleV;
+}
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdASetViewAngle__Fff);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdMoveChara__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdInitHashigo__FP13ED_EVENT_INFOP14ED_EVENT_PARAM);
