@@ -12,7 +12,19 @@ CMapObject *CMap::SetObject(int index, CFrameVu1 *frame, int category_no, int ha
     map_object->SetFrame(frame, 0);
     return map_object;
 }
-INCLUDE_ASM("asm/nonmatchings/map", SetObject__4CMapFP9CFrameVu1ii);
+CMapObject *CMap::SetObject(CFrameVu1 *frame, int category_no, int handle) {
+    int index;
+
+    for (index = 0; index < 10; index++) {
+        if (object[index].unk_0E8 < 0) {
+            break;
+        }
+    }
+    if (index == 10) {
+        return NULL;
+    }
+    return SetObject(index, frame, category_no, handle);
+}
 
 CMapObject *CMap::GetObject(int index) {
     if (index >= 10 || index < 0) {
