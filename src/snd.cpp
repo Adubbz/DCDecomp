@@ -72,6 +72,9 @@ extern int basic_se_table_no;
 /** The chapter sound-effect set that is loaded, or -1 for none. */
 extern int se_table_no;
 
+/** Nonzero keeps the background music from starting. */
+extern int bgm_off;
+
 /** The sound-effect set that is loaded, or -1 for none. */
 extern int now_sound_set;
 
@@ -228,7 +231,14 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndBgmInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmLoad__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmLoadBG__FiPUiPi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmSyncBG__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmPlay__Fi);
+
+void SndBgmPlay(int track_no) {
+    if (bgm_off == 0 && now_bgm_no >= 0 && now_bgm_play != 1) {
+        CSnd.SQ_Play(0, track_no);
+        now_bgm_vol = SndGetDefaultBgmVol();
+        now_bgm_play = 1;
+    }
+}
 
 void SndBgmStop() {
     if (now_bgm_no >= 0 && now_bgm_play != 0) {
