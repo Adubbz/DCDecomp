@@ -110,12 +110,13 @@ public:
     void Enable(int);
 
     /**
+     * Stops one animation group and resets its playback position.
+     *
      * @mangled Disable__13CTextureAnimeFi
      * @address 0x167B80
      * @size 0x40
-     * @unknownret
      */
-    void Disable(int);
+    void Disable(int group);
 
     /**
      * @mangled LoadCFGFile__13CTextureAnimeFPci

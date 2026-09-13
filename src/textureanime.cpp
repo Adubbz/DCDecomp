@@ -25,5 +25,12 @@ INCLUDE_ASM("asm/nonmatchings/textureanime", NewTexAnimeGroupData__13CTextureAni
 INCLUDE_ASM("asm/nonmatchings/textureanime", EnterTexAnime__13CTextureAnimeFP13CTexAnimeData);
 INCLUDE_ASM("asm/nonmatchings/textureanime", DisableAll__13CTextureAnimeFv);
 INCLUDE_ASM("asm/nonmatchings/textureanime", Enable__13CTextureAnimeFi);
-INCLUDE_ASM("asm/nonmatchings/textureanime", Disable__13CTextureAnimeFi);
+void CTextureAnime::Disable(int group) {
+    if (group < 0 || group >= 24) {
+        return;
+    }
+    enabled[group] = 0;
+    current[group] = first[group];
+    frame[group] = 0;
+}
 INCLUDE_ASM("asm/nonmatchings/textureanime", LoadCFGFile__13CTextureAnimeFPci);
