@@ -27,7 +27,7 @@ typedef struct {
 /**
  * Stores the DMA-controller environment exchanged with the SDK.
  */
-typedef struct {
+typedef struct sceDmaEnv {
     u_char sts; /**< Source-channel stall-control state. */
     u_char std; /**< Destination-channel stall-control state. */
     u_char mbs; /**< Source memory-bus state. */
