@@ -43,7 +43,23 @@ ACT_SEQ *CActionSeq::GetNextSeq() {
     return NULL;
 }
 INCLUDE_ASM("asm/nonmatchings/actionseq", SyncChara__10CActionSeqFP10CCharacter);
-INCLUDE_ASM("asm/nonmatchings/actionseq", NextMoveSeq__10CActionSeqFv);
+
+ACT_SEQ *CActionSeq::NextMoveSeq() {
+    ACT_SEQ *sequence = GetNextSeq();
+    if (sequence == NULL) {
+        return NULL;
+    }
+    if (move_tail != NULL) {
+        move_tail->next = sequence;
+    }
+    move_tail = sequence;
+    sequence->next = NULL;
+    if (move_head == NULL) {
+        move_head = sequence;
+    }
+    return sequence;
+}
+
 INCLUDE_ASM("asm/nonmatchings/actionseq", NextMotionSeq__10CActionSeqFv);
 INCLUDE_ASM("asm/nonmatchings/actionseq", NextAnimeSeq__10CActionSeqFv);
 INCLUDE_ASM("asm/nonmatchings/actionseq", MoveSeq__10CActionSeqFPfi);
