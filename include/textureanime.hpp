@@ -102,12 +102,13 @@ public:
     void DisableAll(void);
 
     /**
+     * Enables playback of one animation group.
+     *
      * @mangled Enable__13CTextureAnimeFi
      * @address 0x167B40
      * @size 0x40
-     * @unknownret
      */
-    void Enable(int);
+    void Enable(int group);
 
     /**
      * Stops one animation group and resets its playback position.

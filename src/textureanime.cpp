@@ -24,7 +24,12 @@ INCLUDE_ASM("asm/nonmatchings/textureanime", NewTexAnimeData__13CTextureAnimeFv)
 INCLUDE_ASM("asm/nonmatchings/textureanime", NewTexAnimeGroupData__13CTextureAnimeFi);
 INCLUDE_ASM("asm/nonmatchings/textureanime", EnterTexAnime__13CTextureAnimeFP13CTexAnimeData);
 INCLUDE_ASM("asm/nonmatchings/textureanime", DisableAll__13CTextureAnimeFv);
-INCLUDE_ASM("asm/nonmatchings/textureanime", Enable__13CTextureAnimeFi);
+void CTextureAnime::Enable(int group) {
+    if (group < 0 || group >= 24) {
+        return;
+    }
+    enabled[group] = 1;
+}
 void CTextureAnime::Disable(int group) {
     if (group < 0 || group >= 24) {
         return;
