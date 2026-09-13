@@ -11,7 +11,16 @@ INCLUDE_ASM("asm/nonmatchings/shot_effect", step__5CSHOTFv);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Draw__12CSHOT_EFFECTFv);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Step__12CSHOT_EFFECTFv);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", EndEffect__12CSHOT_EFFECTFv);
-INCLUDE_ASM("asm/nonmatchings/shot_effect", OffEffect__12CSHOT_EFFECTFi);
+void CSHOT_EFFECT::OffEffect(s32 slot) {
+    if (slot != -1) {
+        unk_A000[slot] = 0;
+        return;
+    }
+
+    for (s32 i = 0; i < 8; i++) {
+        unk_A000[i] = 0;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Entry__12CSHOT_EFFECTFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i);
 INCLUDE_RODATA("asm/nonmatchings/shot_effect", @899);
 INCLUDE_RODATA("asm/nonmatchings/shot_effect", @900);
