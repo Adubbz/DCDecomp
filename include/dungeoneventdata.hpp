@@ -17,7 +17,7 @@ public:
     s32 fade;      /**< 1 where the event fades the picture out before it runs. */
     s32 unk_28;
     s32 chara_no; /**< Character that has to start the event, or -1 for any. */
-    u8 unk_30[0x4];
+    s32 unk_30;
     s32 unk_34;
     s32 unk_38; /**< Passed on as the memory the script runs out of. */
     u8 unk_3C[0x4];

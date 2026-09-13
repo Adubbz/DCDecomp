@@ -1,5 +1,9 @@
 #include "dungeoneventman.hpp"
 
+#include "collisiondata.hpp"
+#include "dun/gameloop.hpp"
+#include "mathutil.hpp"
+
 DUNGEON_EVENT_SLOT *CDungeonEventMan::SearchPartsID(int index, int parts_id) {
     int slot_parts_id;
 
