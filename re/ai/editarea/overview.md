@@ -38,9 +38,11 @@ preserve the result of their corresponding integer-coordinate call. The
 three `PickUpPoly` overloads return an integer count through `$v0`.
 `DeleteMapParts` returns zero for a negative part index and one after a
 successful pass. `SetRiverParts` and `SetRoadParts` return their encoded
-connection value. These observations justify removing `@unknownret` from
-the unit's declarations; routines that neither set nor preserve a result are
-declared `void`.
+connection value. These observations, together with caller sites that do not
+consume a result and each routine's setter, copier, clearing, initialization,
+or drawing purpose, justify the `void` declarations. A routine's failure to
+set or preserve a return register is only supporting evidence and is not, by
+itself, sufficient to establish a `void` return contract.
 
 ## Matched behavior
 

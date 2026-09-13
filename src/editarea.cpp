@@ -8,11 +8,11 @@
 #include "rect.hpp"
 #include "vector3.hpp"
 
-void CEditArea::SetSize(s32 width_, s32 height_, float unit_size_, float unit_alt_) {
-    this->width = width_;
-    this->height = height_;
-    this->unit_size = unit_size_;
-    this->unit_alt = unit_alt_;
+void CEditArea::SetSize(s32 width, s32 height, float unit_size, float unit_alt) {
+    this->width = width;
+    this->height = height;
+    this->unit_size = unit_size;
+    this->unit_alt = unit_alt;
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", GetPos__9CEditAreaFP11CVector3_i_fff);
 
@@ -22,44 +22,44 @@ void CEditArea::GetPos(CVector3_f_ *position, s32 x, s32 y, s32 z) {
     position->z = this->offset_z + ((float) z * this->unit_size);
 }
 
-void CEditArea::SetPartsNo(int x, int y, int parts_no_) {
+void CEditArea::SetPartsNo(int x, int y, int parts_no) {
     if (x < 0 || x >= width) {
         return;
     }
     if (y < 0 || y >= height) {
         return;
     }
-    grid[x][y].parts_no = parts_no_;
+    grid[x][y].parts_no = parts_no;
 }
 
-void CEditArea::SetPartsID(int x, int y, int parts_id_) {
+void CEditArea::SetPartsID(int x, int y, int parts_id) {
     if (x < 0 || x >= width) {
         return;
     }
     if (y < 0 || y >= height) {
         return;
     }
-    grid[x][y].parts_id = parts_id_;
+    grid[x][y].parts_id = parts_id;
 }
 
-void CEditArea::SetPartsExtra(int x, int y, int parts_extra_) {
+void CEditArea::SetPartsExtra(int x, int y, int parts_extra) {
     if (x < 0 || x >= width) {
         return;
     }
     if (y < 0 || y >= height) {
         return;
     }
-    grid[x][y].parts_extra = parts_extra_;
+    grid[x][y].parts_extra = parts_extra;
 }
 
-void CEditArea::SetCode(int x, int y, int code_) {
+void CEditArea::SetCode(int x, int y, int code) {
     if (x < 0 || x >= width) {
         return;
     }
     if (y < 0 || y >= height) {
         return;
     }
-    grid[x][y].code = code_;
+    grid[x][y].code = code;
 }
 
 int CEditArea::GetPartsID(int x, int y) {
@@ -82,20 +82,20 @@ int CEditArea::GetCode(int x, int y) {
     return grid[x][y].code;
 }
 
-void CEditArea::SetAlt(int x, int y, int altitude_) {
+void CEditArea::SetAlt(int x, int y, int altitude) {
     if (x < 0 || x >= width) {
         return;
     }
     if (y < 0 || y >= height) {
         return;
     }
-    if (altitude_ < 0) {
-        altitude_ = 0;
+    if (altitude < 0) {
+        altitude = 0;
     }
-    if (altitude_ >= 128) {
-        altitude_ = 127;
+    if (altitude >= 128) {
+        altitude = 127;
     }
-    grid[x][y].altitude = altitude_;
+    grid[x][y].altitude = altitude;
 }
 
 int CEditArea::GetAlt_i(int x, int y) {
@@ -130,7 +130,7 @@ INCLUDE_ASM("asm/nonmatchings/editarea", GetGrid__9CEditAreaFP11CVector3_f_fff);
 INCLUDE_ASM("asm/nonmatchings/editarea", RemakeGrid__9CEditAreaFv);
 
 void CEditArea::GetPartsBox(CBoxVu0 *box) {
-    memcpy(box, &this->parts_box, 0x20U);
+    memcpy(box, &this->parts_box, sizeof(CBoxVu0));
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", MakePartsBox__9CEditAreaFv);
 
@@ -183,9 +183,9 @@ void CEditArea::Clear(void) {
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", Initialize__9CEditAreaFv);
 
-void CEditArea::SetMapInfo(s32 map_no_, s32 area_id_) {
-    this->map_no = map_no_;
-    this->area_id = area_id_;
+void CEditArea::SetMapInfo(s32 map_no, s32 area_id) {
+    this->map_no = map_no;
+    this->area_id = area_id;
 }
 
 int CEditArea::GetMapNo() {
@@ -224,8 +224,8 @@ int CEditArea::GetHeight() {
     return this->height;
 }
 
-void CEditArea::AddAlt(int x, int y, int altitude_) {
-    SetAlt(x, y, GetAlt_i(x, y) + altitude_);
+void CEditArea::AddAlt(int x, int y, int altitude_delta) {
+    SetAlt(x, y, GetAlt_i(x, y) + altitude_delta);
 }
 
 float CEditArea::GetUnitSize() {

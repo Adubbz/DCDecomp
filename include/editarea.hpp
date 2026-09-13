@@ -60,7 +60,7 @@ public:
      * @address 0x16D860
      * @size 0x20
      */
-    void SetSize(int, int, float, float);
+    void SetSize(int width, int height, float unit_size, float unit_alt);
 
     /**
      * Converts a world-space position to integral grid coordinates.
@@ -69,7 +69,7 @@ public:
      * @address 0x16D880
      * @size 0xA0
      */
-    void GetPos(CVector3_i_ *, float, float, float);
+    void GetPos(CVector3_i_ *position, float x, float y, float z);
 
     /**
      * Converts grid coordinates to a world-space position.
@@ -78,7 +78,7 @@ public:
      * @address 0x16D920
      * @size 0x70
      */
-    void GetPos(CVector3_f_ *, int, int, int);
+    void GetPos(CVector3_f_ *position, int x, int y, int z);
 
     /**
      * Sets the map-part number stored at one grid coordinate.
@@ -87,7 +87,7 @@ public:
      * @address 0x16D990
      * @size 0x70
      */
-    void SetPartsNo(int, int, int);
+    void SetPartsNo(int x, int y, int parts_no);
 
     /**
      * Sets the map-part identifier stored at one grid coordinate.
@@ -96,7 +96,7 @@ public:
      * @address 0x16DA00
      * @size 0x70
      */
-    void SetPartsID(int, int, int);
+    void SetPartsID(int x, int y, int parts_id);
 
     /**
      * Sets the area-specific part attribute at one grid coordinate.
@@ -105,7 +105,7 @@ public:
      * @address 0x16DA70
      * @size 0x70
      */
-    void SetPartsExtra(int, int, int);
+    void SetPartsExtra(int x, int y, int parts_extra);
 
     /**
      * Sets the geometry code stored at one grid coordinate.
@@ -114,7 +114,7 @@ public:
      * @address 0x16DAE0
      * @size 0x70
      */
-    void SetCode(int, int, int);
+    void SetCode(int x, int y, int code);
 
     /**
      * Returns the map-part identifier at one grid coordinate.
@@ -123,7 +123,7 @@ public:
      * @address 0x16DB50
      * @size 0x80
      */
-    int GetPartsID(int, int);
+    int GetPartsID(int x, int y);
 
     /**
      * Returns the geometry code at one grid coordinate.
@@ -132,7 +132,7 @@ public:
      * @address 0x16DBD0
      * @size 0x80
      */
-    int GetCode(int, int);
+    int GetCode(int x, int y);
 
     /**
      * Sets a clamped integral altitude at one grid coordinate.
@@ -141,7 +141,7 @@ public:
      * @address 0x16DC50
      * @size 0x90
      */
-    void SetAlt(int, int, int);
+    void SetAlt(int x, int y, int altitude);
 
     /**
      * Returns the integral altitude at one grid coordinate.
@@ -150,7 +150,7 @@ public:
      * @address 0x16DCE0
      * @size 0x80
      */
-    int GetAlt_i(int, int);
+    int GetAlt_i(int x, int y);
 
     /**
      * Returns the world-space altitude at one grid coordinate.
@@ -159,7 +159,7 @@ public:
      * @address 0x16DD60
      * @size 0x90
      */
-    float GetAlt(int, int);
+    float GetAlt(int x, int y);
 
     /**
      * Returns the world-space altitude at one world position.
@@ -168,7 +168,7 @@ public:
      * @address 0x16DDF0
      * @size 0x50
      */
-    float GetAlt(float, float, float);
+    float GetAlt(float x, float y, float z);
 
     /**
      * Returns the integral altitude at one world position.
@@ -177,7 +177,7 @@ public:
      * @address 0x16DE40
      * @size 0x50
      */
-    int GetAlt_i(float, float, float);
+    int GetAlt_i(float x, float y, float z);
 
     /**
      * Returns the area-specific part attribute at one grid coordinate.
@@ -186,7 +186,7 @@ public:
      * @address 0x16DE90
      * @size 0x180
      */
-    int GetPartsExtra(int, int);
+    int GetPartsExtra(int x, int y);
 
     /**
      * Projects one map part into the editable grid.
@@ -195,7 +195,7 @@ public:
      * @address 0x16E010
      * @size 0x200
      */
-    void SetMapParts(int, CMapParts *, float, float, float, int);
+    void SetMapParts(int parts_no, CMapParts *parts, float x, float y, float z, int parts_extra);
 
     /**
      * Removes one map part from the editable grid.
@@ -204,7 +204,7 @@ public:
      * @address 0x16E210
      * @size 0x260
      */
-    int DeleteMapParts(int, CMapParts *, float, float, float);
+    int DeleteMapParts(int parts_no, CMapParts *parts, float x, float y, float z);
 
     /**
      * Determines the river connection code at one grid coordinate.
@@ -213,7 +213,7 @@ public:
      * @address 0x16E470
      * @size 0x440
      */
-    int SetRiverParts(int, int);
+    int SetRiverParts(int x, int y);
 
     /**
      * Determines the road connection code at one grid coordinate.
@@ -222,7 +222,7 @@ public:
      * @address 0x16E8B0
      * @size 0x330
      */
-    int SetRoadParts(int, int);
+    int SetRoadParts(int x, int y);
 
     /**
      * Returns the map-part identifier at one world position.
@@ -231,7 +231,7 @@ public:
      * @address 0x16EBE0
      * @size 0x60
      */
-    int SearchPartsID(float, float, float);
+    int SearchPartsID(float x, float y, float z);
 
     /**
      * Returns the area-specific part attribute at one world position.
@@ -240,7 +240,7 @@ public:
      * @address 0x16EC40
      * @size 0x50
      */
-    int SearchPartsExtra(float, float, float);
+    int SearchPartsExtra(float x, float y, float z);
 
     /**
      * Returns floating grid coordinates for one world position.
@@ -249,7 +249,7 @@ public:
      * @address 0x16EC90
      * @size 0x60
      */
-    void GetGrid(CVector3_f_ *, float, float, float);
+    void GetGrid(CVector3_f_ *grid_position, float x, float y, float z);
 
     /**
      * Rebuilds the frame geometry used to draw the grid.
@@ -267,7 +267,7 @@ public:
      * @address 0x16EED0
      * @size 0x30
      */
-    void GetPartsBox(CBoxVu0 *);
+    void GetPartsBox(CBoxVu0 *box);
 
     /**
      * Recomputes the occupied-parts bounding box.
@@ -285,7 +285,7 @@ public:
      * @address 0x16F090
      * @size 0xB0
      */
-    int CheckArea(float, float, float);
+    int CheckArea(float x, float y, float z);
 
     /**
      * Returns whether a centered grid rectangle fits inside the area.
@@ -294,7 +294,7 @@ public:
      * @address 0x16F140
      * @size 0xC0
      */
-    int CheckAreaRect(float, float, float, int, int);
+    int CheckAreaRect(float x, float y, float z, int width, int height);
 
     /**
      * Returns whether a map part can occupy the requested world position.
@@ -303,7 +303,7 @@ public:
      * @address 0x16F200
      * @size 0x460
      */
-    int CheckParts(CMapParts *, float, float, float, int);
+    int CheckParts(CMapParts *parts, float x, float y, float z, int parts_extra);
 
     /**
      * Collects collision polygons around one world position.
@@ -312,7 +312,7 @@ public:
      * @address 0x16F660
      * @size 0xD0
      */
-    int PickUpPoly(CCPoly *, float, float, float);
+    int PickUpPoly(CCPoly *polygons, float x, float y, float z);
 
     /**
      * Collects collision polygons from one grid rectangle.
@@ -321,7 +321,7 @@ public:
      * @address 0x16F730
      * @size 0x340
      */
-    int PickUpPoly(CCPoly *, CRect_i_);
+    int PickUpPoly(CCPoly *polygons, CRect_i_ rect);
 
     /**
      * Collects collision polygons overlapping one world-space box.
@@ -330,7 +330,7 @@ public:
      * @address 0x16FA70
      * @size 0xE0
      */
-    int PickUpPoly(CCPoly *, CBoxVu0);
+    int PickUpPoly(CCPoly *polygons, CBoxVu0 box);
 
     /**
      * Collects part identifiers from one grid rectangle.
@@ -339,7 +339,7 @@ public:
      * @address 0x16FB50
      * @size 0x150
      */
-    int GetPartsRect(CRect_i_ &, int *, int);
+    int GetPartsRect(CRect_i_ &rect, int *parts_ids, int capacity);
 
     /**
      * Clears the river-chain traversal marks.
@@ -357,7 +357,7 @@ public:
      * @address 0x16FD00
      * @size 0x1F0
      */
-    int CheckRiverChain(int, int, int, int);
+    int CheckRiverChain(int start_x, int start_y, int target_x, int target_y);
 
     /**
      * Updates and draws the editable grid overlay.
@@ -393,7 +393,7 @@ public:
      * @address 0x1700E0
      * @size 0x10
      */
-    void SetMapInfo(int, int);
+    void SetMapInfo(int map_no, int area_id);
 
     /**
      * Returns the selected map number.
@@ -420,7 +420,7 @@ public:
      * @address 0x170110
      * @size 0x10
      */
-    void SetGridFrame(CFrameVu1 *);
+    void SetGridFrame(CFrameVu1 *frame);
 
     /**
      * Returns the frame used to render the grid overlay.
@@ -438,7 +438,7 @@ public:
      * @address 0x170130
      * @size 0x20
      */
-    void SetOffset(float, float, float);
+    void SetOffset(float x, float y, float z);
 
     /**
      * Copies the world-space grid origin to the caller.
@@ -447,7 +447,7 @@ public:
      * @address 0x170150
      * @size 0x20
      */
-    void GetOffset(float *);
+    void GetOffset(float *offset);
 
     /**
      * Returns the active grid width.
@@ -474,7 +474,7 @@ public:
      * @address 0x170190
      * @size 0x70
      */
-    void AddAlt(int, int, int);
+    void AddAlt(int x, int y, int altitude_delta);
 
     /**
      * Returns one cell's horizontal world-space extent.
