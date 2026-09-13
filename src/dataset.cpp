@@ -18,6 +18,7 @@
 #include "mathutil.hpp"
 #include "mds.hpp"
 #include "mdt.hpp"
+#include "mglib.hpp"
 #include "visual.hpp"
 
 void CCollisionMDT::Initialize(void) {
@@ -25,8 +26,6 @@ void CCollisionMDT::Initialize(void) {
     mesh = 0;
     num = 0;
 }
-
-INCLUDE_RODATA("asm/nonmatchings/dataset", @199);
 
 /** Embedded arena that supplies storage to the scene allocators. */
 extern CDataAlloc<1, 1690000> GlobalDataBuffer;
@@ -36,6 +35,12 @@ extern CDataAlloc2<1> WaterData;
 extern CDataAlloc2<1> ActiveData0;
 /** Second bank used for active scene data. */
 extern CDataAlloc2<1> ActiveData1;
+/** Buffer filled by synchronous game-data reads. */
+extern u_int *read_buffer;
+/** Scratch allocator used while loading and transforming data. */
+extern "C" CDataAlloc2<1> *WorkBuffer__2;
+/** Backing object for the shared scratch allocator. */
+extern CDataAlloc2<1> workbuffer;
 
 void InitializeDataBuffer(void) {
     GlobalDataBuffer.used = 0;
@@ -70,7 +75,22 @@ void InitializeDataBuffer(void) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/dataset", SetDataBuffer__FP14CDataAlloc2_1_i);
-INCLUDE_ASM("asm/nonmatchings/dataset", SetPacketReadBuffer__Fii);
+
+void SetPacketReadBuffer(int packet_quads, int read_quads) {
+    u_long128 *buffer0;
+    u_long128 *buffer1;
+
+    read_buffer = (u_int *) GlobalDataBuffer.Alloc64(read_quads);
+    buffer0 = (u_long128 *) GlobalDataBuffer.Alloc64(packet_quads);
+    buffer1 = (u_long128 *) GlobalDataBuffer.Alloc64(packet_quads);
+    MGInitVif1Packet(buffer0, buffer1);
+    workbuffer.base = GlobalDataBuffer.Alloc64(2048);
+    workbuffer.limit = 2048;
+    WorkBuffer__2 = &workbuffer;
+    WorkBuffer__2->used = 0;
+    printf("%d/%d\n", GlobalDataBuffer.used, 1690000);
+}
+
 INCLUDE_ASM("asm/nonmatchings/dataset", BufferAllClear__Fv);
 
 static int htoi(char *s) {
