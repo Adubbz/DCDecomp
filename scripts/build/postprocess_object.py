@@ -187,10 +187,10 @@ def export_constants(path, names, parser, assembly_constants=(),
         name: elf.sections[symbol.st_shndx].data
         for name, symbol in compiled_symbols.items()
     }
-    # A configured symbol rename may already have assigned one compiled
+    # A configured symbol rename or INCLUDE_RODATA may already have assigned a
     # constant its retail name. Reserve such constants so an identical byte
     # sequence cannot also satisfy a later content-based export.
-    reserved = set(reserved_constants) & defined
+    reserved = (set(reserved_constants) | set(assembly_constants)) & defined
     arguments = []
     padded = False
     for name in names:

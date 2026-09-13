@@ -8,6 +8,15 @@
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 struct RS_STACKDATA;
+class CFrame;
+class CCharacter;
+
+/** References one frame or character exposed by the battle script system. */
+struct BT_OBJ_HANDLE {
+    CFrame *frame;         /**< Frame referenced when type is zero. */
+    CCharacter *character; /**< Character referenced when type is one. */
+    s32 type;              /**< Selects whether the handle contains a frame or character. */
+};
 
 /**
  * @mangled BtSystemScriptEventInfoInit__Fv
@@ -23,7 +32,7 @@ void BtSystemScriptEventInfoInit(void);
  * @size 0x60
  * @unknownret
  */
-void GetObjHDL(int);
+BT_OBJ_HANDLE *GetObjHDL(int index);
 
 /**
  * @mangled BtSystemScriptLoad__Fi

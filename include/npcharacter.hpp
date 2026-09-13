@@ -12,13 +12,19 @@ class CCPoly;
 class CNPCharacter {
 public:
     CCharacter chara; /**< The character that the walker draws and moves with. */
-    u8 unk_11B0[0x294];
+    s32 unk_11B0;
+    u8 unk_11B4[0x28C];
+    s32 map_parts_no; /**< Edited-map part associated with the villager, or a negative value. */
     s32 villager_id; /**< Villager-table identifier represented by this event NPC. */
-    u8 unk_1448[0x2C];
-    s32 unk_1474;
+    char resource_name[0x20]; /**< Resource name of the model loaded for the villager. */
+    s32 unk_1468;
+    s32 initialized; /**< Whether the villager model has been initialized for use. */
+    s32 draw_enabled; /**< Whether the villager model participates in drawing and movement. */
+    s32 near_camera; /**< Whether proximity to the camera requests this villager's full update. */
     u8 unk_1478[0x4];
     s32 event_status; /**< Status value exposed to an event script for the talking NPC. */
-    u8 unk_1480[0x8];
+    s32 unk_1480;
+    s32 sequence_state;
     s32 unk_1488;
     s32 unk_148C; /**< Texture set that the walker's model animates with. */
     s32 recurring_talk_event; /**< Event number used for repeated conversations with this villager. */
@@ -78,7 +84,7 @@ public:
      * @size 0x20
      * @unknownret
      */
-    void CheckSeq(void);
+    int CheckSeq(void);
 
     /**
      * @mangled GetNextSeq__12CNPCharacterFv

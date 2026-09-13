@@ -2210,7 +2210,7 @@ void MainDraw(void) {
     sceGsTex0 water_tex;
     int i;
 
-    EdEventInfo.unk_050 = 0;
+    EdEventInfo.main_texture_animation = NULL;
     NowCamera__3->GetPos(eye);
     NowCamera__3->GetCameraMatrix(camera);
     sceVu0UnitMatrix(unit);

@@ -390,7 +390,17 @@
       "@690__2",
       "@475__2",
       "@2242",
-      "@554"
+      "@554",
+      "@853",
+      "@728__3",
+      "@1026",
+      "@1038",
+      "@1424",
+      "@2236",
+      "@2237",
+      "@2246",
+      "@2288",
+      "@2289"
     ],
     "sections": {
       ".fadebss": [
@@ -422,10 +432,45 @@
       ".fishinglineorigin": [
         "fishing_line_origin"
       ],
+      ".extfuncinfo": [
+        "ext_func_info"
+      ],
+      ".eddata1": [
+        "@521"
+      ],
+      ".eddata2": [
+        "@851",
+        "@867"
+      ],
+      ".eddata3": [
+        "@1126"
+      ],
+      ".eddata4": [
+        "@2064"
+      ],
+      ".eddata5": [
+        "@2384"
+      ],
+      ".eddata6": [
+        "@2497",
+        "talk_camera_ref",
+        "@2892",
+        "@2893",
+        "@2901",
+        "@2915",
+        "@3148"
+      ],
       ".edbuffers": [
         "EdVillagerBuffer",
         "EdEventBuffer",
         "EdEventExBuffer"
+      ],
+      ".edexchangebss": [
+        "EdExchangeInfo"
+      ],
+      ".edvillagerbss": [
+        "EdVillager",
+        "EdVillagerInfo"
       ]
     },
     "drop_functions": [

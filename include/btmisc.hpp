@@ -41,8 +41,8 @@ CFrame *LoadCollisionFile(unsigned int *data, CDataAlloc2<1> *buffer);
  * @address 0x1262B0
  * @size 0x4BC
  */
-CFrame *LoadMDSFile(unsigned int *data, CDataAlloc2<1> *buffer, int flags,
-                    char **model_name, char **texture_name);
+CFrameVu1 *LoadMDSFile(unsigned int *data, CDataAlloc2<1> *buffer, int flags,
+                       char **model_name, char **texture_name);
 
 /**
  * Gives the world position of one frame of a model.

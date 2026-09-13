@@ -28,6 +28,8 @@ public:
     char unk_0B;
     char fog_enable; /**< Whether fog affects the frame during rendering. */
     char unk_0D;
+    char colour_dirty; /**< Whether modified model colours must be uploaded before drawing. */
+    char unk_0F;
     float unk_10;
     char unk_14;
     sceVu0FVECTOR color;

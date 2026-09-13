@@ -12,7 +12,10 @@ struct MDT_HEADER {
     unsigned int size;
     int vertex_num;
     int vertex_ofs;
-    int unk_14[5];
+    int unk_14[2];
+    int colour_count; /**< Number of editable per-vertex colour vectors. */
+    int colour_ofs;   /**< Byte offset from the header to those colour vectors. */
+    int unk_24;
     int mesh_ofs;
     int unk_2c[3];
     int info_ofs;

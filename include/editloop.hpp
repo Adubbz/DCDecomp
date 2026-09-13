@@ -22,6 +22,9 @@ struct sceVif1Packet;
 /** Working arena used to load event villagers and the event player model. */
 extern CDataAlloc2<1> EdVillagerBuffer;
 
+/** Working arena used to load map NPC resources. */
+extern CDataAlloc2<1> EdNPCBuffer;
+
 /**
  * Loads the player model and motion archive used by an editor event.
  *
@@ -174,24 +177,30 @@ struct EDIT_WATER_WAVE_VIEW {
  */
 struct VILLAGER_INFO {
     char name[0x40];       /**< Villager resource name. */
-    u8 unk_40[0x4];
+    int placed;             /**< Whether runtime placement has assigned this villager to a slot. */
     int index;             /**< Position of the villager in the parsed list. */
     int character_no;      /**< Character definition selected for the villager. */
     int model_no;          /**< Model variant selected for the villager. */
     int weapon_no;         /**< Equipment or prop selected for the villager. */
     int initial_motion;    /**< Initial motion selected for the villager. */
-    float unk_58;
-    u8 unk_5c[0x4];
+    float move_speed;       /**< Speed used when the villager walks to a selected destination. */
+    int hide_when_complete; /**< Whether completing the associated part suppresses this villager. */
     int talk_event_no;    /**< Event number started when the villager is addressed. */
     int talk_event_level; /**< Priority or variant associated with the talk event. */
     int talk_rotation;    /**< Rotation constraint applied while the villager talks. */
     int talk_direction;   /**< Direction constraint applied while the villager talks. */
     sceVu0FVECTOR position; /**< Initial villager position and scale component. */
-    int unk_80;
-    float unk_84;
-    int unk_88;
-    u8 unk_8c[0x4];
+    sceVu0FVECTOR rotation; /**< Initial villager rotation. */
 };
+
+/**
+ * Copies the current editor resource directory into a caller buffer.
+ *
+ * @mangled GetEditDataDir__FPc
+ * @address 0x1777D0
+ * @size 0x20
+ */
+void GetEditDataDir(char *name);
 
 /**
  * Stores the fog parameters belonging to one lighting preset.
@@ -232,6 +241,24 @@ struct ED_EVENT_POINT {
     sceVu0FVECTOR rotation;   /**< World-space orientation associated with the event. */
     sceVu0FVECTOR extent;     /**< Secondary point or spatial extent of the event. */
 };
+
+/**
+ * Resolves a map object's local position and yaw into world coordinates.
+ *
+ * @mangled GetPosRot__FP10CMapObjectPfPf
+ * @address 0x1838F0
+ * @size 0x118
+ */
+int GetPosRot(CMapObject *object, float *position, float *rotation);
+
+/**
+ * Tests whether an event point is enabled and valid at the requested map time.
+ *
+ * @mangled CheckEventPoint__FP14ED_EVENT_POINTf
+ * @address 0x183A60
+ * @size 0x1D4
+ */
+int CheckEventPoint(ED_EVENT_POINT *point, float time);
 
 /**
  * Provides the overlapping work-record views used by editor map loading.
@@ -334,6 +361,9 @@ extern char *EdEventData;
 
 /** Shared system event script loaded into the script arena. */
 extern char *EdSystemEventData;
+
+/** Whether map geometry drawing is suppressed while an editor event is active. */
+extern int EdDrawOffMap;
 
 /** Camera used while an editor event controls the viewpoint. */
 extern CCameraFollow EventCamera;

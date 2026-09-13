@@ -158,7 +158,7 @@ public:
      * @size 0x3C0
      * @unknownret
      */
-    void GetRandomPlanePos(float *, float (*)[4], int, float *);
+    int GetRandomPlanePos(float *, float (*)[4], int, float *);
 
     /**
      * @mangled GetNearParts__11CEditGroundFPP9CMapPartsiP7CBoxVu0P7CBoxVu0
@@ -190,7 +190,7 @@ public:
      * @size 0x190
      * @unknownret
      */
-    void GetPeoplePos(int, float *);
+    int GetPeoplePos(int, float *);
 
     /**
      * @mangled DrawBaseGround__11CEditGroundFv
@@ -318,7 +318,7 @@ public:
      * @size 0xA0
      * @unknownret
      */
-    void PickUpEditAreaPoly(CCPoly *, float, float, float);
+    int PickUpEditAreaPoly(CCPoly *, float, float, float);
 
     /**
      * @mangled PickUpCameraPoly__11CEditGroundFP6CCPolyR7CBoxVu0i
