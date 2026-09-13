@@ -45,7 +45,18 @@ ACT_SEQ *CActionSeq::GetNextSeq() {
     }
     return NULL;
 }
-INCLUDE_ASM("asm/nonmatchings/actionseq", SyncChara__10CActionSeqFP10CCharacter);
+
+void CActionSeq::SyncChara(CCharacter *target) {
+    sceVu0FVECTOR location;
+    sceVu0FVECTOR angles;
+    character = target;
+    if (target != NULL) {
+        target->GetPosition(location);
+        target->GetRotation(angles);
+        SetPos(location);
+        SetRot(angles);
+    }
+}
 
 ACT_SEQ *CActionSeq::NextMoveSeq() {
     ACT_SEQ *sequence = GetNextSeq();
