@@ -1,6 +1,11 @@
 #include "actionseq.hpp"
 
-INCLUDE_ASM("asm/nonmatchings/actionseq", Initialize__10CActionSeqFP7ACT_SEQi);
+void CActionSeq::Initialize(ACT_SEQ *records, int count) {
+    ClearSeq();
+    pool = records;
+    capacity = count;
+}
+
 INCLUDE_ASM("asm/nonmatchings/actionseq", __ct__10CActionSeqFv);
 void CActionSeq::ClearSeq() {
     character = NULL;
