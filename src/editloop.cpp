@@ -1762,7 +1762,8 @@ void ParamDraw() {
             setbilinear(0);
             CRect_i_ plate;
             CRect_i_ source;
-            int text_y = screen[1] + 14;
+            int plate_y = screen[1];
+            int text_y = plate_y + 14;
             EditNameMes.line_pos[0].x = screen[0] + step;
             EditNameMes.line_pos[0].y = text_y;
             source.x = 0;
@@ -2470,7 +2471,8 @@ void LoadPTS(CMapParts *parts, MAP_PARTS_INFO *info, OBJ_ANIME_SEQ *anime,
     }
     LoadMapObject(parts, names);
     for (int i = 0; i < 4; i++) {
-        frames[i] = parts->frame[i];
+        CFrameVu1 *frame = parts->frame[i];
+        frames[i] = frame;
     }
     if (frames[0] != NULL) {
         frames[0]->GetBoundBox(&bound, 1);
