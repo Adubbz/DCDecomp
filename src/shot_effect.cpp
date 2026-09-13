@@ -74,7 +74,14 @@ void CSHOT_EFFECT::SetAttribute(s32 arg0) {
     }
 }
 INCLUDE_ASM("asm/nonmatchings/shot_effect", SetWepStatus__12CSHOT_EFFECTFi);
-INCLUDE_ASM("asm/nonmatchings/shot_effect", SetVsMonster__12CSHOT_EFFECTFPc);
+void CSHOT_EFFECT::SetVsMonster(s8 *arg0) {
+    s32 temp_6;
+
+    temp_6 = this->unk_A150;
+    if (temp_6 != -1) {
+        this->unk_A090[temp_6] = arg0;
+    }
+}
 void CSHOT_EFFECT::SetUserID2(s32 arg0) {
     s32 temp_6;
 
