@@ -8,3 +8,9 @@ These functions use the byte-exact source bodies from Dayuppy's private export
 The cloth `SIZE` command reads two integer arguments, clamps each grid dimension
 to the inclusive range 1 through 16, and stores the resulting row and column
 counts. The compiled function matches the 0x60-byte retail body at `0x0013FB80`.
+
+## `CommandNORMAL`
+
+The cloth `NORMAL` command copies its single floating-point argument into the
+cloth normal scale. The compiled function matches the 0x18-byte retail body at
+`0x0013FC60`.

@@ -16,6 +16,7 @@
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dataset.hpp"
+#include "framevu1.hpp"
 #include "mathutil.hpp"
 #include "mglib.hpp"
 #include "savedata.hpp"
@@ -650,7 +651,9 @@ static void CommandSIZE(void **argv) {
     pCloth->num_j = num_j;
 }
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandFRAME__FPPv);
-INCLUDE_ASM("asm/nonmatchings/dataread", CommandNORMAL__FPPv);
+static void CommandNORMAL(void **argv) {
+    pCloth->normal_scale = *(float *) argv[0];
+}
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandFOLLOW__FPPv);
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandK__FPPv);
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandWINDEFFECT__FPPv);
