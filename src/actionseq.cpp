@@ -60,7 +60,22 @@ ACT_SEQ *CActionSeq::NextMoveSeq() {
     return sequence;
 }
 
-INCLUDE_ASM("asm/nonmatchings/actionseq", NextMotionSeq__10CActionSeqFv);
+ACT_SEQ *CActionSeq::NextMotionSeq() {
+    ACT_SEQ *sequence = GetNextSeq();
+    if (sequence == NULL) {
+        return NULL;
+    }
+    if (motion_tail != NULL) {
+        motion_tail->next = sequence;
+    }
+    motion_tail = sequence;
+    sequence->next = NULL;
+    if (motion_head == NULL) {
+        motion_head = sequence;
+    }
+    return sequence;
+}
+
 INCLUDE_ASM("asm/nonmatchings/actionseq", NextAnimeSeq__10CActionSeqFv);
 INCLUDE_ASM("asm/nonmatchings/actionseq", MoveSeq__10CActionSeqFPfi);
 INCLUDE_ASM("asm/nonmatchings/actionseq", MoveSeq__10CActionSeqFPff);
