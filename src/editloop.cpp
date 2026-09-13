@@ -2226,9 +2226,9 @@ void VillagerCollision() {
     CCPoly poly;
 
     for (int i = -1; i < 10; i++) {
-        CNPCharacter *villager = NULL;
         int move;
         int sound;
+        CNPCharacter *villager = NULL;
         if (i >= 0) {
             villager = &EdVillager[i];
             move = EdEventInfo.npc_collision[i];
