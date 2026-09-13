@@ -191,7 +191,14 @@ void CActionSeq::MotionTrg(int delay) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/actionseq", AnimeTrg__10CActionSeqFi);
+void CActionSeq::AnimeTrg(int delay) {
+    ACT_SEQ *sequence = NextMoveSeq();
+    if (sequence != NULL) {
+        sequence->operation = ACT_SEQ_TRIGGER_ANIMATION;
+        sequence->duration = delay;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/actionseq", MotionSeq__10CActionSeqFiifi);
 INCLUDE_ASM("asm/nonmatchings/actionseq", AnimeSeq__10CActionSeqFiiii);
 INCLUDE_ASM("asm/nonmatchings/actionseq", CheckEnd__10CActionSeqFv);
