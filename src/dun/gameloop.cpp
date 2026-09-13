@@ -5931,65 +5931,64 @@ void motionDrive(void) {
 }
 
 void BtCleatRandomMap(void) {
+    CTexture *gold;
+    int i;
+    int n;
+    int j;
+    int k;
+    CDungeonEventMan *man;
+    CDungeonMap *map;
+
     NowDngMap = &MainDungeonMap;
     NowEventMan = &DngEventMan;
     ((CDngStatusData *) UserStatus)->LostGateKey();
 
-    {
-        int i;
-        CDungeonEventMan *events = NowEventMan;
+    man = NowEventMan;
 
-        for (i = 0; i < 96; i++) {
-            CDungeonEventData *slot = &events->event[i];
+    for (i = 0; i < 96; i++) {
+        CDungeonEventData *slot = &man->event[i];
 
-            slot->event = NULL;
-            slot->unk_34 = 0;
-            slot->unk_38 = 0;
-            slot->unk_30 = 0;
-            slot->chara_done = -1;
-        }
+        slot->event = NULL;
+        slot->unk_34 = 0;
+        slot->unk_38 = 0;
+        slot->unk_30 = 0;
+        slot->chara_done = -1;
     }
 
-    {
-        int i;
-        CDungeonMap *map = NowDngMap;
+    map = NowDngMap;
 
-        for (i = 0; i < 48; i++) {
-            map->events[i].kind = -1;
-            map->events[i].unk_2C = 0;
-        }
-        for (i = 0; i < 24; i++) {
-            map->boxes[i].used = 0;
-            map->boxes[i].lid_angle = 0.0f;
-            map->boxes[i].unk_30 = 0;
-        }
-        map->box_num = 0;
-        for (i = 0; i < 8; i++) {
-            map->atra[i].used = 0;
-        }
-        map->atra_num = 0;
-        for (i = 0; i < 4; i++) {
-            map->room_link[i].used = 0;
-        }
+    for (i = 0; i < 48; i++) {
+        map->events[i].kind = -1;
+        map->events[i].unk_2C = 0;
+    }
+    for (i = 0; i < 24; i++) {
+        map->boxes[i].used = 0;
+        map->boxes[i].lid_angle = 0.0f;
+        map->boxes[i].unk_30 = 0;
+    }
+    map->box_num = 0;
+    for (i = 0; i < 8; i++) {
+        map->atra[i].used = 0;
+    }
+    map->atra_num = 0;
+    for (i = 0; i < 4; i++) {
+        map->room_link[i].used = 0;
     }
 
-    {
-        CTexture *gold = GoldTex;
-        int i;
+    gold = GoldTex;
 
-        for (i = 0; i < 32; i++) {
-            MainRandomItem.unk_290[i] = -1;
-            MainRandomItem.unk_494[i] = -1;
-            MainRandomItem.unk_514[i] = 0;
-        }
-        MainRandomItem.gold_texture = gold;
-        for (i = 0; i < 32; i++) {
-            SubRandomItem.unk_290[i] = -1;
-            SubRandomItem.unk_494[i] = -1;
-            SubRandomItem.unk_514[i] = 0;
-        }
-        SubRandomItem.gold_texture = gold;
+    for (n = 0; n < 32; n++) {
+        MainRandomItem.unk_290[n] = -1;
+        MainRandomItem.unk_494[n] = -1;
+        MainRandomItem.unk_514[n] = 0;
     }
+    MainRandomItem.gold_texture = gold;
+    for (n = 0; n < 32; n++) {
+        SubRandomItem.unk_290[n] = -1;
+        SubRandomItem.unk_494[n] = -1;
+        SubRandomItem.unk_514[n] = 0;
+    }
+    SubRandomItem.gold_texture = GoldTex;
     RandomItem = &MainRandomItem;
 
     NowDngMap->buildRandomMap(6, 1);
@@ -5999,44 +5998,41 @@ void BtCleatRandomMap(void) {
     NowDngMap->buildEventData(UserStatus->cur_floor, map_no, 1);
     NowDngMap->FlushCheckMask();
     NowDngMap->DrawMapCalc(NowDngMap->unk_BDEC);
-    NowEventMan->SetupEvent(NowDngMap, (s32) NowDngMap->unk_BDEC);
 
-    // The back dungeon starts from the floor that was just built, then lays
-    // out its own events and items on top.
+    s32 event_no = NowDngMap->unk_BDEC;
+
+    NowEventMan->SetupEvent(NowDngMap, event_no);
+
     NowDngMap = &UraDungeonMap;
     NowEventMan = &UraEventMan;
     UraDungeonMap = MainDungeonMap;
     UraEventMan = DngEventMan;
 
-    {
-        int i;
+    for (k = 0; k < 96; k++) {
+        CDungeonEventData *slot = &UraEventMan.event[k];
 
-        for (int i = 0; i < 96; i++) {
-            CDungeonEventData *slot = &UraEventMan.event[i];
-
-            slot->event = NULL;
-            slot->unk_34 = 0;
-            slot->unk_38 = 0;
-            slot->unk_30 = 0;
-            slot->chara_done = -1;
-        }
-        for (i = 0; i < 48; i++) {
-            UraDungeonMap.events[i].kind = -1;
-            UraDungeonMap.events[i].unk_2C = 0;
-        }
-        for (i = 0; i < 24; i++) {
-            UraDungeonMap.boxes[i].used = 0;
-            UraDungeonMap.boxes[i].lid_angle = 0.0f;
-            UraDungeonMap.boxes[i].unk_30 = 0;
-        }
-        UraDungeonMap.box_num = 0;
-        for (i = 0; i < 8; i++) {
-            UraDungeonMap.atra[i].used = 0;
-        }
-        UraDungeonMap.atra_num = 0;
-        for (i = 0; i < 4; i++) {
-            UraDungeonMap.room_link[i].used = 0;
-        }
+        slot->event = NULL;
+        slot->unk_34 = 0;
+        slot->unk_38 = 0;
+        slot->unk_30 = 0;
+        slot->chara_done = -1;
+    }
+    for (j = 0; j < 48; j++) {
+        UraDungeonMap.events[j].kind = -1;
+        UraDungeonMap.events[j].unk_2C = 0;
+    }
+    for (j = 0; j < 24; j++) {
+        UraDungeonMap.boxes[j].used = 0;
+        UraDungeonMap.boxes[j].lid_angle = 0.0f;
+        UraDungeonMap.boxes[j].unk_30 = 0;
+    }
+    UraDungeonMap.box_num = 0;
+    for (j = 0; j < 8; j++) {
+        UraDungeonMap.atra[j].used = 0;
+    }
+    UraDungeonMap.atra_num = 0;
+    for (j = 0; j < 4; j++) {
+        UraDungeonMap.room_link[j].used = 0;
     }
 
     UraDungeonMap.buildRandomMap(6, 0);
@@ -6048,7 +6044,10 @@ void BtCleatRandomMap(void) {
     s32 ura_draw_no = UraDungeonMap.unk_BDEC;
 
     UraDungeonMap.DrawMapCalc(ura_draw_no);
-    UraEventMan.SetupEvent(&UraDungeonMap, (s32) UraDungeonMap.unk_BDEC);
+
+    s32 ura_event_no = UraDungeonMap.unk_BDEC;
+
+    UraEventMan.SetupEvent(&UraDungeonMap, ura_event_no);
 
     NowDngMap = &MainDungeonMap;
     NowEventMan = &DngEventMan;
