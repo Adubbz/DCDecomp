@@ -78,6 +78,9 @@ extern int now_voice_set;
 /** The background-music set that is loaded, or -1 for none. */
 extern int now_bgm_no;
 
+/** Whether the background music plays: zero while it is stopped, one while it plays. */
+extern int now_bgm_play;
+
 /**
  * Returns the table row for a sound effect, or zero when the number names no
  * row. The number selects between the fixed table, the current basic set, the
@@ -202,7 +205,10 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndBgmPlay__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmStop__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmRePlay__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeOutStop__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmCheck__Fv);
+
+int SndBgmCheck() {
+    return now_bgm_play;
+}
 
 int SndGetBgmNo() {
     return now_bgm_no;

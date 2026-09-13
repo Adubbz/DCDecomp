@@ -420,6 +420,16 @@ void SndSetBgmVolf(float volume);
 int SndGetBgmVol();
 
 /**
+ * Returns the play state of the background music, which is zero while it is
+ * stopped and one while it plays.
+ *
+ * @mangled SndBgmCheck__Fv
+ * @address 0x159D00
+ * @size 0xC
+ */
+int SndBgmCheck();
+
+/**
  * Returns the number of the background music that is loaded now, or -1 when
  * no set counts as loaded.
  *
