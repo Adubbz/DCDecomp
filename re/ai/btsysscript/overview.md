@@ -45,6 +45,9 @@ The existing `@unknownret` on `BtLoadMonstor` is stale: its definition in
 reconstructed C++ is byte-perfect.
 
 `BtSetMapJumpFloor` at `0x1BB920` stores its argument in `BtMapJumpFloor`.
+It is deliberately a `void` setter: `_SET_DUNGEON_FLOOR` calls it only for
+the store, then immediately replaces the call result with its own return value
+of `1`; the corresponding C++ caller likewise uses it as a statement.
 Its instructions and objdiff score are exact, but the whole-image verifier
 classifies it as layout-blocked because the current build places the global
 at `0x2A2CA4`, `0xC0` above retail's `0x2A2BE4`.
@@ -82,9 +85,9 @@ retire the next typework frontier:
 4. Add `void BtBattleMusic_Stop(void)` to `include/btmisc.hpp`; the function
    is owned by `btmisc` at `0x1B7640`, and `_STOP_BATTLE_BGM` calls it then
    returns `1`.
-5. Add the established return type and declaration for
-   `LoadActiveItemIcon()` to the `btitem` header; `_SET_ACTIVE_ITEM_ICON` calls
-   it then returns `1`.
+5. Add `void LoadActiveItemIcon(void);` to the `btitem` header. Its assembly
+   computes no return value, and `_SET_ACTIVE_ITEM_ICON` overwrites `$v0` with
+   `1` immediately after the call rather than consuming a callee result.
 6. Remove the stale `@unknownret` from `BtLoadMonstor` in
    `include/dun/gameloop.hpp`. Its C++ definition returns `void`.
 

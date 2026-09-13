@@ -64,7 +64,7 @@ int BtSystemScriptRun(int, CDataAlloc2<1> *);
  * @address 0x1BB920
  * @size 0x10
  */
-void BtSetMapJumpFloor(int);
+void BtSetMapJumpFloor(int floor);
 
 /** Floor requested for the next battle-map jump. */
 extern int BtMapJumpFloor;
@@ -244,7 +244,7 @@ void _LOAD_DUNGEON_MAP2(RS_STACKDATA *, int);
  * @address 0x1BC550
  * @size 0x30
  */
-int _LOAD_MONSTOR(RS_STACKDATA *, int);
+int _LOAD_MONSTOR(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _SET_RANDOM_MAP__FP12RS_STACKDATAi
@@ -405,7 +405,7 @@ void _ALL_DRAW_FLAG(RS_STACKDATA *, int);
  * @address 0x1BCFE0
  * @size 0x30
  */
-int _SET_FLOOR_TITLE(RS_STACKDATA *, int);
+int _SET_FLOOR_TITLE(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _GET_RUBY_ELEMENT__FP12RS_STACKDATAi
