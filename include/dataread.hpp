@@ -230,24 +230,6 @@ void LoadSystemMessage(void);
 void initialize_data(void);
 
 /**
- * Resets the shared read buffers the loaders hand out.
- *
- * @mangled InitializeDataBuffer__Fv
- * @address 0x125990
- * @size 0xF4
- */
-void InitializeDataBuffer(void);
-
-/**
- * Finds one named record inside a loaded PTS archive.
- *
- * @mangled SearchPTS__FPUiPc
- * @address 0x13E4E0
- * @size 0xD8
- */
-unsigned int *SearchPTS(unsigned int *archive, char *name);
-
-/**
  * Gives one arena to the loader as its working buffer.
  *
  * @mangled SetDataBuffer__FP14CDataAlloc2_1_i

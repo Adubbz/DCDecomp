@@ -31,30 +31,37 @@ void CCollisionMDT::Initialize(void) {
  * Embedded arena that supplies storage to the scene allocators.
  */
 extern CDataAlloc<1, 1690000> GlobalDataBuffer;
+
 /**
  * Allocator used for model motion data.
  */
 extern CDataAlloc2<1> MotionData;
+
 /**
  * Allocator used for water geometry.
  */
 extern CDataAlloc2<1> WaterData;
+
 /**
  * First bank used for active scene data.
  */
 extern CDataAlloc2<1> ActiveData0;
+
 /**
  * Second bank used for active scene data.
  */
 extern CDataAlloc2<1> ActiveData1;
+
 /**
  * Buffer filled by synchronous game-data reads.
  */
 extern u_int *read_buffer;
+
 /**
  * Scratch allocator used while loading and transforming data.
  */
 extern "C" CDataAlloc2<1> *WorkBuffer__2;
+
 /**
  * Backing object for the shared scratch allocator.
  */

@@ -113,6 +113,7 @@ INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBSetMotion__FP10CCharacterPi);
 void EBDebug(int mode) {
     debug_mode = mode;
 }
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBSetKey__Ffii);
 
 void EBExit() {
@@ -126,6 +127,7 @@ void EBExit() {
     } while (SndSPSeSyncBG() != 0);
     InitReadBG();
 }
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBIntroLoop__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBLoop__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBDraw__Fv);
@@ -165,6 +167,7 @@ void draw_ok_loop() {
         }
     }
 }
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", draw_ok__Fi);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", button_scale__Fi);
 static int key_mode = 0xFFFF;
@@ -283,6 +286,7 @@ INCLUDE_ASM("asm/nonmatchings/ebattle_loop", CameraAutoMove__FP13CCameraFollowP6
 void EdViewModeOff() {
     viewMode = 0;
 }
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", InitEyeCamera__FP10CCharacter);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EyeCamera__FP7CCameraP10CCharacteri);
 
@@ -299,6 +303,7 @@ void EdMoveCharaInit() {
     chara_fishing = 0;
     fishing_mes = 0;
 }
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdEyeCamera__FP7CCameraP10CCharacter);
 
 int EdCheckViewMode() {
@@ -338,6 +343,7 @@ void EdASetViewAngle(float horizontal, float vertical) {
     viewAngleH = horizontal;
     viewAngleV = vertical;
 }
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdMoveChara__Fv);
 
 /**

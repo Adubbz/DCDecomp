@@ -22,14 +22,15 @@ class CMenuItemStep;
 class CRandomItem;
 class CSHOT_EFFECT_PACK;
 class CStealItem;
+class CUserStatus;
 struct MAP_TRAP_CIRCLE;
 
 /**
- * Names what the dungeon event running now is waiting on.
+ * Stores the state shared by dungeon event scripts and the dungeon loop.
  */
 struct BT_EVENT_INFO {
-    sceVu0FVECTOR unk_00;
-    sceVu0FVECTOR unk_10;
+    sceVu0FVECTOR position;  /**< Where the event run by the script plays. */
+    sceVu0FVECTOR direction; /**< Which way that event faces. */
     u8 unk_20[0x4];
     s32 unk_24;
     u8 unk_28[0x4];
@@ -61,8 +62,6 @@ STATIC_ASSERT(sizeof(BT_EVENT_INFO) == 0xC0);
  * State shared by dungeon event scripts and the dungeon loop.
  */
 extern "C" BT_EVENT_INFO BtEventInfo;
-
-class CUserStatus;
 
 /**
  * Player status shared by the dungeon loop and battle commands.

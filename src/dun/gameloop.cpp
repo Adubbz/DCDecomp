@@ -3325,8 +3325,8 @@ void MoveChara(void) {
                                         BtEventInfo.unk_24 = 0;
                                         sceVu0CopyVector(slot_pos, state->pos);
                                         sceVu0CopyVector(slot_dir, state->dir);
-                                        sceVu0CopyVector(BtEventInfo.unk_00, slot_pos);
-                                        sceVu0CopyVector(BtEventInfo.unk_10, slot_dir);
+                                        sceVu0CopyVector(BtEventInfo.position, slot_pos);
+                                        sceVu0CopyVector(BtEventInfo.direction, slot_dir);
                                     }
                                     if (BtEventInfo.unk_2C != -1) {
                                         if (state->event->chara_no != -1 &&
@@ -3425,9 +3425,9 @@ void MoveChara(void) {
                                                                 sceVu0CopyVector(
                                                                     box_pos,
                                                                     NowDngMap->events[iventActive].pos);
-                                                                sceVu0CopyVector(BtEventInfo.unk_00,
+                                                                sceVu0CopyVector(BtEventInfo.position,
                                                                                  box_pos);
-                                                                sceVu0CopyVector(BtEventInfo.unk_10,
+                                                                sceVu0CopyVector(BtEventInfo.direction,
                                                                                  box_dir);
                                                                 NowDngMap->events[iventActive].kind = -1;
                                                                 BtEventInfo.unk_2C = 0x10;
@@ -3694,8 +3694,8 @@ void MoveChara(void) {
                                                         BtEventInfo.unk_24 = 0;
                                                         sceVu0CopyVector(slot_pos, state->pos);
                                                         sceVu0CopyVector(slot_dir, state->dir);
-                                                        sceVu0CopyVector(BtEventInfo.unk_00, slot_pos);
-                                                        sceVu0CopyVector(BtEventInfo.unk_10, slot_dir);
+                                                        sceVu0CopyVector(BtEventInfo.position, slot_pos);
+                                                        sceVu0CopyVector(BtEventInfo.direction, slot_dir);
                                                     }
                                                     if (BtEventInfo.unk_2C != -1) {
                                                         gameTask = 0x190;
@@ -4962,8 +4962,8 @@ void MoveChara(void) {
                             BtEventInfo.unk_24 = 0;
                             sceVu0CopyVector(slot_pos, state->pos);
                             sceVu0CopyVector(slot_dir, state->dir);
-                            sceVu0CopyVector(BtEventInfo.unk_00, slot_pos);
-                            sceVu0CopyVector(BtEventInfo.unk_10, slot_dir);
+                            sceVu0CopyVector(BtEventInfo.position, slot_pos);
+                            sceVu0CopyVector(BtEventInfo.direction, slot_dir);
                         }
                         if (BtEventInfo.unk_2C != -1) {
                             leaving = 1;

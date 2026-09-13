@@ -5,12 +5,19 @@ header with its original 0xC0 size and field offsets. The entrance and escape
 commands store script-stack pointers at +0x84 and +0x88; the dungeon loop writes
 the result at pointer+4, represented by `RS_STACKDATA::i`. Request is the word
 at +0x98, consumed by the transition switch in MoveChara. The word at +0xB8
-controls party-status restoration in GameInit and GameLoop. Remaining unknown
+controls party-status restoration in GameInit and GameLoop. The vectors at +0x00
+and +0x10 are the event position and facing direction: MoveChara copies the
+activated slot's position and direction into them, and the retail script
+getters `_GET_EVENT_POS` and `_GET_EVENT_ROT` read them. Remaining unknown
 fields retain their offsets and types.
 
 `UserStatus` is defined by `src/dun/gameloop.cpp` at retail 0x2A3468, so its
 extern declaration belongs to that header. Dungeonmap includes that owner;
 charakey and monstorunit already include it.
+
+`InitializeDataBuffer` and `SearchPTS(u_int *, char *)` are defined by dataset
+and dispctrl, so their declarations live only in `dataset.hpp` and
+`dispctrl.hpp`; `dataread.hpp` no longer repeats them.
 
 The main symbol table gives `BtBattleMusic_Stop__Fv` address 0x1B7640 and size
 0x48, and `LoadActiveItemIcon__Fv` address 0x1D13A0 and size 0x4C. Their callers

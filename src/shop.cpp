@@ -29,6 +29,7 @@ void InitAllHaveData() {
     InitHaveAttach(ShopHaveAttachPt);
     ShopHaveItemPt->unk_00 = 0;
 }
+
 INCLUDE_ASM("asm/nonmatchings/shop", CommonShopLoop__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopPolySetInit__Fii);
 INCLUDE_ASM("asm/nonmatchings/shop", SetItemShopTalkMode__Fii);
@@ -175,6 +176,7 @@ INCLUDE_ASM("asm/nonmatchings/shop", GetMardanGareyanFlag__Fv);
 void SetAlreadyGetMardanWeapon(int value) {
     SaveData->SetGameFlag(0xCA, value);
 }
+
 INCLUDE_ASM("asm/nonmatchings/shop", SetFishMardanGarayanNum__Fi);
 INCLUDE_RODATA("asm/nonmatchings/shop", @2912);
 
@@ -185,6 +187,7 @@ int GetFishMardanGarayanNum() {
 void ClearFishMardanGarayanNum() {
     SaveData->SetGameIntFlag(0x14, 0);
 }
+
 INCLUDE_ASM("asm/nonmatchings/shop", AlreadyGetMardanWeapon__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", InitFishingExchange__FP1Pii);
 INCLUDE_RODATA("asm/nonmatchings/shop", @2943);
@@ -217,6 +220,7 @@ INCLUDE_ASM("asm/nonmatchings/shop", GetFishMsgNo__Fi);
 SV_FISH_DATA *GetFishingRankData(int rank_index) {
     return SaveData->GetFishingRank(rank_index);
 }
+
 INCLUDE_ASM("asm/nonmatchings/shop", InitFishRecordView__FP1Pii);
 INCLUDE_RODATA("asm/nonmatchings/shop", @3257);
 INCLUDE_ASM("asm/nonmatchings/shop", ExitFishRecord__Fv);
