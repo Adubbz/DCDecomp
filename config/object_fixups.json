@@ -378,7 +378,8 @@
   },
   "src/editloop3.cpp": {
     "symbols": {
-      "fishing_line_origin": "@2242"
+      "fishing_line_origin": "@2242",
+      "CurrentDir": "CurrentDir__4"
     },
     "rodata_exports": [
       "@2449",
@@ -407,6 +408,38 @@
       "@2289"
     ],
     "sections": {
+      ".edbss1": [
+        "chara$631",
+        "appear_table",
+        "select_table",
+        "appear",
+        "restore_info"
+      ],
+      ".edbss2": [
+        "CurrentDir",
+        "world_pos",
+        "world_rot",
+        "world_local",
+        "local_world",
+        "sync_camera_ref_offset"
+      ],
+      ".edbss3": [
+        "asq_table",
+        "ActSeq",
+        "anime_data",
+        "sprite_table",
+        "SpriteTable",
+        "SpriteTableBack"
+      ],
+      ".edbss4": [
+        "EdEventScript"
+      ],
+      ".edbss5": [
+        "chr_file",
+        "save_l",
+        "save_c",
+        "save_a"
+      ],
       ".edsbss1": [
         "roty$585",
         "init$586",

@@ -398,8 +398,8 @@ void EdEventPointDraw(ED_EVENT_POINT *point, int count, float time) {
 int EdEventPointCpPoly(float *position, ED_EVENT_POINT *points, int count, CCPoly *polygons,
                        float time) {
     CEditGround *ground = EdExchangeInfo.ground;
-    static CCharacter character;
-    character.body_width = 3.0f;
+    static CCharacter chara;
+    chara.body_width = 3.0f;
     int i;
     int found = 0;
     for (i = 0; i < count; i++, points++) {
@@ -417,8 +417,8 @@ int EdEventPointCpPoly(float *position, ED_EVENT_POINT *points, int count, CCPol
             } else if (object != NULL) {
                 GetPosRot(object, event_position, event_rotation);
             }
-            character.SetPosition(event_position);
-            found += character.PickUpPoly(position, polygons);
+            chara.SetPosition(event_position);
+            found += chara.PickUpPoly(position, polygons);
         }
     }
     return found;
@@ -538,6 +538,10 @@ struct VILLAGER_APPEAR_STATE {
     int destination; /**< Villager slot used by a movement command. */
 };
 
+static int appear_table[10];
+
+static int select_table[10];
+
 /** Pending appearance commands for the event villagers. */
 static VILLAGER_APPEAR_STATE appear[16];
 
@@ -575,9 +579,6 @@ void EdCreateVillagerTable(EDIT_MAP_INFO *info) {
         }
     }
 }
-
-static int appear_table[10];
-static int select_table[10];
 
 void EdInitVillagerTable(float clock, EDIT_MAP_INFO *info) {
     for (int i = 0; i < 10; i++)
@@ -2039,51 +2040,36 @@ static int actv_file;
 /** Resource arena selected by subsequent event load commands. */
 static int actv_buffer;
 
-/** Offset added to the event camera's synchronized reference target. */
-static sceVu0FVECTOR sync_camera_ref_offset;
-
-/** Archive slots populated by event character-file loads. */
-static u_int *chr_file[16];
-
-/** Directory prepended to relative event resource names. */
-static char CurrentDir[0x40];
-
-/** Saved point-light direction presets available to event scripts. */
-static sceVu0FMATRIX save_l[2];
-
-/** Saved point-light colour presets available to event scripts. */
-static sceVu0FMATRIX save_c[2];
-
-/** Saved ambient-light colour presets available to event scripts. */
-static sceVu0FVECTOR save_a[2];
-
 void EdEventPause() {
     event_pause = !event_pause;
 }
 
+/** Directory prepended to relative event resource names. */
+static char CurrentDir[0x40];
+
+/** Origin of the event script's optional world coordinate system. */
+static sceVu0FVECTOR world_pos;
+
+/** Rotation of the event script's optional world coordinate system. */
+static sceVu0FVECTOR world_rot;
+
+/** Matrix that converts event-local coordinates to world coordinates. */
+static sceVu0FMATRIX world_local;
+
+/** Matrix that converts world coordinates to event-local coordinates. */
+static sceVu0FMATRIX local_world;
+
+/** Offset added to the event camera's synchronized reference target. */
+static sceVu0FVECTOR sync_camera_ref_offset;
+
 /** Integer scratch flags exposed to editor event scripts. */
 static int work_flag[32];
 
-/** Foreground sprite command table for the active event. */
-static CSpriteTable SpriteTable;
-
-/** Background sprite command table for the active event. */
-static CSpriteTable SpriteTableBack;
-
-/** Bytecode interpreter used by editor events. */
-static CRunScript EdEventScript;
-
-/** Describes one editor-event external function and its bytecode operation number. */
-struct ED_EVENT_EXTERNAL_FUNCTION {
-    int (*function)(RS_STACKDATA *, int); /**< Native function invoked by the bytecode operation. */
-    int operation;                       /**< Bytecode operation number assigned to the function. */
-};
-
-/** Dispatch table built from the editor-event external-function registry. */
-extern int (*ext_func__2[1500])(RS_STACKDATA *, int);
-
 /** Action records supplied to each editor-event sequencer. */
 static ACT_SEQ asq_table[266];
+
+/** Action sequencers available to event scripts. */
+static CActionSeq ActSeq[10];
 
 /** Texture-animation records supplied to event characters. */
 static CTexAnimeData anime_data[320];
@@ -2097,6 +2083,36 @@ STATIC_ASSERT(sizeof(SPRITE_TABLE) == 0x38);
 
 /** Sprite-table entries shared by foreground and background event sprites. */
 static SPRITE_TABLE sprite_table[32];
+
+/** Foreground sprite command table for the active event. */
+static CSpriteTable SpriteTable;
+
+/** Background sprite command table for the active event. */
+static CSpriteTable SpriteTableBack;
+
+/** Bytecode interpreter used by editor events. */
+static CRunScript EdEventScript;
+
+/** Archive slots populated by event character-file loads. */
+static u_int *chr_file[16];
+
+/** Saved point-light direction presets available to event scripts. */
+static sceVu0FMATRIX save_l[2];
+
+/** Saved point-light colour presets available to event scripts. */
+static sceVu0FMATRIX save_c[2];
+
+/** Saved ambient-light colour presets available to event scripts. */
+static sceVu0FVECTOR save_a[2];
+
+/** Describes one editor-event external function and its bytecode operation number. */
+struct ED_EVENT_EXTERNAL_FUNCTION {
+    int (*function)(RS_STACKDATA *, int); /**< Native function invoked by the bytecode operation. */
+    int operation;                       /**< Bytecode operation number assigned to the function. */
+};
+
+/** Dispatch table built from the editor-event external-function registry. */
+extern int (*ext_func__2[1500])(RS_STACKDATA *, int);
 
 static int SetWorkFlag(int index, int value) {
     if (index < 0 || index >= 32)
@@ -2439,9 +2455,6 @@ static void set_attr_obj(OBJ_HANDLE *handle, CFrameAttr &attr, int children, int
     }
 }
 
-/** Action sequencers available to event scripts. */
-static CActionSeq ActSeq[10];
-
 static CActionSeq *GetActSeq(int index) {
     if (index < 0 || index >= 10)
         return NULL;
@@ -2506,18 +2519,6 @@ static VILLAGER_INFO *GetVillagerInfo(int index) {
         return NULL;
     return &EdEventInfo.villagers[index];
 }
-
-/** Origin of the event script's optional world coordinate system. */
-static sceVu0FVECTOR world_pos;
-
-/** Rotation of the event script's optional world coordinate system. */
-static sceVu0FVECTOR world_rot;
-
-/** Matrix that converts event-local coordinates to world coordinates. */
-static sceVu0FMATRIX world_local;
-
-/** Matrix that converts world coordinates to event-local coordinates. */
-static sceVu0FMATRIX local_world;
 
 static void SetWorldCoord(float *position, float *rotation) {
     sceVu0CopyVector(world_pos, position);
