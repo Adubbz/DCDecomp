@@ -302,12 +302,12 @@ int EdGetEvent(ED_EVENT_POINT *points, int count, ED_EVENT_PARAM *param, float *
             switch (point->event_type) {
                 case 4:
                 case 1:
-                    if (AngleCmp(rotation[1], event_rotation[1], 1.570796f))
+                    if (AngleCmp(rotation[1], event_rotation[1], 0.8f))
                         selected = 0;
                     break;
                 case 5:
-                    if (AngleCmp(AngleLimit(rotation[1] - 3.141592f), event_rotation[1],
-                                 1.570796f))
+                    if (AngleCmp(AngleLimit(rotation[1] - 3.14f), event_rotation[1],
+                                 0.8f))
                         selected = 0;
                     break;
             }
@@ -1258,8 +1258,7 @@ int EdGetTime(float time) {
     period = (int) (time / 3.0f);
     if (EdCheckTime(time, 11.5f, 2.5f) != 0)
         period = 0;
-    period_end = 5.5f;
-    if (EdCheckTime(time, 2.5f, period_end) != 0)
+    if (EdCheckTime(time, 2.5f, 5.5f) != 0)
         period = 1;
     if (EdCheckTime(time, (0, 5.5f), 8.5f) != 0)
         period = 2;
