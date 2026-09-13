@@ -243,7 +243,6 @@ segments:
       - {start: 0x64c30, type: cpp, name: objanime}
       - {start: 0x67160, type: cpp, name: textureanime}
       - {start: 0x67d80, type: cpp, name: ebattle}
-      - {start: 0x68300, type: cpp, name: ebattle_loop}
       - {start: 0x6d960, type: cpp, name: editarea}
       - {start: 0x70350, type: cpp, name: edit}
       - {start: 0x742a0, type: cpp, name: editloop}
@@ -369,7 +368,6 @@ segments:
       - {start: 0x19a1f0, type: .rodata, name: runeffect}
       - {start: 0x19a208, type: .rodata, name: objanime}
       - {start: 0x19a2c0, type: .rodata, name: ebattle}
-      - {start: 0x19a2e0, type: .rodata, name: ebattle_loop}
       - {start: 0x19a368, type: .rodata, name: edit}
       - {start: 0x19a8c8, type: .rodata, name: editloop}
       - {start: 0x19b140, type: .rodata, name: editloop3}

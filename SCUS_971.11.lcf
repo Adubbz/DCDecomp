@@ -370,7 +370,6 @@ SECTIONS
         objanime.cpp.o              (.text)   // 0x00164b30
         textureanime.cpp.o          (.text)   // 0x00167060
         ebattle.cpp.o               (.text)   // 0x00167c80
-        ebattle_loop.cpp.o          (.text)   // 0x00168200
         editarea.cpp.o              (.text)   // 0x0016d860
         edit.cpp.o                  (.text)   // 0x00170250
         editloop.cpp.o              (.text)   // 0x001741a0
@@ -596,7 +595,7 @@ SECTIONS
 		main.sdata.part2.s.o (.sdata)  // 0x002a1ea0
 		clsmes.cpp.o (.sdata)          // 0x002a1ec0
 		main.sdata.part2b.s.o (.sdata) // 0x002a1ed0
-		ebattle_loop.cpp.o (.sdata)    // 0x002a1f14
+		ebattle.cpp.o (.sdata)         // 0x002a1f14
 		main.sdata.part2c.s.o (.sdata) // 0x002a1f18
 		edit.cpp.o (.sdata)            // 0x002a1f24
 		main.sdata.part2d.s.o (.sdata) // 0x002a1f50
