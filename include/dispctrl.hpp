@@ -23,6 +23,15 @@ void openGiftag(sceVif1Packet *packet);
 u_int *SearchPTS(u_int *archive, char *name);
 
 /**
+ * Finds a record by index in a loaded PTS archive.
+ *
+ * @mangled SearchPTS__FPUii
+ * @address 0x13E5C0
+ * @size 0x50
+ */
+u_int *SearchPTS(u_int *archive, int index);
+
+/**
  * Controls the black screen curtain used for dungeon transitions.
  */
 class CDispCtrl {

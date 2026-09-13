@@ -76,7 +76,17 @@ u_int *SearchPTS(u_int *archive, char *name) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/dispctrl", SearchPTS__FPUii);
+u_int *SearchPTS(u_int *archive, int index) {
+    PTS_HEADER *header = reinterpret_cast<PTS_HEADER *>(archive);
+    if (header == 0) {
+        return 0;
+    }
+    if (index >= header->count) {
+        return 0;
+    }
+    int offset = *reinterpret_cast<int *>(reinterpret_cast<char *>(archive) + index * 0x30 + 0x20);
+    return reinterpret_cast<u_int *>(reinterpret_cast<char *>(archive) + offset);
+}
 
 void CDispCtrl::FadeOutStart(float speed) {
     this->speed = speed;
