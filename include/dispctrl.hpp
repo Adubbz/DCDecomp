@@ -14,6 +14,15 @@ struct sceVif1Packet;
 void openGiftag(sceVif1Packet *packet);
 
 /**
+ * Finds a named record in a loaded PTS archive.
+ *
+ * @mangled SearchPTS__FPUiPc
+ * @address 0x13E4E0
+ * @size 0xD8
+ */
+u_int *SearchPTS(u_int *archive, char *name);
+
+/**
  * Controls the black screen curtain used for dungeon transitions.
  */
 class CDispCtrl {

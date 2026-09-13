@@ -4,9 +4,25 @@
 
 #include "dispctrl.hpp"
 
+#include <cstring>
+
 #include "bound.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
+
+/** Stores the fixed header at the front of a PTS archive. */
+struct PTS_HEADER {
+    int unk_00;
+    int count; /**< Number of file records in the archive. */
+    int unk_08[2];
+};
+
+/** Stores one named file record in a PTS archive. */
+struct PTS_ENTRY {
+    char name[16]; /**< Null-terminated file name. */
+    int offset;    /**< Byte offset of the file from the archive start. */
+    int unk_14[7];
+};
 
 INCLUDE_RODATA("asm/nonmatchings/dispctrl", @230);
 
@@ -32,7 +48,34 @@ void closeGiftag(sceVif1Packet *packet) {
     sceVif1PkCloseDirectCode(packet);
 }
 INCLUDE_ASM("asm/nonmatchings/dispctrl", Draw__10CDebugFontFv);
-INCLUDE_ASM("asm/nonmatchings/dispctrl", SearchPTS__FPUiPc);
+
+u_int *SearchPTS(u_int *archive, char *name) {
+    int i;
+    PTS_HEADER *header;
+    PTS_ENTRY *entry;
+    char *base;
+    char c;
+
+    header = reinterpret_cast<PTS_HEADER *>(archive);
+    if (header == 0) {
+        return 0;
+    }
+    entry = reinterpret_cast<PTS_ENTRY *>(header + 1);
+    base = name;
+    while ((c = *name) != 0) {
+        if (c == '/') {
+            base = name + 1;
+        }
+        name++;
+    }
+    for (i = 0; i < header->count; i++, entry++) {
+        if (strcmp(base, entry->name) == 0) {
+            return reinterpret_cast<u_int *>(reinterpret_cast<char *>(header) + entry->offset);
+        }
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/dispctrl", SearchPTS__FPUii);
 
 void CDispCtrl::FadeOutStart(float speed) {
