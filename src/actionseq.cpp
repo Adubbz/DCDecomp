@@ -166,7 +166,15 @@ void CActionSeq::WaitRotSeq() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/actionseq", SetRot__10CActionSeqFPf);
+void CActionSeq::SetRot(float *angles) {
+    ACT_SEQ *sequence = NextMoveSeq();
+    if (sequence != NULL) {
+        sequence->operation = ACT_SEQ_SET_ROTATION;
+        sceVu0CopyVector(sequence->arguments.vector, angles);
+        sequence->duration = 0;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/actionseq", SetDelayRot__10CActionSeqFi);
 INCLUDE_ASM("asm/nonmatchings/actionseq", MotionTrg__10CActionSeqFi);
 INCLUDE_ASM("asm/nonmatchings/actionseq", AnimeTrg__10CActionSeqFi);
