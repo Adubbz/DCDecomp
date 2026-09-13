@@ -10,6 +10,7 @@
 #include "memcard.hpp"
 #include "menu_inventory.hpp"
 #include "menu_manual.hpp"
+#include "menu_misc.hpp"
 #include "snd.hpp"
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetDefaultWeaponNo__Fi);
@@ -288,7 +289,46 @@ void MenuClsMes::InitData() {
 }
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", SetBuffInfo__10MenuClsMesFPs);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", NowWeaponStatus__10MenuClsMesFP11WEAPON_HAVE);
+
+void MenuClsMes::NowWeaponStatus(WEAPON_HAVE *selected_weapon) {
+    weapon = selected_weapon;
+    option_flags = 1;
+    option_count = 0;
+    if (selected_weapon != NULL) {
+        option_flags = selected_weapon->flags;
+        for (int slot = 0; slot < 6; slot++) {
+            ATTACH_LIST *attachment = &weapon->attach[slot];
+            s16 attachment_flags = attachment->unk_04;
+            if (attachment_flags != 0 && attachment_flags != 1) {
+                option_flags |= attachment_flags;
+            }
+        }
+        option_flags = CheckWeaponOptionStatus(option_flags);
+        option_count = 0;
+        int clear_slot;
+        int changed = 0;
+        for (int bit = 1; bit <= 13; bit++) {
+            if (option_flags & (1 << bit)) {
+                int message_no = bit + 69;
+                ClsMes *window = message;
+                int index = option_count;
+                if (message_no != window->mes_no[index]) {
+                    changed = 1;
+                }
+                window->mes_no[index] = message_no;
+                option_count++;
+            }
+        }
+        for (clear_slot = option_count; clear_slot < 10; clear_slot++) {
+            ClsMes *window = message;
+            window->mes_no[clear_slot] = 0;
+        }
+        if (changed != 0) {
+            message->mes_made = -1;
+            message->MakeMesWin(422);
+        }
+    }
+}
 
 void MenuClsMes::Step() {
     if (message != NULL) {
