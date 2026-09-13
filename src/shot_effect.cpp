@@ -25,7 +25,14 @@ INCLUDE_ASM("asm/nonmatchings/shot_effect", SetNoSound__12CSHOT_EFFECTFv);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", SetRandomRate__12CSHOT_EFFECTFf);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", SetLifeTime__12CSHOT_EFFECTFi);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", SetEnemyAttr__12CSHOT_EFFECTFi);
-INCLUDE_ASM("asm/nonmatchings/shot_effect", SetDmg__12CSHOT_EFFECTFi);
+void CSHOT_EFFECT::SetDmg(s32 arg0) {
+    s32 temp_6;
+
+    temp_6 = this->unk_A150;
+    if (temp_6 != -1) {
+        this->unk_A010[temp_6] = arg0;
+    }
+}
 void CSHOT_EFFECT::SetAttribute(s32 arg0) {
     if (this->unk_A150 != -1) {
         this->unk_0000->unk_040 = arg0;
