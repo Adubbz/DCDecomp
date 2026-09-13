@@ -1,5 +1,11 @@
 #include "common.h"
 
+#include "nowload.hpp"
+
+extern int end_flag;
+extern int now_loding_off;
+extern int now_loading_vsync_end;
+
 INCLUDE_ASM("asm/nonmatchings/nowload", check_now_loading__Fv);
 INCLUDE_ASM("asm/nonmatchings/nowload", clear_now_loading_vsync_end__Fv);
 INCLUDE_ASM("asm/nonmatchings/nowload", check_now_loading_vsync_end__Fv);
