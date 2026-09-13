@@ -5,6 +5,15 @@
 struct sceVif1Packet;
 
 /**
+ * Opens a direct-mode GIF tag in the supplied VIF packet.
+ *
+ * @mangled openGiftag__FP13sceVif1Packet
+ * @address 0x13DEA0
+ * @size 0x58
+ */
+void openGiftag(sceVif1Packet *packet);
+
+/**
  * Controls the black screen curtain used for dungeon transitions.
  */
 class CDispCtrl {

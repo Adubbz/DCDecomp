@@ -14,7 +14,11 @@ int CBound::Sizeof() {
     return sizeof(CBound);
 }
 
-INCLUDE_ASM("asm/nonmatchings/dispctrl", openGiftag__FP13sceVif1Packet);
+void openGiftag(sceVif1Packet *packet) {
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *reinterpret_cast<u_long128 *>(&GiftagAD));
+}
 
 /**
  * Closes the GIF tag and the direct code that openGiftag began.
