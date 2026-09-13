@@ -244,7 +244,6 @@ void InitializeDataBuffer(void);
  * @mangled SearchPTS__FPUiPc
  * @address 0x13E4E0
  * @size 0xD8
- * @unknownret
  */
 unsigned int *SearchPTS(unsigned int *archive, char *name);
 
