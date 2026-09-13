@@ -28,6 +28,7 @@ extern s16 MenuCharaEffectReadFlag;
 extern s16 MenuCharaOldEffect;
 extern BT_SHOT_EFFECT *WepEffectMenuPt;
 extern u_long128 *WepEffectMenuReadBuf;
+extern ClsMes *CharaNameMes;
 extern s16 CharaNameDrawFlag;
 extern int EditSwitch;
 extern int EdEffectCt;
@@ -567,7 +568,21 @@ int GetMonsterNameDrawFlag() {
 
 INCLUDE_ASM("asm/nonmatchings/menu_misc", MonsterNameInit__FP6ClsMesPsPUc);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1287__2);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", MonsterNameMake__Fi);
+
+void MonsterNameMake(int mes_no) {
+    if (CharaNameMes != NULL) {
+        int mes = mes_no + 3000;
+        if (CharaNameMes->mes_made != mes) {
+            CharaNameMes->MakeMesWin(mes);
+            if (mes == 3000) {
+                CharaNameMes->stay_frame = 0;
+            } else {
+                CharaNameMes->stay_frame = 1;
+            }
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", MonsterNamePosSet__Fii);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", MonsterNameDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", DngEscapeMsgInit__FP6ClsMesP6ClsMesi);
