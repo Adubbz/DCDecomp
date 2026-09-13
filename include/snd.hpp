@@ -413,9 +413,11 @@ void SndSetBgmVol(int volume);
 void SndSetBgmVolf(float volume);
 
 /**
- * Returns the background-music volume.
+ * Returns the background-music volume that is set now.
  *
  * @mangled SndGetBgmVol__Fv
+ * @address 0x159DE0
+ * @size 0xC
  */
 int SndGetBgmVol();
 
