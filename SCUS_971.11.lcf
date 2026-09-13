@@ -344,7 +344,6 @@ SECTIONS
         dispctrl.cpp.o              (.text)   // 0x0013de90
         dataread.cpp.o              (.text)   // 0x0013e950
         main.cpp.o                  (.text)   // 0x001410b0
-        gamemode.cpp.o              (.text)   // 0x00141d30
         dataalloc.cpp.o             (.text)   // 0x00143820
         map.cpp.o                   (.text)   // 0x00143870
         sound.cpp.o                 (.text)   // 0x00143b50
@@ -450,6 +449,7 @@ SECTIONS
         . = . + 0x4; // Retail padding after the character command tables.
         main.data.part2.s.o (.data)
         dataread.cpp.o (.data)
+        main.cpp.o (.data)
         main.data.part2c.s.o (.data)
         clsmes.cpp.o (.data)
         main.data.part2b.s.o (.data)
@@ -592,7 +592,8 @@ SECTIONS
 		mainselect.cpp.o (.sdata)      // 0x002a1e8c
 		main.cpp.o (.sdata)            // 0x002a1e90
 		dataread.cpp.o (.sdata)        // 0x002a1e94
-		main.sdata.part2.s.o (.sdata)  // 0x002a1e98
+		main.cpp.o (.gamemodesdata)    // 0x002a1e98
+		main.sdata.part2.s.o (.sdata)  // 0x002a1ea0
 		clsmes.cpp.o (.sdata)          // 0x002a1ec0
 		main.sdata.part2b.s.o (.sdata) // 0x002a1ed0
 		ebattle_loop.cpp.o (.sdata)    // 0x002a1f14

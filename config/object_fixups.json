@@ -8,6 +8,15 @@
     }
   },
   "src/main.cpp": {
+    "symbols": {
+      "gamemode_empty_string": "@567",
+      "@1129": "@905"
+    },
+    "sections": {
+      ".gamemodesdata": [
+        "@905"
+      ]
+    },
     "rodata_exports": [
       "@873",
       "@874"
