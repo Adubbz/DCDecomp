@@ -1,0 +1,28 @@
+# Editor event BSS placement
+
+## Small BSS
+
+The source emits 32 small-BSS objects in four residual retail runs: event-point
+static values and guards at `0x2A29DC..0x2A29F5`, event flags at
+`0x2A2A04..0x2A2A2C`, camera/load flags at `0x2A2A30..0x2A2A54`, and
+conversation flags at `0x2A2A64..0x2A2A7C`. The event-point run requires a
+four-byte end alignment before the existing fade flags. The retained
+`0x2A2A54..0x2A2A64` dump supplies EdEventMode's two local values and guards.
+
+Definitions of the file-scope event/camera flags are ordered as retail emits
+them so each run can use one section. `simple_event` is GLOBAL in the retail
+ELF, and retained editloop assembly references it; its source definition
+therefore has external linkage. It is first declared in its owning source.
+The four guard aliases reconcile raw-compiler names with mwccgap's retail
+guard names; they apply to the existing objdiff build too.
+
+All 32 objects were read back from xMAP and compared with the retail ELF:
+address and size agree. No editloop3 small-BSS contribution remains in the
+wildcard tail. `__bss_start=0x2A3709`, `SinTable=0x2AA010`,
+`GamePad=0x1CBC540`, and `EdNPCBuffer=0x1D1B350` are restored.
+
+Against immutable base b8ba7b90, the complete snapshot reports zero regressions.
+Main PERFECT increases 1231 to 1548; TITLE 93 to 170; DUN 30 to 55. Main data
+differences decrease 3436 to 6 bytes. Main object-exact functions without
+a linked-perfect result decrease 368 to 51. These are placement restorations
+of existing code, not new function implementations.

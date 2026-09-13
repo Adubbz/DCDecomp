@@ -1980,47 +1980,106 @@ static void ClearObjAnime(int index) {
         anime->type = -1;
 }
 
-/** Menu mode requested by the active event. */
+/**
+ * Whether the current event uses the lightweight initialization path.
+ */
+int simple_event;
+
+/**
+ * Whether an editor-event program has been installed.
+ */
+static int event_enable;
+
+/**
+ * Whether a system event is currently being run.
+ */
+static int run_system_event;
+
+/**
+ * Whether the current asynchronous load may continue without waiting.
+ */
+static int not_wait_load;
+
+/**
+ * Whether event character motion is globally held.
+ */
+static int motion_stop_flag;
+
+/**
+ * Menu mode requested by the active event.
+ */
 static int menu_mode;
 
-/** Map requested by the world-map event command. */
+/**
+ * State of the menu temporarily opened by an event.
+ */
+static int menu_mode_status;
+
+/**
+ * Item-list string supplied to the editor's use-item menu.
+ */
+static char *p_use_item;
+
+/**
+ * Map requested by the world-map event command.
+ */
 static int p_jump_map_no;
 
-/** Whether the active script permits event skipping. */
+/**
+ * Whether execution of the current event has stopped.
+ */
+static int event_stop;
+
+/**
+ * Whether the active script permits event skipping.
+ */
 static int skip_enable;
 
-/** Character followed by the event camera. */
+/**
+ * Whether event-local/world coordinate conversion is enabled.
+ */
+static int set_wl_matrix;
+
+/**
+ * Character followed by the event camera.
+ */
 static CCharacter *follow_chara;
 
-/** Character used as the event camera's reference target. */
+/**
+ * Character used as the event camera's reference target.
+ */
 static CCharacter *sync_camera_ref_chara;
 
-/** Object used as the event camera's reference target. */
+/**
+ * Object used as the event camera's reference target.
+ */
 static OBJ_HANDLE *sync_camera_ref_obj;
 
-/** Object used as the event camera's position target. */
+/**
+ * Object used as the event camera's position target.
+ */
 static OBJ_HANDLE *sync_camera_pos_obj;
+
+/**
+ * Shared destination buffer used by asynchronous event resource loads.
+ */
+static u_int *BaseBuffer;
+
+/**
+ * Character-file slot selected by subsequent event load commands.
+ */
+static int actv_file;
+
+/**
+ * Resource arena selected by subsequent event load commands.
+ */
+static int actv_buffer;
 
 /** Offset added to the event camera's synchronized reference target. */
 static sceVu0FVECTOR sync_camera_ref_offset;
 
-/** Shared destination buffer used by asynchronous event resource loads. */
-static u_int *BaseBuffer;
-
 /** Archive slots populated by event character-file loads. */
 static u_int *chr_file[16];
-
-/** Character-file slot selected by subsequent event load commands. */
-static int actv_file;
-
-/** Resource arena selected by subsequent event load commands. */
-static int actv_buffer;
-
-/** Whether the current asynchronous load may continue without waiting. */
-static int not_wait_load;
-
-/** Item-list string supplied to the editor's use-item menu. */
-static char *p_use_item;
 
 /** Directory prepended to relative event resource names. */
 static char CurrentDir[0x40];
@@ -2077,24 +2136,6 @@ STATIC_ASSERT(sizeof(SPRITE_TABLE) == 0x38);
 
 /** Sprite-table entries shared by foreground and background event sprites. */
 static SPRITE_TABLE sprite_table[32];
-
-/** Whether an editor-event program has been installed. */
-static int event_enable;
-
-/** Whether the current event uses the lightweight initialization path. */
-static int simple_event;
-
-/** Whether a system event is currently being run. */
-static int run_system_event;
-
-/** Whether event character motion is globally held. */
-static int motion_stop_flag;
-
-/** State of the menu temporarily opened by an event. */
-static int menu_mode_status;
-
-/** Whether execution of the current event has stopped. */
-static int event_stop;
 
 static int SetWorkFlag(int index, int value) {
     if (index < 0 || index >= 32)
@@ -2516,9 +2557,6 @@ static sceVu0FMATRIX world_local;
 
 /** Matrix that converts world coordinates to event-local coordinates. */
 static sceVu0FMATRIX local_world;
-
-/** Whether event-local/world coordinate conversion is enabled. */
-static int set_wl_matrix;
 
 static void SetWorldCoord(float *position, float *rotation) {
     sceVu0CopyVector(world_pos, position);
