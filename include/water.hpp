@@ -95,10 +95,11 @@ public:
     void Hamon(void);
 
     /**
+     * Copies four corner positions into the water surface.
+     *
      * @mangled SetVertex__6CWaterFPfPfPfPf
      * @address 0x1612E0
      * @size 0x90
-     * @unknownret
      */
     void SetVertex(float *, float *, float *, float *);
 
