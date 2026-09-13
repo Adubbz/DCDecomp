@@ -408,7 +408,22 @@ int CEditArea::PickUpPoly(CCPoly *polygons, float x, float y, float z) {
     return PickUpPoly(polygons, rect);
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", PickUpPoly__9CEditAreaFP6CCPoly8CRect_i_);
-INCLUDE_ASM("asm/nonmatchings/editarea", PickUpPoly__9CEditAreaFP6CCPoly7CBoxVu0);
+int CEditArea::PickUpPoly(CCPoly *polygons, CBoxVu0 box) {
+    int left, top;
+    CVector3_i_ position;
+    GetPos(&position, box.min[0], box.min[1], box.min[2]);
+    left = position.x;
+    top = position.z;
+    GetPos(&position, box.max[0], box.max[1], box.max[2]);
+    int right = position.x;
+    int bottom = position.z;
+    CRect_i_ rect;
+    rect.x = left - 1;
+    rect.y = top - 1;
+    rect.width = right - left + 2;
+    rect.height = bottom - top + 2;
+    return PickUpPoly(polygons, rect);
+}
 
 int CEditArea::GetPartsRect(CRect_i_ &rect, int *parts_ids, int max_parts) {
     int x, y;
