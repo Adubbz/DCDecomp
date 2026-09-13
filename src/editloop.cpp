@@ -280,8 +280,7 @@ void CommandLIGHT_C(void **arguments) {
     direction[2] = *(float *) arguments[2];
     direction[3] = 0.0f;
     sceVu0Normalize(direction, direction);
-    index = light - 1;
-    edit_info->light_direction[light_no][0][index] = direction[0];
+    edit_info->light_direction[light_no][0][index = light - 1] = direction[0];
     edit_info->light_direction[light_no][1][index] = direction[1];
     edit_info->light_direction[light_no][2][index] = direction[2];
     edit_info->light_direction[light_no][3][index] = direction[3];
@@ -1144,20 +1143,42 @@ void CommandSOUND_SET(void **arguments) {
     printf("sound set = %d\n", edit_info->sound_set_no);
 }
 
-INCLUDE_RODATA("asm/nonmatchings/editloop", @875__2);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @876__2);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @877);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @878);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @879);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @880__2);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @881__2);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @882);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @883);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @884__3);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @885);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @907);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @908);
-INCLUDE_ASM("asm/nonmatchings/editloop", CommandREVERBE__FPPv__2);
+/**
+ * Selects the two environmental reverb presets and their strengths.
+ */
+void CommandREVERBE(void **arguments) {
+    static char *rev[] = {
+        "OFF", "ROOM", "STUDIO_A", "STUDIO_B", "STUDIO_C", "HALL",
+        "SPACE", "ECHO", "DELAY", "PIPE", "MAX", ""
+    };
+
+    int mode = 0;
+    char *name = (char *) arguments[0];
+    while (*rev[mode] != '\0') {
+        if (strcasecmp(rev[mode], name) == 0)
+            break;
+        mode++;
+    }
+    if (10 < mode)
+        mode = 0;
+    edit_info->reverb_mode[0] = mode;
+    edit_info->reverb_depth[0] = *(int *) arguments[1];
+
+    mode = 0;
+    name = (char *) arguments[2];
+    while (*rev[mode] != '\0') {
+        if (strcasecmp(rev[mode], name) == 0)
+            break;
+        mode++;
+    }
+    if (10 < mode)
+        mode = 0;
+    edit_info->reverb_mode[1] = mode;
+    edit_info->reverb_depth[1] = *(int *) arguments[3];
+
+    printf("rev0 = %s %d\n", rev[edit_info->reverb_mode[0]], edit_info->reverb_depth[0]);
+    printf("rev1 = %s %d\n", rev[edit_info->reverb_mode[1]], edit_info->reverb_depth[1]);
+}
 /**
  * Appends a named map-part motion range to the current map.
  */
@@ -1432,7 +1453,6 @@ void RunSystemEvent(int event_no, CCamera *camera) {
 /**
  * Begins a fade into a comparison event unless a higher-priority request is active.
  */
-FUZZY_MATCH("asm/matchings/editloop", FadeOutToEvent__Fii);
 int FadeOutToEvent(int event_no, int level) {
     if (EdDebugEventEnable == 0) {
         return 0;
@@ -1445,7 +1465,8 @@ int FadeOutToEvent(int event_no, int level) {
     }
     goto_cmp_event = event_no;
     goto_cmp_event_level = level;
-    EdFadeOut(60, 0.0f, 0.0f, 0.0f);
+    float zero = 0.0f;
+    EdFadeOut(60, zero, zero, zero);
     return 1;
 }
 /**

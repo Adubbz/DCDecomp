@@ -299,7 +299,8 @@ struct EDIT_MAP_INFO {
     int ambient_sound_off;              /**< Whether ambient map sound is disabled. */
     int bgm_no;                         /**< Background-music number selected by the script. */
     int sound_set_no;                   /**< Environmental sound-set number. */
-    u8 unk_0050[0x10];
+    int reverb_mode[2];                 /**< Reverb presets selected for the two sound channels. */
+    int reverb_depth[2];                /**< Reverb strengths selected for the two sound channels. */
     float wind[4];                      /**< Wind direction and strength parameters. */
     float ambient[12][4];               /**< Ambient light colours for each light preset. */
     float light_direction[12][4][4];    /**< Normalized light directions per preset, one light per column. */

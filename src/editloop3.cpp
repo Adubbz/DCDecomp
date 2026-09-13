@@ -1539,7 +1539,8 @@ void EdSetLightParam(float clock, int fixed, EDIT_MAP_INFO *info, CFrameVu1 *sky
     sceVu0FVECTOR current_background;
     sceVu0FVECTOR next_background;
     if (fixed != 0) {
-        MGSetBGColor(0.0f, 0.0f, 0.0f, 0.0f);
+        float zero = 0.0f;
+        MGSetBGColor(zero, zero, zero, zero = 0.0f);
         fixed_fog = info->fog[current];
         fixed_fog.far_distance *= 10.0f;
         fixed_fog.near_distance *= 10.0f;
@@ -2692,7 +2693,7 @@ static int _GOTO_INTERIOR(RS_STACKDATA *stack, int argument_count) {
         EdEventInfo.unk_2d0 = GetStackInt(stack);
     else
         EdEventInfo.unk_2d0 = -1;
-    EdEventInfo.return_code = 4;
+    return EdEventInfo.return_code = 4;
 }
 
 static int _SET_WORLD_COORD(RS_STACKDATA *stack, int argument_count) {
@@ -3463,17 +3464,12 @@ static int _GET_CHARA_ROT(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _TURN_CHARA(RS_STACKDATA *stack, int argument_count);
-#ifdef NON_MATCHING
 int _TURN_CHARA(RS_STACKDATA *stack, int) {
     sceVu0FVECTOR position;
     GetPosition(stack, position);
-    stack += 3;
-    turn_chara(EdEventInfo.main_character, position, GetStackFloat(stack));
+    turn_chara(EdEventInfo.main_character, position, GetStackFloat(stack += 3));
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", _TURN_CHARA__FP12RS_STACKDATAi);
-#endif
 
 static int _GET_NPC_TALK_POS(RS_STACKDATA *stack, int argument_count) {
     int position[2];
@@ -3684,12 +3680,11 @@ static int _TURN_NPC(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-#ifdef NON_MATCHING
 int _NPC_DRAW(RS_STACKDATA *stack, int argument_count) {
     int draw = GetStackInt(stack++);
     for (int i = 0; i < argument_count - 1; i++) {
-        int index;
-        if (GetChara(index = GetStackInt(stack++)) != NULL) {
+        int index = GetStackInt(stack++);
+        if (GetChara(index) != NULL) {
             if (index < 0)
                 EdEventInfo.player_draw = draw;
             if (index >= 0 && index < 16)
@@ -3698,16 +3693,12 @@ int _NPC_DRAW(RS_STACKDATA *stack, int argument_count) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", _NPC_DRAW__FP12RS_STACKDATAi);
-#endif
 
-#ifdef NON_MATCHING
 int _NPC_DRAW_SHADOW(RS_STACKDATA *stack, int argument_count) {
     int draw = GetStackInt(stack++);
     for (int i = 0; i < argument_count - 1; i++) {
-        int index;
-        if (GetChara(index = GetStackInt(stack++)) != NULL) {
+        int index = GetStackInt(stack++);
+        if (GetChara(index) != NULL) {
             if (index < 0)
                 EdEventInfo.player_shadow_draw = draw;
             if (index >= 0 && index < 16)
@@ -3716,16 +3707,12 @@ int _NPC_DRAW_SHADOW(RS_STACKDATA *stack, int argument_count) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", _NPC_DRAW_SHADOW__FP12RS_STACKDATAi);
-#endif
 
-#ifdef NON_MATCHING
 int _SET_NPC_FOOT_SOUND(RS_STACKDATA *stack, int argument_count) {
     int mode = GetStackInt(stack++);
     for (int i = 0; i < argument_count - 1; i++) {
-        int index;
-        CCharacter *character = GetChara(index = GetStackInt(stack++));
+        int index = GetStackInt(stack++);
+        CCharacter *character = GetChara(index);
         if (character != NULL) {
             if (index < 0)
                 EdEventInfo.player_foot_sound = mode;
@@ -3737,9 +3724,6 @@ int _SET_NPC_FOOT_SOUND(RS_STACKDATA *stack, int argument_count) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", _SET_NPC_FOOT_SOUND__FP12RS_STACKDATAi);
-#endif
 
 static int _SET_NPC_FLOOR_ID(RS_STACKDATA *stack, int) {
     RS_STACKDATA *argument = (0, stack + 1);
@@ -4275,19 +4259,22 @@ static int _HOBJ_CHARA(RS_STACKDATA *stack, int) {
 }
 
 static int _HOBJ_BT_HOBJ(RS_STACKDATA *stack, int argument_count) {
-    RS_STACKDATA *objects = stack + 1;
-    OBJ_HANDLE *handle = GetObjHandle(GetStackInt(stack));
+    OBJ_HANDLE *handle;
+    int i;
+    int count;
+    count = argument_count;
+    handle = GetObjHandle(GetStackInt(stack++));
     if (handle == NULL)
         return 0;
     memset(handle, 0, sizeof(OBJ_HANDLE));
-    if (argument_count >= 13)
-        argument_count = 12;
-    for (int i = 0; i < argument_count - 1; i++) {
-        BT_OBJ_HANDLE *object = GetObjHDL(GetStackInt(objects++));
+    if (12 < count)
+        count = 12;
+    for (i = 0; i < count - 1; i++) {
+        BT_OBJ_HANDLE *object = GetObjHDL(GetStackInt(stack++));
         if (object == NULL)
             return 0;
         if (object->type == 1) {
-            if (argument_count >= 3)
+            if (2 < count)
                 return 0;
             handle->character = object->character;
         }
@@ -5288,26 +5275,20 @@ static int _ASQ_INIT(RS_STACKDATA *stack, int) {
     return 1;
 }
 
-#ifdef NON_MATCHING
 int _ASQ_SYNC_CHARA(RS_STACKDATA *stack, int) {
     int sequence_index = GetStackInt(stack++);
     int character_index = GetStackInt(stack);
     CActionSeq *sequence = GetActSeq(sequence_index);
     if (sequence == NULL)
         return 0;
-    CCharacter *character;
+    CCharacter *character = &GetNPC(character_index)->chara;
     if (character_index == -1)
         character = EdEventInfo.main_character;
-    else
-        character = &GetNPC(character_index)->chara;
     if (character == NULL)
         return 0;
     sequence->SyncChara(character);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", _ASQ_SYNC_CHARA__FP12RS_STACKDATAi);
-#endif
 
 static int _ASQ_SET_POS(RS_STACKDATA *stack, int) {
     RS_STACKDATA *arguments = (0, stack + 1);
@@ -5335,35 +5316,24 @@ static int _ASQ_MOVE(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-#ifdef NON_MATCHING
 int _ASQ_MOVE_STEP(RS_STACKDATA *stack, int) {
-    RS_STACKDATA *arguments = (0, stack + 1);
-    CActionSeq *sequence = GetActSeq(GetStackInt(stack));
+    CActionSeq *sequence = GetActSeq(GetStackInt(stack++));
     if (sequence == NULL)
         return 0;
     sceVu0FVECTOR position;
-    GetPosition(arguments, position);
-    sequence->MoveSeq(position, GetStackFloat(arguments + 3));
+    GetPosition(stack, position);
+    sequence->MoveSeq(position, GetStackFloat(stack += 3));
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", _ASQ_MOVE_STEP__FP12RS_STACKDATAi);
-#endif
-
-#ifdef NON_MATCHING
 int _ASQ_ROT_REF(RS_STACKDATA *stack, int) {
-    RS_STACKDATA *arguments = (0, stack + 1);
-    CActionSeq *sequence = GetActSeq(GetStackInt(stack));
+    CActionSeq *sequence = GetActSeq(GetStackInt(stack++));
     if (sequence == NULL)
         return 0;
     sceVu0FVECTOR position;
-    GetPosition(arguments, position);
-    sequence->RotRefSeq(position, GetStackFloat(arguments + 3));
+    GetPosition(stack, position);
+    sequence->RotRefSeq(position, GetStackFloat(stack += 3));
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", _ASQ_ROT_REF__FP12RS_STACKDATAi);
-#endif
 
 static int _ASQ_ROT_ANGLE(RS_STACKDATA *stack, int) {
     sceVu0FVECTOR rotation;
@@ -5747,7 +5717,6 @@ static int _SATRA_CHIP_GET(RS_STACKDATA *stack, int) {
     SaveData->AtraChipGet(georama, GetStackInt(next));
 }
 
-#ifdef NON_MATCHING
 int _SGET_REQUEST(RS_STACKDATA *stack, int) {
     RS_STACKDATA *result = (0, stack + 1);
     SV_GEORAMA_DATA *georama = SaveData->GetGrdData(GetStackInt(stack) - 1);
@@ -5767,12 +5736,9 @@ int _SGET_REQUEST(RS_STACKDATA *stack, int) {
     if (completed == total)
         SetStack(result, 100);
     else
-        SetStack(result, completed * 100 / total);
+        SetStack(result++, completed * 100 / total);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", _SGET_REQUEST__FP12RS_STACKDATAi);
-#endif
 
 static int _SGET_ATRA_PARTS_NUM(RS_STACKDATA *stack, int) {
     int count = 0;

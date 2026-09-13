@@ -334,7 +334,8 @@
   },
   "src/editloop.cpp": {
     "symbols": {
-      "CommandIMG__FPPv": "CommandIMG__FPPv__2"
+      "CommandIMG__FPPv": "CommandIMG__FPPv__2",
+      "CommandREVERBE__FPPv": "CommandREVERBE__FPPv__2"
     },
     "rodata_exports": [
       "@2362",
@@ -374,7 +375,12 @@
       "@885",
       "@414__5",
       "@2151"
-    ]
+    ],
+    "sections": {
+      ".editloopdata": [
+        "rev$874"
+      ]
+    }
   },
   "src/editloop3.cpp": {
     "symbols": {
@@ -532,16 +538,16 @@
         "@2095"
       ],
       ".eddata5": [
-        "@2416"
+        "@2417"
       ],
       ".eddata6": [
-        "@2529",
+        "@2571",
         "talk_camera_ref",
-        "@2923",
-        "@2924",
-        "@2932",
-        "@2946",
-        "@3180"
+        "@2965",
+        "@2966",
+        "@2974",
+        "@2988",
+        "@3235"
       ],
       ".edbuffers": [
         "EdVillagerBuffer",
