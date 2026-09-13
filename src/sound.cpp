@@ -43,7 +43,10 @@ INCLUDE_ASM("asm/nonmatchings/sound", SQ_RePlay__6CSoundFi);
 INCLUDE_RODATA("asm/nonmatchings/sound", @789);
 INCLUDE_ASM("asm/nonmatchings/sound", SE_Play__6CSoundFiiiiiii);
 INCLUDE_ASM("asm/nonmatchings/sound", SE_Play__6CSoundFiii);
-INCLUDE_ASM("asm/nonmatchings/sound", SE_Play__6CSoundFiiiii);
+void CSound::SE_Play(int group, int bank, int program, int volume, int voice)
+{
+    SE_Play(group, bank, program, 0x40, 0x7F, volume, voice);
+}
 INCLUDE_ASM("asm/nonmatchings/sound", SE_Play__6CSoundFiiii);
 INCLUDE_ASM("asm/nonmatchings/sound", SE_SetVol__6CSoundFiiiii);
 INCLUDE_ASM("asm/nonmatchings/sound", SE_SetPan__6CSoundFiiiii);
