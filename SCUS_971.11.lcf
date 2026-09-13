@@ -651,7 +651,7 @@ SECTIONS
 		editloop3.cpp.o (.edsbss3)     // 0x002a2a30
 		main.sbss.part4e.s.o (.sbss)   // 0x002a2a54
 		editloop3.cpp.o (.edsbss4)     // 0x002a2a64
-		main.sbss.part4f.s.o (.sbss)   // 0x002a2a7c
+		main.sbss.part4f.s.o (.sbss)   // 0x002a2a80
 		dungeonmap.cpp.o (.sbss)
 		main.sbss.part5.s.o (.sbss)
 		monstorunit.cpp.o (.sbss) // 0x002a2c68, counter and guard

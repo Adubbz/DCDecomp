@@ -478,7 +478,8 @@
         "talk_camera",
         "talk_mode",
         "talk_select",
-        "TalkMesMake"
+        "TalkMesMake",
+        "TalkMesNo"
       ],
       ".fadebss": [
         "fade_in_out",
@@ -528,18 +529,18 @@
         "@1158"
       ],
       ".eddata4": [
-        "@2095"
+        "@2094"
       ],
       ".eddata5": [
-        "@2416"
+        "@2415"
       ],
       ".eddata6": [
-        "@2529",
+        "@2528",
         "talk_camera_ref",
+        "@2923",
         "@2924",
-        "@2925",
-        "@2933",
-        "@2947",
+        "@2932",
+        "@2946",
         "@3180"
       ],
       ".edbuffers": [

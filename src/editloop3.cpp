@@ -341,9 +341,9 @@ void EdEventPointDraw(ED_EVENT_POINT *point, int count, float time) {
     CFrame *marker = EdExchangeInfo.event_marker;
     C3DSprite *effect = EdExchangeInfo.system_effect;
     static float roty = 0.0f;
-    roty += 0.01f;
-    if (roty > 6.283184f)
-        roty -= 6.283184f;
+    roty += 0.05f;
+    if (roty > 3.141592f)
+        roty -= 6.2831855f;
 
     static float sys_eff_sc = 0.0f;
     static int sys_eff_cnt = 0;
@@ -352,7 +352,7 @@ void EdEventPointDraw(ED_EVENT_POINT *point, int count, float time) {
         sys_eff_cnt = rand() % 20 + 10;
     }
     if (sys_eff_cnt < 0) {
-        sys_eff_sc += 0.1f;
+        sys_eff_sc += 0.3f;
         sys_eff_cnt = 0;
     }
     sys_eff_cnt--;
@@ -2543,10 +2543,10 @@ static void GetWorldPos(float *out, float *position) {
 
 static float GetWorldRotY(float rotation) {
     rotation += world_rot[1];
-    if (rotation > 3.1415927f)
-        rotation -= 6.2831855f;
-    if (rotation < -3.1415927f)
-        rotation += 6.2831855f;
+    if (rotation > 3.141592f)
+        rotation -= 6.283184f;
+    if (rotation < -3.141592f)
+        rotation += 6.283184f;
     return rotation;
 }
 
@@ -2566,10 +2566,10 @@ static void GetLocalPos(float *out, float *position) {
 
 static float GetLocalRotY(float rotation) {
     rotation -= world_rot[1];
-    if (rotation > 3.1415927f)
-        rotation -= 6.2831855f;
-    if (rotation < -3.1415927f)
-        rotation += 6.2831855f;
+    if (rotation > 3.141592f)
+        rotation -= 6.283184f;
+    if (rotation < -3.141592f)
+        rotation += 6.283184f;
     return rotation;
 }
 
@@ -4704,7 +4704,7 @@ static int _CAMERA_STEP(RS_STACKDATA *, int) {
     if (follow_chara != NULL) {
         sceVu0FVECTOR position;
         follow_chara->GetPosition(position);
-        camera->SetFollow(position[0], position[1] + 0.7f * follow_chara->body_height, position[2]);
+        camera->SetFollow(position[0], position[1] + 0.8f * follow_chara->body_height, position[2]);
     }
     return 1;
 }
@@ -5822,17 +5822,17 @@ static int _LOAD_SND_SYNC(RS_STACKDATA *stack, int) {
 
 static int _LOAD_SOUND_SET(RS_STACKDATA *stack, int) {
     StartReadBG();
-    SndSoundLoadBG(GetStackInt(stack), BaseBuffer, NULL);
+    SndSoundLoadBG(GetStackInt(stack), read_buffer, NULL);
 }
 
 static int _LOAD_VOICE_SET(RS_STACKDATA *stack, int) {
     StartReadBG();
-    SndVoiceLoadBG(GetStackInt(stack), BaseBuffer, NULL);
+    SndVoiceLoadBG(GetStackInt(stack), read_buffer, NULL);
 }
 
 static int _LOAD_BGM(RS_STACKDATA *stack, int) {
     StartReadBG();
-    SndBgmLoadBG(GetStackInt(stack), BaseBuffer, NULL);
+    SndBgmLoadBG(GetStackInt(stack), read_buffer, NULL);
 }
 
 static int _DELETE_BGM(RS_STACKDATA *, int) {
@@ -5958,7 +5958,7 @@ static int _SET_SE_VOL(RS_STACKDATA *stack, int) {
 
 static int _LOAD_SPECIAL_SE(RS_STACKDATA *stack, int) {
     StartReadBG();
-    SndSPSeLoadBG(GetStackInt(stack), BaseBuffer, NULL);
+    SndSPSeLoadBG(GetStackInt(stack), read_buffer, NULL);
     return 1;
 }
 
@@ -6655,7 +6655,7 @@ void RunEvent(CRunScript *script, int program, CDataAlloc2<1> *arena) {
     sceVu0CopyVector(world_pos, world_rot);
     sceVu0UnitMatrix(world_local);
     sceVu0UnitMatrix(local_world);
-    p_jump_map_no = 0;
+    set_wl_matrix = 0;
     script->run(program);
 }
 
@@ -6889,6 +6889,9 @@ static int talk_select;
 /** Whether the active conversation message still needs to be created. */
 static int TalkMesMake;
 
+/** Message number the active conversation is showing. */
+static int TalkMesNo;
+
 int EdTalkModeInit(CNPCharacter *villager, int character_info_id) {
     if (villager->villager_id < 0)
         return 0;
@@ -6899,7 +6902,7 @@ int EdTalkModeInit(CNPCharacter *villager, int character_info_id) {
         talk_chara_info_id = character_info_id;
     talk_mode = 0;
     TalkMesMake = 1;
-    talk_select = 0;
+    TalkMesNo = 0;
     talk_camera = 0;
     if (villager->event_status != 0)
         talk_camera = rand() % 3;
