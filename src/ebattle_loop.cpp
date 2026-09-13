@@ -20,9 +20,14 @@ INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", @1702);
 INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", @1703);
 INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", @1704);
 
+/** Enemy-battle diagnostic display mode. */
+extern int debug_mode;
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBInitIntro__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBSetMotion__FP10CCharacterPi);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBDebug__Fi);
+void EBDebug(int mode) {
+    debug_mode = mode;
+}
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBSetKey__Ffii);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBExit__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBIntroLoop__Fv);
