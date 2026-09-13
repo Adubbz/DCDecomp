@@ -152,7 +152,110 @@ int CEditArea::GetPartsExtra(int x, int y) {
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", SetMapParts__9CEditAreaFiP9CMapPartsfffi);
 INCLUDE_ASM("asm/nonmatchings/editarea", DeleteMapParts__9CEditAreaFiP9CMapPartsfff);
-INCLUDE_ASM("asm/nonmatchings/editarea", SetRiverParts__9CEditAreaFii);
+
+int CEditArea::SetRiverParts(int x, int y) {
+    int neighbors[4];
+    int north, east, south, west;
+    int count, shape, direction, i;
+
+    if ((x < 0) || (x >= this->width)) {
+        return -1;
+    }
+    if ((y < 0) || (y >= this->height)) {
+        return -1;
+    }
+    if (GetPartsExtra(x, y) != 2) {
+        return -1;
+    }
+    north = GetPartsExtra(x, y - 1);
+    east = GetPartsExtra(x + 1, y);
+    south = GetPartsExtra(x, y + 1);
+    west = GetPartsExtra(x - 1, y);
+    neighbors[0] = north == 2;
+    neighbors[1] = east == 2;
+    neighbors[2] = south == 2;
+    neighbors[3] = west == 2;
+    neighbors[0] = neighbors[0] || north == 3;
+    neighbors[1] = neighbors[1] || east == 3;
+    neighbors[2] = neighbors[2] || south == 3;
+    neighbors[3] = neighbors[3] || west == 3;
+    neighbors[0] = neighbors[0] || north == 5;
+    neighbors[1] = neighbors[1] || east == 5;
+    neighbors[2] = neighbors[2] || south == 5;
+    neighbors[3] = neighbors[3] || west == 5;
+    count = 0;
+    for (i = 0; i < 4; i++) {
+        count += neighbors[i];
+    }
+    shape = -1;
+    direction = 0;
+    if (count == 4) {
+        shape = 4;
+    }
+    if (count == 3) {
+        shape = 3;
+        if (neighbors[0] == 0) {
+            direction = 3;
+        }
+        if (neighbors[1] == 0) {
+            direction = 2;
+        }
+        if (neighbors[2] == 0) {
+            direction = 1;
+        }
+        if (neighbors[3] == 0) {
+            direction = 0;
+        }
+    }
+    if (count == 2) {
+        if (((neighbors[0] != 0) && (neighbors[2] != 0)) || ((neighbors[1] != 0) && (neighbors[3] != 0))) {
+            shape = 2;
+            if (neighbors[0] != 0) {
+                direction = 0;
+            }
+            if (neighbors[1] != 0) {
+                direction = 1;
+            }
+        } else {
+            shape = 1;
+            if ((neighbors[1] != 0) && (neighbors[2] != 0)) {
+                direction = 3;
+            }
+            if ((neighbors[2] != 0) && (neighbors[3] != 0)) {
+                direction = 2;
+            }
+            if ((neighbors[3] != 0) && (neighbors[0] != 0)) {
+                direction = 1;
+            }
+            if ((neighbors[0] != 0) && (neighbors[1] != 0)) {
+                direction = 0;
+            }
+        }
+    }
+    if (count == 1) {
+        shape = 6;
+        if (neighbors[0] != 0) {
+            direction = 2;
+        }
+        if (neighbors[1] != 0) {
+            direction = 1;
+        }
+        if (neighbors[2] != 0) {
+            direction = 0;
+        }
+        if (neighbors[3] != 0) {
+            direction = 3;
+        }
+    }
+    if (count == 0) {
+        shape = 5;
+    }
+    if (shape < 0) {
+        return -1;
+    }
+    shape = (shape << 4) & 0xFF0;
+    return shape | (direction & 0xF);
+}
 
 int CEditArea::SetRoadParts(int x, int y) {
     int neighbors[4];

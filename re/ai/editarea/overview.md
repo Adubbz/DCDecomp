@@ -86,3 +86,9 @@ order, and encodes the connection shape in bits 4–11 and rotation in bits
 0–3. Shapes 1/2 are corners/straight segments, 3/4 are three/four-way
 junctions, and 5/6 are isolated/end segments. The final shift-and-mask
 is evaluated before the rotation mask to preserve retail register allocation.
+
+`SetRiverParts` requires attribute 2 in the selected cell, and accepts
+neighbor attributes 2, 3, and 5 as connections. It uses the same six
+shape codes as roads, with different rotations for corners and three-way
+junctions. The staged Boolean assignments preserve the retail ordering of
+neighbor classification.
