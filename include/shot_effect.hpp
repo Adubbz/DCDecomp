@@ -14,7 +14,27 @@ class CFrame;
 
 class CSHOT_EFFECT {
 public:
-    u8 unk_0000[0xA160] __attribute__((aligned(16)));
+    BT_SHOT_EFFECT *unk_0000;
+    u8 unk_0004[0x9FFC];
+    s16 unk_A000[8];
+    s32 unk_A010[8];
+    s32 unk_A030[8];
+    s16 unk_A050[8];
+    s16 unk_A060[8];
+    s32 unk_A070[8];
+    char *unk_A090[8];
+    s32 unk_A0B0[8];
+    float unk_A0D0[8];
+    s32 unk_A0F0[8];
+    s32 unk_A110[8];
+    u8 unk_A130[8];
+    u8 unk_A138[8];
+    u8 unk_A140[8];
+    s32 unk_A148;
+    s32 unk_A14C;
+    s32 unk_A150;
+    s32 unk_A154;
+    u8 unk_A158[8];
 
     /**
      * @mangled Draw__12CSHOT_EFFECTFv
@@ -177,7 +197,7 @@ public:
      * @unknownret
      */
     void Initialize(void);
-};
+} __attribute__((aligned(16)));
 
 STATIC_ASSERT(sizeof(CSHOT_EFFECT) == 0xA160);
 
