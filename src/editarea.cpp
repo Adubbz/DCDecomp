@@ -20,7 +20,15 @@ void CEditArea::SetPartsNo(int x, int y, int parts_no_) {
     }
     grid[x][y].parts_no = parts_no_;
 }
-INCLUDE_ASM("asm/nonmatchings/editarea", SetPartsID__9CEditAreaFiii);
+void CEditArea::SetPartsID(int x, int y, int parts_id_) {
+    if (x < 0 || x >= width) {
+        return;
+    }
+    if (y < 0 || y >= height) {
+        return;
+    }
+    grid[x][y].parts_id = parts_id_;
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", SetPartsExtra__9CEditAreaFiii);
 INCLUDE_ASM("asm/nonmatchings/editarea", SetCode__9CEditAreaFiii);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetPartsID__9CEditAreaFii);
