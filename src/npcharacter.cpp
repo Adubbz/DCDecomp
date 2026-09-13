@@ -17,7 +17,11 @@ INCLUDE_ASM("asm/nonmatchings/npcharacter", SetSeq__12CNPCharacterFPff);
 INCLUDE_ASM("asm/nonmatchings/npcharacter", SetWait__12CNPCharacterFi);
 INCLUDE_ASM("asm/nonmatchings/npcharacter", CheckSeq__12CNPCharacterFv);
 INCLUDE_ASM("asm/nonmatchings/npcharacter", GetNextSeq__12CNPCharacterFv);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", GetNowSeq__12CNPCharacterFv);
+
+NP_SEQUENCE *CNPCharacter::GetNowSeq() {
+    return &sequences[read_index];
+}
+
 INCLUDE_ASM("asm/nonmatchings/npcharacter", NextSeq__12CNPCharacterFv);
 INCLUDE_ASM("asm/nonmatchings/npcharacter", Draw__12CNPCharacterFv);
 INCLUDE_ASM("asm/nonmatchings/npcharacter", DrawShadow__12CNPCharacterFv);
