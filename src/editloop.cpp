@@ -2420,11 +2420,10 @@ int CheckEditToWalk(float *position) {
                 float alt = pEditGround->GetAlt(from[0], from[1], from[2]);
                 int area = pEditGround->GetAreaCode(from[0], from[1], from[2]);
                 float drop;
-                float ground = hit[1];
-                drop = ground - alt;
+                drop = hit[1] - alt;
                 drop = drop < 0.0f ? -drop : drop;
                 if (drop < 0.10000000149011612f && area >= 0) {
-                    pos[1] = 1.0f + ground;
+                    pos[1] = 1.0f + hit[1];
                 } else {
                     walkable = 0;
                 }
