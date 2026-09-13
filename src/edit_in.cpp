@@ -1,5 +1,13 @@
 #include "common.h"
 
+/**
+ * Identifies the kind of editor effect requested.
+ */
+// clang-format off
+enum EFFECT_TYPE {
+};
+// clang-format on
+
 INCLUDE_ASM("asm/nonmatchings/edit_in", GetElementObjName__FP14EDITPARTS_INFOPPcii);
 INCLUDE_ASM("asm/nonmatchings/edit_in", LoadMapObject__FP9CMapPartsPPUiP14CDataAlloc2_1_);
 INCLUDE_ASM("asm/nonmatchings/edit_in", LoadScript__Fv__2);
@@ -67,7 +75,9 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", CommandPEOPLE__FPPv__2);
 INCLUDE_ASM("asm/nonmatchings/edit_in", CommandCD__FPPv__2);
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @1627__2);
 INCLUDE_ASM("asm/nonmatchings/edit_in", CommandOBJ_ANIME__FPPv__2);
-INCLUDE_ASM("asm/nonmatchings/edit_in", SetEffect__F11EFFECT_TYPEPcPfPfPf);
+
+void SetEffect(EFFECT_TYPE, char *, float *, float *, float *) {
+}
 INCLUDE_ASM("asm/nonmatchings/edit_in", CommandFIRE__FPPv__2);
 INCLUDE_ASM("asm/nonmatchings/edit_in", CommandFLAME__FPPv__2);
 INCLUDE_ASM("asm/nonmatchings/edit_in", CommandBRIGHT__FPPv__2);
