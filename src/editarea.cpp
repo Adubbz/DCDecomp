@@ -15,7 +15,11 @@ void CEditArea::SetSize(s32 arg0, s32 arg1, float arg2, float arg3) {
     this->unit_alt = arg3;
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", GetPos__9CEditAreaFP11CVector3_i_fff);
-INCLUDE_ASM("asm/nonmatchings/editarea", GetPos__9CEditAreaFP11CVector3_f_iii);
+void CEditArea::GetPos(CVector3_f_ *arg0, s32 arg1, s32 arg2, s32 arg3) {
+    arg0->x = this->offset_x + ((float) arg1 * this->unit_size);
+    arg0->y = this->offset_y + ((float) arg2 * this->unit_alt);
+    arg0->z = this->offset_z + ((float) arg3 * this->unit_size);
+}
 void CEditArea::SetPartsNo(int x, int y, int parts_no_) {
     if (x < 0 || x >= width) {
         return;
