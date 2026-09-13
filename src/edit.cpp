@@ -1557,7 +1557,10 @@ void EdSaveFrameImageTask() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/edit", EdSaveFrameImageInit__Fv);
+void EdSaveFrameImageInit() {
+    frame_image_tex.Initialize();
+    frame_image_flag = 0;
+}
 INCLUDE_ASM("asm/nonmatchings/edit", EdMenuLoop__FP6ClsMes);
 
 float ConvertTime(float hour) {
