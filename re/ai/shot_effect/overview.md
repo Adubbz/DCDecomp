@@ -110,7 +110,9 @@ compares it with -1, indexes `effect` with stride 0xA160, calls the
 corresponding `CSHOT_EFFECT` method, and returns without setting a return
 register.
 
-Two typework causes remain outside the allowance:
+Two shared-header follow-ups remain outside the allowance. The first no longer
+blocks draft compilation after including its owning header, but its return tag
+is still inaccurate; the second remains a sweep-visible global cause:
 
 - `include/nowload.hpp` should drop `@unknownret` from
   `void wait_now_loading_vsync(void)`. The function's assembly at 0x153F70
