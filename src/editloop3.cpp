@@ -340,6 +340,7 @@ void EdEventPointDraw(ED_EVENT_POINT *point, int count, float time) {
     CEditGround *ground = EdExchangeInfo.ground;
     CFrame *marker = EdExchangeInfo.event_marker;
     C3DSprite *effect = EdExchangeInfo.system_effect;
+    ED_EVENT_POINT *p = point;
     static float roty = 0.0f;
     roty += 0.05f;
     if (roty > 3.141592f)
@@ -357,33 +358,33 @@ void EdEventPointDraw(ED_EVENT_POINT *point, int count, float time) {
     }
     sys_eff_cnt--;
 
-    for (int i = 0; i < count; i++, point++) {
-        if (CheckEventPoint(point, time) == 0)
+    for (int i = 0; i < count; i++, p++) {
+        if (CheckEventPoint(p, time) == 0)
             continue;
-        switch (point->event_type) {
+        switch (p->event_type) {
             case 3:
-                if (point->linked_value <= 0)
+                if (p->linked_value <= 0)
                     break;
             case 2: {
                 sceVu0FVECTOR position;
                 sceVu0FVECTOR rotation;
-                sceVu0CopyVector(position, point->position);
-                sceVu0CopyVector(rotation, point->rotation);
-                CMapObject *object = point->map_object;
-                if (point->parts_no >= 0) {
-                    object = ground->GetPartsObject(point->parts_no);
+                sceVu0CopyVector(position, p->position);
+                sceVu0CopyVector(rotation, p->rotation);
+                CMapObject *object = p->map_object;
+                if (p->parts_no >= 0) {
+                    object = ground->GetPartsObject(p->parts_no);
                     if (object == NULL)
                         break;
                     GetPosRot(object, position, rotation);
                 } else if (object != NULL) {
                     GetPosRot(object, position, rotation);
                 }
-                if (point->event_type == 2 && marker != NULL) {
+                if (p->event_type == 2 && marker != NULL) {
                     marker->SetPosition(position);
                     marker->SetRotation(0.0f, rotation[1], 0.0f);
                     MGDraw(marker);
                 }
-                if (point->event_type == 3) {
+                if (p->event_type == 3) {
                     sceVu0CopyVector(effect->position, position);
                     effect->half_width = 2.0f * sys_eff_sc;
                     effect->half_height = sys_eff_sc;
