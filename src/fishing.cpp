@@ -14,6 +14,9 @@ extern int BattleFish;
 /** The fish displayed after an angling battle, or null when none is displayed. */
 extern CFish *AngleFish;
 
+/** The current tension applied to the fishing hook. */
+extern float pull_hook;
+
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingLoad__FP14CDataAlloc2_1_i);
 INCLUDE_RODATA("asm/nonmatchings/fishing", @353__4);
 INCLUDE_RODATA("asm/nonmatchings/fishing", @354__2);
@@ -68,7 +71,9 @@ INCLUDE_ASM("asm/nonmatchings/fishing", GetHookPos__FPf);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineInit__FPf);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineSetUki__FPff);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineSetHook__FPff);
-INCLUDE_ASM("asm/nonmatchings/fishing", FishPullHook__Ff);
+void FishPullHook(float tension) {
+    pull_hook = tension;
+}
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineGetUki__FPf);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineGetHook__FPf);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingCheckUkiHook__Fv);

@@ -75,6 +75,15 @@ int FishingGetBattleFish();
 void FishingDeleteAngleFish();
 
 /**
+ * Sets the current tension applied to the fishing hook.
+ *
+ * @mangled FishPullHook__Ff
+ * @address 0x1AA170
+ * @size 0xC
+ */
+void FishPullHook(float tension);
+
+/**
  * Leaves the fishing minigame and releases its active state.
  *
  * @mangled FishingExit__Fv
