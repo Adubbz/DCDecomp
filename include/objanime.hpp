@@ -78,10 +78,11 @@ struct EDIT_EFFECT_INFO {
 STATIC_ASSERT(sizeof(EDIT_EFFECT_INFO) == 0x70);
 
 /**
+ * Stops every object animation.
+ *
  * @mangled ObjAnimeAllStop__Fv
  * @address 0x165CE0
  * @size 0x10
- * @unknownret
  */
 void ObjAnimeAllStop(void);
 

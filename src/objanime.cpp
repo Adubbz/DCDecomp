@@ -1,5 +1,10 @@
 #include "objanime.hpp"
 
+/**
+ * Controls whether all object animations are stopped.
+ */
+extern int all_stop;
+
 INCLUDE_ASM("asm/nonmatchings/objanime", EffectMacroStep__FPf);
 INCLUDE_RODATA("asm/nonmatchings/objanime", @621__2);
 INCLUDE_RODATA("asm/nonmatchings/objanime", @622);
@@ -11,7 +16,11 @@ INCLUDE_ASM("asm/nonmatchings/objanime", DepthOfField__FPfiii);
 INCLUDE_RODATA("asm/nonmatchings/objanime", @766);
 INCLUDE_ASM("asm/nonmatchings/objanime", Initialize__13OBJ_ANIME_SEQFv);
 INCLUDE_ASM("asm/nonmatchings/objanime", __ct__13OBJ_ANIME_SEQFv);
-INCLUDE_ASM("asm/nonmatchings/objanime", ObjAnimeAllStop__Fv);
+
+void ObjAnimeAllStop(void) {
+    all_stop = 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/objanime", ObjAnimeAllStart__Fv);
 INCLUDE_ASM("asm/nonmatchings/objanime", InitObjAnime__FP6CFrameP13OBJ_ANIME_SEQ);
 INCLUDE_ASM("asm/nonmatchings/objanime", InitObjAnime__FPP6CFrameP13OBJ_ANIME_SEQ);
@@ -19,6 +28,7 @@ INCLUDE_ASM("asm/nonmatchings/objanime", InitObjAnime__FPP6CFrameiP13OBJ_ANIME_S
 INCLUDE_ASM("asm/nonmatchings/objanime", InitObjAnime__FPP6CFrameiP16EPARTS_FUNC_DATAP13OBJ_ANIME_SEQ);
 INCLUDE_ASM("asm/nonmatchings/objanime", end_check__Ffff);
 INCLUDE_ASM("asm/nonmatchings/objanime", ObjAnimePlay__FP13OBJ_ANIME_SEQ);
+
 INCLUDE_ASM("asm/nonmatchings/objanime", InitEditEffect__FP6CFrameP16EDIT_EFFECT_INFO);
 INCLUDE_ASM("asm/nonmatchings/objanime", InitEditEffect__FP6CFrameP16EPARTS_FUNC_DATAP16EDIT_EFFECT_INFO);
 INCLUDE_ASM("asm/nonmatchings/objanime", CheckEditEffect__FP16EDIT_EFFECT_INFOf);
