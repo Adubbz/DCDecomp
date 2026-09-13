@@ -1,13 +1,7 @@
 #include "runscript_opcodes.hpp"
 
-#include "btactstatus.hpp"
-#include "collision.hpp"
 #include "dun/gameloop.hpp"
-#include "edit.hpp"
-#include "editloop3.hpp"
 #include "monstorunit.hpp"
-#include "runscript.hpp"
-#include "snd.hpp"
 
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", GetStackInt__FP12RS_STACKDATA__3);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", GetStackFloat__FP12RS_STACKDATA__3);

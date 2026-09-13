@@ -406,13 +406,12 @@ void _SET_SND_FRM(RS_STACKDATA *, int);
 void _SET_LOOP_SND(RS_STACKDATA *, int);
 
 /**
- * Stops the current monster's active sound sequence.
- *
  * @mangled _STOP_LOOP_SND__FP12RS_STACKDATAi
  * @address 0x1E4740
  * @size 0x70
+ * @unknownret
  */
-int _STOP_LOOP_SND(RS_STACKDATA *, int);
+void _STOP_LOOP_SND(RS_STACKDATA *, int);
 
 /**
  * Clears the current monster's active sound sequence.
@@ -649,13 +648,12 @@ void _SET_COLLISION_WIDTH(RS_STACKDATA *, int);
 void _GET_NEAR_MONSTER(RS_STACKDATA *, int);
 
 /**
- * Starts the dungeon boss fade-out and marks the player action as hidden.
- *
  * @mangled _BOSS_FADE_OUT__FP12RS_STACKDATAi
  * @address 0x1E5FC0
  * @size 0x50
+ * @unknownret
  */
-int _BOSS_FADE_OUT(RS_STACKDATA *, int);
+void _BOSS_FADE_OUT(RS_STACKDATA *, int);
 
 /**
  * @mangled _CHEKC_FADE_OUT__FP12RS_STACKDATAi
