@@ -6374,8 +6374,6 @@ void SetWeaponColor(void) {
     }
 }
 
-FUZZY_MATCH("asm/nonmatchings/dun/gameloop", Get_Main_EffectPtr__Fii);
-
 BT_SHOT_EFFECT *Get_Main_EffectPtr(int chara, int form) {
     switch (chara) {
         case 0:
