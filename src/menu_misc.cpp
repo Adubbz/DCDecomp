@@ -552,7 +552,10 @@ void SetMonsterNameDrawFlag(int flag) {
     CharaNameDrawFlag = flag;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu_misc", GetMonsterNameDrawFlag__Fv);
+int GetMonsterNameDrawFlag() {
+    return CharaNameDrawFlag;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", MonsterNameInit__FP6ClsMesPsPUc);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1287__2);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", MonsterNameMake__Fi);
