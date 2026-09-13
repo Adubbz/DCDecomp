@@ -13,11 +13,34 @@
 #include "menu_misc.hpp"
 #include "snd.hpp"
 
+/**
+ * Stores whether the party is escaping the dungeon.
+ */
 extern s16 EscapeDngFlg;
+
+/**
+ * Stores whether the party is leaving an interior area.
+ */
 extern s16 RoomOutFlag;
+
+/**
+ * Stores the active battle-menu state.
+ */
 extern s32 BattleMenuFlag;
+
+/**
+ * Stores the battle-menu transition phase.
+ */
 extern s32 BtlEffectFlag;
+
+/**
+ * Stores the selected battle-menu entry.
+ */
 extern s32 MenuSelect;
+
+/**
+ * Stores the battle-menu transition timer.
+ */
 extern float BtlEffectCt;
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetDefaultWeaponNo__Fi);
