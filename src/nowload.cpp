@@ -9,7 +9,9 @@ extern int now_loading_vsync_end;
 int check_now_loading(void) {
     return end_flag;
 }
-INCLUDE_ASM("asm/nonmatchings/nowload", clear_now_loading_vsync_end__Fv);
+void clear_now_loading_vsync_end(void) {
+    now_loading_vsync_end = 0;
+}
 INCLUDE_ASM("asm/nonmatchings/nowload", check_now_loading_vsync_end__Fv);
 INCLUDE_ASM("asm/nonmatchings/nowload", wait_now_loading_vsync__Fv);
 INCLUDE_ASM("asm/nonmatchings/nowload", now_loading_off__Fv);
