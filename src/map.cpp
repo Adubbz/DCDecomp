@@ -33,5 +33,25 @@ CMapObject *CMap::GetObject(int index) {
     return &object[index];
 }
 
-INCLUDE_ASM("asm/nonmatchings/map", Draw__4CMapFv);
+void CMap::Draw(void) {
+    int index;
+
+    for (index = 0; index < 10; index++) {
+        CMapObject *map_object;
+        int category_no;
+        CMapCategoryAttr *attr;
+
+        map_object = &object[index];
+        category_no = map_object->unk_0E4;
+        if (category_no < 0) {
+            continue;
+        }
+        attr = &category[category_no];
+        if (attr->lod[0] > 0.0f && draw_on != 0) {
+            map_object->DrawLOD(attr->lod, attr->lowest, attr->highest, NULL);
+        } else {
+            map_object->Draw();
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/map", Initialize__4CMapFv);
