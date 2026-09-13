@@ -632,7 +632,14 @@ INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuInit__FPii);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @464__3);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @465__2);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuExit__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", GetDrawHelpWindow__Fi);
+
+static int GetDrawHelpWindow(int draw) {
+    if ((EditSwitch == 9 || EditSwitch == 3 || EditSwitch == 0x10) && GetMenuAtraEventFlag()) {
+        draw = 0;
+    }
+    return draw;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuLoop__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuDraw__Fv);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @573__2);
