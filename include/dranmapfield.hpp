@@ -56,3 +56,21 @@ public:
 };
 
 STATIC_ASSERT(sizeof(CDranMapField) == 0x11B0);
+
+/**
+ * Holds the drainage-field models, their collision frames and their runtime
+ * states.
+ */
+struct DRAN_MAP_FIELD_SET {
+    CDranMapField field[12]; /**< Models drawn for the drainage fields. */
+    s32 unk_D440[12];
+    s32 unk_D470[12];
+    s32 unk_D4A0;
+    s32 unk_D4A4;
+    u8 unk_D4A8[8];
+};
+
+STATIC_ASSERT(sizeof(DRAN_MAP_FIELD_SET) == 0xD4B0);
+
+/** Drainage-field models and runtime state for the current dungeon. */
+extern "C" DRAN_MAP_FIELD_SET DranMapField;

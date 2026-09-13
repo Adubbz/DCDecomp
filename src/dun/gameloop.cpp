@@ -749,23 +749,6 @@ extern "C" CCameraFollow SubCamera;
 extern "C" CTextureAnime BtTexAnime;
 extern "C" CTexAnimeData BtTexAnimeData[96];
 
-/**
- * Names the drainage fields the dungeon draws, and what each one is doing.
- */
-struct DRAN_MAP_FIELD_SET {
-    CDranMapField field[12]; /**< The model each field draws. */
-    s32 unk_D440[12];
-    s32 unk_D470[12];
-    s32 unk_D4A0;
-    s32 unk_D4A4;
-    u8 unk_D4A8[8];
-};
-
-STATIC_ASSERT(sizeof(DRAN_MAP_FIELD_SET) == 0xD4B0);
-
-/* The drainage fields the dungeon draws. */
-extern "C" DRAN_MAP_FIELD_SET DranMapField;
-
 /* The collisions of the floor the player is on. */
 extern "C" CCollisionData CColData;
 
