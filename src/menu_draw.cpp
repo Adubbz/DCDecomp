@@ -474,7 +474,7 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonAttachBoardSub__FP11ATTACH_LIST_
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonAttachBoard__FP11ATTACH_LIST);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", WhatIsKindofItem__Fi);
 
-s8 WhoIsWeaponEquip(int weapon_no) {
+int WhoIsWeaponEquip(int weapon_no) {
     COM_ITEM_INFO *info;
     WEAPON_DATA *data;
 
