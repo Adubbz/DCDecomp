@@ -22,21 +22,51 @@
 #include "weapon_buildup.hpp"
 #include "weaponeffect.hpp"
 
+/** The weapon test number the weapon menu reports. */
 extern int MenuWeaponTestCase;
+
+/** The amount the last item use gave, a base value plus a random part. */
 extern int MenuItemUseVolume;
+
+/** The menu's weapon-effect read flag. */
 extern s16 MenuCharaEffectReadFlag;
+
+/** The weapon effect kind SetOldEffectKind records. */
 extern s16 MenuCharaOldEffect;
+
+/** The weapon effect the menu's character plays. */
 extern BT_SHOT_EFFECT *WepEffectMenuPt;
+
+/** The buffer the menu's weapon effect and model are read into. */
 extern u_long128 *WepEffectMenuReadBuf;
+
+/** The message window that shows a monster's name. */
 extern ClsMes *CharaNameMes;
+
+/** Whether the monster's name is drawn. */
 extern s16 CharaNameDrawFlag;
+
+/** The state the edit menu is in. */
 extern int EditSwitch;
+
+/** The frame count of the edit menu's current transition. */
 extern int EdEffectCt;
+
+/** The selection on the edit menu's analyze page. */
 extern s16 AnalyzeSelect;
+
+/** The speed-up the analyze bar draws with, set to 2 while any input is held. */
 extern s16 ButtonAdd;
+
+/** The edit menu icon's movement: 1 while CalMoveFromMenuIcon runs, 2 while CalMoveToMenuIcon runs, 0 for none. */
 extern s16 EdMenuEffectFlag;
+
+/** The frame count of the edit menu icon's movement. */
 extern float EdMenuEffectCt;
+
+/** Whether the edit menu's second window is to be made. */
 extern s16 MakeWin2Flag;
+
 extern int EditMenuStatus[7];
 extern CDataAlloc2<1> EdMenuBuffer;
 extern CDataAlloc2<1> MenuExCashBuffer;
