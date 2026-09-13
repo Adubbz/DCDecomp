@@ -1,8 +1,10 @@
 #include "npcharacter.hpp"
+
+#include <cmath>
+
 #include "collision.hpp"
 #include "mathutil.hpp"
 #include "mglib.hpp"
-#include <cmath>
 
 void CNPCharacter::Step() {
     if (!enabled || chara.frame == NULL) {
@@ -40,7 +42,46 @@ void CNPCharacter::ShadowStep() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/npcharacter", PlaySeq__12CNPCharacterFv);
+void CNPCharacter::PlaySeq() {
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR movement;
+    sceVu0FVECTOR destination;
+    sceVu0FVECTOR flat_position;
+    if (!CheckSeq() || !sequence_enabled) {
+        return;
+    }
+    NP_SEQUENCE *sequence = GetNowSeq();
+    chara.GetPosition(position);
+    switch (sequence->operation) {
+        case NP_SEQUENCE_MOVE: {
+            sceVu0SubVector(movement, sequence->destination, position);
+            movement[1] = 0;
+            sceVu0Normalize(movement, movement);
+            sceVu0ScaleVector(movement, movement, sequence->speed[0]);
+            sceVu0CopyVector(flat_position, position);
+            flat_position[1] = sequence->destination[1];
+            if (DistVector(sequence->destination, flat_position) <= sequence->speed[0]) {
+                sceVu0CopyVector(destination, sequence->destination);
+                NextSeq();
+                chara.SetMotion(0, 0);
+            } else {
+                sceVu0AddVector(destination, position, movement);
+            }
+            float angle = AngleInterpolate(chara.rotation.y, atan2f(movement[0], movement[2]), 0.1f, 0);
+            chara.SetRotation(0, angle, 0);
+            chara.SetPosition(destination);
+            chara.SetMotion(1, 0);
+            return;
+        }
+        case NP_SEQUENCE_WAIT:
+            sequence->wait_frames--;
+            if (sequence->wait_frames < 0) {
+                NextSeq();
+            }
+            chara.SetMotion(0, 0);
+            break;
+    }
+}
 
 void CNPCharacter::ClearSeq() {
     read_index = 0;
