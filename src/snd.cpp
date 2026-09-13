@@ -81,7 +81,7 @@ extern int now_voice_set;
 /** The background-music set that is loaded, or -1 for none. */
 extern int now_bgm_no;
 
-/** Whether the background music plays: zero while it is stopped, one while it plays. */
+/** The background music's play state: 0 while it is stopped, 1 while it plays, 2 while SndBgmRePlay may resume it. */
 extern int now_bgm_play;
 
 /** The background-music volume that is set now. */
@@ -230,7 +230,14 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndBgmLoadBG__FiPUiPi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmSyncBG__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmPlay__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmStop__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmRePlay__Fv);
+
+void SndBgmRePlay() {
+    if (now_bgm_no >= 0 && now_bgm_play == 2) {
+        CSnd.SQ_RePlay(0);
+        now_bgm_play = 1;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeOutStop__Fv);
 
 int SndBgmCheck() {

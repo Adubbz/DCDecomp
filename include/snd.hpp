@@ -86,6 +86,16 @@ void SndStopAllSe(void);
 void SndBgmStop(void);
 
 /**
+ * Starts the background music again when a set is loaded and its play state
+ * is 2.
+ *
+ * @mangled SndBgmRePlay__Fv
+ * @address 0x159C00
+ * @size 0x4C
+ */
+void SndBgmRePlay(void);
+
+/**
  * Fades the background music out and then stops it.
  *
  * @mangled SndBgmFadeOutStop__Fv
@@ -423,8 +433,8 @@ void SndSetBgmVolf(float volume);
 int SndGetBgmVol();
 
 /**
- * Returns the play state of the background music, which is zero while it is
- * stopped and one while it plays.
+ * Returns the play state of the background music: 0 while it is stopped, 1
+ * while it plays, and 2 while SndBgmRePlay may resume it.
  *
  * @mangled SndBgmCheck__Fv
  * @address 0x159D00
