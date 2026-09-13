@@ -158,7 +158,14 @@ void CActionSeq::ClearRotSeq() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/actionseq", WaitRotSeq__10CActionSeqFv);
+void CActionSeq::WaitRotSeq() {
+    ACT_SEQ *sequence = NextMoveSeq();
+    if (sequence != NULL) {
+        sequence->operation = ACT_SEQ_WAIT_ROTATION;
+        sequence->duration = 0;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/actionseq", SetRot__10CActionSeqFPf);
 INCLUDE_ASM("asm/nonmatchings/actionseq", SetDelayRot__10CActionSeqFi);
 INCLUDE_ASM("asm/nonmatchings/actionseq", MotionTrg__10CActionSeqFi);
