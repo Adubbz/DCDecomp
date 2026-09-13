@@ -72,8 +72,47 @@ extern int basic_se_table_no;
 /** The chapter sound-effect set that is loaded, or -1 for none. */
 extern int se_table_no;
 
+/** Nonzero keeps the background music from starting. */
+extern int bgm_off;
+
+/** The sound-effect set that is loaded, or -1 for none. */
+extern int now_sound_set;
+
 /** The voice set that is loaded, or -1 for none. */
 extern int now_voice_set;
+
+/** The background-music set that is loaded, or -1 for none. */
+extern int now_bgm_no;
+
+/** The background music's play state: 0 while it is stopped, 1 while it plays. */
+extern int now_bgm_play;
+
+/** The background-music volume that is set now. */
+extern int now_bgm_vol;
+
+/** The background-music fade that runs: 1 while it fades in, -1 while it fades out, 0 for none. */
+extern int bgm_fade;
+
+/** The background-music fade's current volume. */
+extern float now_bgm_fade_vol;
+
+/** How far the background-music fade moves each frame. */
+extern float bgm_fade_step;
+
+/** The volume the background-music fade ends at. */
+extern int bgm_fade_vol;
+
+/** The ambient loop that is playing, or -1 for none. */
+extern int now_amb_no;
+
+/** The ambient loop's volume that is set now. */
+extern int now_amb_vol;
+
+/** Whether the ambient loop plays: zero while it is stopped, one while it plays. */
+extern int now_amb_play;
+
+/** Whether the sprites that follow draw with the bilinear filter. */
+extern int linear__2;
 
 /**
  * Returns the table row for a sound effect, or zero when the number names no
@@ -182,8 +221,28 @@ INCLUDE_RODATA("asm/nonmatchings/snd", @800);
 INCLUDE_ASM("asm/nonmatchings/snd", LensFlare__FP8CTexturePfUcUcUc);
 INCLUDE_ASM("asm/nonmatchings/snd", SndInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndInitialize__Fiiii);
-INCLUDE_ASM("asm/nonmatchings/snd", SndExit__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndStep__Fv);
+
+void SndExit() {
+    CSnd.Stop(0);
+    CSnd.Stop(15);
+    CSnd.Stop(1);
+    CSnd.Stop(14);
+    CSnd.Stop(10);
+    CSnd.Stop(13);
+    CSnd.Stop(12);
+    CSnd.StopVoice(0);
+    CSnd.StopVoice(1);
+    SndSeSeqInit();
+    SndBgmInit();
+    SndAmbientInit();
+}
+
+void SndStep() {
+    SndBgmFadeInOut();
+    SndSeSeqStep();
+    CSnd.Step();
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndInitSeTable__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetReadBuffer__FPUi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSyncBG__Fv);
@@ -191,24 +250,78 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSetCamera__FP7CCamera);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetCamera__FPfPf);
 INCLUDE_ASM("asm/nonmatchings/snd", GetBGMFile__FiPcPc);
 INCLUDE_ASM("asm/nonmatchings/snd", SetBGMFile__FiPUiPc);
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmInit__Fv);
+
+int SndBgmInit() {
+    now_bgm_no = -1;
+    now_bgm_play = 0;
+    now_bgm_vol = 0;
+    bgm_fade = 0;
+    bgm_fade_vol = 0;
+    bgm_fade_step = 0.0f;
+    now_bgm_fade_vol = 0.0f;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmLoad__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmLoadBG__FiPUiPi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmSyncBG__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmPlay__Fi);
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmStop__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmRePlay__Fv);
+
+void SndBgmPlay(int track_no) {
+    if (bgm_off == 0 && now_bgm_no >= 0 && now_bgm_play != 1) {
+        CSnd.SQ_Play(0, track_no);
+        now_bgm_vol = SndGetDefaultBgmVol();
+        now_bgm_play = 1;
+    }
+}
+
+void SndBgmStop() {
+    if (now_bgm_no >= 0 && now_bgm_play != 0) {
+        CSnd.Stop(0);
+        CSnd.StopVoice(0);
+        now_bgm_vol = 0;
+        now_bgm_play = 0;
+    }
+}
+
+void SndBgmRePlay() {
+    if (now_bgm_no >= 0 && now_bgm_play == 2) {
+        CSnd.SQ_RePlay(0);
+        now_bgm_play = 1;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeOutStop__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmCheck__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndGetBgmNo__Fv);
+
+int SndBgmCheck() {
+    return now_bgm_play;
+}
+
+int SndGetBgmNo() {
+    return now_bgm_no;
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetBgmVol__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetBgmVolf__Ff);
-INCLUDE_ASM("asm/nonmatchings/snd", SndGetBgmVol__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndGetDefaultBgmVol__Fv);
+
+int SndGetBgmVol() {
+    return now_bgm_vol;
+}
+
+int SndGetDefaultBgmVol() {
+    if (now_bgm_no < 0) {
+        return 0;
+    }
+    return CSnd.GetMidiState()->sequence->volume;
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeIn__Fiii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeOut__Fii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeInOut__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndCheckFade__Fv);
+
+int SndCheckFade() {
+    return bgm_fade == 0;
+}
+
 #ifdef NON_MATCHING
 static SND_SE_INFO *GetSeInfo(int se_no) {
     SND_SE_INFO *table;
@@ -250,8 +363,23 @@ static int GetPortNo(int se_no) {
 }
 INCLUDE_ASM("asm/nonmatchings/snd", GetSoundFile__FiPcPc);
 INCLUDE_ASM("asm/nonmatchings/snd", SetSoundFile__FiPUiPc);
-INCLUDE_ASM("asm/nonmatchings/snd", SndGetNowSetNo__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndStopAllSe__Fv);
+
+int SndGetNowSetNo() {
+    return now_sound_set;
+}
+
+void SndStopAllSe() {
+    CSnd.Stop(15);
+    CSnd.Stop(1);
+    CSnd.Stop(14);
+    CSnd.Stop(10);
+    CSnd.Stop(13);
+    CSnd.Stop(12);
+    CSnd.Stop(11);
+    SndAmbientInit();
+    CSnd.StopVoice(1);
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndSoundLoad__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSoundLoadBG__FiPUiPi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSoundSyncBG__Fv);
@@ -287,7 +415,17 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSeStop__Fii);
 #endif
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetSeVol__Fiii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetVolf__Fif);
-INCLUDE_ASM("asm/nonmatchings/snd", SndGetPanf__Ff);
+
+int SndGetPanf(float pan) {
+    if (pan < -1.0f) {
+        pan = -1.0f;
+    }
+    if (pan > 1.0f) {
+        pan = 1.0f;
+    }
+    return (int) (63.0f * pan) + 64;
+}
+
 #ifdef NON_MATCHING
 void SndSetSeVolf(int se_no, float vol, int voice) {
     if (GetSeInfo(se_no) != 0) {
@@ -366,8 +504,24 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqPlayStop__Fiii);
 #endif
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqStep__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqAllStop__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientInit__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientPlay__Fi);
+
+int SndAmbientInit() {
+    now_amb_no = -1;
+    now_amb_play = 0;
+    now_amb_vol = 0;
+    return 1;
+}
+
+void SndAmbientPlay(int ambient_no) {
+    if (now_amb_no != ambient_no || now_amb_play != 1) {
+        SndAmbientStop();
+        CSnd.SQ_Play(1, ambient_no);
+        now_amb_no = ambient_no;
+        now_amb_vol = SndGetAmbientDefaultVol();
+        now_amb_play = 1;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientStop__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientSetVol__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientSetVolf__Ff);
@@ -406,7 +560,6 @@ void SndSPSePlay(int se_no, int vol) {
 #else
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSePlay__Fii);
 #endif
-#ifdef NON_MATCHING
 void SndSPSeStop(int se_no) {
     SND_SE_INFO *info = GetSPInfo(se_no);
 
@@ -414,9 +567,6 @@ void SndSPSeStop(int se_no) {
         CSnd.SE_Stop(12, info->bank, info->prog, 0);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeStop__Fi);
-#endif
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetSPSeVolf__Fif);
 #ifdef NON_MATCHING
 void SndSetSPSePanf(int se_no, float pan) {
@@ -438,7 +588,11 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSetSPSePanf__Fif);
 INCLUDE_ASM("asm/nonmatchings/snd", LoadSoundInfo__FP8SND_INFOPci);
 INCLUDE_ASM("asm/nonmatchings/snd", CommandREVERBE__FPPv);
 INCLUDE_ASM("asm/nonmatchings/snd", CommandTABLE__FPPv);
-INCLUDE_ASM("asm/nonmatchings/snd", setbilinear__Fi);
+
+void setbilinear(int on) {
+    linear__2 = on;
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", setAlphaFlag__FP13sceVif1PacketP10sceGsAlpha);
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_ii);
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_);

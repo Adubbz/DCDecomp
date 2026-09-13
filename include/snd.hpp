@@ -39,7 +39,9 @@ int SndVoiceLoad(int voice_no);
 void SndInitialize(int, int, int, int);
 
 /**
- * Gives the sound system back what it holds, on the way out of an area.
+ * Stops the music, the ambient loop, sound-effect ports 10 and 12 to 15 and both
+ * voices, and resets the sound-effect sequences, the background music and the
+ * ambient loop.
  *
  * @mangled SndExit__Fv
  * @address 0x159290
@@ -48,26 +50,28 @@ void SndInitialize(int, int, int, int);
 void SndExit(void);
 
 /**
- * Steps every sound that is playing.
+ * Steps the background-music fade, the sound-effect sequences and the sound
+ * driver.
  *
  * @mangled SndStep__Fv
  * @address 0x159350
- * @size 0x100
+ * @size 0x34
  */
 void SndStep(void);
 
 /**
- * Starts the background music system from nothing.
+ * Resets the background music so that no set counts as loaded, playing or
+ * fading, and returns 1.
  *
  * @mangled SndBgmInit__Fv
  * @address 0x159930
- * @size 0x30
- * @unknownret
+ * @size 0x2C
  */
-void SndBgmInit(void);
+int SndBgmInit(void);
 
 /**
- * Stops every sound effect that is playing.
+ * Stops every sound effect, the ambient loop and the second voice, and resets
+ * the ambient loop so that none counts as playing.
  *
  * @mangled SndStopAllSe__Fv
  * @address 0x15A450
@@ -83,6 +87,16 @@ void SndStopAllSe(void);
  * @size 0x58
  */
 void SndBgmStop(void);
+
+/**
+ * Starts the background music again when a set is loaded and its play state
+ * is 2.
+ *
+ * @mangled SndBgmRePlay__Fv
+ * @address 0x159C00
+ * @size 0x4C
+ */
+void SndBgmRePlay(void);
 
 /**
  * Fades the background music out and then stops it.
@@ -102,7 +116,13 @@ void SndBgmFadeOutStop(void);
  */
 void SndAmbientStop(void);
 
-/** Starts the requested ambient loop. */
+/**
+ * Starts an ambient loop at its default volume, unless that loop already plays.
+ *
+ * @mangled SndAmbientPlay__Fi
+ * @address 0x15B110
+ * @size 0x74
+ */
 void SndAmbientPlay(int ambient_no);
 
 /** Sets the ambient loop's normalized volume. */
@@ -119,7 +139,7 @@ void SndAmbientSetVolf(float volume);
 int SndGetAmbientDefaultVol();
 
 /**
- * Starts the ambient system from nothing, and reports whether it came up.
+ * Resets the ambient loop so that none counts as playing, and returns 1.
  *
  * @mangled SndAmbientInit__Fv
  * @address 0x15B0F0
@@ -147,7 +167,8 @@ void SndGetVolPan(float *vol, float *pan, float *pos, float near, float far);
 int SndGetVolf(int se_no, float vol);
 
 /**
- * Converts a normalized pan into the hardware pan the sound calls take.
+ * Converts a pan from -1 to 1, clamped to that range, into the pan from 1 to
+ * 127 that the sound calls take.
  *
  * @mangled SndGetPanf__Ff
  * @address 0x15AA30
@@ -413,23 +434,49 @@ void SndSetBgmVol(int volume);
 void SndSetBgmVolf(float volume);
 
 /**
- * Returns the background-music volume.
+ * Returns the background-music volume that is set now.
  *
  * @mangled SndGetBgmVol__Fv
+ * @address 0x159DE0
+ * @size 0xC
  */
 int SndGetBgmVol();
 
-/** Returns the playing background-music number. */
+/**
+ * Returns the play state of the background music: 0 while it is stopped and 1
+ * while it plays.
+ *
+ * @mangled SndBgmCheck__Fv
+ * @address 0x159D00
+ * @size 0xC
+ */
+int SndBgmCheck();
+
+/**
+ * Returns the number of the background music that is loaded now, or -1 when
+ * no set counts as loaded.
+ *
+ * @mangled SndGetBgmNo__Fv
+ * @address 0x159D10
+ * @size 0xC
+ */
 int SndGetBgmNo();
 
-/** Returns whether a background-music fade is still active. */
+/**
+ * Returns whether the background music has no fade running.
+ *
+ * @mangled SndCheckFade__Fv
+ * @address 0x15A090
+ * @size 0x14
+ */
 int SndCheckFade();
 
 /** Polls the background sound loader. */
 int SndSyncBG();
 
 /**
- * Returns the background-music volume the configuration asks for.
+ * Returns the volume of the background-music sequence the MIDI player holds,
+ * or zero when no background-music set is loaded.
  *
  * @mangled SndGetDefaultBgmVol__Fv
  * @address 0x159DF0
@@ -503,12 +550,11 @@ void SndBgmLoad(int set_no);
 void SndBgmPlay(int track_no);
 
 /**
- * Gives back the sound set that is loaded now.
+ * Returns the sound-effect set that is loaded now, or -1 when none is.
  *
  * @mangled SndGetNowSetNo__Fv
  * @address 0x15A440
  * @size 0xC
- * @unknownret
  */
 int SndGetNowSetNo(void);
 

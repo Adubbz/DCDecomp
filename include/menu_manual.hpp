@@ -90,17 +90,17 @@ void ExitManualMenu();
  * @address 0x00234520
  * @size 0x10
  */
-s16 GetNowManualMenuMode();
+int GetNowManualMenuMode();
 
 /**
- * Processes manual-menu input and page transitions.
+ * Processes manual-menu input and page transitions, and returns 1 on the
+ * frame the manual closes.
  *
  * @mangled MenuManualKey__Fv
  * @address 0x00234530
  * @size 0x798
- * @unknownret
  */
-void MenuManualKey();
+int MenuManualKey();
 
 /**
  * Draws the current manual page and its controls.

@@ -464,11 +464,13 @@ int EdSearchEvent(ED_EVENT_PARAM *param, char *name, int kind, float range) {
     }
     return 0;
 }
+
 void EdMapJump(int kind, char *name) {
     if (name == NULL || *name == '\0')
         return;
+    int index;
     if (kind >= 3)
-        name = (char *) name;
+        index = kind;
 
     char *extensions[5] = {"m", "e", "n", "", ""};
     StartReadBG();
@@ -1454,11 +1456,6 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
     }
     MGSetAmbient(old_ambient);
 }
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @1673);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @1674);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @1675);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @1676);
-
 #ifdef NON_MATCHING
 void EdDrawLensFlare(float time, CFrame **sky) {
     int sky_index = (int) (time / 3.0f);
@@ -1519,6 +1516,10 @@ void EdDrawLensFlare(float time, CFrame **sky) {
     }
 }
 #else
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @1673);
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @1674);
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @1675);
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @1676);
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdDrawLensFlare__FfPP6CFrame);
 #endif
 
@@ -6693,7 +6694,6 @@ INCLUDE_RODATA("asm/nonmatchings/editloop3", @2611);
 INCLUDE_RODATA("asm/nonmatchings/editloop3", @2612);
 INCLUDE_RODATA("asm/nonmatchings/editloop3", @2613);
 INCLUDE_RODATA("asm/nonmatchings/editloop3", @2614);
-
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdEventMode__FP13CCameraFollowi);
 int EdEventNPCStep() {
     int wind = EdEventInfo.main_character->unk_C98;
