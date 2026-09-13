@@ -17,6 +17,7 @@
 #include "dataread.hpp"
 #include "dataset.hpp"
 #include "framevu1.hpp"
+#include "gameutil.hpp"
 #include "mathutil.hpp"
 #include "mglib.hpp"
 #include "savedata.hpp"
@@ -690,7 +691,36 @@ INCLUDE_ASM("asm/nonmatchings/dataread", GetArg__FR9input_strPiPPv__2);
 INCLUDE_ASM("asm/nonmatchings/dataread", SearchCommand__FR9input_strPi__2);
 INCLUDE_ASM("asm/nonmatchings/dataread", SkipSpace__FR9input_str__2);
 INCLUDE_ASM("asm/nonmatchings/dataread", CheckChar__Fc__2);
-INCLUDE_ASM("asm/nonmatchings/dataread", keyCtrl__FffP11MOTION_INFO);
+int keyCtrl(float x, float y, MOTION_INFO *motion) {
+    int result = 0;
+
+    if (y != 0.0f || x != 0.0f) {
+        float m;
+        float speed;
+
+        result = 2;
+
+        if (x < 0.0f)
+            x *= -1.0f;
+        if (y < 0.0f)
+            y *= -1.0f;
+
+        if (x >= y)
+            m = x;
+        else
+            m = y;
+
+        speed = 0.8f * (0.1f + m);
+        motion[2].speed = speed;
+        if (speed >= 0.7f)
+            motion[2].speed = 0.7f;
+
+        if (x + y >= 0.85f)
+            result = 1;
+    }
+
+    return result;
+}
 INCLUDE_ASM("asm/nonmatchings/dataread", MoveImageTest__FP13sceVif1PacketiiiRC8CRect_i_iiiiii);
 INCLUDE_ASM("asm/nonmatchings/dataread", unitRotation__FP9CFrameVu1f);
 /* The overlay each map number is served from; an empty name means the map runs out of the

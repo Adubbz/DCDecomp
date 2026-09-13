@@ -44,3 +44,11 @@ at `0x0013FD20`.
 The cloth `POLYDIV` command converts up to sixteen characters into per-row
 polygon-division flags, stopping at the input terminator. The compiled function
 matches the 0x50-byte retail body at `0x0013FD60`.
+
+## `keyCtrl`
+
+The analog-stick helper normalizes the two axes by magnitude, writes the
+clamped motion speed into the third motion record, and returns whether the
+input is idle, moving, or above the run threshold. The `MOTION_INFO` stride is
+0x10, so the retail `+0x28` store is `motion[2].speed`. The compiled function
+matches the 0xF0-byte retail body at `0x00140570`.
