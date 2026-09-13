@@ -644,12 +644,13 @@ void _SET_COLLISION_WIDTH(RS_STACKDATA *, int);
 void _GET_NEAR_MONSTER(RS_STACKDATA *, int);
 
 /**
+ * Starts the dungeon boss fade-out and marks the player action as hidden.
+ *
  * @mangled _BOSS_FADE_OUT__FP12RS_STACKDATAi
  * @address 0x1E5FC0
  * @size 0x50
- * @unknownret
  */
-void _BOSS_FADE_OUT(RS_STACKDATA *, int);
+int _BOSS_FADE_OUT(RS_STACKDATA *, int);
 
 /**
  * @mangled _CHEKC_FADE_OUT__FP12RS_STACKDATAi

@@ -1,5 +1,9 @@
 #include "runscript_opcodes.hpp"
 
+#include "btactstatus.hpp"
+#include "collision.hpp"
+#include "edit.hpp"
+#include "editloop3.hpp"
 #include "runscript.hpp"
 
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", GetStackInt__FP12RS_STACKDATA__3);
