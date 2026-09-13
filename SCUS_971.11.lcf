@@ -533,7 +533,8 @@ SECTIONS
         main.rdata.part4b.s.o (.rdata)   // 0x002a1168
         character.cpp.o (.vtables)       // 0x002a11e0
         . = . + 0x8;
-        main.rdata.part5.s.o (.rdata)
+        dispctrl.cpp.o (.vtables)        // 0x002a1380
+        main.rdata.part5.s.o (.rdata)    // 0x002a1390
         mapobject.cpp.o (.vtables)
         objectframe2.cpp.o (.vtables)
         savedata.cpp.o (.vtables)
@@ -643,10 +644,15 @@ SECTIONS
 		main.sbss.part4b.s.o (.sbss)   // 0x002a25b8
 		edit.cpp.o (.sbss)             // 0x002a2740
 		main.sbss.part4c.s.o (.sbss)   // 0x002a27ac
+		editloop3.cpp.o (.edpointflags) // 0x002a29dc
+		. = ALIGN(4);
 		editloop3.cpp.o (.fadebss)     // 0x002a29f8
-		main.sbss.part4d.s.o (.sbss)   // 0x002a2a04
+		editloop3.cpp.o (.edeventflags) // 0x002a2a04
 		editloop3.cpp.o (.eventbss)    // 0x002a2a2c
-		main.sbss.part4e.s.o (.sbss)   // 0x002a2a30
+		editloop3.cpp.o (.edcameraflags) // 0x002a2a30
+		main.sbss.part4e.s.o (.sbss)   // 0x002a2a54
+		editloop3.cpp.o (.edtalkflags) // 0x002a2a64
+		main.sbss.part4f.s.o (.sbss)   // 0x002a2a7c
 		dungeonmap.cpp.o (.sbss)
 		main.sbss.part5.s.o (.sbss)
 		monstorunit.cpp.o (.sbss) // 0x002a2c68, counter and guard
@@ -715,13 +721,21 @@ SECTIONS
 		main.bss.part5e.s.o (.bss)     // 0x01d1b390
 		editloop3.cpp.o (.edvillagerbss) // 0x01d25b90
 		main.bss.part5f.s.o (.bss)     // 0x01d32f70
+		editloop3.cpp.o (.edbssvillagers) // 0x01d3b950
 		editloop3.cpp.o (.fadecolbss)  // 0x01d3d1c0
 		main.bss.part5b.s.o (.bss)     // 0x01d3d1d0
 		editloop3.cpp.o (.spritebss)  // 0x01d3dd20
 		editloop3.cpp.o (.objanimebss) // 0x01d3e5a0
-		main.bss.part5c.s.o (.bss)     // 0x01d3eea0
+		editloop3.cpp.o (.edbsscoords) // 0x01d3eea0
 		editloop3.cpp.o (.workbss)    // 0x01d3ef90
-		main.bss.part5d.s.o (.bss)     // 0x01d3f010
+		editloop3.cpp.o (.edbsssequence) // 0x01d3f010
+		. = ALIGN(16);
+		main.bss.part5d.s.o (.bss)     // 0x01d48fb0
+		editloop3.cpp.o (.edbssscript) // 0x01d4a430
+		. = ALIGN(16);
+		main.bss.part5g.s.o (.bss)     // 0x01d4a480
+		editloop3.cpp.o (.edbssfiles)  // 0x01d4a4d0
+		main.bss.part5h.s.o (.bss)     // 0x01d4a630
 		dungeonmap.cpp.o (.bss)
 		main.bss.part6.s.o (.bss)
 		monstorunit.cpp.o (.bss)       // 0x01d87380 BeeTbl, then MonsterTexAnim

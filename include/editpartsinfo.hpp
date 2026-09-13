@@ -55,7 +55,7 @@ struct INIT_PARTSINFO {
  */
 struct EDITPARTS_INFO {
     s32 parts_no; /**< Number that names the part. */
-    s32 unk_04;
+    s32 completion_flags; /**< Bit zero records whether the completion event has run. */
     s32 unk_08;
     s32 unk_0C;
     u8 unk_10[4];
@@ -93,20 +93,22 @@ public:
     int CheckComplete(int);
 
     /**
+     * Sets whether one editable part has completed its associated event.
+     *
      * @mangled SetCompEvent__14CEditPartsInfoFii
      * @address 0x19A0A0
      * @size 0x60
-     * @unknownret
      */
-    void SetCompEvent(int, int);
+    void SetCompEvent(int index, int completed);
 
     /**
+     * Reports whether one editable part has completed its associated event.
+     *
      * @mangled GetCompEvent__14CEditPartsInfoFi
      * @address 0x19A100
      * @size 0x40
-     * @unknownret
      */
-    int GetCompEvent(int);
+    int GetCompEvent(int index);
 
     /**
      * @mangled GetRequest__14CEditPartsInfoFi
@@ -125,12 +127,13 @@ public:
     void GetNextPartsNum(int);
 
     /**
+     * Returns the next valid editable part after an index, or -1.
+     *
      * @mangled GetNextParts__14CEditPartsInfoFi
      * @address 0x19A210
      * @size 0x70
-     * @unknownret
      */
-    int GetNextParts(int);
+    int GetNextParts(int index);
 
     /**
      * @mangled Clear__14CEditPartsInfoFv

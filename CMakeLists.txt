@@ -208,10 +208,11 @@ carve_part(main.bss.part6.s
 carve_part(main.bss.part5.s
            main.bss.part5.s=1D1B218-1D1B360
            main.bss.part5e.s=1D1B390-1D25B90
-           main.bss.part5f.s=1D32F70-1D3D1C0
+           main.bss.part5f.s=1D32F70-1D3B950
            main.bss.part5b.s=1D3D1D0-1D3DD20
-           main.bss.part5c.s=1D3EEA0-1D3EF90
-           main.bss.part5d.s=1D3F010-1D569A0)
+           main.bss.part5d.s=1D48FB0-1D4A430
+           main.bss.part5g.s=1D4A480-1D4A4D0
+           main.bss.part5h.s=1D4A630-1D569A0)
 carve_part(main.sbss.part3.s
            main.sbss.part3.s=2A24FC-2A2500)
 # The dun overlay's small data runs from GameEnv to the end of retail's .sbss,
@@ -221,9 +222,9 @@ carve_part(main.sbss.part5b.s
            main.sbss.part5d.s=2A33A0-2A33A4)
 carve_part(main.sbss.part4b.s
            main.sbss.part4b.s=2A25B8-2A2740
-           main.sbss.part4c.s=2A27AC-2A29F8
-           main.sbss.part4d.s=2A2A04-2A2A2C
-           main.sbss.part4e.s=2A2A30-2A2BF0)
+           main.sbss.part4c.s=2A27AC-2A29DC
+           main.sbss.part4e.s=2A2A54-2A2A64
+           main.sbss.part4f.s=2A2A7C-2A2BF0)
 carve_part(main.rdata.part4.s
            main.rdata.part4b.s=2A1168-2A11E0)
 # CheckDmg owns its local static effect index and initialization guard.
@@ -247,6 +248,8 @@ carve_part(main.data.part4.s
            main.data.part4f.s=269B70-269BB0
            main.data.part4g.s=26A5E8-26B2C0
            main.data.part4d.s=26B2E0-279EB0)
+carve_part(main.rdata.part5.s
+           main.rdata.part5.s=2A1390-2A1490)
 
 # These residual ranges are now fully owned by their decompiled translation
 # units. Keep the retail dumps intact as toolchain inputs, but do not assemble

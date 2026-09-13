@@ -540,6 +540,16 @@ struct VILLAGER_APPEAR_STATE {
     int destination; /**< Villager slot used by a movement command. */
 };
 
+/**
+ * Villagers selected for the current time period.
+ */
+static int appear_table[10];
+
+/**
+ * Villager slots selected for the next appearance transition.
+ */
+static int select_table[10];
+
 /** Pending appearance commands for the event villagers. */
 static VILLAGER_APPEAR_STATE appear[16];
 
@@ -577,9 +587,6 @@ void EdCreateVillagerTable(EDIT_MAP_INFO *info) {
         }
     }
 }
-
-static int appear_table[10];
-static int select_table[10];
 
 void EdInitVillagerTable(float clock, EDIT_MAP_INFO *info) {
     for (int i = 0; i < 10; i++)
@@ -1378,7 +1385,8 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
                 MGSetAmbient(ambient);
                 if (next_sun != 2 && following_sun != NULL) {
                     following_sun->SetTransMatrix(identity);
-                    following_sun->SetRotation(0.0f, 0.0f, sun_rotation);
+                    float rotation_y = 0.0f;
+                    following_sun->SetRotation(0.0f, rotation_y, sun_rotation);
                     following_sun->SetPosition(position);
                     MGDraw(following_sun);
                 }
@@ -1980,50 +1988,135 @@ static void ClearObjAnime(int index) {
         anime->type = -1;
 }
 
-/** Menu mode requested by the active event. */
-static int menu_mode;
+/**
+ * Whether the current event uses the lightweight initialization path.
+ */
+int simple_event;
 
-/** Map requested by the world-map event command. */
-static int p_jump_map_no;
+/**
+ * Whether an editor-event program has been installed.
+ */
+static int event_enable;
 
-/** Whether the active script permits event skipping. */
-static int skip_enable;
+/**
+ * Whether a system event is currently being run.
+ */
+static int run_system_event;
 
-/** Character followed by the event camera. */
-static CCharacter *follow_chara;
-
-/** Character used as the event camera's reference target. */
-static CCharacter *sync_camera_ref_chara;
-
-/** Object used as the event camera's reference target. */
-static OBJ_HANDLE *sync_camera_ref_obj;
-
-/** Object used as the event camera's position target. */
-static OBJ_HANDLE *sync_camera_pos_obj;
-
-/** Offset added to the event camera's synchronized reference target. */
-static sceVu0FVECTOR sync_camera_ref_offset;
-
-/** Shared destination buffer used by asynchronous event resource loads. */
-static u_int *BaseBuffer;
-
-/** Archive slots populated by event character-file loads. */
-static u_int *chr_file[16];
-
-/** Character-file slot selected by subsequent event load commands. */
-static int actv_file;
-
-/** Resource arena selected by subsequent event load commands. */
-static int actv_buffer;
-
-/** Whether the current asynchronous load may continue without waiting. */
+/**
+ * Whether the current asynchronous load may continue without waiting.
+ */
 static int not_wait_load;
 
-/** Item-list string supplied to the editor's use-item menu. */
+/**
+ * Whether event character motion is globally held.
+ */
+static int motion_stop_flag;
+
+/**
+ * Menu mode requested by the active event.
+ */
+static int menu_mode;
+
+/**
+ * State of the menu temporarily opened by an event.
+ */
+static int menu_mode_status;
+
+/**
+ * Item-list string supplied to the editor's use-item menu.
+ */
 static char *p_use_item;
 
-/** Directory prepended to relative event resource names. */
+/**
+ * Map requested by the world-map event command.
+ */
+static int p_jump_map_no;
+
+/**
+ * Whether execution of the current event has stopped.
+ */
+static int event_stop;
+
+/**
+ * Whether the active script permits event skipping.
+ */
+static int skip_enable;
+
+/**
+ * Whether event-local/world coordinate conversion is enabled.
+ */
+static int set_wl_matrix;
+
+/**
+ * Character followed by the event camera.
+ */
+static CCharacter *follow_chara;
+
+/**
+ * Character used as the event camera's reference target.
+ */
+static CCharacter *sync_camera_ref_chara;
+
+/**
+ * Object used as the event camera's reference target.
+ */
+static OBJ_HANDLE *sync_camera_ref_obj;
+
+/**
+ * Object used as the event camera's position target.
+ */
+static OBJ_HANDLE *sync_camera_pos_obj;
+
+/**
+ * Shared destination buffer used by asynchronous event resource loads.
+ */
+static u_int *BaseBuffer;
+
+/**
+ * Character-file slot selected by subsequent event load commands.
+ */
+static int actv_file;
+
+/**
+ * Resource arena selected by subsequent event load commands.
+ */
+static int actv_buffer;
+
+/**
+ * Directory prepended to relative event resource names.
+ */
 static char CurrentDir[0x40];
+
+/**
+ * Origin of the event script's optional world coordinate system.
+ */
+static sceVu0FVECTOR world_pos;
+
+/**
+ * Rotation of the event script's optional world coordinate system.
+ */
+static sceVu0FVECTOR world_rot;
+
+/**
+ * Matrix that converts event-local coordinates to world coordinates.
+ */
+static sceVu0FMATRIX world_local;
+
+/**
+ * Matrix that converts world coordinates to event-local coordinates.
+ */
+static sceVu0FMATRIX local_world;
+
+/**
+ * Offset added to the event camera's synchronized reference target.
+ */
+static sceVu0FVECTOR sync_camera_ref_offset;
+
+/**
+ * Archive slots populated by event character-file loads.
+ */
+static u_int *chr_file[16];
 
 /** Saved point-light direction presets available to event scripts. */
 static sceVu0FMATRIX save_l[2];
@@ -2044,12 +2137,6 @@ void EdEventPause() {
 /** Integer scratch flags exposed to editor event scripts. */
 static int work_flag[32];
 
-/** Foreground sprite command table for the active event. */
-static CSpriteTable SpriteTable;
-
-/** Background sprite command table for the active event. */
-static CSpriteTable SpriteTableBack;
-
 /** Bytecode interpreter used by editor events. */
 static CRunScript EdEventScript;
 
@@ -2062,39 +2149,35 @@ struct ED_EVENT_EXTERNAL_FUNCTION {
 /** Dispatch table built from the editor-event external-function registry. */
 extern int (*ext_func__2[1500])(RS_STACKDATA *, int);
 
-/** Action records supplied to each editor-event sequencer. */
+/**
+ * Action records supplied to each editor-event sequencer.
+ */
 static ACT_SEQ asq_table[266];
 
-/** Texture-animation records supplied to event characters. */
+/**
+ * Action sequencers available to event scripts.
+ */
+static CActionSeq ActSeq[10];
+
+/**
+ * Texture-animation records supplied to event characters.
+ */
 static CTexAnimeData anime_data[320];
 
-/** Stores one queued event-sprite command consumed by a sprite table. */
-struct SPRITE_TABLE {
-    u8 unk_00[0x38];
-};
-
-STATIC_ASSERT(sizeof(SPRITE_TABLE) == 0x38);
-
-/** Sprite-table entries shared by foreground and background event sprites. */
+/**
+ * Sprite-table entries shared by foreground and background event sprites.
+ */
 static SPRITE_TABLE sprite_table[32];
 
-/** Whether an editor-event program has been installed. */
-static int event_enable;
+/**
+ * Foreground sprite command table for the active event.
+ */
+static CSpriteTable SpriteTable;
 
-/** Whether the current event uses the lightweight initialization path. */
-static int simple_event;
-
-/** Whether a system event is currently being run. */
-static int run_system_event;
-
-/** Whether event character motion is globally held. */
-static int motion_stop_flag;
-
-/** State of the menu temporarily opened by an event. */
-static int menu_mode_status;
-
-/** Whether execution of the current event has stopped. */
-static int event_stop;
+/**
+ * Background sprite command table for the active event.
+ */
+static CSpriteTable SpriteTableBack;
 
 static int SetWorkFlag(int index, int value) {
     if (index < 0 || index >= 32)
@@ -2437,9 +2520,6 @@ static void set_attr_obj(OBJ_HANDLE *handle, CFrameAttr &attr, int children, int
     }
 }
 
-/** Action sequencers available to event scripts. */
-static CActionSeq ActSeq[10];
-
 static CActionSeq *GetActSeq(int index) {
     if (index < 0 || index >= 10)
         return NULL;
@@ -2504,21 +2584,6 @@ static VILLAGER_INFO *GetVillagerInfo(int index) {
         return NULL;
     return &EdEventInfo.villagers[index];
 }
-
-/** Origin of the event script's optional world coordinate system. */
-static sceVu0FVECTOR world_pos;
-
-/** Rotation of the event script's optional world coordinate system. */
-static sceVu0FVECTOR world_rot;
-
-/** Matrix that converts event-local coordinates to world coordinates. */
-static sceVu0FMATRIX world_local;
-
-/** Matrix that converts world coordinates to event-local coordinates. */
-static sceVu0FMATRIX local_world;
-
-/** Whether event-local/world coordinate conversion is enabled. */
-static int set_wl_matrix;
 
 static void SetWorldCoord(float *position, float *rotation) {
     sceVu0CopyVector(world_pos, position);

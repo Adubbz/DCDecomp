@@ -378,7 +378,11 @@
   },
   "src/editloop3.cpp": {
     "symbols": {
-      "fishing_line_origin": "@2242"
+      "fishing_line_origin": "@2242",
+      "init$541": "init$586",
+      "init$546": "init$591",
+      "init$549": "init$594",
+      "init$585": "init$632"
     },
     "rodata_exports": [
       "@2449",
@@ -478,6 +482,78 @@
       ".edvillagerbss": [
         "EdVillager",
         "EdVillagerInfo"
+      ],
+      ".edbssvillagers": [
+        "character$584",
+        "appear_table",
+        "select_table",
+        "appear",
+        "restore_info"
+      ],
+      ".edbsscoords": [
+        "CurrentDir",
+        "world_pos",
+        "world_rot",
+        "world_local",
+        "local_world",
+        "sync_camera_ref_offset"
+      ],
+      ".edbsssequence": [
+        "asq_table",
+        "ActSeq",
+        "anime_data",
+        "sprite_table",
+        "SpriteTable",
+        "SpriteTableBack"
+      ],
+      ".edbssscript": [
+        "EdEventScript"
+      ],
+      ".edbssfiles": [
+        "chr_file",
+        "save_l",
+        "save_c",
+        "save_a"
+      ],
+      ".edpointflags": [
+        "rotation_y$540",
+        "init$586",
+        "effect_scale$545",
+        "init$591",
+        "effect_count$548",
+        "init$594",
+        "init$632"
+      ],
+      ".edeventflags": [
+        "simple_event",
+        "event_enable",
+        "run_system_event",
+        "not_wait_load",
+        "motion_stop_flag",
+        "menu_mode",
+        "menu_mode_status",
+        "p_use_item",
+        "p_jump_map_no",
+        "event_stop"
+      ],
+      ".edcameraflags": [
+        "skip_enable",
+        "set_wl_matrix",
+        "follow_chara",
+        "sync_camera_ref_chara",
+        "sync_camera_ref_obj",
+        "sync_camera_pos_obj",
+        "BaseBuffer",
+        "actv_file",
+        "actv_buffer"
+      ],
+      ".edtalkflags": [
+        "talk_villager__2",
+        "talk_chara_info_id",
+        "talk_camera",
+        "talk_mode",
+        "talk_select",
+        "TalkMesMake"
       ]
     },
     "rekey_sections": [
@@ -634,6 +710,9 @@
     ]
   },
   "src/dispctrl.cpp": {
+    "sections": {
+      ".vtables": ["__vt__6CBound"]
+    },
     "rodata_exports": [
       "@230"
     ]

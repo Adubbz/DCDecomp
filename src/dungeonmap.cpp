@@ -14,6 +14,7 @@
 #include "camera.hpp"
 #include "character.hpp"
 #include "dataset.hpp"
+#include "dun/gameloop.hpp"
 #include "dungeonparts.hpp"
 #include "frame.hpp"
 #include "frameattr.hpp"

@@ -9,6 +9,8 @@ public:
      * Draws the buffered debug text.
      *
      * @mangled Draw__10CDebugFontFv
+     * @address 0x13DF40
+     * @size 0x59C
      */
     void Draw();
 

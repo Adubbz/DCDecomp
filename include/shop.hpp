@@ -8,9 +8,44 @@
 struct ATTACH_LIST;
 struct ITEM_PACK;
 struct MENU_ITEMDATA;
-struct SHOP_ITEMLIST;
 struct SV_FISH_DATA;
 struct WEAPON_HAVE;
+
+/**
+ * Stores one shop's item-list state.
+ */
+struct SHOP_ITEMLIST {
+    s16 unk_00;
+    u8 unk_02[2];
+    u8 unk_04[0xF8];
+};
+
+STATIC_ASSERT(sizeof(SHOP_ITEMLIST) == 0xFC);
+
+/**
+ * Stores one item held temporarily by a menu.
+ */
+struct IHAVEITEM {
+    s32 unk_00;
+    u8 unk_04[0x10];
+};
+
+STATIC_ASSERT(sizeof(IHAVEITEM) == 0x14);
+
+/**
+ * Points to the item record held by the shop menu.
+ */
+extern IHAVEITEM *ShopHaveItemPt;
+
+/**
+ * Points to the weapon record held by the shop menu.
+ */
+extern WEAPON_HAVE *ShopHaveWepPt;
+
+/**
+ * Points to the attachment record held by the shop menu.
+ */
+extern ATTACH_LIST *ShopHaveAttachPt;
 
 /**
  * @mangled GetItemShopList__Fi
@@ -21,10 +56,11 @@ struct WEAPON_HAVE;
 void GetItemShopList(int);
 
 /**
+ * Clears an item-list record when the supplied pointer is valid.
+ *
  * @mangled InitShopItemListData__FP13SHOP_ITEMLIST
  * @address 0x1E68F0
  * @size 0x40
- * @unknownret
  */
 void InitShopItemListData(SHOP_ITEMLIST *);
 
@@ -628,10 +664,11 @@ void GetExchangeItemList(int);
 int GetMardanGareyanFlag(void);
 
 /**
+ * Records whether the player has received the Mardan Garayan weapon.
+ *
  * @mangled SetAlreadyGetMardanWeapon__Fi
  * @address 0x1F1290
  * @size 0x30
- * @unknownret
  */
 void SetAlreadyGetMardanWeapon(int);
 
@@ -653,10 +690,11 @@ void SetFishMardanGarayanNum(int);
 int GetFishMardanGarayanNum(void);
 
 /**
+ * Clears the fish count used for the Mardan Garayan weapon requirement.
+ *
  * @mangled ClearFishMardanGarayanNum__Fv
  * @address 0x1F1370
  * @size 0x30
- * @unknownret
  */
 void ClearFishMardanGarayanNum(void);
 

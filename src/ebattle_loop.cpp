@@ -6,10 +6,13 @@
 
 #include <libvu0.h>
 
+#include "camerafollow.hpp"
+#include "dataread.hpp"
 #include "ebattle.hpp"
 #include "edit.hpp"
 #include "editloop.hpp"
 #include "gamepad.hpp"
+#include "snd.hpp"
 
 /* The rest of the ebattle module: the intro, the main loop and the draw pass. */
 
@@ -20,19 +23,151 @@ INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", @1702);
 INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", @1703);
 INCLUDE_RODATA("asm/nonmatchings/ebattle_loop", @1704);
 
+/**
+ * Enemy-battle diagnostic display mode.
+ */
+extern int debug_mode;
+
+/**
+ * Frames remaining for the enemy-battle confirmation effect.
+ */
+extern int ok_draw_cnt;
+
+/**
+ * Button shown by the enemy-battle confirmation effect, or -1 for none.
+ */
+extern int ok_effect_button;
+
+/**
+ * Kind of enemy-battle confirmation effect to draw.
+ */
+extern int ok_type;
+
+/**
+ * Character-control state whose low bits lock editor input.
+ */
+extern int chara_mode;
+
+/**
+ * Current editor camera-view mode.
+ */
+extern int viewMode;
+
+/**
+ * Whether the editor-controlled character is fishing.
+ */
+extern int chara_fishing;
+
+/**
+ * Fishing message state used by editor character control.
+ */
+extern int fishing_mes;
+
+/**
+ * Horizontal editor camera angle.
+ */
+extern float viewAngleH;
+
+/**
+ * Vertical editor camera angle.
+ */
+extern float viewAngleV;
+
+/**
+ * Default near-follow distance for the editor camera.
+ */
+extern float camera_near_dist;
+
+/**
+ * Whether an enemy-battle sequence is active.
+ */
+extern int ebattle_flag;
+
+/**
+ * Whether the enemy-battle introduction is active.
+ */
+extern int ebattle_intro_flag;
+
+/**
+ * Enemy-battle introduction frame counter.
+ */
+extern int eb_intro_cnt;
+
+/**
+ * Enemy-battle finish frame counter.
+ */
+extern int eb_finish_cnt;
+
+/**
+ * Clears the enemy-battle confirmation effect.
+ *
+ * @mangled init_draw_ok__Fv
+ * @address 0x169420
+ * @size 0x14
+ */
+void init_draw_ok();
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBInitIntro__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBSetMotion__FP10CCharacterPi);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBDebug__Fi);
+
+void EBDebug(int mode) {
+    debug_mode = mode;
+}
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBSetKey__Ffii);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBExit__Fv);
+
+void EBExit() {
+    ebattle_flag = 0;
+    eb_intro_cnt = 0;
+    GamePad.MenuModeOff();
+    ebattle_intro_flag = 0;
+    eb_finish_cnt = 0;
+    init_draw_ok();
+    do {
+    } while (SndSPSeSyncBG() != 0);
+    InitReadBG();
+}
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBIntroLoop__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBLoop__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", DrawButton__Fiiifi);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", DrawButtonSub__Fiiiif);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", init_draw_ok__Fv);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", set_draw_ok__Fii);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", draw_ok_loop__Fv);
+
+void init_draw_ok() {
+    ok_draw_cnt = 0;
+    ok_effect_button = -1;
+}
+
+/**
+ * Starts the confirmation effect for the selected button.
+ *
+ * @mangled set_draw_ok__Fii
+ * @address 0x169440
+ * @size 0x18
+ */
+void set_draw_ok(int type, int button) {
+    ok_effect_button = button;
+    ok_draw_cnt = 30;
+    ok_type = type;
+}
+
+/**
+ * Counts down the active confirmation effect.
+ *
+ * @mangled draw_ok_loop__Fv
+ * @address 0x169460
+ * @size 0x2C
+ */
+void draw_ok_loop() {
+    if (ok_draw_cnt > 0) {
+        --ok_draw_cnt;
+        if (ok_draw_cnt < 0) {
+            ok_draw_cnt = 0;
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", draw_ok__Fi);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", button_scale__Fi);
 static int key_mode = 0xFFFF;
@@ -86,9 +221,16 @@ int EdPadDown(int keys, int mode) {
     return 0;
 }
 
-static int keylock();
-
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", keylock__Fv);
+/**
+ * Returns the low two character-control lock bits.
+ *
+ * @mangled keylock__Fv
+ * @address 0x1699E0
+ * @size 0x10
+ */
+int keylock() {
+    return chara_mode & 3;
+}
 
 /**
  * Returns the right stick's horizontal input, or zero while editor input is locked.
@@ -133,18 +275,99 @@ static float GetLYf() {
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", PadOn__Fi);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", PadDown__Fi);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", CameraAutoMove__FP13CCameraFollowP6CCPolyPfff);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdViewModeOff__Fv);
+
+/**
+ * Disables the editor camera-view mode.
+ *
+ * @mangled EdViewModeOff__Fv
+ * @address 0x169D80
+ * @size 0xC
+ */
+void EdViewModeOff() {
+    viewMode = 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", InitEyeCamera__FP10CCharacter);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EyeCamera__FP7CCameraP10CCharacteri);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdInitCameraParam__FP13CCameraFollow);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdMoveCharaInit__Fv);
+
+void EdInitCameraParam(CCameraFollow *camera) {
+    if (camera != 0) {
+        camera->SetDistance(camera_near_dist);
+        camera->SetHeight(5.0f);
+    }
+}
+
+void EdMoveCharaInit() {
+    viewMode = 0;
+    chara_mode = 0;
+    chara_fishing = 0;
+    fishing_mes = 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdEyeCamera__FP7CCameraP10CCharacter);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdCheckViewMode__Fv);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdAGetViewAngleH__Fv);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdAGetViewAngleV__Fv);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdASetViewAngle__Fff);
+
+int EdCheckViewMode() {
+    return viewMode;
+}
+
+/**
+ * Returns the horizontal editor camera angle.
+ *
+ * @mangled EdAGetViewAngleH__Fv
+ * @address 0x16A130
+ * @size 0xC
+ */
+float EdAGetViewAngleH() {
+    return viewAngleH;
+}
+
+/**
+ * Returns the vertical editor camera angle.
+ *
+ * @mangled EdAGetViewAngleV__Fv
+ * @address 0x16A140
+ * @size 0xC
+ */
+float EdAGetViewAngleV() {
+    return viewAngleV;
+}
+
+/**
+ * Sets both editor camera angles.
+ *
+ * @mangled EdASetViewAngle__Fff
+ * @address 0x16A150
+ * @size 0x10
+ */
+void EdASetViewAngle(float horizontal, float vertical) {
+    viewAngleH = horizontal;
+    viewAngleV = vertical;
+}
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdMoveChara__Fv);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdInitHashigo__FP13ED_EVENT_INFOP14ED_EVENT_PARAM);
+
+/**
+ * Copies ladder endpoints and event parameters into the active event.
+ *
+ * @mangled EdInitHashigo__FP13ED_EVENT_INFOP14ED_EVENT_PARAM
+ * @address 0x16D720
+ * @size 0xD0
+ */
+void EdInitHashigo(ED_EVENT_INFO *info, ED_EVENT_PARAM *param) {
+    if (param->kind == 4) {
+        sceVu0CopyVector(info->vector_arguments[1], param->position);
+        sceVu0CopyVector(info->vector_arguments[0], param->camera_pos);
+        info->integer_arguments[0] = 0;
+    } else {
+        sceVu0CopyVector(info->vector_arguments[0], param->position);
+        sceVu0CopyVector(info->vector_arguments[1], param->camera_pos);
+        info->integer_arguments[0] = 1;
+    }
+    sceVu0CopyVector(info->vector_arguments[2], param->rotation);
+    info->flag_arguments[0] = (int) param->point->unk_60[3];
+    info->integer_arguments[1] = param->point->side;
+    info->integer_arguments[2] = param->point->linked_value;
+}
 
 int EdInitGotoInterior(ED_EVENT_INFO *info, ED_EVENT_PARAM *param) {
     sceVu0CopyVector(info->vector_arguments[0], param->position);

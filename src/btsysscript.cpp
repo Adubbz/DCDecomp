@@ -1,8 +1,12 @@
 #include "btsysscript.hpp"
+
+#include "btitem.hpp"
+#include "btmisc.hpp"
 #include "camera.hpp"
 #include "camerafollow.hpp"
-#include "dungeonmap.hpp"
+#include "dngstatusdata.hpp"
 #include "dun/gameloop.hpp"
+#include "dungeonmap.hpp"
 #include "frame.hpp"
 #include "runscript.hpp"
 
@@ -15,7 +19,9 @@ INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSystemScriptInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSystemScriptAfter__Fv);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSystemScriptRun__FiP14CDataAlloc2_1_);
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSetMapJumpFloor__Fi);
+void BtSetMapJumpFloor(int floor) {
+    BtMapJumpFloor = floor;
+}
 
 INCLUDE_ASM("asm/nonmatchings/btsysscript", GetStackInt__FP12RS_STACKDATA__2);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", GetStackFloat__FP12RS_STACKDATA__2);
@@ -37,12 +43,41 @@ INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_OBJHDL_ROT__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_OBJHDL_DRAW_FLAG__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_OBJHDL_POS__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_OBJHDL_ROT__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_URA_DUNGEON__FP12RS_STACKDATAi);
+
+int _SET_URA_DUNGEON(RS_STACKDATA *stack, int argument_count) {
+    BtEventInfo.request = 2;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_EVENT_POS__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_EVENT_ROT__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _OPEN_ENTRANCE_WINDOW__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _OPEN_ESCAPE_WINDOW__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _GO_DUNGEON__FP12RS_STACKDATAi);
+
+int _OPEN_ENTRANCE_WINDOW(RS_STACKDATA *stack, int argument_count) {
+    if (stack->type != RS_PTR) {
+        return 0;
+    }
+
+    BtEventInfo.entrance_result = stack->p;
+    BtEventInfo.request = 3;
+    return 1;
+}
+
+int _OPEN_ESCAPE_WINDOW(RS_STACKDATA *stack, int argument_count) {
+    if (stack->type != RS_PTR) {
+        return 0;
+    }
+
+    BtEventInfo.escape_result = stack->p;
+    BtBattleMusic_Stop();
+    BtEventInfo.request = 6;
+    return 1;
+}
+
+int _GO_DUNGEON(RS_STACKDATA *stack, int argument_count) {
+    BtEventInfo.request = 4;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_DUNGEON_MAP__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _LOAD_DUNGEON_MAP2__FP12RS_STACKDATAi);
 
@@ -84,7 +119,12 @@ INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_RUBY_ELEMENT__FP12RS_STACKDATAi
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_RUBY_ELEMENT__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_FLOOR_TITLE_OFF__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_RES_LIMMIT_ZONE__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _CLEAR_DEAMON_SHAFT__FP12RS_STACKDATAi);
+
+int _CLEAR_DEAMON_SHAFT(RS_STACKDATA *stack, int argument_count) {
+    ((CDngStatusData *) UserStatus)->ClearDeamonShaft();
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _INIT_BEE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _END_BEE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _EASTKING_COMPLETE__FP12RS_STACKDATAi);
@@ -96,11 +136,21 @@ INCLUDE_ASM("asm/nonmatchings/btsysscript", _CHECK_MARDAN__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _NO_RESET_CHARA_NO__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _CHECK_CHR_HELP__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _HOLD_ITEM_EVENT__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _STOP_BATTLE_BGM__FP12RS_STACKDATAi);
+
+int _STOP_BATTLE_BGM(RS_STACKDATA *stack, int argument_count) {
+    BtBattleMusic_Stop();
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _NO_STATUS_RECOVER__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_QUEST_DUNGEON__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_MAP_CODE__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_ACTIVE_ITEM_ICON__FP12RS_STACKDATAi);
+
+int _SET_ACTIVE_ITEM_ICON(RS_STACKDATA *stack, int argument_count) {
+    LoadActiveItemIcon();
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_ITEM_UNIT_NO__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_IBOX_ANGLE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_IBOX_FINISH__FP12RS_STACKDATAi);

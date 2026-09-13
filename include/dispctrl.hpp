@@ -5,6 +5,33 @@
 struct sceVif1Packet;
 
 /**
+ * Opens a direct-mode GIF tag in the supplied VIF packet.
+ *
+ * @mangled openGiftag__FP13sceVif1Packet
+ * @address 0x13DEA0
+ * @size 0x58
+ */
+void openGiftag(sceVif1Packet *packet);
+
+/**
+ * Finds a named record in a loaded PTS archive.
+ *
+ * @mangled SearchPTS__FPUiPc
+ * @address 0x13E4E0
+ * @size 0xD8
+ */
+u_int *SearchPTS(u_int *archive, char *name);
+
+/**
+ * Finds a record by index in a loaded PTS archive.
+ *
+ * @mangled SearchPTS__FPUii
+ * @address 0x13E5C0
+ * @size 0x50
+ */
+u_int *SearchPTS(u_int *archive, int index);
+
+/**
  * Controls the black screen curtain used for dungeon transitions.
  */
 class CDispCtrl {
