@@ -1,8 +1,31 @@
 #include "textureanime.hpp"
 
+#include <cstring>
+
 INCLUDE_ASM("asm/nonmatchings/textureanime", Copy__16CTextureTexAnimeFP8CTexture);
 INCLUDE_ASM("asm/nonmatchings/textureanime", __ct__13CTexAnimeDataFv);
-INCLUDE_ASM("asm/nonmatchings/textureanime", Initialize__13CTexAnimeDataFv);
+
+void CTexAnimeData::Initialize() {
+    unk_00 = -1;
+    unk_02 = 0;
+    unk_04 = 0;
+    memset(&unk_08, 0, 0x18);
+    unk_08 = -1;
+    memset(&unk_20, 0, 0x18);
+    unk_20 = -1;
+    unk_3E = 0;
+    unk_3C = 0;
+    unk_3A = 0;
+    unk_38 = 0;
+    unk_42 = 0;
+    unk_40 = 0;
+    unk_50 = 0;
+    unk_4C = 0;
+    unk_48 = 0;
+    unk_44 = 0;
+    unk_54 = 0;
+    unk_06 = -1;
+}
 INCLUDE_ASM("asm/nonmatchings/textureanime", TexAnime__13CTextureAnimeFi);
 
 void CTextureAnime::Initialize(CTexAnimeData *records, int count) {

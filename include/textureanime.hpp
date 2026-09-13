@@ -7,7 +7,25 @@
  */
 class CTexAnimeData {
 public:
-    u8 unk_00[88];
+    s16 unk_00;
+    s16 unk_02;
+    s16 unk_04;
+    s16 unk_06;
+    s16 unk_08;
+    u8 unk_0A[0x16];
+    s16 unk_20;
+    u8 unk_22[0x16];
+    s16 unk_38;
+    s16 unk_3A;
+    s16 unk_3C;
+    s16 unk_3E;
+    s16 unk_40;
+    s16 unk_42;
+    s32 unk_44;
+    s32 unk_48;
+    s32 unk_4C;
+    s32 unk_50;
+    s32 unk_54;
 
     /**
      * Sets the animation to play no frame.
@@ -15,7 +33,6 @@ public:
      * @mangled Initialize__13CTexAnimeDataFv
      * @address 0x1670D0
      * @size 0xA0
-     * @unknownret
      */
     void Initialize(void);
 
