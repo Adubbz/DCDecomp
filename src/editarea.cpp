@@ -118,7 +118,13 @@ INCLUDE_ASM("asm/nonmatchings/editarea", PickUpPoly__9CEditAreaFP6CCPolyfff);
 INCLUDE_ASM("asm/nonmatchings/editarea", PickUpPoly__9CEditAreaFP6CCPoly8CRect_i_);
 INCLUDE_ASM("asm/nonmatchings/editarea", PickUpPoly__9CEditAreaFP6CCPoly7CBoxVu0);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetPartsRect__9CEditAreaFR8CRect_i_Pii);
-INCLUDE_ASM("asm/nonmatchings/editarea", ChainWorkClear__9CEditAreaFv);
+void CEditArea::ChainWorkClear(void) {
+    for (int x = 0; x < 16; x++) {
+        for (int y = 0; y < 16; y++) {
+            chain_work[x][y] = 0;
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", CheckRiverChain__9CEditAreaFiiii);
 INCLUDE_ASM("asm/nonmatchings/editarea", DrawGrid__9CEditAreaFv);
 INCLUDE_ASM("asm/nonmatchings/editarea", Clear__9CEditAreaFv);
