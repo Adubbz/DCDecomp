@@ -38,6 +38,12 @@ extern int chara_mode;
 /** Current editor camera-view mode. */
 extern int viewMode;
 
+/** Whether the editor-controlled character is fishing. */
+extern int chara_fishing;
+
+/** Fishing message state used by editor character control. */
+extern int fishing_mes;
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBInitIntro__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBSetMotion__FP10CCharacterPi);
 void EBDebug(int mode) {
@@ -173,7 +179,12 @@ void EdViewModeOff() {
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", InitEyeCamera__FP10CCharacter);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EyeCamera__FP7CCameraP10CCharacteri);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdInitCameraParam__FP13CCameraFollow);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdMoveCharaInit__Fv);
+void EdMoveCharaInit() {
+    viewMode = 0;
+    chara_mode = 0;
+    chara_fishing = 0;
+    fishing_mes = 0;
+}
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdEyeCamera__FP7CCameraP10CCharacter);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdCheckViewMode__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdAGetViewAngleH__Fv);
