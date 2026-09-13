@@ -25,11 +25,12 @@ header declaration is `extern ClsMes EastKingMsgCls;` in eastking.hpp, with
 ClsMes forward declared. The unused declaration is omitted until migration
 can preserve the linked address.
 
-NowWeaponStatus's best candidate below produces 97.07865% object similarity.
-The remaining differences include attachment indexing load/shift order,
-message slot address addition operand order and loop temporary registers.
+NowWeaponStatus is matched on both the object and linked checker axes.
+The historical 97.07865% candidate below records the starting point; see
+[refinement.md](refinement.md) for the typed intermediates and direct array
+accesses that resolved evaluation order and temporary registers.
 The final clearing loop counter must be int: m2c incorrectly guesses short,
-which inserts narrowing instructions. The function stays assembly-backed.
+which inserts narrowing instructions.
 ATTACH_LIST::unk_04 is demonstrably option_flags (signed halfword):
 NowWeaponStatus loads attachment+4 and ORs it with the weapon's flags before
 CheckWeaponOptionStatus cancels opposing bits. A future shared-header rename
@@ -53,7 +54,7 @@ MenuClsMes::Step needs switch cases in order 0, 1, 2; reversing them changes
 comparison order. The two customization helpers retain the unchecked shift
 counts and row bounds present in retail.
 
-## Near-match source for the next pass
+## Historical near-match source before refinement
 
 ```cpp
 void MenuClsMes::NowWeaponStatus(WEAPON_HAVE *selected_weapon) {
