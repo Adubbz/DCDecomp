@@ -13,12 +13,29 @@ class CFrame;
  */
 
 /**
+ * Clears the global data arena and prepares its persistent scene banks.
+ *
+ * @mangled InitializeDataBuffer__Fv
+ * @address 0x125990
+ * @size 0xF4
+ */
+void InitializeDataBuffer(void);
+
+/**
+ * Reserves the read, packet, and scratch buffers from the global data arena.
+ *
+ * @mangled SetPacketReadBuffer__Fii
+ * @address 0x125AE0
+ * @size 0xD8
+ */
+void SetPacketReadBuffer(int packet_quads, int read_quads);
+
+/**
  * Gives every data buffer back, so the next area starts from an empty one.
  *
  * @mangled BufferAllClear__Fv
  * @address 0x125BC0
  * @size 0x254
- * @unknownret
  */
 void BufferAllClear(void);
 

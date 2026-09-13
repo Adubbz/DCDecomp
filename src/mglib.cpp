@@ -1378,14 +1378,276 @@ void MGStretchMoveImage(sceGsTex0 *src, const CRect_i_ &src_rect, sceGsTex0 *dst
     sceVif1PkCloseDirectCode(packet);
 }
 
-INCLUDE_ASM("asm/nonmatchings/mglib", MGMoveFrameBuffImage__FP9sceGsTex0iii);
+/* Copies both interlaced fields into the destination, one 640-by-1 line at a time. */
+void MGMoveFrameBuffImage(sceGsTex0 *dst, int x, int y, int dir) {
+    sceGsTex0 tex[2];
+    CRect_i_ even;
+    CRect_i_ odd;
+    int i;
+
+    MGGetFBuffTex(&tex[0]);
+    MGGetFBuffBackTex(&tex[1]);
+
+    for (i = 0; i < 224; i++) {
+        even.x = 0;
+        even.y = i;
+        even.width = 640;
+        even.height = 1;
+        MGMoveImage(&tex[!VSyncField__2], even, dst, 0, i * 2, 0);
+
+        odd.x = 0;
+        odd.y = i;
+        odd.width = 640;
+        odd.height = 1;
+        MGMoveImage(&tex[VSyncField__2], odd, dst, 0, i * 2 + 1, 0);
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/mglib", MGFillBox__FRC8CRect_i_UcUcUcUc);
-INCLUDE_ASM("asm/nonmatchings/mglib", MGClearZBuffer__Fi);
-INCLUDE_ASM("asm/nonmatchings/mglib", MGClearScreen__FUcUcUcUc);
-INCLUDE_ASM("asm/nonmatchings/mglib", MGDrawShadowFast__FP6CFramePfPf);
-INCLUDE_ASM("asm/nonmatchings/mglib", MGDrawShadowFast2__FP6CFramePfPf);
-INCLUDE_ASM("asm/nonmatchings/mglib", MGDrawShadow__FP6CFramePfPf);
-INCLUDE_ASM("asm/nonmatchings/mglib", MGDrawShade__FP6CFrame);
+
+/* Writes depth over the 640-by-224 field while leaving colour unchanged. */
+void MGClearZBuffer(int mode) {
+    sceGsTest test;
+    sceGsZbuf zbuf;
+    sceGsAlpha alpha;
+
+    sceVif1PkCnt(Vif1Packet, 0);
+    sceVif1PkOpenDirectCode(Vif1Packet, 0);
+    sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
+
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEX1_1, 1);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(4, 0, 0, 0, 1, 0, 1, 0, 0));
+
+    test = mgPixelTest;
+    test.bits.ate = 0;
+    test.bits.zte = 1;
+    test.bits.ztst = SCE_GS_ALWAYS;
+    test.bits.date = 0;
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *(u_long *) &test);
+
+    zbuf = mgZBuffer;
+    zbuf.bits.zmsk = 0;
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
+
+    alpha = mgAlpha;
+    alpha.bits.a = 2;
+    alpha.bits.b = 2;
+    alpha.bits.c = 2;
+    alpha.bits.d = 1;
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ALPHA_1, *(u_long *) &alpha);
+
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(128, 128, 128, 128, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648, 30976, mode, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2(27648 + 640 * 16, 30976, mode, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2(27648, 30976 + 224 * 16, mode, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2(27648 + 640 * 16, 30976 + 224 * 16, mode, 0));
+
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ALPHA_1, *(u_long *) &mgAlpha);
+
+    sceVif1PkCloseGifTag(Vif1Packet);
+    sceVif1PkCloseDirectCode(Vif1Packet);
+}
+
+/* Writes colour and zero depth over the 640-by-224 field in 16-pixel-wide strips. */
+void MGClearScreen(u_char r, u_char g, u_char b, u_char a) {
+    sceGsTest test;
+    sceGsZbuf zbuf;
+    sceGsAlpha alpha;
+    int x;
+
+    sceVif1PkCnt(Vif1Packet, 0);
+    sceVif1PkOpenDirectCode(Vif1Packet, 0);
+    sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
+    sceVif1PkCloseGifTag(Vif1Packet);
+    sceVif1PkCloseDirectCode(Vif1Packet);
+
+    sceVif1PkCnt(Vif1Packet, 0);
+    sceVif1PkOpenDirectCode(Vif1Packet, 0);
+    sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
+
+    test = mgPixelTest;
+    test.bits.ate = 0;
+    test.bits.zte = 1;
+    test.bits.ztst = SCE_GS_ALWAYS;
+    test.bits.date = 0;
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *(u_long *) &test);
+
+    zbuf = mgZBuffer;
+    zbuf.bits.zmsk = 0;
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
+
+    alpha = mgAlpha;
+    alpha.bits.a = 2;
+    alpha.bits.b = 2;
+    alpha.bits.c = 2;
+    alpha.bits.d = 0;
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ALPHA_1, *(u_long *) &alpha);
+
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEX1_1, 1);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_PRIM,
+                     SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 0, 0, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(r, g, b, a, 0));
+
+    for (x = 0; x < 640 * 16; x += 16 * 16) {
+        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648 + x, 30976, 0, 0));
+        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
+                         SCE_GS_SET_XYZF2(27648 + x + 16 * 16, 30976 + 224 * 16, 0, 0));
+    }
+
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
+    sceVif1PkCloseGifTag(Vif1Packet);
+    sceVif1PkCloseDirectCode(Vif1Packet);
+
+    sceVif1PkCnt(Vif1Packet, 0);
+    sceVif1PkOpenDirectCode(Vif1Packet, 0);
+    sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ALPHA_1, *(u_long *) &mgAlpha);
+    sceVif1PkCloseGifTag(Vif1Packet);
+    sceVif1PkCloseDirectCode(Vif1Packet);
+}
+
+/**
+ * VU microprogram used for the fast shadow pass.
+ */
+extern u_int Vu_shadow[];
+/**
+ * VU microprogram used for the perspective-preserving shadow pass.
+ */
+extern u_int Vu_shadow2[];
+/**
+ * VU microprogram used for the second fast shadow pass.
+ */
+extern u_int Vu_shadow3[];
+/**
+ * VU microprogram restored after a shadow pass.
+ */
+extern u_int Vu_prog0f[];
+
+/* Draws a model's shadow with the fast shadow microprogram. */
+void MGDrawShadowFast(CFrame *frame, float *position, float *normal) {
+    sceGsZbuf zbuf;
+    sceGsTest test;
+
+    if (!frame)
+        return;
+
+    sceVu0CopyVector(mgRenderInfo.shadow_point, position);
+    sceVu0CopyVector(mgRenderInfo.shadow_normal, normal);
+
+    zbuf = mgZBuffer;
+    test = mgPixelTest;
+    zbuf.bits.zmsk = 1;
+    MGSetGsZBUF(&zbuf);
+
+    test.bits.ate = 0;
+    test.bits.date = 0;
+    MGSetGsTEST(&test);
+
+    sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_shadow, 0);
+    mgRenderInfo.unk_320 = 1;
+    MGDraw(frame);
+    mgRenderInfo.unk_320 = 0;
+    sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
+}
+
+/* Draws a model's shadow with the second fast shadow microprogram. */
+void MGDrawShadowFast2(CFrame *frame, float *position, float *normal) {
+    sceGsZbuf zbuf;
+    sceGsTest test;
+
+    if (!frame)
+        return;
+
+    sceVu0CopyVector(mgRenderInfo.shadow_point, position);
+    sceVu0CopyVector(mgRenderInfo.shadow_normal, normal);
+
+    zbuf = mgZBuffer;
+    test = mgPixelTest;
+    zbuf.bits.zmsk = 1;
+    MGSetGsZBUF(&zbuf);
+
+    test.bits.ate = 0;
+    test.bits.date = 0;
+    MGSetGsTEST(&test);
+
+    sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_shadow3, 0);
+    mgRenderInfo.unk_320 = 1;
+    MGDraw(frame);
+    mgRenderInfo.unk_320 = 0;
+    sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
+}
+
+/* Draws a model's shadow while preserving the perspective and viewport matrices. */
+void MGDrawShadow(CFrame *frame, float *position, float *normal) {
+    sceVu0FMATRIX perspective;
+    sceVu0FMATRIX viewport;
+    sceGsZbuf zbuf;
+    sceGsTest test;
+
+    if (!frame)
+        return;
+
+    sceVu0CopyVector(mgRenderInfo.shadow_point, position);
+    sceVu0CopyVector(mgRenderInfo.shadow_normal, normal);
+
+    zbuf = mgZBuffer;
+    test = mgPixelTest;
+    zbuf.bits.zmsk = 1;
+    MGSetGsZBUF(&zbuf);
+
+    test.bits.ate = 0;
+    test.bits.date = 0;
+    MGSetGsTEST(&test);
+
+    sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_shadow2, 0);
+    mgRenderInfo.unk_320 = 2;
+    sceVu0CopyMatrix(perspective, mgRenderInfo.perspective);
+    sceVu0CopyMatrix(viewport, mgRenderInfo.viewport);
+    MGDraw(frame);
+    sceVu0CopyMatrix(mgRenderInfo.perspective, perspective);
+    sceVu0CopyMatrix(mgRenderInfo.viewport, viewport);
+    mgRenderInfo.unk_320 = 0;
+    sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
+}
+
+/* Draws the shade pass for one model. */
+void MGDrawShade(CFrame *frame) {
+    sceGsZbuf zbuf;
+    sceGsTest test;
+    sceGsAlpha alpha;
+
+    if (!frame)
+        return;
+
+    zbuf = mgZBuffer;
+    test = mgPixelTest;
+    zbuf.bits.zmsk = 1;
+    MGSetGsZBUF(&zbuf);
+
+    test.bits.ate = 0;
+    test.bits.date = 0;
+    MGSetGsTEST(&test);
+
+    alpha = mgAlpha;
+    alpha.bits.a = 2;
+    alpha.bits.b = 2;
+    alpha.bits.c = 2;
+    alpha.bits.d = 0;
+    MGSetGsALPHA(&alpha);
+
+    mgRenderInfo.unk_320 = 8;
+    MGDraw(frame);
+    mgRenderInfo.unk_320 = 0;
+}
 
 static sceGsTex0 Shadow_SaveFrameBuff;
 static sceGsTex0 Shadow_WorkTex;

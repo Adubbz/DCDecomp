@@ -344,7 +344,6 @@ SECTIONS
         dispctrl.cpp.o              (.text)   // 0x0013de90
         dataread.cpp.o              (.text)   // 0x0013e950
         main.cpp.o                  (.text)   // 0x001410b0
-        gamemode.cpp.o              (.text)   // 0x00141d30
         dataalloc.cpp.o             (.text)   // 0x00143820
         map.cpp.o                   (.text)   // 0x00143870
         sound.cpp.o                 (.text)   // 0x00143b50
@@ -371,7 +370,6 @@ SECTIONS
         objanime.cpp.o              (.text)   // 0x00164b30
         textureanime.cpp.o          (.text)   // 0x00167060
         ebattle.cpp.o               (.text)   // 0x00167c80
-        ebattle_loop.cpp.o          (.text)   // 0x00168200
         editarea.cpp.o              (.text)   // 0x0016d860
         edit.cpp.o                  (.text)   // 0x00170250
         editloop.cpp.o              (.text)   // 0x001741a0
@@ -450,6 +448,7 @@ SECTIONS
         . = . + 0x4; // Retail padding after the character command tables.
         main.data.part2.s.o (.data)
         dataread.cpp.o (.data)
+        main.cpp.o (.data)
         main.data.part2c.s.o (.data)
         clsmes.cpp.o (.data)
         main.data.part2b.s.o (.data)
@@ -535,7 +534,8 @@ SECTIONS
         main.rdata.part4b.s.o (.rdata)   // 0x002a1168
         character.cpp.o (.vtables)       // 0x002a11e0
         . = . + 0x8;
-        main.rdata.part5.s.o (.rdata)
+        dispctrl.cpp.o (.vtables)        // 0x002a1380
+        main.rdata.part5.s.o (.rdata)    // 0x002a1390
         mapobject.cpp.o (.vtables)
         objectframe2.cpp.o (.vtables)
         savedata.cpp.o (.vtables)
@@ -593,10 +593,11 @@ SECTIONS
 		mainselect.cpp.o (.sdata)      // 0x002a1e8c
 		main.cpp.o (.sdata)            // 0x002a1e90
 		dataread.cpp.o (.sdata)        // 0x002a1e94
-		main.sdata.part2.s.o (.sdata)  // 0x002a1e98
+		main.cpp.o (.gamemodesdata)    // 0x002a1e98
+		main.sdata.part2.s.o (.sdata)  // 0x002a1ea0
 		clsmes.cpp.o (.sdata)          // 0x002a1ec0
 		main.sdata.part2b.s.o (.sdata) // 0x002a1ed0
-		ebattle_loop.cpp.o (.sdata)    // 0x002a1f14
+		ebattle.cpp.o (.sdata)         // 0x002a1f14
 		main.sdata.part2c.s.o (.sdata) // 0x002a1f18
 		edit.cpp.o (.sdata)            // 0x002a1f24
 		main.sdata.part2d.s.o (.sdata) // 0x002a1f50

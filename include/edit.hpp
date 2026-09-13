@@ -173,7 +173,9 @@ struct ED_EVENT_INFO {
 
 STATIC_ASSERT(sizeof(ED_EVENT_INFO) == 0x450);
 
-/** What the Georama editor is doing now. */
+/**
+ * What the Georama editor is doing now.
+ */
 extern "C" ED_EVENT_INFO EdEventInfo;
 
 /**
@@ -202,6 +204,15 @@ void EdInitCameraParam(CCameraFollow *camera);
  * @size 0x40
  */
 void EdAmbientPlay(float volume);
+
+/**
+ * Sets the volume of the active editor ambient sound.
+ *
+ * @mangled EdSetAmbientVol__Ff
+ * @address 0x171610
+ * @size 0x20
+ */
+void EdSetAmbientVol(float volume);
 
 /**
  * Writes the root directory used by editor map resources.
@@ -746,7 +757,6 @@ float InvertTime(float time);
  * @mangled EdCheckViewMode__Fv
  * @address 0x16A120
  * @size 0xC
- * @unknownret
  */
 int EdCheckViewMode(void);
 
@@ -869,6 +879,25 @@ void EdMoveVillager(VILLAGER_INFO *villager);
  * @size 0x258
  */
 void EdMoveVillagerSubMap(VILLAGER_INFO *villager);
+
+/**
+ * Texture used to hold a captured editor frame.
+ */
+extern CTexture frame_image_tex;
+
+/**
+ * Whether the editor has a pending frame capture.
+ */
+extern int frame_image_flag;
+
+/**
+ * Captures a pending editor frame and clears the request.
+ *
+ * @mangled EdSaveFrameImageTask__Fv
+ * @address 0x173E70
+ * @size 0x60
+ */
+void EdSaveFrameImageTask(void);
 
 /**
  * Prepares the frame capture the editor writes to a file.

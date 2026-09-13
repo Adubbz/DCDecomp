@@ -22,8 +22,10 @@
 #define SCE_GS_RGBAQ 1
 #define SCE_GS_UV 3
 #define SCE_GS_XYZF2 4
+#define SCE_GS_XYZ2 5
 #define SCE_GS_TEX0_1 6
 #define SCE_GS_CLAMP_1 8
+#define SCE_GS_XYZF3 12
 #define SCE_GS_TEX1_1 20
 #define SCE_GS_TEXA 59
 #define SCE_GS_TEXFLUSH 63
@@ -435,6 +437,12 @@ typedef struct {
 extern "C" {
 
 void sceGsResetGraph(short mode, short inter, short omode, short ffmd);
+
+/**
+ * Resets the GIF paths used to submit graphics commands.
+ */
+void sceGsResetPath();
+
 int sceGsSyncV(int mode);
 int sceGsSyncPath(int mode, u_short timeout);
 void sceGsSyncVCallback(int (*callback)(int));

@@ -90,37 +90,40 @@ WEAPON_HAVE *GetNowSelectWeapon(void);
 void EscapeDungeonMode(void);
 
 /**
+ * Sets whether the party is escaping the dungeon.
+ *
  * @mangled SetEscapeDngFlag__Fi
  * @address 0x1F3FA0
- * @size 0x10
- * @unknownret
+ * @size 0xC
  */
-void SetEscapeDngFlag(int);
+void SetEscapeDngFlag(int flag);
 
 /**
  * Returns the flag that says the party is escaping the dungeon.
  *
  * @mangled GetEscapeDngFlag__Fv
  * @address 0x1F3FB0
- * @size 0x10
+ * @size 0xC
  */
 s16 GetEscapeDngFlag(void);
 
 /**
+ * Sets whether the party is leaving an interior area.
+ *
  * @mangled SetInteriorOutFlag__Fi
  * @address 0x1F3FC0
- * @size 0x10
- * @unknownret
+ * @size 0xC
  */
-void SetInteriorOutFlag(int);
+void SetInteriorOutFlag(int flag);
 
 /**
+ * Returns the flag that says the party is leaving an interior area.
+ *
  * @mangled GetInteriorOutFlag__Fv
  * @address 0x1F3FD0
- * @size 0x10
- * @unknownret
+ * @size 0xC
  */
-void GetInteriorOutFlag(void);
+s16 GetInteriorOutFlag(void);
 
 /**
  * @mangled DrawDngYesNoDialog__Fiii
@@ -898,20 +901,22 @@ void BattleMenuOptionKey(void);
 void BattleMenuSaveKey(void);
 
 /**
+ * Initializes the battle manual menu from its placement data and load buffer.
+ *
  * @mangled BattleManualInit__FPiP1
  * @address 0x20B070
  * @size 0x20
- * @unknownret
  */
-void BattleManualInit(int *, void /* CW back-ref target unresolved */ *);
+void BattleManualInit(int *result, u_long128 *load_buffer);
 
 /**
+ * Processes battle-manual input and returns zero after updating transitions.
+ *
  * @mangled BattleManualKey__Fv
  * @address 0x20B090
- * @size 0x100
- * @unknownret
+ * @size 0xFC
  */
-void BattleManualKey(void);
+int BattleManualKey(void);
 
 /**
  * @mangled DrawStatusNumberNowAndMax__FPiiiii

@@ -1,7 +1,35 @@
 #include "dungeoneventdata.hpp"
 
-INCLUDE_ASM("asm/nonmatchings/dungeoneventdata", Set__17CDungeonEventDataFP13CDungeonEvent);
-INCLUDE_RODATA("asm/nonmatchings/dungeoneventdata", @3309);
-INCLUDE_ASM("asm/nonmatchings/dungeoneventdata", CheckSwitch__17CDungeonEventDataFv);
-INCLUDE_ASM("asm/nonmatchings/dungeoneventdata", Stop__17CDungeonEventDataFv);
-INCLUDE_ASM("asm/nonmatchings/dungeoneventdata", Start__17CDungeonEventDataFv);
+#include <cstdio>
+
+void CDungeonEventData::Set(CDungeonEvent *source) {
+    if (source == NULL) {
+        printf("******** event NULL !!\n");
+        for (;;) {
+        }
+    }
+
+    event = source;
+    unk_30 = source->unk_28;
+    unk_34 = source->unk_34;
+    unk_38 = 1;
+    chara_done = -1;
+}
+
+int CDungeonEventData::CheckSwitch(void) {
+    if (event == NULL) {
+        return 0;
+    }
+    if (unk_38 != 0 && unk_34 != 0) {
+        return 1;
+    }
+    return 0;
+}
+
+void CDungeonEventData::Stop(void) {
+    unk_34 = 0;
+}
+
+void CDungeonEventData::Start(void) {
+    unk_34 = 1;
+}

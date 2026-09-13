@@ -1,6 +1,26 @@
 #include "common.h"
 
+#include "btitem.hpp"
+#include "dngstatusdata.hpp"
+#include "dun/gameloop.hpp"
+#include "sysmes.hpp"
+
 /* Battle item handling: treasure boxes, pickups and thrown items. */
+
+/**
+ * Item identifier shown by the small-treasure and attachment pickup flows.
+ */
+extern int BtGetTreasureboxSmall_itemNo;
+
+/**
+ * Item quantity shown by the small-treasure and attachment pickup flows.
+ */
+extern int BtGetTreasureboxSmall_itemVolume;
+
+/**
+ * Computes the quantity represented by an acquired attachment.
+ */
+int createAttachVolume(int item_no, int dungeon);
 
 INCLUDE_ASM("asm/nonmatchings/btitem", selectChrUnit__Fii);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @635__2);
@@ -41,7 +61,19 @@ INCLUDE_ASM("asm/nonmatchings/btitem", BtMiniItemSelect_Loop__Fv);
 INCLUDE_ASM("asm/nonmatchings/btitem", BtGetGateKey_Init__Fi);
 INCLUDE_ASM("asm/nonmatchings/btitem", BtGetGateKey_Loop__Fv);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @969);
-INCLUDE_ASM("asm/nonmatchings/btitem", BtGetAttach_Init__Fii);
+
+void BtGetAttach_Init(int dungeon, int item_no) {
+    int volume = 0;
+
+    if (item_no >= 0x51 && item_no < 0x79) {
+        volume = createAttachVolume(item_no, dungeon);
+    }
+    BtGetTreasureboxSmall_itemNo = item_no;
+    BtGetTreasureboxSmall_itemVolume = volume;
+    ((CDngStatusData *) UserStatus)->GetItem(item_no, volume);
+    ClearSystemMes();
+    ItemGetMes(BtGetTreasureboxSmall_itemNo, BtGetTreasureboxSmall_itemVolume, 0x78, 0);
+}
 INCLUDE_ASM("asm/nonmatchings/btitem", BtGetAttach_Loop__Fv);
 INCLUDE_ASM("asm/nonmatchings/btitem", BtEscape_Init__Fv);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @996);

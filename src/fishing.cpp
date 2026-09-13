@@ -1,4 +1,31 @@
-#include "common.h"
+#include "fishing.hpp"
+
+#include "fish.hpp"
+
+/**
+ * The water surface height used by the fishing simulation.
+ */
+extern float WaterLevel;
+
+/**
+ * The terrain height used by the fishing simulation.
+ */
+extern float GroundLevel;
+
+/**
+ * The fish selected for battle, or a negative value when none is selected.
+ */
+extern int BattleFish;
+
+/**
+ * The fish displayed after an angling battle, or null when none is displayed.
+ */
+extern CFish *AngleFish;
+
+/**
+ * The current tension applied to the fishing hook.
+ */
+extern float pull_hook;
 
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingLoad__FP14CDataAlloc2_1_i);
 INCLUDE_RODATA("asm/nonmatchings/fishing", @353__4);
@@ -12,9 +39,18 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishingDeleteEsa__Fv);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingGetEsaItemNo__Fv);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingExit__Fv);
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingSetWaterLevel__Fff);
+
+void FishingSetWaterLevel(float water_level, float ground_level) {
+    WaterLevel = water_level;
+    GroundLevel = ground_level;
+    FishingSetGroundLevel(ground_level, ground_level);
+}
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingSetGroundLevel__Fff);
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingGetWaterLevel__Fv);
+
+float FishingGetWaterLevel() {
+    return WaterLevel;
+}
+
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingSetCPoly__FP6CCPolyi);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingSetRect__F7CBoxVu0);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingPickUpPoly__FP6CCPoly);
@@ -25,18 +61,30 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishingFishKind__Fi);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingBattleToAngleFish__FPUiP14CDataAlloc2_1_);
 INCLUDE_RODATA("asm/nonmatchings/fishing", @578__3);
 INCLUDE_RODATA("asm/nonmatchings/fishing", @604);
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingGetBattleFish__Fv);
+
+int FishingGetBattleFish() {
+    return BattleFish;
+}
+
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingAngleFish__Fi);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingGetAngleFishSize__FPiPi);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingInitFishStatus__Fv);
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingDeleteAngleFish__Fv);
+
+void FishingDeleteAngleFish() {
+    if (AngleFish != NULL) {
+        AngleFish->fish_kind = -1;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingStepFish__Fv);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingDrawFish__Fv);
 INCLUDE_ASM("asm/nonmatchings/fishing", GetHookPos__FPf);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineInit__FPf);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineSetUki__FPff);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineSetHook__FPff);
-INCLUDE_ASM("asm/nonmatchings/fishing", FishPullHook__Ff);
+
+void FishPullHook(float tension) {
+    pull_hook = tension;
+}
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineGetUki__FPf);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineGetHook__FPf);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingCheckUkiHook__Fv);

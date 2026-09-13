@@ -159,7 +159,7 @@ carve_part(main.data.part1.s
            main.data.part1b.s=250EB0-250F40)
 carve_part(main.data.part2.s
            main.data.part2.s=2514C0-251580
-           main.data.part2c.s=251C50-253F20)
+           main.data.part2c.s=2525D0-253F20)
 # Retail's vtables come out in one run that alternates between the units that
 # now own theirs and the dump that still holds the rest, so the dump is cut
 # around each owned block rather than having the block removed from it.
@@ -175,7 +175,7 @@ carve_part(main.rdata.part3.s
 carve_part(main.sdata.part1.s
            main.sdata.part1.s=2A1E88-2A1E8C)
 carve_part(main.sdata.part2.s
-           main.sdata.part2.s=2A1E98-2A1EC0)
+           main.sdata.part2.s=2A1EA0-2A1EC0)
 carve_part(main.sdata.part2b.s
            main.sdata.part2b.s=2A1ED0-2A1F14
            main.sdata.part2c.s=2A1F18-2A1F24
@@ -215,6 +215,8 @@ carve_part(main.bss.part5.s
            main.bss.part5h.s=1D4A630-1D569A0)
 carve_part(main.sbss.part3.s
            main.sbss.part3.s=2A24FC-2A2500)
+carve_part(main.sbss.part4.s
+           main.sbss.part4.s=2A2588-2A25A4)
 # The dun overlay's small data runs from GameEnv to the end of retail's .sbss,
 # and the unit supplies all of it, so the dump stops in front of it.
 carve_part(main.sbss.part5b.s
@@ -249,6 +251,8 @@ carve_part(main.data.part4.s
            main.data.part4f.s=269B60-269BA0
            main.data.part4g.s=26A5E8-26B2C0
            main.data.part4d.s=26B2E0-279EB0)
+carve_part(main.rdata.part5.s
+           main.rdata.part5.s=2A1390-2A1490)
 
 # These residual ranges are now fully owned by their decompiled translation
 # units. Keep the retail dumps intact as toolchain inputs, but do not assemble

@@ -174,42 +174,6 @@ public:
 
 STATIC_ASSERT(sizeof(CDebugFont) == 0x21C);
 
-/**
- * Names what the dungeon event running now is waiting on.
- */
-struct BT_EVENT_INFO {
-    sceVu0FVECTOR unk_00; /**< Where the event the script runs plays. */
-    sceVu0FVECTOR unk_10; /**< Which way that event faces. */
-    u8 unk_20[0x4];
-    s32 unk_24;
-    u8 unk_28[0x4];
-    s32 unk_2C;
-    s32 unk_30;
-    s32 unk_34;
-    s32 unk_38;
-    u8 unk_3C[0x48];
-    s32 *floor_result;  /**< Where the floor the player chose is written back. */
-    s32 *escape_result; /**< Where the escape answer is written back. */
-    s32 unk_8C;
-    s32 unk_90;
-    s32 unk_94;
-    s32 unk_98;
-    s32 unk_9C;
-    s32 unk_A0;
-    s32 unk_A4;
-    u8 unk_A8[0x4];
-    s32 unk_AC;
-    u8 unk_B0[0x4];
-    s32 unk_B4;
-    s32 unk_B8;
-    s32 unk_BC;
-};
-
-STATIC_ASSERT(sizeof(BT_EVENT_INFO) == 0xC0);
-
-/* What the dungeon event running now is waiting on. */
-extern "C" BT_EVENT_INFO BtEventInfo;
-
 /* The debug message overlay. */
 extern "C" CDebugFont CDbgMsg;
 
@@ -784,23 +748,6 @@ extern "C" CCameraFollow SubCamera;
 /* The texture animations every dungeon texture runs. */
 extern "C" CTextureAnime BtTexAnime;
 extern "C" CTexAnimeData BtTexAnimeData[96];
-
-/**
- * Names the drainage fields the dungeon draws, and what each one is doing.
- */
-struct DRAN_MAP_FIELD_SET {
-    CDranMapField field[12]; /**< The model each field draws. */
-    s32 unk_D440[12];
-    s32 unk_D470[12];
-    s32 unk_D4A0;
-    s32 unk_D4A4;
-    u8 unk_D4A8[8];
-};
-
-STATIC_ASSERT(sizeof(DRAN_MAP_FIELD_SET) == 0xD4B0);
-
-/* The drainage fields the dungeon draws. */
-extern "C" DRAN_MAP_FIELD_SET DranMapField;
 
 /* The collisions of the floor the player is on. */
 extern "C" CCollisionData CColData;
@@ -1423,7 +1370,7 @@ void GameInit(void) {
     selectMapNo = main_select_menu_no;
     UserStatus = (CUserStatus *) SaveData->GetDngStatus();
     UserStatus->Init();
-    if (BtEventInfo.unk_B8 != 1) {
+    if (BtEventInfo.no_status_recover != 1) {
         int i;
         CUserStatus *status = UserStatus;
 
@@ -1966,10 +1913,10 @@ int GameLoop(void) {
             int floor = DunEnterMenuLoop();
 
             if (floor != -1) {
-                if (BtEventInfo.floor_result != NULL) {
-                    BtEventInfo.floor_result[1] = floor;
+                if (BtEventInfo.entrance_result != NULL) {
+                    BtEventInfo.entrance_result->i = floor;
                 }
-                BtEventInfo.floor_result = NULL;
+                BtEventInfo.entrance_result = NULL;
                 ((CDngStatusData *) UserStatus)->SetNowFloor(floor);
                 BtGameModeFlag = 1;
             }
@@ -1980,7 +1927,7 @@ int GameLoop(void) {
 
             if (answer > 0) {
                 if (BtEventInfo.escape_result != NULL) {
-                    BtEventInfo.escape_result[1] = answer;
+                    BtEventInfo.escape_result->i = answer;
                 }
                 BtEventInfo.escape_result = NULL;
                 BtGameModeFlag = 1;
@@ -2015,7 +1962,7 @@ int GameLoop(void) {
         MGSetBGColor(fade);
         ((CDngStatusData *) UserStatus)->LostGateKey();
 
-        if (BtEventInfo.unk_B8 == 0) {
+        if (BtEventInfo.no_status_recover == 0) {
             CUserStatus *status = UserStatus;
 
             for (i = 0; i < 6; i++) {
@@ -3361,8 +3308,8 @@ void MoveChara(void) {
                                         BtEventInfo.unk_24 = 0;
                                         sceVu0CopyVector(slot_pos, state->pos);
                                         sceVu0CopyVector(slot_dir, state->dir);
-                                        sceVu0CopyVector(BtEventInfo.unk_00, slot_pos);
-                                        sceVu0CopyVector(BtEventInfo.unk_10, slot_dir);
+                                        sceVu0CopyVector(BtEventInfo.position, slot_pos);
+                                        sceVu0CopyVector(BtEventInfo.direction, slot_dir);
                                     }
                                     if (BtEventInfo.unk_2C != -1) {
                                         if (state->event->chara_no != -1 &&
@@ -3461,9 +3408,9 @@ void MoveChara(void) {
                                                                 sceVu0CopyVector(
                                                                     box_pos,
                                                                     NowDngMap->events[iventActive].pos);
-                                                                sceVu0CopyVector(BtEventInfo.unk_00,
+                                                                sceVu0CopyVector(BtEventInfo.position,
                                                                                  box_pos);
-                                                                sceVu0CopyVector(BtEventInfo.unk_10,
+                                                                sceVu0CopyVector(BtEventInfo.direction,
                                                                                  box_dir);
                                                                 NowDngMap->events[iventActive].kind = -1;
                                                                 BtEventInfo.unk_2C = 0x10;
@@ -3730,8 +3677,8 @@ void MoveChara(void) {
                                                         BtEventInfo.unk_24 = 0;
                                                         sceVu0CopyVector(slot_pos, state->pos);
                                                         sceVu0CopyVector(slot_dir, state->dir);
-                                                        sceVu0CopyVector(BtEventInfo.unk_00, slot_pos);
-                                                        sceVu0CopyVector(BtEventInfo.unk_10, slot_dir);
+                                                        sceVu0CopyVector(BtEventInfo.position, slot_pos);
+                                                        sceVu0CopyVector(BtEventInfo.direction, slot_dir);
                                                     }
                                                     if (BtEventInfo.unk_2C != -1) {
                                                         gameTask = 0x190;
@@ -4409,28 +4356,28 @@ void MoveChara(void) {
                 }
             }
             SetBattleStyle(selectMapNo, 1);
-            switch (BtEventInfo.unk_98) {
+            switch (BtEventInfo.request) {
                 case 1:
-                    BtEventInfo.unk_98 = 0;
+                    BtEventInfo.request = 0;
                     BtMiniItemSelect();
                     gameTask = 0x19A;
                     break;
                 case 2:
-                    BtEventInfo.unk_98 = 0;
+                    BtEventInfo.request = 0;
                     gameTask = 0xA0;
                     break;
                 case 3:
-                    BtEventInfo.unk_98 = 0;
+                    BtEventInfo.request = 0;
                     InitDunEnterMenu(0x17, selectMapNo, -1);
                     BtGameModeFlag = 4;
                     break;
                 case 6:
-                    BtEventInfo.unk_98 = 0;
+                    BtEventInfo.request = 0;
                     DngEscapeMsgInit(&DngMes2, &DngMes1, 0);
                     BtGameModeFlag = 7;
                     break;
                 case 4:
-                    BtEventInfo.unk_98 = 0;
+                    BtEventInfo.request = 0;
                     BtSystemScriptAfter();
                     read_buffer = old_read_buffer;
                     ClearGateKeyStack();
@@ -4462,7 +4409,7 @@ void MoveChara(void) {
                     printf("go dungeon\n");
                     break;
                 case 5:
-                    BtEventInfo.unk_98 = 0;
+                    BtEventInfo.request = 0;
                     BtSystemScriptAfter();
                     BtEventInfo.unk_2C = BtEventInfo.unk_9C;
                     gameTask = 0x190;
@@ -4998,8 +4945,8 @@ void MoveChara(void) {
                             BtEventInfo.unk_24 = 0;
                             sceVu0CopyVector(slot_pos, state->pos);
                             sceVu0CopyVector(slot_dir, state->dir);
-                            sceVu0CopyVector(BtEventInfo.unk_00, slot_pos);
-                            sceVu0CopyVector(BtEventInfo.unk_10, slot_dir);
+                            sceVu0CopyVector(BtEventInfo.position, slot_pos);
+                            sceVu0CopyVector(BtEventInfo.direction, slot_dir);
                         }
                         if (BtEventInfo.unk_2C != -1) {
                             leaving = 1;
@@ -5984,65 +5931,64 @@ void motionDrive(void) {
 }
 
 void BtCleatRandomMap(void) {
+    CTexture *gold;
+    int i;
+    int n;
+    int j;
+    int k;
+    CDungeonEventMan *man;
+    CDungeonMap *map;
+
     NowDngMap = &MainDungeonMap;
     NowEventMan = &DngEventMan;
     ((CDngStatusData *) UserStatus)->LostGateKey();
 
-    {
-        int i;
-        CDungeonEventMan *events = NowEventMan;
+    man = NowEventMan;
 
-        for (i = 0; i < 96; i++) {
-            CDungeonEventData *slot = &events->event[i];
+    for (i = 0; i < 96; i++) {
+        CDungeonEventData *slot = &man->event[i];
 
-            slot->event = NULL;
-            slot->unk_34 = 0;
-            slot->unk_38 = 0;
-            slot->unk_30 = 0;
-            slot->chara_done = -1;
-        }
+        slot->event = NULL;
+        slot->unk_34 = 0;
+        slot->unk_38 = 0;
+        slot->unk_30 = 0;
+        slot->chara_done = -1;
     }
 
-    {
-        int i;
-        CDungeonMap *map = NowDngMap;
+    map = NowDngMap;
 
-        for (i = 0; i < 48; i++) {
-            map->events[i].kind = -1;
-            map->events[i].unk_2C = 0;
-        }
-        for (i = 0; i < 24; i++) {
-            map->boxes[i].used = 0;
-            map->boxes[i].lid_angle = 0.0f;
-            map->boxes[i].unk_30 = 0;
-        }
-        map->box_num = 0;
-        for (i = 0; i < 8; i++) {
-            map->atra[i].used = 0;
-        }
-        map->atra_num = 0;
-        for (i = 0; i < 4; i++) {
-            map->room_link[i].used = 0;
-        }
+    for (i = 0; i < 48; i++) {
+        map->events[i].kind = -1;
+        map->events[i].unk_2C = 0;
+    }
+    for (i = 0; i < 24; i++) {
+        map->boxes[i].used = 0;
+        map->boxes[i].lid_angle = 0.0f;
+        map->boxes[i].unk_30 = 0;
+    }
+    map->box_num = 0;
+    for (i = 0; i < 8; i++) {
+        map->atra[i].used = 0;
+    }
+    map->atra_num = 0;
+    for (i = 0; i < 4; i++) {
+        map->room_link[i].used = 0;
     }
 
-    {
-        CTexture *gold = GoldTex;
-        int i;
+    gold = GoldTex;
 
-        for (i = 0; i < 32; i++) {
-            MainRandomItem.unk_290[i] = -1;
-            MainRandomItem.unk_494[i] = -1;
-            MainRandomItem.unk_514[i] = 0;
-        }
-        MainRandomItem.gold_texture = gold;
-        for (i = 0; i < 32; i++) {
-            SubRandomItem.unk_290[i] = -1;
-            SubRandomItem.unk_494[i] = -1;
-            SubRandomItem.unk_514[i] = 0;
-        }
-        SubRandomItem.gold_texture = gold;
+    for (n = 0; n < 32; n++) {
+        MainRandomItem.unk_290[n] = -1;
+        MainRandomItem.unk_494[n] = -1;
+        MainRandomItem.unk_514[n] = 0;
     }
+    MainRandomItem.gold_texture = gold;
+    for (n = 0; n < 32; n++) {
+        SubRandomItem.unk_290[n] = -1;
+        SubRandomItem.unk_494[n] = -1;
+        SubRandomItem.unk_514[n] = 0;
+    }
+    SubRandomItem.gold_texture = GoldTex;
     RandomItem = &MainRandomItem;
 
     NowDngMap->buildRandomMap(6, 1);
@@ -6052,44 +5998,41 @@ void BtCleatRandomMap(void) {
     NowDngMap->buildEventData(UserStatus->cur_floor, map_no, 1);
     NowDngMap->FlushCheckMask();
     NowDngMap->DrawMapCalc(NowDngMap->unk_BDEC);
-    NowEventMan->SetupEvent(NowDngMap, (s32) NowDngMap->unk_BDEC);
 
-    // The back dungeon starts from the floor that was just built, then lays
-    // out its own events and items on top.
+    s32 event_no = NowDngMap->unk_BDEC;
+
+    NowEventMan->SetupEvent(NowDngMap, event_no);
+
     NowDngMap = &UraDungeonMap;
     NowEventMan = &UraEventMan;
     UraDungeonMap = MainDungeonMap;
     UraEventMan = DngEventMan;
 
-    {
-        int i;
+    for (k = 0; k < 96; k++) {
+        CDungeonEventData *slot = &UraEventMan.event[k];
 
-        for (int i = 0; i < 96; i++) {
-            CDungeonEventData *slot = &UraEventMan.event[i];
-
-            slot->event = NULL;
-            slot->unk_34 = 0;
-            slot->unk_38 = 0;
-            slot->unk_30 = 0;
-            slot->chara_done = -1;
-        }
-        for (i = 0; i < 48; i++) {
-            UraDungeonMap.events[i].kind = -1;
-            UraDungeonMap.events[i].unk_2C = 0;
-        }
-        for (i = 0; i < 24; i++) {
-            UraDungeonMap.boxes[i].used = 0;
-            UraDungeonMap.boxes[i].lid_angle = 0.0f;
-            UraDungeonMap.boxes[i].unk_30 = 0;
-        }
-        UraDungeonMap.box_num = 0;
-        for (i = 0; i < 8; i++) {
-            UraDungeonMap.atra[i].used = 0;
-        }
-        UraDungeonMap.atra_num = 0;
-        for (i = 0; i < 4; i++) {
-            UraDungeonMap.room_link[i].used = 0;
-        }
+        slot->event = NULL;
+        slot->unk_34 = 0;
+        slot->unk_38 = 0;
+        slot->unk_30 = 0;
+        slot->chara_done = -1;
+    }
+    for (j = 0; j < 48; j++) {
+        UraDungeonMap.events[j].kind = -1;
+        UraDungeonMap.events[j].unk_2C = 0;
+    }
+    for (j = 0; j < 24; j++) {
+        UraDungeonMap.boxes[j].used = 0;
+        UraDungeonMap.boxes[j].lid_angle = 0.0f;
+        UraDungeonMap.boxes[j].unk_30 = 0;
+    }
+    UraDungeonMap.box_num = 0;
+    for (j = 0; j < 8; j++) {
+        UraDungeonMap.atra[j].used = 0;
+    }
+    UraDungeonMap.atra_num = 0;
+    for (j = 0; j < 4; j++) {
+        UraDungeonMap.room_link[j].used = 0;
     }
 
     UraDungeonMap.buildRandomMap(6, 0);
@@ -6101,7 +6044,10 @@ void BtCleatRandomMap(void) {
     s32 ura_draw_no = UraDungeonMap.unk_BDEC;
 
     UraDungeonMap.DrawMapCalc(ura_draw_no);
-    UraEventMan.SetupEvent(&UraDungeonMap, (s32) UraDungeonMap.unk_BDEC);
+
+    s32 ura_event_no = UraDungeonMap.unk_BDEC;
+
+    UraEventMan.SetupEvent(&UraDungeonMap, ura_event_no);
 
     NowDngMap = &MainDungeonMap;
     NowEventMan = &DngEventMan;
@@ -6385,8 +6331,6 @@ void SwordDmgCheck1(float amount, int kind) {
     }
 }
 
-FUZZY_MATCH("asm/nonmatchings/dun/gameloop", SetWeaponColor__Fv);
-
 void SetWeaponColor(void) {
     u8 red, green, blue;
     s8 element = NowWeaponHave->best_elem;
@@ -6411,8 +6355,6 @@ void SetWeaponColor(void) {
         CWeaponFx.colour[1].b = CWeaponFx.colour[3].b = blue / 10.0f;
     }
 }
-
-FUZZY_MATCH("asm/nonmatchings/dun/gameloop", Get_Main_EffectPtr__Fii);
 
 BT_SHOT_EFFECT *Get_Main_EffectPtr(int chara, int form) {
     switch (chara) {
@@ -8307,8 +8249,6 @@ void autoCamTrial(void) {
         }
     }
 }
-
-FUZZY_MATCH("asm/nonmatchings/dun/gameloop", DelActiveItem__Fi);
 
 void DelActiveItem(int slot) {
     // The two arrays are adjacent, and retail walks the second one off the

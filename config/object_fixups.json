@@ -8,6 +8,15 @@
     }
   },
   "src/main.cpp": {
+    "symbols": {
+      "gamemode_empty_string": "@567",
+      "@1082": "@905"
+    },
+    "sections": {
+      ".gamemodesdata": [
+        "@905"
+      ]
+    },
     "rodata_exports": [
       "@873",
       "@874"
@@ -720,6 +729,9 @@
     ]
   },
   "src/dispctrl.cpp": {
+    "sections": {
+      ".vtables": ["__vt__6CBound"]
+    },
     "rodata_exports": [
       "@230"
     ]

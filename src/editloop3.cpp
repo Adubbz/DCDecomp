@@ -1379,7 +1379,8 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
                 MGSetAmbient(ambient);
                 if (next_sun != 2 && following_sun != NULL) {
                     following_sun->SetTransMatrix(identity);
-                    following_sun->SetRotation(0.0f, 0.0f, sun_rotation);
+                    float rotation_y = 0.0f;
+                    following_sun->SetRotation(0.0f, rotation_y, sun_rotation);
                     following_sun->SetPosition(position);
                     MGDraw(following_sun);
                 }
@@ -2076,14 +2077,9 @@ static CActionSeq ActSeq[10];
 /** Texture-animation records supplied to event characters. */
 static CTexAnimeData anime_data[320];
 
-/** Stores one queued event-sprite command consumed by a sprite table. */
-struct SPRITE_TABLE {
-    u8 unk_00[0x38];
-};
-
-STATIC_ASSERT(sizeof(SPRITE_TABLE) == 0x38);
-
-/** Sprite-table entries shared by foreground and background event sprites. */
+/**
+ * Sprite-table entries shared by foreground and background event sprites.
+ */
 static SPRITE_TABLE sprite_table[32];
 
 /** Foreground sprite command table for the active event. */

@@ -147,10 +147,11 @@ public:
     void SE_Play(int, int, int);
 
     /**
+     * Plays a sound effect with the default pan and priority settings.
+     *
      * @mangled SE_Play__6CSoundFiiiii
      * @address 0x145820
      * @size 0x30
-     * @unknownret
      */
     void SE_Play(int, int, int, int, int);
 

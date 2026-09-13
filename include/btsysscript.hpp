@@ -183,12 +183,13 @@ void _GET_OBJHDL_POS(RS_STACKDATA *, int);
 void _GET_OBJHDL_ROT(RS_STACKDATA *, int);
 
 /**
+ * Requests a transition to the back dungeon.
+ *
  * @mangled _SET_URA_DUNGEON__FP12RS_STACKDATAi
  * @address 0x1BC300
  * @size 0x20
- * @unknownret
  */
-void _SET_URA_DUNGEON(RS_STACKDATA *, int);
+int _SET_URA_DUNGEON(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _GET_EVENT_POS__FP12RS_STACKDATAi
@@ -207,28 +208,31 @@ void _GET_EVENT_POS(RS_STACKDATA *, int);
 void _GET_EVENT_ROT(RS_STACKDATA *, int);
 
 /**
+ * Opens the dungeon entrance window and retains its result slot.
+ *
  * @mangled _OPEN_ENTRANCE_WINDOW__FP12RS_STACKDATAi
  * @address 0x1BC3E0
  * @size 0x40
- * @unknownret
  */
-void _OPEN_ENTRANCE_WINDOW(RS_STACKDATA *, int);
+int _OPEN_ENTRANCE_WINDOW(RS_STACKDATA *stack, int argument_count);
 
 /**
+ * Opens the dungeon escape window and retains its result slot.
+ *
  * @mangled _OPEN_ESCAPE_WINDOW__FP12RS_STACKDATAi
  * @address 0x1BC420
  * @size 0x60
- * @unknownret
  */
-void _OPEN_ESCAPE_WINDOW(RS_STACKDATA *, int);
+int _OPEN_ESCAPE_WINDOW(RS_STACKDATA *stack, int argument_count);
 
 /**
+ * Requests entry into the selected dungeon floor.
+ *
  * @mangled _GO_DUNGEON__FP12RS_STACKDATAi
  * @address 0x1BC480
  * @size 0x20
- * @unknownret
  */
-void _GO_DUNGEON(RS_STACKDATA *, int);
+int _GO_DUNGEON(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _SET_DUNGEON_MAP__FP12RS_STACKDATAi
@@ -449,12 +453,13 @@ void _SET_FLOOR_TITLE_OFF(RS_STACKDATA *, int);
 void _SET_RES_LIMMIT_ZONE(RS_STACKDATA *, int);
 
 /**
+ * Clears the recorded progress through the Demon Shaft.
+ *
  * @mangled _CLEAR_DEAMON_SHAFT__FP12RS_STACKDATAi
  * @address 0x1BD0E0
  * @size 0x30
- * @unknownret
  */
-void _CLEAR_DEAMON_SHAFT(RS_STACKDATA *, int);
+int _CLEAR_DEAMON_SHAFT(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _INIT_BEE__FP12RS_STACKDATAi
@@ -545,12 +550,13 @@ void _CHECK_CHR_HELP(RS_STACKDATA *, int);
 void _HOLD_ITEM_EVENT(RS_STACKDATA *, int);
 
 /**
+ * Stops the current battle music.
+ *
  * @mangled _STOP_BATTLE_BGM__FP12RS_STACKDATAi
  * @address 0x1BD4F0
  * @size 0x30
- * @unknownret
  */
-void _STOP_BATTLE_BGM(RS_STACKDATA *, int);
+int _STOP_BATTLE_BGM(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _NO_STATUS_RECOVER__FP12RS_STACKDATAi
@@ -577,12 +583,13 @@ void _SET_QUEST_DUNGEON(RS_STACKDATA *, int);
 void _GET_MAP_CODE(RS_STACKDATA *, int);
 
 /**
+ * Loads the icons used by the active item slots.
+ *
  * @mangled _SET_ACTIVE_ITEM_ICON__FP12RS_STACKDATAi
  * @address 0x1BD5D0
  * @size 0x30
- * @unknownret
  */
-void _SET_ACTIVE_ITEM_ICON(RS_STACKDATA *, int);
+int _SET_ACTIVE_ITEM_ICON(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _GET_ITEM_UNIT_NO__FP12RS_STACKDATAi

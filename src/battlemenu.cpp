@@ -13,6 +13,36 @@
 #include "menu_misc.hpp"
 #include "snd.hpp"
 
+/**
+ * Stores whether the party is escaping the dungeon.
+ */
+extern s16 EscapeDngFlg;
+
+/**
+ * Stores whether the party is leaving an interior area.
+ */
+extern s16 RoomOutFlag;
+
+/**
+ * Stores the active battle-menu state.
+ */
+extern s32 BattleMenuFlag;
+
+/**
+ * Stores the battle-menu transition phase.
+ */
+extern s32 BtlEffectFlag;
+
+/**
+ * Stores the selected battle-menu entry.
+ */
+extern s32 MenuSelect;
+
+/**
+ * Stores the battle-menu transition timer.
+ */
+extern float BtlEffectCt;
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetDefaultWeaponNo__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", IsDefaultWeapon__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", SetNowEquipWeaponDataForMsg__Fii);
@@ -20,10 +50,23 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", GetNowEquipWeaponDataForMsg__FRiRi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetGradationColorInfo2__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetNowSelectWeapon__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", EscapeDungeonMode__Fv);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", SetEscapeDngFlag__Fi);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", GetEscapeDngFlag__Fv);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", SetInteriorOutFlag__Fi);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", GetInteriorOutFlag__Fv);
+
+void SetEscapeDngFlag(int flag) {
+    EscapeDngFlg = flag;
+}
+
+s16 GetEscapeDngFlag() {
+    return EscapeDngFlg;
+}
+
+void SetInteriorOutFlag(int flag) {
+    RoomOutFlag = flag;
+}
+
+s16 GetInteriorOutFlag() {
+    return RoomOutFlag;
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawDngYesNoDialog__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetMenuModeMax__Fv);
 
@@ -268,8 +311,46 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", IsLoadMapNo__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", MapNoTransFunc__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuOptionKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuSaveKey__Fv);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleManualInit__FPiP1);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleManualKey__Fv);
+
+void BattleManualInit(int *result, u_long128 *load_buffer) {
+    InitMenuManual(result, load_buffer);
+}
+
+int BattleManualKey() {
+    int transition_done = 0;
+
+    switch (BtlEffectFlag) {
+        case 1:
+            transition_done = ToFromSelect(0);
+            if (transition_done != 0) {
+                BtlEffectFlag = -1;
+                BtlEffectCt = 0.0f;
+            }
+            break;
+        case 0:
+            transition_done = ToFromSelect(1);
+            break;
+    }
+
+    if (BtlEffectFlag != -1) {
+        BtlEffectCt += 1.0f;
+    } else {
+        BtlEffectCt = 0.0f;
+    }
+
+    MenuManualKey();
+    if (GetNowManualMenuMode() == 1) {
+        BtlEffectFlag = 0;
+        if (transition_done != 0) {
+            MenuSelect = 8;
+            BattleMenuFlag = 0x17;
+            ForBackMenu();
+            BattleMenuFlag = 0;
+        }
+    }
+
+    return 0;
+}
 
 static void BattleManualDraw() {
     MenuManualDraw();
