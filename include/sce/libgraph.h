@@ -437,6 +437,12 @@ typedef struct {
 extern "C" {
 
 void sceGsResetGraph(short mode, short inter, short omode, short ffmd);
+
+/**
+ * Resets the GIF paths used to submit graphics commands.
+ */
+void sceGsResetPath();
+
 int sceGsSyncV(int mode);
 int sceGsSyncPath(int mode, u_short timeout);
 void sceGsSyncVCallback(int (*callback)(int));

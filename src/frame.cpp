@@ -4,6 +4,7 @@
 
 #include "frame.hpp"
 
+#include <libdma.h>
 #include <libgraph.h>
 #include <libpkt.h>
 #include <libvu0.h>
@@ -19,7 +20,15 @@
 
 INCLUDE_ASM("asm/nonmatchings/frame", __nw__FUiP1);
 INCLUDE_ASM("asm/nonmatchings/frame", __nwa__FUiP1);
-INCLUDE_ASM("asm/nonmatchings/frame", DevInit__Fv);
+void DevInit() {
+    sceDmaEnv env;
+
+    sceDmaReset(1);
+    sceDmaGetEnv(&env);
+    env.notify = 0x100;
+    sceDmaPutEnv(&env);
+    sceGsResetPath();
+}
 
 /* The two matrix operations the frame does often enough to spell out. Both exist in the vector
    library as calls; done inline the arithmetic costs less than the call around it would, and the
