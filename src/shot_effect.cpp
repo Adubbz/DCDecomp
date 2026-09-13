@@ -7,8 +7,6 @@
 
 #include <cstdlib>
 
-typedef CDataAlloc2<1> CDataAlloc2_1_;
-
 INCLUDE_ASM("asm/nonmatchings/shot_effect", draw__5CSHOTFv);
 INCLUDE_RODATA("asm/nonmatchings/shot_effect", @625__2);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", step__5CSHOTFv);
@@ -17,12 +15,12 @@ INCLUDE_ASM("asm/nonmatchings/shot_effect", Step__12CSHOT_EFFECTFv);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", EndEffect__12CSHOT_EFFECTFv);
 void CSHOT_EFFECT::OffEffect(s32 slot) {
     if (slot != -1) {
-        unk_A000[slot] = 0;
+        active[slot] = 0;
         return;
     }
 
     for (s32 i = 0; i < 8; i++) {
-        unk_A000[i] = 0;
+        active[i] = 0;
     }
 }
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Entry__12CSHOT_EFFECTFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i);
@@ -33,9 +31,9 @@ INCLUDE_ASM("asm/nonmatchings/shot_effect", ReEntry__12CSHOT_EFFECTFP14BT_SHOT_E
 void CSHOT_EFFECT::SetLoop(s32 loop) {
     s32 slot;
 
-    slot = this->unk_A150;
+    slot = this->current_slot;
     if (slot != -1) {
-        this->unk_A0B0[slot] = loop;
+        this->loop[slot] = loop;
     }
 }
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Set__12CSHOT_EFFECTFPfPfiiiP6CFramei);
@@ -43,90 +41,90 @@ INCLUDE_RODATA("asm/nonmatchings/shot_effect", @977__2);
 void CSHOT_EFFECT::SetWait(s32 wait) {
     s32 slot;
 
-    slot = this->unk_A150;
+    slot = this->current_slot;
     if (slot != -1) {
-        this->unk_A138[slot] = (u8) wait;
-        this->unk_A140[this->unk_A150] = 0;
+        this->wait[slot] = (u8) wait;
+        this->wait_state[this->current_slot] = 0;
     }
 }
 void CSHOT_EFFECT::SetNoSound() {
     s32 slot;
 
-    slot = this->unk_A150;
+    slot = this->current_slot;
     if (slot != -1) {
-        this->unk_A130[slot] = 1;
+        this->no_sound[slot] = 1;
     }
 }
 void CSHOT_EFFECT::SetRandomRate(float rate) {
     s32 slot;
 
-    slot = this->unk_A150;
+    slot = this->current_slot;
     if (slot != -1) {
-        this->unk_A0D0[slot] = rate;
+        this->random_rate[slot] = rate;
     }
 }
 void CSHOT_EFFECT::SetLifeTime(s32 life_time) {
     s32 slot;
 
-    slot = this->unk_A150;
+    slot = this->current_slot;
     if (slot != -1) {
-        this->unk_A0F0[slot] = life_time;
+        this->life_time[slot] = life_time;
     }
 }
 void CSHOT_EFFECT::SetEnemyAttr(s32 attribute) {
     s32 slot;
 
-    slot = this->unk_A150;
+    slot = this->current_slot;
     if (slot != -1) {
-        this->unk_A110[slot] = attribute;
+        this->enemy_attribute[slot] = attribute;
     }
 }
 void CSHOT_EFFECT::SetDmg(s32 damage) {
     s32 slot;
 
-    slot = this->unk_A150;
+    slot = this->current_slot;
     if (slot != -1) {
-        this->unk_A010[slot] = damage;
+        this->damage[slot] = damage;
     }
 }
 void CSHOT_EFFECT::SetAttribute(s32 attribute) {
-    if (this->unk_A150 != -1) {
-        this->unk_0000->unk_040 = attribute;
+    if (this->current_slot != -1) {
+        this->effect_data->unk_040 = attribute;
     }
 }
 void CSHOT_EFFECT::SetWepStatus(s32 status) {
     s32 slot;
 
-    slot = this->unk_A150;
+    slot = this->current_slot;
     if (slot != -1) {
-        this->unk_A030[slot] = status;
+        this->weapon_status[slot] = status;
     }
 }
 void CSHOT_EFFECT::SetVsMonster(s8 *effectiveness) {
     s32 slot;
 
-    slot = this->unk_A150;
+    slot = this->current_slot;
     if (slot != -1) {
-        this->unk_A090[slot] = effectiveness;
+        this->vs_monster[slot] = effectiveness;
     }
 }
 void CSHOT_EFFECT::SetUserID2(s32 id) {
     s32 slot;
 
-    slot = this->unk_A150;
+    slot = this->current_slot;
     if (slot != -1) {
-        this->unk_A060[slot] = (s16) id;
+        this->user_id_2[slot] = (s16) id;
     }
 }
 void CSHOT_EFFECT::Initialize() {
-    unk_0000 = NULL;
+    effect_data = NULL;
     for (s32 i = 0; i < 8; i++) {
-        unk_A000[i] = 0;
+        active[i] = 0;
         unk_A050[i] = -1;
         unk_A070[i] = -1;
-        unk_A14C = 4;
+        slot_count = 4;
     }
-    unk_A150 = -1;
+    current_slot = -1;
 }
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Entry__17CSHOT_EFFECT_PACKFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i);
 void CSHOT_EFFECT_PACK::SetUserID2(s32 id) {

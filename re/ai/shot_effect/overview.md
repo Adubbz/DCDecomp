@@ -13,27 +13,27 @@ drafts:
 
 | Offset | Type | Use established in this pass |
 | --- | --- | --- |
-| 0xA000 | `s16[8]` | active flag cleared by `OffEffect` |
-| 0xA010 | `s32[8]` | damage set by `SetDmg` |
-| 0xA030 | `s32[8]` | weapon status set by `SetWepStatus` |
+| 0xA000 | `s16 active[8]` | active flag cleared by `OffEffect` |
+| 0xA010 | `s32 damage[8]` | damage set by `SetDmg` |
+| 0xA030 | `s32 weapon_status[8]` | weapon status set by `SetWepStatus` |
 | 0xA050 | `s16[8]` | initialized to -1 |
-| 0xA060 | `s16[8]` | secondary user ID set by `SetUserID2` |
+| 0xA060 | `s16 user_id_2[8]` | secondary user ID set by `SetUserID2` |
 | 0xA070 | `s32[8]` | initialized to -1 |
-| 0xA090 | `char *[8]` | monster-effectiveness table set by `SetVsMonster` |
-| 0xA0B0 | `s32[8]` | loop setting |
-| 0xA0D0 | `float[8]` | randomization rate |
-| 0xA0F0 | `s32[8]` | lifetime |
-| 0xA110 | `s32[8]` | enemy attribute |
-| 0xA130 | `u8[8]` | no-sound flag |
-| 0xA138 | `u8[8]` | wait value |
-| 0xA140 | `u8[8]` | secondary wait state cleared by `SetWait` |
-| 0xA14C | `s32` | initialized to 4; used as a slot count by larger methods |
-| 0xA150 | `s32` | currently selected slot, or -1 |
+| 0xA090 | `char *vs_monster[8]` | monster-effectiveness table set by `SetVsMonster` |
+| 0xA0B0 | `s32 loop[8]` | loop setting |
+| 0xA0D0 | `float random_rate[8]` | randomization rate |
+| 0xA0F0 | `s32 life_time[8]` | lifetime |
+| 0xA110 | `s32 enemy_attribute[8]` | enemy attribute |
+| 0xA130 | `u8 no_sound[8]` | no-sound flag |
+| 0xA138 | `u8 wait[8]` | wait value |
+| 0xA140 | `u8 wait_state[8]` | secondary wait state cleared by `SetWait` |
+| 0xA14C | `s32 slot_count` | initialized to 4; used as a slot count by larger methods |
+| 0xA150 | `s32 current_slot` | currently selected slot, or -1 |
 | 0xA154 | `s32` | resource/texture value passed to drawing code |
 
-Offsets 0xA148 and 0xA158 remain unknown. The fields retain `unk_<offset>`
-names because this pass established storage roles but did not establish retail
-names.
+Offsets 0xA148, 0xA154, and 0xA158 remain unknown. Other fields use descriptive
+names where the matched methods establish their runtime roles; these names are
+functional descriptions rather than recovered retail identifiers.
 
 ## Matched functions
 
@@ -56,16 +56,20 @@ The following methods are instruction-for-instruction matches:
 - `CSHOT_EFFECT_PACK::SetUserID2` forwards to the selected effect.
 - `CSHOT_EFFECT_PACK::SetDmg` forwards to the selected effect.
 
-All fifteen functions set neither `$2` nor `$f0` on their return path, proving
-their `void` return type. Renaming the generated locals and parameters did not
-change any instruction.
+None of the fifteen functions deliberately computes a return value, and their
+observed callers use them only for their side effects. For the two pack
+forwarders, the caller likewise does not consume the result of the delegated
+setter. Together that supports the existing `void` declarations; absence of a
+final `$2` or `$f0` assignment alone would not prove a return type. Renaming
+the generated locals and parameters did not change any instruction.
 
 ## Typework and remaining frontier
 
 Including `collisiondata.hpp` and `shot_effect_pack.hpp` resolved the six
-missing-type failures from the initial sweep. A source-local typedef from
-`CDataAlloc2<1>` to m2c's assembly spelling `CDataAlloc2_1_` resolves the
-remaining three allocator-type failures without changing the public type.
+missing-type failures from the initial sweep. The harness still emits
+`CDataAlloc2_1_` in three drafts instead of the canonical `CDataAlloc2<1>`;
+that spelling is a draft-generation limitation, not a type needed by compiled
+upstream code, so this branch does not add an alias for it.
 Including `texture.hpp` and `<cstdlib>` also gives the larger drafts the
 existing `TexManager` and `rand` declarations.
 

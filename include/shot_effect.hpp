@@ -17,25 +17,25 @@ class CFrame;
  */
 class CSHOT_EFFECT {
 public:
-    BT_SHOT_EFFECT *unk_0000;
+    BT_SHOT_EFFECT *effect_data; /**< Description shared by the active effect slots. */
     u8 unk_0004[0x9FFC];
-    s16 unk_A000[8];
-    s32 unk_A010[8];
-    s32 unk_A030[8];
+    s16 active[8];        /**< Nonzero while each effect slot is active. */
+    s32 damage[8];        /**< Damage dealt by each effect slot. */
+    s32 weapon_status[8]; /**< Weapon status carried by each effect slot. */
     s16 unk_A050[8];
-    s16 unk_A060[8];
+    s16 user_id_2[8]; /**< Secondary user identifier of each effect slot. */
     s32 unk_A070[8];
-    char *unk_A090[8];
-    s32 unk_A0B0[8];
-    float unk_A0D0[8];
-    s32 unk_A0F0[8];
-    s32 unk_A110[8];
-    u8 unk_A130[8];
-    u8 unk_A138[8];
-    u8 unk_A140[8];
+    char *vs_monster[8];  /**< Monster-effectiveness table of each effect slot. */
+    s32 loop[8];          /**< Whether each effect slot loops. */
+    float random_rate[8]; /**< Randomization rate of each effect slot. */
+    s32 life_time[8];     /**< Lifetime of each effect slot. */
+    s32 enemy_attribute[8]; /**< Enemy attribute of each effect slot. */
+    u8 no_sound[8];         /**< Whether sound is suppressed for each effect slot. */
+    u8 wait[8];             /**< Delay applied to each effect slot. */
+    u8 wait_state[8];       /**< Secondary delay state of each effect slot. */
     s32 unk_A148;
-    s32 unk_A14C;
-    s32 unk_A150;
+    s32 slot_count;   /**< Number of effect slots initialized by the loader. */
+    s32 current_slot; /**< Currently selected effect slot, or -1. */
     s32 unk_A154;
     u8 unk_A158[8];
 
@@ -76,7 +76,7 @@ public:
      * @address 0x1ACC10
      * @size 0x60
      */
-    void OffEffect(int);
+    void OffEffect(int slot);
 
     /**
      * Loads projectile-effect resources and initializes their runtime slots.
@@ -115,7 +115,7 @@ public:
      * @address 0x1ADD20
      * @size 0x40
      */
-    void SetLoop(int);
+    void SetLoop(int loop);
 
     /**
      * Starts one shot effect and gives back the slot it went into, or -1
@@ -134,7 +134,7 @@ public:
      * @address 0x1AE1C0
      * @size 0x50
      */
-    void SetWait(int);
+    void SetWait(int wait);
 
     /**
      * Suppresses sound for the current projectile effect.
@@ -152,7 +152,7 @@ public:
      * @address 0x1AE250
      * @size 0x40
      */
-    void SetRandomRate(float);
+    void SetRandomRate(float rate);
 
     /**
      * Sets the lifetime of the current projectile effect.
@@ -161,7 +161,7 @@ public:
      * @address 0x1AE290
      * @size 0x40
      */
-    void SetLifeTime(int);
+    void SetLifeTime(int life_time);
 
     /**
      * Sets the enemy attribute of the current projectile effect.
@@ -170,7 +170,7 @@ public:
      * @address 0x1AE2D0
      * @size 0x40
      */
-    void SetEnemyAttr(int);
+    void SetEnemyAttr(int attribute);
 
     /**
      * Sets the damage dealt by the current projectile effect.
@@ -179,7 +179,7 @@ public:
      * @address 0x1AE310
      * @size 0x40
      */
-    void SetDmg(int);
+    void SetDmg(int damage);
 
     /**
      * Sets the source effect's attribute when an effect slot is selected.
@@ -188,7 +188,7 @@ public:
      * @address 0x1AE350
      * @size 0x30
      */
-    void SetAttribute(int);
+    void SetAttribute(int attribute);
 
     /**
      * Sets the weapon status of the current projectile effect.
@@ -197,7 +197,7 @@ public:
      * @address 0x1AE380
      * @size 0x40
      */
-    void SetWepStatus(int);
+    void SetWepStatus(int status);
 
     /**
      * Sets the monster-effectiveness table of the current projectile effect.
@@ -206,7 +206,7 @@ public:
      * @address 0x1AE3C0
      * @size 0x40
      */
-    void SetVsMonster(char *);
+    void SetVsMonster(char *effectiveness);
 
     /**
      * Sets the secondary user identifier of the current projectile effect.
@@ -215,7 +215,7 @@ public:
      * @address 0x1AE400
      * @size 0x40
      */
-    void SetUserID2(int);
+    void SetUserID2(int id);
 
     /**
      * Clears the loaded effect and resets all projectile-effect slots.
