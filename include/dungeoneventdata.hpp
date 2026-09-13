@@ -15,12 +15,15 @@ public:
     u8 unk_1C[0x4];
     s32 script_no; /**< Script that the event runs, or -1 where it runs none. */
     s32 fade;      /**< 1 where the event fades the picture out before it runs. */
-    u8 unk_28[0x4];
+    s32 unk_28;
     s32 chara_no; /**< Character that has to start the event, or -1 for any. */
-    u8 unk_30[0x8];
+    u8 unk_30[0x4];
+    s32 unk_34;
     s32 unk_38; /**< Passed on as the memory the script runs out of. */
     u8 unk_3C[0x4];
 };
+
+STATIC_ASSERT(sizeof(CDungeonEvent) == 0x40);
 
 /**
  * Records what one event of the floor is doing.
@@ -37,10 +40,11 @@ public:
     s32 chara_done; /**< Character that has already run the event, or -1 for none. */
 
     /**
+     * Initializes this runtime slot from a dungeon event definition.
+     *
      * @mangled Set__17CDungeonEventDataFP13CDungeonEvent
      * @address 0x1CC820
      * @size 0x60
-     * @unknownret
      */
     void Set(CDungeonEvent *);
 
