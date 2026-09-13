@@ -6,6 +6,7 @@
 
 #include <libvu0.h>
 
+#include "camerafollow.hpp"
 #include "ebattle.hpp"
 #include "edit.hpp"
 #include "editloop.hpp"
@@ -49,6 +50,9 @@ extern float viewAngleH;
 
 /** Vertical editor camera angle. */
 extern float viewAngleV;
+
+/** Default near-follow distance for the editor camera. */
+extern float camera_near_dist;
 
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBInitIntro__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBSetMotion__FP10CCharacterPi);
@@ -184,7 +188,12 @@ void EdViewModeOff() {
 }
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", InitEyeCamera__FP10CCharacter);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EyeCamera__FP7CCameraP10CCharacteri);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdInitCameraParam__FP13CCameraFollow);
+void EdInitCameraParam(CCameraFollow *camera) {
+    if (camera != 0) {
+        camera->SetDistance(camera_near_dist);
+        camera->SetHeight(5.0f);
+    }
+}
 void EdMoveCharaInit() {
     viewMode = 0;
     chara_mode = 0;
