@@ -47,7 +47,17 @@ int _SET_URA_DUNGEON(RS_STACKDATA *stack, int argument_count) {
 
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_EVENT_POS__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_EVENT_ROT__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _OPEN_ENTRANCE_WINDOW__FP12RS_STACKDATAi);
+
+int _OPEN_ENTRANCE_WINDOW(RS_STACKDATA *stack, int argument_count) {
+    if (stack->type != RS_PTR) {
+        return 0;
+    }
+
+    BtEventInfo.entrance_result = stack->p;
+    BtEventInfo.request = 3;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _OPEN_ESCAPE_WINDOW__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GO_DUNGEON__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_DUNGEON_MAP__FP12RS_STACKDATAi);
