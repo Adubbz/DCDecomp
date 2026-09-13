@@ -113,7 +113,14 @@ int CNPCharacter::CheckSeq() {
     return read_index != write_index;
 }
 
-INCLUDE_ASM("asm/nonmatchings/npcharacter", GetNextSeq__12CNPCharacterFv);
+NP_SEQUENCE *CNPCharacter::GetNextSeq() {
+    NP_SEQUENCE *sequence = &sequences[write_index];
+    write_index++;
+    if (write_index >= 8) {
+        write_index = 0;
+    }
+    return sequence;
+}
 
 NP_SEQUENCE *CNPCharacter::GetNowSeq() {
     return &sequences[read_index];
