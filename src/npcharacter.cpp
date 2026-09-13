@@ -3,7 +3,16 @@
 INCLUDE_ASM("asm/nonmatchings/npcharacter", Step__12CNPCharacterFv);
 INCLUDE_ASM("asm/nonmatchings/npcharacter", ShadowStep__12CNPCharacterFv);
 INCLUDE_ASM("asm/nonmatchings/npcharacter", PlaySeq__12CNPCharacterFv);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", ClearSeq__12CNPCharacterFv);
+
+void CNPCharacter::ClearSeq() {
+    read_index = 0;
+    write_index = 0;
+    sequence_enabled = 1;
+    for (int index = 0; index < 8; index++) {
+        sequences[index].operation = NP_SEQUENCE_UNUSED;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/npcharacter", SetSeq__12CNPCharacterFPff);
 INCLUDE_ASM("asm/nonmatchings/npcharacter", SetWait__12CNPCharacterFi);
 INCLUDE_ASM("asm/nonmatchings/npcharacter", CheckSeq__12CNPCharacterFv);
