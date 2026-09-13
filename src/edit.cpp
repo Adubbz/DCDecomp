@@ -81,6 +81,11 @@ int FishingExchangeLoop();
 void InitFishRecordView(u_long128 *buffer, int *texture_block, int mode);
 int FishRecordViewLoop();
 
+/**
+ * Resolves the model and texture paths for a battle item.
+ */
+void BtGetItemNamePath(char *model_path, char *texture_path, int item_no);
+
 /* 28 bytes nothing reads other than a word at a time, so it is spelled as words rather than as a
    layout nothing supports. */
 extern int EditMenuStatus[7];
@@ -1112,7 +1117,9 @@ int EdCheckGetItem(int item) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/edit", EdGetItemFile__FiPcPc);
+void EdGetItemFile(int item_no, char *model_path, char *texture_path) {
+    BtGetItemNamePath(model_path, texture_path, item_no);
+}
 INCLUDE_ASM("asm/nonmatchings/edit", EdDrawItem__Fv);
 /* The map editor's own system and help messages, in front of the ones the town runs: every call
    here reaches the town's message code first and then does the same thing again to a window of the
