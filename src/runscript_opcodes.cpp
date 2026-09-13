@@ -1,8 +1,5 @@
 #include "runscript_opcodes.hpp"
 
-#include "dun/gameloop.hpp"
-#include "monstorunit.hpp"
-
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", GetStackInt__FP12RS_STACKDATA__3);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", GetStackFloat__FP12RS_STACKDATA__3);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", GetStackString__FP12RS_STACKDATA__3);
@@ -22,31 +19,14 @@ INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_VECTOR__FP12RS_STACKDATAi
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_DIRECTION__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MOVE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _CHK_MOVE_INFO__FP12RS_STACKDATAi);
-
-int _SET_MOVE_CANSEL(RS_STACKDATA *, int) {
-    CMonstorUnit *unit = NowMonstorUnit;
-    unit->monster[unit->GetCurrentMonsterIndex()].movement_speed = 0.0f;
-    return 1;
-}
-
-int _SET_ROT_CANSEL(RS_STACKDATA *, int) {
-    CMonstorUnit *unit = NowMonstorUnit;
-    unit->monster[unit->GetCurrentMonsterIndex()].unk_084 = 0.0f;
-    return 1;
-}
-
+INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MOVE_CANSEL__FP12RS_STACKDATAi);
+INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_ROT_CANSEL__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_POSITION__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_FALL__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_MUTEKI__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_ALPHA__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_CHK_ALPHA__FP12RS_STACKDATAi);
-
-int _STATUS_SET_DEAD(RS_STACKDATA *, int) {
-    NowMonstorUnit->monster[NowMonstorUnit->GetCurrentMonsterIndex()].state = -1;
-    NowMonstorUnit->unk_04C--;
-    return 1;
-}
-
+INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_DEAD__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_EVENT__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _RUN_SCRIPT__FP12RS_STACKDATAi);
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @870);
@@ -82,12 +62,7 @@ INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1086__2);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SND_FRM__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_LOOP_SND__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STOP_LOOP_SND__FP12RS_STACKDATAi);
-
-int _DEL_LOOP_SND(RS_STACKDATA *, int) {
-    NowMonstorUnit->sound[NowMonstorUnit->GetCurrentMonsterIndex()].sequence_id = -1;
-    return 1;
-}
-
+INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _DEL_LOOP_SND__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SND_NOW__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STOP_SND_NOW__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_CHR_ID__FP12RS_STACKDATAi);

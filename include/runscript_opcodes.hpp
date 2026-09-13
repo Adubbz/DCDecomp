@@ -11,6 +11,51 @@ class CRunScript;
 struct RS_STACKDATA;
 
 /**
+ * @mangled GetStackInt__FP12RS_STACKDATA__3
+ * @address 0x1E1640
+ * @size 0x50
+ * @unknownret
+ * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
+ */
+void GetStackInt(RS_STACKDATA *);
+
+/**
+ * @mangled GetStackFloat__FP12RS_STACKDATA__3
+ * @address 0x1E1690
+ * @size 0x30
+ * @unknownret
+ * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
+ */
+void GetStackFloat(RS_STACKDATA *);
+
+/**
+ * @mangled GetStackString__FP12RS_STACKDATA__3
+ * @address 0x1E16C0
+ * @size 0x10
+ * @unknownret
+ * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
+ */
+void GetStackString(RS_STACKDATA *);
+
+/**
+ * @mangled SetStack__FP12RS_STACKDATAi__3
+ * @address 0x1E16D0
+ * @size 0x20
+ * @unknownret
+ * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
+ */
+void SetStack(RS_STACKDATA *, int);
+
+/**
+ * @mangled SetStack__FP12RS_STACKDATAf__3
+ * @address 0x1E16F0
+ * @size 0x20
+ * @unknownret
+ * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
+ */
+void SetStack(RS_STACKDATA *, float);
+
+/**
  * @mangled _SET_MOTION__FP12RS_STACKDATAi
  * @address 0x1E1710
  * @size 0x480
@@ -123,22 +168,20 @@ void _SET_MOVE(RS_STACKDATA *, int);
 void _CHK_MOVE_INFO(RS_STACKDATA *, int);
 
 /**
- * Cancels the current monster's scripted movement.
- *
  * @mangled _SET_MOVE_CANSEL__FP12RS_STACKDATAi
  * @address 0x1E2A60
  * @size 0x40
+ * @unknownret
  */
-int _SET_MOVE_CANSEL(RS_STACKDATA *, int);
+void _SET_MOVE_CANSEL(RS_STACKDATA *, int);
 
 /**
- * Clears the current monster's pending rotation value.
- *
  * @mangled _SET_ROT_CANSEL__FP12RS_STACKDATAi
  * @address 0x1E2AA0
  * @size 0x40
+ * @unknownret
  */
-int _SET_ROT_CANSEL(RS_STACKDATA *, int);
+void _SET_ROT_CANSEL(RS_STACKDATA *, int);
 
 /**
  * @mangled _SET_POSITION__FP12RS_STACKDATAi
@@ -181,13 +224,12 @@ void _STATUS_SET_ALPHA(RS_STACKDATA *, int);
 void _STATUS_CHK_ALPHA(RS_STACKDATA *, int);
 
 /**
- * Marks the current monster dead and removes it from the active count.
- *
  * @mangled _STATUS_SET_DEAD__FP12RS_STACKDATAi
  * @address 0x1E2E30
  * @size 0x50
+ * @unknownret
  */
-int _STATUS_SET_DEAD(RS_STACKDATA *, int);
+void _STATUS_SET_DEAD(RS_STACKDATA *, int);
 
 /**
  * @mangled _STATUS_SET_EVENT__FP12RS_STACKDATAi
@@ -414,13 +456,12 @@ void _SET_LOOP_SND(RS_STACKDATA *, int);
 void _STOP_LOOP_SND(RS_STACKDATA *, int);
 
 /**
- * Clears the current monster's active sound sequence.
- *
  * @mangled _DEL_LOOP_SND__FP12RS_STACKDATAi
  * @address 0x1E47B0
  * @size 0x40
+ * @unknownret
  */
-int _DEL_LOOP_SND(RS_STACKDATA *, int);
+void _DEL_LOOP_SND(RS_STACKDATA *, int);
 
 /**
  * @mangled _SET_SND_NOW__FP12RS_STACKDATAi
