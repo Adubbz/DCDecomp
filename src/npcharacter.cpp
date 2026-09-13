@@ -73,7 +73,16 @@ void CNPCharacter::DrawShadow() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/npcharacter", CheckDraw__12CNPCharacterFv);
+int CNPCharacter::CheckDraw() {
+    if (!enabled || chara.frame == NULL) {
+        return 0;
+    }
+    if (chara.ambient_offset[3] <= 0.0f) {
+        return 0;
+    }
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/npcharacter", PickUpPoly__12CNPCharacterFPfP6CCPoly);
 INCLUDE_ASM("asm/nonmatchings/npcharacter", PickUpPoly__10CCharacterFPfP6CCPoly);
 INCLUDE_ASM("asm/nonmatchings/npcharacter", Initialize__12CNPCharacterFv);
