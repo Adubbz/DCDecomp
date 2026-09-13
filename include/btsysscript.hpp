@@ -238,12 +238,13 @@ void _SET_DUNGEON_MAP(RS_STACKDATA *, int);
 void _LOAD_DUNGEON_MAP2(RS_STACKDATA *, int);
 
 /**
+ * Reloads and arranges the monsters on the current floor.
+ *
  * @mangled _LOAD_MONSTOR__FP12RS_STACKDATAi
  * @address 0x1BC550
  * @size 0x30
- * @unknownret
  */
-void _LOAD_MONSTOR(RS_STACKDATA *, int);
+int _LOAD_MONSTOR(RS_STACKDATA *, int);
 
 /**
  * @mangled _SET_RANDOM_MAP__FP12RS_STACKDATAi

@@ -2,6 +2,7 @@
 #include "camera.hpp"
 #include "camerafollow.hpp"
 #include "dungeonmap.hpp"
+#include "dun/gameloop.hpp"
 #include "frame.hpp"
 #include "runscript.hpp"
 
@@ -44,7 +45,11 @@ INCLUDE_ASM("asm/nonmatchings/btsysscript", _OPEN_ESCAPE_WINDOW__FP12RS_STACKDAT
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GO_DUNGEON__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_DUNGEON_MAP__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _LOAD_DUNGEON_MAP2__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _LOAD_MONSTOR__FP12RS_STACKDATAi);
+int _LOAD_MONSTOR(RS_STACKDATA *, int) {
+    BtLoadMonstor(0);
+    BtArrengeMonstor();
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_RANDOM_MAP__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_EVENT_SW__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_MONSTOR_ID__FP12RS_STACKDATAi);
