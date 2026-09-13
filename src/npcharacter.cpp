@@ -91,5 +91,28 @@ int CNPCharacter::PickUpPoly(float *position, CCPoly *polygons) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/npcharacter", PickUpPoly__10CCharacterFPfP6CCPoly);
-INCLUDE_ASM("asm/nonmatchings/npcharacter", Initialize__12CNPCharacterFv);
+
+void CNPCharacter::Initialize() {
+    chara.CCharacter::Initialize();
+    enabled = 0;
+    unk_1474 = 0;
+    chara.ambient_offset[0] = 0;
+    chara.ambient_offset[1] = 0;
+    chara.ambient_offset[2] = 0;
+    chara.ambient_offset[3] = 0;
+    alpha_step = 0;
+    unk_1488 = -1;
+    chara.body_width = 7.0f;
+    unk_148C = 0;
+    unk_1468 = 0;
+    event_status = 0;
+    unk_1470 = 0;
+    unk_1448 = 0;
+    ClearSeq();
+    unk_1440 = 0;
+    unk_1480 = 0;
+    step_hidden = 0;
+    recurring_talk_event = -1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/npcharacter", __ct__12CNPCharacterFv);
