@@ -763,7 +763,10 @@ int CCollision::Intersection(float *from, float *to, float *hit) {
 int CCollision::PickUpNearPoly(CCPoly *poly) {
     return 0;
 }
-INCLUDE_ASM("asm/nonmatchings/dataset", PickUpNearPoly__10CCollisionFP6CCPolyRC7CBoxVu0);
+
+int CCollision::PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box) {
+    return 0;
+}
 
 int CCollision::PickUpNearPoly(CCPoly *poly, float *position, float radius) {
     return 0;
