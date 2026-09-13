@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "battlemenu.hpp"
 #include "character.hpp"
 #include "clsmes.hpp"
 #include "dataalloc.hpp"
@@ -15,7 +16,6 @@
 #include "memcard.hpp"
 #include "menu_draw.hpp"
 #include "menu_manual.hpp"
-#include "shop_battlemenu.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
 #include "weapon_buildup.hpp"
