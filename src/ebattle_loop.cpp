@@ -44,6 +44,9 @@ extern int chara_fishing;
 /** Fishing message state used by editor character control. */
 extern int fishing_mes;
 
+/** Horizontal editor camera angle. */
+extern float viewAngleH;
+
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBInitIntro__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBSetMotion__FP10CCharacterPi);
 void EBDebug(int mode) {
@@ -189,7 +192,9 @@ INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdEyeCamera__FP7CCameraP10CCharacte
 int EdCheckViewMode() {
     return viewMode;
 }
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdAGetViewAngleH__Fv);
+float EdAGetViewAngleH() {
+    return viewAngleH;
+}
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdAGetViewAngleV__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdASetViewAngle__Fff);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdMoveChara__Fv);
