@@ -656,6 +656,15 @@ static void PreProcess(input_str &input) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/chararead", StopCloth__10CCharacterFi);
+void CCharacter::StopCloth(int) {
+    int i;
+
+    for (i = 0; i < 4; i++) {
+        if (cloth[i] != 0) {
+            cloth[i]->stop = 1;
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/chararead", StretchBind2__FPfPfPf);
 INCLUDE_ASM("asm/nonmatchings/chararead", vuabs__FPf);
