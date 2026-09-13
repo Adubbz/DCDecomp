@@ -722,7 +722,51 @@ int keyCtrl(float x, float y, MOTION_INFO *motion) {
     return result;
 }
 INCLUDE_ASM("asm/nonmatchings/dataread", MoveImageTest__FP13sceVif1PacketiiiRC8CRect_i_iiiiii);
-INCLUDE_ASM("asm/nonmatchings/dataread", unitRotation__FP9CFrameVu1f);
+float unitRotation(CFrameVu1 *frame, float heading) {
+    float rotation[4];
+    float delta;
+    float abs_delta;
+
+    frame->GetRotation(rotation);
+    delta = heading - rotation[1];
+    if (delta <= 0.0f)
+        abs_delta = -1.0f * delta;
+    else
+        abs_delta = delta;
+
+    if (abs_delta <= 3.141592653589793) {
+        if (abs_delta <= 0.2617993877991494)
+            delta = 0.0f;
+    } else {
+        abs_delta = 6.283185307179586 - abs_delta;
+        if (abs_delta <= 0.2617993877991494)
+            delta = 0.0f;
+    }
+
+    if (delta > 0.0f) {
+        if (delta <= 3.141592653589793)
+            rotation[1] += 0.2617994f;
+        else
+            rotation[1] -= 0.2617994f;
+    }
+
+    if (delta < 0.0f) {
+        if (delta >= -3.141592653589793)
+            rotation[1] -= 0.2617994f;
+        else
+            rotation[1] += 0.2617994f;
+    }
+
+    if (0.0f == delta)
+        rotation[1] = heading;
+
+    if (rotation[1] <= -3.141592653589793)
+        rotation[1] += 6.2831855f;
+    if (rotation[1] >= 3.141592653589793)
+        rotation[1] -= 6.2831855f;
+
+    return rotation[1];
+}
 /* The overlay each map number is served from; an empty name means the map runs out of the
    executable itself. */
 static char *binfile[15] = {"TITLE.BIN", "TITLE.BIN", "", "DUN.BIN", "DUN.BIN",

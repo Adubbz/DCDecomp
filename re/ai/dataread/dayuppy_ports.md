@@ -52,3 +52,11 @@ clamped motion speed into the third motion record, and returns whether the
 input is idle, moving, or above the run threshold. The `MOTION_INFO` stride is
 0x10, so the retail `+0x28` store is `motion[2].speed`. The compiled function
 matches the 0xF0-byte retail body at `0x00140570`.
+
+## `unitRotation`
+
+The rotation helper finds the signed yaw delta, turns by fifteen degrees along
+the shorter arc unless already within one step, wraps the result into the
+signed-pi range, and returns the new yaw. The double-precision comparisons are
+part of the retail operation sequence. The compiled function matches the
+0x28C-byte retail body at `0x00140810`.
