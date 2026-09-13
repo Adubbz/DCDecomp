@@ -59,14 +59,14 @@ void SndExit(void);
 void SndStep(void);
 
 /**
- * Starts the background music system from nothing.
+ * Resets the background music so that no set counts as loaded, playing or
+ * fading, and returns 1.
  *
  * @mangled SndBgmInit__Fv
  * @address 0x159930
- * @size 0x30
- * @unknownret
+ * @size 0x2C
  */
-void SndBgmInit(void);
+int SndBgmInit(void);
 
 /**
  * Stops every sound effect, the ambient loop and the second voice, and resets

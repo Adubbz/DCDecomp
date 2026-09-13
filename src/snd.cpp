@@ -93,6 +93,15 @@ extern int now_bgm_vol;
 /** The background-music fade that runs: 1 while it fades in, -1 while it fades out, 0 for none. */
 extern int bgm_fade;
 
+/** The background-music fade's current volume. */
+extern float now_bgm_fade_vol;
+
+/** How far the background-music fade moves each frame. */
+extern float bgm_fade_step;
+
+/** The volume the background-music fade ends at. */
+extern int bgm_fade_vol;
+
 /** The ambient loop that is playing, or -1 for none. */
 extern int now_amb_no;
 
@@ -241,7 +250,18 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSetCamera__FP7CCamera);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetCamera__FPfPf);
 INCLUDE_ASM("asm/nonmatchings/snd", GetBGMFile__FiPcPc);
 INCLUDE_ASM("asm/nonmatchings/snd", SetBGMFile__FiPUiPc);
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmInit__Fv);
+
+int SndBgmInit() {
+    now_bgm_no = -1;
+    now_bgm_play = 0;
+    now_bgm_vol = 0;
+    bgm_fade = 0;
+    bgm_fade_vol = 0;
+    bgm_fade_step = 0.0f;
+    now_bgm_fade_vol = 0.0f;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmLoad__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmLoadBG__FiPUiPi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmSyncBG__Fv);
