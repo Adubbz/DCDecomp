@@ -112,10 +112,11 @@ public:
     void UpDate(void);
 
     /**
+     * Initializes the box's links, transform inputs, friction, and extension scales.
+     *
      * @mangled InitParam__6CBoundFv
      * @address 0x13DCF0
      * @size 0x80
-     * @unknownret
      */
     void InitParam(void);
 

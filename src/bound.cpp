@@ -69,5 +69,17 @@ void CBound::UpDate() {
     if (next)
         next->UpDate();
 }
-INCLUDE_ASM("asm/nonmatchings/bound", InitParam__6CBoundFv);
+void CBound::InitParam() {
+    position[0] = 0.0f;
+    position[1] = 0.0f;
+    position[2] = 0.0f;
+    position[3] = 1.0f;
+    next = 0;
+    unk_04 = 0;
+    friction = 0.5f;
+    frame0 = frame1 = 0;
+    sceVu0CopyVector(from, position);
+    sceVu0CopyVector(to, position);
+    length0 = length1 = 1.0f;
+}
 INCLUDE_ASM("asm/nonmatchings/bound", __ct__6CBoundFfff);
