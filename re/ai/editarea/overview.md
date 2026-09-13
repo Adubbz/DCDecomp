@@ -82,7 +82,7 @@ are intentional inputs to river connectivity. All other requests return
 map/area switches reproduce the retail branch layout; a map `if` removes
 one of its unconditional branches.
 
-`SetRoadParts` accepts attribute 1, samples neighbors in north/east/south/west
+`SetRoadParts` accepts attribute 1, samples neighbors in negative Z/positive X/positive Z/negative X
 order, and encodes the connection shape in bits 4–11 and rotation in bits
 0–3. Shapes 1/2 are corners/straight segments, 3/4 are three/four-way
 junctions, and 5/6 are isolated/end segments. The final shift-and-mask
@@ -111,3 +111,8 @@ to zero. Its minimum-X comparison writes the maximum-X accumulator instead
 of the minimum; the C++ preserves that behavior even though nonnegative
 loop coordinates make the branch unreachable. Minimum Z also remains zero
 for nonnegative coordinates. The maximum world X/Z includes one cell size.
+
+The connection enums name only observed road/river attributes and shapes.
+Attributes 3 and 5 are accepted river neighbors but their wider meaning is
+not established here; their numeric tests remain. Axis names describe grid
+indices without claiming geographic directions.
