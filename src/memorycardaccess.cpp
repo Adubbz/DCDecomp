@@ -1,24 +1,6 @@
 #include "memorycardaccess.hpp"
 
-#include <cstdio>
 #include <cstring>
-
-#include "savedata.hpp"
-
-/** Returns the language that the title screen selected. */
-int GetMenuLangFlag();
-
-/** Empties the table that holds the entries of the save directory. */
-void InitSaveFileInfoTbl();
-
-/** Returns one when the table holds an entry with the given name. */
-int GetOpenAttribute(char *name);
-
-/** Holds the entries of the save directory that sceMcGetDir last wrote. */
-extern u8 SaveFileInfo[99][64];
-
-/** Holds the configuration in the format that the memory card carries. */
-extern SV_CONFIG_SYS sys_config;
 
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", Initialize__17CMemoryCardAccessFv);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @372__3);
