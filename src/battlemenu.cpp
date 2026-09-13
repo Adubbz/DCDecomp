@@ -15,6 +15,10 @@
 
 extern s16 EscapeDngFlg;
 extern s16 RoomOutFlag;
+extern s32 BattleMenuFlag;
+extern s32 BtlEffectFlag;
+extern s32 MenuSelect;
+extern float BtlEffectCt;
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetDefaultWeaponNo__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", IsDefaultWeapon__Fi);
@@ -285,7 +289,42 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", MapNoTransFunc__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuOptionKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuSaveKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleManualInit__FPiP1);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleManualKey__Fv);
+
+int BattleManualKey() {
+    int transition_done = 0;
+
+    switch (BtlEffectFlag) {
+        case 1:
+            transition_done = ToFromSelect(0);
+            if (transition_done != 0) {
+                BtlEffectFlag = -1;
+                BtlEffectCt = 0.0f;
+            }
+            break;
+        case 0:
+            transition_done = ToFromSelect(1);
+            break;
+    }
+
+    if (BtlEffectFlag != -1) {
+        BtlEffectCt += 1.0f;
+    } else {
+        BtlEffectCt = 0.0f;
+    }
+
+    MenuManualKey();
+    if (GetNowManualMenuMode() == 1) {
+        BtlEffectFlag = 0;
+        if (transition_done != 0) {
+            MenuSelect = 8;
+            BattleMenuFlag = 0x17;
+            ForBackMenu();
+            BattleMenuFlag = 0;
+        }
+    }
+
+    return 0;
+}
 
 static void BattleManualDraw() {
     MenuManualDraw();

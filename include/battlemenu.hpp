@@ -909,12 +909,13 @@ void BattleMenuSaveKey(void);
 void BattleManualInit(int *, void /* CW back-ref target unresolved */ *);
 
 /**
+ * Processes battle-manual input and returns zero after updating transitions.
+ *
  * @mangled BattleManualKey__Fv
  * @address 0x20B090
- * @size 0x100
- * @unknownret
+ * @size 0xFC
  */
-void BattleManualKey(void);
+int BattleManualKey(void);
 
 /**
  * @mangled DrawStatusNumberNowAndMax__FPiiiii
