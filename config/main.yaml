@@ -251,7 +251,7 @@ segments:
       - {start: 0x83d40, type: cpp, name: editloop3}
       - {start: 0x9a0d0, type: cpp, name: editpartsinfo}
       - {start: 0x9a8b0, type: cpp, name: mapparts}
-      - {start: 0x9b780, type: asmtu, name: edit_in}
+      - {start: 0x9b780, type: cpp, name: edit_in}
       - {start: 0xa0570, type: asmtu, name: editground}
       - {start: 0xa88e0, type: cpp, name: fishing}
       - {start: 0xab840, type: cpp, name: shot_utils}
