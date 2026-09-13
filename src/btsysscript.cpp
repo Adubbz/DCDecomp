@@ -39,7 +39,12 @@ INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_OBJHDL_ROT__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_OBJHDL_DRAW_FLAG__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_OBJHDL_POS__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_OBJHDL_ROT__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_URA_DUNGEON__FP12RS_STACKDATAi);
+
+int _SET_URA_DUNGEON(RS_STACKDATA *stack, int argument_count) {
+    BtEventInfo.request = 2;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_EVENT_POS__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_EVENT_ROT__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _OPEN_ENTRANCE_WINDOW__FP12RS_STACKDATAi);

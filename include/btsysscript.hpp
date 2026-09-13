@@ -183,12 +183,13 @@ void _GET_OBJHDL_POS(RS_STACKDATA *, int);
 void _GET_OBJHDL_ROT(RS_STACKDATA *, int);
 
 /**
+ * Requests a transition to the back dungeon.
+ *
  * @mangled _SET_URA_DUNGEON__FP12RS_STACKDATAi
  * @address 0x1BC300
  * @size 0x20
- * @unknownret
  */
-void _SET_URA_DUNGEON(RS_STACKDATA *, int);
+int _SET_URA_DUNGEON(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _GET_EVENT_POS__FP12RS_STACKDATAi
