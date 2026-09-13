@@ -35,6 +35,15 @@ void FishingSetWaterLevel(float near_height, float far_height);
  */
 void FishingSetGroundLevel(float near_height, float far_height);
 
+/**
+ * Returns the water surface height used by the fishing simulation.
+ *
+ * @mangled FishingGetWaterLevel__Fv
+ * @address 0x1A91D0
+ * @size 0xC
+ */
+float FishingGetWaterLevel();
+
 /** Supplies the ground collision polygons used by the fishing simulation. */
 void FishingSetCPoly(CCPoly *polygons, int count);
 

@@ -25,7 +25,11 @@ void FishingSetWaterLevel(float water_level, float ground_level) {
     FishingSetGroundLevel(ground_level, ground_level);
 }
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingSetGroundLevel__Fff);
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingGetWaterLevel__Fv);
+
+float FishingGetWaterLevel() {
+    return WaterLevel;
+}
+
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingSetCPoly__FP6CCPolyi);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingSetRect__F7CBoxVu0);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingPickUpPoly__FP6CCPoly);
