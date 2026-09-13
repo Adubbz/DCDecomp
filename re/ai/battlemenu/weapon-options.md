@@ -94,3 +94,38 @@ void MenuClsMes::NowWeaponStatus(WEAPON_HAVE *selected_weapon) {
 }
 
 ```
+
+## Wave 4 sweep coverage
+
+The final draft sweep at b3636d82 checked 99 of the remaining 111 functions.
+Its readiness causes were include 8, callee 14, type 21, global 22, link 1,
+syntax 21, draft 11 and code 1. There were no matching draft additions.
+There was no complete pre-change sweep, so these are final coverage counts,
+not a claimed full before/after typework delta.
+
+Twelve jump-table functions were omitted by the default queue filter.
+An explicit supplemental sweep with --include-jumptables stopped when m2c
+could not recover GetLimmitMsg's jump table. Direct decompile.sh invocations
+then independently confirmed the same decompiler failure for all twelve;
+none reached a compiler verdict:
+
+- `GetLimmitMsg__Fv`
+- `BattleMenuCursor__Fv`
+- `BattleMenuSelect__Fv`
+- `DrawAallWeapon__FiifP10CCharacterP11WEAPON_HAVEiii`
+- `BattleMenuDraw__Fv`
+- `BattleMenuCharaKey__Fv`
+- `ItemMenuModeDraw__Fv`
+- `MenuMoveKey__Fv`
+- `WeaponMenuSelect__Fv`
+- `WeaponMenuDraw__Fv`
+- `WeaponSelectKey__Fv`
+- `ItemMenuMainKey__Fv`
+
+The error is "Unable to determine jump table for jr instruction" and asks
+for a variable named with a jtbl/jpt_/lbl_/jumptable_ prefix. This is a tooling
+blocker, not evidence that those functions fail to compile or match.
+
+Narrow whitespace formatting follows the sweep. Its fingerprint is therefore
+historical evidence for b3636d82; the retained function checks and complete
+snapshot comparison are repeated on the final formatted tree.

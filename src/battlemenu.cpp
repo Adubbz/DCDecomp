@@ -190,6 +190,7 @@ static int WeaponMenuKastumSelectDown(int row, int enabled_rows) {
     }
     return selected_row;
 }
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponSelectKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WepAttachHaveCancel__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuAttachModeKey__Fv);
@@ -276,6 +277,7 @@ static void BattleManualDraw() {
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawStatusNumberNowAndMax__FPiiiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWepHole__FiiP11WEAPON_HAVEii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", InitMes__10MenuClsMesFv);
+
 void MenuClsMes::InitData() {
     unk_08 = 366;
     unk_0C = 166;
@@ -284,18 +286,20 @@ void MenuClsMes::InitData() {
     option_count = 0;
     unk_06 = 0;
 }
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", SetBuffInfo__10MenuClsMesFPs);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", NowWeaponStatus__10MenuClsMesFP11WEAPON_HAVE);
+
 void MenuClsMes::Step() {
     if (message != NULL) {
         switch (mode) {
-        case 0:
-            break;
-        case 1:
-        case 2:
-            NowWeaponStatus(GetNowSelectWeapon());
-            message->Step();
-            break;
+            case 0:
+                break;
+            case 1:
+            case 2:
+                NowWeaponStatus(GetNowSelectWeapon());
+                message->Step();
+                break;
         }
     }
 }

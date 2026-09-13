@@ -936,12 +936,12 @@ class MenuClsMes {
 public:
     s8 mode; /**< Selects the weapon option display mode. */
     char unk_01;
-    s16 alpha; /**< Opacity used for the option icons and message window. */
+    s16 alpha;        /**< Opacity used for the option icons and message window. */
     s16 option_count; /**< Number of option messages selected for the weapon. */
     s16 unk_06;
     s32 unk_08;
     s32 unk_0C;
-    s32 option_flags; /**< Combined option bits of the weapon and its attachments. */
+    s32 option_flags;    /**< Combined option bits of the weapon and its attachments. */
     WEAPON_HAVE *weapon; /**< Weapon whose option messages are displayed. */
     s32 unk_18;
     ClsMes *message; /**< Message window that holds the option text. */
