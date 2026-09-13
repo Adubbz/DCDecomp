@@ -359,7 +359,11 @@ int CEditArea::SetRoadParts(int x, int y) {
     return shape | (direction & 0xF);
 }
 
-INCLUDE_ASM("asm/nonmatchings/editarea", SearchPartsID__9CEditAreaFfff);
+int CEditArea::SearchPartsID(float x, float y, float z) {
+    CVector3_i_ position;
+    GetPos(&position, x, y, z);
+    return grid[position.x][position.z].parts_id;
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", SearchPartsExtra__9CEditAreaFfff);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetGrid__9CEditAreaFP11CVector3_f_fff);
 INCLUDE_ASM("asm/nonmatchings/editarea", RemakeGrid__9CEditAreaFv);
