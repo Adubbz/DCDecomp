@@ -600,7 +600,8 @@ SECTIONS
 		edit.cpp.o (.sdata)            // 0x002a1f24
 		main.sdata.part2d.s.o (.sdata) // 0x002a1f50
 		editloop.cpp.o (.sdata)        // 0x002a1f78
-		main.sdata.part2f.s.o (.sdata) // 0x002a1f80
+		editloop3.cpp.o (.sdata)       // 0x002a1f80
+		main.sdata.part2f.s.o (.sdata) // 0x002a1f90
 		weapon_buildup.cpp.o (.sdata)  // 0x002a21c8
 		weaponlevelup.cpp.o (.sdata)   // 0x002a21d8
 		main.sdata.part2e.s.o (.sdata) // 0x002a21f0
