@@ -3,9 +3,8 @@
 ## Provenance
 
 The bodies of the 18 functions matched here come from Dayuppy's Dark Cloud
-decompilation (review export `1707723`). Each was restyled to this repository's
-headers and names and judged against the reference assembly on its own; the
-export's match list was not taken as evidence.
+decompilation. Each was restyled to this repository's headers and names and
+judged against the reference assembly on its own.
 
 ## Background-music state
 
@@ -21,10 +20,10 @@ matched readers and writers:
 | `now_bgm_fade_vol` | `float` | fade's current volume | `SndBgmFadeInOut` reads and writes it with `lwc1`/`swc1` |
 | `bgm_fade_step` | `float` | fade's per-frame step | `SndBgmFadeIn` stores it; `SndBgmFadeInOut` adds it each frame |
 | `bgm_fade_vol` | `int` | fade's end volume | `SndBgmFadeIn` stores it; `SndBgmFadeInOut` converts it to compare |
-| `bgm_off` | `int` | nonzero blocks `SndBgmPlay` | only `SndBgmPlay` reads it through `$gp` |
+| `bgm_off` | `int` | nonzero blocks `SndBgmPlay` | only `SndBgmPlay` reads it; nothing writes it |
 
-No matched code writes `now_bgm_play = 2`, so the comments describe 2 only as
-the state `SndBgmRePlay` resumes from.
+Nothing in retail writes 2 to `now_bgm_play`; the only stores are 0 and 1.
+`SndBgmRePlay` still resumes only from 2.
 
 `SndGetDefaultBgmVol` reads `MIDI_STATE.sequence` at `0x30` and
 `MIDI_SEQUENCE.volume` at `0xC`, the offsets already established in trunk.
@@ -41,7 +40,7 @@ the state `SndBgmRePlay` resumes from.
 
 ## Ambient and sprite state
 
-`SndAmbientPlay` plays on port 1, which is why port 1 is described as the
-ambient port. `setbilinear` writes `linear__2` at `0x2A1EE8` (`.sdata`), read by
-the `set2DSprite*` family through `-0x7908($gp)`. It is a different global from
-`gameutil`'s `linear_filter` at `0x2A25A8`.
+`SndAmbientPlay` plays on port 1, the ambient port. `setbilinear` writes
+`linear__2` at `0x2A1EE8` (`.sdata`), read by the `set2DSprite*` family through
+`-0x7908($gp)`. It is a different global from `gameutil`'s `linear_filter` at
+`0x2A25A8`.

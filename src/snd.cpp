@@ -84,7 +84,7 @@ extern int now_voice_set;
 /** The background-music set that is loaded, or -1 for none. */
 extern int now_bgm_no;
 
-/** The background music's play state: 0 while it is stopped, 1 while it plays, 2 while SndBgmRePlay may resume it. */
+/** The background music's play state: 0 while it is stopped, 1 while it plays. */
 extern int now_bgm_play;
 
 /** The background-music volume that is set now. */

@@ -39,8 +39,9 @@ int SndVoiceLoad(int voice_no);
 void SndInitialize(int, int, int, int);
 
 /**
- * Stops the music, the ambient loop, the sound effects and both voices, and
- * resets the sound-effect sequences, the background music and the ambient loop.
+ * Stops the music, the ambient loop, sound-effect ports 10 and 12 to 15 and both
+ * voices, and resets the sound-effect sequences, the background music and the
+ * ambient loop.
  *
  * @mangled SndExit__Fv
  * @address 0x159290
@@ -442,8 +443,8 @@ void SndSetBgmVolf(float volume);
 int SndGetBgmVol();
 
 /**
- * Returns the play state of the background music: 0 while it is stopped, 1
- * while it plays, and 2 while SndBgmRePlay may resume it.
+ * Returns the play state of the background music: 0 while it is stopped and 1
+ * while it plays.
  *
  * @mangled SndBgmCheck__Fv
  * @address 0x159D00

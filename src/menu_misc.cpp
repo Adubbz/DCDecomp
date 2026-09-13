@@ -22,7 +22,7 @@
 #include "weapon_buildup.hpp"
 #include "weaponeffect.hpp"
 
-/** The weapon test number the weapon menu reports. */
+/** The weapon test number GetNowTestNo reports, initialised to 1. */
 extern int MenuWeaponTestCase;
 
 /** The amount the last item use gave, a base value plus a random part. */
@@ -201,7 +201,8 @@ static int CalMoveToMenuIcon();
 static void EditMenuExit();
 
 /**
- * Reports whether the edit menu draws its help window for a page.
+ * Returns the help-window draw flag it is given, or 0 while the edit menu is in
+ * state 3, 9 or 0x10 and the Atra event flag is set.
  *
  * @mangled GetDrawHelpWindow__Fi
  * @address 0x210E30
@@ -327,7 +328,7 @@ static int AnalyzeBarDraw();
 static void ToAnalyzeEditDraw();
 
 /**
- * Advances the transition into the analysis page.
+ * Speeds up the transition into the analysis page while any input is held.
  *
  * @mangled ToAnalyzeEdit__Fv
  * @address 0x212D10
@@ -345,7 +346,7 @@ static void ToAnalyzeEdit();
 static void AnalyzeEditDraw();
 
 /**
- * Handles pad input on the analysis page and returns the result.
+ * Leaves the analysis page when a 0x60 pad button is pressed, and returns 0.
  *
  * @mangled AnalyzeEdit__Fv
  * @address 0x212F20
