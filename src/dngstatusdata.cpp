@@ -580,31 +580,28 @@ int CUserStatus::CheckLife(void) {
     return 1;
 }
 
-#if DNG_COMPILE_UNMATCHED
 /* Sets an absolute HP target (clamped to 0..max_hp), instantly or
  * interpolated, per the same rules as AddNowLife. */
 /* @ 0x1BE900 (0x150 bytes) -- SetNextLife__11CUserStatusFisf */
 void CUserStatus::SetNextLife(int chara_no, s16 value, float ratio) {
-    int valid;
-
     if (this->life_step[chara_no] != 0) {
         this->hp[chara_no] = this->next_hp[chara_no];
         this->life_step[chara_no] = 0;
     }
 
-    if ((int) value <= 0) {
+    if (value <= 0) {
         value = 0;
     }
-    if (!(valid = (int) value < (int) this->max_hp[chara_no])) {
+    if (value >= this->max_hp[chara_no]) {
         value = this->max_hp[chara_no];
     }
 
-    if (0.0f == ratio) {
+    if (ratio == 0.0f) {
         this->hp[chara_no] = value;
     } else {
         this->next_hp[chara_no] = value;
 
-        this->life_step[chara_no] = ratio * ((float) (this->next_hp[chara_no] - this->hp[chara_no]) / 100.0f);
+        this->life_step[chara_no] = ratio * ((this->next_hp[chara_no] - this->hp[chara_no]) / 100.0f);
         if (this->life_step[chara_no] == 0) {
             if (this->next_hp[chara_no] - this->hp[chara_no] < 0) {
                 this->life_step[chara_no] = -1;
@@ -615,6 +612,7 @@ void CUserStatus::SetNextLife(int chara_no, s16 value, float ratio) {
     }
 }
 
+#if DNG_COMPILE_UNMATCHED
 /* Per-frame update: drains the active character's water gauge at a rate that
  * scales with dungeon depth (and is multiplied by the level-11 restriction
  * zone and by two equipped-weapon flags), costs 1 HP per 120 frames once the
@@ -705,8 +703,6 @@ void CUserStatus::Step(int paused) {
     }
 }
 #else
-INCLUDE_ASM("asm/nonmatchings/dngstatusdata", SetNextLife__11CUserStatusFisf);
-
 INCLUDE_ASM("asm/nonmatchings/dngstatusdata", Step__11CUserStatusFi);
 #endif /* DNG_COMPILE_UNMATCHED */
 
