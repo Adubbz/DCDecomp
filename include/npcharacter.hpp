@@ -44,8 +44,8 @@ public:
     NP_SEQUENCE sequences[8]; /**< Circular storage for movement and wait actions. */
     int unk_1440;
     s32 villager_id; /**< Villager-table identifier represented by this event NPC. */
-    int unk_1448;
-    u8 unk_144C[0x1C];
+    u8 unk_1448;
+    u8 unk_1449[0x1F];
     int unk_1468;
     int enabled; /**< Enables NPC stepping, drawing, and collision queries. */
     int unk_1470;
