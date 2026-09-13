@@ -22,6 +22,7 @@
 #include "weaponeffect.hpp"
 
 extern int MenuItemUseVolume;
+extern s16 MenuCharaEffectReadFlag;
 extern int EditMenuStatus[7];
 extern CDataAlloc2<1> EdMenuBuffer;
 extern CDataAlloc2<1> MenuExCashBuffer;
@@ -412,7 +413,11 @@ INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponStatusBuildUp__FP11WEAPON_HAVERi
 INCLUDE_ASM("asm/nonmatchings/menu_misc", MenuWeaponSpSet__FP10CCharacterP11WEAPON_HAVE);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @914__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @915__2);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", SetMenuCharaEffectReadFlag__Fi);
+
+void SetMenuCharaEffectReadFlag(int flag) {
+    MenuCharaEffectReadFlag = flag;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetMenuCharaEffectReadFlag__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetDngWepEffectPointer__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetWepEffectMenuReadBuf__Fv);
