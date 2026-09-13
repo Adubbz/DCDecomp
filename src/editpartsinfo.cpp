@@ -24,7 +24,14 @@ void CEditPartsInfo::SetCompEvent(int index, int completed) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/editpartsinfo", GetCompEvent__14CEditPartsInfoFi);
+int CEditPartsInfo::GetCompEvent(int index) {
+    EDITPARTS_INFO *info = GetPartsInfo(index);
+    if (info == NULL) {
+        return 0;
+    }
+    return (info->completion_flags & 1) != 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/editpartsinfo", GetRequest__14CEditPartsInfoFi);
 INCLUDE_ASM("asm/nonmatchings/editpartsinfo", GetNextPartsNum__14CEditPartsInfoFi);
 INCLUDE_ASM("asm/nonmatchings/editpartsinfo", GetNextParts__14CEditPartsInfoFi);

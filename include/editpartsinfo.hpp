@@ -102,12 +102,13 @@ public:
     void SetCompEvent(int index, int completed);
 
     /**
+     * Reports whether one editable part has completed its associated event.
+     *
      * @mangled GetCompEvent__14CEditPartsInfoFi
      * @address 0x19A100
      * @size 0x40
-     * @unknownret
      */
-    int GetCompEvent(int);
+    int GetCompEvent(int index);
 
     /**
      * @mangled GetRequest__14CEditPartsInfoFi
