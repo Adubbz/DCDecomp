@@ -67,7 +67,7 @@ the generated locals and parameters did not change any instruction.
 
 Including `collisiondata.hpp` and `shot_effect_pack.hpp` resolved the six
 missing-type failures from the initial sweep. The harness still emits
-`CDataAlloc2_1_` in three drafts instead of the canonical `CDataAlloc2<1>`;
+`CDataAlloc2_1_` in four drafts instead of the canonical `CDataAlloc2<1>`;
 that spelling is a draft-generation limitation, not a type needed by compiled
 upstream code, so this branch does not add an alias for it.
 Including `texture.hpp` and `<cstdlib>` also gives the larger drafts the
