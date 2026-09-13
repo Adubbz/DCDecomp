@@ -5,6 +5,7 @@
 #include "shop.hpp"
 
 #include "dataread.hpp"
+#include "savedata.hpp"
 
 INCLUDE_ASM("asm/nonmatchings/shop", GetItemShopList__Fi);
 INCLUDE_ASM("asm/nonmatchings/shop", InitShopItemListData__FP13SHOP_ITEMLIST);
@@ -156,7 +157,10 @@ INCLUDE_ASM("asm/nonmatchings/shop", ItemShopKey2__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopDraw2__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", GetExchangeItemList__Fi);
 INCLUDE_ASM("asm/nonmatchings/shop", GetMardanGareyanFlag__Fv);
-INCLUDE_ASM("asm/nonmatchings/shop", SetAlreadyGetMardanWeapon__Fi);
+
+void SetAlreadyGetMardanWeapon(int value) {
+    SaveData->SetGameFlag(0xCA, value);
+}
 INCLUDE_ASM("asm/nonmatchings/shop", SetFishMardanGarayanNum__Fi);
 INCLUDE_RODATA("asm/nonmatchings/shop", @2912);
 INCLUDE_ASM("asm/nonmatchings/shop", GetFishMardanGarayanNum__Fv);

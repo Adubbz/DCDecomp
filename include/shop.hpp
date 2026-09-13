@@ -628,10 +628,11 @@ void GetExchangeItemList(int);
 int GetMardanGareyanFlag(void);
 
 /**
+ * Records whether the player has received the Mardan Garayan weapon.
+ *
  * @mangled SetAlreadyGetMardanWeapon__Fi
  * @address 0x1F1290
  * @size 0x30
- * @unknownret
  */
 void SetAlreadyGetMardanWeapon(int);
 
