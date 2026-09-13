@@ -45,26 +45,29 @@ public:
     void Set(CDungeonEvent *);
 
     /**
+     * Reports whether this event slot is enabled and ready to run.
+     *
      * @mangled CheckSwitch__17CDungeonEventDataFv
      * @address 0x1CC880
      * @size 0x50
-     * @unknownret
      */
-    void CheckSwitch(void);
+    int CheckSwitch(void);
 
     /**
+     * Disables this event slot.
+     *
      * @mangled Stop__17CDungeonEventDataFv
      * @address 0x1CC8D0
      * @size 0x10
-     * @unknownret
      */
     void Stop(void);
 
     /**
+     * Enables this event slot.
+     *
      * @mangled Start__17CDungeonEventDataFv
      * @address 0x1CC8E0
      * @size 0x10
-     * @unknownret
      */
     void Start(void);
 };

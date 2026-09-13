@@ -26,12 +26,13 @@ public:
     void SetObject(CFrameVu1 *, int, int);
 
     /**
+     * Returns the map object in a numbered slot, or null for an invalid slot.
+     *
      * @mangled GetObject__4CMapFi
      * @address 0x143980
      * @size 0x40
-     * @unknownret
      */
-    void GetObject(int);
+    CFrameVu1 *GetObject(int);
 
     /**
      * @mangled Draw__4CMapFv
