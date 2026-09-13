@@ -2872,7 +2872,7 @@ static int _LOAD_CHR_FILE(RS_STACKDATA *stack, int argument_count) {
             buffer += (((size >> 6) + 1) << 6) >> 4;
         }
     }
-    not_wait_load = 1;
+    return not_wait_load = 1;
 }
 static int _LOAD_SYNC(RS_STACKDATA *stack, int argument_count) {
     if (argument_count <= 0)
