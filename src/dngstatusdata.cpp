@@ -522,7 +522,6 @@ void CUserStatus::AddDrink(int chara_no, s16 amount, float ratio) {
     }
 }
 
-#if DNG_COMPILE_UNMATCHED
 /* Same instant/interpolated split as AddDrink, for HP. */
 /* @ 0x1BE710 (0x180 bytes) -- AddNowLife__11CUserStatusFisf */
 void CUserStatus::AddNowLife(int chara_no, s16 amount, float ratio) {
@@ -566,9 +565,6 @@ void CUserStatus::AddNowLife(int chara_no, s16 amount, float ratio) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dngstatusdata", AddNowLife__11CUserStatusFisf);
-#endif /* DNG_COMPILE_UNMATCHED */
 
 /* Alive iff the active character has HP left -- and, while an interpolated HP
  * change is in flight, iff its target is above zero too. */
