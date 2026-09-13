@@ -109,7 +109,16 @@ void CActionSeq::MoveSeq(int frames) {
     MoveSeq(queued_position, frames);
 }
 
-INCLUDE_ASM("asm/nonmatchings/actionseq", SetPos__10CActionSeqFPf);
+void CActionSeq::SetPos(float *destination) {
+    ACT_SEQ *sequence = NextMoveSeq();
+    if (sequence != NULL) {
+        sequence->operation = ACT_SEQ_SET_POSITION;
+        sceVu0CopyVector(sequence->arguments.vector, destination);
+        sceVu0CopyVector(queued_position, destination);
+        sequence->duration = 0;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/actionseq", RotRefSeq__10CActionSeqFPff);
 INCLUDE_ASM("asm/nonmatchings/actionseq", RotAngleSeq__10CActionSeqFff);
 INCLUDE_ASM("asm/nonmatchings/actionseq", RotMoveSeq__10CActionSeqFf);
