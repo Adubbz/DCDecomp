@@ -401,7 +401,32 @@ INCLUDE_ASM("asm/nonmatchings/editarea", CheckParts__9CEditAreaFP9CMapPartsfffi)
 INCLUDE_ASM("asm/nonmatchings/editarea", PickUpPoly__9CEditAreaFP6CCPolyfff);
 INCLUDE_ASM("asm/nonmatchings/editarea", PickUpPoly__9CEditAreaFP6CCPoly8CRect_i_);
 INCLUDE_ASM("asm/nonmatchings/editarea", PickUpPoly__9CEditAreaFP6CCPoly7CBoxVu0);
-INCLUDE_ASM("asm/nonmatchings/editarea", GetPartsRect__9CEditAreaFR8CRect_i_Pii);
+
+int CEditArea::GetPartsRect(CRect_i_ &rect, int *parts_ids, int max_parts) {
+    int x, y;
+    int count = 0;
+    for (x = rect.x; x < rect.x + rect.width; x++) {
+        for (y = rect.y; y < rect.y + rect.height; y++) {
+            if (count >= max_parts)
+                break;
+            int parts_id = GetPartsID(x, y);
+            if (parts_id >= 0) {
+                if (count == 0) {
+                    parts_ids[count++] = parts_id;
+                } else {
+                    int found = 0;
+                    for (int i = 0; i < count; i++) {
+                        if (parts_id == parts_ids[i])
+                            found = 1;
+                    }
+                    if (!found)
+                        parts_ids[count++] = parts_id;
+                }
+            }
+        }
+    }
+    return count;
+}
 
 void CEditArea::ChainWorkClear(void) {
     for (int x = 0; x < 16; x++) {
