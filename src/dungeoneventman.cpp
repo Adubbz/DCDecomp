@@ -1,6 +1,18 @@
 #include "dungeoneventman.hpp"
 
-INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchPartsID__16CDungeonEventManFii);
+DUNGEON_EVENT_SLOT *CDungeonEventMan::SearchPartsID(int index, int parts_id) {
+    int slot_parts_id;
+
+    if (slot[index].unk_3C != 0) {
+        slot_parts_id = slot[index].unk_1C;
+    } else {
+        slot_parts_id = -1;
+    }
+    if (parts_id == slot_parts_id) {
+        return &slot[index];
+    }
+    return NULL;
+}
 
 DUNGEON_EVENT_SLOT *CDungeonEventMan::SearchSlot(void) {
     for (int i = 0; i < 64; i++) {
