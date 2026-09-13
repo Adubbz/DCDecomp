@@ -198,7 +198,14 @@ static void BattleManualDraw() {
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawStatusNumberNowAndMax__FPiiiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWepHole__FiiP11WEAPON_HAVEii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", InitMes__10MenuClsMesFv);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", InitData__10MenuClsMesFv);
+void MenuClsMes::InitData() {
+    unk_08 = 366;
+    unk_0C = 166;
+    mode = 0;
+    option_flags = 0;
+    option_count = 0;
+    unk_06 = 0;
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", SetBuffInfo__10MenuClsMesFPs);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", NowWeaponStatus__10MenuClsMesFP11WEAPON_HAVE);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", Step__10MenuClsMesFv);
