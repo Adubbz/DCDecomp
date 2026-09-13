@@ -6,7 +6,10 @@ void CActionSeq::Initialize(ACT_SEQ *records, int count) {
     capacity = count;
 }
 
-INCLUDE_ASM("asm/nonmatchings/actionseq", __ct__10CActionSeqFv);
+CActionSeq::CActionSeq() {
+    Initialize(NULL, 0);
+}
+
 void CActionSeq::ClearSeq() {
     character = NULL;
     move_tail = NULL;
