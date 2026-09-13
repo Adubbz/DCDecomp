@@ -76,7 +76,22 @@ ACT_SEQ *CActionSeq::NextMotionSeq() {
     return sequence;
 }
 
-INCLUDE_ASM("asm/nonmatchings/actionseq", NextAnimeSeq__10CActionSeqFv);
+ACT_SEQ *CActionSeq::NextAnimeSeq() {
+    ACT_SEQ *sequence = GetNextSeq();
+    if (sequence == NULL) {
+        return NULL;
+    }
+    if (anime_tail != NULL) {
+        anime_tail->next = sequence;
+    }
+    anime_tail = sequence;
+    sequence->next = NULL;
+    if (anime_head == NULL) {
+        anime_head = sequence;
+    }
+    return sequence;
+}
+
 INCLUDE_ASM("asm/nonmatchings/actionseq", MoveSeq__10CActionSeqFPfi);
 INCLUDE_ASM("asm/nonmatchings/actionseq", MoveSeq__10CActionSeqFPff);
 INCLUDE_ASM("asm/nonmatchings/actionseq", MoveSeq__10CActionSeqFi);
