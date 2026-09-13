@@ -51,7 +51,11 @@ INCLUDE_ASM("asm/nonmatchings/editarea", GetAreaID__9CEditAreaFv);
 INCLUDE_ASM("asm/nonmatchings/editarea", SetGridFrame__9CEditAreaFP9CFrameVu1);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetGridFrame__9CEditAreaFv);
 INCLUDE_ASM("asm/nonmatchings/editarea", SetOffset__9CEditAreaFfff);
-INCLUDE_ASM("asm/nonmatchings/editarea", GetOffset__9CEditAreaFPf);
+void CEditArea::GetOffset(float *offset) {
+    offset[0] = offset_x;
+    offset[1] = offset_y;
+    offset[2] = offset_z;
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", GetWidth__9CEditAreaFv);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetHeight__9CEditAreaFv);
 INCLUDE_ASM("asm/nonmatchings/editarea", AddAlt__9CEditAreaFiii);
