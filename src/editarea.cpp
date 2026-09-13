@@ -163,7 +163,9 @@ int CEditArea::GetAreaID() {
     return this->area_id;
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", SetGridFrame__9CEditAreaFP9CFrameVu1);
-INCLUDE_ASM("asm/nonmatchings/editarea", GetGridFrame__9CEditAreaFv);
+CFrameVu1 * CEditArea::GetGridFrame() {
+    return this->grid_frame;
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", SetOffset__9CEditAreaFfff);
 void CEditArea::GetOffset(float *offset) {
     offset[0] = offset_x;
