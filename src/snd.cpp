@@ -87,6 +87,9 @@ extern int now_bgm_play;
 /** The background-music volume that is set now. */
 extern int now_bgm_vol;
 
+/** The background-music fade that runs: 1 while it fades in, -1 while it fades out, 0 for none. */
+extern int bgm_fade;
+
 /** Whether the sprites that follow draw with the bilinear filter. */
 extern int linear__2;
 
@@ -234,7 +237,11 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndGetDefaultBgmVol__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeIn__Fiii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeOut__Fii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeInOut__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndCheckFade__Fv);
+
+int SndCheckFade() {
+    return bgm_fade == 0;
+}
+
 #ifdef NON_MATCHING
 static SND_SE_INFO *GetSeInfo(int se_no) {
     SND_SE_INFO *table;

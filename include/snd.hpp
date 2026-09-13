@@ -441,7 +441,13 @@ int SndBgmCheck();
  */
 int SndGetBgmNo();
 
-/** Returns whether a background-music fade is still active. */
+/**
+ * Returns whether the background music has no fade running.
+ *
+ * @mangled SndCheckFade__Fv
+ * @address 0x15A090
+ * @size 0x14
+ */
 int SndCheckFade();
 
 /** Polls the background sound loader. */
