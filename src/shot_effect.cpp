@@ -73,7 +73,14 @@ void CSHOT_EFFECT::SetAttribute(s32 arg0) {
         this->unk_0000->unk_040 = arg0;
     }
 }
-INCLUDE_ASM("asm/nonmatchings/shot_effect", SetWepStatus__12CSHOT_EFFECTFi);
+void CSHOT_EFFECT::SetWepStatus(s32 arg0) {
+    s32 temp_6;
+
+    temp_6 = this->unk_A150;
+    if (temp_6 != -1) {
+        this->unk_A030[temp_6] = arg0;
+    }
+}
 void CSHOT_EFFECT::SetVsMonster(s8 *arg0) {
     s32 temp_6;
 
