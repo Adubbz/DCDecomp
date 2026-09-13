@@ -71,7 +71,11 @@ int _OPEN_ESCAPE_WINDOW(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _GO_DUNGEON__FP12RS_STACKDATAi);
+int _GO_DUNGEON(RS_STACKDATA *stack, int argument_count) {
+    BtEventInfo.request = 4;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_DUNGEON_MAP__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _LOAD_DUNGEON_MAP2__FP12RS_STACKDATAi);
 

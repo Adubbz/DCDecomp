@@ -226,12 +226,13 @@ int _OPEN_ENTRANCE_WINDOW(RS_STACKDATA *stack, int argument_count);
 int _OPEN_ESCAPE_WINDOW(RS_STACKDATA *stack, int argument_count);
 
 /**
+ * Requests entry into the selected dungeon floor.
+ *
  * @mangled _GO_DUNGEON__FP12RS_STACKDATAi
  * @address 0x1BC480
  * @size 0x20
- * @unknownret
  */
-void _GO_DUNGEON(RS_STACKDATA *, int);
+int _GO_DUNGEON(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _SET_DUNGEON_MAP__FP12RS_STACKDATAi
