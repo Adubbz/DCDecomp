@@ -728,8 +728,12 @@ SECTIONS
 		editloop3.cpp.o (.edbss2)      // 0x01d3eea0
 		editloop3.cpp.o (.workbss)    // 0x01d3ef90
 		editloop3.cpp.o (.edbss3)      // 0x01d3f010
+		// Retail rounds the end of a unit's .bss run up to sixteen, which
+		// the 148-byte sprite tables leave short.
+		. = ALIGN(0x10);
 		main.bss.part5d.s.o (.bss)     // 0x01d48fb0
 		editloop3.cpp.o (.edbss4)      // 0x01d4a430
+		. = ALIGN(0x10);
 		main.bss.part5g.s.o (.bss)     // 0x01d4a480
 		editloop3.cpp.o (.edbss5)      // 0x01d4a4d0
 		main.bss.part5h.s.o (.bss)     // 0x01d4a630
