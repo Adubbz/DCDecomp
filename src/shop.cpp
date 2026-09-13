@@ -199,7 +199,10 @@ int FishingExchangeLoop() {
 }
 
 INCLUDE_ASM("asm/nonmatchings/shop", GetFishMsgNo__Fi);
-INCLUDE_ASM("asm/nonmatchings/shop", GetFishingRankData__Fi);
+
+SV_FISH_DATA *GetFishingRankData(int rank_index) {
+    return SaveData->GetFishingRank(rank_index);
+}
 INCLUDE_ASM("asm/nonmatchings/shop", InitFishRecordView__FP1Pii);
 INCLUDE_RODATA("asm/nonmatchings/shop", @3257);
 INCLUDE_ASM("asm/nonmatchings/shop", ExitFishRecord__Fv);
