@@ -1,7 +1,11 @@
 #include "shot_effect.hpp"
 
 #include "collisiondata.hpp"
+#include "nowload.hpp"
 #include "shot_effect_pack.hpp"
+#include "texture.hpp"
+
+#include <cstdlib>
 
 typedef CDataAlloc2<1> CDataAlloc2_1_;
 
