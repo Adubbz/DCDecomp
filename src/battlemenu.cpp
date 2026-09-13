@@ -14,6 +14,7 @@
 #include "snd.hpp"
 
 extern s16 EscapeDngFlg;
+extern s16 RoomOutFlag;
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetDefaultWeaponNo__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", IsDefaultWeapon__Fi);
@@ -30,7 +31,11 @@ void SetEscapeDngFlag(int flag) {
 s16 GetEscapeDngFlag() {
     return EscapeDngFlg;
 }
-INCLUDE_ASM("asm/nonmatchings/battlemenu", SetInteriorOutFlag__Fi);
+
+void SetInteriorOutFlag(int flag) {
+    RoomOutFlag = flag;
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetInteriorOutFlag__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawDngYesNoDialog__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetMenuModeMax__Fv);

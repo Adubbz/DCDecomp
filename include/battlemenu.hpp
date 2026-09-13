@@ -108,12 +108,13 @@ void SetEscapeDngFlag(int flag);
 s16 GetEscapeDngFlag(void);
 
 /**
+ * Sets whether the party is leaving an interior area.
+ *
  * @mangled SetInteriorOutFlag__Fi
  * @address 0x1F3FC0
- * @size 0x10
- * @unknownret
+ * @size 0xC
  */
-void SetInteriorOutFlag(int);
+void SetInteriorOutFlag(int flag);
 
 /**
  * @mangled GetInteriorOutFlag__Fv
