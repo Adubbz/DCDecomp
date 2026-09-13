@@ -201,7 +201,10 @@ float EdAGetViewAngleH() {
 float EdAGetViewAngleV() {
     return viewAngleV;
 }
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdASetViewAngle__Fff);
+void EdASetViewAngle(float horizontal, float vertical) {
+    viewAngleH = horizontal;
+    viewAngleV = vertical;
+}
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdMoveChara__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdInitHashigo__FP13ED_EVENT_INFOP14ED_EVENT_PARAM);
 
