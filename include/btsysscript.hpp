@@ -550,12 +550,13 @@ void _CHECK_CHR_HELP(RS_STACKDATA *, int);
 void _HOLD_ITEM_EVENT(RS_STACKDATA *, int);
 
 /**
+ * Stops the current battle music.
+ *
  * @mangled _STOP_BATTLE_BGM__FP12RS_STACKDATAi
  * @address 0x1BD4F0
  * @size 0x30
- * @unknownret
  */
-void _STOP_BATTLE_BGM(RS_STACKDATA *, int);
+int _STOP_BATTLE_BGM(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _NO_STATUS_RECOVER__FP12RS_STACKDATAi

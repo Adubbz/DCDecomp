@@ -135,7 +135,12 @@ INCLUDE_ASM("asm/nonmatchings/btsysscript", _CHECK_MARDAN__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _NO_RESET_CHARA_NO__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _CHECK_CHR_HELP__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _HOLD_ITEM_EVENT__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _STOP_BATTLE_BGM__FP12RS_STACKDATAi);
+
+int _STOP_BATTLE_BGM(RS_STACKDATA *stack, int argument_count) {
+    BtBattleMusic_Stop();
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _NO_STATUS_RECOVER__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_QUEST_DUNGEON__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_MAP_CODE__FP12RS_STACKDATAi);
