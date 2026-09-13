@@ -21,6 +21,7 @@
 #include "weapon_buildup.hpp"
 #include "weaponeffect.hpp"
 
+extern int MenuItemUseVolume;
 extern int EditMenuStatus[7];
 extern CDataAlloc2<1> EdMenuBuffer;
 extern CDataAlloc2<1> MenuExCashBuffer;
@@ -383,7 +384,11 @@ INCLUDE_ASM("asm/nonmatchings/menu_misc", NowGetGameFlagForBtlMenu__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetMenuHebikiriFlag__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EquipDefaultWeapon__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", DrawMenuNothing__FiiiiPcii);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", GetMenuItemUseVolume__Fv);
+
+int GetMenuItemUseVolume() {
+    return MenuItemUseVolume;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", ItemUseFunc__FP11CUserStatusiiiP11WEAPON_HAVE);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @869);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @870__2);
