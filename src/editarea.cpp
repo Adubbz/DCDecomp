@@ -164,7 +164,9 @@ int CEditArea::GetMapNo() {
 int CEditArea::GetAreaID() {
     return this->area_id;
 }
-INCLUDE_ASM("asm/nonmatchings/editarea", SetGridFrame__9CEditAreaFP9CFrameVu1);
+void CEditArea::SetGridFrame(CFrameVu1 *arg0) {
+    this->grid_frame = arg0;
+}
 CFrameVu1 * CEditArea::GetGridFrame() {
     return this->grid_frame;
 }
