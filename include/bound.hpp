@@ -103,10 +103,11 @@ public:
     void UpDateDirPos(void);
 
     /**
+     * Updates this box and the remaining boxes in its linked list.
+     *
      * @mangled UpDate__6CBoundFv
      * @address 0x13DC70
      * @size 0x80
-     * @unknownret
      */
     void UpDate(void);
 

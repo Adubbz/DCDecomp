@@ -57,6 +57,17 @@ INCLUDE_ASM("asm/nonmatchings/bound", UpDateDir__6CBoundFv);
 INCLUDE_ASM("asm/nonmatchings/bound", SetDir__6CBoundFPfPf);
 INCLUDE_ASM("asm/nonmatchings/bound", SetDir__6CBoundFPf);
 INCLUDE_ASM("asm/nonmatchings/bound", UpDateDirPos__6CBoundFv);
-INCLUDE_ASM("asm/nonmatchings/bound", UpDate__6CBoundFv);
+void CBound::UpDate() {
+    switch (state) {
+    case 1:
+        UpDateDir();
+        break;
+    case 2:
+        UpDateDirPos();
+        break;
+    }
+    if (next)
+        next->UpDate();
+}
 INCLUDE_ASM("asm/nonmatchings/bound", InitParam__6CBoundFv);
 INCLUDE_ASM("asm/nonmatchings/bound", __ct__6CBoundFfff);
