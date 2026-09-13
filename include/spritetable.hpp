@@ -4,11 +4,21 @@
 
 #include <libgraph.h>
 
-// Forward declarations for the types these declarations name. The skeleton
-// headers are generated from the retail symbol table, which knows the type
-// names but not where they live.
-struct MG_SPRITE;
-struct RECT;
+#include "rect.hpp"
+
+/**
+ * Describes one textured sprite and its draw colour.
+ */
+struct MG_SPRITE {
+    u_long tex0; /**< Texture register value. */
+    RECT source; /**< Source rectangle within the texture. */
+    u8 red;      /**< Red colour component. */
+    u8 green;    /**< Green colour component. */
+    u8 blue;     /**< Blue colour component. */
+    u8 alpha;    /**< Alpha colour component. */
+};
+
+STATIC_ASSERT(sizeof(MG_SPRITE) == 0x20);
 
 /**
  * Stores one queued event-sprite command consumed by a sprite table.
@@ -56,12 +66,13 @@ public:
     void DrawTable(void);
 
     /**
+     * Queues a textured sprite on one clamped layer.
+     *
      * @mangled AddTable__12CSpriteTableFiiP9MG_SPRITEii
      * @address 0x12BE90
-     * @size 0x160
-     * @unknownret
+     * @size 0x15C
      */
-    void AddTable(int, int, MG_SPRITE *, int, int);
+    void AddTable(int x, int y, MG_SPRITE *sprite, int list, int flags);
 
     /**
      * @mangled AddTable__12CSpriteTableFiiP9sceGsTex0P4RECTii
