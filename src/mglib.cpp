@@ -1403,7 +1403,54 @@ void MGMoveFrameBuffImage(sceGsTex0 *dst, int x, int y, int dir) {
     }
 }
 INCLUDE_ASM("asm/nonmatchings/mglib", MGFillBox__FRC8CRect_i_UcUcUcUc);
-INCLUDE_ASM("asm/nonmatchings/mglib", MGClearZBuffer__Fi);
+/* Writes depth over the 640-by-224 field while leaving colour unchanged. */
+void MGClearZBuffer(int mode) {
+    sceGsTest test;
+    sceGsZbuf zbuf;
+    sceGsAlpha alpha;
+
+    sceVif1PkCnt(Vif1Packet, 0);
+    sceVif1PkOpenDirectCode(Vif1Packet, 0);
+    sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
+
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEX1_1, 1);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(4, 0, 0, 0, 1, 0, 1, 0, 0));
+
+    test = mgPixelTest;
+    test.bits.ate = 0;
+    test.bits.zte = 1;
+    test.bits.ztst = SCE_GS_ALWAYS;
+    test.bits.date = 0;
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *(u_long *) &test);
+
+    zbuf = mgZBuffer;
+    zbuf.bits.zmsk = 0;
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
+
+    alpha = mgAlpha;
+    alpha.bits.a = 2;
+    alpha.bits.b = 2;
+    alpha.bits.c = 2;
+    alpha.bits.d = 1;
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ALPHA_1, *(u_long *) &alpha);
+
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(128, 128, 128, 128, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648, 30976, mode, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2(27648 + 640 * 16, 30976, mode, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2(27648, 30976 + 224 * 16, mode, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2(27648 + 640 * 16, 30976 + 224 * 16, mode, 0));
+
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ALPHA_1, *(u_long *) &mgAlpha);
+
+    sceVif1PkCloseGifTag(Vif1Packet);
+    sceVif1PkCloseDirectCode(Vif1Packet);
+}
 INCLUDE_ASM("asm/nonmatchings/mglib", MGClearScreen__FUcUcUcUc);
 INCLUDE_ASM("asm/nonmatchings/mglib", MGDrawShadowFast__FP6CFramePfPf);
 INCLUDE_ASM("asm/nonmatchings/mglib", MGDrawShadowFast2__FP6CFramePfPf);
