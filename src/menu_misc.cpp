@@ -673,7 +673,18 @@ static void ToAnalyzeEdit() {
 
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AnalyzeEditDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AnalyzeEdit__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", FromAnalyzeEditDraw__Fv);
+
+static void FromAnalyzeEditDraw() {
+    int alpha;
+
+    DrawMoveMenuIcon();
+    alpha = 0x80 - EdEffectCt * 10;
+    if (alpha < 0) {
+        alpha = 0;
+    }
+    AnalyzeBackDraw(alpha, 0x40);
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", FromAnalyzeEdit__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditSaveDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditSaveKey__Fv);
