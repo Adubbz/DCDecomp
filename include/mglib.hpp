@@ -15,6 +15,7 @@ extern sceGifTag GiftagAD;
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 class CFrame;
+class CTexture;
 
 /**
  * Stores one deferred depth-buffer sample request and its result.
@@ -451,6 +452,16 @@ void MGScisioringForce(int force);
  * @size 0x260
  */
 int MGRotTransPers2D(int *screen, float *world, int fog);
+
+/**
+ * Draws the screen-space flare produced by a visible world-space light source.
+ *
+ * @mangled LensFlare__FP8CTexturePfUcUcUc
+ * @address 0x158EB0
+ * @size 0x2E4
+ */
+void LensFlare(CTexture *texture, float *position, unsigned char red,
+               unsigned char green, unsigned char blue);
 
 /**
  * Calculates a lit vertex colour from a surface normal.

@@ -585,8 +585,8 @@ static void SkyColor(CFrameVu1 *frame) {
             MDT_HEADER *model = (MDT_HEADER *) visual->GetMDTDataAddress();
 
             if (model) {
-                if (model->unk_14[2]) {
-                    sceVu0FVECTOR *color = (sceVu0FVECTOR *) ((char *) model + model->unk_14[3]);
+                if (model->colour_count) {
+                    sceVu0FVECTOR *color = (sceVu0FVECTOR *) ((char *) model + model->colour_ofs);
                     sceVu0FVECTOR color0 = {50.0f, 100.0f, 255.0f, 0.0f};
                     sceVu0FVECTOR color1 = {255.0f, 255.0f, 255.0f, 0.0f};
 

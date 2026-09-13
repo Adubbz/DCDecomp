@@ -15,9 +15,8 @@ must preserve the original queue discipline. NextSeq clears the current
 record before testing whether advancing the read index is appropriate.
 
 The gate at 0x146C enables drawing, stepping, and NPC collision queries.
-Existing unk_1474 controls visibility/fade direction and existing unk_1488
-is a one-frame alpha-step override; external editloop callers reference these
-names, so their names are retained. Alpha itself is CCharacter ambient_offset[3]
+`near_camera` at 0x1474 controls visibility/fade direction, and `unk_1488`
+is a one-frame alpha-step override. Alpha itself is CCharacter ambient_offset[3]
 at 0xCEC. The default alpha step is the integer at 0x1484, and the flag at
 0x1478 requests stepping while hidden.
 
@@ -39,3 +38,19 @@ register ordering. The 0.1f rotation rate is the retail word 0x3DCCCCCD at
 Final retained work: 16 PERFECT functions, 2,652 ELF symbol bytes or 2,752
 bytes including function-slot padding. The constructor remains in assembly
 because its derived vtable cannot be emitted from the current composed class.
+
+## Shared editor fields
+
+The editor and NPC methods access the same state: `initialized` at 0x146C
+gates the NPC methods, `draw_enabled` at 0x1470 selects editor participation,
+and `near_camera` at 0x1474 requests full updates and fading toward visibility.
+`step_hidden` at 0x1478 permits character stepping without that visibility
+request. `map_parts_no` at 0x1440 and `resource_name[0x20]` at 0x1448 retain
+the editor's model ownership information. NPC initialization clears only the
+first resource-name byte, matching retail's byte store.
+
+The editor's load routine sets offset 0x1484 to 8. NPC `Step` uses that integer
+as the default per-frame alpha change, so the shared field is `alpha_step`.
+The event NPC loop clears offset 0x11B0 to suspend queued playback; the shared
+field is `sequence_enabled`. Both consumers use one definition without aliases
+or layout changes; `sizeof(CNPCharacter)` remains 0x14A0.

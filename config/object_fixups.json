@@ -390,7 +390,17 @@
       "@690__2",
       "@475__2",
       "@2242",
-      "@554"
+      "@554",
+      "@853",
+      "@728__3",
+      "@1026",
+      "@1038",
+      "@1424",
+      "@2236",
+      "@2237",
+      "@2246",
+      "@2288",
+      "@2289"
     ],
     "sections": {
       ".fadebss": [
@@ -422,12 +432,57 @@
       ".fishinglineorigin": [
         "fishing_line_origin"
       ],
+      ".extfuncinfo": [
+        "ext_func_info"
+      ],
+      ".eddata1": [
+        "@524"
+      ],
+      ".eddata2": [
+        "@852",
+        "@869",
+        "@911",
+        "@912"
+      ],
+      ".eddata3": [
+        "@1129"
+      ],
+      ".eddata4": [
+        "@2066"
+      ],
+      ".eddata5": [
+        "@2387"
+      ],
+      ".eddata6": [
+        "@2500",
+        "talk_camera_ref",
+        "@2895",
+        "@2896",
+        "@2904",
+        "@2918",
+        "@3151"
+      ],
       ".edbuffers": [
         "EdVillagerBuffer",
         "EdEventBuffer",
         "EdEventExBuffer"
+      ],
+      ".edexchangebss": [
+        "EdExchangeInfo"
+      ],
+      ".edvillagerbss": [
+        "EdVillager",
+        "EdVillagerInfo"
       ]
     },
+    "rekey_sections": [
+      [".eddata1", [16]],
+      [".eddata2", [40, 40, 16, 16]],
+      [".eddata3", [64]],
+      [".eddata4", [128]],
+      [".eddata5", [16]],
+      [".eddata6", [16, 48, 16, 16, 16, 16, 16]]
+    ],
     "drop_functions": [
       "__sinit_editloop3.cpp",
       ".p__sinit_editloop3.cpp"

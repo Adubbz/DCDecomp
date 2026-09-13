@@ -94,6 +94,7 @@ class CFrameVu1;
 class CCharacter;
 class CNPCharacter;
 class ClsMes;
+class CTexAnimeData;
 
 /**
  * Names what the Georama editor is doing; the dungeon reads a few of its
@@ -109,15 +110,15 @@ struct ED_EVENT_INFO {
     s32 reset_camera_angle; /**< Camera-angle reset mode requested by the event. */
     float reset_camera_yaw; /**< Yaw offset used by the requested camera reset. */
     CCharacter *main_character; /**< Player character controlled by the active event. */
-    s32 unk_050;
-    u8 unk_054[0x4];
+    CTexAnimeData *main_texture_animation; /**< Texture-animation data restored to the player after an event. */
+    s32 main_texture_animation_count; /**< Number of saved player texture-animation records. */
     CNPCharacter *npcs; /**< Contiguous array of event NPC characters. */
     s32 player_collision; /**< Whether ground collision is applied to the player during the event. */
     s32 player_draw; /**< Whether the player model is drawn during the event. */
     s32 player_shadow_draw; /**< Whether the player's shadow is drawn during the event. */
     s32 player_foot_sound; /**< Footstep mode applied to the player during the event. */
     s32 player_stop; /**< Whether the player's event motion is held. */
-    u8 unk_070[0x4];
+    s32 player_texture_block; /**< Texture block assigned to the event player model. */
     s32 npc_collision[16]; /**< Ground-collision mode assigned to each event NPC. */
     s32 npc_draw[16]; /**< Whether each event NPC model is drawn. */
     s32 npc_shadow_draw[16]; /**< Whether each event NPC shadow is drawn. */
@@ -200,6 +201,15 @@ void EdInitCameraParam(CCameraFollow *camera);
  * @size 0x40
  */
 void EdAmbientPlay(float volume);
+
+/**
+ * Writes the root directory used by editor map resources.
+ *
+ * @mangled GetEditDataDir__FPc
+ * @address 0x1777D0
+ * @size 0x28
+ */
+void GetEditDataDir(char *directory);
 
 /**
  * Describes the time range and rendering parameters of depth of field.
@@ -412,6 +422,15 @@ void EdUseItemInit();
  * @size 0x80
  */
 void EdSetUseItem(int *items);
+
+/**
+ * Resolves the model and texture file names for an event item.
+ *
+ * @mangled EdGetItemFile__FiPcPc
+ * @address 0x173350
+ * @size 0x30
+ */
+void EdGetItemFile(int item_no, char *model_path, char *texture_path);
 
 /**
  * Returns the item selected by the editor menu.
@@ -765,7 +784,7 @@ int EdGetDoorMotion(int door_no, int state);
  * @address 0x197220
  * @size 0x190
  */
-void EdInitEventParam(void);
+int EdInitEventParam(void);
 
 /**
  * Fills the event points one map-parts entry describes.
@@ -895,6 +914,16 @@ void EdSetBgmVol(float volume);
  * @size 0x818
  */
 void EdSetLightParam(float clock, int preset, EDIT_MAP_INFO *info, CFrameVu1 *frame);
+
+/**
+ * Draws the editor sky dome, celestial layers, and their time-of-day transitions.
+ *
+ * @mangled EdDrawSky__FfPP9CFrameVu1PP6CFrameP9CFrameVu1P7CCameraPi
+ * @address 0x187F90
+ * @size 0xDC0
+ */
+void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
+               CCamera *camera, int *follow_axes);
 
 /**
  * Runs the talking-to-a-villager mode for a frame.

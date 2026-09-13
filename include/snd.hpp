@@ -294,6 +294,16 @@ void set2DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, const CRect_i_ &
                  unsigned char, unsigned char, unsigned char);
 
 /**
+ * Draws one tinted texture rectangle rotated about a caller-supplied pivot.
+ *
+ * @mangled set2DSpriteRot__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_iifUcUcUcUc
+ * @address 0x15EAD0
+ * @size 0x5BC
+ */
+void set2DSpriteRot(sceVif1Packet *, CTexture *, const CRect_i_ &, const CRect_i_ &, int, int,
+                    float, unsigned char, unsigned char, unsigned char, unsigned char);
+
+/**
  * Draws one part of a texture into a rectangle of the screen, turned about a point.
  *
  * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_iif

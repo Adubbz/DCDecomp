@@ -14,11 +14,40 @@ class CSaveData;
  * on the disc writes it.
  */
 struct EPARTS_INFO_HEADER {
-    u8 unk_00[8];
+    s32 header_size; /**< Byte offset from the header to the packed cell map. */
+    s32 data_size;   /**< Total number of bytes occupied by the packed record. */
     s32 width;  /**< Cells that the part covers from west to east. */
     s32 height; /**< Cells that the part covers from north to south. */
-    u8 unk_10[44];
+    s32 kind; /**< Parts classification copied from the source definition. */
+    u8 unk_14[0x28];
     u8 *cell; /**< One byte per grid cell, row by row, that says what the cell is. */
+    s32 element_id[6]; /**< Identifiers for the part's optional visual elements. */
+    char *element_name[6]; /**< Packed names of the part's optional visual elements. */
+    u8 unk_70[8];
+};
+
+/**
+ * Describes one optional visual element attached to an editable part.
+ */
+struct EDITPARTS_ELEMENT {
+    s32 id; /**< Element identifier, or a negative value when the slot is unused. */
+    s32 unk_04;
+    s32 enabled; /**< Whether the element's ordinary object names are visible. */
+    u8 unk_0C[0x14];
+};
+
+STATIC_ASSERT(sizeof(EDITPARTS_ELEMENT) == 0x20);
+
+/**
+ * Holds the unpacked grid and visual-element names read from a parts definition.
+ */
+struct INIT_PARTSINFO {
+    s32 width; /**< Cells that the source part covers from west to east. */
+    s32 height; /**< Cells that the source part covers from north to south. */
+    u8 cell[32][2]; /**< Source grid cells, whose low bytes form the packed grid. */
+    s32 kind; /**< Parts classification copied into the packed header. */
+    s32 element_id[6]; /**< Identifiers for the optional visual elements. */
+    char element_name[6][0x20]; /**< Names belonging to the optional visual elements. */
 };
 
 /**
@@ -34,7 +63,7 @@ struct EDITPARTS_INFO {
     s32 unk_18;
     s32 width;  /**< Cells that the part covers from west to east. */
     s32 height; /**< Cells that the part covers from north to south. */
-    u8 unk_24[192];
+    EDITPARTS_ELEMENT elements[6]; /**< Visibility definitions for optional model elements. */
     EPARTS_INFO_HEADER *header; /**< Shape of the part. */
 };
 

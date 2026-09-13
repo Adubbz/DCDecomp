@@ -42,3 +42,15 @@ rotation interpolation, motion completion, texture animation, virtual
 transform setters, and a local zero-vector initializer. The m2c draft still
 confuses CCharacter members and cannot be retained as written. No external
 header or data-layout change is requested without further analysis.
+
+## Editor event pool
+
+The editor's 266-record `asq_table` uses the shared 0x20-byte `ACT_SEQ`
+definition. Event initialization clears the operation at offset 0 and next
+pointer at offset 0x0C. These are the same fields consumed by `GetNextSeq`
+and `DeleteSeq`, so the editor uses `ACT_SEQ_UNUSED` and `NULL` for those
+stores instead of a second local record definition.
+
+The shared declarations change MWCC's generated constant numbering in
+editloop3. Its six `.eddata*` fixup runs are re-keyed with upstream's
+`scripts/build/rekey_sections.py`; the run sizes and order remain unchanged.

@@ -1049,14 +1049,14 @@ void CommandPEOPLE(void **arguments) {
         villager->model_no = *(int *) arguments[2];
         villager->weapon_no = *(int *) arguments[3];
         villager->initial_motion = *(int *) arguments[4];
-        villager->unk_58 = *(float *) arguments[5];
+        villager->move_speed = *(float *) arguments[5];
         villager->position[0] = *(float *) arguments[6];
         villager->position[1] = *(float *) arguments[7];
         villager->position[2] = *(float *) arguments[8];
         villager->position[3] = 1.0f;
-        villager->unk_80 = 0;
-        villager->unk_84 = *(float *) arguments[9];
-        villager->unk_88 = 0;
+        villager->rotation[0] = 0.0f;
+        villager->rotation[1] = *(float *) arguments[9];
+        villager->rotation[2] = 0.0f;
         people_list++;
     }
 }
@@ -1186,14 +1186,14 @@ void CommandPEOPLE2(void **arguments) {
         villager->model_no = -1;
         villager->weapon_no = *(int *) arguments[1];
         villager->initial_motion = *(int *) arguments[2];
-        villager->unk_58 = *(float *) arguments[3];
+        villager->move_speed = *(float *) arguments[3];
         villager->position[0] = 0.0f;
         villager->position[1] = 0.0f;
         villager->position[2] = 0.0f;
         villager->position[3] = 1.0f;
-        villager->unk_80 = 0;
-        villager->unk_84 = 0.0f;
-        villager->unk_88 = 0;
+        villager->rotation[0] = 0.0f;
+        villager->rotation[1] = 0.0f;
+        villager->rotation[2] = 0.0f;
         villager->talk_event_no = -1;
         villager->talk_event_level = 0;
         now_villinfo = villager;
@@ -1960,7 +1960,7 @@ void TalkMode() {
     Chara->ClothStep(0);
     for (i = 0; i < 10; i++) {
         EdVillager[i].unk_1488 = 128;
-        EdVillager[i].unk_1474 = 0;
+        EdVillager[i].near_camera = 0;
     }
     int result = EdTalkMode(Chara, &TalkCamera, 0, &event_no);
     if (result != 0) {

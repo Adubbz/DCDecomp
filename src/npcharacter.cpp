@@ -7,10 +7,10 @@
 #include "mglib.hpp"
 
 void CNPCharacter::Step() {
-    if (!enabled || chara.frame == NULL) {
+    if (!initialized || chara.frame == NULL) {
         return;
     }
-    if (unk_1474 || step_hidden) {
+    if (near_camera || step_hidden) {
         chara.CCharacter::Step();
     }
     int fade_step = alpha_step;
@@ -19,7 +19,7 @@ void CNPCharacter::Step() {
         fade_step = override_step;
     }
     unk_1488 = -1;
-    if (unk_1474) {
+    if (near_camera) {
         chara.ambient_offset[3] += float(fade_step);
     } else {
         chara.ambient_offset[3] -= float(fade_step);
@@ -34,10 +34,10 @@ void CNPCharacter::Step() {
 }
 
 void CNPCharacter::ShadowStep() {
-    if (!enabled || chara.frame == NULL) {
+    if (!initialized || chara.frame == NULL) {
         return;
     }
-    if (unk_1474) {
+    if (near_camera) {
         chara.CCharacter::ShadowStep();
     }
 }
@@ -139,7 +139,7 @@ void CNPCharacter::NextSeq() {
 void CNPCharacter::Draw() {
     sceVu0FVECTOR saved_ambient;
     sceVu0FVECTOR ambient;
-    if (!enabled || chara.frame == NULL) {
+    if (!initialized || chara.frame == NULL) {
         return;
     }
     if (!(chara.ambient_offset[3] <= 0.0f)) {
@@ -156,16 +156,16 @@ void CNPCharacter::Draw() {
 }
 
 void CNPCharacter::DrawShadow() {
-    if (!enabled || chara.frame == NULL) {
+    if (!initialized || chara.frame == NULL) {
         return;
     }
-    if (unk_1474) {
+    if (near_camera) {
         chara.CCharacter::DrawShadow();
     }
 }
 
 int CNPCharacter::CheckDraw() {
-    if (!enabled || chara.frame == NULL) {
+    if (!initialized || chara.frame == NULL) {
         return 0;
     }
     if (chara.ambient_offset[3] <= 0.0f) {
@@ -175,7 +175,7 @@ int CNPCharacter::CheckDraw() {
 }
 
 int CNPCharacter::PickUpPoly(float *position, CCPoly *polygons) {
-    if (enabled) {
+    if (initialized) {
         return chara.CCharacter::PickUpPoly(position, polygons);
     }
     return 0;
@@ -237,8 +237,8 @@ int CCharacter::PickUpPoly(float *position, CCPoly *polygons) {
 
 void CNPCharacter::Initialize() {
     chara.CCharacter::Initialize();
-    enabled = 0;
-    unk_1474 = 0;
+    initialized = 0;
+    near_camera = 0;
     chara.ambient_offset[0] = 0;
     chara.ambient_offset[1] = 0;
     chara.ambient_offset[2] = 0;
@@ -249,10 +249,10 @@ void CNPCharacter::Initialize() {
     unk_148C = 0;
     unk_1468 = 0;
     event_status = 0;
-    unk_1470 = 0;
-    unk_1448 = 0;
+    draw_enabled = 0;
+    resource_name[0] = 0;
     ClearSeq();
-    unk_1440 = 0;
+    map_parts_no = 0;
     unk_1480 = 0;
     step_hidden = 0;
     recurring_talk_event = -1;

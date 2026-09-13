@@ -194,10 +194,12 @@ carve_part(main.bss.part3.s
 carve_part(main.bss.part4.s
            main.bss.part4.s=1CE7570-1CECE80
            main.bss.part4d.s=1CECF00-1CF8F40)
-# edit.cpp's own runs stand in the middle of these two.
+# edit.cpp's own runs stand in the middle of these two, and editloop3.cpp owns
+# EdExchangeInfo inside the second.
 carve_part(main.bss.part4b.s
            main.bss.part4b.s=1CF91F0-1D19720
-           main.bss.part4c.s=1D19AA0-1D19BF0)
+           main.bss.part4c.s=1D19AA0-1D19BB0
+           main.bss.part4e.s=1D19BCC-1D19BF0)
 # monstorunit owns the bee animation table; retain its BSS neighbours.
 carve_part(main.bss.part6.s
            main.bss.part6.s=1D65C20-1D87380
@@ -205,7 +207,8 @@ carve_part(main.bss.part6.s
            main.bss.part6c.s=1DA8D30-1DABD00)
 carve_part(main.bss.part5.s
            main.bss.part5.s=1D1B218-1D1B360
-           main.bss.part5e.s=1D1B390-1D3D1C0
+           main.bss.part5e.s=1D1B390-1D25B90
+           main.bss.part5f.s=1D32F70-1D3D1C0
            main.bss.part5b.s=1D3D1D0-1D3DD20
            main.bss.part5c.s=1D3EEA0-1D3EF90
            main.bss.part5d.s=1D3F010-1D569A0)
@@ -240,9 +243,10 @@ carve_part(main.data.part4.s
            main.data.part4.s=25DF70-266810
            main.data.part4b.s=2668C0-266F70
            main.data.part4c.s=266FB0-269930
-           main.data.part4e.s=269940-269AD0
-           main.data.part4f.s=269AE0-269C40
-           main.data.part4g.s=269C50-26B2C0
+           main.data.part4e.s=269950-269970
+           main.data.part4i.s=269A30-269AD0
+           main.data.part4f.s=269B70-269BB0
+           main.data.part4g.s=26A5E8-26B2C0
            main.data.part4d.s=26B2E0-279EB0)
 
 # These residual ranges are now fully owned by their decompiled translation

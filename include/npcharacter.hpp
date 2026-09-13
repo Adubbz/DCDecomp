@@ -42,17 +42,16 @@ public:
     int write_index;      /**< Index of the next record to fill. */
     u8 unk_11BC[4];
     NP_SEQUENCE sequences[8]; /**< Circular storage for movement and wait actions. */
-    int unk_1440;
-    s32 villager_id; /**< Villager-table identifier represented by this event NPC. */
-    u8 unk_1448;
-    u8 unk_1449[0x1F];
-    int unk_1468;
-    int enabled; /**< Enables NPC stepping, drawing, and collision queries. */
-    int unk_1470;
-    s32 unk_1474;
+    s32 map_parts_no;         /**< Edited-map part associated with the villager, or a negative value. */
+    s32 villager_id;          /**< Villager-table identifier represented by this event NPC. */
+    char resource_name[0x20]; /**< Resource name of the model loaded for the villager. */
+    s32 unk_1468;
+    s32 initialized;  /**< Whether the villager model has been initialized for use. */
+    s32 draw_enabled; /**< Whether the villager model participates in drawing and movement. */
+    s32 near_camera;  /**< Whether proximity to the camera requests this villager's full update. */
     int step_hidden;  /**< Steps the character while it is not visible. */
     s32 event_status; /**< Status value exposed to an event script for the talking NPC. */
-    int unk_1480;
+    s32 unk_1480;
     int alpha_step; /**< Default alpha change per frame. */
     s32 unk_1488;
     s32 unk_148C;             /**< Texture set that the walker's model animates with. */
