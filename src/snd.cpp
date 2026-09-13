@@ -334,7 +334,18 @@ int SndGetNowSetNo() {
     return now_sound_set;
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndStopAllSe__Fv);
+void SndStopAllSe() {
+    CSnd.Stop(15);
+    CSnd.Stop(1);
+    CSnd.Stop(14);
+    CSnd.Stop(10);
+    CSnd.Stop(13);
+    CSnd.Stop(12);
+    CSnd.Stop(11);
+    SndAmbientInit();
+    CSnd.StopVoice(1);
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndSoundLoad__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSoundLoadBG__FiPUiPi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSoundSyncBG__Fv);

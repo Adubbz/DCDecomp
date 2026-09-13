@@ -68,7 +68,8 @@ void SndStep(void);
 void SndBgmInit(void);
 
 /**
- * Stops every sound effect that is playing.
+ * Stops every sound effect, the ambient loop and the second voice, and resets
+ * the ambient loop so that none counts as playing.
  *
  * @mangled SndStopAllSe__Fv
  * @address 0x15A450
