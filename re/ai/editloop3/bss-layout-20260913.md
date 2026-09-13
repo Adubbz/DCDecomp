@@ -26,3 +26,25 @@ Main PERFECT increases 1231 to 1548; TITLE 93 to 170; DUN 30 to 55. Main data
 differences decrease 3436 to 6 bytes. Main object-exact functions without
 a linked-perfect result decrease 368 to 51. These are placement restorations
 of existing code, not new function implementations.
+
+## Remaining BSS
+
+The remaining 22 source objects occupy five runs: villager state at
+`0x1D3B950..0x1D3D1C0`, event coordinate state at
+`0x1D3EEA0..0x1D3EF90`, sequence/sprite pools at
+`0x1D3F010..0x1D48FA4`, the event interpreter at
+`0x1D4A430..0x1D4A478`, and file/light slots at
+`0x1D4A4D0..0x1D4A630`. The pools and interpreter need their retail
+16-byte trailing alignment before the following dump.
+
+Their declarations are in retail emission order. The existing retained
+constructor table and dropped `__sinit_editloop3.cpp` stay as before: this
+change places storage and removes the duplicate residual dump allocations.
+No source-owned editloop3 `.bss` or `.sbss` contribution remains in the tail.
+All 54 objects across both commits match retail address and size.
+
+Complete snapshot against b8ba7b90: main 1579 PERFECT, 10 fuzzy, 1320 asm,
+46 unmatched, 6 differing data bytes; TITLE 170 PERFECT; DUN 55 PERFECT,
+1 fuzzy, 1 asm, 4 unmatched. Zero function, data or objdiff regressions.
+The object-exact/main-not-linked-perfect census is 368 to 20.
+EdMapJump, AnalyzeEdit and ToAnalyzeEdit each judge PERFECT.

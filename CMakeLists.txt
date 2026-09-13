@@ -208,10 +208,11 @@ carve_part(main.bss.part6.s
 carve_part(main.bss.part5.s
            main.bss.part5.s=1D1B218-1D1B360
            main.bss.part5e.s=1D1B390-1D25B90
-           main.bss.part5f.s=1D32F70-1D3D1C0
+           main.bss.part5f.s=1D32F70-1D3B950
            main.bss.part5b.s=1D3D1D0-1D3DD20
-           main.bss.part5c.s=1D3EEA0-1D3EF90
-           main.bss.part5d.s=1D3F010-1D569A0)
+           main.bss.part5d.s=1D48FB0-1D4A430
+           main.bss.part5g.s=1D4A480-1D4A4D0
+           main.bss.part5h.s=1D4A630-1D569A0)
 carve_part(main.sbss.part3.s
            main.sbss.part3.s=2A24FC-2A2500)
 # The dun overlay's small data runs from GameEnv to the end of retail's .sbss,

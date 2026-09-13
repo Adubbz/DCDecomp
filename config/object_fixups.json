@@ -483,6 +483,38 @@
         "EdVillager",
         "EdVillagerInfo"
       ],
+      ".edbssvillagers": [
+        "character$584",
+        "appear_table",
+        "select_table",
+        "appear",
+        "restore_info"
+      ],
+      ".edbsscoords": [
+        "CurrentDir",
+        "world_pos",
+        "world_rot",
+        "world_local",
+        "local_world",
+        "sync_camera_ref_offset"
+      ],
+      ".edbsssequence": [
+        "asq_table",
+        "ActSeq",
+        "anime_data",
+        "sprite_table",
+        "SpriteTable",
+        "SpriteTableBack"
+      ],
+      ".edbssscript": [
+        "EdEventScript"
+      ],
+      ".edbssfiles": [
+        "chr_file",
+        "save_l",
+        "save_c",
+        "save_a"
+      ],
       ".edpointflags": [
         "rotation_y$540",
         "init$586",
