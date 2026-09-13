@@ -75,10 +75,12 @@ void init_draw_ok();
 
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBInitIntro__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBSetMotion__FP10CCharacterPi);
+
 void EBDebug(int mode) {
     debug_mode = mode;
 }
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBSetKey__Ffii);
+
 void EBExit() {
     ebattle_flag = 0;
     eb_intro_cnt = 0;
@@ -95,15 +97,18 @@ INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBLoop__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EBDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", DrawButton__Fiiifi);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", DrawButtonSub__Fiiiif);
+
 void init_draw_ok() {
     ok_draw_cnt = 0;
     ok_effect_button = -1;
 }
+
 void set_draw_ok(int type, int button) {
     ok_effect_button = button;
     ok_draw_cnt = 30;
     ok_type = type;
 }
+
 void draw_ok_loop() {
     if (ok_draw_cnt > 0) {
         --ok_draw_cnt;
@@ -212,17 +217,20 @@ static float GetLYf() {
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", PadOn__Fi);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", PadDown__Fi);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", CameraAutoMove__FP13CCameraFollowP6CCPolyPfff);
+
 void EdViewModeOff() {
     viewMode = 0;
 }
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", InitEyeCamera__FP10CCharacter);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EyeCamera__FP7CCameraP10CCharacteri);
+
 void EdInitCameraParam(CCameraFollow *camera) {
     if (camera != 0) {
         camera->SetDistance(camera_near_dist);
         camera->SetHeight(5.0f);
     }
 }
+
 void EdMoveCharaInit() {
     viewMode = 0;
     chara_mode = 0;
@@ -230,21 +238,40 @@ void EdMoveCharaInit() {
     fishing_mes = 0;
 }
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdEyeCamera__FP7CCameraP10CCharacter);
+
 int EdCheckViewMode() {
     return viewMode;
 }
+
 float EdAGetViewAngleH() {
     return viewAngleH;
 }
+
 float EdAGetViewAngleV() {
     return viewAngleV;
 }
+
 void EdASetViewAngle(float horizontal, float vertical) {
     viewAngleH = horizontal;
     viewAngleV = vertical;
 }
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdMoveChara__Fv);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdInitHashigo__FP13ED_EVENT_INFOP14ED_EVENT_PARAM);
+
+void EdInitHashigo(ED_EVENT_INFO *info, ED_EVENT_PARAM *param) {
+    if (param->kind == 4) {
+        sceVu0CopyVector(info->vector_arguments[1], param->position);
+        sceVu0CopyVector(info->vector_arguments[0], param->camera_pos);
+        info->integer_arguments[0] = 0;
+    } else {
+        sceVu0CopyVector(info->vector_arguments[0], param->position);
+        sceVu0CopyVector(info->vector_arguments[1], param->camera_pos);
+        info->integer_arguments[0] = 1;
+    }
+    sceVu0CopyVector(info->vector_arguments[2], param->rotation);
+    info->flag_arguments[0] = (int) param->point->unk_60[3];
+    info->integer_arguments[1] = param->point->side;
+    info->integer_arguments[2] = param->point->linked_value;
+}
 
 int EdInitGotoInterior(ED_EVENT_INFO *info, ED_EVENT_PARAM *param) {
     sceVu0CopyVector(info->vector_arguments[0], param->position);
