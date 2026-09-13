@@ -533,7 +533,8 @@ SECTIONS
         main.rdata.part4b.s.o (.rdata)   // 0x002a1168
         character.cpp.o (.vtables)       // 0x002a11e0
         . = . + 0x8;
-        main.rdata.part5.s.o (.rdata)
+        dispctrl.cpp.o (.vtables)        // 0x002a1380
+        main.rdata.part5.s.o (.rdata)    // 0x002a1390
         mapobject.cpp.o (.vtables)
         objectframe2.cpp.o (.vtables)
         savedata.cpp.o (.vtables)

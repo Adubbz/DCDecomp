@@ -4,12 +4,16 @@
 
 #include "dispctrl.hpp"
 
+#include "bound.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
 
 INCLUDE_RODATA("asm/nonmatchings/dispctrl", @230);
 
-INCLUDE_ASM("asm/nonmatchings/dispctrl", Sizeof__6CBoundFv);
+int CBound::Sizeof() {
+    return sizeof(CBound);
+}
+
 INCLUDE_ASM("asm/nonmatchings/dispctrl", openGiftag__FP13sceVif1Packet);
 
 /**

@@ -710,6 +710,9 @@
     ]
   },
   "src/dispctrl.cpp": {
+    "sections": {
+      ".vtables": ["__vt__6CBound"]
+    },
     "rodata_exports": [
       "@230"
     ]
