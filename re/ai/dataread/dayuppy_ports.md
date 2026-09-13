@@ -20,3 +20,9 @@ cloth normal scale. The compiled function matches the 0x18-byte retail body at
 The cloth `FOLLOW` command copies three floating-point arguments into the
 cloth follow vector. The compiled function matches the 0x38-byte retail body
 at `0x0013FC80`.
+
+## `CommandK`
+
+The cloth `K` command copies three floating-point arguments into the cloth
+stiffness vector. The compiled function matches the 0x38-byte retail body at
+`0x0013FCC0`.

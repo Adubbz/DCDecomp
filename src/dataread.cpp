@@ -659,7 +659,11 @@ static void CommandFOLLOW(void **argv) {
     pCloth->follow[1] = *(float *) argv[1];
     pCloth->follow[2] = *(float *) argv[2];
 }
-INCLUDE_ASM("asm/nonmatchings/dataread", CommandK__FPPv);
+static void CommandK(void **argv) {
+    pCloth->stiffness[0] = *(float *) argv[0];
+    pCloth->stiffness[1] = *(float *) argv[1];
+    pCloth->stiffness[2] = *(float *) argv[2];
+}
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandWINDEFFECT__FPPv);
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandGRAVITY__FPPv);
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandPOLYDIVE__FPPv);
