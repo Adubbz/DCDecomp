@@ -27,6 +27,7 @@ extern s16 MenuCharaEffectReadFlag;
 extern s16 MenuCharaOldEffect;
 extern BT_SHOT_EFFECT *WepEffectMenuPt;
 extern u_long128 *WepEffectMenuReadBuf;
+extern s16 CharaNameDrawFlag;
 extern int EditMenuStatus[7];
 extern CDataAlloc2<1> EdMenuBuffer;
 extern CDataAlloc2<1> MenuExCashBuffer;
@@ -546,7 +547,11 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1251);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1254);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", BtMenuLoad2__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EastKingCheckComplete__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", SetMonsterNameDrawFlag__Fi);
+
+void SetMonsterNameDrawFlag(int flag) {
+    CharaNameDrawFlag = flag;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetMonsterNameDrawFlag__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", MonsterNameInit__FP6ClsMesPsPUc);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1287__2);
