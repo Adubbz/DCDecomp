@@ -29,7 +29,9 @@ extern s16 MenuCharaOldEffect;
 extern BT_SHOT_EFFECT *WepEffectMenuPt;
 extern u_long128 *WepEffectMenuReadBuf;
 extern s16 CharaNameDrawFlag;
+extern int EditSwitch;
 extern int EdEffectCt;
+extern s16 AnalyzeSelect;
 extern s16 ButtonAdd;
 extern int EditMenuStatus[7];
 extern CDataAlloc2<1> EdMenuBuffer;
@@ -672,7 +674,15 @@ static void ToAnalyzeEdit() {
 }
 
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AnalyzeEditDraw__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", AnalyzeEdit__Fv);
+
+static int AnalyzeEdit() {
+    if (GamePad.Down(0x60)) {
+        ComMenuSePlay(2);
+        EditSwitch = 0x12;
+        AnalyzeSelect = 2;
+    }
+    return 0;
+}
 
 static void FromAnalyzeEditDraw() {
     int alpha;
