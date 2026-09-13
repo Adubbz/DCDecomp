@@ -8,6 +8,7 @@
 #include "clsmes.hpp"
 #include "memcard.hpp"
 #include "menu_manual.hpp"
+#include "snd.hpp"
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetDefaultWeaponNo__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", IsDefaultWeapon__Fi);
@@ -39,7 +40,14 @@ static void DrawBtlAtoraSelect() {
     DrawMenuAtoraSelect();
 }
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlDrawOption__Fv);
+/**
+ * Draws the battle menu options and restores unfiltered rendering.
+ */
+static void BtlDrawOption() {
+    DrawMenuOption();
+    setbilinear(0);
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlDrawSave__Fv);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @924__2);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlMenuTexBlockEnter__Fv);

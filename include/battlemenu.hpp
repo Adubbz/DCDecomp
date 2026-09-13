@@ -205,14 +205,6 @@ void DngComStatus(int, int, int, int);
 void DrawSelCharaStatus(float, float, int, int, int, int, int, int);
 
 /**
- * @mangled BtlDrawOption__Fv
- * @address 0x1F5830
- * @size 0x30
- * @unknownret
- */
-void BtlDrawOption(void);
-
-/**
  * @mangled BtlDrawSave__Fv
  * @address 0x1F5860
  * @size 0x40
