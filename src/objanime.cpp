@@ -1,4 +1,5 @@
 #include "objanime.hpp"
+#include "frame.hpp"
 
 /**
  * Controls whether all object animations are stopped.
@@ -31,7 +32,18 @@ INCLUDE_ASM("asm/nonmatchings/objanime", InitObjAnime__FPP6CFrameiP16EPARTS_FUNC
 INCLUDE_ASM("asm/nonmatchings/objanime", end_check__Ffff);
 INCLUDE_ASM("asm/nonmatchings/objanime", ObjAnimePlay__FP13OBJ_ANIME_SEQ);
 
-INCLUDE_ASM("asm/nonmatchings/objanime", InitEditEffect__FP6CFrameP16EDIT_EFFECT_INFO);
+void InitEditEffect(CFrame *frame, EDIT_EFFECT_INFO *effect) {
+    if (frame == NULL) {
+        effect->frame = NULL;
+        return;
+    }
+
+    effect->frame = frame->SearchFrame(effect->frame_name);
+    if (effect->frame == NULL) {
+        effect->frame = frame;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/objanime", InitEditEffect__FP6CFrameP16EPARTS_FUNC_DATAP16EDIT_EFFECT_INFO);
 INCLUDE_ASM("asm/nonmatchings/objanime", CheckEditEffect__FP16EDIT_EFFECT_INFOf);
 INCLUDE_ASM("asm/nonmatchings/objanime", EditEffectStep__Fv);
