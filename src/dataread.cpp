@@ -31,6 +31,10 @@ extern short *SystemMes;
 extern int LanguageCode;
 extern int BtMapJumpFloor;
 extern CDataAlloc<1, 6000> SystemMesBuffer;
+
+/**
+ * Cloth instance currently receiving configuration commands.
+ */
 extern CCloth *pCloth;
 
 void DevInit(void);
@@ -585,14 +589,41 @@ int GetPackFileExt(u_int *pack, char *ext, u_int **files, int max, int *sizes, c
     return found;
 }
 
+/**
+ * Sets and clamps the cloth grid dimensions.
+ */
 static void CommandSIZE(void **argv);
+/**
+ * Attaches the cloth to the frame named by the command.
+ */
 static void CommandFRAME(void **argv);
+/**
+ * Sets the scale used when calculating cloth normals.
+ */
 static void CommandNORMAL(void **argv);
+/**
+ * Sets the cloth follow vector.
+ */
 static void CommandFOLLOW(void **argv);
+/**
+ * Sets the cloth stiffness vector.
+ */
 static void CommandK(void **argv);
+/**
+ * Sets the cloth response to wind.
+ */
 static void CommandWINDEFFECT(void **argv);
+/**
+ * Sets the cloth gravity vector.
+ */
 static void CommandGRAVITY(void **argv);
+/**
+ * Selects which cloth rows divide their polygons.
+ */
 static void CommandPOLYDIVE(void **argv);
+/**
+ * Creates and attaches an exclusion bound for the cloth.
+ */
 static void CommandBOUND(void **argv);
 
 /**
@@ -636,6 +667,7 @@ INCLUDE_RODATA("asm/nonmatchings/dataread", @254);
 INCLUDE_RODATA("asm/nonmatchings/dataread", @255);
 
 INCLUDE_ASM("asm/nonmatchings/dataread", InitCloth__FP9CFrameVu1R9input_strP14CDataAlloc2_1_);
+
 static void CommandSIZE(void **argv) {
     int num_i = *(int *) argv[0];
     int num_j = *(int *) argv[1];
@@ -651,28 +683,35 @@ static void CommandSIZE(void **argv) {
     pCloth->num_i = num_i;
     pCloth->num_j = num_j;
 }
+
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandFRAME__FPPv);
+
 static void CommandNORMAL(void **argv) {
     pCloth->normal_scale = *(float *) argv[0];
 }
+
 static void CommandFOLLOW(void **argv) {
     pCloth->follow[0] = *(float *) argv[0];
     pCloth->follow[1] = *(float *) argv[1];
     pCloth->follow[2] = *(float *) argv[2];
 }
+
 static void CommandK(void **argv) {
     pCloth->stiffness[0] = *(float *) argv[0];
     pCloth->stiffness[1] = *(float *) argv[1];
     pCloth->stiffness[2] = *(float *) argv[2];
 }
+
 static void CommandWINDEFFECT(void **argv) {
     pCloth->wind_effect = *(float *) argv[0];
 }
+
 static void CommandGRAVITY(void **argv) {
     pCloth->gravity[0] = *(float *) argv[0];
     pCloth->gravity[1] = *(float *) argv[1];
     pCloth->gravity[2] = *(float *) argv[2];
 }
+
 static void CommandPOLYDIVE(void **argv) {
     char *s = (char *) argv[0];
     int i = 0;
@@ -691,6 +730,10 @@ INCLUDE_ASM("asm/nonmatchings/dataread", GetArg__FR9input_strPiPPv__2);
 INCLUDE_ASM("asm/nonmatchings/dataread", SearchCommand__FR9input_strPi__2);
 INCLUDE_ASM("asm/nonmatchings/dataread", SkipSpace__FR9input_str__2);
 INCLUDE_ASM("asm/nonmatchings/dataread", CheckChar__Fc__2);
+
+/**
+ * Converts analog-stick displacement into a motion speed and movement state.
+ */
 int keyCtrl(float x, float y, MOTION_INFO *motion) {
     int result = 0;
 
@@ -721,7 +764,12 @@ int keyCtrl(float x, float y, MOTION_INFO *motion) {
 
     return result;
 }
+
 INCLUDE_ASM("asm/nonmatchings/dataread", MoveImageTest__FP13sceVif1PacketiiiRC8CRect_i_iiiiii);
+
+/**
+ * Turns a frame toward a heading by one angular step and returns the new yaw.
+ */
 float unitRotation(CFrameVu1 *frame, float heading) {
     float rotation[4];
     float delta;
