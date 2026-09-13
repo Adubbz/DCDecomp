@@ -104,7 +104,11 @@ void CActionSeq::MoveSeq(float *destination, int frames) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/actionseq", MoveSeq__10CActionSeqFPff);
-INCLUDE_ASM("asm/nonmatchings/actionseq", MoveSeq__10CActionSeqFi);
+
+void CActionSeq::MoveSeq(int frames) {
+    MoveSeq(queued_position, frames);
+}
+
 INCLUDE_ASM("asm/nonmatchings/actionseq", SetPos__10CActionSeqFPf);
 INCLUDE_ASM("asm/nonmatchings/actionseq", RotRefSeq__10CActionSeqFPff);
 INCLUDE_ASM("asm/nonmatchings/actionseq", RotAngleSeq__10CActionSeqFff);
