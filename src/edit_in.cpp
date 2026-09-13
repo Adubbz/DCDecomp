@@ -33,7 +33,8 @@ INCLUDE_RODATA("asm/nonmatchings/edit_in", @1369);
 INCLUDE_ASM("asm/nonmatchings/edit_in", LoadTexture__Fv__2);
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @1399);
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @1400);
-INCLUDE_ASM("asm/nonmatchings/edit_in", LoadChara__Fv);
+void LoadChara() {
+}
 INCLUDE_ASM("asm/nonmatchings/edit_in", LoadData__Fv);
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @1537);
 INCLUDE_ASM("asm/nonmatchings/edit_in", LoadPTS__FP9CMapPartsPUi);
