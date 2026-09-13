@@ -18,7 +18,10 @@
 #include "renderinfo.hpp"
 #include "visualvu1.hpp"
 
-INCLUDE_ASM("asm/nonmatchings/frame", __nw__FUiP1);
+void *operator new(u_int, u_long128 *block) {
+    return block;
+}
+
 INCLUDE_ASM("asm/nonmatchings/frame", __nwa__FUiP1);
 void DevInit() {
     sceDmaEnv env;
