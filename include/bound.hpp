@@ -62,12 +62,13 @@ public:
     void SetDir(CFrame *, float *, float *, float *, float, float);
 
     /**
+     * Stores the endpoints and up vector used to orient the box.
+     *
      * @mangled ChangeDir__6CBoundFPfPfPf
      * @address 0x13D5C0
      * @size 0x70
-     * @unknownret
      */
-    void ChangeDir(float *, float *, float *);
+    void ChangeDir(float *from_position, float *to_position, float *up_direction);
 
     /**
      * @mangled UpDateDir__6CBoundFv

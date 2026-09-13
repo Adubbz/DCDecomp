@@ -47,7 +47,12 @@ int CBound::InCheck(float *point, float *result) {
     return 0;
 }
 INCLUDE_ASM("asm/nonmatchings/bound", SetDir__6CBoundFP6CFramePfPfPfff);
-INCLUDE_ASM("asm/nonmatchings/bound", ChangeDir__6CBoundFPfPfPf);
+void CBound::ChangeDir(float *from_position, float *to_position, float *up_direction) {
+    sceVu0CopyVector(from, from_position);
+    sceVu0CopyVector(to, to_position);
+    sceVu0CopyVector(up, up_direction);
+}
+
 INCLUDE_ASM("asm/nonmatchings/bound", UpDateDir__6CBoundFv);
 INCLUDE_ASM("asm/nonmatchings/bound", SetDir__6CBoundFPfPf);
 INCLUDE_ASM("asm/nonmatchings/bound", SetDir__6CBoundFPf);
