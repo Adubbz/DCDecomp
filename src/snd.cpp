@@ -248,7 +248,13 @@ int SndGetBgmVol() {
     return now_bgm_vol;
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndGetDefaultBgmVol__Fv);
+int SndGetDefaultBgmVol() {
+    if (now_bgm_no < 0) {
+        return 0;
+    }
+    return CSnd.GetMidiState()->sequence->volume;
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeIn__Fiii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeOut__Fii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeInOut__Fv);

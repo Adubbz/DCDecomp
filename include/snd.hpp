@@ -455,7 +455,8 @@ int SndCheckFade();
 int SndSyncBG();
 
 /**
- * Returns the background-music volume the configuration asks for.
+ * Returns the volume of the background-music sequence the MIDI player holds,
+ * or zero when no background-music set is loaded.
  *
  * @mangled SndGetDefaultBgmVol__Fv
  * @address 0x159DF0
