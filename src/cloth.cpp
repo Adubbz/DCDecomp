@@ -45,7 +45,34 @@ void CCloth::Draw() {
     MGDraw(&draw_frame);
 }
 
-INCLUDE_ASM("asm/nonmatchings/cloth", Clear__6CClothFv);
+/**
+ * Restores every active cloth point to its frame-relative home position.
+ */
+void CCloth::Clear() {
+    sceVu0FMATRIX matrix;
+    int i;
+    int j;
+
+    if (frame) {
+        frame->GetLWMatrix(matrix);
+    }
+    sceVu0ApplyMatrix(last_position, matrix, position);
+    for (j = 0; j < num_j; j++) {
+        for (i = 0; i < num_i; i++) {
+            sceVu0FVECTOR *element = (sceVu0FVECTOR *)this + i * 16 + j;
+            float *current_point = element[273];
+            float *current_speed = element[1041];
+
+            current_speed[0] = 0.0f;
+            current_speed[1] = 0.0f;
+            current_speed[2] = 0.0f;
+            if (frame) {
+                sceVu0ApplyMatrix(current_point, matrix, element[17]);
+                sceVu0CopyVector(element[529], current_point);
+            }
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/cloth", Step__6CClothFi);
 INCLUDE_ASM("asm/nonmatchings/cloth", DrawVu1__6CClothFPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
 INCLUDE_ASM("asm/nonmatchings/cloth", DrawVu1__6CClothFP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii);

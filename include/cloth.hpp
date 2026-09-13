@@ -60,6 +60,13 @@ public:
      */
     void Draw();
 
+    /**
+     * Restores every active point to its frame-relative home position.
+     *
+     * @mangled Clear__6CClothFv
+     * @address 0x13B7A0
+     * @size 0x100
+     */
     void Clear();
     void Step(int step);
     int CreateVUData(u_int *packet);
