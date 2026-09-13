@@ -5,7 +5,12 @@
 
 char WaterData[0x10];
 
-INCLUDE_ASM("asm/nonmatchings/water", SetParam__6CWaterFffff);
+void CWater::SetParam(float param_0, float param_1, float param_2, float param_3) {
+    unk_094 = param_0;
+    unk_098 = param_1;
+    unk_09C = param_2;
+    unk_0A0 = param_3;
+}
 INCLUDE_ASM("asm/nonmatchings/water", SetColor__6CWaterFUcUcUcUc);
 INCLUDE_ASM("asm/nonmatchings/water", CreateVUData__6CWaterFPUiP10RenderInfo);
 INCLUDE_RODATA("asm/nonmatchings/water", @345__2);
