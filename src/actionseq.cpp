@@ -257,5 +257,17 @@ int CActionSeq::CheckEnd() {
     return move_head == NULL && motion_finished && anime_head == NULL;
 }
 
-INCLUDE_ASM("asm/nonmatchings/actionseq", DeleteSeq__FP7ACT_SEQ);
+/**
+ * Releases an action record and returns the next queued record.
+ */
+static ACT_SEQ *DeleteSeq(ACT_SEQ *sequence) {
+    if (sequence == NULL) {
+        return NULL;
+    }
+    ACT_SEQ *next = sequence->next;
+    sequence->operation = ACT_SEQ_UNUSED;
+    sequence->next = NULL;
+    return next;
+}
+
 INCLUDE_ASM("asm/nonmatchings/actionseq", Play__10CActionSeqFv);
