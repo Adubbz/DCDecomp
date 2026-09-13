@@ -234,6 +234,17 @@ void CActionSeq::AnimeSeq(int animation, int enabled, int frames, int disable_af
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/actionseq", CheckEnd__10CActionSeqFv);
+int CActionSeq::CheckEnd() {
+    int motion_finished = 0;
+    if (motion_head != NULL) {
+        if (motion_head->arguments.animation.mode != 7) {
+            motion_finished = 1;
+        }
+    } else {
+        motion_finished = 1;
+    }
+    return move_head == NULL && motion_finished && anime_head == NULL;
+}
+
 INCLUDE_ASM("asm/nonmatchings/actionseq", DeleteSeq__FP7ACT_SEQ);
 INCLUDE_ASM("asm/nonmatchings/actionseq", Play__10CActionSeqFv);
