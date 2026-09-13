@@ -16,10 +16,56 @@
 #include "memcard.hpp"
 #include "menu_draw.hpp"
 #include "menu_manual.hpp"
+#include "savedata.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
 #include "weapon_buildup.hpp"
 #include "weaponeffect.hpp"
+
+/** The weapon test number GetNowTestNo reports, initialised to 1. */
+extern int MenuWeaponTestCase;
+
+/** The amount the last item use gave, a base value plus a random part. */
+extern int MenuItemUseVolume;
+
+/** The menu's weapon-effect read flag. */
+extern s16 MenuCharaEffectReadFlag;
+
+/** The weapon effect kind SetOldEffectKind records. */
+extern s16 MenuCharaOldEffect;
+
+/** The weapon effect the menu's character plays. */
+extern BT_SHOT_EFFECT *WepEffectMenuPt;
+
+/** The buffer the menu's weapon effect and model are read into. */
+extern u_long128 *WepEffectMenuReadBuf;
+
+/** The message window that shows a monster's name. */
+extern ClsMes *CharaNameMes;
+
+/** Whether the monster's name is drawn. */
+extern s16 CharaNameDrawFlag;
+
+/** The state the edit menu is in. */
+extern int EditSwitch;
+
+/** The frame count of the edit menu's current transition. */
+extern int EdEffectCt;
+
+/** The selection on the edit menu's analyze page. */
+extern s16 AnalyzeSelect;
+
+/** The speed-up the analyze bar draws with, set to 2 while any input is held. */
+extern s16 ButtonAdd;
+
+/** The edit menu icon's movement: 1 while CalMoveFromMenuIcon runs, 2 while CalMoveToMenuIcon runs, 0 for none. */
+extern s16 EdMenuEffectFlag;
+
+/** The frame count of the edit menu icon's movement. */
+extern float EdMenuEffectCt;
+
+/** Whether the edit menu's second window is to be made. */
+extern s16 MakeWin2Flag;
 
 extern int EditMenuStatus[7];
 extern CDataAlloc2<1> EdMenuBuffer;
@@ -155,7 +201,8 @@ static int CalMoveToMenuIcon();
 static void EditMenuExit();
 
 /**
- * Reports whether the edit menu draws its help window for a page.
+ * Returns the help-window draw flag it is given, or 0 while the edit menu is in
+ * state 3, 9 or 0x10 and the Atra event flag is set.
  *
  * @mangled GetDrawHelpWindow__Fi
  * @address 0x210E30
@@ -281,7 +328,7 @@ static int AnalyzeBarDraw();
 static void ToAnalyzeEditDraw();
 
 /**
- * Advances the transition into the analysis page.
+ * Speeds up the transition into the analysis page while any input is held.
  *
  * @mangled ToAnalyzeEdit__Fv
  * @address 0x212D10
@@ -299,7 +346,7 @@ static void ToAnalyzeEdit();
 static void AnalyzeEditDraw();
 
 /**
- * Handles pad input on the analysis page and returns the result.
+ * Leaves the analysis page when a 0x60 pad button is pressed, and returns 0.
  *
  * @mangled AnalyzeEdit__Fv
  * @address 0x212F20
@@ -380,10 +427,18 @@ static int EdMenuManualKey();
 static void EdMenuManualDraw();
 
 INCLUDE_ASM("asm/nonmatchings/menu_misc", NowGetGameFlagForBtlMenu__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", GetMenuHebikiriFlag__Fv);
+
+int GetMenuHebikiriFlag() {
+    return SaveData->GetGameFlag(0x30);
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EquipDefaultWeapon__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", DrawMenuNothing__FiiiiPcii);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", GetMenuItemUseVolume__Fv);
+
+int GetMenuItemUseVolume() {
+    return MenuItemUseVolume;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", ItemUseFunc__FP11CUserStatusiiiP11WEAPON_HAVE);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @869);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @870__2);
@@ -407,12 +462,31 @@ INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponStatusBuildUp__FP11WEAPON_HAVERi
 INCLUDE_ASM("asm/nonmatchings/menu_misc", MenuWeaponSpSet__FP10CCharacterP11WEAPON_HAVE);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @914__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @915__2);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", SetMenuCharaEffectReadFlag__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", GetMenuCharaEffectReadFlag__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", GetDngWepEffectPointer__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", GetWepEffectMenuReadBuf__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", SetOldEffectKind__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", SetWepEffectMenuReadBuf__FP1);
+
+void SetMenuCharaEffectReadFlag(int flag) {
+    MenuCharaEffectReadFlag = flag;
+}
+
+int GetMenuCharaEffectReadFlag() {
+    return MenuCharaEffectReadFlag;
+}
+
+BT_SHOT_EFFECT *GetDngWepEffectPointer() {
+    return WepEffectMenuPt;
+}
+
+u_long128 *GetWepEffectMenuReadBuf() {
+    return WepEffectMenuReadBuf;
+}
+
+void SetOldEffectKind(int kind) {
+    MenuCharaOldEffect = kind;
+}
+
+static void SetWepEffectMenuReadBuf(u_long128 *buf) {
+    WepEffectMenuReadBuf = buf;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", DngWepEffectReadStart__Fv);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @936__3);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @947__2);
@@ -428,7 +502,11 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @959__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @960__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @961);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", MenuWeaponEffectSet__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", GetNowTestNo__Fv);
+
+int GetNowTestNo() {
+    return MenuWeaponTestCase;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", StartReadWepMDS__FP1i);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @969__3);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @970__2);
@@ -513,11 +591,32 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1251);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1254);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", BtMenuLoad2__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EastKingCheckComplete__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", SetMonsterNameDrawFlag__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", GetMonsterNameDrawFlag__Fv);
+
+void SetMonsterNameDrawFlag(int flag) {
+    CharaNameDrawFlag = flag;
+}
+
+int GetMonsterNameDrawFlag() {
+    return CharaNameDrawFlag;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", MonsterNameInit__FP6ClsMesPsPUc);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1287__2);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", MonsterNameMake__Fi);
+
+void MonsterNameMake(int mes_no) {
+    if (CharaNameMes != NULL) {
+        int mes = mes_no + 3000;
+        if (CharaNameMes->mes_made != mes) {
+            CharaNameMes->MakeMesWin(mes);
+            if (mes == 3000) {
+                CharaNameMes->stay_frame = 0;
+            } else {
+                CharaNameMes->stay_frame = 1;
+            }
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", MonsterNamePosSet__Fii);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", MonsterNameDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", DngEscapeMsgInit__FP6ClsMesP6ClsMesi);
@@ -582,7 +681,14 @@ INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuInit__FPii);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @464__3);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @465__2);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuExit__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", GetDrawHelpWindow__Fi);
+
+static int GetDrawHelpWindow(int draw) {
+    if ((EditSwitch == 9 || EditSwitch == 3 || EditSwitch == 0x10) && GetMenuAtraEventFlag()) {
+        draw = 0;
+    }
+    return draw;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuLoop__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditMenuDraw__Fv);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @573__2);
@@ -615,16 +721,106 @@ INCLUDE_ASM("asm/nonmatchings/menu_misc", AnalyzeRequestPer__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AnalyzeBarDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", ToAnalyzeEditDraw__Fv);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @894__3);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", ToAnalyzeEdit__Fv);
+
+static void ToAnalyzeEdit() {
+    if (GamePad.AllOn()) {
+        ButtonAdd = 2;
+        EdEffectCt += 4;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AnalyzeEditDraw__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", AnalyzeEdit__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", FromAnalyzeEditDraw__Fv);
+
+static int AnalyzeEdit() {
+    if (GamePad.Down(0x60)) {
+        ComMenuSePlay(2);
+        EditSwitch = 0x12;
+        AnalyzeSelect = 2;
+    }
+    return 0;
+}
+
+static void FromAnalyzeEditDraw() {
+    int alpha;
+
+    DrawMoveMenuIcon();
+    alpha = 0x80 - EdEffectCt * 10;
+    if (alpha < 0) {
+        alpha = 0;
+    }
+    AnalyzeBackDraw(alpha, 0x40);
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", FromAnalyzeEdit__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditSaveDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EditSaveKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", OptionDraw__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", EdOptionSelect__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", EdMenuManualKey__Fv);
+
+static void EdOptionSelect() {
+    int arrived = 0;
+    int key;
+
+    switch (EdMenuEffectFlag) {
+        case 1:
+            arrived = CalMoveFromMenuIcon();
+            if (arrived) {
+                EdMenuEffectFlag = 0;
+                EdMenuEffectCt = 0.0f;
+            }
+            break;
+        case 2:
+            arrived = CalMoveToMenuIcon();
+            break;
+    }
+    if (EdMenuEffectFlag != 0) {
+        EdMenuEffectCt += 1.0f;
+    } else {
+        EdMenuEffectCt = 0.0f;
+    }
+    key = MenuOptionKey();
+    if (OptionMenuFadeOutStart()) {
+        EdMenuEffectFlag = 2;
+        if (arrived && key) {
+            EdEffectCt = 0;
+            EditSwitch = 2;
+            MakeWin2Flag = 1;
+        }
+    }
+}
+
+static int EdMenuManualKey() {
+    int arrived = 0;
+    int key;
+
+    switch (EdMenuEffectFlag) {
+        case 1:
+            arrived = CalMoveFromMenuIcon();
+            if (arrived) {
+                EdMenuEffectFlag = 0;
+                EdMenuEffectCt = 0.0f;
+            }
+            break;
+        case 2:
+            arrived = CalMoveToMenuIcon();
+            break;
+    }
+    if (EdMenuEffectFlag != 0) {
+        EdMenuEffectCt += 1.0f;
+    } else {
+        EdMenuEffectCt = 0.0f;
+    }
+    key = MenuManualKey();
+    if (GetNowManualMenuMode() == 1) {
+        EdMenuEffectFlag = 2;
+        if (arrived && key) {
+            EdEffectCt = 0;
+            EditSwitch = 2;
+            MakeWin2Flag = 1;
+        }
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EdMenuManualDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", InitSaveFileInfoTbl__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetOpenAttribute__FPc);

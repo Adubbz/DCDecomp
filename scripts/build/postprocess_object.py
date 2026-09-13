@@ -193,6 +193,7 @@ def export_constants(path, names, parser, assembly_constants=(),
     reserved = (set(reserved_constants) | set(assembly_constants)) & defined
     arguments = []
     padded = False
+    taken = set()
     for name in names:
         if name in defined:
             continue
@@ -201,6 +202,10 @@ def export_constants(path, names, parser, assembly_constants=(),
             parser.error(f"no reference assembly defines {name!r}")
         matches = [symbol for symbol, body in compiled.items()
                    if symbol not in reserved and body and wanted.startswith(body)]
+        if len(matches) > 1:
+            # A shorter constant already exported under another name, such as
+            # an empty string, is a prefix of almost anything.
+            matches = [symbol for symbol in matches if symbol not in taken]
         if not matches and name in assembly_constants:
             continue
         if len(matches) != 1:
@@ -210,6 +215,7 @@ def export_constants(path, names, parser, assembly_constants=(),
         # Preserve the explicit zero tail in retail's dump inside the section
         # itself so the following constant still begins at its retail address.
         old = matches[0]
+        taken.add(old)
         section = elf.sections[compiled_symbols[old].st_shndx]
         if len(wanted) > len(section.data):
             tail = wanted[len(section.data):]

@@ -109,32 +109,6 @@ ED_EVENT_POINT *GetNewEventPoint(CMapParts *parts, EPARTS_FUNC_DATA *function,
     return point;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @687);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @688);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @689);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @690__2);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @727__3);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @729__3);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @730__3);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @731__3);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @1673);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @1674);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @1675);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @1676);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2449);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2450);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2451);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2604);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2605);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2606);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2607);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2608);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2609);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2610);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2611);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2612);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2613);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2614);
 int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functions,
                      int function_count, ED_EVENT_POINT *points, int point_count) {
     int has_extent;
@@ -489,13 +463,13 @@ int EdSearchEvent(ED_EVENT_PARAM *param, char *name, int kind, float range) {
     }
     return 0;
 }
-#ifdef NON_MATCHING
+
 void EdMapJump(int kind, char *name) {
     if (name == NULL || *name == '\0')
         return;
-    int unused;
-    if (kind < 3)
-        unused = unused;
+    int index;
+    if (kind >= 3)
+        index = kind;
 
     char *extensions[5] = {"m", "e", "n", "", ""};
     StartReadBG();
@@ -513,22 +487,19 @@ void EdMapJump(int kind, char *name) {
     buffer += (((size >> 6) + 1) << 6) >> 4;
     sprintf(filename, "%s.cfg", name);
     LoadFileBG(filename, buffer, &size);
-    buffer = (u_long128 *) EdNPCBuffer.base + EdNPCBuffer.used;
+    buffer = (u_long128 *) (EdNPCBuffer.base + EdNPCBuffer.used * 16);
     sprintf(filename, "%s.pak", name);
     if (LoadFileBG(filename, buffer, &size) == 0) {
         sprintf(filename, "%s.img", name);
         if (LoadFileBG(filename, buffer, &size) == 0)
             return;
     }
-    if (size >= 0x200001) {
+    if (size > 0x200000) {
         printf("img size over!!!\n");
         while (1) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", EdMapJump__FiPc);
-#endif
 
 void EdPartsObjectOnOff(CMapParts *parts, EDITPARTS_INFO *info, int mode) {
     char storage[32][32];
@@ -1544,6 +1515,10 @@ void EdDrawLensFlare(float time, CFrame **sky) {
     }
 }
 #else
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @1673);
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @1674);
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @1675);
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @1676);
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdDrawLensFlare__FfPP6CFrame);
 #endif
 
@@ -6742,6 +6717,20 @@ int EdEventFinish() {
     return 1;
 }
 
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @2449);
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @2450);
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @2451);
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @2604);
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @2605);
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @2606);
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @2607);
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @2608);
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @2609);
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @2610);
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @2611);
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @2612);
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @2613);
+INCLUDE_RODATA("asm/nonmatchings/editloop3", @2614);
 INCLUDE_ASM("asm/nonmatchings/editloop3", EdEventMode__FP13CCameraFollowi);
 int EdEventNPCStep() {
     int wind = EdEventInfo.main_character->unk_C98;

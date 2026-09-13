@@ -180,7 +180,7 @@ carve_part(main.sdata.part2b.s
            main.sdata.part2b.s=2A1ED0-2A1F14
            main.sdata.part2c.s=2A1F18-2A1F24
            main.sdata.part2d.s=2A1F50-2A1F78
-           main.sdata.part2f.s=2A1F80-2A21C8
+           main.sdata.part2f.s=2A1F90-2A21C8
            main.sdata.part2e.s=2A21F0-2A2218)
 carve_part(main.sdata.part3.s
            main.sdata.part3.s=2A22E0-2A2380)
@@ -243,7 +243,6 @@ carve_part(main.data.part4.s
            main.data.part4.s=25DF70-266810
            main.data.part4b.s=2668C0-266F70
            main.data.part4c.s=266FB0-269930
-           main.data.part4e.s=269950-269970
            main.data.part4i.s=269A30-269AD0
            main.data.part4f.s=269B70-269BB0
            main.data.part4g.s=26A5E8-26B2C0

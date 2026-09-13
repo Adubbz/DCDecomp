@@ -226,7 +226,6 @@ void SndInitialize(int unknown0, int unknown1, int unknown2, int unknown3);
 void SndSetReadBuffer(u_int *buffer);
 void SndSoundLoad(int no);
 void SndAmbientPlay(int no);
-void SndBgmInit();
 void SndBgmLoad(int no);
 void SndBgmPlay(int no);
 void SndBgmFadeOut(int time, int unknown0);
