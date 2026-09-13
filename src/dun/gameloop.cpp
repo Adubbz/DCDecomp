@@ -174,42 +174,6 @@ public:
 
 STATIC_ASSERT(sizeof(CDebugFont) == 0x21C);
 
-/**
- * Names what the dungeon event running now is waiting on.
- */
-struct BT_EVENT_INFO {
-    sceVu0FVECTOR unk_00; /**< Where the event the script runs plays. */
-    sceVu0FVECTOR unk_10; /**< Which way that event faces. */
-    u8 unk_20[0x4];
-    s32 unk_24;
-    u8 unk_28[0x4];
-    s32 unk_2C;
-    s32 unk_30;
-    s32 unk_34;
-    s32 unk_38;
-    u8 unk_3C[0x48];
-    s32 *floor_result;  /**< Where the floor the player chose is written back. */
-    s32 *escape_result; /**< Where the escape answer is written back. */
-    s32 unk_8C;
-    s32 unk_90;
-    s32 unk_94;
-    s32 unk_98;
-    s32 unk_9C;
-    s32 unk_A0;
-    s32 unk_A4;
-    u8 unk_A8[0x4];
-    s32 unk_AC;
-    u8 unk_B0[0x4];
-    s32 unk_B4;
-    s32 unk_B8;
-    s32 unk_BC;
-};
-
-STATIC_ASSERT(sizeof(BT_EVENT_INFO) == 0xC0);
-
-/* What the dungeon event running now is waiting on. */
-extern "C" BT_EVENT_INFO BtEventInfo;
-
 /* The debug message overlay. */
 extern "C" CDebugFont CDbgMsg;
 
@@ -1423,7 +1387,7 @@ void GameInit(void) {
     selectMapNo = main_select_menu_no;
     UserStatus = (CUserStatus *) SaveData->GetDngStatus();
     UserStatus->Init();
-    if (BtEventInfo.unk_B8 != 1) {
+    if (BtEventInfo.no_status_recover != 1) {
         int i;
         CUserStatus *status = UserStatus;
 
@@ -1966,10 +1930,10 @@ int GameLoop(void) {
             int floor = DunEnterMenuLoop();
 
             if (floor != -1) {
-                if (BtEventInfo.floor_result != NULL) {
-                    BtEventInfo.floor_result[1] = floor;
+                if (BtEventInfo.entrance_result != NULL) {
+                    BtEventInfo.entrance_result->i = floor;
                 }
-                BtEventInfo.floor_result = NULL;
+                BtEventInfo.entrance_result = NULL;
                 ((CDngStatusData *) UserStatus)->SetNowFloor(floor);
                 BtGameModeFlag = 1;
             }
@@ -1980,7 +1944,7 @@ int GameLoop(void) {
 
             if (answer > 0) {
                 if (BtEventInfo.escape_result != NULL) {
-                    BtEventInfo.escape_result[1] = answer;
+                    BtEventInfo.escape_result->i = answer;
                 }
                 BtEventInfo.escape_result = NULL;
                 BtGameModeFlag = 1;
@@ -2015,7 +1979,7 @@ int GameLoop(void) {
         MGSetBGColor(fade);
         ((CDngStatusData *) UserStatus)->LostGateKey();
 
-        if (BtEventInfo.unk_B8 == 0) {
+        if (BtEventInfo.no_status_recover == 0) {
             CUserStatus *status = UserStatus;
 
             for (i = 0; i < 6; i++) {
@@ -4409,28 +4373,28 @@ void MoveChara(void) {
                 }
             }
             SetBattleStyle(selectMapNo, 1);
-            switch (BtEventInfo.unk_98) {
+            switch (BtEventInfo.request) {
                 case 1:
-                    BtEventInfo.unk_98 = 0;
+                    BtEventInfo.request = 0;
                     BtMiniItemSelect();
                     gameTask = 0x19A;
                     break;
                 case 2:
-                    BtEventInfo.unk_98 = 0;
+                    BtEventInfo.request = 0;
                     gameTask = 0xA0;
                     break;
                 case 3:
-                    BtEventInfo.unk_98 = 0;
+                    BtEventInfo.request = 0;
                     InitDunEnterMenu(0x17, selectMapNo, -1);
                     BtGameModeFlag = 4;
                     break;
                 case 6:
-                    BtEventInfo.unk_98 = 0;
+                    BtEventInfo.request = 0;
                     DngEscapeMsgInit(&DngMes2, &DngMes1, 0);
                     BtGameModeFlag = 7;
                     break;
                 case 4:
-                    BtEventInfo.unk_98 = 0;
+                    BtEventInfo.request = 0;
                     BtSystemScriptAfter();
                     read_buffer = old_read_buffer;
                     ClearGateKeyStack();
@@ -4462,7 +4426,7 @@ void MoveChara(void) {
                     printf("go dungeon\n");
                     break;
                 case 5:
-                    BtEventInfo.unk_98 = 0;
+                    BtEventInfo.request = 0;
                     BtSystemScriptAfter();
                     BtEventInfo.unk_2C = BtEventInfo.unk_9C;
                     gameTask = 0x190;

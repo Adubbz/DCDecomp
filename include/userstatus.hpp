@@ -133,6 +133,3 @@ public:
     s32 res_limit_zone_current;          // 0x8B10
     s32 active_item_vol[3];              // 0x8B14
 };
-
-/* The player's save-slot status; the dungeon reads the party and the floor. */
-extern CUserStatus *UserStatus;

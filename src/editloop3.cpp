@@ -1385,7 +1385,8 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
                 MGSetAmbient(ambient);
                 if (next_sun != 2 && following_sun != NULL) {
                     following_sun->SetTransMatrix(identity);
-                    following_sun->SetRotation(0.0f, 0.0f, sun_rotation);
+                    float rotation_y = 0.0f;
+                    following_sun->SetRotation(0.0f, rotation_y, sun_rotation);
                     following_sun->SetPosition(position);
                     MGDraw(following_sun);
                 }

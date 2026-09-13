@@ -1,5 +1,7 @@
 #include "common.h"
 
+#include "btitem.hpp"
+
 /* Battle item handling: treasure boxes, pickups and thrown items. */
 
 INCLUDE_ASM("asm/nonmatchings/btitem", selectChrUnit__Fii);

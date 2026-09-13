@@ -2,6 +2,10 @@
 
 #include "common.h"
 
+#include <libvu0.h>
+
+#include "runscript.hpp"
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -19,6 +23,51 @@ class CRandomItem;
 class CSHOT_EFFECT_PACK;
 class CStealItem;
 struct MAP_TRAP_CIRCLE;
+
+/**
+ * Names what the dungeon event running now is waiting on.
+ */
+struct BT_EVENT_INFO {
+    sceVu0FVECTOR unk_00;
+    sceVu0FVECTOR unk_10;
+    u8 unk_20[0x4];
+    s32 unk_24;
+    u8 unk_28[0x4];
+    s32 unk_2C;
+    s32 unk_30;
+    s32 unk_34;
+    s32 unk_38;
+    u8 unk_3C[0x48];
+    RS_STACKDATA *entrance_result; /**< Where the floor the player chose is written back. */
+    RS_STACKDATA *escape_result;   /**< Where the escape answer is written back. */
+    s32 unk_8C;
+    s32 unk_90;
+    s32 unk_94;
+    s32 request; /**< Dungeon transition requested by the event script. */
+    s32 unk_9C;
+    s32 unk_A0;
+    s32 unk_A4;
+    u8 unk_A8[0x4];
+    s32 unk_AC;
+    u8 unk_B0[0x4];
+    s32 unk_B4;
+    s32 no_status_recover; /**< Prevents restoring party status when entering the floor. */
+    s32 unk_BC;
+};
+
+STATIC_ASSERT(sizeof(BT_EVENT_INFO) == 0xC0);
+
+/**
+ * State shared by dungeon event scripts and the dungeon loop.
+ */
+extern "C" BT_EVENT_INFO BtEventInfo;
+
+class CUserStatus;
+
+/**
+ * Player status shared by the dungeon loop and battle commands.
+ */
+extern CUserStatus *UserStatus;
 
 /** Player character. */
 extern "C" CCharacter CharaMain;
@@ -174,12 +223,13 @@ void BtCleatFreeMap(void);
 void BtArrengeMonstor(void);
 
 /**
+ * Loads the monsters assigned to the current floor.
+ *
  * @mangled BtLoadMonstor__Fi
  * @address 0x1DB9330
  * @size 0x260
- * @unknownret
  */
-void BtLoadMonstor(int);
+void BtLoadMonstor(int mode);
 
 /**
  * @mangled EquipReAttach__FP10CCharacteri

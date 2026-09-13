@@ -63,3 +63,12 @@ void getFramePos(CFrameVu1 *frame, char *name, float *position);
  * @size 0x158
  */
 void BtGetWeaponNamePath2(char *name, char *path, int chara, int weapon);
+
+/**
+ * Stops the current battle music.
+ *
+ * @mangled BtBattleMusic_Stop__Fv
+ * @address 0x1B7640
+ * @size 0x48
+ */
+void BtBattleMusic_Stop(void);
