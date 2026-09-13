@@ -437,7 +437,10 @@ void SetOldEffectKind(int kind) {
     MenuCharaOldEffect = kind;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu_misc", SetWepEffectMenuReadBuf__FP1);
+static void SetWepEffectMenuReadBuf(u_long128 *buf) {
+    WepEffectMenuReadBuf = buf;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", DngWepEffectReadStart__Fv);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @936__3);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @947__2);
