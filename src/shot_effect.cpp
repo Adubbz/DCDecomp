@@ -114,7 +114,16 @@ void CSHOT_EFFECT::SetUserID2(s32 id) {
         this->unk_A060[slot] = (s16) id;
     }
 }
-INCLUDE_ASM("asm/nonmatchings/shot_effect", Initialize__12CSHOT_EFFECTFv);
+void CSHOT_EFFECT::Initialize() {
+    unk_0000 = NULL;
+    for (s32 i = 0; i < 8; i++) {
+        unk_A000[i] = 0;
+        unk_A050[i] = -1;
+        unk_A070[i] = -1;
+        unk_A14C = 4;
+    }
+    unk_A150 = -1;
+}
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Entry__17CSHOT_EFFECT_PACKFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i);
 void CSHOT_EFFECT_PACK::SetUserID2(s32 id) {
     if (current_effect != -1) {
