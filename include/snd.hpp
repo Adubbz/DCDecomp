@@ -522,12 +522,11 @@ void SndBgmLoad(int set_no);
 void SndBgmPlay(int track_no);
 
 /**
- * Gives back the sound set that is loaded now.
+ * Returns the sound-effect set that is loaded now, or -1 when none is.
  *
  * @mangled SndGetNowSetNo__Fv
  * @address 0x15A440
  * @size 0xC
- * @unknownret
  */
 int SndGetNowSetNo(void);
 

@@ -72,6 +72,9 @@ extern int basic_se_table_no;
 /** The chapter sound-effect set that is loaded, or -1 for none. */
 extern int se_table_no;
 
+/** The sound-effect set that is loaded, or -1 for none. */
+extern int now_sound_set;
+
 /** The voice set that is loaded, or -1 for none. */
 extern int now_voice_set;
 
@@ -270,7 +273,11 @@ static int GetPortNo(int se_no) {
 }
 INCLUDE_ASM("asm/nonmatchings/snd", GetSoundFile__FiPcPc);
 INCLUDE_ASM("asm/nonmatchings/snd", SetSoundFile__FiPUiPc);
-INCLUDE_ASM("asm/nonmatchings/snd", SndGetNowSetNo__Fv);
+
+int SndGetNowSetNo() {
+    return now_sound_set;
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndStopAllSe__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSoundLoad__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSoundLoadBG__FiPUiPi);
