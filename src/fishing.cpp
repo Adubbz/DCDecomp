@@ -1,4 +1,10 @@
-#include "common.h"
+#include "fishing.hpp"
+
+/** The water surface height used by the fishing simulation. */
+extern float WaterLevel;
+
+/** The terrain height used by the fishing simulation. */
+extern float GroundLevel;
 
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingLoad__FP14CDataAlloc2_1_i);
 INCLUDE_RODATA("asm/nonmatchings/fishing", @353__4);
@@ -12,7 +18,12 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishingDeleteEsa__Fv);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingGetEsaItemNo__Fv);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingExit__Fv);
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingSetWaterLevel__Fff);
+
+void FishingSetWaterLevel(float water_level, float ground_level) {
+    WaterLevel = water_level;
+    GroundLevel = ground_level;
+    FishingSetGroundLevel(ground_level, ground_level);
+}
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingSetGroundLevel__Fff);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingGetWaterLevel__Fv);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingSetCPoly__FP6CCPolyi);

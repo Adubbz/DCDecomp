@@ -17,8 +17,23 @@ void FishingLoadFish(int set_no, CDataAlloc2<1> *arena, int slot);
 /** Sets the rectangular bounds used by the fishing simulation. */
 void FishingSetRect(CBoxVu0 bounds);
 
-/** Sets the near and far water heights used by the fishing simulation. */
+/**
+ * Sets the water surface and terrain heights used by the fishing simulation.
+ *
+ * @mangled FishingSetWaterLevel__Fff
+ * @address 0x1A9190
+ * @size 0x2C
+ */
 void FishingSetWaterLevel(float near_height, float far_height);
+
+/**
+ * Sets both ground-height samples used by the fishing simulation.
+ *
+ * @mangled FishingSetGroundLevel__Fff
+ * @address 0x1A91C0
+ * @size 0x10
+ */
+void FishingSetGroundLevel(float near_height, float far_height);
 
 /** Supplies the ground collision polygons used by the fishing simulation. */
 void FishingSetCPoly(CCPoly *polygons, int count);
