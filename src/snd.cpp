@@ -467,7 +467,16 @@ int SndAmbientInit() {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientPlay__Fi);
+void SndAmbientPlay(int ambient_no) {
+    if (now_amb_no != ambient_no || now_amb_play != 1) {
+        SndAmbientStop();
+        CSnd.SQ_Play(1, ambient_no);
+        now_amb_no = ambient_no;
+        now_amb_vol = SndGetAmbientDefaultVol();
+        now_amb_play = 1;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientStop__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientSetVol__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientSetVolf__Ff);

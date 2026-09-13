@@ -113,7 +113,13 @@ void SndBgmFadeOutStop(void);
  */
 void SndAmbientStop(void);
 
-/** Starts the requested ambient loop. */
+/**
+ * Starts an ambient loop at its default volume, unless that loop already plays.
+ *
+ * @mangled SndAmbientPlay__Fi
+ * @address 0x15B110
+ * @size 0x74
+ */
 void SndAmbientPlay(int ambient_no);
 
 /** Sets the ambient loop's normalized volume. */
