@@ -27,3 +27,17 @@ public:
 } __attribute__((aligned(16)));
 
 STATIC_ASSERT(sizeof(CVector3_f_) == 0x10);
+
+/**
+ * Names an integer grid coordinate in a quadword-sized vector.
+ */
+class CVector3_i_ {
+public:
+    int x; /**< Gives the grid coordinate along the first axis. */
+    int y; /**< Gives the grid elevation. */
+    int z; /**< Gives the grid coordinate along the third axis. */
+    int unk_0c;
+} __attribute__((aligned(16)));
+
+STATIC_ASSERT(sizeof(CVector3_i_) == 0x10);
+STATIC_ASSERT(__alignof__(CVector3_i_) == 0x10);

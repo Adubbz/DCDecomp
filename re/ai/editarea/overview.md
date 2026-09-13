@@ -60,12 +60,13 @@ calls `Initialize` and returns the constructed object.
 
 ## Remaining dependencies and blockers
 
-`CVector3_i_` has no definition in the current shared vector headers. Its use
-in `GetPos`, the coordinate-based search/altitude wrappers, and the polygon
-helpers proves three consecutive 32-bit coordinate fields at offsets `0x00`,
-`0x04`, and `0x08`; stack allocation and quadword copies indicate a `0x10`
-size/alignment, matching `CVector3_f_`. The definition belongs in the shared
-vector header and is intentionally not added from this unit-owned shard.
+`CVector3_i_` is defined in `include/vector3.hpp`: three integer coordinates
+at 0x00/0x04/0x08 and an unresolved fourth word. `GetPos` writes those three
+coordinates; the float-coordinate `GetAlt` wrapper reserves one 0x10-byte
+stack slot at a 16-byte boundary and reads X/Z at +0x20/+0x28. Other polygon
+helpers copy the vector by quadword. Its 0x10 size and alignment are pinned.
+The float-coordinate altitude wrapper returns the corresponding integer-grid
+altitude after converting its input through `GetPos`.
 
 The remaining larger drafts contain control-flow reconstruction artifacts or
 member/field expressions that m2c does not express as the proven grid arrays.

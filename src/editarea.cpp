@@ -117,7 +117,11 @@ float CEditArea::GetAlt(int x, int y) {
     }
     return offset_y + static_cast<float>(grid[x][y].altitude) * unit_alt;
 }
-INCLUDE_ASM("asm/nonmatchings/editarea", GetAlt__9CEditAreaFfff);
+float CEditArea::GetAlt(float x, float y, float z) {
+    CVector3_i_ position;
+    GetPos(&position, x, y, z);
+    return GetAlt(position.x, position.z);
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", GetAlt_i__9CEditAreaFfff);
 
 int CEditArea::GetPartsExtra(int x, int y) {
