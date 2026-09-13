@@ -186,7 +186,9 @@ void EdMoveCharaInit() {
     fishing_mes = 0;
 }
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdEyeCamera__FP7CCameraP10CCharacter);
-INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdCheckViewMode__Fv);
+int EdCheckViewMode() {
+    return viewMode;
+}
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdAGetViewAngleH__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdAGetViewAngleV__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle_loop", EdASetViewAngle__Fff);
