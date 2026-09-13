@@ -58,10 +58,11 @@ void BtSystemScriptAfter(void);
 int BtSystemScriptRun(int, CDataAlloc2<1> *);
 
 /**
+ * Selects the floor used by the next battle-map jump.
+ *
  * @mangled BtSetMapJumpFloor__Fi
  * @address 0x1BB920
  * @size 0x10
- * @unknownret
  */
 void BtSetMapJumpFloor(int);
 
