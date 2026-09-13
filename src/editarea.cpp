@@ -56,7 +56,15 @@ int CEditArea::GetPartsID(int x, int y) {
     }
     return grid[x][y].parts_id;
 }
-INCLUDE_ASM("asm/nonmatchings/editarea", GetCode__9CEditAreaFii);
+int CEditArea::GetCode(int x, int y) {
+    if (x < 0 || x >= width) {
+        return -1;
+    }
+    if (y < 0 || y >= height) {
+        return -1;
+    }
+    return grid[x][y].code;
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", SetAlt__9CEditAreaFiii);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetAlt_i__9CEditAreaFii);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetAlt__9CEditAreaFii);
