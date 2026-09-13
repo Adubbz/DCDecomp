@@ -66,6 +66,15 @@ void FishingLoadEsa(int item_no, CFrameVu1 *frame, int slot);
 int FishingGetBattleFish();
 
 /**
+ * Removes the fish displayed after an angling battle.
+ *
+ * @mangled FishingDeleteAngleFish__Fv
+ * @address 0x1A9920
+ * @size 0x1C
+ */
+void FishingDeleteAngleFish();
+
+/**
  * Leaves the fishing minigame and releases its active state.
  *
  * @mangled FishingExit__Fv

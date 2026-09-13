@@ -1,5 +1,7 @@
 #include "fishing.hpp"
 
+#include "fish.hpp"
+
 /** The water surface height used by the fishing simulation. */
 extern float WaterLevel;
 
@@ -8,6 +10,9 @@ extern float GroundLevel;
 
 /** The fish selected for battle, or a negative value when none is selected. */
 extern int BattleFish;
+
+/** The fish displayed after an angling battle, or null when none is displayed. */
+extern CFish *AngleFish;
 
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingLoad__FP14CDataAlloc2_1_i);
 INCLUDE_RODATA("asm/nonmatchings/fishing", @353__4);
@@ -47,10 +52,16 @@ INCLUDE_RODATA("asm/nonmatchings/fishing", @604);
 int FishingGetBattleFish() {
     return BattleFish;
 }
+
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingAngleFish__Fi);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingGetAngleFishSize__FPiPi);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingInitFishStatus__Fv);
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingDeleteAngleFish__Fv);
+
+void FishingDeleteAngleFish() {
+    if (AngleFish != NULL) {
+        AngleFish->fish_kind = -1;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingStepFish__Fv);
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingDrawFish__Fv);
 INCLUDE_ASM("asm/nonmatchings/fishing", GetHookPos__FPf);
