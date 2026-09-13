@@ -29,6 +29,8 @@ extern s16 MenuCharaOldEffect;
 extern BT_SHOT_EFFECT *WepEffectMenuPt;
 extern u_long128 *WepEffectMenuReadBuf;
 extern s16 CharaNameDrawFlag;
+extern int EdEffectCt;
+extern s16 ButtonAdd;
 extern int EditMenuStatus[7];
 extern CDataAlloc2<1> EdMenuBuffer;
 extern CDataAlloc2<1> MenuExCashBuffer;
@@ -661,7 +663,14 @@ INCLUDE_ASM("asm/nonmatchings/menu_misc", AnalyzeRequestPer__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AnalyzeBarDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", ToAnalyzeEditDraw__Fv);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @894__3);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", ToAnalyzeEdit__Fv);
+
+static void ToAnalyzeEdit() {
+    if (GamePad.AllOn()) {
+        ButtonAdd = 2;
+        EdEffectCt += 4;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AnalyzeEditDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", AnalyzeEdit__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", FromAnalyzeEditDraw__Fv);
