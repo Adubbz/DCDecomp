@@ -22,6 +22,8 @@
 #define SCE_GS_RGBAQ 1
 #define SCE_GS_UV 3
 #define SCE_GS_XYZF2 4
+#define SCE_GS_XYZ2 5
+#define SCE_GS_XYZF3 12
 #define SCE_GS_TEX0_1 6
 #define SCE_GS_CLAMP_1 8
 #define SCE_GS_TEX1_1 20
