@@ -6525,8 +6525,7 @@ int EdSetEventScript(char *common_script, char *map_script, CDataAlloc2<1> *allo
     for (i = 0; i < 1500; i++)
         ext_func__2[i] = NULL;
     for (i = 0;; i++) {
-        int (*function)(RS_STACKDATA *, int) = ext_func_info[i].function;
-        if (function == NULL)
+        if (ext_func_info[i].function == NULL)
             break;
         int j;
         for (j = 0; j < i; j++) {
@@ -6540,10 +6539,10 @@ int EdSetEventScript(char *common_script, char *map_script, CDataAlloc2<1> *allo
         if (operation < 0 || operation >= 1500)
             printf("ext func over!!");
         else
-            ext_func__2[operation] = function;
+            ext_func__2[operation] = ext_func_info[i].function;
     }
     EdEventScript.ext_func(ext_func__2, 1500);
-    run_system_event = 0;
+    simple_event = 0;
     return 1;
 }
 
