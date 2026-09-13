@@ -87,7 +87,12 @@ INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1086__2);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SND_FRM__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_LOOP_SND__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STOP_LOOP_SND__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _DEL_LOOP_SND__FP12RS_STACKDATAi);
+
+int _DEL_LOOP_SND(RS_STACKDATA *, int) {
+    NowMonstorUnit->sound[NowMonstorUnit->GetCurrentMonsterIndex()].sequence_id = -1;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SND_NOW__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STOP_SND_NOW__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_CHR_ID__FP12RS_STACKDATAi);
