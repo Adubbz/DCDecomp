@@ -13,6 +13,15 @@ class CFrame;
  */
 
 /**
+ * Clears the global data arena and prepares its persistent scene banks.
+ *
+ * @mangled InitializeDataBuffer__Fv
+ * @address 0x125990
+ * @size 0xF4
+ */
+void InitializeDataBuffer(void);
+
+/**
  * Gives every data buffer back, so the next area starts from an empty one.
  *
  * @mangled BufferAllClear__Fv

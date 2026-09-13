@@ -2,6 +2,8 @@
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 199
 
+#include "dataset.hpp"
+
 #include <eekernel.h>
 #include <libvu0.h>
 
@@ -26,7 +28,47 @@ void CCollisionMDT::Initialize(void) {
 
 INCLUDE_RODATA("asm/nonmatchings/dataset", @199);
 
-INCLUDE_ASM("asm/nonmatchings/dataset", InitializeDataBuffer__Fv);
+/** Embedded arena that supplies storage to the scene allocators. */
+extern CDataAlloc<1, 1690000> GlobalDataBuffer;
+/** Allocator used for water geometry. */
+extern CDataAlloc2<1> WaterData;
+/** First bank used for active scene data. */
+extern CDataAlloc2<1> ActiveData0;
+/** Second bank used for active scene data. */
+extern CDataAlloc2<1> ActiveData1;
+
+void InitializeDataBuffer(void) {
+    GlobalDataBuffer.used = 0;
+    memset(&GlobalDataBuffer.block[GlobalDataBuffer.used], 0, 1690000 * 16);
+
+    GlobalDataBuffer.Alloc64(10);
+    asm {
+        paddub $4, $2, $0
+        sw $4, WaterData
+    }
+    WaterData.limit = 10;
+    WaterData.used = 0;
+
+    GlobalDataBuffer.Alloc64(25000);
+    asm {
+        paddub $4, $2, $0
+        sw $4, ActiveData0
+    }
+    ActiveData0.limit = 25000;
+    ActiveData0.used = 0;
+
+    GlobalDataBuffer.Alloc64(25000);
+    asm {
+        paddub $4, $2, $0
+        sw $4, ActiveData1
+    }
+    ActiveData1.limit = 25000;
+
+    WaterData.used = 0;
+    ActiveData0.used = 0;
+    ActiveData1.used = 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/dataset", SetDataBuffer__FP14CDataAlloc2_1_i);
 INCLUDE_ASM("asm/nonmatchings/dataset", SetPacketReadBuffer__Fii);
 INCLUDE_ASM("asm/nonmatchings/dataset", BufferAllClear__Fv);
