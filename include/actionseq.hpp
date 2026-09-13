@@ -91,14 +91,16 @@ public:
 
     /**
      * Binds the action pool and clears playback state.
+     *
      * @mangled Initialize__10CActionSeqFP7ACT_SEQi
      * @address 0x154B30
      * @size 0x50
      */
-    void Initialize(ACT_SEQ *, int);
+    void Initialize(ACT_SEQ *records, int count);
 
     /**
      * Creates an empty action sequencer.
+     *
      * @mangled __ct__10CActionSeqFv
      * @address 0x154B80
      * @size 0x40
@@ -107,6 +109,7 @@ public:
 
     /**
      * Clears all queues and playback state.
+     *
      * @mangled ClearSeq__10CActionSeqFv
      * @address 0x154BC0
      * @size 0x60
@@ -115,6 +118,7 @@ public:
 
     /**
      * Finds an unused action record in the pool.
+     *
      * @mangled GetNextSeq__10CActionSeqFv
      * @address 0x154C20
      * @size 0x50
@@ -123,14 +127,16 @@ public:
 
     /**
      * Copies the character transform into the sequencer.
+     *
      * @mangled SyncChara__10CActionSeqFP10CCharacter
      * @address 0x154C70
      * @size 0x90
      */
-    void SyncChara(CCharacter *);
+    void SyncChara(CCharacter *target);
 
     /**
      * Appends an unused record to the movement queue.
+     *
      * @mangled NextMoveSeq__10CActionSeqFv
      * @address 0x154D00
      * @size 0x70
@@ -139,6 +145,7 @@ public:
 
     /**
      * Appends an unused record to the motion queue.
+     *
      * @mangled NextMotionSeq__10CActionSeqFv
      * @address 0x154D70
      * @size 0x70
@@ -147,6 +154,7 @@ public:
 
     /**
      * Appends an unused record to the texture animation queue.
+     *
      * @mangled NextAnimeSeq__10CActionSeqFv
      * @address 0x154DE0
      * @size 0x70
@@ -154,63 +162,71 @@ public:
     ACT_SEQ *NextAnimeSeq(void);
 
     /**
-     * Queues movement to a destination over a frame count or speed.
+     * Queues movement to a destination over the specified number of frames.
+     *
      * @mangled MoveSeq__10CActionSeqFPfi
      * @address 0x154E50
      * @size 0x90
      */
-    void MoveSeq(float *, int);
+    void MoveSeq(float *destination, int frames);
 
     /**
-     * Queues movement to a destination over a frame count or speed.
+     * Queues movement to a destination at the specified speed.
+     *
      * @mangled MoveSeq__10CActionSeqFPff
      * @address 0x154EE0
      * @size 0xB0
      */
-    void MoveSeq(float *, float);
+    void MoveSeq(float *destination, float speed);
 
     /**
-     * Queues movement to a destination over a frame count or speed.
+     * Queues a wait at the last queued destination for the specified number of frames.
+     *
      * @mangled MoveSeq__10CActionSeqFi
      * @address 0x154F90
      * @size 0x30
      */
-    void MoveSeq(int);
+    void MoveSeq(int frames);
 
     /**
      * Queues an immediate position change.
+     *
      * @mangled SetPos__10CActionSeqFPf
      * @address 0x154FC0
      * @size 0x80
      */
-    void SetPos(float *);
+    void SetPos(float *destination);
 
     /**
      * Queues rotation toward a reference position.
+     *
      * @mangled RotRefSeq__10CActionSeqFPff
      * @address 0x155040
      * @size 0x70
      */
-    void RotRefSeq(float *, float);
+    void RotRefSeq(float *reference, float speed);
 
     /**
      * Queues rotation toward a specified angle.
+     *
      * @mangled RotAngleSeq__10CActionSeqFff
      * @address 0x1550B0
      * @size 0x60
      */
-    void RotAngleSeq(float, float);
+    void RotAngleSeq(float angle, float speed);
 
     /**
      * Queues rotation along the movement direction.
+     *
      * @mangled RotMoveSeq__10CActionSeqFf
      * @address 0x155110
      * @size 0x50
      */
-    void RotMoveSeq(float);
+    void RotMoveSeq(float speed);
 
     /**
      * Queues cancellation of automatic rotation.
+     *
      * @mangled ClearRotSeq__10CActionSeqFv
      * @address 0x155160
      * @size 0x40
@@ -219,6 +235,7 @@ public:
 
     /**
      * Queues a wait for automatic rotation to finish.
+     *
      * @mangled WaitRotSeq__10CActionSeqFv
      * @address 0x1551A0
      * @size 0x40
@@ -227,54 +244,61 @@ public:
 
     /**
      * Queues an immediate rotation change.
+     *
      * @mangled SetRot__10CActionSeqFPf
      * @address 0x1551E0
      * @size 0x60
      */
-    void SetRot(float *);
+    void SetRot(float *angles);
 
     /**
      * Queues a delay before automatic rotation.
+     *
      * @mangled SetDelayRot__10CActionSeqFi
      * @address 0x155240
      * @size 0x40
      */
-    void SetDelayRot(int);
+    void SetDelayRot(int delay);
 
     /**
      * Queues a delayed motion trigger.
+     *
      * @mangled MotionTrg__10CActionSeqFi
      * @address 0x155280
      * @size 0x40
      */
-    void MotionTrg(int);
+    void MotionTrg(int delay);
 
     /**
      * Queues a delayed texture animation trigger.
+     *
      * @mangled AnimeTrg__10CActionSeqFi
      * @address 0x1552C0
      * @size 0x40
      */
-    void AnimeTrg(int);
+    void AnimeTrg(int delay);
 
     /**
      * Queues a character motion with playback parameters.
+     *
      * @mangled MotionSeq__10CActionSeqFiifi
      * @address 0x155300
      * @size 0x80
      */
-    void MotionSeq(int, int, float, int);
+    void MotionSeq(int motion, int mode, float speed, int flags);
 
     /**
      * Queues a texture animation change.
+     *
      * @mangled AnimeSeq__10CActionSeqFiiii
      * @address 0x155380
      * @size 0x80
      */
-    void AnimeSeq(int, int, int, int);
+    void AnimeSeq(int animation, int enabled, int frames, int disable_after);
 
     /**
      * Reports whether movement and animation queues have finished.
+     *
      * @mangled CheckEnd__10CActionSeqFv
      * @address 0x155400
      * @size 0x70
@@ -283,6 +307,7 @@ public:
 
     /**
      * Advances queued actions and updates the character transform.
+     *
      * @mangled Play__10CActionSeqFv
      * @address 0x1554A0
      * @size 0xB10

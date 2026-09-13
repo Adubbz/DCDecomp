@@ -20,6 +20,25 @@ rotation vectors at 0x70, 0x90, and 0xA0; an additional rotation queue at
 0x80/0x84. Frame counters and trigger state are cleared by `ClearSeq` in
 retail store order. No external shared layout is changed here.
 
-`SyncChara` and `Play` require careful CCharacter virtual interface analysis:
-the current decompiler mistakes vtable accesses for texture-animation fields.
-They must not be translated using those inferred expressions.
+`SyncChara` calls CCharacter::GetPosition through vtable +0xA0 and
+CObject::GetRotation(float*) through +0x58, as confirmed by the retail
+CCharacter vtable at 0x2A12B0. The existing headers already encode these
+virtuals correctly. Position then rotation local-vector declaration order
+matches their retail stack slots 0x30 and 0x40.
+
+All 25 non-Play functions are now individually PERFECT (objdiff 100 and no
+linked instruction differences), totaling 2,256 ELF symbol bytes (2,416 bytes including slot padding). Pool
+search, initialization, all three queue append operations, and the static
+DeleteSeq helper are included. readelf marks DeleteSeq FUNC LOCAL, size 40;
+its implementation therefore stays file-static. MoveSeq(float*,float) uses
+a double zero in its positive fractional-remainder comparison, preserving
+retail's double conversion/comparison helper calls. CheckEnd's motion mode
+7 and MotionSeq's flag mask 4 remain numeric because their broader enum
+semantics have not been established.
+
+Play remains in assembly. The final wide-filter sweep attempts that one
+remaining function and reports BUILDFAIL. Its 2,820 ELF symbol bytes (2,832 with slot padding) use
+rotation interpolation, motion completion, texture animation, virtual
+transform setters, and a local zero-vector initializer. The m2c draft still
+confuses CCharacter members and cannot be retained as written. No external
+header or data-layout change is requested without further analysis.
