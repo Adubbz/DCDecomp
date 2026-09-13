@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+#include "sce/libmc.h"
 
 class CSaveData;
 
@@ -58,6 +59,12 @@ struct SAVEDATA_INFO {
 };
 
 STATIC_ASSERT(sizeof(SAVEDATA_INFO) == 0x38);
+
+/** Slots the library reads cards from. */
+#define MC_CARD_MAX 2
+
+/** Saves one card holds. */
+#define MC_SAVE_FILE_MAX 12
 
 /**
  * Names the operation dispatched by CMemoryCardAccess::Step.
@@ -372,12 +379,12 @@ public:
     char *unk_D8;
     char *read_buffer; /**< Area behind the save image that a read fills. */
     s32 unk_E0;
-    s32 transferred;                 /**< Bytes that the current read or write has moved. */
-    s32 transfer_size;               /**< Bytes that the current read or write is to move. */
-    u8 icon_sys[0x3C4];              /**< icon.sys image that MakeDir writes into the save directory. */
-    MC_ICON_DATA icon;               /**< Icon files that the save directory is to carry. */
-    MC_CARD_INFO card[2];            /**< What the class found out about the card in each port. */
-    SAVEDATA_INFO file_info[12]; /**< Save files of the card, as the menus show them. */
+    s32 transferred;                           /**< Bytes that the current read or write has moved. */
+    s32 transfer_size;                         /**< Bytes that the current read or write is to move. */
+    sceMcIconSys icon_sys;                     /**< icon.sys image that MakeDir writes into the save directory. */
+    MC_ICON_DATA icon;                         /**< Icon files that the save directory is to carry. */
+    MC_CARD_INFO card[MC_CARD_MAX];            /**< What the class found out about the card in each port. */
+    SAVEDATA_INFO file_info[MC_SAVE_FILE_MAX]; /**< Save files of the card, as the menus show them. */
     u8 unk_7BC[4];
 };
 

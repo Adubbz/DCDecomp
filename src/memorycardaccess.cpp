@@ -2,7 +2,6 @@
 
 #include <cstdio>
 #include <cstring>
-#include <libmc.h>
 
 #include "savedata.hpp"
 
@@ -118,7 +117,18 @@ INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1193__2);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1194__2);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1195__3);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1196);
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", DmySync__17CMemoryCardAccessFv);
+
+void CMemoryCardAccess::DmySync() {
+    int cmd;
+    int result;
+    int running;
+
+    running = 0;
+    while (running == 0) {
+        running = sceMcSync(MC_WAIT, &cmd, &result);
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", McUnFormatForDebug__17CMemoryCardAccessFv);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1230);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @594__2);
