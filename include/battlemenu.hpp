@@ -6,6 +6,7 @@
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 class CCharacter;
+class ClsMes;
 struct RECT;
 struct WEAPON_HAVE;
 
@@ -977,21 +978,37 @@ void DrawStatusNumberNowAndMax(int *, int, int, int, int);
  */
 void DrawWepHole(int, int, WEAPON_HAVE *, int, int);
 
+/**
+ * Displays the selected weapon's option messages in the battle menu.
+ */
 class MenuClsMes {
 public:
+    s8 mode; /**< Selects the weapon option display mode. */
+    char unk_01;
+    s16 alpha; /**< Opacity used for the option icons and message window. */
+    s16 option_count; /**< Number of option messages selected for the weapon. */
+    s16 unk_06;
+    s32 unk_08;
+    s32 unk_0C;
+    s32 option_flags; /**< Combined option bits of the weapon and its attachments. */
+    WEAPON_HAVE *weapon; /**< Weapon whose option messages are displayed. */
+    s32 unk_18;
+    ClsMes *message; /**< Message window that holds the option text. */
     /**
+     * Selects the shared East King message window for weapon option text.
+     *
      * @mangled InitMes__10MenuClsMesFv
      * @address 0x20B580
-     * @size 0x20
-     * @unknownret
+     * @size 0x14
      */
     void InitMes(void);
 
     /**
+     * Resets the weapon option display state and position.
+     *
      * @mangled InitData__10MenuClsMesFv
      * @address 0x20B5A0
-     * @size 0x30
-     * @unknownret
+     * @size 0x28
      */
     void InitData(void);
 
@@ -1004,18 +1021,20 @@ public:
     void SetBuffInfo(short *);
 
     /**
+     * Updates option messages from the weapon and its attachments.
+     *
      * @mangled NowWeaponStatus__10MenuClsMesFP11WEAPON_HAVE
      * @address 0x20B7F0
-     * @size 0x170
-     * @unknownret
+     * @size 0x164
      */
     void NowWeaponStatus(WEAPON_HAVE *);
 
     /**
+     * Updates the active weapon option messages and advances their window.
+     *
      * @mangled Step__10MenuClsMesFv
      * @address 0x20B960
      * @size 0x80
-     * @unknownret
      */
     void Step(void);
 
@@ -1027,3 +1046,5 @@ public:
      */
     void Draw1(int, int, int);
 };
+
+STATIC_ASSERT(sizeof(MenuClsMes) == 0x20);
