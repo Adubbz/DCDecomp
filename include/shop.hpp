@@ -654,10 +654,11 @@ void SetFishMardanGarayanNum(int);
 int GetFishMardanGarayanNum(void);
 
 /**
+ * Clears the fish count used for the Mardan Garayan weapon requirement.
+ *
  * @mangled ClearFishMardanGarayanNum__Fv
  * @address 0x1F1370
  * @size 0x30
- * @unknownret
  */
 void ClearFishMardanGarayanNum(void);
 

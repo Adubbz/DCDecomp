@@ -167,7 +167,10 @@ INCLUDE_RODATA("asm/nonmatchings/shop", @2912);
 int GetFishMardanGarayanNum() {
     return SaveData->GetGameIntFlag(0x14);
 }
-INCLUDE_ASM("asm/nonmatchings/shop", ClearFishMardanGarayanNum__Fv);
+
+void ClearFishMardanGarayanNum() {
+    SaveData->SetGameIntFlag(0x14, 0);
+}
 INCLUDE_ASM("asm/nonmatchings/shop", AlreadyGetMardanWeapon__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", InitFishingExchange__FP1Pii);
 INCLUDE_RODATA("asm/nonmatchings/shop", @2943);
