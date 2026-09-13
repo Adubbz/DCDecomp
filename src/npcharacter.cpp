@@ -3,7 +3,32 @@
 #include "mglib.hpp"
 #include <cmath>
 
-INCLUDE_ASM("asm/nonmatchings/npcharacter", Step__12CNPCharacterFv);
+void CNPCharacter::Step() {
+    if (!enabled || chara.frame == NULL) {
+        return;
+    }
+    if (unk_1474 || step_hidden) {
+        chara.CCharacter::Step();
+    }
+    int fade_step = alpha_step;
+    int override_step = unk_1488;
+    if (!(float(override_step) <= 0.0f)) {
+        fade_step = override_step;
+    }
+    unk_1488 = -1;
+    if (unk_1474) {
+        chara.ambient_offset[3] += float(fade_step);
+    } else {
+        chara.ambient_offset[3] -= float(fade_step);
+    }
+    if (chara.ambient_offset[3] < 0.0f) {
+        chara.ambient_offset[3] = 0;
+    }
+    if (!(chara.ambient_offset[3] <= 128.0f)) {
+        chara.ambient_offset[3] = 128.0f;
+    }
+    PlaySeq();
+}
 
 void CNPCharacter::ShadowStep() {
     if (!enabled || chara.frame == NULL) {
