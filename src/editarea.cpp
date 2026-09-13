@@ -119,7 +119,37 @@ float CEditArea::GetAlt(int x, int y) {
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", GetAlt__9CEditAreaFfff);
 INCLUDE_ASM("asm/nonmatchings/editarea", GetAlt_i__9CEditAreaFfff);
-INCLUDE_ASM("asm/nonmatchings/editarea", GetPartsExtra__9CEditAreaFii);
+
+int CEditArea::GetPartsExtra(int x, int y) {
+    switch (map_no) {
+        case 1:
+            switch (area_id) {
+                case 0:
+                    if (x == 5 && y == -1)
+                        return 2;
+                    if (x == 2 && y == 8)
+                        return 2;
+                    break;
+                case 1:
+                    if (x == 3 && y == 6)
+                        return 2;
+                    if (x == 12 && y == 3)
+                        return 2;
+                    break;
+                case 2:
+                    if (x == 4 && y == -1)
+                        return 2;
+                    if (x == 3 && y == 8)
+                        return 2;
+                    break;
+            }
+    }
+    if (x < 0 || x >= width)
+        return -1;
+    if (y < 0 || y >= height)
+        return -1;
+    return grid[x][y].parts_extra;
+}
 INCLUDE_ASM("asm/nonmatchings/editarea", SetMapParts__9CEditAreaFiP9CMapPartsfffi);
 INCLUDE_ASM("asm/nonmatchings/editarea", DeleteMapParts__9CEditAreaFiP9CMapPartsfff);
 INCLUDE_ASM("asm/nonmatchings/editarea", SetRiverParts__9CEditAreaFii);

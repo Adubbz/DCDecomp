@@ -70,3 +70,13 @@ vector header and is intentionally not added from this unit-owned shard.
 The remaining larger drafts contain control-flow reconstruction artifacts or
 member/field expressions that m2c does not express as the proven grid arrays.
 They remain assembly until a clean C++ body reaches a byte-perfect result.
+
+## Grid connection attributes
+
+`GetPartsExtra` first handles six map 1 endpoints before checking grid bounds.
+Area 0 gives river attribute 2 at (5, -1) and (2, 8); area 1 at (3, 6)
+and (12, 3); area 2 at (4, -1) and (3, 8). These off-grid overrides
+are intentional inputs to river connectivity. All other requests return
+-1 outside the active grid or the cell's stored `parts_extra`. Nested
+map/area switches reproduce the retail branch layout; a map `if` removes
+one of its unconditional branches.
