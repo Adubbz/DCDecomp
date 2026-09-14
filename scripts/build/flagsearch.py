@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Search retail's constant-flag decisions for one translation unit.
+"""Search retail's expression-node decisions for one translation unit.
 
     flagsearch.py <source> [--image title] [--flag 0]
 
@@ -8,23 +8,27 @@ is leaked compiler state: retail's compiler read whatever its arena held, one
 read per float constant, and the only witness is retail's own instruction
 stream (re/ai/compiler/leaked_state.md). This searches it.
 
-The unit is compiled under `#pragma constant_flag <flag>`, which makes the
+The unit is compiled under an ephemeral node-index override, which makes the
 compile deterministic, and then the constants that have to read the other value
 are found by coordinate descent: each is toggled in turn, the whole unit is
 scored against retail with `quicktu.py`, and the toggle that helps most is
 kept. Only the constants of a function that is still wrong are tried, so a unit
 whose functions already match costs one compile.
 
-What it prints is the `#pragma constant_flag_ones` line the source needs.
+For the constant axis it updates `config/expression_node_overrides.json` using
+the exact live MWCC identities. The argument-read axis retains its existing
+pragma output because those reads are not necessarily constant nodes.
 """
 
 import argparse
+import json
 import os
 import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import quicktu  # noqa: E402
+import generate_expression_node_overrides as expression_config  # noqa: E402
 
 sys.stdout.reconfigure(line_buffering=True)
 
@@ -73,10 +77,10 @@ def measure(source, ones, flag, image, ignore=(), shapes=None,
 
 
 def node_report(source, flag=None, axis='constant'):
-    """{index: (function, residue)} for every decision on the chosen axis."""
+    """{index: (function, residue, identity event)} for each decision."""
     if axis == 'constant':
         obj, log, _stem = quicktu.compile_unit(source, [], verify=True, flag=flag)
-        head, at = ['statefix:', 'node'], 5
+        head, at = ['statefix:', 'expression-node'], None
     else:
         # The hook has to be asked for even with nothing to say: standing at
         # the read is what counts and reports them, and `argflag` stays unset so
@@ -92,9 +96,38 @@ def node_report(source, flag=None, axis='constant'):
         if parts[:2] == head and (at is None or len(parts) > at):
             # the argument line carries the node's kind and address too, so the
             # residue is the field just before the arrow
-            where = at if at is not None else parts.index('->') - 1
-            found[int(parts[2])] = (parts[3], int(parts[where], 16))
+            if axis == 'constant':
+                event = json.loads(line.split('statefix: expression-node ', 1)[1])
+                index = len(found) + 1
+                found[index] = (event['function'], event['evaluate_first'], event)
+            else:
+                where = parts.index('->') - 1
+                found[int(parts[2])] = (parts[3], int(parts[where], 16), None)
     return found
+
+
+def write_constant_overrides(nodes, ones, flag):
+    """Persist the searched decisions under exact ExpressionNode identities."""
+    path = expression_config.DEFAULT_OUTPUT
+    try:
+        with open(path, encoding='utf-8') as f:
+            document = json.load(f)
+    except FileNotFoundError:
+        document = {'version': 2, 'translation_units': {}}
+    rows = {expression_config.identity(row): row
+            for row in expression_config.document_rows(document)}
+    for index, (_function, _was, event) in nodes.items():
+        bits = int(event['value_bits'], 16)
+        row = expression_config.make_row(
+            event['translation_unit'], event['function'], event['type'], bits,
+            event['ordinal'], 1 if index in ones else flag)
+        rows[expression_config.identity(row)] = row
+    document = expression_config.make_document(
+        rows.values(), document.get('description'))
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(document, f, indent=2)
+        f.write('\n')
+    return path
 
 
 def near(owners, scores):
@@ -185,15 +218,15 @@ def main():
                         help='when single toggles stall, try them two at a time')
     args = parser.parse_args()
 
-    owners = {i: name for i, (name, _)
-              in node_report(args.source, args.flag, args.axis).items()}
+    nodes = node_report(args.source, args.flag, args.axis)
+    owners = {i: row[0] for i, row in nodes.items()}
     if not owners:
         raise SystemExit('%s: no float constants' % args.source)
     ones = {int(i, 0) for i in args.ones.replace(',', ' ').split()}
     if args.seed:
         # The compiler's own residue is where to start: it is what the build
         # has been getting, so it already has whatever the unit matches under.
-        ones |= {i for i, (_, was)
+        ones |= {i for i, (_name, was, _event)
                  in node_report(args.source, axis=args.axis).items() if was}
     ignore = set(args.ignore.replace(',', ' ').split())
     fixed = {int(i, 0) for i in args.fixed.replace(',', ' ').split()}
@@ -267,11 +300,14 @@ def main():
                         break
 
     kind = 'constant' if args.axis == 'constant' else 'argument'
-    print('#pragma %s_flag %d' % (kind, args.flag))
-    if ones:
-        sys.stdout.write(''.join(
-            line.replace('constant_flag_ones', kind + '_flag_ones')
-            for line in quicktu.ones_pragma(sorted(ones))))
+    if args.axis == 'constant':
+        path = write_constant_overrides(nodes, ones, args.flag)
+        print('updated %s (%d node identities)'
+              % (os.path.relpath(path, quicktu.REPO), len(nodes)))
+    else:
+        print('#pragma argument_flag %d' % args.flag)
+        if ones:
+            sys.stdout.write(''.join(quicktu.index_ones_lines(sorted(ones))))
     print('remaining %d  %s' % (best, ' '.join(
         '%s=%d' % (k, v) for k, v in sorted(scores.items()) if v)))
 

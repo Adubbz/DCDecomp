@@ -1,11 +1,5 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
-#pragma constant_flag 0
-#pragma constant_flag_ones 1, 3, 4, 5, 6, 9, 12, 13, 14, 15
-#pragma constant_flag_ones 16, 17, 18, 19, 20, 21, 28, 32, 33, 34
-#pragma constant_flag_ones 35, 36, 37, 44, 45, 46, 47, 49, 53, 55
-#pragma constant_flag_ones 56, 57, 59, 67, 68, 69, 70, 72, 76, 77
-#pragma constant_flag_ones 78, 83, 84, 85, 86
 #pragma argument_flag 0
 #pragma argument_flag_ones 91, 97, 98, 99, 104, 136, 164, 165, 166, 167
 #pragma argument_flag_ones 174, 175, 176, 177, 252, 253, 254, 257, 258, 259

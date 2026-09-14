@@ -89,7 +89,7 @@ function(add_diff_base_object obj src)
     add_custom_command(
         OUTPUT ${CMAKE_SOURCE_DIR}/${obj}
         # Use the same compiler-state shim as the linked object. Otherwise the
-        # source-only object ignores the unit's state pragmas and objdiff
+        # source-only object ignores the compiler-state model and objdiff
         # reports register/order differences that are absent from the build.
         COMMAND ${CMAKE_COMMAND} -E env "MWCIncludes=${LIB_INCLUDE_DIRS}"
                 "STATEFIX_SOURCE=${src}"
@@ -105,6 +105,7 @@ function(add_diff_base_object obj src)
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/postprocess_object.py
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix.py
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix-wibo.sh
+                ${CMAKE_SOURCE_DIR}/config/expression_node_overrides.json
                 ${CMAKE_SOURCE_DIR}/config/object_fixups.json
                 ${CMAKE_SOURCE_DIR}/config/${image}.symbols.txt
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -176,6 +177,9 @@ function(add_object obj)
             DEPENDS ${CMAKE_SOURCE_DIR}/${src} ${REF_STAMP}
                     ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/literals.py
                     ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/postprocess_object.py
+                    ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix.py
+                    ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix-wibo.sh
+                    ${CMAKE_SOURCE_DIR}/config/expression_node_overrides.json
                     ${CMAKE_SOURCE_DIR}/config/object_fixups.json
                     ${CMAKE_SOURCE_DIR}/config/${image}.symbols.txt
                     ${CMAKE_SOURCE_DIR}/${TOOLS_DIR}/mwccgap/mwccgap/mwccgap.py

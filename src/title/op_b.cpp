@@ -1,8 +1,4 @@
 #pragma helper_mask_gpr 0x30
-#pragma constant_flag 0
-#pragma constant_flag_ones 8, 10, 16, 17, 21, 23, 30, 38, 41, 64
-#pragma constant_flag_ones 65, 66, 69, 71, 73, 77, 81, 82, 84, 85
-#pragma constant_flag_ones 88, 92, 98, 99, 100, 101, 102
 
 #include "common.h"
 

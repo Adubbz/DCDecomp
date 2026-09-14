@@ -1,15 +1,3 @@
-#pragma constant_flag 0
-#pragma constant_flag_ones 11, 14, 15, 17, 22, 25, 26, 30, 34, 35
-#pragma constant_flag_ones 36, 39, 42, 53, 55, 57, 61, 64, 65, 66
-#pragma constant_flag_ones 67, 69, 70, 71, 81, 83, 86, 90, 95, 97
-#pragma constant_flag_ones 99, 102, 103, 114, 115, 116, 117, 121, 123, 131
-#pragma constant_flag_ones 132, 134, 135, 136, 137, 138, 142, 143, 149, 151
-#pragma constant_flag_ones 152, 154, 155, 156, 157, 158, 161, 163, 164, 165
-#pragma constant_flag_ones 174, 179, 180, 181, 186, 191, 192, 193, 194, 196
-#pragma constant_flag_ones 197, 198, 199, 200, 207, 208, 210, 211, 215, 218
-#pragma constant_flag_ones 223, 224, 226, 227, 228, 234, 249, 252, 258, 261
-#pragma constant_flag_ones 268, 269, 272, 276, 278, 280, 283, 286, 293, 297
-#pragma constant_flag_ones 301, 302, 303, 305, 306, 307, 308
 #include "common.h"
 
 #include <libgraph.h>

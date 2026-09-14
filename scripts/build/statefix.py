@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Give MWCC the pragmas it needs to be told what state it is in.
+"""Apply reproducible compiler-state and expression-node overrides to MWCC.
 
-    statefix.py [--verify] -- <compiler arguments>   compile under the pragmas
+    statefix.py [--verify] -- <compiler arguments>   compile under the model
     statefix.py --wibo -- <exe> <arguments>          stand in for wibo
 
 MWCC carries state from one source file of an invocation to the next and never
@@ -9,15 +9,13 @@ resets it, and it reads memory nothing ever wrote (re/ai/compiler/leaked_state.m
 Retail compiled every unit of a program in one invocation; this build compiles
 one unit per invocation, so that state is empty where retail's was not.
 
-Rather than model what retail's invocation had reached, each unit states the
-state it is compiled under, in its own source:
+Expression constants are selected from
+`config/expression_node_overrides.json`. Other compiler state that cannot yet
+be identified structurally remains stated in source:
 
     #pragma helper_mask_gpr 0x30      set the integer helper-argument mask
     #pragma helper_mask_fpr 0x1000    set the float one
     #pragma helper_mask_gpr +0x20     or a bit into it
-    #pragma constant_flag 1           what every later float constant reads
-    #pragma constant_flag_next 1      what the next one reads, once
-    #pragma constant_flag_ones 3,17   which constants of the unit read 1 instead
     #pragma argument_flag 0           what every float argument of a call reads
     #pragma argument_flag_ones 4,9    which of those reads 1 instead
     #pragma argument_flag_free 7,8    which of them to leave to the node's own byte
@@ -25,7 +23,7 @@ state it is compiled under, in its own source:
     #pragma name_counter 910          where the invented-name counter starts
 
 The compiler has no such pragmas. This runs it under gdb, stands at its pragma
-handler, acts on these five spellings and sends them to its own "unknown
+handler, acts on these spellings and sends them to its own "unknown
 pragma" exit, so the compiler never sees them; mwcc ignores an unknown pragma
 silently, so a source carrying them still compiles without this script -- it
 just does not get the state.
@@ -36,7 +34,7 @@ it: `scripts/build/mwccgap.sh` hands mwccgap `--wibo-path` pointing at
 `scripts/build/statefix-wibo.sh`.
 
 Compiling one unit this way and diffing the object against a plain compile is
-how to see what a unit's pragmas are worth.
+how to measure the model's effect.
 """
 
 import os
@@ -44,9 +42,14 @@ import re
 import sys
 import tempfile
 import subprocess
+import json
+import struct
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 COMPILER = os.path.join(REPO, 'tools', 'compilers', 'mw', '2.3.3', 'mwccmips.exe')
+EXPRESSION_NODE_OVERRIDES = os.environ.get(
+    'EXPRESSION_NODE_OVERRIDES',
+    os.path.join(REPO, 'config', 'expression_node_overrides.json'))
 # The build image has wibo on PATH; a host checkout usually has it under
 # ~/.local/bin. WIBO overrides both.
 WIBO = (os.environ.get('WIBO')
@@ -72,11 +75,21 @@ HELPER_MASK = {'gpr': 0x0051CE00, 'fpr': 0x0051CE04}
 
 # The `must be evaluated first` byte of an expression node. The annotation pass
 # 0x004B28C0 writes it for every node kind it handles, but for a float constant
-# it asks whether the constant is exactly representable and, when it is,
+# it tests whether the raw representation has a simple bit pattern and, when
+# that test succeeds,
 # returns at NODE_HOOK without writing -- so the node keeps whatever its arena
 # slot last held. Call lowering reads it to decide which argument to
 # materialise first.
 NODE_HOOK, NODE_FIELD = 0x004B290D, 5
+CURRENT_FILE_NAME_LENGTH = 0x00557B28
+CURRENT_FILE_NAME = 0x00557B29
+CURRENT_FUNCTION = 0x00555EC0
+OBJECT_PLAIN_NAME = 0x08
+OBJECT_LINK_NAME = 0x2C
+HASH_NAME_TEXT = 0x0A
+NODE_TYPE = 0x0A
+NODE_VALUE = 0x14
+TYPE_SIZE = 0x02
 
 # Where call lowering reads that byte, all five of them: one per argument of a
 # call, then the two operands of a binary node, then the two the float path
@@ -113,17 +126,65 @@ CODEGEN = 0x004356B0
 NAME_ARGUMENT, NAME_RECORD = 4, 8
 
 PRAGMAS = ('helper_mask_gpr', 'helper_mask_fpr',
-           'constant_flag', 'constant_flag_next', 'constant_flag_ones',
            'argument_flag', 'argument_flag_ones', 'argument_flag_free',
            'order_flag_zeros', 'name_counter')
 
-# Whether a source asks for the constant-flag pragmas at all. Standing at
-# NODE_HOOK costs a stop per floating-point constant, which is most of what
-# running under gdb costs, and a unit that says nothing about them wants the
-# compiler's own residue left alone.
-WANTS_NODE = re.compile(r'^\s*#\s*pragma\s+constant_flag', re.M)
+# The remaining source-controlled hooks. Expression constants are selected by
+# the external exact-identity config instead of by source pragmas.
 WANTS_ARGUMENT = re.compile(r'^\s*#\s*pragma\s+argument_flag', re.M)
 WANTS_ORDER = re.compile(r'^\s*#\s*pragma\s+order_flag', re.M)
+
+
+def load_expression_node_overrides(path=EXPRESSION_NODE_OVERRIDES):
+    """Load exact floating-constant identities and their replacement bytes."""
+    try:
+        with open(path, encoding='utf-8') as f:
+            document = json.load(f)
+    except FileNotFoundError:
+        return {}
+    except (OSError, ValueError) as error:
+        raise SystemExit('statefix: cannot read %s: %s' % (path, error))
+
+    if (document.get('version') != 2 or
+            not isinstance(document.get('translation_units'), dict)):
+        raise SystemExit('statefix: %s has an unsupported format' % path)
+
+    overrides = {}
+    widths = {'binary32': 8, 'binary64': 16}
+    numbered = []
+    for unit, functions in document['translation_units'].items():
+        if not isinstance(unit, str) or not isinstance(functions, dict):
+            raise SystemExit('statefix: %s has an invalid translation-unit group'
+                             % path)
+        for function, nodes in functions.items():
+            if not isinstance(function, str) or not isinstance(nodes, list):
+                raise SystemExit('statefix: %s: invalid function group %s/%s'
+                                 % (path, unit, function))
+            numbered.extend((unit, function, row) for row in nodes)
+    for number, (unit, function, row) in enumerate(numbered, 1):
+        try:
+            value_type = row['type']
+            bits_text = row['value_bits']
+            bits = int(bits_text, 16)
+            key = (unit, function, value_type, bits, int(row['ordinal']))
+            flag = int(row['evaluate_first'])
+        except (KeyError, TypeError, ValueError) as error:
+            raise SystemExit('statefix: %s: invalid node %d: %s'
+                             % (path, number, error))
+        if value_type not in widths or not isinstance(bits_text, str):
+            raise SystemExit('statefix: %s: invalid type/bits in node %d'
+                             % (path, number))
+        if bits < 0 or bits >= (1 << (widths[value_type] * 4)):
+            raise SystemExit('statefix: %s: value_bits out of range in node %d'
+                             % (path, number))
+        if key[4] < 1 or flag not in (0, 1):
+            raise SystemExit('statefix: %s: invalid ordinal/flag in node %d'
+                             % (path, number))
+        if key in overrides:
+            raise SystemExit('statefix: %s: duplicate node identity at node %d'
+                             % (path, number))
+        overrides[key] = flag
+    return overrides
 
 
 def source_of(arguments):
@@ -139,17 +200,6 @@ def source_of(arguments):
         if argument.endswith(('.c', '.cpp')):
             return argument
     return None
-
-
-def asks_for_nodes(arguments):
-    path = source_of(arguments)
-    if not path or not os.path.exists(path):
-        return False
-    try:
-        with open(path, encoding='utf-8', errors='replace') as f:
-            return bool(WANTS_NODE.search(f.read()))
-    except OSError:
-        return False
 
 
 def asks_for_order(arguments):
@@ -188,6 +238,38 @@ def install(arguments=()):
         blob = bytes(gdb.selected_inferior().read_memory(address, limit))
         return blob.split(b'\0')[0].decode('latin1')
 
+    def current_translation_unit():
+        length = bytes(gdb.selected_inferior().read_memory(
+            CURRENT_FILE_NAME_LENGTH, 1))[0]
+        text = bytes(gdb.selected_inferior().read_memory(
+            CURRENT_FILE_NAME, length)).decode('latin1')
+        return os.path.basename(text.replace('\\', '/'))
+
+    def current_function_name():
+        obj = u32(CURRENT_FUNCTION)
+        if not obj:
+            return '?'
+        name = u32(obj + OBJECT_LINK_NAME)
+        if not name:
+            name = u32(obj + OBJECT_PLAIN_NAME)
+        return cstring(name + HASH_NAME_TEXT) if name else '?'
+
+    def constant_identity(node):
+        """Return (type name, exact normalized bits) from the live node."""
+        type_record = u32(node + NODE_TYPE)
+        size = u32(type_record + TYPE_SIZE)
+        stored = bytes(gdb.selected_inferior().read_memory(node + NODE_VALUE, 8))
+        if size == 4:
+            value = struct.unpack('<d', stored)[0]
+            try:
+                packed = struct.pack('<f', value)
+            except OverflowError:
+                packed = struct.pack('<f', float('-inf') if value < 0 else float('inf'))
+            return 'binary32', int.from_bytes(packed, 'little')
+        if size == 8:
+            return 'binary64', int.from_bytes(stored, 'little')
+        return 'size-%d' % size, int.from_bytes(stored, 'little')
+
     verify = os.environ.get('STATEFIX_VERIFY') == '1'
     # In shim mode gdb's own stream is redirected away so the build log
     # stays the compiler's; anything worth saying goes to the real stderr.
@@ -195,14 +277,21 @@ def install(arguments=()):
     say = (lambda text: sys.stderr.write(text)) if quiet else gdb.write
     counted = {'pragmas': 0, 'nodes': 0, 'arguments': 0, 'order': 0}
     cur = {'name': '?'}
-    # What the source has asked for: a standing constant flag, one that covers
-    # only the next constant, and the constants of the unit -- numbered from 1
-    # in the order the annotation pass reaches them -- that read 1 rather than
-    # the standing value. Retail's residue is not one value per unit but one
-    # per constant, so the standing flag alone cannot say it.
-    said = {'flag': None, 'next': None, 'ones': set(),
-            'argument': None, 'argument_ones': set(), 'argument_free': set(),
+    expression_overrides = load_expression_node_overrides()
+    source_hint = source_of(arguments)
+    source_hint = os.path.basename(source_hint) if source_hint else None
+    override_units = {key[0] for key in expression_overrides}
+    node_occurrences = {}
+    # Argument/order pragmas remain source-controlled. Node-index settings are
+    # ephemeral search instrumentation; persistent node choices use exact keys.
+    said = {'argument': None, 'argument_ones': set(), 'argument_free': set(),
             'order_zeros': set()}
+    node_default_text = os.environ.get('STATEFIX_NODE_DEFAULT')
+    node_default = (int(node_default_text, 0) & 0xff
+                    if node_default_text is not None else None)
+    node_ones = {int(item, 0) for item in
+                 os.environ.get('STATEFIX_NODE_ONES', '').replace(',', ' ').split()}
+    node_audit = os.environ.get('STATEFIX_NODE_AUDIT') == '1'
 
     class Pragma(gdb.Breakpoint):
         def __init__(self):
@@ -222,10 +311,9 @@ def install(arguments=()):
                 rest = ''
             text = rest.split('/*')[0].split('//')[0].strip()
             combine = text.startswith('+')
-            if name in ('constant_flag_ones', 'argument_flag_ones',
-                        'argument_flag_free', 'order_flag_zeros'):
-                where = {'constant_flag_ones': 'ones',
-                         'argument_flag_ones': 'argument_ones',
+            if name in ('argument_flag_ones', 'argument_flag_free',
+                        'order_flag_zeros'):
+                where = {'argument_flag_ones': 'argument_ones',
                          'argument_flag_free': 'argument_free',
                          'order_flag_zeros': 'order_zeros'}[name]
                 # A list, and repeatable: the lexer hands over 96 characters at
@@ -258,12 +346,8 @@ def install(arguments=()):
                         % (u32(NAME_COUNTER), value))
                 gdb.selected_inferior().write_memory(
                     NAME_COUNTER, value.to_bytes(4, 'little'))
-            elif name == 'constant_flag':
-                said['flag'] = value & 0xFF
             elif name == 'argument_flag':
                 said['argument'] = value & 0xFF
-            else:
-                said['next'] = value & 0xFF
             counted['pragmas'] += 1
             if verify:
                 say('statefix: #pragma %s %s\n' % (name, text))
@@ -274,29 +358,73 @@ def install(arguments=()):
 
     Pragma()
 
-    if asks_for_nodes(arguments):
+    if node_audit or node_default is not None or node_ones or source_hint in override_units:
         class Node(gdb.Breakpoint):
             def __init__(self):
                 super().__init__('*' + hex(NODE_HOOK), internal=True)
 
             def stop(self):
                 counted['nodes'] += 1
-                if counted['nodes'] in said['ones']:
+                try:
+                    node = int(gdb.parse_and_eval('$ebp')) & 0xffffffff
+                    memory_unit = current_translation_unit()
+                    memory_function = current_function_name()
+                    function = memory_function
+                    value_type, bits = constant_identity(node)
+                    # mwccgap's second compile uses a temporary filename. The
+                    # live FSSpec remains authoritative for ordinary compiles;
+                    # STATEFIX_SOURCE supplies the original identity only for
+                    # a recognized temporary compilation.
+                    unit = memory_unit
+                    if (source_hint and memory_unit != source_hint and
+                            (memory_unit.startswith('tmp') or
+                             memory_unit.startswith('.tmp'))):
+                        unit = source_hint
+                        if memory_function.startswith('__sinit_'):
+                            function = '__sinit_' + source_hint
+                    base = (unit, function, value_type, bits)
+                    ordinal = node_occurrences.get(base, 0) + 1
+                    node_occurrences[base] = ordinal
+                    identity = base + (ordinal,)
+                except (gdb.MemoryError, struct.error):
+                    node = None
+                    memory_unit = unit = function = '?'
+                    memory_function = '?'
+                    value_type, bits, ordinal = '?', 0, 0
+                    identity = None
+
+                if counted['nodes'] in node_ones:
                     want = 1
-                elif said['next'] is not None:
-                    want, said['next'] = said['next'], None
-                elif said['flag'] is not None:
-                    want = said['flag']
+                elif node_default is not None:
+                    want = node_default
+                elif identity in expression_overrides:
+                    want = expression_overrides[identity]
                 else:
                     want = None           # leave the compiler's own residue
                 try:
-                    node = int(gdb.parse_and_eval('$ebp')) & 0xffffffff
+                    if node is None:
+                        return False
                     if verify:
                         was = bytes(gdb.selected_inferior().read_memory(
                             node + NODE_FIELD, 1))[0]
                         say('statefix: node %4d %-40s constant %02x -> %s\n'
                             % (counted['nodes'], cur['name'], was,
                                '--' if want is None else '%02x' % want))
+                        record = {
+                            'translation_unit': unit,
+                            'memory_translation_unit': memory_unit,
+                            'function': function,
+                            'memory_function': memory_function,
+                            'type': value_type,
+                            'value_bits': ('0x%08x' if value_type == 'binary32'
+                                           else '0x%016x') % bits,
+                            'ordinal': ordinal,
+                            'evaluate_first': was,
+                            'override': want,
+                        }
+                        say('statefix: expression-node %s\n'
+                            % json.dumps(record, sort_keys=True,
+                                         separators=(',', ':')))
                     if want is not None:
                         gdb.selected_inferior().write_memory(
                             node + NODE_FIELD, bytes([want]))
@@ -315,12 +443,12 @@ def install(arguments=()):
             def stop(self):
                 counted['arguments'] += 1
                 if counted['arguments'] in said['argument_ones']:
-                    # naming a read explicitly always wins: a whole range can be
-                    # freed for the constant flag and one read of it still said
+                    # Naming a read explicitly always wins: a whole range can be
+                    # freed for node overrides and one read of it still said
                     want = 1
                 elif counted['arguments'] in said['argument_free']:
                     # left for whatever the node itself carries, which is what
-                    # `constant_flag` writes -- the one way the two axes meet
+                    # An expression-node override is where the two axes meet.
                     want = None
                 elif said['argument'] is not None:
                     want = said['argument']

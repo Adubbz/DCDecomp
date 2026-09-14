@@ -1,13 +1,3 @@
-#pragma constant_flag 0
-#pragma constant_flag_ones 2, 9, 12, 13, 14, 15, 28, 35, 37, 48
-#pragma constant_flag_ones 49, 53, 54, 60, 61, 62, 65, 68, 74, 75
-#pragma constant_flag_ones 77, 78, 82, 84, 87, 91, 92, 101, 102, 103
-#pragma constant_flag_ones 108, 113, 115, 117, 121, 122, 123, 125, 126, 128
-#pragma constant_flag_ones 129, 131, 132, 133, 139, 140, 146, 147, 149, 155
-#pragma constant_flag_ones 166, 170, 171, 172, 173, 183, 187, 188, 194, 215
-#pragma constant_flag_ones 216, 217, 222, 226, 228, 236, 237, 243, 246, 250
-#pragma constant_flag_ones 252, 254, 256, 260, 263, 268, 277, 279, 280, 281
-#pragma constant_flag_ones 282, 276
 
 #include "common.h"
 

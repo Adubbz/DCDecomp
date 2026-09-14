@@ -1,11 +1,3 @@
-#pragma constant_flag 0
-#pragma constant_flag_ones 2, 9, 11, 12, 14, 15, 17, 18, 20, 24
-#pragma constant_flag_ones 27, 28, 32, 33, 34, 35, 36, 39, 48, 63
-#pragma constant_flag_ones 64, 65, 68, 70, 71, 73, 74, 75, 76, 77
-#pragma constant_flag_ones 78, 80, 82, 84, 86, 87, 88, 96, 97, 99
-#pragma constant_flag_ones 100, 102, 104, 108, 109, 110, 120, 121, 122, 123
-#pragma constant_flag_ones 124, 125, 128, 129, 130, 131, 134, 147, 148, 152
-#pragma constant_flag_ones 153, 154, 156, 157, 158, 159
 #pragma argument_flag 0
 #pragma argument_flag_ones 190, 210, 227, 235, 257, 288, 290, 295, 403, 428
 #pragma argument_flag_ones 430, 464, 465, 466, 474, 476, 479, 481, 525, 528

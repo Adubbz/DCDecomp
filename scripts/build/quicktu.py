@@ -13,8 +13,9 @@ function up against retail without linking: immediates are masked, because an
 unlinked object has none, and what is left -- the opcodes and the registers --
 is exactly what the flag decides.
 
-`--ones` is passed to the compiler as `#pragma constant_flag_ones`, written into
-a copy of the source beside the original so its includes still resolve.
+`--ones` is passed to statefix as an ephemeral node-index override. Persistent
+decisions live in `config/expression_node_overrides.json` and are keyed by the
+exact live MWCC identity rather than by a translation-unit-wide index.
 """
 
 import argparse
@@ -114,27 +115,23 @@ def ours(obj, name):
     return rows
 
 
-def ones_pragma(ones):
-    """The `constant_flag_ones` lines a unit needs, ten indices to a line.
+def index_ones_lines(ones, name='argument_flag_ones'):
+    """Format index-list pragmas for the argument-read search tool.
 
     The compiler hands its pragma handler ninety-six characters of the line at
     a time, so a long list has to be said a few at a time; the pragma is
     cumulative, which is what makes that work.
     """
-    lines = ['#pragma constant_flag_ones %s\n'
-             % ','.join(str(i) for i in ones[at:at + 10])
+    lines = ['#pragma %s %s\n' % (name,
+                                  ','.join(str(i) for i in ones[at:at + 10]))
              for at in range(0, len(ones), 10)]
-    return lines or ['#pragma constant_flag_ones\n']
+    return lines or ['#pragma %s\n' % name]
 
 
 def compile_unit(source, ones, verify=False, flag=None,
                  argones=(), argflag=None, arghook=False, argfree=()):
     directory, base = os.path.split(source)
-    # The pragma has to be there even when it says nothing: it is what tells
-    # statefix to stand at the node hook at all, and so what `--nodes` counts.
-    pragma = ''.join(ones_pragma(sorted(ones))) if (ones or verify) else ''
-    if flag is not None:
-        pragma = '#pragma constant_flag %d\n' % flag + pragma
+    pragma = ''
     if argfree:
         free = sorted(argfree)
         pragma += ''.join(
@@ -163,7 +160,15 @@ def compile_unit(source, ones, verify=False, flag=None,
             command.append('--verify')
         command += ['--', '-o', os.path.relpath(obj, REPO)] + FLAGS
         command.append(os.path.relpath(temporary, REPO))
-        done = subprocess.run(command, cwd=REPO, capture_output=True, text=True)
+        environment = dict(os.environ, STATEFIX_SOURCE=source)
+        if verify:
+            environment['STATEFIX_NODE_AUDIT'] = '1'
+        if flag is not None:
+            environment['STATEFIX_NODE_DEFAULT'] = str(flag)
+        if ones:
+            environment['STATEFIX_NODE_ONES'] = ','.join(str(i) for i in ones)
+        done = subprocess.run(command, cwd=REPO, env=environment,
+                              capture_output=True, text=True)
         # MWCC names the unit's static initialiser after the file it compiled,
         # so the copy's name has to be put back for the object to be read under
         # the names the image uses.
@@ -228,11 +233,13 @@ def main():
     parser.add_argument('--image', default='title')
     parser.add_argument('--ones', default='')
     parser.add_argument('--nodes', action='store_true')
+    parser.add_argument('--expression-nodes', action='store_true',
+                        help='list exact live identities used by the override config')
     parser.add_argument('--all', action='store_true')
     parser.add_argument('--argones', default='')
     parser.add_argument('--argflag', type=int, default=None)
     parser.add_argument('--argfree', default='',
-                        help='reads to leave to the node byte, so constant_flag reaches them')
+                        help='reads to leave to the expression node override')
     parser.add_argument('--argnodes', action='store_true')
     parser.add_argument('--diff', action='store_true',
                         help="retail's instructions beside ours, before linking")
@@ -242,14 +249,18 @@ def main():
 
     ones = [int(i, 0) for i in args.ones.replace(',', ' ').split()]
     obj, log, stem = compile_unit(
-        args.source, ones, verify=args.nodes or args.argnodes, flag=args.flag,
+        args.source, ones,
+        verify=args.nodes or args.expression_nodes or args.argnodes,
+        flag=args.flag,
         argones=[int(i, 0) for i in args.argones.replace(',', ' ').split()],
         argfree=[int(i, 0) for i in args.argfree.replace(',', ' ').split()],
         argflag=args.argflag if args.argflag is not None
         else (0 if args.argnodes else None))
     try:
-        if args.nodes or args.argnodes:
-            want = 'statefix: argument' if args.argnodes else 'statefix: node'
+        if args.nodes or args.expression_nodes or args.argnodes:
+            want = ('statefix: argument' if args.argnodes else
+                    'statefix: expression-node' if args.expression_nodes else
+                    'statefix: node')
             for line in log.splitlines():
                 if want in line:
                     print(line.split('statefix: ', 1)[1])

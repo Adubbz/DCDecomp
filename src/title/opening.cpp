@@ -1,9 +1,3 @@
-#pragma constant_flag 0
-#pragma constant_flag_ones 1, 4, 6, 8, 9, 10, 17, 19, 21, 22
-#pragma constant_flag_ones 24, 25, 27, 33, 35, 36, 41, 42, 43, 45
-#pragma constant_flag_ones 46, 47, 48, 50, 54, 64, 67, 68, 71, 73
-#pragma constant_flag_ones 76, 81, 86, 89, 95, 99, 100, 102, 106, 107
-#pragma constant_flag_ones 108, 109, 110, 112, 113
 #pragma argument_flag 0
 #pragma argument_flag_ones 47, 54, 61, 64, 66, 159, 160, 162, 168, 334
 #pragma argument_flag_ones 339, 344, 349, 354, 359, 364, 428, 430, 1138, 1139

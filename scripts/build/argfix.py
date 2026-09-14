@@ -4,9 +4,9 @@
     argfix.py <source> <function> [--image title] [--radius 3] [--size 4]
 
 Which of a call's float arguments is materialised first is a byte the compiler
-reads and never wrote (re/ai/compiler/leaked_state.md). `constant_flag` sets it
-per float constant, which cannot separate arguments that are the *same*
-constant; this sets it per *read* instead, which can.
+reads and never wrote (re/ai/compiler/leaked_state.md). The expression-node
+override sets it per float constant, which cannot separate repeated reads of
+the same node; this sets it per *read* instead, which can.
 
 Three steps, all measured rather than guessed:
 

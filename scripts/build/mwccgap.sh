@@ -31,9 +31,10 @@
 # wibo directly. MWCC carries state between the source files of one invocation
 # and resets none of it, and it reads memory nothing ever wrote; retail compiled
 # a whole program at once and this build compiles one unit at a time, so that
-# state is empty here where retail's was not. Each unit states what it is
-# compiled under with `#pragma helper_mask_gpr` and its neighbours, and the shim
-# is what makes the compiler act on them; see re/ai/compiler/leaked_state.md.
+# state is empty here where retail's was not. Expression constants are keyed by
+# their live MWCC identity in `config/expression_node_overrides.json`; the few
+# remaining non-expression globals use source pragmas. The shim applies both;
+# see re/ai/compiler/leaked_state.md.
 set -e
 
 obj=$1

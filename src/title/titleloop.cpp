@@ -1,5 +1,3 @@
-#pragma constant_flag 0
-#pragma constant_flag_ones 16, 18
 #pragma argument_flag 0
 #pragma argument_flag_ones 14, 16, 20, 22, 31, 33, 45, 47, 109, 418
 #pragma argument_flag_ones 430, 452, 453, 463, 464, 474, 475, 485, 486, 533
