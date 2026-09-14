@@ -404,7 +404,6 @@ void CommandIMG(void **arguments) {
 /**
  * Selects a sky scene layer from a one-based script slot.
  */
-FUZZY_MATCH("asm/matchings/editloop", CommandSKY__FPPv);
 void CommandSKY(void **arguments) {
     int index = **(int **) arguments;
     index--;
@@ -421,7 +420,6 @@ void CommandSKY(void **arguments) {
 /**
  * Selects a sun scene layer from a one-based script slot.
  */
-FUZZY_MATCH("asm/matchings/editloop", CommandSUN__FPPv);
 void CommandSUN(void **arguments) {
     int index = *(int *) arguments[0] - 1;
     if (index < 0 || index > 3) {
@@ -1826,7 +1824,6 @@ INCLUDE_ASM("asm/nonmatchings/editloop", DrawDay__Fv);
 /**
  * Draws the editor's clock, day display, event cursors, and pause overlay.
  */
-FUZZY_MATCH("asm/matchings/editloop", DrawSysGra__Fv);
 void DrawSysGra() {
     if (EdDebugParamDrawOff == 0) {
         TexManager.ReloadTexture(Vif1Packet, 20);
