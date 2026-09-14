@@ -461,7 +461,8 @@ SECTIONS
         edit.cpp.o (.data)
         main.data.part4c.s.o (.data)
         editloop.cpp.o (.editloopdata) // 0x00269320
-        main.data.part4h.s.o (.data)    // 0x00269350
+        editloop.cpp.o (.editinitdata) // 0x00269350
+        main.data.part4h.s.o (.data)    // 0x00269400
         editloop3.cpp.o (.eventoffset) // 0x00269930
         editloop3.cpp.o (.eddata1)     // 0x00269940
         editloop3.cpp.o (.eddata2)     // 0x00269970
@@ -646,6 +647,9 @@ SECTIONS
 		main.sbss.part4b.s.o (.sbss)   // 0x002a25b8
 		edit.cpp.o (.sbss)             // 0x002a2740
 		main.sbss.part4c.s.o (.sbss)   // 0x002a27ac
+		editloop.cpp.o (.editinitflags) // 0x002a294c
+		. = ALIGN(4);
+		main.sbss.part4d.s.o (.sbss)   // 0x002a2958
 		editloop3.cpp.o (.edsbss1)     // 0x002a29dc
 		editloop3.cpp.o (.fadebss)     // 0x002a29f8
 		editloop3.cpp.o (.edsbss2)     // 0x002a2a04
@@ -722,6 +726,9 @@ SECTIONS
 		main.bss.part5e.s.o (.bss)     // 0x01d1b390
 		editloop3.cpp.o (.edvillagerbss) // 0x01d25b90
 		main.bss.part5f.s.o (.bss)     // 0x01d32f70
+		editloop.cpp.o (.editnamemes)  // 0x01d3a090
+		. = ALIGN(0x10);
+		main.bss.part5i.s.o (.bss)     // 0x01d3b850
 		editloop3.cpp.o (.edbss1)      // 0x01d3b950
 		editloop3.cpp.o (.fadecolbss)  // 0x01d3d1c0
 		main.bss.part5b.s.o (.bss)     // 0x01d3d1d0

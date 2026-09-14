@@ -1777,32 +1777,6 @@ void EdInitMesParam() {
     EditNameMes.stay_frame = 0;
     EditNameMes.style = 3;
 }
-INCLUDE_RODATA("asm/nonmatchings/editloop", @714);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @715);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @716);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @717);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @718);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @719);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @720);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @721);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @722);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @723__2);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @724);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @725__3);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @726__3);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @727__2);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @730__2);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @731__2);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @732__2);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @733__2);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @734__3);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @735__2);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @736__2);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @827);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @828);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @1609);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @1610);
-#ifdef NON_MATCHING
 /**
  * Builds every buffer, camera, message window and map the editor loop runs on.
  */
@@ -2165,10 +2139,11 @@ int EditInit(void *) {
     ItemVolumeStep.CheckItemVolume();
     return 0;
 }
+INCLUDE_RODATA("asm/nonmatchings/editloop", @827);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @828);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @1609);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @1610);
 
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop", EditInit__FPv);
-#endif
 
 /**
  * Returns the sum of the editor category indices from zero through nine.

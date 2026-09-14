@@ -207,7 +207,10 @@
   },
   "src/edit.cpp": {
     "export_constants_shared": [
-      ["", "@272__2"]
+      [
+        "",
+        "@272__2"
+      ]
     ],
     "rodata_exports": [
       "@257__3",
@@ -345,8 +348,14 @@
     "sections": {}
   },
   "src/editloop.cpp": {
+    "extern_functions": [
+      "__ct__10CCharacterFv"
+    ],
     "import_constants_shared": [
-      ["", "@272__2"]
+      [
+        "",
+        "@272__2"
+      ]
     ],
     "symbols": {
       "CommandIMG__FPPv": "CommandIMG__FPPv__2",
@@ -394,6 +403,20 @@
     "sections": {
       ".editloopdata": [
         "rev$874"
+      ],
+      ".editinitdata": [
+        "@1029",
+        "@1049",
+        "@1050",
+        "@1059"
+      ],
+      ".editinitflags": [
+        "init$654",
+        "debug_flag_set$664",
+        "init$665"
+      ],
+      ".editnamemes": [
+        "name_mes$653"
       ]
     }
   },
@@ -576,12 +599,52 @@
       ]
     },
     "rekey_sections": [
-      [".eddata1", [16, 20]],
-      [".eddata2", [40, 40, 16, 16]],
-      [".eddata3", [64]],
-      [".eddata4", [128]],
-      [".eddata5", [16]],
-      [".eddata6", [16, 48, 16, 16, 16, 16, 16]]
+      [
+        ".eddata1",
+        [
+          16,
+          20
+        ]
+      ],
+      [
+        ".eddata2",
+        [
+          40,
+          40,
+          16,
+          16
+        ]
+      ],
+      [
+        ".eddata3",
+        [
+          64
+        ]
+      ],
+      [
+        ".eddata4",
+        [
+          128
+        ]
+      ],
+      [
+        ".eddata5",
+        [
+          16
+        ]
+      ],
+      [
+        ".eddata6",
+        [
+          16,
+          48,
+          16,
+          16,
+          16,
+          16,
+          16
+        ]
+      ]
     ],
     "drop_functions": [
       "__sinit_editloop3.cpp",
@@ -730,7 +793,9 @@
   },
   "src/dispctrl.cpp": {
     "sections": {
-      ".vtables": ["__vt__6CBound"]
+      ".vtables": [
+        "__vt__6CBound"
+      ]
     },
     "rodata_exports": [
       "@230"
