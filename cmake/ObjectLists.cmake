@@ -96,7 +96,8 @@ function(add_diff_base_object obj src)
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix-wibo.sh
                 ${MW}mwccmips.exe ${CC_MW_FLAGS} -o ${obj} ${src}
         COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/literals.py --bind ${obj}
-        COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/postprocess_object.py ${obj} ${src}
+        COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/postprocess_object.py
+                --source-only ${obj} ${src}
         COMMAND sh ${SCRIPTS_DIR}/build/fixup_sections.sh ${obj} ${fixup_flags}
         COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/literals.py
                 --resolve-names ${image} ${obj}

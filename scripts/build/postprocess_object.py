@@ -561,7 +561,7 @@ def constant_sections(elf, wanted):
     return found
 
 
-def share_constants(elf, exported, imported, parser):
+def share_constants(elf, exported, imported, parser, source_only=False):
     """Keep one copy of a constant two units use, the way retail's link has it.
 
     MWCC gives every unit its own copy of a string it names, and MWLD merges
@@ -586,7 +586,14 @@ def share_constants(elf, exported, imported, parser):
             found[text] = by_name[name]
     missing = [text for text, _name in entries if text not in found]
     if missing:
-        parser.error("the object holds no %s" % ", ".join(repr(m) for m in missing))
+        # A named entry reaches a constant an INCLUDE_ASM marker supplies, so a
+        # source-only object -- which has no spliced half -- holds neither the
+        # name nor the text, and there is nothing to share.
+        if not source_only:
+            parser.error("the object holds no %s"
+                         % ", ".join(repr(m) for m in missing))
+        exported = [e for e in exported if e[0] in found]
+        imported = [e for e in imported if e[0] in found]
     for text, name in exported:
         symbol = found[text]
         symbol.name = name or shared_constant_name(text)
@@ -631,6 +638,11 @@ def main():
     parser.add_argument("source")
     parser.add_argument("--config", type=Path,
                         default=ROOT / "config" / "object_fixups.json")
+    # objdiff's base object is a plain compile of the source alone, with no
+    # spliced assembly beside it. The fixups that reach a constant or a static
+    # the splice supplies have nothing to act on there, and saying so is not an
+    # error -- the object is only ever read by objdiff, never linked.
+    parser.add_argument("--source-only", action="store_true")
     args = parser.parse_args()
 
     elf = Elf(args.object.read_bytes())
@@ -649,7 +661,8 @@ def main():
     drop_functions(elf, fixups.get("drop_functions", []), parser)
     extern_functions(elf, fixups.get("extern_functions", []), parser)
     share_constants(elf, fixups.get("export_constants_shared", []),
-                    fixups.get("import_constants_shared", []), parser)
+                    fixups.get("import_constants_shared", []), parser,
+                    args.source_only)
     # Every objcopy pass rebuilds the symbol table from `sh_info`, and MWCC
     # puts a global that belongs after it among the locals, so each pass
     # demotes it. fixup_sections.sh is the last one over the object: it reads
@@ -699,7 +712,7 @@ def main():
                      assembly_constants, fixups.get("symbols", {}).values())
     if deferred_sections:
         elf = Elf(args.object.read_bytes())
-        if rename_sections(elf, deferred_sections, parser):
+        if rename_sections(elf, deferred_sections, parser) and not args.source_only:
             parser.error(
                 "a numbered constant in `sections` is not exported; if the "
                 "edit renamed it, empty the entries and re-key them with "
