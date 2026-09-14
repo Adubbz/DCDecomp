@@ -101,7 +101,9 @@ class CTexAnimeData;
  * fields on the way in and out.
  */
 struct ED_EVENT_INFO {
-    u8 unk_000[0x30];
+    u8 unk_000[0x4];
+    s32 unk_004;
+    u8 unk_008[0x28];
     s32 map_jump_bgm_stop; /**< Whether a map jump stops the current background music. */
     s32 fukidashi;
     s32 sound_off_count; /**< Number of sound channels suppressed by the event. */

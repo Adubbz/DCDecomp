@@ -164,7 +164,7 @@ extern CEffect *EffectTable__3;
 extern u8 MesWinTexBuff_11[0x100];
 
 /* Whether an interior is being entered, and the item-volume step to check. */
-extern int EdInInfo;
+extern u_char *EdInInfo;
 extern CMenuItemStep ItemVolumeStep;
 
 /* The interior the player is walking into, and the map file it is built from. */
@@ -1807,7 +1807,7 @@ int EditInit(void *) {
     if (map_no < 9)
         sprintf(EditMapName, "e0%d", map_no + 1);
     int outside = MapNo;
-    if (outside >= 11) {
+    if (outside > 10) {
         int interior = outside - 10;
         if (interior < 10)
             sprintf(EditMapName, "s0%d", interior);
@@ -1835,7 +1835,7 @@ int EditInit(void *) {
     SetDataBuffer(&EdMesBuffer, 13000);
     SetDataBuffer(&DataBuffer__2, 1216000);
     EdNPCBuffer.base = DataBuffer__2.base + DataBuffer__2.used * 16 + 0xCF8500;
-    EdNPCBuffer.limit = 325488;
+    EdNPCBuffer.limit = 326000;
     EdNPCBuffer.used = 0;
     SetPacketReadBuffer(30000, 140000);
     EPartsInfoBuff.used = 0;
@@ -1845,23 +1845,29 @@ int EditInit(void *) {
     MotionParts = new ((u_long128 *) EtcDataBuffer.Alloc(0x470)) CCharacter[4];
     RiverParts = new ((u_long128 *) EtcDataBuffer.Alloc(0x2B0)) CMapParts[16];
     RoadParts = new ((u_long128 *) EtcDataBuffer.Alloc(0x102)) CMapParts[6];
-    float far = 800.0f;
-    MGSetRenderInfo(far, 10.0f, 65535.0f);
+    float near = 10.0f;
+    MGSetRenderInfo(800.0f, near, 65535.0f);
     GetEditDataDir(map_path);
     strcat(map_path, "mapinfo.cfb");
     EditMapInfo = (EDIT_MAP_INFO *) EtcDataBuffer.Alloc(0x2C27);
-    EdEventData = (char *) EtcDataBuffer.Alloc(0x44D);
+    EdInInfo = EtcDataBuffer.Alloc(0x44D);
     if (interior_test == 0) {
         LoadEditMapData(EditMapInfo, map_path, MapNo);
     } else {
         LoadEditMapData(EditMapInfo, "gedit/interior/mapinfo.cfg", MapNo);
         LoadFile("gedit/interior/interior.cfg", read_buffer, &size);
-        u8 *data = (u8 *) read_buffer;
-        int read = 0;
-        int count = size;
-        int column = 0;
-        int row = 0;
         int c;
+        int column;
+        int row;
+        int count;
+        int read;
+        u8 *data;
+
+        data = (u8 *) read_buffer;
+        read = 0;
+        count = size;
+        column = 0;
+        row = 0;
         while (c = data[read++], (count < read) ? 0 : 1) {
             if (c >= 'a' && c < '{') {
                 interior_name[row][column] = c;
@@ -1878,7 +1884,7 @@ int EditInit(void *) {
                 column++;
                 continue;
             }
-            if (column >= 2) {
+            if (column > 1) {
                 interior_name[row][column] = '\0';
                 column = 0;
                 row++;
@@ -1911,7 +1917,7 @@ int EditInit(void *) {
         SndSoundLoad(sound_set);
     }
     EdInitSoundSrc();
-    *(int *) &EdEventInfo.unk_000[4] = 0;
+    EdEventInfo.unk_004 = 0;
     EdEventInfo.main_character = Chara;
     EdEventInfo.main_texture_animation = CharaTexAnimeData;
     EdEventInfo.main_texture_animation_count = 128;
@@ -1931,8 +1937,8 @@ int EditInit(void *) {
     EdEventInfo.messages[1] = &EditEventMes1;
     EdEventInfo.messages[4] = &EditSystemMes;
     EdInitEventParam();
-    EdSystemEventData = 0;
-    EdInInfo = 0;
+    EdEventData = NULL;
+    simple_event = 0;
     LoadScript();
     now_fog = EditMapInfo->fog[0];
     MainCamera.SetFollow(0.0f, 0.0f, 0.0f);
@@ -1940,7 +1946,7 @@ int EditInit(void *) {
     MainCamera.SetSpeed(7.0f);
     EditCamera.SetFollow(0.0f, 0.0f, 0.0f);
     EditCamera.SetSpeed(8.0f);
-    EditCamera.follow[1] = 1.0f;
+    EditCamera.snap_range = 1.0f;
     EditCamera.Step(10);
     MainCamera.SetHeight(-10.0f);
     MainCamera.FollowOff();
@@ -1973,7 +1979,7 @@ int EditInit(void *) {
                     info->elements[j].enabled = 1;
             }
             for (int i = 0; i < 36; i++)
-                ((int *) EditElementInfo)[i * 2 + 1] = i % 15 + 1;
+                *(int *) (EditElementInfo + 4 + i * 8) = i % 15 + 1;
             short element_table[40] = {
                 0, 3, 12, 0, 11, 4, 1, 0, 16, 2, 0, 5, 17, 6, 1, 10, 2, 2, 0, 15,
                 1, 1, 1, 2, 1, 2, 12, 3, 14, 7, 8, 9, 1, 2, 1, 8, 13, 0, 0, -1,
@@ -1984,7 +1990,7 @@ int EditInit(void *) {
             pEditGround->MakePartsBox();
             for (int i = 0; i < 128; i++) {
                 *elem = -1;
-                elem += 2;
+                elem++;
             }
         }
         EditPartsObjectOnOff();
@@ -1995,9 +2001,9 @@ int EditInit(void *) {
     end_counter = 0;
     door_open_cnt = 0;
     EdStepTimeFlag = 1;
-    int free_start = (int) DataBuffer__2.base + DataBuffer__2.used * 16;
+    int free_start = (int) DataBuffer__2.base + (int) (DataBuffer__2.used * 16);
     int free_quads = DataBuffer__2.limit - DataBuffer__2.used;
-    if (free_quads < 325488)
+    if (free_quads < 326000)
         printf("Allocation error!!\n");
     int align = free_start & 0x3F;
     if (free_start < 0 && align != 0)
@@ -2015,7 +2021,7 @@ int EditInit(void *) {
     if ((int) EdNPCReadBuffer < 0 && read_align != 0)
         read_align -= 0x40;
     if (read_align != 0)
-        EdNPCReadBuffer = (u_int *) ((int) EdNPCReadBuffer + ((0x40 - read_align) >> 4) * 16);
+        EdNPCReadBuffer += ((0x40 - read_align) >> 4) * 4;
     EdCreateVillagerTable(EditMapInfo);
     EdInitVillagerControl();
     EdInitVillagerTable(NowTime, EditMapInfo);
