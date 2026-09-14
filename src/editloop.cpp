@@ -133,7 +133,7 @@ extern char EditDataDir[0x100];
 
 /* Whether the editor is running the interior test map, and the map names it reads. */
 extern int interior_test;
-extern char interior_name[64][64];
+extern char **interior_name;
 
 /* The background music the map started, and whether it has been asked for. */
 extern int bgm_play_flag;
@@ -1871,7 +1871,8 @@ int EditInit(void *) {
     MotionParts = new ((u_long128 *) EtcDataBuffer.Alloc(0x470)) CCharacter[4];
     RiverParts = new ((u_long128 *) EtcDataBuffer.Alloc(0x2B0)) CMapParts[16];
     RoadParts = new ((u_long128 *) EtcDataBuffer.Alloc(0x102)) CMapParts[6];
-    MGSetRenderInfo(800.0f, 10.0f, 65535.0f);
+    float far = 800.0f;
+    MGSetRenderInfo(far, 10.0f, 65535.0f);
     GetEditDataDir(map_path);
     strcat(map_path, "mapinfo.cfb");
     EditMapInfo = (EDIT_MAP_INFO *) EtcDataBuffer.Alloc(0x2C27);
@@ -1881,14 +1882,13 @@ int EditInit(void *) {
     } else {
         LoadEditMapData(EditMapInfo, "gedit/interior/mapinfo.cfg", MapNo);
         LoadFile("gedit/interior/interior.cfg", read_buffer, &size);
+        u8 *data = (u8 *) read_buffer;
         int read = 0;
+        int count = size;
         int column = 0;
         int row = 0;
-        while (1) {
-            u8 c = ((u8 *) read_buffer)[read];
-            read++;
-            if (size < read)
-                break;
+        int c;
+        while (c = data[read++], (count < read) ? 0 : 1) {
             if (c >= 'a' && c < '{') {
                 interior_name[row][column] = c;
                 column++;
@@ -2165,6 +2165,7 @@ int EditInit(void *) {
     ItemVolumeStep.CheckItemVolume();
     return 0;
 }
+
 #else
 INCLUDE_ASM("asm/nonmatchings/editloop", EditInit__FPv);
 #endif
