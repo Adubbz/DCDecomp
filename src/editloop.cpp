@@ -2229,7 +2229,6 @@ void EdSetCharaCursor(int on) {
     draw_npc_cursor = on;
 }
 INCLUDE_RODATA("asm/nonmatchings/editloop", @2122);
-#ifdef NON_MATCHING
 /**
  * Draws the villager cursors, the attention marker and the event points.
  */
@@ -2290,9 +2289,6 @@ void EdDrawSysCursor(ED_EVENT_POINT *points, int count) {
     EdEventPointDraw(points, count, NowTime);
     EdDrawOpenItemBox();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop", EdDrawSysCursor__FP14ED_EVENT_POINTi);
-#endif
 
 /**
  * Starts the day-transition overlay at its initial counter value.

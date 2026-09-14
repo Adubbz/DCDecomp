@@ -650,6 +650,9 @@ SECTIONS
 		editloop.cpp.o (.editinitflags) // 0x002a294c
 		. = ALIGN(4);
 		main.sbss.part4d.s.o (.sbss)   // 0x002a2958
+		editloop.cpp.o (.edcursorflags) // 0x002a2994
+		. = ALIGN(4);
+		main.sbss.part4g.s.o (.sbss)   // 0x002a29a4
 		editloop3.cpp.o (.edsbss1)     // 0x002a29dc
 		editloop3.cpp.o (.fadebss)     // 0x002a29f8
 		editloop3.cpp.o (.edsbss2)     // 0x002a2a04

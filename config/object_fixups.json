@@ -417,6 +417,12 @@
       ],
       ".editnamemes": [
         "name_mes$653"
+      ],
+      ".edcursorflags": [
+        "offset$1876",
+        "init$1877",
+        "a$1906",
+        "init$1907"
       ]
     }
   },
