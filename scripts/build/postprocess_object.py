@@ -29,11 +29,19 @@ def local_static_aliases(elf, source):
     # What the object holds decides whether there is anything to pair, and it
     # is already in hand -- reading the unit's reference assembly and retail's
     # symbol table costs more than compiling most objects does.
+    # Only what the object defines is a candidate. A spliced function's own
+    # statics arrive as undefined references already carrying retail's names,
+    # and pairing those again would rename one unit's static to another's.
     compiled_groups = defaultdict(list)
+    spliced = set()
     for symbol in elf.symtab.symbols:
         match = LOCAL_STATIC.match(symbol.name)
-        if match:
+        if not match:
+            continue
+        if symbol.st_shndx:
             compiled_groups[match.group(1)].append(symbol.name)
+        else:
+            spliced.add(symbol.name)
     if not compiled_groups:
         return {}
 
@@ -48,7 +56,10 @@ def local_static_aliases(elf, source):
     text = disassemble.restore_gp_relative_relocations(
         Path(reference), text, disassemble.read_symbol_table(),
         disassemble.image_of_file())
-    retail = set(STATIC_RELOCATION.findall(text))
+    # The names the splice still supplies are spoken for, so what is left is
+    # exactly the set belonging to the functions this object compiles. That is
+    # what lets a unit's statics be paired one function at a time.
+    retail = set(STATIC_RELOCATION.findall(text)) - spliced
     retail_groups = defaultdict(list)
     for name in retail:
         match = LOCAL_STATIC.match(name)

@@ -21,7 +21,11 @@
 #include "character.hpp"
 #include "clsmes.hpp"
 #include "collision.hpp"
+#include "dataset.hpp"
 #include "debugfont.hpp"
+#include "editarea.hpp"
+#include "effectgroup.hpp"
+#include "menuitemstep.hpp"
 #include "dataread.hpp"
 #include "dataalloc.hpp"
 #include "dngstatusdata.hpp"
@@ -88,6 +92,22 @@ extern int motion_parts_list;
 extern int people_list;
 extern int now_parts_no;
 extern int door_open;
+extern int camera_dist_mode;
+extern int EdDrawOffMapShadow;
+void BtSetMapJumpFloor(int floor);
+extern int key_counter;
+extern int clear_screen;
+extern int edit_mode_draw;
+extern int edit_mode_grd_draw;
+extern int depth_of_field;
+extern int edit_mode_lighting;
+extern int draw_sky;
+extern int move_count;
+extern u_int *EdNPCReadBuffer;
+extern CFrameVu1 *TreasureCursor;
+extern CFrameVu1 *TreasureCursorOpen;
+extern int end_counter;
+extern int EdStepTimeFlag;
 extern int talk_villager;
 extern CCameraFollow TalkCamera;
 extern CCamera *NowCamera;
@@ -98,6 +118,8 @@ extern int EdDebugMoveFlag;
 extern CRunEffect RunEffect;
 extern VILLAGER_INFO EdVillagerInfo;
 extern CCameraFollow MainCamera;
+extern CCameraFollow EditCamera;
+extern CCameraFollow EditCamera;
 extern CDataAlloc2<1> CharaBuffer;
 extern int NowEditMap;
 extern int MapNo;
@@ -108,6 +130,42 @@ extern int event_list;
 extern int mapjump_id;
 extern char mapjump_name[0x20];
 extern char EditDataDir[0x100];
+
+/* Whether the editor is running the interior test map, and the map names it reads. */
+extern int interior_test;
+extern char interior_name[64][64];
+
+/* The background music the map started, and whether it has been asked for. */
+extern int bgm_play_flag;
+extern int bgm_play_start;
+
+/* The arenas the map's own data is carved out of. */
+extern CDataAlloc2<1> EtcDataBuffer;
+extern CDataAlloc2<1> EPartsInfoBuff;
+extern CDataAlloc2<1> MotionData;
+extern CDataAlloc2<1> EdMesBuffer;
+extern CDataAlloc2<1> DataBuffer__2;
+
+/* The map the editor builds into, one array per kind of part. */
+extern CEditArea *EditArea;
+extern CCharacter *MotionParts;
+extern CMapParts *RiverParts;
+extern CMapParts *RoadParts;
+
+/* The fog the map starts with, and the debug font the editor draws with. */
+extern EDIT_FOG_INFO now_fog;
+extern CDebugFont DebugFont__3;
+
+/* The effects the editor plays, and the storage they come out of. */
+extern CEffectGroup EdEffectGroup;
+extern CEffect *EffectTable__3;
+
+/* The message-window texture the monster-name window is drawn into. */
+extern u8 MesWinTexBuff_11[0x100];
+
+/* Whether an interior is being entered, and the item-volume step to check. */
+extern int EdInInfo;
+extern CMenuItemStep ItemVolumeStep;
 
 /* The interior the player is walking into, and the map file it is built from. */
 extern char EdInteriorName[0x20];
@@ -134,6 +192,8 @@ extern CNPCharacter EdVillager[10];
 
 /* The cursors drawn over a villager who can be talked to, one who cannot, and
    the character the event wants the player to notice. */
+extern ClsMes CommonMenuMes2;
+extern ClsMes CommonMenuMes3;
 extern CFrame *CharaCursor0;
 extern CFrame *CharaCursor1;
 extern CFrame *CharaCursor2;
@@ -148,7 +208,7 @@ extern CTexAnimeData CharaTexAnimeData[0x80];
 extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 extern u8 EditCharaData[0x960];
 extern u8 EditElementInfo[0x120];
-extern u8 EditMenuStatus[0x1C];
+extern int EditMenuStatus[7];
 extern u8 MesWinTexBuff_01[0x100];
 extern u8 MesWinTexBuff_02[0x100];
 extern u8 SkyFrame[0x10];
@@ -1742,7 +1802,373 @@ INCLUDE_RODATA("asm/nonmatchings/editloop", @827);
 INCLUDE_RODATA("asm/nonmatchings/editloop", @828);
 INCLUDE_RODATA("asm/nonmatchings/editloop", @1609);
 INCLUDE_RODATA("asm/nonmatchings/editloop", @1610);
+#ifdef NON_MATCHING
+/**
+ * Builds every buffer, camera, message window and map the editor loop runs on.
+ */
+int EditInit(void *) {
+    char map_path[0x80];
+    char save_path[0x80];
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR rotation;
+    sceVu0FVECTOR fade;
+    char mes_path[0x40];
+    char sys_path[0x40];
+    char language[0x10];
+    char win_path[0x40];
+    int size;
+    int mes_size;
+
+    oldGameMode = -1;
+    NowTime = 0.0f;
+    SaveData->VisitMap(MapNo, 1);
+    PlayTimeCountFlag(1);
+    MGFlipWaitVSync(0);
+    EdSetKeyMode(0xFFFF);
+    GamePad.MenuModeOff();
+    GamePad.AutoRepeatOff();
+    int map_no = MapNo;
+    NowEditMap = map_no;
+    interior_test = 0;
+    if (map_no < 9)
+        sprintf(EditMapName, "e0%d", map_no + 1);
+    int outside = MapNo;
+    if (outside >= 11) {
+        int interior = outside - 10;
+        if (interior < 10)
+            sprintf(EditMapName, "s0%d", interior);
+        else
+            sprintf(EditMapName, "s%d", interior);
+    }
+    if (NowEditMap == 99) {
+        strcpy(EditDataDir, "\0");
+        interior_test = 1;
+    } else {
+        strcpy(EditDataDir, "gedit/");
+        strcat(EditDataDir, EditMapName);
+        strcat(EditDataDir, "/");
+    }
+    bgm_play_flag = 0;
+    bgm_play_start = 0;
+    InitializeDataBuffer();
+    SetDataBuffer(&VisualData, 100);
+    SetDataBuffer(&EtcDataBuffer, 40000);
+    SetDataBuffer(&EdScriptBuffer, 16000);
+    SetDataBuffer(&EPartsInfoBuff, 8000);
+    SetDataBuffer(&CharaBuffer, 115000);
+    SetDataBuffer(&TextureData, 10);
+    SetDataBuffer(&MotionData, 7900);
+    SetDataBuffer(&EdMesBuffer, 13000);
+    SetDataBuffer(&DataBuffer__2, 1216000);
+    EdNPCBuffer.base = DataBuffer__2.base + DataBuffer__2.used * 16 + 0xCF8500;
+    EdNPCBuffer.limit = 325488;
+    EdNPCBuffer.used = 0;
+    SetPacketReadBuffer(30000, 140000);
+    EPartsInfoBuff.used = 0;
+    EditArea = new ((u_long128 *) EtcDataBuffer.Alloc(0x81C)) CEditArea[4];
+    pEditGround = new ((u_long128 *) EtcDataBuffer.Alloc(0x2097)) CEditGround;
+    ObjParts = new ((u_long128 *) EtcDataBuffer.Alloc(0x3F1)) CMapParts[24];
+    MotionParts = new ((u_long128 *) EtcDataBuffer.Alloc(0x470)) CCharacter[4];
+    RiverParts = new ((u_long128 *) EtcDataBuffer.Alloc(0x2B0)) CMapParts[16];
+    RoadParts = new ((u_long128 *) EtcDataBuffer.Alloc(0x102)) CMapParts[6];
+    MGSetRenderInfo(800.0f, 10.0f, 65535.0f);
+    GetEditDataDir(map_path);
+    strcat(map_path, "mapinfo.cfb");
+    EditMapInfo = (EDIT_MAP_INFO *) EtcDataBuffer.Alloc(0x2C27);
+    EdEventData = (char *) EtcDataBuffer.Alloc(0x44D);
+    if (interior_test == 0) {
+        LoadEditMapData(EditMapInfo, map_path, MapNo);
+    } else {
+        LoadEditMapData(EditMapInfo, "gedit/interior/mapinfo.cfg", MapNo);
+        LoadFile("gedit/interior/interior.cfg", read_buffer, &size);
+        int read = 0;
+        int column = 0;
+        int row = 0;
+        while (1) {
+            u8 c = ((u8 *) read_buffer)[read];
+            read++;
+            if (size < read)
+                break;
+            if (c >= 'a' && c < '{') {
+                interior_name[row][column] = c;
+                column++;
+                continue;
+            }
+            if (c >= '0' && c < ':') {
+                interior_name[row][column] = c;
+                column++;
+                continue;
+            }
+            if (c == '/' || c == '_') {
+                interior_name[row][column] = c;
+                column++;
+                continue;
+            }
+            if (column >= 2) {
+                interior_name[row][column] = '\0';
+                column = 0;
+                row++;
+            }
+            if (row >= 63)
+                break;
+        }
+        interior_name[row][0] = '\0';
+    }
+    SndSetReadBuffer(read_buffer);
+    if (StartEventNo < 0) {
+        int bgm = EditMapInfo->bgm_no;
+        if (bgm >= 0) {
+            if (old_main_mode == 5)
+                SndBgmLoad(0);
+            else
+                SndBgmLoad(bgm);
+            if (EditMapInfo->time_stop == 0)
+                EdSetBgmVol(SaveData->GetNowTime());
+            else
+                SndBgmPlay(0);
+            SndStep();
+        }
+    }
+    int sound_set = EditMapInfo->sound_set_no;
+    if (sound_set < 0) {
+        if (SndGetNowSetNo() < 0)
+            SndSoundLoad(0);
+    } else {
+        SndSoundLoad(sound_set);
+    }
+    EdInitSoundSrc();
+    *(int *) &EdEventInfo.unk_000[4] = 0;
+    EdEventInfo.main_character = Chara;
+    EdEventInfo.main_texture_animation = CharaTexAnimeData;
+    EdEventInfo.main_texture_animation_count = 128;
+    EdEventInfo.npcs = EdVillager;
+    EdEventInfo.npc_count = 10;
+    EdEventInfo.messages[0] = &EditMes1;
+    EdEventInfo.villagers = EditMapInfo->villagers;
+    CEditGround *ground = pEditGround;
+    EdEventInfo.edit_ground = ground;
+    EdEventInfo.fixed_parts_count = 64;
+    EdEventInfo.fixed_parts = (CMapParts *) &ground->unk_15f30[0x10];
+    EdEventInfo.edit_parts_count = 24;
+    EdEventInfo.edit_parts = ObjParts;
+    EdEventInfo.player_texture_block = 8;
+    EdEventInfo.npc_texture_block = 54;
+    EdEventInfo.messages[0] = &EditMes1;
+    EdEventInfo.messages[1] = &EditEventMes1;
+    EdEventInfo.messages[4] = &EditSystemMes;
+    EdInitEventParam();
+    EdSystemEventData = 0;
+    EdInInfo = 0;
+    LoadScript();
+    now_fog = EditMapInfo->fog[0];
+    MainCamera.SetFollow(0.0f, 0.0f, 0.0f);
+    MainCamera.Step(10);
+    MainCamera.SetSpeed(7.0f);
+    EditCamera.SetFollow(0.0f, 0.0f, 0.0f);
+    EditCamera.SetSpeed(8.0f);
+    EditCamera.follow[1] = 1.0f;
+    EditCamera.Step(10);
+    MainCamera.SetHeight(-10.0f);
+    MainCamera.FollowOff();
+    LoadTexture();
+    if (interior_test == 0)
+        LoadGroundData();
+    EdSetDOF((DEPTH_OF_FIELD_INFO *) &EditMapInfo->dof_start_time);
+    camera_dist_mode = 1;
+    NowCamera = &MainCamera;
+    EditMenuStatus[0] = -1;
+    EditMenuStatus[1] = -1;
+    DebugFont__3.texture = "font_buff";
+    DebugFont__3.x = 16;
+    DebugFont__3.y = 16;
+    DebugFont__3.w = 280;
+    DebugFont__3.h = 224;
+    DebugFont__3.alpha = 64;
+    EdDSetFont(&DebugFont__3);
+    if (interior_test == 0) {
+        if (old_main_mode != 7 || main_select_padrup != 0) {
+            EditLoad();
+        } else {
+            GetEditDataDir(save_path);
+            strcat(save_path, "gdata0.edt");
+            int loaded = LoadFile2(save_path, read_buffer, NULL, 0);
+            for (int i = 0; i < 22; i++) {
+                EditPartsInfo.parts[i].unk_08 = 1;
+                EDITPARTS_INFO *info = EditPartsInfo.GetPartsInfo(i);
+                for (int j = 0; j < 6; j++)
+                    info->elements[j].enabled = 1;
+            }
+            for (int i = 0; i < 36; i++)
+                ((int *) EditElementInfo)[i * 2 + 1] = i % 15 + 1;
+            short element_table[40] = {
+                0, 3, 12, 0, 11, 4, 1, 0, 16, 2, 0, 5, 17, 6, 1, 10, 2, 2, 0, 15,
+                1, 1, 1, 2, 1, 2, 12, 3, 14, 7, 8, 9, 1, 2, 1, 8, 13, 0, 0, -1,
+            };
+            short *elem = SaveData->GetElemData(0);
+            if (loaded != 0)
+                pEditGround->Load((char *) read_buffer);
+            pEditGround->MakePartsBox();
+            for (int i = 0; i < 128; i++) {
+                *elem = -1;
+                elem += 2;
+            }
+        }
+        EditPartsObjectOnOff();
+    }
+    pEditGround->RemakeGrid();
+    GameMode = 0;
+    EdMoveCharaInit();
+    end_counter = 0;
+    door_open_cnt = 0;
+    EdStepTimeFlag = 1;
+    int free_start = (int) DataBuffer__2.base + DataBuffer__2.used * 16;
+    int free_quads = DataBuffer__2.limit - DataBuffer__2.used;
+    if (free_quads < 325488)
+        printf("Allocation error!!\n");
+    int align = free_start & 0x3F;
+    if (free_start < 0 && align != 0)
+        align -= 0x40;
+    if (align != 0)
+        free_start += ((0x40 - align) >> 4) * 16;
+    EdNPCBuffer.base = (u_char *) free_start;
+    EdNPCBuffer.limit = free_quads - 4;
+    EdNPCBuffer.used = 0;
+    EdVillagerBuffer.base = (u_char *) free_start;
+    EdVillagerBuffer.limit = free_quads - 4;
+    EdVillagerBuffer.used = 0;
+    EdNPCReadBuffer = (u_int *) (EdNPCBuffer.base + EdNPCBuffer.used * 16 + (free_quads >> 1) * 16);
+    int read_align = (int) EdNPCReadBuffer & 0x3F;
+    if ((int) EdNPCReadBuffer < 0 && read_align != 0)
+        read_align -= 0x40;
+    if (read_align != 0)
+        EdNPCReadBuffer = (u_int *) ((int) EdNPCReadBuffer + ((0x40 - read_align) >> 4) * 16);
+    EdCreateVillagerTable(EditMapInfo);
+    EdInitVillagerControl();
+    EdInitVillagerTable(NowTime, EditMapInfo);
+    EdLoadMainChara("chara/c01d.chr", "info.cfg", &CharaBuffer);
+    sceVu0FVECTOR start_position = {0.0f, 0.0f, 0.0f, 1.0f};
+    sceVu0FVECTOR start_rotation = {0.0f, 0.0f, 0.0f, 0.0f};
+    GameMode = 1;
+    EdGetFadeColor(fade);
+    EdFadeIn(128, (float) (int) fade[0], (float) (int) fade[1], (float) (int) fade[2]);
+    Chara->SetPosition(start_position);
+    Chara->SetRotation(start_rotation);
+    float yaw = start_rotation[1] - 3.141592f;
+    if (yaw < 3.141592f)
+        yaw -= 6.2831855f;
+    MainCamera.SetAngleSoon(yaw);
+    MainCamera.SetFollow(start_position[0], 14.0f + start_position[1], start_position[2]);
+    MainCamera.Step(-1);
+    EffectTable__3 = (CEffect *) EtcDataBuffer.Alloc(0x800);
+    EdEffectGroup.Initialize(EffectTable__3, 128);
+    EdEffectGroup.Clear();
+    EdInitMesParam();
+    EditMes1.tex_block = 26;
+    EditEventMes1.tex_block = 26;
+    EditMes1.unk_17B0 = MesWinTexBuff_01;
+    EditEventMes1.unk_17B0 = MesWinTexBuff_02;
+    short *buffer = (short *) (EdMesBuffer.base + EdMesBuffer.used * 16);
+    GetEditDataDir(sys_path);
+    GetEditDataDir(mes_path);
+    strcat(mes_path, EditMapName);
+    strcat(mes_path, "talk");
+    GetLanguageName(language);
+    strcat(mes_path, language);
+    strcat(mes_path, ".mes");
+    strcat(sys_path, "fconv.bin");
+    if (LoadFile2(mes_path, buffer, &mes_size, 0) == 0 &&
+        LoadFile2(sys_path, buffer, &mes_size, 0) == 0) {
+        LoadFile("gedit/e01/fconv.bin", buffer, &mes_size);
+    }
+    EdMesBuffer.Alloc((mes_size >> 4) + 1);
+    EditMes1.SetBuff(buffer);
+    EdMesBuffer.Align64();
+    short *system = (short *) (EdMesBuffer.base + EdMesBuffer.used * 16);
+    LoadFile("gedit/system/editsys.bin", system, &mes_size);
+    EdMesBuffer.Alloc((mes_size >> 4) + 1);
+    EditSystemMes.unk_17B0 = MesWinTexBuff_01;
+    EditSystemMes.tex_block = 26;
+    EditSystemMes.SetBuff(system);
+    static ClsMes name_mes;
+    name_mes.fukidashi = 0;
+    name_mes.stay_frame = 1;
+    MonsterNameInit(&name_mes, system, MesWinTexBuff_11);
+    EditNameMes.tex_block = 26;
+    EditNameMes.unk_17B0 = MesWinTexBuff_11;
+    EditNameMes.SetBuff(system);
+    EdMesBuffer.Align64();
+    short *window = (short *) (EdMesBuffer.base + EdMesBuffer.used * 16);
+    char window_path[0x40] = "meswin/system14";
+    int language_no = LanguageCode;
+    if (language_no > 0)
+        sprintf(window_path, "meswin/system14_%d", language_no);
+    strcat(window_path, ".mes");
+    if (LoadFile2(window_path, window, &mes_size, 0) == 0)
+        LoadFile("meswin/system14e.bin", window, &mes_size);
+    EdMesBuffer.Alloc((mes_size >> 4) + 1);
+    EditMes1.SetBuff_system(window);
+    EditEventMes1.SetBuff_system(window);
+    EditNameMes.SetBuff_system(window);
+    EditSystemMes.SetBuff_system(window);
+    CommonMenuMes1.SetBuff_system(SystemMes);
+    CommonMenuMes2.SetBuff_system(SystemMes);
+    CommonMenuMes3.SetBuff_system(SystemMes);
+    EdClearSystemMes();
+    EdInitOpenItemBox(TreasureCursorOpen, TreasureCursor);
+    exit_loop = 0;
+    loop_counter = 0;
+    key_counter = 0;
+    sound_off_cnt = 1;
+    clear_screen = 0;
+    goto_dungeon = 0;
+    key_lock = 0;
+    goto_menu = 0;
+    draw_npc_cursor = 0;
+    edit_mode_draw = 0;
+    edit_mode_grd_draw = 0;
+    depth_of_field = 1;
+    edit_mode_lighting = 0;
+    draw_sky = 1;
+    goto_cmp_event = 0;
+    goto_cmp_event_level = -1;
+    change_time_event = 0;
+    start_event_no = -1;
+    start_system_event = -1;
+    move_count = 0;
+    EdBeforeInBgmNo = -1;
+    EdDrawOffFlag = 0;
+    EdDrawOffMap = 0;
+    EdDrawOffMapShadow = 0;
+    EdThunderEffectFlag = 1;
+    EdPauseFlag = 0;
+    debug_menu_mode = 0;
+    EdSaveFrameImageInit();
+    EdInitMenu(-1);
+    BtSetMapJumpFloor(-1);
+    EBInitialize();
+    EdInitThunderEffect();
+    EdInitDrawDay();
+    InitWorkBuffer();
+    int event_no = StartEventNo;
+    if (event_no < 0)
+        RunEvent(128, NULL);
+    else
+        RunEvent(event_no, NULL);
+    StartEventNo = -1;
+    SaveData->GetDngStatus()->unk_04 = 0;
+    static int debug_flag_set = 0;
+    if (debug_flag_set == 0) {
+        EdDebugCameraFlag = 0;
+        EdDebugMoveFlag = 0;
+    }
+    debug_flag_set = 1;
+    ItemVolumeStep.CheckItemVolume();
+    return 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/editloop", EditInit__FPv);
+#endif
+
 /**
  * Returns the sum of the editor category indices from zero through nine.
  */
