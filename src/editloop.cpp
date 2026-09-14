@@ -39,6 +39,7 @@
 #include "mainselect.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
+#include "menu_misc.hpp"
 #include "mglib.hpp"
 #include "npcharacter.hpp"
 #include "objanime.hpp"
@@ -120,6 +121,12 @@ extern CDataAlloc2<1> EdMenuBuffer;
 
 /* Every villager the editor can place, one record each. */
 extern CNPCharacter EdVillager[10];
+
+/* The cursors drawn over a villager who can be talked to, one who cannot, and
+   the character the event wants the player to notice. */
+extern CFrame *CharaCursor0;
+extern CFrame *CharaCursor1;
+extern CFrame *CharaCursor2;
 
 /* Where the player stands and faces while a door plays its motion. */
 extern sceVu0FVECTOR fix_chara_pos;
@@ -1804,7 +1811,71 @@ void EdSetCharaCursor(int on) {
     draw_npc_cursor = on;
 }
 INCLUDE_RODATA("asm/nonmatchings/editloop", @2122);
+#ifdef NON_MATCHING
+/**
+ * Draws the villager cursors, the attention marker and the event points.
+ */
+void EdDrawSysCursor(ED_EVENT_POINT *points, int count) {
+    if (EdDebugParamDrawOff != 0)
+        return;
+
+    static float offset = 2.5f;
+    offset -= 0.1f;
+    if (offset < 0.0f)
+        offset = 2.5f;
+    SetMonsterNameDrawFlag(0);
+    for (int i = 0; i < 10 && draw_npc_cursor != 0; i++) {
+        int shown = EdVillager[i].initialized != 0 && EdVillager[i].draw_enabled != 0;
+        if (shown) {
+            sceVu0FVECTOR position;
+            sceVu0CopyVector(position, EdVillager[i].chara.pos);
+            position[1] += 2.0f + EdVillager[i].chara.body_height;
+            if (EdInteriorFlag == 0 && EdVillager[i].CheckDraw() == 0 &&
+                EdVillager[i].unk_1468 == 0) {
+                if (MapNo != 3 || EdVillager[i].villager_id != 8) {
+                    position[1] += offset;
+                    CharaCursor1->SetPosition(position);
+                    float yaw = 0.0f;
+                    CharaCursor1->SetRotation(0.0f, yaw, 0.0f);
+                    MGDraw(CharaCursor1);
+                }
+            } else if (EdVillager[i].CheckDraw() != 0 && EdVillager[i].unk_1468 != 0 &&
+                       EdCheckViewMode() == 0) {
+                CharaCursor0->SetPosition(position);
+                MGDraw(CharaCursor0);
+                position[3] = 1.0f;
+                sceVu0IVECTOR screen;
+                if (MGRotTransPers2D(screen, position, 0) != 0) {
+                    MonsterNameMake(MapNo * 100 - 2000 + EdVillager[i].villager_id);
+                    MonsterNamePosSet(screen[0], screen[1] - 70);
+                    SetMonsterNameDrawFlag(1);
+                }
+            }
+        }
+    }
+    if (EdEventInfo.draw_exclamation_mark != 0) {
+        if (CharaCursor2 != NULL) {
+            sceVu0FVECTOR position;
+            Chara->GetPosition(position);
+            static float a = 0.0f;
+            position[1] += 3.0f + Chara->body_height + 0.5f * sinf(a);
+            a += 0.1f;
+            if (!(a <= 3.141592f))
+                a -= 6.2831855f;
+            CharaCursor2->SetPosition(position);
+            CFrame *marker = CharaCursor2;
+            marker->attr.unk_58 = 2;
+            MGDraw(CharaCursor2);
+        }
+        EdEventInfo.draw_exclamation_mark = 0;
+    }
+    EdEventPointDraw(points, count, NowTime);
+    EdDrawOpenItemBox();
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/editloop", EdDrawSysCursor__FP14ED_EVENT_POINTi);
+#endif
+
 /**
  * Starts the day-transition overlay at its initial counter value.
  */
