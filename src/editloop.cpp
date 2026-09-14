@@ -146,6 +146,9 @@ extern CDataAlloc2<1> MotionData;
 extern CDataAlloc2<1> EdMesBuffer;
 extern CDataAlloc2<1> DataBuffer__2;
 
+/** Scene archive the map's models are read out of. */
+extern u_int *scn_data;
+
 /* The map the editor builds into, one array per kind of part. */
 extern CEditArea *EditArea;
 extern CCharacter *MotionParts;
@@ -242,6 +245,7 @@ EPARTS_INFO_HEADER *LoadPTS(CMapParts *parts, unsigned int *archive, MAP_PARTS_I
 void LoadPTS(CMapParts *parts, MAP_PARTS_INFO *info, OBJ_ANIME_SEQ *anime,
              EDIT_EFFECT_INFO *effects, EDIT_OBJECT_TIMER *timers, ED_EVENT_POINT *points);
 void GenMdsName(MAP_PARTS_INFO *info, char *name);
+u_int *SearchPTS(u_int *archive, char *name);
 int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int kind);
 void LoadScript(void);
 void LoadObjectParts(void);
@@ -3020,7 +3024,128 @@ void EdLoadMainChara(char *pack, char *name, CDataAlloc2<1> *arena) {
     Chara = &MainChara;
 }
 INCLUDE_ASM("asm/nonmatchings/editloop", LoadGroundData__Fv);
-INCLUDE_ASM("asm/nonmatchings/editloop", LoadObjectParts__Fv);
+/**
+ * Builds every map part the script placed -- the objects, then the roads and
+ * rivers -- and hands a part that names a model already loaded the part that
+ * loaded it, so the two share one set of frames.
+ */
+void LoadObjectParts(void) {
+    char name_buffer[7][0x40];
+    char *names[7];
+    struct LOADED_PARTS {
+        char name[0x20];
+        CMapParts *parts;
+    } loaded[64];
+
+    OBJ_ANIME_SEQ *anime = EditMapInfo->work.obj_anime;
+    EDIT_EFFECT_INFO *effects = EditMapInfo->work.effects.second;
+    EDIT_OBJECT_TIMER *timers = EditMapInfo->work.object_timers.timers;
+    ED_EVENT_POINT *points = EditMapInfo->work.events.points;
+
+    for (int i = 0; i < 7; i++) {
+        names[i] = name_buffer[i];
+        *names[i] = '\0';
+    }
+
+    int i;
+    int river = 0;
+    int road = 0;
+
+    for (i = 0; i < 64; i++)
+        loaded[i].name[0] = '\0';
+
+    int count = 0;
+    for (i = 0; i < 46; i++) {
+        CMapParts *shadow = NULL;
+        int found = 0;
+        CMapParts *parts;
+        MAP_PARTS_INFO *info = &EditMapInfo->parts_work.general.parts[i];
+        EDITPARTS_INFO *plot = NULL;
+        int index = i;
+        int slot;
+
+        if (i >= 24) {
+            info = &EditMapInfo->parts_work.roads.parts[road];
+            if (i >= 30)
+                info = &EditMapInfo->parts_work.rivers.parts[river];
+            switch (info->subtype) {
+            case 2:
+            case 3:
+                parts = &RiverParts[river];
+                slot = river;
+                river++;
+                break;
+            case 1:
+                parts = &RoadParts[road];
+                slot = road;
+                road++;
+                break;
+            default:
+                continue;
+            }
+        } else {
+            parts = &ObjParts[i];
+            plot = EditPartsInfo.GetPartsInfo(i);
+            slot = i;
+        }
+
+        for (int j = 0; j < count; j++) {
+            if (strcmp(info->name[0], loaded[j].name) == 0) {
+                shadow = loaded[j].parts;
+                break;
+            }
+        }
+
+        u_int *archive = SearchPTS(scn_data, info->name[0]);
+        if (archive != NULL)
+            found = 1;
+        parts->Initialize();
+        if (plot == NULL) {
+            for (int j = 0; j < 24; j++) {
+                if (info->subtype == ObjParts[j].unk_118) {
+                    index = j;
+                    break;
+                }
+            }
+        }
+        int kind = info->kind;
+        parts->unk_0E8 = slot;
+        parts->unk_0E4 = kind;
+        parts->parts_no = index;
+        parts->unk_118 = info->subtype;
+        parts->unk_11C = info->unk_264;
+        parts->unk_114 = info->parts_no;
+
+        EPARTS_INFO_HEADER *header;
+        if (found != 0) {
+            header = LoadPTS(parts, archive, info, anime, effects, timers, points, shadow);
+        } else {
+            if (plot != NULL) {
+                header = (EPARTS_INFO_HEADER *) (EPartsInfoBuff.base + EPartsInfoBuff.used * 16);
+                EPartsInfoBuff.Alloc((EdInitToEPInfo(
+                    (INIT_PARTSINFO *) &EditMapInfo->parts_work.parts_defs.defs[i], header) >> 4) + 1);
+            }
+            LoadPTS(parts, info, anime, effects, timers, points);
+        }
+        if (plot != NULL)
+            EditPartsInfo.Initialize(i, header);
+        parts->info = EditPartsInfo.GetPartsInfo(index);
+        if (parts->frame[3] != NULL) {
+            parts->unk_0FC = (int) parts->frame[3];
+        } else if (parts->frame[2] != NULL) {
+            parts->unk_0FC = (int) parts->frame[2];
+        } else if (parts->frame[1] != NULL) {
+            parts->unk_0FC = (int) parts->frame[1];
+        } else if (parts->frame[0] != NULL) {
+            parts->unk_0FC = (int) parts->frame[0];
+        }
+        if (shadow == NULL) {
+            strcpy(loaded[count].name, info->name[0]);
+            loaded[count].parts = parts;
+            count++;
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/editloop", LoadPTS__FP9CMapPartsPUiP14MAP_PARTS_INFOP13OBJ_ANIME_SEQP16EDIT_EFFECT_INFOP17EDIT_OBJECT_TIMERP14ED_EVENT_POINTP9CMapParts);
 /**
  * Builds one map part that has no part-definition file: its models are loaded

@@ -271,7 +271,7 @@ union EDIT_MAP_WORK_INFO {
         EDIT_EFFECT_INFO second[64]; /**< Effects placed on the map objects. */
     } effects;
     struct {
-        u8 unk_0000[0x7ff0];
+        u8 unk_0000[0x8000];
         EDIT_OBJECT_TIMER timers[128]; /**< Object timers parsed for this map. */
     } object_timers;
     struct {

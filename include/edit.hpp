@@ -69,9 +69,8 @@ struct EDIT_MAP_INFO;
  * Stores one script-defined timer that gates a map object.
  */
 struct EDIT_OBJECT_TIMER {
-    u8 unk_00[0x10];
     u8 active; /**< Whether the timer takes part in map processing. */
-    u8 unk_11[0xf];
+    u8 unk_01[0x1f];
 };
 
 STATIC_ASSERT(sizeof(EDIT_OBJECT_TIMER) == 0x20);
