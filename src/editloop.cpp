@@ -2554,11 +2554,6 @@ void EventMode() {
     }
 }
 
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2362);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2363);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2364);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2389);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2390);
 /**
  * Requests a transition from the editor into a dungeon.
  */
@@ -2591,12 +2586,11 @@ void EdDeleteE05RoboParts() {
         parts->part_id = -1;
     }
 }
-#ifdef NON_MATCHING
 /**
  * Loads the interior a door leads to and places the player and camera in it.
  */
 int GotoInterior(char *name, int entrance, int direction, ED_EVENT_PARAM *param, int kind) {
-    char *suffix[5] = {"m", "e", "n", "m", ""};
+    char *suffix[5] = {"m", "e", "n", "m", "\0"};
     char path[0x40];
     ED_EVENT_PARAM entry;
     sceVu0FVECTOR position;
@@ -2620,7 +2614,8 @@ int GotoInterior(char *name, int entrance, int direction, ED_EVENT_PARAM *param,
     if (direction != 0) {
         fix_pos_enble = 1;
         EdInteriorDoorSound = param->point->linked_value;
-        Chara->SetMotion(EdGetDoorMotion(param->point->linked_value, direction > 0), 6);
+        int forward = direction > 0;
+        Chara->SetMotion(EdGetDoorMotion(param->point->linked_value, forward), 6);
         sceVu0CopyVector(fix_chara_pos, param->position);
         sceVu0CopyVector(fix_chara_rot, param->rotation);
         Chara->SetPosition(fix_chara_pos);
@@ -2662,9 +2657,7 @@ int GotoInterior(char *name, int entrance, int direction, ED_EVENT_PARAM *param,
         EdInteriorStartEvent = 128;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop", GotoInterior__FPciiP14ED_EVENT_PARAMi);
-#endif
+INCLUDE_RODATA("asm/nonmatchings/editloop", @2390);
 
 /**
  * Applies right-stick and digital-pad input to an editor follow camera.

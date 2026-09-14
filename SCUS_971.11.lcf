@@ -463,6 +463,9 @@ SECTIONS
         editloop.cpp.o (.editloopdata) // 0x00269320
         editloop.cpp.o (.editinitdata) // 0x00269350
         main.data.part4h.s.o (.data)    // 0x00269400
+        editloop.cpp.o (.edsuffix)      // 0x00269480
+        . = ALIGN(4);
+        main.data.part4j.s.o (.data)    // 0x00269494
         editloop3.cpp.o (.eventoffset) // 0x00269930
         editloop3.cpp.o (.eddata1)     // 0x00269940
         editloop3.cpp.o (.eddata2)     // 0x00269970
