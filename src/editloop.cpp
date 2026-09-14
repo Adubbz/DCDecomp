@@ -108,6 +108,16 @@ extern int event_list;
 extern int mapjump_id;
 extern char mapjump_name[0x20];
 extern char EditDataDir[0x100];
+
+/* The interior the player is walking into, and the map file it is built from. */
+extern char EdInteriorName[0x20];
+extern char interior_map_name[0x40];
+extern int EdInteriorPartsNo;
+extern int EdInteriorJumpID;
+extern int EdInteriorDoorSound;
+extern int EdInteriorStartEvent;
+extern int door_open_cnt;
+extern int fix_pos_enble;
 extern "C" char CurrentDir__3[0x40];
 extern CEditGround *pEditGround;
 extern CCharacter *Chara;
@@ -2177,7 +2187,81 @@ void EdDeleteE05RoboParts() {
         parts->part_id = -1;
     }
 }
+#ifdef NON_MATCHING
+/**
+ * Loads the interior a door leads to and places the player and camera in it.
+ */
+int GotoInterior(char *name, int entrance, int direction, ED_EVENT_PARAM *param, int kind) {
+    char *suffix[5] = {"m", "e", "n", "m", ""};
+    char path[0x40];
+    ED_EVENT_PARAM entry;
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR rotation;
+
+    int period = EdGetTime(NowTime);
+    strcpy(EdInteriorName, name);
+    sprintf(path, "%sin/%s/%s%s", EditDataDir, name, name, suffix[period]);
+    sprintf(interior_map_name, "%s", path);
+    EdInteriorPartsNo = entrance;
+    EdNPCBuffer.used = 0;
+    if (param == NULL)
+        direction = 0;
+    EdInteriorJumpID = 0;
+    if (param != NULL)
+        EdInteriorJumpID = param->point->map_no;
+    door_open = direction;
+    door_open_cnt = 160;
+    GameMode = 11;
+    EdInteriorDoorSound = -1;
+    if (direction != 0) {
+        fix_pos_enble = 1;
+        EdInteriorDoorSound = param->point->linked_value;
+        Chara->SetMotion(EdGetDoorMotion(param->point->linked_value, direction > 0), 6);
+        sceVu0CopyVector(fix_chara_pos, param->position);
+        sceVu0CopyVector(fix_chara_rot, param->rotation);
+        Chara->SetPosition(fix_chara_pos);
+        Chara->SetRotation(fix_chara_rot[0], fix_chara_rot[1], fix_chara_rot[2]);
+        Chara->ClothStep(-1);
+        sceVu0CopyVector(fix_camera_pos, param->camera_pos);
+        MainCamera.SetPos(fix_camera_pos);
+        MainCamera.SetRef(fix_chara_pos[0], 14.0f + fix_chara_pos[1], fix_chara_pos[2]);
+        MainCamera.FollowOff();
+        MainCamera.Step(10);
+        MainCamera.Step(-1);
+    } else {
+        fix_pos_enble = 0;
+        sound_off_cnt = 160;
+        if (EdSearchEvent(&entry, name, 0, NowTime) != 0) {
+            sceVu0CopyVector(fix_chara_pos, entry.position);
+            sceVu0CopyVector(fix_chara_rot, entry.rotation);
+            Chara->SetPosition(fix_chara_pos);
+            Chara->SetRotation(fix_chara_rot[0], fix_chara_rot[1], fix_chara_rot[2]);
+            sceVu0CopyVector(fix_camera_pos, entry.camera_pos);
+            MainCamera.SetPos(fix_camera_pos);
+            MainCamera.SetRef(fix_chara_pos[0], 14.0f + fix_chara_pos[1], fix_chara_pos[2]);
+        } else {
+            Chara->GetPosition(position);
+            Chara->GetRotation(rotation);
+            sceVu0CopyVector(fix_chara_pos, position);
+            sceVu0CopyVector(fix_chara_rot, rotation);
+            MainCamera.GetPos(position);
+            MainCamera.GetRef(rotation);
+            sceVu0CopyVector(fix_camera_pos, position);
+            MainCamera.SetRef(fix_chara_pos[0], 14.0f + fix_chara_pos[1], fix_chara_pos[2]);
+        }
+    }
+    EdFadeOut(100, 0.0f, 0.0f, 0.0f);
+    for (int i = 0; i < 10; i++)
+        EdVillager[i].near_camera = 0;
+    EdInteriorStartEvent = kind;
+    if (kind < 0)
+        EdInteriorStartEvent = 128;
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/editloop", GotoInterior__FPciiP14ED_EVENT_PARAMi);
+#endif
+
 /**
  * Applies right-stick and digital-pad input to an editor follow camera.
  */
