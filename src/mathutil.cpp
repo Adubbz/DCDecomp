@@ -7,6 +7,21 @@
 #include <cmath>
 #include <cstdlib>
 
+/**
+ * First entry of the table of static initializers the runtime calls at startup.
+ */
+extern void (*__static_init[])(void);
+
+/**
+ * End of the table of static initializers the runtime calls at startup.
+ */
+extern void (*__static_init_end[])(void);
+
+/**
+ * Load addresses of the main executable and its overlays.
+ */
+extern u8 _overlay_group_addresses[];
+
 INCLUDE_RODATA("asm/nonmatchings/mathutil", @245);
 INCLUDE_RODATA("asm/nonmatchings/mathutil", @424);
 INCLUDE_RODATA("asm/nonmatchings/mathutil", @425);
@@ -161,6 +176,7 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __dt__Q23std13bad_exceptionFv);
  * @size 0xC
  */
 INCLUDE_ASM("asm/nonmatchings/mathutil", what__Q23std13bad_exceptionCFv);
+
 /**
  * Starts the MetroWerks runtime.
  *
@@ -168,7 +184,10 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", what__Q23std13bad_exceptionCFv);
  * @address 0x122DA0
  * @size 0x40
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", mwInit);
+void mwInit(int argc, const char **argv, const char **envp) {
+    __initialize_cpp_rts(__static_init, __static_init_end, _overlay_group_addresses, _overlay_group_addresses);
+}
+
 /**
  * Starts the overlay loader and records where overlays are read to.
  *
