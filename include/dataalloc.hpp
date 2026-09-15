@@ -2,9 +2,9 @@
 
 #include "common.h"
 
-#include "dataalloc_fwd.hpp"
-
 #include <cstdio>
+
+#include "dataalloc_fwd.hpp"
 
 /**
  * Constructs an object inside allocator-owned quadword storage.
@@ -159,3 +159,6 @@ extern CDataAlloc2<1> VisualData;
  * Supplies the main motion-data allocation arena.
  */
 extern CDataAlloc2<1> MotionData;
+
+/** Buffer the common-menu effect models are read into. */
+extern CDataAlloc2<1> MenuEffectCashBuffer;

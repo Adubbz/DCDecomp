@@ -44,7 +44,6 @@
 #pragma argument_flag_ones 4367, 4393, 4415, 4422, 4429, 4688, 4689, 4690, 4733, 4736
 #pragma argument_flag 0
 
-#include "clothread.hpp"
 #include "dun/gameloop.hpp"
 
 #include <libvu0.h>
@@ -57,15 +56,15 @@
 #include "battlemenu.hpp"
 #include "btactstatus.hpp"
 #include "btmisc.hpp"
-#include "mds.hpp"
 #include "btsysscript.hpp"
 #include "camera.hpp"
 #include "camerafollow.hpp"
 #include "character.hpp"
+#include "clothread.hpp"
 #include "clsmes.hpp"
 #include "collision.hpp"
 #include "collisiondata.hpp"
-#include "dataalloc2_1.hpp"
+#include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dataset.hpp"
 #include "dispctrl.hpp"
@@ -88,6 +87,7 @@
 #include "itemdata.hpp"
 #include "mainitemmodel.hpp"
 #include "mathutil.hpp"
+#include "mds.hpp"
 #include "menu_draw.hpp"
 #include "menu_dungeon.hpp"
 #include "menu_misc.hpp"
@@ -1347,7 +1347,7 @@ void MemoryMapDump(void) {
     printf("CharaModelBuffer\t%d/%d\n", CharaModelBuffer.used, 0x33450);
     printf("MasekiModelBuffer\t%d/%d\n", MasekiModelBuffer.used, 0xFDE8);
     printf("MapVisualData   \t%d/%d\n", MapModelBuffer.used, 0xA7F80);
-    s32 monster_size = MonstorModelBuffer.size;
+    s32 monster_size = MonstorModelBuffer.limit;
 
     printf("MonstorModelBuffer\t%d/%d\n", MonstorModelBuffer.used, monster_size);
     printf("SystemScriptBuffer\t%d/%d\n", BtSystemScriptFileBuffer.used, 0x88B8);
@@ -4300,7 +4300,7 @@ void MoveChara(void) {
             if (BtEventInfo.unk_34 == 0) {
                 printf("********** system mem !!!\n");
                 BtCashBuffer.buffer = BtScriptWorkBuffer.buffer;
-                BtCashBuffer.size = 0x186A0;
+                BtCashBuffer.limit = 0x186A0;
                 BtCashBuffer.used = 0;
             }
             if (BtEventInfo.unk_34 != 0) {
@@ -4318,11 +4318,11 @@ void MoveChara(void) {
                 }
                 MainMonstorUnit.CleanViewMonstor(BtUraDongeon);
                 MonstorModelBuffer.used = 0;
-                s32 cash_size = MonstorModelBuffer.size;
+                s32 cash_size = MonstorModelBuffer.limit;
                 u8 *cash = MonstorModelBuffer.buffer;
 
                 BtCashBuffer.buffer = cash;
-                BtCashBuffer.size = cash_size + 0x88B8;
+                BtCashBuffer.limit = cash_size + 0x88B8;
                 BtCashBuffer.used = 0;
                 read_buffer = old_read_buffer + 0x88B80 / 4;
             }
@@ -6255,7 +6255,7 @@ void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned 
     s64 free_size = 0x33450 - CharaModelBuffer.used - work;
 
     WEffectModelBuffer.buffer = free_start;
-    WEffectModelBuffer.size = free_size;
+    WEffectModelBuffer.limit = free_size;
     WEffectModelBuffer.used = 0;
 
     CUserStatus *equipped = UserStatus;
@@ -6556,7 +6556,7 @@ void LoadChara2(int chara, int keep_place, unsigned int *chara_data, unsigned in
     s64 free_size = 0x33450 - used;
 
     WeaponModelBuffer.buffer = free_start;
-    WeaponModelBuffer.size = free_size;
+    WeaponModelBuffer.limit = free_size;
     WeaponModelBuffer.used = 0;
     LoadWeapon2(crash_data, default_data, main_data, chara, 0);
     MemoryMapDump();

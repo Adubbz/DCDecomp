@@ -10,7 +10,7 @@
 
 #include "battlemenu.hpp"
 #include "clsmes.hpp"
-#include "dataalloc2_1.hpp"
+#include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dngstatusdata.hpp"
 #include "itemdata.hpp"
@@ -618,7 +618,7 @@ void CWeaponLevelUp::Step() {
                 aligned = MenuCalcBufAlignment(aligned);
                 effect.Initialize();
                 MenuEffectCashBuffer.buffer = (u8 *) aligned;
-                MenuEffectCashBuffer.size = 0x9100;
+                MenuEffectCashBuffer.limit = 0x9100;
                 MenuEffectCashBuffer.used = 0;
                 effect.LoadPackData(buffer, pack, &MenuEffectCashBuffer, &MenuEffectCashBuffer);
                 effect_buffer = (u_long128 *) ((MenuEffectCashBuffer.used << 4) +

@@ -10,6 +10,7 @@ class CTexture;
 struct i;
 struct spRGBA;
 struct sceVif1Packet;
+struct RECT;
 
 /**
  * Loads the sound-effect metadata table used by the sound manager.

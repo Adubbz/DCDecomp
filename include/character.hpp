@@ -2,15 +2,13 @@
 
 #include "common.h"
 
-#include "dataalloc_fwd.hpp"
-
 #include <libvu0.h>
 
+#include "dataalloc_fwd.hpp"
 #include "fakepointlight.hpp"
 #include "gameutil.hpp"
 #include "object.hpp"
 #include "textureanime.hpp"
-
 
 /**
  * @file
@@ -121,9 +119,9 @@ public:
      */
     void SetMotionSpeed(float speed) { motion_speed = speed; }
 
-    float body_width;  /**< Width of the character collision body. */
-    float body_height; /**< Height used for targeting and camera framing. */
-    float body_depth;  /**< Depth of the character collision body. */
+    float body_width;     /**< Width of the character collision body. */
+    float body_height;    /**< Height used for targeting and camera framing. */
+    float body_depth;     /**< Depth of the character collision body. */
     CFrame *frame;        /**< Frame that draws the character; zero if it has no model. */
     CFrame *shadow_frame; /**< Frame that draws the shadow; zero if it casts none. */
     u_int *images[4];
@@ -144,15 +142,15 @@ public:
     s32 flags;
     s32 motion_no; /**< Identifier of the motion that the character plays. */
     float unk_C6C;
-    s32 motion_state; /**< 0 while no motion plays, 2 while one plays, 3 as one ends. */
-    CCloth **cloth;   /**< Pieces of cloth that the character wears. */
+    s32 motion_state;     /**< 0 while no motion plays, 2 while one plays, 3 as one ends. */
+    CCloth **cloth;       /**< Pieces of cloth that the character wears. */
     CCloth *cloth_buf[8]; /**< Storage the cloth pointers start in. */
     s32 unk_C98;
     s32 unk_C9C;
     s32 unk_CA0;
     sceVu0FVECTOR unk_CB0[2];
     sceVu0FVECTOR unk_CD0;
-    sceVu0FVECTOR ambient_offset; /**< Ambient RGB added while drawing and an optional alpha override. */
+    sceVu0FVECTOR ambient_offset;                       /**< Ambient RGB added while drawing and an optional alpha override. */
     float fade[4];                                      /**< Alpha the character draws with, two spare values, and the alpha it fades down to. */
     CFakePointLight point_light[CHARA_POINT_LIGHT_MAX]; /**< Lights that the character stands in. */
     CHARA_FOOT_SOUND foot_sound[CHARA_FOOT_SOUND_MAX];  /**< Sounds that the feet play. */

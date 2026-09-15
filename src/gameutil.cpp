@@ -404,6 +404,7 @@ int CheckPosInOutForRect(RECT *rect, int x, int y) {
     }
     return ((top + rect->height) < y) ? 0 : 1;
 }
+
 INCLUDE_ASM("asm/nonmatchings/gameutil", GetDisPosToRect__FP4RECTii);
 INCLUDE_ASM("asm/nonmatchings/gameutil", GetScrPosFromChar__FP10CCharacterPi);
 #ifdef NON_MATCHING
