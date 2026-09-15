@@ -1,5 +1,6 @@
 #include "editground.hpp"
 
+#include "editarea.hpp"
 #include "mapparts.hpp"
 
 INCLUDE_ASM("asm/nonmatchings/editground", SetMapParts__11CEditGroundFifffi);
@@ -19,7 +20,15 @@ INCLUDE_ASM("asm/nonmatchings/editground", SetFocusParts__11CEditGroundFfff);
 INCLUDE_ASM("asm/nonmatchings/editground", EditAreaClip__11CEditGroundFP7CCameraf);
 INCLUDE_ASM("asm/nonmatchings/editground", GetRandomPlanePos__11CEditGroundFPfPA4_fiPf);
 INCLUDE_ASM("asm/nonmatchings/editground", GetNearParts__11CEditGroundFPP9CMapPartsiP7CBoxVu0P7CBoxVu0);
-INCLUDE_ASM("asm/nonmatchings/editground", MakePartsBox__11CEditGroundFv);
+
+void CEditGround::MakePartsBox() {
+    for (int i = 0; i < 4; i++) {
+        if (areas[i] != NULL) {
+            areas[i]->MakePartsBox();
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", GetPartsBox__11CEditGroundFP7CBoxVu0fff);
 INCLUDE_ASM("asm/nonmatchings/editground", GetPeoplePos__11CEditGroundFiPf);
 INCLUDE_ASM("asm/nonmatchings/editground", DrawBaseGround__11CEditGroundFv);
