@@ -96,50 +96,56 @@ void ObjAnimeAllStop(void);
 void ObjAnimeAllStart(void);
 
 /**
+ * Attaches an object animation to one frame.
+ *
  * @mangled InitObjAnime__FP6CFrameP13OBJ_ANIME_SEQ
  * @address 0x165D00
  * @size 0xC4
- * @unknownret
  */
 void InitObjAnime(CFrame *, OBJ_ANIME_SEQ *);
 
 /**
+ * Attaches an object animation to a list of frames.
+ *
  * @mangled InitObjAnime__FPP6CFrameP13OBJ_ANIME_SEQ
  * @address 0x165DD0
  * @size 0xFC
- * @unknownret
  */
 void InitObjAnime(CFrame **, OBJ_ANIME_SEQ *);
 
 /**
+ * Attaches an object animation to a counted list of frames.
+ *
  * @mangled InitObjAnime__FPP6CFrameiP13OBJ_ANIME_SEQ
  * @address 0x165ED0
  * @size 0x138
- * @unknownret
  */
 void InitObjAnime(CFrame **, int, OBJ_ANIME_SEQ *);
 
 /**
+ * Attaches an object animation to the frames one function point names.
+ *
  * @mangled InitObjAnime__FPP6CFrameiP16EPARTS_FUNC_DATAP13OBJ_ANIME_SEQ
  * @address 0x166010
  * @size 0x160
- * @unknownret
  */
 void InitObjAnime(CFrame **, int, EPARTS_FUNC_DATA *, OBJ_ANIME_SEQ *);
 
 /**
+ * Reports whether an animated value has passed its target in the direction it moves.
+ *
  * @mangled end_check__Ffff
  * @address 0x166170
  * @size 0x68
- * @unknownret
  */
 void end_check(float, float, float);
 
 /**
+ * Advances one object animation by a frame.
+ *
  * @mangled ObjAnimePlay__FP13OBJ_ANIME_SEQ
  * @address 0x1661E0
  * @size 0x78C
- * @unknownret
  */
 void ObjAnimePlay(OBJ_ANIME_SEQ *);
 
@@ -153,10 +159,11 @@ void ObjAnimePlay(OBJ_ANIME_SEQ *);
 void InitEditEffect(CFrame *, EDIT_EFFECT_INFO *);
 
 /**
+ * Attaches an editor effect to the frame a function point names.
+ *
  * @mangled InitEditEffect__FP6CFrameP16EPARTS_FUNC_DATAP16EDIT_EFFECT_INFO
  * @address 0x1669D0
  * @size 0x1E0
- * @unknownret
  */
 int InitEditEffect(CFrame *, EPARTS_FUNC_DATA *, EDIT_EFFECT_INFO *);
 
@@ -171,25 +178,28 @@ int InitEditEffect(CFrame *, EPARTS_FUNC_DATA *, EDIT_EFFECT_INFO *);
 int CheckEditEffect(EDIT_EFFECT_INFO *, float);
 
 /**
+ * Advances the editor's shared fire, candle and flame effects.
+ *
  * @mangled EditEffectStep__Fv
  * @address 0x166D10
  * @size 0xC4
- * @unknownret
  */
 void EditEffectStep(void);
 
 /**
+ * Rebuilds the editor's fire texture for the frame.
+ *
  * @mangled EditEffectStep2__Fv
  * @address 0x166DE0
  * @size 0x28
- * @unknownret
  */
 void EditEffectStep2(void);
 
 /**
+ * Draws one editor effect, choosing the kind from its record.
+ *
  * @mangled DrawEditEffect__FP16EDIT_EFFECT_INFOP7CCameraP12CEffectGroup
  * @address 0x166E10
  * @size 0x24C
- * @unknownret
  */
 void DrawEditEffect(EDIT_EFFECT_INFO *, CCamera *, CEffectGroup *);

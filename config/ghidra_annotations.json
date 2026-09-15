@@ -1151,6 +1151,7 @@
       "size": "0x10",
       "name": "Initialize__7CVisualFv",
       "sha256": "2e19c68970e580ef1ae2739f8a9983498cd6a05bd8e56237493e190d40b34aba",
+      "comment": "Clears the visual's draw flags.",
       "documentation": "include/visualvu1.hpp"
     },
     {
@@ -1162,6 +1163,7 @@
       "size": "0x44",
       "name": "__ct__7CVisualFv",
       "sha256": "5e0cbddeb802bf7d9aecf887c45689eec3334c5c63cffcfa1b62df067cbe0379",
+      "comment": "Constructs a visual and clears it.",
       "documentation": "include/visualvu1.hpp"
     },
     {
@@ -1173,6 +1175,7 @@
       "size": "0xC4",
       "name": "DrawVu1__10CVisualVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii",
       "sha256": "f01234347b5e7dfa9f4efea3a59afcc880a48856496d0537f5c4a14cd7e56908",
+      "comment": "Draws the visual into a VIF packet.",
       "documentation": "include/visualvu1.hpp"
     },
     {
@@ -1208,6 +1211,7 @@
       "size": "0x3C",
       "name": "Initialize__10CVisualVu1Fv",
       "sha256": "1c14d3b98a38c3ee969dc6eee6a3a96e8124d2a3ce506ab0d3bd21c23f1e6d6e",
+      "comment": "Clears the vector-unit visual's packet pointers and sizes.",
       "documentation": "include/visualvu1.hpp"
     },
     {
@@ -1219,6 +1223,7 @@
       "size": "0x50",
       "name": "__ct__10CVisualVu1Fv",
       "sha256": "9f6562cd0c1639cc5ac50d421cd17cc2eff3523b216f4aec59baa38c6616a967",
+      "comment": "Constructs a vector-unit visual and clears it.",
       "documentation": "include/visualvu1.hpp"
     },
     {
@@ -1274,6 +1279,7 @@
       "size": "0x964",
       "name": "DrawVu1__10CVisualVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii",
       "sha256": "36c496b38b0fbf22dbbdebc9d7fc09aa8e08f7e794e9115a0aed166f76d16363",
+      "comment": "Draws the visual into a packet through the vector unit.",
       "documentation": "include/visualvu1.hpp"
     },
     {
@@ -1284,7 +1290,9 @@
       "address": "0x00135970",
       "size": "0x130",
       "name": "SetVuData__FiP1PUiP1P1P1P1i",
-      "sha256": "2d5e1949bfb599f7d07c23931b4a20c7c9a58edf128abf089362706c1c050b51"
+      "sha256": "2d5e1949bfb599f7d07c23931b4a20c7c9a58edf128abf089362706c1c050b51",
+      "comment": "Writes one vector-unit upload header and gives back its length in words.",
+      "documentation": "src/visualvu1.cpp"
     },
     {
       "translation_unit": "visualvu1",
@@ -1686,7 +1694,9 @@
       "address": "0x00142DA0",
       "size": "0x43C",
       "name": "__as__10CCharacterFRC10CCharacter",
-      "sha256": "03d8e4b2568bce78858843900a6ad4eaa479cfdb5be339578a13aedbd51d662b"
+      "sha256": "03d8e4b2568bce78858843900a6ad4eaa479cfdb5be339578a13aedbd51d662b",
+      "comment": "Copies one character over another, field by field.",
+      "documentation": "src/main.cpp"
     },
     {
       "translation_unit": "main",
@@ -1720,7 +1730,9 @@
       "address": "0x00143360",
       "size": "0x30",
       "name": "__as__14CVisualPolyVu1FRC14CVisualPolyVu1",
-      "sha256": "3c510919480f8027bfc64736f079ec5b9a76f99522dd4b7c7e4a14b6973d4dd3"
+      "sha256": "3c510919480f8027bfc64736f079ec5b9a76f99522dd4b7c7e4a14b6973d4dd3",
+      "comment": "Copies one polygon visual over another, field by field.",
+      "documentation": "src/main.cpp"
     },
     {
       "translation_unit": "main",
@@ -1730,7 +1742,9 @@
       "address": "0x00143390",
       "size": "0x5C",
       "name": "__as__10CVisualVu1FRC10CVisualVu1",
-      "sha256": "dc0cd1fcb699c7c8ea0477a4bef21aa600de0e08088ebf1762813554567d712c"
+      "sha256": "dc0cd1fcb699c7c8ea0477a4bef21aa600de0e08088ebf1762813554567d712c",
+      "comment": "Copies one vector-unit visual over another, field by field.",
+      "documentation": "src/main.cpp"
     },
     {
       "translation_unit": "main",
@@ -1740,7 +1754,9 @@
       "address": "0x001433F0",
       "size": "0x1C",
       "name": "__as__7CVisualFRC7CVisual",
-      "sha256": "1a64a934456184bc9cb8ef88b48d8fea8f308727b2dc1af58a8f3aff3ab73f63"
+      "sha256": "1a64a934456184bc9cb8ef88b48d8fea8f308727b2dc1af58a8f3aff3ab73f63",
+      "comment": "Copies one visual over another, field by field.",
+      "documentation": "src/main.cpp"
     },
     {
       "translation_unit": "main",
@@ -1750,7 +1766,9 @@
       "address": "0x00143410",
       "size": "0x30",
       "name": "__ct__12CategoryAttrFv",
-      "sha256": "897dc21551d33ecc2741a912a34f9f9d34d276255f6ef48222ca377ed687974c"
+      "sha256": "897dc21551d33ecc2741a912a34f9f9d34d276255f6ef48222ca377ed687974c",
+      "comment": "Clears the category attributes.",
+      "documentation": "src/main.cpp"
     },
     {
       "translation_unit": "main",
@@ -1760,7 +1778,9 @@
       "address": "0x00143440",
       "size": "0x1C",
       "name": "Initialize__12CategoryAttrFv",
-      "sha256": "81b5ef5b28343c0d6b3a725b1c81ac7f6573ca17c8075fb12e3a1e1d9c193131"
+      "sha256": "81b5ef5b28343c0d6b3a725b1c81ac7f6573ca17c8075fb12e3a1e1d9c193131",
+      "comment": "Gives the category attributes their starting values.",
+      "documentation": "src/main.cpp"
     },
     {
       "translation_unit": "main",
@@ -1782,7 +1802,9 @@
       "address": "0x00143490",
       "size": "0x30",
       "name": "Initialize__11CBombEffectFv",
-      "sha256": "441ddbdaa3ba6fdc21972205b7b77fac8a223e97688fb320fb035e40b0217cb1"
+      "sha256": "441ddbdaa3ba6fdc21972205b7b77fac8a223e97688fb320fb035e40b0217cb1",
+      "comment": "Clears the bomb effect.",
+      "documentation": "src/main.cpp"
     },
     {
       "translation_unit": "main",
@@ -1804,7 +1826,9 @@
       "address": "0x001434F0",
       "size": "0x10",
       "name": "Initialize__10CMajinBeemFv",
-      "sha256": "815d89d0a2de93f01cb650f2e2e1fb80e39fd2aa895d70425d578e2e980232ad"
+      "sha256": "815d89d0a2de93f01cb650f2e2e1fb80e39fd2aa895d70425d578e2e980232ad",
+      "comment": "Clears the beam effect.",
+      "documentation": "src/main.cpp"
     },
     {
       "translation_unit": "main",
@@ -1814,7 +1838,9 @@
       "address": "0x00143500",
       "size": "0x30",
       "name": "__ct__13MAP_NPC_MODELFv",
-      "sha256": "205b5d312836bc91d719f5049eca612c24f8ea38e7a9c8a2e832cc13cda5adf3"
+      "sha256": "205b5d312836bc91d719f5049eca612c24f8ea38e7a9c8a2e832cc13cda5adf3",
+      "comment": "Constructs one map character slot.",
+      "documentation": "src/main.cpp"
     },
     {
       "translation_unit": "main",
@@ -1824,7 +1850,9 @@
       "address": "0x00143530",
       "size": "0xD4",
       "name": "__ct__10CCharacterFv",
-      "sha256": "c558a480cd41c6d9bdb721bc4bac22149f91c216e06f980c0c8ffb585ea5f6b3"
+      "sha256": "c558a480cd41c6d9bdb721bc4bac22149f91c216e06f980c0c8ffb585ea5f6b3",
+      "comment": "Constructs a character with no model, motion or texture animation.",
+      "documentation": "src/main.cpp"
     },
     {
       "translation_unit": "main",
@@ -1845,7 +1873,9 @@
       "address": "0x00143620",
       "size": "0x28",
       "name": "__ct__13CTextureAnimeFv",
-      "sha256": "f963901e2e4392cce84afb5b0088c51e6a2888e53a7caf466fdcdf2d9bdc63b0"
+      "sha256": "f963901e2e4392cce84afb5b0088c51e6a2888e53a7caf466fdcdf2d9bdc63b0",
+      "comment": "Constructs a texture animation with no data attached.",
+      "documentation": "src/main.cpp"
     },
     {
       "translation_unit": "main",
@@ -1855,7 +1885,9 @@
       "address": "0x00143650",
       "size": "0x28",
       "name": "__ct__7CObjectFv",
-      "sha256": "84faf74e33b50089d882b3980f964d7047bffddbcefb27fd7c5798315083b9f8"
+      "sha256": "84faf74e33b50089d882b3980f964d7047bffddbcefb27fd7c5798315083b9f8",
+      "comment": "Constructs an object at the origin with an identity transform.",
+      "documentation": "src/main.cpp"
     },
     {
       "translation_unit": "main",
@@ -1865,7 +1897,9 @@
       "address": "0x00143680",
       "size": "0x54",
       "name": "__ct__12CSHOT_EFFECTFv",
-      "sha256": "e53cf413f4234e9da35a75a6901d3217ba68bcac39a8cb2d785e6791c5c22d07"
+      "sha256": "e53cf413f4234e9da35a75a6901d3217ba68bcac39a8cb2d785e6791c5c22d07",
+      "comment": "Constructs a projectile effect.",
+      "documentation": "src/main.cpp"
     },
     {
       "translation_unit": "main",
@@ -1875,7 +1909,9 @@
       "address": "0x001436E0",
       "size": "0x3C",
       "name": "__ct__8CHitMarkFv",
-      "sha256": "255072d6336fee9f2674b705f3d370ccb251db04a88ad6af5dd180b72fdc7754"
+      "sha256": "255072d6336fee9f2674b705f3d370ccb251db04a88ad6af5dd180b72fdc7754",
+      "comment": "Constructs a hit marker.",
+      "documentation": "src/main.cpp"
     },
     {
       "translation_unit": "main",
@@ -1885,7 +1921,9 @@
       "address": "0x00143720",
       "size": "0x68",
       "name": "Alloc__18CDataAlloc_1_6000_Fi",
-      "sha256": "d28607595fa9d3ffce7193c84bd73d4a063cd2e7aeef4bffdc4cbab3fc185924"
+      "sha256": "d28607595fa9d3ffce7193c84bd73d4a063cd2e7aeef4bffdc4cbab3fc185924",
+      "comment": "Takes a run of quadwords out of the six-thousand-quadword arena.",
+      "documentation": "src/main.cpp"
     },
     {
       "translation_unit": "main",
@@ -1895,7 +1933,9 @@
       "address": "0x00143790",
       "size": "0x90",
       "name": "Align64__18CDataAlloc_1_6000_Fv",
-      "sha256": "8aa033eb1e868a0f6751faa4c57446c217491fc7d618acebf13da2eebe7a60a1"
+      "sha256": "8aa033eb1e868a0f6751faa4c57446c217491fc7d618acebf13da2eebe7a60a1",
+      "comment": "Rounds the six-thousand-quadword arena's cursor up to sixty-four bytes.",
+      "documentation": "src/main.cpp"
     },
     {
       "translation_unit": "sound",
@@ -4378,7 +4418,9 @@
       "address": "0x00164B30",
       "size": "0x98",
       "name": "EffectMacroStep__FPf",
-      "sha256": "dc6196fa157d4944ecada5e1faa7f037917f25f9e230515afb7f0e58696f6041"
+      "sha256": "dc6196fa157d4944ecada5e1faa7f037917f25f9e230515afb7f0e58696f6041",
+      "comment": "Advances the shared effect state for one frame at a world position.",
+      "documentation": "src/objanime.cpp"
     },
     {
       "translation_unit": "objanime",
@@ -4388,7 +4430,9 @@
       "address": "0x00164BD0",
       "size": "0x350",
       "name": "EffectSmoke__FP12CEffectGroupPffi",
-      "sha256": "6283a16423ad5143d6ef7cdb1ed572af84ff36403d7367c83b9ced611ea5b565"
+      "sha256": "6283a16423ad5143d6ef7cdb1ed572af84ff36403d7367c83b9ced611ea5b565",
+      "comment": "Adds a puff of smoke to an effect group.",
+      "documentation": "src/objanime.cpp"
     },
     {
       "translation_unit": "objanime",
@@ -4398,7 +4442,9 @@
       "address": "0x00164F20",
       "size": "0x29C",
       "name": "EffectWaterSpray__FP12CEffectGroupPfPfii",
-      "sha256": "3f5f7e0763c123830bdd9a163e0c6cbc8d153f8688c24717ae2079f80fd123a7"
+      "sha256": "3f5f7e0763c123830bdd9a163e0c6cbc8d153f8688c24717ae2079f80fd123a7",
+      "comment": "Adds a spray of water to an effect group.",
+      "documentation": "src/objanime.cpp"
     },
     {
       "translation_unit": "objanime",
@@ -4408,7 +4454,9 @@
       "address": "0x001651C0",
       "size": "0xF4",
       "name": "EffectHamon__FP12CEffectGroupPff",
-      "sha256": "de62218614e3c5e8be579788a5a7eefa90bd057c6495f10eb8b532cf4dc7bd3e"
+      "sha256": "de62218614e3c5e8be579788a5a7eefa90bd057c6495f10eb8b532cf4dc7bd3e",
+      "comment": "Adds a ripple to an effect group.",
+      "documentation": "src/objanime.cpp"
     },
     {
       "translation_unit": "objanime",
@@ -4430,7 +4478,9 @@
       "address": "0x00165C90",
       "size": "0x14",
       "name": "Initialize__13OBJ_ANIME_SEQFv",
-      "sha256": "9175cea68d0a92c3d03a8d6449ffbdc20e6fb808dc417fb37f84b4160a8b6fa8"
+      "sha256": "9175cea68d0a92c3d03a8d6449ffbdc20e6fb808dc417fb37f84b4160a8b6fa8",
+      "comment": "Clears one object-animation sequence.",
+      "documentation": "src/objanime.cpp"
     },
     {
       "translation_unit": "objanime",
@@ -4440,7 +4490,9 @@
       "address": "0x00165CB0",
       "size": "0x30",
       "name": "__ct__13OBJ_ANIME_SEQFv",
-      "sha256": "0171828183b1a0d917e1d0bf8a614664a3a742d1cac70b5ef6aeacfde0c733cd"
+      "sha256": "0171828183b1a0d917e1d0bf8a614664a3a742d1cac70b5ef6aeacfde0c733cd",
+      "comment": "Constructs an object-animation sequence.",
+      "documentation": "src/objanime.cpp"
     },
     {
       "translation_unit": "objanime",
@@ -4451,6 +4503,7 @@
       "size": "0xC4",
       "name": "InitObjAnime__FP6CFrameP13OBJ_ANIME_SEQ",
       "sha256": "a0cd87c15865093b960618e464fd41029852b0b828ed79b4a3d2dfeafc4af4ef",
+      "comment": "Attaches an object animation to one frame.",
       "documentation": "include/objanime.hpp"
     },
     {
@@ -4462,6 +4515,7 @@
       "size": "0xFC",
       "name": "InitObjAnime__FPP6CFrameP13OBJ_ANIME_SEQ",
       "sha256": "00d17b0e343db96528d12bb35c2f1326c67390b47586d4f721365f0b75b18edc",
+      "comment": "Attaches an object animation to a list of frames.",
       "documentation": "include/objanime.hpp"
     },
     {
@@ -4473,6 +4527,7 @@
       "size": "0x138",
       "name": "InitObjAnime__FPP6CFrameiP13OBJ_ANIME_SEQ",
       "sha256": "49233756c1cebe755078975db296093cea61234d31e23c217ed10f6c12ae52fc",
+      "comment": "Attaches an object animation to a counted list of frames.",
       "documentation": "include/objanime.hpp"
     },
     {
@@ -4484,6 +4539,7 @@
       "size": "0x160",
       "name": "InitObjAnime__FPP6CFrameiP16EPARTS_FUNC_DATAP13OBJ_ANIME_SEQ",
       "sha256": "bf667cb414144ef6b6af2a623b3824c99d3c531b69efe2c463af065c3e62da06",
+      "comment": "Attaches an object animation to the frames one function point names.",
       "documentation": "include/objanime.hpp"
     },
     {
@@ -4495,6 +4551,7 @@
       "size": "0x68",
       "name": "end_check__Ffff",
       "sha256": "f69f0201711bc2d1b55d8c9641f7f51e51966c59b9c78aac248b787e8f40cfb3",
+      "comment": "Reports whether an animated value has passed its target in the direction it moves.",
       "documentation": "include/objanime.hpp"
     },
     {
@@ -4506,6 +4563,7 @@
       "size": "0x78C",
       "name": "ObjAnimePlay__FP13OBJ_ANIME_SEQ",
       "sha256": "a56367e40efe7669c489d7cf2b2bd7f38eeac0c857f79035bfe7f72afbd47b89",
+      "comment": "Advances one object animation by a frame.",
       "documentation": "include/objanime.hpp"
     },
     {
@@ -4517,6 +4575,7 @@
       "size": "0x1E0",
       "name": "InitEditEffect__FP6CFrameP16EPARTS_FUNC_DATAP16EDIT_EFFECT_INFO",
       "sha256": "fa3ad9e82237a5267dd0be6699cf4f09a0ff7d7e2365b768a81c8f9b717da481",
+      "comment": "Attaches an editor effect to the frame a function point names.",
       "documentation": "include/objanime.hpp"
     },
     {
@@ -4540,6 +4599,7 @@
       "size": "0xC4",
       "name": "EditEffectStep__Fv",
       "sha256": "fa79888c81bd9244bcd8dbf8b13d3f34706ee24572df8a8e2fd7edef302ba472",
+      "comment": "Advances the editor's shared fire, candle and flame effects.",
       "documentation": "include/objanime.hpp"
     },
     {
@@ -4551,6 +4611,7 @@
       "size": "0x28",
       "name": "EditEffectStep2__Fv",
       "sha256": "72a0e70b07f3cfcd03bdb0551e8be1ac0cf0b304175bfbb0e25930069c6eadf9",
+      "comment": "Rebuilds the editor's fire texture for the frame.",
       "documentation": "include/objanime.hpp"
     },
     {
@@ -4562,6 +4623,7 @@
       "size": "0x24C",
       "name": "DrawEditEffect__FP16EDIT_EFFECT_INFOP7CCameraP12CEffectGroup",
       "sha256": "25f4ffebda62019e067343cab9955319f75531cfe9df9ae64a6aec8ae340cb28",
+      "comment": "Draws one editor effect, choosing the kind from its record.",
       "documentation": "include/objanime.hpp"
     },
     {
@@ -4703,7 +4765,9 @@
       "address": "0x00168200",
       "size": "0xA8",
       "name": "EBInitIntro__Fv",
-      "sha256": "042439925ecf5de76c56dea1a0e6e0f26bbfa44c7beb08a5dcaa2482b1ffa2eb"
+      "sha256": "042439925ecf5de76c56dea1a0e6e0f26bbfa44c7beb08a5dcaa2482b1ffa2eb",
+      "comment": "Looks up the textures the event battle's opening needs.",
+      "documentation": "src/ebattle.cpp"
     },
     {
       "translation_unit": "ebattle",
@@ -4737,7 +4801,9 @@
       "address": "0x001685C0",
       "size": "0xCC",
       "name": "EBIntroLoop__Fv",
-      "sha256": "9fb4e25a1967ca58bc90a955350fe046ebf518b4ddce553c944624efcd95caf6"
+      "sha256": "9fb4e25a1967ca58bc90a955350fe046ebf518b4ddce553c944624efcd95caf6",
+      "comment": "Runs the event battle's opening and reports when it ends.",
+      "documentation": "src/ebattle.cpp"
     },
     {
       "translation_unit": "ebattle",
@@ -4747,7 +4813,9 @@
       "address": "0x00168690",
       "size": "0x4E4",
       "name": "EBLoop__Fv",
-      "sha256": "d79f0a9b48724a1fe92c76c72d004c9e93288aa8fdb985245cd7c666b38e53bd"
+      "sha256": "d79f0a9b48724a1fe92c76c72d004c9e93288aa8fdb985245cd7c666b38e53bd",
+      "comment": "Runs one frame of the event battle and reports the result.",
+      "documentation": "src/ebattle.cpp"
     },
     {
       "translation_unit": "ebattle",
@@ -4769,7 +4837,9 @@
       "address": "0x001690E0",
       "size": "0x260",
       "name": "DrawButton__Fiiifi",
-      "sha256": "e91c9df2d4d9ecb02b887082d6ed4ca866d42263e2bc3983621a997b3c6fdb77"
+      "sha256": "e91c9df2d4d9ecb02b887082d6ed4ca866d42263e2bc3983621a997b3c6fdb77",
+      "comment": "Draws one button prompt of the event battle.",
+      "documentation": "src/ebattle.cpp"
     },
     {
       "translation_unit": "ebattle",
@@ -4779,7 +4849,9 @@
       "address": "0x00169340",
       "size": "0xE0",
       "name": "DrawButtonSub__Fiiiif",
-      "sha256": "b0f3dadcb760e92280c56723b1ea8d04d6a7323553e88d03c89a2e77348079c2"
+      "sha256": "b0f3dadcb760e92280c56723b1ea8d04d6a7323553e88d03c89a2e77348079c2",
+      "comment": "Draws one button prompt at a scale.",
+      "documentation": "src/ebattle.cpp"
     },
     {
       "translation_unit": "ebattle",
@@ -4789,7 +4861,9 @@
       "address": "0x00169490",
       "size": "0x2A0",
       "name": "draw_ok__Fi",
-      "sha256": "0ab3374265770e9c38ca912ab32fb27e77b8898b78fc9a3f832b78a3531a3fe8"
+      "sha256": "0ab3374265770e9c38ca912ab32fb27e77b8898b78fc9a3f832b78a3531a3fe8",
+      "comment": "Draws the success flash after a button is pressed in time.",
+      "documentation": "src/ebattle.cpp"
     },
     {
       "translation_unit": "ebattle",
@@ -4799,7 +4873,9 @@
       "address": "0x00169730",
       "size": "0x90",
       "name": "button_scale__Fi",
-      "sha256": "67b59f85f7c6dffdc18140804b8cf698daccee8ef07037dd322d8256c3c552e7"
+      "sha256": "67b59f85f7c6dffdc18140804b8cf698daccee8ef07037dd322d8256c3c552e7",
+      "comment": "Gives the scale a button prompt draws at while it flashes.",
+      "documentation": "src/ebattle.cpp"
     },
     {
       "translation_unit": "ebattle",
@@ -4809,7 +4885,9 @@
       "address": "0x00169AF0",
       "size": "0x40",
       "name": "PadOn__Fi",
-      "sha256": "1a15da6100dae09a984a3ea538cc93fd246dba56297bd45fdedc05f00e344d70"
+      "sha256": "1a15da6100dae09a984a3ea538cc93fd246dba56297bd45fdedc05f00e344d70",
+      "comment": "Reports whether a button is held, unless the pad is locked.",
+      "documentation": "src/ebattle.cpp"
     },
     {
       "translation_unit": "ebattle",
@@ -4819,7 +4897,9 @@
       "address": "0x00169B30",
       "size": "0x40",
       "name": "PadDown__Fi",
-      "sha256": "cbb066bf78d49608db08a313852346145a269dac1768415a94bea42d40d237c4"
+      "sha256": "cbb066bf78d49608db08a313852346145a269dac1768415a94bea42d40d237c4",
+      "comment": "Reports whether a button was just pressed, unless the pad is locked.",
+      "documentation": "src/ebattle.cpp"
     },
     {
       "translation_unit": "ebattle",
@@ -4829,7 +4909,9 @@
       "address": "0x00169B70",
       "size": "0x20C",
       "name": "CameraAutoMove__FP13CCameraFollowP6CCPolyPfff",
-      "sha256": "4d5c257a6504d7344a13c0ebc7280d70aff9b1442716e06c576b2b975b445ee2"
+      "sha256": "4d5c257a6504d7344a13c0ebc7280d70aff9b1442716e06c576b2b975b445ee2",
+      "comment": "Moves the camera towards a point, keeping it clear of the collision.",
+      "documentation": "src/ebattle.cpp"
     },
     {
       "translation_unit": "ebattle",
@@ -4839,7 +4921,9 @@
       "address": "0x00169D90",
       "size": "0x34",
       "name": "InitEyeCamera__FP10CCharacter",
-      "sha256": "7f3e111e2df8bfb79ca30963ce8497ada7022e5b0863acd0933607048dd54994"
+      "sha256": "7f3e111e2df8bfb79ca30963ce8497ada7022e5b0863acd0933607048dd54994",
+      "comment": "Places the eye camera on a character's head.",
+      "documentation": "src/ebattle.cpp"
     },
     {
       "translation_unit": "ebattle",
@@ -4849,7 +4933,9 @@
       "address": "0x00169DD0",
       "size": "0x1B0",
       "name": "EyeCamera__FP7CCameraP10CCharacteri",
-      "sha256": "60ae30ad02c94758bc9afab50aa0007c2ec7f6211620429c204a4f725fd897ed"
+      "sha256": "60ae30ad02c94758bc9afab50aa0007c2ec7f6211620429c204a4f725fd897ed",
+      "comment": "Aims the eye camera from a character's head.",
+      "documentation": "src/ebattle.cpp"
     },
     {
       "translation_unit": "ebattle",
@@ -4859,7 +4945,9 @@
       "address": "0x00169FF0",
       "size": "0x128",
       "name": "EdEyeCamera__FP7CCameraP10CCharacter",
-      "sha256": "3d5d6de9581551a1d93aa5fcaed0b5386720e17cdb7e7db6128c96a4e8ccb24a"
+      "sha256": "3d5d6de9581551a1d93aa5fcaed0b5386720e17cdb7e7db6128c96a4e8ccb24a",
+      "comment": "Aims the editor's eye camera from a character's head.",
+      "documentation": "src/ebattle.cpp"
     },
     {
       "translation_unit": "ebattle",
@@ -8854,6 +8942,7 @@
       "size": "0x26C",
       "name": "SetNPC__11CDungeonMapFiPUiiPfPfiiP14CDataAlloc2_1_",
       "sha256": "fc371e7ddaf5cef1cab07af7aec6aefcded8b26baff980ffe50e669449183888",
+      "comment": "Puts one non-player character on the floor.",
       "documentation": "include/dungeonmap.hpp"
     },
     {
@@ -8865,6 +8954,7 @@
       "size": "0x92C",
       "name": "DrawMap__11CDungeonMapFP13CCameraFollowP9CFrameVu1",
       "sha256": "4045fb283d8645a203211ad62e0d4863001021b1221f6de6afffa48148602288",
+      "comment": "Draws the floor's rooms and corridors.",
       "documentation": "include/dungeonmap.hpp"
     },
     {
@@ -8876,6 +8966,7 @@
       "size": "0x840",
       "name": "DrawMiniMap__11CDungeonMapFPff",
       "sha256": "dfd237b54768b0f048665164d4114997cc09088232164185aeebfc1153a1f096",
+      "comment": "Draws the corner map of the floor.",
       "documentation": "include/dungeonmap.hpp"
     },
     {
@@ -8887,6 +8978,7 @@
       "size": "0x3F4",
       "name": "DrawFireFreeStyle__11CDungeonMapFP9CFrameVu1P13CCameraFollow",
       "sha256": "a943e959106789df31f1b00ec1fd9b130155d6e38ea39578ccae5826f5ed9888",
+      "comment": "Draws the floor's freely placed fires.",
       "documentation": "include/dungeonmap.hpp"
     },
     {
@@ -8898,6 +8990,7 @@
       "size": "0x548",
       "name": "DrawFire__11CDungeonMapFP9CFrameVu1P13CCameraFollow",
       "sha256": "dc3097ec4038656c1398bab600bc53d868a6236a95f0646c2b02d07793c352e5",
+      "comment": "Draws the fires standing on the floor's parts.",
       "documentation": "include/dungeonmap.hpp"
     },
     {
@@ -8909,6 +9002,7 @@
       "size": "0x324",
       "name": "DrawRaster__11CDungeonMapFP9CFrameVu1",
       "sha256": "a0e8d40ea2adf77900eda1f57aee02f963329862b3b376fa3f183476011224a3",
+      "comment": "Draws the light the floor's fires cast on the ground.",
       "documentation": "include/dungeonmap.hpp"
     },
     {
@@ -8920,6 +9014,7 @@
       "size": "0x318",
       "name": "DrawItemBox__11CDungeonMapFPf",
       "sha256": "f89cee3d1041836165f99c0eca4b982b833b4fb65049d9320d7d420075837dc5",
+      "comment": "Draws the floor's treasure chests.",
       "documentation": "include/dungeonmap.hpp"
     },
     {
@@ -8953,6 +9048,7 @@
       "size": "0x2F4",
       "name": "SetTreasureBox__11CDungeonMapFPfiii",
       "sha256": "1531cf2d0e1b2eaeee5f34b2a41a31a04d308a56ff405480863009cc9d1dd675",
+      "comment": "Puts a treasure chest on the floor.",
       "documentation": "include/dungeonmap.hpp"
     },
     {
@@ -8964,6 +9060,7 @@
       "size": "0x680",
       "name": "buildEventData__11CDungeonMapFiii",
       "sha256": "f31bcdd55e631b5ce7cc9ad4dce2a5c4443869cdeb6b86d0e8818d695462119c",
+      "comment": "Lays the floor's events out over its rooms.",
       "documentation": "include/dungeonmap.hpp"
     },
     {
@@ -8975,6 +9072,7 @@
       "size": "0xC70",
       "name": "GetRoomLinkInfo__11CDungeonMapFv",
       "sha256": "3dd2b307d04bfc3c54f339b2c19dc33a6ab438524d6aab1b259bb4f7699bb911",
+      "comment": "Gives the table saying which of the floor's rooms join up.",
       "documentation": "include/dungeonmap.hpp"
     },
     {
@@ -9420,6 +9518,7 @@
       "size": "0x44",
       "name": "GetFreeCashNo__14CMainItemModelFv",
       "sha256": "7562cbaa9b6b990e6622d993efb56a7e0bbe84e68fce7ff5b0f527186e5568ee",
+      "comment": "Gives a free cache slot, or -1 where none is free.",
       "documentation": "include/mainitemmodel.hpp"
     },
     {
@@ -9431,6 +9530,7 @@
       "size": "0x48",
       "name": "GetFreeModelNo__14CMainItemModelFv",
       "sha256": "f3f2c54ede0395dc91e1f29211c8be8073a8fac2c1e20be85e1127012c36417c",
+      "comment": "Gives a free model slot, or -1 where none is free.",
       "documentation": "include/mainitemmodel.hpp"
     },
     {
@@ -9442,6 +9542,7 @@
       "size": "0x190",
       "name": "SetCashModel__14CMainItemModelFiPUiPUii",
       "sha256": "38737e15285f1ccba039a5ee01a6dc00bf1ff50a10d97962a6aa7ffdf1712df7",
+      "comment": "Reads one item model into a cache slot.",
       "documentation": "include/mainitemmodel.hpp"
     },
     {
@@ -9453,6 +9554,7 @@
       "size": "0xA4",
       "name": "DeleteModel__14CMainItemModelFi",
       "sha256": "8beef5fec1623a79cb06d106d87ecb3183236e8c86b416dabfe054c8c69b40a8",
+      "comment": "Releases one model slot.",
       "documentation": "include/mainitemmodel.hpp"
     },
     {
@@ -9464,6 +9566,7 @@
       "size": "0x120",
       "name": "SetHandModel__14CMainItemModelFi",
       "sha256": "6cc2474a5726e3639756f594070dc8514c0defea4a9a44a26e6c29e47d091ad8",
+      "comment": "Puts one item model in the player's hand.",
       "documentation": "include/mainitemmodel.hpp"
     },
     {
@@ -9475,6 +9578,7 @@
       "size": "0x78",
       "name": "AllReleasItem__14CMainItemModelFv",
       "sha256": "c7350a800c9a892c06568c567ce49f48e56834cb8a47f6b27ed762f21ff4f5c1",
+      "comment": "Releases every item model.",
       "documentation": "include/mainitemmodel.hpp"
     },
     {
@@ -9486,6 +9590,7 @@
       "size": "0x108",
       "name": "SetThrowModel__14CMainItemModelFiPfPf",
       "sha256": "eac7abb0d91cfa06dc0a308b176a19124d8466606635816348f247fa1f7b3457",
+      "comment": "Starts one item model flying from a position along a heading.",
       "documentation": "include/mainitemmodel.hpp"
     },
     {
@@ -9497,6 +9602,7 @@
       "size": "0x350",
       "name": "Draw__14CMainItemModelFv",
       "sha256": "5eee16bddf5069aa32bbb6670abf1ea4c8bf30eddfb6e957fcbef154d92de338",
+      "comment": "Draws every item model the player is carrying or has thrown.",
       "documentation": "include/mainitemmodel.hpp"
     },
     {
@@ -9508,6 +9614,7 @@
       "size": "0x520",
       "name": "Step__14CMainItemModelFv",
       "sha256": "a69ad6b522e7f58b970348d695ec7b88de07d5db33163f50959bb9ca1bdfc711",
+      "comment": "Advances every item model by a frame.",
       "documentation": "include/mainitemmodel.hpp"
     },
     {
@@ -9519,6 +9626,7 @@
       "size": "0xE4",
       "name": "Initialize__14CMainItemModelFv",
       "sha256": "8d48f646de6d642e6483687a30c5efbe2a60243c183b9884263cd6328da60883",
+      "comment": "Clears every item model and cache slot.",
       "documentation": "include/mainitemmodel.hpp"
     },
     {

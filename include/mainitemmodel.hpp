@@ -8,82 +8,92 @@ private:
 
 public:
     /**
+     * Gives a free cache slot, or -1 where none is free.
+     *
      * @mangled GetFreeCashNo__14CMainItemModelFv
      * @address 0x1D4540
      * @size 0x44
-     * @unknownret
      */
     void GetFreeCashNo(void);
 
     /**
+     * Gives a free model slot, or -1 where none is free.
+     *
      * @mangled GetFreeModelNo__14CMainItemModelFv
      * @address 0x1D4590
      * @size 0x48
-     * @unknownret
      */
     void GetFreeModelNo(void);
 
     /**
+     * Reads one item model into a cache slot.
+     *
      * @mangled SetCashModel__14CMainItemModelFiPUiPUii
      * @address 0x1D45E0
      * @size 0x190
-     * @unknownret
      */
     void SetCashModel(int, unsigned int *, unsigned int *, int);
 
     /**
+     * Releases one model slot.
+     *
      * @mangled DeleteModel__14CMainItemModelFi
      * @address 0x1D4770
      * @size 0xA4
-     * @unknownret
      */
     void DeleteModel(int);
 
     /**
+     * Puts one item model in the player's hand.
+     *
      * @mangled SetHandModel__14CMainItemModelFi
      * @address 0x1D4820
      * @size 0x120
-     * @unknownret
      */
     int SetHandModel(int);
 
     /**
+     * Releases every item model.
+     *
      * @mangled AllReleasItem__14CMainItemModelFv
      * @address 0x1D4940
      * @size 0x78
-     * @unknownret
      */
     void AllReleasItem(void);
 
     /**
+     * Starts one item model flying from a position along a heading.
+     *
      * @mangled SetThrowModel__14CMainItemModelFiPfPf
      * @address 0x1D49C0
      * @size 0x108
-     * @unknownret
      */
     void SetThrowModel(int, float *, float *);
 
     /**
+     * Draws every item model the player is carrying or has thrown.
+     *
      * @mangled Draw__14CMainItemModelFv
      * @address 0x1D4AD0
      * @size 0x350
-     * @unknownret
      */
     void Draw(void);
 
     /**
+     * Advances every item model by a frame.
+     *
      * @mangled Step__14CMainItemModelFv
      * @address 0x1D4E20
      * @size 0x520
-     * @unknownret
      */
     void Step(void);
 
     /**
+     * Clears every item model and cache slot.
+     *
      * @mangled Initialize__14CMainItemModelFv
      * @address 0x1D5340
      * @size 0xE4
-     * @unknownret
      */
     void Initialize(void);
 };

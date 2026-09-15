@@ -186,10 +186,11 @@ public:
     MAP_TRAP_CIRCLE trap_circle[3]; /**< Trap circles that lie on the floor. */
 
     /**
+     * Puts one non-player character on the floor.
+     *
      * @mangled SetNPC__11CDungeonMapFiPUiiPfPfiiP14CDataAlloc2_1_
      * @address 0x1C1C00
      * @size 0x26C
-     * @unknownret
      */
     void SetNPC(int, unsigned int *, int, sceVu0FVECTOR, sceVu0FVECTOR, int, int, CDataAlloc2<1> *);
 
@@ -275,10 +276,11 @@ public:
     void DrawMapCalc(int);
 
     /**
+     * Draws the floor's rooms and corridors.
+     *
      * @mangled DrawMap__11CDungeonMapFP13CCameraFollowP9CFrameVu1
      * @address 0x1C2690
      * @size 0x92C
-     * @unknownret
      */
     void DrawMap(CCameraFollow *, CFrameVu1 *);
 
@@ -302,10 +304,11 @@ public:
     void DrawDummyModel(CCamera *camera);
 
     /**
+     * Draws the corner map of the floor.
+     *
      * @mangled DrawMiniMap__11CDungeonMapFPff
      * @address 0x1C3180
      * @size 0x840
-     * @unknownret
      */
     void DrawMiniMap(float *, float);
 
@@ -329,26 +332,29 @@ public:
     void FlushCheckMask(void);
 
     /**
+     * Draws the floor's freely placed fires.
+     *
      * @mangled DrawFireFreeStyle__11CDungeonMapFP9CFrameVu1P13CCameraFollow
      * @address 0x1C3CC0
      * @size 0x3F4
-     * @unknownret
      */
     void DrawFireFreeStyle(CFrameVu1 *, CCameraFollow *);
 
     /**
+     * Draws the fires standing on the floor's parts.
+     *
      * @mangled DrawFire__11CDungeonMapFP9CFrameVu1P13CCameraFollow
      * @address 0x1C40C0
      * @size 0x548
-     * @unknownret
      */
     void DrawFire(CFrameVu1 *, CCameraFollow *);
 
     /**
+     * Draws the light the floor's fires cast on the ground.
+     *
      * @mangled DrawRaster__11CDungeonMapFP9CFrameVu1
      * @address 0x1C4610
      * @size 0x324
-     * @unknownret
      */
     void DrawRaster(CFrameVu1 *);
 
@@ -361,10 +367,11 @@ public:
     void DrawWater(float *, int);
 
     /**
+     * Draws the floor's treasure chests.
+     *
      * @mangled DrawItemBox__11CDungeonMapFPf
      * @address 0x1C4DE0
      * @size 0x318
-     * @unknownret
      */
     void DrawItemBox(float *);
 
@@ -467,6 +474,8 @@ public:
     void SetAtraBoll(float *, int);
 
     /**
+     * Puts a treasure chest on the floor.
+     *
      * @mangled SetTreasureBox__11CDungeonMapFPfiii
      * @address 0x1C8240
      * @size 0x2F4
@@ -474,10 +483,11 @@ public:
     int SetTreasureBox(float *, int, int, int);
 
     /**
+     * Lays the floor's events out over its rooms.
+     *
      * @mangled buildEventData__11CDungeonMapFiii
      * @address 0x1C8540
      * @size 0x680
-     * @unknownret
      */
     void buildEventData(int, int, int);
 
@@ -516,10 +526,11 @@ public:
     void buildDummyModel(void);
 
     /**
+     * Gives the table saying which of the floor's rooms join up.
+     *
      * @mangled GetRoomLinkInfo__11CDungeonMapFv
      * @address 0x1C95D0
      * @size 0xC70
-     * @unknownret
      */
     void GetRoomLinkInfo(void);
 

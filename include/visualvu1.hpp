@@ -24,10 +24,11 @@ public:
     s32 unk_00; /**< Unknown base-visual state preceding the virtual table pointer. */
     s32 unk_04; /**< Unknown base-visual state preceding the virtual table pointer. */
     /**
+     * Clears the vector-unit visual's packet pointers and sizes.
+     *
      * @mangled Initialize__10CVisualVu1Fv
      * @address 0x134EC0
      * @size 0x3C
-     * @unknownret
      */
     virtual void Initialize(void);
 
@@ -61,19 +62,21 @@ public:
     virtual int RemakeData(unsigned int *);
 
     /**
+     * Draws the visual into a packet through the vector unit.
+     *
      * @mangled DrawVu1__10CVisualVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii
      * @address 0x135000
      * @size 0x964
-     * @unknownret
      */
     virtual int DrawVu1(unsigned int *, float (*)[4], RenderInfo *, VU1_PROGRAM, RenderInfo *,
                         int, int);
 
     /**
+     * Draws the visual into a VIF packet.
+     *
      * @mangled DrawVu1__10CVisualVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii
      * @address 0x134BC0
      * @size 0xC4
-     * @unknownret
      */
     virtual int DrawVu1(sceVif1Packet *, float (*)[4], RenderInfo *, VU1_PROGRAM, sceVif1Packet *,
                         int, int);
@@ -81,6 +84,8 @@ public:
     s32 unk_0C; /**< Unknown base-visual state following the virtual table pointer. */
 
     /**
+     * Constructs a vector-unit visual and clears it.
+     *
      * @mangled __ct__10CVisualVu1Fv
      * @address 0x134F00
      * @size 0x50
@@ -114,14 +119,17 @@ STATIC_ASSERT(sizeof(CVisualPolyVu1) == 0x20);
 class CVisual {
 public:
     /**
+     * Clears the visual's draw flags.
+     *
      * @mangled Initialize__7CVisualFv
      * @address 0x134B50
      * @size 0x10
-     * @unknownret
      */
     void Initialize(void);
 
     /**
+     * Constructs a visual and clears it.
+     *
      * @mangled __ct__7CVisualFv
      * @address 0x134B60
      * @size 0x44

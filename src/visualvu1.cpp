@@ -116,13 +116,34 @@ void SetTextureInfo(CTexture *tex, char *name, u_char *buffer) {
     }
 }
 
+/**
+ * Clears the visual's draw flags.
+ *
+ * @mangled Initialize__7CVisualFv
+ * @address 0x134B50
+ * @size 0x10
+ */
 INCLUDE_ASM("asm/nonmatchings/visualvu1", Initialize__7CVisualFv);
+/**
+ * Constructs a visual and clears it.
+ *
+ * @mangled __ct__7CVisualFv
+ * @address 0x134B60
+ * @size 0x44
+ */
 INCLUDE_ASM("asm/nonmatchings/visualvu1", __ct__7CVisualFv);
 
 int CVisualVu1::RemakeData(unsigned int *data) {
     return 0;
 }
 
+/**
+ * Draws the visual into a VIF packet.
+ *
+ * @mangled DrawVu1__10CVisualVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii
+ * @address 0x134BC0
+ * @size 0xC4
+ */
 INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__10CVisualVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
 
 /**
@@ -158,16 +179,86 @@ static int SetShadowData(u_int *packet, float (*matrix)[4]) {
 
 INCLUDE_ASM("asm/nonmatchings/visualvu1", SetMaterial__FPUiP12MDT_MATERIAL);
 INCLUDE_ASM("asm/nonmatchings/visualvu1", SetTEX0__FPUiUlUl);
+/**
+ * Clears the vector-unit visual's packet pointers and sizes.
+ *
+ * @mangled Initialize__10CVisualVu1Fv
+ * @address 0x134EC0
+ * @size 0x3C
+ */
 INCLUDE_ASM("asm/nonmatchings/visualvu1", Initialize__10CVisualVu1Fv);
+/**
+ * Constructs a vector-unit visual and clears it.
+ *
+ * @mangled __ct__10CVisualVu1Fv
+ * @address 0x134F00
+ * @size 0x50
+ */
 INCLUDE_ASM("asm/nonmatchings/visualvu1", __ct__10CVisualVu1Fv);
+/**
+ * Points the visual at the model data it draws from.
+ *
+ * @mangled SetMDTDataAddress__13CVisualMDTVu1FPUi
+ * @address 0x134F50
+ * @size 0xC
+ */
 INCLUDE_ASM("asm/nonmatchings/visualvu1", SetMDTDataAddress__13CVisualMDTVu1FPUi);
+/**
+ * Gives the model data the visual draws from.
+ *
+ * @mangled GetMDTDataAddress__13CVisualMDTVu1Fv
+ * @address 0x134F60
+ * @size 0xC
+ */
 INCLUDE_ASM("asm/nonmatchings/visualvu1", GetMDTDataAddress__13CVisualMDTVu1Fv);
+/**
+ * Clears the model visual's data pointer and packet.
+ *
+ * @mangled Initialize__13CVisualMDTVu1Fv
+ * @address 0x134F70
+ * @size 0x3C
+ */
 INCLUDE_ASM("asm/nonmatchings/visualvu1", Initialize__13CVisualMDTVu1Fv);
+/**
+ * Constructs a model visual and clears it.
+ *
+ * @mangled __ct__13CVisualMDTVu1Fv
+ * @address 0x134FB0
+ * @size 0x48
+ */
 INCLUDE_ASM("asm/nonmatchings/visualvu1", __ct__13CVisualMDTVu1Fv);
+/**
+ * Draws the visual into a packet through the vector unit.
+ *
+ * @mangled DrawVu1__10CVisualVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii
+ * @address 0x135000
+ * @size 0x964
+ */
 INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__10CVisualVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
+/**
+ * Writes one vector-unit upload header and gives back its length in words.
+ *
+ * @mangled SetVuData__FiP1PUiP1P1P1P1i
+ * @address 0x135970
+ * @size 0x130
+ */
 INCLUDE_ASM("asm/nonmatchings/visualvu1", SetVuData__FiP1PUiP1P1P1P1i);
 INCLUDE_ASM("asm/nonmatchings/visualvu1", CreateVUdataFromMDT__10CVisualVu1FPUiPUiii);
 INCLUDE_ASM("asm/nonmatchings/visualvu1", CreateVUdataFromMDTRemake__10CVisualVu1FPUiPUii);
+/**
+ * Draws the model, rebuilding its packet where the data has changed.
+ *
+ * @mangled DrawVu1__13CVisualMDTVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii
+ * @address 0x1360E0
+ * @size 0x120
+ */
 INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__13CVisualMDTVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
+/**
+ * Draws the model into a VIF packet, choosing the buffer the frame is using.
+ *
+ * @mangled DrawVu1__13CVisualMDTVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii
+ * @address 0x136200
+ * @size 0x34
+ */
 INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__13CVisualMDTVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
 INCLUDE_ASM("asm/nonmatchings/visualvu1", RemakeData__13CVisualMDTVu1FPUi);
