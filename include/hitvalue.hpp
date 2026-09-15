@@ -9,7 +9,7 @@ public:
     u8 unk_00[0x10];
     s32 unk_10;
     u8 unk_14[0x48];
-    s32 unk_5C;
+    s32 active; /**< Indicates that the slot is showing a number. */
 
     /**
      * Puts one damage number on the screen over what took the hit.

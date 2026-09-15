@@ -367,20 +367,38 @@
     "sections": {}
   },
   "src/editloop.cpp": {
+    "sections": {
+      ".editinitdata": [
+        "@657",
+        "@677",
+        "@678",
+        "@687"
+      ],
+      ".editinitflags": [
+        "init$654",
+        "debug_flag_set$664",
+        "init$665"
+      ],
+      ".editnamemes": [
+        "name_mes$653"
+      ],
+      ".edcursorflags": [
+        "offset$1876",
+        "init$1877",
+        "a$1906",
+        "init$1907"
+      ],
+      ".edsuffix": [
+        "@943"
+      ]
+    },
     "extern_functions": [
       "__ct__10CCharacterFv"
     ],
-    "import_constants_shared": [
-      [
-        "",
-        "@272__2"
-      ]
-    ],
-    "symbols": {
-      "CommandIMG__FPPv": "CommandIMG__FPPv__2",
-      "CommandREVERBE__FPPv": "CommandREVERBE__FPPv__2"
-    },
     "rodata_exports": [
+      "@414__5",
+      "@717",
+      "@2151",
       "@2362",
       "@2363",
       "@2364",
@@ -403,50 +421,8 @@
       "@2850",
       "@2851",
       "@2852",
-      "@2853",
-      "@717",
-      "@875__2",
-      "@876__2",
-      "@877",
-      "@878",
-      "@879",
-      "@880__2",
-      "@881__2",
-      "@882",
-      "@883",
-      "@884__3",
-      "@885",
-      "@414__5",
-      "@2151"
-    ],
-    "sections": {
-      ".editloopdata": [
-        "rev$874"
-      ],
-      ".editinitdata": [
-        "@1029",
-        "@1049",
-        "@1050",
-        "@1059"
-      ],
-      ".editinitflags": [
-        "init$654",
-        "debug_flag_set$664",
-        "init$665"
-      ],
-      ".editnamemes": [
-        "name_mes$653"
-      ],
-      ".edcursorflags": [
-        "offset$1876",
-        "init$1877",
-        "a$1906",
-        "init$1907"
-      ],
-      ".edsuffix": [
-        "@1315"
-      ]
-    }
+      "@2853"
+    ]
   },
   "src/editloop3.cpp": {
     "symbols": {
@@ -1104,6 +1080,36 @@
     "globalize_symbols": [
       "Command__2",
       "CommandExe__2"
+    ]
+  },
+  "src/editmapscript.cpp": {
+    "import_constants_shared": [
+      [
+        "",
+        "@272__2"
+      ]
+    ],
+    "symbols": {
+      "CommandIMG__FPPv": "CommandIMG__FPPv__2",
+      "CommandREVERBE__FPPv": "CommandREVERBE__FPPv__2"
+    },
+    "sections": {
+      ".mapscriptdata": [
+        "rev$874"
+      ]
+    },
+    "rodata_exports": [
+      "@875__2",
+      "@876__2",
+      "@877",
+      "@878",
+      "@879",
+      "@880__2",
+      "@881__2",
+      "@882",
+      "@883",
+      "@884__3",
+      "@885"
     ]
   }
 }

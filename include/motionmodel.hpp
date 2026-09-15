@@ -3,18 +3,20 @@
 #include "common.h"
 
 #include "dataalloc_fwd.hpp"
+#include "gameutil.hpp"
 
 class CFrame;
 
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
-struct MOTION_INFO;
-
 class CMotionModel {
 public:
     CFrame *frame; /**< Frame that draws the model. */
-    u8 unk_04[0x9C];
+    u8 unk_04[0xC];
+    tagMOTION_TYPE motion; /**< Motion data and playback state for the model. */
+    int current_motion;    /**< Motion selected for the next playback step. */
+    u8 unk_94[0xC];
 
     /**
      * Reads one model and its motions out of an archive into two arenas.
@@ -23,7 +25,9 @@ public:
      * @address 0x1B6A30
      * @size 0x2A0
      */
-    void LoadPack(unsigned int *, char *, CDataAlloc2<1> *, CDataAlloc2<1> *, MOTION_INFO *, int);
+    void LoadPack(unsigned int *pack, char *base_name, CDataAlloc2<1> *model_arena,
+                  CDataAlloc2<1> *motion_arena, MOTION_INFO *motion_info,
+                  int initialize_frames);
 
     /**
      * Advances the model's motion by a frame.

@@ -91,7 +91,7 @@ public:
      * @address 0x161100
      * @size 0xC4
      */
-    void CheckClip(void);
+    int CheckClip(void);
 
     /**
      * Advances the ripples one step, writing into whichever of the two height

@@ -5293,16 +5293,16 @@
       "documentation": "src/edit.cpp"
     },
     {
-      "translation_unit": "editloop",
-      "source": "src/editloop.cpp",
-      "assembly": "asm/nonmatchings/editloop/LoadEditMapData__FP13EDIT_MAP_INFOPci.s",
+      "translation_unit": "editmapscript",
+      "source": "src/editmapscript.cpp",
+      "assembly": "asm/nonmatchings/editmapscript/LoadEditMapData__FP13EDIT_MAP_INFOPci.s",
       "image": "main",
       "address": "0x00174390",
       "size": "0x74C",
       "name": "LoadEditMapData__FP13EDIT_MAP_INFOPci",
       "sha256": "cfeb7be082276f245d11a9b9e7ee8cb386b8603d35d29a29c37ad3b97d464d69",
       "comment": "Reads one editor map's description through the script interpreter.",
-      "documentation": "src/editloop.cpp"
+      "documentation": "src/editmapscript.cpp"
     },
     {
       "translation_unit": "editloop",

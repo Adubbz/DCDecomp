@@ -1,6 +1,103 @@
 #include "healeffect.hpp"
 
+#include <libvu0.h>
+
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+
+#include "character.hpp"
+#include "shot_freefuncs.hpp"
+#include "texture.hpp"
+
+extern "C" CCharacter CharaMain;
+
+#ifdef NON_MATCHING
+void CHealEffect::Set(float *world) {
+    sceVu0CopyVector(this->position, world);
+    this->active = 1;
+    for (int i = 0; i < 32; i++) {
+        this->radius[i] = 3.0f + 6.0f * (float) rand() / 2.1474836e9f;
+        this->angle[i] = 6.2831855f * (float) rand() / 2.1474836e9f - 3.1415927f;
+        this->angular_velocity[i] = 0.034906585f * (5.0f * (float) rand() / 2.1474836e9f);
+        this->size[i] = 0.4f + 0.6f * (float) rand() / 2.1474836e9f;
+        this->alpha[i] = 0.0f;
+        // The drawn phase is the one below; the value rolled here is discarded.
+        this->phase[i] = 0.1f * (float) rand() / 2.1474836e9f;
+        this->phase[i] = 0.0f;
+        this->particle_offset[i][1] = 2.0f + 10.0f * (float) rand() / 2.1474836e9f;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/healeffect", Set__11CHealEffectFPf);
+#endif
+
+#ifdef NON_MATCHING
+void CHealEffect::Step(void) {
+    float offset[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+    sceVu0FMATRIX unit;
+    sceVu0FMATRIX rotation;
+    int expired = 0;
+
+    if (this->active != 0) {
+        for (int i = 0; i < 32; i++) {
+            if (this->phase[i] < 3.1415927f) {
+                // The phase runs a half sine, so the particle rises and fades once.
+                float rise = sinf(this->phase[i]);
+
+                this->phase[i] += 0.052359879f;
+                this->alpha[i] = 128.0f * rise - 32.0f;
+                if (this->alpha[i] <= 0.0f) {
+                    this->alpha[i] = 0.0f;
+                }
+                this->angle[i] += this->angular_velocity[i];
+                if (this->angle[i] > 3.1415927f) {
+                    this->angle[i] -= 6.2831855f;
+                }
+                if (this->angle[i] < -3.1415927f) {
+                    this->angle[i] += 6.2831855f;
+                }
+                offset[0] = 0.0f;
+                offset[1] = this->particle_offset[i][1] + 0.3f * (float) rand() / 2.1474836e9f;
+                offset[2] = rise * this->radius[i];
+                sceVu0UnitMatrix(unit);
+                sceVu0RotMatrixY(rotation, unit, this->angle[i]);
+                sceVu0ApplyMatrix(offset, rotation, offset);
+                sceVu0CopyVector(this->particle_offset[i], offset);
+            } else {
+                expired++;
+                if (expired == 32) {
+                    this->active = 0;
+                    printf("emd!!\n");
+                }
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/healeffect", Step__11CHealEffectFv);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/healeffect", @1415);
+
+#ifdef NON_MATCHING
+void CHealEffect::Draw(void) {
+    float world[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+
+    if (this->active != 0) {
+        CTexture *texture = TexManager.GetTexture("basefx00", -1);
+
+        sceVu0CopyVector(this->position, CharaMain.pos);
+        for (int i = 0; i < 32; i++) {
+            if (this->phase[i] < 3.1415927f) {
+                world[0] = this->position[0] + this->particle_offset[i][0];
+                world[1] = this->position[1] + this->particle_offset[i][1];
+                world[2] = this->position[2] + this->particle_offset[i][2];
+                BtSet3DCellModel(world, texture, this->size[i], 0x10, 0, 0x20, 0x20,
+                                 (int) this->alpha[i]);
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/healeffect", Draw__11CHealEffectFv);
+#endif

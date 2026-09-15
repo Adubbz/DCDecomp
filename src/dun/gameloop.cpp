@@ -57,6 +57,7 @@
 #include "battlemenu.hpp"
 #include "btactstatus.hpp"
 #include "btmisc.hpp"
+#include "mds.hpp"
 #include "btsysscript.hpp"
 #include "camera.hpp"
 #include "camerafollow.hpp"
@@ -1443,8 +1444,8 @@ void GameInit(void) {
 
         state->event = NULL;
         state->unk_34 = 0;
-        state->unk_38 = 0;
-        state->unk_30 = 0;
+        state->enabled = 0;
+        state->hold = 0;
         state->chara_done = -1;
     }
     NowEventMan = &DngEventMan;
@@ -1453,11 +1454,11 @@ void GameInit(void) {
         CDranMapField *field = &DranMapField.field[i];
 
         field->Initialize();
-        DranMapField.unk_D440[i] = 0;
-        DranMapField.unk_D470[i] = 3;
+        DranMapField.collision[i] = 0;
+        DranMapField.state[i] = 3;
     }
-    DranMapField.unk_D4A0 = 0;
-    DranMapField.unk_D4A4 = 0;
+    DranMapField.field_count = 0;
+    DranMapField.collision_count = 0;
     NowDranMapField = DranMapField.field;
     NowColData = &CColData;
 
@@ -1493,7 +1494,7 @@ void GameInit(void) {
     }
     NewChangeFxFlag = 0;
     for (int i = 0; i < 32; i++) {
-        HitValue[i].unk_5C = 0;
+        HitValue[i].active = 0;
         HitValue[i].unk_10 = 0;
     }
     NowHitValue = HitValue;
@@ -1732,8 +1733,8 @@ void GameInit(void) {
     BtEventMes0.SetBuff_system(mes);
     ClearSystemMes();
 
-    DngMessMan.unk_24 = -1;
-    DngMessMan.unk_04 = 0;
+    DngMessMan.message = -1;
+    DngMessMan.timer = 0;
     DngMessMan.unk_00 = 1;
     oldMsgNo = -1;
     oldMsgNo2 = -1;
@@ -2773,7 +2774,7 @@ void MainDraw(void) {
 
     if (showing != 0) {
         if (DngMessMan.unk_1C == 0) {
-            int mes_no = DngMessMan.unk_24;
+            int mes_no = DngMessMan.message;
 
             DngMes1.mes_no[0] = DngMessMan.unk_0C;
             DngMes1.mes_no[1] = DngMessMan.unk_10;
@@ -2796,7 +2797,7 @@ void MainDraw(void) {
                 DngMes1.DrawMesWin();
             }
         } else {
-            int mes_no = DngMessMan.unk_24;
+            int mes_no = DngMessMan.message;
             int pos[4];
 
             DngMesStb.value_signed = 1;
@@ -3028,8 +3029,8 @@ void MoveChara(void) {
                     if (GamePad.Down(0x100) != 0 && UserStatus->party_size >= 2 &&
                         BtActStatus.action_on == 0) {
                         DngMessMan.unk_00 = 0;
-                        DngMessMan.unk_24 = -1;
-                        DngMessMan.unk_04 = 0;
+                        DngMessMan.message = -1;
+                        DngMessMan.timer = 0;
                         DngMessMan.unk_1C = 0;
                         DngMessMan.unk_20 = 0;
                         DngMessMan.unk_08 = 0;
@@ -3324,7 +3325,7 @@ void MoveChara(void) {
                                             EdFadeOut(0x78, 0.0f, 0.0f, 0.0f);
                                             BtEventInfo.unk_38 = 0;
                                             gameTask = 0x1F4;
-                                        } else if (state->unk_30 != 0 && GamePad.Down(0x80) != 0) {
+                                        } else if (state->hold != 0 && GamePad.Down(0x80) != 0) {
                                             gameTask = 0x190;
                                             BtEventInfo.unk_24 = 2;
                                         } else if (GamePad.Down(PadInput_OK) != 0) {
@@ -3557,10 +3558,10 @@ void MoveChara(void) {
                                                                    ->active_item_vol[itemNowSel - 1];
                                                         if ((*vol -= 1) <= 0) {
                                                             DelActiveItem(itemNowSel);
-                                                            DngMessMan.unk_24 = 0xB6;
+                                                            DngMessMan.message = 0xB6;
                                                             DngMessMan.unk_0C =
                                                                 GetCommonItemDataSystemMsg(-1);
-                                                            DngMessMan.unk_04 = 0xB4;
+                                                            DngMessMan.timer = 0xB4;
                                                             DngMessMan.unk_1C = 0;
                                                         }
                                                     }
@@ -4284,8 +4285,8 @@ void MoveChara(void) {
             CharaMain.motion_speed = -1.0f;
             BtActStatus.action_on = 0;
             DngMessMan.unk_00 = 0;
-            DngMessMan.unk_24 = -1;
-            DngMessMan.unk_04 = 0;
+            DngMessMan.message = -1;
+            DngMessMan.timer = 0;
             DngMessMan.unk_1C = 0;
             DngMessMan.unk_20 = 0;
             DngMessMan.unk_08 = 0;
@@ -4341,8 +4342,8 @@ void MoveChara(void) {
                 DngMesStb.mes_made = -1;
                 Mes1MakeFlg = 1;
                 Mes2MakeFlg = 1;
-                DngMessMan.unk_24 = -1;
-                DngMessMan.unk_04 = 0;
+                DngMessMan.message = -1;
+                DngMessMan.timer = 0;
                 DngMessMan.unk_1C = 0;
                 DngMessMan.unk_20 = 0;
                 DngMessMan.unk_08 = 0;
@@ -4385,8 +4386,8 @@ void MoveChara(void) {
                     DngMesStb.mes_made = -1;
                     Mes1MakeFlg = 1;
                     Mes2MakeFlg = 1;
-                    DngMessMan.unk_24 = -1;
-                    DngMessMan.unk_04 = 0;
+                    DngMessMan.message = -1;
+                    DngMessMan.timer = 0;
                     DngMessMan.unk_1C = 0;
                     DngMessMan.unk_20 = 0;
                     DngMessMan.unk_08 = 0;
@@ -5051,8 +5052,8 @@ void MoveChara(void) {
             MonstorNameOff = 1;
             NowCamera__3->SetSpeed(0.0f);
             DngMessMan.unk_00 = 0;
-            DngMessMan.unk_24 = -1;
-            DngMessMan.unk_04 = 0;
+            DngMessMan.message = -1;
+            DngMessMan.timer = 0;
             DngMessMan.unk_1C = 0;
             DngMessMan.unk_20 = 0;
             DngMessMan.unk_08 = 0;
@@ -5088,8 +5089,8 @@ void MoveChara(void) {
             Mes1MakeFlg = 1;
             Mes2MakeFlg = 1;
             DngMessMan.unk_00 = 1;
-            DngMessMan.unk_24 = -1;
-            DngMessMan.unk_04 = 0;
+            DngMessMan.message = -1;
+            DngMessMan.timer = 0;
             DngMessMan.unk_1C = 0;
             DngMessMan.unk_20 = 0;
             DngMessMan.unk_08 = 0xA;
@@ -5671,11 +5672,11 @@ void motionDrive(void) {
     NowDranMapField->CDranMapField::Step();
     DngMesStb.Step();
 
-    if (DngMessMan.unk_04 > 0) {
-        DngMessMan.unk_04--;
-        if (DngMessMan.unk_04 == 0) {
+    if (DngMessMan.timer > 0) {
+        DngMessMan.timer--;
+        if (DngMessMan.timer == 0) {
             DngMessMan.unk_1C = 0;
-            DngMessMan.unk_24 = -1;
+            DngMessMan.message = -1;
         }
     }
     if (DngMessMan.unk_08 > 0) {
@@ -5948,8 +5949,8 @@ void BtCleatRandomMap(void) {
 
         slot->event = NULL;
         slot->unk_34 = 0;
-        slot->unk_38 = 0;
-        slot->unk_30 = 0;
+        slot->enabled = 0;
+        slot->hold = 0;
         slot->chara_done = -1;
     }
 
@@ -5977,14 +5978,14 @@ void BtCleatRandomMap(void) {
 
     for (n = 0; n < 32; n++) {
         MainRandomItem.unk_290[n] = -1;
-        MainRandomItem.unk_494[n] = -1;
-        MainRandomItem.unk_514[n] = 0;
+        MainRandomItem.pickup_event[n] = -1;
+        MainRandomItem.state[n] = 0;
     }
     MainRandomItem.gold_texture = gold;
     for (n = 0; n < 32; n++) {
         SubRandomItem.unk_290[n] = -1;
-        SubRandomItem.unk_494[n] = -1;
-        SubRandomItem.unk_514[n] = 0;
+        SubRandomItem.pickup_event[n] = -1;
+        SubRandomItem.state[n] = 0;
     }
     SubRandomItem.gold_texture = GoldTex;
     RandomItem = &MainRandomItem;
@@ -6011,8 +6012,8 @@ void BtCleatRandomMap(void) {
 
         slot->event = NULL;
         slot->unk_34 = 0;
-        slot->unk_38 = 0;
-        slot->unk_30 = 0;
+        slot->enabled = 0;
+        slot->hold = 0;
         slot->chara_done = -1;
     }
     for (j = 0; j < 48; j++) {
@@ -6073,8 +6074,8 @@ void BtCleatFreeMap(void) {
 
     for (i = 0; i < 32; i++) {
         MainRandomItem.unk_290[i] = -1;
-        MainRandomItem.unk_494[i] = -1;
-        MainRandomItem.unk_514[i] = 0;
+        MainRandomItem.pickup_event[i] = -1;
+        MainRandomItem.state[i] = 0;
     }
     MainRandomItem.gold_texture = gold;
     RandomItem = &MainRandomItem;
@@ -6281,8 +6282,8 @@ void SwordDmgCheck1(float amount, int kind) {
     // The Chronicle sword says so once, as its durability crosses a fifth.
     if (weapon->item_no == 0x110 && weapon->durability_f <= warn && was >= warn) {
         SetWeaponAttachStatus(NowWeaponHave);
-        DngMessMan.unk_24 = 0xB8;
-        DngMessMan.unk_04 = 0xF0;
+        DngMessMan.message = 0xB8;
+        DngMessMan.timer = 0xF0;
         DngMessMan.unk_1C = 0;
         SndSePlay(0x6F, -1, 0);
         MenuWeaponSpSet(NowWeapon, weapon);
@@ -6768,8 +6769,8 @@ int BtCheckDamageProc(void) {
                     *water -= drained;
                     SndSePlay(0xDF, -1, 0);
                     NowMonstorUnit->monster[monster].unk_03C += drained;
-                    DngMessMan.unk_24 = 0xB5;
-                    DngMessMan.unk_04 = 0xB4;
+                    DngMessMan.message = 0xB5;
+                    DngMessMan.timer = 0xB4;
                     DngMessMan.unk_1C = 0;
                 }
             }
@@ -6792,9 +6793,9 @@ int BtCheckDamageProc(void) {
 
                     if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
-                        DngMessMan.unk_24 = 0xB7;
+                        DngMessMan.message = 0xB7;
                         DngMessMan.unk_0C = GetCommonItemDataSystemMsg(0x84);
-                        DngMessMan.unk_04 = 0xB4;
+                        DngMessMan.timer = 0xB4;
                         DngMessMan.unk_1C = 0;
                     }
                 }
@@ -6806,8 +6807,8 @@ int BtCheckDamageProc(void) {
 
                 if (slot == -1) {
                     BtSetStatusErr(0x10);
-                    DngMessMan.unk_24 = 0xBB;
-                    DngMessMan.unk_04 = 0xB4;
+                    DngMessMan.message = 0xBB;
+                    DngMessMan.timer = 0xB4;
                     DngMessMan.unk_1C = 0;
                 } else {
                     CUserStatus *who = UserStatus;
@@ -6815,9 +6816,9 @@ int BtCheckDamageProc(void) {
 
                     if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
-                        DngMessMan.unk_24 = 0xB7;
+                        DngMessMan.message = 0xB7;
                         DngMessMan.unk_0C = GetCommonItemDataSystemMsg(0x87);
-                        DngMessMan.unk_04 = 0xB4;
+                        DngMessMan.timer = 0xB4;
                         DngMessMan.unk_1C = 0;
                     }
                 }
@@ -6829,8 +6830,8 @@ int BtCheckDamageProc(void) {
 
                 if (slot == -1) {
                     BtSetStatusErr(0x20);
-                    DngMessMan.unk_24 = 0xB9;
-                    DngMessMan.unk_04 = 0xB4;
+                    DngMessMan.message = 0xB9;
+                    DngMessMan.timer = 0xB4;
                     DngMessMan.unk_1C = 0;
                 } else {
                     CUserStatus *who = UserStatus;
@@ -6838,9 +6839,9 @@ int BtCheckDamageProc(void) {
 
                     if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
-                        DngMessMan.unk_24 = 0xB7;
+                        DngMessMan.message = 0xB7;
                         DngMessMan.unk_0C = GetCommonItemDataSystemMsg(0x85);
-                        DngMessMan.unk_04 = 0xB4;
+                        DngMessMan.timer = 0xB4;
                         DngMessMan.unk_1C = 0;
                     }
                 }
@@ -6852,8 +6853,8 @@ int BtCheckDamageProc(void) {
 
                 if (slot == -1) {
                     BtSetStatusErr(0x40);
-                    DngMessMan.unk_24 = 0xBA;
-                    DngMessMan.unk_04 = 0xB4;
+                    DngMessMan.message = 0xBA;
+                    DngMessMan.timer = 0xB4;
                     DngMessMan.unk_1C = 0;
                 } else {
                     CUserStatus *who = UserStatus;
@@ -6861,9 +6862,9 @@ int BtCheckDamageProc(void) {
 
                     if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
-                        DngMessMan.unk_24 = 0xB7;
+                        DngMessMan.message = 0xB7;
                         DngMessMan.unk_0C = GetCommonItemDataSystemMsg(0x86);
-                        DngMessMan.unk_04 = 0xB4;
+                        DngMessMan.timer = 0xB4;
                         DngMessMan.unk_1C = 0;
                     }
                 }
@@ -7205,8 +7206,8 @@ void BattleActionDrink(void) {
         BtActStatus.unk_00C = 0;
         CMonUnitHold = 0;
         CEffectHold = 0;
-        DngMessMan.unk_24 = -1;
-        DngMessMan.unk_04 = 0;
+        DngMessMan.message = -1;
+        DngMessMan.timer = 0;
         DngMessMan.unk_1C = 0;
         DngMessMan.unk_20 = 0;
         DngMessMan.unk_08 = 0;

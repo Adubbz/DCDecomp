@@ -135,7 +135,7 @@ public:
      * @address 0x1B5AE0
      * @size 0xA4
      */
-    void SetKickBack(float *, float, float, int);
+    void SetKickBack(float *origin, float speed, float decay, int mode);
 };
 
 STATIC_ASSERT(sizeof(CCollisionData) == 0x3D90);

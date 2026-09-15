@@ -4,6 +4,13 @@
 
 #include "itemdata.hpp"
 
+#include <cstring>
+
+#ifdef NON_MATCHING
+/** Bytes of the item definition file that were read. */
+static int teigiFileSize;
+#endif
+
 /**
  * Steps the item definition file past whitespace and comments.
  *
@@ -12,7 +19,46 @@
  * @size 0x110
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
+#ifdef NON_MATCHING
+static int skipSpace(char *text, int pos) {
+    for (;;) {
+        if (pos >= teigiFileSize) {
+            return teigiFileSize;
+        }
+
+        int skipped = 0;
+        // The file is Shift-JIS, so a space can be the full-width one.
+        if (memcmp(&text[pos], "\x81\x40", 2) == 0) {
+            pos++;
+            skipped = 1;
+        }
+        char c = text[pos];
+        if (c == ' ') {
+            skipped = 1;
+        }
+        if (c == '\t') {
+            skipped = 1;
+        }
+        if (c == '\0') {
+            pos++;
+            skipped = 1;
+        }
+        if (memcmp(&text[pos], "//", 2) == 0) {
+            while (text[pos] != '\0') {
+                pos++;
+            }
+            pos++;
+            skipped = 1;
+        }
+        if (skipped == 0) {
+            return pos;
+        }
+        pos++;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/itemdata", skipSpace__FPci__2);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @549__3);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @550__2);
 /**

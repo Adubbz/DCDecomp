@@ -27,12 +27,6 @@
 #define shadow_motion_ptr shadow_motion
 #define cloth cloth
 
-struct MOTION_FILE_INFO {
-    char *name;
-    u_int *data;
-    int size;
-};
-
 typedef MOTION_INFO tagMOTION_KEY;
 
 extern "C" double atof(const char *string);
@@ -44,9 +38,6 @@ struct COMMAND_INFO {
 };
 
 u_int *GetPackFile(u_int *pack, char *name, int *size = 0);
-void CreateAnimeDataEX(tagMOTION_TYPE *motion, CDataAlloc2<1> *buffer, MOTION_FILE_INFO *files);
-void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *buffer,
-                   tagFRAME_INF **frame_info);
 void *InitCloth(CFrameVu1 *frame, input_str &input, CDataAlloc2<1> *buffer);
 
 static void ReadInfo(CCharacter *value, u_int *pack, char *name, CDataAlloc2<1> *mds,
@@ -673,7 +664,37 @@ void CCharacter::StopCloth(int) {
  * @address 0x13B3E0
  * @size 0x64
  */
+#ifdef NON_MATCHING
+void StretchBind2(float *first, float *second, float *parameters) {
+    asm {
+        lqc2 $vf10, 0x0($4)
+        lqc2 $vf11, 0x0($5)
+        lqc2 $vf12, 0x0($6)
+        vmulx.xyzw $vf1, $vf0, $vf0x
+        vsub.xyz $vf13, $vf10, $vf11
+        vnop
+        vnop
+        vnop
+        vaddy.x $vf5, $vf1, $vf13y
+        vaddz.x $vf6, $vf1, $vf13z
+        vmula.x $ACC, $vf13, $vf13
+        vmadday.x $ACC, $vf5, $vf13y
+        vmaddz.x $vf7, $vf6, $vf13z
+        vrsqrt $Q, $vf12x, $vf7x
+        vaddax.xyzw $ACC, $vf13, $vf0x
+        vwaitq
+        vmsubq.xyzw $vf25, $vf13, $Q
+        vaddax.xyzw $ACC, $vf10, $vf0x
+        vmsuby.xyz $vf10, $vf25, $vf12y
+        vaddax.xyzw $ACC, $vf11, $vf0x
+        vmaddz.xyz $vf11, $vf25, $vf12z
+        sqc2 $vf10, 0x0($4)
+        sqc2 $vf11, 0x0($5)
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/chararead", StretchBind2__FPfPfPf);
+#endif
 /**
  * Gives the length of a three-component vector, on the vector unit.
  *
@@ -681,4 +702,21 @@ INCLUDE_ASM("asm/nonmatchings/chararead", StretchBind2__FPfPfPf);
  * @address 0x13B450
  * @size 0x30
  */
+#ifdef NON_MATCHING
+float vuabs(float *vector) {
+    asm {
+        lqc2 $vf4, 0x0($4)
+        vmul.xyz $vf4, $vf4, $vf4
+        vmr32.xy $vf5, $vf4
+        vmr32.x $vf6, $vf5
+        vadd.x $vf7, $vf4, $vf5
+        vadd.x $vf5, $vf6, $vf7
+        vsqrt $Q, $vf5x
+        vwaitq
+        cfc2.ni $2, $vi22
+        mtc1 $2, $f0
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/chararead", vuabs__FPf);
+#endif

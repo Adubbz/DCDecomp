@@ -27,8 +27,45 @@ DUNGEON_EVENT_SLOT *CDungeonEventMan::SearchSlot(void) {
     return NULL;
 }
 
+#ifdef NON_MATCHING
+void CDungeonEventMan::SearchDataSwitch(int script_no, int enable) {
+    for (int i = 0; i < 96; i++) {
+        int active;
+        if (event[i].event != NULL) {
+            active = event[i].enabled;
+        } else {
+            active = 0;
+        }
+        if (active != 0 && script_no == event[i].event->script_no) {
+            if (enable != 0) {
+                event[i].Start();
+            }
+            if (enable == 0) {
+                event[i].Stop();
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchDataSwitch__16CDungeonEventManFii);
+#endif
+#ifdef NON_MATCHING
+void CDungeonEventMan::SearchItemEventHold(int script_no) {
+    for (int i = 0; i < 96; i++) {
+        int active;
+        if (event[i].event != NULL) {
+            active = event[i].enabled;
+        } else {
+            active = 0;
+        }
+        if (active != 0 && script_no == event[i].event->script_no) {
+            event[i].hold = 0;
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchItemEventHold__16CDungeonEventManFi);
+#endif
 
 int CDungeonEventMan::GetDataNum(void) {
     int count = 0;
@@ -36,7 +73,7 @@ int CDungeonEventMan::GetDataNum(void) {
     for (int i = 0; i < 96; i++) {
         int active;
         if (event[i].event != NULL) {
-            active = event[i].unk_38;
+            active = event[i].enabled;
         } else {
             active = 0;
         }
@@ -51,7 +88,7 @@ CDungeonEventData *CDungeonEventMan::SearchDataSlot(void) {
     for (int i = 0; i < 96; i++) {
         int active;
         if (event[i].event != NULL) {
-            active = event[i].unk_38;
+            active = event[i].enabled;
         } else {
             active = 0;
         }
@@ -109,6 +146,36 @@ CDungeonEventData *CDungeonEventMan::SearchDataSlotPos(float *position) {
     }
     return NULL;
 }
+#ifdef NON_MATCHING
+CDungeonEventData *CDungeonEventMan::SearchDataSlotPos2(float *position) {
+    sceVu0FVECTOR event_position;
+    sceVu0FVECTOR target_position;
+
+    sceVu0CopyVector(target_position, position);
+    float target_height = target_position[1];
+    target_position[1] = 0.0f;
+
+    for (int i = 0; i < 96; i++) {
+        CDungeonEventData *event_data = &event[i];
+        if (event_data->CheckSwitch() != 0) {
+            sceVu0CopyVector(event_position, event_data->pos);
+            float height_difference = target_height - event_position[1];
+            if (height_difference < 0.0f) {
+                height_difference = -height_difference;
+            }
+            if (height_difference < 40.0f) {
+                event_position[1] = 0.0f;
+                float radius = event_data->event->radius;
+                if (DistVector(event_position, target_position) <= radius + 10.0f) {
+                    return event_data;
+                }
+            }
+        }
+    }
+    return NULL;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchDataSlotPos2__16CDungeonEventManFPf);
+#endif
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SetupEvent__16CDungeonEventManFP11CDungeonMapi);
 INCLUDE_RODATA("asm/nonmatchings/dungeoneventman", @3600);

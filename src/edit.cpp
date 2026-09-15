@@ -21,6 +21,7 @@
 #include "debugfont.hpp"
 #include "dngstatusdata.hpp"
 #include "edit.hpp"
+#include "editloop3.hpp"
 #include "editground.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
@@ -484,8 +485,50 @@ static void DrawLine(int *from, int *to, u_char r, u_char g, u_char b, u_char a)
     sceVif1PkCloseDirectCode(packet);
 }
 
+#ifdef NON_MATCHING
+void EdSetBgmVol(float time) {
+    float scale = 1.0f;
+
+    // The town music plays at night and is silent through the day, fading out
+    // over the hour before four.
+    if (EdCheckTime(time, 4.0f, 11.0f) != 0) {
+        scale = 0.0f;
+    }
+    if (!(time < 3.0f) && time < 4.0f) {
+        scale = 4.0f - time;
+    }
+
+    int volume = (int) (scale * (float) SndGetDefaultBgmVol());
+    if (volume < 2) {
+        scale = 0.0f;
+    }
+    if (SndBgmCheck() == 1) {
+        if (volume > 0) {
+            SndSetBgmVol(volume);
+        } else {
+            SndBgmStop();
+        }
+    } else if (scale > 0.0) {
+        SndBgmPlay(0);
+        SndSetBgmVol(volume);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit", EdSetBgmVol__Ff);
+#endif
+#ifdef NON_MATCHING
+void EdAmbientPlay(float volume) {
+    // The ambient sets run one behind the four times of day, and roll over.
+    int ambient_no = EdGetTime(volume) + 1;
+
+    if (ambient_no >= 4) {
+        ambient_no = 0;
+    }
+    SndAmbientPlay(ambient_no);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit", EdAmbientPlay__Ff);
+#endif
 
 void EdSetAmbientVol(float volume) {
     SndAmbientSetVolf(volume);
@@ -764,7 +807,18 @@ void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_po
  * @address 0x172100
  * @size 0x58
  */
+#ifdef NON_MATCHING
+void EdDoorOpenSe(int door_no, float *position) {
+    static int se_open[8] = {0x6C, 0x7E, 0x6E, 0x80, 0x74, 0x82, 0x70, 0x72};
+
+    if (door_no < 0 || door_no >= 8) {
+        return;
+    }
+    SndSePlay(se_open[door_no], -1, 0);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit", EdDoorOpenSe__FiPf);
+#endif
 /**
  * Plays the sound one kind of door makes when it closes.
  *
@@ -772,8 +826,32 @@ INCLUDE_ASM("asm/nonmatchings/edit", EdDoorOpenSe__FiPf);
  * @address 0x172160
  * @size 0x58
  */
+#ifdef NON_MATCHING
+void EdDoorCloseSe(int door_no, float *position) {
+    static int se_close[8] = {0x6D, 0x7F, 0x6F, 0x81, 0x75, 0x83, 0x71, 0x73};
+
+    if (door_no < 0 || door_no >= 8) {
+        return;
+    }
+    SndSePlay(se_close[door_no], -1, 0);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit", EdDoorCloseSe__FiPf);
+#endif
+#ifdef NON_MATCHING
+int EdGetDoorMotion(int door_no, int state) {
+    static int motion[8][2] = {
+        {3, 4}, {10, 10}, {3, 4}, {10, 10}, {3, 4}, {10, 10}, {10, 10}, {10, 10},
+    };
+
+    if (door_no < 0 || door_no >= 8) {
+        return 0;
+    }
+    return motion[door_no][state != 0];
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit", EdGetDoorMotion__Fii);
+#endif
 /* The map editor's depth of field: one description at a time, taken from the map's own data or
    replaced by a default set, and handed every frame to the effect the rest of the game draws. */
 static DEPTH_OF_FIELD_INFO dof;
@@ -1148,7 +1226,16 @@ void EdGetItemFile(int item_no, char *model_path, char *texture_path) {
  * @address 0x173380
  * @size 0x58
  */
+#ifdef NON_MATCHING
+void EdDrawItem(void) {
+    if (EdEventInfo.item_frame[0] != NULL) {
+        TexManager.ReloadTexture(GetVif1Packet(), 0x28);
+        MGDraw((CFrame *) EdEventInfo.item_frame[0]);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit", EdDrawItem__Fv);
+#endif
 /* The map editor's own system and help messages, in front of the ones the town runs: every call
    here reaches the town's message code first and then does the same thing again to a window of the
    editor's own, so both are up at once and the editor's is the one drawn last.
@@ -1582,7 +1669,14 @@ void EdDrawOpenItemBox() {
  * @address 0x173E00
  * @size 0x70
  */
+#ifdef NON_MATCHING
+void EdSaveFrameImage(CTexture texture) {
+    frame_image_flag = 1;
+    frame_image_tex = texture;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit", EdSaveFrameImage__F8CTexture);
+#endif
 
 void EdSaveFrameImageTask() {
     if (frame_image_flag != 0) {
@@ -1603,7 +1697,71 @@ void EdSaveFrameImageInit() {
  * @address 0x173F00
  * @size 0x1EC
  */
+#ifdef NON_MATCHING
+int EdMenuLoop(ClsMes *message) {
+    if (message == NULL) {
+        return 1;
+    }
+    message->Step();
+    if (GamePad.Down(0x60) != 0) {
+        // A confirm on the last page closes the window and leaves it ready
+        // for the next one.
+        if (message->State() == 3) {
+            message->text_rate = message->text_rate_set;
+            message->mes_made = -1;
+            message->fade_in = 0;
+            message->text_columns = 0x46;
+            message->text_rows = 0xA;
+            message->text_len = 0;
+            message->text_width = 0;
+            message->text_height = 0;
+            message->fade = 0.0f;
+            message->fade_in = 1;
+            message->text_rate = message->text_rate_set;
+            message->waiting = 0;
+            message->text_at = 0.0f;
+            message->text_no = 0;
+            message->text_from = 0;
+            message->page_from = 0;
+            message->InitMesWinTbl();
+            message->clut_now = message->clut_default;
+            message->wait = 0;
+            message->blink = 0;
+            message->auto_page_wait = 0;
+            message->mes_made = -1;
+            message->edge_alpha = 0x80;
+            for (int i = 0; i < 10; i++) {
+                message->mes_no[i] = -1;
+            }
+            for (int i = 0; i < 8; i++) {
+                message->values[i] = 0;
+            }
+            message->value = 0;
+            message->value_signed = 0;
+            message->value_show = 1;
+            message->value_narrow = 0;
+            message->space_width = -1;
+            message->space_area = -1;
+            message->cursor_row = -1;
+            message->cursor_y = 0;
+            message->cursor_lit = 0;
+            for (int i = 0; i < 10; i++) {
+                message->line_pos[i].x = -1;
+                message->line_pos[i].y = -1;
+            }
+            return 1;
+        }
+        if (message->State() == 5) {
+            message->GoNextPage();
+        } else {
+            message->text_rate = 0.0f;
+        }
+    }
+    return 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit", EdMenuLoop__FP6ClsMes);
+#endif
 
 float ConvertTime(float hour) {
     hour -= 10.0f;

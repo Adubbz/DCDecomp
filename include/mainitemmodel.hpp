@@ -3,10 +3,12 @@
 #include "common.h"
 
 class CMainItemModel {
-private:
-    u8 data[0x2810];
-
 public:
+    u_int *cash[6]; /**< Model data each cache slot holds, or zero where the slot is free. */
+    u8 unk_018[0x30];
+    s32 model[16];  /**< What each model slot holds; -1 where the slot is free. */
+    u8 unk_088[0x2788];
+
     /**
      * Gives a free cache slot, or -1 where none is free.
      *
@@ -14,7 +16,7 @@ public:
      * @address 0x1D4540
      * @size 0x44
      */
-    void GetFreeCashNo(void);
+    int GetFreeCashNo(void);
 
     /**
      * Gives a free model slot, or -1 where none is free.
@@ -23,7 +25,7 @@ public:
      * @address 0x1D4590
      * @size 0x48
      */
-    void GetFreeModelNo(void);
+    int GetFreeModelNo(void);
 
     /**
      * Reads one item model into a cache slot.
@@ -41,7 +43,7 @@ public:
      * @address 0x1D4770
      * @size 0xA4
      */
-    void DeleteModel(int);
+    void DeleteModel(int index);
 
     /**
      * Puts one item model in the player's hand.

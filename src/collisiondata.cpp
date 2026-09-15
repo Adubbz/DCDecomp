@@ -1,5 +1,10 @@
 #include "collisiondata.hpp"
 
+#ifdef NON_MATCHING
+/** Key items waiting to be dropped, one entry each, -1 where a slot is free. */
+static int gateKeyStack[32];
+#endif
+
 INCLUDE_ASM("asm/nonmatchings/collisiondata", DebugInfomationDraw__Fv);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1542);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1543);
@@ -59,8 +64,37 @@ INCLUDE_RODATA("asm/nonmatchings/collisiondata", @512);
  * @address 0x1B5640
  * @size 0x3C
  */
+#ifdef NON_MATCHING
+void ClearGateKeyStack(void) {
+    for (int i = 0; i < 32; i++) {
+        gateKeyStack[i] = -1;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/collisiondata", ClearGateKeyStack__Fv);
+#endif
+#ifdef NON_MATCHING
+int SetGateKeyStack(int item) {
+    if (item == -1) {
+        return 0;
+    }
+    // One of a key item is enough, so a second is refused rather than stacked.
+    for (int i = 0; i < 32; i++) {
+        if (item == gateKeyStack[i]) {
+            return 0;
+        }
+    }
+    for (int i = 0; i < 32; i++) {
+        if (gateKeyStack[i] == -1) {
+            gateKeyStack[i] = item;
+            return 1;
+        }
+    }
+    return 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/collisiondata", SetGateKeyStack__Fi);
+#endif
 /**
  * Builds a resource path by putting one of the fixed prefixes before a name.
  *
@@ -85,4 +119,15 @@ INCLUDE_ASM("asm/nonmatchings/collisiondata", CheckHitUser__14CCollisionDataFPfi
  * @address 0x1B5AE0
  * @size 0xA4
  */
+#ifdef NON_MATCHING
+void CCollisionData::SetKickBack(float *origin, float speed, float decay, int mode) {
+    hit[now_hit].knockback_origin[0] = origin[0];
+    hit[now_hit].knockback_origin[1] = origin[1];
+    hit[now_hit].knockback_origin[2] = origin[2];
+    hit[now_hit].knockback_speed = speed;
+    hit[now_hit].knockback_decay = decay;
+    hit[now_hit].knockback_mode = mode;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/collisiondata", SetKickBack__14CCollisionDataFPfffi);
+#endif

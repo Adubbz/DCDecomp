@@ -26,15 +26,6 @@ CFrame *LoadMDSFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *buffer);
 CFrame *LoadCollisionFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *buffer);
 
 /**
- * Reads the collision model a whole file holds.
- *
- * @mangled LoadCollisionFile__FPUiP14CDataAlloc2_1_
- * @address 0x126F70
- * @size 0x2E0
- */
-CFrame *LoadCollisionFile(unsigned int *data, CDataAlloc2<1> *buffer);
-
-/**
  * Loads a model from memory.
  *
  * @mangled LoadMDSFile__FPUiP14CDataAlloc2_1_iPPcPPc

@@ -276,7 +276,8 @@ public:
     DNG_CONSUMABLE consumable_items[43];
     char unk_8A5C[180];
     s32 res_limit_zone_current;
-    char unk_8B14[392];
+    s32 quick_item_icon_count[3]; /**< Quantities carried by icons landing in the quick-item slots. */
+    char unk_8B20[380];
 };
 
 STATIC_ASSERT(sizeof(CDngStatusData) == 0x8C9C);

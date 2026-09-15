@@ -5,7 +5,18 @@
 #include "hitvalue.hpp"
 
 INCLUDE_ASM("asm/nonmatchings/hitvalue", BattleSubWeaponDmg__Ffi);
+#ifdef NON_MATCHING
+void HitValueEntry(CHitValue *values, float *world, int amount, int kind, CFrame *frame) {
+    for (int i = 0; i < 32; i++) {
+        if (values[i].active == 0) {
+            values[i].EntryValue(world, amount, kind, frame);
+            return;
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/hitvalue", HitValueEntry__FP9CHitValuePfiiP6CFrame);
+#endif
 INCLUDE_ASM("asm/nonmatchings/hitvalue", EntryValue__9CHitValueFPfiiP6CFrame);
 INCLUDE_ASM("asm/nonmatchings/hitvalue", Draw__9CHitValueFv);
 INCLUDE_RODATA("asm/nonmatchings/hitvalue", @804);

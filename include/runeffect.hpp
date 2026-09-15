@@ -4,7 +4,11 @@
 
 class CRunEffect {
 public:
-    u8 unk_00[0xD0];
+    int lighting; /**< Whether the dust takes light. */
+    u8 unk_04[0xC];
+    float position[8][4]; /**< World position of each puff of dust. */
+    float velocity_y[8];  /**< Speed each puff is rising at, which gravity eats into. */
+    int life[8];          /**< Frames each puff has left before it goes. */
 
     /**
      * Sets whether the running effect takes light.
@@ -13,7 +17,7 @@ public:
      * @address 0x163470
      * @size 0xC
      */
-    void Lighting(int);
+    void Lighting(int enabled);
 
     /**
      * Draws the dust the player's run leaves behind.

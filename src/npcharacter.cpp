@@ -258,4 +258,11 @@ void CNPCharacter::Initialize() {
     recurring_talk_event = -1;
 }
 
+#ifdef NON_MATCHING
+CNPCharacter::CNPCharacter(void) {
+    // The composed character's constructor initializes its members before this body runs.
+    Initialize();
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/npcharacter", __ct__12CNPCharacterFv);
+#endif

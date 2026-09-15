@@ -26,15 +26,6 @@ extern CDataAlloc2<1> EdVillagerBuffer;
 extern CDataAlloc2<1> EdNPCBuffer;
 
 /**
- * Loads the player model and motion archive used by an editor event.
- *
- * @mangled EdLoadMainChara__FPcPcP14CDataAlloc2_1_
- * @address 0x181480
- * @size 0x154
- */
-void EdLoadMainChara(char *model, char *motion, CDataAlloc2<1> *arena);
-
-/**
  * Describes one image resource assigned while loading an editor map.
  */
 struct EDIT_IMAGE_INFO {
@@ -194,15 +185,6 @@ struct VILLAGER_INFO {
 };
 
 /**
- * Copies the current editor resource directory into a caller buffer.
- *
- * @mangled GetEditDataDir__FPc
- * @address 0x1777D0
- * @size 0x28
- */
-void GetEditDataDir(char *name);
-
-/**
  * Stores the fog parameters belonging to one lighting preset.
  */
 struct EDIT_FOG_INFO {
@@ -241,24 +223,6 @@ struct ED_EVENT_POINT {
     sceVu0FVECTOR rotation;   /**< World-space orientation associated with the event. */
     sceVu0FVECTOR extent;     /**< Secondary point or spatial extent of the event. */
 };
-
-/**
- * Resolves a map object's local position and yaw into world coordinates.
- *
- * @mangled GetPosRot__FP10CMapObjectPfPf
- * @address 0x1838F0
- * @size 0x118
- */
-int GetPosRot(CMapObject *object, float *position, float *rotation);
-
-/**
- * Tests whether an event point is enabled and valid at the requested map time.
- *
- * @mangled CheckEventPoint__FP14ED_EVENT_POINTf
- * @address 0x183A60
- * @size 0x1D4
- */
-int CheckEventPoint(ED_EVENT_POINT *point, float time);
 
 /**
  * Provides the overlapping work-record views used by editor map loading.
@@ -341,7 +305,6 @@ struct EDIT_MAP_INFO {
     EDIT_MAP_WORK_INFO work;            /**< Overlapping work records reset during map initialization. */
 };
 
-
 /** Current parsed editor-map description. */
 extern EDIT_MAP_INFO *EditMapInfo;
 
@@ -422,6 +385,60 @@ STATIC_ASSERT(sizeof(EDIT_MAP_INFO) == 0x2C260);
 STATIC_ASSERT(sizeof(ED_EVENT_POINT) == 0x90);
 STATIC_ASSERT(sizeof(VILLAGER_INFO) == 0x90);
 
+/** Whether the current editor map is an interior. */
+extern int EdInteriorFlag;
+
+/** Whether the editor's thunder effect is active. */
+extern int EdThunderEffectFlag;
+
+/** Background music remembered before entering an interior. */
+extern int EdBeforeInBgmNo;
+
+/** Georama map currently being edited. */
+extern int NowEditMap;
+
+/** Returns a map-completion flag from the active Georama map. */
+int EdGetMapFlag(int flag_no);
+
+/** Sets a map-completion flag on the active Georama map. */
+int EdSetMapFlag(int flag_no, int value);
+
+/**
+ * Loads the player model and motion archive used by an editor event.
+ *
+ * @mangled EdLoadMainChara__FPcPcP14CDataAlloc2_1_
+ * @address 0x181480
+ * @size 0x154
+ */
+void EdLoadMainChara(char *model, char *motion, CDataAlloc2<1> *arena);
+
+/**
+ * Copies the current editor resource directory into a caller buffer.
+ *
+ * @mangled GetEditDataDir__FPc
+ * @address 0x1777D0
+ * @size 0x28
+ */
+void GetEditDataDir(char *name);
+
+/**
+ * Resolves a map object's local position and yaw into world coordinates.
+ *
+ * @mangled GetPosRot__FP10CMapObjectPfPf
+ * @address 0x1838F0
+ * @size 0x118
+ */
+int GetPosRot(CMapObject *object, float *position, float *rotation);
+
+/**
+ * Tests whether an event point is enabled and valid at the requested map time.
+ *
+ * @mangled CheckEventPoint__FP14ED_EVENT_POINTf
+ * @address 0x183A60
+ * @size 0x1D4
+ */
+int CheckEventPoint(ED_EVENT_POINT *point, float time);
+
 /**
  * Returns the first unused event-point slot after the reserved first entry.
  *
@@ -430,15 +447,6 @@ STATIC_ASSERT(sizeof(VILLAGER_INFO) == 0x90);
  * @size 0x4C
  */
 ED_EVENT_POINT *GetNewEventPoint(ED_EVENT_POINT *points, int count);
-
-/**
- * Returns the integer value addressed by a script argument slot.
- *
- * @mangled test__FPPv
- * @address 0x1741D0
- * @size 0x10
- */
-int test(void **argument);
 
 /**
  * Starts a map event and optionally adopts a camera viewpoint.
@@ -585,24 +593,6 @@ void EdStartDrawDay();
  * @size 0x10
  */
 void EdInitDrawDay();
-
-/** Whether the current editor map is an interior. */
-extern int EdInteriorFlag;
-
-/** Whether the editor's thunder effect is active. */
-extern int EdThunderEffectFlag;
-
-/** Background music remembered before entering an interior. */
-extern int EdBeforeInBgmNo;
-
-/** Georama map currently being edited. */
-extern int NowEditMap;
-
-/** Returns a map-completion flag from the active Georama map. */
-int EdGetMapFlag(int flag_no);
-
-/** Sets a map-completion flag on the active Georama map. */
-int EdSetMapFlag(int flag_no, int value);
 
 /**
  * Removes the event-specific robot-part models.

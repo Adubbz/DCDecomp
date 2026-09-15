@@ -272,6 +272,16 @@ void SndSeSeqInit(void);
 void setbilinear(int on);
 
 /**
+ * Draws a textured sprite using plain screen and texture rectangles.
+ *
+ * @mangled set2DSprite__FP13sceVif1PacketP8CTextureP4RECTP4RECTUc
+ * @address 0x15F090
+ * @size 0x68
+ */
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, RECT *screen, RECT *texel,
+                 unsigned char alpha);
+
+/**
  * Opens a run of sprites that all draw out of one texture.
  *
  * @mangled set2DSprite_Start__FP13sceVif1PacketP8CTexture
@@ -411,6 +421,16 @@ void set3DColSprite(sceVif1Packet *, int *, int *, int *, int *, spRGBA *, spRGB
  */
 void set3DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, int *, int *, int *, int *,
                  unsigned char);
+
+/**
+ * Draws a textured sprite in world space between two projected corners.
+ *
+ * @mangled set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiP6spRGBA
+ * @address 0x15D790
+ * @size 0x210
+ */
+void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source,
+                 int *top_left, int *bottom_right, spRGBA *color);
 
 /**
  * Tells the sound where the camera stands, so that it can pan what it plays.

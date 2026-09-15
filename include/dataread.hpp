@@ -220,13 +220,13 @@ void LoadSystemMessage(void);
 void initialize_data(void);
 
 /**
- * Gives one arena to the loader as its working buffer.
+ * Gives one arena to the loader as its working buffer, sized in quadwords.
  *
  * @mangled SetDataBuffer__FP14CDataAlloc2_1_i
  * @address 0x125A90
  * @size 0x4C
  */
-void SetDataBuffer(CDataAlloc2<1> *arena, int kind);
+void SetDataBuffer(CDataAlloc2<1> *arena, int quads);
 
 /**
  * Sets where packet reads land, and how much room they have.

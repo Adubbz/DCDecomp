@@ -34,9 +34,9 @@ public:
     u8 unk_04[0xC];
     sceVu0FVECTOR pos; /**< World position that the event plays at. */
     sceVu0FVECTOR dir; /**< Way that the event faces. */
-    s32 unk_30;
+    s32 hold;    /**< Holds the event back from running until it is cleared. */
     s32 unk_34;
-    s32 unk_38;
+    s32 enabled; /**< Whether the slot holds an event that can run. */
     s32 chara_done; /**< Character that has already run the event, or -1 for none. */
 
     /**

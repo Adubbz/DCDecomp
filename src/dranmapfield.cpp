@@ -1,6 +1,33 @@
 #include "dranmapfield.hpp"
 
+#include <cstdio>
+
+#include "boxvu0.hpp"
+#include "collision.hpp"
+#include "mds.hpp"
+#include "dataalloc.hpp"
+#include "frame.hpp"
+#include "snd.hpp"
+
+#ifdef NON_MATCHING
+void CDranMapField::LoadModel(unsigned int *pack, CDataAlloc2<1> *arena) {
+    DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
+
+    if (set->field_count >= 12) {
+        printf(" ************* over!!\n");
+        return;
+    }
+
+    CDranMapField *field = &set->field[set->field_count];
+    field->Initialize();
+    field->LoadPackData(pack, "info", arena, arena);
+    field->SetPosition(0.0f, 0.0f, 0.0f);
+    field->SetRotation(0.0f, 0.0f, 0.0f);
+    set->field_count++;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/dranmapfield", LoadModel__13CDranMapFieldFPUiP14CDataAlloc2_1_);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @3606);
 INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @488);
 INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @489);
@@ -40,7 +67,82 @@ INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @522__2);
 INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @523);
 INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @524);
 INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @525);
+#ifdef NON_MATCHING
+int CDranMapField::AddCollision(CCPoly *poly, int count, CBoxVu0 box) {
+    // The methods run on the first field of the set and index from there.
+    DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
+    CBoxVu0 region = box;
+
+    if (set->collision_count == 0) {
+        return count;
+    }
+    for (int i = 0; i < set->collision_count; i++) {
+        if (set->collision[i] != NULL && set->state[i] >= 2) {
+            count += set->collision[i]->PickUpNearPoly(&poly[count], region);
+        }
+    }
+    return count;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/dranmapfield", AddCollision__13CDranMapFieldFP6CCPolyi7CBoxVu0);
+#endif
+#ifdef NON_MATCHING
+void CDranMapField::LoadCollision(unsigned int *pack, CDataAlloc2<1> *arena) {
+    DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
+
+    if (set->collision_count >= 12) {
+        printf(" ************* over!!\n");
+        return;
+    }
+    set->collision[set->collision_count] = (CFrame *) LoadCollisionFile(pack, arena);
+    set->collision[set->collision_count]->SetPosition(0.0f, 0.0f, 0.0f);
+    set->collision[set->collision_count]->SetRotation(0.0f, 0.0f, 0.0f);
+    set->collision_count++;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/dranmapfield", LoadCollision__13CDranMapFieldFPUiP14CDataAlloc2_1_);
+#endif
+#ifdef NON_MATCHING
+void CDranMapField::Draw(void) {
+    DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
+
+    if (set->field_count != 0) {
+        for (int i = 0; i < set->field_count; i++) {
+            if (set->field[i].frame != NULL && set->state[i] != 0) {
+                set->field[i].Draw();
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/dranmapfield", Draw__13CDranMapFieldFv);
+#endif
+#ifdef NON_MATCHING
+void CDranMapField::Step(void) {
+    DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
+
+    if (set->field_count != 0) {
+        for (int i = 0; i < set->field_count; i++) {
+            if (set->field[i].frame == NULL) {
+                continue;
+            }
+            if (set->state[i] <= 0) {
+                continue;
+            }
+            // Two starts the drain, and the motion runs while it stands at one.
+            if (set->state[i] == 2) {
+                SndSePlay(0x6C9, -1, 0);
+                set->state[i]--;
+            }
+            if (set->state[i] == 1) {
+                set->field[i].Step();
+                if (!(set->field[i].GetNowTime() < 59.0f)) {
+                    set->state[i]--;
+                }
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/dranmapfield", Step__13CDranMapFieldFv);
+#endif

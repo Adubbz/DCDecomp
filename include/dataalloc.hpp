@@ -155,3 +155,7 @@ extern CDataAlloc2<1> TextureData;
  * Supplies the main visual-model allocation arena.
  */
 extern CDataAlloc2<1> VisualData;
+/**
+ * Supplies the main motion-data allocation arena.
+ */
+extern CDataAlloc2<1> MotionData;

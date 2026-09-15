@@ -167,6 +167,37 @@ struct tagMOTION_TYPE {
 STATIC_ASSERT(sizeof(tagMOTION_TYPE) == 0x80);
 
 /**
+ * Names one optional motion-data file found in a model archive.
+ */
+struct MOTION_FILE_INFO {
+    char *name;         /**< Name used to find the file in the archive. */
+    unsigned int *data; /**< Packed file data, or NULL when the file is absent. */
+    int size;           /**< Size of the packed file in bytes. */
+};
+
+STATIC_ASSERT(sizeof(MOTION_FILE_INFO) == 0xC);
+
+/**
+ * Takes a motion's animation data out of an arena and fills it from its files.
+ *
+ * @mangled CreateAnimeDataEX__FP14tagMOTION_TYPEP14CDataAlloc2_1_P16MOTION_FILE_INFO
+ * @address 0x149090
+ * @size 0x264
+ */
+void CreateAnimeDataEX(tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
+                       MOTION_FILE_INFO *files);
+
+/**
+ * Builds the per-frame animation table a model's motion needs.
+ *
+ * @mangled AnimeDataInit__FP6CFrameP14tagMOTION_TYPEP14CDataAlloc2_1_PP12tagFRAME_INF
+ * @address 0x149300
+ * @size 0x98
+ */
+void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
+                   tagFRAME_INF **frame_info);
+
+/**
  * Puts a model on the frame that its motion state stands on.
  *
  * @mangled SetMotionEX__FP6CFrameP14tagMOTION_TYPEP11MOTION_INFOP12MOTION_STATEP12tagFRAME_INF
@@ -229,7 +260,7 @@ void GetScrPosFromChar(CCharacter *chara, int *out_pos);
 int NameRegistCodeJtoE(int code);
 
 /**
- * Enters one colour into the font palette and gives back the entry it took.
+ * Gives the font palette entry that holds one colour, or the first entry.
  *
  * @mangled Color2Clut__FUi
  * @address 0x14CA10

@@ -4,6 +4,12 @@
 #   decompile.sh <symbol>                       wherever the symbol lives
 #   decompile.sh {main|title|dun} <symbol>      ...if you want to say so
 #   decompile.sh <symbol> --stack-structs       extra flags go to m2c
+#   decompile.sh <symbol> --raw                 skip the prepared dump
+#
+# The dump is prepared first (scripts/diff/m2c_prep.py: jump tables named the
+# way m2c recognises them, $gp displacements resolved to their symbols) and the
+# output folded back into source spelling (scripts/diff/m2c_calls.py), so a
+# method reads as GamePad.Down(0x40) rather than by its mangled name.
 #
 # Symbols are the mangled names diff.sh takes; look one up with
 # `grep <name> config/*.symbols.txt`.
@@ -26,6 +32,13 @@ fi
 symbol=$1
 shift
 
+raw=0
+remaining=()
+for argument in "$@"; do
+    if [ "$argument" = --raw ]; then raw=1; else remaining+=("$argument"); fi
+done
+set -- ${remaining[@]+"${remaining[@]}"}
+
 CTX=build/ctx.c
 M2C=(python3 tools/m2c/m2c.py --target mipsee-mwcc-c++)
 
@@ -44,13 +57,22 @@ run() {
         fi
         exit 1
     }
-    read -r _ asm _ _ _ <<<"$located"
+    read -r image asm _ _ _ <<<"$located"
+
+    if [ "$raw" = 0 ]; then
+        asm=$(python3 scripts/diff/m2c_prep.py "$asm" --image "$image")
+    fi
 
     if [ ! -f "$CTX" ]; then
         echo "$0: $CTX is missing; generating it." >&2
         python3 scripts/diff/m2ctx.py -o "$CTX" >&2
     fi
 
+    if [ "$raw" = 0 ]; then
+        "${M2C[@]}" --context "$CTX" -f "$symbol" "$asm" "$@" \
+            | python3 scripts/diff/m2c_calls.py
+        exit "${PIPESTATUS[0]}"
+    fi
     exec "${M2C[@]}" --context "$CTX" -f "$symbol" "$asm" "$@"
 }
 
@@ -65,4 +87,5 @@ exec "$BUILDER" run --rm \
     -v "$PWD:$CONTAINER_WORKDIR:Z" \
     -w "$CONTAINER_WORKDIR" \
     -e HOME=/tmp \
-    dcdecomp_dev "$CONTAINER_WORKDIR/decompile.sh" "${section[@]}" "$symbol" "$@"
+    dcdecomp_dev "$CONTAINER_WORKDIR/decompile.sh" "${section[@]}" "$symbol" \
+    ${raw:+$([ "$raw" = 1 ] && echo --raw)} "$@"

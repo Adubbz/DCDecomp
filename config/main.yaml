@@ -247,7 +247,8 @@ segments:
       - {start: 0x68200, type: cpp, name: ebattle}
       - {start: 0x6d960, type: cpp, name: editarea}
       - {start: 0x70350, type: cpp, name: edit}
-      - {start: 0x742a0, type: cpp, name: editloop}
+      - {start: 0x742a0, type: cpp, name: editmapscript}
+      - {start: 0x77890, type: cpp, name: editloop}
       - {start: 0x83d40, type: cpp, name: editloop3}
       - {start: 0x9a0d0, type: cpp, name: editpartsinfo}
       - {start: 0x9a8b0, type: cpp, name: mapparts}
@@ -377,7 +378,8 @@ segments:
       - {start: 0x19a270, type: .rodata, name: textureanime}
       - {start: 0x19a2c0, type: .rodata, name: ebattle}
       - {start: 0x19a368, type: .rodata, name: edit}
-      - {start: 0x19a8c8, type: .rodata, name: editloop}
+      - {start: 0x19a8c8, type: .rodata, name: editmapscript}
+      - {start: 0x19aa10, type: .rodata, name: editloop}
       - {start: 0x19b140, type: .rodata, name: editloop3}
       - {start: 0x19b378, type: .rodata, name: edit_in}
       - {start: 0x19b528, type: .rodata, name: editground}

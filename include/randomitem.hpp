@@ -10,8 +10,8 @@ public:
     u8 unk_004[0x28C];
     s32 unk_290[32];
     u8 unk_09[0x184];
-    s32 unk_494[32];
-    s32 unk_514[32];
+    s32 pickup_event[32]; /**< Event each dropped item raises when the party walks onto it, or -1. */
+    s32 state[32];        /**< What each dropped item is doing; three where it is being taken back. */
     u8 unk_594[0x8C];
 
     /**

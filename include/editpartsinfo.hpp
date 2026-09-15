@@ -33,7 +33,8 @@ struct EDITPARTS_ELEMENT {
     s32 id; /**< Element identifier, or a negative value when the slot is unused. */
     s32 unk_04;
     s32 enabled; /**< Whether the element's ordinary object names are visible. */
-    u8 unk_0C[0x14];
+    char *names[4]; /**< Optional object names controlled by this element. */
+    s32 unk_1C;
 };
 
 STATIC_ASSERT(sizeof(EDITPARTS_ELEMENT) == 0x20);
@@ -58,7 +59,7 @@ struct EDITPARTS_INFO {
     s32 completion_flags; /**< Bit zero records whether the completion event has run. */
     s32 unk_08;
     s32 unk_0C;
-    u8 unk_10[4];
+    s32 unk_10;
     s32 kind;   /**< What the plot holds: 2 where a story building stands on it. */
     s32 unk_18;
     s32 width;  /**< Cells that the part covers from west to east. */
@@ -71,7 +72,8 @@ STATIC_ASSERT(sizeof(EDITPARTS_INFO) == 0xE8);
 
 class CEditPartsInfo {
 public:
-    u8 unk_00[0x64];
+    s32 unk_00;
+    s32 request[24]; /**< Villager request each part belongs to. */
     EDITPARTS_INFO parts[24]; /**< Every part the map can hold. */
     u8 unk_1624[4];
 
@@ -91,7 +93,7 @@ public:
      * @address 0x19A020
      * @size 0x80
      */
-    int CheckComplete(int);
+    int CheckComplete(int index);
 
     /**
      * Sets whether one editable part has completed its associated event.
@@ -118,16 +120,16 @@ public:
      * @address 0x19A140
      * @size 0x38
      */
-    int GetRequest(int);
+    int GetRequest(int index);
 
     /**
-     * Gives the next georama part after one, or -1 at the end.
+     * Counts the georama parts after one that still have work left.
      *
      * @mangled GetNextPartsNum__14CEditPartsInfoFi
      * @address 0x19A180
      * @size 0x88
      */
-    void GetNextPartsNum(int);
+    int GetNextPartsNum(int index);
 
     /**
      * Returns the next valid editable part after an index, or -1.

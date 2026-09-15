@@ -31,7 +31,13 @@ INCLUDE_ASM("asm/nonmatchings/runeffect", blendTextuerTest__FP13sceVif1Packetiii
  * @address 0x163470
  * @size 0xC
  */
+#ifdef NON_MATCHING
+void CRunEffect::Lighting(int enabled) {
+    lighting = enabled;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runeffect", Lighting__10CRunEffectFi);
+#endif
 /**
  * Draws the dust the player's run leaves behind.
  *
@@ -57,7 +63,19 @@ INCLUDE_ASM("asm/nonmatchings/runeffect", Set__10CRunEffectFPf);
  * @address 0x163980
  * @size 0x70
  */
+#ifdef NON_MATCHING
+void CRunEffect::Step(void) {
+    for (int i = 0; i < 8; i++) {
+        if (life[i] != 0) {
+            life[i]--;
+            velocity_y[i] -= 0.03f;
+            position[i][1] += velocity_y[i];
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runeffect", Step__10CRunEffectFv);
+#endif
 /**
  * Constructs the run effect with no dust standing.
  *
@@ -65,4 +83,14 @@ INCLUDE_ASM("asm/nonmatchings/runeffect", Step__10CRunEffectFv);
  * @address 0x1639F0
  * @size 0x3C
  */
+#ifdef NON_MATCHING
+CRunEffect::CRunEffect(void) {
+    for (int i = 0; i < 8; i++) {
+        velocity_y[i] = 0.0f;
+        life[i] = 0;
+    }
+    lighting = 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runeffect", __ct__10CRunEffectFv);
+#endif

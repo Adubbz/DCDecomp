@@ -10,9 +10,9 @@ void CDungeonEventData::Set(CDungeonEvent *source) {
     }
 
     event = source;
-    unk_30 = source->unk_28;
+    hold = source->unk_28;
     unk_34 = source->unk_34;
-    unk_38 = 1;
+    enabled = 1;
     chara_done = -1;
 }
 
@@ -20,7 +20,7 @@ int CDungeonEventData::CheckSwitch(void) {
     if (event == NULL) {
         return 0;
     }
-    if (unk_38 != 0 && unk_34 != 0) {
+    if (enabled != 0 && unk_34 != 0) {
         return 1;
     }
     return 0;

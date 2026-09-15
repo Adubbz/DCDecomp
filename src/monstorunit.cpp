@@ -1559,8 +1559,8 @@ void CMonstorUnit::Step(int pause) {
                                     weapon->unk_14 = max_exp;
                                     DngMessMan.unk_0C = GetCommonItemDataSystemMsg(weapon->item_no);
                                     DngMessMan.unk_14 = weapon->unk_02;
-                                    DngMessMan.unk_24 = 150;
-                                    DngMessMan.unk_04 = 480;
+                                    DngMessMan.message = 150;
+                                    DngMessMan.timer = 480;
                                     DngMessMan.unk_1C = 0;
                                     weapon->unk_14 = max_exp;
                                 } else {

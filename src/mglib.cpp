@@ -1403,7 +1403,43 @@ void MGMoveFrameBuffImage(sceGsTex0 *dst, int x, int y, int dir) {
     }
 }
 
+#ifdef NON_MATCHING
+void MGFillBox(const CRect_i_ &rect, unsigned char r, unsigned char g, unsigned char b,
+               unsigned char a) {
+    sceGsTest test = mgPixelTest;
+    sceGsZbuf zbuf = mgZBuffer;
+
+    test.bits.ate = 1;
+    test.bits.atst = 1;
+    test.bits.aref = 0;
+    test.bits.afail = 0;
+    test.bits.date = 1;
+    test.bits.datm = 1;
+    zbuf.bits.zmsk = 1;
+
+    sceVif1PkCnt(Vif1Packet, 0);
+    sceVif1PkOpenDirectCode(Vif1Packet, 0);
+    sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
+    sceVif1PkAddGsAD(Vif1Packet, 0x14, 1);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_PRIM, 0x146);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *(u_long *) &test);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(r, g, b, a, 0x3F800000));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2(rect.x + 0x6C00, rect.y + 0x7900, 0, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2(rect.x + 0x6C00 + rect.width,
+                                      rect.y + 0x7900 + rect.height, 0, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
+    sceVif1PkCloseGifTag(Vif1Packet);
+    sceVif1PkCloseDirectCode(Vif1Packet);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/mglib", MGFillBox__FRC8CRect_i_UcUcUcUc);
+#endif
 
 /* Writes depth over the 640-by-224 field while leaving colour unchanged. */
 void MGClearZBuffer(int mode) {

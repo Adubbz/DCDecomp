@@ -62,7 +62,7 @@ public:
      * @address 0x163AB0
      * @size 0x24
      */
-    void SetPosition(float *position);
+    void SetPosition(float *world);
 
     /**
      * Advances and wraps the fractional flame-atlas frame.

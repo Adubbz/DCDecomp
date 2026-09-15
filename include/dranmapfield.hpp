@@ -21,7 +21,7 @@ public:
      * @address 0x1CD3C0
      * @size 0x14C
      */
-    void LoadModel(unsigned int *, CDataAlloc2<1> *);
+    void LoadModel(unsigned int *pack, CDataAlloc2<1> *arena);
 
     /**
      * Appends polygons near the active drainage-field collision frames.
@@ -30,7 +30,7 @@ public:
      * @address 0x1CD510
      * @size 0xF8
      */
-    int AddCollision(CCPoly *, int, CBoxVu0);
+    int AddCollision(CCPoly *poly, int count, CBoxVu0 box);
 
     /**
      * Loads one drainage-field collision frame into the next free slot.
@@ -39,7 +39,7 @@ public:
      * @address 0x1CD610
      * @size 0x110
      */
-    void LoadCollision(unsigned int *, CDataAlloc2<1> *);
+    void LoadCollision(unsigned int *pack, CDataAlloc2<1> *arena);
 
     /**
      * Draws every active drainage-field model that has finished loading.
@@ -67,11 +67,11 @@ STATIC_ASSERT(sizeof(CDranMapField) == 0x11B0);
  * states.
  */
 struct DRAN_MAP_FIELD_SET {
-    CDranMapField field[12]; /**< Models drawn for the drainage fields. */
-    CFrame *unk_D440[12];
-    s32 unk_D470[12];
-    s32 unk_D4A0;
-    s32 unk_D4A4;
+    CDranMapField field[12];  /**< Models drawn for the drainage fields. */
+    CFrame *collision[12];    /**< Collision frame each field stands on. */
+    s32 state[12];            /**< What each field is doing; counts down as it drains. */
+    s32 field_count;          /**< Fields the floor laid out. */
+    s32 collision_count;      /**< Collision frames read for them. */
     u8 unk_D4A8[8];
 };
 

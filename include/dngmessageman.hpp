@@ -5,7 +5,7 @@
 class CDngMessageMan {
 public:
     s32 unk_00;
-    s32 unk_04;
+    s32 timer; /**< Frames the message has left on screen. */
     s32 unk_08;
     s32 unk_0C;
     s32 unk_10;
@@ -13,7 +13,7 @@ public:
     s32 unk_18;
     s32 unk_1C;
     s32 unk_20;
-    s32 unk_24;
+    s32 message; /**< Message the window shows. */
 
     /**
      * Selects the warning for the current dungeon restriction zone and
@@ -41,5 +41,5 @@ public:
      * @address 0x1B5D40
      * @size 0x50
      */
-    void SetSteevMes(int);
+    void SetSteevMes(int first);
 };

@@ -62,7 +62,7 @@ public:
      * @address 0x1CC990
      * @size 0xD0
      */
-    void SearchDataSwitch(int, int);
+    void SearchDataSwitch(int script_no, int enable);
 
     /**
      * Releases the hold flag for runtime events with a requested script number.
@@ -71,7 +71,7 @@ public:
      * @address 0x1CCA60
      * @size 0x64
      */
-    void SearchItemEventHold(int);
+    void SearchItemEventHold(int script_no);
 
     /**
      * Counts unused runtime event records.
@@ -116,7 +116,7 @@ public:
      * @address 0x1CCDE0
      * @size 0x154
      */
-    CDungeonEventData *SearchDataSlotPos2(float *);
+    CDungeonEventData *SearchDataSlotPos2(float *position);
 
     /**
      * Builds the runtime event records for a dungeon map.
@@ -125,7 +125,7 @@ public:
      * @address 0x1CCF40
      * @size 0x474
      */
-    void SetupEvent(CDungeonMap *, int);
+    void SetupEvent(CDungeonMap *map, int mode);
 };
 
 STATIC_ASSERT(sizeof(CDungeonEventMan) == 0x2800);

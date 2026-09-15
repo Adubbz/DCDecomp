@@ -99,7 +99,15 @@ void InitializeDataBuffer(void) {
     ActiveData1.used = 0;
 }
 
+#ifdef NON_MATCHING
+void SetDataBuffer(CDataAlloc2<1> *arena, int quads) {
+    arena->base = GlobalDataBuffer.Alloc64(quads);
+    arena->limit = quads;
+    arena->used = 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/dataset", SetDataBuffer__FP14CDataAlloc2_1_i);
+#endif
 
 void SetPacketReadBuffer(int packet_quads, int read_quads) {
     u_long128 *buffer0;
