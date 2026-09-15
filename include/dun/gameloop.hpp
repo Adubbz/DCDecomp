@@ -116,7 +116,7 @@ extern CCollisionData *NowColData;
 /**
  * @mangled LoadBaseTexture__Fv
  * @address 0x1DABD80
- * @size 0x150
+ * @size 0x14C
  * @unknownret
  */
 void LoadBaseTexture(void);
@@ -131,7 +131,7 @@ int LoadTempTexture(char **files, int block, char *buffer);
 /**
  * @mangled SetTempTexture__FiPc
  * @address 0x1DABFF0
- * @size 0x80
+ * @size 0x74
  * @unknownret
  */
 void SetTempTexture(int, char *);
@@ -139,7 +139,7 @@ void SetTempTexture(int, char *);
 /**
  * @mangled MemoryMapDump__Fv
  * @address 0x1DAC070
- * @size 0x150
+ * @size 0x14C
  * @unknownret
  */
 void MemoryMapDump(void);
@@ -147,7 +147,7 @@ void MemoryMapDump(void);
 /**
  * @mangled GameInit__Fv
  * @address 0x1DAC1C0
- * @size 0x17C0
+ * @size 0x17B8
  * @unknownret
  */
 void GameInit(void);
@@ -155,7 +155,7 @@ void GameInit(void);
 /**
  * @mangled GameLoop__Fv
  * @address 0x1DAD980
- * @size 0x2C0
+ * @size 0x2BC
  * @unknownret
  */
 int GameLoop(void);
@@ -179,7 +179,7 @@ void Draw_MainUnit(void);
 /**
  * @mangled MainDraw__Fv__3
  * @address 0x1DAE2A0
- * @size 0x2600
+ * @size 0x25F8
  * @unknownret
  * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
  */
@@ -188,7 +188,7 @@ void MainDraw(void);
 /**
  * @mangled MoveChara__Fv__2
  * @address 0x1DB08A0
- * @size 0x6BB0
+ * @size 0x6BA8
  * @unknownret
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
@@ -197,7 +197,7 @@ void MoveChara(void);
 /**
  * @mangled motionDrive__Fv
  * @address 0x1DB7450
- * @size 0x1340
+ * @size 0x1338
  * @unknownret
  */
 void motionDrive(void);
@@ -205,7 +205,7 @@ void motionDrive(void);
 /**
  * @mangled BtCleatRandomMap__Fv
  * @address 0x1DB8790
- * @size 0xA30
+ * @size 0xA24
  * @unknownret
  */
 void BtCleatRandomMap(void);
@@ -223,7 +223,7 @@ void BtCleatFreeMap(void);
  *
  * @mangled BtArrengeMonstor__Fv
  * @address 0x1DB92E0
- * @size 0x50
+ * @size 0x48
  */
 void BtArrengeMonstor(void);
 
@@ -232,14 +232,14 @@ void BtArrengeMonstor(void);
  *
  * @mangled BtLoadMonstor__Fi
  * @address 0x1DB9330
- * @size 0x260
+ * @size 0x25C
  */
 void BtLoadMonstor(int mode);
 
 /**
  * @mangled EquipReAttach__FP10CCharacteri
  * @address 0x1DB9590
- * @size 0xD0
+ * @size 0xC8
  * @unknownret
  */
 void EquipReAttach(CCharacter *, int);
@@ -265,7 +265,7 @@ void LoadWeapon2(unsigned int *, unsigned int *, unsigned int *, int, int);
 /**
  * @mangled SwordDmgCheck1__Ffi
  * @address 0x1DB9B30
- * @size 0x2D0
+ * @size 0x2C8
  * @unknownret
  */
 void SwordDmgCheck1(float, int);
@@ -282,7 +282,7 @@ void SetWeaponColor(void);
 /**
  * @mangled Get_Main_EffectPtr__Fii
  * @address 0x1DBA060
- * @size 0x1D0
+ * @size 0x1CC
  * @unknownret
  */
 BT_SHOT_EFFECT *Get_Main_EffectPtr(int chara, int form);
@@ -290,7 +290,7 @@ BT_SHOT_EFFECT *Get_Main_EffectPtr(int chara, int form);
 /**
  * @mangled MainChara_Effect__FP14BT_SHOT_EFFECTPUii
  * @address 0x1DBA230
- * @size 0x190
+ * @size 0x18C
  * @unknownret
  */
 void MainChara_Effect(BT_SHOT_EFFECT *, unsigned int *, int);
@@ -298,7 +298,7 @@ void MainChara_Effect(BT_SHOT_EFFECT *, unsigned int *, int);
 /**
  * @mangled LoadChara2__FiiPUiPUiPUiPUi
  * @address 0x1DBA3C0
- * @size 0x570
+ * @size 0x568
  * @unknownret
  */
 void LoadChara2(int, int, unsigned int *, unsigned int *, unsigned int *, unsigned int *);
@@ -306,7 +306,7 @@ void LoadChara2(int, int, unsigned int *, unsigned int *, unsigned int *, unsign
 /**
  * @mangled BtCheckDamageProc__Fv
  * @address 0x1DBAFD0
- * @size 0xF10
+ * @size 0xF0C
  */
 int BtCheckDamageProc(void);
 
@@ -321,7 +321,7 @@ void BattleActionThlow(void);
 /**
  * @mangled BattleActionDrink__Fv
  * @address 0x1DBC600
- * @size 0x2A0
+ * @size 0x294
  * @unknownret
  */
 void BattleActionDrink(void);
@@ -331,14 +331,14 @@ void BattleActionDrink(void);
  *
  * @mangled BattleActionOn_Jinn__Fv
  * @address 0x1DBC8A0
- * @size 0x90
+ * @size 0x8C
  */
 void BattleActionOn_Jinn(void);
 
 /**
  * @mangled BattleActionPlay_Jinn__FP10CCharacteri
  * @address 0x1DBC930
- * @size 0x5D0
+ * @size 0x5CC
  * @unknownret
  */
 void BattleActionPlay_Jinn(CCharacter *, int);
@@ -348,14 +348,14 @@ void BattleActionPlay_Jinn(CCharacter *, int);
  *
  * @mangled BattleActionOn_Ruby__Fv
  * @address 0x1DBCF00
- * @size 0x80
+ * @size 0x78
  */
 void BattleActionOn_Ruby(void);
 
 /**
  * @mangled BattleActionShotRuby__FP10CCharacterifi
  * @address 0x1DBCF80
- * @size 0x3D0
+ * @size 0x3CC
  * @unknownret
  */
 void BattleActionShotRuby(CCharacter *, int, float, int);
@@ -373,7 +373,7 @@ void BattleActionPlay_Ruby(CCharacter *, int);
  *
  * @mangled BattleActionOn_Ozumond__Fv
  * @address 0x1DBDB40
- * @size 0x90
+ * @size 0x8C
  */
 void BattleActionOn_Ozumond(void);
 
@@ -398,7 +398,7 @@ void BattleActionOn_Ozumond_F(void);
 /**
  * @mangled BattleActionPlay_Ozumond__Fi
  * @address 0x1DBDCF0
- * @size 0x3D0
+ * @size 0x3C4
  * @unknownret
  */
 void BattleActionPlay_Ozumond(int);
@@ -406,7 +406,7 @@ void BattleActionPlay_Ozumond(int);
 /**
  * @mangled BattleActionPlay_Ozumond_H__Fi
  * @address 0x1DBE0C0
- * @size 0x2E0
+ * @size 0x2D8
  * @unknownret
  */
 void BattleActionPlay_Ozumond_H(int);
@@ -422,7 +422,7 @@ void BattleActionPlay_Ozumond_F(int);
 /**
  * @mangled autoCamTrial__Fv
  * @address 0x1DBE970
- * @size 0x1060
+ * @size 0x1054
  * @unknownret
  */
 void autoCamTrial(void);
@@ -430,15 +430,17 @@ void autoCamTrial(void);
 /**
  * @mangled DelActiveItem__Fi
  * @address 0x1DBF9D0
- * @size 0xA0
+ * @size 0x98
  * @unknownret
  */
 void DelActiveItem(int);
 
 /**
+ * Applies the trap selected by a dungeon-floor trap circle.
+ *
  * @mangled Run_TrapCircle__FP15MAP_TRAP_CIRCLE
  * @address 0x1DBFA70
- * @size 0x270
+ * @size 0x264
  */
 int Run_TrapCircle(MAP_TRAP_CIRCLE *trap);
 
@@ -447,7 +449,7 @@ int Run_TrapCircle(MAP_TRAP_CIRCLE *trap);
  *
  * @mangled LockOffTargte__Fv
  * @address 0x1DBFCE0
- * @size 0x30
+ * @size 0x28
  */
 void LockOffTargte(void);
 
@@ -456,14 +458,14 @@ void LockOffTargte(void);
  *
  * @mangled DrawTargetLife__Fv
  * @address 0x1DBFD10
- * @size 0x1C0
+ * @size 0x1B4
  */
 void DrawTargetLife(void);
 
 /**
  * @mangled DrawtargetCursor__FPffff
  * @address 0x1DBFED0
- * @size 0x290
+ * @size 0x288
  * @unknownret
  */
 void DrawtargetCursor(float *, float, float, float);
@@ -471,14 +473,14 @@ void DrawtargetCursor(float *, float, float, float);
 /**
  * @mangled SetNearLockOnTarget__Fii
  * @address 0x1DC0160
- * @size 0x640
+ * @size 0x638
  */
 int SetNearLockOnTarget(int from, int nearest_only);
 
 /**
  * @mangled setTargetCursor__Fi
  * @address 0x1DC07A0
- * @size 0x6E0
+ * @size 0x6DC
  * @unknownret
  */
 void setTargetCursor(int);
@@ -488,14 +490,14 @@ void setTargetCursor(int);
  *
  * @mangled unitBlowActionRot__FPf
  * @address 0x1DC0E80
- * @size 0xA0
+ * @size 0x94
  */
 void unitBlowActionRot(float *velocity);
 
 /**
  * @mangled setUnitDamageColor__Fi
  * @address 0x1DC0F20
- * @size 0xD0
+ * @size 0xCC
  */
 float setUnitDamageColor(int hit);
 
@@ -504,7 +506,7 @@ float setUnitDamageColor(int hit);
  *
  * @mangled RsetUnitAmbientAnime__Fv
  * @address 0x1DC0FF0
- * @size 0x10
+ * @size 0xC
  */
 void RsetUnitAmbientAnime(void);
 
@@ -522,7 +524,7 @@ void setUnitAmbientAnime(float speed, float time, float red, float green, float 
  *
  * @mangled unitAmbientAnime__FPf
  * @address 0x1DC1050
- * @size 0x130
+ * @size 0x12C
  */
 int unitAmbientAnime(float *colour);
 
@@ -538,7 +540,7 @@ int LoadStartLogo(int map);
  *
  * @mangled FloorTitleOn__Fv
  * @address 0x1DC1290
- * @size 0x30
+ * @size 0x24
  */
 void FloorTitleOn(void);
 
@@ -556,7 +558,7 @@ void SetMIniMapStatus(int on);
  *
  * @mangled ResetStatusInfo__Fv
  * @address 0x1DC1300
- * @size 0x100
+ * @size 0xF8
  */
 void ResetStatusInfo(void);
 
@@ -565,14 +567,14 @@ void ResetStatusInfo(void);
  *
  * @mangled ResetMovePower__Fv
  * @address 0x1DC1400
- * @size 0x20
+ * @size 0x18
  */
 void ResetMovePower(void);
 
 /**
  * @mangled LoaderInit__Fv
  * @address 0x1DC1420
- * @size 0xF0
+ * @size 0xE4
  * @unknownret
  */
 void LoaderInit(void);
@@ -580,7 +582,7 @@ void LoaderInit(void);
 /**
  * @mangled LoaderLoop__Fv
  * @address 0x1DC1510
- * @size 0x280
+ * @size 0x278
  */
 int LoaderLoop(void);
 
@@ -589,14 +591,14 @@ int LoaderLoop(void);
  *
  * @mangled InitEyeCamera__Fv
  * @address 0x1DC1790
- * @size 0x50
+ * @size 0x48
  */
 void InitEyeCamera(void);
 
 /**
  * @mangled EyeCamera__Fv
  * @address 0x1DC17E0
- * @size 0x0
+ * @size 0x2A0
  * @unknownret
  */
 void EyeCamera(void);

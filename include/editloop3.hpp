@@ -13,7 +13,6 @@ class CMapParts;
 class CNPCharacter;
 struct ED_EVENT_POINT;
 struct EDITPARTS_INFO;
-class CNPCharacter;
 template <int> class CDataAlloc2;
 struct EPARTS_FUNC_DATA;
 struct RS_STACKDATA;
@@ -89,7 +88,7 @@ void EdMoveVillagerSubMap(VILLAGER_INFO *villagers);
  *
  * @mangled EdGetEvent__FP14ED_EVENT_POINTiP14ED_EVENT_PARAMPfPff
  * @address 0x184350
- * @size 0x400
+ * @size 0x3F4
  */
 int EdGetEvent(ED_EVENT_POINT *points, int count, ED_EVENT_PARAM *param, float *position,
                float *rotation, float time);
@@ -99,7 +98,7 @@ int EdGetEvent(ED_EVENT_POINT *points, int count, ED_EVENT_PARAM *param, float *
  *
  * @mangled EdEventPointCpPoly__FPfP14ED_EVENT_POINTiP6CCPolyf
  * @address 0x184A50
- * @size 0x260
+ * @size 0x254
  */
 int EdEventPointCpPoly(float *position, ED_EVENT_POINT *points, int count, CCPoly *polygons,
                        float time);
@@ -117,8 +116,8 @@ void EdMapJump(int kind, char *name);
  * Tests whether one villager is currently permitted to appear.
  *
  * @mangled EdCheckVillager__FiP13VILLAGER_INFOP11CEditGround
- * @address 0x187E50
- * @size 0x184
+ * @address 0x185C50
+ * @size 0xFC
  */
 int EdCheckVillager(int index, VILLAGER_INFO *villager, CEditGround *ground);
 
@@ -380,3 +379,75 @@ int EdEventInit(int event_no, CDataAlloc2<1> *arena, char *name);
  * @size 0x3C
  */
 int CheckPartsInfo(EDITPARTS_INFO *info);
+
+/**
+ * Draws the editor sky's lens-flare frames for the current time of day.
+ *
+ * @mangled EdDrawLensFlare__FfPP6CFrame
+ * @address 0x188A20
+ * @size 0x32C
+ */
+void EdDrawLensFlare(float time, CFrame **sky);
+
+/**
+ * Activates and places the villager selected by an editor-event script.
+ *
+ * @mangled _LOAD_IN_VILLAGER__FP12RS_STACKDATAi
+ * @address 0x18CD60
+ * @size 0x1FC
+ */
+int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count);
+
+/**
+ * Removes the villager selected by an editor-event script.
+ *
+ * @mangled _LOAD_OUT_VILLAGER__FP12RS_STACKDATAi
+ * @address 0x18CF60
+ * @size 0x1C0
+ */
+int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count);
+
+/**
+ * Configures automatic message advancement for the active editor event.
+ *
+ * @mangled _SET_MES_AUTOSET__FP12RS_STACKDATAi
+ * @address 0x18FC10
+ * @size 0x1BC
+ */
+int _SET_MES_AUTOSET(RS_STACKDATA *stack, int argument_count);
+
+/**
+ * Pushes the active conversation villager's event status onto the script stack.
+ *
+ * @mangled _GET_TALKNPC_STATUS__FP12RS_STACKDATAi
+ * @address 0x191530
+ * @size 0x74
+ */
+int _GET_TALKNPC_STATUS(RS_STACKDATA *stack, int argument_count);
+
+/**
+ * Stores the editor ground's event clipping plane from script arguments.
+ *
+ * @mangled _SET_CLIP_POINT__FP12RS_STACKDATAi
+ * @address 0x1931F0
+ * @size 0x8C
+ */
+int _SET_CLIP_POINT(RS_STACKDATA *stack, int argument_count);
+
+/**
+ * Pushes whether an editor action-sequence slot has finished onto the script stack.
+ *
+ * @mangled _ASQ_CHECK__FP12RS_STACKDATAi
+ * @address 0x194B70
+ * @size 0x74
+ */
+int _ASQ_CHECK(RS_STACKDATA *stack, int argument_count);
+
+/**
+ * Updates a map's visit count and optionally returns the resulting count to the script.
+ *
+ * @mangled _SADD_VISIT_MAP__FP12RS_STACKDATAi
+ * @address 0x195540
+ * @size 0xC4
+ */
+int _SADD_VISIT_MAP(RS_STACKDATA *stack, int argument_count);

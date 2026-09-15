@@ -94,7 +94,7 @@ public:
      *
      * @mangled Initialize__10CActionSeqFP7ACT_SEQi
      * @address 0x154B30
-     * @size 0x50
+     * @size 0x4C
      */
     void Initialize(ACT_SEQ *records, int count);
 
@@ -103,7 +103,7 @@ public:
      *
      * @mangled __ct__10CActionSeqFv
      * @address 0x154B80
-     * @size 0x40
+     * @size 0x38
      */
     CActionSeq(void);
 
@@ -112,7 +112,7 @@ public:
      *
      * @mangled ClearSeq__10CActionSeqFv
      * @address 0x154BC0
-     * @size 0x60
+     * @size 0x54
      */
     void ClearSeq(void);
 
@@ -121,7 +121,7 @@ public:
      *
      * @mangled GetNextSeq__10CActionSeqFv
      * @address 0x154C20
-     * @size 0x50
+     * @size 0x4C
      */
     ACT_SEQ *GetNextSeq(void);
 
@@ -130,7 +130,7 @@ public:
      *
      * @mangled SyncChara__10CActionSeqFP10CCharacter
      * @address 0x154C70
-     * @size 0x90
+     * @size 0x8C
      */
     void SyncChara(CCharacter *target);
 
@@ -139,7 +139,7 @@ public:
      *
      * @mangled NextMoveSeq__10CActionSeqFv
      * @address 0x154D00
-     * @size 0x70
+     * @size 0x68
      */
     ACT_SEQ *NextMoveSeq(void);
 
@@ -148,7 +148,7 @@ public:
      *
      * @mangled NextMotionSeq__10CActionSeqFv
      * @address 0x154D70
-     * @size 0x70
+     * @size 0x68
      */
     ACT_SEQ *NextMotionSeq(void);
 
@@ -157,7 +157,7 @@ public:
      *
      * @mangled NextAnimeSeq__10CActionSeqFv
      * @address 0x154DE0
-     * @size 0x70
+     * @size 0x68
      */
     ACT_SEQ *NextAnimeSeq(void);
 
@@ -166,7 +166,7 @@ public:
      *
      * @mangled MoveSeq__10CActionSeqFPfi
      * @address 0x154E50
-     * @size 0x90
+     * @size 0x84
      */
     void MoveSeq(float *destination, int frames);
 
@@ -184,7 +184,7 @@ public:
      *
      * @mangled MoveSeq__10CActionSeqFi
      * @address 0x154F90
-     * @size 0x30
+     * @size 0x28
      */
     void MoveSeq(int frames);
 
@@ -193,7 +193,7 @@ public:
      *
      * @mangled SetPos__10CActionSeqFPf
      * @address 0x154FC0
-     * @size 0x80
+     * @size 0x78
      */
     void SetPos(float *destination);
 
@@ -202,7 +202,7 @@ public:
      *
      * @mangled RotRefSeq__10CActionSeqFPff
      * @address 0x155040
-     * @size 0x70
+     * @size 0x6C
      */
     void RotRefSeq(float *reference, float speed);
 
@@ -211,7 +211,7 @@ public:
      *
      * @mangled RotAngleSeq__10CActionSeqFff
      * @address 0x1550B0
-     * @size 0x60
+     * @size 0x5C
      */
     void RotAngleSeq(float angle, float speed);
 
@@ -220,7 +220,7 @@ public:
      *
      * @mangled RotMoveSeq__10CActionSeqFf
      * @address 0x155110
-     * @size 0x50
+     * @size 0x44
      */
     void RotMoveSeq(float speed);
 
@@ -229,7 +229,7 @@ public:
      *
      * @mangled ClearRotSeq__10CActionSeqFv
      * @address 0x155160
-     * @size 0x40
+     * @size 0x34
      */
     void ClearRotSeq(void);
 
@@ -238,7 +238,7 @@ public:
      *
      * @mangled WaitRotSeq__10CActionSeqFv
      * @address 0x1551A0
-     * @size 0x40
+     * @size 0x34
      */
     void WaitRotSeq(void);
 
@@ -247,7 +247,7 @@ public:
      *
      * @mangled SetRot__10CActionSeqFPf
      * @address 0x1551E0
-     * @size 0x60
+     * @size 0x5C
      */
     void SetRot(float *angles);
 
@@ -283,7 +283,7 @@ public:
      *
      * @mangled MotionSeq__10CActionSeqFiifi
      * @address 0x155300
-     * @size 0x80
+     * @size 0x78
      */
     void MotionSeq(int motion, int mode, float speed, int flags);
 
@@ -292,7 +292,7 @@ public:
      *
      * @mangled AnimeSeq__10CActionSeqFiiii
      * @address 0x155380
-     * @size 0x80
+     * @size 0x7C
      */
     void AnimeSeq(int animation, int enabled, int frames, int disable_after);
 
@@ -301,7 +301,7 @@ public:
      *
      * @mangled CheckEnd__10CActionSeqFv
      * @address 0x155400
-     * @size 0x70
+     * @size 0x68
      */
     int CheckEnd(void);
 
@@ -310,7 +310,7 @@ public:
      *
      * @mangled Play__10CActionSeqFv
      * @address 0x1554A0
-     * @size 0xB10
+     * @size 0xB04
      */
     void Play(void);
 };

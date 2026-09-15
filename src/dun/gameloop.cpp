@@ -76,6 +76,7 @@
 #include "editloop3.hpp"
 #include "frame.hpp"
 #include "frameattr.hpp"
+#include "gamemode.hpp"
 #include "gamepad.hpp"
 #include "healeffect.hpp"
 #include "hit_machingun_effect.hpp"
@@ -220,8 +221,6 @@ extern "C" CDataAlloc2<1> WeaponModelBuffer;
 extern "C" CCharacter CrashWeapon;
 extern "C" CCharacter DefaultWeapon;
 extern "C" CCharacter MainWeapon;
-
-extern void BtGetWeaponNamePath2(char *name, char *path, int chara, int weapon);
 
 /* The buffers the dungeon loads its data into. */
 extern "C" CDataAlloc2<1> MainModelBuffer;
@@ -718,8 +717,6 @@ int checkItemUsed(int slot);
  * @mangled EdEventMode__FP13CCameraFollowi
  */
 int EdEventMode(CCameraFollow *camera, int unk);
-
-extern void MapJump(int map_no, int event_no);
 
 /* The lighting the dungeon draws the field and the models under. */
 extern "C" sceVu0FMATRIX main_light;
@@ -1465,7 +1462,7 @@ void GameInit(void) {
         ShotData.used[i] = 0;
     }
     NowShotData = &ShotData;
-    HealEffect.unk_510 = 0;
+    HealEffect.active = 0;
     WaterSplash_Init();
     for (int i = 0; i < 5; i++) {
         ShotEffect.effect[i].Initialize();
@@ -1479,10 +1476,10 @@ void GameInit(void) {
         OzumondShot.unk_280[i] = 0;
     }
     for (int i = 0; i < 64; i++) {
-        OzumondFire.unk_0A00[i] = 1;
-        OzumondFire.unk_0C00[i] = -1;
+        OzumondFire.damage[i] = 1;
+        OzumondFire.state[i] = -1;
     }
-    OzumondFire.unk_0D00 = 0;
+    OzumondFire.start_index = 0;
     EscapeFlag = 0;
     WeaponCrashEffect.Initialize();
     for (int i = 0; i < 16; i++) {
@@ -6560,8 +6557,6 @@ void LoadChara2(int chara, int keep_place, unsigned int *chara_data, unsigned in
     LoadWeapon2(crash_data, default_data, main_data, chara, 0);
     MemoryMapDump();
 }
-
-extern void BtGetWeaponNamePath3(char *, char *, int);
 
 static void LoadData(void) {
     CFrameAttr frame_attr;

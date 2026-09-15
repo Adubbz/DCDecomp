@@ -11,6 +11,15 @@ class CCPoly;
 struct RenderInfo;
 class sceVif1Packet;
 
+/**
+ * Resets the EE DMA environment and the GS transfer path used for rendering.
+ *
+ * @mangled DevInit__Fv
+ * @address 0x127BA0
+ * @size 0x4C
+ */
+void DevInit(void);
+
 /* The per-frame drawing attributes, kept inside the frame rather than beside it. SetAttr copies
    them one field per mask bit, so a field's position and width are settled while its meaning is
    not — which is why most of them are still unnamed. */

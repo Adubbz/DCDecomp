@@ -6133,21 +6133,14 @@ static int _SET_FISHING_ESA(RS_STACKDATA *stack, int) {
     return 1;
 }
 
-/* The operations assembly still supplies, so the registry below can name them. */
-int _LOAD_IN_VILLAGER(RS_STACKDATA *, int);
-int _LOAD_OUT_VILLAGER(RS_STACKDATA *, int);
+/* The internal operations assembly still supplies, so the registry below can name them. */
 int _TURN_CHARA(RS_STACKDATA *, int);
 int _NPC_DRAW(RS_STACKDATA *, int);
 int _NPC_DRAW_SHADOW(RS_STACKDATA *, int);
 int _SET_NPC_FOOT_SOUND(RS_STACKDATA *, int);
-int _SET_MES_AUTOSET(RS_STACKDATA *, int);
-int _GET_TALKNPC_STATUS(RS_STACKDATA *, int);
-int _SET_CLIP_POINT(RS_STACKDATA *, int);
 int _ASQ_SYNC_CHARA(RS_STACKDATA *, int);
 int _ASQ_MOVE_STEP(RS_STACKDATA *, int);
 int _ASQ_ROT_REF(RS_STACKDATA *, int);
-int _ASQ_CHECK(RS_STACKDATA *, int);
-int _SADD_VISIT_MAP(RS_STACKDATA *, int);
 int _SGET_REQUEST(RS_STACKDATA *, int);
 
 /** Retail's ordered registry of editor-event external functions. */

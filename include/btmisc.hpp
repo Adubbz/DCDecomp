@@ -65,6 +65,15 @@ void getFramePos(CFrameVu1 *frame, char *name, float *position);
 void BtGetWeaponNamePath2(char *name, char *path, int chara, int weapon);
 
 /**
+ * Builds the model and effect names for an absolute weapon item identifier.
+ *
+ * @mangled BtGetWeaponNamePath3__FPcPci
+ * @address 0x1B73B0
+ * @size 0xB4
+ */
+void BtGetWeaponNamePath3(char *name, char *effect_name, int weapon_no);
+
+/**
  * Stops the current battle music.
  *
  * @mangled BtBattleMusic_Stop__Fv

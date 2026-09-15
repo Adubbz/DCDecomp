@@ -43,6 +43,9 @@ transform setters, and a local zero-vector initializer. The m2c draft still
 confuses CCharacter members and cannot be retained as written. No external
 header or data-layout change is requested without further analysis.
 
+The retail ELF extent for `Play` is `0xB04`; the following twelve bytes are
+translation-unit alignment padding and are not part of the function.
+
 ## Editor event pool
 
 The editor's 266-record `asq_table` uses the shared 0x20-byte `ACT_SEQ`

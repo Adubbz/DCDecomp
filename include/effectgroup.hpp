@@ -2,51 +2,61 @@
 
 #include "common.h"
 
-// Forward declarations for the types these declarations name. The skeleton
-// headers are generated from the retail symbol table, which knows the type
-// names but not where they live.
 class CEffect;
 class CEffectParam;
 
+/**
+ * Owns access to a caller-supplied fixed-capacity pool of effects.
+ */
 class CEffectGroup {
 public:
+    CEffect *effect_table; /**< First effect in the caller-supplied pool. */
+    int capacity;          /**< Number of effects in the pool. */
+
     /**
+     * Starts an effect in the first inactive pool slot.
+     *
      * @mangled EnterEffect__12CEffectGroupFP12CEffectParam
      * @address 0x164980
-     * @size 0x70
-     * @unknownret
+     * @size 0x6C
      */
-    void EnterEffect(CEffectParam *);
+    int EnterEffect(CEffectParam *parameters);
 
     /**
+     * Advances every pool slot by one frame.
+     *
      * @mangled Step__12CEffectGroupFi
      * @address 0x1649F0
-     * @size 0x70
-     * @unknownret
+     * @size 0x64
      */
-    void Step(int);
+    void Step(int unused);
 
     /**
+     * Draws every active effect in the pool.
+     *
      * @mangled Draw__12CEffectGroupFv
      * @address 0x164A60
      * @size 0x60
-     * @unknownret
      */
     void Draw(void);
 
     /**
+     * Resets every effect in the pool to its inactive state.
+     *
      * @mangled Clear__12CEffectGroupFv
      * @address 0x164AC0
      * @size 0x60
-     * @unknownret
      */
     void Clear(void);
 
     /**
+     * Assigns the storage and capacity used by the effect pool.
+     *
      * @mangled Initialize__12CEffectGroupFP7CEffecti
      * @address 0x164B20
      * @size 0x10
-     * @unknownret
      */
-    void Initialize(CEffect *, int);
+    void Initialize(CEffect *table, int count);
 };
+
+STATIC_ASSERT(sizeof(CEffectGroup) == 0x8);
