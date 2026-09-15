@@ -79,7 +79,7 @@ extern "C" CWeaponEffect CWeaponFx;
  *
  * @mangled SetWepEffectMenuReadBuf__FP1
  * @address 0x20D0A0
- * @size 0x10
+ * @size 0xC
  */
 static void SetWepEffectMenuReadBuf(u_long128 *);
 
@@ -88,7 +88,7 @@ static void SetWepEffectMenuReadBuf(u_long128 *);
  *
  * @mangled GetMenuWeaponModelData__Fi
  * @address 0x20D3B0
- * @size 0x20
+ * @size 0x18
  */
 static int *GetMenuWeaponModelData(int);
 
@@ -106,7 +106,7 @@ static void InitMenuWeaponModelData();
  *
  * @mangled GetMenuWeaponModelInfo__Fi
  * @address 0x20D400
- * @size 0x20
+ * @size 0x18
  */
 static int *GetMenuWeaponModelInfo(int);
 
@@ -115,7 +115,7 @@ static int *GetMenuWeaponModelInfo(int);
  *
  * @mangled GetNowMotionStepCnt__Fi
  * @address 0x20DE80
- * @size 0x40
+ * @size 0x38
  */
 static int GetNowMotionStepCnt(int status);
 
@@ -124,7 +124,7 @@ static int GetNowMotionStepCnt(int status);
  *
  * @mangled GetCharaChangeReadCharaFilePath__FPci
  * @address 0x20E530
- * @size 0x80
+ * @size 0x74
  */
 static void GetCharaChangeReadCharaFilePath(char *, int);
 
@@ -133,7 +133,7 @@ static void GetCharaChangeReadCharaFilePath(char *, int);
  *
  * @mangled LocalWeaponDataChange__FPciii
  * @address 0x20FBE0
- * @size 0x100
+ * @size 0xF8
  */
 static void LocalWeaponDataChange(char *, int, int, int);
 
@@ -142,7 +142,7 @@ static void LocalWeaponDataChange(char *, int, int, int);
  *
  * @mangled GetEditMenuMax__Fv
  * @address 0x2102E0
- * @size 0x40
+ * @size 0x3C
  */
 static int GetEditMenuMax();
 
@@ -151,7 +151,7 @@ static int GetEditMenuMax();
  *
  * @mangled DrawMenuIcon__Fi
  * @address 0x210320
- * @size 0xD0
+ * @size 0xC4
  */
 static void DrawMenuIcon(int);
 
@@ -160,7 +160,7 @@ static void DrawMenuIcon(int);
  *
  * @mangled GetEditMenuIconPos__FiPi
  * @address 0x2103F0
- * @size 0x100
+ * @size 0xFC
  */
 static void GetEditMenuIconPos(int, int *);
 
@@ -169,7 +169,7 @@ static void GetEditMenuIconPos(int, int *);
  *
  * @mangled DrawMoveMenuIcon__Fv
  * @address 0x2104F0
- * @size 0x1C0
+ * @size 0x1B4
  */
 static void DrawMoveMenuIcon();
 
@@ -196,7 +196,7 @@ static int CalMoveToMenuIcon();
  *
  * @mangled EditMenuExit__Fv
  * @address 0x210DA0
- * @size 0x90
+ * @size 0x8C
  */
 static void EditMenuExit();
 
@@ -206,7 +206,7 @@ static void EditMenuExit();
  *
  * @mangled GetDrawHelpWindow__Fi
  * @address 0x210E30
- * @size 0x70
+ * @size 0x64
  */
 static int GetDrawHelpWindow(int);
 
@@ -215,7 +215,7 @@ static int GetDrawHelpWindow(int);
  *
  * @mangled EditMenuStart__Fv
  * @address 0x2112C0
- * @size 0x4C0
+ * @size 0x4BC
  */
 static int EditMenuStart();
 
@@ -224,7 +224,7 @@ static int EditMenuStart();
  *
  * @mangled EditMenuSelectDraw__Fv
  * @address 0x211780
- * @size 0x230
+ * @size 0x22C
  */
 static void EditMenuSelectDraw();
 
@@ -233,7 +233,7 @@ static void EditMenuSelectDraw();
  *
  * @mangled EditMenuSelect__Fv
  * @address 0x2119B0
- * @size 0x390
+ * @size 0x38C
  */
 static int EditMenuSelect();
 
@@ -251,7 +251,7 @@ static void EditMenuToExitDraw();
  *
  * @mangled EditMenuToExit__Fv
  * @address 0x211D60
- * @size 0x150
+ * @size 0x144
  */
 static int EditMenuToExit();
 
@@ -269,7 +269,7 @@ static void AtoraSelectDraw();
  *
  * @mangled AtoraSelect__Fv
  * @address 0x211F40
- * @size 0x190
+ * @size 0x188
  */
 static int AtoraSelect();
 
@@ -278,7 +278,7 @@ static int AtoraSelect();
  *
  * @mangled AtoraMoveDraw__Fv
  * @address 0x2120D0
- * @size 0x10
+ * @size 0x8
  */
 static void AtoraMoveDraw();
 
@@ -296,7 +296,7 @@ static int AtoraMove();
  *
  * @mangled AnalyzeBackDraw__Fii
  * @address 0x212110
- * @size 0x160
+ * @size 0x15C
  */
 static void AnalyzeBackDraw(int, int);
 
@@ -305,7 +305,7 @@ static void AnalyzeBackDraw(int, int);
  *
  * @mangled AnalyzeRequestPer__Fv
  * @address 0x212270
- * @size 0xB0
+ * @size 0xAC
  */
 static float AnalyzeRequestPer();
 
@@ -314,7 +314,7 @@ static float AnalyzeRequestPer();
  *
  * @mangled AnalyzeBarDraw__Fv
  * @address 0x212320
- * @size 0x6A0
+ * @size 0x69C
  */
 static int AnalyzeBarDraw();
 
@@ -323,7 +323,7 @@ static int AnalyzeBarDraw();
  *
  * @mangled ToAnalyzeEditDraw__Fv
  * @address 0x2129C0
- * @size 0x350
+ * @size 0x348
  */
 static void ToAnalyzeEditDraw();
 
@@ -332,7 +332,7 @@ static void ToAnalyzeEditDraw();
  *
  * @mangled ToAnalyzeEdit__Fv
  * @address 0x212D10
- * @size 0x50
+ * @size 0x44
  */
 static void ToAnalyzeEdit();
 
@@ -350,7 +350,7 @@ static void AnalyzeEditDraw();
  *
  * @mangled AnalyzeEdit__Fv
  * @address 0x212F20
- * @size 0x60
+ * @size 0x54
  */
 static int AnalyzeEdit();
 
@@ -368,7 +368,7 @@ static void FromAnalyzeEditDraw();
  *
  * @mangled FromAnalyzeEdit__Fv
  * @address 0x212FD0
- * @size 0xB0
+ * @size 0xA8
  */
 static void FromAnalyzeEdit();
 
@@ -377,7 +377,7 @@ static void FromAnalyzeEdit();
  *
  * @mangled EditSaveDraw__Fv
  * @address 0x213080
- * @size 0x80
+ * @size 0x74
  */
 static void EditSaveDraw();
 
@@ -386,7 +386,7 @@ static void EditSaveDraw();
  *
  * @mangled EditSaveKey__Fv
  * @address 0x213100
- * @size 0xE0
+ * @size 0xDC
  */
 static void EditSaveKey();
 
@@ -395,7 +395,7 @@ static void EditSaveKey();
  *
  * @mangled OptionDraw__Fv
  * @address 0x2131E0
- * @size 0x70
+ * @size 0x6C
  */
 static void OptionDraw();
 
@@ -404,7 +404,7 @@ static void OptionDraw();
  *
  * @mangled EdOptionSelect__Fv
  * @address 0x213250
- * @size 0x100
+ * @size 0xF4
  */
 static void EdOptionSelect();
 
@@ -413,7 +413,7 @@ static void EdOptionSelect();
  *
  * @mangled EdMenuManualKey__Fv
  * @address 0x213350
- * @size 0x100
+ * @size 0xF8
  */
 static int EdMenuManualKey();
 
@@ -422,7 +422,7 @@ static int EdMenuManualKey();
  *
  * @mangled EdMenuManualDraw__Fv
  * @address 0x213450
- * @size 0x70
+ * @size 0x6C
  */
 static void EdMenuManualDraw();
 

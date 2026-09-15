@@ -2840,7 +2840,9 @@
       "address": "0x0015A0B0",
       "size": "0x148",
       "name": "GetSeInfo__Fi",
-      "sha256": "781dd5f9015030e668ace953cee96fcf13dee6b7781a2161963eeb34674237aa"
+      "sha256": "781dd5f9015030e668ace953cee96fcf13dee6b7781a2161963eeb34674237aa",
+      "comment": "Returns the table row for a sound effect, or zero when the number names no row. The number selects between the fixed table, the current basic set, the current chapter set and the current voice set.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -2916,7 +2918,9 @@
       "address": "0x0015A760",
       "size": "0xBC",
       "name": "SndSePlay__Fiffi",
-      "sha256": "4e9d37300d15608d45b4e75a1dd4f6df2a3a66a3b64ce40b31d761d5b361033f"
+      "sha256": "4e9d37300d15608d45b4e75a1dd4f6df2a3a66a3b64ce40b31d761d5b361033f",
+      "comment": "Plays a sound effect at an explicit volume and pan.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3020,7 +3024,9 @@
       "address": "0x0015AE10",
       "size": "0xC0",
       "name": "GetSeSeq__FPiii",
-      "sha256": "3ab885ba21ccb0a120876ebda4fd9ba7141a8081654ad8cc0d0dc4890aa0d3f1"
+      "sha256": "3ab885ba21ccb0a120876ebda4fd9ba7141a8081654ad8cc0d0dc4890aa0d3f1",
+      "comment": "Finds the sequence slot already playing a sound on a voice, and reports through found that it did. Returns the first free slot instead when there is no such slot, or zero when every slot is taken.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3054,7 +3060,9 @@
       "address": "0x0015AFA0",
       "size": "0xB8",
       "name": "SndSeSeqStep__Fv",
-      "sha256": "ee3c05c81f4ddda380516b9cf88eea65c30d92f07958a0c0a4f8588a1a7fb461"
+      "sha256": "ee3c05c81f4ddda380516b9cf88eea65c30d92f07958a0c0a4f8588a1a7fb461",
+      "comment": "Advances every sound-effect sequence that is running.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -5701,6 +5709,7 @@
       "size": "0x79C",
       "name": "SetMapParts__11CEditGroundFifffi",
       "sha256": "600112d3a0530b376f99b24ea2bc21fdcc489aa414606ee4103e030a4d9f0c9d",
+      "comment": "Places one part on the ground, replacing or refusing it according to what already stands there.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5712,6 +5721,7 @@
       "size": "0x3C8",
       "name": "SetRiverParts__11CEditGroundFfffii",
       "sha256": "d2e5d98635d496702dde3717c5ef108d6e62eba950e9c3ee1752a0be8a10b22e",
+      "comment": "Re-chooses the river piece one cell away so the water joins up with its neighbours.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5723,6 +5733,7 @@
       "size": "0x2A4",
       "name": "SetRoadParts__11CEditGroundFfffii",
       "sha256": "396379daff2c7722807a7760968ccc76dd8a4ee301a786493b1fe12521fdeec1",
+      "comment": "Re-chooses the road piece one cell away so the road joins up with its neighbours.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5734,6 +5745,7 @@
       "size": "0x418",
       "name": "DeleteMapParts__11CEditGroundFPiPifff",
       "sha256": "b420988f41c3f1eb89316e9b610bda907939d011cee588ed2b4405652bb1e84b",
+      "comment": "Takes the part standing at a position off the ground and gives back what it was.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5745,6 +5757,7 @@
       "size": "0xAC",
       "name": "GetAreaCode__11CEditGroundFfff",
       "sha256": "ca2a54d6e576d9b19b79e2d4d8d9eeaf97fad41e375caacdf9d3d0755be3f4df",
+      "comment": "Gives the editable area a position falls in, or -1 where none does.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5756,6 +5769,7 @@
       "size": "0x84",
       "name": "GetAlt__11CEditGroundFfff",
       "sha256": "590580245d099af49a6bfc9717356c24e1cc20d59b6a09492b2e4d2498e5cde7",
+      "comment": "Gives the ground height at a position.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5767,6 +5781,7 @@
       "size": "0x84",
       "name": "GetAlt_i__11CEditGroundFfff",
       "sha256": "75d6be707d0d84e48224aee2dd617cbb3654d9ac3f4468f710d9aab6a213cf59",
+      "comment": "Gives the ground height at a position, snapped to the grid.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5778,6 +5793,7 @@
       "size": "0x50",
       "name": "GetPartsObject__11CEditGroundFi",
       "sha256": "6ecda765335f529d435b55e217c8e7c93d98ac8c57c4945e9658cd241f730d66",
+      "comment": "Finds the placed part with a given plot number.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5789,6 +5805,7 @@
       "size": "0x84",
       "name": "GetPartsID__11CEditGroundFfff",
       "sha256": "245117b23fc691bf2b5e22be5d3f47435980be8de37cf00012019c2c6a0e9c07",
+      "comment": "Gives the placed part standing at a position, or -1 where none does.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5800,6 +5817,7 @@
       "size": "0x5C",
       "name": "GetParts__11CEditGroundFfff",
       "sha256": "704e9646cb042a81c47a3c487f9346bd14844211e57f6965c8a05dbbff0e53fa",
+      "comment": "Gives the part standing at a position.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5811,6 +5829,7 @@
       "size": "0x18",
       "name": "CheckEffect__11CEditGroundFv",
       "sha256": "7b8266feb6518eb138501a7a67efdb7c067b009fe2b24b82633bc83b284b79f0",
+      "comment": "Reports whether the drop-in effect is still running.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5822,6 +5841,7 @@
       "size": "0x134",
       "name": "SetBuildEffect__11CEditGroundFi",
       "sha256": "9d7d563eb8abc37334d4645b2f0708d66328761a115ef76496945371cf63d543",
+      "comment": "Starts a part falling into place from above.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5833,6 +5853,7 @@
       "size": "0x1E0",
       "name": "EffectTask__11CEditGroundFv",
       "sha256": "f7421451213fe37fb3baa2e2cc18052255f6be153040903f5fb270c6c1e3a8d5",
+      "comment": "Advances the falling part one step and settles it when it lands.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5844,6 +5865,7 @@
       "size": "0x130",
       "name": "SetFocusParts__11CEditGroundFfff",
       "sha256": "6735775e7354b8d29b11d3cfb8d5201d99746b4ba7bad9c3ab7250bf6a3a4c15",
+      "comment": "Marks the part at a position as the one the cursor is on.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5855,6 +5877,7 @@
       "size": "0x89C",
       "name": "EditAreaClip__11CEditGroundFP7CCameraf",
       "sha256": "fa7770a53cb528e8023d3b4f6bbe771b203c0e39b151ae7b621e095c6d4f000d",
+      "comment": "Clips the editable areas against the camera.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5866,6 +5889,7 @@
       "size": "0x3BC",
       "name": "GetRandomPlanePos__11CEditGroundFPfPA4_fiPf",
       "sha256": "20caa762823c508d631015e17b5e2fc01ec9a043abfa1b420c5a6df58e511f60",
+      "comment": "Picks a random point on the walkable ground.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5877,6 +5901,7 @@
       "size": "0x17C",
       "name": "GetNearParts__11CEditGroundFPP9CMapPartsiP7CBoxVu0P7CBoxVu0",
       "sha256": "a3e79c0e9bc447460c002ed552064b6dde257fd84b648c693e2e9d2f7bd2714c",
+      "comment": "Collects the placed parts whose bounds meet a box.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5888,6 +5913,7 @@
       "size": "0x64",
       "name": "MakePartsBox__11CEditGroundFv",
       "sha256": "9c2202c69cd15a3b8e45663a0ab9cae7653f40cf7a8af765a997ff04d4a51ce7",
+      "comment": "Rebuilds the bounding boxes of every editable area.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5899,6 +5925,7 @@
       "size": "0x8C",
       "name": "GetPartsBox__11CEditGroundFP7CBoxVu0fff",
       "sha256": "1bf3858bdde977084a647559ed04756a7823ffdeeb24fe3fc0b4a0dcc15db12d",
+      "comment": "Gives the bounding box of the area a position falls in.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5910,6 +5937,7 @@
       "size": "0x190",
       "name": "GetPeoplePos__11CEditGroundFiPf",
       "sha256": "7477836c9fe38c929993e8b2f0c81bc42c93394cff232e4f4edcafe6a79a5873",
+      "comment": "Gives the position of one of the villagers standing on the ground.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5921,6 +5949,7 @@
       "size": "0x64",
       "name": "DrawBaseGround__11CEditGroundFv",
       "sha256": "0e81145b5b5d7bc023fc97ad43317fe5b49d5ee2aea5e6eb911b19380f20f931",
+      "comment": "Draws the grid of every editable area.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5932,6 +5961,7 @@
       "size": "0x23C",
       "name": "Draw__11CEditGroundFfiiiii",
       "sha256": "88be5cab49210304d1f9b4339124d430c90c6080dc2b07291f9eb2a85cb53904",
+      "comment": "Draws every placed part, choosing the level of detail from the distance.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5943,6 +5973,7 @@
       "size": "0x20C",
       "name": "StepWater__11CEditGroundFv",
       "sha256": "906f76b4a698d6c89a78d66bccaeed216365211e06d2e5029e0b7187e9726d3d",
+      "comment": "Advances the ripples of each water surface the view can reach.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5954,6 +5985,7 @@
       "size": "0x2B8",
       "name": "DrawWaterSurface__11CEditGroundFP7CCamera",
       "sha256": "a957bf5070c7f2b1542550a7e5608a271d6094746a220b5f67d02ee91b193a3d",
+      "comment": "Draws the water surfaces, ordered back to front from the camera.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5965,6 +5997,7 @@
       "size": "0x314",
       "name": "DrawWater__11CEditGroundFi",
       "sha256": "d71af14287c80e5eaba8f4ef82f8d5f3b9f2b3ecfecbee6f175c3365705c6b77",
+      "comment": "Draws the water pieces of the placed parts.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5976,6 +6009,7 @@
       "size": "0x2A0",
       "name": "DrawRipple__11CEditGroundFi",
       "sha256": "1910128ba9032f2fc18182c911f098d261a6bacec714cc193314943dc4e09eaa",
+      "comment": "Draws the ripples standing on the placed parts.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5987,6 +6021,7 @@
       "size": "0x34C",
       "name": "DrawShadow__11CEditGroundFiff",
       "sha256": "8605588c8385ed3c77a22cb12bf8008a250ab373621a2b992714e631ef12dd8a",
+      "comment": "Drops the shadows of the placed parts onto the ground.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -5998,6 +6033,7 @@
       "size": "0x6D8",
       "name": "DrawPartsCursor__11CEditGroundFiPfPfiPfi",
       "sha256": "9997ab4ecd9210dca9aa5625732486303570f4690ce1aeb19f4b519f42f90daa",
+      "comment": "Draws the cursor over the cells a part would occupy, colouring it by whether it may go there.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6009,6 +6045,7 @@
       "size": "0x170",
       "name": "DrawEffect__11CEditGroundFP13CCameraFollowfP12CEffectGroup",
       "sha256": "2f9f296f3dbe3fc0940433a881751af50cb075acc34babcbc3a6a4606e3f987c",
+      "comment": "Draws the effects standing on the placed parts.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6020,6 +6057,7 @@
       "size": "0x188",
       "name": "Save__11CEditGroundFPc",
       "sha256": "d7ee0d39096535f334a16faabd8a7f1c6aff6a5ce8a674d54e17a065e29e86cc",
+      "comment": "Writes every placed part into a buffer.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6031,6 +6069,7 @@
       "size": "0x374",
       "name": "Load__11CEditGroundFPc",
       "sha256": "e3fa2d997f22597f29c9ad2604252d4cb49d957dc5de583a27f8e9cc5a55cd4b",
+      "comment": "Reads placed parts back out of a buffer, clearing the ground first.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6042,6 +6081,7 @@
       "size": "0x17C",
       "name": "Save__11CEditGroundFiP9CSaveData",
       "sha256": "d27a2bc931f1ffd6171ddc8101257914d2d1aa8d88b6582fafab33086df46283",
+      "comment": "Writes every placed part into the save file.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6053,6 +6093,7 @@
       "size": "0xD0",
       "name": "Load__11CEditGroundFiP9CSaveData",
       "sha256": "c1af8e76ff12edf1684572f1d254eed2df6be6aad9fc883a507b0ff28828bacc",
+      "comment": "Reads placed parts back out of the save file.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6064,6 +6105,7 @@
       "size": "0x70",
       "name": "PickUpPoly__11CEditGroundFP6CCPolyfff",
       "sha256": "99bd51a156e28ada70ce688c58d3cede9c330419edc1fab033fac724188b4c59",
+      "comment": "Collects the collision polygons within thirty units of a position.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6075,6 +6117,7 @@
       "size": "0x214",
       "name": "PickUpPoly__11CEditGroundFP6CCPoly7CBoxVu0i",
       "sha256": "ec532ae330a2a0b14330294efc00ed581c446f100b061554ba4f84045a2b8cc6",
+      "comment": "Collects the collision polygons meeting a box.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6086,6 +6129,7 @@
       "size": "0x94",
       "name": "PickUpEditAreaPoly__11CEditGroundFP6CCPolyfff",
       "sha256": "155e014818d0791b120a539025fbbae356e47c338fdd7b5af2629ccb25794e18",
+      "comment": "Collects the ground polygons of the area a position falls in.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6097,6 +6141,7 @@
       "size": "0x2F4",
       "name": "PickUpCameraPoly__11CEditGroundFP6CCPolyR7CBoxVu0i",
       "sha256": "7ccf5b55f787f7db551d4ae6ae929d8efad287f8791a5544c29202d869a40910",
+      "comment": "Collects the polygons the camera collides against.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6108,6 +6153,7 @@
       "size": "0x2E8",
       "name": "Clear__11CEditGroundFv",
       "sha256": "0150bc987655f56f59f77a468cf254f073739793a885dda86ba5fda5f2d55559",
+      "comment": "Empties every placed part and every editable area.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6119,6 +6165,7 @@
       "size": "0x1A8",
       "name": "Initialize__11CEditGroundFv",
       "sha256": "2d979f6802b20eed629e36a387d8e6f7ac66fad7b0daf054e0daa9b3b2012ae6",
+      "comment": "Clears the ground's areas, parts, water and villager lists.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6130,6 +6177,7 @@
       "size": "0x40",
       "name": "RemakeGrid__11CEditGroundFv",
       "sha256": "2c9dc6dd3f07e4cb207e2f69eeef7d4c35b6b6a7c579ffe3dd924d505d5406f1",
+      "comment": "Rebuilds the grid the parts are placed on.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6141,6 +6189,7 @@
       "size": "0xE4",
       "name": "__ct__11CEditGroundFv",
       "sha256": "1e80b1d8b2dd80bc2cb2a10466269ed08395ef5c5e3965ca9c96de8be0bb930f",
+      "comment": "Constructs the ground's parts, water surfaces and interior parts.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6172,6 +6221,7 @@
       "size": "0x328",
       "name": "Draw__12CPartsCursorFPfii",
       "sha256": "fe343b118ad404cbc0947dd98fc0e9cd83a7a6d6d1143bc861d98279038e489d",
+      "comment": "Draws the placement cursor over a run of cells.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6183,6 +6233,7 @@
       "size": "0x1F4",
       "name": "RequestCheck__11CEditGroundFv",
       "sha256": "4039817e2484595bf7d87bdfdead124298d78981008c68c4a3b5fdd412aeac34",
+      "comment": "Counts what stands on the ground and reports which villager requests it satisfies.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6194,6 +6245,7 @@
       "size": "0xE0",
       "name": "CheckPartsRect__11CEditGroundFiiR8CRect_i_",
       "sha256": "78404976e72f159b37622bf946373347446a50289ed93b6eae819eabed2ec570",
+      "comment": "Reports whether a part of a given kind stands inside a rectangle.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6205,6 +6257,7 @@
       "size": "0x14C",
       "name": "GetRectParts__11CEditGroundFP8CRect_i_P9CMapPartsi",
       "sha256": "95cbf49315cb40ae162cdac7d69c2b678089227e166761ad0f41c7130c2fcb30",
+      "comment": "Collects the parts of one kind standing inside a rectangle.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6216,6 +6269,7 @@
       "size": "0x338",
       "name": "GetRectParts__11CEditGroundFP8CRect_i_P9CMapPartsii",
       "sha256": "0687bc39fd63fbd1fadbd9c0a806e4316b533a008d7f781b2940c734bd181486",
+      "comment": "Collects the parts of one kind and subtype standing inside a rectangle.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6227,6 +6281,7 @@
       "size": "0x264",
       "name": "GetRectDirParts__11CEditGroundFP8CRect_i_P9CMapPartsii",
       "sha256": "e8fb860a322f4fd0f65ffa8f3cefe6a047f8bb475f14273ea6ed078bdee6b4a4",
+      "comment": "Collects the parts inside a rectangle that face a given direction.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6238,6 +6293,7 @@
       "size": "0x3C4",
       "name": "NornRequest__11CEditGroundFPA64_P9CMapParts",
       "sha256": "c949e3f2f833e3581c3b324e09fcfdb2958d895113ad028d1bdfe666c1223e00",
+      "comment": "Checks the ground against Norn's request.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6249,6 +6305,7 @@
       "size": "0x65C",
       "name": "MatatagiRequest__11CEditGroundFPA64_P9CMapParts",
       "sha256": "a91a0e526e80344c76f01f0c84b176bb011f3530a1c55b833efb673cd161a92c",
+      "comment": "Checks the ground against Matataki's request, which wants the rivers chained up.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6260,6 +6317,7 @@
       "size": "0x49C",
       "name": "QueensRequest__11CEditGroundFPA64_P9CMapParts",
       "sha256": "311f0fca50107687131e48c4b552dc231820985588e5dcf454216ebcefca7509",
+      "comment": "Checks the ground against the Queen's request.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6281,6 +6339,7 @@
       "size": "0x614",
       "name": "MuskaRequest__11CEditGroundFPA64_P9CMapParts",
       "sha256": "c85d1305d5ca034ba72f23a6f2783ae398ca55069b5eb0194ba2dcb7f32ae6e8",
+      "comment": "Checks the ground against Muska Racka's request.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -6292,6 +6351,7 @@
       "size": "0x8A0",
       "name": "YellowRequest__11CEditGroundFPA64_P9CMapParts",
       "sha256": "2df553f926c853dd900adc1880ee1fef166bfd9037c9f0d5e8976567e84f4bfe",
+      "comment": "Checks the ground against the yellow request, which wants parts facing one another.",
       "documentation": "include/editground.hpp"
     },
     {
@@ -7620,7 +7680,7 @@
       "size": "0x24",
       "name": "BtSystemScriptRun__FiP14CDataAlloc2_1_",
       "sha256": "1e9c5a12da9fa7299b947148ea1167650209c0b6a1fc6ed87ae687174496f274",
-      "comment": "Starts one system event script running out of an arena.",
+      "comment": "Starts one system event script running out of an arena, giving back what `EdEventInit` reports.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -11529,7 +11589,7 @@
       "size": "0x1C",
       "name": "GetDefaultWeaponNo__Fi",
       "sha256": "5cc85e2f48f557aada8641666bf0771a0cd4c1809d26aa8b7e8b31e1c4989fc3",
-      "comment": "Returns the first weapon identifier in a character's weapon chain.",
+      "comment": "Gives the weapon a party member starts with. Returns the first weapon identifier in a character's weapon chain.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11541,6 +11601,7 @@
       "size": "0x84",
       "name": "IsDefaultWeapon__Fi",
       "sha256": "fce6bee4ebf137dda76d275755be82b4efc7bd7b2e10939b83c51763d3e105c7",
+      "comment": "Reports which party member a weapon is the starting weapon of, or -1 for none.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11552,7 +11613,7 @@
       "size": "0x18",
       "name": "SetNowEquipWeaponDataForMsg__Fii",
       "sha256": "a8c6cb521ca89b85eecf82beb2bab84a4ec207867135ef3ca716608398fd90ad",
-      "comment": "Records the weapon the item menu's message is about.",
+      "comment": "Remembers the weapon and slot a message is about to name. Records the weapon the item menu's message is about.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11564,6 +11625,7 @@
       "size": "0x68",
       "name": "GetNowEquipWeaponDataForMsg__FRiRi",
       "sha256": "b627bc89b0b42f9180ba5c01f2ba4c8f86640e08e5947d649197a6beba915166",
+      "comment": "Gives the item number and slot the last message was told about.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11575,6 +11637,7 @@
       "size": "0x18",
       "name": "GetGradationColorInfo2__Fi",
       "sha256": "216c99807f895f7a1c6f55fbe680628c2172c132772b8c41c69258f3fe70d796",
+      "comment": "Gives one of the menu's gradient colour pairs.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11586,7 +11649,7 @@
       "size": "0x3C",
       "name": "GetNowSelectWeapon__Fv",
       "sha256": "0280e6940e7fd25174f599947c26324632d09713f7ceaed8d535eaf5a4548700",
-      "comment": "Returns the weapon the weapon menu's cursor is on.",
+      "comment": "Gives the weapon the cursor stands on. Returns the weapon the weapon menu's cursor is on.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11598,6 +11661,7 @@
       "size": "0x5C",
       "name": "EscapeDungeonMode__Fv",
       "sha256": "a4bb0e1fbea2b906d7e017829b976d90980db5ecf07f03bda9974e0b8d6db37c",
+      "comment": "Reports whether the party may leave the floor: freely, with an escape item, or not at all.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11609,6 +11673,7 @@
       "size": "0xB8",
       "name": "DrawDngYesNoDialog__Fiii",
       "sha256": "217668b76cdcb6428146bb9d2a751b92bff02626e34f2ce1e05648de0ec0fcc6",
+      "comment": "Draws the two-line yes-or-no plate the dungeon menu asks with.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11620,7 +11685,7 @@
       "size": "0x68",
       "name": "GetMenuModeMax__Fv",
       "sha256": "d6e3852ed547fd8d16d61322dabca6ef9cacae9386792f6d61420525e12a5b64",
-      "comment": "Returns how many icons the battle menu ring currently offers.",
+      "comment": "Gives how many icons the menu bar shows, which depends on the mode and the manual flag. Returns how many icons the battle menu ring currently offers.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11632,6 +11697,7 @@
       "size": "0xE8",
       "name": "BtlMenuMekeIconInfo__FPii",
       "sha256": "dadf5b4a0a0eac26aa2bfbd6af93ea5c67a84d296467d2f4125ca5c351e1daaa",
+      "comment": "Fills in the icon numbers the menu bar draws for one mode.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11643,6 +11709,7 @@
       "size": "0x294",
       "name": "DrawBtlMenuBar__Fv",
       "sha256": "eaeb11ff7b7dac5f07164a6ad432f4819ae9271e0951034c01a55cd9562c5086",
+      "comment": "Draws the menu bar and its icons, fading them with the open and close effect.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11654,6 +11721,7 @@
       "size": "0x6C",
       "name": "GetLimmitMsg__Fv",
       "sha256": "ba104d1e531748527b7bbae9f9c8b82eade8ec48fd5a118f600de17054b1839d",
+      "comment": "Chooses the message that explains why the party may not leave the zone.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11665,6 +11733,7 @@
       "size": "0x310",
       "name": "DrawBattleMain__Fv",
       "sha256": "7e5b5d03cd246e05d015a60bcea3cfd98f708217e17b96ab114d2a13d5a22eaa",
+      "comment": "Draws the menu's main page: the bar, the selected icon's title and its help text.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11676,6 +11745,7 @@
       "size": "0x484",
       "name": "DrawOtherCharaStatus__Fiiii",
       "sha256": "b0e68a6196feeba2b7668e8726cdba332fd4061d09a6da3205c3c4f561376f33",
+      "comment": "Draws one unselected party member's face, life and magic bars.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11687,6 +11757,7 @@
       "size": "0x720",
       "name": "DngComStatus__Fiiii",
       "sha256": "89022cdc43b56b025e6a42cee82a3dd61b480f3025b4fc10a2a1b6e771044548",
+      "comment": "Draws one party member's dungeon status panel with their weapon and condition.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11698,6 +11769,7 @@
       "size": "0x3EC",
       "name": "DrawSelCharaStatus__Fffiiiiii",
       "sha256": "902c257fa11d569a5feefe0afaef12c7bc40a905edd19c84d044ddef00cda996",
+      "comment": "Draws the selected party member's full status panel.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11709,6 +11781,7 @@
       "size": "0x34",
       "name": "BtlDrawSave__Fv",
       "sha256": "c245866f1418f96ef4da5c7b74495282178c7096513803b6e2215818dc38be11",
+      "comment": "Draws the saving notice over the menu.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11720,7 +11793,7 @@
       "size": "0x118",
       "name": "BtlMenuTexBlockEnter__Fv",
       "sha256": "e590f8c31541927bcfdfd50321f56d1531349eb99f94af1f1321ff60c646e414",
-      "comment": "Looks the battle menu's fixed textures up in the texture manager and keeps them.",
+      "comment": "Looks up every texture the menu draws from and holds them. Looks the battle menu's fixed textures up in the texture manager and keeps them.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11744,7 +11817,7 @@
       "size": "0x1EC",
       "name": "ExitBattleMenu__Fi",
       "sha256": "8c7c382da6de98247b14ceedd5f31d4c18994c0fc1b5688340b6c7b425789d7f",
-      "comment": "Tears the battle menu down: its textures, its buffers, the gamepad and the BGM volume.",
+      "comment": "Clears the menu's item list and hands the party's state back to the game. Tears the battle menu down: its textures, its buffers, the gamepad and the BGM volume.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11756,6 +11829,7 @@
       "size": "0x45C",
       "name": "BattleMenuInit__FPii",
       "sha256": "24f68a6ca8fe1119a468389056ca0ce3b6e5c1399ea6bacbc6edaf9d5d599f53",
+      "comment": "Takes the texture blocks the menu was given, sets the pad up and opens the chosen mode.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11767,6 +11841,7 @@
       "size": "0x88",
       "name": "BtlMenuDrawSpecialFlag__Fi",
       "sha256": "cadcd2a0c7fecd5e65b420a454a7c8539c3def3f6713cb369a9eb0847c85c5cf",
+      "comment": "Suppresses a draw flag while an Atla event or a character page is showing.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11778,6 +11853,7 @@
       "size": "0x540",
       "name": "BattleMenuDraw__Fv",
       "sha256": "6fdabcbbe89819cf6422c162fd5574e1e3daeb745267fdcb8de7de67c36144e9",
+      "comment": "Draws the whole menu for one frame, choosing the page from the menu state.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11789,6 +11865,7 @@
       "size": "0x194",
       "name": "BattleMenuCursor__Fv",
       "sha256": "2a1d463ad0848538576c8c425a84aee9313b5458c0db624f558160650f08d04b",
+      "comment": "Runs one frame of the menu, stepping the party and dispatching on the menu state.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11800,6 +11877,7 @@
       "size": "0x17C",
       "name": "BattleMenuAppear__Fv",
       "sha256": "411779130a05fe9ff5e809f0ee97650e0fe976eded7097c793730483744f1aeb",
+      "comment": "Slides the bar icons into place and reports when they have all arrived.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11811,6 +11889,7 @@
       "size": "0xDC",
       "name": "BattleMenuExit__Fv",
       "sha256": "530004bd5366caccd9c378deb6ef36a293fd28bd200b0c14985b0d3e8c4cb3e3",
+      "comment": "Slides the bar icons off the screen and reports when the menu may close.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11822,6 +11901,7 @@
       "size": "0x438",
       "name": "BattleMenuSelect__Fv",
       "sha256": "e0e5e93e115a504411a5a02657fff37cb3b5dd126e305912bdfb7b7b5a802749",
+      "comment": "Moves the cursor along the menu bar and opens the page it settles on.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11833,7 +11913,7 @@
       "size": "0x29C",
       "name": "ToFromSelect__Fi",
       "sha256": "64fbd146440ff502efa9a7e02e9b146e663d0d8b395913fdb09030f3a7452889",
-      "comment": "Steps the battle menu ring towards the icon it is given and returns the icon it settles on.",
+      "comment": "Slides the page in or out and reports when the movement has finished. Steps the battle menu ring towards the icon it is given and returns the icon it settles on.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11857,6 +11937,7 @@
       "size": "0x158",
       "name": "InitMenuChara__FP1",
       "sha256": "5b437bf387196bc2d1ef00f1e3e69470200bc8883cd317fb9b81716545471db8",
+      "comment": "Reads the character page's models and textures and starts its turntable.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11868,6 +11949,7 @@
       "size": "0x9EC",
       "name": "BattleMenuCharaKey__Fv",
       "sha256": "2b94b7bbf377f0582033da45430dc7536e6e567ce85c24ab09f90b7766cc1854",
+      "comment": "Handles input on the character page, including the turntable and the equipment list.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11879,6 +11961,7 @@
       "size": "0xEF4",
       "name": "DrawCharaSelect__Fv",
       "sha256": "afe03817257179cab170edb27ca211e4d6d01ee2bda8e77fd742af5769fa3010",
+      "comment": "Draws the character page with its model, status and equipment.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11890,6 +11973,7 @@
       "size": "0x4B4",
       "name": "DrawWepDamageDraw__F4RECTP11WEAPON_HAVEi",
       "sha256": "1424867981db669f72a1155fddf1e73ff63fb47be62c55bd5b6c7bb855135eaa",
+      "comment": "Draws one weapon's attack and endurance bars with its experience.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11901,6 +11985,7 @@
       "size": "0xD8",
       "name": "DrawWepStatus__FiiP11WEAPON_HAVEii",
       "sha256": "63d920a145962fd674002a9c4f34f9d77eb6e7e09962a52d21242b8bb919bad8",
+      "comment": "Draws one weapon's status panel.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11912,6 +11997,7 @@
       "size": "0x2A8",
       "name": "DrawWepVolumeDisplay__FiiP11WEAPON_HAVEi",
       "sha256": "d789920b381a486b30e3bd864e04d13940d074d308cd2aabb9a9e5dffa068755",
+      "comment": "Draws the bars comparing a weapon's current values against its built-up ones.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11923,6 +12009,7 @@
       "size": "0x13C",
       "name": "DrawWeaponNameBoard__Fiiiii",
       "sha256": "19d32c92a3ae8fb28eb2f1ab6cb8ab959f762a593b14c3f396471f5a43154770",
+      "comment": "Draws the board a weapon's name sits on.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11934,6 +12021,7 @@
       "size": "0x550",
       "name": "WeaponNameDraw__Fiii",
       "sha256": "f9505109bcf1603af7b501485d357e563703880d088d556813f4ff23d0afa575",
+      "comment": "Draws the names of the weapons either side of the cursor as they slide past.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11945,6 +12033,7 @@
       "size": "0x220",
       "name": "WepStatusVolumeDraw__F4RECTiPiiiii",
       "sha256": "34b6f4eea4eabaa741238703e33ef143018a97c9a42a1b9b49334da291f6ce82",
+      "comment": "Draws one weapon-status bar, filled to the value's share of its maximum.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11956,6 +12045,7 @@
       "size": "0x68",
       "name": "DrawWeaponStatusWaku__Fiiii",
       "sha256": "00e24705ec99844cf6b8e34d1da73a47910ebc8c5cf49be342af853be7a9a73f",
+      "comment": "Draws the gradient frame a weapon-status row sits in.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11967,6 +12057,7 @@
       "size": "0x60",
       "name": "DrawLimmitMax__Fiii",
       "sha256": "0b173f31f7a340688b1f8876eba3af9ed1fc71f2e430b83f4bda1c912980b949",
+      "comment": "Draws the mark that says a weapon value has reached its ceiling.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11978,6 +12069,7 @@
       "size": "0x194",
       "name": "DrawBtlMenuLRCursor__Fiiii",
       "sha256": "d9430e5a555460e23b7e59653c4629b4048d1dd47da1ec260250eef12395f3de",
+      "comment": "Draws the left and right cursor arrows, bobbing them with a sine.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -11989,7 +12081,7 @@
       "size": "0x7B8",
       "name": "DrawWeaponStatusTag__FiiP11WEAPON_HAVEiii",
       "sha256": "5ba6400437c602d30c78060e0d4a7e7b220974f843b6cc4340808f8602784b52",
-      "comment": "Draws one weapon's status tags: their values, their gradation bars and their experience numbers.",
+      "comment": "Draws a weapon's status tags with their volume bars. Draws one weapon's status tags: their values, their gradation bars and their experience numbers.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12001,7 +12093,7 @@
       "size": "0x42C",
       "name": "DrawWeaponElemTag__FiiP11WEAPON_HAVEiii",
       "sha256": "da562059ad9c6f9dc6ddb744222b92ee235b7c0341a3bc97b8ebec861fec7bee",
-      "comment": "Draws one weapon's elemental tags with their volume bars.",
+      "comment": "Draws a weapon's elemental tags with their volume bars. Draws one weapon's elemental tags with their volume bars.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12025,6 +12117,7 @@
       "size": "0x210",
       "name": "DrawWeaponTagBoard__FiiP11WEAPON_HAVEiii",
       "sha256": "b378857581e66f85dd296bb5e6dab1aaa57e4c3edda2e41f5b17aa06eab0313a",
+      "comment": "Draws the three tag pages of a weapon and highlights the one the cursor is on.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12036,6 +12129,7 @@
       "size": "0x55C",
       "name": "DrawAallWeapon__FiifP10CCharacterP11WEAPON_HAVEiii",
       "sha256": "a389254f96b6b944e3ba3865e8a2a87b6836c5d14620c9c2e5af0236eea3a8b1",
+      "comment": "Draws one weapon's model, name and every panel that describes it.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12047,6 +12141,7 @@
       "size": "0x748",
       "name": "BtlWeaponDraw__Fifii",
       "sha256": "196bb444773eedf3678aeb73aeba66fdddc2954a646368e06ed5bdb662b15edb",
+      "comment": "Draws the weapon page for one party member, sliding between their weapons.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12058,6 +12153,7 @@
       "size": "0x11C",
       "name": "NowWeaponStatusValue__FP11WEAPON_HAVE",
       "sha256": "7211daf218c002ace7b08edecb55b0ebbc184cca27a2024247391ea207ec1454",
+      "comment": "Reports whether a weapon can be repaired, built up, or neither.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12069,6 +12165,7 @@
       "size": "0xB8",
       "name": "WeaponMenuCheckElemValue__FP11WEAPON_HAVEP11WEAPON_HAVE",
       "sha256": "fdaf54e2241b3272acb71388e35bcec3a768ce201415f201fd92271636fd2e48",
+      "comment": "Drops a weapon's element where the attachment no longer supports it.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12080,6 +12177,7 @@
       "size": "0x10C",
       "name": "WeaponMenuCheckEnableSetElem__FP11WEAPON_HAVEP11WEAPON_HAVEi",
       "sha256": "a75497394bf048c25b2f8d82d38c0a0d1d7ea7903a8edc25e06276fc98180e79",
+      "comment": "Reports whether an element may be put on a weapon, and complains where it may not.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12091,6 +12189,7 @@
       "size": "0x530",
       "name": "DrawWeaponSelectDialog__Fiii",
       "sha256": "013e6196d9f202a005e3f9acd6e374d837dbd96a64066df1622443beb292b7d2",
+      "comment": "Draws the dialog that offers to repair, build up or scrap the selected weapon.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12102,6 +12201,7 @@
       "size": "0x3CC",
       "name": "InitWeaponSelect__Fii",
       "sha256": "08b321a8c96163fd5086b2851851b9183bfed17921a65aed67c0139a8ee97f19",
+      "comment": "Opens the weapon page in one of its modes and puts the cursor where it was left.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12113,6 +12213,7 @@
       "size": "0x2CC",
       "name": "ExitWeaponMenuSelect__Fv",
       "sha256": "729d5dd91bf4a6b590be7d0a86893c56865cce59384b416f800de9cdc7a2bc3c",
+      "comment": "Rebuilds the player's equipped weapon model and gives the menu's textures back.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12124,6 +12225,7 @@
       "size": "0x107C",
       "name": "WeaponMenuSelect__Fv",
       "sha256": "0475fe12df99fa6e001bd156a8330e9b5f48b53f0830566c5f6410a623e1afd5",
+      "comment": "Runs one frame of the weapon page, dispatching on which of its modes is open.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12135,6 +12237,7 @@
       "size": "0x178C",
       "name": "WeaponSelectKey__Fv",
       "sha256": "c11631f13cbf58019c64926f96f71f71f27ed0246d43923837f64a66f6c1451e",
+      "comment": "Moves the cursor across the weapon list and opens what it settles on.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12146,7 +12249,7 @@
       "size": "0x198",
       "name": "WepAttachHaveCancel__Fv",
       "sha256": "81f19a4540649c442b45fb2355e16d85fa3cc5bb01655918944dd1fd4680f996",
-      "comment": "Puts the attachment the weapon menu is holding back where it came from.",
+      "comment": "Takes the held attachment back out of the player's hand. Puts the attachment the weapon menu is holding back where it came from.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12158,6 +12261,7 @@
       "size": "0x23C",
       "name": "WeaponMenuAttachModeKey__Fv",
       "sha256": "9a197054ba7e97880e3b1d8172b36d180db2476ee6acc43f413527d2ecb6f894",
+      "comment": "Moves the cursor between the three attachment pages.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12169,7 +12273,7 @@
       "size": "0xCC",
       "name": "WeaponMenuActWepKey__Fv",
       "sha256": "6d4546f3ec95b87341ef12f643ab0290f72fe73cee72ff2e4f8bf846040c7619",
-      "comment": "Handles input on the weapon menu's equipped weapon row.",
+      "comment": "Handles input while a weapon action is being chosen. Handles input on the weapon menu's equipped weapon row.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12181,7 +12285,7 @@
       "size": "0x5B4",
       "name": "WeaponMenuTagKey__Fv",
       "sha256": "d149245c91f4afeb933e09421de460f6d48f5bf0c7d2204cab9e361ed245120b",
-      "comment": "Handles input on the weapon menu's tag row, fitting and removing tags.",
+      "comment": "Moves the cursor down the tags of the open attachment page. Handles input on the weapon menu's tag row, fitting and removing tags.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12193,7 +12297,7 @@
       "size": "0x414",
       "name": "WeaponMenuAttachWepKey__Fv",
       "sha256": "8a19038abf25294a01f9b65cbd96c5b6344e1765ef1aabf763f07d7279fd25bc",
-      "comment": "Handles input while an attachment is being fitted to a weapon.",
+      "comment": "Moves the cursor across the weapons an attachment may be put on. Handles input while an attachment is being fitted to a weapon.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12217,6 +12321,7 @@
       "size": "0x290",
       "name": "RepairAndLevelUpDraw__Fiii",
       "sha256": "31abab8a1f28766f8a4d62929ffe45654411732fa3e7c158986cb9da6c682b32",
+      "comment": "Draws the repair and build-up dialog with the counts of the items it needs.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12228,6 +12333,7 @@
       "size": "0x238",
       "name": "DrawBuildUpWeaponSelect__Fiii",
       "sha256": "bd5e2e78588236689530018bca5ba636e98dcb509bca725f2b517331cf431540",
+      "comment": "Draws the list of weapons the selected one may be built up into.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12239,6 +12345,7 @@
       "size": "0x11A8",
       "name": "WeaponMenuDraw__Fv",
       "sha256": "c0a92b9d751179a9b635da05e22c977f59c81db5e865c7199e0de5b7b7b86534",
+      "comment": "Draws the weapon page and whichever dialog is open over it.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12250,6 +12357,7 @@
       "size": "0x2F0",
       "name": "ItemTrushKey__FPiPii",
       "sha256": "2669e0d7add4cbada143876863db66ff25defb43e58869aab39c2086e9baba94",
+      "comment": "Handles input while items are being thrown away.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12261,6 +12369,7 @@
       "size": "0x2F4",
       "name": "DrawTrushItem__Fv",
       "sha256": "2f053edfb45c722b6ad3156c62e00d8adf27cfdae192d136e815db1572425a05",
+      "comment": "Draws the list of items that may be thrown away.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12272,6 +12381,7 @@
       "size": "0x88",
       "name": "ExitItemSelect__Fv",
       "sha256": "851ed93b95a71da5d238d69f7630dbb0d6410b43758690129cfd9e99087aa0da",
+      "comment": "Remembers where the item page's cursor stood and closes it.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12283,6 +12393,7 @@
       "size": "0x54",
       "name": "StartBGReadItemMenuWepIcon__FP1Ri",
       "sha256": "64ac94d7c16e7f86fa5c3596bc0034e325c631435fc873bf65c1f3657ee5d0fe",
+      "comment": "Starts reading the item page's weapon icons in the background.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12294,6 +12405,7 @@
       "size": "0xC8",
       "name": "ReadSyncItemMenuWepIcon__Fv",
       "sha256": "0c0bfe0940230dbc599f334668cee96accd830fbe05e48f3a8fab42a3df79cd6",
+      "comment": "Waits for the item page's weapon icons and enters them into the texture manager.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12305,6 +12417,7 @@
       "size": "0x624",
       "name": "InitItemMode__Fii",
       "sha256": "6a904f7b6d09c81861868e8a8bdd9c432860fa042d970039f5bf2bc52bbce2c3",
+      "comment": "Opens the item page on one party member, restoring the mode it was left in.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12316,6 +12429,7 @@
       "size": "0x74",
       "name": "InitItemTrushStart__Fv",
       "sha256": "b0b631d4664cfcbf294491de09e3d7a420772c040c56791f15f83cf2c40cceba",
+      "comment": "Waits for the item page's data and opens it on the throw-away mode.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12327,6 +12441,7 @@
       "size": "0xC0",
       "name": "ExistItemMenu__Fv",
       "sha256": "aa05d1760be60a4c2f67d48d077803abff9b16f2c28045df9f66225627b552a3",
+      "comment": "Gives the item page's textures back and re-equips anyone left without a weapon.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12338,6 +12453,7 @@
       "size": "0x1C0",
       "name": "ChangeMenuChara__Fv",
       "sha256": "3b8de3bd7c1ece2eb2886507be741fd7939619625dc5dbff36dcf87c839ee57f",
+      "comment": "Moves the item page from one party member to the next.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12349,6 +12465,7 @@
       "size": "0x2AA0",
       "name": "ItemMenuMainKey__Fv",
       "sha256": "532f75c78c43d9de926b6e747b2777727f83bf9bfa247659e3b3ca159f132004",
+      "comment": "Runs one frame of the item page, dispatching on which of its modes is open.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12360,6 +12477,7 @@
       "size": "0xA30",
       "name": "ItemMenuModeDraw__Fv",
       "sha256": "cd1334d0f85076f2051ee876e1deddd1ec5d1877bab5fdf32245a4add28fd492",
+      "comment": "Draws the item page for whichever of its modes is open.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12371,6 +12489,7 @@
       "size": "0x4D8",
       "name": "ItemMenuModeKey__Fv",
       "sha256": "2e80f216beca4be700bf65601d53203ab656aa1d443d2720a7b607c8efef7d2e",
+      "comment": "Moves the cursor across the item list and wraps it at the ends.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12382,6 +12501,7 @@
       "size": "0x1EC",
       "name": "ActiveItemDraw__Fiii",
       "sha256": "11d2e982b404a113253d1e1385290027f332ebe38cfc0c92ba26ed927949b123",
+      "comment": "Draws the party member's active item slots and what stands in them.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12393,6 +12513,7 @@
       "size": "0x84",
       "name": "MenuCharaPolyDraw__Fv",
       "sha256": "91411095d4156f30b265ba26b470b1197dbc4f39a83c26f5faa90d9494cfcee9",
+      "comment": "Steps and draws the party member's model on the item page.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12404,6 +12525,7 @@
       "size": "0xDA0",
       "name": "ItemMenuCharaStatusDraw__Fiiii",
       "sha256": "53947a6ff9b49c2804b36477935b891bda6187c2117e06735691255c11cfe324",
+      "comment": "Draws the item page's status panel for one party member.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12415,6 +12537,7 @@
       "size": "0x2D8",
       "name": "ItemNaviCursor__Fi",
       "sha256": "0bf70b7e52334d8388803c026b06ae636755b093e47ff1695af504d74fa63aa6",
+      "comment": "Chooses which of the use, equip and throw prompts an item offers.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12426,6 +12549,7 @@
       "size": "0x22C",
       "name": "CharaStatusMsgDraw__Fiiiii",
       "sha256": "684e67e474f7eecdec38056fa8ce0a0f15f02d1b09cf5b5a47ffd35c8a5cbe1e",
+      "comment": "Draws the party member's status ailments, bobbing the icons with a sine.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12437,6 +12561,7 @@
       "size": "0xFC",
       "name": "BattleMenuAtoraKey__Fv",
       "sha256": "d6e1d7166b7742c49391225f01dfce81faf3359da7cc4a74aad3852b08bdb7b0",
+      "comment": "Runs the Atla page and returns to the menu bar when it closes.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12448,6 +12573,7 @@
       "size": "0x414",
       "name": "InitMenuMove__FiiP1",
       "sha256": "eede60d23645c6e64786d94fe34e6b12f450ec056784ffac05cfc8722060b03e",
+      "comment": "Opens the travel page, either on the world map or on the local one.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12459,6 +12585,7 @@
       "size": "0x180",
       "name": "GetTownOrDngPos__Fv",
       "sha256": "032c3f892ebdd81575f0f4ade5599bcf9d8ac8305d69f6d04355c1fe3c49a12e",
+      "comment": "Places the party's marker on the town or dungeon the cursor stands on.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12470,6 +12597,7 @@
       "size": "0xB54",
       "name": "MenuMoveKey__Fv",
       "sha256": "5e849d06c2cda735688b55ffc373ef1f027d45969f643f83206e07569492b9bd",
+      "comment": "Handles input on the travel page and reports the destination that was chosen.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12481,6 +12609,7 @@
       "size": "0xCC8",
       "name": "DrawMenuMove__Fv",
       "sha256": "896049fcbe600283ed8724bab94e80d798de0e95f1f49aec3245b3ba4a4b56f8",
+      "comment": "Draws the travel page with its map, its names and its confirmation plate.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12504,6 +12633,7 @@
       "size": "0xBC",
       "name": "StartLoadWorldMap__FiP1",
       "sha256": "bbbd700f7b6cb80703aa458fea0793e79ecaf0ed30a27d5a4838faeae612dbb8",
+      "comment": "Starts reading one region's world map in the background.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12515,6 +12645,7 @@
       "size": "0x32C",
       "name": "LoadWorldMap__Fv",
       "sha256": "bba9c6291287e125c21b2e51d9ce913f76a9234c6a7d2389559132901bd4651d",
+      "comment": "Waits for the world map and enters its textures and model.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12526,7 +12657,7 @@
       "size": "0x6C",
       "name": "LocalDrawWorldMap__Fv",
       "sha256": "928250c2ebeaea0bcd0eb7ddeda567f0ee53e17e184f2077d9d195b66e88aa49",
-      "comment": "Draws the world map's menu character.",
+      "comment": "Steps and draws the party's marker over the world map. Draws the world map's menu character.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12538,6 +12669,7 @@
       "size": "0x48",
       "name": "DrawWorldMap__Fi",
       "sha256": "48d899481cd31f4ec01c1d0cd57ac134ab2d3e8e63690ebf9a658586420d2560",
+      "comment": "Draws the world map with the party's marker over it.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12549,7 +12681,7 @@
       "size": "0x3BC",
       "name": "GetNearWorldPos__FiPi",
       "sha256": "91df9650ad695b256734ccfb2f244b2afe5c34e72089723ea83337b6279e72aa",
-      "comment": "Returns the reachable world map destination nearest the one it is given, or -1 when there is none.",
+      "comment": "Finds the world-map place nearest the direction the pad was pushed in. Returns the reachable world map destination nearest the one it is given, or -1 when there is none.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12561,6 +12693,7 @@
       "size": "0x148",
       "name": "WorldMapMoveKey__Fv",
       "sha256": "ccc6a3739a6718fbafbcf161957c81b5632a4ac66cf409fb8ed03b16a089e846",
+      "comment": "Moves the world-map cursor between places and reports the one chosen.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12572,6 +12705,7 @@
       "size": "0x150",
       "name": "DrawMapCheck__Fi",
       "sha256": "4d05b3208a4d131c3ad72c4a036b3b93d8d0cc0600a3724c5eb495a2bae9fb80",
+      "comment": "Draws the plate that asks whether to travel to the chosen place.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12583,6 +12717,7 @@
       "size": "0x164",
       "name": "GetVisitInfo__Fii",
       "sha256": "c2635826db7c8c4b8a0d3414aff88a3b5b053502fcef3c7d96ff31080e9e357c",
+      "comment": "Reports whether a world-map place has been visited and may be travelled to.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12594,6 +12729,7 @@
       "size": "0x110",
       "name": "IsLoadMapNo__Fv",
       "sha256": "f01e67a3f97a866dfba4818cdd5b68cf53aa6e6db589187978a9a34b7591050a",
+      "comment": "Gives the region whose world map should be read for the party's position.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12605,6 +12741,7 @@
       "size": "0xD8",
       "name": "MapNoTransFunc__Fi",
       "sha256": "4414ef9b347e672083ca55241ceb23480ed1f9c2c7da3802385b2bcfe7d78497",
+      "comment": "Turns a map number into the world-map place that stands for it.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12616,6 +12753,7 @@
       "size": "0x108",
       "name": "BattleMenuOptionKey__Fv",
       "sha256": "c325de4763039db761ff91156f6007da24bee91024b43c36307589b6df5b82c0",
+      "comment": "Runs the options page and returns to the menu bar when it closes.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12627,6 +12765,7 @@
       "size": "0xF4",
       "name": "BattleMenuSaveKey__Fv",
       "sha256": "6993a0f1a3b69eb485c02103137ce558b739b68e3f8031d272d249abd7b8ad6d",
+      "comment": "Runs the save page and returns to the menu bar when it closes.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12638,6 +12777,7 @@
       "size": "0x128",
       "name": "DrawStatusNumberNowAndMax__FPiiiii",
       "sha256": "0fa8ecf6eb27c497241c4707c974afc855f06ea0c76a591772acee09f2027145",
+      "comment": "Draws a current-over-maximum pair, reddening it as the value runs low.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12649,6 +12789,7 @@
       "size": "0x294",
       "name": "DrawWepHole__FiiP11WEAPON_HAVEii",
       "sha256": "674c6350f5cb84c3cb9ecd378c2543ba40a6539423b51517dad70a173c2d293e",
+      "comment": "Draws the sockets of a weapon and what is fitted into them.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -12813,7 +12954,9 @@
       "address": "0x0020D3B0",
       "size": "0x18",
       "name": "GetMenuWeaponModelData__Fi",
-      "sha256": "5722f8ff3939eb9139d1c043cf3f5899adcd124f8e9f3664307e0106bec203ae"
+      "sha256": "5722f8ff3939eb9139d1c043cf3f5899adcd124f8e9f3664307e0106bec203ae",
+      "comment": "Returns one entry of the menu's weapon model table.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -12823,7 +12966,9 @@
       "address": "0x0020D3D0",
       "size": "0x30",
       "name": "InitMenuWeaponModelData__Fv",
-      "sha256": "5d78b6a4d37894a1c0718947f6d7c0e32ec16d217655dfa3613b32799405489c"
+      "sha256": "5d78b6a4d37894a1c0718947f6d7c0e32ec16d217655dfa3613b32799405489c",
+      "comment": "Clears the menu's weapon model table.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -12833,7 +12978,9 @@
       "address": "0x0020D400",
       "size": "0x18",
       "name": "GetMenuWeaponModelInfo__Fi",
-      "sha256": "374044ac153b1a5f0a482e8f3a75c93451939f58b7a91987575095870b1b5699"
+      "sha256": "374044ac153b1a5f0a482e8f3a75c93451939f58b7a91987575095870b1b5699",
+      "comment": "Returns the two-value reference entry for one weapon model.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -12987,7 +13134,9 @@
       "address": "0x0020E530",
       "size": "0x74",
       "name": "GetCharaChangeReadCharaFilePath__FPci",
-      "sha256": "891e8163a4a3e4da843a8b18c700b8ef56971ff07b5e13876d849af8c1df3a52"
+      "sha256": "891e8163a4a3e4da843a8b18c700b8ef56971ff07b5e13876d849af8c1df3a52",
+      "comment": "Writes the file path of one character's model into a buffer.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13189,7 +13338,9 @@
       "address": "0x0020FBE0",
       "size": "0xF8",
       "name": "LocalWeaponDataChange__FPciii",
-      "sha256": "2c3f79a088f9390ecf448139eca061bd057a22ac2011a14e428daa40d828b98d"
+      "sha256": "2c3f79a088f9390ecf448139eca061bd057a22ac2011a14e428daa40d828b98d",
+      "comment": "Randomly adjusts one value of a weapon being changed into another.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13223,7 +13374,9 @@
       "address": "0x002102E0",
       "size": "0x3C",
       "name": "GetEditMenuMax__Fv",
-      "sha256": "d193107ef5e2ffd3f9b877ce6fb6decf4f8966b518d21319d70aec655ce65ca2"
+      "sha256": "d193107ef5e2ffd3f9b877ce6fb6decf4f8966b518d21319d70aec655ce65ca2",
+      "comment": "Returns the number of edit menu icons, one fewer until the manual is available.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13233,7 +13386,9 @@
       "address": "0x00210320",
       "size": "0xC4",
       "name": "DrawMenuIcon__Fi",
-      "sha256": "d40719035ab047c1ea9baf4756dbcb670ea65e12505d436af539c5866a8bfda5"
+      "sha256": "d40719035ab047c1ea9baf4756dbcb670ea65e12505d436af539c5866a8bfda5",
+      "comment": "Draws one edit menu icon at its resting position.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13243,7 +13398,9 @@
       "address": "0x002103F0",
       "size": "0xFC",
       "name": "GetEditMenuIconPos__FiPi",
-      "sha256": "de983b2cdf9d755bb37832c94a35bf133dccbecfe89089726d96e4491922fa52"
+      "sha256": "de983b2cdf9d755bb37832c94a35bf133dccbecfe89089726d96e4491922fa52",
+      "comment": "Writes the screen position of one edit menu icon.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13253,7 +13410,9 @@
       "address": "0x002104F0",
       "size": "0x1B4",
       "name": "DrawMoveMenuIcon__Fv",
-      "sha256": "c683b3acfaa2b3d2f5dd9b8b1d0273ddb1af22145c5607a2f7b343830d4cfa74"
+      "sha256": "c683b3acfaa2b3d2f5dd9b8b1d0273ddb1af22145c5607a2f7b343830d4cfa74",
+      "comment": "Draws the edit menu icons at their current positions.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13263,7 +13422,9 @@
       "address": "0x002106B0",
       "size": "0x240",
       "name": "CalMoveFromMenuIcon__Fv",
-      "sha256": "2ff629bfe2ea2531b9fce5b8e45216365e1ed7c85036a7cdfffb9d7b33781db5"
+      "sha256": "2ff629bfe2ea2531b9fce5b8e45216365e1ed7c85036a7cdfffb9d7b33781db5",
+      "comment": "Moves the edit menu icons one step away from their resting positions and reports when they have arrived.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13273,7 +13434,9 @@
       "address": "0x002108F0",
       "size": "0x1C0",
       "name": "CalMoveToMenuIcon__Fv",
-      "sha256": "b91d084a560d1d571932b6ea30fd9343c7a75e0558bfef58053bd999910f6c08"
+      "sha256": "b91d084a560d1d571932b6ea30fd9343c7a75e0558bfef58053bd999910f6c08",
+      "comment": "Moves the edit menu icons one step back to their resting positions and reports when they have arrived.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13295,7 +13458,9 @@
       "address": "0x00210DA0",
       "size": "0x8C",
       "name": "EditMenuExit__Fv",
-      "sha256": "ce114d9653a9de1b9e43e9e13b850a714f0d83374bccd18bb66ebbc79f5398f6"
+      "sha256": "ce114d9653a9de1b9e43e9e13b850a714f0d83374bccd18bb66ebbc79f5398f6",
+      "comment": "Releases the edit menu's textures and returns the pad to normal mode.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13329,7 +13494,9 @@
       "address": "0x002112C0",
       "size": "0x4BC",
       "name": "EditMenuStart__Fv",
-      "sha256": "2ddc12de2435aac541e7b68b6e4095707d2f6ea34b2550d385558ae301c7c66a"
+      "sha256": "2ddc12de2435aac541e7b68b6e4095707d2f6ea34b2550d385558ae301c7c66a",
+      "comment": "Draws the edit menu's opening and enters its page textures once they have been read.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13339,7 +13506,9 @@
       "address": "0x00211780",
       "size": "0x22C",
       "name": "EditMenuSelectDraw__Fv",
-      "sha256": "29ec518743f00f974a3e07c7334fdcba7e382ec29c485afd0060980902a7a52a"
+      "sha256": "29ec518743f00f974a3e07c7334fdcba7e382ec29c485afd0060980902a7a52a",
+      "comment": "Draws the edit menu's icon selection.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13349,7 +13518,9 @@
       "address": "0x002119B0",
       "size": "0x38C",
       "name": "EditMenuSelect__Fv",
-      "sha256": "859fc886d35526310bee910aed7bc9cbb005cb1b141eb620a08580d4d612dd00"
+      "sha256": "859fc886d35526310bee910aed7bc9cbb005cb1b141eb620a08580d4d612dd00",
+      "comment": "Handles pad input in the edit menu's icon selection and returns the result.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13359,7 +13530,9 @@
       "address": "0x00211D60",
       "size": "0x144",
       "name": "EditMenuToExit__Fv",
-      "sha256": "c923904b73fa4e19a24f0baf3bcdd60df01bb8bcea2c4b3a7c10eb788b5af75c"
+      "sha256": "c923904b73fa4e19a24f0baf3bcdd60df01bb8bcea2c4b3a7c10eb788b5af75c",
+      "comment": "Runs the edit menu's closing and reports when it is finished.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13369,7 +13542,9 @@
       "address": "0x00211EB0",
       "size": "0x90",
       "name": "AtoraSelectDraw__Fv",
-      "sha256": "aa59fabd358f1319476932fb7f7b0c6ec1722f67990ccb5d012666802e92be67"
+      "sha256": "aa59fabd358f1319476932fb7f7b0c6ec1722f67990ccb5d012666802e92be67",
+      "comment": "Draws the Atla selection page.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13379,7 +13554,9 @@
       "address": "0x00211F40",
       "size": "0x188",
       "name": "AtoraSelect__Fv",
-      "sha256": "75a37950d924caf3ac327cb84e46be21b63c5d38a20aac8b3db3e78cc7dd6d16"
+      "sha256": "75a37950d924caf3ac327cb84e46be21b63c5d38a20aac8b3db3e78cc7dd6d16",
+      "comment": "Runs the Atla selection page and returns the result.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13389,7 +13566,9 @@
       "address": "0x002120E0",
       "size": "0x30",
       "name": "AtoraMove__Fv",
-      "sha256": "db9a608ac2c5e81ff20da622b115c68e146e1cf11782ea11d81a409685506082"
+      "sha256": "db9a608ac2c5e81ff20da622b115c68e146e1cf11782ea11d81a409685506082",
+      "comment": "Leaves the edit menu for the Atla move and returns the result.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13399,7 +13578,9 @@
       "address": "0x00212110",
       "size": "0x15C",
       "name": "AnalyzeBackDraw__Fii",
-      "sha256": "c017cb476e2ce27b9786ddaab411b1d79af7817f53ded90a59e6f18ccaecdfce"
+      "sha256": "c017cb476e2ce27b9786ddaab411b1d79af7817f53ded90a59e6f18ccaecdfce",
+      "comment": "Draws the background panels of the analysis page.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13409,7 +13590,9 @@
       "address": "0x00212270",
       "size": "0xAC",
       "name": "AnalyzeRequestPer__Fv",
-      "sha256": "fa0cefb554dc26ee1982a5f3eeee3255aeb8cff1b952ec673891c513ea037103"
+      "sha256": "fa0cefb554dc26ee1982a5f3eeee3255aeb8cff1b952ec673891c513ea037103",
+      "comment": "Returns the analysis page's completion percentage, capped at 100.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13419,7 +13602,9 @@
       "address": "0x00212320",
       "size": "0x69C",
       "name": "AnalyzeBarDraw__Fv",
-      "sha256": "290319cfcf7a997a5d0b826d24df4098e265ae24da2dc629f8a8e86448111804"
+      "sha256": "290319cfcf7a997a5d0b826d24df4098e265ae24da2dc629f8a8e86448111804",
+      "comment": "Draws the analysis page's bars and reports whether the fill has reached its target.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13429,7 +13614,9 @@
       "address": "0x002129C0",
       "size": "0x348",
       "name": "ToAnalyzeEditDraw__Fv",
-      "sha256": "ce3c2d75faf4f401a1007a4efc330d8d3abb495e6d73750172df2c1c8624645d"
+      "sha256": "ce3c2d75faf4f401a1007a4efc330d8d3abb495e6d73750172df2c1c8624645d",
+      "comment": "Draws the transition into the analysis page.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13439,7 +13626,9 @@
       "address": "0x00212D60",
       "size": "0x1C0",
       "name": "AnalyzeEditDraw__Fv",
-      "sha256": "5667c1b876870e402e67e8eefaabdb2d66f1d5733e7300453d9cd734190558b0"
+      "sha256": "5667c1b876870e402e67e8eefaabdb2d66f1d5733e7300453d9cd734190558b0",
+      "comment": "Draws the analysis page.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13449,7 +13638,9 @@
       "address": "0x00212FD0",
       "size": "0xA8",
       "name": "FromAnalyzeEdit__Fv",
-      "sha256": "4af40eb6c3ba58c9ec4a7d16f51c5cd6359839be1cb0d086107a1d154bff3f11"
+      "sha256": "4af40eb6c3ba58c9ec4a7d16f51c5cd6359839be1cb0d086107a1d154bff3f11",
+      "comment": "Advances the transition out of the analysis page.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13459,7 +13650,9 @@
       "address": "0x00213080",
       "size": "0x74",
       "name": "EditSaveDraw__Fv",
-      "sha256": "3d11d7f8a35fc78d5f4799ba7131511e0c281e5ca7c3e27618389f221bac51ec"
+      "sha256": "3d11d7f8a35fc78d5f4799ba7131511e0c281e5ca7c3e27618389f221bac51ec",
+      "comment": "Draws the edit menu's save page.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13469,7 +13662,9 @@
       "address": "0x00213100",
       "size": "0xDC",
       "name": "EditSaveKey__Fv",
-      "sha256": "64d1251a5eb1d71936fa8d9586641140a204aabf169ff671707883acd3a440c5"
+      "sha256": "64d1251a5eb1d71936fa8d9586641140a204aabf169ff671707883acd3a440c5",
+      "comment": "Handles pad input on the edit menu's save page.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13479,7 +13674,9 @@
       "address": "0x002131E0",
       "size": "0x6C",
       "name": "OptionDraw__Fv",
-      "sha256": "2525072a2527e792bef3b7fd9f00a25d0ecbddbfb7d20360d1071bfadb932d1d"
+      "sha256": "2525072a2527e792bef3b7fd9f00a25d0ecbddbfb7d20360d1071bfadb932d1d",
+      "comment": "Draws the edit menu's option page.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13489,7 +13686,9 @@
       "address": "0x00213450",
       "size": "0x6C",
       "name": "EdMenuManualDraw__Fv",
-      "sha256": "a589229822f7234ac86282bb009d516cc948d351265984b9d499773892391b42"
+      "sha256": "a589229822f7234ac86282bb009d516cc948d351265984b9d499773892391b42",
+      "comment": "Draws the edit menu's manual page.",
+      "documentation": "src/menu_misc.cpp"
     },
     {
       "translation_unit": "menu_misc",
@@ -13965,7 +14164,9 @@
       "address": "0x00218470",
       "size": "0x8C",
       "name": "SearchAtoraInfo__Fi",
-      "sha256": "d4b86f64834f1ced1d8a0b4cd53d0879387b2595531df8bf6aec7497644dd1ca"
+      "sha256": "d4b86f64834f1ced1d8a0b4cd53d0879387b2595531df8bf6aec7497644dd1ca",
+      "comment": "Returns the record of the n-th valid part in the georama's part list, or NULL when there are fewer.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -13975,7 +14176,9 @@
       "address": "0x00218500",
       "size": "0x9C",
       "name": "AtoraAllTipGet__Fi",
-      "sha256": "0ecb22a8cb012904013ac000225aaf380dd2d8c8b12d91940030a438f261786c"
+      "sha256": "0ecb22a8cb012904013ac000225aaf380dd2d8c8b12d91940030a438f261786c",
+      "comment": "Returns whether every chip of a georama part has been acquired.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -13985,7 +14188,9 @@
       "address": "0x002185A0",
       "size": "0x64",
       "name": "AlreadyPeopleTalk__Fii",
-      "sha256": "a70d7130a054fbdfd23268271cc17075aea1935834ee1625af3e2d545f4d1be3"
+      "sha256": "a70d7130a054fbdfd23268271cc17075aea1935834ee1625af3e2d545f4d1be3",
+      "comment": "Returns whether the player has already spoken to a georama resident.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -13995,7 +14200,9 @@
       "address": "0x00218610",
       "size": "0x164",
       "name": "AtoraCompOrEvent__FP14EDITPARTS_INFO",
-      "sha256": "f0be991a28a04c5dbe9a8aeb65a8483288864dfbd86d975df97c87db01949c46"
+      "sha256": "f0be991a28a04c5dbe9a8aeb65a8483288864dfbd86d975df97c87db01949c46",
+      "comment": "Returns one when a georama part is fully built, its residents have all been spoken to, and its completion event has not been flagged yet.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14005,7 +14212,9 @@
       "address": "0x00218780",
       "size": "0x88",
       "name": "AtraBoardMaxNum__Fi",
-      "sha256": "c9f2264c47d6b78f5d14e298a893782584efc374dfa9a9eda1e3f0877d806d25"
+      "sha256": "c9f2264c47d6b78f5d14e298a893782584efc374dfa9a9eda1e3f0877d806d25",
+      "comment": "Returns how many parts a georama ground defines, or zero for an invalid ground.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14015,7 +14224,9 @@
       "address": "0x00218810",
       "size": "0xC8",
       "name": "AtoraTipStatusSearch__FP14EDITPARTS_INFOi",
-      "sha256": "1c8194662e8b7350e38449be32f61e5d1c0d28bcc46de3977646f8dd17503fd8"
+      "sha256": "1c8194662e8b7350e38449be32f61e5d1c0d28bcc46de3977646f8dd17503fd8",
+      "comment": "Returns the link code of a chip slot: -1 when empty, 0 without a pending link, otherwise 1 or 2 by link kind plus 10 for each unplaced chip above it.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14025,7 +14236,9 @@
       "address": "0x002188E0",
       "size": "0x74",
       "name": "AtraTipCanDisplay__FP21EDIT_CHIP_ATTACH_DATA",
-      "sha256": "c281a5f55115bb73ff71bddc10c598ff405f3f7af88d97728039b988a4ae3da2"
+      "sha256": "c281a5f55115bb73ff71bddc10c598ff405f3f7af88d97728039b988a4ae3da2",
+      "comment": "Returns whether a chip attachment may be shown on the board.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14035,7 +14248,9 @@
       "address": "0x00218960",
       "size": "0x1F4",
       "name": "AtoraTipRelationDraw__FiiP14EDITPARTS_INFOiii",
-      "sha256": "71a41a8d892eb35abb5f80d5f669a066c168014c92eec74f6d80a6b137578e8f"
+      "sha256": "71a41a8d892eb35abb5f80d5f669a066c168014c92eec74f6d80a6b137578e8f",
+      "comment": "Draws the arrow from a chip slot to the chip it hangs off, covering the slot while that chip is missing, as the slot's link code directs.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14045,7 +14260,9 @@
       "address": "0x00218B60",
       "size": "0x10C",
       "name": "AtoraBoardEnableMovePos__FiPi",
-      "sha256": "e8ecba0c61f87abf67e47d3ef4480a6a8b2f6ab26ffed9fc029d2cf87974c352"
+      "sha256": "e8ecba0c61f87abf67e47d3ef4480a6a8b2f6ab26ffed9fc029d2cf87974c352",
+      "comment": "Marks which of the six chip slots of a georama part can be selected.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14055,7 +14272,9 @@
       "address": "0x00218C70",
       "size": "0x44",
       "name": "AtoraBoardGoToPos__FPiii",
-      "sha256": "0fccb65b5a8325d44be1808306d5141a429f3ad5a500000aa1ab57261c9ff5e8"
+      "sha256": "0fccb65b5a8325d44be1808306d5141a429f3ad5a500000aa1ab57261c9ff5e8",
+      "comment": "Returns the first index at or below a start whose entry in a slot table is set, or the lower bound when none is.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14077,7 +14296,9 @@
       "address": "0x00218DA0",
       "size": "0x1F4",
       "name": "AtoraMsgNoGet__Fiii",
-      "sha256": "f485f31d7243608395e574ceada7bb1228d29ddb1a2fd14cb45649428d97ab61"
+      "sha256": "f485f31d7243608395e574ceada7bb1228d29ddb1a2fd14cb45649428d97ab61",
+      "comment": "Returns the message number that the board shows for a georama part or one of its chip slots, or -1 when the part has no record.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14087,7 +14308,9 @@
       "address": "0x00218FA0",
       "size": "0x58",
       "name": "AtoraTipOnlyMsgNoGet__Fii",
-      "sha256": "4ef5ef9316606a2869a25b9b73bdf0d468121a941f7d59a6a0acfbcfb9e01a76"
+      "sha256": "4ef5ef9316606a2869a25b9b73bdf0d468121a941f7d59a6a0acfbcfb9e01a76",
+      "comment": "Returns the message number of a chip from its attribute record alone, or -1 when it has none.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14107,7 +14330,9 @@
       "address": "0x002190E0",
       "size": "0xDC",
       "name": "AtoraTipObjectOrPerson__Fiiiii",
-      "sha256": "3f3349abf4fd5567ea12ce1df37349564f13f68581631048039821ad9dccb012"
+      "sha256": "3f3349abf4fd5567ea12ce1df37349564f13f68581631048039821ad9dccb012",
+      "comment": "Draws a chip's icon as either the object or the resident it stands for.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14117,7 +14342,9 @@
       "address": "0x002191C0",
       "size": "0x4C",
       "name": "AtoraTipHoleTexInfoGet__FiPUc",
-      "sha256": "152f5f60fa593dc680ac14fbd95a3904d47d19d906d3577c7e5b849fde381614"
+      "sha256": "152f5f60fa593dc680ac14fbd95a3904d47d19d906d3577c7e5b849fde381614",
+      "comment": "Returns the gold socket texture when its flag is set and the grey one otherwise, and writes the colour to draw it with.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14127,7 +14354,9 @@
       "address": "0x00219210",
       "size": "0xE0",
       "name": "AtoraPlateDrawHaichiBar__FP14EDITPARTS_INFOiii",
-      "sha256": "d06ae7ca26c2a3e8f75d31f7093426d0f57fa82562d499a6c27060a13f1056e7"
+      "sha256": "d06ae7ca26c2a3e8f75d31f7093426d0f57fa82562d499a6c27060a13f1056e7",
+      "comment": "Draws the placement gauge of a georama part, filled in proportion to what has been placed, with the placed-over-total count beside it.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14161,7 +14390,9 @@
       "address": "0x00219CC0",
       "size": "0x2F4",
       "name": "DrawAtoraNothing__Fiii",
-      "sha256": "a773c0a9de0eda16c4ad9c99670b46928ef779c6ee103141371c025dc3c6db95"
+      "sha256": "a773c0a9de0eda16c4ad9c99670b46928ef779c6ee103141371c025dc3c6db95",
+      "comment": "Draws an empty plate of the georama board with a caption in its centre.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14171,7 +14402,9 @@
       "address": "0x00219FC0",
       "size": "0xA0",
       "name": "DrawMsgAtraWarning__FP6ClsMesii",
-      "sha256": "40de9edb2e410133c1c3d4739b420badd0e0eb5b572d1fd7cccf7898c75871cf"
+      "sha256": "40de9edb2e410133c1c3d4739b420badd0e0eb5b572d1fd7cccf7898c75871cf",
+      "comment": "Shows message 200 in a message window at a position.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14181,7 +14414,9 @@
       "address": "0x0021A060",
       "size": "0x2C",
       "name": "AtoraTipInfoInit__Fv",
-      "sha256": "41bd04e9d7ca982474f56290e4952134d84842ae015642b69efa787b73ff1d82"
+      "sha256": "41bd04e9d7ca982474f56290e4952134d84842ae015642b69efa787b73ff1d82",
+      "comment": "Clears the georama chip selection.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14203,7 +14438,9 @@
       "address": "0x0021A0A0",
       "size": "0x10",
       "name": "SetMenuAtraEventFlag__Fi",
-      "sha256": "fdb46a9faf419fbc3542a0fab093d3d71ca3669a12d7933093986dee0d95f9da"
+      "sha256": "fdb46a9faf419fbc3542a0fab093d3d71ca3669a12d7933093986dee0d95f9da",
+      "comment": "Records whether the georama menu is running an event.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14213,7 +14450,9 @@
       "address": "0x0021A0B0",
       "size": "0x7C",
       "name": "MenuAtoraAfterFadeIn__Fv",
-      "sha256": "011844a3939c212b3e9efe83327c9fa8ac4be74f6cfc54db2daa08ddf968ab87"
+      "sha256": "011844a3939c212b3e9efe83327c9fa8ac4be74f6cfc54db2daa08ddf968ab87",
+      "comment": "Opens the board's message window on the message of the selected part.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14247,7 +14486,9 @@
       "address": "0x0021A890",
       "size": "0xC8",
       "name": "ExitAtoraSelect__Fv",
-      "sha256": "e008ffa5dbc1f356475a5e2049a2de1518b9abd9c3b86bf3b2af096c80a87ca8"
+      "sha256": "e008ffa5dbc1f356475a5e2049a2de1518b9abd9c3b86bf3b2af096c80a87ca8",
+      "comment": "Stores the board cursor in the save data when cursor memory is on and gives back the message windows that the board screen took over.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14257,7 +14498,9 @@
       "address": "0x0021A960",
       "size": "0x118",
       "name": "AtoraTexInfoGet__Fv",
-      "sha256": "596f8323119722fbdaa9e43e28fafa974fcf37413d8df11e34a19861bdf0eed0"
+      "sha256": "596f8323119722fbdaa9e43e28fafa974fcf37413d8df11e34a19861bdf0eed0",
+      "comment": "Looks up the textures the georama board draws from.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14279,7 +14522,9 @@
       "address": "0x0021AE80",
       "size": "0xFEC",
       "name": "DrawAtoraSelect__Fi",
-      "sha256": "655a6443de9fc7f75a6e6dcf813c03fe1dc9d66ade8d8175ad5afc289eb16a7a"
+      "sha256": "655a6443de9fc7f75a6e6dcf813c03fe1dc9d66ade8d8175ad5afc289eb16a7a",
+      "comment": "Draws the georama board screen's board, panels and cursor.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14289,7 +14534,9 @@
       "address": "0x0021BE70",
       "size": "0x1A4",
       "name": "AtoraTextureEnter__Fv",
-      "sha256": "39ea30f2f6ac42e07d464dfc93476317a30e6813235b65f87d91d0ee27b52059"
+      "sha256": "39ea30f2f6ac42e07d464dfc93476317a30e6813235b65f87d91d0ee27b52059",
+      "comment": "Loads the georama board screen's texture block.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14299,7 +14546,9 @@
       "address": "0x0021C020",
       "size": "0x64",
       "name": "GetTipKind__Fi",
-      "sha256": "9fd15c552bc4d094552511dcc8ecee14dccc0dc395557016c8ee9d03837be149"
+      "sha256": "9fd15c552bc4d094552511dcc8ecee14dccc0dc395557016c8ee9d03837be149",
+      "comment": "Returns which of the three chip groups a chip number belongs to.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14309,7 +14558,9 @@
       "address": "0x0021C090",
       "size": "0xCC",
       "name": "CompTip__Fii",
-      "sha256": "eb7776bdb2ae4ae2da3a51fa7670bf11cc9a3a9c8ddb938e8c38b221064a7b26"
+      "sha256": "eb7776bdb2ae4ae2da3a51fa7670bf11cc9a3a9c8ddb938e8c38b221064a7b26",
+      "comment": "Compares two chips for the board's sort by group, with empty slots last, and then by number.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14319,7 +14570,9 @@
       "address": "0x0021C160",
       "size": "0x108",
       "name": "SeitonAtoraTipBoardSub__Fv",
-      "sha256": "1443bec9383d11cabcc916c2823c657e744ec65e3782e96a8415f7335896c68a"
+      "sha256": "1443bec9383d11cabcc916c2823c657e744ec65e3782e96a8415f7335896c68a",
+      "comment": "Sorts the chip list with the current group first and empty slots last, and returns whether any chip moved.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14329,7 +14582,9 @@
       "address": "0x0021C270",
       "size": "0x70",
       "name": "SeitonAtoraTipBoard__Fv",
-      "sha256": "6c71e42642e45dea312d3c5d0ded3b49dec4f879b9a1f3225e7c57230e830612"
+      "sha256": "6c71e42642e45dea312d3c5d0ded3b49dec4f879b9a1f3225e7c57230e830612",
+      "comment": "Sorts the chip list, switching which chip group comes first whenever the list is already in order, up to three times.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14351,7 +14606,9 @@
       "address": "0x0021CA90",
       "size": "0xA30",
       "name": "AtoraBoardKey__Fv",
-      "sha256": "383ea537ef4aada42f4a184ddf1ff6686f379c18c9519deb20253ac8836de7b8"
+      "sha256": "383ea537ef4aada42f4a184ddf1ff6686f379c18c9519deb20253ac8836de7b8",
+      "comment": "Moves the board cursor and handles its buttons, returning 10 when a part is picked for placing, 100 when the screen is to close and zero otherwise.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14361,7 +14618,9 @@
       "address": "0x0021D4C0",
       "size": "0x2F4",
       "name": "AtoraTipKey__Fv",
-      "sha256": "5ac3a7e8b150a6e6438abcdd1e8aa692da1f8122068cd664d5c36729383cc7ae"
+      "sha256": "5ac3a7e8b150a6e6438abcdd1e8aa692da1f8122068cd664d5c36729383cc7ae",
+      "comment": "Moves the chip cursor and swaps, sorts or puts back chips, returning 100 when the screen is to close and zero otherwise.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14371,7 +14630,9 @@
       "address": "0x0021D7C0",
       "size": "0xC8",
       "name": "AtoraMenuTipCancel__Fv",
-      "sha256": "6685537d1e6b2bb31cdf43a9103faa3687d0d234bf2e033e87bb188825f94481"
+      "sha256": "6685537d1e6b2bb31cdf43a9103faa3687d0d234bf2e033e87bb188825f94481",
+      "comment": "Puts the chip that the cursor holds back where it was picked up.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14381,7 +14642,9 @@
       "address": "0x0021D890",
       "size": "0x3C8",
       "name": "AtoraBoardFadeEffect__Fv",
-      "sha256": "752d75e04dc9d7abb7e662f7fe47270f9dc8e6f55a525ccf65899cf252171e4c"
+      "sha256": "752d75e04dc9d7abb7e662f7fe47270f9dc8e6f55a525ccf65899cf252171e4c",
+      "comment": "Draws the board's edge fade.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14403,7 +14666,9 @@
       "address": "0x0021E020",
       "size": "0x42C",
       "name": "OptionMenuDraw__Fiiiii",
-      "sha256": "ee71508594f1a44c84e9722dfbd7890076e709a884e037f57e99a336f4563106"
+      "sha256": "ee71508594f1a44c84e9722dfbd7890076e709a884e037f57e99a336f4563106",
+      "comment": "Draws the twelve option rows, each label with its current setting, as two pages from the given position.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14413,7 +14678,9 @@
       "address": "0x0021E450",
       "size": "0x80",
       "name": "DrawOptionLRCur__Fii",
-      "sha256": "4880500bf69c2c72bd8d539d97660569e7664cce1402e496675b8e395a066b7d"
+      "sha256": "4880500bf69c2c72bd8d539d97660569e7664cce1402e496675b8e395a066b7d",
+      "comment": "Draws the arrow that points to the other option page.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14435,7 +14702,9 @@
       "address": "0x0021E780",
       "size": "0x18C",
       "name": "ExitMenuOption__Fv",
-      "sha256": "0ebe25ad566ab8ecc466f30906c0b79842a2f4195b0337f55c7f54d17cc5879a"
+      "sha256": "0ebe25ad566ab8ecc466f30906c0b79842a2f4195b0337f55c7f54d17cc5879a",
+      "comment": "Writes the option rows back to the configuration and the menu cursor, sets the stereo mode from them and restores the pad's menu repeat.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14445,7 +14714,9 @@
       "address": "0x0021E910",
       "size": "0x44",
       "name": "InitOptionFlag__Fv",
-      "sha256": "9d7dfbaf5e8a55e0b8a548d09138d3526828b0375d053a8a55e5b5eeda8dd6b7"
+      "sha256": "9d7dfbaf5e8a55e0b8a548d09138d3526828b0375d053a8a55e5b5eeda8dd6b7",
+      "comment": "Resets the option rows to their defaults.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14455,7 +14726,9 @@
       "address": "0x0021E960",
       "size": "0x48",
       "name": "PrevOptionSetFunc__Fv",
-      "sha256": "b06cae1ef2cbabaf0bbe05ab17da011acb0ee2f143f34a38074e61f4c413ec51"
+      "sha256": "b06cae1ef2cbabaf0bbe05ab17da011acb0ee2f143f34a38074e61f4c413ec51",
+      "comment": "Restores the option rows to the values they had when the screen opened.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14513,7 +14786,9 @@
       "address": "0x0021FD80",
       "size": "0x144",
       "name": "ExitSaveSelect__Fv",
-      "sha256": "d8850748fe62e5e0e68ac5ce4daad6b2ecadf72914e902a40c2e280753a7776b"
+      "sha256": "d8850748fe62e5e0e68ac5ce4daad6b2ecadf72914e902a40c2e280753a7776b",
+      "comment": "Closes the save screen's message window and restores the pad, and after a load sets the stereo mode from the loaded configuration.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14547,7 +14822,9 @@
       "address": "0x00220D90",
       "size": "0x34",
       "name": "SaveMenuKeyFadeIn__Fv",
-      "sha256": "57d506a9090c39d9fd47b23460af4623af35a7389a9d0626e266a9d0b7abdcd6"
+      "sha256": "57d506a9090c39d9fd47b23460af4623af35a7389a9d0626e266a9d0b7abdcd6",
+      "comment": "Waits out the save screen's fade-in and then moves on to the save file choice.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14557,7 +14834,9 @@
       "address": "0x00220DD0",
       "size": "0x68",
       "name": "SaveMenuKeyFadeOut__Fv",
-      "sha256": "ffd5f0290d1b5ce82526e1ab1bac44a44edd333defe1d8645b456d89025fd4ec"
+      "sha256": "ffd5f0290d1b5ce82526e1ab1bac44a44edd333defe1d8645b456d89025fd4ec",
+      "comment": "Waits out the save screen's fade-out, then closes the screen and records the result that MenuSaveKey returns.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14567,7 +14846,9 @@
       "address": "0x00220E40",
       "size": "0x12C",
       "name": "SaveMenuKeyModeSelect__Fv",
-      "sha256": "f687933366304157279bdfc1818d15d538435bc6effa1e30915d55d60cb3dc19"
+      "sha256": "f687933366304157279bdfc1818d15d538435bc6effa1e30915d55d60cb3dc19",
+      "comment": "Lets the player choose between saving and loading, then moves on to the slot choice or closes the screen.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14577,7 +14858,9 @@
       "address": "0x00220F70",
       "size": "0x228",
       "name": "SaveMenuKeyMcSelect__Fv",
-      "sha256": "55cf10f87050baf979484224f24fdf45e62801194bed3a9853280944d4cc9d04"
+      "sha256": "55cf10f87050baf979484224f24fdf45e62801194bed3a9853280944d4cc9d04",
+      "comment": "Lets the player pick memory card slot 1 or 2, then starts the card type check on it or backs out.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14587,7 +14870,9 @@
       "address": "0x002211A0",
       "size": "0xC0",
       "name": "SaveMenuKeyCheckMcType__Fv",
-      "sha256": "990247171bf572219832be725634e930dcb6958a0ded17763a93b83d269df3f0"
+      "sha256": "990247171bf572219832be725634e930dcb6958a0ded17763a93b83d269df3f0",
+      "comment": "Moves on to reading the save directory when the chosen slot holds a PlayStation 2 card, and to an alert otherwise.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14597,7 +14882,9 @@
       "address": "0x00221260",
       "size": "0x248",
       "name": "SaveMenuKeyCheckMc__Fv",
-      "sha256": "a408fec74beb1f0e9ac632b4cf26518c0b3c965e1b370315ec61677824186124"
+      "sha256": "a408fec74beb1f0e9ac632b4cf26518c0b3c965e1b370315ec61677824186124",
+      "comment": "Checks the chosen card again and starts reading its configuration for a load or its save files for a save, returning zero when the card is gone.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14607,7 +14894,9 @@
       "address": "0x002214B0",
       "size": "0x74",
       "name": "SaveMenuKeyLoadConfig__Fv",
-      "sha256": "53e659b3c7e5f143562cf0af3958d3372aa5bad33419058629238d65a366dd8f"
+      "sha256": "53e659b3c7e5f143562cf0af3958d3372aa5bad33419058629238d65a366dd8f",
+      "comment": "Starts reading the save files of the card and moves on to the file choice, with the cursor on the last file that the configuration records.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14617,7 +14906,9 @@
       "address": "0x00221530",
       "size": "0x1FC",
       "name": "SaveMenuKeyFileSelect__Fv",
-      "sha256": "aa85253946fb43ba71785b35d133519a545c0fab7a01f76be4c74a3baf48a7df"
+      "sha256": "aa85253946fb43ba71785b35d133519a545c0fab7a01f76be4c74a3baf48a7df",
+      "comment": "Lets the player pick one of the twelve save files for the save check or the load confirmation, or go back to the slot choice.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "menu_draw",

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Correct `@address` and `@size` in header documentation against the symbol tables.
+"""Correct `@address` and `@size` in documentation against the symbol tables.
 
 A documented function block only reaches Ghidra when its `@address` and `@size`
 match the retail symbol exactly -- `generate_dark_cloud_annotations.py` drops
@@ -90,8 +90,11 @@ def main() -> None:
 
     functions = retail_functions()
     total = 0
-    for path in sorted((ROOT / "include").rglob("*")):
-        if not path.is_file() or path.suffix not in {".h", ".hpp"}:
+    # A file-scope static cannot be declared in a header, so the unit that
+    # defines it documents it in place; those blocks are read the same way.
+    sources = sorted((ROOT / "include").rglob("*")) + sorted((ROOT / "src").rglob("*"))
+    for path in sources:
+        if not path.is_file() or path.suffix not in {".h", ".hpp", ".c", ".cpp"}:
             continue
         text = path.read_text(errors="replace")
         corrected, changes = correct(text, functions)

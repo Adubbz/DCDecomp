@@ -26,7 +26,7 @@ struct SV_ATRA_PARTS_DEF {
  *
  * @mangled GetEditAtraPartsData__Fii
  * @address 0x158E00
- * @size 0x80
+ * @size 0x74
  */
 extern "C" SV_ATRA_PARTS_DEF *GetEditAtraPartsData__Fii(int georama_no, int plot_no);
 

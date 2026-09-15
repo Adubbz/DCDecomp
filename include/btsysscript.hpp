@@ -74,13 +74,14 @@ void BtSystemScriptInit(void);
 void BtSystemScriptAfter(void);
 
 /**
- * Starts one system event script running out of an arena.
+ * Starts one system event script running out of an arena, giving back what
+ * `EdEventInit` reports.
  *
  * @mangled BtSystemScriptRun__FiP14CDataAlloc2_1_
  * @address 0x1BB8F0
  * @size 0x24
  */
-void BtSystemScriptRun(int event, CDataAlloc2<1> *arena);
+int BtSystemScriptRun(int event, CDataAlloc2<1> *arena);
 
 /**
  * Selects the floor used by the next battle-map jump.

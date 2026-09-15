@@ -31,61 +31,69 @@ struct MAP_JUMP_COMPARE {
 STATIC_ASSERT(sizeof(MAP_JUMP_COMPARE) == 0x14);
 
 /**
- * Returns the first weapon identifier in a character's weapon chain.
+ * Gives the weapon a party member starts with.
  *
  * @mangled GetDefaultWeaponNo__Fi
  * @address 0x1F3DA0
  * @size 0x1C
+ * Returns the first weapon identifier in a character's weapon chain.
  */
 int GetDefaultWeaponNo(int character_no);
 
 /**
+ * Reports which party member a weapon is the starting weapon of, or -1 for none.
+ *
  * @mangled IsDefaultWeapon__Fi
  * @address 0x1F3DC0
  * @size 0x84
- * @unknownret
  */
 int IsDefaultWeapon(int);
 
 /**
- * Records the weapon the item menu's message is about.
+ * Remembers the weapon and slot a message is about to name.
  *
  * @mangled SetNowEquipWeaponDataForMsg__Fii
  * @address 0x1F3E50
  * @size 0x18
+ * Records the weapon the item menu's message is about.
  */
 void SetNowEquipWeaponDataForMsg(int, int);
 
 /**
+ * Gives the item number and slot the last message was told about.
+ *
  * @mangled GetNowEquipWeaponDataForMsg__FRiRi
  * @address 0x1F3E70
  * @size 0x68
- * @unknownret
  */
 void GetNowEquipWeaponDataForMsg(int &, int &);
 
 /**
+ * Gives one of the menu's gradient colour pairs.
+ *
  * @mangled GetGradationColorInfo2__Fi
  * @address 0x1F3EE0
  * @size 0x18
- * @unknownret
  */
 void GetGradationColorInfo2(int);
 
 /**
- * Returns the weapon the weapon menu's cursor is on.
+ * Gives the weapon the cursor stands on.
  *
  * @mangled GetNowSelectWeapon__Fv
  * @address 0x1F3F00
  * @size 0x3C
+ * Returns the weapon the weapon menu's cursor is on.
  */
 WEAPON_HAVE *GetNowSelectWeapon(void);
 
 /**
+ * Reports whether the party may leave the floor: freely, with an escape item, or not at
+ * all.
+ *
  * @mangled EscapeDungeonMode__Fv
  * @address 0x1F3F40
  * @size 0x5C
- * @unknownret
  */
 void EscapeDungeonMode(void);
 
@@ -126,92 +134,104 @@ void SetInteriorOutFlag(int flag);
 s16 GetInteriorOutFlag(void);
 
 /**
+ * Draws the two-line yes-or-no plate the dungeon menu asks with.
+ *
  * @mangled DrawDngYesNoDialog__Fiii
  * @address 0x1F3FE0
  * @size 0xB8
- * @unknownret
  */
 void DrawDngYesNoDialog(int, int, int);
 
 /**
- * Returns how many icons the battle menu ring currently offers.
+ * Gives how many icons the menu bar shows, which depends on the mode and the manual
+ * flag.
  *
  * @mangled GetMenuModeMax__Fv
  * @address 0x1F40A0
  * @size 0x68
+ * Returns how many icons the battle menu ring currently offers.
  */
 int GetMenuModeMax(void);
 
 /**
+ * Fills in the icon numbers the menu bar draws for one mode.
+ *
  * @mangled BtlMenuMekeIconInfo__FPii
  * @address 0x1F4160
  * @size 0xE8
- * @unknownret
  */
 void BtlMenuMekeIconInfo(int *, int);
 
 /**
+ * Draws the menu bar and its icons, fading them with the open and close effect.
+ *
  * @mangled DrawBtlMenuBar__Fv
  * @address 0x1F4250
  * @size 0x294
- * @unknownret
  */
 void DrawBtlMenuBar(void);
 
 /**
+ * Chooses the message that explains why the party may not leave the zone.
+ *
  * @mangled GetLimmitMsg__Fv
  * @address 0x1F44F0
  * @size 0x6C
- * @unknownret
  */
 void GetLimmitMsg(void);
 
 /**
+ * Draws the menu's main page: the bar, the selected icon's title and its help text.
+ *
  * @mangled DrawBattleMain__Fv
  * @address 0x1F4560
  * @size 0x310
- * @unknownret
  */
 void DrawBattleMain(void);
 
 /**
+ * Draws one unselected party member's face, life and magic bars.
+ *
  * @mangled DrawOtherCharaStatus__Fiiii
  * @address 0x1F4870
  * @size 0x484
- * @unknownret
  */
 void DrawOtherCharaStatus(int, int, int, int);
 
 /**
+ * Draws one party member's dungeon status panel with their weapon and condition.
+ *
  * @mangled DngComStatus__Fiiii
  * @address 0x1F4D00
  * @size 0x720
- * @unknownret
  */
 void DngComStatus(int, int, int, int);
 
 /**
+ * Draws the selected party member's full status panel.
+ *
  * @mangled DrawSelCharaStatus__Fffiiiiii
  * @address 0x1F5420
  * @size 0x3EC
- * @unknownret
  */
 void DrawSelCharaStatus(float, float, int, int, int, int, int, int);
 
 /**
+ * Draws the saving notice over the menu.
+ *
  * @mangled BtlDrawSave__Fv
  * @address 0x1F5860
  * @size 0x34
- * @unknownret
  */
 void BtlDrawSave(void);
 
 /**
- * Looks the battle menu's fixed textures up in the texture manager and keeps them.
+ * Looks up every texture the menu draws from and holds them.
  *
  * @mangled BtlMenuTexBlockEnter__Fv
  * @address 0x1F58A0
  * @size 0x118
+ * Looks the battle menu's fixed textures up in the texture manager and keeps them.
  */
 void BtlMenuTexBlockEnter(void);
 
@@ -225,76 +245,86 @@ void BtlMenuTexBlockEnter(void);
 void BattleMenuTexEnter(void);
 
 /**
- * Tears the battle menu down: its textures, its buffers, the gamepad and the BGM volume.
+ * Clears the menu's item list and hands the party's state back to the game.
  *
  * @mangled ExitBattleMenu__Fi
  * @address 0x1F5B00
  * @size 0x1EC
+ * Tears the battle menu down: its textures, its buffers, the gamepad and the BGM volume.
  */
 void ExitBattleMenu(int);
 
 /**
+ * Takes the texture blocks the menu was given, sets the pad up and opens the chosen
+ * mode.
+ *
  * @mangled BattleMenuInit__FPii
  * @address 0x1F5CF0
  * @size 0x45C
- * @unknownret
  */
 void BattleMenuInit(int *, int);
 
 /**
+ * Suppresses a draw flag while an Atla event or a character page is showing.
+ *
  * @mangled BtlMenuDrawSpecialFlag__Fi
  * @address 0x1F6150
  * @size 0x88
- * @unknownret
  */
 void BtlMenuDrawSpecialFlag(int);
 
 /**
+ * Draws the whole menu for one frame, choosing the page from the menu state.
+ *
  * @mangled BattleMenuDraw__Fv
  * @address 0x1F61E0
  * @size 0x540
- * @unknownret
  */
 void BattleMenuDraw(void);
 
 /**
+ * Runs one frame of the menu, stepping the party and dispatching on the menu state.
+ *
  * @mangled BattleMenuCursor__Fv
  * @address 0x1F6720
  * @size 0x194
- * @unknownret
  */
 int BattleMenuCursor(void);
 
 /**
+ * Slides the bar icons into place and reports when they have all arrived.
+ *
  * @mangled BattleMenuAppear__Fv
  * @address 0x1F68C0
  * @size 0x17C
- * @unknownret
  */
 void BattleMenuAppear(void);
 
 /**
+ * Slides the bar icons off the screen and reports when the menu may close.
+ *
  * @mangled BattleMenuExit__Fv
  * @address 0x1F6A40
  * @size 0xDC
- * @unknownret
  */
 void BattleMenuExit(void);
 
 /**
+ * Moves the cursor along the menu bar and opens the page it settles on.
+ *
  * @mangled BattleMenuSelect__Fv
  * @address 0x1F6B20
  * @size 0x438
- * @unknownret
  */
 void BattleMenuSelect(void);
 
 /**
- * Steps the battle menu ring towards the icon it is given and returns the icon it settles on.
+ * Slides the page in or out and reports when the movement has finished.
  *
  * @mangled ToFromSelect__Fi
  * @address 0x1F6F60
  * @size 0x29C
+ * Steps the battle menu ring towards the icon it is given and returns the icon it settles on.
  */
 int ToFromSelect(int);
 
@@ -308,58 +338,65 @@ int ToFromSelect(int);
 void ForBackMenu(void);
 
 /**
+ * Reads the character page's models and textures and starts its turntable.
+ *
  * @mangled InitMenuChara__FP1
  * @address 0x1F72E0
  * @size 0x158
- * @unknownret
  */
 void InitMenuChara(void /* CW back-ref target unresolved */ *);
 
 /**
+ * Handles input on the character page, including the turntable and the equipment list.
+ *
  * @mangled BattleMenuCharaKey__Fv
  * @address 0x1F7440
  * @size 0x9EC
- * @unknownret
  */
 void BattleMenuCharaKey(void);
 
 /**
+ * Draws the character page with its model, status and equipment.
+ *
  * @mangled DrawCharaSelect__Fv
  * @address 0x1F7E30
  * @size 0xEF4
- * @unknownret
  */
 void DrawCharaSelect(void);
 
 /**
+ * Draws one weapon's attack and endurance bars with its experience.
+ *
  * @mangled DrawWepDamageDraw__F4RECTP11WEAPON_HAVEi
  * @address 0x1F8D30
  * @size 0x4B4
- * @unknownret
  */
 void DrawWepDamageDraw(RECT, WEAPON_HAVE *, int);
 
 /**
+ * Draws one weapon's status panel.
+ *
  * @mangled DrawWepStatus__FiiP11WEAPON_HAVEii
  * @address 0x1F91F0
  * @size 0xD8
- * @unknownret
  */
 void DrawWepStatus(int, int, WEAPON_HAVE *, int, int);
 
 /**
+ * Draws the bars comparing a weapon's current values against its built-up ones.
+ *
  * @mangled DrawWepVolumeDisplay__FiiP11WEAPON_HAVEi
  * @address 0x1F92D0
  * @size 0x2A8
- * @unknownret
  */
 void DrawWepVolumeDisplay(int, int, WEAPON_HAVE *, int);
 
 /**
+ * Draws the board a weapon's name sits on.
+ *
  * @mangled DrawWeaponNameBoard__Fiiiii
  * @address 0x1F9580
  * @size 0x13C
- * @unknownret
  */
 void DrawWeaponNameBoard(int, int, int, int, int);
 
@@ -373,60 +410,67 @@ void DrawWeaponNameBoard(int, int, int, int, int);
 s32 GetWeaponNamePutX(int, int);
 
 /**
+ * Draws the names of the weapons either side of the cursor as they slide past.
+ *
  * @mangled WeaponNameDraw__Fiii
  * @address 0x1F96D0
  * @size 0x550
- * @unknownret
  */
 void WeaponNameDraw(int, int, int);
 
 /**
+ * Draws one weapon-status bar, filled to the value's share of its maximum.
+ *
  * @mangled WepStatusVolumeDraw__F4RECTiPiiiii
  * @address 0x1F9C20
  * @size 0x220
- * @unknownret
  */
 void WepStatusVolumeDraw(RECT, int, int *, int, int, int, int);
 
 /**
+ * Draws the gradient frame a weapon-status row sits in.
+ *
  * @mangled DrawWeaponStatusWaku__Fiiii
  * @address 0x1F9E40
  * @size 0x68
- * @unknownret
  */
 void DrawWeaponStatusWaku(int, int, int, int);
 
 /**
+ * Draws the mark that says a weapon value has reached its ceiling.
+ *
  * @mangled DrawLimmitMax__Fiii
  * @address 0x1F9EB0
  * @size 0x60
- * @unknownret
  */
 void DrawLimmitMax(int, int, int);
 
 /**
+ * Draws the left and right cursor arrows, bobbing them with a sine.
+ *
  * @mangled DrawBtlMenuLRCursor__Fiiii
  * @address 0x1F9F10
  * @size 0x194
- * @unknownret
  */
 void DrawBtlMenuLRCursor(int, int, int, int);
 
 /**
- * Draws one weapon's status tags: their values, their gradation bars and their experience numbers.
+ * Draws a weapon's status tags with their volume bars.
  *
  * @mangled DrawWeaponStatusTag__FiiP11WEAPON_HAVEiii
  * @address 0x1FA0B0
  * @size 0x7B8
+ * Draws one weapon's status tags: their values, their gradation bars and their experience numbers.
  */
 void DrawWeaponStatusTag(int, int, WEAPON_HAVE *, int, int, int);
 
 /**
- * Draws one weapon's elemental tags with their volume bars.
+ * Draws a weapon's elemental tags with their volume bars.
  *
  * @mangled DrawWeaponElemTag__FiiP11WEAPON_HAVEiii
  * @address 0x1FA870
  * @size 0x42C
+ * Draws one weapon's elemental tags with their volume bars.
  */
 void DrawWeaponElemTag(int, int, WEAPON_HAVE *, int, int, int);
 
@@ -440,134 +484,150 @@ void DrawWeaponElemTag(int, int, WEAPON_HAVE *, int, int, int);
 void DrawWeaponVsMonster(int, int, WEAPON_HAVE *, int, int, int);
 
 /**
+ * Draws the three tag pages of a weapon and highlights the one the cursor is on.
+ *
  * @mangled DrawWeaponTagBoard__FiiP11WEAPON_HAVEiii
  * @address 0x1FAFF0
  * @size 0x210
- * @unknownret
  */
 void DrawWeaponTagBoard(int, int, WEAPON_HAVE *, int, int, int);
 
 /**
+ * Draws one weapon's model, name and every panel that describes it.
+ *
  * @mangled DrawAallWeapon__FiifP10CCharacterP11WEAPON_HAVEiii
  * @address 0x1FB200
  * @size 0x55C
- * @unknownret
  */
 void DrawAallWeapon(int, int, float, CCharacter *, WEAPON_HAVE *, int, int, int);
 
 /**
+ * Draws the weapon page for one party member, sliding between their weapons.
+ *
  * @mangled BtlWeaponDraw__Fifii
  * @address 0x1FB760
  * @size 0x748
- * @unknownret
  */
 void BtlWeaponDraw(int, float, int, int);
 
 /**
+ * Reports whether a weapon can be repaired, built up, or neither.
+ *
  * @mangled NowWeaponStatusValue__FP11WEAPON_HAVE
  * @address 0x1FBEB0
  * @size 0x11C
- * @unknownret
  */
 void NowWeaponStatusValue(WEAPON_HAVE *);
 
 /**
+ * Drops a weapon's element where the attachment no longer supports it.
+ *
  * @mangled WeaponMenuCheckElemValue__FP11WEAPON_HAVEP11WEAPON_HAVE
  * @address 0x1FC050
  * @size 0xB8
- * @unknownret
  */
 void WeaponMenuCheckElemValue(WEAPON_HAVE *, WEAPON_HAVE *);
 
 /**
+ * Reports whether an element may be put on a weapon, and complains where it may not.
+ *
  * @mangled WeaponMenuCheckEnableSetElem__FP11WEAPON_HAVEP11WEAPON_HAVEi
  * @address 0x1FC110
  * @size 0x10C
- * @unknownret
  */
 void WeaponMenuCheckEnableSetElem(WEAPON_HAVE *, WEAPON_HAVE *, int);
 
 /**
+ * Draws the dialog that offers to repair, build up or scrap the selected weapon.
+ *
  * @mangled DrawWeaponSelectDialog__Fiii
  * @address 0x1FC220
  * @size 0x530
- * @unknownret
  */
 void DrawWeaponSelectDialog(int, int, int);
 
 /**
+ * Opens the weapon page in one of its modes and puts the cursor where it was left.
+ *
  * @mangled InitWeaponSelect__Fii
  * @address 0x1FC750
  * @size 0x3CC
- * @unknownret
  */
 void InitWeaponSelect(int, int);
 
 /**
+ * Rebuilds the player's equipped weapon model and gives the menu's textures back.
+ *
  * @mangled ExitWeaponMenuSelect__Fv
  * @address 0x1FCB20
  * @size 0x2CC
- * @unknownret
  */
 void ExitWeaponMenuSelect(void);
 
 /**
+ * Runs one frame of the weapon page, dispatching on which of its modes is open.
+ *
  * @mangled WeaponMenuSelect__Fv
  * @address 0x1FCDF0
  * @size 0x107C
- * @unknownret
  */
 void WeaponMenuSelect(void);
 
 /**
+ * Moves the cursor across the weapon list and opens what it settles on.
+ *
  * @mangled WeaponSelectKey__Fv
  * @address 0x1FDF20
  * @size 0x178C
- * @unknownret
  */
 void WeaponSelectKey(void);
 
 /**
- * Puts the attachment the weapon menu is holding back where it came from.
+ * Takes the held attachment back out of the player's hand.
  *
  * @mangled WepAttachHaveCancel__Fv
  * @address 0x1FF6B0
  * @size 0x198
+ * Puts the attachment the weapon menu is holding back where it came from.
  */
 void WepAttachHaveCancel(void);
 
 /**
+ * Moves the cursor between the three attachment pages.
+ *
  * @mangled WeaponMenuAttachModeKey__Fv
  * @address 0x1FF850
  * @size 0x23C
- * @unknownret
  */
 void WeaponMenuAttachModeKey(void);
 
 /**
- * Handles input on the weapon menu's equipped weapon row.
+ * Handles input while a weapon action is being chosen.
  *
  * @mangled WeaponMenuActWepKey__Fv
  * @address 0x1FFA90
  * @size 0xCC
+ * Handles input on the weapon menu's equipped weapon row.
  */
 void WeaponMenuActWepKey(void);
 
 /**
- * Handles input on the weapon menu's tag row, fitting and removing tags.
+ * Moves the cursor down the tags of the open attachment page.
  *
  * @mangled WeaponMenuTagKey__Fv
  * @address 0x1FFB60
  * @size 0x5B4
+ * Handles input on the weapon menu's tag row, fitting and removing tags.
  */
 void WeaponMenuTagKey(void);
 
 /**
- * Handles input while an attachment is being fitted to a weapon.
+ * Moves the cursor across the weapons an attachment may be put on.
  *
  * @mangled WeaponMenuAttachWepKey__Fv
  * @address 0x200120
  * @size 0x414
+ * Handles input while an attachment is being fitted to a weapon.
  */
 void WeaponMenuAttachWepKey(void);
 
@@ -581,202 +641,227 @@ void WeaponMenuAttachWepKey(void);
 void WeaponMenuAttachKey(void);
 
 /**
+ * Draws the repair and build-up dialog with the counts of the items it needs.
+ *
  * @mangled RepairAndLevelUpDraw__Fiii
  * @address 0x2007B0
  * @size 0x290
- * @unknownret
  */
 void RepairAndLevelUpDraw(int, int, int);
 
 /**
+ * Draws the list of weapons the selected one may be built up into.
+ *
  * @mangled DrawBuildUpWeaponSelect__Fiii
  * @address 0x200A40
  * @size 0x238
- * @unknownret
  */
 void DrawBuildUpWeaponSelect(int, int, int);
 
 /**
+ * Draws the weapon page and whichever dialog is open over it.
+ *
  * @mangled WeaponMenuDraw__Fv
  * @address 0x200C80
  * @size 0x11A8
- * @unknownret
  */
 void WeaponMenuDraw(void);
 
 /**
+ * Handles input while items are being thrown away.
+ *
  * @mangled ItemTrushKey__FPiPii
  * @address 0x201E30
  * @size 0x2F0
- * @unknownret
  */
 void ItemTrushKey(int *, int *, int);
 
 /**
+ * Draws the list of items that may be thrown away.
+ *
  * @mangled DrawTrushItem__Fv
  * @address 0x202120
  * @size 0x2F4
- * @unknownret
  */
 void DrawTrushItem(void);
 
 /**
+ * Remembers where the item page's cursor stood and closes it.
+ *
  * @mangled ExitItemSelect__Fv
  * @address 0x202420
  * @size 0x88
- * @unknownret
  */
 void ExitItemSelect(void);
 
 /**
+ * Starts reading the item page's weapon icons in the background.
+ *
  * @mangled StartBGReadItemMenuWepIcon__FP1Ri
  * @address 0x2024B0
  * @size 0x54
- * @unknownret
  */
 void StartBGReadItemMenuWepIcon(void /* CW back-ref target unresolved */ *, int &);
 
 /**
+ * Waits for the item page's weapon icons and enters them into the texture manager.
+ *
  * @mangled ReadSyncItemMenuWepIcon__Fv
  * @address 0x202510
  * @size 0xC8
- * @unknownret
  */
 void ReadSyncItemMenuWepIcon(void);
 
 /**
+ * Opens the item page on one party member, restoring the mode it was left in.
+ *
  * @mangled InitItemMode__Fii
  * @address 0x2025E0
  * @size 0x624
- * @unknownret
  */
 void InitItemMode(int, int);
 
 /**
+ * Waits for the item page's data and opens it on the throw-away mode.
+ *
  * @mangled InitItemTrushStart__Fv
  * @address 0x202C10
  * @size 0x74
- * @unknownret
  */
 void InitItemTrushStart(void);
 
 /**
+ * Gives the item page's textures back and re-equips anyone left without a weapon.
+ *
  * @mangled ExistItemMenu__Fv
  * @address 0x202C90
  * @size 0xC0
- * @unknownret
  */
 void ExistItemMenu(void);
 
 /**
+ * Moves the item page from one party member to the next.
+ *
  * @mangled ChangeMenuChara__Fv
  * @address 0x202D50
  * @size 0x1C0
- * @unknownret
  */
 void ChangeMenuChara(void);
 
 /**
+ * Runs one frame of the item page, dispatching on which of its modes is open.
+ *
  * @mangled ItemMenuMainKey__Fv
  * @address 0x202F10
  * @size 0x2AA0
- * @unknownret
  */
 void ItemMenuMainKey(void);
 
 /**
+ * Draws the item page for whichever of its modes is open.
+ *
  * @mangled ItemMenuModeDraw__Fv
  * @address 0x2059B0
  * @size 0xA30
- * @unknownret
  */
 void ItemMenuModeDraw(void);
 
 /**
+ * Moves the cursor across the item list and wraps it at the ends.
+ *
  * @mangled ItemMenuModeKey__Fv
  * @address 0x2063E0
  * @size 0x4D8
- * @unknownret
  */
 void ItemMenuModeKey(void);
 
 /**
+ * Draws the party member's active item slots and what stands in them.
+ *
  * @mangled ActiveItemDraw__Fiii
  * @address 0x2068C0
  * @size 0x1EC
- * @unknownret
  */
 void ActiveItemDraw(int, int, int);
 
 /**
+ * Steps and draws the party member's model on the item page.
+ *
  * @mangled MenuCharaPolyDraw__Fv
  * @address 0x206AB0
  * @size 0x84
- * @unknownret
  */
 void MenuCharaPolyDraw(void);
 
 /**
+ * Draws the item page's status panel for one party member.
+ *
  * @mangled ItemMenuCharaStatusDraw__Fiiii
  * @address 0x206B40
  * @size 0xDA0
- * @unknownret
  */
 void ItemMenuCharaStatusDraw(int, int, int, int);
 
 /**
+ * Chooses which of the use, equip and throw prompts an item offers.
+ *
  * @mangled ItemNaviCursor__Fi
  * @address 0x2078E0
  * @size 0x2D8
- * @unknownret
  */
 void ItemNaviCursor(int);
 
 /**
+ * Draws the party member's status ailments, bobbing the icons with a sine.
+ *
  * @mangled CharaStatusMsgDraw__Fiiiii
  * @address 0x207BC0
  * @size 0x22C
- * @unknownret
  */
 void CharaStatusMsgDraw(int, int, int, int, int);
 
 /**
+ * Runs the Atla page and returns to the menu bar when it closes.
+ *
  * @mangled BattleMenuAtoraKey__Fv
  * @address 0x207DF0
  * @size 0xFC
- * @unknownret
  */
 void BattleMenuAtoraKey(void);
 
 /**
+ * Opens the travel page, either on the world map or on the local one.
+ *
  * @mangled InitMenuMove__FiiP1
  * @address 0x207EF0
  * @size 0x414
- * @unknownret
  */
 void InitMenuMove(int, int, void /* CW back-ref target unresolved */ *);
 
 /**
+ * Places the party's marker on the town or dungeon the cursor stands on.
+ *
  * @mangled GetTownOrDngPos__Fv
  * @address 0x208310
  * @size 0x180
- * @unknownret
  */
 void GetTownOrDngPos(void);
 
 /**
+ * Handles input on the travel page and reports the destination that was chosen.
+ *
  * @mangled MenuMoveKey__Fv
  * @address 0x208490
  * @size 0xB54
- * @unknownret
  */
 void MenuMoveKey(void);
 
 /**
+ * Draws the travel page with its map, its names and its confirmation plate.
+ *
  * @mangled DrawMenuMove__Fv
  * @address 0x208FF0
  * @size 0xCC8
- * @unknownret
  */
 void DrawMenuMove(void);
 
@@ -790,35 +875,39 @@ void DrawMenuMove(void);
 void DrawEscapeItem(int, int, int);
 
 /**
+ * Starts reading one region's world map in the background.
+ *
  * @mangled StartLoadWorldMap__FiP1
  * @address 0x209F80
  * @size 0xBC
- * @unknownret
  */
 void StartLoadWorldMap(int, void /* CW back-ref target unresolved */ *);
 
 /**
+ * Waits for the world map and enters its textures and model.
+ *
  * @mangled LoadWorldMap__Fv
  * @address 0x20A040
  * @size 0x32C
- * @unknownret
  */
 void LoadWorldMap(void);
 
 /**
- * Draws the world map's menu character.
+ * Steps and draws the party's marker over the world map.
  *
  * @mangled LocalDrawWorldMap__Fv
  * @address 0x20A370
  * @size 0x6C
+ * Draws the world map's menu character.
  */
 void LocalDrawWorldMap(void);
 
 /**
+ * Draws the world map with the party's marker over it.
+ *
  * @mangled DrawWorldMap__Fi
  * @address 0x20A3E0
  * @size 0x48
- * @unknownret
  */
 void DrawWorldMap(int);
 
@@ -835,68 +924,76 @@ void DrawWorldMap(int);
 void MenuDataSwap(MAP_JUMP_COMPARE *first, MAP_JUMP_COMPARE *second);
 
 /**
- * Returns the reachable world map destination nearest the one it is given, or -1 when there
- * is none.
+ * Finds the world-map place nearest the direction the pad was pushed in.
  *
  * @mangled GetNearWorldPos__FiPi
  * @address 0x20A4A0
  * @size 0x3BC
+ * Returns the reachable world map destination nearest the one it is given, or -1 when there
+ * is none.
  */
 int GetNearWorldPos(int, int *);
 
 /**
+ * Moves the world-map cursor between places and reports the one chosen.
+ *
  * @mangled WorldMapMoveKey__Fv
  * @address 0x20A860
  * @size 0x148
- * @unknownret
  */
 void WorldMapMoveKey(void);
 
 /**
+ * Draws the plate that asks whether to travel to the chosen place.
+ *
  * @mangled DrawMapCheck__Fi
  * @address 0x20A9B0
  * @size 0x150
- * @unknownret
  */
 void DrawMapCheck(int);
 
 /**
+ * Reports whether a world-map place has been visited and may be travelled to.
+ *
  * @mangled GetVisitInfo__Fii
  * @address 0x20AB00
  * @size 0x164
- * @unknownret
  */
 void GetVisitInfo(int, int);
 
 /**
+ * Gives the region whose world map should be read for the party's position.
+ *
  * @mangled IsLoadMapNo__Fv
  * @address 0x20AC70
  * @size 0x110
- * @unknownret
  */
 void IsLoadMapNo(void);
 
 /**
+ * Turns a map number into the world-map place that stands for it.
+ *
  * @mangled MapNoTransFunc__Fi
  * @address 0x20AD80
  * @size 0xD8
- * @unknownret
  */
 void MapNoTransFunc(int);
 
 /**
+ * Runs the options page and returns to the menu bar when it closes.
+ *
  * @mangled BattleMenuOptionKey__Fv
  * @address 0x20AE60
  * @size 0x108
- * @unknownret
  */
 void BattleMenuOptionKey(void);
 
 /**
+ * Runs the save page and returns to the menu bar when it closes.
+ *
  * @mangled BattleMenuSaveKey__Fv
  * @address 0x20AF70
  * @size 0xF4
- * @unknownret
  */
 void BattleMenuSaveKey(void);
 
@@ -919,18 +1016,20 @@ void BattleManualInit(int *result, u_long128 *load_buffer);
 int BattleManualKey(void);
 
 /**
+ * Draws a current-over-maximum pair, reddening it as the value runs low.
+ *
  * @mangled DrawStatusNumberNowAndMax__FPiiiii
  * @address 0x20B1B0
  * @size 0x128
- * @unknownret
  */
 void DrawStatusNumberNowAndMax(int *, int, int, int, int);
 
 /**
+ * Draws the sockets of a weapon and what is fitted into them.
+ *
  * @mangled DrawWepHole__FiiP11WEAPON_HAVEii
  * @address 0x20B2E0
  * @size 0x294
- * @unknownret
  */
 void DrawWepHole(int, int, WEAPON_HAVE *, int, int);
 

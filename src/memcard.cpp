@@ -23,7 +23,7 @@ struct EDIT_CHIP_ATTACH_DATA;
  *
  * @mangled SearchAtoraInfo__Fi
  * @address 0x218470
- * @size 0x90
+ * @size 0x8C
  */
 static EDITPARTS_INFO *SearchAtoraInfo(int);
 
@@ -32,7 +32,7 @@ static EDITPARTS_INFO *SearchAtoraInfo(int);
  *
  * @mangled AtoraAllTipGet__Fi
  * @address 0x218500
- * @size 0xA0
+ * @size 0x9C
  */
 static int AtoraAllTipGet(int);
 
@@ -41,7 +41,7 @@ static int AtoraAllTipGet(int);
  *
  * @mangled AlreadyPeopleTalk__Fii
  * @address 0x2185A0
- * @size 0x70
+ * @size 0x64
  */
 static int AlreadyPeopleTalk(int, int);
 
@@ -51,7 +51,7 @@ static int AlreadyPeopleTalk(int, int);
  *
  * @mangled AtoraCompOrEvent__FP14EDITPARTS_INFO
  * @address 0x218610
- * @size 0x170
+ * @size 0x164
  */
 static int AtoraCompOrEvent(EDITPARTS_INFO *);
 
@@ -61,7 +61,7 @@ static int AtoraCompOrEvent(EDITPARTS_INFO *);
  *
  * @mangled AtraBoardMaxNum__Fi
  * @address 0x218780
- * @size 0x90
+ * @size 0x88
  */
 static int AtraBoardMaxNum(int);
 
@@ -71,7 +71,7 @@ static int AtraBoardMaxNum(int);
  *
  * @mangled AtoraTipStatusSearch__FP14EDITPARTS_INFOi
  * @address 0x218810
- * @size 0xD0
+ * @size 0xC8
  */
 static int AtoraTipStatusSearch(EDITPARTS_INFO *, int);
 
@@ -80,7 +80,7 @@ static int AtoraTipStatusSearch(EDITPARTS_INFO *, int);
  *
  * @mangled AtraTipCanDisplay__FP21EDIT_CHIP_ATTACH_DATA
  * @address 0x2188E0
- * @size 0x80
+ * @size 0x74
  */
 static int AtraTipCanDisplay(EDIT_CHIP_ATTACH_DATA *);
 
@@ -90,7 +90,7 @@ static int AtraTipCanDisplay(EDIT_CHIP_ATTACH_DATA *);
  *
  * @mangled AtoraTipRelationDraw__FiiP14EDITPARTS_INFOiii
  * @address 0x218960
- * @size 0x200
+ * @size 0x1F4
  */
 static void AtoraTipRelationDraw(int, int, EDITPARTS_INFO *, int, int, int);
 
@@ -99,7 +99,7 @@ static void AtoraTipRelationDraw(int, int, EDITPARTS_INFO *, int, int, int);
  *
  * @mangled AtoraBoardEnableMovePos__FiPi
  * @address 0x218B60
- * @size 0x110
+ * @size 0x10C
  */
 static void AtoraBoardEnableMovePos(int, int *);
 
@@ -109,7 +109,7 @@ static void AtoraBoardEnableMovePos(int, int *);
  *
  * @mangled AtoraBoardGoToPos__FPiii
  * @address 0x218C70
- * @size 0x50
+ * @size 0x44
  */
 static int AtoraBoardGoToPos(int *, int, int);
 
@@ -119,7 +119,7 @@ static int AtoraBoardGoToPos(int *, int, int);
  *
  * @mangled AtoraMsgNoGet__Fiii
  * @address 0x218DA0
- * @size 0x200
+ * @size 0x1F4
  */
 static int AtoraMsgNoGet(int, int, int);
 
@@ -129,7 +129,7 @@ static int AtoraMsgNoGet(int, int, int);
  *
  * @mangled AtoraTipOnlyMsgNoGet__Fii
  * @address 0x218FA0
- * @size 0x60
+ * @size 0x58
  */
 static int AtoraTipOnlyMsgNoGet(int, int);
 
@@ -138,7 +138,7 @@ static int AtoraTipOnlyMsgNoGet(int, int);
  *
  * @mangled AtoraTipObjectOrPerson__Fiiiii
  * @address 0x2190E0
- * @size 0xE0
+ * @size 0xDC
  */
 static void AtoraTipObjectOrPerson(int, int, int, int, int);
 
@@ -148,7 +148,7 @@ static void AtoraTipObjectOrPerson(int, int, int, int, int);
  *
  * @mangled AtoraTipHoleTexInfoGet__FiPUc
  * @address 0x2191C0
- * @size 0x50
+ * @size 0x4C
  */
 static CTexture *AtoraTipHoleTexInfoGet(int, unsigned char *);
 
@@ -167,7 +167,7 @@ static void AtoraPlateDrawHaichiBar(EDITPARTS_INFO *, int, int, int);
  *
  * @mangled DrawAtoraNothing__Fiii
  * @address 0x219CC0
- * @size 0x300
+ * @size 0x2F4
  */
 static void DrawAtoraNothing(int, int, int);
 
@@ -185,7 +185,7 @@ static void DrawMsgAtraWarning(ClsMes *, int, int);
  *
  * @mangled AtoraTipInfoInit__Fv
  * @address 0x21A060
- * @size 0x30
+ * @size 0x2C
  */
 static void AtoraTipInfoInit();
 
@@ -203,7 +203,7 @@ static void SetMenuAtraEventFlag(int);
  *
  * @mangled MenuAtoraAfterFadeIn__Fv
  * @address 0x21A0B0
- * @size 0x80
+ * @size 0x7C
  */
 static void MenuAtoraAfterFadeIn();
 
@@ -213,7 +213,7 @@ static void MenuAtoraAfterFadeIn();
  *
  * @mangled ExitAtoraSelect__Fv
  * @address 0x21A890
- * @size 0xD0
+ * @size 0xC8
  */
 static void ExitAtoraSelect();
 
@@ -222,7 +222,7 @@ static void ExitAtoraSelect();
  *
  * @mangled AtoraTexInfoGet__Fv
  * @address 0x21A960
- * @size 0x120
+ * @size 0x118
  */
 static void AtoraTexInfoGet();
 
@@ -231,7 +231,7 @@ static void AtoraTexInfoGet();
  *
  * @mangled DrawAtoraSelect__Fi
  * @address 0x21AE80
- * @size 0xFF0
+ * @size 0xFEC
  */
 static void DrawAtoraSelect(int);
 
@@ -240,7 +240,7 @@ static void DrawAtoraSelect(int);
  *
  * @mangled AtoraTextureEnter__Fv
  * @address 0x21BE70
- * @size 0x1B0
+ * @size 0x1A4
  */
 static int AtoraTextureEnter();
 
@@ -249,7 +249,7 @@ static int AtoraTextureEnter();
  *
  * @mangled GetTipKind__Fi
  * @address 0x21C020
- * @size 0x70
+ * @size 0x64
  */
 static int GetTipKind(int);
 
@@ -259,7 +259,7 @@ static int GetTipKind(int);
  *
  * @mangled CompTip__Fii
  * @address 0x21C090
- * @size 0xD0
+ * @size 0xCC
  */
 static int CompTip(int, int);
 
@@ -269,7 +269,7 @@ static int CompTip(int, int);
  *
  * @mangled SeitonAtoraTipBoardSub__Fv
  * @address 0x21C160
- * @size 0x110
+ * @size 0x108
  */
 static int SeitonAtoraTipBoardSub();
 
@@ -299,7 +299,7 @@ static int AtoraBoardKey();
  *
  * @mangled AtoraTipKey__Fv
  * @address 0x21D4C0
- * @size 0x300
+ * @size 0x2F4
  */
 static int AtoraTipKey();
 
@@ -308,7 +308,7 @@ static int AtoraTipKey();
  *
  * @mangled AtoraMenuTipCancel__Fv
  * @address 0x21D7C0
- * @size 0xD0
+ * @size 0xC8
  */
 static void AtoraMenuTipCancel();
 
@@ -317,7 +317,7 @@ static void AtoraMenuTipCancel();
  *
  * @mangled AtoraBoardFadeEffect__Fv
  * @address 0x21D890
- * @size 0x3D0
+ * @size 0x3C8
  */
 static void AtoraBoardFadeEffect();
 
@@ -327,7 +327,7 @@ static void AtoraBoardFadeEffect();
  *
  * @mangled OptionMenuDraw__Fiiiii
  * @address 0x21E020
- * @size 0x430
+ * @size 0x42C
  */
 static void OptionMenuDraw(int, int, int, int, int);
 
@@ -346,7 +346,7 @@ static void DrawOptionLRCur(int, int);
  *
  * @mangled ExitMenuOption__Fv
  * @address 0x21E780
- * @size 0x190
+ * @size 0x18C
  */
 static void ExitMenuOption();
 
@@ -355,7 +355,7 @@ static void ExitMenuOption();
  *
  * @mangled InitOptionFlag__Fv
  * @address 0x21E910
- * @size 0x50
+ * @size 0x44
  */
 static void InitOptionFlag();
 
@@ -364,7 +364,7 @@ static void InitOptionFlag();
  *
  * @mangled PrevOptionSetFunc__Fv
  * @address 0x21E960
- * @size 0x50
+ * @size 0x48
  */
 static void PrevOptionSetFunc();
 
@@ -374,7 +374,7 @@ static void PrevOptionSetFunc();
  *
  * @mangled ExitSaveSelect__Fv
  * @address 0x21FD80
- * @size 0x150
+ * @size 0x144
  */
 static void ExitSaveSelect();
 
@@ -384,7 +384,7 @@ static void ExitSaveSelect();
  *
  * @mangled SaveMenuKeyFadeIn__Fv
  * @address 0x220D90
- * @size 0x40
+ * @size 0x34
  */
 static int SaveMenuKeyFadeIn();
 
@@ -394,7 +394,7 @@ static int SaveMenuKeyFadeIn();
  *
  * @mangled SaveMenuKeyFadeOut__Fv
  * @address 0x220DD0
- * @size 0x70
+ * @size 0x68
  */
 static int SaveMenuKeyFadeOut();
 
@@ -404,7 +404,7 @@ static int SaveMenuKeyFadeOut();
  *
  * @mangled SaveMenuKeyModeSelect__Fv
  * @address 0x220E40
- * @size 0x130
+ * @size 0x12C
  */
 static int SaveMenuKeyModeSelect();
 
@@ -414,7 +414,7 @@ static int SaveMenuKeyModeSelect();
  *
  * @mangled SaveMenuKeyMcSelect__Fv
  * @address 0x220F70
- * @size 0x230
+ * @size 0x228
  */
 static int SaveMenuKeyMcSelect();
 
@@ -434,7 +434,7 @@ static int SaveMenuKeyCheckMcType();
  *
  * @mangled SaveMenuKeyCheckMc__Fv
  * @address 0x221260
- * @size 0x250
+ * @size 0x248
  */
 static int SaveMenuKeyCheckMc();
 
@@ -444,7 +444,7 @@ static int SaveMenuKeyCheckMc();
  *
  * @mangled SaveMenuKeyLoadConfig__Fv
  * @address 0x2214B0
- * @size 0x80
+ * @size 0x74
  */
 static int SaveMenuKeyLoadConfig();
 
@@ -454,7 +454,7 @@ static int SaveMenuKeyLoadConfig();
  *
  * @mangled SaveMenuKeyFileSelect__Fv
  * @address 0x221530
- * @size 0x200
+ * @size 0x1FC
  */
 static int SaveMenuKeyFileSelect();
 

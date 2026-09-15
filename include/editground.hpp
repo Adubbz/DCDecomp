@@ -35,326 +35,371 @@ public:
     u8 unk_16294[0xA6C8];
     s32 suppress_water; /**< Whether rendering of the editable ground's water is disabled. */
     /**
+     * Places one part on the ground, replacing or refusing it according to what already
+     * stands there.
+     *
      * @mangled SetMapParts__11CEditGroundFifffi
      * @address 0x1A0470
      * @size 0x79C
-     * @unknownret
      */
-    void SetMapParts(int, float, float, float, int);
+    CMapParts *SetMapParts(int parts_no, float x, float y, float z, int rot_y);
 
     /**
+     * Re-chooses the river piece one cell away so the water joins up with its
+     * neighbours.
+     *
      * @mangled SetRiverParts__11CEditGroundFfffii
      * @address 0x1A0C10
      * @size 0x3C8
-     * @unknownret
      */
-    void SetRiverParts(float, float, float, int, int);
+    int SetRiverParts(float x, float y, float z, int column_step, int row_step);
 
     /**
+     * Re-chooses the road piece one cell away so the road joins up with its neighbours.
+     *
      * @mangled SetRoadParts__11CEditGroundFfffii
      * @address 0x1A0FE0
      * @size 0x2A4
-     * @unknownret
      */
-    void SetRoadParts(float, float, float, int, int);
+    int SetRoadParts(float x, float y, float z, int column_step, int row_step);
 
     /**
+     * Takes the part standing at a position off the ground and gives back what it was.
+     *
      * @mangled DeleteMapParts__11CEditGroundFPiPifff
      * @address 0x1A1290
      * @size 0x418
-     * @unknownret
      */
-    void DeleteMapParts(int *, int *, float, float, float);
+    int DeleteMapParts(int *out_parts_no, int *out_kind, float x, float y, float z);
 
     /**
+     * Gives the editable area a position falls in, or -1 where none does.
+     *
      * @mangled GetAreaCode__11CEditGroundFfff
      * @address 0x1A16B0
      * @size 0xAC
-     * @unknownret
      */
-    int GetAreaCode(float, float, float);
+    int GetAreaCode(float x, float y, float z);
 
     /**
+     * Gives the ground height at a position.
+     *
      * @mangled GetAlt__11CEditGroundFfff
      * @address 0x1A1760
      * @size 0x84
-     * @unknownret
      */
-    float GetAlt(float, float, float);
+    float GetAlt(float x, float y, float z);
 
     /**
+     * Gives the ground height at a position, snapped to the grid.
+     *
      * @mangled GetAlt_i__11CEditGroundFfff
      * @address 0x1A17F0
      * @size 0x84
-     * @unknownret
      */
-    void GetAlt_i(float, float, float);
+    float GetAlt_i(float x, float y, float z);
 
     /**
+     * Finds the placed part with a given plot number.
+     *
      * @mangled GetPartsObject__11CEditGroundFi
      * @address 0x1A1880
      * @size 0x50
-     * @unknownret
      */
-    CMapParts *GetPartsObject(int);
+    CMapParts *GetPartsObject(int parts_no);
 
     /**
+     * Gives the placed part standing at a position, or -1 where none does.
+     *
      * @mangled GetPartsID__11CEditGroundFfff
      * @address 0x1A18D0
      * @size 0x84
-     * @unknownret
      */
-    void GetPartsID(float, float, float);
+    int GetPartsID(float x, float y, float z);
 
     /**
+     * Gives the part standing at a position.
+     *
      * @mangled GetParts__11CEditGroundFfff
      * @address 0x1A1960
      * @size 0x5C
-     * @unknownret
      */
-    CMapParts *GetParts(float, float, float);
+    CMapParts *GetParts(float x, float y, float z);
 
     /**
+     * Reports whether the drop-in effect is still running.
+     *
      * @mangled CheckEffect__11CEditGroundFv
      * @address 0x1A19C0
      * @size 0x18
-     * @unknownret
      */
-    void CheckEffect(void);
+    int CheckEffect(void);
 
     /**
+     * Starts a part falling into place from above.
+     *
      * @mangled SetBuildEffect__11CEditGroundFi
      * @address 0x1A19E0
      * @size 0x134
-     * @unknownret
      */
-    void SetBuildEffect(int);
+    void SetBuildEffect(int parts_id);
 
     /**
+     * Advances the falling part one step and settles it when it lands.
+     *
      * @mangled EffectTask__11CEditGroundFv
      * @address 0x1A1B20
      * @size 0x1E0
-     * @unknownret
      */
     void EffectTask(void);
 
     /**
+     * Marks the part at a position as the one the cursor is on.
+     *
      * @mangled SetFocusParts__11CEditGroundFfff
      * @address 0x1A1D00
      * @size 0x130
-     * @unknownret
      */
-    void SetFocusParts(float, float, float);
+    int SetFocusParts(float x, float y, float z);
 
     /**
+     * Clips the editable areas against the camera.
+     *
      * @mangled EditAreaClip__11CEditGroundFP7CCameraf
      * @address 0x1A1E30
      * @size 0x89C
-     * @unknownret
      */
-    void EditAreaClip(CCamera *, float);
+    void EditAreaClip(CCamera *camera, float range);
 
     /**
+     * Picks a random point on the walkable ground.
+     *
      * @mangled GetRandomPlanePos__11CEditGroundFPfPA4_fiPf
      * @address 0x1A26D0
      * @size 0x3BC
-     * @unknownret
      */
-    int GetRandomPlanePos(float *, float (*)[4], int, float *);
+    int GetRandomPlanePos(float *out_position, float (*matrix)[4], int area, float *extent);
 
     /**
+     * Collects the placed parts whose bounds meet a box.
+     *
      * @mangled GetNearParts__11CEditGroundFPP9CMapPartsiP7CBoxVu0P7CBoxVu0
      * @address 0x1A2A90
      * @size 0x17C
-     * @unknownret
      */
-    void GetNearParts(CMapParts **, int, CBoxVu0 *, CBoxVu0 *);
+    int GetNearParts(CMapParts **out_parts, int limit, CBoxVu0 *box, CBoxVu0 *out_box);
 
     /**
+     * Rebuilds the bounding boxes of every editable area.
+     *
      * @mangled MakePartsBox__11CEditGroundFv
      * @address 0x1A2C10
      * @size 0x64
-     * @unknownret
      */
     void MakePartsBox(void);
 
     /**
+     * Gives the bounding box of the area a position falls in.
+     *
      * @mangled GetPartsBox__11CEditGroundFP7CBoxVu0fff
      * @address 0x1A2C80
      * @size 0x8C
-     * @unknownret
      */
-    void GetPartsBox(CBoxVu0 *, float, float, float);
+    void GetPartsBox(CBoxVu0 *out_box, float x, float y, float z);
 
     /**
+     * Gives the position of one of the villagers standing on the ground.
+     *
      * @mangled GetPeoplePos__11CEditGroundFiPf
      * @address 0x1A2D10
      * @size 0x190
-     * @unknownret
      */
-    int GetPeoplePos(int, float *);
+    int GetPeoplePos(int villager, float *out_position);
 
     /**
+     * Draws the grid of every editable area.
+     *
      * @mangled DrawBaseGround__11CEditGroundFv
      * @address 0x1A2EA0
      * @size 0x64
-     * @unknownret
      */
     void DrawBaseGround(void);
 
     /**
+     * Draws every placed part, choosing the level of detail from the distance.
+     *
      * @mangled Draw__11CEditGroundFfiiiii
      * @address 0x1A2F10
      * @size 0x23C
-     * @unknownret
      */
     void Draw(float, int, int, int, int, int);
 
     /**
+     * Advances the ripples of each water surface the view can reach.
+     *
      * @mangled StepWater__11CEditGroundFv
      * @address 0x1A3150
      * @size 0x20C
-     * @unknownret
      */
     void StepWater(void);
 
     /**
+     * Draws the water surfaces, ordered back to front from the camera.
+     *
      * @mangled DrawWaterSurface__11CEditGroundFP7CCamera
      * @address 0x1A3360
      * @size 0x2B8
-     * @unknownret
      */
-    void DrawWaterSurface(CCamera *);
+    void DrawWaterSurface(CCamera *camera);
 
     /**
+     * Draws the water pieces of the placed parts.
+     *
      * @mangled DrawWater__11CEditGroundFi
      * @address 0x1A3620
      * @size 0x314
-     * @unknownret
      */
-    void DrawWater(int);
+    void DrawWater(int pass);
 
     /**
+     * Draws the ripples standing on the placed parts.
+     *
      * @mangled DrawRipple__11CEditGroundFi
      * @address 0x1A3940
      * @size 0x2A0
-     * @unknownret
      */
-    void DrawRipple(int);
+    void DrawRipple(int pass);
 
     /**
+     * Drops the shadows of the placed parts onto the ground.
+     *
      * @mangled DrawShadow__11CEditGroundFiff
      * @address 0x1A3BE0
      * @size 0x34C
-     * @unknownret
      */
-    void DrawShadow(int, float, float);
+    void DrawShadow(int pass, float near_distance, float far_distance);
 
     /**
+     * Draws the cursor over the cells a part would occupy, colouring it by whether it
+     * may go there.
+     *
      * @mangled DrawPartsCursor__11CEditGroundFiPfPfiPfi
      * @address 0x1A3F30
      * @size 0x6D8
-     * @unknownret
      */
     void DrawPartsCursor(int, float *, float *, int, float *, int);
 
     /**
+     * Draws the effects standing on the placed parts.
+     *
      * @mangled DrawEffect__11CEditGroundFP13CCameraFollowfP12CEffectGroup
      * @address 0x1A4610
      * @size 0x170
-     * @unknownret
      */
-    void DrawEffect(CCameraFollow *, float, CEffectGroup *);
+    void DrawEffect(CCameraFollow *camera, float range, CEffectGroup *effects);
 
     /**
+     * Writes every placed part into a buffer.
+     *
      * @mangled Save__11CEditGroundFPc
      * @address 0x1A4780
      * @size 0x188
-     * @unknownret
      */
-    void Save(char *);
+    void Save(char *buffer);
 
     /**
+     * Reads placed parts back out of a buffer, clearing the ground first.
+     *
      * @mangled Load__11CEditGroundFPc
      * @address 0x1A4910
      * @size 0x374
-     * @unknownret
      */
-    void Load(char *);
+    void Load(char *buffer);
 
     /**
+     * Writes every placed part into the save file.
+     *
      * @mangled Save__11CEditGroundFiP9CSaveData
      * @address 0x1A4C90
      * @size 0x17C
-     * @unknownret
      */
-    void Save(int, CSaveData *);
+    void Save(int map_no, CSaveData *save);
 
     /**
+     * Reads placed parts back out of the save file.
+     *
      * @mangled Load__11CEditGroundFiP9CSaveData
      * @address 0x1A4E10
      * @size 0xD0
-     * @unknownret
      */
-    void Load(int, CSaveData *);
+    void Load(int map_no, CSaveData *save);
 
     /**
+     * Collects the collision polygons within thirty units of a position.
+     *
      * @mangled PickUpPoly__11CEditGroundFP6CCPolyfff
      * @address 0x1A4EE0
      * @size 0x70
-     * @unknownret
      */
     int PickUpPoly(CCPoly *, float, float, float);
 
     /**
+     * Collects the collision polygons meeting a box.
+     *
      * @mangled PickUpPoly__11CEditGroundFP6CCPoly7CBoxVu0i
      * @address 0x1A4F50
      * @size 0x214
-     * @unknownret
      */
     int PickUpPoly(CCPoly *, CBoxVu0, int);
 
     /**
+     * Collects the ground polygons of the area a position falls in.
+     *
      * @mangled PickUpEditAreaPoly__11CEditGroundFP6CCPolyfff
      * @address 0x1A5170
      * @size 0x94
-     * @unknownret
      */
-    int PickUpEditAreaPoly(CCPoly *, float, float, float);
+    int PickUpEditAreaPoly(CCPoly *polygons, float x, float y, float z);
 
     /**
+     * Collects the polygons the camera collides against.
+     *
      * @mangled PickUpCameraPoly__11CEditGroundFP6CCPolyR7CBoxVu0i
      * @address 0x1A5210
      * @size 0x2F4
-     * @unknownret
      */
-    void PickUpCameraPoly(CCPoly *, CBoxVu0 &, int);
+    int PickUpCameraPoly(CCPoly *polygons, CBoxVu0 &box, int flags);
 
     /**
+     * Empties every placed part and every editable area.
+     *
      * @mangled Clear__11CEditGroundFv
      * @address 0x1A5510
      * @size 0x2E8
-     * @unknownret
      */
     void Clear(void);
 
     /**
+     * Clears the ground's areas, parts, water and villager lists.
+     *
      * @mangled Initialize__11CEditGroundFv
      * @address 0x1A5800
      * @size 0x1A8
-     * @unknownret
      */
     void Initialize(void);
 
     /**
+     * Rebuilds the grid the parts are placed on.
+     *
      * @mangled RemakeGrid__11CEditGroundFv
      * @address 0x1A59B0
      * @size 0x40
-     * @unknownret
      */
     void RemakeGrid(void);
 
     /**
+     * Constructs the ground's parts, water surfaces and interior parts.
+     *
      * @mangled __ct__11CEditGroundFv
      * @address 0x1A59F0
      * @size 0xE4
@@ -362,82 +407,94 @@ public:
     CEditGround(void);
 
     /**
+     * Counts what stands on the ground and reports which villager requests it
+     * satisfies.
+     *
      * @mangled RequestCheck__11CEditGroundFv
      * @address 0x1A5FE0
      * @size 0x1F4
-     * @unknownret
      */
-    void RequestCheck(void);
+    int RequestCheck(void);
 
     /**
+     * Reports whether a part of a given kind stands inside a rectangle.
+     *
      * @mangled CheckPartsRect__11CEditGroundFiiR8CRect_i_
      * @address 0x1A61E0
      * @size 0xE0
-     * @unknownret
      */
-    void CheckPartsRect(int, int, CRect_i_ &);
+    int CheckPartsRect(int area, int parts_no, CRect_i_ &rect);
 
     /**
+     * Collects the parts of one kind standing inside a rectangle.
+     *
      * @mangled GetRectParts__11CEditGroundFP8CRect_i_P9CMapPartsi
      * @address 0x1A62C0
      * @size 0x14C
-     * @unknownret
      */
     void GetRectParts(CRect_i_ *, CMapParts *, int);
 
     /**
+     * Collects the parts of one kind and subtype standing inside a rectangle.
+     *
      * @mangled GetRectParts__11CEditGroundFP8CRect_i_P9CMapPartsii
      * @address 0x1A6410
      * @size 0x338
-     * @unknownret
      */
     void GetRectParts(CRect_i_ *, CMapParts *, int, int);
 
     /**
+     * Collects the parts inside a rectangle that face a given direction.
+     *
      * @mangled GetRectDirParts__11CEditGroundFP8CRect_i_P9CMapPartsii
      * @address 0x1A6750
      * @size 0x264
-     * @unknownret
      */
     void GetRectDirParts(CRect_i_ *, CMapParts *, int, int);
 
     /**
+     * Checks the ground against Norn's request.
+     *
      * @mangled NornRequest__11CEditGroundFPA64_P9CMapParts
      * @address 0x1A69C0
      * @size 0x3C4
-     * @unknownret
      */
     void NornRequest(CMapParts *(*) [64]);
 
     /**
+     * Checks the ground against Matataki's request, which wants the rivers chained up.
+     *
      * @mangled MatatagiRequest__11CEditGroundFPA64_P9CMapParts
      * @address 0x1A6D90
      * @size 0x65C
-     * @unknownret
      */
     void MatatagiRequest(CMapParts *(*) [64]);
 
     /**
+     * Checks the ground against the Queen's request.
+     *
      * @mangled QueensRequest__11CEditGroundFPA64_P9CMapParts
      * @address 0x1A73F0
      * @size 0x49C
-     * @unknownret
      */
     void QueensRequest(CMapParts *(*) [64]);
 
     /**
+     * Checks the ground against Muska Racka's request.
+     *
      * @mangled MuskaRequest__11CEditGroundFPA64_P9CMapParts
      * @address 0x1A7920
      * @size 0x614
-     * @unknownret
      */
     void MuskaRequest(CMapParts *(*) [64]);
 
     /**
+     * Checks the ground against the yellow request, which wants parts facing one
+     * another.
+     *
      * @mangled YellowRequest__11CEditGroundFPA64_P9CMapParts
      * @address 0x1A7F40
      * @size 0x8A0
-     * @unknownret
      */
     void YellowRequest(CMapParts *(*) [64]);
 };
@@ -445,10 +502,11 @@ public:
 class CPartsCursor {
 public:
     /**
+     * Draws the placement cursor over a run of cells.
+     *
      * @mangled Draw__12CPartsCursorFPfii
      * @address 0x1A5CB0
      * @size 0x328
-     * @unknownret
      */
     void Draw(float *, int, int);
 };
