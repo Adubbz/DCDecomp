@@ -617,12 +617,12 @@ void CWeaponLevelUp::Step() {
                 aligned = read->buffer + (read->size >> 4) + 1;
                 aligned = MenuCalcBufAlignment(aligned);
                 effect.Initialize();
-                MenuEffectCashBuffer.buffer = (u8 *) aligned;
+                MenuEffectCashBuffer.base = (u8 *) aligned;
                 MenuEffectCashBuffer.limit = 0x9100;
                 MenuEffectCashBuffer.used = 0;
                 effect.LoadPackData(buffer, pack, &MenuEffectCashBuffer, &MenuEffectCashBuffer);
                 effect_buffer = (u_long128 *) ((MenuEffectCashBuffer.used << 4) +
-                                               MenuEffectCashBuffer.buffer);
+                                               MenuEffectCashBuffer.base);
                 effect_state++;
                 effect_timer = 0.0f;
                 effect_active = 1;

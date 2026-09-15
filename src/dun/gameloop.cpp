@@ -1705,7 +1705,7 @@ void GameInit(void) {
     BtEventMes1.page_arrow = 1;
     BtEventMes1.unk_17B0 = MesWinTexBuff_02;
 
-    mes = (short *) (BtMesBuffer.buffer + BtMesBuffer.used * 16);
+    mes = (short *) (BtMesBuffer.base + BtMesBuffer.used * 16);
     sprintf(name, "dun/message/ww_mes/dunmsd00_%d.mes", LanguageCode);
     LoadFile(name, mes, &size);
     wait_now_loading_vsync();
@@ -1716,7 +1716,7 @@ void GameInit(void) {
     BtMesBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     BtMesBuffer.Align64();
 
-    mes = (short *) (BtMesBuffer.buffer + BtMesBuffer.used * 16);
+    mes = (short *) (BtMesBuffer.base + BtMesBuffer.used * 16);
     sprintf(name, "dun/message/ww_mes/font18_%d.mes", LanguageCode);
     LoadFile(name, mes, &size);
     wait_now_loading_vsync();
@@ -1724,7 +1724,7 @@ void GameInit(void) {
     BtMesBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     BtMesBuffer.Align64();
 
-    mes = (short *) (BtMesBuffer.buffer + BtMesBuffer.used * 16);
+    mes = (short *) (BtMesBuffer.base + BtMesBuffer.used * 16);
     LoadFile("meswin/system14e.bin", mes, &size);
     wait_now_loading_vsync();
     BtMesBuffer.Alloc((size >> 4) + 1);
@@ -4299,7 +4299,7 @@ void MoveChara(void) {
             BtSystemScriptInit();
             if (BtEventInfo.unk_34 == 0) {
                 printf("********** system mem !!!\n");
-                BtCashBuffer.buffer = BtScriptWorkBuffer.buffer;
+                BtCashBuffer.base = BtScriptWorkBuffer.base;
                 BtCashBuffer.limit = 0x186A0;
                 BtCashBuffer.used = 0;
             }
@@ -4319,9 +4319,9 @@ void MoveChara(void) {
                 MainMonstorUnit.CleanViewMonstor(BtUraDongeon);
                 MonstorModelBuffer.used = 0;
                 s32 cash_size = MonstorModelBuffer.limit;
-                u8 *cash = MonstorModelBuffer.buffer;
+                u8 *cash = MonstorModelBuffer.base;
 
-                BtCashBuffer.buffer = cash;
+                BtCashBuffer.base = cash;
                 BtCashBuffer.limit = cash_size + 0x88B8;
                 BtCashBuffer.used = 0;
                 read_buffer = old_read_buffer + 0x88B80 / 4;
@@ -6251,10 +6251,10 @@ void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned 
     // The effect models take whatever the weapon models leave.
     work = WeaponModelBuffer.used;
 
-    u8 *free_start = WeaponModelBuffer.buffer + work * 16;
+    u8 *free_start = WeaponModelBuffer.base + work * 16;
     s64 free_size = 0x33450 - CharaModelBuffer.used - work;
 
-    WEffectModelBuffer.buffer = free_start;
+    WEffectModelBuffer.base = free_start;
     WEffectModelBuffer.limit = free_size;
     WEffectModelBuffer.used = 0;
 
@@ -6521,7 +6521,7 @@ void LoadChara2(int chara, int keep_place, unsigned int *chara_data, unsigned in
         int size;
 
         u_int *hand_texture = GetPackFile(chara_data, "c05w_h.img", &size);
-        u8 *at = CharaModelBuffer.buffer + CharaModelBuffer.used * 16;
+        u8 *at = CharaModelBuffer.base + CharaModelBuffer.used * 16;
 
         memcpy(at, hand_texture, size);
         size = (((size >> 6) + 1) << 6) >> 4;
@@ -6532,7 +6532,7 @@ void LoadChara2(int chara, int keep_place, unsigned int *chara_data, unsigned in
 
         u_int *effect = GetPackFile(chara_data, "mgan01.chr", &size);
 
-        ozumond_default_effect = (unsigned int *) (CharaModelBuffer.buffer +
+        ozumond_default_effect = (unsigned int *) (CharaModelBuffer.base +
                                                    CharaModelBuffer.used * 16);
         memcpy(ozumond_default_effect, effect, size);
         size = (((size >> 6) + 1) << 6) >> 4;
@@ -6543,7 +6543,7 @@ void LoadChara2(int chara, int keep_place, unsigned int *chara_data, unsigned in
         int size;
         u_int *effect = GetPackFile(chara_data, "c05_f03.chr", &size);
 
-        ozumond_default_effect = (unsigned int *) (CharaModelBuffer.buffer +
+        ozumond_default_effect = (unsigned int *) (CharaModelBuffer.base +
                                                    CharaModelBuffer.used * 16);
         memcpy(ozumond_default_effect, effect, size);
         size = (((size >> 6) + 1) << 6) >> 4;
@@ -6552,10 +6552,10 @@ void LoadChara2(int chara, int keep_place, unsigned int *chara_data, unsigned in
 
     // The weapon models take whatever the character models leave.
     s32 used = CharaModelBuffer.used;
-    u8 *free_start = CharaModelBuffer.buffer + used * 16;
+    u8 *free_start = CharaModelBuffer.base + used * 16;
     s64 free_size = 0x33450 - used;
 
-    WeaponModelBuffer.buffer = free_start;
+    WeaponModelBuffer.base = free_start;
     WeaponModelBuffer.limit = free_size;
     WeaponModelBuffer.used = 0;
     LoadWeapon2(crash_data, default_data, main_data, chara, 0);
@@ -8893,7 +8893,7 @@ int LoadStartLogo(int map) {
     files[0] = NameExchg(dungeon_name[map], 0);
     files[1] = NULL;
     BtStartLogoBuffer.used = 0;
-    size = LoadTempTexture(files, 8, (char *) BtStartLogoBuffer.buffer);
+    size = LoadTempTexture(files, 8, (char *) BtStartLogoBuffer.base);
     blocks = (((size >> 6) + 1) << 6) >> 4;
     BtStartLogoBuffer.Alloc(blocks);
 

@@ -55,7 +55,7 @@ void LangsetInit(void) {
     TexManager.LoadTextureBlock(-1, textures, read_buffer);
     GamePad.SetAutoRepeat(0x5000, 30, 9);
     GamePad.MenuModeOn(120);
-    Fade = 0;
+    Fade.value = 0;
     Cursor = 0;
     Proc = 0;
 }

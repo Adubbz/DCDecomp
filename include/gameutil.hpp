@@ -3,7 +3,7 @@
 #include "common.h"
 
 #include "collision.hpp"
-#include "dataalloc.hpp"
+#include "dataalloc_fwd.hpp"
 #include "frame.hpp"
 #include "texture.hpp"
 
