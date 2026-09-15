@@ -853,7 +853,7 @@ void CDungeonMap::DrawFireFreeStyle(CFrameVu1 *frame, CCameraFollow *camera) {
             param = this->parts[i].fire_param[j];
 
             // The point turns with the part that holds it.
-            angle = this->parts[i].unk_170;
+            angle = this->parts[i].unk_170[0];
             if (angle != 0.0f) {
                 angle = (3.1415927f * (90.0f * (4.0f - angle))) / 180.0f;
                 turn = -fire_pos[2] * sinf(angle);
