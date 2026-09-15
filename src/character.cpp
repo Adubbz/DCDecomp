@@ -48,6 +48,13 @@ void zcross(float z, float *from, float *to, float *out) {
     out[3] = 1.0f;
 }
 
+/**
+ * Clips a triangle against the near plane, giving back the polygon that survives.
+ *
+ * @mangled scissior__FPA4_fPA4_fPA4_ff
+ * @address 0x137440
+ * @size 0xA38
+ */
 INCLUDE_ASM("asm/nonmatchings/character", scissior__FPA4_fPA4_fPA4_ff);
 INCLUDE_RODATA("asm/nonmatchings/character", @648);
 

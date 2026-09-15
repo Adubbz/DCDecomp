@@ -1732,6 +1732,13 @@ int joinRoom(int a, int b) {
     return 1;
 }
 #endif /* DNG_COMPILE_UNMATCHED */
+/**
+ * Joins two rooms with a corridor.
+ *
+ * @mangled joinRoom__Fii
+ * @address 0x1C61C0
+ * @size 0x878
+ */
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", joinRoom__Fii);
 
 static void setRoomObject() {

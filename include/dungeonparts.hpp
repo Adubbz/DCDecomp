@@ -177,34 +177,38 @@ public:
     CFrame *GetSearchFrame(char *name);
 
     /**
+     * Places a healing zone within one dungeon part.
+     *
      * @mangled SetHealZone__13CDungeonPartsFPfff
      * @address 0x1C1670
      * @size 0x58
-     * @unknownret
      */
     void SetHealZone(float *, float, float);
 
     /**
+     * Draws one dungeon part and everything standing on it.
+     *
      * @mangled Draw__13CDungeonPartsFv
      * @address 0x1C16D0
      * @size 0x17C
-     * @unknownret
      */
     void Draw(void);
 
     /**
+     * Chooses the level of detail each of a part's frames draws at.
+     *
      * @mangled DrawCalc__13CDungeonPartsFiiii
      * @address 0x1C1850
      * @size 0x348
-     * @unknownret
      */
     void DrawCalc(int, int, int, int);
 
     /**
+     * Clears one dungeon part.
+     *
      * @mangled initalize__13CDungeonPartsFv
      * @address 0x1C1BA0
      * @size 0x5C
-     * @unknownret
      */
     void initalize(void);
 };

@@ -471,6 +471,13 @@ INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuNumber__FiiiP8CTexture4RECTii);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuNumber__Fiii4RECTP8CTextureiUcUcUci);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuNumber__Fiii4RECTP8CTextureiiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", GetMsgLengthMenu__FP6ClsMesi);
+/**
+ * Gives the texture and the cell within it that one georama element draws from.
+ *
+ * @mangled RetCTexAtora__FiRiRi
+ * @address 0x2181E0
+ * @size 0xD8
+ */
 INCLUDE_ASM("asm/nonmatchings/memcard", RetCTexAtora__FiRiRi);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtoraParts__Fiiiiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", SearchAtoraInfo__Fi);
@@ -486,6 +493,13 @@ INCLUDE_ASM("asm/nonmatchings/memcard", AtoraBoardGoToPos__FPiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", GetAtraMsgNo__Fii);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraMsgNoGet__Fiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipOnlyMsgNoGet__Fii);
+/**
+ * Gives the cell within the element sheet that one georama element draws from.
+ *
+ * @mangled AtoraTipGetTexPos__FiRiRi
+ * @address 0x219000
+ * @size 0xD8
+ */
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipGetTexPos__FiRiRi);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipObjectOrPerson__Fiiiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipHoleTexInfoGet__FiPUc);

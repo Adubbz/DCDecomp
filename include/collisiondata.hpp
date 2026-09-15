@@ -7,6 +7,8 @@
 #include "mathutil.hpp"
 
 /**
+ * Builds a resource path by putting one of the fixed prefixes before a name.
+ *
  * @mangled NameExchg__FPci
  * @address 0x1B5740
  * @size 0x60
@@ -118,18 +120,20 @@ public:
     int Set(float *, int, int, float, float, int, int, int, int);
 
     /**
+     * Reports which recorded hit reaches the player.
+     *
      * @mangled CheckHitUser__14CCollisionDataFPfif
      * @address 0x1B5920
      * @size 0x1BC
-     * @unknownret
      */
     int CheckHitUser(float *, int, float);
 
     /**
+     * Records the push a hit gives whatever it struck.
+     *
      * @mangled SetKickBack__14CCollisionDataFPfffi
      * @address 0x1B5AE0
      * @size 0xA4
-     * @unknownret
      */
     void SetKickBack(float *, float, float, int);
 };

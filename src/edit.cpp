@@ -757,7 +757,21 @@ void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_po
     EdPlaySoundSrc();
 }
 
+/**
+ * Plays the sound one kind of door makes when it opens.
+ *
+ * @mangled EdDoorOpenSe__FiPf
+ * @address 0x172100
+ * @size 0x58
+ */
 INCLUDE_ASM("asm/nonmatchings/edit", EdDoorOpenSe__FiPf);
+/**
+ * Plays the sound one kind of door makes when it closes.
+ *
+ * @mangled EdDoorCloseSe__FiPf
+ * @address 0x172160
+ * @size 0x58
+ */
 INCLUDE_ASM("asm/nonmatchings/edit", EdDoorCloseSe__FiPf);
 INCLUDE_ASM("asm/nonmatchings/edit", EdGetDoorMotion__Fii);
 /* The map editor's depth of field: one description at a time, taken from the map's own data or
@@ -865,6 +879,13 @@ void EdThunderEffect(int map, CEditGround *ground) {
 
 INCLUDE_RODATA("asm/nonmatchings/edit", @435);
 
+/**
+ * Draws one editor character with its shadow, cursor and event state.
+ *
+ * @mangled EdDrawCharacter__FP10CCharacteriiP12CNPCharacterPiiP13ED_EVENT_INFO
+ * @address 0x1725F0
+ * @size 0x4C8
+ */
 INCLUDE_ASM("asm/nonmatchings/edit", EdDrawCharacter__FP10CCharacteriiP12CNPCharacterPiiP13ED_EVENT_INFO);
 
 /* Giving a map part one more effect: the description table is scanned from the front for an entry
@@ -1120,6 +1141,13 @@ int EdCheckGetItem(int item) {
 void EdGetItemFile(int item_no, char *model_path, char *texture_path) {
     BtGetItemNamePath(model_path, texture_path, item_no);
 }
+/**
+ * Draws the item the player is holding up.
+ *
+ * @mangled EdDrawItem__Fv
+ * @address 0x173380
+ * @size 0x58
+ */
 INCLUDE_ASM("asm/nonmatchings/edit", EdDrawItem__Fv);
 /* The map editor's own system and help messages, in front of the ones the town runs: every call
    here reaches the town's message code first and then does the same thing again to a window of the
@@ -1547,6 +1575,13 @@ void EdDrawOpenItemBox() {
     MGSetAmbient(save);
 }
 
+/**
+ * Copies the drawn frame into a texture, for the menu to show behind itself.
+ *
+ * @mangled EdSaveFrameImage__F8CTexture
+ * @address 0x173E00
+ * @size 0x70
+ */
 INCLUDE_ASM("asm/nonmatchings/edit", EdSaveFrameImage__F8CTexture);
 
 void EdSaveFrameImageTask() {
@@ -1561,6 +1596,13 @@ void EdSaveFrameImageInit() {
     frame_image_tex.Initialize();
     frame_image_flag = 0;
 }
+/**
+ * Runs one frame of the editor's message menu and reports when it closes.
+ *
+ * @mangled EdMenuLoop__FP6ClsMes
+ * @address 0x173F00
+ * @size 0x1EC
+ */
 INCLUDE_ASM("asm/nonmatchings/edit", EdMenuLoop__FP6ClsMes);
 
 float ConvertTime(float hour) {

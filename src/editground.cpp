@@ -44,7 +44,21 @@ INCLUDE_ASM("asm/nonmatchings/editground", Clear__11CEditGroundFv);
 INCLUDE_ASM("asm/nonmatchings/editground", Initialize__11CEditGroundFv);
 INCLUDE_ASM("asm/nonmatchings/editground", RemakeGrid__11CEditGroundFv);
 INCLUDE_ASM("asm/nonmatchings/editground", __ct__11CEditGroundFv);
+/**
+ * Constructs the water surface of one ground tile.
+ *
+ * @mangled __ct__12CGroundWaterFv
+ * @address 0x1A5AE0
+ * @size 0x34
+ */
 INCLUDE_ASM("asm/nonmatchings/editground", __ct__12CGroundWaterFv);
+/**
+ * Reports whether a part may be replaced by the one being placed over it.
+ *
+ * @mangled CheckDelete__FP9CEditAreaP9CMapPartsfff
+ * @address 0x1A5B20
+ * @size 0x18C
+ */
 INCLUDE_ASM("asm/nonmatchings/editground", CheckDelete__FP9CEditAreaP9CMapPartsfff);
 INCLUDE_ASM("asm/nonmatchings/editground", Draw__12CPartsCursorFPfii);
 INCLUDE_ASM("asm/nonmatchings/editground", RequestCheck__11CEditGroundFv);
@@ -55,6 +69,13 @@ INCLUDE_ASM("asm/nonmatchings/editground", GetRectDirParts__11CEditGroundFP8CRec
 INCLUDE_ASM("asm/nonmatchings/editground", NornRequest__11CEditGroundFPA64_P9CMapParts);
 INCLUDE_ASM("asm/nonmatchings/editground", MatatagiRequest__11CEditGroundFPA64_P9CMapParts);
 INCLUDE_ASM("asm/nonmatchings/editground", QueensRequest__11CEditGroundFPA64_P9CMapParts);
+/**
+ * Reports whether two parts face each other at a given quarter-turn offset.
+ *
+ * @mangled CheckRot__FP9CMapPartsP9CMapPartsi
+ * @address 0x1A7890
+ * @size 0x8C
+ */
 INCLUDE_ASM("asm/nonmatchings/editground", CheckRot__FP9CMapPartsP9CMapPartsi);
 INCLUDE_ASM("asm/nonmatchings/editground", MuskaRequest__11CEditGroundFPA64_P9CMapParts);
 INCLUDE_ASM("asm/nonmatchings/editground", YellowRequest__11CEditGroundFPA64_P9CMapParts);

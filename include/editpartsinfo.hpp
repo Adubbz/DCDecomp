@@ -85,10 +85,11 @@ public:
     EDITPARTS_INFO *GetPartsInfo(int);
 
     /**
+     * Reports whether one georama part has every element it wants.
+     *
      * @mangled CheckComplete__14CEditPartsInfoFi
      * @address 0x19A020
      * @size 0x80
-     * @unknownret
      */
     int CheckComplete(int);
 
@@ -111,18 +112,20 @@ public:
     int GetCompEvent(int index);
 
     /**
+     * Gives the villager request one georama part belongs to.
+     *
      * @mangled GetRequest__14CEditPartsInfoFi
      * @address 0x19A140
      * @size 0x38
-     * @unknownret
      */
     int GetRequest(int);
 
     /**
+     * Gives the next georama part after one, or -1 at the end.
+     *
      * @mangled GetNextPartsNum__14CEditPartsInfoFi
      * @address 0x19A180
      * @size 0x88
-     * @unknownret
      */
     void GetNextPartsNum(int);
 
@@ -136,42 +139,47 @@ public:
     int GetNextParts(int index);
 
     /**
+     * Empties every georama part definition.
+     *
      * @mangled Clear__14CEditPartsInfoFv
      * @address 0x19A280
      * @size 0x40
-     * @unknownret
      */
     void Clear(void);
 
     /**
+     * Writes the georama part definitions into the save file.
+     *
      * @mangled Save__14CEditPartsInfoFiP9CSaveData
      * @address 0x19A2C0
      * @size 0x128
-     * @unknownret
      */
     void Save(int, CSaveData *);
 
     /**
+     * Reads the georama part definitions back out of the save file.
+     *
      * @mangled Load__14CEditPartsInfoFiP9CSaveDatai
      * @address 0x19A3F0
      * @size 0x178
-     * @unknownret
      */
     void Load(int, CSaveData *, int);
 
     /**
+     * Clears the georama part definitions of one map.
+     *
      * @mangled Initialize__14CEditPartsInfoFi
      * @address 0x19A570
      * @size 0x1C8
-     * @unknownret
      */
     void Initialize(int);
 
     /**
+     * Fills one georama part definition from its packed header.
+     *
      * @mangled Initialize__14CEditPartsInfoFiP18EPARTS_INFO_HEADER
      * @address 0x19A740
      * @size 0x64
-     * @unknownret
      */
     void Initialize(int, EPARTS_INFO_HEADER *);
 

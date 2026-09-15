@@ -82,6 +82,8 @@ STATIC_ASSERT(sizeof(CHARA_UNK_1068) == 0x14);
 class MotionParam {
 public:
     /**
+     * Constructs the motion parameters.
+     *
      * @mangled __ct__11MotionParamFv
      * @address 0x143610
      * @size 0xC

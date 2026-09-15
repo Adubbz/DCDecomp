@@ -12,26 +12,29 @@ public:
     s32 unk_5C;
 
     /**
+     * Puts one damage number on the screen over what took the hit.
+     *
      * @mangled EntryValue__9CHitValueFPfiiP6CFrame
      * @address 0x1B6370
      * @size 0x1E4
-     * @unknownret
      */
     void EntryValue(float *, int, int, CFrame *);
 
     /**
+     * Draws the damage numbers standing on the screen.
+     *
      * @mangled Draw__9CHitValueFv
      * @address 0x1B6560
      * @size 0x2F0
-     * @unknownret
      */
     void Draw(void);
 
     /**
+     * Advances the damage numbers' rise and fade.
+     *
      * @mangled Step__9CHitValueFv
      * @address 0x1B6850
      * @size 0x198
-     * @unknownret
      */
     void Step(void);
 };

@@ -33,14 +33,56 @@ INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1630);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1631);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1632__2);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1633);
+/**
+ * Clears the debug overlay's state.
+ *
+ * @mangled DebugInfomationInit__Fv
+ * @address 0x1B46F0
+ * @size 0xC8
+ */
 INCLUDE_ASM("asm/nonmatchings/collisiondata", DebugInfomationInit__Fv);
+/**
+ * Moves through the debug overlay's pages with the pad.
+ *
+ * @mangled DebugInfomationIF__Fv
+ * @address 0x1B47C0
+ * @size 0xE78
+ */
 INCLUDE_ASM("asm/nonmatchings/collisiondata", DebugInfomationIF__Fv);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1825);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @511);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @512);
+/**
+ * Empties the list of key items waiting to be dropped.
+ *
+ * @mangled ClearGateKeyStack__Fv
+ * @address 0x1B5640
+ * @size 0x3C
+ */
 INCLUDE_ASM("asm/nonmatchings/collisiondata", ClearGateKeyStack__Fv);
 INCLUDE_ASM("asm/nonmatchings/collisiondata", SetGateKeyStack__Fi);
+/**
+ * Builds a resource path by putting one of the fixed prefixes before a name.
+ *
+ * @mangled NameExchg__FPci
+ * @address 0x1B5740
+ * @size 0x60
+ */
 INCLUDE_ASM("asm/nonmatchings/collisiondata", NameExchg__FPci);
 INCLUDE_ASM("asm/nonmatchings/collisiondata", Set__14CCollisionDataFPfiiffiiii);
+/**
+ * Reports which recorded hit reaches the player.
+ *
+ * @mangled CheckHitUser__14CCollisionDataFPfif
+ * @address 0x1B5920
+ * @size 0x1BC
+ */
 INCLUDE_ASM("asm/nonmatchings/collisiondata", CheckHitUser__14CCollisionDataFPfif);
+/**
+ * Records the push a hit gives whatever it struck.
+ *
+ * @mangled SetKickBack__14CCollisionDataFPfffi
+ * @address 0x1B5AE0
+ * @size 0xA4
+ */
 INCLUDE_ASM("asm/nonmatchings/collisiondata", SetKickBack__14CCollisionDataFPfffi);

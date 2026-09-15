@@ -15,38 +15,44 @@ public:
     u8 unk_594[0x8C];
 
     /**
+     * Draws the items lying on the floor.
+     *
      * @mangled Draw__11CRandomItemFv
      * @address 0x1D6BE0
      * @size 0x1BC
-     * @unknownret
      */
     void Draw(void);
 
     /**
+     * Draws the corner-map marks of the items lying on the floor.
+     *
      * @mangled MapSymbolDraw__11CRandomItemFv
      * @address 0x1D6DA0
      * @size 0x148
-     * @unknownret
      */
     void MapSymbolDraw(void);
 
     /**
+     * Raises the pickup event for an item the party has walked onto.
+     *
      * @mangled checkEvent__11CRandomItemFv
      * @address 0x1D6EF0
      * @size 0x50
-     * @unknownret
      */
     int checkEvent(void);
 
     /**
+     * Drops items that ended up somewhere they may not lie.
+     *
      * @mangled checkErr__11CRandomItemFv
      * @address 0x1D6F40
      * @size 0x60
-     * @unknownret
      */
     int checkErr(void);
 
     /**
+     * Reports which lying item the party is standing on.
+     *
      * @mangled CheckPosition__11CRandomItemFv
      * @address 0x1D6FA0
      * @size 0x250
@@ -54,36 +60,39 @@ public:
     int CheckPosition(void);
 
     /**
+     * Puts one item on the floor at a position.
+     *
      * @mangled Set__11CRandomItemFPfiii
      * @address 0x1D71F0
      * @size 0xD8
-     * @unknownret
      */
     void Set(float *, int, int, int);
 
     /**
+     * Finds a free slot among the thirty-two lying items.
+     *
      * @mangled CheckID__11CRandomItemFv
      * @address 0x1D72D0
      * @size 0x4C
-     * @unknownret
      */
     void CheckID(void);
 
     /**
-     * Tells whether an item already lies on the floor.
+     * Reports whether one item number is already lying on the floor.
      *
      * @mangled CheckItemNo__11CRandomItemFi
      * @address 0x1D7320
      * @size 0x58
-     * @unknownret
+     * Tells whether an item already lies on the floor.
      */
     int CheckItemNo(int);
 
     /**
+     * Advances the lying items' bob and sparkle by a frame.
+     *
      * @mangled Step__11CRandomItemFv
      * @address 0x1D7380
      * @size 0x158
-     * @unknownret
      */
     void Step(void);
 };

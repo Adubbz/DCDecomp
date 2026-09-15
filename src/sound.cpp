@@ -6,7 +6,21 @@ INCLUDE_ASM("asm/nonmatchings/sound", GetSeNo__6CSoundFii);
 INCLUDE_ASM("asm/nonmatchings/sound", StopVoice__6CSoundFi);
 INCLUDE_RODATA("asm/nonmatchings/sound", @221__2);
 INCLUDE_ASM("asm/nonmatchings/sound", SetReverb__6CSoundFiii);
+/**
+ * Sends one command to the sound processor.
+ *
+ * @mangled set_spu__Fiiii
+ * @address 0x143D70
+ * @size 0x168
+ */
 INCLUDE_ASM("asm/nonmatchings/sound", set_spu__Fiiii);
+/**
+ * Sends a header and body pair across to the sound processor's memory.
+ *
+ * @mangled TransHdBd__Fiiii
+ * @address 0x143EE0
+ * @size 0x1EC
+ */
 INCLUDE_ASM("asm/nonmatchings/sound", TransHdBd__Fiiii);
 INCLUDE_RODATA("asm/nonmatchings/sound", @245__2);
 INCLUDE_RODATA("asm/nonmatchings/sound", @246);

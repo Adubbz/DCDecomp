@@ -1102,10 +1102,11 @@ void MenuTextureClip(int &, int &, int &, int, int);
 int GetNumberKeta(int);
 
 /**
+ * Gives the description of one menu icon.
+ *
  * @mangled GetMenuIconInfo__Fi
  * @address 0x22DF40
  * @size 0x5C
- * @unknownret
  */
 void GetMenuIconInfo(int);
 

@@ -17,26 +17,29 @@ public:
     u8 unk_04[0x9C];
 
     /**
+     * Reads one model and its motions out of an archive into two arenas.
+     *
      * @mangled LoadPack__12CMotionModelFPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P11MOTION_INFOi
      * @address 0x1B6A30
      * @size 0x2A0
-     * @unknownret
      */
     void LoadPack(unsigned int *, char *, CDataAlloc2<1> *, CDataAlloc2<1> *, MOTION_INFO *, int);
 
     /**
+     * Advances the model's motion by a frame.
+     *
      * @mangled Step__12CMotionModelFv
      * @address 0x1B6CD0
      * @size 0x68
-     * @unknownret
      */
     void Step(void);
 
     /**
+     * Draws the model.
+     *
      * @mangled Draw__12CMotionModelFv
      * @address 0x1B6D40
      * @size 0x2C
-     * @unknownret
      */
     void Draw(void);
 };

@@ -17,28 +17,189 @@ INCLUDE_RODATA("asm/nonmatchings/mathutil", @1036);
 INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std13bad_exception);
 INCLUDE_RODATA("asm/nonmatchings/mathutil", @1039);
 
+/**
+ * Runs a constructor over every element of an array.
+ *
+ * @mangled __construct_array
+ * @address 0x1222D0
+ * @size 0x12C
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", __construct_array);
+/**
+ * Runs a constructor over every element of a newly allocated array.
+ *
+ * @mangled __construct_new_array
+ * @address 0x122400
+ * @size 0x14C
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", __construct_new_array);
+/**
+ * Frees storage that `operator new` handed out.
+ *
+ * @mangled __dl__FPv
+ * @address 0x122550
+ * @size 0x40
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", __dl__FPv);
+/**
+ * Destroys a `std::exception`.
+ *
+ * @mangled __dt__Q23std9exceptionFv
+ * @address 0x122590
+ * @size 0x6C
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", __dt__Q23std9exceptionFv);
+/**
+ * Gives a `std::exception`'s description.
+ *
+ * @mangled what__Q23std9exceptionCFv
+ * @address 0x122600
+ * @size 0xC
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", what__Q23std9exceptionCFv);
+/**
+ * Reports whether a thrown type matches a catch clause's type.
+ *
+ * @mangled __throw_catch_compare
+ * @address 0x122610
+ * @size 0x26C
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", __throw_catch_compare);
+/**
+ * Calls the handler for an exception a function did not declare.
+ *
+ * @mangled unexpected__3stdFv
+ * @address 0x122880
+ * @size 0x24
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", unexpected__3stdFv);
+/**
+ * Calls the handler that ends the program after an unrecoverable exception.
+ *
+ * @mangled terminate__3stdFv
+ * @address 0x1228B0
+ * @size 0x24
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", terminate__3stdFv);
+/**
+ * The default unexpected-exception handler, which terminates.
+ *
+ * @mangled duhandler__3stdFv
+ * @address 0x1228E0
+ * @size 0x24
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", duhandler__3stdFv);
+/**
+ * The default terminate handler, which stops the program.
+ *
+ * @mangled dthandler__3stdFv
+ * @address 0x122910
+ * @size 0x1C
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", dthandler__3stdFv);
+/**
+ * Records one global object so that its destructor runs at exit.
+ *
+ * @mangled __register_global_object
+ * @address 0x122930
+ * @size 0x24
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", __register_global_object);
+/**
+ * Starts the C++ runtime: its handlers and its global-object list.
+ *
+ * @mangled __initialize_cpp_rts
+ * @address 0x122960
+ * @size 0x54
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", __initialize_cpp_rts);
+/**
+ * Reads an unsigned number out of a mangled type name.
+ *
+ * @mangled __DecodeUnsignedNumber__FPcPUi
+ * @address 0x1229C0
+ * @size 0xA0
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", __DecodeUnsignedNumber__FPcPUi);
+/**
+ * Reads a signed number out of a mangled type name.
+ *
+ * @mangled __DecodeSignedNumber__FPcPi
+ * @address 0x122A60
+ * @size 0xA0
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", __DecodeSignedNumber__FPcPi);
+/**
+ * Ends a catch clause and releases the exception it caught.
+ *
+ * @mangled __end__catch
+ * @address 0x122B00
+ * @size 0x38
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", __end__catch);
+/**
+ * Raises an exception a function did not declare, through the unexpected handler.
+ *
+ * @mangled __unexpected
+ * @address 0x122B40
+ * @size 0x1C0
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", __unexpected);
+/**
+ * Destroys a `std::bad_exception`.
+ *
+ * @mangled __dt__Q23std13bad_exceptionFv
+ * @address 0x122D00
+ * @size 0x84
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", __dt__Q23std13bad_exceptionFv);
+/**
+ * Gives a `std::bad_exception`'s description.
+ *
+ * @mangled what__Q23std13bad_exceptionCFv
+ * @address 0x122D90
+ * @size 0xC
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", what__Q23std13bad_exceptionCFv);
+/**
+ * Starts the MetroWerks runtime.
+ *
+ * @mangled mwInit
+ * @address 0x122DA0
+ * @size 0x40
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", mwInit);
+/**
+ * Starts the overlay loader and records where overlays are read to.
+ *
+ * @mangled mwOverlayInit
+ * @address 0x122DE0
+ * @size 0x8C
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", mwOverlayInit);
+/**
+ * Tells the runtime that an overlay has finished loading.
+ *
+ * @mangled MWNotifyOverlayLoaded
+ * @address 0x122E70
+ * @size 0x8
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", MWNotifyOverlayLoaded);
+/**
+ * Reads one overlay image off the disc.
+ *
+ * @mangled mwBload
+ * @address 0x122E80
+ * @size 0xB4
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", mwBload);
+/**
+ * Reads an overlay into memory and gives back whether it succeeded.
+ *
+ * @mangled mwLoadOverlay
+ * @address 0x122F40
+ * @size 0x70
+ */
 INCLUDE_ASM("asm/nonmatchings/mathutil", mwLoadOverlay);
 
 #define PI 3.1415927f

@@ -89,12 +89,54 @@ int ezTransToIOP(void *iop_address, void *ee_address, int size) {
 
 INCLUDE_RODATA("asm/nonmatchings/gameutil", @414__4);
 
+/**
+ * Interpolates between two quaternions along the shorter arc.
+ *
+ * @mangled QuatSlerp__FPfPffPf
+ * @address 0x147B70
+ * @size 0x1B0
+ */
 INCLUDE_ASM("asm/nonmatchings/gameutil", QuatSlerp__FPfPffPf);
+/**
+ * Applies one motion's frame to a model's frame hierarchy.
+ *
+ * @mangled MotionProc__FP6CFrameP12MOTION_STATEP8Mot_List
+ * @address 0x147D20
+ * @size 0xB34
+ */
 INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc__FP6CFrameP12MOTION_STATEP8Mot_List);
+/**
+ * Applies one motion's frame to a model, blending between two motions.
+ *
+ * @mangled MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List
+ * @address 0x148860
+ * @size 0x498
+ */
 INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List);
 INCLUDE_ASM("asm/nonmatchings/gameutil", SetMotionEX__FP6CFrameP14tagMOTION_TYPEP11MOTION_INFOP12MOTION_STATEP12tagFRAME_INF);
+/**
+ * Takes a motion's animation data out of an arena and fills it from a file.
+ *
+ * @mangled CreateAnimeDataEX__FP14tagMOTION_TYPEP14CDataAlloc2_1_P16MOTION_FILE_INFO
+ * @address 0x149090
+ * @size 0x264
+ */
 INCLUDE_ASM("asm/nonmatchings/gameutil", CreateAnimeDataEX__FP14tagMOTION_TYPEP14CDataAlloc2_1_P16MOTION_FILE_INFO);
+/**
+ * Builds the per-frame animation table a model's motion needs.
+ *
+ * @mangled AnimeDataInit__FP6CFrameP14tagMOTION_TYPEP14CDataAlloc2_1_PP12tagFRAME_INF
+ * @address 0x149300
+ * @size 0x98
+ */
 INCLUDE_ASM("asm/nonmatchings/gameutil", AnimeDataInit__FP6CFrameP14tagMOTION_TYPEP14CDataAlloc2_1_PP12tagFRAME_INF);
+/**
+ * Builds the per-frame animation table into storage already set aside.
+ *
+ * @mangled AnimeDataInit__FP6CFrameP14tagMOTION_TYPEP14CDataAlloc2_1_P12tagFRAME_INF
+ * @address 0x1493A0
+ * @size 0x318
+ */
 INCLUDE_ASM("asm/nonmatchings/gameutil", AnimeDataInit__FP6CFrameP14tagMOTION_TYPEP14CDataAlloc2_1_P12tagFRAME_INF);
 INCLUDE_ASM("asm/nonmatchings/gameutil", NextMotionTime_GET_EX__FP11MOTION_INFOP12MOTION_STATE);
 
@@ -186,14 +228,35 @@ int LookAt(CFrameVu1 *frame, CFrameVu1 *target, _FRAMECONSTRAINT constraint) {
     return LookAt(frame, matrix[3], constraint);
 }
 
+/**
+ * Collects the polygons of a set that meet a box.
+ *
+ * @mangled PickUpNearPoly__FP6CCPoly7CBoxVu0P6CCPolyi
+ * @address 0x149C30
+ * @size 0x118
+ */
 INCLUDE_ASM("asm/nonmatchings/gameutil", PickUpNearPoly__FP6CCPoly7CBoxVu0P6CCPolyi);
 INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHit__FP6CCPolyiPfPfPfii);
 INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHitVertical__FP6CCPolyiPffPfi);
 INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHits__FP6CCPolyiPfPfiPiPA4_fii);
 INCLUDE_ASM("asm/nonmatchings/gameutil", MoveCheck__FPfPfPfP13MoveCheckInfoP6CCPolyii);
 INCLUDE_ASM("asm/nonmatchings/gameutil", GetFootPoly__FPffP6CCPolyPfP6CCPolyii);
+/**
+ * Finds the event polygon a movement crosses.
+ *
+ * @mangled GetEventPoly__FPfPfP6CCPolyPiPfP6CCPolyii
+ * @address 0x14AD90
+ * @size 0x1E0
+ */
 INCLUDE_ASM("asm/nonmatchings/gameutil", GetEventPoly__FPfPfP6CCPolyPiPfP6CCPolyii);
 INCLUDE_ASM("asm/nonmatchings/gameutil", CheckWidth__FP6CCPolyiPffPfi);
+/**
+ * Reports how far the camera may stand back before the collision stops it.
+ *
+ * @mangled CheckCameraWidth__FP6CCPolyiPffPfi
+ * @address 0x14B830
+ * @size 0x9EC
+ */
 INCLUDE_ASM("asm/nonmatchings/gameutil", CheckCameraWidth__FP6CCPolyiPffPfi);
 static s32 linear_filter;          // Nonzero selects linear filtering for sprite batches.
 static u_long128 *sprite_data_top; // First quadword of the open sprite batch.

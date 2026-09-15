@@ -4,24 +4,61 @@
 
 #include "itemdata.hpp"
 
+/**
+ * Steps the item definition file past whitespace and comments.
+ *
+ * @mangled skipSpace__FPci__2
+ * @address 0x1CD910
+ * @size 0x110
+ * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
+ */
 INCLUDE_ASM("asm/nonmatchings/itemdata", skipSpace__FPci__2);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @549__3);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @550__2);
+/**
+ * Reads one argument out of the item definition file.
+ *
+ * @mangled checkArg__FPciPi__2
+ * @address 0x1CDA20
+ * @size 0x664
+ * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
+ */
 INCLUDE_ASM("asm/nonmatchings/itemdata", checkArg__FPciPi__2);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @653);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @654);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @655);
+/**
+ * Reads the item definition file and fills in the item tables.
+ *
+ * @mangled TEIGIAnalyz__FPc
+ * @address 0x1CE090
+ * @size 0x3B4
+ */
 INCLUDE_ASM("asm/nonmatchings/itemdata", TEIGIAnalyz__FPc);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @762);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @763);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @764);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @765);
+/**
+ * Reads the textures the item definitions name.
+ *
+ * @mangled TEIGIImgLoad__FPUiP14CDataAlloc2_1_
+ * @address 0x1CE450
+ * @size 0x594
+ */
 INCLUDE_ASM("asm/nonmatchings/itemdata", TEIGIImgLoad__FPUiP14CDataAlloc2_1_);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @766__2);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @768);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @809__2);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @810);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @811);
+/**
+ * Reads the models the item definitions name.
+ *
+ * @mangled TEIGIMdsLoad__FPUii
+ * @address 0x1CE9F0
+ * @size 0x2398
+ */
 INCLUDE_ASM("asm/nonmatchings/itemdata", TEIGIMdsLoad__FPUii);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @1149);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @1150__2);

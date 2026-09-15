@@ -1068,6 +1068,8 @@ public:
     void InitData(void);
 
     /**
+     * Presets the shared message window and points it at a message buffer.
+     *
      * @mangled SetBuffInfo__10MenuClsMesFPs
      * @address 0x20B5D0
      * @size 0x21C
@@ -1094,6 +1096,8 @@ public:
     void Step(void);
 
     /**
+     * Draws the message window's single line over the menu.
+     *
      * @mangled Draw1__10MenuClsMesFiii
      * @address 0x20B9E0
      * @size 0x4DC

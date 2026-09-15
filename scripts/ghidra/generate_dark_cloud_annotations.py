@@ -339,9 +339,10 @@ def documented_functions() -> dict[str, dict[str, object]]:
                 docs[mangled] = record
             elif (previous["address"], previous["size"]) == (address, size):
                 # The same function documented twice -- a header declaring it and
-                # the unit defining it. They agree on what it is, so the first
-                # wins and headers are read first.
-                pass
+                # the unit defining it. They agree on what it is, so whichever
+                # actually says something wins, and the header wins a tie.
+                if previous["comment"] is None and record["comment"] is not None:
+                    docs[mangled] = record
             else:
                 # Two different claims about where the function is. Neither is
                 # safe to apply.

@@ -245,18 +245,20 @@ public:
     s32 used[12]; /**< 1 while the slot holds a shot. */
 
     /**
+     * Draws the twelve projectiles of one shot.
+     *
      * @mangled draw__5CSHOTFv
      * @address 0x1ABC40
      * @size 0xCC
-     * @unknownret
      */
     void draw(void);
 
     /**
+     * Advances the twelve projectiles of one shot.
+     *
      * @mangled step__5CSHOTFv
      * @address 0x1ABD10
      * @size 0x204
-     * @unknownret
      */
     void step(void);
 };
@@ -271,18 +273,20 @@ public:
     s32 unk_280[16];
 
     /**
+     * Starts one rapid-fire projectile from a position along a heading.
+     *
      * @mangled Set__15CSHOT_MACHINGUNFPfPfii
      * @address 0x1AE660
      * @size 0xEC
-     * @unknownret
      */
     void Set(float *, float *, int, int);
 
     /**
+     * Advances the sixteen rapid-fire projectiles.
+     *
      * @mangled Step__15CSHOT_MACHINGUNFv
      * @address 0x1AE750
      * @size 0x230
-     * @unknownret
      */
     void Step(void);
 };

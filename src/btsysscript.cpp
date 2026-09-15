@@ -23,10 +23,50 @@ void BtSetMapJumpFloor(int floor) {
     BtMapJumpFloor = floor;
 }
 
+/**
+ * Reads one script argument as an integer, converting it where the slot holds a float.
+ *
+ * @mangled GetStackInt__FP12RS_STACKDATA__2
+ * @address 0x1BB930
+ * @size 0x44
+ * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
+ */
 INCLUDE_ASM("asm/nonmatchings/btsysscript", GetStackInt__FP12RS_STACKDATA__2);
+/**
+ * Reads one script argument as a float, converting it where the slot holds an integer.
+ *
+ * @mangled GetStackFloat__FP12RS_STACKDATA__2
+ * @address 0x1BB980
+ * @size 0x2C
+ * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
+ */
 INCLUDE_ASM("asm/nonmatchings/btsysscript", GetStackFloat__FP12RS_STACKDATA__2);
+/**
+ * Reads one script argument as a string.
+ *
+ * @mangled GetStackString__FP12RS_STACKDATA__2
+ * @address 0x1BB9B0
+ * @size 0xC
+ * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
+ */
 INCLUDE_ASM("asm/nonmatchings/btsysscript", GetStackString__FP12RS_STACKDATA__2);
+/**
+ * Writes an integer back through a script argument that names a variable.
+ *
+ * @mangled SetStack__FP12RS_STACKDATAi__2
+ * @address 0x1BB9C0
+ * @size 0x20
+ * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
+ */
 INCLUDE_ASM("asm/nonmatchings/btsysscript", SetStack__FP12RS_STACKDATAi__2);
+/**
+ * Writes a float back through a script argument that names a variable.
+ *
+ * @mangled SetStack__FP12RS_STACKDATAf__2
+ * @address 0x1BB9E0
+ * @size 0x20
+ * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
+ */
 INCLUDE_ASM("asm/nonmatchings/btsysscript", SetStack__FP12RS_STACKDATAf__2);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_FLOOR_LEVEL__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_FLOOR_LEVEL__FP12RS_STACKDATAi);

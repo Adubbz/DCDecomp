@@ -666,5 +666,19 @@ void CCharacter::StopCloth(int) {
     }
 }
 
+/**
+ * Blends two bone transforms for a stretched vertex, on the vector unit.
+ *
+ * @mangled StretchBind2__FPfPfPf
+ * @address 0x13B3E0
+ * @size 0x64
+ */
 INCLUDE_ASM("asm/nonmatchings/chararead", StretchBind2__FPfPfPf);
+/**
+ * Gives the length of a three-component vector, on the vector unit.
+ *
+ * @mangled vuabs__FPf
+ * @address 0x13B450
+ * @size 0x30
+ */
 INCLUDE_ASM("asm/nonmatchings/chararead", vuabs__FPf);

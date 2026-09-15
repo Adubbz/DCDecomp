@@ -8,154 +8,173 @@
  */
 
 /**
+ * Runs a constructor over every element of an array.
+ *
  * @mangled __construct_array
  * @address 0x1222D0
  * @size 0x12C
- * @unknownret
  */
 void __construct_array(/* unknown args */);
 
 /**
+ * Runs a constructor over every element of a newly allocated array.
+ *
  * @mangled __construct_new_array
  * @address 0x122400
  * @size 0x14C
- * @unknownret
  */
 void __construct_new_array(/* unknown args */);
 
 /**
+ * Frees storage that `operator new` handed out.
+ *
  * @mangled __dl__FPv
  * @address 0x122550
  * @size 0x40
- * @unknownret
  */
 void __dl(void *);
 
 /**
+ * Reports whether a thrown type matches a catch clause's type.
+ *
  * @mangled __throw_catch_compare
  * @address 0x122610
  * @size 0x26C
- * @unknownret
  */
 void __throw_catch_compare(/* unknown args */);
 
 /**
+ * Calls the handler for an exception a function did not declare.
+ *
  * @mangled unexpected__3stdFv
  * @address 0x122880
  * @size 0x24
- * @unknownret
  */
 void unexpected(void);
 
 /**
+ * Calls the handler that ends the program after an unrecoverable exception.
+ *
  * @mangled terminate__3stdFv
  * @address 0x1228B0
  * @size 0x24
- * @unknownret
  */
 void terminate(void);
 
 /**
+ * The default unexpected-exception handler, which terminates.
+ *
  * @mangled duhandler__3stdFv
  * @address 0x1228E0
  * @size 0x24
- * @unknownret
  */
 void duhandler(void);
 
 /**
+ * The default terminate handler, which stops the program.
+ *
  * @mangled dthandler__3stdFv
  * @address 0x122910
  * @size 0x1C
- * @unknownret
  */
 void dthandler(void);
 
 /**
+ * Records one global object so that its destructor runs at exit.
+ *
  * @mangled __register_global_object
  * @address 0x122930
  * @size 0x24
- * @unknownret
  */
 void __register_global_object(/* unknown args */);
 
 /**
+ * Starts the C++ runtime: its handlers and its global-object list.
+ *
  * @mangled __initialize_cpp_rts
  * @address 0x122960
  * @size 0x54
- * @unknownret
  */
 void __initialize_cpp_rts(/* unknown args */);
 
 /**
+ * Reads an unsigned number out of a mangled type name.
+ *
  * @mangled __DecodeUnsignedNumber__FPcPUi
  * @address 0x1229C0
  * @size 0xA0
- * @unknownret
  */
 void __DecodeUnsignedNumber(char *, unsigned int *);
 
 /**
+ * Reads a signed number out of a mangled type name.
+ *
  * @mangled __DecodeSignedNumber__FPcPi
  * @address 0x122A60
  * @size 0xA0
- * @unknownret
  */
 void __DecodeSignedNumber(char *, int *);
 
 /**
+ * Ends a catch clause and releases the exception it caught.
+ *
  * @mangled __end__catch
  * @address 0x122B00
  * @size 0x38
- * @unknownret
  */
 void __end__catch(/* unknown args */);
 
 /**
+ * Raises an exception a function did not declare, through the unexpected handler.
+ *
  * @mangled __unexpected
  * @address 0x122B40
  * @size 0x1C0
- * @unknownret
  */
 void __unexpected(/* unknown args */);
 
 /**
+ * Starts the MetroWerks runtime.
+ *
  * @mangled mwInit
  * @address 0x122DA0
  * @size 0x40
- * @unknownret
  */
 void mwInit(/* unknown args */);
 
 /**
+ * Starts the overlay loader and records where overlays are read to.
+ *
  * @mangled mwOverlayInit
  * @address 0x122DE0
  * @size 0x8C
- * @unknownret
  */
 void mwOverlayInit(/* unknown args */);
 
 /**
+ * Tells the runtime that an overlay has finished loading.
+ *
  * @mangled MWNotifyOverlayLoaded
  * @address 0x122E70
  * @size 0x8
- * @unknownret
  */
 void MWNotifyOverlayLoaded(/* unknown args */);
 
 /**
+ * Reads one overlay image off the disc.
+ *
  * @mangled mwBload
  * @address 0x122E80
  * @size 0xB4
- * @unknownret
  */
 void mwBload(/* unknown args */);
 
 /**
+ * Reads an overlay into memory and gives back whether it succeeded.
+ *
  * @mangled mwLoadOverlay
  * @address 0x122F40
  * @size 0x70
- * @unknownret
  */
 extern "C" int mwLoadOverlay(char *path, void *address);
 

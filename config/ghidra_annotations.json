@@ -878,6 +878,7 @@
       "size": "0x12C",
       "name": "__construct_array",
       "sha256": "dc1f0d3ccf0538499373499d9d31be35b5f1d81b1a4bfeafa4db5fbaca20306b",
+      "comment": "Runs a constructor over every element of an array.",
       "documentation": "include/mathutil.hpp"
     },
     {
@@ -889,6 +890,7 @@
       "size": "0x14C",
       "name": "__construct_new_array",
       "sha256": "c519752c9ea47d0edb2a6e1eee318f8fa72ca44153185a315ceecc78c8d6df34",
+      "comment": "Runs a constructor over every element of a newly allocated array.",
       "documentation": "include/mathutil.hpp"
     },
     {
@@ -900,6 +902,7 @@
       "size": "0x40",
       "name": "__dl__FPv",
       "sha256": "8939a6d5e8e9dbe91a9cdb675f02d54904af8809d7439050eb5836fa86e193c6",
+      "comment": "Frees storage that `operator new` handed out.",
       "documentation": "include/mathutil.hpp"
     },
     {
@@ -910,7 +913,9 @@
       "address": "0x00122590",
       "size": "0x6C",
       "name": "__dt__Q23std9exceptionFv",
-      "sha256": "c66cfa3e32d926a9271664a46dc1c1da30c58f565435f39ca91f6a772135f019"
+      "sha256": "c66cfa3e32d926a9271664a46dc1c1da30c58f565435f39ca91f6a772135f019",
+      "comment": "Destroys a `std::exception`.",
+      "documentation": "src/mathutil.cpp"
     },
     {
       "translation_unit": "mathutil",
@@ -920,7 +925,9 @@
       "address": "0x00122600",
       "size": "0xC",
       "name": "what__Q23std9exceptionCFv",
-      "sha256": "4690a0d3719b79541c9db4c98bc2a49def4af01ce38f014194768e9cc3b62bd9"
+      "sha256": "4690a0d3719b79541c9db4c98bc2a49def4af01ce38f014194768e9cc3b62bd9",
+      "comment": "Gives a `std::exception`'s description.",
+      "documentation": "src/mathutil.cpp"
     },
     {
       "translation_unit": "mathutil",
@@ -931,6 +938,7 @@
       "size": "0x26C",
       "name": "__throw_catch_compare",
       "sha256": "1cac03757923ed13b5097ec0396cbe41f10b812bd8de75bb9c89840ebf952b75",
+      "comment": "Reports whether a thrown type matches a catch clause's type.",
       "documentation": "include/mathutil.hpp"
     },
     {
@@ -942,6 +950,7 @@
       "size": "0x24",
       "name": "unexpected__3stdFv",
       "sha256": "27bd5ab575fb361859f46034fadba5609594ea520b2cda5c1fd3121a00b95383",
+      "comment": "Calls the handler for an exception a function did not declare.",
       "documentation": "include/mathutil.hpp"
     },
     {
@@ -953,6 +962,7 @@
       "size": "0x24",
       "name": "terminate__3stdFv",
       "sha256": "a75259f1cbf7897cfc6989fca202f37c5f154a43f76872e6cdc9796da96969cd",
+      "comment": "Calls the handler that ends the program after an unrecoverable exception.",
       "documentation": "include/mathutil.hpp"
     },
     {
@@ -964,6 +974,7 @@
       "size": "0x24",
       "name": "duhandler__3stdFv",
       "sha256": "a75259f1cbf7897cfc6989fca202f37c5f154a43f76872e6cdc9796da96969cd",
+      "comment": "The default unexpected-exception handler, which terminates.",
       "documentation": "include/mathutil.hpp"
     },
     {
@@ -975,6 +986,7 @@
       "size": "0x1C",
       "name": "dthandler__3stdFv",
       "sha256": "334db879a844a6b88fb62a523f74b84ed98c91d5b22405a15ea86daa2f65ff09",
+      "comment": "The default terminate handler, which stops the program.",
       "documentation": "include/mathutil.hpp"
     },
     {
@@ -986,6 +998,7 @@
       "size": "0x24",
       "name": "__register_global_object",
       "sha256": "87f88b63960db4401e98e21abde95a2ba6e54b16b5c7672e0990dbf4d54b8eb8",
+      "comment": "Records one global object so that its destructor runs at exit.",
       "documentation": "include/mathutil.hpp"
     },
     {
@@ -997,6 +1010,7 @@
       "size": "0x54",
       "name": "__initialize_cpp_rts",
       "sha256": "6e950545064d0581094ad3356921d70a0f00f13e9a4910dfec7d54d00e24e03b",
+      "comment": "Starts the C++ runtime: its handlers and its global-object list.",
       "documentation": "include/mathutil.hpp"
     },
     {
@@ -1008,6 +1022,7 @@
       "size": "0xA0",
       "name": "__DecodeUnsignedNumber__FPcPUi",
       "sha256": "6b31e7318ba5870d7dcbfceb6d819154e072317b560ce1bbbd301a4183d573b4",
+      "comment": "Reads an unsigned number out of a mangled type name.",
       "documentation": "include/mathutil.hpp"
     },
     {
@@ -1019,6 +1034,7 @@
       "size": "0xA0",
       "name": "__DecodeSignedNumber__FPcPi",
       "sha256": "9f24de5c49a70423f84b50c095f820997545405c1790fe02d22cbca40ebc763a",
+      "comment": "Reads a signed number out of a mangled type name.",
       "documentation": "include/mathutil.hpp"
     },
     {
@@ -1030,6 +1046,7 @@
       "size": "0x38",
       "name": "__end__catch",
       "sha256": "7775a3239eb67b238aae22e20941c51e27cebb403e40ccdf2dd72dd3747eb2dc",
+      "comment": "Ends a catch clause and releases the exception it caught.",
       "documentation": "include/mathutil.hpp"
     },
     {
@@ -1041,6 +1058,7 @@
       "size": "0x1C0",
       "name": "__unexpected",
       "sha256": "7b120df785131beec904fedee75e12e885c6b9dc0b524d468cde809c7f859d69",
+      "comment": "Raises an exception a function did not declare, through the unexpected handler.",
       "documentation": "include/mathutil.hpp"
     },
     {
@@ -1051,7 +1069,9 @@
       "address": "0x00122D00",
       "size": "0x84",
       "name": "__dt__Q23std13bad_exceptionFv",
-      "sha256": "0e6209bdfebac210f5e2514146a5776a42827978d5b268650754674301665a13"
+      "sha256": "0e6209bdfebac210f5e2514146a5776a42827978d5b268650754674301665a13",
+      "comment": "Destroys a `std::bad_exception`.",
+      "documentation": "src/mathutil.cpp"
     },
     {
       "translation_unit": "mathutil",
@@ -1061,7 +1081,9 @@
       "address": "0x00122D90",
       "size": "0xC",
       "name": "what__Q23std13bad_exceptionCFv",
-      "sha256": "29fd68061353605cd957e6f1b9ec11f88853563faeb55f01603e895062efa6d5"
+      "sha256": "29fd68061353605cd957e6f1b9ec11f88853563faeb55f01603e895062efa6d5",
+      "comment": "Gives a `std::bad_exception`'s description.",
+      "documentation": "src/mathutil.cpp"
     },
     {
       "translation_unit": "mathutil",
@@ -1072,6 +1094,7 @@
       "size": "0x40",
       "name": "mwInit",
       "sha256": "b63f51116c7537eec256e80d559b7b0f814f5a8c72b2968ecff72f772721085d",
+      "comment": "Starts the MetroWerks runtime.",
       "documentation": "include/mathutil.hpp"
     },
     {
@@ -1083,6 +1106,7 @@
       "size": "0x8C",
       "name": "mwOverlayInit",
       "sha256": "a9ce6a4ec3a2b3ccba6e3e4a9a8dc56647825d117a55781a0bc16f43945c3c40",
+      "comment": "Starts the overlay loader and records where overlays are read to.",
       "documentation": "include/mathutil.hpp"
     },
     {
@@ -1094,6 +1118,7 @@
       "size": "0x8",
       "name": "MWNotifyOverlayLoaded",
       "sha256": "6d64edf91449c1b17746c1ef18afa2eb25c70bdf1322ab3df5a2630993b7e2f1",
+      "comment": "Tells the runtime that an overlay has finished loading.",
       "documentation": "include/mathutil.hpp"
     },
     {
@@ -1105,6 +1130,7 @@
       "size": "0xB4",
       "name": "mwBload",
       "sha256": "78cb289a1c4fe7457aee9c9a390dca4825a4b982fbc2448886e7511ffe33a3b6",
+      "comment": "Reads one overlay image off the disc.",
       "documentation": "include/mathutil.hpp"
     },
     {
@@ -1116,6 +1142,7 @@
       "size": "0x70",
       "name": "mwLoadOverlay",
       "sha256": "02be3bbb0d8a42375a36ce56b747b0da2861e1152932f6a5cff474a0ed216f2f",
+      "comment": "Reads an overlay into memory and gives back whether it succeeded.",
       "documentation": "include/mathutil.hpp"
     },
     {
@@ -1235,7 +1262,8 @@
       "size": "0xC",
       "name": "SetMDTDataAddress__13CVisualMDTVu1FPUi",
       "sha256": "ba2db0b14bb996078c4d4220d9dfd4cdafbd0e20e194ab285f8319aa1f205b76",
-      "documentation": "include/visualmdtvu1.hpp"
+      "comment": "Points the visual at the model data it draws from.",
+      "documentation": "src/visualvu1.cpp"
     },
     {
       "translation_unit": "visualvu1",
@@ -1246,7 +1274,8 @@
       "size": "0xC",
       "name": "GetMDTDataAddress__13CVisualMDTVu1Fv",
       "sha256": "0e873f0d68954c5c5d6ba62f8bb60771110f2f9f5d0c85dac5fdc6c11404b1a6",
-      "documentation": "include/visualmdtvu1.hpp"
+      "comment": "Gives the model data the visual draws from.",
+      "documentation": "src/visualvu1.cpp"
     },
     {
       "translation_unit": "visualvu1",
@@ -1257,7 +1286,8 @@
       "size": "0x3C",
       "name": "Initialize__13CVisualMDTVu1Fv",
       "sha256": "940e7aeec0ecc990cba0a8cc35865e4eb11cd386251ae4b8098e4b14fdf2da20",
-      "documentation": "include/visualmdtvu1.hpp"
+      "comment": "Clears the model visual's data pointer and packet.",
+      "documentation": "src/visualvu1.cpp"
     },
     {
       "translation_unit": "visualvu1",
@@ -1268,7 +1298,8 @@
       "size": "0x48",
       "name": "__ct__13CVisualMDTVu1Fv",
       "sha256": "73ced75a1d31acf874bf6d0b6baf0979828fc4d04acf2b880c3034f00785626b",
-      "documentation": "include/visualmdtvu1.hpp"
+      "comment": "Constructs a model visual and clears it.",
+      "documentation": "src/visualvu1.cpp"
     },
     {
       "translation_unit": "visualvu1",
@@ -1327,7 +1358,8 @@
       "size": "0x120",
       "name": "DrawVu1__13CVisualMDTVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii",
       "sha256": "ee3051551439fa5d3bd2ebd1a38dc4020e2f5b5c28c40f2943389e358116ecc6",
-      "documentation": "include/visualmdtvu1.hpp"
+      "comment": "Draws the model, rebuilding its packet where the data has changed.",
+      "documentation": "src/visualvu1.cpp"
     },
     {
       "translation_unit": "visualvu1",
@@ -1338,7 +1370,8 @@
       "size": "0x34",
       "name": "DrawVu1__13CVisualMDTVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii",
       "sha256": "151f8331acae6410e3c5ac293051e055fb6443c9020dc32a8377c50335d5e8f5",
-      "documentation": "include/visualmdtvu1.hpp"
+      "comment": "Draws the model into a VIF packet, choosing the buffer the frame is using.",
+      "documentation": "src/visualvu1.cpp"
     },
     {
       "translation_unit": "visualvu1",
@@ -1420,7 +1453,9 @@
       "address": "0x00137440",
       "size": "0xA38",
       "name": "scissior__FPA4_fPA4_fPA4_ff",
-      "sha256": "7e8e3fb01fdcce65768ae1a488e74c0340c0756d8af1096c979596e5776e89ce"
+      "sha256": "7e8e3fb01fdcce65768ae1a488e74c0340c0756d8af1096c979596e5776e89ce",
+      "comment": "Clips a triangle against the near plane, giving back the polygon that survives.",
+      "documentation": "src/character.cpp"
     },
     {
       "translation_unit": "chararead",
@@ -1430,7 +1465,9 @@
       "address": "0x0013B3E0",
       "size": "0x64",
       "name": "StretchBind2__FPfPfPf",
-      "sha256": "3fd0e16e3aea8c0c889b00b2d9b296270ef56c1f4d139a39103eee22d33d91a7"
+      "sha256": "3fd0e16e3aea8c0c889b00b2d9b296270ef56c1f4d139a39103eee22d33d91a7",
+      "comment": "Blends two bone transforms for a stretched vertex, on the vector unit.",
+      "documentation": "src/chararead.cpp"
     },
     {
       "translation_unit": "chararead",
@@ -1440,7 +1477,9 @@
       "address": "0x0013B450",
       "size": "0x30",
       "name": "vuabs__FPf",
-      "sha256": "430850d5da36fc6adfdce9a3dd4db9b5f508e517d5bb0f41391e32aa67b08526"
+      "sha256": "430850d5da36fc6adfdce9a3dd4db9b5f508e517d5bb0f41391e32aa67b08526",
+      "comment": "Gives the length of a three-component vector, on the vector unit.",
+      "documentation": "src/chararead.cpp"
     },
     {
       "translation_unit": "cloth",
@@ -1450,7 +1489,9 @@
       "address": "0x0013B7A0",
       "size": "0x100",
       "name": "Clear__6CClothFv",
-      "sha256": "48d34a094e89a1b4b262e68afce76870901269163fa98cec6422152363cb1954"
+      "sha256": "48d34a094e89a1b4b262e68afce76870901269163fa98cec6422152363cb1954",
+      "comment": "Puts every cloth vertex back where its frame says it rests.",
+      "documentation": "src/cloth.cpp"
     },
     {
       "translation_unit": "cloth",
@@ -1460,7 +1501,9 @@
       "address": "0x0013B8A0",
       "size": "0xBCC",
       "name": "Step__6CClothFi",
-      "sha256": "799af0ac04ffaf8a1f97e41daad0fe53417591a63ad7cb7792576b7a3fde6f30"
+      "sha256": "799af0ac04ffaf8a1f97e41daad0fe53417591a63ad7cb7792576b7a3fde6f30",
+      "comment": "Advances the cloth simulation, pushing its vertices out of the exclusion boxes.",
+      "documentation": "src/cloth.cpp"
     },
     {
       "translation_unit": "cloth",
@@ -1470,7 +1513,9 @@
       "address": "0x0013C470",
       "size": "0xC0",
       "name": "DrawVu1__6CClothFPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii",
-      "sha256": "8ab910512680f7137bb1e50acf76c1d5bf08dcfed7476acfafc733ee15c7bf74"
+      "sha256": "8ab910512680f7137bb1e50acf76c1d5bf08dcfed7476acfafc733ee15c7bf74",
+      "comment": "Draws the cloth through the vector unit.",
+      "documentation": "src/cloth.cpp"
     },
     {
       "translation_unit": "cloth",
@@ -1480,7 +1525,9 @@
       "address": "0x0013C530",
       "size": "0xC0",
       "name": "DrawVu1__6CClothFP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii",
-      "sha256": "911bbf997bc359085e947febf84ee6d5a640ffe54383440801e89abfaa3cf463"
+      "sha256": "911bbf997bc359085e947febf84ee6d5a640ffe54383440801e89abfaa3cf463",
+      "comment": "Draws the cloth into a VIF packet.",
+      "documentation": "src/cloth.cpp"
     },
     {
       "translation_unit": "cloth",
@@ -1490,7 +1537,9 @@
       "address": "0x0013C5F0",
       "size": "0x3B8",
       "name": "CreateVUData__6CClothFPUi",
-      "sha256": "bbebd7d3c4cbb61ec43f0b0558b6ddd65b594b545af49cb7310268ac6a4d5972"
+      "sha256": "bbebd7d3c4cbb61ec43f0b0558b6ddd65b594b545af49cb7310268ac6a4d5972",
+      "comment": "Builds the packet that draws the cloth and gives back its size.",
+      "documentation": "src/cloth.cpp"
     },
     {
       "translation_unit": "cloth",
@@ -1500,7 +1549,9 @@
       "address": "0x0013C9B0",
       "size": "0x1C0",
       "name": "InitParam__6CClothFv",
-      "sha256": "6f9fa998928b4187608db1b703527b12fa9fdf7921f632aa565b67be7739cfeb"
+      "sha256": "6f9fa998928b4187608db1b703527b12fa9fdf7921f632aa565b67be7739cfeb",
+      "comment": "Gives the cloth its default grid size, stiffness and gravity.",
+      "documentation": "src/cloth.cpp"
     },
     {
       "translation_unit": "cloth",
@@ -1510,7 +1561,9 @@
       "address": "0x0013CBF0",
       "size": "0x458",
       "name": "Initialize__6CClothFP14CDataAlloc2_1_",
-      "sha256": "e22e3120a31be58fe1ea1eb808c474796ec18112c9a6e8a7619aec8b3ffe0ae0"
+      "sha256": "e22e3120a31be58fe1ea1eb808c474796ec18112c9a6e8a7619aec8b3ffe0ae0",
+      "comment": "Takes the cloth's vertex storage out of an arena.",
+      "documentation": "src/cloth.cpp"
     },
     {
       "translation_unit": "cloth",
@@ -1520,7 +1573,9 @@
       "address": "0x0013D050",
       "size": "0x200",
       "name": "Initialize__6CClothFP10MDT_HEADERP14CDataAlloc2_1_",
-      "sha256": "3257cafbf50217cc006bfe7c10b1bfbee51a6d67949a1d0760eddd9a5b6f78be"
+      "sha256": "3257cafbf50217cc006bfe7c10b1bfbee51a6d67949a1d0760eddd9a5b6f78be",
+      "comment": "Builds the cloth's grid from a model's mesh and takes its storage out of an arena.",
+      "documentation": "src/cloth.cpp"
     },
     {
       "translation_unit": "bound",
@@ -1602,7 +1657,9 @@
       "address": "0x0013F9C0",
       "size": "0x1B4",
       "name": "InitCloth__FP9CFrameVu1R9input_strP14CDataAlloc2_1_",
-      "sha256": "2c79f4a26c54cd0f9c23aba0c7dd6bed6dadb4c3755a25738810ec3102169f2a"
+      "sha256": "2c79f4a26c54cd0f9c23aba0c7dd6bed6dadb4c3755a25738810ec3102169f2a",
+      "comment": "Reads one model's cloth description and attaches the simulation.",
+      "documentation": "src/dataread.cpp"
     },
     {
       "translation_unit": "dataread",
@@ -1612,7 +1669,9 @@
       "address": "0x0013FBE0",
       "size": "0x7C",
       "name": "CommandFRAME__FPPv",
-      "sha256": "aa2cedc5a8dad5363cd1489c55786072e3aff1c72e1bd11f357e28814f165a96"
+      "sha256": "aa2cedc5a8dad5363cd1489c55786072e3aff1c72e1bd11f357e28814f165a96",
+      "comment": "Names the frame the following model commands act on.",
+      "documentation": "src/dataread.cpp"
     },
     {
       "translation_unit": "dataread",
@@ -1622,7 +1681,9 @@
       "address": "0x0013FDB0",
       "size": "0x24C",
       "name": "CommandBOUND__FPPv",
-      "sha256": "f08f66eb90339654ff52b1f18b9f3403535b9ca6b05b264c2f57c9aa0dc6fced"
+      "sha256": "f08f66eb90339654ff52b1f18b9f3403535b9ca6b05b264c2f57c9aa0dc6fced",
+      "comment": "Adds one exclusion box to the cloth on the current frame.",
+      "documentation": "src/dataread.cpp"
     },
     {
       "translation_unit": "dataread",
@@ -1632,7 +1693,9 @@
       "address": "0x00140000",
       "size": "0x320",
       "name": "GetArg__FR9input_strPiPPv__2",
-      "sha256": "ba7f9dddc5b4b0bb8fbb598d36c34c69653c933f98b3e28286a866b061d00227"
+      "sha256": "ba7f9dddc5b4b0bb8fbb598d36c34c69653c933f98b3e28286a866b061d00227",
+      "comment": "Reads one command argument out of a model script.",
+      "documentation": "src/dataread.cpp"
     },
     {
       "translation_unit": "dataread",
@@ -1642,7 +1705,9 @@
       "address": "0x00140320",
       "size": "0x144",
       "name": "SearchCommand__FR9input_strPi__2",
-      "sha256": "6305025564b28e600e97a4eb80147eb18bded2fc317651a68c56408cc7085c8a"
+      "sha256": "6305025564b28e600e97a4eb80147eb18bded2fc317651a68c56408cc7085c8a",
+      "comment": "Finds the command table entry a model script's next word names.",
+      "documentation": "src/dataread.cpp"
     },
     {
       "translation_unit": "dataread",
@@ -1652,7 +1717,9 @@
       "address": "0x00140470",
       "size": "0x94",
       "name": "SkipSpace__FR9input_str__2",
-      "sha256": "f3bb07c7a097d55b1a38445bdd17bb59510f4826a3d6288f2a8f49122040bf3c"
+      "sha256": "f3bb07c7a097d55b1a38445bdd17bb59510f4826a3d6288f2a8f49122040bf3c",
+      "comment": "Steps a model script past whitespace and comments.",
+      "documentation": "src/dataread.cpp"
     },
     {
       "translation_unit": "dataread",
@@ -1662,7 +1729,9 @@
       "address": "0x00140510",
       "size": "0x60",
       "name": "CheckChar__Fc__2",
-      "sha256": "1f743838fe39bee4799b6b0d87f31a7aa7de32af4ea9e61708abffc72ea8b347"
+      "sha256": "1f743838fe39bee4799b6b0d87f31a7aa7de32af4ea9e61708abffc72ea8b347",
+      "comment": "Reports whether a character is not whitespace.",
+      "documentation": "src/dataread.cpp"
     },
     {
       "translation_unit": "dataread",
@@ -1672,7 +1741,9 @@
       "address": "0x00140660",
       "size": "0x1A4",
       "name": "MoveImageTest__FP13sceVif1PacketiiiRC8CRect_i_iiiiii",
-      "sha256": "ae293cd84b738b2d3d6928ac018b59008d2e951c6596187da153382b7e4a4dab"
+      "sha256": "ae293cd84b738b2d3d6928ac018b59008d2e951c6596187da153382b7e4a4dab",
+      "comment": "Copies one rectangle of video memory to another.",
+      "documentation": "src/dataread.cpp"
     },
     {
       "translation_unit": "main",
@@ -1863,6 +1934,7 @@
       "size": "0xC",
       "name": "__ct__11MotionParamFv",
       "sha256": "d565c3ced94188adf77290ff20c83c2e49086c36e428ca753353836b55b10534",
+      "comment": "Constructs the motion parameters.",
       "documentation": "include/character.hpp"
     },
     {
@@ -2005,7 +2077,9 @@
       "address": "0x00143D70",
       "size": "0x168",
       "name": "set_spu__Fiiii",
-      "sha256": "5fd6eff6275adbf6e2dd52abc22a386ba3e6867866bf356b1b125117d790d872"
+      "sha256": "5fd6eff6275adbf6e2dd52abc22a386ba3e6867866bf356b1b125117d790d872",
+      "comment": "Sends one command to the sound processor.",
+      "documentation": "src/sound.cpp"
     },
     {
       "translation_unit": "sound",
@@ -2015,7 +2089,9 @@
       "address": "0x00143EE0",
       "size": "0x1EC",
       "name": "TransHdBd__Fiiii",
-      "sha256": "70b1a2e86cfbba5dfdfcb0026bffb3fd8dbfb59b8564dc12827e1d6508dd5796"
+      "sha256": "70b1a2e86cfbba5dfdfcb0026bffb3fd8dbfb59b8564dc12827e1d6508dd5796",
+      "comment": "Sends a header and body pair across to the sound processor's memory.",
+      "documentation": "src/sound.cpp"
     },
     {
       "translation_unit": "sound",
@@ -2385,7 +2461,9 @@
       "address": "0x00147B70",
       "size": "0x1B0",
       "name": "QuatSlerp__FPfPffPf",
-      "sha256": "ad27b0bb1f4306460f4ddce77ec23770a1e3e74e79426d5c1d744d697548a2bb"
+      "sha256": "ad27b0bb1f4306460f4ddce77ec23770a1e3e74e79426d5c1d744d697548a2bb",
+      "comment": "Interpolates between two quaternions along the shorter arc.",
+      "documentation": "src/gameutil.cpp"
     },
     {
       "translation_unit": "gameutil",
@@ -2395,7 +2473,9 @@
       "address": "0x00147D20",
       "size": "0xB34",
       "name": "MotionProc__FP6CFrameP12MOTION_STATEP8Mot_List",
-      "sha256": "f13137d5fa2d3aaacacb960f6fed34533253698e5829922c55c34941c3c1cbe6"
+      "sha256": "f13137d5fa2d3aaacacb960f6fed34533253698e5829922c55c34941c3c1cbe6",
+      "comment": "Applies one motion's frame to a model's frame hierarchy.",
+      "documentation": "src/gameutil.cpp"
     },
     {
       "translation_unit": "gameutil",
@@ -2405,7 +2485,9 @@
       "address": "0x00148860",
       "size": "0x498",
       "name": "MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List",
-      "sha256": "e8c34f8e135b3e32d066853de9676da1c38ad61fa97f8dd0c00aabb614941f02"
+      "sha256": "e8c34f8e135b3e32d066853de9676da1c38ad61fa97f8dd0c00aabb614941f02",
+      "comment": "Applies one motion's frame to a model, blending between two motions.",
+      "documentation": "src/gameutil.cpp"
     },
     {
       "translation_unit": "gameutil",
@@ -2427,7 +2509,9 @@
       "address": "0x00149090",
       "size": "0x264",
       "name": "CreateAnimeDataEX__FP14tagMOTION_TYPEP14CDataAlloc2_1_P16MOTION_FILE_INFO",
-      "sha256": "7a7d9a0e2fc271ba97c3f2cd9577f381f789238a3928370caccb22cbd1144aaa"
+      "sha256": "7a7d9a0e2fc271ba97c3f2cd9577f381f789238a3928370caccb22cbd1144aaa",
+      "comment": "Takes a motion's animation data out of an arena and fills it from a file.",
+      "documentation": "src/gameutil.cpp"
     },
     {
       "translation_unit": "gameutil",
@@ -2437,7 +2521,9 @@
       "address": "0x00149300",
       "size": "0x98",
       "name": "AnimeDataInit__FP6CFrameP14tagMOTION_TYPEP14CDataAlloc2_1_PP12tagFRAME_INF",
-      "sha256": "367c918eabeafe019c93287f458a71c4532bd258487d3bfb195227dd545d6ce0"
+      "sha256": "367c918eabeafe019c93287f458a71c4532bd258487d3bfb195227dd545d6ce0",
+      "comment": "Builds the per-frame animation table a model's motion needs.",
+      "documentation": "src/gameutil.cpp"
     },
     {
       "translation_unit": "gameutil",
@@ -2447,7 +2533,9 @@
       "address": "0x001493A0",
       "size": "0x318",
       "name": "AnimeDataInit__FP6CFrameP14tagMOTION_TYPEP14CDataAlloc2_1_P12tagFRAME_INF",
-      "sha256": "95b1f44cc5ecae8c1704919e3c82e3f4ad32d168707abe4aa81ec23f0061056d"
+      "sha256": "95b1f44cc5ecae8c1704919e3c82e3f4ad32d168707abe4aa81ec23f0061056d",
+      "comment": "Builds the per-frame animation table into storage already set aside.",
+      "documentation": "src/gameutil.cpp"
     },
     {
       "translation_unit": "gameutil",
@@ -2469,7 +2557,9 @@
       "address": "0x00149C30",
       "size": "0x118",
       "name": "PickUpNearPoly__FP6CCPoly7CBoxVu0P6CCPolyi",
-      "sha256": "e86de1ffd6f69012cf218f297e05b7c616307129d2b9626ffe13f9a851417b74"
+      "sha256": "e86de1ffd6f69012cf218f297e05b7c616307129d2b9626ffe13f9a851417b74",
+      "comment": "Collects the polygons of a set that meet a box.",
+      "documentation": "src/gameutil.cpp"
     },
     {
       "translation_unit": "gameutil",
@@ -2539,7 +2629,9 @@
       "address": "0x0014AD90",
       "size": "0x1E0",
       "name": "GetEventPoly__FPfPfP6CCPolyPiPfP6CCPolyii",
-      "sha256": "be4be9719e6a3b0e262fa60d678fbbbe80c1bf35e36810912c248ac618ac218c"
+      "sha256": "be4be9719e6a3b0e262fa60d678fbbbe80c1bf35e36810912c248ac618ac218c",
+      "comment": "Finds the event polygon a movement crosses.",
+      "documentation": "src/gameutil.cpp"
     },
     {
       "translation_unit": "gameutil",
@@ -2561,7 +2653,9 @@
       "address": "0x0014B830",
       "size": "0x9EC",
       "name": "CheckCameraWidth__FP6CCPolyiPffPfi",
-      "sha256": "e7a4426bb20859fc346b6d3b21d478e90c0bc1e093033fc5385bf63b20c72d1e"
+      "sha256": "e7a4426bb20859fc346b6d3b21d478e90c0bc1e093033fc5385bf63b20c72d1e",
+      "comment": "Reports how far the camera may stand back before the collision stops it.",
+      "documentation": "src/gameutil.cpp"
     },
     {
       "translation_unit": "gameutil",
@@ -3640,6 +3734,7 @@
       "size": "0x144",
       "name": "GetNextTAG__18CScriptInterpreterFv",
       "sha256": "76ffce5ddebf095870f1c9a5e61712a186846c297dc2691f6f7fe3ff486cbcd2",
+      "comment": "Reads the next tag out of the script and gives its number.",
       "documentation": "include/scriptinterpreter.hpp"
     },
     {
@@ -3651,6 +3746,7 @@
       "size": "0x10",
       "name": "SetTAG__18CScriptInterpreterFP9TAG_PARAMi",
       "sha256": "e0da31d72730188601920f841eaccd17c223b0ce8278323d4eb2303b868ac17c",
+      "comment": "Gives the interpreter the table of tags it recognises.",
       "documentation": "include/scriptinterpreter.hpp"
     },
     {
@@ -3662,6 +3758,7 @@
       "size": "0x10",
       "name": "SetFunction__18CScriptInterpreterFP14SPI_FUNC_PARAMi",
       "sha256": "f49d48879b0db4e75c3d52abc37d5ff69e9e15c99333bce17145aa8db57bb6d6",
+      "comment": "Gives the interpreter the table of commands it may call.",
       "documentation": "include/scriptinterpreter.hpp"
     },
     {
@@ -3673,6 +3770,7 @@
       "size": "0x38",
       "name": "SetScript__18CScriptInterpreterFPci",
       "sha256": "a61e3056e653bf5c2e62114d2f844418d1deb65e57110d4db3573281a05adc37",
+      "comment": "Points the interpreter at the script text it is to read.",
       "documentation": "include/scriptinterpreter.hpp"
     },
     {
@@ -3684,6 +3782,7 @@
       "size": "0x38",
       "name": "__ct__18CScriptInterpreterFv",
       "sha256": "b17d40c3428b485dcb3d1f3d1de94cd9f07b9e6e413a080051875f6342079051",
+      "comment": "Constructs an interpreter with no script, tags or commands.",
       "documentation": "include/scriptinterpreter.hpp"
     },
     {
@@ -3695,6 +3794,7 @@
       "size": "0x178",
       "name": "ControlCode__18CScriptInterpreterFv",
       "sha256": "eb3494d20ce61910ae1ff9f53fd063c04681b7fc93f9c8cdc714d4fbe59885fe",
+      "comment": "Reads one control code out of the script.",
       "documentation": "include/scriptinterpreter.hpp"
     },
     {
@@ -3706,6 +3806,7 @@
       "size": "0x320",
       "name": "CallFunction__18CScriptInterpreterFPi",
       "sha256": "9e08a48c24f91866eaaedd87173415acc8f3726c09c69090ca4a2f04e3f39e7e",
+      "comment": "Calls the command the script names, having gathered its arguments.",
       "documentation": "include/scriptinterpreter.hpp"
     },
     {
@@ -3717,6 +3818,7 @@
       "size": "0x3F0",
       "name": "GetArg__18CScriptInterpreterFPi",
       "sha256": "35dfbc7ef71bf72608f2cac7fcd4bf404ba90e1da3cbdbe3a1154a79268cd804",
+      "comment": "Reads one command argument out of the script.",
       "documentation": "include/scriptinterpreter.hpp"
     },
     {
@@ -3728,6 +3830,7 @@
       "size": "0x1A4",
       "name": "SearchCommand__18CScriptInterpreterFPi",
       "sha256": "dda5d20685fe2b825c832c6203955a9da1cb8d0a056a0bf1b1b8b463525a8ba7",
+      "comment": "Finds the command table entry the script's next word names.",
       "documentation": "include/scriptinterpreter.hpp"
     },
     {
@@ -3894,7 +3997,9 @@
       "address": "0x00162580",
       "size": "0x73C",
       "name": "blendTextuer__FP13sceVif1PacketiiiP8CTextureRC8CRect_i_RC8CRect_i_P8CTextureRC8CRect_i_RC8CRect_i_",
-      "sha256": "54ef4bbc519ff43adabae828fe7cbdbcd9743da6ab08c45653c1ec7d579c7cc4"
+      "sha256": "54ef4bbc519ff43adabae828fe7cbdbcd9743da6ab08c45653c1ec7d579c7cc4",
+      "comment": "Draws two textures blended over one another.",
+      "documentation": "src/runeffect.cpp"
     },
     {
       "translation_unit": "runeffect",
@@ -3904,7 +4009,9 @@
       "address": "0x00162CC0",
       "size": "0xB4",
       "name": "initBlendCnt__Fif",
-      "sha256": "38cd123caf29f57b6431a99c07596dfd0a634e61a1bdf926800cd3eab1f7a7aa"
+      "sha256": "38cd123caf29f57b6431a99c07596dfd0a634e61a1bdf926800cd3eab1f7a7aa",
+      "comment": "Fills the blend table with one period of a sine.",
+      "documentation": "src/runeffect.cpp"
     },
     {
       "translation_unit": "runeffect",
@@ -3914,7 +4021,9 @@
       "address": "0x00162D80",
       "size": "0x6E4",
       "name": "blendTextuerTest__FP13sceVif1PacketiiiRC8CRect_i_P8CTextureRC8CRect_i_RC8CRect_i_ff",
-      "sha256": "ac75aff45b3ad4ccf8bef6d53a9d0f12303b8d5352e74f923b5a1e5f995d0256"
+      "sha256": "ac75aff45b3ad4ccf8bef6d53a9d0f12303b8d5352e74f923b5a1e5f995d0256",
+      "comment": "Draws a blended texture clipped to a rectangle, at a given strength.",
+      "documentation": "src/runeffect.cpp"
     },
     {
       "translation_unit": "runeffect",
@@ -3925,6 +4034,7 @@
       "size": "0xC",
       "name": "Lighting__10CRunEffectFi",
       "sha256": "e377c4eae22c9efe97c7ef1865fe3b182495f0bacc085c09a69454c65253020f",
+      "comment": "Sets whether the running effect takes light.",
       "documentation": "include/runeffect.hpp"
     },
     {
@@ -3936,6 +4046,7 @@
       "size": "0x46C",
       "name": "Draw__10CRunEffectFv",
       "sha256": "5e08a8eb88ea560f07712011c115fd08a3c094eb6de09dac5ffcf133d4be3a19",
+      "comment": "Draws the dust the player's run leaves behind.",
       "documentation": "include/runeffect.hpp"
     },
     {
@@ -3947,6 +4058,7 @@
       "size": "0x8C",
       "name": "Set__10CRunEffectFPf",
       "sha256": "88b290289ba6c0a680cebbcae681645d6ea86ba75362507ae3ca063d3f67a29b",
+      "comment": "Starts one puff of run dust at a position.",
       "documentation": "include/runeffect.hpp"
     },
     {
@@ -3958,6 +4070,7 @@
       "size": "0x70",
       "name": "Step__10CRunEffectFv",
       "sha256": "41b4cded4d98fa7b38a00bb6609113975cfa461dee57ba31153e3b4af2794a76",
+      "comment": "Advances the run dust by a frame.",
       "documentation": "include/runeffect.hpp"
     },
     {
@@ -3969,6 +4082,7 @@
       "size": "0x3C",
       "name": "__ct__10CRunEffectFv",
       "sha256": "3d4b88eae8ac31998c3ee64ae77761e6727ebbd52bbe858a9aa4c5ca50795926",
+      "comment": "Constructs the run effect with no dust standing.",
       "documentation": "include/runeffect.hpp"
     },
     {
@@ -4659,6 +4773,7 @@
       "size": "0x6B0",
       "name": "TexAnime__13CTextureAnimeFi",
       "sha256": "5ac73593b5419f617f29574d4d0880ebd154cf6bb189db0bfea667fc26121505",
+      "comment": "Uploads one animation group's current textures to the graphics synthesizer.",
       "documentation": "include/textureanime.hpp"
     },
     {
@@ -5101,7 +5216,9 @@
       "address": "0x00172100",
       "size": "0x58",
       "name": "EdDoorOpenSe__FiPf",
-      "sha256": "6cf5c8e7645661dc1088964f8fd4ab499674ec6e05155c261223828f67e54edb"
+      "sha256": "6cf5c8e7645661dc1088964f8fd4ab499674ec6e05155c261223828f67e54edb",
+      "comment": "Plays the sound one kind of door makes when it opens.",
+      "documentation": "src/edit.cpp"
     },
     {
       "translation_unit": "edit",
@@ -5111,7 +5228,9 @@
       "address": "0x00172160",
       "size": "0x58",
       "name": "EdDoorCloseSe__FiPf",
-      "sha256": "6de327296a1e03dcf35dbab497304610e96140c99ea91d425299b38c4ea9658f"
+      "sha256": "6de327296a1e03dcf35dbab497304610e96140c99ea91d425299b38c4ea9658f",
+      "comment": "Plays the sound one kind of door makes when it closes.",
+      "documentation": "src/edit.cpp"
     },
     {
       "translation_unit": "edit",
@@ -5133,7 +5252,9 @@
       "address": "0x001725F0",
       "size": "0x4C8",
       "name": "EdDrawCharacter__FP10CCharacteriiP12CNPCharacterPiiP13ED_EVENT_INFO",
-      "sha256": "e4d70cf727cd9f0ee68496f7200581b46c1794359ff5e5a767fea60be9905160"
+      "sha256": "e4d70cf727cd9f0ee68496f7200581b46c1794359ff5e5a767fea60be9905160",
+      "comment": "Draws one editor character with its shadow, cursor and event state.",
+      "documentation": "src/edit.cpp"
     },
     {
       "translation_unit": "edit",
@@ -5143,7 +5264,9 @@
       "address": "0x00173380",
       "size": "0x58",
       "name": "EdDrawItem__Fv",
-      "sha256": "6185ad665ee259b4a88a21df86cd0942d4f35e533f0bef99c6fb0627d057b704"
+      "sha256": "6185ad665ee259b4a88a21df86cd0942d4f35e533f0bef99c6fb0627d057b704",
+      "comment": "Draws the item the player is holding up.",
+      "documentation": "src/edit.cpp"
     },
     {
       "translation_unit": "edit",
@@ -5153,7 +5276,9 @@
       "address": "0x00173E00",
       "size": "0x70",
       "name": "EdSaveFrameImage__F8CTexture",
-      "sha256": "0e21c2e4cebe4ee226bb2c1a3d880c137cd6daff49fad6a05888f49b385878fb"
+      "sha256": "0e21c2e4cebe4ee226bb2c1a3d880c137cd6daff49fad6a05888f49b385878fb",
+      "comment": "Copies the drawn frame into a texture, for the menu to show behind itself.",
+      "documentation": "src/edit.cpp"
     },
     {
       "translation_unit": "edit",
@@ -5163,7 +5288,9 @@
       "address": "0x00173F00",
       "size": "0x1EC",
       "name": "EdMenuLoop__FP6ClsMes",
-      "sha256": "7eb0afbb857645c18418dae2c1fc328d8a5a41535c419ac974aa01b16242ffde"
+      "sha256": "7eb0afbb857645c18418dae2c1fc328d8a5a41535c419ac974aa01b16242ffde",
+      "comment": "Runs one frame of the editor's message menu and reports when it closes.",
+      "documentation": "src/edit.cpp"
     },
     {
       "translation_unit": "editloop",
@@ -5173,7 +5300,9 @@
       "address": "0x00174390",
       "size": "0x74C",
       "name": "LoadEditMapData__FP13EDIT_MAP_INFOPci",
-      "sha256": "cfeb7be082276f245d11a9b9e7ee8cb386b8603d35d29a29c37ad3b97d464d69"
+      "sha256": "cfeb7be082276f245d11a9b9e7ee8cb386b8603d35d29a29c37ad3b97d464d69",
+      "comment": "Reads one editor map's description through the script interpreter.",
+      "documentation": "src/editloop.cpp"
     },
     {
       "translation_unit": "editloop",
@@ -5183,7 +5312,9 @@
       "address": "0x001797E0",
       "size": "0x1FE8",
       "name": "EditLoop__Fv",
-      "sha256": "374f4ab561c53fba9aa0d611b229af79c8d430b72fb182d9425fdf3011edf53c"
+      "sha256": "374f4ab561c53fba9aa0d611b229af79c8d430b72fb182d9425fdf3011edf53c",
+      "comment": "Runs one frame of the editor and reports what it is to do next.",
+      "documentation": "src/editloop.cpp"
     },
     {
       "translation_unit": "editloop",
@@ -5193,7 +5324,9 @@
       "address": "0x0017B7D0",
       "size": "0x11D8",
       "name": "MainDraw__Fv",
-      "sha256": "967e6c0cd95bc8e815424ebec15b069e71e51c4c5be6c7b648474905743ff2dd"
+      "sha256": "967e6c0cd95bc8e815424ebec15b069e71e51c4c5be6c7b648474905743ff2dd",
+      "comment": "Draws the editor's world for one frame.",
+      "documentation": "src/editloop.cpp"
     },
     {
       "translation_unit": "editloop",
@@ -5215,7 +5348,9 @@
       "address": "0x0017DEA0",
       "size": "0x7A4",
       "name": "MainEditMode__Fv",
-      "sha256": "3ca651308e4dc08ffc87c67549eac35acd89badae6c23f797083fae3fcf5bfd2"
+      "sha256": "3ca651308e4dc08ffc87c67549eac35acd89badae6c23f797083fae3fcf5bfd2",
+      "comment": "Runs the editing mode: the cursor, the part list and the placement rules.",
+      "documentation": "src/editloop.cpp"
     },
     {
       "translation_unit": "editloop",
@@ -5225,7 +5360,9 @@
       "address": "0x001800C0",
       "size": "0xB40",
       "name": "MoveEditCursor__Fv",
-      "sha256": "43b583692829aa4502b8cf655086c4b0be98dd7e4a9a88c0cd2cc04ffea8b621"
+      "sha256": "43b583692829aa4502b8cf655086c4b0be98dd7e4a9a88c0cd2cc04ffea8b621",
+      "comment": "Moves the placement cursor across the ground with the pad.",
+      "documentation": "src/editloop.cpp"
     },
     {
       "translation_unit": "editloop",
@@ -5235,7 +5372,9 @@
       "address": "0x00180C00",
       "size": "0x878",
       "name": "LoadTexture__Fv",
-      "sha256": "d551b2bc559ef286d0c8fb50d8ae67bb8045d86417743ac5085c0cbc437d1144"
+      "sha256": "d551b2bc559ef286d0c8fb50d8ae67bb8045d86417743ac5085c0cbc437d1144",
+      "comment": "Enters the editor map's textures once they have been read.",
+      "documentation": "src/editloop.cpp"
     },
     {
       "translation_unit": "editloop",
@@ -5245,7 +5384,9 @@
       "address": "0x001815E0",
       "size": "0xDA8",
       "name": "LoadGroundData__Fv",
-      "sha256": "1ff5e64a29d1d02dedce618cf27b15443a4478685ddab54adf443529011b62e6"
+      "sha256": "1ff5e64a29d1d02dedce618cf27b15443a4478685ddab54adf443529011b62e6",
+      "comment": "Reads the editor map's ground, areas and grid.",
+      "documentation": "src/editloop.cpp"
     },
     {
       "translation_unit": "editloop",
@@ -5255,7 +5396,9 @@
       "address": "0x001828B0",
       "size": "0x754",
       "name": "LoadPTS__FP9CMapPartsPUiP14MAP_PARTS_INFOP13OBJ_ANIME_SEQP16EDIT_EFFECT_INFOP17EDIT_OBJECT_TIMERP14ED_EVENT_POINTP9CMapParts",
-      "sha256": "7de708c69670d127a0adcf478b99f272d955d7be995b1f206ffe9b000b719a1d"
+      "sha256": "7de708c69670d127a0adcf478b99f272d955d7be995b1f206ffe9b000b719a1d",
+      "comment": "Builds one map part from its archive entry, sharing the models of a part already built.",
+      "documentation": "src/editloop.cpp"
     },
     {
       "translation_unit": "editloop",
@@ -5422,6 +5565,7 @@
       "size": "0x80",
       "name": "CheckComplete__14CEditPartsInfoFi",
       "sha256": "97160e5a12d2b92bde67b3c97a4a581a384803e153b5c15bea9ecac3daa90280",
+      "comment": "Reports whether one georama part has every element it wants.",
       "documentation": "include/editpartsinfo.hpp"
     },
     {
@@ -5433,6 +5577,7 @@
       "size": "0x38",
       "name": "GetRequest__14CEditPartsInfoFi",
       "sha256": "b0945e225c4390a762ca133d851819c1f39e4c14ab637cf34558b081053a85c2",
+      "comment": "Gives the villager request one georama part belongs to.",
       "documentation": "include/editpartsinfo.hpp"
     },
     {
@@ -5444,6 +5589,7 @@
       "size": "0x88",
       "name": "GetNextPartsNum__14CEditPartsInfoFi",
       "sha256": "0a713493393f82ee4a4fc844ccf350806bd8af557cc2241ead28b90285c70761",
+      "comment": "Gives the next georama part after one, or -1 at the end.",
       "documentation": "include/editpartsinfo.hpp"
     },
     {
@@ -5455,6 +5601,7 @@
       "size": "0x40",
       "name": "Clear__14CEditPartsInfoFv",
       "sha256": "fbc4fa068dd21a0f1599043e57eeb65fd36aaf63a011d25edaba446dc67f38bd",
+      "comment": "Empties every georama part definition.",
       "documentation": "include/editpartsinfo.hpp"
     },
     {
@@ -5466,6 +5613,7 @@
       "size": "0x128",
       "name": "Save__14CEditPartsInfoFiP9CSaveData",
       "sha256": "609f18377b6c836b54525f0e49717e2a53589928dbe126e3fe10ed225287e8bd",
+      "comment": "Writes the georama part definitions into the save file.",
       "documentation": "include/editpartsinfo.hpp"
     },
     {
@@ -5477,6 +5625,7 @@
       "size": "0x178",
       "name": "Load__14CEditPartsInfoFiP9CSaveDatai",
       "sha256": "16e38fc8dc774fc4a35c9a51b1eba569409eab242a83ab279c492b4d78512310",
+      "comment": "Reads the georama part definitions back out of the save file.",
       "documentation": "include/editpartsinfo.hpp"
     },
     {
@@ -5488,6 +5637,7 @@
       "size": "0x1C8",
       "name": "Initialize__14CEditPartsInfoFi",
       "sha256": "2f7d92a38a370628d15353271b9d3c7f938ed241170a8a9d732717359b1eb58b",
+      "comment": "Clears the georama part definitions of one map.",
       "documentation": "include/editpartsinfo.hpp"
     },
     {
@@ -5499,6 +5649,7 @@
       "size": "0x64",
       "name": "Initialize__14CEditPartsInfoFiP18EPARTS_INFO_HEADER",
       "sha256": "13f52cfcaff44b7f950381e05d953f83d269c53c7bcbfa263dfc9fa39a38ecac",
+      "comment": "Fills one georama part definition from its packed header.",
       "documentation": "include/editpartsinfo.hpp"
     },
     {
@@ -6481,7 +6632,9 @@
       "address": "0x001A5AE0",
       "size": "0x34",
       "name": "__ct__12CGroundWaterFv",
-      "sha256": "c2683e59325025a383cf32366edf3017ab47b9f40f17b0ffa546f6de65501609"
+      "sha256": "c2683e59325025a383cf32366edf3017ab47b9f40f17b0ffa546f6de65501609",
+      "comment": "Constructs the water surface of one ground tile.",
+      "documentation": "src/editground.cpp"
     },
     {
       "translation_unit": "editground",
@@ -6491,7 +6644,9 @@
       "address": "0x001A5B20",
       "size": "0x18C",
       "name": "CheckDelete__FP9CEditAreaP9CMapPartsfff",
-      "sha256": "8d5d284da575032199bd59d2e3291b1febc95d44fdb3b72d19137472ca2664bb"
+      "sha256": "8d5d284da575032199bd59d2e3291b1febc95d44fdb3b72d19137472ca2664bb",
+      "comment": "Reports whether a part may be replaced by the one being placed over it.",
+      "documentation": "src/editground.cpp"
     },
     {
       "translation_unit": "editground",
@@ -6609,7 +6764,9 @@
       "address": "0x001A7890",
       "size": "0x8C",
       "name": "CheckRot__FP9CMapPartsP9CMapPartsi",
-      "sha256": "28da9170a9c0486e91d0490073f66679913c58658faebf6d152cadeff43ef4f6"
+      "sha256": "28da9170a9c0486e91d0490073f66679913c58658faebf6d152cadeff43ef4f6",
+      "comment": "Reports whether two parts face each other at a given quarter-turn offset.",
+      "documentation": "src/editground.cpp"
     },
     {
       "translation_unit": "editground",
@@ -7102,6 +7259,7 @@
       "size": "0xCC",
       "name": "draw__5CSHOTFv",
       "sha256": "0a5b0ca551aa6bae7974453c608f8f7e36584e20fc5e7ad0c2cae8c49220f7ff",
+      "comment": "Draws the twelve projectiles of one shot.",
       "documentation": "include/shot_effect.hpp"
     },
     {
@@ -7113,6 +7271,7 @@
       "size": "0x204",
       "name": "step__5CSHOTFv",
       "sha256": "288e0b6178b4f95aed0c218ec647c2ab8f8682161eb5a96a077523f48d7f0b13",
+      "comment": "Advances the twelve projectiles of one shot.",
       "documentation": "include/shot_effect.hpp"
     },
     {
@@ -7220,6 +7379,7 @@
       "size": "0xEC",
       "name": "Set__15CSHOT_MACHINGUNFPfPfii",
       "sha256": "22cba25ebc71283787674155d91026a4d3fdf6ae11a9fbb658deaaefb71c8e88",
+      "comment": "Starts one rapid-fire projectile from a position along a heading.",
       "documentation": "include/shot_effect.hpp"
     },
     {
@@ -7231,6 +7391,7 @@
       "size": "0x230",
       "name": "Step__15CSHOT_MACHINGUNFv",
       "sha256": "0238c46e349d903cc9a8aa9aa6fa51f0386709878e66cf17951b954c643f78d4",
+      "comment": "Advances the sixteen rapid-fire projectiles.",
       "documentation": "include/shot_effect.hpp"
     },
     {
@@ -7644,7 +7805,9 @@
       "address": "0x001B46F0",
       "size": "0xC8",
       "name": "DebugInfomationInit__Fv",
-      "sha256": "83170857a8f1fe7b7e1b794cf7cb8f3e85434e3ccfd95bd4ded98c330e9cec13"
+      "sha256": "83170857a8f1fe7b7e1b794cf7cb8f3e85434e3ccfd95bd4ded98c330e9cec13",
+      "comment": "Clears the debug overlay's state.",
+      "documentation": "src/collisiondata.cpp"
     },
     {
       "translation_unit": "collisiondata",
@@ -7654,7 +7817,9 @@
       "address": "0x001B47C0",
       "size": "0xE78",
       "name": "DebugInfomationIF__Fv",
-      "sha256": "968e77b127a6531fd0f5657543f8d7c06c6c134753270a4b2059b5d4eb8a89d5"
+      "sha256": "968e77b127a6531fd0f5657543f8d7c06c6c134753270a4b2059b5d4eb8a89d5",
+      "comment": "Moves through the debug overlay's pages with the pad.",
+      "documentation": "src/collisiondata.cpp"
     },
     {
       "translation_unit": "collisiondata",
@@ -7664,7 +7829,9 @@
       "address": "0x001B5640",
       "size": "0x3C",
       "name": "ClearGateKeyStack__Fv",
-      "sha256": "2da3ec12e2eb44356333082b69a426132989f65cc256133d68ca6ca0a72c5a07"
+      "sha256": "2da3ec12e2eb44356333082b69a426132989f65cc256133d68ca6ca0a72c5a07",
+      "comment": "Empties the list of key items waiting to be dropped.",
+      "documentation": "src/collisiondata.cpp"
     },
     {
       "translation_unit": "collisiondata",
@@ -7687,6 +7854,7 @@
       "size": "0x60",
       "name": "NameExchg__FPci",
       "sha256": "c0648e7c8c974bfd8927caef1c0c1e20ff5f403867fcbb6895b4769d9e56e6bd",
+      "comment": "Builds a resource path by putting one of the fixed prefixes before a name.",
       "documentation": "include/collisiondata.hpp"
     },
     {
@@ -7710,6 +7878,7 @@
       "size": "0x1BC",
       "name": "CheckHitUser__14CCollisionDataFPfif",
       "sha256": "647dd9ed822a1f6baca0a00c87dec317052b897aa0e6253b4bc1dd4927471e24",
+      "comment": "Reports which recorded hit reaches the player.",
       "documentation": "include/collisiondata.hpp"
     },
     {
@@ -7721,6 +7890,7 @@
       "size": "0xA4",
       "name": "SetKickBack__14CCollisionDataFPfffi",
       "sha256": "f26c196fe74c4d0c61d937c3f4d82eb0717db6269716b54eec9c53ce2c5c14b3",
+      "comment": "Records the push a hit gives whatever it struck.",
       "documentation": "include/collisiondata.hpp"
     },
     {
@@ -7768,6 +7938,7 @@
       "size": "0x1E4",
       "name": "EntryValue__9CHitValueFPfiiP6CFrame",
       "sha256": "30cb7ac0de5ab3ed60596a4edd3d75a4ec537ba82a57befa35c3f2e342c90b37",
+      "comment": "Puts one damage number on the screen over what took the hit.",
       "documentation": "include/hitvalue.hpp"
     },
     {
@@ -7779,6 +7950,7 @@
       "size": "0x2F0",
       "name": "Draw__9CHitValueFv",
       "sha256": "5bf4fc7d2968b63659438c895c9e05b409b3c567f0159893e69e82106113b893",
+      "comment": "Draws the damage numbers standing on the screen.",
       "documentation": "include/hitvalue.hpp"
     },
     {
@@ -7790,6 +7962,7 @@
       "size": "0x198",
       "name": "Step__9CHitValueFv",
       "sha256": "cacff6dd219c012fa13a4441813d99bac37bc2cd73de80480b4c6a91cb4234f1",
+      "comment": "Advances the damage numbers' rise and fade.",
       "documentation": "include/hitvalue.hpp"
     },
     {
@@ -7813,6 +7986,7 @@
       "size": "0x2A0",
       "name": "LoadPack__12CMotionModelFPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P11MOTION_INFOi",
       "sha256": "f116d33554f329b6698011a582b16cb4a19bba022147356511c198ad78a94580",
+      "comment": "Reads one model and its motions out of an archive into two arenas.",
       "documentation": "include/motionmodel.hpp"
     },
     {
@@ -7824,6 +7998,7 @@
       "size": "0x68",
       "name": "Step__12CMotionModelFv",
       "sha256": "ae254850924dcf114459c60979598d15ef8a8f0cf921020b50961ed2be0e42c1",
+      "comment": "Advances the model's motion by a frame.",
       "documentation": "include/motionmodel.hpp"
     },
     {
@@ -7835,6 +8010,7 @@
       "size": "0x2C",
       "name": "Draw__12CMotionModelFv",
       "sha256": "a122801cc299f4d3f3e75957eea8c30fd921d0b70186ffae6995e857c5966446",
+      "comment": "Draws the model.",
       "documentation": "include/motionmodel.hpp"
     },
     {
@@ -7869,7 +8045,9 @@
       "address": "0x001B6E80",
       "size": "0xA4",
       "name": "setCameraPassData__FP9CFrameVu1P7CCameraPcPc",
-      "sha256": "bf1ffc566d223c9de4da2e7a9f2eb68ca0efdd242f05206d6b7ef31c4a39a656"
+      "sha256": "bf1ffc566d223c9de4da2e7a9f2eb68ca0efdd242f05206d6b7ef31c4a39a656",
+      "comment": "Puts the camera on the two named frames of a model's path.",
+      "documentation": "src/btmisc.cpp"
     },
     {
       "translation_unit": "btmisc",
@@ -7891,7 +8069,9 @@
       "address": "0x001B6F80",
       "size": "0x198",
       "name": "makeWeaponName__FPci",
-      "sha256": "075af68b637a0d50d5c58425c5d34b75fa5abab08bfc0655ef1fc2d3309b4ae1"
+      "sha256": "075af68b637a0d50d5c58425c5d34b75fa5abab08bfc0655ef1fc2d3309b4ae1",
+      "comment": "Builds the resource name of one weapon.",
+      "documentation": "src/btmisc.cpp"
     },
     {
       "translation_unit": "btmisc",
@@ -7901,7 +8081,9 @@
       "address": "0x001B7120",
       "size": "0x124",
       "name": "BtGetItemNamePath__FPcPci",
-      "sha256": "98f61e9778a8a23f88755828d4de4303e8892a9f26b22f8fca619bd47715916b"
+      "sha256": "98f61e9778a8a23f88755828d4de4303e8892a9f26b22f8fca619bd47715916b",
+      "comment": "Builds the model and texture paths of one item.",
+      "documentation": "src/btmisc.cpp"
     },
     {
       "translation_unit": "btmisc",
@@ -7935,7 +8117,9 @@
       "address": "0x001B7470",
       "size": "0xBC",
       "name": "getAtraToSaveData__FiiP9CSaveDataii",
-      "sha256": "dfb293c70b77facd2f14c7dd4d6db099d1ce4580dcd97d77306c551b2f5ac083"
+      "sha256": "dfb293c70b77facd2f14c7dd4d6db099d1ce4580dcd97d77306c551b2f5ac083",
+      "comment": "Records in the save file that an Atla has been collected.",
+      "documentation": "src/btmisc.cpp"
     },
     {
       "translation_unit": "btmisc",
@@ -7945,7 +8129,9 @@
       "address": "0x001B7530",
       "size": "0xE8",
       "name": "createAttachVolume__Fii",
-      "sha256": "561b65b7ef98d4b75d1d55bfab5ac94d872956ac1be1d4acb63d735738f2ee66"
+      "sha256": "561b65b7ef98d4b75d1d55bfab5ac94d872956ac1be1d4acb63d735738f2ee66",
+      "comment": "Gives how much of an attachment one item yields.",
+      "documentation": "src/btmisc.cpp"
     },
     {
       "translation_unit": "btmisc",
@@ -7955,7 +8141,9 @@
       "address": "0x001B7690",
       "size": "0x12C",
       "name": "BtBattleMusic_Excg__FfPfPf",
-      "sha256": "93d0597b8ee08c5ff1800bd4c818acf67eaff3dfc8b498a71e97d8c5263b1876"
+      "sha256": "93d0597b8ee08c5ff1800bd4c818acf67eaff3dfc8b498a71e97d8c5263b1876",
+      "comment": "Crossfades between the field and battle music as the party nears a monster.",
+      "documentation": "src/btmisc.cpp"
     },
     {
       "translation_unit": "btmisc",
@@ -8049,7 +8237,9 @@
       "address": "0x001BB930",
       "size": "0x44",
       "name": "GetStackInt__FP12RS_STACKDATA__2",
-      "sha256": "b56ce31e28ee1f2858398b86f093e0957ca64780ccbdfade42b6a5f27415e965"
+      "sha256": "b56ce31e28ee1f2858398b86f093e0957ca64780ccbdfade42b6a5f27415e965",
+      "comment": "Reads one script argument as an integer, converting it where the slot holds a float.",
+      "documentation": "src/btsysscript.cpp"
     },
     {
       "translation_unit": "btsysscript",
@@ -8059,7 +8249,9 @@
       "address": "0x001BB980",
       "size": "0x2C",
       "name": "GetStackFloat__FP12RS_STACKDATA__2",
-      "sha256": "f4bac30e2c6f77dfd28ec4d2683a970723cd6b73e0ad4b64c6f3111cc731c687"
+      "sha256": "f4bac30e2c6f77dfd28ec4d2683a970723cd6b73e0ad4b64c6f3111cc731c687",
+      "comment": "Reads one script argument as a float, converting it where the slot holds an integer.",
+      "documentation": "src/btsysscript.cpp"
     },
     {
       "translation_unit": "btsysscript",
@@ -8069,7 +8261,9 @@
       "address": "0x001BB9B0",
       "size": "0xC",
       "name": "GetStackString__FP12RS_STACKDATA__2",
-      "sha256": "7ddb3ea293fa822a4f3bb493dab498ddf0dd6434a6b722a226fa35b6d8219f52"
+      "sha256": "7ddb3ea293fa822a4f3bb493dab498ddf0dd6434a6b722a226fa35b6d8219f52",
+      "comment": "Reads one script argument as a string.",
+      "documentation": "src/btsysscript.cpp"
     },
     {
       "translation_unit": "btsysscript",
@@ -8079,7 +8273,9 @@
       "address": "0x001BB9C0",
       "size": "0x20",
       "name": "SetStack__FP12RS_STACKDATAi__2",
-      "sha256": "ffcfaed1fb592cd02ea4d2e30e91c5398e308e7240b7343993cd563f31be7fca"
+      "sha256": "ffcfaed1fb592cd02ea4d2e30e91c5398e308e7240b7343993cd563f31be7fca",
+      "comment": "Writes an integer back through a script argument that names a variable.",
+      "documentation": "src/btsysscript.cpp"
     },
     {
       "translation_unit": "btsysscript",
@@ -8089,7 +8285,9 @@
       "address": "0x001BB9E0",
       "size": "0x20",
       "name": "SetStack__FP12RS_STACKDATAf__2",
-      "sha256": "b7fe9b9a3926eaa7bae74a947c1baadd69b312bcf0a5241666f891a3fd6ab080"
+      "sha256": "b7fe9b9a3926eaa7bae74a947c1baadd69b312bcf0a5241666f891a3fd6ab080",
+      "comment": "Writes a float back through a script argument that names a variable.",
+      "documentation": "src/btsysscript.cpp"
     },
     {
       "translation_unit": "btsysscript",
@@ -8807,7 +9005,9 @@
       "address": "0x001BFAB0",
       "size": "0x440",
       "name": "GetPieroItem__FiiPiPi",
-      "sha256": "294c2ab74b02847786ab1624d68e0a4635a290290028c0b4ce8f8770c923f526"
+      "sha256": "294c2ab74b02847786ab1624d68e0a4635a290290028c0b4ce8f8770c923f526",
+      "comment": "Gives the two items the clown offers on one floor.",
+      "documentation": "src/dungeonparts.cpp"
     },
     {
       "translation_unit": "dungeonparts",
@@ -8841,7 +9041,9 @@
       "address": "0x001C0940",
       "size": "0x74",
       "name": "chkAtraFloor__Fii",
-      "sha256": "f564c6c8cf2a242d41b08904bdbfdc641d53ccbf347933ef6f9f74c7d3a862e8"
+      "sha256": "f564c6c8cf2a242d41b08904bdbfdc641d53ccbf347933ef6f9f74c7d3a862e8",
+      "comment": "Reports whether an Atla may be placed on one floor.",
+      "documentation": "src/dungeonparts.cpp"
     },
     {
       "translation_unit": "dungeonparts",
@@ -8851,7 +9053,9 @@
       "address": "0x001C09C0",
       "size": "0x358",
       "name": "BtAtraListMake__Fi",
-      "sha256": "38c693915409436d2dc050ca1d570b2d243766fb5932f857466aa98730cd53ca"
+      "sha256": "38c693915409436d2dc050ca1d570b2d243766fb5932f857466aa98730cd53ca",
+      "comment": "Builds the list of Atla one dungeon may hand out.",
+      "documentation": "src/dungeonparts.cpp"
     },
     {
       "translation_unit": "dungeonparts",
@@ -8898,6 +9102,7 @@
       "size": "0x58",
       "name": "SetHealZone__13CDungeonPartsFPfff",
       "sha256": "f13f1daaa792a15127349ee3c99d6c405fdcd8891b1ac334bf73d2806ec62f7b",
+      "comment": "Places a healing zone within one dungeon part.",
       "documentation": "include/dungeonparts.hpp"
     },
     {
@@ -8909,6 +9114,7 @@
       "size": "0x17C",
       "name": "Draw__13CDungeonPartsFv",
       "sha256": "d1aab13123c26ef6da61e6976d5ce7abaed6bcfad0ac13f196be3ef13bc78aa1",
+      "comment": "Draws one dungeon part and everything standing on it.",
       "documentation": "include/dungeonparts.hpp"
     },
     {
@@ -8920,6 +9126,7 @@
       "size": "0x348",
       "name": "DrawCalc__13CDungeonPartsFiiii",
       "sha256": "6e068b2bbab8fa5987d7ed1ca8332d624df9a4b42df3508f122cfdc816731c09",
+      "comment": "Chooses the level of detail each of a part's frames draws at.",
       "documentation": "include/dungeonparts.hpp"
     },
     {
@@ -8931,6 +9138,7 @@
       "size": "0x5C",
       "name": "initalize__13CDungeonPartsFv",
       "sha256": "03fae391d276b61b15fca0bbe63532f66939a125270fd076b7638d4f9a8d8c31",
+      "comment": "Clears one dungeon part.",
       "documentation": "include/dungeonparts.hpp"
     },
     {
@@ -9037,7 +9245,9 @@
       "address": "0x001C61C0",
       "size": "0x878",
       "name": "joinRoom__Fii",
-      "sha256": "84f33f6c9ff5a8f7aae600a9c1432dbc51c8ce396898041fc87400528656550f"
+      "sha256": "84f33f6c9ff5a8f7aae600a9c1432dbc51c8ce396898041fc87400528656550f",
+      "comment": "Joins two rooms with a corridor.",
+      "documentation": "src/dungeonmap.cpp"
     },
     {
       "translation_unit": "dungeonmap",
@@ -9203,7 +9413,9 @@
       "address": "0x001CD910",
       "size": "0x110",
       "name": "skipSpace__FPci__2",
-      "sha256": "db9d4224a7d1713c3827aece7e4691d9da977cf9a4238dce82c6c69c75524dc5"
+      "sha256": "db9d4224a7d1713c3827aece7e4691d9da977cf9a4238dce82c6c69c75524dc5",
+      "comment": "Steps the item definition file past whitespace and comments.",
+      "documentation": "src/itemdata.cpp"
     },
     {
       "translation_unit": "itemdata",
@@ -9213,7 +9425,9 @@
       "address": "0x001CDA20",
       "size": "0x664",
       "name": "checkArg__FPciPi__2",
-      "sha256": "1b0ab11994c6c0bc9c4f2319f24d84f742304bf7e063530204800e31526fccfc"
+      "sha256": "1b0ab11994c6c0bc9c4f2319f24d84f742304bf7e063530204800e31526fccfc",
+      "comment": "Reads one argument out of the item definition file.",
+      "documentation": "src/itemdata.cpp"
     },
     {
       "translation_unit": "itemdata",
@@ -9223,7 +9437,9 @@
       "address": "0x001CE090",
       "size": "0x3B4",
       "name": "TEIGIAnalyz__FPc",
-      "sha256": "e1cf87d874572a635d7ec44950b34bc99761094936b51ae7252282290ad3e368"
+      "sha256": "e1cf87d874572a635d7ec44950b34bc99761094936b51ae7252282290ad3e368",
+      "comment": "Reads the item definition file and fills in the item tables.",
+      "documentation": "src/itemdata.cpp"
     },
     {
       "translation_unit": "itemdata",
@@ -9233,7 +9449,9 @@
       "address": "0x001CE450",
       "size": "0x594",
       "name": "TEIGIImgLoad__FPUiP14CDataAlloc2_1_",
-      "sha256": "62aa056fece481cc015d5ce97c45be480b3c2735dcdc929a2f33041e131d5ddc"
+      "sha256": "62aa056fece481cc015d5ce97c45be480b3c2735dcdc929a2f33041e131d5ddc",
+      "comment": "Reads the textures the item definitions name.",
+      "documentation": "src/itemdata.cpp"
     },
     {
       "translation_unit": "itemdata",
@@ -9243,7 +9461,9 @@
       "address": "0x001CE9F0",
       "size": "0x2398",
       "name": "TEIGIMdsLoad__FPUii",
-      "sha256": "297da91970d64ed341c0decef0ae7c02526c2d5ad32d0abc5e709729b1f98603"
+      "sha256": "297da91970d64ed341c0decef0ae7c02526c2d5ad32d0abc5e709729b1f98603",
+      "comment": "Reads the models the item definitions name.",
+      "documentation": "src/itemdata.cpp"
     },
     {
       "translation_unit": "btitem",
@@ -9649,7 +9869,9 @@
       "address": "0x001D5580",
       "size": "0x16C",
       "name": "checkItemUsed__Fi",
-      "sha256": "0a814ffd3a4bf5555b6e4323656fe7029151b72847b37a39e7599005b7df37e8"
+      "sha256": "0a814ffd3a4bf5555b6e4323656fe7029151b72847b37a39e7599005b7df37e8",
+      "comment": "Reports whether one running item is still in use.",
+      "documentation": "src/itembombeffect.cpp"
     },
     {
       "translation_unit": "itembombeffect",
@@ -9671,7 +9893,9 @@
       "address": "0x001D5940",
       "size": "0x1F0",
       "name": "SetBombEffect__FPfiif",
-      "sha256": "2292d21fa4291429812cb37950fb4aa842da64940a94a6a961d726484a23240e"
+      "sha256": "2292d21fa4291429812cb37950fb4aa842da64940a94a6a961d726484a23240e",
+      "comment": "Starts a bomb effect at a position and gives back the slot it took.",
+      "documentation": "src/itembombeffect.cpp"
     },
     {
       "translation_unit": "itembombeffect",
@@ -9682,6 +9906,7 @@
       "size": "0x374",
       "name": "Draw__15CItemBombEffectFP7CCamera",
       "sha256": "4143ae7b4edd5096469a7282564e982b8c926f5918665c88aa54158180a5cf1f",
+      "comment": "Draws the bomb's blast and its shock wave.",
       "documentation": "include/itembombeffect.hpp"
     },
     {
@@ -9693,6 +9918,7 @@
       "size": "0x1F0",
       "name": "Step__15CItemBombEffectFv",
       "sha256": "9e1fa32774ba2f3daf7c035a3630e082f91c915cf4deb292b402db91f44d38a0",
+      "comment": "Advances the bomb effect by a frame.",
       "documentation": "include/itembombeffect.hpp"
     },
     {
@@ -9704,6 +9930,7 @@
       "size": "0xBC",
       "name": "SetBomb__15CItemBombEffectFPff",
       "sha256": "def861c640bf27cf51699356beb58166a988206c299813aa516e932a959b0a76",
+      "comment": "Places the bomb's five blast puffs around a position.",
       "documentation": "include/itembombeffect.hpp"
     },
     {
@@ -9715,6 +9942,7 @@
       "size": "0x48",
       "name": "CheckBomb__15CItemBombEffectFv",
       "sha256": "5ecc64622e7bcc19c95a2d38927f8a4823c08a8dcfcaf29ce1721d8d1b1f01b2",
+      "comment": "Reports whether the bomb effect is still running.",
       "documentation": "include/itembombeffect.hpp"
     },
     {
@@ -9726,6 +9954,7 @@
       "size": "0x30",
       "name": "Initialize__15CItemBombEffectFv",
       "sha256": "1c9be5c46c13d2b11ee080792f42dbb7c8d213a7574176e58b820c8866e991ef",
+      "comment": "Clears the bomb effect.",
       "documentation": "include/itembombeffect.hpp"
     },
     {
@@ -9737,6 +9966,7 @@
       "size": "0x2F8",
       "name": "Draw__10CShockWaveFP7CCamera",
       "sha256": "23ef7fce5675dbfd5fd2cade675faed00f531921d5924b907c8c4a4d364ab1b8",
+      "comment": "Draws the expanding shock-wave ring.",
       "documentation": "include/itembombeffect.hpp"
     },
     {
@@ -9748,6 +9978,7 @@
       "size": "0xD8",
       "name": "Step__10CShockWaveFv",
       "sha256": "e92aa13e56a4f7dc1be01892f15b4ddcc2bbb6dbf89c0ac27d2dcab070baf7aa",
+      "comment": "Expands and fades the shock-wave ring by a frame.",
       "documentation": "include/itembombeffect.hpp"
     },
     {
@@ -9759,6 +9990,7 @@
       "size": "0x1BC",
       "name": "Draw__11CRandomItemFv",
       "sha256": "15fb3cb618c71ea90f5998c6a15f0c63d200747c7c5a79b9fadc13d908bb61f5",
+      "comment": "Draws the items lying on the floor.",
       "documentation": "include/randomitem.hpp"
     },
     {
@@ -9770,6 +10002,7 @@
       "size": "0x148",
       "name": "MapSymbolDraw__11CRandomItemFv",
       "sha256": "b4cca095e8429d1886ff5846bd18e6696961ba398eea20a4b0ee5074fbf66fff",
+      "comment": "Draws the corner-map marks of the items lying on the floor.",
       "documentation": "include/randomitem.hpp"
     },
     {
@@ -9781,6 +10014,7 @@
       "size": "0x50",
       "name": "checkEvent__11CRandomItemFv",
       "sha256": "4f3979f286b80a3145d2180d19981acff508db7a4c986bbf84906d9aab82f928",
+      "comment": "Raises the pickup event for an item the party has walked onto.",
       "documentation": "include/randomitem.hpp"
     },
     {
@@ -9792,6 +10026,7 @@
       "size": "0x60",
       "name": "checkErr__11CRandomItemFv",
       "sha256": "6892567c3c03bbabf155faa9a4c957c0062d09c222389688d2e13b617dfe0286",
+      "comment": "Drops items that ended up somewhere they may not lie.",
       "documentation": "include/randomitem.hpp"
     },
     {
@@ -9803,6 +10038,7 @@
       "size": "0x250",
       "name": "CheckPosition__11CRandomItemFv",
       "sha256": "2e5701117af2d142d8a8c4455b5135589a0e0395bd498fdaa82fac3fd443f1c9",
+      "comment": "Reports which lying item the party is standing on.",
       "documentation": "include/randomitem.hpp"
     },
     {
@@ -9814,6 +10050,7 @@
       "size": "0xD8",
       "name": "Set__11CRandomItemFPfiii",
       "sha256": "2fa4c197d706fe9a59ce55b48d950c7aad5a293bff71e3c334adb7c361a87453",
+      "comment": "Puts one item on the floor at a position.",
       "documentation": "include/randomitem.hpp"
     },
     {
@@ -9825,6 +10062,7 @@
       "size": "0x4C",
       "name": "CheckID__11CRandomItemFv",
       "sha256": "92c3bf208de3c5f59b3b960384b40144a291be310ba22f2b953beeb6134e02b4",
+      "comment": "Finds a free slot among the thirty-two lying items.",
       "documentation": "include/randomitem.hpp"
     },
     {
@@ -9836,7 +10074,7 @@
       "size": "0x58",
       "name": "CheckItemNo__11CRandomItemFi",
       "sha256": "0e84da584d606832f4e85d7b260e93c88546f98297850672a599534c92171a47",
-      "comment": "Tells whether an item already lies on the floor.",
+      "comment": "Reports whether one item number is already lying on the floor. Tells whether an item already lies on the floor.",
       "documentation": "include/randomitem.hpp"
     },
     {
@@ -9848,6 +10086,7 @@
       "size": "0x158",
       "name": "Step__11CRandomItemFv",
       "sha256": "0b9777e6fa20c95ba976af0bebbc5d2cdc93be89d106cc5afa93626eb31ec3b4",
+      "comment": "Advances the lying items' bob and sparkle by a frame.",
       "documentation": "include/randomitem.hpp"
     },
     {
@@ -13267,6 +13506,7 @@
       "size": "0x21C",
       "name": "SetBuffInfo__10MenuClsMesFPs",
       "sha256": "954a7c45a3ada308df4aff398cb0d05cc8e096ecd1e6ee1d6825f2023bde739e",
+      "comment": "Presets the shared message window and points it at a message buffer.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -13278,6 +13518,7 @@
       "size": "0x4DC",
       "name": "Draw1__10MenuClsMesFiii",
       "sha256": "1e137afb4b3f0aa617ed2ceca130ec5f4a80a6bbe44d853631d0c3f57474af2a",
+      "comment": "Draws the message window's single line over the menu.",
       "documentation": "include/battlemenu.hpp"
     },
     {
@@ -14596,7 +14837,9 @@
       "address": "0x002181E0",
       "size": "0xD8",
       "name": "RetCTexAtora__FiRiRi",
-      "sha256": "3dd807270cef00f0af1ff27933f6e1a8b170959b8cfb820ae95b56f47d09cc8e"
+      "sha256": "3dd807270cef00f0af1ff27933f6e1a8b170959b8cfb820ae95b56f47d09cc8e",
+      "comment": "Gives the texture and the cell within it that one georama element draws from.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -14774,7 +15017,9 @@
       "address": "0x00219000",
       "size": "0xD8",
       "name": "AtoraTipGetTexPos__FiRiRi",
-      "sha256": "9d8b126ed309e6593df1f71b3e619706fac5020d57d450314e4d9670a6d52977"
+      "sha256": "9d8b126ed309e6593df1f71b3e619706fac5020d57d450314e4d9670a6d52977",
+      "comment": "Gives the cell within the element sheet that one georama element draws from.",
+      "documentation": "src/memcard.cpp"
     },
     {
       "translation_unit": "memcard",
@@ -16537,6 +16782,7 @@
       "size": "0x5C",
       "name": "GetMenuIconInfo__Fi",
       "sha256": "32767cf2720cf8f8ae24a15e18da9cde743226914c2d10c97aa2e29cc176d4ad",
+      "comment": "Gives the description of one menu icon.",
       "documentation": "include/menu_draw.hpp"
     },
     {
@@ -17359,6 +17605,7 @@
       "size": "0x40",
       "name": "IsMoveIcon__16CMenuIconAutoGetFv",
       "sha256": "ef76bf98c6f560fdc358356193ed466751408334d0a4d00e11a248e9c56cf1e9",
+      "comment": "Reports whether an icon is still flying to its slot.",
       "documentation": "include/menuiconautoget.hpp"
     },
     {
@@ -17370,6 +17617,7 @@
       "size": "0x40",
       "name": "IsSameItem__16CMenuIconAutoGetFi",
       "sha256": "56906b1769df99d6e8183fa2e1503a044de3be8af1c815f8c2e1011c712f51db",
+      "comment": "Reports whether an item is already flying to a slot.",
       "documentation": "include/menuiconautoget.hpp"
     },
     {
@@ -17381,6 +17629,7 @@
       "size": "0x4C",
       "name": "GetMoveIconGole__16CMenuIconAutoGetFii",
       "sha256": "ed39dc52d75eff8a37ab72a2608192a8aabf41c3a132b1f3b89e52cd9effbda2",
+      "comment": "Gives the screen position an icon is to fly to.",
       "documentation": "include/menuiconautoget.hpp"
     },
     {
@@ -17392,6 +17641,7 @@
       "size": "0x48",
       "name": "GetSpace__16CMenuIconAutoGetFv",
       "sha256": "b0edf4a761da1acd44d1c96d765b1b4f63ad6df49a06a02467365154163289a6",
+      "comment": "Gives a free slot among the three flying icons.",
       "documentation": "include/menuiconautoget.hpp"
     },
     {
@@ -17403,6 +17653,7 @@
       "size": "0x18C",
       "name": "IconAutoMove__16CMenuIconAutoGetFv",
       "sha256": "709e9eed7cde28d6b5f6ea6f54408af91a3306da2e3487711c44be59081d0556",
+      "comment": "Advances the flying icons and puts what lands into the inventory.",
       "documentation": "include/menuiconautoget.hpp"
     },
     {
@@ -17414,6 +17665,7 @@
       "size": "0x24",
       "name": "IconMoveTarSet__16CMenuIconAutoGetFiiiiff",
       "sha256": "27b784304e3c2f982302d2b5a55f9ff0adbd2f096cd0b259b91691f04e1c0660",
+      "comment": "Starts one icon flying from a position to a slot.",
       "documentation": "include/menuiconautoget.hpp"
     },
     {
@@ -17425,6 +17677,7 @@
       "size": "0xBC",
       "name": "IconAutoMoveDraw__16CMenuIconAutoGetFv",
       "sha256": "b354da8507850bf732499a788282904930b74ff9ee65858628a30aa4dde06d66",
+      "comment": "Draws the icons part-way through their flight.",
       "documentation": "include/menuiconautoget.hpp"
     },
     {

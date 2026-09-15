@@ -320,6 +320,13 @@ void InitInfo() {
         edit_info->work.events.points[i].event_type = 0;
     }
 }
+/**
+ * Reads one editor map's description through the script interpreter.
+ *
+ * @mangled LoadEditMapData__FP13EDIT_MAP_INFOPci
+ * @address 0x174390
+ * @size 0x74C
+ */
 INCLUDE_ASM("asm/nonmatchings/editloop", LoadEditMapData__FP13EDIT_MAP_INFOPci);
 /**
  * Sets the scene resource used by the current editor map.
@@ -2165,10 +2172,24 @@ int cat_end() {
     }
     return total;
 }
+/**
+ * Runs one frame of the editor and reports what it is to do next.
+ *
+ * @mangled EditLoop__Fv
+ * @address 0x1797E0
+ * @size 0x1FE8
+ */
 INCLUDE_ASM("asm/nonmatchings/editloop", EditLoop__Fv);
 
 INCLUDE_RODATA("asm/nonmatchings/editloop", @1837__2);
 INCLUDE_RODATA("asm/nonmatchings/editloop", @1838__2);
+/**
+ * Draws the editor's world for one frame.
+ *
+ * @mangled MainDraw__Fv
+ * @address 0x17B7D0
+ * @size 0x11D8
+ */
 INCLUDE_ASM("asm/nonmatchings/editloop", MainDraw__Fv);
 
 /**
@@ -2430,6 +2451,13 @@ void EditMode() {
     MoveEditCursor();
     EditPartsObjectOnOff();
 }
+/**
+ * Runs the editing mode: the cursor, the part list and the placement rules.
+ *
+ * @mangled MainEditMode__Fv
+ * @address 0x17DEA0
+ * @size 0x7A4
+ */
 INCLUDE_ASM("asm/nonmatchings/editloop", MainEditMode__Fv);
 /**
  * Steps the player while a door plays its motion, holding them and the camera
@@ -2996,7 +3024,21 @@ int CheckEditToWalk(float *position) {
     sceVu0CopyVector(position, pos);
     return walkable;
 }
+/**
+ * Moves the placement cursor across the ground with the pad.
+ *
+ * @mangled MoveEditCursor__Fv
+ * @address 0x1800C0
+ * @size 0xB40
+ */
 INCLUDE_ASM("asm/nonmatchings/editloop", MoveEditCursor__Fv);
+/**
+ * Enters the editor map's textures once they have been read.
+ *
+ * @mangled LoadTexture__Fv
+ * @address 0x180C00
+ * @size 0x878
+ */
 INCLUDE_ASM("asm/nonmatchings/editloop", LoadTexture__Fv);
 /**
  * Loads the player's model and motions into the arena the caller names, or
@@ -3023,6 +3065,13 @@ void EdLoadMainChara(char *pack, char *name, CDataAlloc2<1> *arena) {
     MainChara.SetPosition(origin, origin, origin);
     Chara = &MainChara;
 }
+/**
+ * Reads the editor map's ground, areas and grid.
+ *
+ * @mangled LoadGroundData__Fv
+ * @address 0x1815E0
+ * @size 0xDA8
+ */
 INCLUDE_ASM("asm/nonmatchings/editloop", LoadGroundData__Fv);
 /**
  * Builds every map part the script placed -- the objects, then the roads and
@@ -3146,6 +3195,14 @@ void LoadObjectParts(void) {
         }
     }
 }
+/**
+ * Builds one map part from its archive entry, sharing the models of a part already
+ * built.
+ *
+ * @mangled LoadPTS__FP9CMapPartsPUiP14MAP_PARTS_INFOP13OBJ_ANIME_SEQP16EDIT_EFFECT_INFOP17EDIT_OBJECT_TIMERP14ED_EVENT_POINTP9CMapParts
+ * @address 0x1828B0
+ * @size 0x754
+ */
 INCLUDE_ASM("asm/nonmatchings/editloop", LoadPTS__FP9CMapPartsPUiP14MAP_PARTS_INFOP13OBJ_ANIME_SEQP16EDIT_EFFECT_INFOP17EDIT_OBJECT_TIMERP14ED_EVENT_POINTP9CMapParts);
 /**
  * Builds one map part that has no part-definition file: its models are loaded

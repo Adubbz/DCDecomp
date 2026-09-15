@@ -7,8 +7,22 @@
 
 #include <cstdlib>
 
+/**
+ * Draws the twelve projectiles of one shot.
+ *
+ * @mangled draw__5CSHOTFv
+ * @address 0x1ABC40
+ * @size 0xCC
+ */
 INCLUDE_ASM("asm/nonmatchings/shot_effect", draw__5CSHOTFv);
 INCLUDE_RODATA("asm/nonmatchings/shot_effect", @625__2);
+/**
+ * Advances the twelve projectiles of one shot.
+ *
+ * @mangled step__5CSHOTFv
+ * @address 0x1ABD10
+ * @size 0x204
+ */
 INCLUDE_ASM("asm/nonmatchings/shot_effect", step__5CSHOTFv);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Draw__12CSHOT_EFFECTFv);
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Step__12CSHOT_EFFECTFv);
@@ -156,5 +170,19 @@ void CSHOT_EFFECT_PACK::SetDmg(s32 damage) {
     }
 }
 
+/**
+ * Starts one rapid-fire projectile from a position along a heading.
+ *
+ * @mangled Set__15CSHOT_MACHINGUNFPfPfii
+ * @address 0x1AE660
+ * @size 0xEC
+ */
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Set__15CSHOT_MACHINGUNFPfPfii);
+/**
+ * Advances the sixteen rapid-fire projectiles.
+ *
+ * @mangled Step__15CSHOT_MACHINGUNFv
+ * @address 0x1AE750
+ * @size 0x230
+ */
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Step__15CSHOT_MACHINGUNFv);

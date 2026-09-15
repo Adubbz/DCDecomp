@@ -14,42 +14,47 @@ private:
 
 public:
     /**
+     * Draws the bomb's blast and its shock wave.
+     *
      * @mangled Draw__15CItemBombEffectFP7CCamera
      * @address 0x1D5B30
      * @size 0x374
-     * @unknownret
      */
     void Draw(CCamera *);
 
     /**
+     * Advances the bomb effect by a frame.
+     *
      * @mangled Step__15CItemBombEffectFv
      * @address 0x1D5EB0
      * @size 0x1F0
-     * @unknownret
      */
     void Step(void);
 
     /**
+     * Places the bomb's five blast puffs around a position.
+     *
      * @mangled SetBomb__15CItemBombEffectFPff
      * @address 0x1D60A0
      * @size 0xBC
-     * @unknownret
      */
     void SetBomb(float *, float);
 
     /**
+     * Reports whether the bomb effect is still running.
+     *
      * @mangled CheckBomb__15CItemBombEffectFv
      * @address 0x1D6160
      * @size 0x48
-     * @unknownret
      */
     void CheckBomb(void);
 
     /**
+     * Clears the bomb effect.
+     *
      * @mangled Initialize__15CItemBombEffectFv
      * @address 0x1D61B0
      * @size 0x30
-     * @unknownret
      */
     void Initialize(void);
 };
@@ -61,18 +66,20 @@ public:
     u8 unk_2C[0x4];
 
     /**
+     * Draws the expanding shock-wave ring.
+     *
      * @mangled Draw__10CShockWaveFP7CCamera
      * @address 0x1D61E0
      * @size 0x2F8
-     * @unknownret
      */
     void Draw(CCamera *);
 
     /**
+     * Expands and fades the shock-wave ring by a frame.
+     *
      * @mangled Step__10CShockWaveFv
      * @address 0x1D64E0
      * @size 0xD8
-     * @unknownret
      */
     void Step(void);
 };

@@ -29,12 +29,33 @@ INCLUDE_RODATA("asm/nonmatchings/btmisc", @890__3);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @891__3);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @892__3);
 INCLUDE_ASM("asm/nonmatchings/btmisc", LoadCollisionFilePack__FPUiPcP14CDataAlloc2_1_);
+/**
+ * Puts the camera on the two named frames of a model's path.
+ *
+ * @mangled setCameraPassData__FP9CFrameVu1P7CCameraPcPc
+ * @address 0x1B6E80
+ * @size 0xA4
+ */
 INCLUDE_ASM("asm/nonmatchings/btmisc", setCameraPassData__FP9CFrameVu1P7CCameraPcPc);
 INCLUDE_ASM("asm/nonmatchings/btmisc", getFramePos__FP9CFrameVu1PcPf);
+/**
+ * Builds the resource name of one weapon.
+ *
+ * @mangled makeWeaponName__FPci
+ * @address 0x1B6F80
+ * @size 0x198
+ */
 INCLUDE_ASM("asm/nonmatchings/btmisc", makeWeaponName__FPci);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @919__2);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @920__2);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @921__2);
+/**
+ * Builds the model and texture paths of one item.
+ *
+ * @mangled BtGetItemNamePath__FPcPci
+ * @address 0x1B7120
+ * @size 0x124
+ */
 INCLUDE_ASM("asm/nonmatchings/btmisc", BtGetItemNamePath__FPcPci);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @928__2);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @929__2);
@@ -45,8 +66,22 @@ INCLUDE_RODATA("asm/nonmatchings/btmisc", @946);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @947);
 INCLUDE_ASM("asm/nonmatchings/btmisc", BtGetWeaponNamePath3__FPcPci);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @953);
+/**
+ * Records in the save file that an Atla has been collected.
+ *
+ * @mangled getAtraToSaveData__FiiP9CSaveDataii
+ * @address 0x1B7470
+ * @size 0xBC
+ */
 INCLUDE_ASM("asm/nonmatchings/btmisc", getAtraToSaveData__FiiP9CSaveDataii);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @958);
+/**
+ * Gives how much of an attachment one item yields.
+ *
+ * @mangled createAttachVolume__Fii
+ * @address 0x1B7530
+ * @size 0xE8
+ */
 INCLUDE_ASM("asm/nonmatchings/btmisc", createAttachVolume__Fii);
 
 void BtBattleMusic_Init() {
@@ -63,5 +98,12 @@ void BtBattleMusic_Stop() {
     }
 }
 
+/**
+ * Crossfades between the field and battle music as the party nears a monster.
+ *
+ * @mangled BtBattleMusic_Excg__FfPfPf
+ * @address 0x1B7690
+ * @size 0x12C
+ */
 INCLUDE_ASM("asm/nonmatchings/btmisc", BtBattleMusic_Excg__FfPfPf);
 INCLUDE_ASM("asm/nonmatchings/btmisc", BtGetFloorLevel__Fi);
