@@ -7560,6 +7560,7 @@
       "size": "0x198",
       "name": "BtSystemScriptEventInfoInit__Fv",
       "sha256": "cc1174cd238ec6694ffac1168833d6f1dee8ae3ff371c1e5d748d9c037968bbc",
+      "comment": "Clears the battle event state and points the event at the player's party.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7571,6 +7572,7 @@
       "size": "0x60",
       "name": "GetObjHDL__Fi",
       "sha256": "4b7a01aa0f91d477e1d4991d978a4f9088958ca5a42589874659a34d9898c1a0",
+      "comment": "Gives one of the thirty-two object handles, or nothing where the index is out of range.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7582,6 +7584,7 @@
       "size": "0xAC",
       "name": "BtSystemScriptLoad__Fi",
       "sha256": "6c74e9fdfd4eb307576ca2116648600472972b76a2007f851a393de1365b115f",
+      "comment": "Reads one floor's system script off the disc and installs its opcode table.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7593,6 +7596,7 @@
       "size": "0x2C4",
       "name": "BtSystemScriptInit__Fv",
       "sha256": "240fa4caac12990b971272286a7b61daa859ef9ee5e65da45f6f76ca4810c23e",
+      "comment": "Puts the battle event camera in place of the player's and clears the object handles.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7604,6 +7608,7 @@
       "size": "0x304",
       "name": "BtSystemScriptAfter__Fv",
       "sha256": "64ee03bda4f373d6fca6d5e2cdc4b70aeb288eaf4f23781ead6ceffbdbb007f1",
+      "comment": "Hands control back to the player's camera and clears what the event set.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7615,6 +7620,7 @@
       "size": "0x24",
       "name": "BtSystemScriptRun__FiP14CDataAlloc2_1_",
       "sha256": "1e9c5a12da9fa7299b947148ea1167650209c0b6a1fc6ed87ae687174496f274",
+      "comment": "Starts one system event script running out of an arena.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7676,6 +7682,7 @@
       "size": "0x2C",
       "name": "_GET_FLOOR_LEVEL__FP12RS_STACKDATAi",
       "sha256": "82a6139c0e175a9bf3245a766bf003e920d5242591915cf4cd828ae825ee4926",
+      "comment": "Gives the floor the party stands on.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7687,6 +7694,7 @@
       "size": "0x34",
       "name": "_SET_FLOOR_LEVEL__FP12RS_STACKDATAi",
       "sha256": "d8c74083b311da919d98bf75dee8ef7b9d79331be093329088974fb4de92dae6",
+      "comment": "Moves the party to a floor.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7698,6 +7706,7 @@
       "size": "0x2C",
       "name": "_GET_OLD_FLOOR_LEVEL__FP12RS_STACKDATAi",
       "sha256": "073a7eefda65d9cfc14cb606c2fd7ca27ce263cb17cb5731032ba493559e4f09",
+      "comment": "Gives the floor the party came from.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7709,6 +7718,7 @@
       "size": "0x2C",
       "name": "_GET_ACTION_MODE__FP12RS_STACKDATAi",
       "sha256": "ab1f0154046b00a127a042a10668d08e55e1fec4b812913a22ed68686dac8350",
+      "comment": "Gives the mode the battle loop is running in.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7720,6 +7730,7 @@
       "size": "0xEC",
       "name": "_ITEM_USE_WINDOW__FP12RS_STACKDATAi",
       "sha256": "a8df8dc7e9c2722c66a22391bd95d7ef02f2a132c37238856887d98b34b58a7d",
+      "comment": "Opens the window that asks the player to choose one of a list of items.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7731,6 +7742,7 @@
       "size": "0x50",
       "name": "_CHECK_EVENT_FLG__FP12RS_STACKDATAi",
       "sha256": "1b31048911300a6634ee4e38a430145bda3ab8dbc8e7808305faff1e490335a3",
+      "comment": "Reads one of the dungeon's event flags.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7742,6 +7754,7 @@
       "size": "0x70",
       "name": "_SET_EVENT_FLG__FP12RS_STACKDATAi",
       "sha256": "1823c9f903e30fd409b587ec18a0da2ed0545fd6c34644e0a64809e7a7ca0922",
+      "comment": "Writes one of the dungeon's fifty event flags.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7753,6 +7766,7 @@
       "size": "0x130",
       "name": "_GET_OBJHDL__FP12RS_STACKDATAi",
       "sha256": "92826cba1350d3f595b656962710b9cf4bd6e19d52f786d73b206b1125b4fcb9",
+      "comment": "Binds an object handle to a named frame of the map, or of one of its parts.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7764,6 +7778,7 @@
       "size": "0xF8",
       "name": "_SET_OBJHDL_POS__FP12RS_STACKDATAi",
       "sha256": "fc433418cf35fe6b8a6a5b5b7e44fe8f5ae60ba9e198eafe4e470c034db320c9",
+      "comment": "Puts the object a handle names at a world position.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7775,6 +7790,7 @@
       "size": "0x180",
       "name": "_SET_OBJHDL_ROT__FP12RS_STACKDATAi",
       "sha256": "51a3cd7b7d1b2f6fb8008b19406a88c17236f1d8d218421a7cab344d04a47c5c",
+      "comment": "Turns the object a handle names to three wrapped angles.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7786,6 +7802,7 @@
       "size": "0xC4",
       "name": "_SET_OBJHDL_DRAW_FLAG__FP12RS_STACKDATAi",
       "sha256": "b2138273a330e561c4698964397d07ce68825516343feeca40ce7aa3d7b2d45f",
+      "comment": "Sets whether the object a handle names is drawn.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7797,6 +7814,7 @@
       "size": "0xEC",
       "name": "_GET_OBJHDL_POS__FP12RS_STACKDATAi",
       "sha256": "8154942d119567c572367201506098d9fb9885995e89e3f0b7dd0d5d067db2bd",
+      "comment": "Reads the world position of the object a handle names.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7808,6 +7826,7 @@
       "size": "0x10C",
       "name": "_GET_OBJHDL_ROT__FP12RS_STACKDATAi",
       "sha256": "9f79fd1926c7d4fd892d199d978c9aaa910c3f4a3a419dad43dc2e5770c88107",
+      "comment": "Reads the heading of the object a handle names.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7819,6 +7838,7 @@
       "size": "0x5C",
       "name": "_GET_EVENT_POS__FP12RS_STACKDATAi",
       "sha256": "15313923a1876495341503d77e01a9e08d837fa43d02b63b8cd2500e7b897714",
+      "comment": "Gives the world position the event was started at.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7830,6 +7850,7 @@
       "size": "0x5C",
       "name": "_GET_EVENT_ROT__FP12RS_STACKDATAi",
       "sha256": "8775db9df104e4b7ef89f2c84067923f79ec70a1c9033ba609089c4370f7c2a9",
+      "comment": "Gives the heading the event was started with.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7841,6 +7862,7 @@
       "size": "0x64",
       "name": "_SET_DUNGEON_MAP__FP12RS_STACKDATAi",
       "sha256": "73087e5c391c26be3b91e050c687f973da32bd5c341b4692ee273f9c075133db",
+      "comment": "Names the map file and type the next floor loads from.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7852,6 +7874,7 @@
       "size": "0x40",
       "name": "_LOAD_DUNGEON_MAP2__FP12RS_STACKDATAi",
       "sha256": "c2a03aafaa6ebaa78cb52b8ab982dcc090c549bf52865c97304adf025ff157a1",
+      "comment": "Loads the map the previous opcode named.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7863,6 +7886,7 @@
       "size": "0x50",
       "name": "_SET_RANDOM_MAP__FP12RS_STACKDATAi",
       "sha256": "9dcc35e5005723d283a7577ae48022d01a2eb5aef1cc7382419b4852e9b07174",
+      "comment": "Lays out the floor, randomly or freely according to the map's own setting.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7874,6 +7898,7 @@
       "size": "0x5C",
       "name": "_SET_EVENT_SW__FP12RS_STACKDATAi",
       "sha256": "062da6564602ceffd99b567d795af46d78af72ad2b8ce963d75a949e8dc3d143",
+      "comment": "Turns one of the floor's event switches on or off.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7885,6 +7910,7 @@
       "size": "0x1BC",
       "name": "_SET_MONSTOR_ID__FP12RS_STACKDATAi",
       "sha256": "e671469fce1b412669aede84726fb3826537c25664af523fa5ca3386120affd3",
+      "comment": "Puts a monster on the floor, optionally clearing the ones already there first.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7896,6 +7922,7 @@
       "size": "0x8C",
       "name": "_CHK_ATRA_HAVE__FP12RS_STACKDATAi",
       "sha256": "22d25ca06d2407a844a6950125a6d11e220910f9cdf07d50151517ae63597db5",
+      "comment": "Reports how many of one kind of Atla the party is carrying.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7907,6 +7934,7 @@
       "size": "0x7C",
       "name": "_SET_ATRA__FP12RS_STACKDATAi",
       "sha256": "d657baae495f92e1244a43d15031d0934bab391d71d9ecf324851efea07604d5",
+      "comment": "Puts an Atla sphere on the floor at a world position.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7918,6 +7946,7 @@
       "size": "0x84",
       "name": "_SET_IBOX__FP12RS_STACKDATAi",
       "sha256": "02222ea391185ccefcf311fde7fed95ba79f3a73cb3d8759e43c8ba5adec3bda",
+      "comment": "Puts a treasure chest on the floor at a world position.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7929,6 +7958,7 @@
       "size": "0x5C",
       "name": "_GET_NOW_USER_ID__FP12RS_STACKDATAi",
       "sha256": "9eb1746e888284376edf52e102c0488c7620314da606dadc213a9be89a11ca80",
+      "comment": "Gives the character the player is controlling.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7940,6 +7970,7 @@
       "size": "0xC0",
       "name": "_RUN_SCRIPT_NO__FP12RS_STACKDATAi",
       "sha256": "7e2963c32b4c0931694744009fb4594abaa51e75d7d282a60352db19d3404d3b",
+      "comment": "Queues another system script to run when this one ends.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7951,6 +7982,7 @@
       "size": "0x78",
       "name": "_CLEAN_MONSTOR_SCRIPT_NO__FP12RS_STACKDATAi",
       "sha256": "fe84411153c6b0a6532abf450923cdab55acfc96f9fda1145c68a7ef5323ea09",
+      "comment": "Queues the script that clears the floor's monsters.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7962,6 +7994,7 @@
       "size": "0xCC",
       "name": "_GET_NPC_OBJHDL__FP12RS_STACKDATAi",
       "sha256": "92f4f3bf6ec2240656086718f7991153d6198c3594e4f98156275407a59301af",
+      "comment": "Binds an object handle to one of the floor's four non-player characters.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7973,6 +8006,7 @@
       "size": "0x138",
       "name": "_SET_MOTION_OBJHDL__FP12RS_STACKDATAi",
       "sha256": "ff6a5aaa957562e1905d750eea38f42d83b187e4c388a93311bb5d9da70ab1fe",
+      "comment": "Starts a motion on one of the floor's non-player characters.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7984,6 +8018,7 @@
       "size": "0x84",
       "name": "_SET_NPC_ON_OFF__FP12RS_STACKDATAi",
       "sha256": "071d5c1bd7934135937d805883a534b603550ace406dd175f3c1189bd1bafecb",
+      "comment": "Sets whether one of the floor's non-player characters takes part.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -7995,6 +8030,7 @@
       "size": "0x2C",
       "name": "_GET_GATEKEY_NO__FP12RS_STACKDATAi",
       "sha256": "4a394cc78b33388ec23918fe3f16163578148407922bd6e7848daaf6f74b29c2",
+      "comment": "Gives the key the floor's gate wants.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8006,6 +8042,7 @@
       "size": "0x40",
       "name": "_USER_WEAPON_DRAW__FP12RS_STACKDATAi",
       "sha256": "0d9a830d8074a2e85367dbe6b358dec5f756950f0aef42f2be8455411268797d",
+      "comment": "Sets whether the player's weapon is drawn.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8017,6 +8054,7 @@
       "size": "0x9C",
       "name": "_SET_MAIN_CHR2__FP12RS_STACKDATAi",
       "sha256": "b1b63e8802ec6f7ab1e05a114fff82ecf79d35ce505f62ae41b247efa582b35f",
+      "comment": "Puts one of the six party members in the player's hands, remembering who was there.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8028,6 +8066,7 @@
       "size": "0x50",
       "name": "_RESET_MAIN_CHR__FP12RS_STACKDATAi",
       "sha256": "012f96a4cdbfdeb9fac1c43307455e008b4974d68ed88282ba93c0b915deede3",
+      "comment": "Gives the player back the character the previous opcode took away.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8039,6 +8078,7 @@
       "size": "0x40",
       "name": "_SET_LIMMIT_ZONE__FP12RS_STACKDATAi",
       "sha256": "41d5a564f507e7f2fbd051e6a98596a02118887e0aa76a719dfed1b768fe8895",
+      "comment": "Fences the party into a zone and loads the sound that warns them of it.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8050,6 +8090,7 @@
       "size": "0x28",
       "name": "_SET_DEAD_FLAG__FP12RS_STACKDATAi",
       "sha256": "461f26da2e97ebcc7afd062450ca5fdfa3c03be64019de7cf94d5102d9890484",
+      "comment": "Marks the party dead.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8061,6 +8102,7 @@
       "size": "0x34",
       "name": "_ALL_DRAW_FLAG__FP12RS_STACKDATAi",
       "sha256": "25b0498b059aa20c870ef378b64f29cadcc2b94ac58e046238699f5bb7585fcb",
+      "comment": "Sets whether the floor draws at all.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8072,6 +8114,7 @@
       "size": "0x28",
       "name": "_GET_RUBY_ELEMENT__FP12RS_STACKDATAi",
       "sha256": "1e083fdd742a65d7a0f94c69257fcb83c3c646774df75baa0d9a5889aac7a9a6",
+      "comment": "Gives the element the floor's sealed door wants.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8083,6 +8126,7 @@
       "size": "0x24",
       "name": "_SET_RUBY_ELEMENT__FP12RS_STACKDATAi",
       "sha256": "f503f7084eef6b47b03d6a51f7b677200e4fd0f5c4b36647b969bdb2ccadc7ba",
+      "comment": "Reads an element off the stack and discards it.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8094,6 +8138,7 @@
       "size": "0x14",
       "name": "_SET_FLOOR_TITLE_OFF__FP12RS_STACKDATAi",
       "sha256": "9c9054291e7bb3fe6e48285004877a22ef95f6a548a461ceb04051e9dc63ed16",
+      "comment": "Suppresses the plate that names the floor.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8105,6 +8150,7 @@
       "size": "0x50",
       "name": "_SET_RES_LIMMIT_ZONE__FP12RS_STACKDATAi",
       "sha256": "9dca272f17f4142b7bdb10ec006926595f984fde2079403c17074598aa74e200",
+      "comment": "Restores the zone the party was fenced into and its warning sound.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8116,6 +8162,7 @@
       "size": "0x64",
       "name": "_INIT_BEE__FP12RS_STACKDATAi",
       "sha256": "c03afd0cf3bac18f33a8833f4d189fc17c36e9804d4ee86306962a19a3af0db7",
+      "comment": "Starts the swarm of bees on one of the party's characters.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8127,6 +8174,7 @@
       "size": "0x18",
       "name": "_END_BEE__FP12RS_STACKDATAi",
       "sha256": "b1980ad02559046493dbb37e77ac00edd1a3132cea6cd8c8a905886c7946c4b7",
+      "comment": "Ends the swarm of bees.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8138,6 +8186,7 @@
       "size": "0x40",
       "name": "_EASTKING_COMPLETE__FP12RS_STACKDATAi",
       "sha256": "ae89886938d512bf3d162a313e3aed3e71599176c37a596c48a24000803f21aa",
+      "comment": "Reports whether the Eastern king's puzzle has been completed.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8149,6 +8198,7 @@
       "size": "0x44",
       "name": "_GET_ITEM_TRAPID__FP12RS_STACKDATAi",
       "sha256": "b27f179d051cb42384490e7ac729cde613a460a01d7498e83c628be85490afc5",
+      "comment": "Gives the trap on the chest the party is opening.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8160,6 +8210,7 @@
       "size": "0x34",
       "name": "_RESET_ITEM_TRAP__FP12RS_STACKDATAi",
       "sha256": "dad5495de715fe1c02266ec5bb5d09d0be4b09a4806fcc136fb2ba357045b94f",
+      "comment": "Clears the trap on the chest the party is opening.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8171,6 +8222,7 @@
       "size": "0x100",
       "name": "_BOM_SET__FP12RS_STACKDATAi",
       "sha256": "acb5f4c7287be6fa8cdf7c0238701f59bc9c6d4801d4418dc4cc6fc76f234647",
+      "comment": "Sets off an explosion above the party and pushes it away from them.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8182,6 +8234,7 @@
       "size": "0x90",
       "name": "_SET_STATUS_ERR__FP12RS_STACKDATAi",
       "sha256": "d7d0dd7fd4ff5ab1b6e0f7782c70cfc4bdc92811b2e0d47565c5841ae57e53b0",
+      "comment": "Inflicts a status ailment on the party and raises the collision that shows it.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8193,6 +8246,7 @@
       "size": "0x34",
       "name": "_CHECK_MARDAN__FP12RS_STACKDATAi",
       "sha256": "d76d73d8b8e10afc75a168a6f9d17d67c1f30da13b7643bd63e7405ef910a55e",
+      "comment": "Reports the state of the Mardan Garayan fishing quest.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8204,6 +8258,7 @@
       "size": "0x14",
       "name": "_NO_RESET_CHARA_NO__FP12RS_STACKDATAi",
       "sha256": "f7a7f0aae1cdec70f65d4180b993663e6070d81bca7ac1f699c88416a5da77df",
+      "comment": "Keeps the controlled character across the end of the event.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8215,6 +8270,7 @@
       "size": "0x2C",
       "name": "_CHECK_CHR_HELP__FP12RS_STACKDATAi",
       "sha256": "6603880f647bba0f7e794b8be9d5faf69fc989a64eb78e6fe80bda7938a3d26b",
+      "comment": "Reports whether a party member is waiting to be rescued.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8226,6 +8282,7 @@
       "size": "0x58",
       "name": "_HOLD_ITEM_EVENT__FP12RS_STACKDATAi",
       "sha256": "6dc5334f260b468f476c02abfa18ba5e38278e3541d69508b558114e003ecb84",
+      "comment": "Holds the item event of a number back in both event managers.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8237,6 +8294,7 @@
       "size": "0x14",
       "name": "_NO_STATUS_RECOVER__FP12RS_STACKDATAi",
       "sha256": "803398a137973013ee049abd25658d5e81f6e4beaee805bc5234ebc56c63ae1b",
+      "comment": "Keeps status ailments across the end of the event.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8248,6 +8306,7 @@
       "size": "0x5C",
       "name": "_SET_QUEST_DUNGEON__FP12RS_STACKDATAi",
       "sha256": "ef7f424bc0c92778a69a8868a9cf477295642cbf94686345e72a247332d069bc",
+      "comment": "Records the party's progress through a quest dungeon.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8259,6 +8318,7 @@
       "size": "0x30",
       "name": "_GET_MAP_CODE__FP12RS_STACKDATAi",
       "sha256": "160feaf9045155f53e50ccf1a775d1cb194e326c90d2fa43eba1d0480daff267",
+      "comment": "Gives the dungeon the party is in, counted from one.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8270,6 +8330,7 @@
       "size": "0xE4",
       "name": "_GET_ITEM_UNIT_NO__FP12RS_STACKDATAi",
       "sha256": "75a7db11160d5fd1f3adf1e69f5d7e30e67c80129bb8cb97a1d83c5510345be3",
+      "comment": "Sorts an item number into the six bands the dungeons draw from.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8281,6 +8342,7 @@
       "size": "0x44",
       "name": "_SET_IBOX_ANGLE__FP12RS_STACKDATAi",
       "sha256": "bbbb4ba59ab5da43b91a941afb2821c0fd68a3ba4152ebcc3fc058d87028af06",
+      "comment": "Turns the chest the party is opening.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8292,6 +8354,7 @@
       "size": "0x50",
       "name": "_SET_IBOX_FINISH__FP12RS_STACKDATAi",
       "sha256": "c5e2bc93dc3e660998eedf864960ba1946533753b98dc8170f47942714ac7be7",
+      "comment": "Closes the chest the party is opening and drops it out of sight.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8303,6 +8366,7 @@
       "size": "0x64",
       "name": "_GET_PIERO_ITEM__FP12RS_STACKDATAi",
       "sha256": "72ad845687adbb196e8ebb9a347584f419e0eb480c5f4d18ac1047d0bdfca3d0",
+      "comment": "Gives the two items the clown trades on this floor.",
       "documentation": "include/btsysscript.hpp"
     },
     {
@@ -8314,6 +8378,7 @@
       "size": "0xFC",
       "name": "AddSystemEventScript__Fv",
       "sha256": "7d19b1af1113e04db6db64de7cd45425c898066e17f6ec9c6baed6dce32a029f",
+      "comment": "Fills the opcode table from the extension list, refusing a list that names one twice.",
       "documentation": "include/btsysscript.hpp"
     },
     {
