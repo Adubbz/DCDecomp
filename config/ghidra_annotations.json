@@ -9320,6 +9320,7 @@
       "size": "0x44",
       "name": "GetStackInt__FP12RS_STACKDATA__3",
       "sha256": "b56ce31e28ee1f2858398b86f093e0957ca64780ccbdfade42b6a5f27415e965",
+      "comment": "Reads one script argument as an integer, converting it where the slot holds a float.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9331,6 +9332,7 @@
       "size": "0x2C",
       "name": "GetStackFloat__FP12RS_STACKDATA__3",
       "sha256": "f4bac30e2c6f77dfd28ec4d2683a970723cd6b73e0ad4b64c6f3111cc731c687",
+      "comment": "Reads one script argument as a float, converting it where the slot holds an integer.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9342,6 +9344,7 @@
       "size": "0xC",
       "name": "GetStackString__FP12RS_STACKDATA__3",
       "sha256": "7ddb3ea293fa822a4f3bb493dab498ddf0dd6434a6b722a226fa35b6d8219f52",
+      "comment": "Reads one script argument as a string.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9353,6 +9356,7 @@
       "size": "0x20",
       "name": "SetStack__FP12RS_STACKDATAi__3",
       "sha256": "ffcfaed1fb592cd02ea4d2e30e91c5398e308e7240b7343993cd563f31be7fca",
+      "comment": "Writes an integer back through a script argument that names a variable.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9364,6 +9368,7 @@
       "size": "0x20",
       "name": "SetStack__FP12RS_STACKDATAf__3",
       "sha256": "b7fe9b9a3926eaa7bae74a947c1baadd69b312bcf0a5241666f891a3fd6ab080",
+      "comment": "Writes a float back through a script argument that names a variable.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9375,6 +9380,7 @@
       "size": "0x478",
       "name": "_SET_MOTION__FP12RS_STACKDATAi",
       "sha256": "6ed5cc25b72f536b3cc81f46b26bc3a86c86e4b97f946acd029f1e6fe2d91259",
+      "comment": "Starts a motion on the monster and every part linked to it, optionally at a given speed and repeat count.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9386,6 +9392,7 @@
       "size": "0xCC",
       "name": "_CHK_MOTION_FRM__FP12RS_STACKDATAi",
       "sha256": "cf599618c361cfa790909362ae0d6a47ea7fb11bad459f470e1fb17a562a6fa4",
+      "comment": "Reports whether the monster's motion has reached its last frame.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9397,6 +9404,7 @@
       "size": "0x44",
       "name": "_GET_MOTION_FRM__FP12RS_STACKDATAi",
       "sha256": "c97920d96e02be235fc6046908e20adb84dd255d7d47acacd6e315f98c18c248",
+      "comment": "Reads the frame the monster's motion currently stands on.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9408,6 +9416,7 @@
       "size": "0x48",
       "name": "_SET_MOTION_FRM__FP12RS_STACKDATAi",
       "sha256": "a0f3f8d569db185c68b195023c222d2cae26d08b0ce329af6c856c2c2017b8e6",
+      "comment": "Moves the monster's motion to a given frame.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9419,6 +9428,7 @@
       "size": "0xEC",
       "name": "_GET_DISTANCE__FP12RS_STACKDATAi",
       "sha256": "3c5353266bf7cc9e56c897124e5a58dec1b259471c4d6e90d04e38a2cb8063d5",
+      "comment": "Measures the distance from the monster to the player or to a given point.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9430,6 +9440,7 @@
       "size": "0xEC",
       "name": "_GET_POSITION__FP12RS_STACKDATAi",
       "sha256": "0ace545f0d911c8d8c4c09c09ea8272c6e5ced5cc29861dd3136438d8019b613",
+      "comment": "Reads the world position of the monster or of the player.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9441,6 +9452,7 @@
       "size": "0x1C4",
       "name": "_SET_ROTATION__FP12RS_STACKDATAi",
       "sha256": "fff6e14d3d67ed62529327a36921cd4c6f21c063f39dfd3959d598fffd47ff7b",
+      "comment": "Turns the monster towards a point, immediately where no turn rate is given.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9452,6 +9464,7 @@
       "size": "0x70",
       "name": "_CHK_ROTATION__FP12RS_STACKDATAi",
       "sha256": "371425cb7d87384aceb7f8a7971041b07a966045bb5c678642645005ef9cd4c2",
+      "comment": "Reports whether the monster has finished turning.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9463,6 +9476,7 @@
       "size": "0xFC",
       "name": "_CHK_MOVE__FP12RS_STACKDATAi",
       "sha256": "d67eabd6f34bf98da6d4d7193c7f60c205fa8747c77728a9f5a680345bb5dafb",
+      "comment": "Reports whether the monster has finished moving, and how far it still has to go.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9474,6 +9488,7 @@
       "size": "0x210",
       "name": "_CHK_USER_INNER_PRODUCT__FP12RS_STACKDATAi",
       "sha256": "fc54946bc1eb7aa23d3ead702d20b5b7b3ce4299973e66d3d37dc25617788c37",
+      "comment": "Reports whether the player stands within a cone in front of the monster and near enough to it.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9485,6 +9500,7 @@
       "size": "0x210",
       "name": "_GET_VECTOR__FP12RS_STACKDATAi",
       "sha256": "6cdc8c6dd451b1e88f91e757ef97833e0741cf278371fd12ec349acefb31d70c",
+      "comment": "Gives the unit vector from the monster to a point, optionally turned about the vertical axis.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9496,6 +9512,7 @@
       "size": "0x17C",
       "name": "_GET_DIRECTION__FP12RS_STACKDATAi",
       "sha256": "6d328e31e545200dc493454a1718940dd6be880042998566c4862ac31401b444",
+      "comment": "Gives the unit vector the monster faces, optionally turned about the vertical axis.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9507,6 +9524,7 @@
       "size": "0x15C",
       "name": "_SET_MOVE__FP12RS_STACKDATAi",
       "sha256": "04c9c4a5923ee69a04aa41affb613cdd2bbfbefb3421667075d8673f6f91d1e0",
+      "comment": "Sends the monster towards a point at a given speed.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9518,6 +9536,7 @@
       "size": "0x140",
       "name": "_CHK_MOVE_INFO__FP12RS_STACKDATAi",
       "sha256": "130a365a3db9e3692bcdd7a2265c56e67cc80e1bcba994b4fbbd32178298af15",
+      "comment": "Reports whether the floor carries the monster all the way to a point.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9529,6 +9548,7 @@
       "size": "0x38",
       "name": "_SET_MOVE_CANSEL__FP12RS_STACKDATAi",
       "sha256": "e1727e5c4aaafefb5cf38b90d2b4c51a6752f306448ba25f75c8e69ce46b857f",
+      "comment": "Stops the monster where it stands.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9540,6 +9560,7 @@
       "size": "0x38",
       "name": "_SET_ROT_CANSEL__FP12RS_STACKDATAi",
       "sha256": "1802d046205ef2977105d17e2e514da69841805eb2d076c77f683cfc787de0cf",
+      "comment": "Stops the monster's turn at its current angle.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9551,6 +9572,7 @@
       "size": "0x84",
       "name": "_SET_POSITION__FP12RS_STACKDATAi",
       "sha256": "84d6d57c2d020238e8ee761e99bf48402b5e08af259da82b8a2e4a6a8b0b1cf0",
+      "comment": "Puts the monster at a world position.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9562,6 +9584,7 @@
       "size": "0x5C",
       "name": "_STATUS_SET_FALL__FP12RS_STACKDATAi",
       "sha256": "c0ea8b69df1121a31c123755a7df4d07683a5d3d65ece070492bafb31c93ac5f",
+      "comment": "Sets whether gravity pulls the monster down.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9573,6 +9596,7 @@
       "size": "0x8C",
       "name": "_STATUS_SET_MUTEKI__FP12RS_STACKDATAi",
       "sha256": "42ef7bd3bfae658b6edd937fb961466f678a75e9cb7634363596a387e168e01f",
+      "comment": "Makes the monster proof against damage, unless it is already dying.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9584,6 +9608,7 @@
       "size": "0xB4",
       "name": "_STATUS_SET_ALPHA__FP12RS_STACKDATAi",
       "sha256": "68c1e92791876fa53e0467c7e38e2f93f6b6ed983e693eb9684d5ed8641860f2",
+      "comment": "Fades the monster towards an opacity, or sets that opacity outright.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9595,6 +9620,7 @@
       "size": "0x10C",
       "name": "_STATUS_CHK_ALPHA__FP12RS_STACKDATAi",
       "sha256": "3af0f6dab55d1016d6f5ca6aab46e99bfa03ead06c7494573d1342d5dfbe1775",
+      "comment": "Reports whether the monster has finished fading out, or in.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9606,6 +9632,7 @@
       "size": "0x4C",
       "name": "_STATUS_SET_DEAD__FP12RS_STACKDATAi",
       "sha256": "72a818d07c1d9dfbb8ef05054d25a3c1be277c7ab8a86e5dd79eb0a1492c245a",
+      "comment": "Marks the monster dead and takes it off the live count.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9617,6 +9644,7 @@
       "size": "0x2C",
       "name": "_STATUS_SET_EVENT__FP12RS_STACKDATAi",
       "sha256": "4dceee736f2a6d89e207ea2975ac5e5daa3748ff6ce0099e965b526b19e6338c",
+      "comment": "Chooses the script the monster runs next.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9628,6 +9656,7 @@
       "size": "0x3C",
       "name": "_RUN_SCRIPT__FP12RS_STACKDATAi",
       "sha256": "29a5889e16074d9605454e47ce0165d03445a2e2f3b5ec513cd3158dd3808457",
+      "comment": "Chooses the script the monster runs next and reports the change.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9639,6 +9668,7 @@
       "size": "0x5C",
       "name": "_STATUS_SET_COL_OFF__FP12RS_STACKDATAi",
       "sha256": "239af5c3e2c59628af30bf0410093227f6e4d0ca5cbdaaf90f6b8cbbcb6f54c1",
+      "comment": "Sets whether the monster takes part in collision.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9650,6 +9680,7 @@
       "size": "0x88",
       "name": "_STATUS_GET_LIFE_RATE__FP12RS_STACKDATAi",
       "sha256": "42eadbdce51d85f52ef598cdace2a71268157c80d31659c7f673121c87a15bfa",
+      "comment": "Gives the monster's remaining life as a percentage of its maximum.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9661,6 +9692,7 @@
       "size": "0x104",
       "name": "_STATUS_GET_USER_VECTOR__FP12RS_STACKDATAi",
       "sha256": "465dbcbcbf6462ed2ba150a4f2c10b7bb8bd228e94503f0b689e3bd2b987775f",
+      "comment": "Gives the vector the player faces, turned by an angle and optionally normalized.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9672,6 +9704,7 @@
       "size": "0x50",
       "name": "_STATUS_GET_HEIGHT__FP12RS_STACKDATAi",
       "sha256": "40b89e2eab2fe86683f77f4e4f2afa90dd6f00a1509fdc8ddab92e10aa72e8ec",
+      "comment": "Gives the monster's height.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9683,6 +9716,7 @@
       "size": "0x88",
       "name": "_GET_RAND__FP12RS_STACKDATAi",
       "sha256": "c65398c426798f299818b585bd2a43a0ed07302f39d94ebed1aea23d5215002f",
+      "comment": "Gives a random integer below a bound.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9694,6 +9728,7 @@
       "size": "0x84",
       "name": "_GET_RANDF__FP12RS_STACKDATAi",
       "sha256": "71840118eacd5685c09ff9ee5f55f820120b502df8ae1d36c1fc768399aff88d",
+      "comment": "Gives a random whole number below a bound, as a float.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9705,6 +9740,7 @@
       "size": "0x54",
       "name": "_SIN_DEG__FP12RS_STACKDATAi",
       "sha256": "33bc8a6209eeb17d7673f2524a63860109004f0888b7299a3979b6c9674fa168",
+      "comment": "Gives the sine of an angle in degrees.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9716,6 +9752,7 @@
       "size": "0x54",
       "name": "_COS_DEG__FP12RS_STACKDATAi",
       "sha256": "b123cc967b646e068c420f7ef844e1f5388327cd3a2e5b1e7bedb07a4b14f48a",
+      "comment": "Gives the cosine of an angle in degrees.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9727,6 +9764,7 @@
       "size": "0x1D4",
       "name": "_STATUS_SET_PALLET__FP12RS_STACKDATAi",
       "sha256": "c00cf58c3fdb6fd60d058ce6d64ed038ce2871a8354e0dca8372d9eb357bde4a",
+      "comment": "Tints the monster, either with a given colour or with the colour of its element.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9738,6 +9776,7 @@
       "size": "0x54",
       "name": "_STATUS_SET_CLIPLEVEL__FP12RS_STACKDATAi",
       "sha256": "5a2b5c647531b4d0be894144fb02afac99e0df357d22f1f0641215ffc827dfd6",
+      "comment": "Sets the distance at which the monster stops being drawn.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9749,6 +9788,7 @@
       "size": "0x50",
       "name": "_STATUS_GET_HITDMG_VOL__FP12RS_STACKDATAi",
       "sha256": "8c6059bb1e96656fea1c4f4885ba0be28af35118d43030fab62533445d4d009a",
+      "comment": "Gives the damage the monster took from the last hit.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9760,6 +9800,7 @@
       "size": "0x44",
       "name": "_STATUS_GET_MOTION_ID__FP12RS_STACKDATAi",
       "sha256": "cdd5a097f8ebe88a0d64fdd9958f9ae50a9ca45554d062d3893e9a803a3512cc",
+      "comment": "Gives the motion the monster is playing.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9771,6 +9812,7 @@
       "size": "0x50",
       "name": "_STATUS_GET_DMG_ID__FP12RS_STACKDATAi",
       "sha256": "441a0aba7ca04b285c82b7e2988298073a01c13d05deb19dea6107415efff574",
+      "comment": "Gives the damage collision that last struck the monster.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9782,6 +9824,7 @@
       "size": "0x54",
       "name": "_STATUS_SET_LOCKON_DIST__FP12RS_STACKDATAi",
       "sha256": "318b1c2c177b4d365c1203bb07cde5aa69cbf1f0b209090b9bdef1811ee2893c",
+      "comment": "Sets how far away the player may lock on to the monster.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9793,6 +9836,7 @@
       "size": "0x54",
       "name": "_STATUS_SET_SHADOW_LEN__FP12RS_STACKDATAi",
       "sha256": "34fb1d72d1a56a0db52a9936652ed31df257b2864e5a0b856eb3da45c663fded",
+      "comment": "Sets the length of the monster's shadow.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9804,6 +9848,7 @@
       "size": "0x130",
       "name": "_STATUS_SET_LOCKON_TRG__FP12RS_STACKDATAi",
       "sha256": "c908a4cc4d8fe55557be6480365aadd3adf05fb83a27765bb4767f4b073ac503",
+      "comment": "Puts the lock-on marker on a named frame of the monster's model.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9815,6 +9860,7 @@
       "size": "0x1A8",
       "name": "_SET_MOV_COL__FP12RS_STACKDATAi",
       "sha256": "51ed28413db3fb1627f74c218c08cba243132055ffd28b3650f98215600e2722",
+      "comment": "Gives the monster a movement collision sphere on a named frame.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9826,6 +9872,7 @@
       "size": "0x2A8",
       "name": "_SET_BODY_COL__FP12RS_STACKDATAi",
       "sha256": "630a19cc11cc73103c3fb10b159ae338b0cbb3273e9a50eb08e05378a6fce723",
+      "comment": "Gives the monster a body collision sphere on a named frame, and clears its parameters.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9837,6 +9884,7 @@
       "size": "0x104",
       "name": "_SET_BODY_COL_PARA__FP12RS_STACKDATAi",
       "sha256": "486bd5836b53bc9b3885dee6bceee0ec3e333e0bdab87b5c2585a0226cc0c59d",
+      "comment": "Sets one parameter of the body collision sphere the last opcode created.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9848,6 +9896,7 @@
       "size": "0x214",
       "name": "_SET_DMG_COL__FP12RS_STACKDATAi",
       "sha256": "186d5a8a61e1363bcddceea6f421a3dc6248a42002a08cf824d6aae4f311612b",
+      "comment": "Gives the monster a damage collision sphere on a named frame.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9859,6 +9908,7 @@
       "size": "0x150",
       "name": "_SET_DMG_PARA__FP12RS_STACKDATAi",
       "sha256": "238f3b911eca296a8e4d0a25f60c5f1f76d05783caed69f03814efea193a6c0f",
+      "comment": "Sets the damage, kind and effect of the damage collision the last opcode created.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9870,6 +9920,7 @@
       "size": "0x1EC",
       "name": "_SET_SHOT__FP12RS_STACKDATAi",
       "sha256": "193dcdd0791ff02f9060905a72407664787ca62de8fa23cd0f0a73391f4c1c26",
+      "comment": "Fires the monster's first projectile from a named frame.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9881,6 +9932,7 @@
       "size": "0x20C",
       "name": "_SET_SHOT2__FP12RS_STACKDATAi",
       "sha256": "f9c4a1ec7fdc2c62752a372460560153bff58904e5cd96bdcadb85ec4063ada7",
+      "comment": "Fires the monster's second projectile from a named frame.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9892,6 +9944,7 @@
       "size": "0x144",
       "name": "_SET_SND_FRM__FP12RS_STACKDATAi",
       "sha256": "51d3555052c02d8b5d1b604fc62e5566ded7ff20ed12c98a58f5ca141b02a969",
+      "comment": "Schedules a sound to play when the motion reaches a frame.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9903,6 +9956,7 @@
       "size": "0xC8",
       "name": "_SET_LOOP_SND__FP12RS_STACKDATAi",
       "sha256": "d815eeca119627a1fe5952e97317f696d3ab19a9da32d40c49129c9b8e464436",
+      "comment": "Starts a sound that keeps playing until it is stopped.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9914,6 +9968,7 @@
       "size": "0x6C",
       "name": "_STOP_LOOP_SND__FP12RS_STACKDATAi",
       "sha256": "40eefba514df1cd77084ea86be4e17d72ca4d6551ea990827835450c56cdf1db",
+      "comment": "Stops the monster's looping sound.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9925,6 +9980,7 @@
       "size": "0x34",
       "name": "_DEL_LOOP_SND__FP12RS_STACKDATAi",
       "sha256": "3ac54105dd4080746390dce5b6e681203212c2ff64349be9f6339aa2cc3fba94",
+      "comment": "Forgets the monster's looping sound without stopping it.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9936,6 +9992,7 @@
       "size": "0x38",
       "name": "_SET_SND_NOW__FP12RS_STACKDATAi",
       "sha256": "4a11c5b02316ba21658e5c97fc46da2368e5a63f6797537eea4ba856038ec7fe",
+      "comment": "Plays a sound at once.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9947,6 +10004,7 @@
       "size": "0x34",
       "name": "_STOP_SND_NOW__FP12RS_STACKDATAi",
       "sha256": "92dd4bf3900a36e271e149e7ef0b7a69ba7b497e861e821d6fd970802b4f8218",
+      "comment": "Stops a sound at once.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9958,6 +10016,7 @@
       "size": "0x2C",
       "name": "_GET_CHR_ID__FP12RS_STACKDATAi",
       "sha256": "c9e242883b363e434604dc44f5a123baf87a64bc46eb1d743bb8b48bc19ee377",
+      "comment": "Gives the character the player is controlling.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9969,6 +10028,7 @@
       "size": "0x50",
       "name": "_GET_COL_HIT_ID__FP12RS_STACKDATAi",
       "sha256": "f67d369178f85eda9f0abcc7fedf27888e93458cda5f625fdc35102952e1b7f6",
+      "comment": "Gives the body collision that was last struck.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9980,6 +10040,7 @@
       "size": "0x2C",
       "name": "_GET_SCRIPT_ID__FP12RS_STACKDATAi",
       "sha256": "0636b04b68e477bca54a96b3914bde309fbbc5a9c51d50a55eb866190a98346b",
+      "comment": "Gives the index of the monster the script is running for.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -9991,6 +10052,7 @@
       "size": "0x98",
       "name": "_GET_MONSTOR_POS__FP12RS_STACKDATAi",
       "sha256": "9acca0722d527252ff09a0e5829e38bf1b118167b00d90227c7d8f84b4940359",
+      "comment": "Reads the world position of another monster.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10002,6 +10064,7 @@
       "size": "0x58",
       "name": "_GET_MONSTOR_FRM__FP12RS_STACKDATAi",
       "sha256": "06d79c4c123a6e6bc5c39cf58be0d3542e144b29943759a628f5bdbfb250c791",
+      "comment": "Reads the motion frame another monster stands on.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10013,6 +10076,7 @@
       "size": "0x9C",
       "name": "_SET_MONSTOR_POS__FP12RS_STACKDATAi",
       "sha256": "a20fc11f75b0d5a89de8de7348445320186f4edd7d14d6e5ae14017cd11db928",
+      "comment": "Puts another monster at a world position.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10024,6 +10088,7 @@
       "size": "0x13C",
       "name": "_SET_MONSTOR_MOVE__FP12RS_STACKDATAi",
       "sha256": "e628b356464ca23a01fe985665ba8a6f3dc0adfeddb2820e395aa1b4ac240133",
+      "comment": "Sends another monster towards a point at a given speed.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10035,6 +10100,7 @@
       "size": "0xBC",
       "name": "_SET_MONSTOR_LINK_MOVE__FP12RS_STACKDATAi",
       "sha256": "308e195fc0d05d5f71e5a6b5675fff16435c071614b4bca6f2886705d51eff4c",
+      "comment": "Gives one monster the heading and speed of another.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10046,6 +10112,7 @@
       "size": "0x4C",
       "name": "_SET_MONSTOR_MOVE_CANSEL__FP12RS_STACKDATAi",
       "sha256": "e71ee9bd6ed61ceb6f6bfd10f2fd7c80605d9a2499fbe6aa2151cca8457a8458",
+      "comment": "Stops another monster where it stands.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10057,6 +10124,7 @@
       "size": "0x54",
       "name": "_SET_LOCKON_DIST__FP12RS_STACKDATAi",
       "sha256": "318b1c2c177b4d365c1203bb07cde5aa69cbf1f0b209090b9bdef1811ee2893c",
+      "comment": "Sets how far away the player may lock on to the monster.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10068,6 +10136,7 @@
       "size": "0x5C",
       "name": "_SET_LOCKON_SW__FP12RS_STACKDATAi",
       "sha256": "24766b9164810321792120ff6691c685edf3d95a7b8b50df9a999a8dddc73257",
+      "comment": "Sets whether the player may lock on to the monster at all.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10079,6 +10148,7 @@
       "size": "0x3B4",
       "name": "_SET_MONSTOR_MOTION__FP12RS_STACKDATAi",
       "sha256": "2fce678639e37b1f311318dc4676ad4d2b24a723bb7d70741d0bea1ceede6f97",
+      "comment": "Starts a motion on another monster and every part linked to it.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10090,6 +10160,7 @@
       "size": "0x5C",
       "name": "_SET_GLOBAL_INT__FP12RS_STACKDATAi",
       "sha256": "ba81ed9c9dccb9dad4b9099f5f4279f4311a8fd692911a8d0352d11951ef1649",
+      "comment": "Stores an integer in a slot every monster script shares.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10101,6 +10172,7 @@
       "size": "0x50",
       "name": "_GET_GLOBAL_INT__FP12RS_STACKDATAi",
       "sha256": "9ebcf507c1b1845c6436910da3918c3e4ecba484dec21f426d87e5b33cd39912",
+      "comment": "Reads an integer out of a slot every monster script shares.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10112,6 +10184,7 @@
       "size": "0xC8",
       "name": "_GET_OBJ_POS__FP12RS_STACKDATAi__2",
       "sha256": "ff7c5049c5606aa17f60c6b7fdf5d361b5b5e84d42a8ce94ff791420d1db87d2",
+      "comment": "Reads the world position of a named frame of the monster's model.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10123,6 +10196,7 @@
       "size": "0x168",
       "name": "_SET_ROTATION_X__FP12RS_STACKDATAi",
       "sha256": "dd4d0e1801b34e3eb34a0dda9113dc44e2d75900165cb74443fd768921cdb838",
+      "comment": "Pitches the monster towards a point.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10134,6 +10208,7 @@
       "size": "0x338",
       "name": "_LOOKAT__FP12RS_STACKDATAi",
       "sha256": "5ab27acbd89bf5a0e40710289ae3618a90e1a6050c6c9f3baffe03f46f103e0e",
+      "comment": "Aims one of the monster's three axes at a point.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10145,6 +10220,7 @@
       "size": "0xA8",
       "name": "_SET_MOTION_CHANGE_STEP__FP12RS_STACKDATAi",
       "sha256": "e58914c31ad1f000fbbc5486f930bb049884082ed61b26414189345b4588ec63",
+      "comment": "Sets how quickly the monster and its linked parts blend between motions.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10156,6 +10232,7 @@
       "size": "0x214",
       "name": "_GET_MONSTOR_VECTOR__FP12RS_STACKDATAi",
       "sha256": "5cc28d8f740f3e8d83acbbd35627cb04ef025084f5cf7174823527f4296a5ac2",
+      "comment": "Gives the unit vector from another monster to a point, optionally turned about the vertical axis.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10167,6 +10244,7 @@
       "size": "0x84",
       "name": "_STATUS_SET_LIFE__FP12RS_STACKDATAi",
       "sha256": "a9e1a8e54fb9a58bd9a6a0e1ff63ea98cb8c457225e0fba56d5bb59c2a915725",
+      "comment": "Sets the monster's life to a fraction of its maximum.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10178,6 +10256,7 @@
       "size": "0x5C",
       "name": "_SET_BIN2__FP12RS_STACKDATAi",
       "sha256": "01f2208a33d1bc080d86030da52138f3344a40e21f8ba463069e81d242823a71",
+      "comment": "Stores the monster's script flag word.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10189,6 +10268,7 @@
       "size": "0xCC",
       "name": "_SET_STATUS_CHANGE__FP12RS_STACKDATAi",
       "sha256": "18a914ee92727cb5a79fa92fdc972e5d25da549f32fcec85871de53a4ea1628c",
+      "comment": "Sets one of a monster's five status-change resistances.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10200,6 +10280,7 @@
       "size": "0x10C",
       "name": "_SET_TEX_ANIME_SW__FP12RS_STACKDATAi",
       "sha256": "ef9918c20909f52bb0a371ddc1fdfc7b61bc16fa39d464a1d41656ec9aa753dd",
+      "comment": "Turns one of a monster's texture animations on or off.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10211,6 +10292,7 @@
       "size": "0x58",
       "name": "_GET_STATUS_BIN2__FP12RS_STACKDATAi",
       "sha256": "751512658a771add4eb54725103653840d1f1841c64ea5020a92890d090c3d4f",
+      "comment": "Reads the monster's script flag word.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10222,6 +10304,7 @@
       "size": "0x54",
       "name": "_SET_COLLISION_WIDTH__FP12RS_STACKDATAi",
       "sha256": "696c9ecda26621401be7d0b27596a276812583bbbde5516c5a0b0f085eb2f140",
+      "comment": "Sets the radius the monster occupies for collision.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10233,6 +10316,7 @@
       "size": "0x198",
       "name": "_GET_NEAR_MONSTER__FP12RS_STACKDATAi",
       "sha256": "07580cb32d7d75c82f9bfea0914cb9e7887fe7b1b8631ec4e81bc5ae669b58b4",
+      "comment": "Finds the nearest other live monster within two hundred and forty units.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10244,6 +10328,7 @@
       "size": "0x50",
       "name": "_BOSS_FADE_OUT__FP12RS_STACKDATAi",
       "sha256": "65bb0fb8a1e176f1d90229e73067d46dc41d932ec414f0cb73da6be45232d166",
+      "comment": "Starts the fade to black that ends a boss fight.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10255,6 +10340,7 @@
       "size": "0x40",
       "name": "_CHEKC_FADE_OUT__FP12RS_STACKDATAi",
       "sha256": "106ce9b5e23e4a5cd78d49a8441674eb919f7b5d1a9e24b55585c1e59f5474f0",
+      "comment": "Reports whether the boss fade has finished.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10266,6 +10352,7 @@
       "size": "0x5C",
       "name": "_SET_GRAVITY__FP12RS_STACKDATAi",
       "sha256": "807c5b01c0bf7e7da2f91702194c49ebe867fdc6d989e43cfb66454528434eea",
+      "comment": "Sets the gravity applied to the monster.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10277,6 +10364,7 @@
       "size": "0x14C",
       "name": "_SET_GUARD_FRAME__FP12RS_STACKDATAi",
       "sha256": "8e9ed7acfe7b879def8778db257f56b650f6fb67686b4bb6d5860effe7265745",
+      "comment": "Opens a window, in motion frames, during which the monster guards.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10288,6 +10376,7 @@
       "size": "0x158",
       "name": "_GUARD_SEARCH__FP12RS_STACKDATAi",
       "sha256": "824057f80845c30ea9bd774ad0ccd25dd663616fff2c5a9f395b459acffb1b35",
+      "comment": "Reports the player's guard state, distance and character while the monster is guarding.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10299,6 +10388,7 @@
       "size": "0x5C",
       "name": "_GET_MOVE_VEC__FP12RS_STACKDATAi",
       "sha256": "3bfbf8980dab1d7d6da8418cfede5584e72e742ed49b98c5fc1c23f034200c64",
+      "comment": "Gives the direction the player is moving in.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10310,6 +10400,7 @@
       "size": "0x94",
       "name": "_PUSH_IGLOBAL__FP12RS_STACKDATAi",
       "sha256": "951cf5d4335d5a7edfa3c95700261dcc4bb480194e243fb1d4731455f8969313",
+      "comment": "Stores an integer in one of the monster's own eight slots.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10321,6 +10412,7 @@
       "size": "0x88",
       "name": "_POP_IGLOBAL__FP12RS_STACKDATAi",
       "sha256": "ae32d70664d7ea00d7d16bb30b87e5f09880f29838fdde71ccc59fb70eef73b3",
+      "comment": "Reads an integer out of one of the monster's own eight slots.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10332,6 +10424,7 @@
       "size": "0x74",
       "name": "_GET_USER_STATUS__FP12RS_STACKDATAi",
       "sha256": "25b2ed702378571c7940754ca046247b147b206a9092893458417d56572791df",
+      "comment": "Gives the status ailment the player is suffering.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10343,6 +10436,7 @@
       "size": "0xC0",
       "name": "_SET_REFERENCE__FP12RS_STACKDATAi",
       "sha256": "2a5b0790ad8acda1cb91f2ca69c0d81e0d832b4b5ac3d7b6df52583b26cbc9cb",
+      "comment": "Attaches the monster's model to a named frame of its own hierarchy.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10354,6 +10448,7 @@
       "size": "0x5C",
       "name": "_DEL_REFERENCE__FP12RS_STACKDATAi",
       "sha256": "17331bae6852cfadd930ab3775ac2943d4c409ea68451fa30a8d5dfb9ee3490e",
+      "comment": "Detaches another monster's model from whatever it was attached to.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10365,6 +10460,7 @@
       "size": "0x5C",
       "name": "_SET_SHADOW_FLAG__FP12RS_STACKDATAi",
       "sha256": "2d7e144d411f87d085d8ffdfefa3fe346b2562252138f75da0b118b71474f5b2",
+      "comment": "Sets whether the monster casts a shadow.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10376,6 +10472,7 @@
       "size": "0xA4",
       "name": "BtSetEventScript__FP10CRunScriptPcP14CDataAlloc2_1_",
       "sha256": "637705f0df8f0116b03b06f4c6510c0715b55cba21d14d725cf0d1ac80ccc9f5",
+      "comment": "Loads a monster script, giving it its argument stack, call stack and opcode table.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
@@ -10387,6 +10484,7 @@
       "size": "0x12C",
       "name": "BtSetEventExtendTable__Fv",
       "sha256": "affe82cebd493c7476cb19ddde02d2ea4e19b4aa4d515b228cf7d0d33cb76be2",
+      "comment": "Builds the opcode table out of the extension list, refusing a list that names one twice.",
       "documentation": "include/runscript_opcodes.hpp"
     },
     {
