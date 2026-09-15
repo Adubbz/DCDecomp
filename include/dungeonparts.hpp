@@ -158,8 +158,7 @@ public:
     u8 unk_104[12];
     float unk_110[4];
     u8 unk_120[80];
-    float unk_170;
-    s32 unk_174[5];
+    float unk_170[6];
     u8 unk_188[32];
     s32 unk_1A8;
     s32 unk_1AC;

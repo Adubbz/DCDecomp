@@ -6,6 +6,8 @@
 #include <cstring>
 
 #include "clsmes.hpp"
+#include "dataread.hpp"
+#include "dngstatusdata.hpp"
 #include "itemdata.hpp"
 #include "memcard.hpp"
 #include "menu_inventory.hpp"
@@ -42,6 +44,16 @@ extern s32 MenuSelect;
  * Stores the battle-menu transition timer.
  */
 extern float BtlEffectCt;
+
+/**
+ * Stores the dungeon status used by the battle menu.
+ */
+extern CDngStatusData *BtlMenuStatusPt;
+
+/**
+ * Stores the active battle-menu submode.
+ */
+extern s32 BtlMenuMode;
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetDefaultWeaponNo__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", IsDefaultWeapon__Fi);
@@ -253,7 +265,27 @@ INCLUDE_RODATA("asm/nonmatchings/battlemenu", @4330);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ReadSyncItemMenuWepIcon__Fv);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @4334);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", InitItemMode__Fii);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", InitItemTrushStart__Fv);
+
+/**
+ * Waits for the item page's data and opens it on the throw-away mode.
+ *
+ * @mangled InitItemTrushStart__Fv
+ * @address 0x202C10
+ * @size 0x74
+ */
+static void InitItemTrushStart() {
+    if (ReadBGSync() == 0) {
+        BattleMenuTexEnter();
+        if (BtlMenuMode == 1) {
+            BtlMenuStatusPt->unk_04 = 0;
+        }
+        InitItemMode(0, BtlMenuStatusPt->unk_04);
+        BattleMenuFlag = MenuSelect + 8;
+        BtlEffectFlag = 1;
+        BtlEffectCt = 0.0f;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ExistItemMenu__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ChangeMenuChara__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemMenuMainKey__Fv);

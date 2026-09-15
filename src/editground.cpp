@@ -1,5 +1,8 @@
 #include "editground.hpp"
 
+#include "editarea.hpp"
+#include "mapparts.hpp"
+
 INCLUDE_ASM("asm/nonmatchings/editground", SetMapParts__11CEditGroundFifffi);
 INCLUDE_ASM("asm/nonmatchings/editground", SetRiverParts__11CEditGroundFfffii);
 INCLUDE_ASM("asm/nonmatchings/editground", SetRoadParts__11CEditGroundFfffii);
@@ -17,7 +20,15 @@ INCLUDE_ASM("asm/nonmatchings/editground", SetFocusParts__11CEditGroundFfff);
 INCLUDE_ASM("asm/nonmatchings/editground", EditAreaClip__11CEditGroundFP7CCameraf);
 INCLUDE_ASM("asm/nonmatchings/editground", GetRandomPlanePos__11CEditGroundFPfPA4_fiPf);
 INCLUDE_ASM("asm/nonmatchings/editground", GetNearParts__11CEditGroundFPP9CMapPartsiP7CBoxVu0P7CBoxVu0);
-INCLUDE_ASM("asm/nonmatchings/editground", MakePartsBox__11CEditGroundFv);
+
+void CEditGround::MakePartsBox() {
+    for (int i = 0; i < 4; i++) {
+        if (areas[i] != NULL) {
+            areas[i]->MakePartsBox();
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", GetPartsBox__11CEditGroundFP7CBoxVu0fff);
 INCLUDE_ASM("asm/nonmatchings/editground", GetPeoplePos__11CEditGroundFiPf);
 INCLUDE_ASM("asm/nonmatchings/editground", DrawBaseGround__11CEditGroundFv);
@@ -69,14 +80,33 @@ INCLUDE_ASM("asm/nonmatchings/editground", GetRectDirParts__11CEditGroundFP8CRec
 INCLUDE_ASM("asm/nonmatchings/editground", NornRequest__11CEditGroundFPA64_P9CMapParts);
 INCLUDE_ASM("asm/nonmatchings/editground", MatatagiRequest__11CEditGroundFPA64_P9CMapParts);
 INCLUDE_ASM("asm/nonmatchings/editground", QueensRequest__11CEditGroundFPA64_P9CMapParts);
+
 /**
- * Reports whether two parts face each other at a given quarter-turn offset.
+ * Reports whether one part, turned by a quarter-turn offset, faces the same direction as another.
  *
  * @mangled CheckRot__FP9CMapPartsP9CMapPartsi
  * @address 0x1A7890
  * @size 0x8C
  */
-INCLUDE_ASM("asm/nonmatchings/editground", CheckRot__FP9CMapPartsP9CMapPartsi);
+static int CheckRot(CMapParts *parts, CMapParts *other, int rotation_offset) {
+    int other_rotation;
+    int rotation;
+
+    if (parts == NULL || other == NULL) {
+        return 0;
+    }
+
+    rotation = rotation_offset + parts->GetRotY();
+    other_rotation = other->GetRotY();
+    if (rotation > 2) {
+        rotation -= 4;
+    }
+    if (rotation < -1) {
+        rotation += 4;
+    }
+    return rotation == other_rotation;
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", MuskaRequest__11CEditGroundFPA64_P9CMapParts);
 INCLUDE_ASM("asm/nonmatchings/editground", YellowRequest__11CEditGroundFPA64_P9CMapParts);
 INCLUDE_RODATA("asm/nonmatchings/editground", @2120);

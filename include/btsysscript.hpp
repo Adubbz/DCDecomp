@@ -453,7 +453,7 @@ int _SET_LIMMIT_ZONE(RS_STACKDATA *stack, int count);
  * @address 0x1BCF70
  * @size 0x28
  */
-int _SET_DEAD_FLAG(RS_STACKDATA *stack, int count);
+int _SET_DEAD_FLAG(RS_STACKDATA *stack, int argument_count);
 
 /**
  * Sets whether the floor draws at all.

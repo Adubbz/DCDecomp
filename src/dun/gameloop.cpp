@@ -3866,7 +3866,7 @@ void MoveChara(void) {
                                                                         CDungeonParts *part2 =
                                                                             &map->parts[i];
 
-                                                                        turn = (int) part2->unk_170;
+                                                                        turn = (int) part2->unk_170[0];
                                                                         turn += part2->unk_010;
                                                                         if (turn > 3) {
                                                                             turn -= 3;
@@ -4788,7 +4788,7 @@ void MoveChara(void) {
 
                             CDungeonParts *part2 = &NowDngMap->parts[i];
 
-                            turn = (int) part2->unk_170;
+                            turn = (int) part2->unk_170[0];
                             turn += part2->unk_010;
                             if (turn > 3) {
                                 turn -= 3;
@@ -8007,7 +8007,7 @@ void autoCamTrial(void) {
                 sceVu0CopyVector(eye, part->unk_110);
 
                 CDungeonMap *map = NowDngMap;
-                int turn = (int) ((CDungeonMap *) map)->parts[i].unk_170;
+                int turn = (int) ((CDungeonMap *) map)->parts[i].unk_170[0];
 
                 turn += i == -1 ? 0 : map->parts[i].unk_008;
 

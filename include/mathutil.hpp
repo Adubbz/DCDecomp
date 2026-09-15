@@ -89,13 +89,13 @@ void dthandler(void);
 void __register_global_object(/* unknown args */);
 
 /**
- * Starts the C++ runtime: its handlers and its global-object list.
+ * Calls each static initializer in the table from the first pointer up to the second.
  *
  * @mangled __initialize_cpp_rts
  * @address 0x122960
  * @size 0x54
  */
-void __initialize_cpp_rts(/* unknown args */);
+extern "C" void __initialize_cpp_rts(void *, void *, void *, void *);
 
 /**
  * Reads an unsigned number out of a mangled type name.
@@ -140,7 +140,7 @@ void __unexpected(/* unknown args */);
  * @address 0x122DA0
  * @size 0x40
  */
-void mwInit(/* unknown args */);
+extern "C" void mwInit(int argc, const char **argv, const char **envp);
 
 /**
  * Starts the overlay loader and records where overlays are read to.
@@ -158,7 +158,7 @@ void mwOverlayInit(/* unknown args */);
  * @address 0x122E70
  * @size 0x8
  */
-void MWNotifyOverlayLoaded(/* unknown args */);
+extern "C" void MWNotifyOverlayLoaded(void);
 
 /**
  * Reads one overlay image off the disc.
