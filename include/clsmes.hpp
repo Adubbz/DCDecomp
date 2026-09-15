@@ -159,7 +159,7 @@ public:
      *
      * @mangled GetNameWidth__6ClsMesFi
      * @address 0x14CC60
-     * @size 0x120
+     * @size 0x118
      */
     int GetNameWidth(int chara);
 
@@ -180,7 +180,7 @@ public:
      *
      * @mangled AutoSet__6ClsMesFPi
      * @address 0x14D030
-     * @size 0x630
+     * @size 0x628
      */
     void AutoSet(int *pos);
 
@@ -190,7 +190,7 @@ public:
      *
      * @mangled AbsFukidashiIn__6ClsMesFv
      * @address 0x14D660
-     * @size 0x160
+     * @size 0x154
      */
     void AbsFukidashiIn(void);
 
@@ -199,7 +199,7 @@ public:
      *
      * @mangled __ct__6ClsMesFv
      * @address 0x14D7C0
-     * @size 0x240
+     * @size 0x234
      */
     ClsMes(void);
 
@@ -208,7 +208,7 @@ public:
      *
      * @mangled SetBuff__6ClsMesFPs
      * @address 0x14DA00
-     * @size 0x30
+     * @size 0x28
      */
     void SetBuff(short *buff);
 
@@ -217,7 +217,7 @@ public:
      *
      * @mangled SetBuff_system__6ClsMesFPs
      * @address 0x14DA30
-     * @size 0x30
+     * @size 0x28
      */
     void SetBuff_system(short *buff);
 
@@ -227,7 +227,7 @@ public:
      *
      * @mangled Preset__6ClsMesFi
      * @address 0x14DA60
-     * @size 0x150
+     * @size 0x14C
      */
     void Preset(int style);
 
@@ -237,7 +237,7 @@ public:
      *
      * @mangled SetMesFukidashi__6ClsMesFi
      * @address 0x14DBB0
-     * @size 0x1E0
+     * @size 0x1D8
      */
     void SetMesFukidashi(int style);
 
@@ -266,7 +266,7 @@ public:
      *
      * @mangled MyTextureMake_InitAll__6ClsMesFv
      * @address 0x14E130
-     * @size 0x40
+     * @size 0x34
      */
     void MyTextureMake_InitAll(void);
 
@@ -275,7 +275,7 @@ public:
      *
      * @mangled GoNextPage__6ClsMesFv
      * @address 0x14E170
-     * @size 0x50
+     * @size 0x48
      */
     void GoNextPage(void);
 
@@ -285,7 +285,7 @@ public:
      *
      * @mangled MyTextureMake_sub__6ClsMesFv
      * @address 0x14E1C0
-     * @size 0x1C0
+     * @size 0x1B8
      */
     int MyTextureMake_sub(void);
 
@@ -294,7 +294,7 @@ public:
      *
      * @mangled MyTextureMake__6ClsMesFv
      * @address 0x14E380
-     * @size 0x200
+     * @size 0x1FC
      */
     void MyTextureMake(void);
 
@@ -304,7 +304,7 @@ public:
      *
      * @mangled MakeMesWinTbl_value__6ClsMesFPiPi
      * @address 0x14E700
-     * @size 0x230
+     * @size 0x224
      */
     void MakeMesWinTbl_value(int *x, int *y);
 
@@ -313,7 +313,7 @@ public:
      *
      * @mangled MakeMesWinTbl_value__6ClsMesFiPiPi
      * @address 0x14E930
-     * @size 0x240
+     * @size 0x23C
      */
     void MakeMesWinTbl_value(int which, int *x, int *y);
 
@@ -323,7 +323,7 @@ public:
      *
      * @mangled MakeMesWinTbl_system__6ClsMesFiPiPi
      * @address 0x14EB70
-     * @size 0x480
+     * @size 0x478
      */
     int MakeMesWinTbl_system(int code, int *x, int *y);
 
@@ -333,7 +333,7 @@ public:
      *
      * @mangled GetMesLen_system__6ClsMesFi
      * @address 0x14EFF0
-     * @size 0x330
+     * @size 0x32C
      */
     int GetMesLen_system(int mes_no);
 
@@ -342,7 +342,7 @@ public:
      *
      * @mangled GetMesWidth_system__6ClsMesFi
      * @address 0x14F320
-     * @size 0x190
+     * @size 0x184
      */
     int GetMesWidth_system(int mes_no);
 
@@ -351,7 +351,7 @@ public:
      *
      * @mangled GetTextLineDataTop__6ClsMesFi
      * @address 0x14F4B0
-     * @size 0x70
+     * @size 0x64
      */
     short *GetTextLineDataTop(int line);
 
@@ -360,7 +360,7 @@ public:
      *
      * @mangled GetTextLineDataTop_system__6ClsMesFi
      * @address 0x14F520
-     * @size 0x70
+     * @size 0x64
      */
     short *GetTextLineDataTop_system(int line);
 
@@ -370,7 +370,7 @@ public:
      *
      * @mangled InitMesWinTbl__6ClsMesFv
      * @address 0x14F590
-     * @size 0x50
+     * @size 0x44
      */
     void InitMesWinTbl(void);
 
@@ -380,7 +380,7 @@ public:
      *
      * @mangled SetMesWinTbl__6ClsMesFiiss
      * @address 0x14F5E0
-     * @size 0x1A0
+     * @size 0x19C
      */
     int SetMesWinTbl(int code, int mode, short x, short y);
 
@@ -389,7 +389,7 @@ public:
      *
      * @mangled CalcSpaceW__6ClsMesFiiPs
      * @address 0x14F780
-     * @size 0x150
+     * @size 0x14C
      */
     int CalcSpaceW(int width, int glyph_width, short *text);
 
@@ -399,7 +399,7 @@ public:
      *
      * @mangled MakeMesWinTbl__6ClsMesFi
      * @address 0x14F8D0
-     * @size 0x430
+     * @size 0x428
      */
     int MakeMesWinTbl(int mes_no);
 
@@ -409,7 +409,7 @@ public:
      *
      * @mangled NeedMesWinWH__6ClsMesFiPi
      * @address 0x14FD60
-     * @size 0x6B0
+     * @size 0x6A8
      */
     void NeedMesWinWH(int mes_no, int *out);
 
@@ -429,7 +429,7 @@ public:
      *
      * @mangled MakeMesTexture__6ClsMesFi
      * @address 0x150650
-     * @size 0x1C0
+     * @size 0x1BC
      */
     void MakeMesTexture(int mes_no);
 
@@ -438,7 +438,7 @@ public:
      *
      * @mangled Myset2DSprite_Fuchi__6ClsMesFP13sceVif1PacketP8CTextureiiiiiiii
      * @address 0x150810
-     * @size 0x3A0
+     * @size 0x39C
      */
     void Myset2DSprite_Fuchi(sceVif1Packet *packet, CTexture *texture, int x, int y, int width,
                              int height, int u, int v, int u_width, int v_height);
@@ -468,7 +468,7 @@ public:
      *
      * @mangled DrawMesWin_sub__6ClsMesFP8CTextureiii
      * @address 0x152030
-     * @size 0x900
+     * @size 0x8F4
      */
     void DrawMesWin_sub(CTexture *texture, int dx, int dy, int frame);
 
@@ -478,7 +478,7 @@ public:
      *
      * @mangled DrawGaijiFont__6ClsMesFP8CTextureiRC8CRect_i_RC8CRect_i_ii
      * @address 0x152EE0
-     * @size 0x308
+     * @size 0x430
      */
     void DrawGaijiFont(CTexture *texture, int no, const CRect_i_ &texel,
                        const CRect_i_ &screen, int wide, int dark);
@@ -489,7 +489,7 @@ public:
      *
      * @mangled DrawMesWin__6ClsMesFv
      * @address 0x153310
-     * @size 0xC30
+     * @size 0xC24
      */
     void DrawMesWin(void);
 };

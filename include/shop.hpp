@@ -60,7 +60,7 @@ void GetItemShopList(int);
  *
  * @mangled InitShopItemListData__FP13SHOP_ITEMLIST
  * @address 0x1E68F0
- * @size 0x40
+ * @size 0x38
  */
 void InitShopItemListData(SHOP_ITEMLIST *);
 
@@ -69,7 +69,7 @@ public:
     /**
      * @mangled IconMoveTarSet__12ShopIconMoveFiiiP13MENU_ITEMDATAffi
      * @address 0x1E6930
-     * @size 0x70
+     * @size 0x68
      * @unknownret
      */
     void IconMoveTarSet(int, int, int, MENU_ITEMDATA *, float, float, int);
@@ -85,7 +85,7 @@ public:
     /**
      * @mangled IconAutoMoveDraw__12ShopIconMoveFv
      * @address 0x1E6E00
-     * @size 0xF0
+     * @size 0xE8
      * @unknownret
      */
     void IconAutoMoveDraw(void);
@@ -96,14 +96,14 @@ public:
  *
  * @mangled GetItemMoney__Fii
  * @address 0x1E6EF0
- * @size 0x50
+ * @size 0x44
  */
 s16 GetItemMoney(int, int);
 
 /**
  * @mangled ShopNoInput__FPiii
  * @address 0x1E6F40
- * @size 0x90
+ * @size 0x88
  * @unknownret
  */
 void ShopNoInput(int *, int, int);
@@ -113,14 +113,14 @@ void ShopNoInput(int *, int, int);
  *
  * @mangled InitAllHaveData__Fv
  * @address 0x1E6FD0
- * @size 0x50
+ * @size 0x44
  */
 void InitAllHaveData(void);
 
 /**
  * @mangled CommonShopLoop__Fv
  * @address 0x1E7020
- * @size 0x60
+ * @size 0x5C
  * @unknownret
  */
 void CommonShopLoop(void);
@@ -147,14 +147,14 @@ void SetItemShopTalkMode(int, int);
  *
  * @mangled ShopIconDraw__FPsPUciiiiii
  * @address 0x1E7220
- * @size 0x100
+ * @size 0xFC
  */
 void ShopIconDraw(short *, unsigned char *, int, int, int, int, int, int);
 
 /**
  * @mangled ChargeShopLRDraw__Fi
  * @address 0x1E7320
- * @size 0x1B0
+ * @size 0x1AC
  * @unknownret
  */
 void ChargeShopLRDraw(int);
@@ -162,7 +162,7 @@ void ChargeShopLRDraw(int);
 /**
  * @mangled ShopCurDraw__Fiiiiiii
  * @address 0x1E74D0
- * @size 0x300
+ * @size 0x2FC
  * @unknownret
  */
 void ShopCurDraw(int, int, int, int, int, int, int);
@@ -170,7 +170,7 @@ void ShopCurDraw(int, int, int, int, int, int, int);
 /**
  * @mangled DrawShopIcon__Fiiii
  * @address 0x1E77D0
- * @size 0x70
+ * @size 0x6C
  * @unknownret
  */
 void DrawShopIcon(int, int, int, int);
@@ -178,7 +178,7 @@ void DrawShopIcon(int, int, int, int);
 /**
  * @mangled IsEnableCharge__Fi
  * @address 0x1E7840
- * @size 0x110
+ * @size 0x10C
  * @unknownret
  */
 void IsEnableCharge(int);
@@ -188,7 +188,7 @@ void IsEnableCharge(int);
  *
  * @mangled ShopMenuInit__FPiii
  * @address 0x1E7950
- * @size 0x250
+ * @size 0x248
  */
 void ShopMenuInit(int *, int, int);
 
@@ -197,7 +197,7 @@ void ShopMenuInit(int *, int, int);
  *
  * @mangled ShopMenuExit__Fv
  * @address 0x1E7BA0
- * @size 0x130
+ * @size 0x12C
  */
 void ShopMenuExit(void);
 
@@ -212,7 +212,7 @@ void ShopTextureLoadFix(void);
 /**
  * @mangled ShopFadeoutDraw__Fv
  * @address 0x1E7EA0
- * @size 0x100
+ * @size 0xF8
  * @unknownret
  */
 void ShopFadeoutDraw(void);
@@ -220,7 +220,7 @@ void ShopFadeoutDraw(void);
 /**
  * @mangled ShopPersonReadStart__Fii
  * @address 0x1E7FA0
- * @size 0xA0
+ * @size 0x98
  * @unknownret
  */
 void ShopPersonReadStart(int, int);
@@ -228,7 +228,7 @@ void ShopPersonReadStart(int, int);
 /**
  * @mangled ShopPersonBuild__Fii
  * @address 0x1E8040
- * @size 0x270
+ * @size 0x268
  * @unknownret
  */
 void ShopPersonBuild(int, int);
@@ -238,14 +238,14 @@ void ShopPersonBuild(int, int);
  *
  * @mangled LocalShopPersonDraw__Fv
  * @address 0x1E82B0
- * @size 0xC0
+ * @size 0xB8
  */
 void LocalShopPersonDraw(void);
 
 /**
  * @mangled ShopPersonDraw__Fi
  * @address 0x1E8370
- * @size 0x40
+ * @size 0x3C
  * @unknownret
  */
 void ShopPersonDraw(int);
@@ -255,7 +255,7 @@ void ShopPersonDraw(int);
  *
  * @mangled ShopMasterVectorSet__Fi
  * @address 0x1E83B0
- * @size 0xE0
+ * @size 0xD8
  */
 void ShopMasterVectorSet(int);
 
@@ -264,7 +264,7 @@ void ShopMasterVectorSet(int);
  *
  * @mangled InitChargeShop__FPiii
  * @address 0x1E8490
- * @size 0x190
+ * @size 0x188
  */
 void InitChargeShop(int *, int, int);
 
@@ -273,7 +273,7 @@ void InitChargeShop(int *, int, int);
  *
  * @mangled ChargeShopLimmitCheck__Fv
  * @address 0x1E8620
- * @size 0x280
+ * @size 0x274
  */
 void ChargeShopLimmitCheck(void);
 
@@ -291,7 +291,7 @@ int ChargeShopLoop(void);
  *
  * @mangled ChargeShopKey__Fv
  * @address 0x1E8910
- * @size 0x15D0
+ * @size 0x15CC
  */
 int ChargeShopKey(void);
 
@@ -308,14 +308,14 @@ void ChargeSelectKey(void);
  *
  * @mangled DrawChargeShop__Fv
  * @address 0x1EA7A0
- * @size 0x5B0
+ * @size 0x5A4
  */
 void DrawChargeShop(void);
 
 /**
  * @mangled ChargeShopMaxDraw__Fiiii
  * @address 0x1EAD50
- * @size 0x1F0
+ * @size 0x1EC
  * @unknownret
  */
 void ChargeShopMaxDraw(int, int, int, int);
@@ -325,7 +325,7 @@ void ChargeShopMaxDraw(int, int, int, int);
  *
  * @mangled ChargeShopBoardDraw__Fiii
  * @address 0x1EAF40
- * @size 0x390
+ * @size 0x384
  */
 void ChargeShopBoardDraw(int, int, int);
 
@@ -341,7 +341,7 @@ int CalItemMoney(int, int);
 /**
  * @mangled WeaponCalMoney__FP11WEAPON_HAVEi
  * @address 0x1EB310
- * @size 0x90
+ * @size 0x84
  * @unknownret
  */
 void WeaponCalMoney(WEAPON_HAVE *, int);
@@ -360,14 +360,14 @@ int BuyMoneyCheck2(void);
  *
  * @mangled SellMoneyCheck2__Fv
  * @address 0x1EB540
- * @size 0xC0
+ * @size 0xB4
  */
 int SellMoneyCheck2(void);
 
 /**
  * @mangled IncludeBuyItem2__Fv
  * @address 0x1EB600
- * @size 0x1B0
+ * @size 0x1A4
  * @unknownret
  */
 void IncludeBuyItem2(void);
@@ -377,7 +377,7 @@ void IncludeBuyItem2(void);
  *
  * @mangled CheckBuyItemFunc2__Fv
  * @address 0x1EB7B0
- * @size 0x1D0
+ * @size 0x1C4
  */
 int CheckBuyItemFunc2(void);
 
@@ -386,7 +386,7 @@ int CheckBuyItemFunc2(void);
  *
  * @mangled ExitItemShop2__Fv
  * @address 0x1EB980
- * @size 0xA0
+ * @size 0x9C
  */
 void ExitItemShop2(void);
 
@@ -395,14 +395,14 @@ void ExitItemShop2(void);
  *
  * @mangled ShopSpecialFunc__Fv
  * @address 0x1EBA20
- * @size 0x130
+ * @size 0x128
  */
 void ShopSpecialFunc(void);
 
 /**
  * @mangled CompItem1__Fii
  * @address 0x1EBB50
- * @size 0x120
+ * @size 0x11C
  * @unknownret
  */
 void CompItem1(int, int);
@@ -412,14 +412,14 @@ void CompItem1(int, int);
  *
  * @mangled SeitonShopItemBoardSub__FP9ITEM_PACK
  * @address 0x1EBC70
- * @size 0x140
+ * @size 0x138
  */
 int SeitonShopItemBoardSub(ITEM_PACK *);
 
 /**
  * @mangled SeitonShopItemBoard__FP9ITEM_PACK
  * @address 0x1EBDB0
- * @size 0x90
+ * @size 0x88
  * @unknownret
  */
 void SeitonShopItemBoard(ITEM_PACK *);
@@ -427,7 +427,7 @@ void SeitonShopItemBoard(ITEM_PACK *);
 /**
  * @mangled CompAttach1__FP11ATTACH_LISTP11ATTACH_LIST
  * @address 0x1EBE40
- * @size 0x100
+ * @size 0xFC
  * @unknownret
  */
 void CompAttach1(ATTACH_LIST *, ATTACH_LIST *);
@@ -437,14 +437,14 @@ void CompAttach1(ATTACH_LIST *, ATTACH_LIST *);
  *
  * @mangled SeitonShopAttachBoardSub__FP11ATTACH_LIST
  * @address 0x1EBF40
- * @size 0x140
+ * @size 0x138
  */
 int SeitonShopAttachBoardSub(ATTACH_LIST *);
 
 /**
  * @mangled SeitonShopAttachBoard__FP11ATTACH_LIST
  * @address 0x1EC080
- * @size 0xA0
+ * @size 0x94
  * @unknownret
  */
 void SeitonShopAttachBoard(ATTACH_LIST *);
@@ -461,7 +461,7 @@ int ItemShopLoop2(void);
 /**
  * @mangled CheckSideKey2__Fv
  * @address 0x1EC170
- * @size 0x200
+ * @size 0x1F4
  * @unknownret
  */
 void CheckSideKey2(void);
@@ -469,7 +469,7 @@ void CheckSideKey2(void);
 /**
  * @mangled DrawItemShopBoard2__Fiii
  * @address 0x1EC370
- * @size 0x2D0
+ * @size 0x2C4
  * @unknownret
  */
 void DrawItemShopBoard2(int, int, int);
@@ -477,7 +477,7 @@ void DrawItemShopBoard2(int, int, int);
 /**
  * @mangled DrawMoneyCheckBoard2__Fiii
  * @address 0x1EC640
- * @size 0x190
+ * @size 0x18C
  * @unknownret
  */
 void DrawMoneyCheckBoard2(int, int, int);
@@ -487,7 +487,7 @@ void DrawMoneyCheckBoard2(int, int, int);
  *
  * @mangled DrawCheckButton__Fiii
  * @address 0x1EC7D0
- * @size 0xA0
+ * @size 0x9C
  */
 void DrawCheckButton(int, int, int);
 
@@ -513,7 +513,7 @@ void DrawBigSellTicket(int, int, int, int, int);
  *
  * @mangled DrawSellTicket_2__Fiiiii
  * @address 0x1ECA30
- * @size 0x190
+ * @size 0x184
  */
 void DrawSellTicket_2(int, int, int, int, int);
 
@@ -522,14 +522,14 @@ void DrawSellTicket_2(int, int, int, int, int);
  *
  * @mangled DrawLocalTicket__Fiiiiiii
  * @address 0x1ECBC0
- * @size 0x150
+ * @size 0x14C
  */
 void DrawLocalTicket(int, int, int, int, int, int, int);
 
 /**
  * @mangled DrawSellTicket22__Fiiiii
  * @address 0x1ECD10
- * @size 0x280
+ * @size 0x274
  * @unknownret
  */
 void DrawSellTicket22(int, int, int, int, int);
@@ -545,7 +545,7 @@ void ShopCancelGoodReturn2(void);
 /**
  * @mangled GetNowMasterMsgNo2__Fii
  * @address 0x1ED470
- * @size 0x270
+ * @size 0x268
  * @unknownret
  */
 void GetNowMasterMsgNo2(int, int);
@@ -553,7 +553,7 @@ void GetNowMasterMsgNo2(int, int);
 /**
  * @mangled ShopModelMsgFunc__Fi
  * @address 0x1ED6E0
- * @size 0x2E0
+ * @size 0x2D8
  * @unknownret
  */
 void ShopModelMsgFunc(int);
@@ -563,7 +563,7 @@ void ShopModelMsgFunc(int);
  *
  * @mangled SetShopTalkMsgPos__Fv
  * @address 0x1ED9C0
- * @size 0xC0
+ * @size 0xB4
  */
 void SetShopTalkMsgPos(void);
 
@@ -572,14 +572,14 @@ void SetShopTalkMsgPos(void);
  *
  * @mangled ItemShopGetPacFileName__FiiPc
  * @address 0x1EDA80
- * @size 0xE0
+ * @size 0xD8
  */
 void ItemShopGetPacFileName(int, int, char *);
 
 /**
  * @mangled ItemShopGetImgFileName__FiiPc
  * @address 0x1EDB60
- * @size 0x90
+ * @size 0x8C
  * @unknownret
  */
 void ItemShopGetImgFileName(int, int, char *);
@@ -589,7 +589,7 @@ void ItemShopGetImgFileName(int, int, char *);
  *
  * @mangled ItemShopMemoryAlloc__Fv
  * @address 0x1EDBF0
- * @size 0x110
+ * @size 0x10C
  */
 void ItemShopMemoryAlloc(void);
 
@@ -598,7 +598,7 @@ void ItemShopMemoryAlloc(void);
  *
  * @mangled ItemPosInfoInit__Fv
  * @address 0x1EDD00
- * @size 0x1A0
+ * @size 0x194
  */
 void ItemPosInfoInit(void);
 
@@ -607,7 +607,7 @@ void ItemPosInfoInit(void);
  *
  * @mangled ItemShopGoodInitialize__Fi
  * @address 0x1EDEA0
- * @size 0x250
+ * @size 0x24C
  */
 void ItemShopGoodInitialize(int);
 
@@ -642,14 +642,14 @@ int ItemShopKey2(void);
  *
  * @mangled ItemShopDraw2__Fv
  * @address 0x1F0800
- * @size 0xA50
+ * @size 0xA4C
  */
 void ItemShopDraw2(void);
 
 /**
  * @mangled GetExchangeItemList__Fi
  * @address 0x1F1250
- * @size 0x20
+ * @size 0x18
  * @unknownret
  */
 void GetExchangeItemList(int);
@@ -659,7 +659,7 @@ void GetExchangeItemList(int);
  *
  * @mangled GetMardanGareyanFlag__Fv
  * @address 0x1F1270
- * @size 0x20
+ * @size 0x18
  */
 int GetMardanGareyanFlag(void);
 
@@ -668,14 +668,14 @@ int GetMardanGareyanFlag(void);
  *
  * @mangled SetAlreadyGetMardanWeapon__Fi
  * @address 0x1F1290
- * @size 0x30
+ * @size 0x2C
  */
 void SetAlreadyGetMardanWeapon(int);
 
 /**
  * @mangled SetFishMardanGarayanNum__Fi
  * @address 0x1F12C0
- * @size 0x80
+ * @size 0x78
  * @unknownret
  */
 void SetFishMardanGarayanNum(int);
@@ -694,7 +694,7 @@ int GetFishMardanGarayanNum(void);
  *
  * @mangled ClearFishMardanGarayanNum__Fv
  * @address 0x1F1370
- * @size 0x30
+ * @size 0x2C
  */
 void ClearFishMardanGarayanNum(void);
 
@@ -719,7 +719,7 @@ void InitFishingExchange(void /* CW back-ref target unresolved */ *, int *, int)
 /**
  * @mangled FishMenuTextureLoad__Fv
  * @address 0x1F15D0
- * @size 0x2B0
+ * @size 0x2AC
  * @unknownret
  */
 void FishMenuTextureLoad(void);
@@ -729,7 +729,7 @@ void FishMenuTextureLoad(void);
  *
  * @mangled FishingExchangeKey__Fv
  * @address 0x1F1880
- * @size 0xBA0
+ * @size 0xB94
  */
 int FishingExchangeKey(void);
 
@@ -738,7 +738,7 @@ int FishingExchangeKey(void);
  *
  * @mangled FishImageIconDraw__Fiiii
  * @address 0x1F2420
- * @size 0x60
+ * @size 0x54
  */
 void FishImageIconDraw(int, int, int, int);
 
@@ -747,7 +747,7 @@ void FishImageIconDraw(int, int, int, int);
  *
  * @mangled FishExchangeItemDraw__Fiii
  * @address 0x1F2480
- * @size 0x790
+ * @size 0x788
  */
 void FishExchangeItemDraw(int, int, int);
 
@@ -756,7 +756,7 @@ void FishExchangeItemDraw(int, int, int);
  *
  * @mangled FishingExchangeDraw__Fv
  * @address 0x1F2C10
- * @size 0x120
+ * @size 0x11C
  */
 void FishingExchangeDraw(void);
 
@@ -774,14 +774,14 @@ void ExitFishingExchange(void);
  *
  * @mangled FishingExchangeLoop__Fv
  * @address 0x1F2DB0
- * @size 0x60
+ * @size 0x54
  */
 int FishingExchangeLoop(void);
 
 /**
  * @mangled GetFishMsgNo__Fi
  * @address 0x1F2E10
- * @size 0x40
+ * @size 0x3C
  * @unknownret
  */
 void GetFishMsgNo(int);
@@ -791,7 +791,7 @@ void GetFishMsgNo(int);
  *
  * @mangled GetFishingRankData__Fi
  * @address 0x1F2E50
- * @size 0x30
+ * @size 0x28
  */
 SV_FISH_DATA *GetFishingRankData(int);
 
@@ -817,7 +817,7 @@ void ExitFishRecord(void);
  *
  * @mangled FishRecordTextureEnter__Fv
  * @address 0x1F3000
- * @size 0x1E0
+ * @size 0x1DC
  */
 void FishRecordTextureEnter(void);
 
@@ -835,7 +835,7 @@ int FishRecordViewKey(void);
  *
  * @mangled FishRecordViewBoard__Fiii
  * @address 0x1F35F0
- * @size 0x650
+ * @size 0x648
  */
 void FishRecordViewBoard(int, int, int);
 
@@ -844,7 +844,7 @@ void FishRecordViewBoard(int, int, int);
  *
  * @mangled FishRecordViewDraw__Fv
  * @address 0x1F3C40
- * @size 0x120
+ * @size 0x11C
  */
 void FishRecordViewDraw(void);
 
@@ -853,6 +853,6 @@ void FishRecordViewDraw(void);
  *
  * @mangled FishRecordViewLoop__Fv
  * @address 0x1F3D60
- * @size 0x40
+ * @size 0x38
  */
 int FishRecordViewLoop(void);

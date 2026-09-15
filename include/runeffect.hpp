@@ -9,7 +9,7 @@ public:
     /**
      * @mangled Lighting__10CRunEffectFi
      * @address 0x163470
-     * @size 0x10
+     * @size 0xC
      * @unknownret
      */
     void Lighting(int);
@@ -17,7 +17,7 @@ public:
     /**
      * @mangled Draw__10CRunEffectFv
      * @address 0x163480
-     * @size 0x470
+     * @size 0x46C
      * @unknownret
      */
     void Draw(void);
@@ -25,7 +25,7 @@ public:
     /**
      * @mangled Set__10CRunEffectFPf
      * @address 0x1638F0
-     * @size 0x90
+     * @size 0x8C
      * @unknownret
      */
     void Set(float *);
@@ -41,7 +41,7 @@ public:
     /**
      * @mangled __ct__10CRunEffectFv
      * @address 0x1639F0
-     * @size 0x40
+     * @size 0x3C
      */
     CRunEffect(void);
 };

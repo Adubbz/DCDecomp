@@ -13,7 +13,7 @@ struct WEAPON_HAVE;
  *
  * @mangled NowGetGameFlagForBtlMenu__Fi
  * @address 0x20BEC0
- * @size 0xC0
+ * @size 0xB8
  */
 int NowGetGameFlagForBtlMenu(int);
 
@@ -22,7 +22,7 @@ int NowGetGameFlagForBtlMenu(int);
  *
  * @mangled GetMenuHebikiriFlag__Fv
  * @address 0x20BF80
- * @size 0x30
+ * @size 0x28
  */
 int GetMenuHebikiriFlag();
 
@@ -31,7 +31,7 @@ int GetMenuHebikiriFlag();
  *
  * @mangled EquipDefaultWeapon__Fi
  * @address 0x20BFB0
- * @size 0xC0
+ * @size 0xB4
  */
 void EquipDefaultWeapon(int);
 
@@ -49,7 +49,7 @@ void DrawMenuNothing(int, int, int, int, char *, int, int);
  *
  * @mangled GetMenuItemUseVolume__Fv
  * @address 0x20C3D0
- * @size 0x10
+ * @size 0xC
  */
 int GetMenuItemUseVolume();
 
@@ -58,7 +58,7 @@ int GetMenuItemUseVolume();
  *
  * @mangled ItemUseFunc__FP11CUserStatusiiiP11WEAPON_HAVE
  * @address 0x20C3E0
- * @size 0x9F0
+ * @size 0x9E4
  */
 int ItemUseFunc(CUserStatus *, int, int, int, WEAPON_HAVE *);
 
@@ -67,7 +67,7 @@ int ItemUseFunc(CUserStatus *, int, int, int, WEAPON_HAVE *);
  *
  * @mangled GetNowWeaponRate__FP11WEAPON_HAVE
  * @address 0x20CDD0
- * @size 0x60
+ * @size 0x5C
  */
 float GetNowWeaponRate(WEAPON_HAVE *);
 
@@ -76,7 +76,7 @@ float GetNowWeaponRate(WEAPON_HAVE *);
  *
  * @mangled WeaponStatusBreakEnable__FP11WEAPON_HAVE
  * @address 0x20CE30
- * @size 0x40
+ * @size 0x34
  */
 int WeaponStatusBreakEnable(WEAPON_HAVE *);
 
@@ -94,7 +94,7 @@ int WeaponStatusBuildUp(WEAPON_HAVE *, int &);
  *
  * @mangled MenuWeaponSpSet__FP10CCharacterP11WEAPON_HAVE
  * @address 0x20CF30
- * @size 0x120
+ * @size 0x114
  */
 void MenuWeaponSpSet(CCharacter *, WEAPON_HAVE *);
 
@@ -103,7 +103,7 @@ void MenuWeaponSpSet(CCharacter *, WEAPON_HAVE *);
  *
  * @mangled SetMenuCharaEffectReadFlag__Fi
  * @address 0x20D050
- * @size 0x10
+ * @size 0xC
  */
 void SetMenuCharaEffectReadFlag(int);
 
@@ -112,7 +112,7 @@ void SetMenuCharaEffectReadFlag(int);
  *
  * @mangled GetMenuCharaEffectReadFlag__Fv
  * @address 0x20D060
- * @size 0x10
+ * @size 0xC
  */
 int GetMenuCharaEffectReadFlag();
 
@@ -121,7 +121,7 @@ int GetMenuCharaEffectReadFlag();
  *
  * @mangled GetDngWepEffectPointer__Fv
  * @address 0x20D070
- * @size 0x10
+ * @size 0xC
  */
 BT_SHOT_EFFECT *GetDngWepEffectPointer();
 
@@ -130,7 +130,7 @@ BT_SHOT_EFFECT *GetDngWepEffectPointer();
  *
  * @mangled GetWepEffectMenuReadBuf__Fv
  * @address 0x20D080
- * @size 0x10
+ * @size 0xC
  */
 u_long128 *GetWepEffectMenuReadBuf();
 
@@ -139,7 +139,7 @@ u_long128 *GetWepEffectMenuReadBuf();
  *
  * @mangled SetOldEffectKind__Fi
  * @address 0x20D090
- * @size 0x10
+ * @size 0xC
  */
 void SetOldEffectKind(int);
 
@@ -148,7 +148,7 @@ void SetOldEffectKind(int);
  *
  * @mangled DngWepEffectReadStart__Fv
  * @address 0x20D0B0
- * @size 0xC0
+ * @size 0xB4
  */
 BT_SHOT_EFFECT *DngWepEffectReadStart();
 
@@ -157,7 +157,7 @@ BT_SHOT_EFFECT *DngWepEffectReadStart();
  *
  * @mangled MenuWeaponEffectSet__Fi
  * @address 0x20D170
- * @size 0x50
+ * @size 0x44
  */
 void MenuWeaponEffectSet(int);
 
@@ -166,7 +166,7 @@ void MenuWeaponEffectSet(int);
  *
  * @mangled GetNowTestNo__Fv
  * @address 0x20D1C0
- * @size 0x10
+ * @size 0xC
  */
 int GetNowTestNo();
 
@@ -175,7 +175,7 @@ int GetNowTestNo();
  *
  * @mangled StartReadWepMDS__FP1i
  * @address 0x20D1D0
- * @size 0x1E0
+ * @size 0x1D4
  */
 int StartReadWepMDS(u_long128 *, int);
 
@@ -184,7 +184,7 @@ int StartReadWepMDS(u_long128 *, int);
  *
  * @mangled InitMenuWeaponModelReference__Fv
  * @address 0x20D420
- * @size 0x50
+ * @size 0x48
  */
 void InitMenuWeaponModelReference();
 
@@ -193,7 +193,7 @@ void InitMenuWeaponModelReference();
  *
  * @mangled SetMenuWeaponModelReference__Fiii
  * @address 0x20D470
- * @size 0x30
+ * @size 0x28
  */
 void SetMenuWeaponModelReference(int, int, int);
 
@@ -202,7 +202,7 @@ void SetMenuWeaponModelReference(int, int, int);
  *
  * @mangled GetMenuWeaponModelFrameNo__Fi
  * @address 0x20D4A0
- * @size 0x20
+ * @size 0x1C
  */
 int GetMenuWeaponModelFrameNo(int);
 
@@ -211,7 +211,7 @@ int GetMenuWeaponModelFrameNo(int);
  *
  * @mangled EnterWeaponModel__Fiii
  * @address 0x20D4C0
- * @size 0x470
+ * @size 0x464
  */
 int EnterWeaponModel(int, int, int);
 
@@ -229,7 +229,7 @@ void WeaponModelBuildFunc(int, int);
  *
  * @mangled DngWeaponEquipModelBuild__FiiP1
  * @address 0x20DD60
- * @size 0x120
+ * @size 0x114
  */
 int DngWeaponEquipModelBuild(int, int, u_long128 *);
 
@@ -247,7 +247,7 @@ int GetNowActiveCharaStatus(int);
  *
  * @mangled SetNowCharaMotionNo__Fi
  * @address 0x20DEF0
- * @size 0x130
+ * @size 0x12C
  */
 void SetNowCharaMotionNo(int);
 
@@ -265,7 +265,7 @@ void SetItemMenuColor(int);
  *
  * @mangled SetItemMenuOldAmbient__Fv
  * @address 0x20E170
- * @size 0x30
+ * @size 0x28
  */
 void SetItemMenuOldAmbient();
 
@@ -283,7 +283,7 @@ int StartLoadCharaMDS(u_long128 *, int, int);
  *
  * @mangled MenuCharaMDSBuild2__Fii
  * @address 0x20E280
- * @size 0x2B0
+ * @size 0x2A8
  */
 void MenuCharaMDSBuild2(int, int);
 
@@ -292,7 +292,7 @@ void MenuCharaMDSBuild2(int, int);
  *
  * @mangled CharaChangeInitToGL__FP1i
  * @address 0x20E5B0
- * @size 0x300
+ * @size 0x2F4
  */
 int CharaChangeInitToGL(u_long128 *, int);
 
@@ -310,7 +310,7 @@ void CharaChangeInitToGL2(int);
  *
  * @mangled BtMenuLoadChara__Fv
  * @address 0x20E960
- * @size 0xA0
+ * @size 0x94
  */
 void BtMenuLoadChara();
 
@@ -319,7 +319,7 @@ void BtMenuLoadChara();
  *
  * @mangled BtMenuLoad2__Fi
  * @address 0x20EA00
- * @size 0xE0
+ * @size 0xD4
  */
 void BtMenuLoad2(int);
 
@@ -337,7 +337,7 @@ int EastKingCheckComplete();
  *
  * @mangled SetMonsterNameDrawFlag__Fi
  * @address 0x20EB60
- * @size 0x10
+ * @size 0xC
  */
 void SetMonsterNameDrawFlag(int);
 
@@ -346,7 +346,7 @@ void SetMonsterNameDrawFlag(int);
  *
  * @mangled GetMonsterNameDrawFlag__Fv
  * @address 0x20EB70
- * @size 0x10
+ * @size 0xC
  */
 int GetMonsterNameDrawFlag();
 
@@ -355,7 +355,7 @@ int GetMonsterNameDrawFlag();
  *
  * @mangled MonsterNameInit__FP6ClsMesPsPUc
  * @address 0x20EB80
- * @size 0x210
+ * @size 0x208
  */
 void MonsterNameInit(ClsMes *, short *, unsigned char *);
 
@@ -364,7 +364,7 @@ void MonsterNameInit(ClsMes *, short *, unsigned char *);
  *
  * @mangled MonsterNameMake__Fi
  * @address 0x20ED90
- * @size 0x80
+ * @size 0x74
  */
 void MonsterNameMake(int);
 
@@ -373,7 +373,7 @@ void MonsterNameMake(int);
  *
  * @mangled MonsterNamePosSet__Fii
  * @address 0x20EE10
- * @size 0x60
+ * @size 0x5C
  */
 void MonsterNamePosSet(int, int);
 
@@ -382,7 +382,7 @@ void MonsterNamePosSet(int, int);
  *
  * @mangled MonsterNameDraw__Fv
  * @address 0x20EE70
- * @size 0x120
+ * @size 0x114
  */
 void MonsterNameDraw();
 
@@ -391,7 +391,7 @@ void MonsterNameDraw();
  *
  * @mangled DngEscapeMsgInit__FP6ClsMesP6ClsMesi
  * @address 0x20EF90
- * @size 0x2B0
+ * @size 0x2AC
  */
 void DngEscapeMsgInit(ClsMes *, ClsMes *, int);
 
@@ -409,7 +409,7 @@ void DngEscapeMsgDraw();
  *
  * @mangled DngEscapeMsgLoop__Fv
  * @address 0x20F360
- * @size 0x170
+ * @size 0x164
  */
 int DngEscapeMsgLoop();
 
@@ -427,7 +427,7 @@ int CheckItemThrow(int *, int *);
  *
  * @mangled SetWeaponElementStatus__FP11WEAPON_HAVE
  * @address 0x20F680
- * @size 0x60
+ * @size 0x5C
  */
 void SetWeaponElementStatus(WEAPON_HAVE *);
 
@@ -436,7 +436,7 @@ void SetWeaponElementStatus(WEAPON_HAVE *);
  *
  * @mangled CheckWeaponOptionStatus__Fi
  * @address 0x20F6E0
- * @size 0x90
+ * @size 0x8C
  */
 int CheckWeaponOptionStatus(int);
 
@@ -454,7 +454,7 @@ int IsWeaponOptionGoodOrBad(int);
  *
  * @mangled DefaultWeaponOptionSet__Fi
  * @address 0x20F7B0
- * @size 0x40
+ * @size 0x3C
  */
 int DefaultWeaponOptionSet(int);
 
@@ -463,7 +463,7 @@ int DefaultWeaponOptionSet(int);
  *
  * @mangled WeaponOptionStatusDraw__FP11WEAPON_HAVEiii
  * @address 0x20F7F0
- * @size 0x230
+ * @size 0x224
  */
 void WeaponOptionStatusDraw(WEAPON_HAVE *, int, int, int);
 
@@ -490,7 +490,7 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *, int);
  *
  * @mangled GetNumHowManyItemsHave__Fi
  * @address 0x2101D0
- * @size 0x110
+ * @size 0x104
  */
 int GetNumHowManyItemsHave(int);
 
@@ -499,7 +499,7 @@ int GetNumHowManyItemsHave(int);
  *
  * @mangled EditMenuInit__FPii
  * @address 0x210AB0
- * @size 0x2F0
+ * @size 0x2E4
  */
 void EditMenuInit(int *, int);
 
@@ -517,7 +517,7 @@ int EditMenuLoop();
  *
  * @mangled EditMenuDraw__Fv
  * @address 0x210FB0
- * @size 0x310
+ * @size 0x304
  */
 void EditMenuDraw();
 
@@ -526,7 +526,7 @@ void EditMenuDraw();
  *
  * @mangled InitSaveFileInfoTbl__Fv
  * @address 0x2134C0
- * @size 0x80
+ * @size 0x74
  */
 void InitSaveFileInfoTbl();
 

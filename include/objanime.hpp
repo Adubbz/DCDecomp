@@ -91,14 +91,14 @@ void ObjAnimeAllStop(void);
  *
  * @mangled ObjAnimeAllStart__Fv
  * @address 0x165CF0
- * @size 0x10
+ * @size 0xC
  */
 void ObjAnimeAllStart(void);
 
 /**
  * @mangled InitObjAnime__FP6CFrameP13OBJ_ANIME_SEQ
  * @address 0x165D00
- * @size 0xD0
+ * @size 0xC4
  * @unknownret
  */
 void InitObjAnime(CFrame *, OBJ_ANIME_SEQ *);
@@ -106,7 +106,7 @@ void InitObjAnime(CFrame *, OBJ_ANIME_SEQ *);
 /**
  * @mangled InitObjAnime__FPP6CFrameP13OBJ_ANIME_SEQ
  * @address 0x165DD0
- * @size 0x100
+ * @size 0xFC
  * @unknownret
  */
 void InitObjAnime(CFrame **, OBJ_ANIME_SEQ *);
@@ -114,7 +114,7 @@ void InitObjAnime(CFrame **, OBJ_ANIME_SEQ *);
 /**
  * @mangled InitObjAnime__FPP6CFrameiP13OBJ_ANIME_SEQ
  * @address 0x165ED0
- * @size 0x140
+ * @size 0x138
  * @unknownret
  */
 void InitObjAnime(CFrame **, int, OBJ_ANIME_SEQ *);
@@ -130,7 +130,7 @@ void InitObjAnime(CFrame **, int, EPARTS_FUNC_DATA *, OBJ_ANIME_SEQ *);
 /**
  * @mangled end_check__Ffff
  * @address 0x166170
- * @size 0x70
+ * @size 0x68
  * @unknownret
  */
 void end_check(float, float, float);
@@ -138,7 +138,7 @@ void end_check(float, float, float);
 /**
  * @mangled ObjAnimePlay__FP13OBJ_ANIME_SEQ
  * @address 0x1661E0
- * @size 0x790
+ * @size 0x78C
  * @unknownret
  */
 void ObjAnimePlay(OBJ_ANIME_SEQ *);
@@ -173,7 +173,7 @@ int CheckEditEffect(EDIT_EFFECT_INFO *, float);
 /**
  * @mangled EditEffectStep__Fv
  * @address 0x166D10
- * @size 0xD0
+ * @size 0xC4
  * @unknownret
  */
 void EditEffectStep(void);
@@ -181,7 +181,7 @@ void EditEffectStep(void);
 /**
  * @mangled EditEffectStep2__Fv
  * @address 0x166DE0
- * @size 0x30
+ * @size 0x28
  * @unknownret
  */
 void EditEffectStep2(void);
@@ -189,7 +189,7 @@ void EditEffectStep2(void);
 /**
  * @mangled DrawEditEffect__FP16EDIT_EFFECT_INFOP7CCameraP12CEffectGroup
  * @address 0x166E10
- * @size 0x250
+ * @size 0x24C
  * @unknownret
  */
 void DrawEditEffect(EDIT_EFFECT_INFO *, CCamera *, CEffectGroup *);

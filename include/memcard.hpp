@@ -19,7 +19,7 @@ struct RECT;
  *
  * @mangled McCheckMCPs2__FP12MC_CARD_INFO
  * @address 0x216D50
- * @size 0x40
+ * @size 0x34
  */
 int McCheckMCPs2(MC_CARD_INFO *);
 
@@ -29,7 +29,7 @@ int McCheckMCPs2(MC_CARD_INFO *);
  *
  * @mangled DrawObjectVibe__FiiP8CTexture8CRect_i_Uci
  * @address 0x216D90
- * @size 0x140
+ * @size 0x134
  */
 void DrawObjectVibe(int, int, CTexture *, CRect_i_, unsigned char, int);
 
@@ -38,7 +38,7 @@ void DrawObjectVibe(int, int, CTexture *, CRect_i_, unsigned char, int);
  *
  * @mangled DrawObjectVibe__FiiP8CTexture4RECTUci
  * @address 0x216ED0
- * @size 0x70
+ * @size 0x68
  */
 void DrawObjectVibe(int, int, CTexture *, RECT, unsigned char, int);
 
@@ -57,7 +57,7 @@ void DrawMenuObjectVibe(int, int, int, int);
  *
  * @mangled DrawMenuHelpWindow__FP8CTextureiiiffi
  * @address 0x217010
- * @size 0x390
+ * @size 0x388
  */
 void DrawMenuHelpWindow(CTexture *, int, int, int, float, float, int);
 
@@ -67,7 +67,7 @@ void DrawMenuHelpWindow(CTexture *, int, int, int, float, float, int);
  *
  * @mangled MenuHelpWinDraw__FiiffiiiP8CTexture
  * @address 0x2173A0
- * @size 0x370
+ * @size 0x368
  */
 void MenuHelpWinDraw(int, int, float, float, int, int, int, CTexture *);
 
@@ -77,7 +77,7 @@ void MenuHelpWinDraw(int, int, float, float, int, int, int, CTexture *);
  *
  * @mangled MenuHelpWinDraw2__FiiffiiiP8CTexture
  * @address 0x217710
- * @size 0x350
+ * @size 0x34C
  */
 void MenuHelpWinDraw2(int, int, float, float, int, int, int, CTexture *);
 
@@ -86,7 +86,7 @@ void MenuHelpWinDraw2(int, int, float, float, int, int, int, CTexture *);
  *
  * @mangled MenuHelpWinDraw__Fiiffi
  * @address 0x217A60
- * @size 0xA0
+ * @size 0x9C
  */
 void MenuHelpWinDraw(int, int, float, float, int);
 
@@ -96,7 +96,7 @@ void MenuHelpWinDraw(int, int, float, float, int);
  *
  * @mangled DrawMenuWaku__FffiiiP8CTexturei
  * @address 0x217B00
- * @size 0x2C0
+ * @size 0x2BC
  */
 void DrawMenuWaku(float, float, int, int, int, CTexture *, int);
 
@@ -106,7 +106,7 @@ void DrawMenuWaku(float, float, int, int, int, CTexture *, int);
  *
  * @mangled DrawMenuNumber__FiiiP8CTexture4RECTii
  * @address 0x217DC0
- * @size 0x60
+ * @size 0x58
  */
 int DrawMenuNumber(int, int, int, CTexture *, RECT, int, int);
 
@@ -116,7 +116,7 @@ int DrawMenuNumber(int, int, int, CTexture *, RECT, int, int);
  *
  * @mangled DrawMenuNumber__Fiii4RECTP8CTextureiUcUcUci
  * @address 0x217E20
- * @size 0x1B0
+ * @size 0x1AC
  */
 int DrawMenuNumber(int, int, int, RECT, CTexture *, int, unsigned char, unsigned char, unsigned char, int);
 
@@ -136,7 +136,7 @@ int DrawMenuNumber(int, int, int, RECT, CTexture *, int, int, int, int);
  *
  * @mangled GetMsgLengthMenu__FP6ClsMesi
  * @address 0x218170
- * @size 0x70
+ * @size 0x64
  */
 int GetMsgLengthMenu(ClsMes *, int);
 
@@ -146,7 +146,7 @@ int GetMsgLengthMenu(ClsMes *, int);
  *
  * @mangled DrawAtoraParts__Fiiiiii
  * @address 0x2182C0
- * @size 0x1B0
+ * @size 0x1A8
  */
 void DrawAtoraParts(int, int, int, int, int, int);
 
@@ -164,7 +164,7 @@ int GetAtraMsgNo(int, int);
  *
  * @mangled DrawAtraBuildNum__FP14EDITPARTS_INFOiii
  * @address 0x2192F0
- * @size 0x170
+ * @size 0x164
  */
 void DrawAtraBuildNum(EDITPARTS_INFO *, int, int, int);
 
@@ -175,7 +175,7 @@ void DrawAtraBuildNum(EDITPARTS_INFO *, int, int, int);
  *
  * @mangled DrawAtora__Fiiii
  * @address 0x219460
- * @size 0x860
+ * @size 0x85C
  */
 void DrawAtora(int, int, int, int);
 
@@ -203,7 +203,7 @@ void InitMenuAtora1(int, int, int *, u_long128 *);
  *
  * @mangled InitMenuAtoraSelect__Fi
  * @address 0x21A440
- * @size 0x450
+ * @size 0x44C
  */
 void InitMenuAtoraSelect(int);
 
@@ -212,7 +212,7 @@ void InitMenuAtoraSelect(int);
  *
  * @mangled DrawMenuAtoraSelect__Fv
  * @address 0x21AA80
- * @size 0x400
+ * @size 0x3FC
  */
 void DrawMenuAtoraSelect();
 
@@ -222,7 +222,7 @@ void DrawMenuAtoraSelect();
  *
  * @mangled MenuAtoraSelectKey__Fv
  * @address 0x21C2E0
- * @size 0x7B0
+ * @size 0x7A4
  */
 int MenuAtoraSelectKey();
 
@@ -232,7 +232,7 @@ int MenuAtoraSelectKey();
  *
  * @mangled AtoraNameDraw__Fi
  * @address 0x21DC60
- * @size 0x3C0
+ * @size 0x3BC
  */
 void AtoraNameDraw(int);
 
@@ -243,7 +243,7 @@ void AtoraNameDraw(int);
  *
  * @mangled InitMenuOption__FiiP1
  * @address 0x21E4D0
- * @size 0x2B0
+ * @size 0x2A8
  */
 int InitMenuOption(int, int, u_long128 *);
 
@@ -253,7 +253,7 @@ int InitMenuOption(int, int, u_long128 *);
  *
  * @mangled MenuOptionKey__Fv
  * @address 0x21E9B0
- * @size 0x900
+ * @size 0x8F8
  */
 int MenuOptionKey();
 
@@ -262,7 +262,7 @@ int MenuOptionKey();
  *
  * @mangled DrawMenuOption__Fv
  * @address 0x21F2B0
- * @size 0x830
+ * @size 0x82C
  */
 void DrawMenuOption();
 
@@ -271,7 +271,7 @@ void DrawMenuOption();
  *
  * @mangled OptionMenuFadeOutStart__Fv
  * @address 0x21FAE0
- * @size 0x30
+ * @size 0x24
  */
 int OptionMenuFadeOutStart();
 
@@ -281,7 +281,7 @@ int OptionMenuFadeOutStart();
  *
  * @mangled InitMenuSave__FiiP1
  * @address 0x21FB10
- * @size 0x270
+ * @size 0x268
  */
 int InitMenuSave(int, int, u_long128 *);
 
@@ -291,7 +291,7 @@ int InitMenuSave(int, int, u_long128 *);
  *
  * @mangled MenuSaveKey__Fv
  * @address 0x21FED0
- * @size 0x500
+ * @size 0x4F8
  */
 int MenuSaveKey();
 

@@ -102,7 +102,7 @@ public:
      *
      * @mangled Initialize__17CMemoryCardAccessFv
      * @address 0x2135D0
-     * @size 0x180
+     * @size 0x17C
      */
     void Initialize();
 
@@ -112,7 +112,7 @@ public:
      *
      * @mangled InitForMC__17CMemoryCardAccessFv
      * @address 0x213750
-     * @size 0x100
+     * @size 0xF4
      */
     int InitForMC();
 
@@ -122,7 +122,7 @@ public:
      *
      * @mangled SetBuff__17CMemoryCardAccessFPc
      * @address 0x213850
-     * @size 0x140
+     * @size 0x138
      */
     void SetBuff(char *buffer);
 
@@ -131,7 +131,7 @@ public:
      *
      * @mangled SetIconData__17CMemoryCardAccessFP12MC_ICON_DATA
      * @address 0x213990
-     * @size 0x70
+     * @size 0x68
      */
     void SetIconData(MC_ICON_DATA *icon);
 
@@ -140,7 +140,7 @@ public:
      *
      * @mangled MakeMcIconSysInfo__17CMemoryCardAccessFv
      * @address 0x213A00
-     * @size 0x190
+     * @size 0x188
      */
     void MakeMcIconSysInfo();
 
@@ -150,7 +150,7 @@ public:
      *
      * @mangled SetFuncNo__17CMemoryCardAccessFi
      * @address 0x213B90
-     * @size 0x50
+     * @size 0x48
      */
     void SetFuncNo(int func_no);
 
@@ -159,7 +159,7 @@ public:
      *
      * @mangled GetFuncNo__17CMemoryCardAccessFv
      * @address 0x213BE0
-     * @size 0x10
+     * @size 0xC
      */
     int GetFuncNo();
 
@@ -177,7 +177,7 @@ public:
      *
      * @mangled SetVersion__17CMemoryCardAccessFPc
      * @address 0x213DB0
-     * @size 0x30
+     * @size 0x24
      */
     void SetVersion(char *version);
 
@@ -186,7 +186,7 @@ public:
      *
      * @mangled GetVersion__17CMemoryCardAccessFv
      * @address 0x213DE0
-     * @size 0x10
+     * @size 0xC
      */
     char *GetVersion();
 
@@ -196,7 +196,7 @@ public:
      *
      * @mangled SearchMcType__17CMemoryCardAccessFv
      * @address 0x213DF0
-     * @size 0x2A0
+     * @size 0x29C
      */
     int SearchMcType();
 
@@ -206,7 +206,7 @@ public:
      *
      * @mangled GetDir__17CMemoryCardAccessFv
      * @address 0x214090
-     * @size 0x2A0
+     * @size 0x294
      */
     int GetDir();
 
@@ -216,7 +216,7 @@ public:
      *
      * @mangled LoadSysConfig__17CMemoryCardAccessFv
      * @address 0x214330
-     * @size 0x2A0
+     * @size 0x298
      */
     int LoadSysConfig();
 
@@ -265,7 +265,7 @@ public:
      *
      * @mangled GetSaveFileInfoFromMc__17CMemoryCardAccessFi
      * @address 0x2154A0
-     * @size 0x590
+     * @size 0x584
      */
     int GetSaveFileInfoFromMc(int file_no);
 
@@ -274,7 +274,7 @@ public:
      *
      * @mangled GetAllSaveFileInfo__17CMemoryCardAccessFv
      * @address 0x215A30
-     * @size 0xE0
+     * @size 0xD8
      */
     int GetAllSaveFileInfo();
 
@@ -341,7 +341,7 @@ public:
      *
      * @mangled McError__17CMemoryCardAccessFi
      * @address 0x216A50
-     * @size 0x1A0
+     * @size 0x19C
      */
     int McError(int error);
 
@@ -350,7 +350,7 @@ public:
      *
      * @mangled DmySync__17CMemoryCardAccessFv
      * @address 0x216BF0
-     * @size 0x50
+     * @size 0x44
      */
     void DmySync();
 

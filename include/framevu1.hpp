@@ -27,7 +27,7 @@ public:
     /**
      * @mangled DrawVu1__9CFrameVu1FP13sceVif1PacketP10RenderInfo
      * @address 0x12A110
-     * @size 0x80
+     * @size 0x7C
      * @unknownret
      */
     virtual int DrawVu1(sceVif1Packet *, RenderInfo *);
@@ -35,7 +35,7 @@ public:
     /**
      * @mangled SetVisual__9CFrameVu1FP10CVisualVu1
      * @address 0x12A210
-     * @size 0x10
+     * @size 0xC
      * @unknownret
      */
     void SetVisual(CVisualVu1 *);
@@ -43,7 +43,7 @@ public:
     /**
      * @mangled GetVisual__9CFrameVu1Fv
      * @address 0x12A220
-     * @size 0x10
+     * @size 0xC
      * @unknownret
      */
     CVisualVu1 *GetVisual(void);
@@ -59,14 +59,14 @@ public:
     /**
      * @mangled __ct__9CFrameVu1Fv
      * @address 0x12A260
-     * @size 0x50
+     * @size 0x48
      */
     CFrameVu1(void);
 
     /**
      * @mangled __as__9CFrameVu1FR9CFrameVu1
      * @address 0x12A2B0
-     * @size 0x50
+     * @size 0x44
      * @unknownret
      */
     CFrameVu1 &operator=(CFrameVu1 &);

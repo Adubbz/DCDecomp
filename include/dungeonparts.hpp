@@ -172,14 +172,14 @@ public:
      *
      * @mangled GetSearchFrame__13CDungeonPartsFPc
      * @address 0x1C1590
-     * @size 0xE0
+     * @size 0xD8
      */
     CFrame *GetSearchFrame(char *name);
 
     /**
      * @mangled SetHealZone__13CDungeonPartsFPfff
      * @address 0x1C1670
-     * @size 0x60
+     * @size 0x58
      * @unknownret
      */
     void SetHealZone(float *, float, float);
@@ -187,7 +187,7 @@ public:
     /**
      * @mangled Draw__13CDungeonPartsFv
      * @address 0x1C16D0
-     * @size 0x180
+     * @size 0x17C
      * @unknownret
      */
     void Draw(void);
@@ -195,7 +195,7 @@ public:
     /**
      * @mangled DrawCalc__13CDungeonPartsFiiii
      * @address 0x1C1850
-     * @size 0x350
+     * @size 0x348
      * @unknownret
      */
     void DrawCalc(int, int, int, int);
@@ -203,7 +203,7 @@ public:
     /**
      * @mangled initalize__13CDungeonPartsFv
      * @address 0x1C1BA0
-     * @size 0x60
+     * @size 0x5C
      * @unknownret
      */
     void initalize(void);
@@ -217,7 +217,7 @@ STATIC_ASSERT(sizeof(CDungeonParts) == 0x1D0);
  *
  * @mangled PresetSmallItemNo_Get__Fiiii
  * @address 0x1BFEF0
- * @size 0x4D0
+ * @size 0x4CC
  */
 int PresetSmallItemNo_Get(int map_no, int floor_no, int special, int small);
 
@@ -226,7 +226,7 @@ int PresetSmallItemNo_Get(int map_no, int floor_no, int special, int small);
  *
  * @mangled SearchiDoPutArea__FP8MAPPARTSiiiiPf
  * @address 0x1C03C0
- * @size 0x580
+ * @size 0x578
  * @unknownret
  */
 void SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float *pos);

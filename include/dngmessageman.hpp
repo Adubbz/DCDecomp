@@ -21,7 +21,7 @@ public:
      *
      * @mangled LimmitZone__14CDngMessageManFv
      * @address 0x1B5B90
-     * @size 0xA0
+     * @size 0x98
      */
     void LimmitZone(void);
 
@@ -30,7 +30,7 @@ public:
      *
      * @mangled SetStatus_Dry__14CDngMessageManFfff
      * @address 0x1B5C30
-     * @size 0x110
+     * @size 0x10C
      */
     void SetStatus_Dry(float, float, float);
 

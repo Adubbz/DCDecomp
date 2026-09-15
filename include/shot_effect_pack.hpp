@@ -35,7 +35,7 @@ public:
     /**
      * @mangled SetUserID2__17CSHOT_EFFECT_PACKFi
      * @address 0x1AE5C0
-     * @size 0x50
+     * @size 0x44
      * @unknownret
      */
     void SetUserID2(int);
@@ -43,7 +43,7 @@ public:
     /**
      * @mangled SetDmg__17CSHOT_EFFECT_PACKFi
      * @address 0x1AE610
-     * @size 0x50
+     * @size 0x44
      * @unknownret
      */
     void SetDmg(int);

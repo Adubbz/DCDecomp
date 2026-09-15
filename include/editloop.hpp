@@ -29,8 +29,8 @@ extern CDataAlloc2<1> EdNPCBuffer;
  * Loads the player model and motion archive used by an editor event.
  *
  * @mangled EdLoadMainChara__FPcPcP14CDataAlloc2_1_
- * @address 0x17E4B0
- * @size 0x2CC
+ * @address 0x181480
+ * @size 0x154
  */
 void EdLoadMainChara(char *model, char *motion, CDataAlloc2<1> *arena);
 
@@ -198,7 +198,7 @@ struct VILLAGER_INFO {
  *
  * @mangled GetEditDataDir__FPc
  * @address 0x1777D0
- * @size 0x20
+ * @size 0x28
  */
 void GetEditDataDir(char *name);
 

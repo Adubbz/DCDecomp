@@ -44,7 +44,7 @@ public:
      *
      * @mangled Set__17CDungeonEventDataFP13CDungeonEvent
      * @address 0x1CC820
-     * @size 0x60
+     * @size 0x5C
      */
     void Set(CDungeonEvent *);
 
@@ -53,7 +53,7 @@ public:
      *
      * @mangled CheckSwitch__17CDungeonEventDataFv
      * @address 0x1CC880
-     * @size 0x50
+     * @size 0x48
      */
     int CheckSwitch(void);
 
@@ -62,7 +62,7 @@ public:
      *
      * @mangled Stop__17CDungeonEventDataFv
      * @address 0x1CC8D0
-     * @size 0x10
+     * @size 0xC
      */
     void Stop(void);
 

@@ -87,7 +87,7 @@ public:
     /**
      * @mangled check_stack__10CRunScriptFv
      * @address 0x23D980
-     * @size 0x40
+     * @size 0x34
      * @unknownret
      */
     void check_stack(void);
@@ -111,7 +111,7 @@ public:
     /**
      * @mangled push_str__10CRunScriptFPc
      * @address 0x23DA60
-     * @size 0x60
+     * @size 0x54
      * @unknownret
      */
     void push_str(char *);
@@ -119,7 +119,7 @@ public:
     /**
      * @mangled push_ptr__10CRunScriptFP12RS_STACKDATA
      * @address 0x23DAC0
-     * @size 0x60
+     * @size 0x54
      * @unknownret
      */
     void push_ptr(RS_STACKDATA *);
@@ -127,7 +127,7 @@ public:
     /**
      * @mangled push_float__10CRunScriptFf
      * @address 0x23DB20
-     * @size 0x60
+     * @size 0x54
      * @unknownret
      */
     void push_float(float);
@@ -135,7 +135,7 @@ public:
     /**
      * @mangled pop__10CRunScriptFv
      * @address 0x23DB80
-     * @size 0x30
+     * @size 0x24
      * @unknownret
      */
     RS_STACKDATA pop(void);
@@ -143,7 +143,7 @@ public:
     /**
      * @mangled call_func__10CRunScriptFP8funcdataP8vmcode_t
      * @address 0x23DBB0
-     * @size 0x110
+     * @size 0x108
      * @unknownret
      */
     vmcode_t *call_func(funcdata *, vmcode_t *);
@@ -151,7 +151,7 @@ public:
     /**
      * @mangled ret_func__10CRunScriptFv
      * @address 0x23DCC0
-     * @size 0x40
+     * @size 0x34
      * @unknownret
      */
     vmcode_t *ret_func(void);
@@ -159,7 +159,7 @@ public:
     /**
      * @mangled ext__10CRunScriptFP12RS_STACKDATAi
      * @address 0x23DD00
-     * @size 0xC0
+     * @size 0xB4
      * @unknownret
      */
     void ext(RS_STACKDATA *, int);
@@ -175,7 +175,7 @@ public:
     /**
      * @mangled reload__10CRunScriptFP14RS_PROG_HEADER
      * @address 0x23DE10
-     * @size 0x20
+     * @size 0x18
      * @unknownret
      */
     void reload(RS_PROG_HEADER *);
@@ -191,7 +191,7 @@ public:
     /**
      * @mangled resume__10CRunScriptFv
      * @address 0x23DE40
-     * @size 0x30
+     * @size 0x2C
      * @unknownret
      */
     void resume(void);
@@ -207,7 +207,7 @@ public:
     /**
      * @mangled check_program__10CRunScriptFi
      * @address 0x23DFF0
-     * @size 0x60
+     * @size 0x54
      * @unknownret
      */
     int check_program(int);
@@ -215,7 +215,7 @@ public:
     /**
      * @mangled skip__10CRunScriptFv
      * @address 0x23E050
-     * @size 0x30
+     * @size 0x28
      * @unknownret
      */
     void skip(void);
@@ -223,7 +223,7 @@ public:
     /**
      * @mangled exe__10CRunScriptFP8vmcode_t
      * @address 0x23E080
-     * @size 0x50
+     * @size 0x1508
      * @unknownret
      */
     void exe(vmcode_t *);

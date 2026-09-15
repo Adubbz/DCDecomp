@@ -182,7 +182,7 @@ void SetMotionEX(CFrame *frame, tagMOTION_TYPE *motion, MOTION_INFO *info, MOTIO
  *
  * @mangled NextMotionTime_GET_EX__FP11MOTION_INFOP12MOTION_STATE
  * @address 0x1496C0
- * @size 0xD0
+ * @size 0xC4
  * @unknownret
  */
 int NextMotionTime_GET_EX(MOTION_INFO *info, MOTION_STATE *state);
@@ -224,7 +224,7 @@ void GetScrPosFromChar(CCharacter *chara, int *out_pos);
  *
  * @mangled NameRegistCodeJtoE__Fi
  * @address 0x14CA60
- * @size 0xD0
+ * @size 0xC4
  */
 int NameRegistCodeJtoE(int code);
 
@@ -233,7 +233,7 @@ int NameRegistCodeJtoE(int code);
  *
  * @mangled Color2Clut__FUi
  * @address 0x14CA10
- * @size 0x50
+ * @size 0x4C
  */
 unsigned int Color2Clut(unsigned int colour);
 
@@ -242,7 +242,7 @@ unsigned int Color2Clut(unsigned int colour);
  *
  * @mangled RollPos__FPfPffPf
  * @address 0x14C690
- * @size 0x1F0
+ * @size 0x1E4
  */
 void RollPos(float *centre, float *point, float angle, float *out);
 

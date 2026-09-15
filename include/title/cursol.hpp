@@ -21,7 +21,7 @@ public:
      *
      * @mangled Init__7CCursolFv
      * @address 0x1DD4CF0
-     * @size 0x30
+     * @size 0x2C
      * @unknownret
      */
     void Init(void);
@@ -31,7 +31,7 @@ public:
      *
      * @mangled Move__7CCursolFv
      * @address 0x1DD4D20
-     * @size 0x390
+     * @size 0x384
      * @unknownret
      */
     int Move(void);
@@ -41,7 +41,7 @@ public:
      *
      * @mangled Set__7CCursolFf
      * @address 0x1DD50B0
-     * @size 0x10
+     * @size 0xC
      * @unknownret
      */
     void Set(float);
@@ -51,7 +51,7 @@ public:
      *
      * @mangled GetSelect__7CCursolFv
      * @address 0x1DD50C0
-     * @size 0x10
+     * @size 0xC
      * @unknownret
      */
     int GetSelect(void);
@@ -61,7 +61,7 @@ public:
      *
      * @mangled GetPos__7CCursolFv
      * @address 0x1DD50D0
-     * @size 0x30
+     * @size 0x24
      * @unknownret
      */
     int GetPos(void);

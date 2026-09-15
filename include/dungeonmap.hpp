@@ -188,7 +188,7 @@ public:
     /**
      * @mangled SetNPC__11CDungeonMapFiPUiiPfPfiiP14CDataAlloc2_1_
      * @address 0x1C1C00
-     * @size 0x270
+     * @size 0x26C
      * @unknownret
      */
     void SetNPC(int, unsigned int *, int, sceVu0FVECTOR, sceVu0FVECTOR, int, int, CDataAlloc2<1> *);
@@ -198,7 +198,7 @@ public:
      *
      * @mangled ClearNPC_Cash__11CDungeonMapFv
      * @address 0x1C1E70
-     * @size 0x40
+     * @size 0x3C
      */
     void ClearNPC_Cash(void);
 
@@ -207,14 +207,14 @@ public:
      *
      * @mangled ReservNPC_Draw__11CDungeonMapFifffi
      * @address 0x1C1EB0
-     * @size 0xD0
+     * @size 0xC4
      */
     void ReservNPC_Draw(int npc_no, float x, float y, float z, int param);
 
     /**
      * @mangled DrawNPCDraw__11CDungeonMapFv
      * @address 0x1C1F80
-     * @size 0x270
+     * @size 0x264
      * @unknownret
      */
     void DrawNPCDraw(void);
@@ -234,7 +234,7 @@ public:
      *
      * @mangled NPCSetMotion__11CDungeonMapFii
      * @address 0x1C22B0
-     * @size 0x40
+     * @size 0x3C
      */
     void NPCSetMotion(int npc_no, int motion_no);
 
@@ -262,14 +262,14 @@ public:
      *
      * @mangled DrawMapFreeStyle__11CDungeonMapFv
      * @address 0x1C23C0
-     * @size 0x100
+     * @size 0xF8
      */
     void DrawMapFreeStyle(void);
 
     /**
      * @mangled DrawMapCalc__11CDungeonMapFi
      * @address 0x1C24C0
-     * @size 0x1D0
+     * @size 0x1C8
      * @unknownret
      */
     void DrawMapCalc(int);
@@ -277,7 +277,7 @@ public:
     /**
      * @mangled DrawMap__11CDungeonMapFP13CCameraFollowP9CFrameVu1
      * @address 0x1C2690
-     * @size 0x930
+     * @size 0x92C
      * @unknownret
      */
     void DrawMap(CCameraFollow *, CFrameVu1 *);
@@ -287,7 +287,7 @@ public:
      *
      * @mangled DrawBGModel__11CDungeonMapFP7CCamera
      * @address 0x1C2FC0
-     * @size 0xA0
+     * @size 0x94
      * @unknownret
      */
     void DrawBGModel(CCamera *camera);
@@ -314,7 +314,7 @@ public:
      *
      * @mangled checkMask__11CDungeonMapFff
      * @address 0x1C39C0
-     * @size 0x240
+     * @size 0x23C
      * @unknownret
      */
     void checkMask(float x, float z);
@@ -324,14 +324,14 @@ public:
      *
      * @mangled FlushCheckMask__11CDungeonMapFv
      * @address 0x1C3C00
-     * @size 0xC0
+     * @size 0xB4
      */
     void FlushCheckMask(void);
 
     /**
      * @mangled DrawFireFreeStyle__11CDungeonMapFP9CFrameVu1P13CCameraFollow
      * @address 0x1C3CC0
-     * @size 0x400
+     * @size 0x3F4
      * @unknownret
      */
     void DrawFireFreeStyle(CFrameVu1 *, CCameraFollow *);
@@ -339,7 +339,7 @@ public:
     /**
      * @mangled DrawFire__11CDungeonMapFP9CFrameVu1P13CCameraFollow
      * @address 0x1C40C0
-     * @size 0x550
+     * @size 0x548
      * @unknownret
      */
     void DrawFire(CFrameVu1 *, CCameraFollow *);
@@ -347,7 +347,7 @@ public:
     /**
      * @mangled DrawRaster__11CDungeonMapFP9CFrameVu1
      * @address 0x1C4610
-     * @size 0x330
+     * @size 0x324
      * @unknownret
      */
     void DrawRaster(CFrameVu1 *);
@@ -355,7 +355,7 @@ public:
     /**
      * @mangled DrawWater__11CDungeonMapFPfi
      * @address 0x1C4940
-     * @size 0x4A0
+     * @size 0x494
      * @unknownret
      */
     void DrawWater(float *, int);
@@ -363,7 +363,7 @@ public:
     /**
      * @mangled DrawItemBox__11CDungeonMapFPf
      * @address 0x1C4DE0
-     * @size 0x320
+     * @size 0x318
      * @unknownret
      */
     void DrawItemBox(float *);
@@ -383,7 +383,7 @@ public:
      *
      * @mangled CreateCollision__11CDungeonMapFP6CCPoly7CBoxVu0i
      * @address 0x1C5270
-     * @size 0x150
+     * @size 0x144
      */
     int CreateCollision(CCPoly *poly, CBoxVu0 box, int num);
 
@@ -392,7 +392,7 @@ public:
      *
      * @mangled initTrapCircle__11CDungeonMapFv
      * @address 0x1C79B0
-     * @size 0x40
+     * @size 0x38
      */
     void initTrapCircle(void);
 
@@ -410,14 +410,14 @@ public:
      *
      * @mangled SetupTrapCircle__11CDungeonMapFPf
      * @address 0x1C7AB0
-     * @size 0x120
+     * @size 0x118
      */
     void SetupTrapCircle(float *pos);
 
     /**
      * @mangled DrawTrapCircle__11CDungeonMapFv
      * @address 0x1C7BD0
-     * @size 0x1B0
+     * @size 0x1A4
      * @unknownret
      */
     void DrawTrapCircle(void);
@@ -436,7 +436,7 @@ public:
      *
      * @mangled StepTrapCircle__11CDungeonMapFv
      * @address 0x1C7E60
-     * @size 0x80
+     * @size 0x7C
      */
     void StepTrapCircle(void);
 
@@ -445,7 +445,7 @@ public:
      *
      * @mangled CheckTreasureBox__11CDungeonMapFPff
      * @address 0x1C7EE0
-     * @size 0xC0
+     * @size 0xBC
      */
     int CheckTreasureBox(float *pos, float dist);
 
@@ -454,7 +454,7 @@ public:
      *
      * @mangled CheckAtra__11CDungeonMapFPff
      * @address 0x1C7FA0
-     * @size 0xE0
+     * @size 0xD8
      */
     int CheckAtra(float *pos, float dist);
 
@@ -469,7 +469,7 @@ public:
     /**
      * @mangled SetTreasureBox__11CDungeonMapFPfiii
      * @address 0x1C8240
-     * @size 0x300
+     * @size 0x2F4
      */
     int SetTreasureBox(float *, int, int, int);
 
@@ -484,7 +484,7 @@ public:
     /**
      * @mangled SetMimicEvent__11CDungeonMapFfffii
      * @address 0x1C8BC0
-     * @size 0x290
+     * @size 0x28C
      * @unknownret
      */
     void SetMimicEvent(float, float, float, int, int);
@@ -494,7 +494,7 @@ public:
      *
      * @mangled RsetMimicEvent__11CDungeonMapFv
      * @address 0x1C8E50
-     * @size 0x80
+     * @size 0x7C
      */
     void RsetMimicEvent(void);
 
@@ -503,7 +503,7 @@ public:
      *
      * @mangled GetActiveIvent__11CDungeonMapFP9CFrameVu1
      * @address 0x1C8ED0
-     * @size 0x150
+     * @size 0x144
      */
     int GetActiveIvent(CFrameVu1 *frame);
 
@@ -535,14 +535,14 @@ public:
     /**
      * @mangled CreatPartsList__11CDungeonMapFPiiii
      * @address 0x1CA290
-     * @size 0x1F0
+     * @size 0x1E4
      */
     int CreatPartsList(int *, int, int, int);
 
     /**
      * @mangled BuildCharaSpecialParts__11CDungeonMapFv
      * @address 0x1CA480
-     * @size 0xDB0
+     * @size 0xDA4
      * @unknownret
      */
     void BuildCharaSpecialParts(void);
@@ -550,7 +550,7 @@ public:
     /**
      * @mangled SetCharaDoor__11CDungeonMapFi
      * @address 0x1CB230
-     * @size 0x440
+     * @size 0x438
      */
     int SetCharaDoor(int);
 
@@ -586,7 +586,7 @@ public:
  *
  * @mangled mapPartsFilter__Fv
  * @address 0x1C5550
- * @size 0xBE0
+ * @size 0xBDC
  */
 void mapPartsFilter(void);
 

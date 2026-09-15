@@ -16,7 +16,7 @@ public:
     /**
      * @mangled Draw__15CItemBombEffectFP7CCamera
      * @address 0x1D5B30
-     * @size 0x380
+     * @size 0x374
      * @unknownret
      */
     void Draw(CCamera *);
@@ -32,7 +32,7 @@ public:
     /**
      * @mangled SetBomb__15CItemBombEffectFPff
      * @address 0x1D60A0
-     * @size 0xC0
+     * @size 0xBC
      * @unknownret
      */
     void SetBomb(float *, float);
@@ -40,7 +40,7 @@ public:
     /**
      * @mangled CheckBomb__15CItemBombEffectFv
      * @address 0x1D6160
-     * @size 0x50
+     * @size 0x48
      * @unknownret
      */
     void CheckBomb(void);
@@ -63,7 +63,7 @@ public:
     /**
      * @mangled Draw__10CShockWaveFP7CCamera
      * @address 0x1D61E0
-     * @size 0x300
+     * @size 0x2F8
      * @unknownret
      */
     void Draw(CCamera *);
@@ -71,7 +71,7 @@ public:
     /**
      * @mangled Step__10CShockWaveFv
      * @address 0x1D64E0
-     * @size 0xE0
+     * @size 0xD8
      * @unknownret
      */
     void Step(void);

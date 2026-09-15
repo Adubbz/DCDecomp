@@ -21,7 +21,7 @@ struct BT_OBJ_HANDLE {
 /**
  * @mangled BtSystemScriptEventInfoInit__Fv
  * @address 0x1BB060
- * @size 0x1A0
+ * @size 0x198
  * @unknownret
  */
 void BtSystemScriptEventInfoInit(void);
@@ -37,7 +37,7 @@ BT_OBJ_HANDLE *GetObjHDL(int index);
 /**
  * @mangled BtSystemScriptLoad__Fi
  * @address 0x1BB260
- * @size 0xB0
+ * @size 0xAC
  * @unknownret
  */
 void BtSystemScriptLoad(int);
@@ -45,7 +45,7 @@ void BtSystemScriptLoad(int);
 /**
  * @mangled BtSystemScriptInit__Fv
  * @address 0x1BB310
- * @size 0x2D0
+ * @size 0x2C4
  * @unknownret
  */
 void BtSystemScriptInit(void);
@@ -53,7 +53,7 @@ void BtSystemScriptInit(void);
 /**
  * @mangled BtSystemScriptAfter__Fv
  * @address 0x1BB5E0
- * @size 0x310
+ * @size 0x304
  * @unknownret
  */
 void BtSystemScriptAfter(void);
@@ -61,7 +61,7 @@ void BtSystemScriptAfter(void);
 /**
  * @mangled BtSystemScriptRun__FiP14CDataAlloc2_1_
  * @address 0x1BB8F0
- * @size 0x30
+ * @size 0x24
  * @unknownret
  */
 int BtSystemScriptRun(int, CDataAlloc2<1> *);
@@ -71,7 +71,7 @@ int BtSystemScriptRun(int, CDataAlloc2<1> *);
  *
  * @mangled BtSetMapJumpFloor__Fi
  * @address 0x1BB920
- * @size 0x10
+ * @size 0xC
  */
 void BtSetMapJumpFloor(int floor);
 
@@ -81,7 +81,7 @@ extern int BtMapJumpFloor;
 /**
  * @mangled _GET_FLOOR_LEVEL__FP12RS_STACKDATAi
  * @address 0x1BBA00
- * @size 0x30
+ * @size 0x2C
  * @unknownret
  */
 void _GET_FLOOR_LEVEL(RS_STACKDATA *, int);
@@ -89,7 +89,7 @@ void _GET_FLOOR_LEVEL(RS_STACKDATA *, int);
 /**
  * @mangled _SET_FLOOR_LEVEL__FP12RS_STACKDATAi
  * @address 0x1BBA30
- * @size 0x40
+ * @size 0x34
  * @unknownret
  */
 void _SET_FLOOR_LEVEL(RS_STACKDATA *, int);
@@ -97,7 +97,7 @@ void _SET_FLOOR_LEVEL(RS_STACKDATA *, int);
 /**
  * @mangled _GET_OLD_FLOOR_LEVEL__FP12RS_STACKDATAi
  * @address 0x1BBA70
- * @size 0x30
+ * @size 0x2C
  * @unknownret
  */
 void _GET_OLD_FLOOR_LEVEL(RS_STACKDATA *, int);
@@ -105,7 +105,7 @@ void _GET_OLD_FLOOR_LEVEL(RS_STACKDATA *, int);
 /**
  * @mangled _GET_ACTION_MODE__FP12RS_STACKDATAi
  * @address 0x1BBAA0
- * @size 0x30
+ * @size 0x2C
  * @unknownret
  */
 void _GET_ACTION_MODE(RS_STACKDATA *, int);
@@ -113,7 +113,7 @@ void _GET_ACTION_MODE(RS_STACKDATA *, int);
 /**
  * @mangled _ITEM_USE_WINDOW__FP12RS_STACKDATAi
  * @address 0x1BBAD0
- * @size 0xF0
+ * @size 0xEC
  * @unknownret
  */
 void _ITEM_USE_WINDOW(RS_STACKDATA *, int);
@@ -145,7 +145,7 @@ void _GET_OBJHDL(RS_STACKDATA *, int);
 /**
  * @mangled _SET_OBJHDL_POS__FP12RS_STACKDATAi
  * @address 0x1BBDB0
- * @size 0x100
+ * @size 0xF8
  * @unknownret
  */
 void _SET_OBJHDL_POS(RS_STACKDATA *, int);
@@ -161,7 +161,7 @@ void _SET_OBJHDL_ROT(RS_STACKDATA *, int);
 /**
  * @mangled _SET_OBJHDL_DRAW_FLAG__FP12RS_STACKDATAi
  * @address 0x1BC030
- * @size 0xD0
+ * @size 0xC4
  * @unknownret
  */
 void _SET_OBJHDL_DRAW_FLAG(RS_STACKDATA *, int);
@@ -169,7 +169,7 @@ void _SET_OBJHDL_DRAW_FLAG(RS_STACKDATA *, int);
 /**
  * @mangled _GET_OBJHDL_POS__FP12RS_STACKDATAi
  * @address 0x1BC100
- * @size 0xF0
+ * @size 0xEC
  * @unknownret
  */
 void _GET_OBJHDL_POS(RS_STACKDATA *, int);
@@ -177,7 +177,7 @@ void _GET_OBJHDL_POS(RS_STACKDATA *, int);
 /**
  * @mangled _GET_OBJHDL_ROT__FP12RS_STACKDATAi
  * @address 0x1BC1F0
- * @size 0x110
+ * @size 0x10C
  * @unknownret
  */
 void _GET_OBJHDL_ROT(RS_STACKDATA *, int);
@@ -187,14 +187,14 @@ void _GET_OBJHDL_ROT(RS_STACKDATA *, int);
  *
  * @mangled _SET_URA_DUNGEON__FP12RS_STACKDATAi
  * @address 0x1BC300
- * @size 0x20
+ * @size 0x18
  */
 int _SET_URA_DUNGEON(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _GET_EVENT_POS__FP12RS_STACKDATAi
  * @address 0x1BC320
- * @size 0x60
+ * @size 0x5C
  * @unknownret
  */
 void _GET_EVENT_POS(RS_STACKDATA *, int);
@@ -202,7 +202,7 @@ void _GET_EVENT_POS(RS_STACKDATA *, int);
 /**
  * @mangled _GET_EVENT_ROT__FP12RS_STACKDATAi
  * @address 0x1BC380
- * @size 0x60
+ * @size 0x5C
  * @unknownret
  */
 void _GET_EVENT_ROT(RS_STACKDATA *, int);
@@ -212,7 +212,7 @@ void _GET_EVENT_ROT(RS_STACKDATA *, int);
  *
  * @mangled _OPEN_ENTRANCE_WINDOW__FP12RS_STACKDATAi
  * @address 0x1BC3E0
- * @size 0x40
+ * @size 0x3C
  */
 int _OPEN_ENTRANCE_WINDOW(RS_STACKDATA *stack, int argument_count);
 
@@ -221,7 +221,7 @@ int _OPEN_ENTRANCE_WINDOW(RS_STACKDATA *stack, int argument_count);
  *
  * @mangled _OPEN_ESCAPE_WINDOW__FP12RS_STACKDATAi
  * @address 0x1BC420
- * @size 0x60
+ * @size 0x58
  */
 int _OPEN_ESCAPE_WINDOW(RS_STACKDATA *stack, int argument_count);
 
@@ -230,14 +230,14 @@ int _OPEN_ESCAPE_WINDOW(RS_STACKDATA *stack, int argument_count);
  *
  * @mangled _GO_DUNGEON__FP12RS_STACKDATAi
  * @address 0x1BC480
- * @size 0x20
+ * @size 0x18
  */
 int _GO_DUNGEON(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _SET_DUNGEON_MAP__FP12RS_STACKDATAi
  * @address 0x1BC4A0
- * @size 0x70
+ * @size 0x64
  * @unknownret
  */
 void _SET_DUNGEON_MAP(RS_STACKDATA *, int);
@@ -270,7 +270,7 @@ void _SET_RANDOM_MAP(RS_STACKDATA *, int);
 /**
  * @mangled _SET_EVENT_SW__FP12RS_STACKDATAi
  * @address 0x1BC5D0
- * @size 0x60
+ * @size 0x5C
  * @unknownret
  */
 void _SET_EVENT_SW(RS_STACKDATA *, int);
@@ -278,7 +278,7 @@ void _SET_EVENT_SW(RS_STACKDATA *, int);
 /**
  * @mangled _SET_MONSTOR_ID__FP12RS_STACKDATAi
  * @address 0x1BC630
- * @size 0x1C0
+ * @size 0x1BC
  * @unknownret
  */
 void _SET_MONSTOR_ID(RS_STACKDATA *, int);
@@ -286,7 +286,7 @@ void _SET_MONSTOR_ID(RS_STACKDATA *, int);
 /**
  * @mangled _CHK_ATRA_HAVE__FP12RS_STACKDATAi
  * @address 0x1BC7F0
- * @size 0x90
+ * @size 0x8C
  * @unknownret
  */
 void _CHK_ATRA_HAVE(RS_STACKDATA *, int);
@@ -294,7 +294,7 @@ void _CHK_ATRA_HAVE(RS_STACKDATA *, int);
 /**
  * @mangled _SET_ATRA__FP12RS_STACKDATAi
  * @address 0x1BC880
- * @size 0x80
+ * @size 0x7C
  * @unknownret
  */
 void _SET_ATRA(RS_STACKDATA *, int);
@@ -302,7 +302,7 @@ void _SET_ATRA(RS_STACKDATA *, int);
 /**
  * @mangled _SET_IBOX__FP12RS_STACKDATAi
  * @address 0x1BC900
- * @size 0x90
+ * @size 0x84
  * @unknownret
  */
 void _SET_IBOX(RS_STACKDATA *, int);
@@ -310,7 +310,7 @@ void _SET_IBOX(RS_STACKDATA *, int);
 /**
  * @mangled _GET_NOW_USER_ID__FP12RS_STACKDATAi
  * @address 0x1BC990
- * @size 0x60
+ * @size 0x5C
  * @unknownret
  */
 void _GET_NOW_USER_ID(RS_STACKDATA *, int);
@@ -326,7 +326,7 @@ void _RUN_SCRIPT_NO(RS_STACKDATA *, int);
 /**
  * @mangled _CLEAN_MONSTOR_SCRIPT_NO__FP12RS_STACKDATAi
  * @address 0x1BCAB0
- * @size 0x80
+ * @size 0x78
  * @unknownret
  */
 void _CLEAN_MONSTOR_SCRIPT_NO(RS_STACKDATA *, int);
@@ -334,7 +334,7 @@ void _CLEAN_MONSTOR_SCRIPT_NO(RS_STACKDATA *, int);
 /**
  * @mangled _GET_NPC_OBJHDL__FP12RS_STACKDATAi
  * @address 0x1BCB30
- * @size 0xD0
+ * @size 0xCC
  * @unknownret
  */
 void _GET_NPC_OBJHDL(RS_STACKDATA *, int);
@@ -342,7 +342,7 @@ void _GET_NPC_OBJHDL(RS_STACKDATA *, int);
 /**
  * @mangled _SET_MOTION_OBJHDL__FP12RS_STACKDATAi
  * @address 0x1BCC00
- * @size 0x140
+ * @size 0x138
  * @unknownret
  */
 void _SET_MOTION_OBJHDL(RS_STACKDATA *, int);
@@ -350,7 +350,7 @@ void _SET_MOTION_OBJHDL(RS_STACKDATA *, int);
 /**
  * @mangled _SET_NPC_ON_OFF__FP12RS_STACKDATAi
  * @address 0x1BCD40
- * @size 0x90
+ * @size 0x84
  * @unknownret
  */
 void _SET_NPC_ON_OFF(RS_STACKDATA *, int);
@@ -358,7 +358,7 @@ void _SET_NPC_ON_OFF(RS_STACKDATA *, int);
 /**
  * @mangled _GET_GATEKEY_NO__FP12RS_STACKDATAi
  * @address 0x1BCDD0
- * @size 0x30
+ * @size 0x2C
  * @unknownret
  */
 void _GET_GATEKEY_NO(RS_STACKDATA *, int);
@@ -374,7 +374,7 @@ void _USER_WEAPON_DRAW(RS_STACKDATA *, int);
 /**
  * @mangled _SET_MAIN_CHR2__FP12RS_STACKDATAi
  * @address 0x1BCE40
- * @size 0xA0
+ * @size 0x9C
  * @unknownret
  */
 void _SET_MAIN_CHR2(RS_STACKDATA *, int);
@@ -398,7 +398,7 @@ void _SET_LIMMIT_ZONE(RS_STACKDATA *, int);
 /**
  * @mangled _SET_DEAD_FLAG__FP12RS_STACKDATAi
  * @address 0x1BCF70
- * @size 0x30
+ * @size 0x28
  * @unknownret
  */
 void _SET_DEAD_FLAG(RS_STACKDATA *, int);
@@ -406,7 +406,7 @@ void _SET_DEAD_FLAG(RS_STACKDATA *, int);
 /**
  * @mangled _ALL_DRAW_FLAG__FP12RS_STACKDATAi
  * @address 0x1BCFA0
- * @size 0x40
+ * @size 0x34
  * @unknownret
  */
 void _ALL_DRAW_FLAG(RS_STACKDATA *, int);
@@ -416,14 +416,14 @@ void _ALL_DRAW_FLAG(RS_STACKDATA *, int);
  *
  * @mangled _SET_FLOOR_TITLE__FP12RS_STACKDATAi
  * @address 0x1BCFE0
- * @size 0x30
+ * @size 0x24
  */
 int _SET_FLOOR_TITLE(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _GET_RUBY_ELEMENT__FP12RS_STACKDATAi
  * @address 0x1BD010
- * @size 0x30
+ * @size 0x28
  * @unknownret
  */
 void _GET_RUBY_ELEMENT(RS_STACKDATA *, int);
@@ -431,7 +431,7 @@ void _GET_RUBY_ELEMENT(RS_STACKDATA *, int);
 /**
  * @mangled _SET_RUBY_ELEMENT__FP12RS_STACKDATAi
  * @address 0x1BD040
- * @size 0x30
+ * @size 0x24
  * @unknownret
  */
 void _SET_RUBY_ELEMENT(RS_STACKDATA *, int);
@@ -439,7 +439,7 @@ void _SET_RUBY_ELEMENT(RS_STACKDATA *, int);
 /**
  * @mangled _SET_FLOOR_TITLE_OFF__FP12RS_STACKDATAi
  * @address 0x1BD070
- * @size 0x20
+ * @size 0x14
  * @unknownret
  */
 void _SET_FLOOR_TITLE_OFF(RS_STACKDATA *, int);
@@ -457,14 +457,14 @@ void _SET_RES_LIMMIT_ZONE(RS_STACKDATA *, int);
  *
  * @mangled _CLEAR_DEAMON_SHAFT__FP12RS_STACKDATAi
  * @address 0x1BD0E0
- * @size 0x30
+ * @size 0x28
  */
 int _CLEAR_DEAMON_SHAFT(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _INIT_BEE__FP12RS_STACKDATAi
  * @address 0x1BD110
- * @size 0x70
+ * @size 0x64
  * @unknownret
  */
 void _INIT_BEE(RS_STACKDATA *, int);
@@ -472,7 +472,7 @@ void _INIT_BEE(RS_STACKDATA *, int);
 /**
  * @mangled _END_BEE__FP12RS_STACKDATAi
  * @address 0x1BD180
- * @size 0x20
+ * @size 0x18
  * @unknownret
  */
 void _END_BEE(RS_STACKDATA *, int);
@@ -488,7 +488,7 @@ void _EASTKING_COMPLETE(RS_STACKDATA *, int);
 /**
  * @mangled _GET_ITEM_TRAPID__FP12RS_STACKDATAi
  * @address 0x1BD1E0
- * @size 0x50
+ * @size 0x44
  * @unknownret
  */
 void _GET_ITEM_TRAPID(RS_STACKDATA *, int);
@@ -496,7 +496,7 @@ void _GET_ITEM_TRAPID(RS_STACKDATA *, int);
 /**
  * @mangled _RESET_ITEM_TRAP__FP12RS_STACKDATAi
  * @address 0x1BD230
- * @size 0x40
+ * @size 0x34
  * @unknownret
  */
 void _RESET_ITEM_TRAP(RS_STACKDATA *, int);
@@ -520,7 +520,7 @@ void _SET_STATUS_ERR(RS_STACKDATA *, int);
 /**
  * @mangled _CHECK_MARDAN__FP12RS_STACKDATAi
  * @address 0x1BD400
- * @size 0x40
+ * @size 0x34
  * @unknownret
  */
 void _CHECK_MARDAN(RS_STACKDATA *, int);
@@ -528,7 +528,7 @@ void _CHECK_MARDAN(RS_STACKDATA *, int);
 /**
  * @mangled _NO_RESET_CHARA_NO__FP12RS_STACKDATAi
  * @address 0x1BD440
- * @size 0x20
+ * @size 0x14
  * @unknownret
  */
 void _NO_RESET_CHARA_NO(RS_STACKDATA *, int);
@@ -536,7 +536,7 @@ void _NO_RESET_CHARA_NO(RS_STACKDATA *, int);
 /**
  * @mangled _CHECK_CHR_HELP__FP12RS_STACKDATAi
  * @address 0x1BD460
- * @size 0x30
+ * @size 0x2C
  * @unknownret
  */
 void _CHECK_CHR_HELP(RS_STACKDATA *, int);
@@ -544,7 +544,7 @@ void _CHECK_CHR_HELP(RS_STACKDATA *, int);
 /**
  * @mangled _HOLD_ITEM_EVENT__FP12RS_STACKDATAi
  * @address 0x1BD490
- * @size 0x60
+ * @size 0x58
  * @unknownret
  */
 void _HOLD_ITEM_EVENT(RS_STACKDATA *, int);
@@ -554,14 +554,14 @@ void _HOLD_ITEM_EVENT(RS_STACKDATA *, int);
  *
  * @mangled _STOP_BATTLE_BGM__FP12RS_STACKDATAi
  * @address 0x1BD4F0
- * @size 0x30
+ * @size 0x24
  */
 int _STOP_BATTLE_BGM(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _NO_STATUS_RECOVER__FP12RS_STACKDATAi
  * @address 0x1BD520
- * @size 0x20
+ * @size 0x14
  * @unknownret
  */
 void _NO_STATUS_RECOVER(RS_STACKDATA *, int);
@@ -569,7 +569,7 @@ void _NO_STATUS_RECOVER(RS_STACKDATA *, int);
 /**
  * @mangled _SET_QUEST_DUNGEON__FP12RS_STACKDATAi
  * @address 0x1BD540
- * @size 0x60
+ * @size 0x5C
  * @unknownret
  */
 void _SET_QUEST_DUNGEON(RS_STACKDATA *, int);
@@ -587,14 +587,14 @@ void _GET_MAP_CODE(RS_STACKDATA *, int);
  *
  * @mangled _SET_ACTIVE_ITEM_ICON__FP12RS_STACKDATAi
  * @address 0x1BD5D0
- * @size 0x30
+ * @size 0x24
  */
 int _SET_ACTIVE_ITEM_ICON(RS_STACKDATA *stack, int argument_count);
 
 /**
  * @mangled _GET_ITEM_UNIT_NO__FP12RS_STACKDATAi
  * @address 0x1BD600
- * @size 0xF0
+ * @size 0xE4
  * @unknownret
  */
 void _GET_ITEM_UNIT_NO(RS_STACKDATA *, int);
@@ -602,7 +602,7 @@ void _GET_ITEM_UNIT_NO(RS_STACKDATA *, int);
 /**
  * @mangled _SET_IBOX_ANGLE__FP12RS_STACKDATAi
  * @address 0x1BD6F0
- * @size 0x50
+ * @size 0x44
  * @unknownret
  */
 void _SET_IBOX_ANGLE(RS_STACKDATA *, int);
@@ -618,7 +618,7 @@ void _SET_IBOX_FINISH(RS_STACKDATA *, int);
 /**
  * @mangled _GET_PIERO_ITEM__FP12RS_STACKDATAi
  * @address 0x1BD790
- * @size 0x70
+ * @size 0x64
  * @unknownret
  */
 void _GET_PIERO_ITEM(RS_STACKDATA *, int);
@@ -626,7 +626,7 @@ void _GET_PIERO_ITEM(RS_STACKDATA *, int);
 /**
  * @mangled AddSystemEventScript__Fv
  * @address 0x1BD800
- * @size 0x100
+ * @size 0xFC
  * @unknownret
  */
 void AddSystemEventScript(void);

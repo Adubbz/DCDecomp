@@ -19,7 +19,7 @@ public:
      *
      * @mangled Draw__11CSeireiKingFPffi
      * @address 0x1DAE590
-     * @size 0x820
+     * @size 0x814
      */
     void Draw(float *position, float size, int spread);
 
@@ -28,7 +28,7 @@ public:
      *
      * @mangled Draw2__11CSeireiKingFP7CCameraPfPf
      * @address 0x1DAEDB0
-     * @size 0x380
+     * @size 0x374
      */
     void Draw2(CCamera *camera, float *head, float *source);
 
@@ -37,7 +37,7 @@ public:
      *
      * @mangled Step__11CSeireiKingFv
      * @address 0x1DAF130
-     * @size 0x90
+     * @size 0x84
      */
     void Step(void);
 

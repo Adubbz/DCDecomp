@@ -53,7 +53,7 @@ public:
     /**
      * @mangled GetSeNo__6CSoundFii
      * @address 0x143B70
-     * @size 0x80
+     * @size 0x78
      * @unknownret
      */
     int GetSeNo(int, int);
@@ -61,7 +61,7 @@ public:
     /**
      * @mangled StopVoice__6CSoundFi
      * @address 0x143BF0
-     * @size 0x60
+     * @size 0x54
      * @unknownret
      */
     void StopVoice(int);
@@ -77,7 +77,7 @@ public:
     /**
      * @mangled LoadSoundFileFromPack__6CSoundFPcPUi
      * @address 0x1440D0
-     * @size 0x9C0
+     * @size 0x9B8
      * @unknownret
      */
     void LoadSoundFileFromPack(char *, unsigned int *);
@@ -85,7 +85,7 @@ public:
     /**
      * @mangled LoadSqInf__6CSoundFPcPUi
      * @address 0x144A90
-     * @size 0x130
+     * @size 0x12C
      * @unknownret
      */
     void LoadSqInf(char *, unsigned int *);
@@ -93,7 +93,7 @@ public:
     /**
      * @mangled LoadSeInf__6CSoundFPcPUi
      * @address 0x144BC0
-     * @size 0x1A0
+     * @size 0x198
      * @unknownret
      */
     void LoadSeInf(char *, unsigned int *);
@@ -117,7 +117,7 @@ public:
     /**
      * @mangled SQ_Play__6CSoundFiii
      * @address 0x1453F0
-     * @size 0x1B0
+     * @size 0x1A8
      * @unknownret
      */
     void SQ_Play(int, int, int);
@@ -125,7 +125,7 @@ public:
     /**
      * @mangled SQ_RePlay__6CSoundFi
      * @address 0x1455A0
-     * @size 0x50
+     * @size 0x44
      * @unknownret
      */
     void SQ_RePlay(int);
@@ -133,7 +133,7 @@ public:
     /**
      * @mangled SE_Play__6CSoundFiiiiiii
      * @address 0x1455F0
-     * @size 0x6C
+     * @size 0x1C8
      * @unknownret
      */
     void SE_Play(int, int, int, int, int, int, int);
@@ -166,7 +166,7 @@ public:
     /**
      * @mangled SE_SetVol__6CSoundFiiiii
      * @address 0x145880
-     * @size 0x50
+     * @size 0x108
      * @unknownret
      */
     void SE_SetVol(int, int, int, int, int);
@@ -174,7 +174,7 @@ public:
     /**
      * @mangled SE_SetPan__6CSoundFiiiii
      * @address 0x145990
-     * @size 0x50
+     * @size 0x10C
      * @unknownret
      */
     void SE_SetPan(int, int, int, int, int);
@@ -190,7 +190,7 @@ public:
     /**
      * @mangled SE_Stop__6CSoundFiiii
      * @address 0x145AF0
-     * @size 0x48
+     * @size 0x100
      * @unknownret
      */
     void SE_Stop(int, int, int, int);
@@ -198,7 +198,7 @@ public:
     /**
      * @mangled Fade__6CSoundFifi
      * @address 0x145BF0
-     * @size 0x330
+     * @size 0x324
      * @unknownret
      */
     void Fade(int, float, int);
@@ -214,7 +214,7 @@ public:
     /**
      * @mangled Stop__6CSoundFi
      * @address 0x146910
-     * @size 0x50
+     * @size 0x48
      * @unknownret
      */
     void Stop(int);
@@ -222,7 +222,7 @@ public:
     /**
      * @mangled SetVol__6CSoundFii
      * @address 0x146960
-     * @size 0x30
+     * @size 0x28
      * @unknownret
      */
     void SetVol(int, int);
@@ -230,7 +230,7 @@ public:
     /**
      * @mangled SetStereoMode__6CSoundFi
      * @address 0x146990
-     * @size 0x30
+     * @size 0x24
      * @unknownret
      */
     void SetStereoMode(int);
@@ -238,7 +238,7 @@ public:
     /**
      * @mangled LoadHdBd_A__6CSoundFiiii
      * @address 0x1469C0
-     * @size 0x180
+     * @size 0x17C
      * @unknownret
      */
     void LoadHdBd_A(int, int, int, int);
@@ -246,7 +246,7 @@ public:
     /**
      * @mangled LoadHdBd_C__6CSoundFiiii
      * @address 0x146B40
-     * @size 0x230
+     * @size 0x228
      * @unknownret
      */
     void LoadHdBd_C(int, int, int, int);
@@ -254,7 +254,7 @@ public:
     /**
      * @mangled LoadHdBd_E__6CSoundFiiii
      * @address 0x146D70
-     * @size 0x180
+     * @size 0x17C
      * @unknownret
      */
     void LoadHdBd_E(int, int, int, int);
@@ -262,7 +262,7 @@ public:
     /**
      * @mangled LoadHdBd_G__6CSoundFiiii
      * @address 0x146EF0
-     * @size 0x180
+     * @size 0x17C
      * @unknownret
      */
     void LoadHdBd_G(int, int, int, int);
@@ -270,7 +270,7 @@ public:
     /**
      * @mangled LoadHdBd_I__6CSoundFiiii
      * @address 0x147070
-     * @size 0x270
+     * @size 0x26C
      * @unknownret
      */
     void LoadHdBd_I(int, int, int, int);
@@ -278,7 +278,7 @@ public:
     /**
      * @mangled LoadHdBd_M__6CSoundFiiii
      * @address 0x1472E0
-     * @size 0x170
+     * @size 0x164
      * @unknownret
      */
     void LoadHdBd_M(int, int, int, int);
@@ -286,7 +286,7 @@ public:
     /**
      * @mangled LoadHdBd_Q__6CSoundFiiii
      * @address 0x147450
-     * @size 0x170
+     * @size 0x164
      * @unknownret
      */
     void LoadHdBd_Q(int, int, int, int);
@@ -294,7 +294,7 @@ public:
     /**
      * @mangled LoadHdBd_S__6CSoundFiiii
      * @address 0x1475C0
-     * @size 0x170
+     * @size 0x164
      * @unknownret
      */
     void LoadHdBd_S(int, int, int, int);
@@ -302,7 +302,7 @@ public:
     /**
      * @mangled LoadSeq_A__6CSoundFii
      * @address 0x147730
-     * @size 0xC0
+     * @size 0xBC
      * @unknownret
      */
     void LoadSeq_A(int, int);
@@ -310,7 +310,7 @@ public:
     /**
      * @mangled LoadSeq_E__6CSoundFii
      * @address 0x1477F0
-     * @size 0xC0
+     * @size 0xBC
      * @unknownret
      */
     void LoadSeq_E(int, int);
@@ -318,7 +318,7 @@ public:
     /**
      * @mangled LoadSeq_I__6CSoundFii
      * @address 0x1478B0
-     * @size 0xC0
+     * @size 0xBC
      * @unknownret
      */
     void LoadSeq_I(int, int);

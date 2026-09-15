@@ -35,7 +35,7 @@ public:
      *
      * @mangled GetCollisionFrame__10CMapObjectFv
      * @address 0x1574F0
-     * @size 0xA0
+     * @size 0x98
      */
     CFrame *GetCollisionFrame(void);
 
@@ -44,7 +44,7 @@ public:
      *
      * @mangled FrameObjectOnOff__10CMapObjectFPci
      * @address 0x157590
-     * @size 0x130
+     * @size 0x124
      */
     virtual void FrameObjectOnOff(char *name, int on);
 
@@ -53,7 +53,7 @@ public:
      *
      * @mangled Draw__10CMapObjectFv
      * @address 0x1576C0
-     * @size 0x40
+     * @size 0x38
      */
     virtual void Draw(void);
 
@@ -63,7 +63,7 @@ public:
      *
      * @mangled DrawLOD__10CMapObjectFPfiiPi
      * @address 0x157700
-     * @size 0x60
+     * @size 0x58
      */
     virtual void DrawLOD(float *distance, int lowest, int highest, int *out_level);
 
@@ -72,7 +72,7 @@ public:
      *
      * @mangled DrawShadow__10CMapObjectFi
      * @address 0x157760
-     * @size 0x110
+     * @size 0x10C
      */
     void DrawShadow(int fast);
 
@@ -81,7 +81,7 @@ public:
      *
      * @mangled DrawShade__10CMapObjectFv
      * @address 0x157870
-     * @size 0xA0
+     * @size 0x94
      */
     void DrawShade(void);
 
@@ -90,7 +90,7 @@ public:
      *
      * @mangled Initialize__10CMapObjectFv
      * @address 0x157910
-     * @size 0x60
+     * @size 0x54
      */
     void Initialize(void);
 
@@ -99,7 +99,7 @@ public:
      *
      * @mangled __ct__10CMapObjectFv
      * @address 0x157970
-     * @size 0x70
+     * @size 0x6C
      */
     CMapObject(void);
 };

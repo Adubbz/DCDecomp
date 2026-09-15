@@ -44,7 +44,7 @@ void BufferAllClear(void);
  *
  * @mangled SetFrameAttr__FP6CFramei
  * @address 0x125EF0
- * @size 0x3C0
+ * @size 0x3BC
  * @unknownret
  */
 void SetFrameAttr(CFrame *frame, int attr);

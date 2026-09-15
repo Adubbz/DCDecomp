@@ -14,7 +14,7 @@ public:
      *
      * @mangled In__8CScFaderFv
      * @address 0x1DD5100
-     * @size 0x50
+     * @size 0x48
      * @unknownret
      */
     int In(void);
@@ -24,7 +24,7 @@ public:
      *
      * @mangled In2__8CScFaderFv
      * @address 0x1DD5150
-     * @size 0x50
+     * @size 0x48
      * @unknownret
      */
     int In2(void);
@@ -34,7 +34,7 @@ public:
      *
      * @mangled Out__8CScFaderFv
      * @address 0x1DD51A0
-     * @size 0x50
+     * @size 0x48
      * @unknownret
      */
     int Out(void);
@@ -44,7 +44,7 @@ public:
      *
      * @mangled Get__8CScFaderFi
      * @address 0x1DD51F0
-     * @size 0x40
+     * @size 0x38
      * @unknownret
      */
     int Get(int);

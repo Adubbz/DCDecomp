@@ -22,7 +22,7 @@ public:
      *
      * @mangled InitPos__11CMenuCursorFv
      * @address 0x158AE0
-     * @size 0x80
+     * @size 0x74
      */
     void InitPos();
 
@@ -115,7 +115,7 @@ public:
      *
      * @mangled __ct__9CSaveDataFv
      * @address 0x158D30
-     * @size 0x50
+     * @size 0x44
      */
     CSaveData();
 
@@ -124,7 +124,7 @@ public:
      *
      * @mangled Initialize__9CSaveDataFv
      * @address 0x158B60
-     * @size 0x1D0
+     * @size 0x1C8
      */
     void Initialize();
 
@@ -133,7 +133,7 @@ public:
      *
      * @mangled GetConfigData__9CSaveDataFv
      * @address 0x157B30
-     * @size 0x10
+     * @size 0xC
      */
     void *GetConfigData();
 
@@ -142,7 +142,7 @@ public:
      *
      * @mangled GetMenuCursor__9CSaveDataFv
      * @address 0x157B40
-     * @size 0x10
+     * @size 0xC
      */
     CMenuCursor *GetMenuCursor();
 
@@ -151,7 +151,7 @@ public:
      *
      * @mangled GetCharaName__9CSaveDataFi
      * @address 0x157B50
-     * @size 0x40
+     * @size 0x34
      */
     char *GetCharaName(int chara_no);
 
@@ -160,7 +160,7 @@ public:
      *
      * @mangled AddPlayTime__9CSaveDataFi
      * @address 0x157B90
-     * @size 0x20
+     * @size 0x14
      */
     void AddPlayTime(int time);
 
@@ -169,7 +169,7 @@ public:
      *
      * @mangled GetPlayTime__9CSaveDataFv
      * @address 0x157BB0
-     * @size 0x10
+     * @size 0xC
      */
     int GetPlayTime();
 
@@ -178,7 +178,7 @@ public:
      *
      * @mangled SetNowTime__9CSaveDataFf
      * @address 0x157BC0
-     * @size 0x10
+     * @size 0xC
      */
     void SetNowTime(float time);
 
@@ -187,7 +187,7 @@ public:
      *
      * @mangled GetNowTime__9CSaveDataFv
      * @address 0x157BD0
-     * @size 0x10
+     * @size 0xC
      */
     float GetNowTime();
 
@@ -196,7 +196,7 @@ public:
      *
      * @mangled AddNowTime__9CSaveDataFf
      * @address 0x157BE0
-     * @size 0xE0
+     * @size 0xDC
      */
     void AddNowTime(float add);
 
@@ -205,7 +205,7 @@ public:
      *
      * @mangled SetDay__9CSaveDataFi
      * @address 0x157CC0
-     * @size 0x40
+     * @size 0x34
      */
     void SetDay(int day);
 
@@ -214,7 +214,7 @@ public:
      *
      * @mangled GetDay__9CSaveDataFv
      * @address 0x157D00
-     * @size 0x10
+     * @size 0xC
      */
     int GetDay();
 
@@ -232,7 +232,7 @@ public:
      *
      * @mangled AddFishingPoint__9CSaveDataFi
      * @address 0x157D40
-     * @size 0x40
+     * @size 0x3C
      */
     void AddFishingPoint(int add);
 
@@ -241,7 +241,7 @@ public:
      *
      * @mangled SetFishingPoint__9CSaveDataFi
      * @address 0x157D80
-     * @size 0x40
+     * @size 0x34
      */
     void SetFishingPoint(int value);
 
@@ -259,7 +259,7 @@ public:
      *
      * @mangled GetFishingRank__9CSaveDataFi
      * @address 0x157F40
-     * @size 0x70
+     * @size 0x68
      */
     SV_FISH_DATA *GetFishingRank(int rank_index);
 
@@ -268,7 +268,7 @@ public:
      *
      * @mangled GetGrdData__9CSaveDataFi
      * @address 0x157FB0
-     * @size 0x40
+     * @size 0x38
      */
     SV_GEORAMA_DATA *GetGrdData(int georama_no);
 
@@ -277,7 +277,7 @@ public:
      *
      * @mangled GetEditPartsInfo__9CSaveDataFii
      * @address 0x157FF0
-     * @size 0x70
+     * @size 0x68
      */
     SV_EDIT_PARTS_INFO *GetEditPartsInfo(int georama_no, int plot_no);
 
@@ -286,7 +286,7 @@ public:
      *
      * @mangled GetParts__9CSaveDataFiPi
      * @address 0x158060
-     * @size 0x70
+     * @size 0x6C
      */
     SV_GRD_PART *GetParts(int georama_no, int *out_count);
 
@@ -304,7 +304,7 @@ public:
      *
      * @mangled GetElemData__9CSaveDataFi
      * @address 0x1581A0
-     * @size 0x40
+     * @size 0x34
      */
     s16 *GetElemData(int georama_no);
 
@@ -313,7 +313,7 @@ public:
      *
      * @mangled GetDngStatus__9CSaveDataFv
      * @address 0x1581E0
-     * @size 0x10
+     * @size 0xC
      */
     CDngStatusData *GetDngStatus();
 
@@ -331,7 +331,7 @@ public:
      *
      * @mangled GetGameFlag__9CSaveDataFi
      * @address 0x158200
-     * @size 0x80
+     * @size 0x74
      */
     int GetGameFlag(int flag_no);
 
@@ -340,7 +340,7 @@ public:
      *
      * @mangled SetGameFlag__9CSaveDataFii
      * @address 0x158280
-     * @size 0xA0
+     * @size 0x94
      */
     int SetGameFlag(int flag_no, int value);
 
@@ -349,7 +349,7 @@ public:
      *
      * @mangled GetGameIntFlag__9CSaveDataFi
      * @address 0x158320
-     * @size 0x40
+     * @size 0x38
      */
     int GetGameIntFlag(int flag_no);
 
@@ -358,7 +358,7 @@ public:
      *
      * @mangled SetGameIntFlag__9CSaveDataFii
      * @address 0x158360
-     * @size 0x40
+     * @size 0x38
      */
     int SetGameIntFlag(int flag_no, int value);
 
@@ -367,7 +367,7 @@ public:
      *
      * @mangled GetMapFlag__9CSaveDataFii
      * @address 0x1583A0
-     * @size 0xA0
+     * @size 0x9C
      */
     int GetMapFlag(int map_no, int flag_no);
 
@@ -376,7 +376,7 @@ public:
      *
      * @mangled SetMapFlag__9CSaveDataFiii
      * @address 0x158440
-     * @size 0xC0
+     * @size 0xBC
      */
     int SetMapFlag(int map_no, int flag_no, int value);
 
@@ -385,7 +385,7 @@ public:
      *
      * @mangled GetMapInitFlag__9CSaveDataFii
      * @address 0x158500
-     * @size 0xA0
+     * @size 0x9C
      */
     int GetMapInitFlag(int map_no, int flag_no);
 
@@ -394,7 +394,7 @@ public:
      *
      * @mangled SetMapInitFlag__9CSaveDataFiii
      * @address 0x1585A0
-     * @size 0xC0
+     * @size 0xBC
      */
     int SetMapInitFlag(int map_no, int flag_no, int value);
 
@@ -412,7 +412,7 @@ public:
      *
      * @mangled AtraChipGet__9CSaveDataFii
      * @address 0x158760
-     * @size 0xA0
+     * @size 0x94
      */
     int AtraChipGet(int georama_no, int chip_id);
 
@@ -421,7 +421,7 @@ public:
      *
      * @mangled VisitMap__9CSaveDataFii
      * @address 0x158800
-     * @size 0x70
+     * @size 0x68
      */
     s16 VisitMap(int map_no, int add);
 
@@ -430,7 +430,7 @@ public:
      *
      * @mangled QuestDungeon__9CSaveDataFii
      * @address 0x158870
-     * @size 0xD0
+     * @size 0xCC
      */
     int QuestDungeon(int dungeon_no, int add);
 
@@ -439,7 +439,7 @@ public:
      *
      * @mangled ConvertConfig__9CSaveDataFP13SV_CONFIG_SYS
      * @address 0x158940
-     * @size 0xC0
+     * @size 0xB8
      */
     void ConvertConfig(SV_CONFIG_SYS *out);
 
@@ -448,7 +448,7 @@ public:
      *
      * @mangled InvertConfig__9CSaveDataFP13SV_CONFIG_SYS
      * @address 0x158A00
-     * @size 0xE0
+     * @size 0xDC
      */
     int InvertConfig(SV_CONFIG_SYS *in);
 

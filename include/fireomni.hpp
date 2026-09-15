@@ -34,7 +34,7 @@ public:
     /**
      * @mangled __ct__9CFireOmniFv
      * @address 0x161650
-     * @size 0xA0
+     * @size 0x94
      */
     CFireOmni(void);
 
@@ -49,7 +49,7 @@ public:
     /**
      * @mangled FireCreate__9CFireOmniFv
      * @address 0x1617C0
-     * @size 0x2E0
+     * @size 0x2D8
      * @unknownret
      */
     void FireCreate(void);
@@ -57,7 +57,7 @@ public:
     /**
      * @mangled SetTexture__9CFireOmniFP8CTextureP8CTexture
      * @address 0x161AA0
-     * @size 0x20
+     * @size 0x18
      * @unknownret
      */
     void SetTexture(CTexture *, CTexture *);
@@ -75,14 +75,14 @@ public:
      *
      * @mangled RasterStep__9CFireOmniFv
      * @address 0x162280
-     * @size 0x90
+     * @size 0x84
      */
     void RasterStep(void);
 
     /**
      * @mangled DrawRaster__9CFireOmniFv
      * @address 0x162310
-     * @size 0x270
+     * @size 0x26C
      * @unknownret
      */
     void DrawRaster(void);

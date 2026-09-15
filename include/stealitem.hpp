@@ -36,7 +36,7 @@ public:
      *
      * @mangled Initialize__10CStealItemFP9CFrameVu1
      * @address 0x1D74E0
-     * @size 0x40
+     * @size 0x3C
      */
     void Initialize(CFrameVu1 *model);
 
@@ -46,7 +46,7 @@ public:
      *
      * @mangled Set__10CStealItemFPfi
      * @address 0x1D7520
-     * @size 0xE0
+     * @size 0xD4
      */
     void Set(float *position, int item_no);
 

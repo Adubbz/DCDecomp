@@ -20,7 +20,7 @@ class CCharacter;
  *
  * @mangled ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P14CDataAlloc2_1_iP14CDataAlloc2_1_ii
  * @address 0x139D10
- * @size 0x260
+ * @size 0x258
  * @unknownret
  */
 void ReadInfo(CCharacter *chara, unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc,

@@ -66,14 +66,14 @@ public:
      *
      * @mangled ChangeDir__6CBoundFPfPfPf
      * @address 0x13D5C0
-     * @size 0x70
+     * @size 0x68
      */
     void ChangeDir(float *from_position, float *to_position, float *up_direction);
 
     /**
      * @mangled UpDateDir__6CBoundFv
      * @address 0x13D630
-     * @size 0x210
+     * @size 0x208
      * @unknownret
      */
     void UpDateDir(void);
@@ -89,7 +89,7 @@ public:
     /**
      * @mangled SetDir__6CBoundFPf
      * @address 0x13D8A0
-     * @size 0x150
+     * @size 0x148
      * @unknownret
      */
     void SetDir(float *);
@@ -97,7 +97,7 @@ public:
     /**
      * @mangled UpDateDirPos__6CBoundFv
      * @address 0x13D9F0
-     * @size 0x280
+     * @size 0x27C
      * @unknownret
      */
     void UpDateDirPos(void);
@@ -107,7 +107,7 @@ public:
      *
      * @mangled UpDate__6CBoundFv
      * @address 0x13DC70
-     * @size 0x80
+     * @size 0x74
      */
     void UpDate(void);
 
@@ -116,14 +116,14 @@ public:
      *
      * @mangled InitParam__6CBoundFv
      * @address 0x13DCF0
-     * @size 0x80
+     * @size 0x7C
      */
     void InitParam(void);
 
     /**
      * @mangled __ct__6CBoundFfff
      * @address 0x13DD70
-     * @size 0x120
+     * @size 0x11C
      */
     CBound(float, float, float);
 };

@@ -44,7 +44,7 @@ public:
      *
      * @mangled Step__7CCameraFi
      * @address 0x123F30
-     * @size 0x2E0
+     * @size 0x2D8
      */
     virtual void Step(int steps);
 
@@ -54,7 +54,7 @@ public:
      *
      * @mangled Stay__7CCameraFv
      * @address 0x124210
-     * @size 0x50
+     * @size 0x44
      */
     virtual void Stay(void);
 
@@ -63,7 +63,7 @@ public:
      *
      * @mangled SetPos__7CCameraFP6CFramefff
      * @address 0x124260
-     * @size 0x30
+     * @size 0x2C
      */
     void SetPos(CFrame *parent, float x, float y, float z);
 
@@ -72,7 +72,7 @@ public:
      *
      * @mangled SetPos__7CCameraFPf
      * @address 0x124290
-     * @size 0x40
+     * @size 0x34
      */
     void SetPos(float *pos);
 
@@ -81,7 +81,7 @@ public:
      *
      * @mangled SetNextPos__7CCameraFP6CFramefff
      * @address 0x1242D0
-     * @size 0x20
+     * @size 0x14
      */
     void SetNextPos(CFrame *parent, float x, float y, float z);
 
@@ -99,7 +99,7 @@ public:
      *
      * @mangled SetRef__7CCameraFPf
      * @address 0x124310
-     * @size 0x40
+     * @size 0x34
      */
     void SetRef(float *ref);
 
@@ -108,7 +108,7 @@ public:
      *
      * @mangled SetRef__7CCameraFfff
      * @address 0x124350
-     * @size 0x30
+     * @size 0x24
      */
     void SetRef(float x, float y, float z);
 
@@ -117,7 +117,7 @@ public:
      *
      * @mangled SetNextRef__7CCameraFP6CFramefff
      * @address 0x124380
-     * @size 0x20
+     * @size 0x14
      */
     void SetNextRef(CFrame *parent, float x, float y, float z);
 
@@ -126,7 +126,7 @@ public:
      *
      * @mangled GetDir__7CCameraFPf
      * @address 0x1243A0
-     * @size 0x40
+     * @size 0x38
      */
     void GetDir(float *dir);
 
@@ -136,7 +136,7 @@ public:
      *
      * @mangled GetCameraMatrix__7CCameraFPA4_f
      * @address 0x1243E0
-     * @size 0x270
+     * @size 0x26C
      */
     void GetCameraMatrix(float (*matrix)[4]);
 
@@ -145,7 +145,7 @@ public:
      *
      * @mangled SetSpeed__7CCameraFf
      * @address 0x124650
-     * @size 0x10
+     * @size 0xC
      */
     void SetSpeed(float speed);
 
@@ -154,7 +154,7 @@ public:
      *
      * @mangled SetRoll__7CCameraFf
      * @address 0x124660
-     * @size 0x10
+     * @size 0xC
      */
     void SetRoll(float roll);
 
@@ -163,7 +163,7 @@ public:
      *
      * @mangled GetPos__7CCameraFPf
      * @address 0x124670
-     * @size 0x30
+     * @size 0x2C
      */
     void GetPos(float *pos);
 
@@ -172,7 +172,7 @@ public:
      *
      * @mangled GetRef__7CCameraFPf
      * @address 0x1246A0
-     * @size 0x30
+     * @size 0x2C
      */
     void GetRef(float *ref);
 
@@ -181,7 +181,7 @@ public:
      *
      * @mangled GetAngleH__7CCameraFv
      * @address 0x1246D0
-     * @size 0x10
+     * @size 0xC
      */
     float GetAngleH(void);
 
@@ -190,7 +190,7 @@ public:
      *
      * @mangled GetRoll__7CCameraFv
      * @address 0x1246E0
-     * @size 0x10
+     * @size 0xC
      */
     float GetRoll(void);
 
@@ -207,7 +207,7 @@ public:
     /**
      * @mangled __dt__7CCameraFv
      * @address 0x124770
-     * @size 0x60
+     * @size 0x54
      */
     virtual ~CCamera(void);
 };

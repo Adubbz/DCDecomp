@@ -50,7 +50,7 @@ public:
      *
      * @mangled Load__7CScriptFPCc
      * @address 0x1DABD80
-     * @size 0x160
+     * @size 0x158
      */
     void Load(const char *name);
 
@@ -59,7 +59,7 @@ public:
      *
      * @mangled Step__7CScriptFv
      * @address 0x1DABEE0
-     * @size 0x230
+     * @size 0x228
      */
     void Step(void);
 
@@ -77,7 +77,7 @@ public:
      *
      * @mangled CheckArg__7CScriptFPciP15CSCRIPT_COMMAND
      * @address 0x1DACC50
-     * @size 0x440
+     * @size 0x43C
      */
     int CheckArg(char *buffer, int position, CSCRIPT_COMMAND *command);
 
@@ -86,7 +86,7 @@ public:
      *
      * @mangled SkipSpace__7CScriptFPci
      * @address 0x1DAD090
-     * @size 0x150
+     * @size 0x14C
      */
     int SkipSpace(char *buffer, int position);
 

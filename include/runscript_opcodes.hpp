@@ -13,7 +13,7 @@ struct RS_STACKDATA;
 /**
  * @mangled GetStackInt__FP12RS_STACKDATA__3
  * @address 0x1E1640
- * @size 0x50
+ * @size 0x44
  * @unknownret
  * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
  */
@@ -22,7 +22,7 @@ void GetStackInt(RS_STACKDATA *);
 /**
  * @mangled GetStackFloat__FP12RS_STACKDATA__3
  * @address 0x1E1690
- * @size 0x30
+ * @size 0x2C
  * @unknownret
  * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
  */
@@ -31,7 +31,7 @@ void GetStackFloat(RS_STACKDATA *);
 /**
  * @mangled GetStackString__FP12RS_STACKDATA__3
  * @address 0x1E16C0
- * @size 0x10
+ * @size 0xC
  * @unknownret
  * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
  */
@@ -58,7 +58,7 @@ void SetStack(RS_STACKDATA *, float);
 /**
  * @mangled _SET_MOTION__FP12RS_STACKDATAi
  * @address 0x1E1710
- * @size 0x480
+ * @size 0x478
  * @unknownret
  */
 void _SET_MOTION(RS_STACKDATA *, int);
@@ -66,7 +66,7 @@ void _SET_MOTION(RS_STACKDATA *, int);
 /**
  * @mangled _CHK_MOTION_FRM__FP12RS_STACKDATAi
  * @address 0x1E1B90
- * @size 0xD0
+ * @size 0xCC
  * @unknownret
  */
 void _CHK_MOTION_FRM(RS_STACKDATA *, int);
@@ -74,7 +74,7 @@ void _CHK_MOTION_FRM(RS_STACKDATA *, int);
 /**
  * @mangled _GET_MOTION_FRM__FP12RS_STACKDATAi
  * @address 0x1E1C60
- * @size 0x50
+ * @size 0x44
  * @unknownret
  */
 void _GET_MOTION_FRM(RS_STACKDATA *, int);
@@ -82,7 +82,7 @@ void _GET_MOTION_FRM(RS_STACKDATA *, int);
 /**
  * @mangled _SET_MOTION_FRM__FP12RS_STACKDATAi
  * @address 0x1E1CB0
- * @size 0x50
+ * @size 0x48
  * @unknownret
  */
 void _SET_MOTION_FRM(RS_STACKDATA *, int);
@@ -90,7 +90,7 @@ void _SET_MOTION_FRM(RS_STACKDATA *, int);
 /**
  * @mangled _GET_DISTANCE__FP12RS_STACKDATAi
  * @address 0x1E1D00
- * @size 0xF0
+ * @size 0xEC
  * @unknownret
  */
 void _GET_DISTANCE(RS_STACKDATA *, int);
@@ -98,7 +98,7 @@ void _GET_DISTANCE(RS_STACKDATA *, int);
 /**
  * @mangled _GET_POSITION__FP12RS_STACKDATAi
  * @address 0x1E1DF0
- * @size 0xF0
+ * @size 0xEC
  * @unknownret
  */
 void _GET_POSITION(RS_STACKDATA *, int);
@@ -106,7 +106,7 @@ void _GET_POSITION(RS_STACKDATA *, int);
 /**
  * @mangled _SET_ROTATION__FP12RS_STACKDATAi
  * @address 0x1E1EE0
- * @size 0x1D0
+ * @size 0x1C4
  * @unknownret
  */
 void _SET_ROTATION(RS_STACKDATA *, int);
@@ -122,7 +122,7 @@ void _CHK_ROTATION(RS_STACKDATA *, int);
 /**
  * @mangled _CHK_MOVE__FP12RS_STACKDATAi
  * @address 0x1E2120
- * @size 0x100
+ * @size 0xFC
  * @unknownret
  */
 void _CHK_MOVE(RS_STACKDATA *, int);
@@ -146,7 +146,7 @@ void _GET_VECTOR(RS_STACKDATA *, int);
 /**
  * @mangled _GET_DIRECTION__FP12RS_STACKDATAi
  * @address 0x1E2640
- * @size 0x180
+ * @size 0x17C
  * @unknownret
  */
 void _GET_DIRECTION(RS_STACKDATA *, int);
@@ -154,7 +154,7 @@ void _GET_DIRECTION(RS_STACKDATA *, int);
 /**
  * @mangled _SET_MOVE__FP12RS_STACKDATAi
  * @address 0x1E27C0
- * @size 0x160
+ * @size 0x15C
  * @unknownret
  */
 void _SET_MOVE(RS_STACKDATA *, int);
@@ -170,7 +170,7 @@ void _CHK_MOVE_INFO(RS_STACKDATA *, int);
 /**
  * @mangled _SET_MOVE_CANSEL__FP12RS_STACKDATAi
  * @address 0x1E2A60
- * @size 0x40
+ * @size 0x38
  * @unknownret
  */
 void _SET_MOVE_CANSEL(RS_STACKDATA *, int);
@@ -178,7 +178,7 @@ void _SET_MOVE_CANSEL(RS_STACKDATA *, int);
 /**
  * @mangled _SET_ROT_CANSEL__FP12RS_STACKDATAi
  * @address 0x1E2AA0
- * @size 0x40
+ * @size 0x38
  * @unknownret
  */
 void _SET_ROT_CANSEL(RS_STACKDATA *, int);
@@ -186,7 +186,7 @@ void _SET_ROT_CANSEL(RS_STACKDATA *, int);
 /**
  * @mangled _SET_POSITION__FP12RS_STACKDATAi
  * @address 0x1E2AE0
- * @size 0x90
+ * @size 0x84
  * @unknownret
  */
 void _SET_POSITION(RS_STACKDATA *, int);
@@ -194,7 +194,7 @@ void _SET_POSITION(RS_STACKDATA *, int);
 /**
  * @mangled _STATUS_SET_FALL__FP12RS_STACKDATAi
  * @address 0x1E2B70
- * @size 0x60
+ * @size 0x5C
  * @unknownret
  */
 void _STATUS_SET_FALL(RS_STACKDATA *, int);
@@ -202,7 +202,7 @@ void _STATUS_SET_FALL(RS_STACKDATA *, int);
 /**
  * @mangled _STATUS_SET_MUTEKI__FP12RS_STACKDATAi
  * @address 0x1E2BD0
- * @size 0x90
+ * @size 0x8C
  * @unknownret
  */
 void _STATUS_SET_MUTEKI(RS_STACKDATA *, int);
@@ -210,7 +210,7 @@ void _STATUS_SET_MUTEKI(RS_STACKDATA *, int);
 /**
  * @mangled _STATUS_SET_ALPHA__FP12RS_STACKDATAi
  * @address 0x1E2C60
- * @size 0xC0
+ * @size 0xB4
  * @unknownret
  */
 void _STATUS_SET_ALPHA(RS_STACKDATA *, int);
@@ -218,7 +218,7 @@ void _STATUS_SET_ALPHA(RS_STACKDATA *, int);
 /**
  * @mangled _STATUS_CHK_ALPHA__FP12RS_STACKDATAi
  * @address 0x1E2D20
- * @size 0x110
+ * @size 0x10C
  * @unknownret
  */
 void _STATUS_CHK_ALPHA(RS_STACKDATA *, int);
@@ -226,7 +226,7 @@ void _STATUS_CHK_ALPHA(RS_STACKDATA *, int);
 /**
  * @mangled _STATUS_SET_DEAD__FP12RS_STACKDATAi
  * @address 0x1E2E30
- * @size 0x50
+ * @size 0x4C
  * @unknownret
  */
 void _STATUS_SET_DEAD(RS_STACKDATA *, int);
@@ -234,7 +234,7 @@ void _STATUS_SET_DEAD(RS_STACKDATA *, int);
 /**
  * @mangled _STATUS_SET_EVENT__FP12RS_STACKDATAi
  * @address 0x1E2E80
- * @size 0x30
+ * @size 0x2C
  * @unknownret
  */
 void _STATUS_SET_EVENT(RS_STACKDATA *, int);
@@ -242,7 +242,7 @@ void _STATUS_SET_EVENT(RS_STACKDATA *, int);
 /**
  * @mangled _RUN_SCRIPT__FP12RS_STACKDATAi
  * @address 0x1E2EB0
- * @size 0x40
+ * @size 0x3C
  * @unknownret
  */
 void _RUN_SCRIPT(RS_STACKDATA *, int);
@@ -250,7 +250,7 @@ void _RUN_SCRIPT(RS_STACKDATA *, int);
 /**
  * @mangled _STATUS_SET_COL_OFF__FP12RS_STACKDATAi
  * @address 0x1E2EF0
- * @size 0x60
+ * @size 0x5C
  * @unknownret
  */
 void _STATUS_SET_COL_OFF(RS_STACKDATA *, int);
@@ -258,7 +258,7 @@ void _STATUS_SET_COL_OFF(RS_STACKDATA *, int);
 /**
  * @mangled _STATUS_GET_LIFE_RATE__FP12RS_STACKDATAi
  * @address 0x1E2F50
- * @size 0x90
+ * @size 0x88
  * @unknownret
  */
 void _STATUS_GET_LIFE_RATE(RS_STACKDATA *, int);
@@ -266,7 +266,7 @@ void _STATUS_GET_LIFE_RATE(RS_STACKDATA *, int);
 /**
  * @mangled _STATUS_GET_USER_VECTOR__FP12RS_STACKDATAi
  * @address 0x1E2FE0
- * @size 0x110
+ * @size 0x104
  * @unknownret
  */
 void _STATUS_GET_USER_VECTOR(RS_STACKDATA *, int);
@@ -282,7 +282,7 @@ void _STATUS_GET_HEIGHT(RS_STACKDATA *, int);
 /**
  * @mangled _GET_RAND__FP12RS_STACKDATAi
  * @address 0x1E3140
- * @size 0x90
+ * @size 0x88
  * @unknownret
  */
 void _GET_RAND(RS_STACKDATA *, int);
@@ -290,7 +290,7 @@ void _GET_RAND(RS_STACKDATA *, int);
 /**
  * @mangled _GET_RANDF__FP12RS_STACKDATAi
  * @address 0x1E31D0
- * @size 0x90
+ * @size 0x84
  * @unknownret
  */
 void _GET_RANDF(RS_STACKDATA *, int);
@@ -298,7 +298,7 @@ void _GET_RANDF(RS_STACKDATA *, int);
 /**
  * @mangled _SIN_DEG__FP12RS_STACKDATAi
  * @address 0x1E3260
- * @size 0x60
+ * @size 0x54
  * @unknownret
  */
 void _SIN_DEG(RS_STACKDATA *, int);
@@ -306,7 +306,7 @@ void _SIN_DEG(RS_STACKDATA *, int);
 /**
  * @mangled _COS_DEG__FP12RS_STACKDATAi
  * @address 0x1E32C0
- * @size 0x60
+ * @size 0x54
  * @unknownret
  */
 void _COS_DEG(RS_STACKDATA *, int);
@@ -314,7 +314,7 @@ void _COS_DEG(RS_STACKDATA *, int);
 /**
  * @mangled _STATUS_SET_PALLET__FP12RS_STACKDATAi
  * @address 0x1E3320
- * @size 0x1E0
+ * @size 0x1D4
  * @unknownret
  */
 void _STATUS_SET_PALLET(RS_STACKDATA *, int);
@@ -322,7 +322,7 @@ void _STATUS_SET_PALLET(RS_STACKDATA *, int);
 /**
  * @mangled _STATUS_SET_CLIPLEVEL__FP12RS_STACKDATAi
  * @address 0x1E3500
- * @size 0x60
+ * @size 0x54
  * @unknownret
  */
 void _STATUS_SET_CLIPLEVEL(RS_STACKDATA *, int);
@@ -338,7 +338,7 @@ void _STATUS_GET_HITDMG_VOL(RS_STACKDATA *, int);
 /**
  * @mangled _STATUS_GET_MOTION_ID__FP12RS_STACKDATAi
  * @address 0x1E35B0
- * @size 0x50
+ * @size 0x44
  * @unknownret
  */
 void _STATUS_GET_MOTION_ID(RS_STACKDATA *, int);
@@ -354,7 +354,7 @@ void _STATUS_GET_DMG_ID(RS_STACKDATA *, int);
 /**
  * @mangled _STATUS_SET_LOCKON_DIST__FP12RS_STACKDATAi
  * @address 0x1E3650
- * @size 0x60
+ * @size 0x54
  * @unknownret
  */
 void _STATUS_SET_LOCKON_DIST(RS_STACKDATA *, int);
@@ -362,7 +362,7 @@ void _STATUS_SET_LOCKON_DIST(RS_STACKDATA *, int);
 /**
  * @mangled _STATUS_SET_SHADOW_LEN__FP12RS_STACKDATAi
  * @address 0x1E36B0
- * @size 0x60
+ * @size 0x54
  * @unknownret
  */
 void _STATUS_SET_SHADOW_LEN(RS_STACKDATA *, int);
@@ -378,7 +378,7 @@ void _STATUS_SET_LOCKON_TRG(RS_STACKDATA *, int);
 /**
  * @mangled _SET_MOV_COL__FP12RS_STACKDATAi
  * @address 0x1E3840
- * @size 0x1B0
+ * @size 0x1A8
  * @unknownret
  */
 void _SET_MOV_COL(RS_STACKDATA *, int);
@@ -386,7 +386,7 @@ void _SET_MOV_COL(RS_STACKDATA *, int);
 /**
  * @mangled _SET_BODY_COL__FP12RS_STACKDATAi
  * @address 0x1E39F0
- * @size 0x2B0
+ * @size 0x2A8
  * @unknownret
  */
 void _SET_BODY_COL(RS_STACKDATA *, int);
@@ -394,7 +394,7 @@ void _SET_BODY_COL(RS_STACKDATA *, int);
 /**
  * @mangled _SET_BODY_COL_PARA__FP12RS_STACKDATAi
  * @address 0x1E3CA0
- * @size 0x110
+ * @size 0x104
  * @unknownret
  */
 void _SET_BODY_COL_PARA(RS_STACKDATA *, int);
@@ -402,7 +402,7 @@ void _SET_BODY_COL_PARA(RS_STACKDATA *, int);
 /**
  * @mangled _SET_DMG_COL__FP12RS_STACKDATAi
  * @address 0x1E3DB0
- * @size 0x220
+ * @size 0x214
  * @unknownret
  */
 void _SET_DMG_COL(RS_STACKDATA *, int);
@@ -418,7 +418,7 @@ void _SET_DMG_PARA(RS_STACKDATA *, int);
 /**
  * @mangled _SET_SHOT__FP12RS_STACKDATAi
  * @address 0x1E4120
- * @size 0x1F0
+ * @size 0x1EC
  * @unknownret
  */
 void _SET_SHOT(RS_STACKDATA *, int);
@@ -426,7 +426,7 @@ void _SET_SHOT(RS_STACKDATA *, int);
 /**
  * @mangled _SET_SHOT2__FP12RS_STACKDATAi
  * @address 0x1E4310
- * @size 0x210
+ * @size 0x20C
  * @unknownret
  */
 void _SET_SHOT2(RS_STACKDATA *, int);
@@ -434,7 +434,7 @@ void _SET_SHOT2(RS_STACKDATA *, int);
 /**
  * @mangled _SET_SND_FRM__FP12RS_STACKDATAi
  * @address 0x1E4520
- * @size 0x150
+ * @size 0x144
  * @unknownret
  */
 void _SET_SND_FRM(RS_STACKDATA *, int);
@@ -442,7 +442,7 @@ void _SET_SND_FRM(RS_STACKDATA *, int);
 /**
  * @mangled _SET_LOOP_SND__FP12RS_STACKDATAi
  * @address 0x1E4670
- * @size 0xD0
+ * @size 0xC8
  * @unknownret
  */
 void _SET_LOOP_SND(RS_STACKDATA *, int);
@@ -450,7 +450,7 @@ void _SET_LOOP_SND(RS_STACKDATA *, int);
 /**
  * @mangled _STOP_LOOP_SND__FP12RS_STACKDATAi
  * @address 0x1E4740
- * @size 0x70
+ * @size 0x6C
  * @unknownret
  */
 void _STOP_LOOP_SND(RS_STACKDATA *, int);
@@ -458,7 +458,7 @@ void _STOP_LOOP_SND(RS_STACKDATA *, int);
 /**
  * @mangled _DEL_LOOP_SND__FP12RS_STACKDATAi
  * @address 0x1E47B0
- * @size 0x40
+ * @size 0x34
  * @unknownret
  */
 void _DEL_LOOP_SND(RS_STACKDATA *, int);
@@ -466,7 +466,7 @@ void _DEL_LOOP_SND(RS_STACKDATA *, int);
 /**
  * @mangled _SET_SND_NOW__FP12RS_STACKDATAi
  * @address 0x1E47F0
- * @size 0x40
+ * @size 0x38
  * @unknownret
  */
 void _SET_SND_NOW(RS_STACKDATA *, int);
@@ -474,7 +474,7 @@ void _SET_SND_NOW(RS_STACKDATA *, int);
 /**
  * @mangled _STOP_SND_NOW__FP12RS_STACKDATAi
  * @address 0x1E4830
- * @size 0x40
+ * @size 0x34
  * @unknownret
  */
 void _STOP_SND_NOW(RS_STACKDATA *, int);
@@ -482,7 +482,7 @@ void _STOP_SND_NOW(RS_STACKDATA *, int);
 /**
  * @mangled _GET_CHR_ID__FP12RS_STACKDATAi
  * @address 0x1E4870
- * @size 0x30
+ * @size 0x2C
  * @unknownret
  */
 void _GET_CHR_ID(RS_STACKDATA *, int);
@@ -498,7 +498,7 @@ void _GET_COL_HIT_ID(RS_STACKDATA *, int);
 /**
  * @mangled _GET_SCRIPT_ID__FP12RS_STACKDATAi
  * @address 0x1E48F0
- * @size 0x30
+ * @size 0x2C
  * @unknownret
  */
 void _GET_SCRIPT_ID(RS_STACKDATA *, int);
@@ -506,7 +506,7 @@ void _GET_SCRIPT_ID(RS_STACKDATA *, int);
 /**
  * @mangled _GET_MONSTOR_POS__FP12RS_STACKDATAi
  * @address 0x1E4920
- * @size 0xA0
+ * @size 0x98
  * @unknownret
  */
 void _GET_MONSTOR_POS(RS_STACKDATA *, int);
@@ -514,7 +514,7 @@ void _GET_MONSTOR_POS(RS_STACKDATA *, int);
 /**
  * @mangled _GET_MONSTOR_FRM__FP12RS_STACKDATAi
  * @address 0x1E49C0
- * @size 0x60
+ * @size 0x58
  * @unknownret
  */
 void _GET_MONSTOR_FRM(RS_STACKDATA *, int);
@@ -522,7 +522,7 @@ void _GET_MONSTOR_FRM(RS_STACKDATA *, int);
 /**
  * @mangled _SET_MONSTOR_POS__FP12RS_STACKDATAi
  * @address 0x1E4A20
- * @size 0xA0
+ * @size 0x9C
  * @unknownret
  */
 void _SET_MONSTOR_POS(RS_STACKDATA *, int);
@@ -530,7 +530,7 @@ void _SET_MONSTOR_POS(RS_STACKDATA *, int);
 /**
  * @mangled _SET_MONSTOR_MOVE__FP12RS_STACKDATAi
  * @address 0x1E4AC0
- * @size 0x140
+ * @size 0x13C
  * @unknownret
  */
 void _SET_MONSTOR_MOVE(RS_STACKDATA *, int);
@@ -538,7 +538,7 @@ void _SET_MONSTOR_MOVE(RS_STACKDATA *, int);
 /**
  * @mangled _SET_MONSTOR_LINK_MOVE__FP12RS_STACKDATAi
  * @address 0x1E4C00
- * @size 0xC0
+ * @size 0xBC
  * @unknownret
  */
 void _SET_MONSTOR_LINK_MOVE(RS_STACKDATA *, int);
@@ -546,7 +546,7 @@ void _SET_MONSTOR_LINK_MOVE(RS_STACKDATA *, int);
 /**
  * @mangled _SET_MONSTOR_MOVE_CANSEL__FP12RS_STACKDATAi
  * @address 0x1E4CC0
- * @size 0x50
+ * @size 0x4C
  * @unknownret
  */
 void _SET_MONSTOR_MOVE_CANSEL(RS_STACKDATA *, int);
@@ -554,7 +554,7 @@ void _SET_MONSTOR_MOVE_CANSEL(RS_STACKDATA *, int);
 /**
  * @mangled _SET_LOCKON_DIST__FP12RS_STACKDATAi
  * @address 0x1E4D10
- * @size 0x60
+ * @size 0x54
  * @unknownret
  */
 void _SET_LOCKON_DIST(RS_STACKDATA *, int);
@@ -562,7 +562,7 @@ void _SET_LOCKON_DIST(RS_STACKDATA *, int);
 /**
  * @mangled _SET_LOCKON_SW__FP12RS_STACKDATAi
  * @address 0x1E4D70
- * @size 0x60
+ * @size 0x5C
  * @unknownret
  */
 void _SET_LOCKON_SW(RS_STACKDATA *, int);
@@ -570,7 +570,7 @@ void _SET_LOCKON_SW(RS_STACKDATA *, int);
 /**
  * @mangled _SET_MONSTOR_MOTION__FP12RS_STACKDATAi
  * @address 0x1E4DD0
- * @size 0x3C0
+ * @size 0x3B4
  * @unknownret
  */
 void _SET_MONSTOR_MOTION(RS_STACKDATA *, int);
@@ -578,7 +578,7 @@ void _SET_MONSTOR_MOTION(RS_STACKDATA *, int);
 /**
  * @mangled _SET_GLOBAL_INT__FP12RS_STACKDATAi
  * @address 0x1E5190
- * @size 0x60
+ * @size 0x5C
  * @unknownret
  */
 void _SET_GLOBAL_INT(RS_STACKDATA *, int);
@@ -594,7 +594,7 @@ void _GET_GLOBAL_INT(RS_STACKDATA *, int);
 /**
  * @mangled _GET_OBJ_POS__FP12RS_STACKDATAi__2
  * @address 0x1E5240
- * @size 0xD0
+ * @size 0xC8
  * @unknownret
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
@@ -603,7 +603,7 @@ void _GET_OBJ_POS(RS_STACKDATA *, int);
 /**
  * @mangled _SET_ROTATION_X__FP12RS_STACKDATAi
  * @address 0x1E5310
- * @size 0x170
+ * @size 0x168
  * @unknownret
  */
 void _SET_ROTATION_X(RS_STACKDATA *, int);
@@ -611,7 +611,7 @@ void _SET_ROTATION_X(RS_STACKDATA *, int);
 /**
  * @mangled _LOOKAT__FP12RS_STACKDATAi
  * @address 0x1E5480
- * @size 0x340
+ * @size 0x338
  * @unknownret
  */
 void _LOOKAT(RS_STACKDATA *, int);
@@ -619,7 +619,7 @@ void _LOOKAT(RS_STACKDATA *, int);
 /**
  * @mangled _SET_MOTION_CHANGE_STEP__FP12RS_STACKDATAi
  * @address 0x1E57C0
- * @size 0xB0
+ * @size 0xA8
  * @unknownret
  */
 void _SET_MOTION_CHANGE_STEP(RS_STACKDATA *, int);
@@ -627,7 +627,7 @@ void _SET_MOTION_CHANGE_STEP(RS_STACKDATA *, int);
 /**
  * @mangled _GET_MONSTOR_VECTOR__FP12RS_STACKDATAi
  * @address 0x1E5870
- * @size 0x220
+ * @size 0x214
  * @unknownret
  */
 void _GET_MONSTOR_VECTOR(RS_STACKDATA *, int);
@@ -635,7 +635,7 @@ void _GET_MONSTOR_VECTOR(RS_STACKDATA *, int);
 /**
  * @mangled _STATUS_SET_LIFE__FP12RS_STACKDATAi
  * @address 0x1E5A90
- * @size 0x90
+ * @size 0x84
  * @unknownret
  */
 void _STATUS_SET_LIFE(RS_STACKDATA *, int);
@@ -643,7 +643,7 @@ void _STATUS_SET_LIFE(RS_STACKDATA *, int);
 /**
  * @mangled _SET_BIN2__FP12RS_STACKDATAi
  * @address 0x1E5B20
- * @size 0x60
+ * @size 0x5C
  * @unknownret
  */
 void _SET_BIN2(RS_STACKDATA *, int);
@@ -651,7 +651,7 @@ void _SET_BIN2(RS_STACKDATA *, int);
 /**
  * @mangled _SET_STATUS_CHANGE__FP12RS_STACKDATAi
  * @address 0x1E5B80
- * @size 0xD0
+ * @size 0xCC
  * @unknownret
  */
 void _SET_STATUS_CHANGE(RS_STACKDATA *, int);
@@ -659,7 +659,7 @@ void _SET_STATUS_CHANGE(RS_STACKDATA *, int);
 /**
  * @mangled _SET_TEX_ANIME_SW__FP12RS_STACKDATAi
  * @address 0x1E5C50
- * @size 0x110
+ * @size 0x10C
  * @unknownret
  */
 void _SET_TEX_ANIME_SW(RS_STACKDATA *, int);
@@ -667,7 +667,7 @@ void _SET_TEX_ANIME_SW(RS_STACKDATA *, int);
 /**
  * @mangled _GET_STATUS_BIN2__FP12RS_STACKDATAi
  * @address 0x1E5D60
- * @size 0x60
+ * @size 0x58
  * @unknownret
  */
 void _GET_STATUS_BIN2(RS_STACKDATA *, int);
@@ -675,7 +675,7 @@ void _GET_STATUS_BIN2(RS_STACKDATA *, int);
 /**
  * @mangled _SET_COLLISION_WIDTH__FP12RS_STACKDATAi
  * @address 0x1E5DC0
- * @size 0x60
+ * @size 0x54
  * @unknownret
  */
 void _SET_COLLISION_WIDTH(RS_STACKDATA *, int);
@@ -683,7 +683,7 @@ void _SET_COLLISION_WIDTH(RS_STACKDATA *, int);
 /**
  * @mangled _GET_NEAR_MONSTER__FP12RS_STACKDATAi
  * @address 0x1E5E20
- * @size 0x1A0
+ * @size 0x198
  * @unknownret
  */
 void _GET_NEAR_MONSTER(RS_STACKDATA *, int);
@@ -707,7 +707,7 @@ void _CHEKC_FADE_OUT(RS_STACKDATA *, int);
 /**
  * @mangled _SET_GRAVITY__FP12RS_STACKDATAi
  * @address 0x1E6050
- * @size 0x60
+ * @size 0x5C
  * @unknownret
  */
 void _SET_GRAVITY(RS_STACKDATA *, int);
@@ -715,7 +715,7 @@ void _SET_GRAVITY(RS_STACKDATA *, int);
 /**
  * @mangled _SET_GUARD_FRAME__FP12RS_STACKDATAi
  * @address 0x1E60B0
- * @size 0x150
+ * @size 0x14C
  * @unknownret
  */
 void _SET_GUARD_FRAME(RS_STACKDATA *, int);
@@ -723,7 +723,7 @@ void _SET_GUARD_FRAME(RS_STACKDATA *, int);
 /**
  * @mangled _GUARD_SEARCH__FP12RS_STACKDATAi
  * @address 0x1E6200
- * @size 0x160
+ * @size 0x158
  * @unknownret
  */
 void _GUARD_SEARCH(RS_STACKDATA *, int);
@@ -731,7 +731,7 @@ void _GUARD_SEARCH(RS_STACKDATA *, int);
 /**
  * @mangled _GET_MOVE_VEC__FP12RS_STACKDATAi
  * @address 0x1E6360
- * @size 0x60
+ * @size 0x5C
  * @unknownret
  */
 void _GET_MOVE_VEC(RS_STACKDATA *, int);
@@ -739,7 +739,7 @@ void _GET_MOVE_VEC(RS_STACKDATA *, int);
 /**
  * @mangled _PUSH_IGLOBAL__FP12RS_STACKDATAi
  * @address 0x1E63C0
- * @size 0xA0
+ * @size 0x94
  * @unknownret
  */
 void _PUSH_IGLOBAL(RS_STACKDATA *, int);
@@ -747,7 +747,7 @@ void _PUSH_IGLOBAL(RS_STACKDATA *, int);
 /**
  * @mangled _POP_IGLOBAL__FP12RS_STACKDATAi
  * @address 0x1E6460
- * @size 0x90
+ * @size 0x88
  * @unknownret
  */
 void _POP_IGLOBAL(RS_STACKDATA *, int);
@@ -755,7 +755,7 @@ void _POP_IGLOBAL(RS_STACKDATA *, int);
 /**
  * @mangled _GET_USER_STATUS__FP12RS_STACKDATAi
  * @address 0x1E64F0
- * @size 0x80
+ * @size 0x74
  * @unknownret
  */
 void _GET_USER_STATUS(RS_STACKDATA *, int);
@@ -771,7 +771,7 @@ void _SET_REFERENCE(RS_STACKDATA *, int);
 /**
  * @mangled _DEL_REFERENCE__FP12RS_STACKDATAi
  * @address 0x1E6630
- * @size 0x60
+ * @size 0x5C
  * @unknownret
  */
 void _DEL_REFERENCE(RS_STACKDATA *, int);
@@ -779,7 +779,7 @@ void _DEL_REFERENCE(RS_STACKDATA *, int);
 /**
  * @mangled _SET_SHADOW_FLAG__FP12RS_STACKDATAi
  * @address 0x1E6690
- * @size 0x60
+ * @size 0x5C
  * @unknownret
  */
 void _SET_SHADOW_FLAG(RS_STACKDATA *, int);
@@ -787,7 +787,7 @@ void _SET_SHADOW_FLAG(RS_STACKDATA *, int);
 /**
  * @mangled BtSetEventScript__FP10CRunScriptPcP14CDataAlloc2_1_
  * @address 0x1E66F0
- * @size 0xB0
+ * @size 0xA4
  * @unknownret
  */
 void BtSetEventScript(CRunScript *, char *, CDataAlloc2<1> *);
@@ -795,7 +795,7 @@ void BtSetEventScript(CRunScript *, char *, CDataAlloc2<1> *);
 /**
  * @mangled BtSetEventExtendTable__Fv
  * @address 0x1E67A0
- * @size 0x130
+ * @size 0x12C
  * @unknownret
  */
 void BtSetEventExtendTable(void);

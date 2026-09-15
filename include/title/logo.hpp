@@ -14,7 +14,7 @@ public:
      *
      * @mangled __ct__5CLogoFv
      * @address 0x1DD3E00
-     * @size 0x40
+     * @size 0x3C
      */
     CLogo(void);
 
@@ -53,7 +53,7 @@ public:
      *
      * @mangled Sparkdraw__5CLogoFf
      * @address 0x1DD3FC0
-     * @size 0x2D0
+     * @size 0x2C8
      * @unknownret
      */
     void Sparkdraw(float);
@@ -63,7 +63,7 @@ public:
      *
      * @mangled Draw__5CLogoFv
      * @address 0x1DD4290
-     * @size 0x140
+     * @size 0x134
      * @unknownret
      */
     void Draw(void);
@@ -73,7 +73,7 @@ public:
      *
      * @mangled Move__5CLogoFv
      * @address 0x1DD43D0
-     * @size 0x50
+     * @size 0x48
      * @unknownret
      */
     void Move(void);

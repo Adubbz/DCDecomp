@@ -49,7 +49,7 @@ public:
     /**
      * @mangled SetParam__6CWaterFffff
      * @address 0x1607A0
-     * @size 0x20
+     * @size 0x18
      * Stores the four parameters used by the water simulation.
      */
     void SetParam(float, float, float, float);
@@ -57,7 +57,7 @@ public:
     /**
      * @mangled SetColor__6CWaterFUcUcUcUc
      * @address 0x1607C0
-     * @size 0x20
+     * @size 0x18
      * Sets the red, green, blue and alpha channels of the surface.
      */
     void SetColor(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha);
@@ -73,7 +73,7 @@ public:
     /**
      * @mangled DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1
      * @address 0x160F20
-     * @size 0x1E0
+     * @size 0x1DC
      * @unknownret
      */
     void DrawVu1(RenderInfo *, sceVif1Packet *, RenderInfo *);
@@ -81,7 +81,7 @@ public:
     /**
      * @mangled CheckClip__6CWaterFv
      * @address 0x161100
-     * @size 0xD0
+     * @size 0xC4
      * @unknownret
      */
     void CheckClip(void);
@@ -89,7 +89,7 @@ public:
     /**
      * @mangled Hamon__6CWaterFv
      * @address 0x1611D0
-     * @size 0x110
+     * @size 0x108
      * @unknownret
      */
     void Hamon(void);
@@ -99,14 +99,14 @@ public:
      *
      * @mangled SetVertex__6CWaterFPfPfPfPf
      * @address 0x1612E0
-     * @size 0x90
+     * @size 0x84
      */
     void SetVertex(float *, float *, float *, float *);
 
     /**
      * @mangled Shake__6CWaterFiif
      * @address 0x161370
-     * @size 0xA0
+     * @size 0x9C
      * @unknownret
      */
     void Shake(int, int, float);
@@ -114,7 +114,7 @@ public:
     /**
      * @mangled SetSize__6CWaterFiiP14CDataAlloc2_1_
      * @address 0x161410
-     * @size 0x1B0
+     * @size 0x1A4
      * @unknownret
      */
     void SetSize(int, int, CDataAlloc2<1> *);
@@ -122,7 +122,7 @@ public:
     /**
      * @mangled __ct__6CWaterFv
      * @address 0x1615C0
-     * @size 0x90
+     * @size 0x8C
      */
     CWater(void);
 };

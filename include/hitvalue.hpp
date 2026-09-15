@@ -14,7 +14,7 @@ public:
     /**
      * @mangled EntryValue__9CHitValueFPfiiP6CFrame
      * @address 0x1B6370
-     * @size 0x1F0
+     * @size 0x1E4
      * @unknownret
      */
     void EntryValue(float *, int, int, CFrame *);
@@ -30,7 +30,7 @@ public:
     /**
      * @mangled Step__9CHitValueFv
      * @address 0x1B6850
-     * @size 0x1A0
+     * @size 0x198
      * @unknownret
      */
     void Step(void);

@@ -39,7 +39,7 @@ public:
      *
      * @mangled Step__8CHitMarkFv
      * @address 0x1B3490
-     * @size 0x140
+     * @size 0x13C
      */
     virtual void Step(void);
 
@@ -58,7 +58,7 @@ public:
      *
      * @mangled Draw__8CHitMarkFv
      * @address 0x1B31A0
-     * @size 0x2F0
+     * @size 0x2EC
      */
     void Draw(void);
 
@@ -67,7 +67,7 @@ public:
      *
      * @mangled Initialize__8CHitMarkFv
      * @address 0x1B35D0
-     * @size 0x40
+     * @size 0x3C
      */
     void Initialize(void);
 };
@@ -100,7 +100,7 @@ public:
      *
      * @mangled Draw__13CHitPointMarkFv
      * @address 0x1B3610
-     * @size 0x100
+     * @size 0xFC
      */
     void Draw(void);
 
@@ -109,7 +109,7 @@ public:
      *
      * @mangled Step__13CHitPointMarkFv
      * @address 0x1B3710
-     * @size 0x70
+     * @size 0x64
      */
     void Step(void);
 };

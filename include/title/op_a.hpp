@@ -7,7 +7,7 @@
  *
  * @mangled OpA_InitProcess__Fv
  * @address 0x1DB4EC0
- * @size 0x1B0
+ * @size 0x1A8
  * @unknownret
  */
 void OpA_InitProcess(void);
@@ -17,7 +17,7 @@ void OpA_InitProcess(void);
  *
  * @mangled LoadTexture__Fv__3
  * @address 0x1DB5070
- * @size 0x3B0
+ * @size 0x3AC
  * @unknownret
  * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
  */
@@ -28,7 +28,7 @@ void LoadTexture(void);
  *
  * @mangled LoadData__Fv__2
  * @address 0x1DB5420
- * @size 0x330
+ * @size 0x32C
  * @unknownret
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
@@ -39,7 +39,7 @@ void LoadData(void);
  *
  * @mangled SetDanceMotion__Fv
  * @address 0x1DB5750
- * @size 0x150
+ * @size 0x148
  * @unknownret
  */
 void SetDanceMotion(void);
@@ -49,7 +49,7 @@ void SetDanceMotion(void);
  *
  * @mangled InitDancerPos__Fv
  * @address 0x1DB58A0
- * @size 0x130
+ * @size 0x124
  * @unknownret
  */
 void InitDancerPos(void);
@@ -59,7 +59,7 @@ void InitDancerPos(void);
  *
  * @mangled OpA_DrawProcess__Fv
  * @address 0x1DB59D0
- * @size 0xD40
+ * @size 0xD34
  * @unknownret
  */
 void OpA_DrawProcess(void);
@@ -79,7 +79,7 @@ void DrawCloud(void);
  *
  * @mangled SmokeProcess__Fv
  * @address 0x1DB6940
- * @size 0x2B0
+ * @size 0x2A4
  * @unknownret
  */
 void SmokeProcess(void);
@@ -99,7 +99,7 @@ void OpA_MotionProcess(void);
  *
  * @mangled MoveDancers__Fv
  * @address 0x1DB75D0
- * @size 0x190
+ * @size 0x188
  * @unknownret
  */
 void MoveDancers(void);
@@ -109,7 +109,7 @@ void MoveDancers(void);
  *
  * @mangled ReaderShadow__Fv
  * @address 0x1DB7760
- * @size 0xC0
+ * @size 0xB8
  * @unknownret
  */
 void ReaderShadow(void);
@@ -119,7 +119,7 @@ void ReaderShadow(void);
  *
  * @mangled DancerShadow__Fv
  * @address 0x1DB7820
- * @size 0xC0
+ * @size 0xB4
  * @unknownret
  */
 void DancerShadow(void);
@@ -129,7 +129,7 @@ void DancerShadow(void);
  *
  * @mangled ShogunShadow__Fv
  * @address 0x1DB78E0
- * @size 0xD0
+ * @size 0xCC
  * @unknownret
  */
 void ShogunShadow(void);
@@ -139,7 +139,7 @@ void ShogunShadow(void);
  *
  * @mangled ShisaiShadow__Fv
  * @address 0x1DB79B0
- * @size 0xD0
+ * @size 0xCC
  * @unknownret
  */
 void ShisaiShadow(void);
@@ -149,7 +149,7 @@ void ShisaiShadow(void);
  *
  * @mangled DrawShadow__Ffff
  * @address 0x1DB7A80
- * @size 0x110
+ * @size 0x108
  * @unknownret
  */
 void DrawShadow(float, float, float);
@@ -169,7 +169,7 @@ void OpA_SoundProcess(void);
  *
  * @mangled setTexScroll__Fv
  * @address 0x1DB82D0
- * @size 0x280
+ * @size 0x274
  * @unknownret
  */
 void setTexScroll(void);
@@ -179,7 +179,7 @@ void setTexScroll(void);
  *
  * @mangled setCloudTexScroll__Fv
  * @address 0x1DB8550
- * @size 0x280
+ * @size 0x274
  * @unknownret
  */
 void setCloudTexScroll(void);

@@ -29,7 +29,7 @@ public:
      *
      * @mangled SetMoment__12CObjectFrameF11CVector3_f_
      * @address 0x1579E0
-     * @size 0x40
+     * @size 0x38
      */
     virtual void SetMoment(CVector3_f_ moment);
 
@@ -38,7 +38,7 @@ public:
      *
      * @mangled SetRotation__12CObjectFrameF11CVector3_f_
      * @address 0x157A40
-     * @size 0x40
+     * @size 0x38
      */
     virtual void SetRotation(CVector3_f_ rotation);
 
@@ -47,7 +47,7 @@ public:
      *
      * @mangled SetRotation__12CObjectFrameFfff
      * @address 0x157A20
-     * @size 0x20
+     * @size 0x1C
      */
     virtual void SetRotation(float x, float y, float z);
 
@@ -56,7 +56,7 @@ public:
      *
      * @mangled SetRotVelocity__12CObjectFrameF11CVector3_f_
      * @address 0x157A80
-     * @size 0x40
+     * @size 0x38
      */
     virtual void SetRotVelocity(CVector3_f_ rot_velocity);
 
@@ -65,7 +65,7 @@ public:
      *
      * @mangled SetRotAcceleration__12CObjectFrameF11CVector3_f_
      * @address 0x157AC0
-     * @size 0x40
+     * @size 0x38
      */
     virtual void SetRotAcceleration(CVector3_f_ rot_acceleration);
 
@@ -74,7 +74,7 @@ public:
      *
      * @mangled FrameObjectOnOff__12CObjectFrameFPci
      * @address 0x1570F0
-     * @size 0xA0
+     * @size 0x94
      */
     virtual void FrameObjectOnOff(char *name, int on);
 
@@ -83,7 +83,7 @@ public:
      *
      * @mangled Draw__12CObjectFrameFv
      * @address 0x157190
-     * @size 0x90
+     * @size 0x84
      */
     virtual void Draw(void);
 
@@ -102,7 +102,7 @@ public:
      *
      * @mangled SetFrame__12CObjectFrameFP9CFrameVu1i
      * @address 0x1570C0
-     * @size 0x30
+     * @size 0x28
      */
     void SetFrame(CFrameVu1 *frame, int level);
 
@@ -111,7 +111,7 @@ public:
      *
      * @mangled Initialize__12CObjectFrameFP9CFrameVu1
      * @address 0x157460
-     * @size 0x90
+     * @size 0x84
      */
     void Initialize(CFrameVu1 *frame);
 

@@ -10,7 +10,7 @@ public:
     /**
      * @mangled GetFreeCashNo__14CMainItemModelFv
      * @address 0x1D4540
-     * @size 0x50
+     * @size 0x44
      * @unknownret
      */
     void GetFreeCashNo(void);
@@ -18,7 +18,7 @@ public:
     /**
      * @mangled GetFreeModelNo__14CMainItemModelFv
      * @address 0x1D4590
-     * @size 0x50
+     * @size 0x48
      * @unknownret
      */
     void GetFreeModelNo(void);
@@ -34,7 +34,7 @@ public:
     /**
      * @mangled DeleteModel__14CMainItemModelFi
      * @address 0x1D4770
-     * @size 0xB0
+     * @size 0xA4
      * @unknownret
      */
     void DeleteModel(int);
@@ -50,7 +50,7 @@ public:
     /**
      * @mangled AllReleasItem__14CMainItemModelFv
      * @address 0x1D4940
-     * @size 0x80
+     * @size 0x78
      * @unknownret
      */
     void AllReleasItem(void);
@@ -58,7 +58,7 @@ public:
     /**
      * @mangled SetThrowModel__14CMainItemModelFiPfPf
      * @address 0x1D49C0
-     * @size 0x110
+     * @size 0x108
      * @unknownret
      */
     void SetThrowModel(int, float *, float *);
@@ -82,7 +82,7 @@ public:
     /**
      * @mangled Initialize__14CMainItemModelFv
      * @address 0x1D5340
-     * @size 0xF0
+     * @size 0xE4
      * @unknownret
      */
     void Initialize(void);
@@ -103,7 +103,7 @@ public:
      *
      * @mangled CheckStatusType__15CActiveItemPackFv
      * @address 0x1D5430
-     * @size 0x150
+     * @size 0x144
      */
     int CheckStatusType(void);
 };

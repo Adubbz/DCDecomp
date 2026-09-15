@@ -70,7 +70,7 @@ public:
      *
      * @mangled __ct__6CClothFiif
      * @address 0x13CB70
-     * @size 0x80
+     * @size 0x78
      */
     CCloth(int num_i = 16, int num_j = 16, float pitch = 1.0f);
 

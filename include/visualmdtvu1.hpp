@@ -15,7 +15,7 @@ public:
     /**
      * @mangled SetMDTDataAddress__13CVisualMDTVu1FPUi
      * @address 0x134F50
-     * @size 0x10
+     * @size 0xC
      * @unknownret
      */
     void SetMDTDataAddress(unsigned int *);
@@ -23,7 +23,7 @@ public:
     /**
      * @mangled GetMDTDataAddress__13CVisualMDTVu1Fv
      * @address 0x134F60
-     * @size 0x10
+     * @size 0xC
      * @unknownret
      */
     void GetMDTDataAddress(void);
@@ -31,7 +31,7 @@ public:
     /**
      * @mangled Initialize__13CVisualMDTVu1Fv
      * @address 0x134F70
-     * @size 0x40
+     * @size 0x3C
      * @unknownret
      */
     void Initialize(void);
@@ -39,7 +39,7 @@ public:
     /**
      * @mangled __ct__13CVisualMDTVu1Fv
      * @address 0x134FB0
-     * @size 0x50
+     * @size 0x48
      */
     CVisualMDTVu1(void);
 
@@ -54,7 +54,7 @@ public:
     /**
      * @mangled DrawVu1__13CVisualMDTVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii
      * @address 0x136200
-     * @size 0x40
+     * @size 0x34
      * @unknownret
      */
     void DrawVu1(sceVif1Packet *, float (*)[4], RenderInfo *, VU1_PROGRAM, sceVif1Packet *, int, int);
@@ -64,7 +64,7 @@ public:
      *
      * @mangled RemakeData__13CVisualMDTVu1FPUi
      * @address 0x136240
-     * @size 0x50
+     * @size 0x4C
      */
     int RemakeData(unsigned int *);
 };

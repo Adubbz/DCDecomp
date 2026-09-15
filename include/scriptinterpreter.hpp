@@ -13,7 +13,7 @@ public:
     /**
      * @mangled GetNextTAG__18CScriptInterpreterFv
      * @address 0x15F100
-     * @size 0x150
+     * @size 0x144
      * @unknownret
      */
     void GetNextTAG(void);
@@ -37,7 +37,7 @@ public:
     /**
      * @mangled SetScript__18CScriptInterpreterFPci
      * @address 0x15F270
-     * @size 0x40
+     * @size 0x38
      * @unknownret
      */
     void SetScript(char *, int);
@@ -45,14 +45,14 @@ public:
     /**
      * @mangled __ct__18CScriptInterpreterFv
      * @address 0x15F2B0
-     * @size 0x40
+     * @size 0x38
      */
     CScriptInterpreter(void);
 
     /**
      * @mangled ControlCode__18CScriptInterpreterFv
      * @address 0x15F2F0
-     * @size 0x180
+     * @size 0x178
      * @unknownret
      */
     void ControlCode(void);
@@ -76,7 +76,7 @@ public:
     /**
      * @mangled SearchCommand__18CScriptInterpreterFPi
      * @address 0x15FB80
-     * @size 0x1B0
+     * @size 0x1A4
      * @unknownret
      */
     void SearchCommand(int *);

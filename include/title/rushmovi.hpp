@@ -10,7 +10,7 @@ class CFrameVu1;
 /**
  * @mangled RushInit__Fv
  * @address 0x1DC8C50
- * @size 0x260
+ * @size 0x254
  * @unknownret
  */
 void RushInit(void);
@@ -18,7 +18,7 @@ void RushInit(void);
 /**
  * @mangled RushLoop__Fv
  * @address 0x1DC8EB0
- * @size 0x1F0
+ * @size 0x1E4
  * @unknownret
  */
 void RushLoop(void);
@@ -35,7 +35,7 @@ void MotionProcess(void);
 /**
  * @mangled DrawProcess__Fv__2
  * @address 0x1DC9E70
- * @size 0x350
+ * @size 0x344
  * @unknownret
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
@@ -44,7 +44,7 @@ void DrawProcess(void);
 /**
  * @mangled SoundProcess__Fv__2
  * @address 0x1DCA1C0
- * @size 0xD00
+ * @size 0xCF4
  * @unknownret
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */

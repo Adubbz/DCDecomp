@@ -64,7 +64,7 @@ public:
      * Constructs both character forms and resets the fish.
      * @mangled __ct__5CFishFv
      * @address 0x1A8DC0
-     * @size 0x90
+     * @size 0x184
      */
     CFish();
 

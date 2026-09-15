@@ -7,14 +7,14 @@ public:
     /**
      * @mangled __ct__7CSpriteFv
      * @address 0x1DD4420
-     * @size 0x50
+     * @size 0x48
      */
     CSprite(void);
 
     /**
      * @mangled Init__7CSpriteFv
      * @address 0x1DD4470
-     * @size 0x50
+     * @size 0x44
      * @unknownret
      */
     void Init(void);
@@ -30,7 +30,7 @@ public:
     /**
      * @mangled Draw__7CSpriteFv
      * @address 0x1DD4760
-     * @size 0x550
+     * @size 0x544
      * @unknownret
      */
     void Draw(void);
@@ -38,7 +38,7 @@ public:
     /**
      * @mangled Se__7CSpriteFv
      * @address 0x1DD4CB0
-     * @size 0x10
+     * @size 0xC
      * @unknownret
      */
     int Se(void);

@@ -44,7 +44,7 @@ public:
      *
      * @mangled Draw__12CSHOT_EFFECTFv
      * @address 0x1ABF20
-     * @size 0x260
+     * @size 0x25C
      * @unknownret
      */
     void Draw(void);
@@ -64,7 +64,7 @@ public:
      *
      * @mangled EndEffect__12CSHOT_EFFECTFv
      * @address 0x1ACB30
-     * @size 0xE0
+     * @size 0xD4
      * @unknownret
      */
     void EndEffect(void);
@@ -83,7 +83,7 @@ public:
      *
      * @mangled Entry__12CSHOT_EFFECTFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i
      * @address 0x1ACC70
-     * @size 0x5F0
+     * @size 0x5E4
      * @unknownret
      */
     void Entry(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
@@ -93,7 +93,7 @@ public:
      *
      * @mangled Entry2__12CSHOT_EFFECTFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i
      * @address 0x1AD260
-     * @size 0x5B0
+     * @size 0x5A8
      * @unknownret
      */
     int Entry2(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
@@ -103,7 +103,7 @@ public:
      *
      * @mangled ReEntry__12CSHOT_EFFECTFP14BT_SHOT_EFFECTP14CDataAlloc2_1_
      * @address 0x1AD810
-     * @size 0x510
+     * @size 0x508
      * @unknownret
      */
     void ReEntry(BT_SHOT_EFFECT *, CDataAlloc2<1> *);
@@ -113,7 +113,7 @@ public:
      *
      * @mangled SetLoop__12CSHOT_EFFECTFi
      * @address 0x1ADD20
-     * @size 0x40
+     * @size 0x34
      */
     void SetLoop(int loop);
 
@@ -123,7 +123,7 @@ public:
      *
      * @mangled Set__12CSHOT_EFFECTFPfPfiiiP6CFramei
      * @address 0x1ADD60
-     * @size 0x460
+     * @size 0x458
      */
     int Set(float *, float *, int, int, int, CFrame *, int);
 
@@ -132,7 +132,7 @@ public:
      *
      * @mangled SetWait__12CSHOT_EFFECTFi
      * @address 0x1AE1C0
-     * @size 0x50
+     * @size 0x4C
      */
     void SetWait(int wait);
 
@@ -141,7 +141,7 @@ public:
      *
      * @mangled SetNoSound__12CSHOT_EFFECTFv
      * @address 0x1AE210
-     * @size 0x40
+     * @size 0x34
      */
     void SetNoSound(void);
 
@@ -150,7 +150,7 @@ public:
      *
      * @mangled SetRandomRate__12CSHOT_EFFECTFf
      * @address 0x1AE250
-     * @size 0x40
+     * @size 0x34
      */
     void SetRandomRate(float rate);
 
@@ -159,7 +159,7 @@ public:
      *
      * @mangled SetLifeTime__12CSHOT_EFFECTFi
      * @address 0x1AE290
-     * @size 0x40
+     * @size 0x34
      */
     void SetLifeTime(int life_time);
 
@@ -168,7 +168,7 @@ public:
      *
      * @mangled SetEnemyAttr__12CSHOT_EFFECTFi
      * @address 0x1AE2D0
-     * @size 0x40
+     * @size 0x34
      */
     void SetEnemyAttr(int attribute);
 
@@ -177,7 +177,7 @@ public:
      *
      * @mangled SetDmg__12CSHOT_EFFECTFi
      * @address 0x1AE310
-     * @size 0x40
+     * @size 0x34
      */
     void SetDmg(int damage);
 
@@ -186,7 +186,7 @@ public:
      *
      * @mangled SetAttribute__12CSHOT_EFFECTFi
      * @address 0x1AE350
-     * @size 0x30
+     * @size 0x28
      */
     void SetAttribute(int attribute);
 
@@ -195,7 +195,7 @@ public:
      *
      * @mangled SetWepStatus__12CSHOT_EFFECTFi
      * @address 0x1AE380
-     * @size 0x40
+     * @size 0x34
      */
     void SetWepStatus(int status);
 
@@ -204,7 +204,7 @@ public:
      *
      * @mangled SetVsMonster__12CSHOT_EFFECTFPc
      * @address 0x1AE3C0
-     * @size 0x40
+     * @size 0x34
      */
     void SetVsMonster(char *effectiveness);
 
@@ -213,7 +213,7 @@ public:
      *
      * @mangled SetUserID2__12CSHOT_EFFECTFi
      * @address 0x1AE400
-     * @size 0x40
+     * @size 0x34
      */
     void SetUserID2(int id);
 
@@ -247,7 +247,7 @@ public:
     /**
      * @mangled draw__5CSHOTFv
      * @address 0x1ABC40
-     * @size 0xD0
+     * @size 0xCC
      * @unknownret
      */
     void draw(void);
@@ -255,7 +255,7 @@ public:
     /**
      * @mangled step__5CSHOTFv
      * @address 0x1ABD10
-     * @size 0x210
+     * @size 0x204
      * @unknownret
      */
     void step(void);
@@ -273,7 +273,7 @@ public:
     /**
      * @mangled Set__15CSHOT_MACHINGUNFPfPfii
      * @address 0x1AE660
-     * @size 0xF0
+     * @size 0xEC
      * @unknownret
      */
     void Set(float *, float *, int, int);

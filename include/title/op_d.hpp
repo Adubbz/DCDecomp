@@ -10,7 +10,7 @@ class CFrameVu1;
 /**
  * @mangled OpD_LoadDataBG__Fv
  * @address 0x1DC40B0
- * @size 0x50
+ * @size 0x4C
  * @unknownret
  */
 void OpD_LoadDataBG(void);
@@ -18,7 +18,7 @@ void OpD_LoadDataBG(void);
 /**
  * @mangled OpD_LoadDataBG2__Fv
  * @address 0x1DC4100
- * @size 0x80
+ * @size 0x74
  * @unknownret
  */
 void OpD_LoadDataBG2(void);
@@ -26,7 +26,7 @@ void OpD_LoadDataBG2(void);
 /**
  * @mangled OpD_InitProcess__Fv
  * @address 0x1DC4180
- * @size 0x760
+ * @size 0x758
  * @unknownret
  */
 void OpD_InitProcess(void);
@@ -42,7 +42,7 @@ void OpD_InitProcess2(void);
 /**
  * @mangled SkyColor__FP9CFrameVu1
  * @address 0x1DC4F30
- * @size 0x1A0
+ * @size 0x194
  * @unknownret
  */
 void SkyColor(CFrameVu1 *);
@@ -50,7 +50,7 @@ void SkyColor(CFrameVu1 *);
 /**
  * @mangled OpD_MotionProcess__Fv
  * @address 0x1DC50D0
- * @size 0x530
+ * @size 0x52C
  * @unknownret
  */
 void OpD_MotionProcess(void);
@@ -66,7 +66,7 @@ void OpD_SoundProcess(void);
 /**
  * @mangled OpD_DrawProcess__Fv
  * @address 0x1DC5B60
- * @size 0x9E0
+ * @size 0x9DC
  * @unknownret
  */
 void OpD_DrawProcess(void);
@@ -74,7 +74,7 @@ void OpD_DrawProcess(void);
 /**
  * @mangled EffectAtraPrizum__Fv
  * @address 0x1DC6540
- * @size 0x3B0
+ * @size 0x3A8
  * @unknownret
  */
 void EffectAtraPrizum(void);
@@ -82,7 +82,7 @@ void EffectAtraPrizum(void);
 /**
  * @mangled RollLight__FPf
  * @address 0x1DC68F0
- * @size 0x380
+ * @size 0x378
  * @unknownret
  */
 void RollLight(float *);
@@ -90,7 +90,7 @@ void RollLight(float *);
 /**
  * @mangled EffectSeireiKing__Ff
  * @address 0x1DC6C70
- * @size 0x120
+ * @size 0x114
  * @unknownret
  */
 void EffectSeireiKing(float);
@@ -98,7 +98,7 @@ void EffectSeireiKing(float);
 /**
  * @mangled LensFreaProcess__Fv
  * @address 0x1DC6D90
- * @size 0xE0
+ * @size 0xD4
  * @unknownret
  */
 void LensFreaProcess(void);
@@ -106,7 +106,7 @@ void LensFreaProcess(void);
 /**
  * @mangled Setsumei__Fv
  * @address 0x1DC6E70
- * @size 0x1790
+ * @size 0x178C
  * @unknownret
  */
 void Setsumei(void);

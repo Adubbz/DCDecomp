@@ -26,7 +26,7 @@ public:
     /**
      * @mangled Initialize__10CVisualVu1Fv
      * @address 0x134EC0
-     * @size 0x40
+     * @size 0x3C
      * @unknownret
      */
     virtual void Initialize(void);
@@ -37,7 +37,7 @@ public:
      *
      * @mangled SetMDTDataAddress__10CVisualVu1FPUi
      * @address 0x137E80
-     * @size 0x10
+     * @size 0x8
      */
     virtual void SetMDTDataAddress(unsigned int *data);
 
@@ -47,7 +47,7 @@ public:
      *
      * @mangled GetMDTDataAddress__10CVisualVu1Fv
      * @address 0x137E90
-     * @size 0x10
+     * @size 0xC
      */
     virtual unsigned int *GetMDTDataAddress(void);
 
@@ -56,14 +56,14 @@ public:
      *
      * @mangled RemakeData__10CVisualVu1FPUi
      * @address 0x134BB0
-     * @size 0x10
+     * @size 0xC
      */
     virtual int RemakeData(unsigned int *);
 
     /**
      * @mangled DrawVu1__10CVisualVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii
      * @address 0x135000
-     * @size 0x970
+     * @size 0x964
      * @unknownret
      */
     virtual int DrawVu1(unsigned int *, float (*)[4], RenderInfo *, VU1_PROGRAM, RenderInfo *,
@@ -72,7 +72,7 @@ public:
     /**
      * @mangled DrawVu1__10CVisualVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii
      * @address 0x134BC0
-     * @size 0xD0
+     * @size 0xC4
      * @unknownret
      */
     virtual int DrawVu1(sceVif1Packet *, float (*)[4], RenderInfo *, VU1_PROGRAM, sceVif1Packet *,
@@ -90,7 +90,7 @@ public:
     /**
      * @mangled CreateVUdataFromMDT__10CVisualVu1FPUiPUiii
      * @address 0x135AA0
-     * @size 0x3B0
+     * @size 0x3A8
      * @unknownret
      */
     void CreateVUdataFromMDT(unsigned int *, unsigned int *, int, int);
@@ -98,7 +98,7 @@ public:
     /**
      * @mangled CreateVUdataFromMDTRemake__10CVisualVu1FPUiPUii
      * @address 0x135E50
-     * @size 0x290
+     * @size 0x288
      * @unknownret
      */
     void CreateVUdataFromMDTRemake(unsigned int *, unsigned int *, int);
@@ -124,7 +124,7 @@ public:
     /**
      * @mangled __ct__7CVisualFv
      * @address 0x134B60
-     * @size 0x50
+     * @size 0x44
      */
     CVisual(void);
 };

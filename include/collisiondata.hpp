@@ -120,7 +120,7 @@ public:
     /**
      * @mangled CheckHitUser__14CCollisionDataFPfif
      * @address 0x1B5920
-     * @size 0x1C0
+     * @size 0x1BC
      * @unknownret
      */
     int CheckHitUser(float *, int, float);
@@ -128,7 +128,7 @@ public:
     /**
      * @mangled SetKickBack__14CCollisionDataFPfffi
      * @address 0x1B5AE0
-     * @size 0xB0
+     * @size 0xA4
      * @unknownret
      */
     void SetKickBack(float *, float, float, int);

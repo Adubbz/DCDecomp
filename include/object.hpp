@@ -38,7 +38,7 @@ public:
      *
      * @mangled Step__7CObjectFv
      * @address 0x156BA0
-     * @size 0x10
+     * @size 0x8
      */
     virtual void Step();
 
@@ -47,7 +47,7 @@ public:
      *
      * @mangled GetDistance__7CObjectFR7CObject
      * @address 0x156BB0
-     * @size 0x60
+     * @size 0x54
      */
     float GetDistance(CObject &other);
 
@@ -56,7 +56,7 @@ public:
      *
      * @mangled GetDir__7CObjectFR7CObjectPf
      * @address 0x156C10
-     * @size 0x70
+     * @size 0x64
      */
     void GetDir(CObject &other, float *out_direction);
 
@@ -65,7 +65,7 @@ public:
      *
      * @mangled SetMass__7CObjectFf
      * @address 0x156C80
-     * @size 0x10
+     * @size 0xC
      */
     virtual void SetMass(float mass);
 
@@ -74,7 +74,7 @@ public:
      *
      * @mangled SetPosition__7CObjectF11CVector3_f_
      * @address 0x156C90
-     * @size 0x40
+     * @size 0x34
      */
     virtual void SetPosition(CVector3_f_ position);
 
@@ -83,7 +83,7 @@ public:
      *
      * @mangled SetPosition__7CObjectFPf
      * @address 0x157B00
-     * @size 0x40
+     * @size 0x24
      * @unknownret
      */
     virtual void SetPosition(float *position);
@@ -93,7 +93,7 @@ public:
      *
      * @mangled SetPosition__7CObjectFfff
      * @address 0x156CD0
-     * @size 0x20
+     * @size 0x14
      */
     virtual void SetPosition(float x, float y, float z);
 
@@ -147,7 +147,7 @@ public:
      *
      * @mangled SetRotation__7CObjectFfff
      * @address 0x156DE0
-     * @size 0x20
+     * @size 0x14
      */
     virtual void SetRotation(float x, float y, float z);
 
@@ -183,7 +183,7 @@ public:
      *
      * @mangled GetMass__7CObjectFv
      * @address 0x156E80
-     * @size 0x10
+     * @size 0xC
      */
     virtual float GetMass(void);
 
@@ -273,7 +273,7 @@ public:
      *
      * @mangled GetVelocity__7CObjectFv
      * @address 0x156F40
-     * @size 0x10
+     * @size 0xC
      */
     virtual CVector3_f_ *GetVelocity(void);
 
@@ -282,7 +282,7 @@ public:
      *
      * @mangled GetAcceleration__7CObjectFv
      * @address 0x156F50
-     * @size 0x10
+     * @size 0xC
      */
     virtual CVector3_f_ *GetAcceleration(void);
 
@@ -291,7 +291,7 @@ public:
      *
      * @mangled GetGravity__7CObjectFv
      * @address 0x156F60
-     * @size 0x10
+     * @size 0xC
      */
     virtual CVector3_f_ *GetGravity(void);
 
@@ -300,7 +300,7 @@ public:
      *
      * @mangled GetMoment__7CObjectFv
      * @address 0x156F70
-     * @size 0x10
+     * @size 0xC
      */
     virtual CVector3_f_ *GetMoment(void);
 
@@ -309,7 +309,7 @@ public:
      *
      * @mangled GetRotation__7CObjectFv
      * @address 0x156F80
-     * @size 0x10
+     * @size 0xC
      */
     virtual CVector3_f_ *GetRotation(void);
 
@@ -318,7 +318,7 @@ public:
      *
      * @mangled GetRotVelocity__7CObjectFv
      * @address 0x156F90
-     * @size 0x10
+     * @size 0xC
      */
     virtual CVector3_f_ *GetRotVelocity(void);
 
@@ -327,7 +327,7 @@ public:
      *
      * @mangled GetRotAcceleration__7CObjectFv
      * @address 0x156FA0
-     * @size 0x10
+     * @size 0xC
      */
     virtual CVector3_f_ *GetRotAcceleration(void);
 
@@ -336,7 +336,7 @@ public:
      *
      * @mangled SetScale__7CObjectFfff
      * @address 0x156FB0
-     * @size 0x20
+     * @size 0x14
      */
     virtual void SetScale(float x, float y, float z);
 
@@ -363,7 +363,7 @@ public:
      *
      * @mangled __ct__7CObjectFf
      * @address 0x157010
-     * @size 0x40
+     * @size 0x3C
      */
     CObject(float mass = 1.0f);
 
@@ -373,7 +373,7 @@ public:
      *
      * @mangled Initialize__7CObjectFf
      * @address 0x157050
-     * @size 0x70
+     * @size 0x68
      */
     void Initialize(float mass);
 };

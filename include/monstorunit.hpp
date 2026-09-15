@@ -286,7 +286,7 @@ public:
      *
      * @mangled GetMonstorNum__12CMonstorUnitFv
      * @address 0x1D7A40
-     * @size 0x60
+     * @size 0x5C
      */
     int GetMonstorNum(void);
 
@@ -295,7 +295,7 @@ public:
      *
      * @mangled DrawMapSymbol__12CMonstorUnitFPf
      * @address 0x1D7AA0
-     * @size 0x1E0
+     * @size 0x1D8
      * @unknownret
      */
     void DrawMapSymbol(float *);
@@ -305,7 +305,7 @@ public:
      *
      * @mangled SetKey__12CMonstorUnitFv
      * @address 0x1D7C80
-     * @size 0x150
+     * @size 0x2A4
      * @unknownret
      */
     void SetKey(void);
@@ -315,7 +315,7 @@ public:
      *
      * @mangled CheckEventFlag2__12CMonstorUnitFv
      * @address 0x1D7F30
-     * @size 0x90
+     * @size 0x88
      */
     int CheckEventFlag2(void);
 
@@ -324,7 +324,7 @@ public:
      *
      * @mangled ArrangementPos__12CMonstorUnitFP11CDungeonMapiii
      * @address 0x1D7FC0
-     * @size 0x3A0
+     * @size 0x398
      */
     void ArrangementPos(CDungeonMap *, int, int, int);
 
@@ -333,7 +333,7 @@ public:
      *
      * @mangled AllBin2__12CMonstorUnitFv
      * @address 0x1D8360
-     * @size 0x50
+     * @size 0x4C
      */
     void AllBin2(void);
 
@@ -351,7 +351,7 @@ public:
      *
      * @mangled PalletStep__12CMonstorUnitFv
      * @address 0x1D8570
-     * @size 0x420
+     * @size 0x418
      */
     void PalletStep(void);
 
@@ -360,7 +360,7 @@ public:
      *
      * @mangled SoundCheck__12CMonstorUnitFv
      * @address 0x1D8990
-     * @size 0x340
+     * @size 0x338
      */
     void SoundCheck(void);
 
@@ -369,7 +369,7 @@ public:
      *
      * @mangled DrawMonstor__12CMonstorUnitFv
      * @address 0x1D8CD0
-     * @size 0x540
+     * @size 0x534
      * @unknownret
      */
     void DrawMonstor(void);
@@ -389,7 +389,7 @@ public:
      *
      * @mangled DrawShadowMonstor__12CMonstorUnitFv
      * @address 0x1D9800
-     * @size 0x1A0
+     * @size 0x19C
      * @unknownret
      */
     void DrawShadowMonstor(void);
@@ -399,7 +399,7 @@ public:
      *
      * @mangled CheckViewLevel__12CMonstorUnitFv
      * @address 0x1D99A0
-     * @size 0x3C0
+     * @size 0x3BC
      */
     void CheckViewLevel(void);
 
@@ -417,7 +417,7 @@ public:
      *
      * @mangled CheckDmg__12CMonstorUnitFv
      * @address 0x1D9F10
-     * @size 0x2910
+     * @size 0x2904
      */
     int CheckDmg(void);
 
@@ -426,7 +426,7 @@ public:
      *
      * @mangled MoveCheck__12CMonstorUnitFPfPfi
      * @address 0x1DC820
-     * @size 0x5B0
+     * @size 0x5A8
      * @unknownret
      */
     void MoveCheck(float *, float *, int);
@@ -436,7 +436,7 @@ public:
      *
      * @mangled MoveCheck2__12CMonstorUnitFv
      * @address 0x1DCDD0
-     * @size 0x370
+     * @size 0x36C
      */
     void MoveCheck2(void);
 
@@ -445,7 +445,7 @@ public:
      *
      * @mangled MoveChecMonster__12CMonstorUnitFv
      * @address 0x1DD140
-     * @size 0x400
+     * @size 0x3FC
      */
     void MoveChecMonster(void);
 
@@ -454,7 +454,7 @@ public:
      *
      * @mangled Step__12CMonstorUnitFi
      * @address 0x1DD540
-     * @size 0x24B0
+     * @size 0x24A4
      * @unknownret
      */
     void Step(int);
@@ -473,7 +473,7 @@ public:
      *
      * @mangled SetupBaseModel__12CMonstorUnitFiiiP14CDataAlloc2_1_
      * @address 0x1DFE90
-     * @size 0x420
+     * @size 0x414
      * @unknownret
      */
     int SetupBaseModel(int, int, int, CDataAlloc2<1> *);
@@ -483,7 +483,7 @@ public:
      *
      * @mangled SetupViewMonstor__12CMonstorUnitFiPfi
      * @address 0x1E02B0
-     * @size 0x1390
+     * @size 0x138C
      * @unknownret
      */
     int SetupViewMonstor(int, float *, int);

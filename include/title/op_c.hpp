@@ -5,7 +5,7 @@
 /**
  * @mangled OpC_LoadDataBG__Fv
  * @address 0x1DBBEA0
- * @size 0x50
+ * @size 0x4C
  * @unknownret
  */
 void OpC_LoadDataBG(void);
@@ -13,7 +13,7 @@ void OpC_LoadDataBG(void);
 /**
  * @mangled OpC_LoadDataBG2__Fv
  * @address 0x1DBBEF0
- * @size 0x50
+ * @size 0x4C
  * @unknownret
  */
 void OpC_LoadDataBG2(void);
@@ -21,7 +21,7 @@ void OpC_LoadDataBG2(void);
 /**
  * @mangled OpC_LoadDataBG3__Fv
  * @address 0x1DBBF40
- * @size 0x50
+ * @size 0x4C
  * @unknownret
  */
 void OpC_LoadDataBG3(void);
@@ -29,7 +29,7 @@ void OpC_LoadDataBG3(void);
 /**
  * @mangled OpC_LoadDataBG4__Fv
  * @address 0x1DBBF90
- * @size 0x50
+ * @size 0x4C
  * @unknownret
  */
 void OpC_LoadDataBG4(void);
@@ -37,7 +37,7 @@ void OpC_LoadDataBG4(void);
 /**
  * @mangled OpC_LoadDataBG5__Fv
  * @address 0x1DBBFE0
- * @size 0x50
+ * @size 0x4C
  * @unknownret
  */
 void OpC_LoadDataBG5(void);
@@ -45,7 +45,7 @@ void OpC_LoadDataBG5(void);
 /**
  * @mangled OpC_InitProcess__Fv
  * @address 0x1DBC030
- * @size 0xDA0
+ * @size 0xD9C
  * @unknownret
  */
 void OpC_InitProcess(void);
@@ -61,7 +61,7 @@ void OpC_InitProcess2(void);
 /**
  * @mangled OpC_InitProcess3__Fv
  * @address 0x1DBD2E0
- * @size 0x740
+ * @size 0x73C
  * @unknownret
  */
 void OpC_InitProcess3(void);
@@ -77,7 +77,7 @@ void OpC_InitProcess4(void);
 /**
  * @mangled OpC_InitProcess5__Fv
  * @address 0x1DBDCF0
- * @size 0x8B0
+ * @size 0x8AC
  * @unknownret
  */
 void OpC_InitProcess5(void);
@@ -85,7 +85,7 @@ void OpC_InitProcess5(void);
 /**
  * @mangled MapLoad__Fv
  * @address 0x1DBE5A0
- * @size 0x6C0
+ * @size 0x6B8
  * @unknownret
  */
 void MapLoad(void);
@@ -101,7 +101,7 @@ void MapLoad2(void);
 /**
  * @mangled OpC_MotionProcess__Fv
  * @address 0x1DBF300
- * @size 0x810
+ * @size 0x808
  * @unknownret
  */
 void OpC_MotionProcess(void);
@@ -109,7 +109,7 @@ void OpC_MotionProcess(void);
 /**
  * @mangled LoadCharaMajin__Fv
  * @address 0x1DBFB10
- * @size 0x110
+ * @size 0x10C
  * @unknownret
  */
 void LoadCharaMajin(void);
@@ -117,7 +117,7 @@ void LoadCharaMajin(void);
 /**
  * @mangled OpC_SoundProcess__Fv
  * @address 0x1DBFC20
- * @size 0x930
+ * @size 0x924
  * @unknownret
  */
 void OpC_SoundProcess(void);
@@ -133,7 +133,7 @@ void OpC_DrawProcess(void);
 /**
  * @mangled DrawDancer__Fv
  * @address 0x1DC1A00
- * @size 0x4E0
+ * @size 0x4D8
  * @unknownret
  */
 void DrawDancer(void);
@@ -141,7 +141,7 @@ void DrawDancer(void);
 /**
  * @mangled InchikiShadow__Fv
  * @address 0x1DC1EE0
- * @size 0x480
+ * @size 0x478
  * @unknownret
  */
 void InchikiShadow(void);
@@ -149,7 +149,7 @@ void InchikiShadow(void);
 /**
  * @mangled DrawShadow__Fifff
  * @address 0x1DC2360
- * @size 0x140
+ * @size 0x134
  * @unknownret
  */
 void DrawShadow(int, float, float, float);
@@ -165,7 +165,7 @@ void MajinBeemProcess(void);
 /**
  * @mangled SmokeProcess__Fv__2
  * @address 0x1DC2D30
- * @size 0x570
+ * @size 0x564
  * @unknownret
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
@@ -174,7 +174,7 @@ void SmokeProcess(void);
 /**
  * @mangled WaterProcess__Fv
  * @address 0x1DC32A0
- * @size 0x1E0
+ * @size 0x1D4
  * @unknownret
  */
 void WaterProcess(void);
@@ -182,7 +182,7 @@ void WaterProcess(void);
 /**
  * @mangled KageCheck__Fi
  * @address 0x1DC3480
- * @size 0x130
+ * @size 0x128
  * @unknownret
  */
 void KageCheck(int);
@@ -190,7 +190,7 @@ void KageCheck(int);
 /**
  * @mangled LightSet__Ffffi
  * @address 0x1DC35B0
- * @size 0x2D0
+ * @size 0x2C4
  * @unknownret
  */
 void LightSet(float, float, float, int);

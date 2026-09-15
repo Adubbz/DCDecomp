@@ -20,56 +20,56 @@ public:
     /**
      * @mangled ChkEventFlag__11CUserStatusFi
      * @address 0x1BDAC0
-     * @size 0x60
+     * @size 0x5C
      */
     int ChkEventFlag(int flag_no);
 
     /**
      * @mangled ClearEventFlag__11CUserStatusFv
      * @address 0x1BDB20
-     * @size 0x40
+     * @size 0x34
      */
     void ClearEventFlag(void);
 
     /**
      * @mangled AddDrink__11CUserStatusFisf
      * @address 0x1BE510
-     * @size 0x200
+     * @size 0x1FC
      */
     void AddDrink(int chara_no, s16 amount, float ratio);
 
     /**
      * @mangled AddNowLife__11CUserStatusFisf
      * @address 0x1BE710
-     * @size 0x180
+     * @size 0x178
      */
     void AddNowLife(int chara_no, s16 amount, float ratio);
 
     /**
      * @mangled CheckLife__11CUserStatusFv
      * @address 0x1BE890
-     * @size 0x70
+     * @size 0x68
      */
     int CheckLife(void);
 
     /**
      * @mangled SetNextLife__11CUserStatusFisf
      * @address 0x1BE900
-     * @size 0x150
+     * @size 0x144
      */
     void SetNextLife(int chara_no, s16 value, float ratio);
 
     /**
      * @mangled Step__11CUserStatusFi
      * @address 0x1BEA50
-     * @size 0x390
+     * @size 0x388
      */
     void Step(int paused);
 
     /**
      * @mangled Init__11CUserStatusFv
      * @address 0x1BEDE0
-     * @size 0x110
+     * @size 0x108
      */
     void Init(void);
 

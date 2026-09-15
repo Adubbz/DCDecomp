@@ -17,7 +17,7 @@ public:
     /**
      * @mangled Draw__11CRandomItemFv
      * @address 0x1D6BE0
-     * @size 0xF4
+     * @size 0x1BC
      * @unknownret
      */
     void Draw(void);
@@ -25,7 +25,7 @@ public:
     /**
      * @mangled MapSymbolDraw__11CRandomItemFv
      * @address 0x1D6DA0
-     * @size 0x150
+     * @size 0x148
      * @unknownret
      */
     void MapSymbolDraw(void);
@@ -56,7 +56,7 @@ public:
     /**
      * @mangled Set__11CRandomItemFPfiii
      * @address 0x1D71F0
-     * @size 0xE0
+     * @size 0xD8
      * @unknownret
      */
     void Set(float *, int, int, int);
@@ -64,7 +64,7 @@ public:
     /**
      * @mangled CheckID__11CRandomItemFv
      * @address 0x1D72D0
-     * @size 0x50
+     * @size 0x4C
      * @unknownret
      */
     void CheckID(void);
@@ -74,7 +74,7 @@ public:
      *
      * @mangled CheckItemNo__11CRandomItemFi
      * @address 0x1D7320
-     * @size 0x60
+     * @size 0x58
      * @unknownret
      */
     int CheckItemNo(int);
@@ -82,7 +82,7 @@ public:
     /**
      * @mangled Step__11CRandomItemFv
      * @address 0x1D7380
-     * @size 0x160
+     * @size 0x158
      * @unknownret
      */
     void Step(void);

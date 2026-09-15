@@ -28,7 +28,7 @@ public:
      *
      * @mangled Step__13CCameraFollowFi
      * @address 0x1247D0
-     * @size 0x280
+     * @size 0x27C
      */
     virtual void Step(int steps);
 
@@ -48,7 +48,7 @@ public:
      *
      * @mangled __as__13CCameraFollowFRC13CCameraFollow
      * @address 0x124AA0
-     * @size 0x40
+     * @size 0x3C
      */
     CCameraFollow &operator=(const CCameraFollow &src);
 
@@ -57,7 +57,7 @@ public:
      *
      * @mangled SetFollow__13CCameraFollowFfff
      * @address 0x124AE0
-     * @size 0x20
+     * @size 0x14
      */
     void SetFollow(float x, float y, float z);
 
@@ -76,7 +76,7 @@ public:
      *
      * @mangled FollowOff__13CCameraFollowFv
      * @address 0x124B10
-     * @size 0x10
+     * @size 0xC
      */
     void FollowOff();
 
@@ -86,7 +86,7 @@ public:
      *
      * @mangled SetAngle__13CCameraFollowFf
      * @address 0x124B20
-     * @size 0x10
+     * @size 0xC
      */
     void SetAngle(float angle);
 
@@ -105,7 +105,7 @@ public:
      *
      * @mangled GetAngle__13CCameraFollowFv
      * @address 0x124B40
-     * @size 0x10
+     * @size 0xC
      */
     float GetAngle();
 
@@ -114,7 +114,7 @@ public:
      *
      * @mangled AddAngle__13CCameraFollowFf
      * @address 0x124B50
-     * @size 0x20
+     * @size 0x14
      */
     void AddAngle(float angle);
 
@@ -123,7 +123,7 @@ public:
      *
      * @mangled SetDistance__13CCameraFollowFf
      * @address 0x124B70
-     * @size 0x10
+     * @size 0xC
      */
     void SetDistance(float distance);
 
@@ -132,7 +132,7 @@ public:
      *
      * @mangled GetDistance__13CCameraFollowFv
      * @address 0x124B80
-     * @size 0x10
+     * @size 0xC
      */
     float GetDistance();
 
@@ -141,7 +141,7 @@ public:
      *
      * @mangled AddDistance__13CCameraFollowFf
      * @address 0x124B90
-     * @size 0x20
+     * @size 0x14
      */
     void AddDistance(float distance);
 
@@ -150,7 +150,7 @@ public:
      *
      * @mangled SetHeight__13CCameraFollowFf
      * @address 0x124BB0
-     * @size 0x10
+     * @size 0xC
      */
     void SetHeight(float height);
 
@@ -159,7 +159,7 @@ public:
      *
      * @mangled GetHeight__13CCameraFollowFv
      * @address 0x124BC0
-     * @size 0x10
+     * @size 0xC
      */
     float GetHeight();
 
@@ -168,7 +168,7 @@ public:
      *
      * @mangled AddHeight__13CCameraFollowFf
      * @address 0x124BD0
-     * @size 0x20
+     * @size 0x14
      */
     void AddHeight(float height);
 
@@ -178,7 +178,7 @@ public:
      *
      * @mangled __ct__13CCameraFollowFffff
      * @address 0x124BF0
-     * @size 0x90
+     * @size 0x88
      */
     CCameraFollow(float distance, float height, float angle, float speed);
 

@@ -19,7 +19,7 @@ public:
      *
      * @mangled LoadModel__13CDranMapFieldFPUiP14CDataAlloc2_1_
      * @address 0x1CD3C0
-     * @size 0x150
+     * @size 0x14C
      */
     void LoadModel(unsigned int *, CDataAlloc2<1> *);
 
@@ -28,7 +28,7 @@ public:
      *
      * @mangled AddCollision__13CDranMapFieldFP6CCPolyi7CBoxVu0
      * @address 0x1CD510
-     * @size 0x100
+     * @size 0xF8
      */
     int AddCollision(CCPoly *, int, CBoxVu0);
 
@@ -46,7 +46,7 @@ public:
      *
      * @mangled Draw__13CDranMapFieldFv
      * @address 0x1CD720
-     * @size 0xB0
+     * @size 0xAC
      */
     void Draw(void);
 
@@ -55,7 +55,7 @@ public:
      *
      * @mangled Step__13CDranMapFieldFv
      * @address 0x1CD7D0
-     * @size 0x140
+     * @size 0x134
      */
     void Step(void);
 };

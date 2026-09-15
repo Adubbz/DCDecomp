@@ -63,7 +63,7 @@ public:
      *
      * @mangled Step__12CNPCharacterFv
      * @address 0x155FB0
-     * @size 0x140
+     * @size 0x134
      */
     void Step(void);
 
@@ -72,7 +72,7 @@ public:
      *
      * @mangled ShadowStep__12CNPCharacterFv
      * @address 0x1560F0
-     * @size 0x50
+     * @size 0x4C
      */
     void ShadowStep(void);
 
@@ -90,7 +90,7 @@ public:
      *
      * @mangled ClearSeq__12CNPCharacterFv
      * @address 0x156350
-     * @size 0x50
+     * @size 0x48
      */
     void ClearSeq(void);
 
@@ -99,7 +99,7 @@ public:
      *
      * @mangled SetSeq__12CNPCharacterFPff
      * @address 0x1563A0
-     * @size 0x70
+     * @size 0x6C
      */
     int SetSeq(float *destination, float speed);
 
@@ -108,7 +108,7 @@ public:
      *
      * @mangled SetWait__12CNPCharacterFi
      * @address 0x156410
-     * @size 0x40
+     * @size 0x3C
      */
     int SetWait(int frames);
 
@@ -117,7 +117,7 @@ public:
      *
      * @mangled CheckSeq__12CNPCharacterFv
      * @address 0x156450
-     * @size 0x20
+     * @size 0x18
      */
     int CheckSeq(void);
 
@@ -126,7 +126,7 @@ public:
      *
      * @mangled GetNextSeq__12CNPCharacterFv
      * @address 0x156470
-     * @size 0x40
+     * @size 0x3C
      */
     NP_SEQUENCE *GetNextSeq(void);
 
@@ -144,7 +144,7 @@ public:
      *
      * @mangled NextSeq__12CNPCharacterFv
      * @address 0x1564D0
-     * @size 0x70
+     * @size 0x64
      */
     void NextSeq(void);
 
@@ -153,7 +153,7 @@ public:
      *
      * @mangled Draw__12CNPCharacterFv
      * @address 0x156540
-     * @size 0xE0
+     * @size 0xD8
      */
     void Draw(void);
 
@@ -162,7 +162,7 @@ public:
      *
      * @mangled DrawShadow__12CNPCharacterFv
      * @address 0x156620
-     * @size 0x50
+     * @size 0x4C
      */
     void DrawShadow(void);
 
@@ -171,7 +171,7 @@ public:
      *
      * @mangled CheckDraw__12CNPCharacterFv
      * @address 0x156670
-     * @size 0x60
+     * @size 0x58
      */
     int CheckDraw(void);
 
@@ -180,7 +180,7 @@ public:
      *
      * @mangled PickUpPoly__12CNPCharacterFPfP6CCPoly
      * @address 0x1566D0
-     * @size 0x40
+     * @size 0x38
      */
     int PickUpPoly(float *position, CCPoly *polygons);
 
@@ -189,7 +189,7 @@ public:
      *
      * @mangled Initialize__12CNPCharacterFv
      * @address 0x1569E0
-     * @size 0x90
+     * @size 0x8C
      */
     void Initialize(void);
 
@@ -198,7 +198,7 @@ public:
      *
      * @mangled __ct__12CNPCharacterFv
      * @address 0x156A70
-     * @size 0xF0
+     * @size 0xEC
      */
     CNPCharacter(void);
 };

@@ -13,7 +13,7 @@ struct spRGBA;
 /**
  * @mangled GlobalNameInit__Fv
  * @address 0x238450
- * @size 0x50
+ * @size 0x48
  * @unknownret
  */
 void GlobalNameInit(void);
@@ -29,7 +29,7 @@ void InitNameRegist(int, int, void /* CW back-ref target unresolved */ *);
 /**
  * @mangled ExitNameEnterFunc__Fv
  * @address 0x238630
- * @size 0x70
+ * @size 0x68
  * @unknownret
  */
 void ExitNameEnterFunc(void);
@@ -37,7 +37,7 @@ void ExitNameEnterFunc(void);
 /**
  * @mangled GetNameTextureInfo__FPP8CTextureiRiRi
  * @address 0x2386A0
- * @size 0xC0
+ * @size 0xBC
  * @unknownret
  */
 void GetNameTextureInfo(CTexture **, int, int &, int &);
@@ -45,7 +45,7 @@ void GetNameTextureInfo(CTexture **, int, int &, int &);
 /**
  * @mangled DrawCharaName__Fiiiii
  * @address 0x238760
- * @size 0x120
+ * @size 0x118
  * @unknownret
  */
 void DrawCharaName(int, int, int, int, int);
@@ -61,7 +61,7 @@ void DrawNameRegiWaku(int, int, int, int, int);
 /**
  * @mangled DrawCharaNameUp__Fiiii
  * @address 0x238A70
- * @size 0x630
+ * @size 0x628
  * @unknownret
  */
 void DrawCharaNameUp(int, int, int, int);
@@ -77,7 +77,7 @@ void DrawNameTemplete(int, int, int, int);
 /**
  * @mangled NameCompare__FPsPs
  * @address 0x2399D0
- * @size 0x70
+ * @size 0x6C
  * @unknownret
  */
 void NameCompare(short *, short *);
@@ -93,7 +93,7 @@ void CheckName(void);
 /**
  * @mangled NameEnterDraw__Fv
  * @address 0x239BA0
- * @size 0xCA0
+ * @size 0xC9C
  * @unknownret
  */
 void NameEnterDraw(void);
@@ -101,7 +101,7 @@ void NameEnterDraw(void);
 /**
  * @mangled NameEnterKey__Fv
  * @address 0x23A840
- * @size 0x1F30
+ * @size 0x1F28
  * @unknownret
  */
 void NameEnterKey(void);
@@ -117,7 +117,7 @@ void NameDefaultSet(int);
 /**
  * @mangled GetFontLRTumeW__Fiii
  * @address 0x23C880
- * @size 0x80
+ * @size 0x78
  * @unknownret
  */
 void GetFontLRTumeW(int, int, int);
@@ -133,7 +133,7 @@ void CharaSelectNameDraw2(int, int, short *, CTexture **, int);
 /**
  * @mangled DrawSaveBoardCharaName2__FiiPsPP8CTexture6spRGBA6spRGBA
  * @address 0x23CB50
- * @size 0x290
+ * @size 0x284
  * @unknownret
  */
 void DrawSaveBoardCharaName2(int, int, short *, CTexture **, spRGBA, spRGBA);
@@ -144,7 +144,7 @@ void DrawSaveBoardCharaName2(int, int, short *, CTexture **, spRGBA, spRGBA);
  *
  * @mangled GetMsgLengthCharaName__Fi
  * @address 0x23CDE0
- * @size 0x80
+ * @size 0x78
  */
 int GetMsgLengthCharaName(int);
 
@@ -159,7 +159,7 @@ void InitOpeningBook(void /* CW back-ref target unresolved */ *, int *);
 /**
  * @mangled OpeningBookKey__Fv
  * @address 0x23CF10
- * @size 0x670
+ * @size 0x664
  * @unknownret
  */
 void OpeningBookKey(void);
@@ -167,7 +167,7 @@ void OpeningBookKey(void);
 /**
  * @mangled OpeningBookDraw__Fv
  * @address 0x23D580
- * @size 0x140
+ * @size 0x134
  * @unknownret
  */
 void OpeningBookDraw(void);
@@ -175,7 +175,7 @@ void OpeningBookDraw(void);
 /**
  * @mangled runerror__FPCc
  * @address 0x23D6C0
- * @size 0x50
+ * @size 0x44
  * @unknownret
  */
 void runerror(const char *);
@@ -183,7 +183,7 @@ void runerror(const char *);
 /**
  * @mangled stkoverflow__Fv
  * @address 0x23D710
- * @size 0x30
+ * @size 0x28
  * @unknownret
  */
 void stkoverflow(void);
@@ -191,7 +191,7 @@ void stkoverflow(void);
 /**
  * @mangled chk_int__F12RS_STACKDATAP8funcdata
  * @address 0x23D740
- * @size 0x70
+ * @size 0x68
  * @unknownret
  */
 int chk_int(RS_STACKDATA, funcdata *);
@@ -199,7 +199,7 @@ int chk_int(RS_STACKDATA, funcdata *);
 /**
  * @mangled is_true__F12RS_STACKDATA
  * @address 0x23D7B0
- * @size 0x40
+ * @size 0x3C
  * @unknownret
  */
 int is_true(RS_STACKDATA);
@@ -207,7 +207,7 @@ int is_true(RS_STACKDATA);
 /**
  * @mangled divby0error__Fv
  * @address 0x23D7F0
- * @size 0x30
+ * @size 0x28
  * @unknownret
  */
 void divby0error(void);
@@ -215,7 +215,7 @@ void divby0error(void);
 /**
  * @mangled modby0error__Fv
  * @address 0x23D820
- * @size 0x30
+ * @size 0x28
  * @unknownret
  */
 void modby0error(void);
@@ -223,7 +223,7 @@ void modby0error(void);
 /**
  * @mangled print__FP12RS_STACKDATAi
  * @address 0x23D850
- * @size 0xF0
+ * @size 0xE8
  * @unknownret
  */
 void print(RS_STACKDATA *, int);

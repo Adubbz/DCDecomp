@@ -33,7 +33,7 @@ public:
     /**
      * @mangled SetObject__4CMapFiP9CFrameVu1ii
      * @address 0x143870
-     * @size 0x80
+     * @size 0x74
      * Places a frame in a numbered object slot and returns that object, or
      * null when the slot number is invalid.
      */
@@ -42,7 +42,7 @@ public:
     /**
      * @mangled SetObject__4CMapFP9CFrameVu1ii
      * @address 0x1438F0
-     * @size 0x90
+     * @size 0x84
      * Places a frame in the first free object slot and returns that object,
      * or null when every slot is occupied.
      */
@@ -53,14 +53,14 @@ public:
      *
      * @mangled GetObject__4CMapFi
      * @address 0x143980
-     * @size 0x40
+     * @size 0x3C
      */
     CMapObject *GetObject(int);
 
     /**
      * @mangled Draw__4CMapFv
      * @address 0x1439C0
-     * @size 0xE0
+     * @size 0xD4
      * Draws every placed object, using its category's level-of-detail range
      * when range selection is enabled.
      */
@@ -69,7 +69,7 @@ public:
     /**
      * @mangled Initialize__4CMapFv
      * @address 0x143AA0
-     * @size 0xB0
+     * @size 0xAC
      * Resets the category ranges and every object slot to their defaults.
      */
     void Initialize(void);

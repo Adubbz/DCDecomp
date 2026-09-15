@@ -10,7 +10,7 @@
 /**
  * @mangled __construct_array
  * @address 0x1222D0
- * @size 0x130
+ * @size 0x12C
  * @unknownret
  */
 void __construct_array(/* unknown args */);
@@ -18,7 +18,7 @@ void __construct_array(/* unknown args */);
 /**
  * @mangled __construct_new_array
  * @address 0x122400
- * @size 0x150
+ * @size 0x14C
  * @unknownret
  */
 void __construct_new_array(/* unknown args */);
@@ -34,7 +34,7 @@ void __dl(void *);
 /**
  * @mangled __throw_catch_compare
  * @address 0x122610
- * @size 0x270
+ * @size 0x26C
  * @unknownret
  */
 void __throw_catch_compare(/* unknown args */);
@@ -42,7 +42,7 @@ void __throw_catch_compare(/* unknown args */);
 /**
  * @mangled unexpected__3stdFv
  * @address 0x122880
- * @size 0x30
+ * @size 0x24
  * @unknownret
  */
 void unexpected(void);
@@ -50,7 +50,7 @@ void unexpected(void);
 /**
  * @mangled terminate__3stdFv
  * @address 0x1228B0
- * @size 0x30
+ * @size 0x24
  * @unknownret
  */
 void terminate(void);
@@ -58,7 +58,7 @@ void terminate(void);
 /**
  * @mangled duhandler__3stdFv
  * @address 0x1228E0
- * @size 0x30
+ * @size 0x24
  * @unknownret
  */
 void duhandler(void);
@@ -66,7 +66,7 @@ void duhandler(void);
 /**
  * @mangled dthandler__3stdFv
  * @address 0x122910
- * @size 0x20
+ * @size 0x1C
  * @unknownret
  */
 void dthandler(void);
@@ -74,7 +74,7 @@ void dthandler(void);
 /**
  * @mangled __register_global_object
  * @address 0x122930
- * @size 0x30
+ * @size 0x24
  * @unknownret
  */
 void __register_global_object(/* unknown args */);
@@ -82,7 +82,7 @@ void __register_global_object(/* unknown args */);
 /**
  * @mangled __initialize_cpp_rts
  * @address 0x122960
- * @size 0x60
+ * @size 0x54
  * @unknownret
  */
 void __initialize_cpp_rts(/* unknown args */);
@@ -106,7 +106,7 @@ void __DecodeSignedNumber(char *, int *);
 /**
  * @mangled __end__catch
  * @address 0x122B00
- * @size 0x40
+ * @size 0x38
  * @unknownret
  */
 void __end__catch(/* unknown args */);
@@ -130,7 +130,7 @@ void mwInit(/* unknown args */);
 /**
  * @mangled mwOverlayInit
  * @address 0x122DE0
- * @size 0x90
+ * @size 0x8C
  * @unknownret
  */
 void mwOverlayInit(/* unknown args */);
@@ -138,7 +138,7 @@ void mwOverlayInit(/* unknown args */);
 /**
  * @mangled MWNotifyOverlayLoaded
  * @address 0x122E70
- * @size 0x10
+ * @size 0x8
  * @unknownret
  */
 void MWNotifyOverlayLoaded(/* unknown args */);
@@ -146,7 +146,7 @@ void MWNotifyOverlayLoaded(/* unknown args */);
 /**
  * @mangled mwBload
  * @address 0x122E80
- * @size 0xC0
+ * @size 0xB4
  * @unknownret
  */
 void mwBload(/* unknown args */);
@@ -186,7 +186,7 @@ void VectorMax(float *, float *, float *, float *, float *);
 /**
  * @mangled VectorMin__FPfPfPf
  * @address 0x123020
- * @size 0x20
+ * @size 0x18
  * @unknownret
  */
 void VectorMin(float *, float *, float *);
@@ -194,7 +194,7 @@ void VectorMin(float *, float *, float *);
 /**
  * @mangled VectorMin__FPfPfPfPfPf
  * @address 0x123040
- * @size 0x2C
+ * @size 0x28
  * @unknownret
  */
 void VectorMin(float *, float *, float *, float *, float *);

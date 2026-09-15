@@ -63,7 +63,7 @@ public:
      *
      * @mangled GetPosition__9CMapPartsFPf
      * @address 0x19A7B0
-     * @size 0x30
+     * @size 0x2C
      */
     void GetPosition(float *out_position);
 
@@ -72,7 +72,7 @@ public:
      *
      * @mangled SetPosition__9CMapPartsFPf
      * @address 0x19A7E0
-     * @size 0x30
+     * @size 0x24
      */
     virtual void SetPosition(float *position);
 
@@ -81,7 +81,7 @@ public:
      *
      * @mangled SetPosition__9CMapPartsFfff
      * @address 0x19A810
-     * @size 0x20
+     * @size 0x14
      */
     virtual void SetPosition(float x, float y, float z);
 
@@ -90,7 +90,7 @@ public:
      *
      * @mangled SetRotation__9CMapPartsFfff
      * @address 0x19A830
-     * @size 0x20
+     * @size 0x14
      */
     virtual void SetRotation(float x, float y, float z);
 
@@ -99,7 +99,7 @@ public:
      *
      * @mangled SetRotY__9CMapPartsFi
      * @address 0x19A850
-     * @size 0x60
+     * @size 0x5C
      */
     void SetRotY(int rot_y);
 
@@ -108,7 +108,7 @@ public:
      *
      * @mangled GetRotY__9CMapPartsFv
      * @address 0x19A8B0
-     * @size 0x10
+     * @size 0xC
      */
     int GetRotY(void);
 
@@ -118,7 +118,7 @@ public:
      *
      * @mangled Initialize__9CMapPartsFv
      * @address 0x19A8C0
-     * @size 0xA0
+     * @size 0x9C
      */
     void Initialize(void);
 
@@ -127,7 +127,7 @@ public:
      *
      * @mangled __ct__9CMapPartsFv
      * @address 0x19A960
-     * @size 0x50
+     * @size 0x48
      */
     CMapParts(void);
 
@@ -136,7 +136,7 @@ public:
      *
      * @mangled FrameObjectOnOff__9CMapPartsFPci
      * @address 0x19A9B0
-     * @size 0x70
+     * @size 0x68
      */
     virtual void FrameObjectOnOff(char *name, int on);
 
@@ -145,7 +145,7 @@ public:
      *
      * @mangled GetWidth__9CMapPartsFv
      * @address 0x19AA20
-     * @size 0x60
+     * @size 0x58
      */
     int GetWidth(void);
 
@@ -154,7 +154,7 @@ public:
      *
      * @mangled GetHeight__9CMapPartsFv
      * @address 0x19AA80
-     * @size 0x60
+     * @size 0x58
      */
     int GetHeight(void);
 
@@ -173,7 +173,7 @@ public:
      *
      * @mangled ChangeAltData__9CMapPartsFv
      * @address 0x19AC40
-     * @size 0xA0
+     * @size 0x98
      */
     int ChangeAltData(void);
 
@@ -182,7 +182,7 @@ public:
      *
      * @mangled ChangeDigData__9CMapPartsFv
      * @address 0x19ACE0
-     * @size 0xA0
+     * @size 0x98
      */
     int ChangeDigData(void);
 
@@ -191,7 +191,7 @@ public:
      *
      * @mangled CheckBox__9CMapPartsFP7CBoxVu0
      * @address 0x19AD80
-     * @size 0x140
+     * @size 0x134
      */
     int CheckBox(CBoxVu0 *box);
 
@@ -201,7 +201,7 @@ public:
      *
      * @mangled CheckBox2__9CMapPartsFP7CBoxVu0
      * @address 0x19AEC0
-     * @size 0x1E0
+     * @size 0x1D8
      */
     int CheckBox2(CBoxVu0 *box);
 
@@ -211,7 +211,7 @@ public:
      *
      * @mangled DrawLOD__9CMapPartsFPfiiPi
      * @address 0x19B0A0
-     * @size 0x1C0
+     * @size 0x1B8
      */
     virtual void DrawLOD(float *distance, int lowest, int highest, int *out_level);
 
@@ -220,7 +220,7 @@ public:
      *
      * @mangled DrawParts__9CMapPartsFfPfiiPi
      * @address 0x19B260
-     * @size 0x2F0
+     * @size 0x2EC
      */
     void DrawParts(float time, float *distance, int lowest, int highest, int *out_level);
 

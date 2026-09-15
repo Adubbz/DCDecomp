@@ -27,7 +27,7 @@ public:
     /**
      * @mangled Step__12CMotionModelFv
      * @address 0x1B6CD0
-     * @size 0x70
+     * @size 0x68
      * @unknownret
      */
     void Step(void);
@@ -35,7 +35,7 @@ public:
     /**
      * @mangled Draw__12CMotionModelFv
      * @address 0x1B6D40
-     * @size 0x30
+     * @size 0x2C
      * @unknownret
      */
     void Draw(void);

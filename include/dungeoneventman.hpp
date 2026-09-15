@@ -42,7 +42,7 @@ public:
      *
      * @mangled SearchPartsID__16CDungeonEventManFii
      * @address 0x1CC8F0
-     * @size 0x50
+     * @size 0x44
      */
     DUNGEON_EVENT_SLOT *SearchPartsID(int, int);
 
@@ -51,7 +51,7 @@ public:
      *
      * @mangled SearchSlot__16CDungeonEventManFv
      * @address 0x1CC940
-     * @size 0x50
+     * @size 0x44
      */
     DUNGEON_EVENT_SLOT *SearchSlot(void);
 
@@ -69,7 +69,7 @@ public:
      *
      * @mangled SearchItemEventHold__16CDungeonEventManFi
      * @address 0x1CCA60
-     * @size 0x70
+     * @size 0x64
      */
     void SearchItemEventHold(int);
 
@@ -78,7 +78,7 @@ public:
      *
      * @mangled GetDataNum__16CDungeonEventManFv
      * @address 0x1CCAD0
-     * @size 0x60
+     * @size 0x58
      */
     int GetDataNum(void);
 
@@ -87,7 +87,7 @@ public:
      *
      * @mangled SearchDataSlot__16CDungeonEventManFv
      * @address 0x1CCB30
-     * @size 0x70
+     * @size 0x64
      */
     CDungeonEventData *SearchDataSlot(void);
 
@@ -105,7 +105,7 @@ public:
      *
      * @mangled SearchDataSlotPos__16CDungeonEventManFPf
      * @address 0x1CCCD0
-     * @size 0x110
+     * @size 0x108
      */
     CDungeonEventData *SearchDataSlotPos(float *);
 
@@ -114,7 +114,7 @@ public:
      *
      * @mangled SearchDataSlotPos2__16CDungeonEventManFPf
      * @address 0x1CCDE0
-     * @size 0x160
+     * @size 0x154
      */
     CDungeonEventData *SearchDataSlotPos2(float *);
 
@@ -123,7 +123,7 @@ public:
      *
      * @mangled SetupEvent__16CDungeonEventManFP11CDungeonMapi
      * @address 0x1CCF40
-     * @size 0x480
+     * @size 0x474
      */
     void SetupEvent(CDungeonMap *, int);
 };

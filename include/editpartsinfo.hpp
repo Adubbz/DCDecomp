@@ -80,7 +80,7 @@ public:
      *
      * @mangled GetPartsInfo__14CEditPartsInfoFi
      * @address 0x199FD0
-     * @size 0x50
+     * @size 0x44
      */
     EDITPARTS_INFO *GetPartsInfo(int);
 
@@ -113,7 +113,7 @@ public:
     /**
      * @mangled GetRequest__14CEditPartsInfoFi
      * @address 0x19A140
-     * @size 0x40
+     * @size 0x38
      * @unknownret
      */
     int GetRequest(int);
@@ -121,7 +121,7 @@ public:
     /**
      * @mangled GetNextPartsNum__14CEditPartsInfoFi
      * @address 0x19A180
-     * @size 0x90
+     * @size 0x88
      * @unknownret
      */
     void GetNextPartsNum(int);
@@ -146,7 +146,7 @@ public:
     /**
      * @mangled Save__14CEditPartsInfoFiP9CSaveData
      * @address 0x19A2C0
-     * @size 0x130
+     * @size 0x128
      * @unknownret
      */
     void Save(int, CSaveData *);
@@ -154,7 +154,7 @@ public:
     /**
      * @mangled Load__14CEditPartsInfoFiP9CSaveDatai
      * @address 0x19A3F0
-     * @size 0x180
+     * @size 0x178
      * @unknownret
      */
     void Load(int, CSaveData *, int);
@@ -162,7 +162,7 @@ public:
     /**
      * @mangled Initialize__14CEditPartsInfoFi
      * @address 0x19A570
-     * @size 0x1D0
+     * @size 0x1C8
      * @unknownret
      */
     void Initialize(int);
@@ -170,7 +170,7 @@ public:
     /**
      * @mangled Initialize__14CEditPartsInfoFiP18EPARTS_INFO_HEADER
      * @address 0x19A740
-     * @size 0x70
+     * @size 0x64
      * @unknownret
      */
     void Initialize(int, EPARTS_INFO_HEADER *);

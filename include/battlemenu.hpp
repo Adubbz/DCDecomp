@@ -35,14 +35,14 @@ STATIC_ASSERT(sizeof(MAP_JUMP_COMPARE) == 0x14);
  *
  * @mangled GetDefaultWeaponNo__Fi
  * @address 0x1F3DA0
- * @size 0x20
+ * @size 0x1C
  */
 int GetDefaultWeaponNo(int character_no);
 
 /**
  * @mangled IsDefaultWeapon__Fi
  * @address 0x1F3DC0
- * @size 0x90
+ * @size 0x84
  * @unknownret
  */
 int IsDefaultWeapon(int);
@@ -52,14 +52,14 @@ int IsDefaultWeapon(int);
  *
  * @mangled SetNowEquipWeaponDataForMsg__Fii
  * @address 0x1F3E50
- * @size 0x20
+ * @size 0x18
  */
 void SetNowEquipWeaponDataForMsg(int, int);
 
 /**
  * @mangled GetNowEquipWeaponDataForMsg__FRiRi
  * @address 0x1F3E70
- * @size 0x70
+ * @size 0x68
  * @unknownret
  */
 void GetNowEquipWeaponDataForMsg(int &, int &);
@@ -67,7 +67,7 @@ void GetNowEquipWeaponDataForMsg(int &, int &);
 /**
  * @mangled GetGradationColorInfo2__Fi
  * @address 0x1F3EE0
- * @size 0x20
+ * @size 0x18
  * @unknownret
  */
 void GetGradationColorInfo2(int);
@@ -77,14 +77,14 @@ void GetGradationColorInfo2(int);
  *
  * @mangled GetNowSelectWeapon__Fv
  * @address 0x1F3F00
- * @size 0x40
+ * @size 0x3C
  */
 WEAPON_HAVE *GetNowSelectWeapon(void);
 
 /**
  * @mangled EscapeDungeonMode__Fv
  * @address 0x1F3F40
- * @size 0x60
+ * @size 0x5C
  * @unknownret
  */
 void EscapeDungeonMode(void);
@@ -128,7 +128,7 @@ s16 GetInteriorOutFlag(void);
 /**
  * @mangled DrawDngYesNoDialog__Fiii
  * @address 0x1F3FE0
- * @size 0xC0
+ * @size 0xB8
  * @unknownret
  */
 void DrawDngYesNoDialog(int, int, int);
@@ -138,14 +138,14 @@ void DrawDngYesNoDialog(int, int, int);
  *
  * @mangled GetMenuModeMax__Fv
  * @address 0x1F40A0
- * @size 0x70
+ * @size 0x68
  */
 int GetMenuModeMax(void);
 
 /**
  * @mangled BtlMenuMekeIconInfo__FPii
  * @address 0x1F4160
- * @size 0xF0
+ * @size 0xE8
  * @unknownret
  */
 void BtlMenuMekeIconInfo(int *, int);
@@ -153,7 +153,7 @@ void BtlMenuMekeIconInfo(int *, int);
 /**
  * @mangled DrawBtlMenuBar__Fv
  * @address 0x1F4250
- * @size 0x2A0
+ * @size 0x294
  * @unknownret
  */
 void DrawBtlMenuBar(void);
@@ -161,7 +161,7 @@ void DrawBtlMenuBar(void);
 /**
  * @mangled GetLimmitMsg__Fv
  * @address 0x1F44F0
- * @size 0x70
+ * @size 0x6C
  * @unknownret
  */
 void GetLimmitMsg(void);
@@ -177,7 +177,7 @@ void DrawBattleMain(void);
 /**
  * @mangled DrawOtherCharaStatus__Fiiii
  * @address 0x1F4870
- * @size 0x490
+ * @size 0x484
  * @unknownret
  */
 void DrawOtherCharaStatus(int, int, int, int);
@@ -193,7 +193,7 @@ void DngComStatus(int, int, int, int);
 /**
  * @mangled DrawSelCharaStatus__Fffiiiiii
  * @address 0x1F5420
- * @size 0x3F0
+ * @size 0x3EC
  * @unknownret
  */
 void DrawSelCharaStatus(float, float, int, int, int, int, int, int);
@@ -201,7 +201,7 @@ void DrawSelCharaStatus(float, float, int, int, int, int, int, int);
 /**
  * @mangled BtlDrawSave__Fv
  * @address 0x1F5860
- * @size 0x40
+ * @size 0x34
  * @unknownret
  */
 void BtlDrawSave(void);
@@ -211,7 +211,7 @@ void BtlDrawSave(void);
  *
  * @mangled BtlMenuTexBlockEnter__Fv
  * @address 0x1F58A0
- * @size 0x120
+ * @size 0x118
  */
 void BtlMenuTexBlockEnter(void);
 
@@ -229,14 +229,14 @@ void BattleMenuTexEnter(void);
  *
  * @mangled ExitBattleMenu__Fi
  * @address 0x1F5B00
- * @size 0x1F0
+ * @size 0x1EC
  */
 void ExitBattleMenu(int);
 
 /**
  * @mangled BattleMenuInit__FPii
  * @address 0x1F5CF0
- * @size 0x460
+ * @size 0x45C
  * @unknownret
  */
 void BattleMenuInit(int *, int);
@@ -244,7 +244,7 @@ void BattleMenuInit(int *, int);
 /**
  * @mangled BtlMenuDrawSpecialFlag__Fi
  * @address 0x1F6150
- * @size 0x90
+ * @size 0x88
  * @unknownret
  */
 void BtlMenuDrawSpecialFlag(int);
@@ -260,7 +260,7 @@ void BattleMenuDraw(void);
 /**
  * @mangled BattleMenuCursor__Fv
  * @address 0x1F6720
- * @size 0x1A0
+ * @size 0x194
  * @unknownret
  */
 int BattleMenuCursor(void);
@@ -268,7 +268,7 @@ int BattleMenuCursor(void);
 /**
  * @mangled BattleMenuAppear__Fv
  * @address 0x1F68C0
- * @size 0x180
+ * @size 0x17C
  * @unknownret
  */
 void BattleMenuAppear(void);
@@ -276,7 +276,7 @@ void BattleMenuAppear(void);
 /**
  * @mangled BattleMenuExit__Fv
  * @address 0x1F6A40
- * @size 0xE0
+ * @size 0xDC
  * @unknownret
  */
 void BattleMenuExit(void);
@@ -284,7 +284,7 @@ void BattleMenuExit(void);
 /**
  * @mangled BattleMenuSelect__Fv
  * @address 0x1F6B20
- * @size 0x440
+ * @size 0x438
  * @unknownret
  */
 void BattleMenuSelect(void);
@@ -294,7 +294,7 @@ void BattleMenuSelect(void);
  *
  * @mangled ToFromSelect__Fi
  * @address 0x1F6F60
- * @size 0x2A0
+ * @size 0x29C
  */
 int ToFromSelect(int);
 
@@ -310,7 +310,7 @@ void ForBackMenu(void);
 /**
  * @mangled InitMenuChara__FP1
  * @address 0x1F72E0
- * @size 0x160
+ * @size 0x158
  * @unknownret
  */
 void InitMenuChara(void /* CW back-ref target unresolved */ *);
@@ -318,7 +318,7 @@ void InitMenuChara(void /* CW back-ref target unresolved */ *);
 /**
  * @mangled BattleMenuCharaKey__Fv
  * @address 0x1F7440
- * @size 0x9F0
+ * @size 0x9EC
  * @unknownret
  */
 void BattleMenuCharaKey(void);
@@ -326,7 +326,7 @@ void BattleMenuCharaKey(void);
 /**
  * @mangled DrawCharaSelect__Fv
  * @address 0x1F7E30
- * @size 0xF00
+ * @size 0xEF4
  * @unknownret
  */
 void DrawCharaSelect(void);
@@ -334,7 +334,7 @@ void DrawCharaSelect(void);
 /**
  * @mangled DrawWepDamageDraw__F4RECTP11WEAPON_HAVEi
  * @address 0x1F8D30
- * @size 0x4C0
+ * @size 0x4B4
  * @unknownret
  */
 void DrawWepDamageDraw(RECT, WEAPON_HAVE *, int);
@@ -342,7 +342,7 @@ void DrawWepDamageDraw(RECT, WEAPON_HAVE *, int);
 /**
  * @mangled DrawWepStatus__FiiP11WEAPON_HAVEii
  * @address 0x1F91F0
- * @size 0xE0
+ * @size 0xD8
  * @unknownret
  */
 void DrawWepStatus(int, int, WEAPON_HAVE *, int, int);
@@ -350,7 +350,7 @@ void DrawWepStatus(int, int, WEAPON_HAVE *, int, int);
 /**
  * @mangled DrawWepVolumeDisplay__FiiP11WEAPON_HAVEi
  * @address 0x1F92D0
- * @size 0x2B0
+ * @size 0x2A8
  * @unknownret
  */
 void DrawWepVolumeDisplay(int, int, WEAPON_HAVE *, int);
@@ -358,7 +358,7 @@ void DrawWepVolumeDisplay(int, int, WEAPON_HAVE *, int);
 /**
  * @mangled DrawWeaponNameBoard__Fiiiii
  * @address 0x1F9580
- * @size 0x140
+ * @size 0x13C
  * @unknownret
  */
 void DrawWeaponNameBoard(int, int, int, int, int);
@@ -391,7 +391,7 @@ void WepStatusVolumeDraw(RECT, int, int *, int, int, int, int);
 /**
  * @mangled DrawWeaponStatusWaku__Fiiii
  * @address 0x1F9E40
- * @size 0x70
+ * @size 0x68
  * @unknownret
  */
 void DrawWeaponStatusWaku(int, int, int, int);
@@ -407,7 +407,7 @@ void DrawLimmitMax(int, int, int);
 /**
  * @mangled DrawBtlMenuLRCursor__Fiiii
  * @address 0x1F9F10
- * @size 0x1A0
+ * @size 0x194
  * @unknownret
  */
 void DrawBtlMenuLRCursor(int, int, int, int);
@@ -417,7 +417,7 @@ void DrawBtlMenuLRCursor(int, int, int, int);
  *
  * @mangled DrawWeaponStatusTag__FiiP11WEAPON_HAVEiii
  * @address 0x1FA0B0
- * @size 0x7C0
+ * @size 0x7B8
  */
 void DrawWeaponStatusTag(int, int, WEAPON_HAVE *, int, int, int);
 
@@ -426,7 +426,7 @@ void DrawWeaponStatusTag(int, int, WEAPON_HAVE *, int, int, int);
  *
  * @mangled DrawWeaponElemTag__FiiP11WEAPON_HAVEiii
  * @address 0x1FA870
- * @size 0x430
+ * @size 0x42C
  */
 void DrawWeaponElemTag(int, int, WEAPON_HAVE *, int, int, int);
 
@@ -450,7 +450,7 @@ void DrawWeaponTagBoard(int, int, WEAPON_HAVE *, int, int, int);
 /**
  * @mangled DrawAallWeapon__FiifP10CCharacterP11WEAPON_HAVEiii
  * @address 0x1FB200
- * @size 0x560
+ * @size 0x55C
  * @unknownret
  */
 void DrawAallWeapon(int, int, float, CCharacter *, WEAPON_HAVE *, int, int, int);
@@ -458,7 +458,7 @@ void DrawAallWeapon(int, int, float, CCharacter *, WEAPON_HAVE *, int, int, int)
 /**
  * @mangled BtlWeaponDraw__Fifii
  * @address 0x1FB760
- * @size 0x750
+ * @size 0x748
  * @unknownret
  */
 void BtlWeaponDraw(int, float, int, int);
@@ -466,7 +466,7 @@ void BtlWeaponDraw(int, float, int, int);
 /**
  * @mangled NowWeaponStatusValue__FP11WEAPON_HAVE
  * @address 0x1FBEB0
- * @size 0x120
+ * @size 0x11C
  * @unknownret
  */
 void NowWeaponStatusValue(WEAPON_HAVE *);
@@ -474,7 +474,7 @@ void NowWeaponStatusValue(WEAPON_HAVE *);
 /**
  * @mangled WeaponMenuCheckElemValue__FP11WEAPON_HAVEP11WEAPON_HAVE
  * @address 0x1FC050
- * @size 0xC0
+ * @size 0xB8
  * @unknownret
  */
 void WeaponMenuCheckElemValue(WEAPON_HAVE *, WEAPON_HAVE *);
@@ -482,7 +482,7 @@ void WeaponMenuCheckElemValue(WEAPON_HAVE *, WEAPON_HAVE *);
 /**
  * @mangled WeaponMenuCheckEnableSetElem__FP11WEAPON_HAVEP11WEAPON_HAVEi
  * @address 0x1FC110
- * @size 0x110
+ * @size 0x10C
  * @unknownret
  */
 void WeaponMenuCheckEnableSetElem(WEAPON_HAVE *, WEAPON_HAVE *, int);
@@ -498,7 +498,7 @@ void DrawWeaponSelectDialog(int, int, int);
 /**
  * @mangled InitWeaponSelect__Fii
  * @address 0x1FC750
- * @size 0x3D0
+ * @size 0x3CC
  * @unknownret
  */
 void InitWeaponSelect(int, int);
@@ -506,7 +506,7 @@ void InitWeaponSelect(int, int);
 /**
  * @mangled ExitWeaponMenuSelect__Fv
  * @address 0x1FCB20
- * @size 0x2D0
+ * @size 0x2CC
  * @unknownret
  */
 void ExitWeaponMenuSelect(void);
@@ -514,7 +514,7 @@ void ExitWeaponMenuSelect(void);
 /**
  * @mangled WeaponMenuSelect__Fv
  * @address 0x1FCDF0
- * @size 0x1080
+ * @size 0x107C
  * @unknownret
  */
 void WeaponMenuSelect(void);
@@ -522,7 +522,7 @@ void WeaponMenuSelect(void);
 /**
  * @mangled WeaponSelectKey__Fv
  * @address 0x1FDF20
- * @size 0x1790
+ * @size 0x178C
  * @unknownret
  */
 void WeaponSelectKey(void);
@@ -532,14 +532,14 @@ void WeaponSelectKey(void);
  *
  * @mangled WepAttachHaveCancel__Fv
  * @address 0x1FF6B0
- * @size 0x1A0
+ * @size 0x198
  */
 void WepAttachHaveCancel(void);
 
 /**
  * @mangled WeaponMenuAttachModeKey__Fv
  * @address 0x1FF850
- * @size 0x240
+ * @size 0x23C
  * @unknownret
  */
 void WeaponMenuAttachModeKey(void);
@@ -549,7 +549,7 @@ void WeaponMenuAttachModeKey(void);
  *
  * @mangled WeaponMenuActWepKey__Fv
  * @address 0x1FFA90
- * @size 0xD0
+ * @size 0xCC
  */
 void WeaponMenuActWepKey(void);
 
@@ -558,7 +558,7 @@ void WeaponMenuActWepKey(void);
  *
  * @mangled WeaponMenuTagKey__Fv
  * @address 0x1FFB60
- * @size 0x5C0
+ * @size 0x5B4
  */
 void WeaponMenuTagKey(void);
 
@@ -567,7 +567,7 @@ void WeaponMenuTagKey(void);
  *
  * @mangled WeaponMenuAttachWepKey__Fv
  * @address 0x200120
- * @size 0x420
+ * @size 0x414
  */
 void WeaponMenuAttachWepKey(void);
 
@@ -591,7 +591,7 @@ void RepairAndLevelUpDraw(int, int, int);
 /**
  * @mangled DrawBuildUpWeaponSelect__Fiii
  * @address 0x200A40
- * @size 0x240
+ * @size 0x238
  * @unknownret
  */
 void DrawBuildUpWeaponSelect(int, int, int);
@@ -599,7 +599,7 @@ void DrawBuildUpWeaponSelect(int, int, int);
 /**
  * @mangled WeaponMenuDraw__Fv
  * @address 0x200C80
- * @size 0x11B0
+ * @size 0x11A8
  * @unknownret
  */
 void WeaponMenuDraw(void);
@@ -615,7 +615,7 @@ void ItemTrushKey(int *, int *, int);
 /**
  * @mangled DrawTrushItem__Fv
  * @address 0x202120
- * @size 0x300
+ * @size 0x2F4
  * @unknownret
  */
 void DrawTrushItem(void);
@@ -623,7 +623,7 @@ void DrawTrushItem(void);
 /**
  * @mangled ExitItemSelect__Fv
  * @address 0x202420
- * @size 0x90
+ * @size 0x88
  * @unknownret
  */
 void ExitItemSelect(void);
@@ -631,7 +631,7 @@ void ExitItemSelect(void);
 /**
  * @mangled StartBGReadItemMenuWepIcon__FP1Ri
  * @address 0x2024B0
- * @size 0x60
+ * @size 0x54
  * @unknownret
  */
 void StartBGReadItemMenuWepIcon(void /* CW back-ref target unresolved */ *, int &);
@@ -639,7 +639,7 @@ void StartBGReadItemMenuWepIcon(void /* CW back-ref target unresolved */ *, int 
 /**
  * @mangled ReadSyncItemMenuWepIcon__Fv
  * @address 0x202510
- * @size 0xD0
+ * @size 0xC8
  * @unknownret
  */
 void ReadSyncItemMenuWepIcon(void);
@@ -647,7 +647,7 @@ void ReadSyncItemMenuWepIcon(void);
 /**
  * @mangled InitItemMode__Fii
  * @address 0x2025E0
- * @size 0x630
+ * @size 0x624
  * @unknownret
  */
 void InitItemMode(int, int);
@@ -655,7 +655,7 @@ void InitItemMode(int, int);
 /**
  * @mangled InitItemTrushStart__Fv
  * @address 0x202C10
- * @size 0x80
+ * @size 0x74
  * @unknownret
  */
 void InitItemTrushStart(void);
@@ -695,7 +695,7 @@ void ItemMenuModeDraw(void);
 /**
  * @mangled ItemMenuModeKey__Fv
  * @address 0x2063E0
- * @size 0x4E0
+ * @size 0x4D8
  * @unknownret
  */
 void ItemMenuModeKey(void);
@@ -703,7 +703,7 @@ void ItemMenuModeKey(void);
 /**
  * @mangled ActiveItemDraw__Fiii
  * @address 0x2068C0
- * @size 0x1F0
+ * @size 0x1EC
  * @unknownret
  */
 void ActiveItemDraw(int, int, int);
@@ -711,7 +711,7 @@ void ActiveItemDraw(int, int, int);
 /**
  * @mangled MenuCharaPolyDraw__Fv
  * @address 0x206AB0
- * @size 0x90
+ * @size 0x84
  * @unknownret
  */
 void MenuCharaPolyDraw(void);
@@ -727,7 +727,7 @@ void ItemMenuCharaStatusDraw(int, int, int, int);
 /**
  * @mangled ItemNaviCursor__Fi
  * @address 0x2078E0
- * @size 0x2E0
+ * @size 0x2D8
  * @unknownret
  */
 void ItemNaviCursor(int);
@@ -735,7 +735,7 @@ void ItemNaviCursor(int);
 /**
  * @mangled CharaStatusMsgDraw__Fiiiii
  * @address 0x207BC0
- * @size 0x230
+ * @size 0x22C
  * @unknownret
  */
 void CharaStatusMsgDraw(int, int, int, int, int);
@@ -743,7 +743,7 @@ void CharaStatusMsgDraw(int, int, int, int, int);
 /**
  * @mangled BattleMenuAtoraKey__Fv
  * @address 0x207DF0
- * @size 0x100
+ * @size 0xFC
  * @unknownret
  */
 void BattleMenuAtoraKey(void);
@@ -751,7 +751,7 @@ void BattleMenuAtoraKey(void);
 /**
  * @mangled InitMenuMove__FiiP1
  * @address 0x207EF0
- * @size 0x420
+ * @size 0x414
  * @unknownret
  */
 void InitMenuMove(int, int, void /* CW back-ref target unresolved */ *);
@@ -767,7 +767,7 @@ void GetTownOrDngPos(void);
 /**
  * @mangled MenuMoveKey__Fv
  * @address 0x208490
- * @size 0xB60
+ * @size 0xB54
  * @unknownret
  */
 void MenuMoveKey(void);
@@ -775,7 +775,7 @@ void MenuMoveKey(void);
 /**
  * @mangled DrawMenuMove__Fv
  * @address 0x208FF0
- * @size 0xCD0
+ * @size 0xCC8
  * @unknownret
  */
 void DrawMenuMove(void);
@@ -792,7 +792,7 @@ void DrawEscapeItem(int, int, int);
 /**
  * @mangled StartLoadWorldMap__FiP1
  * @address 0x209F80
- * @size 0xC0
+ * @size 0xBC
  * @unknownret
  */
 void StartLoadWorldMap(int, void /* CW back-ref target unresolved */ *);
@@ -800,7 +800,7 @@ void StartLoadWorldMap(int, void /* CW back-ref target unresolved */ *);
 /**
  * @mangled LoadWorldMap__Fv
  * @address 0x20A040
- * @size 0x330
+ * @size 0x32C
  * @unknownret
  */
 void LoadWorldMap(void);
@@ -810,14 +810,14 @@ void LoadWorldMap(void);
  *
  * @mangled LocalDrawWorldMap__Fv
  * @address 0x20A370
- * @size 0x70
+ * @size 0x6C
  */
 void LocalDrawWorldMap(void);
 
 /**
  * @mangled DrawWorldMap__Fi
  * @address 0x20A3E0
- * @size 0x50
+ * @size 0x48
  * @unknownret
  */
 void DrawWorldMap(int);
@@ -830,7 +830,7 @@ void DrawWorldMap(int);
  *
  * @mangled MenuDataSwap__FP16MAP_JUMP_COMPAREP16MAP_JUMP_COMPARE
  * @address 0x20A430
- * @size 0x70
+ * @size 0x6C
  */
 void MenuDataSwap(MAP_JUMP_COMPARE *first, MAP_JUMP_COMPARE *second);
 
@@ -840,14 +840,14 @@ void MenuDataSwap(MAP_JUMP_COMPARE *first, MAP_JUMP_COMPARE *second);
  *
  * @mangled GetNearWorldPos__FiPi
  * @address 0x20A4A0
- * @size 0x3C0
+ * @size 0x3BC
  */
 int GetNearWorldPos(int, int *);
 
 /**
  * @mangled WorldMapMoveKey__Fv
  * @address 0x20A860
- * @size 0x150
+ * @size 0x148
  * @unknownret
  */
 void WorldMapMoveKey(void);
@@ -863,7 +863,7 @@ void DrawMapCheck(int);
 /**
  * @mangled GetVisitInfo__Fii
  * @address 0x20AB00
- * @size 0x170
+ * @size 0x164
  * @unknownret
  */
 void GetVisitInfo(int, int);
@@ -879,7 +879,7 @@ void IsLoadMapNo(void);
 /**
  * @mangled MapNoTransFunc__Fi
  * @address 0x20AD80
- * @size 0xE0
+ * @size 0xD8
  * @unknownret
  */
 void MapNoTransFunc(int);
@@ -887,7 +887,7 @@ void MapNoTransFunc(int);
 /**
  * @mangled BattleMenuOptionKey__Fv
  * @address 0x20AE60
- * @size 0x110
+ * @size 0x108
  * @unknownret
  */
 void BattleMenuOptionKey(void);
@@ -895,7 +895,7 @@ void BattleMenuOptionKey(void);
 /**
  * @mangled BattleMenuSaveKey__Fv
  * @address 0x20AF70
- * @size 0x100
+ * @size 0xF4
  * @unknownret
  */
 void BattleMenuSaveKey(void);
@@ -921,7 +921,7 @@ int BattleManualKey(void);
 /**
  * @mangled DrawStatusNumberNowAndMax__FPiiiii
  * @address 0x20B1B0
- * @size 0x130
+ * @size 0x128
  * @unknownret
  */
 void DrawStatusNumberNowAndMax(int *, int, int, int, int);
@@ -929,7 +929,7 @@ void DrawStatusNumberNowAndMax(int *, int, int, int, int);
 /**
  * @mangled DrawWepHole__FiiP11WEAPON_HAVEii
  * @address 0x20B2E0
- * @size 0x2A0
+ * @size 0x294
  * @unknownret
  */
 void DrawWepHole(int, int, WEAPON_HAVE *, int, int);
@@ -971,7 +971,7 @@ public:
     /**
      * @mangled SetBuffInfo__10MenuClsMesFPs
      * @address 0x20B5D0
-     * @size 0x220
+     * @size 0x21C
      * @unknownret
      */
     void SetBuffInfo(short *);
@@ -997,7 +997,7 @@ public:
     /**
      * @mangled Draw1__10MenuClsMesFiii
      * @address 0x20B9E0
-     * @size 0x4E0
+     * @size 0x4DC
      * @unknownret
      */
     void Draw1(int, int, int);

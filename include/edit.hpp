@@ -896,7 +896,7 @@ extern int frame_image_flag;
  *
  * @mangled EdSaveFrameImageTask__Fv
  * @address 0x173E70
- * @size 0x60
+ * @size 0x54
  */
 void EdSaveFrameImageTask(void);
 
@@ -951,7 +951,7 @@ void EdSetLightParam(float clock, int preset, EDIT_MAP_INFO *info, CFrameVu1 *fr
  *
  * @mangled EdDrawSky__FfPP9CFrameVu1PP6CFrameP9CFrameVu1P7CCameraPi
  * @address 0x187F90
- * @size 0xDC0
+ * @size 0xA88
  */
 void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
                CCamera *camera, int *follow_axes);

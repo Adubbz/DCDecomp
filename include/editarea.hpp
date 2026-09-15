@@ -58,7 +58,7 @@ public:
      *
      * @mangled SetSize__9CEditAreaFiiff
      * @address 0x16D860
-     * @size 0x20
+     * @size 0x18
      */
     void SetSize(int width, int height, float unit_size, float unit_alt);
 
@@ -76,7 +76,7 @@ public:
      *
      * @mangled GetPos__9CEditAreaFP11CVector3_f_iii
      * @address 0x16D920
-     * @size 0x70
+     * @size 0x68
      */
     void GetPos(CVector3_f_ *position, int x, int y, int z);
 
@@ -85,7 +85,7 @@ public:
      *
      * @mangled SetPartsNo__9CEditAreaFiii
      * @address 0x16D990
-     * @size 0x70
+     * @size 0x6C
      */
     void SetPartsNo(int x, int y, int parts_no);
 
@@ -94,7 +94,7 @@ public:
      *
      * @mangled SetPartsID__9CEditAreaFiii
      * @address 0x16DA00
-     * @size 0x70
+     * @size 0x6C
      */
     void SetPartsID(int x, int y, int parts_id);
 
@@ -103,7 +103,7 @@ public:
      *
      * @mangled SetPartsExtra__9CEditAreaFiii
      * @address 0x16DA70
-     * @size 0x70
+     * @size 0x6C
      */
     void SetPartsExtra(int x, int y, int parts_extra);
 
@@ -112,7 +112,7 @@ public:
      *
      * @mangled SetCode__9CEditAreaFiii
      * @address 0x16DAE0
-     * @size 0x70
+     * @size 0x6C
      */
     void SetCode(int x, int y, int code);
 
@@ -121,7 +121,7 @@ public:
      *
      * @mangled GetPartsID__9CEditAreaFii
      * @address 0x16DB50
-     * @size 0x80
+     * @size 0x78
      */
     int GetPartsID(int x, int y);
 
@@ -130,7 +130,7 @@ public:
      *
      * @mangled GetCode__9CEditAreaFii
      * @address 0x16DBD0
-     * @size 0x80
+     * @size 0x78
      */
     int GetCode(int x, int y);
 
@@ -139,7 +139,7 @@ public:
      *
      * @mangled SetAlt__9CEditAreaFiii
      * @address 0x16DC50
-     * @size 0x90
+     * @size 0x88
      */
     void SetAlt(int x, int y, int altitude);
 
@@ -148,7 +148,7 @@ public:
      *
      * @mangled GetAlt_i__9CEditAreaFii
      * @address 0x16DCE0
-     * @size 0x80
+     * @size 0x78
      */
     int GetAlt_i(int x, int y);
 
@@ -157,7 +157,7 @@ public:
      *
      * @mangled GetAlt__9CEditAreaFii
      * @address 0x16DD60
-     * @size 0x90
+     * @size 0x88
      */
     float GetAlt(int x, int y);
 
@@ -166,7 +166,7 @@ public:
      *
      * @mangled GetAlt__9CEditAreaFfff
      * @address 0x16DDF0
-     * @size 0x50
+     * @size 0x44
      */
     float GetAlt(float x, float y, float z);
 
@@ -175,7 +175,7 @@ public:
      *
      * @mangled GetAlt_i__9CEditAreaFfff
      * @address 0x16DE40
-     * @size 0x50
+     * @size 0x44
      */
     int GetAlt_i(float x, float y, float z);
 
@@ -193,7 +193,7 @@ public:
      *
      * @mangled SetMapParts__9CEditAreaFiP9CMapPartsfffi
      * @address 0x16E010
-     * @size 0x200
+     * @size 0x1FC
      */
     void SetMapParts(int parts_no, CMapParts *parts, float x, float y, float z, int parts_extra);
 
@@ -202,7 +202,7 @@ public:
      *
      * @mangled DeleteMapParts__9CEditAreaFiP9CMapPartsfff
      * @address 0x16E210
-     * @size 0x260
+     * @size 0x25C
      */
     int DeleteMapParts(int parts_no, CMapParts *parts, float x, float y, float z);
 
@@ -220,7 +220,7 @@ public:
      *
      * @mangled SetRoadParts__9CEditAreaFii
      * @address 0x16E8B0
-     * @size 0x330
+     * @size 0x32C
      */
     int SetRoadParts(int x, int y);
 
@@ -229,7 +229,7 @@ public:
      *
      * @mangled SearchPartsID__9CEditAreaFfff
      * @address 0x16EBE0
-     * @size 0x60
+     * @size 0x5C
      */
     int SearchPartsID(float x, float y, float z);
 
@@ -238,7 +238,7 @@ public:
      *
      * @mangled SearchPartsExtra__9CEditAreaFfff
      * @address 0x16EC40
-     * @size 0x50
+     * @size 0x44
      */
     int SearchPartsExtra(float x, float y, float z);
 
@@ -247,7 +247,7 @@ public:
      *
      * @mangled GetGrid__9CEditAreaFP11CVector3_f_fff
      * @address 0x16EC90
-     * @size 0x60
+     * @size 0x58
      */
     void GetGrid(CVector3_f_ *grid_position, float x, float y, float z);
 
@@ -256,7 +256,7 @@ public:
      *
      * @mangled RemakeGrid__9CEditAreaFv
      * @address 0x16ECF0
-     * @size 0x1E0
+     * @size 0x1D8
      */
     void RemakeGrid(void);
 
@@ -274,7 +274,7 @@ public:
      *
      * @mangled MakePartsBox__9CEditAreaFv
      * @address 0x16EF00
-     * @size 0x190
+     * @size 0x188
      */
     void MakePartsBox(void);
 
@@ -283,7 +283,7 @@ public:
      *
      * @mangled CheckArea__9CEditAreaFfff
      * @address 0x16F090
-     * @size 0xB0
+     * @size 0xA8
      */
     int CheckArea(float x, float y, float z);
 
@@ -292,7 +292,7 @@ public:
      *
      * @mangled CheckAreaRect__9CEditAreaFfffii
      * @address 0x16F140
-     * @size 0xC0
+     * @size 0xBC
      */
     int CheckAreaRect(float x, float y, float z, int width, int height);
 
@@ -301,7 +301,7 @@ public:
      *
      * @mangled CheckParts__9CEditAreaFP9CMapPartsfffi
      * @address 0x16F200
-     * @size 0x460
+     * @size 0x454
      */
     int CheckParts(CMapParts *parts, float x, float y, float z, int parts_extra);
 
@@ -310,7 +310,7 @@ public:
      *
      * @mangled PickUpPoly__9CEditAreaFP6CCPolyfff
      * @address 0x16F660
-     * @size 0xD0
+     * @size 0xC4
      */
     int PickUpPoly(CCPoly *polygons, float x, float y, float z);
 
@@ -319,7 +319,7 @@ public:
      *
      * @mangled PickUpPoly__9CEditAreaFP6CCPoly8CRect_i_
      * @address 0x16F730
-     * @size 0x340
+     * @size 0x338
      */
     int PickUpPoly(CCPoly *polygons, CRect_i_ rect);
 
@@ -346,7 +346,7 @@ public:
      *
      * @mangled ChainWorkClear__9CEditAreaFv
      * @address 0x16FCA0
-     * @size 0x60
+     * @size 0x54
      */
     void ChainWorkClear(void);
 
@@ -373,7 +373,7 @@ public:
      *
      * @mangled Clear__9CEditAreaFv
      * @address 0x16FFC0
-     * @size 0xA0
+     * @size 0x98
      */
     void Clear(void);
 
@@ -382,7 +382,7 @@ public:
      *
      * @mangled Initialize__9CEditAreaFv
      * @address 0x170060
-     * @size 0x80
+     * @size 0x78
      */
     void Initialize(void);
 
@@ -400,7 +400,7 @@ public:
      *
      * @mangled GetMapNo__9CEditAreaFv
      * @address 0x1700F0
-     * @size 0x10
+     * @size 0xC
      */
     int GetMapNo(void);
 
@@ -409,7 +409,7 @@ public:
      *
      * @mangled GetAreaID__9CEditAreaFv
      * @address 0x170100
-     * @size 0x10
+     * @size 0xC
      */
     int GetAreaID(void);
 
@@ -418,7 +418,7 @@ public:
      *
      * @mangled SetGridFrame__9CEditAreaFP9CFrameVu1
      * @address 0x170110
-     * @size 0x10
+     * @size 0xC
      */
     void SetGridFrame(CFrameVu1 *frame);
 
@@ -427,7 +427,7 @@ public:
      *
      * @mangled GetGridFrame__9CEditAreaFv
      * @address 0x170120
-     * @size 0x10
+     * @size 0xC
      */
     CFrameVu1 *GetGridFrame(void);
 
@@ -436,7 +436,7 @@ public:
      *
      * @mangled SetOffset__9CEditAreaFfff
      * @address 0x170130
-     * @size 0x20
+     * @size 0x14
      */
     void SetOffset(float x, float y, float z);
 
@@ -454,7 +454,7 @@ public:
      *
      * @mangled GetWidth__9CEditAreaFv
      * @address 0x170170
-     * @size 0x10
+     * @size 0xC
      */
     int GetWidth(void);
 
@@ -463,7 +463,7 @@ public:
      *
      * @mangled GetHeight__9CEditAreaFv
      * @address 0x170180
-     * @size 0x10
+     * @size 0xC
      */
     int GetHeight(void);
 
@@ -472,7 +472,7 @@ public:
      *
      * @mangled AddAlt__9CEditAreaFiii
      * @address 0x170190
-     * @size 0x70
+     * @size 0x68
      */
     void AddAlt(int x, int y, int altitude_delta);
 
@@ -481,7 +481,7 @@ public:
      *
      * @mangled GetUnitSize__9CEditAreaFv
      * @address 0x170200
-     * @size 0x10
+     * @size 0xC
      */
     float GetUnitSize(void);
 
@@ -490,7 +490,7 @@ public:
      *
      * @mangled GetUnitAlt__9CEditAreaFv
      * @address 0x170210
-     * @size 0x10
+     * @size 0xC
      */
     float GetUnitAlt(void);
 

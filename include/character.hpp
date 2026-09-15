@@ -175,7 +175,7 @@ public:
      *
      * @mangled SetPointLight__10CCharacterFPfffffff
      * @address 0x137EE0
-     * @size 0x110
+     * @size 0x108
      */
     int SetPointLight(float *pos, float inner_range, float outer_range, float red, float green,
                       float blue, float alpha);
@@ -185,7 +185,7 @@ public:
      *
      * @mangled InitializeTexAnime__10CCharacterFP13CTexAnimeDatai
      * @address 0x137FF0
-     * @size 0x30
+     * @size 0x24
      */
     void InitializeTexAnime(CTexAnimeData *data, int count);
 
@@ -194,7 +194,7 @@ public:
      *
      * @mangled ClearTexAnime__10CCharacterFv
      * @address 0x138020
-     * @size 0x30
+     * @size 0x24
      */
     void ClearTexAnime(void);
 
@@ -203,7 +203,7 @@ public:
      *
      * @mangled TextureAnime__10CCharacterFi
      * @address 0x138050
-     * @size 0x30
+     * @size 0x24
      */
     void TextureAnime(int step);
 
@@ -212,7 +212,7 @@ public:
      *
      * @mangled TexAnimeOn__10CCharacterFi
      * @address 0x138080
-     * @size 0x30
+     * @size 0x24
      */
     void TexAnimeOn(int no);
 
@@ -221,7 +221,7 @@ public:
      *
      * @mangled TexAnimeOff__10CCharacterFi
      * @address 0x1380B0
-     * @size 0x30
+     * @size 0x24
      */
     void TexAnimeOff(int no);
 
@@ -230,7 +230,7 @@ public:
      *
      * @mangled SetFootSound__10CCharacterFffi
      * @address 0x1380E0
-     * @size 0x130
+     * @size 0x128
      */
     int SetFootSound(float left_frame, float right_frame, int motion_no);
 
@@ -239,7 +239,7 @@ public:
      *
      * @mangled SetFootSoundID__10CCharacterFi
      * @address 0x138210
-     * @size 0x10
+     * @size 0xC
      */
     void SetFootSoundID(int id);
 
@@ -248,7 +248,7 @@ public:
      *
      * @mangled FootSoundEnable__10CCharacterFi
      * @address 0x138220
-     * @size 0x10
+     * @size 0xC
      */
     void FootSoundEnable(int on);
 
@@ -257,7 +257,7 @@ public:
      *
      * @mangled EventEnable__10CCharacterFi
      * @address 0x138230
-     * @size 0x10
+     * @size 0xC
      */
     void EventEnable(int on);
 
@@ -266,7 +266,7 @@ public:
      *
      * @mangled SetEvent__10CCharacterFfiii
      * @address 0x138240
-     * @size 0xC0
+     * @size 0xB4
      */
     void SetEvent(float frame, int kind, int no, int motion_no);
 
@@ -275,7 +275,7 @@ public:
      *
      * @mangled ClearEvent__10CCharacterFi
      * @address 0x138300
-     * @size 0x70
+     * @size 0x68
      */
     void ClearEvent(int motion_no);
 
@@ -284,7 +284,7 @@ public:
      *
      * @mangled SetMotionCamera__10CCharacterFP7CCamera
      * @address 0x138370
-     * @size 0x40
+     * @size 0x3C
      */
     void SetMotionCamera(CCamera *camera);
 
@@ -293,7 +293,7 @@ public:
      *
      * @mangled GetMotionParam__10CCharacterFiPiPiPiPi
      * @address 0x1383B0
-     * @size 0xC0
+     * @size 0xB4
      */
     tagMOTION_TYPE *GetMotionParam(int motion_no, int *out_index, int *out_start, int *out_end,
                                    int *out_set);
@@ -303,7 +303,7 @@ public:
      *
      * @mangled GetMotionInfo__10CCharacterFi
      * @address 0x138470
-     * @size 0x70
+     * @size 0x68
      */
     MOTION_INFO *GetMotionInfo(int motion_no);
 
@@ -312,7 +312,7 @@ public:
      *
      * @mangled GetNowTime__10CCharacterFv
      * @address 0x1384E0
-     * @size 0x50
+     * @size 0x4C
      */
     float GetNowTime(void);
 
@@ -321,7 +321,7 @@ public:
      *
      * @mangled Step__10CCharacterFv
      * @address 0x138530
-     * @size 0x760
+     * @size 0x75C
      */
     virtual void Step(void);
 
@@ -330,7 +330,7 @@ public:
      *
      * @mangled ShadowStep__10CCharacterFv
      * @address 0x138C90
-     * @size 0x1C0
+     * @size 0x1B8
      */
     virtual void ShadowStep(void);
 
@@ -339,7 +339,7 @@ public:
      *
      * @mangled ClothStep__10CCharacterFi
      * @address 0x138E50
-     * @size 0x120
+     * @size 0x11C
      */
     virtual void ClothStep(int step);
 
@@ -384,7 +384,7 @@ public:
      *
      * @mangled GetWorldPosition__10CCharacterFPf
      * @address 0x139040
-     * @size 0x70
+     * @size 0x68
      */
     virtual void GetWorldPosition(float *out_position);
 
@@ -393,7 +393,7 @@ public:
      *
      * @mangled PickUpPoly__10CCharacterFPfP6CCPoly
      * @address 0x156710
-     * @size 0x2D0
+     * @size 0x2C4
      */
     virtual int PickUpPoly(float *position, CCPoly *poly);
 
@@ -402,7 +402,7 @@ public:
      *
      * @mangled SetPosition__10CCharacterFPf
      * @address 0x1390E0
-     * @size 0x30
+     * @size 0x2C
      */
     virtual void SetPosition(float *position);
 
@@ -411,7 +411,7 @@ public:
      *
      * @mangled SetPosition__10CCharacterF11CVector3_f_
      * @address 0x139110
-     * @size 0x40
+     * @size 0x38
      */
     virtual void SetPosition(CVector3_f_ position);
 
@@ -429,7 +429,7 @@ public:
      *
      * @mangled SetRotation__10CCharacterFPf
      * @address 0x1391E0
-     * @size 0x30
+     * @size 0x2C
      */
     virtual void SetRotation(float *rotation);
 
@@ -438,7 +438,7 @@ public:
      *
      * @mangled SetRotation__10CCharacterF11CVector3_f_
      * @address 0x139210
-     * @size 0x40
+     * @size 0x38
      */
     virtual void SetRotation(CVector3_f_ rotation);
 
@@ -456,7 +456,7 @@ public:
      *
      * @mangled SetScale__10CCharacterFPf
      * @address 0x1392E0
-     * @size 0x30
+     * @size 0x2C
      */
     virtual void SetScale(float *scale);
 
@@ -465,7 +465,7 @@ public:
      *
      * @mangled Draw__10CCharacterFv
      * @address 0x139310
-     * @size 0x3F0
+     * @size 0x3E8
      */
     virtual void Draw(void);
 
@@ -474,7 +474,7 @@ public:
      *
      * @mangled DrawShadow__10CCharacterFv
      * @address 0x139700
-     * @size 0xF0
+     * @size 0xE4
      */
     virtual void DrawShadow(void);
 
@@ -503,7 +503,7 @@ public:
      *
      * @mangled LoadPackData2__10CCharacterFPUiPcP14CDataAlloc2_1_iP14CDataAlloc2_1_i
      * @address 0x139850
-     * @size 0x40
+     * @size 0x3C
      */
     virtual void LoadPackData2(unsigned int *pack, char *name, CDataAlloc2<1> *alloc,
                                int motion_set, CDataAlloc2<1> *extend_alloc, int unk_08);
@@ -524,7 +524,7 @@ public:
      *
      * @mangled DeleteExtendTexture__10CCharacterFi
      * @address 0x1398D0
-     * @size 0xC0
+     * @size 0xB8
      */
     void DeleteExtendTexture(int block_no);
 
@@ -542,7 +542,7 @@ public:
      *
      * @mangled Initialize__10CCharacterFv
      * @address 0x1399D0
-     * @size 0x2D0
+     * @size 0x2C8
      */
     virtual void Initialize(void);
 
@@ -580,7 +580,7 @@ public:
      *
      * @mangled Initialize__10CMainCharaFv
      * @address 0x139CC0
-     * @size 0x50
+     * @size 0x48
      */
     virtual void Initialize(void);
 };

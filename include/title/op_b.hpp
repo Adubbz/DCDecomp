@@ -7,7 +7,7 @@
  *
  * @mangled FaceChange__Fi
  * @address 0x1DB87D0
- * @size 0x730
+ * @size 0x72C
  */
 void FaceChange(int actor_no);
 
@@ -16,7 +16,7 @@ void FaceChange(int actor_no);
  *
  * @mangled LoadCharaData__Fii
  * @address 0x1DB8F00
- * @size 0x1E0
+ * @size 0x1D4
  * @unknownret
  */
 void LoadCharaData(int, int);
@@ -26,7 +26,7 @@ void LoadCharaData(int, int);
  *
  * @mangled LoadMotionData__Fv
  * @address 0x1DB90E0
- * @size 0x2F0
+ * @size 0x2E4
  * @unknownret
  */
 void LoadMotionData(void);
@@ -36,7 +36,7 @@ void LoadMotionData(void);
  *
  * @mangled OpB_LoadDataBG__Fv
  * @address 0x1DB93D0
- * @size 0x50
+ * @size 0x4C
  * @unknownret
  */
 void OpB_LoadDataBG(void);
@@ -46,7 +46,7 @@ void OpB_LoadDataBG(void);
  *
  * @mangled OpB_LoadDataBG2__Fv
  * @address 0x1DB9420
- * @size 0x50
+ * @size 0x4C
  * @unknownret
  */
 void OpB_LoadDataBG2(void);
@@ -56,7 +56,7 @@ void OpB_LoadDataBG2(void);
  *
  * @mangled OpB_InitProcess__Fv
  * @address 0x1DB9470
- * @size 0xD50
+ * @size 0xD4C
  * @unknownret
  */
 void OpB_InitProcess(void);
@@ -66,7 +66,7 @@ void OpB_InitProcess(void);
  *
  * @mangled OpB_InitProcess2__Fv
  * @address 0x1DBA1C0
- * @size 0x700
+ * @size 0x6F4
  * @unknownret
  */
 void OpB_InitProcess2(void);
@@ -76,7 +76,7 @@ void OpB_InitProcess2(void);
  *
  * @mangled OpB_MotionProcess__Fv
  * @address 0x1DBA8C0
- * @size 0x460
+ * @size 0x454
  * @unknownret
  */
 void OpB_MotionProcess(void);
@@ -86,7 +86,7 @@ void OpB_MotionProcess(void);
  *
  * @mangled OpB_SoundProcess__Fv
  * @address 0x1DBAD20
- * @size 0x500
+ * @size 0x4F4
  * @unknownret
  */
 void OpB_SoundProcess(void);
@@ -106,7 +106,7 @@ void OpB_DrawProcess(void);
  *
  * @mangled setTexAnime__Fv
  * @address 0x1DBB8A0
- * @size 0x1F0
+ * @size 0x1EC
  * @unknownret
  */
 void setTexAnime(void);

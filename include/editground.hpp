@@ -37,7 +37,7 @@ public:
     /**
      * @mangled SetMapParts__11CEditGroundFifffi
      * @address 0x1A0470
-     * @size 0x7A0
+     * @size 0x79C
      * @unknownret
      */
     void SetMapParts(int, float, float, float, int);
@@ -45,7 +45,7 @@ public:
     /**
      * @mangled SetRiverParts__11CEditGroundFfffii
      * @address 0x1A0C10
-     * @size 0x3D0
+     * @size 0x3C8
      * @unknownret
      */
     void SetRiverParts(float, float, float, int, int);
@@ -53,7 +53,7 @@ public:
     /**
      * @mangled SetRoadParts__11CEditGroundFfffii
      * @address 0x1A0FE0
-     * @size 0x2B0
+     * @size 0x2A4
      * @unknownret
      */
     void SetRoadParts(float, float, float, int, int);
@@ -61,7 +61,7 @@ public:
     /**
      * @mangled DeleteMapParts__11CEditGroundFPiPifff
      * @address 0x1A1290
-     * @size 0x420
+     * @size 0x418
      * @unknownret
      */
     void DeleteMapParts(int *, int *, float, float, float);
@@ -69,7 +69,7 @@ public:
     /**
      * @mangled GetAreaCode__11CEditGroundFfff
      * @address 0x1A16B0
-     * @size 0xB0
+     * @size 0xAC
      * @unknownret
      */
     int GetAreaCode(float, float, float);
@@ -77,7 +77,7 @@ public:
     /**
      * @mangled GetAlt__11CEditGroundFfff
      * @address 0x1A1760
-     * @size 0x90
+     * @size 0x84
      * @unknownret
      */
     float GetAlt(float, float, float);
@@ -85,7 +85,7 @@ public:
     /**
      * @mangled GetAlt_i__11CEditGroundFfff
      * @address 0x1A17F0
-     * @size 0x90
+     * @size 0x84
      * @unknownret
      */
     void GetAlt_i(float, float, float);
@@ -101,7 +101,7 @@ public:
     /**
      * @mangled GetPartsID__11CEditGroundFfff
      * @address 0x1A18D0
-     * @size 0x90
+     * @size 0x84
      * @unknownret
      */
     void GetPartsID(float, float, float);
@@ -109,7 +109,7 @@ public:
     /**
      * @mangled GetParts__11CEditGroundFfff
      * @address 0x1A1960
-     * @size 0x60
+     * @size 0x5C
      * @unknownret
      */
     CMapParts *GetParts(float, float, float);
@@ -117,7 +117,7 @@ public:
     /**
      * @mangled CheckEffect__11CEditGroundFv
      * @address 0x1A19C0
-     * @size 0x20
+     * @size 0x18
      * @unknownret
      */
     void CheckEffect(void);
@@ -125,7 +125,7 @@ public:
     /**
      * @mangled SetBuildEffect__11CEditGroundFi
      * @address 0x1A19E0
-     * @size 0x140
+     * @size 0x134
      * @unknownret
      */
     void SetBuildEffect(int);
@@ -149,7 +149,7 @@ public:
     /**
      * @mangled EditAreaClip__11CEditGroundFP7CCameraf
      * @address 0x1A1E30
-     * @size 0x8A0
+     * @size 0x89C
      * @unknownret
      */
     void EditAreaClip(CCamera *, float);
@@ -157,7 +157,7 @@ public:
     /**
      * @mangled GetRandomPlanePos__11CEditGroundFPfPA4_fiPf
      * @address 0x1A26D0
-     * @size 0x3C0
+     * @size 0x3BC
      * @unknownret
      */
     int GetRandomPlanePos(float *, float (*)[4], int, float *);
@@ -165,7 +165,7 @@ public:
     /**
      * @mangled GetNearParts__11CEditGroundFPP9CMapPartsiP7CBoxVu0P7CBoxVu0
      * @address 0x1A2A90
-     * @size 0x180
+     * @size 0x17C
      * @unknownret
      */
     void GetNearParts(CMapParts **, int, CBoxVu0 *, CBoxVu0 *);
@@ -173,7 +173,7 @@ public:
     /**
      * @mangled MakePartsBox__11CEditGroundFv
      * @address 0x1A2C10
-     * @size 0x70
+     * @size 0x64
      * @unknownret
      */
     void MakePartsBox(void);
@@ -181,7 +181,7 @@ public:
     /**
      * @mangled GetPartsBox__11CEditGroundFP7CBoxVu0fff
      * @address 0x1A2C80
-     * @size 0x90
+     * @size 0x8C
      * @unknownret
      */
     void GetPartsBox(CBoxVu0 *, float, float, float);
@@ -197,7 +197,7 @@ public:
     /**
      * @mangled DrawBaseGround__11CEditGroundFv
      * @address 0x1A2EA0
-     * @size 0x70
+     * @size 0x64
      * @unknownret
      */
     void DrawBaseGround(void);
@@ -205,7 +205,7 @@ public:
     /**
      * @mangled Draw__11CEditGroundFfiiiii
      * @address 0x1A2F10
-     * @size 0x240
+     * @size 0x23C
      * @unknownret
      */
     void Draw(float, int, int, int, int, int);
@@ -213,7 +213,7 @@ public:
     /**
      * @mangled StepWater__11CEditGroundFv
      * @address 0x1A3150
-     * @size 0x210
+     * @size 0x20C
      * @unknownret
      */
     void StepWater(void);
@@ -221,7 +221,7 @@ public:
     /**
      * @mangled DrawWaterSurface__11CEditGroundFP7CCamera
      * @address 0x1A3360
-     * @size 0x2C0
+     * @size 0x2B8
      * @unknownret
      */
     void DrawWaterSurface(CCamera *);
@@ -229,7 +229,7 @@ public:
     /**
      * @mangled DrawWater__11CEditGroundFi
      * @address 0x1A3620
-     * @size 0x320
+     * @size 0x314
      * @unknownret
      */
     void DrawWater(int);
@@ -245,7 +245,7 @@ public:
     /**
      * @mangled DrawShadow__11CEditGroundFiff
      * @address 0x1A3BE0
-     * @size 0x350
+     * @size 0x34C
      * @unknownret
      */
     void DrawShadow(int, float, float);
@@ -253,7 +253,7 @@ public:
     /**
      * @mangled DrawPartsCursor__11CEditGroundFiPfPfiPfi
      * @address 0x1A3F30
-     * @size 0x6E0
+     * @size 0x6D8
      * @unknownret
      */
     void DrawPartsCursor(int, float *, float *, int, float *, int);
@@ -269,7 +269,7 @@ public:
     /**
      * @mangled Save__11CEditGroundFPc
      * @address 0x1A4780
-     * @size 0x190
+     * @size 0x188
      * @unknownret
      */
     void Save(char *);
@@ -277,7 +277,7 @@ public:
     /**
      * @mangled Load__11CEditGroundFPc
      * @address 0x1A4910
-     * @size 0x380
+     * @size 0x374
      * @unknownret
      */
     void Load(char *);
@@ -285,7 +285,7 @@ public:
     /**
      * @mangled Save__11CEditGroundFiP9CSaveData
      * @address 0x1A4C90
-     * @size 0x180
+     * @size 0x17C
      * @unknownret
      */
     void Save(int, CSaveData *);
@@ -309,7 +309,7 @@ public:
     /**
      * @mangled PickUpPoly__11CEditGroundFP6CCPoly7CBoxVu0i
      * @address 0x1A4F50
-     * @size 0x220
+     * @size 0x214
      * @unknownret
      */
     int PickUpPoly(CCPoly *, CBoxVu0, int);
@@ -317,7 +317,7 @@ public:
     /**
      * @mangled PickUpEditAreaPoly__11CEditGroundFP6CCPolyfff
      * @address 0x1A5170
-     * @size 0xA0
+     * @size 0x94
      * @unknownret
      */
     int PickUpEditAreaPoly(CCPoly *, float, float, float);
@@ -325,7 +325,7 @@ public:
     /**
      * @mangled PickUpCameraPoly__11CEditGroundFP6CCPolyR7CBoxVu0i
      * @address 0x1A5210
-     * @size 0x300
+     * @size 0x2F4
      * @unknownret
      */
     void PickUpCameraPoly(CCPoly *, CBoxVu0 &, int);
@@ -333,7 +333,7 @@ public:
     /**
      * @mangled Clear__11CEditGroundFv
      * @address 0x1A5510
-     * @size 0x2F0
+     * @size 0x2E8
      * @unknownret
      */
     void Clear(void);
@@ -341,7 +341,7 @@ public:
     /**
      * @mangled Initialize__11CEditGroundFv
      * @address 0x1A5800
-     * @size 0x1B0
+     * @size 0x1A8
      * @unknownret
      */
     void Initialize(void);
@@ -357,14 +357,14 @@ public:
     /**
      * @mangled __ct__11CEditGroundFv
      * @address 0x1A59F0
-     * @size 0xF0
+     * @size 0xE4
      */
     CEditGround(void);
 
     /**
      * @mangled RequestCheck__11CEditGroundFv
      * @address 0x1A5FE0
-     * @size 0x200
+     * @size 0x1F4
      * @unknownret
      */
     void RequestCheck(void);
@@ -380,7 +380,7 @@ public:
     /**
      * @mangled GetRectParts__11CEditGroundFP8CRect_i_P9CMapPartsi
      * @address 0x1A62C0
-     * @size 0x150
+     * @size 0x14C
      * @unknownret
      */
     void GetRectParts(CRect_i_ *, CMapParts *, int);
@@ -388,7 +388,7 @@ public:
     /**
      * @mangled GetRectParts__11CEditGroundFP8CRect_i_P9CMapPartsii
      * @address 0x1A6410
-     * @size 0x340
+     * @size 0x338
      * @unknownret
      */
     void GetRectParts(CRect_i_ *, CMapParts *, int, int);
@@ -396,7 +396,7 @@ public:
     /**
      * @mangled GetRectDirParts__11CEditGroundFP8CRect_i_P9CMapPartsii
      * @address 0x1A6750
-     * @size 0x270
+     * @size 0x264
      * @unknownret
      */
     void GetRectDirParts(CRect_i_ *, CMapParts *, int, int);
@@ -404,7 +404,7 @@ public:
     /**
      * @mangled NornRequest__11CEditGroundFPA64_P9CMapParts
      * @address 0x1A69C0
-     * @size 0x3D0
+     * @size 0x3C4
      * @unknownret
      */
     void NornRequest(CMapParts *(*) [64]);
@@ -412,7 +412,7 @@ public:
     /**
      * @mangled MatatagiRequest__11CEditGroundFPA64_P9CMapParts
      * @address 0x1A6D90
-     * @size 0x660
+     * @size 0x65C
      * @unknownret
      */
     void MatatagiRequest(CMapParts *(*) [64]);
@@ -420,7 +420,7 @@ public:
     /**
      * @mangled QueensRequest__11CEditGroundFPA64_P9CMapParts
      * @address 0x1A73F0
-     * @size 0x4A0
+     * @size 0x49C
      * @unknownret
      */
     void QueensRequest(CMapParts *(*) [64]);
@@ -428,7 +428,7 @@ public:
     /**
      * @mangled MuskaRequest__11CEditGroundFPA64_P9CMapParts
      * @address 0x1A7920
-     * @size 0x620
+     * @size 0x614
      * @unknownret
      */
     void MuskaRequest(CMapParts *(*) [64]);
@@ -447,7 +447,7 @@ public:
     /**
      * @mangled Draw__12CPartsCursorFPfii
      * @address 0x1A5CB0
-     * @size 0x330
+     * @size 0x328
      * @unknownret
      */
     void Draw(float *, int, int);

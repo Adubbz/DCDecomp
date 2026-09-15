@@ -7,7 +7,7 @@
  *
  * @mangled InitProcA__Fv
  * @address 0x1DCB560
- * @size 0x830
+ * @size 0x82C
  * @unknownret
  */
 void InitProcA(void);
@@ -17,7 +17,7 @@ void InitProcA(void);
  *
  * @mangled DrawProcA__Fv
  * @address 0x1DCBD90
- * @size 0x7E0
+ * @size 0x7D4
  * @unknownret
  */
 void DrawProcA(void);
@@ -41,7 +41,7 @@ void DrawProcB(void);
 /**
  * @mangled AtraLight__Fv
  * @address 0x1DCD1D0
- * @size 0x290
+ * @size 0x28C
  * @unknownret
  */
 void AtraLight(void);
@@ -49,7 +49,7 @@ void AtraLight(void);
 /**
  * @mangled InitProcC__Fv
  * @address 0x1DCD460
- * @size 0x680
+ * @size 0x67C
  * @unknownret
  */
 void InitProcC(void);
@@ -57,7 +57,7 @@ void InitProcC(void);
 /**
  * @mangled DrawProcC__Fv
  * @address 0x1DCDAE0
- * @size 0x380
+ * @size 0x37C
  * @unknownret
  */
 void DrawProcC(void);
@@ -65,7 +65,7 @@ void DrawProcC(void);
 /**
  * @mangled InitProcD__Fv
  * @address 0x1DCDE60
- * @size 0x620
+ * @size 0x614
  * @unknownret
  */
 void InitProcD(void);
@@ -73,7 +73,7 @@ void InitProcD(void);
 /**
  * @mangled DrawProcD__Fv
  * @address 0x1DCE480
- * @size 0x220
+ * @size 0x218
  * @unknownret
  */
 void DrawProcD(void);
@@ -81,7 +81,7 @@ void DrawProcD(void);
 /**
  * @mangled InitProcE__Fv
  * @address 0x1DCE6A0
- * @size 0x540
+ * @size 0x538
  * @unknownret
  */
 void InitProcE(void);
@@ -105,7 +105,7 @@ void InitProcF(void);
 /**
  * @mangled DrawProcF__Fv
  * @address 0x1DCF4A0
- * @size 0x280
+ * @size 0x27C
  * @unknownret
  */
 void DrawProcF(void);
@@ -129,7 +129,7 @@ void DrawProcG(void);
 /**
  * @mangled InitProcH__Fv
  * @address 0x1DCFEF0
- * @size 0x9F0
+ * @size 0x9E8
  * @unknownret
  */
 void InitProcH(void);
@@ -137,7 +137,7 @@ void InitProcH(void);
 /**
  * @mangled DrawProcH__Fv
  * @address 0x1DD08E0
- * @size 0x3C0
+ * @size 0x3BC
  * @unknownret
  */
 void DrawProcH(void);
@@ -145,7 +145,7 @@ void DrawProcH(void);
 /**
  * @mangled InitProcI__Fv
  * @address 0x1DD0CA0
- * @size 0x820
+ * @size 0x814
  * @unknownret
  */
 void InitProcI(void);
@@ -153,7 +153,7 @@ void InitProcI(void);
 /**
  * @mangled DrawProcI__Fv
  * @address 0x1DD14C0
- * @size 0x2A0
+ * @size 0x29C
  * @unknownret
  */
 void DrawProcI(void);
@@ -161,7 +161,7 @@ void DrawProcI(void);
 /**
  * @mangled InitProcTitle__Fv
  * @address 0x1DD1760
- * @size 0xA0
+ * @size 0x9C
  * @unknownret
  */
 void InitProcTitle(void);
@@ -169,7 +169,7 @@ void InitProcTitle(void);
 /**
  * @mangled DrawProcTitle__Fv
  * @address 0x1DD1800
- * @size 0x2B0
+ * @size 0x2A4
  * @unknownret
  */
 void DrawProcTitle(void);
@@ -177,7 +177,7 @@ void DrawProcTitle(void);
 /**
  * @mangled TitleInit__Fi
  * @address 0x1DD1AB0
- * @size 0x770
+ * @size 0x76C
  * @unknownret
  */
 void TitleInit(int);
@@ -185,7 +185,7 @@ void TitleInit(int);
 /**
  * @mangled TitleLoop__Fv
  * @address 0x1DD2220
- * @size 0x9F0
+ * @size 0x9E4
  * @unknownret
  */
 int TitleLoop(void);
@@ -195,7 +195,7 @@ int TitleLoop(void);
  *
  * @mangled TitleDraw__Fv
  * @address 0x1DD2C10
- * @size 0x11F0
+ * @size 0x11EC
  * @unknownret
  */
 void TitleDraw(void);

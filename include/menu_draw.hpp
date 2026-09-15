@@ -88,7 +88,7 @@ extern char MenuGrobalDir[64];
  *
  * @mangled SaveMenuKeySaveCheck__Fv
  * @address 0x221730
- * @size 0x170
+ * @size 0x168
  */
 int SaveMenuKeySaveCheck(void);
 
@@ -115,7 +115,7 @@ int SaveMenuKeySave(void);
  *
  * @mangled SaveMenuKeyEndSave__Fv
  * @address 0x221AB0
- * @size 0x80
+ * @size 0x74
  */
 int SaveMenuKeyEndSave(void);
 
@@ -133,7 +133,7 @@ int SaveMenuKeyLoadDecide(void);
  *
  * @mangled SaveMenuKeyLoad__Fv
  * @address 0x221C30
- * @size 0xE0
+ * @size 0xDC
  */
 int SaveMenuKeyLoad(void);
 
@@ -142,7 +142,7 @@ int SaveMenuKeyLoad(void);
  *
  * @mangled SaveMenuKeyArart__Fv
  * @address 0x221D10
- * @size 0x130
+ * @size 0x128
  */
 int SaveMenuKeyArart(void);
 
@@ -151,7 +151,7 @@ int SaveMenuKeyArart(void);
  *
  * @mangled SaveMenuKeyNewDirSelect__Fv
  * @address 0x221E40
- * @size 0xD0
+ * @size 0xC8
  */
 int SaveMenuKeyNewDirSelect(void);
 
@@ -160,7 +160,7 @@ int SaveMenuKeyNewDirSelect(void);
  *
  * @mangled SaveMenuKeyNewDir__Fv
  * @address 0x221F10
- * @size 0x110
+ * @size 0x108
  */
 int SaveMenuKeyNewDir(void);
 
@@ -178,7 +178,7 @@ int SaveMenuKeyFormat(void);
  *
  * @mangled SaveMenuKeyUnFormat__Fv
  * @address 0x222170
- * @size 0x80
+ * @size 0x78
  */
 int SaveMenuKeyUnFormat(void);
 
@@ -187,7 +187,7 @@ int SaveMenuKeyUnFormat(void);
  *
  * @mangled SaveMenuKeyDifVersion__Fv
  * @address 0x2221F0
- * @size 0x60
+ * @size 0x5C
  */
 int SaveMenuKeyDifVersion(void);
 
@@ -196,7 +196,7 @@ int SaveMenuKeyDifVersion(void);
  *
  * @mangled SaveMenuKeyDelete__Fv
  * @address 0x222250
- * @size 0x10
+ * @size 0xC
  */
 s32 SaveMenuKeyDelete(void);
 
@@ -205,7 +205,7 @@ s32 SaveMenuKeyDelete(void);
  *
  * @mangled SaveMenuKeyCopy__Fv
  * @address 0x222260
- * @size 0x10
+ * @size 0xC
  */
 s32 SaveMenuKeyCopy(void);
 
@@ -214,7 +214,7 @@ s32 SaveMenuKeyCopy(void);
  *
  * @mangled SaveMenuKeyAfterEnding__Fv
  * @address 0x222270
- * @size 0x80
+ * @size 0x7C
  */
 int SaveMenuKeyAfterEnding(void);
 
@@ -223,7 +223,7 @@ int SaveMenuKeyAfterEnding(void);
  *
  * @mangled SaveMenuKeySaveDecideEnding__Fv
  * @address 0x2222F0
- * @size 0x80
+ * @size 0x7C
  */
 int SaveMenuKeySaveDecideEnding(void);
 
@@ -232,7 +232,7 @@ int SaveMenuKeySaveDecideEnding(void);
  *
  * @mangled SaveMenuKeySaveEnding__Fv
  * @address 0x222370
- * @size 0x40
+ * @size 0x3C
  */
 int SaveMenuKeySaveEnding(void);
 
@@ -241,7 +241,7 @@ int SaveMenuKeySaveEnding(void);
  *
  * @mangled SaveMenuKeyEndSaveEnding__Fv
  * @address 0x2223B0
- * @size 0x60
+ * @size 0x58
  */
 int SaveMenuKeyEndSaveEnding(void);
 
@@ -259,7 +259,7 @@ int GetSaveMenuMsgNo(void);
  *
  * @mangled SaveMenuTextureEnter__Fv
  * @address 0x222640
- * @size 0x2D0
+ * @size 0x2C4
  */
 int SaveMenuTextureEnter(void);
 
@@ -268,7 +268,7 @@ int SaveMenuTextureEnter(void);
  *
  * @mangled SaveMenuEffectFadeOut__Fv
  * @address 0x222910
- * @size 0x30
+ * @size 0x28
  */
 int SaveMenuEffectFadeOut(void);
 
@@ -278,7 +278,7 @@ int SaveMenuEffectFadeOut(void);
  *
  * @mangled GetSaveBoardAlphaInfo__FiiRiRii
  * @address 0x222940
- * @size 0x160
+ * @size 0x154
  */
 void GetSaveBoardAlphaInfo(int x, int width, int &start_alpha, int &end_alpha, int alpha);
 
@@ -287,7 +287,7 @@ void GetSaveBoardAlphaInfo(int x, int width, int &start_alpha, int &end_alpha, i
  *
  * @mangled DrawSaveBoard__FP13SAVEDATA_INFOPP8CTextureiiii
  * @address 0x222AA0
- * @size 0x9C0
+ * @size 0x9B8
  */
 void DrawSaveBoard(SAVEDATA_INFO *, CTexture **, int, int, int, int);
 
@@ -296,7 +296,7 @@ void DrawSaveBoard(SAVEDATA_INFO *, CTexture **, int, int, int, int);
  *
  * @mangled DrawNewFileTemplete__Fiii
  * @address 0x223460
- * @size 0x4E0
+ * @size 0x4DC
  */
 void DrawNewFileTemplete(int, int, int);
 
@@ -305,7 +305,7 @@ void DrawNewFileTemplete(int, int, int);
  *
  * @mangled InitExistData__Fv
  * @address 0x223940
- * @size 0x180
+ * @size 0x174
  */
 int InitExistData(void);
 
@@ -323,7 +323,7 @@ int SaveEnableCheck(void);
  *
  * @mangled InitEventItemSelect__FiPiP9ITEM_PACKiiii
  * @address 0x223C60
- * @size 0x480
+ * @size 0x478
  */
 void InitEventItemSelect(int, int *, ITEM_PACK *, int, int, int, int);
 
@@ -332,7 +332,7 @@ void InitEventItemSelect(int, int *, ITEM_PACK *, int, int, int, int);
  *
  * @mangled EventItemSelectExit__Fv
  * @address 0x2240E0
- * @size 0x60
+ * @size 0x5C
  */
 void EventItemSelectExit(void);
 
@@ -341,7 +341,7 @@ void EventItemSelectExit(void);
  *
  * @mangled EventItemSelectLoop__FPi
  * @address 0x224140
- * @size 0x120
+ * @size 0x11C
  */
 int EventItemSelectLoop(int *);
 
@@ -350,7 +350,7 @@ int EventItemSelectLoop(int *);
  *
  * @mangled EventItemSelectKey__FPi
  * @address 0x224260
- * @size 0x6B0
+ * @size 0x6A4
  */
 int EventItemSelectKey(int *);
 
@@ -359,7 +359,7 @@ int EventItemSelectKey(int *);
  *
  * @mangled DrawEventAndFishMenuBoard_Ver__FP8CTexture8CRect_i_iiii
  * @address 0x224910
- * @size 0x150
+ * @size 0x148
  */
 void DrawEventAndFishMenuBoard_Ver(CTexture *, CRect_i_, int, int, int, int);
 
@@ -368,7 +368,7 @@ void DrawEventAndFishMenuBoard_Ver(CTexture *, CRect_i_, int, int, int, int);
  *
  * @mangled DrawEventAndFishMenuBoard__FP8CTextureiiii
  * @address 0x224A60
- * @size 0x2F0
+ * @size 0x2E8
  */
 void DrawEventAndFishMenuBoard(CTexture *, int, int, int, int);
 
@@ -377,7 +377,7 @@ void DrawEventAndFishMenuBoard(CTexture *, int, int, int, int);
  *
  * @mangled EventItemSelectDraw__Fv
  * @address 0x224D50
- * @size 0x6D0
+ * @size 0x6C4
  */
 void EventItemSelectDraw(void);
 
@@ -386,7 +386,7 @@ void EventItemSelectDraw(void);
  *
  * @mangled DrawEventItemBoard__FiiiiiP8CTexture
  * @address 0x225420
- * @size 0x110
+ * @size 0x10C
  */
 void DrawEventItemBoard(int, int, int, int, int, CTexture *);
 
@@ -395,7 +395,7 @@ void DrawEventItemBoard(int, int, int, int, int, CTexture *);
  *
  * @mangled PlayerAllItemCheck__Fi
  * @address 0x225530
- * @size 0xA0
+ * @size 0x9C
  */
 int PlayerAllItemCheck(int item);
 
@@ -404,7 +404,7 @@ int PlayerAllItemCheck(int item);
  *
  * @mangled GetAddAttachItem__Fi
  * @address 0x2255D0
- * @size 0x30
+ * @size 0x28
  */
 s32 GetAddAttachItem(int);
 
@@ -422,7 +422,7 @@ int TransWepNo(int weapon_no);
  *
  * @mangled TransWepNoNewToOld__Fi
  * @address 0x2256E0
- * @size 0x130
+ * @size 0x128
  */
 int TransWepNoNewToOld(int weapon_no);
 
@@ -431,7 +431,7 @@ int TransWepNoNewToOld(int weapon_no);
  *
  * @mangled PlusAttachmentVolume__FP11ATTACH_LISTP11ATTACH_LISTf
  * @address 0x225810
- * @size 0x160
+ * @size 0x158
  */
 void PlusAttachmentVolume(ATTACH_LIST *, ATTACH_LIST *, float);
 
@@ -440,7 +440,7 @@ void PlusAttachmentVolume(ATTACH_LIST *, ATTACH_LIST *, float);
  *
  * @mangled GetWeaponAttachStatusUp__FP11WEAPON_HAVEi
  * @address 0x225970
- * @size 0x130
+ * @size 0x124
  */
 int GetWeaponAttachStatusUp(WEAPON_HAVE *, int);
 
@@ -459,7 +459,7 @@ int BattleSubWeaponDmg(float amount, int kind);
  *
  * @mangled SetWeaponAttachStatus__FP11WEAPON_HAVE
  * @address 0x225AA0
- * @size 0xC0
+ * @size 0xB4
  */
 void SetWeaponAttachStatus(WEAPON_HAVE *);
 
@@ -469,7 +469,7 @@ void SetWeaponAttachStatus(WEAPON_HAVE *);
  *
  * @mangled WeaponAllValueSet__FP11WEAPON_HAVEP11WEAPON_HAVEi
  * @address 0x225B60
- * @size 0x3F0
+ * @size 0x3E8
  */
 void WeaponAllValueSet(WEAPON_HAVE *, WEAPON_HAVE *, int);
 
@@ -478,7 +478,7 @@ void WeaponAllValueSet(WEAPON_HAVE *, WEAPON_HAVE *, int);
  *
  * @mangled SetAttachMentValue__FiisP11ATTACH_LIST
  * @address 0x225F50
- * @size 0x160
+ * @size 0x154
  */
 int SetAttachMentValue(int, int, short, ATTACH_LIST *);
 
@@ -496,7 +496,7 @@ int GetAttachVolumeForMsg(ATTACH_LIST *);
  *
  * @mangled InitDunEnterMenu__Fiii
  * @address 0x226110
- * @size 0x410
+ * @size 0x408
  */
 int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor);
 
@@ -514,7 +514,7 @@ void ExitDunEnterMenu(void);
  *
  * @mangled DunEnterMenuLoop__Fv
  * @address 0x226590
- * @size 0x90
+ * @size 0x8C
  */
 int DunEnterMenuLoop(void);
 
@@ -523,7 +523,7 @@ int DunEnterMenuLoop(void);
  *
  * @mangled DunEnterMenuKey__Fv
  * @address 0x226620
- * @size 0x6F0
+ * @size 0x6EC
  */
 int DunEnterMenuKey(void);
 
@@ -532,7 +532,7 @@ int DunEnterMenuKey(void);
  *
  * @mangled DunEnterDraw__Fv
  * @address 0x226D10
- * @size 0x540
+ * @size 0x538
  */
 void DunEnterDraw(void);
 
@@ -541,7 +541,7 @@ void DunEnterDraw(void);
  *
  * @mangled DunEnterBoardWaku__Fiii
  * @address 0x227250
- * @size 0x4B0
+ * @size 0x4AC
  */
 void DunEnterBoardWaku(int, int, int);
 
@@ -559,7 +559,7 @@ void DunEnterBoard(int, int, int);
  *
  * @mangled DrawEnemyNum__Fiiiiii
  * @address 0x227EC0
- * @size 0x160
+ * @size 0x154
  */
 void DrawEnemyNum(int, int, int, int, int, int);
 
@@ -568,7 +568,7 @@ void DrawEnemyNum(int, int, int, int, int, int);
  *
  * @mangled DrawGetAtoraNumBoard__Fiiiiii
  * @address 0x228020
- * @size 0x250
+ * @size 0x248
  */
 void DrawGetAtoraNumBoard(int, int, int, int, int, int);
 
@@ -577,7 +577,7 @@ void DrawGetAtoraNumBoard(int, int, int, int, int, int);
  *
  * @mangled DrawDunNumberClip__Fiiiiii
  * @address 0x228270
- * @size 0xE0
+ * @size 0xDC
  */
 void DrawDunNumberClip(int, int, int, int, int, int);
 
@@ -586,7 +586,7 @@ void DrawDunNumberClip(int, int, int, int, int, int);
  *
  * @mangled DrawDunEnterBack__Fi
  * @address 0x228350
- * @size 0xA0
+ * @size 0x9C
  */
 void DrawDunEnterBack(int);
 
@@ -604,7 +604,7 @@ void DrawDunEnterFloorName(int, int, int, int, int, int);
  *
  * @mangled StartQuickChange__FP1iPii
  * @address 0x228680
- * @size 0x530
+ * @size 0x524
  */
 void StartQuickChange(u_long128 *, int, int *, int);
 
@@ -613,7 +613,7 @@ void StartQuickChange(u_long128 *, int, int *, int);
  *
  * @mangled CharaChangeLoop__Fv
  * @address 0x228BB0
- * @size 0x2E0
+ * @size 0x2DC
  */
 int CharaChangeLoop(void);
 
@@ -622,7 +622,7 @@ int CharaChangeLoop(void);
  *
  * @mangled CharaChangeKey__Fv
  * @address 0x228E90
- * @size 0x8B0
+ * @size 0x8A8
  */
 int CharaChangeKey(void);
 
@@ -631,7 +631,7 @@ int CharaChangeKey(void);
  *
  * @mangled CharaChangeDraw__Fv
  * @address 0x229740
- * @size 0xAD0
+ * @size 0xAC4
  */
 void CharaChangeDraw(void);
 
@@ -640,7 +640,7 @@ void CharaChangeDraw(void);
  *
  * @mangled DngActItemModelReadStart__FP1
  * @address 0x22A210
- * @size 0x180
+ * @size 0x17C
  */
 int DngActItemModelReadStart(u_long128 *buffer);
 
@@ -649,14 +649,14 @@ int DngActItemModelReadStart(u_long128 *buffer);
  *
  * @mangled DngActItemModelBuild__Fi
  * @address 0x22A390
- * @size 0x210
+ * @size 0x20C
  */
 int DngActItemModelBuild(int);
 
 /**
  * @mangled DngActiveItemTextureCopy__Fv
  * @address 0x22A5A0
- * @size 0x110
+ * @size 0x104
  * @unknownret
  */
 void DngActiveItemTextureCopy(void);
@@ -674,7 +674,7 @@ void DngActiveWeaponTextureCopy(void);
  *
  * @mangled GetWeaponMsgNo__FP11WEAPON_HAVE
  * @address 0x22A7E0
- * @size 0x60
+ * @size 0x58
  */
 s32 GetWeaponMsgNo(WEAPON_HAVE *);
 
@@ -683,7 +683,7 @@ s32 GetWeaponMsgNo(WEAPON_HAVE *);
  *
  * @mangled GetWeaponMsgNo2__Fi
  * @address 0x22A840
- * @size 0x40
+ * @size 0x38
  */
 s16 GetWeaponMsgNo2(int);
 
@@ -692,7 +692,7 @@ s16 GetWeaponMsgNo2(int);
  *
  * @mangled DrawWepAttach__FiiP11WEAPON_HAVEii
  * @address 0x22A880
- * @size 0x1C0
+ * @size 0x1B4
  */
 void DrawWepAttach(int, int, WEAPON_HAVE *, int, int);
 
@@ -701,7 +701,7 @@ void DrawWepAttach(int, int, WEAPON_HAVE *, int, int);
  *
  * @mangled GetAtraTipNowHave__Fii
  * @address 0x22AA40
- * @size 0x180
+ * @size 0x17C
  */
 int GetAtraTipNowHave(int, int);
 
@@ -728,7 +728,7 @@ int InitItemPolygonView(int item_no, u_long128 *buffer);
  *
  * @mangled EnterItemPolygonView__Fv
  * @address 0x22AD20
- * @size 0x220
+ * @size 0x21C
  */
 int EnterItemPolygonView(void);
 
@@ -737,7 +737,7 @@ int EnterItemPolygonView(void);
  *
  * @mangled LocalDrawItemPolygonView__Fv
  * @address 0x22AF40
- * @size 0x270
+ * @size 0x26C
  */
 void LocalDrawItemPolygonView(void);
 
@@ -746,7 +746,7 @@ void LocalDrawItemPolygonView(void);
  *
  * @mangled DrawItemPolygonView__Fv
  * @address 0x22B1B0
- * @size 0x40
+ * @size 0x38
  */
 void DrawItemPolygonView(void);
 
@@ -755,7 +755,7 @@ void DrawItemPolygonView(void);
  *
  * @mangled ConvDebugSelectToExcelListNo__Fi
  * @address 0x22B1F0
- * @size 0x50
+ * @size 0x4C
  */
 int ConvDebugSelectToExcelListNo(int selection);
 
@@ -773,7 +773,7 @@ int DebugItemGetKey(void);
  *
  * @mangled DebugItemGetDraw__Fv
  * @address 0x22B5B0
- * @size 0x210
+ * @size 0x204
  */
 void DebugItemGetDraw(void);
 
@@ -800,7 +800,7 @@ char *GetMenuTextureDir(void);
  *
  * @mangled GetMenuLangFlag__Fv
  * @address 0x22BA00
- * @size 0x10
+ * @size 0xC
  */
 int GetMenuLangFlag(void);
 
@@ -809,7 +809,7 @@ int GetMenuLangFlag(void);
  *
  * @mangled GetNowSelectLanguage__Fi
  * @address 0x22BA10
- * @size 0x40
+ * @size 0x34
  */
 char *GetNowSelectLanguage(int);
 
@@ -845,7 +845,7 @@ int LoadFileMenuData(char *, unsigned int *);
  *
  * @mangled BtlMenuBufferSet__Fi
  * @address 0x22BBB0
- * @size 0x50
+ * @size 0x48
  */
 u_long128 *BtlMenuBufferSet(int);
 
@@ -854,7 +854,7 @@ u_long128 *BtlMenuBufferSet(int);
  *
  * @mangled MenuCalcBufAlignment__FP1
  * @address 0x22BC00
- * @size 0x40
+ * @size 0x38
  */
 u_long128 *MenuCalcBufAlignment(u_long128 *buffer);
 
@@ -863,7 +863,7 @@ u_long128 *MenuCalcBufAlignment(u_long128 *buffer);
  *
  * @mangled GetAtoraMaxVillage__Fv
  * @address 0x22BC40
- * @size 0xD0
+ * @size 0xC8
  */
 int GetAtoraMaxVillage(void);
 
@@ -872,7 +872,7 @@ int GetAtoraMaxVillage(void);
  *
  * @mangled GetNowMapTransAtraMap__Fi
  * @address 0x22BD10
- * @size 0xE0
+ * @size 0xDC
  */
 int GetNowMapTransAtraMap(int);
 
@@ -881,7 +881,7 @@ int GetNowMapTransAtraMap(int);
  *
  * @mangled MenuWorldTrans__FP7CCamera
  * @address 0x22BDF0
- * @size 0xA0
+ * @size 0x9C
  */
 void MenuWorldTrans(CCamera *);
 
@@ -890,7 +890,7 @@ void MenuWorldTrans(CCamera *);
  *
  * @mangled MenuPolygonDraw__FiPFv_v
  * @address 0x22BE90
- * @size 0x190
+ * @size 0x188
  */
 void MenuPolygonDraw(int, void (*)(void));
 
@@ -899,7 +899,7 @@ void MenuPolygonDraw(int, void (*)(void));
  *
  * @mangled Get3DPosTo2DPos__FP6CFramePi
  * @address 0x22C020
- * @size 0x70
+ * @size 0x68
  */
 void Get3DPosTo2DPos(CFrame *, int *);
 
@@ -908,7 +908,7 @@ void Get3DPosTo2DPos(CFrame *, int *);
  *
  * @mangled GetMenuCommonFontW__Fii
  * @address 0x22C090
- * @size 0x40
+ * @size 0x34
  */
 int GetMenuCommonFontW(int, int);
 
@@ -917,7 +917,7 @@ int GetMenuCommonFontW(int, int);
  *
  * @mangled GetMenuCommonPutXY__FP6ClsMesi
  * @address 0x22C0D0
- * @size 0x70
+ * @size 0x64
  */
 int GetMenuCommonPutXY(ClsMes *, int);
 
@@ -926,7 +926,7 @@ int GetMenuCommonPutXY(ClsMes *, int);
  *
  * @mangled InitMenuMesSet__FiPs
  * @address 0x22C140
- * @size 0xD60
+ * @size 0xD58
  */
 void InitMenuMesSet(int, short *);
 
@@ -935,7 +935,7 @@ void InitMenuMesSet(int, short *);
  *
  * @mangled DrawMenuClsMes__FP6ClsMesii
  * @address 0x22CEA0
- * @size 0x50
+ * @size 0x48
  */
 void DrawMenuClsMes(ClsMes *, int, int);
 
@@ -953,7 +953,7 @@ void ComMenuSePlay(int);
  *
  * @mangled DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i
  * @address 0x22CF20
- * @size 0x70
+ * @size 0x6C
  */
 void DrawMenu2DSprite(CTexture *, CRect_i_, CRect_i_, int);
 
@@ -962,7 +962,7 @@ void DrawMenu2DSprite(CTexture *, CRect_i_, CRect_i_, int);
  *
  * @mangled DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_UcUcUci
  * @address 0x22CF90
- * @size 0xA0
+ * @size 0x9C
  */
 void DrawMenu2DSprite(CTexture *, CRect_i_, CRect_i_, unsigned char, unsigned char, unsigned char, int);
 
@@ -971,7 +971,7 @@ void DrawMenu2DSprite(CTexture *, CRect_i_, CRect_i_, unsigned char, unsigned ch
  *
  * @mangled DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBA
  * @address 0x22D030
- * @size 0xB0
+ * @size 0xA4
  */
 void DrawMenu2DSprite(CTexture *, CRect_i_, CRect_i_, spRGBA *, spRGBA *, spRGBA *, spRGBA *);
 
@@ -980,7 +980,7 @@ void DrawMenu2DSprite(CTexture *, CRect_i_, CRect_i_, spRGBA *, spRGBA *, spRGBA
  *
  * @mangled MenuTextureReload__Fi
  * @address 0x22D0E0
- * @size 0x50
+ * @size 0x44
  */
 void MenuTextureReload(int);
 
@@ -998,7 +998,7 @@ void MenuTextureDelete(int *);
  *
  * @mangled AllFillBoxForMenu__FUcUcUcUc
  * @address 0x22D1B0
- * @size 0xD0
+ * @size 0xC8
  */
 void AllFillBoxForMenu(unsigned char, unsigned char, unsigned char, unsigned char);
 
@@ -1016,7 +1016,7 @@ void AllFadeForMenu(int);
  *
  * @mangled FrameImageDraw__Fii
  * @address 0x22D2B0
- * @size 0x120
+ * @size 0x114
  */
 void FrameImageDraw(int, int);
 
@@ -1025,7 +1025,7 @@ void FrameImageDraw(int, int);
  *
  * @mangled DrawMenuColorGradation__FR8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBA
  * @address 0x22D3D0
- * @size 0x80
+ * @size 0x7C
  */
 void DrawMenuColorGradation(CRect_i_ &, spRGBA *, spRGBA *, spRGBA *, spRGBA *);
 
@@ -1034,7 +1034,7 @@ void DrawMenuColorGradation(CRect_i_ &, spRGBA *, spRGBA *, spRGBA *, spRGBA *);
  *
  * @mangled DrawMenuSideGradation__FR8CRect_i_P6spRGBAP6spRGBA
  * @address 0x22D450
- * @size 0x70
+ * @size 0x64
  */
 void DrawMenuSideGradation(CRect_i_ &, spRGBA *, spRGBA *);
 
@@ -1043,7 +1043,7 @@ void DrawMenuSideGradation(CRect_i_ &, spRGBA *, spRGBA *);
  *
  * @mangled DrawDontSetItemMark__Fiiiii
  * @address 0x22D4C0
- * @size 0xE0
+ * @size 0xDC
  */
 void DrawDontSetItemMark(int, int, int, int, int);
 
@@ -1052,7 +1052,7 @@ void DrawDontSetItemMark(int, int, int, int, int);
  *
  * @mangled DrawIconParts__Fiiiiiii
  * @address 0x22D5A0
- * @size 0x1E0
+ * @size 0x1DC
  */
 void DrawIconParts(int, int, int, int, int, int, int);
 
@@ -1061,7 +1061,7 @@ void DrawIconParts(int, int, int, int, int, int, int);
  *
  * @mangled DrawAttachNumberOrWeapon__Fiiiiiiii
  * @address 0x22D780
- * @size 0x270
+ * @size 0x26C
  */
 void DrawAttachNumberOrWeapon(int, int, int, int, int, int, int, int);
 
@@ -1070,7 +1070,7 @@ void DrawAttachNumberOrWeapon(int, int, int, int, int, int, int, int);
  *
  * @mangled FadeTexX__FiiiiPci
  * @address 0x22D9F0
- * @size 0x3A0
+ * @size 0x398
  */
 void FadeTexX(int, int, int, int, char *, int);
 
@@ -1079,7 +1079,7 @@ void FadeTexX(int, int, int, int, char *, int);
  *
  * @mangled RetCTex__FsRiRi
  * @address 0x22DD90
- * @size 0xF0
+ * @size 0xE8
  */
 CTexture *RetCTex(short, int &, int &);
 
@@ -1088,7 +1088,7 @@ CTexture *RetCTex(short, int &, int &);
  *
  * @mangled MenuTextureClip__FRiRiRiii
  * @address 0x22DE80
- * @size 0x80
+ * @size 0x78
  */
 void MenuTextureClip(int &, int &, int &, int, int);
 
@@ -1097,14 +1097,14 @@ void MenuTextureClip(int &, int &, int &, int, int);
  *
  * @mangled GetNumberKeta__Fi
  * @address 0x22DF00
- * @size 0x40
+ * @size 0x3C
  */
 int GetNumberKeta(int);
 
 /**
  * @mangled GetMenuIconInfo__Fi
  * @address 0x22DF40
- * @size 0x60
+ * @size 0x5C
  * @unknownret
  */
 void GetMenuIconInfo(int);
@@ -1114,7 +1114,7 @@ void GetMenuIconInfo(int);
  *
  * @mangled DrawMainMenuIcon__Fiiiiii
  * @address 0x22DFA0
- * @size 0x1E0
+ * @size 0x1DC
  */
 void DrawMainMenuIcon(int, int, int, int, int, int);
 
@@ -1123,7 +1123,7 @@ void DrawMainMenuIcon(int, int, int, int, int, int);
  *
  * @mangled DrawMenuVibeItem__Fiiiii
  * @address 0x22E180
- * @size 0x190
+ * @size 0x188
  */
 void DrawMenuVibeItem(int, int, int, int, int);
 
@@ -1132,7 +1132,7 @@ void DrawMenuVibeItem(int, int, int, int, int);
  *
  * @mangled GetMainMenuRightHelpWinLangOffset__FRfRfRfRf
  * @address 0x22E310
- * @size 0xB0
+ * @size 0xA8
  */
 int GetMainMenuRightHelpWinLangOffset(float &, float &, float &, float &);
 
@@ -1141,7 +1141,7 @@ int GetMainMenuRightHelpWinLangOffset(float &, float &, float &, float &);
  *
  * @mangled GetMainMenuRightHelpMsgLangOffset__FRiRi
  * @address 0x22E3C0
- * @size 0x80
+ * @size 0x78
  */
 int GetMainMenuRightHelpMsgLangOffset(int &, int &);
 
@@ -1150,7 +1150,7 @@ int GetMainMenuRightHelpMsgLangOffset(int &, int &);
  *
  * @mangled InitHaveData__FP9IHAVEITEM
  * @address 0x22E440
- * @size 0x30
+ * @size 0x28
  */
 void InitHaveData(IHAVEITEM *);
 
@@ -1159,7 +1159,7 @@ void InitHaveData(IHAVEITEM *);
  *
  * @mangled InitHaveWep__FP11WEAPON_HAVE
  * @address 0x22E470
- * @size 0x40
+ * @size 0x3C
  */
 void InitHaveWep(WEAPON_HAVE *);
 
@@ -1168,7 +1168,7 @@ void InitHaveWep(WEAPON_HAVE *);
  *
  * @mangled InitHaveAttach__FP11ATTACH_LIST
  * @address 0x22E4B0
- * @size 0x30
+ * @size 0x28
  */
 void InitHaveAttach(ATTACH_LIST *);
 
@@ -1195,7 +1195,7 @@ void MenuDataSwap(int *first, int *second);
  *
  * @mangled MenuDataSwap__FP11WEAPON_HAVEP11WEAPON_HAVE
  * @address 0x22E540
- * @size 0x90
+ * @size 0x84
  */
 void MenuDataSwap(WEAPON_HAVE *first, WEAPON_HAVE *second);
 
@@ -1204,7 +1204,7 @@ void MenuDataSwap(WEAPON_HAVE *first, WEAPON_HAVE *second);
  *
  * @mangled MenuDataSwap__FP11ATTACH_LISTP11ATTACH_LIST
  * @address 0x22E5D0
- * @size 0x90
+ * @size 0x84
  */
 void MenuDataSwap(ATTACH_LIST *first, ATTACH_LIST *second);
 
@@ -1213,7 +1213,7 @@ void MenuDataSwap(ATTACH_LIST *first, ATTACH_LIST *second);
  *
  * @mangled SetMenuTrushMark__FP9ITEM_PACK
  * @address 0x22E660
- * @size 0xB0
+ * @size 0xA4
  */
 void SetMenuTrushMark(ITEM_PACK *);
 
@@ -1231,7 +1231,7 @@ void DeleteMenuTrushMark(void);
  *
  * @mangled InitPersonalBoardMode__FP11CUserStatusP14PERSONAL_BOARDii
  * @address 0x22E740
- * @size 0x270
+ * @size 0x268
  */
 void InitPersonalBoardMode(CUserStatus *, PERSONAL_BOARD *, int, int);
 
@@ -1240,7 +1240,7 @@ void InitPersonalBoardMode(CUserStatus *, PERSONAL_BOARD *, int, int);
  *
  * @mangled BoardModeChangeKey__Fv
  * @address 0x22E9B0
- * @size 0x130
+ * @size 0x12C
  */
 int BoardModeChangeKey(void);
 
@@ -1249,7 +1249,7 @@ int BoardModeChangeKey(void);
  *
  * @mangled PersonalBoardLimmitCheck__Fv
  * @address 0x22EAE0
- * @size 0x1A0
+ * @size 0x19C
  */
 void PersonalBoardLimmitCheck(void);
 
@@ -1258,7 +1258,7 @@ void PersonalBoardLimmitCheck(void);
  *
  * @mangled PersonalBoardKeySub__Fv
  * @address 0x22EC80
- * @size 0x2E0
+ * @size 0x2DC
  */
 int PersonalBoardKeySub(void);
 

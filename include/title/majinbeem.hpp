@@ -34,7 +34,7 @@ public:
      *
      * @mangled Draw2__10CMajinBeemFP7CCameraPfPf
      * @address 0x1DADFA0
-     * @size 0x3A0
+     * @size 0x394
      */
     void Draw2(CCamera *, float *, float *);
 
@@ -43,7 +43,7 @@ public:
      *
      * @mangled Step__10CMajinBeemFv
      * @address 0x1DAE340
-     * @size 0x250
+     * @size 0x24C
      */
     void Step(void);
 

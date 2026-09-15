@@ -51,7 +51,7 @@ public:
     /**
      * @mangled SetNowFloor__14CDngStatusDataFi
      * @address 0x1BD900
-     * @size 0x40
+     * @size 0x34
      */
     void SetNowFloor(int floor);
 
@@ -65,42 +65,42 @@ public:
     /**
      * @mangled LostItem__14CDngStatusDataFi
      * @address 0x1BDB60
-     * @size 0x60
+     * @size 0x54
      */
     int LostItem(int item_id);
 
     /**
      * @mangled LostGateKey__14CDngStatusDataFv
      * @address 0x1BDBC0
-     * @size 0x130
+     * @size 0x12C
      */
     void LostGateKey(void);
 
     /**
      * @mangled GetLiveUnit__14CDngStatusDataFv
      * @address 0x1BDCF0
-     * @size 0x50
+     * @size 0x44
      */
     int GetLiveUnit(void);
 
     /**
      * @mangled CheckItemGet__14CDngStatusDataFi
      * @address 0x1BDD40
-     * @size 0x190
+     * @size 0x184
      */
     int CheckItemGet(int item_id);
 
     /**
      * @mangled CheckWeaponUser__14CDngStatusDataFi
      * @address 0x1BDED0
-     * @size 0xC0
+     * @size 0xB4
      */
     int CheckWeaponUser(int weapon_id);
 
     /**
      * @mangled CheckWeaponRot__14CDngStatusDataFi
      * @address 0x1BDF90
-     * @size 0xC0
+     * @size 0xBC
      */
     int CheckWeaponRot(int weapon_id);
 
@@ -114,35 +114,35 @@ public:
     /**
      * @mangled GetItem__14CDngStatusDataFii
      * @address 0x1BE060
-     * @size 0x400
+     * @size 0x3F8
      */
     int GetItem(int item_id, int qty);
 
     /**
      * @mangled CheckActItemSlot__14CDngStatusDataFi
      * @address 0x1BE460
-     * @size 0x50
+     * @size 0x44
      */
     int CheckActItemSlot(int item_id);
 
     /**
      * @mangled CheckDefaultWeapon__14CDngStatusDataFi
      * @address 0x1BE4B0
-     * @size 0x60
+     * @size 0x5C
      */
     int CheckDefaultWeapon(int chara_no);
 
     /**
      * @mangled SetDead__14CDngStatusDataFv
      * @address 0x1BEEF0
-     * @size 0x20
+     * @size 0x14
      */
     void SetDead(void);
 
     /**
      * @mangled SetResLimmitZone__14CDngStatusDataFv
      * @address 0x1BEF10
-     * @size 0x50
+     * @size 0x44
      */
     void SetResLimmitZone(void);
 
@@ -156,35 +156,35 @@ public:
     /**
      * @mangled Initialize__14CDngStatusDataFv
      * @address 0x1BF340
-     * @size 0x3C0
+     * @size 0x3BC
      */
     void Initialize(void);
 
     /**
      * @mangled AddKills__14CDngStatusDataFv
      * @address 0x1BF700
-     * @size 0x40
+     * @size 0x3C
      */
     void AddKills(void);
 
     /**
      * @mangled ChkKills__14CDngStatusDataFii
      * @address 0x1BF740
-     * @size 0x30
+     * @size 0x2C
      */
     s16 ChkKills(int georama_no, int floor);
 
     /**
      * @mangled GetAtraNum__14CDngStatusDataFii
      * @address 0x1BF770
-     * @size 0x80
+     * @size 0x74
      */
     int GetAtraNum(int georama_no, int floor);
 
     /**
      * @mangled GetMaxAtraNum__14CDngStatusDataFii
      * @address 0x1BF7F0
-     * @size 0x80
+     * @size 0x74
      */
     int GetMaxAtraNum(int georama_no, int floor);
 
@@ -198,7 +198,7 @@ public:
     /**
      * @mangled SetCopyAtraList__14CDngStatusDataFiiPi
      * @address 0x1BF8F0
-     * @size 0x60
+     * @size 0x5C
      */
     void SetCopyAtraList(int georama_no, int floor, int *out8);
 

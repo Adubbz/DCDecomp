@@ -538,7 +538,7 @@ STATIC_ASSERT(sizeof(WEAPON_HAVE) == 0xF8);
  *
  * @mangled GetWeaponDataInfo__Fi
  * @address 0x1D0D90
- * @size 0x40
+ * @size 0x3C
  */
 WEAPON_DATA *GetWeaponDataInfo(int weapon_no);
 
@@ -547,7 +547,7 @@ WEAPON_DATA *GetWeaponDataInfo(int weapon_no);
  *
  * @mangled GetCommonItemInfo__Fi
  * @address 0x1D0DD0
- * @size 0x60
+ * @size 0x54
  */
 COM_ITEM_INFO *GetCommonItemInfo(int item_no);
 
@@ -565,7 +565,7 @@ int GetItemTypeInfo(int item_no, s8 *kind);
  *
  * @mangled GetItemData__Fi
  * @address 0x1D0E80
- * @size 0x70
+ * @size 0x64
  */
 ITEM_DATA *GetItemData(int item_no);
 
@@ -574,7 +574,7 @@ ITEM_DATA *GetItemData(int item_no);
  *
  * @mangled GetAttachData__Fi
  * @address 0x1D0EF0
- * @size 0x60
+ * @size 0x58
  */
 ATTACH_DATA *GetAttachData(int item_no);
 
@@ -583,7 +583,7 @@ ATTACH_DATA *GetAttachData(int item_no);
  *
  * @mangled GetWeaponData__Fi
  * @address 0x1D0F50
- * @size 0x70
+ * @size 0x6C
  */
 WEAPON_DATA *GetWeaponData(int item_no);
 
@@ -601,7 +601,7 @@ int GetCommonItemDataMsg(int item_no);
  *
  * @mangled GetCommonItemDataSystemMsg__Fi
  * @address 0x1D1000
- * @size 0x30
+ * @size 0x24
  */
 int GetCommonItemDataSystemMsg(int item_no);
 
