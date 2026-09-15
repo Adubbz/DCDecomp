@@ -18,21 +18,6 @@
 /* The four values EBDraw reads to place its caution mark; all of them zero. */
 extern "C" const s32 Caution[4] = {0, 0, 0, 0};
 
-INCLUDE_ASM("asm/nonmatchings/ebattle", CommandTEX_ANIME__FPPv);
-INCLUDE_ASM("asm/nonmatchings/ebattle", CommandTEX_ANIME_DATA__FPPv);
-INCLUDE_ASM("asm/nonmatchings/ebattle", CommandTEX_ANIME_DATA2__FPPv);
-INCLUDE_ASM("asm/nonmatchings/ebattle", CommandTEX_SCROLL_DATA__FPPv);
-
-/**
- * Ends a texture animation command; nothing remains to be done.
- *
- * @mangled CommandTEX_ANIME_END__FPPv
- * @address 0x1680F0
- * @size 0x8
- */
-void CommandTEX_ANIME_END(void **arguments) {
-}
-
 extern int eb_motion[160];
 extern float old_time;
 extern float speed;
@@ -111,6 +96,13 @@ extern float viewAngleH;
 extern float viewAngleV;
 extern float camera_near_dist;
 
+/**
+ * Looks up the textures the event battle's opening needs.
+ *
+ * @mangled EBInitIntro__Fv
+ * @address 0x168200
+ * @size 0xA8
+ */
 INCLUDE_ASM("asm/nonmatchings/ebattle", EBInitIntro__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle", EBSetMotion__FP10CCharacterPi);
 
@@ -132,10 +124,38 @@ void EBExit() {
     InitReadBG();
 }
 
+/**
+ * Runs the event battle's opening and reports when it ends.
+ *
+ * @mangled EBIntroLoop__Fv
+ * @address 0x1685C0
+ * @size 0xCC
+ */
 INCLUDE_ASM("asm/nonmatchings/ebattle", EBIntroLoop__Fv);
+/**
+ * Runs one frame of the event battle and reports the result.
+ *
+ * @mangled EBLoop__Fv
+ * @address 0x168690
+ * @size 0x4E4
+ */
 INCLUDE_ASM("asm/nonmatchings/ebattle", EBLoop__Fv);
 INCLUDE_ASM("asm/nonmatchings/ebattle", EBDraw__Fv);
+/**
+ * Draws one button prompt of the event battle.
+ *
+ * @mangled DrawButton__Fiiifi
+ * @address 0x1690E0
+ * @size 0x260
+ */
 INCLUDE_ASM("asm/nonmatchings/ebattle", DrawButton__Fiiifi);
+/**
+ * Draws one button prompt at a scale.
+ *
+ * @mangled DrawButtonSub__Fiiiif
+ * @address 0x169340
+ * @size 0xE0
+ */
 INCLUDE_ASM("asm/nonmatchings/ebattle", DrawButtonSub__Fiiiif);
 
 /**
@@ -179,7 +199,21 @@ void draw_ok_loop() {
     }
 }
 
+/**
+ * Draws the success flash after a button is pressed in time.
+ *
+ * @mangled draw_ok__Fi
+ * @address 0x169490
+ * @size 0x2A0
+ */
 INCLUDE_ASM("asm/nonmatchings/ebattle", draw_ok__Fi);
+/**
+ * Gives the scale a button prompt draws at while it flashes.
+ *
+ * @mangled button_scale__Fi
+ * @address 0x169730
+ * @size 0x90
+ */
 INCLUDE_ASM("asm/nonmatchings/ebattle", button_scale__Fi);
 static int key_mode = 0xFFFF;
 
@@ -283,8 +317,29 @@ static float GetLYf() {
     return EdGetLYf(1);
 }
 
+/**
+ * Reports whether a button is held, unless the pad is locked.
+ *
+ * @mangled PadOn__Fi
+ * @address 0x169AF0
+ * @size 0x40
+ */
 INCLUDE_ASM("asm/nonmatchings/ebattle", PadOn__Fi);
+/**
+ * Reports whether a button was just pressed, unless the pad is locked.
+ *
+ * @mangled PadDown__Fi
+ * @address 0x169B30
+ * @size 0x40
+ */
 INCLUDE_ASM("asm/nonmatchings/ebattle", PadDown__Fi);
+/**
+ * Moves the camera towards a point, keeping it clear of the collision.
+ *
+ * @mangled CameraAutoMove__FP13CCameraFollowP6CCPolyPfff
+ * @address 0x169B70
+ * @size 0x20C
+ */
 INCLUDE_ASM("asm/nonmatchings/ebattle", CameraAutoMove__FP13CCameraFollowP6CCPolyPfff);
 
 /**
@@ -298,7 +353,21 @@ void EdViewModeOff() {
     viewMode = 0;
 }
 
+/**
+ * Places the eye camera on a character's head.
+ *
+ * @mangled InitEyeCamera__FP10CCharacter
+ * @address 0x169D90
+ * @size 0x34
+ */
 INCLUDE_ASM("asm/nonmatchings/ebattle", InitEyeCamera__FP10CCharacter);
+/**
+ * Aims the eye camera from a character's head.
+ *
+ * @mangled EyeCamera__FP7CCameraP10CCharacteri
+ * @address 0x169DD0
+ * @size 0x1B0
+ */
 INCLUDE_ASM("asm/nonmatchings/ebattle", EyeCamera__FP7CCameraP10CCharacteri);
 
 void EdInitCameraParam(CCameraFollow *camera) {
@@ -315,6 +384,13 @@ void EdMoveCharaInit() {
     fishing_mes = 0;
 }
 
+/**
+ * Aims the editor's eye camera from a character's head.
+ *
+ * @mangled EdEyeCamera__FP7CCameraP10CCharacter
+ * @address 0x169FF0
+ * @size 0x128
+ */
 INCLUDE_ASM("asm/nonmatchings/ebattle", EdEyeCamera__FP7CCameraP10CCharacter);
 
 int EdCheckViewMode() {

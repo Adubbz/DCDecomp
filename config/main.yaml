@@ -216,7 +216,7 @@ segments:
       - {start: 0x3d350, type: cpp, name: bound}
       - {start: 0x3df90, type: cpp, name: dispctrl}
       - {start: 0x3ea50, type: cpp, name: dataread}
-      - {start: 0x411b0, type: cpp, name: main}
+      - {start: 0x40ba0, type: cpp, name: main}
       - {start: 0x43920, type: cpp, name: dataalloc}
       - {start: 0x43970, type: cpp, name: map}
       - {start: 0x43c50, type: cpp, name: sound}
@@ -242,7 +242,7 @@ segments:
       - {start: 0x64a80, type: cpp, name: effectgroup}
       - {start: 0x64c30, type: cpp, name: objanime}
       - {start: 0x67160, type: cpp, name: textureanime}
-      - {start: 0x67d80, type: cpp, name: ebattle}
+      - {start: 0x68200, type: cpp, name: ebattle}
       - {start: 0x6d960, type: cpp, name: editarea}
       - {start: 0x70350, type: cpp, name: edit}
       - {start: 0x742a0, type: cpp, name: editloop}
@@ -355,7 +355,7 @@ segments:
       - {start: 0x199148, type: .rodata, name: chararead}
       - {start: 0x199168, type: .rodata, name: dispctrl}
       - {start: 0x199178, type: .rodata, name: dataread}
-      - {start: 0x1994d8, type: .rodata, name: main}
+      - {start: 0x1992f8, type: .rodata, name: main}
       - {start: 0x1997d0, type: .rodata, name: sound}
       - {start: 0x199b20, type: .rodata, name: gameutil}
       - {start: 0x199b68, type: .rodata, name: clsmes}
@@ -367,6 +367,7 @@ segments:
       - {start: 0x19a1c0, type: .rodata, name: fireomni}
       - {start: 0x19a1f0, type: .rodata, name: runeffect}
       - {start: 0x19a208, type: .rodata, name: objanime}
+      - {start: 0x19a270, type: .rodata, name: textureanime}
       - {start: 0x19a2c0, type: .rodata, name: ebattle}
       - {start: 0x19a368, type: .rodata, name: edit}
       - {start: 0x19a8c8, type: .rodata, name: editloop}

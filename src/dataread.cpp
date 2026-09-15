@@ -25,22 +25,10 @@
 #include "sound.hpp"
 #include "sysmes.hpp"
 
-extern CSaveData *SaveData;
-extern CSound CSnd;
-extern short *SystemMes;
-extern int LanguageCode;
-extern int BtMapJumpFloor;
-extern CDataAlloc<1, 6000> SystemMesBuffer;
-
 /**
  * Cloth instance currently receiving configuration commands.
  */
 extern CCloth *pCloth;
-
-void DevInit(void);
-void SndInitSeTable(void);
-
-static int play_time_count = 1;
 
 /* One record of the archive's index file. The four numbers a read needs sit behind twelve bytes
    the index does not use, and the first word is where the entry's name begins in the same file. */
@@ -666,6 +654,13 @@ static void (*CommandExe[9])(void **) = {
 INCLUDE_RODATA("asm/nonmatchings/dataread", @254);
 INCLUDE_RODATA("asm/nonmatchings/dataread", @255);
 
+/**
+ * Reads one model's cloth description and attaches the simulation.
+ *
+ * @mangled InitCloth__FP9CFrameVu1R9input_strP14CDataAlloc2_1_
+ * @address 0x13F9C0
+ * @size 0x1B4
+ */
 INCLUDE_ASM("asm/nonmatchings/dataread", InitCloth__FP9CFrameVu1R9input_strP14CDataAlloc2_1_);
 
 static void CommandSIZE(void **argv) {
@@ -684,6 +679,13 @@ static void CommandSIZE(void **argv) {
     pCloth->num_j = num_j;
 }
 
+/**
+ * Names the frame the following model commands act on.
+ *
+ * @mangled CommandFRAME__FPPv
+ * @address 0x13FBE0
+ * @size 0x7C
+ */
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandFRAME__FPPv);
 
 static void CommandNORMAL(void **argv) {
@@ -725,10 +727,49 @@ static void CommandPOLYDIVE(void **argv) {
         i++;
     }
 }
+/**
+ * Adds one exclusion box to the cloth on the current frame.
+ *
+ * @mangled CommandBOUND__FPPv
+ * @address 0x13FDB0
+ * @size 0x24C
+ */
 INCLUDE_ASM("asm/nonmatchings/dataread", CommandBOUND__FPPv);
+/**
+ * Reads one command argument out of a model script.
+ *
+ * @mangled GetArg__FR9input_strPiPPv__2
+ * @address 0x140000
+ * @size 0x320
+ * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
+ */
 INCLUDE_ASM("asm/nonmatchings/dataread", GetArg__FR9input_strPiPPv__2);
+/**
+ * Finds the command table entry a model script's next word names.
+ *
+ * @mangled SearchCommand__FR9input_strPi__2
+ * @address 0x140320
+ * @size 0x144
+ * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
+ */
 INCLUDE_ASM("asm/nonmatchings/dataread", SearchCommand__FR9input_strPi__2);
+/**
+ * Steps a model script past whitespace and comments.
+ *
+ * @mangled SkipSpace__FR9input_str__2
+ * @address 0x140470
+ * @size 0x94
+ * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
+ */
 INCLUDE_ASM("asm/nonmatchings/dataread", SkipSpace__FR9input_str__2);
+/**
+ * Reports whether a character is not whitespace.
+ *
+ * @mangled CheckChar__Fc__2
+ * @address 0x140510
+ * @size 0x60
+ * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
+ */
 INCLUDE_ASM("asm/nonmatchings/dataread", CheckChar__Fc__2);
 
 /**
@@ -765,6 +806,13 @@ int keyCtrl(float x, float y, MOTION_INFO *motion) {
     return result;
 }
 
+/**
+ * Copies one rectangle of video memory to another.
+ *
+ * @mangled MoveImageTest__FP13sceVif1PacketiiiRC8CRect_i_iiiiii
+ * @address 0x140660
+ * @size 0x1A4
+ */
 INCLUDE_ASM("asm/nonmatchings/dataread", MoveImageTest__FP13sceVif1PacketiiiRC8CRect_i_iiiiii);
 
 /**
@@ -814,147 +862,4 @@ float unitRotation(CFrameVu1 *frame, float heading) {
         rotation[1] -= 6.2831855f;
 
     return rotation[1];
-}
-/* The overlay each map number is served from; an empty name means the map runs out of the
-   executable itself. */
-static char *binfile[15] = {"TITLE.BIN", "TITLE.BIN", "", "DUN.BIN", "DUN.BIN",
-                            "TITLE.BIN", "", "", "DUN.BIN", "DUN.BIN",
-                            "", "", "", "", ""};
-
-/* The overlay that is loaded now, so asking for it again costs nothing. */
-static char now_binfile[128] = "";
-
-void LoadOverlay(int mode) {
-    if (binfile[mode][0] == '\0')
-        return;
-    if (strcmp(binfile[mode], now_binfile) == 0)
-        return;
-
-    strcpy(now_binfile, binfile[mode]);
-    void *address = *(void **) 0x002A17B4;
-    char path[128] = "cdrom0:\\";
-    strcat(path, binfile[mode]);
-    strcat(path, ";1");
-    mwLoadOverlay(path, address);
-}
-
-/* Defined by main.cpp, whose .sbss run holds them. */
-extern sceDmaChan *d1;
-extern sceDmaChan *d2;
-extern sceDmaChan *d8;
-
-void init_all() {
-    sceSifInitRpc(0);
-    sceCdInit(0);
-    sceCdMmode(2);
-    while (!sceSifRebootIop("cdrom0:\\MODULES\\IOPRP211.IMG;1")) {
-    }
-    while (!sceSifSyncIop()) {
-    }
-    sceSifInitRpc(0);
-    sceCdInit(0);
-    sceCdMmode(2);
-    sceFsReset();
-    while (sceSifLoadModule("cdrom0:\\MODULES\\SIO2MAN.IRX;1", 0, 0) < 0) {
-    }
-    while (sceSifLoadModule("cdrom0:\\MODULES\\PADMAN.IRX;1", 0, 0) < 0) {
-    }
-    while (sceSifLoadModule("cdrom0:\\MODULES\\MCMAN.IRX;1", 0, 0) < 0) {
-    }
-    while (sceSifLoadModule("cdrom0:\\MODULES\\MCSERV.IRX;1", 0, 0) < 0) {
-    }
-    while (sceSifLoadModule("cdrom0:\\MODULES\\LIBSD.IRX;1", 0, 0) < 0) {
-    }
-    while (sceSifLoadModule("cdrom0:\\MODULES\\SDRDRV.IRX;1", 0, 0) < 0) {
-    }
-    while (sceSifLoadModule("cdrom0:\\MODULES\\MODMIDI.IRX;1", 0, 0) < 0) {
-    }
-    while (sceSifLoadModule("cdrom0:\\MODULES\\MODHSYN.IRX;1", 0, 0) < 0) {
-    }
-    while (sceSifLoadModule("cdrom0:\\MODULES\\EZMIDI.IRX;1", 0, 0) < 0) {
-    }
-    InitCDFile();
-    DevInit();
-    d1 = sceDmaGetChan(1);
-    d2 = sceDmaGetChan(2);
-    d8 = sceDmaGetChan(8);
-    MGInit();
-    InitMemoryFile();
-    BufferAllClear();
-    InitReadBG();
-}
-
-/* The parallel lights the renderer starts with. The direction matrix is held transposed -- the
-   overlays write light n's x, y and z into rows 0, 1 and 2 at column n -- so three equal rows are
-   one light and the other two are off, while the colour matrix is the other way round with one
-   light to a row. */
-sceVu0FMATRIX light = {
-    {0.578f, 0.0f, 0.0f, 0.0f},
-    {0.578f, 0.0f, 0.0f, 0.0f},
-    {0.578f, 0.0f, 0.0f, 0.0f},
-    {0.0f, 0.0f, 0.0f, 0.0f},
-};
-
-sceVu0FMATRIX lightcolor = {
-    {120.0f, 120.0f, 120.0f, 128.0f},
-    {0.0f, 0.0f, 0.0f, 0.0f},
-    {0.0f, 0.0f, 0.0f, 0.0f},
-    {0.0f, 0.0f, 0.0f, 0.0f},
-};
-
-/* The light every surface gets no matter which way it faces. */
-sceVu0FVECTOR ambientlight = {64.0f, 64.0f, 64.0f, 128.0f};
-
-void SetEnv(sceVif1Packet *packet) {
-    sceVif1PkCnt(packet, 0);
-    sceVif1PkOpenDirectCode(packet, 0);
-    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
-    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, *(u_long *) &mgTEX1Env);
-    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
-    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
-    sceVif1PkAddGsAD(packet, SCE_GS_ALPHA_1, *(u_long *) &mgAlpha);
-    sceVif1PkAddGsAD(packet, SCE_GS_CLAMP_1, 5);
-    sceVif1PkCloseGifTag(packet);
-    sceVif1PkCloseDirectCode(packet);
-}
-
-void LoadSndTxt() {
-    u_char work[48000];
-    u_char *buffer = work;
-    int offset = (int) buffer % 64;
-    if (offset)
-        buffer += 64 - offset;
-    CSnd.LoadSeInf("sound/tbl/setbl.txt", (u_int *) buffer);
-    CSnd.LoadSqInf("sound/tbl/sqtbl.txt", (u_int *) buffer);
-    SndInitSeTable();
-}
-
-void PlayTimeCountFlag(int flag) {
-    play_time_count = flag;
-}
-
-int PlayTimeCount(int) {
-    if (play_time_count)
-        SaveData->AddPlayTime(1);
-}
-
-void LoadSystemMessage() {
-    int size;
-    SystemMesBuffer.used = 0;
-    SystemMesBuffer.Align64();
-    SystemMes = (short *) &SystemMesBuffer.block[SystemMesBuffer.used];
-    char name[64] = "meswin/system";
-    if (LanguageCode > 0)
-        sprintf(name, "meswin/system_%d", LanguageCode);
-    strcat(name, ".mes");
-    if (!LoadFile2(name, SystemMes, &size, 0))
-        LoadFile("meswin/systeme.bin", SystemMes, &size);
-    SystemMesBuffer.Alloc((size >> 4) + 1);
-    InitSystemMes();
-}
-
-void initialize_data() {
-    LoadSystemMessage();
-    BtMapJumpFloor = -1;
-    LoadSndTxt();
 }

@@ -343,7 +343,7 @@ SECTIONS
         bound.cpp.o                 (.text)   // 0x0013d250
         dispctrl.cpp.o              (.text)   // 0x0013de90
         dataread.cpp.o              (.text)   // 0x0013e950
-        main.cpp.o                  (.text)   // 0x001410b0
+        main.cpp.o                  (.text)   // 0x00140aa0
         dataalloc.cpp.o             (.text)   // 0x00143820
         map.cpp.o                   (.text)   // 0x00143870
         sound.cpp.o                 (.text)   // 0x00143b50
@@ -369,7 +369,7 @@ SECTIONS
         effectgroup.cpp.o           (.text)   // 0x00164980
         objanime.cpp.o              (.text)   // 0x00164b30
         textureanime.cpp.o          (.text)   // 0x00167060
-        ebattle.cpp.o               (.text)   // 0x00167c80
+        ebattle.cpp.o               (.text)   // 0x00168100
         editarea.cpp.o              (.text)   // 0x0016d860
         edit.cpp.o                  (.text)   // 0x00170250
         editloop.cpp.o              (.text)   // 0x001741a0
@@ -596,7 +596,6 @@ SECTIONS
 		main.sdata.part1.s.o (.sdata)  // 0x002a1e88
 		mainselect.cpp.o (.sdata)      // 0x002a1e8c
 		main.cpp.o (.sdata)            // 0x002a1e90
-		dataread.cpp.o (.sdata)        // 0x002a1e94
 		main.cpp.o (.gamemodesdata)    // 0x002a1e98
 		main.sdata.part2.s.o (.sdata)  // 0x002a1ea0
 		clsmes.cpp.o (.sdata)          // 0x002a1ec0

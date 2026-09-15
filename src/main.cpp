@@ -1,27 +1,34 @@
 // C imports
 #include <libmc.h>
+#include <libcdvd.h>
+#include <sifdev.h>
+#include <sifrpc.h>
 
 #include <cstdio>
 #include <cstring>
 
 // Our imports
 #include "clsmes.hpp"
+#include "btsysscript.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dataset.hpp"
 #include "debugfont.hpp"
 #include "editloop.hpp"
+#include "frame.hpp"
 #include "gamemode.hpp"
 #include "gamepad.hpp"
 #include "mainselect.hpp"
 #include "memcard.hpp"
 #include "menu_draw.hpp"
+#include "mathutil.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "runscript.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "sound.hpp"
+#include "sysmes.hpp"
 #include "texture.hpp"
 
 #pragma helper_mask_gpr 0x30
@@ -202,6 +209,9 @@ s32 PolyCount;
  */
 s32 NextMapNo = -1;
 
+/** Enables accumulation of the save file's play-time counter. */
+static int play_time_count = 1;
+
 /* Low byte of an EE DMA channel's CHCR, as a bitfield. The "kick this
  * channel" write in main() is a 1-bit field assignment in the original
  * source, not hand masking: only that form makes MWCC materialise the OR
@@ -228,6 +238,142 @@ typedef struct {
 extern char My_dma_start0[];
 extern char Vu_progmain[];
 extern char Vu_prog0f[];
+
+/** Overlay file selected for each top-level game mode. */
+static char *binfile[15] = {"TITLE.BIN", "TITLE.BIN", "", "DUN.BIN", "DUN.BIN",
+                            "TITLE.BIN", "", "", "DUN.BIN", "DUN.BIN",
+                            "", "", "", "", ""};
+
+/** Name of the currently loaded overlay. */
+static char now_binfile[128] = "";
+
+void LoadOverlay(int mode) {
+    if (binfile[mode][0] == '\0')
+        return;
+    if (strcmp(binfile[mode], now_binfile) == 0)
+        return;
+
+    strcpy(now_binfile, binfile[mode]);
+    void *address = *(void **) 0x002A17B4;
+    char path[128] = "cdrom0:\\";
+    strcat(path, binfile[mode]);
+    strcat(path, ";1");
+    mwLoadOverlay(path, address);
+}
+
+void init_all() {
+    sceSifInitRpc(0);
+    sceCdInit(0);
+    sceCdMmode(2);
+    while (!sceSifRebootIop("cdrom0:\\MODULES\\IOPRP211.IMG;1")) {
+    }
+    while (!sceSifSyncIop()) {
+    }
+    sceSifInitRpc(0);
+    sceCdInit(0);
+    sceCdMmode(2);
+    sceFsReset();
+    while (sceSifLoadModule("cdrom0:\\MODULES\\SIO2MAN.IRX;1", 0, 0) < 0) {
+    }
+    while (sceSifLoadModule("cdrom0:\\MODULES\\PADMAN.IRX;1", 0, 0) < 0) {
+    }
+    while (sceSifLoadModule("cdrom0:\\MODULES\\MCMAN.IRX;1", 0, 0) < 0) {
+    }
+    while (sceSifLoadModule("cdrom0:\\MODULES\\MCSERV.IRX;1", 0, 0) < 0) {
+    }
+    while (sceSifLoadModule("cdrom0:\\MODULES\\LIBSD.IRX;1", 0, 0) < 0) {
+    }
+    while (sceSifLoadModule("cdrom0:\\MODULES\\SDRDRV.IRX;1", 0, 0) < 0) {
+    }
+    while (sceSifLoadModule("cdrom0:\\MODULES\\MODMIDI.IRX;1", 0, 0) < 0) {
+    }
+    while (sceSifLoadModule("cdrom0:\\MODULES\\MODHSYN.IRX;1", 0, 0) < 0) {
+    }
+    while (sceSifLoadModule("cdrom0:\\MODULES\\EZMIDI.IRX;1", 0, 0) < 0) {
+    }
+    InitCDFile();
+    DevInit();
+    d1 = sceDmaGetChan(1);
+    d2 = sceDmaGetChan(2);
+    d8 = sceDmaGetChan(8);
+    MGInit();
+    InitMemoryFile();
+    BufferAllClear();
+    InitReadBG();
+}
+
+/** Initial parallel-light direction matrix used by the renderer. */
+sceVu0FMATRIX light = {
+    {0.578f, 0.0f, 0.0f, 0.0f},
+    {0.578f, 0.0f, 0.0f, 0.0f},
+    {0.578f, 0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f, 0.0f},
+};
+
+/** Initial parallel-light colour matrix used by the renderer. */
+sceVu0FMATRIX lightcolor = {
+    {120.0f, 120.0f, 120.0f, 128.0f},
+    {0.0f, 0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f, 0.0f},
+};
+
+/** Initial ambient-light colour used by the renderer. */
+sceVu0FVECTOR ambientlight = {64.0f, 64.0f, 64.0f, 128.0f};
+
+void SetEnv(sceVif1Packet *packet) {
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, *(u_long *) &mgTEX1Env);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
+    sceVif1PkAddGsAD(packet, SCE_GS_ALPHA_1, *(u_long *) &mgAlpha);
+    sceVif1PkAddGsAD(packet, SCE_GS_CLAMP_1, 5);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
+void LoadSndTxt() {
+    u_char work[48000];
+    u_char *buffer = work;
+    int offset = (int) buffer % 64;
+    if (offset)
+        buffer += 64 - offset;
+    CSnd.LoadSeInf("sound/tbl/setbl.txt", (u_int *) buffer);
+    CSnd.LoadSqInf("sound/tbl/sqtbl.txt", (u_int *) buffer);
+    SndInitSeTable();
+}
+
+void PlayTimeCountFlag(int flag) {
+    play_time_count = flag;
+}
+
+int PlayTimeCount(int) {
+    if (play_time_count)
+        SaveData->AddPlayTime(1);
+}
+
+void LoadSystemMessage() {
+    int size;
+    SystemMesBuffer.used = 0;
+    SystemMesBuffer.Align64();
+    SystemMes = (short *) &SystemMesBuffer.block[SystemMesBuffer.used];
+    char name[64] = "meswin/system";
+    if (LanguageCode > 0)
+        sprintf(name, "meswin/system_%d", LanguageCode);
+    strcat(name, ".mes");
+    if (!LoadFile2(name, SystemMes, &size, 0))
+        LoadFile("meswin/systeme.bin", SystemMes, &size);
+    SystemMesBuffer.Alloc((size >> 4) + 1);
+    InitSystemMes();
+}
+
+void initialize_data() {
+    LoadSystemMessage();
+    BtMapJumpFloor = -1;
+    LoadSndTxt();
+}
 
 /* @ 0x1410B0 (0xC80 bytes) -- main */
 int main(int argc, const char **argv, const char **envp) {
@@ -1114,25 +1260,144 @@ void TrialStart() {}
 int CheckTrialEnd() { return 0; }
 
 INCLUDE_ASM("asm/nonmatchings/main", __as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL);
+/**
+ * Copies one character over another, field by field.
+ *
+ * @mangled __as__10CCharacterFRC10CCharacter
+ * @address 0x142DA0
+ * @size 0x43C
+ */
 INCLUDE_ASM("asm/nonmatchings/main", __as__10CCharacterFRC10CCharacter);
 INCLUDE_ASM("asm/nonmatchings/main", __as__7CObjectFRC7CObject);
 INCLUDE_ASM("asm/nonmatchings/main", __as__6CWaterFR6CWater);
+/**
+ * Copies one polygon visual over another, field by field.
+ *
+ * @mangled __as__14CVisualPolyVu1FRC14CVisualPolyVu1
+ * @address 0x143360
+ * @size 0x30
+ */
 INCLUDE_ASM("asm/nonmatchings/main", __as__14CVisualPolyVu1FRC14CVisualPolyVu1);
+/**
+ * Copies one vector-unit visual over another, field by field.
+ *
+ * @mangled __as__10CVisualVu1FRC10CVisualVu1
+ * @address 0x143390
+ * @size 0x5C
+ */
 INCLUDE_ASM("asm/nonmatchings/main", __as__10CVisualVu1FRC10CVisualVu1);
+/**
+ * Copies one visual over another, field by field.
+ *
+ * @mangled __as__7CVisualFRC7CVisual
+ * @address 0x1433F0
+ * @size 0x1C
+ */
 INCLUDE_ASM("asm/nonmatchings/main", __as__7CVisualFRC7CVisual);
+/**
+ * Clears the category attributes.
+ *
+ * @mangled __ct__12CategoryAttrFv
+ * @address 0x143410
+ * @size 0x30
+ */
 INCLUDE_ASM("asm/nonmatchings/main", __ct__12CategoryAttrFv);
+/**
+ * Gives the category attributes their starting values.
+ *
+ * @mangled Initialize__12CategoryAttrFv
+ * @address 0x143440
+ * @size 0x1C
+ */
 INCLUDE_ASM("asm/nonmatchings/main", Initialize__12CategoryAttrFv);
 INCLUDE_ASM("asm/nonmatchings/main", __ct__11CBombEffectFv);
+/**
+ * Clears the bomb effect.
+ *
+ * @mangled Initialize__11CBombEffectFv
+ * @address 0x143490
+ * @size 0x30
+ */
 INCLUDE_ASM("asm/nonmatchings/main", Initialize__11CBombEffectFv);
 INCLUDE_ASM("asm/nonmatchings/main", __ct__10CMajinBeemFv);
+/**
+ * Clears the beam effect.
+ *
+ * @mangled Initialize__10CMajinBeemFv
+ * @address 0x1434F0
+ * @size 0x10
+ */
 INCLUDE_ASM("asm/nonmatchings/main", Initialize__10CMajinBeemFv);
+/**
+ * Constructs one map character slot.
+ *
+ * @mangled __ct__13MAP_NPC_MODELFv
+ * @address 0x143500
+ * @size 0x30
+ */
 INCLUDE_ASM("asm/nonmatchings/main", __ct__13MAP_NPC_MODELFv);
+/**
+ * Constructs a character with no model, motion or texture animation.
+ *
+ * @mangled __ct__10CCharacterFv
+ * @address 0x143530
+ * @size 0xD4
+ */
 INCLUDE_ASM("asm/nonmatchings/main", __ct__10CCharacterFv);
+/**
+ * Constructs the motion parameters.
+ *
+ * @mangled __ct__11MotionParamFv
+ * @address 0x143610
+ * @size 0xC
+ */
 INCLUDE_ASM("asm/nonmatchings/main", __ct__11MotionParamFv);
+/**
+ * Constructs a texture animation with no data attached.
+ *
+ * @mangled __ct__13CTextureAnimeFv
+ * @address 0x143620
+ * @size 0x28
+ */
 INCLUDE_ASM("asm/nonmatchings/main", __ct__13CTextureAnimeFv);
+/**
+ * Constructs an object at the origin with an identity transform.
+ *
+ * @mangled __ct__7CObjectFv
+ * @address 0x143650
+ * @size 0x28
+ */
 INCLUDE_ASM("asm/nonmatchings/main", __ct__7CObjectFv);
+/**
+ * Constructs a projectile effect.
+ *
+ * @mangled __ct__12CSHOT_EFFECTFv
+ * @address 0x143680
+ * @size 0x54
+ */
 INCLUDE_ASM("asm/nonmatchings/main", __ct__12CSHOT_EFFECTFv);
+/**
+ * Constructs a hit marker.
+ *
+ * @mangled __ct__8CHitMarkFv
+ * @address 0x1436E0
+ * @size 0x3C
+ */
 INCLUDE_ASM("asm/nonmatchings/main", __ct__8CHitMarkFv);
+/**
+ * Takes a run of quadwords out of the six-thousand-quadword arena.
+ *
+ * @mangled Alloc__18CDataAlloc_1_6000_Fi
+ * @address 0x143720
+ * @size 0x68
+ */
 INCLUDE_ASM("asm/nonmatchings/main", Alloc__18CDataAlloc_1_6000_Fi);
+/**
+ * Rounds the six-thousand-quadword arena's cursor up to sixty-four bytes.
+ *
+ * @mangled Align64__18CDataAlloc_1_6000_Fv
+ * @address 0x143790
+ * @size 0x90
+ */
 INCLUDE_ASM("asm/nonmatchings/main", Align64__18CDataAlloc_1_6000_Fv);
 INCLUDE_RODATA("asm/nonmatchings/main", @1195);

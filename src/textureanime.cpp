@@ -9,10 +9,10 @@ void CTexAnimeData::Initialize() {
     unk_00 = -1;
     unk_02 = 0;
     unk_04 = 0;
-    memset(&unk_08, 0, 0x18);
-    unk_08 = -1;
-    memset(&unk_20, 0, 0x18);
-    unk_20 = -1;
+    memset(&first_texture, 0, sizeof(first_texture));
+    first_texture.block = -1;
+    memset(&second_texture, 0, sizeof(second_texture));
+    second_texture.block = -1;
     unk_3E = 0;
     unk_3C = 0;
     unk_3A = 0;
@@ -66,3 +66,23 @@ void CTextureAnime::Disable(int group) {
     frame[group] = 0;
 }
 INCLUDE_ASM("asm/nonmatchings/textureanime", LoadCFGFile__13CTextureAnimeFPci);
+
+INCLUDE_RODATA("asm/nonmatchings/textureanime", @447__2);
+INCLUDE_RODATA("asm/nonmatchings/textureanime", @448);
+INCLUDE_RODATA("asm/nonmatchings/textureanime", @449);
+INCLUDE_RODATA("asm/nonmatchings/textureanime", @450);
+INCLUDE_RODATA("asm/nonmatchings/textureanime", @451);
+INCLUDE_ASM("asm/nonmatchings/textureanime", CommandTEX_ANIME__FPPv);
+INCLUDE_ASM("asm/nonmatchings/textureanime", CommandTEX_ANIME_DATA__FPPv);
+INCLUDE_ASM("asm/nonmatchings/textureanime", CommandTEX_ANIME_DATA2__FPPv);
+INCLUDE_ASM("asm/nonmatchings/textureanime", CommandTEX_SCROLL_DATA__FPPv);
+
+/**
+ * Ends a texture animation command; nothing remains to be done.
+ *
+ * @mangled CommandTEX_ANIME_END__FPPv
+ * @address 0x1680F0
+ * @size 0x8
+ */
+void CommandTEX_ANIME_END(void **arguments) {
+}
