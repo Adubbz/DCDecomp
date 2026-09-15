@@ -1,6 +1,4 @@
-#include "common.h"
-
-/* The language-setting screen the game shows before the title. */
+#include "langset.hpp"
 
 INCLUDE_RODATA("asm/nonmatchings/langset", @355__4);
 INCLUDE_RODATA("asm/nonmatchings/langset", @356__3);

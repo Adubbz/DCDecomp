@@ -13,10 +13,10 @@ INCLUDE_ASM("asm/nonmatchings/fireomni", DrawFire__9CFireOmniFiiP7CCameraPffif);
 INCLUDE_RODATA("asm/nonmatchings/fireomni", @298__3);
 
 void CFireOmni::RasterStep(void) {
-    float phase = this->unk_04 + ((2.0f * (float) rand()) / 2.1474836e9f);
-    this->unk_04 = phase;
+    float phase = this->raster_phase + ((2.0f * (float) rand()) / 2.1474836e9f);
+    this->raster_phase = phase;
     if (!(phase < 8.0f)) {
-        this->unk_04 = 0.0f;
+        this->raster_phase = 0.0f;
     }
 }
 

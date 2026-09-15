@@ -54,12 +54,15 @@ public:
     virtual int InCheck(float *position, float *result);
 
     /**
+     * Attaches the box to one frame, stores the span it follows, and sets its
+     * horizontal half extents.
+     *
      * @mangled SetDir__6CBoundFP6CFramePfPfPfff
      * @address 0x13D4C0
      * @size 0x100
-     * @unknownret
      */
-    void SetDir(CFrame *, float *, float *, float *, float, float);
+    void SetDir(CFrame *frame, float *from_position, float *to_position, float *up_direction,
+                float half_width, float half_height);
 
     /**
      * Stores the endpoints and up vector used to orient the box.
@@ -71,34 +74,42 @@ public:
     void ChangeDir(float *from_position, float *to_position, float *up_direction);
 
     /**
+     * Centres the box between its two endpoints in world space and orients it
+     * along the span between them.
+     *
      * @mangled UpDateDir__6CBoundFv
      * @address 0x13D630
      * @size 0x208
-     * @unknownret
      */
     void UpDateDir(void);
 
     /**
+     * Orients the box along a facing direction, using an up vector to settle
+     * the roll.
+     *
      * @mangled SetDir__6CBoundFPfPf
      * @address 0x13D840
      * @size 0x60
-     * @unknownret
      */
-    void SetDir(float *, float *);
+    void SetDir(float *direction, float *up_direction);
 
     /**
+     * Rebuilds the box's orientation from its stored facing direction; the
+     * argument is not read.
+     *
      * @mangled SetDir__6CBoundFPf
      * @address 0x13D8A0
      * @size 0x148
-     * @unknownret
      */
-    void SetDir(float *);
+    void SetDir(float *direction);
 
     /**
+     * Centres the box between the two frames its endpoints follow and stretches
+     * its span by the two length scales.
+     *
      * @mangled UpDateDirPos__6CBoundFv
      * @address 0x13D9F0
      * @size 0x27C
-     * @unknownret
      */
     void UpDateDirPos(void);
 
@@ -121,11 +132,14 @@ public:
     void InitParam(void);
 
     /**
+     * Initializes the box and gives it the half extents it excludes cloth
+     * within.
+     *
      * @mangled __ct__6CBoundFfff
      * @address 0x13DD70
      * @size 0x11C
      */
-    CBound(float, float, float);
+    CBound(float half_width, float half_height, float half_depth);
 };
 
 STATIC_ASSERT(sizeof(CBound) == 0x130);

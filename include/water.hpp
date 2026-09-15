@@ -28,69 +28,78 @@ public:
      */
     CWater &operator=(CWater &);
 
-    s32 unk_000;
-    s32 unk_004;
-    s32 unk_008;
-    float unk_00C;
-    float unk_010;
+    s32 rows;      /**< Grid rows the surface is divided into. */
+    s32 columns;   /**< Grid columns the surface is divided into. */
+    float *height; /**< Wave heights the surface currently draws from. */
+    float *height_a; /**< First of the two wave-height buffers. */
+    float *height_b; /**< Second of the two wave-height buffers. */
     sceVu0FVECTOR vertex[4]; /**< The four corners of the surface. */
     s32 unk_060;
     float unk_064;
     float unk_068;
     CVisualPolyVu1 visual; /**< Draws the polygons of the surface. */
     u8 color[4];           /**< Red, green, blue and alpha channels of the surface. */
-    float unk_094;
-    float unk_098;
+    float wave_speed; /**< Speed the ripples travel across the grid at. */
+    float damping;    /**< Rate the ripples lose height at. */
     float unk_09C;
     float unk_0A0;
     s32 unk_0A4;
     CFrameVu1 frame; /**< Places and draws the water surface. */
 
     /**
+     * Stores the four parameters the ripple simulation runs on.
+     *
      * @mangled SetParam__6CWaterFffff
      * @address 0x1607A0
      * @size 0x18
-     * Stores the four parameters used by the water simulation.
      */
-    void SetParam(float, float, float, float);
+    void SetParam(float wave_speed, float damping, float unknown0, float unknown1);
 
     /**
+     * Sets the red, green, blue and alpha channels of the surface.
+     *
      * @mangled SetColor__6CWaterFUcUcUcUc
      * @address 0x1607C0
      * @size 0x18
-     * Sets the red, green, blue and alpha channels of the surface.
      */
     void SetColor(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha);
 
     /**
+     * Builds the vector-unit packet that draws the surface, one quad per grid
+     * cell.
+     *
      * @mangled CreateVUData__6CWaterFPUiP10RenderInfo
      * @address 0x1607E0
      * @size 0x740
-     * @unknownret
      */
-    void CreateVUData(unsigned int *, RenderInfo *);
+    void CreateVUData(unsigned int *packet, RenderInfo *info);
 
     /**
+     * Draws the surface through the vector unit.
+     *
      * @mangled DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1
      * @address 0x160F20
      * @size 0x1DC
-     * @unknownret
      */
-    void DrawVu1(RenderInfo *, sceVif1Packet *, RenderInfo *);
+    void DrawVu1(RenderInfo *info, sceVif1Packet *packet, RenderInfo *parent_info);
 
     /**
+     * Clips the surface against the view using the world-space box its four
+     * corners span.
+     *
      * @mangled CheckClip__6CWaterFv
      * @address 0x161100
      * @size 0xC4
-     * @unknownret
      */
     void CheckClip(void);
 
     /**
+     * Advances the ripples one step, writing into whichever of the two height
+     * buffers is not being drawn.
+     *
      * @mangled Hamon__6CWaterFv
      * @address 0x1611D0
      * @size 0x108
-     * @unknownret
      */
     void Hamon(void);
 
@@ -101,25 +110,31 @@ public:
      * @address 0x1612E0
      * @size 0x84
      */
-    void SetVertex(float *, float *, float *, float *);
+    void SetVertex(float *corner0, float *corner1, float *corner2, float *corner3);
 
     /**
+     * Raises one interior grid cell, starting a ripple from it.
+     *
      * @mangled Shake__6CWaterFiif
      * @address 0x161370
      * @size 0x9C
-     * @unknownret
      */
-    void Shake(int, int, float);
+    void Shake(int row, int column, float height_change);
 
     /**
+     * Gives the surface its grid size and takes the two height buffers out of
+     * an arena.
+     *
      * @mangled SetSize__6CWaterFiiP14CDataAlloc2_1_
      * @address 0x161410
      * @size 0x1A4
-     * @unknownret
      */
-    void SetSize(int, int, CDataAlloc2<1> *);
+    void SetSize(int rows, int columns, CDataAlloc2<1> *arena);
 
     /**
+     * Clears the grid, gives the surface a half-bright white and sets the
+     * ripple constants.
+     *
      * @mangled __ct__6CWaterFv
      * @address 0x1615C0
      * @size 0x8C

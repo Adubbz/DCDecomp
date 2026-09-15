@@ -1347,6 +1347,7 @@
       "size": "0x14C",
       "name": "DrawVu1__13CVisualShadowFPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii",
       "sha256": "9102c7f3266ffe8afc1b9dd90cc1934d88b896544266d4f22dcb94b71f643ddc",
+      "comment": "Draws the model, building and lending it a clipped shadow packet on the shadow pass.",
       "documentation": "include/visualshadow.hpp"
     },
     {
@@ -1358,6 +1359,7 @@
       "size": "0x144",
       "name": "DrawVu1__13CVisualShadowFP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii",
       "sha256": "9ac03f240b48df1b9b45a74a45e9dc9ac72c614e072af20fe9fcaf15f8ef7964",
+      "comment": "Draws the model into a VIF packet, building and lending it a clipped shadow packet on the shadow pass.",
       "documentation": "include/visualshadow.hpp"
     },
     {
@@ -1369,6 +1371,7 @@
       "size": "0x304",
       "name": "CreateVUdataShadow__13CVisualShadowFPUiPUi",
       "sha256": "3d5c5055930fba5b1b55b003fd801791b1228b6960883b9322cc6cf1ac60d9ce",
+      "comment": "Writes the shadow geometry of one model into a packet and gives back its size in quadwords.",
       "documentation": "include/visualshadow.hpp"
     },
     {
@@ -1390,6 +1393,7 @@
       "size": "0xB48",
       "name": "CreateVUdataShadowCLIP__13CVisualShadowFPUiPUiP10RenderInfoPA4_f",
       "sha256": "6917e6c9a29080c488efdf3ccbf47889cd321c22a9fdec80b84f52de1c3d6a2d",
+      "comment": "Writes the shadow geometry of one model into a packet, dropping what the view does not reach, and gives back its size in quadwords.",
       "documentation": "include/visualshadow.hpp"
     },
     {
@@ -1511,6 +1515,7 @@
       "size": "0x100",
       "name": "SetDir__6CBoundFP6CFramePfPfPfff",
       "sha256": "02e2156cbef7f4776012e7a48a825432f2fc4a15e68e6b2195af7ad4154dae23",
+      "comment": "Attaches the box to one frame, stores the span it follows, and sets its horizontal half extents.",
       "documentation": "include/bound.hpp"
     },
     {
@@ -1522,6 +1527,7 @@
       "size": "0x208",
       "name": "UpDateDir__6CBoundFv",
       "sha256": "05afdeb305d6fe6af8fab40c34a46bf704bb614d7d2edb4d4dac0e1db0f5690a",
+      "comment": "Centres the box between its two endpoints in world space and orients it along the span between them.",
       "documentation": "include/bound.hpp"
     },
     {
@@ -1533,6 +1539,7 @@
       "size": "0x60",
       "name": "SetDir__6CBoundFPfPf",
       "sha256": "a21dcaadb718e31c384a38a9139eb56f95755e82a5a6dc11607261a77e7453ab",
+      "comment": "Orients the box along a facing direction, using an up vector to settle the roll.",
       "documentation": "include/bound.hpp"
     },
     {
@@ -1544,6 +1551,7 @@
       "size": "0x148",
       "name": "SetDir__6CBoundFPf",
       "sha256": "ab72a3803d463a37a05078055025a9438dd78738c88316b95de6f48e30594047",
+      "comment": "Rebuilds the box's orientation from its stored facing direction; the argument is not read.",
       "documentation": "include/bound.hpp"
     },
     {
@@ -1555,6 +1563,7 @@
       "size": "0x27C",
       "name": "UpDateDirPos__6CBoundFv",
       "sha256": "237173623159270804de501559b5e178e06c132b07072a4d94b9efed7b9fa1e8",
+      "comment": "Centres the box between the two frames its endpoints follow and stretches its span by the two length scales.",
       "documentation": "include/bound.hpp"
     },
     {
@@ -1566,6 +1575,7 @@
       "size": "0x11C",
       "name": "__ct__6CBoundFfff",
       "sha256": "c60e10073ce0e849686e015c65ea800b0afed82665d004d4c72664d71f928808",
+      "comment": "Initializes the box and gives it the half extents it excludes cloth within.",
       "documentation": "include/bound.hpp"
     },
     {
@@ -2550,7 +2560,9 @@
       "address": "0x00153FC0",
       "size": "0x354",
       "name": "init_now_loading__Fi",
-      "sha256": "fef7d459741bc12e5ca861cbc4c82d7b69beda3161f81ffa9abb804c53bce568"
+      "sha256": "fef7d459741bc12e5ca861cbc4c82d7b69beda3161f81ffa9abb804c53bce568",
+      "comment": "Loads the loading screen for one map, arms its vertical-sync callback, and starts its fade.",
+      "documentation": "include/nowload.hpp"
     },
     {
       "translation_unit": "nowload",
@@ -2560,7 +2572,9 @@
       "address": "0x00154320",
       "size": "0x450",
       "name": "VSyncCallBack_Load__Fi",
-      "sha256": "e909ab9d712b863996ca5b52fca718d1bde5e32e67cbaaa74cf72ee2e6dc7af5"
+      "sha256": "e909ab9d712b863996ca5b52fca718d1bde5e32e67cbaaa74cf72ee2e6dc7af5",
+      "comment": "Draws the loading screen and advances its fade once per vertical sync.",
+      "documentation": "include/nowload.hpp"
     },
     {
       "translation_unit": "nowload",
@@ -2570,7 +2584,9 @@
       "address": "0x00154770",
       "size": "0x1D4",
       "name": "LoadTexture__FPcPUcP8CTextureii",
-      "sha256": "73c90dc8b862c28a9d737e75698f92f425df66ce66c300eeb42ebe782c97a8b5"
+      "sha256": "73c90dc8b862c28a9d737e75698f92f425df66ce66c300eeb42ebe782c97a8b5",
+      "comment": "Uploads a named image and its palette to video memory and records where they went.",
+      "documentation": "include/nowload.hpp"
     },
     {
       "translation_unit": "nowload",
@@ -2580,7 +2596,9 @@
       "address": "0x00154950",
       "size": "0x1D4",
       "name": "LoadTexture__FP8TM2_headP8CTextureii",
-      "sha256": "9b761951e6b22fb273740cbcf5facbe9974a62d067e33c37e5e588a64dcbe701"
+      "sha256": "9b761951e6b22fb273740cbcf5facbe9974a62d067e33c37e5e588a64dcbe701",
+      "comment": "Uploads one already-located image and its palette to video memory and records where they went.",
+      "documentation": "include/nowload.hpp"
     },
     {
       "translation_unit": "actionseq",
@@ -3560,6 +3578,7 @@
       "size": "0x740",
       "name": "CreateVUData__6CWaterFPUiP10RenderInfo",
       "sha256": "a64acf095723d0c81c20fb7a3a42a2c2174d5b559be44c460f61ca4bdeee58e6",
+      "comment": "Builds the vector-unit packet that draws the surface, one quad per grid cell.",
       "documentation": "include/water.hpp"
     },
     {
@@ -3571,6 +3590,7 @@
       "size": "0x1DC",
       "name": "DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1",
       "sha256": "d84d14d69f0cbae940a3a62dbe3253b74f042a13b2c5ec3ea728030a78763ce6",
+      "comment": "Draws the surface through the vector unit.",
       "documentation": "include/water.hpp"
     },
     {
@@ -3582,6 +3602,7 @@
       "size": "0xC4",
       "name": "CheckClip__6CWaterFv",
       "sha256": "b3d0e0b92d0ff005fc160b5d59def6461e5134bf6f126ccd7cb2b95a10a2190f",
+      "comment": "Clips the surface against the view using the world-space box its four corners span.",
       "documentation": "include/water.hpp"
     },
     {
@@ -3593,6 +3614,7 @@
       "size": "0x108",
       "name": "Hamon__6CWaterFv",
       "sha256": "1f57743855db0abf11326183d0e2db278b01836fd07fa765d8fab265ef7347db",
+      "comment": "Advances the ripples one step, writing into whichever of the two height buffers is not being drawn.",
       "documentation": "include/water.hpp"
     },
     {
@@ -3604,6 +3626,7 @@
       "size": "0x9C",
       "name": "Shake__6CWaterFiif",
       "sha256": "309a25e360067ee658bf83839d7e5402842277b6a4a6721efd96f01d3fb543cc",
+      "comment": "Raises one interior grid cell, starting a ripple from it.",
       "documentation": "include/water.hpp"
     },
     {
@@ -3615,6 +3638,7 @@
       "size": "0x1A4",
       "name": "SetSize__6CWaterFiiP14CDataAlloc2_1_",
       "sha256": "47608ec5908fc51d3cbd564e848fa02f89c3f0dd0ba93599238fcf5f1a8d97d6",
+      "comment": "Gives the surface its grid size and takes the two height buffers out of an arena.",
       "documentation": "include/water.hpp"
     },
     {
@@ -3626,6 +3650,7 @@
       "size": "0x8C",
       "name": "__ct__6CWaterFv",
       "sha256": "acc219055dec034a4062314674bd9a28a4c7da27c55397136b9bff620a6a915e",
+      "comment": "Clears the grid, gives the surface a half-bright white and sets the ripple constants.",
       "documentation": "include/water.hpp"
     },
     {
@@ -3637,6 +3662,7 @@
       "size": "0x94",
       "name": "__ct__9CFireOmniFv",
       "sha256": "42764140028e3d24bcea9428ead2db446d52387cf57d3291b4040400cfb51748",
+      "comment": "Clears the fire's animation state and gives its cell phase a random start.",
       "documentation": "include/fireomni.hpp"
     },
     {
@@ -3648,6 +3674,7 @@
       "size": "0xD0",
       "name": "FireStep__9CFireOmniFv",
       "sha256": "2e299edc2cf7a5b3b8ad2f15bb9c18f31624351ec80feeb39ea7a50a4c9bae79",
+      "comment": "Advances the flame and cell animation phases and chooses the seed the next flicker draws from.",
       "documentation": "include/fireomni.hpp"
     },
     {
@@ -3659,6 +3686,7 @@
       "size": "0x2D8",
       "name": "FireCreate__9CFireOmniFv",
       "sha256": "aafb48357638e5c2ea9e43496215a3518abef5174b19aa42779bbc6491bf4a14",
+      "comment": "Composes the flame texture for the current cell phase out of the sheet the texture manager holds.",
       "documentation": "include/fireomni.hpp"
     },
     {
@@ -3670,6 +3698,7 @@
       "size": "0x18",
       "name": "SetTexture__9CFireOmniFP8CTextureP8CTexture",
       "sha256": "61319c699d346bff60c226637a2c5e4c158e70f6c8a657c91f1d691a5e3e0236",
+      "comment": "Supplies the two flame textures, so that drawing does not look them up for itself.",
       "documentation": "include/fireomni.hpp"
     },
     {
@@ -3681,6 +3710,7 @@
       "size": "0x7C0",
       "name": "DrawFire__9CFireOmniFiiP7CCameraPffif",
       "sha256": "d7e16f27740c255830600840df8d91276886df6f92b26c716c8a9fe8416879f9",
+      "comment": "Draws the flame as camera-facing sprites, one layer per bit of the layer mask.",
       "documentation": "include/fireomni.hpp"
     },
     {
@@ -3692,6 +3722,7 @@
       "size": "0x26C",
       "name": "DrawRaster__9CFireOmniFv",
       "sha256": "e006c80be0cac9fa9536400f86748247699432661830969d0eabc31e9168fdd7",
+      "comment": "Draws the light the fire casts on the floor, clipped to the screen.",
       "documentation": "include/fireomni.hpp"
     },
     {
@@ -16713,7 +16744,9 @@
       "address": "0x00244B30",
       "size": "0x140",
       "name": "LangsetInit__Fv",
-      "sha256": "0f2a33fc600be4973ba83ca14f9d922eaf1b189f575fdb102ae6662267d8b4ea"
+      "sha256": "0f2a33fc600be4973ba83ca14f9d922eaf1b189f575fdb102ae6662267d8b4ea",
+      "comment": "Builds the arenas, textures and pad settings the language screen runs on.",
+      "documentation": "include/langset.hpp"
     },
     {
       "translation_unit": "langset",
@@ -16723,7 +16756,9 @@
       "address": "0x00244C70",
       "size": "0xE4",
       "name": "LangsetLoop__Fv",
-      "sha256": "7f7b69349e91f29e7efca5a7b2aa9e573540eb3cf43235a819f53348d238e13f"
+      "sha256": "7f7b69349e91f29e7efca5a7b2aa9e573540eb3cf43235a819f53348d238e13f",
+      "comment": "Runs one frame of the language screen and reports that a language has been chosen and faded out.",
+      "documentation": "include/langset.hpp"
     },
     {
       "translation_unit": "langset",
@@ -16733,7 +16768,9 @@
       "address": "0x00244D60",
       "size": "0xD8",
       "name": "LangsetProc__Fv",
-      "sha256": "58351c2b4ebd5c21a70e92574aae6f0d763ac4091f33a88747fc3bdce85f3909"
+      "sha256": "58351c2b4ebd5c21a70e92574aae6f0d763ac4091f33a88747fc3bdce85f3909",
+      "comment": "Moves the language cursor with the pad and reports that the choice was confirmed.",
+      "documentation": "include/langset.hpp"
     },
     {
       "translation_unit": "langset",
@@ -16743,7 +16780,9 @@
       "address": "0x00244E40",
       "size": "0x3A8",
       "name": "LangsetDraw__Fv",
-      "sha256": "5f955092ab2da50641c2458697cd2e5639e5d69d64ce9ae49a1f0cf0363a0779"
+      "sha256": "5f955092ab2da50641c2458697cd2e5639e5d69d64ce9ae49a1f0cf0363a0779",
+      "comment": "Draws the language plate and its five entries, brightening the selected one.",
+      "documentation": "include/langset.hpp"
     },
     {
       "translation_unit": "fader",

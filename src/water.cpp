@@ -5,9 +5,9 @@
 
 char WaterData[0x10];
 
-void CWater::SetParam(float param_0, float param_1, float param_2, float param_3) {
-    unk_094 = param_0;
-    unk_098 = param_1;
+void CWater::SetParam(float speed, float loss, float param_2, float param_3) {
+    wave_speed = speed;
+    damping = loss;
     unk_09C = param_2;
     unk_0A0 = param_3;
 }

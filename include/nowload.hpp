@@ -2,6 +2,10 @@
 
 #include "common.h"
 
+// Forward declarations for the types these declarations name.
+class CTexture;
+struct TM2_head;
+
 /**
  * @file
  * Declares the calls that drive the loading screen while the disc is read.
@@ -51,3 +55,44 @@ void wait_now_loading_vsync(void);
  * @size 0x10
  */
 void now_loading_off(void);
+
+/**
+ * Loads the loading screen for one map, arms its vertical-sync callback, and
+ * starts its fade.
+ *
+ * @mangled init_now_loading__Fi
+ * @address 0x153FC0
+ * @size 0x354
+ */
+void init_now_loading(int map_title_no);
+
+/**
+ * Draws the loading screen and advances its fade once per vertical sync.
+ *
+ * @mangled VSyncCallBack_Load__Fi
+ * @address 0x154320
+ * @size 0x450
+ */
+void VSyncCallBack_Load(int field);
+
+/**
+ * Uploads a named image and its palette to video memory and records where
+ * they went.
+ *
+ * @mangled LoadTexture__FPcPUcP8CTextureii
+ * @address 0x154770
+ * @size 0x1D4
+ */
+void LoadTexture(char *name, unsigned char *archive, CTexture *texture, int image_address,
+                 int palette_address);
+
+/**
+ * Uploads one already-located image and its palette to video memory and
+ * records where they went.
+ *
+ * @mangled LoadTexture__FP8TM2_headP8CTextureii
+ * @address 0x154950
+ * @size 0x1D4
+ */
+void LoadTexture(TM2_head *image, CTexture *texture, int image_address, int palette_address);
+
