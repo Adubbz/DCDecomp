@@ -1078,16 +1078,6 @@
       "@1076"
     ]
   },
-  "src/menu_draw.cpp": {
-    "sections": {
-      ".denterstatus": [
-        "DEnterStatusPt"
-      ],
-      ".menuerrorcnt": [
-        "MenuEtcErrCnt"
-      ]
-    }
-  },
   "src/runscript.cpp": {
     "rodata_exports": [
       "@15",
@@ -1099,5 +1089,15 @@
       "@51",
       "@52"
     ]
+  },
+  "src/menu_dungeon.cpp": {
+    "sections": {
+      ".denterstatus": [
+        "DEnterStatusPt"
+      ],
+      ".menuerrorcnt": [
+        "MenuEtcErrCnt"
+      ]
+    }
   }
 }

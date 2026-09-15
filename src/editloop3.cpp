@@ -44,6 +44,7 @@
 #include "mdt.hpp"
 #include "menu_draw.hpp"
 #include "menu_misc.hpp"
+#include "menu_save.hpp"
 #include "mglib.hpp"
 #include "nowload.hpp"
 #include "npcharacter.hpp"

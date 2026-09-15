@@ -287,7 +287,9 @@ segments:
       - {start: 0x1102d0, type: cpp, name: editmenu}
       - {start: 0x1135c0, type: cpp, name: memorycardaccess}
       - {start: 0x116e50, type: cpp, name: memcard}
-      - {start: 0x121830, type: cpp, name: menu_draw}
+      - {start: 0x121830, type: cpp, name: menu_save}
+      - {start: 0x125910, type: cpp, name: menu_dungeon}
+      - {start: 0x12baf0, type: cpp, name: menu_draw}
       - {start: 0x132930, type: cpp, name: eastking}
       - {start: 0x133620, type: cpp, name: menu_manual}
       - {start: 0x1350e0, type: cpp, name: weapon_buildup}
@@ -407,7 +409,9 @@ segments:
       - {start: 0x19e3f8, type: .rodata, name: editmenu}
       - {start: 0x19e5b0, type: .rodata, name: memorycardaccess}
       - {start: 0x19eb00, type: .rodata, name: memcard}
-      - {start: 0x19ecc0, type: .rodata, name: menu_draw}
+      - {start: 0x19ecc0, type: .rodata, name: menu_save}
+      - {start: 0x19ef50, type: .rodata, name: menu_dungeon}
+      - {start: 0x19f220, type: .rodata, name: menu_draw}
       - {start: 0x19f370, type: .rodata, name: eastking}
       - {start: 0x19f3b8, type: .rodata, name: menu_manual}
       - {start: 0x19f478, type: .rodata, name: weaponlevelup}

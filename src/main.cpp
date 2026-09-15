@@ -22,6 +22,7 @@
 #include "memcard.hpp"
 #include "menu_draw.hpp"
 #include "mathutil.hpp"
+#include "menu_save.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "runscript.hpp"
