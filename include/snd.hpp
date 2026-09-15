@@ -12,6 +12,15 @@ struct spRGBA;
 struct sceVif1Packet;
 
 /**
+ * Loads the sound-effect metadata table used by the sound manager.
+ *
+ * @mangled SndInitSeTable__Fv
+ * @address 0x159390
+ * @size 0x298
+ */
+void SndInitSeTable(void);
+
+/**
  * Loads one character voice bank.
  *
  * @mangled SndVoiceLoad__Fi
@@ -152,7 +161,7 @@ int SndAmbientInit(void);
  *
  * @mangled SndGetVolPan__FPfPfPfff
  * @address 0x15AC00
- * @size 0x200
+ * @size 0x1F8
  */
 void SndGetVolPan(float *vol, float *pan, float *pos, float near, float far);
 
@@ -191,7 +200,7 @@ void SndSetSeVol(int se_no, int vol, int voice);
  *
  * @mangled SndSetSeVolf__Fifi
  * @address 0x15AAB0
- * @size 0x60
+ * @size 0x5C
  * @unknownret
  */
 void SndSetSeVolf(int se_no, float vol, int voice);
@@ -211,7 +220,7 @@ void SndSetSePanf(int se_no, float pan, int voice);
  *
  * @mangled SndSePlay__Fiii
  * @address 0x15A6B0
- * @size 0xD0
+ * @size 0xA4
  * @unknownret
  */
 int SndSePlay(int se_no, int voice, int pan);
@@ -220,8 +229,8 @@ int SndSePlay(int se_no, int voice, int pan);
  * Plays a positional sound effect with distance attenuation.
  *
  * @mangled SndSePlay__FiPfff
- * @address 0x15A810
- * @size 0xF0
+ * @address 0x15A820
+ * @size 0x90
  */
 void SndSePlay(int se_no, float *position, float near, float far);
 
@@ -229,8 +238,8 @@ void SndSePlay(int se_no, float *position, float near, float far);
  * Plays the sound of one foot at a world position.
  *
  * @mangled SndPlayFootSound__FiiPf
- * @address 0x15ABE0
- * @size 0x120
+ * @address 0x15AB90
+ * @size 0x68
  * @unknownret
  */
 void SndPlayFootSound(int sound_id, int foot, float *position);
@@ -297,7 +306,7 @@ void SetClut(sceVif1Packet *packet, CTexture *texture, i *clut);
  *
  * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_Uc
  * @address 0x15C310
- * @size 0x320
+ * @size 0x318
  * @unknownret
  */
 void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
@@ -329,7 +338,7 @@ void set2DSpriteRot(sceVif1Packet *, CTexture *, const CRect_i_ &, const CRect_i
  *
  * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_iif
  * @address 0x15E540
- * @size 0x590
+ * @size 0x58C
  * @unknownret
  */
 void set2DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, const CRect_i_ &, int, int, float);
@@ -397,7 +406,7 @@ void set3DColSprite(sceVif1Packet *, int *, int *, int *, int *, spRGBA *, spRGB
  *
  * @mangled set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiPiPiUc
  * @address 0x15D470
- * @size 0x40
+ * @size 0x34
  * @unknownret
  */
 void set3DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, int *, int *, int *, int *,
@@ -424,9 +433,12 @@ void SndSetCamera(float *position, float *rotation);
 void SndSeStop(int se_no, int voice);
 
 /**
- * Sets the background-music volume.
+ * Sets the background music's volume.
  *
  * @mangled SndSetBgmVol__Fi
+ * @address 0x159D20
+ * @size 0x70
+ * Sets the background-music volume.
  */
 void SndSetBgmVol(int volume);
 
@@ -627,7 +639,7 @@ void SndBgmFadeInOut(void);
  *
  * @mangled setAlphaFlag__FP13sceVif1PacketP10sceGsAlpha
  * @address 0x15BC20
- * @size 0xE0
+ * @size 0xDC
  */
 void setAlphaFlag(sceVif1Packet *packet, sceGsAlpha *alpha);
 

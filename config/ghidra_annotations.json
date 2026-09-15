@@ -1898,6 +1898,7 @@
       "size": "0x10",
       "name": "GetMidiState__6CSoundFv",
       "sha256": "b0abd13e750894650d4ba29785279382320757b6699f5e719dacdb9a2ea0cd21",
+      "comment": "Gives the sequencer's state word.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -1909,6 +1910,7 @@
       "size": "0x10",
       "name": "GetSeInfTbl__6CSoundFv",
       "sha256": "7a53892008718e740215221f237ee51802a688e8672c696e4f4fe728547cd8bd",
+      "comment": "Gives the table describing each sound effect.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -1920,6 +1922,7 @@
       "size": "0x78",
       "name": "GetSeNo__6CSoundFii",
       "sha256": "b1c29bd99f036ff311da7eac2b81334f895176f9c779c12057a5d0a0d7ebe2a1",
+      "comment": "Gives the bank entry one sound effect plays from.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -1931,6 +1934,7 @@
       "size": "0x54",
       "name": "StopVoice__6CSoundFi",
       "sha256": "49dfd634d37d9ad98bad7823c5056e07c5c08d60fd29c0083435af409f0ef809",
+      "comment": "Silences one hardware voice.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -1942,6 +1946,7 @@
       "size": "0x120",
       "name": "SetReverb__6CSoundFiii",
       "sha256": "cc70ab601f0e99208f8371d108fef46e5573a24c0b2d13ccd110bb9f49a93d92",
+      "comment": "Sets the reverberation mode and depth of one channel.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -1973,6 +1978,7 @@
       "size": "0x9B8",
       "name": "LoadSoundFileFromPack__6CSoundFPcPUi",
       "sha256": "0a6f0ad413166525b6ee9f15c2550d420cc4fdb1f52be7e4535c832b5989a006",
+      "comment": "Reads one sound file out of an archive.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -1984,6 +1990,7 @@
       "size": "0x12C",
       "name": "LoadSqInf__6CSoundFPcPUi",
       "sha256": "41691762a576e134b49e8c235e51b29ac89d9f1f23c5eadc023a6c8bc9152f85",
+      "comment": "Reads the sequence description table.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -1995,6 +2002,7 @@
       "size": "0x198",
       "name": "LoadSeInf__6CSoundFPcPUi",
       "sha256": "a9d7b6f5bb7ae68c9d81658273e13b15d7e633e3ebe490960447c4c7ea8d6850",
+      "comment": "Reads the sound-effect description table.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2006,6 +2014,7 @@
       "size": "0x4C0",
       "name": "Init__6CSoundFiiii",
       "sha256": "47cf8ba7209dca224eb046fd12ae16ea2951bfb1cab423c7980a00fac3442d9c",
+      "comment": "Starts the sound system and its sequencer.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2017,6 +2026,7 @@
       "size": "0x1D0",
       "name": "SQ_Play__6CSoundFii",
       "sha256": "f58d65f6a37f092cd592c6741f666fe270b8c6000cb79c2256331ffd574ed9ee",
+      "comment": "Starts a sequence playing.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2028,6 +2038,7 @@
       "size": "0x1A8",
       "name": "SQ_Play__6CSoundFiii",
       "sha256": "c5c05434849da9cee963b23932ee934de7fcd6e5ef1081862ecee273874f5610",
+      "comment": "Starts a sequence playing at a given volume.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2039,6 +2050,7 @@
       "size": "0x44",
       "name": "SQ_RePlay__6CSoundFi",
       "sha256": "9ca259aec8ff6c94f95f6943079cc241e59eceda7f783d566f37042b1074d84e",
+      "comment": "Starts a sequence again from its beginning.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2050,6 +2062,7 @@
       "size": "0x1C8",
       "name": "SE_Play__6CSoundFiiiiiii",
       "sha256": "9e24ee7be27d1425ac4828f9fb30a09f794c12066ee1c52b3d0785b446b7a011",
+      "comment": "Plays one sound effect with every parameter given.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2061,6 +2074,7 @@
       "size": "0x60",
       "name": "SE_Play__6CSoundFiii",
       "sha256": "059579479a926ad969aad4dc9480c14bfe67f5454c259b3e86b14853b9cc5478",
+      "comment": "Plays one sound effect, taking its parameters from the description table.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2072,6 +2086,7 @@
       "size": "0x30",
       "name": "SE_Play__6CSoundFiiii",
       "sha256": "5a6e97619ff75e5cecba8c9e6aaea3145ee9ccbdde1c9a648eed0d4dace04f62",
+      "comment": "Plays one sound effect at the middle pan and full volume.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2083,6 +2098,7 @@
       "size": "0x108",
       "name": "SE_SetVol__6CSoundFiiiii",
       "sha256": "d391dd843c73ae3b1718a97176e1b8fd8f51b7abd356d332c8de7cabe67d7d9d",
+      "comment": "Sets the volume of a sounding effect.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2094,6 +2110,7 @@
       "size": "0x10C",
       "name": "SE_SetPan__6CSoundFiiiii",
       "sha256": "f53e38997c5ac766a29a31e538e33d595c170cecbbd5cde6865e05cedfad584e",
+      "comment": "Sets the stereo position of a sounding effect.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2105,6 +2122,7 @@
       "size": "0x50",
       "name": "SE_SetPan__6CSoundFiiii",
       "sha256": "b5a17509d3022451b6d52803faf6d1c04c663ebc0d5210f3de895327b5862e73",
+      "comment": "Sets the stereo position of a sounding effect, naming it through the description table.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2116,6 +2134,7 @@
       "size": "0x100",
       "name": "SE_Stop__6CSoundFiiii",
       "sha256": "8fba4e521ee2c3b6bff6b5227e16eabbbc31d5d66dcd5b9b147ee296349535b2",
+      "comment": "Stops a sounding effect.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2127,6 +2146,7 @@
       "size": "0x324",
       "name": "Fade__6CSoundFifi",
       "sha256": "1682e0c29e64b120a741803fb704324c49ddf65e7e39df1cc33a1240d2160450",
+      "comment": "Fades a channel towards a volume over a number of steps.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2138,6 +2158,7 @@
       "size": "0x9F0",
       "name": "Step__6CSoundFv",
       "sha256": "651ac4858d0475947e8d8837207f4ef7ebd237bc3816fb9e3c6e576742b583ef",
+      "comment": "Advances the fades and the sequencer by one frame.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2149,6 +2170,7 @@
       "size": "0x48",
       "name": "Stop__6CSoundFi",
       "sha256": "a4e822fce2203c4babb69e3b0525c4f38916882474fc43ddc0bc7b924334cd30",
+      "comment": "Stops a sequence.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2160,6 +2182,7 @@
       "size": "0x28",
       "name": "SetVol__6CSoundFii",
       "sha256": "f9306f54b61c4d689d5c2478e70284906f70310c4621f8983f0ac746836616ca",
+      "comment": "Sets a sequence's volume.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2171,6 +2194,7 @@
       "size": "0x24",
       "name": "SetStereoMode__6CSoundFi",
       "sha256": "100d90c2970a135c398937489946db5f90833c66d57e0fe9b0404b6431b54270",
+      "comment": "Chooses between stereo and monaural output.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2182,6 +2206,7 @@
       "size": "0x17C",
       "name": "LoadHdBd_A__6CSoundFiiii",
       "sha256": "aaacd862e28b0fcff17fea35960373756edfef083ad14e994ada23ee86287676",
+      "comment": "Loads the ambient bank into the sound processor.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2193,6 +2218,7 @@
       "size": "0x228",
       "name": "LoadHdBd_C__6CSoundFiiii",
       "sha256": "b074b968594f4b3e38ccb11a79bbeac93a7bd5879805d650d3eae6ac26456f1e",
+      "comment": "Loads the common bank into the sound processor.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2204,6 +2230,7 @@
       "size": "0x17C",
       "name": "LoadHdBd_E__6CSoundFiiii",
       "sha256": "4285cb8973f3fea6c0615990c50feb7f7fc0d2097006c73333bb2998264a7d3a",
+      "comment": "Loads the effect bank into the sound processor.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2215,6 +2242,7 @@
       "size": "0x17C",
       "name": "LoadHdBd_G__6CSoundFiiii",
       "sha256": "26cfc80c0c4bd604b00a3d1f77902bf49e3ffd750bd4758c6e1f37ecdc651d07",
+      "comment": "Loads the georama bank into the sound processor.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2226,6 +2254,7 @@
       "size": "0x26C",
       "name": "LoadHdBd_I__6CSoundFiiii",
       "sha256": "b2471d385a7a722bea7ea99f340e6adb864dfaf0ca8ac252aa59b1028f9ecc9a",
+      "comment": "Loads the interior bank into the sound processor.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2237,6 +2266,7 @@
       "size": "0x164",
       "name": "LoadHdBd_M__6CSoundFiiii",
       "sha256": "725e6ee5078ce198148c768a69420e86511b5591493e1701161bd045445098db",
+      "comment": "Loads the music bank into the sound processor.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2248,6 +2278,7 @@
       "size": "0x164",
       "name": "LoadHdBd_Q__6CSoundFiiii",
       "sha256": "4c21228a04aa863829f972e22a4f12c16e5e2425c84c143c198aebb76a85b1fa",
+      "comment": "Loads the quest bank into the sound processor.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2259,6 +2290,7 @@
       "size": "0x164",
       "name": "LoadHdBd_S__6CSoundFiiii",
       "sha256": "0f251552978ab2749a398dde535ea729de73c1de4d42d07aacba76fed4a53cad",
+      "comment": "Loads the system bank into the sound processor.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2270,6 +2302,7 @@
       "size": "0xBC",
       "name": "LoadSeq_A__6CSoundFii",
       "sha256": "09ec9e4ec9ee70c2ab828508fdf2afb92eb4e66ed22b9ee725d4a63efd6fd177",
+      "comment": "Loads the ambient sequence set through the sound processor's heap.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2281,6 +2314,7 @@
       "size": "0xBC",
       "name": "LoadSeq_E__6CSoundFii",
       "sha256": "7a0ca21fb6169ab95a1dbcaeb1743fe632fa3f45a0531757b2717561f103c10f",
+      "comment": "Loads the effect sequence set through the sound processor's heap.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2292,6 +2326,7 @@
       "size": "0xBC",
       "name": "LoadSeq_I__6CSoundFii",
       "sha256": "8583d7fe62b4a24e4e75bf1f509f856992600117cb57d1fe62357c9ec106a33d",
+      "comment": "Loads the interior sequence set through the sound processor's heap.",
       "documentation": "include/sound.hpp"
     },
     {
@@ -2644,7 +2679,9 @@
       "address": "0x001591A0",
       "size": "0x60",
       "name": "SndInit__Fv",
-      "sha256": "344be013c1c7060c6f86019bfa4fdd4d6c5e854f56f46c1a97ea9d606592de4e"
+      "sha256": "344be013c1c7060c6f86019bfa4fdd4d6c5e854f56f46c1a97ea9d606592de4e",
+      "comment": "Starts the sound manager once, and loads its effect table.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -2690,7 +2727,9 @@
       "address": "0x00159670",
       "size": "0x80",
       "name": "SndSyncBG__Fv",
-      "sha256": "cb3ebedf79909a7d6937d289ea66cbb8a1179feaa064ab078983472725f801dc"
+      "sha256": "cb3ebedf79909a7d6937d289ea66cbb8a1179feaa064ab078983472725f801dc",
+      "comment": "Reports whether any of the background sound loads is still running.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -2712,7 +2751,9 @@
       "address": "0x00159740",
       "size": "0x50",
       "name": "SndSetCamera__FPfPf",
-      "sha256": "d6193bfce3ca843f76709504325e0211206ea6298994a655fe5989225a5562d5"
+      "sha256": "d6193bfce3ca843f76709504325e0211206ea6298994a655fe5989225a5562d5",
+      "comment": "Tells the sound where the camera stands and which way it looks.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -2722,7 +2763,9 @@
       "address": "0x00159790",
       "size": "0x7C",
       "name": "GetBGMFile__FiPcPc",
-      "sha256": "a579ce720dd541de42a5e6f959eeaa5112e3795ea0c8bafb717ce86e0e3a39cd"
+      "sha256": "a579ce720dd541de42a5e6f959eeaa5112e3795ea0c8bafb717ce86e0e3a39cd",
+      "comment": "Builds the archive and configuration file names of one music set.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -2732,7 +2775,9 @@
       "address": "0x00159810",
       "size": "0x114",
       "name": "SetBGMFile__FiPUiPc",
-      "sha256": "b196a756098c515f2a51257dac6a5a9f6d520dc98c9b5fe9348208e84f86e6da"
+      "sha256": "b196a756098c515f2a51257dac6a5a9f6d520dc98c9b5fe9348208e84f86e6da",
+      "comment": "Hands a loaded music set to the driver and reads its configuration.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -2754,7 +2799,9 @@
       "address": "0x001599F0",
       "size": "0xC0",
       "name": "SndBgmLoadBG__FiPUiPi",
-      "sha256": "ddc45a462fde67e88852fee1b4b360166f16676c796d179bff74fd50650f1ea3"
+      "sha256": "ddc45a462fde67e88852fee1b4b360166f16676c796d179bff74fd50650f1ea3",
+      "comment": "Starts loading one music set in the background.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -2798,7 +2845,9 @@
       "address": "0x00159D90",
       "size": "0x50",
       "name": "SndSetBgmVolf__Ff",
-      "sha256": "756abfbebdc79bb1c5a791af6f5575f7d1396739bd204364b6c2e043e96856ac"
+      "sha256": "756abfbebdc79bb1c5a791af6f5575f7d1396739bd204364b6c2e043e96856ac",
+      "comment": "Sets the background music's volume as a share of its default.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -2808,7 +2857,9 @@
       "address": "0x00159E40",
       "size": "0xC8",
       "name": "SndBgmFadeIn__Fiii",
-      "sha256": "77fcc08c999f2d7c196ae2ce66a6457956ac136a1eeb054dabd393fc4e52058f"
+      "sha256": "77fcc08c999f2d7c196ae2ce66a6457956ac136a1eeb054dabd393fc4e52058f",
+      "comment": "Fades the background music up to a volume over a number of steps.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -2818,7 +2869,9 @@
       "address": "0x00159F10",
       "size": "0x74",
       "name": "SndBgmFadeOut__Fii",
-      "sha256": "55824d787a912f943f3edc66bc56597c3066d8415a0f07cbbd9004fa834be688"
+      "sha256": "55824d787a912f943f3edc66bc56597c3066d8415a0f07cbbd9004fa834be688",
+      "comment": "Fades the background music down to a volume over a number of steps.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -2852,7 +2905,9 @@
       "address": "0x0015A240",
       "size": "0x7C",
       "name": "GetSoundFile__FiPcPc",
-      "sha256": "8bed76142ef34739f12009e2bd9ce6f085a78838443a1303433db71eeacb0a49"
+      "sha256": "8bed76142ef34739f12009e2bd9ce6f085a78838443a1303433db71eeacb0a49",
+      "comment": "Builds the archive and configuration file names of one sound-effect set.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -2862,7 +2917,9 @@
       "address": "0x0015A2C0",
       "size": "0x174",
       "name": "SetSoundFile__FiPUiPc",
-      "sha256": "4fe415c2b92b729fb9ddd37caf7779920262ce8d69db56f64f110f26dc66a0ad"
+      "sha256": "4fe415c2b92b729fb9ddd37caf7779920262ce8d69db56f64f110f26dc66a0ad",
+      "comment": "Hands a loaded sound-effect set to the driver and sets its channel volumes.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -2884,7 +2941,9 @@
       "address": "0x0015A580",
       "size": "0xAC",
       "name": "SndSoundLoadBG__FiPUiPi",
-      "sha256": "aad2c8643b9cf300a6db97f441c1b2b510737196ed43b67f77f605061092ef91"
+      "sha256": "aad2c8643b9cf300a6db97f441c1b2b510737196ed43b67f77f605061092ef91",
+      "comment": "Starts loading one sound-effect set in the background.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -2942,7 +3001,9 @@
       "address": "0x0015A8B0",
       "size": "0x50",
       "name": "SndSeStop__Fii",
-      "sha256": "ce6d0972be12d825a4309b6a693257d29c36d25b80a19d45cd41a0aced1e9e8e"
+      "sha256": "ce6d0972be12d825a4309b6a693257d29c36d25b80a19d45cd41a0aced1e9e8e",
+      "comment": "Stops a sounding effect.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3072,7 +3133,9 @@
       "address": "0x0015B060",
       "size": "0x84",
       "name": "SndSeSeqAllStop__Fv",
-      "sha256": "e6208d385402c17d78cfc2b0a3c0ce9671e17292ce2a38cc8c16d1f2a88326a3"
+      "sha256": "e6208d385402c17d78cfc2b0a3c0ce9671e17292ce2a38cc8c16d1f2a88326a3",
+      "comment": "Stops every sound-effect sequence.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3094,7 +3157,9 @@
       "address": "0x0015B1E0",
       "size": "0x60",
       "name": "SndAmbientSetVol__Fi",
-      "sha256": "5b86e4cb3cbeaa48184e6cc80cf0df87d6b754b06fac18098be0c4374726454a"
+      "sha256": "5b86e4cb3cbeaa48184e6cc80cf0df87d6b754b06fac18098be0c4374726454a",
+      "comment": "Sets the ambient loop's volume.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3104,7 +3169,9 @@
       "address": "0x0015B240",
       "size": "0x5C",
       "name": "SndAmbientSetVolf__Ff",
-      "sha256": "0ff71059e43fc6bd6224d86216e91cc163c5fdb3bf85ec86981aaba2db5ddb77"
+      "sha256": "0ff71059e43fc6bd6224d86216e91cc163c5fdb3bf85ec86981aaba2db5ddb77",
+      "comment": "Sets the ambient loop's volume as a share of its default.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3126,7 +3193,9 @@
       "address": "0x0015B310",
       "size": "0x7C",
       "name": "GetVoiceFile__FiPcPc",
-      "sha256": "1e7e4e7c2fe95536ba19725f85424cb2334a93de0628d72b80f20672321d5440"
+      "sha256": "1e7e4e7c2fe95536ba19725f85424cb2334a93de0628d72b80f20672321d5440",
+      "comment": "Builds the archive and configuration file names of one voice set.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3136,7 +3205,9 @@
       "address": "0x0015B390",
       "size": "0x54",
       "name": "SetVoiceFile__FiPUiPc",
-      "sha256": "e6b7b91b1fb373828855aa180084b5a06b19b8823d5246fba43913f30829df04"
+      "sha256": "e6b7b91b1fb373828855aa180084b5a06b19b8823d5246fba43913f30829df04",
+      "comment": "Hands a loaded voice set to the driver and reads its configuration.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3158,7 +3229,9 @@
       "address": "0x0015B480",
       "size": "0xAC",
       "name": "SndVoiceLoadBG__FiPUiPi",
-      "sha256": "7e0b24870d5834751308d8c3728fea147df2374ef4cb1ace7e06d463c6f23920"
+      "sha256": "7e0b24870d5834751308d8c3728fea147df2374ef4cb1ace7e06d463c6f23920",
+      "comment": "Starts loading one voice set in the background.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3180,7 +3253,9 @@
       "address": "0x0015B5F0",
       "size": "0x7C",
       "name": "GetSPSeFile__FiPcPc",
-      "sha256": "63477eb5a0dd7ec87daac256d77f03c32339b917ea0908bd705a1ef5d1879336"
+      "sha256": "63477eb5a0dd7ec87daac256d77f03c32339b917ea0908bd705a1ef5d1879336",
+      "comment": "Builds the archive and configuration file names of one special-effect set.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3190,7 +3265,9 @@
       "address": "0x0015B670",
       "size": "0x54",
       "name": "SetSPSeFile__FiPUiPc",
-      "sha256": "ff77ffdd32b20ff25ddfe5227bcef92e86aaaca8167a7b1c9536cbd7dbff31e0"
+      "sha256": "ff77ffdd32b20ff25ddfe5227bcef92e86aaaca8167a7b1c9536cbd7dbff31e0",
+      "comment": "Hands a loaded special-effect set to the driver and reads its configuration.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3200,7 +3277,9 @@
       "address": "0x0015B6D0",
       "size": "0x90",
       "name": "SndSPSeLoad__Fi",
-      "sha256": "4974fd8c94d9da6a2447f9bd93a1648f3870b98986dff306c418504d69a664bd"
+      "sha256": "4974fd8c94d9da6a2447f9bd93a1648f3870b98986dff306c418504d69a664bd",
+      "comment": "Starts loading one special-effect set.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3222,7 +3301,9 @@
       "address": "0x0015B800",
       "size": "0x80",
       "name": "SndSPSeSyncBG__Fv",
-      "sha256": "ce9dd2440716c3f0f4ed4cf5c98800e54b15f91ba6959e0990795cec3c89931d"
+      "sha256": "ce9dd2440716c3f0f4ed4cf5c98800e54b15f91ba6959e0990795cec3c89931d",
+      "comment": "Polls the special-effect set load and hands the file to the driver once it lands.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3232,7 +3313,9 @@
       "address": "0x0015B880",
       "size": "0x7C",
       "name": "SndSPSePlay__Fii",
-      "sha256": "21a30e9b6ed3e05236245b3f820bbe0b3bd07b59aa5318c6923166b9ad6bc7b2"
+      "sha256": "21a30e9b6ed3e05236245b3f820bbe0b3bd07b59aa5318c6923166b9ad6bc7b2",
+      "comment": "Plays one special sound effect.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3242,7 +3325,9 @@
       "address": "0x0015B950",
       "size": "0xB0",
       "name": "SndSetSPSeVolf__Fif",
-      "sha256": "3cb7587a319f9aae96a18a079f99c538086b32ac28360a0095cc2d9931a3cdf5"
+      "sha256": "3cb7587a319f9aae96a18a079f99c538086b32ac28360a0095cc2d9931a3cdf5",
+      "comment": "Sets a special sound effect's volume as a share of its table value.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3252,7 +3337,9 @@
       "address": "0x0015BA00",
       "size": "0xA8",
       "name": "SndSetSPSePanf__Fif",
-      "sha256": "76db3a4870af35a9a585c5210dae99d2e9655267a53412253798456dd292da57"
+      "sha256": "76db3a4870af35a9a585c5210dae99d2e9655267a53412253798456dd292da57",
+      "comment": "Sets a special sound effect's pan as a share of the widest pan.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3262,7 +3349,9 @@
       "address": "0x0015BAB0",
       "size": "0xF4",
       "name": "LoadSoundInfo__FP8SND_INFOPci",
-      "sha256": "1645308a172c11ef2c5740758ad6beb2a1906ab70faeda5873584a1dd16b804f"
+      "sha256": "1645308a172c11ef2c5740758ad6beb2a1906ab70faeda5873584a1dd16b804f",
+      "comment": "Reads one sound configuration file through the script interpreter.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3272,7 +3361,9 @@
       "address": "0x0015BBB0",
       "size": "0x28",
       "name": "CommandREVERBE__FPPv",
-      "sha256": "9d1ea3b7889bbf74bbcf8d8c46c4c6af39eb26667aa264b1213bf708ac776942"
+      "sha256": "9d1ea3b7889bbf74bbcf8d8c46c4c6af39eb26667aa264b1213bf708ac776942",
+      "comment": "Sets the reverberation the sound configuration asks for.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3282,7 +3373,9 @@
       "address": "0x0015BBE0",
       "size": "0x28",
       "name": "CommandTABLE__FPPv",
-      "sha256": "a2acde2b5a846cd1c776032ad155e20870a3d30636e75f0ba3f22988bc3534aa"
+      "sha256": "a2acde2b5a846cd1c776032ad155e20870a3d30636e75f0ba3f22988bc3534aa",
+      "comment": "Names the sound-effect table the configuration draws from.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3388,7 +3481,9 @@
       "address": "0x0015D4B0",
       "size": "0x2E0",
       "name": "set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiPiPiP6spRGBA",
-      "sha256": "edeacf8232b04461ea6d2192c958cb45fb903e0ca3011ec678335b4bb00ff43e"
+      "sha256": "edeacf8232b04461ea6d2192c958cb45fb903e0ca3011ec678335b4bb00ff43e",
+      "comment": "Draws a textured sprite in world space, with four corner positions and colours.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3398,7 +3493,9 @@
       "address": "0x0015D790",
       "size": "0x210",
       "name": "set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiP6spRGBA",
-      "sha256": "b7b6af0a06b70869df9e848c3315e175f58178a7e69fba42f682b2829e170e9a"
+      "sha256": "b7b6af0a06b70869df9e848c3315e175f58178a7e69fba42f682b2829e170e9a",
+      "comment": "Draws a textured sprite in world space between two projected corners.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3408,7 +3505,9 @@
       "address": "0x0015D9A0",
       "size": "0x2FC",
       "name": "set3DSpriteFog__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiPiPiUc",
-      "sha256": "fc6b265d999fb6ba62d6c3997a5cdb97358d5767480b3f65717bc55ea3396664"
+      "sha256": "fc6b265d999fb6ba62d6c3997a5cdb97358d5767480b3f65717bc55ea3396664",
+      "comment": "Draws a fogged sprite in world space, with four corner positions.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3418,7 +3517,9 @@
       "address": "0x0015DCA0",
       "size": "0x228",
       "name": "set3DSpriteFog__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiP6spRGBA",
-      "sha256": "5ba8cb813a3d478f4834840c4aca7f1dfc3128271b8959ef3ff4b0f78f988ec1"
+      "sha256": "5ba8cb813a3d478f4834840c4aca7f1dfc3128271b8959ef3ff4b0f78f988ec1",
+      "comment": "Draws a fogged sprite in world space between two projected corners.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "snd",
@@ -3476,7 +3577,9 @@
       "address": "0x0015F090",
       "size": "0x68",
       "name": "set2DSprite__FP13sceVif1PacketP8CTextureP4RECTP4RECTUc",
-      "sha256": "ce7411dca553118108085fa20b34c14f144018b1645ea5546d1549d78611f7df"
+      "sha256": "ce7411dca553118108085fa20b34c14f144018b1645ea5546d1549d78611f7df",
+      "comment": "Draws a textured sprite in screen space.",
+      "documentation": "src/snd.cpp"
     },
     {
       "translation_unit": "scriptinterpreter",
@@ -5318,7 +5421,9 @@
       "address": "0x0019B790",
       "size": "0x204",
       "name": "LoadMapObject__FP9CMapPartsPPUiP14CDataAlloc2_1_",
-      "sha256": "98815ba6077ae9a3d2af154ff19ec9652f01f369efb0a21dcca0096e16d09ad3"
+      "sha256": "98815ba6077ae9a3d2af154ff19ec9652f01f369efb0a21dcca0096e16d09ad3",
+      "comment": "Reads one interior object's levels of detail and hangs them off its part.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5328,7 +5433,9 @@
       "address": "0x0019B9A0",
       "size": "0x294",
       "name": "LoadScript__Fv__2",
-      "sha256": "a90b5802efe4d4749c89ddfa3b954c284574c1c10ec79966c6b8c1529b1c19a9"
+      "sha256": "a90b5802efe4d4749c89ddfa3b954c284574c1c10ec79966c6b8c1529b1c19a9",
+      "comment": "Reads the interior's event script into the script arena.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5338,7 +5445,9 @@
       "address": "0x0019BC40",
       "size": "0xB4",
       "name": "RunEvent__FiP7CCamera__2",
-      "sha256": "7fedb9138b19ac782425ddcc4b9bee11027e8ed74b5d876ee2540f08bb74de60"
+      "sha256": "7fedb9138b19ac782425ddcc4b9bee11027e8ed74b5d876ee2540f08bb74de60",
+      "comment": "Starts an interior event, handing it the camera it is to play through.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5348,7 +5457,9 @@
       "address": "0x0019BD00",
       "size": "0xA0",
       "name": "RunSystemEvent__FiP7CCamera__2",
-      "sha256": "d417a6b7cbc3e47cb51d3a394c6072e1fba92ca8b115218148fcf53c71cd7d6d"
+      "sha256": "d417a6b7cbc3e47cb51d3a394c6072e1fba92ca8b115218148fcf53c71cd7d6d",
+      "comment": "Starts an interior system event, handing it the camera it is to play through.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5358,7 +5469,9 @@
       "address": "0x0019BDA0",
       "size": "0x90",
       "name": "InitWorkBuffer__Fv__2",
-      "sha256": "1ab3580fa0149f71183b40d94e557c099b8c851fb18772dcfa6015d1d10936f2"
+      "sha256": "1ab3580fa0149f71183b40d94e557c099b8c851fb18772dcfa6015d1d10936f2",
+      "comment": "Divides the read buffer into the interior's work, NPC and menu arenas.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5368,7 +5481,9 @@
       "address": "0x0019BE30",
       "size": "0x478",
       "name": "EditInInit__FfPc",
-      "sha256": "85c2b826fe976dbd99361428350b5c1462711ccd7fcd22cf3efa5fe8b3681a02"
+      "sha256": "85c2b826fe976dbd99361428350b5c1462711ccd7fcd22cf3efa5fe8b3681a02",
+      "comment": "Builds everything one interior runs on: its data, models, script and camera.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5378,7 +5493,9 @@
       "address": "0x0019C2B0",
       "size": "0x1014",
       "name": "EditInLoop__Fv",
-      "sha256": "4b7a506b74252542007688c0fdcd09edc997ecbce557b74f5feff9f1f65eec84"
+      "sha256": "4b7a506b74252542007688c0fdcd09edc997ecbce557b74f5feff9f1f65eec84",
+      "comment": "Runs one frame of the interior and reports when it is to be left.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5388,7 +5505,9 @@
       "address": "0x0019D2D0",
       "size": "0x6AC",
       "name": "MainDraw__Fv__2",
-      "sha256": "148561970cb25e034d2e211df146cb1a055883c49246d3274bf66f9af1d1a2c1"
+      "sha256": "148561970cb25e034d2e211df146cb1a055883c49246d3274bf66f9af1d1a2c1",
+      "comment": "Draws the interior for one frame.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5398,7 +5517,9 @@
       "address": "0x0019D980",
       "size": "0x15C",
       "name": "DrawWaterSurface__FP7CCamera",
-      "sha256": "7bf2e6da870b3ca921272f09d3a73f8994798336e915b709cb32f2e4353c512e"
+      "sha256": "7bf2e6da870b3ca921272f09d3a73f8994798336e915b709cb32f2e4353c512e",
+      "comment": "Draws the interior's water surfaces, ordered back to front from the camera.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5408,7 +5529,9 @@
       "address": "0x0019DAE0",
       "size": "0x204",
       "name": "StepWater__Fv",
-      "sha256": "057cecef95b1c65e1af657ca7d2c134fde404117a08b2eb01158d1f2c2b69223"
+      "sha256": "057cecef95b1c65e1af657ca7d2c134fde404117a08b2eb01158d1f2c2b69223",
+      "comment": "Advances the ripples of the interior's water surfaces.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5418,7 +5541,9 @@
       "address": "0x0019DCF0",
       "size": "0x38C",
       "name": "MoveCharacter__Fv",
-      "sha256": "c9611b6c4180660dfc859cd2eb903b4a7bb567d491f88a04c3653d76a7fa4571"
+      "sha256": "c9611b6c4180660dfc859cd2eb903b4a7bb567d491f88a04c3653d76a7fa4571",
+      "comment": "Moves the player and the villagers through the interior for one frame.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5428,7 +5553,9 @@
       "address": "0x0019E080",
       "size": "0x164",
       "name": "MoveCamera__FP13CCameraFollow__2",
-      "sha256": "43105813de5aca954d4d8682bd497e1dc6bd4015c4e5000f8ed1b61dd408e5c8"
+      "sha256": "43105813de5aca954d4d8682bd497e1dc6bd4015c4e5000f8ed1b61dd408e5c8",
+      "comment": "Applies the right stick to the interior camera, holding its height and distance in range.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5438,7 +5565,9 @@
       "address": "0x0019E1F0",
       "size": "0xF4",
       "name": "SearchMapJump__FPfPf",
-      "sha256": "939d12927c020804ea16c4e346fb4306bd2f287fdea1a4f008fc5b063956a9f4"
+      "sha256": "939d12927c020804ea16c4e346fb4306bd2f287fdea1a4f008fc5b063956a9f4",
+      "comment": "Finds the map jump the player is standing on.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5448,7 +5577,9 @@
       "address": "0x0019E2F0",
       "size": "0x12C",
       "name": "GetMapJumpPos__FP10CCharacter",
-      "sha256": "6470d5823bbf7519dcb8a86bdd8182ffcd58e224e027c74a0c7ed773d33db018"
+      "sha256": "6470d5823bbf7519dcb8a86bdd8182ffcd58e224e027c74a0c7ed773d33db018",
+      "comment": "Puts the player where the interior's map jump says they arrive.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5458,7 +5589,9 @@
       "address": "0x0019E420",
       "size": "0xF8",
       "name": "GetDoorPos__FiPfPfPiPi",
-      "sha256": "53b2a4e40ef8c3e49161aef719024ef3f35ca0083185305390e35f2640f1831b"
+      "sha256": "53b2a4e40ef8c3e49161aef719024ef3f35ca0083185305390e35f2640f1831b",
+      "comment": "Gives the position, heading and part of one of the interior's doors.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5468,7 +5601,9 @@
       "address": "0x0019E520",
       "size": "0x3F8",
       "name": "SetCameraPos__FP6CFrameP7CCameraP10CCharacter",
-      "sha256": "258f641989c821c36594adf92cb42cc2fef5725830d4ae13a9772fc5f544936c"
+      "sha256": "258f641989c821c36594adf92cb42cc2fef5725830d4ae13a9772fc5f544936c",
+      "comment": "Places the interior camera so that the player stays in view and the walls do not.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5478,7 +5613,9 @@
       "address": "0x0019E920",
       "size": "0xBC",
       "name": "GetCollision__FP6CCPolyP7CBoxVu0__2",
-      "sha256": "dec09020fcf753f5259a4a30e8cced671603d96b8e0fb21001b8a48fd091a28f"
+      "sha256": "dec09020fcf753f5259a4a30e8cced671603d96b8e0fb21001b8a48fd091a28f",
+      "comment": "Collects the collision polygons of the interior parts meeting a box.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5488,7 +5625,9 @@
       "address": "0x0019E9E0",
       "size": "0x2D0",
       "name": "VillagerCollision__Fv__2",
-      "sha256": "7365fd71d333c48df94b2d83274595c60a726204d9585c6d98a52b20248d0682"
+      "sha256": "7365fd71d333c48df94b2d83274595c60a726204d9585c6d98a52b20248d0682",
+      "comment": "Pushes the player and the interior's villagers out of one another.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5498,7 +5637,9 @@
       "address": "0x0019ECB0",
       "size": "0x20C",
       "name": "LoadTexture__Fv__2",
-      "sha256": "ddb86c0e9b8a9fe0f4ef54ac5026b46b135a12846470b26f92b6dc9d6567df39"
+      "sha256": "ddb86c0e9b8a9fe0f4ef54ac5026b46b135a12846470b26f92b6dc9d6567df39",
+      "comment": "Enters the interior's textures once they have been read.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5508,7 +5649,9 @@
       "address": "0x0019EED0",
       "size": "0x818",
       "name": "LoadData__Fv",
-      "sha256": "7af24e18513f0c8e8cd7fb23cd67aae9a94627b0929985d7287cdca5f46dc635"
+      "sha256": "7af24e18513f0c8e8cd7fb23cd67aae9a94627b0929985d7287cdca5f46dc635",
+      "comment": "Reads the interior's parts, objects and function points out of its archive.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5518,7 +5661,9 @@
       "address": "0x0019F6F0",
       "size": "0x238",
       "name": "LoadPTS__FP9CMapPartsPUi",
-      "sha256": "7ec9457eafc1524d56721041e2a166f4af7d0012089f8ed1945c4cb819486ff2"
+      "sha256": "7ec9457eafc1524d56721041e2a166f4af7d0012089f8ed1945c4cb819486ff2",
+      "comment": "Builds one interior part from its archive entry.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5528,7 +5673,9 @@
       "address": "0x0019F930",
       "size": "0x74",
       "name": "GetFuncPoint__FiPUiP16EPARTS_FUNC_DATA",
-      "sha256": "eef81faa85b57343f8de40b1d96c79d8a84729a6fa66e166c287bcd72896c1cc"
+      "sha256": "eef81faa85b57343f8de40b1d96c79d8a84729a6fa66e166c287bcd72896c1cc",
+      "comment": "Collects the function points one interior part defines.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5538,7 +5685,9 @@
       "address": "0x0019F9B0",
       "size": "0x1C0",
       "name": "setTexAnim__Fv",
-      "sha256": "f1a09dfcc46181b89ec078c5d699a560949e9f2c20fce0c70692e5cd1bbedc5d"
+      "sha256": "f1a09dfcc46181b89ec078c5d699a560949e9f2c20fce0c70692e5cd1bbedc5d",
+      "comment": "Uploads the interior's texture-animation state to the graphics synthesizer.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5548,7 +5697,9 @@
       "address": "0x0019FB70",
       "size": "0xD8",
       "name": "LoadInfo__FPci",
-      "sha256": "a2e150553548dcba5419a595013b19647eae3871f7a9e15a846040887308b525"
+      "sha256": "a2e150553548dcba5419a595013b19647eae3871f7a9e15a846040887308b525",
+      "comment": "Runs the interior's info script through the interpreter.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5558,7 +5709,9 @@
       "address": "0x0019FC50",
       "size": "0x44",
       "name": "CommandAMBIENT__FPPv__2",
-      "sha256": "4a9e5abff2043fc2de3da2ff14cbe42dee8d705786ba44afad94503ae5354c9d"
+      "sha256": "4a9e5abff2043fc2de3da2ff14cbe42dee8d705786ba44afad94503ae5354c9d",
+      "comment": "Sets the interior's ambient light colour.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5568,7 +5721,9 @@
       "address": "0x0019FCA0",
       "size": "0x128",
       "name": "CommandLIGHT_C__FPPv__2",
-      "sha256": "fab1deaf37d36193dbd94257819473bb0d59eaba7f8dfba12479a9c389dc1465"
+      "sha256": "fab1deaf37d36193dbd94257819473bb0d59eaba7f8dfba12479a9c389dc1465",
+      "comment": "Sets the colour and direction of one of the interior's lights.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5578,7 +5733,9 @@
       "address": "0x0019FDD0",
       "size": "0x78",
       "name": "CommandFOG__FPPv__2",
-      "sha256": "3ab4e5c2d855b584ebb8b947501fc815323570c9bf857232c7a7d3e9f58b8109"
+      "sha256": "3ab4e5c2d855b584ebb8b947501fc815323570c9bf857232c7a7d3e9f58b8109",
+      "comment": "Sets the interior's fog distances and colour.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5588,7 +5745,9 @@
       "address": "0x0019FE50",
       "size": "0x44",
       "name": "CommandBG_COL__FPPv__2",
-      "sha256": "ff4a3586a729ab1cf624b876a52ed82c5a4bd98ec282024612d9bc980041b978"
+      "sha256": "ff4a3586a729ab1cf624b876a52ed82c5a4bd98ec282024612d9bc980041b978",
+      "comment": "Sets the colour the interior clears to.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5598,7 +5757,9 @@
       "address": "0x0019FEA0",
       "size": "0x18",
       "name": "CommandPROJECTION__FPPv",
-      "sha256": "533e4e0f590e2c3b74ba537dd5feadd91dba7a26fabafad90f2db582e0a24e39"
+      "sha256": "533e4e0f590e2c3b74ba537dd5feadd91dba7a26fabafad90f2db582e0a24e39",
+      "comment": "Sets the interior's projection distance.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5608,7 +5769,9 @@
       "address": "0x0019FEC0",
       "size": "0x8",
       "name": "CommandPEOPLE__FPPv__2",
-      "sha256": "6d64edf91449c1b17746c1ef18afa2eb25c70bdf1322ab3df5a2630993b7e2f1"
+      "sha256": "6d64edf91449c1b17746c1ef18afa2eb25c70bdf1322ab3df5a2630993b7e2f1",
+      "comment": "Accepts the villager command and does nothing with it.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5618,7 +5781,9 @@
       "address": "0x0019FED0",
       "size": "0x60",
       "name": "CommandCD__FPPv__2",
-      "sha256": "469815b9c283395f92aafb73121cc1ff618cf88d522c7e2ba9c1857cd9e92a15"
+      "sha256": "469815b9c283395f92aafb73121cc1ff618cf88d522c7e2ba9c1857cd9e92a15",
+      "comment": "Moves the script's current directory to one below the interior's own.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5628,7 +5793,9 @@
       "address": "0x0019FF30",
       "size": "0x8",
       "name": "CommandOBJ_ANIME__FPPv__2",
-      "sha256": "6d64edf91449c1b17746c1ef18afa2eb25c70bdf1322ab3df5a2630993b7e2f1"
+      "sha256": "6d64edf91449c1b17746c1ef18afa2eb25c70bdf1322ab3df5a2630993b7e2f1",
+      "comment": "Accepts the object-animation command and does nothing with it.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5638,7 +5805,9 @@
       "address": "0x0019FF50",
       "size": "0x94",
       "name": "CommandFIRE__FPPv__2",
-      "sha256": "59adf6dbc490034b2767aeb0fd29c3773b313fe342191781f40a9e6e1a44878f"
+      "sha256": "59adf6dbc490034b2767aeb0fd29c3773b313fe342191781f40a9e6e1a44878f",
+      "comment": "Places a fire effect in the interior.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5648,7 +5817,9 @@
       "address": "0x0019FFF0",
       "size": "0x94",
       "name": "CommandFLAME__FPPv__2",
-      "sha256": "e87ccdd37eef33706f2647f8c32e874a39fb004f20076642c6d4f5d8cc30ec4d"
+      "sha256": "e87ccdd37eef33706f2647f8c32e874a39fb004f20076642c6d4f5d8cc30ec4d",
+      "comment": "Places a flame effect in the interior.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5658,7 +5829,9 @@
       "address": "0x001A0090",
       "size": "0x94",
       "name": "CommandBRIGHT__FPPv__2",
-      "sha256": "bb111fd43deb57d7657e72225e5aa15e4cd5ace28dae743b22f40c8f625b7dab"
+      "sha256": "bb111fd43deb57d7657e72225e5aa15e4cd5ace28dae743b22f40c8f625b7dab",
+      "comment": "Places a glow effect in the interior.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5668,7 +5841,9 @@
       "address": "0x001A0130",
       "size": "0x10",
       "name": "CommandDEBUG__FPPv",
-      "sha256": "53c826d5482483e9faf5a69ace602420ffd9bd669df159d0616580fed8a3f4ca"
+      "sha256": "53c826d5482483e9faf5a69ace602420ffd9bd669df159d0616580fed8a3f4ca",
+      "comment": "Turns the interior's debug drawing on.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5678,7 +5853,9 @@
       "address": "0x001A0140",
       "size": "0xF4",
       "name": "CommandMOTION_PARTS__FPPv__2",
-      "sha256": "7366c8947ffc2d917fcf0f2010e7fe124fc03b2354fb0515bfb4766351e3f51d"
+      "sha256": "7366c8947ffc2d917fcf0f2010e7fe124fc03b2354fb0515bfb4766351e3f51d",
+      "comment": "Names one of the interior's four moving parts.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5688,7 +5865,9 @@
       "address": "0x001A0240",
       "size": "0x184",
       "name": "CommandWATER_SURFACE__FPPv__2",
-      "sha256": "ccae4adfe41ba5a0f13dff67e57b345f446e01720727733b9ef14ced6b9ad204"
+      "sha256": "ccae4adfe41ba5a0f13dff67e57b345f446e01720727733b9ef14ced6b9ad204",
+      "comment": "Names one of the interior's eight water surfaces.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "edit_in",
@@ -5698,7 +5877,9 @@
       "address": "0x001A03D0",
       "size": "0x9C",
       "name": "CommandWATER_SHAKE__FPPv__2",
-      "sha256": "0a442751176de0d519642733302a12ccbc3573947b3f03f41fbc89d10eb157cb"
+      "sha256": "0a442751176de0d519642733302a12ccbc3573947b3f03f41fbc89d10eb157cb",
+      "comment": "Starts a ripple on the interior's water surface.",
+      "documentation": "src/edit_in.cpp"
     },
     {
       "translation_unit": "editground",
@@ -10621,6 +10802,7 @@
       "size": "0x20",
       "name": "GetItemShopList__Fi",
       "sha256": "aa0605917400f0b13ac3fb8997544496de8cbafdbeb93dcec47df142eb7be8eb",
+      "comment": "Gives the goods list one item shop sells from.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -10632,6 +10814,7 @@
       "size": "0x68",
       "name": "IconMoveTarSet__12ShopIconMoveFiiiP13MENU_ITEMDATAffi",
       "sha256": "39d9f692853361872f42a882dbae1e0c280413399d008e4008a4fd5b6da4fac6",
+      "comment": "Aims a shop icon at the slot it is to fly to.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -10643,6 +10826,7 @@
       "size": "0x460",
       "name": "IconAutoMove__12ShopIconMoveFii",
       "sha256": "792c5a90db25cc57c862e5962dab3734bdde8c7b2a33049e3bf8da7df7ddd9b1",
+      "comment": "Advances a flying shop icon and reports when it has arrived.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -10654,6 +10838,7 @@
       "size": "0xE8",
       "name": "IconAutoMoveDraw__12ShopIconMoveFv",
       "sha256": "825b56293c9993c88ef63a568c4c3263745c900a7ad602bf6c99ecf3672a707f",
+      "comment": "Draws a shop icon part-way through its flight.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -10677,6 +10862,7 @@
       "size": "0x88",
       "name": "ShopNoInput__FPiii",
       "sha256": "57f20aab2662bae66cc7945f8d7add7407d92ccb6deeb6d66005c7b052c5f02d",
+      "comment": "Turns a shop number into the shop and the master it stands for.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -10688,6 +10874,7 @@
       "size": "0x5C",
       "name": "CommonShopLoop__Fv",
       "sha256": "9fa58b4592754b922ff4860a137e791fa1bf9b0e702c44f914480a6a84c11987",
+      "comment": "Runs one frame of whichever shop is open.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -10699,6 +10886,7 @@
       "size": "0x150",
       "name": "ShopPolySetInit__Fii",
       "sha256": "7329cea72429e3117a7b3a125ea0131a14e37c7430212350a5c4fe6fa84598f9",
+      "comment": "Places the camera and lights the shop's model is drawn under.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -10734,6 +10922,7 @@
       "size": "0x1AC",
       "name": "ChargeShopLRDraw__Fi",
       "sha256": "9ff4fc458a3f1aa1e283f8ed2064517225c5e557e62b25dc90f4406e8db3bcc7",
+      "comment": "Draws the left and right arrows of the recharge shop.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -10745,6 +10934,7 @@
       "size": "0x2FC",
       "name": "ShopCurDraw__Fiiiiiii",
       "sha256": "5cad8a9d6b8805970acfcf1892a18854da7059652c6118fdaefc7b415373471e",
+      "comment": "Draws the shop cursor over the slot it stands on.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -10756,6 +10946,7 @@
       "size": "0x6C",
       "name": "DrawShopIcon__Fiiii",
       "sha256": "6f9fdcbc5e56090f5c61bc31c5b138bd852c7b4e46935c386d6388c4736c5407",
+      "comment": "Draws one shop icon at a position.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -10767,6 +10958,7 @@
       "size": "0x10C",
       "name": "IsEnableCharge__Fi",
       "sha256": "912bf7c18325be29c076d4770377b53063e614c15c20c3b16820b7d3a36e1783",
+      "comment": "Reports whether an item may be recharged.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -10802,6 +10994,7 @@
       "size": "0x1D0",
       "name": "ShopTextureLoadFix__Fv",
       "sha256": "270b4a706d977a98459215d335980defa238945b99d25e2238215853827ec0c9",
+      "comment": "Enters the shop's fixed textures into the texture manager.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -10813,6 +11006,7 @@
       "size": "0xF8",
       "name": "ShopFadeoutDraw__Fv",
       "sha256": "527e6083a75a7f9fc8f76d283d410fa8075e499eb6d04299ab82434e82e64f33",
+      "comment": "Draws the fade that covers the shop while it opens and closes.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -10824,6 +11018,7 @@
       "size": "0x98",
       "name": "ShopPersonReadStart__Fii",
       "sha256": "6f72f5d3eb8bbddcdfb6c83eb1625d581751f146df5f3d73f9a6bb50d8ed731d",
+      "comment": "Starts reading a shopkeeper's model in the background.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -10835,6 +11030,7 @@
       "size": "0x268",
       "name": "ShopPersonBuild__Fii",
       "sha256": "f44d1a8dec5e24949c313b598c104308e132605ffacbbd9c95e8fc32aaece3a5",
+      "comment": "Builds the shopkeeper's model once it has been read.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -10858,6 +11054,7 @@
       "size": "0x3C",
       "name": "ShopPersonDraw__Fi",
       "sha256": "fb1b05474bc78a23e4121197240c72f8e559a3d6bbad0bf9e2dadacae2a9e932",
+      "comment": "Draws the shopkeeper.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -10869,7 +11066,7 @@
       "size": "0xD8",
       "name": "ShopMasterVectorSet__Fi",
       "sha256": "b9fef9c3a4ee31baa371bc3e25d35740030a48e8c659e486c8fdf697f74474af",
-      "comment": "Turns the shopkeeper to face the menu camera.",
+      "comment": "Points the shopkeeper's model at the camera. Turns the shopkeeper to face the menu camera.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -10917,6 +11114,7 @@
       "size": "0x8C0",
       "name": "ChargeSelectKey__Fv",
       "sha256": "093653f1c95bdfdf9a841ac764a80fb1e2f03145afc0c60b34574703a3e73fec",
+      "comment": "Moves the cursor across the recharge shop's list.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -10940,6 +11138,7 @@
       "size": "0x1EC",
       "name": "ChargeShopMaxDraw__Fiiii",
       "sha256": "01de7ef9d979bc5e4e17c9685b4afef9d2a24df91082c06e4e54b7e0f4b29151",
+      "comment": "Draws the plate saying an item is already fully charged.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -10975,6 +11174,7 @@
       "size": "0x84",
       "name": "WeaponCalMoney__FP11WEAPON_HAVEi",
       "sha256": "0c30099dc9de979a03bd6638d6400a8cc2cf0f28487f3da2ab6b2707bcb7892d",
+      "comment": "Gives what a weapon fetches, from its kind and how worn it is.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11010,6 +11210,7 @@
       "size": "0x1A4",
       "name": "IncludeBuyItem2__Fv",
       "sha256": "dda3f539ffc7c1e61218e735d55fd29923a0c95f0e4e9f2c5dc1e5a9e45c3328",
+      "comment": "Settles which goods are marked for purchase against what may be afforded.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11057,6 +11258,7 @@
       "size": "0x11C",
       "name": "CompItem1__Fii",
       "sha256": "64c4656a59da40096f02a02906e5cdeaee509d0cce49be1b0d63577c1d857b02",
+      "comment": "Orders two items for the shop's sort.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11080,6 +11282,7 @@
       "size": "0x88",
       "name": "SeitonShopItemBoard__FP9ITEM_PACK",
       "sha256": "3644e76449da03fedcd29a4c6470421b48fb63d4209de11301379ba6477aa700",
+      "comment": "Sorts the item board, trying each ordering until one changes it.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11091,6 +11294,7 @@
       "size": "0xFC",
       "name": "CompAttach1__FP11ATTACH_LISTP11ATTACH_LIST",
       "sha256": "76558f217b5750bcacf2517c6a0324da94bb0140f04198c9513246a477089e24",
+      "comment": "Orders two attachments for the shop's sort.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11114,6 +11318,7 @@
       "size": "0x94",
       "name": "SeitonShopAttachBoard__FP11ATTACH_LIST",
       "sha256": "66252aac0817abe32561d6a8225c7b5245cd95825a8c58c6829b7f098f0d7f62",
+      "comment": "Sorts the attachment board, trying each ordering until one changes it.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11125,6 +11330,7 @@
       "size": "0x1F4",
       "name": "CheckSideKey2__Fv",
       "sha256": "64a2d0f8a2398af4e221cdf928a6826c8c52fc0ad3c138509111facca83e7f66",
+      "comment": "Moves the shop cursor between the goods side and the player's side.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11136,6 +11342,7 @@
       "size": "0x2C4",
       "name": "DrawItemShopBoard2__Fiii",
       "sha256": "d64126cb364923965889aa106d84e0725eb805696825f3be53ff4ace3bb6361a",
+      "comment": "Draws the item shop's board with its goods and their prices.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11147,6 +11354,7 @@
       "size": "0x18C",
       "name": "DrawMoneyCheckBoard2__Fiii",
       "sha256": "13eb61dab1a00e90a786b8a0a6f59b1b8e31fdbce69a7951f63203a27cdc7f6d",
+      "comment": "Draws the running total the purchase will come to.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11182,6 +11390,7 @@
       "size": "0xE0",
       "name": "DrawBigSellTicket__Fiiiii",
       "sha256": "690d9991522b9ec94ecdb79a734eb6bb0cfc6ceeb57449d2d33321473447d180",
+      "comment": "Draws the large price ticket.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11217,6 +11426,7 @@
       "size": "0x274",
       "name": "DrawSellTicket22__Fiiiii",
       "sha256": "6b58610841851d1373fe9ffe2e6096b70a44106033ea9220d6701c8d2a3eb624",
+      "comment": "Draws the price tickets of everything marked on the player's side.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11228,6 +11438,7 @@
       "size": "0x4E0",
       "name": "ShopCancelGoodReturn2__Fv",
       "sha256": "16bcfd9989fee2c08123073c4f6906bb13dbc358525867fae28e0ddb237e0845",
+      "comment": "Puts every marked good back where it came from.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11239,6 +11450,7 @@
       "size": "0x268",
       "name": "GetNowMasterMsgNo2__Fii",
       "sha256": "4d391e3ca8ec99b37f22a62092cbb75f661554eaf58d2122fd9e41c9035a7cb1",
+      "comment": "Chooses the line the shopkeeper says for the shop's current state.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11250,6 +11462,7 @@
       "size": "0x2D8",
       "name": "ShopModelMsgFunc__Fi",
       "sha256": "d3a0123fba5f86637ddff085041f73f5a0dd4c1e93377606a92e4cb174cae975",
+      "comment": "Runs the shopkeeper's speech and the model's reaction to it.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11261,7 +11474,7 @@
       "size": "0xB4",
       "name": "SetShopTalkMsgPos__Fv",
       "sha256": "b199ffb141fdea78178de061e3a7bae5f77d42cd1b2983c6c9078fa5682b711c",
-      "comment": "Places the shopkeeper's message window over the shopkeeper.",
+      "comment": "Places the shopkeeper's speech bubble above their model. Places the shopkeeper's message window over the shopkeeper.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11273,7 +11486,7 @@
       "size": "0xD8",
       "name": "ItemShopGetPacFileName__FiiPc",
       "sha256": "34722e3d80e77c40ccebeaba3c15c7df9cb0427db56f9a2b957fc0bfea0d0ae1",
-      "comment": "Builds the archive file name of one shop's goods into the buffer it is given.",
+      "comment": "Builds the file name of a shopkeeper's model archive. Builds the archive file name of one shop's goods into the buffer it is given.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11285,6 +11498,7 @@
       "size": "0x8C",
       "name": "ItemShopGetImgFileName__FiiPc",
       "sha256": "24fde6d2539fe1f5c4086b5d8511f845e9fa250af15ca23e6f75844ea92b296b",
+      "comment": "Builds the file name of a shopkeeper's texture archive.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11296,7 +11510,7 @@
       "size": "0x10C",
       "name": "ItemShopMemoryAlloc__Fv",
       "sha256": "ce228541bb75643ef370b985f8e5b50c6f9155d91729d891d3acadc9b58043ab",
-      "comment": "Allocates and clears the item shop's working buffer.",
+      "comment": "Takes the shop's four board tables out of its arena. Allocates and clears the item shop's working buffer.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11308,7 +11522,7 @@
       "size": "0x194",
       "name": "ItemPosInfoInit__Fv",
       "sha256": "7c2848b8a7f9e0ae63fb1250628ad0cc39a4827dd0db307c4a3f345a0756e2c7",
-      "comment": "Rebuilds the shop's slot table, marking each item and weapon slot as taken or free.",
+      "comment": "Clears the marks on everything the player is carrying. Rebuilds the shop's slot table, marking each item and weapon slot as taken or free.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11320,7 +11534,7 @@
       "size": "0x24C",
       "name": "ItemShopGoodInitialize__Fi",
       "sha256": "3e87b581f45de6b41c7368deac3f7f77f6c9049ffd4dc3ac1440e4df59098974",
-      "comment": "Fills the shop stock from the goods list of the shop number it is given.",
+      "comment": "Fills the goods board from one shop's list. Fills the shop stock from the goods list of the shop number it is given.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11344,6 +11558,7 @@
       "size": "0xAF0",
       "name": "ItemShopSelectKey2__Fv",
       "sha256": "07829dab51a0d727827999e2a6cb01d88e0996af317d99818788c2a765f8700d",
+      "comment": "Moves the cursor across the item shop's board.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11367,7 +11582,7 @@
       "size": "0xA4C",
       "name": "ItemShopDraw2__Fv",
       "sha256": "1b8d69d63f8a468ec60827109f9165ab5b37cfd5a08bfd6d611bb6948c777f5e",
-      "comment": "Draws one frame of the item shop.",
+      "comment": "Draws the item shop with its boards, tickets and shopkeeper. Draws one frame of the item shop.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11379,6 +11594,7 @@
       "size": "0x18",
       "name": "GetExchangeItemList__Fi",
       "sha256": "6db8408d68b92a05c81a8a2942f4368081f64f067fa97150f37a0024fbac1bd9",
+      "comment": "Gives the list of items one fishing prize band offers.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11402,6 +11618,7 @@
       "size": "0x78",
       "name": "SetFishMardanGarayanNum__Fi",
       "sha256": "c349c252ae802cc8971a81f9e4fda42a549e1c03344810de03b65fb2d17ddcc9",
+      "comment": "Adds to the count of Mardan Garayan caught, holding it between zero and ten thousand.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11425,6 +11642,7 @@
       "size": "0x1C0",
       "name": "InitFishingExchange__FP1Pii",
       "sha256": "0c3876a90217fda548f1e3792358c4f806c1f2a5e971be483bf05bede7fd5095",
+      "comment": "Opens the fishing prize exchange and reads its data.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11436,6 +11654,7 @@
       "size": "0x2AC",
       "name": "FishMenuTextureLoad__Fv",
       "sha256": "4bd66a71acdb8f64ff84a96ee31491986816af8ea9314aee71a8885a64e11a99",
+      "comment": "Enters the fishing menu's textures once they have been read.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11507,6 +11726,7 @@
       "size": "0x3C",
       "name": "GetFishMsgNo__Fi",
       "sha256": "b8236b6b55bdc20012b4081cd35bd4e647addb83161abd9d46066f59082ffba2",
+      "comment": "Gives the message describing one fishing prize.",
       "documentation": "include/shop.hpp"
     },
     {
@@ -11518,6 +11738,7 @@
       "size": "0x120",
       "name": "InitFishRecordView__FP1Pii",
       "sha256": "1ae7bce7b1df9db962181e2ed77e15945c11165ca590f7a1b1b15d7b285c3724",
+      "comment": "Opens the page listing the fish that have been caught.",
       "documentation": "include/shop.hpp"
     },
     {

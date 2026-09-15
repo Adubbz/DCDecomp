@@ -219,6 +219,13 @@ INCLUDE_RODATA("asm/nonmatchings/snd", @799);
 INCLUDE_RODATA("asm/nonmatchings/snd", @800);
 
 INCLUDE_ASM("asm/nonmatchings/snd", LensFlare__FP8CTexturePfUcUcUc);
+/**
+ * Starts the sound manager once, and loads its effect table.
+ *
+ * @mangled SndInit__Fv
+ * @address 0x1591A0
+ * @size 0x60
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SndInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndInitialize__Fiiii);
 
@@ -245,10 +252,38 @@ void SndStep() {
 
 INCLUDE_ASM("asm/nonmatchings/snd", SndInitSeTable__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetReadBuffer__FPUi);
+/**
+ * Reports whether any of the background sound loads is still running.
+ *
+ * @mangled SndSyncBG__Fv
+ * @address 0x159670
+ * @size 0x80
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SndSyncBG__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetCamera__FP7CCamera);
+/**
+ * Tells the sound where the camera stands and which way it looks.
+ *
+ * @mangled SndSetCamera__FPfPf
+ * @address 0x159740
+ * @size 0x50
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetCamera__FPfPf);
+/**
+ * Builds the archive and configuration file names of one music set.
+ *
+ * @mangled GetBGMFile__FiPcPc
+ * @address 0x159790
+ * @size 0x7C
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", GetBGMFile__FiPcPc);
+/**
+ * Hands a loaded music set to the driver and reads its configuration.
+ *
+ * @mangled SetBGMFile__FiPUiPc
+ * @address 0x159810
+ * @size 0x114
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SetBGMFile__FiPUiPc);
 
 int SndBgmInit() {
@@ -263,6 +298,13 @@ int SndBgmInit() {
 }
 
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmLoad__Fi);
+/**
+ * Starts loading one music set in the background.
+ *
+ * @mangled SndBgmLoadBG__FiPUiPi
+ * @address 0x1599F0
+ * @size 0xC0
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmLoadBG__FiPUiPi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmSyncBG__Fv);
 
@@ -300,7 +342,21 @@ int SndGetBgmNo() {
     return now_bgm_no;
 }
 
+/**
+ * Sets the background music's volume.
+ *
+ * @mangled SndSetBgmVol__Fi
+ * @address 0x159D20
+ * @size 0x70
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetBgmVol__Fi);
+/**
+ * Sets the background music's volume as a share of its default.
+ *
+ * @mangled SndSetBgmVolf__Ff
+ * @address 0x159D90
+ * @size 0x50
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetBgmVolf__Ff);
 
 int SndGetBgmVol() {
@@ -314,7 +370,21 @@ int SndGetDefaultBgmVol() {
     return CSnd.GetMidiState()->sequence->volume;
 }
 
+/**
+ * Fades the background music up to a volume over a number of steps.
+ *
+ * @mangled SndBgmFadeIn__Fiii
+ * @address 0x159E40
+ * @size 0xC8
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeIn__Fiii);
+/**
+ * Fades the background music down to a volume over a number of steps.
+ *
+ * @mangled SndBgmFadeOut__Fii
+ * @address 0x159F10
+ * @size 0x74
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeOut__Fii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeInOut__Fv);
 
@@ -361,7 +431,21 @@ static int GetPortNo(int se_no) {
     }
     return 14;
 }
+/**
+ * Builds the archive and configuration file names of one sound-effect set.
+ *
+ * @mangled GetSoundFile__FiPcPc
+ * @address 0x15A240
+ * @size 0x7C
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", GetSoundFile__FiPcPc);
+/**
+ * Hands a loaded sound-effect set to the driver and sets its channel volumes.
+ *
+ * @mangled SetSoundFile__FiPUiPc
+ * @address 0x15A2C0
+ * @size 0x174
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SetSoundFile__FiPUiPc);
 
 int SndGetNowSetNo() {
@@ -381,6 +465,13 @@ void SndStopAllSe() {
 }
 
 INCLUDE_ASM("asm/nonmatchings/snd", SndSoundLoad__Fi);
+/**
+ * Starts loading one sound-effect set in the background.
+ *
+ * @mangled SndSoundLoadBG__FiPUiPi
+ * @address 0x15A580
+ * @size 0xAC
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SndSoundLoadBG__FiPUiPi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSoundSyncBG__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSePlay__Fiii);
@@ -411,6 +502,13 @@ void SndSeStop(int se_no, int voice) {
     }
 }
 #else
+/**
+ * Stops a sounding effect.
+ *
+ * @mangled SndSeStop__Fii
+ * @address 0x15A8B0
+ * @size 0x50
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeStop__Fii);
 #endif
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetSeVol__Fiii);
@@ -503,6 +601,13 @@ int SndSeSeqPlayStop(int se_no, int length, int voice) {
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqPlayStop__Fiii);
 #endif
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqStep__Fv);
+/**
+ * Stops every sound-effect sequence.
+ *
+ * @mangled SndSeSeqAllStop__Fv
+ * @address 0x15B060
+ * @size 0x84
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqAllStop__Fv);
 
 int SndAmbientInit() {
@@ -523,12 +628,47 @@ void SndAmbientPlay(int ambient_no) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientStop__Fv);
+/**
+ * Sets the ambient loop's volume.
+ *
+ * @mangled SndAmbientSetVol__Fi
+ * @address 0x15B1E0
+ * @size 0x60
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientSetVol__Fi);
+/**
+ * Sets the ambient loop's volume as a share of its default.
+ *
+ * @mangled SndAmbientSetVolf__Ff
+ * @address 0x15B240
+ * @size 0x5C
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientSetVolf__Ff);
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetAmbientDefaultVol__Fv);
+/**
+ * Builds the archive and configuration file names of one voice set.
+ *
+ * @mangled GetVoiceFile__FiPcPc
+ * @address 0x15B310
+ * @size 0x7C
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", GetVoiceFile__FiPcPc);
+/**
+ * Hands a loaded voice set to the driver and reads its configuration.
+ *
+ * @mangled SetVoiceFile__FiPUiPc
+ * @address 0x15B390
+ * @size 0x54
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SetVoiceFile__FiPUiPc);
 INCLUDE_ASM("asm/nonmatchings/snd", SndVoiceLoad__Fi);
+/**
+ * Starts loading one voice set in the background.
+ *
+ * @mangled SndVoiceLoadBG__FiPUiPi
+ * @address 0x15B480
+ * @size 0xAC
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SndVoiceLoadBG__FiPUiPi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndVoiceSyncBG__Fv);
 static SND_SE_INFO *GetSPInfo(int se_no) {
@@ -537,10 +677,38 @@ static SND_SE_INFO *GetSPInfo(int se_no) {
     }
     return &special_se_info[se_no];
 }
+/**
+ * Builds the archive and configuration file names of one special-effect set.
+ *
+ * @mangled GetSPSeFile__FiPcPc
+ * @address 0x15B5F0
+ * @size 0x7C
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", GetSPSeFile__FiPcPc);
+/**
+ * Hands a loaded special-effect set to the driver and reads its configuration.
+ *
+ * @mangled SetSPSeFile__FiPUiPc
+ * @address 0x15B670
+ * @size 0x54
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SetSPSeFile__FiPUiPc);
+/**
+ * Starts loading one special-effect set.
+ *
+ * @mangled SndSPSeLoad__Fi
+ * @address 0x15B6D0
+ * @size 0x90
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoad__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoadBG__FiPUiPi);
+/**
+ * Polls the special-effect set load and hands the file to the driver once it lands.
+ *
+ * @mangled SndSPSeSyncBG__Fv
+ * @address 0x15B800
+ * @size 0x80
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeSyncBG__Fv);
 #ifdef NON_MATCHING
 void SndSPSePlay(int se_no, int vol) {
@@ -558,6 +726,13 @@ void SndSPSePlay(int se_no, int vol) {
     }
 }
 #else
+/**
+ * Plays one special sound effect.
+ *
+ * @mangled SndSPSePlay__Fii
+ * @address 0x15B880
+ * @size 0x7C
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSePlay__Fii);
 #endif
 void SndSPSeStop(int se_no) {
@@ -567,6 +742,13 @@ void SndSPSeStop(int se_no) {
         CSnd.SE_Stop(12, info->bank, info->prog, 0);
     }
 }
+/**
+ * Sets a special sound effect's volume as a share of its table value.
+ *
+ * @mangled SndSetSPSeVolf__Fif
+ * @address 0x15B950
+ * @size 0xB0
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetSPSeVolf__Fif);
 #ifdef NON_MATCHING
 void SndSetSPSePanf(int se_no, float pan) {
@@ -583,10 +765,38 @@ void SndSetSPSePanf(int se_no, float pan) {
     }
 }
 #else
+/**
+ * Sets a special sound effect's pan as a share of the widest pan.
+ *
+ * @mangled SndSetSPSePanf__Fif
+ * @address 0x15BA00
+ * @size 0xA8
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetSPSePanf__Fif);
 #endif
+/**
+ * Reads one sound configuration file through the script interpreter.
+ *
+ * @mangled LoadSoundInfo__FP8SND_INFOPci
+ * @address 0x15BAB0
+ * @size 0xF4
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", LoadSoundInfo__FP8SND_INFOPci);
+/**
+ * Sets the reverberation the sound configuration asks for.
+ *
+ * @mangled CommandREVERBE__FPPv
+ * @address 0x15BBB0
+ * @size 0x28
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", CommandREVERBE__FPPv);
+/**
+ * Names the sound-effect table the configuration draws from.
+ *
+ * @mangled CommandTABLE__FPPv
+ * @address 0x15BBE0
+ * @size 0x28
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", CommandTABLE__FPPv);
 
 void setbilinear(int on) {
@@ -601,12 +811,47 @@ INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8C
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBAi);
 INCLUDE_ASM("asm/nonmatchings/snd", set3DColSprite__FP13sceVif1PacketPiPiPiPiP6spRGBAP6spRGBAP6spRGBAP6spRGBA);
 INCLUDE_ASM("asm/nonmatchings/snd", set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiPiPiUc);
+/**
+ * Draws a textured sprite in world space, with four corner positions and colours.
+ *
+ * @mangled set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiPiPiP6spRGBA
+ * @address 0x15D4B0
+ * @size 0x2E0
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiPiPiP6spRGBA);
+/**
+ * Draws a textured sprite in world space between two projected corners.
+ *
+ * @mangled set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiP6spRGBA
+ * @address 0x15D790
+ * @size 0x210
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiP6spRGBA);
+/**
+ * Draws a fogged sprite in world space, with four corner positions.
+ *
+ * @mangled set3DSpriteFog__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiPiPiUc
+ * @address 0x15D9A0
+ * @size 0x2FC
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", set3DSpriteFog__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiPiPiUc);
+/**
+ * Draws a fogged sprite in world space between two projected corners.
+ *
+ * @mangled set3DSpriteFog__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiP6spRGBA
+ * @address 0x15DCA0
+ * @size 0x228
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", set3DSpriteFog__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiP6spRGBA);
 INCLUDE_ASM("asm/nonmatchings/snd", setColSprite__FP13sceVif1PacketPiPiPiPiUcUcUcUc);
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSpriteC4__FP13sceVif1PacketRC8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBA);
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_iif);
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSpriteRot__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_iifUcUcUcUc);
+/**
+ * Draws a textured sprite in screen space.
+ *
+ * @mangled set2DSprite__FP13sceVif1PacketP8CTextureP4RECTP4RECTUc
+ * @address 0x15F090
+ * @size 0x68
+ */
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureP4RECTP4RECTUc);
