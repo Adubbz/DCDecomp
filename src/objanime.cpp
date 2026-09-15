@@ -8,43 +8,6 @@
 extern int all_stop;
 
 /**
- * Advances the shared effect state for one frame at a world position.
- *
- * @mangled EffectMacroStep__FPf
- * @address 0x164B30
- * @size 0x98
- */
-INCLUDE_ASM("asm/nonmatchings/objanime", EffectMacroStep__FPf);
-INCLUDE_RODATA("asm/nonmatchings/objanime", @621__2);
-INCLUDE_RODATA("asm/nonmatchings/objanime", @622);
-INCLUDE_RODATA("asm/nonmatchings/objanime", @623);
-/**
- * Adds a puff of smoke to an effect group.
- *
- * @mangled EffectSmoke__FP12CEffectGroupPffi
- * @address 0x164BD0
- * @size 0x350
- */
-INCLUDE_ASM("asm/nonmatchings/objanime", EffectSmoke__FP12CEffectGroupPffi);
-/**
- * Adds a spray of water to an effect group.
- *
- * @mangled EffectWaterSpray__FP12CEffectGroupPfPfii
- * @address 0x164F20
- * @size 0x29C
- */
-INCLUDE_ASM("asm/nonmatchings/objanime", EffectWaterSpray__FP12CEffectGroupPfPfii);
-/**
- * Adds a ripple to an effect group.
- *
- * @mangled EffectHamon__FP12CEffectGroupPff
- * @address 0x1651C0
- * @size 0xF4
- */
-INCLUDE_ASM("asm/nonmatchings/objanime", EffectHamon__FP12CEffectGroupPff);
-INCLUDE_ASM("asm/nonmatchings/objanime", DepthOfField__FPfiii);
-INCLUDE_RODATA("asm/nonmatchings/objanime", @766);
-/**
  * Clears one object-animation sequence.
  *
  * @mangled Initialize__13OBJ_ANIME_SEQFv

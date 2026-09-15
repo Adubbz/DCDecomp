@@ -4525,57 +4525,57 @@
       }
     },
     {
-      "translation_unit": "objanime",
-      "source": "src/objanime.cpp",
-      "assembly": "asm/nonmatchings/objanime/EffectMacroStep__FPf.s",
+      "translation_unit": "effectmacro",
+      "source": "src/effectmacro.cpp",
+      "assembly": "asm/nonmatchings/effectmacro/EffectMacroStep__FPf.s",
       "image": "main",
       "address": "0x00164B30",
       "size": "0x98",
       "name": "EffectMacroStep__FPf",
       "sha256": "dc6196fa157d4944ecada5e1faa7f037917f25f9e230515afb7f0e58696f6041",
       "comment": "Advances the shared effect state for one frame at a world position.",
-      "documentation": "src/objanime.cpp"
+      "documentation": "include/effectmacro.hpp"
     },
     {
-      "translation_unit": "objanime",
-      "source": "src/objanime.cpp",
-      "assembly": "asm/nonmatchings/objanime/EffectSmoke__FP12CEffectGroupPffi.s",
+      "translation_unit": "effectmacro",
+      "source": "src/effectmacro.cpp",
+      "assembly": "asm/nonmatchings/effectmacro/EffectSmoke__FP12CEffectGroupPffi.s",
       "image": "main",
       "address": "0x00164BD0",
       "size": "0x350",
       "name": "EffectSmoke__FP12CEffectGroupPffi",
       "sha256": "6283a16423ad5143d6ef7cdb1ed572af84ff36403d7367c83b9ced611ea5b565",
       "comment": "Adds a puff of smoke to an effect group.",
-      "documentation": "src/objanime.cpp"
+      "documentation": "include/effectmacro.hpp"
     },
     {
-      "translation_unit": "objanime",
-      "source": "src/objanime.cpp",
-      "assembly": "asm/nonmatchings/objanime/EffectWaterSpray__FP12CEffectGroupPfPfii.s",
+      "translation_unit": "effectmacro",
+      "source": "src/effectmacro.cpp",
+      "assembly": "asm/nonmatchings/effectmacro/EffectWaterSpray__FP12CEffectGroupPfPfii.s",
       "image": "main",
       "address": "0x00164F20",
       "size": "0x29C",
       "name": "EffectWaterSpray__FP12CEffectGroupPfPfii",
       "sha256": "3f5f7e0763c123830bdd9a163e0c6cbc8d153f8688c24717ae2079f80fd123a7",
       "comment": "Adds a spray of water to an effect group.",
-      "documentation": "src/objanime.cpp"
+      "documentation": "include/effectmacro.hpp"
     },
     {
-      "translation_unit": "objanime",
-      "source": "src/objanime.cpp",
-      "assembly": "asm/nonmatchings/objanime/EffectHamon__FP12CEffectGroupPff.s",
+      "translation_unit": "effectmacro",
+      "source": "src/effectmacro.cpp",
+      "assembly": "asm/nonmatchings/effectmacro/EffectHamon__FP12CEffectGroupPff.s",
       "image": "main",
       "address": "0x001651C0",
       "size": "0xF4",
       "name": "EffectHamon__FP12CEffectGroupPff",
       "sha256": "de62218614e3c5e8be579788a5a7eefa90bd057c6495f10eb8b532cf4dc7bd3e",
-      "comment": "Adds a ripple to an effect group.",
-      "documentation": "src/objanime.cpp"
+      "comment": "Adds a spreading ripple to an effect group.",
+      "documentation": "include/effectmacro.hpp"
     },
     {
-      "translation_unit": "objanime",
-      "source": "src/objanime.cpp",
-      "assembly": "asm/nonmatchings/objanime/DepthOfField__FPfiii.s",
+      "translation_unit": "effectmacro",
+      "source": "src/effectmacro.cpp",
+      "assembly": "asm/nonmatchings/effectmacro/DepthOfField__FPfiii.s",
       "image": "main",
       "address": "0x001652C0",
       "size": "0x9D0",

@@ -368,7 +368,8 @@ SECTIONS
         candleeffect.cpp.o          (.text)   // 0x00163a30
         effect.cpp.o                (.text)   // 0x00163d20
         effectgroup.cpp.o           (.text)   // 0x00164980
-        objanime.cpp.o              (.text)   // 0x00164b30
+        effectmacro.cpp.o           (.text)   // 0x00164b30
+        objanime.cpp.o              (.text)   // 0x00165c90
         textureanime.cpp.o          (.text)   // 0x00167060
         ebattle.cpp.o               (.text)   // 0x00168100
         editarea.cpp.o              (.text)   // 0x0016d860

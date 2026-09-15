@@ -241,7 +241,8 @@ segments:
       - {start: 0x63b30, type: cpp, name: candleeffect}
       - {start: 0x63e20, type: cpp, name: effect}
       - {start: 0x64a80, type: cpp, name: effectgroup}
-      - {start: 0x64c30, type: cpp, name: objanime}
+      - {start: 0x64c30, type: cpp, name: effectmacro}
+      - {start: 0x65d90, type: cpp, name: objanime}
       - {start: 0x67160, type: cpp, name: textureanime}
       - {start: 0x68200, type: cpp, name: ebattle}
       - {start: 0x6d960, type: cpp, name: editarea}
@@ -371,7 +372,8 @@ segments:
       - {start: 0x19a1b8, type: .rodata, name: water}
       - {start: 0x19a1c0, type: .rodata, name: fireomni}
       - {start: 0x19a1f0, type: .rodata, name: runeffect}
-      - {start: 0x19a208, type: .rodata, name: objanime}
+      - {start: 0x19a208, type: .rodata, name: effectmacro}
+      - {start: 0x19a230, type: .rodata, name: objanime}
       - {start: 0x19a270, type: .rodata, name: textureanime}
       - {start: 0x19a2c0, type: .rodata, name: ebattle}
       - {start: 0x19a368, type: .rodata, name: edit}
