@@ -1,6 +1,6 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
-#pragma name_counter 68
+#pragma name_counter 15
 
 #include "runscript.hpp"
 
@@ -10,6 +10,50 @@
 #include <cstring>
 
 #include "battle_globals.hpp"
+
+void runerror(const char *message) {
+    fprintf(stderr, "RUNTIME ERROR: %s\n", message);
+    exit__2(-1);
+}
+
+void stkoverflow() {
+    runerror("stack overflow");
+}
+
+int chk_int(RS_STACKDATA data, funcdata *function) {
+    if (data.type == RS_INT) {
+        return data.i;
+    }
+
+    fprintf(stderr, "RUNTIME ERROR: %s: operand is not integer\n", function->name);
+    exit__2(-1);
+    return 0;
+}
+
+int is_true(RS_STACKDATA data) {
+    return !(data.type == RS_INT && data.i == 0);
+}
+
+void divby0error() {
+    runerror("Divide by 0");
+}
+
+void modby0error() {
+    runerror("Modulo by 0");
+}
+
+void print(RS_STACKDATA *data, int count) {
+    for (int index = 0; index < count; index++, data++) {
+        if (data->type == RS_INT) {
+            printf("%d", data->i);
+        } else if (data->type == RS_STR) {
+            printf("%s", data->s);
+        } else if (data->type == RS_FLOAT) {
+            printf("%f", data->f);
+        }
+        fflush(stdout);
+    }
+}
 
 CRunScript::CRunScript() {
     sp = stack;

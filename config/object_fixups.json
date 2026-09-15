@@ -869,18 +869,6 @@
       "@541__2"
     ]
   },
-  "src/battle_globals.cpp": {
-    "rodata_exports": [
-      "@15",
-      "@17",
-      "@24",
-      "@32",
-      "@34",
-      "@50",
-      "@51",
-      "@52"
-    ]
-  },
   "src/texture_data.cpp": {
     "symbols": {
       "TextureDataStore": "TextureData"
@@ -1099,5 +1087,17 @@
         "MenuEtcErrCnt"
       ]
     }
+  },
+  "src/runscript.cpp": {
+    "rodata_exports": [
+      "@15",
+      "@17",
+      "@24",
+      "@32",
+      "@34",
+      "@50",
+      "@51",
+      "@52"
+    ]
   }
 }

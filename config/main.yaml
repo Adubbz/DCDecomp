@@ -294,7 +294,7 @@ segments:
       - {start: 0x135b10, type: cpp, name: weaponlevelup}
       - {start: 0x1381b0, type: cpp, name: menuiconautoget}
       - {start: 0x138550, type: cpp, name: battle_globals}
-      - {start: 0x13da40, type: cpp, name: runscript}
+      - {start: 0x13d7c0, type: cpp, name: runscript}
       - {start: 0x13f690, type: cpp, name: stockitem}
       - {start: 0x140150, type: cpp, name: fish}
       - {start: 0x141420, type: cpp, name: charakey}
@@ -410,7 +410,7 @@ segments:
       - {start: 0x19f3b8, type: .rodata, name: menu_manual}
       - {start: 0x19f478, type: .rodata, name: weaponlevelup}
       - {start: 0x19f6d0, type: .rodata, name: battle_globals}
-      - {start: 0x19f910, type: .rodata, name: runscript}
+      - {start: 0x19f870, type: .rodata, name: runscript}
       - {start: 0x19fd00, type: .rodata, name: stockitem}
       - {start: 0x19fd38, type: .rodata, name: fish}
       - {start: 0x19fe78, type: .rodata, name: charakey}

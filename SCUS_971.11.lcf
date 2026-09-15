@@ -421,7 +421,7 @@ SECTIONS
         weaponlevelup.cpp.o         (.text)   // 0x00235a10
         menuiconautoget.cpp.o       (.text)   // 0x002380b0
         battle_globals.cpp.o        (.text)   // 0x00238450
-        runscript.cpp.o             (.text)   // 0x0023d940
+        runscript.cpp.o             (.text)   // 0x0023d6c0
         stockitem.cpp.o             (.text)   // 0x0023f590
         fish.cpp.o                  (.text)   // 0x00240050
         charakey.cpp.o              (.text)   // 0x00241320
