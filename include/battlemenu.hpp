@@ -722,15 +722,6 @@ void ReadSyncItemMenuWepIcon(void);
 void InitItemMode(int, int);
 
 /**
- * Waits for the item page's data and opens it on the throw-away mode.
- *
- * @mangled InitItemTrushStart__Fv
- * @address 0x202C10
- * @size 0x74
- */
-void InitItemTrushStart(void);
-
-/**
  * Gives the item page's textures back and re-equips anyone left without a weapon.
  *
  * @mangled ExistItemMenu__Fv
