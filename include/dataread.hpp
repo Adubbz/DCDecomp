@@ -148,16 +148,6 @@ int GetPackFileExt(u_int *pack, char *extension, u_int **files, int max_files, i
 extern u_int *read_buffer;
 
 /**
- * Turns a model towards one heading, a step at a time, and gives back the
- * heading it stands on now.
- *
- * @mangled unitRotation__FP9CFrameVu1f
- * @address 0x140810
- * @size 0x28C
- */
-float unitRotation(CFrameVu1 *frame, float heading);
-
-/**
  * Loads the overlay required by a top-level game mode.
  *
  * @mangled LoadOverlay__Fi

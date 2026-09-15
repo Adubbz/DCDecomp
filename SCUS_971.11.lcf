@@ -343,6 +343,7 @@ SECTIONS
         bound.cpp.o                 (.text)   // 0x0013d250
         dispctrl.cpp.o              (.text)   // 0x0013de90
         dataread.cpp.o              (.text)   // 0x0013e950
+        clothread.cpp.o             (.text)   // 0x0013f9c0
         main.cpp.o                  (.text)   // 0x00140aa0
         dataalloc.cpp.o             (.text)   // 0x00143820
         map.cpp.o                   (.text)   // 0x00143870
@@ -450,7 +451,8 @@ SECTIONS
         chararead.cpp.o (.data)
         . = . + 0x4; // Retail padding after the character command tables.
         main.data.part2.s.o (.data)
-        dataread.cpp.o (.data)
+        dataread.cpp.o (.data)       // 0x00251580 CurrentDir, then LoadFile2's templates
+        clothread.cpp.o (.data)      // 0x002517a0 the cloth command tables
         main.cpp.o (.data)
         main.data.part2c.s.o (.data)
         clsmes.cpp.o (.data)

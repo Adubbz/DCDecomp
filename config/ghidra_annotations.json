@@ -1650,100 +1650,100 @@
       "documentation": "include/bound.hpp"
     },
     {
-      "translation_unit": "dataread",
-      "source": "src/dataread.cpp",
-      "assembly": "asm/nonmatchings/dataread/InitCloth__FP9CFrameVu1R9input_strP14CDataAlloc2_1_.s",
+      "translation_unit": "clothread",
+      "source": "src/clothread.cpp",
+      "assembly": "asm/nonmatchings/clothread/InitCloth__FP9CFrameVu1R9input_strP14CDataAlloc2_1_.s",
       "image": "main",
       "address": "0x0013F9C0",
       "size": "0x1B4",
       "name": "InitCloth__FP9CFrameVu1R9input_strP14CDataAlloc2_1_",
       "sha256": "2c79f4a26c54cd0f9c23aba0c7dd6bed6dadb4c3755a25738810ec3102169f2a",
       "comment": "Reads one model's cloth description and attaches the simulation.",
-      "documentation": "src/dataread.cpp"
+      "documentation": "src/clothread.cpp"
     },
     {
-      "translation_unit": "dataread",
-      "source": "src/dataread.cpp",
-      "assembly": "asm/nonmatchings/dataread/CommandFRAME__FPPv.s",
+      "translation_unit": "clothread",
+      "source": "src/clothread.cpp",
+      "assembly": "asm/nonmatchings/clothread/CommandFRAME__FPPv.s",
       "image": "main",
       "address": "0x0013FBE0",
       "size": "0x7C",
       "name": "CommandFRAME__FPPv",
       "sha256": "aa2cedc5a8dad5363cd1489c55786072e3aff1c72e1bd11f357e28814f165a96",
       "comment": "Names the frame the following model commands act on.",
-      "documentation": "src/dataread.cpp"
+      "documentation": "src/clothread.cpp"
     },
     {
-      "translation_unit": "dataread",
-      "source": "src/dataread.cpp",
-      "assembly": "asm/nonmatchings/dataread/CommandBOUND__FPPv.s",
+      "translation_unit": "clothread",
+      "source": "src/clothread.cpp",
+      "assembly": "asm/nonmatchings/clothread/CommandBOUND__FPPv.s",
       "image": "main",
       "address": "0x0013FDB0",
       "size": "0x24C",
       "name": "CommandBOUND__FPPv",
       "sha256": "f08f66eb90339654ff52b1f18b9f3403535b9ca6b05b264c2f57c9aa0dc6fced",
       "comment": "Adds one exclusion box to the cloth on the current frame.",
-      "documentation": "src/dataread.cpp"
+      "documentation": "src/clothread.cpp"
     },
     {
-      "translation_unit": "dataread",
-      "source": "src/dataread.cpp",
-      "assembly": "asm/nonmatchings/dataread/GetArg__FR9input_strPiPPv__2.s",
+      "translation_unit": "clothread",
+      "source": "src/clothread.cpp",
+      "assembly": "asm/nonmatchings/clothread/GetArg__FR9input_strPiPPv__2.s",
       "image": "main",
       "address": "0x00140000",
       "size": "0x320",
       "name": "GetArg__FR9input_strPiPPv__2",
       "sha256": "ba7f9dddc5b4b0bb8fbb598d36c34c69653c933f98b3e28286a866b061d00227",
       "comment": "Reads one command argument out of a model script.",
-      "documentation": "src/dataread.cpp"
+      "documentation": "src/clothread.cpp"
     },
     {
-      "translation_unit": "dataread",
-      "source": "src/dataread.cpp",
-      "assembly": "asm/nonmatchings/dataread/SearchCommand__FR9input_strPi__2.s",
+      "translation_unit": "clothread",
+      "source": "src/clothread.cpp",
+      "assembly": "asm/nonmatchings/clothread/SearchCommand__FR9input_strPi__2.s",
       "image": "main",
       "address": "0x00140320",
       "size": "0x144",
       "name": "SearchCommand__FR9input_strPi__2",
       "sha256": "6305025564b28e600e97a4eb80147eb18bded2fc317651a68c56408cc7085c8a",
       "comment": "Finds the command table entry a model script's next word names.",
-      "documentation": "src/dataread.cpp"
+      "documentation": "src/clothread.cpp"
     },
     {
-      "translation_unit": "dataread",
-      "source": "src/dataread.cpp",
-      "assembly": "asm/nonmatchings/dataread/SkipSpace__FR9input_str__2.s",
+      "translation_unit": "clothread",
+      "source": "src/clothread.cpp",
+      "assembly": "asm/nonmatchings/clothread/SkipSpace__FR9input_str__2.s",
       "image": "main",
       "address": "0x00140470",
       "size": "0x94",
       "name": "SkipSpace__FR9input_str__2",
       "sha256": "f3bb07c7a097d55b1a38445bdd17bb59510f4826a3d6288f2a8f49122040bf3c",
       "comment": "Steps a model script past whitespace and comments.",
-      "documentation": "src/dataread.cpp"
+      "documentation": "src/clothread.cpp"
     },
     {
-      "translation_unit": "dataread",
-      "source": "src/dataread.cpp",
-      "assembly": "asm/nonmatchings/dataread/CheckChar__Fc__2.s",
+      "translation_unit": "clothread",
+      "source": "src/clothread.cpp",
+      "assembly": "asm/nonmatchings/clothread/CheckChar__Fc__2.s",
       "image": "main",
       "address": "0x00140510",
       "size": "0x60",
       "name": "CheckChar__Fc__2",
       "sha256": "1f743838fe39bee4799b6b0d87f31a7aa7de32af4ea9e61708abffc72ea8b347",
       "comment": "Reports whether a character is not whitespace.",
-      "documentation": "src/dataread.cpp"
+      "documentation": "src/clothread.cpp"
     },
     {
-      "translation_unit": "dataread",
-      "source": "src/dataread.cpp",
-      "assembly": "asm/nonmatchings/dataread/MoveImageTest__FP13sceVif1PacketiiiRC8CRect_i_iiiiii.s",
+      "translation_unit": "clothread",
+      "source": "src/clothread.cpp",
+      "assembly": "asm/nonmatchings/clothread/MoveImageTest__FP13sceVif1PacketiiiRC8CRect_i_iiiiii.s",
       "image": "main",
       "address": "0x00140660",
       "size": "0x1A4",
       "name": "MoveImageTest__FP13sceVif1PacketiiiRC8CRect_i_iiiiii",
       "sha256": "ae293cd84b738b2d3d6928ac018b59008d2e951c6596187da153382b7e4a4dab",
       "comment": "Copies one rectangle of video memory to another.",
-      "documentation": "src/dataread.cpp"
+      "documentation": "src/clothread.cpp"
     },
     {
       "translation_unit": "main",

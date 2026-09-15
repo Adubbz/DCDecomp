@@ -768,9 +768,7 @@
   },
   "src/dataread.cpp": {
     "symbols": {
-      "CurrentDir": "CurrentDir__2",
-      "Command": "Command__2",
-      "CommandExe": "CommandExe__2"
+      "CurrentDir": "CurrentDir__2"
     },
     "rodata_exports": [
       "@234",
@@ -784,20 +782,7 @@
       "@391",
       "@439",
       "@467",
-      "@468",
-      "@187",
-      "@188",
-      "@189",
-      "@190",
-      "@191",
-      "@192",
-      "@193",
-      "@194",
-      "@195"
-    ],
-    "globalize_symbols": [
-      "Command__2",
-      "CommandExe__2"
+      "@468"
     ]
   },
   "src/dispctrl.cpp": {
@@ -1099,5 +1084,26 @@
         "MenuEtcErrCnt"
       ]
     }
+  },
+  "src/clothread.cpp": {
+    "symbols": {
+      "Command": "Command__2",
+      "CommandExe": "CommandExe__2"
+    },
+    "rodata_exports": [
+      "@187",
+      "@188",
+      "@189",
+      "@190",
+      "@191",
+      "@192",
+      "@193",
+      "@194",
+      "@195"
+    ],
+    "globalize_symbols": [
+      "Command__2",
+      "CommandExe__2"
+    ]
   }
 }

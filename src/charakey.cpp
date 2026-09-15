@@ -15,6 +15,7 @@
 #include "btactstatus.hpp"
 #include "btmisc.hpp"
 #include "character.hpp"
+#include "clothread.hpp"
 #include "collisiondata.hpp"
 #include "dataread.hpp"
 #include "dun/gameloop.hpp"

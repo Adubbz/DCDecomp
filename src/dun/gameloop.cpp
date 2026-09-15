@@ -44,6 +44,7 @@
 #pragma argument_flag_ones 4367, 4393, 4415, 4422, 4429, 4688, 4689, 4690, 4733, 4736
 #pragma argument_flag 0
 
+#include "clothread.hpp"
 #include "dun/gameloop.hpp"
 
 #include <libvu0.h>
