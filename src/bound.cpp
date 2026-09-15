@@ -49,7 +49,33 @@ int CBound::InCheck(float *point, float *result) {
     }
     return 0;
 }
+#ifdef NON_MATCHING
+void CBound::SetDir(CFrame *frame, float *from_position, float *to_position,
+                    float *up_direction, float half_width, float half_height) {
+    state = 1;
+    frame0 = frame;
+    frame1 = NULL;
+    ChangeDir(from_position, to_position, up_direction);
+
+    // The depth is whatever the box already had; only the two across the
+    // span are given here.
+    float half_depth = extent[2];
+    extent[0] = half_width;
+    extent[1] = half_height;
+    extent[2] = half_depth;
+    if (!(extent[0] <= 0.0f)) {
+        reciprocal[0] = 1.0f / half_width;
+    }
+    if (!(extent[1] <= 0.0f)) {
+        reciprocal[1] = 1.0f / half_height;
+    }
+    if (!(extent[2] <= 0.0f)) {
+        reciprocal[2] = 1.0f / half_depth;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/bound", SetDir__6CBoundFP6CFramePfPfPfff);
+#endif
 
 void CBound::ChangeDir(float *from_position, float *to_position, float *up_direction) {
     sceVu0CopyVector(from, from_position);
@@ -97,4 +123,25 @@ void CBound::InitParam() {
     sceVu0CopyVector(to, position);
     length0 = length1 = 1.0f;
 }
+#ifdef NON_MATCHING
+CBound::CBound(float half_width, float half_height, float half_depth) {
+    sceVu0FVECTOR forward = {0.0f, 0.0f, 1.0f, 0.0f};
+
+    InitParam();
+    extent[0] = half_width;
+    extent[1] = half_height;
+    extent[2] = half_depth;
+    if (!(extent[0] <= 0.0f)) {
+        reciprocal[0] = 1.0f / half_width;
+    }
+    if (!(extent[1] <= 0.0f)) {
+        reciprocal[1] = 1.0f / half_height;
+    }
+    if (!(extent[2] <= 0.0f)) {
+        reciprocal[2] = 1.0f / half_depth;
+    }
+    SetDir(forward);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/bound", __ct__6CBoundFfff);
+#endif
