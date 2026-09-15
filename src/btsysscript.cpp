@@ -147,7 +147,12 @@ INCLUDE_ASM("asm/nonmatchings/btsysscript", _USER_WEAPON_DRAW__FP12RS_STACKDATAi
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_MAIN_CHR2__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _RESET_MAIN_CHR__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_LIMMIT_ZONE__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_DEAD_FLAG__FP12RS_STACKDATAi);
+
+int _SET_DEAD_FLAG(RS_STACKDATA *stack, int argument_count) {
+    ((CDngStatusData *) UserStatus)->SetDead();
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _ALL_DRAW_FLAG__FP12RS_STACKDATAi);
 
 int _SET_FLOOR_TITLE(RS_STACKDATA *stack, int argument_count) {

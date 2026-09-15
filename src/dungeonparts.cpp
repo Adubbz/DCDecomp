@@ -55,6 +55,7 @@ INCLUDE_ASM("asm/nonmatchings/dungeonparts", Draw__13CDungeonPartsFv);
  * @size 0x348
  */
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", DrawCalc__13CDungeonPartsFiiii);
+
 /**
  * Clears one dungeon part.
  *
@@ -62,4 +63,19 @@ INCLUDE_ASM("asm/nonmatchings/dungeonparts", DrawCalc__13CDungeonPartsFiiii);
  * @address 0x1C1BA0
  * @size 0x5C
  */
-INCLUDE_ASM("asm/nonmatchings/dungeonparts", initalize__13CDungeonPartsFv);
+void CDungeonParts::initalize() {
+    for (int i = 0; i < 6; i++) {
+        frame[i] = NULL;
+        unk_170[i] = 0.0f;
+    }
+    unk_000 = 0;
+    collision = NULL;
+    unk_004 = NULL;
+    unk_008 = 0;
+    unk_010 = 0;
+    fire_num = 0;
+    water.used = 0;
+    water.has_fall = 0;
+    unk_1A8 = 0;
+    direction = 0;
+}

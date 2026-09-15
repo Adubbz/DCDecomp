@@ -11,6 +11,7 @@ class CBoxVu0;
 class CCPoly;
 class CCamera;
 class CCameraFollow;
+class CEditArea;
 class CEffectGroup;
 class CFrame;
 class CMapParts;
@@ -27,7 +28,9 @@ struct EDIT_WATER_SURFACE_RENDER {
 
 class CEditGround {
 public:
-    u8 unk_00000[0x15060];
+    u8 unk_00000[4];
+    CEditArea *areas[4]; /**< Editable areas that make up the ground. */
+    u8 unk_00014[0x1504C];
     EDIT_WATER_SURFACE_RENDER water_surfaces[4]; /**< Render controls for the four ground water surfaces. */
     sceVu0FVECTOR clip_plane; /**< Plane used to clip the editable ground's rendered geometry. */
     u8 unk_15f30[0x360];

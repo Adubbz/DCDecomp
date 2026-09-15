@@ -89,7 +89,20 @@ INCLUDE_ASM("asm/nonmatchings/menu_save", DrawEventAndFishMenuBoard_Ver__FP8CTex
 INCLUDE_ASM("asm/nonmatchings/menu_save", DrawEventAndFishMenuBoard__FP8CTextureiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_save", EventItemSelectDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", DrawEventItemBoard__FiiiiiP8CTexture);
-INCLUDE_ASM("asm/nonmatchings/menu_save", PlayerAllItemCheck__Fi);
+
+int PlayerAllItemCheck(int item) {
+    CDngStatusData *dungeon_status = SaveData->GetDngStatus();
+    CStockItem *stock = SaveData->GetStockItem();
+    int has_item = 0;
+
+    if (dungeon_status->SearchItemIndexNo(item) >= 0) {
+        has_item = 1;
+    }
+    if (stock->SearchItem(item) != 0) {
+        has_item = 1;
+    }
+    return has_item;
+}
 
 s32 GetAddAttachItem(s32 item_no) {
     s32 result;
