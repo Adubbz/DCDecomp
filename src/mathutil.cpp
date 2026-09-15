@@ -177,6 +177,7 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", mwInit);
  * @size 0x8C
  */
 INCLUDE_ASM("asm/nonmatchings/mathutil", mwOverlayInit);
+
 /**
  * Tells the runtime that an overlay has finished loading.
  *
@@ -184,7 +185,8 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", mwOverlayInit);
  * @address 0x122E70
  * @size 0x8
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", MWNotifyOverlayLoaded);
+void MWNotifyOverlayLoaded(void) {}
+
 /**
  * Reads one overlay image off the disc.
  *
