@@ -2,6 +2,9 @@
 
 #include <cstring>
 
+INCLUDE_ASM("asm/nonmatchings/memorycardaccess", InitSaveFileInfoTbl__Fv);
+INCLUDE_ASM("asm/nonmatchings/memorycardaccess", GetOpenAttribute__FPc);
+INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @346__2);
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", Initialize__17CMemoryCardAccessFv);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @372__3);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @373__4);

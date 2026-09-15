@@ -284,7 +284,8 @@ segments:
       - {start: 0xe69d0, type: cpp, name: shop}
       - {start: 0xf3ea0, type: cpp, name: battlemenu}
       - {start: 0x10bfc0, type: cpp, name: menu_misc}
-      - {start: 0x1136d0, type: cpp, name: memorycardaccess}
+      - {start: 0x1102d0, type: cpp, name: editmenu}
+      - {start: 0x1135c0, type: cpp, name: memorycardaccess}
       - {start: 0x116e50, type: cpp, name: memcard}
       - {start: 0x121830, type: cpp, name: menu_draw}
       - {start: 0x132930, type: cpp, name: eastking}
@@ -403,7 +404,8 @@ segments:
       - {start: 0x19d250, type: .rodata, name: shop}
       - {start: 0x19d5a0, type: .rodata, name: battlemenu}
       - {start: 0x19de60, type: .rodata, name: menu_misc}
-      - {start: 0x19e5d0, type: .rodata, name: memorycardaccess}
+      - {start: 0x19e3f8, type: .rodata, name: editmenu}
+      - {start: 0x19e5b0, type: .rodata, name: memorycardaccess}
       - {start: 0x19eb00, type: .rodata, name: memcard}
       - {start: 0x19ecc0, type: .rodata, name: menu_draw}
       - {start: 0x19f370, type: .rodata, name: eastking}

@@ -395,3 +395,21 @@ public:
 };
 
 STATIC_ASSERT(sizeof(CMemoryCardAccess) == 0x7C0);
+
+/**
+ * Clears the table of save file information.
+ *
+ * @mangled InitSaveFileInfoTbl__Fv
+ * @address 0x2134C0
+ * @size 0x74
+ */
+void InitSaveFileInfoTbl();
+
+/**
+ * Returns the attribute recorded for a save file name, or zero when the name is not in the table.
+ *
+ * @mangled GetOpenAttribute__FPc
+ * @address 0x213540
+ * @size 0x90
+ */
+int GetOpenAttribute(char *);

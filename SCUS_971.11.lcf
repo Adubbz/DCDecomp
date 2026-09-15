@@ -411,7 +411,8 @@ SECTIONS
         shop.cpp.o                  (.text)   // 0x001e68d0
         battlemenu.cpp.o            (.text)   // 0x001f3da0
         menu_misc.cpp.o             (.text)   // 0x0020bec0
-        memorycardaccess.cpp.o      (.text)   // 0x002135d0
+        editmenu.cpp.o              (.text)   // 0x002101d0
+        memorycardaccess.cpp.o      (.text)   // 0x002134c0
         memcard.cpp.o               (.text)   // 0x00216d50
         menu_draw.cpp.o             (.text)   // 0x00221730
         eastking.cpp.o              (.text)   // 0x00232830
