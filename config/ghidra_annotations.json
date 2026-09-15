@@ -1294,7 +1294,9 @@
       "address": "0x00135AA0",
       "size": "0x3A8",
       "name": "CreateVUdataFromMDT__10CVisualVu1FPUiPUiii",
-      "sha256": "bfd84cd8ea945e93b4ada44c6719184e3769cca80c7edaaa8618f57e85c07253"
+      "sha256": "bfd84cd8ea945e93b4ada44c6719184e3769cca80c7edaaa8618f57e85c07253",
+      "comment": "Builds a model's VU data block and returns its size in quadwords.",
+      "documentation": "include/visual.hpp"
     },
     {
       "translation_unit": "visualvu1",
@@ -1304,7 +1306,9 @@
       "address": "0x00135E50",
       "size": "0x288",
       "name": "CreateVUdataFromMDTRemake__10CVisualVu1FPUiPUii",
-      "sha256": "4bf82c70fd9e1c8b6ad4ea3572b0465f3291b271a15afdab6fba6e5d76a25094"
+      "sha256": "4bf82c70fd9e1c8b6ad4ea3572b0465f3291b271a15afdab6fba6e5d76a25094",
+      "comment": "Rebuilds a VU data block from retained model data and returns its size in quadwords.",
+      "documentation": "include/visual.hpp"
     },
     {
       "translation_unit": "visualvu1",
@@ -1336,7 +1340,9 @@
       "address": "0x00136240",
       "size": "0x4C",
       "name": "RemakeData__13CVisualMDTVu1FPUi",
-      "sha256": "0bdc6a54ff0796ecf794a6ee5a3ee65946713c747298e558f93a6abda4216741"
+      "sha256": "0bdc6a54ff0796ecf794a6ee5a3ee65946713c747298e558f93a6abda4216741",
+      "comment": "Rebuilds VU data and returns its size in quadwords, or zero if no MDT model is retained.",
+      "documentation": "include/visual.hpp"
     },
     {
       "translation_unit": "visualshadow",
@@ -1382,7 +1388,9 @@
       "address": "0x00136840",
       "size": "0x48",
       "name": "RemakeData__13CVisualShadowFPUi",
-      "sha256": "78abf451140325a6603ee4620926399239a6863cd22b5922e008de1d36d2d8dd"
+      "sha256": "78abf451140325a6603ee4620926399239a6863cd22b5922e008de1d36d2d8dd",
+      "comment": "Rebuilds shadow VU data and returns its size in quadwords, or zero if no MDT model is retained.",
+      "documentation": "include/visual.hpp"
     },
     {
       "translation_unit": "visualshadow",
@@ -2835,7 +2843,9 @@
       "address": "0x00159D20",
       "size": "0x70",
       "name": "SndSetBgmVol__Fi",
-      "sha256": "bed39def82a137c2e3e97a9bccb3093d7a0aad378075ac77a33f4d5776c3c3a2"
+      "sha256": "bed39def82a137c2e3e97a9bccb3093d7a0aad378075ac77a33f4d5776c3c3a2",
+      "comment": "Sets the background music's volume. Sets the background-music volume.",
+      "documentation": "include/snd.hpp"
     },
     {
       "translation_unit": "snd",
@@ -5179,7 +5189,9 @@
       "address": "0x00186EF0",
       "size": "0x5B4",
       "name": "EdMoveVillager__FP13VILLAGER_INFO",
-      "sha256": "c8c5c4700083a6f6a213978cf4d9b146dc9a6a1134c8af5621412a0c2c36860e"
+      "sha256": "c8c5c4700083a6f6a213978cf4d9b146dc9a6a1134c8af5621412a0c2c36860e",
+      "comment": "Runs one villager for a frame on the current map.",
+      "documentation": "include/edit.hpp"
     },
     {
       "translation_unit": "editloop3",
@@ -6543,7 +6555,9 @@
       "address": "0x001A87E0",
       "size": "0x110",
       "name": "FishingLoad__FP14CDataAlloc2_1_i",
-      "sha256": "9b0678fa509c9d3662c970a04c8ad25f3ed0b49a0f9359c5b35de08b32fe1e1b"
+      "sha256": "9b0678fa509c9d3662c970a04c8ad25f3ed0b49a0f9359c5b35de08b32fe1e1b",
+      "comment": "Reads the fishing minigame's models and textures.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6553,7 +6567,9 @@
       "address": "0x001A88F0",
       "size": "0x4CC",
       "name": "FishingLoadFish__FiP14CDataAlloc2_1_i",
-      "sha256": "5fbc2f9b97e68609f7d6c7a6918a6cf7d1e89cdf539a4088b67a56ef454c2959"
+      "sha256": "5fbc2f9b97e68609f7d6c7a6918a6cf7d1e89cdf539a4088b67a56ef454c2959",
+      "comment": "Reads the six fish of one fishing spot into an arena.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6575,7 +6591,9 @@
       "address": "0x001A8F50",
       "size": "0xBC",
       "name": "FishingLoadEsa__FiP9CFrameVu1i",
-      "sha256": "30f33ded8649016b5eb74b875c04a6b8a34fe42a7c15f300bb55aee8f46a3b01"
+      "sha256": "30f33ded8649016b5eb74b875c04a6b8a34fe42a7c15f300bb55aee8f46a3b01",
+      "comment": "Reads the model of the bait on the hook.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6585,7 +6603,9 @@
       "address": "0x001A9010",
       "size": "0x14",
       "name": "FishingDeleteEsa__Fv",
-      "sha256": "0e5a0f192a9538e47cc106661052dd0bd23c40e7ae943d9558b80f0009ddf58b"
+      "sha256": "0e5a0f192a9538e47cc106661052dd0bd23c40e7ae943d9558b80f0009ddf58b",
+      "comment": "Takes the bait off the hook.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6595,7 +6615,9 @@
       "address": "0x001A9030",
       "size": "0x38",
       "name": "FishingGetEsaItemNo__Fv",
-      "sha256": "0dfabe10a23a9287d2857f0fb60477e5503c217435e3758b684352f84b38e1af"
+      "sha256": "0dfabe10a23a9287d2857f0fb60477e5503c217435e3758b684352f84b38e1af",
+      "comment": "Gives the item the bait on the hook came from.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6605,7 +6627,9 @@
       "address": "0x001A9070",
       "size": "0x7C",
       "name": "FishingInit__Fv",
-      "sha256": "902cd99f623c442bbd6080f8c00968cdcd0b874f5b4faf16ac6492e28613cf28"
+      "sha256": "902cd99f623c442bbd6080f8c00968cdcd0b874f5b4faf16ac6492e28613cf28",
+      "comment": "Clears the fishing simulation's water, ground and line state.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6639,7 +6663,9 @@
       "address": "0x001A91E0",
       "size": "0x7C",
       "name": "FishingSetCPoly__FP6CCPolyi",
-      "sha256": "07e9ba2f262d67c0643ded475f483a5738194f035327d41c34c2dfcc2de2f269"
+      "sha256": "07e9ba2f262d67c0643ded475f483a5738194f035327d41c34c2dfcc2de2f269",
+      "comment": "Copies the collision polygons the fishing water stands on.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6649,7 +6675,9 @@
       "address": "0x001A9260",
       "size": "0x40",
       "name": "FishingSetRect__F7CBoxVu0",
-      "sha256": "bf9231c9e7b60e5ed6b5ebaef671a95dc0099f19baad125719c540518069396f"
+      "sha256": "bf9231c9e7b60e5ed6b5ebaef671a95dc0099f19baad125719c540518069396f",
+      "comment": "Sets the box the fish may swim within.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6659,7 +6687,9 @@
       "address": "0x001A92A0",
       "size": "0x1BC",
       "name": "FishingPickUpPoly__FP6CCPoly",
-      "sha256": "e9d57c02e9e10f469efdd1e3b01efdcd847735562bae1fbd905acb082d2e3093"
+      "sha256": "e9d57c02e9e10f469efdd1e3b01efdcd847735562bae1fbd905acb082d2e3093",
+      "comment": "Collects the collision polygons around the fishing spot.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6669,7 +6699,9 @@
       "address": "0x001A9460",
       "size": "0x108",
       "name": "FishingInitFish__F7CBoxVu0",
-      "sha256": "40b86b4eb305151d1b6011e651d4b056bed3ee1c4f8b0795038f571c9965c26c"
+      "sha256": "40b86b4eb305151d1b6011e651d4b056bed3ee1c4f8b0795038f571c9965c26c",
+      "comment": "Places the six fish at random within the fishing box.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6679,7 +6711,9 @@
       "address": "0x001A9570",
       "size": "0xD8",
       "name": "FishingFishStatus__FPi",
-      "sha256": "45865109ba479b80d7511b75e8e069fa6820ca2fe00a54f4f984face4100356e"
+      "sha256": "45865109ba479b80d7511b75e8e069fa6820ca2fe00a54f4f984face4100356e",
+      "comment": "Gives what the nearest fish is doing and how interested it is.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6689,7 +6723,9 @@
       "address": "0x001A9650",
       "size": "0x68",
       "name": "FishingBattleFish__Fi",
-      "sha256": "b3ec597a0d44e9c4c53036e0af1510e4fa13b17eeed9a3e909e86db79a77de35"
+      "sha256": "b3ec597a0d44e9c4c53036e0af1510e4fa13b17eeed9a3e909e86db79a77de35",
+      "comment": "Marks one fish as the one now fighting the line.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6699,7 +6735,9 @@
       "address": "0x001A96C0",
       "size": "0x4C",
       "name": "FishingFishKind__Fi",
-      "sha256": "78751837ddaaa784c7a8d49451911177d2f64afd29152ada32d10131f5b07663"
+      "sha256": "78751837ddaaa784c7a8d49451911177d2f64afd29152ada32d10131f5b07663",
+      "comment": "Gives the kind of one of the six fish.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6709,7 +6747,9 @@
       "address": "0x001A9710",
       "size": "0x88",
       "name": "FishingBattleToAngleFish__FPUiP14CDataAlloc2_1_",
-      "sha256": "b8d28dec2e8a475438d44824f016eaa4fdb286381a57842330ca61edc231f8d7"
+      "sha256": "b8d28dec2e8a475438d44824f016eaa4fdb286381a57842330ca61edc231f8d7",
+      "comment": "Turns the fighting fish into the one being landed.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6719,7 +6759,9 @@
       "address": "0x001A97B0",
       "size": "0x80",
       "name": "FishingAngleFish__Fi",
-      "sha256": "642012be7e21cc029c04d95decc41926ecd225665abb282c13a91e40164cb671"
+      "sha256": "642012be7e21cc029c04d95decc41926ecd225665abb282c13a91e40164cb671",
+      "comment": "Marks one fish as the one being landed.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6729,7 +6771,9 @@
       "address": "0x001A9830",
       "size": "0x84",
       "name": "FishingGetAngleFishSize__FPiPi",
-      "sha256": "0305ccc8a037b1f9e09642bf6bc185073afcd141f1d3137e3abf8bfa99cb9445"
+      "sha256": "0305ccc8a037b1f9e09642bf6bc185073afcd141f1d3137e3abf8bfa99cb9445",
+      "comment": "Gives the kind and size of the fish being landed.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6739,7 +6783,9 @@
       "address": "0x001A98C0",
       "size": "0x5C",
       "name": "FishingInitFishStatus__Fv",
-      "sha256": "50ef26b965b2fb12f23ca4ee0fb2b329687bd1dd8ae1826c9702c34299b37049"
+      "sha256": "50ef26b965b2fb12f23ca4ee0fb2b329687bd1dd8ae1826c9702c34299b37049",
+      "comment": "Puts the six fish back to swimming.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6749,7 +6795,9 @@
       "address": "0x001A9940",
       "size": "0x138",
       "name": "FishingStepFish__Fv",
-      "sha256": "aaadf4a8c36fa615542a49d61f8582b6c6360bba0bb95b5e84493c2dea237ac8"
+      "sha256": "aaadf4a8c36fa615542a49d61f8582b6c6360bba0bb95b5e84493c2dea237ac8",
+      "comment": "Advances the six fish one step, steering them by the hook.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6759,7 +6807,9 @@
       "address": "0x001A9A80",
       "size": "0x13C",
       "name": "FishingDrawFish__Fv",
-      "sha256": "30005d4c77053aa629605b64a96f6ef953ec09163571beefe32db4d39f4e7290"
+      "sha256": "30005d4c77053aa629605b64a96f6ef953ec09163571beefe32db4d39f4e7290",
+      "comment": "Draws the six fish.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6769,7 +6819,9 @@
       "address": "0x001A9BC0",
       "size": "0x28",
       "name": "GetHookPos__FPf",
-      "sha256": "dfbf073dadd612fac5079f9f12fae8e301eeae7de73cef2b18efd0a87797a078"
+      "sha256": "dfbf073dadd612fac5079f9f12fae8e301eeae7de73cef2b18efd0a87797a078",
+      "comment": "Gives where the hook is.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6779,7 +6831,9 @@
       "address": "0x001A9BF0",
       "size": "0x43C",
       "name": "FishLineInit__FPf",
-      "sha256": "9fe77c3b2b07cd84088ded5b8bbb0f6fd5c5ab4d8f7b63337fc95e1826dc3669"
+      "sha256": "9fe77c3b2b07cd84088ded5b8bbb0f6fd5c5ab4d8f7b63337fc95e1826dc3669",
+      "comment": "Casts the line, putting the float and hook at a position.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6789,7 +6843,9 @@
       "address": "0x001AA030",
       "size": "0x98",
       "name": "FishLineSetUki__FPff",
-      "sha256": "a83990535b6ff045a0e9a40684ce6bf60491969457f8967c413681cf9e956a63"
+      "sha256": "a83990535b6ff045a0e9a40684ce6bf60491969457f8967c413681cf9e956a63",
+      "comment": "Pulls the float towards a position by a share of the distance.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6799,7 +6855,9 @@
       "address": "0x001AA0D0",
       "size": "0x98",
       "name": "FishLineSetHook__FPff",
-      "sha256": "afa363db3a643f19c3dcc0fbf09c8f6bd6104bf0356bef0d0df8037a54224b86"
+      "sha256": "afa363db3a643f19c3dcc0fbf09c8f6bd6104bf0356bef0d0df8037a54224b86",
+      "comment": "Pulls the hook towards a position by a share of the distance.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6809,7 +6867,9 @@
       "address": "0x001AA180",
       "size": "0x28",
       "name": "FishLineGetUki__FPf",
-      "sha256": "0ad6a5f42e281e28017b4ae449b3ecd8d00e7970e55d9d2c7e99892fa8b686d4"
+      "sha256": "0ad6a5f42e281e28017b4ae449b3ecd8d00e7970e55d9d2c7e99892fa8b686d4",
+      "comment": "Gives where the float is.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6819,7 +6879,9 @@
       "address": "0x001AA1B0",
       "size": "0x28",
       "name": "FishLineGetHook__FPf",
-      "sha256": "0201903e2c63e02f5bc17bb3c19259b8a039793c1ac82c4c12b1937b05899c47"
+      "sha256": "0201903e2c63e02f5bc17bb3c19259b8a039793c1ac82c4c12b1937b05899c47",
+      "comment": "Gives where the hook is.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6829,7 +6891,9 @@
       "address": "0x001AA1E0",
       "size": "0x158",
       "name": "FishingCheckUkiHook__Fv",
-      "sha256": "504266f2a117a5095cd03868adfc52cc5a7b3398564a1d3b50d263defc64fdbe"
+      "sha256": "504266f2a117a5095cd03868adfc52cc5a7b3398564a1d3b50d263defc64fdbe",
+      "comment": "Reports whether the float and hook are clear of the ground.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6839,7 +6903,9 @@
       "address": "0x001AA340",
       "size": "0xDA8",
       "name": "FishLineStep__FPfPf",
-      "sha256": "db870d9f8eb4a353404d765cfab4b069f9bf238a99650afaf1788a7922cde891"
+      "sha256": "db870d9f8eb4a353404d765cfab4b069f9bf238a99650afaf1788a7922cde891",
+      "comment": "Advances the line, float and hook one step from the rod's position.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "fishing",
@@ -6849,7 +6915,9 @@
       "address": "0x001AB0F0",
       "size": "0x64C",
       "name": "FishLineDraw__Fi",
-      "sha256": "9d25d920c1bd602c5707174ded2578653c189dde07fd70166499a421f21a69bc"
+      "sha256": "9d25d920c1bd602c5707174ded2578653c189dde07fd70166499a421f21a69bc",
+      "comment": "Draws the line between the rod, the float and the hook.",
+      "documentation": "src/fishing.cpp"
     },
     {
       "translation_unit": "shot_utils",
@@ -7146,6 +7214,7 @@
       "size": "0x48",
       "name": "WaterSplash_Init__Fv",
       "sha256": "a413736f2454fb65e1c693ac2ddcd5f4e67fd4d4927f4314f12ad42f2043b6cf",
+      "comment": "Clears the water-splash effects.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7157,6 +7226,7 @@
       "size": "0x328",
       "name": "CheckHealingWater__Fv",
       "sha256": "01c64185eb8bcd4dd9c96052bf54b61726ad68a818a70fb31eb830c614e58268",
+      "comment": "Reports whether the party stands in healing water.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7168,6 +7238,7 @@
       "size": "0x29C",
       "name": "CheckHealZone__Fv",
       "sha256": "4a644062c34b2dcc882f9aad7b4a9c470ef89ab1512810484c00ba688bfd2687",
+      "comment": "Reports whether the party stands in a healing zone.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7179,6 +7250,7 @@
       "size": "0x158",
       "name": "HealingWater__Fv",
       "sha256": "50777926aaed59ce0e860646c2b1ce9b10d0df4ae95a55a362b8678bcf4e551e",
+      "comment": "Restores the party while they stand in healing water.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7190,6 +7262,7 @@
       "size": "0x27C",
       "name": "DrawWaterLing__Fv",
       "sha256": "d4a419a074369cd982611d3046cdb5b0da8f8f70b16e65f80074837d3e90dbb4",
+      "comment": "Draws the rings spreading on the water.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7201,6 +7274,7 @@
       "size": "0x130",
       "name": "StepWaterLing__Fv",
       "sha256": "952566fe7f287e5d42f48ea0bd1db995000ed3749200987f92ee0da872d14c4f",
+      "comment": "Advances the rings spreading on the water.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7212,6 +7286,7 @@
       "size": "0x1D0",
       "name": "SetBattleStyle__Fii",
       "sha256": "9c5c467c8b90034e8a46423f2ec1b8c851bb88e3084913dcf5d2b2a6e93e5da3",
+      "comment": "Chooses the stance the player takes from the nearest monster.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7223,6 +7298,7 @@
       "size": "0x1F8",
       "name": "ValuePrint__FiiiiUc",
       "sha256": "0ca55129d20e8605432269af269de41465d4dcafe722ae8b28c6ae06ad7f71f3",
+      "comment": "Draws a three-digit value out of the number sheet.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7234,6 +7310,7 @@
       "size": "0xB8",
       "name": "BtStatusAlarmInit__Fv",
       "sha256": "029d02db74cd5962f9ef258bad926167e04a02ee563bc697d1c450798a061137",
+      "comment": "Clears the pulse that warns of low life.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7245,6 +7322,7 @@
       "size": "0xC8",
       "name": "BtStatusAlarmAnime__Fv",
       "sha256": "0ec8b4f21d0d3dd08ca896dc54c94bbc72416ee2b0b710a172c22c8363b6f81b",
+      "comment": "Advances the pulse that warns of low life.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7256,6 +7334,7 @@
       "size": "0x80",
       "name": "BtGetStatusPal__Fiff",
       "sha256": "9ab9c938991ad78f2bf377d6dfdd5e8fd559aaf5baa8e582a7be23d76bf2f454",
+      "comment": "Chooses the colour a status bar draws in from how full it is.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7267,6 +7346,7 @@
       "size": "0x80",
       "name": "BtGetStatusPal2__Fiff",
       "sha256": "b739f786d9d91d6620b6de519f923a26d5d12093bf6ed0327f6c8a008a459cc4",
+      "comment": "Chooses the second colour a status bar draws in from how full it is.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7278,6 +7358,7 @@
       "size": "0x1438",
       "name": "topStatusInfo__Fiii",
       "sha256": "33b04c170054885f3da4315ee983dffcafb38429cc5c67ac279e5c361e279a11",
+      "comment": "Draws the life, magic and stamina bars at the top of the screen.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7289,6 +7370,7 @@
       "size": "0x28",
       "name": "StatusErrCheck__Fi",
       "sha256": "1a45332329f5c5e992d6497982767832dbb97c04a21b13260671ff5f546a76a9",
+      "comment": "Reports whether the party is suffering one status ailment.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7300,7 +7382,7 @@
       "size": "0xE8",
       "name": "BtStatusErrColorSet__Fv",
       "sha256": "0cb7e9948d87530a7706c2ceb785cb57608e15d59d8124fc0aa3a946dc875a61",
-      "comment": "Gives the colour a status ailment tints a model with, and 1 while one runs.",
+      "comment": "Chooses the tint the party's status ailment gives them. Gives the colour a status ailment tints a model with, and 1 while one runs.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7312,6 +7394,7 @@
       "size": "0x154",
       "name": "BtStatusErrStep__Fv",
       "sha256": "f11f0ec8c4c8c6c935cbb32abbfdcc5ff7263decb8bf4e9314f69212c108d999",
+      "comment": "Advances the party's status ailments and applies what they cost.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7323,6 +7406,7 @@
       "size": "0x1CC",
       "name": "BtSetStatusErr__Fi",
       "sha256": "432fb2369e466077d6bbb40701713b2aded984ba00e07854afee2b0abb72cc4a",
+      "comment": "Inflicts one status ailment on the party.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7334,6 +7418,7 @@
       "size": "0x16C",
       "name": "BtStatusErrDraw__Fi",
       "sha256": "78024dea8a702ef9e4b09b9eada8458aecfd71c7143f53e29e109716dd4f023c",
+      "comment": "Draws the icons of the party's status ailments.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7345,6 +7430,7 @@
       "size": "0x1CC",
       "name": "setItemToReserved__FPciiPcii",
       "sha256": "09043910ee62941111bc5d39778827c61b979df943c20a6a7e67f2b8cb8ab2fe",
+      "comment": "Draws one item into the reserved slot area.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7356,6 +7442,7 @@
       "size": "0x1C",
       "name": "BtMapJumpCashClear__Fv",
       "sha256": "1565962d67e8a2f04f5ab0447153b8740d713f51e0f0dc1af7cba2721425c27b",
+      "comment": "Clears the cached map-jump data.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7367,6 +7454,7 @@
       "size": "0x70C",
       "name": "BtMapJumpLoad__FPc",
       "sha256": "ad6775c8d064ce1d782c98b65cca2d52074a8ffbfd0c1de850b38b2118f7b683",
+      "comment": "Reads the map a jump leads to, along with its message buffer.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -7378,6 +7466,7 @@
       "size": "0x108",
       "name": "BtSet3DCellModel__FPfP8CTexturefiiiii",
       "sha256": "9e41a7b1d1955bc8ee4cac29d5c12e43f59902e36e00107ea6281a50f244293b",
+      "comment": "Draws a textured cell in world space.",
       "documentation": "include/shot_freefuncs.hpp"
     },
     {
@@ -9066,7 +9155,9 @@
       "address": "0x001D1030",
       "size": "0x368",
       "name": "selectChrUnit__Fii",
-      "sha256": "c394d1f4494b2d75ec7c4ddc6e1afb2cc8e0ea214baf11178f8aa829bbb07fdc"
+      "sha256": "c394d1f4494b2d75ec7c4ddc6e1afb2cc8e0ea214baf11178f8aa829bbb07fdc",
+      "comment": "Puts one party member in the player's hands, loading them if need be.",
+      "documentation": "src/btitem.cpp"
     },
     {
       "translation_unit": "btitem",
@@ -9088,7 +9179,9 @@
       "address": "0x001D13F0",
       "size": "0x418",
       "name": "BtGetTreasureboxBig_Init__Fv",
-      "sha256": "1d3b5240ea20ac045cf63181271f0cf674ac37c49da2d405b832a1bee2934855"
+      "sha256": "1d3b5240ea20ac045cf63181271f0cf674ac37c49da2d405b832a1bee2934855",
+      "comment": "Opens the large treasure chest and starts its presentation.",
+      "documentation": "src/btitem.cpp"
     },
     {
       "translation_unit": "btitem",
@@ -9098,7 +9191,9 @@
       "address": "0x001D1810",
       "size": "0x7A8",
       "name": "BtGetTreasureboxBig_Loop__Fv",
-      "sha256": "079d27fdf93abc11591f84e0eec69adcde8e9a2a4c827539eb50d30e339ce895"
+      "sha256": "079d27fdf93abc11591f84e0eec69adcde8e9a2a4c827539eb50d30e339ce895",
+      "comment": "Runs the large treasure chest's presentation and reports when it ends.",
+      "documentation": "src/btitem.cpp"
     },
     {
       "translation_unit": "btitem",
@@ -9108,7 +9203,9 @@
       "address": "0x001D1FC0",
       "size": "0x4A0",
       "name": "BtGetTreasureboxSmall_Init__Fi",
-      "sha256": "afcaab44bd4e9772bf7e807de074b903142a598592669cb4cadeb75bf843dc6d"
+      "sha256": "afcaab44bd4e9772bf7e807de074b903142a598592669cb4cadeb75bf843dc6d",
+      "comment": "Opens the small treasure chest and starts its presentation.",
+      "documentation": "src/btitem.cpp"
     },
     {
       "translation_unit": "btitem",
@@ -9118,7 +9215,9 @@
       "address": "0x001D2460",
       "size": "0x690",
       "name": "BtGetTreasureboxSmall_Loop__Fv",
-      "sha256": "eee2515be2d3bca4a10ce7771b89f613badba4ab34ae59b58e6dac1ed9c4f8cb"
+      "sha256": "eee2515be2d3bca4a10ce7771b89f613badba4ab34ae59b58e6dac1ed9c4f8cb",
+      "comment": "Runs the small treasure chest's presentation and reports when it ends.",
+      "documentation": "src/btitem.cpp"
     },
     {
       "translation_unit": "btitem",
@@ -9128,7 +9227,9 @@
       "address": "0x001D2AF0",
       "size": "0x180",
       "name": "BtAtraGetShort_Init__Fv",
-      "sha256": "e5a20e6de8c5015b98594835674e66e64abdc2ae0187c9d09850c07b07f7fe38"
+      "sha256": "e5a20e6de8c5015b98594835674e66e64abdc2ae0187c9d09850c07b07f7fe38",
+      "comment": "Starts the short presentation for picking up an Atla.",
+      "documentation": "src/btitem.cpp"
     },
     {
       "translation_unit": "btitem",
@@ -9138,7 +9239,9 @@
       "address": "0x001D2C70",
       "size": "0x61C",
       "name": "BtAtraGetShort_Loop__Fii",
-      "sha256": "b26d7b057237d9f85104d1f1109a3dc02aea65faaf621e7cfb813519950fae2b"
+      "sha256": "b26d7b057237d9f85104d1f1109a3dc02aea65faaf621e7cfb813519950fae2b",
+      "comment": "Runs the Atla pickup presentation and reports when it ends.",
+      "documentation": "src/btitem.cpp"
     },
     {
       "translation_unit": "btitem",
@@ -9148,7 +9251,9 @@
       "address": "0x001D3290",
       "size": "0x40",
       "name": "BtMiniChrSelect_Init__Fi",
-      "sha256": "bcf259a341f1a9c33fc222980ef443fee317eeb2c11183cded7c771ed901c736"
+      "sha256": "bcf259a341f1a9c33fc222980ef443fee317eeb2c11183cded7c771ed901c736",
+      "comment": "Opens the small character-select window.",
+      "documentation": "src/btitem.cpp"
     },
     {
       "translation_unit": "btitem",
@@ -9158,7 +9263,9 @@
       "address": "0x001D32D0",
       "size": "0x128",
       "name": "BtMiniChrSelect_Loop__Fv",
-      "sha256": "8279a642fb3c450a303e686b2c355bf59f20d0cf4372a875f8b8756429753f32"
+      "sha256": "8279a642fb3c450a303e686b2c355bf59f20d0cf4372a875f8b8756429753f32",
+      "comment": "Runs the small character-select window and reports the choice.",
+      "documentation": "src/btitem.cpp"
     },
     {
       "translation_unit": "btitem",
@@ -9168,7 +9275,9 @@
       "address": "0x001D3400",
       "size": "0x38",
       "name": "BtMiniItemSelect__Fv",
-      "sha256": "3dc12e8d069842ef15f2a93188e4fe6a2143eaac5b5bc44514eee3e4e5d619c4"
+      "sha256": "3dc12e8d069842ef15f2a93188e4fe6a2143eaac5b5bc44514eee3e4e5d619c4",
+      "comment": "Opens the small item-select window.",
+      "documentation": "src/btitem.cpp"
     },
     {
       "translation_unit": "btitem",
@@ -9178,7 +9287,9 @@
       "address": "0x001D3440",
       "size": "0x118",
       "name": "BtMiniItemSelect_Loop__Fv",
-      "sha256": "92349f9c6241348cb5a74e9a89a56f5efbf43d46a30a44106c3389f029936343"
+      "sha256": "92349f9c6241348cb5a74e9a89a56f5efbf43d46a30a44106c3389f029936343",
+      "comment": "Runs the small item-select window and reports the choice.",
+      "documentation": "src/btitem.cpp"
     },
     {
       "translation_unit": "btitem",
@@ -9188,7 +9299,9 @@
       "address": "0x001D3560",
       "size": "0x13C",
       "name": "BtGetGateKey_Init__Fi",
-      "sha256": "1bce6ffae3971c248150e0902e9540ca9c8dad965236006fa57c55db7729ba89"
+      "sha256": "1bce6ffae3971c248150e0902e9540ca9c8dad965236006fa57c55db7729ba89",
+      "comment": "Starts the presentation for picking up a gate key.",
+      "documentation": "src/btitem.cpp"
     },
     {
       "translation_unit": "btitem",
@@ -9198,7 +9311,9 @@
       "address": "0x001D36A0",
       "size": "0x3D0",
       "name": "BtGetGateKey_Loop__Fv",
-      "sha256": "b848b0b3b1e2d9e919206768f2b61097925f859dc1743e1083e35ad86a4663f8"
+      "sha256": "b848b0b3b1e2d9e919206768f2b61097925f859dc1743e1083e35ad86a4663f8",
+      "comment": "Runs the gate-key presentation and reports when it ends.",
+      "documentation": "src/btitem.cpp"
     },
     {
       "translation_unit": "btitem",
@@ -9208,7 +9323,9 @@
       "address": "0x001D3B00",
       "size": "0xF0",
       "name": "BtGetAttach_Loop__Fv",
-      "sha256": "963b6ffce178565de901f7f7a9e9f66de20c17366fb718c4cafc569e29d6ee1d"
+      "sha256": "963b6ffce178565de901f7f7a9e9f66de20c17366fb718c4cafc569e29d6ee1d",
+      "comment": "Runs the attachment pickup presentation and reports when it ends.",
+      "documentation": "src/btitem.cpp"
     },
     {
       "translation_unit": "btitem",
@@ -9218,7 +9335,9 @@
       "address": "0x001D3BF0",
       "size": "0x14C",
       "name": "BtEscape_Init__Fv",
-      "sha256": "84aa0d64a749161da691c19ca988bd28fd19883092dc2ad3d7b99ed400280600"
+      "sha256": "84aa0d64a749161da691c19ca988bd28fd19883092dc2ad3d7b99ed400280600",
+      "comment": "Starts the presentation for escaping the floor.",
+      "documentation": "src/btitem.cpp"
     },
     {
       "translation_unit": "btitem",
@@ -9228,7 +9347,9 @@
       "address": "0x001D3D40",
       "size": "0x18C",
       "name": "BtEscape_Loop__Fv",
-      "sha256": "fa4959373e41602d79cf3a4bbfbafa37f31423c7e25007bc9120167625e18b6a"
+      "sha256": "fa4959373e41602d79cf3a4bbfbafa37f31423c7e25007bc9120167625e18b6a",
+      "comment": "Runs the escape presentation and reports when it ends.",
+      "documentation": "src/btitem.cpp"
     },
     {
       "translation_unit": "btitem",
@@ -9238,7 +9359,9 @@
       "address": "0x001D3ED0",
       "size": "0x1B0",
       "name": "BtSetActiveItemModel__FPUi",
-      "sha256": "28897e9827e796314f19393d0f3f38a8d58d93f670370e138a559554b7739c25"
+      "sha256": "28897e9827e796314f19393d0f3f38a8d58d93f670370e138a559554b7739c25",
+      "comment": "Builds the models of the items in the active slots.",
+      "documentation": "src/btitem.cpp"
     },
     {
       "translation_unit": "btitem",
@@ -9284,7 +9407,9 @@
       "address": "0x001D4260",
       "size": "0x2D4",
       "name": "ItemThrowStep__FPfPf",
-      "sha256": "5e98af2f816ac8551aafd506d9db59c519d39040c1af9c9472e94d3459e86a9f"
+      "sha256": "5e98af2f816ac8551aafd506d9db59c519d39040c1af9c9472e94d3459e86a9f",
+      "comment": "Advances a thrown item along its arc.",
+      "documentation": "src/btitem.cpp"
     },
     {
       "translation_unit": "mainitemmodel",
@@ -15811,7 +15936,9 @@
       "address": "0x0022A5A0",
       "size": "0x104",
       "name": "DngActiveItemTextureCopy__Fv",
-      "sha256": "5067dab36e9a23516833765fa0d2c1c84e92ba7c1996b6421a356cc0c346a28e"
+      "sha256": "5067dab36e9a23516833765fa0d2c1c84e92ba7c1996b6421a356cc0c346a28e",
+      "comment": "Copies the textures the item list holds into the frame it draws from.",
+      "documentation": "include/dun/gameloop.hpp"
     },
     {
       "translation_unit": "menu_draw",
@@ -15821,7 +15948,9 @@
       "address": "0x0022A6B0",
       "size": "0x130",
       "name": "DngActiveWeaponTextureCopy__Fv",
-      "sha256": "3ed311629b4a582afac020101c68e9b28e6e0434cd3600bec2b6f5dd266bf6d7"
+      "sha256": "3ed311629b4a582afac020101c68e9b28e6e0434cd3600bec2b6f5dd266bf6d7",
+      "comment": "The same, for the weapon the player holds.",
+      "documentation": "include/dun/gameloop.hpp"
     },
     {
       "translation_unit": "menu_draw",
@@ -17199,6 +17328,7 @@
       "size": "0x48",
       "name": "GlobalNameInit__Fv",
       "sha256": "15ed3f1f6fe7049c868695109f0ad6d013fba9e3cd9c406ef99cb55880130135",
+      "comment": "Gives every party member their default name.",
       "documentation": "include/battle_globals.hpp"
     },
     {
@@ -17210,6 +17340,7 @@
       "size": "0x190",
       "name": "InitNameRegist__FiiP1",
       "sha256": "7146feef40c0475ad1d9aeb28284e9d30eec20ab9488b96442bb392ff711fa69",
+      "comment": "Opens the name-entry screen and reads its textures.",
       "documentation": "include/battle_globals.hpp"
     },
     {
@@ -17221,6 +17352,7 @@
       "size": "0x68",
       "name": "ExitNameEnterFunc__Fv",
       "sha256": "dbc958b63f8b3e8b9902275492b5679d82ab535bb05c7239773aaf24d7189eda",
+      "comment": "Gives the name-entry screen's textures back and closes it.",
       "documentation": "include/battle_globals.hpp"
     },
     {
@@ -17232,6 +17364,7 @@
       "size": "0xBC",
       "name": "GetNameTextureInfo__FPP8CTextureiRiRi",
       "sha256": "67f7b2055d2f1e1abff351d931faa87bcdebb11b4efb8a45ee3989912c3984d1",
+      "comment": "Gives the texture and cell one name character draws from.",
       "documentation": "include/battle_globals.hpp"
     },
     {
@@ -17243,6 +17376,7 @@
       "size": "0x118",
       "name": "DrawCharaName__Fiiiii",
       "sha256": "973cc574510281acc417722a88303f24491f45f4557388e5cf71f41abffa189c",
+      "comment": "Draws a party member's name.",
       "documentation": "include/battle_globals.hpp"
     },
     {
@@ -17254,6 +17388,7 @@
       "size": "0x1F0",
       "name": "DrawNameRegiWaku__Fiiiii",
       "sha256": "6ab6c713a2ed9b5533b853e940efd67cd2f1a322b0eaff91cde730fe8668a0d3",
+      "comment": "Draws the frame around the name being entered, bobbing it with a sine.",
       "documentation": "include/battle_globals.hpp"
     },
     {
@@ -17265,6 +17400,7 @@
       "size": "0x628",
       "name": "DrawCharaNameUp__Fiiii",
       "sha256": "392505384da2e506bed82b9b16e99aae75ffcb127af7849736c542e01bb0ea08",
+      "comment": "Draws the name being entered above the keyboard.",
       "documentation": "include/battle_globals.hpp"
     },
     {
@@ -17276,6 +17412,7 @@
       "size": "0x930",
       "name": "DrawNameTemplete__Fiiii",
       "sha256": "470c0fa9ab1a619d9bc07629e478789b657abd2a9d018961db3ad29c11009a8e",
+      "comment": "Draws the character keyboard the name is entered from.",
       "documentation": "include/battle_globals.hpp"
     },
     {
@@ -17287,6 +17424,7 @@
       "size": "0x6C",
       "name": "NameCompare__FPsPs",
       "sha256": "5da4d04ecacd051b97c921a96ded82ab50c58ccf9c4efcba5f9647eef0eeb7cd",
+      "comment": "Reports whether two names are the same.",
       "documentation": "include/battle_globals.hpp"
     },
     {
@@ -17298,6 +17436,7 @@
       "size": "0x160",
       "name": "CheckName__Fv",
       "sha256": "789bddc938800452aadc285f726b94eb3307a773a6558eaf242125663b0fd599",
+      "comment": "Reports whether the entered name may be used.",
       "documentation": "include/battle_globals.hpp"
     },
     {
@@ -17309,6 +17448,7 @@
       "size": "0xC9C",
       "name": "NameEnterDraw__Fv",
       "sha256": "bf305d6886c42d5ee5df70dfb9d94e8f9422243bef294106a8827b4e47518ec4",
+      "comment": "Draws the name-entry screen.",
       "documentation": "include/battle_globals.hpp"
     },
     {
@@ -17320,6 +17460,7 @@
       "size": "0x1F28",
       "name": "NameEnterKey__Fv",
       "sha256": "fa1674028857ddf8774ff00e4b37743012fcd15b771c52230b57c6b294403810",
+      "comment": "Moves the cursor across the keyboard and enters the character it settles on.",
       "documentation": "include/battle_globals.hpp"
     },
     {
@@ -17331,6 +17472,7 @@
       "size": "0x110",
       "name": "NameDefaultSet__Fi",
       "sha256": "b28ae8bcc8b897c9ebee9a5d040eb70338be0db93aa722e2c9192afcf3df9897",
+      "comment": "Gives one party member their default name for the chosen language.",
       "documentation": "include/battle_globals.hpp"
     },
     {
@@ -17342,6 +17484,7 @@
       "size": "0x78",
       "name": "GetFontLRTumeW__Fiii",
       "sha256": "51e8bbe50a53d5309228c0de10a9d99f97e8c472bd050a70242834fb569816d2",
+      "comment": "Gives the kerning between two name characters.",
       "documentation": "include/battle_globals.hpp"
     },
     {
@@ -17353,6 +17496,7 @@
       "size": "0x250",
       "name": "CharaSelectNameDraw2__FiiPsPP8CTexturei",
       "sha256": "5f73e215bfe88835fd6c3473c37f1f516d91859b5eeb7dff97d0d8ecf46b91ee",
+      "comment": "Draws a party member's name on the character-select page.",
       "documentation": "include/battle_globals.hpp"
     },
     {
@@ -17364,6 +17508,7 @@
       "size": "0x284",
       "name": "DrawSaveBoardCharaName2__FiiPsPP8CTexture6spRGBA6spRGBA",
       "sha256": "a77470b2692f6b22ae7bd3c5b9a9a394dac494a45b492d9d9e4bca6087114e10",
+      "comment": "Draws a party member's name on the save board, in a gradient.",
       "documentation": "include/battle_globals.hpp"
     },
     {
@@ -17375,7 +17520,7 @@
       "size": "0x78",
       "name": "GetMsgLengthCharaName__Fi",
       "sha256": "ab52e9cf3895226abb64b7bf182be21ea28e5eb4a15a3682fa1a7cbd38c044c9",
-      "comment": "Counts the characters of a party member's name, up to ten, or gives zero for an index outside the party.",
+      "comment": "Gives how wide a party member's name draws. Counts the characters of a party member's name, up to ten, or gives zero for an index outside the party.",
       "documentation": "include/battle_globals.hpp"
     },
     {
@@ -17387,6 +17532,7 @@
       "size": "0xB0",
       "name": "InitOpeningBook__FP1Pi",
       "sha256": "eed37a5a49c8a4bdfcf756d05d5cfd730196e83618b0eff0b095b58eb9ee45a5",
+      "comment": "Opens the storybook that begins the game.",
       "documentation": "include/battle_globals.hpp"
     },
     {
@@ -17398,6 +17544,7 @@
       "size": "0x664",
       "name": "OpeningBookKey__Fv",
       "sha256": "799b3632052cb1ebcad7996fd692b602644b4e4ff9a5cd0ca5cecdbb670b588c",
+      "comment": "Turns the storybook's pages with the pad.",
       "documentation": "include/battle_globals.hpp"
     },
     {
@@ -17409,6 +17556,7 @@
       "size": "0x134",
       "name": "OpeningBookDraw__Fv",
       "sha256": "02e601ccb7e789e8a5b4f71e043981a3af8d896ba040c1725c8ce28b089da59f",
+      "comment": "Draws the storybook page by page.",
       "documentation": "include/battle_globals.hpp"
     },
     {

@@ -22,6 +22,13 @@ extern int BtGetTreasureboxSmall_itemVolume;
  */
 int createAttachVolume(int item_no, int dungeon);
 
+/**
+ * Puts one party member in the player's hands, loading them if need be.
+ *
+ * @mangled selectChrUnit__Fii
+ * @address 0x1D1030
+ * @size 0x368
+ */
 INCLUDE_ASM("asm/nonmatchings/btitem", selectChrUnit__Fii);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @635__2);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @636);
@@ -32,10 +39,45 @@ INCLUDE_RODATA("asm/nonmatchings/btitem", @640__2);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @641);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @642__2);
 INCLUDE_ASM("asm/nonmatchings/btitem", LoadActiveItemIcon__Fv);
+/**
+ * Opens the large treasure chest and starts its presentation.
+ *
+ * @mangled BtGetTreasureboxBig_Init__Fv
+ * @address 0x1D13F0
+ * @size 0x418
+ */
 INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxBig_Init__Fv);
+/**
+ * Runs the large treasure chest's presentation and reports when it ends.
+ *
+ * @mangled BtGetTreasureboxBig_Loop__Fv
+ * @address 0x1D1810
+ * @size 0x7A8
+ */
 INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxBig_Loop__Fv);
+/**
+ * Opens the small treasure chest and starts its presentation.
+ *
+ * @mangled BtGetTreasureboxSmall_Init__Fi
+ * @address 0x1D1FC0
+ * @size 0x4A0
+ */
 INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxSmall_Init__Fi);
+/**
+ * Runs the small treasure chest's presentation and reports when it ends.
+ *
+ * @mangled BtGetTreasureboxSmall_Loop__Fv
+ * @address 0x1D2460
+ * @size 0x690
+ */
 INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxSmall_Loop__Fv);
+/**
+ * Starts the short presentation for picking up an Atla.
+ *
+ * @mangled BtAtraGetShort_Init__Fv
+ * @address 0x1D2AF0
+ * @size 0x180
+ */
 INCLUDE_ASM("asm/nonmatchings/btitem", BtAtraGetShort_Init__Fv);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @656__4);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @657__2);
@@ -53,12 +95,61 @@ INCLUDE_RODATA("asm/nonmatchings/btitem", @795__2);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @796);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @866__2);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @902);
+/**
+ * Runs the Atla pickup presentation and reports when it ends.
+ *
+ * @mangled BtAtraGetShort_Loop__Fii
+ * @address 0x1D2C70
+ * @size 0x61C
+ */
 INCLUDE_ASM("asm/nonmatchings/btitem", BtAtraGetShort_Loop__Fii);
+/**
+ * Opens the small character-select window.
+ *
+ * @mangled BtMiniChrSelect_Init__Fi
+ * @address 0x1D3290
+ * @size 0x40
+ */
 INCLUDE_ASM("asm/nonmatchings/btitem", BtMiniChrSelect_Init__Fi);
+/**
+ * Runs the small character-select window and reports the choice.
+ *
+ * @mangled BtMiniChrSelect_Loop__Fv
+ * @address 0x1D32D0
+ * @size 0x128
+ */
 INCLUDE_ASM("asm/nonmatchings/btitem", BtMiniChrSelect_Loop__Fv);
+/**
+ * Opens the small item-select window.
+ *
+ * @mangled BtMiniItemSelect__Fv
+ * @address 0x1D3400
+ * @size 0x38
+ */
 INCLUDE_ASM("asm/nonmatchings/btitem", BtMiniItemSelect__Fv);
+/**
+ * Runs the small item-select window and reports the choice.
+ *
+ * @mangled BtMiniItemSelect_Loop__Fv
+ * @address 0x1D3440
+ * @size 0x118
+ */
 INCLUDE_ASM("asm/nonmatchings/btitem", BtMiniItemSelect_Loop__Fv);
+/**
+ * Starts the presentation for picking up a gate key.
+ *
+ * @mangled BtGetGateKey_Init__Fi
+ * @address 0x1D3560
+ * @size 0x13C
+ */
 INCLUDE_ASM("asm/nonmatchings/btitem", BtGetGateKey_Init__Fi);
+/**
+ * Runs the gate-key presentation and reports when it ends.
+ *
+ * @mangled BtGetGateKey_Loop__Fv
+ * @address 0x1D36A0
+ * @size 0x3D0
+ */
 INCLUDE_ASM("asm/nonmatchings/btitem", BtGetGateKey_Loop__Fv);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @969);
 
@@ -74,7 +165,21 @@ void BtGetAttach_Init(int dungeon, int item_no) {
     ClearSystemMes();
     ItemGetMes(BtGetTreasureboxSmall_itemNo, BtGetTreasureboxSmall_itemVolume, 0x78, 0);
 }
+/**
+ * Runs the attachment pickup presentation and reports when it ends.
+ *
+ * @mangled BtGetAttach_Loop__Fv
+ * @address 0x1D3B00
+ * @size 0xF0
+ */
 INCLUDE_ASM("asm/nonmatchings/btitem", BtGetAttach_Loop__Fv);
+/**
+ * Starts the presentation for escaping the floor.
+ *
+ * @mangled BtEscape_Init__Fv
+ * @address 0x1D3BF0
+ * @size 0x14C
+ */
 INCLUDE_ASM("asm/nonmatchings/btitem", BtEscape_Init__Fv);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @996);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @549__4);
@@ -219,9 +324,30 @@ INCLUDE_RODATA("asm/nonmatchings/btitem", @732__5);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @733__4);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @734__4);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @735__3);
+/**
+ * Runs the escape presentation and reports when it ends.
+ *
+ * @mangled BtEscape_Loop__Fv
+ * @address 0x1D3D40
+ * @size 0x18C
+ */
 INCLUDE_ASM("asm/nonmatchings/btitem", BtEscape_Loop__Fv);
+/**
+ * Builds the models of the items in the active slots.
+ *
+ * @mangled BtSetActiveItemModel__FPUi
+ * @address 0x1D3ED0
+ * @size 0x1B0
+ */
 INCLUDE_ASM("asm/nonmatchings/btitem", BtSetActiveItemModel__FPUi);
 INCLUDE_ASM("asm/nonmatchings/btitem", ParabolicInitialVector__FPfPfPfff);
 INCLUDE_ASM("asm/nonmatchings/btitem", setShotVector__FPffff);
 INCLUDE_ASM("asm/nonmatchings/btitem", getCharacterVector__FPff);
+/**
+ * Advances a thrown item along its arc.
+ *
+ * @mangled ItemThrowStep__FPfPf
+ * @address 0x1D4260
+ * @size 0x2D4
+ */
 INCLUDE_ASM("asm/nonmatchings/btitem", ItemThrowStep__FPfPf);

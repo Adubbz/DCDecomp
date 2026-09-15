@@ -337,8 +337,14 @@ def documented_functions() -> dict[str, dict[str, object]]:
             previous = docs.get(mangled)
             if previous is None or previous == record:
                 docs[mangled] = record
+            elif (previous["address"], previous["size"]) == (address, size):
+                # The same function documented twice -- a header declaring it and
+                # the unit defining it. They agree on what it is, so the first
+                # wins and headers are read first.
+                pass
             else:
-                # Conflicting documentation is not safe to apply automatically.
+                # Two different claims about where the function is. Neither is
+                # safe to apply.
                 docs.pop(mangled, None)
     return docs
 
