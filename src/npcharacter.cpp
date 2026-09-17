@@ -260,7 +260,6 @@ void CNPCharacter::Initialize() {
 
 #ifdef NON_MATCHING
 CNPCharacter::CNPCharacter(void) {
-    // The composed character's constructor initializes its members before this body runs.
     Initialize();
 }
 #else

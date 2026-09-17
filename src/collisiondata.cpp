@@ -1,11 +1,56 @@
 #include "collisiondata.hpp"
 
+#include <cstdio>
+#include <cstring>
+
+#include "debugfont.hpp"
+#include "gamepad.hpp"
+#include "snd.hpp"
+
+extern "C" int DebugStatus[21];
+extern "C" int DebugInfoCode[15];
+extern "C" char *DebugInfoMsg[15];
+extern "C" int DebugInfoNowCursor;
+extern "C" CDebugFont DbgMsg;
+extern "C" char nameblock[64];
+
 #ifdef NON_MATCHING
 /** Key items waiting to be dropped, one entry each, -1 where a slot is free. */
 static int gateKeyStack[32];
 #endif
 
+#ifdef NON_MATCHING
+/**
+ * Draws the dungeon debug overlay and its current menu selection.
+ *
+ * @mangled DebugInfomationDraw__Fv
+ * @address 0x1B3780
+ * @size 0xF70
+ */
+void DebugInfomationDraw(void) {
+    if (DebugStatus[0] == 0) {
+        return;
+    }
+    DbgMsg.len = sprintf(DbgMsg.text, "DEBUG INFORMATION\n");
+    for (int i = 0; i < 15 && DebugInfoMsg[i] != NULL; i++) {
+        DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], i == DebugInfoNowCursor ? ">>" : "  ");
+        int code = DebugInfoCode[i];
+        if (code == 10 || code == 20 || code == 30 || code == 50 || code == 70 || code == 110) {
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i],
+                                  DebugStatus[code / 10]);
+        } else if (code == 100) {
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], DebugStatus[14],
+                                  DebugStatus[15]);
+        } else {
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "%s", DebugInfoMsg[i]);
+        }
+        DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "\n");
+    }
+    DbgMsg.Draw();
+}
+#endif
 INCLUDE_ASM("asm/nonmatchings/collisiondata", DebugInfomationDraw__Fv);
+
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1542);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1543);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1545);
@@ -38,6 +83,8 @@ INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1630);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1631);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1632__2);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1633);
+
+#ifdef NON_MATCHING
 /**
  * Clears the debug overlay's state.
  *
@@ -45,7 +92,25 @@ INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1633);
  * @address 0x1B46F0
  * @size 0xC8
  */
+void DebugInfomationInit(void) {
+    for (int i = 0; i < 21; i++) {
+        DebugStatus[i] = 0;
+    }
+    DebugStatus[5] = 1;
+    DebugStatus[8] = 150;
+    DebugStatus[9] = -1;
+    DebugStatus[11] = 100;
+    DebugStatus[13] = 16;
+    DebugStatus[15] = 16;
+    DebugStatus[18] = 400;
+    DebugStatus[19] = 1;
+    DebugInfoNowCursor = 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/collisiondata", DebugInfomationInit__Fv);
+#endif
+
+#ifdef NON_MATCHING
 /**
  * Moves through the debug overlay's pages with the pad.
  *
@@ -53,10 +118,87 @@ INCLUDE_ASM("asm/nonmatchings/collisiondata", DebugInfomationInit__Fv);
  * @address 0x1B47C0
  * @size 0xE78
  */
+int DebugInfomationIF(void) {
+    if (GamePad.Down(0x400) != 0) {
+        DebugStatus[0] = 0;
+        GamePad.AutoRepeatOff();
+        GamePad.MenuModeOff();
+        return 1;
+    }
+    int count = 0;
+    while (count < 15 && DebugInfoCode[count] != -1) {
+        count++;
+    }
+    if (count == 0) {
+        return 0;
+    }
+    if (GamePad.Down(0x4000) != 0) {
+        DebugInfoNowCursor = (DebugInfoNowCursor + 1) % count;
+    }
+    if (GamePad.Down(0x1000) != 0) {
+        DebugInfoNowCursor--;
+        if (DebugInfoNowCursor < 0) {
+            DebugInfoNowCursor = count - 1;
+        }
+    }
+    int code = DebugInfoCode[DebugInfoNowCursor];
+    if (GamePad.Down(0x10) != 0 && code == 90) {
+        DebugStatus[0] = 0;
+        DebugStatus[12] = 1;
+        GamePad.AutoRepeatOff();
+        GamePad.MenuModeOff();
+        return 40;
+    }
+    if (GamePad.Down(0x20) != 0) {
+        if (code == 40 || code == 60 || code == 80 || code == 90 || code == 100 ||
+            code == 120) {
+            DebugStatus[0] = 0;
+            GamePad.AutoRepeatOff();
+            GamePad.MenuModeOff();
+            return code;
+        }
+        if (code == 130) {
+            SndSePlay(DebugStatus[18], -1, 0);
+        }
+    }
+    if (GamePad.Down(0x2000) != 0) {
+        switch (code) {
+            case 10:
+            case 20:
+            case 30:
+            case 50:
+            case 70:
+            case 110:
+                DebugStatus[code / 10] = !DebugStatus[code / 10];
+                break;
+            case 100:
+                DebugStatus[14] = (DebugStatus[14] + 1) % 5;
+                break;
+            case 120:
+                DebugStatus[17] = (DebugStatus[17] + 1) % 6;
+                break;
+            case 130:
+                DebugStatus[18]++;
+                break;
+            case 140:
+                DebugStatus[19] = (DebugStatus[19] + 1) % 6;
+                break;
+            case 150:
+                DebugStatus[20] = (DebugStatus[20] + 1) % 3;
+                break;
+        }
+    }
+    return 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/collisiondata", DebugInfomationIF__Fv);
+#endif
+
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1825);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @511);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @512);
+
+#ifdef NON_MATCHING
 /**
  * Empties the list of key items waiting to be dropped.
  *
@@ -64,7 +206,6 @@ INCLUDE_RODATA("asm/nonmatchings/collisiondata", @512);
  * @address 0x1B5640
  * @size 0x3C
  */
-#ifdef NON_MATCHING
 void ClearGateKeyStack(void) {
     for (int i = 0; i < 32; i++) {
         gateKeyStack[i] = -1;
@@ -73,6 +214,7 @@ void ClearGateKeyStack(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/collisiondata", ClearGateKeyStack__Fv);
 #endif
+
 #ifdef NON_MATCHING
 int SetGateKeyStack(int item) {
     if (item == -1) {
@@ -95,6 +237,8 @@ int SetGateKeyStack(int item) {
 #else
 INCLUDE_ASM("asm/nonmatchings/collisiondata", SetGateKeyStack__Fi);
 #endif
+
+#ifdef NON_MATCHING
 /**
  * Builds a resource path by putting one of the fixed prefixes before a name.
  *
@@ -102,7 +246,15 @@ INCLUDE_ASM("asm/nonmatchings/collisiondata", SetGateKeyStack__Fi);
  * @address 0x1B5740
  * @size 0x60
  */
+char *NameExchg(char *name, int language) {
+    static const char *prefixes[2] = {"dun/img/jp/", "dun/img/us/"};
+    strcpy(nameblock, prefixes[language]);
+    strcat(nameblock, name);
+    return nameblock;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/collisiondata", NameExchg__FPci);
+#endif
 
 int CCollisionData::Set(float *pos, int damage, int life, float radius, float unknown0, int unknown1,
                         int kind, int flags, int unknown2) {
@@ -141,6 +293,7 @@ int CCollisionData::Set(float *pos, int damage, int life, float radius, float un
     // With every record in use nothing is set and no index is returned.
 }
 
+#ifdef NON_MATCHING
 /**
  * Reports which recorded hit reaches the player.
  *
@@ -148,7 +301,40 @@ int CCollisionData::Set(float *pos, int damage, int life, float radius, float un
  * @address 0x1B5920
  * @size 0x1BC
  */
+int CCollisionData::CheckHitUser(float *position, int mask, float height) {
+    sceVu0FVECTOR user_position;
+    sceVu0CopyVector(user_position, position);
+    user_position[1] = 0.0f;
+    float user_bottom = position[1];
+    float user_top = user_bottom + height;
+    for (int i = 0; i < 96; i++) {
+        COLLISION_HIT *record = &hit[i];
+        if (active[i] == 0 || (mask & record->unk_48) == 0 ||
+            record->unk_70 != record->unk_74) {
+            continue;
+        }
+        sceVu0FVECTOR hit_position;
+        sceVu0CopyVector(hit_position, record->pos);
+        hit_position[1] = 0.0f;
+        if (DistVector(user_position, hit_position) > record->radius) {
+            continue;
+        }
+        float hit_bottom = record->pos[1] - record->radius;
+        float hit_top = record->pos[1] + record->radius;
+        if ((user_top <= hit_top && hit_bottom < user_top) ||
+            (user_bottom <= hit_top && hit_bottom < user_bottom) ||
+            (hit_top <= user_top && user_bottom < hit_bottom) ||
+            (user_top <= hit_top && hit_bottom < user_bottom)) {
+            return i;
+        }
+    }
+    return -1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/collisiondata", CheckHitUser__14CCollisionDataFPfif);
+#endif
+
+#ifdef NON_MATCHING
 /**
  * Records the push a hit gives whatever it struck.
  *
@@ -156,7 +342,6 @@ INCLUDE_ASM("asm/nonmatchings/collisiondata", CheckHitUser__14CCollisionDataFPfi
  * @address 0x1B5AE0
  * @size 0xA4
  */
-#ifdef NON_MATCHING
 void CCollisionData::SetKickBack(float *origin, float speed, float decay, int mode) {
     hit[now_hit].knockback_origin[0] = origin[0];
     hit[now_hit].knockback_origin[1] = origin[1];

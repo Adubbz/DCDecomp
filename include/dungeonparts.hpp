@@ -140,7 +140,7 @@ struct PARTS_WATER {
  */
 class CDungeonParts {
 public:
-    s16 unk_000;
+    s16 direction_offset; /**< Direction added when the part is placed on the map grid. */
     s16 unk_002;
     CFrame *unk_004;
     s16 unk_008;
@@ -157,9 +157,13 @@ public:
     s16 unk_102;
     u8 unk_104[12];
     float unk_110[4];
-    u8 unk_120[80];
+    u8 unk_120[0x40];
+    float event_direction; /**< Additional quarter-turn applied to the part's event frames. */
+    u8 unk_164[0xC];
     float unk_170[6];
-    u8 unk_188[32];
+    u8 unk_188[0x18];
+    s32 loaded; /**< Whether this map-part slot contains loaded data. */
+    u8 unk_1A4[4];
     s32 unk_1A8;
     s32 unk_1AC;
     CFrame *frame[6]; /**< Models that draw the part; a free slot has zero in the first. */

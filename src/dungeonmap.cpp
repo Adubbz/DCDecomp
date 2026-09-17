@@ -648,7 +648,7 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
             }
             if (this->cells[cell_no].parts_no != MAP_PARTS_NONE && show == 1) {
                 direction = this->cells[cell_no].direction +
-                            this->parts[this->cells[cell_no].parts_no].unk_000;
+                            this->parts[this->cells[cell_no].parts_no].direction_offset;
                 direction %= 8;
                 map_src.x = direction * 16;
                 map_src.y = (direction / 8) * 16;

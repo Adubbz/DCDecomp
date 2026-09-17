@@ -117,7 +117,8 @@ public:
      * @address 0x1B57A0
      * @size 0x180
      */
-    int Set(float *, int, int, float, float, int, int, int, int);
+    int Set(float *position, int damage, int life, float radius, float hit_value, int mask,
+            int kind, int flags, int attribute);
 
     /**
      * Reports which recorded hit reaches the player.
@@ -126,7 +127,7 @@ public:
      * @address 0x1B5920
      * @size 0x1BC
      */
-    int CheckHitUser(float *, int, float);
+    int CheckHitUser(float *position, int mask, float height);
 
     /**
      * Records the push a hit gives whatever it struck.

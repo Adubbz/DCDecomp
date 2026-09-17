@@ -12,6 +12,9 @@
 class CBoxVu0;
 class CCPoly;
 
+/**
+ * Loads, draws and advances one drainage-field model.
+ */
 class CDranMapField : public CCharacter {
 public:
     /**

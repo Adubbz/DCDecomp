@@ -69,7 +69,6 @@ INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @524);
 INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @525);
 #ifdef NON_MATCHING
 int CDranMapField::AddCollision(CCPoly *poly, int count, CBoxVu0 box) {
-    // The methods run on the first field of the set and index from there.
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
     CBoxVu0 region = box;
 

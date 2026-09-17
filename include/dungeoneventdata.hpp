@@ -4,15 +4,20 @@
 
 #include <libvu0.h>
 
+class CFrame;
+
 /**
  * Names one event that a dungeon floor lays out, as the floor's event file
  * declares it.
  */
 class CDungeonEvent {
 public:
-    u8 unk_00[0x18];
+    s8 state; /**< Runtime allocation state initialized when the dungeon starts. */
+    u8 unk_01[0xF];
+    CFrame *placement_frame; /**< Root frame positioned and rotated with the map part. */
+    CFrame *trigger_frame;   /**< Child frame whose transform locates and faces the event. */
     float radius; /**< Distance at which the event starts. */
-    u8 unk_1C[0x4];
+    s32 parts_id; /**< Map-part identifier that owns this event definition. */
     s32 script_no; /**< Script that the event runs, or -1 where it runs none. */
     s32 fade;      /**< 1 where the event fades the picture out before it runs. */
     s32 unk_28;
@@ -20,7 +25,7 @@ public:
     s32 unk_30;
     s32 unk_34;
     s32 unk_38; /**< Passed on as the memory the script runs out of. */
-    u8 unk_3C[0x4];
+    s32 enabled; /**< Whether this definition slot is in use. */
 };
 
 STATIC_ASSERT(sizeof(CDungeonEvent) == 0x40);

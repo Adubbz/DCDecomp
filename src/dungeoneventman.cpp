@@ -1,14 +1,19 @@
 #include "dungeoneventman.hpp"
 
+#include <cmath>
+#include <cstdio>
+
 #include "collisiondata.hpp"
 #include "dun/gameloop.hpp"
+#include "dungeonmap.hpp"
+#include "frame.hpp"
 #include "mathutil.hpp"
 
-DUNGEON_EVENT_SLOT *CDungeonEventMan::SearchPartsID(int index, int parts_id) {
+CDungeonEvent *CDungeonEventMan::SearchPartsID(int index, int parts_id) {
     int slot_parts_id;
 
-    if (slot[index].unk_3C != 0) {
-        slot_parts_id = slot[index].unk_1C;
+    if (slot[index].enabled != 0) {
+        slot_parts_id = slot[index].parts_id;
     } else {
         slot_parts_id = -1;
     }
@@ -18,9 +23,9 @@ DUNGEON_EVENT_SLOT *CDungeonEventMan::SearchPartsID(int index, int parts_id) {
     return NULL;
 }
 
-DUNGEON_EVENT_SLOT *CDungeonEventMan::SearchSlot(void) {
+CDungeonEvent *CDungeonEventMan::SearchSlot(void) {
     for (int i = 0; i < 64; i++) {
-        if (slot[i].unk_3C == 0) {
+        if (slot[i].enabled == 0) {
             return &slot[i];
         }
     }
@@ -177,5 +182,92 @@ CDungeonEventData *CDungeonEventMan::SearchDataSlotPos2(float *position) {
 #else
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchDataSlotPos2__16CDungeonEventManFPf);
 #endif
+#ifdef NON_MATCHING
+void CDungeonEventMan::SetupEvent(CDungeonMap *map, int mode) {
+    sceVu0FVECTOR local_origin = {0.0f, 0.0f, 0.0f, 0.0f};
+
+    if (mode == 1) {
+        for (int row = 0; row < 16; row++) {
+            for (int column = 0; column < 16; column++) {
+                MAP_CELL *cell = &map->cells[column + row * 20];
+                int parts_id = cell->parts_no;
+                if (parts_id == MAP_PARTS_NONE) {
+                    continue;
+                }
+
+                for (int slot_no = 0; slot_no < 64; slot_no++) {
+                    CDungeonEvent *definition = SearchPartsID(slot_no, parts_id);
+                    if (definition == NULL) {
+                        continue;
+                    }
+
+                    CDungeonEventData *runtime_event = SearchDataSlot();
+                    if (runtime_event == NULL) {
+                        printf("** eventdata err \n ");
+                        while (true) {
+                        }
+                    }
+                    runtime_event->Set(definition);
+
+                    int direction_offset = map->parts[parts_id].direction_offset;
+                    float direction = (float) cell->direction + (float) direction_offset;
+                    if (direction > 3.0f) {
+                        direction -= 3.0f;
+                    }
+                    if (direction == 3.0f) {
+                        direction = -1.0f;
+                    }
+                    definition->placement_frame->SetRotation(
+                        0.0f, (3.1415927f * (-90.0f * direction)) / 180.0f, 0.0f);
+
+                    sceVu0FMATRIX matrix;
+                    definition->trigger_frame->GetLWMatrix(matrix);
+                    runtime_event->dir[0] = 0.0f;
+                    runtime_event->dir[1] = atan2f(matrix[2][0], matrix[2][2]);
+                    runtime_event->dir[2] = 0.0f;
+                    runtime_event->dir[3] = 1.0f;
+
+                    definition->placement_frame->SetPosition(
+                        160.0f * (float) column, 0.0f, 160.0f * (float) row);
+                    definition->trigger_frame->GetWorldPosition(runtime_event->pos, local_origin);
+                }
+            }
+        }
+        return;
+    }
+
+    for (int parts_id = 0; map->parts[parts_id].loaded != 0; parts_id++) {
+        for (int slot_no = 0; slot_no < 64; slot_no++) {
+            CDungeonEvent *definition = SearchPartsID(slot_no, parts_id);
+            if (definition == NULL) {
+                continue;
+            }
+
+            CDungeonEventData *runtime_event = SearchDataSlot();
+            runtime_event->Set(definition);
+
+            float direction = map->parts[parts_id].event_direction +
+                              (float) map->parts[parts_id].direction_offset;
+            if (direction > 3.0f) {
+                direction -= 3.0f;
+            }
+            if (direction == 3.0f) {
+                direction = -1.0f;
+            }
+            definition->placement_frame->SetRotation(
+                0.0f, (3.1415927f * (-90.0f * direction)) / 180.0f, 0.0f);
+
+            sceVu0FMATRIX matrix;
+            definition->trigger_frame->GetLWMatrix(matrix);
+            runtime_event->dir[0] = 0.0f;
+            runtime_event->dir[1] = atan2f(matrix[2][0], matrix[2][2]);
+            runtime_event->dir[2] = 0.0f;
+            runtime_event->dir[3] = 1.0f;
+            definition->trigger_frame->GetWorldPosition(runtime_event->pos, local_origin);
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SetupEvent__16CDungeonEventManFP11CDungeonMapi);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/dungeoneventman", @3600);

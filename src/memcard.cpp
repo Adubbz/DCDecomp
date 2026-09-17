@@ -1,5 +1,7 @@
 #include "memcard.hpp"
 
+#include <cmath>
+
 #include "battle_globals.hpp"
 #include "clsmes.hpp"
 #include "dataread.hpp"
@@ -458,9 +460,34 @@ static int SaveMenuKeyLoadConfig();
  */
 static int SaveMenuKeyFileSelect();
 
+#ifdef NON_MATCHING
+int McCheckMCPs2(MC_CARD_INFO *card) {
+    if (!card->present || card->type != 2) {
+        return 0;
+    }
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/memcard", McCheckMCPs2__FP12MC_CARD_INFO);
+#endif
+#ifdef NON_MATCHING
+void DrawObjectVibe(int x, int y, CTexture *texture, CRect_i_ src_rect, unsigned char alpha, int flag) {
+    s32 dest_x = (s32) ((float) x + 7.0f * cosf(0.08055365830659866f * (float) CursorVibeCnt));
+    s32 dest_y = (s32) ((float) y + 5.0f * sinf(0.1163552850484848f * (float) CursorVibeCnt));
+    CRect_i_ dest_rect(dest_x, dest_y, src_rect.width, src_rect.height);
+    DrawMenu2DSprite(texture, dest_rect, src_rect, alpha, alpha, alpha, flag);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawObjectVibe__FiiP8CTexture8CRect_i_Uci);
+#endif
+#ifdef NON_MATCHING
+void DrawObjectVibe(int x, int y, CTexture *texture, RECT src_rect, unsigned char alpha, int flag) {
+    CRect_i_ src(src_rect.x, src_rect.y, src_rect.width, src_rect.height);
+    DrawObjectVibe(x, y, texture, src, alpha, flag);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawObjectVibe__FiiP8CTexture4RECTUci);
+#endif
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuObjectVibe__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuHelpWindow__FP8CTextureiiiffi);
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuHelpWinDraw__FiiffiiiP8CTexture);

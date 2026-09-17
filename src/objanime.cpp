@@ -15,7 +15,10 @@ extern int all_stop;
  * @address 0x165C90
  * @size 0x14
  */
-INCLUDE_ASM("asm/nonmatchings/objanime", Initialize__13OBJ_ANIME_SEQFv);
+void OBJ_ANIME_SEQ::Initialize(void) {
+    type = -1;
+    completion_flag = 0;
+}
 /**
  * Constructs an object-animation sequence.
  *
@@ -23,7 +26,9 @@ INCLUDE_ASM("asm/nonmatchings/objanime", Initialize__13OBJ_ANIME_SEQFv);
  * @address 0x165CB0
  * @size 0x30
  */
-INCLUDE_ASM("asm/nonmatchings/objanime", __ct__13OBJ_ANIME_SEQFv);
+OBJ_ANIME_SEQ::OBJ_ANIME_SEQ(void) {
+    Initialize();
+}
 
 void ObjAnimeAllStop(void) {
     all_stop = 1;
@@ -64,6 +69,7 @@ INCLUDE_ASM("asm/nonmatchings/objanime", InitObjAnime__FPP6CFrameiP13OBJ_ANIME_S
  * @size 0x160
  */
 INCLUDE_ASM("asm/nonmatchings/objanime", InitObjAnime__FPP6CFrameiP16EPARTS_FUNC_DATAP13OBJ_ANIME_SEQ);
+#ifdef NON_MATCHING
 /**
  * Reports whether an animated value has passed its target in the direction it moves.
  *
@@ -71,7 +77,15 @@ INCLUDE_ASM("asm/nonmatchings/objanime", InitObjAnime__FPP6CFrameiP16EPARTS_FUNC
  * @address 0x166170
  * @size 0x68
  */
+int end_check(float value, float target, float step) {
+    if (step > 0.0f) {
+        return value > target;
+    }
+    return value < target;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/objanime", end_check__Ffff);
+#endif
 /**
  * Advances one object animation by a frame.
  *

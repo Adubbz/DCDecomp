@@ -10,12 +10,14 @@
 
 #include "camera.hpp"
 #include "clsmes.hpp"
+#include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dun/gameloop.hpp"
 #include "editatra.hpp"
 #include "gamepad.hpp"
 #include "itemdata.hpp"
 #include "mainitemmodel.hpp"
+#include "mainselect.hpp"
 #include "memcard.hpp"
 #include "memorycardaccess.hpp"
 #include "menu_inventory.hpp"
@@ -34,19 +36,119 @@ INCLUDE_RODATA("asm/nonmatchings/menu_draw", @556);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @557);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @558);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @559);
+#ifdef NON_MATCHING
+char *GetMenuTextureDir(void) {
+    return AllMenuTextureDir;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuTextureDir__Fv);
+#endif
+
+#ifdef NON_MATCHING
+int GetMenuLangFlag(void) {
+    return LanguageCode;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuLangFlag__Fv);
+#endif
+
+#ifdef NON_MATCHING
+char *GetNowSelectLanguage(int language) {
+    if ((language < 0) || (language >= 7)) {
+        language = 0;
+    }
+    return ComMenuContryName[language];
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowSelectLanguage__Fi);
+#endif
 
 void GetPathReadDifferntLang(char *path) {
     strcpy(path, GetMenuTextureDir());
     strcat(path, GetNowSelectLanguage(GetMenuLangFlag()));
 }
+
+#ifdef NON_MATCHING
+int LoadFileBGMenuData(char *name, u_long128 *buffer) {
+    int size;
+
+    if ((name == NULL) || (buffer == NULL)) {
+        return -1;
+    }
+    GetPathReadDifferntLang(MenuGrobalDir);
+    strcat(MenuGrobalDir, name);
+    LoadFileBG(MenuGrobalDir, buffer, &size);
+    return size;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", LoadFileBGMenuData__FPcP1);
+#endif
+
+#ifdef NON_MATCHING
+int LoadFileMenuData(char *name, unsigned int *buffer) {
+    int size;
+
+    GetPathReadDifferntLang(MenuGrobalDir);
+    strcat(MenuGrobalDir, name);
+    LoadFile(MenuGrobalDir, buffer, &size);
+    return size;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", LoadFileMenuData__FPcPUi);
+#endif
+#ifdef NON_MATCHING
+extern CDataAlloc2<1> EdMenuBuffer;
+extern u_int *read_buffer;
+
+u_long128 *BtlMenuBufferSet(int mode) {
+    switch (mode) {
+        case 0:
+            return (u_long128 *) read_buffer;
+        case 1:
+            return (u_long128 *) (EdMenuBuffer.base + EdMenuBuffer.used * 0x10);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", BtlMenuBufferSet__Fi);
+#endif
+
+#ifdef NON_MATCHING
+u_long128 *MenuCalcBufAlignment(u_long128 *buffer) {
+    int offset = (int) buffer;
+    int remainder = offset & 0x3F;
+    if ((offset < 0) && (remainder != 0)) {
+        remainder -= 0x40;
+    }
+    if (remainder != 0) {
+        offset = ((offset >> 6) + 1) << 6;
+    }
+    return (u_long128 *) offset;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuCalcBufAlignment__FP1);
+#endif
+#ifdef NON_MATCHING
+int GetAtoraMaxVillage(void) {
+    int max_village = 3;
+    int village;
+
+    for (village = 4; village >= 0; village--) {
+        if (SaveData->VisitMap(village, 0) || SaveData->QuestDungeon(village, 0)) {
+            max_village = village + 3;
+            break;
+        }
+    }
+    if (SaveData->QuestDungeon(5, 0)) {
+        max_village = 8;
+    }
+    if ((max_village < 3) || (max_village >= 9)) {
+        max_village = 8;
+    }
+    return max_village;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetAtoraMaxVillage__Fv);
+#endif
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowMapTransAtraMap__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuWorldTrans__FP7CCamera);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuPolygonDraw__FiPFv_v);

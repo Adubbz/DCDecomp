@@ -20,30 +20,30 @@
 #include "character.hpp"
 #include "clsmes.hpp"
 #include "collision.hpp"
+#include "dataalloc.hpp"
+#include "dataread.hpp"
 #include "dataset.hpp"
 #include "debugfont.hpp"
-#include "editarea.hpp"
-#include "effectgroup.hpp"
-#include "menuitemstep.hpp"
-#include "dataread.hpp"
-#include "dataalloc.hpp"
 #include "dngstatusdata.hpp"
 #include "ebattle.hpp"
-#include "editloop.hpp"
-#include "editmapscript.hpp"
-#include "editloop3.hpp"
 #include "edit.hpp"
-#include "editpartsinfo.hpp"
+#include "editarea.hpp"
 #include "editground.hpp"
+#include "editloop.hpp"
+#include "editloop3.hpp"
+#include "editmapscript.hpp"
+#include "editpartsinfo.hpp"
 #include "effect.hpp"
+#include "effectgroup.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "gamepad.hpp"
-#include "mapparts.hpp"
 #include "mainselect.hpp"
+#include "mapparts.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
 #include "menu_misc.hpp"
+#include "menuitemstep.hpp"
 #include "mglib.hpp"
 #include "npcharacter.hpp"
 #include "objanime.hpp"
@@ -51,6 +51,7 @@
 #include "rect.hpp"
 #include "runeffect.hpp"
 #include "savedata.hpp"
+#include "scriptinterpreter.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
 
@@ -209,7 +210,20 @@ extern sceVu0FVECTOR fix_camera_pos;
 /* Data whose shape the unit does not need yet. */
 extern CTexAnimeData CharaTexAnimeData[0x80];
 extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
-extern u8 EditCharaData[0x960];
+
+/** One default villager entry stored for each map and list position. */
+struct EDIT_CHARA_DATA_ENTRY {
+    char *name;       /**< Villager resource name. */
+    s16 character_no; /**< Character definition selected for the villager. */
+    s16 model_no;     /**< Model variant selected for the villager. */
+    u8 unk_08[8];
+    s16 hide_when_complete; /**< Whether completed town progress hides the villager. */
+    u8 unk_12[2];
+};
+
+STATIC_ASSERT(sizeof(EDIT_CHARA_DATA_ENTRY) == 0x14);
+
+extern EDIT_CHARA_DATA_ENTRY EditCharaData[5][16];
 extern u8 EditElementInfo[0x120];
 extern int EditMenuStatus[7];
 extern u8 MesWinTexBuff_01[0x100];
@@ -217,7 +231,7 @@ extern u8 MesWinTexBuff_02[0x100];
 extern u8 SkyFrame[0x10];
 extern u8 SunFrame[0x10];
 extern u8 SystemEffect[0x200];
-extern u8 def_light[0xC0];
+extern float def_light[12][4];
 
 void CommandIMGSub(int image_type, int image_number, char *name);
 void EditSave();
@@ -274,6 +288,17 @@ void EditLoop(void);
 void EditLoad(void);
 void EditPartsObjectOnOff();
 
+typedef void (*EDIT_SCRIPT_COMMAND)(void **arguments);
+
+extern "C" TAG_PARAM Command__5[61];
+extern "C" EDIT_SCRIPT_COMMAND CommandExe__5[61];
+extern "C" SPI_FUNC_PARAM func_table;
+extern int binary;
+extern int fobject_list;
+extern int partseffect_list;
+extern int objeffect_list;
+extern int objtimer_list;
+
 INCLUDE_RODATA("asm/nonmatchings/editmapscript", @478);
 INCLUDE_RODATA("asm/nonmatchings/editmapscript", @482__2);
 
@@ -283,12 +308,14 @@ INCLUDE_RODATA("asm/nonmatchings/editmapscript", @482__2);
 void CommandCD(void **arguments) {
     strcpy(CurrentDir__3, (char *) arguments[0]);
 }
+
 /**
  * Returns the integer value addressed by a script argument slot.
  */
 int test(void **argument) {
     return *(int *) *argument;
 }
+
 /**
  * Clears the editor-map description and resets every reusable work record.
  */
@@ -320,6 +347,7 @@ void InitInfo() {
         edit_info->work.events.points[i].event_type = 0;
     }
 }
+
 /**
  * Reads one editor map's description through the script interpreter.
  *
@@ -327,13 +355,176 @@ void InitInfo() {
  * @address 0x174390
  * @size 0x74C
  */
+#ifdef NON_MATCHING
+int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
+    edit_info = info;
+
+    char *extension = name;
+    while (*extension != '\0') {
+        if (*extension++ == '.') {
+            break;
+        }
+    }
+
+    int file_size;
+    if (LoadFile2(name, read_buffer, &file_size, 0) == 0) {
+        extension[2] = 'g';
+        LoadFile(name, read_buffer, &file_size);
+    }
+
+    u8 *script = (u8 *) read_buffer;
+    light_no = 0;
+    CurrentDir__3[0] = '\0';
+    binary = 0;
+    InitInfo();
+    texture_list = 0;
+    fobject_list = 0;
+    mapobj_list = 0;
+    objanime_list = 1;
+    partseffect_list = 1;
+    objeffect_list = 1;
+    objtimer_list = 1;
+    event_list = 1;
+    water_list = 0;
+    people_list = 0;
+    objframe = NULL;
+    mapobj = NULL;
+    now_villinfo = NULL;
+    now_parts_no = -1;
+    mapjump_id = 0;
+    mapjump_name[0] = '\0';
+    week_no = 0;
+    water_info = NULL;
+    edit_rect_list = 0;
+    motion_parts_list = 0;
+
+    strcpy(edit_info->scene_name, "scene.scn");
+    edit_info->sky_follow[0] = 1;
+    edit_info->sky_follow[1] = 0;
+    edit_info->sky_follow[2] = 1;
+    edit_info->shadow_near = 320.0f;
+    edit_info->shadow_far = 740.0f;
+    edit_info->shadow_level = 2;
+    edit_info->shadow_mode = 0x34;
+    edit_info->shadow_mode_2 = 0x20;
+    edit_info->bgm_no = -1;
+    edit_info->sound_set_no = -1;
+    edit_info->reverb_mode[0] = 2;
+    edit_info->reverb_mode[1] = 4;
+    edit_info->reverb_depth[0] = 5;
+    edit_info->reverb_depth[1] = 0x1E;
+    edit_info->ambient_sound_off = 0;
+    edit_info->wind[0] = 0.3f;
+    edit_info->wind[1] = 0.0f;
+    edit_info->wind[2] = 0.1f;
+    edit_info->wind[3] = 0.4f;
+    for (int i = 0; i < 16; i++) {
+        edit_info->people_list[i] = -1;
+    }
+
+    if (strcmp(extension, "cfb") == 0) {
+        binary = 1;
+        u8 *cursor = script;
+        u8 *end = script + file_size;
+        while (cursor < end) {
+            int command = *(int *) cursor;
+            cursor += sizeof(int);
+            if (command < 0) {
+                break;
+            }
+
+            void *arguments[32];
+            int argument_count = 0;
+            for (;;) {
+                int type = *(int *) cursor;
+                cursor += sizeof(int);
+                if (type < 0) {
+                    break;
+                }
+                arguments[argument_count++] = cursor;
+                if (type == 0) {
+                    cursor += (strlen((char *) cursor) + 4) & ~3;
+                } else {
+                    cursor += sizeof(int);
+                }
+            }
+            CommandExe__5[command](arguments);
+        }
+    } else {
+        int command_cache[16000];
+        int *cache = command_cache;
+        CScriptInterpreter interpreter;
+        interpreter.SetScript((char *) script, file_size);
+        interpreter.SetTAG(Command__5, 61);
+        interpreter.SetFunction(&func_table, 1);
+
+        int command;
+        while ((command = interpreter.GetNextTAG()) >= 0) {
+            CommandExe__5[command](interpreter.arguments);
+            *cache++ = command;
+
+            int argument = 0;
+            for (int *type = Command__5[command].argument_types; *type >= 0; type++, argument++) {
+                *cache++ = *type;
+                if (*type == 0) {
+                    int bytes = (strlen((char *) interpreter.arguments[argument]) + 4) & ~3;
+                    memset(cache, 0, bytes);
+                    strcpy((char *) cache, (char *) interpreter.arguments[argument]);
+                    cache += bytes / 4;
+                } else {
+                    *cache++ = *(int *) interpreter.arguments[argument];
+                }
+            }
+            *cache++ = -1;
+        }
+        *cache = -1;
+    }
+
+    edit_info->images[texture_list].name[0] = '\0';
+    edit_info->images[texture_list].type = -1;
+    for (int i = 0; i < 4; i++) {
+        edit_info->map_objects[mapobj_list].name[i][0] = '\0';
+    }
+    edit_info->obj_anime_count = objanime_list;
+    edit_info->object_effect_count = objeffect_list;
+    edit_info->parts_effect_count = partseffect_list;
+    edit_info->object_timer_count = objtimer_list;
+    edit_info->event_count = event_list;
+
+    if (map_no >= 0 && map_no < 5) {
+        for (int i = 0; i < 16; i++) {
+            VILLAGER_INFO *villager = &edit_info->villagers[i];
+            EDIT_CHARA_DATA_ENTRY *defaults = &EditCharaData[map_no][i];
+            strcpy(villager->name, defaults->name);
+            villager->index = i;
+            villager->character_no = defaults->character_no;
+            villager->model_no = defaults->model_no;
+            villager->hide_when_complete = defaults->hide_when_complete;
+        }
+    }
+
+    if (edit_info->time_stop == 0) {
+        for (int i = 0; i < 12; i++) {
+            edit_info->light_direction[i][0][0] = def_light[i][0];
+            edit_info->light_direction[i][1][0] = def_light[i][1];
+            edit_info->light_direction[i][2][0] = def_light[i][2];
+        }
+    }
+    if (edit_info->sound_set_no < 0) {
+        edit_info->ambient_sound_off = 1;
+    }
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/editmapscript", LoadEditMapData__FP13EDIT_MAP_INFOPci);
+#endif
 /**
  * Sets the scene resource used by the current editor map.
  */
 void CommandSCN(void **arguments) {
     strcpy(edit_info->scene_name, (char *) arguments[0]);
 }
+
 /**
  * Selects a zero-based light index from a one-based script value.
  */
@@ -347,6 +538,7 @@ void CommandLIGHT_NO(void **arguments) {
         light_no = 11;
     }
 }
+
 /**
  * Stores the ambient light colour for the selected light preset.
  */
@@ -356,6 +548,7 @@ void CommandAMBIENT(void **arguments) {
     edit_info->ambient[light_no][2] = *(float *) arguments[2];
     edit_info->ambient[light_no][3] = 128.0f;
 }
+
 /**
  * Stores the direction and colour of one light within the selected preset.
  */
@@ -390,6 +583,7 @@ void CommandFOG(void **arguments) {
     edit_info->fog[light_no].intensity = *(float *) arguments[5];
     edit_info->fog[light_no].exponent = *(float *) arguments[6];
 }
+
 /**
  * Stores the primary background colour for the selected light preset.
  */
@@ -409,6 +603,7 @@ void CommandBG_COL2(void **arguments) {
     edit_info->background_colour_2[light_no][2] = *(float *) arguments[2];
     edit_info->background_colour_2[light_no][3] = 128.0f;
 }
+
 /**
  * Stores the map's time-bounded depth-of-field settings.
  */
@@ -421,6 +616,7 @@ void CommandDOF(void **arguments) {
     edit_info->dof_far_level = *(int *) arguments[5];
     edit_info->dof_alpha = *(int *) arguments[6];
 }
+
 /**
  * Appends an image-resource assignment to the current editor map.
  */
@@ -444,6 +640,7 @@ void CommandGRD_IMG(void **arguments) {
 void CommandBLD_IMG(void **arguments) {
     CommandIMGSub(2, *(int *) arguments[1], (char *) arguments[0]);
 }
+
 /**
  * Assigns a sky image to a one-based sky layer from a parsed map-script command.
  */
@@ -455,6 +652,7 @@ void CommandSKY_IMG(void **arguments) {
 
     CommandIMGSub(index + 3, *(int *) arguments[2], (char *) arguments[1]);
 }
+
 /**
  * Assigns a sun image from a parsed map-script command.
  */
@@ -482,6 +680,7 @@ void CommandFIRE_IMG(void **arguments) {
 void CommandFLER_IMG(void **arguments) {
     CommandIMGSub(23, *(int *) arguments[1], (char *) arguments[0]);
 }
+
 /**
  * Assigns an image whose script-provided slot is also its image number.
  */
@@ -489,6 +688,7 @@ void CommandIMG(void **arguments) {
     int image_type = *(int *) arguments[2];
     CommandIMGSub(image_type, image_type, (char *) arguments[1]);
 }
+
 /**
  * Selects a sky scene layer from a one-based script slot.
  */
@@ -519,6 +719,7 @@ void CommandSUN(void **arguments) {
     mapobj = NULL;
     mapparts = NULL;
 }
+
 /**
  * Places one ground object, with its models, position and orientation.
  */
@@ -545,6 +746,7 @@ void CommandGROUND(void **arguments) {
     mapparts = NULL;
     mapobj_list++;
 }
+
 /**
  * Places one building object, with its models, position and orientation.
  */
@@ -571,6 +773,7 @@ void CommandBUILD(void **arguments) {
     mapparts = NULL;
     mapobj_list++;
 }
+
 /**
  * Places one water object, with its models, position and orientation.
  */
@@ -597,6 +800,7 @@ void CommandWATER(void **arguments) {
     mapparts = NULL;
     mapobj_list++;
 }
+
 /**
  * Places one water surface and the three corners that span it.
  */
@@ -633,10 +837,12 @@ void CommandWATER_SURFACE(void **arguments) {
         water_info = surface;
     }
 }
+
 /**
  * Adds one water-wave parameter set to the first unused wave slot.
  */
 FUZZY_MATCH("asm/matchings/editloop", CommandWATER_SHAKE__FPPv);
+
 void CommandWATER_SHAKE(void **arguments) {
     EDIT_WATER_INFO *info = water_info;
     if (info != NULL) {
@@ -675,6 +881,7 @@ void CommandEDITAREA(void **arguments) {
     area->unk_54 = *(float *) arguments[7];
     area->unk_58 = *(float *) arguments[8];
 }
+
 /**
  * Expands a map-part resource name into the seven model files the loader reads,
  * or keeps it as it stands when the script named a part-definition file.
@@ -701,6 +908,7 @@ void GenMdsName(MAP_PARTS_INFO *info, char *name) {
     sprintf(info->name[6], "%sk.mds", name);
     sprintf(info->name[7], "");
 }
+
 /**
  * Defines one building map part from a parsed script command.
  */
@@ -754,6 +962,7 @@ void CommandGRD_PARTS(void **arguments) {
     mapobj = NULL;
     mapparts = (CMapParts *) parts;
 }
+
 /**
  * Reads the cell grid and attached resources of the map part being defined.
  */
@@ -778,14 +987,14 @@ void CommandPARTS_INFO(void **arguments) {
             count++;
         } else {
             switch (c) {
-            case 'd':
-                def->cells[count] = 0x81;
-                count++;
-                break;
-            case 'x':
-                def->cells[count] = 0x80;
-                count++;
-                break;
+                case 'd':
+                    def->cells[count] = 0x81;
+                    count++;
+                    break;
+                case 'x':
+                    def->cells[count] = 0x80;
+                    count++;
+                    break;
             }
         }
         if (count >= def->width * def->height) {
@@ -800,12 +1009,14 @@ void CommandPARTS_INFO(void **arguments) {
         strcpy(def->names[i], (char *) arguments[argument++]);
     }
 }
+
 /**
  * Defines a road-classified map part in the general part table.
  */
 void CommandROAD_PARTS(void **arguments) {
     int index = *(int *) arguments[0];
-    if (index < 0 || index >= 24) return;
+    if (index < 0 || index >= 24)
+        return;
     now_parts_no = index;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.general.parts[index];
     char *source_name = (char *) arguments[1];
@@ -813,7 +1024,8 @@ void CommandROAD_PARTS(void **arguments) {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir__3, source_name);
         GenMdsName(parts, name);
-    } else parts->name[0][0] = '\0';
+    } else
+        parts->name[0][0] = '\0';
     parts->parts_no = *(int *) arguments[2];
     parts->unk_264 = *(float *) arguments[3];
     parts->kind = 1;
@@ -828,14 +1040,16 @@ void CommandROAD_PARTS(void **arguments) {
  */
 void CommandROAD(void **arguments) {
     int index = *(int *) arguments[0];
-    if (index < 0 || index >= 6) return;
+    if (index < 0 || index >= 6)
+        return;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.roads.parts[index];
     char *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir__3, source_name);
         GenMdsName(parts, name);
-    } else parts->name[0][0] = '\0';
+    } else
+        parts->name[0][0] = '\0';
     parts->parts_no = *(int *) arguments[2];
     parts->unk_264 = *(float *) arguments[3];
     parts->kind = 1;
@@ -850,7 +1064,8 @@ void CommandROAD(void **arguments) {
  */
 void CommandRIVER_PARTS(void **arguments) {
     int index = *(int *) arguments[0];
-    if (index < 0 || index >= 24) return;
+    if (index < 0 || index >= 24)
+        return;
     now_parts_no = index;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.general.parts[index];
     char *source_name = (char *) arguments[1];
@@ -858,7 +1073,8 @@ void CommandRIVER_PARTS(void **arguments) {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir__3, source_name);
         GenMdsName(parts, name);
-    } else parts->name[0][0] = '\0';
+    } else
+        parts->name[0][0] = '\0';
     parts->parts_no = *(int *) arguments[2];
     parts->unk_264 = *(float *) arguments[3];
     parts->kind = 1;
@@ -867,19 +1083,22 @@ void CommandRIVER_PARTS(void **arguments) {
     mapobj = NULL;
     mapparts = (CMapParts *) parts;
 }
+
 /**
  * Defines one river, bridge or lake part in the dedicated river table.
  */
 void CommandRIVER(void **arguments) {
     int index = *(int *) arguments[0];
-    if (index < 0 || index >= 16) return;
+    if (index < 0 || index >= 16)
+        return;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.rivers.parts[index];
     char *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir__3, source_name);
         GenMdsName(parts, name);
-    } else parts->name[0][0] = '\0';
+    } else
+        parts->name[0][0] = '\0';
     parts->parts_no = *(int *) arguments[2];
     parts->unk_264 = *(float *) arguments[3];
     parts->kind = 1;
@@ -902,12 +1121,14 @@ void CommandRIVER(void **arguments) {
         mapparts = (CMapParts *) parts;
     }
 }
+
 /**
  * Defines a bridge-classified map part in the general part table.
  */
 void CommandBRIDGE_PARTS(void **arguments) {
     int index = *(int *) arguments[0];
-    if (index < 0 || index >= 24) return;
+    if (index < 0 || index >= 24)
+        return;
     now_parts_no = index;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.general.parts[index];
     char *source_name = (char *) arguments[1];
@@ -915,7 +1136,8 @@ void CommandBRIDGE_PARTS(void **arguments) {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir__3, source_name);
         GenMdsName(parts, name);
-    } else parts->name[0][0] = '\0';
+    } else
+        parts->name[0][0] = '\0';
     parts->parts_no = *(int *) arguments[2];
     parts->unk_264 = *(float *) arguments[3];
     parts->kind = 1;
@@ -930,7 +1152,8 @@ void CommandBRIDGE_PARTS(void **arguments) {
  */
 void CommandLAKE_PARTS(void **arguments) {
     int index = *(int *) arguments[0];
-    if (index < 0 || index >= 24) return;
+    if (index < 0 || index >= 24)
+        return;
     now_parts_no = index;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.general.parts[index];
     char *source_name = (char *) arguments[1];
@@ -939,7 +1162,8 @@ void CommandLAKE_PARTS(void **arguments) {
         sprintf(name, "%s%s", CurrentDir__3, source_name);
         GenMdsName(parts, name);
         sprintf(parts->name[7], "%s%s", CurrentDir__3, (char *) arguments[4]);
-    } else parts->name[0][0] = '\0';
+    } else
+        parts->name[0][0] = '\0';
     parts->parts_no = *(int *) arguments[2];
     parts->unk_264 = *(float *) arguments[3];
     parts->kind = 1;
@@ -954,7 +1178,8 @@ void CommandLAKE_PARTS(void **arguments) {
  */
 void CommandON_RIVER_PARTS(void **arguments) {
     int index = *(int *) arguments[0];
-    if (index < 0 || index >= 24) return;
+    if (index < 0 || index >= 24)
+        return;
     now_parts_no = index;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.general.parts[index];
     char *source_name = (char *) arguments[1];
@@ -963,7 +1188,8 @@ void CommandON_RIVER_PARTS(void **arguments) {
         sprintf(name, "%s%s", CurrentDir__3, source_name);
         GenMdsName(parts, name);
         sprintf(parts->name[7], "%s%s", CurrentDir__3, (char *) arguments[4]);
-    } else parts->name[0][0] = '\0';
+    } else
+        parts->name[0][0] = '\0';
     parts->parts_no = *(int *) arguments[2];
     parts->unk_264 = *(float *) arguments[3];
     parts->kind = 1;
@@ -972,6 +1198,7 @@ void CommandON_RIVER_PARTS(void **arguments) {
     mapobj = NULL;
     mapparts = (CMapParts *) parts;
 }
+
 /**
  * Attaches one object animation to the map part or object being defined.
  */
@@ -1014,6 +1241,7 @@ void CommandOBJ_ANIME(void **arguments) {
     }
     objanime_list++;
 }
+
 /**
  * Accepts the legacy fire command, which has no runtime effect.
  */
@@ -1037,6 +1265,7 @@ void CommandBRIGHT(void **arguments) {
  */
 void CommandOBJECT_TIMER(void **arguments) {
 }
+
 /**
  * Places the entrance the last map-jump command named, on the side the script
  * chose, and attaches it to the part or object being defined.
@@ -1055,14 +1284,14 @@ void CommandENTRANCE(void **arguments) {
     point->map_no = mapjump_id;
     point->side = 0;
     switch (*side) {
-    case 'r':
-    case 'R':
-        point->side = 1;
-        break;
-    case 'l':
-    case 'L':
-        point->side = -1;
-        break;
+        case 'r':
+        case 'R':
+            point->side = 1;
+            break;
+        case 'l':
+        case 'L':
+            point->side = -1;
+            break;
     }
     point->position[0] = *(float *) arguments[1];
     point->position[1] = *(float *) arguments[2];
@@ -1089,6 +1318,7 @@ void CommandENTRANCE(void **arguments) {
         event_list++;
     }
 }
+
 /**
  * Names the map that the entrances defined after it lead to.
  */
@@ -1122,6 +1352,7 @@ void CommandMAPJUMP(void **arguments) {
     }
     event_list++;
 }
+
 /**
  * Appends one villager definition to the map's parsed villager list.
  */
@@ -1145,6 +1376,7 @@ void CommandPEOPLE(void **arguments) {
         people_list++;
     }
 }
+
 /**
  * Selects the weekly time table referenced by subsequent script entries.
  */
@@ -1155,6 +1387,7 @@ void CommandTIME_TABLE_NO(void **arguments) {
     }
     week_no = table_no;
 }
+
 /**
  * Replaces one weekly villager time-table row from a script command.
  */
@@ -1170,6 +1403,7 @@ void CommandTIME_TABLE(void **arguments) {
         }
     }
 }
+
 /**
  * Stops time progression for the current editor map.
  */
@@ -1185,6 +1419,7 @@ void CommandSKY_FOLLOW(void **arguments) {
     edit_info->sky_follow[1] = *(int *) arguments[1];
     edit_info->sky_follow[2] = *(int *) arguments[2];
 }
+
 /**
  * Stores the shadow distances, quality level and modes for the current map.
  */
@@ -1195,6 +1430,7 @@ void CommandSHADOW_LEVEL(void **arguments) {
     edit_info->shadow_mode = *(int *) arguments[3];
     edit_info->shadow_mode_2 = *(int *) arguments[4];
 }
+
 /**
  * Appends a rectangular editor region with its corners ordered component-wise.
  */
@@ -1213,6 +1449,7 @@ void CommandEDITAREA_RECT(void **arguments) {
         VectorMaxMin(rect->maximum, rect->minimum, second, first);
     }
 }
+
 /**
  * Selects and reports the background-music number for the current map.
  */
@@ -1235,8 +1472,7 @@ void CommandSOUND_SET(void **arguments) {
 void CommandREVERBE(void **arguments) {
     static char *rev[] = {
         "OFF", "ROOM", "STUDIO_A", "STUDIO_B", "STUDIO_C", "HALL",
-        "SPACE", "ECHO", "DELAY", "PIPE", "MAX", ""
-    };
+        "SPACE", "ECHO", "DELAY", "PIPE", "MAX", ""};
 
     int mode = 0;
     char *name = (char *) arguments[0];
@@ -1265,6 +1501,7 @@ void CommandREVERBE(void **arguments) {
     printf("rev0 = %s %d\n", rev[edit_info->reverb_mode[0]], edit_info->reverb_depth[0]);
     printf("rev1 = %s %d\n", rev[edit_info->reverb_mode[1]], edit_info->reverb_depth[1]);
 }
+
 /**
  * Appends a named map-part motion range to the current map.
  */
@@ -1281,6 +1518,7 @@ void CommandMOTION_PARTS(void **arguments) {
         motion->values[5] = *(float *) arguments[6];
     }
 }
+
 /**
  * Appends one villager placed by a second-format script entry.
  */
@@ -1307,6 +1545,7 @@ void CommandPEOPLE2(void **arguments) {
         people_list++;
     }
 }
+
 /**
  * Disables ambient sound for the current editor map.
  */
@@ -1323,6 +1562,7 @@ void CommandWIND(void **arguments) {
     edit_info->wind[2] = *(float *) arguments[2];
     edit_info->wind[3] = *(float *) arguments[3];
 }
+
 /**
  * Assigns the event number and level used when the current villager is addressed.
  */
@@ -1332,10 +1572,12 @@ void CommandTALK_EVENT(void **arguments) {
         now_villinfo->talk_event_level = *(int *) arguments[1];
     }
 }
+
 /**
  * Stores a character ambient colour selected by a one-based script slot.
  */
 FUZZY_MATCH("asm/matchings/editloop", CommandCHARA_AMBIENT__FPPv);
+
 void CommandCHARA_AMBIENT(void **arguments) {
     int index = *(int *) arguments[0] - 1;
     if (index < 0 || index >= 4) {
@@ -1349,6 +1591,7 @@ void CommandCHARA_AMBIENT(void **arguments) {
     edit_info->character_ambient[index][2] = *(float *) arguments[3];
     edit_info->character_ambient[index][3] = 0.0f;
 }
+
 /**
  * Sets the rotation constraint used while the current villager talks.
  */
@@ -1366,6 +1609,7 @@ void CommandTALK_DIR(void **arguments) {
         now_villinfo->talk_direction = *(int *) arguments[0];
     }
 }
+
 /**
  * Copies the fifteen villager identifiers parsed for the current editor map.
  */
@@ -1374,6 +1618,7 @@ void CommandPEOPLE_LIST(void **arguments) {
         edit_info->people_list[i] = *(int *) arguments[i];
     }
 }
+
 /**
  * Reports whether the current editor state should draw the fishing interface.
  */
@@ -1386,6 +1631,7 @@ int FishingDrawCheck() {
     }
     return 0;
 }
+
 /**
  * Finds a file in the active pack or loads it into the shared read buffer.
  */
@@ -1399,6 +1645,7 @@ void *EdLoadFile(char *name) {
     }
     return read_buffer;
 }
+
 /**
  * Tests whether a motion crossed a nearby target time during the current step.
  */
@@ -1411,6 +1658,7 @@ int CheckMotionTime(float target, float previous, float current) {
 
     return (current >= target && current < previous) & 0xff;
 }
+
 /**
  * Starts ambient playback unless the current map disables ambient sound.
  */
@@ -1419,6 +1667,7 @@ void PlayAmbient(float volume) {
         EdAmbientPlay(volume);
     }
 }
+
 /**
  * Provides the editor hook for stopping all currently managed sound.
  */

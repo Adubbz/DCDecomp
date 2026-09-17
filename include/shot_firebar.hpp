@@ -27,7 +27,7 @@ public:
      * @address 0x1AEB20
      * @size 0x21C
      */
-    int Init(float *origin, float *direction, int damage, int texture_cell);
+    int Init(float *origin, float *direction, int collision_damage, int element);
 
     /**
      *
@@ -37,7 +37,7 @@ public:
      * @address 0x1AED40
      * @size 0x21C
      */
-    int Set(float *origin, float *direction, int damage, int texture_cell);
+    int Set(float *origin, float *direction, int collision_damage, int element);
 
     /**
      *
@@ -69,3 +69,5 @@ public:
      */
     void Draw(void);
 };
+
+STATIC_ASSERT(sizeof(CSHOT_FIREBAR) == 0xD10);

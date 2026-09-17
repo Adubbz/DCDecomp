@@ -1,17 +1,106 @@
 #include "memorycardaccess.hpp"
 
+#include <cstdio>
 #include <cstring>
 
+#include "menu_draw.hpp"
+#include "savedata.hpp"
+
+#ifdef NON_MATCHING
+void InitSaveFileInfoTbl() {
+    for (int i = 0; i < MC_DIR_ENTRY_MAX; i++) {
+        memset(&SaveFileInfo[i], 0, sizeof(SaveFileInfo[i]));
+        SaveFileInfo[i].name[0] = 0;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", InitSaveFileInfoTbl__Fv);
+#endif
+
+#ifdef NON_MATCHING
+int GetOpenAttribute(char *name) {
+    for (int i = 0; i < MC_DIR_ENTRY_MAX; i++) {
+        if (strcmp(name, SaveFileInfo[i].name) == 0) {
+            printf("same file existed!!!!!!\n");
+            return 1;
+        }
+    }
+    return 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", GetOpenAttribute__FPc);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @346__2);
+#ifdef NON_MATCHING
+void CMemoryCardAccess::Initialize() {
+    if (GetMenuLangFlag() == 0) {
+        strcpy(this->dir_name, "BISCPS-15004dkcloud");
+    } else {
+        strcpy(this->dir_name, "BASCUS-97111dkcloud");
+    }
+    strcpy(this->file_name, "darkcloud");
+    for (int i = 0; i < 0x40; i++) {
+        this->current_dir[i] = 0;
+    }
+    this->port = 0;
+    this->file_no = 0;
+    this->fd = -1;
+    memset(&this->error_code, 0, 0x14);
+    this->SetVersion("darkcloudVer1.9");
+    this->func_no = MC_OPERATION_IDLE;
+    this->unk_E0 = 0x3D;
+    this->step = 0;
+    this->save_buffer = NULL;
+    this->unk_D8 = NULL;
+    this->read_buffer = NULL;
+    this->dir_table = SaveFileInfo;
+    this->transferred = 0;
+    this->transfer_size = 0;
+    memset(this->card, 0, sizeof(this->card));
+    memset(this->file_info, 0, sizeof(this->file_info));
+    memset(&this->icon, 0, sizeof(this->icon));
+    this->card[0].present = 1;
+    this->card[1].present = 1;
+    printf("SaveData size = %d\n", sizeof(CSaveData));
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", Initialize__17CMemoryCardAccessFv);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @372__3);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @373__4);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @374__3);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @375__4);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @376__4);
+#ifdef NON_MATCHING
+int CMemoryCardAccess::InitForMC() {
+    int status = sceMcInit();
+    this->Initialize();
+    InitSaveFileInfoTbl();
+
+    int result;
+    switch (status) {
+        case 0:
+            printf("Memory Card Initialized Successed!!\n\n\n\n");
+            result = 0;
+            break;
+        case -101:
+            result = 1;
+            printf("Initialized Failed!!\n");
+            break;
+        case -120:
+            result = 1;
+            printf("mcserv.irx is old file\n");
+            break;
+        case -121:
+            result = 1;
+            printf("mcman.irx is old file \n");
+            break;
+    }
+    return result;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", InitForMC__17CMemoryCardAccessFv);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @384__3);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @385__2);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @386__2);

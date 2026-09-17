@@ -68,7 +68,7 @@ void CDungeonParts::initalize() {
         frame[i] = NULL;
         unk_170[i] = 0.0f;
     }
-    unk_000 = 0;
+    direction_offset = 0;
     collision = NULL;
     unk_004 = NULL;
     unk_008 = 0;

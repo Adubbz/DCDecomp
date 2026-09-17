@@ -39,3 +39,12 @@ void EffectWaterSpray(CEffectGroup *group, float *position, float *velocity, int
  * @size 0xF4
  */
 void EffectHamon(CEffectGroup *group, float *position, float scale);
+
+/**
+ * Blurs screen regions outside the two depth intervals surrounding the focus.
+ *
+ * @mangled DepthOfField__FPfiii
+ * @address 0x1652C0
+ * @size 0x9D0
+ */
+void DepthOfField(float *focus, int level, int alpha, int blur);

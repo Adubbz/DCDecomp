@@ -2,6 +2,36 @@
 
 #include "common.h"
 
+template <int>
+class CDataAlloc2;
+
+/**
+ * Reads the item-definition text file into the intermediate command table.
+ *
+ * @mangled TEIGIAnalyz__FPc
+ * @address 0x1CE090
+ * @size 0x3B4
+ */
+void TEIGIAnalyz(char *path);
+
+/**
+ * Loads texture resources named by the parsed item-definition commands.
+ *
+ * @mangled TEIGIImgLoad__FPUiP14CDataAlloc2_1_
+ * @address 0x1CE450
+ * @size 0x594
+ */
+void TEIGIImgLoad(u_int *pack, CDataAlloc2<1> *arena);
+
+/**
+ * Loads dungeon models and applies scene directives from the parsed definitions.
+ *
+ * @mangled TEIGIMdsLoad__FPUii
+ * @address 0x1CE9F0
+ * @size 0x2398
+ */
+void TEIGIMdsLoad(u_int *pack, int reuse_only);
+
 /**
  * @file
  * Item, weapon and attachment definitions, and their accessors.

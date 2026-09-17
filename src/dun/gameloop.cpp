@@ -1431,13 +1431,13 @@ void GameInit(void) {
     NowDngMap->initalize();
     BtTexAnime.Initialize(BtTexAnimeData, 96);
     for (int i = 0; i < 64; i++) {
-        DUNGEON_EVENT_SLOT *slot = &DngEventMan.slot[i];
+        CDungeonEvent *slot = &DngEventMan.slot[i];
 
-        slot->unk_00 = 0;
-        slot->unk_20 = -1;
-        slot->unk_1C = -1;
+        slot->state = 0;
+        slot->script_no = -1;
+        slot->parts_id = -1;
         slot->unk_34 = 0;
-        slot->unk_3C = 0;
+        slot->enabled = 0;
     }
     for (int i = 0; i < 96; i++) {
         CDungeonEventData *state = &DngEventMan.event[i];
@@ -1495,7 +1495,7 @@ void GameInit(void) {
     NewChangeFxFlag = 0;
     for (int i = 0; i < 32; i++) {
         HitValue[i].active = 0;
-        HitValue[i].unk_10 = 0;
+        HitValue[i].frame = NULL;
     }
     NowHitValue = HitValue;
 
@@ -5977,13 +5977,13 @@ void BtCleatRandomMap(void) {
     gold = GoldTex;
 
     for (n = 0; n < 32; n++) {
-        MainRandomItem.unk_290[n] = -1;
+        MainRandomItem.id[n] = -1;
         MainRandomItem.pickup_event[n] = -1;
         MainRandomItem.state[n] = 0;
     }
     MainRandomItem.gold_texture = gold;
     for (n = 0; n < 32; n++) {
-        SubRandomItem.unk_290[n] = -1;
+        SubRandomItem.id[n] = -1;
         SubRandomItem.pickup_event[n] = -1;
         SubRandomItem.state[n] = 0;
     }
@@ -6073,7 +6073,7 @@ void BtCleatFreeMap(void) {
     CTexture *gold = GoldTex;
 
     for (i = 0; i < 32; i++) {
-        MainRandomItem.unk_290[i] = -1;
+        MainRandomItem.id[i] = -1;
         MainRandomItem.pickup_event[i] = -1;
         MainRandomItem.state[i] = 0;
     }
@@ -8265,10 +8265,10 @@ void DelActiveItem(int slot) {
     }
 }
 
-#if DUN_COMPILE_UNMATCHED
+#ifdef NON_MATCHING
 int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
     if (trap == NULL) {
-        return;
+        return 0;
     }
 
     int element;
@@ -8307,7 +8307,7 @@ int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
             se = 0xE1;
             break;
         case 1: {
-            float rate = 1.2f;
+            float rate = 0.2f;
             int added = (int) (had * rate) + 10;
 
             if (had + added >= 0xFFFF) {
@@ -8365,9 +8365,9 @@ int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
     SndSePlay(se, -1, 0);
     return kind;
 }
-#endif /* DUN_COMPILE_UNMATCHED */
-
+#else
 INCLUDE_ASM("asm/nonmatchings/dun/gameloop", Run_TrapCircle__FP15MAP_TRAP_CIRCLE);
+#endif
 
 void LockOffTargte(void) {
     lockOnTargetDraw = 0;

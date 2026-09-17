@@ -55,7 +55,6 @@ INCLUDE_ASM("asm/nonmatchings/candleeffect", SetPosition__13CCandleEffectFPf);
 #ifdef NON_MATCHING
 void CCandleEffect::Step(void) {
     this->animation_frame += 0.3f;
-    // The atlas holds eight frames, so the cycle restarts past the last of them.
     if (this->animation_frame > 8.0f) {
         this->animation_frame = 0.0f;
     }

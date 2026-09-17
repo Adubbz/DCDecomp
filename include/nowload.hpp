@@ -73,7 +73,7 @@ void init_now_loading(int map_title_no);
  * @address 0x154320
  * @size 0x450
  */
-void VSyncCallBack_Load(int field);
+int VSyncCallBack_Load(int field);
 
 /**
  * Uploads a named image and its palette to video memory and records where
@@ -95,4 +95,3 @@ void LoadTexture(char *name, unsigned char *archive, CTexture *texture, int imag
  * @size 0x1D4
  */
 void LoadTexture(TM2_head *image, CTexture *texture, int image_address, int palette_address);
-

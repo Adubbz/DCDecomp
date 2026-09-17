@@ -24,14 +24,14 @@ class CCameraFollow;
  * Describes the event the player is standing in, and where it puts them.
  */
 struct ED_EVENT_PARAM {
-    int kind;                 /**< What kind of event the point is; 1 for a door. */
-    int entrance;             /**< Entrance of the map the door leads to. */
+    int kind;     /**< What kind of event the point is; 1 for a door. */
+    int entrance; /**< Entrance of the map the door leads to. */
     u8 unk_08[0x8];
     sceVu0FVECTOR position;   /**< Where the player stands while the door plays. */
     sceVu0FVECTOR camera_pos; /**< Where the camera stands while the door plays. */
     sceVu0FVECTOR rotation;   /**< Which way the player faces while it plays. */
     u8 unk_40[0x10];
-    ED_EVENT_POINT *point;    /**< Event point the parameters were read from. */
+    ED_EVENT_POINT *point; /**< Event point the parameters were read from. */
     u8 unk_54[0xc];
 };
 
@@ -39,32 +39,33 @@ struct ED_EVENT_PARAM {
  * What the editor hands to EdMoveChara, and what it gets back.
  */
 struct ED_MOVE_CHARA_INFO {
-    float time;              /**< Time of day the step happens at. */
-    CCharacter *chara;       /**< Character being moved. */
-    CCamera *camera;         /**< Camera the movement is relative to. */
-    CCameraFollow *follow;   /**< Camera that follows the character. */
-    int key_lock;            /**< Whether the pad is ignored this step. */
+    float time;            /**< Time of day the step happens at. */
+    CCharacter *chara;     /**< Character being moved. */
+    CCamera *camera;       /**< Camera the movement is relative to. */
+    CCameraFollow *follow; /**< Camera that follows the character. */
+    int key_lock;          /**< Whether the pad is ignored this step. */
     u8 unk_14[0x4];
     int unk_18;
-    CEditGround *ground;     /**< Ground the character walks on. */
+    CEditGround *ground; /**< Ground the character walks on. */
     u8 unk_20[0x8];
-    int event_ready;         /**< Set where the character stands in an event. */
+    int event_ready; /**< Set where the character stands in an event. */
     u8 unk_2c[0x4];
-    ED_EVENT_PARAM param;    /**< The event the character stands in. */
-    ED_EVENT_POINT *points;  /**< Event points of the map. */
-    int point_count;         /**< How many of them there are. */
-    int event_no;            /**< Map event the step asks to run. */
-    int system_event_no;     /**< System event the step asks to run. */
+    ED_EVENT_PARAM param;   /**< The event the character stands in. */
+    ED_EVENT_POINT *points; /**< Event points of the map. */
+    int point_count;        /**< How many of them there are. */
+    int event_no;           /**< Map event the step asks to run. */
+    int system_event_no;    /**< System event the step asks to run. */
     u8 unk_a0[0x4];
-    int in_event;            /**< Whether an event already has the character. */
-    float motion_previous;   /**< Motion time at the previous step. */
-    float motion_current;    /**< Motion time at this one. */
+    int in_event;          /**< Whether an event already has the character. */
+    float motion_previous; /**< Motion time at the previous step. */
+    float motion_current;  /**< Motion time at this one. */
 };
 
 STATIC_ASSERT(sizeof(ED_EVENT_PARAM) == 0x60);
 STATIC_ASSERT(sizeof(ED_MOVE_CHARA_INFO) == 0xb0);
 struct ED_EVENT_POINT;
 struct EDIT_MAP_INFO;
+
 /**
  * Stores one script-defined timer that gates a map object.
  */
@@ -105,71 +106,71 @@ struct ED_EVENT_INFO {
     u8 unk_008[0x28];
     s32 map_jump_bgm_stop; /**< Whether a map jump stops the current background music. */
     s32 fukidashi;
-    s32 sound_off_count; /**< Number of sound channels suppressed by the event. */
-    float projection; /**< Projection distance used while rendering an event. */
-    CCameraFollow *camera; /**< Camera controller used by the active event. */
-    s32 reset_camera_angle; /**< Camera-angle reset mode requested by the event. */
-    float reset_camera_yaw; /**< Yaw offset used by the requested camera reset. */
-    CCharacter *main_character; /**< Player character controlled by the active event. */
+    s32 sound_off_count;                   /**< Number of sound channels suppressed by the event. */
+    float projection;                      /**< Projection distance used while rendering an event. */
+    CCameraFollow *camera;                 /**< Camera controller used by the active event. */
+    s32 reset_camera_angle;                /**< Camera-angle reset mode requested by the event. */
+    float reset_camera_yaw;                /**< Yaw offset used by the requested camera reset. */
+    CCharacter *main_character;            /**< Player character controlled by the active event. */
     CTexAnimeData *main_texture_animation; /**< Texture-animation data restored to the player after an event. */
-    s32 main_texture_animation_count; /**< Number of saved player texture-animation records. */
-    CNPCharacter *npcs; /**< Contiguous array of event NPC characters. */
-    s32 player_collision; /**< Whether ground collision is applied to the player during the event. */
-    s32 player_draw; /**< Whether the player model is drawn during the event. */
-    s32 player_shadow_draw; /**< Whether the player's shadow is drawn during the event. */
-    s32 player_foot_sound; /**< Footstep mode applied to the player during the event. */
-    s32 player_stop; /**< Whether the player's event motion is held. */
-    s32 player_texture_block; /**< Texture block assigned to the event player model. */
-    s32 npc_collision[16]; /**< Ground-collision mode assigned to each event NPC. */
-    s32 npc_draw[16]; /**< Whether each event NPC model is drawn. */
-    s32 npc_shadow_draw[16]; /**< Whether each event NPC shadow is drawn. */
-    s32 npc_foot_sound[16]; /**< Footstep mode assigned to each event NPC. */
-    s32 npc_stop[16]; /**< Whether each event NPC's motion is held. */
-    s32 npc_draw_before[16]; /**< Draw-order group assigned to each event NPC. */
-    s32 npc_texture_block; /**< First texture block assigned to the event NPC models. */
-    s32 npc_count; /**< Number of valid entries in the event NPC array. */
-    VILLAGER_INFO *villagers; /**< Metadata array for the event villagers. */
-    ClsMes *messages[8]; /**< Message windows owned by the active event. */
-    float current_time; /**< Current editor time used by time-of-day opcodes. */
+    s32 main_texture_animation_count;      /**< Number of saved player texture-animation records. */
+    CNPCharacter *npcs;                    /**< Contiguous array of event NPC characters. */
+    s32 player_collision;                  /**< Whether ground collision is applied to the player during the event. */
+    s32 player_draw;                       /**< Whether the player model is drawn during the event. */
+    s32 player_shadow_draw;                /**< Whether the player's shadow is drawn during the event. */
+    s32 player_foot_sound;                 /**< Footstep mode applied to the player during the event. */
+    s32 player_stop;                       /**< Whether the player's event motion is held. */
+    s32 player_texture_block;              /**< Texture block assigned to the event player model. */
+    s32 npc_collision[16];                 /**< Ground-collision mode assigned to each event NPC. */
+    s32 npc_draw[16];                      /**< Whether each event NPC model is drawn. */
+    s32 npc_shadow_draw[16];               /**< Whether each event NPC shadow is drawn. */
+    s32 npc_foot_sound[16];                /**< Footstep mode assigned to each event NPC. */
+    s32 npc_stop[16];                      /**< Whether each event NPC's motion is held. */
+    s32 npc_draw_before[16];               /**< Draw-order group assigned to each event NPC. */
+    s32 npc_texture_block;                 /**< First texture block assigned to the event NPC models. */
+    s32 npc_count;                         /**< Number of valid entries in the event NPC array. */
+    VILLAGER_INFO *villagers;              /**< Metadata array for the event villagers. */
+    ClsMes *messages[8];                   /**< Message windows owned by the active event. */
+    float current_time;                    /**< Current editor time used by time-of-day opcodes. */
     u8 unk_224[0xC];
-    sceVu0FVECTOR wind; /**< Wind vector applied while the event is active. */
-    CEditGround *edit_ground; /**< Ground and placed-part database used by the active event. */
-    s32 fixed_parts_count; /**< Number of fixed map parts available to object-handle opcodes. */
-    CMapParts *fixed_parts; /**< Fixed map parts available to object-handle opcodes. */
-    s32 edit_parts_count; /**< Number of placed map parts available to object-handle opcodes. */
-    CMapParts *edit_parts; /**< Placed map parts available to object-handle opcodes. */
-    s32 interior_parts_count; /**< Number of interior parts available to object-handle opcodes. */
+    sceVu0FVECTOR wind;        /**< Wind vector applied while the event is active. */
+    CEditGround *edit_ground;  /**< Ground and placed-part database used by the active event. */
+    s32 fixed_parts_count;     /**< Number of fixed map parts available to object-handle opcodes. */
+    CMapParts *fixed_parts;    /**< Fixed map parts available to object-handle opcodes. */
+    s32 edit_parts_count;      /**< Number of placed map parts available to object-handle opcodes. */
+    CMapParts *edit_parts;     /**< Placed map parts available to object-handle opcodes. */
+    s32 interior_parts_count;  /**< Number of interior parts available to object-handle opcodes. */
     CMapParts *interior_parts; /**< Interior parts available to object-handle opcodes. */
-    CFrameVu1 *item_frame[1]; /**< VU1 frame used for the single event-held item. */
-    s32 talk_npc_id; /**< Identifier of the NPC currently engaged in conversation. */
-    s32 talk_messages[16]; /**< Message identifiers assigned to the current conversation sequence. */
-    s32 talk_select_message; /**< Message selected after a conversation choice. */
-    s32 talk_select_prompt; /**< Message containing the current conversation choices. */
+    CFrameVu1 *item_frame[1];  /**< VU1 frame used for the single event-held item. */
+    s32 talk_npc_id;           /**< Identifier of the NPC currently engaged in conversation. */
+    s32 talk_messages[16];     /**< Message identifiers assigned to the current conversation sequence. */
+    s32 talk_select_message;   /**< Message selected after a conversation choice. */
+    s32 talk_select_prompt;    /**< Message containing the current conversation choices. */
     s32 unk_2ac;
     char unk_2b0[0x20];
     s32 unk_2d0;
-    s32 outside_map_no; /**< Map requested when an event exits to the outside. */
+    s32 outside_map_no;        /**< Map requested when an event exits to the outside. */
     s32 draw_exclamation_mark; /**< Whether the event requests the attention marker. */
-    s32 suppress_background; /**< Whether event rendering suppresses the scene background. */
-    s32 suppress_shadows; /**< Whether event rendering suppresses character shadows. */
+    s32 suppress_background;   /**< Whether event rendering suppresses the scene background. */
+    s32 suppress_shadows;      /**< Whether event rendering suppresses character shadows. */
     u8 unk_2e4[0xC];
     float background_color[3]; /**< RGB override for the event background. */
     u8 unk_2fc[4];
     s32 screen_filter; /**< Whether a full-screen event colour filter is active. */
     u8 unk_304[0xC];
     sceVu0FVECTOR screen_filter_color; /**< RGBA colour of the event screen filter. */
-    s32 lighting_override; /**< Whether script-provided scene lighting replaces the map lighting. */
+    s32 lighting_override;             /**< Whether script-provided scene lighting replaces the map lighting. */
     u8 unk_324[0xC];
-    sceVu0FMATRIX light_direction; /**< Direction vectors for the four event point lights. */
-    sceVu0FMATRIX light_color; /**< RGB intensities for the four event point lights. */
-    sceVu0FVECTOR ambient_color; /**< RGBA ambient-light colour for the event scene. */
+    sceVu0FMATRIX light_direction;     /**< Direction vectors for the four event point lights. */
+    sceVu0FMATRIX light_color;         /**< RGB intensities for the four event point lights. */
+    sceVu0FVECTOR ambient_color;       /**< RGBA ambient-light colour for the event scene. */
     sceVu0FVECTOR vector_arguments[4]; /**< Vector arguments supplied to the active event. */
-    s32 integer_arguments[8]; /**< Integer arguments supplied to the active event. */
-    s32 flag_arguments[8]; /**< Flag-like arguments supplied to the active event. */
-    s32 fadeout_event_no; /**< Event started after the current fade-out completes. */
-    s32 next_event; /**< Event number requested by the NEXT_EVENT opcode. */
-    s32 return_code; /**< Result code passed from an editor event back to the game loop. */
-    s32 exit_code; /**< Exit status supplied by the event script. */
+    s32 integer_arguments[8];          /**< Integer arguments supplied to the active event. */
+    s32 flag_arguments[8];             /**< Flag-like arguments supplied to the active event. */
+    s32 fadeout_event_no;              /**< Event started after the current fade-out completes. */
+    s32 next_event;                    /**< Event number requested by the NEXT_EVENT opcode. */
+    s32 return_code;                   /**< Result code passed from an editor event back to the game loop. */
+    s32 exit_code;                     /**< Exit status supplied by the event script. */
 };
 
 STATIC_ASSERT(sizeof(ED_EVENT_INFO) == 0x450);
@@ -179,6 +180,9 @@ STATIC_ASSERT(sizeof(ED_EVENT_INFO) == 0x450);
  */
 extern "C" ED_EVENT_INFO EdEventInfo;
 
+/** Disables character drawing in the editor debug view. */
+extern int EdDebugCharaDrawOff;
+
 /**
  * Steps the editor's event system, and says what the event asks the loop to do.
  *
@@ -186,7 +190,7 @@ extern "C" ED_EVENT_INFO EdEventInfo;
  * @address 0x197AD0
  * @size 0xCFC
  */
-int EdEventMode(CCameraFollow *camera, int kind);
+int EdEventMode(CCameraFollow *camera, int event_kind);
 
 /**
  * Puts the camera back on the parameters the editor uses outside events.
@@ -964,7 +968,7 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
  * @size 0xEBC
  * @unknownret
  */
-int EdTalkMode(CCharacter *chara, CCameraFollow *camera, int mode, int *state);
+int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selection);
 
 /**
  * Holds the edit cursor inside the area the map allows.

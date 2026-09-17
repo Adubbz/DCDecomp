@@ -12,6 +12,15 @@ struct spRGBA;
 struct sceVif1Packet;
 struct RECT;
 
+/** Draws a projected sprite with one colour and fog depth. */
+void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source,
+                    int *top_left, int *bottom_right, spRGBA *colour);
+
+/** Draws a projected quadrilateral with per-corner depth and a uniform alpha. */
+void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source,
+                    int *top_left, int *top_right, int *bottom_right, int *bottom_left,
+                    unsigned char alpha);
+
 /**
  * Loads the sound-effect metadata table used by the sound manager.
  *

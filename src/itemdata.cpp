@@ -4,13 +4,120 @@
 
 #include "itemdata.hpp"
 
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
+
+#include "dataalloc.hpp"
+#include "dataread.hpp"
+#include "dranmapfield.hpp"
+#include "dun/gameloop.hpp"
+#include "dungeonmap.hpp"
+#include "dungeonparts.hpp"
+#include "frame.hpp"
+#include "mds.hpp"
+#include "mglib.hpp"
+#include "nowload.hpp"
+#include "texture.hpp"
+#include "textureanime.hpp"
+#include "userstatus.hpp"
 
 #ifdef NON_MATCHING
 /** Bytes of the item definition file that were read. */
 static int teigiFileSize;
 #endif
 
+/** Parsed string argument for each item-definition command. */
+extern char argStrBuff__2[640][36];
+
+/** Command identifier and numeric arguments for each parsed definition. */
+extern float argValBuff__2[640][36];
+
+/** Number of item-definition commands parsed so far. */
+extern int argLevel__2;
+
+/** Item-definition command names, terminated by a null entry. */
+extern char *TEIGI_TABLE[];
+
+/** Argument format associated with each item-definition command. */
+extern int *TEIGI_ARG_TABLE[];
+
+/** Scratch arena used while loading the current map. */
+extern "C" CDataAlloc2<1> MapModelBuffer;
+
+/** Parser integrity marker changed by malformed definition data. */
+extern int errFlag2;
+
+/** Randomized dungeon key selected while parsing definitions. */
+extern int BtRubyDoorKey;
+
+/** Parser command formats used to identify resource-loading directives. */
+extern int TEIGI_SET_PATH[];
+extern int TEIGI_GRD_IMG__2[];
+extern int TEIGI_FIRE_IMG__2[];
+extern int TEIGI_MINIMAP_IMG[];
+extern int TEIGI_DebugFlag__2[];
+extern int TEIGI_RUN_SPEED__2[];
+extern int TEIGI_LIGHT_C[];
+extern int TEIGI_AMBIENT__2[];
+extern int TEIGI_URA_LIGHT_C[];
+extern int TEIGI_URA_AMBIENT[];
+extern int TEIGI_FOG__2[];
+extern int TEIGI_URA_FOG[];
+extern int TEIGI_BG_COL__2[];
+extern int TEIGI_URA_BG_COL[];
+extern int TEIGI_VIEWLEVEL[];
+extern int TEIGI_BG_MODEL[];
+extern int TEIGI_DUMMY_MODEL[];
+extern int TEIGI_DRANS_PARTS[];
+extern int TEIGI_DRANS_COLS[];
+extern int TEIGI_DEF_PATS__2[];
+extern int TEIGI_DEF_ENDS__2[];
+extern int TEIGI_PT_BASE__2[];
+extern int TEIGI_PT_COLS__2[];
+extern int TEIGI_PT_CAM[];
+extern int TEIGI_DRAW_FLAG[];
+extern int TEIGI_PT_DRAW_FLAG[];
+extern int TEIGI_PT_LIGHT[];
+extern int TEIGI_PT_FIRE__2[];
+extern int TEIGI_PT_HEAL_ZONE[];
+extern int TEIGI_PT_WATER__2[];
+extern int TEIGI_PT_NPC[];
+
+/** Texture animation state initialized after the ground texture archive loads. */
+extern "C" CTextureAnime BtTexAnime;
+extern "C" CTexAnimeData BtTexAnimeData[96];
+
+/** Directory prefix applied to resource names in the item definition file. */
+extern char pathName[256];
+
+/** Persistent caches shared by repeated dungeon-part model directives. */
+extern char filePathList[72][64];
+extern CFrame *frameList[72];
+extern char filePathColList[144][64];
+extern CFrame *frameListCol[144];
+extern int filePathNum;
+extern int filePathColNum;
+extern int nowPartsCnt__2;
+
+/** Scene-wide values filled from model-definition directives. */
+extern int debugModeFlag__2;
+extern "C" float run_speed__2;
+extern "C" sceVu0FMATRIX main_light;
+extern "C" sceVu0FMATRIX main_lightcolor;
+extern "C" sceVu0FMATRIX sub_light;
+extern "C" sceVu0FMATRIX sub_lightcolor;
+extern "C" sceVu0FVECTOR main_ambientlight;
+extern "C" sceVu0FVECTOR sub_ambientlight;
+extern "C" float main_fogRate[4];
+extern "C" float sub_fogRate[4];
+extern "C" u8 main_fogColor[3];
+extern "C" u8 sub_fogColor[3];
+extern u8 main_bgColor[3];
+extern u8 sub_bgColor[3];
+extern u_int *read_buffer;
+
+#ifdef NON_MATCHING
 /**
  * Steps the item definition file past whitespace and comments.
  *
@@ -19,7 +126,6 @@ static int teigiFileSize;
  * @size 0x110
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static int skipSpace(char *text, int pos) {
     for (;;) {
         if (pos >= teigiFileSize) {
@@ -59,8 +165,11 @@ static int skipSpace(char *text, int pos) {
 #else
 INCLUDE_ASM("asm/nonmatchings/itemdata", skipSpace__FPci__2);
 #endif
+
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @549__3);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @550__2);
+
+#ifdef NON_MATCHING
 /**
  * Reads one argument out of the item definition file.
  *
@@ -69,10 +178,98 @@ INCLUDE_RODATA("asm/nonmatchings/itemdata", @550__2);
  * @size 0x664
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
+static int checkArg(char *text, int pos, int *format) {
+    enum ARGUMENT_KIND {
+        ARGUMENT_STRING = 0,
+        ARGUMENT_COMMA_NUMBER = 1,
+        ARGUMENT_NUMBER = 2,
+    };
+
+    int argument;
+
+    for (argument = 0; argument < format[1]; argument++) {
+        int kind = format[argument + 2];
+        argValBuff__2[argLevel__2][0] = (float) format[0];
+
+        if (kind == ARGUMENT_STRING) {
+            int length;
+            if (text[pos] != '"') {
+                return -1;
+            }
+            pos++;
+            for (length = 0; length < 32; length++) {
+                if (text[pos] == '"') {
+                    argStrBuff__2[argLevel__2][length] = '\0';
+                    pos++;
+                    break;
+                }
+                argStrBuff__2[argLevel__2][length] = text[pos++];
+            }
+            if (length == 32) {
+                return -1;
+            }
+            pos = skipSpace(text, pos);
+            continue;
+        }
+
+        if (kind == ARGUMENT_COMMA_NUMBER) {
+            if (text[pos] != ',') {
+                return -1;
+            }
+            pos = skipSpace(text, pos + 1);
+        }
+
+        if (memcmp(&text[pos], "ON", 2) == 0) {
+            argValBuff__2[argLevel__2][argument + 1] = 1.0f;
+            pos += 2;
+        } else if (memcmp(&text[pos], "OFF", 3) == 0) {
+            argValBuff__2[argLevel__2][argument + 1] = 0.0f;
+            pos += 3;
+        } else {
+            int consumed;
+            char first = text[pos];
+            if (first != '-' && (first < '0' || first > '9')) {
+                return -1;
+            }
+            argValBuff__2[argLevel__2][argument + 1] = (float) atof(&text[pos]);
+            for (consumed = 0; consumed < 32; consumed++) {
+                bool numeric = false;
+                if (text[pos] == '-') {
+                    pos++;
+                    numeric = true;
+                }
+                if (text[pos] >= '0' && text[pos] <= '9') {
+                    pos++;
+                    numeric = true;
+                }
+                if (text[pos] == '.') {
+                    pos++;
+                    numeric = true;
+                }
+                if (!numeric) {
+                    break;
+                }
+            }
+            if (consumed == 32) {
+                return -1;
+            }
+        }
+        if (argument >= 32) {
+            printf("************ TAG OVER !!\n");
+        }
+        pos = skipSpace(text, pos);
+    }
+    return pos;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/itemdata", checkArg__FPciPi__2);
+#endif
+
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @653);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @654);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @655);
+
+#ifdef NON_MATCHING
 /**
  * Reads the item definition file and fills in the item tables.
  *
@@ -80,11 +277,89 @@ INCLUDE_RODATA("asm/nonmatchings/itemdata", @655);
  * @address 0x1CE090
  * @size 0x3B4
  */
+void TEIGIAnalyz(char *path) {
+    char *text;
+    int pos;
+    int command;
+
+    argLevel__2 = 0;
+    errFlag2 = 0x7E;
+    BtRubyDoorKey = (int) ((float) rand() * 5.0f / 2.1474836e9f);
+    if (BtRubyDoorKey < 0 || BtRubyDoorKey >= 5) {
+        BtRubyDoorKey = 0;
+    }
+    if (selectMapNo == 2 && UserStatus->cur_floor == 8) {
+        BtRubyDoorKey = 0;
+    }
+
+    MapModelBuffer.Align64();
+    text = (char *) MapModelBuffer.base + MapModelBuffer.used * 16;
+    if (LoadFile(path, text, &teigiFileSize) == 0) {
+        return;
+    }
+    wait_now_loading_vsync();
+    MapModelBuffer.Alloc((teigiFileSize >> 4) + 1);
+    MapModelBuffer.Align64();
+
+    // The parser treats each source line as a null-terminated record.
+    for (pos = 0; pos < teigiFileSize; pos++) {
+        if (text[pos] == '\r' && text[pos + 1] == '\n') {
+            text[pos] = '\0';
+            text[pos + 1] = '\0';
+        }
+    }
+
+    for (pos = 0; pos < teigiFileSize; pos = skipSpace(text, pos)) {
+        bool found = false;
+        pos = skipSpace(text, pos);
+        for (command = 0; TEIGI_TABLE[command] != NULL; command++) {
+            int name_length = strlen(TEIGI_TABLE[command]);
+            if (memcmp(&text[pos], TEIGI_TABLE[command], name_length) != 0) {
+                continue;
+            }
+
+            pos = skipSpace(text, pos + name_length);
+            if ((unsigned int) (command - 11) < 2) {
+                argValBuff__2[argLevel__2][0] = (float) TEIGI_ARG_TABLE[command][0];
+            } else {
+                pos = checkArg(text, pos, TEIGI_ARG_TABLE[command]);
+                if (pos == -1) {
+                    printf("def Error:%s\n", TEIGI_TABLE[command]);
+                    exit__2(-1);
+                }
+                pos = skipSpace(text, pos);
+            }
+            argLevel__2++;
+            if (argLevel__2 >= 640) {
+                printf("arg line level err!!\n");
+                for (;;) {
+                }
+            }
+            found = true;
+            break;
+        }
+        if (!found) {
+            printf("TAG SyntaxError!! >> %s\n", &text[pos]);
+            exit__2(-1);
+        }
+    }
+
+    if (errFlag2 != 0x7E) {
+        printf("TAG MEM ERR2 !!\n");
+        for (;;) {
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/itemdata", TEIGIAnalyz__FPc);
+#endif
+
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @762);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @763);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @764);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @765);
+
+#ifdef NON_MATCHING
 /**
  * Reads the textures the item definitions name.
  *
@@ -92,20 +367,331 @@ INCLUDE_RODATA("asm/nonmatchings/itemdata", @765);
  * @address 0x1CE450
  * @size 0x594
  */
+void TEIGIImgLoad(u_int *pack, CDataAlloc2<1> *arena) {
+    LOADTEXTURE_INFO2 ground_images[5] = {};
+    LOADTEXTURE_INFO2 fire_images[2] = {};
+    LOADTEXTURE_INFO2 minimap_images[2] = {};
+    char full_path[256];
+    int ground_count = 0;
+    int size;
+    int command;
+    int i;
+
+    pathName[0] = '\0';
+    for (i = 0; i < 4; i++) {
+        TexManager.DeleteTextureBlock(i + 64);
+    }
+    TexManager.CleanUpTextureList();
+    TexManager.CleanUpBuffer();
+
+    for (command = 0; command < argLevel__2; command++) {
+        int kind = (int) argValBuff__2[command][0];
+        if (kind == TEIGI_SET_PATH[0]) {
+            strcpy(pathName, argStrBuff__2[command]);
+        }
+
+        if (kind == TEIGI_GRD_IMG__2[0]) {
+            u_char *destination;
+            u_int *image;
+            strcpy(full_path, pathName);
+            strcat(full_path, argStrBuff__2[command]);
+            strcpy(argStrBuff__2[command], full_path);
+
+            destination = arena->base + arena->used * 16;
+            image = GetPackFile(pack, argStrBuff__2[command], &size);
+            arena->Alloc((((size >> 6) + 1) << 6) >> 4);
+            memcpy(destination, image, size);
+            ground_images[ground_count].name = (char *) destination;
+            ground_images[ground_count].block_no = 3;
+            ground_images[ground_count].unk_08 = (int) argValBuff__2[command][2];
+            ground_count++;
+            ground_images[ground_count].name = NULL;
+
+            TexManager.DeleteTextureBlock(3);
+            TexManager.CleanUpTextureList();
+            TexManager.CleanUpBuffer();
+            TexManager.LoadTextureBlockEX(-1, ground_images);
+
+            BtTexAnime.Initialize(BtTexAnimeData, 96);
+            char *config = (char *) GetPackFile(pack, "texanime.cfg", &size);
+            if (config != NULL) {
+                for (i = 0; i < 96; i++) {
+                    BtTexAnimeData[i].Initialize();
+                }
+                BtTexAnime.LoadCFGFile(config, size);
+            }
+        }
+
+        if (kind == TEIGI_FIRE_IMG__2[0]) {
+            strcpy(full_path, pathName);
+            strcat(full_path, argStrBuff__2[command]);
+            printf("%s\n", argStrBuff__2[command]);
+            fire_images[0].name = (char *) GetPackFile(pack, "fire.img", &size);
+            fire_images[0].block_no = 14;
+            if (fire_images[0].name == NULL) {
+                exit__2(-1);
+            }
+            TexManager.DeleteTextureBlock(14);
+            TexManager.CleanUpTextureList();
+            TexManager.CleanUpBuffer();
+            TexManager.LoadTextureBlock(-1, fire_images);
+        }
+
+        if (kind == TEIGI_MINIMAP_IMG[0]) {
+            strcpy(full_path, pathName);
+            strcat(full_path, argStrBuff__2[command]);
+            minimap_images[0].name = (char *) GetPackFile(pack, full_path, &size);
+            minimap_images[0].block_no = 31;
+            if (minimap_images[0].name == NULL) {
+                exit__2(-1);
+            }
+            TexManager.DeleteTextureBlock(31);
+            TexManager.CleanUpTextureList();
+            TexManager.CleanUpBuffer();
+            TexManager.LoadTextureBlock(-1, minimap_images);
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/itemdata", TEIGIImgLoad__FPUiP14CDataAlloc2_1_);
+#endif
+
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @766__2);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @768);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @809__2);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @810);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @811);
 /**
- * Reads the models the item definitions name.
- *
- * @mangled TEIGIMdsLoad__FPUii
- * @address 0x1CE9F0
- * @size 0x2398
+ * Loads dungeon models and applies scene directives from the parsed definitions.
  */
 INCLUDE_ASM("asm/nonmatchings/itemdata", TEIGIMdsLoad__FPUii);
+#ifdef NON_MATCHING
+void TEIGIMdsLoad(u_int *pack, int reuse_only) {
+    CFrameAttr frame_attr;
+    CFrame *current_model = NULL;
+    CFrame *current_collision = NULL;
+    int part_frame = 0;
+    int command;
+
+    nowPartsCnt__2 = 0;
+    if (reuse_only == 0) {
+        filePathNum = 0;
+        filePathColNum = 0;
+    }
+    pathName[0] = '\0';
+
+    for (command = 0; command < argLevel__2; command++) {
+        float *value = argValBuff__2[command];
+        int kind = (int) value[0];
+        int size;
+
+        if (kind == TEIGI_DebugFlag__2[0]) {
+            debugModeFlag__2 = (int) value[1];
+            printf("debugModeFlag = %d\n", debugModeFlag__2);
+        } else if (kind == TEIGI_RUN_SPEED__2[0]) {
+            run_speed__2 = value[1];
+        } else if (kind == TEIGI_LIGHT_C[0] || kind == TEIGI_URA_LIGHT_C[0]) {
+            int light_no = (int) value[7] - 1;
+            float (*direction)[4] = kind == TEIGI_LIGHT_C[0] ? main_light : sub_light;
+            float (*colour)[4] =
+                kind == TEIGI_LIGHT_C[0] ? main_lightcolor : sub_lightcolor;
+            direction[light_no][0] = value[1];
+            direction[light_no][1] = value[2];
+            direction[light_no][2] = value[3];
+            direction[light_no][3] = 0.0f;
+            sceVu0Normalize(direction[light_no], direction[light_no]);
+            colour[light_no][0] = value[4];
+            colour[light_no][1] = value[5];
+            colour[light_no][2] = value[6];
+            colour[light_no][3] = 1.0f;
+        } else if (kind == TEIGI_AMBIENT__2[0] || kind == TEIGI_URA_AMBIENT[0]) {
+            float *ambient =
+                kind == TEIGI_AMBIENT__2[0] ? main_ambientlight : sub_ambientlight;
+            ambient[0] = value[1];
+            ambient[1] = value[2];
+            ambient[2] = value[3];
+        } else if (kind == TEIGI_FOG__2[0] || kind == TEIGI_URA_FOG[0]) {
+            float *rate = kind == TEIGI_FOG__2[0] ? main_fogRate : sub_fogRate;
+            u8 *colour = kind == TEIGI_FOG__2[0] ? main_fogColor : sub_fogColor;
+            rate[0] = value[1];
+            rate[1] = value[2];
+            rate[2] = value[6];
+            rate[3] = value[7];
+            colour[0] = (u8) value[3];
+            colour[1] = (u8) value[4];
+            colour[2] = (u8) value[5];
+        } else if (kind == TEIGI_BG_COL__2[0] || kind == TEIGI_URA_BG_COL[0]) {
+            u8 *colour = kind == TEIGI_BG_COL__2[0] ? main_bgColor : sub_bgColor;
+            colour[0] = (u8) value[1];
+            colour[1] = (u8) value[2];
+            colour[2] = (u8) value[3];
+            if (kind == TEIGI_BG_COL__2[0]) {
+                MGSetBGColor((float) colour[0], (float) colour[1], (float) colour[2], 128.0f);
+            }
+        } else if (kind == TEIGI_SET_PATH[0]) {
+            strcpy(pathName, argStrBuff__2[command]);
+        } else if (kind == TEIGI_VIEWLEVEL[0]) {
+            NowDngMap->draw_dist_scale = value[1];
+        } else if (kind == TEIGI_BG_MODEL[0] || kind == TEIGI_DUMMY_MODEL[0]) {
+            u_int *data = GetPackFile(pack, argStrBuff__2[command], &size);
+            if (data == NULL) {
+                printf("MDS Load Error %s\n", argStrBuff__2[command]);
+                continue;
+            }
+            CFrame *frame = LoadMDSFile(data, &MapModelBuffer, 0, NULL, NULL);
+            if (kind == TEIGI_BG_MODEL[0]) {
+                if (NowDngMap->unk_03B4 < 6) {
+                    NowDngMap->bg_model[NowDngMap->unk_03B4++] = frame;
+                }
+            } else if (NowDngMap->unk_03B8 < 3) {
+                frame->SetAttr(frame_attr, 1, 0x40);
+                SetFrameAttr(frame, 1);
+                NowDngMap->dummy_frame[NowDngMap->unk_03B8++] = frame;
+            }
+        } else if (kind == TEIGI_DRANS_PARTS[0] || kind == TEIGI_DRANS_COLS[0]) {
+            u_int *data = GetPackFile(pack, argStrBuff__2[command], &size);
+            if (data == NULL) {
+                printf("MDS Load Error %s\n", argStrBuff__2[command]);
+            } else if (kind == TEIGI_DRANS_PARTS[0]) {
+                NowDranMapField->LoadModel(data, &MapModelBuffer);
+            } else {
+                NowDranMapField->LoadCollision(data, &MapModelBuffer);
+            }
+        } else if (kind == TEIGI_DEF_PATS__2[0]) {
+            part_frame = 0;
+        } else if (kind == TEIGI_DEF_ENDS__2[0]) {
+            nowPartsCnt__2++;
+        } else if (kind == TEIGI_PT_BASE__2[0]) {
+            char full_path[128];
+            int found = -1;
+            int i;
+            strcpy(full_path, pathName);
+            strcat(full_path, argStrBuff__2[command]);
+            for (i = 0; i < filePathNum; i++) {
+                if (strcmp(filePathList[i], full_path) == 0) {
+                    found = i;
+                }
+            }
+            if (found < 0) {
+                u_int *data;
+                if (reuse_only != 0) {
+                    printf("MDS Cash Error %s\n", full_path);
+                    exit__2(-1);
+                }
+                if (pack == NULL) {
+                    LoadFile(full_path, read_buffer, NULL);
+                    wait_now_loading_vsync();
+                    data = read_buffer;
+                } else {
+                    data = GetPackFile(pack, full_path, &size);
+                }
+                current_model = LoadMDSFile(data, &MapModelBuffer, 0, NULL, NULL);
+                current_model->SetAttr(frame_attr, 1, 0x40);
+                SetFrameAttr(current_model, 1);
+                strcpy(filePathList[filePathNum], full_path);
+                frameList[filePathNum++] = current_model;
+            } else {
+                current_model = frameList[found];
+            }
+            if (nowPartsCnt__2 < 72 && part_frame < 6) {
+                CDungeonParts &part = NowDngMap->parts[nowPartsCnt__2];
+                part.frame[part_frame] = current_model;
+                part.pos[0] = value[3] * 10.0f;
+                part.pos[1] = value[4] * 10.0f;
+                part.pos[2] = value[5] * 10.0f;
+                part.pos[3] = 1.0f;
+                part.unk_170[part_frame] = value[6];
+                part.direction_offset = (s16) value[2];
+            }
+            part_frame++;
+        } else if (kind == TEIGI_PT_COLS__2[0] || kind == TEIGI_PT_CAM[0]) {
+            char full_path[128];
+            int found = -1;
+            int i;
+            strcpy(full_path, pathName);
+            strcat(full_path, argStrBuff__2[command]);
+            for (i = 0; i < filePathColNum; i++) {
+                if (strcmp(filePathColList[i], full_path) == 0) {
+                    found = i;
+                }
+            }
+            if (found < 0) {
+                u_int *data;
+                if (reuse_only != 0) {
+                    printf("Collision Cash Error %s\n", full_path);
+                    exit__2(-1);
+                }
+                if (pack == NULL) {
+                    LoadFile(full_path, read_buffer, NULL);
+                    wait_now_loading_vsync();
+                    data = read_buffer;
+                } else {
+                    data = GetPackFile(pack, full_path, &size);
+                }
+                current_collision = LoadCollisionFile(data, &MapModelBuffer);
+                current_collision->attr.draw_on = 1;
+                strcpy(filePathColList[filePathColNum], full_path);
+                frameListCol[filePathColNum++] = current_collision;
+            } else {
+                current_collision = frameListCol[found];
+            }
+            CDungeonParts &part = NowDngMap->parts[nowPartsCnt__2];
+            if (kind == TEIGI_PT_COLS__2[0]) {
+                part.collision = current_collision;
+                part.unk_010 = (s16) value[2];
+            } else {
+                part.unk_004 = current_collision;
+                part.unk_008 = (s16) value[2];
+            }
+        } else if (kind == TEIGI_DRAW_FLAG[0]) {
+            CFrame *frame = NowDngMap->GetFrameSearch(argStrBuff__2[command]);
+            if (frame != NULL) {
+                frame->attr.draw_on = (int) value[2] != 0 ? 1 : 2;
+            }
+        } else if (kind == TEIGI_PT_DRAW_FLAG[0] && current_model != NULL) {
+            CFrame *frame = current_model->SearchFrame(argStrBuff__2[command]);
+            if (frame != NULL) {
+                frame->attr.draw_on = (int) value[2] != 0 ? 1 : 2;
+            }
+        } else if (kind == TEIGI_PT_LIGHT[0] || kind == TEIGI_PT_FIRE__2[0]) {
+            CDungeonParts &part = NowDngMap->parts[nowPartsCnt__2];
+            if (part.fire_num < 6) {
+                int index = part.fire_num++;
+                part.fire_pos[index][0] = value[1];
+                part.fire_pos[index][1] = value[2];
+                part.fire_pos[index][2] = value[3];
+                part.fire_param[index] = kind == TEIGI_PT_LIGHT[0] ? 2 : 3;
+            }
+        } else if (kind == TEIGI_PT_HEAL_ZONE[0]) {
+            float position[4] = {value[1] * 10.0f, value[2] * 10.0f, value[3] * 10.0f,
+                                 1.0f};
+            NowDngMap->parts[nowPartsCnt__2].SetHealZone(position, value[4] * 10.0f,
+                                                         value[5] * 10.0f);
+        } else if (kind == TEIGI_PT_WATER__2[0]) {
+            CDungeonParts &part = NowDngMap->parts[nowPartsCnt__2];
+            part.water.used = 1;
+            float x0 = value[1] * 10.0f;
+            float y = value[2] * 10.0f;
+            float z0 = value[3] * 10.0f;
+            float x1 = value[4] * 10.0f;
+            float z1 = value[5] * 10.0f;
+            float vertices[4][4] = {{x0, y, z0, 1.0f}, {x1, y, z0, 1.0f}, {x0, y, z1, 1.0f}, {x1, y, z1, 1.0f}};
+            for (int i = 0; i < 4; i++) {
+                sceVu0CopyVector(part.water.vertex[i], vertices[i]);
+            }
+            part.water.red = (u8) value[6];
+            part.water.green = (u8) value[7];
+            part.water.blue = (u8) value[8];
+        } else if (kind == TEIGI_PT_NPC[0]) {
+            sceVu0FVECTOR position = {value[2], value[3], value[4], 1.0f};
+            sceVu0FVECTOR rotation = {value[5], value[6], value[7], 1.0f};
+            u_int *data = GetPackFile(pack, argStrBuff__2[command], &size);
+            NowDngMap->SetNPC((int) value[1], data, nowPartsCnt__2, position, rotation,
+                              (int) value[8], (int) value[9], &MapModelBuffer);
+        }
+    }
+}
+#endif
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @1149);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @1150__2);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @1151__2);

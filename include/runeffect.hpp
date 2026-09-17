@@ -2,6 +2,44 @@
 
 #include "common.h"
 
+#include "rect.hpp"
+
+class CTexture;
+struct sceVif1Packet;
+
+/**
+ * Blends two texture regions into a frame-buffer texture.
+ *
+ * @mangled blendTextuer__FP13sceVif1PacketiiiP8CTextureRC8CRect_i_RC8CRect_i_P8CTextureRC8CRect_i_RC8CRect_i_
+ * @address 0x162580
+ * @size 0x73C
+ */
+void blendTextuer(sceVif1Packet *packet, int destination, int width, int format,
+                  CTexture *first_texture, const CRect_i_ &first_destination,
+                  const CRect_i_ &first_source, CTexture *second_texture,
+                  const CRect_i_ &second_destination, const CRect_i_ &second_source);
+
+/**
+ * Fills the blend table with one period of a sine.
+ *
+ * @mangled initBlendCnt__Fif
+ * @address 0x162CC0
+ * @size 0xB4
+ */
+void initBlendCnt(int count, float scale);
+
+/**
+ * Blends a texture region into a clipped destination with depth testing.
+ *
+ * @mangled blendTextuerTest__FP13sceVif1PacketiiiRC8CRect_i_P8CTextureRC8CRect_i_RC8CRect_i_ff
+ * @address 0x162D80
+ * @size 0x6E4
+ */
+void blendTextuerTest(sceVif1Packet *packet, int destination, int width, int format,
+                      const CRect_i_ &destination_rect, CTexture *texture,
+                      const CRect_i_ &texture_rect, const CRect_i_ &source_rect, float depth,
+                      float phase);
+
 class CRunEffect {
 public:
     int lighting; /**< Whether the dust takes light. */

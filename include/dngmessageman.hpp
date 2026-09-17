@@ -43,3 +43,6 @@ public:
      */
     void SetSteevMes(int first);
 };
+
+/** Dungeon message state shared by battle and the dungeon loop. */
+extern "C" CDngMessageMan DngMessMan;

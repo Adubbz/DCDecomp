@@ -7,12 +7,18 @@ class CTexture;
 class CRandomItem {
 public:
     CTexture *gold_texture; /**< Texture that a dropped pile of gold draws with. */
-    u8 unk_004[0x28C];
-    s32 unk_290[32];
-    u8 unk_09[0x184];
-    s32 pickup_event[32]; /**< Event each dropped item raises when the party walks onto it, or -1. */
-    s32 state[32];        /**< What each dropped item is doing; three where it is being taken back. */
-    u8 unk_594[0x8C];
+    u8 unk_004[0xC];
+    float position[32][4];  /**< World position of each dropped item. */
+    float distance[32];     /**< Distance from each item to the player. */
+    s32 id[32];             /**< Slot identifier, or -1 where the slot is free. */
+    s32 amount[32];         /**< Gold value, or -1 when the slot contains an item. */
+    s32 state[32];          /**< Appearance and pickup animation state. */
+    float phase[32];        /**< Phase of each item's appearance or pickup animation. */
+    float bob_phase;        /**< Shared phase used to make active items hover. */
+    s32 pickup_event[32];   /**< Event each dropped item raises when the party walks onto it, or -1. */
+    s32 pickup_blocked[32]; /**< Nonzero while inventory capacity prevents pickup. */
+    s32 item_no[32];        /**< Item number, or -1 when the slot contains gold. */
+    u8 unk_614[0xC];
 
     /**
      * Draws the items lying on the floor.
@@ -75,7 +81,7 @@ public:
      * @address 0x1D72D0
      * @size 0x4C
      */
-    void CheckID(void);
+    int CheckID(void);
 
     /**
      * Reports whether one item number is already lying on the floor.

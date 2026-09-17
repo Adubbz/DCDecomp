@@ -17,18 +17,18 @@ class CTexture;
 class CFireOmni {
 public:
     s32 unk_00;
-    float raster_phase;    /**< Animation phase of the raster cast on the floor. */
-    float flame_phase;     /**< Animation phase of the flame, wrapping at 128. */
-    float cell_phase;      /**< Texture cell the flame draws, counting down to zero. */
-    float flicker_width;   /**< Random width scale held between flicker steps. */
-    float flicker_height;  /**< Random height scale held between flicker steps. */
-    s16 flicker_seed;      /**< Seed the flicker draw restarts the generator from. */
+    float raster_phase;   /**< Animation phase of the raster cast on the floor. */
+    float flame_phase;    /**< Animation phase of the flame, wrapping at 128. */
+    float cell_phase;     /**< Texture cell the flame draws, counting down to zero. */
+    float flicker_width;  /**< Random width scale held between flicker steps. */
+    float flicker_height; /**< Random height scale held between flicker steps. */
+    s16 flicker_seed;     /**< Seed the flicker draw restarts the generator from. */
     s16 unk_1A;
-    s32 flicker_count;     /**< Frames drawn since the flicker scales were last chosen. */
-    sceVu0FVECTOR pos;     /**< World position that the fire draws at. */
-    s32 texture_set;       /**< Indicates that the textures were supplied rather than looked up. */
-    CTexture *core;        /**< Bright inner texture of the flame. */
-    CTexture *glow;        /**< Soft outer texture of the flame. */
+    s32 flicker_count; /**< Frames drawn since the flicker scales were last chosen. */
+    sceVu0FVECTOR pos; /**< World position that the fire draws at. */
+    s32 texture_set;   /**< Indicates that the textures were supplied rather than looked up. */
+    CTexture *core;    /**< Bright inner texture of the flame. */
+    CTexture *glow;    /**< Soft outer texture of the flame. */
     s32 unk_3C;
 
     /**

@@ -8,7 +8,13 @@
 #include "menu_draw.hpp"
 #include "savedata.hpp"
 
+#ifdef NON_MATCHING
+s16 *GetItemShopList(int shop_no) {
+    return ItemShopList2[shop_no];
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", GetItemShopList__Fi);
+#endif
 
 void InitShopItemListData(SHOP_ITEMLIST *item_list) {
     if (item_list != NULL) {
@@ -17,10 +23,40 @@ void InitShopItemListData(SHOP_ITEMLIST *item_list) {
     }
 }
 
+#ifdef NON_MATCHING
+void ShopIconMove::IconMoveTarSet(int slot_no, int icon_no, int item_no, MENU_ITEMDATA *item_data, float start_x, float start_y, int to_stock) {
+    this->to_stock = to_stock;
+    this->item_no = item_no;
+    this->slot_no = slot_no;
+    this->icon_no = icon_no;
+    memcpy(this->data, item_data, sizeof(this->data));
+    this->pos_x = start_x;
+    this->pos_y = start_y;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", IconMoveTarSet__12ShopIconMoveFiiiP13MENU_ITEMDATAffi);
+#endif
 INCLUDE_ASM("asm/nonmatchings/shop", IconAutoMove__12ShopIconMoveFii);
 INCLUDE_ASM("asm/nonmatchings/shop", IconAutoMoveDraw__12ShopIconMoveFv);
+#ifdef NON_MATCHING
+/** An item's buy and sell price, indexed by item number. */
+struct ITEM_MONEY_ENTRY {
+    s16 buy_price;
+    s16 sell_price;
+};
+
+extern u8 ext_func_info__3_unk_000[0x19C];
+extern ITEM_MONEY_ENTRY ext_func_info__3_money[0x51];
+
+s16 GetItemMoney(int item_no, int sell) {
+    if (sell != 0) {
+        return ext_func_info__3_money[item_no].sell_price;
+    }
+    return ext_func_info__3_money[item_no].buy_price;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", GetItemMoney__Fii);
+#endif
 INCLUDE_ASM("asm/nonmatchings/shop", ShopNoInput__FPiii);
 
 void InitAllHaveData() {

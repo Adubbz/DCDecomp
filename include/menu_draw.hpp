@@ -77,6 +77,12 @@ extern DUN_ENTER_MENU DEnterMenu;
 /** Dungeon progress the entrance menu shows. */
 extern CDngStatusData *DEnterStatusPt;
 
+/** Directory that menu textures load from. */
+extern char AllMenuTextureDir[9];
+
+/** Path fragment of each selectable language's directory and file names. */
+extern char *ComMenuContryName[7];
+
 /** Frames a menu error message has shown for. */
 extern int MenuEtcErrCnt;
 
@@ -123,7 +129,7 @@ int GetMenuLangFlag(void);
  * @address 0x22BA10
  * @size 0x34
  */
-char *GetNowSelectLanguage(int);
+char *GetNowSelectLanguage(int language);
 
 /**
  * Builds the menu texture path of the selected language.
@@ -150,7 +156,7 @@ int LoadFileBGMenuData(char *name, u_long128 *buffer);
  * @address 0x22BB40
  * @size 0x70
  */
-int LoadFileMenuData(char *, unsigned int *);
+int LoadFileMenuData(char *name, unsigned int *buffer);
 
 /**
  * Returns the buffer the battle menu or the edit menu loads its files into.
@@ -159,7 +165,7 @@ int LoadFileMenuData(char *, unsigned int *);
  * @address 0x22BBB0
  * @size 0x48
  */
-u_long128 *BtlMenuBufferSet(int);
+u_long128 *BtlMenuBufferSet(int mode);
 
 /**
  * Rounds a buffer pointer up to the next 64-byte boundary.

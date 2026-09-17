@@ -6,7 +6,14 @@
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 struct SPI_FUNC_PARAM;
-struct TAG_PARAM;
+
+/** Describes one script tag and the types of arguments that follow it. */
+struct TAG_PARAM {
+    char *name;             /**< Text name used to find the tag. */
+    int argument_types[24]; /**< Argument kinds, terminated by a negative value. */
+};
+
+STATIC_ASSERT(sizeof(TAG_PARAM) == 0x64);
 
 class CScriptInterpreter {
 public:
@@ -17,7 +24,7 @@ public:
      * @address 0x15F100
      * @size 0x144
      */
-    void GetNextTAG(void);
+    int GetNextTAG(void);
 
     /**
      * Gives the interpreter the table of tags it recognises.
@@ -90,4 +97,10 @@ public:
      * @size 0x1A4
      */
     void SearchCommand(int *);
+
+    u8 unk_000[0x424];         /**< Parser state and command lookup work. */
+    void *arguments[24];       /**< Arguments decoded for the current command. */
+    char argument_text[0x40C]; /**< Inline storage for decoded string arguments. */
 };
+
+STATIC_ASSERT(sizeof(CScriptInterpreter) == 0x890);

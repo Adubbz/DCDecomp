@@ -434,6 +434,13 @@ typedef struct {
     u_long chain[7][2];
 } sceGsStoreImage;
 
+/**
+ * Packet used by the SDK to transfer one image into GS memory.
+ */
+typedef struct {
+    u_long chain[6][2];
+} sceGsLoadImage;
+
 extern "C" {
 
 void sceGsResetGraph(short mode, short inter, short omode, short ffmd);
@@ -452,6 +459,9 @@ void sceGsSetHalfOffset(sceGsDrawEnv1 *env, short offx, short offy, short field)
 void sceGsSetDefStoreImage(sceGsStoreImage *si, short sbp, short sbw, short spsm, short ssax,
                            short ssay, short rrw, short rrh);
 void sceGsExecStoreImage(sceGsStoreImage *si, u_long128 *dest);
+void sceGsSetDefLoadImage(sceGsLoadImage *li, short dbp, short dbw, short dpsm, short dsax,
+                          short dsay, short rrw, short rrh);
+void sceGsExecLoadImage(sceGsLoadImage *li, u_int *source);
 }
 
 #define R bits.r

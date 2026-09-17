@@ -21,7 +21,7 @@ struct RECT;
  * @address 0x216D50
  * @size 0x34
  */
-int McCheckMCPs2(MC_CARD_INFO *);
+int McCheckMCPs2(MC_CARD_INFO *card);
 
 /**
  * Draws a menu sprite that sways a few pixels around a position in time with
@@ -31,7 +31,7 @@ int McCheckMCPs2(MC_CARD_INFO *);
  * @address 0x216D90
  * @size 0x134
  */
-void DrawObjectVibe(int, int, CTexture *, CRect_i_, unsigned char, int);
+void DrawObjectVibe(int x, int y, CTexture *texture, CRect_i_ src_rect, unsigned char alpha, int flag);
 
 /**
  * Draws a swaying menu sprite from a source rectangle given as a RECT.
@@ -40,7 +40,7 @@ void DrawObjectVibe(int, int, CTexture *, CRect_i_, unsigned char, int);
  * @address 0x216ED0
  * @size 0x68
  */
-void DrawObjectVibe(int, int, CTexture *, RECT, unsigned char, int);
+void DrawObjectVibe(int x, int y, CTexture *texture, RECT src_rect, unsigned char alpha, int flag);
 
 /**
  * Draws one swaying 32-pixel icon of the common menu texture, with a shadow
@@ -323,3 +323,8 @@ extern ClsMes AtoraNameMes;
  * The memory card state the save, load and option screens work through.
  */
 extern CMemoryCardAccess McAccess;
+
+/**
+ * Frame counter the swaying menu sprites animate with.
+ */
+extern s32 CursorVibeCnt;

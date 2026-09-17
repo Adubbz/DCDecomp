@@ -1,5 +1,7 @@
 #include "bound.hpp"
 
+#include "frame.hpp"
+
 /**
  * Returns the length of a three-component vector.
  */
@@ -83,7 +85,52 @@ void CBound::ChangeDir(float *from_position, float *to_position, float *up_direc
     sceVu0CopyVector(up, up_direction);
 }
 
+#ifdef NON_MATCHING
+void CBound::UpDateDir(void) {
+    sceVu0FMATRIX frame_matrix;
+    sceVu0FVECTOR world_from;
+    sceVu0FVECTOR world_to;
+    sceVu0FVECTOR world_up;
+    sceVu0FVECTOR span;
+
+    if (frame0 != NULL) {
+        frame0->GetLWMatrix(frame_matrix);
+        sceVu0ApplyMatrix(world_from, frame_matrix, from);
+        sceVu0ApplyMatrix(world_to, frame_matrix, to);
+        up[3] = 0.0f;
+        sceVu0ApplyMatrix(world_up, frame_matrix, up);
+        sceVu0SubVector(span, world_from, world_to);
+        position[0] = (world_from[0] + world_to[0]) / 2.0f;
+        position[1] = (world_from[1] + world_to[1]) / 2.0f;
+        position[2] = (world_from[2] + world_to[2]) / 2.0f;
+    } else {
+        sceVu0CopyVector(world_up, up);
+        sceVu0SubVector(span, from, to);
+        position[0] = (from[0] + to[0]) / 2.0f;
+        position[1] = (from[1] + to[1]) / 2.0f;
+        position[2] = (from[2] + to[2]) / 2.0f;
+    }
+
+    SetDir(span, world_up);
+    float half_depth = extent[2];
+    float half_height = extent[1];
+    float half_width = extent[0];
+    extent[0] = half_width;
+    extent[1] = half_height;
+    extent[2] = half_depth;
+    if (!(extent[0] <= 0.0f)) {
+        reciprocal[0] = 1.0f / half_width;
+    }
+    if (!(extent[1] <= 0.0f)) {
+        reciprocal[1] = 1.0f / half_height;
+    }
+    if (!(extent[2] <= 0.0f)) {
+        reciprocal[2] = 1.0f / half_depth;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/bound", UpDateDir__6CBoundFv);
+#endif
 #ifdef NON_MATCHING
 void CBound::SetDir(float *direction, float *up_direction) {
     sceVu0FVECTOR origin = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -94,8 +141,101 @@ void CBound::SetDir(float *direction, float *up_direction) {
 #else
 INCLUDE_ASM("asm/nonmatchings/bound", SetDir__6CBoundFPfPf);
 #endif
+#ifdef NON_MATCHING
+void CBound::SetDir(float *unused_direction) {
+    sceVu0Normalize(direction, direction);
+    float length = vuabs(direction);
+    float saved_y = direction[1];
+    direction[1] = 0.0f;
+    float horizontal_length = vuabs(direction);
+    direction[1] = saved_y;
+
+    float horizontal_sine = 0.0f;
+    float horizontal_cosine;
+    if (horizontal_length == 0.0f) {
+        horizontal_cosine = 1.0f;
+    } else {
+        horizontal_cosine = direction[2] / horizontal_length;
+        horizontal_sine = -direction[0] / horizontal_length;
+    }
+    if (length == 0.0f) {
+        length = 1.0f;
+    }
+    float horizontal_ratio = horizontal_length / length;
+    float vertical_ratio = direction[1] / length;
+
+    sceVu0UnitMatrix(inverse);
+    inverse[0][0] = horizontal_cosine;
+    inverse[0][1] = -horizontal_sine * vertical_ratio;
+    inverse[0][2] = horizontal_sine * horizontal_ratio;
+    inverse[0][3] = 0.0f;
+    inverse[1][0] = 0.0f;
+    inverse[1][1] = -horizontal_ratio;
+    inverse[1][2] = -vertical_ratio;
+    inverse[1][3] = 0.0f;
+    inverse[2][0] = horizontal_sine;
+    inverse[2][1] = horizontal_cosine * vertical_ratio;
+    inverse[2][2] = -horizontal_cosine * horizontal_ratio;
+    inverse[2][3] = 0.0f;
+    sceVu0TransposeMatrix(matrix, inverse);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/bound", SetDir__6CBoundFPf);
+#endif
+#ifdef NON_MATCHING
+void CBound::UpDateDirPos(void) {
+    sceVu0FMATRIX frame_matrix;
+    sceVu0FVECTOR world_from;
+    sceVu0FVECTOR world_to;
+    sceVu0FVECTOR span;
+    sceVu0FVECTOR end_extension;
+    sceVu0FVECTOR start_extension;
+
+    if (frame0 != NULL) {
+        from[3] = 1.0f;
+        frame0->GetLWMatrix(frame_matrix);
+        sceVu0ApplyMatrix(world_from, frame_matrix, from);
+    } else {
+        sceVu0CopyVector(world_from, from);
+    }
+    if (frame1 != NULL) {
+        to[3] = 1.0f;
+        frame1->GetLWMatrix(frame_matrix);
+        sceVu0ApplyMatrix(world_to, frame_matrix, to);
+    } else {
+        sceVu0CopyVector(world_to, to);
+    }
+
+    position[0] = (world_from[0] + world_to[0]) * 0.5f;
+    position[1] = (world_from[1] + world_to[1]) * 0.5f;
+    position[2] = (world_from[2] + world_to[2]) * 0.5f;
+    sceVu0SubVector(span, world_to, world_from);
+    sceVu0ScaleVector(end_extension, span, (length0 - 1.0f) * 0.5f);
+    sceVu0ScaleVector(start_extension, span, (length1 - 1.0f) * 0.5f);
+    sceVu0AddVector(world_to, world_to, end_extension);
+    sceVu0SubVector(world_from, world_from, start_extension);
+    sceVu0SubVector(span, world_to, world_from);
+
+    float half_depth = extent[2];
+    float half_height = extent[1];
+    float half_width = extent[0];
+    extent[0] = half_width;
+    extent[1] = half_height;
+    extent[2] = half_depth;
+    if (!(extent[0] <= 0.0f)) {
+        reciprocal[0] = 1.0f / half_width;
+    }
+    if (!(extent[1] <= 0.0f)) {
+        reciprocal[1] = 1.0f / half_height;
+    }
+    if (!(extent[2] <= 0.0f)) {
+        reciprocal[2] = 1.0f / half_depth;
+    }
+    SetDir(span);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/bound", UpDateDirPos__6CBoundFv);
+#endif
 
 void CBound::UpDate() {
     switch (state) {

@@ -71,6 +71,21 @@ STATIC_ASSERT(sizeof(SAVEDATA_INFO) == 0x38);
 #define MC_SAVE_FILE_MAX 12
 
 /**
+ * Entries CMemoryCardAccess::dir_table holds.
+ */
+#define MC_DIR_ENTRY_MAX 99
+
+/**
+ * One entry that sceMcGetDir writes into CMemoryCardAccess::dir_table.
+ */
+struct MC_DIR_ENTRY {
+    u8 unk_00[0x20];
+    char name[0x20]; /**< Name of the file or directory. */
+};
+
+STATIC_ASSERT(sizeof(MC_DIR_ENTRY) == 0x40);
+
+/**
  * Names the operation dispatched by CMemoryCardAccess::Step.
  */
 // clang-format off
@@ -379,7 +394,7 @@ public:
     u8 unk_C0[4];
     s32 step;               /**< Step that the current operation has reached. */
     s32 fd;                 /**< File that the last sceMcOpen returned, -1 until one does. */
-    u8 (*dir_table)[64];    /**< Table that GetDir fills with the entries of the save directory. */
+    MC_DIR_ENTRY *dir_table; /**< Table that GetDir fills with the entries of the save directory. */
     CSaveData *save_buffer; /**< Save data at the start of the save image. */
     char *check_sum;        /**< Checksum bytes of the save image, one for every 64 bytes of the save data. */
     char *unk_D8;
@@ -412,4 +427,10 @@ void InitSaveFileInfoTbl();
  * @address 0x213540
  * @size 0x90
  */
-int GetOpenAttribute(char *);
+int GetOpenAttribute(char *name);
+
+/**
+ * Directory entries that CMemoryCardAccess::dir_table reads the save
+ * directory's listing into.
+ */
+extern MC_DIR_ENTRY SaveFileInfo[MC_DIR_ENTRY_MAX];

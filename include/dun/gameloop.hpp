@@ -13,10 +13,12 @@ class CCharacter;
 class CCameraFollow;
 class CCPoly;
 struct BT_SHOT_EFFECT;
+struct WEAPON_HAVE;
 class CFrame;
 class CCollisionData;
 class CDngMessageMan;
 class CDungeonMap;
+class CDranMapField;
 class CHitValue;
 class CMenuItemStep;
 class CMonstorUnit;
@@ -104,6 +106,9 @@ extern s32 BtEquipMasuisyou;
 /** Map of the floor the player is on. */
 extern CDungeonMap *NowDngMap;
 
+/** Drainage-field set used by the current dungeon floor. */
+extern CDranMapField *NowDranMapField;
+
 /** Damage numbers the dungeon shows. */
 extern CHitValue *NowHitValue;
 
@@ -112,6 +117,9 @@ extern CSHOT_EFFECT_PACK *NowShotEffect;
 
 /** Hits the collision test found this frame. */
 extern CCollisionData *NowColData;
+
+/** Weapon currently equipped by the player character. */
+extern WEAPON_HAVE *NowWeaponHave;
 
 /**
  * @mangled LoadBaseTexture__Fv

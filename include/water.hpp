@@ -2,10 +2,9 @@
 
 #include "common.h"
 
-#include "dataalloc_fwd.hpp"
-
 #include <libvu0.h>
 
+#include "dataalloc_fwd.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "visualvu1.hpp"
@@ -28,19 +27,17 @@ public:
      */
     CWater &operator=(CWater &);
 
-    s32 rows;      /**< Grid rows the surface is divided into. */
-    s32 columns;   /**< Grid columns the surface is divided into. */
-    float *height; /**< Wave heights the surface currently draws from. */
-    float *height_a; /**< First of the two wave-height buffers. */
-    float *height_b; /**< Second of the two wave-height buffers. */
+    s32 rows;                /**< Grid rows the surface is divided into. */
+    s32 columns;             /**< Grid columns the surface is divided into. */
+    float *height;           /**< Wave heights the surface currently draws from. */
+    float *height_a;         /**< First of the two wave-height buffers. */
+    float *height_b;         /**< Second of the two wave-height buffers. */
     sceVu0FVECTOR vertex[4]; /**< The four corners of the surface. */
-    s32 unk_060;
-    float unk_064;
-    float unk_068;
-    CVisualPolyVu1 visual; /**< Draws the polygons of the surface. */
-    u8 color[4];           /**< Red, green, blue and alpha channels of the surface. */
-    float wave_speed; /**< Speed the ripples travel across the grid at. */
-    float damping;    /**< Rate the ripples lose height at. */
+    u_int *packet[3];        /**< VU packets, including one for each display buffer. */
+    CVisualPolyVu1 visual;   /**< Draws the polygons of the surface. */
+    u8 color[4];             /**< Red, green, blue and alpha channels of the surface. */
+    float wave_speed;        /**< Speed the ripples travel across the grid at. */
+    float damping;           /**< Rate the ripples lose height at. */
     float unk_09C;
     float unk_0A0;
     s32 unk_0A4;
@@ -72,7 +69,7 @@ public:
      * @address 0x1607E0
      * @size 0x740
      */
-    void CreateVUData(unsigned int *packet, RenderInfo *info);
+    int CreateVUData(unsigned int *packet, RenderInfo *info);
 
     /**
      * Draws the surface through the vector unit.

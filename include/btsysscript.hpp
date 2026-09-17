@@ -37,6 +37,9 @@ struct BT_OBJ_HANDLE {
  */
 void BtSystemScriptEventInfoInit(void);
 
+/** Table of object handles the battle script system can bind. */
+extern BT_OBJ_HANDLE BtObjHdl[32];
+
 /**
  * Gives one of the thirty-two object handles, or nothing where the index is out of range.
  *

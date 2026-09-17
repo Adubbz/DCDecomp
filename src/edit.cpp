@@ -21,14 +21,16 @@
 #include "debugfont.hpp"
 #include "dngstatusdata.hpp"
 #include "edit.hpp"
-#include "editloop3.hpp"
+#include "effectmacro.hpp"
 #include "editground.hpp"
+#include "editloop3.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "gamepad.hpp"
 #include "mapparts.hpp"
 #include "mathutil.hpp"
 #include "mglib.hpp"
+#include "npcharacter.hpp"
 #include "objanime.hpp"
 #include "rect.hpp"
 #include "savedata.hpp"
@@ -48,8 +50,6 @@ struct SOUND_SRC {
     float vol[16];
     float pan[16];
 };
-
-void DepthOfField(float *dist, int level, int alpha, int blur);
 
 struct EPARTS_FUNC_DATA;
 
@@ -533,6 +533,7 @@ INCLUDE_ASM("asm/nonmatchings/edit", EdAmbientPlay__Ff);
 void EdSetAmbientVol(float volume) {
     SndAmbientSetVolf(volume);
 }
+
 /* The sound the map editor puts in the world: every effect a map part carries that names a sound
    is measured against the camera each frame, and what survives is entered into one of four
    sources. A source is one sound effect and the set of places it is coming from at once, so a
@@ -841,7 +842,14 @@ INCLUDE_ASM("asm/nonmatchings/edit", EdDoorCloseSe__FiPf);
 #ifdef NON_MATCHING
 int EdGetDoorMotion(int door_no, int state) {
     static int motion[8][2] = {
-        {3, 4}, {10, 10}, {3, 4}, {10, 10}, {3, 4}, {10, 10}, {10, 10}, {10, 10},
+        {3, 4},
+        {10, 10},
+        {3, 4},
+        {10, 10},
+        {3, 4},
+        {10, 10},
+        {10, 10},
+        {10, 10},
     };
 
     if (door_no < 0 || door_no >= 8) {
@@ -964,7 +972,92 @@ INCLUDE_RODATA("asm/nonmatchings/edit", @435);
  * @address 0x1725F0
  * @size 0x4C8
  */
+#ifdef NON_MATCHING
+void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count,
+                     CNPCharacter *npcs, int *npc_draw_masks, int draw_shadows,
+                     ED_EVENT_INFO *event) {
+    if (EdDebugCharaDrawOff != 0) {
+        player_draw_mask = 0;
+    }
+
+    if (event != NULL) {
+        player_draw_mask = 3;
+        if (event->player_draw == 0) {
+            player_draw_mask = 2;
+        }
+        if (event->player_shadow_draw == 0) {
+            player_draw_mask &= ~2;
+        }
+        draw_shadows = event->player_shadow_draw != 0;
+
+        if (npc_draw_masks != NULL) {
+            for (int i = 0; i < npc_count; i++) {
+                if (event->npc_draw[i] == 0) {
+                    npc_draw_masks[i] = 0;
+                }
+                if (event->npc_shadow_draw[i] == 0) {
+                    npc_draw_masks[i] &= ~2;
+                } else {
+                    draw_shadows = 1;
+                }
+            }
+        }
+
+        for (int i = 0; i < npc_count && npc_draw_masks != NULL; i++) {
+            CNPCharacter *npc = &npcs[i];
+            if (npc->CheckDraw() != 0 && event->npc_draw_before[i] != 0 && (npc_draw_masks[i] & 1) != 0 && npc->initialized != 0 && npc->draw_enabled != 0) {
+                npc_draw_masks[i] = 0;
+                TexManager.ReloadTexture(Vif1Packet, npc->unk_148C);
+                npc->chara.TextureAnime(npc->unk_148C);
+                npc->Draw();
+            }
+        }
+    }
+
+    if (draw_shadows != 0) {
+        sceVu0FMATRIX light_direction;
+        sceVu0FMATRIX light_colour;
+        sceVu0FMATRIX shadow_direction;
+        sceVu0FMATRIX saved_colour;
+        MGGetPLight(light_direction, light_colour);
+        sceVu0CopyMatrix(shadow_direction, light_direction);
+        sceVu0CopyMatrix(saved_colour, light_colour);
+        EdLimitShadowLight(shadow_direction, 3.0f);
+        MGSetPLight(shadow_direction, light_colour);
+        TexManager.ReloadTexture(Vif1Packet, 0x16);
+        CTexture *shadow = TexManager.GetTexture((char *) "shadow_buff", -1);
+        MGBeginDrawShadow(*(sceGsTex0 *) &shadow->tex0);
+
+        if (player_draw_mask & 2) {
+            player->DrawShadow();
+        }
+        for (int i = 0; i < npc_count && npc_draw_masks != NULL; i++) {
+            if ((npc_draw_masks[i] & 2) != 0 && npcs[i].initialized != 0 && npcs[i].draw_enabled != 0) {
+                npcs[i].DrawShadow();
+            }
+        }
+        MGEndDrawShadow(0x34);
+        MGSetPLight(light_direction, saved_colour);
+    }
+
+    if (player_draw_mask & 1) {
+        TexManager.ReloadTexture(Vif1Packet, 8);
+        player->TextureAnime(8);
+        player->Draw();
+    }
+
+    for (int i = 0; i < npc_count && npc_draw_masks != NULL; i++) {
+        CNPCharacter *npc = &npcs[i];
+        if (npc->CheckDraw() != 0 && (npc_draw_masks[i] & 1) != 0 && npc->initialized != 0 && npc->draw_enabled != 0) {
+            TexManager.ReloadTexture(Vif1Packet, npc->unk_148C);
+            npc->chara.TextureAnime(npc->unk_148C);
+            npc->Draw();
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit", EdDrawCharacter__FP10CCharacteriiP12CNPCharacterPiiP13ED_EVENT_INFO);
+#endif
 
 /* Giving a map part one more effect: the description table is scanned from the front for an entry
    nothing has claimed, the effect is built on the part's own frame, and the part is told which
@@ -1219,6 +1312,7 @@ int EdCheckGetItem(int item) {
 void EdGetItemFile(int item_no, char *model_path, char *texture_path) {
     BtGetItemNamePath(model_path, texture_path, item_no);
 }
+
 /**
  * Draws the item the player is holding up.
  *
@@ -1690,6 +1784,7 @@ void EdSaveFrameImageInit() {
     frame_image_tex.Initialize();
     frame_image_flag = 0;
 }
+
 /**
  * Runs one frame of the editor's message menu and reports when it closes.
  *

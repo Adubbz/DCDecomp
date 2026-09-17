@@ -1,7 +1,10 @@
 #include "actionseq.hpp"
+#include "sce/libvu0.h"
+
+#include <cmath>
+
 #include "character.hpp"
 #include "mathutil.hpp"
-#include "sce/libvu0.h"
 
 void CActionSeq::Initialize(ACT_SEQ *records, int count) {
     ClearSeq();
@@ -34,6 +37,7 @@ void CActionSeq::ClearSeq() {
     anime_trigger = 0;
     anime_delay = 0;
 }
+
 ACT_SEQ *CActionSeq::GetNextSeq() {
     ACT_SEQ *sequence = pool;
     int index = 0;
@@ -270,4 +274,212 @@ static ACT_SEQ *DeleteSeq(ACT_SEQ *sequence) {
     return next;
 }
 
+#ifdef NON_MATCHING
+/**
+ * Advances queued actions and updates the bound character transform.
+ *
+ * @mangled Play__10CActionSeqFv
+ * @address 0x1554A0
+ * @size 0xB04
+ */
+void CActionSeq::Play() {
+    if (move_head == NULL && motion_head == NULL && anime_head == NULL) {
+        return;
+    }
+
+    while (move_head != NULL) {
+        ACT_SEQ *sequence = move_head;
+        if (sequence->operation == ACT_SEQ_MOVE) {
+            move_frame++;
+            if (move_frame >= sequence->duration) {
+                sceVu0CopyVector(position, sequence->arguments.vector);
+                sceVu0CopyVector(start_position, sequence->arguments.vector);
+                move_head = DeleteSeq(sequence);
+                move_frame = 0;
+            } else {
+                sceVu0FVECTOR offset;
+                sceVu0SubVector(offset, sequence->arguments.vector, start_position);
+                sceVu0ScaleVector(offset, offset,
+                                  (float) move_frame / (float) sequence->duration);
+                sceVu0AddVector(position, start_position, offset);
+            }
+            break;
+        }
+        if (sequence->operation == ACT_SEQ_WAIT_ROTATION) {
+            if (rotation_complete != 0) {
+                rotation_mode = 0;
+                rotation_complete = 0;
+                move_head = DeleteSeq(sequence);
+            }
+            break;
+        }
+        switch (sequence->operation) {
+            case ACT_SEQ_TRIGGER_MOTION:
+                if (motion_trigger != 0) {
+                    motion_head = DeleteSeq(motion_head);
+                    if (motion_head == NULL) {
+                        motion_tail = NULL;
+                    }
+                }
+                if (motion_head != NULL) {
+                    motion_trigger = 1;
+                    motion_delay = sequence->duration;
+                }
+                break;
+            case ACT_SEQ_TRIGGER_ANIMATION:
+                anime_trigger = 1;
+                anime_delay = sequence->duration;
+                break;
+            case ACT_SEQ_SET_POSITION:
+                sceVu0CopyVector(position, sequence->arguments.vector);
+                sceVu0CopyVector(start_position, sequence->arguments.vector);
+                move_frame = 0;
+                break;
+            case ACT_SEQ_SET_ROTATION:
+                sceVu0CopyVector(rotation, sequence->arguments.vector);
+                sceVu0CopyVector(start_rotation, sequence->arguments.vector);
+                move_frame = 0;
+                break;
+            case ACT_SEQ_ROTATE_REFERENCE:
+                rotation_mode = 1;
+                rotation_complete = 0;
+                sceVu0CopyVector(rotation_target, sequence->arguments.vector);
+                break;
+            case ACT_SEQ_ROTATE_MOVEMENT:
+                rotation_mode = 2;
+                rotation_complete = 0;
+                sceVu0CopyVector(rotation_target, sequence->arguments.vector);
+                break;
+            case ACT_SEQ_ROTATE_ANGLE:
+                rotation_mode = 3;
+                rotation_complete = 0;
+                sceVu0CopyVector(rotation_target, sequence->arguments.vector);
+                break;
+            case ACT_SEQ_CLEAR_ROTATION:
+                rotation_mode = 0;
+                rotation_complete = 0;
+                break;
+            case ACT_SEQ_DELAY_ROTATION:
+                rotation_delay = sequence->duration;
+                break;
+        }
+        move_head = DeleteSeq(sequence);
+    }
+    if (move_head == NULL) {
+        move_tail = NULL;
+    }
+
+    while (rotation_head != NULL) {
+        ACT_SEQ *sequence = rotation_head;
+        if (sequence->operation == ACT_SEQ_SET_ROTATION) {
+            sceVu0CopyVector(rotation, sequence->arguments.vector);
+            sceVu0CopyVector(start_rotation, sequence->arguments.vector);
+            rotation_head = DeleteSeq(sequence);
+            rotation_frame = 0;
+            continue;
+        }
+        rotation_frame++;
+        if (rotation_frame >= sequence->duration) {
+            sceVu0CopyVector(rotation, sequence->arguments.vector);
+            sceVu0CopyVector(start_rotation, sequence->arguments.vector);
+            rotation_head = DeleteSeq(sequence);
+            rotation_frame = 0;
+        } else {
+            sceVu0FVECTOR offset;
+            sceVu0SubVector(offset, sequence->arguments.vector, start_rotation);
+            sceVu0ScaleVector(offset, offset,
+                              (float) rotation_frame / (float) sequence->duration);
+            sceVu0AddVector(rotation, start_rotation, offset);
+        }
+        break;
+    }
+
+    if (rotation_mode != 0 && rotation_delay == 0) {
+        sceVu0FVECTOR direction = {0.0f, 0.0f, 0.0f, 0.0f};
+        if (rotation_mode == 1) {
+            sceVu0SubVector(direction, rotation_target, position);
+        } else if (rotation_mode == 2) {
+            sceVu0SubVector(direction, position, start_position);
+        }
+        if (rotation_mode == 3) {
+            rotation[1] = AngleInterpolate(rotation[1], rotation_target[1],
+                                           rotation_target[3], 0);
+            if (AngleCmp(rotation[1], rotation_target[1], 0.001f) == 0) {
+                rotation_complete = 1;
+            }
+        } else if (direction[0] != 0.0f || direction[2] != 0.0f) {
+            float target = atan2f(direction[0], direction[2]);
+            rotation[1] = AngleInterpolate(rotation[1], target, rotation_target[3], 0);
+            if (AngleCmp(rotation[1], target, 0.001f) == 0) {
+                rotation_complete = 1;
+            }
+        } else {
+            rotation_complete = 1;
+        }
+    }
+    if (--rotation_delay < 0) {
+        rotation_delay = 0;
+    }
+
+    if (motion_trigger != 0 && motion_delay <= 0 && motion_head != NULL && character != NULL) {
+        ACT_SEQ *sequence = motion_head;
+        character->SetMotion(sequence->arguments.animation.id,
+                             sequence->arguments.animation.mode,
+                             sequence->arguments.animation.playback.speed);
+    }
+
+    if (anime_trigger != 0 && anime_delay <= 0 && character != NULL) {
+        int active = 0;
+        while (anime_head != NULL) {
+            ACT_SEQ *sequence = anime_head;
+            if (sequence->operation != ACT_SEQ_ANIMATION) {
+                anime_head = DeleteSeq(sequence);
+                continue;
+            }
+            if (sequence->duration != 0 && anime_frame >= sequence->duration) {
+                if (sequence->arguments.animation.playback.disable_after != 0) {
+                    character->TexAnimeOff(sequence->arguments.animation.id);
+                }
+                anime_head = DeleteSeq(sequence);
+                anime_frame = 0;
+                continue;
+            }
+            if (sequence->arguments.animation.id == -1 &&
+                sequence->arguments.animation.mode == 0) {
+                character->ClearTexAnime();
+            }
+            if (sequence->arguments.animation.mode != 0) {
+                character->TexAnimeOn(sequence->arguments.animation.id);
+            } else {
+                character->TexAnimeOff(sequence->arguments.animation.id);
+            }
+            if (sequence->duration == 0) {
+                anime_head = DeleteSeq(sequence);
+                anime_frame = 0;
+                continue;
+            }
+            active = 1;
+            break;
+        }
+        anime_frame += active;
+        if (anime_head == NULL) {
+            anime_tail = NULL;
+            anime_trigger = 0;
+        }
+    }
+
+    if (--motion_delay < 0) {
+        motion_delay = 0;
+    }
+    if (--anime_delay < 0) {
+        anime_delay = 0;
+    }
+    if (character != NULL) {
+        character->SetPosition(position);
+        rotation[1] = AngleLimit(rotation[1]);
+        character->SetRotation(rotation);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/actionseq", Play__10CActionSeqFv);
+#endif

@@ -48,7 +48,28 @@ struct OBJ_ANIME_SEQ {
     sceVu0FVECTOR range;    /**< Extent over which the animation moves. */
     sceVu0FVECTOR speed;    /**< Rate at which the animation advances. */
     sceVu0FVECTOR offset;   /**< Displacement applied to the animated frame. */
-    u8 unk_50[0x40];
+    sceVu0FVECTOR current;     /**< Current animated value applied to the attached frames. */
+    CFrame *frames[10];        /**< Frames driven by this animation. */
+    int completion_flag;      /**< Map flag associated with the source function marker. */
+    int unk_8C;
+
+    /**
+     * Clears one object-animation sequence.
+     *
+     * @mangled Initialize__13OBJ_ANIME_SEQFv
+     * @address 0x165C90
+     * @size 0x14
+     */
+    void Initialize(void);
+
+    /**
+     * Constructs an object-animation sequence.
+     *
+     * @mangled __ct__13OBJ_ANIME_SEQFv
+     * @address 0x165CB0
+     * @size 0x30
+     */
+    OBJ_ANIME_SEQ(void);
 };
 
 STATIC_ASSERT(sizeof(OBJ_ANIME_SEQ) == 0x90);
@@ -138,7 +159,7 @@ void InitObjAnime(CFrame **, int, EPARTS_FUNC_DATA *, OBJ_ANIME_SEQ *);
  * @address 0x166170
  * @size 0x68
  */
-void end_check(float, float, float);
+int end_check(float value, float target, float step);
 
 /**
  * Advances one object animation by a frame.

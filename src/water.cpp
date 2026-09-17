@@ -3,8 +3,16 @@
 
 #include "water.hpp"
 
+#include <libpkt.h>
+
 #include "boxvu0.hpp"
+#include "dataalloc.hpp"
 #include "mglib.hpp"
+#include "sysmes.hpp"
+#include "texture.hpp"
+
+extern int DBuffID;
+int SetTEX0(u_int *packet, u_long tex0, u_long tex1);
 
 char WaterData[0x10];
 
@@ -21,9 +29,119 @@ void CWater::SetColor(unsigned char red, unsigned char green, unsigned char blue
     color[2] = blue;
     color[3] = alpha;
 }
+#ifdef NON_MATCHING
+int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
+    sceVu0FMATRIX local_to_world;
+    sceVu0FMATRIX local_to_screen;
+    sceVu0FVECTOR row_step;
+    sceVu0FVECTOR column_step;
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR transformed;
+    sceVu0FVECTOR normal;
+    CTexture *texture;
+    int word = 0;
+
+    union {
+        u_int *pointer;
+        float value;
+    } packet_address;
+
+    packet_address.pointer = output;
+    visual.unk_010[2] = packet_address.value;
+
+    frame.GetLWMatrix(local_to_world);
+    sceVu0MulMatrix(local_to_screen, info->view_screen, local_to_world);
+    for (int axis = 0; axis < 3; axis++) {
+        row_step[axis] = (vertex[1][axis] - vertex[0][axis]) / (float) (rows - 1);
+        column_step[axis] = (vertex[2][axis] - vertex[0][axis]) / (float) (columns - 1);
+    }
+    row_step[3] = 0.0f;
+    column_step[3] = 0.0f;
+    pretest(local_to_screen, column_step);
+
+    texture = TexManager.GetTexture("work", -1);
+    if (unk_0A4 == 0) {
+        word = SetTEX0(output, texture->tex0 & ~(4ULL << 32), 0);
+    } else {
+        word = 16;
+    }
+
+    // Each grid cell contributes the two vertices of a triangle strip row.
+    for (int row = 0; row < rows - 1; row++) {
+        for (int column = 0; column < columns; column++) {
+            for (int side = 0; side < 2; side++) {
+                int source_row = row + side;
+                int index = column + source_row * columns;
+                for (int axis = 0; axis < 3; axis++) {
+                    position[axis] = vertex[0][axis] + (float) source_row * row_step[axis] +
+                                     (float) column * column_step[axis];
+                }
+                position[1] += height[index] * unk_09C;
+                position[3] = 1.0f;
+                Trans_AddCell(transformed, position);
+
+                int left = column > 0 ? index - 1 : index;
+                int right = column + 1 < columns ? index + 1 : index;
+                int above = source_row > 0 ? index - columns : index;
+                int below = source_row + 1 < rows ? index + columns : index;
+                normal[0] = (height[left] - height[right]) * unk_0A0;
+                normal[1] = 1.0f;
+                normal[2] = (height[above] - height[below]) * unk_0A0;
+                normal[3] = 0.0f;
+                sceVu0Normalize(normal, normal);
+
+                float *vertex_data = (float *) &output[word];
+                sceVu0CopyVector(vertex_data, transformed);
+                vertex_data += 4;
+                vertex_data[0] = (float) color[0];
+                vertex_data[1] = (float) color[1];
+                vertex_data[2] = (float) color[2];
+                vertex_data[3] = (float) color[3];
+                sceVu0CopyVector(vertex_data + 4, normal);
+                word += 12;
+            }
+        }
+    }
+    visual.unk_0C = word >> 2;
+    return visual.unk_0C;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/water", CreateVUData__6CWaterFPUiP10RenderInfo);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/water", @345__2);
+#ifdef NON_MATCHING
+extern "C" void DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(
+    CWater *water, RenderInfo *info, sceVif1Packet *draw_packet, void *parent_info) {
+    if (water->CheckClip() != 0) {
+        return;
+    }
+
+    sceGsTest test = mgPixelTest;
+    test.bits.ate = 0;
+    test.bits.date = 0;
+    sceVif1PkCnt(draw_packet, 0);
+    sceVif1PkOpenDirectCode(draw_packet, 0);
+    sceVif1PkOpenGifTag(draw_packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(draw_packet, SCE_GS_TEST_1, *(u_long *) &test);
+    sceVif1PkCloseGifTag(draw_packet);
+    sceVif1PkCloseDirectCode(draw_packet);
+
+    sceVu0FMATRIX local_to_world;
+    water->frame.GetLWMatrix(local_to_world);
+    water->CreateVUData(water->packet[DBuffID == 0], &mgRenderInfo);
+    info->unk_324 = 0;
+    water->visual.DrawVu1(draw_packet, local_to_world, info, (VU1_PROGRAM) 15, NULL, 0, 0);
+
+    sceVif1PkCnt(draw_packet, 0);
+    sceVif1PkOpenDirectCode(draw_packet, 0);
+    sceVif1PkOpenGifTag(draw_packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(draw_packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkCloseGifTag(draw_packet);
+    sceVif1PkCloseDirectCode(draw_packet);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/water", DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1);
+#endif
 #ifdef NON_MATCHING
 int CWater::CheckClip(void) {
     sceVu0FVECTOR corner0;
@@ -106,5 +224,52 @@ void CWater::Shake(int row, int column, float height_change) {
 #else
 INCLUDE_ASM("asm/nonmatchings/water", Shake__6CWaterFiif);
 #endif
+#ifdef NON_MATCHING
+void CWater::SetSize(int row_count, int column_count, CDataAlloc2<1> *arena) {
+    if (arena == NULL) {
+        arena = (CDataAlloc2<1> *) WaterData;
+    }
+
+    int quads = ((row_count * column_count) >> 2) + 1;
+    height_a = (float *) arena->Alloc(quads);
+    height_b = (float *) arena->Alloc(quads);
+    rows = row_count;
+    columns = column_count;
+    for (int i = 0; i < rows * columns; i++) {
+        height_a[i] = 0.0f;
+        height_b[i] = 0.0f;
+    }
+    height = height_a;
+
+    RenderInfo info;
+    unk_0A4 = 0;
+    arena->Align64();
+    packet[1] = (u_int *) (arena->base + arena->used * 16);
+    int packet_quads = CreateVUData(packet[1], &info);
+    arena->Alloc(packet_quads);
+    packet[2] = (u_int *) arena->Alloc64(packet_quads);
+    CreateVUData(packet[2], &info);
+    unk_0A4 = 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/water", SetSize__6CWaterFiiP14CDataAlloc2_1_);
+#endif
+#ifdef NON_MATCHING
+CWater::CWater(void) {
+    rows = 0;
+    columns = 0;
+    packet[0] = NULL;
+    packet[1] = NULL;
+    packet[2] = NULL;
+    color[0] = 0x80;
+    color[1] = 0x80;
+    color[2] = 0x80;
+    color[3] = 0x80;
+    wave_speed = 0.96f;
+    damping = 0.01f;
+    unk_09C = 0.0f;
+    unk_0A0 = 0.0f;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/water", __ct__6CWaterFv);
+#endif

@@ -2,14 +2,22 @@
 
 #include "common.h"
 
+#include "itemdata.hpp"
+#include "stockitem.hpp"
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
-struct ATTACH_LIST;
 struct ITEM_PACK;
 struct MENU_ITEMDATA;
 struct SV_FISH_DATA;
-struct WEAPON_HAVE;
+
+/**
+ * Gives the goods list one item shop sells from.
+ *
+ * One shop's twenty-item goods list, eighteen shops long.
+ */
+extern s16 ItemShopList2[18][20];
 
 /**
  * Stores one shop's item-list state.
@@ -54,7 +62,7 @@ extern ATTACH_LIST *ShopHaveAttachPt;
  * @address 0x1E68D0
  * @size 0x20
  */
-void GetItemShopList(int);
+s16 *GetItemShopList(int shop_no);
 
 /**
  * Clears an item-list record when the supplied pointer is valid.
@@ -65,8 +73,21 @@ void GetItemShopList(int);
  */
 void InitShopItemListData(SHOP_ITEMLIST *);
 
+/**
+ * Tracks one shop icon flying from its shelf to the slot it was bought or sold into.
+ */
 class ShopIconMove {
 public:
+    s16 to_stock; /**< Nonzero routes the icon into the shop's stock; zero writes it straight into the player's status. */
+    s16 unk_02;
+    s16 slot_no; /**< Indexes the board slot, and the matching CStockItem/CUserStatus entry, the icon is bound for. */
+    s16 icon_no; /**< Indexes the icon's position on the board; divided and taken modulo five gives its row and column. */
+    float pos_x; /**< Current horizontal screen position of the flying icon. */
+    float pos_y; /**< Current vertical screen position of the flying icon. */
+    s16 item_no; /**< The item, weapon or attachment identifier the icon is carrying. */
+    u8 unk_12[2];
+    u8 data[0xF8]; /**< A copy of the item, weapon or attachment record, sized for the largest (WEAPON_HAVE). */
+
     /**
      * Aims a shop icon at the slot it is to fly to.
      *
@@ -74,7 +95,7 @@ public:
      * @address 0x1E6930
      * @size 0x68
      */
-    void IconMoveTarSet(int, int, int, MENU_ITEMDATA *, float, float, int);
+    void IconMoveTarSet(int slot_no, int icon_no, int item_no, MENU_ITEMDATA *item_data, float start_x, float start_y, int to_stock);
 
     /**
      * Advances a flying shop icon and reports when it has arrived.
@@ -83,7 +104,7 @@ public:
      * @address 0x1E69A0
      * @size 0x460
      */
-    void IconAutoMove(int, int);
+    int IconAutoMove(int is_buy, int force_arrive);
 
     /**
      * Draws a shop icon part-way through its flight.
@@ -94,6 +115,8 @@ public:
      */
     void IconAutoMoveDraw(void);
 };
+
+STATIC_ASSERT(sizeof(ShopIconMove) == 0x10C);
 
 /**
  * Returns an item's price, buying or selling, from the item table.

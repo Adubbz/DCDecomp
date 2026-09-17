@@ -1,13 +1,20 @@
 #include "btsysscript.hpp"
 
+#include <cstdio>
+
 #include "btitem.hpp"
 #include "btmisc.hpp"
 #include "camera.hpp"
 #include "camerafollow.hpp"
+#include "dataalloc.hpp"
+#include "dataread.hpp"
 #include "dngstatusdata.hpp"
 #include "dun/gameloop.hpp"
 #include "dungeonmap.hpp"
+#include "editloop.hpp"
+#include "editloop3.hpp"
 #include "frame.hpp"
+#include "nowload.hpp"
 #include "runscript.hpp"
 #include "shot_freefuncs.hpp"
 #include "userstatus.hpp"
@@ -18,10 +25,44 @@
 extern char BtLoadMapFileName[32];
 
 INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSystemScriptEventInfoInit__Fv);
+
+#ifdef NON_MATCHING
+BT_OBJ_HANDLE *GetObjHDL(int index) {
+    if (index < 0 || index >= 32) {
+        printf("** obj hdl err **\n");
+        return NULL;
+    }
+
+    return &BtObjHdl[index];
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/btsysscript", GetObjHDL__Fi);
 INCLUDE_RODATA("asm/nonmatchings/btsysscript", @579);
+#endif
+/** File buffer the current floor's system script is read into. */
+extern "C" CDataAlloc2<1> BtSystemScriptFileBuffer;
+
+/** Base address of the system script data currently loaded. */
+extern s32 BtEventData;
+
+#ifdef NON_MATCHING
+void BtSystemScriptLoad(int floor) {
+    char path[44];
+    int read_size;
+
+    sprintf(path, "dun/script/d0%d/event.stb", floor + 1);
+    BtSystemScriptFileBuffer.used = 0;
+    BtEventData = (s32) (BtSystemScriptFileBuffer.base + BtSystemScriptFileBuffer.used * 0x10);
+    LoadFile(path, (void *) BtEventData, &read_size);
+    wait_now_loading_vsync();
+    BtSystemScriptFileBuffer.Alloc((read_size >> 4) + 1);
+    EdSetEventScript((char *) BtEventData, NULL, &BtSystemScriptFileBuffer);
+    AddSystemEventScript();
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSystemScriptLoad__Fi);
 INCLUDE_RODATA("asm/nonmatchings/btsysscript", @584);
+#endif
 INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSystemScriptInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSystemScriptAfter__Fv);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSystemScriptRun__FiP14CDataAlloc2_1_);

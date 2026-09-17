@@ -1,10 +1,51 @@
 #include "runscript_opcodes.hpp"
+#include "runscript.hpp"
 
+#ifdef NON_MATCHING
+int GetStackInt(RS_STACKDATA *argument) {
+    if (argument->type == RS_FLOAT) {
+        return (int) argument->f;
+    }
+    return argument->i;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", GetStackInt__FP12RS_STACKDATA__3);
+#endif
+#ifdef NON_MATCHING
+float GetStackFloat(RS_STACKDATA *argument) {
+    if (argument->type == RS_INT) {
+        return (float) argument->i;
+    }
+    return argument->f;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", GetStackFloat__FP12RS_STACKDATA__3);
+#endif
+#ifdef NON_MATCHING
+char *GetStackString(RS_STACKDATA *argument) {
+    return argument->s;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", GetStackString__FP12RS_STACKDATA__3);
+#endif
+#ifdef NON_MATCHING
+void SetStack(RS_STACKDATA *argument, int value) {
+    if (argument->type == RS_PTR) {
+        argument->p->i = value;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", SetStack__FP12RS_STACKDATAi__3);
+#endif
+#ifdef NON_MATCHING
+void SetStack(RS_STACKDATA *argument, float value) {
+    if (argument->type == RS_PTR) {
+        argument->p->f = value;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", SetStack__FP12RS_STACKDATAf__3);
+#endif
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MOTION__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _CHK_MOTION_FRM__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_MOTION_FRM__FP12RS_STACKDATAi);
