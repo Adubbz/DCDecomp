@@ -8,6 +8,7 @@
 #include "clsmes.hpp"
 #include "dataread.hpp"
 #include "dngstatusdata.hpp"
+#include "eastking.hpp"
 #include "itemdata.hpp"
 #include "memcard.hpp"
 #include "menu_draw.hpp"
@@ -492,7 +493,10 @@ static void BattleManualDraw() {
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawStatusNumberNowAndMax__FPiiiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWepHole__FiiP11WEAPON_HAVEii);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", InitMes__10MenuClsMesFv);
+
+void MenuClsMes::InitMes() {
+    message = &EastKingMsgCls;
+}
 
 void MenuClsMes::InitData() {
     unk_08 = 366;
