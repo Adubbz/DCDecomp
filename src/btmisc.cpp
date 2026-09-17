@@ -31,7 +31,7 @@ extern int BtBattleMusic_Wait;
 /**
  * The current battle-music volume.
  */
-extern int BtBattleMusic_Vol;
+extern float BtBattleMusic_Vol;
 
 #ifdef NON_MATCHING
 CFrame *LoadMDSFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *buffer) {
@@ -167,7 +167,7 @@ INCLUDE_ASM("asm/nonmatchings/btmisc", createAttachVolume__Fii);
 void BtBattleMusic_Init() {
     BtBattleMusic_Flag = 0;
     BtBattleMusic_Wait = 0;
-    BtBattleMusic_Vol = 0;
+    BtBattleMusic_Vol = 0.0f;
 }
 
 void BtBattleMusic_Stop() {
@@ -185,5 +185,33 @@ void BtBattleMusic_Stop() {
  * @address 0x1B7690
  * @size 0x12C
  */
-INCLUDE_ASM("asm/nonmatchings/btmisc", BtBattleMusic_Excg__FfPfPf);
+void BtBattleMusic_Excg(float distance, float *field_volume, float *battle_volume) {
+    if (BtBattleMusic_Flag != 0) {
+        if (distance >= 110.0f) {
+            if (BtBattleMusic_Wait == 0) {
+                BtBattleMusic_Vol -= 1.0f / 30.0f;
+                if (BtBattleMusic_Vol < 0.1f) {
+                    BtBattleMusic_Flag = 0;
+                    BtBattleMusic_Vol = 0.0f;
+                }
+            } else {
+                BtBattleMusic_Wait--;
+            }
+        } else if (BtBattleMusic_Vol < 0.9f) {
+            BtBattleMusic_Vol += 1.0f / 30.0f;
+        }
+    }
+    if (BtBattleMusic_Flag == 0 && distance <= 100.0f) {
+        BtBattleMusic_Flag = 1;
+    }
+    if (BtBattleMusic_Vol >= 0.9f) {
+        BtBattleMusic_Vol = 0.9f;
+    }
+    if (BtBattleMusic_Vol <= 0.0f) {
+        BtBattleMusic_Vol = 0.0f;
+    }
+    *field_volume = 1.0f - BtBattleMusic_Vol;
+    *battle_volume = BtBattleMusic_Vol;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btmisc", BtGetFloorLevel__Fi);
