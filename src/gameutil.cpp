@@ -99,7 +99,67 @@ INCLUDE_RODATA("asm/nonmatchings/gameutil", @414__4);
 INCLUDE_ASM("asm/nonmatchings/gameutil", QuatSlerp__FPfPffPf);
 INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc__FP6CFrameP12MOTION_STATEP8Mot_List);
 INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List);
-INCLUDE_ASM("asm/nonmatchings/gameutil", SetMotionEX__FP6CFrameP14tagMOTION_TYPEP11MOTION_INFOP12MOTION_STATEP12tagFRAME_INF);
+
+void SetMotionEX(CFrame *frame, tagMOTION_TYPE *motion, MOTION_INFO *info, MOTION_STATE *state,
+                 tagFRAME_INF *frame_info) {
+    Mot_List *list;
+    Mot_List *list2;
+
+    if (state->playing_no != state->motion_no || state->blending != 0) {
+        if (state->blending == 0) {
+            state->blend = 0.0f;
+        }
+        state->blending = 1;
+        state->frame = state->time;
+        state->blend += state->blend_step;
+        state->playing_no = state->motion_no;
+        if (!(state->blend < 1.0f)) {
+            state->time = state->next_frame;
+            state->frame = state->next_frame;
+            state->blend = 0.0f;
+            state->blending = 0;
+        }
+        for (list = motion->proc_list; list != NULL;) {
+            list = MotionProc(frame, state, list);
+        }
+        if (state->look_at != 0) {
+            if (state->look_target != NULL) {
+                LookAt(state->look_frame, state->look_target, state->look_constraint);
+            } else {
+                LookAt(state->look_frame, state->look_position, state->look_constraint);
+            }
+        }
+        for (list = motion->proc_list2; list != NULL;) {
+            list = MotionProc2(frame, motion, frame_info, list);
+        }
+        return;
+    }
+    state->playing_no = state->motion_no;
+    state->frame = state->time;
+    state->next_frame = state->frame + 1;
+    state->blend = state->time - state->frame;
+    for (list2 = motion->proc_list; list2 != NULL;) {
+        list2 = MotionProc(frame, state, list2);
+    }
+    if (state->look_at != 0) {
+        if (state->look_target != NULL) {
+            LookAt(state->look_frame, state->look_target, state->look_constraint);
+        } else {
+            LookAt(state->look_frame, state->look_position, state->look_constraint);
+        }
+    }
+    for (list2 = motion->proc_list2; list2 != NULL;) {
+        list2 = MotionProc2(frame, motion, frame_info, list2);
+    }
+    state->time += info[state->motion_no].speed;
+    if ((unsigned int) state->time >= info[state->motion_no].end) {
+        state->time -= (float) info[state->motion_no].end - (float) info[state->motion_no].start;
+        state->frame = info[state->motion_no].start;
+        state->next_frame = state->frame + 1;
+        state->blend = state->time - state->frame;
+    }
+}
+
 /**
  * Takes a motion's animation data out of an arena and fills it from a file.
  *
