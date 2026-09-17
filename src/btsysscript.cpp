@@ -197,7 +197,12 @@ int _CLEAR_DEAMON_SHAFT(RS_STACKDATA *stack, int argument_count) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _INIT_BEE__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _END_BEE__FP12RS_STACKDATAi);
+
+int _END_BEE(RS_STACKDATA *stack, int argument_count) {
+    BtEventInfo.unk_94 = -1;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _EASTKING_COMPLETE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_ITEM_TRAPID__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _RESET_ITEM_TRAP__FP12RS_STACKDATAi);
