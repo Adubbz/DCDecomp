@@ -10,6 +10,7 @@
 #include "dngstatusdata.hpp"
 #include "itemdata.hpp"
 #include "memcard.hpp"
+#include "menu_draw.hpp"
 #include "menu_inventory.hpp"
 #include "menu_manual.hpp"
 #include "menu_misc.hpp"
@@ -44,6 +45,11 @@ extern s32 MenuSelect[2];
  * Stores the screen positions of the battle menu ring's eight icons.
  */
 extern MENU_ICON_POS NorMenuIcon[8];
+
+/**
+ * Is nonzero while the battle menu shows a warning message, which dims its icons.
+ */
+extern s32 MenuWarningMsgFlag;
 
 /**
  * Stores the battle-menu transition timer.
@@ -125,7 +131,75 @@ static void GetMenuIconPos(int icon, int *position) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlMenuMekeIconInfo__FPii);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBtlMenuBar__Fv);
+
+/**
+ * Draws the battle menu ring and its icons, fading them out with the closing effect and
+ * dimming them while a warning message is shown.
+ *
+ * @mangled DrawBtlMenuBar__Fv
+ * @address 0x1F4250
+ * @size 0x294
+ */
+static void DrawBtlMenuBar() {
+    int alpha;
+    int icon_alpha;
+    int i;
+    int x;
+    int menu_flag;
+    int brightness;
+    int selected;
+    int y;
+
+    if (BtlEffectFlag == 0 || BattleMenuFlag == -1) {
+        alpha = 10.0f * BtlEffectCt;
+        if (alpha >= 128) {
+            alpha = 128;
+        }
+    }
+    if (BtlEffectFlag == 1 || BattleMenuFlag == 28) {
+        alpha = 128.0f - 10.0f * BtlEffectCt;
+        if (alpha < 0) {
+            alpha = 0;
+        }
+    } else {
+        alpha = 128;
+    }
+
+    NowGetGameFlagForBtlMenu(BtlMenuMode);
+    int icon_count = GetMenuModeMax();
+    int icons[8];
+    BtlMenuMekeIconInfo(icons, BtlMenuMode);
+    for (i = 0; i < icon_count; i++) {
+        icon_alpha = alpha;
+        brightness = 128;
+        if (MenuWarningMsgFlag != 0) {
+            brightness = 64;
+        }
+        menu_flag = BattleMenuFlag;
+        if (0 < menu_flag && menu_flag < 9) {
+            icon_alpha = 0;
+        }
+        selected = 0;
+        float icon_x = NorMenuIcon[i].x;
+        x = icon_x;
+        float icon_y = NorMenuIcon[i].y;
+        float lowered_y = 2.0f + icon_y;
+        y = 1.0f + lowered_y;
+        if (i == MenuSelect[1]) {
+            if ((menu_flag == -1 || menu_flag == 28) && menu_flag == 13) {
+                icon_alpha = alpha;
+            }
+            selected = 1;
+            x = icon_x - 10.0f;
+            y = 1.0f + (icon_y - 2.0f);
+            icon_alpha = 128;
+        }
+        if (icons[i] >= 0) {
+            DrawMainMenuIcon(x, y, icons[i], selected, brightness, icon_alpha);
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetLimmitMsg__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBattleMain__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawOtherCharaStatus__Fiiii);

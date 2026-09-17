@@ -162,15 +162,6 @@ void DrawDngYesNoDialog(int, int, int);
 void BtlMenuMekeIconInfo(int *, int);
 
 /**
- * Draws the menu bar and its icons, fading them with the open and close effect.
- *
- * @mangled DrawBtlMenuBar__Fv
- * @address 0x1F4250
- * @size 0x294
- */
-void DrawBtlMenuBar(void);
-
-/**
  * Chooses the message that explains why the party may not leave the zone.
  *
  * @mangled GetLimmitMsg__Fv
