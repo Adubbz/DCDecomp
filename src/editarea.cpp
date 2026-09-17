@@ -4,7 +4,9 @@
 
 #include "collision.hpp"
 #include "frame.hpp"
+#include "framevu1.hpp"
 #include "mapparts.hpp"
+#include "mglib.hpp"
 #include "rect.hpp"
 #include "vector3.hpp"
 
@@ -520,7 +522,34 @@ void CEditArea::ChainWorkClear(void) {
     }
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", CheckRiverChain__9CEditAreaFiiii);
-INCLUDE_ASM("asm/nonmatchings/editarea", DrawGrid__9CEditAreaFv);
+
+void CEditArea::DrawGrid(void) {
+    sceVu0FVECTOR position;
+
+    grid_redraw_count--;
+    if (grid_redraw != 0) {
+        grid_redraw_count = 2;
+    }
+    if (grid_redraw_count > 0) {
+        RemakeGrid();
+        if (grid_frame != NULL) {
+            grid_frame->attr.unk_30 = 0;
+        }
+    } else {
+        if (grid_frame != NULL) {
+            grid_frame->attr.unk_30 = 1;
+        }
+    }
+    grid_redraw = 0;
+    if (grid_redraw_count < 0) {
+        grid_redraw_count = 0;
+    }
+    position[0] = offset_x;
+    position[1] = offset_y;
+    position[2] = offset_z;
+    grid_frame->SetPosition(position);
+    MGDraw(grid_frame);
+}
 
 void CEditArea::Clear(void) {
     for (int x = 0; x < width; x++) {
@@ -534,8 +563,8 @@ void CEditArea::Clear(void) {
             grid[x][y].unk_18 = -1;
         }
     }
-    unk_2050 = 1;
-    unk_2054 = 4;
+    grid_redraw = 1;
+    grid_redraw_count = 4;
 }
 
 void CEditArea::Initialize() {
