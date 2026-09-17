@@ -620,7 +620,7 @@ void OpC_InitProcess() {
     attr11.unk_08 = 0;
     Chara[11].frame->SetAttr(attr11, 1, 4);
     Chara[11].motion_type.state.time = 10.0f;
-    Chara[11].motion_type.state.unk_08 = 0.05f;
+    Chara[11].motion_type.state.blend_step = 0.05f;
     Chara[11].motion_type.state.motion_no = 0;
     Chara[11].motion_type.state.playing_no = 0;
 
@@ -631,7 +631,7 @@ void OpC_InitProcess() {
     attr17.unk_08 = 0;
     Chara[17].frame->SetAttr(attr17, 1, 4);
     Chara[17].motion_type.state.time = 10.0f;
-    Chara[17].motion_type.state.unk_08 = 0.05f;
+    Chara[17].motion_type.state.blend_step = 0.05f;
     Chara[17].motion_type.state.motion_no = 0;
     Chara[17].motion_type.state.playing_no = 0;
 
@@ -642,7 +642,7 @@ void OpC_InitProcess() {
     attr18.unk_08 = 0;
     Chara[18].frame->SetAttr(attr18, 1, 4);
     Chara[18].motion_type.state.time = 10.0f;
-    Chara[18].motion_type.state.unk_08 = 0.05f;
+    Chara[18].motion_type.state.blend_step = 0.05f;
     Chara[18].motion_type.state.motion_no = 0;
     Chara[18].motion_type.state.playing_no = 0;
 
@@ -653,7 +653,7 @@ void OpC_InitProcess() {
     attr12.unk_08 = 0;
     Chara[12].frame->SetAttr(attr12, 1, 4);
     Chara[12].motion_type.state.time = 10.0f;
-    Chara[12].motion_type.state.unk_08 = 0.05f;
+    Chara[12].motion_type.state.blend_step = 0.05f;
     Chara[12].motion_type.state.motion_no = 0;
     Chara[12].motion_type.state.playing_no = 0;
 
@@ -665,7 +665,7 @@ void OpC_InitProcess() {
     attr13.unk_08 = 0;
     Chara[13].frame->SetAttr(attr13, 1, 4);
     Chara[13].motion_type.state.time = 10.0f;
-    Chara[13].motion_type.state.unk_08 = 0.05f;
+    Chara[13].motion_type.state.blend_step = 0.05f;
     Chara[13].motion_type.state.motion_no = 0;
     Chara[13].motion_type.state.playing_no = 0;
 
@@ -808,7 +808,7 @@ void OpC_InitProcess2() {
     attr14.unk_08 = 0;
     Chara[14].frame->SetAttr(attr14, 1, 4);
     Chara[14].motion_type.state.time = 1.0f;
-    Chara[14].motion_type.state.unk_08 = 1.0f;
+    Chara[14].motion_type.state.blend_step = 1.0f;
     Chara[14].motion_type.state.motion_no = 0;
     Chara[14].motion_type.state.playing_no = 0;
 
@@ -825,7 +825,7 @@ void OpC_InitProcess2() {
     attr19.unk_08 = 0;
     Chara[19].frame->SetAttr(attr19, 1, 4);
     Chara[19].motion_type.state.time = 1.0f;
-    Chara[19].motion_type.state.unk_08 = 1.0f;
+    Chara[19].motion_type.state.blend_step = 1.0f;
     Chara[19].motion_type.state.motion_no = 0;
     Chara[19].motion_type.state.playing_no = 0;
 
@@ -836,7 +836,7 @@ void OpC_InitProcess2() {
     attr20.unk_08 = 0;
     Chara[20].frame->SetAttr(attr20, 1, 4);
     Chara[20].motion_type.state.time = 1.0f;
-    Chara[20].motion_type.state.unk_08 = 1.0f;
+    Chara[20].motion_type.state.blend_step = 1.0f;
     Chara[20].motion_type.state.motion_no = 0;
     Chara[20].motion_type.state.playing_no = 0;
 
@@ -853,7 +853,7 @@ void OpC_InitProcess2() {
     attr15.unk_08 = 0;
     Chara[15].frame->SetAttr(attr15, 1, 4);
     Chara[15].motion_type.state.time = 300.0f;
-    Chara[15].motion_type.state.unk_08 = 0.5f;
+    Chara[15].motion_type.state.blend_step = 0.5f;
     Chara[15].motion_type.state.motion_no = 0;
     Chara[15].motion_type.state.playing_no = 0;
 
@@ -870,7 +870,7 @@ void OpC_InitProcess2() {
     attr16.unk_08 = 0;
     Chara[16].frame->SetAttr(attr16, 1, 4);
     Chara[16].motion_type.state.time = 300.0f;
-    Chara[16].motion_type.state.unk_08 = 0.5f;
+    Chara[16].motion_type.state.blend_step = 0.5f;
     Chara[16].motion_type.state.motion_no = 0;
     Chara[16].motion_type.state.playing_no = 0;
 
@@ -936,7 +936,7 @@ void OpC_InitProcess3() {
     attr1.unk_08 = 0;
     Chara[1].frame->SetAttr(attr1, 1, 4);
     Chara[1].motion_type.state.time = 10.0f;
-    Chara[1].motion_type.state.unk_08 = 0.5f;
+    Chara[1].motion_type.state.blend_step = 0.5f;
     Chara[1].motion_type.state.motion_no = 0;
     Chara[1].motion_type.state.playing_no = 0;
 
@@ -947,7 +947,7 @@ void OpC_InitProcess3() {
     attr3.unk_08 = 0;
     Chara[3].frame->SetAttr(attr3, 1, 4);
     Chara[3].motion_type.state.time = 10.0f;
-    Chara[3].motion_type.state.unk_08 = 0.5f;
+    Chara[3].motion_type.state.blend_step = 0.5f;
     Chara[3].motion_type.state.motion_no = 0;
     Chara[3].motion_type.state.playing_no = 0;
 
@@ -1150,7 +1150,7 @@ void OpC_InitProcess5() {
     attr11.unk_08 = 0;
     Chara[11].frame->SetAttr(attr11, 1, 4);
     Chara[11].motion_type.state.time = 10.0f;
-    Chara[11].motion_type.state.unk_08 = 0.05f;
+    Chara[11].motion_type.state.blend_step = 0.05f;
     Chara[11].motion_type.state.motion_no = 0;
     Chara[11].motion_type.state.playing_no = 0;
     Chara[11].unk_C98 = (int) &Wind;
@@ -1171,7 +1171,7 @@ void OpC_InitProcess5() {
     attr9.unk_08 = 0;
     Chara[9].frame->SetAttr(attr9, 1, 4);
     Chara[9].motion_type.state.time = 5.0f;
-    Chara[9].motion_type.state.unk_08 = 1.0f;
+    Chara[9].motion_type.state.blend_step = 1.0f;
     Chara[9].motion_type.state.motion_no = 0;
     Chara[9].motion_type.state.playing_no = 0;
 
@@ -1188,7 +1188,7 @@ void OpC_InitProcess5() {
     attr13.unk_08 = 0;
     Chara[13].frame->SetAttr(attr13, 1, 4);
     Chara[13].motion_type.state.time = 5.0f;
-    Chara[13].motion_type.state.unk_08 = 1.0f;
+    Chara[13].motion_type.state.blend_step = 1.0f;
     Chara[13].motion_type.state.motion_no = 0;
     Chara[13].motion_type.state.playing_no = 0;
 
@@ -1199,7 +1199,7 @@ void OpC_InitProcess5() {
     attr18.unk_08 = 0;
     Chara[18].frame->SetAttr(attr18, 1, 4);
     Chara[18].motion_type.state.time = 10.0f;
-    Chara[18].motion_type.state.unk_08 = 0.5f;
+    Chara[18].motion_type.state.blend_step = 0.5f;
     Chara[18].motion_type.state.motion_no = 0;
     Chara[18].motion_type.state.playing_no = 0;
 
@@ -1210,7 +1210,7 @@ void OpC_InitProcess5() {
     attr1.unk_08 = 0;
     Chara[1].frame->SetAttr(attr1, 1, 4);
     Chara[1].motion_type.state.time = 10.0f;
-    Chara[1].motion_type.state.unk_08 = 0.5f;
+    Chara[1].motion_type.state.blend_step = 0.5f;
     Chara[1].motion_type.state.motion_no = 0;
     Chara[1].motion_type.state.playing_no = 0;
 
@@ -1221,7 +1221,7 @@ void OpC_InitProcess5() {
     attr3.unk_08 = 0;
     Chara[3].frame->SetAttr(attr3, 1, 4);
     Chara[3].motion_type.state.time = 10.0f;
-    Chara[3].motion_type.state.unk_08 = 0.5f;
+    Chara[3].motion_type.state.blend_step = 0.5f;
     Chara[3].motion_type.state.motion_no = 0;
     Chara[3].motion_type.state.playing_no = 0;
 
@@ -1794,7 +1794,7 @@ void OpC_MotionProcess() {
                 }
             }
 
-            Chara[i].motion_type.state.unk_08 = CScript.obj[i].step;
+            Chara[i].motion_type.state.blend_step = CScript.obj[i].step;
             Chara[i].motion_no = CScript.obj[i].motion;
             Chara[i].flags = 0;
             Chara[i].motion_speed = -1.0f;
@@ -1978,7 +1978,7 @@ static void LoadCharaMajin() {
             Chara[4].Initialize();
             Chara[4].LoadPackData(read_buffer, "04c08b.cfg", &CharaDataBuffer[6], 0);
             Chara[4].motion_type.state.time = 5.0f;
-            Chara[4].motion_type.state.unk_08 = 1.0f;
+            Chara[4].motion_type.state.blend_step = 1.0f;
             Chara[4].motion_type.state.motion_no = 0;
             Chara[4].motion_type.state.playing_no = 0;
             CScript.obj[4].load = -1;

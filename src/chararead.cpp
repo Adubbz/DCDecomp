@@ -376,18 +376,18 @@ static void CommandMOTION_END(void **) {
     motion_info[motion_info_num].speed = -1.0f;
     motion->motion_info = motion_info;
     motion->state.time = (float) motion->motion_info->start;
-    motion->state.unk_08 = 0.1f;
+    motion->state.blend_step = 0.1f;
     motion->state.motion_no = 0;
     motion->state.playing_no = 0;
-    motion->state.unk_1C = 0;
+    motion->state.blending = 0;
     if (shadow_motion != 0) {
         tagMOTION_TYPE *shadow = character->shadow_motion_ptr[now_motion_data];
         shadow->motion_info = motion_info;
         shadow->state.time = (float) shadow->motion_info->start;
-        shadow->state.unk_08 = 0.1f;
+        shadow->state.blend_step = 0.1f;
         shadow->state.motion_no = 0;
         shadow->state.playing_no = 0;
-        shadow->state.unk_1C = 0;
+        shadow->state.blending = 0;
     }
     character->motion_end[now_motion_data] = key_start + key_no;
 }

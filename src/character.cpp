@@ -188,7 +188,7 @@ void CCharacter::SetMotionCamera(CCamera *camera) {
 
     for (i = 0; i < CHARA_MOTION_MAX; i++) {
         if (this->motion[i] != NULL) {
-            this->motion[i]->camera = camera;
+            this->motion[i]->state.camera = camera;
         }
     }
 }
@@ -306,22 +306,22 @@ void CCharacter::Step() {
     motion->state.motion_no = index;
     if (motion->state.motion_no != motion->state.playing_no) {
         if (this->motion_no == 1 || this->motion_no == 2) {
-            motion->state.unk_10 = NextMotionTime_GET_EX(motion->motion_info, &motion->state);
-            motion->state.unk_10 += 2;
+            motion->state.next_frame = NextMotionTime_GET_EX(motion->motion_info, &motion->state);
+            motion->state.next_frame += 2;
         } else {
-            motion->state.unk_10 = motion->motion_info[index].start;
+            motion->state.next_frame = motion->motion_info[index].start;
             this->motion_state = 1;
         }
     }
 
     saved_speed = motion->motion_info[index].speed;
-    saved_state = motion->state.unk_08;
+    saved_state = motion->state.blend_step;
     if (this->motion_speed > 0.0f) {
         motion->motion_info[index].speed = this->motion_speed;
     }
     if ((this->flags & 1) || MotionStopFlag) {
         motion->motion_info[index].speed = 0.0f;
-        motion->state.unk_08 = 0.0f;
+        motion->state.blend_step = 0.0f;
     }
     if (this->flags & 2) {
         if (!(motion->state.time + saved_speed + 0.01f <
@@ -330,16 +330,16 @@ void CCharacter::Step() {
         }
     }
     if (this->flags & 4) {
-        motion->state.unk_08 = 1.0f;
-        motion->state.unk_0C = motion->motion_info[index].start;
-        motion->state.unk_10 = motion->motion_info[index].start;
+        motion->state.blend_step = 1.0f;
+        motion->state.frame = motion->motion_info[index].start;
+        motion->state.next_frame = motion->motion_info[index].start;
         motion->state.time = (float) motion->motion_info[index].start;
     }
     this->flags &= ~4;
     SetMotionEX(this->frame, motion, motion->motion_info, &motion->state, motion->frame_info);
     if (motion->motion_info != NULL) {
         motion->motion_info[index].speed = saved_speed;
-        motion->state.unk_08 = saved_state;
+        motion->state.blend_step = saved_state;
     }
 
     if (this->unk_C9C != 0) {
@@ -484,13 +484,13 @@ void CCharacter::ShadowStep() {
 
     // The shadow plays the motion of the model, at the frame the model stands on.
     shadow->state.time = motion->state.time;
-    shadow->state.unk_10 = motion->state.unk_10;
+    shadow->state.next_frame = motion->state.next_frame;
     shadow->state.motion_no = motion->state.motion_no;
-    shadow->state.unk_04 = motion->state.unk_04;
-    shadow->state.unk_08 = motion->state.unk_08;
-    shadow->state.unk_10 = motion->state.unk_10;
+    shadow->state.blend = motion->state.blend;
+    shadow->state.blend_step = motion->state.blend_step;
+    shadow->state.next_frame = motion->state.next_frame;
     shadow->state.playing_no = motion->state.playing_no;
-    shadow->state.unk_1C = motion->state.unk_1C;
+    shadow->state.blending = motion->state.blending;
     SetMotionEX(this->shadow_frame, shadow, shadow->motion_info, &shadow->state,
                 shadow->frame_info);
     shadow->motion_info[index].speed = speed;

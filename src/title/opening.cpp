@@ -290,10 +290,10 @@ static void LoadScene() {
         LoadFile(name[i][0], (void *) read_buffer, 0);
         Cam[i].LoadPackData(read_buffer, name[i][1], &PassDataBuffer[i], 0);
         Cam[i].motion_type.state.time = 1.0f;
-        Cam[i].motion_type.state.unk_08 = 1.0f;
+        Cam[i].motion_type.state.blend_step = 1.0f;
         Cam[i].motion_type.state.motion_no = 0;
         Cam[i].motion_type.state.playing_no = 0;
-        Cam[i].motion_type.camera = &OP_MainCamera;
+        Cam[i].motion_type.state.camera = &OP_MainCamera;
     }
 }
 
@@ -687,7 +687,7 @@ static void MotionProcess() {
         Cam[SceneNp].motion_type.state.time = (float) (CScript.motion_end - 1);
     }
     if (CameraMode == 0) {
-        Cam[SceneNp].motion_type.camera = &OP_MainCamera;
+        Cam[SceneNp].motion_type.state.camera = &OP_MainCamera;
         if (PauseFrame > (float) (CScript.motion_end - 1)) {
             PauseFrame = (float) (CScript.motion_end - 1);
         }

@@ -97,21 +97,7 @@ INCLUDE_RODATA("asm/nonmatchings/gameutil", @414__4);
  * @size 0x1B0
  */
 INCLUDE_ASM("asm/nonmatchings/gameutil", QuatSlerp__FPfPffPf);
-/**
- * Applies one motion's frame to a model's frame hierarchy.
- *
- * @mangled MotionProc__FP6CFrameP12MOTION_STATEP8Mot_List
- * @address 0x147D20
- * @size 0xB34
- */
 INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc__FP6CFrameP12MOTION_STATEP8Mot_List);
-/**
- * Applies one motion's frame to a model, blending between two motions.
- *
- * @mangled MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List
- * @address 0x148860
- * @size 0x498
- */
 INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List);
 INCLUDE_ASM("asm/nonmatchings/gameutil", SetMotionEX__FP6CFrameP14tagMOTION_TYPEP11MOTION_INFOP12MOTION_STATEP12tagFRAME_INF);
 /**

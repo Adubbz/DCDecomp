@@ -76,10 +76,10 @@ void CMotionModel::LoadPack(unsigned int *pack, char *base_name, CDataAlloc2<1> 
     }
     motion.motion_info = motion_info;
     motion.state.time = (float) motion_info->start;
-    motion.state.unk_08 = 1.0f;
+    motion.state.blend_step = 1.0f;
     motion.state.motion_no = 0;
     motion.state.playing_no = 0;
-    motion.state.unk_1C = 0;
+    motion.state.blending = 0;
     current_motion = 0;
 }
 #else
@@ -94,7 +94,7 @@ INCLUDE_RODATA("asm/nonmatchings/motionmodel", @868);
 void CMotionModel::Step(void) {
     motion.state.motion_no = current_motion;
     if (motion.state.motion_no != motion.state.playing_no) {
-        motion.state.unk_10 = motion.motion_info[current_motion].start;
+        motion.state.next_frame = motion.motion_info[current_motion].start;
     }
     SetMotionEX(frame, &motion, motion.motion_info, &motion.state, motion.frame_info);
 }
