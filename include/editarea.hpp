@@ -357,7 +357,7 @@ public:
      * @address 0x16FD00
      * @size 0x1F0
      */
-    int CheckRiverChain(int start_x, int start_y, int target_x, int target_y);
+    int CheckRiverChain(int x, int y, int target_x, int target_y);
 
     /**
      * Updates and draws the editable grid overlay.

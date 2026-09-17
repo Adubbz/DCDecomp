@@ -224,7 +224,8 @@ carve_part(main.sbss.part5b.s
            main.sbss.part5b.s=2A2FD8-2A2FE4
            main.sbss.part5d.s=2A33A0-2A33A4)
 carve_part(main.sbss.part4b.s
-           main.sbss.part4b.s=2A25B8-2A2740
+           main.sbss.part4b.s=2A25B8-2A2728
+           main.sbss.part4h.s=2A2730-2A2740
            main.sbss.part4c.s=2A27AC-2A294C
            main.sbss.part4d.s=2A2958-2A2994
            main.sbss.part4g.s=2A29A4-2A29DC

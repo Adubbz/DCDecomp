@@ -521,7 +521,34 @@ void CEditArea::ChainWorkClear(void) {
         }
     }
 }
-INCLUDE_ASM("asm/nonmatchings/editarea", CheckRiverChain__9CEditAreaFiiii);
+
+int CEditArea::CheckRiverChain(int x, int y, int target_x, int target_y) {
+    if (x < 0 || y < 0 || x >= 16 || y >= 16) {
+        return 0;
+    }
+    if (chain_work[x][y] != 0) {
+        return 0;
+    }
+    chain_work[x][y] = 1;
+    static int ext = 0;
+    ext = GetPartsExtra(x, y);
+    if (ext != MAP_CONNECTION_RIVER && ext != 3 && ext != 5) {
+        return 0;
+    }
+    if (x == target_x && y == target_y) {
+        return 1;
+    }
+    if (CheckRiverChain(x - 1, y, target_x, target_y)) {
+        return 1;
+    }
+    if (CheckRiverChain(x + 1, y, target_x, target_y)) {
+        return 1;
+    }
+    if (CheckRiverChain(x, y - 1, target_x, target_y)) {
+        return 1;
+    }
+    return CheckRiverChain(x, y + 1, target_x, target_y) ? 1 : 0;
+}
 
 void CEditArea::DrawGrid(void) {
     sceVu0FVECTOR position;
