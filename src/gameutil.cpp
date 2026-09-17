@@ -138,7 +138,22 @@ INCLUDE_ASM("asm/nonmatchings/gameutil", AnimeDataInit__FP6CFrameP14tagMOTION_TY
  * @size 0x318
  */
 INCLUDE_ASM("asm/nonmatchings/gameutil", AnimeDataInit__FP6CFrameP14tagMOTION_TYPEP14CDataAlloc2_1_P12tagFRAME_INF);
-INCLUDE_ASM("asm/nonmatchings/gameutil", NextMotionTime_GET_EX__FP11MOTION_INFOP12MOTION_STATE);
+
+int NextMotionTime_GET_EX(MOTION_INFO *info, MOTION_STATE *state) {
+    int playing_start = info[state->playing_no].start;
+    float progress = (state->time - playing_start) / (info[state->playing_no].end - playing_start);
+    int start = info[state->motion_no].start;
+    int end = info[state->motion_no].end;
+    int time = start + progress * (end - start);
+
+    if (end < time) {
+        time = end;
+    }
+    if (time < start) {
+        time = start;
+    }
+    return time;
+}
 
 /**
  * Builds a matrix that rotates by an angle around an arbitrary direction.

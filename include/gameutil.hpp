@@ -210,12 +210,11 @@ void SetMotionEX(CFrame *frame, tagMOTION_TYPE *motion, MOTION_INFO *info, MOTIO
                  tagFRAME_INF *frame_info);
 
 /**
- * Gets the frame that the motion state moves on to next.
+ * Maps how far the playing motion has run onto the requested motion's frames.
  *
  * @mangled NextMotionTime_GET_EX__FP11MOTION_INFOP12MOTION_STATE
  * @address 0x1496C0
  * @size 0xC4
- * @unknownret
  */
 int NextMotionTime_GET_EX(MOTION_INFO *info, MOTION_STATE *state);
 
