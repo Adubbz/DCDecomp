@@ -9,6 +9,13 @@
 #include "dungeonmap.hpp"
 #include "frame.hpp"
 #include "runscript.hpp"
+#include "shot_freefuncs.hpp"
+#include "userstatus.hpp"
+
+/**
+ * Name of the map file the next battle-map jump loads.
+ */
+extern char BtLoadMapFileName[32];
 
 INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSystemScriptEventInfoInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", GetObjHDL__Fi);
@@ -119,7 +126,13 @@ int _GO_DUNGEON(RS_STACKDATA *stack, int argument_count) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_DUNGEON_MAP__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _LOAD_DUNGEON_MAP2__FP12RS_STACKDATAi);
+
+int _LOAD_DUNGEON_MAP2(RS_STACKDATA *stack, int argument_count) {
+    CUserStatus *status = UserStatus;
+    status->res_limit_zone_current = -1;
+    BtMapJumpLoad(BtLoadMapFileName);
+    return 1;
+}
 
 int _LOAD_MONSTOR(RS_STACKDATA *stack, int argument_count) {
     BtLoadMonstor(0);
