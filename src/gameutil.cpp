@@ -253,7 +253,102 @@ int LookAt(CFrameVu1 *frame, CFrameVu1 *target, _FRAMECONSTRAINT constraint) {
 INCLUDE_ASM("asm/nonmatchings/gameutil", PickUpNearPoly__FP6CCPoly7CBoxVu0P6CCPolyi);
 INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHit__FP6CCPolyiPfPfPfii);
 INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHitVertical__FP6CCPolyiPffPfi);
-INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHits__FP6CCPolyiPfPfiPiPA4_fii);
+
+/* Loads the line's bounds into VU0 registers, which retail's polygon loop never reads. */
+static inline void vu_hold_box(float *max, float *min) {
+    register float *p0 = max;
+    register float *p1 = min;
+
+    asm {
+        lqc2    vf10, 0(p0)
+        lqc2    vf11, 0(p1)
+    }
+}
+
+int CheckHits(CCPoly *poly, int count, float *from, float *to, int max, int *hit_poly,
+              float (*hit_point)[4], int sort, int mode) {
+    sceVu0FVECTOR point;
+    sceVu0FVECTOR poly_min;
+    sceVu0FVECTOR poly_max;
+    CBoxVu0 line;
+    sceVu0FVECTOR offset;
+    sceVu0FVECTOR swap;
+    int i;
+    int j;
+    int hits;
+    float from_side;
+    float to_side;
+
+    hits = 0;
+    VectorMaxMin(line.max, line.min, from, to);
+    vu_hold_box(line.max, line.min);
+    for (i = 0; i < count; i++, poly++) {
+        if (poly->attr.ignore_mask & mode) {
+            continue;
+        }
+        VectorMaxMin(poly_max, poly_min, poly->vertex[0], poly->vertex[1], poly->vertex[2]);
+        if (line.max[0] < poly_min[0] || line.max[1] < poly_min[1] || line.max[2] < poly_min[2]) {
+            continue;
+        }
+        if (line.min[0] > poly_max[0] || line.min[1] > poly_max[1] || line.min[2] > poly_max[2]) {
+            continue;
+        }
+        sceVu0SubVector(offset, from, poly->vertex[0]);
+        from_side = sceVu0InnerProduct(poly->normal, offset);
+        sceVu0SubVector(offset, to, poly->vertex[0]);
+        to_side = sceVu0InnerProduct(poly->normal, offset);
+        if (from_side > 0.0f && to_side > 0.0f) {
+            continue;
+        }
+        if (from_side < 0.0f && to_side < 0.0f) {
+            continue;
+        }
+        if (IntersectionPoint_line_poly3(from, to, poly->vertex[0], poly->vertex[1],
+                                         poly->vertex[2], poly->normal, point) == 0) {
+            continue;
+        }
+        if (hits >= max) {
+            break;
+        }
+        hit_poly[hits] = i;
+        sceVu0CopyVector(hit_point[hits], point);
+        hit_point[hits][3] = DistVector(from, point);
+        hits++;
+    }
+    if (sort == 0) {
+        return hits;
+    }
+    if (sort > 0) {
+        for (i = 0; i < hits - 1; i++) {
+            for (j = i + 1; j < hits; j++) {
+                if (hit_point[i][3] > hit_point[j][3]) {
+                    int index = hit_poly[i];
+                    hit_poly[i] = hit_poly[j];
+                    hit_poly[j] = index;
+                    sceVu0CopyVector(swap, hit_point[i]);
+                    sceVu0CopyVector(hit_point[i], hit_point[j]);
+                    sceVu0CopyVector(hit_point[j], swap);
+                }
+            }
+        }
+    }
+    if (sort < 0) {
+        for (i = 0; i < hits - 1; i++) {
+            for (j = i + 1; j < hits; j++) {
+                if (hit_point[i][3] > hit_point[j][3]) {
+                    int index = hit_poly[i];
+                    hit_poly[i] = hit_poly[j];
+                    hit_poly[j] = index;
+                    sceVu0CopyVector(swap, hit_point[i]);
+                    sceVu0CopyVector(hit_point[i], hit_point[j]);
+                    sceVu0CopyVector(hit_point[j], swap);
+                }
+            }
+        }
+    }
+    return hits;
+}
+
 INCLUDE_ASM("asm/nonmatchings/gameutil", MoveCheck__FPfPfPfP13MoveCheckInfoP6CCPolyii);
 INCLUDE_ASM("asm/nonmatchings/gameutil", GetFootPoly__FPffP6CCPolyPfP6CCPolyii);
 /**
