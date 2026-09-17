@@ -441,7 +441,7 @@ static void LoadData() {
         attr.unk_08 = 0;
         Chara[i].frame->SetAttr(attr, 1, 4);
         Chara[i].motion_type.state.time = 10.0f;
-        Chara[i].motion_type.state.unk_08 = 0.05f;
+        Chara[i].motion_type.state.blend_step = 0.05f;
         Chara[i].motion_type.state.motion_no = 0;
         Chara[i].motion_type.state.playing_no = 0;
     }
@@ -495,7 +495,7 @@ static void SetDanceMotion() {
     Chara[6].LoadPackData(read_buffer, "01p19a1a.cfg", &CharaDataBuffer[4],
                           &CharaDataBuffer[6], 0);
     Chara[6].motion_type.state.time = 120.0f;
-    Chara[6].motion_type.state.unk_08 = 0.1f;
+    Chara[6].motion_type.state.blend_step = 0.1f;
     Chara[6].motion_type.state.motion_no = 0;
     Chara[6].motion_type.state.playing_no = 0;
     Chara[6].motion_type.motion_info->start = noroi[0].start;
@@ -505,7 +505,7 @@ static void SetDanceMotion() {
     Chara[7].LoadPackData(read_buffer, "01p17a1a.cfg", &CharaDataBuffer[4],
                           &CharaDataBuffer[6], 0);
     Chara[7].motion_type.state.time = 1.0f;
-    Chara[7].motion_type.state.unk_08 = 0.1f;
+    Chara[7].motion_type.state.blend_step = 0.1f;
     Chara[7].motion_type.state.motion_no = 0;
     Chara[7].motion_type.state.playing_no = 0;
     Chara[7].motion_type.motion_info->start = dancer[0].start;
@@ -1068,7 +1068,7 @@ void OpA_MotionProcess() {
                 }
             }
 
-            Chara[i].motion_type.state.unk_08 = CScript.obj[i].step;
+            Chara[i].motion_type.state.blend_step = CScript.obj[i].step;
 
             if (CScript.obj[i].step == 1.0f) {
                 if (CScript.obj[i].motion != Chara[i].motion_no) {

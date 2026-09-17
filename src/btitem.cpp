@@ -22,13 +22,6 @@ extern int BtGetTreasureboxSmall_itemVolume;
  */
 int createAttachVolume(int item_no, int dungeon);
 
-/**
- * Puts one party member in the player's hands, loading them if need be.
- *
- * @mangled selectChrUnit__Fii
- * @address 0x1D1030
- * @size 0x368
- */
 INCLUDE_ASM("asm/nonmatchings/btitem", selectChrUnit__Fii);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @635__2);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @636);

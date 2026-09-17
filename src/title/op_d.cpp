@@ -385,7 +385,7 @@ void OpD_InitProcess() {
     attr8.unk_08 = 0;
     Chara[8].frame->SetAttr(attr8, 1, 4);
     Chara[8].motion_type.state.time = 60.0f;
-    Chara[8].motion_type.state.unk_08 = 0.05f;
+    Chara[8].motion_type.state.blend_step = 0.05f;
     Chara[8].motion_type.state.motion_no = 0;
     Chara[8].motion_type.state.playing_no = 0;
     CharaTex[8] = 1;
@@ -393,7 +393,7 @@ void OpD_InitProcess() {
     attr8.unk_08 = 0;
     Chara[11].frame->SetAttr(attr8, 1, 4);
     Chara[11].motion_type.state.time = 75.0f;
-    Chara[11].motion_type.state.unk_08 = 0.05f;
+    Chara[11].motion_type.state.blend_step = 0.05f;
     Chara[11].motion_type.state.motion_no = 1;
     Chara[11].motion_type.state.playing_no = 1;
     CharaTex[11] = 1;
@@ -404,7 +404,7 @@ void OpD_InitProcess() {
     attr21.unk_08 = 0;
     Chara[21].frame->SetAttr(attr21, 1, 4);
     Chara[21].motion_type.state.time = 1.0f;
-    Chara[21].motion_type.state.unk_08 = 0.05f;
+    Chara[21].motion_type.state.blend_step = 0.05f;
     Chara[21].motion_type.state.motion_no = 0;
     Chara[21].motion_type.state.playing_no = 0;
     CharaTex[21] = 2;
@@ -415,7 +415,7 @@ void OpD_InitProcess() {
     attre.unk_08 = 0;
     Effect.frame->SetAttr(attre, 1, 4);
     Effect.motion_type.state.time = 1.0f;
-    Effect.motion_type.state.unk_08 = 1.0f;
+    Effect.motion_type.state.blend_step = 1.0f;
     Effect.motion_type.state.motion_no = 0;
     Effect.motion_type.state.playing_no = 0;
     CSnd.SetReverb(0, 4, 50);
@@ -545,7 +545,7 @@ void OpD_InitProcess2() {
     attr22.unk_08 = 0;
     Chara[22].frame->SetAttr(attr22, 1, 4);
     Chara[22].motion_type.state.time = 1.0f;
-    Chara[22].motion_type.state.unk_08 = 0.05f;
+    Chara[22].motion_type.state.blend_step = 0.05f;
     Chara[22].motion_type.state.motion_no = 0;
     Chara[22].motion_type.state.playing_no = 0;
     CharaTex[22] = 3;
@@ -553,7 +553,7 @@ void OpD_InitProcess2() {
     attr22.unk_08 = 0;
     Chara[5].frame->SetAttr(attr22, 1, 4);
     Chara[5].motion_type.state.time = 1.0f;
-    Chara[5].motion_type.state.unk_08 = 0.05f;
+    Chara[5].motion_type.state.blend_step = 0.05f;
     Chara[5].motion_type.state.motion_no = 0;
     Chara[5].motion_type.state.playing_no = 0;
     CharaTex[5] = 3;
@@ -629,7 +629,7 @@ void OpD_MotionProcess() {
                     }
                 }
 
-                Chara[i].motion_type.state.unk_08 = CScript.obj[i].step;
+                Chara[i].motion_type.state.blend_step = CScript.obj[i].step;
 
                 if (CScript.obj[i].step == 1.0f) {
                     if (CScript.obj[i].motion != Chara[i].motion_no) {

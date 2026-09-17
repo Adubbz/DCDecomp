@@ -545,7 +545,7 @@ static void MotionProcess() {
         }
 
         Cam[SceneNp].motion_type.state.time = (float) CScript.motion_start;
-        Cam[SceneNp].motion_type.camera = &MainCamera;
+        Cam[SceneNp].motion_type.state.camera = &MainCamera;
         CScript.motion_req = 0;
     }
 
@@ -566,7 +566,7 @@ static void MotionProcess() {
                 }
             }
 
-            Chara[i].motion_type.state.unk_08 = CScript.obj[i].step;
+            Chara[i].motion_type.state.blend_step = CScript.obj[i].step;
 
             if (CScript.obj[i].step == 1.0f) {
                 if (CScript.obj[i].motion != Chara[i].motion_no) {

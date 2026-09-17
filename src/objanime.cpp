@@ -1,5 +1,6 @@
 #include "objanime.hpp"
 
+#include "editloop.hpp"
 #include "frame.hpp"
 
 /**
@@ -100,7 +101,39 @@ void InitEditEffect(CFrame *frame, EDIT_EFFECT_INFO *effect) {
  * @size 0x1E0
  */
 INCLUDE_ASM("asm/nonmatchings/objanime", InitEditEffect__FP6CFrameP16EPARTS_FUNC_DATAP16EDIT_EFFECT_INFO);
-INCLUDE_ASM("asm/nonmatchings/objanime", CheckEditEffect__FP16EDIT_EFFECT_INFOf);
+
+int CheckEditEffect(EDIT_EFFECT_INFO *effect, float time) {
+    if (effect->kind <= 0) {
+        return 0;
+    }
+    if (effect->map_flag > 0 && EdGetMapFlag(effect->map_flag)) {
+        return 0;
+    }
+
+    // An effect whose start is later than its end runs across midnight.
+    if (effect->start > effect->end && effect->start > time && effect->end <= time) {
+        return 0;
+    }
+    if (effect->start < effect->end && (effect->start > time || effect->end <= time)) {
+        return 0;
+    }
+
+    // The effect draws only while its frame and every parent above it are shown.
+    CFrame *frame = effect->frame;
+    if (frame == NULL) {
+        return 1;
+    }
+    if (!(frame->attr.draw_on & 1)) {
+        return 0;
+    }
+    for (frame = frame->parent; frame != NULL; frame = frame->parent) {
+        if (!(frame->attr.draw_on & 1)) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
 /**
  * Advances the editor's shared fire, candle and flame effects.
  *

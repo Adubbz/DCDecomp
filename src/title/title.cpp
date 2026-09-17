@@ -551,7 +551,7 @@ static void InitProcA() {
         attr.unk_08 = 0;
         Chara[i].frame->SetAttr(attr, 1, 4);
         Chara[i].motion_type.state.time = 1.0f;
-        Chara[i].motion_type.state.unk_08 = 0.05f;
+        Chara[i].motion_type.state.blend_step = 0.05f;
         Chara[i].motion_type.state.motion_no = 0;
         Chara[i].motion_type.state.playing_no = 0;
     }
@@ -568,7 +568,7 @@ static void InitProcA() {
 
         attr.unk_08 = 0;
         Chara[j].frame->SetAttr(attr, 1, 4);
-        Chara[j].motion_type.state.unk_08 = 0.05f;
+        Chara[j].motion_type.state.blend_step = 0.05f;
         Chara[j].motion_type.state.motion_no = 0;
         Chara[j].motion_type.state.playing_no = 0;
         Chara[j].SetScale(5.0f, (float) (j - j + 5), 5.0f);
@@ -655,10 +655,10 @@ static void InitProcA() {
     for (int k = 0; k < 4; k++) {
         Cam[k].LoadPackData(read_buffer, campath[k], &PathDataBuffer, 0);
         Cam[k].motion_type.state.time = 1.0f;
-        Cam[k].motion_type.state.unk_08 = 1.0f;
+        Cam[k].motion_type.state.blend_step = 1.0f;
         Cam[k].motion_type.state.motion_no = 0;
         Cam[k].motion_type.state.playing_no = 0;
-        Cam[k].motion_type.camera = &MainCamera;
+        Cam[k].motion_type.state.camera = &MainCamera;
     }
 
     wait_now_loading_vsync();
@@ -877,7 +877,7 @@ static void InitProcB() {
         attr.unk_08 = 0;
         Chara[j].frame->SetAttr(attr, 1, 4);
         Chara[j].motion_type.state.time = 1.0f;
-        Chara[j].motion_type.state.unk_08 = 0.05f;
+        Chara[j].motion_type.state.blend_step = 0.05f;
         Chara[j].motion_type.state.motion_no = 0;
         Chara[j].motion_type.state.playing_no = 0;
     }
@@ -922,10 +922,10 @@ static void InitProcB() {
     for (int k = 0; k < 3; k++) {
         Cam[k].LoadPackData(read_buffer, campath[k], &PathDataBuffer, 0);
         Cam[k].motion_type.state.time = 1.0f;
-        Cam[k].motion_type.state.unk_08 = 1.0f;
+        Cam[k].motion_type.state.blend_step = 1.0f;
         Cam[k].motion_type.state.motion_no = 0;
         Cam[k].motion_type.state.playing_no = 0;
-        Cam[k].motion_type.camera = &MainCamera;
+        Cam[k].motion_type.state.camera = &MainCamera;
     }
 
     OP_FireList = 0;
@@ -1126,7 +1126,7 @@ static void InitProcC() {
     attr.unk_08 = 0;
     Chara[0].frame->SetAttr(attr, 1, 4);
     Chara[0].motion_type.state.time = 10.0f;
-    Chara[0].motion_type.state.unk_08 = 0.05f;
+    Chara[0].motion_type.state.blend_step = 0.05f;
     Chara[0].motion_type.state.motion_no = 0;
     Chara[0].motion_type.state.playing_no = 0;
     Chara[0].FootSoundEnable(0);
@@ -1136,7 +1136,7 @@ static void InitProcC() {
     attr.unk_08 = 0;
     Chara[8].frame->SetAttr(attr, 1, 4);
     Chara[8].motion_type.state.time = 1.0f;
-    Chara[8].motion_type.state.unk_08 = 0.05f;
+    Chara[8].motion_type.state.blend_step = 0.05f;
     Chara[8].motion_type.state.motion_no = 0;
     Chara[8].motion_type.state.playing_no = 0;
 
@@ -1201,10 +1201,10 @@ static void InitProcC() {
     for (int j = 0; j < 1; j++) {
         Cam[j].LoadPackData(read_buffer, campath[j], &PathDataBuffer, 0);
         Cam[j].motion_type.state.time = 1.0f;
-        Cam[j].motion_type.state.unk_08 = 1.0f;
+        Cam[j].motion_type.state.blend_step = 1.0f;
         Cam[j].motion_type.state.motion_no = 0;
         Cam[j].motion_type.state.playing_no = 0;
-        Cam[j].motion_type.camera = &MainCamera;
+        Cam[j].motion_type.state.camera = &MainCamera;
     }
 
     OP_FireList = 0;
@@ -1333,7 +1333,7 @@ static void InitProcD() {
         attr.unk_08 = 0;
         Chara[j].frame->SetAttr(attr, 1, 4);
         Chara[j].motion_type.state.time = 1.0f;
-        Chara[j].motion_type.state.unk_08 = 0.05f;
+        Chara[j].motion_type.state.blend_step = 0.05f;
         Chara[j].motion_type.state.motion_no = 0;
         Chara[j].motion_type.state.playing_no = 0;
     }
@@ -1381,10 +1381,10 @@ static void InitProcD() {
     for (int k = 0; k < 1; k++) {
         Cam[k].LoadPackData(read_buffer, campath[k], &PathDataBuffer, 0);
         Cam[k].motion_type.state.time = 10.0f;
-        Cam[k].motion_type.state.unk_08 = 1.0f;
+        Cam[k].motion_type.state.blend_step = 1.0f;
         Cam[k].motion_type.state.motion_no = 0;
         Cam[k].motion_type.state.playing_no = 0;
-        Cam[k].motion_type.camera = &MainCamera;
+        Cam[k].motion_type.state.camera = &MainCamera;
     }
 
     OP_FireList = 0;
@@ -1474,7 +1474,7 @@ static void InitProcE() {
         attr.unk_08 = 0;
         Chara[j].frame->SetAttr(attr, 1, 4);
         Chara[j].motion_type.state.time = 1.0f;
-        Chara[j].motion_type.state.unk_08 = 0.05f;
+        Chara[j].motion_type.state.blend_step = 0.05f;
         Chara[j].motion_type.state.motion_no = 0;
         Chara[j].motion_type.state.playing_no = 0;
     }
@@ -1512,10 +1512,10 @@ static void InitProcE() {
     for (int k = 0; k < 2; k++) {
         Cam[k].LoadPackData(read_buffer, campath[k], &PathDataBuffer, 0);
         Cam[k].motion_type.state.time = 1.0f;
-        Cam[k].motion_type.state.unk_08 = 1.0f;
+        Cam[k].motion_type.state.blend_step = 1.0f;
         Cam[k].motion_type.state.motion_no = 0;
         Cam[k].motion_type.state.playing_no = 0;
-        Cam[k].motion_type.camera = &MainCamera;
+        Cam[k].motion_type.state.camera = &MainCamera;
     }
 
     OP_FireList = 0;
@@ -1611,7 +1611,7 @@ static void InitProcF() {
         attr.unk_08 = 0;
         Chara[j].frame->SetAttr(attr, 1, 4);
         Chara[j].motion_type.state.time = 1.0f;
-        Chara[j].motion_type.state.unk_08 = 0.05f;
+        Chara[j].motion_type.state.blend_step = 0.05f;
         Chara[j].motion_type.state.motion_no = 0;
         Chara[j].motion_type.state.playing_no = 0;
     }
@@ -1661,10 +1661,10 @@ static void InitProcF() {
     for (int k = 0; k < 2; k++) {
         Cam[k].LoadPackData(read_buffer, campath[k], &PathDataBuffer, 0);
         Cam[k].motion_type.state.time = 1.0f;
-        Cam[k].motion_type.state.unk_08 = 1.0f;
+        Cam[k].motion_type.state.blend_step = 1.0f;
         Cam[k].motion_type.state.motion_no = 0;
         Cam[k].motion_type.state.playing_no = 0;
-        Cam[k].motion_type.camera = &MainCamera;
+        Cam[k].motion_type.state.camera = &MainCamera;
     }
 
     OP_FireList = 0;
@@ -1762,7 +1762,7 @@ static void InitProcG() {
         attr.unk_08 = 0;
         Chara[i].frame->SetAttr(attr, 1, 4);
         Chara[i].motion_type.state.time = 1.0f;
-        Chara[i].motion_type.state.unk_08 = 0.05f;
+        Chara[i].motion_type.state.blend_step = 0.05f;
         Chara[i].motion_type.state.motion_no = 0;
         Chara[i].motion_type.state.playing_no = 0;
     }
@@ -1809,10 +1809,10 @@ static void InitProcG() {
     for (int j = 0; j < 3; j++) {
         Cam[j].LoadPackData(read_buffer, campath[j], &PathDataBuffer, 0);
         Cam[j].motion_type.state.time = 1.0f;
-        Cam[j].motion_type.state.unk_08 = 1.0f;
+        Cam[j].motion_type.state.blend_step = 1.0f;
         Cam[j].motion_type.state.motion_no = 0;
         Cam[j].motion_type.state.playing_no = 0;
-        Cam[j].motion_type.camera = &MainCamera;
+        Cam[j].motion_type.state.camera = &MainCamera;
     }
 
     OP_FireList = 0;
@@ -1895,7 +1895,7 @@ static void InitProcH() {
     attr.unk_08 = 0;
     Chara[0].frame->SetAttr(attr, 1, 4);
     Chara[0].motion_type.state.time = 10.0f;
-    Chara[0].motion_type.state.unk_08 = 0.05f;
+    Chara[0].motion_type.state.blend_step = 0.05f;
     Chara[0].motion_type.state.motion_no = 0;
     Chara[0].motion_type.state.playing_no = 0;
     Chara[0].FootSoundEnable(0);
@@ -1904,7 +1904,7 @@ static void InitProcH() {
     attr.unk_08 = 0;
     Chara[1].frame->SetAttr(attr, 1, 4);
     Chara[1].motion_type.state.time = 70.0f;
-    Chara[1].motion_type.state.unk_08 = 0.05f;
+    Chara[1].motion_type.state.blend_step = 0.05f;
     Chara[1].motion_type.state.motion_no = 0;
     Chara[1].motion_type.state.playing_no = 0;
 
@@ -1912,7 +1912,7 @@ static void InitProcH() {
     attr.unk_08 = 0;
     Chara[2].frame->SetAttr(attr, 1, 4);
     Chara[2].motion_type.state.time = 20.0f;
-    Chara[2].motion_type.state.unk_08 = 0.05f;
+    Chara[2].motion_type.state.blend_step = 0.05f;
     Chara[2].motion_type.state.motion_no = 0;
     Chara[2].motion_type.state.playing_no = 0;
 
@@ -1920,7 +1920,7 @@ static void InitProcH() {
     attr.unk_08 = 0;
     Chara[3].frame->SetAttr(attr, 1, 4);
     Chara[3].motion_type.state.time = 2.0f;
-    Chara[3].motion_type.state.unk_08 = 0.05f;
+    Chara[3].motion_type.state.blend_step = 0.05f;
     Chara[3].motion_type.state.motion_no = 0;
     Chara[3].motion_type.state.playing_no = 0;
 
@@ -1995,10 +1995,10 @@ static void InitProcH() {
     for (int i = 0; i < 2; i++) {
         Cam[i].LoadPackData(read_buffer, campath[i], &PathDataBuffer, 0);
         Cam[i].motion_type.state.time = 1.0f;
-        Cam[i].motion_type.state.unk_08 = 1.0f;
+        Cam[i].motion_type.state.blend_step = 1.0f;
         Cam[i].motion_type.state.motion_no = 0;
         Cam[i].motion_type.state.playing_no = 0;
-        Cam[i].motion_type.camera = &MainCamera;
+        Cam[i].motion_type.state.camera = &MainCamera;
     }
 
     OP_FireList = 0;
@@ -2110,7 +2110,7 @@ static void InitProcI() {
         attr.unk_08 = 0;
         Chara[i].frame->SetAttr(attr, 1, 4);
         Chara[i].motion_type.state.time = 1.0f;
-        Chara[i].motion_type.state.unk_08 = 0.05f;
+        Chara[i].motion_type.state.blend_step = 0.05f;
         Chara[i].motion_type.state.motion_no = 0;
         Chara[i].motion_type.state.playing_no = 0;
     }
@@ -2180,10 +2180,10 @@ static void InitProcI() {
     for (int j = 0; j < 2; j++) {
         Cam[j].LoadPackData(read_buffer, campath[j], &PathDataBuffer, 0);
         Cam[j].motion_type.state.time = 1.0f;
-        Cam[j].motion_type.state.unk_08 = 1.0f;
+        Cam[j].motion_type.state.blend_step = 1.0f;
         Cam[j].motion_type.state.motion_no = 0;
         Cam[j].motion_type.state.playing_no = 0;
-        Cam[j].motion_type.camera = &MainCamera;
+        Cam[j].motion_type.state.camera = &MainCamera;
     }
 
     OP_FireList = 0;

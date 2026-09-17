@@ -15,11 +15,26 @@ class CHitValue {
 public:
     sceVu0FVECTOR pos; /**< World position the number is drawn above. */
     CFrame *frame;     /**< Frame the number follows, or zero to stand still. */
-    float phase[5];    /**< Bounce phase of each digit, one place each. */
-    s32 digit[5];      /**< Decimal digits of the amount; -1 where a place is blank and -2 for a mark. */
-    float fade;        /**< Frames the number has been standing, which retires it. */
-    float rise;        /**< Speed the number floats upward at. */
-    s32 unk_44;
+    union {
+        float digit_angle[5]; /**< Hop angle of each place, rising to pi. */
+        float phase[5];       /**< Alternate retail-facing name used by the entry routine. */
+    };
+    union {
+        s32 digits[5]; /**< Value of each place; -1 skips its hop and -2 draws the special mark. */
+        s32 digit[5];  /**< Alternate retail-facing name used by the entry routine. */
+    };
+    union {
+        float alpha; /**< Opacity of the number, from zero to 128. */
+        float fade;  /**< Alternate name used while initializing the opacity. */
+    };
+    union {
+        float alpha_speed; /**< Amount the opacity changes by each step. */
+        float rise;        /**< Alternate name used by the entry routine. */
+    };
+    union {
+        s32 last_digit; /**< Place whose finished hop starts the fade. */
+        s32 unk_44;
+    };
     s32 kind;          /**< What took the hit, which picks the digit sheet. */
     RECT texel;        /**< Rectangle of the sheet one digit is cut from. */
     s32 active;        /**< Indicates that the slot is showing a number. */

@@ -3219,7 +3219,7 @@ static int _LOAD_SCENE(RS_STACKDATA *stack, int argument_count) {
     CDataAlloc2<1> *first = get_buffer();
     CDataAlloc2<1> *second = get_buffer();
     scene->LoadPackData(pack, name, first, second);
-    scene->motion_type.camera = &DmmyCamera;
+    scene->motion_type.state.camera = &DmmyCamera;
     if (argument_count >= 3)
         scene->motion_speed = GetStackFloat(stack);
     return 1;
@@ -3254,7 +3254,7 @@ static int _SYNC_SCENE_CAMERA(RS_STACKDATA *stack, int) {
         return 0;
     if (EdEventInfo.camera != NULL) {
         EdEventInfo.camera->FollowOff();
-        scene->motion_type.camera = EdEventInfo.camera;
+        scene->motion_type.state.camera = EdEventInfo.camera;
     }
     return 1;
 }
@@ -3277,7 +3277,7 @@ static int _RELEASE_SCENE_CAMERA(RS_STACKDATA *stack, int) {
     CCharacter *scene = GetScene(GetStackInt(stack));
     if (scene == NULL)
         return 0;
-    scene->motion_type.camera = &DmmyCamera;
+    scene->motion_type.state.camera = &DmmyCamera;
     return 1;
 }
 
