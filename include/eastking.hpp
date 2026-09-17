@@ -2,6 +2,13 @@
 
 #include "common.h"
 
+class ClsMes;
+
+/**
+ * Message window that shows the East King event's text.
+ */
+extern ClsMes EastKingMsgCls;
+
 /**
  * Stores the background-music volume saved before the East King event.
  */

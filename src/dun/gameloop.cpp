@@ -5523,12 +5523,12 @@ void motionDrive(void) {
 
         if (lockOnTargetFlag != 0 && UserStatus->cur_chara == 1 &&
             CharaMainHandViewFlag == 0) {
-            CharaMain.motion_type.unk_38 = CharaFrame->SearchFrame("jnt2_1");
-            sceVu0CopyVector(CharaMain.motion_type.unk_40, BtActStatus.unk_080);
-            CharaMain.motion_type.unk_34 = 1;
-            CharaMain.motion_type.unk_50 = 2;
+            CharaMain.motion_type.state.look_frame = (CFrameVu1 *) CharaFrame->SearchFrame("jnt2_1");
+            sceVu0CopyVector(CharaMain.motion_type.state.look_position, BtActStatus.unk_080);
+            CharaMain.motion_type.state.look_at = 1;
+            CharaMain.motion_type.state.look_constraint = FRAME_CONSTRAINT_X;
         } else {
-            CharaMain.motion_type.unk_34 = 0;
+            CharaMain.motion_type.state.look_at = 0;
         }
 
         CharaMain.Step();

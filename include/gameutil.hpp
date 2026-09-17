@@ -24,6 +24,7 @@ class CCamera;
 class CFrame;
 class CRect_i_;
 class CTexture;
+struct Mot_List;
 struct RECT;
 struct sceVif1Packet;
 struct i;
@@ -117,17 +118,24 @@ STATIC_ASSERT(sizeof(MOTION_INFO) == 0x10);
  * Records how far one model has played through the motion it holds.
  */
 struct MOTION_STATE {
-    float time; /**< Frame that the motion stands on. */
-    float unk_04;
-    float unk_08;
-    s32 unk_0C;
-    s32 unk_10;
-    s32 motion_no;  /**< Motion that the character asks for. */
-    s32 playing_no; /**< Motion that plays now. */
-    s32 unk_1C;
-};
+    float time;                       /**< Frame that the motion stands on. */
+    float blend;                      /**< How far the pose has blended toward the next frame or motion; 1 is all the way. */
+    float blend_step;                 /**< Amount the blend advances each step while changing motion. */
+    unsigned int frame;               /**< Whole frame that the model is posed from. */
+    unsigned int next_frame;          /**< Frame that the pose interpolates toward. */
+    s32 motion_no;                    /**< Motion that the character asks for. */
+    s32 playing_no;                   /**< Motion that plays now. */
+    s32 blending;                     /**< Set while the model blends into a newly requested motion. */
+    CCamera *camera;                  /**< Camera that the motion moves; zero where it moves none. */
+    s32 look_at;                      /**< Set when a frame of the model turns to look at a target. */
+    CFrameVu1 *look_frame;            /**< Frame that turns to look. */
+    CFrameVu1 *look_target;           /**< Frame looked at, or NULL to look at look_position. */
+    sceVu0FVECTOR look_position;      /**< Point looked at when there is no target frame. */
+    _FRAMECONSTRAINT look_constraint; /**< Axes the looking frame may turn about. */
+    u8 unk_44[0xC];
+} __attribute__((aligned(16)));
 
-STATIC_ASSERT(sizeof(MOTION_STATE) == 0x20);
+STATIC_ASSERT(sizeof(MOTION_STATE) == 0x50);
 
 /**
  * Describes the frames of one model that a motion drives.
@@ -146,15 +154,11 @@ STATIC_ASSERT(sizeof(tagFRAME_INF) == 0xD0);
  * they drive.
  */
 struct tagMOTION_TYPE {
-    u8 unk_00[16];
-    MOTION_STATE state; /**< How far the set has played. */
-    CCamera *camera;    /**< Camera that the motion moves; zero where it moves none. */
-    s32 unk_34;
-    CFrame *unk_38;
-    u8 unk_3C[4];
-    sceVu0FVECTOR unk_40;
-    s32 unk_50;
-    u8 unk_54[12];
+    s32 unk_00;
+    Mot_List *proc_list;  /**< Frame drivers applied from the motion state. */
+    Mot_List *proc_list2; /**< Frame drivers applied from the frame table. */
+    u8 unk_0C[4];
+    MOTION_STATE state;       /**< How far the set has played, and what it moves. */
     tagFRAME_INF *frame_info; /**< Frames that the motions drive. */
     MOTION_INFO *motion_info; /**< One entry per motion of the set. */
     s32 unk_68;
@@ -199,23 +203,41 @@ void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
                    tagFRAME_INF **frame_info);
 
 /**
+ * Applies one motion's frame to a model's frame hierarchy, and gives back the
+ * next driver in the list.
+ *
+ * @mangled MotionProc__FP6CFrameP12MOTION_STATEP8Mot_List
+ * @address 0x147D20
+ * @size 0xB34
+ */
+Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list);
+
+/**
+ * Applies one motion's frame to a model, blending between two motions, and
+ * gives back the next driver in the list.
+ *
+ * @mangled MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List
+ * @address 0x148860
+ * @size 0x498
+ */
+Mot_List *MotionProc2(CFrame *frame, tagMOTION_TYPE *motion, tagFRAME_INF *frame_info, Mot_List *list);
+
+/**
  * Puts a model on the frame that its motion state stands on.
  *
  * @mangled SetMotionEX__FP6CFrameP14tagMOTION_TYPEP11MOTION_INFOP12MOTION_STATEP12tagFRAME_INF
  * @address 0x148D00
  * @size 0x390
- * @unknownret
  */
 void SetMotionEX(CFrame *frame, tagMOTION_TYPE *motion, MOTION_INFO *info, MOTION_STATE *state,
                  tagFRAME_INF *frame_info);
 
 /**
- * Gets the frame that the motion state moves on to next.
+ * Maps how far the playing motion has run onto the requested motion's frames.
  *
  * @mangled NextMotionTime_GET_EX__FP11MOTION_INFOP12MOTION_STATE
  * @address 0x1496C0
  * @size 0xC4
- * @unknownret
  */
 int NextMotionTime_GET_EX(MOTION_INFO *info, MOTION_STATE *state);
 

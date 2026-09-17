@@ -402,7 +402,7 @@ void LoadCharaData(int kind, int no) {
             Chara[no].LoadPackData(read_buffer, name[no][1],
                                    &CharaDataBuffer[kind], 0);
             Chara[no].motion_type.state.time = 10.0f;
-            Chara[no].motion_type.state.unk_08 = 0.05f;
+            Chara[no].motion_type.state.blend_step = 0.05f;
             Chara[no].motion_type.state.motion_no = 0;
             Chara[no].motion_type.state.playing_no = 0;
             CScript.obj[no].load = -1;
@@ -768,7 +768,7 @@ void OpB_InitProcess() {
     chara_attr.unk_08 = 0;
     Chara[9].frame->SetAttr(chara_attr, 1, 4);
     Chara[9].motion_type.state.time = 10.0f;
-    Chara[9].motion_type.state.unk_08 = 0.05f;
+    Chara[9].motion_type.state.blend_step = 0.05f;
     Chara[9].motion_type.state.motion_no = 0;
     Chara[9].motion_type.state.playing_no = 0;
 
@@ -891,7 +891,7 @@ void OpB_InitProcess2() {
     attr.unk_08 = 0;
     Komono.frame->SetAttr(attr, 1, 4);
     Komono.motion_type.state.time = 10.0f;
-    Komono.motion_type.state.unk_08 = 0.05f;
+    Komono.motion_type.state.blend_step = 0.05f;
     Komono.motion_type.state.motion_no = 0;
     Komono.motion_type.state.playing_no = 0;
 
@@ -904,7 +904,7 @@ void OpB_InitProcess2() {
     attr2.unk_08 = 0;
     Chara[10].frame->SetAttr(attr2, 1, 4);
     Chara[10].motion_type.state.time = 10.0f;
-    Chara[10].motion_type.state.unk_08 = 0.05f;
+    Chara[10].motion_type.state.blend_step = 0.05f;
     Chara[10].motion_type.state.motion_no = 0;
     Chara[10].motion_type.state.playing_no = 0;
 
@@ -923,7 +923,7 @@ void OpB_InitProcess2() {
     attr3.unk_08 = 0;
     Chara[8].frame->SetAttr(attr3, 1, 4);
     Chara[8].motion_type.state.time = 10.0f;
-    Chara[8].motion_type.state.unk_08 = 0.05f;
+    Chara[8].motion_type.state.blend_step = 0.05f;
     Chara[8].motion_type.state.motion_no = 0;
     Chara[8].motion_type.state.playing_no = 0;
 
@@ -945,7 +945,7 @@ void OpB_InitProcess2() {
     attr3.unk_08 = 0;
     Chara[11].frame->SetAttr(attr3, 1, 4);
     Chara[11].motion_type.state.time = 160.0f;
-    Chara[11].motion_type.state.unk_08 = 0.1f;
+    Chara[11].motion_type.state.blend_step = 0.1f;
     Chara[11].motion_type.state.motion_no = 0;
     Chara[11].motion_type.state.playing_no = 0;
 
@@ -987,7 +987,7 @@ void OpB_MotionProcess() {
                 }
             }
 
-            Chara[i].motion_type.state.unk_08 = CScript.obj[i].step;
+            Chara[i].motion_type.state.blend_step = CScript.obj[i].step;
             Chara[i].motion_no = CScript.obj[i].motion;
             Chara[i].flags = 0;
             Chara[i].motion_speed = -1.0f;

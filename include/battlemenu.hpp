@@ -31,6 +31,16 @@ struct MAP_JUMP_COMPARE {
 STATIC_ASSERT(sizeof(MAP_JUMP_COMPARE) == 0x14);
 
 /**
+ * Holds the screen position of one icon on the battle menu ring.
+ */
+struct MENU_ICON_POS {
+    float x; /**< Horizontal screen position of the icon. */
+    float y; /**< Vertical screen position of the icon. */
+};
+
+STATIC_ASSERT(sizeof(MENU_ICON_POS) == 0x8);
+
+/**
  * Gives the weapon a party member starts with.
  *
  * @mangled GetDefaultWeaponNo__Fi
@@ -143,17 +153,6 @@ s16 GetInteriorOutFlag(void);
 void DrawDngYesNoDialog(int, int, int);
 
 /**
- * Gives how many icons the menu bar shows, which depends on the mode and the manual
- * flag.
- *
- * @mangled GetMenuModeMax__Fv
- * @address 0x1F40A0
- * @size 0x68
- * Returns how many icons the battle menu ring currently offers.
- */
-int GetMenuModeMax(void);
-
-/**
  * Fills in the icon numbers the menu bar draws for one mode.
  *
  * @mangled BtlMenuMekeIconInfo__FPii
@@ -161,15 +160,6 @@ int GetMenuModeMax(void);
  * @size 0xE8
  */
 void BtlMenuMekeIconInfo(int *, int);
-
-/**
- * Draws the menu bar and its icons, fading them with the open and close effect.
- *
- * @mangled DrawBtlMenuBar__Fv
- * @address 0x1F4250
- * @size 0x294
- */
-void DrawBtlMenuBar(void);
 
 /**
  * Chooses the message that explains why the party may not leave the zone.

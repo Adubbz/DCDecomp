@@ -103,7 +103,44 @@ INCLUDE_ASM("asm/nonmatchings/collisiondata", SetGateKeyStack__Fi);
  * @size 0x60
  */
 INCLUDE_ASM("asm/nonmatchings/collisiondata", NameExchg__FPci);
-INCLUDE_ASM("asm/nonmatchings/collisiondata", Set__14CCollisionDataFPfiiffiiii);
+
+int CCollisionData::Set(float *pos, int damage, int life, float radius, float unknown0, int unknown1,
+                        int kind, int flags, int unknown2) {
+    for (int i = 0; i < 96; i++) {
+        if (active[i] == 0) {
+            active[i] = 1;
+            sceVu0CopyVector(hit[i].pos, pos);
+            hit[i].unk_10[0] = hit[i].unk_10[1] = hit[i].unk_10[2] = 0.0f;
+            hit[i].unk_10[3] = 1.0f;
+            hit[i].velocity[0] = hit[i].velocity[1] = hit[i].velocity[2] = 0.0f;
+            hit[i].velocity[0] = 1.0f;
+            hit[i].damage = damage;
+            hit[i].unk_38 = unknown0;
+            hit[i].life = life;
+            hit[i].radius = radius;
+            hit[i].unk_48 = unknown1;
+            hit[i].kind = kind;
+            hit[i].flags = flags;
+            hit[i].unk_54 = unknown2;
+            hit[i].owner = -1;
+            hit[i].monster_no = -1;
+            hit[i].unk_60 = -1;
+            hit[i].vs_monster = NULL;
+            hit[i].weapon_flags = 1;
+            hit[i].target_kind = -1;
+            hit[i].knockback_origin[0] = hit[i].knockback_origin[1] = hit[i].knockback_origin[2] = 0.0f;
+            hit[i].knockback_origin[3] = 1.0f;
+            hit[i].knockback_speed = 0.0f;
+            hit[i].knockback_decay = 0.0f;
+            hit[i].knockback_mode = 0;
+            hit[i].unk_70 = hit[i].unk_74 = 0;
+            now_hit = i;
+            return i;
+        }
+    }
+    // With every record in use nothing is set and no index is returned.
+}
+
 /**
  * Reports which recorded hit reaches the player.
  *

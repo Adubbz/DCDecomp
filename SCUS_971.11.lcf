@@ -654,6 +654,9 @@ SECTIONS
 		clsmes.cpp.o (.sbss)
 		gameutil.cpp.o (.sbss)         // 0x002a25a8
 		main.sbss.part4b.s.o (.sbss)   // 0x002a25b8
+		editarea.cpp.o (.sbss)         // 0x002a2728
+		. = ALIGN(4);
+		main.sbss.part4h.s.o (.sbss)   // 0x002a2730
 		edit.cpp.o (.sbss)             // 0x002a2740
 		main.sbss.part4c.s.o (.sbss)   // 0x002a27ac
 		editloop.cpp.o (.editinitflags) // 0x002a294c

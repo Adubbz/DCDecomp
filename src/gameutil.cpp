@@ -97,23 +97,69 @@ INCLUDE_RODATA("asm/nonmatchings/gameutil", @414__4);
  * @size 0x1B0
  */
 INCLUDE_ASM("asm/nonmatchings/gameutil", QuatSlerp__FPfPffPf);
-/**
- * Applies one motion's frame to a model's frame hierarchy.
- *
- * @mangled MotionProc__FP6CFrameP12MOTION_STATEP8Mot_List
- * @address 0x147D20
- * @size 0xB34
- */
 INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc__FP6CFrameP12MOTION_STATEP8Mot_List);
-/**
- * Applies one motion's frame to a model, blending between two motions.
- *
- * @mangled MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List
- * @address 0x148860
- * @size 0x498
- */
 INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List);
-INCLUDE_ASM("asm/nonmatchings/gameutil", SetMotionEX__FP6CFrameP14tagMOTION_TYPEP11MOTION_INFOP12MOTION_STATEP12tagFRAME_INF);
+
+void SetMotionEX(CFrame *frame, tagMOTION_TYPE *motion, MOTION_INFO *info, MOTION_STATE *state,
+                 tagFRAME_INF *frame_info) {
+    Mot_List *list;
+    Mot_List *list2;
+
+    if (state->playing_no != state->motion_no || state->blending != 0) {
+        if (state->blending == 0) {
+            state->blend = 0.0f;
+        }
+        state->blending = 1;
+        state->frame = state->time;
+        state->blend += state->blend_step;
+        state->playing_no = state->motion_no;
+        if (!(state->blend < 1.0f)) {
+            state->time = state->next_frame;
+            state->frame = state->next_frame;
+            state->blend = 0.0f;
+            state->blending = 0;
+        }
+        for (list = motion->proc_list; list != NULL;) {
+            list = MotionProc(frame, state, list);
+        }
+        if (state->look_at != 0) {
+            if (state->look_target != NULL) {
+                LookAt(state->look_frame, state->look_target, state->look_constraint);
+            } else {
+                LookAt(state->look_frame, state->look_position, state->look_constraint);
+            }
+        }
+        for (list = motion->proc_list2; list != NULL;) {
+            list = MotionProc2(frame, motion, frame_info, list);
+        }
+        return;
+    }
+    state->playing_no = state->motion_no;
+    state->frame = state->time;
+    state->next_frame = state->frame + 1;
+    state->blend = state->time - state->frame;
+    for (list2 = motion->proc_list; list2 != NULL;) {
+        list2 = MotionProc(frame, state, list2);
+    }
+    if (state->look_at != 0) {
+        if (state->look_target != NULL) {
+            LookAt(state->look_frame, state->look_target, state->look_constraint);
+        } else {
+            LookAt(state->look_frame, state->look_position, state->look_constraint);
+        }
+    }
+    for (list2 = motion->proc_list2; list2 != NULL;) {
+        list2 = MotionProc2(frame, motion, frame_info, list2);
+    }
+    state->time += info[state->motion_no].speed;
+    if ((unsigned int) state->time >= info[state->motion_no].end) {
+        state->time -= (float) info[state->motion_no].end - (float) info[state->motion_no].start;
+        state->frame = info[state->motion_no].start;
+        state->next_frame = state->frame + 1;
+        state->blend = state->time - state->frame;
+    }
+}
+
 /**
  * Takes a motion's animation data out of an arena and fills it from a file.
  *
@@ -138,7 +184,22 @@ INCLUDE_ASM("asm/nonmatchings/gameutil", AnimeDataInit__FP6CFrameP14tagMOTION_TY
  * @size 0x318
  */
 INCLUDE_ASM("asm/nonmatchings/gameutil", AnimeDataInit__FP6CFrameP14tagMOTION_TYPEP14CDataAlloc2_1_P12tagFRAME_INF);
-INCLUDE_ASM("asm/nonmatchings/gameutil", NextMotionTime_GET_EX__FP11MOTION_INFOP12MOTION_STATE);
+
+int NextMotionTime_GET_EX(MOTION_INFO *info, MOTION_STATE *state) {
+    int playing_start = info[state->playing_no].start;
+    float progress = (state->time - playing_start) / (info[state->playing_no].end - playing_start);
+    int start = info[state->motion_no].start;
+    int end = info[state->motion_no].end;
+    int time = start + progress * (end - start);
+
+    if (end < time) {
+        time = end;
+    }
+    if (time < start) {
+        time = start;
+    }
+    return time;
+}
 
 /**
  * Builds a matrix that rotates by an angle around an arbitrary direction.
@@ -238,7 +299,102 @@ int LookAt(CFrameVu1 *frame, CFrameVu1 *target, _FRAMECONSTRAINT constraint) {
 INCLUDE_ASM("asm/nonmatchings/gameutil", PickUpNearPoly__FP6CCPoly7CBoxVu0P6CCPolyi);
 INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHit__FP6CCPolyiPfPfPfii);
 INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHitVertical__FP6CCPolyiPffPfi);
-INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHits__FP6CCPolyiPfPfiPiPA4_fii);
+
+/* Loads the line's bounds into VU0 registers, which retail's polygon loop never reads. */
+static inline void vu_hold_box(float *max, float *min) {
+    register float *p0 = max;
+    register float *p1 = min;
+
+    asm {
+        lqc2    vf10, 0(p0)
+        lqc2    vf11, 0(p1)
+    }
+}
+
+int CheckHits(CCPoly *poly, int count, float *from, float *to, int max, int *hit_poly,
+              float (*hit_point)[4], int sort, int mode) {
+    sceVu0FVECTOR point;
+    sceVu0FVECTOR poly_min;
+    sceVu0FVECTOR poly_max;
+    CBoxVu0 line;
+    sceVu0FVECTOR offset;
+    sceVu0FVECTOR swap;
+    int i;
+    int j;
+    int hits;
+    float from_side;
+    float to_side;
+
+    hits = 0;
+    VectorMaxMin(line.max, line.min, from, to);
+    vu_hold_box(line.max, line.min);
+    for (i = 0; i < count; i++, poly++) {
+        if (poly->attr.ignore_mask & mode) {
+            continue;
+        }
+        VectorMaxMin(poly_max, poly_min, poly->vertex[0], poly->vertex[1], poly->vertex[2]);
+        if (line.max[0] < poly_min[0] || line.max[1] < poly_min[1] || line.max[2] < poly_min[2]) {
+            continue;
+        }
+        if (line.min[0] > poly_max[0] || line.min[1] > poly_max[1] || line.min[2] > poly_max[2]) {
+            continue;
+        }
+        sceVu0SubVector(offset, from, poly->vertex[0]);
+        from_side = sceVu0InnerProduct(poly->normal, offset);
+        sceVu0SubVector(offset, to, poly->vertex[0]);
+        to_side = sceVu0InnerProduct(poly->normal, offset);
+        if (from_side > 0.0f && to_side > 0.0f) {
+            continue;
+        }
+        if (from_side < 0.0f && to_side < 0.0f) {
+            continue;
+        }
+        if (IntersectionPoint_line_poly3(from, to, poly->vertex[0], poly->vertex[1],
+                                         poly->vertex[2], poly->normal, point) == 0) {
+            continue;
+        }
+        if (hits >= max) {
+            break;
+        }
+        hit_poly[hits] = i;
+        sceVu0CopyVector(hit_point[hits], point);
+        hit_point[hits][3] = DistVector(from, point);
+        hits++;
+    }
+    if (sort == 0) {
+        return hits;
+    }
+    if (sort > 0) {
+        for (i = 0; i < hits - 1; i++) {
+            for (j = i + 1; j < hits; j++) {
+                if (hit_point[i][3] > hit_point[j][3]) {
+                    int index = hit_poly[i];
+                    hit_poly[i] = hit_poly[j];
+                    hit_poly[j] = index;
+                    sceVu0CopyVector(swap, hit_point[i]);
+                    sceVu0CopyVector(hit_point[i], hit_point[j]);
+                    sceVu0CopyVector(hit_point[j], swap);
+                }
+            }
+        }
+    }
+    if (sort < 0) {
+        for (i = 0; i < hits - 1; i++) {
+            for (j = i + 1; j < hits; j++) {
+                if (hit_point[i][3] > hit_point[j][3]) {
+                    int index = hit_poly[i];
+                    hit_poly[i] = hit_poly[j];
+                    hit_poly[j] = index;
+                    sceVu0CopyVector(swap, hit_point[i]);
+                    sceVu0CopyVector(hit_point[i], hit_point[j]);
+                    sceVu0CopyVector(hit_point[j], swap);
+                }
+            }
+        }
+    }
+    return hits;
+}
+
 INCLUDE_ASM("asm/nonmatchings/gameutil", MoveCheck__FPfPfPfP13MoveCheckInfoP6CCPolyii);
 INCLUDE_ASM("asm/nonmatchings/gameutil", GetFootPoly__FPffP6CCPolyPfP6CCPolyii);
 /**

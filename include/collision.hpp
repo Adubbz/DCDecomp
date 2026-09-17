@@ -41,7 +41,8 @@ public:
             s16 ground_kind; /**< What the surface is made of. */
             s16 foot_sound;  /**< Sound the character's feet play on it. */
             s16 unk_44;      /**< Light or ambience the surface puts the character in. */
-            u8 unk_46[10];
+            s16 ignore_mask; /**< Collision query modes that pass through the surface. */
+            u8 unk_48[8];
         } attr;
     };
 } __attribute__((aligned(16)));

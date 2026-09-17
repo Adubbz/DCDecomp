@@ -8,7 +8,12 @@ class CHitValue {
 public:
     u8 unk_00[0x10];
     s32 unk_10;
-    u8 unk_14[0x48];
+    float digit_angle[5]; /**< Hop angle of each place, rising to pi. */
+    s32 digits[5];        /**< Value of each place; -1 skips its hop, and -2 in the first place gives the whole number one hop. */
+    float alpha;          /**< Opacity of the number, from 0 to 128. */
+    float alpha_speed;    /**< Amount the opacity changes by each step; scaled by -1.2 when a hop ends. */
+    s32 last_digit;       /**< Place of the digit whose finished hop starts the fade, or -1 once it has. */
+    u8 unk_48[0x14];
     s32 active; /**< Indicates that the slot is showing a number. */
 
     /**

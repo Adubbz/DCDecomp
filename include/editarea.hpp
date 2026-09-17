@@ -49,9 +49,9 @@ public:
     int chain_work[16][16];     /**< Marks cells visited while following river chains. */
     CFrameVu1 *grid_frame;      /**< Holds the frame used to render the grid overlay. */
     int unk_202c;
-    CBoxVu0 parts_box; /**< Bounds all occupied cells in world space. */
-    int unk_2050;
-    int unk_2054;
+    CBoxVu0 parts_box;     /**< Bounds all occupied cells in world space. */
+    int grid_redraw;       /**< Set to have DrawGrid rebuild the grid overlay. */
+    int grid_redraw_count; /**< Draws left that rebuild the grid overlay. */
 
     /**
      * Sets the active grid dimensions and world-space unit scales.
@@ -357,7 +357,7 @@ public:
      * @address 0x16FD00
      * @size 0x1F0
      */
-    int CheckRiverChain(int start_x, int start_y, int target_x, int target_y);
+    int CheckRiverChain(int x, int y, int target_x, int target_y);
 
     /**
      * Updates and draws the editable grid overlay.

@@ -9,6 +9,13 @@
 #include "dungeonmap.hpp"
 #include "frame.hpp"
 #include "runscript.hpp"
+#include "shot_freefuncs.hpp"
+#include "userstatus.hpp"
+
+/**
+ * Name of the map file the next battle-map jump loads.
+ */
+extern char BtLoadMapFileName[32];
 
 INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSystemScriptEventInfoInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", GetObjHDL__Fi);
@@ -119,7 +126,13 @@ int _GO_DUNGEON(RS_STACKDATA *stack, int argument_count) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_DUNGEON_MAP__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _LOAD_DUNGEON_MAP2__FP12RS_STACKDATAi);
+
+int _LOAD_DUNGEON_MAP2(RS_STACKDATA *stack, int argument_count) {
+    CUserStatus *status = UserStatus;
+    status->res_limit_zone_current = -1;
+    BtMapJumpLoad(BtLoadMapFileName);
+    return 1;
+}
 
 int _LOAD_MONSTOR(RS_STACKDATA *stack, int argument_count) {
     BtLoadMonstor(0);
@@ -127,7 +140,15 @@ int _LOAD_MONSTOR(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_RANDOM_MAP__FP12RS_STACKDATAi);
+int _SET_RANDOM_MAP(RS_STACKDATA *stack, int argument_count) {
+    if (NowDngMap->unk_BDEC == 1) {
+        BtCleatRandomMap();
+    } else {
+        BtCleatFreeMap();
+    }
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_EVENT_SW__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_MONSTOR_ID__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _CHK_ATRA_HAVE__FP12RS_STACKDATAi);
@@ -145,7 +166,16 @@ INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_NPC_ON_OFF__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_GATEKEY_NO__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _USER_WEAPON_DRAW__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_MAIN_CHR2__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _RESET_MAIN_CHR__FP12RS_STACKDATAi);
+
+int _RESET_MAIN_CHR(RS_STACKDATA *stack, int argument_count) {
+    if (BtEventInfo.script_main_chr == -1) {
+        return 1;
+    }
+    selectChrUnit(BtEventInfo.script_main_chr, 0);
+    BtEventInfo.script_main_chr = -1;
+    // Past the early exit the result is whatever selectChrUnit left behind.
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_LIMMIT_ZONE__FP12RS_STACKDATAi);
 
 int _SET_DEAD_FLAG(RS_STACKDATA *stack, int argument_count) {
@@ -162,7 +192,12 @@ int _SET_FLOOR_TITLE(RS_STACKDATA *stack, int argument_count) {
 
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_RUBY_ELEMENT__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_RUBY_ELEMENT__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_FLOOR_TITLE_OFF__FP12RS_STACKDATAi);
+
+int _SET_FLOOR_TITLE_OFF(RS_STACKDATA *stack, int argument_count) {
+    BtEventInfo.unk_8C = 1;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_RES_LIMMIT_ZONE__FP12RS_STACKDATAi);
 
 int _CLEAR_DEAMON_SHAFT(RS_STACKDATA *stack, int argument_count) {
@@ -171,7 +206,12 @@ int _CLEAR_DEAMON_SHAFT(RS_STACKDATA *stack, int argument_count) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _INIT_BEE__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _END_BEE__FP12RS_STACKDATAi);
+
+int _END_BEE(RS_STACKDATA *stack, int argument_count) {
+    BtEventInfo.unk_94 = -1;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _EASTKING_COMPLETE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_ITEM_TRAPID__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _RESET_ITEM_TRAP__FP12RS_STACKDATAi);

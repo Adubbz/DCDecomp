@@ -510,19 +510,19 @@ void TitleInit(int no) {
 
     Cloud.LoadPackData(read_buffer, "cloud.cfg", &MotionData, 0);
     Cloud.motion_type.state.time = 100.0f;
-    Cloud.motion_type.state.unk_08 = 0.1f;
+    Cloud.motion_type.state.blend_step = 0.1f;
     Cloud.motion_type.state.motion_no = 0;
     Cloud.motion_type.state.playing_no = 0;
-    Cloud.motion_type.state.unk_1C = 0;
+    Cloud.motion_type.state.blending = 0;
     Cloud.motion_no = 0;
     Cloud.SetPosition(0.0f, 0.0f, -5.0f);
 
     Logo.LoadPackData(read_buffer, "logo.cfg", &MotionData, 0);
     Logo.motion_type.state.time = 1.0f;
-    Logo.motion_type.state.unk_08 = 0.1f;
+    Logo.motion_type.state.blend_step = 0.1f;
     Logo.motion_type.state.motion_no = 0;
     Logo.motion_type.state.playing_no = 0;
-    Logo.motion_type.state.unk_1C = 0;
+    Logo.motion_type.state.blending = 0;
     Logo.motion_no = 0;
 
     char *name[9] = {
@@ -532,10 +532,10 @@ void TitleInit(int no) {
     for (i = 0; i < 9; i++) {
         Spark[i].LoadPackData(read_buffer, name[i], &MotionData, 0);
         Spark[i].motion_type.state.time = 1.0f;
-        Spark[i].motion_type.state.unk_08 = 0.1f;
+        Spark[i].motion_type.state.blend_step = 0.1f;
         Spark[i].motion_type.state.motion_no = 0;
         Spark[i].motion_type.state.playing_no = 0;
-        Spark[i].motion_type.state.unk_1C = 0;
+        Spark[i].motion_type.state.blending = 0;
         Spark[i].motion_no = 0;
         Spark[i].SetPosition(0.0f, 11.599f, -19.099f);
     }
