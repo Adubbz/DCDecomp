@@ -80,7 +80,30 @@ s16 GetInteriorOutFlag() {
 }
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawDngYesNoDialog__Fiii);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", GetMenuModeMax__Fv);
+
+/**
+ * Gives how many icons the battle menu ring shows, which depends on the menu mode and
+ * whether the manual entry is enabled.
+ *
+ * @mangled GetMenuModeMax__Fv
+ * @address 0x1F40A0
+ * @size 0x68
+ */
+static int GetMenuModeMax() {
+    int icon_count;
+    switch (BtlMenuMode) {
+        case 0:
+            icon_count = 7;
+            break;
+        case 1:
+            icon_count = 8;
+            break;
+    }
+    if (GetGameFlagForManualMenu() == 0) {
+        icon_count--;
+    }
+    return icon_count;
+}
 
 /**
  * Writes the screen coordinates of one icon on the battle menu ring.

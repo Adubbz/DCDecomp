@@ -143,17 +143,6 @@ s16 GetInteriorOutFlag(void);
 void DrawDngYesNoDialog(int, int, int);
 
 /**
- * Gives how many icons the menu bar shows, which depends on the mode and the manual
- * flag.
- *
- * @mangled GetMenuModeMax__Fv
- * @address 0x1F40A0
- * @size 0x68
- * Returns how many icons the battle menu ring currently offers.
- */
-int GetMenuModeMax(void);
-
-/**
  * Fills in the icon numbers the menu bar draws for one mode.
  *
  * @mangled BtlMenuMekeIconInfo__FPii
