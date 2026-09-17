@@ -1,6 +1,15 @@
 #pragma once
 
 /**
+ * Puts one party member in the player's hands, loading them if need be.
+ *
+ * @mangled selectChrUnit__Fii
+ * @address 0x1D1030
+ * @size 0x368
+ */
+void selectChrUnit(int chara, int mode);
+
+/**
  * Loads the icons for the active item slots.
  *
  * @mangled LoadActiveItemIcon__Fv

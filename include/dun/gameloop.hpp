@@ -49,7 +49,7 @@ struct BT_EVENT_INFO {
     s32 unk_9C;
     s32 unk_A0;
     s32 unk_A4;
-    u8 unk_A8[0x4];
+    s32 script_main_chr; /**< Character _SET_MAIN_CHR2 last asked for, or -1 when none is set. */
     s32 unk_AC;
     u8 unk_B0[0x4];
     s32 unk_B4;
