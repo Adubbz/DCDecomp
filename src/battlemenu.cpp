@@ -36,9 +36,14 @@ extern s32 BattleMenuFlag;
 extern s32 BtlEffectFlag;
 
 /**
- * Stores the selected battle-menu entry.
+ * Stores the selected battle-menu entry, then the icon highlighted on the menu ring.
  */
-extern s32 MenuSelect;
+extern s32 MenuSelect[2];
+
+/**
+ * Stores the screen positions of the battle menu ring's eight icons.
+ */
+extern MENU_ICON_POS NorMenuIcon[8];
 
 /**
  * Stores the battle-menu transition timer.
@@ -303,7 +308,7 @@ static void InitItemTrushStart() {
             BtlMenuStatusPt->unk_04 = 0;
         }
         InitItemMode(0, BtlMenuStatusPt->unk_04);
-        BattleMenuFlag = MenuSelect + 8;
+        BattleMenuFlag = MenuSelect[0] + 8;
         BtlEffectFlag = 1;
         BtlEffectCt = 0.0f;
     }
@@ -397,7 +402,7 @@ int BattleManualKey() {
     if (GetNowManualMenuMode() == 1) {
         BtlEffectFlag = 0;
         if (transition_done != 0) {
-            MenuSelect = 8;
+            MenuSelect[0] = 8;
             BattleMenuFlag = 0x17;
             ForBackMenu();
             BattleMenuFlag = 0;

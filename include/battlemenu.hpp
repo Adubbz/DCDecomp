@@ -31,6 +31,16 @@ struct MAP_JUMP_COMPARE {
 STATIC_ASSERT(sizeof(MAP_JUMP_COMPARE) == 0x14);
 
 /**
+ * Holds the screen position of one icon on the battle menu ring.
+ */
+struct MENU_ICON_POS {
+    float x; /**< Horizontal screen position of the icon. */
+    float y; /**< Vertical screen position of the icon. */
+};
+
+STATIC_ASSERT(sizeof(MENU_ICON_POS) == 0x8);
+
+/**
  * Gives the weapon a party member starts with.
  *
  * @mangled GetDefaultWeaponNo__Fi
