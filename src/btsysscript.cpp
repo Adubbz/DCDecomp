@@ -183,7 +183,12 @@ int _SET_FLOOR_TITLE(RS_STACKDATA *stack, int argument_count) {
 
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_RUBY_ELEMENT__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_RUBY_ELEMENT__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_FLOOR_TITLE_OFF__FP12RS_STACKDATAi);
+
+int _SET_FLOOR_TITLE_OFF(RS_STACKDATA *stack, int argument_count) {
+    BtEventInfo.unk_8C = 1;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_RES_LIMMIT_ZONE__FP12RS_STACKDATAi);
 
 int _CLEAR_DEAMON_SHAFT(RS_STACKDATA *stack, int argument_count) {
