@@ -429,7 +429,7 @@ int _USER_WEAPON_DRAW(RS_STACKDATA *stack, int count);
 int _SET_MAIN_CHR2(RS_STACKDATA *stack, int count);
 
 /**
- * Gives the player back the character the previous opcode took away.
+ * Selects again, with mode 0, the character _SET_MAIN_CHR2 last asked for, and clears the record.
  *
  * @mangled _RESET_MAIN_CHR__FP12RS_STACKDATAi
  * @address 0x1BCEE0

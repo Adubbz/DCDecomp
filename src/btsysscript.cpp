@@ -166,7 +166,16 @@ INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_NPC_ON_OFF__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_GATEKEY_NO__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _USER_WEAPON_DRAW__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_MAIN_CHR2__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _RESET_MAIN_CHR__FP12RS_STACKDATAi);
+
+int _RESET_MAIN_CHR(RS_STACKDATA *stack, int argument_count) {
+    if (BtEventInfo.script_main_chr == -1) {
+        return 1;
+    }
+    selectChrUnit(BtEventInfo.script_main_chr, 0);
+    BtEventInfo.script_main_chr = -1;
+    // Past the early exit the result is whatever selectChrUnit left behind.
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_LIMMIT_ZONE__FP12RS_STACKDATAi);
 
 int _SET_DEAD_FLAG(RS_STACKDATA *stack, int argument_count) {
