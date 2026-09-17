@@ -22,4 +22,43 @@ INCLUDE_ASM("asm/nonmatchings/hitvalue", Draw__9CHitValueFv);
 INCLUDE_RODATA("asm/nonmatchings/hitvalue", @804);
 INCLUDE_RODATA("asm/nonmatchings/hitvalue", @805);
 INCLUDE_RODATA("asm/nonmatchings/hitvalue", @863);
-INCLUDE_ASM("asm/nonmatchings/hitvalue", Step__9CHitValueFv);
+
+void CHitValue::Step(void) {
+    if (active != 0) {
+        if (digits[0] == -2) {
+            digit_angle[0] += 3.141592f / 20.0f;
+            if (digit_angle[0] >= 3.141592f) {
+                digit_angle[0] = 3.141592f;
+                alpha_speed *= -1.2f;
+            }
+        } else {
+            // Each place further along hops more slowly.
+            for (int i = 0; i < 5; i++) {
+                if (digits[i] != -1) {
+                    digit_angle[i] += 3.141592f / (20.0f + 5.0f * i);
+                    if (digit_angle[i] >= 3.141592f) {
+                        digit_angle[i] = 3.141592f;
+                        if (i == last_digit) {
+                            alpha_speed *= -1.2f;
+                            last_digit = -1;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (alpha_speed > 0.0f) {
+            alpha += alpha_speed;
+            if (alpha >= 128.0f) {
+                alpha = 128.0f;
+            }
+        }
+        if (alpha_speed < 0.0f) {
+            alpha += alpha_speed;
+            if (alpha <= 0.0f) {
+                alpha = 0.0f;
+                active = 0;
+            }
+        }
+    }
+}
