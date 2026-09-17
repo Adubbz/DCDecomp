@@ -140,7 +140,15 @@ int _LOAD_MONSTOR(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_RANDOM_MAP__FP12RS_STACKDATAi);
+int _SET_RANDOM_MAP(RS_STACKDATA *stack, int argument_count) {
+    if (NowDngMap->unk_BDEC == 1) {
+        BtCleatRandomMap();
+    } else {
+        BtCleatFreeMap();
+    }
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_EVENT_SW__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_MONSTOR_ID__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _CHK_ATRA_HAVE__FP12RS_STACKDATAi);
