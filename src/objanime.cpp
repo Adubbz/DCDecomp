@@ -1,7 +1,18 @@
 #include "objanime.hpp"
 
+#include <libvu0.h>
+
+#include "candleeffect.hpp"
 #include "editloop.hpp"
+#include "fireomni.hpp"
 #include "frame.hpp"
+#include "texture.hpp"
+
+#ifdef NON_MATCHING
+/** The one fire and the one candle the editor lends to every map part. */
+extern CFireOmni Fire;
+extern CCandleEffect Candle;
+#endif
 
 /**
  * Controls whether all object animations are stopped.
@@ -44,7 +55,31 @@ void ObjAnimeAllStart(void) {
  * @address 0x165D00
  * @size 0xC4
  */
+#ifdef NON_MATCHING
+int InitObjAnime(CFrame *frame, OBJ_ANIME_SEQ *sequence) {
+    int i;
+
+    for (i = 0; i < 10; i++) {
+        sequence->frames[i] = NULL;
+    }
+    if (sequence->type < 0) {
+        return 0;
+    }
+    // An empty name means the animation drives the frame it was given.
+    if (sequence->name[0] != 0) {
+        sequence->frames[0] = frame->SearchFrame(sequence->name);
+    } else {
+        sequence->frames[i] = frame;
+    }
+    if (sequence->frames[0] == NULL) {
+        return 0;
+    }
+    sceVu0CopyVector(sequence->current, sequence->range);
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/objanime", InitObjAnime__FP6CFrameP13OBJ_ANIME_SEQ);
+#endif
 /**
  * Attaches an object animation to a list of frames.
  *
@@ -52,7 +87,30 @@ INCLUDE_ASM("asm/nonmatchings/objanime", InitObjAnime__FP6CFrameP13OBJ_ANIME_SEQ
  * @address 0x165DD0
  * @size 0xFC
  */
+#ifdef NON_MATCHING
+int InitObjAnime(CFrame **frames, OBJ_ANIME_SEQ *sequence) {
+    if (sequence->type < 0) {
+        return 0;
+    }
+    for (int i = 0; i < 10; i++) {
+        sequence->frames[i] = NULL;
+    }
+    for (int i = 0; i < 4; i++) {
+        sequence->frames[i] = NULL;
+        if (frames[i] != NULL) {
+            if (sequence->name[0] != 0) {
+                sequence->frames[i] = frames[i]->SearchFrame(sequence->name);
+            } else {
+                sequence->frames[i] = frames[i];
+            }
+        }
+    }
+    sceVu0CopyVector(sequence->current, sequence->range);
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/objanime", InitObjAnime__FPP6CFrameP13OBJ_ANIME_SEQ);
+#endif
 /**
  * Attaches an object animation to a counted list of frames.
  *
@@ -60,7 +118,39 @@ INCLUDE_ASM("asm/nonmatchings/objanime", InitObjAnime__FPP6CFrameP13OBJ_ANIME_SE
  * @address 0x165ED0
  * @size 0x138
  */
+#ifdef NON_MATCHING
+int InitObjAnime(CFrame **frames, int count, OBJ_ANIME_SEQ *sequence) {
+    int found = 0;
+
+    if (sequence->type < 0) {
+        return 0;
+    }
+    if (count >= 11) {
+        count = 10;
+    }
+    for (int i = 0; i < 10; i++) {
+        sequence->frames[i] = NULL;
+    }
+    // The named frames are packed down, so a list with holes still fills
+    // the front of the sequence.
+    for (int i = 0; i < count; i++) {
+        if (frames[i] != NULL) {
+            if (sequence->name[0] != 0) {
+                sequence->frames[found] = frames[i]->SearchFrame(sequence->name);
+            } else {
+                sequence->frames[found] = frames[i];
+            }
+            if (sequence->frames[found] != NULL) {
+                found++;
+            }
+        }
+    }
+    sceVu0CopyVector(sequence->current, sequence->range);
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/objanime", InitObjAnime__FPP6CFrameiP13OBJ_ANIME_SEQ);
+#endif
 /**
  * Attaches an object animation to the frames one function point names.
  *
@@ -84,7 +174,17 @@ int end_check(float value, float target, float step) {
     return value < target;
 }
 #else
+#ifdef NON_MATCHING
+static int end_check(float value, float target, float speed) {
+    // Which way the value is travelling decides which side of the target ends it.
+    if (!(speed <= 0.0f)) {
+        return !(value <= target);
+    }
+    return value < target;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/objanime", end_check__Ffff);
+#endif
 #endif
 /**
  * Advances one object animation by a frame.
@@ -155,7 +255,17 @@ int CheckEditEffect(EDIT_EFFECT_INFO *effect, float time) {
  * @address 0x166D10
  * @size 0xC4
  */
+#ifdef NON_MATCHING
+void EditEffectStep(void) {
+    Fire.FireStep();
+    Candle.Step();
+    Candle.SetTexture(TexManager.GetTexture("rousoku", -1));
+    Fire.SetTexture(TexManager.GetTexture("lightling", -1),
+                    TexManager.GetTexture("blender", -1));
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/objanime", EditEffectStep__Fv);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/objanime", @606);
 INCLUDE_RODATA("asm/nonmatchings/objanime", @607);
 INCLUDE_RODATA("asm/nonmatchings/objanime", @608);
@@ -166,7 +276,13 @@ INCLUDE_RODATA("asm/nonmatchings/objanime", @608);
  * @address 0x166DE0
  * @size 0x28
  */
+#ifdef NON_MATCHING
+void EditEffectStep2(void) {
+    Fire.FireCreate();
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/objanime", EditEffectStep2__Fv);
+#endif
 /**
  * Draws one editor effect, choosing the kind from its record.
  *

@@ -123,7 +123,7 @@ void ObjAnimeAllStart(void);
  * @address 0x165D00
  * @size 0xC4
  */
-void InitObjAnime(CFrame *, OBJ_ANIME_SEQ *);
+int InitObjAnime(CFrame *frame, OBJ_ANIME_SEQ *sequence);
 
 /**
  * Attaches an object animation to a list of frames.
@@ -132,7 +132,7 @@ void InitObjAnime(CFrame *, OBJ_ANIME_SEQ *);
  * @address 0x165DD0
  * @size 0xFC
  */
-void InitObjAnime(CFrame **, OBJ_ANIME_SEQ *);
+int InitObjAnime(CFrame **frames, OBJ_ANIME_SEQ *sequence);
 
 /**
  * Attaches an object animation to a counted list of frames.
@@ -141,7 +141,7 @@ void InitObjAnime(CFrame **, OBJ_ANIME_SEQ *);
  * @address 0x165ED0
  * @size 0x138
  */
-void InitObjAnime(CFrame **, int, OBJ_ANIME_SEQ *);
+int InitObjAnime(CFrame **frames, int count, OBJ_ANIME_SEQ *sequence);
 
 /**
  * Attaches an object animation to the frames one function point names.
