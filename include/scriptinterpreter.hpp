@@ -2,12 +2,34 @@
 
 #include "common.h"
 
-// Forward declarations for the types these declarations name. The skeleton
-// headers are generated from the retail symbol table, which knows the type
-// names but not where they live.
-struct SPI_FUNC_PARAM;
+/** Types used to decode values following a script tag or command. */
+enum SCRIPT_ARGUMENT_TYPE {
+    SCRIPT_ARGUMENT_STRING = 0,  /**< A quoted text argument. */
+    SCRIPT_ARGUMENT_INTEGER = 1, /**< A signed decimal integer argument. */
+    SCRIPT_ARGUMENT_FLOAT = 2,   /**< A signed decimal floating-point argument. */
+};
 
-/** Describes one script tag and the types of arguments that follow it. */
+/** Script command callback. */
+typedef int (*SPI_FUNCTION)(void **arguments);
+
+/**
+ *
+ * Describes one callable script command and its argument types.
+ *
+ */
+struct SPI_FUNC_PARAM {
+    char *name;             /**< Text name used to find the command. */
+    int argument_types[24]; /**< Argument kinds, terminated by a negative value. */
+    SPI_FUNCTION function;  /**< Routine invoked after its arguments are decoded. */
+};
+
+STATIC_ASSERT(sizeof(SPI_FUNC_PARAM) == 0x68);
+
+/**
+ *
+ * Describes one script tag and the types of arguments that follow it.
+ *
+ */
 struct TAG_PARAM {
     char *name;             /**< Text name used to find the tag. */
     int argument_types[24]; /**< Argument kinds, terminated by a negative value. */
@@ -15,6 +37,11 @@ struct TAG_PARAM {
 
 STATIC_ASSERT(sizeof(TAG_PARAM) == 0x64);
 
+/**
+ *
+ * Parses tagged text scripts and dispatches their embedded commands.
+ *
+ */
 class CScriptInterpreter {
 public:
     /**
@@ -33,7 +60,7 @@ public:
      * @address 0x15F250
      * @size 0x10
      */
-    void SetTAG(TAG_PARAM *, int);
+    void SetTAG(TAG_PARAM *tags, int count);
 
     /**
      * Gives the interpreter the table of commands it may call.
@@ -42,7 +69,7 @@ public:
      * @address 0x15F260
      * @size 0x10
      */
-    void SetFunction(SPI_FUNC_PARAM *, int);
+    void SetFunction(SPI_FUNC_PARAM *functions, int count);
 
     /**
      * Points the interpreter at the script text it is to read.
@@ -51,7 +78,7 @@ public:
      * @address 0x15F270
      * @size 0x38
      */
-    void SetScript(char *, int);
+    void SetScript(char *script, int script_size);
 
     /**
      * Constructs an interpreter with no script, tags or commands.
@@ -69,7 +96,7 @@ public:
      * @address 0x15F2F0
      * @size 0x178
      */
-    void ControlCode(void);
+    int ControlCode(void);
 
     /**
      * Calls the command the script names, having gathered its arguments.
@@ -78,7 +105,7 @@ public:
      * @address 0x15F470
      * @size 0x320
      */
-    void CallFunction(int *);
+    int CallFunction(int *result);
 
     /**
      * Reads one command argument out of the script.
@@ -87,7 +114,7 @@ public:
      * @address 0x15F790
      * @size 0x3F0
      */
-    void GetArg(int *);
+    int GetArg(int *argument_types);
 
     /**
      * Finds the command table entry the script's next word names.
@@ -96,9 +123,18 @@ public:
      * @address 0x15FB80
      * @size 0x1A4
      */
-    void SearchCommand(int *);
+    int SearchCommand(int *tag_index);
 
-    u8 unk_000[0x424];         /**< Parser state and command lookup work. */
+    char *data;                /**< Mutable script text being parsed. */
+    int size;                  /**< Number of bytes available in the script. */
+    int pos;                   /**< Current byte position in the script. */
+    int current_tag;           /**< Index of the tag most recently read, or -1. */
+    int argument_data_used;    /**< Offset of command-call values in the work buffer. */
+    int tag_count;             /**< Number of entries in the tag table. */
+    u8 function_argument_data[0x400]; /**< Storage used to marshal command-call arguments. */
+    TAG_PARAM *tag_table;      /**< Tags recognised by the interpreter. */
+    SPI_FUNC_PARAM *function_table; /**< Commands callable from control codes. */
+    int function_count;        /**< Number of entries in the command table. */
     void *arguments[24];       /**< Arguments decoded for the current command. */
     char argument_text[0x40C]; /**< Inline storage for decoded string arguments. */
 };

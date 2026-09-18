@@ -433,6 +433,17 @@ void set3DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, int *, int *, in
                  unsigned char);
 
 /**
+ * Draws one part of a texture into a projected quadrilateral with one colour.
+ *
+ * @mangled set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiPiPiP6spRGBA
+ * @address 0x15D4B0
+ * @size 0x2E0
+ */
+void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source,
+                 int *top_left, int *top_right, int *bottom_left, int *bottom_right,
+                 spRGBA *colour);
+
+/**
  * Draws a textured sprite in world space between two projected corners.
  *
  * @mangled set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiP6spRGBA

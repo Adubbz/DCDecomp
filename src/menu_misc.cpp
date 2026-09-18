@@ -16,6 +16,7 @@
 #include "memcard.hpp"
 #include "menu_draw.hpp"
 #include "menu_manual.hpp"
+#include "mglib.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
@@ -46,10 +47,24 @@ extern ClsMes *CharaNameMes;
 /** Whether the monster's name is drawn. */
 extern s16 CharaNameDrawFlag;
 
+/** The dungeon status data the battle menu is showing, or NULL outside the dungeon. */
+extern CDngStatusData *BtlMenuStatusPt;
+
+/** The ambient light saved before the item menu tinted it. */
+extern float MenuCharaOldAmbient[4];
+
 extern CDataAlloc2<1> MenuExCashBuffer;
 extern CCharacter MenuCharaFrame;
 extern CCharacter DngWeaponFrm[12];
 extern "C" CWeaponEffect CWeaponFx;
+
+#ifdef NON_MATCHING
+/** Frame numbers of the menu's cached weapon models. */
+static int MenuWeaponModelData[42];
+
+/** Each weapon model slot's frame number and read state. */
+static int MenuWeaponModelInfo[12][2];
+#endif
 
 /**
  * Sets the buffer the menu reads weapon effect files into.
@@ -211,12 +226,54 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @995);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @996__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @997);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1002);
+#ifdef NON_MATCHING
+static int *GetMenuWeaponModelData(int index) {
+    return &MenuWeaponModelData[index];
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetMenuWeaponModelData__Fi);
+#endif
+#ifdef NON_MATCHING
+static void InitMenuWeaponModelData() {
+    memset(MenuWeaponModelData, 0, sizeof(MenuWeaponModelData));
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_misc", InitMenuWeaponModelData__Fv);
+#endif
+#ifdef NON_MATCHING
+static int *GetMenuWeaponModelInfo(int index) {
+    return MenuWeaponModelInfo[index];
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetMenuWeaponModelInfo__Fi);
+#endif
+#ifdef NON_MATCHING
+void InitMenuWeaponModelReference() {
+    for (int i = 0; i < 12; i++) {
+        int *entry = GetMenuWeaponModelInfo(i);
+        entry[0] = -1;
+        entry[1] = -1;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_misc", InitMenuWeaponModelReference__Fv);
+#endif
+#ifdef NON_MATCHING
+void SetMenuWeaponModelReference(int index, int frame_no, int value) {
+    int *entry = GetMenuWeaponModelInfo(index);
+    entry[0] = frame_no;
+    entry[1] = value;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_misc", SetMenuWeaponModelReference__Fiii);
+#endif
+#ifdef NON_MATCHING
+int GetMenuWeaponModelFrameNo(int index) {
+    return *GetMenuWeaponModelInfo(index);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetMenuWeaponModelFrameNo__Fi);
+#endif
 INCLUDE_ASM("asm/nonmatchings/menu_misc", EnterWeaponModel__Fiii);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1032);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1033);
@@ -252,7 +309,13 @@ static int GetNowMotionStepCnt(int status) {
 INCLUDE_ASM("asm/nonmatchings/menu_misc", GetNowActiveCharaStatus__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", SetNowCharaMotionNo__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", SetItemMenuColor__Fi);
+#ifdef NON_MATCHING
+void SetItemMenuOldAmbient() {
+    MGSetAmbient(MenuCharaOldAmbient);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_misc", SetItemMenuOldAmbient__Fv);
+#endif
 INCLUDE_ASM("asm/nonmatchings/menu_misc", StartLoadCharaMDS__FP1ii);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1176);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1177);
@@ -331,7 +394,15 @@ int CheckWeaponOptionStatus(int options) {
     return options;
 }
 
+#ifdef NON_MATCHING
+int IsWeaponOptionGoodOrBad(int option) {
+    // Whether each of the fourteen weapon options is a benefit (1) or a drawback (0).
+    s16 good_or_bad[14] = { 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1 };
+    return good_or_bad[option];
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_misc", IsWeaponOptionGoodOrBad__Fi);
+#endif
 
 int DefaultWeaponOptionSet(int weapon_no) {
     WEAPON_DATA *data = GetWeaponData(weapon_no);

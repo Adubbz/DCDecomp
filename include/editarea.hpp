@@ -294,7 +294,7 @@ public:
      * @address 0x16F140
      * @size 0xBC
      */
-    int CheckAreaRect(float x, float y, float z, int width, int height);
+    int CheckAreaRect(float x, float y, float z, int rect_width, int rect_height);
 
     /**
      * Returns whether a map part can occupy the requested world position.
@@ -303,7 +303,7 @@ public:
      * @address 0x16F200
      * @size 0x454
      */
-    int CheckParts(CMapParts *parts, float x, float y, float z, int parts_extra);
+    int CheckParts(CMapParts *parts, float x, float y, float z, int rotation);
 
     /**
      * Collects collision polygons around one world position.

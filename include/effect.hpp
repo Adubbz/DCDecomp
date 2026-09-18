@@ -4,7 +4,20 @@
 #include "rect.hpp"
 
 class CTexture;
-struct CEffectTextureFrame;
+
+/**
+ * Selects a texture and source rectangle until an exclusive animation frame.
+ */
+struct CEffectTextureFrame {
+    int end_frame;                 /**< Exclusive final frame using this entry. */
+    CTexture *texture;             /**< Texture selected when this entry is active. */
+    u32 unk_08;
+    u32 unk_0c;
+    CRect_i_ texel;                /**< Rectangle sampled while this entry is active. */
+    CEffectTextureFrame *next;     /**< Next animation interval, or null at the end. */
+};
+
+STATIC_ASSERT(sizeof(CEffectTextureFrame) == 0x30);
 
 /**
  * Describes the initial motion, appearance, and animation of one effect.
@@ -12,11 +25,11 @@ struct CEffectTextureFrame;
 class CEffectParam {
 public:
     int lifetime;                         /**< Number of frames before the effect is retired. */
-    int position_oscillation_flags;       /**< Enables sinusoidal position offsets. */
+    int position_oscillation_flags;       /**< Bit zero enables sinusoidal position offsets. */
     float width;                          /**< Initial unscaled sprite width. */
     float height;                         /**< Initial unscaled sprite height. */
     int draw_mode;                        /**< Selects a world-oriented quad instead of a billboard. */
-    int scale_oscillation_flags;          /**< Enables sinusoidal scale offsets. */
+    int scale_oscillation_flags;          /**< Bit zero enables sinusoidal scale offsets. */
     u32 unk_18;
     u32 unk_1c;
     float position[4];                    /**< Initial homogeneous world-space position. */
@@ -61,7 +74,7 @@ public:
     s16 draw_mode;                        /**< Selects a world-oriented quad instead of a billboard. */
     float width;                          /**< Unscaled sprite width. */
     float height;                         /**< Unscaled sprite height. */
-    int position_oscillation_flags;       /**< Enables sinusoidal position offsets. */
+    int position_oscillation_flags;       /**< Bit zero enables sinusoidal position offsets. */
     u32 unk_14;
     u32 unk_18;
     u32 unk_1c;
@@ -70,7 +83,7 @@ public:
     float acceleration[4];                /**< Velocity added on every step. */
     float position_oscillation_scale[4];  /**< Per-axis sinusoidal position amplitudes. */
     float position_oscillation_rate[4];   /**< Per-axis sinusoidal phase rates. */
-    int scale_oscillation_flags;          /**< Enables sinusoidal scale offsets. */
+    int scale_oscillation_flags;          /**< Bit zero enables sinusoidal scale offsets. */
     u32 unk_74;
     u32 unk_78;
     u32 unk_7c;

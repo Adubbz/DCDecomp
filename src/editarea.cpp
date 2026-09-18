@@ -197,7 +197,47 @@ int CEditArea::GetPartsExtra(int x, int y) {
     return grid[x][y].parts_extra;
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", SetMapParts__9CEditAreaFiP9CMapPartsfffi);
+#ifdef NON_MATCHING
+int CEditArea::DeleteMapParts(int parts_no, CMapParts *parts, float x, float y, float z) {
+    CVector3_i_ position;
+    GetPos(&position, x, y, z);
+    if (parts_no < 0) {
+        return 0;
+    }
+    CMapParts *target = &parts[parts_no];
+    int width = target->GetWidth();
+    int height = target->GetHeight();
+    for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; j++) {
+            int cell_x = i + (position.x - (width >> 1));
+            int cell_y = j + (position.z - (height >> 1));
+            int info = target->GetInfoData(i, j);
+            if (info != 0) {
+                if (info < 0x80) {
+                    int occupant = GetPartsID(cell_x, cell_y);
+                    AddAlt(cell_x, cell_y, -info);
+                    if (occupant >= 0) {
+                        CMapParts *occupant_parts = &parts[occupant];
+                        float occupant_position[3];
+                        occupant_parts->GetPosition(occupant_position);
+                        occupant_position[1] = GetAlt(cell_x, cell_y);
+                        occupant_parts->SetPosition(occupant_position);
+                    }
+                } else {
+                    SetPartsNo(cell_x, cell_y, -1);
+                    SetPartsID(cell_x, cell_y, -1);
+                    SetPartsExtra(cell_x, cell_y, -1);
+                    SetCode(cell_x, cell_y, -1);
+                }
+            }
+        }
+    }
+    grid_redraw = 1;
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/editarea", DeleteMapParts__9CEditAreaFiP9CMapPartsfff);
+#endif
 
 int CEditArea::SetRiverParts(int x, int y) {
     int neighbors[4];
@@ -467,8 +507,89 @@ int CEditArea::CheckArea(float x, float, float z) {
     }
     return 1;
 }
+#ifdef NON_MATCHING
+int CEditArea::CheckAreaRect(float x, float y, float z, int rect_width, int rect_height) {
+    CVector3_i_ position;
+    GetPos(&position, x, y, z);
+    int left = position.x - (rect_width >> 1);
+    int top = position.z - (rect_height >> 1);
+    if (left < 0 || top < 0) {
+        return 0;
+    }
+    if ((rect_width + left - 1) >= this->width || (rect_height + top - 1) >= this->height) {
+        return 0;
+    }
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/editarea", CheckAreaRect__9CEditAreaFfffii);
+#endif
+#ifdef NON_MATCHING
+int CEditArea::CheckParts(CMapParts *parts, float x, float y, float z, int rotation) {
+    if (parts->info == NULL) {
+        return 0;
+    }
+    CVector3_i_ position;
+    GetPos(&position, x, y, z);
+    if (parts->unk_118 == 5) {
+        return GetPartsExtra(position.x, position.z) == 2;
+    }
+    parts->SetRotY(rotation);
+    int part_width = parts->GetWidth();
+    int part_height = parts->GetHeight();
+    for (int i = 0; i < part_width; i++) {
+        for (int j = 0; j < part_height; j++) {
+            int cell_x = i + (position.x - (part_width >> 1));
+            int cell_y = j + (position.z - (part_height >> 1));
+            if (cell_x < 0 || cell_x >= this->width) {
+                return 0;
+            }
+            if (cell_y < 0 || cell_y >= this->height) {
+                return 0;
+            }
+            if (parts->GetInfoData(i, j) != 0) {
+                int neighbor_parts_id = grid[cell_x][cell_y + 1].parts_id;
+                int extra = GetPartsExtra(cell_x, cell_y);
+                if ((parts->unk_118 == 1 || extra != 1) && neighbor_parts_id >= 0) {
+                    return 0;
+                }
+            }
+        }
+    }
+    if (parts->unk_118 == 2) {
+        if (GetAlt_i(position.x, position.z) > 0) {
+            return 0;
+        }
+        int neighbors[4];
+        neighbors[0] = GetPartsExtra(position.x + 1, position.z);
+        neighbors[1] = GetPartsExtra(position.x - 1, position.z);
+        neighbors[2] = GetPartsExtra(position.x, position.z - 1);
+        neighbors[3] = GetPartsExtra(position.x, position.z + 1);
+        for (int i = 0; i < 4; i++) {
+            int extra = neighbors[i];
+            if (extra == 3 || extra == 4 || extra == 5) {
+                return 0;
+            }
+        }
+    }
+    if (parts->unk_118 == 4) {
+        if (GetAlt_i(position.x, position.z) > 0) {
+            return 0;
+        }
+        for (int i = -1; i < part_width + 1; i++) {
+            for (int j = -1; j < part_height + 1; j++) {
+                int extra = GetPartsExtra(i + (position.x - (part_width >> 1)), j + (position.z - (part_height >> 1)));
+                if (extra == 3 || extra == 2 || extra == 5) {
+                    return 0;
+                }
+            }
+        }
+    }
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/editarea", CheckParts__9CEditAreaFP9CMapPartsfffi);
+#endif
 
 int CEditArea::PickUpPoly(CCPoly *polygons, float x, float y, float z) {
     CVector3_i_ position;

@@ -8,6 +8,7 @@
 #include "clsmes.hpp"
 #include "dataread.hpp"
 #include "dngstatusdata.hpp"
+#include "dun/gameloop.hpp"
 #include "eastking.hpp"
 #include "itemdata.hpp"
 #include "memcard.hpp"
@@ -15,6 +16,7 @@
 #include "menu_inventory.hpp"
 #include "menu_manual.hpp"
 #include "menu_misc.hpp"
+#include "monstorunit.hpp"
 #include "snd.hpp"
 
 /**
@@ -67,13 +69,98 @@ extern CDngStatusData *BtlMenuStatusPt;
  */
 extern s32 BtlMenuMode;
 
+/**
+ * Tracks the weapon menu's selected character and weapon slot.
+ */
+extern WEP_MENU_INFO WepMenu;
+
+/**
+ * Tracks what the item menu's message is currently about.
+ */
+extern ITEM_MENU_MODE_INFO ItemMenuMode;
+
+/**
+ * Holds the menu's gradient colour pairs.
+ */
+extern GRADATION_COLOR_INFO2 MenuColorInfo2[26];
+
+/**
+ * Texture the dungeon status plates are drawn from.
+ */
+extern CTexture *BtStatus;
+
+/**
+ * Icon numbers the menu bar shows for each menu mode.
+ */
+extern s16 BtlDrawTbl[2][8];
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetDefaultWeaponNo__Fi);
+
+#ifdef NON_MATCHING
+int IsDefaultWeapon(int weapon_no) {
+    int chara;
+
+    for (chara = 0; chara < 6; chara++) {
+        int default_weapon_no = GetDefaultWeaponNo(chara);
+        if (default_weapon_no == weapon_no || default_weapon_no + 1 == weapon_no) {
+            return chara;
+        }
+    }
+    return -1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", IsDefaultWeapon__Fi);
+#endif
+#ifdef NON_MATCHING
+void SetNowEquipWeaponDataForMsg(int item_no, int slot) {
+    ItemMenuMode.message_item_no = item_no;
+    ItemMenuMode.message_slot = slot;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", SetNowEquipWeaponDataForMsg__Fii);
+#endif
+#ifdef NON_MATCHING
+void GetNowEquipWeaponDataForMsg(int &item_no, int &slot) {
+    COM_ITEM_INFO *item_info = GetCommonItemInfo(ItemMenuMode.message_item_no);
+    if (item_info != NULL) {
+        item_no = item_info->icon_index;
+    } else {
+        item_no = 0;
+    }
+    slot = ItemMenuMode.message_slot;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetNowEquipWeaponDataForMsg__FRiRi);
+#endif
+#ifdef NON_MATCHING
+GRADATION_COLOR_INFO2 *GetGradationColorInfo2(int index) {
+    return &MenuColorInfo2[index];
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetGradationColorInfo2__Fi);
+#endif
+#ifdef NON_MATCHING
+WEAPON_HAVE *GetNowSelectWeapon(void) {
+    return &BtlMenuStatusPt->chara_weapons[WepMenu.chara][WepMenu.weapon_slot];
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetNowSelectWeapon__Fv);
+#endif
+#ifdef NON_MATCHING
+int EscapeDungeonMode(void) {
+    int mode = 0;
+
+    if (BtlMenuStatusPt->SearchItemIndexNo(ITEM_ESCAPE_POWDER) >= 0) {
+        mode = 1;
+    }
+    if (NowMonstorUnit->GetMonstorNum() <= 0) {
+        mode = 2;
+    }
+    return mode;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", EscapeDungeonMode__Fv);
+#endif
 
 void SetEscapeDngFlag(int flag) {
     EscapeDngFlg = flag;
@@ -91,7 +178,20 @@ s16 GetInteriorOutFlag() {
     return RoomOutFlag;
 }
 
+#ifdef NON_MATCHING
+void DrawDngYesNoDialog(int x, int y, int mode) {
+    CRect_i_ dst(x, y, 0x60, 0x20);
+    CRect_i_ src(0, 0, 0x60, 0x20);
+
+    for (int row = 0; row < 2; row++) {
+        DrawMenu2DSprite(BtStatus, dst, src, mode);
+        dst.y += 0x1C;
+        src.y += 0x20;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawDngYesNoDialog__Fiii);
+#endif
 
 /**
  * Gives how many icons the battle menu ring shows, which depends on the menu mode and
@@ -131,7 +231,33 @@ static void GetMenuIconPos(int icon, int *position) {
     position[1] = y;
 }
 
+#ifdef NON_MATCHING
+void BtlMenuMekeIconInfo(int *icons, int menu_mode) {
+    int icon_count = GetMenuModeMax();
+
+    for (int i = 0; i < icon_count; i++) {
+        icons[i] = BtlDrawTbl[BtlMenuMode][i];
+    }
+    if (BtlMenuMode != 0) {
+        int special_icon;
+        switch (NowGetGameFlagForBtlMenu(BtlMenuMode)) {
+            case 2:
+                special_icon = 0xC;
+                break;
+            case 1:
+                special_icon = 8;
+                break;
+            case 10:
+            case 11:
+                special_icon = 9;
+                break;
+        }
+        icons[4] = special_icon;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlMenuMekeIconInfo__FPii);
+#endif
 
 /**
  * Draws the battle menu ring and its icons, fading them out with the closing effect and
@@ -201,7 +327,32 @@ static void DrawBtlMenuBar() {
     }
 }
 
+#ifdef NON_MATCHING
+int GetLimmitMsg(void) {
+    switch (BtlMenuStatusPt->res_limit_zone_current) {
+        case -1:
+            return -1;
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+            return 0x1A0;
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+            break;
+        case 10:
+            return 0x19E;
+        case 11:
+            return 0x19F;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetLimmitMsg__Fv);
+#endif
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBattleMain__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawOtherCharaStatus__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DngComStatus__Fiiii);

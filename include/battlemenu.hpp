@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+#include "rect.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
@@ -9,6 +10,38 @@ class CCharacter;
 class ClsMes;
 struct RECT;
 struct WEAPON_HAVE;
+
+/**
+ * Holds a gradient's four corner colours.
+ */
+struct GRADATION_COLOR_INFO2 {
+    spRGBA colors[4]; /**< Corner colours, in the order DrawMenuColorGradation takes them. */
+};
+
+STATIC_ASSERT(sizeof(GRADATION_COLOR_INFO2) == 0x10);
+
+/**
+ * Tracks which character and weapon the weapon menu's cursor is on.
+ */
+struct WEP_MENU_INFO {
+    char unk_00[4];
+    s8 weapon_slot; /**< Weapon slot the cursor is on, within the selected character's chara_weapons row. */
+    s8 chara;        /**< Party member index the weapon menu is showing. */
+    char unk_06[0x176];
+};
+
+STATIC_ASSERT(sizeof(WEP_MENU_INFO) == 0x17C);
+
+/**
+ * Tracks what a message on the item menu is currently about.
+ */
+struct ITEM_MENU_MODE_INFO {
+    char unk_000[0x184];
+    s16 message_item_no; /**< Item number the last SetNowEquipWeaponDataForMsg call named. */
+    s16 message_slot;    /**< Slot number the last SetNowEquipWeaponDataForMsg call named. */
+};
+
+STATIC_ASSERT(sizeof(ITEM_MENU_MODE_INFO) == 0x188);
 
 /**
  * Ranks one world-map destination by how near it is.
@@ -57,7 +90,7 @@ int GetDefaultWeaponNo(int character_no);
  * @address 0x1F3DC0
  * @size 0x84
  */
-int IsDefaultWeapon(int);
+int IsDefaultWeapon(int weapon_no);
 
 /**
  * Remembers the weapon and slot a message is about to name.
@@ -67,7 +100,7 @@ int IsDefaultWeapon(int);
  * @size 0x18
  * Records the weapon the item menu's message is about.
  */
-void SetNowEquipWeaponDataForMsg(int, int);
+void SetNowEquipWeaponDataForMsg(int item_no, int slot);
 
 /**
  * Gives the item number and slot the last message was told about.
@@ -76,7 +109,7 @@ void SetNowEquipWeaponDataForMsg(int, int);
  * @address 0x1F3E70
  * @size 0x68
  */
-void GetNowEquipWeaponDataForMsg(int &, int &);
+void GetNowEquipWeaponDataForMsg(int &item_no, int &slot);
 
 /**
  * Gives one of the menu's gradient colour pairs.
@@ -85,7 +118,7 @@ void GetNowEquipWeaponDataForMsg(int &, int &);
  * @address 0x1F3EE0
  * @size 0x18
  */
-void GetGradationColorInfo2(int);
+GRADATION_COLOR_INFO2 *GetGradationColorInfo2(int index);
 
 /**
  * Gives the weapon the cursor stands on.
@@ -105,7 +138,7 @@ WEAPON_HAVE *GetNowSelectWeapon(void);
  * @address 0x1F3F40
  * @size 0x5C
  */
-void EscapeDungeonMode(void);
+int EscapeDungeonMode(void);
 
 /**
  * Sets whether the party is escaping the dungeon.
@@ -150,7 +183,7 @@ s16 GetInteriorOutFlag(void);
  * @address 0x1F3FE0
  * @size 0xB8
  */
-void DrawDngYesNoDialog(int, int, int);
+void DrawDngYesNoDialog(int x, int y, int mode);
 
 /**
  * Fills in the icon numbers the menu bar draws for one mode.
@@ -159,7 +192,7 @@ void DrawDngYesNoDialog(int, int, int);
  * @address 0x1F4160
  * @size 0xE8
  */
-void BtlMenuMekeIconInfo(int *, int);
+void BtlMenuMekeIconInfo(int *icons, int menu_mode);
 
 /**
  * Chooses the message that explains why the party may not leave the zone.
@@ -168,7 +201,7 @@ void BtlMenuMekeIconInfo(int *, int);
  * @address 0x1F44F0
  * @size 0x6C
  */
-void GetLimmitMsg(void);
+int GetLimmitMsg(void);
 
 /**
  * Draws the menu's main page: the bar, the selected icon's title and its help text.

@@ -1,6 +1,7 @@
 #include "editmenu.hpp"
 
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 #include "battlemenu.hpp"
@@ -17,6 +18,10 @@
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
+
+#ifdef NON_MATCHING
+extern "C" int abs(int);
+#endif
 
 /** The state the edit menu is in. */
 extern int EditSwitch;
@@ -41,6 +46,24 @@ extern s16 MakeWin2Flag;
 
 extern int EditMenuStatus[7];
 extern CDataAlloc2<1> EdMenuBuffer;
+
+#ifdef NON_MATCHING
+/** The edit menu's eased cursor position and current icon selection. */
+struct EDIT_MENU_CURSOR {
+    float x;      /**< Cursor's current screen x, eased toward its target. */
+    float y;      /**< Cursor's current screen y, eased toward its target. */
+    s8 selection; /**< Index of the selected icon. */
+};
+
+/** The edit menu's cursor. */
+static EDIT_MENU_CURSOR EdCur;
+
+/** Resting screen position of each edit menu icon, one x/y pair per icon. */
+static float MenuIconPos[6][2];
+
+/** The icon shown at each edit menu slot. */
+static s8 EditMenuIconID[6];
+#endif
 
 /**
  * Returns the number of edit menu icons, one fewer until the manual is available.
@@ -330,13 +353,172 @@ static int EdMenuManualKey();
  * @size 0x6C
  */
 static void EdMenuManualDraw();
+#ifdef NON_MATCHING
+int GetNumHowManyItemsHave(int item) {
+    COM_ITEM_INFO *info = GetCommonItemInfo(item);
+    if (info == NULL) {
+        return 0;
+    }
+    CDngStatusData *dungeon_status = SaveData->GetDngStatus();
+    if (dungeon_status == NULL) {
+        return 0;
+    }
+    int count = 0;
+    if (info->kind == ITEMKIND_WEAPON) {
+        WEAPON_DATA *weapon = GetWeaponData(item);
+        if (weapon != NULL) {
+            for (int i = 0; i < 10; i++) {
+                if (item == dungeon_status->chara_weapons[weapon->owner][i].item_no) {
+                    count++;
+                }
+            }
+        }
+    }
+    return count;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/editmenu", GetNumHowManyItemsHave__Fi);
+#endif
+#ifdef NON_MATCHING
+static int GetEditMenuMax() {
+    int max = 6;
+    if (GetGameFlagForManualMenu() == 0) {
+        max = 5;
+    }
+    return max;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/editmenu", GetEditMenuMax__Fv);
+#endif
 INCLUDE_ASM("asm/nonmatchings/editmenu", DrawMenuIcon__Fi);
 INCLUDE_ASM("asm/nonmatchings/editmenu", GetEditMenuIconPos__FiPi);
+#ifdef NON_MATCHING
+static void DrawMoveMenuIcon() {
+    int icon_max = GetEditMenuMax();
+    int brightness;
+
+    for (int i = 0; i < icon_max; i++) {
+        if (EditSwitch == 2) {
+            brightness = 0x80;
+        }
+        if (EditSwitch > 8 && EditSwitch < 0x10) {
+            brightness = 0x80 - EdEffectCt * 8;
+        }
+        if (EditSwitch > 0xF && EditSwitch < 0x16) {
+            brightness = EdEffectCt * 8;
+        }
+        if (brightness < 0) {
+            brightness = 0;
+        }
+        if (brightness > 0x80) {
+            brightness = 0x80;
+        }
+
+        s8 icon = EditMenuIconID[i];
+        GetMenuIconInfo(icon);
+
+        int x_offset = 0;
+        int y_offset = 0;
+        int selected = 0;
+        if (i == EdCur.selection) {
+            x_offset = 6;
+            y_offset = 2;
+            brightness = 0x80;
+            selected = 1;
+        }
+        int x = (int) (MenuIconPos[i][0] - x_offset);
+        int y = (int) (MenuIconPos[i][1] - y_offset);
+        DrawMainMenuIcon(x, y, icon, selected, 0x80, brightness);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/editmenu", DrawMoveMenuIcon__Fv);
+#endif
+#ifdef NON_MATCHING
+/** The screen position an icon animates to when it leaves for its own page. */
+struct EDIT_MENU_ICON_TARGET {
+    s16 x;
+    s16 y;
+};
+
+static int CalMoveFromMenuIcon() {
+    static const EDIT_MENU_ICON_TARGET panel_target[6] = {
+        {0x50, 0x34}, {0x50, 0x34}, {0x50, 0x20}, {0x5E, 0x1E}, {0x50, 0x34}, {0x50, 0x34},
+    };
+    static const s16 offscreen_x = -250;
+    int icon_max = GetEditMenuMax();
+    int arrived_count = 0;
+
+    for (int i = 0; i < icon_max; i++) {
+        int arrived_axes = 0;
+        s16 target_x;
+        s16 target_y;
+
+        if (i == EditSwitch - 9) {
+            target_x = panel_target[i].x;
+            target_y = panel_target[i].y;
+        } else {
+            target_x = offscreen_x;
+            target_y = (s16) MenuIconPos[i][1];
+        }
+
+        float delta_x = (float) target_x - MenuIconPos[i][0];
+        MenuIconPos[i][0] += delta_x / 4.0f;
+        if (abs((int) delta_x) < 4.0f) {
+            MenuIconPos[i][0] = target_x;
+            arrived_axes++;
+        }
+
+        float delta_y = (float) target_y - MenuIconPos[i][1];
+        MenuIconPos[i][1] += delta_y / 4.0f;
+        if (abs((int) delta_y) < 4.0f) {
+            MenuIconPos[i][1] = target_y;
+            arrived_axes++;
+        }
+
+        if (arrived_axes >= 2) {
+            arrived_count++;
+        }
+    }
+    return arrived_count >= icon_max;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/editmenu", CalMoveFromMenuIcon__Fv);
+#endif
+#ifdef NON_MATCHING
+static int CalMoveToMenuIcon() {
+    int icon_max = GetEditMenuMax();
+    int arrived_count = 0;
+
+    for (int i = 0; i < icon_max; i++) {
+        int arrived_axes = 0;
+        int target[2];
+
+        GetEditMenuIconPos(i, target);
+
+        float delta_x = (float) target[0] - MenuIconPos[i][0];
+        MenuIconPos[i][0] += delta_x / 4.0f;
+        if (abs((int) delta_x) < 2.0f) {
+            MenuIconPos[i][0] = target[0];
+            arrived_axes++;
+        }
+
+        float delta_y = (float) target[1] - MenuIconPos[i][1];
+        MenuIconPos[i][1] += delta_y / 4.0f;
+        if (abs((int) delta_y) < 2.0f) {
+            MenuIconPos[i][1] = target[1];
+            arrived_axes++;
+        }
+
+        if (arrived_axes >= 2) {
+            arrived_count++;
+        }
+    }
+    return arrived_count >= icon_max;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/editmenu", CalMoveToMenuIcon__Fv);
+#endif
 INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuInit__FPii);
 INCLUDE_RODATA("asm/nonmatchings/editmenu", @464__3);
 INCLUDE_RODATA("asm/nonmatchings/editmenu", @465__2);

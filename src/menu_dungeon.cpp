@@ -34,9 +34,83 @@ int MenuEtcErrCnt;
 /** Number of floors available in each dungeon. */
 static int maxFloorTbl__4[7] = {15, 17, 18, 18, 15, 25, 100};
 
+#ifdef NON_MATCHING
+void PlusAttachmentVolume(ATTACH_LIST *base, ATTACH_LIST *add, float scale) {
+    int i;
+
+    for (i = 0; i < 4; i++) {
+        (&base->attack)[i] = (s16) ((float) (&base->attack)[i] + (float) (&add->attack)[i] * scale);
+    }
+    for (i = 0; i < 5; i++) {
+        base->elem[i] = (s8) ((float) base->elem[i] + (float) add->elem[i] * scale);
+    }
+    for (i = 0; i < 10; i++) {
+        base->vs_monster[i] = (s8) ((float) base->vs_monster[i] + (float) add->vs_monster[i] * scale);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", PlusAttachmentVolume__FP11ATTACH_LISTP11ATTACH_LISTf);
+#endif
+#ifdef NON_MATCHING
+int GetWeaponAttachStatusUp(WEAPON_HAVE *weapon, int stat) {
+    int total;
+    int i;
+
+    if (GetWeaponData(weapon->item_no) == NULL || weapon->item_no < 0x101) {
+        return 0;
+    }
+
+    total = 0;
+    for (i = 0; i < 6; i++) {
+        ATTACH_LIST *attach = &weapon->attach[i];
+
+        if (attach->item_no < 0x51) {
+            continue;
+        }
+
+        int multiplier = (weapon->attach_kind[i] == 3) ? 2 : 1;
+
+        /* Attachment stats are read by byte offset from the ATTACH_LIST
+         * start: a 16-bit value at 6 + stat*2 for the base stats, then bytes
+         * out of elem/vs_monster for the element and monster-type stats. */
+        s8 *bytes = (s8 *) attach;
+        if (stat < 5) {
+            total += *(s16 *) (bytes + 6 + stat * 2) * multiplier;
+        } else if (stat >= 8 && stat < 0xD) {
+            total += bytes[stat + 8] * multiplier;
+        } else {
+            total += bytes[stat + 7] * multiplier;
+        }
+    }
+    return total;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", GetWeaponAttachStatusUp__FP11WEAPON_HAVEi);
+#endif
+#ifdef NON_MATCHING
+void SetWeaponAttachStatus(WEAPON_HAVE *attach_source) {
+    if (attach_source == NULL) {
+        return;
+    }
+
+    CDngStatusData *dng_status = SaveData->GetDngStatus();
+    if (dng_status == NULL) {
+        printf("cdng is NULL!!!!\n");
+        return;
+    }
+
+    int chara = dng_status->unk_04;
+    WEAPON_HAVE *equipped = &dng_status->chara_weapons[chara][dng_status->equipped_weapon_slot[chara]];
+    if (equipped == NULL) {
+        printf("actwep is NULL\n", chara);
+        return;
+    }
+
+    WeaponAllValueSet(equipped, attach_source, 0);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", SetWeaponAttachStatus__FP11WEAPON_HAVE);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @638__3);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @639__4);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", WeaponAllValueSet__FP11WEAPON_HAVEP11WEAPON_HAVEi);

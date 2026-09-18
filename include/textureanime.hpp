@@ -44,11 +44,11 @@ public:
     s16 unk_3E;
     s16 unk_40;
     s16 unk_42;
-    s32 unk_44;
-    s32 unk_48;
-    s32 unk_4C;
-    s32 unk_50;
-    s32 unk_54;
+    float scroll_x_step; /**< Horizontal texture-scroll increment per frame. */
+    float scroll_y_step; /**< Vertical texture-scroll increment per frame. */
+    float scroll_x;      /**< Current horizontal texture-scroll offset. */
+    float scroll_y;      /**< Current vertical texture-scroll offset. */
+    CTexAnimeData *next; /**< Links the record to the next animation in its group. */
 
     /**
      * Sets the animation to play no frame.
@@ -120,7 +120,7 @@ public:
      * @size 0x60
      * @unknownret
      */
-    void NewTexAnimeData(void);
+    CTexAnimeData *NewTexAnimeData(void);
 
     /**
      * Starts a new animation group at the next available pool record.
@@ -130,7 +130,7 @@ public:
      * @size 0xDC
      * @unknownret
      */
-    void NewTexAnimeGroupData(int);
+    CTexAnimeData *NewTexAnimeGroupData(int group);
 
     /**
      * Appends one texture-animation record to its selected group.
@@ -140,7 +140,7 @@ public:
      * @size 0xF8
      * @unknownret
      */
-    void EnterTexAnime(CTexAnimeData *);
+    int EnterTexAnime(CTexAnimeData *record);
 
     /**
      * Stops and resets every animation group.

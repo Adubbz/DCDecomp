@@ -5,6 +5,28 @@
 #include "menu_draw.hpp"
 
 /**
+ * Holds the save menu's current step and the arguments its steps pass to
+ * each other.
+ */
+struct SAVE_MENU_STATE {
+    s32 unk_0;
+    s32 key_no; /**< Index of the step run next, into SaveMenuFunc. */
+    u8 unk_8[4];
+    s32 file_no; /**< Save slot the current step works on. */
+    u8 unk_10[0x10];
+    s32 unk_20;
+    u8 unk_24[4];
+    s32 unk_28;
+    s32 block_no; /**< Texture block the save board's textures load into. */
+    u8 unk_30[4];
+};
+
+STATIC_ASSERT(sizeof(SAVE_MENU_STATE) == 0x34);
+
+/** Current step of the save menu and the arguments it carries between steps. */
+extern SAVE_MENU_STATE SaveMenu;
+
+/**
  * Checks the memory card before a save and picks the save menu's next step.
  *
  * @mangled SaveMenuKeySaveCheck__Fv
