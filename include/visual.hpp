@@ -32,6 +32,15 @@ public:
     int unk_00;
     int unk_04;
 
+    /**
+     * Constructs a visual and clears it.
+     *
+     * @mangled __ct__7CVisualFv
+     * @address 0x134B60
+     * @size 0x44
+     */
+    CVisual();
+
     virtual void Initialize();
 
     int unk_0C;
@@ -139,12 +148,45 @@ public:
      * @size 0x48
      */
     virtual int RemakeData(u_int *data);
+
+    /**
+     * Draws the model, building and lending it a clipped shadow packet on the shadow pass.
+     *
+     * @mangled DrawVu1__13CVisualShadowFPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii
+     * @address 0x136290
+     * @size 0x14C
+     */
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
                         u_long128 *unknown0, int unknown1, int unknown2);
+
+    /**
+     * Draws the model into a VIF packet, building and lending it a clipped shadow packet.
+     *
+     * @mangled DrawVu1__13CVisualShadowFP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii
+     * @address 0x1363E0
+     * @size 0x144
+     */
     virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
                         VU1_PROGRAM program, u_long128 *unknown0, int unknown1, int unknown2);
 
-    void CreateVUdataShadow(u_int *block, u_int *data);
+    /**
+     * Writes one model's shadow geometry and returns its size in quadwords.
+     *
+     * @mangled CreateVUdataShadow__13CVisualShadowFPUiPUi
+     * @address 0x136530
+     * @size 0x304
+     */
+    int CreateVUdataShadow(u_int *block, u_int *data);
+
+    /**
+     * Writes visible shadow geometry and returns its size in quadwords.
+     *
+     * @mangled CreateVUdataShadowCLIP__13CVisualShadowFPUiPUiP10RenderInfoPA4_f
+     * @address 0x136890
+     * @size 0xB48
+     */
+    int CreateVUdataShadowCLIP(u_int *block, u_int *data, RenderInfo *info,
+                               float (*matrix)[4]);
 };
 
 /**
