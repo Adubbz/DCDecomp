@@ -6750,7 +6750,7 @@ int BtCheckDamageProc(void) {
             if (NowColData->hit[no].owner != -1) {
                 monster = (NowColData->hit[no].owner - 200) / 5;
                 if (monster >= 0 && monster < 16) {
-                    NowMonstorUnit->monster[monster].unk_0C0 = damage;
+                    NowMonstorUnit->monster[monster].last_hit_damage = damage;
                 }
                 NowMonstorUnit->chara[monster][0].GetPosition(from);
             }

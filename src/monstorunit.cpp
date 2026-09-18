@@ -509,7 +509,7 @@ void CMonstorUnit::DrawShadowMonstor() {
                 character->GetRotation(rotation);
                 chara[i][0].shadow_frame->SetPosition(position);
                 chara[i][0].shadow_frame->SetRotation(0.0f, rotation[1], 0.0f);
-                position[1] -= monster[i].unk_0CC;
+                position[1] -= monster[i].shadow_length;
                 MGDrawShadowFast(chara[i][0].shadow_frame, position, light);
             }
         }
@@ -538,10 +538,10 @@ void CMonstorUnit::CheckViewLevel() {
         player_position[3] = 1;
         float distance = DistVector(player_position, monster_position);
         monster[i].player_distance = distance;
-        if (monster[i].state == 1 && distance < monster[i].unk_0A4) {
+        if (monster[i].state == 1 && distance < monster[i].clip_distance) {
             monster[i].state = 2;
         }
-        if (monster[i].state == 2 && distance > 10.0f + monster[i].unk_0A4) {
+        if (monster[i].state == 2 && distance > 10.0f + monster[i].clip_distance) {
             monster[i].state = 1;
         }
         if (monster[i].hp <= 0) {
@@ -1492,15 +1492,15 @@ void CMonstorUnit::Step(int pause) {
                             }
                         }
                     }
-                    if (monster[unk_090].unk_084 != 0.0f) {
+                    if (monster[unk_090].turn_speed != 0.0f) {
                         chara[unk_090][0].GetPosition(turn_position);
                         chara[unk_090][0].GetRotation(rotation);
                         sceVu0SubVector(direction, monster[unk_090].unk_070, turn_position);
                         float angle = atan2f(direction[0], direction[2]);
-                        rotation[1] = AngleInterpolate(rotation[1], angle, monster[unk_090].unk_084, 0);
+                        rotation[1] = AngleInterpolate(rotation[1], angle, monster[unk_090].turn_speed, 0);
                         chara[unk_090][0].SetRotation(rotation);
                         if (AngleCmp(rotation[1], angle, 0.052359879f) == 0) {
-                            monster[unk_090].unk_084 = 0.0f;
+                            monster[unk_090].turn_speed = 0.0f;
                         }
                     }
                     if (monster[unk_090].unk_098 > 0) {
@@ -1641,19 +1641,19 @@ void CMonstorUnit::CleanViewMonstor(int mode) {
         monster[i].unk_070[1] = 0;
         monster[i].unk_070[0] = 0;
         monster[i].movement_speed = 0;
-        monster[i].unk_084 = 0;
+        monster[i].turn_speed = 0;
         monster[i].unk_088 = 1;
         monster[i].unk_044 = 13.0f;
         monster[i].collision_radius = 13.0f;
         monster[i].unk_094 = 0;
         monster[i].unk_098 = 0;
         monster[i].unk_0A0 = -1;
-        monster[i].unk_0A4 = 300.0f;
+        monster[i].clip_distance = 300.0f;
         monster[i].unk_0A8 = 0;
         monster[i].unk_0AC = -1;
         monster[i].unk_0AE = -1;
-        monster[i].unk_0C0 = -1;
-        monster[i].unk_0CC = 1.0f;
+        monster[i].last_hit_damage = -1;
+        monster[i].shadow_length = 1.0f;
         monster[i].unk_0FC = 0;
         monster[i].unk_110 = 1.0f;
         monster[i].unk_114 = 1.0f;

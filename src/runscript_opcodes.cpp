@@ -61,7 +61,7 @@ int _SET_MOTION(RS_STACKDATA *stack, int argc) {
     int motion_id = GetStackInt(stack);
     int half_speed = NowMonstorUnit->monster[monster_no].unk_014 > 0;
 
-    NowMonstorUnit->monster[monster_no].unk_0C0 = -1;
+    NowMonstorUnit->monster[monster_no].last_hit_damage = -1;
     NowMonstorUnit->monster[monster_no].requested_motion_speed = -1.0f;
     stack++;
 
@@ -372,7 +372,7 @@ INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _COS_DEG__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_PALLET__FP12RS_STACKDATAi);
 #ifdef NON_MATCHING
 int _STATUS_SET_CLIPLEVEL(RS_STACKDATA *stack, int argc) {
-    NowMonstorUnit->monster[NowMonstorUnit->unk_090].unk_0A4 = GetStackFloat(stack);
+    NowMonstorUnit->monster[NowMonstorUnit->unk_090].clip_distance = GetStackFloat(stack);
     return 1;
 }
 #else
@@ -380,7 +380,7 @@ INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_CLIPLEVEL__FP12RS_
 #endif
 #ifdef NON_MATCHING
 int _STATUS_GET_HITDMG_VOL(RS_STACKDATA *stack, int argc) {
-    SetStack(stack, NowMonstorUnit->monster[NowMonstorUnit->unk_090].unk_0C0);
+    SetStack(stack, NowMonstorUnit->monster[NowMonstorUnit->unk_090].last_hit_damage);
     return 1;
 }
 #else
@@ -412,7 +412,7 @@ INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_LOCKON_DIST__FP12R
 #endif
 #ifdef NON_MATCHING
 int _STATUS_SET_SHADOW_LEN(RS_STACKDATA *stack, int argc) {
-    NowMonstorUnit->monster[NowMonstorUnit->unk_090].unk_0CC = GetStackFloat(stack);
+    NowMonstorUnit->monster[NowMonstorUnit->unk_090].shadow_length = GetStackFloat(stack);
     return 1;
 }
 #else

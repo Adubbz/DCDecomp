@@ -153,7 +153,7 @@ public:
      * @address 0x157B50
      * @size 0x34
      */
-    char *GetCharaName(int chara_no);
+    s16 *GetCharaName(int chara_no);
 
     /**
      * Adds a value to the play time.
@@ -454,7 +454,7 @@ public:
 
 private:
     s32 config[18];         /**< Contains the configuration values. */
-    char chara_name[6][64]; /**< Contains the name of each character. */
+    s16 chara_name[6][32]; /**< Contains the name of each character, as sixteen-bit characters. */
     s32 map_no;             /**< Map that the game resumes on. */
     s32 unk_1CC;
     float now_time;             /**< Contains the time of day. */

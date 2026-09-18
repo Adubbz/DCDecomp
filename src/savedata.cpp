@@ -38,7 +38,7 @@ CMenuCursor *CSaveData::GetMenuCursor() {
     return &this->menu_cursor;
 }
 
-char *CSaveData::GetCharaName(int chara_no) {
+s16 *CSaveData::GetCharaName(int chara_no) {
     if (chara_no < 0 || chara_no >= 6) {
         return NULL;
     }

@@ -195,9 +195,7 @@ int GetMsgLengthCharaName(int chara_no) {
         return 0;
     }
 
-    /* The name is ten sixteen-bit characters; savedata.hpp still gives the
-       getter a `char *` return, which the halfword walk here contradicts. */
-    short *name = (short *) SaveData->GetCharaName(chara_no);
+    s16 *name = SaveData->GetCharaName(chara_no);
     int length = 0;
 
     while (*name != 0 && length < 10) {

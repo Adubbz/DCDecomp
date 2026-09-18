@@ -53,7 +53,7 @@ struct MONSTOR {
     u8 unk_09C[4];
     s16 unk_0A0;
     u8 unk_0A2[2];
-    float unk_0A4;
+    float clip_distance;  /**< Distance past which the monster stops taking part and being drawn. */
     s32 unk_0A8;
     s16 unk_0AC;
     s16 unk_0AE;
@@ -62,10 +62,10 @@ struct MONSTOR {
     u8 unk_0B6[2];
     float ground_distance; /**< Height of the monster above the ground beneath it. */
     float ground_y;        /**< Height of the ground beneath the monster. */
-    s32 unk_0C0;
+    s32 last_hit_damage;  /**< Damage the last hit did, or -1 once a new motion starts. */
     s32 last_hit_id; /**< Identifies the attack that last hit the monster, or -1. */
     s32 hit_element; /**< Element of the attack that last hit the monster; 5 for none. */
-    float unk_0CC;
+    float shadow_length;  /**< Distance the monster's shadow is cast below it. */
     s16 unk_0D0;
     s16 unk_0D2;
     s16 unk_0D4;
