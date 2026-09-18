@@ -7,6 +7,8 @@
 #include "dun/gameloop.hpp"
 #include "mathutil.hpp"
 #include "monstorunit.hpp"
+#include "userstatus.hpp"
+#include "snd.hpp"
 
 #ifdef NON_MATCHING
 int GetStackInt(RS_STACKDATA *argument) {
@@ -368,12 +370,54 @@ int _COS_DEG(RS_STACKDATA *stack, int argc) {
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _COS_DEG__FP12RS_STACKDATAi);
 #endif
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_PALLET__FP12RS_STACKDATAi);
+#ifdef NON_MATCHING
+int _STATUS_SET_CLIPLEVEL(RS_STACKDATA *stack, int argc) {
+    NowMonstorUnit->monster[NowMonstorUnit->unk_090].unk_0A4 = GetStackFloat(stack);
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_CLIPLEVEL__FP12RS_STACKDATAi);
+#endif
+#ifdef NON_MATCHING
+int _STATUS_GET_HITDMG_VOL(RS_STACKDATA *stack, int argc) {
+    SetStack(stack, NowMonstorUnit->monster[NowMonstorUnit->unk_090].unk_0C0);
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_GET_HITDMG_VOL__FP12RS_STACKDATAi);
+#endif
+#ifdef NON_MATCHING
+int _STATUS_GET_MOTION_ID(RS_STACKDATA *stack, int argc) {
+    SetStack(stack, NowMonstorUnit->chara[NowMonstorUnit->unk_090][0].motion_no);
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_GET_MOTION_ID__FP12RS_STACKDATAi);
+#endif
+#ifdef NON_MATCHING
+int _STATUS_GET_DMG_ID(RS_STACKDATA *stack, int argc) {
+    SetStack(stack, NowMonstorUnit->monster[NowMonstorUnit->unk_090].last_hit_id);
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_GET_DMG_ID__FP12RS_STACKDATAi);
+#endif
+#ifdef NON_MATCHING
+int _STATUS_SET_LOCKON_DIST(RS_STACKDATA *stack, int argc) {
+    NowMonstorUnit->monster[NowMonstorUnit->unk_090].lock_range = GetStackFloat(stack);
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_LOCKON_DIST__FP12RS_STACKDATAi);
+#endif
+#ifdef NON_MATCHING
+int _STATUS_SET_SHADOW_LEN(RS_STACKDATA *stack, int argc) {
+    NowMonstorUnit->monster[NowMonstorUnit->unk_090].unk_0CC = GetStackFloat(stack);
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_SHADOW_LEN__FP12RS_STACKDATAi);
+#endif
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_LOCKON_TRG__FP12RS_STACKDATAi);
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @960);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MOV_COL__FP12RS_STACKDATAi);
@@ -391,11 +435,47 @@ INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1086__2);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SND_FRM__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_LOOP_SND__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STOP_LOOP_SND__FP12RS_STACKDATAi);
+#ifdef NON_MATCHING
+int _DEL_LOOP_SND(RS_STACKDATA *stack, int argc) {
+    // The sound keeps playing; the monster just stops owning it.
+    NowMonstorUnit->sound[NowMonstorUnit->unk_090].sequence_id = -1;
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _DEL_LOOP_SND__FP12RS_STACKDATAi);
+#endif
+#ifdef NON_MATCHING
+int _SET_SND_NOW(RS_STACKDATA *stack, int argc) {
+    SndSePlay(GetStackInt(stack), -1, 0);
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SND_NOW__FP12RS_STACKDATAi);
+#endif
+#ifdef NON_MATCHING
+int _STOP_SND_NOW(RS_STACKDATA *stack, int argc) {
+    SndSeStop(GetStackInt(stack), 0);
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STOP_SND_NOW__FP12RS_STACKDATAi);
+#endif
+#ifdef NON_MATCHING
+int _GET_CHR_ID(RS_STACKDATA *stack, int argc) {
+    SetStack(stack, (int) UserStatus->cur_chara);
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_CHR_ID__FP12RS_STACKDATAi);
+#endif
+#ifdef NON_MATCHING
+int _GET_COL_HIT_ID(RS_STACKDATA *stack, int argc) {
+    SetStack(stack, NowMonstorUnit->effect[NowMonstorUnit->unk_090].hit_slot);
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_COL_HIT_ID__FP12RS_STACKDATAi);
+#endif
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_SCRIPT_ID__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_MONSTOR_POS__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_MONSTOR_FRM__FP12RS_STACKDATAi);
