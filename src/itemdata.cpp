@@ -461,10 +461,6 @@ INCLUDE_RODATA("asm/nonmatchings/itemdata", @768);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @809__2);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @810);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @811);
-/**
- * Loads dungeon models and applies scene directives from the parsed definitions.
- */
-INCLUDE_ASM("asm/nonmatchings/itemdata", TEIGIMdsLoad__FPUii);
 #ifdef NON_MATCHING
 void TEIGIMdsLoad(u_int *pack, int reuse_only) {
     CFrameAttr frame_attr;
@@ -691,6 +687,8 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/itemdata", TEIGIMdsLoad__FPUii);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @1149);
 INCLUDE_RODATA("asm/nonmatchings/itemdata", @1150__2);

@@ -2,6 +2,7 @@
 
 #include <cstring>
 
+#include "mglib.hpp"
 #include "scriptinterpreter.hpp"
 #include "texture.hpp"
 
@@ -10,6 +11,7 @@ extern CTextureAnime *pTexAnime;
 extern int now_group;
 extern TAG_PARAM Command__4[];
 extern void (*CommandExe__4[])(void **arguments);
+extern int stop_anime__13CTextureAnime;
 #endif
 
 void CTextureTexAnime::Copy(CTexture *texture) {
@@ -47,7 +49,118 @@ void CTexAnimeData::Initialize() {
     next = NULL;
     unk_06 = -1;
 }
+#ifdef NON_MATCHING
+void CTextureAnime::TexAnime(int texture_block) {
+    sceVif1PkCnt(Vif1Packet, 0);
+    sceVif1PkOpenDirectCode(Vif1Packet, 0);
+    sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(Vif1Packet, 0x3F, 0);
+    sceVif1PkCloseGifTag(Vif1Packet);
+    sceVif1PkCloseDirectCode(Vif1Packet);
+
+    for (int group = 0; group < 24; group++) {
+        CTexAnimeData *record = current[group];
+        if (enabled[group] != 0 && record != NULL && record->unk_06 >= 0) {
+            Enable(record->unk_06);
+        }
+    }
+
+    for (int group = 0; group < 24; group++) {
+        CTexAnimeData *record = current[group];
+        if (enabled[group] == 0 || record == NULL || record->first_texture.block != texture_block ||
+            record->second_texture.block != texture_block) {
+            continue;
+        }
+
+        for (;;) {
+            sceGsTex0 *source = (sceGsTex0 *) &record->first_texture.tex0;
+            sceGsTex0 *destination = (sceGsTex0 *) &record->second_texture.tex0;
+            if (record->unk_00 == 0) {
+                CRect_i_ source_rect(record->unk_38, record->unk_3A, record->unk_3C,
+                                     record->unk_3E);
+                MGMoveImage(source, source_rect, destination, record->unk_40, record->unk_42, 0);
+            } else if (record->unk_00 == 1) {
+                int scroll_x = (int) record->scroll_x;
+                int scroll_y = (int) record->scroll_y;
+                int remaining_width = record->unk_3C - scroll_x;
+                int remaining_height = record->unk_3E - scroll_y;
+
+                if (remaining_width > 0 && remaining_height > 0) {
+                    CRect_i_ rect(record->unk_38 + scroll_x, record->unk_3A + scroll_y,
+                                  remaining_width, remaining_height);
+                    MGMoveImage(source, rect, destination, record->unk_40, record->unk_42, 0);
+                }
+                if (remaining_width > 0 && scroll_y > 0) {
+                    CRect_i_ rect(record->unk_38 + scroll_x, record->unk_3A, remaining_width,
+                                  scroll_y);
+                    MGMoveImage(source, rect, destination, record->unk_40,
+                                record->unk_42 + record->unk_3E - scroll_y, 0);
+                }
+                if (scroll_x > 0 && remaining_height > 0) {
+                    CRect_i_ rect(record->unk_38, record->unk_3A + scroll_y, scroll_x,
+                                  remaining_height);
+                    MGMoveImage(source, rect, destination,
+                                record->unk_40 + record->unk_3C - scroll_x, record->unk_42, 0);
+                }
+                if (scroll_x > 0 && scroll_y > 0) {
+                    CRect_i_ rect(record->unk_38, record->unk_3A, scroll_x, scroll_y);
+                    MGMoveImage(source, rect, destination,
+                                record->unk_40 + record->unk_3C - scroll_x,
+                                record->unk_42 + record->unk_3E - scroll_y, 0);
+                }
+            }
+
+            if (record->unk_00 == 1 && stop_anime__13CTextureAnime == 0) {
+                if (record->scroll_x_step != 0.0f) {
+                    record->scroll_x += record->scroll_x_step;
+                    if (record->scroll_x >= record->unk_3C) {
+                        record->scroll_x -= record->unk_3C;
+                    }
+                    if (record->scroll_x < 0.0f) {
+                        record->scroll_x += record->unk_3C;
+                    }
+                }
+                if (record->scroll_y_step != 0.0f) {
+                    record->scroll_y += record->scroll_y_step;
+                    if (record->scroll_y >= record->unk_3E) {
+                        record->scroll_y -= record->unk_3E;
+                    }
+                    if (record->scroll_y < 0.0f) {
+                        record->scroll_y += record->unk_3E;
+                    }
+                }
+            }
+
+            if (record->unk_04 != 0 || record->next == NULL) {
+                break;
+            }
+            record = record->next;
+        }
+
+        if (stop_anime__13CTextureAnime == 0) {
+            frame[group]++;
+        }
+        if (record->unk_04 < 0) {
+            frame[group] = 0;
+        } else if (record->unk_04 < frame[group]) {
+            frame[group] = 0;
+            current[group] = current[group]->next;
+            if (current[group] == NULL) {
+                current[group] = first[group];
+            }
+        }
+    }
+
+    sceVif1PkCnt(Vif1Packet, 0);
+    sceVif1PkOpenDirectCode(Vif1Packet, 0);
+    sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(Vif1Packet, 0x3F, 0);
+    sceVif1PkCloseGifTag(Vif1Packet);
+    sceVif1PkCloseDirectCode(Vif1Packet);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/textureanime", TexAnime__13CTextureAnimeFi);
+#endif
 
 void CTextureAnime::Initialize(CTexAnimeData *records, int count) {
     data = records;

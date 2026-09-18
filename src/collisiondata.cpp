@@ -48,8 +48,9 @@ void DebugInfomationDraw(void) {
     }
     DbgMsg.Draw();
 }
-#endif
+#else
 INCLUDE_ASM("asm/nonmatchings/collisiondata", DebugInfomationDraw__Fv);
+#endif
 
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1542);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1543);

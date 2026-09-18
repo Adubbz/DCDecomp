@@ -2,17 +2,28 @@
 
 #include "common.h"
 
+#include <libvu0.h>
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 class CCamera;
 class CUserStatus;
 
+/**
+ * Animates the blast billboards created by one bomb.
+ */
 class CItemBombEffect {
-private:
-    u8 data[0xC0];
-
 public:
+    sceVu0FVECTOR positions[5]; /**< World positions of the blast billboards. */
+    s32 phases[5];              /**< Envelope phase run by each billboard. */
+    s32 counters[5];            /**< Frames elapsed in each billboard's phase. */
+    float sizes[5];             /**< World-space widths of the billboards. */
+    float alphas[5];            /**< Alpha values used to draw the billboards. */
+    s32 active[5];              /**< Nonzero while each billboard is animated. */
+    float scale;                /**< Scale applied to every billboard. */
+    u8 unk_B8[0x8];
+
     /**
      * Draws the bomb's blast and its shock wave.
      *
@@ -47,7 +58,7 @@ public:
      * @address 0x1D6160
      * @size 0x48
      */
-    void CheckBomb(void);
+    int CheckBomb(void);
 
     /**
      * Clears the bomb effect.
@@ -61,7 +72,13 @@ public:
 
 class CShockWave {
 public:
-    u8 unk_00[0x28];
+    sceVu0FVECTOR position; /**< World position at the centre of the ring. */
+    float radius_scale;     /**< Amount added to the ring radius as it expands. */
+    float base_radius;      /**< Ring radius before its expansion is applied. */
+    float radius;           /**< Current world-space radius of the ring. */
+    float expand_steps;     /**< Number of frames taken to complete expansion. */
+    float phase;            /**< Sine-envelope phase of the expansion. */
+    float alpha;            /**< Alpha value used to draw the ring. */
     s32 unk_28;
     u8 unk_2C[0x4];
 
@@ -95,5 +112,23 @@ STATIC_ASSERT(sizeof(CShockWave) == 0x30);
  * @unknownret
  */
 void usedActiveItem(CUserStatus *status, int item);
+
+/**
+ * Reports whether one running item is still in use.
+ *
+ * @mangled checkItemUsed__Fi
+ * @address 0x1D5580
+ * @size 0x16C
+ */
+int checkItemUsed(int slot);
+
+/**
+ * Starts a bomb effect at a position and returns its collision slot.
+ *
+ * @mangled SetBombEffect__FPfiif
+ * @address 0x1D5940
+ * @size 0x1F0
+ */
+int SetBombEffect(float *position, int owner, int damage, float scale);
 
 STATIC_ASSERT(sizeof(CItemBombEffect) == 0xC0);
