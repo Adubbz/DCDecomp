@@ -192,7 +192,7 @@ int GetAtoraMaxVillage(void);
  * @address 0x22BD10
  * @size 0xDC
  */
-int GetNowMapTransAtraMap(int);
+int GetNowMapTransAtraMap(int mapNo);
 
 /**
  * Sets the menu's projection and view matrices from a camera.

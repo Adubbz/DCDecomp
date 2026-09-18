@@ -5,6 +5,7 @@
 #include <cstdio>
 
 #include "dun/gameloop.hpp"
+#include "mathutil.hpp"
 #include "monstorunit.hpp"
 
 #ifdef NON_MATCHING
@@ -52,13 +53,186 @@ void SetStack(RS_STACKDATA *argument, float value) {
 #else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", SetStack__FP12RS_STACKDATAf__3);
 #endif
+#ifdef NON_MATCHING
+int _SET_MOTION(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+    int motion_id = GetStackInt(stack);
+    int half_speed = NowMonstorUnit->monster[monster_no].unk_014 > 0;
+
+    NowMonstorUnit->monster[monster_no].unk_0C0 = -1;
+    NowMonstorUnit->monster[monster_no].requested_motion_speed = -1.0f;
+    stack++;
+
+    if (argc == 1) {
+        float speed = NowMonstorUnit->chara[monster_no][0].motion_type.motion_info[motion_id].speed;
+        if (half_speed) {
+            speed *= 0.5f;
+        }
+        NowMonstorUnit->chara[monster_no][0].SetMotion(motion_id, 0);
+        NowMonstorUnit->chara[monster_no][0].SetMotionSpeed(speed);
+        NowMonstorUnit->monster[monster_no].requested_motion = motion_id;
+        NowMonstorUnit->monster[monster_no].requested_motion_flags = 0;
+        NowMonstorUnit->monster[monster_no].requested_motion_speed = speed;
+        for (int i = 0; i < NowMonstorUnit->monster[monster_no].unk_0B4; i++) {
+            NowMonstorUnit->chara[monster_no][i + 1].SetMotion(motion_id, 0);
+            NowMonstorUnit->chara[monster_no][i + 1].SetMotionSpeed(speed);
+        }
+    }
+    if (argc == 2) {
+        float speed = GetStackFloat(stack);
+        stack++;
+        if (half_speed) {
+            speed *= 0.5f;
+        }
+        NowMonstorUnit->chara[monster_no][0].SetMotion(motion_id, 0);
+        NowMonstorUnit->chara[monster_no][0].SetMotionSpeed(speed);
+        NowMonstorUnit->monster[monster_no].requested_motion = motion_id;
+        NowMonstorUnit->monster[monster_no].requested_motion_flags = 0;
+        NowMonstorUnit->monster[monster_no].requested_motion_speed = speed;
+        for (int i = 0; i < NowMonstorUnit->monster[monster_no].unk_0B4; i++) {
+            NowMonstorUnit->chara[monster_no][i + 1].SetMotion(motion_id, 0);
+            NowMonstorUnit->chara[monster_no][i + 1].SetMotionSpeed(speed);
+        }
+    }
+    if (argc == 3) {
+        float speed = GetStackFloat(stack);
+        stack++;
+        if (half_speed) {
+            speed *= 0.5f;
+        }
+        int mode = GetStackInt(stack);
+        stack++;
+        NowMonstorUnit->chara[monster_no][0].SetMotion(motion_id, mode);
+        NowMonstorUnit->chara[monster_no][0].SetMotionSpeed(speed);
+        NowMonstorUnit->monster[monster_no].requested_motion = motion_id;
+        NowMonstorUnit->monster[monster_no].requested_motion_flags = mode;
+        NowMonstorUnit->monster[monster_no].requested_motion_speed = speed;
+        for (int i = 0; i < NowMonstorUnit->monster[monster_no].unk_0B4; i++) {
+            NowMonstorUnit->chara[monster_no][i + 1].SetMotion(motion_id, mode);
+            NowMonstorUnit->chara[monster_no][i + 1].SetMotionSpeed(speed);
+        }
+    }
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MOTION__FP12RS_STACKDATAi);
+#endif
+#ifdef NON_MATCHING
+int _CHK_MOTION_FRM(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+    float current_frame = NowMonstorUnit->chara[monster_no][0].motion_type.state.time;
+    int motion_no = NowMonstorUnit->chara[monster_no][0].motion_no;
+    float end_frame = (float) NowMonstorUnit->chara[monster_no][0].motion_type.motion_info[motion_no].end;
+    int done = 0;
+
+    if (!(current_frame < end_frame - 1.0f) && current_frame < end_frame) {
+        done = 1;
+    }
+    SetStack(stack, done);
+    stack++;
+    if (argc == 2) {
+        SetStack(stack, current_frame);
+    }
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _CHK_MOTION_FRM__FP12RS_STACKDATAi);
+#endif
+#ifdef NON_MATCHING
+int _GET_MOTION_FRM(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+
+    SetStack(stack, NowMonstorUnit->chara[monster_no][0].motion_type.state.time);
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_MOTION_FRM__FP12RS_STACKDATAi);
+#endif
+#ifdef NON_MATCHING
+int _SET_MOTION_FRM(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+
+    NowMonstorUnit->chara[monster_no][0].motion_type.state.time = GetStackFloat(stack);
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MOTION_FRM__FP12RS_STACKDATAi);
+#endif
+#ifdef NON_MATCHING
+int _GET_DISTANCE(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+    float monster_position[4];
+    float target_position[4];
+
+    NowMonstorUnit->chara[monster_no][0].GetPosition(monster_position);
+    if (argc == 1) {
+        sceVu0CopyVector(target_position, CharaMain.pos);
+    } else {
+        target_position[0] = GetStackFloat(stack);
+        stack++;
+        target_position[1] = GetStackFloat(stack);
+        stack++;
+        target_position[2] = GetStackFloat(stack);
+        stack++;
+    }
+    SetStack(stack, DistVector(monster_position, target_position));
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_DISTANCE__FP12RS_STACKDATAi);
+#endif
+#ifdef NON_MATCHING
+int _GET_POSITION(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+    int who = (int) GetStackFloat(stack);
+    float position[4];
+
+    stack++;
+    if (who == -1) {
+        NowMonstorUnit->chara[monster_no][0].GetPosition(position);
+    }
+    if (who == -2) {
+        sceVu0CopyVector(position, CharaMain.pos);
+    }
+    SetStack(stack, position[0]);
+    stack++;
+    SetStack(stack, position[1]);
+    stack++;
+    SetStack(stack, position[2]);
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_POSITION__FP12RS_STACKDATAi);
+#endif
+#ifdef NON_MATCHING
+int _SET_ROTATION(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+
+    NowMonstorUnit->monster[monster_no].unk_070[0] = GetStackFloat(stack);
+    stack++;
+    NowMonstorUnit->monster[monster_no].unk_070[1] = GetStackFloat(stack);
+    stack++;
+    NowMonstorUnit->monster[monster_no].unk_070[2] = GetStackFloat(stack);
+    stack++;
+    NowMonstorUnit->monster[monster_no].turn_speed = GetStackFloat(stack);
+
+    if (NowMonstorUnit->monster[monster_no].turn_speed < 0.0f) {
+        float position[4];
+        float rotation[4];
+        float direction[4];
+
+        NowMonstorUnit->chara[monster_no][0].GetPosition(position);
+        NowMonstorUnit->chara[monster_no][0].GetRotation(rotation);
+        sceVu0SubVector(direction, NowMonstorUnit->monster[monster_no].unk_070, position);
+        rotation[1] = atan2f(direction[0], direction[2]);
+        NowMonstorUnit->chara[monster_no][0].SetRotation(rotation);
+        NowMonstorUnit->monster[monster_no].turn_speed = 0.0f;
+    }
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_ROTATION__FP12RS_STACKDATAi);
+#endif
 #ifdef NON_MATCHING
 int _CHK_ROTATION(RS_STACKDATA *stack, int argc) {
     int done = 0;
@@ -72,7 +246,27 @@ int _CHK_ROTATION(RS_STACKDATA *stack, int argc) {
 #else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _CHK_ROTATION__FP12RS_STACKDATAi);
 #endif
+#ifdef NON_MATCHING
+int _CHK_MOVE(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+    int done = 0;
+
+    if (NowMonstorUnit->monster[monster_no].movement_speed == 0.0f) {
+        done = 1;
+    }
+    SetStack(stack, done);
+    if (argc == 2) {
+        float position[4];
+
+        stack++;
+        NowMonstorUnit->chara[monster_no][0].GetPosition(position);
+        SetStack(stack, DistVector(NowMonstorUnit->monster[monster_no].movement, position));
+    }
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _CHK_MOVE__FP12RS_STACKDATAi);
+#endif
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _CHK_USER_INNER_PRODUCT__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_VECTOR__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_DIRECTION__FP12RS_STACKDATAi);

@@ -149,11 +149,125 @@ int GetAtoraMaxVillage(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetAtoraMaxVillage__Fv);
 #endif
+#ifdef NON_MATCHING
+int GetNowMapTransAtraMap(int mapNo) {
+    s16 mapToVillage[35] = {
+        1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 4, 3, 4, 5, 5,
+        5, 3, 1, 4, 4, 4, 4, 1, 3, 2, 3, 4, 5, 2, 5,
+        4, 3, 2, 2, 2,
+    };
+    int village = 0;
+
+    if (mapNo < 5) {
+        village = mapNo;
+    } else if (mapNo >= 0xB && mapNo < 0x29) {
+        village = mapToVillage[mapNo - 0xB];
+    } else if (mapNo >= 0xC8) {
+        village = mapNo - 0xC8;
+    }
+
+    if (GetAtoraMaxVillage() - 3 < village) {
+        village = GetAtoraMaxVillage() - 3;
+    }
+
+    return village;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowMapTransAtraMap__Fi);
+#endif
+#ifdef NON_MATCHING
+#include <libvu0.h>
+
+void MenuWorldTrans(CCamera *camera) {
+    // CCamera has an unnamed field at +0x2B8 (a two-entry function-pointer
+    // table not yet in camera.hpp) whose second entry is called here.
+    typedef void (*CameraExtraStep)(CCamera *, int);
+    sceVu0FMATRIX cameraMatrix;
+    sceVu0FMATRIX unitMatrix;
+    sceVu0FMATRIX viewMatrix;
+    sceVu0FVECTOR eyePos;
+    void **cameraExtra;
+
+    MGSetProjection(800.0f);
+    camera->GetCameraMatrix(cameraMatrix);
+    cameraExtra = *(void ***) ((char *) camera + 0x2B8);
+    ((CameraExtraStep) cameraExtra[2])(camera, 1);
+    camera->GetPos(eyePos);
+    sceVu0UnitMatrix(unitMatrix);
+    sceVu0MulMatrix(viewMatrix, unitMatrix, cameraMatrix);
+    MGSetViewMatrix(viewMatrix, eyePos);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuWorldTrans__FP7CCamera);
+#endif
+#ifdef NON_MATCHING
+#include <libvu0.h>
+
+/** Camera the menu draws 3D models under. */
+extern CCamera MenuCamera;
+
+void MenuPolygonDraw(int distance, void (*draw)(void)) {
+    float refPos[4] = {0.0f, 0.0f, -45.0f, 1.0f};
+    float eyePos[4] = {0.0f, 0.0f, 60.0f, 1.0f};
+    float lightDir[4][4] = {
+        {0.3f, 0.0f, 0.0f, 0.0f},
+        {0.3f, 0.0f, 0.0f, 0.0f},
+        {0.3f, 0.0f, 0.0f, 0.0f},
+        {0.0f, 0.0f, 0.0f, 0.0f},
+    };
+    float lightColour[4][4] = {
+        {96.0f, 96.0f, 96.0f, 0.0f},
+        {0.0f, 0.0f, 0.0f, 0.0f},
+        {0.0f, 0.0f, 0.0f, 0.0f},
+        {0.0f, 0.0f, 0.0f, 0.0f},
+    };
+    float savedLightDir[4][4];
+    float savedLightColour[4][4];
+    float savedAmbient[4];
+    float ambient[4] = {80.0f, 80.0f, 80.0f, 0.0f};
+    float lightVector[4] = {0.3f, 1.0f, 0.3f, 0.0f};
+    float lightNormal[4];
+
+    MenuCamera.SetRef(refPos);
+    MenuCamera.SetPos(eyePos);
+    MGGetPLight(savedLightDir, savedLightColour);
+    MGGetAmbient(savedAmbient);
+    ambient[3] = (float) distance;
+    sceVu0Normalize(lightNormal, lightVector);
+    lightDir[0][0] = lightNormal[0];
+    lightDir[1][0] = lightNormal[1];
+    lightDir[2][0] = lightNormal[2];
+    MGSetPLight(lightDir, lightColour);
+    MGSetAmbient(ambient);
+    draw();
+    MGSetPLight(savedLightDir, savedLightColour);
+    MGSetAmbient(savedAmbient);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuPolygonDraw__FiPFv_v);
+#endif
+#ifdef NON_MATCHING
+void Get3DPosTo2DPos(CFrame *frame, int *screen) {
+    float origin[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+    float world[4];
+    int screenPos[2];
+
+    frame->GetWorldPosition(world, origin);
+    MGRotTransPers2D(screenPos, world, 0);
+    screen[0] = screenPos[0];
+    screen[1] = screenPos[1];
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", Get3DPosTo2DPos__FP6CFramePi);
+#endif
+#ifdef NON_MATCHING
+int GetMenuCommonFontW(int style, int fontSize) {
+    u8 fontWidths[7] = {16, 11, 11, 11, 11, 11, 11};
+    return fontWidths[style];
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuCommonFontW__Fii);
+#endif
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuCommonPutXY__FP6ClsMesi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", InitMenuMesSet__FiPs);
 

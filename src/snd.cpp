@@ -16,6 +16,15 @@
 #include "snd.hpp"
 #include "sound.hpp"
 
+#ifdef NON_MATCHING
+/* Only the drafts below need these; the build's own object must not see a
+   header the retail unit did not. */
+#include <cstdio>
+#include <cstring>
+
+#include "dataread.hpp"
+#endif
+
 /* The sound manager: BGM loading, playback and fading, and the SE table.
  * CSound itself is in src/sound.cpp. */
 
@@ -47,6 +56,51 @@ struct SND_SE_SEQ {
 };
 
 STATIC_ASSERT(sizeof(SND_SE_SEQ) == 8);
+
+/** One sound configuration read out of a sound script file. */
+struct SND_INFO {
+    s32 reverb_mode;   /**< Reverberation mode the REVERBE tag sets. */
+    s32 reverb_depth;  /**< Reverberation depth the REVERBE tag sets. */
+    s32 se_table;      /**< Sound-effect table number the TABLE tag names. */
+    s32 se_table_type; /**< Sound-effect table kind the TABLE tag names. */
+};
+
+STATIC_ASSERT(sizeof(SND_INFO) == 0x10);
+
+#ifdef NON_MATCHING
+/* Defined at the bottom of the unit, past the drafts that call it. */
+void LoadSoundInfo(SND_INFO *info, char *script, int script_size);
+#endif
+
+/** The two script tags LoadSoundInfo recognises. */
+extern TAG_PARAM Command__3[2];
+
+/** The handler LoadSoundInfo calls for each of Command__3's tags. */
+extern void (*CommandExe__3[2])(void **arguments);
+
+/** The sound configuration the command handlers fill in. */
+extern SND_INFO *SoundInfo;
+
+/** Count of entries the TABLE command has read this file. */
+extern int se_list;
+
+/**
+ * Sets the reverberation the sound configuration asks for.
+ *
+ * @mangled CommandREVERBE__FPPv
+ * @address 0x15BBB0
+ * @size 0x28
+ */
+static void CommandREVERBE(void **arguments);
+
+/**
+ * Names the sound-effect table the configuration draws from.
+ *
+ * @mangled CommandTABLE__FPPv
+ * @address 0x15BBE0
+ * @size 0x28
+ */
+static void CommandTABLE(void **arguments);
 
 /** The fixed sound-effect table, addressed by sound number. */
 extern SND_SE_INFO se_info[2801];
@@ -113,6 +167,48 @@ extern int now_amb_play;
 
 /** Whether the sprites that follow draw with the bilinear filter. */
 extern int linear__2;
+
+/** Whether the sound manager has been started once already. */
+extern int init_snd;
+
+/** The buffer background sound loads read into. */
+extern unsigned int *read_buffer;
+
+/** The buffer the sound loader is pointed at. */
+extern unsigned int *snd_read_buf;
+
+/** The reverberation core's revision, read back after SetReverb. */
+extern int snd_id;
+
+/** The menu sound effect that is playing, or -1 for none. */
+extern int now_sp_no;
+
+/** The background-music set that is loading in the background, or -1 for none. */
+extern int load_bgm_no;
+
+/** The buffer the loading background-music set reads into. */
+extern unsigned int *load_bgm_adr;
+
+/** The sound-effect set that is loading in the background, or -1 for none. */
+extern int load_snd_set;
+
+/** The buffer the loading sound-effect set reads into. */
+extern unsigned int *load_snd_adr;
+
+/** The voice set that is loading in the background, or -1 for none. */
+extern int load_voice_set;
+
+/** The buffer the loading voice set reads into. */
+extern unsigned int *load_voice_adr;
+
+/** The background-music set's configuration file name. */
+extern char bgm_cfg_file[32];
+
+/** The sound-effect set's configuration file name. */
+extern char snd_cfg_file[32];
+
+/** The voice set's configuration file name. */
+extern char voice_cfg_file[32];
 
 /**
  * Returns the table row for a sound effect, or zero when the number names no
@@ -218,7 +314,55 @@ INCLUDE_RODATA("asm/nonmatchings/snd", @752);
 INCLUDE_RODATA("asm/nonmatchings/snd", @799);
 INCLUDE_RODATA("asm/nonmatchings/snd", @800);
 
+#ifdef NON_MATCHING
+void LensFlare(CTexture *texture, float *position, unsigned char red, unsigned char green,
+               unsigned char blue) {
+    static const float flare_offset[8] = { 0.1f, 0.2f, 0.4f, 0.5f, 0.8f, 0.9f, 1.0f, 1.3f };
+    static const float flare_size[8] = { 0.1f, 0.2f, 1.0f, 0.3f, 2.0f, 0.5f, 3.8f, 0.5f };
+    int screen[3];
+    int visible;
+    int i;
+    int center_x;
+    int center_y;
+    unsigned char alpha;
+
+    if (texture == 0) {
+        return;
+    }
+
+    visible = MGRotTransPers2D(screen, position, 0);
+
+    for (i = 0; i < 8; i++) {
+        int size = (int) (64.0f * flare_size[i]);
+        int x = (int) ((float) (320 - screen[0]) * flare_offset[i]) + screen[0] - (size >> 1);
+        int y = (int) ((float) (224 - screen[1]) * flare_offset[i]) + screen[1] - (size >> 1);
+
+        if (visible && screen[0] >= 0 && screen[0] < 640 && screen[1] >= 0 && screen[1] < 448) {
+            setbilinear(1);
+            set2DSprite(Vif1Packet, texture, CRect_i_(x, y, size, size),
+                        CRect_i_(0, 0, 0x40, 0x40));
+        }
+    }
+
+    if (visible && screen[0] >= 0 && screen[0] < 640 && screen[1] >= 0 && screen[1] < 448) {
+        if (screen[0] >= 320) {
+            center_x = 320 - (screen[0] - 320);
+        } else {
+            center_x = screen[0];
+        }
+        if (screen[1] >= 224) {
+            center_y = 224 - (screen[1] - 224);
+        } else {
+            center_y = screen[1];
+        }
+
+        alpha = (unsigned char) (int) ((float) ((center_x + center_y) >> 1) / 2.7f);
+        MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), red, green, blue, alpha);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/snd", LensFlare__FP8CTexturePfUcUcUc);
+#endif
 /**
  * Starts the sound manager once, and loads its effect table.
  *
@@ -226,8 +370,44 @@ INCLUDE_ASM("asm/nonmatchings/snd", LensFlare__FP8CTexturePfUcUcUc);
  * @address 0x1591A0
  * @size 0x60
  */
+#ifdef NON_MATCHING
+void SndInit(void) {
+    if (init_snd == 0) {
+        CSnd.Init(0, 0, 0, 0);
+        init_snd = 1;
+        SndInitialize(4, 0x1E, 4, 5);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/snd", SndInit__Fv);
+#endif
+#ifdef NON_MATCHING
+void SndInitialize(int, int, int, int) {
+    snd_read_buf = read_buffer;
+    SndBgmInit();
+    SndAmbientInit();
+    SndSeSeqInit();
+    now_sound_set = -1;
+    now_voice_set = -1;
+    snd_id = 0;
+    now_amb_no = -1;
+    now_amb_vol = -1;
+    now_sp_no = -1;
+    se_table_no = -1;
+    basic_se_table_no = -1;
+    load_bgm_no = -1;
+    load_bgm_adr = 0;
+    bgm_cfg_file[0] = 0;
+    load_snd_set = -1;
+    load_snd_adr = 0;
+    snd_cfg_file[0] = 0;
+    load_voice_set = -1;
+    load_voice_adr = 0;
+    voice_cfg_file[0] = 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/snd", SndInitialize__Fiiii);
+#endif
 
 void SndExit() {
     CSnd.Stop(0);
@@ -276,7 +456,17 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSetCamera__FPfPf);
  * @address 0x159790
  * @size 0x7C
  */
+#ifdef NON_MATCHING
+void GetBGMFile(int set_no, char *archive_name, char *config_name) {
+    char name[16];
+
+    sprintf(name, "bgm%d", set_no);
+    sprintf(archive_name, "sound/bgm/%s.snd", name);
+    sprintf(config_name, "%s.txt", name);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/snd", GetBGMFile__FiPcPc);
+#endif
 /**
  * Hands a loaded music set to the driver and reads its configuration.
  *
@@ -284,7 +474,35 @@ INCLUDE_ASM("asm/nonmatchings/snd", GetBGMFile__FiPcPc);
  * @address 0x159810
  * @size 0x114
  */
+#ifdef NON_MATCHING
+void SetBGMFile(int set_no, unsigned int *buffer, char *filename) {
+    char base_name[64];
+    char *dst = base_name;
+    unsigned int *packed;
+    int size;
+    SND_INFO info;
+
+    SndBgmStop();
+    CSnd.LoadSoundFileFromPack(filename, buffer);
+    now_bgm_no = set_no;
+    now_bgm_play = 0;
+
+    for (; *filename != 0 && *filename != '.'; filename++) {
+        *dst++ = *filename;
+    }
+    *dst = 0;
+
+    strcat(base_name, ".cfg");
+    packed = GetPackFile(buffer, base_name, &size);
+    if (packed != 0) {
+        LoadSoundInfo(&info, (char *) packed, size);
+        CSnd.SetReverb(0, info.reverb_mode, info.reverb_depth);
+        printf("core 0 rev = %d %d\n", info.reverb_mode, info.reverb_depth);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/snd", SetBGMFile__FiPUiPc);
+#endif
 
 int SndBgmInit() {
     now_bgm_no = -1;
@@ -781,23 +999,44 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSetSPSePanf__Fif);
  * @address 0x15BAB0
  * @size 0xF4
  */
+#ifdef NON_MATCHING
+void LoadSoundInfo(SND_INFO *info, char *script, int script_size) {
+    CScriptInterpreter interpreter;
+    int i;
+    int tag;
+
+    memset(info, 0, sizeof(SND_INFO));
+    for (i = 0; i < (int) sizeof(SND_INFO); i++) {
+        ((s8 *) info)[i] = 0;
+    }
+
+    se_list = 0;
+    SoundInfo = info;
+    interpreter.SetScript(script, script_size);
+    interpreter.SetTAG(Command__3, 2);
+    while ((tag = interpreter.GetNextTAG()) >= 0) {
+        CommandExe__3[tag](interpreter.arguments);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/snd", LoadSoundInfo__FP8SND_INFOPci);
-/**
- * Sets the reverberation the sound configuration asks for.
- *
- * @mangled CommandREVERBE__FPPv
- * @address 0x15BBB0
- * @size 0x28
- */
+#endif
+#ifdef NON_MATCHING
+static void CommandREVERBE(void **arguments) {
+    SoundInfo->reverb_mode = *(s32 *) arguments[0];
+    SoundInfo->reverb_depth = *(s32 *) arguments[1];
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/snd", CommandREVERBE__FPPv);
-/**
- * Names the sound-effect table the configuration draws from.
- *
- * @mangled CommandTABLE__FPPv
- * @address 0x15BBE0
- * @size 0x28
- */
+#endif
+#ifdef NON_MATCHING
+static void CommandTABLE(void **arguments) {
+    SoundInfo->se_table = *(s32 *) arguments[0];
+    SoundInfo->se_table_type = *(s32 *) arguments[1];
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/snd", CommandTABLE__FPPv);
+#endif
 
 void setbilinear(int on) {
     linear__2 = on;

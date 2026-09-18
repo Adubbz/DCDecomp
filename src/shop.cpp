@@ -8,6 +8,115 @@
 #include "menu_draw.hpp"
 #include "savedata.hpp"
 
+// CUserStatus and CStockItem are only dereferenced by the drafts that need
+// their full class definitions; those include the owning header themselves.
+class CUserStatus;
+class CStockItem;
+
+/**
+ * Shop UI bookkeeping shared by the charge shop and item shop screens: their
+ * cursor, phase and animation state. Only the handful of fields read outside
+ * this unit's own functions are named.
+ */
+struct ShopMenuWork {
+    s16 unk_00;
+    s16 unk_02;
+    s16 unk_04;
+    s16 unk_06;
+    u8 unk_08[4];
+    s16 unk_0C;
+    u8 unk_0E[2];
+    s32 unk_10;
+    s32 unk_14;
+    float unk_18;
+    u8 unk_1C[4];
+    u8 unk_20[0x144];
+    s32 unk_164;
+    s32 unk_168;
+    s32 unk_16C;
+    u8 unk_170[4];
+    s16 unk_174;
+    s16 unk_176;
+    s32 unk_178;
+    s32 unk_17C;
+    s32 unk_180;
+    s32 unk_184;
+    s16 unk_188;
+    s16 unk_18A;
+    s16 unk_18C;
+    s16 unk_18E;
+    s32 unk_190;
+    s16 unk_194;
+    s16 unk_196;
+    s16 unk_198;
+    s16 unk_19A;
+    s16 unk_19C;
+    s16 unk_19E;
+    s32 unk_1A0;
+    s32 unk_1A4;
+};
+
+STATIC_ASSERT(sizeof(ShopMenuWork) == 0x1A8);
+
+/** Shared UI state for the charge shop and item shop screens. */
+extern ShopMenuWork ShopMenu;
+
+/** Player status the shop currently open is reading and writing. */
+extern CUserStatus *ShopUserStatusPt;
+
+/** Stock inventory the shop currently open is reading and writing. */
+extern CStockItem *ShopStockPt;
+
+/** Texture the shop board frame, tags and tickets are drawn from. */
+extern CTexture *ShopBoard;
+
+/** Per-slot state (0 = empty, 1 = held, 2 = just moved) of the personal item board. */
+extern s32 *ItemBoardInfo;
+
+/** Per-slot state of the personal weapon board, indexed by character then slot. */
+extern s32 (*WeaponBoardInfo)[10];
+
+/** Per-slot state of the personal attachment board. */
+extern s32 *AttachBoardInfo;
+
+/** Per-slot state of the charge shop's personal board. */
+extern s32 *ShopBoardInfo;
+
+/** The charge shop's goods list, one entry per personal board slot. */
+extern SHOP_ITEMLIST *ShopListPt;
+
+/** Working copy of the item shop's board, allocated out of the shop's arena. */
+extern SHOP_ITEMLIST *ShopWorkBuf;
+
+/** Screen position of the shop's help window. */
+extern float ShopHelpWinPos[2];
+
+/** Height of the shop's help window. */
+extern float ShopHelpWinH;
+
+/** Width of the shop's help window. */
+extern float ShopHelpWinW;
+
+/** Nonzero while the item shop is open, zero while the charge shop is open. */
+extern s16 ChargeOrShopFlag;
+
+/**
+ * A view onto the personal item board inside CUserStatus's still-unnamed
+ * 0x436C region (userstatus.hpp reaches only 0x436C of it so far): one item
+ * number and one volume per dungeon-item board slot.
+ */
+struct ShopUserItemBoardView {
+    char unk_00[2];
+    s16 item_no[60];
+    char unk_7A[0xD0 - 0x7A];
+    s16 volume[60];
+};
+
+/** Reaches the shop item board inside a player status by its byte offset. */
+static inline ShopUserItemBoardView *ShopUserItemBoard(CUserStatus *user_status) {
+    return (ShopUserItemBoardView *) ((char *) user_status + 0x436C);
+}
+
 #ifdef NON_MATCHING
 s16 *GetItemShopList(int shop_no) {
     return ItemShopList2[shop_no];
