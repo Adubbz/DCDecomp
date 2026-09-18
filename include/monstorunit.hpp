@@ -42,7 +42,7 @@ struct MONSTOR {
     sceVu0FVECTOR movement; /**< Direction the monster moves in. */
     sceVu0FVECTOR unk_070;
     float movement_speed; /**< Distance the monster moves each step. */
-    float unk_084;
+    float turn_speed;     /**< Angle the monster turns each step; zero once the turn is done. */
     s32 unk_088;
     u8 unk_08C[4];
     s16 unk_090;
