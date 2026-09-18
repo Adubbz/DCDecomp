@@ -8,6 +8,7 @@
 #include "edit.hpp"
 #include "editloop.hpp"
 #include "gamepad.hpp"
+#include "rect.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
 
@@ -36,6 +37,11 @@ extern int sound_cnt;
 extern int debug_mode;
 extern CTexture *tex;
 extern CTexture *tex2;
+
+#ifdef NON_MATCHING
+/** The part of the screen the event battle's opening wipe has reached. */
+extern CRect_i_ draw_rect;
+#endif
 extern int eb_key_num;
 
 static void init_draw_ok();
@@ -103,7 +109,24 @@ extern float camera_near_dist;
  * @address 0x168200
  * @size 0xA8
  */
+#ifdef NON_MATCHING
+void EBInitIntro(void) {
+    tex = TexManager.GetTexture("ebat", -1);
+    if (tex == NULL) {
+        return;
+    }
+    tex2 = TexManager.GetTexture("ebat2", -1);
+    if (tex2 == NULL) {
+        return;
+    }
+    eb_intro_cnt = 0;
+    ebattle_intro_flag = 1;
+    // The wipe opens from the right edge, so it starts with no width.
+    draw_rect = CRect_i_(0x280, 0, 0, 0x1C0);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/ebattle", EBInitIntro__Fv);
+#endif
 INCLUDE_ASM("asm/nonmatchings/ebattle", EBSetMotion__FP10CCharacterPi);
 
 void EBDebug(int mode) {
@@ -214,7 +237,26 @@ INCLUDE_ASM("asm/nonmatchings/ebattle", draw_ok__Fi);
  * @address 0x169730
  * @size 0x90
  */
+#ifdef NON_MATCHING
+static float button_scale(int button) {
+    if (button != ok_effect_button) {
+        return 1.0f;
+    }
+
+    // The prompt swells over the first five frames of the flash and settles
+    // back over the next five.
+    int elapsed = 30 - ok_draw_cnt;
+    if (elapsed < 5) {
+        return 1.0f + 0.2f * (float) elapsed;
+    }
+    if (elapsed < 10) {
+        return 1.0f + 0.2f * (float) (10 - elapsed);
+    }
+    return 1.0f;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/ebattle", button_scale__Fi);
+#endif
 static int key_mode = 0xFFFF;
 
 /**
@@ -324,7 +366,16 @@ static float GetLYf() {
  * @address 0x169AF0
  * @size 0x40
  */
+#ifdef NON_MATCHING
+static int PadOn(int keys) {
+    if (keylock() != 0) {
+        return 0;
+    }
+    return EdPadOn(keys, 1);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/ebattle", PadOn__Fi);
+#endif
 /**
  * Reports whether a button was just pressed, unless the pad is locked.
  *
@@ -332,7 +383,16 @@ INCLUDE_ASM("asm/nonmatchings/ebattle", PadOn__Fi);
  * @address 0x169B30
  * @size 0x40
  */
+#ifdef NON_MATCHING
+static int PadDown(int keys) {
+    if (keylock() != 0) {
+        return 0;
+    }
+    return EdPadDown(keys, 1);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/ebattle", PadDown__Fi);
+#endif
 /**
  * Moves the camera towards a point, keeping it clear of the collision.
  *
