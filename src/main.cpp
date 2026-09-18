@@ -1268,7 +1268,32 @@ INCLUDE_ASM("asm/nonmatchings/main", __as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL);
  * @size 0x43C
  */
 INCLUDE_ASM("asm/nonmatchings/main", __as__10CCharacterFRC10CCharacter);
+#ifdef NON_MATCHING
+#include "object.hpp"
+
+CObject &CObject::operator=(const CObject &source) {
+    // The three words after the mass are not carried over.
+    mass = source.mass;
+    pos[0] = source.pos[0];
+    pos[1] = source.pos[1];
+    pos[2] = source.pos[2];
+    pos[3] = source.pos[3];
+    velocity = source.velocity;
+    acceleration = source.acceleration;
+    gravity = source.gravity;
+    moment = source.moment;
+    rotation = source.rotation;
+    rot_velocity = source.rot_velocity;
+    rot_acceleration = source.rot_acceleration;
+    scale[0] = source.scale[0];
+    scale[1] = source.scale[1];
+    scale[2] = source.scale[2];
+    scale[3] = source.scale[3];
+    return *this;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/main", __as__7CObjectFRC7CObject);
+#endif
 INCLUDE_ASM("asm/nonmatchings/main", __as__6CWaterFR6CWater);
 /**
  * Copies one polygon visual over another, field by field.
