@@ -89,7 +89,7 @@ void DrawNameTemplete(int, int, int, int);
  * @address 0x2399D0
  * @size 0x6C
  */
-void NameCompare(short *, short *);
+int NameCompare(short *first, short *second);
 
 /**
  * Reports whether the entered name may be used.
@@ -125,7 +125,7 @@ void NameEnterKey(void);
  * @address 0x23C770
  * @size 0x110
  */
-void NameDefaultSet(int);
+void NameDefaultSet(int chara_no);
 
 /**
  * Gives the kerning between two name characters.
@@ -163,7 +163,7 @@ void DrawSaveBoardCharaName2(int, int, short *, CTexture **, spRGBA, spRGBA);
  * Counts the characters of a party member's name, up to ten, or gives zero for
  * an index outside the party.
  */
-int GetMsgLengthCharaName(int);
+int GetMsgLengthCharaName(int chara_no);
 
 /**
  * Opens the storybook that begins the game.

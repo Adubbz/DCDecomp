@@ -8,6 +8,7 @@
 #include <cstdlib>
 
 #include "runscript.hpp"
+#include "savedata.hpp"
 
 INCLUDE_RODATA("asm/nonmatchings/battle_globals", @348__4);
 INCLUDE_RODATA("asm/nonmatchings/battle_globals", @481__2);
@@ -35,7 +36,15 @@ INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1559__3);
  * @address 0x238450
  * @size 0x48
  */
+#ifdef NON_MATCHING
+void GlobalNameInit(void) {
+    for (int chara_no = 0; chara_no < 6; chara_no++) {
+        NameDefaultSet(chara_no);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/battle_globals", GlobalNameInit__Fv);
+#endif
 /**
  * Opens the name-entry screen and reads its textures.
  *
@@ -99,7 +108,24 @@ INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawNameTemplete__Fiiii);
  * @address 0x2399D0
  * @size 0x6C
  */
+#ifdef NON_MATCHING
+int NameCompare(short *first, short *second) {
+    int same = 0;
+
+    for (int i = 0; i < 10; i++) {
+        if (first[i] == second[i]) {
+            same++;
+        }
+    }
+    // Every character has to agree before the names count as one.
+    if (same >= 10) {
+        return 0;
+    }
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/battle_globals", NameCompare__FPsPs);
+#endif
 /**
  * Reports whether the entered name may be used.
  *
@@ -163,7 +189,26 @@ INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawSaveBoardCharaName2__FiiPsPP8
  * @address 0x23CDE0
  * @size 0x78
  */
+#ifdef NON_MATCHING
+int GetMsgLengthCharaName(int chara_no) {
+    if (chara_no < 0 || chara_no >= 6) {
+        return 0;
+    }
+
+    /* The name is ten sixteen-bit characters; savedata.hpp still gives the
+       getter a `char *` return, which the halfword walk here contradicts. */
+    short *name = (short *) SaveData->GetCharaName(chara_no);
+    int length = 0;
+
+    while (*name != 0 && length < 10) {
+        name++;
+        length++;
+    }
+    return length;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/battle_globals", GetMsgLengthCharaName__Fi);
+#endif
 /**
  * Opens the storybook that begins the game.
  *
