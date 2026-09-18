@@ -1,5 +1,18 @@
 #include "dungeonparts.hpp"
 
+#include "frame.hpp"
+
+#ifdef NON_MATCHING
+/* The floors each dungeon keeps Atla off, one list per dungeon, ending at -1. */
+static int noEntry0[] = {4, 8, 11, -1};
+static int noEntry1[] = {4, 9, 12, -1};
+static int noEntry2[] = {5, 9, 12, -1};
+static int noEntry3[] = {5, 9, 13, -1};
+static int noEntry4[] = {4, 8, 11, -1};
+static int noEntry5[] = {19, 20, 21, 22, 23, -1};
+static int *noEntryTbl[6] = {noEntry0, noEntry1, noEntry2, noEntry3, noEntry4, noEntry5};
+#endif
+
 /**
  * Gives the two items the clown offers on one floor.
  *
@@ -19,7 +32,25 @@ INCLUDE_ASM("asm/nonmatchings/dungeonparts", SearchiDoPutArea__FP8MAPPARTSiiiiPf
  * @address 0x1C0940
  * @size 0x74
  */
+#ifdef NON_MATCHING
+int chkAtraFloor(int dungeon, int floor) {
+    if (dungeon >= 6) {
+        return 0;
+    }
+    for (int i = 0;; i++) {
+        int barred = noEntryTbl[dungeon][i];
+
+        if (barred == -1) {
+            return 1;
+        }
+        if (floor == barred) {
+            return 0;
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", chkAtraFloor__Fii);
+#endif
 /**
  * Builds the list of Atla one dungeon may hand out.
  *
@@ -30,7 +61,34 @@ INCLUDE_ASM("asm/nonmatchings/dungeonparts", chkAtraFloor__Fii);
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", BtAtraListMake__Fi);
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", BtAtraFloorCyoice__FiiPi);
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", setCollisionData__FP11CDungeonMapP6CCPolyPfff);
+#ifdef NON_MATCHING
+CFrame *CDungeonParts::GetSearchFrame(char *name) {
+    for (int i = 0; i < 6; i++) {
+        if (frame[i] != NULL) {
+            CFrame *found = frame[i]->SearchFrame(name);
+            if (found != NULL) {
+                return found;
+            }
+        }
+    }
+    // The collision and the second model are searched after the drawn ones.
+    if (collision != NULL) {
+        CFrame *found = collision->SearchFrame(name);
+        if (found != NULL) {
+            return found;
+        }
+    }
+    if (unk_004 != NULL) {
+        CFrame *found = unk_004->SearchFrame(name);
+        if (found != NULL) {
+            return found;
+        }
+    }
+    return NULL;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", GetSearchFrame__13CDungeonPartsFPc);
+#endif
 /**
  * Places a healing zone within one dungeon part.
  *
