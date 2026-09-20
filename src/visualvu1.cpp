@@ -190,7 +190,22 @@ static int SetShadowData(u_int *packet, float (*matrix)[4]) {
     return 0x24;
 }
 
-INCLUDE_ASM("asm/nonmatchings/visualvu1", SetMaterial__FPUiP12MDT_MATERIAL);
+int SetMaterial(u_int *packet, MDT_MATERIAL *material) {
+    if (material == NULL) {
+        return 0x14;
+    }
+
+    packet[0] = 0;
+    packet[1] = 0;
+    packet[2] = 0;
+    packet[3] = 0x6C040025;
+    u_int last_row[4] = {3, 0, 0, 0};
+    ((u_long128 *) packet)[1] = *(u_long128 *) material->unk_00;
+    ((u_long128 *) packet)[2] = *(u_long128 *) material->unk_10;
+    ((u_long128 *) packet)[3] = *(u_long128 *) material->unk_20;
+    ((u_long128 *) packet)[4] = *(u_long128 *) last_row;
+    return 0x14;
+}
 INCLUDE_ASM("asm/nonmatchings/visualvu1", SetTEX0__FPUiUlUl);
 /**
  * Clears the vector-unit visual's packet pointers and sizes.
