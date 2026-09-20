@@ -108,6 +108,13 @@ public:
  */
 class CVisualMDTVu1 : public CVisualVu1 {
 public:
+    /**
+     * Constructs a model visual and clears it.
+     *
+     * @mangled __ct__13CVisualMDTVu1Fv
+     * @address 0x134FB0
+     * @size 0x48
+     */
     CVisualMDTVu1();
 
     /* Every one of them, because a block that is kept can be rebuilt and one that is not cannot. */

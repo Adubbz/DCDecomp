@@ -325,13 +325,9 @@ INCLUDE_ASM("asm/nonmatchings/visualvu1", Initialize__13CVisualMDTVu1Fv);
  * @address 0x134FB0
  * @size 0x48
  */
-#ifdef NON_MATCHING
 CVisualMDTVu1::CVisualMDTVu1(void) {
-    Initialize();
+    CVisualMDTVu1::Initialize();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/visualvu1", __ct__13CVisualMDTVu1Fv);
-#endif
 /**
  * Draws the visual into a packet through the vector unit.
  *
