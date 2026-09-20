@@ -97,12 +97,13 @@ enum MC_OPERATION {
     MC_OPERATION_GET_ALL_SAVE_FILE_INFO = 4,
     MC_OPERATION_SAVE                   = 5,
     MC_OPERATION_LOAD                   = 6,
-    MC_OPERATION_FORMAT                 = 8,
-    MC_OPERATION_UNFORMAT               = 9,
-    MC_OPERATION_WRITE_TEST              = 11,
-    MC_OPERATION_LOAD_CONFIG            = 12,
-    MC_OPERATION_SAVE_CONFIG            = 13,
-    MC_OPERATION_CONVERT                = 14
+    MC_OPERATION_DELETE                 = 7,
+    MC_OPERATION_FORMAT                 = 9,
+    MC_OPERATION_UNFORMAT               = 10,
+    MC_OPERATION_WRITE_TEST             = 12,
+    MC_OPERATION_LOAD_CONFIG            = 13,
+    MC_OPERATION_SAVE_CONFIG            = 14,
+    MC_OPERATION_CONVERT                = 15
 };
 // clang-format on
 
