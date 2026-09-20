@@ -483,7 +483,13 @@ void SndSeStop(int se_no, int voice);
  */
 void SndSetBgmVol(int volume);
 
-/** Sets the background-music normalized volume. */
+/**
+ * Sets the background music's volume as a share of its default.
+ *
+ * @mangled SndSetBgmVolf__Ff
+ * @address 0x159D90
+ * @size 0x50
+ */
 void SndSetBgmVolf(float volume);
 
 /**
@@ -649,6 +655,16 @@ int SndSoundLoadBG(int set_no, u_int *buffer, int *size);
  * load could not be started.
  */
 int SndVoiceLoadBG(int set_no, u_int *buffer, int *size);
+
+/**
+ * Reads one special-effect set and hands it to SetSPSeFile; returns 0 when the set is
+ * already current or its file cannot be read, otherwise 1.
+ *
+ * @mangled SndSPSeLoad__Fi
+ * @address 0x15B6D0
+ * @size 0x90
+ */
+int SndSPSeLoad(int set_no);
 
 /**
  * Starts loading a special-effect sound bank into a caller-provided buffer, and

@@ -13,15 +13,15 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
+/** Language the cursor stands on, counted from zero. */
+extern int Cursor;
+
 #ifdef NON_MATCHING
 /** The vector-unit program the language screen draws its plate with. */
 extern char Vu_prog0f[];
 
 /** Fade the language screen opens and closes with. */
 static Fader Fade;
-
-/** Language the cursor stands on, counted from zero. */
-static int Cursor;
 
 /** What the screen is doing: fading in, taking the choice, or fading out. */
 static int Proc;
@@ -92,7 +92,6 @@ int LangsetLoop(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/langset", LangsetLoop__Fv);
 #endif
-#ifdef NON_MATCHING
 int LangsetProc(void) {
     if (GamePad.Down(0x1000) != 0) {
         Cursor--;
@@ -103,7 +102,7 @@ int LangsetProc(void) {
     if (Cursor < 0) {
         Cursor = 4;
     }
-    if (Cursor >= 5) {
+    if (Cursor > 4) {
         Cursor = 0;
     }
     if (GamePad.Down(0x800) != 0 || GamePad.Down(0x40) != 0) {
@@ -111,9 +110,6 @@ int LangsetProc(void) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/langset", LangsetProc__Fv);
-#endif
 #ifdef NON_MATCHING
 void LangsetDraw(void) {
     setbilinear(1);

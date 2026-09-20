@@ -3,9 +3,16 @@
 #include "collision.hpp"
 
 template <int T> class CDataAlloc2;
+class CFish;
 class CFrameVu1;
 
-/** Initializes the fishing subsystem's runtime state. */
+/**
+ * Initializes the fishing subsystem's runtime state.
+ *
+ * @mangled FishingInit__Fv
+ * @address 0x1A9070
+ * @size 0x7C
+ */
 void FishingInit();
 
 /** Loads shared fishing resources into an event arena. */
@@ -27,13 +34,13 @@ void FishingSetRect(CBoxVu0 bounds);
 void FishingSetWaterLevel(float near_height, float far_height);
 
 /**
- * Sets both ground-height samples used by the fishing simulation.
+ * Sets the ground heights under the float and under the hook.
  *
  * @mangled FishingSetGroundLevel__Fff
  * @address 0x1A91C0
  * @size 0x10
  */
-void FishingSetGroundLevel(float near_height, float far_height);
+void FishingSetGroundLevel(float uki_height, float hook_height);
 
 /**
  * Returns the water surface height used by the fishing simulation.
@@ -57,13 +64,31 @@ void FishLineInit(float *position);
 void FishingLoadEsa(int item_no, CFrameVu1 *frame, int slot);
 
 /**
- * Returns the fish selected for the active battle.
+ * Takes the bait off the hook.
+ *
+ * @mangled FishingDeleteEsa__Fv
+ * @address 0x1A9010
+ * @size 0x14
+ */
+void FishingDeleteEsa();
+
+/**
+ * Makes a fish that has bitten the hook the one fighting the line.
+ *
+ * @mangled FishingBattleFish__Fi
+ * @address 0x1A9650
+ * @size 0x68
+ */
+void FishingBattleFish(int fish_no);
+
+/**
+ * Returns the fish fighting the line, or null when none is.
  *
  * @mangled FishingGetBattleFish__Fv
  * @address 0x1A97A0
  * @size 0xC
  */
-int FishingGetBattleFish();
+CFish *FishingGetBattleFish();
 
 /**
  * Removes the fish displayed after an angling battle.

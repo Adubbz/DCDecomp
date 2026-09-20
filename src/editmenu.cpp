@@ -15,6 +15,7 @@
 #include "menu_draw.hpp"
 #include "menu_manual.hpp"
 #include "menu_misc.hpp"
+#include "menu_save.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
@@ -531,7 +532,54 @@ static int GetDrawHelpWindow(int draw) {
     return draw;
 }
 
-INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuLoop__Fv);
+int EditMenuLoop() {
+    int result;
+
+    ReadBG();
+    result = 0;
+    switch (EditSwitch) {
+        case 2:
+            result = EditMenuSelect();
+            break;
+        case 11:
+            ToAnalyzeEdit();
+            break;
+        case 4:
+            result = AtoraMove();
+            break;
+        case 5:
+            result = AnalyzeEdit();
+            break;
+        case 3:
+        case 9:
+        case 16:
+            result = AtoraSelect();
+            break;
+        case 18:
+            FromAnalyzeEdit();
+            break;
+        case 6:
+        case 12:
+        case 19:
+            EditSaveKey();
+            break;
+        case 7:
+        case 13:
+        case 20:
+            EdOptionSelect();
+            break;
+        case 8:
+        case 14:
+        case 21:
+            EdMenuManualKey();
+            break;
+        case 15:
+            result = EditMenuToExit();
+            break;
+    }
+    EditMenuDraw();
+    return result;
+}
 INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuDraw__Fv);
 INCLUDE_RODATA("asm/nonmatchings/editmenu", @573__2);
 INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuStart__Fv);
@@ -595,7 +643,37 @@ static void FromAnalyzeEditDraw() {
 
 INCLUDE_ASM("asm/nonmatchings/editmenu", FromAnalyzeEdit__Fv);
 INCLUDE_ASM("asm/nonmatchings/editmenu", EditSaveDraw__Fv);
-INCLUDE_ASM("asm/nonmatchings/editmenu", EditSaveKey__Fv);
+
+static void EditSaveKey() {
+    int arrived;
+
+    switch (EdMenuEffectFlag) {
+        case 1:
+            arrived = CalMoveFromMenuIcon();
+            if (arrived) {
+                EdMenuEffectFlag = 0;
+                EdMenuEffectCt = 0.0f;
+            }
+            break;
+        case 2:
+            arrived = CalMoveToMenuIcon();
+            break;
+    }
+    if (EdMenuEffectFlag != 0) {
+        EdMenuEffectCt += 1.0f;
+    } else {
+        EdMenuEffectCt = 0.0f;
+    }
+    MenuSaveKey();
+    if (SaveMenuEffectFadeOut()) {
+        EdMenuEffectFlag = 2;
+        if (arrived) {
+            EdEffectCt = 0;
+            EditSwitch = 2;
+            MakeWin2Flag = 1;
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/editmenu", OptionDraw__Fv);
 
 static void EdOptionSelect() {

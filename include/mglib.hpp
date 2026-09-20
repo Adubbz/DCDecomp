@@ -80,6 +80,10 @@ void MGEndDrawShadow(unsigned char alpha);
  */
 void MGSetBGColor(float red, float green, float blue, float alpha);
 
+/**
+ * Index of the display buffer, and of each visual's built block, in use this frame.
+ */
+extern int DBuffID;
 extern sceDmaChan *DmaCH1;
 extern sceDmaChan *DmaCH2;
 extern sceDmaChan *DmaCH8;

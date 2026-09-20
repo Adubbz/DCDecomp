@@ -4,10 +4,14 @@
 
 #include <cstring>
 
+#include "dataalloc.hpp"
 #include "mdt.hpp"
+#include "mglib.hpp"
 #include "texture.hpp"
 #include "tim2.hpp"
 #include "visual.hpp"
+
+extern CDataAlloc2<1> *ActiveData;
 
 void SetTextureInfo(CTexture *tex, char *name, TM2_head *head) {
     TM2_picture *pic = (TM2_picture *) ((u_char *) head + 16);
@@ -190,8 +194,63 @@ static int SetShadowData(u_int *packet, float (*matrix)[4]) {
     return 0x24;
 }
 
-INCLUDE_ASM("asm/nonmatchings/visualvu1", SetMaterial__FPUiP12MDT_MATERIAL);
-INCLUDE_ASM("asm/nonmatchings/visualvu1", SetTEX0__FPUiUlUl);
+int SetMaterial(u_int *packet, MDT_MATERIAL *material) {
+    if (material == NULL) {
+        return 0x14;
+    }
+
+    packet[0] = 0;
+    packet[1] = 0;
+    packet[2] = 0;
+    packet[3] = 0x6C040025;
+    u_int last_row[4] = {3, 0, 0, 0};
+    ((u_long128 *) packet)[1] = *(u_long128 *) material->unk_00;
+    ((u_long128 *) packet)[2] = *(u_long128 *) material->unk_10;
+    ((u_long128 *) packet)[3] = *(u_long128 *) material->unk_20;
+    ((u_long128 *) packet)[4] = *(u_long128 *) last_row;
+    return 0x14;
+}
+
+int SetTEX0(u_int *packet, u_long tex0, u_long tex1) {
+    packet[0] = 0;
+    packet[1] = 0;
+    packet[2] = 0;
+
+    if (tex1 == 0) {
+        tex1 = *(u_long *) &mgTEX1Env;
+    }
+
+    if (tex1 != 0) {
+        packet[3] = 0x50000003;
+        packet[4] = 0x8002;
+        packet[5] = 0x10000000;
+        packet[6] = 0xE;
+        packet[7] = 0;
+        packet += 8;
+    } else {
+        packet[3] = 0x50000002;
+        packet[4] = 0x8001;
+        packet[5] = 0x10000000;
+        packet[6] = 0xE;
+        packet[7] = 0;
+        packet += 8;
+    }
+
+    packet[0] = (u_int) tex0;
+    packet[1] = (u_int) ((tex0 >> 32) & 0xFFFFFFFF);
+    packet[2] = SCE_GS_TEX0_1;
+    packet[3] = 0;
+
+    if (tex1 != 0) {
+        packet[4] = (u_int) tex1;
+        packet[5] = (u_int) ((tex1 >> 32) & 0xFFFFFFFF);
+        packet[6] = SCE_GS_TEX1_1;
+        packet[7] = 0;
+        return 0x10;
+    }
+
+    return 0xC;
+}
 /**
  * Clears the vector-unit visual's packet pointers and sizes.
  *
@@ -256,8 +315,8 @@ void CVisualMDTVu1::Initialize(void) {
     CVisualVu1::Initialize();
     unk_00 = 0;
     data = NULL;
-    vu_data1 = NULL;
-    vu_data0 = NULL;
+    vu_data_buffer[1] = NULL;
+    vu_data_buffer[0] = NULL;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/visualvu1", Initialize__13CVisualMDTVu1Fv);
@@ -269,13 +328,9 @@ INCLUDE_ASM("asm/nonmatchings/visualvu1", Initialize__13CVisualMDTVu1Fv);
  * @address 0x134FB0
  * @size 0x48
  */
-#ifdef NON_MATCHING
 CVisualMDTVu1::CVisualMDTVu1(void) {
-    Initialize();
+    CVisualMDTVu1::Initialize();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/visualvu1", __ct__13CVisualMDTVu1Fv);
-#endif
 /**
  * Draws the visual into a packet through the vector unit.
  *
@@ -295,13 +350,26 @@ INCLUDE_ASM("asm/nonmatchings/visualvu1", SetVuData__FiP1PUiP1P1P1P1i);
 INCLUDE_ASM("asm/nonmatchings/visualvu1", CreateVUdataFromMDT__10CVisualVu1FPUiPUiii);
 INCLUDE_ASM("asm/nonmatchings/visualvu1", CreateVUdataFromMDTRemake__10CVisualVu1FPUiPUii);
 /**
- * Draws the model, rebuilding its packet where the data has changed.
+ * Draws the model, from a copy of this frame's block when the visual asks for one.
  *
  * @mangled DrawVu1__13CVisualMDTVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii
  * @address 0x1360E0
  * @size 0x120
  */
-INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__13CVisualMDTVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
+int CVisualMDTVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
+                           VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
+    int result;
+
+    result = 0;
+    vu_data = vu_data_buffer[DBuffID];
+    if (unk_00 != 0) {
+        vu_data = (u_int *) ActiveData->Alloc64(vu_size);
+        memcpy(vu_data, vu_data_buffer[DBuffID], vu_size * 16);
+    }
+    result += CVisualVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown1, unknown2);
+    vu_data = vu_data_buffer[DBuffID];
+    return result;
+}
 /**
  * Draws the model into a VIF packet, choosing the buffer the frame is using.
  *
@@ -309,5 +377,15 @@ INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__13CVisualMDTVu1FPUiPA4_fP10Re
  * @address 0x136200
  * @size 0x34
  */
-INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__13CVisualMDTVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
-INCLUDE_ASM("asm/nonmatchings/visualvu1", RemakeData__13CVisualMDTVu1FPUi);
+int CVisualMDTVu1::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
+                           VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
+    vu_data = vu_data_buffer[DBuffID];
+    return CVisualVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown1, unknown2);
+}
+
+int CVisualMDTVu1::RemakeData(u_int *data) {
+    if (this->data == NULL) {
+        return 0;
+    }
+    return CreateVUdataFromMDTRemake(vu_data_buffer[DBuffID], this->data, 1);
+}

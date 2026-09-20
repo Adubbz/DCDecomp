@@ -91,9 +91,9 @@ public:
      */
     virtual int RemakeData(u_int *data);
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
-                        i *draw_state, int unknown1, int unknown2);
+                        u_long128 *draw_state, int unknown1, int unknown2);
     virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
-                        VU1_PROGRAM program, i *draw_state, int unknown1, int unknown2);
+                        VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
 
     int unk_00;
     int unk_04;
@@ -103,11 +103,18 @@ public:
 
 /**
  * The same with a copy of the model file kept beside the built block, which is what lets the
-   geometry be rebuilt later without the loader. vu_data0 and vu_data1 are the same address
-   unless a second block was built for the model, and then they are the two of them.
+   geometry be rebuilt later without the loader. Both vu_data_buffer entries are the same
+   address unless a second block was built for the model, and then they are the two of them.
  */
 class CVisualMDTVu1 : public CVisualVu1 {
 public:
+    /**
+     * Constructs a model visual and clears it.
+     *
+     * @mangled __ct__13CVisualMDTVu1Fv
+     * @address 0x134FB0
+     * @size 0x48
+     */
     CVisualMDTVu1();
 
     /* Every one of them, because a block that is kept can be rebuilt and one that is not cannot. */
@@ -122,15 +129,30 @@ public:
      * @size 0x4C
      */
     virtual int RemakeData(u_int *data);
+
+    /**
+     * Draws the model, from a copy of this frame's block when the visual asks for one.
+     *
+     * @mangled DrawVu1__13CVisualMDTVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii
+     * @address 0x1360E0
+     * @size 0x120
+     */
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
-                        i *draw_state, int unknown1, int unknown2);
+                        u_long128 *draw_state, int unknown1, int unknown2);
+
+    /**
+     * Draws the model into a VIF packet, choosing the buffer the frame is using.
+     *
+     * @mangled DrawVu1__13CVisualMDTVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii
+     * @address 0x136200
+     * @size 0x34
+     */
     virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
-                        VU1_PROGRAM program, i *draw_state, int unknown1, int unknown2);
+                        VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
 
     u_int *data; /**< Retained source MDT image used to rebuild the visual. */
     int unk_00;
-    u_int *vu_data0; /**< Primary built Vector Unit data block. */
-    u_int *vu_data1; /**< Secondary built Vector Unit data block. */
+    u_int *vu_data_buffer[2]; /**< Built block each display buffer draws from. */
 };
 
 /**
@@ -158,7 +180,7 @@ public:
      * @size 0x14C
      */
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
-                        i *draw_state, int unknown1, int unknown2);
+                        u_long128 *draw_state, int unknown1, int unknown2);
 
     /**
      * Draws the model into a VIF packet, building and lending it a clipped shadow packet.
@@ -168,7 +190,7 @@ public:
      * @size 0x144
      */
     virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
-                        VU1_PROGRAM program, i *draw_state, int unknown1, int unknown2);
+                        VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
 
     /**
      * Writes one model's shadow geometry and returns its size in quadwords.

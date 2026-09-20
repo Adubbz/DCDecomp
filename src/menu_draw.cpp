@@ -29,6 +29,9 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
+/** The personal inventory board the menu is working on. */
+extern PERSONAL_BOARD *PerBoardPt;
+
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @553);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @554__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @555);
@@ -413,7 +416,32 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardWeaponPush__FP9IHAVEITEMi
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardAttachPush__FP9IHAVEITEMi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardItemGetorSwap__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardItemCancel__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalRetMax__Fi);
+
+int PersonalRetMax(int board_mode) {
+    int max = 0;
+
+    switch (board_mode) {
+        case 0:
+            max = PerBoardPt->item_pack->num;
+            break;
+        case 1:
+            max = 60;
+            break;
+        case 2:
+            max = 40;
+            break;
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+            max = 120;
+            break;
+    }
+    return max;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawPersonalBoard__Fiiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawNowEquipWeaponMark__Fiiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonIconDraw__Fiiiiiii);

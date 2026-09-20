@@ -15,6 +15,7 @@
 #include "itemdata.hpp"
 #include "memcard.hpp"
 #include "menu_draw.hpp"
+#include "menu_inventory.hpp"
 #include "menu_manual.hpp"
 #include "mglib.hpp"
 #include "savedata.hpp"
@@ -52,6 +53,21 @@ extern CDngStatusData *BtlMenuStatusPt;
 
 /** The ambient light saved before the item menu tinted it. */
 extern float MenuCharaOldAmbient[4];
+
+/** The dungeon escape prompt's second message window. */
+extern ClsMes *DngMenuMes;
+
+/** The picture drawn behind the dungeon escape prompt. */
+extern CTexture *DngEscapeTex;
+
+/** The texture block the dungeon escape prompt's picture is loaded into. */
+extern s16 DngEscapeBlock;
+
+/** Whether the dungeon escape prompt is closing and fades to black. */
+extern s16 DngEscapeEndFlag;
+
+/** The darkness drawn over the dungeon escape prompt, from 0 (none) to 0x80 (black). */
+extern s16 DngEscapeAlpha;
 
 extern CDataAlloc2<1> MenuExCashBuffer;
 extern CCharacter MenuCharaFrame;
@@ -204,7 +220,12 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @958__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @959__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @960__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @961);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", MenuWeaponEffectSet__Fi);
+
+void MenuWeaponEffectSet(int effect_no) {
+    SetMenuCharaEffectReadFlag(0);
+    MainChara_Effect((BT_SHOT_EFFECT *) WepEffectMenuPt, (unsigned int *) WepEffectMenuReadBuf,
+                     effect_no);
+}
 
 int GetNowTestNo() {
     return MenuWeaponTestCase;
@@ -372,7 +393,37 @@ INCLUDE_ASM("asm/nonmatchings/menu_misc", MonsterNamePosSet__Fii);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", MonsterNameDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", DngEscapeMsgInit__FP6ClsMesP6ClsMesi);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1341);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", DngEscapeMsgDraw__Fv);
+
+void DngEscapeMsgDraw() {
+    AllFadeForMenu(0x80);
+    if (CharaNameMes == NULL || DngMenuMes == NULL) {
+        return;
+    }
+
+    MenuTextureReload(DngEscapeBlock);
+    DrawFullSizePicture(DngEscapeTex, 0, 0, 0x80);
+    MenuTextureReload(CharaNameMes->tex_block);
+    setbilinear(0);
+    CharaNameMes->stay_frame = 1;
+    CharaNameMes->Step();
+    DngMenuMes->Step();
+    CharaNameMes->DrawMesWin();
+    DngMenuMes->DrawMesWin();
+
+    if (DngEscapeEndFlag != 0) {
+        DngEscapeAlpha += 3;
+        if (DngEscapeAlpha > 0x80) {
+            DngEscapeAlpha = 0x80;
+        }
+    } else {
+        DngEscapeAlpha -= 3;
+        if (DngEscapeAlpha < 0) {
+            DngEscapeAlpha = 0;
+        }
+    }
+    AllFadeForMenu(DngEscapeAlpha);
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_misc", DngEscapeMsgLoop__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", CheckItemThrow__FPiPi);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", SetWeaponElementStatus__FP11WEAPON_HAVE);

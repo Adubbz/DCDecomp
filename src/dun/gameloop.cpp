@@ -5979,13 +5979,13 @@ void BtCleatRandomMap(void) {
     for (n = 0; n < 32; n++) {
         MainRandomItem.id[n] = -1;
         MainRandomItem.pickup_event[n] = -1;
-        MainRandomItem.state[n] = 0;
+        MainRandomItem.pickup_blocked[n] = 0;
     }
     MainRandomItem.gold_texture = gold;
     for (n = 0; n < 32; n++) {
         SubRandomItem.id[n] = -1;
         SubRandomItem.pickup_event[n] = -1;
-        SubRandomItem.state[n] = 0;
+        SubRandomItem.pickup_blocked[n] = 0;
     }
     SubRandomItem.gold_texture = GoldTex;
     RandomItem = &MainRandomItem;
@@ -6075,7 +6075,7 @@ void BtCleatFreeMap(void) {
     for (i = 0; i < 32; i++) {
         MainRandomItem.id[i] = -1;
         MainRandomItem.pickup_event[i] = -1;
-        MainRandomItem.state[i] = 0;
+        MainRandomItem.pickup_blocked[i] = 0;
     }
     MainRandomItem.gold_texture = gold;
     RandomItem = &MainRandomItem;

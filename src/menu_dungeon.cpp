@@ -212,7 +212,18 @@ s16 GetWeaponMsgNo2(s32 item_no) {
 }
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawWepAttach__FiiP11WEAPON_HAVEii);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", GetAtraTipNowHave__Fii);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", GetDispVolumeForFloat__Ff);
+
+int GetDispVolumeForFloat(float volume) {
+    int whole;
+    int shown;
+
+    whole = (int) volume;
+    shown = whole;
+    if (volume - (float) whole > 0.0) {
+        shown += 1;
+    }
+    return shown;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", InitItemPolygonView__FiP1);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", EnterItemPolygonView__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", LocalDrawItemPolygonView__Fv);

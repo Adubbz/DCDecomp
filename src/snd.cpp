@@ -575,7 +575,9 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSetBgmVol__Fi);
  * @address 0x159D90
  * @size 0x50
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetBgmVolf__Ff);
+void SndSetBgmVolf(float volume) {
+    SndSetBgmVol((int) (volume * (float) SndGetDefaultBgmVol()));
+}
 
 int SndGetBgmVol() {
     return now_bgm_vol;
@@ -878,7 +880,11 @@ INCLUDE_ASM("asm/nonmatchings/snd", GetVoiceFile__FiPcPc);
  * @address 0x15B390
  * @size 0x54
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SetVoiceFile__FiPUiPc);
+static void SetVoiceFile(int voice_set, u_int *pack, char *file_name) {
+    CSnd.LoadSoundFileFromPack(file_name, pack);
+    CSnd.SetVol(11, 0x100);
+    now_voice_set = voice_set;
+}
 INCLUDE_ASM("asm/nonmatchings/snd", SndVoiceLoad__Fi);
 /**
  * Starts loading one voice set in the background.
@@ -911,13 +917,6 @@ INCLUDE_ASM("asm/nonmatchings/snd", GetSPSeFile__FiPcPc);
  * @size 0x54
  */
 INCLUDE_ASM("asm/nonmatchings/snd", SetSPSeFile__FiPUiPc);
-/**
- * Starts loading one special-effect set.
- *
- * @mangled SndSPSeLoad__Fi
- * @address 0x15B6D0
- * @size 0x90
- */
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoad__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoadBG__FiPUiPi);
 /**
