@@ -204,7 +204,12 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @958__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @959__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @960__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @961);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", MenuWeaponEffectSet__Fi);
+
+void MenuWeaponEffectSet(int effect_no) {
+    SetMenuCharaEffectReadFlag(0);
+    MainChara_Effect((BT_SHOT_EFFECT *) WepEffectMenuPt, (unsigned int *) WepEffectMenuReadBuf,
+                     effect_no);
+}
 
 int GetNowTestNo() {
     return MenuWeaponTestCase;
