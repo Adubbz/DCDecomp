@@ -129,6 +129,14 @@ public:
      * @size 0x4C
      */
     virtual int RemakeData(u_int *data);
+
+    /**
+     * Draws the model, from a copy of this frame's block when the visual asks for one.
+     *
+     * @mangled DrawVu1__13CVisualMDTVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii
+     * @address 0x1360E0
+     * @size 0x120
+     */
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
                         u_long128 *draw_state, int unknown1, int unknown2);
 

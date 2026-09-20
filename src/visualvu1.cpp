@@ -4,11 +4,14 @@
 
 #include <cstring>
 
+#include "dataalloc.hpp"
 #include "mdt.hpp"
 #include "mglib.hpp"
 #include "texture.hpp"
 #include "tim2.hpp"
 #include "visual.hpp"
+
+extern CDataAlloc2<1> *ActiveData;
 
 void SetTextureInfo(CTexture *tex, char *name, TM2_head *head) {
     TM2_picture *pic = (TM2_picture *) ((u_char *) head + 16);
@@ -347,13 +350,26 @@ INCLUDE_ASM("asm/nonmatchings/visualvu1", SetVuData__FiP1PUiP1P1P1P1i);
 INCLUDE_ASM("asm/nonmatchings/visualvu1", CreateVUdataFromMDT__10CVisualVu1FPUiPUiii);
 INCLUDE_ASM("asm/nonmatchings/visualvu1", CreateVUdataFromMDTRemake__10CVisualVu1FPUiPUii);
 /**
- * Draws the model, rebuilding its packet where the data has changed.
+ * Draws the model, from a copy of this frame's block when the visual asks for one.
  *
  * @mangled DrawVu1__13CVisualMDTVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii
  * @address 0x1360E0
  * @size 0x120
  */
-INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__13CVisualMDTVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
+int CVisualMDTVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
+                           VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
+    int result;
+
+    result = 0;
+    vu_data = (&vu_data0)[DBuffID];
+    if (unk_00 != 0) {
+        vu_data = (u_int *) ActiveData->Alloc64(vu_size);
+        memcpy(vu_data, (&vu_data0)[DBuffID], vu_size * 16);
+    }
+    result += CVisualVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown1, unknown2);
+    vu_data = (&vu_data0)[DBuffID];
+    return result;
+}
 /**
  * Draws the model into a VIF packet, choosing the buffer the frame is using.
  *
