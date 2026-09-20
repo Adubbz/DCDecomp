@@ -5,6 +5,7 @@
 #include <cstring>
 
 #include "mdt.hpp"
+#include "mglib.hpp"
 #include "texture.hpp"
 #include "tim2.hpp"
 #include "visual.hpp"
@@ -206,7 +207,47 @@ int SetMaterial(u_int *packet, MDT_MATERIAL *material) {
     ((u_long128 *) packet)[4] = *(u_long128 *) last_row;
     return 0x14;
 }
-INCLUDE_ASM("asm/nonmatchings/visualvu1", SetTEX0__FPUiUlUl);
+
+int SetTEX0(u_int *packet, u_long tex0, u_long tex1) {
+    packet[0] = 0;
+    packet[1] = 0;
+    packet[2] = 0;
+
+    if (tex1 == 0) {
+        tex1 = *(u_long *) &mgTEX1Env;
+    }
+
+    if (tex1 != 0) {
+        packet[3] = 0x50000003;
+        packet[4] = 0x8002;
+        packet[5] = 0x10000000;
+        packet[6] = 0xE;
+        packet[7] = 0;
+        packet += 8;
+    } else {
+        packet[3] = 0x50000002;
+        packet[4] = 0x8001;
+        packet[5] = 0x10000000;
+        packet[6] = 0xE;
+        packet[7] = 0;
+        packet += 8;
+    }
+
+    packet[0] = (u_int) tex0;
+    packet[1] = (u_int) ((tex0 >> 32) & 0xFFFFFFFF);
+    packet[2] = SCE_GS_TEX0_1;
+    packet[3] = 0;
+
+    if (tex1 != 0) {
+        packet[4] = (u_int) tex1;
+        packet[5] = (u_int) ((tex1 >> 32) & 0xFFFFFFFF);
+        packet[6] = SCE_GS_TEX1_1;
+        packet[7] = 0;
+        return 0x10;
+    }
+
+    return 0xC;
+}
 /**
  * Clears the vector-unit visual's packet pointers and sizes.
  *
