@@ -880,7 +880,11 @@ INCLUDE_ASM("asm/nonmatchings/snd", GetVoiceFile__FiPcPc);
  * @address 0x15B390
  * @size 0x54
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SetVoiceFile__FiPUiPc);
+static void SetVoiceFile(int voice_set, u_int *pack, char *file_name) {
+    CSnd.LoadSoundFileFromPack(file_name, pack);
+    CSnd.SetVol(11, 0x100);
+    now_voice_set = voice_set;
+}
 INCLUDE_ASM("asm/nonmatchings/snd", SndVoiceLoad__Fi);
 /**
  * Starts loading one voice set in the background.
