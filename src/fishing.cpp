@@ -14,6 +14,16 @@ extern float WaterLevel;
 extern float GroundLevel;
 
 /**
+ * The ground height under the float.
+ */
+extern float UkiGroundLevel;
+
+/**
+ * The ground height under the hook.
+ */
+extern float HookGroundLevel;
+
+/**
  * The fish fighting the line, or null when none is.
  */
 extern CFish *BattleFish;
@@ -162,7 +172,11 @@ void FishingSetWaterLevel(float water_level, float ground_level) {
     GroundLevel = ground_level;
     FishingSetGroundLevel(ground_level, ground_level);
 }
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingSetGroundLevel__Fff);
+
+void FishingSetGroundLevel(float uki_height, float hook_height) {
+    UkiGroundLevel = uki_height;
+    HookGroundLevel = hook_height;
+}
 
 float FishingGetWaterLevel() {
     return WaterLevel;

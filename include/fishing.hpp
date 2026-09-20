@@ -34,13 +34,13 @@ void FishingSetRect(CBoxVu0 bounds);
 void FishingSetWaterLevel(float near_height, float far_height);
 
 /**
- * Sets both ground-height samples used by the fishing simulation.
+ * Sets the ground heights under the float and under the hook.
  *
  * @mangled FishingSetGroundLevel__Fff
  * @address 0x1A91C0
  * @size 0x10
  */
-void FishingSetGroundLevel(float near_height, float far_height);
+void FishingSetGroundLevel(float uki_height, float hook_height);
 
 /**
  * Returns the water surface height used by the fishing simulation.
