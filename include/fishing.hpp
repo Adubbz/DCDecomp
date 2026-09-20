@@ -6,7 +6,13 @@ template <int T> class CDataAlloc2;
 class CFish;
 class CFrameVu1;
 
-/** Initializes the fishing subsystem's runtime state. */
+/**
+ * Initializes the fishing subsystem's runtime state.
+ *
+ * @mangled FishingInit__Fv
+ * @address 0x1A9070
+ * @size 0x7C
+ */
 void FishingInit();
 
 /** Loads shared fishing resources into an event arena. */

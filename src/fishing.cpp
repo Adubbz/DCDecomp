@@ -1,6 +1,7 @@
 #include "fishing.hpp"
 
 #include "fish.hpp"
+#include "framevu1.hpp"
 
 /**
  * The water surface height used by the fishing simulation.
@@ -36,6 +37,61 @@ extern CFrameVu1 *EsaFrame;
  * The kind of bait on the hook, or -1 when the hook is bare.
  */
 extern int esa_type;
+
+/**
+ * The line's hook model.
+ */
+extern CFrame *HookFrame;
+
+/**
+ * The line's float model.
+ */
+extern CFrame *UkiFrame;
+
+/**
+ * The texture slot of the rod, float and hook, or -99 before they are read.
+ */
+extern int fishing_texb;
+
+/**
+ * The texture slot of the fish, or -99 before they are read.
+ */
+extern int fish_texb;
+
+/**
+ * The texture slot of the bait, or -99 before it is read.
+ */
+extern int esa_texb;
+
+/**
+ * The fish of the fishing spot.
+ */
+extern CFish *Fish;
+
+/**
+ * The number of fish read for the fishing spot.
+ */
+extern int FishNum;
+
+/**
+ * The collision polygons the fish move against.
+ */
+extern CCPoly *cpoly;
+
+/**
+ * The number of collision polygons in cpoly.
+ */
+extern int cpoly_num;
+
+/**
+ * The frame the float's model hangs from.
+ */
+extern CFrameVu1 UkiFrameTop;
+
+/**
+ * The fishing rod.
+ */
+extern CCharacter Rod;
 
 /**
  * Reads the fishing minigame's models and textures.
@@ -79,14 +135,26 @@ void FishingDeleteEsa() {
  * @size 0x38
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingGetEsaItemNo__Fv);
-/**
- * Clears the fishing simulation's water, ground and line state.
- *
- * @mangled FishingInit__Fv
- * @address 0x1A9070
- * @size 0x7C
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingInit__Fv);
+
+void FishingInit() {
+    WaterLevel = 0.0f;
+    GroundLevel = 0.0f;
+    HookFrame = NULL;
+    UkiFrame = NULL;
+    EsaFrame = NULL;
+    esa_type = -1;
+    UkiFrameTop.Initialize();
+    Rod.Initialize();
+    esa_texb = -99;
+    fish_texb = -99;
+    fishing_texb = -99;
+    Fish = NULL;
+    FishNum = 0;
+    AngleFish = NULL;
+    BattleFish = NULL;
+    cpoly = NULL;
+    cpoly_num = 0;
+}
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingExit__Fv);
 
 void FishingSetWaterLevel(float water_level, float ground_level) {
