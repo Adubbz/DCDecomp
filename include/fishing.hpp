@@ -58,6 +58,15 @@ void FishLineInit(float *position);
 void FishingLoadEsa(int item_no, CFrameVu1 *frame, int slot);
 
 /**
+ * Takes the bait off the hook.
+ *
+ * @mangled FishingDeleteEsa__Fv
+ * @address 0x1A9010
+ * @size 0x14
+ */
+void FishingDeleteEsa();
+
+/**
  * Returns the fish fighting the line, or null when none is.
  *
  * @mangled FishingGetBattleFish__Fv

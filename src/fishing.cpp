@@ -28,6 +28,16 @@ extern CFish *AngleFish;
 extern float pull_hook;
 
 /**
+ * The model of the bait on the hook, or null when the hook is bare.
+ */
+extern CFrameVu1 *EsaFrame;
+
+/**
+ * The kind of bait on the hook, or -1 when the hook is bare.
+ */
+extern int esa_type;
+
+/**
  * Reads the fishing minigame's models and textures.
  *
  * @mangled FishingLoad__FP14CDataAlloc2_1_i
@@ -56,14 +66,11 @@ INCLUDE_ASM("asm/nonmatchings/fishing", __ct__5CFishFv);
  * @size 0xBC
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingLoadEsa__FiP9CFrameVu1i);
-/**
- * Takes the bait off the hook.
- *
- * @mangled FishingDeleteEsa__Fv
- * @address 0x1A9010
- * @size 0x14
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingDeleteEsa__Fv);
+
+void FishingDeleteEsa() {
+    EsaFrame = NULL;
+    esa_type = -1;
+}
 /**
  * Gives the item the bait on the hook came from.
  *
