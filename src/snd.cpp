@@ -575,7 +575,9 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSetBgmVol__Fi);
  * @address 0x159D90
  * @size 0x50
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetBgmVolf__Ff);
+void SndSetBgmVolf(float volume) {
+    SndSetBgmVol((int) (volume * (float) SndGetDefaultBgmVol()));
+}
 
 int SndGetBgmVol() {
     return now_bgm_vol;

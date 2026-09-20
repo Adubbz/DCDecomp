@@ -483,7 +483,13 @@ void SndSeStop(int se_no, int voice);
  */
 void SndSetBgmVol(int volume);
 
-/** Sets the background-music normalized volume. */
+/**
+ * Sets the background music's volume as a share of its default.
+ *
+ * @mangled SndSetBgmVolf__Ff
+ * @address 0x159D90
+ * @size 0x50
+ */
 void SndSetBgmVolf(float volume);
 
 /**
