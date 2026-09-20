@@ -130,7 +130,65 @@ int CMemoryCardAccess::GetFuncNo() {
     return this->func_no;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", Step__17CMemoryCardAccessFv);
+int CMemoryCardAccess::Step() {
+    int result;
+    int target_file;
+
+    result = 0;
+    switch (func_no) {
+        case MC_OPERATION_SEARCH_TYPE:
+            result = SearchMcType();
+            break;
+        case MC_OPERATION_GET_DIR:
+            result = GetDir();
+            break;
+        case MC_OPERATION_MAKE_DIR:
+            result = MakeDir();
+            break;
+        case MC_OPERATION_GET_ALL_SAVE_FILE_INFO:
+            result = GetAllSaveFileInfo();
+            break;
+        case MC_OPERATION_SAVE:
+            result = SaveToMc(file_no);
+            break;
+        case MC_OPERATION_LOAD:
+            result = LoadFromMc(file_no);
+            break;
+        case MC_OPERATION_FORMAT:
+            result = FormatForMc();
+            break;
+        case MC_OPERATION_UNFORMAT:
+            result = McUnFormatForDebug();
+            break;
+        case MC_OPERATION_DELETE:
+            if (error_code == 0) {
+                target_file = file_no;
+            } else {
+                target_file = error_file_no;
+            }
+            result = DeleteFile(target_file);
+            break;
+        case MC_OPERATION_LOAD_CONFIG:
+            result = LoadSysConfig();
+            break;
+        case MC_OPERATION_SAVE_CONFIG:
+            result = SaveSysConfig();
+            break;
+        case MC_OPERATION_WRITE_TEST:
+            result = Write();
+            break;
+        case MC_OPERATION_CONVERT:
+            result = Convert();
+            break;
+    }
+    if (result == 1) {
+        step = 0;
+        SetFuncNo(MC_OPERATION_IDLE);
+    } else {
+        McError(result);
+    }
+    return result;
+}
 
 void CMemoryCardAccess::SetVersion(char *version) {
     strcpy(this->version, version);
