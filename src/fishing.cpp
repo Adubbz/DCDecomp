@@ -13,9 +13,9 @@ extern float WaterLevel;
 extern float GroundLevel;
 
 /**
- * The fish selected for battle, or a negative value when none is selected.
+ * The fish fighting the line, or null when none is.
  */
-extern int BattleFish;
+extern CFish *BattleFish;
 
 /**
  * The fish displayed after an angling battle, or null when none is displayed.
@@ -160,7 +160,7 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishingBattleToAngleFish__FPUiP14CDataAl
 INCLUDE_RODATA("asm/nonmatchings/fishing", @578__3);
 INCLUDE_RODATA("asm/nonmatchings/fishing", @604);
 
-int FishingGetBattleFish() {
+CFish *FishingGetBattleFish() {
     return BattleFish;
 }
 

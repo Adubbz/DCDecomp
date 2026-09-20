@@ -3,6 +3,7 @@
 #include "collision.hpp"
 
 template <int T> class CDataAlloc2;
+class CFish;
 class CFrameVu1;
 
 /** Initializes the fishing subsystem's runtime state. */
@@ -57,13 +58,13 @@ void FishLineInit(float *position);
 void FishingLoadEsa(int item_no, CFrameVu1 *frame, int slot);
 
 /**
- * Returns the fish selected for the active battle.
+ * Returns the fish fighting the line, or null when none is.
  *
  * @mangled FishingGetBattleFish__Fv
  * @address 0x1A97A0
  * @size 0xC
  */
-int FishingGetBattleFish();
+CFish *FishingGetBattleFish();
 
 /**
  * Removes the fish displayed after an angling battle.
