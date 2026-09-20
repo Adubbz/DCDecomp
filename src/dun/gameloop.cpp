@@ -6075,7 +6075,7 @@ void BtCleatFreeMap(void) {
     for (i = 0; i < 32; i++) {
         MainRandomItem.id[i] = -1;
         MainRandomItem.pickup_event[i] = -1;
-        MainRandomItem.state[i] = 0;
+        MainRandomItem.pickup_blocked[i] = 0;
     }
     MainRandomItem.gold_texture = gold;
     RandomItem = &MainRandomItem;
