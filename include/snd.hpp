@@ -657,6 +657,16 @@ int SndSoundLoadBG(int set_no, u_int *buffer, int *size);
 int SndVoiceLoadBG(int set_no, u_int *buffer, int *size);
 
 /**
+ * Reads one special-effect set and hands it to SetSPSeFile; returns 0 when the set is
+ * already current or its file cannot be read, otherwise 1.
+ *
+ * @mangled SndSPSeLoad__Fi
+ * @address 0x15B6D0
+ * @size 0x90
+ */
+int SndSPSeLoad(int set_no);
+
+/**
  * Starts loading a special-effect sound bank into a caller-provided buffer, and
  * returns whether the load was started.
  *

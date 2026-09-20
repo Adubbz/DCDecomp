@@ -917,13 +917,6 @@ INCLUDE_ASM("asm/nonmatchings/snd", GetSPSeFile__FiPcPc);
  * @size 0x54
  */
 INCLUDE_ASM("asm/nonmatchings/snd", SetSPSeFile__FiPUiPc);
-/**
- * Starts loading one special-effect set.
- *
- * @mangled SndSPSeLoad__Fi
- * @address 0x15B6D0
- * @size 0x90
- */
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoad__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoadBG__FiPUiPi);
 /**
