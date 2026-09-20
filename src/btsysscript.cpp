@@ -17,6 +17,7 @@
 #include "nowload.hpp"
 #include "runscript.hpp"
 #include "shot_freefuncs.hpp"
+#include "snd.hpp"
 #include "userstatus.hpp"
 
 /**
@@ -431,7 +432,13 @@ int _SET_FLOOR_TITLE_OFF(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_RES_LIMMIT_ZONE__FP12RS_STACKDATAi);
+int _SET_RES_LIMMIT_ZONE(RS_STACKDATA *stack, int argument_count) {
+    ((CDngStatusData *) UserStatus)->SetResLimmitZone();
+    if (UserStatus->res_limit_zone_current != -1) {
+        SndSPSeLoad(0x1B);
+    }
+    return 1;
+}
 
 int _CLEAR_DEAMON_SHAFT(RS_STACKDATA *stack, int argument_count) {
     ((CDngStatusData *) UserStatus)->ClearDeamonShaft();
