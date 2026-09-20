@@ -532,7 +532,54 @@ static int GetDrawHelpWindow(int draw) {
     return draw;
 }
 
-INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuLoop__Fv);
+int EditMenuLoop() {
+    int result;
+
+    ReadBG();
+    result = 0;
+    switch (EditSwitch) {
+        case 2:
+            result = EditMenuSelect();
+            break;
+        case 11:
+            ToAnalyzeEdit();
+            break;
+        case 4:
+            result = AtoraMove();
+            break;
+        case 5:
+            result = AnalyzeEdit();
+            break;
+        case 3:
+        case 9:
+        case 16:
+            result = AtoraSelect();
+            break;
+        case 18:
+            FromAnalyzeEdit();
+            break;
+        case 6:
+        case 12:
+        case 19:
+            EditSaveKey();
+            break;
+        case 7:
+        case 13:
+        case 20:
+            EdOptionSelect();
+            break;
+        case 8:
+        case 14:
+        case 21:
+            EdMenuManualKey();
+            break;
+        case 15:
+            result = EditMenuToExit();
+            break;
+    }
+    EditMenuDraw();
+    return result;
+}
 INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuDraw__Fv);
 INCLUDE_RODATA("asm/nonmatchings/editmenu", @573__2);
 INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuStart__Fv);
