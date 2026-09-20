@@ -510,8 +510,8 @@ CVisualMDTVu1 *CreateVisual(u_int *data, CDataAlloc2<1> *alloc, int attr) {
     if (attr & 8) {
         ((CVisualShadow *) visual)
             ->CreateVUdataShadow((u_int *) (alloc->base + alloc->used * 16), data);
-        visual->vu_data0 = visual->vu_data;
-        visual->vu_data1 = visual->vu_data;
+        visual->vu_data_buffer[0] = visual->vu_data;
+        visual->vu_data_buffer[1] = visual->vu_data;
         ArrangeShadowMDT(data);
     } else {
         visual->CreateVUdataFromMDT((u_int *) (alloc->base + alloc->used * 16), data, 0, 0);
@@ -536,19 +536,19 @@ CVisualMDTVu1 *CreateVisual(u_int *data, CDataAlloc2<1> *alloc, int attr) {
         if ((attr & 4) && !(attr & 0x10)) {
             alloc->Align64();
             if (attr & 8) {
-                visual->vu_data0 = visual->vu_data;
+                visual->vu_data_buffer[0] = visual->vu_data;
                 ((CVisualShadow *) visual)
                     ->CreateVUdataShadow((u_int *) (alloc->base + alloc->used * 16), data);
             } else {
-                visual->vu_data0 = visual->vu_data;
+                visual->vu_data_buffer[0] = visual->vu_data;
                 visual->CreateVUdataFromMDT(
                     (u_int *) (alloc->base + alloc->used * 16), data, 0, 0);
             }
             alloc->Alloc(visual->vu_size);
-            visual->vu_data1 = visual->vu_data;
+            visual->vu_data_buffer[1] = visual->vu_data;
         } else {
-            visual->vu_data0 = visual->vu_data;
-            visual->vu_data1 = visual->vu_data;
+            visual->vu_data_buffer[0] = visual->vu_data;
+            visual->vu_data_buffer[1] = visual->vu_data;
         }
     }
 

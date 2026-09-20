@@ -103,8 +103,8 @@ public:
 
 /**
  * The same with a copy of the model file kept beside the built block, which is what lets the
-   geometry be rebuilt later without the loader. vu_data0 and vu_data1 are the same address
-   unless a second block was built for the model, and then they are the two of them.
+   geometry be rebuilt later without the loader. Both vu_data_buffer entries are the same
+   address unless a second block was built for the model, and then they are the two of them.
  */
 class CVisualMDTVu1 : public CVisualVu1 {
 public:
@@ -152,8 +152,7 @@ public:
 
     u_int *data; /**< Retained source MDT image used to rebuild the visual. */
     int unk_00;
-    u_int *vu_data0; /**< Primary built Vector Unit data block. */
-    u_int *vu_data1; /**< Secondary built Vector Unit data block. */
+    u_int *vu_data_buffer[2]; /**< Built block each display buffer draws from. */
 };
 
 /**

@@ -21,18 +21,18 @@ int CVisualShadow::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
 
     result = 0;
     if (info->unk_320 == 2) {
-        saved_primary = vu_data0;
-        saved_secondary = vu_data1;
+        saved_primary = vu_data_buffer[0];
+        saved_secondary = vu_data_buffer[1];
         saved_size = vu_size;
         ActiveData->Align64();
         ActiveData->Alloc(CreateVUdataShadowCLIP(
             (u_int *) (ActiveData->base + ActiveData->used * 16), data, info, matrix));
-        vu_data0 = vu_data;
-        vu_data1 = vu_data;
+        vu_data_buffer[0] = vu_data;
+        vu_data_buffer[1] = vu_data;
         result +=
             CVisualMDTVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown1, unknown2);
-        vu_data0 = saved_primary;
-        vu_data1 = saved_secondary;
+        vu_data_buffer[0] = saved_primary;
+        vu_data_buffer[1] = saved_secondary;
         vu_size = saved_size;
         return result;
     }
@@ -49,18 +49,18 @@ int CVisualShadow::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo
 
     result = 0;
     if (info->unk_320 == 2) {
-        saved_primary = vu_data0;
-        saved_secondary = vu_data1;
+        saved_primary = vu_data_buffer[0];
+        saved_secondary = vu_data_buffer[1];
         saved_size = vu_size;
         ActiveData->Align64();
         ActiveData->Alloc(CreateVUdataShadowCLIP(
             (u_int *) (ActiveData->base + ActiveData->used * 16), data, info, matrix));
-        vu_data0 = vu_data;
-        vu_data1 = vu_data;
+        vu_data_buffer[0] = vu_data;
+        vu_data_buffer[1] = vu_data;
         result +=
             CVisualMDTVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown1, unknown2);
-        vu_data0 = saved_primary;
-        vu_data1 = saved_secondary;
+        vu_data_buffer[0] = saved_primary;
+        vu_data_buffer[1] = saved_secondary;
         vu_size = saved_size;
         return result;
     }
@@ -169,7 +169,7 @@ int CVisualShadow::RemakeData(u_int *block) {
     if (!data) {
         return 0;
     }
-    return CreateVUdataShadow(DBuffID ? vu_data1 : vu_data0, data);
+    return CreateVUdataShadow(DBuffID ? vu_data_buffer[1] : vu_data_buffer[0], data);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/visualshadow", RemakeData__13CVisualShadowFPUi);

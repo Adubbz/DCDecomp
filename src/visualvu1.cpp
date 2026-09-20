@@ -315,8 +315,8 @@ void CVisualMDTVu1::Initialize(void) {
     CVisualVu1::Initialize();
     unk_00 = 0;
     data = NULL;
-    vu_data1 = NULL;
-    vu_data0 = NULL;
+    vu_data_buffer[1] = NULL;
+    vu_data_buffer[0] = NULL;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/visualvu1", Initialize__13CVisualMDTVu1Fv);
@@ -361,13 +361,13 @@ int CVisualMDTVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
     int result;
 
     result = 0;
-    vu_data = (&vu_data0)[DBuffID];
+    vu_data = vu_data_buffer[DBuffID];
     if (unk_00 != 0) {
         vu_data = (u_int *) ActiveData->Alloc64(vu_size);
-        memcpy(vu_data, (&vu_data0)[DBuffID], vu_size * 16);
+        memcpy(vu_data, vu_data_buffer[DBuffID], vu_size * 16);
     }
     result += CVisualVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown1, unknown2);
-    vu_data = (&vu_data0)[DBuffID];
+    vu_data = vu_data_buffer[DBuffID];
     return result;
 }
 /**
@@ -379,7 +379,7 @@ int CVisualMDTVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
  */
 int CVisualMDTVu1::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
                            VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
-    vu_data = (&vu_data0)[DBuffID];
+    vu_data = vu_data_buffer[DBuffID];
     return CVisualVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown1, unknown2);
 }
 
@@ -387,5 +387,5 @@ int CVisualMDTVu1::RemakeData(u_int *data) {
     if (this->data == NULL) {
         return 0;
     }
-    return CreateVUdataFromMDTRemake((&vu_data0)[DBuffID], this->data, 1);
+    return CreateVUdataFromMDTRemake(vu_data_buffer[DBuffID], this->data, 1);
 }
