@@ -91,9 +91,9 @@ public:
      */
     virtual int RemakeData(u_int *data);
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
-                        i *draw_state, int unknown1, int unknown2);
+                        u_long128 *draw_state, int unknown1, int unknown2);
     virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
-                        VU1_PROGRAM program, i *draw_state, int unknown1, int unknown2);
+                        VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
 
     int unk_00;
     int unk_04;
@@ -123,9 +123,9 @@ public:
      */
     virtual int RemakeData(u_int *data);
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
-                        i *draw_state, int unknown1, int unknown2);
+                        u_long128 *draw_state, int unknown1, int unknown2);
     virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
-                        VU1_PROGRAM program, i *draw_state, int unknown1, int unknown2);
+                        VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
 
     u_int *data; /**< Retained source MDT image used to rebuild the visual. */
     int unk_00;
@@ -158,7 +158,7 @@ public:
      * @size 0x14C
      */
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
-                        i *draw_state, int unknown1, int unknown2);
+                        u_long128 *draw_state, int unknown1, int unknown2);
 
     /**
      * Draws the model into a VIF packet, building and lending it a clipped shadow packet.
@@ -168,7 +168,7 @@ public:
      * @size 0x144
      */
     virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
-                        VU1_PROGRAM program, i *draw_state, int unknown1, int unknown2);
+                        VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
 
     /**
      * Writes one model's shadow geometry and returns its size in quadwords.

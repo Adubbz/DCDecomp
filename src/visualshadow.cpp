@@ -12,7 +12,7 @@ extern CDataAlloc2<1> *ActiveData;
 extern int DBuffID;
 
 int CVisualShadow::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
-                           VU1_PROGRAM program, i *draw_state, int unknown1, int unknown2) {
+                           VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
     u_int *saved_primary;
     u_int *saved_secondary;
     u_int saved_size;
@@ -43,7 +43,7 @@ INCLUDE_ASM("asm/nonmatchings/visualshadow", DrawVu1__13CVisualShadowFPUiPA4_fP1
 
 #ifdef NON_MATCHING
 int CVisualShadow::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
-                           VU1_PROGRAM program, i *draw_state, int unknown1, int unknown2) {
+                           VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
     u_int *saved_primary;
     u_int *saved_secondary;
     u_int saved_size;
