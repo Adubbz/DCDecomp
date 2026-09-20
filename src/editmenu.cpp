@@ -15,6 +15,7 @@
 #include "menu_draw.hpp"
 #include "menu_manual.hpp"
 #include "menu_misc.hpp"
+#include "menu_save.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
@@ -595,7 +596,37 @@ static void FromAnalyzeEditDraw() {
 
 INCLUDE_ASM("asm/nonmatchings/editmenu", FromAnalyzeEdit__Fv);
 INCLUDE_ASM("asm/nonmatchings/editmenu", EditSaveDraw__Fv);
-INCLUDE_ASM("asm/nonmatchings/editmenu", EditSaveKey__Fv);
+
+static void EditSaveKey() {
+    int arrived;
+
+    switch (EdMenuEffectFlag) {
+        case 1:
+            arrived = CalMoveFromMenuIcon();
+            if (arrived) {
+                EdMenuEffectFlag = 0;
+                EdMenuEffectCt = 0.0f;
+            }
+            break;
+        case 2:
+            arrived = CalMoveToMenuIcon();
+            break;
+    }
+    if (EdMenuEffectFlag != 0) {
+        EdMenuEffectCt += 1.0f;
+    } else {
+        EdMenuEffectCt = 0.0f;
+    }
+    MenuSaveKey();
+    if (SaveMenuEffectFadeOut()) {
+        EdMenuEffectFlag = 2;
+        if (arrived) {
+            EdEffectCt = 0;
+            EditSwitch = 2;
+            MakeWin2Flag = 1;
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/editmenu", OptionDraw__Fv);
 
 static void EdOptionSelect() {
