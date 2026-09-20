@@ -222,14 +222,17 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishingInitFish__F7CBoxVu0);
  * @size 0xD8
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingFishStatus__FPi);
-/**
- * Marks one fish as the one now fighting the line.
- *
- * @mangled FishingBattleFish__Fi
- * @address 0x1A9650
- * @size 0x68
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingBattleFish__Fi);
+
+void FishingBattleFish(int fish_no) {
+    BattleFish = NULL;
+    if (fish_no >= 0 && fish_no < 6) {
+        CFish *fish = &Fish[fish_no];
+        if (fish->action == FISH_ACTION_BITE_HOOK) {
+            BattleFish = fish;
+            fish->SetBattleMode();
+        }
+    }
+}
 /**
  * Gives the kind of one of the six fish.
  *

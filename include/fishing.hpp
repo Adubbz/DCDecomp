@@ -73,6 +73,15 @@ void FishingLoadEsa(int item_no, CFrameVu1 *frame, int slot);
 void FishingDeleteEsa();
 
 /**
+ * Makes a fish that has bitten the hook the one fighting the line.
+ *
+ * @mangled FishingBattleFish__Fi
+ * @address 0x1A9650
+ * @size 0x68
+ */
+void FishingBattleFish(int fish_no);
+
+/**
  * Returns the fish fighting the line, or null when none is.
  *
  * @mangled FishingGetBattleFish__Fv
