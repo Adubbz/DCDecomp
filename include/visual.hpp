@@ -131,6 +131,14 @@ public:
     virtual int RemakeData(u_int *data);
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
                         u_long128 *draw_state, int unknown1, int unknown2);
+
+    /**
+     * Draws the model into a VIF packet, choosing the buffer the frame is using.
+     *
+     * @mangled DrawVu1__13CVisualMDTVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii
+     * @address 0x136200
+     * @size 0x34
+     */
     virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
                         VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
 

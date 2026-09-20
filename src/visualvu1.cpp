@@ -361,5 +361,9 @@ INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__13CVisualMDTVu1FPUiPA4_fP10Re
  * @address 0x136200
  * @size 0x34
  */
-INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__13CVisualMDTVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
+int CVisualMDTVu1::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
+                           VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
+    vu_data = (&vu_data0)[DBuffID];
+    return CVisualVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown1, unknown2);
+}
 INCLUDE_ASM("asm/nonmatchings/visualvu1", RemakeData__13CVisualMDTVu1FPUi);
