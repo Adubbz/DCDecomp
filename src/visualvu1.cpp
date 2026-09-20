@@ -382,4 +382,10 @@ int CVisualMDTVu1::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo
     vu_data = (&vu_data0)[DBuffID];
     return CVisualVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown1, unknown2);
 }
-INCLUDE_ASM("asm/nonmatchings/visualvu1", RemakeData__13CVisualMDTVu1FPUi);
+
+int CVisualMDTVu1::RemakeData(u_int *data) {
+    if (this->data == NULL) {
+        return 0;
+    }
+    return CreateVUdataFromMDTRemake((&vu_data0)[DBuffID], this->data, 1);
+}
