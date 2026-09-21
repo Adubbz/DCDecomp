@@ -106,6 +106,12 @@ extern CDataAlloc2<1> ShopCashBuffer;
 /** Texture the shop board frame, tags and tickets are drawn from. */
 extern CTexture *ShopBoard;
 
+/** Icon sheet of the consumable items. */
+extern CTexture *ItemIcon;
+
+/** Icon sheet of the weapons. */
+extern CTexture *WepIcon;
+
 /** Per-slot state (0 = empty, 1 = held, 2 = just moved) of the personal item board. */
 extern s32 *ItemBoardInfo;
 
@@ -1140,7 +1146,30 @@ static void ShopMenuExit() {
     GamePad.MenuModeOff();
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", ShopTextureLoadFix__Fv);
+void ShopTextureLoadFix() {
+    LOADTEXTURE_INFO2 info[3] = {
+        {"#frame_imageshop#640#448#4", 0, 0},
+        {NULL, 0, 0},
+        {NULL, 0, 0},
+    };
+
+    info[0].block_no = ShopMenu.unk_18A;
+    info[1].block_no = ShopMenu.unk_18A;
+    BG_READ_INFO *file = GetReadBGFile(0);
+    info[1].name = (char *) GetPackFile((u_int *) file->buffer, "itemshop.img", NULL);
+    TexManager.DeleteTextureBlock(ShopMenu.unk_18A);
+    TexManager.CleanUpTextureList();
+    TexManager.LoadTextureBlockEX(-1, info);
+    ShopBoard = TexManager.GetTexture("shopbrd", ShopMenu.unk_18A);
+    PerBoardTex = TexManager.GetTexture("perbrd", ShopMenu.unk_18A);
+    WepIcon = TexManager.GetTexture("wepicon", ShopMenu.unk_18A);
+    ItemIcon = TexManager.GetTexture("itemicon", ShopMenu.unk_18A);
+    ShopMenu.unk_188 = 1;
+    s16 *shop_messages = (s16 *) GetPackFile((u_int *) file->buffer, "itemshop.bin", NULL);
+    s16 *keeper_messages = (s16 *) GetPackFile((u_int *) file->buffer, "shopman.bin", NULL);
+    InitMenuMesSet(2, shop_messages);
+    CommonMenuMes3.SetBuff(keeper_messages);
+}
 
 /**
  * Draws the fade that covers the shop while it opens and closes.
@@ -2301,14 +2330,6 @@ void InitItemShop2(int *state, int shop_no, int mode) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopSelectKey2__Fv);
-INCLUDE_RODATA("asm/nonmatchings/shop", @783__4);
-INCLUDE_RODATA("asm/nonmatchings/shop", @787);
-INCLUDE_RODATA("asm/nonmatchings/shop", @788);
-INCLUDE_RODATA("asm/nonmatchings/shop", @789__2);
-INCLUDE_RODATA("asm/nonmatchings/shop", @790);
-INCLUDE_RODATA("asm/nonmatchings/shop", @791);
-INCLUDE_RODATA("asm/nonmatchings/shop", @792__3);
-INCLUDE_RODATA("asm/nonmatchings/shop", @793__2);
 INCLUDE_RODATA("asm/nonmatchings/shop", @819);
 INCLUDE_RODATA("asm/nonmatchings/shop", @837__3);
 INCLUDE_RODATA("asm/nonmatchings/shop", @838__2);

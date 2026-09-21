@@ -249,7 +249,7 @@ carve_part(main.sbss.part5.s
 carve_part(main.data.part6.s
            main.data.part6.s=27E790-27EB30
            main.data.part6f.s=291850-291B80
-           main.data.part6k.s=2926E0-293C60
+           main.data.part6k.s=292704-293C60
            main.data.part6h.s=293C80-294150
            main.data.part6g.s=294170-294460
            main.data.part6j.s=295644-295810
