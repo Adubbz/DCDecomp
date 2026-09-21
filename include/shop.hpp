@@ -155,15 +155,6 @@ int CommonShopLoop(void);
 void ShopPolySetInit(int, int);
 
 /**
- * Draws the icons of one shop board row.
- *
- * @mangled ShopIconDraw__FPsPUciiiiii
- * @address 0x1E7220
- * @size 0xFC
- */
-void ShopIconDraw(short *, unsigned char *, int, int, int, int, int, int);
-
-/**
  * Draws the left and right arrows of the recharge shop.
  *
  * @mangled ChargeShopLRDraw__Fi

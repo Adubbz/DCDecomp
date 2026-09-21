@@ -318,7 +318,28 @@ static void SetItemShopTalkMode(int talk_mode, int msg_mode) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", ShopIconDraw__FPsPUciiiiii);
+/**
+ * Draws the icons of one shop board row.
+ *
+ * @mangled ShopIconDraw__FPsPUciiiiii
+ * @address 0x1E7220
+ * @size 0xFC
+ */
+static void ShopIconDraw(short *item_no, unsigned char *value, int count, int x, int y, int mode, int clip, int alpha) {
+    int draw_x = x;
+    int draw_y = y;
+    int i;
+
+    for (i = 0; i < count; i++) {
+        DrawIconParts(item_no[i], draw_x, draw_y, mode, clip, alpha, value[i]);
+        draw_x += 0x28;
+        if (i % 5 == 4) {
+            draw_x = x;
+            draw_y += 0x28;
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopLRDraw__Fi);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopCurDraw__Fiiiiiii);
 
