@@ -75,9 +75,6 @@ static void LoadSoundInfo(SND_INFO *info, char *script, int script_size);
 /** The two script tags LoadSoundInfo recognises. */
 extern TAG_PARAM Command__3[2];
 
-/** The handler LoadSoundInfo calls for each of Command__3's tags. */
-extern void (*CommandExe__3[2])(void **arguments);
-
 /** The sound configuration the command handlers fill in. */
 extern SND_INFO *SoundInfo;
 
@@ -102,11 +99,23 @@ static void CommandREVERBE(void **arguments);
  */
 static void CommandTABLE(void **arguments);
 
-/** The fixed sound-effect table, addressed by sound number. */
-extern SND_SE_INFO se_info[2801];
+/** The basic sound-effect set the town maps use. */
+extern SND_SE_INFO geo[199];
+
+/** The basic sound-effect set the dungeon maps use. */
+extern SND_SE_INFO dun[199];
 
 /** The two basic sound-effect sets, one of which is loaded at a time. */
-extern SND_SE_INFO *basic_se_info[2];
+static SND_SE_INFO *basic_se_info[2] = { geo, dun };
+
+/** The handler LoadSoundInfo calls for each of Command__3's tags. */
+static void (*CommandExe__3[2])(void **arguments) = { CommandREVERBE, CommandTABLE };
+
+/** Whether the sprites that follow draw with the bilinear filter. */
+static int linear__2 = 1;
+
+/** The fixed sound-effect table, addressed by sound number. */
+extern SND_SE_INFO se_info[2801];
 
 /** The chapter sound-effect sets; entries the game never loads are zero. */
 extern SND_SE_INFO *cap_se_info[101];
@@ -164,9 +173,6 @@ extern int now_amb_vol;
 
 /** Whether the ambient loop plays: zero while it is stopped, one while it plays. */
 extern int now_amb_play;
-
-/** Whether the sprites that follow draw with the bilinear filter. */
-extern int linear__2;
 
 /** Whether the sound manager has been started once already. */
 extern int init_snd;
@@ -1510,22 +1516,14 @@ void LoadSoundInfo(SND_INFO *info, char *script, int script_size) {
 #else
 INCLUDE_ASM("asm/nonmatchings/snd", LoadSoundInfo__FP8SND_INFOPci);
 #endif
-#ifdef NON_MATCHING
 static void CommandREVERBE(void **arguments) {
     SoundInfo->reverb_mode = *(s32 *) arguments[0];
     SoundInfo->reverb_depth = *(s32 *) arguments[1];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", CommandREVERBE__FPPv);
-#endif
-#ifdef NON_MATCHING
 static void CommandTABLE(void **arguments) {
     SoundInfo->se_table = *(s32 *) arguments[0];
     SoundInfo->se_table_type = *(s32 *) arguments[1];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", CommandTABLE__FPPv);
-#endif
 
 void setbilinear(int on) {
     linear__2 = on;

@@ -607,6 +607,8 @@ SECTIONS
 		main.sdata.part2.s.o (.sdata)  // 0x002a1ea0
 		clsmes.cpp.o (.sdata)          // 0x002a1ec0
 		main.sdata.part2b.s.o (.sdata) // 0x002a1ed0
+		snd.cpp.o (.sdata)             // 0x002a1ed8
+		main.sdata.snd-tail.s.o (.sdata) // 0x002a1eec
 		ebattle.cpp.o (.sdata)         // 0x002a1f14
 		main.sdata.part2c.s.o (.sdata) // 0x002a1f18
 		edit.cpp.o (.sdata)            // 0x002a1f24
