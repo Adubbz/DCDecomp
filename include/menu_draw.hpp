@@ -77,7 +77,8 @@ struct PERSONAL_BOARD {
  * Where one main menu icon and its label sit on the menu frame texture.
  */
 struct MENU_ICON_INFO {
-    s32 unk_00;
+    s16 id; /**< Icon the entry describes. */
+    s16 unk_02;
     s32 unk_04;
     s32 unk_08;
     s32 unk_0C;
