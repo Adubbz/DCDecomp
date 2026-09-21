@@ -466,7 +466,23 @@ static void CommandDEBUG(void **) {
  * @size 0xF4
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandMOTION_PARTS__FPPv__2);
+static void CommandMOTION_PARTS(void **arguments) {
+    if (motion_parts_list < 4) {
+        EDIT_MOTION_PARTS_INFO *motion = &EdInInfo->motion_parts[motion_parts_list];
+        motion_parts_list++;
+        strcpy(motion->name, CurrentDir);
+        strcat(motion->name, (char *) arguments[0]);
+        motion->values[0] = *(float *) arguments[1];
+        motion->values[1] = *(float *) arguments[2];
+        motion->values[2] = *(float *) arguments[3];
+        motion->values[3] = *(float *) arguments[4];
+        motion->values[4] = *(float *) arguments[5];
+        motion->values[5] = *(float *) arguments[6];
+        motion->values[6] = *(float *) arguments[7];
+        motion->values[7] = *(float *) arguments[8];
+        motion->values[8] = *(float *) arguments[9];
+    }
+}
 /**
  * Names one of the interior's eight water surfaces.
  *
