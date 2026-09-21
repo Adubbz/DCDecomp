@@ -243,7 +243,44 @@ INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1123);
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", DeleteFile__17CMemoryCardAccessFi);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1141__2);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1142__2);
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", GetMsgNo__17CMemoryCardAccessFi);
+
+int CMemoryCardAccess::GetMsgNo(int msg_no) {
+    int result = 0;
+
+    switch (this->GetFuncNo()) {
+        case MC_OPERATION_GET_DIR:
+            result = msg_no + 5;
+            break;
+        case MC_OPERATION_MAKE_DIR:
+            result = msg_no + 11;
+            break;
+        case MC_OPERATION_GET_ALL_SAVE_FILE_INFO:
+            result = msg_no + 5;
+            break;
+        case MC_OPERATION_SAVE:
+        case MC_OPERATION_SAVE_CONFIG:
+            result = msg_no + 11;
+            break;
+        case MC_OPERATION_LOAD:
+        case MC_OPERATION_LOAD_CONFIG:
+            result = msg_no + 21;
+            break;
+        case MC_OPERATION_FORMAT:
+            result = msg_no + 35;
+            break;
+        case MC_OPERATION_UNFORMAT:
+            result = msg_no + 39;
+            break;
+        case MC_OPERATION_DELETE:
+            result = msg_no + 41;
+            break;
+        case 8:
+            result = msg_no + 43;
+            break;
+    }
+    return result;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", McError__17CMemoryCardAccessFi);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1188__3);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1189);
