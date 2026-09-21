@@ -1085,7 +1085,25 @@ static void AtoraPlateDrawHaichiBar(EDITPARTS_INFO *info, int x, int y, int flag
     DrawAtraBuildNum(info, x, y, flag);
 }
 
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtraBuildNum__FP14EDITPARTS_INFOiii);
+void DrawAtraBuildNum(EDITPARTS_INFO *info, int x, int y, int alpha) {
+    RECT digit = {0, 212, 12, 12};
+    int num_x;
+
+    num_x = x + 8;
+    if ((info->unk_18 - info->unk_0C) / 10 > 0) {
+        num_x += 24;
+    } else {
+        num_x += 12;
+    }
+    if (info->unk_18 / 10 > 0) {
+        num_x += 24;
+    } else {
+        num_x += 12;
+    }
+    num_x = DrawMenuNumber(info->unk_18, num_x, y + 5, StayTex, digit, 1, alpha);
+    DrawMenu2DSprite(StayTex, CRect_i_(num_x - 10, y + 5, 12, 12), CRect_i_(120, digit.y, 12, 12), alpha);
+    DrawMenuNumber(info->unk_18 - info->unk_0C, num_x - 7, y + 5, StayTex, digit, 1, alpha);
+}
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtora__Fiiii);
 
 static void DrawAtoraNothing(int x, int y, int alpha) {
