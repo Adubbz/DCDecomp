@@ -719,7 +719,22 @@ static int _GET_OBJ_POS(RS_STACKDATA *stack, int argc) {
     SetStack(stack, world[2]);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_ROTATION_X__FP12RS_STACKDATAi);
+int _SET_ROTATION_X(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+    float position[4];
+    float rotation[4];
+    float direction[4];
+
+    NowMonstorUnit->monster[monster_no].unk_070[0] = GetStackFloat(stack++);
+    NowMonstorUnit->monster[monster_no].unk_070[1] = GetStackFloat(stack++);
+    NowMonstorUnit->monster[monster_no].unk_070[2] = GetStackFloat(stack);
+    NowMonstorUnit->chara[monster_no][0].GetPosition(position);
+    NowMonstorUnit->chara[monster_no][0].GetRotation(rotation);
+    sceVu0SubVector(direction, NowMonstorUnit->monster[monster_no].unk_070, position);
+    rotation[0] = -atan2f(direction[1], direction[2]);
+    NowMonstorUnit->chara[monster_no][0].SetRotation(rotation);
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _LOOKAT__FP12RS_STACKDATAi);
 int _SET_MOTION_CHANGE_STEP(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
