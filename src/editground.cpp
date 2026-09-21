@@ -65,7 +65,10 @@ CMapParts *CEditGround::GetParts(float x, float y, float z) {
     }
     return &parts[parts_id];
 }
-INCLUDE_ASM("asm/nonmatchings/editground", CheckEffect__11CEditGroundFv);
+
+int CEditGround::CheckEffect() {
+    return effect_count > 0;
+}
 INCLUDE_ASM("asm/nonmatchings/editground", SetBuildEffect__11CEditGroundFi);
 INCLUDE_ASM("asm/nonmatchings/editground", EffectTask__11CEditGroundFv);
 INCLUDE_ASM("asm/nonmatchings/editground", SetFocusParts__11CEditGroundFfff);
