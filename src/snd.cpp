@@ -1300,7 +1300,21 @@ static void SetSPSeFile(int set_no, u_int *pack, char *file_name) {
     now_sp_no = set_no;
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoad__Fi);
+int SndSPSeLoad(int set_no) {
+    char archive_name[128];
+    char config_name[32];
+
+    if (now_sp_no == set_no) {
+        return 0;
+    }
+    GetSPSeFile(set_no, archive_name, config_name);
+    if (LoadFile2(archive_name, snd_read_buf, 0, 0)) {
+        SetSPSeFile(set_no, snd_read_buf, config_name);
+        return 1;
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoadBG__FiPUiPi);
 /**
  * Polls the special-effect set load and hands the file to the driver once it lands.
