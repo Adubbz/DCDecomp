@@ -608,7 +608,20 @@ int SndBgmInit() {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmLoad__Fi);
+int SndBgmLoad(int set_no) {
+    char archive_name[128];
+    char config_name[16];
+
+    if (now_bgm_no == set_no) {
+        return 0;
+    }
+    GetBGMFile(set_no, archive_name, config_name);
+    if (LoadFile2(archive_name, snd_read_buf, 0, 0)) {
+        SetBGMFile(set_no, snd_read_buf, config_name);
+        return 1;
+    }
+    return 0;
+}
 /**
  * Starts loading one music set in the background.
  *
