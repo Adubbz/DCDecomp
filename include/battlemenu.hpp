@@ -802,15 +802,6 @@ void MenuDataSwap(MAP_JUMP_COMPARE *first, MAP_JUMP_COMPARE *second);
 int GetNearWorldPos(int, int *);
 
 /**
- * Moves the world-map cursor between places and reports the one chosen.
- *
- * @mangled WorldMapMoveKey__Fv
- * @address 0x20A860
- * @size 0x148
- */
-void WorldMapMoveKey(void);
-
-/**
  * Draws the plate that asks whether to travel to the chosen place.
  *
  * @mangled DrawMapCheck__Fi

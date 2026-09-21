@@ -1109,7 +1109,41 @@ void MenuDataSwap(MAP_JUMP_COMPARE *first, MAP_JUMP_COMPARE *second) {
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetNearWorldPos__FiPi);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", WorldMapMoveKey__Fv);
+/**
+ * Moves the world-map cursor to the place nearest the direction pressed.
+ *
+ * @mangled WorldMapMoveKey__Fv
+ * @address 0x20A860
+ * @size 0x148
+ */
+static int WorldMapMoveKey() {
+    int position[2];
+
+    position[0] = SysCur[0];
+    position[1] = SysCur[1];
+    int direction = 0;
+    if (GamePad.Down(0x1000) != 0) {
+        direction |= 1;
+    }
+    if (GamePad.Down(0x4000) != 0) {
+        direction |= 2;
+    }
+    if (GamePad.Down(0x2000) != 0) {
+        direction |= 8;
+    }
+    if (GamePad.Down(0x8000) != 0) {
+        direction |= 4;
+    }
+    if (direction > 0) {
+        direction = GetNearWorldPos(direction, position);
+        if (direction < 16 && direction >= 0) {
+            NextWorldPos = TownOrDngPos[direction];
+            MenuMove.unk_04 = direction;
+            MapMoveCursor = MenuCharaFrame.frame->SearchFrame(TownOrDngPos[MenuMove.unk_04]);
+        }
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawMapCheck__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetVisitInfo__Fii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", IsLoadMapNo__Fv);
