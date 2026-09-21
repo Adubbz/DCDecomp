@@ -621,15 +621,6 @@ int ItemShopKey2(void);
 void ItemShopDraw2(void);
 
 /**
- * Gives the list of items one fishing prize band offers.
- *
- * @mangled GetExchangeItemList__Fi
- * @address 0x1F1250
- * @size 0x18
- */
-void GetExchangeItemList(int);
-
-/**
  * Returns the save data's Mardan Garayan progress flag.
  *
  * @mangled GetMardanGareyanFlag__Fv

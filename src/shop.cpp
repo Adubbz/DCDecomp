@@ -576,7 +576,18 @@ INCLUDE_RODATA("asm/nonmatchings/shop", @2143);
 INCLUDE_RODATA("asm/nonmatchings/shop", @2146);
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopKey2__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopDraw2__Fv);
-INCLUDE_ASM("asm/nonmatchings/shop", GetExchangeItemList__Fi);
+
+/**
+ * Returns one prize the fishing exchange offers.
+ *
+ * @mangled GetExchangeItemList__Fi
+ * @address 0x1F1250
+ * @size 0x18
+ */
+static FISH_EXCHANGE_ITEM *GetExchangeItemList(int index) {
+    return &exitemlst[index];
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", GetMardanGareyanFlag__Fv);
 
 void SetAlreadyGetMardanWeapon(int value) {
