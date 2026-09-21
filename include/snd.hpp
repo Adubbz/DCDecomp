@@ -201,7 +201,6 @@ int SndGetPanf(float pan);
  * @mangled SndSetSeVol__Fiii
  * @address 0x15A900
  * @size 0x70
- * @unknownret
  */
 void SndSetSeVol(int se_no, int vol, int voice);
 
@@ -211,7 +210,6 @@ void SndSetSeVol(int se_no, int vol, int voice);
  * @mangled SndSetSeVolf__Fifi
  * @address 0x15AAB0
  * @size 0x5C
- * @unknownret
  */
 void SndSetSeVolf(int se_no, float vol, int voice);
 
@@ -221,7 +219,6 @@ void SndSetSeVolf(int se_no, float vol, int voice);
  * @mangled SndSetSePanf__Fifi
  * @address 0x15AB10
  * @size 0x80
- * @unknownret
  */
 void SndSetSePanf(int se_no, float pan, int voice);
 
@@ -458,7 +455,6 @@ void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sourc
  * @mangled SndSetCamera__FP7CCamera
  * @address 0x1596F0
  * @size 0x48
- * @unknownret
  */
 void SndSetCamera(CCamera *camera);
 
