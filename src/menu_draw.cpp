@@ -681,11 +681,11 @@ void PersonalBoardDrawWaku(int x, int y, CTexture *texture, int alpha) {
     DrawMenu2DSprite(texture, CRect_i_(x + 0x14, y + 0xA1, 0xC8, 0x1F), CRect_i_(0x14, 0xA0, 0xC8, 0x20), alpha);
 }
 
-void PersonalBoardOptionDraw(int x, int y, int board_mode, int cursor_pos, CTexture *texture, int alpha) {
-    PersonalBoardTagDraw(x, board_mode, cursor_pos, texture, 0, alpha);
-    PersonalBoardDrawWaku(board_mode, cursor_pos, texture, alpha);
-    PersonalBoardScrlBarDraw(y, board_mode, cursor_pos, PerBoardPt->scroll, PerBoardPt->unk_18, texture, alpha);
-    PersonalBoardMaxDraw(y, board_mode, cursor_pos, texture, alpha);
+void PersonalBoardOptionDraw(int board_mode, int count, int x, int y, CTexture *texture, int alpha) {
+    PersonalBoardTagDraw(board_mode, x, y, texture, 0, alpha);
+    PersonalBoardDrawWaku(x, y, texture, alpha);
+    PersonalBoardScrlBarDraw(count, x, y, PerBoardPt->scroll, PerBoardPt->unk_18, texture, alpha);
+    PersonalBoardMaxDraw(count, x, y, texture, alpha);
 }
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardTagDraw__FiiiP8CTextureii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardScrlBarDraw__FiiiRfUcP8CTexturei);
