@@ -271,7 +271,17 @@ int _STATUS_SET_MUTEKI(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->monster[monster_no].unk_098 = value;
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_ALPHA__FP12RS_STACKDATAi);
+int _STATUS_SET_ALPHA(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+
+    NowMonstorUnit->monster[monster_no].palette_alpha_step = GetStackFloat(stack++);
+    if (argc == 2) {
+        NowMonstorUnit->monster[monster_no].palette_alpha_step = GetStackInt(stack);
+    } else {
+        NowMonstorUnit->monster[monster_no].palette_delay = 0;
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_CHK_ALPHA__FP12RS_STACKDATAi);
 int _STATUS_SET_DEAD(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
