@@ -1483,7 +1483,22 @@ void setbilinear(int on) {
     linear__2 = on;
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", setAlphaFlag__FP13sceVif1PacketP10sceGsAlpha);
+void setAlphaFlag(sceVif1Packet *packet, sceGsAlpha *alpha) {
+    sceGifTag tag;
+
+    *(u_long128 *) &tag = 0;
+    tag.EOP = 1;
+    tag.NREG = 1;
+    tag.REGS0 = SCE_GIF_PACKED_AD;
+
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &tag);
+    sceVif1PkAddGsAD(packet, SCE_GS_ALPHA_1, *(u_long *) alpha);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_ii);
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_);
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_Uc);
