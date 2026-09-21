@@ -16,19 +16,17 @@
 /** Language the cursor stands on, counted from zero. */
 extern int Cursor;
 
-#ifdef NON_MATCHING
 /** The vector-unit program the language screen draws its plate with. */
 extern char Vu_prog0f[];
 
 /** Fade the language screen opens and closes with. */
-static Fader Fade;
+extern Fader Fade;
 
 /** What the screen is doing: fading in, taking the choice, or fading out. */
-static int Proc;
+extern int Proc;
 
 /** Opacity of each language entry. */
-static int Alpha[5];
-#endif
+extern int Alpha[5];
 
 INCLUDE_RODATA("asm/nonmatchings/langset", @355__4);
 INCLUDE_RODATA("asm/nonmatchings/langset", @356__3);
@@ -62,7 +60,6 @@ void LangsetInit(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/langset", LangsetInit__Fv);
 #endif
-#ifdef NON_MATCHING
 int LangsetLoop(void) {
     sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
     sceVif1PkTerminate(Vif1Packet);
@@ -89,9 +86,6 @@ int LangsetLoop(void) {
     LangsetDraw();
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/langset", LangsetLoop__Fv);
-#endif
 int LangsetProc(void) {
     if (GamePad.Down(0x1000) != 0) {
         Cursor--;
