@@ -8,6 +8,7 @@
 
 #include <cmath>
 
+#include "battlemenu.hpp"
 #include "camera.hpp"
 #include "character.hpp"
 #include "clsmes.hpp"
@@ -510,8 +511,37 @@ static void DrawShopIcon(int x, int y, int selected, int mode) {
  * @address 0x1E7840
  * @size 0x10C
  */
-static int IsEnableCharge(int item_no);
-INCLUDE_ASM("asm/nonmatchings/shop", IsEnableCharge__Fi);
+static int IsEnableCharge(int item_no) {
+    int enable = 0;
+
+    if (item_no >= 0x101) {
+        int chara_no = WhoIsWeaponEquip(item_no);
+        CUserStatus *status = ShopUserStatusPt;
+        WEAPON_HAVE *weapons = status->chara_weapons[chara_no];
+        int default_no = GetDefaultWeaponNo(chara_no);
+
+        for (int i = 0; i < 10; i++) {
+            int weapon_no = weapons[i].item_no;
+
+            if (weapon_no == default_no || weapon_no == default_no + 1) {
+                enable = 1;
+                break;
+            }
+        }
+        if (ShopUserStatusPt->party_size - 1 < chara_no) {
+            enable = 1;
+        }
+        if (ShopMenu.board.unk_15C >= 0) {
+            enable = 0;
+        }
+    } else {
+        enable = 1;
+        if (item_no == 0xF2) {
+            enable = 0;
+        }
+    }
+    return enable;
+}
 
 /**
  * Starts a shop menu up: its buffers, its textures, its board mode and the gamepad.
