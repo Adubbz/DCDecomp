@@ -333,7 +333,6 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
  * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_UcUcUcUc
  * @address 0x15C630
  * @size 0x350
- * @unknownret
  */
 void set2DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, const CRect_i_ &, unsigned char,
                  unsigned char, unsigned char, unsigned char);
