@@ -463,13 +463,13 @@ public:
     int CheckPartsRect(int parts_no, int area, CRect_i_ &rect);
 
     /**
-     * Collects the parts of one kind standing inside a rectangle.
+     * Gives the grid rectangle a part covers, widened by a margin on every side.
      *
      * @mangled GetRectParts__11CEditGroundFP8CRect_i_P9CMapPartsi
      * @address 0x1A62C0
      * @size 0x14C
      */
-    void GetRectParts(CRect_i_ *, CMapParts *, int);
+    void GetRectParts(CRect_i_ *rect, CMapParts *target, int margin);
 
     /**
      * Collects the parts of one kind and subtype standing inside a rectangle.

@@ -6,6 +6,7 @@
 #include "editarea.hpp"
 #include "editpartsinfo.hpp"
 #include "mapparts.hpp"
+#include "rect.hpp"
 #include "vector3.hpp"
 
 static int CheckDelete(CEditArea *area, CMapParts *parts, float x, float y, float z);
@@ -402,8 +403,35 @@ int CEditGround::CheckPartsRect(int parts_no, int area, CRect_i_ &rect) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/editground", GetRectParts__11CEditGroundFP8CRect_i_P9CMapPartsi);
+void CEditGround::GetRectParts(CRect_i_ *rect, CMapParts *target, int margin) {
+    sceVu0FVECTOR position;
+    CVector3_i_ grid;
+
+    *rect = CRect_i_(0, 0, 0, 0);
+    if (target == NULL) {
+        return;
+    }
+    target->GetPosition(position);
+    int area = GetAreaCode(position[0], position[1], position[2]);
+    if (area < 0 || area >= 4) {
+        return;
+    }
+    if (areas[area] == NULL) {
+        return;
+    }
+    areas[area]->GetPos(&grid, position[0], position[1], position[2]);
+    int width = target->GetWidth();
+    int height = target->GetHeight();
+    int half_width = width >> 1;
+    rect->x = grid.x - half_width - margin;
+    int half_height = height >> 1;
+    rect->y = grid.z - half_height - margin;
+    rect->width = width + margin * 2;
+    rect->height = height + margin * 2;
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", GetRectParts__11CEditGroundFP8CRect_i_P9CMapPartsii);
+
 INCLUDE_ASM("asm/nonmatchings/editground", GetRectDirParts__11CEditGroundFP8CRect_i_P9CMapPartsii);
 INCLUDE_ASM("asm/nonmatchings/editground", NornRequest__11CEditGroundFPA64_P9CMapParts);
 INCLUDE_ASM("asm/nonmatchings/editground", MatatagiRequest__11CEditGroundFPA64_P9CMapParts);
