@@ -307,13 +307,9 @@ void ExitManualMenu() {
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_manual", ExitManualMenu__Fv);
 #endif
-#ifdef NON_MATCHING
 int GetNowManualMenuMode() {
     return ManualMenu.mode;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_manual", GetNowManualMenuMode__Fv);
-#endif
 #ifdef NON_MATCHING
 int MenuManualKey() {
     ReadBG();
