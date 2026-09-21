@@ -3,19 +3,33 @@
 #include <libvu0.h>
 
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
+#include "boxvu0.hpp"
+#include "camera.hpp"
 #include "character.hpp"
+#include "collision.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
+#include "dataset.hpp"
 #include "edit_in.hpp"
+#include "editground.hpp"
 #include "editloop.hpp"
 #include "editloop3.hpp"
 #include "editpartsinfo.hpp"
 #include "frame.hpp"
+#include "framevu1.hpp"
 #include "mapparts.hpp"
+#include "mainselect.hpp"
 #include "mathutil.hpp"
+#include "mds.hpp"
+#include "mglib.hpp"
+#include "npcharacter.hpp"
+#include "rect.hpp"
 #include "scriptinterpreter.hpp"
+#include "texture.hpp"
+#include "water.hpp"
 
 /* The arenas the interior carves the read buffer into. */
 extern CDataAlloc2<1> EdWorkBuffer;
@@ -46,6 +60,14 @@ extern CMapParts InteriorParts[10];
 extern int parts_num;
 extern EPARTS_FUNC_DATA *func_point;
 extern int func_num;
+
+/* The player's character in the interior, and the villagers who can stand in it. */
+extern CCharacter *Chara;
+extern CNPCharacter EdVillager[10];
+
+/* Frame of the interior's animated texture, and the clock that advances it. */
+extern int setTexAnimCnt;
+extern float setTexAnimCntf;
 
 /* Map jump the player arrives through when entering an interior. */
 extern int EdInteriorJumpID;

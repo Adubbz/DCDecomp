@@ -225,7 +225,9 @@
       "water_list": "water_list__2",
       "water_info": "water_info__2",
       "GetCollision__FP6CCPolyP7CBoxVu0": "GetCollision__FP6CCPolyP7CBoxVu0__2",
-      "func_num": "func_num__2"
+      "func_num": "func_num__2",
+      "Water": "Water__3",
+      "Chara": "Chara__2"
     },
     "globalize_symbols": [
       "InitWorkBuffer__Fv__2",

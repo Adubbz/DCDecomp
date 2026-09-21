@@ -2,6 +2,7 @@
 
 #include "common.h"
 
+#include "editground.hpp"
 #include "editloop.hpp"
 
 class CCharacter;
@@ -10,7 +11,8 @@ class CCharacter;
  * Holds the settings and records an interior's info script describes.
  */
 struct EDIT_IN_INFO {
-    u8 unk_000[0x4C0];
+    char name[0x40]; /**< Path of the interior's map file. */
+    u8 unk_040[0x480];
     float projection; /**< Distance of the interior's projection plane. */
     u8 unk_4c4[0xC];
     float ambient[4];            /**< Ambient light colour. */
@@ -27,6 +29,9 @@ STATIC_ASSERT(sizeof(EDIT_IN_INFO) == 0x44C0);
 
 /** Settings of the interior being run. */
 extern EDIT_IN_INFO *EdInInfo;
+
+/** Water surface the interior draws. */
+extern CGroundWater Water[1];
 
 /**
  * Finds the map jump the player is standing on and facing.
