@@ -1069,7 +1069,13 @@ static SND_SE_SEQ *GetSeSeq(int *found, int se_no, int voice) {
     return slot;
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqInit__Fv);
+void SndSeSeqInit() {
+    int i;
+
+    for (i = 0; i < 32; i++) {
+        InitSeSeq(&se_seq[i]);
+    }
+}
 int SndSeSeqPlayStop(int se_no, int length, int voice) {
     int found;
     SND_SE_SEQ *slot = GetSeSeq(&found, se_no, voice);
