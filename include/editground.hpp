@@ -449,7 +449,7 @@ public:
      * @address 0x1A61E0
      * @size 0xE0
      */
-    int CheckPartsRect(int area, int parts_no, CRect_i_ &rect);
+    int CheckPartsRect(int parts_no, int area, CRect_i_ &rect);
 
     /**
      * Collects the parts of one kind standing inside a rectangle.

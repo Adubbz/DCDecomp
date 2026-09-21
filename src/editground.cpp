@@ -304,7 +304,25 @@ static int CheckDelete(CEditArea *area, CMapParts *parts, float x, float y, floa
 
 INCLUDE_ASM("asm/nonmatchings/editground", Draw__12CPartsCursorFPfii);
 INCLUDE_ASM("asm/nonmatchings/editground", RequestCheck__11CEditGroundFv);
-INCLUDE_ASM("asm/nonmatchings/editground", CheckPartsRect__11CEditGroundFiiR8CRect_i_);
+
+int CEditGround::CheckPartsRect(int parts_no, int area, CRect_i_ &rect) {
+    int parts_ids[256];
+
+    if (area < 0 || area >= 4) {
+        return 0;
+    }
+    if (areas[area] == NULL) {
+        return 0;
+    }
+    int count = areas[area]->GetPartsRect(rect, parts_ids, 256);
+    for (int i = 0; i < count; i++) {
+        if (parts[parts_ids[i]].parts_no == parts_no) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", GetRectParts__11CEditGroundFP8CRect_i_P9CMapPartsi);
 INCLUDE_ASM("asm/nonmatchings/editground", GetRectParts__11CEditGroundFP8CRect_i_P9CMapPartsii);
 INCLUDE_ASM("asm/nonmatchings/editground", GetRectDirParts__11CEditGroundFP8CRect_i_P9CMapPartsii);
