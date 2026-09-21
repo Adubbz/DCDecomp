@@ -182,15 +182,6 @@ void ChargeShopLRDraw(int);
 void ShopCurDraw(int, int, int, int, int, int, int);
 
 /**
- * Draws one shop icon at a position.
- *
- * @mangled DrawShopIcon__Fiiii
- * @address 0x1E77D0
- * @size 0x6C
- */
-void DrawShopIcon(int, int, int, int);
-
-/**
  * Reports whether an item may be recharged.
  *
  * @mangled IsEnableCharge__Fi

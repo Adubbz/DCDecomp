@@ -298,7 +298,25 @@ static void SetItemShopTalkMode(int talk_mode, int msg_mode) {
 INCLUDE_ASM("asm/nonmatchings/shop", ShopIconDraw__FPsPUciiiiii);
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopLRDraw__Fi);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopCurDraw__Fiiiiiii);
-INCLUDE_ASM("asm/nonmatchings/shop", DrawShopIcon__Fiiii);
+
+/**
+ * Draws one shop icon at a position.
+ *
+ * @mangled DrawShopIcon__Fiiii
+ * @address 0x1E77D0
+ * @size 0x6C
+ */
+static void DrawShopIcon(int x, int y, int selected, int mode) {
+    int v = 0x50;
+    int width = 0xA2;
+
+    if (selected) {
+        v += 0x28;
+        width = 0xC8;
+    }
+    DrawMenu2DSprite(ShopBoard, CRect_i_(x, y, width, 0x28), CRect_i_(0x14, v, width, 0x28), mode);
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", IsEnableCharge__Fi);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopMenuInit__FPiii);
 INCLUDE_RODATA("asm/nonmatchings/shop", @760);
