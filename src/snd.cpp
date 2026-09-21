@@ -1542,7 +1542,48 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkCloseDirectCode(packet);
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
+                 const CRect_i_ &clip) {
+    sceGsTest test;
+    sceGsZbuf zbuf;
+    float q;
+
+    if (texture == 0) {
+        return;
+    }
+    q = 1.0f;
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, ((u_long) linear__2 << 5) | 0x41);
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
+                     SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 1, 1, 0, 0));
+    test = mgPixelTest;
+    test.bits.ate = 0;
+    test.bits.aref = 0;
+    test.bits.atst = SCE_GS_ALWAYS;
+    test.bits.zte = 1;
+    test.bits.ztst = SCE_GS_ALWAYS;
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &test);
+    zbuf = mgZBuffer;
+    zbuf.bits.zmsk = 1;
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, 0x80, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(clip.x << 4, clip.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV,
+                     SCE_GS_SET_UV((clip.x + clip.width) << 4, (clip.y + clip.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647,
+                                      ((screen.y + screen.height) << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_Uc);
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_UcUcUcUc);
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBAi);
