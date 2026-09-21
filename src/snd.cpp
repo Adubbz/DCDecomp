@@ -8,6 +8,7 @@
 #include <libvu0.h>
 
 #include <cmath>
+#include <cstdio>
 
 #include "editatra.hpp"
 #include "mglib.hpp"
@@ -19,7 +20,6 @@
 #ifdef NON_MATCHING
 /* Only the drafts below need these; the build's own object must not see a
    header the retail unit did not. */
-#include <cstdio>
 #include <cstring>
 
 #include "dataread.hpp"
@@ -299,21 +299,6 @@ EDIT_ELEMENT_ATRA *GetEditAtraChipData(int ground, int number) {
     return GetEditAtraData(ground, number + 40);
 }
 
-INCLUDE_RODATA("asm/nonmatchings/snd", @348);
-INCLUDE_RODATA("asm/nonmatchings/snd", @349);
-INCLUDE_RODATA("asm/nonmatchings/snd", @350);
-INCLUDE_RODATA("asm/nonmatchings/snd", @362);
-INCLUDE_RODATA("asm/nonmatchings/snd", @363__2);
-INCLUDE_RODATA("asm/nonmatchings/snd", @384__2);
-INCLUDE_RODATA("asm/nonmatchings/snd", @514);
-INCLUDE_RODATA("asm/nonmatchings/snd", @515);
-INCLUDE_RODATA("asm/nonmatchings/snd", @725__2);
-INCLUDE_RODATA("asm/nonmatchings/snd", @726__2);
-INCLUDE_RODATA("asm/nonmatchings/snd", @751);
-INCLUDE_RODATA("asm/nonmatchings/snd", @752);
-INCLUDE_RODATA("asm/nonmatchings/snd", @799);
-INCLUDE_RODATA("asm/nonmatchings/snd", @800);
-
 #ifdef NON_MATCHING
 void LensFlare(CTexture *texture, float *position, unsigned char red, unsigned char green,
                unsigned char blue) {
@@ -448,17 +433,13 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSetCamera__FPfPf);
  * @address 0x159790
  * @size 0x7C
  */
-#ifdef NON_MATCHING
-void GetBGMFile(int set_no, char *archive_name, char *config_name) {
+static void GetBGMFile(int set_no, char *archive_name, char *config_name) {
     char name[16];
 
     sprintf(name, "bgm%d", set_no);
     sprintf(archive_name, "sound/bgm/%s.snd", name);
     sprintf(config_name, "%s.txt", name);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", GetBGMFile__FiPcPc);
-#endif
 /**
  * Hands a loaded music set to the driver and reads its configuration.
  *
@@ -466,6 +447,8 @@ INCLUDE_ASM("asm/nonmatchings/snd", GetBGMFile__FiPcPc);
  * @address 0x159810
  * @size 0x114
  */
+INCLUDE_RODATA("asm/nonmatchings/snd", @362);
+INCLUDE_RODATA("asm/nonmatchings/snd", @363__2);
 #ifdef NON_MATCHING
 void SetBGMFile(int set_no, unsigned int *buffer, char *filename) {
     char base_name[64];
@@ -515,6 +498,7 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndBgmLoad__Fi);
  * @address 0x1599F0
  * @size 0xC0
  */
+INCLUDE_RODATA("asm/nonmatchings/snd", @384__2);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmLoadBG__FiPUiPi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmSyncBG__Fv);
 
@@ -646,7 +630,13 @@ static int GetPortNo(int se_no) {
  * @address 0x15A240
  * @size 0x7C
  */
-INCLUDE_ASM("asm/nonmatchings/snd", GetSoundFile__FiPcPc);
+static void GetSoundFile(int set_no, char *archive_name, char *config_name) {
+    char name[16];
+
+    sprintf(name, "snd%d", set_no);
+    sprintf(archive_name, "sound/set/%s.snd", name);
+    sprintf(config_name, "%s.txt", name);
+}
 /**
  * Hands a loaded sound-effect set to the driver and sets its channel volumes.
  *
@@ -840,7 +830,13 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndGetAmbientDefaultVol__Fv);
  * @address 0x15B310
  * @size 0x7C
  */
-INCLUDE_ASM("asm/nonmatchings/snd", GetVoiceFile__FiPcPc);
+static void GetVoiceFile(int set_no, char *archive_name, char *config_name) {
+    char name[16];
+
+    sprintf(name, "voice%d", set_no);
+    sprintf(archive_name, "sound/voice/%s.snd", name);
+    sprintf(config_name, "%s.txt", name);
+}
 /**
  * Hands a loaded voice set to the driver and reads its configuration.
  *
@@ -876,7 +872,13 @@ static SND_SE_INFO *GetSPInfo(int se_no) {
  * @address 0x15B5F0
  * @size 0x7C
  */
-INCLUDE_ASM("asm/nonmatchings/snd", GetSPSeFile__FiPcPc);
+static void GetSPSeFile(int set_no, char *archive_name, char *config_name) {
+    char name[16];
+
+    sprintf(name, "sp%d", set_no);
+    sprintf(archive_name, "sound/special/%s.snd", name);
+    sprintf(config_name, "%s.txt", name);
+}
 /**
  * Hands a loaded special-effect set to the driver and reads its configuration.
  *
@@ -952,6 +954,8 @@ void SndSetSPSePanf(int se_no, float pan) {
     }
 }
 
+INCLUDE_RODATA("asm/nonmatchings/snd", @799);
+INCLUDE_RODATA("asm/nonmatchings/snd", @800);
 /**
  * Reads one sound configuration file through the script interpreter.
  *
