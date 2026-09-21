@@ -727,15 +727,6 @@ int GetNearWorldPos(int direction, int *position);
 void DrawMapCheck(int);
 
 /**
- * Turns a map number into the world-map place that stands for it.
- *
- * @mangled MapNoTransFunc__Fi
- * @address 0x20AD80
- * @size 0xD8
- */
-void MapNoTransFunc(int);
-
-/**
  * Initializes the battle manual menu from its placement data and load buffer.
  *
  * @mangled BattleManualInit__FPiP1

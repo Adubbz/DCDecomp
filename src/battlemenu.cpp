@@ -2282,7 +2282,83 @@ static int IsLoadMapNo() {
     return region;
 }
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", MapNoTransFunc__Fi);
+/**
+ * Turns a map number into the world-map place that stands for it.
+ *
+ * @mangled MapNoTransFunc__Fi
+ * @address 0x20AD80
+ * @size 0xD8
+ */
+static int MapNoTransFunc(int map_no) {
+    int place;
+
+    if (map_no < 10) {
+        s16 towns[5] = {0, 2, 5, 7, 11};
+        place = towns[map_no];
+    }
+    if (map_no >= 11 && map_no < 200) {
+        char fields[69] = {
+            2,
+            2,
+            2,
+            4,
+            4,
+            4,
+            4,
+            4,
+            5,
+            5,
+            10,
+            8,
+            10,
+            13,
+            13,
+            14,
+            8,
+            4,
+            10,
+            10,
+            10,
+            10,
+            2,
+            9,
+            6,
+            8,
+            12,
+            13,
+            6,
+            13,
+            13,
+            8,
+            5,
+            5,
+            5,
+            0,
+            13,
+            13,
+            13,
+            13,
+            13,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            15,
+            15,
+        };
+        place = fields[map_no - 11];
+    }
+    if (map_no >= 200) {
+        s8 dungeons[6] = {1, 3, 6, 9, 12, 14};
+        map_no -= 200;
+        place = dungeons[map_no];
+    }
+    return place;
+}
 
 /**
  * Runs the options page and returns to the menu bar when it closes.

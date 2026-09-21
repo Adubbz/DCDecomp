@@ -181,7 +181,8 @@ carve_part(main.sdata.part2b.s
            main.sdata.snd-tail.s=2A1EF0-2A1F14
            main.sdata.part2c.s=2A1F18-2A1F24
            main.sdata.part2d.s=2A1F50-2A1F78
-           main.sdata.part2f.s=2A1F90-2A2150
+           main.sdata.part2f.s=2A1F90-2A20C8
+           main.sdata.battlemenu-tail.s=2A20D8-2A2150
            main.sdata.memcard-a.s=2A2158-2A21A0
            main.sdata.part2g.s=2A21B8-2A21C8
            main.sdata.part2e.s=2A21F0-2A2218)
@@ -247,11 +248,11 @@ carve_part(main.sbss.part5.s
 # The weapon build-up and level-up local templates stand in this residual run,
 # and runscript_opcodes.cpp supplies its vector initializers ahead of part6f.
 # shop.cpp supplies the start of its own run between part6f and part6k, and
-# battlemenu.cpp supplies DrawWepHole's colour template at the end of its run.
+# battlemenu.cpp supplies the travel page's and DrawWepHole's templates at the end of its run.
 carve_part(main.data.part6.s
            main.data.part6.s=27E790-27EB30
            main.data.part6f.s=291850-291B80
-           main.data.part6k.s=292704-293948
+           main.data.part6k.s=292704-2938A0
            main.data.battlemenu-tail.s=293960-293C60
            main.data.part6h.s=293C80-293D50
            main.data.memcard-a.s=293EBC-293FE0
