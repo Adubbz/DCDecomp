@@ -38,7 +38,17 @@ int CEditGround::GetAlt_i(float x, float y, float z) {
     }
     return areas[area]->GetAlt_i(x, y, z);
 }
-INCLUDE_ASM("asm/nonmatchings/editground", GetPartsObject__11CEditGroundFi);
+
+CMapParts *CEditGround::GetPartsObject(int parts_no) {
+    CMapParts *object = parts;
+
+    for (int i = 0; i < 128; i++, object++) {
+        if (object->unk_0E8 >= 0 && object->parts_no == parts_no) {
+            return object;
+        }
+    }
+    return NULL;
+}
 INCLUDE_ASM("asm/nonmatchings/editground", GetPartsID__11CEditGroundFfff);
 INCLUDE_ASM("asm/nonmatchings/editground", GetParts__11CEditGroundFfff);
 INCLUDE_ASM("asm/nonmatchings/editground", CheckEffect__11CEditGroundFv);
