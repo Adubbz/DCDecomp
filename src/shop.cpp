@@ -258,7 +258,21 @@ void InitAllHaveData() {
     ShopHaveItemPt->unk_00 = 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", CommonShopLoop__Fv);
+int CommonShopLoop() {
+    int done = 0;
+
+    ShopMenu.unk_06 = 0;
+    switch (ChargeOrShopFlag) {
+        case 0:
+            done = ChargeShopLoop();
+            break;
+        case 1:
+            done = ItemShopLoop2();
+            break;
+    }
+    return done;
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", ShopPolySetInit__Fii);
 INCLUDE_ASM("asm/nonmatchings/shop", SetItemShopTalkMode__Fii);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopIconDraw__FPsPUciiiiii);

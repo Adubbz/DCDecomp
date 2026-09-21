@@ -143,7 +143,7 @@ void InitAllHaveData(void);
  * @address 0x1E7020
  * @size 0x5C
  */
-void CommonShopLoop(void);
+int CommonShopLoop(void);
 
 /**
  * Places the camera and lights the shop's model is drawn under.
