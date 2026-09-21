@@ -349,7 +349,15 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", CommandLIGHT_C__FPPv__2);
  * @size 0x78
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandFOG__FPPv__2);
+static void CommandFOG(void **arguments) {
+    EdInInfo->fog.near_distance = *(float *) arguments[0];
+    EdInInfo->fog.far_distance = *(float *) arguments[1];
+    EdInInfo->fog.red = *(int *) arguments[2];
+    EdInInfo->fog.green = *(int *) arguments[3];
+    EdInInfo->fog.blue = *(int *) arguments[4];
+    EdInInfo->fog.intensity = *(float *) arguments[5];
+    EdInInfo->fog.exponent = *(float *) arguments[6];
+}
 /**
  * Sets the colour the interior clears to.
  *
