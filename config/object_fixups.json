@@ -224,6 +224,7 @@
       "motion_parts_list": "motion_parts_list__2",
       "water_list": "water_list__2",
       "water_info": "water_info__2",
+      "GetCollision__FP6CCPolyP7CBoxVu0": "GetCollision__FP6CCPolyP7CBoxVu0__2",
       "func_num": "func_num__2"
     },
     "globalize_symbols": [
@@ -239,6 +240,7 @@
       "LoadInfo__FPci",
       "CommandPROJECTION__FPPv",
       "CommandDEBUG__FPPv",
+      "GetCollision__FP6CCPolyP7CBoxVu0__2",
       "GetDoorPos__FiPfPfPiPi"
     ],
     "rodata_exports": [

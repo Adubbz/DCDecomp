@@ -303,7 +303,17 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", SetCameraPos__FP6CFrameP7CCameraP10CChar
  * @size 0xBC
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", GetCollision__FP6CCPolyP7CBoxVu0__2);
+static int GetCollision(CCPoly *poly, CBoxVu0 *box) {
+    int count = 0;
+
+    for (int i = 0; i < parts_num; i++) {
+        CFrame *frame = InteriorParts[i].GetCollisionFrame();
+        if (frame != NULL) {
+            count += frame->PickUpNearPoly(&poly[count], *box);
+        }
+    }
+    return count;
+}
 /**
  * Pushes the player and the interior's villagers out of one another.
  *
