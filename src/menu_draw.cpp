@@ -42,12 +42,6 @@ extern s8 MenuTrushMark[100];
 /** Screen rectangle the menus draw full-screen pictures into. */
 extern CRect_i_ MenuDispRc;
 
-/** Rank of each item kind in the item board sort, rebuilt before each sort pass. */
-extern int sort_table__2[9];
-
-/** Rank of each attachment kind in the attachment board sort. */
-extern int asort_table__2[5];
-
 /** Icon sheet of the consumable items. */
 extern CTexture *ItemIcon;
 
@@ -1018,6 +1012,9 @@ void SwapItem(ITEM_PACK *items, int first_pos, int second_pos) {
     items->item_vol[second_pos] = vol;
 }
 
+/** Rank of each item kind in the item board sort, rebuilt before each sort pass. */
+static int sort_table[9] = {9, 0, 1, 2, 3, 4, 5, 6, 7};
+
 int CompItem(int first_item_no, int second_item_no) {
     ITEM_DATA *first = GetItemData(first_item_no);
     ITEM_DATA *second = GetItemData(second_item_no);
@@ -1025,10 +1022,10 @@ int CompItem(int first_item_no, int second_item_no) {
     int second_rank = 0;
 
     if (first != NULL) {
-        first_rank = sort_table__2[first->sort_key];
+        first_rank = sort_table[first->sort_key];
     }
     if (second != NULL) {
-        second_rank = sort_table__2[second->sort_key];
+        second_rank = sort_table[second->sort_key];
     }
     if (first_item_no < ITEM_DUNGEON_START) {
         first_rank = 9;
@@ -1061,13 +1058,13 @@ int SeitonItemBoardSub(ITEM_PACK *items) {
     int swapped;
 
     for (i = 0; i < 9; i++) {
-        sort_table__2[type] = i;
+        sort_table[type] = i;
         type++;
         if (type >= 9) {
             type = 0;
         }
     }
-    sort_table__2[0] = 9;
+    sort_table[0] = 9;
     swapped = 0;
     for (i = 0; i < items->num - 1; i++) {
         for (j = i + 1; j < items->num; j++) {
@@ -1114,9 +1111,12 @@ int GetAttachKind(int item_no) {
     return ATTACHKIND_OTHER;
 }
 
+/** Rank of each attachment kind in the attachment board sort, rebuilt before each sort pass. */
+static int asort_table[5] = {5, 1, 2, 3, 4};
+
 int CompAttach(ATTACH_LIST *first, ATTACH_LIST *second) {
-    int first_rank = asort_table__2[GetAttachKind(first->item_no)];
-    int second_rank = asort_table__2[GetAttachKind(second->item_no)];
+    int first_rank = asort_table[GetAttachKind(first->item_no)];
+    int second_rank = asort_table[GetAttachKind(second->item_no)];
 
     if (first->item_no < ITEM_ATTACH_START) {
         first_rank = 5;
@@ -1149,13 +1149,13 @@ int SeitonAttachBoardSub(ATTACH_LIST *attachments) {
     int swapped;
 
     for (i = 0; i < 5; i++) {
-        asort_table__2[type] = i;
+        asort_table[type] = i;
         type++;
         if (type >= 5) {
             type = 0;
         }
     }
-    asort_table__2[0] = 5;
+    asort_table[0] = 5;
     swapped = 0;
     for (i = 0; i < 39; i++) {
         for (j = i + 1; j < 40; j++) {
