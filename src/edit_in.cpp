@@ -171,11 +171,61 @@ void LoadMapObject(CMapParts *parts, u_int **data, CDataAlloc2<1> *alloc) {
  * @size 0x294
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", LoadScript__Fv__2);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @419);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @420);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @421__2);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @422);
+static void LoadScript() {
+    char event_path[0x80];
+    char directory[0x40];
+    char message_path[0x40];
+    char language[0x1c];
+    int size;
+    char *map_script;
+
+    EdScriptBuffer.used = 0;
+    EdEventData = (char *) (EdScriptBuffer.base + EdScriptBuffer.used * 16);
+    sprintf(language, "_%d.mes", LanguageCode);
+    strcpy(message_path, EdInInfo->name);
+    int length = strlen(message_path);
+    if (length > 0) {
+        char last = message_path[length - 1];
+        if (last == 'm' || last == 'n' || last == 'e') {
+            message_path[length - 1] = '\0';
+        }
+    }
+    strcat(message_path, language);
+    printf("mes = %s\n", message_path);
+    strcpy(directory, EdInInfo->name);
+    char *p = directory;
+    char *slash = p;
+    char c;
+    while ((c = *p) != '\0') {
+        if (c == '/') {
+            slash = p;
+        }
+        p++;
+    }
+    *slash = '\0';
+    sprintf(event_path, "%s/event.stb", directory);
+    if (LoadFile2(event_path, EdEventData, &size, 0) != 0) {
+        EdScriptBuffer.Alloc((size >> 4) + 1);
+        map_script = (char *) (EdScriptBuffer.base + EdScriptBuffer.used * 16);
+        if (LoadFile2(message_path, map_script, &size, 0) != 0) {
+            EdScriptBuffer.Alloc((size >> 4) + 1);
+        } else {
+            map_script = NULL;
+        }
+        EdSetEventScript(EdEventData, map_script, &EdScriptBuffer);
+    } else {
+        EdEventData = NULL;
+        EdSetEventScript(NULL, NULL, &EdScriptBuffer);
+        EdInitEventParam();
+    }
+    EdScriptBuffer.Align64();
+    EdSystemEventData = (char *) (EdScriptBuffer.base + EdScriptBuffer.used * 16);
+    if (LoadFile2("gedit/system/event.stb", EdSystemEventData, &size, 0) != 0) {
+        EdScriptBuffer.Alloc((size >> 4) + 1);
+        return;
+    }
+    EdSystemEventData = NULL;
+}
 /**
  * Starts an interior event, handing it the camera it is to play through.
  *
