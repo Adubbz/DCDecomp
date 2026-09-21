@@ -293,14 +293,12 @@ int _COS_DEG(RS_STACKDATA *stack, int argc) {
     return 1;
 }
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_PALLET__FP12RS_STACKDATAi);
-#ifdef NON_MATCHING
 int _STATUS_SET_CLIPLEVEL(RS_STACKDATA *stack, int argc) {
-    NowMonstorUnit->monster[NowMonstorUnit->unk_090].clip_distance = GetStackFloat(stack);
+    int monster_no = NowMonstorUnit->unk_090;
+
+    NowMonstorUnit->monster[monster_no].clip_distance = GetStackFloat(stack);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_CLIPLEVEL__FP12RS_STACKDATAi);
-#endif
 int _STATUS_GET_HITDMG_VOL(RS_STACKDATA *stack, int argc) {
     SetStack(stack, NowMonstorUnit->monster[NowMonstorUnit->unk_090].last_hit_damage);
     return 1;
