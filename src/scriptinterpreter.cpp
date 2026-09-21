@@ -60,37 +60,33 @@ static void PreProcess(CScriptInterpreter &input) {
 }
 #endif
 
-#ifdef NON_MATCHING
 int CScriptInterpreter::GetNextTAG(void) {
     if (tag_table == NULL) {
         return -1;
     }
     do {
-        if (!ControlCode() || !SearchCommand(&current_tag)) {
+        if (!ControlCode()) {
+            return -1;
+        }
+        if (!SearchCommand(&current_tag)) {
             return -1;
         }
     } while (current_tag >= tag_count || current_tag < 0);
 
-    TAG_PARAM *tag = &tag_table[current_tag];
-    if (tag->argument_types[0] >= 0) {
-        int status = GetArg(tag->argument_types);
+    if (tag_table[current_tag].argument_types[0] >= 0) {
+        int status = GetArg(tag_table[current_tag].argument_types);
         if (status == 0) {
             return -1;
         }
         if (status < 0) {
             printf("error at ");
-            printf("%s\n", tag->name);
+            printf("%s\n", tag_table[current_tag].name);
             for (;;) {
             }
         }
     }
     return current_tag;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/scriptinterpreter", GetNextTAG__18CScriptInterpreterFv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/scriptinterpreter", @183);
-INCLUDE_RODATA("asm/nonmatchings/scriptinterpreter", @184);
 void CScriptInterpreter::SetTAG(TAG_PARAM *tags, int count) {
     tag_table = tags;
     tag_count = count;
