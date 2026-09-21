@@ -1392,7 +1392,24 @@ void SndSPSeStop(int se_no) {
  * @address 0x15B950
  * @size 0xB0
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetSPSeVolf__Fif);
+void SndSetSPSeVolf(int se_no, float volume) {
+    SND_SE_INFO *info = GetSPInfo(se_no);
+
+    if (info != 0) {
+        short *table = CSnd.GetSeInfTbl();
+        int level = table[info->vol_no * 2 + 1];
+
+        level = (int) ((float) level * volume);
+
+        if (level < 0) {
+            level = 0;
+        }
+        if (level > 127) {
+            level = 127;
+        }
+        CSnd.SE_SetVol(12, info->bank, info->prog, level, 0);
+    }
+}
 /**
  * Sets a special sound effect's pan as a share of the widest pan.
  *
