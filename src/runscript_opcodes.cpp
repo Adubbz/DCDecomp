@@ -590,8 +590,34 @@ INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_BODY_COL_PARA__FP12RS_STA
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_DMG_COL__FP12RS_STACKDATAi);
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1040);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_DMG_PARA__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SHOT__FP12RS_STACKDATAi);
-INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1069);
+int _SET_SHOT(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+    char *name;
+
+    if (NowMonstorUnit->monster[monster_no].unk_0AC == -1) {
+        return 1;
+    }
+    name = GetStackString(stack++);
+    NowMonstorUnit->event[monster_no].local_position[0] = GetStackFloat(stack++);
+    NowMonstorUnit->event[monster_no].local_position[1] = GetStackFloat(stack++);
+    NowMonstorUnit->event[monster_no].local_position[2] = GetStackFloat(stack++);
+    NowMonstorUnit->event[monster_no].local_position[3] = 1.0f;
+    if (NowMonstorUnit->event[monster_no].timer == 0) {
+        CFrame *frame = NowMonstorUnit->chara[monster_no][0].frame->SearchFrame(name);
+
+        if (frame == NULL) {
+            printf("not shot null !!\n");
+            return 1;
+        }
+        NowMonstorUnit->event[monster_no].frame = frame;
+        NowMonstorUnit->event[monster_no].timer = 1;
+    }
+    NowMonstorUnit->event[monster_no].damage_override = -1;
+    if (argc == 5) {
+        NowMonstorUnit->event[monster_no].damage_override = GetStackInt(stack);
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SHOT2__FP12RS_STACKDATAi);
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1086__2);
 int _SET_SND_FRM(RS_STACKDATA *stack, int argc) {
