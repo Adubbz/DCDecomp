@@ -357,15 +357,6 @@ void DrawMenuColorGradation(CRect_i_ &, spRGBA *, spRGBA *, spRGBA *, spRGBA *);
 void DrawMenuSideGradation(CRect_i_ &, spRGBA *, spRGBA *);
 
 /**
- * Draws the mark over an item that cannot be set.
- *
- * @mangled DrawDontSetItemMark__Fiiiii
- * @address 0x22D4C0
- * @size 0xDC
- */
-void DrawDontSetItemMark(int, int, int, int, int);
-
-/**
  * Draws an item's icon with its attachment count or weapon mark.
  *
  * @mangled DrawIconParts__Fiiiiiii

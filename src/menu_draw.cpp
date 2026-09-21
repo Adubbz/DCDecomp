@@ -42,6 +42,17 @@ extern CRect_i_ MenuDispRc;
 
 /** Item kind the item board sort places first. */
 extern int sort_top_type__2;
+/** Texture of the personal inventory board. */
+extern CTexture *PerBoardTex;
+
+/**
+ * Draws the mark over an item that cannot be set.
+ *
+ * @mangled DrawDontSetItemMark__Fiiiii
+ * @address 0x22D4C0
+ * @size 0xDC
+ */
+static void DrawDontSetItemMark(int, int, int, int, int);
 
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @553);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @554__2);
@@ -298,7 +309,21 @@ void DrawMenuColorGradation(CRect_i_ &rect, spRGBA *top_left, spRGBA *top_right,
 void DrawMenuSideGradation(CRect_i_ &rect, spRGBA *left, spRGBA *right) {
     set2DSpriteC4(GetVif1Packet(), rect, left, right, left, right);
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawDontSetItemMark__Fiiiii);
+
+static void DrawDontSetItemMark(int x, int y, int top, int bottom, int alpha) {
+    int position;
+    int length;
+    int source;
+
+    if (y < top - 31 || y > bottom - 1) {
+        return;
+    }
+    position = y;
+    length = 32;
+    source = 0xC0;
+    MenuTextureClip(position, source, length, top, bottom);
+    DrawMenu2DSprite(PerBoardTex, CRect_i_(x, position, 32, length), CRect_i_(0x13C, source, 32, length), alpha);
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawIconParts__Fiiiiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawAttachNumberOrWeapon__Fiiiiiiii);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @852__4);
