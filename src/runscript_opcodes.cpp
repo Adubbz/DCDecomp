@@ -7,6 +7,7 @@
 #include "dun/gameloop.hpp"
 #include "edit.hpp"
 #include "editloop3.hpp"
+#include "frame.hpp"
 #include "mathutil.hpp"
 #include "monstorunit.hpp"
 #include "userstatus.hpp"
@@ -484,7 +485,16 @@ int _GET_USER_STATUS(RS_STACKDATA *stack, int argc) {
     return 1;
 }
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_REFERENCE__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _DEL_REFERENCE__FP12RS_STACKDATAi);
+int _DEL_REFERENCE(RS_STACKDATA *stack, int argc) {
+    int monster_no = GetStackInt(stack);
+    CFrame *frame = NowMonstorUnit->chara[monster_no][0].frame;
+
+    if (frame == NULL) {
+        return 1;
+    }
+    frame->DeleteReference();
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SHADOW_FLAG__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", BtSetEventScript__FP10CRunScriptPcP14CDataAlloc2_1_);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", BtSetEventExtendTable__Fv);
