@@ -346,14 +346,10 @@ int _STATUS_SET_CLIPLEVEL(RS_STACKDATA *stack, int argc) {
 #else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_CLIPLEVEL__FP12RS_STACKDATAi);
 #endif
-#ifdef NON_MATCHING
 int _STATUS_GET_HITDMG_VOL(RS_STACKDATA *stack, int argc) {
     SetStack(stack, NowMonstorUnit->monster[NowMonstorUnit->unk_090].last_hit_damage);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_GET_HITDMG_VOL__FP12RS_STACKDATAi);
-#endif
 #ifdef NON_MATCHING
 int _STATUS_GET_MOTION_ID(RS_STACKDATA *stack, int argc) {
     SetStack(stack, NowMonstorUnit->chara[NowMonstorUnit->unk_090][0].motion_no);
