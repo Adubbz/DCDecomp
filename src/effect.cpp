@@ -7,7 +7,6 @@
 #include "mglib.hpp"
 #include "snd.hpp"
 
-#ifdef NON_MATCHING
 void C3DSprite::Draw(void) {
     if (texture == NULL) {
         return;
@@ -42,9 +41,6 @@ void C3DSprite::Draw(void) {
         MGSetGsZBUF(&mgZBuffer);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/effect", Draw__9C3DSpriteFv);
-#endif
 
 #ifdef NON_MATCHING
 void C3DSprite::Initialize(void) {
@@ -61,7 +57,6 @@ void C3DSprite::Initialize(void) {
 INCLUDE_ASM("asm/nonmatchings/effect", Initialize__9C3DSpriteFv);
 #endif
 
-#ifdef NON_MATCHING
 void CEffect::SetEffect(CEffectParam *parameters) {
     active = 1;
     frame = 0;
@@ -103,9 +98,6 @@ void CEffect::SetEffect(CEffectParam *parameters) {
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/effect", SetEffect__7CEffectFP12CEffectParam);
-#endif
 
 #ifdef NON_MATCHING
 void CEffect::Step(int unused) {
