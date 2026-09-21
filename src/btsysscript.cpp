@@ -201,7 +201,26 @@ int _GET_ACTION_MODE(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _ITEM_USE_WINDOW__FP12RS_STACKDATAi);
+int _ITEM_USE_WINDOW(RS_STACKDATA *stack, int count) {
+    if (stack->type != RS_PTR) {
+        return 0;
+    }
+
+    BtEventInfo.unk_80 = (s32) stack->p;
+    stack++;
+    int i;
+    for (i = 0; i < count - 1; i++) {
+        BtEventInfo.unk_3C[i] = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    }
+    BtEventInfo.unk_7C = 0;
+    if (count > 1) {
+        BtEventInfo.unk_7C = 1;
+    }
+    BtEventInfo.unk_3C[i] = -1;
+    BtEventInfo.request = 1;
+    return 1;
+}
+
 int _CHECK_EVENT_FLG(RS_STACKDATA *stack, int count) {
     int flag_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
     int flag = UserStatus->ChkEventFlag(flag_no);
