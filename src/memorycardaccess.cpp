@@ -408,15 +408,65 @@ int CMemoryCardAccess::Write() {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", Convert__17CMemoryCardAccessFv);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @668__2);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @669__2);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @670__2);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @671__2);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @672__2);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @673__2);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @674__2);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @675__2);
+int CMemoryCardAccess::Convert() {
+    int result;
+    int cmd;
+    char src_name[0x80];
+    char dst_name[0x80];
+    char buffer[0x19000];
+    int i;
+    int fd;
+
+    sceMcChdir(this->port, 1, "/", "");
+    sceMcSync(MC_WAIT, &cmd, &result);
+    printf("move to dir\n");
+    while (this->MakeDir() == 0) {
+    }
+    printf("create new dir\n");
+    for (i = 0; i < MC_SAVE_FILE_MAX; i++) {
+        strcpy(src_name, "BASCUS-97112dkcloud/");
+        strcat(src_name, this->file_name);
+        strcat(src_name, "%d");
+        sprintf(src_name, src_name, i);
+        strcpy(dst_name, "BASCUS-97111dkcloud/");
+        strcat(dst_name, this->file_name);
+        strcat(dst_name, "%d");
+        sprintf(dst_name, dst_name, i);
+        if (sceMcOpen(this->port, 1, src_name, 1) != 0) {
+            continue;
+        }
+        sceMcSync(MC_WAIT, &cmd, &result);
+        if (cmd != 2 || (cmd == 2 && result < 0)) {
+            continue;
+        }
+        fd = result;
+        printf("fname = %s\n", src_name);
+        memset(this->unk_D8, 0, 0x136E7);
+        sceMcRead(fd, this->unk_D8, 0x136A7);
+        sceMcSync(MC_WAIT, &cmd, &result);
+        sceMcClose(fd);
+        sceMcSync(MC_WAIT, &cmd, &result);
+        if (sceMcOpen(this->port, 1, dst_name, 0x202) != 0) {
+            continue;
+        }
+        sceMcSync(MC_WAIT, &cmd, &result);
+        if (cmd != 2 || (cmd == 2 && result < 0)) {
+            continue;
+        }
+        fd = result;
+        printf("fname = %s\n", dst_name);
+        memset(buffer, 0, 0x136E7);
+        sceMcWrite(fd, this->unk_D8, 0x136A7);
+        sceMcSync(MC_WAIT, &cmd, &result);
+        sceMcFlush(fd);
+        sceMcSync(MC_WAIT, &cmd, &result);
+        printf("save %d\n", i);
+        sceMcClose(fd);
+        sceMcSync(MC_WAIT, &cmd, &result);
+    }
+    return 1;
+}
+
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @814);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @815__2);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @816);
