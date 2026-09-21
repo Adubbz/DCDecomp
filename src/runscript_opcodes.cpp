@@ -354,14 +354,10 @@ int _STATUS_GET_MOTION_ID(RS_STACKDATA *stack, int argc) {
     SetStack(stack, NowMonstorUnit->chara[NowMonstorUnit->unk_090][0].motion_no);
     return 1;
 }
-#ifdef NON_MATCHING
 int _STATUS_GET_DMG_ID(RS_STACKDATA *stack, int argc) {
     SetStack(stack, NowMonstorUnit->monster[NowMonstorUnit->unk_090].last_hit_id);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_GET_DMG_ID__FP12RS_STACKDATAi);
-#endif
 #ifdef NON_MATCHING
 int _STATUS_SET_LOCKON_DIST(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->monster[NowMonstorUnit->unk_090].lock_range = GetStackFloat(stack);
