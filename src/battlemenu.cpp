@@ -115,19 +115,15 @@ void SetNowEquipWeaponDataForMsg(int item_no, int slot) {
     ItemMenuMode.message_item_no = item_no;
     ItemMenuMode.message_slot = slot;
 }
-#ifdef NON_MATCHING
 void GetNowEquipWeaponDataForMsg(int &item_no, int &slot) {
     COM_ITEM_INFO *item_info = GetCommonItemInfo(ItemMenuMode.message_item_no);
     if (item_info != NULL) {
-        item_no = item_info->icon_index;
+        item_no = item_info->msg;
     } else {
         item_no = 0;
     }
     slot = ItemMenuMode.message_slot;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", GetNowEquipWeaponDataForMsg__FRiRi);
-#endif
 GRADATION_COLOR_INFO2 *GetGradationColorInfo2(int index) {
     return &MenuColorInfo2[index];
 }
@@ -230,8 +226,14 @@ static void GetMenuIconPos(int icon, int *position) {
     position[1] = y;
 }
 
-#ifdef NON_MATCHING
-void BtlMenuMekeIconInfo(int *icons, int menu_mode) {
+/**
+ * Fills in the icon numbers the menu bar draws for one mode.
+ *
+ * @mangled BtlMenuMekeIconInfo__FPii
+ * @address 0x1F4160
+ * @size 0xE8
+ */
+static void BtlMenuMekeIconInfo(int *icons, int menu_mode) {
     int icon_count = GetMenuModeMax();
 
     for (int i = 0; i < icon_count; i++) {
@@ -240,23 +242,20 @@ void BtlMenuMekeIconInfo(int *icons, int menu_mode) {
     if (BtlMenuMode != 0) {
         int special_icon;
         switch (NowGetGameFlagForBtlMenu(BtlMenuMode)) {
-            case 2:
-                special_icon = 0xC;
+            case 11:
+            case 10:
+                special_icon = 9;
                 break;
             case 1:
                 special_icon = 8;
                 break;
-            case 10:
-            case 11:
-                special_icon = 9;
+            case 2:
+                special_icon = 0xC;
                 break;
         }
         icons[4] = special_icon;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlMenuMekeIconInfo__FPii);
-#endif
 
 /**
  * Draws the battle menu ring and its icons, fading them out with the closing effect and

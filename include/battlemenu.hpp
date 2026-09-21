@@ -167,15 +167,6 @@ void SetInteriorOutFlag(int flag);
 s16 GetInteriorOutFlag(void);
 
 /**
- * Fills in the icon numbers the menu bar draws for one mode.
- *
- * @mangled BtlMenuMekeIconInfo__FPii
- * @address 0x1F4160
- * @size 0xE8
- */
-void BtlMenuMekeIconInfo(int *icons, int menu_mode);
-
-/**
  * Chooses the message that explains why the party may not leave the zone.
  *
  * @mangled GetLimmitMsg__Fv
