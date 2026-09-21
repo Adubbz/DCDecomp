@@ -14,10 +14,8 @@ extern "C" int DebugInfoNowCursor;
 extern "C" CDebugFont DbgMsg;
 extern "C" char nameblock[64];
 
-#ifdef NON_MATCHING
 /** Key items waiting to be dropped, one entry each, -1 where a slot is free. */
-static int gateKeyStack[32];
-#endif
+extern "C" int gateKeyStack[32];
 
 #ifdef NON_MATCHING
 /**
@@ -199,7 +197,6 @@ INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1825);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @511);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @512);
 
-#ifdef NON_MATCHING
 /**
  * Empties the list of key items waiting to be dropped.
  *
@@ -212,11 +209,7 @@ void ClearGateKeyStack(void) {
         gateKeyStack[i] = -1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/collisiondata", ClearGateKeyStack__Fv);
-#endif
 
-#ifdef NON_MATCHING
 int SetGateKeyStack(int item) {
     if (item == -1) {
         return 0;
@@ -235,9 +228,6 @@ int SetGateKeyStack(int item) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/collisiondata", SetGateKeyStack__Fi);
-#endif
 
 #ifdef NON_MATCHING
 /**
