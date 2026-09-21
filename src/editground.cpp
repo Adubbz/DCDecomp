@@ -176,7 +176,15 @@ int CEditGround::PickUpPoly(CCPoly *polygons, float x, float y, float z) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/editground", PickUpPoly__11CEditGroundFP6CCPoly7CBoxVu0i);
-INCLUDE_ASM("asm/nonmatchings/editground", PickUpEditAreaPoly__11CEditGroundFP6CCPolyfff);
+
+int CEditGround::PickUpEditAreaPoly(CCPoly *polygons, float x, float y, float z) {
+    int area = GetAreaCode(x, y, z);
+    if (area < 0) {
+        return 0;
+    }
+    return areas[area]->PickUpPoly(polygons, x, y, z);
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", PickUpCameraPoly__11CEditGroundFP6CCPolyR7CBoxVu0i);
 INCLUDE_ASM("asm/nonmatchings/editground", Clear__11CEditGroundFv);
 INCLUDE_ASM("asm/nonmatchings/editground", Initialize__11CEditGroundFv);
