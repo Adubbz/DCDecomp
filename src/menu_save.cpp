@@ -415,7 +415,33 @@ int SaveMenuEffectFadeOut(void) {
     }
     return 0;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_save", GetSaveBoardAlphaInfo__FiiRiRii);
+
+void GetSaveBoardAlphaInfo(int x, int width, int &start_alpha, int &end_alpha, int alpha) {
+    if (x < 0) {
+        start_alpha = 0;
+    } else if ((0 <= x) && (x < 0x81)) {
+        start_alpha = (x * alpha) >> 7;
+    } else if ((x > 0x80) && (x < 0x141)) {
+        start_alpha = (alpha * 0x80) >> 7;
+    } else if ((x > 0x140) && (x < 0x1C1)) {
+        start_alpha = ((0x1C0 - x) * alpha) >> 7;
+    } else {
+        start_alpha = 0;
+    }
+
+    x += width;
+    if (x < 0) {
+        end_alpha = 0;
+    } else if ((0 <= x) && (x < 0x81)) {
+        end_alpha = (x * alpha) >> 7;
+    } else if ((x > 0x80) && (x < 0x141)) {
+        end_alpha = (alpha * 0x80) >> 7;
+    } else if ((x > 0x140) && (x < 0x1C1)) {
+        end_alpha = ((0x1C0 - x) * alpha) >> 7;
+    } else {
+        end_alpha = 0;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/menu_save", DrawSaveBoard__FP13SAVEDATA_INFOPP8CTextureiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_save", DrawNewFileTemplete__Fiii);
 INCLUDE_ASM("asm/nonmatchings/menu_save", InitExistData__Fv);
