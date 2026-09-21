@@ -779,16 +779,6 @@ void StartLoadWorldMap(int, void /* CW back-ref target unresolved */ *);
 void LoadWorldMap(void);
 
 /**
- * Steps and draws the party's marker over the world map.
- *
- * @mangled LocalDrawWorldMap__Fv
- * @address 0x20A370
- * @size 0x6C
- * Draws the world map's menu character.
- */
-void LocalDrawWorldMap(void);
-
-/**
  * Draws the world map with the party's marker over it.
  *
  * @mangled DrawWorldMap__Fi

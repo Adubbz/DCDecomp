@@ -1073,7 +1073,19 @@ INCLUDE_RODATA("asm/nonmatchings/battlemenu", @6248);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @6249);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @6250);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", LocalDrawWorldMap__Fv);
+/**
+ * Steps and draws the party's marker over the world map.
+ *
+ * @mangled LocalDrawWorldMap__Fv
+ * @address 0x20A370
+ * @size 0x6C
+ */
+static void LocalDrawWorldMap() {
+    MenuCharaFrame.SetScale(2.2f, 2.2f, 2.2f);
+    MenuCharaFrame.SetPosition(mapo);
+    MenuCharaFrame.Step();
+    MenuCharaFrame.Draw();
+}
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWorldMap__Fi);
 
