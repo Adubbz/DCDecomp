@@ -763,7 +763,27 @@ void SndBgmFadeOut(int frames, int volume) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeInOut__Fv);
+void SndBgmFadeInOut() {
+    float step;
+
+    if (bgm_fade != 0) {
+        now_bgm_fade_vol += bgm_fade_step;
+        step = bgm_fade_step;
+        if ((step < 0.0f ? -step : step) < 0.0001f) {
+            bgm_fade = 0;
+        }
+        if (bgm_fade > 0) {
+            if (now_bgm_fade_vol >= (float) bgm_fade_vol) {
+                now_bgm_fade_vol = (float) bgm_fade_vol;
+                bgm_fade = 0;
+            }
+        } else if (now_bgm_fade_vol <= (float) bgm_fade_vol) {
+            now_bgm_fade_vol = (float) bgm_fade_vol;
+            bgm_fade = 0;
+        }
+        SndSetBgmVol((int) now_bgm_fade_vol);
+    }
+}
 
 int SndCheckFade() {
     return bgm_fade == 0;
