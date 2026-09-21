@@ -181,7 +181,8 @@ carve_part(main.sdata.part2b.s
            main.sdata.snd-tail.s=2A1EF0-2A1F14
            main.sdata.part2c.s=2A1F18-2A1F24
            main.sdata.part2d.s=2A1F50-2A1F78
-           main.sdata.part2f.s=2A1F90-2A21A0
+           main.sdata.part2f.s=2A1F90-2A2150
+           main.sdata.memcard-a.s=2A2158-2A21A0
            main.sdata.part2g.s=2A21B8-2A21C8
            main.sdata.part2e.s=2A21F0-2A2218)
 carve_part(main.sdata.part3.s

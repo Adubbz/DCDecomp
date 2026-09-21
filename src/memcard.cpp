@@ -1474,7 +1474,13 @@ static void AtoraBoardFadeEffect() {
 }
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraNameDraw__Fi);
 INCLUDE_ASM("asm/nonmatchings/memcard", OptionMenuDraw__Fiiiii);
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawOptionLRCur__Fii);
+static void DrawOptionLRCur(int side, int alpha) {
+    int cursor_x[2] = {32, 520};
+    int v;
+
+    v = side * 32 + 256;
+    DrawMenu2DSprite(MenuOption, CRect_i_(cursor_x[side], 180, 96, 32), CRect_i_(416, v, 96, 32), alpha);
+}
 int InitMenuOption(int mode, int block_no, u_long128 *buffer) {
     u_long128 *data;
     CUserStatus *status;

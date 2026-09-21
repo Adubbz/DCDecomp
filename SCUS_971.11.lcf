@@ -637,6 +637,8 @@ SECTIONS
 		editloop.cpp.o (.sdata)        // 0x002a1f78
 		editloop3.cpp.o (.sdata)       // 0x002a1f80
 		main.sdata.part2f.s.o (.sdata) // 0x002a1f90
+		memcard.cpp.o (.sdata) // 0x002a2150
+		main.sdata.memcard-a.s.o (.sdata) // 0x002a2158
 		menu_draw.cpp.o (.sdata)       // 0x002a21a0
 		main.sdata.part2g.s.o (.sdata) // 0x002a21b8
 		weapon_buildup.cpp.o (.sdata)  // 0x002a21c8
