@@ -32,7 +32,21 @@ struct EsaInfo {
 /**
  * The kinds of bait, indexed by esa_type.
  */
-extern EsaInfo esa_info[13];
+static EsaInfo esa_info[13] = {
+    {0xC1, 50.0f},
+    {0xC5, 25.0f},
+    {0xC7, 25.0f},
+    {0xA6, 25.0f},
+    {0xA7, 25.0f},
+    {0xA8, 25.0f},
+    {0xA9, 25.0f},
+    {0xAA, 25.0f},
+    {0xBA, 25.0f},
+    {0xBB, 25.0f},
+    {0xBC, 25.0f},
+    {0xBD, 25.0f},
+    {0xBE, 40.0f},
+};
 
 /**
  * The water surface height used by the fishing simulation.
@@ -473,14 +487,38 @@ void FishingSetRect(CBoxVu0 bounds) {
     memcpy(&fishing_rect, &bounds, sizeof(CBoxVu0));
 }
 
-/**
- * Collects the collision polygons around the fishing spot.
- *
- * @mangled FishingPickUpPoly__FP6CCPoly
- * @address 0x1A92A0
- * @size 0x1BC
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingPickUpPoly__FP6CCPoly);
+int FishingPickUpPoly(CCPoly *polys) {
+    sceVu0FVECTOR corner[8];
+    sceVu0FVECTOR bound[2];
+
+    sceVu0CopyVector(bound[0], fishing_rect.min);
+    sceVu0CopyVector(bound[1], fishing_rect.max);
+    for (int i = 0; i < 8; i++) {
+        corner[i][3] = 1.0f;
+        corner[i][0] = bound[(i & 1) != 0][0];
+        corner[i][1] = bound[(i & 2) != 0][1];
+        corner[i][2] = bound[(i & 4) != 0][2];
+    }
+    int face[8][3] = {
+        {0, 1, 2},
+        {1, 3, 2},
+        {1, 5, 3},
+        {5, 7, 3},
+        {5, 4, 7},
+        {4, 6, 7},
+        {4, 0, 6},
+        {0, 2, 6},
+    };
+    for (int i = 0; i < 8; i++) {
+        CCPoly *poly = &polys[i];
+        memset(poly, 0, sizeof(CCPoly));
+        for (int j = 0; j < 3; j++) {
+            sceVu0CopyVector(poly->vertex[j], corner[face[i][j]]);
+        }
+        PlaneNormal(poly->normal, poly->vertex[0], poly->vertex[1], poly->vertex[2]);
+    }
+    return 8;
+}
 
 void FishingInitFish(CBoxVu0 bounds) {
     sceVu0FVECTOR position;
@@ -630,14 +668,28 @@ void FishingStepFish() {
     }
 }
 
-/**
- * Draws the six fish.
- *
- * @mangled FishingDrawFish__Fv
- * @address 0x1A9A80
- * @size 0x13C
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingDrawFish__Fv);
+void FishingDrawFish() {
+    if (Fish == NULL) {
+        return;
+    }
+    if (AngleFish != NULL) {
+        TexManager.ReloadTexture(GetVif1Packet(), fish_texb + 1);
+        AngleFish->SetReference(HookFrame);
+        sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 0.0f};
+        sceVu0FVECTOR rotation = {-1.57f, 1.57f, 0.0f, 0.0f};
+        AngleFish->SetPosition(position);
+        AngleFish->SetRotation(rotation);
+        AngleFish->Draw();
+        AngleFish->DeleteReference();
+    } else {
+        TexManager.ReloadTexture(GetVif1Packet(), fish_texb);
+        if (draw_under_water) {
+            for (int i = 0; i < 6; i++) {
+                Fish[i].Draw();
+            }
+        }
+    }
+}
 
 /**
  * Gives where the hook is.
@@ -651,13 +703,66 @@ static void GetHookPos(float *position) {
 }
 
 /**
- * Casts the line, putting the float and hook at a position.
- *
- * @mangled FishLineInit__FPf
- * @address 0x1A9BF0
- * @size 0x43C
+ * The pairs of hook points held apart by a fixed length.
  */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishLineInit__FPf);
+static int hook_link[3][2] = {{0, 1}, {0, 2}, {1, 2}};
+
+/**
+ * The pairs of float points held apart by a fixed length.
+ */
+static int uki_link[6][2] = {{0, 1}, {0, 2}, {0, 3}, {1, 2}, {2, 3}, {3, 1}};
+
+void FishLineInit(float *position) {
+    sceVu0FVECTOR p;
+    int i;
+
+    set_uki_pos = 0;
+    set_hook_pos = 0;
+    pull_hook = 0.0f;
+    sceVu0FVECTOR zero = {0.0f, 0.0f, 0.0f, 0.0f};
+    sceVu0CopyVector(rod_top, position);
+    sceVu0CopyVector(p, position);
+    p[3] = 1.0f;
+    for (i = 0; i < 24; i++) {
+        sceVu0CopyVector(point[i], p);
+        sceVu0CopyVector(old_p[i], p);
+        sceVu0CopyVector(velo[i], zero);
+        p[1] -= distp;
+    }
+    for (i = 0; i < 3; i++) {
+        sceVu0CopyVector(hookp[i], point[23]);
+    }
+    for (i = 1; i < 3; i++) {
+        hookp[i][1] -= 2.0f;
+    }
+    hookp[1][0] -= 1.0f;
+    hookp[2][0] += 1.0f;
+    for (i = 0; i < 3; i++) {
+        sceVu0CopyVector(hookop[i], hookp[i]);
+        sceVu0CopyVector(hookv[i], zero);
+    }
+    for (i = 0; i < 3; i++) {
+        hook_dist[i] = DistVector(hookp[hook_link[i][0]], hookp[hook_link[i][1]]);
+    }
+    for (i = 0; i < 4; i++) {
+        sceVu0CopyVector(ukip[i], point[18]);
+    }
+    for (i = 1; i < 4; i++) {
+        ukip[i][1] -= 0.866f;
+    }
+    ukip[1][2] += 1.005f;
+    ukip[2][0] += 0.866f;
+    ukip[2][2] -= 0.5f;
+    ukip[3][0] -= 0.866f;
+    ukip[3][2] -= 0.5f;
+    for (i = 0; i < 4; i++) {
+        sceVu0CopyVector(ukiop[i], ukip[i]);
+        sceVu0CopyVector(ukiv[i], zero);
+    }
+    for (i = 0; i < 6; i++) {
+        uki_dist[i] = DistVector(ukip[uki_link[i][0]], ukip[uki_link[i][1]]);
+    }
+}
 
 void FishLineSetUki(float *position, float rate) {
     sceVu0FVECTOR offset;

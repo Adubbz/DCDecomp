@@ -42,9 +42,6 @@ void FishingSetGroundLevel(float uki_height, float hook_height);
  */
 float FishingGetWaterLevel();
 
-/** Initializes the fishing line at a world-space point. */
-void FishLineInit(float *position);
-
 /**
  * Takes the bait off the hook.
  *
@@ -154,6 +151,15 @@ void FishingSetCPoly(CCPoly *polys, int count);
 void FishingSetRect(CBoxVu0 bounds);
 
 /**
+ * Builds the eight triangles of the fishing box's top and sides, and returns how many it built.
+ *
+ * @mangled FishingPickUpPoly__FP6CCPoly
+ * @address 0x1A92A0
+ * @size 0x1BC
+ */
+int FishingPickUpPoly(CCPoly *polys);
+
+/**
  * Sets the box the fish swim within and puts every fish at its centre, under the water surface.
  *
  * @mangled FishingInitFish__F7CBoxVu0
@@ -224,6 +230,24 @@ void FishingInitFishStatus();
  * @size 0x138
  */
 void FishingStepFish();
+
+/**
+ * Draws the fish being landed on the hook, or the fish swimming when they show.
+ *
+ * @mangled FishingDrawFish__Fv
+ * @address 0x1A9A80
+ * @size 0x13C
+ */
+void FishingDrawFish();
+
+/**
+ * Casts the line straight down from the rod tip, with the float and the hook at rest on it.
+ *
+ * @mangled FishLineInit__FPf
+ * @address 0x1A9BF0
+ * @size 0x43C
+ */
+void FishLineInit(float *position);
 
 /**
  * Pulls the float a share of the way towards a position, or stops pulling it when the share is negative.
