@@ -1291,8 +1291,27 @@ SV_FISH_DATA *GetFishingRankData(int rank_index) {
     return SaveData->GetFishingRank(rank_index);
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", InitFishRecordView__FP1Pii);
-INCLUDE_RODATA("asm/nonmatchings/shop", @3257);
+void InitFishRecordView(u_long128 *buffer, int *tex_block, int mode) {
+    u_long128 *load_buffer = buffer;
+
+    if (buffer == NULL) {
+        load_buffer = (u_long128 *) (EdMenuBuffer.base + EdMenuBuffer.used * 16);
+    }
+    load_buffer = MenuCalcBufAlignment(load_buffer);
+    FishRecordMenu.tex_block = tex_block[0];
+    FishRecordMenu.tex_block2 = tex_block[1];
+    FishRecordMenu.mode = mode;
+    StartReadBG();
+    LoadFileBGMenuData("fishrec.pak", load_buffer);
+    FishRecordMenu.ready = 0;
+    FishRecordMenu.unk_00 = 0;
+    FishRecordMenu.unk_04 = 0;
+    FishRecordMenu.fade_count = 0;
+    FishRecordMenu.fade_mode = 0;
+    StayTex = TexManager.GetTexture("stayframe", -1);
+    GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
+    GamePad.MenuModeOn(0x78);
+}
 
 /**
  * Leaves the fishing record view and releases its texture block.
