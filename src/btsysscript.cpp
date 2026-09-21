@@ -410,23 +410,19 @@ int _EASTKING_COMPLETE(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-#ifdef NON_MATCHING
 int _GET_ITEM_TRAPID(RS_STACKDATA *stack, int count) {
-    SetStack(stack, NowDngMap->boxes[BtEventInfo.unk_AC].unk_30);
+    int box = BtEventInfo.unk_AC;
+    SetStack__FP12RS_STACKDATAi__2(stack, NowDngMap->boxes[box].unk_30);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_ITEM_TRAPID__FP12RS_STACKDATAi);
-#endif
-#ifdef NON_MATCHING
+
 int _RESET_ITEM_TRAP(RS_STACKDATA *stack, int count) {
-    NowDngMap->boxes[BtEventInfo.unk_AC].unk_30 = 0;
+    int box = BtEventInfo.unk_AC;
+    NowDngMap->boxes[box].unk_30 = 0;
     BtEventInfo.unk_AC = 0;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _RESET_ITEM_TRAP__FP12RS_STACKDATAi);
-#endif
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _BOM_SET__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_STATUS_ERR__FP12RS_STACKDATAi);
 #ifdef NON_MATCHING
