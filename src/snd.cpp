@@ -1896,7 +1896,35 @@ void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &so
     sceVif1PkCloseDirectCode(packet);
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", setColSprite__FP13sceVif1PacketPiPiPiPiUcUcUcUc);
+void setColSprite(sceVif1Packet *packet, int *top_left, int *top_right, int *bottom_left,
+                  int *bottom_right, unsigned char red, unsigned char green, unsigned char blue,
+                  unsigned char alpha) {
+    float q = 1.0f;
+
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, SCE_GS_SET_TEX1(1, 0, 1, 1, 0, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
+                     SCE_GS_SET_PRIM(4, 0, 0, 0, 1, 0, 0, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(red, green, blue, alpha, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZ2, (u_long) top_left[0] | ((u_long) top_left[1] << 16) | ((u_long) top_left[2] << 32));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZ2, (u_long) top_right[0] | ((u_long) top_right[1] << 16) | ((u_long) top_right[2] << 32));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZ2,
+                     (u_long) bottom_left[0] | ((u_long) bottom_left[1] << 16) | ((u_long) bottom_left[2] << 32));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZ2,
+                     (u_long) bottom_right[0] | ((u_long) bottom_right[1] << 16) | ((u_long) bottom_right[2] << 32));
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEXFLUSH, 0);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSpriteC4__FP13sceVif1PacketRC8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBA);
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_iif);
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSpriteRot__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_iifUcUcUcUc);

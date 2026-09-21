@@ -395,7 +395,6 @@ void set2DSpriteC4(sceVif1Packet *, const CRect_i_ &, spRGBA *, spRGBA *, spRGBA
  * @mangled setColSprite__FP13sceVif1PacketPiPiPiPiUcUcUcUc
  * @address 0x15DED0
  * @size 0x250
- * @unknownret
  */
 void setColSprite(sceVif1Packet *, int *, int *, int *, int *, unsigned char, unsigned char,
                   unsigned char, unsigned char);
