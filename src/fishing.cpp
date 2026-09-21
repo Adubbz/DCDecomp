@@ -589,14 +589,16 @@ int FishingGetAngleFishSize(int *size, int *fp) {
     return AngleFish->fish_kind;
 }
 
-/**
- * Puts the six fish back to swimming.
- *
- * @mangled FishingInitFishStatus__Fv
- * @address 0x1A98C0
- * @size 0x5C
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingInitFishStatus__Fv);
+void FishingInitFishStatus() {
+    if (Fish != NULL) {
+        for (int i = 0; i < 6; i++) {
+            CFish *fish = &Fish[i];
+            fish->action = FISH_ACTION_NONE;
+            fish->move_mode = FISH_MOVE_UNSET;
+            fish->use_angle_model = 0;
+        }
+    }
+}
 
 void FishingDeleteAngleFish() {
     if (AngleFish != NULL) {

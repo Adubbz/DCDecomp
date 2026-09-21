@@ -206,3 +206,12 @@ void FishingAngleFish(int fish_no);
  * @size 0x84
  */
 int FishingGetAngleFishSize(int *size, int *fp);
+
+/**
+ * Puts the six fish back to swimming with no interest in the bait.
+ *
+ * @mangled FishingInitFishStatus__Fv
+ * @address 0x1A98C0
+ * @size 0x5C
+ */
+void FishingInitFishStatus();
