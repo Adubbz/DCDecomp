@@ -541,7 +541,7 @@ static void ShopMenuInit(int *tex_block, int shop_no, int mode) {
     InitPersonalBoardMode(ShopUserStatusPt, &ShopMenu.board, 0, 0);
     ShopHaveItemPt = (IHAVEITEM *) ShopMenu.board.unk_30;
     ShopHaveWepPt = &ShopMenu.board.weapon;
-    ShopHaveAttachPt = (ATTACH_LIST *) ShopMenu.board.unk_13C;
+    ShopHaveAttachPt = &ShopMenu.board.unk_13C;
     ShopMenu.unk_176 = 0;
     ShopMenu.unk_174 = 0;
     ShopMenu.unk_184 = 0;
