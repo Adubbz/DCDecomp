@@ -750,7 +750,7 @@ int SndGetDefaultBgmVol() {
     if (now_bgm_no < 0) {
         return 0;
     }
-    return CSnd.GetMidiState()->sequence->volume;
+    return CSnd.GetMidiState()->port[0].sequence[0]->volume;
 }
 
 /**
@@ -1247,8 +1247,8 @@ void SndAmbientSetVolf(float volume) {
     }
 }
 int SndGetAmbientDefaultVol() {
-    if (CSnd.GetMidiState()->ambient_sequence[now_amb_no] != 0) {
-        return CSnd.GetMidiState()->ambient_sequence[now_amb_no]->volume;
+    if (CSnd.GetMidiState()->port[2].sequence[now_amb_no] != 0) {
+        return CSnd.GetMidiState()->port[2].sequence[now_amb_no]->volume;
     }
     return 64;
 }
