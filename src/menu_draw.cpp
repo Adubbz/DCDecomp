@@ -1005,8 +1005,32 @@ int GetWeaponMaxExp(WEAPON_HAVE *weapon) {
     }
     return experience;
 }
+
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowItemNum__FsP9ITEM_PACK);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DeleteItemAfterUseItem__FsP9ITEM_PACK);
+
+void DeleteItemAfterUseItem(short item_no, ITEM_PACK *items) {
+    int deleted = 0;
+    int i;
+
+    for (i = 0; i < items->num; i++) {
+        if (items->item[i] == item_no) {
+            items->item[i] = -1;
+            deleted = 1;
+            break;
+        }
+    }
+    if (deleted == 0) {
+        for (i = 0; i < 3; i++) {
+            if (items->quick_item_slot[i] == item_no) {
+                items->quick_item_qty[i]--;
+                if (items->quick_item_qty[i] <= 0) {
+                    items->quick_item_slot[i] = -1;
+                }
+                break;
+            }
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowModeMaxNum__FiPi);
 
 void WepDataListToHaveCopy(int weapon_no, WEAPON_HAVE *weapon) {
