@@ -147,8 +147,8 @@ CDungeonEventData *CDungeonEventMan::SearchDataSlotPos(float *position) {
     }
     return NULL;
 }
-#ifdef NON_MATCHING
 CDungeonEventData *CDungeonEventMan::SearchDataSlotPos2(float *position) {
+    int i;
     sceVu0FVECTOR event_position;
     sceVu0FVECTOR target_position;
 
@@ -156,28 +156,22 @@ CDungeonEventData *CDungeonEventMan::SearchDataSlotPos2(float *position) {
     float target_height = target_position[1];
     target_position[1] = 0.0f;
 
-    for (int i = 0; i < 96; i++) {
-        CDungeonEventData *event_data = &event[i];
-        if (event_data->CheckSwitch() != 0) {
-            sceVu0CopyVector(event_position, event_data->pos);
+    for (i = 0; i < 96; i++) {
+        if (event[i].CheckSwitch() != 0) {
+            sceVu0CopyVector(event_position, event[i].pos);
             float height_difference = target_height - event_position[1];
-            if (height_difference < 0.0f) {
-                height_difference = -height_difference;
-            }
+            height_difference = height_difference < 0.0f ? -height_difference : height_difference;
             if (height_difference < 40.0f) {
                 event_position[1] = 0.0f;
-                float radius = event_data->event->radius;
+                float radius = event[i].event->radius;
                 if (DistVector(event_position, target_position) <= radius + 10.0f) {
-                    return event_data;
+                    return &event[i];
                 }
             }
         }
     }
     return NULL;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchDataSlotPos2__16CDungeonEventManFPf);
-#endif
 #ifdef NON_MATCHING
 void CDungeonEventMan::SetupEvent(CDungeonMap *map, int mode) {
     sceVu0FVECTOR local_origin = {0.0f, 0.0f, 0.0f, 0.0f};
