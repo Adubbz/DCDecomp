@@ -231,9 +231,8 @@ void SndSetSePanf(int se_no, float pan, int voice);
  * @mangled SndSePlay__Fiii
  * @address 0x15A6B0
  * @size 0xA4
- * @unknownret
  */
-int SndSePlay(int se_no, int voice, int pan);
+void SndSePlay(int se_no, int vol, int voice);
 
 /**
  * Plays a positional sound effect with distance attenuation.
