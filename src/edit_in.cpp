@@ -400,8 +400,11 @@ static void CommandPEOPLE(void **) {
  * @size 0x60
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandCD__FPPv__2);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1627__2);
+static void CommandCD(void **arguments) {
+    GetEditDataDir(CurrentDir);
+    strcat(CurrentDir, "in/");
+    strcat(CurrentDir, (char *) arguments[0]);
+}
 /**
  * Accepts the object-animation command and does nothing with it.
  *
