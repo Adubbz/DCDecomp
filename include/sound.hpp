@@ -7,9 +7,19 @@
  *          played and faded through.
  */
 struct MIDI_SEQUENCE {
-    u8 unk_00[12];
-    s32 volume; /**< Volume the sequence plays at, out of 256. */
+    char name[12]; /**< File name of the sequence, without its extension. */
+    s32 volume;    /**< Volume the sequence plays at, out of 256. */
 };
+
+/**
+ *          The sequence description table and how many entries it holds.
+ */
+struct SQ_INF_TABLE {
+    MIDI_SEQUENCE sequence[400]; /**< Each sequence's description. */
+    s32 count;                   /**< Number of entries read. */
+};
+
+STATIC_ASSERT(sizeof(SQ_INF_TABLE) == 0x1904);
 
 /**
  *          One volume fade the sequencer advances once a frame.
@@ -149,7 +159,7 @@ public:
      * @address 0x1440D0
      * @size 0x9B8
      */
-    void LoadSoundFileFromPack(char *, unsigned int *);
+    int LoadSoundFileFromPack(char *, unsigned int *);
 
     /**
      * Reads the sequence description table.

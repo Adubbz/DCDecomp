@@ -175,7 +175,7 @@ carve_part(main.rdata.part3.s
 carve_part(main.sdata.part1.s
            main.sdata.part1.s=2A1E88-2A1E8C)
 carve_part(main.sdata.part2.s
-           main.sdata.part2.s=2A1EA0-2A1EC0)
+           main.sdata.sound-tail.s=2A1EB8-2A1EC0)
 carve_part(main.sdata.part2b.s
            main.sdata.part2b.s=2A1ED0-2A1ED8
            main.sdata.snd-tail.s=2A1EF0-2A1F14
@@ -195,7 +195,6 @@ carve_part(main.bss.part3.s
            main.bss.part3.s=1C7A6B8-1C7A6C0)
 # gameutil.cpp's own run stands in the middle of this one.
 carve_part(main.bss.part4.s
-           main.bss.part4.s=1CE7570-1CECE80
            main.bss.part4d.s=1CECF00-1CF8F40)
 # edit.cpp's own runs stand in the middle of these two, and editloop3.cpp owns
 # EdExchangeInfo inside the second.

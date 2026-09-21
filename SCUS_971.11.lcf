@@ -625,7 +625,8 @@ SECTIONS
 		mainselect.cpp.o (.sdata)      // 0x002a1e8c
 		main.cpp.o (.sdata)            // 0x002a1e90
 		main.cpp.o (.gamemodesdata)    // 0x002a1e98
-		main.sdata.part2.s.o (.sdata)  // 0x002a1ea0
+		sound.cpp.o (.sdata)           // 0x002a1ea0
+		main.sdata.sound-tail.s.o (.sdata) // 0x002a1eb8
 		clsmes.cpp.o (.sdata)          // 0x002a1ec0
 		main.sdata.part2b.s.o (.sdata) // 0x002a1ed0
 		snd.cpp.o (.sdata)             // 0x002a1ed8
@@ -764,7 +765,7 @@ SECTIONS
 		mainselect.cpp.o (.bss)
 		gamepad.cpp.o (.bss)
 		main.cpp.o (.bss)
-		main.bss.part4.s.o (.bss)      // 0x01ce7570
+		sound.cpp.o (.bss)             // 0x01ce7570
 		gameutil.cpp.o (.bss)          // 0x01cece80
 		main.bss.part4d.s.o (.bss)     // 0x01cecf00
 		clsmes.cpp.o (.bss)

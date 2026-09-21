@@ -6,29 +6,35 @@
 #include <sifrpc.h>
 
 #include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
+#include "dataread.hpp"
 #include "gameutil.hpp"
 
-/** The MIDI player's state, one record per bank slot. */
-extern MIDI_STATE midi_state;
-
-/** The bank a load is handing to the MIDI player. */
-extern MIDI_BANK gBank;
-
-/** The sound-effect description table. */
-extern SE_INF_TABLE se_inf_tbl;
-
 /** The context of the MIDI stream input module. */
-extern sceCslCtx msinCtx;
-
-/** The stream input module's message buffers, one per effect port. */
-extern MSIN_BUFFER msinBf[6];
+static sceCslCtx msinCtx;
 
 /** The stream input module's two buffer groups, input first. */
-extern sceCslBuffGrp msinBfGrp[2];
+static sceCslBuffGrp msinBfGrp[2];
 
 /** The stream input module's input buffers, one per effect port. */
-extern sceCslBuffCtx msinBfCtx[6];
+static sceCslBuffCtx msinBfCtx[6];
+
+/** The stream input module's message buffers, one per effect port. */
+static MSIN_BUFFER msinBf[6] __attribute__((aligned(64)));
+
+/** The bank a load is handing to the MIDI player. */
+static MIDI_BANK gBank;
+
+/** The MIDI player's state, one record per bank slot. */
+static MIDI_STATE midi_state;
+
+/** The sequence description table. */
+static SQ_INF_TABLE sq_inf_tbl;
+
+/** The sound-effect description table. */
+static SE_INF_TABLE se_inf_tbl;
 
 /** IOP address the message buffers are copied to, or zero before the first start. */
 static int iopMSINBuffAddr;
@@ -165,24 +171,170 @@ int TransHdBd(int hd, int hd_size, int bd, int bd_size) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/sound", LoadSoundFileFromPack__6CSoundFPcPUi);
-INCLUDE_RODATA("asm/nonmatchings/sound", @460);
-INCLUDE_RODATA("asm/nonmatchings/sound", @461);
-INCLUDE_RODATA("asm/nonmatchings/sound", @462);
-INCLUDE_RODATA("asm/nonmatchings/sound", @463);
-INCLUDE_RODATA("asm/nonmatchings/sound", @464__2);
-INCLUDE_RODATA("asm/nonmatchings/sound", @465);
-INCLUDE_RODATA("asm/nonmatchings/sound", @466);
-INCLUDE_RODATA("asm/nonmatchings/sound", @467__2);
-INCLUDE_RODATA("asm/nonmatchings/sound", @468__2);
-INCLUDE_RODATA("asm/nonmatchings/sound", @469__2);
-INCLUDE_RODATA("asm/nonmatchings/sound", @470__2);
-INCLUDE_RODATA("asm/nonmatchings/sound", @471);
-INCLUDE_RODATA("asm/nonmatchings/sound", @472);
-INCLUDE_RODATA("asm/nonmatchings/sound", @473);
-INCLUDE_ASM("asm/nonmatchings/sound", LoadSqInf__6CSoundFPcPUi);
-INCLUDE_RODATA("asm/nonmatchings/sound", @546);
-INCLUDE_ASM("asm/nonmatchings/sound", LoadSeInf__6CSoundFPcPUi);
+int CSound::LoadSoundFileFromPack(char *name, unsigned int *pack) {
+    static char wk_name[20];
+    static char wk_name2[20];
+    int size;
+    int bd_size;
+    char delimiter[] = "\n";
+    char *token;
+    int hd;
+    int i;
+
+    printf("SND_INF= %s \n", name);
+    token = strtok((char *) GetPackFile(pack, name, &size), delimiter);
+    while (token != NULL) {
+        strncpy(wk_name, "                                  ", 9);
+        strncpy(wk_name2, "                                  ", 9);
+        strncpy(wk_name, token, 9);
+        if (strncmp(&wk_name[6], ".sq", 3) == 0) {
+            if (strncmp(&wk_name[5], "a", 1) == 0) {
+                LoadSeq_A((int) GetPackFile(pack, wk_name, &size), size);
+                for (i = 0; i < sq_inf_tbl.count; i++) {
+                    if (strncmp(wk_name, sq_inf_tbl.sequence[i].name, 9) == 0) {
+                        break;
+                    }
+                }
+                if (i < sq_inf_tbl.count) {
+                    midi_state.port[0].sequence[midi_state.port[0].sequence_count] =
+                        &sq_inf_tbl.sequence[i];
+                    midi_state.port[0].sequence_count++;
+                } else {
+                    printf("################SQ_TBL NOT FOUND NEME=%s ##################\n", wk_name);
+                }
+            }
+            if (strncmp(&wk_name[5], "e", 1) == 0) {
+                LoadSeq_E((int) GetPackFile(pack, wk_name, &size), size);
+                for (i = 0; i < sq_inf_tbl.count; i++) {
+                    if (strncmp(wk_name, sq_inf_tbl.sequence[i].name, 9) == 0) {
+                        break;
+                    }
+                }
+                if (i < sq_inf_tbl.count) {
+                    midi_state.port[2].sequence[midi_state.port[2].sequence_count] =
+                        &sq_inf_tbl.sequence[i];
+                    midi_state.port[2].sequence_count++;
+                } else {
+                    printf("################SQ_TBL NOT FOUND NEME=%s ##################\n", wk_name);
+                }
+            }
+            if (strncmp(&wk_name[5], "i", 1) == 0) {
+                LoadSeq_I((int) GetPackFile(pack, wk_name, &size), size);
+                for (i = 0; i < sq_inf_tbl.count; i++) {
+                    if (strncmp(wk_name, sq_inf_tbl.sequence[i].name, 9) == 0) {
+                        break;
+                    }
+                }
+                if (i < sq_inf_tbl.count) {
+                    midi_state.port[4].sequence[midi_state.port[4].sequence_count] =
+                        &sq_inf_tbl.sequence[i];
+                    midi_state.port[4].sequence_count++;
+                } else {
+                    printf("################SQ_TBL NOT FOUND NEME=%s ##################\n", wk_name);
+                }
+            }
+        }
+        if (strncmp(&wk_name[6], ".hd", 3) == 0) {
+            if (strncmp(&wk_name[5], "a", 1) == 0) {
+                strncpy(wk_name2, wk_name, 9);
+                strcpy(&wk_name2[7], "bd");
+                hd = (int) GetPackFile(pack, wk_name, &size);
+                LoadHdBd_A(hd, size, (int) GetPackFile(pack, wk_name2, &bd_size), bd_size);
+            }
+            if (strncmp(&wk_name[5], "c", 1) == 0) {
+                strcpy(wk_name2, wk_name);
+                strcpy(&wk_name2[7], "bd");
+                hd = (int) GetPackFile(pack, wk_name, &size);
+                LoadHdBd_C(hd, size, (int) GetPackFile(pack, wk_name2, &bd_size), bd_size);
+            }
+            if (strncmp(&wk_name[5], "e", 1) == 0) {
+                strncpy(wk_name2, wk_name, 9);
+                strcpy(&wk_name2[7], "bd");
+                hd = (int) GetPackFile(pack, wk_name, &size);
+                LoadHdBd_E(hd, size, (int) GetPackFile(pack, wk_name2, &bd_size), bd_size);
+            }
+            if (strncmp(&wk_name[5], "i", 1) == 0) {
+                strncpy(wk_name2, wk_name, 9);
+                strcpy(&wk_name2[7], "bd");
+                hd = (int) GetPackFile(pack, wk_name, &size);
+                LoadHdBd_I(hd, size, (int) GetPackFile(pack, wk_name2, &bd_size), bd_size);
+            }
+            if (strncmp(&wk_name[5], "g", 1) == 0) {
+                strncpy(wk_name2, wk_name, 9);
+                strcpy(&wk_name2[7], "bd");
+                hd = (int) GetPackFile(pack, wk_name, &size);
+                LoadHdBd_G(hd, size, (int) GetPackFile(pack, wk_name2, &bd_size), bd_size);
+            }
+            if (strncmp(&wk_name[5], "m", 1) == 0) {
+                strncpy(wk_name2, wk_name, 9);
+                strcpy(&wk_name2[7], "bd");
+                hd = (int) GetPackFile(pack, wk_name, &size);
+                LoadHdBd_M(hd, size, (int) GetPackFile(pack, wk_name2, &bd_size), bd_size);
+            }
+            if (strncmp(&wk_name[5], "q", 1) == 0) {
+                strncpy(wk_name2, wk_name, 9);
+                strcpy(&wk_name2[7], "bd");
+                hd = (int) GetPackFile(pack, wk_name, &size);
+                LoadHdBd_Q(hd, size, (int) GetPackFile(pack, wk_name2, &bd_size), bd_size);
+            }
+            if (strncmp(&wk_name[5], "s", 1) == 0) {
+                strncpy(wk_name2, wk_name, 9);
+                strcpy(&wk_name2[7], "bd");
+                hd = (int) GetPackFile(pack, wk_name, &size);
+                LoadHdBd_S(hd, size, (int) GetPackFile(pack, wk_name2, &bd_size), bd_size);
+            }
+        }
+        token = strtok(NULL, delimiter);
+    }
+    return 0;
+}
+
+int CSound::LoadSqInf(char *name, unsigned int *buffer) {
+    int size;
+    char number[4];
+    char *token;
+
+    LoadFile(name, buffer, &size);
+    *(char *) ((int) buffer + size) = 0;
+    char delimiter[] = " ;,\t\n\r";
+    strtok((char *) buffer, "\n\r");
+    token = strtok(NULL, delimiter);
+    while (token != NULL) {
+        strncpy(sq_inf_tbl.sequence[sq_inf_tbl.count].name, token, 9);
+        token = strtok(NULL, delimiter);
+        strcpy(number, token);
+        sq_inf_tbl.sequence[sq_inf_tbl.count].volume = atoi(number);
+        sq_inf_tbl.count++;
+        token = strtok(NULL, delimiter);
+    }
+    return size;
+}
+
+int CSound::LoadSeInf(char *name, unsigned int *buffer) {
+    int size;
+    char number[4];
+    char *token;
+
+    LoadFile(name, buffer, &size);
+    *(char *) ((int) buffer + size) = 0;
+    char delimiter[] = " ;,\t\n\r";
+    se_inf_tbl.count = 0;
+    strtok((char *) buffer, "\n\r");
+    token = strtok(NULL, delimiter);
+    while (token != NULL) {
+        strncpy(number, token, 4);
+        se_inf_tbl.entry[se_inf_tbl.count].bank = atoi(number);
+        token = strtok(NULL, delimiter);
+        strncpy(number, token, 4);
+        se_inf_tbl.entry[se_inf_tbl.count].program = atoi(number);
+        token = strtok(NULL, delimiter);
+        strncpy(number, token, 4);
+        se_inf_tbl.entry[se_inf_tbl.count].volume = atoi(number);
+        token = strtok(NULL, delimiter);
+        se_inf_tbl.count++;
+    }
+    return size;
+}
 
 int CSound::Init(int mode0, int mode1, int depth0, int depth1) {
     static int load_m_flg = (int) 0.0f;
