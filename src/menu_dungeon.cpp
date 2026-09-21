@@ -37,6 +37,9 @@ static int maxFloorTbl__4[7] = {15, 17, 18, 18, 15, 25, 100};
 /** Screen rectangle the menus draw full-screen pictures into. */
 extern CRect_i_ MenuDispRc;
 
+/** Texture block the battle menu's extra textures load into. */
+extern int BtlMenuExReadBlock;
+
 /** Texture of the dungeon entrance board. */
 extern CTexture *DunLogBoard;
 
@@ -442,7 +445,11 @@ int GetDispVolumeForFloat(float volume) {
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", InitItemPolygonView__FiP1);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", EnterItemPolygonView__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", LocalDrawItemPolygonView__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawItemPolygonView__Fv);
+
+void DrawItemPolygonView(void) {
+    MenuTextureReload(BtlMenuExReadBlock);
+    MenuPolygonDraw(0x80, LocalDrawItemPolygonView);
+}
 
 static int ConvDebugSelectToExcelListNo(int selection) {
     int item_no;
