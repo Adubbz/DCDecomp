@@ -30,6 +30,9 @@
 /** Texture block the event item selection menu's textures load into. */
 extern s32 MiniEventTextureBlock;
 
+/** State of the event item selection menu. */
+extern MINI_MENU_INFO MiniMenu;
+
 /**
  * Closes the save screen's message window and restores the pad, and after a
  * load sets the stereo mode from the loaded configuration.

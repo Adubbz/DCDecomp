@@ -31,6 +31,28 @@ STATIC_ASSERT(sizeof(SAVE_MENU_STATE) == 0x34);
 extern SAVE_MENU_STATE SaveMenu;
 
 /**
+ * Holds the state of the event item selection menu.
+ */
+struct MINI_MENU_INFO {
+    s16 unk_0;
+    u8 unk_2[2];
+    s16 unk_4;
+    s16 unk_6;
+    s32 unk_8;
+    s32 unk_C[13];
+    s32 unk_40;
+    s8 unk_44;
+    s8 unk_45;
+    u8 unk_46[2];
+    s32 unk_48;
+    s16 unk_4C;
+    u8 unk_4E[2];
+    s32 unk_50;
+};
+
+STATIC_ASSERT(sizeof(MINI_MENU_INFO) == 0x54);
+
+/**
  * Checks the memory card before a save and picks the save menu's next step.
  *
  * @mangled SaveMenuKeySaveCheck__Fv
