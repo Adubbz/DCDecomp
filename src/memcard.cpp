@@ -1256,9 +1256,27 @@ void DrawMenuAtoraSelect() {
         EastKingEventDraw();
     }
 }
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1664);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtoraSelect__Fi);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTextureEnter__Fv);
+
+static int AtoraTextureEnter() {
+    LOADTEXTURE_INFO2 tex[3] = {{"#frame_image3#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+    BG_READ_INFO *bg;
+
+    tex[1].block_no = tex[0].block_no = AtoraTextureReadBlock;
+    bg = GetReadBGFile(0);
+    char name[16] = "a%d.img";
+    sprintf(name, name, MenuAtoraSel.map_no + 1);
+    tex[1].name = (char *) GetPackFile((u_int *) bg->buffer, name, NULL);
+    TexManager.DeleteTextureBlock(AtoraTextureReadBlock);
+    TexManager.LoadTextureBlockEX(-1, tex);
+    CompleteTex = TexManager.GetTexture("complete", -1);
+    Sozai = TexManager.GetTexture("sozai", AtoraTextureReadBlock);
+    HoleGray = TexManager.GetTexture("holegray", AtoraTextureReadBlock);
+    HoleGold = TexManager.GetTexture("holegold", AtoraTextureReadBlock);
+    ObTip = TexManager.GetTexture("obtip", AtoraTextureReadBlock);
+    ObPerson = TexManager.GetTexture("obperson", AtoraTextureReadBlock);
+    return 1;
+}
 
 static int GetTipKind(int tip_no) {
     if (tip_no < 0 || tip_no >= 100) {
