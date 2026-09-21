@@ -437,7 +437,14 @@ INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_STATUS_CHANGE__FP12RS_STA
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_TEX_ANIME_SW__FP12RS_STACKDATAi);
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1311);
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1312);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_STATUS_BIN2__FP12RS_STACKDATAi);
+int _GET_STATUS_BIN2(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+    int status = NowMonstorUnit->monster[monster_no].unk_010;
+
+    NowMonstorUnit->monster[monster_no].unk_010 = status;
+    SetStack(stack, status);
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_COLLISION_WIDTH__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_NEAR_MONSTER__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _BOSS_FADE_OUT__FP12RS_STACKDATAi);
