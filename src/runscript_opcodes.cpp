@@ -11,6 +11,11 @@
 #include "snd.hpp"
 
 /**
+ * Integers the monster scripts share, set and read by index.
+ */
+extern int GL_INT[10];
+
+/**
  * Reads one script argument as an integer, converting it where the slot holds a float.
  */
 static int GetStackInt(RS_STACKDATA *argument) {
@@ -409,7 +414,12 @@ int _SET_LOCKON_SW(RS_STACKDATA *stack, int argc) {
     return 1;
 }
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MONSTOR_MOTION__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_GLOBAL_INT__FP12RS_STACKDATAi);
+int _SET_GLOBAL_INT(RS_STACKDATA *stack, int argc) {
+    int index = GetStackInt(stack++);
+
+    GL_INT[index] = GetStackInt(stack);
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_GLOBAL_INT__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_OBJ_POS__FP12RS_STACKDATAi__2);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_ROTATION_X__FP12RS_STACKDATAi);
