@@ -366,7 +366,37 @@ static void ShopIconDraw(short *item_no, unsigned char *value, int count, int x,
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopLRDraw__Fi);
+/**
+ * Draws the left and right arrows of the recharge shop.
+ *
+ * @mangled ChargeShopLRDraw__Fi
+ * @address 0x1E7320
+ * @size 0x1AC
+ */
+static void ChargeShopLRDraw(int mode) {
+    int x = -1;
+    int gap = x;
+
+    switch (ShopMenu.unk_02) {
+        case 0:
+            x = 0x38;
+            gap = 0xD8;
+            break;
+        case 1:
+            x = 0x146;
+            gap = 0xE6;
+            break;
+    }
+    if (0 < x) {
+        CRect_i_ texel(0x62, 0x14, 0x1A, 0x18);
+        int y = 66.0f + 4.0f * sinf(3.1415927f * (CursorVibeCnt % 79 - 40) / 40.0f);
+
+        DrawMenu2DSprite(PerBoardTex, CRect_i_(x, y, texel.width, texel.height), texel, mode);
+        texel.x += texel.width;
+        DrawMenu2DSprite(PerBoardTex, CRect_i_(x + gap, y, texel.width, texel.height), texel, mode);
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", ShopCurDraw__Fiiiiiii);
 
 /**

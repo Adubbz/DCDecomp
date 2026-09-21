@@ -155,15 +155,6 @@ int CommonShopLoop(void);
 void ShopPolySetInit(int, int);
 
 /**
- * Draws the left and right arrows of the recharge shop.
- *
- * @mangled ChargeShopLRDraw__Fi
- * @address 0x1E7320
- * @size 0x1AC
- */
-void ChargeShopLRDraw(int);
-
-/**
  * Draws the shop cursor over the slot it stands on.
  *
  * @mangled ShopCurDraw__Fiiiiiii
