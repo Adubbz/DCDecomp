@@ -1875,7 +1875,89 @@ void MenuDataSwap(MAP_JUMP_COMPARE *first, MAP_JUMP_COMPARE *second) {
     memcpy(second, &temp, sizeof(MAP_JUMP_COMPARE));
 }
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", GetNearWorldPos__FiPi);
+int GetNearWorldPos(int direction, int *) {
+    if (direction == 0) {
+        return -1;
+    }
+    int up;
+    int down;
+    int right;
+    int left;
+    WORLD_MAP_POS *from = &TownOrDngPos[MenuMove.unk_04];
+    float dx = 0.0f;
+    float dy = dx;
+    up = direction & 1;
+    if (up) {
+        dy -= 1.0f;
+    }
+    down = direction & 2;
+    if (down) {
+        dy += 1.0f;
+    }
+    right = direction & 8;
+    if (right) {
+        dx += 1.0f;
+    }
+    left = direction & 4;
+    if (left) {
+        dx -= 1.0f;
+    }
+    float length = sqrt(dx * dx + dy * dy);
+    if (length != 0.0f) {
+        dx /= length;
+    }
+    if (length != 0.0f) {
+        dy /= length;
+    }
+    MAP_JUMP_COMPARE places[16];
+    for (int i = 0; i < 16; i++) {
+        MAP_JUMP_COMPARE *place = &places[i];
+        place->index = i;
+        WORLD_MAP_POS *pos = &TownOrDngPos[i];
+        if (pos->unk_06 <= 0 || i == MenuMove.unk_04) {
+            place->reachable = 0;
+        } else {
+            place->reachable = 1;
+        }
+        place->dx = pos->x - from->x;
+        place->dy = pos->y - from->y;
+        place->distance_sq = place->dx * place->dx + place->dy * place->dy;
+        float distance = sqrt(place->distance_sq);
+        float nx = place->dx;
+        float ny = place->dy;
+        if (distance != 0.0f) {
+            nx /= distance;
+            ny /= distance;
+        }
+        place->distance = nx * dx + ny * dy;
+    }
+    for (int i = 0; i < 16;) {
+        int swapped = 0;
+        MAP_JUMP_COMPARE *place = &places[i];
+        for (int j = i + 1; j < 16; j++) {
+            MAP_JUMP_COMPARE *other = &places[j];
+            if (place->distance < other->distance) {
+                MenuDataSwap(place, other);
+                swapped = 1;
+                break;
+            }
+        }
+        if (!swapped) {
+            i++;
+        }
+    }
+    int nearest = -1;
+    int nearest_sq = 600000;
+    for (int i = 0; i < 16; i++) {
+        MAP_JUMP_COMPARE *place = &places[i];
+        if (place->reachable > 0 && (!up || place->dy < 0) && (!down || place->dy > 0) && (!right || place->dx > 0) &&
+            (!left || place->dx < 0) && place->distance_sq < nearest_sq) {
+            nearest = place->index;
+            nearest_sq = place->distance_sq;
+        }
+    }
+    return nearest;
+}
 
 /**
  * Moves the world-map cursor to the place nearest the direction pressed.
