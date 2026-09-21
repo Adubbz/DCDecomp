@@ -207,7 +207,17 @@ int _CHECK_EVENT_FLG(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_EVENT_FLG__FP12RS_STACKDATAi);
+int _SET_EVENT_FLG(RS_STACKDATA *stack, int count) {
+    int flag_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int value = GetStackInt__FP12RS_STACKDATA__2(stack);
+    CUserStatus *status = UserStatus;
+
+    if (flag_no >= 0 && flag_no < 50) {
+        status->event_flags[flag_no] = value;
+    }
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_OBJHDL__FP12RS_STACKDATAi);
 INCLUDE_RODATA("asm/nonmatchings/btsysscript", @700);
 INCLUDE_RODATA("asm/nonmatchings/btsysscript", @701);
