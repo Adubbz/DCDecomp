@@ -285,7 +285,7 @@ int GetWeaponMaxExp(WEAPON_HAVE *weapon);
  * @address 0x00232130
  * @size 0x8C
  */
-void GetNowItemNum(short item_no, ITEM_PACK *items);
+int GetNowItemNum(short item_no, ITEM_PACK *items);
 
 /**
  * Removes one used item from an item pack.

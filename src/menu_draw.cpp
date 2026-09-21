@@ -1006,7 +1006,23 @@ int GetWeaponMaxExp(WEAPON_HAVE *weapon) {
     return experience;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowItemNum__FsP9ITEM_PACK);
+int GetNowItemNum(short item_no, ITEM_PACK *items) {
+    int count = 0;
+    int i;
+    int j;
+
+    for (i = 0; i < items->num; i++) {
+        if (items->item[i] == item_no) {
+            count++;
+        }
+    }
+    for (j = 0; j < 3; j++) {
+        if (items->quick_item_slot[j] == item_no) {
+            count += items->quick_item_qty[j];
+        }
+    }
+    return count;
+}
 
 void DeleteItemAfterUseItem(short item_no, ITEM_PACK *items) {
     int deleted = 0;
