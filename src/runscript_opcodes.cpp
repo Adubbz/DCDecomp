@@ -588,7 +588,23 @@ int _SET_MONSTOR_POS(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->chara[monster_no][0].SetPosition(position);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MONSTOR_MOVE__FP12RS_STACKDATAi);
+int _SET_MONSTOR_MOVE(RS_STACKDATA *stack, int argc) {
+    int monster_no = GetStackInt(stack++);
+    float direction[4];
+    float position[4];
+
+    NowMonstorUnit->chara[monster_no][0].GetPosition(position);
+    direction[0] = GetStackFloat(stack++);
+    direction[1] = GetStackFloat(stack++);
+    direction[2] = GetStackFloat(stack++);
+    direction[0] -= position[0];
+    direction[1] -= position[1];
+    direction[2] -= position[2];
+    direction[3] = 1.0f;
+    sceVu0Normalize(NowMonstorUnit->monster[monster_no].movement, direction);
+    NowMonstorUnit->monster[monster_no].movement_speed = GetStackFloat(stack);
+    return 1;
+}
 int _SET_MONSTOR_LINK_MOVE(RS_STACKDATA *stack, int argc) {
     int monster_no = GetStackInt(stack++);
     int leader_no = GetStackInt(stack);
