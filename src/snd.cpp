@@ -1835,7 +1835,35 @@ void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sourc
  * @address 0x15D9A0
  * @size 0x2FC
  */
-INCLUDE_ASM("asm/nonmatchings/snd", set3DSpriteFog__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiPiPiUc);
+void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left,
+                    int *top_right, int *bottom_left, int *bottom_right, unsigned char alpha) {
+    float q;
+
+    if (texture == 0) {
+        return;
+    }
+    q = 1.0f;
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, SCE_GS_SET_TEX1(1, 0, 1, 1, 0, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
+                     SCE_GS_SET_PRIM(4, 0, 1, 1, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, alpha, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(source.x << 4, source.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(top_left[0], top_left[1], top_left[2], top_left[3]));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((source.x + source.width) << 4, source.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(top_right[0], top_right[1], top_right[2], top_right[3]));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(source.x << 4, (source.y + source.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(bottom_left[0], bottom_left[1], bottom_left[2], bottom_left[3]));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((source.x + source.width) << 4, (source.y + source.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(bottom_right[0], bottom_right[1], bottom_right[2], bottom_right[3]));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
 /**
  * Draws a fogged sprite in world space between two projected corners.
  *

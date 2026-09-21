@@ -18,7 +18,7 @@ void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &so
 
 /** Draws a projected quadrilateral with per-corner depth and a uniform alpha. */
 void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source,
-                    int *top_left, int *top_right, int *bottom_right, int *bottom_left,
+                    int *top_left, int *top_right, int *bottom_left, int *bottom_right,
                     unsigned char alpha);
 
 /**
