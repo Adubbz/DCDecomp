@@ -1961,7 +1961,66 @@ void set2DSpriteC4(sceVif1Packet *packet, const CRect_i_ &screen, spRGBA *top_le
     sceVif1PkCloseDirectCode(packet);
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_iif);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
+                 const CRect_i_ &texel, int pivot_x, int pivot_y, float angle) {
+    float x[4];
+    float y[4];
+    sceGsTest test;
+    sceGsZbuf zbuf;
+    float q;
+    int i;
+
+    if (texture == 0) {
+        return;
+    }
+    q = 1.0f;
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, ((u_long) linear__2 << 5) | 0x41);
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(4, 0, 1, 0, 1, 1, 1, 0, 0));
+    test = mgPixelTest;
+    test.bits.ate = 0;
+    test.bits.aref = 0;
+    test.bits.atst = SCE_GS_ALWAYS;
+    test.bits.zte = 1;
+    test.bits.ztst = SCE_GS_ALWAYS;
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &test);
+    zbuf = mgZBuffer;
+    zbuf.bits.zmsk = 1;
+
+    x[0] = x[2] = -pivot_x;
+    x[1] = x[3] = (screen.x + screen.width + 1) - (screen.x + pivot_x);
+    y[0] = y[1] = -pivot_y;
+    y[2] = y[3] = (screen.y + screen.height + 1) - (screen.y + pivot_y);
+    for (i = 0; i < 4; i++) {
+        float turned_x = y[i] * cosf(angle) + x[i] * sinf(angle);
+        float turned_y = x[i] * cosf(angle) - y[i] * sinf(angle);
+
+        x[i] = (((int) turned_x + screen.x) << 4) + 27648;
+        y[i] = (((int) turned_y + screen.y) << 3) + 30976;
+    }
+
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, 0x80, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[0], y[0], 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV,
+                     SCE_GS_SET_UV((texel.x + screen.width) << 4, texel.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[1], y[1], 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV,
+                     SCE_GS_SET_UV(texel.x << 4, (texel.y + texel.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[2], y[2], 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV,
+                     SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[3], y[3], 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSpriteRot__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_iifUcUcUcUc);
 /**
  * Draws a textured sprite in screen space.
