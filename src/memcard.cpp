@@ -10,6 +10,7 @@
 #include "editatra.hpp"
 #include "editpartsinfo.hpp"
 #include "gamepad.hpp"
+#include "mainselect.hpp"
 #include "memorycardaccess.hpp"
 #include "menu_draw.hpp"
 #include "menu_save.hpp"
@@ -1496,5 +1497,13 @@ static int SaveMenuKeyCheckMc() {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyLoadConfig__Fv);
+static int SaveMenuKeyLoadConfig() {
+    McAccess.SetFuncNo(4);
+    SaveMenu.key_no = 7;
+    if (*(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->reserved_36[2] != 0) {
+        GameClearFlag = 1;
+    }
+    SaveMenu.file_no = ((s32 *) SaveData->GetConfigData())[17];
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyFileSelect__Fv);
