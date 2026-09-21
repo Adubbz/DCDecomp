@@ -726,15 +726,11 @@ int SndGetPanf(float pan) {
     return (int) (63.0f * pan) + 64;
 }
 
-#ifdef NON_MATCHING
 void SndSetSeVolf(int se_no, float vol, int voice) {
     if (GetSeInfo(se_no) != 0) {
         SndSetSeVol(se_no, SndGetVolf(se_no, vol), voice);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetSeVolf__Fifi);
-#endif
 #ifdef NON_MATCHING
 void SndSetSePanf(int se_no, float pan, int voice) {
     SND_SE_INFO *info = GetSeInfo(se_no);
