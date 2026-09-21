@@ -225,7 +225,8 @@
       "CommandAMBIENT__FPPv__2",
       "CommandFOG__FPPv__2",
       "CommandBG_COL__FPPv__2",
-      "LoadInfo__FPci"
+      "LoadInfo__FPci",
+      "CommandPROJECTION__FPPv"
     ],
     "rodata_exports": [
       "@1592",

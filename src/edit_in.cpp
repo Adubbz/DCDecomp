@@ -379,7 +379,9 @@ static void CommandBG_COL(void **arguments) {
  * @address 0x19FEA0
  * @size 0x18
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandPROJECTION__FPPv);
+static void CommandPROJECTION(void **arguments) {
+    EdInInfo->projection = *(float *) arguments[0];
+}
 /**
  * Accepts the villager command and does nothing with it.
  *
