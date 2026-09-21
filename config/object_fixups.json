@@ -231,7 +231,9 @@
       "Chara": "Chara__2",
       "LoadScript__Fv": "LoadScript__Fv__2",
       "RunEvent__FiP7CCamera": "RunEvent__FiP7CCamera__2",
+      "RunSystemEvent__FiP7CCamera": "RunSystemEvent__FiP7CCamera__2",
       "start_event_no": "start_event_no__2",
+      "start_system_event": "start_system_event__2",
       "EventCamera": "EventCamera__2"
     },
     "globalize_symbols": [
@@ -253,6 +255,7 @@
       "VillagerCollision__Fv__2",
       "LoadScript__Fv__2",
       "RunEvent__FiP7CCamera__2",
+      "RunSystemEvent__FiP7CCamera__2",
       "setTexAnim__Fv"
     ],
     "rodata_exports": [

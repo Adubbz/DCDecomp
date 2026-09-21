@@ -259,7 +259,21 @@ static void RunEvent(int event_no, CCamera *camera) {
  * @size 0xA0
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", RunSystemEvent__FiP7CCamera__2);
+static void RunSystemEvent(int event_no, CCamera *camera) {
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR reference;
+
+    if (start_system_event <= 0) {
+        if (camera != NULL) {
+            camera->GetPos(position);
+            camera->GetRef(reference);
+            EventCamera.SetPos(position);
+            EventCamera.SetRef(reference);
+            EventCamera.FollowOff();
+        }
+        start_system_event = event_no;
+    }
+}
 /**
  * Divides the read buffer into the interior's work, NPC and menu arenas.
  *
