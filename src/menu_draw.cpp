@@ -42,6 +42,12 @@ extern CRect_i_ MenuDispRc;
 
 /** Item kind the item board sort places first. */
 extern int sort_top_type__2;
+/** Icon sheet of the consumable items. */
+extern CTexture *ItemIcon;
+
+/** Icon sheet of the weapons. */
+extern CTexture *WepIcon;
+
 /** Texture of the personal inventory board. */
 extern CTexture *PerBoardTex;
 
@@ -343,7 +349,31 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawIconParts__Fiiiiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawAttachNumberOrWeapon__Fiiiiiiii);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @852__4);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", FadeTexX__FiiiiPci);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", RetCTex__FsRiRi);
+
+CTexture *RetCTex(short item_no, int &u, int &v) {
+    CTexture *texture;
+    COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
+
+    if (info == NULL) {
+        return NULL;
+    }
+    int icon = info->icon_index;
+    if (icon < 0) {
+        return NULL;
+    }
+    u = ((icon + 8) % 8) << 5;
+    v = (icon >> 3) << 5;
+    switch (info->kind) {
+        case 1:
+            texture = ItemIcon;
+            break;
+        case 0:
+        case 2:
+            texture = WepIcon;
+            break;
+    }
+    return texture;
+}
 
 void MenuTextureClip(int &position, int &source, int &length, int minimum, int maximum) {
     if (position < minimum && position + length > minimum) {
