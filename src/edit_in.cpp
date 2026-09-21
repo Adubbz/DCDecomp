@@ -8,6 +8,7 @@
 
 #include "boxvu0.hpp"
 #include "camera.hpp"
+#include "camerafollow.hpp"
 #include "character.hpp"
 #include "collision.hpp"
 #include "dataalloc.hpp"
@@ -234,7 +235,22 @@ static void LoadScript() {
  * @size 0xB4
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", RunEvent__FiP7CCamera__2);
+static void RunEvent(int event_no, CCamera *camera) {
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR reference;
+
+    if (start_event_no <= 0) {
+        if (camera != NULL) {
+            camera->GetPos(position);
+            camera->GetRef(reference);
+            EventCamera.SetPos(position);
+            EventCamera.SetRef(reference);
+            EventCamera.FollowOff();
+            EventCamera.SetRoll(0.0f);
+        }
+        start_event_no = event_no;
+    }
+}
 /**
  * Starts an interior system event, handing it the camera it is to play through.
  *
