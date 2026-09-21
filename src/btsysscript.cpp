@@ -691,14 +691,11 @@ int _CHECK_MARDAN(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-#ifdef NON_MATCHING
 int _NO_RESET_CHARA_NO(RS_STACKDATA *stack, int count) {
-    *(s32 *) BtEventInfo.unk_B0 = 1;
+    BtEventInfo.unk_B0 = 1;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _NO_RESET_CHARA_NO__FP12RS_STACKDATAi);
-#endif
+
 int _CHECK_CHR_HELP(RS_STACKDATA *stack, int count) {
     SetStack__FP12RS_STACKDATAi__2(stack, BtEventInfo.unk_B4);
     return 1;
