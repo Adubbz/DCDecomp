@@ -716,7 +716,10 @@ int GetMenuAtraEventFlag() {
     return MenuAtoraSel.event_flag;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memcard", SetMenuAtraEventFlag__Fi);
+static void SetMenuAtraEventFlag(int flag) {
+    MenuAtoraSel.event_flag = flag;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuAtoraAfterFadeIn__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", InitMenuAtora1__FiiPiP1);
 INCLUDE_ASM("asm/nonmatchings/memcard", InitMenuAtoraSelect__Fi);
