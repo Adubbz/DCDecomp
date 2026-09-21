@@ -107,7 +107,49 @@ int CEditGround::SetRiverParts(float x, float y, float z, int column_step, int r
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/editground", SetRoadParts__11CEditGroundFfffii);
+int CEditGround::SetRoadParts(float x, float y, float z, int column_step, int row_step) {
+    CVector3_i_ cell;
+
+    int area_no = GetAreaCode(x, y, z);
+    if (area_no < 0) {
+        return 0;
+    }
+    CEditArea *area = areas[area_no];
+    area->GetPos(&cell, x, y, z);
+    cell.x += column_step;
+    cell.z += row_step;
+    int parts_id = area->GetPartsID(cell.x, cell.z);
+    if (parts_id < 0) {
+        return 0;
+    }
+    CMapParts *object = &parts[parts_id];
+    if (object->unk_118 != 1 || road_parts == NULL) {
+        return 0;
+    }
+    int code = area->SetRoadParts(cell.x, cell.z);
+    if (code < 0) {
+        return 0;
+    }
+    int piece = (code & 0xFF0) >> 4;
+    int rot_y = code & 0xF;
+    if (piece - 1 < 0 || piece - 1 >= 6) {
+        return 0;
+    }
+    if (rot_y >= 3) {
+        rot_y = -1;
+    }
+    for (int i = 0; i < 4; i++) {
+        CMapParts *road = &road_parts[(u32) (piece - 1)];
+        CFrameVu1 *frame = road->frame[i];
+        object->SetFrame(frame, i);
+    }
+    object->collision_frame = road_parts[(u32) (piece - 1)].GetCollisionFrame();
+    object->SetRotY(rot_y);
+    object->unk_0E8 = road_parts[(u32) (piece - 1)].unk_0E8;
+    object->unk_118 = road_parts[(u32) (piece - 1)].unk_118;
+    object->bound = road_parts[(u32) (piece - 1)].bound;
+    return 1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/editground", DeleteMapParts__11CEditGroundFPiPifff);
 
