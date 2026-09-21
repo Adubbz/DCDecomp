@@ -23,7 +23,7 @@ extern s16 ItemShopList2[18][20];
  * The record behind one shop slot, read according to the kind of item in it.
  */
 union SHOP_ITEM_RECORD {
-    s32 volume;         /**< A dungeon item's volume. */
+    s16 volume;         /**< A dungeon item's volume. */
     WEAPON_HAVE weapon; /**< A weapon's record. */
     ATTACH_LIST attach; /**< An attachment's record. */
     s16 param[0x7C];    /**< The record read as halfwords; items 0x5B to 0x5E each set one of an attachment's stats. */
@@ -98,7 +98,7 @@ public:
     float pos_y; /**< Current vertical screen position of the flying icon. */
     s16 item_no; /**< The item, weapon or attachment identifier the icon is carrying. */
     u8 unk_12[2];
-    u8 data[0xF8]; /**< A copy of the item, weapon or attachment record, sized for the largest (WEAPON_HAVE). */
+    SHOP_ITEM_RECORD data; /**< A copy of the item, weapon or attachment record. */
 
     /**
      * Aims a shop icon at the slot it is to fly to.

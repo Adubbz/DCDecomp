@@ -242,7 +242,7 @@ void ShopIconMove::IconMoveTarSet(int slot_no, int icon_no, int item_no, MENU_IT
     this->item_no = item_no;
     this->slot_no = slot_no;
     this->icon_no = icon_no;
-    memcpy(this->data, item_data, sizeof(this->data));
+    memcpy(&this->data, item_data, sizeof(this->data));
     this->pos_x = start_x;
     this->pos_y = start_y;
 }
@@ -464,7 +464,7 @@ static void ShopMenuInit(int *tex_block, int shop_no, int mode) {
     ShopDataMove.item_no = -1;
     ShopDataMove.pos_y = 0.0f;
     ShopDataMove.pos_x = 0.0f;
-    memset(ShopDataMove.data, 0, sizeof(ShopDataMove.data));
+    memset(&ShopDataMove.data, 0, sizeof(ShopDataMove.data));
     SetMenuTrushMark((ITEM_PACK *) ShopUserItemPack(ShopUserStatusPt));
     GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
     GamePad.MenuModeOn(0x78);
