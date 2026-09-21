@@ -245,7 +245,6 @@ int CMemoryCardAccess::GetDir() {
     return 0;
 }
 
-
 int CMemoryCardAccess::LoadSysConfig() {
     int port;
     int cmd;
@@ -312,8 +311,83 @@ int CMemoryCardAccess::LoadSysConfig() {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SaveSysConfig__17CMemoryCardAccessFv);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @641__3);
+int CMemoryCardAccess::SaveSysConfig() {
+    int port;
+    int i;
+    int cmd;
+    int result;
+
+    port = this->port;
+    switch (this->step) {
+        case 0:
+            if (sceMcOpen(port, 1, this->dir_name, 2) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 1:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 2 || (cmd == 2 && result < 0)) {
+                return -1;
+            }
+            this->fd = result;
+            this->fd = result;
+            this->transferred = 0;
+            this->transfer_size = 0x40;
+            for (i = 0; i < 18; i++) {
+                printf("config%d = %d\n", i, sys_config.values[i]);
+            }
+            if (sceMcWrite(this->fd, &sys_config, this->transfer_size) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 2:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 6 || (cmd == 6 && result < 0)) {
+                return -1;
+            }
+            this->transferred += result;
+            if (this->transferred < this->transfer_size) {
+                break;
+            }
+            if (sceMcFlush(this->fd) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 3:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 0xA || (cmd == 0xA && result < 0)) {
+                return -1;
+            }
+            if (sceMcClose(this->fd) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 4:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 3 || (cmd == 3 && result < 0)) {
+                return -1;
+            }
+            return 1;
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", Write__17CMemoryCardAccessFv);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @643__3);
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", Convert__17CMemoryCardAccessFv);
