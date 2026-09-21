@@ -146,16 +146,12 @@ int _GET_MOTION_FRM(RS_STACKDATA *stack, int argc) {
     SetStack(stack, NowMonstorUnit->chara[monster_no][0].motion_type.state.time);
     return 1;
 }
-#ifdef NON_MATCHING
 int _SET_MOTION_FRM(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
 
     NowMonstorUnit->chara[monster_no][0].motion_type.state.time = GetStackFloat(stack);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MOTION_FRM__FP12RS_STACKDATAi);
-#endif
 #ifdef NON_MATCHING
 int _GET_DISTANCE(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
