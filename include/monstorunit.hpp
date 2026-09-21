@@ -175,7 +175,7 @@ struct MONSTOR_EFFECT_STATE {
     float motion_start[16];     /**< Motion frame each sphere starts taking hits on; 0 for always. */
     float motion_end[16];       /**< Motion frame each sphere stops taking hits on. */
     s32 timer[16];              /**< Nonzero while each sphere is in use. */
-    u8 unk_240[0x140];
+    s32 unk_240[16][5];
     s32 parameter[16][6]; /**< Percentage of damage each sphere takes from each attacker. */
     s32 hit_slot;         /**< Sphere the last hit landed on. */
     s32 hit_attributes;   /**< Weapon flags of the last hit. */
