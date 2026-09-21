@@ -39,13 +39,9 @@ INCLUDE_RODATA("asm/nonmatchings/menu_draw", @556);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @557);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @558);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @559);
-#ifdef NON_MATCHING
 char *GetMenuTextureDir(void) {
     return AllMenuTextureDir;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuTextureDir__Fv);
-#endif
 
 #ifdef NON_MATCHING
 int GetMenuLangFlag(void) {
