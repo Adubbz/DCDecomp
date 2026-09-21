@@ -287,8 +287,14 @@ void AllFadeForMenu(int alpha) {
 }
 INCLUDE_ASM("asm/nonmatchings/menu_draw", FrameImageDraw__Fii);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @764__3);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenuColorGradation__FR8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBA);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenuSideGradation__FR8CRect_i_P6spRGBAP6spRGBA);
+
+void DrawMenuColorGradation(CRect_i_ &rect, spRGBA *top_left, spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right) {
+    set2DSpriteC4(GetVif1Packet(), rect, top_left, top_right, bottom_left, bottom_right);
+}
+
+void DrawMenuSideGradation(CRect_i_ &rect, spRGBA *left, spRGBA *right) {
+    set2DSpriteC4(GetVif1Packet(), rect, left, right, left, right);
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawDontSetItemMark__Fiiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawIconParts__Fiiiiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawAttachNumberOrWeapon__Fiiiiiiii);
