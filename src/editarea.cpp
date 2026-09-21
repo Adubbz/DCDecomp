@@ -197,7 +197,6 @@ int CEditArea::GetPartsExtra(int x, int y) {
     return grid[x][y].parts_extra;
 }
 INCLUDE_ASM("asm/nonmatchings/editarea", SetMapParts__9CEditAreaFiP9CMapPartsfffi);
-#ifdef NON_MATCHING
 int CEditArea::DeleteMapParts(int parts_no, CMapParts *parts, float x, float y, float z) {
     CVector3_i_ position;
     GetPos(&position, x, y, z);
@@ -209,9 +208,11 @@ int CEditArea::DeleteMapParts(int parts_no, CMapParts *parts, float x, float y, 
     int height = target->GetHeight();
     for (int i = 0; i < width; i++) {
         for (int j = 0; j < height; j++) {
-            int cell_x = i + (position.x - (width >> 1));
-            int cell_y = j + (position.z - (height >> 1));
-            int info = target->GetInfoData(i, j);
+            int half_width = width >> 1;
+            int cell_x = i + (position.x - half_width);
+            int half_height = height >> 1;
+            int cell_y = j + (position.z - half_height);
+            s16 info = target->GetInfoData(i, j);
             if (info != 0) {
                 if (info < 0x80) {
                     int occupant = GetPartsID(cell_x, cell_y);
@@ -235,9 +236,6 @@ int CEditArea::DeleteMapParts(int parts_no, CMapParts *parts, float x, float y, 
     grid_redraw = 1;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editarea", DeleteMapParts__9CEditAreaFiP9CMapPartsfff);
-#endif
 
 int CEditArea::SetRiverParts(int x, int y) {
     int neighbors[4];
