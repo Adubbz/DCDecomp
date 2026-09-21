@@ -323,32 +323,30 @@ static void DrawBtlMenuBar() {
     }
 }
 
-#ifdef NON_MATCHING
 int GetLimmitMsg(void) {
+    int message;
+
     switch (BtlMenuStatusPt->res_limit_zone_current) {
         case -1:
-            return -1;
+            message = -1;
+            break;
+        case 10:
+            message = 0x19E;
+            break;
+        case 11:
+            message = 0x19F;
+            break;
         case 0:
         case 1:
         case 2:
         case 3:
         case 4:
         case 5:
-            return 0x1A0;
-        case 6:
-        case 7:
-        case 8:
-        case 9:
+            message = 0x1A0;
             break;
-        case 10:
-            return 0x19E;
-        case 11:
-            return 0x19F;
     }
+    return message;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", GetLimmitMsg__Fv);
-#endif
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBattleMain__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawOtherCharaStatus__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DngComStatus__Fiiii);
