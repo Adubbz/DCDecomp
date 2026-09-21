@@ -23,6 +23,7 @@
 #include "mainselect.hpp"
 #include "memcard.hpp"
 #include "memorycardaccess.hpp"
+#include "menu_dungeon.hpp"
 #include "menu_inventory.hpp"
 #include "menuitemstep.hpp"
 #include "mglib.hpp"
@@ -450,8 +451,28 @@ MENU_ICON_INFO *GetMenuIconInfo(int icon) {
 }
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMainMenuIcon__Fiiiiii);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @981);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenuVibeItem__Fiiiii);
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @994__2);
+
+void DrawMenuVibeItem(int x, int y, int offset_x, int offset_y, int) {
+    int item_x = x + offset_x;
+    int item_y = y + offset_y;
+    s16 item_no = PerBoardPt->unk_40;
+    CRect_i_ shadow(0x80, 0x28, 0x20, 0x20);
+    int u;
+    int v;
+    CTexture *texture = RetCTex(item_no, u, v);
+
+    if (texture != NULL) {
+        DrawObjectVibe(x + 4, y + 2, TexManager.GetTexture("StayTex", -1), shadow, 0, 0x50);
+        CRect_i_ source(u, v, 0x20, 0x20);
+        DrawObjectVibe(item_x + 4, item_y + 2, texture, source, 0, 0x50);
+        DrawObjectVibe(item_x, item_y, texture, source, 0x80, 0x80);
+        int number = GetAttachVolumeForMsg(&PerBoardPt->unk_13C);
+        if (item_no == 0x5A) {
+            number = PerBoardPt->unk_13C.unk_02;
+        }
+        DrawAttachNumberOrWeapon(item_x, item_y, 0, 0x280, item_no, number, 0x80, 1);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMainMenuRightHelpWinLangOffset__FRfRfRfRf);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMainMenuRightHelpMsgLangOffset__FRiRi);
 
