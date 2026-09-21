@@ -510,8 +510,8 @@ INCLUDE_ASM("asm/nonmatchings/memcard", MenuHelpWinDraw2__FiiffiiiP8CTexture);
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuHelpWinDraw__Fiiffi);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuWaku__FffiiiP8CTexturei);
 
-int DrawMenuNumber(int x, int y, int number, CTexture *texture, RECT rect, int overlap, int flag) {
-    return DrawMenuNumber(x, y, number, rect, texture, overlap, 0, 0x1C0, flag);
+int DrawMenuNumber(int number, int x, int y, CTexture *texture, RECT rect, int overlap, int flag) {
+    return DrawMenuNumber(number, x, y, rect, texture, overlap, 0, 0x1C0, flag);
 }
 
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuNumber__Fiii4RECTP8CTextureiUcUcUci);
