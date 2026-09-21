@@ -42,6 +42,18 @@ static inline CFrame *GetRippleFrame(CMapParts *parts) {
     return parts->unk_104;
 }
 
+/**
+ * Puts a map part's camera collision frame where the part is and gives it back.
+ */
+static inline CFrame *GetCameraFrame(CMapParts *parts) {
+    if (parts->unk_0DC == NULL) {
+        return NULL;
+    }
+    parts->unk_0DC->SetPosition(parts->pos[0], parts->pos[1], parts->pos[2]);
+    parts->unk_0DC->SetRotation(parts->rotation.x, parts->rotation.y, parts->rotation.z);
+    return parts->unk_0DC;
+}
+
 int CEditGround::SetRiverParts(float x, float y, float z, int column_step, int row_step) {
     CVector3_i_ cell;
     CVector3_f_ position;
@@ -89,16 +101,7 @@ int CEditGround::SetRiverParts(float x, float y, float z, int column_step, int r
     object->collision_frame = river_parts[(u32) (piece - 1)].GetCollisionFrame();
     object->shadow_frame = GetShadowFrame(&river_parts[(u32) (piece - 1)]);
     object->shade_frame = GetShadeFrame(&river_parts[(u32) (piece - 1)]);
-    CMapParts *river = &river_parts[(u32) (piece - 1)];
-    CFrame *frame;
-    if (river->unk_0DC == NULL) {
-        frame = NULL;
-    } else {
-        river->unk_0DC->SetPosition(river->pos[0], river->pos[1], river->pos[2]);
-        river->unk_0DC->SetRotation(river->rotation.x, river->rotation.y, river->rotation.z);
-        frame = river->unk_0DC;
-    }
-    object->unk_0DC = frame;
+    object->unk_0DC = GetCameraFrame(&river_parts[(u32) (piece - 1)]);
     object->unk_104 = GetRippleFrame(&river_parts[(u32) (piece - 1)]);
     object->unk_0E8 = river_parts[(u32) (piece - 1)].unk_0E8;
     object->unk_118 = river_parts[(u32) (piece - 1)].unk_118;
