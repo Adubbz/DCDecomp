@@ -266,7 +266,44 @@ int _CHK_MOVE(RS_STACKDATA *stack, int argc) {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _CHK_USER_INNER_PRODUCT__FP12RS_STACKDATAi);
+
+int _CHK_USER_INNER_PRODUCT(RS_STACKDATA *stack, int argc) {
+    int result;
+    int monster_no = NowMonstorUnit->unk_090;
+    float limit;
+    float range;
+    float position[4];
+    float rotation[4];
+    float player[4];
+    float offset[4];
+
+    result = 0;
+    limit = 1.0f - 0.011111111f * GetStackInt(stack++);
+    range = 100000;
+    if (argc == 3) {
+        range = GetStackFloat(stack++);
+    }
+    sceVu0CopyVector(player, CharaMain.pos);
+    NowMonstorUnit->chara[monster_no][0].GetPosition(position);
+    NowMonstorUnit->chara[monster_no][0].GetRotation(rotation);
+    float direction[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+    float unit[4][4];
+    float matrix[4][4];
+
+    sceVu0UnitMatrix(unit);
+    sceVu0RotMatrixY(matrix, unit, rotation[1]);
+    sceVu0ApplyMatrix(direction, matrix, direction);
+    sceVu0Normalize(direction, direction);
+    offset[0] = position[0] - player[0];
+    offset[2] = position[2] - player[2];
+    offset[1] = 0.0f;
+    offset[3] = 1.0f;
+    sceVu0Normalize(offset, offset);
+    if (sceVu0InnerProduct(direction, offset) >= limit && DistVector(position, player) < range) {
+        result = 1;
+    }
+    SetStack(stack, result);
+}
 
 int _GET_VECTOR(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;

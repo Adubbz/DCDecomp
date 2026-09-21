@@ -495,7 +495,8 @@ SECTIONS
         main.data.part6.s.o (.data)
         weaponeffect.cpp.o (.data)   // 0x0027eb30
         monstorunit.cpp.o (.data)    // 0x0027eb50
-        main.data.part6f.s.o (.data) // 0x00291830
+        runscript_opcodes.cpp.o (.data) // 0x00291830
+        main.data.part6f.s.o (.data) // 0x00291840
         menu_dungeon.cpp.o (.data)   // 0x00294150
         . = ALIGN(0x10);
         main.data.part6g.s.o (.data) // 0x00294170
