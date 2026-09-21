@@ -6,16 +6,12 @@
 #include "menu_draw.hpp"
 #include "savedata.hpp"
 
-#ifdef NON_MATCHING
 void InitSaveFileInfoTbl() {
     for (int i = 0; i < MC_DIR_ENTRY_MAX; i++) {
         memset(&SaveFileInfo[i], 0, sizeof(SaveFileInfo[i]));
         SaveFileInfo[i].name[0] = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", InitSaveFileInfoTbl__Fv);
-#endif
 
 #ifdef NON_MATCHING
 int GetOpenAttribute(char *name) {
