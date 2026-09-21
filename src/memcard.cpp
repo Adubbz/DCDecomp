@@ -96,9 +96,6 @@ u_long128 *AtoraOffsetBuf;
 
 s32 CursorVibeCnt;
 
-/** The rank that the board's sort gives each chip group, by group. */
-extern int tip_table[3];
-
 /** The chip group that the board's sort ranks first. */
 extern int tip_sort_type;
 
@@ -1277,6 +1274,9 @@ static int AtoraTextureEnter() {
     ObPerson = TexManager.GetTexture("obperson", AtoraTextureReadBlock);
     return 1;
 }
+
+/** The rank that the board's sort gives each chip group, by group. */
+int tip_table[3] = {3, 1, 2};
 
 static int GetTipKind(int tip_no) {
     if (tip_no < 0 || tip_no >= 100) {
