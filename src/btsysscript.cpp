@@ -1,6 +1,7 @@
 #include "btsysscript.hpp"
 
 #include <cstdio>
+#include <cstring>
 
 #include "btitem.hpp"
 #include "btmisc.hpp"
@@ -35,6 +36,11 @@ extern int BtRubyDoorKey;
 /** Nonzero while the dungeon floor is drawn at all. */
 extern s32 BtAllDrawFlag;
 
+/** Layout of the map the next battle-map jump loads. */
+extern s32 BtLoadMapType;
+
+/** The dungeon floor that the player is on. */
+extern "C" CDungeonMap MainDungeonMap;
 
 /** The events of the floor the dungeon is drawing. */
 extern CDungeonEventMan *NowEventMan;
@@ -255,22 +261,14 @@ int _GO_DUNGEON(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-#ifdef NON_MATCHING
-#include <cstring>
-
-extern s32 BtLoadMapType;
-extern s32 BtLoadMapTypeMirror;
-
 int _SET_DUNGEON_MAP(RS_STACKDATA *stack, int count) {
-    char *map_file = GetStackString(stack);
-    BtLoadMapType = GetStackInt(&stack[1]);
+    char *map_file = GetStackString__FP12RS_STACKDATA__2(stack++);
+    BtLoadMapType = GetStackInt__FP12RS_STACKDATA__2(stack);
     strcpy(BtLoadMapFileName, map_file);
-    BtLoadMapTypeMirror = BtLoadMapType;
+    MainDungeonMap.unk_BDEC = BtLoadMapType;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_DUNGEON_MAP__FP12RS_STACKDATAi);
-#endif
+
 int _LOAD_DUNGEON_MAP2(RS_STACKDATA *stack, int argument_count) {
     CUserStatus *status = UserStatus;
     status->res_limit_zone_current = -1;
