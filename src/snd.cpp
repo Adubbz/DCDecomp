@@ -1224,7 +1224,12 @@ void SndAmbientSetVolf(float volume) {
         SndAmbientSetVol((int) ((float) level * volume));
     }
 }
-INCLUDE_ASM("asm/nonmatchings/snd", SndGetAmbientDefaultVol__Fv);
+int SndGetAmbientDefaultVol() {
+    if (CSnd.GetMidiState()->ambient_sequence[now_amb_no] != 0) {
+        return CSnd.GetMidiState()->ambient_sequence[now_amb_no]->volume;
+    }
+    return 64;
+}
 /**
  * Builds the archive and configuration file names of one voice set.
  *
