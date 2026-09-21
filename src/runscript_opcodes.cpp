@@ -869,7 +869,55 @@ int _SET_ROTATION_X(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->chara[monster_no][0].SetRotation(rotation);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _LOOKAT__FP12RS_STACKDATAi);
+int _LOOKAT(RS_STACKDATA *stack, int argc) {
+    int axis;
+    int monster_no = NowMonstorUnit->unk_090;
+    float position[4];
+    float rotation[4];
+    sceVu0FMATRIX matrix;
+    float direction[4];
+    float x_axis[4];
+    float y_axis[4];
+    float z_axis[4];
+
+    NowMonstorUnit->monster[monster_no].unk_070[0] = GetStackFloat(stack++);
+    NowMonstorUnit->monster[monster_no].unk_070[1] = GetStackFloat(stack++);
+    NowMonstorUnit->monster[monster_no].unk_070[2] = GetStackFloat(stack++);
+    axis = GetStackInt(stack);
+    sceVu0UnitMatrix(matrix);
+    NowMonstorUnit->chara[monster_no][0].GetPosition(position);
+    NowMonstorUnit->chara[monster_no][0].GetRotation(rotation);
+    sceVu0CopyMatrix(matrix, NowMonstorUnit->chara[monster_no][0].frame->local);
+    sceVu0SubVector(direction, NowMonstorUnit->monster[monster_no].unk_070, position);
+    if (axis == 0) {
+        sceVu0Normalize(x_axis, direction);
+        sceVu0OuterProduct(z_axis, x_axis, matrix[1]);
+        sceVu0OuterProduct(y_axis, x_axis, z_axis);
+        sceVu0CopyVector(matrix[0], x_axis);
+        sceVu0CopyVector(matrix[1], y_axis);
+        sceVu0CopyVector(matrix[2], z_axis);
+        NowMonstorUnit->chara[monster_no][0].frame->SetTransMatrix(matrix);
+    }
+    if (axis == 1) {
+        sceVu0Normalize(y_axis, direction);
+        sceVu0OuterProduct(x_axis, y_axis, matrix[2]);
+        sceVu0OuterProduct(z_axis, x_axis, z_axis);
+        sceVu0CopyVector(matrix[0], x_axis);
+        sceVu0CopyVector(matrix[1], y_axis);
+        sceVu0CopyVector(matrix[2], z_axis);
+        NowMonstorUnit->chara[monster_no][0].frame->SetTransMatrix(matrix);
+    }
+    if (axis == 2) {
+        sceVu0Normalize(z_axis, direction);
+        sceVu0OuterProduct(x_axis, z_axis, matrix[1]);
+        sceVu0OuterProduct(y_axis, x_axis, z_axis);
+        sceVu0CopyVector(matrix[0], x_axis);
+        sceVu0CopyVector(matrix[1], y_axis);
+        sceVu0CopyVector(matrix[2], z_axis);
+        NowMonstorUnit->chara[monster_no][0].frame->SetTransMatrix(matrix);
+    }
+    return 1;
+}
 int _SET_MOTION_CHANGE_STEP(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
     float step = GetStackFloat(stack);
