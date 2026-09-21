@@ -1152,7 +1152,12 @@ void SndAmbientPlay(int ambient_no) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientStop__Fv);
+void SndAmbientStop() {
+    if (now_amb_no >= 0 && now_amb_play != 0) {
+        CSnd.Stop(1);
+        now_amb_play = 0;
+    }
+}
 /**
  * Sets the ambient loop's volume.
  *
