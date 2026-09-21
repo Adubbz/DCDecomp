@@ -566,14 +566,18 @@ CFish *FishingGetBattleFish() {
     return BattleFish;
 }
 
-/**
- * Marks one fish as the one being landed.
- *
- * @mangled FishingAngleFish__Fi
- * @address 0x1A97B0
- * @size 0x80
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingAngleFish__Fi);
+void FishingAngleFish(int fish_no) {
+    AngleFish = NULL;
+    if (fish_no >= 0 && fish_no < 6) {
+        CFish *fish = &Fish[fish_no];
+        if (fish->action == FISH_ACTION_BITE_HOOK) {
+            AngleFish = fish;
+            fish->SetAngleMode();
+            fish = &Fish[fish_no];
+            fish->use_angle_model = 1;
+        }
+    }
+}
 
 /**
  * Gives the kind and size of the fish being landed.

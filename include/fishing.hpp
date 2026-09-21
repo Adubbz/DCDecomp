@@ -188,3 +188,12 @@ int FishingFishKind(int fish_no);
  * @size 0x88
  */
 void FishingBattleToAngleFish(u_int *pack, CDataAlloc2<1> *alloc);
+
+/**
+ * Makes a fish that has bitten the hook the one being landed.
+ *
+ * @mangled FishingAngleFish__Fi
+ * @address 0x1A97B0
+ * @size 0x80
+ */
+void FishingAngleFish(int fish_no);
