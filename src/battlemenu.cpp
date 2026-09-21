@@ -21,6 +21,8 @@
 #include "menu_misc.hpp"
 #include "menu_save.hpp"
 #include "monstorunit.hpp"
+#include "savedata.hpp"
+#include "shop.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
 #include "weapon_buildup.hpp"
@@ -225,6 +227,31 @@ extern CFrame *MapMoveCursor;
  * Runs the weapon menu's repair, level-up and build-up effects.
  */
 extern CWeaponLevelUp MenuWepLevelUp;
+
+/**
+ * Points to the item the weapon menu is holding.
+ */
+extern IHAVEITEM *BtlHaveItemPt;
+
+/**
+ * Points to the weapons of the party member the weapon menu shows.
+ */
+extern WEAPON_HAVE *DngWepHavePt;
+
+/**
+ * Buffer the battle menu reads its files into.
+ */
+extern u_long128 *BtlMenuReadBuf;
+
+/**
+ * Texture block the menu's pages read their extra textures into.
+ */
+extern s32 MenuExtendReadBlock;
+
+/**
+ * Language the battle menu's text is drawn in.
+ */
+extern s32 BtlMenuNowLang;
 
 int GetDefaultWeaponNo(int character_no) {
     return MenuDefaultWeaponNo[character_no];
@@ -713,6 +740,7 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBtlMenuLRCursor__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponStatusTag__FiiP11WEAPON_HAVEiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponElemTag__FiiP11WEAPON_HAVEiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponVsMonster__FiiP11WEAPON_HAVEiii);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponTagBoard__FiiP11WEAPON_HAVEiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawAallWeapon__FiifP10CCharacterP11WEAPON_HAVEiii);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2244);
@@ -825,6 +853,7 @@ static int WeaponMenuCheckEnableSetElem(WEAPON_HAVE *weapon, WEAPON_HAVE *attach
 }
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponSelectDialog__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", InitWeaponSelect__Fii);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ExitWeaponMenuSelect__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuSelect__Fv);
 
@@ -862,6 +891,21 @@ static int WeaponMenuKastumSelectDown(int row, int enabled_rows) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponSelectKey__Fv);
+
+/**
+ * Stores a menu's cursor position in the saved menu cursors.
+ */
+static inline void SetCursorPos(CMenuCursor *cursor, int menu, int pos) {
+    cursor->pos[menu] = pos;
+}
+
+/**
+ * Stores the party member the item menu shows in the saved menu cursors.
+ */
+static inline void SetCursorChara(CMenuCursor *cursor, int chara) {
+    cursor->chara_no = chara;
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WepAttachHaveCancel__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuAttachModeKey__Fv);
 
@@ -892,6 +936,7 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBuildUpWeaponSelect__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemTrushKey__FPiPii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawTrushItem__Fv);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ExitItemSelect__Fv);
 
 /**

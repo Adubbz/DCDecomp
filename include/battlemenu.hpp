@@ -1,6 +1,8 @@
 #pragma once
 
 #include "common.h"
+
+#include "itemdata.hpp"
 #include "rect.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
@@ -28,7 +30,8 @@ struct WEP_MENU_INFO {
     s16 unk_02;
     s8 weapon_slot; /**< Weapon slot the cursor is on, within the selected character's chara_weapons row. */
     s8 chara;       /**< Party member index the weapon menu is showing. */
-    char unk_06[2];
+    s8 unk_06;
+    char unk_07;
     s8 unk_08;
     char unk_09[3];
     s16 unk_0C;
@@ -36,7 +39,10 @@ struct WEP_MENU_INFO {
     s32 unk_20;
     char unk_24[8];
     s32 unk_2C;
-    char unk_30[0x149];
+    char unk_30[0x120];
+    ATTACH_LIST unk_150;
+    char unk_170[8];
+    s8 unk_178;
     s8 unk_179;
     char unk_17A[2];
 };
@@ -878,7 +884,7 @@ public:
     s32 unk_0C;
     s32 option_flags;    /**< Combined option bits of the weapon and its attachments. */
     WEAPON_HAVE *weapon; /**< Weapon whose option messages are displayed. */
-    s32 unk_18;
+    void *unk_18;
     ClsMes *message; /**< Message window that holds the option text. */
     /**
      * Selects the shared East King message window for weapon option text.
