@@ -155,15 +155,6 @@ void InitAllHaveData(void);
 int CommonShopLoop(void);
 
 /**
- * Places the camera and lights the shop's model is drawn under.
- *
- * @mangled ShopPolySetInit__Fii
- * @address 0x1E7080
- * @size 0x150
- */
-void ShopPolySetInit(int, int);
-
-/**
  * Enters the shop's fixed textures into the texture manager.
  *
  * @mangled ShopTextureLoadFix__Fv

@@ -756,7 +756,114 @@ int CommonShopLoop() {
     return done;
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", ShopPolySetInit__Fii);
+/**
+ * Places, scales and turns the shopkeeper's model for one shop.
+ *
+ * @mangled ShopPolySetInit__Fii
+ * @address 0x1E7080
+ * @size 0x150
+ */
+static void ShopPolySetInit(int shop_no, int person_no) {
+    float place[2][18][3] = {
+        {
+            {-7.84f, -15.5f, 0.9f},
+            {-7.3f, -9.555f, 0.25f},
+            {-7.04f, -21.21f, 1.0f},
+            {-7.56f, -18.967f, 1.0f},
+            {-7.0f, -14.0f, 1.0f},
+            {-7.3359f, -15.818726f, 0.95f},
+            {0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f},
+        },
+        {
+            {-7.01f, -17.0f, 0.9f},
+            {-7.21f, -7.8f, 0.5f},
+            {-7.46f, -19.6f, 1.0f},
+            {-8.0665f, -18.923f, 1.0f},
+            {-8.0665f, -18.923f, 1.0f},
+            {-8.0665f, -18.923f, 1.0f},
+            {-8.0665f, -18.923f, 1.0f},
+            {-7.0f, -20.5f, 1.0f},
+            {-7.5378f, -15.362f, 0.8f},
+            {-7.0f, -19.0f, 0.8f},
+            {-7.0f, -15.0f, 1.0f},
+            {-7.0f, -17.0f, 1.0f},
+            {-7.6f, -18.7f, 0.8f},
+            {-7.01f, -17.2f, 0.9f},
+            {-7.21f, -7.8f, 0.5f},
+            {-7.5378f, -18.5f, 0.8f},
+            {-7.0f, -17.0f, 1.0f},
+            {-7.0f, -17.0f, 1.0f},
+        },
+    };
+    float turn[2][18][4] = {
+        {
+            {0.005f, 0.26413f, 0.0f, 0.0f},
+            {0.05f, 0.249446f, 0.0f, 0.0f},
+            {-0.033f, 0.2382f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f},
+        },
+        {
+            {-0.177612f, 0.23744f, 0.0f, 0.0f},
+            {-0.177612f, 0.23744f, 0.0f, 0.0f},
+            {-0.026733f, 0.251785f, 0.0f, 0.0f},
+            {-0.070679f, 0.271298f, -0.02832f, 0.0f},
+            {-0.050537f, 0.255213f, 0.0f, 0.0f},
+            {-0.026733f, 0.251785f, 0.0f, 0.0f},
+            {-0.026733f, 0.251785f, 0.0f, 0.0f},
+            {-0.026733f, 0.251785f, 0.0f, 0.0f},
+            {-0.026733f, 0.251785f, 0.0f, 0.0f},
+            {-0.026733f, 0.251785f, 0.0f, 0.0f},
+            {-0.026733f, 0.251785f, 0.0f, 0.0f},
+            {-0.026733f, 0.251785f, 0.0f, 0.0f},
+            {-0.026733f, 0.251785f, 0.0f, 0.0f},
+            {-0.026733f, 0.251785f, 0.0f, 0.0f},
+            {-0.026733f, 0.251785f, 0.0f, 0.0f},
+            {-0.026733f, 0.251785f, 0.0f, 0.0f},
+            {-0.026733f, 0.251785f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f},
+        },
+    };
+    float position[4];
+    float scale[4];
+    float rotation[4];
+
+    position[0] = place[shop_no][person_no][0];
+    position[1] = place[shop_no][person_no][1];
+    position[2] = 1.0f;
+    position[3] = 0.0f;
+    for (int i = 0; i < 4; i++) {
+        scale[i] = place[shop_no][person_no][2];
+        rotation[i] = turn[shop_no][person_no][i];
+    }
+    MenuCharaFrame.SetPosition(position);
+    MenuCharaFrame.SetScale(scale);
+    MenuCharaFrame.SetRotation(rotation);
+}
 
 /**
  * Records the line the shopkeeper is to say and how it is to be shown.
