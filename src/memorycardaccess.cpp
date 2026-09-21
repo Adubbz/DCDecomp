@@ -874,9 +874,42 @@ int CMemoryCardAccess::FormatForMc() {
     return result;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", DeleteFile__17CMemoryCardAccessFi);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1141__2);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1142__2);
+int CMemoryCardAccess::DeleteFile(int file_no) {
+    int status;
+    int cmd;
+
+    switch (this->step) {
+        case 0: {
+            char name[64] = "darkcloud%d";
+
+            sprintf(name, name, file_no);
+            printf("delete:%s\n", name);
+            if (sceMcDelete(this->port, 1, name) == 0) {
+                this->step++;
+            } else {
+                sceMcSync(MC_NOWAIT, NULL, NULL);
+            }
+            break;
+        }
+        case 1:
+            if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
+                break;
+            }
+            if (cmd != 0xF) {
+                break;
+            }
+            if (status < 0) {
+                this->error.retry_count++;
+                if (this->error.retry_count > 120) {
+                    printf("delete error \n");
+                    return 1;
+                }
+                break;
+            }
+            return 1;
+    }
+    return 0;
+}
 
 int CMemoryCardAccess::GetMsgNo(int msg_no) {
     int result = 0;

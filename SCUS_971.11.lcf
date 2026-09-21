@@ -512,7 +512,7 @@ SECTIONS
         . = ALIGN(0x10);
         main.data.part6h.s.o (.data) // 0x00293c80
         memorycardaccess.cpp.o (.data) // 0x00293d50
-        main.data.memcard-a.s.o (.data) // 0x00293e00
+        main.data.memcard-a.s.o (.data) // 0x00293e40
         menu_dungeon.cpp.o (.data)   // 0x00294150
         . = ALIGN(0x10);
         main.data.part6g.s.o (.data) // 0x00294170
