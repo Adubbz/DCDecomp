@@ -74,9 +74,6 @@ extern float menudebugrot[3];
 /** Scale the debug item preview draws its model at. */
 extern float menudebugrscale[3];
 
-/** Returns the magnitude of an integer; the C library's abs, which cstdlib does not declare. */
-extern "C" int abs(int);
-
 /**
  * Resolves the model and texture paths for a battle item.
  *

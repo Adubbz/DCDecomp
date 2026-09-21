@@ -4,6 +4,7 @@
 
 extern "C" {
 
+int abs(int);
 int rand(void);
 void srand(unsigned int seed);
 double atof(const char *text);
