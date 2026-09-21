@@ -752,7 +752,30 @@ static int GetTipKind(int tip_no) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/memcard", CompTip__Fii);
+static int CompTip(int tip_a, int tip_b) {
+    int rank_a;
+    int rank_b;
+
+    rank_a = tip_table[GetTipKind(tip_a)];
+    rank_b = tip_table[GetTipKind(tip_b)];
+    if (tip_a < 0) {
+        rank_a = 3;
+    }
+    if (tip_b < 0) {
+        rank_b = 3;
+    }
+    if (rank_a > rank_b) {
+        return 1;
+    }
+    if (rank_a < rank_b) {
+        return -1;
+    }
+    if (tip_a > tip_b) {
+        return 1;
+    }
+    return (tip_a < tip_b) ? -1 : 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", SeitonAtoraTipBoardSub__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", SeitonAtoraTipBoard__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuAtoraSelectKey__Fv);
