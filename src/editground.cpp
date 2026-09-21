@@ -512,7 +512,74 @@ void CEditGround::DrawRipple(int pass) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/editground", DrawShadow__11CEditGroundFiff);
+void CEditGround::DrawShadow(int pass, float near_distance, float far_distance) {
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR view;
+    sceVu0FVECTOR distance;
+    int i;
+    CMapParts *object;
+    int fast;
+
+    if (near_distance < 1.0f) {
+        near_distance = -10000000;
+    }
+    object = parts;
+    for (i = 0; i < 128; i++, object++) {
+        if (object->unk_0E4 < 0) {
+            continue;
+        }
+        if (object->unk_0E8 < 0) {
+            continue;
+        }
+        if (object->unk_0F4 >= 0 && unk_00014[object->unk_0F4] == 0) {
+            continue;
+        }
+        if (!(clip_plane[3] <= 0.0f)) {
+            object->GetPosition(distance);
+            if (!(DistVector(distance, clip_plane) <= clip_plane[3]) && !object->ChangeDigData()) {
+                continue;
+            }
+        }
+        object->GetPosition(position);
+        position[3] = 1.0f;
+        sceVu0ApplyMatrix(view, mgRenderInfo.view_scaled, position);
+        if (!(object->unk_120 <= 0.0f) && pass == 0 && object->unk_120 < DistVector(view)) {
+            continue;
+        }
+        if (view[2] > near_distance && view[2] < far_distance) {
+            object->DrawShade();
+            if (object->shadow_frame != NULL) {
+                fast = pass != 0;
+                if (view[2] > 300.0f) {
+                    fast = 1;
+                }
+                object->DrawShadow(fast);
+            }
+        }
+    }
+    for (int j = 0; j < 64; j++) {
+        CMapParts *fixed = &fixed_parts[j];
+        if (fixed->unk_0E4 < 0) {
+            continue;
+        }
+        if (fixed->unk_0E8 < 0) {
+            continue;
+        }
+        sceVu0CopyVector(position, fixed->pos);
+        position[3] = 1.0f;
+        sceVu0ApplyMatrix(view, mgRenderInfo.view_scaled, position);
+        if (view[2] > near_distance && view[2] < far_distance) {
+            fixed->DrawShade();
+            if (fixed->shadow_frame != NULL) {
+                fast = pass != 0;
+                if (view[2] > 300.0f) {
+                    fast = 1;
+                }
+                fixed->DrawShadow(fast);
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/editground", DrawPartsCursor__11CEditGroundFiPfPfiPfi);
 INCLUDE_RODATA("asm/nonmatchings/editground", @1207);
