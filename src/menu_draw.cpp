@@ -785,10 +785,10 @@ int BoardModeChangeKey() {
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardLimmitCheck__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardKeySub__Fv);
 
-void PersonalBoardKey() {
+int PersonalBoardKey() {
     BoardModeChangeKey();
     PersonalBoardLimmitCheck();
-    PersonalBoardKeySub();
+    return PersonalBoardKeySub();
 }
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardItemPush__FP9IHAVEITEMi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardWeaponPush__FP9IHAVEITEMi);

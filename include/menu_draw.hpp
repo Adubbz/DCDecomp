@@ -591,13 +591,13 @@ void PersonalBoardLimmitCheck(void);
 int PersonalBoardKeySub(void);
 
 /**
- * Handles key input on the personal board.
+ * Handles key input on the personal board and returns what the cursor handler returned.
  *
  * @mangled PersonalBoardKey__Fv
  * @address 0x22EF60
  * @size 0x30
  */
-void PersonalBoardKey(void);
+int PersonalBoardKey(void);
 
 /**
  * Swaps an inventory entry into a personal board slot.
