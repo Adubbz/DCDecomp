@@ -745,7 +745,6 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndGetVolPan__FPfPfPfff);
 static void InitSeSeq(SND_SE_SEQ *seq) {
     seq->se_no = -1;
 }
-#ifdef NON_MATCHING
 static SND_SE_SEQ *GetSeSeq(int *found, int se_no, int voice) {
     int i;
     SND_SE_SEQ *slot = 0;
@@ -768,9 +767,7 @@ static SND_SE_SEQ *GetSeSeq(int *found, int se_no, int voice) {
     }
     return slot;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", GetSeSeq__FPiii);
-#endif
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqInit__Fv);
 #ifdef NON_MATCHING
 int SndSeSeqPlayStop(int se_no, int length, int voice) {
