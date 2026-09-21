@@ -1432,7 +1432,27 @@ static int SaveMenuKeyMcSelect() {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyCheckMcType__Fv);
+static int SaveMenuKeyCheckMcType() {
+    MC_CARD_INFO *card;
+
+    card = &McAccess.card[McAccess.port];
+    if (card->present) {
+        switch (card->type) {
+            case 2:
+                McAccess.SetFuncNo(2);
+                SaveMenu.key_no = 5;
+                break;
+            default:
+                SaveMenu.key_no = 14;
+                SaveMenu.unk_20 = 1;
+                break;
+        }
+    } else {
+        SaveMenu.key_no = 14;
+        SaveMenu.unk_20 = 1;
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyCheckMc__Fv);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2823);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2824);
