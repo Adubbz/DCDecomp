@@ -95,7 +95,6 @@ u_long128 *BtlMenuBufferSet(int mode) {
 INCLUDE_ASM("asm/nonmatchings/menu_draw", BtlMenuBufferSet__Fi);
 #endif
 
-#ifdef NON_MATCHING
 u_long128 *MenuCalcBufAlignment(u_long128 *buffer) {
     int offset = (int) buffer;
     int remainder = offset & 0x3F;
@@ -107,9 +106,6 @@ u_long128 *MenuCalcBufAlignment(u_long128 *buffer) {
     }
     return (u_long128 *) offset;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuCalcBufAlignment__FP1);
-#endif
 #ifdef NON_MATCHING
 int GetAtoraMaxVillage(void) {
     int max_village = 3;
