@@ -589,7 +589,16 @@ INCLUDE_RODATA("asm/nonmatchings/menu_save", @3551);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3552);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3553);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3554);
-INCLUDE_ASM("asm/nonmatchings/menu_save", DrawEventAndFishMenuBoard_Ver__FP8CTexture8CRect_i_iiii);
+
+void DrawEventAndFishMenuBoard_Ver(CTexture *texture, CRect_i_ rect, int u, int width, int unused, int alpha) {
+    int y = rect.y;
+
+    DrawMenu2DSprite(texture, CRect_i_(rect.x, y, rect.width, 0x94), CRect_i_(u, 0, width, 0x94), alpha);
+    y += 0x94;
+    DrawMenu2DSprite(texture, CRect_i_(rect.x, y, rect.width, rect.height + 0x32), CRect_i_(u, 0x94, width, 0x14), alpha);
+    y += rect.height + 0x32;
+    DrawMenu2DSprite(texture, CRect_i_(rect.x, y, rect.width, 0x1E), CRect_i_(u, 0xC6, width, 0x1E), alpha);
+}
 INCLUDE_ASM("asm/nonmatchings/menu_save", DrawEventAndFishMenuBoard__FP8CTextureiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_save", EventItemSelectDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", DrawEventItemBoard__FiiiiiP8CTexture);
