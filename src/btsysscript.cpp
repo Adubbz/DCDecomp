@@ -92,16 +92,13 @@ void BtSetMapJumpFloor(int floor) {
  * @size 0x44
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
-int GetStackInt(RS_STACKDATA *argument) {
+extern "C" static int GetStackInt__FP12RS_STACKDATA__2(RS_STACKDATA *argument) {
     if (argument->type == RS_FLOAT) {
         return (int) argument->f;
     }
     return argument->i;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btsysscript", GetStackInt__FP12RS_STACKDATA__2);
-#endif
+
 /**
  * Reads one script argument as a float, converting it where the slot holds an integer.
  *
@@ -110,16 +107,13 @@ INCLUDE_ASM("asm/nonmatchings/btsysscript", GetStackInt__FP12RS_STACKDATA__2);
  * @size 0x2C
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
-float GetStackFloat(RS_STACKDATA *argument) {
+extern "C" static float GetStackFloat__FP12RS_STACKDATA__2(RS_STACKDATA *argument) {
     if (argument->type == RS_INT) {
         return (float) argument->i;
     }
     return argument->f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btsysscript", GetStackFloat__FP12RS_STACKDATA__2);
-#endif
+
 /**
  * Reads one script argument as a string.
  *
@@ -128,13 +122,10 @@ INCLUDE_ASM("asm/nonmatchings/btsysscript", GetStackFloat__FP12RS_STACKDATA__2);
  * @size 0xC
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
-char *GetStackString(RS_STACKDATA *argument) {
+extern "C" static char *GetStackString__FP12RS_STACKDATA__2(RS_STACKDATA *argument) {
     return argument->s;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btsysscript", GetStackString__FP12RS_STACKDATA__2);
-#endif
+
 /**
  * Writes an integer back through a script argument that names a variable.
  *
@@ -143,15 +134,12 @@ INCLUDE_ASM("asm/nonmatchings/btsysscript", GetStackString__FP12RS_STACKDATA__2)
  * @size 0x20
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
-void SetStack(RS_STACKDATA *argument, int value) {
+extern "C" static void SetStack__FP12RS_STACKDATAi__2(RS_STACKDATA *argument, int value) {
     if (argument->type == RS_PTR) {
         argument->p->i = value;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btsysscript", SetStack__FP12RS_STACKDATAi__2);
-#endif
+
 /**
  * Writes a float back through a script argument that names a variable.
  *
@@ -160,15 +148,12 @@ INCLUDE_ASM("asm/nonmatchings/btsysscript", SetStack__FP12RS_STACKDATAi__2);
  * @size 0x20
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
-void SetStack(RS_STACKDATA *argument, float value) {
+extern "C" static void SetStack__FP12RS_STACKDATAf__2(RS_STACKDATA *argument, float value) {
     if (argument->type == RS_PTR) {
         argument->p->f = value;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btsysscript", SetStack__FP12RS_STACKDATAf__2);
-#endif
+
 #ifdef NON_MATCHING
 int _GET_FLOOR_LEVEL(RS_STACKDATA *stack, int count) {
     SetStack(stack, UserStatus->cur_floor);
