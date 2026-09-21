@@ -662,7 +662,19 @@ void SndBgmRePlay() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeOutStop__Fv);
+void SndBgmFadeOutStop() {
+    float volume = SndGetBgmVol();
+    float step = volume / 10.0f;
+    int i;
+
+    for (i = 0; i < 10; i++) {
+        sceGsSyncV(0);
+        volume -= step;
+        SndSetBgmVol((int) volume);
+        SndStep();
+    }
+    SndBgmStop();
+}
 
 int SndBgmCheck() {
     return now_bgm_play;
