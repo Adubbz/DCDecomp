@@ -237,9 +237,62 @@ INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SaveToMc__17CMemoryCardAccessFi
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", LoadFromMc__17CMemoryCardAccessFi);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1090__2);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1091);
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", FormatForMc__17CMemoryCardAccessFv);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1122);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1123);
+
+int CMemoryCardAccess::FormatForMc() {
+    int result;
+    MC_CARD_INFO *card;
+    int cmd;
+    int status;
+
+    result = 0;
+    card = &this->card[this->port];
+    switch (this->step) {
+        case 0:
+            if (sceMcFormat(this->port, 1) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 1:
+            if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
+                break;
+            }
+            if (cmd != 0x10) {
+                break;
+            }
+            if (status < 0) {
+                printf("format failed\n");
+                return -1;
+            }
+            printf("format finished\n");
+            this->step++;
+            break;
+        case 2:
+            if (sceMcGetInfo(this->port, 1, &card->type, &card->free_size, &card->formatted) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 3:
+            if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
+                break;
+            }
+            if (cmd != 1) {
+                return -1;
+            }
+            card->present = 1;
+            if (status < -9) {
+                card->present = 0;
+            }
+            card->result = status;
+            result = 1;
+            break;
+    }
+    return result;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", DeleteFile__17CMemoryCardAccessFi);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1141__2);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1142__2);
