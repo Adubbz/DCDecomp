@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "camerafollow.hpp"
 #include "editarea.hpp"
 #include "editpartsinfo.hpp"
 #include "frame.hpp"
@@ -269,7 +270,29 @@ INCLUDE_ASM("asm/nonmatchings/editground", DrawRipple__11CEditGroundFi);
 INCLUDE_ASM("asm/nonmatchings/editground", DrawShadow__11CEditGroundFiff);
 INCLUDE_ASM("asm/nonmatchings/editground", DrawPartsCursor__11CEditGroundFiPfPfiPfi);
 INCLUDE_RODATA("asm/nonmatchings/editground", @1207);
-INCLUDE_ASM("asm/nonmatchings/editground", DrawEffect__11CEditGroundFP13CCameraFollowfP12CEffectGroup);
+
+void CEditGround::DrawEffect(CCameraFollow *camera, float time, CEffectGroup *effects) {
+    sceVu0FVECTOR position;
+    int i;
+    CMapParts *object = parts;
+
+    for (i = 0; i < 128; i++, object++) {
+        if (object->unk_0F4 >= 0 && unk_00014[object->unk_0F4] == 0) {
+            continue;
+        }
+        if (!(clip_plane[3] <= 0.0f)) {
+            object->GetPosition(position);
+            if (!(DistVector(position, clip_plane) <= clip_plane[3])) {
+                continue;
+            }
+        }
+        object->DrawEffect(camera, time, effects);
+    }
+    for (i = 0; i < 64; i++) {
+        fixed_parts[i].DrawEffect(camera, time, effects);
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", Save__11CEditGroundFPc);
 INCLUDE_RODATA("asm/nonmatchings/editground", @1263);
 INCLUDE_ASM("asm/nonmatchings/editground", Load__11CEditGroundFPc);

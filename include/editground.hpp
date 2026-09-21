@@ -344,7 +344,7 @@ public:
      * @address 0x1A4610
      * @size 0x170
      */
-    void DrawEffect(CCameraFollow *camera, float range, CEffectGroup *effects);
+    void DrawEffect(CCameraFollow *camera, float time, CEffectGroup *effects);
 
     /**
      * Writes every placed part into a buffer.
