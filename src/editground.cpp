@@ -69,7 +69,26 @@ CMapParts *CEditGround::GetParts(float x, float y, float z) {
 int CEditGround::CheckEffect() {
     return effect_count > 0;
 }
-INCLUDE_ASM("asm/nonmatchings/editground", SetBuildEffect__11CEditGroundFi);
+
+void CEditGround::SetBuildEffect(int parts_id) {
+    sceVu0FVECTOR position;
+
+    if (parts_id < 0 || parts_id >= 128) {
+        return;
+    }
+    if (parts[parts_id].unk_118 != 0) {
+        return;
+    }
+    effect_parts_id = parts_id;
+    effect_count = 15;
+    parts[parts_id].GetPosition(position);
+    effect_target_alt = position[1];
+    position[1] += 50.0f;
+    parts[parts_id].SetPosition(position);
+    effect_alt = position[1];
+    effect_step = (effect_target_alt - effect_alt) / effect_count;
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", EffectTask__11CEditGroundFv);
 INCLUDE_ASM("asm/nonmatchings/editground", SetFocusParts__11CEditGroundFfff);
 INCLUDE_ASM("asm/nonmatchings/editground", EditAreaClip__11CEditGroundFP7CCameraf);
