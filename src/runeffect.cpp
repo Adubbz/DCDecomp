@@ -169,7 +169,6 @@ void blendTextuerTest(sceVif1Packet *packet, int destination, int width, int for
 #else
 INCLUDE_ASM("asm/nonmatchings/runeffect", blendTextuerTest__FP13sceVif1PacketiiiRC8CRect_i_P8CTextureRC8CRect_i_RC8CRect_i_ff);
 #endif
-#ifdef NON_MATCHING
 /**
  * Sets whether the running effect takes light.
  *
@@ -180,9 +179,6 @@ INCLUDE_ASM("asm/nonmatchings/runeffect", blendTextuerTest__FP13sceVif1Packetiii
 void CRunEffect::Lighting(int enabled) {
     lighting = enabled;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runeffect", Lighting__10CRunEffectFi);
-#endif
 #ifdef NON_MATCHING
 /**
  * Draws the dust the player's run leaves behind.
@@ -286,7 +282,6 @@ void CRunEffect::Set(float *origin) {
 #else
 INCLUDE_ASM("asm/nonmatchings/runeffect", Set__10CRunEffectFPf);
 #endif
-#ifdef NON_MATCHING
 /**
  * Advances the run dust by a frame.
  *
@@ -303,10 +298,6 @@ void CRunEffect::Step(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runeffect", Step__10CRunEffectFv);
-#endif
-#ifdef NON_MATCHING
 /**
  * Constructs the run effect with no dust standing.
  *
@@ -321,6 +312,3 @@ CRunEffect::CRunEffect(void) {
     }
     lighting = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runeffect", __ct__10CRunEffectFv);
-#endif
