@@ -6,8 +6,11 @@
 #include "editarea.hpp"
 #include "editpartsinfo.hpp"
 #include "frame.hpp"
+#include "framevu1.hpp"
 #include "mapparts.hpp"
+#include "mathutil.hpp"
 #include "mglib.hpp"
+#include "objanime.hpp"
 #include "rect.hpp"
 #include "savedata.hpp"
 #include "vector3.hpp"
@@ -181,7 +184,39 @@ void CEditGround::GetPartsBox(CBoxVu0 *out_box, float x, float y, float z) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/editground", GetPeoplePos__11CEditGroundFiPf);
+EPARTS_FUNC_DATA *CEditGround::GetPeoplePos(int villager, float *out_position) {
+    sceVu0FVECTOR rotation;
+    sceVu0FVECTOR frame_rotation;
+
+    for (int i = 0; i < people_count; i++) {
+        EPARTS_FUNC_DATA *marker = people[i];
+        if (marker->kind != 1 || marker->link_id != villager) {
+            continue;
+        }
+        CMapParts *owner = marker->parts;
+        if (owner->parts_no >= 0) {
+            owner = GetPartsObject(owner->parts_no);
+        }
+        if (owner == NULL) {
+            return NULL;
+        }
+        sceVu0CopyVector(out_position, marker->position);
+        CFrameVu1 *frame = owner->frame[0];
+        if (frame == NULL) {
+            return NULL;
+        }
+        owner->GetPosition(rotation);
+        frame->SetPosition(rotation);
+        owner->GetRotation(rotation);
+        frame->SetRotation(rotation[0], rotation[1], rotation[2]);
+        out_position[3] = 1.0f;
+        frame->GetWorldPosition(out_position, out_position);
+        frame->GetRotation(frame_rotation);
+        out_position[3] = AngleLimit(frame_rotation[1] + marker->rotation[1]);
+        return marker;
+    }
+    return NULL;
+}
 
 void CEditGround::DrawBaseGround() {
     for (int i = 0; i < 4; i++) {

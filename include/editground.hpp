@@ -256,13 +256,13 @@ public:
     void GetPartsBox(CBoxVu0 *out_box, float x, float y, float z);
 
     /**
-     * Gives the position of one of the villagers standing on the ground.
+     * Gives the position of one of the villagers standing on the ground, and the marker it stands at.
      *
      * @mangled GetPeoplePos__11CEditGroundFiPf
      * @address 0x1A2D10
      * @size 0x190
      */
-    int GetPeoplePos(int villager, float *out_position);
+    EPARTS_FUNC_DATA *GetPeoplePos(int villager, float *out_position);
 
     /**
      * Draws the grid of every editable area.
