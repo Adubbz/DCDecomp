@@ -22,7 +22,8 @@ struct MIDI_STATE {
     s32 unk_5C;
     u8 unk_60[140];
     s32 unk_EC;
-    u8 unk_F0[108];
+    u8 unk_F0[64];
+    MIDI_SEQUENCE *ambient_sequence[11]; /**< Sequence of each ambient loop, or zero. */
     s32 unk_15C;
     u8 unk_160[268];
     s32 unk_26C;
