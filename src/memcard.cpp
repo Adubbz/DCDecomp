@@ -11,10 +11,12 @@
 #include "gamepad.hpp"
 #include "memorycardaccess.hpp"
 #include "menu_draw.hpp"
+#include "menu_save.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
+#include "sound.hpp"
 #include "texture.hpp"
 
 /**
@@ -1299,7 +1301,39 @@ int OptionMenuFadeOutStart() {
 INCLUDE_ASM("asm/nonmatchings/memcard", InitMenuSave__FiiP1);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2503);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2504);
-INCLUDE_ASM("asm/nonmatchings/memcard", ExitSaveSelect__Fv);
+static void ExitSaveSelect() {
+    s32 *config;
+
+    CommonMenuMes2.stay_frame = 0;
+    CommonMenuMes2.value_show = 0;
+    CommonMenuMes2.value_signed = 1;
+    CommonMenuMes2.auto_pos = -1;
+    switch (SaveMenu.unk_0) {
+        case 0:
+            GamePad.AutoRepeatOff();
+            GamePad.MenuModeOff();
+            GamePad.SetAutoRepeat(0x5000, 30, 9);
+            GamePad.MenuModeOn(120);
+            if (SaveMenu.loaded) {
+                config = (s32 *) SaveData->GetConfigData();
+                if (config != NULL) {
+                    if (config[5]) {
+                        CSnd.SetStereoMode(0);
+                    } else {
+                        CSnd.SetStereoMode(1);
+                    }
+                }
+            }
+            break;
+        case 1:
+            break;
+        case 2:
+            GamePad.AutoRepeatOff();
+            GamePad.MenuModeOff();
+            break;
+    }
+    CommonMenuMes2.cursor_lit = 0;
+}
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuSaveKey__Fv);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2597__2);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuSave__FPc);
