@@ -637,7 +637,18 @@ INCLUDE_RODATA("asm/nonmatchings/shop", @2963);
 INCLUDE_RODATA("asm/nonmatchings/shop", @2964);
 INCLUDE_ASM("asm/nonmatchings/shop", FishingExchangeKey__Fv);
 INCLUDE_RODATA("asm/nonmatchings/shop", @3159);
-INCLUDE_ASM("asm/nonmatchings/shop", FishImageIconDraw__Fiiii);
+
+/**
+ * Draws one fish icon.
+ *
+ * @mangled FishImageIconDraw__Fiiii
+ * @address 0x1F2420
+ * @size 0x54
+ */
+static void FishImageIconDraw(int x, int y, int width, int mode) {
+    DrawMenu2DSprite(FishMenuTex, CRect_i_(x, y, width, 0x28), CRect_i_(0, 0xD0, width, 0x28), mode);
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", FishExchangeItemDraw__Fiii);
 INCLUDE_ASM("asm/nonmatchings/shop", FishingExchangeDraw__Fv);
 

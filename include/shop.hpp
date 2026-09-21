@@ -693,15 +693,6 @@ void FishMenuTextureLoad(void);
 int FishingExchangeKey(void);
 
 /**
- * Draws one fish icon.
- *
- * @mangled FishImageIconDraw__Fiiii
- * @address 0x1F2420
- * @size 0x54
- */
-void FishImageIconDraw(int, int, int, int);
-
-/**
  * Draws the fishing exchange's goods, their prices and its help window.
  *
  * @mangled FishExchangeItemDraw__Fiii
