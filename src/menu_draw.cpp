@@ -401,7 +401,10 @@ int GetNumberKeta(int value) {
     }
     return digits;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuIconInfo__Fi);
+
+MENU_ICON_INFO *GetMenuIconInfo(int icon) {
+    return &MenuIcon[GetMenuLangFlag()][icon];
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMainMenuIcon__Fiiiiii);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @981);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenuVibeItem__Fiiiii);

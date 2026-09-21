@@ -71,6 +71,24 @@ struct PERSONAL_BOARD {
     s32 unk_15C;
 };
 
+/**
+ * Where one main menu icon and its label sit on the menu frame texture.
+ */
+struct MENU_ICON_INFO {
+    s32 unk_00;
+    s32 unk_04;
+    s32 unk_08;
+    s32 unk_0C;
+    s32 unk_10;
+    s32 unk_14;
+    s32 unk_18;
+    s32 unk_1C;
+    s32 unk_20;
+    s32 unk_24;
+};
+
+STATIC_ASSERT(sizeof(MENU_ICON_INFO) == 0x28);
+
 /** The dungeon entrance menu. */
 extern DUN_ENTER_MENU DEnterMenu;
 
@@ -103,6 +121,9 @@ extern int BtlMenuBGMvol;
 
 /** Set while the extra-menu texture has been read. */
 extern int MenuExTextureReadFlag;
+
+/** Description of each main menu icon, for each of the seven languages. */
+extern MENU_ICON_INFO MenuIcon[7][14];
 
 /**
  * Returns the directory that menu textures load from.
@@ -411,13 +432,13 @@ void MenuTextureClip(int &, int &, int &, int, int);
 int GetNumberKeta(int);
 
 /**
- * Gives the description of one menu icon.
+ * Returns the description of one menu icon in the language the menus display in.
  *
  * @mangled GetMenuIconInfo__Fi
  * @address 0x22DF40
  * @size 0x5C
  */
-void GetMenuIconInfo(int);
+MENU_ICON_INFO *GetMenuIconInfo(int icon);
 
 /**
  * Draws one of the main menu's icons.
