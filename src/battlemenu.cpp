@@ -772,9 +772,23 @@ static int EnableWeaponElemNone(int weapon_no) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuCheckElemValue__FP11WEAPON_HAVEP11WEAPON_HAVE);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2339__2);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2340__2);
+/**
+ * Drops a weapon's active element where the attachment no longer supports it.
+ *
+ * @mangled WeaponMenuCheckElemValue__FP11WEAPON_HAVEP11WEAPON_HAVE
+ * @address 0x1FC050
+ * @size 0xB8
+ */
+static void WeaponMenuCheckElemValue(WEAPON_HAVE *weapon, WEAPON_HAVE *attachment) {
+    if (0 <= weapon->best_elem && weapon->best_elem < 5 && attachment->elem[weapon->best_elem] <= 0) {
+        weapon->best_elem = 5;
+    }
+    if (weapon->best_elem == 5 && EnableWeaponElemNone(weapon->item_no) != 0) {
+        SetWeaponElementStatus(weapon);
+    }
+    printf("now active elem = %d\n", weapon->best_elem);
+    printf("now active vol  = %d\n", weapon->elem[weapon->best_elem]);
+}
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuCheckEnableSetElem__FP11WEAPON_HAVEP11WEAPON_HAVEi);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2356);

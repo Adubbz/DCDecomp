@@ -479,15 +479,6 @@ void DrawAallWeapon(int, int, float, CCharacter *, WEAPON_HAVE *, int, int, int)
 void BtlWeaponDraw(int, float, int, int);
 
 /**
- * Drops a weapon's element where the attachment no longer supports it.
- *
- * @mangled WeaponMenuCheckElemValue__FP11WEAPON_HAVEP11WEAPON_HAVE
- * @address 0x1FC050
- * @size 0xB8
- */
-void WeaponMenuCheckElemValue(WEAPON_HAVE *, WEAPON_HAVE *);
-
-/**
  * Reports whether an element may be put on a weapon, and complains where it may not.
  *
  * @mangled WeaponMenuCheckEnableSetElem__FP11WEAPON_HAVEP11WEAPON_HAVEi
