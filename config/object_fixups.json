@@ -211,6 +211,7 @@
       "CommandAMBIENT__FPPv": "CommandAMBIENT__FPPv__2",
       "CommandFOG__FPPv": "CommandFOG__FPPv__2",
       "CommandBG_COL__FPPv": "CommandBG_COL__FPPv__2",
+      "CommandPEOPLE__FPPv": "CommandPEOPLE__FPPv__2",
       "Command": "Command__6",
       "CommandExe": "CommandExe__6",
       "CurrentDir": "CurrentDir__5",
@@ -225,6 +226,7 @@
       "CommandAMBIENT__FPPv__2",
       "CommandFOG__FPPv__2",
       "CommandBG_COL__FPPv__2",
+      "CommandPEOPLE__FPPv__2",
       "LoadInfo__FPci",
       "CommandPROJECTION__FPPv"
     ],

@@ -390,7 +390,8 @@ static void CommandPROJECTION(void **arguments) {
  * @size 0x8
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandPEOPLE__FPPv__2);
+static void CommandPEOPLE(void **) {
+}
 /**
  * Moves the script's current directory to one below the interior's own.
  *
