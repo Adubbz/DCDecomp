@@ -410,14 +410,12 @@ void FishingDeleteEsa() {
     esa_type = -1;
 }
 
-/**
- * Gives the item the bait on the hook came from.
- *
- * @mangled FishingGetEsaItemNo__Fv
- * @address 0x1A9030
- * @size 0x38
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingGetEsaItemNo__Fv);
+int FishingGetEsaItemNo() {
+    if (esa_type < 0) {
+        return -1;
+    }
+    return esa_info[esa_type].item_no;
+}
 
 void FishingInit() {
     WaterLevel = 0.0f;

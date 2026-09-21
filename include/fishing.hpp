@@ -134,3 +134,12 @@ void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot);
  * @size 0xBC
  */
 void FishingLoadEsa(int item_no, CFrameVu1 *frame, int slot);
+
+/**
+ * Returns the item the bait on the hook came from, or -1 when the hook is bare.
+ *
+ * @mangled FishingGetEsaItemNo__Fv
+ * @address 0x1A9030
+ * @size 0x38
+ */
+int FishingGetEsaItemNo();
