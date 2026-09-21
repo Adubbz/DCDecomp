@@ -983,7 +983,23 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemMenuModeDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemMenuModeKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ActiveItemDraw__Fiii);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", MenuCharaPolyDraw__Fv);
+/**
+ * Steps and draws the party member's model on the item page.
+ *
+ * @mangled MenuCharaPolyDraw__Fv
+ * @address 0x206AB0
+ * @size 0x84
+ */
+static void MenuCharaPolyDraw() {
+    SetNowCharaMotionNo(ItemMenuMode.chara);
+    SetItemMenuColor(ItemMenuMode.chara);
+    MenuCharaFrame.Step();
+    if (ItemMenuMode.chara == 0) {
+        MenuCharaFrame.ClothStep(0);
+    }
+    MenuCharaFrame.Draw();
+    SetItemMenuOldAmbient();
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemMenuCharaStatusDraw__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemNaviCursor__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", CharaStatusMsgDraw__Fiiiii);

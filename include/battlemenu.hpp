@@ -689,15 +689,6 @@ void ItemMenuModeKey(void);
 void ActiveItemDraw(int, int, int);
 
 /**
- * Steps and draws the party member's model on the item page.
- *
- * @mangled MenuCharaPolyDraw__Fv
- * @address 0x206AB0
- * @size 0x84
- */
-void MenuCharaPolyDraw(void);
-
-/**
  * Draws the item page's status panel for one party member.
  *
  * @mangled ItemMenuCharaStatusDraw__Fiiii
