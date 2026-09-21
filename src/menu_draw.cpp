@@ -37,6 +37,9 @@ extern PERSONAL_BOARD *PerBoardPt;
 /** Marks, one per item pack slot, of the items the menu offers to throw away. */
 extern s8 MenuTrushMark[100];
 
+/** Screen rectangle the menus draw full-screen pictures into. */
+extern CRect_i_ MenuDispRc;
+
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @553);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @554__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @555);
@@ -554,4 +557,9 @@ void AttachDataListToHaveCopy(int attachment_no, ATTACH_LIST *attachment) {
 }
 INCLUDE_ASM("asm/nonmatchings/menu_draw", ItemDataToHaveCopy__Fi);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @2113__2);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawFullSizePicture__FP8CTextureiii);
+
+void DrawFullSizePicture(CTexture *texture, int x, int y, int alpha) {
+    if (texture != NULL) {
+        DrawMenu2DSprite(texture, CRect_i_(x, y, MenuDispRc.width, MenuDispRc.height), MenuDispRc, alpha);
+    }
+}
