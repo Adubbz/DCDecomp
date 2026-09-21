@@ -128,7 +128,35 @@ int SaveMenuKeyLoad(void) {
     SaveMenu.key_no = 7;
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyArart__Fv);
+
+int SaveMenuKeyArart(void) {
+    switch (SaveMenu.unk_20) {
+        case 0:
+            break;
+        case 1:
+            if (GamePad.Down(0x60) != 0) {
+                SaveMenu.key_no = 3;
+                SaveMenu.file_no = McAccess.port;
+                ComMenuSePlay(2);
+            }
+            break;
+        case 2:
+            if (GamePad.Down(0x60) != 0) {
+                SaveMenu.key_no = 3;
+                SaveMenu.file_no = McAccess.port;
+                ComMenuSePlay(2);
+            }
+            break;
+        default:
+            if (GamePad.Down(0x60) != 0) {
+                SaveMenu.key_no = 3;
+                SaveMenu.file_no = McAccess.port;
+                ComMenuSePlay(2);
+            }
+            break;
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyNewDirSelect__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyNewDir__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyFormat__Fv);
