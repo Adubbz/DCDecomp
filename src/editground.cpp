@@ -708,7 +708,81 @@ void CEditGround::MatatagiRequest(CMapParts *(*plot_parts)[64]) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/editground", QueensRequest__11CEditGroundFPA64_P9CMapParts);
+void CEditGround::QueensRequest(CMapParts *(*plot_parts)[64]) {
+    parts_info->unk_00 = 10;
+    if (areas[0] == NULL || areas[1] == NULL || areas[2] == NULL) {
+        return;
+    }
+    if (plot_parts[0][0] != NULL) {
+        if (CheckPartsRect(0, 1, CRect_i_(0, 0, 1, 7))) {
+            parts_info->request[0] = 1;
+        }
+        if (CheckPartsRect(0, 2, CRect_i_(0, 0, 1, 8))) {
+            parts_info->request[0] = 1;
+        }
+    }
+    if (plot_parts[1][0] != NULL && plot_parts[10][0] != NULL) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[10][0], 3);
+        if (CheckPartsRect(1, plot_parts[10][0]->unk_0F4, rect)) {
+            parts_info->request[1] = 1;
+        }
+    }
+    if (plot_parts[2][0] != NULL && plot_parts[8][0] != NULL) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[8][0], 2);
+        if (CheckPartsRect(2, plot_parts[8][0]->unk_0F4, rect)) {
+            parts_info->request[2] = 1;
+        }
+    }
+    if (plot_parts[3][0] != NULL && plot_parts[1][0] != NULL) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[1][0], 2);
+        if (CheckPartsRect(3, plot_parts[1][0]->unk_0F4, rect)) {
+            parts_info->request[3] = 1;
+        }
+    }
+    if (plot_parts[4][0] != NULL) {
+        if (plot_parts[9][0] == NULL) {
+            parts_info->request[4] = 1;
+        } else if (plot_parts[4][0]->unk_0F4 != plot_parts[9][0]->unk_0F4) {
+            parts_info->request[4] = 1;
+        }
+    }
+    if (plot_parts[5][0] != NULL && plot_parts[5][0]->GetRotY() == 0) {
+        parts_info->request[5] = 1;
+    }
+    if (plot_parts[6][0] != NULL && plot_parts[11][0] != NULL && plot_parts[6][0]->GetRotY() == -1) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[11][0], 3);
+        if (CheckPartsRect(6, plot_parts[11][0]->unk_0F4, rect)) {
+            parts_info->request[6] = 1;
+        }
+    }
+    if (plot_parts[7][0] != NULL && plot_parts[7][0]->unk_0F4 == 0) {
+        parts_info->request[7] = 1;
+    }
+    if (plot_parts[8][0] != NULL) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[8][0], 0, 3);
+        if (CheckPartsRect(13, plot_parts[8][0]->unk_0F4, rect)) {
+            parts_info->request[8] = 1;
+        }
+    }
+    if (plot_parts[9][0] != NULL && plot_parts[8][0] != NULL) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[8][0], 1);
+        if (CheckPartsRect(9, plot_parts[8][0]->unk_0F4, rect)) {
+            parts_info->request[9] = 1;
+        }
+    }
+}
 
 /**
  * Reports whether one part, turned by a quarter-turn offset, faces the same direction as another.

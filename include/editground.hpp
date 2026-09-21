@@ -514,7 +514,7 @@ public:
      * @address 0x1A73F0
      * @size 0x49C
      */
-    void QueensRequest(CMapParts *(*) [64]);
+    void QueensRequest(CMapParts *(*plot_parts)[64]);
 
     /**
      * Checks the ground against Muska Racka's request.
