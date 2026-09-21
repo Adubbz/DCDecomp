@@ -606,14 +606,29 @@ void FishingDeleteAngleFish() {
     }
 }
 
-/**
- * Advances the six fish one step, steering them by the hook.
- *
- * @mangled FishingStepFish__Fv
- * @address 0x1A9940
- * @size 0x138
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingStepFish__Fv);
+void FishingStepFish() {
+    sceVu0FVECTOR hook;
+
+    GetHookPos(hook);
+    hook[1] -= 3.0f;
+    if (Fish == NULL) {
+        return;
+    }
+    if (AngleFish != NULL) {
+        AngleFish->Step();
+        return;
+    }
+    for (int i = 0; i < 6; i++) {
+        if (esa_type < 0 || EsaFrame == NULL) {
+            float radius = 0.0f;
+            Fish[i].SetFoodPos(-1, hook, radius);
+        } else {
+            float radius = esa_info[esa_type].radius;
+            Fish[i].SetFoodPos(esa_type, hook, radius);
+        }
+        Fish[i].Step();
+    }
+}
 
 /**
  * Draws the six fish.

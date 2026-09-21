@@ -215,3 +215,12 @@ int FishingGetAngleFishSize(int *size, int *fp);
  * @size 0x5C
  */
 void FishingInitFishStatus();
+
+/**
+ * Advances the fish one step, showing them the hook and the bait on it.
+ *
+ * @mangled FishingStepFish__Fv
+ * @address 0x1A9940
+ * @size 0x138
+ */
+void FishingStepFish();
