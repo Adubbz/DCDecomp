@@ -374,7 +374,6 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
  * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBAi
  * @address 0x15C980
  * @size 0x82C
- * @unknownret
  */
 void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
                  const CRect_i_ &texel, spRGBA *top_left, spRGBA *top_right,

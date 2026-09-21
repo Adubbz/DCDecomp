@@ -1669,7 +1669,74 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkCloseDirectCode(packet);
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBAi);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
+                 const CRect_i_ &texel, spRGBA *top_left, spRGBA *top_right, spRGBA *bottom_left,
+                 spRGBA *bottom_right, int mode) {
+    sceGsTest test;
+    sceGsZbuf zbuf;
+    float q;
+
+    if (texture == 0) {
+        return;
+    }
+    q = 1.0f;
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, ((u_long) linear__2 << 5) | 0x41);
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(4, 1, 1, 0, 1, 0, 1, 0, 0));
+    test = mgPixelTest;
+    test.bits.ate = 0;
+    test.bits.aref = 0;
+    test.bits.atst = SCE_GS_ALWAYS;
+    test.bits.zte = 1;
+    test.bits.ztst = SCE_GS_ALWAYS;
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &test);
+    zbuf = mgZBuffer;
+    zbuf.bits.zmsk = 1;
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
+    if (mode != 0) {
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
+                         SCE_GS_SET_RGBAQ(top_left->r, top_left->g, top_left->b, top_left->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
+                         SCE_GS_SET_RGBAQ(top_right->r, top_right->g, top_right->b, top_right->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, texel.y << 4));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, (screen.y << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
+                         SCE_GS_SET_RGBAQ(bottom_left->r, bottom_left->g, bottom_left->b, bottom_left->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, (texel.y + texel.height) << 4));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, ((screen.y + screen.height) << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
+                         SCE_GS_SET_RGBAQ(bottom_right->r, bottom_right->g, bottom_right->b, bottom_right->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, ((screen.y + screen.height) << 3) + 30976, 0, 0));
+    } else {
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
+                         SCE_GS_SET_RGBAQ(top_right->r, top_right->g, top_right->b, top_right->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, texel.y << 4));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, (screen.y << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
+                         SCE_GS_SET_RGBAQ(top_left->r, top_left->g, top_left->b, top_left->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
+                         SCE_GS_SET_RGBAQ(bottom_right->r, bottom_right->g, bottom_right->b, bottom_right->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, ((screen.y + screen.height) << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
+                         SCE_GS_SET_RGBAQ(bottom_left->r, bottom_left->g, bottom_left->b, bottom_left->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, (texel.y + texel.height) << 4));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, ((screen.y + screen.height) << 3) + 30976, 0, 0));
+    }
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", set3DColSprite__FP13sceVif1PacketPiPiPiPiP6spRGBAP6spRGBAP6spRGBAP6spRGBA);
 INCLUDE_ASM("asm/nonmatchings/snd", set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiPiPiUc);
 /**
