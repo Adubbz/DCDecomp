@@ -81,13 +81,12 @@ void CBound::ChangeDir(float *from_position, float *to_position, float *up_direc
     sceVu0CopyVector(up, up_direction);
 }
 
-#ifdef NON_MATCHING
 void CBound::UpDateDir(void) {
-    sceVu0FMATRIX frame_matrix;
+    sceVu0FVECTOR span;
     sceVu0FVECTOR world_from;
     sceVu0FVECTOR world_to;
     sceVu0FVECTOR world_up;
-    sceVu0FVECTOR span;
+    sceVu0FMATRIX frame_matrix;
 
     if (frame0 != NULL) {
         frame0->GetLWMatrix(frame_matrix);
@@ -108,9 +107,13 @@ void CBound::UpDateDir(void) {
     }
 
     SetDir(span, world_up);
-    float half_depth = extent[2];
-    float half_height = extent[1];
-    float half_width = extent[0];
+    float half_width;
+    float half_height;
+    float half_depth;
+
+    half_depth = extent[2];
+    half_height = extent[1];
+    half_width = extent[0];
     extent[0] = half_width;
     extent[1] = half_height;
     extent[2] = half_depth;
@@ -124,9 +127,6 @@ void CBound::UpDateDir(void) {
         reciprocal[2] = 1.0f / half_depth;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/bound", UpDateDir__6CBoundFv);
-#endif
 #ifdef NON_MATCHING
 void CBound::SetDir(float *direction, float *up_direction) {
     sceVu0FVECTOR origin = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -178,7 +178,6 @@ void CBound::SetDir(float *unused_direction) {
 #else
 INCLUDE_ASM("asm/nonmatchings/bound", SetDir__6CBoundFPf);
 #endif
-#ifdef NON_MATCHING
 void CBound::UpDateDirPos(void) {
     sceVu0FMATRIX frame_matrix;
     sceVu0FVECTOR world_from;
@@ -212,9 +211,13 @@ void CBound::UpDateDirPos(void) {
     sceVu0SubVector(world_from, world_from, start_extension);
     sceVu0SubVector(span, world_to, world_from);
 
-    float half_depth = extent[2];
-    float half_height = extent[1];
-    float half_width = extent[0];
+    float half_width;
+    float half_height;
+    float half_depth;
+
+    half_depth = extent[2];
+    half_height = extent[1];
+    half_width = extent[0];
     extent[0] = half_width;
     extent[1] = half_height;
     extent[2] = half_depth;
@@ -229,9 +232,6 @@ void CBound::UpDateDirPos(void) {
     }
     SetDir(span);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/bound", UpDateDirPos__6CBoundFv);
-#endif
 
 void CBound::UpDate() {
     switch (state) {
