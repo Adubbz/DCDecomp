@@ -67,6 +67,9 @@ struct ShopMenuWork {
 
 STATIC_ASSERT(sizeof(ShopMenuWork) == 0x1A8);
 
+/** Returns the magnitude of an integer. */
+extern "C" int abs(int);
+
 /** Shared UI state for the charge shop and item shop screens. */
 extern ShopMenuWork ShopMenu;
 
@@ -255,7 +258,95 @@ void ShopIconMove::IconMoveTarSet(int slot_no, int icon_no, int item_no, MENU_IT
     this->pos_x = start_x;
     this->pos_y = start_y;
 }
-INCLUDE_ASM("asm/nonmatchings/shop", IconAutoMove__12ShopIconMoveFii);
+
+int ShopIconMove::IconAutoMove(int is_buy, int force_arrive) {
+    if (item_no < 0x51) {
+        return -1;
+    }
+
+    int col = icon_no % 5 * 0x28;
+    int row = icon_no / 5 * 0x28;
+    int target_x;
+    int target_y;
+
+    if (is_buy) {
+        target_x = col + 0x16A;
+        target_y = row + 0x86;
+    } else {
+        target_x = col + 0x16A;
+        target_y = row + 0x90;
+    }
+    if (to_stock) {
+        target_x = col + 0x3E;
+        target_y = row + 0x90;
+    }
+
+    pos_x += (float) (target_x - (int) pos_x) / 4.0f;
+    pos_y += (float) (target_y - (int) pos_y) / 4.0f;
+
+    int arrived = 0;
+    if (force_arrive || (float) abs((int) (pos_x - (float) target_x)) < 4.0f) {
+        pos_x = target_x;
+        arrived++;
+    }
+    if (force_arrive || (float) abs((int) (pos_y - (float) target_y)) < 4.0f) {
+        pos_y = target_y;
+        arrived++;
+    }
+
+    if (arrived >= 2) {
+        s32 *board_info;
+
+        switch (WhatIsKindofItem(item_no)) {
+            case 0:
+                if (to_stock) {
+                    s16 item = item_no;
+                    s16 volume = data.volume;
+                    ShopStockPt->SetItemToPos(slot_no, &item, &volume);
+                } else {
+                    ShopUserItemPackView *pack = ShopUserItemPack(ShopUserStatusPt);
+                    pack->item[slot_no] = item_no;
+                    pack->item_vol[slot_no] = data.volume;
+                    board_info = &ItemBoardInfo[slot_no];
+                }
+                break;
+            case 2:
+                if (to_stock) {
+                    ShopStockPt->SetAttachToPos(slot_no, &data.attach);
+                } else {
+                    DNG_CONSUMABLE *attach = ShopUserStatusPt->consumable_items;
+                    memcpy(&attach[slot_no], &data.attach, sizeof(DNG_CONSUMABLE));
+                    attach[slot_no].id = item_no;
+                    board_info = &AttachBoardInfo[slot_no];
+                }
+                break;
+            case 1:
+                if (to_stock) {
+                    ShopStockPt->SetWepToPos(slot_no, &data.weapon);
+                } else {
+                    int chara_no = slot_no / 10;
+                    CUserStatus *status = ShopUserStatusPt;
+                    WEAPON_HAVE *row = status->chara_weapons[chara_no];
+                    WEAPON_HAVE *weapon = &row[slot_no % 10];
+                    memcpy(weapon, &data.weapon, sizeof(WEAPON_HAVE));
+                    weapon->item_no = item_no;
+                    board_info = &WeaponBoardInfo[0][slot_no];
+                }
+                break;
+        }
+        if (ChargeOrShopFlag) {
+            *board_info = 2;
+        }
+        unk_02 = -1;
+        slot_no = -1;
+        icon_no = -1;
+        item_no = -1;
+        pos_y = 0.0f;
+        pos_x = 0.0f;
+        memset(&data, 0, sizeof(data));
+    }
+    return 0;
+}
 
 void ShopIconMove::IconAutoMoveDraw() {
     if (item_no >= 0x51) {
