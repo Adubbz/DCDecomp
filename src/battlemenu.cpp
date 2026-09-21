@@ -1004,7 +1004,47 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemMenuCharaStatusDraw__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemNaviCursor__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", CharaStatusMsgDraw__Fiiiii);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuAtoraKey__Fv);
+/**
+ * Runs the Atla page and returns to the menu bar when it closes.
+ *
+ * @mangled BattleMenuAtoraKey__Fv
+ * @address 0x207DF0
+ * @size 0xFC
+ */
+static int BattleMenuAtoraKey() {
+    switch (BtlEffectFlag) {
+        case 1:
+            if (ToFromSelect(0) != 0) {
+                BtlEffectFlag = -1;
+                BtlEffectCt = 0.0f;
+            }
+            break;
+        case 0:
+            if (ToFromSelect(1) != 0) {
+                MenuSelect[0] = 4;
+                BattleMenuFlag = 20;
+                ForBackMenu();
+                BattleMenuFlag = 0;
+            }
+            break;
+        default:
+            switch (MenuAtoraSelectKey()) {
+                case 100:
+                    BtlEffectFlag = 0;
+                    BtlEffectCt = 0.0f;
+                    break;
+                case 0:
+                    break;
+            }
+            break;
+    }
+    if (BtlEffectFlag != -1) {
+        BtlEffectCt += 1.0f;
+    } else {
+        BtlEffectCt = 0.0f;
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", InitMenuMove__FiiP1);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @5858);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @5859);

@@ -716,15 +716,6 @@ void ItemNaviCursor(int);
 void CharaStatusMsgDraw(int, int, int, int, int);
 
 /**
- * Runs the Atla page and returns to the menu bar when it closes.
- *
- * @mangled BattleMenuAtoraKey__Fv
- * @address 0x207DF0
- * @size 0xFC
- */
-void BattleMenuAtoraKey(void);
-
-/**
  * Opens the travel page, either on the world map or on the local one.
  *
  * @mangled InitMenuMove__FiiP1
