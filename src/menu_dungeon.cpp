@@ -43,6 +43,18 @@ extern int BtlMenuExReadBlock;
 /** Texture of the dungeon entrance board. */
 extern CTexture *DunLogBoard;
 
+/** Dungeon progress the battle menus show. */
+extern CDngStatusData *BtlMenuStatusPt;
+
+/**
+ * Resolves the model and texture paths for a battle item.
+ *
+ * @mangled BtGetItemNamePath__FPcPci
+ * @address 0x1B7120
+ * @size 0x124
+ */
+void BtGetItemNamePath(char *model_path, char *texture_path, int item_no);
+
 /**
  * Adds one attachment's values into another, scaled by a factor.
  *
@@ -431,9 +443,42 @@ INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1374);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1375);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", CharaChangeKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", CharaChangeDraw__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DngActItemModelReadStart__FP1);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1663);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1664__2);
+
+int DngActItemModelReadStart(u_long128 *buffer) {
+    char model_path[64];
+    char texture_path[76];
+    int size;
+    u_long128 *model_buffer;
+    u_long128 *texture_buffer;
+    int i;
+    ITEM_PACK *pack;
+
+    size = 0;
+    pack = &BtlMenuStatusPt->item_pack;
+    if (pack == NULL) {
+        return 1;
+    }
+    model_buffer = MenuCalcBufAlignment(buffer);
+    texture_buffer = model_buffer + 0xFA1;
+    texture_buffer = MenuCalcBufAlignment(texture_buffer);
+    StartReadBG();
+    for (i = 0; i < 3; i++) {
+        if (pack->quick_item_slot[i] >= 0x84) {
+            printf("mds = %p\n", model_buffer);
+            printf("img = %p\n", texture_buffer);
+            BtGetItemNamePath(model_path, texture_path, pack->quick_item_slot[i]);
+            LoadFileBG(model_path, model_buffer, &size);
+            model_buffer += (((size >> 6) + 1) << 6) >> 4;
+            LoadFileBG(texture_path, texture_buffer, &size);
+            texture_buffer += (((size >> 6) + 1) << 6) >> 4;
+        }
+        if (pack->quick_item_slot[i] < 0x84) {
+            pack->quick_item_slot[i] = -1;
+        }
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DngActItemModelBuild__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DngActiveItemTextureCopy__Fv);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1728__2);
