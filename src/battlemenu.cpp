@@ -1556,7 +1556,127 @@ static void StartBGReadItemMenuWepIcon(u_long128 *buffer, int &size) {
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ReadSyncItemMenuWepIcon__Fv);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @4334);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", InitItemMode__Fii);
+/**
+ * Opens the item page on one party member, restoring the mode it was left in.
+ *
+ * When the pack holds more than it can carry, the page opens on the first list that overflows
+ * so the player throws something away.
+ *
+ * @mangled InitItemMode__Fii
+ * @address 0x2025E0
+ * @size 0x624
+ */
+static void InitItemMode(int, int chara) {
+    CMenuCursor *cursor;
+    int max;
+    int thrown[7];
+
+    InitPersonalBoardMode((CUserStatus *) BtlMenuStatusPt, &ItemMenuMode.board, 0, 0);
+    ItemMenuMode.unk_00 = 4;
+    ItemMenuMode.chara = chara;
+    cursor = SaveData->GetMenuCursor();
+    if (cursor->reset_pos == 0) {
+        ItemMenuMode.unk_00 = cursor->mode[0];
+        if (ItemMenuMode.unk_00 < 0 || ItemMenuMode.unk_00 > 4) {
+            ItemMenuMode.unk_00 = 4;
+        }
+        max = PersonalRetMax(cursor->chara_no);
+        ItemMenuMode.board.unk_0C = cursor->pos[0];
+        ItemMenuMode.board.unk_18 = ItemMenuMode.board.unk_0C / 5 - 3;
+        if (ItemMenuMode.board.unk_18 < 0) {
+            ItemMenuMode.board.unk_18 = 0;
+        }
+    } else {
+        ItemMenuMode.unk_00 = 4;
+        ItemMenuMode.board.unk_0C = 0;
+        ItemMenuMode.board.unk_18 = 0;
+        max = PersonalRetMax(0);
+    }
+    memset(thrown, 0, sizeof(thrown));
+    for (int i = 0; i < 3; i++) {
+        ItemMenuMode.unk_0E[i] = 0;
+    }
+    ItemMenuMode.unk_0A = 0;
+    ItemMenuMode.unk_0C = 0;
+    if (CheckItemThrow(thrown, NULL)) {
+        for (int i = 0; i < 3; i++) {
+            if (thrown[i] >= 0x84) {
+                ItemMenuMode.unk_0E[0]++;
+            }
+        }
+        if (thrown[3] >= 0x101) {
+            ItemMenuMode.unk_0E[1]++;
+        }
+        for (int i = 0; i < 3; i++) {
+            if (thrown[i + 4] < 0x51) {
+                break;
+            }
+            ItemMenuMode.unk_0E[2]++;
+        }
+        for (int i = 0; i < 3; i++) {
+            if (ItemMenuMode.unk_0E[i] > 0) {
+                ItemMenuMode.unk_0A |= 1 << (i + 1);
+            }
+        }
+        for (int i = 2; i >= 0; i--) {
+            if (ItemMenuMode.unk_0A & (1 << (i + 1))) {
+                ItemMenuMode.board.unk_04 = i;
+            }
+        }
+        if (ItemMenuMode.board.unk_04 == 1) {
+            ItemMenuMode.board.unk_0C = WhoIsWeaponEquip(thrown[3]) * 10;
+            ItemMenuMode.board.unk_18 = ItemMenuMode.board.unk_0C / 5;
+            if (ItemMenuMode.board.unk_18 < 0) {
+                ItemMenuMode.board.unk_18 = 0;
+            }
+            if (ItemMenuMode.board.unk_18 > 9) {
+                ItemMenuMode.board.unk_18 = 9;
+            }
+        }
+        ItemMenuMode.unk_0C = 1;
+        BtlMenuStatusPt->overflow_flag = 1;
+    }
+    ItemMenuMode.board.unk_10 = 127 - ItemMenuMode.board.unk_18 * 40;
+    int pages = max / 5;
+    ItemMenuMode.board.scroll = 140.0f + 114.0f * ItemMenuMode.board.unk_18 / pages;
+    ItemMenuMode.board.unk_08 = 1;
+    ItemMenuMode.unk_18 = 1;
+    ItemMenuMode.unk_1C = 0;
+    u_long128 *buffer = BtlMenuReadBuf;
+    int size;
+    StartBGReadItemMenuWepIcon(buffer, size);
+    buffer += (size >> 4) + 1;
+    ItemMenuCharaReadBuf = MenuCalcBufAlignment(buffer);
+    BtlHaveItemPt = (IHAVEITEM *) ItemMenuMode.board.unk_30;
+    StartLoadCharaMDS(ItemMenuCharaReadBuf, chara, 1);
+    MenuExTextureReadFlag = 0;
+    memset(&IconAutoGet, -1, sizeof(IconAutoGet));
+    CommonMenuMes3.Preset(4);
+    CommonMenuMes3.mes_made = -1;
+    CommonMenuMes3.rows = 1;
+    CommonMenuMes3.char_width = 12;
+    CommonMenuMes1.mes_made = -1;
+    AtoraNameMes.value_signed = 0;
+    AtoraNameMes.Preset(1);
+    AtoraNameMes.mes_made = -1;
+    AtoraNameMes.rows = 3;
+    for (int i = 0; i < 10; i++) {
+        AtoraNameMes.mes_no[i] = 0;
+        AtoraNameMes.values[i] = 0;
+        SetLinePos(&AtoraNameMes, i, -1, -1);
+    }
+    AtoraNameMes.char_width = GetMenuCommonFontW(BtlMenuNowLang, -1);
+    int member = ItemMenuMode.chara;
+    CDngStatusData *status = BtlMenuStatusPt;
+    int slot = status->equipped_weapon_slot[member];
+    WEAPON_HAVE *row = status->chara_weapons[member];
+    WEAPON_HAVE *weapon = &row[slot];
+    if (weapon != NULL) {
+        SetNowEquipWeaponDataForMsg(weapon->item_no, weapon->unk_02);
+    } else {
+        SetNowEquipWeaponDataForMsg(0, 0);
+    }
+}
 
 /**
  * Waits for the item page's data and opens it on the throw-away mode.

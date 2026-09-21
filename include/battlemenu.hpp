@@ -579,15 +579,6 @@ void DrawTrushItem(void);
 void ReadSyncItemMenuWepIcon(void);
 
 /**
- * Opens the item page on one party member, restoring the mode it was left in.
- *
- * @mangled InitItemMode__Fii
- * @address 0x2025E0
- * @size 0x624
- */
-void InitItemMode(int, int);
-
-/**
  * Gives the item page's textures back and re-equips anyone left without a weapon.
  *
  * @mangled ExistItemMenu__Fv
