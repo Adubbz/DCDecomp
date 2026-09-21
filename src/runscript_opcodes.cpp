@@ -6,6 +6,7 @@
 #include <cstdlib>
 
 #include "collision.hpp"
+#include "dataalloc.hpp"
 #include "dun/gameloop.hpp"
 #include "edit.hpp"
 #include "editloop3.hpp"
@@ -20,6 +21,11 @@
  * Integers the monster scripts share, set and read by index.
  */
 extern int GL_INT[10];
+
+/**
+ * Opcode table the monster scripts dispatch through, indexed by operation number.
+ */
+extern int (*ext_func[256])(RS_STACKDATA *, int);
 
 /**
  * Reads one script argument as an integer, converting it where the slot holds a float.
@@ -744,7 +750,13 @@ int _SET_SHADOW_FLAG(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->monster[monster_no].unk_0D2 = GetStackInt(stack);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", BtSetEventScript__FP10CRunScriptPcP14CDataAlloc2_1_);
+int BtSetEventScript(CRunScript *script, char *program, CDataAlloc2<1> *arena) {
+    RS_STACKDATA *stack = (RS_STACKDATA *) arena->Alloc(64);
+
+    script->load((RS_PROG_HEADER *) program, stack, 128, (RS_CALLDATA *) arena->Alloc(384), 512);
+    script->ext_func(ext_func, 256);
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", BtSetEventExtendTable__Fv);
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1452);
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1453);
