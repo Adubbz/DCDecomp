@@ -994,7 +994,28 @@ void SndSetSeVol(int se_no, int vol, int voice) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndGetVolf__Fif);
+int SndGetVolf(int se_no, float vol) {
+    SND_SE_INFO *info = GetSeInfo(se_no);
+    short *table;
+    int level;
+
+    if (info == 0) {
+        return 0;
+    }
+    table = CSnd.GetSeInfTbl();
+    level = 64;
+    if (info->vol_no >= 0) {
+        level = table[info->vol_no * 2 + 1];
+    }
+    level = (int) ((float) level * vol);
+    if (level < 0) {
+        level = 0;
+    }
+    if (level > 127) {
+        level = 127;
+    }
+    return level;
+}
 
 int SndGetPanf(float pan) {
     if (pan < -1.0f) {
