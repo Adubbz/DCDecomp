@@ -67,7 +67,7 @@ struct PERSONAL_BOARD {
     s16 *unk_2C;
     u8 unk_30[0x10];
     s16 unk_40;
-    u8 unk_42[2];
+    s16 unk_42;
     WEAPON_HAVE weapon; /**< Weapon record the board holds. */
     ATTACH_LIST unk_13C;
     s32 unk_15C;
