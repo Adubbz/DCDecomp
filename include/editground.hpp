@@ -496,7 +496,7 @@ public:
      * @address 0x1A69C0
      * @size 0x3C4
      */
-    void NornRequest(CMapParts *(*) [64]);
+    void NornRequest(CMapParts *(*plot_parts)[64]);
 
     /**
      * Checks the ground against Matataki's request, which wants the rivers chained up.

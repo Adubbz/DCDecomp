@@ -7,6 +7,7 @@
 #include "editpartsinfo.hpp"
 #include "mapparts.hpp"
 #include "rect.hpp"
+#include "savedata.hpp"
 #include "vector3.hpp"
 
 static int CheckDelete(CEditArea *area, CMapParts *parts, float x, float y, float z);
@@ -515,7 +516,76 @@ void CEditGround::GetRectParts(CRect_i_ *rect, CMapParts *target, int column, in
 }
 
 INCLUDE_ASM("asm/nonmatchings/editground", GetRectDirParts__11CEditGroundFP8CRect_i_P9CMapPartsii);
-INCLUDE_ASM("asm/nonmatchings/editground", NornRequest__11CEditGroundFPA64_P9CMapParts);
+
+void CEditGround::NornRequest(CMapParts *(*plot_parts)[64]) {
+    parts_info->unk_00 = 8;
+    if (areas[0] == NULL) {
+        return;
+    }
+    if (plot_parts[0][0] != NULL && plot_parts[0][0]->GetRotY() == 1) {
+        parts_info->request[0] = 1;
+    }
+    if (plot_parts[1][0] != NULL) {
+        if (CheckPartsRect(1, 0, CRect_i_(10, 0, 4, 5))) {
+            parts_info->request[1] = 1;
+        }
+    }
+    if (plot_parts[2][0] != NULL) {
+        if (!CheckPartsRect(2, 0, CRect_i_(2, 8, 9, 4))) {
+            parts_info->request[2] = 1;
+        }
+    }
+    if (plot_parts[3][0] != NULL) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[12][0], 2);
+        if (CheckPartsRect(3, 0, rect)) {
+            parts_info->request[3] = 1;
+        }
+    }
+    if (plot_parts[4][0] != NULL) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[6][0], 4);
+        if (CheckPartsRect(4, 0, rect)) {
+            parts_info->request[4] = 1;
+        }
+    }
+    if (plot_parts[5][0] != NULL) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectDirParts(&rect, plot_parts[8][0], 2, 4);
+        if (CheckPartsRect(5, 0, rect) && SaveData->GetGameIntFlag(0) >= 100) {
+            parts_info->request[5] = 1;
+        }
+    }
+    if (plot_parts[6][0] != NULL) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[1][0], 4);
+        if (!CheckPartsRect(6, 0, rect)) {
+            parts_info->request[6] = 1;
+        }
+    }
+    if (plot_parts[7][0] != NULL) {
+        int parts_ids[256];
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[7][0], 4);
+        int count = areas[0]->GetPartsRect(rect, parts_ids, 256);
+        int houses = 0;
+        for (int i = 0; i < count; i++) {
+            if (parts[parts_ids[i]].parts_no < 7) {
+                houses++;
+            }
+            if (houses >= 2) {
+                parts_info->request[7] = 1;
+                break;
+            }
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", MatatagiRequest__11CEditGroundFPA64_P9CMapParts);
 INCLUDE_ASM("asm/nonmatchings/editground", QueensRequest__11CEditGroundFPA64_P9CMapParts);
 
