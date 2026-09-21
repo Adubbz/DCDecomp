@@ -287,15 +287,6 @@ void ExitBattleMenu(int);
 void BattleMenuInit(int *, int);
 
 /**
- * Suppresses a draw flag while an Atla event or a character page is showing.
- *
- * @mangled BtlMenuDrawSpecialFlag__Fi
- * @address 0x1F6150
- * @size 0x88
- */
-void BtlMenuDrawSpecialFlag(int);
-
-/**
  * Draws the whole menu for one frame, choosing the page from the menu state.
  *
  * @mangled BattleMenuDraw__Fv

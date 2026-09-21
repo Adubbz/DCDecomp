@@ -551,7 +551,23 @@ INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1011__2);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1012);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1013);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlMenuDrawSpecialFlag__Fi);
+/**
+ * Suppresses a draw flag while an Atla event or a character page is showing.
+ *
+ * @mangled BtlMenuDrawSpecialFlag__Fi
+ * @address 0x1F6150
+ * @size 0x88
+ */
+static int BtlMenuDrawSpecialFlag(int flag) {
+    if ((BattleMenuFlag == 12 || BattleMenuFlag == 4 || BattleMenuFlag == 20) &&
+        GetMenuAtraEventFlag() != 0) {
+        flag = 0;
+    }
+    if (MenuChara.unk_03 == 4 || MenuChara.unk_03 == 5) {
+        flag = 0;
+    }
+    return flag;
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuCursor__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuAppear__Fv);
