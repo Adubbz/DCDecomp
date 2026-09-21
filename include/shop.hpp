@@ -350,7 +350,7 @@ int SeitonShopItemBoardSub(ITEM_PACK *);
  * @address 0x1EBE40
  * @size 0xFC
  */
-void CompAttach1(ATTACH_LIST *, ATTACH_LIST *);
+int CompAttach1(ATTACH_LIST *, ATTACH_LIST *);
 
 /**
  * Sorts one attachment board into order and returns one when any entry moved.

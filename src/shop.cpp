@@ -684,7 +684,35 @@ static void SeitonShopItemBoard(ITEM_PACK *pack) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", CompAttach1__FP11ATTACH_LISTP11ATTACH_LIST);
+int CompAttach1(ATTACH_LIST *first, ATTACH_LIST *second) {
+    int first_priority = asort_table[GetAttachKind(first->item_no)];
+    int second_priority = asort_table[GetAttachKind(second->item_no)];
+    int second_item_no;
+    int first_item_no;
+
+    first_item_no = first->item_no;
+    if (ITEM_ATTACH_START > first_item_no) {
+        first_priority = 5;
+    }
+    second_item_no = second->item_no;
+    if (ITEM_ATTACH_START > second_item_no) {
+        second_priority = 5;
+    }
+    if (second_priority < first_priority) {
+        return 1;
+    }
+    if (first_priority < second_priority) {
+        return -1;
+    }
+    if (first_item_no > second_item_no) {
+        return 1;
+    }
+    if (first_item_no < second_item_no) {
+        return -1;
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", SeitonShopAttachBoardSub__FP11ATTACH_LIST);
 
 /**
