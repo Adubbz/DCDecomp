@@ -234,7 +234,6 @@ INCLUDE_RODATA("asm/nonmatchings/itembombeffect", @1169__2);
  * @address 0x1D5EB0
  * @size 0x1F0
  */
-#ifdef NON_MATCHING
 void CItemBombEffect::Step(void) {
     for (int effect_no = 0; effect_no < 5; effect_no++) {
         if (active[effect_no] != 1) {
@@ -271,7 +270,7 @@ void CItemBombEffect::Step(void) {
                 break;
             case 3:
                 counters[effect_no]++;
-                sizes[effect_no] -= 0.1f;
+                sizes[effect_no] += 0.1f;
                 alphas[effect_no] -= 2.0f;
                 if (counters[effect_no] >= 40) {
                     active[effect_no] = 0;
@@ -280,9 +279,6 @@ void CItemBombEffect::Step(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/itembombeffect", Step__15CItemBombEffectFv);
-#endif
 
 /**
  * Places the bomb's five blast puffs around a position.
