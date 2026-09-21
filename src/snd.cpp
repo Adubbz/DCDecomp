@@ -377,7 +377,6 @@ void SndInit(void) {
         SndInitialize(4, 0x1E, 4, 5);
     }
 }
-#ifdef NON_MATCHING
 void SndInitialize(int, int, int, int) {
     snd_read_buf = read_buffer;
     SndBgmInit();
@@ -401,9 +400,6 @@ void SndInitialize(int, int, int, int) {
     load_voice_adr = 0;
     voice_cfg_file[0] = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", SndInitialize__Fiiii);
-#endif
 
 void SndExit() {
     CSnd.Stop(0);
