@@ -458,15 +458,6 @@ void DrawWeaponElemTag(int, int, WEAPON_HAVE *, int, int, int);
 void DrawWeaponVsMonster(int, int, WEAPON_HAVE *, int, int, int);
 
 /**
- * Draws the three tag pages of a weapon and highlights the one the cursor is on.
- *
- * @mangled DrawWeaponTagBoard__FiiP11WEAPON_HAVEiii
- * @address 0x1FAFF0
- * @size 0x210
- */
-void DrawWeaponTagBoard(int, int, WEAPON_HAVE *, int, int, int);
-
-/**
  * Draws one weapon's model, name and every panel that describes it.
  *
  * @mangled DrawAallWeapon__FiifP10CCharacterP11WEAPON_HAVEiii

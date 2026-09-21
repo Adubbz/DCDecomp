@@ -741,7 +741,53 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponStatusTag__FiiP11WEAPON_HAV
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponElemTag__FiiP11WEAPON_HAVEiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponVsMonster__FiiP11WEAPON_HAVEiii);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponTagBoard__FiiP11WEAPON_HAVEiii);
+/**
+ * Draws the three tag pages of a weapon and highlights the one the cursor is on.
+ *
+ * @mangled DrawWeaponTagBoard__FiiP11WEAPON_HAVEiii
+ * @address 0x1FAFF0
+ * @size 0x210
+ */
+static void DrawWeaponTagBoard(int x, int y, WEAPON_HAVE *weapon, int value_x, int value_y, int alpha) {
+    int page = WepMenu.unk_178;
+    int tag = 0;
+    int i = 0;
+    int step = 1;
+    int wrapped = 0;
+
+    for (; i < 3; i++) {
+        int brightness = 128;
+        if (page == tag) {
+            if (wrapped != 0) {
+                tag = page;
+            } else {
+                tag = 2;
+                step = -1;
+                wrapped = 1;
+            }
+        }
+        if (WepMenu.unk_02 == 2 && tag != 1) {
+            brightness = 64;
+        }
+        int top = tag * 0xAA;
+        DrawMenu2DSprite(WepStatus, CRect_i_(x, y, 0xD4, 0xAA), CRect_i_(0, top, 0xD4, 0xAA),
+                         brightness, brightness, brightness, alpha);
+        tag += step;
+    }
+    if (weapon != NULL) {
+        switch (page) {
+            case 0:
+                DrawWeaponStatusTag(x, y, weapon, value_x, value_y, alpha);
+                break;
+            case 1:
+                DrawWeaponElemTag(x, y, weapon, value_x, value_y, alpha);
+                break;
+            case 2:
+                DrawWeaponVsMonster(x, y, weapon, value_x, value_y, alpha);
+                break;
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawAallWeapon__FiifP10CCharacterP11WEAPON_HAVEiii);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2244);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2245);
