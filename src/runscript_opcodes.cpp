@@ -266,14 +266,10 @@ INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_VECTOR__FP12RS_STACKDATAi
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_DIRECTION__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MOVE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _CHK_MOVE_INFO__FP12RS_STACKDATAi);
-#ifdef NON_MATCHING
 int _SET_MOVE_CANSEL(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->monster[NowMonstorUnit->unk_090].movement_speed = 0.0f;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MOVE_CANSEL__FP12RS_STACKDATAi);
-#endif
 #ifdef NON_MATCHING
 int _SET_ROT_CANSEL(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->monster[NowMonstorUnit->unk_090].turn_speed = 0.0f;
