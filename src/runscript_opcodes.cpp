@@ -558,7 +558,20 @@ int _SET_BIN2(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->monster[monster_no].unk_010 = GetStackInt(stack);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_STATUS_CHANGE__FP12RS_STACKDATAi);
+int _SET_STATUS_CHANGE(RS_STACKDATA *stack, int argc) {
+    int kind = GetStackInt(stack++);
+    int weight = GetStackInt(stack++);
+    int monster_no = GetStackInt(stack);
+
+    if (monster_no < 0 || monster_no > 15) {
+        return 1;
+    }
+    if (kind < 0 || kind > 4) {
+        kind = 0;
+    }
+    NowMonstorUnit->monster[monster_no].attachment_weight[kind] = weight;
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_TEX_ANIME_SW__FP12RS_STACKDATAi);
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1311);
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1312);
