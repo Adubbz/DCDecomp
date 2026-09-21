@@ -333,15 +333,6 @@ void CheckSideKey2(void);
 void DrawMoneyCheckBoard2(int, int, int);
 
 /**
- * Draws the small price ticket, clipped to the digits it has to show.
- *
- * @mangled DrawSmallSellTicket__Fiiiiii
- * @address 0x1EC870
- * @size 0xE0
- */
-void DrawSmallSellTicket(int, int, int, int, int, int);
-
-/**
  * Draws the large price ticket.
  *
  * @mangled DrawBigSellTicket__Fiiiii

@@ -232,6 +232,8 @@ static void SetShopTalkMsgPos();
 
 static void DrawCheckButton(int x, int y, int mode);
 
+static void DrawSmallSellTicket(int selected, int x, int y, int clip_top, int clip_bottom, int mode);
+
 s16 *GetItemShopList(int shop_no) {
     return ItemShopList2[shop_no];
 }
@@ -1396,7 +1398,29 @@ static void DrawCheckButton(int x, int y, int mode) {
     DrawMenu2DSprite(ShopBoard, CRect_i_(x, y, 0x60, 0x20), CRect_i_(u, 0x90, 0x60, 0x20), mode);
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", DrawSmallSellTicket__Fiiiiii);
+/**
+ * Draws the small price ticket, clipped to the digits it has to show.
+ *
+ * @mangled DrawSmallSellTicket__Fiiiiii
+ * @address 0x1EC870
+ * @size 0xE0
+ */
+static void DrawSmallSellTicket(int selected, int x, int y, int clip_top, int clip_bottom, int mode) {
+    int draw_x = x + 0x16;
+    int draw_y = y + 0x18;
+    int v = 0xB0;
+    int height = 0xC;
+
+    if (selected) {
+        v = 0xBC;
+    }
+    if (!(clip_top < draw_y + 0xC && clip_bottom > draw_y)) {
+        return;
+    }
+    MenuTextureClip(draw_y, v, height, clip_top, clip_bottom);
+    DrawMenu2DSprite(ShopBoard, CRect_i_(draw_x, draw_y, 0x10, height), CRect_i_(0x130, v, 0x10, height), mode);
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", DrawBigSellTicket__Fiiiii);
 
 /**
