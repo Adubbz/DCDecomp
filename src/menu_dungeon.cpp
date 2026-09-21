@@ -393,7 +393,39 @@ s16 GetWeaponMsgNo2(s32 item_no) {
     }
     return 0;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawWepAttach__FiiP11WEAPON_HAVEii);
+
+void DrawWepAttach(int x, int y, WEAPON_HAVE *weapon, int, int alpha) {
+    int holes;
+    int item_no;
+    int i;
+    float size;
+    CTexture *texture;
+    int u;
+    int v;
+    int volume;
+
+    holes = GetWeaponHoleNum(weapon->item_no);
+    if (holes <= 0) {
+        return;
+    }
+    for (i = 0; i < holes; i++) {
+        item_no = weapon->attach[i].item_no;
+        if (item_no >= 0x51) {
+            size = 32.0f;
+            texture = RetCTex(item_no, u, v);
+            CRect_i_ src(u, v, 32, 32);
+            CRect_i_ dest(x, y, size, size);
+            DrawMenu2DSprite(texture, dest, src, alpha);
+            volume = GetAttachVolumeForMsg(&weapon->attach[i]);
+            if (item_no == 0x5A) {
+                volume = weapon->attach[i].unk_02;
+            }
+            DrawAttachNumberOrWeapon(x, y, 0, 0x280, item_no, volume, alpha, 0);
+        }
+        x += 42.0f;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", GetAtraTipNowHave__Fii);
 
 int GetDispVolumeForFloat(float volume) {
