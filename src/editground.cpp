@@ -90,7 +90,26 @@ void CEditGround::SetBuildEffect(int parts_id) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/editground", EffectTask__11CEditGroundFv);
-INCLUDE_ASM("asm/nonmatchings/editground", SetFocusParts__11CEditGroundFfff);
+
+int CEditGround::SetFocusParts(float x, float y, float z) {
+    focus_parts_id = -1;
+    int area = GetAreaCode(x, y, z);
+    if (area < 0) {
+        return -1;
+    }
+    CEditArea *edit_area = areas[area];
+    int parts_id = edit_area->SearchPartsID(x, y, z);
+    if (parts_id < 0) {
+        return -1;
+    }
+    CMapParts *focus = &parts[parts_id];
+    if (CheckDelete(edit_area, focus, x, y, z)) {
+        return -1;
+    }
+    focus_parts_id = GetPartsID(x, y, z);
+    return focus_parts_id;
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", EditAreaClip__11CEditGroundFP7CCameraf);
 INCLUDE_ASM("asm/nonmatchings/editground", GetRandomPlanePos__11CEditGroundFPfPA4_fiPf);
 INCLUDE_ASM("asm/nonmatchings/editground", GetNearParts__11CEditGroundFPP9CMapPartsiP7CBoxVu0P7CBoxVu0);
