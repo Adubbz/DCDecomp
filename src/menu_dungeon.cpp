@@ -34,6 +34,9 @@ int MenuEtcErrCnt;
 /** Number of floors available in each dungeon. */
 static int maxFloorTbl__4[7] = {15, 17, 18, 18, 15, 25, 100};
 
+/** Screen rectangle the menus draw full-screen pictures into. */
+extern CRect_i_ MenuDispRc;
+
 /** Texture of the dungeon entrance board. */
 extern CTexture *DunLogBoard;
 
@@ -334,8 +337,11 @@ static void DrawDunNumberClip(int x, int y, int top, int bottom, int digit, int 
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawDunEnterBack__Fi);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1255__2);
+static void DrawDunEnterBack(int alpha) {
+    DrawMenu2DSprite(TexManager.GetTexture("frame", -1), MenuDispRc, MenuDispRc, 0x80);
+    MGFillBox(CRect_i_(0, 0, 0x2800, 0x1C00), 10, 10, 10, (alpha * 4) >> 7);
+}
+
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1301);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawDunEnterFloorName__Fiiiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", StartQuickChange__FP1iPii);
