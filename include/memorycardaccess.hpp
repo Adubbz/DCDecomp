@@ -4,6 +4,7 @@
 #include "sce/libmc.h"
 
 class CSaveData;
+struct SV_CONFIG_SYS;
 
 /**
  * Describes one browser-icon file written into the save directory.
@@ -444,3 +445,9 @@ int GetOpenAttribute(char *name);
  * directory's listing into.
  */
 extern MC_DIR_ENTRY SaveFileInfo[MC_DIR_ENTRY_MAX];
+
+/**
+ * Configuration image that LoadSysConfig reads from the card and SetBuff and
+ * SaveSysConfig fill for writing.
+ */
+extern SV_CONFIG_SYS sys_config;

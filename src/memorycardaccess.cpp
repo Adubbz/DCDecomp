@@ -181,7 +181,73 @@ INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SearchMcType__17CMemoryCardAcce
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", GetDir__17CMemoryCardAccessFv);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @531__2);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @532__2);
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", LoadSysConfig__17CMemoryCardAccessFv);
+
+int CMemoryCardAccess::LoadSysConfig() {
+    int port;
+    int cmd;
+    int result;
+    int i;
+
+    port = this->port;
+    switch (this->step) {
+        case 0:
+            if (sceMcOpen(port, 1, this->dir_name, 1) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 1:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 2 || (cmd == 2 && result < 0)) {
+                return -1;
+            }
+            this->fd = result;
+            this->transfer_size = 0x40;
+            memset(&sys_config, 0, this->transfer_size + 0x40);
+            sys_config.values[17] = 1;
+            this->transferred = 0;
+            if (sceMcRead(this->fd, &sys_config, this->transfer_size) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 2:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 5 || (cmd == 5 && result < 0)) {
+                return -1;
+            }
+            this->transferred += result;
+            if (this->transferred < this->transfer_size) {
+                break;
+            }
+            if (sceMcClose(this->fd) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 3:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 3 || (cmd == 3 && result < 0)) {
+                return -1;
+            }
+            if (SaveData->InvertConfig(&sys_config) != 0) {
+                for (i = 0; i < 12; i++) {
+                }
+            }
+            return 1;
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SaveSysConfig__17CMemoryCardAccessFv);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @641__3);
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", Write__17CMemoryCardAccessFv);
