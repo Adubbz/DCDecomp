@@ -692,7 +692,15 @@ void AreaAddPos(int *area, int *pos, int *out) {
     out[3] = bottom;
 }
 
-INCLUDE_ASM("asm/nonmatchings/gameutil", RollPos__FPfPffPf);
+void RollPos(float *centre, float *point, float angle, float *out) {
+    float centre_x = centre[0];
+    float centre_y = centre[1];
+    float point_x = point[0];
+    float point_y = point[1];
+
+    out[0] = centre_x + ((point_x - centre_x) * cos(angle) - (point_y - centre_y) * sin(angle));
+    out[1] = centre_y - ((point_x - centre_x) * sin(angle) + (point_y - centre_y) * cos(angle));
+}
 
 int CheckPosInOutForRect(RECT *rect, int x, int y) {
     s32 top;
