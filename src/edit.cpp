@@ -804,7 +804,6 @@ void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_po
  * @address 0x172100
  * @size 0x58
  */
-#ifdef NON_MATCHING
 void EdDoorOpenSe(int door_no, float *position) {
     static int se_open[8] = {0x6C, 0x7E, 0x6E, 0x80, 0x74, 0x82, 0x70, 0x72};
 
@@ -813,9 +812,6 @@ void EdDoorOpenSe(int door_no, float *position) {
     }
     SndSePlay(se_open[door_no], -1, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit", EdDoorOpenSe__FiPf);
-#endif
 /**
  * Plays the sound one kind of door makes when it closes.
  *
@@ -823,7 +819,6 @@ INCLUDE_ASM("asm/nonmatchings/edit", EdDoorOpenSe__FiPf);
  * @address 0x172160
  * @size 0x58
  */
-#ifdef NON_MATCHING
 void EdDoorCloseSe(int door_no, float *position) {
     static int se_close[8] = {0x6D, 0x7F, 0x6F, 0x81, 0x75, 0x83, 0x71, 0x73};
 
@@ -832,10 +827,6 @@ void EdDoorCloseSe(int door_no, float *position) {
     }
     SndSePlay(se_close[door_no], -1, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit", EdDoorCloseSe__FiPf);
-#endif
-#ifdef NON_MATCHING
 int EdGetDoorMotion(int door_no, int state) {
     static int motion[8][2] = {
         {3, 4},
@@ -853,9 +844,6 @@ int EdGetDoorMotion(int door_no, int state) {
     }
     return motion[door_no][state != 0];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit", EdGetDoorMotion__Fii);
-#endif
 /* The map editor's depth of field: one description at a time, taken from the map's own data or
    replaced by a default set, and handed every frame to the effect the rest of the game draws. */
 static DEPTH_OF_FIELD_INFO dof;
