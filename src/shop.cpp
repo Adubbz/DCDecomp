@@ -1066,8 +1066,18 @@ void SetAlreadyGetMardanWeapon(int value) {
     SaveData->SetGameFlag(0xCA, value);
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", SetFishMardanGarayanNum__Fi);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2912);
+void SetFishMardanGarayanNum(int count) {
+    int total = count + GetFishMardanGarayanNum();
+
+    if (total < 0) {
+        total = 0;
+    }
+    if (total > 10000) {
+        total = 10000;
+    }
+    SaveData->SetGameIntFlag(0x14, total);
+    printf("now mardan num(IntFlag):\t%d\n", GetFishMardanGarayanNum());
+}
 
 int GetFishMardanGarayanNum() {
     return SaveData->GetGameIntFlag(0x14);
