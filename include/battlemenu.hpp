@@ -727,15 +727,6 @@ int GetNearWorldPos(int direction, int *position);
 void DrawMapCheck(int);
 
 /**
- * Gives the region whose world map should be read for the party's position.
- *
- * @mangled IsLoadMapNo__Fv
- * @address 0x20AC70
- * @size 0x110
- */
-void IsLoadMapNo(void);
-
-/**
  * Turns a map number into the world-map place that stands for it.
  *
  * @mangled MapNoTransFunc__Fi

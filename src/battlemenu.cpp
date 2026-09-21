@@ -2194,7 +2194,93 @@ static int GetVisitInfo(int place, int menu_mode) {
     return visits;
 }
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", IsLoadMapNo__Fv);
+/**
+ * Gives the region whose world map should be read for the party's position.
+ *
+ * @mangled IsLoadMapNo__Fv
+ * @address 0x20AC70
+ * @size 0x110
+ */
+static int IsLoadMapNo() {
+    int region = -1;
+    s8 map_region[80] = {
+        0,
+        0,
+        1,
+        2,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        3,
+        2,
+        3,
+        0,
+        0,
+        0,
+        2,
+        0,
+        3,
+        3,
+        3,
+        3,
+        0,
+        2,
+        1,
+        2,
+        3,
+        0,
+        1,
+        4,
+        3,
+        2,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        5,
+    };
+
+    for (int map_no = 0; map_no < 80; map_no++) {
+        if (BtlMenuSaveDataPt->VisitMap(map_no, 0) && map_region[map_no] > region) {
+            region = map_region[map_no];
+        }
+    }
+    s8 dungeon_region[6] = {0, 1, 2, 3, 4, 5};
+    for (int dungeon = 1; dungeon <= 5; dungeon++) {
+        if (BtlMenuSaveDataPt->QuestDungeon(dungeon, 0) && dungeon_region[dungeon - 1] > region) {
+            region = dungeon_region[dungeon - 1];
+        }
+    }
+    return region;
+}
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", MapNoTransFunc__Fi);
 
