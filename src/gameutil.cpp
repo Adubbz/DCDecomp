@@ -14,6 +14,7 @@
 #include <cmath>
 #include <cstdio>
 
+#include "character.hpp"
 #include "dataalloc.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
@@ -568,7 +569,17 @@ float GetDisPosToRect(RECT *rect, int x, int y) {
     return sqrt(dx * dx + dy * dy);
 }
 
-INCLUDE_ASM("asm/nonmatchings/gameutil", GetScrPosFromChar__FP10CCharacterPi);
+void GetScrPosFromChar(CCharacter *chara, int *out_pos) {
+    float position[4];
+    int screen[4];
+
+    chara->GetPosition(position);
+    position[1] += 0.85f * chara->body_height;
+    position[3] = 1.0f;
+    MGRotTransPers2D(screen, position, 0);
+    out_pos[0] = screen[0];
+    out_pos[1] = screen[1];
+}
 /** The sixteen colours the font palette can hold. */
 extern "C" u32 FontColorTbl[16];
 
