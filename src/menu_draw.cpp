@@ -69,6 +69,12 @@ extern int ItemMenuWeaponIconReadBlock;
 /** Camera the menu draws 3D models under. */
 extern CCamera MenuCamera;
 
+/** Texture of the village tag bar on the personal inventory board. */
+extern CTexture *VillageBar;
+
+/** Texture of the village names on the personal inventory board. */
+extern CTexture *VillageName;
+
 /**
  * Draws the mark over an item that cannot be set.
  *
@@ -485,8 +491,42 @@ void DrawMenuVibeItem(int x, int y, int offset_x, int offset_y, int) {
         DrawAttachNumberOrWeapon(item_x, item_y, 0, 0x280, item_no, number, 0x80, 1);
     }
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMainMenuRightHelpWinLangOffset__FRfRfRfRf);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMainMenuRightHelpMsgLangOffset__FRiRi);
+
+int GetMainMenuRightHelpWinLangOffset(float &x, float &y, float &width, float &height) {
+    float offsets[7][4] = {
+        {320.0f, 325.0f, 14.6f, 2.2f},
+        {318.0f, 320.0f, 15.6f, 2.7f},
+        {318.0f, 320.0f, 15.6f, 2.7f},
+        {318.0f, 320.0f, 15.6f, 2.7f},
+        {318.0f, 320.0f, 15.6f, 2.7f},
+        {318.0f, 320.0f, 15.6f, 2.7f},
+        {318.0f, 320.0f, 15.6f, 2.7f},
+    };
+    int lang = GetMenuLangFlag();
+
+    x = offsets[lang][0];
+    y = offsets[lang][1];
+    width = offsets[lang][2];
+    height = offsets[lang][3];
+    return 0;
+}
+
+int GetMainMenuRightHelpMsgLangOffset(int &x, int &y) {
+    s8 offsets[7][2] = {
+        {18, 16},
+        {20, 12},
+        {20, 12},
+        {20, 12},
+        {20, 12},
+        {20, 12},
+        {20, 12},
+    };
+    int lang = GetMenuLangFlag();
+
+    x = offsets[lang][0];
+    y = offsets[lang][1];
+    return 1;
+}
 
 void InitHaveData(IHAVEITEM *item) {
     memset(item, -1, 0x14U);
@@ -727,9 +767,176 @@ void PersonalBoardOptionDraw(int board_mode, int count, int x, int y, CTexture *
     PersonalBoardScrlBarDraw(count, x, y, PerBoardPt->scroll, PerBoardPt->unk_18, texture, alpha);
     PersonalBoardMaxDraw(count, x, y, texture, alpha);
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardTagDraw__FiiiP8CTextureii);
+
+void PersonalBoardTagDraw(int tag, int x, int y, CTexture *texture, int shift, int alpha) {
+    int bright = 0x80;
+    int top;
+    int row;
+
+    switch (PerBoardPt->unk_00) {
+        case 1:
+            bright = 0x40;
+        case 0:
+            for (int kind = 0, i = 0; i < 3; i++, kind++) {
+                if (tag != kind) {
+                    top = y - 0x30;
+                    row = kind * 0x30;
+                    set2DSprite(GetVif1Packet(), texture, CRect_i_(x, top + 2, 0x100, 0x2F), CRect_i_(0x100, row, 0x100, 0x30),
+                                bright, bright, bright, alpha);
+                }
+            }
+            top = y - 0x30;
+            row = tag * 0x30;
+            DrawMenu2DSprite(texture, CRect_i_(x, top + 2, 0x100, 0x2F), CRect_i_(0x100, row, 0x100, 0x30), alpha);
+            x = x + 0x12 + tag * 0x44;
+            top = y - 0x4C;
+            {
+                s8 widths[7][3] = {
+                    {0x34, 0x45, 0x4E},
+                    {0x34, 0x45, 0x4E},
+                    {0x34, 0x45, 0x4E},
+                    {0x34, 0x45, 0x4E},
+                    {0x34, 0x45, 0x4E},
+                    {0x34, 0x45, 0x4E},
+                    {0x34, 0x45, 0x4E},
+                };
+                s8 sources[7][3] = {
+                    {0x00, 0x34, 0x79},
+                    {0x00, 0x34, 0x79},
+                    {0x00, 0x34, 0x79},
+                    {0x00, 0x34, 0x79},
+                    {0x00, 0x34, 0x79},
+                    {0x00, 0x34, 0x79},
+                    {0x00, 0x34, 0x79},
+                };
+                s8 offsets[7][3] = {
+                    {2, -8, -16},
+                    {2, -8, -16},
+                    {2, -8, -16},
+                    {2, -8, -16},
+                    {2, -8, -16},
+                    {2, -8, -16},
+                    {2, -8, -16},
+                };
+                int lang = GetMenuLangFlag();
+                int width = widths[lang][tag];
+                int source = sources[lang][tag];
+
+                x += offsets[lang][tag];
+                x += shift;
+                if (shift == 0) {
+                    DrawMenu2DSprite(texture, CRect_i_(x, top + 1, width, 0x1B), CRect_i_(source, 0xC0, width, 0x1C), alpha);
+                }
+            }
+            break;
+        case 2:
+            if (VillageBar != NULL) {
+                MenuTextureReload(VillageBar->block);
+                int last = 0;
+                int village = 2;
+                int max_village = GetAtoraMaxVillage();
+                int step = 1;
+                int count = 0;
+
+                top = y - 0x30;
+                while (step != 0) {
+                    village += step;
+                    if (max_village < village) {
+                        village = max_village;
+                    }
+                    if (village == tag) {
+                        if (step == 1 && village == max_village) {
+                            last = 1;
+                        } else if (step == -1) {
+                            last = 1;
+                        } else if (step == 1) {
+                            step = -1;
+                            village = max_village;
+                        }
+                    }
+                    int index = village - 3;
+                    int left = x + index * 0x1A;
+
+                    if (last) {
+                        DrawMenu2DSprite(VillageBar, CRect_i_(x, y - 0x12, 0x100, 0x13), CRect_i_(0, 0x90, 0x100, 0x14), alpha);
+                        bright = 0x80;
+                    }
+                    int column = (index % 2) * 0x60;
+                    row = (index >> 1) * 0x30;
+                    set2DSprite(GetVif1Packet(), VillageBar, CRect_i_(left, top + 2, 0x60, 0x2F), CRect_i_(column, row, 0x60, 0x30),
+                                bright, bright, bright, alpha);
+                    if (last) {
+                        break;
+                    }
+                    if (++count >= 7) {
+                        break;
+                    }
+                }
+                top = y - 0x5A;
+                row = (tag - 3) * 0x28;
+                DrawMenu2DSprite(VillageName, CRect_i_(x, top + 1, 0x100, 0x27), CRect_i_(0, row, 0x100, 0x28), alpha);
+            }
+            break;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardScrlBarDraw__FiiiRfUcP8CTexturei);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardMaxDraw__FiiiP8CTexturei);
+
+void PersonalBoardMaxDraw(int num, int x, int y, CTexture *texture, int alpha) {
+    int left = x + 0xD2;
+    int top = y - 0x28;
+
+    DrawMenu2DSprite(texture, CRect_i_(left, top + 1, 0x30, 0x2F), CRect_i_(0x100, 0x90, 0x30, 0x30), alpha);
+    RECT digits = {0x90, 0xDC, 12, 12};
+    left = x + 0xF7;
+    top = y - 0xE;
+    if (PerBoardPt->unk_00 == 2) {
+        left += 2;
+    }
+    DrawMenuNumber(num, left, top, texture, digits, 1, alpha);
+    left = x + 0xF4;
+    top = y - 0x22;
+
+    int max = 0;
+    int full = 0;
+    int item;
+
+    switch (PerBoardPt->unk_04) {
+        case 0:
+        case 1:
+        case 2:
+            max = GetNowModeMaxNum(PerBoardPt->unk_04, &full);
+            item = PerBoardPt->unk_40;
+            if (item >= 0x51) {
+                int kind = WhatIsKindofItem(item);
+                if (kind == PerBoardPt->unk_04) {
+                    max++;
+                }
+            }
+            if (num < max) {
+                full = 1;
+            }
+            break;
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+            for (int i = 0; i < num; i++) {
+                if (PerBoardPt->unk_2C[i] >= 0) {
+                    max++;
+                }
+            }
+            if (0 <= PerBoardPt->unk_40) {
+                max++;
+            }
+            break;
+    }
+    if (full) {
+        digits.y += digits.height;
+    }
+    DrawMenuNumber(max, left, top, texture, digits, 1, alpha);
+}
 
 static void DrawPersonalBoardBase(int x, int y, int top, int bottom, int count, CTexture *texture, int alpha) {
     int v;
@@ -761,7 +968,16 @@ static void DrawPersonalBoardBase(int x, int y, int top, int bottom, int count, 
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawPerBoardDraw__FiiiiiiP8CTexturei);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonTrushDraw__Fiii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", IsEnableTrushThrow__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonMoneyBoardDraw__Fiiii);
+
+void CommonMoneyBoardDraw(int x, int y, int money, int alpha) {
+    int top = y + 2;
+
+    DrawMenu2DSprite(PerBoardTex, CRect_i_(x, top, 0x1A, 0x1B), CRect_i_(0x160, 0xC0, 0x1A, 0x1C), alpha);
+    DrawMenu2DSprite(PerBoardTex, CRect_i_(x + 0x1A, top, 0x2A, 0x1B), CRect_i_(0x17A, 0xC0, 0x20, 0x1C), alpha);
+    DrawMenu2DSprite(PerBoardTex, CRect_i_(x + 0x44, top, 0x1A, 0x1B), CRect_i_(0x19A, 0xC0, 0x1A, 0x1C), alpha);
+    RECT digits = {0, 0xDC, 12, 12};
+    DrawMenuNumber(money, x + 0x55, y + 8, PerBoardTex, digits, 0, alpha);
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SearchBoardNowPosItemExist__Fii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetBoardSpace__FiPi);
 
@@ -919,6 +1135,7 @@ int SeitonAttachBoardSub(ATTACH_LIST *attachments) {
     return swapped;
 }
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonAttachBoard__FP11ATTACH_LIST);
+
 INCLUDE_ASM("asm/nonmatchings/menu_draw", WhatIsKindofItem__Fi);
 
 int WhoIsWeaponEquip(int weapon_no) {

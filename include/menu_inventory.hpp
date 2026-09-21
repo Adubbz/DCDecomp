@@ -90,13 +90,14 @@ void PersonalBoardDrawWaku(int x, int y, CTexture *texture, int alpha);
 void PersonalBoardOptionDraw(int x, int y, int board_mode, int cursor_pos, CTexture *texture, int alpha);
 
 /**
- * Draws the category tags associated with a personal inventory board.
+ * Draws the tabs above a personal inventory board, the selected one lit, and in
+ * the village board the village tabs and the selected village's name.
  *
  * @mangled PersonalBoardTagDraw__FiiiP8CTextureii
  * @address 0x00230210
  * @size 0x50C
  */
-void PersonalBoardTagDraw(int x, int y, int board_mode, CTexture *texture, int cursor_pos, int alpha);
+void PersonalBoardTagDraw(int tag, int x, int y, CTexture *texture, int shift, int alpha);
 
 /**
  * Draws and updates the personal-board scroll bar.
@@ -108,13 +109,14 @@ void PersonalBoardTagDraw(int x, int y, int board_mode, CTexture *texture, int c
 void PersonalBoardScrlBarDraw(int x, int y, int count, float &scroll, unsigned char visible_count, CTexture *texture, int alpha);
 
 /**
- * Draws the personal-board maximum-capacity indicator.
+ * Draws the number of entries on a personal inventory board and its capacity,
+ * the capacity picked out once the board is over it.
  *
  * @mangled PersonalBoardMaxDraw__FiiiP8CTexturei
  * @address 0x002309C0
  * @size 0x238
  */
-void PersonalBoardMaxDraw(int x, int y, int board_mode, CTexture *texture, int alpha);
+void PersonalBoardMaxDraw(int num, int x, int y, CTexture *texture, int alpha);
 
 /**
  * Draws one complete personal-board view.
