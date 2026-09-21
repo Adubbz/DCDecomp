@@ -35,7 +35,7 @@ struct MC_CARD_INFO {
     s32 present;   /**< One while the last sceMcGetInfo found a card in the port. */
     s32 type;      /**< Card type that sceMcGetInfo writes. */
     s32 formatted; /**< Format flag that sceMcGetInfo writes. */
-    s32 unk_0C;
+    s32 format_change; /**< 1 once a search finds the card newly formatted, -1 once it finds it unformatted. */
     s32 dir_exists; /**< One once GetDir has found the save directory on the card. */
     u8 unk_14[4];
     s32 free_size;   /**< Free space that sceMcGetInfo writes. */

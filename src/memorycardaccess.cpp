@@ -209,7 +209,79 @@ char *CMemoryCardAccess::GetVersion() {
     return this->version;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SearchMcType__17CMemoryCardAccessFv);
+int CMemoryCardAccess::SearchMcType() {
+    static int old_format;
+    MC_CARD_INFO *card;
+    int cmd;
+    int status;
+
+    card = &this->card[this->port];
+    if (this->step == 0) {
+        old_format = card->formatted;
+    }
+    switch (this->step % 2) {
+        case 0:
+            memset(&card->present, 0, sizeof(card->present));
+            if (sceMcGetInfo(this->port, 1, &card->type, &card->free_size, &card->formatted) == 0) {
+                this->step++;
+            } else {
+                this->step += 2;
+            }
+            break;
+        case 1:
+            if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
+                break;
+            }
+            if (cmd != 1) {
+                sceMcSync(MC_NOWAIT, NULL, NULL);
+                break;
+            }
+            card->present = 1;
+            card->result = status;
+            switch (status) {
+                case 0:
+                    break;
+                case -1:
+                    card->formatted = 1;
+                    break;
+                case -2:
+                    card->formatted = 0;
+                    break;
+                default:
+                    if (status < -10) {
+                        card->present = 0;
+                    }
+                    break;
+            }
+            this->step++;
+            if (this->step >= 2 && card->present && card->formatted) {
+                if (old_format && card->formatted) {
+                    card->format_change = 0;
+                }
+                if (!old_format && card->formatted) {
+                    card->format_change = 1;
+                }
+                return 1;
+            }
+            if (this->step >= 16) {
+                if (old_format && card->formatted) {
+                    card->format_change = 0;
+                }
+                if (!old_format && !card->formatted) {
+                    card->format_change = 0;
+                }
+                if (!old_format && card->formatted) {
+                    card->format_change = 1;
+                }
+                if (old_format && !card->formatted) {
+                    card->format_change = -1;
+                }
+                return 1;
+            }
+            break;
+    }
+    return 0;
+}
 
 int CMemoryCardAccess::GetDir() {
     MC_CARD_INFO *card;
