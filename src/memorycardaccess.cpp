@@ -571,10 +571,203 @@ int CMemoryCardAccess::Convert() {
     return 1;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @814);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @815__2);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @816);
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", MakeDir__17CMemoryCardAccessFv);
+/** The dummy file that MakeDir writes into a new save directory. */
+extern char mcdmybuf[0x40];
+
+int CMemoryCardAccess::MakeDir() {
+    int status = 0;
+    static int iconNo = -1;
+    char path[128];
+    int cmd;
+
+    switch (this->step) {
+        case 0:
+            if (sceMcMkdir(this->port, 1, this->dir_name) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 1:
+            if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
+                break;
+            }
+            if (cmd != 0xB) {
+                break;
+            }
+            if (cmd == 0xB && status < 0) {
+                return -1;
+            }
+            strcpy(path, this->dir_name);
+            strcat(path, "/");
+            if (sceMcChdir(this->port, 1, path, this->current_dir) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 2:
+            if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
+                break;
+            }
+            if (cmd != 0xC || (cmd == 0xC && status < 0)) {
+                return -1;
+            }
+            cmd = sceMcOpen(this->port, 1, this->dir_name, 0x202);
+            if (cmd == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 3:
+            if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
+                break;
+            }
+            if (cmd != 2 || (cmd == 2 && status < 0)) {
+                return -1;
+            }
+            this->fd = status;
+            this->transferred = 0;
+            this->transfer_size = sizeof(mcdmybuf);
+            memset(mcdmybuf, 0, sizeof(mcdmybuf));
+            mcdmybuf[0x11] = 1;
+            if (sceMcWrite(this->fd, mcdmybuf, this->transfer_size) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 4:
+            if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
+                break;
+            }
+            if (cmd != 6 || (cmd == 6 && status < 0)) {
+                return -1;
+            }
+            this->transferred += status;
+            printf("read size = %d\n", this->transfer_size);
+            if (this->transferred < this->transfer_size) {
+                break;
+            }
+            if (sceMcClose(this->fd) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 5:
+            if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
+                break;
+            }
+            if (cmd != 3 || (cmd == 3 && status < 0)) {
+                return -1;
+            }
+            if (sceMcOpen(this->port, 1, "icon.sys", 0x202) == 0) {
+                iconNo = -1;
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 6:
+            if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
+                break;
+            }
+            if (cmd != 2 || (cmd == 2 && status < 0)) {
+                printf("open error = %d\n", status);
+                return -1;
+            }
+            this->fd = status;
+            this->transferred = 0;
+            this->transfer_size = sizeof(sceMcIconSys);
+            if (sceMcWrite(this->fd, &this->icon_sys, this->transfer_size) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 7:
+        case 11:
+        case 15:
+        case 19:
+            if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
+                break;
+            }
+            if (cmd != 6 || (cmd == 6 && status < 0)) {
+                return -1;
+            }
+            this->transferred += status;
+            if (this->transferred < this->transfer_size) {
+                break;
+            }
+            if (sceMcFlush(this->fd) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 8:
+        case 12:
+        case 16:
+        case 20:
+            if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
+                break;
+            }
+            if (cmd != 0xA || (cmd == 0xA && status < 0)) {
+                return -1;
+            }
+            cmd = sceMcClose(this->fd);
+            if (cmd == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 9:
+        case 13:
+        case 17:
+        case 21:
+            if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
+                break;
+            }
+            if (cmd != 3 || (cmd == 3 && status < 0)) {
+                return -1;
+            }
+            iconNo++;
+            if (iconNo < 3) {
+                cmd = sceMcOpen(this->port, 1, (&this->icon.view)[iconNo].name, 0x203);
+                if (cmd == 0) {
+                    this->step++;
+                } else {
+                    return -1;
+                }
+            } else {
+                return 1;
+            }
+            break;
+        case 10:
+        case 14:
+        case 18:
+            if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
+                break;
+            }
+            if (cmd != 2 || (cmd == 2 && status < 0)) {
+                return -1;
+            }
+            this->fd = status;
+            this->transferred = 0;
+            this->transfer_size = (&this->icon.view)[iconNo].size;
+            cmd = sceMcWrite(this->fd, (&this->icon.view)[iconNo].data, this->transfer_size);
+            if (cmd == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+    }
+    return 0;
+}
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", GetSaveFileInfoFromMc__17CMemoryCardAccessFi);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @892__5);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @893__4);
