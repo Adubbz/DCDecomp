@@ -346,7 +346,45 @@ INCLUDE_RODATA("asm/nonmatchings/shop", @760);
 INCLUDE_RODATA("asm/nonmatchings/shop", @761);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopMenuExit__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopTextureLoadFix__Fv);
-INCLUDE_ASM("asm/nonmatchings/shop", ShopFadeoutDraw__Fv);
+
+/**
+ * Draws the fade that covers the shop while it opens and closes.
+ *
+ * @mangled ShopFadeoutDraw__Fv
+ * @address 0x1E7EA0
+ * @size 0xF8
+ */
+static void ShopFadeoutDraw() {
+    int alpha = 0;
+
+    switch (ShopMenu.unk_180) {
+        case 1:
+            alpha = 0x80 - ShopMenu.unk_184 * 3;
+            break;
+        case 2:
+            alpha = ShopMenu.unk_184 * 3 + 0x40;
+            break;
+    }
+    if (alpha < 0) {
+        alpha = 0;
+    }
+    if (alpha > 0x80) {
+        alpha = 0x80;
+    }
+    FrameImageDraw(0x40, alpha);
+    switch (ShopMenu.unk_180) {
+        case 0:
+        case 0x19:
+            ShopMenu.unk_184 = 0;
+            break;
+        default:
+            if (ShopMenu.unk_188 != 0) {
+                ShopMenu.unk_184++;
+            }
+            break;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", ShopPersonReadStart__Fii);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopPersonBuild__Fii);
 

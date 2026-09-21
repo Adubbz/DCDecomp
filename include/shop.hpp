@@ -218,15 +218,6 @@ void ShopMenuExit(void);
 void ShopTextureLoadFix(void);
 
 /**
- * Draws the fade that covers the shop while it opens and closes.
- *
- * @mangled ShopFadeoutDraw__Fv
- * @address 0x1E7EA0
- * @size 0xF8
- */
-void ShopFadeoutDraw(void);
-
-/**
  * Starts reading a shopkeeper's model in the background.
  *
  * @mangled ShopPersonReadStart__Fii
