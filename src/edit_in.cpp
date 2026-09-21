@@ -294,7 +294,30 @@ INCLUDE_RODATA("asm/nonmatchings/edit_in", @1606);
  * @address 0x19FB70
  * @size 0xD8
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", LoadInfo__FPci);
+static void LoadInfo(char *script, int size) {
+    CScriptInterpreter interpreter;
+    int command;
+
+    interpreter.SetScript(script, size);
+    interpreter.SetTAG(Command, 15);
+    CurrentDir[0] = '\0';
+    npc_count = 0;
+    objanime_list = 0;
+    effect_list = 0;
+    motion_parts_list = 0;
+    water_list = 0;
+    water_info = NULL;
+    debug = 0;
+    for (;;) {
+        command = interpreter.GetNextTAG();
+        if (command < 0) {
+            break;
+        }
+        CommandExe[command](interpreter.arguments);
+    }
+    obj_anime_num = objanime_list;
+    effect_num = effect_list;
+}
 /**
  * Sets the interior's ambient light colour.
  *

@@ -218,7 +218,8 @@
       "water_info": "water_info__2"
     },
     "globalize_symbols": [
-      "InitWorkBuffer__Fv__2"
+      "InitWorkBuffer__Fv__2",
+      "LoadInfo__FPci"
     ],
     "rodata_exports": [
       "@1592",
