@@ -270,14 +270,10 @@ int _SET_MOVE_CANSEL(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->monster[NowMonstorUnit->unk_090].movement_speed = 0.0f;
     return 1;
 }
-#ifdef NON_MATCHING
 int _SET_ROT_CANSEL(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->monster[NowMonstorUnit->unk_090].turn_speed = 0.0f;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_ROT_CANSEL__FP12RS_STACKDATAi);
-#endif
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_POSITION__FP12RS_STACKDATAi);
 #ifdef NON_MATCHING
 int _STATUS_SET_FALL(RS_STACKDATA *stack, int argc) {
