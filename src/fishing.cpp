@@ -482,14 +482,21 @@ void FishingSetRect(CBoxVu0 bounds) {
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingPickUpPoly__FP6CCPoly);
 
-/**
- * Places the six fish at random within the fishing box.
- *
- * @mangled FishingInitFish__F7CBoxVu0
- * @address 0x1A9460
- * @size 0x108
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingInitFish__F7CBoxVu0);
+void FishingInitFish(CBoxVu0 bounds) {
+    sceVu0FVECTOR position;
+
+    if (Fish == NULL) {
+        return;
+    }
+    memcpy(&fish_rect, &bounds, sizeof(CBoxVu0));
+    for (int i = 0; i < FishNum; i++) {
+        position[0] = 0.5f * (bounds.max[0] + bounds.min[0]);
+        position[1] = WaterLevel - 12.0f;
+        position[2] = 0.5f * (bounds.max[2] + bounds.min[2]);
+        Fish[i].SetPosition(position);
+        Fish[i].SetCPoly(cpoly, cpoly_num);
+    }
+}
 
 /**
  * Gives what the nearest fish is doing and how interested it is.

@@ -42,9 +42,6 @@ void FishingSetGroundLevel(float uki_height, float hook_height);
  */
 float FishingGetWaterLevel();
 
-/** Initializes a fish inside the supplied rectangular bounds. */
-void FishingInitFish(CBoxVu0 bounds);
-
 /** Initializes the fishing line at a world-space point. */
 void FishLineInit(float *position);
 
@@ -155,3 +152,12 @@ void FishingSetCPoly(CCPoly *polys, int count);
  * @size 0x40
  */
 void FishingSetRect(CBoxVu0 bounds);
+
+/**
+ * Sets the box the fish swim within and puts every fish at its centre, under the water surface.
+ *
+ * @mangled FishingInitFish__F7CBoxVu0
+ * @address 0x1A9460
+ * @size 0x108
+ */
+void FishingInitFish(CBoxVu0 bounds);
