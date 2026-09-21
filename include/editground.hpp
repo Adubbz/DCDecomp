@@ -554,7 +554,7 @@ public:
      * @address 0x1A7F40
      * @size 0x8A0
      */
-    void YellowRequest(CMapParts *(*) [64]);
+    void YellowRequest(CMapParts *(*plot_parts)[64]);
 };
 
 STATIC_ASSERT(sizeof(CEditGround) == 0x20960);

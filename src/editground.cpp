@@ -1597,5 +1597,138 @@ void CEditGround::MuskaRequest(CMapParts *(*plot_parts)[64]) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/editground", YellowRequest__11CEditGroundFPA64_P9CMapParts);
-INCLUDE_RODATA("asm/nonmatchings/editground", @2120);
+void CEditGround::YellowRequest(CMapParts *(*plot_parts)[64]) {
+    int unused[24];
+    int i;
+
+    parts_info->unk_00 = 13;
+    if (areas[0] == NULL) {
+        return;
+    }
+    for (int j = 0; j < 24; j++) {
+        unused[j] = 0;
+    }
+    if (CheckRot(plot_parts[0][0], plot_parts[7][0], 0)) {
+        CRect_i_ rect;
+        CRect_i_ other;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        other.x = other.y = other.width = other.height = 0;
+        GetRectParts(&rect, plot_parts[0][0], 0, 2);
+        GetRectParts(&other, plot_parts[0][0], 1, 2);
+        if (CheckPartsRect(7, 0, rect) && CheckPartsRect(7, 0, other)) {
+            parts_info->request[0] = 1;
+        }
+    }
+    if (CheckRot(plot_parts[1][0], plot_parts[5][0], 0)) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[1][0], 0, -1);
+        if (CheckPartsRect(5, 0, rect)) {
+            parts_info->request[1] = 1;
+        }
+    }
+    if (CheckRot(plot_parts[2][0], plot_parts[6][0], 0)) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[2][0], 0, -1);
+        if (CheckPartsRect(6, 0, rect)) {
+            parts_info->request[2] = 1;
+        }
+    }
+    if (CheckRot(plot_parts[3][0], plot_parts[7][0], 0)) {
+        CRect_i_ rect;
+        CRect_i_ other;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        other.x = other.y = other.width = other.height = 0;
+        GetRectParts(&rect, plot_parts[3][0], 2, 1);
+        GetRectParts(&other, plot_parts[3][0], 2, 0);
+        if (CheckPartsRect(7, 0, rect) && !CheckPartsRect(7, 0, other)) {
+            parts_info->request[3] = 1;
+        }
+    }
+    if (CheckRot(plot_parts[4][0], plot_parts[7][0], 0)) {
+        CRect_i_ rect;
+        CRect_i_ other;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        other.x = other.y = other.width = other.height = 0;
+        GetRectParts(&rect, plot_parts[4][0], -1, 1);
+        GetRectParts(&other, plot_parts[4][0], -1, 0);
+        if (CheckPartsRect(7, 0, rect) && !CheckPartsRect(7, 0, other)) {
+            parts_info->request[4] = 1;
+        }
+    }
+    if (CheckRot(plot_parts[5][0], plot_parts[3][0], 0)) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[3][0], 1, 2);
+        if (CheckPartsRect(5, 0, rect)) {
+            parts_info->request[5] = 1;
+        }
+    }
+    if (CheckRot(plot_parts[6][0], plot_parts[4][0], 0)) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[4][0], 0, 2);
+        if (CheckPartsRect(6, 0, rect)) {
+            parts_info->request[6] = 1;
+        }
+    }
+    if (plot_parts[7][0] != NULL) {
+        parts_info->request[7] = 1;
+    }
+    if (CheckRot(plot_parts[8][0], plot_parts[7][0], 0)) {
+        CRect_i_ rect;
+        CRect_i_ other;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        other.x = other.y = other.width = other.height = 0;
+        GetRectParts(&rect, plot_parts[8][0], 0, -1);
+        GetRectParts(&other, plot_parts[8][0], 1, -1);
+        if (CheckPartsRect(7, 0, rect) && CheckPartsRect(7, 0, other)) {
+            parts_info->request[8] = 1;
+        }
+    }
+    if (CheckRot(plot_parts[9][0], plot_parts[8][0], 0)) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[8][0], 0, 1);
+        if (CheckPartsRect(9, 0, rect)) {
+            parts_info->request[9] = 1;
+        }
+    }
+    if (CheckRot(plot_parts[10][0], plot_parts[8][0], 0)) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[8][0], 1, 1);
+        if (CheckPartsRect(10, 0, rect)) {
+            parts_info->request[10] = 1;
+        }
+    }
+    if (CheckRot(plot_parts[11][0], plot_parts[9][0], 0)) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[11][0], 0, -1);
+        if (CheckPartsRect(9, 0, rect)) {
+            parts_info->request[11] = 1;
+        }
+    }
+    if (CheckRot(plot_parts[12][0], plot_parts[10][0], 0)) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[12][0], 0, -1);
+        if (CheckPartsRect(10, 0, rect)) {
+            parts_info->request[12] = 1;
+        }
+    }
+    for (i = 0; i < 24; i++) {
+        int on = 2;
+        this->plot_parts[i].FrameObjectOnOff("setuzoku", on);
+        if (plot_parts[i][0] != NULL) {
+            sceVu0FVECTOR position;
+            plot_parts[i][0]->GetPosition(position);
+            if (parts_info->request[i] && position[1] < 1.0f) {
+                on = 1;
+            }
+            this->plot_parts[i].FrameObjectOnOff("setuzoku", on);
+        }
+    }
+}
