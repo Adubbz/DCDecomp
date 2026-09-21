@@ -10,7 +10,18 @@ INCLUDE_ASM("asm/nonmatchings/editground", SetMapParts__11CEditGroundFifffi);
 INCLUDE_ASM("asm/nonmatchings/editground", SetRiverParts__11CEditGroundFfffii);
 INCLUDE_ASM("asm/nonmatchings/editground", SetRoadParts__11CEditGroundFfffii);
 INCLUDE_ASM("asm/nonmatchings/editground", DeleteMapParts__11CEditGroundFPiPifff);
-INCLUDE_ASM("asm/nonmatchings/editground", GetAreaCode__11CEditGroundFfff);
+
+int CEditGround::GetAreaCode(float x, float y, float z) {
+    for (int i = 0; i < 4; i++) {
+        if (areas[i] == NULL) {
+            break;
+        }
+        if (areas[i]->CheckArea(x, y, z)) {
+            return i;
+        }
+    }
+    return -1;
+}
 INCLUDE_ASM("asm/nonmatchings/editground", GetAlt__11CEditGroundFfff);
 INCLUDE_ASM("asm/nonmatchings/editground", GetAlt_i__11CEditGroundFfff);
 INCLUDE_ASM("asm/nonmatchings/editground", GetPartsObject__11CEditGroundFi);
