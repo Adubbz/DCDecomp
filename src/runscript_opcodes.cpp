@@ -495,7 +495,12 @@ int _DEL_REFERENCE(RS_STACKDATA *stack, int argc) {
     frame->DeleteReference();
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SHADOW_FLAG__FP12RS_STACKDATAi);
+int _SET_SHADOW_FLAG(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+
+    NowMonstorUnit->monster[monster_no].unk_0D2 = GetStackInt(stack);
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", BtSetEventScript__FP10CRunScriptPcP14CDataAlloc2_1_);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", BtSetEventExtendTable__Fv);
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1452);
