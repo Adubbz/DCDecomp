@@ -928,7 +928,46 @@ int _SET_MOTION_CHANGE_STEP(RS_STACKDATA *stack, int argc) {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_MONSTOR_VECTOR__FP12RS_STACKDATAi);
+int _GET_MONSTOR_VECTOR(RS_STACKDATA *stack, int argc) {
+    int monster_no = GetStackInt(stack++);
+    float angle = 0.0f;
+    float direction[4];
+    float position[4];
+    float rotation[4][4];
+    float unit[4][4];
+
+    NowMonstorUnit->chara[monster_no][0].GetPosition(position);
+    direction[0] = GetStackFloat(stack++);
+    direction[1] = GetStackFloat(stack++);
+    direction[2] = GetStackFloat(stack++);
+    direction[3] = 1.0f;
+    if (argc == 8) {
+        angle = GetStackFloat(stack++);
+        if (angle >= 180.0f) {
+            angle -= 360.0f;
+        }
+        angle = 0.017453292f * angle;
+        if (angle > 6.2831855f) {
+            angle -= 6.2831855f;
+        }
+        if (angle < -3.1415927f) {
+            angle += 6.2831855f;
+        }
+    }
+    direction[0] -= position[0];
+    direction[1] -= position[1];
+    direction[2] -= position[2];
+    sceVu0Normalize(direction, direction);
+    if (argc == 8) {
+        sceVu0UnitMatrix(unit);
+        sceVu0RotMatrixY(rotation, unit, angle);
+        sceVu0ApplyMatrix(direction, rotation, direction);
+    }
+    SetStack(stack++, direction[0]);
+    SetStack(stack++, direction[1]);
+    SetStack(stack, direction[2]);
+    return 1;
+}
 int _STATUS_SET_LIFE(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
     float rate = GetStackFloat(stack);
