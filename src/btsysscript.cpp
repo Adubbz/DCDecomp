@@ -378,7 +378,18 @@ int _CLEAN_MONSTOR_SCRIPT_NO(RS_STACKDATA *stack, int count) {
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_NPC_OBJHDL__FP12RS_STACKDATAi);
 INCLUDE_RODATA("asm/nonmatchings/btsysscript", @833);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_MOTION_OBJHDL__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_NPC_ON_OFF__FP12RS_STACKDATAi);
+
+int _SET_NPC_ON_OFF(RS_STACKDATA *stack, int count) {
+    int npc_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int enable = GetStackInt__FP12RS_STACKDATA__2(stack);
+
+    if (NowDngMap->npc[npc_no].chara.frame == NULL) {
+        return 1;
+    }
+    NowDngMap->npc[npc_no].unk_11D8 = enable;
+    return 1;
+}
+
 int _GET_GATEKEY_NO(RS_STACKDATA *stack, int count) {
     SetStack__FP12RS_STACKDATAi__2(stack, NowDngMap->unk_0464);
     return 1;
