@@ -255,7 +255,8 @@ carve_part(main.data.part6.s
            main.data.part6b.s=2959A0-295FF0)
 carve_part(main.data.part4.s
            main.data.part4.s=25DF70-266810
-           main.data.part4b.s=2668C0-266EF0
+           main.data.part4b.s=2668C0-266B70
+           main.data.part4m.s=266B90-266EF0
            main.data.part4c.s=266FB0-269320
            main.data.part4h.s=269400-269480
            main.data.part4j.s=269494-269930

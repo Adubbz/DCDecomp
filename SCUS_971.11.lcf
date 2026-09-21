@@ -465,6 +465,9 @@ SECTIONS
         main.data.part4.s.o (.data)
         sysmes.cpp.o (.data)
         main.data.part4b.s.o (.data)
+        textureanime.cpp.o (.data)   // 0x00266b70
+        . = ALIGN(0x10);
+        main.data.part4m.s.o (.data) // 0x00266b90
         edit.cpp.o (.data)
         main.data.part4c.s.o (.data)
         editmapscript.cpp.o (.mapscriptdata) // 0x00269320
