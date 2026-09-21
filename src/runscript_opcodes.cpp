@@ -317,14 +317,12 @@ int _STATUS_SET_LOCKON_DIST(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->monster[monster_no].lock_range = GetStackFloat(stack);
     return 1;
 }
-#ifdef NON_MATCHING
 int _STATUS_SET_SHADOW_LEN(RS_STACKDATA *stack, int argc) {
-    NowMonstorUnit->monster[NowMonstorUnit->unk_090].shadow_length = GetStackFloat(stack);
+    int monster_no = NowMonstorUnit->unk_090;
+
+    NowMonstorUnit->monster[monster_no].shadow_length = GetStackFloat(stack);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_SHADOW_LEN__FP12RS_STACKDATAi);
-#endif
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_LOCKON_TRG__FP12RS_STACKDATAi);
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @960);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MOV_COL__FP12RS_STACKDATAi);
