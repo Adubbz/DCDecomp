@@ -740,7 +740,30 @@ int _SET_GRAVITY(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->monster[monster_no].unk_0D6 = GetStackInt(stack);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_GUARD_FRAME__FP12RS_STACKDATAi);
+int _SET_GUARD_FRAME(RS_STACKDATA *stack, int argc) {
+    int start;
+    int monster_no = NowMonstorUnit->unk_090;
+    int end;
+    int slot;
+
+    start = (int) GetStackFloat(stack++);
+    end = (int) GetStackFloat(stack);
+    slot = -1;
+
+    for (int i = 0; i < 3; i++) {
+        if (NowMonstorUnit->guard[monster_no].active[i] == 0) {
+            slot = i;
+            break;
+        }
+    }
+    if (slot == -1) {
+        return 1;
+    }
+    NowMonstorUnit->guard[monster_no].active[slot] = 1;
+    NowMonstorUnit->guard[monster_no].motion_start[slot] = start;
+    NowMonstorUnit->guard[monster_no].motion_end[slot] = end;
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GUARD_SEARCH__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_MOVE_VEC__FP12RS_STACKDATAi);
 int _PUSH_IGLOBAL(RS_STACKDATA *stack, int argc) {
