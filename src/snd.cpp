@@ -498,7 +498,19 @@ void SndSetReadBuffer(unsigned int *buffer) {
  * @address 0x159670
  * @size 0x80
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSyncBG__Fv);
+int SndSyncBG() {
+    if (SndBgmSyncBG()) {
+        return 1;
+    }
+    if (SndSoundSyncBG()) {
+        return 1;
+    }
+    if (SndSPSeSyncBG()) {
+        return 1;
+    }
+    return SndVoiceSyncBG() ? 1 : 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetCamera__FP7CCamera);
 /**
  * Tells the sound where the camera stands and which way it looks.
