@@ -24,10 +24,21 @@ STATIC_ASSERT(sizeof(GRADATION_COLOR_INFO2) == 0x10);
  * Tracks which character and weapon the weapon menu's cursor is on.
  */
 struct WEP_MENU_INFO {
-    char unk_00[4];
+    char unk_00[2];
+    s16 unk_02;
     s8 weapon_slot; /**< Weapon slot the cursor is on, within the selected character's chara_weapons row. */
-    s8 chara;        /**< Party member index the weapon menu is showing. */
-    char unk_06[0x176];
+    s8 chara;       /**< Party member index the weapon menu is showing. */
+    char unk_06[2];
+    s8 unk_08;
+    char unk_09[3];
+    s16 unk_0C;
+    char unk_0E[0x12];
+    s32 unk_20;
+    char unk_24[8];
+    s32 unk_2C;
+    char unk_30[0x149];
+    s8 unk_179;
+    char unk_17A[2];
 };
 
 STATIC_ASSERT(sizeof(WEP_MENU_INFO) == 0x17C);
@@ -36,12 +47,57 @@ STATIC_ASSERT(sizeof(WEP_MENU_INFO) == 0x17C);
  * Tracks what a message on the item menu is currently about.
  */
 struct ITEM_MENU_MODE_INFO {
-    char unk_000[0x184];
+    s16 unk_00;
+    s16 chara; /**< Party member index the item page is showing. */
+    char unk_04[0x20];
+    s32 unk_24;
+    char unk_28[4];
+    s32 unk_2C;
+    char unk_30[0x154];
     s16 message_item_no; /**< Item number the last SetNowEquipWeaponDataForMsg call named. */
     s16 message_slot;    /**< Slot number the last SetNowEquipWeaponDataForMsg call named. */
 };
 
 STATIC_ASSERT(sizeof(ITEM_MENU_MODE_INFO) == 0x188);
+
+/**
+ * Holds the battle menu's character page state.
+ */
+struct MENU_CHARA_INFO {
+    s16 unk_00;
+    s8 unk_02;
+    s8 unk_03;
+    float unk_04;
+    float unk_08;
+};
+
+STATIC_ASSERT(sizeof(MENU_CHARA_INFO) == 0xC);
+
+/**
+ * Holds one party member's place on the character page's turntable.
+ */
+struct SYS_CHARA_INFO {
+    s8 unk_00;
+    s8 unk_01;
+    char unk_02[2];
+    s32 unk_04;
+    s32 unk_08;
+};
+
+STATIC_ASSERT(sizeof(SYS_CHARA_INFO) == 0xC);
+
+/**
+ * Holds the travel page's state.
+ */
+struct MENU_MOVE_INFO {
+    s32 unk_00;
+    s32 unk_04;
+    char unk_08[0xC];
+    s32 unk_14;
+    char unk_18[8];
+};
+
+STATIC_ASSERT(sizeof(MENU_MOVE_INFO) == 0x20);
 
 /**
  * Ranks one world-map destination by how near it is.

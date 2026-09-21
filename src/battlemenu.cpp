@@ -3,21 +3,28 @@
 
 #include "battlemenu.hpp"
 
+#include <cstdio>
 #include <cstring>
 
+#include "character.hpp"
 #include "clsmes.hpp"
 #include "dataread.hpp"
 #include "dngstatusdata.hpp"
 #include "dun/gameloop.hpp"
 #include "eastking.hpp"
+#include "gamepad.hpp"
 #include "itemdata.hpp"
 #include "memcard.hpp"
 #include "menu_draw.hpp"
 #include "menu_inventory.hpp"
 #include "menu_manual.hpp"
 #include "menu_misc.hpp"
+#include "menu_save.hpp"
 #include "monstorunit.hpp"
 #include "snd.hpp"
+#include "texture.hpp"
+#include "weapon_buildup.hpp"
+#include "weaponlevelup.hpp"
 
 /**
  * Stores whether the party is escaping the dungeon.
@@ -94,6 +101,131 @@ extern CTexture *BtStatus;
  */
 extern s16 BtlDrawTbl[2][8];
 
+/**
+ * Holds the source rectangle of the menu's digit sprites.
+ */
+extern RECT NumberSprite;
+
+/**
+ * Holds each party member's starting weapon.
+ */
+extern s16 MenuDefaultWeaponNo[7];
+
+/**
+ * Holds the character page's state.
+ */
+extern MENU_CHARA_INFO MenuChara;
+
+/**
+ * Holds each party member's place on the character page's turntable.
+ */
+extern SYS_CHARA_INFO SysChara[6];
+
+/**
+ * Holds the menu cursor's screen position.
+ */
+extern float SysCur[3];
+
+/**
+ * Is nonzero while the menu's frames need rebuilding.
+ */
+extern s8 BtlWakuMake2;
+
+/**
+ * Is set once the character page's extra data has been read.
+ */
+extern s32 BtlMenuExReadFlag;
+
+/**
+ * Stores the character page's turntable radius.
+ */
+extern float chara_r_long;
+
+/**
+ * Stores the character page's turntable movement.
+ */
+extern s32 MenuCharaMove;
+
+/**
+ * Texture the weapon status panels are drawn from.
+ */
+extern CTexture *WepStatus;
+
+/**
+ * Texture the party members' faces are drawn from.
+ */
+extern CTexture *MenuCharaFace;
+
+/**
+ * Texture the weapon icons are drawn from.
+ */
+extern CTexture *WepIcon;
+
+/**
+ * Texture the item icons are drawn from.
+ */
+extern CTexture *ItemIcon;
+
+/**
+ * Texture the personal boards are drawn from.
+ */
+extern CTexture *PerBoardTex;
+
+/**
+ * Texture the frames and digits are drawn from.
+ */
+extern CTexture *StayTex;
+
+/**
+ * Points to the item pack the battle menu shows.
+ */
+extern ITEM_PACK *MenuItemPackPt;
+
+/**
+ * Is set once the item page's weapon icons have been entered.
+ */
+extern s32 ItemMenuAlreadyReadWepIconTexFlag;
+
+/**
+ * Buffer the item page reads the party member's model into.
+ */
+extern u_long128 *ItemMenuCharaReadBuf;
+
+/**
+ * Character the menus draw a party member or map marker with.
+ */
+extern CCharacter MenuCharaFrame;
+
+/**
+ * Holds the world-map marker's position.
+ */
+extern float mapo[4];
+
+/**
+ * Holds the travel page's state.
+ */
+extern MENU_MOVE_INFO MenuMove;
+
+/**
+ * Holds the frame name of each world-map place.
+ */
+extern char TownOrDngPos[16][16];
+
+/**
+ * Points to the frame name of the world-map place the cursor moves to.
+ */
+extern char *NextWorldPos;
+
+/**
+ * Frame of the world-map place the cursor stands on.
+ */
+extern CFrame *MapMoveCursor;
+
+/**
+ * Runs the weapon menu's repair, level-up and build-up effects.
+ */
+extern CWeaponLevelUp MenuWepLevelUp;
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetDefaultWeaponNo__Fi);
 
 int IsDefaultWeapon(int weapon_no) {
@@ -125,6 +257,7 @@ void GetNowEquipWeaponDataForMsg(int &item_no, int &slot) {
 GRADATION_COLOR_INFO2 *GetGradationColorInfo2(int index) {
     return &MenuColorInfo2[index];
 }
+
 /**
  * Gives the weapon the weapon menu's cursor is on.
  *
@@ -376,6 +509,7 @@ static void BtlDrawOption() {
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlDrawSave__Fv);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @924__2);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlMenuTexBlockEnter__Fv);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @926__2);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @927__2);
@@ -397,14 +531,18 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuInit__FPii);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1011__2);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1012);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1013);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlMenuDrawSpecialFlag__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuCursor__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuAppear__Fv);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuExit__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuSelect__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ToFromSelect__Fi);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ForBackMenu__Fv);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", InitMenuChara__FP1);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1348);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1363__3);
@@ -419,6 +557,7 @@ INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1668);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWepDamageDraw__F4RECTP11WEAPON_HAVEi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWepStatus__FiiP11WEAPON_HAVEii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWepVolumeDisplay__FiiP11WEAPON_HAVEi);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponNameBoard__Fiiiii);
 
 s32 GetWeaponNamePutX(s32 center_x, s32 width) {
@@ -427,6 +566,7 @@ s32 GetWeaponNamePutX(s32 center_x, s32 width) {
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponNameDraw__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WepStatusVolumeDraw__F4RECTiPiiiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponStatusWaku__Fiiii);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawLimmitMax__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBtlMenuLRCursor__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponStatusTag__FiiP11WEAPON_HAVEiii);
@@ -441,6 +581,7 @@ INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2247);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2248);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2249);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlWeaponDraw__Fifii);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", NowWeaponStatusValue__FP11WEAPON_HAVE);
 
 /**
@@ -460,6 +601,7 @@ static int EnableWeaponElemNone(int weapon_no) {
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuCheckElemValue__FP11WEAPON_HAVEP11WEAPON_HAVE);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2339__2);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2340__2);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuCheckEnableSetElem__FP11WEAPON_HAVEP11WEAPON_HAVEi);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2356);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2357);
@@ -504,6 +646,7 @@ static int WeaponMenuKastumSelectDown(int row, int enabled_rows) {
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponSelectKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WepAttachHaveCancel__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuAttachModeKey__Fv);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuActWepKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuTagKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuAttachWepKey__Fv);
@@ -514,6 +657,7 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemTrushKey__FPiPii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawTrushItem__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ExitItemSelect__Fv);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", StartBGReadItemMenuWepIcon__FP1Ri);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @4330);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ReadSyncItemMenuWepIcon__Fv);
@@ -541,15 +685,18 @@ static void InitItemTrushStart() {
 }
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ExistItemMenu__Fv);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ChangeMenuChara__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemMenuMainKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemMenuModeDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemMenuModeKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ActiveItemDraw__Fiii);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", MenuCharaPolyDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemMenuCharaStatusDraw__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemNaviCursor__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", CharaStatusMsgDraw__Fiiiii);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuAtoraKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", InitMenuMove__FiiP1);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @5858);
@@ -578,7 +725,9 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", LoadWorldMap__Fv);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @6248);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @6249);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @6250);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", LocalDrawWorldMap__Fv);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWorldMap__Fi);
 
 void MenuDataSwap(MAP_JUMP_COMPARE *first, MAP_JUMP_COMPARE *second) {
@@ -590,12 +739,15 @@ void MenuDataSwap(MAP_JUMP_COMPARE *first, MAP_JUMP_COMPARE *second) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetNearWorldPos__FiPi);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WorldMapMoveKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawMapCheck__Fi);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetVisitInfo__Fii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", IsLoadMapNo__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", MapNoTransFunc__Fi);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuOptionKey__Fv);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuSaveKey__Fv);
 
 void BattleManualInit(int *result, u_long128 *load_buffer) {
