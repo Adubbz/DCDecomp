@@ -526,7 +526,23 @@ INCLUDE_ASM("asm/nonmatchings/memcard", GetMsgLengthMenu__FP6ClsMesi);
  */
 INCLUDE_ASM("asm/nonmatchings/memcard", RetCTexAtora__FiRiRi);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtoraParts__Fiiiiii);
-INCLUDE_ASM("asm/nonmatchings/memcard", SearchAtoraInfo__Fi);
+
+static EDITPARTS_INFO *SearchAtoraInfo(int index) {
+    int parts;
+    int count;
+
+    parts = CommonMenuAtoraInfo->GetNextParts(-1);
+    count = -1;
+    while (parts != -1) {
+        count++;
+        if (index == count) {
+            return CommonMenuAtoraInfo->GetPartsInfo(parts);
+        }
+        parts = CommonMenuAtoraInfo->GetNextParts(parts);
+    }
+    return NULL;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraAllTipGet__Fi);
 
 static int AlreadyPeopleTalk(int map_no, int chip_no) {
