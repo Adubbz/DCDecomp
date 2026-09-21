@@ -145,7 +145,6 @@ int _SET_MOTION_FRM(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->chara[monster_no][0].motion_type.state.time = GetStackFloat(stack);
     return 1;
 }
-#ifdef NON_MATCHING
 int _GET_DISTANCE(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
     float monster_position[4];
@@ -155,19 +154,13 @@ int _GET_DISTANCE(RS_STACKDATA *stack, int argc) {
     if (argc == 1) {
         sceVu0CopyVector(target_position, CharaMain.pos);
     } else {
-        target_position[0] = GetStackFloat(stack);
-        stack++;
-        target_position[1] = GetStackFloat(stack);
-        stack++;
-        target_position[2] = GetStackFloat(stack);
-        stack++;
+        target_position[0] = GetStackFloat(stack++);
+        target_position[1] = GetStackFloat(stack++);
+        target_position[2] = GetStackFloat(stack++);
     }
     SetStack(stack, DistVector(monster_position, target_position));
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_DISTANCE__FP12RS_STACKDATAi);
-#endif
 #ifdef NON_MATCHING
 int _GET_POSITION(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
