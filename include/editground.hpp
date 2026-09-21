@@ -4,6 +4,9 @@
 
 #include <libvu0.h>
 
+#include "mapparts.hpp"
+#include "water.hpp"
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -12,6 +15,7 @@ class CCPoly;
 class CCamera;
 class CCameraFollow;
 class CEditArea;
+class CEditPartsInfo;
 class CEffectGroup;
 class CFrame;
 class CMapParts;
@@ -19,19 +23,38 @@ class CRect_i_;
 class CSaveData;
 
 /**
- * Holds the render controls for one editable-ground water surface.
+ * Holds one water surface of the editable ground and whether it is drawn.
  */
-struct EDIT_WATER_SURFACE_RENDER {
+class CGroundWater {
+public:
+    u8 unk_000[0x20];
     s32 draw; /**< Whether this water surface is drawn. */
-    u8 unk_004[0x3AC];
+    u8 unk_024[0x6C];
+    CWater water; /**< Surface that ripples and draws. */
 };
 
+STATIC_ASSERT(sizeof(CGroundWater) == 0x3B0);
+
+/**
+ * Holds the editable areas of a Georama map and every part placed on them.
+ */
 class CEditGround {
 public:
-    u8 unk_00000[4];
+    s32 unk_00000;
     CEditArea *areas[4]; /**< Editable areas that make up the ground. */
-    u8 unk_00014[0x1504C];
-    EDIT_WATER_SURFACE_RENDER water_surfaces[4]; /**< Render controls for the four ground water surfaces. */
+    s32 unk_00014[4];
+    u8 unk_00024[0xC];
+    CMapParts parts[128];       /**< Parts placed on the ground, indexed by part ID. */
+    CEditPartsInfo *parts_info; /**< Catalogue of the parts the map can hold. */
+    u8 unk_15034[0xC];
+    CGroundWater water_surfaces[4]; /**< The four ground water surfaces. */
+    s32 effect_count;               /**< Steps left before the falling part lands; zero or less when none falls. */
+    s32 effect_parts_id;            /**< ID of the falling part, or -1. */
+    float effect_alt;               /**< Height the falling part starts from. */
+    float effect_target_alt;        /**< Height the falling part lands at. */
+    float effect_step;              /**< Height the falling part moves each step. */
+    s32 focus_parts_id;             /**< ID of the part under the cursor, or -1. */
+    u8 unk_15f18[8];
     sceVu0FVECTOR clip_plane; /**< Plane used to clip the editable ground's rendered geometry. */
     u8 unk_15f30[0x360];
     CFrame *frame; /**< Root frame containing the editable ground model. */
@@ -501,6 +524,8 @@ public:
      */
     void YellowRequest(CMapParts *(*) [64]);
 };
+
+STATIC_ASSERT(sizeof(CEditGround) == 0x20960);
 
 class CPartsCursor {
 public:
