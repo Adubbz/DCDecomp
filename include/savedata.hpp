@@ -418,7 +418,7 @@ public:
      * @address 0x158800
      * @size 0x68
      */
-    s16 VisitMap(int map_no, int add);
+    int VisitMap(int map_no, int add);
 
     /**
      * Adds a value to the quest count of a dungeon and returns the new count.
