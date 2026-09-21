@@ -513,7 +513,24 @@ static int AlreadyPeopleTalk(int map_no, int chip_no) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraCompOrEvent__FP14EDITPARTS_INFO);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtraBoardMaxNum__Fi);
+
+static int AtraBoardMaxNum(int ground) {
+    EDIT_PARTS_ATRA *parts;
+    int count;
+
+    if (ground < 0 || ground >= 6) {
+        return 0;
+    }
+    parts = GetEditAtraPartsData(ground, 0);
+    if (parts == NULL) {
+        return 0;
+    }
+    for (count = 0; count < 40 && parts->max > 0; count++) {
+        parts++;
+    }
+    return count;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipStatusSearch__FP14EDITPARTS_INFOi);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtraTipCanDisplay__FP21EDIT_CHIP_ATTACH_DATA);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipRelationDraw__FiiP14EDITPARTS_INFOiii);
