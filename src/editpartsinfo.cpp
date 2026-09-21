@@ -25,7 +25,6 @@ EDITPARTS_INFO *CEditPartsInfo::GetPartsInfo(int index) {
     }
     return &parts[index];
 }
-#ifdef NON_MATCHING
 int CEditPartsInfo::CheckComplete(int index) {
     EDITPARTS_INFO *info = GetPartsInfo(index);
 
@@ -40,9 +39,6 @@ int CEditPartsInfo::CheckComplete(int index) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editpartsinfo", CheckComplete__14CEditPartsInfoFi);
-#endif
 
 void CEditPartsInfo::SetCompEvent(int index, int completed) {
     EDITPARTS_INFO *info = GetPartsInfo(index);
@@ -63,17 +59,12 @@ int CEditPartsInfo::GetCompEvent(int index) {
     return (info->completion_flags & 1) != 0;
 }
 
-#ifdef NON_MATCHING
 int CEditPartsInfo::GetRequest(int index) {
     if (index < 0 || index >= 24) {
         return 0;
     }
     return request[index];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editpartsinfo", GetRequest__14CEditPartsInfoFi);
-#endif
-#ifdef NON_MATCHING
 int CEditPartsInfo::GetNextPartsNum(int index) {
     int remaining = 0;
 
@@ -88,9 +79,6 @@ int CEditPartsInfo::GetNextPartsNum(int index) {
     }
     return remaining;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editpartsinfo", GetNextPartsNum__14CEditPartsInfoFi);
-#endif
 
 int CEditPartsInfo::GetNextParts(int index) {
     for (;;) {
@@ -106,15 +94,11 @@ int CEditPartsInfo::GetNextParts(int index) {
     }
 }
 
-#ifdef NON_MATCHING
 void CEditPartsInfo::Clear(void) {
     for (int plot = 0; plot < 24; plot++) {
         parts[plot].unk_0C = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editpartsinfo", Clear__14CEditPartsInfoFv);
-#endif
 
 #ifdef NON_MATCHING
 void CEditPartsInfo::Save(int georama_no, CSaveData *save_data) {
