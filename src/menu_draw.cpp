@@ -59,7 +59,6 @@ void GetPathReadDifferntLang(char *path) {
     strcat(path, GetNowSelectLanguage(GetMenuLangFlag()));
 }
 
-#ifdef NON_MATCHING
 int LoadFileBGMenuData(char *name, u_long128 *buffer) {
     int size;
 
@@ -71,9 +70,6 @@ int LoadFileBGMenuData(char *name, u_long128 *buffer) {
     LoadFileBG(MenuGrobalDir, buffer, &size);
     return size;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", LoadFileBGMenuData__FPcP1);
-#endif
 
 #ifdef NON_MATCHING
 int LoadFileMenuData(char *name, unsigned int *buffer) {
