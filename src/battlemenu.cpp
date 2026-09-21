@@ -1275,7 +1275,23 @@ static void BattleManualDraw() {
     MenuManualDraw();
 }
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawStatusNumberNowAndMax__FPiiiii);
+/**
+ * Draws a current-over-maximum pair, reddening it as the value runs low.
+ *
+ * @mangled DrawStatusNumberNowAndMax__FPiiiii
+ * @address 0x20B1B0
+ * @size 0x128
+ */
+static void DrawStatusNumberNowAndMax(int *values, int x, int y, int color, int alpha) {
+    RECT digits = NumberSprite;
+
+    if (values[0] < 0.3f * values[1]) {
+        digits.y += 12;
+    }
+    int end = DrawMenuNumber(values[1], x, y, StayTex, digits, color, alpha);
+    DrawMenu2DSprite(StayTex, CRect_i_(end - 11, y, 12, 12), CRect_i_(0x78, digits.y, 12, 12), alpha);
+    DrawMenuNumber(values[0], end - 11, y, StayTex, digits, color, alpha);
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWepHole__FiiP11WEAPON_HAVEii);
 
 void MenuClsMes::InitMes() {

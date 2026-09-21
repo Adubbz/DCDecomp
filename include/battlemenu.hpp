@@ -856,15 +856,6 @@ void BattleManualInit(int *result, u_long128 *load_buffer);
 int BattleManualKey(void);
 
 /**
- * Draws a current-over-maximum pair, reddening it as the value runs low.
- *
- * @mangled DrawStatusNumberNowAndMax__FPiiiii
- * @address 0x20B1B0
- * @size 0x128
- */
-void DrawStatusNumberNowAndMax(int *, int, int, int, int);
-
-/**
  * Draws the sockets of a weapon and what is fitted into them.
  *
  * @mangled DrawWepHole__FiiP11WEAPON_HAVEii
