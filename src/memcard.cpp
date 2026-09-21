@@ -1506,4 +1506,47 @@ static int SaveMenuKeyLoadConfig() {
     SaveMenu.file_no = ((s32 *) SaveData->GetConfigData())[17];
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyFileSelect__Fv);
+static int SaveMenuKeyFileSelect() {
+    int prev_file;
+    SAVEDATA_INFO *info;
+
+    prev_file = SaveMenu.file_no;
+    if (GamePad.Down(0x4000)) {
+        SaveMenu.file_no++;
+        if (SaveMenu.file_no >= 12) {
+            SaveMenu.file_no--;
+        }
+    }
+    if (GamePad.Down(0x1000) && 0 < SaveMenu.file_no) {
+        SaveMenu.file_no--;
+    }
+    if (prev_file != SaveMenu.file_no) {
+        ComMenuSePlay(0);
+    }
+    if (GamePad.Down(0x20)) {
+        SaveMenu.key_no = 3;
+        SaveMenu.file_no = McAccess.port;
+        SaveMenu.unk_28 = 0;
+        ComMenuSePlay(2);
+        return 1;
+    }
+    if (GamePad.Down(0x40)) {
+        switch (SaveMenu.unk_1C) {
+            case 2:
+                SaveMenu.key_no = 8;
+                McAccess.SetFuncNo(0);
+                break;
+            case 1:
+                info = &McAccess.file_info[SaveMenu.file_no];
+                if (info->state) {
+                    SaveMenu.key_no = 12;
+                } else {
+                    ComMenuSePlay(2);
+                }
+                break;
+        }
+        ComMenuSePlay(1);
+        return 1;
+    }
+    return 1;
+}
