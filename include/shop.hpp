@@ -23,7 +23,7 @@ extern s16 ItemShopList2[18][20];
  * The record behind one shop slot, read according to the kind of item in it.
  */
 union SHOP_ITEM_RECORD {
-    s16 volume;         /**< A dungeon item's volume. */
+    s32 volume;         /**< A dungeon item's volume. */
     WEAPON_HAVE weapon; /**< A weapon's record. */
     ATTACH_LIST attach; /**< An attachment's record. */
     s16 param[0x7C];    /**< The record read as halfwords; items 0x5B to 0x5E each set one of an attachment's stats. */
