@@ -39,7 +39,233 @@ extern MINI_MENU_INFO MiniMenu;
  */
 void ExitSaveSelect();
 
-int SaveMenuKeySaveCheck(void) {
+/**
+ * Checks the memory card before a save and picks the save menu's next step.
+ *
+ * @mangled SaveMenuKeySaveCheck__Fv
+ * @address 0x221730
+ * @size 0x168
+ */
+static int SaveMenuKeySaveCheck(void);
+
+/**
+ * Handles the save menu's prompt to confirm a save.
+ *
+ * @mangled SaveMenuKeySaveDecide__Fv
+ * @address 0x2218A0
+ * @size 0xE0
+ */
+static int SaveMenuKeySaveDecide(void);
+
+/**
+ * Steps the save menu while the game is written to the memory card.
+ *
+ * @mangled SaveMenuKeySave__Fv
+ * @address 0x221980
+ * @size 0x130
+ */
+static int SaveMenuKeySave(void);
+
+/**
+ * Waits for a button press once a save has finished.
+ *
+ * @mangled SaveMenuKeyEndSave__Fv
+ * @address 0x221AB0
+ * @size 0x74
+ */
+static int SaveMenuKeyEndSave(void);
+
+/**
+ * Steps the save menu while a save is read from the memory card.
+ *
+ * @mangled SaveMenuKeyLoad__Fv
+ * @address 0x221C30
+ * @size 0xDC
+ */
+static int SaveMenuKeyLoad(void);
+
+/**
+ * Waits for a button press while the save menu shows an alert.
+ *
+ * @mangled SaveMenuKeyArart__Fv
+ * @address 0x221D10
+ * @size 0x128
+ */
+static int SaveMenuKeyArart(void);
+
+/**
+ * Handles the save menu's prompt to create new save data.
+ *
+ * @mangled SaveMenuKeyNewDirSelect__Fv
+ * @address 0x221E40
+ * @size 0xC8
+ */
+static int SaveMenuKeyNewDirSelect(void);
+
+/**
+ * Steps the save menu while new save data is created on the memory card.
+ *
+ * @mangled SaveMenuKeyNewDir__Fv
+ * @address 0x221F10
+ * @size 0x108
+ */
+static int SaveMenuKeyNewDir(void);
+
+/**
+ * Handles the save menu's memory card format step.
+ *
+ * @mangled SaveMenuKeyFormat__Fv
+ * @address 0x222020
+ * @size 0x150
+ */
+static int SaveMenuKeyFormat(void);
+
+/**
+ * Waits for a button press when the save data is of a different version.
+ *
+ * @mangled SaveMenuKeyDifVersion__Fv
+ * @address 0x2221F0
+ * @size 0x5C
+ */
+static int SaveMenuKeyDifVersion(void);
+
+/**
+ * Steps the delete choice of the save menu.
+ *
+ * @mangled SaveMenuKeyDelete__Fv
+ * @address 0x222250
+ * @size 0xC
+ */
+static s32 SaveMenuKeyDelete(void);
+
+/**
+ * Steps the copy choice of the save menu.
+ *
+ * @mangled SaveMenuKeyCopy__Fv
+ * @address 0x222260
+ * @size 0xC
+ */
+static s32 SaveMenuKeyCopy(void);
+
+/**
+ * Handles key input on the save menu offered after the ending.
+ *
+ * @mangled SaveMenuKeyAfterEnding__Fv
+ * @address 0x222270
+ * @size 0x7C
+ */
+static int SaveMenuKeyAfterEnding(void);
+
+/**
+ * Handles the prompt to confirm a save after the ending.
+ *
+ * @mangled SaveMenuKeySaveDecideEnding__Fv
+ * @address 0x2222F0
+ * @size 0x7C
+ */
+static int SaveMenuKeySaveDecideEnding(void);
+
+/**
+ * Steps the save menu while saving after the ending.
+ *
+ * @mangled SaveMenuKeySaveEnding__Fv
+ * @address 0x222370
+ * @size 0x3C
+ */
+static int SaveMenuKeySaveEnding(void);
+
+/**
+ * Waits for a button press once the save after the ending has finished.
+ *
+ * @mangled SaveMenuKeyEndSaveEnding__Fv
+ * @address 0x2223B0
+ * @size 0x58
+ */
+static int SaveMenuKeyEndSaveEnding(void);
+
+/**
+ * Computes the save board's alpha ramp at a position and at that position
+ * offset by the second argument.
+ *
+ * @mangled GetSaveBoardAlphaInfo__FiiRiRii
+ * @address 0x222940
+ * @size 0x154
+ */
+static void GetSaveBoardAlphaInfo(int x, int width, int &start_alpha, int &end_alpha, int alpha);
+
+/**
+ * Frees the event item selection menu's textures and releases the pad.
+ *
+ * @mangled EventItemSelectExit__Fv
+ * @address 0x2240E0
+ * @size 0x5C
+ */
+static void EventItemSelectExit(void);
+
+/**
+ * Draws one vertical section of the board the event and fishing menus share.
+ *
+ * @mangled DrawEventAndFishMenuBoard_Ver__FP8CTexture8CRect_i_iiii
+ * @address 0x224910
+ * @size 0x148
+ */
+static void DrawEventAndFishMenuBoard_Ver(CTexture *, CRect_i_, int, int, int, int);
+
+/**
+ * Draws a section of the event item board, clipped to a range.
+ *
+ * @mangled DrawEventItemBoard__FiiiiiP8CTexture
+ * @address 0x225420
+ * @size 0x10C
+ */
+static void DrawEventItemBoard(int, int, int, int, int, CTexture *);
+
+/**
+ * Handles the save menu's prompt to confirm a load.
+ *
+ * @mangled SaveMenuKeyLoadDecide__Fv
+ * @address 0x221B30
+ * @size 0x100
+ */
+static int SaveMenuKeyLoadDecide(void);
+
+/**
+ * Steps the save menu when the memory card is not formatted.
+ *
+ * @mangled SaveMenuKeyUnFormat__Fv
+ * @address 0x222170
+ * @size 0x78
+ */
+static int SaveMenuKeyUnFormat(void);
+
+/**
+ * Handles pad input for the event item selection menu.
+ *
+ * @mangled EventItemSelectKey__FPi
+ * @address 0x224260
+ * @size 0x6A4
+ */
+static int EventItemSelectKey(int *);
+
+/**
+ * Draws the event item selection menu.
+ *
+ * @mangled EventItemSelectDraw__Fv
+ * @address 0x224D50
+ * @size 0x6C4
+ */
+static void EventItemSelectDraw(void);
+
+/**
+ * Draws the board the event and fishing menus share.
+ *
+ * @mangled DrawEventAndFishMenuBoard__FP8CTextureiiii
+ * @address 0x224A60
+ * @size 0x2E8
+ */
+static void DrawEventAndFishMenuBoard(CTexture *, int, int, int, int);
+
+static int SaveMenuKeySaveCheck(void) {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
 
     if (McCheckMCPs2(card) == 0) {
@@ -70,7 +296,7 @@ int SaveMenuKeySaveCheck(void) {
     return 1;
 }
 
-int SaveMenuKeySaveDecide(void) {
+static int SaveMenuKeySaveDecide(void) {
     if (GamePad.Down(0x40) != 0) {
         McAccess.SetFuncNo(0);
         int file_no = SaveMenu.file_no;
@@ -89,7 +315,7 @@ int SaveMenuKeySaveDecide(void) {
     return 1;
 }
 
-int SaveMenuKeySave(void) {
+static int SaveMenuKeySave(void) {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
 
     if (McCheckMCPs2(card) == 0) {
@@ -113,7 +339,7 @@ int SaveMenuKeySave(void) {
     return 1;
 }
 
-int SaveMenuKeyEndSave(void) {
+static int SaveMenuKeyEndSave(void) {
     if ((GamePad.Down(0x40) != 0) || (GamePad.Down(0x20) != 0)) {
         McAccess.SetFuncNo(1);
         SaveMenu.key_no = 7;
@@ -122,7 +348,7 @@ int SaveMenuKeyEndSave(void) {
 }
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyLoadDecide__Fv);
 
-int SaveMenuKeyLoad(void) {
+static int SaveMenuKeyLoad(void) {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
 
     if (McCheckMCPs2(card) == 0) {
@@ -141,7 +367,7 @@ int SaveMenuKeyLoad(void) {
     return 1;
 }
 
-int SaveMenuKeyArart(void) {
+static int SaveMenuKeyArart(void) {
     switch (SaveMenu.unk_20) {
         case 0:
             break;
@@ -170,7 +396,7 @@ int SaveMenuKeyArart(void) {
     return 1;
 }
 
-int SaveMenuKeyNewDirSelect(void) {
+static int SaveMenuKeyNewDirSelect(void) {
     if (GamePad.Down(0x40) != 0) {
         McAccess.SetFuncNo(0);
         SaveMenu.key_no = 0xF;
@@ -187,7 +413,7 @@ int SaveMenuKeyNewDirSelect(void) {
     return 1;
 }
 
-int SaveMenuKeyNewDir(void) {
+static int SaveMenuKeyNewDir(void) {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
 
     if (McCheckMCPs2(card) == 0) {
@@ -209,7 +435,7 @@ int SaveMenuKeyNewDir(void) {
     SaveMenu.key_no = 0xA;
 }
 
-int SaveMenuKeyFormat(void) {
+static int SaveMenuKeyFormat(void) {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
 
     if (McCheckMCPs2(card) == 0) {
@@ -238,7 +464,7 @@ int SaveMenuKeyFormat(void) {
 }
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyUnFormat__Fv);
 
-int SaveMenuKeyDifVersion(void) {
+static int SaveMenuKeyDifVersion(void) {
     if (GamePad.Down(0xF0) != 0) {
         McAccess.SetFuncNo(7);
         int file_no = McAccess.file_no;
@@ -247,15 +473,15 @@ int SaveMenuKeyDifVersion(void) {
     return 1;
 }
 
-s32 SaveMenuKeyDelete(void) {
+static s32 SaveMenuKeyDelete(void) {
     return 1;
 }
 
-s32 SaveMenuKeyCopy(void) {
+static s32 SaveMenuKeyCopy(void) {
     return 1;
 }
 
-int SaveMenuKeyAfterEnding(void) {
+static int SaveMenuKeyAfterEnding(void) {
     if (GamePad.Down(0x40) != 0) {
         SaveMenu.key_no = 3;
     } else if (GamePad.Down(0x20) != 0) {
@@ -265,7 +491,7 @@ int SaveMenuKeyAfterEnding(void) {
     return 1;
 }
 
-int SaveMenuKeySaveDecideEnding(void) {
+static int SaveMenuKeySaveDecideEnding(void) {
     if (GamePad.Down(0x40) != 0) {
         SaveMenu.key_no = 0x17;
     } else if (GamePad.Down(0x20) != 0) {
@@ -275,13 +501,13 @@ int SaveMenuKeySaveDecideEnding(void) {
     return 1;
 }
 
-int SaveMenuKeySaveEnding(void) {
+static int SaveMenuKeySaveEnding(void) {
     SaveMenu.key_no = 0x19;
     McAccess.SetFuncNo(0xE);
     return 1;
 }
 
-int SaveMenuKeyEndSaveEnding(void) {
+static int SaveMenuKeyEndSaveEnding(void) {
     if (GamePad.Down(0x40) != 0) {
         SaveMenu.key_no = 3;
         McAccess.SetFuncNo(1);
@@ -419,7 +645,7 @@ int SaveMenuEffectFadeOut(void) {
     return 0;
 }
 
-void GetSaveBoardAlphaInfo(int x, int width, int &start_alpha, int &end_alpha, int alpha) {
+static void GetSaveBoardAlphaInfo(int x, int width, int &start_alpha, int &end_alpha, int alpha) {
     if (x < 0) {
         start_alpha = 0;
     } else if ((0 <= x) && (x < 0x81)) {
@@ -540,7 +766,7 @@ INCLUDE_RODATA("asm/nonmatchings/menu_save", @3428);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3429);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3430);
 
-void EventItemSelectExit(void) {
+static void EventItemSelectExit(void) {
     TexManager.DeleteTextureBlock(MiniEventTextureBlock);
     TexManager.CleanUpTextureList();
     GamePad.AutoRepeatOff();
@@ -590,7 +816,7 @@ INCLUDE_RODATA("asm/nonmatchings/menu_save", @3552);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3553);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3554);
 
-void DrawEventAndFishMenuBoard_Ver(CTexture *texture, CRect_i_ rect, int u, int width, int unused, int alpha) {
+static void DrawEventAndFishMenuBoard_Ver(CTexture *texture, CRect_i_ rect, int u, int width, int unused, int alpha) {
     int y = rect.y;
 
     DrawMenu2DSprite(texture, CRect_i_(rect.x, y, rect.width, 0x94), CRect_i_(u, 0, width, 0x94), alpha);
@@ -602,7 +828,7 @@ void DrawEventAndFishMenuBoard_Ver(CTexture *texture, CRect_i_ rect, int u, int 
 INCLUDE_ASM("asm/nonmatchings/menu_save", DrawEventAndFishMenuBoard__FP8CTextureiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_save", EventItemSelectDraw__Fv);
 
-void DrawEventItemBoard(int x, int y, int top, int bottom, int alpha, CTexture *texture) {
+static void DrawEventItemBoard(int x, int y, int top, int bottom, int alpha, CTexture *texture) {
     int clip_y;
     int clip_v;
     int clip_height;

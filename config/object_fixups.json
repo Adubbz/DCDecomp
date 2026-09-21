@@ -1200,5 +1200,25 @@
       "SaveMenuKeyLoadConfig__Fv",
       "SaveMenuKeyFileSelect__Fv"
     ]
+  },
+  "src/menu_save.cpp": {
+    "globalize_symbols": [
+      "SaveMenuKeySaveCheck__Fv",
+      "SaveMenuKeySaveDecide__Fv",
+      "SaveMenuKeySave__Fv",
+      "SaveMenuKeyEndSave__Fv",
+      "SaveMenuKeyLoad__Fv",
+      "SaveMenuKeyArart__Fv",
+      "SaveMenuKeyNewDirSelect__Fv",
+      "SaveMenuKeyNewDir__Fv",
+      "SaveMenuKeyFormat__Fv",
+      "SaveMenuKeyDifVersion__Fv",
+      "SaveMenuKeyDelete__Fv",
+      "SaveMenuKeyCopy__Fv",
+      "SaveMenuKeyAfterEnding__Fv",
+      "SaveMenuKeySaveDecideEnding__Fv",
+      "SaveMenuKeySaveEnding__Fv",
+      "SaveMenuKeyEndSaveEnding__Fv"
+    ]
   }
 }
