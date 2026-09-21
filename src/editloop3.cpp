@@ -4050,7 +4050,6 @@ static int _MES_NEXTPAGE(RS_STACKDATA *stack, int) {
     return 1;
 }
 
-#ifdef NON_MATCHING
 int _SET_MES_AUTOSET(RS_STACKDATA *stack, int argument_count) {
     ClsMes *message = GetMes(GetStackInt(stack++));
     if (message == NULL)
@@ -4073,18 +4072,14 @@ int _SET_MES_AUTOSET(RS_STACKDATA *stack, int argument_count) {
     if (argument_count == 3) {
         int first_index = GetStackInt(stack++);
         int second_index = GetStackInt(stack);
-        message->AutoSetSub(
-            first_index == -1 ? EdEventInfo.main_character : &GetNPC(first_index)->chara,
-            second_index == -1 ? EdEventInfo.main_character : &GetNPC(second_index)->chara,
-            talk_position);
+        CCharacter *speaker = first_index == -1 ? EdEventInfo.main_character : &GetNPC(first_index)->chara;
+        CCharacter *listener = second_index == -1 ? EdEventInfo.main_character : &GetNPC(second_index)->chara;
+        message->AutoSetSub(speaker, listener, talk_position);
         message->AutoSet(talk_position);
         return 1;
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", _SET_MES_AUTOSET__FP12RS_STACKDATAi);
-#endif
 
 static int _SET_MES_SHIPPO(RS_STACKDATA *stack, int argument_count) {
     ClsMes *message = GetMes(GetStackInt(stack++));
@@ -6687,7 +6682,6 @@ int EdInitEventParam() {
  */
 int EdRunEvent(int program, CDataAlloc2<1> *arena);
 
-#ifdef NON_MATCHING
 int EdEventInit(int event_number, CDataAlloc2<1> *arena, char *program) {
     if (program == NULL) {
         return 0;
@@ -6720,8 +6714,6 @@ int EdEventInit(int event_number, CDataAlloc2<1> *arena, char *program) {
         message->edge_alpha = 0x80;
         for (int j = 0; j < 10; j++) {
             message->mes_no[j] = -1;
-            message->line_pos[j].x = -1;
-            message->line_pos[j].y = -1;
         }
         for (int j = 0; j < 8; j++) {
             message->values[j] = 0;
@@ -6735,10 +6727,15 @@ int EdEventInit(int event_number, CDataAlloc2<1> *arena, char *program) {
         message->cursor_row = -1;
         message->cursor_y = 0;
         message->cursor_lit = 0;
+        for (int j = 0; j < 10; j++) {
+            message->line_pos[j].x = -1;
+            message->line_pos[j].y = -1;
+        }
     }
 
     EdEventScript.reload((RS_PROG_HEADER *) program);
-    EdEventInfo.unk_004 = event_number;
+    EdEventInfo.return_code = 0;
+    EdEventInfo.unk_000 = event_number;
     EdEventInfo.exit_code = 0;
     EdEventInfo.draw_exclamation_mark = 0;
     EdEventInfo.reset_camera_angle = 0;
@@ -6767,9 +6764,6 @@ int EdEventInit(int event_number, CDataAlloc2<1> *arena, char *program) {
     skip_enable = 0;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", EdEventInit__FiP14CDataAlloc2_1_Pc);
-#endif
 
 /**
  * Resets event-script workspace and starts the requested script program.
