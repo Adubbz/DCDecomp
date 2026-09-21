@@ -691,7 +691,17 @@ int SndGetBgmNo() {
  * @address 0x159D20
  * @size 0x70
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetBgmVol__Fi);
+void SndSetBgmVol(int volume) {
+    if (now_bgm_no >= 0 && now_bgm_vol != volume) {
+        if (volume < 0 || volume > 127) {
+            return;
+        }
+        if (now_bgm_play != 0) {
+            now_bgm_vol = volume;
+            CSnd.SetVol(0, volume);
+        }
+    }
+}
 /**
  * Sets the background music's volume as a share of its default.
  *
