@@ -199,25 +199,36 @@ void ShopIconMove::IconMoveTarSet(int slot_no, int icon_no, int item_no, MENU_IT
 }
 INCLUDE_ASM("asm/nonmatchings/shop", IconAutoMove__12ShopIconMoveFii);
 INCLUDE_ASM("asm/nonmatchings/shop", IconAutoMoveDraw__12ShopIconMoveFv);
-#ifdef NON_MATCHING
 /** An item's buy and sell price, indexed by item number. */
 struct ITEM_MONEY_ENTRY {
     s16 buy_price;
     s16 sell_price;
 };
 
-extern u8 ext_func_info__3_unk_000[0x19C];
-extern ITEM_MONEY_ENTRY ext_func_info__3_money[0x51];
+/**
+ * A local data block of this unit whose tail is the item price table.
+ */
+struct EXT_FUNC_INFO_3 {
+    u8 unk_000[0x19C];
+    ITEM_MONEY_ENTRY money[0x51]; /**< Buy and sell price of each item below 0x51. */
+};
 
-s16 GetItemMoney(int item_no, int sell) {
+/** Retail's local data block holding the item price table. */
+extern EXT_FUNC_INFO_3 ext_func_info__3;
+
+/**
+ * Returns an item's price, buying or selling, from the item table.
+ *
+ * @mangled GetItemMoney__Fii
+ * @address 0x1E6EF0
+ * @size 0x44
+ */
+static s16 GetItemMoney(int item_no, int sell) {
     if (sell != 0) {
-        return ext_func_info__3_money[item_no].sell_price;
+        return ext_func_info__3.money[item_no].sell_price;
     }
-    return ext_func_info__3_money[item_no].buy_price;
+    return ext_func_info__3.money[item_no].buy_price;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", GetItemMoney__Fii);
-#endif
 INCLUDE_ASM("asm/nonmatchings/shop", ShopNoInput__FPiii);
 
 void InitAllHaveData() {

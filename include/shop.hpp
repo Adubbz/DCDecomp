@@ -119,15 +119,6 @@ public:
 STATIC_ASSERT(sizeof(ShopIconMove) == 0x10C);
 
 /**
- * Returns an item's price, buying or selling, from the item table.
- *
- * @mangled GetItemMoney__Fii
- * @address 0x1E6EF0
- * @size 0x44
- */
-s16 GetItemMoney(int, int);
-
-/**
  * Turns a shop number into the shop and the master it stands for.
  *
  * @mangled ShopNoInput__FPiii
