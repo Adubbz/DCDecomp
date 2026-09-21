@@ -3,10 +3,12 @@
 #include <cstdio>
 #include <cstring>
 
+#include "btactstatus.hpp"
 #include "btitem.hpp"
 #include "btmisc.hpp"
 #include "camera.hpp"
 #include "camerafollow.hpp"
+#include "clsmes.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dngstatusdata.hpp"
@@ -59,6 +61,18 @@ extern "C" CNPCharacter NPCUnit[6];
 
 /** Whether the player is in the back dungeon rather than the main one. */
 extern s32 BtUraDongeon;
+
+/** Nonzero while a system event script holds the dungeon. */
+extern s32 BtEventMode;
+
+/** Nonzero while a system event script clears the dungeon's usual work. */
+extern s32 BtAllClear;
+
+/** Camera the dungeon currently draws through. */
+extern CCameraFollow *NowCamera__3;
+
+/** Camera that stands in for the player's while an event runs. */
+extern "C" CCameraFollow SubCamera;
 
 /** Message window the system script talks through first. */
 extern "C" ClsMes BtEventMes0;
@@ -141,7 +155,68 @@ void BtSystemScriptLoad(int floor) {
     AddSystemEventScript();
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSystemScriptInit__Fv);
+void BtSystemScriptInit(void) {
+    sceVu0FVECTOR pos;
+    sceVu0FVECTOR ref;
+    float text_rate;
+
+    BtEventMode = 1;
+    BtAllClear = 1;
+    NowCamera__3->GetPos(pos);
+    NowCamera__3->GetRef(ref);
+    SubCamera.FollowOff();
+    SubCamera.SetPos(pos);
+    SubCamera.SetRef(ref);
+    SubCamera.Step(-1);
+    NowCamera__3 = &SubCamera;
+    NowCamera__3->FollowOff();
+    CUserStatus *status = UserStatus;
+    status->step_disable = 1;
+    EdEventInfo.projection = -1.0f;
+    EdEventInfo.camera = NowCamera__3;
+    EdEventInfo.main_character = &CharaMain;
+    for (int i = 0; i < 6; i++) {
+        NPCUnit[i].chara.frame = NULL;
+    }
+    EdEventInfo.npcs = NPCUnit;
+    EdEventInfo.npc_texture_block = 32;
+    EdEventInfo.player_texture_block = 17;
+    EdEventInfo.npc_count = 6;
+    EdEventInfo.villagers = NULL;
+    for (int i = 0; i < 8; i++) {
+        EdEventInfo.messages[i] = NULL;
+    }
+    EdEventInfo.messages[1] = &BtEventMes0;
+    EdEventInfo.messages[2] = &BtEventMes1;
+    EDIT_CONFIG_VIEW *config = (EDIT_CONFIG_VIEW *) SaveData->GetConfigData();
+    if (config->message_speed != 0) {
+        text_rate = 0.6f;
+    } else {
+        text_rate = 0.3f;
+    }
+    EdEventInfo.messages[1]->text_rate = text_rate;
+    EdEventInfo.messages[2]->text_rate = text_rate;
+    EdEventInfo.messages[1]->text_rate_set = text_rate;
+    EdEventInfo.messages[2]->text_rate_set = text_rate;
+    if (BtEventInfo.unk_90 != 0) {
+        EdFadeInit();
+    }
+    BtEventInfo.unk_90 = 1;
+    for (int i = 0; i < 32; i++) {
+        BtObjHdl[i].frame = NULL;
+        BtObjHdl[i].character = NULL;
+    }
+    BtEventInfo.unk_38 = 0;
+    BtEventInfo.unk_8C = 0;
+    BtEventInfo.unk_B0 = 0;
+    BtActStatus.unk_00C = 0;
+    BtActStatus.unk_004 = -1;
+    BtActStatus.unk_008 = -1;
+    BtActStatus.action_no = 0;
+    BtActStatus.action_on = 0;
+    BtActStatus.unk_028 = 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSystemScriptAfter__Fv);
 int BtSystemScriptRun(int event, CDataAlloc2<1> *arena) {
     return EdEventInit(event, arena, (char *) BtEventData);
