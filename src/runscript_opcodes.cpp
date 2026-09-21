@@ -47,6 +47,11 @@ extern BT_EVENT_EXTERNAL_FUNCTION ext_func_info__3[];
 extern int (*ext_func[256])(RS_STACKDATA *, int);
 
 /**
+ * Body collision sphere the last _SET_BODY_COL created, or -1 when it found no frame.
+ */
+static int bak_ColNo;
+
+/**
  * Reads one script argument as an integer, converting it where the slot holds a float.
  */
 static int GetStackInt(RS_STACKDATA *argument) {
@@ -597,8 +602,45 @@ int _SET_MOV_COL(RS_STACKDATA *stack, int argc) {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_BODY_COL__FP12RS_STACKDATAi);
-INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1010);
+
+int _SET_BODY_COL(RS_STACKDATA *stack, int argc) {
+    char *name = GetStackString(stack++);
+    float radius = GetStackFloat(stack++);
+    float start = 0.0f;
+    float end = 0.0f;
+    int i;
+    int monster_no;
+    int j;
+
+    if (argc == 4) {
+        start = GetStackFloat(stack++);
+        end = GetStackFloat(stack);
+    }
+    monster_no = NowMonstorUnit->unk_090;
+    for (i = 0; i < 16; i++) {
+        if (NowMonstorUnit->effect[monster_no].timer[i] == 0) {
+            CFrame *frame = NowMonstorUnit->chara[monster_no][0].frame->SearchFrame(name);
+            if (frame != NULL) {
+                NowMonstorUnit->effect[monster_no].timer[i] = 1;
+                NowMonstorUnit->effect[monster_no].frame[i] = frame;
+                NowMonstorUnit->effect[monster_no].radius[i] = radius;
+                NowMonstorUnit->effect[monster_no].motion_start[i] = start;
+                NowMonstorUnit->effect[monster_no].motion_end[i] = end;
+                for (j = 0; j < 5; j++) {
+                    NowMonstorUnit->effect[monster_no].unk_240[i][j] = 100;
+                }
+                for (j = 0; j < 6; j++) {
+                    NowMonstorUnit->effect[monster_no].parameter[i][j] = 100;
+                }
+                bak_ColNo = i;
+                break;
+            }
+            printf("[%d]body col -> %s\n", NowMonstorUnit->monster[monster_no].base_model, name);
+            bak_ColNo = -1;
+        }
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_BODY_COL_PARA__FP12RS_STACKDATAi);
 
 int _SET_DMG_COL(RS_STACKDATA *stack, int argc) {

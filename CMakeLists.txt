@@ -235,10 +235,11 @@ carve_part(main.sbss.part4b.s
            main.sbss.part4f.s=2A2A80-2A2BF0)
 carve_part(main.rdata.part4.s
            main.rdata.part4b.s=2A1168-2A11E0)
-# CheckDmg owns its local static effect index and initialization guard.
+# CheckDmg owns its local static effect index and initialization guard, and
+# runscript_opcodes.cpp owns bak_ColNo after them.
 carve_part(main.sbss.part5.s
            main.sbss.part5.s=2A2BF8-2A2C68
-           main.sbss.part5c.s=2A2C70-2A2F50
+           main.sbss.part5c.s=2A2C74-2A2F50
            main.sbss.denter-gap.s=2A2F54-2A2F5C
            main.sbss.denter-tail.s=2A2F60-2A2FD0)
 # The weapon build-up and level-up local templates stand in this residual run.
