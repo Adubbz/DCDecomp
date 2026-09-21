@@ -1804,7 +1804,13 @@ void set3DColSprite(sceVif1Packet *packet, int *top_left, int *top_right, int *b
     sceVif1PkCloseDirectCode(packet);
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiPiPiUc);
+void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left,
+                 int *top_right, int *bottom_left, int *bottom_right, unsigned char alpha) {
+    spRGBA colour = { 0x80, 0x80, 0x80, 0 };
+
+    colour.a = alpha;
+    set3DSprite(packet, texture, source, top_left, top_right, bottom_left, bottom_right, &colour);
+}
 /**
  * Draws a textured sprite in world space, with four corner positions and colours.
  *

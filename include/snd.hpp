@@ -415,7 +415,6 @@ void set3DColSprite(sceVif1Packet *, int *, int *, int *, int *, spRGBA *, spRGB
  * @mangled set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiPiPiUc
  * @address 0x15D470
  * @size 0x34
- * @unknownret
  */
 void set3DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, int *, int *, int *, int *,
                  unsigned char);
