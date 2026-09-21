@@ -79,21 +79,21 @@ int LoadFileMenuData(char *name, unsigned int *buffer) {
     LoadFile(MenuGrobalDir, buffer, &size);
     return size;
 }
-#ifdef NON_MATCHING
+/** Allocator of the edit menu's work memory, which the battle menus also load into. */
 extern CDataAlloc2<1> EdMenuBuffer;
-extern u_int *read_buffer;
 
 u_long128 *BtlMenuBufferSet(int mode) {
+    u_long128 *buffer;
+
     switch (mode) {
         case 0:
-            return (u_long128 *) read_buffer;
+            buffer = (u_long128 *) read_buffer;
+            break;
         case 1:
-            return (u_long128 *) (EdMenuBuffer.base + EdMenuBuffer.used * 0x10);
+            buffer = (u_long128 *) (EdMenuBuffer.base + EdMenuBuffer.used * 0x10);
     }
+    return buffer;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", BtlMenuBufferSet__Fi);
-#endif
 
 u_long128 *MenuCalcBufAlignment(u_long128 *buffer) {
     int offset = (int) buffer;
