@@ -767,7 +767,92 @@ static inline void SetLinePos(ClsMes *window, int line, int x, int y) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponNameDraw__Fiii);
+/**
+ * Draws the names of the weapons either side of the cursor as they slide past.
+ *
+ * Weapons off screen, or hidden by the page's current mode, get the blank message. The window
+ * is laid out again whenever a name or level changed, and the name frame is drawn under it while
+ * the page is at its top level.
+ *
+ * @mangled WeaponNameDraw__Fiii
+ * @address 0x1F96D0
+ * @size 0x550
+ */
+static void WeaponNameDraw(int y, int selected_only, int alpha) {
+    int previous_mes[4];
+    int previous_level[4];
+
+    MenuTextureReload(AtoraNameMes.tex_block);
+    int slot = WepMenu.weapon_slot - 1;
+    for (int i = 0; i < 4; i++) {
+        previous_mes[i] = AtoraNameMes.mes_no[i];
+        previous_level[i] = AtoraNameMes.values[i];
+    }
+    int x = 22.0f + WeaponPos + slot * 0xD6;
+    AtoraNameMes.value_signed = 1;
+    for (int i = 0; i < 3; i++) {
+        int mes_no;
+        int level = 0;
+        if (x < -140 || x > 630 || (selected_only == 1 && slot != WepMenu.weapon_slot) || slot < 0 || slot > 9 ||
+            ((WepMenu.unk_0C == 8 || WepMenu.unk_0C == 9) && slot == WepMenu.weapon_slot) ||
+            (WepMenu.unk_02 > 0 && slot != WepMenu.weapon_slot) || (WepMenu.unk_0C != 10 && WepMenu.unk_0C >= 8 && WepMenu.unk_0C < 11) ||
+            (WepMenu.unk_0C == 7 && slot != WepMenu.weapon_slot)) {
+            mes_no = 999;
+        } else {
+            mes_no = GetWeaponMsgNo(&DngWepHavePt[slot]);
+            if (mes_no < 0 || slot < 0) {
+                mes_no = 999;
+            }
+            if (mes_no > 100) {
+                AtoraNameMes.GetMesWidth_system(mes_no);
+                level = DngWepHavePt[slot].unk_02;
+            }
+        }
+        int width = AtoraNameMes.GetMesWidth_system(mes_no);
+        AtoraNameMes.mes_no[i] = mes_no;
+        AtoraNameMes.values[i] = level;
+        int name_x = GetWeaponNamePutX(x + 0x42, width);
+        if (level > 0) {
+            name_x -= 8;
+            if (level / 10 > 0) {
+                name_x -= 8;
+            }
+        }
+        SetLinePos(&AtoraNameMes, i, name_x, y);
+        x += 0xD6;
+        slot++;
+    }
+    for (int i = 0; i < 4; i++) {
+        if (AtoraNameMes.line_pos[i].y > 180) {
+            AtoraNameMes.line_pos[i].y = y;
+            AtoraNameMes.mes_no[i] = 999;
+        }
+    }
+    for (int i = 0; i < 4; i++) {
+        if (AtoraNameMes.mes_no[i] != previous_mes[i] || AtoraNameMes.values[i] != previous_level[i]) {
+            AtoraNameMes.mes_made = -1;
+            AtoraNameMes.MakeMesWin(150);
+            break;
+        }
+    }
+    AtoraNameMes.edge_alpha = alpha;
+    AtoraNameMes.Step();
+    AtoraNameMes.DrawMesWin();
+    if (WepMenu.unk_02 == 0 && WepMenu.unk_0C == 0) {
+        CTexture *frame = TexManager.GetTexture("frame_image", -1);
+        if (frame != NULL) {
+            TexManager.ReloadTexture(GetVif1Packet(), frame->block);
+            ((sceGsTex0 *) &frame->tex0)->bits.tcc = 0;
+            sceGsTexa texa = mgTexa;
+            texa.AEM = 1;
+            texa.TA0 = 0x80;
+            MGSetGsTEXA(&texa);
+            CRect_i_ rect(0, 0x14A, 0x104, 0x76);
+            set2DSprite(GetVif1Packet(), frame, rect, rect, 0x40, 0x40, 0x40, alpha);
+            MGSetGsTEXA(NULL);
+        }
+    }
+}
 
 /**
  * Draws one weapon-status bar, filled to the value's share of its maximum.

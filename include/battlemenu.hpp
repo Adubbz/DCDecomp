@@ -414,15 +414,6 @@ void DrawWepVolumeDisplay(int, int, WEAPON_HAVE *, int);
 s32 GetWeaponNamePutX(int, int);
 
 /**
- * Draws the names of the weapons either side of the cursor as they slide past.
- *
- * @mangled WeaponNameDraw__Fiii
- * @address 0x1F96D0
- * @size 0x550
- */
-void WeaponNameDraw(int, int, int);
-
-/**
  * Draws the gradient frame a weapon-status row sits in.
  *
  * @mangled DrawWeaponStatusWaku__Fiiii
