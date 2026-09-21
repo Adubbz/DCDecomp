@@ -664,7 +664,38 @@ void MenuHelpWinDraw2(int x, int y, float width, float height, int alpha, int u,
     DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, 24, 22), CRect_i_(u + 38, v + 42, 24, 22), (alpha * 100) >> 7);
 }
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuHelpWinDraw__Fiiffi);
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuWaku__FffiiiP8CTexturei);
+void DrawMenuWaku(float x, float y, int width, int height, int type, CTexture *texture, int alpha) {
+    RECT *src;
+    float offset;
+    int left;
+    int top;
+    int right;
+    int bottom;
+
+    if (texture != NULL) {
+        static int MenuWakuCnt = 0;
+
+        offset = 0.2f * MenuWakuCnt;
+        left = x + offset;
+        top = y + offset;
+        right = (x + width) - offset;
+        bottom = (y + height) - offset;
+        RECT corner[2] = {{74, 72, 16, 16}, {106, 72, 27, 24}};
+        src = &corner[type];
+        DrawMenu2DSprite(texture, CRect_i_(left, top, src->width, src->height),
+                         CRect_i_(src->x, src->y, src->width, src->height), alpha);
+        DrawMenu2DSprite(texture, CRect_i_(right, top, src->width, src->height),
+                         CRect_i_(src->x + src->width, src->y, src->width, src->height), alpha);
+        DrawMenu2DSprite(texture, CRect_i_(left, bottom, src->width, src->height),
+                         CRect_i_(src->x, src->y + src->height, src->width, src->height), alpha);
+        DrawMenu2DSprite(texture, CRect_i_(right, bottom, src->width, src->height),
+                         CRect_i_(src->x + src->width, src->y + src->height, src->width, src->height), alpha);
+        MenuWakuCnt++;
+        if (MenuWakuCnt < 0 || MenuWakuCnt >= 30) {
+            MenuWakuCnt = 0;
+        }
+    }
+}
 
 int DrawMenuNumber(int number, int x, int y, CTexture *texture, RECT rect, int overlap, int flag) {
     return DrawMenuNumber(number, x, y, rect, texture, overlap, 0, 0x1C0, flag);
