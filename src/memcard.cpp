@@ -759,7 +759,22 @@ static void AtoraPlateDrawHaichiBar(EDITPARTS_INFO *info, int x, int y, int flag
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtraBuildNum__FP14EDITPARTS_INFOiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtora__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtoraNothing__Fiii);
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawMsgAtraWarning__FP6ClsMesii);
+
+static void DrawMsgAtraWarning(ClsMes *mes, int x, int y) {
+    if (mes == NULL) {
+        return;
+    }
+    if (mes->mes_made != 200) {
+        mes->MakeMesWin(200);
+    }
+    mes->MakeMesWin(200);
+    MenuTextureReload(mes->tex_block);
+    mes->stay_frame = 1;
+    mes->text_x = x;
+    mes->text_y = y;
+    mes->Step();
+    mes->DrawMesWin();
+}
 
 static void AtoraTipInfoInit() {
     NowTipHavePt->mode = 0;
