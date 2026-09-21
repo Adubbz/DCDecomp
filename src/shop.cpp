@@ -18,8 +18,10 @@
 #include "memcard.hpp"
 #include "menu_draw.hpp"
 #include "menu_inventory.hpp"
+#include "mglib.hpp"
 #include "rect.hpp"
 #include "savedata.hpp"
+#include "snd.hpp"
 #include "texture.hpp"
 
 // CUserStatus and CStockItem are only dereferenced by the drafts that need
@@ -128,9 +130,15 @@ extern s16 ChargeOrShopFlag;
  */
 struct FishMenuWork {
     s16 tex_block; /**< Texture block the exchange's textures are entered into. */
-    u8 unk_02[6];
+    u8 unk_02[2];
+    s16 ready; /**< Nonzero once the exchange's contents may be drawn. */
+    u8 unk_06[2];
     s32 point; /**< Fishing points the player has left to spend. */
-    u8 unk_0C[0x1C];
+    u8 unk_0C[0xA];
+    s16 fade_mode; /**< Whether the exchange is fading in (0) or out (1). */
+    u8 unk_18[8];
+    s32 fade_count; /**< Frames the current fade has run for. */
+    u8 unk_24[4];
 };
 
 STATIC_ASSERT(sizeof(FishMenuWork) == 0x28);
@@ -142,7 +150,11 @@ extern FishMenuWork FishMenu;
  * State of the fishing record screen.
  */
 struct FishRecordMenuWork {
-    u8 unk_00[0x1C];
+    u8 unk_00[0xC];
+    s32 fade_mode;  /**< Whether the record view is fading in (0) or out (1). */
+    s32 fade_count; /**< Frames the current fade has run for. */
+    u8 unk_14[4];
+    s32 ready;     /**< Nonzero once the record view's contents may be drawn. */
     s32 tex_block; /**< Texture block the record view's textures are entered into. */
     u8 unk_20[4];
 };
