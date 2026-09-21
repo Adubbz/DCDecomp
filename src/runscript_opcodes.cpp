@@ -563,7 +563,24 @@ int _GET_USER_STATUS(RS_STACKDATA *stack, int argc) {
     SetStack(stack, value);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_REFERENCE__FP12RS_STACKDATAi);
+int _SET_REFERENCE(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+    int target_no = GetStackInt(stack++);
+    char *name = GetStackString(stack);
+    CFrame *frame;
+    CFrame *reference;
+
+    if (name == NULL) {
+        return 1;
+    }
+    frame = NowMonstorUnit->chara[monster_no][0].frame;
+    reference = NowMonstorUnit->chara[target_no][0].frame->SearchFrame(name);
+    if (reference == NULL) {
+        return 1;
+    }
+    frame->SetReference(reference);
+    return 1;
+}
 int _DEL_REFERENCE(RS_STACKDATA *stack, int argc) {
     int monster_no = GetStackInt(stack);
     CFrame *frame = NowMonstorUnit->chara[monster_no][0].frame;
