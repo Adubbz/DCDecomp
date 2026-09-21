@@ -743,7 +743,19 @@ static CTexture *AtoraTipHoleTexInfoGet(int gold, unsigned char *color) {
     return HoleGray;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraPlateDrawHaichiBar__FP14EDITPARTS_INFOiii);
+static void AtoraPlateDrawHaichiBar(EDITPARTS_INFO *info, int x, int y, int flag) {
+    int empty = 83 - info->unk_0C * 83 / info->unk_18;
+    CRect_i_ dest;
+    CRect_i_ src(244, 323 - empty, 12, empty);
+
+    dest.x = x + 12;
+    dest.y = y + 107 - empty;
+    dest.width = 12;
+    dest.height = empty;
+    DrawMenu2DSprite(Sozai, dest, src, flag);
+    DrawAtraBuildNum(info, x, y, flag);
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtraBuildNum__FP14EDITPARTS_INFOiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtora__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtoraNothing__Fiii);
