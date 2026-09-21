@@ -251,3 +251,12 @@ void FishLineSetHook(float *position, float rate);
  * @size 0x28
  */
 void FishLineGetUki(float *position);
+
+/**
+ * Gives the position of the hook.
+ *
+ * @mangled FishLineGetHook__FPf
+ * @address 0x1AA1B0
+ * @size 0x28
+ */
+void FishLineGetHook(float *position);

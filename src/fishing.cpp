@@ -693,14 +693,9 @@ void FishLineGetUki(float *position) {
     sceVu0CopyVector(position, point[18]);
 }
 
-/**
- * Gives where the hook is.
- *
- * @mangled FishLineGetHook__FPf
- * @address 0x1AA1B0
- * @size 0x28
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishLineGetHook__FPf);
+void FishLineGetHook(float *position) {
+    sceVu0CopyVector(position, point[23]);
+}
 
 /**
  * Reports whether the float and hook are clear of the ground.
