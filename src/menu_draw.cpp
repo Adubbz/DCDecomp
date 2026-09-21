@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "battlemenu.hpp"
 #include "camera.hpp"
 #include "clsmes.hpp"
 #include "dataalloc.hpp"
@@ -832,7 +833,54 @@ int GetWeaponMaxExp(WEAPON_HAVE *weapon) {
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowItemNum__FsP9ITEM_PACK);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DeleteItemAfterUseItem__FsP9ITEM_PACK);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowModeMaxNum__FiPi);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", WepDataListToHaveCopy__FiP11WEAPON_HAVE);
+
+void WepDataListToHaveCopy(int weapon_no, WEAPON_HAVE *weapon) {
+    WEAPON_DATA *data;
+    int best;
+    int best_value;
+    int i;
+    int j;
+
+    if (weapon != NULL && weapon_no > 0) {
+        if (weapon_no < 0x51) {
+            weapon_no += 0x100;
+        }
+        data = GetWeaponData(weapon_no);
+        memset(weapon, 0, sizeof(WEAPON_HAVE));
+        weapon->item_no = weapon_no;
+        weapon->attack = data->attack;
+        weapon->endurance = data->endurance;
+        weapon->speed = data->speed;
+        weapon->magic = data->magic;
+        weapon->durability = data->durability;
+        weapon->durability_f = weapon->durability;
+        best = 5;
+        best_value = 0;
+        for (i = 0; i < 5; i++) {
+            weapon->elem[i] = data->elem[i];
+            if (weapon->elem[i] > best_value) {
+                best_value = weapon->elem[i];
+                best = i;
+            }
+        }
+        weapon->best_elem = best;
+        for (j = 0; j < 10; j++) {
+            weapon->vs_monster[j] = data->vs_monster[j];
+        }
+        weapon->flags = data->flags;
+        if (IsDefaultWeapon(weapon->item_no) < 0) {
+            int chance = rand() % 1000;
+            if (chance < 1000) {
+                if (chance < 10) {
+                    weapon->flags |= WEAPONFLAG_DURABLE;
+                }
+                if (chance > 989) {
+                    weapon->flags |= WEAPONFLAG_FRAGILE;
+                }
+            }
+        }
+    }
+}
 
 void AttachDataListToHaveCopy(int attachment_no, ATTACH_LIST *attachment) {
     if ((attachment_no < 0x51) || (attachment_no >= 0x84)) {
