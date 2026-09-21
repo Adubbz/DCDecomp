@@ -967,7 +967,18 @@ static int AtoraTipOnlyMsgNoGet(int map_no, int number) {
  * @address 0x219000
  * @size 0xD8
  */
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipGetTexPos__FiRiRi);
+static void AtoraTipGetTexPos(int tip_no, int &x, int &y) {
+    int tex_no;
+
+    tex_no = GetEditAtraChipData(MenuAtoraSel.map_no, tip_no)->tex_no;
+    if (tip_no >= 40) {
+        x = 144;
+        y = 180;
+    } else if (0 <= tex_no && tex_no < 40) {
+        x = (tex_no % 7) * 36;
+        y = (tex_no / 7) * 36;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipObjectOrPerson__Fiiiii);
 
 static CTexture *AtoraTipHoleTexInfoGet(int gold, unsigned char *color) {
