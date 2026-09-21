@@ -505,7 +505,7 @@ public:
      * @address 0x1A6D90
      * @size 0x65C
      */
-    void MatatagiRequest(CMapParts *(*) [64]);
+    void MatatagiRequest(CMapParts *(*plot_parts)[64]);
 
     /**
      * Checks the ground against the Queen's request.

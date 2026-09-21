@@ -586,7 +586,128 @@ void CEditGround::NornRequest(CMapParts *(*plot_parts)[64]) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/editground", MatatagiRequest__11CEditGroundFPA64_P9CMapParts);
+void CEditGround::MatatagiRequest(CMapParts *(*plot_parts)[64]) {
+    parts_info->unk_00 = 10;
+    if (areas[0] == NULL || areas[1] == NULL || areas[2] == NULL) {
+        return;
+    }
+    areas[0]->ChainWorkClear();
+    int chained = areas[0]->CheckRiverChain(5, 0, 2, 7);
+    areas[1]->ChainWorkClear();
+    chained &= areas[1]->CheckRiverChain(3, 5, 11, 3);
+    areas[2]->ChainWorkClear();
+    chained &= areas[2]->CheckRiverChain(4, 0, 3, 7);
+    if (chained) {
+        parts_info->request[16] = 1;
+    }
+    if (plot_parts[0][0] != NULL) {
+        if (CheckPartsRect(0, 0, CRect_i_(0, 0, 4, 1))) {
+            parts_info->request[0] = 1;
+        }
+        if (CheckPartsRect(0, 1, CRect_i_(0, 5, 1, 1))) {
+            parts_info->request[0] = 1;
+        }
+    }
+    if (plot_parts[1][0] != NULL) {
+        int parts_ids[256];
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[1][0], 1);
+        int count = areas[plot_parts[1][0]->unk_0F4]->GetPartsRect(rect, parts_ids, 256);
+        int found = 0;
+        for (int i = 0; i < count; i++) {
+            if (parts[parts_ids[i]].parts_no == 15) {
+                found++;
+            }
+            if (found >= 4) {
+                parts_info->request[1] = 1;
+                break;
+            }
+        }
+    }
+    if (plot_parts[2][0] != NULL) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[2][0], 3);
+        int area = plot_parts[2][0]->unk_0F4;
+        if (CheckPartsRect(11, area, rect)) {
+            parts_info->request[2] = 1;
+        }
+        if (CheckPartsRect(12, area, rect)) {
+            parts_info->request[2] = 1;
+        }
+        if (CheckPartsRect(13, area, rect)) {
+            parts_info->request[2] = 1;
+        }
+    }
+    if (plot_parts[3][0] != NULL) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[3][0], 4);
+        int area = plot_parts[3][0]->unk_0F4;
+        if (CheckPartsRect(14, area, rect)) {
+            parts_info->request[3] = 1;
+        }
+    }
+    if (plot_parts[4][0] != NULL) {
+        if (CheckPartsRect(4, 2, CRect_i_(0, 5, 7, 3))) {
+            parts_info->request[4] = 1;
+        }
+    }
+    if (plot_parts[5][0] != NULL) {
+        sceVu0FVECTOR position;
+        plot_parts[5][0]->GetPosition(position);
+        if (GetAlt_i(position[0], position[1], position[2]) > 0) {
+            parts_info->request[5] = 1;
+        }
+    }
+    if (plot_parts[6][0] != NULL && plot_parts[3][0] != NULL) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[3][0], 3);
+        if (CheckPartsRect(6, plot_parts[3][0]->unk_0F4, rect)) {
+            parts_info->request[6] = 1;
+        }
+    }
+    if (plot_parts[7][0] != NULL) {
+        sceVu0FVECTOR position;
+        plot_parts[7][0]->GetPosition(position);
+        if (GetAlt_i(position[0], position[1], position[2]) > 0) {
+            parts_info->request[7] = 1;
+        }
+    }
+    if (plot_parts[14][0] != NULL) {
+        int parts_ids[256];
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[14][0], 1);
+        int count = areas[plot_parts[14][0]->unk_0F4]->GetPartsRect(rect, parts_ids, 256);
+        int found = 0;
+        for (int i = 0; i < count; i++) {
+            int parts_no = parts[parts_ids[i]].parts_no;
+            if (parts_no == 16) {
+                found++;
+            }
+            if (parts_no == 17) {
+                found++;
+            }
+            if (parts_no == 11) {
+                found++;
+            }
+            if (parts_no == 12) {
+                found++;
+            }
+            if (parts_no == 13) {
+                found++;
+            }
+            if (found >= 14) {
+                parts_info->request[14] = 1;
+                break;
+            }
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", QueensRequest__11CEditGroundFPA64_P9CMapParts);
 
 /**
@@ -616,5 +737,6 @@ static int CheckRot(CMapParts *parts, CMapParts *other, int rotation_offset) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/editground", MuskaRequest__11CEditGroundFPA64_P9CMapParts);
+
 INCLUDE_ASM("asm/nonmatchings/editground", YellowRequest__11CEditGroundFPA64_P9CMapParts);
 INCLUDE_RODATA("asm/nonmatchings/editground", @2120);
