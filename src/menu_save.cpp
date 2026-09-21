@@ -380,6 +380,27 @@ int TransWepNo(int weapon_no) {
     }
     return item_no;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_save", TransWepNoNewToOld__Fi);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3735);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3736);
+
+int TransWepNoNewToOld(int weapon_no) {
+    s32 item_no;
+
+    item_no = weapon_no;
+    printf("newitemno is %d\n", item_no);
+    if (item_no >= 0x101) {
+        if ((item_no >= 0x101) && (item_no < 0x116)) {
+            item_no -= 0x100;
+        } else if ((item_no >= 0x12B) && (item_no < 0x137)) {
+            item_no -= 0x116;
+        } else if ((item_no >= 0x13A) && (item_no < 0x147)) {
+            item_no -= 0x119;
+        } else if ((item_no >= 0x14B) && (item_no < 0x157)) {
+            item_no -= 0x11D;
+        } else if ((item_no >= 0x15B) && (item_no < 0x167)) {
+            item_no -= 0x121;
+        } else if ((item_no >= 0x16B) && (item_no < 0x176)) {
+            item_no -= 0x125;
+        }
+    }
+    printf("olditemno is %d\n", item_no);
+    return item_no;
+}
