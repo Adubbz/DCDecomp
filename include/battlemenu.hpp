@@ -838,15 +838,6 @@ void IsLoadMapNo(void);
 void MapNoTransFunc(int);
 
 /**
- * Runs the save page and returns to the menu bar when it closes.
- *
- * @mangled BattleMenuSaveKey__Fv
- * @address 0x20AF70
- * @size 0xF4
- */
-void BattleMenuSaveKey(void);
-
-/**
  * Initializes the battle manual menu from its placement data and load buffer.
  *
  * @mangled BattleManualInit__FPiP1

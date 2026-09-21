@@ -1190,7 +1190,46 @@ static void BattleMenuOptionKey() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuSaveKey__Fv);
+/**
+ * Runs the save page and returns to the menu bar when it closes.
+ *
+ * @mangled BattleMenuSaveKey__Fv
+ * @address 0x20AF70
+ * @size 0xF4
+ */
+static void BattleMenuSaveKey() {
+    int transition_done = 0;
+
+    switch (BtlEffectFlag) {
+        case 1:
+            transition_done = ToFromSelect(0);
+            if (transition_done != 0) {
+                BtlEffectFlag = -1;
+                BtlEffectCt = 0.0f;
+            }
+            break;
+        case 0:
+            transition_done = ToFromSelect(1);
+            break;
+    }
+
+    if (BtlEffectFlag != -1) {
+        BtlEffectCt += 1.0f;
+    } else {
+        BtlEffectCt = 0.0f;
+    }
+
+    MenuSaveKey();
+    if (SaveMenuEffectFadeOut() != 0) {
+        BtlEffectFlag = 0;
+        if (transition_done != 0) {
+            MenuSelect[0] = 7;
+            BattleMenuFlag = 22;
+            ForBackMenu();
+            BattleMenuFlag = 0;
+        }
+    }
+}
 
 void BattleManualInit(int *result, u_long128 *load_buffer) {
     InitMenuManual(result, load_buffer);
