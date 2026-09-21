@@ -121,7 +121,21 @@ void CEditGround::MakePartsBox() {
         }
     }
 }
-INCLUDE_ASM("asm/nonmatchings/editground", GetPartsBox__11CEditGroundFP7CBoxVu0fff);
+
+void CEditGround::GetPartsBox(CBoxVu0 *out_box, float x, float y, float z) {
+    int area = GetAreaCode(x, y, z);
+    if (area < 0) {
+        out_box->max[0] = out_box->max[1] = out_box->max[2] = 0.0f;
+        out_box->max[3] = 1.0f;
+        out_box->min[0] = out_box->min[1] = out_box->min[2] = 0.0f;
+        out_box->min[3] = 1.0f;
+        return;
+    }
+    if (areas[area] != NULL) {
+        areas[area]->GetPartsBox(out_box);
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", GetPeoplePos__11CEditGroundFiPf);
 INCLUDE_ASM("asm/nonmatchings/editground", DrawBaseGround__11CEditGroundFv);
 INCLUDE_ASM("asm/nonmatchings/editground", Draw__11CEditGroundFfiiiii);
