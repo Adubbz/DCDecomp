@@ -8,11 +8,9 @@
 #include "frame.hpp"
 #include "texture.hpp"
 
-#ifdef NON_MATCHING
 /** The one fire and the one candle the editor lends to every map part. */
 extern CFireOmni Fire;
 extern CCandleEffect Candle;
-#endif
 
 /**
  * Controls whether all object animations are stopped.
@@ -255,7 +253,6 @@ int CheckEditEffect(EDIT_EFFECT_INFO *effect, float time) {
  * @address 0x166D10
  * @size 0xC4
  */
-#ifdef NON_MATCHING
 void EditEffectStep(void) {
     Fire.FireStep();
     Candle.Step();
@@ -263,12 +260,6 @@ void EditEffectStep(void) {
     Fire.SetTexture(TexManager.GetTexture("lightling", -1),
                     TexManager.GetTexture("blender", -1));
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/objanime", EditEffectStep__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/objanime", @606);
-INCLUDE_RODATA("asm/nonmatchings/objanime", @607);
-INCLUDE_RODATA("asm/nonmatchings/objanime", @608);
 /**
  * Rebuilds the editor's fire texture for the frame.
  *
@@ -276,13 +267,9 @@ INCLUDE_RODATA("asm/nonmatchings/objanime", @608);
  * @address 0x166DE0
  * @size 0x28
  */
-#ifdef NON_MATCHING
 void EditEffectStep2(void) {
     Fire.FireCreate();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/objanime", EditEffectStep2__Fv);
-#endif
 /**
  * Draws one editor effect, choosing the kind from its record.
  *
