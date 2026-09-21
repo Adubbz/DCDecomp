@@ -366,7 +366,32 @@ static void DrawDontSetItemMark(int x, int y, int top, int bottom, int alpha) {
     MenuTextureClip(position, source, length, top, bottom);
     DrawMenu2DSprite(PerBoardTex, CRect_i_(x, position, 32, length), CRect_i_(0x13C, source, 32, length), alpha);
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawIconParts__Fiiiiiii);
+
+void DrawIconParts(int item_no, int x, int y, int top, int bottom, int alpha, int number) {
+    int position;
+    int u;
+    int v;
+    int length;
+    COM_ITEM_INFO *info;
+    CTexture *texture;
+
+    if (y < top - 31 || y > bottom - 1) {
+        return;
+    }
+    position = y;
+    info = GetCommonItemInfo(item_no);
+    if (info != NULL && info->icon_index >= 0) {
+        texture = RetCTex(item_no, u, v);
+        if (texture != NULL) {
+            length = 32;
+            MenuTextureClip(position, v, length, top, bottom);
+            CRect_i_ source(u, v, 32, length);
+            set2DSprite(GetVif1Packet(), texture, CRect_i_(x + 2, position + 1, 32, length), source, 0, 0, 0, alpha * 0x50 >> 7);
+            DrawMenu2DSprite(texture, CRect_i_(x, position, 32, length), source, alpha);
+            DrawAttachNumberOrWeapon(x, y, top, bottom, item_no, number, alpha, 0);
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawAttachNumberOrWeapon__Fiiiiiiii);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @852__4);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", FadeTexX__FiiiiPci);
