@@ -685,7 +685,20 @@ INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipOnlyMsgNoGet__Fii);
  */
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipGetTexPos__FiRiRi);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipObjectOrPerson__Fiiiii);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipHoleTexInfoGet__FiPUc);
+
+static CTexture *AtoraTipHoleTexInfoGet(int gold, unsigned char *color) {
+    if (gold) {
+        color[0] = 0x8C;
+        color[1] = 0x80;
+        color[2] = 0x50;
+        return HoleGold;
+    }
+    color[0] = 0x80;
+    color[1] = 0x80;
+    color[2] = 0x80;
+    return HoleGray;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraPlateDrawHaichiBar__FP14EDITPARTS_INFOiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtraBuildNum__FP14EDITPARTS_INFOiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtora__Fiiii);
