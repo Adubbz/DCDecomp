@@ -348,7 +348,22 @@ int _GET_NOW_USER_ID(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _RUN_SCRIPT_NO__FP12RS_STACKDATAi);
+int _RUN_SCRIPT_NO(RS_STACKDATA *stack, int count) {
+    int script_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
+
+    BtEventInfo.unk_34 = 0;
+    if (count == 2) {
+        BtEventInfo.unk_34 = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    }
+    if (count == 3) {
+        BtEventInfo.unk_34 = GetStackInt__FP12RS_STACKDATA__2(stack++);
+        BtEventInfo.unk_90 = GetStackInt__FP12RS_STACKDATA__2(stack);
+    }
+    BtEventInfo.request = 5;
+    BtEventInfo.unk_9C = script_no;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _CLEAN_MONSTOR_SCRIPT_NO__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_NPC_OBJHDL__FP12RS_STACKDATAi);
 INCLUDE_RODATA("asm/nonmatchings/btsysscript", @833);
