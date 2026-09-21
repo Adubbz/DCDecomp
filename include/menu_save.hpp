@@ -34,12 +34,12 @@ extern SAVE_MENU_STATE SaveMenu;
  * Holds the state of the event item selection menu.
  */
 struct MINI_MENU_INFO {
-    s16 unk_0;
-    u8 unk_2[2];
-    s16 unk_4;
-    s16 unk_6;
-    s32 unk_8;
-    s32 unk_C[13];
+    s16 unk_00;
+    u8 unk_02[2];
+    s16 unk_04;
+    s16 unk_06;
+    s32 unk_08;
+    s32 unk_0C[13];
     s32 unk_40;
     s8 unk_44;
     s8 unk_45;

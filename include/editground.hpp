@@ -363,7 +363,7 @@ public:
     void DrawEffect(CCameraFollow *camera, float time, CEffectGroup *effects);
 
     /**
-     * Writes every placed part into a buffer.
+     * Writes every placed part to the host debug file gdata0.edt; the argument is unused.
      *
      * @mangled Save__11CEditGroundFPc
      * @address 0x1A4780
