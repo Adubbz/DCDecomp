@@ -1180,5 +1180,12 @@
     "symbols": {
       "SeitonAttachBoardSub__FP11ATTACH_LIST": "SeitonAttachBoardSub__FP11ATTACH_LIST__2"
     }
+  },
+  "src/itemdata.cpp": {
+    "symbols": {
+      "skipSpace__FPci": "skipSpace__FPci__2",
+      "checkArg__FPciPi": "checkArg__FPciPi__2",
+      "teigiFileSize": "teigiFileSize__2"
+    }
   }
 }
