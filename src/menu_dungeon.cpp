@@ -87,7 +87,6 @@ int GetWeaponAttachStatusUp(WEAPON_HAVE *weapon, int stat) {
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", GetWeaponAttachStatusUp__FP11WEAPON_HAVEi);
 #endif
-#ifdef NON_MATCHING
 void SetWeaponAttachStatus(WEAPON_HAVE *attach_source) {
     if (attach_source == NULL) {
         return;
@@ -100,7 +99,9 @@ void SetWeaponAttachStatus(WEAPON_HAVE *attach_source) {
     }
 
     int chara = dng_status->unk_04;
-    WEAPON_HAVE *equipped = &dng_status->chara_weapons[chara][dng_status->equipped_weapon_slot[chara]];
+    int slot = dng_status->equipped_weapon_slot[chara];
+    WEAPON_HAVE *weapons = dng_status->chara_weapons[chara];
+    WEAPON_HAVE *equipped = &weapons[slot];
     if (equipped == NULL) {
         printf("actwep is NULL\n", chara);
         return;
@@ -108,11 +109,6 @@ void SetWeaponAttachStatus(WEAPON_HAVE *attach_source) {
 
     WeaponAllValueSet(equipped, attach_source, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", SetWeaponAttachStatus__FP11WEAPON_HAVE);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @638__3);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @639__4);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", WeaponAllValueSet__FP11WEAPON_HAVEP11WEAPON_HAVEi);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", SetAttachMentValue__FiisP11ATTACH_LIST);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", GetAttachVolumeForMsg__FP11ATTACH_LIST);
