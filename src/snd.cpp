@@ -1181,7 +1181,13 @@ void SndAmbientSetVol(int volume) {
  * @address 0x15B240
  * @size 0x5C
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientSetVolf__Ff);
+void SndAmbientSetVolf(float volume) {
+    if (now_amb_no >= 0) {
+        int level = SndGetAmbientDefaultVol();
+
+        SndAmbientSetVol((int) ((float) level * volume));
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetAmbientDefaultVol__Fv);
 /**
  * Builds the archive and configuration file names of one voice set.
