@@ -196,7 +196,34 @@ int SaveMenuKeyNewDir(void) {
     McAccess.SetFuncNo(3);
     SaveMenu.key_no = 0xA;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyFormat__Fv);
+
+int SaveMenuKeyFormat(void) {
+    MC_CARD_INFO *card = &McAccess.card[McAccess.port];
+
+    if (McCheckMCPs2(card) == 0) {
+        SaveMenu.key_no = 0xE;
+        SaveMenu.unk_20 = 1;
+        return 1;
+    }
+    if (card->result < 0) {
+        SaveMenu.key_no = 0xE;
+        SaveMenu.unk_20 = 6;
+        return 1;
+    }
+    if (GamePad.Down(0x40) != 0) {
+        McAccess.SetFuncNo(9);
+        SaveMenu.key_no = 0xF;
+        ComMenuSePlay(1);
+        return 1;
+    }
+    if (GamePad.Down(0x20) != 0) {
+        SaveMenu.key_no = 3;
+        SaveMenu.file_no = McAccess.port;
+        ComMenuSePlay(2);
+        return 1;
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyUnFormat__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyDifVersion__Fv);
 
