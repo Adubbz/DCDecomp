@@ -36,15 +36,11 @@ INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1559__3);
  * @address 0x238450
  * @size 0x48
  */
-#ifdef NON_MATCHING
 void GlobalNameInit(void) {
     for (int chara_no = 0; chara_no < 6; chara_no++) {
         NameDefaultSet(chara_no);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", GlobalNameInit__Fv);
-#endif
 /**
  * Opens the name-entry screen and reads its textures.
  *
@@ -108,8 +104,7 @@ INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawNameTemplete__Fiiii);
  * @address 0x2399D0
  * @size 0x6C
  */
-#ifdef NON_MATCHING
-int NameCompare(short *first, short *second) {
+static int NameCompare(short *first, short *second) {
     int same = 0;
 
     for (int i = 0; i < 10; i++) {
@@ -123,9 +118,6 @@ int NameCompare(short *first, short *second) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", NameCompare__FPsPs);
-#endif
 /**
  * Reports whether the entered name may be used.
  *

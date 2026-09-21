@@ -83,15 +83,6 @@ void DrawCharaNameUp(int, int, int, int);
 void DrawNameTemplete(int, int, int, int);
 
 /**
- * Reports whether two names are the same.
- *
- * @mangled NameCompare__FPsPs
- * @address 0x2399D0
- * @size 0x6C
- */
-int NameCompare(short *first, short *second);
-
-/**
  * Reports whether the entered name may be used.
  *
  * @mangled CheckName__Fv
