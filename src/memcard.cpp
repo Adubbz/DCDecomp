@@ -46,20 +46,61 @@ STATIC_ASSERT(sizeof(OPTION_MENU_STATE) == 0x88);
 /** The state of the option screen. */
 extern OPTION_MENU_STATE OptionMenu;
 
+/** The StayTex menu texture. */
+CTexture *StayTex;
+
+/** The AttachIcon menu texture. */
+CTexture *AttachIcon;
+
+/** The texture of the item icons. */
+CTexture *ItemIcon;
+
+/** The ItemIcon2 menu texture. */
+CTexture *ItemIcon2;
+
+/** The texture of the weapon icons. */
+CTexture *WepIcon;
+
+CTexture *Sozai;
+CTexture *HoleGray;
+CTexture *HoleGold;
+CTexture *ObTip;
+CTexture *ObPerson;
+CTexture *CompleteTex;
+CTexture *VillageBar;
+CTexture *VillageName;
+
+/** The texture that the save screen's file boards draw from. */
+CTexture *SaveBoard;
+
+/** The texture that the option screen draws from. */
+CTexture *MenuOption;
+
+CEditPartsInfo *CommonMenuAtoraInfo;
+short *GetAtraMsgReadBuf;
+
 /** The chip that the georama board's cursor has picked up. */
-extern ATORA_TIP_HAVE *NowTipHavePt;
+ATORA_TIP_HAVE *NowTipHavePt;
+
+/** Whether the board screen's texture block has finished loading. */
+int AtoraTextureEnterFlag;
+
+/** The texture block that holds the board's town tags and names. */
+int AtoraTextureBaseBlock;
+
+/** The texture block the georama board screen loads for its own textures. */
+int AtoraTextureReadBlock;
+
+/** The buffer that the georama board screen reads its files into. */
+u_long128 *AtoraOffsetBuf;
+
+s32 CursorVibeCnt;
 
 /** The rank that the board's sort gives each chip group, by group. */
 extern int tip_table[3];
 
 /** The chip group that the board's sort ranks first. */
 extern int tip_sort_type;
-
-/** The texture block the georama board screen loads for its own textures. */
-extern int AtoraTextureReadBlock;
-
-/** The texture block that holds the board's town tags and names. */
-extern int AtoraTextureBaseBlock;
 
 /** The configuration words that the option screen edits. */
 extern s32 *OpConfigPt;
@@ -75,9 +116,6 @@ extern int (*SaveMenuFunc[26])();
  * @size 0xBC
  */
 void EditLoad(void);
-
-/** Whether the board screen's texture block has finished loading. */
-extern int AtoraTextureEnterFlag;
 
 /**
  * Returns the record of the n-th valid part in the georama's part list, or NULL
