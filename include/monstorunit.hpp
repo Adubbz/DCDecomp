@@ -198,7 +198,8 @@ struct MONSTOR_EFFECT_STATE2 {
     float motion_start[16];     /**< Motion frame each sphere starts hitting on. */
     float motion_end[16];       /**< Motion frame each sphere stops hitting on. */
     s32 active[16];             /**< Nonzero while each sphere is in use. */
-    u8 unk_340[0x10];
+    s32 unk_340;
+    u8 unk_344[0xC];
 };
 
 STATIC_ASSERT(sizeof(MONSTOR_EFFECT_STATE2) == 0x350);
