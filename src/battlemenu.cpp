@@ -1219,7 +1219,105 @@ static void WeaponMenuActWepKey() {
 }
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuTagKey__Fv);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuAttachWepKey__Fv);
+/**
+ * Moves the cursor across the sockets of the selected weapon and fits or takes off the attachment held.
+ *
+ * @mangled WeaponMenuAttachWepKey__Fv
+ * @address 0x200120
+ * @size 0x414
+ */
+static void WeaponMenuAttachWepKey() {
+    int moved = 0;
+    WEAPON_HAVE *weapon = GetNowSelectWeapon();
+
+    if (GamePad.Down(0x8000)) {
+        moved = 1;
+        if (0 < WepMenu.board.unk_0C) {
+            WepMenu.board.unk_0C--;
+        }
+    }
+    int holes = GetWeaponHoleNum(weapon->item_no);
+    if (WepMenu.board.unk_0C > holes - 1) {
+        WepMenu.board.unk_0C = holes - 1;
+        if (WepMenu.board.unk_0C < 0) {
+            WepMenu.board.unk_0C = 0;
+            WepMenu.unk_02 = 8;
+            return;
+        }
+    }
+    if (holes <= 0) {
+        WepMenu.board.unk_0C = 0;
+        WepMenu.unk_02 = 8;
+        return;
+    }
+    if (moved) {
+        return;
+    }
+    if (GamePad.Down(0x40)) {
+        if (holes <= 0) {
+            ComMenuSePlay(2);
+            return;
+        }
+        int hole = WepMenu.board.unk_0C;
+        if (BtlHaveItemPt->item_no < 81) {
+            if (weapon->attach[hole].item_no <= 0) {
+                ComMenuSePlay(2);
+                return;
+            }
+            ComMenuSePlay(6);
+            s16 held = BtlHaveItemPt->item_no;
+            s16 item_no = weapon->attach[hole].item_no;
+            MenuDataSwap(&WepMenu.board.unk_13C, &weapon->attach[hole]);
+            BtlHaveItemPt->item_no = item_no;
+            weapon->attach[hole].item_no = held;
+            BtlHaveItemPt->unk_0C = WepMenu.board.unk_0C;
+            BtlHaveItemPt->unk_04 = 9;
+            WEAPON_HAVE value;
+            WeaponAllValueSet(weapon, &value, 0);
+            WeaponMenuCheckElemValue(weapon, &value);
+            return;
+        }
+        WEAPON_DATA *data = GetWeaponData(weapon->item_no);
+        int socket = data->hole[hole];
+        if (BtlHaveItemPt->item_no == 90 && socket != 2) {
+            ComMenuSePlay(2);
+            return;
+        }
+        ComMenuSePlay(5);
+        s16 item_no = weapon->attach[hole].item_no;
+        s16 held = BtlHaveItemPt->item_no;
+        MenuDataSwap(&weapon->attach[hole], &WepMenu.board.unk_13C);
+        weapon->attach[hole].item_no = held;
+        BtlHaveItemPt->item_no = item_no;
+        BtlHaveItemPt->unk_0C = WepMenu.board.unk_0C;
+        BtlHaveItemPt->unk_04 = WepMenu.unk_02;
+        WEAPON_HAVE value;
+        WeaponAllValueSet(weapon, &value, 0);
+        WeaponMenuCheckElemValue(weapon, &value);
+        return;
+    }
+    if (GamePad.Down(0x20)) {
+        ComMenuSePlay(2);
+        WepAttachHaveCancel();
+        return;
+    }
+    if (GamePad.Down(0x2000)) {
+        if (WepMenu.board.unk_0C < holes - 1) {
+            WepMenu.board.unk_0C++;
+            if (WepMenu.board.unk_0C <= 0) {
+                WepMenu.board.unk_0C = 0;
+            }
+        } else {
+            WepMenu.unk_02 = 10;
+            WepMenu.board.unk_0C = WepMenu.board.unk_18 * 5;
+        }
+    } else if (GamePad.Down(0x80)) {
+        ComMenuSePlay(2);
+    } else if (GamePad.Down(0x4000)) {
+        WepMenu.unk_02 = 11;
+        WepMenu.unk_179 = 0;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuAttachKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", RepairAndLevelUpDraw__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBuildUpWeaponSelect__Fiii);

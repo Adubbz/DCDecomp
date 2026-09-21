@@ -515,16 +515,6 @@ void WeaponMenuAttachModeKey(void);
 void WeaponMenuTagKey(void);
 
 /**
- * Moves the cursor across the weapons an attachment may be put on.
- *
- * @mangled WeaponMenuAttachWepKey__Fv
- * @address 0x200120
- * @size 0x414
- * Handles input while an attachment is being fitted to a weapon.
- */
-void WeaponMenuAttachWepKey(void);
-
-/**
  * Handles input while an attachment is being moved on the weapon menu.
  *
  * @mangled WeaponMenuAttachKey__Fv
