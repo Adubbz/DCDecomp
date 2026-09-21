@@ -1345,7 +1345,18 @@ int SndSPSeLoadBG(int set_no, u_int *buffer, int *size) {
  * @address 0x15B800
  * @size 0x80
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeSyncBG__Fv);
+int SndSPSeSyncBG() {
+    if (load_sp_no < 0 || load_sp_adr == 0) {
+        return 0;
+    }
+    if (ReadBGSync()) {
+        return 1;
+    }
+    SetSPSeFile(load_sp_no, load_sp_adr, sp_cfg_file);
+    load_sp_no = -1;
+    load_sp_adr = 0;
+    return 0;
+}
 /**
  * Plays one special sound effect.
  *
