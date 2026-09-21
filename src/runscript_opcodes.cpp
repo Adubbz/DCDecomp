@@ -246,7 +246,15 @@ int _SET_ROT_CANSEL(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->monster[NowMonstorUnit->unk_090].turn_speed = 0.0f;
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_POSITION__FP12RS_STACKDATAi);
+int _SET_POSITION(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+    float x = GetStackFloat(stack++);
+    float y = GetStackFloat(stack++);
+    float z = GetStackFloat(stack);
+
+    NowMonstorUnit->chara[monster_no][0].SetPosition(x, y, z);
+    return 1;
+}
 int _STATUS_SET_FALL(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
 
