@@ -177,16 +177,12 @@ int _GET_POSITION(RS_STACKDATA *stack, int argc) {
     SetStack(stack, position[2]);
     return 1;
 }
-#ifdef NON_MATCHING
 int _SET_ROTATION(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
 
-    NowMonstorUnit->monster[monster_no].unk_070[0] = GetStackFloat(stack);
-    stack++;
-    NowMonstorUnit->monster[monster_no].unk_070[1] = GetStackFloat(stack);
-    stack++;
-    NowMonstorUnit->monster[monster_no].unk_070[2] = GetStackFloat(stack);
-    stack++;
+    NowMonstorUnit->monster[monster_no].unk_070[0] = GetStackFloat(stack++);
+    NowMonstorUnit->monster[monster_no].unk_070[1] = GetStackFloat(stack++);
+    NowMonstorUnit->monster[monster_no].unk_070[2] = GetStackFloat(stack++);
     NowMonstorUnit->monster[monster_no].turn_speed = GetStackFloat(stack);
 
     if (NowMonstorUnit->monster[monster_no].turn_speed < 0.0f) {
@@ -203,9 +199,6 @@ int _SET_ROTATION(RS_STACKDATA *stack, int argc) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_ROTATION__FP12RS_STACKDATAi);
-#endif
 #ifdef NON_MATCHING
 int _CHK_ROTATION(RS_STACKDATA *stack, int argc) {
     int done = 0;
