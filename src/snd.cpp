@@ -982,7 +982,18 @@ void SndSeStop(int se_no, int voice) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetSeVol__Fiii);
+void SndSetSeVol(int se_no, int vol, int voice) {
+    SND_SE_INFO *info;
+
+    if (vol < 0 || vol > 127) {
+        return;
+    }
+    info = GetSeInfo(se_no);
+    if (info != 0) {
+        CSnd.SE_SetVol(GetPortNo(se_no), info->bank, info->prog, vol, voice);
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetVolf__Fif);
 
 int SndGetPanf(float pan) {
