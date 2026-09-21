@@ -363,7 +363,71 @@ int PickUpNearPoly(CCPoly *out, CBoxVu0 box, CCPoly *poly, int count) {
     return picked;
 }
 
-INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHit__FP6CCPolyiPfPfPfii);
+int CheckHit(CCPoly *poly, int count, float *from, float *to, float *hit_point, int nearest,
+             int mode) {
+    sceVu0FVECTOR point;
+    sceVu0FVECTOR diff;
+    sceVu0FVECTOR poly_min;
+    sceVu0FVECTOR poly_max;
+    CBoxVu0 line;
+    sceVu0FVECTOR offset;
+    int i;
+    int hit = -1;
+    int found = 0;
+    float best;
+    float from_side;
+    float to_side;
+    float dist;
+
+    VectorMaxMin(line.max, line.min, from, to);
+    vu_hold_box(line.max, line.min);
+    for (i = 0; i < count; i++, poly++) {
+        if (poly->attr.ignore_mask & mode) {
+            continue;
+        }
+        VectorMaxMin(poly_max, poly_min, poly->vertex[0], poly->vertex[1], poly->vertex[2]);
+        if (line.max[0] < poly_min[0] || line.max[1] < poly_min[1] || line.max[2] < poly_min[2]) {
+            continue;
+        }
+        if (line.min[0] > poly_max[0] || line.min[1] > poly_max[1] || line.min[2] > poly_max[2]) {
+            continue;
+        }
+        sceVu0SubVector(offset, from, poly->vertex[0]);
+        from_side = sceVu0InnerProduct(poly->normal, offset);
+        sceVu0SubVector(offset, to, poly->vertex[0]);
+        to_side = sceVu0InnerProduct(poly->normal, offset);
+        if (from_side > 0.0f && to_side > 0.0f) {
+            continue;
+        }
+        if (from_side < 0.0f && to_side < 0.0f) {
+            continue;
+        }
+        if (IntersectionPoint_line_poly3(from, to, poly->vertex[0], poly->vertex[1],
+                                         poly->vertex[2], poly->normal, point) == 0) {
+            continue;
+        }
+        if (nearest == 0) {
+            hit = i;
+            sceVu0CopyVector(hit_point, point);
+            break;
+        }
+        diff[0] = from[0] - point[0];
+        diff[1] = from[1] - point[1];
+        diff[2] = from[2] - point[2];
+        dist = diff[0] * diff[0] + diff[1] * diff[1] + diff[2] * diff[2];
+        if (found == 0) {
+            hit = i;
+            best = dist;
+            sceVu0CopyVector(hit_point, point);
+        } else if (best > dist) {
+            hit = i;
+            best = dist;
+            sceVu0CopyVector(hit_point, point);
+        }
+        found = 1;
+    }
+    return hit;
+}
 
 INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHitVertical__FP6CCPolyiPffPfi);
 
