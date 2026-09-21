@@ -1,5 +1,6 @@
 #include "btsysscript.hpp"
 
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 
@@ -70,6 +71,9 @@ extern s32 BtAllClear;
 
 /** Camera the dungeon currently draws through. */
 extern CCameraFollow *NowCamera__3;
+
+/** Camera that follows the player. */
+extern "C" CCameraFollow MainCamera__4;
 
 /** Camera that stands in for the player's while an event runs. */
 extern "C" CCameraFollow SubCamera;
@@ -217,7 +221,55 @@ void BtSystemScriptInit(void) {
     BtActStatus.unk_028 = 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSystemScriptAfter__Fv);
+void BtSystemScriptAfter(void) {
+    sceVu0FVECTOR pos;
+    sceVu0FVECTOR ref;
+
+    BtEventMode = 0;
+    BtAllClear = 0;
+    BtEventInfo.unk_30 = -1;
+    SetMIniMapStatus(1);
+    CharaMain.SetMotion(0, 0);
+    BtActStatus.unk_00C = 0;
+    BtActStatus.unk_004 = -1;
+    BtActStatus.unk_008 = -1;
+    BtActStatus.unk_000 = 1;
+    BtActStatus.unk_058 = 1;
+    BtActStatus.unk_054 = 1;
+    EdEventInfo.player_shadow_draw = 1;
+    EdEventInfo.player_draw = 1;
+    EdEventAllClear();
+    UserStatus->step_disable = 0;
+    BtMapJumpFloor = -1;
+    if (EdEventInfo.reset_camera_angle > 0) {
+        sceVu0CopyVector(pos, CharaMain.pos);
+        CharaMain.GetRotation(ref);
+        float angle = ref[1] + EdEventInfo.reset_camera_yaw;
+        if (!(angle <= 3.141592f)) {
+            angle -= 6.2831855f;
+        }
+        MainCamera__4.SetAngleSoon(angle);
+        MainCamera__4.SetFollow(pos[0], pos[1] + 16.0f - 3.0f, pos[2]);
+        MainCamera__4.Step(-1);
+    }
+    if (EdEventInfo.reset_camera_angle < 0) {
+        SubCamera.GetPos(pos);
+        SubCamera.GetRef(ref);
+        MainCamera__4.FollowOff();
+        MainCamera__4.SetPos(pos);
+        MainCamera__4.SetRef(ref);
+        MainCamera__4.Step(-1);
+        MainCamera__4.Step(1);
+        MainCamera__4.FollowOn();
+        MainCamera__4.SetHeight(pos[1] - ref[1]);
+        MainCamera__4.SetFollow(ref[0], ref[1], ref[2]);
+        MainCamera__4.SetAngleSoon(atan2(pos[0] - ref[0], pos[2] - ref[2]));
+        MainCamera__4.Step(-1);
+        MainCamera__4.Step(1);
+    }
+    NowCamera__3 = &MainCamera__4;
+}
+
 int BtSystemScriptRun(int event, CDataAlloc2<1> *arena) {
     return EdEventInit(event, arena, (char *) BtEventData);
 }
