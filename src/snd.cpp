@@ -731,7 +731,22 @@ int SndGetDefaultBgmVol() {
  * @address 0x159E40
  * @size 0xC8
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeIn__Fiii);
+void SndBgmFadeIn(int frames, int volume, int start_volume) {
+    if (frames > 0) {
+        if (volume < 0) {
+            volume = SndGetDefaultBgmVol();
+        }
+        bgm_fade_vol = volume;
+        if (start_volume < 0) {
+            start_volume = SndGetBgmVol();
+        }
+        if (start_volume != SndGetDefaultBgmVol()) {
+            now_bgm_fade_vol = (float) start_volume / (float) SndGetDefaultBgmVol();
+            bgm_fade = 1;
+            bgm_fade_step = ((float) bgm_fade_vol - now_bgm_fade_vol) / (float) frames;
+        }
+    }
+}
 /**
  * Fades the background music down to a volume over a number of steps.
  *

@@ -677,7 +677,7 @@ int SndSPSeLoad(int set_no);
 int SndSPSeLoadBG(int set_no, u_int *buffer, int *size);
 
 /** Fades a background-music stream in. */
-void SndBgmFadeIn(int bgm_no, int frames, int mode);
+void SndBgmFadeIn(int frames, int volume, int start_volume);
 
 /** Fades a background-music stream out. */
 void SndBgmFadeOut(int bgm_no, int frames);
