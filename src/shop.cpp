@@ -437,7 +437,39 @@ static void ShopMenuInit(int *tex_block, int shop_no, int mode) {
     GamePad.MenuModeOn(0x78);
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", ShopMenuExit__Fv);
+/**
+ * Tears a shop menu down: its textures, its messages and the gamepad.
+ *
+ * @mangled ShopMenuExit__Fv
+ * @address 0x1E7BA0
+ * @size 0x12C
+ */
+static void ShopMenuExit() {
+    ShopUserItemPackView *pack = ShopUserItemPack(ShopUserStatusPt);
+    int i;
+    int j;
+
+    pack->item_count = 0;
+    for (i = 0; i < 3; i++) {
+        if (pack->quick_item[i] >= ITEM_DUNGEON_START) {
+            pack->item_count += (s8) pack->quick_item_vol[i];
+        }
+    }
+    for (j = 0; j < pack->num; j++) {
+        if (pack->item[j] >= ITEM_DUNGEON_START) {
+            pack->item_count++;
+        }
+    }
+    DeleteMenuTrushMark();
+    CommonMenuMes3.auto_pos = -1;
+    AtoraNameMes.rows = 4;
+    TexManager.DeleteTextureBlock(ShopMenu.unk_18A);
+    TexManager.DeleteTextureBlock(ShopMenu.unk_196);
+    TexManager.CleanUpTextureList();
+    GamePad.AutoRepeatOff();
+    GamePad.MenuModeOff();
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", ShopTextureLoadFix__Fv);
 
 /**

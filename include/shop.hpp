@@ -182,15 +182,6 @@ void ShopCurDraw(int, int, int, int, int, int, int);
 void IsEnableCharge(int);
 
 /**
- * Tears a shop menu down: its textures, its messages and the gamepad.
- *
- * @mangled ShopMenuExit__Fv
- * @address 0x1E7BA0
- * @size 0x12C
- */
-void ShopMenuExit(void);
-
-/**
  * Enters the shop's fixed textures into the texture manager.
  *
  * @mangled ShopTextureLoadFix__Fv
