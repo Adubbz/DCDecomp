@@ -1237,7 +1237,24 @@ int SndVoiceLoad(int set_no) {
  * @address 0x15B480
  * @size 0xAC
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndVoiceLoadBG__FiPUiPi);
+int SndVoiceLoadBG(int set_no, u_int *buffer, int *size) {
+    char archive_name[128];
+
+    if (size != 0) {
+        *size = 0;
+    }
+    if (now_voice_set == set_no) {
+        return 0;
+    }
+    GetVoiceFile(set_no, archive_name, voice_cfg_file);
+    if (LoadFileBG(archive_name, (u_long128 *) buffer, size)) {
+        load_voice_set = set_no;
+        load_voice_adr = buffer;
+        return 1;
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndVoiceSyncBG__Fv);
 static SND_SE_INFO *GetSPInfo(int se_no) {
     if (se_no < 0 || se_no >= 64) {
