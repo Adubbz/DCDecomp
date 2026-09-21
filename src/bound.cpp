@@ -127,16 +127,12 @@ void CBound::UpDateDir(void) {
         reciprocal[2] = 1.0f / half_depth;
     }
 }
-#ifdef NON_MATCHING
 void CBound::SetDir(float *direction, float *up_direction) {
     sceVu0FVECTOR origin = {0.0f, 0.0f, 0.0f, 1.0f};
 
     sceVu0CameraMatrix(inverse, origin, direction, up_direction);
     sceVu0TransposeMatrix(matrix, inverse);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/bound", SetDir__6CBoundFPfPf);
-#endif
 #ifdef NON_MATCHING
 void CBound::SetDir(float *unused_direction) {
     sceVu0Normalize(direction, direction);
