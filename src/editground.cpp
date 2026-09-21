@@ -397,7 +397,63 @@ void CEditGround::StepWater() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/editground", DrawWaterSurface__11CEditGroundFP7CCamera);
+void CEditGround::DrawWaterSurface(CCamera *camera) {
+    sceVu0FVECTOR eye;
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR dir;
+    sceVu0FVECTOR parts_position;
+    int i;
+    CGroundWater *surface = water_surfaces;
+
+    camera->GetPos(eye);
+    camera->GetDir(dir);
+    dir[1] = 0.0f;
+    sceVu0Normalize(dir, dir);
+    for (i = 0; i < 4; i++, surface++) {
+        if (surface->draw == 0) {
+            continue;
+        }
+        CWater *water = &surface->water;
+        sceVu0CopyVector(position, surface->offset);
+        if (surface->parts_no >= 0) {
+            CMapParts *owner = GetPartsObject(surface->parts_no);
+            if (owner == NULL) {
+                continue;
+            }
+            CFrame *frame = owner->unk_104;
+            if (frame != NULL && surface->name[0] != '\0') {
+                frame = frame->SearchFrame(surface->name);
+                if (frame != NULL && !(frame->attr.draw_on & 1)) {
+                    continue;
+                }
+            }
+            owner->GetPosition(parts_position);
+            if (!(clip_plane[3] <= 0.0f || DistVector(parts_position, clip_plane) <= clip_plane[3] ||
+                  owner->ChangeDigData())) {
+                continue;
+            }
+            sceVu0AddVector(position, position, parts_position);
+            water->frame.SetPosition(position);
+            owner->GetRotation(parts_position);
+            water->frame.SetRotation(parts_position[0], parts_position[1], parts_position[2]);
+        } else {
+            if (surface->follow_x) {
+                position[0] = eye[0] + 50.0f * dir[0];
+            }
+            if (surface->follow_y) {
+                position[1] = eye[1];
+            }
+            if (surface->follow_z) {
+                position[2] = eye[2] + 50.0f * dir[2];
+            }
+            CVector3_f_ rotation;
+            rotation.z = rotation.y = rotation.x = 0.0f;
+            water->frame.SetRotation(rotation.x, rotation.y, rotation.z);
+            water->frame.SetPosition(position);
+        }
+        DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(water, &mgRenderInfo, GetVif1Packet(), NULL);
+    }
+}
 
 void CEditGround::DrawWater(int pass) {
     sceVu0FVECTOR position;
