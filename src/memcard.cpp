@@ -855,7 +855,16 @@ INCLUDE_ASM("asm/nonmatchings/memcard", InitMenuOption__FiiP1);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2211);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2251);
 INCLUDE_ASM("asm/nonmatchings/memcard", ExitMenuOption__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", InitOptionFlag__Fv);
+
+static void InitOptionFlag() {
+    int i;
+
+    for (i = 0; i < 12; i++) {
+        OptionMenu.flag[i] = 0;
+    }
+    OptionMenu.flag[6] = 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", PrevOptionSetFunc__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuOptionKey__Fv);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2345);
