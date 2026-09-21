@@ -561,7 +561,13 @@ int CheckPosInOutForRect(RECT *rect, int x, int y) {
     return ((top + rect->height) < y) ? 0 : 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/gameutil", GetDisPosToRect__FP4RECTii);
+float GetDisPosToRect(RECT *rect, int x, int y) {
+    float dx = rect->x + (rect->width >> 1) - x;
+    float dy = rect->y + (rect->height >> 1) - y;
+
+    return sqrt(dx * dx + dy * dy);
+}
+
 INCLUDE_ASM("asm/nonmatchings/gameutil", GetScrPosFromChar__FP10CCharacterPi);
 /** The sixteen colours the font palette can hold. */
 extern "C" u32 FontColorTbl[16];
