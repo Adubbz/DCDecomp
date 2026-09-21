@@ -120,7 +120,44 @@ int CEditGround::SetFocusParts(float x, float y, float z) {
 
 INCLUDE_ASM("asm/nonmatchings/editground", EditAreaClip__11CEditGroundFP7CCameraf);
 INCLUDE_ASM("asm/nonmatchings/editground", GetRandomPlanePos__11CEditGroundFPfPA4_fiPf);
-INCLUDE_ASM("asm/nonmatchings/editground", GetNearParts__11CEditGroundFPP9CMapPartsiP7CBoxVu0P7CBoxVu0);
+
+int CEditGround::GetNearParts(CMapParts **out_parts, int limit, CBoxVu0 *box, CBoxVu0 *fixed_box) {
+    int i;
+    int count = 0;
+    CMapParts *object = parts;
+
+    for (i = 0; i < 128; i++, object++) {
+        if (object->unk_0E8 < 0) {
+            continue;
+        }
+        if (!object->CheckBox(box)) {
+            continue;
+        }
+        if (count >= limit) {
+            return count;
+        }
+        *out_parts++ = object;
+        count++;
+    }
+    if (fixed_box == NULL) {
+        fixed_box = box;
+    }
+    for (i = 0; i < 64; i++) {
+        if (fixed_parts[i].unk_0E8 < 0) {
+            continue;
+        }
+        CMapParts *fixed = &fixed_parts[i];
+        if (!fixed->CheckBox2(fixed_box)) {
+            continue;
+        }
+        if (count >= limit) {
+            return count;
+        }
+        *out_parts++ = fixed;
+        count++;
+    }
+    return count;
+}
 
 void CEditGround::MakePartsBox() {
     for (int i = 0; i < 4; i++) {
@@ -293,6 +330,7 @@ INCLUDE_ASM("asm/nonmatchings/editground", __ct__11CEditGroundFv);
  * @size 0x34
  */
 INCLUDE_ASM("asm/nonmatchings/editground", __ct__12CGroundWaterFv);
+
 /**
  * Reports whether a part may be replaced by the one being placed over it.
  *

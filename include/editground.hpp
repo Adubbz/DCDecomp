@@ -235,7 +235,7 @@ public:
      * @address 0x1A2A90
      * @size 0x17C
      */
-    int GetNearParts(CMapParts **out_parts, int limit, CBoxVu0 *box, CBoxVu0 *out_box);
+    int GetNearParts(CMapParts **out_parts, int limit, CBoxVu0 *box, CBoxVu0 *fixed_box);
 
     /**
      * Rebuilds the bounding boxes of every editable area.
