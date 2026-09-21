@@ -572,7 +572,26 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuCursor__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuAppear__Fv);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuExit__Fv);
+/**
+ * Slides the bar icons off the screen and closes the menu once they are gone.
+ *
+ * @mangled BattleMenuExit__Fv
+ * @address 0x1F6A40
+ * @size 0xDC
+ */
+static int BattleMenuExit() {
+    int i;
+
+    for (i = 0; i < GetMenuModeMax(); i++) {
+        NorMenuIcon[i].x += (-198.0f - NorMenuIcon[i].x) / 4.0f;
+    }
+    BtlEffectCt += 1.0f;
+    if (!(BtlEffectCt <= 20.0f) && ReadBGSync() == 0) {
+        ExitBattleMenu(1);
+        return 0;
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuSelect__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ToFromSelect__Fi);
 

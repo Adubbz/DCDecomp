@@ -314,15 +314,6 @@ int BattleMenuCursor(void);
 void BattleMenuAppear(void);
 
 /**
- * Slides the bar icons off the screen and reports when the menu may close.
- *
- * @mangled BattleMenuExit__Fv
- * @address 0x1F6A40
- * @size 0xDC
- */
-void BattleMenuExit(void);
-
-/**
  * Moves the cursor along the menu bar and opens the page it settles on.
  *
  * @mangled BattleMenuSelect__Fv
