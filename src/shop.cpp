@@ -417,7 +417,27 @@ INCLUDE_ASM("asm/nonmatchings/shop", BuyMoneyCheck2__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", SellMoneyCheck2__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", IncludeBuyItem2__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", CheckBuyItemFunc2__Fv);
-INCLUDE_ASM("asm/nonmatchings/shop", ExitItemShop2__Fv);
+
+/**
+ * Leaves the item shop, returning the goods not bought and recording the shop game flag.
+ *
+ * @mangled ExitItemShop2__Fv
+ * @address 0x1EB980
+ * @size 0x9C
+ */
+static void ExitItemShop2() {
+    CDngStatusData *dng_status;
+
+    ShopCancelGoodReturn2();
+    ShopMenuExit();
+    if (SaveData != NULL && ShopMenu.unk_00 == 1 && !SaveData->GetGameFlag(0xC8)) {
+        dng_status = SaveData->GetDngStatus();
+        if (dng_status != NULL && dng_status->SearchItemIndexNo(5) >= 0) {
+            SaveData->SetGameFlag(0xC8, 1);
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", ShopSpecialFunc__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", CompItem1__Fii);
 INCLUDE_ASM("asm/nonmatchings/shop", SeitonShopItemBoardSub__FP9ITEM_PACK);

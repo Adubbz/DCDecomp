@@ -363,15 +363,6 @@ void IncludeBuyItem2(void);
 int CheckBuyItemFunc2(void);
 
 /**
- * Leaves the item shop, returning the goods not bought and recording the shop game flag.
- *
- * @mangled ExitItemShop2__Fv
- * @address 0x1EB980
- * @size 0x9C
- */
-void ExitItemShop2(void);
-
-/**
  * Drops the shop special good from the stock once the player already carries one.
  *
  * @mangled ShopSpecialFunc__Fv
