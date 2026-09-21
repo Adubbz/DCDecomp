@@ -146,7 +146,6 @@ void DrawPrevNextCursor() {
 INCLUDE_ASM("asm/nonmatchings/menu_manual", DrawPrevNextCursor__Fv);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/menu_manual", @535);
-#ifdef NON_MATCHING
 void DrawManualMsg() {
     if (ManualMenu.messages_ready == 0) {
         return;
@@ -154,8 +153,13 @@ void DrawManualMsg() {
     MenuTextureReload(CommonMenuMes3.tex_block);
     ManualMsg->text_x = 0x86;
     ManualMsg->text_y = 0x46;
+    ClsMes *window = ManualMsg;
     if (ManualMenu.selection_level < 0) {
-        ManualMsg->edge_alpha = ManualMenu.selection_level == -1 ? 0x50 : 0x80;
+        if (ManualMenu.selection_level == -1) {
+            window->edge_alpha = 0x50;
+        } else {
+            window->edge_alpha = 0x80;
+        }
         ManualMsg->Step();
         ManualMsg->DrawMesWin();
     }
@@ -170,8 +174,8 @@ void DrawManualMsg() {
     if (ManualMenu.mode == 4) {
         CommonMenuMes3.stay_frame = 1;
         CommonMenuMes3.auto_pos = 8;
-        message_no = ManualMenu.message_page + ManualMenu.category * 1000 + 1100 +
-                     (ManualMenu.entry + 1) * 10;
+        message_no = ManualMenu.category * 1000 + 1100 + (ManualMenu.entry + 1) * 10 +
+                     ManualMenu.message_page;
         CommonMenuMes3.text_x = 0x78;
         CommonMenuMes3.text_y = 0x158;
     }
@@ -184,14 +188,12 @@ void DrawManualMsg() {
     CommonMenuMes3.Step();
     CommonMenuMes3.DrawMesWin();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_manual", DrawManualMsg__Fv);
-#endif
-#ifdef NON_MATCHING
 void InitMenuManual(int *texture_blocks, u_long128 *load_buffer) {
-    ManualMenu.load_buffer = MenuCalcBufAlignment(load_buffer);
+    ManualMenu.load_buffer = load_buffer;
+    ManualMenu.load_buffer = MenuCalcBufAlignment(ManualMenu.load_buffer);
+    u_long128 *buffer = ManualMenu.load_buffer;
     StartReadBG();
-    LoadFileBGMenuData((char *)"manual/mndata.pak", ManualMenu.load_buffer);
+    LoadFileBGMenuData("manual/mndata.pak", buffer);
     ReadBG();
     ManualMenu.messages_ready = 0;
     ManualMenu.images_ready = 0;
@@ -211,10 +213,6 @@ void InitMenuManual(int *texture_blocks, u_long128 *load_buffer) {
     ManualMenu.menu_message_buffer = CommonMenuMes1.buff;
     ManualMenu.char_width = CommonMenuMes3.char_width;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_manual", InitMenuManual__FPiP1);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_manual", @559__2);
 #ifdef NON_MATCHING
 static void ResetManualMessage(ClsMes *message) {
     message->text_columns = 0x46;
