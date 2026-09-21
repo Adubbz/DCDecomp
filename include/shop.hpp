@@ -333,15 +333,6 @@ void CheckSideKey2(void);
 void DrawMoneyCheckBoard2(int, int, int);
 
 /**
- * Draws the shop's confirmation button.
- *
- * @mangled DrawCheckButton__Fiii
- * @address 0x1EC7D0
- * @size 0x9C
- */
-void DrawCheckButton(int, int, int);
-
-/**
  * Draws the small price ticket, clipped to the digits it has to show.
  *
  * @mangled DrawSmallSellTicket__Fiiiiii

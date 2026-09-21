@@ -230,6 +230,8 @@ static void DrawSellTicket_2(int x, int y, int clip_top, int clip_bottom, int mo
 
 static void SetShopTalkMsgPos();
 
+static void DrawCheckButton(int x, int y, int mode);
+
 s16 *GetItemShopList(int shop_no) {
     return ItemShopList2[shop_no];
 }
@@ -1372,7 +1374,28 @@ static void DrawItemShopBoard2(int x, int y, int alpha) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/shop", DrawMoneyCheckBoard2__Fiii);
-INCLUDE_ASM("asm/nonmatchings/shop", DrawCheckButton__Fiii);
+
+/**
+ * Draws the shop's confirmation button.
+ *
+ * @mangled DrawCheckButton__Fiii
+ * @address 0x1EC7D0
+ * @size 0x9C
+ */
+static void DrawCheckButton(int x, int y, int mode) {
+    int u = 0x130;
+
+    switch (ShopMenu.unk_180) {
+        case 0x1A:
+            u = 0x190;
+            if (ShopMenu.unk_184 > 8) {
+                ShopMenu.unk_180 = 0;
+            }
+            break;
+    }
+    DrawMenu2DSprite(ShopBoard, CRect_i_(x, y, 0x60, 0x20), CRect_i_(u, 0x90, 0x60, 0x20), mode);
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", DrawSmallSellTicket__Fiiiiii);
 INCLUDE_ASM("asm/nonmatchings/shop", DrawBigSellTicket__Fiiiii);
 
