@@ -12,7 +12,6 @@
 
 extern "C" CCharacter CharaMain;
 
-#ifdef NON_MATCHING
 void CHealEffect::Set(float *world) {
     sceVu0CopyVector(this->position, world);
     this->active = 1;
@@ -28,9 +27,6 @@ void CHealEffect::Set(float *world) {
         this->particle_offset[i][1] = 2.0f + 10.0f * (float) rand() / 2.1474836e9f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/healeffect", Set__11CHealEffectFPf);
-#endif
 
 #ifdef NON_MATCHING
 void CHealEffect::Step(void) {
