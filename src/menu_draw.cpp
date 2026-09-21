@@ -59,6 +59,9 @@ extern CTexture *WepIcon;
 /** Texture of the personal inventory board. */
 extern CTexture *PerBoardTex;
 
+/** Texture block the item menu's weapon icons load into. */
+extern int ItemMenuWeaponIconReadBlock;
+
 /**
  * Draws the mark over an item that cannot be set.
  *
@@ -611,7 +614,42 @@ int PersonalRetMax(int board_mode) {
     return max;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawPersonalBoard__Fiiiii);
+void DrawPersonalBoard(int x, int y, int board_mode, int alpha, int) {
+    int max = PersonalRetMax(board_mode);
+    int top = y + 9;
+    int bottom = top + 0xA0;
+    int left = x + 0x13;
+    int row_y = y - 0x11;
+    int kind;
+
+    row_y = row_y + 0x17 - PerBoardPt->unk_18 * 40;
+    PerBoardPt->unk_10 += (row_y - PerBoardPt->unk_10) / 4.0f;
+    row_y = PerBoardPt->unk_10;
+    switch (PerBoardPt->unk_00) {
+        case 2:
+        case 0:
+            MenuTextureReload(PerBoardTex->block);
+            break;
+    }
+    kind = 0;
+    switch (board_mode) {
+        case 1:
+            kind = 2;
+            break;
+    }
+    DrawPerBoardDraw(kind, max, left, row_y, top, bottom, PerBoardTex, alpha);
+    switch (PerBoardPt->unk_00) {
+        case 2:
+            MenuTextureReload(PerBoardTex->block);
+            break;
+        case 0:
+            MenuTextureReload(ItemMenuWeaponIconReadBlock);
+            break;
+    }
+    CommonIconDraw(board_mode, max, left + 2, row_y + 6, top, bottom, alpha);
+    MenuTextureReload(PerBoardTex->block);
+    PersonalBoardOptionDraw(board_mode, max, x, y, PerBoardTex, alpha);
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawNowEquipWeaponMark__Fiiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonIconDraw__Fiiiiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardDrawWaku__FiiP8CTexturei);
