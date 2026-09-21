@@ -188,7 +188,6 @@ void InitShopItemListData(SHOP_ITEMLIST *item_list) {
     }
 }
 
-#ifdef NON_MATCHING
 void ShopIconMove::IconMoveTarSet(int slot_no, int icon_no, int item_no, MENU_ITEMDATA *item_data, float start_x, float start_y, int to_stock) {
     this->to_stock = to_stock;
     this->item_no = item_no;
@@ -198,9 +197,6 @@ void ShopIconMove::IconMoveTarSet(int slot_no, int icon_no, int item_no, MENU_IT
     this->pos_x = start_x;
     this->pos_y = start_y;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", IconMoveTarSet__12ShopIconMoveFiiiP13MENU_ITEMDATAffi);
-#endif
 INCLUDE_ASM("asm/nonmatchings/shop", IconAutoMove__12ShopIconMoveFii);
 INCLUDE_ASM("asm/nonmatchings/shop", IconAutoMoveDraw__12ShopIconMoveFv);
 #ifdef NON_MATCHING
