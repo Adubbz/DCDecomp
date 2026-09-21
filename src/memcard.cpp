@@ -42,6 +42,12 @@ extern int tip_table[3];
 /** The chip group that the board's sort ranks first. */
 extern int tip_sort_type;
 
+/** The texture block the georama board screen loads for its own textures. */
+extern int AtoraTextureReadBlock;
+
+/** The texture block that holds the board's town tags and names. */
+extern int AtoraTextureBaseBlock;
+
 // The chip attachment record is opaque to every unit; only the unit's own
 // functions take a pointer to it.
 struct EDIT_CHIP_ATTACH_DATA;
@@ -592,7 +598,6 @@ void MenuHelpWinDraw2(int x, int y, float width, float height, int alpha, int u,
     DrawMenu2DSprite(texture, CRect_i_(x, middle_y, 24, middle_height), CRect_i_(u + 38, v + 22, 24, 20), (alpha * 100) >> 7);
     DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, 24, 22), CRect_i_(u + 38, v + 42, 24, 22), (alpha * 100) >> 7);
 }
-
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuHelpWinDraw__Fiiffi);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuWaku__FffiiiP8CTexturei);
 
@@ -1006,15 +1011,17 @@ INCLUDE_ASM("asm/nonmatchings/memcard", InitMenuAtora1__FiiPiP1);
 INCLUDE_ASM("asm/nonmatchings/memcard", InitMenuAtoraSelect__Fi);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @1397);
 INCLUDE_ASM("asm/nonmatchings/memcard", ExitAtoraSelect__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTexInfoGet__Fv);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1410);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1411);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1412);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1413);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1414__2);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1415__2);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1416);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1417);
+
+static void AtoraTexInfoGet() {
+    CompleteTex = TexManager.GetTexture("complete", -1);
+    Sozai = TexManager.GetTexture("sozai", AtoraTextureReadBlock);
+    HoleGray = TexManager.GetTexture("holegray", AtoraTextureReadBlock);
+    HoleGold = TexManager.GetTexture("holegold", AtoraTextureReadBlock);
+    ObTip = TexManager.GetTexture("obtip", AtoraTextureReadBlock);
+    ObPerson = TexManager.GetTexture("obperson", AtoraTextureReadBlock);
+    VillageBar = TexManager.GetTexture("viltag", AtoraTextureBaseBlock);
+    VillageName = TexManager.GetTexture("vilname", AtoraTextureBaseBlock);
+}
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuAtoraSelect__Fv);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @1502);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @1664);

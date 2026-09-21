@@ -381,6 +381,31 @@ extern CTexture *HoleGold;
 extern CTexture *HoleGray;
 
 /**
+ * The texture of the seal a completed georama shows.
+ */
+extern CTexture *CompleteTex;
+
+/**
+ * The texture of the icons of chips that stand for objects.
+ */
+extern CTexture *ObTip;
+
+/**
+ * The texture of the icons of chips that stand for residents.
+ */
+extern CTexture *ObPerson;
+
+/**
+ * The texture of the georama board's town tags.
+ */
+extern CTexture *VillageBar;
+
+/**
+ * The texture of the georama board's town names.
+ */
+extern CTexture *VillageName;
+
+/**
  * The state of the georama board screen.
  */
 extern MENU_ATORA_SEL MenuAtoraSel;
