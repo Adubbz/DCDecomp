@@ -462,14 +462,12 @@ float FishingGetWaterLevel() {
     return WaterLevel;
 }
 
-/**
- * Copies the collision polygons the fishing water stands on.
- *
- * @mangled FishingSetCPoly__FP6CCPolyi
- * @address 0x1A91E0
- * @size 0x7C
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingSetCPoly__FP6CCPolyi);
+void FishingSetCPoly(CCPoly *polys, int count) {
+    for (int i = 0; i < count; i++) {
+        memcpy(&cpoly[i], &polys[i], sizeof(CCPoly));
+    }
+    cpoly_num = count;
+}
 
 /**
  * Sets the box the fish may swim within.

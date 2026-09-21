@@ -45,9 +45,6 @@ void FishingSetGroundLevel(float uki_height, float hook_height);
  */
 float FishingGetWaterLevel();
 
-/** Supplies the ground collision polygons used by the fishing simulation. */
-void FishingSetCPoly(CCPoly *polygons, int count);
-
 /** Initializes a fish inside the supplied rectangular bounds. */
 void FishingInitFish(CBoxVu0 bounds);
 
@@ -143,3 +140,12 @@ void FishingLoadEsa(int item_no, CFrameVu1 *frame, int slot);
  * @size 0x38
  */
 int FishingGetEsaItemNo();
+
+/**
+ * Copies the collision polygons the fish move against.
+ *
+ * @mangled FishingSetCPoly__FP6CCPolyi
+ * @address 0x1A91E0
+ * @size 0x7C
+ */
+void FishingSetCPoly(CCPoly *polys, int count);
