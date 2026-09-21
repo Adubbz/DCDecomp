@@ -47,6 +47,12 @@ extern CTexture *DunLogBoard;
 /** Dungeon progress the battle menus show. */
 extern CDngStatusData *BtlMenuStatusPt;
 
+/** Buffer the battle menus read their files into. */
+extern u_long128 *BtlMenuReadBuf;
+
+/** State of the debug item menu. */
+extern ITEM_AUTO_GET ItemAutoGet;
+
 /** Model the item preview shows. */
 extern CFrame *ItemPolyView;
 
@@ -730,7 +736,76 @@ static int ConvDebugSelectToExcelListNo(int selection) {
     }
     return item_no;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DebugItemGetKey__Fv);
+
+int DebugItemGetKey(void) {
+    int result;
+    int selection;
+    int page;
+    int item_no;
+    WEAPON_DATA *data;
+    int count;
+
+    result = 0;
+    selection = ItemAutoGet.selection;
+    page = ItemAutoGet.page;
+    if (GamePad.Down(0x1000)) {
+        ItemAutoGet.selection -= 8;
+    }
+    if (GamePad.Down(0x4000)) {
+        ItemAutoGet.selection += 8;
+    }
+    if (GamePad.Down(0x2000)) {
+        ItemAutoGet.selection += 1;
+    }
+    if (GamePad.Down(0x8000)) {
+        ItemAutoGet.selection -= 1;
+    }
+    if (GamePad.Down(0x100)) {
+        if (ItemAutoGet.show_model) {
+            ItemAutoGet.show_model = 0;
+        } else {
+            ItemAutoGet.show_model = 1;
+        }
+        polyreadflag = InitItemPolygonView(ConvDebugSelectToExcelListNo(ItemAutoGet.selection), BtlMenuReadBuf);
+    }
+    if (GamePad.Down(5)) {
+        ItemAutoGet.selection -= 0x40;
+    }
+    if (GamePad.Down(0xA)) {
+        ItemAutoGet.selection += 0x40;
+    }
+    if (ItemAutoGet.selection < 0) {
+        ItemAutoGet.selection += 0x140;
+    }
+    if (ItemAutoGet.selection > 0x13F) {
+        ItemAutoGet.selection -= 0x140;
+    }
+    ItemAutoGet.page = ItemAutoGet.selection >> 6;
+    if (selection != ItemAutoGet.selection || page != ItemAutoGet.page) {
+        ComMenuSePlay(0);
+    }
+    if (GamePad.Down(0x40)) {
+        ComMenuSePlay(1);
+        count = rand() % 3 + 1;
+        BtlMenuStatusPt->GetItem(ConvDebugSelectToExcelListNo(ItemAutoGet.selection), count);
+    }
+    if (GamePad.Down(0x20)) {
+        result = -1;
+        CommonMenuMes2.mes_made = result;
+        ComMenuSePlay(2);
+    }
+    if (GamePad.Down2(0x40)) {
+        for (item_no = 0x101; item_no < 0x179; item_no++) {
+            data = GetWeaponData(item_no);
+            if (data != NULL && data->flags != 0 && data->flags != 1) {
+                BtlMenuStatusPt->GetItem(item_no, 0);
+            }
+        }
+        ComMenuSePlay(1);
+    }
+    return result;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DebugItemGetDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawItemDataView__Fi);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2140__2);

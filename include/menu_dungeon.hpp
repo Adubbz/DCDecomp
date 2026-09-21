@@ -5,6 +5,17 @@
 #include "menu_draw.hpp"
 
 /**
+ * State of the debug item menu, which hands out any item on request.
+ */
+struct ITEM_AUTO_GET {
+    s32 selection;  /**< Entry the cursor stands on. */
+    s32 page;       /**< Page of 64 entries the cursor is on. */
+    s32 show_model; /**< Toggled by the key that previews the selected item's model. */
+};
+
+STATIC_ASSERT(sizeof(ITEM_AUTO_GET) == 0xC);
+
+/**
  * Returns how much a weapon's attachments raise one of its values.
  *
  * @mangled GetWeaponAttachStatusUp__FP11WEAPON_HAVEi
