@@ -666,16 +666,6 @@ int GetFishMardanGarayanNum(void);
 void ClearFishMardanGarayanNum(void);
 
 /**
- * Reports whether the Mardan Garayan weapon has been handed over: zero once game flag 0xCA
- * marks it taken, one or two otherwise according to the Mardan Garayan flag.
- *
- * @mangled AlreadyGetMardanWeapon__Fv
- * @address 0x1F13A0
- * @size 0x70
- */
-int AlreadyGetMardanWeapon(void);
-
-/**
  * Opens the fishing prize exchange and reads its data.
  *
  * @mangled InitFishingExchange__FP1Pii

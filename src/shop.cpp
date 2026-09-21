@@ -605,7 +605,29 @@ void ClearFishMardanGarayanNum() {
     SaveData->SetGameIntFlag(0x14, 0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", AlreadyGetMardanWeapon__Fv);
+/**
+ * Reports whether the Mardan Garayan weapon has been handed over: zero once game flag 0xCA
+ * marks it taken, one or two otherwise according to the Mardan Garayan flag.
+ *
+ * @mangled AlreadyGetMardanWeapon__Fv
+ * @address 0x1F13A0
+ * @size 0x70
+ */
+static int AlreadyGetMardanWeapon() {
+    int flag = SaveData->GetGameFlag(0xCA);
+
+    if (flag == 0) {
+        if (GetMardanGareyanFlag() > 0) {
+            return 1;
+        }
+        return 2;
+    }
+    if (flag == 1) {
+        return 0;
+    }
+    return flag;
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", InitFishingExchange__FP1Pii);
 INCLUDE_RODATA("asm/nonmatchings/shop", @2943);
 INCLUDE_RODATA("asm/nonmatchings/shop", @2948);
