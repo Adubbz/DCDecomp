@@ -672,7 +672,25 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWepDamageDraw__F4RECTP11WEAPON_HA
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWepStatus__FiiP11WEAPON_HAVEii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWepVolumeDisplay__FiiP11WEAPON_HAVEi);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponNameBoard__Fiiiii);
+/**
+ * Draws the board a weapon's name sits on.
+ *
+ * @mangled DrawWeaponNameBoard__Fiiiii
+ * @address 0x1F9580
+ * @size 0x13C
+ */
+static void DrawWeaponNameBoard(int x, int y, int width, int alpha, int brightness) {
+    CRect_i_ left(x, y + 1, 0x28, 0x1F);
+    CRect_i_ middle(x + 0x28, y + 1, 0x99, 0x1F);
+    CRect_i_ right(x + 0xAC, y + 1, 0x20, 0x1F);
+
+    DrawMenu2DSprite(WepStatus, left, CRect_i_(0xE0, 0x1A8, 0x28, 0x20), brightness, brightness,
+                     brightness, alpha);
+    DrawMenu2DSprite(WepStatus, middle, CRect_i_(0x108, 0x1A8, 0x78, 0x20), brightness, brightness,
+                     brightness, alpha);
+    DrawMenu2DSprite(WepStatus, right, CRect_i_(0xD4, 0x1D4, 0x20, 0x20), brightness, brightness,
+                     brightness, alpha);
+}
 
 s32 GetWeaponNamePutX(s32 center_x, s32 width) {
     return center_x - (width >> 1);

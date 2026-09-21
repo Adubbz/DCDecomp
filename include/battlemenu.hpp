@@ -378,15 +378,6 @@ void DrawWepStatus(int, int, WEAPON_HAVE *, int, int);
 void DrawWepVolumeDisplay(int, int, WEAPON_HAVE *, int);
 
 /**
- * Draws the board a weapon's name sits on.
- *
- * @mangled DrawWeaponNameBoard__Fiiiii
- * @address 0x1F9580
- * @size 0x13C
- */
-void DrawWeaponNameBoard(int, int, int, int, int);
-
-/**
  * Returns the x position that centers a weapon name of a width.
  *
  * @mangled GetWeaponNamePutX__Fii
