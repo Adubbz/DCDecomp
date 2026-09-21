@@ -601,7 +601,26 @@ void DrawEventAndFishMenuBoard_Ver(CTexture *texture, CRect_i_ rect, int u, int 
 }
 INCLUDE_ASM("asm/nonmatchings/menu_save", DrawEventAndFishMenuBoard__FP8CTextureiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_save", EventItemSelectDraw__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_save", DrawEventItemBoard__FiiiiiP8CTexture);
+
+void DrawEventItemBoard(int x, int y, int top, int bottom, int alpha, CTexture *texture) {
+    int clip_y;
+    int clip_v;
+    int clip_height;
+
+    if ((y < top - 0x27) || (bottom <= y)) {
+        return;
+    }
+    int pos_x = x;
+    clip_y = y;
+    clip_v = 0;
+    clip_height = 0x28;
+    MenuTextureClip(clip_y, clip_v, clip_height, top, bottom);
+    for (int i = 0; i < 5; i++) {
+        DrawMenu2DSprite(texture, CRect_i_(pos_x, clip_y + 1, 0x28, clip_height), CRect_i_(0x116, clip_v, 0x28, clip_height),
+                         alpha);
+        pos_x += 0x2A;
+    }
+}
 
 int PlayerAllItemCheck(int item) {
     CDngStatusData *dungeon_status = SaveData->GetDngStatus();
