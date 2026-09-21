@@ -1255,7 +1255,18 @@ int SndVoiceLoadBG(int set_no, u_int *buffer, int *size) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndVoiceSyncBG__Fv);
+int SndVoiceSyncBG() {
+    if (load_voice_set < 0 || load_voice_adr == 0) {
+        return 0;
+    }
+    if (ReadBGSync()) {
+        return 1;
+    }
+    SetVoiceFile(load_voice_set, load_voice_adr, voice_cfg_file);
+    load_voice_set = -1;
+    load_voice_adr = 0;
+    return 0;
+}
 static SND_SE_INFO *GetSPInfo(int se_no) {
     if (se_no < 0 || se_no >= 64) {
         return 0;
