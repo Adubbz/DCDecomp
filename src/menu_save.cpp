@@ -27,6 +27,12 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
+/**
+ * Closes the save screen's message window and restores the pad, and after a
+ * load sets the stereo mode from the loaded configuration.
+ */
+void ExitSaveSelect();
+
 int SaveMenuKeySaveCheck(void) {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
 
@@ -242,7 +248,16 @@ s32 SaveMenuKeyDelete(void) {
 s32 SaveMenuKeyCopy(void) {
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyAfterEnding__Fv);
+
+int SaveMenuKeyAfterEnding(void) {
+    if (GamePad.Down(0x40) != 0) {
+        SaveMenu.key_no = 3;
+    } else if (GamePad.Down(0x20) != 0) {
+        SaveMenu.key_no = 1;
+        ExitSaveSelect();
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeySaveDecideEnding__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeySaveEnding__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyEndSaveEnding__Fv);
