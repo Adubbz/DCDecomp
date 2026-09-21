@@ -229,7 +229,27 @@ static s16 GetItemMoney(int item_no, int sell) {
     }
     return ext_func_info__3.money[item_no].buy_price;
 }
-INCLUDE_ASM("asm/nonmatchings/shop", ShopNoInput__FPiii);
+
+int ShopNoInput(int *state, int shop_no, int mode) {
+    if (shop_no < 0 || shop_no > 200) {
+        shop_no = 0;
+    }
+    if (shop_no < 100) {
+        if (shop_no > 20) {
+            shop_no = 0;
+        }
+        InitItemShop2(state, shop_no, mode);
+        ChargeOrShopFlag = 1;
+    } else {
+        shop_no -= 100;
+        if (shop_no > 5) {
+            shop_no = 0;
+        }
+        InitChargeShop(state, shop_no, mode);
+        ChargeOrShopFlag = 0;
+    }
+    return 1;
+}
 
 void InitAllHaveData() {
     InitHaveData(ShopHaveItemPt);

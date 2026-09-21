@@ -125,7 +125,7 @@ STATIC_ASSERT(sizeof(ShopIconMove) == 0x10C);
  * @address 0x1E6F40
  * @size 0x88
  */
-void ShopNoInput(int *, int, int);
+int ShopNoInput(int *, int, int);
 
 /**
  * Clears the shop's held item, weapon and attachment lists.
