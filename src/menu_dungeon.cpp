@@ -39,7 +39,7 @@ void PlusAttachmentVolume(ATTACH_LIST *base, ATTACH_LIST *add, float scale) {
     int i;
 
     for (i = 0; i < 4; i++) {
-        (&base->attack)[i] = (s16) ((float) (&base->attack)[i] + (float) (&add->attack)[i] * scale);
+        base->status[i] = (s16) ((float) base->status[i] + (float) add->status[i] * scale);
     }
     for (i = 0; i < 5; i++) {
         base->elem[i] = (s8) ((float) base->elem[i] + (float) add->elem[i] * scale);
@@ -70,16 +70,12 @@ int GetWeaponAttachStatusUp(WEAPON_HAVE *weapon, int stat) {
 
         int multiplier = (weapon->attach_kind[i] == 3) ? 2 : 1;
 
-        /* Attachment stats are read by byte offset from the ATTACH_LIST
-         * start: a 16-bit value at 6 + stat*2 for the base stats, then bytes
-         * out of elem/vs_monster for the element and monster-type stats. */
-        s8 *bytes = (s8 *) attach;
         if (stat < 5) {
-            total += *(s16 *) (bytes + 6 + stat * 2) * multiplier;
+            total += attach->status[stat - 1] * multiplier;
         } else if (stat >= 8 && stat < 0xD) {
-            total += bytes[stat + 8] * multiplier;
+            total += attach->elem[stat - 8] * multiplier;
         } else {
-            total += bytes[stat + 7] * multiplier;
+            total += attach->vs_monster[stat - 14] * multiplier;
         }
     }
     return total;

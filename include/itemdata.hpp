@@ -439,10 +439,7 @@ struct ATTACH_LIST {
     s16 unk_04;
     s8 stat_00;
     s8 unk_07;
-    s16 attack;
-    s16 endurance;
-    s16 speed;
-    s16 magic;
+    s16 status[4];     /**< Attack, endurance, speed and magic: AttachStat minus one. */
     s8 elem[5];        /**< AttachStat order: fire, ice, thunder, wind, holy. */
     s8 vs_monster[10]; /**< Monster effectiveness, one byte per WEAPON_DATA entry. */
     u8 unk_1F;
