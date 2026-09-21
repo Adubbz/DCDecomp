@@ -223,7 +223,8 @@
       "debug": "debug__2",
       "motion_parts_list": "motion_parts_list__2",
       "water_list": "water_list__2",
-      "water_info": "water_info__2"
+      "water_info": "water_info__2",
+      "func_num": "func_num__2"
     },
     "globalize_symbols": [
       "InitWorkBuffer__Fv__2",

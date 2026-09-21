@@ -1,11 +1,20 @@
 #include "common.h"
 
+#include <libvu0.h>
+
+#include <cstdio>
 #include <cstring>
 
+#include "character.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "edit_in.hpp"
 #include "editloop.hpp"
+#include "editloop3.hpp"
+#include "editpartsinfo.hpp"
+#include "frame.hpp"
+#include "mapparts.hpp"
+#include "mathutil.hpp"
 #include "scriptinterpreter.hpp"
 
 /* The arenas the interior carves the read buffer into. */
@@ -31,6 +40,15 @@ extern EDIT_WATER_INFO *water_info;
 /* Numbers of object animations and effects the interior uses. */
 extern int obj_anime_num;
 extern int effect_num;
+
+/* The interior's parts, how many it has, and the function points they define. */
+extern CMapParts InteriorParts[10];
+extern int parts_num;
+extern EPARTS_FUNC_DATA *func_point;
+extern int func_num;
+
+/* Map jump the player arrives through when entering an interior. */
+extern int EdInteriorJumpID;
 
 /**
  * Identifies the kind of editor effect requested.
