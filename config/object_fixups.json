@@ -208,6 +208,7 @@
   "src/edit_in.cpp": {
     "symbols": {
       "InitWorkBuffer__Fv": "InitWorkBuffer__Fv__2",
+      "CommandAMBIENT__FPPv": "CommandAMBIENT__FPPv__2",
       "Command": "Command__6",
       "CommandExe": "CommandExe__6",
       "CurrentDir": "CurrentDir__5",
@@ -219,6 +220,7 @@
     },
     "globalize_symbols": [
       "InitWorkBuffer__Fv__2",
+      "CommandAMBIENT__FPPv__2",
       "LoadInfo__FPci"
     ],
     "rodata_exports": [

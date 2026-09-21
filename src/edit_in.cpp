@@ -326,7 +326,12 @@ static void LoadInfo(char *script, int size) {
  * @size 0x44
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandAMBIENT__FPPv__2);
+static void CommandAMBIENT(void **arguments) {
+    EdInInfo->ambient[0] = *(float *) arguments[0];
+    EdInInfo->ambient[1] = *(float *) arguments[1];
+    EdInInfo->ambient[2] = *(float *) arguments[2];
+    EdInInfo->ambient[3] = 128.0f;
+}
 /**
  * Sets the colour and direction of one of the interior's lights.
  *
