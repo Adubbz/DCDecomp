@@ -563,7 +563,41 @@ static int AtoraTipStatusSearch(EDITPARTS_INFO *info, int slot) {
 
 INCLUDE_ASM("asm/nonmatchings/memcard", AtraTipCanDisplay__FP21EDIT_CHIP_ATTACH_DATA);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipRelationDraw__FiiP14EDITPARTS_INFOiii);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraBoardEnableMovePos__FiPi);
+
+static void AtoraBoardEnableMovePos(int parts_no, int *enable) {
+    EDITPARTS_INFO *info;
+    int link;
+    int i;
+
+    info = SearchAtoraInfo(parts_no);
+    if (info == NULL) {
+        for (int j = 0; j < 6; j++) {
+            enable[j] = 0;
+        }
+        return;
+    }
+    for (i = 0; i < 6; i++) {
+        enable[i] = 1;
+        if (info->elements[i].id < 0) {
+            enable[i] = 0;
+        } else {
+            link = info->elements[i].unk_04;
+            if (link < 0) {
+                enable[i] = 1;
+            } else {
+                link = info->elements[link].unk_04;
+                if (link < 0) {
+                    enable[i] = 1;
+                } else if (info->elements[link].enabled != 0) {
+                    enable[i] = 1;
+                } else {
+                    enable[i] = 0;
+                }
+            }
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraBoardGoToPos__FPiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", GetAtraMsgNo__Fii);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraMsgNoGet__Fiii);
