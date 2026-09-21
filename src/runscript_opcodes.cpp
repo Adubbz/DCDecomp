@@ -628,7 +628,22 @@ int _SET_DMG_COL(RS_STACKDATA *stack, int argc) {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_DMG_PARA__FP12RS_STACKDATAi);
+
+int _SET_DMG_PARA(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+    int slot = NowMonstorUnit->effect2[monster_no].unk_340;
+
+    if (slot != -1) {
+        NowMonstorUnit->effect2[monster_no].damage[slot] = GetStackInt(stack++);
+        NowMonstorUnit->effect2[monster_no].flags[slot] = GetStackInt(stack++);
+        NowMonstorUnit->effect2[monster_no].kind[slot] = GetStackInt(stack++);
+        NowMonstorUnit->effect2[monster_no].angle[slot] = 0.0f;
+        if (NowMonstorUnit->effect2[monster_no].kind[slot] == 3 && argc == 4) {
+            NowMonstorUnit->effect2[monster_no].angle[slot] = GetStackFloat(stack);
+        }
+    }
+    return 1;
+}
 
 int _SET_SHOT(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
