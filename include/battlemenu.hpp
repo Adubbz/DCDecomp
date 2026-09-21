@@ -121,16 +121,6 @@ void GetNowEquipWeaponDataForMsg(int &item_no, int &slot);
 GRADATION_COLOR_INFO2 *GetGradationColorInfo2(int index);
 
 /**
- * Gives the weapon the cursor stands on.
- *
- * @mangled GetNowSelectWeapon__Fv
- * @address 0x1F3F00
- * @size 0x3C
- * Returns the weapon the weapon menu's cursor is on.
- */
-WEAPON_HAVE *GetNowSelectWeapon(void);
-
-/**
  * Sets whether the party is escaping the dungeon.
  *
  * @mangled SetEscapeDngFlag__Fi

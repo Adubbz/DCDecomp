@@ -125,13 +125,19 @@ void GetNowEquipWeaponDataForMsg(int &item_no, int &slot) {
 GRADATION_COLOR_INFO2 *GetGradationColorInfo2(int index) {
     return &MenuColorInfo2[index];
 }
-#ifdef NON_MATCHING
-WEAPON_HAVE *GetNowSelectWeapon(void) {
-    return &BtlMenuStatusPt->chara_weapons[WepMenu.chara][WepMenu.weapon_slot];
+/**
+ * Gives the weapon the weapon menu's cursor is on.
+ *
+ * @mangled GetNowSelectWeapon__Fv
+ * @address 0x1F3F00
+ * @size 0x3C
+ */
+static WEAPON_HAVE *GetNowSelectWeapon() {
+    int chara = WepMenu.chara;
+    CDngStatusData *status = BtlMenuStatusPt;
+    WEAPON_HAVE *row = status->chara_weapons[chara];
+    return &row[WepMenu.weapon_slot];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", GetNowSelectWeapon__Fv);
-#endif
 /**
  * Reports whether the party may leave the floor: freely, with an escape item, or not at
  * all.
