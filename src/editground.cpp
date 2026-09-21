@@ -162,7 +162,19 @@ INCLUDE_ASM("asm/nonmatchings/editground", Load__11CEditGroundFPc);
 INCLUDE_RODATA("asm/nonmatchings/editground", @1325);
 INCLUDE_ASM("asm/nonmatchings/editground", Save__11CEditGroundFiP9CSaveData);
 INCLUDE_ASM("asm/nonmatchings/editground", Load__11CEditGroundFiP9CSaveData);
-INCLUDE_ASM("asm/nonmatchings/editground", PickUpPoly__11CEditGroundFP6CCPolyfff);
+
+int CEditGround::PickUpPoly(CCPoly *polygons, float x, float y, float z) {
+    CBoxVu0 box;
+
+    box.max[0] = x + 30.0f;
+    box.min[0] = x - 30.0f;
+    box.max[2] = z + 30.0f;
+    box.min[2] = z - 30.0f;
+    box.max[1] = y + 100.0f;
+    box.min[1] = y - 100.0f;
+    return PickUpPoly(polygons, box, 0);
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", PickUpPoly__11CEditGroundFP6CCPoly7CBoxVu0i);
 INCLUDE_ASM("asm/nonmatchings/editground", PickUpEditAreaPoly__11CEditGroundFP6CCPolyfff);
 INCLUDE_ASM("asm/nonmatchings/editground", PickUpCameraPoly__11CEditGroundFP6CCPolyR7CBoxVu0i);
