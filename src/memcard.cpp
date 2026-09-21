@@ -566,7 +566,33 @@ void MenuHelpWinDraw(int x, int y, float width, float height, int alpha, int u, 
     DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, 24, 22), CRect_i_(u + 38, v + 42, 24, 22), (alpha * 100) >> 7);
 }
 
-INCLUDE_ASM("asm/nonmatchings/memcard", MenuHelpWinDraw2__FiiffiiiP8CTexture);
+void MenuHelpWinDraw2(int x, int y, float width, float height, int alpha, int u, int v, CTexture *texture) {
+    int middle_width;
+    int middle_height;
+    int middle_y;
+    int bottom_y;
+
+    middle_width = width;
+    middle_height = height;
+    middle_y = y + 22;
+    bottom_y = middle_y + middle_height;
+    if (texture == NULL) {
+        return;
+    }
+    DrawMenu2DSprite(texture, CRect_i_(x, y, 24, 22), CRect_i_(u, v, 24, 22), (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, middle_y, 24, middle_height), CRect_i_(u, v + 22, 24, 20), (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, 24, 22), CRect_i_(u, v + 42, 24, 22), (alpha * 100) >> 7);
+    x += 24;
+    DrawMenu2DSprite(texture, CRect_i_(x, y, middle_width, 22), CRect_i_(u + 22, v, 16, 22), (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, middle_y, middle_width, middle_height), CRect_i_(u + 22, v + 22, 16, 20),
+                     (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, middle_width, 22), CRect_i_(u + 22, v + 42, 16, 22), (alpha * 100) >> 7);
+    x += middle_width;
+    DrawMenu2DSprite(texture, CRect_i_(x, y, 24, 22), CRect_i_(u + 38, v, 24, 22), (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, middle_y, 24, middle_height), CRect_i_(u + 38, v + 22, 24, 20), (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, 24, 22), CRect_i_(u + 38, v + 42, 24, 22), (alpha * 100) >> 7);
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuHelpWinDraw__Fiiffi);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuWaku__FffiiiP8CTexturei);
 
