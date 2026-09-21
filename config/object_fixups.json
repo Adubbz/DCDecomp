@@ -484,6 +484,10 @@
       "@2851",
       "@2852",
       "@2853"
+    ],
+    "globalize_symbols": [
+      "RunEvent__FiP7CCamera",
+      "RunSystemEvent__FiP7CCamera"
     ]
   },
   "src/editloop3.cpp": {

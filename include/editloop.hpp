@@ -458,24 +458,6 @@ int CheckEventPoint(ED_EVENT_POINT *point, float time);
 ED_EVENT_POINT *GetNewEventPoint(ED_EVENT_POINT *points, int count);
 
 /**
- * Starts a map event and optionally adopts a camera viewpoint.
- *
- * @mangled RunEvent__FiP7CCamera
- * @address 0x1779F0
- * @size 0xD0
- */
-int RunEvent(int event_no, CCamera *camera);
-
-/**
- * Starts a system event and optionally adopts a camera viewpoint.
- *
- * @mangled RunSystemEvent__FiP7CCamera
- * @address 0x177AC0
- * @size 0xA8
- */
-void RunSystemEvent(int event_no, CCamera *camera);
-
-/**
  * Writes the editor's part progress and clock back to the save data.
  *
  * @mangled EditSave__Fv
