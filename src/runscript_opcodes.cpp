@@ -199,19 +199,16 @@ int _SET_ROTATION(RS_STACKDATA *stack, int argc) {
     }
     return 1;
 }
-#ifdef NON_MATCHING
 int _CHK_ROTATION(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
     int done = 0;
 
-    if (NowMonstorUnit->monster[NowMonstorUnit->unk_090].turn_speed == 0.0f) {
+    if (NowMonstorUnit->monster[monster_no].turn_speed == 0.0f) {
         done = 1;
     }
     SetStack(stack, done);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _CHK_ROTATION__FP12RS_STACKDATAi);
-#endif
 #ifdef NON_MATCHING
 int _CHK_MOVE(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
