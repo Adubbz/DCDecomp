@@ -383,16 +383,6 @@ void ItemShopMemoryAlloc(void);
 void ItemPosInfoInit(void);
 
 /**
- * Fills the goods board from one shop's list.
- *
- * @mangled ItemShopGoodInitialize__Fi
- * @address 0x1EDEA0
- * @size 0x24C
- * Fills the shop stock from the goods list of the shop number it is given.
- */
-void ItemShopGoodInitialize(int);
-
-/**
  * Starts the item shop up: its goods, its slot table and its buffers.
  *
  * @mangled InitItemShop2__FPiii

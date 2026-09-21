@@ -576,6 +576,8 @@ static void DrawCheckButton(int x, int y, int mode);
 
 static void DrawSmallSellTicket(int selected, int x, int y, int clip_top, int clip_bottom, int mode);
 
+static void ItemShopGoodInitialize(int shop_no);
+
 s16 *GetItemShopList(int shop_no) {
     return ItemShopList2[shop_no];
 }
@@ -2308,7 +2310,52 @@ void ItemPosInfoInit() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", ItemShopGoodInitialize__Fi);
+/**
+ * Fills the goods board from one shop's list.
+ *
+ * @mangled ItemShopGoodInitialize__Fi
+ * @address 0x1EDEA0
+ * @size 0x24C
+ * Fills the shop stock from the goods list of the shop number it is given.
+ */
+static void ItemShopGoodInitialize(int shop_no) {
+    s16 *list = GetItemShopList(shop_no);
+
+    for (int i = 0; i < 20; i++) {
+        s16 item_no = list[i];
+
+        if (item_no >= 0x51) {
+            switch (WhatIsKindofItem(item_no)) {
+                case 1:
+                    WepDataListToHaveCopy(item_no, &ShopListPt[i].data.weapon);
+                    break;
+                case 2:
+                    AttachDataListToHaveCopy(item_no, &ShopListPt[i].data.attach);
+                    if (item_no >= 0x5B && item_no < 0x5F) {
+                        ShopListPt[i].data.param[item_no - 0x57] = 1;
+                    }
+                    break;
+                case 0:
+                    ShopListPt[i].data.volume = ItemDataToHaveCopy(item_no);
+                    break;
+                default:
+                    memset(&ShopListPt[i], 0, sizeof(SHOP_ITEMLIST));
+                    break;
+            }
+            ShopListPt[i].item_no = item_no;
+            ShopBoardInfo[i] = 1;
+        } else {
+            memset(&ShopListPt[i], 0, sizeof(SHOP_ITEMLIST));
+            ShopBoardInfo[i] = 0;
+        }
+    }
+    for (int i = 20; i < 30; i++) {
+        ShopBoardInfo[i] = 0;
+        memset(&ShopListPt[i], 0, sizeof(SHOP_ITEMLIST));
+    }
+    ShopSpecialFunc();
+    InitAllHaveData();
+}
 
 void InitItemShop2(int *state, int shop_no, int mode) {
     ShopMenuInit(state, shop_no, mode);
