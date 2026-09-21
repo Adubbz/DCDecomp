@@ -70,10 +70,6 @@ void EditLoad(void);
 /** Whether the board screen's texture block has finished loading. */
 extern int AtoraTextureEnterFlag;
 
-// The chip attachment record is opaque to every unit; only the unit's own
-// functions take a pointer to it.
-struct EDIT_CHIP_ATTACH_DATA;
-
 /**
  * Returns the record of the n-th valid part in the georama's part list, or NULL
  * when there are fewer.

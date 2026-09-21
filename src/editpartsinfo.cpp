@@ -182,7 +182,7 @@ void CEditPartsInfo::Initialize(int georama_no) {
         part.kind = source->kind;
         for (int element = 0; element < 6; element++) {
             EDITPARTS_ELEMENT &destination = part.elements[element];
-            EDIT_PARTS_ELEMENT_ATRA &definition = source->elements[element];
+            EDIT_CHIP_ATTACH_DATA &definition = source->elements[element];
             destination.id = definition.id;
             destination.unk_04 = definition.unk_04;
             destination.enabled = 0;
