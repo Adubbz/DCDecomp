@@ -9,21 +9,15 @@
 
 #include <cmath>
 #include <cstdio>
+#include <cstring>
 
+#include "dataread.hpp"
 #include "editatra.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "scriptinterpreter.hpp"
 #include "snd.hpp"
 #include "sound.hpp"
-
-#ifdef NON_MATCHING
-/* Only the drafts below need these; the build's own object must not see a
-   header the retail unit did not. */
-#include <cstring>
-
-#include "dataread.hpp"
-#endif
 
 /* The sound manager: BGM loading, playback and fading, and the SE table.
  * CSound itself is in src/sound.cpp. */
@@ -67,10 +61,14 @@ struct SND_INFO {
 
 STATIC_ASSERT(sizeof(SND_INFO) == 0x10);
 
-#ifdef NON_MATCHING
-/* Defined at the bottom of the unit, past the drafts that call it. */
-void LoadSoundInfo(SND_INFO *info, char *script, int script_size);
-#endif
+/**
+ * Reads one sound configuration file through the script interpreter.
+ *
+ * @mangled LoadSoundInfo__FP8SND_INFOPci
+ * @address 0x15BAB0
+ * @size 0xF4
+ */
+static void LoadSoundInfo(SND_INFO *info, char *script, int script_size);
 
 /** The two script tags LoadSoundInfo recognises. */
 extern TAG_PARAM Command__3[2];
@@ -447,12 +445,10 @@ static void GetBGMFile(int set_no, char *archive_name, char *config_name) {
  * @address 0x159810
  * @size 0x114
  */
-INCLUDE_RODATA("asm/nonmatchings/snd", @362);
-INCLUDE_RODATA("asm/nonmatchings/snd", @363__2);
-#ifdef NON_MATCHING
-void SetBGMFile(int set_no, unsigned int *buffer, char *filename) {
+static void SetBGMFile(int set_no, unsigned int *buffer, char *filename) {
     char base_name[64];
-    char *dst = base_name;
+    char *dst;
+    char c;
     unsigned int *packed;
     int size;
     SND_INFO info;
@@ -462,8 +458,14 @@ void SetBGMFile(int set_no, unsigned int *buffer, char *filename) {
     now_bgm_no = set_no;
     now_bgm_play = 0;
 
-    for (; *filename != 0 && *filename != '.'; filename++) {
-        *dst++ = *filename;
+    dst = base_name;
+    while ((c = *filename) != 0) {
+        if (c == '.') {
+            break;
+        }
+        *dst = c;
+        filename++;
+        dst++;
     }
     *dst = 0;
 
@@ -475,9 +477,6 @@ void SetBGMFile(int set_no, unsigned int *buffer, char *filename) {
         printf("core 0 rev = %d %d\n", info.reverb_mode, info.reverb_depth);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", SetBGMFile__FiPUiPc);
-#endif
 
 int SndBgmInit() {
     now_bgm_no = -1;
@@ -644,7 +643,45 @@ static void GetSoundFile(int set_no, char *archive_name, char *config_name) {
  * @address 0x15A2C0
  * @size 0x174
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SetSoundFile__FiPUiPc);
+static void SetSoundFile(int set_no, unsigned int *buffer, char *filename) {
+    char base_name[64];
+    char *dst;
+    char c;
+    SND_INFO info;
+    unsigned int *packed;
+    int size;
+
+    CSnd.LoadSoundFileFromPack(filename, buffer);
+    CSnd.SetVol(15, 0x100);
+    CSnd.SetVol(14, 0x100);
+    CSnd.SetVol(10, 0x100);
+    CSnd.SetVol(13, 0x100);
+    CSnd.SetVol(12, 0x100);
+    now_sound_set = set_no;
+    snd_id = 0;
+    now_amb_no = -1;
+    SndStopAllSe();
+
+    dst = base_name;
+    while ((c = *filename) != 0) {
+        if (c == '.') {
+            break;
+        }
+        *dst = c;
+        filename++;
+        dst++;
+    }
+    *dst = 0;
+
+    strcat(base_name, ".cfg");
+    packed = GetPackFile(buffer, base_name, &size);
+    if (packed != 0) {
+        LoadSoundInfo(&info, (char *) packed, size);
+        CSnd.SetReverb(1, info.reverb_mode, info.reverb_depth);
+        basic_se_table_no = info.se_table;
+        se_table_no = info.se_table_type;
+    }
+}
 
 int SndGetNowSetNo() {
     return now_sound_set;
