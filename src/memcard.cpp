@@ -1412,7 +1412,69 @@ static void SeitonAtoraTipBoard() {
 
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuAtoraSelectKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraBoardKey__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipKey__Fv);
+
+static int AtoraTipKey() {
+    int result = 0;
+    int pos = MenuAtoraSel.unk_20;
+    int mode = MenuAtoraSel.unk_00;
+    int page = MenuAtoraSel.unk_18;
+
+    switch (PersonalBoardKey()) {
+        case 1: {
+            EDITPARTS_INFO *info = SearchAtoraInfo(MenuAtoraSel.board_pos);
+            int event = 0;
+            if (info != NULL) {
+                event = AtoraCompOrEvent(info);
+            }
+            int enable[6];
+            AtoraBoardEnableMovePos(MenuAtoraSel.board_pos, enable);
+            MenuAtoraSel.unk_00 = 0;
+            if (info == NULL || event != 0) {
+                MenuAtoraSel.unk_20 = 0;
+            } else {
+                int slot = AtoraBoardGoToPos(enable, MenuAtoraSel.unk_20 < MenuAtoraSel.unk_2C * 5 + 10 ? 2 : 5, 0);
+                if (enable[slot]) {
+                    MenuAtoraSel.unk_20 = slot + 1;
+                } else {
+                    MenuAtoraSel.unk_20 = 0;
+                }
+            }
+            ComMenuSePlay(0);
+            break;
+        }
+    }
+    if (MenuAtoraSel.unk_00 == 1) {
+        if (pos != MenuAtoraSel.unk_20 || mode != MenuAtoraSel.unk_00 || page != MenuAtoraSel.unk_18) {
+            ComMenuSePlay(0);
+        }
+        if (GamePad.Down(0x40)) {
+            s16 *tip = &MenuAtoraSel.tip_list[MenuAtoraSel.unk_20];
+            if (NowTipHavePt->tip_no == *tip) {
+                ComMenuSePlay(2);
+            } else {
+                ComMenuSePlay(1);
+                s16 tip_no = *tip;
+                *tip = NowTipHavePt->tip_no;
+                NowTipHavePt->tip_no = tip_no;
+                NowTipHavePt->slot = MenuAtoraSel.unk_20;
+                NowTipHavePt->mode = 1;
+                NowTipHavePt->parts_no = -1;
+            }
+            return 0;
+        } else if (GamePad.Down(0x20)) {
+            ComMenuSePlay(2);
+            if (NowTipHavePt->tip_no < 0) {
+                result = 100;
+            } else {
+                AtoraMenuTipCancel();
+            }
+        } else if (GamePad.Down(0x80)) {
+            ComMenuSePlay(1);
+            SeitonAtoraTipBoard();
+        }
+    }
+    return result;
+}
 
 static void AtoraMenuTipCancel() {
     EDITPARTS_INFO *info;

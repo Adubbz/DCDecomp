@@ -32,10 +32,17 @@ STATIC_ASSERT(sizeof(ATORA_TIP_HAVE) == 0x14);
  * Holds the state of the georama board screen.
  */
 struct MENU_ATORA_SEL {
-    u8 unk_00[0xC];
+    s32 unk_00;
+    u8 unk_04[8];
     s16 map_no;    /**< Georama that the board shows. */
     s16 board_pos; /**< Board position of the part that the cursor is on. */
-    u8 unk_10[0x30];
+    u8 unk_10[8];
+    s32 unk_18;
+    u8 unk_1C[4];
+    s32 unk_20;
+    u8 unk_24[8];
+    s32 unk_2C;
+    u8 unk_30[0x10];
     s16 *tip_list; /**< Chips that the player holds, as the chip list shows them. */
     u8 unk_44[0x13C];
     float cursor_x; /**< Where the board's cursor icon draws, from the left of the screen. */
