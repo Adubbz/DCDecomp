@@ -91,7 +91,7 @@ static void DrawNowEquipWeaponMark(int x, int y, int top, int bottom, int alpha)
  * @address 0x00230C00
  * @size 0x1C0
  */
-static void DrawPersonalBoardBase(int x, int y, int width, int height, int board_mode, CTexture *texture, int alpha);
+static void DrawPersonalBoardBase(int x, int y, int top, int bottom, int count, CTexture *texture, int alpha);
 
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @553);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @554__2);
@@ -723,7 +723,34 @@ void PersonalBoardOptionDraw(int board_mode, int count, int x, int y, CTexture *
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardTagDraw__FiiiP8CTextureii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardScrlBarDraw__FiiiRfUcP8CTexturei);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardMaxDraw__FiiiP8CTexturei);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawPersonalBoardBase__FiiiiiP8CTexturei);
+
+static void DrawPersonalBoardBase(int x, int y, int top, int bottom, int count, CTexture *texture, int alpha) {
+    int v;
+    int length;
+    spRGBA upper;
+    spRGBA lower;
+    int step;
+    int i;
+
+    if (y < top - 39 || y > bottom - 1) {
+        return;
+    }
+    v = 0x14;
+    length = 0x28;
+    MenuTextureClip(y, v, length, top, bottom);
+    step = 9;
+    upper.r = upper.g = upper.b = 0x80;
+    lower.r = lower.g = lower.b = 0x80 - step;
+    lower.a = alpha;
+    upper.a = alpha;
+    for (i = 0; i < count; i++) {
+        set2DSprite(GetVif1Packet(), texture, CRect_i_(x, y, 0x28, length), CRect_i_(0x20, v, 0x28, length), &upper, &lower, &upper, &lower, 1);
+        upper.r = upper.g = upper.b = lower.r;
+        lower.r = lower.g = lower.b = lower.r - step;
+        step--;
+        x += 0x28;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawPerBoardDraw__FiiiiiiP8CTexturei);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonTrushDraw__Fiii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", IsEnableTrushThrow__Fi);
