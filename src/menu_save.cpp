@@ -285,7 +285,120 @@ int SaveMenuKeyEndSaveEnding(void) {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_save", GetSaveMenuMsgNo__Fv);
+
+int GetSaveMenuMsgNo(void) {
+    int msg_no = 0;
+
+    switch (McAccess.GetFuncNo()) {
+        case 0:
+            switch (SaveMenu.key_no) {
+                case 4:
+                case 8:
+                case 7:
+                case 0xA:
+                case 0xD:
+                case 0xF:
+                    msg_no = 0xFF;
+                    break;
+            }
+        case 1:
+            switch (SaveMenu.key_no) {
+                case 5:
+                    msg_no = 0xFF;
+                    break;
+                case 2:
+                    msg_no = 0xFA;
+                    break;
+                case 3:
+                    msg_no = 0xFB;
+                    break;
+                case 9:
+                    msg_no = 0x108;
+                    break;
+                case 12:
+                    msg_no = 0x10E;
+                    break;
+                case 14:
+                    switch (SaveMenu.unk_20) {
+                        case 1:
+                            msg_no = 0xFD;
+                            break;
+                        case 2:
+                            msg_no = 0x11B;
+                            break;
+                        case 6:
+                            msg_no = 0x101;
+                            break;
+                        case 7:
+                            msg_no = 0x11A;
+                            break;
+                        case 8:
+                            msg_no = 0x10A;
+                            break;
+                        case 10:
+                            msg_no = 0x117;
+                            break;
+                        case 11:
+                            msg_no = 0x100;
+                            break;
+                        case 12:
+                            msg_no = 0x111;
+                            break;
+                        case 9:
+                            msg_no = 0x112;
+                            break;
+                        case 0:
+                        case 3:
+                        case 4:
+                        case 5:
+                            break;
+                    }
+                    break;
+                case 17:
+                    msg_no = 0x10B;
+                    break;
+                case 16:
+                    msg_no = 0x118;
+                    break;
+                case 20:
+                    msg_no = 0x122;
+                    break;
+                case 21:
+                    msg_no = 0x124;
+                    break;
+                case 19:
+                    msg_no = 0x12B;
+                    break;
+                case 23:
+                case 24:
+                    msg_no = 0;
+                    break;
+                case 22:
+                    msg_no = 0x12A;
+                    break;
+                case 11:
+                case 25:
+                    msg_no = 0x106;
+                    break;
+                case 0:
+                case 1:
+                case 4:
+                case 6:
+                case 7:
+                case 8:
+                case 10:
+                case 13:
+                case 15:
+                case 18:
+                    break;
+            }
+            break;
+        default:
+            msg_no = McAccess.GetMsgNo(0xFA);
+            break;
+    }
+    return msg_no;
+}
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3066);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3068);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3069);
