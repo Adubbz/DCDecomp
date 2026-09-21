@@ -24,6 +24,11 @@
 extern int GL_INT[10];
 
 /**
+ * Palette colour each element tints a hit monster with, as red, green and blue.
+ */
+extern int elmColor[6][3];
+
+/**
  * Describes one opcode a monster script can call and the number that calls it.
  */
 struct BT_EVENT_EXTERNAL_FUNCTION {
@@ -447,7 +452,25 @@ int _COS_DEG(RS_STACKDATA *stack, int argc) {
     SetStack(stack, cosf(angle));
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_PALLET__FP12RS_STACKDATAi);
+int _STATUS_SET_PALLET(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+
+    if (argc == 5) {
+        NowMonstorUnit->monster[monster_no].palette_target[0] = GetStackFloat(stack++);
+        NowMonstorUnit->monster[monster_no].palette_target[1] = GetStackFloat(stack++);
+        NowMonstorUnit->monster[monster_no].palette_target[2] = GetStackFloat(stack++);
+    } else {
+        int element = NowMonstorUnit->monster[monster_no].hit_element;
+
+        NowMonstorUnit->monster[monster_no].palette_target[0] = elmColor[element][0];
+        NowMonstorUnit->monster[monster_no].palette_target[1] = elmColor[element][1];
+        NowMonstorUnit->monster[monster_no].palette_target[2] = elmColor[element][2];
+    }
+    NowMonstorUnit->monster[monster_no].palette_cycles = GetStackInt(stack++);
+    NowMonstorUnit->monster[monster_no].palette_step = GetStackFloat(stack);
+    NowMonstorUnit->monster[monster_no].palette_blend = 0.0f;
+    return 1;
+}
 int _STATUS_SET_CLIPLEVEL(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
 
