@@ -3,6 +3,7 @@
 #include "common.h"
 
 #include "itemdata.hpp"
+#include "menu_draw.hpp"
 #include "rect.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
@@ -26,7 +27,7 @@ STATIC_ASSERT(sizeof(GRADATION_COLOR_INFO2) == 0x10);
  * Tracks which character and weapon the weapon menu's cursor is on.
  */
 struct WEP_MENU_INFO {
-    char unk_00[2];
+    s16 unk_00;
     s16 unk_02;
     s8 weapon_slot; /**< Weapon slot the cursor is on, within the selected character's chara_weapons row. */
     s8 chara;       /**< Party member index the weapon menu is showing. */
@@ -35,13 +36,10 @@ struct WEP_MENU_INFO {
     s8 unk_08;
     char unk_09[3];
     s16 unk_0C;
-    char unk_0E[0x12];
-    s32 unk_20;
-    char unk_24[8];
-    s32 unk_2C;
-    char unk_30[0x120];
-    ATTACH_LIST unk_150;
-    char unk_170[8];
+    char unk_0E[2];
+    s32 unk_10;
+    PERSONAL_BOARD board; /**< Personal board the weapon menu lists the party member's weapons on. */
+    char unk_174[4];
     s8 unk_178;
     s8 unk_179;
     char unk_17A[2];
@@ -86,8 +84,8 @@ struct SYS_CHARA_INFO {
     s8 unk_00;
     s8 unk_01;
     char unk_02[2];
-    s32 unk_04;
-    s32 unk_08;
+    float unk_04;
+    float unk_08;
 };
 
 STATIC_ASSERT(sizeof(SYS_CHARA_INFO) == 0xC);
@@ -98,9 +96,15 @@ STATIC_ASSERT(sizeof(SYS_CHARA_INFO) == 0xC);
 struct MENU_MOVE_INFO {
     s32 unk_00;
     s32 unk_04;
-    char unk_08[0xC];
+    s16 unk_08;
+    s16 unk_0A;
+    s16 unk_0C;
+    s16 unk_0E;
+    char unk_10[4];
     s32 unk_14;
-    char unk_18[8];
+    s16 unk_18;
+    char unk_1A[2];
+    s32 unk_1C;
 };
 
 STATIC_ASSERT(sizeof(MENU_MOVE_INFO) == 0x20);

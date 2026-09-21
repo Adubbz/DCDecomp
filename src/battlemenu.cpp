@@ -253,6 +253,26 @@ extern s32 MenuExtendReadBlock;
  */
 extern s32 BtlMenuNowLang;
 
+/**
+ * Draws the selected weapon's option messages.
+ */
+extern MenuClsMes MenuMes;
+
+/**
+ * Horizontal position of the weapon list's model row.
+ */
+extern float WeaponPos;
+
+/**
+ * Horizontal position of the weapon list's polygons.
+ */
+extern float WepPolyPos;
+
+/**
+ * Frame rate the weapon models turn at.
+ */
+extern float WepFrameRate;
+
 int GetDefaultWeaponNo(int character_no) {
     return MenuDefaultWeaponNo[character_no];
 }
@@ -1043,7 +1063,7 @@ static void WepAttachHaveCancel() {
         }
         if (slot != NULL) {
             s16 item_no = slot->item_no;
-            MenuDataSwap(slot, &WepMenu.unk_150);
+            MenuDataSwap(slot, &WepMenu.board.unk_13C);
             BtlHaveItemPt->item_no = item_no;
             slot->item_no = held;
         }
@@ -1054,10 +1074,10 @@ static void WepAttachHaveCancel() {
         CMenuCursor *cursor = SaveData->GetMenuCursor();
         if (cursor->reset_pos == 0) {
             cursor->mode[2] = WepMenu.unk_02;
-            SetCursorPos(cursor, 2, WepMenu.unk_20);
+            SetCursorPos(cursor, 2, WepMenu.board.unk_0C);
         }
         WepMenu.unk_02 = 1;
-        WepMenu.unk_20 = 1;
+        WepMenu.board.unk_0C = 1;
         WepMenu.unk_06 = 0;
         GetNowSelectWeapon();
         if (BtlMenuMode == 0 && BtlMenuStatusPt->unk_04 == 3 && WepMenu.chara == 3) {
@@ -1078,7 +1098,7 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuAttachModeKey__Fv);
 static void WeaponMenuActWepKey() {
     if (GamePad.Down(0x2000) != 0) {
         WepMenu.unk_02 = 10;
-        WepMenu.unk_20 = WepMenu.unk_2C * 5 + 10;
+        WepMenu.board.unk_0C = WepMenu.board.unk_18 * 5 + 10;
     } else if (GamePad.Down(0x4000) != 0) {
         WepMenu.unk_02 = 11;
         WepMenu.unk_179 = 0;
