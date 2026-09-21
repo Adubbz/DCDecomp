@@ -750,7 +750,220 @@ int ChargeShopLoop() {
 }
 
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopKey__Fv);
-INCLUDE_ASM("asm/nonmatchings/shop", ChargeSelectKey__Fv);
+
+/**
+ * Moves the cursor across the recharge shop's list.
+ *
+ * @mangled ChargeSelectKey__Fv
+ * @address 0x1E9EE0
+ * @size 0x8C0
+ */
+static int ChargeSelectKey() {
+    if (ShopHaveItemPt->item_no < 0x51 && BoardModeChangeKey()) {
+        PersonalBoardLimmitCheck();
+        ChargeShopLimmitCheck();
+    }
+    int count = ChargeShopMax[ShopMenu.board.unk_04];
+
+    if (GamePad.Down(0x1000)) {
+        ShopMenu.board.unk_0C -= 5;
+        if (ShopMenu.board.unk_0C < 0) {
+            ShopMenu.board.unk_0C += 5;
+        }
+        if (ShopMenu.board.unk_0C / 5 < ShopMenu.unk_176) {
+            ShopMenu.unk_176--;
+        }
+    }
+    if (GamePad.Down(0x4000)) {
+        if (ShopMenu.board.unk_0C < count - 5) {
+            ShopMenu.board.unk_0C += 5;
+        }
+        if (ShopMenu.unk_176 + 3 < ShopMenu.board.unk_0C / 5) {
+            ShopMenu.unk_176++;
+        }
+    }
+    if (GamePad.Down(0x8000) && ShopMenu.board.unk_0C % 5 != 0) {
+        ShopMenu.board.unk_0C--;
+    }
+    if (GamePad.Down(0x2000)) {
+        if (ShopMenu.board.unk_0C % 5 == 4) {
+            ShopMenu.unk_02 = 1;
+            ShopMenu.board.unk_0C = (ShopMenu.board.unk_18 + (ShopMenu.board.unk_0C / 5 - ShopMenu.unk_176)) * 5;
+        } else {
+            ShopMenu.board.unk_0C++;
+        }
+    }
+    switch (ShopMenu.unk_02) {
+        case 0:
+            int se = 2;
+            IHAVEITEM saved;
+            memcpy(&saved, ShopHaveItemPt, sizeof(IHAVEITEM));
+            if (GamePad.Down(0x40)) {
+                // Put the held item into the stock slot under the cursor.
+                if (ShopHaveItemPt->item_no >= 0x51 && !IsEnableCharge(ShopHaveItemPt->item_no)) {
+                    ComMenuSePlay(2);
+                    SetItemShopTalkMode(7, 1);
+                    return 0;
+                }
+                int mode = ShopMenu.board.unk_04;
+                int kind = WhatIsKindofItem(ShopHaveItemPt->item_no);
+                if (mode != kind && kind != -1) {
+                    se = 2;
+                } else {
+                    switch (mode) {
+                        case 0:
+                            ShopStockPt->SetItemToPos(ShopMenu.board.unk_0C, &ShopHaveItemPt->item_no, &ShopHaveItemPt->volume);
+                            break;
+                        case 1:
+                            ShopStockPt->SetWepToPos(ShopMenu.board.unk_0C, ShopHaveWepPt);
+                            if (ShopHaveWepPt->item_no < 0x51) {
+                                ShopHaveItemPt->item_no = -1;
+                                InitHaveWep(ShopHaveWepPt);
+                                ShopMenu.board.unk_15C = -1;
+                            } else {
+                                ShopHaveItemPt->item_no = ShopHaveWepPt->item_no;
+                            }
+                            break;
+                        case 2:
+                            ShopStockPt->SetAttachToPos(ShopMenu.board.unk_0C, ShopHaveAttachPt);
+                            if (ShopHaveAttachPt->item_no < 0x51) {
+                                ShopHaveItemPt->item_no = -1;
+                                InitHaveAttach(ShopHaveAttachPt);
+                                ShopMenu.board.unk_15C = -1;
+                            } else {
+                                ShopHaveItemPt->item_no = ShopHaveAttachPt->item_no;
+                            }
+                            break;
+                    }
+                    ShopHaveItemPt->unk_00 = 0;
+                }
+                if (ShopHaveItemPt->item_no < 0x51) {
+                    InitAllHaveData();
+                } else {
+                    ShopHaveItemPt->unk_00 = 0;
+                    ShopHaveItemPt->unk_04 = ShopMenu.board.unk_04;
+                    ShopHaveItemPt->unk_0C = ShopMenu.board.unk_0C;
+                    se = 1;
+                }
+                if (memcmp(&saved, ShopHaveItemPt, sizeof(IHAVEITEM)) != 0 || se != 2) {
+                    ComMenuSePlay(1);
+                } else {
+                    ComMenuSePlay(2);
+                }
+            } else if (GamePad.Down(0x10)) {
+                // Check whether the good under the cursor can be taken for charging.
+                if (ShopHaveItemPt->item_no >= 0x51) {
+                    ComMenuSePlay(2);
+                    return 0;
+                }
+                int ok = 1;
+                ATTACH_LIST attach;
+                WEAPON_HAVE weapon;
+                int kind;
+                int full;
+                s16 item;
+                s16 volume;
+
+                switch (ShopMenu.board.unk_04) {
+                    case 0:
+                        ShopStockPt->GetItemInfo(ShopMenu.board.unk_0C, &item, &volume);
+                        break;
+                    case 2:
+                        ShopStockPt->GetAttachInfo(ShopMenu.board.unk_0C, &attach);
+                        item = attach.item_no;
+                        break;
+                    case 1:
+                        ShopStockPt->GetWeaponInfo(ShopMenu.board.unk_0C, &weapon);
+                        item = weapon.item_no;
+                        break;
+                }
+                GetBoardSpace(item, &kind);
+                full = 0;
+                int used = 0;
+                int max = 0;
+                GetNowModeMaxNum(ShopMenu.board.unk_04, &full);
+                switch (kind) {
+                    case 0: {
+                        ShopUserItemPackView *pack = ShopUserItemPack(ShopUserStatusPt);
+
+                        max = pack->num;
+                        for (int i = 0; i < 3; i++) {
+                            if (pack->quick_item[i] >= 0x84) {
+                                used += pack->quick_item_vol[i];
+                            }
+                        }
+                        for (int i = 0; i < max; i++) {
+                            if (pack->item[i] >= 0x84) {
+                                used++;
+                            }
+                        }
+                        break;
+                    }
+                    case 1: {
+                        int i;
+                        max = 10;
+                        int chara_no = WhoIsWeaponEquip(item);
+                        CUserStatus *status = ShopUserStatusPt;
+                        WEAPON_HAVE *weapons = status->chara_weapons[chara_no];
+
+                        for (i = 0; i < 10; i++) {
+                            if (weapons[i].item_no >= 0x101) {
+                                used++;
+                            }
+                        }
+                        break;
+                    }
+                    case 2: {
+                        int i;
+                        max = 40;
+                        DNG_CONSUMABLE *attachments = ShopUserStatusPt->consumable_items;
+
+                        for (i = 0; i < 40; i++) {
+                            if (attachments[i].id >= 0x51) {
+                                used++;
+                            }
+                        }
+                        break;
+                    }
+                }
+                if (ShopDataMove.item_no > 0) {
+                    used++;
+                }
+                if (used >= max) {
+                    full = 1;
+                }
+                if (full && item >= 0x51) {
+                    ok = 0;
+                    SetItemShopTalkMode(0xA, 1);
+                }
+                if (item < 0x51) {
+                    ok = 0;
+                    SetItemShopTalkMode(0, 0);
+                }
+                if (ok) {
+                    ShopMenu.unk_180 = 0x12;
+                    ComMenuSePlay(1);
+                } else {
+                    ComMenuSePlay(2);
+                }
+            } else if (GamePad.Down(0x80)) {
+                switch (ShopMenu.board.unk_04) {
+                    case 0:
+                        ShopStockPt->SeitonItem();
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        ShopStockPt->SeitonAttach();
+                        break;
+                }
+                ComMenuSePlay(1);
+            }
+            break;
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", DrawChargeShop__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopMaxDraw__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopBoardDraw__Fiii);

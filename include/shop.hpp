@@ -225,15 +225,6 @@ int ChargeShopLoop(void);
 int ChargeShopKey(void);
 
 /**
- * Moves the cursor across the recharge shop's list.
- *
- * @mangled ChargeSelectKey__Fv
- * @address 0x1E9EE0
- * @size 0x8C0
- */
-void ChargeSelectKey(void);
-
-/**
  * Draws one frame of the charge shop.
  *
  * @mangled DrawChargeShop__Fv
