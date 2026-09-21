@@ -374,7 +374,21 @@ INCLUDE_ASM("asm/nonmatchings/shop", ChargeSelectKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", DrawChargeShop__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopMaxDraw__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopBoardDraw__Fiii);
-INCLUDE_ASM("asm/nonmatchings/shop", CalItemMoney__Fii);
+
+/**
+ * Returns the shop price of one item, which is zero for the item numbers below 0x51.
+ *
+ * @mangled CalItemMoney__Fii
+ * @address 0x1EB2D0
+ * @size 0x40
+ */
+static int CalItemMoney(int item_no, int sell) {
+    if (item_no < 0x51) {
+        return 0;
+    }
+    return GetItemMoney(item_no, sell);
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", WeaponCalMoney__FP11WEAPON_HAVEi);
 INCLUDE_ASM("asm/nonmatchings/shop", BuyMoneyCheck2__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", SellMoneyCheck2__Fv);

@@ -327,15 +327,6 @@ void ChargeShopMaxDraw(int, int, int, int);
 void ChargeShopBoardDraw(int, int, int);
 
 /**
- * Returns the shop price of one item, which is zero for the item numbers below 0x51.
- *
- * @mangled CalItemMoney__Fii
- * @address 0x1EB2D0
- * @size 0x40
- */
-int CalItemMoney(int, int);
-
-/**
  * Gives what a weapon fetches, from its kind and how worn it is.
  *
  * @mangled WeaponCalMoney__FP11WEAPON_HAVEi
