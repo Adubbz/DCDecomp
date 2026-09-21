@@ -517,9 +517,108 @@ int CMemoryCardAccess::CheckFileNo(int file_no) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SaveToMc__17CMemoryCardAccessFi);
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", LoadFromMc__17CMemoryCardAccessFi);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1090__2);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1091);
+
+int CMemoryCardAccess::LoadFromMc(int file_no) {
+    char name[0x80];
+    char version[0x20];
+    char saved_version[0x20];
+    int result;
+    int cmd;
+    int ok;
+    char *data;
+    char *sum;
+    char total;
+    int i;
+
+    switch (this->step) {
+        case 0:
+            strcpy(name, this->file_name);
+            strcat(name, "%d");
+            sprintf(name, name, file_no);
+            if (sceMcOpen(this->port, 1, name, 1) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 1:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 2 || (cmd == 2 && result < 0)) {
+                return -1;
+            }
+            this->fd = result;
+            this->transfer_size = 0x136A7;
+            memset(this->unk_D8, 0, this->transfer_size + 0x40);
+            this->transferred = 0;
+            if (sceMcRead(this->fd, this->unk_D8, this->transfer_size) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 2:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 5 || (cmd == 5 && result < 0)) {
+                return -1;
+            }
+            this->transferred += result;
+            if (this->transferred < this->transfer_size) {
+                break;
+            }
+            if (sceMcClose(this->fd) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 3:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 3 || (cmd == 3 && result < 0)) {
+                return -1;
+            }
+            ok = 1;
+            data = this->unk_D8 + sizeof(CSaveData);
+            strcpy(version, this->GetVersion());
+            memcpy(saved_version, data, sizeof(saved_version));
+            if (saved_version[0] == version[0]) {
+                if (strcmp(version, saved_version) == 0) {
+                    sum = data + 0x20;
+                    data = this->unk_D8;
+                    total = 0;
+                    for (i = 0; i < sizeof(CSaveData); i++) {
+                        total += *data++;
+                        if (i % 64 == 63) {
+                            if (total != *sum) {
+                                printf("save data break!!!\n");
+                                ok = 0;
+                                break;
+                            }
+                            sum++;
+                            total = 0;
+                        }
+                    }
+                }
+            } else {
+                ok = 0;
+                printf("not load\n");
+            }
+            if (ok) {
+                memcpy(SaveData, this->unk_D8, sizeof(CSaveData));
+                ((s32 *) SaveData->GetConfigData())[17] = file_no;
+            } else {
+                return -1;
+            }
+            return 1;
+    }
+    return 0;
+}
+
 
 int CMemoryCardAccess::FormatForMc() {
     int result;
