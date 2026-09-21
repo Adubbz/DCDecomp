@@ -1345,7 +1345,17 @@ static int SaveMenuKeyFadeIn() {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyFadeOut__Fv);
+static int SaveMenuKeyFadeOut() {
+    if (SaveMenu.unk_28 > 32) {
+        ExitSaveSelect();
+        if (SaveMenu.loaded) {
+            SaveMenu.result = 1;
+        } else {
+            SaveMenu.result = 2;
+        }
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyModeSelect__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyMcSelect__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyCheckMcType__Fv);
