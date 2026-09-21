@@ -494,15 +494,6 @@ void DrawWeaponSelectDialog(int, int, int);
 void InitWeaponSelect(int, int);
 
 /**
- * Rebuilds the player's equipped weapon model and gives the menu's textures back.
- *
- * @mangled ExitWeaponMenuSelect__Fv
- * @address 0x1FCB20
- * @size 0x2CC
- */
-void ExitWeaponMenuSelect(void);
-
-/**
  * Runs one frame of the weapon page, dispatching on which of its modes is open.
  *
  * @mangled WeaponMenuSelect__Fv

@@ -900,7 +900,74 @@ static int WeaponMenuCheckEnableSetElem(WEAPON_HAVE *weapon, WEAPON_HAVE *attach
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponSelectDialog__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", InitWeaponSelect__Fii);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", ExitWeaponMenuSelect__Fv);
+/**
+ * Rebuilds the player's equipped weapon model and gives the menu's textures back.
+ *
+ * @mangled ExitWeaponMenuSelect__Fv
+ * @address 0x1FCB20
+ * @size 0x2CC
+ */
+static void ExitWeaponMenuSelect() {
+    int chara = BtlMenuStatusPt->unk_04;
+
+    if (BtlMenuMode == 0 && chara == WepMenu.chara) {
+        DngWeaponEquipModelBuild(chara, MenuExtendReadBlock, BtlMenuReadBuf);
+    }
+    TexManager.DeleteTextureBlock(MenuExtendReadBlock);
+    TexManager.CleanUpTextureList();
+    BtlMenuTexBlockEnter();
+    BattleMenuFlag = 18;
+    CommonMenuMes3.text_columns = 70;
+    CommonMenuMes3.text_rows = 10;
+    CommonMenuMes3.text_len = 0;
+    CommonMenuMes3.text_width = 0;
+    CommonMenuMes3.text_height = 0;
+    CommonMenuMes3.fade = 0.0f;
+    CommonMenuMes3.fade_in = 1;
+    CommonMenuMes3.text_rate = CommonMenuMes3.text_rate_set;
+    CommonMenuMes3.waiting = 0;
+    CommonMenuMes3.text_at = 0.0f;
+    CommonMenuMes3.text_no = 0;
+    CommonMenuMes3.text_from = 0;
+    CommonMenuMes3.page_from = 0;
+    CommonMenuMes3.InitMesWinTbl();
+    CommonMenuMes3.clut_now = CommonMenuMes3.clut_default;
+    CommonMenuMes3.wait = 0;
+    CommonMenuMes3.blink = 0;
+    CommonMenuMes3.auto_page_wait = 0;
+    CommonMenuMes3.mes_made = -1;
+    CommonMenuMes3.edge_alpha = 128;
+    for (int slot = 0; slot < 10; slot++) {
+        CommonMenuMes3.mes_no[slot] = -1;
+    }
+    for (int slot = 0; slot < 8; slot++) {
+        CommonMenuMes3.values[slot] = 0;
+    }
+    CommonMenuMes3.value = 0;
+    CommonMenuMes3.value_signed = 0;
+    CommonMenuMes3.value_show = 1;
+    CommonMenuMes3.value_narrow = 0;
+    CommonMenuMes3.space_width = -1;
+    CommonMenuMes3.space_area = -1;
+    CommonMenuMes3.cursor_row = -1;
+    CommonMenuMes3.cursor_y = 0;
+    CommonMenuMes3.cursor_lit = 0;
+    for (int line = 0; line < 10; line++) {
+        CommonMenuMes3.line_pos[line].x = -1;
+        CommonMenuMes3.line_pos[line].y = -1;
+    }
+    CommonMenuMes3.Preset(1);
+    CommonMenuMes3.char_width = GetMenuCommonFontW(BtlMenuNowLang, -1);
+    CommonMenuMes3.char_height = 22;
+    CommonMenuMes3.value_narrow = 0;
+    AtoraNameMes.value_show = 1;
+    AtoraNameMes.value_narrow = 0;
+    AtoraNameMes.narrow_gaiji = 0;
+    AtoraNameMes.char_width = GetMenuCommonFontW(BtlMenuNowLang, -1);
+    CommonMenuMes1.value_narrow = 0;
+    ForBackMenu();
+    BattleMenuFlag = 0;
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuSelect__Fv);
 
 /**
