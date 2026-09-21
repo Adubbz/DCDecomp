@@ -472,7 +472,17 @@ INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GUARD_SEARCH__FP12RS_STACKDAT
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_MOVE_VEC__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _PUSH_IGLOBAL__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _POP_IGLOBAL__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_USER_STATUS__FP12RS_STACKDATAi);
+int _GET_USER_STATUS(RS_STACKDATA *stack, int argc) {
+    int kind = GetStackInt(stack++);
+    int chara = UserStatus->cur_chara;
+    int value = 0;
+
+    if (UserStatus->unk_42C8[chara] != 0 && kind != 0) {
+        value = UserStatus->unk_42E0[chara];
+    }
+    SetStack(stack, value);
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_REFERENCE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _DEL_REFERENCE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SHADOW_FLAG__FP12RS_STACKDATAi);
