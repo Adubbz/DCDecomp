@@ -444,8 +444,41 @@ void GetSaveBoardAlphaInfo(int x, int width, int &start_alpha, int &end_alpha, i
 }
 INCLUDE_ASM("asm/nonmatchings/menu_save", DrawSaveBoard__FP13SAVEDATA_INFOPP8CTextureiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_save", DrawNewFileTemplete__Fiii);
-INCLUDE_ASM("asm/nonmatchings/menu_save", InitExistData__Fv);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3336);
+
+int InitExistData(void) {
+    int port;
+    int result;
+
+    if (McAccess.InitForMC() != 0) {
+        printf("Memory Card Initialized Failed\n");
+        return 0;
+    }
+    for (port = 0; port < 2; port++) {
+        McAccess.port = port;
+        McAccess.SetFuncNo(0);
+        do {
+            result = McAccess.Step();
+        } while (result == 0);
+        if (result < 0) {
+            continue;
+        }
+        MC_CARD_INFO *card = &McAccess.card[McAccess.port];
+        if ((McCheckMCPs2(card) == 0) || (card->formatted == 0)) {
+            continue;
+        }
+        McAccess.SetFuncNo(2);
+        while (McAccess.Step() == 0) {
+        }
+        McAccess.SetFuncNo(0xD);
+        do {
+            result = McAccess.Step();
+        } while (result == 0);
+        if ((result >= 0) && (card->dir_exists != 0)) {
+            return 1;
+        }
+    }
+    return 0;
+}
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3413);
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveEnableCheck__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", InitEventItemSelect__FiPiP9ITEM_PACKiiii);
