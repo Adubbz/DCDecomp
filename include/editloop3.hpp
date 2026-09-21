@@ -443,12 +443,3 @@ int _SET_CLIP_POINT(RS_STACKDATA *stack, int argument_count);
  * @size 0x74
  */
 int _ASQ_CHECK(RS_STACKDATA *stack, int argument_count);
-
-/**
- * Updates a map's visit count and optionally returns the resulting count to the script.
- *
- * @mangled _SADD_VISIT_MAP__FP12RS_STACKDATAi
- * @address 0x195540
- * @size 0xC4
- */
-int _SADD_VISIT_MAP(RS_STACKDATA *stack, int argument_count);

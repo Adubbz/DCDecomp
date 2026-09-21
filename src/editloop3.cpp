@@ -5737,24 +5737,23 @@ static int _SSET_REQUEST_EVENT_FLAG(RS_STACKDATA *stack, int) {
     return 1;
 }
 
-#ifdef NON_MATCHING
-int _SADD_VISIT_MAP(RS_STACKDATA *stack, int argument_count) {
+/**
+ * Updates a map's visit count and optionally returns the resulting count to the script.
+ *
+ * @mangled _SADD_VISIT_MAP__FP12RS_STACKDATAi
+ * @address 0x195540
+ * @size 0xC4
+ */
+static int _SADD_VISIT_MAP(RS_STACKDATA *stack, int argument_count) {
     int map = GetStackInt(stack++) - 1;
     int add = 1;
     if (argument_count > 1)
         add = GetStackInt(stack++);
-    int visits;
-    if (map < 200)
-        visits = SaveData->VisitMap(map, add);
-    else
-        visits = SaveData->QuestDungeon(map, add);
-    if (argument_count >= 3)
+    int visits = map < 200 ? SaveData->VisitMap(map, add) : SaveData->QuestDungeon(map, add);
+    if (argument_count > 2)
         SetStack(stack, visits);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", _SADD_VISIT_MAP__FP12RS_STACKDATAi);
-#endif
 
 static int _SSKILL_GET(RS_STACKDATA *stack, int) {
     CDngStatusData *status = SaveData->GetDngStatus();
