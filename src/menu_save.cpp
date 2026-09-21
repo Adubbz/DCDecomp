@@ -100,7 +100,14 @@ int SaveMenuKeySave(void) {
     SaveMenu.key_no = 0xB;
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyEndSave__Fv);
+
+int SaveMenuKeyEndSave(void) {
+    if ((GamePad.Down(0x40) != 0) || (GamePad.Down(0x20) != 0)) {
+        McAccess.SetFuncNo(1);
+        SaveMenu.key_no = 7;
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyLoadDecide__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyLoad__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyArart__Fv);
