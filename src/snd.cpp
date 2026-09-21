@@ -1095,7 +1095,24 @@ int SndSeSeqPlayStop(int se_no, int length, int voice) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqStep__Fv);
+static void SndSeSeqStep() {
+    int i;
+
+    for (i = 0; i < 32; i++) {
+        SND_SE_SEQ *seq = &se_seq[i];
+
+        if (seq->se_no >= 0) {
+            if (seq->step == 0) {
+                SndSePlay(seq->se_no, -1, seq->voice);
+            }
+            if (seq->step >= seq->length) {
+                SndSeStop(seq->se_no, seq->voice);
+                InitSeSeq(seq);
+            }
+            seq->step++;
+        }
+    }
+}
 /**
  * Stops every sound-effect sequence.
  *
