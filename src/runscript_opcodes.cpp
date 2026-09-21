@@ -293,14 +293,10 @@ int _STATUS_SET_DEAD(RS_STACKDATA *stack, int argc) {
 #else
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_DEAD__FP12RS_STACKDATAi);
 #endif
-#ifdef NON_MATCHING
 int _STATUS_SET_EVENT(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->unk_094 = GetStackInt(stack);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_EVENT__FP12RS_STACKDATAi);
-#endif
 #ifdef NON_MATCHING
 int _RUN_SCRIPT(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->unk_094 = GetStackInt(stack);
