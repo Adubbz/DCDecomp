@@ -455,7 +455,9 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", CommandBRIGHT__FPPv__2);
  * @address 0x1A0130
  * @size 0x10
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandDEBUG__FPPv);
+static void CommandDEBUG(void **) {
+    debug = 1;
+}
 /**
  * Names one of the interior's four moving parts.
  *

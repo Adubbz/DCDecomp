@@ -232,7 +232,8 @@
       "CommandCD__FPPv__2",
       "CommandOBJ_ANIME__FPPv__2",
       "LoadInfo__FPci",
-      "CommandPROJECTION__FPPv"
+      "CommandPROJECTION__FPPv",
+      "CommandDEBUG__FPPv"
     ],
     "rodata_exports": [
       "@1592",
