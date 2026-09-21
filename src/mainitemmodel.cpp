@@ -1,6 +1,5 @@
 #include "mainitemmodel.hpp"
 
-#ifdef NON_MATCHING
 int CMainItemModel::GetFreeCashNo(void) {
     for (int i = 0; i < 6; i++) {
         if (cash[i] == NULL) {
@@ -9,10 +8,6 @@ int CMainItemModel::GetFreeCashNo(void) {
     }
     return -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mainitemmodel", GetFreeCashNo__14CMainItemModelFv);
-#endif
-#ifdef NON_MATCHING
 int CMainItemModel::GetFreeModelNo(void) {
     for (int i = 0; i < 16; i++) {
         if (model[i] == -1) {
@@ -21,9 +16,6 @@ int CMainItemModel::GetFreeModelNo(void) {
     }
     return -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mainitemmodel", GetFreeModelNo__14CMainItemModelFv);
-#endif
 INCLUDE_ASM("asm/nonmatchings/mainitemmodel", SetCashModel__14CMainItemModelFiPUiPUii);
 INCLUDE_ASM("asm/nonmatchings/mainitemmodel", DeleteModel__14CMainItemModelFi);
 INCLUDE_ASM("asm/nonmatchings/mainitemmodel", SetHandModel__14CMainItemModelFi);
