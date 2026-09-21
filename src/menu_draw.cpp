@@ -40,6 +40,9 @@ extern s8 MenuTrushMark[100];
 /** Screen rectangle the menus draw full-screen pictures into. */
 extern CRect_i_ MenuDispRc;
 
+/** Item kind the item board sort places first. */
+extern int sort_top_type__2;
+
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @553);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @554__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @555);
@@ -472,7 +475,20 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", GetBoardSpace__FiPi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SwapItem__FP9ITEM_PACKii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", CompItem__Fii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonItemBoardSub__FP9ITEM_PACK);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonItemBoard__FP9ITEM_PACK);
+
+void SeitonItemBoard(ITEM_PACK *items) {
+    if (items != NULL) {
+        for (int i = 0; i < 9; i++) {
+            if (SeitonItemBoardSub(items) != 0) {
+                break;
+            }
+            sort_top_type__2++;
+            if (sort_top_type__2 >= 9) {
+                sort_top_type__2 = 1;
+            }
+        }
+    }
+}
 
 int GetAttachKind(int item_no) {
     if ((item_no >= ITEM_ATTACH_START) && (item_no < ITEM_ATTACH_ATTACK)) {
