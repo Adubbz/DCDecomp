@@ -620,7 +620,17 @@ int _SET_GRAVITY(RS_STACKDATA *stack, int argc) {
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_GUARD_FRAME__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GUARD_SEARCH__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_MOVE_VEC__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _PUSH_IGLOBAL__FP12RS_STACKDATAi);
+int _PUSH_IGLOBAL(RS_STACKDATA *stack, int argc) {
+    int index;
+    int monster_no = NowMonstorUnit->unk_090;
+
+    index = GetStackInt(stack++);
+    if (index < 0 || index > 7) {
+        return 0;
+    }
+    PUSH_INT_DATA[monster_no][index] = GetStackInt(stack);
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _POP_IGLOBAL__FP12RS_STACKDATAi);
 int _GET_USER_STATUS(RS_STACKDATA *stack, int argc) {
     int kind = GetStackInt(stack++);

@@ -21,6 +21,11 @@ class CRunScript;
 struct RS_STACKDATA;
 
 /**
+ * Integers each monster's script pushes and pops, eight per monster.
+ */
+extern int PUSH_INT_DATA[16][8];
+
+/**
  * Starts a motion on the monster and every part linked to it, optionally at a given speed and repeat count.
  *
  * @mangled _SET_MOTION__FP12RS_STACKDATAi
