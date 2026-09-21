@@ -454,7 +454,14 @@ int _SET_MONSTOR_POS(RS_STACKDATA *stack, int argc) {
     return 1;
 }
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MONSTOR_MOVE__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MONSTOR_LINK_MOVE__FP12RS_STACKDATAi);
+int _SET_MONSTOR_LINK_MOVE(RS_STACKDATA *stack, int argc) {
+    int monster_no = GetStackInt(stack++);
+    int leader_no = GetStackInt(stack);
+
+    sceVu0CopyVector(NowMonstorUnit->monster[monster_no].movement, NowMonstorUnit->monster[leader_no].movement);
+    NowMonstorUnit->monster[monster_no].movement_speed = NowMonstorUnit->monster[leader_no].movement_speed;
+    return 1;
+}
 int _SET_MONSTOR_MOVE_CANSEL(RS_STACKDATA *stack, int argc) {
     int monster_no = GetStackInt(stack);
 
