@@ -206,6 +206,17 @@
     ]
   },
   "src/edit_in.cpp": {
+    "symbols": {
+      "Command": "Command__6",
+      "CommandExe": "CommandExe__6",
+      "CurrentDir": "CurrentDir__5",
+      "objanime_list": "objanime_list__2",
+      "debug": "debug__2",
+      "motion_parts_list": "motion_parts_list__2",
+      "water_list": "water_list__2",
+      "water_info": "water_info__2"
+    },
+    "globalize_symbols": [],
     "rodata_exports": [
       "@1592",
       "@1593",

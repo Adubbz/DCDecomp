@@ -1,5 +1,37 @@
 #include "common.h"
 
+#include <cstring>
+
+#include "dataalloc.hpp"
+#include "dataread.hpp"
+#include "edit_in.hpp"
+#include "editloop.hpp"
+#include "scriptinterpreter.hpp"
+
+/* The arenas the interior carves the read buffer into. */
+extern CDataAlloc2<1> EdWorkBuffer;
+extern CDataAlloc2<1> EdMenuBuffer;
+
+/* The keywords an interior's info script may use, and what each one does. */
+extern TAG_PARAM Command[15];
+extern void (*CommandExe[15])(void **);
+
+/* Directory that names in the info script are relative to. */
+extern char CurrentDir[0x80];
+
+/* Records the info script has filled in so far, and whether it asked for debug drawing. */
+extern int npc_count;
+extern int objanime_list;
+extern int effect_list;
+extern int debug;
+extern int motion_parts_list;
+extern int water_list;
+extern EDIT_WATER_INFO *water_info;
+
+/* Numbers of object animations and effects the interior uses. */
+extern int obj_anime_num;
+extern int effect_num;
+
 /**
  * Identifies the kind of editor effect requested.
  */

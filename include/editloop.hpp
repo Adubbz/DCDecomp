@@ -63,8 +63,7 @@ struct EDIT_AREA_INFO {
  */
 struct EDIT_MOTION_PARTS_INFO {
     char name[0x40]; /**< Name of the moving map part. */
-    float values[6]; /**< Motion limits and rates supplied by the script. */
-    u8 unk_58[0xc];
+    float values[9]; /**< Motion limits and rates supplied by the script. */
 };
 
 /**
