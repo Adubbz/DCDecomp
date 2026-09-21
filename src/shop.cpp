@@ -233,7 +233,7 @@ s16 *GetItemShopList(int shop_no) {
 void InitShopItemListData(SHOP_ITEMLIST *item_list) {
     if (item_list != NULL) {
         item_list->item_no = 0;
-        memset(item_list->data, 0, sizeof(item_list->data));
+        memset(&item_list->data, 0, sizeof(item_list->data));
     }
 }
 
@@ -722,7 +722,7 @@ static int SellMoneyCheck2() {
             if (item_no >= ITEM_ATTACH_START) {
                 int money = CalItemMoney(item_no, 1);
                 if (item_no >= ITEM_WEAPON_START) {
-                    money += WeaponCalMoney((WEAPON_HAVE *) ShopListPt[i].data, 1);
+                    money += WeaponCalMoney(&ShopListPt[i].data.weapon, 1);
                 }
                 total += money;
             }

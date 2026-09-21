@@ -20,12 +20,24 @@ struct SV_FISH_DATA;
 extern s16 ItemShopList2[18][20];
 
 /**
+ * The record behind one shop slot, read according to the kind of item in it.
+ */
+union SHOP_ITEM_RECORD {
+    s32 volume;         /**< A dungeon item's volume. */
+    WEAPON_HAVE weapon; /**< A weapon's record. */
+    ATTACH_LIST attach; /**< An attachment's record. */
+    s16 param[0x7C];    /**< The record read as halfwords; items 0x5B to 0x5E each set one of an attachment's stats. */
+};
+
+STATIC_ASSERT(sizeof(SHOP_ITEM_RECORD) == 0xF8);
+
+/**
  * Stores one shop's item-list state.
  */
 struct SHOP_ITEMLIST {
     s16 item_no; /**< The item, weapon or attachment on offer. */
     u8 unk_02[2];
-    u8 data[0xF8]; /**< The item's record, sized for the largest (WEAPON_HAVE). */
+    SHOP_ITEM_RECORD data; /**< The item's record. */
 };
 
 STATIC_ASSERT(sizeof(SHOP_ITEMLIST) == 0xFC);
