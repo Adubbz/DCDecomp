@@ -63,15 +63,6 @@ int PersonalRetMax(int board_mode);
 void DrawPersonalBoard(int x, int y, int board_mode, int cursor_pos, int alpha);
 
 /**
- * Draws the equipped-weapon marker on a personal-board entry.
- *
- * @mangled DrawNowEquipWeaponMark__Fiiiii
- * @address 0x0022F9D0
- * @size 0x100
- */
-void DrawNowEquipWeaponMark(int x, int y, int weapon_no, int character_no, int alpha);
-
-/**
  * Draws a common inventory icon with its quantity and state overlays.
  *
  * @mangled CommonIconDraw__Fiiiiiii
@@ -124,15 +115,6 @@ void PersonalBoardScrlBarDraw(int x, int y, int count, float &scroll, unsigned c
  * @size 0x238
  */
 void PersonalBoardMaxDraw(int x, int y, int board_mode, CTexture *texture, int alpha);
-
-/**
- * Draws the base layers of a personal inventory board.
- *
- * @mangled DrawPersonalBoardBase__FiiiiiP8CTexturei
- * @address 0x00230C00
- * @size 0x1C0
- */
-void DrawPersonalBoardBase(int x, int y, int width, int height, int board_mode, CTexture *texture, int alpha);
 
 /**
  * Draws one complete personal-board view.

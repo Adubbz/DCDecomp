@@ -75,6 +75,24 @@ extern int ItemMenuWeaponIconReadBlock;
  */
 static void DrawDontSetItemMark(int, int, int, int, int);
 
+/**
+ * Draws the equipped-weapon marker on a personal-board entry.
+ *
+ * @mangled DrawNowEquipWeaponMark__Fiiiii
+ * @address 0x0022F9D0
+ * @size 0x100
+ */
+static void DrawNowEquipWeaponMark(int x, int y, int weapon_no, int character_no, int alpha);
+
+/**
+ * Draws the base layers of a personal inventory board.
+ *
+ * @mangled DrawPersonalBoardBase__FiiiiiP8CTexturei
+ * @address 0x00230C00
+ * @size 0x1C0
+ */
+static void DrawPersonalBoardBase(int x, int y, int width, int height, int board_mode, CTexture *texture, int alpha);
+
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @553);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @554__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @555);
