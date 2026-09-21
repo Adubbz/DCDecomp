@@ -460,16 +460,12 @@ static int SaveMenuKeyLoadConfig();
  */
 static int SaveMenuKeyFileSelect();
 
-#ifdef NON_MATCHING
 int McCheckMCPs2(MC_CARD_INFO *card) {
     if (!card->present || card->type != 2) {
         return 0;
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", McCheckMCPs2__FP12MC_CARD_INFO);
-#endif
 #ifdef NON_MATCHING
 void DrawObjectVibe(int x, int y, CTexture *texture, CRect_i_ src_rect, unsigned char alpha, int flag) {
     s32 dest_x = (s32) ((float) x + 7.0f * cosf(0.08055365830659866f * (float) CursorVibeCnt));
