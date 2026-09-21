@@ -46,6 +46,24 @@ extern CTexture *DunLogBoard;
 /** Dungeon progress the battle menus show. */
 extern CDngStatusData *BtlMenuStatusPt;
 
+/** Model the item preview shows. */
+extern CFrame *ItemPolyView;
+
+/** Set while the debug item preview is shown. */
+extern int MDebugItemPolyViewFlag;
+
+/** Set once the item preview's files have been read. */
+extern int polyreadflag;
+
+/** Position the debug item preview draws its model at. */
+extern float menudebugpos[4];
+
+/** Rotation the debug item preview turns its model to. */
+extern float menudebugrot[3];
+
+/** Scale the debug item preview draws its model at. */
+extern float menudebugrscale[3];
+
 /**
  * Resolves the model and texture paths for a battle item.
  *
@@ -563,7 +581,48 @@ int GetDispVolumeForFloat(float volume) {
 }
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", InitItemPolygonView__FiP1);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", EnterItemPolygonView__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", LocalDrawItemPolygonView__Fv);
+
+static void LocalDrawItemPolygonView(void) {
+    float turn;
+    float tilt;
+    int i;
+
+    if (MDebugItemPolyViewFlag != 0 && ItemPolyView != NULL && polyreadflag != 0) {
+        turn = GamePad.GetRXf();
+        tilt = GamePad.GetRYf();
+        menudebugrot[0] += tilt / 32.0f;
+        menudebugrot[1] += turn / 32.0f;
+        for (i = 0; i < 3; i++) {
+            if (menudebugrot[i] < -3.1415927f) {
+                menudebugrot[i] += 6.2831855f;
+            }
+            if (menudebugrot[i] > 3.1415927f) {
+                menudebugrot[i] -= 6.2831855f;
+            }
+        }
+        if (GamePad.Down2(0x20)) {
+            MDebugItemPolyViewFlag = 0;
+        }
+        if (GamePad.On2(0x10)) {
+            for (i = 0; i < 3; i++) {
+                if (menudebugrscale[i] <= 5.0f) {
+                    menudebugrscale[i] += 0.1f;
+                }
+            }
+        }
+        if (GamePad.On2(0x80)) {
+            for (i = 0; i < 3; i++) {
+                if (0.1f < menudebugrscale[i]) {
+                    menudebugrscale[i] -= 0.1f;
+                }
+            }
+        }
+        ItemPolyView->SetRotation(menudebugrot[0], menudebugrot[1], menudebugrot[2]);
+        ItemPolyView->SetScale(menudebugrscale);
+        ItemPolyView->SetPosition(menudebugpos);
+        MGDraw(ItemPolyView);
+    }
+}
 
 void DrawItemPolygonView(void) {
     MenuTextureReload(BtlMenuExReadBlock);
