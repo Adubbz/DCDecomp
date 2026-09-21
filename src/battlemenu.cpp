@@ -16,6 +16,7 @@
 #include "itemdata.hpp"
 #include "memcard.hpp"
 #include "menu_draw.hpp"
+#include "menu_dungeon.hpp"
 #include "menu_inventory.hpp"
 #include "menu_manual.hpp"
 #include "menu_misc.hpp"
@@ -272,6 +273,11 @@ extern float WepPolyPos;
  * Frame rate the weapon models turn at.
  */
 extern float WepFrameRate;
+
+/**
+ * Source rectangle of the digits a weapon-status bar prints its value with.
+ */
+extern RECT WeaponVolumeNumberRect;
 
 int GetDefaultWeaponNo(int character_no) {
     return MenuDefaultWeaponNo[character_no];
@@ -743,6 +749,7 @@ s32 GetWeaponNamePutX(s32 center_x, s32 width) {
     return center_x - (width >> 1);
 }
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponNameDraw__Fiii);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WepStatusVolumeDraw__F4RECTiPiiiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponStatusWaku__Fiiii);
 
@@ -1177,11 +1184,13 @@ static void WeaponMenuActWepKey() {
     }
 }
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuTagKey__Fv);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuAttachWepKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuAttachKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", RepairAndLevelUpDraw__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBuildUpWeaponSelect__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuDraw__Fv);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemTrushKey__FPiPii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawTrushItem__Fv);
 
@@ -1200,9 +1209,9 @@ static void ExitItemSelect() {
     AtoraNameMes.auto_pos = -1;
     CMenuCursor *cursor = SaveData->GetMenuCursor();
     if (cursor->reset_pos == 0) {
-        SetCursorPos(cursor, 0, ItemMenuMode.unk_2C);
+        SetCursorPos(cursor, 0, ItemMenuMode.board.unk_0C);
         cursor->mode[0] = ItemMenuMode.unk_00;
-        SetCursorChara(cursor, ItemMenuMode.unk_24);
+        SetCursorChara(cursor, ItemMenuMode.board.unk_04);
     }
 }
 

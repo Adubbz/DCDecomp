@@ -53,11 +53,9 @@ STATIC_ASSERT(sizeof(WEP_MENU_INFO) == 0x17C);
 struct ITEM_MENU_MODE_INFO {
     s16 unk_00;
     s16 chara; /**< Party member index the item page is showing. */
-    char unk_04[0x20];
-    s32 unk_24;
-    char unk_28[4];
-    s32 unk_2C;
-    char unk_30[0x154];
+    char unk_04[0x1C];
+    PERSONAL_BOARD board; /**< Personal board the item page lists the pack on. */
+    char unk_180[4];
     s16 message_item_no; /**< Item number the last SetNowEquipWeaponDataForMsg call named. */
     s16 message_slot;    /**< Slot number the last SetNowEquipWeaponDataForMsg call named. */
 };
