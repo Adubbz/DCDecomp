@@ -234,7 +234,15 @@ void CEditGround::Clear() {
 }
 
 INCLUDE_ASM("asm/nonmatchings/editground", Initialize__11CEditGroundFv);
-INCLUDE_ASM("asm/nonmatchings/editground", RemakeGrid__11CEditGroundFv);
+
+void CEditGround::RemakeGrid() {
+    for (int i = 0; i < 4; i++) {
+        if (areas[i] != NULL) {
+            areas[i]->grid_redraw = 1;
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", __ct__11CEditGroundFv);
 /**
  * Constructs the water surface of one ground tile.
