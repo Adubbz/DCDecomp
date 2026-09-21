@@ -551,15 +551,6 @@ void DrawBuildUpWeaponSelect(int, int, int);
 void WeaponMenuDraw(void);
 
 /**
- * Handles input while items are being thrown away.
- *
- * @mangled ItemTrushKey__FPiPii
- * @address 0x201E30
- * @size 0x2F0
- */
-void ItemTrushKey(int *, int *, int);
-
-/**
  * Draws the list of items that may be thrown away.
  *
  * @mangled DrawTrushItem__Fv

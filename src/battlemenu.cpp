@@ -1323,7 +1323,97 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", RepairAndLevelUpDraw__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBuildUpWeaponSelect__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuDraw__Fv);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemTrushKey__FPiPii);
+/**
+ * Swaps the item the menu is holding with the one in the given slot of the page it is on.
+ *
+ * Weapons are only taken when they are not a party member's default weapon and belong to the
+ * party member holding the menu's slot.
+ *
+ * @mangled ItemTrushKey__FPiPii
+ * @address 0x201E30
+ * @size 0x2F0
+ */
+static int ItemTrushKey(int *, int *, int slot) {
+    int swapped = 0;
+    int page = ItemMenuMode.board.unk_04;
+    int kind = WhatIsKindofItem(BtlHaveItemPt->item_no);
+    s16 held = BtlHaveItemPt->item_no;
+    s16 item_no;
+
+    switch (page) {
+        case 0:
+            if (!kind || kind == -1) {
+                MenuDataSwap(&MenuItemPackPt->item[MenuItemPackPt->num + slot], &ItemMenuMode.board.unk_40);
+                MenuDataSwap(&ItemMenuMode.board.unk_42, &MenuItemPackPt->item_vol[MenuItemPackPt->num + slot]);
+                swapped = 1;
+            }
+            break;
+        case 1:
+            if (kind == 1 || kind == -1) {
+                int owner = -1;
+                WEAPON_HAVE *weapon;
+                int equip = WhoIsWeaponEquip(held);
+                if (equip < 0) {
+                    for (int i = 0; i < 6; i++) {
+                        CDngStatusData *status = BtlMenuStatusPt;
+                        WEAPON_HAVE *row = status->chara_weapons[i];
+                        weapon = &row[10];
+                        if (weapon != NULL && weapon->item_no >= 257) {
+                            owner = (s8) GetWeaponData(weapon->item_no)->owner;
+                            break;
+                        }
+                    }
+                } else {
+                    CDngStatusData *status = BtlMenuStatusPt;
+                    WEAPON_HAVE *row = status->chara_weapons[equip];
+                    weapon = &row[10];
+                    if (weapon != NULL) {
+                        owner = equip;
+                    }
+                }
+                int is_default = 0;
+                for (int chara = 0; chara < 6; chara++) {
+                    int default_no = GetDefaultWeaponNo(chara);
+                    if (ItemMenuMode.board.weapon.item_no == default_no ||
+                        ItemMenuMode.board.weapon.item_no == default_no + 1) {
+                        is_default = 1;
+                    }
+                }
+                int allowed = 1;
+                if (ItemMenuMode.board.unk_15C >= 0) {
+                    allowed = 0;
+                }
+                if (is_default) {
+                    allowed = 0;
+                }
+                if (equip >= 0 && owner != equip && owner >= 0) {
+                    allowed = 0;
+                }
+                if (allowed) {
+                    item_no = weapon->item_no;
+                    MenuDataSwap(weapon, &ItemMenuMode.board.weapon);
+                    BtlHaveItemPt->item_no = item_no;
+                    weapon->item_no = held;
+                    swapped = 1;
+                } else {
+                    swapped = 0;
+                }
+            }
+            break;
+        case 2:
+            if (kind == 2 || kind == -1) {
+                DNG_CONSUMABLE *items = BtlMenuStatusPt->consumable_items;
+                ATTACH_LIST *attach = (ATTACH_LIST *) &items[slot] + 40;
+                item_no = attach->item_no;
+                MenuDataSwap(attach, &ItemMenuMode.board.unk_13C);
+                BtlHaveItemPt->item_no = item_no;
+                attach->item_no = held;
+                swapped = 1;
+            }
+            break;
+    }
+    return swapped;
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawTrushItem__Fv);
 
 /**
