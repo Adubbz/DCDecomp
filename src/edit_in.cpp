@@ -123,7 +123,46 @@ void GetElementObjName(EDITPARTS_INFO *info, char **names, int element, int mode
  * @address 0x19B790
  * @size 0x204
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", LoadMapObject__FP9CMapPartsPPUiP14CDataAlloc2_1_);
+void LoadMapObject(CMapParts *parts, u_int **data, CDataAlloc2<1> *alloc) {
+    CFrameVu1 *frames[4];
+    int i;
+
+    LoadMDSFileLOD(frames, data, alloc, 1);
+    CFrameAttr attr;
+    attr.fog_enable = 1;
+    attr.unk_08 = 0;
+    attr.unk_50 = 0x40;
+    for (i = 1; i < 4; i++) {
+        if (frames[i] != NULL) {
+            frames[i]->SetAttr(attr, 1, 0x44);
+            SetFrameAttr(frames[i], 1);
+        }
+    }
+    attr.unk_04 = 100.0f;
+    attr.unk_08 = 1;
+    frames[0]->SetAttr(attr, 1, 0);
+    SetFrameAttr(frames[0], 1);
+    for (i = 0; i < 4; i++) {
+        parts->SetFrame(frames[i], i);
+    }
+    if (data[4] != NULL) {
+        parts->shadow_frame = LoadMDSFile(data[4], alloc, 14, NULL, NULL);
+    }
+    if (data[5] != NULL) {
+        parts->collision_frame = LoadCollisionFile(data[5], alloc);
+    } else {
+        parts->collision_frame = NULL;
+    }
+    if (data[6] != NULL) {
+        parts->shade_frame = LoadMDSFile(data[6], alloc, 0, NULL, NULL);
+    }
+    if (data[7] != NULL) {
+        parts->unk_104 = LoadMDSFile(data[7], alloc, 0, NULL, NULL);
+    }
+    if (data[8] != NULL) {
+        parts->unk_0DC = LoadCollisionFile(data[8], alloc);
+    }
+}
 /**
  * Reads the interior's event script into the script arena.
  *

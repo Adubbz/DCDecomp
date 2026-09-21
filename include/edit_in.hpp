@@ -50,3 +50,12 @@ EPARTS_FUNC_DATA *SearchMapJump(float *position, float *rotation);
  * @size 0x12C
  */
 void GetMapJumpPos(CCharacter *chara);
+
+/**
+ * Reads one interior object's levels of detail and hangs them off its part.
+ *
+ * @mangled LoadMapObject__FP9CMapPartsPPUiP14CDataAlloc2_1_
+ * @address 0x19B790
+ * @size 0x204
+ */
+void LoadMapObject(CMapParts *parts, u_int **data, CDataAlloc2<1> *alloc);
