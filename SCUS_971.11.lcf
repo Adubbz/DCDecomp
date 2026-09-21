@@ -459,6 +459,7 @@ SECTIONS
         clothread.cpp.o (.data)      // 0x002517a0 the cloth command tables
         main.cpp.o (.data)
         main.data.part2c.s.o (.data)
+        gameutil.cpp.o (.data)       // 0x00253dd0 NameRegistCodeJtoE's table
         clsmes.cpp.o (.data)
         main.data.part2b.s.o (.data)
         mapobject.cpp.o (.data)

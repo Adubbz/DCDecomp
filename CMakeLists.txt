@@ -159,7 +159,7 @@ carve_part(main.data.part1.s
            main.data.part1b.s=250EC0-250F40)
 carve_part(main.data.part2.s
            main.data.part2.s=2514C0-251560
-           main.data.part2c.s=2525D0-253F20)
+           main.data.part2c.s=2525D0-253DD0)
 # Retail's vtables come out in one run that alternates between the units that
 # now own theirs and the dump that still holds the rest, so the dump is cut
 # around each owned block rather than having the block removed from it.
