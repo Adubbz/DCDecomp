@@ -806,7 +806,20 @@ static int SeitonAtoraTipBoardSub() {
     return moved;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memcard", SeitonAtoraTipBoard__Fv);
+static void SeitonAtoraTipBoard() {
+    int i;
+
+    for (i = 0; i < 3; i++) {
+        if (SeitonAtoraTipBoardSub()) {
+            break;
+        }
+        tip_sort_type++;
+        if (tip_sort_type >= 3) {
+            tip_sort_type = 1;
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuAtoraSelectKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraBoardKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipKey__Fv);
