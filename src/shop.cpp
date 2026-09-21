@@ -385,9 +385,58 @@ static void DrawShopIcon(int x, int y, int selected, int mode) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/shop", IsEnableCharge__Fi);
-INCLUDE_ASM("asm/nonmatchings/shop", ShopMenuInit__FPiii);
-INCLUDE_RODATA("asm/nonmatchings/shop", @760);
-INCLUDE_RODATA("asm/nonmatchings/shop", @761);
+
+/**
+ * Starts a shop menu up: its buffers, its textures, its board mode and the gamepad.
+ *
+ * @mangled ShopMenuInit__FPiii
+ * @address 0x1E7950
+ * @size 0x248
+ */
+static void ShopMenuInit(int *tex_block, int shop_no, int mode) {
+    u_long128 *buffer;
+    int limit;
+
+    buffer = BtlMenuBufferSet(mode);
+    buffer = MenuCalcBufAlignment(buffer);
+    limit = EdMenuBuffer.limit >> 1;
+    ShopCashBuffer.base = (u_char *) buffer;
+    ShopCashBuffer.limit = limit;
+    ShopCashBuffer.used = 0;
+    ShopUserStatusPt = (CUserStatus *) SaveData->GetDngStatus();
+    ShopMenu.unk_190 = GetMenuLangFlag();
+    StartReadBG();
+    ShopCashBuffer.Alloc((LoadFileBGMenuData("itemshop.pak", buffer) >> 4) + 0x102);
+    ShopMenu.unk_00 = shop_no;
+    ShopMenu.unk_04 = mode;
+    ShopMenu.unk_18A = tex_block[0];
+    ShopMenu.unk_188 = 0;
+    ShopMenu.unk_196 = tex_block[1];
+    ShopMenu.unk_194 = 1;
+    ShopMenu.unk_18E = 0;
+    ShopMenu.unk_02 = 1;
+    InitPersonalBoardMode(ShopUserStatusPt, &ShopMenu.board, 0, 0);
+    ShopHaveItemPt = (IHAVEITEM *) ShopMenu.board.unk_30;
+    ShopHaveWepPt = &ShopMenu.board.weapon;
+    ShopHaveAttachPt = (ATTACH_LIST *) ShopMenu.board.unk_13C;
+    ShopMenu.unk_176 = 0;
+    ShopMenu.unk_174 = 0;
+    ShopMenu.unk_184 = 0;
+    ShopMenu.unk_180 = 1;
+    StayTex = TexManager.GetTexture("stayframe", -1);
+    ItemVolumeStep.CheckItemVolume();
+    ShopDataMove.unk_02 = -1;
+    ShopDataMove.slot_no = -1;
+    ShopDataMove.icon_no = -1;
+    ShopDataMove.item_no = -1;
+    ShopDataMove.pos_y = 0.0f;
+    ShopDataMove.pos_x = 0.0f;
+    memset(ShopDataMove.data, 0, sizeof(ShopDataMove.data));
+    SetMenuTrushMark((ITEM_PACK *) ShopUserItemPack(ShopUserStatusPt));
+    GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
+    GamePad.MenuModeOn(0x78);
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", ShopMenuExit__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopTextureLoadFix__Fv);
 

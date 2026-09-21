@@ -182,15 +182,6 @@ void ShopCurDraw(int, int, int, int, int, int, int);
 void IsEnableCharge(int);
 
 /**
- * Starts a shop menu up: its buffers, its textures, its board mode and the gamepad.
- *
- * @mangled ShopMenuInit__FPiii
- * @address 0x1E7950
- * @size 0x248
- */
-void ShopMenuInit(int *, int, int);
-
-/**
  * Tears a shop menu down: its textures, its messages and the gamepad.
  *
  * @mangled ShopMenuExit__Fv
