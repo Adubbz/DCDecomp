@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include "collision.hpp"
 #include "dun/gameloop.hpp"
 #include "edit.hpp"
 #include "editloop3.hpp"
@@ -238,7 +239,27 @@ INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _CHK_USER_INNER_PRODUCT__FP12R
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_VECTOR__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_DIRECTION__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MOVE__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _CHK_MOVE_INFO__FP12RS_STACKDATAi);
+int _CHK_MOVE_INFO(RS_STACKDATA *stack, int argc) {
+    int clear;
+    int monster_no = NowMonstorUnit->unk_090;
+    float from[4];
+    float to[4];
+    float hit[4];
+
+    clear = 1;
+    NowMonstorUnit->chara[monster_no][0].GetPosition(from);
+    to[0] = GetStackFloat(stack++);
+    to[1] = GetStackFloat(stack++);
+    to[2] = GetStackFloat(stack++);
+    from[1] += 5.0f;
+    to[1] += 5.0f;
+    if (CheckHit(NowMonstorUnit->monster[monster_no].collision_poly, NowMonstorUnit->monster[monster_no].unk_050,
+                 from, to, hit, 0, 0) >= 0) {
+        clear = 0;
+    }
+    SetStack(stack, clear);
+    return 1;
+}
 int _SET_MOVE_CANSEL(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->monster[NowMonstorUnit->unk_090].movement_speed = 0.0f;
     return 1;
