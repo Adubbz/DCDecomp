@@ -1190,6 +1190,7 @@
   },
   "src/memcard.cpp": {
     "globalize_symbols": [
+      "ExitSaveSelect__Fv",
       "SaveMenuKeyFadeIn__Fv",
       "SaveMenuKeyFadeOut__Fv",
       "SaveMenuKeyModeSelect__Fv",
