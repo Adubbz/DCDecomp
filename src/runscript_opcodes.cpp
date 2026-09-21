@@ -12,6 +12,7 @@
 #include "frame.hpp"
 #include "mathutil.hpp"
 #include "monstorunit.hpp"
+#include "shot_freefuncs.hpp"
 #include "userstatus.hpp"
 #include "snd.hpp"
 
@@ -348,7 +349,31 @@ int _STATUS_SET_COL_OFF(RS_STACKDATA *stack, int argc) {
     return 1;
 }
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_GET_LIFE_RATE__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_GET_USER_VECTOR__FP12RS_STACKDATAi);
+int _STATUS_GET_USER_VECTOR(RS_STACKDATA *stack, int argc) {
+    int normalize = 0;
+    float angle;
+    float vector[4];
+
+    if (argc == 4) {
+        normalize = GetStackInt(stack++);
+    }
+    angle = 0.0f;
+    angle += 0.017453292f * GetStackFloat(stack++);
+    if (angle > 3.1415927f) {
+        angle -= 6.2831855f;
+    }
+    if (angle < -3.1415927f) {
+        angle += 6.2831855f;
+    }
+    getCharacterVector(vector, angle);
+    if (normalize != 0) {
+        sceVu0Normalize(vector, vector);
+    }
+    SetStack(stack++, vector[0]);
+    SetStack(stack++, vector[1]);
+    SetStack(stack, vector[2]);
+    return 1;
+}
 int _STATUS_GET_HEIGHT(RS_STACKDATA *stack, int argc) {
     SetStack(stack, NowMonstorUnit->monster[NowMonstorUnit->unk_090].ground_distance);
     return 1;
