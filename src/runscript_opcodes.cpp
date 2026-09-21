@@ -437,8 +437,29 @@ int _STATUS_SET_SHADOW_LEN(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->monster[monster_no].shadow_length = GetStackFloat(stack);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_LOCKON_TRG__FP12RS_STACKDATAi);
-INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @960);
+int _STATUS_SET_LOCKON_TRG(RS_STACKDATA *stack, int argc) {
+    char *name;
+    int monster_no = NowMonstorUnit->unk_090;
+    float scale_x = 1.0f;
+    float scale_y = scale_x;
+    CFrame *frame;
+
+    name = GetStackString(stack++);
+
+    if (argc == 3) {
+        scale_x = GetStackFloat(stack++);
+        scale_y = GetStackFloat(stack);
+    }
+    frame = NowMonstorUnit->chara[monster_no][0].frame->SearchFrame(name);
+    if (frame == NULL) {
+        printf("lock:NofFountNull %s\n", name);
+    } else {
+        NowMonstorUnit->monster[monster_no].unk_0FC = frame;
+        NowMonstorUnit->monster[monster_no].unk_110 = scale_x;
+        NowMonstorUnit->monster[monster_no].unk_114 = scale_y;
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MOV_COL__FP12RS_STACKDATAi);
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @979__2);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_BODY_COL__FP12RS_STACKDATAi);
