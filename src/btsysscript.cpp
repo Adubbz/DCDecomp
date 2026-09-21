@@ -218,9 +218,37 @@ int _SET_EVENT_FLG(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_OBJHDL__FP12RS_STACKDATAi);
-INCLUDE_RODATA("asm/nonmatchings/btsysscript", @700);
-INCLUDE_RODATA("asm/nonmatchings/btsysscript", @701);
+int _GET_OBJHDL(RS_STACKDATA *stack, int count) {
+    int index = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int parts_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    char *name = GetStackString__FP12RS_STACKDATA__2(stack);
+    BT_OBJ_HANDLE *handle = GetObjHDL(index);
+
+    if (parts_no != -1) {
+        CDungeonMap *map = NowDngMap;
+        CFrame *frame = map->parts[parts_no].GetSearchFrame(name);
+        if (frame != NULL) {
+            handle->frame = frame;
+            handle->type = 0;
+        } else {
+            printf("******** Frame NotFount %s *******\n", name);
+            handle->frame = NULL;
+            handle->type = 0;
+        }
+    } else {
+        CFrame *frame = NowDngMap->GetFrameSearch(name);
+        if (frame != NULL) {
+            handle->frame = frame;
+            handle->type = 0;
+        } else {
+            printf("******** All Frame NotFount %s *******\n", name);
+            handle->frame = NULL;
+            handle->type = 0;
+        }
+    }
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_OBJHDL_POS__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_OBJHDL_ROT__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_OBJHDL_DRAW_FLAG__FP12RS_STACKDATAi);
