@@ -618,7 +618,113 @@ static int DunEnterMenuKey(void) {
     return result;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DunEnterDraw__Fv);
+static void DunEnterDraw(void) {
+    int fade;
+    int alpha;
+    int cover;
+    int half_width;
+    int cursor_y;
+    int left;
+    int top;
+    int right;
+    int bottom;
+    float wave;
+
+    setbilinear(0);
+    CRect_i_ screen(0, 0, 0x2800, 0x1C00);
+    alpha = 0x80;
+    fade = alpha;
+    switch (DEnterMenu.state) {
+        case 1:
+            if (DEnterMenu.unk_00C != 0) {
+                fade = DEnterMenu.counter * 6;
+                alpha = fade;
+            }
+            break;
+    }
+    if (alpha < 0) {
+        alpha = 0;
+    }
+    if (fade > 0x80) {
+        fade = 0x80;
+    }
+    if (alpha > 0x80) {
+        alpha = 0x80;
+    }
+    if (DEnterMenu.unk_00C != 0 && DEnterMenu.state != 3) {
+        MenuTextureReload(DEnterMenu.texture_block);
+        DrawDunEnterBack(alpha);
+        DunEnterBoard(0x46, 0x5A, alpha);
+        CursorVibeCnt++;
+        if (CursorVibeCnt > 0x107AC0) {
+            CursorVibeCnt = 0;
+        }
+        if (DEnterMenu.state == 0) {
+            cursor_y = (DEnterMenu.selected_floor - DEnterMenu.scroll_top) * 40 + 0x74;
+            static int DunWakuCnt;
+            static s8 init;
+            if (init == 0) {
+                DunWakuCnt = 0;
+                init = 1;
+            }
+            wave = 0.2f * DunWakuCnt;
+            left = 94.0f + wave;
+            top = cursor_y + wave;
+            right = 204.0f - wave;
+            bottom = (cursor_y + 0x18) - wave;
+            RECT corner = {0x40, 0x60, 0x10, 0x10};
+            DrawMenu2DSprite(DunLogBoard, CRect_i_(left, top, corner.width, corner.height),
+                             CRect_i_(corner.x, corner.y, corner.width, corner.height), alpha);
+            DrawMenu2DSprite(DunLogBoard, CRect_i_(right, top, corner.width, corner.height),
+                             CRect_i_(corner.x + corner.width, corner.y, corner.width, corner.height), alpha);
+            DrawMenu2DSprite(DunLogBoard, CRect_i_(left, bottom, corner.width, corner.height),
+                             CRect_i_(corner.x, corner.y + corner.height, corner.width, corner.height), alpha);
+            DrawMenu2DSprite(DunLogBoard, CRect_i_(right, bottom, corner.width, corner.height),
+                             CRect_i_(corner.x + corner.width, corner.y + corner.height, corner.width, corner.height),
+                             alpha);
+            DunWakuCnt++;
+            if (DunWakuCnt < 0 || DunWakuCnt >= 30) {
+                DunWakuCnt = 0;
+            }
+            CRect_i_ cursor(0x20, 0x60, 0x20, 0x20);
+            DrawObjectVibe(0x49, cursor_y + 2, DunLogBoard, cursor, 0, alpha);
+            DrawObjectVibe(0x46, cursor_y, DunLogBoard, cursor, 0x80, alpha);
+        }
+        MenuTextureReload(CommonMenuMes2.tex_block);
+        CommonMenuMes2.stay_frame = 1;
+        CommonMenuMes2.edge_alpha = alpha;
+        CommonMenuMes2.text_y = 0x158;
+        half_width = CommonMenuMes2.char_width >> 1;
+        GetMenuCommonPutXY(&CommonMenuMes2, 0x148 - half_width);
+        CommonMenuMes2.Step();
+        CommonMenuMes2.DrawMesWin();
+    } else {
+        MGFillBox(screen, 0, 0, 0, 0x80);
+    }
+    cover = 0x80;
+    switch (DEnterMenu.state) {
+        case 1:
+            cover = 0x80 - DEnterMenu.counter * 6;
+            break;
+        case 2:
+            cover = DEnterMenu.counter * 9;
+            break;
+    }
+    if (cover < 0) {
+        cover = 0;
+    }
+    if (cover > 0x80) {
+        cover = 0x80;
+    }
+    switch (DEnterMenu.state) {
+        case 1:
+        case 2:
+            MGFillBox(screen, 0, 0, 0, cover);
+            break;
+    }
+    setbilinear(1);
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DunEnterBoardWaku__Fiii);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DunEnterBoard__Fiii);
 
