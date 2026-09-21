@@ -5,6 +5,8 @@
 #include <cstdio>
 
 #include "dun/gameloop.hpp"
+#include "edit.hpp"
+#include "editloop3.hpp"
 #include "mathutil.hpp"
 #include "monstorunit.hpp"
 #include "userstatus.hpp"
@@ -453,7 +455,12 @@ int _SET_COLLISION_WIDTH(RS_STACKDATA *stack, int argc) {
 }
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_NEAR_MONSTER__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _BOSS_FADE_OUT__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _CHEKC_FADE_OUT__FP12RS_STACKDATAi);
+int _CHEKC_FADE_OUT(RS_STACKDATA *stack, int argc) {
+    int done = EdFadeOutCheck();
+
+    SetStack(stack, done);
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_GRAVITY__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_GUARD_FRAME__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GUARD_SEARCH__FP12RS_STACKDATAi);
