@@ -92,9 +92,41 @@ void CMemoryCardAccess::SetIconData(MC_ICON_DATA *icon) {
     memcpy(&this->icon.del, &icon->del, sizeof(MC_ICON_FILE));
 }
 
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", MakeMcIconSysInfo__17CMemoryCardAccessFv);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @404);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @405__2);
+void CMemoryCardAccess::MakeMcIconSysInfo() {
+    int bg_color[4][4] = {
+        {0x80, 0, 0x40, 0},
+        {0, 0x80, 0, 0},
+        {0, 0, 0x80, 0},
+        {0x80, 0x80, 0x80, 0},
+    };
+    float light_dir[3][4] = {
+        {0.5f, 0.5f, 0.5f, 0.0f},
+        {0.0f, -0.4f, -0.1f, 0.0f},
+        {-0.5f, -0.5f, 0.5f, 0.0f},
+    };
+    float light_color[3][4] = {
+        {0.48f, 0.48f, 0.03f, 0.0f},
+        {0.5f, 0.33f, 0.2f, 0.0f},
+        {0.14f, 0.14f, 0.38f, 0.0f},
+    };
+    float ambient[4] = {0.5f, 0.5f, 0.5f, 0.0f};
+
+    memset(&this->icon_sys, 0, sizeof(sceMcIconSys));
+    strcpy(this->icon_sys.head, "PS2D");
+    // "Dark Cloud Data" in full-width Shift-JIS.
+    strcpy((char *) this->icon_sys.title_name, "\x82\x63\x82\x81\x82\x92\x82\x8B\x81\x40\x82\x62\x82\x8C\x82\x8F"
+                                                 "\x82\x95\x82\x84\x81\x40\x82\x63\x82\x81\x82\x94\x82\x81");
+    this->icon_sys.nl_offset = 20;
+    this->icon_sys.trans_rate = 0x60;
+    // Only the first entry of each table is copied; the rest of the image stays zero.
+    memcpy(this->icon_sys.bg_color, bg_color, 16);
+    memcpy(this->icon_sys.light_dir, light_dir, 16);
+    memcpy(this->icon_sys.light_color, light_color, 16);
+    memcpy(this->icon_sys.ambient, ambient, 16);
+    strcpy(this->icon_sys.fname_view, this->icon.view.name);
+    strcpy(this->icon_sys.fname_copy, this->icon.copy.name);
+    strcpy(this->icon_sys.fname_del, this->icon.del.name);
+}
 
 void CMemoryCardAccess::SetFuncNo(int func_no) {
     this->func_no = func_no;
