@@ -390,7 +390,7 @@ public:
      * @address 0x1A4E10
      * @size 0xD0
      */
-    void Load(int map_no, CSaveData *save);
+    void Load(int town, CSaveData *save);
 
     /**
      * Collects the collision polygons within thirty units of a position.

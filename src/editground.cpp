@@ -383,7 +383,29 @@ void CEditGround::Save(int town, CSaveData *save) {
     record->pos_z = 0.0f;
 }
 
-INCLUDE_ASM("asm/nonmatchings/editground", Load__11CEditGroundFiP9CSaveData);
+void CEditGround::Load(int town, CSaveData *save) {
+    char buffer[0x5000];
+    int count;
+    GROUND_SAVE_HEADER *header = (GROUND_SAVE_HEADER *) buffer;
+    SV_GRD_PART *record = (SV_GRD_PART *) &buffer[sizeof(GROUND_SAVE_HEADER)];
+
+    SV_GRD_PART *saved = save->GetParts(town, &count);
+    if (saved == NULL) {
+        return;
+    }
+    header->count = count;
+    header->offset = sizeof(GROUND_SAVE_HEADER);
+    for (int i = 0; i < count; saved++, record++, i++) {
+        record->part_id = saved->part_id;
+        record->variant = saved->variant;
+        record->pos_x = saved->pos_x;
+        record->pos_y = saved->pos_y;
+        record->pos_z = saved->pos_z;
+    }
+    record->part_id = -1;
+    record->variant = -1;
+    Load(buffer);
+}
 
 int CEditGround::PickUpPoly(CCPoly *polygons, float x, float y, float z) {
     CBoxVu0 box;
