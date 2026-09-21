@@ -494,7 +494,41 @@ void DeleteMenuTrushMark() {
 }
 INCLUDE_ASM("asm/nonmatchings/menu_draw", InitPersonalBoardMode__FP11CUserStatusP14PERSONAL_BOARDii);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @1073);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", BoardModeChangeKey__Fv);
+
+int BoardModeChangeKey() {
+    int board_mode = PerBoardPt->unk_04;
+
+    if (GamePad.Down(5)) {
+        switch (PerBoardPt->unk_00) {
+            case 0:
+                PerBoardPt->unk_04--;
+                if (PerBoardPt->unk_04 < 0) {
+                    PerBoardPt->unk_04 = 2;
+                }
+                break;
+            case 2:
+            case 1:
+                break;
+        }
+    }
+    if (GamePad.Down(10)) {
+        switch (PerBoardPt->unk_00) {
+            case 0:
+                PerBoardPt->unk_04++;
+                if (PerBoardPt->unk_04 > 2) {
+                    PerBoardPt->unk_04 = 0;
+                }
+                break;
+            case 2:
+            case 1:
+                break;
+        }
+    }
+    if (board_mode != PerBoardPt->unk_04) {
+        return 1;
+    }
+    return 0;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardLimmitCheck__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardKeySub__Fv);
 
