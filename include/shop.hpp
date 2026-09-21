@@ -408,15 +408,6 @@ void CompAttach1(ATTACH_LIST *, ATTACH_LIST *);
 int SeitonShopAttachBoardSub(ATTACH_LIST *);
 
 /**
- * Sorts the attachment board, trying each ordering until one changes it.
- *
- * @mangled SeitonShopAttachBoard__FP11ATTACH_LIST
- * @address 0x1EC080
- * @size 0x94
- */
-void SeitonShopAttachBoard(ATTACH_LIST *);
-
-/**
  * Runs one frame of the item shop and returns the mode its input handler left.
  *
  * @mangled ItemShopLoop2__Fv

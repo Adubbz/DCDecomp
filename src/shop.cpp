@@ -468,7 +468,31 @@ static void SeitonShopItemBoard(ITEM_PACK *pack) {
 
 INCLUDE_ASM("asm/nonmatchings/shop", CompAttach1__FP11ATTACH_LISTP11ATTACH_LIST);
 INCLUDE_ASM("asm/nonmatchings/shop", SeitonShopAttachBoardSub__FP11ATTACH_LIST);
-INCLUDE_ASM("asm/nonmatchings/shop", SeitonShopAttachBoard__FP11ATTACH_LIST);
+
+/**
+ * Sorts the attachment board, trying each ordering until one changes it.
+ *
+ * @mangled SeitonShopAttachBoard__FP11ATTACH_LIST
+ * @address 0x1EC080
+ * @size 0x94
+ */
+static int SeitonShopAttachBoard(ATTACH_LIST *list) {
+    int i;
+
+    if (list == NULL) {
+        return 0;
+    }
+    for (i = 0; i < 5; i++) {
+        if (SeitonShopAttachBoardSub(list)) {
+            break;
+        }
+        asort_top_type++;
+        if (asort_top_type >= 5) {
+            asort_top_type = 0;
+        }
+    }
+    return 1;
+}
 
 int ItemShopLoop2() {
     int done;
