@@ -1215,7 +1215,21 @@ static void SetVoiceFile(int voice_set, u_int *pack, char *file_name) {
     CSnd.SetVol(11, 0x100);
     now_voice_set = voice_set;
 }
-INCLUDE_ASM("asm/nonmatchings/snd", SndVoiceLoad__Fi);
+
+int SndVoiceLoad(int set_no) {
+    char archive_name[128];
+    char config_name[32];
+
+    if (now_voice_set == set_no) {
+        return 0;
+    }
+    GetVoiceFile(set_no, archive_name, config_name);
+    if (LoadFile2(archive_name, snd_read_buf, 0, 0)) {
+        SetVoiceFile(set_no, snd_read_buf, config_name);
+        return 1;
+    }
+    return 0;
+}
 /**
  * Starts loading one voice set in the background.
  *
