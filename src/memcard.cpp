@@ -712,7 +712,10 @@ static void AtoraTipInfoInit() {
     NowTipHavePt->tip_no = -1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memcard", GetMenuAtraEventFlag__Fv);
+int GetMenuAtraEventFlag() {
+    return MenuAtoraSel.event_flag;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", SetMenuAtraEventFlag__Fi);
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuAtoraAfterFadeIn__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", InitMenuAtora1__FiiPiP1);
