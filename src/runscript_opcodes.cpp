@@ -805,7 +805,33 @@ int _SET_COLLISION_WIDTH(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->monster[monster_no].collision_radius = GetStackFloat(stack);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_NEAR_MONSTER__FP12RS_STACKDATAi);
+int _GET_NEAR_MONSTER(RS_STACKDATA *stack, int argc) {
+    int found;
+    int i;
+    int monster_no = NowMonstorUnit->unk_090;
+    float nearest = 240.0f;
+    float position[4];
+    float other[4];
+    float found_position[4];
+
+    found = -1;
+    NowMonstorUnit->chara[monster_no][0].GetPosition(position);
+    for (i = 0; i < 16; i++) {
+        if (i != monster_no && NowMonstorUnit->monster[i].state == 2) {
+            NowMonstorUnit->chara[i][0].GetPosition(other);
+            float distance = DistVector(position, other);
+            if (distance < nearest) {
+                sceVu0CopyVector(found_position, other);
+                nearest = distance;
+                found = i;
+            }
+        }
+    }
+    SetStack(stack++, found_position[0]);
+    SetStack(stack++, found_position[1]);
+    SetStack(stack++, found_position[2]);
+    SetStack(stack, found);
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _BOSS_FADE_OUT__FP12RS_STACKDATAi);
 int _CHEKC_FADE_OUT(RS_STACKDATA *stack, int argc) {
     int done = EdFadeOutCheck();
