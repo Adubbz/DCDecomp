@@ -672,14 +672,18 @@ void FishLineSetUki(float *position, float rate) {
     set_uki_pos = 1;
 }
 
-/**
- * Pulls the hook towards a position by a share of the distance.
- *
- * @mangled FishLineSetHook__FPff
- * @address 0x1AA0D0
- * @size 0x98
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishLineSetHook__FPff);
+void FishLineSetHook(float *position, float rate) {
+    sceVu0FVECTOR offset;
+
+    if (rate < 0.0f) {
+        set_hook_pos = 0;
+        return;
+    }
+    sceVu0SubVector(offset, position, hookp[0]);
+    sceVu0ScaleVector(offset, offset, rate);
+    sceVu0AddVector(fishhook, hookp[0], offset);
+    set_hook_pos = 1;
+}
 
 void FishPullHook(float tension) {
     pull_hook = tension;

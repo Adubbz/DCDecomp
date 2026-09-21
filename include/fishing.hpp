@@ -233,3 +233,12 @@ void FishingStepFish();
  * @size 0x98
  */
 void FishLineSetUki(float *position, float rate);
+
+/**
+ * Pulls the hook a share of the way towards a position, or stops pulling it when the share is negative.
+ *
+ * @mangled FishLineSetHook__FPff
+ * @address 0x1AA0D0
+ * @size 0x98
+ */
+void FishLineSetHook(float *position, float rate);
