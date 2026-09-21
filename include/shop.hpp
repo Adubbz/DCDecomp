@@ -299,15 +299,6 @@ void ChargeShopBoardDraw(int, int, int);
 int BuyMoneyCheck2(void);
 
 /**
- * Totals what the goods currently marked for sale fetch.
- *
- * @mangled SellMoneyCheck2__Fv
- * @address 0x1EB540
- * @size 0xB4
- */
-int SellMoneyCheck2(void);
-
-/**
  * Settles which goods are marked for purchase against what may be afforded.
  *
  * @mangled IncludeBuyItem2__Fv

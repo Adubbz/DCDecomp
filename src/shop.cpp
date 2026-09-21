@@ -548,7 +548,33 @@ static int WeaponCalMoney(WEAPON_HAVE *weapon, int sell) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/shop", BuyMoneyCheck2__Fv);
-INCLUDE_ASM("asm/nonmatchings/shop", SellMoneyCheck2__Fv);
+
+/**
+ * Totals what the goods currently marked for sale fetch.
+ *
+ * @mangled SellMoneyCheck2__Fv
+ * @address 0x1EB540
+ * @size 0xB4
+ */
+static int SellMoneyCheck2() {
+    int total = 0;
+    int i;
+
+    for (i = 0; i < 30; i++) {
+        if (ShopBoardInfo[i] == 2) {
+            int item_no = ShopListPt[i].item_no;
+            if (item_no >= ITEM_ATTACH_START) {
+                int money = CalItemMoney(item_no, 1);
+                if (item_no >= ITEM_WEAPON_START) {
+                    money += WeaponCalMoney((WEAPON_HAVE *) ShopListPt[i].data, 1);
+                }
+                total += money;
+            }
+        }
+    }
+    return total;
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", IncludeBuyItem2__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", CheckBuyItemFunc2__Fv);
 
