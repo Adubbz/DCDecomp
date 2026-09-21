@@ -392,15 +392,6 @@ void DrawSellTicket22(int, int, int, int, int);
 void ShopCancelGoodReturn2(void);
 
 /**
- * Chooses the line the shopkeeper says for the shop's current state.
- *
- * @mangled GetNowMasterMsgNo2__Fii
- * @address 0x1ED470
- * @size 0x268
- */
-void GetNowMasterMsgNo2(int, int);
-
-/**
  * Runs the shopkeeper's speech and the model's reaction to it.
  *
  * @mangled ShopModelMsgFunc__Fi

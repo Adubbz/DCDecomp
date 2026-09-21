@@ -1231,6 +1231,15 @@ static void DrawLocalTicket(int x, int y, int clip_top, int clip_bottom, int slo
 
 INCLUDE_ASM("asm/nonmatchings/shop", DrawSellTicket22__Fiiiii);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopCancelGoodReturn2__Fv);
+
+/**
+ * Chooses the line the shopkeeper says for the shop's current state.
+ *
+ * @mangled GetNowMasterMsgNo2__Fii
+ * @address 0x1ED470
+ * @size 0x268
+ */
+static int GetNowMasterMsgNo2(int, int);
 INCLUDE_ASM("asm/nonmatchings/shop", GetNowMasterMsgNo2__Fii);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopModelMsgFunc__Fi);
 
