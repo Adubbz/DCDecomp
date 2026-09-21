@@ -171,15 +171,6 @@ int CommonShopLoop(void);
 void ShopPolySetInit(int, int);
 
 /**
- * Reports whether an item may be recharged.
- *
- * @mangled IsEnableCharge__Fi
- * @address 0x1E7840
- * @size 0x10C
- */
-void IsEnableCharge(int);
-
-/**
  * Enters the shop's fixed textures into the texture manager.
  *
  * @mangled ShopTextureLoadFix__Fv

@@ -499,6 +499,14 @@ static void DrawShopIcon(int x, int y, int selected, int mode) {
     DrawMenu2DSprite(ShopBoard, CRect_i_(x, y, width, 0x28), CRect_i_(0x14, v, width, 0x28), mode);
 }
 
+/**
+ * Reports whether an item may be recharged.
+ *
+ * @mangled IsEnableCharge__Fi
+ * @address 0x1E7840
+ * @size 0x10C
+ */
+static int IsEnableCharge(int item_no);
 INCLUDE_ASM("asm/nonmatchings/shop", IsEnableCharge__Fi);
 
 /**
