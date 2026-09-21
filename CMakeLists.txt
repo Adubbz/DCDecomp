@@ -245,9 +245,11 @@ carve_part(main.sbss.part5.s
            main.sbss.denter-tail.s=2A2F60-2A2FD0)
 # The weapon build-up and level-up local templates stand in this residual run,
 # and runscript_opcodes.cpp supplies its vector initializers ahead of part6f.
+# shop.cpp supplies the start of its own run between part6f and part6k.
 carve_part(main.data.part6.s
            main.data.part6.s=27E790-27EB30
-           main.data.part6f.s=291850-293C60
+           main.data.part6f.s=291850-291B80
+           main.data.part6k.s=2922F0-293C60
            main.data.part6h.s=293C80-294150
            main.data.part6g.s=294170-294460
            main.data.part6j.s=295644-295810

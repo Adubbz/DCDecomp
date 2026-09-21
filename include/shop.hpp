@@ -13,13 +13,6 @@ struct MENU_ITEMDATA;
 struct SV_FISH_DATA;
 
 /**
- * Gives the goods list one item shop sells from.
- *
- * One shop's twenty-item goods list, eighteen shops long.
- */
-extern s16 ItemShopList2[18][20];
-
-/**
  * The record behind one shop slot, read according to the kind of item in it.
  */
 union SHOP_ITEM_RECORD {
