@@ -523,7 +523,7 @@ public:
      * @address 0x1A7920
      * @size 0x614
      */
-    void MuskaRequest(CMapParts *(*) [64]);
+    void MuskaRequest(CMapParts *(*plot_parts)[64]);
 
     /**
      * Checks the ground against the yellow request, which wants parts facing one

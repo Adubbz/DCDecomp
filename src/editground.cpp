@@ -810,7 +810,90 @@ static int CheckRot(CMapParts *parts, CMapParts *other, int rotation_offset) {
     return rotation == other_rotation;
 }
 
-INCLUDE_ASM("asm/nonmatchings/editground", MuskaRequest__11CEditGroundFPA64_P9CMapParts);
+void CEditGround::MuskaRequest(CMapParts *(*plot_parts)[64]) {
+    parts_info->unk_00 = 9;
+    if (areas[0] == NULL) {
+        return;
+    }
+    if (plot_parts[0][0] != NULL && plot_parts[8][0] != NULL) {
+        if (CheckPartsRect(0, 0, CRect_i_(1, 0, 6, 3))) {
+            CRect_i_ rect;
+            rect.x = rect.y = rect.width = rect.height = 0;
+            GetRectDirParts(&rect, plot_parts[0][0], 2, 14);
+            if (CheckPartsRect(8, 0, rect) && CheckRot(plot_parts[0][0], plot_parts[8][0], 1) &&
+                parts_info->GetCompEvent(0)) {
+                parts_info->request[0] = 1;
+            }
+        }
+    }
+    if (plot_parts[1][0] != NULL && plot_parts[10][0] != NULL) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectDirParts(&rect, plot_parts[1][0], 2, 14);
+        if (CheckPartsRect(10, 0, rect) && CheckRot(plot_parts[1][0], plot_parts[10][0], 1)) {
+            parts_info->request[1] = 1;
+        }
+    }
+    if (plot_parts[2][0] != NULL && plot_parts[9][0] != NULL) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectDirParts(&rect, plot_parts[2][0], 2, 14);
+        if (CheckPartsRect(9, 0, rect) && CheckRot(plot_parts[2][0], plot_parts[9][0], 0)) {
+            parts_info->request[2] = 1;
+        }
+    }
+    if (plot_parts[3][0] != NULL && plot_parts[9][0] != NULL) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectParts(&rect, plot_parts[11][0], 2);
+        if (CheckPartsRect(3, 0, rect)) {
+            CRect_i_ dir_rect;
+            dir_rect.x = dir_rect.y = dir_rect.width = dir_rect.height = 0;
+            GetRectDirParts(&dir_rect, plot_parts[3][0], 2, 14);
+            if (CheckPartsRect(9, 0, dir_rect) && CheckRot(plot_parts[3][0], plot_parts[9][0], 2)) {
+                parts_info->request[3] = 1;
+            }
+        }
+    }
+    if (plot_parts[4][0] != NULL && plot_parts[9][0] != NULL) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectDirParts(&rect, plot_parts[4][0], 2, 14);
+        if (CheckPartsRect(9, 0, rect) && CheckRot(plot_parts[4][0], plot_parts[9][0], 1)) {
+            parts_info->request[4] = 1;
+        }
+    }
+    if (plot_parts[5][0] != NULL && plot_parts[10][0] != NULL) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectDirParts(&rect, plot_parts[5][0], 2, 14);
+        if (CheckPartsRect(10, 0, rect) && CheckRot(plot_parts[5][0], plot_parts[10][0], 0)) {
+            parts_info->request[5] = 1;
+        }
+    }
+    if (plot_parts[6][0] != NULL && plot_parts[8][0] != NULL) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectDirParts(&rect, plot_parts[6][0], 2, 14);
+        if (CheckPartsRect(8, 0, rect) && CheckRot(plot_parts[6][0], plot_parts[8][0], 0) &&
+            plot_parts[6][0]->GetRotY() == 1) {
+            parts_info->request[6] = 1;
+        }
+    }
+    if (plot_parts[7][0] != NULL && plot_parts[8][0] != NULL) {
+        CRect_i_ rect;
+        rect.x = rect.y = rect.width = rect.height = 0;
+        GetRectDirParts(&rect, plot_parts[7][0], 2, 14);
+        if (CheckPartsRect(8, 0, rect) && CheckRot(plot_parts[7][0], plot_parts[8][0], 2)) {
+            parts_info->request[7] = 1;
+        }
+    }
+    if (plot_parts[10][0] != NULL) {
+        if (CheckPartsRect(10, 0, CRect_i_(2, 0, 3, 14)) && plot_parts[10][0]->GetRotY() == 0) {
+            parts_info->request[10] = 1;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/editground", YellowRequest__11CEditGroundFPA64_P9CMapParts);
 INCLUDE_RODATA("asm/nonmatchings/editground", @2120);
