@@ -504,7 +504,18 @@ int CMemoryCardAccess::GetAllSaveFileInfo() {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", CheckFileNo__17CMemoryCardAccessFi);
+int CMemoryCardAccess::CheckFileNo(int file_no) {
+    char name[0x20];
+
+    if (file_no < 0) {
+        return 0;
+    }
+    strcpy(name, this->file_name);
+    strcat(name, "%d");
+    sprintf(name, name, file_no);
+    return GetOpenAttribute(name);
+}
+
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SaveToMc__17CMemoryCardAccessFi);
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", LoadFromMc__17CMemoryCardAccessFi);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1090__2);
