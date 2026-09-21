@@ -514,7 +514,44 @@ int DrawMenuNumber(int number, int x, int y, CTexture *texture, RECT rect, int o
     return DrawMenuNumber(number, x, y, rect, texture, overlap, 0, 0x1C0, flag);
 }
 
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuNumber__Fiii4RECTP8CTextureiUcUcUci);
+int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int overlap, unsigned char r,
+                   unsigned char g, unsigned char b, int flag) {
+    int digits;
+    int digit;
+    int width;
+    int src_x;
+    int dest_y;
+    int dest_height;
+    int clip_y;
+    int src_y;
+    int height;
+
+    if (texture == NULL) {
+        return 0;
+    }
+    for (digits = GetNumberKeta(number); 0 < digits; digits--) {
+        clip_y = y;
+        digit = number % 10;
+        width = rect.width;
+        x -= width - overlap;
+        src_x = rect.x + width * digit;
+        src_y = rect.y;
+        height = rect.height;
+        MenuTextureClip(clip_y, src_y, height, 0, 0x1C0);
+        CRect_i_ dest;
+        CRect_i_ src(src_x, src_y, width, height);
+        dest_height = height - 1;
+        dest_y = clip_y;
+        dest.x = x;
+        dest.y = dest_y;
+        dest.width = width;
+        dest.height = dest_height;
+        DrawMenu2DSprite(texture, dest, src, r, g, b, flag);
+        number /= 10;
+    }
+    return x;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuNumber__Fiii4RECTP8CTextureiiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", GetMsgLengthMenu__FP6ClsMesi);
 /**
