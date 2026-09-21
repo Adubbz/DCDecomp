@@ -248,15 +248,13 @@ int _STATUS_SET_FALL(RS_STACKDATA *stack, int argc) {
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_MUTEKI__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_ALPHA__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_CHK_ALPHA__FP12RS_STACKDATAi);
-#ifdef NON_MATCHING
 int _STATUS_SET_DEAD(RS_STACKDATA *stack, int argc) {
-    NowMonstorUnit->monster[NowMonstorUnit->unk_090].state = -1;
+    int monster_no = NowMonstorUnit->unk_090;
+
+    NowMonstorUnit->monster[monster_no].state = -1;
     NowMonstorUnit->unk_04C--;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_DEAD__FP12RS_STACKDATAi);
-#endif
 int _STATUS_SET_EVENT(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->unk_094 = GetStackInt(stack);
     return 1;
