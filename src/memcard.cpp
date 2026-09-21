@@ -99,9 +99,6 @@ s32 CursorVibeCnt;
 /** The chip group that the board's sort ranks first. */
 extern int tip_sort_type;
 
-/** The configuration words that the option screen edits. */
-extern s32 *OpConfigPt;
-
 /** The save menu's steps, by SAVE_MENU_STATE::key_no. */
 extern int (*SaveMenuFunc[26])();
 
@@ -1020,6 +1017,15 @@ static void AtoraTipRelationDraw(int x, int y, EDITPARTS_INFO *info, int slot, i
         }
     }
 }
+
+/** Frame counter that DrawAtora's part plates animate with. */
+int AtoraHeyCnt;
+
+/** Frame counter that DrawAtora's completion sprites animate with. */
+int CompMsgCt;
+
+/** The configuration words that the option screen edits. */
+s32 *OpConfigPt;
 
 static void AtoraBoardEnableMovePos(int parts_no, int *enable) {
     EDITPARTS_INFO *info;
