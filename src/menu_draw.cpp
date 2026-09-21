@@ -327,8 +327,22 @@ void AllFillBoxForMenu(unsigned char r, unsigned char g, unsigned char b, unsign
 void AllFadeForMenu(int alpha) {
     AllFillBoxForMenu(0, 0, 0, (unsigned char) alpha);
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", FrameImageDraw__Fii);
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @764__3);
+
+void FrameImageDraw(int brightness, int alpha) {
+    sceGsTexa texa;
+    CTexture *texture = TexManager.GetTexture("frame_image", -1);
+
+    if (texture != NULL) {
+        TexManager.ReloadTexture(GetVif1Packet(), texture->block);
+        ((sceGsTex0 *) &texture->tex0)->bits.tcc = 0;
+        texa = mgTexa;
+        texa.AEM = 1;
+        texa.TA0 = 0x80;
+        MGSetGsTEXA(&texa);
+        set2DSprite(GetVif1Packet(), texture, MenuDispRc, MenuDispRc, brightness, brightness, brightness, alpha);
+        MGSetGsTEXA(NULL);
+    }
+}
 
 void DrawMenuColorGradation(CRect_i_ &rect, spRGBA *top_left, spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right) {
     set2DSpriteC4(GetVif1Packet(), rect, top_left, top_right, bottom_left, bottom_right);
