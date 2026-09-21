@@ -633,7 +633,32 @@ int CompItem1(int first_item_no, int second_item_no) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", SeitonShopItemBoardSub__FP9ITEM_PACK);
+int SeitonShopItemBoardSub(ITEM_PACK *pack) {
+    int sort_type = sort_top_type;
+    int first_slot;
+    int second_slot;
+    int moved;
+
+    for (first_slot = 0; first_slot < 9; first_slot++) {
+        sort_table[sort_type] = first_slot;
+        sort_type++;
+        if (sort_type >= 9) {
+            sort_type = 0;
+        }
+    }
+    sort_table[0] = 9;
+    moved = false;
+    for (first_slot = 0; first_slot < pack->num - 1; first_slot++) {
+        for (second_slot = first_slot + 1; second_slot < pack->num; second_slot++) {
+            if (CompItem1(pack->item[first_slot], pack->item[second_slot]) > 0) {
+                SwapItem(pack, first_slot, second_slot);
+                MenuDataSwap(&ItemBoardInfo[first_slot], &ItemBoardInfo[second_slot]);
+                moved = true;
+            }
+        }
+    }
+    return moved;
+}
 
 /**
  * Sorts the item board, trying each ordering until one changes it.
