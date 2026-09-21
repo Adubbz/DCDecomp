@@ -975,7 +975,23 @@ int SndSoundSyncBG() {
     load_snd_adr = 0;
     return 0;
 }
-INCLUDE_ASM("asm/nonmatchings/snd", SndSePlay__Fiii);
+void SndSePlay(int se_no, int vol, int voice) {
+    SND_SE_INFO *info = GetSeInfo(se_no);
+
+    if (info != 0) {
+        if (info->vol_no < 0) {
+            vol = 127;
+        }
+        int port = GetPortNo(se_no);
+        static int system_snd_id = (int) 0.0f;
+
+        if (vol < 0) {
+            CSnd.SE_Play(port, info->vol_no, voice);
+        } else {
+            CSnd.SE_Play(port, info->bank, info->prog, vol, voice);
+        }
+    }
+}
 void SndSePlay(int se_no, float volume, float pan, int voice) {
     SND_SE_INFO *info = GetSeInfo(se_no);
 

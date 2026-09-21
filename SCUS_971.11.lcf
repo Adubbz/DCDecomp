@@ -654,6 +654,9 @@ SECTIONS
 		clsmes.cpp.o (.sbss)
 		gameutil.cpp.o (.sbss)         // 0x002a25a8
 		main.sbss.part4b.s.o (.sbss)   // 0x002a25b8
+		snd.cpp.o (.sbss)              // 0x002a264c, SndSePlay's statics
+		. = ALIGN(4);
+		main.sbss.snd-tail.s.o (.sbss) // 0x002a2654
 		editarea.cpp.o (.sbss)         // 0x002a2728
 		. = ALIGN(4);
 		main.sbss.part4h.s.o (.sbss)   // 0x002a2730
