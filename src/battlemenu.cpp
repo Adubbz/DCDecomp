@@ -226,7 +226,9 @@ extern CFrame *MapMoveCursor;
  */
 extern CWeaponLevelUp MenuWepLevelUp;
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", GetDefaultWeaponNo__Fi);
+int GetDefaultWeaponNo(int character_no) {
+    return MenuDefaultWeaponNo[character_no];
+}
 
 int IsDefaultWeapon(int weapon_no) {
     int owner = -1;
