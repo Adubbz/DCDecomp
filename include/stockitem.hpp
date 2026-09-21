@@ -27,13 +27,12 @@ enum SearchSpace {
  * Stores dungeon items, weapons, and attachments.
  */
 class CStockItem {
-private:
+public:
     s16 dungeon_items[60];       /**< Contains the dungeon-item identifiers. */
     s16 dungeon_item_vols[60];   /**< Contains the volume for each dungeon-item slot. */
     WEAPON_HAVE weapons[30];     /**< Contains the weapon data. */
     ATTACH_LIST attachments[30]; /**< Contains the attachment data. */
 
-public:
     /**
      * Sets all stock inventory slots to zero.
      *
