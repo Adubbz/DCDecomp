@@ -323,7 +323,6 @@ void SetClut(sceVif1Packet *packet, CTexture *texture, i *clut);
  * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_Uc
  * @address 0x15C310
  * @size 0x318
- * @unknownret
  */
 void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
                  const CRect_i_ &texel, unsigned char alpha);
