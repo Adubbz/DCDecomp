@@ -268,7 +268,12 @@ int SaveMenuKeySaveDecideEnding(void) {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeySaveEnding__Fv);
+
+int SaveMenuKeySaveEnding(void) {
+    SaveMenu.key_no = 0x19;
+    McAccess.SetFuncNo(0xE);
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyEndSaveEnding__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", GetSaveMenuMsgNo__Fv);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3066);
