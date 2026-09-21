@@ -686,16 +686,11 @@ int _RESET_ITEM_TRAP(RS_STACKDATA *stack, int count) {
 
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _BOM_SET__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_STATUS_ERR__FP12RS_STACKDATAi);
-#ifdef NON_MATCHING
-#include "shop.hpp"
-
 int _CHECK_MARDAN(RS_STACKDATA *stack, int count) {
-    SetStack(stack, GetMardanGareyanFlag());
+    SetStack__FP12RS_STACKDATAi__2(stack, SaveData->GetMardanGareyanFlag());
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _CHECK_MARDAN__FP12RS_STACKDATAi);
-#endif
+
 #ifdef NON_MATCHING
 int _NO_RESET_CHARA_NO(RS_STACKDATA *stack, int count) {
     *(s32 *) BtEventInfo.unk_B0 = 1;
