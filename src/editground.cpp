@@ -5,7 +5,9 @@
 
 #include "editarea.hpp"
 #include "editpartsinfo.hpp"
+#include "frame.hpp"
 #include "mapparts.hpp"
+#include "mglib.hpp"
 #include "rect.hpp"
 #include "savedata.hpp"
 #include "vector3.hpp"
@@ -341,7 +343,66 @@ static int CheckDelete(CEditArea *area, CMapParts *parts, float x, float y, floa
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/editground", Draw__12CPartsCursorFPfii);
+void CPartsCursor::Draw(float *position, int width, int height) {
+    sceVu0FVECTOR cell;
+    sceVu0FVECTOR corner;
+    int i;
+    int j;
+    int columns = width * 2;
+    int rows = height * 2;
+
+    sceVu0CopyVector(corner, position);
+    corner[0] -= 0.5f * (unit_size * width);
+    corner[2] -= 0.5f * (unit_size * height);
+    corner[0] += 0.25f * unit_size;
+    corner[2] += 0.25f * unit_size;
+    sceVu0CopyVector(cell, corner);
+    for (i = 0; i < columns; i++) {
+        cell[2] = corner[2];
+        for (j = 0; j < rows; j++) {
+            int piece = 2;
+            int turn = 0;
+            if (i == 0 && j == 0) {
+                piece = 0;
+            }
+            if (i > 0 && i < columns - 1 && j == 0) {
+                piece = 1;
+                turn = 2;
+            }
+            if (i == columns - 1 && j == 0) {
+                piece = 0;
+                turn = -1;
+            }
+            if (i == columns - 1 && j > 0 && j < rows - 1) {
+                piece = 1;
+                turn = 1;
+            }
+            if (i == columns - 1 && j == rows - 1) {
+                piece = 0;
+                turn = 2;
+            }
+            if (i > 0 && i < columns - 1 && j == rows - 1) {
+                piece = 1;
+                turn = 0;
+            }
+            if (i == 0 && j == rows - 1) {
+                piece = 0;
+                turn = 1;
+            }
+            if (i == 0 && j > 0 && j < rows - 1) {
+                piece = 1;
+                turn = -1;
+            }
+            pieces[piece]->SetPosition(cell);
+            pieces[piece]->SetRotation(0.0f, 1.5707964f * turn, 0.0f);
+            float scale = unit_size / 100.0f;
+            pieces[piece]->SetScale(scale, scale, scale);
+            MGDraw(pieces[piece]);
+            cell[2] += 0.5f * unit_size;
+        }
+        cell[0] += 0.5f * unit_size;
+    }
+}
 
 void CEditGround::RequestCheck() {
     CMapParts *plot_parts[24][64];

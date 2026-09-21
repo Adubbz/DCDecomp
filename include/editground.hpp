@@ -538,8 +538,15 @@ public:
 
 STATIC_ASSERT(sizeof(CEditGround) == 0x20960);
 
+/**
+ * Draws the placement cursor out of corner, edge and centre pieces.
+ */
 class CPartsCursor {
 public:
+    u8 unk_00[4];
+    float unit_size;   /**< Width of one grid cell. */
+    CFrame *pieces[3]; /**< Corner, edge and centre pieces of the cursor. */
+
     /**
      * Draws the placement cursor over a run of cells.
      *
@@ -547,5 +554,5 @@ public:
      * @address 0x1A5CB0
      * @size 0x328
      */
-    void Draw(float *, int, int);
+    void Draw(float *position, int width, int height);
 };
