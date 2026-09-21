@@ -1,6 +1,7 @@
 #include "editground.hpp"
 
 #include "editarea.hpp"
+#include "editpartsinfo.hpp"
 #include "mapparts.hpp"
 #include "vector3.hpp"
 
@@ -186,7 +187,52 @@ int CEditGround::PickUpEditAreaPoly(CCPoly *polygons, float x, float y, float z)
 }
 
 INCLUDE_ASM("asm/nonmatchings/editground", PickUpCameraPoly__11CEditGroundFP6CCPolyR7CBoxVu0i);
-INCLUDE_ASM("asm/nonmatchings/editground", Clear__11CEditGroundFv);
+
+void CEditGround::Clear() {
+    int i;
+
+    for (i = 0; i < 128; i++) {
+        parts[i].Initialize();
+    }
+    for (i = 0; i < 4; i++) {
+        if (areas[i] != NULL) {
+            areas[i]->Clear();
+        }
+        unk_00014[i] = 1;
+    }
+    effect_count = -1;
+    effect_parts_id = -1;
+    effect_alt = 0.0f;
+    effect_target_alt = 0.0f;
+    effect_step = 0.0f;
+    if (parts_info != NULL) {
+        parts_info->Clear();
+    }
+    if (unk_00000 == 1) {
+        CVector3_f_ position;
+        EDITPARTS_INFO *info = parts_info->GetPartsInfo(16);
+        int saved = info->unk_08;
+
+        info->unk_18 += 6;
+        info->unk_08 = 0;
+        areas[0]->GetPos(&position, 5, 0, 0);
+        SetMapParts(16, position.x, position.y, position.z, 0);
+        areas[0]->GetPos(&position, 2, 0, 7);
+        SetMapParts(16, position.x, position.y, position.z, 0);
+        areas[1]->GetPos(&position, 3, 0, 5);
+        SetMapParts(16, position.x, position.y, position.z, 0);
+        areas[1]->GetPos(&position, 11, 0, 3);
+        SetMapParts(16, position.x, position.y, position.z, 0);
+        areas[2]->GetPos(&position, 4, 0, 0);
+        SetMapParts(16, position.x, position.y, position.z, 0);
+        areas[2]->GetPos(&position, 3, 0, 7);
+        SetMapParts(16, position.x, position.y, position.z, 0);
+        info->unk_0C = 0;
+        info->unk_18 -= 6;
+        info->unk_08 = saved;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", Initialize__11CEditGroundFv);
 INCLUDE_ASM("asm/nonmatchings/editground", RemakeGrid__11CEditGroundFv);
 INCLUDE_ASM("asm/nonmatchings/editground", __ct__11CEditGroundFv);
