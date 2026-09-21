@@ -379,7 +379,14 @@ int _GET_SCRIPT_ID(RS_STACKDATA *stack, int argc) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_MONSTOR_POS__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_MONSTOR_FRM__FP12RS_STACKDATAi);
+int _GET_MONSTOR_FRM(RS_STACKDATA *stack, int argc) {
+    int monster_no = GetStackInt(stack++);
+
+    float frame = NowMonstorUnit->chara[monster_no][0].motion_type.state.time;
+
+    SetStack(stack, frame);
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MONSTOR_POS__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MONSTOR_MOVE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MONSTOR_LINK_MOVE__FP12RS_STACKDATAi);
