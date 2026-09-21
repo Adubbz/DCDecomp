@@ -23,11 +23,7 @@
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
-
-// CUserStatus and CStockItem are only dereferenced by the drafts that need
-// their full class definitions; those include the owning header themselves.
-class CUserStatus;
-class CStockItem;
+#include "userstatus.hpp"
 
 /**
  * Shop UI bookkeeping shared by the charge shop and item shop screens: their
@@ -48,12 +44,13 @@ struct ShopMenuWork {
     u8 unk_20[0x144];
     s32 unk_164;
     s32 unk_168;
-    s32 unk_16C;
-    u8 unk_170[4];
+    float unk_16C;
+    float unk_170;
     s16 unk_174;
-    s16 unk_176;
-    s32 unk_178;
-    s32 unk_17C;
+    u8 unk_176;
+    u8 unk_177;
+    float unk_178;
+    float unk_17C;
     s16 unk_180;
     s16 unk_182;
     s32 unk_184;
@@ -76,6 +73,9 @@ STATIC_ASSERT(sizeof(ShopMenuWork) == 0x1A8);
 
 /** Shared UI state for the charge shop and item shop screens. */
 extern ShopMenuWork ShopMenu;
+
+/** The icon being carried between the shop's board and the player's. */
+extern ShopIconMove ShopDataMove;
 
 /** Player status the shop currently open is reading and writing. */
 extern CUserStatus *ShopUserStatusPt;
@@ -121,6 +121,9 @@ extern float ShopHelpWinH;
 
 /** Width of the shop's help window. */
 extern float ShopHelpWinW;
+
+/** Number of goods on each charge shop's board. */
+extern s16 ChargeShopMax[3];
 
 /** Nonzero while the item shop is open, zero while the charge shop is open. */
 extern s16 ChargeOrShopFlag;
