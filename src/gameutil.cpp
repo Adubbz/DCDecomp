@@ -14,6 +14,7 @@
 #include <cmath>
 #include <cstdio>
 
+#include "dataalloc.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "mathutil.hpp"
@@ -175,7 +176,10 @@ INCLUDE_ASM("asm/nonmatchings/gameutil", CreateAnimeDataEX__FP14tagMOTION_TYPEP1
  * @address 0x149300
  * @size 0x98
  */
-INCLUDE_ASM("asm/nonmatchings/gameutil", AnimeDataInit__FP6CFrameP14tagMOTION_TYPEP14CDataAlloc2_1_PP12tagFRAME_INF);
+void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena, tagFRAME_INF **frame_info) {
+    *frame_info = (tagFRAME_INF *) arena->Alloc64((frame->GetFrameNum() + 10) * sizeof(tagFRAME_INF) / 16 + 1);
+    AnimeDataInit(frame, motion, arena, *frame_info);
+}
 /**
  * Builds the per-frame animation table into storage already set aside.
  *

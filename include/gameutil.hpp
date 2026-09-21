@@ -203,6 +203,17 @@ void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
                    tagFRAME_INF **frame_info);
 
 /**
+ * Builds the per-frame animation table into storage already set aside.
+ *
+ * @mangled AnimeDataInit__FP6CFrameP14tagMOTION_TYPEP14CDataAlloc2_1_P12tagFRAME_INF
+ * @address 0x1493A0
+ * @size 0x318
+ * @unknownret
+ */
+void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
+                   tagFRAME_INF *frame_info);
+
+/**
  * Applies one motion's frame to a model's frame hierarchy, and gives back the
  * next driver in the list.
  *
