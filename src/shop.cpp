@@ -177,13 +177,9 @@ static inline ShopUserItemBoardView *ShopUserItemBoard(CUserStatus *user_status)
     return (ShopUserItemBoardView *) ((char *) user_status + 0x436C);
 }
 
-#ifdef NON_MATCHING
 s16 *GetItemShopList(int shop_no) {
     return ItemShopList2[shop_no];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", GetItemShopList__Fi);
-#endif
 
 void InitShopItemListData(SHOP_ITEMLIST *item_list) {
     if (item_list != NULL) {
