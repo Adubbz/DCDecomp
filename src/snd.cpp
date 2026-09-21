@@ -769,7 +769,6 @@ static SND_SE_SEQ *GetSeSeq(int *found, int se_no, int voice) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqInit__Fv);
-#ifdef NON_MATCHING
 int SndSeSeqPlayStop(int se_no, int length, int voice) {
     int found;
     SND_SE_SEQ *slot = GetSeSeq(&found, se_no, voice);
@@ -788,9 +787,7 @@ int SndSeSeqPlayStop(int se_no, int length, int voice) {
     slot->voice = voice;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqPlayStop__Fiii);
-#endif
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqStep__Fv);
 /**
  * Stops every sound-effect sequence.
