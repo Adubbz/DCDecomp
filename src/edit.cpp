@@ -485,7 +485,6 @@ static void DrawLine(int *from, int *to, u_char r, u_char g, u_char b, u_char a)
     sceVif1PkCloseDirectCode(packet);
 }
 
-#ifdef NON_MATCHING
 void EdSetBgmVol(float time) {
     float scale = 1.0f;
 
@@ -513,9 +512,6 @@ void EdSetBgmVol(float time) {
         SndSetBgmVol(volume);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit", EdSetBgmVol__Ff);
-#endif
 #ifdef NON_MATCHING
 void EdAmbientPlay(float volume) {
     // The ambient sets run one behind the four times of day, and roll over.
@@ -1320,16 +1316,12 @@ void EdGetItemFile(int item_no, char *model_path, char *texture_path) {
  * @address 0x173380
  * @size 0x58
  */
-#ifdef NON_MATCHING
 void EdDrawItem(void) {
     if (EdEventInfo.item_frame[0] != NULL) {
         TexManager.ReloadTexture(GetVif1Packet(), 0x28);
         MGDraw((CFrame *) EdEventInfo.item_frame[0]);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit", EdDrawItem__Fv);
-#endif
 /* The map editor's own system and help messages, in front of the ones the town runs: every call
    here reaches the town's message code first and then does the same thing again to a window of the
    editor's own, so both are up at once and the editor's is the one drawn last.
@@ -1763,14 +1755,10 @@ void EdDrawOpenItemBox() {
  * @address 0x173E00
  * @size 0x70
  */
-#ifdef NON_MATCHING
 void EdSaveFrameImage(CTexture texture) {
     frame_image_flag = 1;
     frame_image_tex = texture;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit", EdSaveFrameImage__F8CTexture);
-#endif
 
 void EdSaveFrameImageTask() {
     if (frame_image_flag != 0) {
@@ -1792,7 +1780,6 @@ void EdSaveFrameImageInit() {
  * @address 0x173F00
  * @size 0x1EC
  */
-#ifdef NON_MATCHING
 int EdMenuLoop(ClsMes *message) {
     if (message == NULL) {
         return 1;
@@ -1854,9 +1841,6 @@ int EdMenuLoop(ClsMes *message) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit", EdMenuLoop__FP6ClsMes);
-#endif
 
 float ConvertTime(float hour) {
     hour -= 10.0f;
