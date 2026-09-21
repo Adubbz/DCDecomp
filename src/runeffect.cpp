@@ -89,7 +89,6 @@ void blendTextuer(sceVif1Packet *packet, int destination, int width, int format,
 #else
 INCLUDE_ASM("asm/nonmatchings/runeffect", blendTextuer__FP13sceVif1PacketiiiP8CTextureRC8CRect_i_RC8CRect_i_P8CTextureRC8CRect_i_RC8CRect_i_);
 #endif
-#ifdef NON_MATCHING
 /**
  * Fills the blend table with one period of a sine.
  *
@@ -100,12 +99,10 @@ INCLUDE_ASM("asm/nonmatchings/runeffect", blendTextuer__FP13sceVif1PacketiiiP8CT
 void initBlendCnt(int count, float scale) {
     for (int i = 0; i < count; i++) {
         float degrees = (360.0f / (float) count) * (float) i;
-        waveAnimeCnt[i] = sinf(3.1415927f * degrees / 180.0f) * scale;
+        float wave = sinf(3.1415927f * degrees / 180.0f);
+        waveAnimeCnt[i] = wave * scale;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runeffect", initBlendCnt__Fif);
-#endif
 #ifdef NON_MATCHING
 /**
  * Draws a blended texture clipped to a rectangle, at a given strength.
@@ -255,7 +252,6 @@ INCLUDE_ASM("asm/nonmatchings/runeffect", Draw__10CRunEffectFv);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/runeffect", @395__2);
 INCLUDE_RODATA("asm/nonmatchings/runeffect", @396);
-#ifdef NON_MATCHING
 /**
  * Starts one puff of run dust at a position.
  *
@@ -275,13 +271,10 @@ void CRunEffect::Set(float *origin) {
         position[slot][1] = origin[1];
         position[slot][2] = origin[2];
         position[slot][3] = 1.0f;
-        velocity_y[slot] = -0.1f;
+        velocity_y[slot] = 0.3f;
         life[slot] = 16;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runeffect", Set__10CRunEffectFPf);
-#endif
 /**
  * Advances the run dust by a frame.
  *
