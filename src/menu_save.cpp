@@ -274,7 +274,14 @@ int SaveMenuKeySaveEnding(void) {
     McAccess.SetFuncNo(0xE);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyEndSaveEnding__Fv);
+
+int SaveMenuKeyEndSaveEnding(void) {
+    if (GamePad.Down(0x40) != 0) {
+        SaveMenu.key_no = 3;
+        McAccess.SetFuncNo(1);
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_save", GetSaveMenuMsgNo__Fv);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3066);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3068);
