@@ -502,7 +502,13 @@ int _SET_MOTION_CHANGE_STEP(RS_STACKDATA *stack, int argc) {
     return 1;
 }
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_MONSTOR_VECTOR__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_LIFE__FP12RS_STACKDATAi);
+int _STATUS_SET_LIFE(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+    float rate = GetStackFloat(stack);
+
+    NowMonstorUnit->monster[monster_no].hp = (int) (NowMonstorUnit->monster[monster_no].max_hp * rate);
+    return 1;
+}
 int _SET_BIN2(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
 
