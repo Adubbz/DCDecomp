@@ -482,7 +482,11 @@ INCLUDE_ASM("asm/nonmatchings/memcard", MenuHelpWinDraw__FiiffiiiP8CTexture);
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuHelpWinDraw2__FiiffiiiP8CTexture);
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuHelpWinDraw__Fiiffi);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuWaku__FffiiiP8CTexturei);
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuNumber__FiiiP8CTexture4RECTii);
+
+int DrawMenuNumber(int x, int y, int number, CTexture *texture, RECT rect, int overlap, int flag) {
+    return DrawMenuNumber(x, y, number, rect, texture, overlap, 0, 0x1C0, flag);
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuNumber__Fiii4RECTP8CTextureiUcUcUci);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuNumber__Fiii4RECTP8CTextureiiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", GetMsgLengthMenu__FP6ClsMesi);
