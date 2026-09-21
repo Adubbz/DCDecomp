@@ -754,7 +754,15 @@ void SndBgmFadeIn(int frames, int volume, int start_volume) {
  * @address 0x159F10
  * @size 0x74
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeOut__Fii);
+void SndBgmFadeOut(int frames, int volume) {
+    if (frames > 0) {
+        bgm_fade_vol = volume;
+        now_bgm_fade_vol = (float) SndGetBgmVol();
+        bgm_fade = -1;
+        bgm_fade_step = ((float) bgm_fade_vol - now_bgm_fade_vol) / (float) frames;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeInOut__Fv);
 
 int SndCheckFade() {
