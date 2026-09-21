@@ -698,15 +698,6 @@ void SndSePlay(int se_no, float volume, float pan, int voice) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/snd", SndSePlay__FiPfff);
-#ifdef NON_MATCHING
-void SndSeStop(int se_no, int voice) {
-    SND_SE_INFO *info = GetSeInfo(se_no);
-
-    if (info != 0) {
-        CSnd.SE_Stop(GetPortNo(se_no), info->bank, info->prog, voice);
-    }
-}
-#else
 /**
  * Stops a sounding effect.
  *
@@ -714,8 +705,14 @@ void SndSeStop(int se_no, int voice) {
  * @address 0x15A8B0
  * @size 0x50
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSeStop__Fii);
-#endif
+void SndSeStop(int se_no, int voice) {
+    SND_SE_INFO *info = GetSeInfo(se_no);
+
+    if (info != 0) {
+        CSnd.SE_Stop(GetPortNo(se_no), info->bank, info->prog, voice);
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetSeVol__Fiii);
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetVolf__Fif);
 
