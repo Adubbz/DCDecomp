@@ -493,7 +493,28 @@ int _GET_NPC_OBJHDL(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_MOTION_OBJHDL__FP12RS_STACKDATAi);
+int _SET_MOTION_OBJHDL(RS_STACKDATA *stack, int count) {
+    int npc_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int motion_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int speed = -1;
+    int unk = 0;
+
+    if (count > 2) {
+        speed = GetStackFloat__FP12RS_STACKDATA__2(stack++);
+    }
+    if (count > 3) {
+        unk = GetStackInt__FP12RS_STACKDATA__2(stack);
+    }
+    if (NowDngMap->npc[npc_no].chara.frame == NULL) {
+        return 1;
+    }
+    if (count < 3) {
+        NowDngMap->NPCSetMotion(npc_no, motion_no);
+    } else {
+        NowDngMap->NPCSetMotion(npc_no, motion_no, speed, unk);
+    }
+    return 1;
+}
 
 int _SET_NPC_ON_OFF(RS_STACKDATA *stack, int count) {
     int npc_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
