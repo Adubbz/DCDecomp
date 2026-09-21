@@ -456,8 +456,64 @@ void CEditGround::DrawWater(int pass) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/editground", DrawRipple__11CEditGroundFi);
+void CEditGround::DrawRipple(int pass) {
+    sceVu0FVECTOR vector;
+    sceVu0FVECTOR position;
+    CMapParts *object = parts;
+    int i;
+
+    for (i = 0; i < 128; i++, object++) {
+        if (suppress_water) {
+            break;
+        }
+        if (object->unk_0E8 < 0) {
+            continue;
+        }
+        if (object->unk_104 == NULL) {
+            continue;
+        }
+        if (object->draw_on == 0) {
+            continue;
+        }
+        if (object->unk_0F4 >= 0 && unk_00014[object->unk_0F4] == 0) {
+            continue;
+        }
+        if (!(clip_plane[3] <= 0.0f)) {
+            object->GetPosition(position);
+            if (!(DistVector(position, clip_plane) <= clip_plane[3]) && !object->ChangeDigData()) {
+                continue;
+            }
+        }
+        if (object->unk_104 == NULL) {
+            continue;
+        }
+        object->GetPosition(vector);
+        object->unk_104->SetPosition(vector);
+        object->SetRotY(object->GetRotY());
+        object->GetRotation(vector);
+        object->unk_104->SetRotation(vector[0], vector[1], vector[2]);
+        MGDraw(object->unk_104);
+    }
+    for (int j = 0; j < 64; j++) {
+        if (fixed_parts[j].unk_0E4 != pass) {
+            continue;
+        }
+        if (fixed_parts[j].unk_104 == NULL) {
+            continue;
+        }
+        if (fixed_parts[j].draw_on == 0) {
+            continue;
+        }
+        fixed_parts[j].GetPosition(vector);
+        fixed_parts[j].unk_104->SetPosition(vector);
+        fixed_parts[j].GetRotation(vector);
+        fixed_parts[j].unk_104->SetRotation(vector[0], vector[1], vector[2]);
+        MGDraw(fixed_parts[j].unk_104);
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", DrawShadow__11CEditGroundFiff);
+
 INCLUDE_ASM("asm/nonmatchings/editground", DrawPartsCursor__11CEditGroundFiPfPfiPfi);
 INCLUDE_RODATA("asm/nonmatchings/editground", @1207);
 
