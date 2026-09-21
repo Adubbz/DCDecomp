@@ -1179,6 +1179,26 @@
   "src/menu_draw.cpp": {
     "symbols": {
       "SeitonAttachBoardSub__FP11ATTACH_LIST": "SeitonAttachBoardSub__FP11ATTACH_LIST__2"
+    },
+    "rodata_exports": [
+      "@597__3",
+      "@611__3",
+      "@612__3",
+      "@613__2",
+      "@614__3",
+      "@615__3",
+      "@617__3"
+    ],
+    "sections": {
+      ".mdrawdata1": [
+        "@597__3",
+        "@611__3",
+        "@612__3",
+        "@613__2",
+        "@614__3",
+        "@615__3",
+        "@617__3"
+      ]
     }
   }
 }

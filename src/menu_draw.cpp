@@ -66,6 +66,9 @@ extern CTexture *PerBoardTex;
 /** Texture block the item menu's weapon icons load into. */
 extern int ItemMenuWeaponIconReadBlock;
 
+/** Camera the menu draws 3D models under. */
+extern CCamera MenuCamera;
+
 /**
  * Draws the mark over an item that cannot be set.
  *
@@ -185,14 +188,13 @@ int GetAtoraMaxVillage(void) {
     }
     return max_village;
 }
-#ifdef NON_MATCHING
 int GetNowMapTransAtraMap(int mapNo) {
+    int village = 0;
     s16 mapToVillage[35] = {
         1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 4, 3, 4, 5, 5,
         5, 3, 1, 4, 4, 4, 4, 1, 3, 2, 3, 4, 5, 2, 5,
         4, 3, 2, 2, 2,
     };
-    int village = 0;
 
     if (mapNo < 5) {
         village = mapNo;
@@ -208,9 +210,6 @@ int GetNowMapTransAtraMap(int mapNo) {
 
     return village;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowMapTransAtraMap__Fi);
-#endif
 void MenuWorldTrans(CCamera *camera) {
     sceVu0FMATRIX cameraMatrix;
     sceVu0FVECTOR eyePos;
@@ -225,15 +224,13 @@ void MenuWorldTrans(CCamera *camera) {
     sceVu0MulMatrix(viewMatrix, unitMatrix, cameraMatrix);
     MGSetViewMatrix(viewMatrix, eyePos);
 }
-#ifdef NON_MATCHING
-#include <libvu0.h>
-
-/** Camera the menu draws 3D models under. */
-extern CCamera MenuCamera;
-
 void MenuPolygonDraw(int distance, void (*draw)(void)) {
     float refPos[4] = {0.0f, 0.0f, -45.0f, 1.0f};
     float eyePos[4] = {0.0f, 0.0f, 60.0f, 1.0f};
+
+    MenuCamera.SetRef(refPos);
+    MenuCamera.SetPos(eyePos);
+
     float lightDir[4][4] = {
         {0.3f, 0.0f, 0.0f, 0.0f},
         {0.3f, 0.0f, 0.0f, 0.0f},
@@ -246,18 +243,19 @@ void MenuPolygonDraw(int distance, void (*draw)(void)) {
         {0.0f, 0.0f, 0.0f, 0.0f},
         {0.0f, 0.0f, 0.0f, 0.0f},
     };
+    float savedAmbient[4];
+    float ambient[4];
     float savedLightDir[4][4];
     float savedLightColour[4][4];
-    float savedAmbient[4];
-    float ambient[4] = {80.0f, 80.0f, 80.0f, 0.0f};
+
+    MGGetPLight(savedLightDir, savedLightColour);
+    MGGetAmbient(savedAmbient);
+    ambient[0] = ambient[1] = ambient[2] = 80.0f;
+    ambient[3] = (float) distance;
+
     float lightVector[4] = {0.3f, 1.0f, 0.3f, 0.0f};
     float lightNormal[4];
 
-    MenuCamera.SetRef(refPos);
-    MenuCamera.SetPos(eyePos);
-    MGGetPLight(savedLightDir, savedLightColour);
-    MGGetAmbient(savedAmbient);
-    ambient[3] = (float) distance;
     sceVu0Normalize(lightNormal, lightVector);
     lightDir[0][0] = lightNormal[0];
     lightDir[1][0] = lightNormal[1];
@@ -268,23 +266,16 @@ void MenuPolygonDraw(int distance, void (*draw)(void)) {
     MGSetPLight(savedLightDir, savedLightColour);
     MGSetAmbient(savedAmbient);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuPolygonDraw__FiPFv_v);
-#endif
-#ifdef NON_MATCHING
 void Get3DPosTo2DPos(CFrame *frame, int *screen) {
-    float origin[4] = {0.0f, 0.0f, 0.0f, 1.0f};
     float world[4];
-    int screenPos[2];
+    float origin[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+    int screenPos[4];
 
     frame->GetWorldPosition(world, origin);
     MGRotTransPers2D(screenPos, world, 0);
     screen[0] = screenPos[0];
     screen[1] = screenPos[1];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", Get3DPosTo2DPos__FP6CFramePi);
-#endif
 #ifdef NON_MATCHING
 int GetMenuCommonFontW(int style, int fontSize) {
     u8 fontWidths[7] = {16, 11, 11, 11, 11, 11, 11};
