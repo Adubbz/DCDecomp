@@ -289,7 +289,38 @@ int _SET_OBJHDL_ROT(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_OBJHDL_DRAW_FLAG__FP12RS_STACKDATAi);
+int _SET_OBJHDL_DRAW_FLAG(RS_STACKDATA *stack, int count) {
+    int index = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int draw = GetStackInt__FP12RS_STACKDATA__2(stack);
+    BT_OBJ_HANDLE *handle = GetObjHDL(index);
+
+    if (handle->type == 0) {
+        CFrame *frame = handle->frame;
+        if (frame != NULL) {
+            int draw_on = 2;
+            if (draw) {
+                draw_on = 1;
+            }
+            frame->attr.draw_on = draw_on;
+            frame->flags = draw_on;
+        }
+    }
+    if (handle->type == 1) {
+        CCharacter *chara = handle->character;
+        if (chara != NULL) {
+            CFrame *frame = chara->frame;
+            if (frame != NULL) {
+                int draw_on = 2;
+                if (draw) {
+                    draw_on = 1;
+                }
+                frame->attr.draw_on = draw_on;
+            }
+        }
+    }
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_OBJHDL_POS__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_OBJHDL_ROT__FP12RS_STACKDATAi);
 
