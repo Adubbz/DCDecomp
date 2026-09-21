@@ -209,6 +209,15 @@ extern char snd_cfg_file[32];
 /** The voice set's configuration file name. */
 extern char voice_cfg_file[32];
 
+/** The special-effect set that is loading in the background, or -1 for none. */
+extern int load_sp_no;
+
+/** The buffer the loading special-effect set reads into. */
+extern unsigned int *load_sp_adr;
+
+/** The special-effect set's configuration file name. */
+extern char sp_cfg_file[32];
+
 /** Where the camera the sound pans against stands. */
 extern sceVu0FVECTOR camera_pos;
 
@@ -1315,7 +1324,20 @@ int SndSPSeLoad(int set_no) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoadBG__FiPUiPi);
+int SndSPSeLoadBG(int set_no, u_int *buffer, int *size) {
+    char archive_name[128];
+
+    if (size != 0) {
+        *size = 0;
+    }
+    GetSPSeFile(set_no, archive_name, sp_cfg_file);
+    if (LoadFileBG(archive_name, (u_long128 *) buffer, size)) {
+        load_sp_no = set_no;
+        load_sp_adr = buffer;
+        return 1;
+    }
+    return 0;
+}
 /**
  * Polls the special-effect set load and hands the file to the driver once it lands.
  *
