@@ -829,7 +829,21 @@ static void SetShopTalkMsgPos() {
 
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopGetPacFileName__FiiPc);
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopGetImgFileName__FiiPc);
-INCLUDE_ASM("asm/nonmatchings/shop", ItemShopMemoryAlloc__Fv);
+
+void ItemShopMemoryAlloc() {
+    ShopBoardInfo = (s32 *) ShopCashBuffer.Alloc(0x78);
+    ItemBoardInfo = (s32 *) ShopCashBuffer.Alloc(0x190);
+    WeaponBoardInfo = (s32(*)[10]) ShopCashBuffer.Alloc(0xF0);
+    AttachBoardInfo = (s32 *) ShopCashBuffer.Alloc(0xA0);
+    memset(ShopBoardInfo, 0, 0x78);
+    memset(ItemBoardInfo, 0, 0x190);
+    memset(WeaponBoardInfo, 0, 0xF0);
+    memset(AttachBoardInfo, 0, 0xA0);
+    ShopListPt = (SHOP_ITEMLIST *) ShopCashBuffer.Alloc(0x1D88);
+    memset(ShopListPt, 0, 0x1D88);
+    ShopWorkBuf = (SHOP_ITEMLIST *) ShopCashBuffer.Alloc(0x1D88);
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", ItemPosInfoInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopGoodInitialize__Fi);
 INCLUDE_ASM("asm/nonmatchings/shop", InitItemShop2__FPiii);
