@@ -895,7 +895,13 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoadBG__FiPUiPi);
  * @size 0x80
  */
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeSyncBG__Fv);
-#ifdef NON_MATCHING
+/**
+ * Plays one special sound effect.
+ *
+ * @mangled SndSPSePlay__Fii
+ * @address 0x15B880
+ * @size 0x7C
+ */
 void SndSPSePlay(int se_no, int vol) {
     SND_SE_INFO *info = GetSPInfo(se_no);
 
@@ -910,16 +916,6 @@ void SndSPSePlay(int se_no, int vol) {
         }
     }
 }
-#else
-/**
- * Plays one special sound effect.
- *
- * @mangled SndSPSePlay__Fii
- * @address 0x15B880
- * @size 0x7C
- */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSPSePlay__Fii);
-#endif
 void SndSPSeStop(int se_no) {
     SND_SE_INFO *info = GetSPInfo(se_no);
 
