@@ -1001,7 +1001,43 @@ static void FishImageIconDraw(int x, int y, int width, int mode) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/shop", FishExchangeItemDraw__Fiii);
-INCLUDE_ASM("asm/nonmatchings/shop", FishingExchangeDraw__Fv);
+
+void FishingExchangeDraw() {
+    int frame_alpha;
+    int alpha;
+
+    setbilinear(0);
+    frame_alpha = 0x40;
+    alpha = 0x80;
+    switch (FishMenu.fade_mode) {
+        case 0:
+            frame_alpha = alpha - FishMenu.fade_count * 2;
+            alpha = FishMenu.fade_count * 4;
+            break;
+        case 1:
+            frame_alpha = FishMenu.fade_count * 2 + 0x40;
+            alpha = alpha - FishMenu.fade_count * 4;
+            break;
+    }
+    if (frame_alpha > 0x80) {
+        frame_alpha = 0x80;
+    }
+    if (frame_alpha < 0x40) {
+        frame_alpha = 0x40;
+    }
+    if (alpha > 0x80) {
+        alpha = 0x80;
+    }
+    if (alpha < 0) {
+        alpha = 0;
+    }
+    FrameImageDraw(frame_alpha, 0x80);
+    if (FishMenu.ready != 0) {
+        FishImageIconDraw(0x50, 0x32, 0xF0, alpha);
+        FishExchangeItemDraw(0x9C, 0x6A, alpha);
+        setbilinear(1);
+    }
+}
 
 void ExitFishingExchange() {
     CommonMenuMes1.auto_pos = -1;
