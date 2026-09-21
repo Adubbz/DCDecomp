@@ -48,6 +48,16 @@ public:
 STATIC_ASSERT(sizeof(CGroundWater) == 0x3B0);
 
 /**
+ * Starts a saved ground: the placed parts follow it as SV_GRD_PART records.
+ */
+struct GROUND_SAVE_HEADER {
+    s16 count;  /**< Number of records before the terminating one. */
+    s16 size;   /**< Bytes from the header to the end of the terminating record. */
+    s16 offset; /**< Bytes from the header to the first record. */
+    s16 unk_06;
+};
+
+/**
  * Holds the editable areas of a Georama map and every part placed on them.
  */
 class CEditGround {
@@ -353,7 +363,7 @@ public:
      * @address 0x1A4780
      * @size 0x188
      */
-    void Save(char *buffer);
+    void Save(char *path);
 
     /**
      * Reads placed parts back out of a buffer, clearing the ground first.

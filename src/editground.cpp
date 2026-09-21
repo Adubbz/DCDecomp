@@ -4,6 +4,7 @@
 #include <cstring>
 
 #include "camerafollow.hpp"
+#include "dataread.hpp"
 #include "editarea.hpp"
 #include "editpartsinfo.hpp"
 #include "frame.hpp"
@@ -293,8 +294,48 @@ void CEditGround::DrawEffect(CCameraFollow *camera, float time, CEffectGroup *ef
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/editground", Save__11CEditGroundFPc);
-INCLUDE_RODATA("asm/nonmatchings/editground", @1263);
+void CEditGround::Save(char *) {
+    char buffer[4000];
+    sceVu0FVECTOR position;
+    GROUND_SAVE_HEADER *header = (GROUND_SAVE_HEADER *) buffer;
+    SV_GRD_PART *record = (SV_GRD_PART *) (header + 1);
+
+    header->offset = sizeof(GROUND_SAVE_HEADER);
+    header->count = 0;
+    for (int i = 0; i < 128; i++) {
+        CMapParts *object = &parts[i];
+        int parts_id = parts[i].unk_0E8;
+        if (parts_id < 0) {
+            continue;
+        }
+        int j;
+        int kind = object->unk_118;
+        if (kind > 0) {
+            for (j = 0; j < 24; j++) {
+                if (kind == plot_parts[j].unk_118) {
+                    parts_id = plot_parts[j].unk_0E8;
+                    break;
+                }
+            }
+        }
+        object->GetPosition(position);
+        record->part_id = parts_id;
+        record->variant = object->rot_y;
+        record->pos_x = position[0];
+        record->pos_y = position[1];
+        record->pos_z = position[2];
+        record++;
+        header->count++;
+    }
+    record->part_id = -1;
+    record->variant = -1;
+    record->pos_x = 0.0f;
+    record->pos_y = 0.0f;
+    record->pos_z = 0.0f;
+    header->size = (char *) (record + 1) - buffer;
+    WriteFile("host0:y:/ps2/dc_data/gdata0.edt", buffer, header->size);
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", Load__11CEditGroundFPc);
 INCLUDE_RODATA("asm/nonmatchings/editground", @1325);
 INCLUDE_ASM("asm/nonmatchings/editground", Save__11CEditGroundFiP9CSaveData);
