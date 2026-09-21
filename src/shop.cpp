@@ -599,7 +599,40 @@ static void ExitItemShop2() {
 }
 
 INCLUDE_ASM("asm/nonmatchings/shop", ShopSpecialFunc__Fv);
-INCLUDE_ASM("asm/nonmatchings/shop", CompItem1__Fii);
+
+int CompItem1(int first_item_no, int second_item_no) {
+    ITEM_DATA *first = GetItemData(first_item_no);
+    ITEM_DATA *second = GetItemData(second_item_no);
+    int first_priority = 0;
+    int second_priority = 0;
+
+    if (first != NULL) {
+        first_priority = sort_table[first->sort_key];
+    }
+    if (second != NULL) {
+        second_priority = sort_table[second->sort_key];
+    }
+    if (first_item_no < ITEM_DUNGEON_START) {
+        first_priority = 9;
+    }
+    if (second_item_no < ITEM_DUNGEON_START) {
+        second_priority = 9;
+    }
+    if (second_priority < first_priority) {
+        return 1;
+    }
+    if (first_priority < second_priority) {
+        return -1;
+    }
+    if (second_item_no < first_item_no) {
+        return 1;
+    }
+    if (first_item_no < second_item_no) {
+        return -1;
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", SeitonShopItemBoardSub__FP9ITEM_PACK);
 
 /**

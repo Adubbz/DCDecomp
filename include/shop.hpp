@@ -332,7 +332,7 @@ void ShopSpecialFunc(void);
  * @address 0x1EBB50
  * @size 0x11C
  */
-void CompItem1(int, int);
+int CompItem1(int, int);
 
 /**
  * Sorts one shop item board into order and returns one when any entry moved.
