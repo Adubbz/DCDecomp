@@ -404,15 +404,6 @@ s32 GetWeaponNamePutX(int, int);
 void WeaponNameDraw(int, int, int);
 
 /**
- * Draws one weapon-status bar, filled to the value's share of its maximum.
- *
- * @mangled WepStatusVolumeDraw__F4RECTiPiiiii
- * @address 0x1F9C20
- * @size 0x220
- */
-void WepStatusVolumeDraw(RECT, int, int *, int, int, int, int);
-
-/**
  * Draws the gradient frame a weapon-status row sits in.
  *
  * @mangled DrawWeaponStatusWaku__Fiiii

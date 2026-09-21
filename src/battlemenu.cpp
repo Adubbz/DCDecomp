@@ -750,7 +750,41 @@ s32 GetWeaponNamePutX(s32 center_x, s32 width) {
 }
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponNameDraw__Fiii);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", WepStatusVolumeDraw__F4RECTiPiiiii);
+/**
+ * Draws one weapon-status bar, filled to the value's share of its maximum.
+ *
+ * @mangled WepStatusVolumeDraw__F4RECTiPiiiii
+ * @address 0x1F9C20
+ * @size 0x220
+ */
+static void WepStatusVolumeDraw(RECT rect, int width, int *value, int color, int alpha, int number_style, int show) {
+    int y = rect.y;
+    int fill = (float) (value[1] * width) / (float) value[0];
+    if (fill > width) {
+        fill = width;
+    }
+    GRADATION_COLOR_INFO2 gradation;
+    memcpy(&gradation, GetGradationColorInfo2(color), sizeof(gradation));
+    gradation.colors[3].a = alpha;
+    gradation.colors[2].a = alpha;
+    gradation.colors[1].a = alpha;
+    gradation.colors[0].a = alpha;
+    CRect_i_ bar(rect.x, y, fill, 8);
+    DrawMenuColorGradation(bar, &gradation.colors[0], &gradation.colors[1], &gradation.colors[2],
+                           &gradation.colors[3]);
+    fill = (float) (value[2] * width) / (float) value[0];
+    if (fill > width) {
+        fill = width;
+    }
+    int number_alpha = 1.5f * alpha;
+    if (number_style == 1 && show > 0) {
+        DrawMenuNumber(value[1], rect.x + rect.width, y + rect.height, WeaponVolumeNumberRect, WepStatus, 2,
+                       0xDC, 0, 0, alpha);
+    } else {
+        DrawMenuNumber(value[1], rect.x + rect.width, y + rect.height, WepStatus, WeaponVolumeNumberRect, 2,
+                       alpha);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponStatusWaku__Fiiii);
 
 /**
