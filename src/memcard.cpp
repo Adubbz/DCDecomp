@@ -55,6 +55,18 @@ extern int AtoraTextureReadBlock;
 /** The texture block that holds the board's town tags and names. */
 extern int AtoraTextureBaseBlock;
 
+/** The save menu's steps, by SAVE_MENU_STATE::key_no. */
+extern int (*SaveMenuFunc[26])();
+
+/**
+ * Loads the georama editor's state back from the save data.
+ *
+ * @mangled EditLoad__Fv
+ * @address 0x177C80
+ * @size 0xBC
+ */
+void EditLoad(void);
+
 /** Whether the board screen's texture block has finished loading. */
 extern int AtoraTextureEnterFlag;
 
@@ -1389,8 +1401,144 @@ static void ExitSaveSelect() {
     }
     CommonMenuMes2.cursor_lit = 0;
 }
-INCLUDE_ASM("asm/nonmatchings/memcard", MenuSaveKey__Fv);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @2597__2);
+int MenuSaveKey() {
+    int func_no;
+    int result;
+    int now_func_no;
+    int msg_no;
+    int value;
+    MC_ERROR_INFO *error;
+    MC_ERROR_INFO *last_error;
+
+    if (!SaveMenu.texture_ready) {
+        SaveMenu.texture_ready = SaveMenuTextureEnter();
+    }
+    func_no = McAccess.GetFuncNo();
+    result = McAccess.Step();
+    now_func_no = McAccess.GetFuncNo();
+    if (func_no == now_func_no) {
+        last_error = &McAccess.error;
+        switch (now_func_no) {
+            case 9:
+                if (result < 0) {
+                    SaveMenu.key_no = 14;
+                    SaveMenu.unk_20 = 7;
+                    McAccess.SetFuncNo(1);
+                }
+                break;
+            case 3:
+            case 5:
+                if (result < 0) {
+                    SaveMenu.key_no = 14;
+                    SaveMenu.unk_20 = 8;
+                    McAccess.SetFuncNo(1);
+                }
+                break;
+            case 6:
+                if (result < 0) {
+                    SaveMenu.key_no = 14;
+                    SaveMenu.unk_20 = 9;
+                    McAccess.SetFuncNo(1);
+                }
+                break;
+            case 2:
+                last_error->code = 0;
+            case 4:
+                if (result < 0) {
+                    SaveMenu.key_no = 14;
+                    SaveMenu.unk_20 = 6;
+                    McAccess.SetFuncNo(1);
+                    break;
+                }
+                switch (last_error->code) {
+                    case 0:
+                        break;
+                    case 1:
+                        SaveMenu.return_key_no = SaveMenu.key_no;
+                        SaveMenu.key_no = 19;
+                        McAccess.SetFuncNo(1);
+                        break;
+                    case 2:
+                    case 3:
+                        break;
+                    case 4:
+                        SaveMenu.key_no = 14;
+                        SaveMenu.unk_20 = 2;
+                        break;
+                }
+                break;
+        }
+    } else {
+        switch (func_no) {
+            case 4:
+                break;
+            case 6:
+                switch (SaveMenu.unk_0) {
+                    case 0:
+                        SaveMenu.key_no = 1;
+                        SaveMenu.loaded = 1;
+                        McAccess.DmySync();
+                        break;
+                    case 1:
+                        EditLoad();
+                        break;
+                    case 2:
+                        break;
+                }
+                break;
+            case 7:
+                error = &McAccess.error;
+                switch (error->code) {
+                    case 1:
+                        McAccess.SetFuncNo(4);
+                        McAccess.step = error->step;
+                        if (SaveMenu.return_key_no >= 0) {
+                            SaveMenu.key_no = SaveMenu.return_key_no;
+                        }
+                        if (McAccess.step > 49) {
+                            McAccess.step = 0;
+                        }
+                        error->code = 0;
+                        error->retry_count = 0;
+                        break;
+                    case 0:
+                        McAccess.SetFuncNo(4);
+                        break;
+                }
+                break;
+            case 5:
+                ComMenuSePlay(12);
+                McAccess.SetFuncNo(4);
+                break;
+        }
+    }
+    switch (McAccess.GetFuncNo()) {
+        case 1:
+            SaveMenuFunc[SaveMenu.key_no]();
+            break;
+    }
+    msg_no = GetSaveMenuMsgNo();
+    if (CommonMenuMes2.mes_made != msg_no) {
+        value = SaveMenu.file_no + 1;
+        switch (msg_no - 250) {
+            case 3:
+            case 6:
+            case 7:
+            case 17:
+            case 29:
+            case 30:
+                value = McAccess.port + 1;
+                break;
+        }
+        CommonMenuMes2.value = value;
+        if (msg_no == 299) {
+            CommonMenuMes2.value = McAccess.error.file_no;
+        }
+        printf("msgno = %d\n", msg_no);
+        CommonMenuMes2.MakeMesWin(msg_no);
+    }
+    return SaveMenu.result;
+}
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuSave__FPc);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2730);
 static int SaveMenuKeyFadeIn() {
