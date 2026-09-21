@@ -1086,7 +1086,9 @@
       "_GET_OBJ_POS__FP12RS_STACKDATAi__2"
     ],
     "rodata_exports": [
-      "@870"
+      "@870",
+      "@1311",
+      "@1312"
     ]
   },
   "src/menu_dungeon.cpp": {

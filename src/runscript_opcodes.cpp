@@ -572,9 +572,23 @@ int _SET_STATUS_CHANGE(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->monster[monster_no].attachment_weight[kind] = weight;
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_TEX_ANIME_SW__FP12RS_STACKDATAi);
-INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1311);
-INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1312);
+int _SET_TEX_ANIME_SW(RS_STACKDATA *stack, int argc) {
+    int anime_no = GetStackInt(stack++);
+    int on = GetStackInt(stack++);
+    int monster_no = GetStackInt(stack);
+
+    if (monster_no < 0 || monster_no > 15) {
+        return 2;
+    }
+    if (on) {
+        NowMonstorUnit->chara[monster_no][0].TexAnimeOn(anime_no);
+        printf("animOn %d\n", anime_no);
+    } else {
+        NowMonstorUnit->chara[monster_no][0].TexAnimeOff(anime_no);
+        printf("animOff %d\n", anime_no);
+    }
+    return 1;
+}
 int _GET_STATUS_BIN2(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
     int status = NowMonstorUnit->monster[monster_no].unk_010;
