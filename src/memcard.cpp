@@ -598,7 +598,16 @@ static void AtoraBoardEnableMovePos(int parts_no, int *enable) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraBoardGoToPos__FPiii);
+static int AtoraBoardGoToPos(int *enable, int pos, int min) {
+    while (min < pos) {
+        if (enable[pos] != 0) {
+            return pos;
+        }
+        pos--;
+    }
+    return pos;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", GetAtraMsgNo__Fii);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraMsgNoGet__Fiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipOnlyMsgNoGet__Fii);
