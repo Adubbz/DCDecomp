@@ -10,15 +10,19 @@
  */
 struct SAVE_MENU_STATE {
     s32 unk_0;
-    s32 key_no; /**< Index of the step run next, into SaveMenuFunc. */
-    u8 unk_8[4];
-    s32 file_no; /**< Save slot the current step works on. */
-    u8 unk_10[0x10];
+    s32 key_no;        /**< Index of the step run next, into SaveMenuFunc. */
+    s32 return_key_no; /**< Step to go back to once a card operation finishes, or -1. */
+    s32 file_no;       /**< Save slot the current step works on. */
+    s32 unk_10;
+    s8 result; /**< How the screen ended: 0 while it runs, 1 after a load, 2 otherwise. */
+    u8 unk_15[3];
+    s32 loaded; /**< Whether a save file has been loaded. */
+    s32 unk_1C;
     s32 unk_20;
     u8 unk_24[4];
     s32 unk_28;
-    s32 block_no; /**< Texture block the save board's textures load into. */
-    u8 unk_30[4];
+    s32 block_no;      /**< Texture block the save board's textures load into. */
+    s32 texture_ready; /**< Whether the save board's textures have been entered. */
 };
 
 STATIC_ASSERT(sizeof(SAVE_MENU_STATE) == 0x34);
