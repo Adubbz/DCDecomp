@@ -404,14 +404,10 @@ int _SET_SND_NOW(RS_STACKDATA *stack, int argc) {
     SndSePlay(GetStackInt(stack), -1, 0);
     return 1;
 }
-#ifdef NON_MATCHING
 int _STOP_SND_NOW(RS_STACKDATA *stack, int argc) {
     SndSeStop(GetStackInt(stack), 0);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STOP_SND_NOW__FP12RS_STACKDATAi);
-#endif
 #ifdef NON_MATCHING
 int _GET_CHR_ID(RS_STACKDATA *stack, int argc) {
     SetStack(stack, (int) UserStatus->cur_chara);
