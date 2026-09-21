@@ -673,7 +673,12 @@ int FishingExchangeLoop() {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", GetFishMsgNo__Fi);
+int GetFishMsgNo(int prize_no) {
+    if (prize_no < 0 || prize_no >= 18) {
+        return 0;
+    }
+    return FishMsg[prize_no] + 30;
+}
 
 SV_FISH_DATA *GetFishingRankData(int rank_index) {
     return SaveData->GetFishingRank(rank_index);

@@ -735,7 +735,7 @@ int FishingExchangeLoop(void);
  * @address 0x1F2E10
  * @size 0x3C
  */
-void GetFishMsgNo(int);
+int GetFishMsgNo(int);
 
 /**
  * Returns one entry of the fishing leaderboard, or NULL when that rank is empty.
