@@ -330,7 +330,17 @@ int _SET_ATRA(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_IBOX__FP12RS_STACKDATAi);
+int _SET_IBOX(RS_STACKDATA *stack, int count) {
+    sceVu0FVECTOR pos;
+
+    pos[0] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
+    pos[1] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
+    pos[2] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
+    pos[3] = 1.0f;
+    NowDngMap->SetTreasureBox(pos, GetStackInt__FP12RS_STACKDATA__2(stack), 1, 0);
+    return 1;
+}
+
 int _GET_NOW_USER_ID(RS_STACKDATA *stack, int count) {
     int cur_chara = UserStatus->cur_chara;
     printf("get id = %d\n", cur_chara);
