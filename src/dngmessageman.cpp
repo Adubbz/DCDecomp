@@ -40,7 +40,6 @@ void CDngMessageMan::SetStatus_Dry(float water_max, float water_before, float wa
         unk_1C = 0;
     }
 }
-#ifdef NON_MATCHING
 void CDngMessageMan::SetSteevMes(int first) {
     if (timer <= 0) {
         // The ten Steev lines are shown in turn, so the index rides on.
@@ -48,11 +47,8 @@ void CDngMessageMan::SetSteevMes(int first) {
         timer = 0xF0;
         unk_1C = 1;
         unk_20++;
-        if (unk_20 >= 10) {
+        if (unk_20 > 9) {
             unk_20 = 0;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dngmessageman", SetSteevMes__14CDngMessageManFi);
-#endif
