@@ -13,20 +13,16 @@ void InitSaveFileInfoTbl() {
     }
 }
 
-#ifdef NON_MATCHING
 int GetOpenAttribute(char *name) {
     for (int i = 0; i < MC_DIR_ENTRY_MAX; i++) {
-        if (strcmp(name, SaveFileInfo[i].name) == 0) {
+        char *entry = SaveFileInfo[i].name;
+        if (strcmp(name, entry) == 0) {
             printf("same file existed!!!!!!\n");
             return 1;
         }
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", GetOpenAttribute__FPc);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @346__2);
 #ifdef NON_MATCHING
 void CMemoryCardAccess::Initialize() {
     if (GetMenuLangFlag() == 0) {
