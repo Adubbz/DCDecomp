@@ -127,7 +127,6 @@ int BattleSubWeaponDmg(float amount, int kind) {
 #else
 INCLUDE_ASM("asm/nonmatchings/hitvalue", BattleSubWeaponDmg__Ffi);
 #endif
-#ifdef NON_MATCHING
 void HitValueEntry(CHitValue *values, float *world, int amount, int kind, CFrame *frame) {
     for (int i = 0; i < 32; i++) {
         if (values[i].active == 0) {
@@ -136,9 +135,6 @@ void HitValueEntry(CHitValue *values, float *world, int amount, int kind, CFrame
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/hitvalue", HitValueEntry__FP9CHitValuePfiiP6CFrame);
-#endif
 #ifdef NON_MATCHING
 void CHitValue::EntryValue(float *world, int amount, int kind, CFrame *frame) {
     for (int i = 0; i < 5; i++) {
@@ -261,7 +257,6 @@ INCLUDE_ASM("asm/nonmatchings/hitvalue", Draw__9CHitValueFv);
 INCLUDE_RODATA("asm/nonmatchings/hitvalue", @804);
 INCLUDE_RODATA("asm/nonmatchings/hitvalue", @805);
 INCLUDE_RODATA("asm/nonmatchings/hitvalue", @863);
-#ifdef NON_MATCHING
 void CHitValue::Step(void) {
     if (active != 0) {
         if (digits[0] == -2) {
@@ -301,6 +296,3 @@ void CHitValue::Step(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/hitvalue", Step__9CHitValueFv);
-#endif
