@@ -6,7 +6,6 @@
 #include "itemdata.hpp"
 #include "savedata.hpp"
 
-#ifdef NON_MATCHING
 void CMenuItemStep::Initialize(void) {
     frame = 0;
     unk_08 = -1;
@@ -21,10 +20,6 @@ void CMenuItemStep::Initialize(void) {
         unk_20[i] = -1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menuitemstep", Initialize__13CMenuItemStepFv);
-#endif
-#ifdef NON_MATCHING
 void CMenuItemStep::LoopStep(int interval) {
     if (enabled != 0) {
         // A negative interval asks for the default of one second.
@@ -38,9 +33,6 @@ void CMenuItemStep::LoopStep(int interval) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menuitemstep", LoopStep__13CMenuItemStepFi);
-#endif
 #ifdef NON_MATCHING
 void CMenuItemStep::CheckItemVolume(void) {
     int elapsed = pending_volume;
