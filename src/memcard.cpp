@@ -708,7 +708,20 @@ INCLUDE_ASM("asm/nonmatchings/memcard", GetMsgLengthMenu__FP6ClsMesi);
  * @size 0xD8
  */
 static CTexture *RetCTexAtora(int tip_no, int &x, int &y);
-INCLUDE_ASM("asm/nonmatchings/memcard", RetCTexAtora__FiRiRi);
+static CTexture *RetCTexAtora(int tip_no, int &x, int &y) {
+    CTexture *texture;
+    int tex_no;
+
+    tex_no = GetEditAtraChipData(MenuAtoraSel.map_no, tip_no)->tex_no;
+    x = ((tex_no + 7) % 7) * 36;
+    y = (tex_no / 7) * 36;
+    if (tip_no < 40) {
+        texture = ObTip;
+    } else if (tip_no >= 40) {
+        texture = ObPerson;
+    }
+    return texture;
+}
 
 void DrawAtoraParts(int x, int y, int tip_no, int top, int bottom, int alpha) {
     CTexture *texture;
