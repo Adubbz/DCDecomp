@@ -737,11 +737,118 @@ int FishingCheckUkiHook() {
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineStep__FPfPf);
 
-/**
- * Draws the line between the rod, the float and the hook.
- *
- * @mangled FishLineDraw__Fi
- * @address 0x1AB0F0
- * @size 0x64C
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishLineDraw__Fi);
+void FishLineDraw(int above_water) {
+    int screen[4];
+    sceVu0FVECTOR center;
+    sceVu0FVECTOR direction;
+    sceVu0FMATRIX matrix;
+    sceVu0FVECTOR uki_top;
+    sceVu0FVECTOR hook_top;
+    sceVu0FVECTOR esa_position;
+    sceGsTest test;
+    int draw;
+    int visible;
+    int prev_visible;
+    int i;
+    sceVif1Packet *packet;
+
+    TexManager.ReloadTexture(GetVif1Packet(), fishing_texb);
+    prev_visible = 0;
+    packet = GetVif1Packet();
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(2, 1, 0, 0, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, 0x80, 0));
+    test = mgPixelTest;
+    test.bits.aref = 0;
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &test);
+    for (i = 0; i < 24; i++) {
+        visible = MGRotTransPers(screen, point[i], 0);
+        u_char above = point[i][1] > WaterLevel;
+        int reg = SCE_GS_XYZF2;
+        if (visible == 0 || prev_visible == 0) {
+            reg = SCE_GS_XYZF3;
+        }
+        if (above_water) {
+            if (!above) {
+                reg = SCE_GS_XYZF3;
+            }
+        } else if (above || draw_under_water == 0) {
+            reg = SCE_GS_XYZF3;
+        }
+        sceVif1PkAddGsAD(packet, reg,
+                         (u_long) screen[0] | ((u_long) screen[1] << 16) | ((u_long) screen[2] << 32));
+        prev_visible = visible;
+    }
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+
+    draw = 1;
+    VectorMax(uki_top, ukip[0], ukip[1], ukip[2], ukip[3]);
+    if (above_water) {
+        if (uki_top[1] < WaterLevel) {
+            draw = 0;
+        }
+    } else if (uki_top[1] > WaterLevel || draw_under_water == 0) {
+        draw = 0;
+    }
+    if (UkiFrame != NULL && draw) {
+        sceVu0AddVector(center, ukip[1], ukip[2]);
+        sceVu0AddVector(center, center, ukip[3]);
+        sceVu0ScaleVector(center, center, 0.333333f);
+        sceVu0SubVector(direction, ukip[0], center);
+        sceVu0Normalize(matrix[1], direction);
+        matrix[1][3] = 0.0f;
+        sceVu0SubVector(direction, center, ukip[1]);
+        sceVu0Normalize(matrix[2], direction);
+        sceVu0OuterProduct(matrix[0], matrix[1], matrix[2]);
+        matrix[0][3] = 0.0f;
+        matrix[3][0] = matrix[3][1] = matrix[3][2] = 0.0f;
+        matrix[3][3] = 1.0f;
+        UkiFrameTop.Initialize();
+        UkiFrameTop.SetTransMatrix(matrix);
+        UkiFrameTop.SetPosition(ukip[0]);
+        UkiFrame->SetReference(&UkiFrameTop);
+        MGDraw(UkiFrame);
+    }
+
+    draw = 1;
+    VectorMax(hook_top, hookp[0], hookp[1], hookp[2]);
+    if (above_water) {
+        if (hook_top[1] < WaterLevel) {
+            draw = 0;
+        }
+    } else if (hook_top[1] > WaterLevel || draw_under_water == 0) {
+        draw = 0;
+    }
+    if (HookFrame != NULL && draw) {
+        sceVu0AddVector(center, hookp[1], hookp[2]);
+        sceVu0ScaleVector(center, center, 0.5f);
+        sceVu0SubVector(direction, hookp[0], center);
+        sceVu0Normalize(matrix[1], direction);
+        matrix[1][3] = 0.0f;
+        sceVu0SubVector(center, hookp[1], hookp[0]);
+        sceVu0SubVector(direction, hookp[2], hookp[0]);
+        sceVu0OuterProduct(matrix[2], center, direction);
+        sceVu0Normalize(matrix[2], matrix[2]);
+        matrix[2][3] = 0.0f;
+        sceVu0OuterProduct(matrix[0], matrix[1], matrix[2]);
+        matrix[0][3] = 0.0f;
+        matrix[3][0] = matrix[3][1] = matrix[3][2] = 0.0f;
+        matrix[3][3] = 1.0f;
+        HookFrame->SetTransMatrix(matrix);
+        HookFrame->SetPosition(hookp[0]);
+        MGDraw(HookFrame);
+        if (EsaFrame != NULL) {
+            sceVu0AddVector(esa_position, hookp[0], hookp[1]);
+            sceVu0AddVector(esa_position, esa_position, hookp[2]);
+            sceVu0ScaleVector(esa_position, esa_position, 0.3333f);
+            EsaFrame->SetTransMatrix(matrix);
+            EsaFrame->SetPosition(esa_position);
+            TexManager.ReloadTexture(GetVif1Packet(), esa_texb);
+            MGDraw(EsaFrame);
+        }
+    }
+}

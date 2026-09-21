@@ -269,3 +269,12 @@ void FishLineGetHook(float *position);
  * @size 0x158
  */
 int FishingCheckUkiHook();
+
+/**
+ * Draws the line, the float, the hook and its bait on one side of the water surface.
+ *
+ * @mangled FishLineDraw__Fi
+ * @address 0x1AB0F0
+ * @size 0x64C
+ */
+void FishLineDraw(int above_water);
