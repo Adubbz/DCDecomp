@@ -249,7 +249,22 @@ int _GET_OBJHDL(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_OBJHDL_POS__FP12RS_STACKDATAi);
+int _SET_OBJHDL_POS(RS_STACKDATA *stack, int count) {
+    int index = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    float x = GetStackFloat__FP12RS_STACKDATA__2(stack++);
+    float y = GetStackFloat__FP12RS_STACKDATA__2(stack++);
+    float z = GetStackFloat__FP12RS_STACKDATA__2(stack);
+    BT_OBJ_HANDLE *handle = GetObjHDL(index);
+
+    if (handle->type == 0 && handle->frame != NULL) {
+        handle->frame->SetPosition(x, y, z);
+    }
+    if (handle->type == 1 && handle->character != NULL) {
+        handle->character->SetPosition(x, y, z);
+    }
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_OBJHDL_ROT__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_OBJHDL_DRAW_FLAG__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_OBJHDL_POS__FP12RS_STACKDATAi);
