@@ -19,6 +19,7 @@
 #include "memcard.hpp"
 #include "memorycardaccess.hpp"
 #include "menu_inventory.hpp"
+#include "menu_misc.hpp"
 #include "menuitemstep.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
@@ -273,7 +274,95 @@ void SetWeaponAttachStatus(WEAPON_HAVE *attach_source) {
 
     WeaponAllValueSet(equipped, attach_source, 0);
 }
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", WeaponAllValueSet__FP11WEAPON_HAVEP11WEAPON_HAVEi);
+
+void WeaponAllValueSet(WEAPON_HAVE *weapon, WEAPON_HAVE *result, int full) {
+    int i;
+    WEAPON_DATA *data;
+    int flags;
+    ATTACH_LIST *attaches;
+    ATTACH_LIST total;
+    float rate;
+    float scale;
+    int value;
+
+    data = GetWeaponData(weapon->item_no);
+    if (data == NULL) {
+        return;
+    }
+    attaches = weapon->attach;
+    memset(&total, 0, sizeof(ATTACH_LIST));
+    rate = GetNowWeaponRate(weapon);
+    if (full) {
+        rate = 1.0f;
+    }
+    flags = 0;
+    flags |= weapon->flags;
+    memcpy(result, weapon, sizeof(WEAPON_HAVE));
+    for (i = 0; i < GetWeaponHoleNum(weapon->item_no); i++) {
+        if (data->hole[i] <= 0) {
+            break;
+        }
+        scale = 1.0f;
+        if (weapon->attach_kind[i] == 3) {
+            scale = 2.0f;
+        }
+        PlusAttachmentVolume(&total, &attaches[i], scale);
+        if (attaches[i].item_no == 0x5A && attaches[i].unk_04 != 0 && attaches[i].unk_04 != 1) {
+            flags |= attaches[i].unk_04;
+        }
+    }
+    result->flags = CheckWeaponOptionStatus(flags);
+    int limit[4] = {data->attack_max, 99, 99, data->magic_max};
+    limit[0] *= rate;
+    limit[3] *= rate;
+    value = result->attack + total.status[0];
+    value *= rate;
+    if (limit[0] < value) {
+        result->attack = limit[0];
+    } else {
+        result->attack = value;
+    }
+    value = result->endurance + total.status[1];
+    value *= rate;
+    if (limit[1] < value) {
+        result->endurance = limit[1];
+    } else {
+        result->endurance = value;
+    }
+    value = result->speed + total.status[2];
+    value *= rate;
+    if (value >= limit[2]) {
+        result->speed = limit[2];
+    } else {
+        result->speed = value;
+    }
+    value = result->magic + total.status[3];
+    value *= rate;
+    if (limit[3] < value) {
+        result->magic = limit[3];
+    } else {
+        result->magic = value;
+    }
+    for (i = 0; i < 5; i++) {
+        value = result->elem[i] + total.elem[i];
+        value *= rate;
+        if (value >= 99) {
+            result->elem[i] = 99;
+        } else {
+            result->elem[i] = value;
+        }
+    }
+    for (i = 0; i < 10; i++) {
+        value = result->vs_monster[i] + total.vs_monster[i];
+        value *= rate;
+        if (value >= 99) {
+            result->vs_monster[i] = 99;
+        } else {
+            result->vs_monster[i] = value;
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", SetAttachMentValue__FiisP11ATTACH_LIST);
 
 int GetAttachVolumeForMsg(ATTACH_LIST *attach) {
