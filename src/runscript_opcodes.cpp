@@ -339,7 +339,17 @@ INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SHOT2__FP12RS_STACKDATAi)
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1086__2);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SND_FRM__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_LOOP_SND__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STOP_LOOP_SND__FP12RS_STACKDATAi);
+int _STOP_LOOP_SND(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+    int sound_id = NowMonstorUnit->sound[monster_no].sequence_id;
+
+    if (sound_id == -1) {
+        return 1;
+    }
+    NowMonstorUnit->sound[monster_no].sequence_id = -1;
+    SndSeStop(sound_id, monster_no * 2);
+    return 1;
+}
 int _DEL_LOOP_SND(RS_STACKDATA *stack, int argc) {
     // The sound keeps playing; the monster just stops owning it.
     int monster_no = NowMonstorUnit->unk_090;
