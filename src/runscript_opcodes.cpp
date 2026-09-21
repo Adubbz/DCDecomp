@@ -787,7 +787,49 @@ int _SET_LOCKON_SW(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->monster[monster_no].unk_11C = GetStackInt(stack);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MONSTOR_MOTION__FP12RS_STACKDATAi);
+int _SET_MONSTOR_MOTION(RS_STACKDATA *stack, int argc) {
+    int monster_no = GetStackInt(stack++);
+    int motion_id = GetStackInt(stack++);
+
+    NowMonstorUnit->monster[monster_no].last_hit_damage = -1;
+    NowMonstorUnit->monster[monster_no].requested_motion_speed = -1.0f;
+    if (argc == 2) {
+        NowMonstorUnit->chara[monster_no][0].SetMotion(motion_id, 0);
+        NowMonstorUnit->monster[monster_no].requested_motion = motion_id;
+        NowMonstorUnit->monster[monster_no].requested_motion_flags = 0;
+        for (int i = 0; i < NowMonstorUnit->monster[monster_no].unk_0B4; i++) {
+            NowMonstorUnit->chara[monster_no][i + 1].SetMotion(motion_id, 0);
+        }
+    }
+    if (argc == 3) {
+        float speed = GetStackFloat(stack++);
+
+        NowMonstorUnit->chara[monster_no][0].SetMotion(motion_id, 0);
+        NowMonstorUnit->chara[monster_no][0].SetMotionSpeed(speed);
+        NowMonstorUnit->monster[monster_no].requested_motion = motion_id;
+        NowMonstorUnit->monster[monster_no].requested_motion_flags = 0;
+        NowMonstorUnit->monster[monster_no].requested_motion_speed = speed;
+        for (int i = 0; i < NowMonstorUnit->monster[monster_no].unk_0B4; i++) {
+            NowMonstorUnit->chara[monster_no][i + 1].SetMotion(motion_id, 0);
+            NowMonstorUnit->chara[monster_no][i + 1].SetMotionSpeed(speed);
+        }
+    }
+    if (argc == 4) {
+        float speed = GetStackFloat(stack++);
+        int mode = GetStackInt(stack);
+
+        NowMonstorUnit->chara[monster_no][0].SetMotion(motion_id, mode);
+        NowMonstorUnit->chara[monster_no][0].SetMotionSpeed(speed);
+        NowMonstorUnit->monster[monster_no].requested_motion = motion_id;
+        NowMonstorUnit->monster[monster_no].requested_motion_flags = mode;
+        NowMonstorUnit->monster[monster_no].requested_motion_speed = speed;
+        for (int i = 0; i < NowMonstorUnit->monster[monster_no].unk_0B4; i++) {
+            NowMonstorUnit->chara[monster_no][i + 1].SetMotion(motion_id, mode);
+            NowMonstorUnit->chara[monster_no][i + 1].SetMotionSpeed(speed);
+        }
+    }
+    return 1;
+}
 int _SET_GLOBAL_INT(RS_STACKDATA *stack, int argc) {
     int index = GetStackInt(stack++);
 
