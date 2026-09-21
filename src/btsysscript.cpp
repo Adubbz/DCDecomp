@@ -472,8 +472,27 @@ int _CLEAN_MONSTOR_SCRIPT_NO(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_NPC_OBJHDL__FP12RS_STACKDATAi);
-INCLUDE_RODATA("asm/nonmatchings/btsysscript", @833);
+int _GET_NPC_OBJHDL(RS_STACKDATA *stack, int count) {
+    int index = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int npc_no = GetStackInt__FP12RS_STACKDATA__2(stack);
+    BT_OBJ_HANDLE *handle = GetObjHDL(index);
+
+    if (npc_no < 0 || npc_no > 3) {
+        printf("over err\n");
+        return 1;
+    }
+
+    CCharacter *chara = &NowDngMap->npc[npc_no].chara;
+    if (chara->frame != NULL) {
+        handle->character = chara;
+        handle->type = 1;
+    } else {
+        handle->character = NULL;
+        handle->type = 1;
+    }
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_MOTION_OBJHDL__FP12RS_STACKDATAi);
 
 int _SET_NPC_ON_OFF(RS_STACKDATA *stack, int count) {
