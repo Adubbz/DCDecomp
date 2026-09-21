@@ -472,14 +472,10 @@ void DrawObjectVibe(int x, int y, CTexture *texture, CRect_i_ src_rect, unsigned
     CRect_i_ dest_rect((s32) dest_x, (s32) dest_y, src_rect.width, src_rect.height);
     DrawMenu2DSprite(texture, dest_rect, src_rect, alpha, alpha, alpha, flag);
 }
-#ifdef NON_MATCHING
 void DrawObjectVibe(int x, int y, CTexture *texture, RECT src_rect, unsigned char alpha, int flag) {
     CRect_i_ src(src_rect.x, src_rect.y, src_rect.width, src_rect.height);
     DrawObjectVibe(x, y, texture, src, alpha, flag);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawObjectVibe__FiiP8CTexture4RECTUci);
-#endif
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuObjectVibe__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuHelpWindow__FP8CTextureiiiffi);
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuHelpWinDraw__FiiffiiiP8CTexture);
