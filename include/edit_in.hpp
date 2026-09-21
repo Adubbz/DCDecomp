@@ -25,3 +25,12 @@ STATIC_ASSERT(sizeof(EDIT_IN_INFO) == 0x44C0);
 
 /** Settings of the interior being run. */
 extern EDIT_IN_INFO *EdInInfo;
+
+/**
+ * Finds the map jump the player is standing on and facing.
+ *
+ * @mangled SearchMapJump__FPfPf
+ * @address 0x19E1F0
+ * @size 0xF4
+ */
+EPARTS_FUNC_DATA *SearchMapJump(float *position, float *rotation);

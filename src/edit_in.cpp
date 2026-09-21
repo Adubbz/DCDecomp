@@ -228,7 +228,25 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", MoveCamera__FP13CCameraFollow__2);
  * @address 0x19E1F0
  * @size 0xF4
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", SearchMapJump__FPfPf);
+EPARTS_FUNC_DATA *SearchMapJump(float *position, float *rotation) {
+    sceVu0FVECTOR world;
+    int i;
+    EPARTS_FUNC_DATA *point = func_point;
+
+    for (i = 0; i < func_num; i++, point++) {
+        if (point->kind == 2) {
+            CFrame *frame = (CFrame *) point->parts;
+            point->position[3] = 1.0f;
+            frame->GetWorldPosition(world, point->position);
+            EdInteriorJumpID = point->link_id;
+            if (DistVector(position, world) < 10.0f &&
+                AngleCmp(rotation[1], point->rotation[1], 0.87f) == 0) {
+                return point;
+            }
+        }
+    }
+    return NULL;
+}
 /**
  * Puts the player where the interior's map jump says they arrive.
  *
