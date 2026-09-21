@@ -480,7 +480,57 @@ int InitExistData(void) {
     return 0;
 }
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3413);
-INCLUDE_ASM("asm/nonmatchings/menu_save", SaveEnableCheck__Fv);
+
+int SaveEnableCheck(void) {
+    int found;
+    int free_size;
+    int port;
+    int result;
+
+    if (McAccess.InitForMC() != 0) {
+        return 0;
+    }
+    found = 0;
+    free_size = 0;
+    for (port = 0; port < 2; port++) {
+        McAccess.port = port;
+        McAccess.SetFuncNo(0);
+        do {
+            result = McAccess.Step();
+        } while (result == 0);
+        if (result < 0) {
+            continue;
+        }
+        MC_CARD_INFO *card = &McAccess.card[McAccess.port];
+        if (McCheckMCPs2(card) == 0) {
+            continue;
+        }
+        found = 1;
+        if (card->formatted == 0) {
+            return found;
+        }
+        McAccess.SetFuncNo(2);
+        do {
+            result = McAccess.Step();
+        } while (result == 0);
+        if (result < 0) {
+            continue;
+        }
+        if (card->dir_exists != 0) {
+            return 1;
+        }
+        if (free_size < card->free_size) {
+            free_size = card->free_size;
+        }
+    }
+    if (found == 0) {
+        return 0;
+    }
+    if (free_size < 0x190) {
+        return -1;
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_save", InitEventItemSelect__FiPiP9ITEM_PACKiiii);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3427);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3428);
