@@ -426,7 +426,15 @@ int _GET_SCRIPT_ID(RS_STACKDATA *stack, int argc) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_MONSTOR_POS__FP12RS_STACKDATAi);
+int _GET_MONSTOR_POS(RS_STACKDATA *stack, int argc) {
+    float position[4];
+
+    NowMonstorUnit->chara[GetStackInt(stack++)][0].GetPosition(position);
+    SetStack(stack++, position[0]);
+    SetStack(stack++, position[1]);
+    SetStack(stack, position[2]);
+    return 1;
+}
 int _GET_MONSTOR_FRM(RS_STACKDATA *stack, int argc) {
     int monster_no = GetStackInt(stack++);
 
