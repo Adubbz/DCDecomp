@@ -4,11 +4,20 @@
 
 #include "shop.hpp"
 
+#include <libvu0.h>
+
+#include <cmath>
+
+#include "camera.hpp"
+#include "character.hpp"
 #include "clsmes.hpp"
+#include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "gamepad.hpp"
+#include "mathutil.hpp"
 #include "memcard.hpp"
 #include "menu_draw.hpp"
+#include "menu_inventory.hpp"
 #include "rect.hpp"
 #include "savedata.hpp"
 #include "texture.hpp"
@@ -29,8 +38,7 @@ struct ShopMenuWork {
     s16 unk_04;
     s16 unk_06;
     u8 unk_08[4];
-    s16 unk_0C;
-    u8 unk_0E[2];
+    s32 unk_0C;
     s32 unk_10;
     s32 unk_14;
     float unk_18;
@@ -72,6 +80,15 @@ extern CUserStatus *ShopUserStatusPt;
 
 /** Stock inventory the shop currently open is reading and writing. */
 extern CStockItem *ShopStockPt;
+
+/** Camera the menu draws 3D models under. */
+extern CCamera MenuCamera;
+
+/** Model the menus draw a character with; the shopkeeper while a shop is open. */
+extern CCharacter MenuCharaFrame;
+
+/** Arena the shopkeeper's model and the item shop's board tables are read into. */
+extern CDataAlloc2<1> ShopCashBuffer;
 
 /** Texture the shop board frame, tags and tickets are drawn from. */
 extern CTexture *ShopBoard;
@@ -154,6 +171,12 @@ STATIC_ASSERT(sizeof(FISH_EXCHANGE_ITEM) == 4);
 /** The prizes the fishing exchange offers. */
 extern FISH_EXCHANGE_ITEM exitemlst[35];
 
+/** Sort priority of each dungeon-item sort key for the item board sort. */
+extern s32 sort_table[9];
+
+/** Sort priority of each attachment kind for the attachment board sort. */
+extern s32 asort_table[5];
+
 /** Ordering the next item board sort tries, from one to eight. */
 extern s32 sort_top_type;
 
@@ -183,8 +206,8 @@ s16 *GetItemShopList(int shop_no) {
 
 void InitShopItemListData(SHOP_ITEMLIST *item_list) {
     if (item_list != NULL) {
-        item_list->unk_00 = 0;
-        memset(item_list->unk_04, 0, sizeof(item_list->unk_04));
+        item_list->item_no = 0;
+        memset(item_list->data, 0, sizeof(item_list->data));
     }
 }
 

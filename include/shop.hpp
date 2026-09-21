@@ -23,9 +23,9 @@ extern s16 ItemShopList2[18][20];
  * Stores one shop's item-list state.
  */
 struct SHOP_ITEMLIST {
-    s16 unk_00;
+    s16 item_no; /**< The item, weapon or attachment on offer. */
     u8 unk_02[2];
-    u8 unk_04[0xF8];
+    u8 data[0xF8]; /**< The item's record, sized for the largest (WEAPON_HAVE). */
 };
 
 STATIC_ASSERT(sizeof(SHOP_ITEMLIST) == 0xFC);
