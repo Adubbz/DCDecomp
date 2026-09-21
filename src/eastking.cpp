@@ -205,19 +205,21 @@ static void EastKingMsgDraw() {
 void GetPrevEastKingSndVol() {
     PrevEastKingSndVol = SndGetBgmVol();
 }
-#ifdef NON_MATCHING
-void InitEastKingEvent(int event_no, int *texture_block, void *load_buffer) {
+
+void InitEastKingEvent(int event_no, int *texture_block, u_long128 *load_buffer) {
     char path[76];
     int size;
 
     GetPathReadDifferntLang(path);
     strcat(path, "eastk/st%d.pak");
     sprintf(path, path, event_no + 1);
-    EastKing.load_buffer = MenuCalcBufAlignment((u_long128 *)load_buffer);
+    EastKing.load_buffer = load_buffer;
+    EastKing.load_buffer = MenuCalcBufAlignment(EastKing.load_buffer);
     StartReadBG();
     LoadFileBG(path, EastKing.load_buffer, &size);
     ReadBG();
-    EastKingSndReadBuf = (u_int *)MenuCalcBufAlignment(EastKing.load_buffer + size / 16 + 0x10);
+    EastKingSndReadBuf = (u_int *) (EastKing.load_buffer + size / 16 + 0x10);
+    EastKingSndReadBuf = (u_int *) MenuCalcBufAlignment((u_long128 *) EastKingSndReadBuf);
     PrevEastKingSndNo = SndGetBgmNo();
     SndBgmLoadBG(0x16, EastKingSndReadBuf, &size);
     EastKing.resources_ready = 0;
@@ -233,10 +235,6 @@ void InitEastKingEvent(int event_no, int *texture_block, void *load_buffer) {
         SaveData->SetGameFlag(EastKing.event_no + 0xE6, 1);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/eastking", InitEastKingEvent__FiPiP1);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/eastking", @398__2);
 int EastKingEventKey() {
     int finished = 0;
     int size;

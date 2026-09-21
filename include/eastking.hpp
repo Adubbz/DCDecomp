@@ -39,7 +39,7 @@ void GetPrevEastKingSndVol();
  * @address 0x00232E30
  * @size 0x1A8
  */
-void InitEastKingEvent(int event_no, int *result, void *load_buffer);
+void InitEastKingEvent(int event_no, int *result, u_long128 *load_buffer);
 
 /**
  * Processes input and state transitions for the East King event.
