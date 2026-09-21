@@ -4,6 +4,7 @@
 
 #include <eekernel.h>
 #include <libvu0.h>
+#include <sifdev.h>
 
 #include <cmath>
 #include <cstdlib>
@@ -226,7 +227,23 @@ void MWNotifyOverlayLoaded(void) {}
  * @address 0x122E80
  * @size 0xB4
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", mwBload);
+extern "C" int mwBload(char *path, void *buffer) {
+    int fd;
+    int size = 0;
+
+    fd = sceOpen(path, 1);
+    if (fd >= 0) {
+        size = sceLseek(fd, 0, 2);
+        sceLseek(fd, 0, 0);
+    }
+    if (size > 0) {
+        size = sceRead(fd, buffer, size);
+    }
+    if (fd >= 0) {
+        sceClose(fd);
+    }
+    return size;
+}
 /**
  * Reads an overlay into memory and gives back whether it succeeded.
  *
