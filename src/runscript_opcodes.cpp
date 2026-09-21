@@ -618,8 +618,35 @@ int _SET_SHOT(RS_STACKDATA *stack, int argc) {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SHOT2__FP12RS_STACKDATAi);
-INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1086__2);
+int _SET_SHOT2(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+    char *name;
+
+    if (NowMonstorUnit->monster[monster_no].unk_0AE == -1) {
+        return 1;
+    }
+    printf("shot !!\n");
+    name = GetStackString(stack++);
+    NowMonstorUnit->event2[monster_no].local_position[0] = GetStackFloat(stack++);
+    NowMonstorUnit->event2[monster_no].local_position[1] = GetStackFloat(stack++);
+    NowMonstorUnit->event2[monster_no].local_position[2] = GetStackFloat(stack++);
+    NowMonstorUnit->event2[monster_no].local_position[3] = 1.0f;
+    if (NowMonstorUnit->event2[monster_no].timer == 0) {
+        CFrame *frame = NowMonstorUnit->chara[monster_no][0].frame->SearchFrame(name);
+
+        if (frame == NULL) {
+            printf("not shot null !!\n");
+            return 1;
+        }
+        NowMonstorUnit->event2[monster_no].frame = frame;
+        NowMonstorUnit->event2[monster_no].timer = 1;
+    }
+    NowMonstorUnit->event2[monster_no].damage_override = -1;
+    if (argc == 5) {
+        NowMonstorUnit->event2[monster_no].damage_override = GetStackInt(stack);
+    }
+    return 1;
+}
 int _SET_SND_FRM(RS_STACKDATA *stack, int argc) {
     int slot;
     int i;
