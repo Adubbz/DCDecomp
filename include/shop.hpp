@@ -718,15 +718,6 @@ int FishRecordViewKey(void);
 void FishRecordViewBoard(int, int, int);
 
 /**
- * Draws one frame of the fishing record view.
- *
- * @mangled FishRecordViewDraw__Fv
- * @address 0x1F3C40
- * @size 0x11C
- */
-void FishRecordViewDraw(void);
-
-/**
  * Runs one frame of the fish record view and returns the mode its input handler left.
  *
  * @mangled FishRecordViewLoop__Fv

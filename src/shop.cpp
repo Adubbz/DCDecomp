@@ -1093,7 +1093,50 @@ INCLUDE_RODATA("asm/nonmatchings/shop", @3274);
 INCLUDE_RODATA("asm/nonmatchings/shop", @3275);
 INCLUDE_ASM("asm/nonmatchings/shop", FishRecordViewKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", FishRecordViewBoard__Fiii);
-INCLUDE_ASM("asm/nonmatchings/shop", FishRecordViewDraw__Fv);
+
+/**
+ * Draws one frame of the fishing record view.
+ *
+ * @mangled FishRecordViewDraw__Fv
+ * @address 0x1F3C40
+ * @size 0x11C
+ */
+static void FishRecordViewDraw() {
+    int frame_alpha;
+    int alpha;
+
+    setbilinear(0);
+    frame_alpha = 0x40;
+    alpha = 0x80;
+    switch (FishRecordMenu.fade_mode) {
+        case 0:
+            frame_alpha = alpha - FishRecordMenu.fade_count * 2;
+            alpha = FishRecordMenu.fade_count * 4;
+            break;
+        case 1:
+            frame_alpha = FishRecordMenu.fade_count * 2 + 0x40;
+            alpha = alpha - FishRecordMenu.fade_count * 4;
+            break;
+    }
+    if (frame_alpha > 0x80) {
+        frame_alpha = 0x80;
+    }
+    if (frame_alpha < 0x40) {
+        frame_alpha = 0x40;
+    }
+    if (alpha > 0x80) {
+        alpha = 0x80;
+    }
+    if (alpha < 0) {
+        alpha = 0;
+    }
+    FrameImageDraw(frame_alpha, 0x80);
+    if (FishRecordMenu.ready != 0) {
+        FishImageIconDraw(0x50, 0x32, 0x10C, alpha);
+        FishRecordViewBoard(0x9C, 0x6A, alpha);
+        setbilinear(1);
+    }
+}
 
 int FishRecordViewLoop() {
     int done;
