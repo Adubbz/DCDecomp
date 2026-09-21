@@ -34,24 +34,19 @@ int MenuEtcErrCnt;
 /** Number of floors available in each dungeon. */
 static int maxFloorTbl__4[7] = {15, 17, 18, 18, 15, 25, 100};
 
-#ifdef NON_MATCHING
 void PlusAttachmentVolume(ATTACH_LIST *base, ATTACH_LIST *add, float scale) {
     int i;
 
     for (i = 0; i < 4; i++) {
-        base->status[i] = (s16) ((float) base->status[i] + (float) add->status[i] * scale);
+        base->status[i] += add->status[i] * scale;
     }
     for (i = 0; i < 5; i++) {
-        base->elem[i] = (s8) ((float) base->elem[i] + (float) add->elem[i] * scale);
+        base->elem[i] += add->elem[i] * scale;
     }
     for (i = 0; i < 10; i++) {
-        base->vs_monster[i] = (s8) ((float) base->vs_monster[i] + (float) add->vs_monster[i] * scale);
+        base->vs_monster[i] += add->vs_monster[i] * scale;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", PlusAttachmentVolume__FP11ATTACH_LISTP11ATTACH_LISTf);
-#endif
-#ifdef NON_MATCHING
 int GetWeaponAttachStatusUp(WEAPON_HAVE *weapon, int stat) {
     int total;
     int i;
@@ -62,14 +57,16 @@ int GetWeaponAttachStatusUp(WEAPON_HAVE *weapon, int stat) {
 
     total = 0;
     for (i = 0; i < 6; i++) {
-        ATTACH_LIST *attach = &weapon->attach[i];
-
-        if (attach->item_no < 0x51) {
+        if (weapon->attach[i].item_no - 0x51 < 0) {
             continue;
         }
 
-        int multiplier = (weapon->attach_kind[i] == 3) ? 2 : 1;
+        int multiplier = 1;
+        if (weapon->attach_kind[i] == 3) {
+            multiplier = 2;
+        }
 
+        ATTACH_LIST *attach = &weapon->attach[i];
         if (stat < 5) {
             total += attach->status[stat - 1] * multiplier;
         } else if (stat >= 8 && stat < 0xD) {
@@ -80,9 +77,6 @@ int GetWeaponAttachStatusUp(WEAPON_HAVE *weapon, int stat) {
     }
     return total;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", GetWeaponAttachStatusUp__FP11WEAPON_HAVEi);
-#endif
 void SetWeaponAttachStatus(WEAPON_HAVE *attach_source) {
     if (attach_source == NULL) {
         return;
