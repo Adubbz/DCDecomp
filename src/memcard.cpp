@@ -531,7 +531,36 @@ static int AtraBoardMaxNum(int ground) {
     return count;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipStatusSearch__FP14EDITPARTS_INFOi);
+static int AtoraTipStatusSearch(EDITPARTS_INFO *info, int slot) {
+    int next;
+    int link;
+    int code;
+
+    if (info == NULL) {
+        return 0;
+    }
+    if (info->elements[slot].id < 0) {
+        return -1;
+    }
+    link = info->elements[slot].unk_04;
+    if (link < 0 || info->elements[slot].enabled != 0) {
+        return 0;
+    }
+    if (link < 3 && slot >= 3) {
+        code = 2;
+    } else {
+        code = 1;
+    }
+    if (info->elements[link].enabled == 0) {
+        code += 10;
+    }
+    next = info->elements[link].unk_04;
+    if (next >= 0 && info->elements[next].enabled == 0) {
+        code += 10;
+    }
+    return code;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", AtraTipCanDisplay__FP21EDIT_CHIP_ATTACH_DATA);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipRelationDraw__FiiP14EDITPARTS_INFOiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraBoardEnableMovePos__FiPi);
