@@ -677,7 +677,9 @@ SECTIONS
 		dataread.cpp.o (.sbss)         // 0x002a24e4
 		main.sbss.part3.s.o (.sbss)    // 0x002a24fc
 		main.cpp.o (.sbss)
-		main.sbss.part4.s.o (.sbss)
+		sound.cpp.o (.sbss)            // 0x002a2588
+		. = ALIGN(16);
+		main.sbss.sound-tail.s.o (.sbss) // 0x002a25a0
 		clsmes.cpp.o (.sbss)
 		gameutil.cpp.o (.sbss)         // 0x002a25a8
 		main.sbss.part4b.s.o (.sbss)   // 0x002a25b8

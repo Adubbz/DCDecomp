@@ -220,7 +220,7 @@ carve_part(main.bss.part5.s
 carve_part(main.sbss.part3.s
            main.sbss.part3.s=2A24FC-2A2500)
 carve_part(main.sbss.part4.s
-           main.sbss.part4.s=2A2588-2A25A4)
+           main.sbss.sound-tail.s=2A25A0-2A25A4)
 # The dun overlay's small data runs from GameEnv to the end of retail's .sbss,
 # and the unit supplies all of it, so the dump stops in front of it.
 carve_part(main.sbss.part5b.s

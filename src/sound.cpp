@@ -24,8 +24,17 @@ extern sceCslCtx msinCtx;
 /** The stream input module's message buffers, one per effect port. */
 extern MSIN_BUFFER msinBf[6];
 
+/** The stream input module's two buffer groups, input first. */
+extern sceCslBuffGrp msinBfGrp[2];
+
+/** The stream input module's input buffers, one per effect port. */
+extern sceCslBuffCtx msinBfCtx[6];
+
 /** IOP address the message buffers are copied to, or zero before the first start. */
-extern int iopMSINBuffAddr;
+static int iopMSINBuffAddr;
+
+/** Bytes of bank bodies loaded into the sound processor. */
+static int bd_size_total;
 
 MIDI_STATE *CSound::GetMidiState(void) {
     return &midi_state;
@@ -174,10 +183,108 @@ INCLUDE_RODATA("asm/nonmatchings/sound", @473);
 INCLUDE_ASM("asm/nonmatchings/sound", LoadSqInf__6CSoundFPcPUi);
 INCLUDE_RODATA("asm/nonmatchings/sound", @546);
 INCLUDE_ASM("asm/nonmatchings/sound", LoadSeInf__6CSoundFPcPUi);
-INCLUDE_ASM("asm/nonmatchings/sound", Init__6CSoundFiiii);
-INCLUDE_RODATA("asm/nonmatchings/sound", @626__2);
-INCLUDE_RODATA("asm/nonmatchings/sound", @627__2);
-INCLUDE_RODATA("asm/nonmatchings/sound", @628__2);
+
+int CSound::Init(int mode0, int mode1, int depth0, int depth1) {
+    static int load_m_flg = (int) 0.0f;
+    int i;
+
+    printf("EzMIDI initialize...\n");
+    ezMidiInit();
+    set_spu(mode0, mode1, depth0, depth1);
+    if (iopMSINBuffAddr == 0) {
+        iopMSINBuffAddr = ezMidi(0x8010, 0x4000);
+        sceSifInitIopHeap();
+        printf("iopMSINBuffAddr %d\n", iopMSINBuffAddr);
+    }
+    msinCtx.extmod = 0;
+    msinCtx.callBack = 0;
+    msinCtx.conf = 0;
+    msinCtx.buffGrpNum = 2;
+    msinCtx.buffGrp = msinBfGrp;
+    msinBfGrp[0].buffNum = 0;
+    msinBfGrp[0].buffCtx = 0;
+    msinBfGrp[1].buffNum = 6;
+    msinBfGrp[1].buffCtx = msinBfCtx;
+    for (i = 0; i < 6; i++) {
+        MSIN_BUFFER *buffer;
+
+        msinBfCtx[i].sema = 0;
+        buffer = &msinBf[i];
+        msinBfCtx[i].buff = buffer;
+        buffer->size = sizeof(MSIN_BUFFER);
+        buffer->length = 0;
+    }
+    if (sceMSIn_Init(&msinCtx) != 0) {
+        printf("sceMSIn_Init Error\n");
+        return 1;
+    }
+    bd_size_total = 0;
+    midi_state.port[0].bank = 0;
+    midi_state.port[0].spu_address = 0x5010;
+    for (i = 0; i < 10; i++) {
+        midi_state.port[0].sequence_address[i] = 0;
+    }
+    midi_state.port[0].sequence_count = 0;
+    midi_state.port[0].fade[0].active = 0;
+    midi_state.port[0].fade[1].active = 0;
+    midi_state.port[1].bank = 0;
+    midi_state.port[1].spu_address = 0x7D010;
+    for (i = 0; i < 10; i++) {
+        midi_state.port[1].sequence_address[i] = 0;
+    }
+    midi_state.port[1].sequence_count = 0;
+    midi_state.port[1].fade[0].active = 0;
+    midi_state.port[1].fade[1].active = 0;
+    midi_state.port[2].bank = 0;
+    midi_state.port[2].spu_address = 0x7D010;
+    for (i = 0; i < 10; i++) {
+        midi_state.port[2].sequence_address[i] = 0;
+    }
+    midi_state.port[2].sequence_count = 0;
+    midi_state.port[2].fade[0].active = 0;
+    midi_state.port[2].fade[1].active = 0;
+    midi_state.port[4].bank = 0;
+    midi_state.port[4].spu_address = 0x16E900;
+    for (i = 0; i < 10; i++) {
+        midi_state.port[4].sequence_address[i] = 0;
+    }
+    midi_state.port[4].sequence_count = 0;
+    midi_state.port[4].fade[0].active = 0;
+    midi_state.port[4].fade[1].active = 0;
+    midi_state.port[3].bank = 0;
+    midi_state.port[3].spu_address = 0x16E900;
+    for (i = 0; i < 10; i++) {
+        midi_state.port[3].sequence_address[i] = 0;
+    }
+    midi_state.port[3].sequence_count = 0;
+    midi_state.port[3].fade[0].active = 0;
+    midi_state.port[3].fade[1].active = 0;
+    midi_state.port[5].bank = 0;
+    midi_state.port[5].spu_address = 0x16E900;
+    for (i = 0; i < 10; i++) {
+        midi_state.port[5].sequence_address[i] = 0;
+    }
+    midi_state.port[5].sequence_count = 0;
+    midi_state.port[5].fade[0].active = 0;
+    midi_state.port[5].fade[1].active = 0;
+    midi_state.port[6].bank = 0;
+    midi_state.port[6].spu_address = 0x18AE20;
+    for (i = 0; i < 10; i++) {
+        midi_state.port[6].sequence_address[i] = 0;
+    }
+    midi_state.port[6].sequence_count = 0;
+    midi_state.port[6].fade[0].active = 0;
+    midi_state.port[6].fade[1].active = 0;
+    midi_state.port[7].bank = 0;
+    midi_state.port[7].spu_address = 0x1B6D40;
+    for (i = 0; i < 10; i++) {
+        midi_state.port[7].sequence_address[i] = 0;
+    }
+    midi_state.port[7].sequence_count = 0;
+    midi_state.port[7].fade[0].active = 0;
+    midi_state.port[7].fade[1].active = 0;
+    return 0;
+}
 
 void CSound::SQ_Play(int port, int no) {
     int address;
