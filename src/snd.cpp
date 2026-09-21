@@ -2087,4 +2087,8 @@ void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sc
  * @address 0x15F090
  * @size 0x68
  */
-INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureP4RECTP4RECTUc);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, RECT *screen, RECT *texel,
+                 unsigned char alpha) {
+    set2DSprite(packet, texture, CRect_i_(screen->x, screen->y, screen->width, screen->height),
+                CRect_i_(texel->x, texel->y, texel->width, texel->height), alpha);
+}
