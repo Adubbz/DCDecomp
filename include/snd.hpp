@@ -365,7 +365,6 @@ void set2DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, const CRect_i_ &
  * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_ii
  * @address 0x15BD00
  * @size 0x300
- * @unknownret
  */
 void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, int u,
                  int v);
