@@ -640,7 +640,15 @@ INCLUDE_RODATA("asm/nonmatchings/shop", @3159);
 INCLUDE_ASM("asm/nonmatchings/shop", FishImageIconDraw__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/shop", FishExchangeItemDraw__Fiii);
 INCLUDE_ASM("asm/nonmatchings/shop", FishingExchangeDraw__Fv);
-INCLUDE_ASM("asm/nonmatchings/shop", ExitFishingExchange__Fv);
+
+void ExitFishingExchange() {
+    CommonMenuMes1.auto_pos = -1;
+    SaveData->SetFishingPoint(FishMenu.point);
+    TexManager.DeleteTextureBlock(FishMenu.tex_block);
+    TexManager.CleanUpTextureList();
+    GamePad.AutoRepeatOff();
+    GamePad.MenuModeOff();
+}
 
 int FishingExchangeLoop() {
     int done;
