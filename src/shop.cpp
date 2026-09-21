@@ -84,6 +84,9 @@ extern CCamera MenuCamera;
 /** Model the menus draw a character with; the shopkeeper while a shop is open. */
 extern CCharacter MenuCharaFrame;
 
+/** Texture the personal board's frame, tags and arrows are drawn from. */
+extern CTexture *PerBoardTex;
+
 /** Arena the editor's menus are read into. */
 extern CDataAlloc2<1> EdMenuBuffer;
 
