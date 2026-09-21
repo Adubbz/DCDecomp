@@ -42,17 +42,11 @@ extern s8 MenuTrushMark[100];
 /** Screen rectangle the menus draw full-screen pictures into. */
 extern CRect_i_ MenuDispRc;
 
-/** Item kind the item board sort places first. */
-extern int sort_top_type__2;
-
 /** Rank of each item kind in the item board sort, rebuilt before each sort pass. */
 extern int sort_table__2[9];
 
 /** Rank of each attachment kind in the attachment board sort. */
 extern int asort_table__2[5];
-
-/** Attachment kind the attachment board sort places first. */
-extern int asort_top_type__2;
 
 /** Icon sheet of the consumable items. */
 extern CTexture *ItemIcon;
@@ -68,6 +62,9 @@ extern int ItemMenuWeaponIconReadBlock;
 
 /** Camera the menu draws 3D models under. */
 extern CCamera MenuCamera;
+
+/** Frame texture the main menu draws its icons in. */
+extern CTexture *StayTex;
 
 /** Texture of the village tag bar on the personal inventory board. */
 extern CTexture *VillageBar;
@@ -282,14 +279,10 @@ void Get3DPosTo2DPos(CFrame *frame, int *screen) {
     screen[0] = screenPos[0];
     screen[1] = screenPos[1];
 }
-#ifdef NON_MATCHING
 int GetMenuCommonFontW(int style, int fontSize) {
-    u8 fontWidths[7] = {16, 11, 11, 11, 11, 11, 11};
+    s8 fontWidths[7] = {16, 11, 11, 11, 11, 11, 11};
     return fontWidths[style];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuCommonFontW__Fii);
-#endif
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuCommonPutXY__FP6ClsMesi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", InitMenuMesSet__FiPs);
 
@@ -467,8 +460,42 @@ int GetNumberKeta(int value) {
 MENU_ICON_INFO *GetMenuIconInfo(int icon) {
     return &MenuIcon[GetMenuLangFlag()][icon];
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMainMenuIcon__Fiiiiii);
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @981);
+
+void DrawMainMenuIcon(int x, int y, int icon, int selected, int bright, int alpha) {
+    if (StayTex == NULL) {
+        StayTex = TexManager.GetTexture("stayframe", -1);
+        if (StayTex == NULL) {
+            return;
+        }
+    }
+    MENU_ICON_INFO *info = GetMenuIconInfo(icon);
+    if (info == NULL) {
+        return;
+    }
+    int u = info->unk_0C;
+    int v = info->unk_10;
+    s16 frame_size[2][2] = {{0x30, 0x20}, {0x3A, 0x28}};
+    int width = frame_size[selected][0];
+    int height = frame_size[selected][1];
+
+    if (selected) {
+        u = info->unk_04;
+        v = info->unk_08;
+        if (icon == info->id) {
+            width = 0x38;
+        }
+    }
+    set2DSprite(GetVif1Packet(), StayTex, CRect_i_(x, y, width, height - 1), CRect_i_(u, v, width, height), bright, bright, bright, alpha);
+    if (selected) {
+        x += 0x44;
+        y += 1;
+    } else {
+        x += 0x40;
+        y -= 1;
+    }
+    set2DSprite(GetVif1Packet(), StayTex, CRect_i_(x, y, info->unk_1C, info->unk_20 - 1),
+                CRect_i_(info->unk_14, info->unk_18, info->unk_1C, info->unk_20), bright, bright, bright, alpha);
+}
 
 void DrawMenuVibeItem(int x, int y, int offset_x, int offset_y, int) {
     int item_x = x + offset_x;
@@ -1024,10 +1051,13 @@ int CompItem(int first_item_no, int second_item_no) {
     return 0;
 }
 
+/** Item kind the item board sort places first. */
+static int sort_top_type = 1;
+
 int SeitonItemBoardSub(ITEM_PACK *items) {
     int i;
     int j;
-    int type = sort_top_type__2;
+    int type = sort_top_type;
     int swapped;
 
     for (i = 0; i < 9; i++) {
@@ -1056,9 +1086,9 @@ void SeitonItemBoard(ITEM_PACK *items) {
             if (SeitonItemBoardSub(items) != 0) {
                 break;
             }
-            sort_top_type__2++;
-            if (sort_top_type__2 >= 9) {
-                sort_top_type__2 = 1;
+            sort_top_type++;
+            if (sort_top_type >= 9) {
+                sort_top_type = 1;
             }
         }
     }
@@ -1109,10 +1139,13 @@ int CompAttach(ATTACH_LIST *first, ATTACH_LIST *second) {
     return 0;
 }
 
+/** Attachment kind the attachment board sort places first. */
+static int asort_top_type = 1;
+
 int SeitonAttachBoardSub(ATTACH_LIST *attachments) {
     int i;
     int j;
-    int type = asort_top_type__2;
+    int type = asort_top_type;
     int swapped;
 
     for (i = 0; i < 5; i++) {
