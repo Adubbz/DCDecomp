@@ -228,6 +228,8 @@ static inline ShopUserItemPackView *ShopUserItemPack(CUserStatus *user_status) {
 
 static void DrawSellTicket_2(int x, int y, int clip_top, int clip_bottom, int mode);
 
+static void SetShopTalkMsgPos();
+
 s16 *GetItemShopList(int shop_no) {
     return ItemShopList2[shop_no];
 }
@@ -1241,7 +1243,89 @@ INCLUDE_ASM("asm/nonmatchings/shop", ShopCancelGoodReturn2__Fv);
  */
 static int GetNowMasterMsgNo2(int, int);
 INCLUDE_ASM("asm/nonmatchings/shop", GetNowMasterMsgNo2__Fii);
-INCLUDE_ASM("asm/nonmatchings/shop", ShopModelMsgFunc__Fi);
+
+/**
+ * Runs the shopkeeper's speech and the model's reaction to it.
+ *
+ * @mangled ShopModelMsgFunc__Fi
+ * @address 0x1ED6E0
+ * @size 0x2D8
+ */
+static void ShopModelMsgFunc(int shop_no) {
+    if (ShopMenu.unk_194 == 2) {
+        int motion = ShopMenu.unk_19C;
+
+        switch (ShopMenu.unk_19A) {
+            case 0:
+                motion = 0;
+                if (GamePad.AllOn()) {
+                    ShopMenu.unk_1A4 = 0;
+                } else {
+                    ShopMenu.unk_1A4++;
+                    if (ShopMenu.unk_1A4 >= 0x140) {
+                        ShopMenu.unk_19A = 1;
+                        motion = 3;
+                    }
+                }
+                break;
+            case 1:
+                switch (ShopMenu.unk_180) {
+                    case 0:
+                        if (GamePad.AllOn()) {
+                            ShopMenu.unk_19A = 0;
+                            ShopMenu.unk_1A4 = 0;
+                            motion = 0;
+                        }
+                        break;
+                    default:
+                        motion = 3;
+                        break;
+                }
+                break;
+        }
+        if (ShopMenu.unk_19A == 1) {
+            int msg_no = GetNowMasterMsgNo2(shop_no, ShopMenu.unk_00);
+
+            if (ShopMenu.unk_19E != msg_no || GamePad.Down(0x60)) {
+                ShopMenu.unk_19E = msg_no;
+                CommonMenuMes3.mes_made = -1;
+                CommonMenuMes3.MakeMesWin(ShopMenu.unk_19E);
+                motion = 3;
+            }
+            switch (ShopMenu.unk_180) {
+                case 2:
+                case 1:
+                    break;
+                default:
+                    if (ShopMenu.unk_194) {
+                        SetShopTalkMsgPos();
+                        CommonMenuMes3.tail_on = 1;
+                        CommonMenuMes3.auto_pos = 8;
+                        CommonMenuMes3.Step();
+                        if (ShopMenu.unk_1A0 >= 4) {
+                            CommonMenuMes3.DrawMesWin();
+                        }
+                        setbilinear(0);
+                    }
+                    break;
+            }
+        }
+        switch (CommonMenuMes3.State()) {
+            case 0:
+            case 4:
+                motion = 0;
+                break;
+            case 1:
+            case 2:
+                motion = 3;
+                break;
+        }
+        if (ShopMenu.unk_19C != motion) {
+            ShopMenu.unk_19C = motion;
+            MenuCharaFrame.SetMotion(ShopMenu.unk_19C, 0);
+        }
+    }
+}
 
 /**
  * Places the shopkeeper's speech bubble above their model.

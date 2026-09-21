@@ -392,15 +392,6 @@ void DrawSellTicket22(int, int, int, int, int);
 void ShopCancelGoodReturn2(void);
 
 /**
- * Runs the shopkeeper's speech and the model's reaction to it.
- *
- * @mangled ShopModelMsgFunc__Fi
- * @address 0x1ED6E0
- * @size 0x2D8
- */
-void ShopModelMsgFunc(int);
-
-/**
  * Builds the file name of a shopkeeper's model archive.
  *
  * @mangled ItemShopGetPacFileName__FiiPc
