@@ -504,7 +504,41 @@ void DrawObjectVibe(int x, int y, CTexture *texture, RECT src_rect, unsigned cha
     DrawObjectVibe(x, y, texture, src, alpha, flag);
 }
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuObjectVibe__Fiiii);
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuHelpWindow__FP8CTextureiiiffi);
+
+void DrawMenuHelpWindow(CTexture *texture, int style, int x, int y, float width, float height, int alpha) {
+    int corner_u;
+    float middle_width;
+    float middle_height;
+    int middle_y;
+    int bottom_y;
+
+    if (style == 0) {
+        corner_u = 24;
+    } else if (style == 1) {
+        corner_u = 0;
+    } else {
+        corner_u = 48;
+    }
+    middle_width = 24.0f * width;
+    middle_height = 24.0f * height;
+    middle_y = y + 24;
+    bottom_y = middle_y + middle_height;
+    if (texture == NULL) {
+        return;
+    }
+    DrawMenu2DSprite(texture, CRect_i_(x, y, 24, 24), CRect_i_(corner_u, 0, 24, 24), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x, middle_y, 24, middle_height), CRect_i_(24, 24, 24, 24), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, 24, 24), CRect_i_(24, 48, 24, 24), alpha);
+    x += 24;
+    DrawMenu2DSprite(texture, CRect_i_(x, y, middle_width, 24), CRect_i_(48, 0, 24, 24), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x, middle_y, middle_width, middle_height), CRect_i_(48, 24, 24, 24), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, middle_width, 24), CRect_i_(48, 48, 24, 24), alpha);
+    x += middle_width;
+    DrawMenu2DSprite(texture, CRect_i_(x, y, 24, 24), CRect_i_(72, 0, 24, 24), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x, middle_y, 24, middle_height), CRect_i_(72, 24, 24, 24), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, 24, 24), CRect_i_(72, 48, 24, 24), alpha);
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuHelpWinDraw__FiiffiiiP8CTexture);
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuHelpWinDraw2__FiiffiiiP8CTexture);
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuHelpWinDraw__Fiiffi);
