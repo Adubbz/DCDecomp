@@ -552,7 +552,44 @@ int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int o
     return x;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuNumber__Fiii4RECTP8CTextureiiii);
+int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int overlap, int top, int bottom,
+                   int flag) {
+    int digits;
+    int digit;
+    int width;
+    int src_x;
+    int dest_y;
+    int dest_height;
+    int clip_y;
+    int src_y;
+    int height;
+
+    if (texture == NULL) {
+        return 0;
+    }
+    for (digits = GetNumberKeta(number); 0 < digits; digits--) {
+        clip_y = y;
+        digit = number % 10;
+        width = rect.width;
+        x -= width - overlap;
+        src_x = rect.x + width * digit;
+        src_y = rect.y;
+        height = rect.height;
+        MenuTextureClip(clip_y, src_y, height, top, bottom);
+        CRect_i_ dest;
+        CRect_i_ src(src_x, src_y, width, height);
+        dest_height = height - 1;
+        dest_y = clip_y;
+        dest.x = x;
+        dest.y = dest_y;
+        dest.width = width;
+        dest.height = dest_height;
+        DrawMenu2DSprite(texture, dest, src, flag);
+        number /= 10;
+    }
+    return x;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", GetMsgLengthMenu__FP6ClsMesi);
 /**
  * Gives the texture and the cell within it that one georama element draws from.
