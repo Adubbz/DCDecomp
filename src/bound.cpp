@@ -51,7 +51,6 @@ int CBound::InCheck(float *point, float *result) {
     }
     return 0;
 }
-#ifdef NON_MATCHING
 void CBound::SetDir(CFrame *frame, float *from_position, float *to_position,
                     float *up_direction, float half_width, float half_height) {
     state = 1;
@@ -75,9 +74,6 @@ void CBound::SetDir(CFrame *frame, float *from_position, float *to_position,
         reciprocal[2] = 1.0f / half_depth;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/bound", SetDir__6CBoundFP6CFramePfPfPfff);
-#endif
 
 void CBound::ChangeDir(float *from_position, float *to_position, float *up_direction) {
     sceVu0CopyVector(from, from_position);
