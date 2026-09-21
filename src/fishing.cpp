@@ -437,7 +437,15 @@ void FishingInit() {
     cpoly_num = 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingExit__Fv);
+void FishingExit() {
+    if (esa_type >= 0) {
+        EdGetItem(esa_info[esa_type].item_no, 1, -1);
+    }
+    for (int i = 0; i < 6; i++) {
+        Fish[i].Initialize();
+    }
+    FishingInit();
+}
 
 void FishingSetWaterLevel(float water_level, float ground_level) {
     WaterLevel = water_level;
