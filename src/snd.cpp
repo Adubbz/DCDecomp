@@ -405,7 +405,84 @@ void SndStep() {
     CSnd.Step();
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndInitSeTable__Fv);
+void SndInitSeTable() {
+    int i;
+    int j;
+
+    for (i = 0; i < 2800; i++) {
+        SND_SE_INFO *info = &se_info[i];
+
+        if (info->bank >= 0) {
+            info->vol_no = CSnd.GetSeNo(info->bank, info->prog);
+        }
+    }
+
+    for (j = 0; j < 100; j++) {
+        SND_SE_INFO *table = cap_se_info[j];
+
+        if (table == 0) {
+            continue;
+        }
+        for (i = 0; i < 100; i++) {
+            SND_SE_INFO *info = &table[i];
+
+            if (info->bank == -128) {
+                break;
+            }
+            if (info->bank >= 0) {
+                info->vol_no = CSnd.GetSeNo(info->bank, info->prog);
+            }
+        }
+    }
+
+    for (j = 0; j < 2; j++) {
+        SND_SE_INFO *table = basic_se_info[j];
+
+        if (table == 0) {
+            continue;
+        }
+        for (i = 0; i < 200; i++) {
+            SND_SE_INFO *info = &table[i];
+
+            if (info->bank == -128) {
+                break;
+            }
+            if (info->bank >= 0) {
+                info->vol_no = CSnd.GetSeNo(info->bank, info->prog);
+            }
+        }
+    }
+
+    for (j = 0; j < 10; j++) {
+        SND_SE_INFO *table = voice_info[j];
+
+        if (table == 0) {
+            continue;
+        }
+        for (i = 0; i < 100; i++) {
+            SND_SE_INFO *info = &table[i];
+
+            if (info->bank == -128) {
+                break;
+            }
+            if (info->bank >= 0) {
+                info->vol_no = CSnd.GetSeNo(info->bank, info->prog);
+            }
+        }
+    }
+
+    for (i = 0; i < 64; i++) {
+        SND_SE_INFO *info = &special_se_info[i];
+
+        if (info->bank == -128) {
+            break;
+        }
+        if (info->bank >= 0) {
+            info->vol_no = CSnd.GetSeNo(info->bank, info->prog);
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetReadBuffer__FPUi);
 /**
  * Reports whether any of the background sound loads is still running.
