@@ -927,7 +927,18 @@ int SndSoundLoadBG(int set_no, u_int *buffer, int *size) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndSoundSyncBG__Fv);
+int SndSoundSyncBG() {
+    if (load_snd_set < 0 || load_snd_adr == 0) {
+        return 0;
+    }
+    if (ReadBGSync()) {
+        return 1;
+    }
+    SetSoundFile(load_snd_set, load_snd_adr, snd_cfg_file);
+    load_snd_set = -1;
+    load_snd_adr = 0;
+    return 0;
+}
 INCLUDE_ASM("asm/nonmatchings/snd", SndSePlay__Fiii);
 void SndSePlay(int se_no, float volume, float pan, int voice) {
     SND_SE_INFO *info = GetSeInfo(se_no);
