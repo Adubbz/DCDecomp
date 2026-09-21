@@ -652,7 +652,13 @@ void DrawPersonalBoard(int x, int y, int board_mode, int alpha, int) {
 }
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawNowEquipWeaponMark__Fiiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonIconDraw__Fiiiiiii);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardDrawWaku__FiiP8CTexturei);
+
+void PersonalBoardDrawWaku(int x, int y, CTexture *texture, int alpha) {
+    DrawMenu2DSprite(texture, CRect_i_(x, y + 1, 0x14, 0xBF), CRect_i_(0, 0, 0x14, 0xC0), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x + 0x14, y + 1, 0xC8, 0x13), CRect_i_(0x14, 0, 0xC8, 0x14), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x + 0xDC, y + 1, 0x24, 0xBF), CRect_i_(0xDC, 0, 0x24, 0xC0), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x + 0x14, y + 0xA1, 0xC8, 0x1F), CRect_i_(0x14, 0xA0, 0xC8, 0x20), alpha);
+}
 
 void PersonalBoardOptionDraw(int x, int y, int board_mode, int cursor_pos, CTexture *texture, int alpha) {
     PersonalBoardTagDraw(x, board_mode, cursor_pos, texture, 0, alpha);
