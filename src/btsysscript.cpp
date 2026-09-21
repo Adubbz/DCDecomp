@@ -19,6 +19,7 @@
 #include "mathutil.hpp"
 #include "menu_dungeon.hpp"
 #include "menu_misc.hpp"
+#include "monstorunit.hpp"
 #include "nowload.hpp"
 #include "npcharacter.hpp"
 #include "runscript.hpp"
@@ -405,7 +406,41 @@ int _SET_EVENT_SW(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_MONSTOR_ID__FP12RS_STACKDATAi);
+int _SET_MONSTOR_ID(RS_STACKDATA *stack, int count) {
+    int model_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int event_flag = -1;
+    float pos[3];
+
+    if (count == 2) {
+        if (GetStackInt__FP12RS_STACKDATA__2(stack++)) {
+            BtLoadMonstor(0);
+            NowMonstorUnit->CleanViewMonstor(0);
+        }
+    }
+    if (count == 5) {
+        int clean = GetStackInt__FP12RS_STACKDATA__2(stack++);
+        pos[0] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
+        pos[1] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
+        pos[2] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
+        if (clean) {
+            BtLoadMonstor(0);
+            NowMonstorUnit->CleanViewMonstor(0);
+        }
+    }
+    if (count == 6) {
+        int clean = GetStackInt__FP12RS_STACKDATA__2(stack++);
+        pos[0] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
+        pos[1] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
+        pos[2] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
+        event_flag = GetStackInt__FP12RS_STACKDATA__2(stack);
+        if (clean) {
+            BtLoadMonstor(0);
+            NowMonstorUnit->CleanViewMonstor(0);
+        }
+    }
+    NowMonstorUnit->SetupViewMonstor(model_no, pos, event_flag);
+    return 1;
+}
 
 int _CHK_ATRA_HAVE(RS_STACKDATA *stack, int count) {
     int atra_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
