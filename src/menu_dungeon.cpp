@@ -262,11 +262,85 @@ int GetAttachVolumeForMsg(ATTACH_LIST *attach) {
     return volume;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", InitDunEnterMenu__Fiii);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @762__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @763__3);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @764__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @765__2);
+int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor) {
+    char path[76];
+    int size;
+    u_long128 *buffer;
+    int first_open;
+    int floor;
+    s8 lines;
+
+    SaveData->QuestDungeon(dungeon, 1);
+    DEnterStatusPt = (CDngStatusData *) UserStatus;
+    StartReadBG();
+    buffer = (u_long128 *) read_buffer;
+    buffer = MenuCalcBufAlignment(buffer);
+    DEnterMenu.dungeon = dungeon;
+    GetPathReadDifferntLang(path);
+    strcat(path, "dunenter/dunenter%d.pak");
+    sprintf(path, path, DEnterMenu.dungeon);
+    LoadFileBG(path, buffer, &size);
+    ReadBG();
+    MenuEtcErrCnt = 0;
+    DEnterMenu.texture_block = texture_block;
+    DEnterMenu.unk_00C = 0;
+    DEnterMenu.unk_00E = 1;
+    DEnterMenu.counter = 0;
+    DEnterMenu.state = 1;
+    DEnterMenu.requested_floor = requested_floor;
+    if (requested_floor >= 0) {
+        DEnterMenu.state = 3;
+        return 1;
+    }
+    first_open = -1;
+    floor = DEnterStatusPt->floor_reached[dungeon];
+    if (dungeon == 5) {
+        if (floor >= maxFloorTbl__4[dungeon]) {
+            floor = maxFloorTbl__4[dungeon] - 1;
+        }
+        printf("maxfloor = %d\n", floor);
+    }
+    if (floor >= 0) {
+        DEnterMenu.floor_count = floor + 1;
+    } else {
+        DEnterMenu.floor_count = 1;
+    }
+    for (floor = 0; floor < maxFloorTbl__4[dungeon]; floor++) {
+        DEnterMenu.max_atra[floor] = DEnterStatusPt->GetMaxAtraNum(dungeon, floor);
+        DEnterMenu.collected_atra[floor] = DEnterStatusPt->GetAtraNum(dungeon, floor);
+        DEnterMenu.kills[floor] = DEnterStatusPt->ChkKills(dungeon, floor);
+        if (DEnterMenu.kills[floor] > 999) {
+            DEnterMenu.kills[floor] = 999;
+        }
+        if (first_open == -1 && (u8) DEnterMenu.max_atra[floor] != (u8) DEnterMenu.collected_atra[floor]) {
+            first_open = floor;
+        }
+    }
+    DEnterMenu.selected_floor = DEnterMenu.floor_count - 1;
+    DEnterMenu.scroll_top = DEnterMenu.selected_floor;
+    if (first_open > -1) {
+        DEnterMenu.selected_floor = first_open;
+        DEnterMenu.scroll_top = DEnterMenu.selected_floor;
+    }
+    if (DEnterMenu.scroll_top > DEnterMenu.floor_count - 5) {
+        DEnterMenu.scroll_top = DEnterMenu.floor_count - 5;
+        if (DEnterMenu.scroll_top < 0) {
+            DEnterMenu.scroll_top = 0;
+        }
+    }
+    printf("DEnterMenu.select = %d\n", DEnterMenu.selected_floor);
+    printf("DEnterMenu.topline = %d\n", DEnterMenu.scroll_top);
+    DEnterMenu.unk_004 = 118.0f - 40.0f * DEnterMenu.scroll_top;
+    lines = DEnterMenu.floor_count;
+    if (lines < 5) {
+        lines = 5;
+    }
+    DEnterMenu.unk_008 = 122.0f + 108.0f * DEnterMenu.scroll_top / lines;
+    GamePad.SetAutoRepeat(0xF00F, 30, 5);
+    GamePad.MenuModeOn(0x78);
+    return 1;
+}
+
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @776__3);
 
 static void ExitDunEnterMenu() {
