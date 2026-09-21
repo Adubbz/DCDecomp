@@ -332,7 +332,7 @@ void AttachDataListToHaveCopy(int attachment_no, ATTACH_LIST *attachment);
  * @address 0x002326C0
  * @size 0x104
  */
-s16 ItemDataToHaveCopy(int item_no);
+int ItemDataToHaveCopy(int item_no);
 
 /**
  * Draws a texture across the complete menu display rectangle.

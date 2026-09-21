@@ -1469,7 +1469,7 @@ void AttachDataListToHaveCopy(int attachment_no, ATTACH_LIST *attachment) {
     }
 }
 
-s16 ItemDataToHaveCopy(int item_no) {
+int ItemDataToHaveCopy(int item_no) {
     int vol;
 
     if (item_no < ITEM_DUNGEON_START || item_no > ITEM_WEAPON_START - 1) {
