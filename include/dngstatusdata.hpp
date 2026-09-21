@@ -35,8 +35,8 @@ struct DNG_CONSUMABLE {
  * slots, and the item and remaining volume in each slot.
  */
 struct ITEM_PACK {
-    s8 num; /**< Slots the pack holds. */
-    char unk_01[1];
+    s8 num;                 /**< Slots the pack holds. */
+    s8 item_count;          /**< Dungeon items carried, counting every copy in a quick-use slot. */
     s16 quick_item_slot[3]; /**< Item in each quick-use slot, or -1. */
     s16 quick_item_qty[3];  /**< How many of that item each quick-use slot holds. */
     s16 item[103];          /**< Item in each slot, or -1. */

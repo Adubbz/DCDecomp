@@ -7,6 +7,7 @@
 #include <libvu0.h>
 
 #include <cmath>
+#include <cstdlib>
 
 #include "battlemenu.hpp"
 #include "camera.hpp"
@@ -66,9 +67,6 @@ struct ShopMenuWork {
 };
 
 STATIC_ASSERT(sizeof(ShopMenuWork) == 0x1A8);
-
-/** Returns the magnitude of an integer. */
-extern "C" int abs(int);
 
 /** Shared UI state for the charge shop and item shop screens. */
 extern ShopMenuWork ShopMenu;
@@ -218,22 +216,10 @@ extern s32 sort_top_type;
 extern s32 asort_top_type;
 
 /**
- * A view onto the dungeon item pack inside CUserStatus's 0x4360 region, which
- * userstatus.hpp does not lay out as one: its capacity, the quick slots and the
- * dungeon items with their volumes.
+ * Gives the dungeon item pack a player status carries.
  */
-struct ShopUserItemPackView {
-    s8 num;                /**< Number of dungeon-item slots the pack holds. */
-    s8 item_count;         /**< Dungeon items carried, quick slot stacks included. */
-    s16 quick_item[3];     /**< The item in each quick slot. */
-    s16 quick_item_vol[3]; /**< How many of each quick slot's item are stacked. */
-    s16 item[103];         /**< The item in each dungeon-item slot. */
-    s16 item_vol[103];     /**< The volume of each dungeon-item slot's item. */
-};
-
-/** Reaches the dungeon item pack inside a player status by its byte offset. */
-static inline ShopUserItemPackView *ShopUserItemPack(CUserStatus *user_status) {
-    return (ShopUserItemPackView *) ((char *) user_status + 0x4360);
+static inline ITEM_PACK *ShopUserItemPack(CUserStatus *user_status) {
+    return &user_status->item_pack;
 }
 
 /** An item's buy and sell price. */
@@ -644,7 +630,7 @@ int ShopIconMove::IconAutoMove(int is_buy, int force_arrive) {
                     s16 volume = data.volume;
                     ShopStockPt->SetItemToPos(slot_no, &item, &volume);
                 } else {
-                    ShopUserItemPackView *pack = ShopUserItemPack(ShopUserStatusPt);
+                    ITEM_PACK *pack = ShopUserItemPack(ShopUserStatusPt);
                     pack->item[slot_no] = item_no;
                     pack->item_vol[slot_no] = data.volume;
                     board_info = &ItemBoardInfo[slot_no];
@@ -1110,7 +1096,7 @@ static void ShopMenuInit(int *tex_block, int shop_no, int mode) {
     ShopDataMove.pos_y = 0.0f;
     ShopDataMove.pos_x = 0.0f;
     memset(&ShopDataMove.data, 0, sizeof(ShopDataMove.data));
-    SetMenuTrushMark((ITEM_PACK *) ShopUserItemPack(ShopUserStatusPt));
+    SetMenuTrushMark(ShopUserItemPack(ShopUserStatusPt));
     GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
     GamePad.MenuModeOn(0x78);
 }
@@ -1123,14 +1109,14 @@ static void ShopMenuInit(int *tex_block, int shop_no, int mode) {
  * @size 0x12C
  */
 static void ShopMenuExit() {
-    ShopUserItemPackView *pack = ShopUserItemPack(ShopUserStatusPt);
+    ITEM_PACK *pack = ShopUserItemPack(ShopUserStatusPt);
     int i;
     int j;
 
     pack->item_count = 0;
     for (i = 0; i < 3; i++) {
-        if (pack->quick_item[i] >= ITEM_DUNGEON_START) {
-            pack->item_count += (s8) pack->quick_item_vol[i];
+        if (pack->quick_item_slot[i] >= ITEM_DUNGEON_START) {
+            pack->item_count += (s8) pack->quick_item_qty[i];
         }
     }
     for (j = 0; j < pack->num; j++) {
@@ -1462,12 +1448,12 @@ static int ChargeSelectKey() {
                 GetNowModeMaxNum(ShopMenu.board.unk_04, &full);
                 switch (kind) {
                     case 0: {
-                        ShopUserItemPackView *pack = ShopUserItemPack(ShopUserStatusPt);
+                        ITEM_PACK *pack = ShopUserItemPack(ShopUserStatusPt);
 
                         max = pack->num;
                         for (int i = 0; i < 3; i++) {
-                            if (pack->quick_item[i] >= 0x84) {
-                                used += pack->quick_item_vol[i];
+                            if (pack->quick_item_slot[i] >= 0x84) {
+                                used += pack->quick_item_qty[i];
                             }
                         }
                         for (int i = 0; i < max; i++) {
@@ -2279,7 +2265,7 @@ void ItemShopMemoryAlloc() {
 void ItemPosInfoInit() {
     int i;
     int j;
-    ShopUserItemPackView *pack = ShopUserItemPack(ShopUserStatusPt);
+    ITEM_PACK *pack = ShopUserItemPack(ShopUserStatusPt);
 
     for (i = 0; i < 100; i++) {
         if (pack->item[i] >= 0x84) {
