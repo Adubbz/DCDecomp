@@ -419,7 +419,34 @@ void CEditGround::Clear() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/editground", Initialize__11CEditGroundFv);
+void CEditGround::Initialize() {
+    map_no = 0;
+    plot_parts = NULL;
+    river_parts = NULL;
+    road_parts = NULL;
+    parts_info = NULL;
+    for (int area = 0; area < 4; area++) {
+        areas[area] = NULL;
+        unk_00014[area] = 1;
+    }
+    int i;
+    for (i = 0; i < 64; i++) {
+        fixed_parts[i].Initialize();
+    }
+    for (i = 0; i < 1; i++) {
+        unk_20740[i] = 0;
+    }
+    for (i = 0; i < 4; i++) {
+        water_surfaces[i].draw = 0;
+    }
+    for (i = 0; i < 128; i++) {
+        people[i] = NULL;
+    }
+    people_count = 0;
+    suppress_water = 0;
+    Clear();
+    clip_plane[3] = -1.0f;
+}
 
 void CEditGround::RemakeGrid() {
     for (int i = 0; i < 4; i++) {

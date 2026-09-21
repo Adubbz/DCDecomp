@@ -73,7 +73,7 @@ public:
     CMapParts *road_parts;    /**< Template road pieces, indexed by how the road joins its neighbours. */
     u8 unk_15f3c[4];
     CMapParts fixed_parts[64]; /**< Parts of the map that the player cannot move; the second is the ground model. */
-    s32 unk_20740;
+    s32 unk_20740[1];
     s32 unk_20744;
     float unk_20748;
     s32 unk_2074c;
