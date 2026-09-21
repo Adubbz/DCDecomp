@@ -46,6 +46,9 @@ extern int sort_top_type__2;
 /** Rank of each item kind in the item board sort, rebuilt before each sort pass. */
 extern int sort_table__2[9];
 
+/** Rank of each attachment kind in the attachment board sort. */
+extern int asort_table__2[5];
+
 /** Icon sheet of the consumable items. */
 extern CTexture *ItemIcon;
 
@@ -641,7 +644,30 @@ int GetAttachKind(int item_no) {
     return ATTACHKIND_OTHER;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu_draw", CompAttach__FP11ATTACH_LISTP11ATTACH_LIST);
+int CompAttach(ATTACH_LIST *first, ATTACH_LIST *second) {
+    int first_rank = asort_table__2[GetAttachKind(first->item_no)];
+    int second_rank = asort_table__2[GetAttachKind(second->item_no)];
+
+    if (first->item_no < ITEM_ATTACH_START) {
+        first_rank = 5;
+    }
+    if (second->item_no < ITEM_ATTACH_START) {
+        second_rank = 5;
+    }
+    if (first_rank > second_rank) {
+        return 1;
+    }
+    if (first_rank < second_rank) {
+        return -1;
+    }
+    if (first->item_no > second->item_no) {
+        return 1;
+    }
+    if (first->item_no < second->item_no) {
+        return -1;
+    }
+    return 0;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonAttachBoardSub__FP11ATTACH_LIST__2);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonAttachBoard__FP11ATTACH_LIST);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", WhatIsKindofItem__Fi);
