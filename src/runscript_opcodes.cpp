@@ -297,16 +297,11 @@ int _STATUS_SET_EVENT(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->unk_094 = GetStackInt(stack);
     return 1;
 }
-#ifdef NON_MATCHING
 int _RUN_SCRIPT(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->unk_094 = GetStackInt(stack);
     printf("run script !!\n");
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _RUN_SCRIPT__FP12RS_STACKDATAi);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @870);
 int _STATUS_SET_COL_OFF(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
 

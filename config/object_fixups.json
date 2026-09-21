@@ -1082,6 +1082,9 @@
       "GetStackString__FP12RS_STACKDATA__3",
       "SetStack__FP12RS_STACKDATAi__3",
       "SetStack__FP12RS_STACKDATAf__3"
+    ],
+    "rodata_exports": [
+      "@870"
     ]
   },
   "src/menu_dungeon.cpp": {
