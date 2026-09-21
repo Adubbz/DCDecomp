@@ -2,6 +2,9 @@
 
 #include "editarea.hpp"
 #include "mapparts.hpp"
+#include "vector3.hpp"
+
+static int CheckDelete(CEditArea *area, CMapParts *parts, float x, float y, float z);
 
 INCLUDE_ASM("asm/nonmatchings/editground", SetMapParts__11CEditGroundFifffi);
 INCLUDE_ASM("asm/nonmatchings/editground", SetRiverParts__11CEditGroundFfffii);
@@ -28,7 +31,6 @@ void CEditGround::MakePartsBox() {
         }
     }
 }
-
 INCLUDE_ASM("asm/nonmatchings/editground", GetPartsBox__11CEditGroundFP7CBoxVu0fff);
 INCLUDE_ASM("asm/nonmatchings/editground", GetPeoplePos__11CEditGroundFiPf);
 INCLUDE_ASM("asm/nonmatchings/editground", DrawBaseGround__11CEditGroundFv);
@@ -70,7 +72,49 @@ INCLUDE_ASM("asm/nonmatchings/editground", __ct__12CGroundWaterFv);
  * @address 0x1A5B20
  * @size 0x18C
  */
-INCLUDE_ASM("asm/nonmatchings/editground", CheckDelete__FP9CEditAreaP9CMapPartsfff);
+static int CheckDelete(CEditArea *area, CMapParts *parts, float x, float y, float z) {
+    CVector3_i_ position;
+
+    area->GetPos(&position, x, y, z);
+    int column = position.x;
+    int row = position.z;
+    int kind = parts->unk_118;
+    switch (area->GetMapNo()) {
+        case 1:
+            if (kind == 3) {
+                break;
+            }
+            switch (area->GetAreaID()) {
+                case 0:
+                    if (column == 5 && row == 0) {
+                        return 1;
+                    }
+                    if (column == 2 && row == 7) {
+                        return 1;
+                    }
+                    break;
+                case 1:
+                    if (column == 3 && row == 5) {
+                        return 1;
+                    }
+                    if (column == 11 && row == 3) {
+                        return 1;
+                    }
+                    break;
+                case 2:
+                    if (column == 4 && row == 0) {
+                        return 1;
+                    }
+                    if (column == 3 && row == 7) {
+                        return 1;
+                    }
+                    break;
+            }
+            break;
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", Draw__12CPartsCursorFPfii);
 INCLUDE_ASM("asm/nonmatchings/editground", RequestCheck__11CEditGroundFv);
 INCLUDE_ASM("asm/nonmatchings/editground", CheckPartsRect__11CEditGroundFiiR8CRect_i_);
