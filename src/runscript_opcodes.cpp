@@ -491,7 +491,28 @@ INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SHOT__FP12RS_STACKDATAi);
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1069);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SHOT2__FP12RS_STACKDATAi);
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1086__2);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_SND_FRM__FP12RS_STACKDATAi);
+int _SET_SND_FRM(RS_STACKDATA *stack, int argc) {
+    int slot;
+    int i;
+    int monster_no = NowMonstorUnit->unk_090;
+
+    slot = -1;
+    for (i = 0; i < 16; i++) {
+        if (NowMonstorUnit->sound[monster_no].id[i] == -1) {
+            if (NowMonstorUnit->sound[monster_no].cooldown[i] == 0) {
+                slot = i;
+            }
+            break;
+        }
+    }
+    if (slot == -1) {
+        return 1;
+    }
+    NowMonstorUnit->sound[monster_no].start[slot] = GetStackFloat(stack++);
+    NowMonstorUnit->sound[monster_no].end[slot] = GetStackFloat(stack++);
+    NowMonstorUnit->sound[monster_no].id[slot] = GetStackInt(stack);
+    return 1;
+}
 int _SET_LOOP_SND(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
 
