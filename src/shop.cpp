@@ -1667,7 +1667,40 @@ void ItemShopMemoryAlloc() {
     ShopWorkBuf = (SHOP_ITEMLIST *) ShopCashBuffer.Alloc(0x1D88);
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", ItemPosInfoInit__Fv);
+void ItemPosInfoInit() {
+    int i;
+    int j;
+    ShopUserItemPackView *pack = ShopUserItemPack(ShopUserStatusPt);
+
+    for (i = 0; i < 100; i++) {
+        if (pack->item[i] >= 0x84) {
+            ItemBoardInfo[i] = 2;
+        } else {
+            ItemBoardInfo[i] = 0;
+        }
+    }
+    for (i = 0; i < 6; i++) {
+        CUserStatus *status = ShopUserStatusPt;
+        WEAPON_HAVE *weapons = status->chara_weapons[i];
+
+        for (j = 0; j < 10; j++) {
+            if (weapons[j].item_no >= 0x101) {
+                WeaponBoardInfo[i][j] = 2;
+            } else {
+                WeaponBoardInfo[i][j] = 0;
+            }
+        }
+    }
+    DNG_CONSUMABLE *attach = ShopUserStatusPt->consumable_items;
+    for (i = 0; i < 40; i++) {
+        if (attach[i].id >= 0x51) {
+            AttachBoardInfo[i] = 2;
+        } else {
+            AttachBoardInfo[i] = 0;
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopGoodInitialize__Fi);
 
 void InitItemShop2(int *state, int shop_no, int mode) {
