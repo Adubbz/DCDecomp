@@ -161,3 +161,12 @@ void FishingSetRect(CBoxVu0 bounds);
  * @size 0x108
  */
 void FishingInitFish(CBoxVu0 bounds);
+
+/**
+ * Returns whether a fish is fighting the line, biting the hook or eating the bait, and which fish it is.
+ *
+ * @mangled FishingFishStatus__FPi
+ * @address 0x1A9570
+ * @size 0xD8
+ */
+int FishingFishStatus(int *fish_no);

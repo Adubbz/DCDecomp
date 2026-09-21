@@ -498,14 +498,34 @@ void FishingInitFish(CBoxVu0 bounds) {
     }
 }
 
-/**
- * Gives what the nearest fish is doing and how interested it is.
- *
- * @mangled FishingFishStatus__FPi
- * @address 0x1A9570
- * @size 0xD8
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingFishStatus__FPi);
+int FishingFishStatus(int *fish_no) {
+    int status;
+
+    if (Fish == NULL) {
+        return -1;
+    }
+    status = -1;
+    for (int i = 0; i < 6; i++) {
+        if (fish_no != NULL) {
+            *fish_no = i;
+        }
+        CFish *fish;
+        if (status == -1) {
+            fish = &Fish[i];
+            if (fish->action == FISH_ACTION_EAT_FOOD) {
+                status = FISH_ACTION_EAT_FOOD;
+            }
+        }
+        fish = &Fish[i];
+        if (fish->action == FISH_ACTION_BITE_HOOK) {
+            return FISH_ACTION_BITE_HOOK;
+        }
+        if (fish->action == FISH_ACTION_BATTLE) {
+            return FISH_ACTION_BATTLE;
+        }
+    }
+    return status;
+}
 
 void FishingBattleFish(int fish_no) {
     BattleFish = NULL;
