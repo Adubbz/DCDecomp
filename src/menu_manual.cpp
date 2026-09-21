@@ -33,8 +33,14 @@ int GetGameFlagForManualMenu() {
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_manual", GetGameFlagForManualMenu__Fv);
 #endif
-#ifdef NON_MATCHING
-s16 ManualImgLoad() {
+/**
+ * Begins loading the image resources for the current manual page.
+ *
+ * @mangled ManualImgLoad__Fv
+ * @address 0x002335D0
+ * @size 0x1A8
+ */
+static s16 ManualImgLoad() {
     char path[76];
     int size;
 
@@ -45,11 +51,13 @@ s16 ManualImgLoad() {
     strcat(path, "manual/m%d.pac");
     int image_no = ManualMenu.entry + (ManualMenu.category + 1) * 10;
     sprintf(path, path, image_no);
-    u_long128 *buffer = MenuCalcBufAlignment(ManualMenu.load_buffer);
+    u_long128 *buffer = ManualMenu.load_buffer;
+    buffer = MenuCalcBufAlignment(buffer);
     StartReadBG();
     LoadFileBG(path, buffer, &size);
-    buffer = MenuCalcBufAlignment(buffer + (size / 16) + 1);
-    if ((u32)(image_no - 11) < 2 || (u32)(image_no - 21) < 2 || image_no == 31 ||
+    buffer += size / 16 + 1;
+    buffer = MenuCalcBufAlignment(buffer);
+    if ((u32) (image_no - 11) <= 1 || (u32) (image_no - 21) <= 1 || image_no == 31 ||
         image_no == 42) {
         GetPathReadDifferntLang(path);
         strcat(path, "manual/m%db.pac");
@@ -62,11 +70,6 @@ s16 ManualImgLoad() {
     ManualMenu.images_ready = 0;
     return ManualMenu.images_ready;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_manual", ManualImgLoad__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_manual", @479__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_manual", @480__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_manual", @489__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_manual", @496__5);
 INCLUDE_RODATA("asm/nonmatchings/menu_manual", @497__5);
