@@ -538,7 +538,13 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawPersonalBoard__Fiiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawNowEquipWeaponMark__Fiiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonIconDraw__Fiiiiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardDrawWaku__FiiP8CTexturei);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardOptionDraw__FiiiiP8CTexturei);
+
+void PersonalBoardOptionDraw(int x, int y, int board_mode, int cursor_pos, CTexture *texture, int alpha) {
+    PersonalBoardTagDraw(x, board_mode, cursor_pos, texture, 0, alpha);
+    PersonalBoardDrawWaku(board_mode, cursor_pos, texture, alpha);
+    PersonalBoardScrlBarDraw(y, board_mode, cursor_pos, PerBoardPt->scroll, PerBoardPt->unk_18, texture, alpha);
+    PersonalBoardMaxDraw(y, board_mode, cursor_pos, texture, alpha);
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardTagDraw__FiiiP8CTextureii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardScrlBarDraw__FiiiRfUcP8CTexturei);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardMaxDraw__FiiiP8CTexturei);
