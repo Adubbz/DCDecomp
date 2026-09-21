@@ -779,15 +779,6 @@ void StartLoadWorldMap(int, void /* CW back-ref target unresolved */ *);
 void LoadWorldMap(void);
 
 /**
- * Draws the world map with the party's marker over it.
- *
- * @mangled DrawWorldMap__Fi
- * @address 0x20A3E0
- * @size 0x48
- */
-void DrawWorldMap(int);
-
-/**
  * Exchanges two world-map destination rankings.
  *
  * Unlike the menu_draw.cpp overloads of this name, this one does not check

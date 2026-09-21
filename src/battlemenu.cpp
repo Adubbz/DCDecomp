@@ -1087,7 +1087,17 @@ static void LocalDrawWorldMap() {
     MenuCharaFrame.Draw();
 }
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWorldMap__Fi);
+/**
+ * Draws the world map with the party's marker over it.
+ *
+ * @mangled DrawWorldMap__Fi
+ * @address 0x20A3E0
+ * @size 0x48
+ */
+static void DrawWorldMap(int alpha) {
+    MenuTextureReload(MenuMove.unk_14);
+    MenuPolygonDraw(alpha, LocalDrawWorldMap);
+}
 
 void MenuDataSwap(MAP_JUMP_COMPARE *first, MAP_JUMP_COMPARE *second) {
     MAP_JUMP_COMPARE temp;
