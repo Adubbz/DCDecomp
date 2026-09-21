@@ -34,6 +34,9 @@
 /** The personal inventory board the menu is working on. */
 extern PERSONAL_BOARD *PerBoardPt;
 
+/** Marks, one per item pack slot, of the items the menu offers to throw away. */
+extern s8 MenuTrushMark[100];
+
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @553);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @554__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @555);
@@ -370,7 +373,10 @@ void MenuDataSwap(ATTACH_LIST *first, ATTACH_LIST *second) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SetMenuTrushMark__FP9ITEM_PACK);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DeleteMenuTrushMark__Fv);
+
+void DeleteMenuTrushMark() {
+    memset(MenuTrushMark, 0, sizeof(MenuTrushMark));
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", InitPersonalBoardMode__FP11CUserStatusP14PERSONAL_BOARDii);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @1073);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", BoardModeChangeKey__Fv);
