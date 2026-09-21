@@ -487,7 +487,8 @@ SECTIONS
         editloop3.cpp.o (.extfuncinfo) // 0x00269c50
         main.data.part4g.s.o (.data)   // 0x0026a5e8
         weaponelement.cpp.o (.data)  // 0x0026b2c0
-        main.data.part4d.s.o (.data) // 0x0026b2e0
+        btsysscript.cpp.o (.data)    // 0x0026b2e0
+        main.data.part4d.s.o (.data) // 0x0026b310
         dungeonmap.cpp.o (.data)
         main.data.part5.s.o (.data)
         itemdata.cpp.o (.data)

@@ -10,6 +10,7 @@
 #include "camera.hpp"
 #include "camerafollow.hpp"
 #include "clsmes.hpp"
+#include "collisiondata.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dngstatusdata.hpp"
@@ -19,6 +20,7 @@
 #include "editloop.hpp"
 #include "editloop3.hpp"
 #include "frame.hpp"
+#include "itembombeffect.hpp"
 #include "mathutil.hpp"
 #include "menu_dungeon.hpp"
 #include "menu_misc.hpp"
@@ -508,8 +510,55 @@ int _SET_OBJHDL_DRAW_FLAG(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_OBJHDL_POS__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_OBJHDL_ROT__FP12RS_STACKDATAi);
+int _GET_OBJHDL_POS(RS_STACKDATA *stack, int count) {
+    sceVu0FVECTOR local = {0.0f, 0.0f, 0.0f, 0.0f};
+    sceVu0FVECTOR pos;
+    BT_OBJ_HANDLE *handle = GetObjHDL(GetStackInt__FP12RS_STACKDATA__2(stack++));
+
+    if (handle->type == 0) {
+        CFrame *frame = handle->frame;
+        if (frame != NULL) {
+            frame->GetWorldPosition(pos, local);
+        }
+    }
+    if (handle->type == 1) {
+        CCharacter *chara = handle->character;
+        if (chara != NULL) {
+            chara->GetPosition(pos);
+        }
+    }
+    SetStack__FP12RS_STACKDATAf__2(stack++, pos[0]);
+    SetStack__FP12RS_STACKDATAf__2(stack++, pos[1]);
+    SetStack__FP12RS_STACKDATAf__2(stack, pos[2]);
+    return 1;
+}
+
+int _GET_OBJHDL_ROT(RS_STACKDATA *stack, int count) {
+    sceVu0FVECTOR rot = {0.0f, 0.0f, 0.0f, 1.0f};
+    sceVu0FMATRIX matrix;
+    BT_OBJ_HANDLE *handle = GetObjHDL(GetStackInt__FP12RS_STACKDATA__2(stack++));
+
+    if (handle->type == 0) {
+        CFrame *frame = handle->frame;
+        if (frame != NULL) {
+            frame->GetLWMatrix(matrix);
+            rot[0] = 0.0f;
+            rot[1] = atan2f(matrix[2][0], matrix[2][2]);
+            rot[2] = 0.0f;
+            rot[3] = 1.0f;
+        }
+    }
+    if (handle->type == 1) {
+        CCharacter *chara = handle->character;
+        if (chara != NULL) {
+            chara->GetRotation(rot);
+        }
+    }
+    SetStack__FP12RS_STACKDATAf__2(stack++, rot[0]);
+    SetStack__FP12RS_STACKDATAf__2(stack++, rot[1]);
+    SetStack__FP12RS_STACKDATAf__2(stack, rot[2]);
+    return 1;
+}
 
 int _SET_URA_DUNGEON(RS_STACKDATA *stack, int argument_count) {
     BtEventInfo.request = 2;
@@ -870,7 +919,24 @@ int _RESET_ITEM_TRAP(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _BOM_SET__FP12RS_STACKDATAi);
+int _BOM_SET(RS_STACKDATA *stack, int count) {
+    sceVu0FVECTOR pos;
+    sceVu0FVECTOR push = {0.0f, 0.0f, 1.0f, 1.0f};
+    sceVu0FVECTOR direction;
+
+    sceVu0CopyVector(pos, CharaMain.pos);
+    pos[1] += 16.0f;
+    pos[2] -= 3.0f;
+    int bomb = SetBombEffect(pos, 1, selectMapNo * 20 + 20, 0.8f);
+    if (bomb != -1) {
+        CCollisionData *collision = NowColData;
+        sceVu0Normalize(direction, push);
+        sceVu0ScaleVectorXYZ(collision->hit[bomb].velocity, direction, 0.8f);
+    }
+    BtActStatus.unk_148 = 30;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_STATUS_ERR__FP12RS_STACKDATAi);
 int _CHECK_MARDAN(RS_STACKDATA *stack, int count) {
     SetStack__FP12RS_STACKDATAi__2(stack, SaveData->GetMardanGareyanFlag());
