@@ -317,7 +317,23 @@ static void DrawEnemyNum(int x, int y, int top, int bottom, int number, int alph
 }
 
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawGetAtoraNumBoard__Fiiiiii);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawDunNumberClip__Fiiiiii);
+
+static void DrawDunNumberClip(int x, int y, int top, int bottom, int digit, int alpha) {
+    int position;
+    int source;
+    int length;
+    int u;
+
+    position = y;
+    u = digit * 12 + 0x20;
+    source = 0x48;
+    length = 12;
+    MenuTextureClip(position, source, length, top, bottom);
+    if (position < bottom) {
+        DrawMenu2DSprite(DunLogBoard, CRect_i_(x, position, 12, length), CRect_i_(u, source, 12, length), alpha);
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawDunEnterBack__Fi);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1255__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1301);
