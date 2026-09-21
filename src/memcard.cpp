@@ -1356,7 +1356,34 @@ static int SaveMenuKeyFadeOut() {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyModeSelect__Fv);
+static int SaveMenuKeyModeSelect() {
+    if (GamePad.Down(0x5000)) {
+        if (SaveMenu.file_no) {
+            SaveMenu.file_no = 0;
+        } else {
+            SaveMenu.file_no = 1;
+        }
+    }
+    if (GamePad.Down(0x40)) {
+        if (SaveMenu.file_no) {
+            SaveMenu.unk_1C = 1;
+        } else {
+            SaveMenu.unk_1C = 2;
+        }
+        SaveMenu.key_no = 3;
+        SaveMenu.file_no = 0;
+        ComMenuSePlay(1);
+        return 1;
+    }
+    if (GamePad.Down(0x20)) {
+        SaveMenu.key_no = 1;
+        ExitSaveSelect();
+        SaveMenu.unk_28 = 0;
+        ComMenuSePlay(2);
+        return 1;
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyMcSelect__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyCheckMcType__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyCheckMc__Fv);
