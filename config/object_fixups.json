@@ -1202,6 +1202,9 @@
     ]
   },
   "src/menu_save.cpp": {
+    "symbols": {
+      "allmenu_mes": "@2347"
+    },
     "globalize_symbols": [
       "SaveMenuKeySaveCheck__Fv",
       "SaveMenuKeySaveDecide__Fv",

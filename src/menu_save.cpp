@@ -33,6 +33,15 @@ extern s32 MiniEventTextureBlock;
 /** State of the event item selection menu. */
 extern MINI_MENU_INFO MiniMenu;
 
+/** Textures of the save menu's three character sets, indexed by input mode. */
+extern CTexture *SaveMenuMojiTextbl[4];
+
+/** The texture that the save screen's file boards draw from. */
+extern CTexture *SaveBoard;
+
+/** Name of the pack entry that holds the menu messages. */
+extern char allmenu_mes[];
+
 /**
  * Closes the save screen's message window and restores the pad, and after a
  * load sets the stereo mode from the loaded configuration.
@@ -628,16 +637,52 @@ int GetSaveMenuMsgNo(void) {
     }
     return msg_no;
 }
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3066);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3068);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3069);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3070);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3080);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3081);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3082);
-INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuTextureEnter__Fv);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3094);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3095);
+
+int SaveMenuTextureEnter(void) {
+    ReadBG();
+    if (ReadBGSync() == 0) {
+        LOADTEXTURE_INFO2 tex[3] = {{"#frame_image_save#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+        BG_READ_INFO *bg;
+        u_int *pack;
+        int i;
+
+        tex[0].block_no = SaveMenu.block_no;
+        tex[1].block_no = SaveMenu.block_no;
+        bg = GetReadBGFile(0);
+        pack = GetPackFile((u_int *) bg->buffer, "saveimg.img", NULL);
+        tex[1].name = (char *) pack;
+        TexManager.DeleteTextureBlock(SaveMenu.block_no);
+        TexManager.CleanUpTextureList();
+        TexManager.LoadTextureBlockEX(-1, tex);
+        SaveBoard = TexManager.GetTexture("save", -1);
+
+        char *moji_names[4] = {"alphabet", "kata", "hira", "alphabet"};
+        for (i = 0; i < 4; i++) {
+            SaveMenuMojiTextbl[i] = TexManager.GetTexture(moji_names[i], -1);
+        }
+        switch (SaveMenu.unk_0) {
+            case 2:
+            case 0:
+                InitMenuMesSet(0, (short *) GetPackFile((u_int *) bg->buffer, allmenu_mes, NULL));
+                break;
+        }
+        CommonMenuMes2.stay_frame = 1;
+        CommonMenuMes2.value_show = 1;
+        CommonMenuMes2.value_signed = 0;
+        CommonMenuMes2.cursor_lit = 1;
+
+        char *save_buffer = (char *) pack + bg->size;
+        MC_ICON_DATA icon = {{"dkicon.ico", NULL, 0}, {"dkicon_c.ico", NULL, 0}, {"dkicon_d.ico", NULL, 0}};
+        for (i = 0; i < 3; i++) {
+            (&icon.view)[i].data = (char *) GetPackFile((u_int *) bg->buffer, (&icon.view)[i].name, &(&icon.view)[i].size);
+        }
+        McAccess.SetBuff(save_buffer);
+        McAccess.SetIconData(&icon);
+        McAccess.MakeMcIconSysInfo();
+        return 1;
+    }
+    return 0;
+}
 int SaveMenuEffectFadeOut(void) {
     if (SaveMenu.key_no == 1) {
         return 1;
