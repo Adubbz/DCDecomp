@@ -531,6 +531,15 @@ struct BT_ENEMY_FLOOR {
 STATIC_ASSERT(sizeof(BT_ENEMY_LAYOUT) == 0x0C);
 STATIC_ASSERT(sizeof(BT_ENEMY_FLOOR) == 0x70);
 
+/**
+ * Scatters the bees over their frames and hides the frames themselves.
+ *
+ * @mangled InitBee__FP6CFramei
+ * @address 0x1D9420
+ * @size 0x164
+ */
+void InitBee(CFrame *frame, int count);
+
 /** Model, script and combat parameters of every kind of monster. */
 extern "C" MONSTOR_MODEL MonstorTable[167];
 

@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "btmisc.hpp"
 #include "camera.hpp"
 #include "clsmes.hpp"
 #include "dataread.hpp"
@@ -73,15 +74,6 @@ extern float menudebugrot[3];
 
 /** Scale the debug item preview draws its model at. */
 extern float menudebugrscale[3];
-
-/**
- * Resolves the model and texture paths for a battle item.
- *
- * @mangled BtGetItemNamePath__FPcPci
- * @address 0x1B7120
- * @size 0x124
- */
-void BtGetItemNamePath(char *model_path, char *texture_path, int item_no);
 
 /**
  * Adds one attachment's values into another, scaled by a factor.

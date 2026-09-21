@@ -17,6 +17,7 @@
 #include "dun/gameloop.hpp"
 #include "dungeoneventman.hpp"
 #include "dungeonmap.hpp"
+#include "dungeonparts.hpp"
 #include "editloop.hpp"
 #include "editloop3.hpp"
 #include "frame.hpp"
@@ -85,16 +86,6 @@ extern "C" ClsMes BtEventMes0;
 
 /** Message window the system script talks through second. */
 extern "C" ClsMes BtEventMes1;
-
-/**
- * Scatters the bees over their frames and hides the frames themselves.
- */
-void InitBee(CFrame *frame, int count);
-
-/**
- * Gives the two items the clown offers on one floor.
- */
-void GetPieroItem(int map_no, int ura_dungeon, int *item0, int *item1);
 
 void BtSystemScriptEventInfoInit(void) {
     BtEventInfo.unk_2C = -1;

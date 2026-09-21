@@ -103,15 +103,6 @@ extern int tip_sort_type;
 extern int (*SaveMenuFunc[26])();
 
 /**
- * Loads the georama editor's state back from the save data.
- *
- * @mangled EditLoad__Fv
- * @address 0x177C80
- * @size 0xBC
- */
-void EditLoad(void);
-
-/**
  * Returns the record of the n-th valid part in the georama's part list, or NULL
  * when there are fewer.
  *

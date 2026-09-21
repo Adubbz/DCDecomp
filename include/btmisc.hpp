@@ -46,6 +46,15 @@ CFrameVu1 *LoadMDSFile(unsigned int *data, CDataAlloc2<1> *buffer, int flags,
 void getFramePos(CFrameVu1 *frame, char *name, float *position);
 
 /**
+ * Resolves the model and texture paths for a battle item.
+ *
+ * @mangled BtGetItemNamePath__FPcPci
+ * @address 0x1B7120
+ * @size 0x124
+ */
+void BtGetItemNamePath(char *model_path, char *texture_path, int item_no);
+
+/**
  * Builds the model and texture file names of one of a character's weapons into
  * the two given buffers.
  *

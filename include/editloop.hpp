@@ -467,6 +467,15 @@ ED_EVENT_POINT *GetNewEventPoint(ED_EVENT_POINT *points, int count);
 void EditSave();
 
 /**
+ * Loads the georama editor's state back from the save data.
+ *
+ * @mangled EditLoad__Fv
+ * @address 0x177C80
+ * @size 0xBC
+ */
+void EditLoad(void);
+
+/**
  * Draws one textured rectangle rotated about a caller-supplied pivot.
  *
  * @mangled set2DSpriteRot__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_iifUc
