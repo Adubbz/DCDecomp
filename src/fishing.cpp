@@ -248,15 +248,6 @@ extern float distp;
  */
 extern int draw_under_water;
 
-/**
- * Gives the greatest coordinates of three points on each axis.
- *
- * @mangled VectorMax__FPfPfPfPf
- * @address 0x122FD0
- * @size 0x20
- */
-void VectorMax(float *max, float *a, float *b, float *c);
-
 static void GetHookPos(float *position);
 
 void FishingLoad(CDataAlloc2<1> *alloc, int slot) {

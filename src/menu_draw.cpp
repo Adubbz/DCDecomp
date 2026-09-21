@@ -60,12 +60,6 @@ extern CCamera MenuCamera;
 /** Frame texture the main menu draws its icons in. */
 extern CTexture *StayTex;
 
-/** Texture of the village tag bar on the personal inventory board. */
-extern CTexture *VillageBar;
-
-/** Texture of the village names on the personal inventory board. */
-extern CTexture *VillageName;
-
 /**
  * Draws the mark over an item that cannot be set.
  *
