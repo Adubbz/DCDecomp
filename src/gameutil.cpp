@@ -512,7 +512,6 @@ void SetClut(sceVif1Packet *packet, CTexture *texture, i *clut) {
 float LinerInterpolation(float from, float to, float at) {
     return from + (at * (to - from));
 }
-#ifdef NON_MATCHING
 void AreaAddPos(int *area, int *pos, int *out) {
     int left = area[0];
     int top = area[1];
@@ -538,9 +537,6 @@ void AreaAddPos(int *area, int *pos, int *out) {
     out[2] = right;
     out[3] = bottom;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/gameutil", AreaAddPos__FPiPiPi);
-#endif
 INCLUDE_ASM("asm/nonmatchings/gameutil", RollPos__FPfPffPf);
 
 int CheckPosInOutForRect(RECT *rect, int x, int y) {
@@ -563,7 +559,6 @@ int CheckPosInOutForRect(RECT *rect, int x, int y) {
 
 INCLUDE_ASM("asm/nonmatchings/gameutil", GetDisPosToRect__FP4RECTii);
 INCLUDE_ASM("asm/nonmatchings/gameutil", GetScrPosFromChar__FP10CCharacterPi);
-#ifdef NON_MATCHING
 /** The sixteen colours the font palette can hold. */
 extern "C" u32 FontColorTbl[16];
 
@@ -575,7 +570,4 @@ unsigned int Color2Clut(unsigned int colour) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/gameutil", Color2Clut__FUi);
-#endif
 INCLUDE_ASM("asm/nonmatchings/gameutil", NameRegistCodeJtoE__Fi);
