@@ -434,15 +434,6 @@ void DrawBigSellTicket(int, int, int, int, int);
 void DrawSellTicket_2(int, int, int, int, int);
 
 /**
- * Draws the price ticket of one shop slot, small or large according to the price.
- *
- * @mangled DrawLocalTicket__Fiiiiiii
- * @address 0x1ECBC0
- * @size 0x14C
- */
-void DrawLocalTicket(int, int, int, int, int, int, int);
-
-/**
  * Draws the price tickets of everything marked on the player's side.
  *
  * @mangled DrawSellTicket22__Fiiiii

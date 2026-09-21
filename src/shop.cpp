@@ -796,7 +796,36 @@ INCLUDE_ASM("asm/nonmatchings/shop", DrawCheckButton__Fiii);
 INCLUDE_ASM("asm/nonmatchings/shop", DrawSmallSellTicket__Fiiiiii);
 INCLUDE_ASM("asm/nonmatchings/shop", DrawBigSellTicket__Fiiiii);
 INCLUDE_ASM("asm/nonmatchings/shop", DrawSellTicket_2__Fiiiii);
-INCLUDE_ASM("asm/nonmatchings/shop", DrawLocalTicket__Fiiiiiii);
+
+/**
+ * Draws the price ticket of one shop slot, small or large according to the price.
+ *
+ * @mangled DrawLocalTicket__Fiiiiiii
+ * @address 0x1ECBC0
+ * @size 0x14C
+ */
+static void DrawLocalTicket(int x, int y, int clip_top, int clip_bottom, int slot, int item_no, int mode) {
+    int money;
+    int ticket_x;
+    int ticket_y;
+
+    if (slot == ShopMenu.unk_14 && ShopMenu.unk_02 == 1) {
+        money = CalItemMoney(item_no, 0);
+        if (money < 0) {
+            money = 1;
+        }
+        ticket_x = x + (slot % 5) * 0x28;
+        ticket_y = y + (slot / 5) * 0x28;
+        if (ticket_y >= clip_top || ticket_y < clip_bottom) {
+            DrawBigSellTicket(0, money, ticket_x, ticket_y, 0x80);
+        }
+    } else {
+        ticket_x = x + (slot % 5) * 0x28;
+        ticket_y = y + (slot / 5) * 0x28;
+        DrawSmallSellTicket(0, ticket_x, ticket_y, clip_top, clip_bottom, mode);
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", DrawSellTicket22__Fiiiii);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopCancelGoodReturn2__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", GetNowMasterMsgNo2__Fii);
