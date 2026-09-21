@@ -4,9 +4,14 @@
 
 #include "shop.hpp"
 
+#include "clsmes.hpp"
 #include "dataread.hpp"
+#include "gamepad.hpp"
+#include "memcard.hpp"
 #include "menu_draw.hpp"
+#include "rect.hpp"
 #include "savedata.hpp"
+#include "texture.hpp"
 
 // CUserStatus and CStockItem are only dereferenced by the drafts that need
 // their full class definitions; those include the owning header themselves.
@@ -39,7 +44,8 @@ struct ShopMenuWork {
     s16 unk_176;
     s32 unk_178;
     s32 unk_17C;
-    s32 unk_180;
+    s16 unk_180;
+    s16 unk_182;
     s32 unk_184;
     s16 unk_188;
     s16 unk_18A;
@@ -99,6 +105,60 @@ extern float ShopHelpWinW;
 
 /** Nonzero while the item shop is open, zero while the charge shop is open. */
 extern s16 ChargeOrShopFlag;
+
+/**
+ * State of the fishing prize exchange screen.
+ */
+struct FishMenuWork {
+    s16 tex_block; /**< Texture block the exchange's textures are entered into. */
+    u8 unk_02[6];
+    s32 point; /**< Fishing points the player has left to spend. */
+    u8 unk_0C[0x1C];
+};
+
+STATIC_ASSERT(sizeof(FishMenuWork) == 0x28);
+
+/** State of the fishing prize exchange screen. */
+extern FishMenuWork FishMenu;
+
+/**
+ * State of the fishing record screen.
+ */
+struct FishRecordMenuWork {
+    u8 unk_00[0x1C];
+    s32 tex_block; /**< Texture block the record view's textures are entered into. */
+    u8 unk_20[4];
+};
+
+STATIC_ASSERT(sizeof(FishRecordMenuWork) == 0x24);
+
+/** State of the fishing record screen. */
+extern FishRecordMenuWork FishRecordMenu;
+
+/** Texture the fishing exchange's fish icons are drawn from. */
+extern CTexture *FishMenuTex;
+
+/** Message number, less thirty, describing each fishing prize. */
+extern s8 FishMsg[18];
+
+/**
+ * One prize the fishing exchange offers.
+ */
+struct FISH_EXCHANGE_ITEM {
+    s16 unk_00;
+    s16 unk_02;
+};
+
+STATIC_ASSERT(sizeof(FISH_EXCHANGE_ITEM) == 4);
+
+/** The prizes the fishing exchange offers. */
+extern FISH_EXCHANGE_ITEM exitemlst[35];
+
+/** Ordering the next item board sort tries, from one to eight. */
+extern s32 sort_top_type;
+
+/** Ordering the next attachment board sort tries, from zero to four. */
+extern s32 asort_top_type;
 
 /**
  * A view onto the personal item board inside CUserStatus's still-unnamed
