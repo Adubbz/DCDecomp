@@ -469,14 +469,9 @@ void FishingSetCPoly(CCPoly *polys, int count) {
     cpoly_num = count;
 }
 
-/**
- * Sets the box the fish may swim within.
- *
- * @mangled FishingSetRect__F7CBoxVu0
- * @address 0x1A9260
- * @size 0x40
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingSetRect__F7CBoxVu0);
+void FishingSetRect(CBoxVu0 bounds) {
+    memcpy(&fishing_rect, &bounds, sizeof(CBoxVu0));
+}
 
 /**
  * Collects the collision polygons around the fishing spot.

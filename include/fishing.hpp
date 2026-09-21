@@ -15,9 +15,6 @@ class CFrameVu1;
  */
 void FishingInit();
 
-/** Sets the rectangular bounds used by the fishing simulation. */
-void FishingSetRect(CBoxVu0 bounds);
-
 /**
  * Sets the water surface and terrain heights used by the fishing simulation.
  *
@@ -149,3 +146,12 @@ int FishingGetEsaItemNo();
  * @size 0x7C
  */
 void FishingSetCPoly(CCPoly *polys, int count);
+
+/**
+ * Sets the box the float and hook must stay within.
+ *
+ * @mangled FishingSetRect__F7CBoxVu0
+ * @address 0x1A9260
+ * @size 0x40
+ */
+void FishingSetRect(CBoxVu0 bounds);
