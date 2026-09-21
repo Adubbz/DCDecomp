@@ -479,15 +479,6 @@ void DrawAallWeapon(int, int, float, CCharacter *, WEAPON_HAVE *, int, int, int)
 void BtlWeaponDraw(int, float, int, int);
 
 /**
- * Reports whether a weapon can be repaired, built up, or neither.
- *
- * @mangled NowWeaponStatusValue__FP11WEAPON_HAVE
- * @address 0x1FBEB0
- * @size 0x11C
- */
-void NowWeaponStatusValue(WEAPON_HAVE *);
-
-/**
  * Drops a weapon's element where the attachment no longer supports it.
  *
  * @mangled WeaponMenuCheckElemValue__FP11WEAPON_HAVEP11WEAPON_HAVE

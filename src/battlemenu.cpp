@@ -723,7 +723,40 @@ INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2248);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2249);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlWeaponDraw__Fifii);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", NowWeaponStatusValue__FP11WEAPON_HAVE);
+/**
+ * Reports whether a weapon can be repaired, built up, or neither, as a set of flags.
+ *
+ * @mangled NowWeaponStatusValue__FP11WEAPON_HAVE
+ * @address 0x1FBEB0
+ * @size 0x11C
+ */
+static int NowWeaponStatusValue(WEAPON_HAVE *weapon) {
+    if (weapon == NULL) {
+        return 0;
+    }
+    int status = 0;
+    if (weapon->unk_14 >= GetWeaponMaxExp(weapon) || GetNowItemNum(0xB2, MenuItemPackPt) > 0) {
+        status |= 2;
+    }
+    if (WeaponStatusBreakEnable(weapon) != 0) {
+        status |= 4;
+    }
+    status |= 8;
+    int build_up = 0;
+    if (WeaponStatusBuildUp(weapon, build_up) > 0 && GetNowWeaponAttachNum(weapon) == 0 &&
+        build_up > 0) {
+        status |= 0x10;
+    }
+    if (IsNotBuildUpWeapon(weapon->item_no) != 0) {
+        if (status & 8) {
+            status &= ~8;
+        }
+        if (status & 0x10) {
+            status &= ~0x10;
+        }
+    }
+    return status;
+}
 
 /**
  * Returns the restriction on selecting no element for a weapon.
