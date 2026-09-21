@@ -4,6 +4,8 @@
 
 #include "editloop.hpp"
 
+class CCharacter;
+
 /**
  * Holds the settings and records an interior's info script describes.
  */
@@ -34,3 +36,12 @@ extern EDIT_IN_INFO *EdInInfo;
  * @size 0xF4
  */
 EPARTS_FUNC_DATA *SearchMapJump(float *position, float *rotation);
+
+/**
+ * Puts the player where the interior's map jump says they arrive.
+ *
+ * @mangled GetMapJumpPos__FP10CCharacter
+ * @address 0x19E2F0
+ * @size 0x12C
+ */
+void GetMapJumpPos(CCharacter *chara);

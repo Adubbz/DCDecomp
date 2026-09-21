@@ -254,8 +254,18 @@ EPARTS_FUNC_DATA *SearchMapJump(float *position, float *rotation) {
  * @address 0x19E2F0
  * @size 0x12C
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", GetMapJumpPos__FP10CCharacter);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1194);
+void GetMapJumpPos(CCharacter *chara) {
+    EPARTS_FUNC_DATA *point = func_point;
+
+    for (int i = 0; i < func_num; i++, point++) {
+        if (point->kind == 2 && point->link_id == EdInteriorJumpID) {
+            chara->SetPosition(point->position[0], point->position[1], point->position[2]);
+            printf("%f %f %f\n", point->position[0], point->position[1], point->position[2]);
+            chara->SetRotation(0.0f, AngleLimit(3.141592f + point->rotation[1]), 0.0f);
+            return;
+        }
+    }
+}
 /**
  * Gives the position, heading and part of one of the interior's doors.
  *
