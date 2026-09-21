@@ -13,6 +13,7 @@
 
 #include <cmath>
 #include <cstdio>
+#include <cstring>
 
 #include "character.hpp"
 #include "dataalloc.hpp"
@@ -294,18 +295,7 @@ int LookAt(CFrameVu1 *frame, CFrameVu1 *target, _FRAMECONSTRAINT constraint) {
     return LookAt(frame, matrix[3], constraint);
 }
 
-/**
- * Collects the polygons of a set that meet a box.
- *
- * @mangled PickUpNearPoly__FP6CCPoly7CBoxVu0P6CCPolyi
- * @address 0x149C30
- * @size 0x118
- */
-INCLUDE_ASM("asm/nonmatchings/gameutil", PickUpNearPoly__FP6CCPoly7CBoxVu0P6CCPolyi);
-INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHit__FP6CCPolyiPfPfPfii);
-INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHitVertical__FP6CCPolyiPffPfi);
-
-/* Loads the line's bounds into VU0 registers, which retail's polygon loop never reads. */
+/* Loads a box's corners into VU0 registers vf10 and vf11 for the box tests that follow. */
 static inline void vu_hold_box(float *max, float *min) {
     register float *p0 = max;
     register float *p1 = min;
@@ -315,6 +305,67 @@ static inline void vu_hold_box(float *max, float *min) {
         lqc2    vf11, 0(p1)
     }
 }
+
+/* Whether a triangle's bound misses the box held in VU0: the sign flags of the two subtractions,
+   cleared before them and read back after. */
+static inline int vu_box_missed(float *max, float *min) {
+    register float *p0 = max;
+    register float *p1 = min;
+    register int status;
+
+    asm {
+        lqc2    vf12, 0(p0)
+        lqc2    vf13, 0(p1)
+        vnop
+        vnop
+        vnop
+        ctc2    $0, $vi16
+        vsub.xyz vf25, vf10, vf13
+        vsub.xyz vf25, vf12, vf11
+        vnop
+        vnop
+        vnop
+        vnop
+        vnop
+        cfc2    status, $vi16
+    }
+
+    return status & 0xc0;
+}
+
+/**
+ * Collects the polygons of a set that meet a box.
+ *
+ * @mangled PickUpNearPoly__FP6CCPoly7CBoxVu0P6CCPolyi
+ * @address 0x149C30
+ * @size 0x118
+ */
+int PickUpNearPoly(CCPoly *out, CBoxVu0 box, CCPoly *poly, int count) {
+    sceVu0FVECTOR poly_max;
+    sceVu0FVECTOR poly_min;
+    int picked = 0;
+    int i;
+    CCPoly *src;
+    CCPoly *dst;
+
+    vu_hold_box(box.max, box.min);
+    src = poly;
+    dst = out;
+    for (i = 0; i < count; i++, src++) {
+        VectorMaxMin(poly_max, poly_min, src->vertex[0], src->vertex[1], src->vertex[2]);
+        if (vu_box_missed(poly_max, poly_min)) {
+            continue;
+        }
+        memcpy(dst, src, sizeof(CCPoly));
+        dst++;
+        picked++;
+    }
+    return picked;
+}
+
+INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHit__FP6CCPolyiPfPfPfii);
+
+INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHitVertical__FP6CCPolyiPffPfi);
 
 int CheckHits(CCPoly *poly, int count, float *from, float *to, int max, int *hit_poly,
               float (*hit_point)[4], int sort, int mode) {
@@ -542,6 +593,7 @@ void AreaAddPos(int *area, int *pos, int *out) {
     out[2] = right;
     out[3] = bottom;
 }
+
 INCLUDE_ASM("asm/nonmatchings/gameutil", RollPos__FPfPffPf);
 
 int CheckPosInOutForRect(RECT *rect, int x, int y) {
