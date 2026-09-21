@@ -409,7 +409,24 @@ void PersonalBoardKey() {
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardItemPush__FP9IHAVEITEMi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardWeaponPush__FP9IHAVEITEMi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardAttachPush__FP9IHAVEITEMi);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardItemGetorSwap__Fi);
+
+int PersonalBoardItemGetorSwap(int board_pos) {
+    int result = 0;
+    IHAVEITEM *item = (IHAVEITEM *) PerBoardPt->unk_30;
+
+    switch (PerBoardPt->unk_04) {
+        case 0:
+            result = PersonalBoardItemPush(item, board_pos);
+            break;
+        case 1:
+            result = PersonalBoardWeaponPush(item, board_pos);
+            break;
+        case 2:
+            result = PersonalBoardAttachPush(item, board_pos);
+            break;
+    }
+    return result;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardItemCancel__Fv);
 
 int PersonalRetMax(int board_mode) {
