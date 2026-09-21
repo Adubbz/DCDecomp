@@ -335,7 +335,6 @@ int CCollisionData::CheckHitUser(float *position, int mask, float height) {
 INCLUDE_ASM("asm/nonmatchings/collisiondata", CheckHitUser__14CCollisionDataFPfif);
 #endif
 
-#ifdef NON_MATCHING
 /**
  * Records the push a hit gives whatever it struck.
  *
@@ -351,6 +350,3 @@ void CCollisionData::SetKickBack(float *origin, float speed, float decay, int mo
     hit[now_hit].knockback_decay = decay;
     hit[now_hit].knockback_mode = mode;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/collisiondata", SetKickBack__14CCollisionDataFPfffi);
-#endif
