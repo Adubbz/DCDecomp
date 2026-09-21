@@ -1294,7 +1294,12 @@ static void GetSPSeFile(int set_no, char *archive_name, char *config_name) {
  * @address 0x15B670
  * @size 0x54
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SetSPSeFile__FiPUiPc);
+static void SetSPSeFile(int set_no, u_int *pack, char *file_name) {
+    CSnd.LoadSoundFileFromPack(file_name, pack);
+    CSnd.SetVol(12, 0x100);
+    now_sp_no = set_no;
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoad__Fi);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoadBG__FiPUiPi);
 /**
