@@ -954,7 +954,19 @@ void SndSePlay(int se_no, float volume, float pan, int voice) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndSePlay__FiPfff);
+void SndSePlay(int se_no, float *position, float near, float far) {
+    float volume;
+    float pan;
+
+    if (near < 0.0f) {
+        near = 20.0f;
+    }
+    if (far < 0.0f) {
+        far = 500.0f;
+    }
+    SndGetVolPan(&volume, &pan, position, near, far);
+    SndSePlay(se_no, volume, pan, 0);
+}
 /**
  * Stops a sounding effect.
  *
