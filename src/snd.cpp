@@ -1737,7 +1737,28 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkCloseDirectCode(packet);
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", set3DColSprite__FP13sceVif1PacketPiPiPiPiP6spRGBAP6spRGBAP6spRGBAP6spRGBA);
+void set3DColSprite(sceVif1Packet *packet, int *top_left, int *top_right, int *bottom_left,
+                    int *bottom_right, spRGBA *top_left_colour, spRGBA *top_right_colour,
+                    spRGBA *bottom_left_colour, spRGBA *bottom_right_colour) {
+    float q = 1.0f;
+
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
+                     SCE_GS_SET_PRIM(4, 1, 0, 0, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(top_left_colour->r, top_left_colour->g, top_left_colour->b, top_left_colour->a, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(top_left[0], top_left[1], top_left[2], 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(top_right_colour->r, top_right_colour->g, top_right_colour->b, top_right_colour->a, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(top_right[0], top_right[1], top_right[2], 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(bottom_left_colour->r, bottom_left_colour->g, bottom_left_colour->b, bottom_left_colour->a, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(bottom_left[0], bottom_left[1], bottom_left[2], 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(bottom_right_colour->r, bottom_right_colour->g, bottom_right_colour->b, bottom_right_colour->a, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(bottom_right[0], bottom_right[1], bottom_right[2], 0));
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiPiPiUc);
 /**
  * Draws a textured sprite in world space, with four corner positions and colours.
