@@ -1175,5 +1175,10 @@
       "@884__3",
       "@885"
     ]
+  },
+  "src/menu_draw.cpp": {
+    "symbols": {
+      "SeitonAttachBoardSub__FP11ATTACH_LIST": "SeitonAttachBoardSub__FP11ATTACH_LIST__2"
+    }
   }
 }
