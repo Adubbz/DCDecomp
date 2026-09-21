@@ -36,10 +36,10 @@ struct MC_CARD_INFO {
     s32 type;      /**< Card type that sceMcGetInfo writes. */
     s32 formatted; /**< Format flag that sceMcGetInfo writes. */
     s32 unk_0C;
-    s32 unk_10;
+    s32 dir_exists; /**< One once GetDir has found the save directory on the card. */
     u8 unk_14[4];
-    s32 free_size; /**< Free space that sceMcGetInfo writes. */
-    s32 unk_1C;
+    s32 free_size;   /**< Free space that sceMcGetInfo writes. */
+    s32 dir_entries; /**< Entries that sceMcGetDir found in the save directory. */
     s32 result; /**< Result of the last sceMcGetInfo on the card. */
 };
 

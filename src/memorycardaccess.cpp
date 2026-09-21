@@ -178,9 +178,73 @@ char *CMemoryCardAccess::GetVersion() {
 }
 
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SearchMcType__17CMemoryCardAccessFv);
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", GetDir__17CMemoryCardAccessFv);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @531__2);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @532__2);
+
+int CMemoryCardAccess::GetDir() {
+    MC_CARD_INFO *card;
+    char name[0x40];
+    char path[0x40];
+    char dir[0x80];
+    char pattern[0x48];
+    int cmd;
+    int result;
+
+    card = &this->card[this->port];
+    switch (this->step) {
+        case 0:
+            strcpy(name, this->dir_name);
+            strcpy(path, "/");
+            strcat(path, this->dir_name);
+            InitSaveFileInfoTbl();
+            card->dir_exists = 0;
+            this->step++;
+            break;
+        case 1:
+            strcpy(dir, "/");
+            strcat(dir, this->dir_name);
+            if (sceMcChdir(this->port, 1, dir, this->current_dir) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 2:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 0xC) {
+                return -1;
+            }
+            if (result < 0) {
+                if (result == -4 || result == -2) {
+                    return 1;
+                }
+                if (result < -9) {
+                    return -1;
+                }
+            }
+            card->dir_exists = 1;
+            result = 0;
+            strcpy(pattern, this->file_name);
+            strcat(pattern, "*");
+            if (sceMcGetDir(this->port, 1, pattern, 0, 15, SaveFileInfo) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 3:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 0xD || (cmd == 0xD && result < 0)) {
+                return -1;
+            }
+            card->dir_entries = result;
+            return 1;
+    }
+    return 0;
+}
+
 
 int CMemoryCardAccess::LoadSysConfig() {
     int port;
