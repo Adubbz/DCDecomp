@@ -258,7 +258,16 @@ int SaveMenuKeyAfterEnding(void) {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeySaveDecideEnding__Fv);
+
+int SaveMenuKeySaveDecideEnding(void) {
+    if (GamePad.Down(0x40) != 0) {
+        SaveMenu.key_no = 0x17;
+    } else if (GamePad.Down(0x20) != 0) {
+        SaveMenu.key_no = 1;
+        ExitSaveSelect();
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeySaveEnding__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyEndSaveEnding__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", GetSaveMenuMsgNo__Fv);
