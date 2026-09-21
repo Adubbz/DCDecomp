@@ -579,14 +579,15 @@ void FishingAngleFish(int fish_no) {
     }
 }
 
-/**
- * Gives the kind and size of the fish being landed.
- *
- * @mangled FishingGetAngleFishSize__FPiPi
- * @address 0x1A9830
- * @size 0x84
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingGetAngleFishSize__FPiPi);
+int FishingGetAngleFishSize(int *size, int *fp) {
+    if (AngleFish == NULL) {
+        return -1;
+    }
+    float length = AngleFish->size;
+    *size = length * 10.0f;
+    *fp = AngleFish->GetFP();
+    return AngleFish->fish_kind;
+}
 
 /**
  * Puts the six fish back to swimming.

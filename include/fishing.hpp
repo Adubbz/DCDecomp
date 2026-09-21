@@ -197,3 +197,12 @@ void FishingBattleToAngleFish(u_int *pack, CDataAlloc2<1> *alloc);
  * @size 0x80
  */
 void FishingAngleFish(int fish_no);
+
+/**
+ * Returns the kind of the fish being landed, and gives its size in tenths and its fishing points.
+ *
+ * @mangled FishingGetAngleFishSize__FPiPi
+ * @address 0x1A9830
+ * @size 0x84
+ */
+int FishingGetAngleFishSize(int *size, int *fp);
