@@ -512,19 +512,15 @@ void EdSetBgmVol(float time) {
         SndSetBgmVol(volume);
     }
 }
-#ifdef NON_MATCHING
 void EdAmbientPlay(float volume) {
     // The ambient sets run one behind the four times of day, and roll over.
-    int ambient_no = EdGetTime(volume) + 1;
+    int ambient_no = EdGetTime(volume);
 
-    if (ambient_no >= 4) {
+    if (++ambient_no >= 4) {
         ambient_no = 0;
     }
     SndAmbientPlay(ambient_no);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit", EdAmbientPlay__Ff);
-#endif
 
 void EdSetAmbientVol(float volume) {
     SndAmbientSetVolf(volume);
