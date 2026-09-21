@@ -546,7 +546,41 @@ void EventItemSelectExit(void) {
     GamePad.AutoRepeatOff();
     GamePad.MenuModeOff();
 }
-INCLUDE_ASM("asm/nonmatchings/menu_save", EventItemSelectLoop__FPi);
+
+int EventItemSelectLoop(int *result) {
+    int ret;
+    int alpha;
+
+    ReadBG();
+    alpha = 0x40;
+    switch (MiniMenu.unk_4C) {
+        case 0:
+            alpha = 0x40;
+            break;
+        case 2:
+            alpha = 0x80 - MiniMenu.unk_50 * 4;
+            if (alpha < 0x40) {
+                alpha = 0x40;
+            }
+            break;
+        case 3:
+            alpha = MiniMenu.unk_50 * 4 + 0x40;
+            if (alpha > 0x80) {
+                alpha = 0x80;
+            }
+            break;
+    }
+    setbilinear(0);
+    FrameImageDraw(alpha, 0x80);
+    MenuTextureReload(MiniEventTextureBlock);
+    ret = EventItemSelectKey(result);
+    EventItemSelectDraw();
+    setbilinear(1);
+    if (ret != 0) {
+        EventItemSelectExit();
+    }
+    return ret;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_save", EventItemSelectKey__FPi);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3548);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3549);
