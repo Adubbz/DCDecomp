@@ -157,19 +157,34 @@ void EastKingTextureEnter() {
 INCLUDE_ASM("asm/nonmatchings/eastking", EastKingTextureEnter__Fv);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/eastking", @371__4);
-#ifdef NON_MATCHING
-void EastKingMsgDraw() {
+
+/**
+ * Draws the current East King event message.
+ *
+ * @mangled EastKingMsgDraw__Fv
+ * @address 0x00232C60
+ * @size 0x1A0
+ */
+static void EastKingMsgDraw() {
     if (EastKing.resources_ready != 0 && EastKingMsgCls.mes_made != EastKingMsg.message_no &&
         EastKingMsg.draw_message != 0) {
         EastKingMsgCls.MakeMesWin(EastKingMsg.message_no);
     }
     MenuTextureReload(EastKingMsgCls.tex_block);
-    if (EastKing.mode == EAST_KING_MESSAGE_FADE_OUT || EastKing.mode == EAST_KING_CLOSING) {
-        EastKingMsg.alpha -= 2;
-    } else if (EastKing.mode == EAST_KING_MESSAGE_FADE_IN ||
-               EastKing.mode == EAST_KING_DIALOGUE ||
-               (EastKing.mode == EAST_KING_LOADING && EastKing.resources_ready != 0)) {
-        EastKingMsg.alpha += 2;
+    switch (EastKing.mode) {
+        case EAST_KING_LOADING:
+            if (EastKing.resources_ready == 0) {
+                break;
+            }
+            // The window fades in once the loading has finished.
+        case EAST_KING_DIALOGUE:
+        case EAST_KING_MESSAGE_FADE_IN:
+            EastKingMsg.alpha += 2;
+            break;
+        case EAST_KING_CLOSING:
+        case EAST_KING_MESSAGE_FADE_OUT:
+            EastKingMsg.alpha -= 2;
+            break;
     }
     if (EastKingMsg.alpha < 0) {
         EastKingMsg.alpha = 0;
@@ -178,16 +193,14 @@ void EastKingMsgDraw() {
         EastKingMsg.alpha = 0x80;
     }
     if (EastKing.resources_ready != 0) {
-        GetMenuCommonPutXY(&EastKingMsgCls, 0x14C - (EastKingMsgCls.char_width >> 1));
+        int half_width = EastKingMsgCls.char_width >> 1;
+        GetMenuCommonPutXY(&EastKingMsgCls, 0x14C - half_width);
         EastKingMsgCls.text_y = 0x132;
         EastKingMsgCls.edge_alpha = EastKingMsg.alpha;
         EastKingMsgCls.Step();
         EastKingMsgCls.DrawMesWin();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/eastking", EastKingMsgDraw__Fv);
-#endif
 
 void GetPrevEastKingSndVol() {
     PrevEastKingSndVol = SndGetBgmVol();
