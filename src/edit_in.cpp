@@ -465,8 +465,71 @@ static int GetCollision(CCPoly *poly, CBoxVu0 *box) {
  * @size 0x2D0
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", VillagerCollision__Fv__2);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1369);
+static void VillagerCollision() {
+    sceVu0FVECTOR pos;
+    CBoxVu0 box;
+    sceVu0FVECTOR ground;
+    CCPoly poly;
+
+    for (int i = -1; i < 10; i++) {
+        int move;
+        CCharacter *chara;
+        CNPCharacter *villager = NULL;
+        int sound;
+        if (i >= 0) {
+            villager = &EdVillager[i];
+            move = EdEventInfo.npc_collision[i];
+            if (villager->CheckDraw() == 0) {
+                continue;
+            }
+            villager->chara.GetPosition(pos);
+            sound = EdEventInfo.npc_foot_sound[i];
+        } else {
+            move = EdEventInfo.player_collision;
+            Chara->GetPosition(pos);
+            sound = EdEventInfo.player_foot_sound;
+        }
+        WorkBuffer__2->used = 0;
+        CCPoly *polys = (CCPoly *) WorkBuffer__2->Alloc(2000);
+        box.max[0] = 1.0f + pos[0];
+        box.min[0] = pos[0] - 1.0f;
+        box.max[2] = 1.0f + pos[2];
+        box.min[2] = pos[2] - 1.0f;
+        box.max[1] = 1000.0f;
+        box.min[1] = -1000.0f;
+        if (i >= 0) {
+            chara = &villager->chara;
+        } else {
+            chara = Chara;
+        }
+        chara->FootSoundEnable(0);
+        int count = GetCollision(polys, &box);
+        if (count > 300) {
+            printf("cpoly over!!!! %d\n", count);
+        }
+        if (count > 0) {
+            pos[1] += 20.0f;
+            if (GetFootPoly(pos, 1000.0f, &poly, ground, polys, count, 0) != 0) {
+                sceVu0CopyVector(pos, ground);
+                chara->FootSoundEnable(sound);
+                if (sound == 1) {
+                    chara->SetFootSoundID(poly.attr.foot_sound);
+                }
+            } else {
+                pos[1] = 0.0f;
+            }
+        } else {
+            pos[1] = 0.0f;
+        }
+        if (move != 0) {
+            if (i >= 0) {
+                villager->chara.SetPosition(pos);
+            } else {
+                Chara->SetPosition(pos);
+            }
+        }
+    }
+}
 /**
  * Enters the interior's textures once they have been read.
  *
