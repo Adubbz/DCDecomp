@@ -21,14 +21,20 @@
 #include "snd.hpp"
 #include "sound.hpp"
 #include "texture.hpp"
+#include "userstatus.hpp"
 
 /**
  * Holds the state of the option screen.
  */
 struct OPTION_MENU_STATE {
-    u8 unk_00[0x10];
-    s32 step; /**< Stage that the screen is at, 2 once it has begun to close. */
-    u8 unk_14[0x10];
+    s32 mode; /**< How the screen was opened; 0 from the main menu. */
+    u8 unk_04[8];
+    s32 cursor; /**< Cell that the cursor is on, as ten times the row plus the column. */
+    s32 step;   /**< Stage that the screen is at, 2 once it has begun to close. */
+    s32 unk_14;
+    float cursor_x; /**< Screen X of the cursor. */
+    float cursor_y; /**< Screen Y of the cursor. */
+    float unk_20;
     s32 flag[12];      /**< Setting of each option row. */
     s32 prev_flag[12]; /**< Setting of each option row when the screen opened. */
     s16 unk_84;
@@ -54,6 +60,9 @@ extern int AtoraTextureReadBlock;
 
 /** The texture block that holds the board's town tags and names. */
 extern int AtoraTextureBaseBlock;
+
+/** The configuration words that the option screen edits. */
+extern s32 *OpConfigPt;
 
 /** The save menu's steps, by SAVE_MENU_STATE::key_no. */
 extern int (*SaveMenuFunc[26])();
@@ -1309,8 +1318,53 @@ static void AtoraBoardFadeEffect() {
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraNameDraw__Fi);
 INCLUDE_ASM("asm/nonmatchings/memcard", OptionMenuDraw__Fiiiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawOptionLRCur__Fii);
-INCLUDE_ASM("asm/nonmatchings/memcard", InitMenuOption__FiiP1);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @2211);
+int InitMenuOption(int mode, int block_no, u_long128 *buffer) {
+    u_long128 *data;
+    CUserStatus *status;
+    int i;
+
+    switch ((int) buffer) {
+        case 0:
+            buffer = (u_long128 *) read_buffer;
+    }
+    data = MenuCalcBufAlignment(buffer);
+    StartReadBG();
+    if (LoadFileBGMenuData("option.pac", data) <= 0) {
+        return 0;
+    }
+    OptionMenu.mode = mode;
+    OptionMenu.unk_86 = block_no;
+    switch (OptionMenu.mode) {
+        case 0:
+            GamePad.SetAutoRepeat(0xF000, 30, 5);
+            GamePad.MenuModeOn(120);
+    }
+    OptionMenu.unk_84 = 0;
+    OptionMenu.step = 1;
+    OptionMenu.unk_14 = 0;
+    OptionMenu.cursor = 10;
+    OptionMenu.cursor_x = (OptionMenu.cursor % 10) * 70 + 316;
+    OptionMenu.cursor_y = ((OptionMenu.cursor - 10) / 10) * 30 + 90;
+    OptionMenu.unk_20 = 136.0f;
+    OpConfigPt = (s32 *) SaveData->GetConfigData();
+    status = (CUserStatus *) SaveData->GetDngStatus();
+    OptionMenu.flag[0] = SaveData->GetMenuCursor()->reset_pos;
+    OptionMenu.flag[1] = OpConfigPt[7];
+    OptionMenu.flag[2] = OpConfigPt[4];
+    OptionMenu.flag[3] = OpConfigPt[5];
+    OptionMenu.flag[4] = OpConfigPt[2];
+    OptionMenu.flag[5] = OpConfigPt[3];
+    OptionMenu.flag[6] = status->minimap_status;
+    OptionMenu.flag[7] = OpConfigPt[10];
+    OptionMenu.flag[8] = OpConfigPt[9];
+    OptionMenu.flag[9] = OpConfigPt[11];
+    OptionMenu.flag[10] = OpConfigPt[8];
+    OptionMenu.flag[11] = OpConfigPt[6];
+    for (i = 0; i < 12; i++) {
+        OptionMenu.prev_flag[i] = OptionMenu.flag[i];
+    }
+    return 1;
+}
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2251);
 INCLUDE_ASM("asm/nonmatchings/memcard", ExitMenuOption__Fv);
 
