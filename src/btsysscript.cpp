@@ -193,14 +193,13 @@ int _GET_ACTION_MODE(RS_STACKDATA *stack, int count) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _ITEM_USE_WINDOW__FP12RS_STACKDATAi);
-#ifdef NON_MATCHING
 int _CHECK_EVENT_FLG(RS_STACKDATA *stack, int count) {
-    SetStack(&stack[1], UserStatus->ChkEventFlag(GetStackInt(stack)));
+    int flag_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int flag = UserStatus->ChkEventFlag(flag_no);
+    SetStack__FP12RS_STACKDATAi__2(stack, flag);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _CHECK_EVENT_FLG__FP12RS_STACKDATAi);
-#endif
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_EVENT_FLG__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_OBJHDL__FP12RS_STACKDATAi);
 INCLUDE_RODATA("asm/nonmatchings/btsysscript", @700);
