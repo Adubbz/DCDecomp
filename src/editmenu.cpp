@@ -354,7 +354,6 @@ static int EdMenuManualKey();
  * @size 0x6C
  */
 static void EdMenuManualDraw();
-#ifdef NON_MATCHING
 int GetNumHowManyItemsHave(int item) {
     COM_ITEM_INFO *info = GetCommonItemInfo(item);
     if (info == NULL) {
@@ -365,21 +364,24 @@ int GetNumHowManyItemsHave(int item) {
         return 0;
     }
     int count = 0;
-    if (info->kind == ITEMKIND_WEAPON) {
-        WEAPON_DATA *weapon = GetWeaponData(item);
-        if (weapon != NULL) {
-            for (int i = 0; i < 10; i++) {
-                if (item == dungeon_status->chara_weapons[weapon->owner][i].item_no) {
-                    count++;
+    switch (info->kind) {
+        case ITEMKIND_WEAPON: {
+            WEAPON_DATA *weapon = GetWeaponData(item);
+            if (weapon != NULL) {
+                int i;
+                s8 owner = weapon->owner;
+                WEAPON_HAVE *weapons = dungeon_status->chara_weapons[owner];
+                for (i = 0; i < 10; i++) {
+                    if (item == weapons[i].item_no) {
+                        count++;
+                    }
                 }
             }
+            break;
         }
     }
     return count;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", GetNumHowManyItemsHave__Fi);
-#endif
 static int GetEditMenuMax() {
     int max = 6;
     if (GetGameFlagForManualMenu() == 0) {
