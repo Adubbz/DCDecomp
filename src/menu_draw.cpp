@@ -1321,8 +1321,31 @@ void AttachDataListToHaveCopy(int attachment_no, ATTACH_LIST *attachment) {
         memcpy(attachment, GetAttachData(attachment_no), 0x20U);
     }
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", ItemDataToHaveCopy__Fi);
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @2113__2);
+
+s16 ItemDataToHaveCopy(int item_no) {
+    int vol;
+
+    if (item_no < ITEM_DUNGEON_START || item_no > ITEM_WEAPON_START - 1) {
+        return 0;
+    }
+    ITEM_DATA *data = GetItemData(item_no);
+    if (data == NULL) {
+        return -1;
+    }
+    vol = data->vol;
+    if (item_no == ITEM_DRAN_S_FEATHER) {
+        int angle = rand() % 360;
+        if (angle < 180) {
+            angle += 180;
+        }
+        vol = angle * 60;
+    }
+    if (item_no >= ITEM_ANTI_FREEZE_AMULET && item_no <= ITEM_ANTIDOTE_AMULET) {
+        vol = rand() % 5 + 3;
+    }
+    printf("vol = %d\n", vol);
+    return vol;
+}
 
 void DrawFullSizePicture(CTexture *texture, int x, int y, int alpha) {
     if (texture != NULL) {
