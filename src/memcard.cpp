@@ -598,8 +598,39 @@ INCLUDE_ASM("asm/nonmatchings/memcard", GetMsgLengthMenu__FP6ClsMesi);
  * @address 0x2181E0
  * @size 0xD8
  */
+static CTexture *RetCTexAtora(int tip_no, int &x, int &y);
 INCLUDE_ASM("asm/nonmatchings/memcard", RetCTexAtora__FiRiRi);
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtoraParts__Fiiiiii);
+
+void DrawAtoraParts(int x, int y, int tip_no, int top, int bottom, int alpha) {
+    CTexture *texture;
+    int src_x;
+    int src_y;
+    int height;
+
+    if (x < 340 || x > 600) {
+        return;
+    }
+    if (y < 80 || y > 300) {
+        return;
+    }
+    if (y < top - 35 || bottom <= y) {
+        return;
+    }
+    if (tip_no < 0) {
+        return;
+    }
+    texture = RetCTexAtora(tip_no, src_x, src_y);
+    if (texture == NULL) {
+        return;
+    }
+    height = 36;
+    MenuTextureClip(y, src_y, height, top, bottom);
+    CRect_i_ src(src_x, src_y, 36, height);
+    CRect_i_ shadow(x + 2, y + 1, 36, height);
+    DrawMenu2DSprite(texture, shadow, src, 0, 0, 0, (alpha * 80) >> 7);
+    CRect_i_ dest(x, y, 36, height);
+    DrawMenu2DSprite(texture, dest, src, alpha);
+}
 
 static EDITPARTS_INFO *SearchAtoraInfo(int index) {
     int parts;
