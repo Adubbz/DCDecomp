@@ -756,6 +756,36 @@ int _GET_PIERO_ITEM(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", AddSystemEventScript__Fv);
-INCLUDE_RODATA("asm/nonmatchings/btsysscript", @974);
-INCLUDE_RODATA("asm/nonmatchings/btsysscript", @975);
+/** Pairs one system script opcode function with its bytecode operation number. */
+struct BT_EVENT_EXTERNAL_FUNCTION {
+    int (*function)(RS_STACKDATA *, int); /**< Native function invoked by the bytecode operation. */
+    int operation;                        /**< Bytecode operation number assigned to the function. */
+};
+
+/** Opcode functions of the system script, ended by an entry without a function. */
+extern "C" BT_EVENT_EXTERNAL_FUNCTION ext_func_info__2[];
+
+/** Dispatch table the event script calls opcodes through. */
+extern int (*ext_func__2[1500])(RS_STACKDATA *, int);
+
+void AddSystemEventScript(void) {
+    for (int i = 0;; i++) {
+        if (ext_func_info__2[i].function == NULL) {
+            break;
+        }
+        int j;
+        for (j = 0; j < i; j++) {
+            if (ext_func_info__2[i].operation == ext_func_info__2[j].operation) {
+                printf("same ext_func_no!!!\n");
+                while (1) {
+                }
+            }
+        }
+        int operation = ext_func_info__2[i].operation;
+        if (operation < 0 || operation >= 1500) {
+            printf("ext func over!!");
+        } else {
+            ext_func__2[operation] = ext_func_info__2[i].function;
+        }
+    }
+}
