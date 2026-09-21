@@ -201,29 +201,26 @@ void CWater::SetVertex(float *v0, float *v1, float *v2, float *v3) {
     sceVu0CopyVector(vertex[3], v3);
 }
 
-#ifdef NON_MATCHING
 void CWater::Shake(int row, int column, float height_change) {
-    int i = row % rows;
-    int j = column % columns;
+    row %= rows;
+    column %= columns;
 
     // The edge cells hold the surface still, so a ripple starts inside them.
-    if (i <= 0) {
-        i = 1;
+    if (row <= 0) {
+        row = 1;
     }
-    if (j <= 0) {
-        j = 1;
+    if (column <= 0) {
+        column = 1;
     }
-    if (rows - 2 < i) {
-        i = rows - 2;
+    if (row > rows - 2) {
+        row = rows - 2;
     }
-    if (columns - 2 < j) {
-        j = columns - 2;
+    if (column > columns - 2) {
+        column = columns - 2;
     }
-    height[j + i * columns] += height_change;
+    float *cell = &height[column];
+    cell[row * columns] += height_change;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/water", Shake__6CWaterFiif);
-#endif
 void CWater::SetSize(int row_count, int column_count, CDataAlloc2<1> *arena) {
     if (arena == NULL) {
         arena = (CDataAlloc2<1> *) WaterData;
