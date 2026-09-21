@@ -135,8 +135,9 @@ void HitValueEntry(CHitValue *values, float *world, int amount, int kind, CFrame
         }
     }
 }
-#ifdef NON_MATCHING
 void CHitValue::EntryValue(float *world, int amount, int kind, CFrame *frame) {
+    int place = 10000;
+
     for (int i = 0; i < 5; i++) {
         digit[i] = -1;
         phase[i] = -3.141592f;
@@ -156,10 +157,10 @@ void CHitValue::EntryValue(float *world, int amount, int kind, CFrame *frame) {
         return;
     }
 
-    int place = 10000;
+    int value;
     int leading = 0;
     for (int i = 4; i >= 0; i--) {
-        int value = amount / place;
+        value = amount / place;
 
         if (value > 0) {
             leading = 1;
@@ -167,7 +168,7 @@ void CHitValue::EntryValue(float *world, int amount, int kind, CFrame *frame) {
         // The units place is always drawn; the rest only past the first digit.
         if (i == 0 || leading != 0) {
             digit[i] = value;
-            amount %= place;
+            amount -= value * place;
             if (place < 9) {
                 last_digit = i;
             }
@@ -196,9 +197,6 @@ void CHitValue::EntryValue(float *world, int amount, int kind, CFrame *frame) {
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/hitvalue", EntryValue__9CHitValueFPfiiP6CFrame);
-#endif
 #ifdef NON_MATCHING
 void CHitValue::Draw(void) {
     if (active == 0) {
