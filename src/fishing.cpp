@@ -646,7 +646,9 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishingDrawFish__Fv);
  * @address 0x1A9BC0
  * @size 0x28
  */
-INCLUDE_ASM("asm/nonmatchings/fishing", GetHookPos__FPf);
+static void GetHookPos(float *position) {
+    sceVu0CopyVector(position, hookp[0]);
+}
 
 /**
  * Casts the line, putting the float and hook at a position.
