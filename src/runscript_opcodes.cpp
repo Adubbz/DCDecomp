@@ -345,7 +345,35 @@ int _GET_VECTOR(RS_STACKDATA *stack, int argc) {
     SetStack(stack, direction[2]);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_DIRECTION__FP12RS_STACKDATAi);
+
+int _GET_DIRECTION(RS_STACKDATA *stack, int argc) {
+    float rotation[4];
+    float matrix[4][4];
+    float unit[4][4];
+
+    NowMonstorUnit->chara[NowMonstorUnit->unk_090][0].GetRotation(rotation);
+    if (argc == 4) {
+        float angle = GetStackFloat(stack++);
+
+        rotation[1] += 0.017453292f * angle;
+        if (rotation[1] > 3.1415927f) {
+            rotation[1] -= 6.2831855f;
+        }
+        if (rotation[1] < -3.1415927f) {
+            rotation[1] += 6.2831855f;
+        }
+    }
+    float direction[4] = {0.0f, 0.0f, 1.0f, 0.0f};
+    sceVu0UnitMatrix(unit);
+    sceVu0RotMatrixY(matrix, unit, rotation[1]);
+    sceVu0ApplyMatrix(direction, matrix, direction);
+    direction[3] = 1.0f;
+    sceVu0Normalize(direction, direction);
+    SetStack(stack++, direction[0]);
+    SetStack(stack++, direction[1]);
+    SetStack(stack, direction[2]);
+    return 1;
+}
 
 int _SET_MOVE(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;

@@ -246,7 +246,7 @@ carve_part(main.sbss.part5.s
 # and runscript_opcodes.cpp supplies its vector initializers ahead of part6f.
 carve_part(main.data.part6.s
            main.data.part6.s=27E790-27EB30
-           main.data.part6f.s=291840-294150
+           main.data.part6f.s=291850-294150
            main.data.part6g.s=294170-295810
            main.data.part6d.s=295830-295840
            main.data.part6b.s=2959A0-295FF0)
