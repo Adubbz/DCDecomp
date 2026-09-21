@@ -946,7 +946,20 @@ static int AtoraBoardGoToPos(int *enable, int pos, int min) {
 
 INCLUDE_ASM("asm/nonmatchings/memcard", GetAtraMsgNo__Fii);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraMsgNoGet__Fiii);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipOnlyMsgNoGet__Fii);
+static int AtoraTipOnlyMsgNoGet(int map_no, int number) {
+    EDIT_ELEMENT_ATRA *chip;
+    int msg_no;
+
+    chip = GetEditAtraChipData(map_no, number);
+    if (chip == NULL) {
+        return -1;
+    }
+    msg_no = chip->msg_no + 40;
+    if (number >= 40) {
+        msg_no += 40;
+    }
+    return msg_no;
+}
 /**
  * Gives the cell within the element sheet that one georama element draws from.
  *
