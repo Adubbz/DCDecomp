@@ -364,7 +364,17 @@ int _RUN_SCRIPT_NO(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _CLEAN_MONSTOR_SCRIPT_NO__FP12RS_STACKDATAi);
+int _CLEAN_MONSTOR_SCRIPT_NO(RS_STACKDATA *stack, int count) {
+    int script_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
+
+    BtEventInfo.unk_A4 = 0;
+    if (count > 1) {
+        BtEventInfo.unk_A4 = GetStackInt__FP12RS_STACKDATA__2(stack);
+    }
+    BtEventInfo.unk_A0 = script_no;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_NPC_OBJHDL__FP12RS_STACKDATAi);
 INCLUDE_RODATA("asm/nonmatchings/btsysscript", @833);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_MOTION_OBJHDL__FP12RS_STACKDATAi);
