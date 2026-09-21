@@ -1,6 +1,7 @@
 #include "editground.hpp"
 
 #include <cstdlib>
+#include <cstring>
 
 #include "editarea.hpp"
 #include "editpartsinfo.hpp"
@@ -244,7 +245,7 @@ void CEditGround::Clear() {
     if (parts_info != NULL) {
         parts_info->Clear();
     }
-    if (unk_00000 == 1) {
+    if (map_no == 1) {
         CVector3_f_ position;
         EDITPARTS_INFO *info = parts_info->GetPartsInfo(16);
         int saved = info->unk_08;
@@ -339,7 +340,49 @@ static int CheckDelete(CEditArea *area, CMapParts *parts, float x, float y, floa
 }
 
 INCLUDE_ASM("asm/nonmatchings/editground", Draw__12CPartsCursorFPfii);
-INCLUDE_ASM("asm/nonmatchings/editground", RequestCheck__11CEditGroundFv);
+
+void CEditGround::RequestCheck() {
+    CMapParts *plot_parts[24][64];
+    int plot_count[24];
+    int i;
+
+    memset(plot_parts, 0, sizeof(plot_parts));
+    CMapParts *object = parts;
+    for (i = 0; i < 24; i++) {
+        plot_count[i] = 0;
+        parts_info->request[i] = 0;
+    }
+    for (i = 0; i < 128; i++, object++) {
+        if (object->unk_0E8 >= 0) {
+            int plot = object->parts_no;
+            if (plot >= 0 && plot < 24) {
+                plot_parts[plot][plot_count[plot]++] = object;
+            }
+        }
+    }
+    switch (map_no) {
+        case 0:
+            NornRequest(plot_parts);
+            break;
+        case 1:
+            MatatagiRequest(plot_parts);
+            break;
+        case 2:
+            QueensRequest(plot_parts);
+            break;
+        case 3:
+            MuskaRequest(plot_parts);
+            break;
+        case 4:
+            YellowRequest(plot_parts);
+            break;
+    }
+    for (i = 0; i < 24; i++) {
+        if (!parts_info->CheckComplete(i)) {
+            parts_info->request[i] = 0;
+        }
+    }
+}
 
 int CEditGround::CheckPartsRect(int parts_no, int area, CRect_i_ &rect) {
     int parts_ids[256];

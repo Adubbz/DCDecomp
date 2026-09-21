@@ -51,7 +51,7 @@ STATIC_ASSERT(sizeof(CGroundWater) == 0x3B0);
  */
 class CEditGround {
 public:
-    s32 unk_00000;
+    s32 map_no;          /**< Georama town the ground belongs to, from 0 for Norune to 4 for Yellow Drops. */
     CEditArea *areas[4]; /**< Editable areas that make up the ground. */
     s32 unk_00014[4];
     u8 unk_00024[0xC];
@@ -451,7 +451,7 @@ public:
      * @address 0x1A5FE0
      * @size 0x1F4
      */
-    int RequestCheck(void);
+    void RequestCheck(void);
 
     /**
      * Reports whether a part of a given kind stands inside a rectangle.
