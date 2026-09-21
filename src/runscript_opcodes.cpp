@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 
 #include "dun/gameloop.hpp"
 #include "edit.hpp"
@@ -311,7 +312,14 @@ int _STATUS_GET_HEIGHT(RS_STACKDATA *stack, int argc) {
     SetStack(stack, NowMonstorUnit->monster[NowMonstorUnit->unk_090].ground_distance);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_RAND__FP12RS_STACKDATAi);
+int _GET_RAND(RS_STACKDATA *stack, int argc) {
+    int range = GetStackInt(stack++);
+
+    int value = (float) range * rand() / 2147483648.0f;
+
+    SetStack(stack, value);
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_RANDF__FP12RS_STACKDATAi);
 int _SIN_DEG(RS_STACKDATA *stack, int argc) {
     float angle = GetStackFloat(stack++);
