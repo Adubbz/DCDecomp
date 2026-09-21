@@ -254,9 +254,17 @@ void ComMenuSePlay(int sound) {
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_UcUcUci);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBA);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuTextureReload__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuTextureDelete__FPi);
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @728__6);
+
+void MenuTextureReload(int block) {
+    TexManager.ReloadTexture(GetVif1Packet(), block);
+}
+
+void MenuTextureDelete(int *blocks) {
+    for (int i = 0; blocks[i] != -1; i++) {
+        TexManager.DeleteTextureBlock(blocks[i]);
+        printf("delete block: %d\n", blocks[i]);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", AllFillBoxForMenu__FUcUcUcUc);
 
 void AllFadeForMenu(int alpha) {
