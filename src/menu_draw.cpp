@@ -773,7 +773,16 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", IsEnableTrushThrow__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonMoneyBoardDraw__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SearchBoardNowPosItemExist__Fii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetBoardSpace__FiPi);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", SwapItem__FP9ITEM_PACKii);
+
+void SwapItem(ITEM_PACK *items, int first_pos, int second_pos) {
+    s16 item = items->item[first_pos];
+    s16 vol = items->item_vol[first_pos];
+
+    items->item[first_pos] = items->item[second_pos];
+    items->item_vol[first_pos] = items->item_vol[second_pos];
+    items->item[second_pos] = item;
+    items->item_vol[second_pos] = vol;
+}
 
 int CompItem(int first_item_no, int second_item_no) {
     ITEM_DATA *first = GetItemData(first_item_no);
