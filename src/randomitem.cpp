@@ -183,7 +183,6 @@ int CRandomItem::CheckItemNo(int item) {
     }
     return 0;
 }
-#ifdef NON_MATCHING
 void CRandomItem::Step(void) {
     bob_phase += 0.05235988f;
     if (bob_phase > 3.1415927f) {
@@ -200,7 +199,11 @@ void CRandomItem::Step(void) {
                 if (phase[i] > 3.1415927f) {
                     state[i] = 1;
                     phase[i] = 0.0f;
-                    SndSePlay(item_no[i] == -1 ? 0xDD : 0xDE, -1, 0);
+                    if (item_no[i] == -1) {
+                        SndSePlay(0xDD, -1, 0);
+                    } else {
+                        SndSePlay(0xDE, -1, 0);
+                    }
                 }
                 break;
             case 1:
@@ -214,6 +217,3 @@ void CRandomItem::Step(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/randomitem", Step__11CRandomItemFv);
-#endif
