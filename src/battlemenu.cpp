@@ -790,9 +790,39 @@ static void WeaponMenuCheckElemValue(WEAPON_HAVE *weapon, WEAPON_HAVE *attachmen
     printf("now active vol  = %d\n", weapon->elem[weapon->best_elem]);
 }
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuCheckEnableSetElem__FP11WEAPON_HAVEP11WEAPON_HAVEi);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2356);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2357);
+/**
+ * Reports whether an element may be put on a weapon, and complains where it may not.
+ *
+ * @mangled WeaponMenuCheckEnableSetElem__FP11WEAPON_HAVEP11WEAPON_HAVEi
+ * @address 0x1FC110
+ * @size 0x10C
+ */
+static int WeaponMenuCheckEnableSetElem(WEAPON_HAVE *weapon, WEAPON_HAVE *attachment, int elem) {
+    int refused = 0;
+
+    if (weapon->best_elem == elem) {
+        if (EnableWeaponElemNone(weapon->item_no) != 0) {
+            WepMenu.unk_0C = 11;
+            WepMenu.unk_08 = 9;
+            refused = 1;
+        } else {
+            weapon->best_elem = 5;
+        }
+    } else if (attachment->elem[elem] > 0) {
+        weapon->best_elem = elem;
+    } else {
+        WepMenu.unk_0C = 11;
+        WepMenu.unk_08 = 0;
+        refused = 1;
+    }
+    if (weapon != NULL) {
+        printf("now elem = %d\n", weapon->best_elem);
+        if (weapon->best_elem != 5) {
+            printf("now elem vol = %d\n", attachment->elem[weapon->best_elem]);
+        }
+    }
+    return refused;
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponSelectDialog__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", InitWeaponSelect__Fii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ExitWeaponMenuSelect__Fv);

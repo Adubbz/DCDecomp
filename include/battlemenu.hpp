@@ -479,15 +479,6 @@ void DrawAallWeapon(int, int, float, CCharacter *, WEAPON_HAVE *, int, int, int)
 void BtlWeaponDraw(int, float, int, int);
 
 /**
- * Reports whether an element may be put on a weapon, and complains where it may not.
- *
- * @mangled WeaponMenuCheckEnableSetElem__FP11WEAPON_HAVEP11WEAPON_HAVEi
- * @address 0x1FC110
- * @size 0x10C
- */
-void WeaponMenuCheckEnableSetElem(WEAPON_HAVE *, WEAPON_HAVE *, int);
-
-/**
  * Draws the dialog that offers to repair, build up or scrap the selected weapon.
  *
  * @mangled DrawWeaponSelectDialog__Fiii
