@@ -163,7 +163,7 @@ int CDngStatusData::LostItem(int item_id) {
     for (i = 0; (valid = i < 103) != 0; i++) {
         if (this->inventory.dungeon_items[i] == item_id) {
             this->inventory.dungeon_items[i] = -1;
-            this->item_vol[i] = 0;
+            this->inventory.item_vol[i] = 0;
             return i;
         }
     }
@@ -393,13 +393,13 @@ int CDngStatusData::GetItem(int item_id, int qty) {
                     for (m = 0; (valid = m < 3) != 0; m++) {
                         if (this->inventory.dungeon_items[this->inventory.item_capacity + m] == -1) {
                             this->inventory.dungeon_items[this->inventory.item_capacity + m] = item_id;
-                            this->item_vol[this->inventory.item_capacity + m] = have_copy;
+                            this->inventory.item_vol[this->inventory.item_capacity + m] = have_copy;
                             return i;
                         }
                     }
                 } else {
                     this->inventory.dungeon_items[i] = item_id;
-                    this->item_vol[i] = have_copy;
+                    this->inventory.item_vol[i] = have_copy;
                 }
                 return i;
             }

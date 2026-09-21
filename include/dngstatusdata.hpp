@@ -31,13 +31,19 @@ struct DNG_CONSUMABLE {
 };
 
 /**
- * Stores the editor-visible dungeon item capacity and item identifiers.
+ * Stores a player's dungeon items: the slots the pack holds, the quick-use
+ * slots, and the item and remaining volume in each slot.
  */
 struct ITEM_PACK {
-    s8 num;
-    char unk_01[13];
-    s16 item[103];
+    s8 num; /**< Slots the pack holds. */
+    char unk_01[1];
+    s16 quick_item_slot[3]; /**< Item in each quick-use slot, or -1. */
+    s16 quick_item_qty[3];  /**< How many of that item each quick-use slot holds. */
+    s16 item[103];          /**< Item in each slot, or -1. */
+    s16 item_vol[103];      /**< How much is left in each slot's copy of its item. */
 };
+
+STATIC_ASSERT(sizeof(ITEM_PACK) == 0x1AA);
 
 STATIC_ASSERT(sizeof(DNG_CONSUMABLE) == 0x20);
 
@@ -264,13 +270,13 @@ public:
             s16 quick_item_slot[3];
             s16 quick_item_qty[3];
             s16 dungeon_items[103];
+
+            /* Per-slot "vol": how much is left in that copy of the item. Seeded from
+             * ITEM_LIST +10 via ItemDataToHaveCopy, drained by CMenuItemStep::
+             * CheckItemVolume, which advances the item id a stage when it empties. */
+            s16 item_vol[103];
         } inventory;
     };
-
-    /* Per-slot "vol": how much is left in that copy of the item. Seeded from
-     * ITEM_LIST +10 via ItemDataToHaveCopy, drained by CMenuItemStep::
-     * CheckItemVolume, which advances the item id a stage when it empties. */
-    s16 item_vol[103];
     char unk_450A[2];
     WEAPON_HAVE chara_weapons[6][11];
     DNG_CONSUMABLE consumable_items[43];

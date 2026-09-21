@@ -67,13 +67,13 @@ void CMenuItemStep::CheckItemVolume(void) {
             preservation[slot + 1] += 100;
         }
 
-        status->item_vol[slot] -= elapsed;
-        if (status->item_vol[slot] <= 0) {
+        status->inventory.item_vol[slot] -= elapsed;
+        if (status->inventory.item_vol[slot] <= 0) {
             item++;
             if (item >= ITEM_TINY_ICE + 1) {
                 item = -1;
             } else {
-                status->item_vol[slot] = GetItemData(item)->vol;
+                status->inventory.item_vol[slot] = GetItemData(item)->vol;
             }
         }
     }
@@ -87,8 +87,8 @@ void CMenuItemStep::CheckItemVolume(void) {
             preservation[slot] = 100;
         }
         int loss = (int) ((float) elapsed * (100.0f - preservation[slot]) / 100.0f);
-        status->item_vol[slot] -= loss;
-        if (status->item_vol[slot] <= 0) {
+        status->inventory.item_vol[slot] -= loss;
+        if (status->inventory.item_vol[slot] <= 0) {
             item++;
         }
     }
