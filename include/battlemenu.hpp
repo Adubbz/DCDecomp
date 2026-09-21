@@ -53,7 +53,14 @@ STATIC_ASSERT(sizeof(WEP_MENU_INFO) == 0x17C);
 struct ITEM_MENU_MODE_INFO {
     s16 unk_00;
     s16 chara; /**< Party member index the item page is showing. */
-    char unk_04[0x1C];
+    char unk_04[6];
+    s16 unk_0A;
+    s16 unk_0C;
+    s16 unk_0E[3];
+    char unk_14[4];
+    s16 unk_18;
+    char unk_1A[2];
+    s32 unk_1C;
     PERSONAL_BOARD board; /**< Personal board the item page lists the pack on. */
     char unk_180[4];
     s16 message_item_no; /**< Item number the last SetNowEquipWeaponDataForMsg call named. */
@@ -106,6 +113,18 @@ struct MENU_MOVE_INFO {
 };
 
 STATIC_ASSERT(sizeof(MENU_MOVE_INFO) == 0x20);
+
+/**
+ * Names one world-map place and where it sits on the map.
+ */
+struct WORLD_MAP_POS {
+    char frame[6]; /**< Name of the map frame the place's marker hangs off. */
+    s16 unk_06;
+    s32 x; /**< Horizontal position of the place on the map. */
+    s32 y; /**< Vertical position of the place on the map. */
+};
+
+STATIC_ASSERT(sizeof(WORLD_MAP_POS) == 0x10);
 
 /**
  * Ranks one world-map destination by how near it is.
@@ -725,15 +744,14 @@ void LoadWorldMap(void);
 void MenuDataSwap(MAP_JUMP_COMPARE *first, MAP_JUMP_COMPARE *second);
 
 /**
- * Finds the world-map place nearest the direction the pad was pushed in.
+ * Finds the reachable world-map place nearest the current one in the direction the pad was
+ * pushed, or -1 when there is none.
  *
  * @mangled GetNearWorldPos__FiPi
  * @address 0x20A4A0
  * @size 0x3BC
- * Returns the reachable world map destination nearest the one it is given, or -1 when there
- * is none.
  */
-int GetNearWorldPos(int, int *);
+int GetNearWorldPos(int direction, int *position);
 
 /**
  * Draws the plate that asks whether to travel to the chosen place.

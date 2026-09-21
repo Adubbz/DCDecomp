@@ -3,6 +3,7 @@
 
 #include "battlemenu.hpp"
 
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 
@@ -21,6 +22,8 @@
 #include "menu_manual.hpp"
 #include "menu_misc.hpp"
 #include "menu_save.hpp"
+#include "menuiconautoget.hpp"
+#include "mglib.hpp"
 #include "monstorunit.hpp"
 #include "savedata.hpp"
 #include "shop.hpp"
@@ -210,9 +213,9 @@ extern float mapo[4];
 extern MENU_MOVE_INFO MenuMove;
 
 /**
- * Holds the frame name of each world-map place.
+ * Holds each world-map place's frame name and position.
  */
-extern char TownOrDngPos[16][16];
+extern WORLD_MAP_POS TownOrDngPos[16];
 
 /**
  * Points to the frame name of the world-map place the cursor moves to.
@@ -278,6 +281,11 @@ extern float WepFrameRate;
  * Source rectangle of the digits a weapon-status bar prints its value with.
  */
 extern RECT WeaponVolumeNumberRect;
+
+/**
+ * Icons flying from the field into the item pack.
+ */
+extern CMenuIconAutoGet IconAutoGet;
 
 int GetDefaultWeaponNo(int character_no) {
     return MenuDefaultWeaponNo[character_no];
@@ -748,6 +756,17 @@ static void DrawWeaponNameBoard(int x, int y, int width, int alpha, int brightne
 s32 GetWeaponNamePutX(s32 center_x, s32 width) {
     return center_x - (width >> 1);
 }
+
+/**
+ * Places one line of a message window, ignoring lines past the window's ten.
+ */
+static inline void SetLinePos(ClsMes *window, int line, int x, int y) {
+    if (line >= 0 && line < 10) {
+        window->line_pos[line].x = x;
+        window->line_pos[line].y = y;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponNameDraw__Fiii);
 
 /**
@@ -1451,6 +1470,7 @@ static void StartBGReadItemMenuWepIcon(u_long128 *buffer, int &size) {
 }
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ReadSyncItemMenuWepIcon__Fv);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @4334);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", InitItemMode__Fii);
 
 /**
@@ -1680,9 +1700,9 @@ static int WorldMapMoveKey() {
     if (direction > 0) {
         direction = GetNearWorldPos(direction, position);
         if (direction < 16 && direction >= 0) {
-            NextWorldPos = TownOrDngPos[direction];
+            NextWorldPos = TownOrDngPos[direction].frame;
             MenuMove.unk_04 = direction;
-            MapMoveCursor = MenuCharaFrame.frame->SearchFrame(TownOrDngPos[MenuMove.unk_04]);
+            MapMoveCursor = MenuCharaFrame.frame->SearchFrame(TownOrDngPos[MenuMove.unk_04].frame);
         }
     }
     return 1;
