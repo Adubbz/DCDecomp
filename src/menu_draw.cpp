@@ -71,7 +71,6 @@ int LoadFileBGMenuData(char *name, u_long128 *buffer) {
     return size;
 }
 
-#ifdef NON_MATCHING
 int LoadFileMenuData(char *name, unsigned int *buffer) {
     int size;
 
@@ -80,9 +79,6 @@ int LoadFileMenuData(char *name, unsigned int *buffer) {
     LoadFile(MenuGrobalDir, buffer, &size);
     return size;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", LoadFileMenuData__FPcPUi);
-#endif
 #ifdef NON_MATCHING
 extern CDataAlloc2<1> EdMenuBuffer;
 extern u_int *read_buffer;
