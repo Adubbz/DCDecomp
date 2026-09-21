@@ -2,10 +2,12 @@
 
 #include "mathutil.hpp"
 
+#include <eekernel.h>
 #include <libvu0.h>
 
 #include <cmath>
 #include <cstdlib>
+#include <cstring>
 
 /**
  * First entry of the table of static initializers the runtime calls at startup.
@@ -195,7 +197,18 @@ void mwInit(int argc, const char **argv, const char **envp) {
  * @address 0x122DE0
  * @size 0x8C
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", mwOverlayInit);
+extern "C" void mwOverlayInit(void *overlay, int size) {
+    char *image = (char *) overlay;
+    OverlayHeader *header = (OverlayHeader *) overlay;
+    int bss_size = header->bss_size;
+
+    FlushCache(2);
+    if (bss_size != 0) {
+        image += size;
+        memset(image, 0, bss_size);
+    }
+    __initialize_cpp_rts(header->static_init, header->static_init_end, 0, 0);
+}
 
 /**
  * Tells the runtime that an overlay has finished loading.
