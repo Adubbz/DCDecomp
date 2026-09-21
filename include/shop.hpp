@@ -47,7 +47,11 @@ STATIC_ASSERT(sizeof(SHOP_ITEMLIST) == 0xFC);
  */
 struct IHAVEITEM {
     s32 unk_00;
-    u8 unk_04[0x10];
+    s32 unk_04;
+    s32 unk_08;
+    s32 unk_0C;
+    s16 item_no; /**< The item held. */
+    s16 volume;  /**< The held item's volume. */
 };
 
 STATIC_ASSERT(sizeof(IHAVEITEM) == 0x14);
