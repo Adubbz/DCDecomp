@@ -44,6 +44,9 @@ extern int BtlMenuExReadBlock;
 /** Texture of the dungeon entrance board. */
 extern CTexture *DunLogBoard;
 
+/** Texture of the floor list on the dungeon entrance board. */
+extern CTexture *DunLogBoard2;
+
 /** Dungeon progress the battle menus show. */
 extern CDngStatusData *BtlMenuStatusPt;
 
@@ -70,6 +73,9 @@ extern float menudebugrot[3];
 
 /** Scale the debug item preview draws its model at. */
 extern float menudebugrscale[3];
+
+/** Returns the magnitude of an integer; the C library's abs, which cstdlib does not declare. */
+extern "C" int abs(int);
 
 /**
  * Resolves the model and texture paths for a battle item.
@@ -466,8 +472,6 @@ int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor) {
     return 1;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @776__3);
-
 static void ExitDunEnterMenu() {
     GamePad.AutoRepeatOff();
     GamePad.MenuModeOff();
@@ -490,12 +494,130 @@ int DunEnterMenuLoop() {
     }
     return result;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DunEnterMenuKey__Fv);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @843__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @844);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @845);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @846);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @847);
+
+static int DunEnterMenuKey(void) {
+    int result;
+    int selected;
+    int scroll_top;
+    int count;
+    BG_READ_INFO *archive;
+
+    result = -1;
+    switch (DEnterMenu.state) {
+        case 1:
+        case 3:
+            if (DEnterMenu.unk_00C == 0 && ReadBGSync() == 0) {
+                LOADTEXTURE_INFO2 textures[] = {
+                    {(char *) "#frame_menu_enter#640#448#4", DEnterMenu.texture_block, 0},
+                    {NULL, DEnterMenu.texture_block, 0},
+                    {NULL, 0, 0},
+                };
+                archive = GetReadBGFile(0);
+                textures[1].name = (char *) GetPackFile((u_int *) archive->buffer, (char *) "dunenter.img", NULL);
+                TexManager.DeleteTextureBlock(DEnterMenu.texture_block);
+                TexManager.CleanUpTextureList();
+                TexManager.LoadTextureBlockEX(-1, textures);
+                DunLogBoard = TexManager.GetTexture("dunenter", DEnterMenu.texture_block);
+                DunLogBoard2 = TexManager.GetTexture("kaisou", DEnterMenu.texture_block);
+                InitMenuMesSet(7, (short *) GetPackFile((u_int *) archive->buffer, (char *) "dunlog.bin", NULL));
+                CommonMenuMes2.mes_made = -1;
+                CommonMenuMes2.MakeMesWin(10);
+                DEnterMenu.unk_00C = 1;
+                DEnterMenu.unk_00E = 0;
+                printf("tex enter end \n");
+            } else {
+                MenuEtcErrCnt++;
+            }
+            if (DEnterMenu.unk_00C != 0) {
+                DEnterMenu.counter++;
+            }
+            if (DEnterMenu.unk_00C != 0 && DEnterMenu.counter > 30) {
+                DEnterMenu.state = 0;
+                DEnterMenu.counter = 0;
+                if (DEnterMenu.requested_floor >= 0) {
+                    DEnterMenu.state = 2;
+                    DEnterMenu.result = DEnterMenu.requested_floor;
+                    result = 1;
+                }
+            }
+            break;
+        case 2:
+            DEnterMenu.counter++;
+            if (DEnterMenu.counter > 46) {
+                result = 1;
+            }
+            break;
+        case 0:
+            selected = DEnterMenu.selected_floor;
+            scroll_top = DEnterMenu.scroll_top;
+            if (GamePad.Down(0x1000)) {
+                DEnterMenu.selected_floor--;
+                if (DEnterMenu.selected_floor < DEnterMenu.scroll_top) {
+                    DEnterMenu.scroll_top--;
+                }
+            } else if (GamePad.Down(0x4000)) {
+                DEnterMenu.selected_floor++;
+                if (DEnterMenu.scroll_top + 4 < DEnterMenu.selected_floor) {
+                    DEnterMenu.scroll_top++;
+                }
+            } else if (GamePad.Down(0x200A)) {
+                DEnterMenu.scroll_top += 5;
+                DEnterMenu.selected_floor += 5;
+            } else if (GamePad.Down(0x8005)) {
+                DEnterMenu.scroll_top -= 5;
+                DEnterMenu.selected_floor -= 5;
+            }
+            if (DEnterMenu.scroll_top < 0 || DEnterMenu.selected_floor < 0) {
+                DEnterMenu.selected_floor = 0;
+                DEnterMenu.scroll_top = 0;
+            }
+            if (DEnterMenu.floor_count - 1 < DEnterMenu.selected_floor) {
+                DEnterMenu.selected_floor = DEnterMenu.floor_count - 1;
+                DEnterMenu.scroll_top = DEnterMenu.selected_floor - 4;
+                if (DEnterMenu.scroll_top < 0) {
+                    DEnterMenu.scroll_top = 0;
+                }
+            }
+            if (DEnterMenu.selected_floor > DEnterMenu.floor_count - 1) {
+                DEnterMenu.selected_floor = DEnterMenu.floor_count - 1;
+            }
+            count = DEnterMenu.floor_count;
+            if (count > 5) {
+                if (DEnterMenu.scroll_top > count - 5) {
+                    DEnterMenu.scroll_top = count - 5;
+                    if (DEnterMenu.scroll_top < 0) {
+                        DEnterMenu.scroll_top = 0;
+                        DEnterMenu.selected_floor = 0;
+                    }
+                }
+            } else if (DEnterMenu.selected_floor > count - 1 || DEnterMenu.scroll_top > count - 1) {
+                DEnterMenu.selected_floor = count - 1;
+                DEnterMenu.scroll_top = 0;
+            }
+            if (DEnterMenu.scroll_top < 0 || DEnterMenu.selected_floor < 0) {
+                DEnterMenu.scroll_top = 0;
+                DEnterMenu.selected_floor = 0;
+            }
+            if (abs(DEnterMenu.scroll_top - scroll_top) > 4) {
+                DEnterMenu.unk_004 = 118.0f - 40.0f * DEnterMenu.scroll_top;
+                DEnterMenu.unk_008 = 122.0f + 108.0f * DEnterMenu.scroll_top / DEnterMenu.floor_count;
+            }
+            if (selected != DEnterMenu.selected_floor || scroll_top != DEnterMenu.scroll_top) {
+                ComMenuSePlay(0);
+            }
+            if (GamePad.Down(0x40)) {
+                DEnterMenu.result = DEnterMenu.selected_floor;
+                DEnterMenu.state = 2;
+                ComMenuSePlay(1);
+            }
+            if (GamePad.Down(0x20)) {
+                ComMenuSePlay(2);
+            }
+            break;
+    }
+    return result;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DunEnterDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DunEnterBoardWaku__Fiii);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DunEnterBoard__Fiii);
