@@ -512,16 +512,6 @@ void WeaponMenuSelect(void);
 void WeaponSelectKey(void);
 
 /**
- * Takes the held attachment back out of the player's hand.
- *
- * @mangled WepAttachHaveCancel__Fv
- * @address 0x1FF6B0
- * @size 0x198
- * Puts the attachment the weapon menu is holding back where it came from.
- */
-void WepAttachHaveCancel(void);
-
-/**
  * Moves the cursor between the three attachment pages.
  *
  * @mangled WeaponMenuAttachModeKey__Fv

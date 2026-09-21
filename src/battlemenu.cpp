@@ -1019,7 +1019,53 @@ static inline void SetCursorChara(CMenuCursor *cursor, int chara) {
     cursor->chara_no = chara;
 }
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", WepAttachHaveCancel__Fv);
+/**
+ * Puts the attachment the weapon menu is holding back where it came from.
+ *
+ * @mangled WepAttachHaveCancel__Fv
+ * @address 0x1FF6B0
+ * @size 0x198
+ */
+static void WepAttachHaveCancel() {
+    ATTACH_LIST *slot;
+    s16 held = BtlHaveItemPt->item_no;
+
+    if (held >= 81) {
+        switch (BtlHaveItemPt->unk_04) {
+            case 10: {
+                ATTACH_LIST *items = (ATTACH_LIST *) BtlMenuStatusPt->consumable_items;
+                slot = &items[BtlHaveItemPt->unk_0C];
+                break;
+            }
+            case 9:
+                slot = &DngWepHavePt[WepMenu.weapon_slot].attach[BtlHaveItemPt->unk_0C];
+                break;
+        }
+        if (slot != NULL) {
+            s16 item_no = slot->item_no;
+            MenuDataSwap(slot, &WepMenu.unk_150);
+            BtlHaveItemPt->item_no = item_no;
+            slot->item_no = held;
+        }
+        if (BtlHaveItemPt->item_no < 81) {
+            InitHaveData(BtlHaveItemPt);
+        }
+    } else {
+        CMenuCursor *cursor = SaveData->GetMenuCursor();
+        if (cursor->reset_pos == 0) {
+            cursor->mode[2] = WepMenu.unk_02;
+            SetCursorPos(cursor, 2, WepMenu.unk_20);
+        }
+        WepMenu.unk_02 = 1;
+        WepMenu.unk_20 = 1;
+        WepMenu.unk_06 = 0;
+        GetNowSelectWeapon();
+        if (BtlMenuMode == 0 && BtlMenuStatusPt->unk_04 == 3 && WepMenu.chara == 3) {
+            StartReadBG();
+            DngWepEffectReadStart();
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuAttachModeKey__Fv);
 
 /**
