@@ -99,7 +99,46 @@ INCLUDE_RODATA("asm/nonmatchings/gameutil", @414__4);
  * @address 0x147B70
  * @size 0x1B0
  */
-INCLUDE_ASM("asm/nonmatchings/gameutil", QuatSlerp__FPfPffPf);
+static void QuatSlerp(float *from, float *to, float t, float *out) {
+    float to_x;
+    float to_y;
+    float to_z;
+    float to_w;
+    float cosine;
+    float angle;
+    float inv_sine;
+    float scale_from;
+    float scale_to;
+
+    from[0] = -from[0];
+    to[0] = -to[0];
+    cosine = from[1] * to[1] + from[2] * to[2] + from[3] * to[3] + from[0] * to[0];
+    if (cosine < 0.0f) {
+        cosine = -cosine;
+        to_x = -to[1];
+        to_y = -to[2];
+        to_z = -to[3];
+        to_w = -to[0];
+    } else {
+        to_x = to[1];
+        to_y = to[2];
+        to_z = to[3];
+        to_w = to[0];
+    }
+    if (1.0f - cosine > 0.001f) {
+        angle = acosf(cosine);
+        inv_sine = 1.0f / sinf(angle);
+        scale_from = inv_sine * sinf((1.0f - t) * angle);
+        scale_to = inv_sine * sinf(t * angle);
+    } else {
+        scale_from = 1.0f - t;
+        scale_to = t;
+    }
+    out[1] = scale_from * from[1] + scale_to * to_x;
+    out[2] = scale_from * from[2] + scale_to * to_y;
+    out[3] = scale_from * from[3] + scale_to * to_z;
+    out[0] = scale_from * from[0] + scale_to * to_w;
+}
 INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc__FP6CFrameP12MOTION_STATEP8Mot_List);
 INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List);
 
