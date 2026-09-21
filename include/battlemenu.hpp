@@ -626,15 +626,6 @@ void DrawTrushItem(void);
 void ExitItemSelect(void);
 
 /**
- * Starts reading the item page's weapon icons in the background.
- *
- * @mangled StartBGReadItemMenuWepIcon__FP1Ri
- * @address 0x2024B0
- * @size 0x54
- */
-void StartBGReadItemMenuWepIcon(void /* CW back-ref target unresolved */ *, int &);
-
-/**
  * Waits for the item page's weapon icons and enters them into the texture manager.
  *
  * @mangled ReadSyncItemMenuWepIcon__Fv

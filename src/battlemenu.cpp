@@ -894,8 +894,18 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemTrushKey__FPiPii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawTrushItem__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ExitItemSelect__Fv);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", StartBGReadItemMenuWepIcon__FP1Ri);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @4330);
+/**
+ * Starts reading the item page's weapon icons in the background.
+ *
+ * @mangled StartBGReadItemMenuWepIcon__FP1Ri
+ * @address 0x2024B0
+ * @size 0x54
+ */
+static void StartBGReadItemMenuWepIcon(u_long128 *buffer, int &size) {
+    StartReadBG();
+    size = LoadFileBGMenuData("wepchara.img", buffer);
+    ItemMenuAlreadyReadWepIconTexFlag = 0;
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ReadSyncItemMenuWepIcon__Fv);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @4334);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", InitItemMode__Fii);
