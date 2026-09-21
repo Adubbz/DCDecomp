@@ -977,7 +977,26 @@ void ItemShopMemoryAlloc() {
 
 INCLUDE_ASM("asm/nonmatchings/shop", ItemPosInfoInit__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopGoodInitialize__Fi);
-INCLUDE_ASM("asm/nonmatchings/shop", InitItemShop2__FPiii);
+
+void InitItemShop2(int *state, int shop_no, int mode) {
+    ShopMenuInit(state, shop_no, mode);
+    ItemShopMemoryAlloc();
+    ItemShopGoodInitialize(shop_no);
+    ItemPosInfoInit();
+    InitAllHaveData();
+    ShopHaveItemPt->unk_00 = 0;
+    ShopMenu.unk_14 = 0;
+    ShopMenu.unk_02 = 0;
+    ShopMenu.unk_176 = 0;
+    ShopMenu.unk_170 = 142.0f + 114.0f * ShopMenu.unk_176 / 6.0f;
+    ShopMenu.unk_16C = 0x7E - ShopMenu.unk_176 * 0x28;
+    ShopMenu.unk_178 = 86.0f;
+    ShopMenu.unk_17C = 152.0f;
+    ShopMenu.unk_178 = (ShopMenu.unk_14 % 5) * 0x28 + 0x154;
+    ShopMenu.unk_17C = 120.0f;
+    GetMainMenuRightHelpWinLangOffset(ShopHelpWinPos[0], ShopHelpWinPos[1], ShopHelpWinW, ShopHelpWinH);
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopSelectKey2__Fv);
 INCLUDE_RODATA("asm/nonmatchings/shop", @783__4);
 INCLUDE_RODATA("asm/nonmatchings/shop", @787);
