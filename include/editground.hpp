@@ -23,13 +23,24 @@ class CRect_i_;
 class CSaveData;
 
 /**
+ * Describes one ripple source that keeps a ground water surface moving.
+ */
+struct GROUND_WATER_RIPPLE {
+    float row;    /**< Grid row the ripple starts at; below zero picks one at random. */
+    float column; /**< Grid column the ripple starts at; below zero picks one at random. */
+    float range;  /**< Largest random height added to each push. */
+    float power;  /**< Height of each push before the random part. */
+};
+
+/**
  * Holds one water surface of the editable ground and whether it is drawn.
  */
 class CGroundWater {
 public:
     u8 unk_000[0x20];
     s32 draw; /**< Whether this water surface is drawn. */
-    u8 unk_024[0x6C];
+    u8 unk_024[0x2C];
+    GROUND_WATER_RIPPLE ripples[4]; /**< Ripple sources; one with no power and no range ends the list. */
     CWater water; /**< Surface that ripples and draws. */
 };
 

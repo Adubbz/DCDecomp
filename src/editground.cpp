@@ -1,5 +1,7 @@
 #include "editground.hpp"
 
+#include <cstdlib>
+
 #include "editarea.hpp"
 #include "editpartsinfo.hpp"
 #include "mapparts.hpp"
@@ -149,7 +151,41 @@ void CEditGround::DrawBaseGround() {
 }
 
 INCLUDE_ASM("asm/nonmatchings/editground", Draw__11CEditGroundFfiiiii);
-INCLUDE_ASM("asm/nonmatchings/editground", StepWater__11CEditGroundFv);
+
+void CEditGround::StepWater() {
+    int i;
+    int j;
+    CGroundWater *surface = water_surfaces;
+
+    for (i = 0; i < 4; i++, surface++) {
+        if (surface->draw == 0) {
+            continue;
+        }
+        if (surface->water.CheckClip()) {
+            continue;
+        }
+        for (j = 0; j < 4; j++) {
+            if (surface->ripples[j].power == 0.0f && surface->ripples[j].range == 0.0f) {
+                break;
+            }
+            int row = surface->ripples[j].row;
+            int column = surface->ripples[j].column;
+            if (row < 0) {
+                int rows = surface->water.rows;
+                row = rows * (float) rand() / 2.1474836e9f;
+            }
+            if (column < 0) {
+                int rows = surface->water.rows;
+                column = rows * (float) rand() / 2.1474836e9f;
+            }
+            surface->water.Shake(row, column,
+                                 surface->ripples[j].power +
+                                     surface->ripples[j].range * (float) rand() / 2.1474836e9f);
+        }
+        surface->water.Hamon();
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", DrawWaterSurface__11CEditGroundFP7CCamera);
 INCLUDE_ASM("asm/nonmatchings/editground", DrawWater__11CEditGroundFi);
 INCLUDE_ASM("asm/nonmatchings/editground", DrawRipple__11CEditGroundFi);
