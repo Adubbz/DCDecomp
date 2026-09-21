@@ -1444,7 +1444,60 @@ static void WeaponMenuAttachWepKey() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuAttachKey__Fv);
+/**
+ * Handles input while an attachment is being moved on the weapon menu.
+ *
+ * @mangled WeaponMenuAttachKey__Fv
+ * @address 0x200540
+ * @size 0x270
+ */
+static void WeaponMenuAttachKey() {
+    if (PersonalBoardKey()) {
+        if (WepMenu.unk_06) {
+            WepMenu.unk_02 = 9;
+            WepMenu.board.unk_0C = GetWeaponHoleNum(GetNowSelectWeapon()->item_no) - 1;
+        } else {
+            WepMenu.unk_02 = 8;
+        }
+    } else if (GamePad.Down(0x40)) {
+        switch (WepMenu.board.unk_08) {
+            case 2:
+                InitHaveData(BtlHaveItemPt);
+                InitHaveAttach(&WepMenu.board.unk_13C);
+                ComMenuSePlay(2);
+                break;
+            case 1: {
+                DNG_CONSUMABLE *items = BtlMenuStatusPt->consumable_items;
+                ATTACH_LIST *slot = (ATTACH_LIST *) &items[WepMenu.board.unk_0C];
+                if (slot->item_no >= 81 || BtlHaveItemPt->item_no >= 81) {
+                    ComMenuSePlay(1);
+                    s16 held = BtlHaveItemPt->item_no;
+                    s16 item_no = slot->item_no;
+                    MenuDataSwap(slot, &WepMenu.board.unk_13C);
+                    BtlHaveItemPt->item_no = item_no;
+                    slot->item_no = held;
+                    BtlHaveItemPt->unk_0C = WepMenu.board.unk_0C;
+                    BtlHaveItemPt->unk_04 = 10;
+                    if (BtlHaveItemPt->item_no >= 81) {
+                        WepMenu.unk_06 = 1;
+                    } else {
+                        InitHaveData(BtlHaveItemPt);
+                        InitHaveAttach(&WepMenu.board.unk_13C);
+                    }
+                } else {
+                    ComMenuSePlay(2);
+                }
+                break;
+            }
+        }
+    } else if (GamePad.Down(0x20)) {
+        ComMenuSePlay(2);
+        WepAttachHaveCancel();
+    } else if (GamePad.Down(0x80)) {
+        SeitonAttachBoard((ATTACH_LIST *) BtlMenuStatusPt->consumable_items);
+        ComMenuSePlay(1);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", RepairAndLevelUpDraw__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBuildUpWeaponSelect__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuDraw__Fv);

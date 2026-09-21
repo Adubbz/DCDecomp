@@ -525,15 +525,6 @@ void WeaponMenuAttachModeKey(void);
 void WeaponMenuTagKey(void);
 
 /**
- * Handles input while an attachment is being moved on the weapon menu.
- *
- * @mangled WeaponMenuAttachKey__Fv
- * @address 0x200540
- * @size 0x270
- */
-void WeaponMenuAttachKey(void);
-
-/**
  * Draws the repair and build-up dialog with the counts of the items it needs.
  *
  * @mangled RepairAndLevelUpDraw__Fiii
