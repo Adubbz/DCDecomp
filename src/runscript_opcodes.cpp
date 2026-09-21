@@ -275,16 +275,12 @@ int _SET_ROT_CANSEL(RS_STACKDATA *stack, int argc) {
     return 1;
 }
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_POSITION__FP12RS_STACKDATAi);
-#ifdef NON_MATCHING
 int _STATUS_SET_FALL(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
 
     NowMonstorUnit->monster[monster_no].unk_088 = GetStackInt(stack);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_FALL__FP12RS_STACKDATAi);
-#endif
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_MUTEKI__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_ALPHA__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_CHK_ALPHA__FP12RS_STACKDATAi);
