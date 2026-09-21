@@ -65,9 +65,11 @@ struct PERSONAL_BOARD {
     ITEM_PACK *item_pack; /**< Item pack the board lists. */
     s32 unk_28;
     s32 unk_2C;
-    u8 unk_30[0x14];
+    u8 unk_30[0x10];
+    s16 unk_40;
+    u8 unk_42[2];
     WEAPON_HAVE weapon; /**< Weapon record the board holds. */
-    u8 unk_13C[0x20];
+    ATTACH_LIST unk_13C;
     s32 unk_15C;
 };
 
