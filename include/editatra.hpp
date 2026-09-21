@@ -6,7 +6,9 @@
  * Stores one map-editor element attribute record.
  */
 struct EDIT_ELEMENT_ATRA {
-    u8 unk_00[0xC];
+    s32 tex_no; /**< Cell of the element sheet that the element's icon draws from, seven to a row. */
+    s32 msg_no; /**< Message of the element's name, counted from its georama's first element message. */
+    u8 unk_08[4];
 };
 
 /**
