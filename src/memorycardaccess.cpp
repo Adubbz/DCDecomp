@@ -58,7 +58,6 @@ void CMemoryCardAccess::Initialize() {
     this->card[1].present = 1;
     printf("SaveData size = %d\n", sizeof(CSaveData));
 }
-#ifdef NON_MATCHING
 int CMemoryCardAccess::InitForMC() {
     int status = sceMcInit();
     this->Initialize();
@@ -85,13 +84,6 @@ int CMemoryCardAccess::InitForMC() {
     }
     return result;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", InitForMC__17CMemoryCardAccessFv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @384__3);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @385__2);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @386__2);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @387__2);
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SetBuff__17CMemoryCardAccessFPc);
 
 void CMemoryCardAccess::SetIconData(MC_ICON_DATA *icon) {
