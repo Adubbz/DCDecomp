@@ -776,7 +776,7 @@ int EditInit(void *) {
     CEditGround *ground = pEditGround;
     EdEventInfo.edit_ground = ground;
     EdEventInfo.fixed_parts_count = 64;
-    EdEventInfo.fixed_parts = (CMapParts *) &ground->unk_15f30[0x10];
+    EdEventInfo.fixed_parts = ground->fixed_parts;
     EdEventInfo.edit_parts_count = 24;
     EdEventInfo.edit_parts = ObjParts;
     EdEventInfo.player_texture_block = 8;

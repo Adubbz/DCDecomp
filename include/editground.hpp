@@ -20,6 +20,7 @@ class CEffectGroup;
 class CFrame;
 class CMapParts;
 class CRect_i_;
+struct EPARTS_FUNC_DATA;
 class CSaveData;
 
 /**
@@ -67,10 +68,20 @@ public:
     s32 focus_parts_id;             /**< ID of the part under the cursor, or -1. */
     u8 unk_15f18[8];
     sceVu0FVECTOR clip_plane; /**< Plane used to clip the editable ground's rendered geometry. */
-    u8 unk_15f30[0x360];
-    CFrame *frame; /**< Root frame containing the editable ground model. */
-    u8 unk_16294[0xA6C8];
-    s32 suppress_water; /**< Whether rendering of the editable ground's water is disabled. */
+    CMapParts *plot_parts;    /**< Template part of each plot, indexed by plot number. */
+    CMapParts *river_parts;   /**< Template river pieces, indexed by how the river joins its neighbours. */
+    CMapParts *road_parts;    /**< Template road pieces, indexed by how the road joins its neighbours. */
+    u8 unk_15f3c[4];
+    CMapParts fixed_parts[64]; /**< Parts of the map that the player cannot move; the second is the ground model. */
+    s32 unk_20740;
+    s32 unk_20744;
+    float unk_20748;
+    s32 unk_2074c;
+    s32 unk_20750;
+    u8 unk_20754[4];
+    EPARTS_FUNC_DATA *people[128]; /**< Villager markers of the placed parts. */
+    s32 people_count;              /**< Number of villager markers in use. */
+    s32 suppress_water;            /**< Whether rendering of the editable ground's water is disabled. */
     /**
      * Places one part on the ground, replacing or refusing it according to what already
      * stands there.

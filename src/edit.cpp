@@ -900,7 +900,7 @@ void EdThunderEffect(int map, CEditGround *ground) {
     int channel;
 
     if (map == 40 || map == 50 || map == 24) {
-        frame = ground->frame;
+        frame = ground->fixed_parts[1].frame[0];
         if (frame)
             frame = frame->SearchFrame("inazuma");
         if (frame == 0)
