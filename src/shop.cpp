@@ -18,6 +18,7 @@
 #include "memcard.hpp"
 #include "menu_draw.hpp"
 #include "menu_inventory.hpp"
+#include "menuitemstep.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "savedata.hpp"
@@ -35,14 +36,7 @@ struct ShopMenuWork {
     s16 unk_02;
     s16 unk_04;
     s16 unk_06;
-    u8 unk_08[4];
-    s32 unk_0C;
-    s32 unk_10;
-    s32 unk_14;
-    float unk_18;
-    u8 unk_1C[4];
-    u8 unk_20[0x144];
-    s32 unk_164;
+    PERSONAL_BOARD board; /**< The player's side of the shop: the personal board and the records it holds. */
     s32 unk_168;
     float unk_16C;
     float unk_170;
@@ -58,7 +52,8 @@ struct ShopMenuWork {
     s16 unk_18A;
     s16 unk_18C;
     s16 unk_18E;
-    s32 unk_190;
+    s16 unk_190;
+    s16 unk_192;
     s16 unk_194;
     s16 unk_196;
     s16 unk_198;
@@ -88,6 +83,15 @@ extern CCamera MenuCamera;
 
 /** Model the menus draw a character with; the shopkeeper while a shop is open. */
 extern CCharacter MenuCharaFrame;
+
+/** Arena the editor's menus are read into. */
+extern CDataAlloc2<1> EdMenuBuffer;
+
+/** Steps item volumes for the menus. */
+extern CMenuItemStep ItemVolumeStep;
+
+/** Texture of the frame drawn while a menu waits for its data. */
+extern CTexture *StayTex;
 
 /** Arena the shopkeeper's model and the item shop's board tables are read into. */
 extern CDataAlloc2<1> ShopCashBuffer;
@@ -153,13 +157,15 @@ extern FishMenuWork FishMenu;
  * State of the fishing record screen.
  */
 struct FishRecordMenuWork {
-    u8 unk_00[0xC];
+    s32 unk_00;
+    s32 unk_04;
+    s32 mode;       /**< The mode the record view was opened in. */
     s32 fade_mode;  /**< Whether the record view is fading in (0) or out (1). */
     s32 fade_count; /**< Frames the current fade has run for. */
     u8 unk_14[4];
-    s32 ready;     /**< Nonzero once the record view's contents may be drawn. */
-    s32 tex_block; /**< Texture block the record view's textures are entered into. */
-    u8 unk_20[4];
+    s32 ready;      /**< Nonzero once the record view's contents may be drawn. */
+    s32 tex_block;  /**< Texture block the record view's textures are entered into. */
+    s32 tex_block2; /**< Second texture block the record view's textures are entered into. */
 };
 
 STATIC_ASSERT(sizeof(FishRecordMenuWork) == 0x24);
@@ -199,20 +205,22 @@ extern s32 sort_top_type;
 extern s32 asort_top_type;
 
 /**
- * A view onto the personal item board inside CUserStatus's still-unnamed
- * 0x436C region (userstatus.hpp reaches only 0x436C of it so far): one item
- * number and one volume per dungeon-item board slot.
+ * A view onto the dungeon item pack inside CUserStatus's 0x4360 region, which
+ * userstatus.hpp does not lay out as one: its capacity, the quick slots and the
+ * dungeon items with their volumes.
  */
-struct ShopUserItemBoardView {
-    char unk_00[2];
-    s16 item_no[60];
-    char unk_7A[0xD0 - 0x7A];
-    s16 volume[60];
+struct ShopUserItemPackView {
+    s8 num;                /**< Number of dungeon-item slots the pack holds. */
+    s8 item_count;         /**< Dungeon items carried, quick slot stacks included. */
+    s16 quick_item[3];     /**< The item in each quick slot. */
+    s16 quick_item_vol[3]; /**< How many of each quick slot's item are stacked. */
+    s16 item[103];         /**< The item in each dungeon-item slot. */
+    s16 item_vol[103];     /**< The volume of each dungeon-item slot's item. */
 };
 
-/** Reaches the shop item board inside a player status by its byte offset. */
-static inline ShopUserItemBoardView *ShopUserItemBoard(CUserStatus *user_status) {
-    return (ShopUserItemBoardView *) ((char *) user_status + 0x436C);
+/** Reaches the dungeon item pack inside a player status by its byte offset. */
+static inline ShopUserItemPackView *ShopUserItemPack(CUserStatus *user_status) {
+    return (ShopUserItemPackView *) ((char *) user_status + 0x4360);
 }
 
 s16 *GetItemShopList(int shop_no) {
@@ -506,9 +514,9 @@ void InitChargeShop(int *state, int shop_no, int mode) {
         shop_no -= 100;
     }
     ShopMenuInit(state, shop_no, mode);
-    ShopMenu.unk_14 = 0;
+    ShopMenu.board.unk_0C = 0;
     ShopMenu.unk_02 = 1;
-    ShopMenu.unk_178 = (ShopMenu.unk_14 % 5) * 0x28 + 0x154;
+    ShopMenu.unk_178 = (ShopMenu.board.unk_0C % 5) * 0x28 + 0x154;
     ShopMenu.unk_17C = 120.0f;
     ShopStockPt = SaveData->GetStockItem();
     rows = ChargeShopMax[0] / 5;
@@ -880,7 +888,7 @@ static void DrawSellTicket_2(int x, int y, int clip_top, int clip_bottom, int mo
             if (ShopListPt[i].item_no < ITEM_ATTACH_START) {
                 visible = 0;
             }
-            if (ShopMenu.unk_02 == 0 && i == ShopMenu.unk_14) {
+            if (ShopMenu.unk_02 == 0 && i == ShopMenu.board.unk_0C) {
                 visible = 0;
             }
             selected = 0;
@@ -911,7 +919,7 @@ static void DrawLocalTicket(int x, int y, int clip_top, int clip_bottom, int slo
     int ticket_x;
     int ticket_y;
 
-    if (slot == ShopMenu.unk_14 && ShopMenu.unk_02 == 1) {
+    if (slot == ShopMenu.board.unk_0C && ShopMenu.unk_02 == 1) {
         money = CalItemMoney(item_no, 0);
         if (money < 0) {
             money = 1;
@@ -985,14 +993,14 @@ void InitItemShop2(int *state, int shop_no, int mode) {
     ItemPosInfoInit();
     InitAllHaveData();
     ShopHaveItemPt->unk_00 = 0;
-    ShopMenu.unk_14 = 0;
+    ShopMenu.board.unk_0C = 0;
     ShopMenu.unk_02 = 0;
     ShopMenu.unk_176 = 0;
     ShopMenu.unk_170 = 142.0f + 114.0f * ShopMenu.unk_176 / 6.0f;
     ShopMenu.unk_16C = 0x7E - ShopMenu.unk_176 * 0x28;
     ShopMenu.unk_178 = 86.0f;
     ShopMenu.unk_17C = 152.0f;
-    ShopMenu.unk_178 = (ShopMenu.unk_14 % 5) * 0x28 + 0x154;
+    ShopMenu.unk_178 = (ShopMenu.board.unk_0C % 5) * 0x28 + 0x154;
     ShopMenu.unk_17C = 120.0f;
     GetMainMenuRightHelpWinLangOffset(ShopHelpWinPos[0], ShopHelpWinPos[1], ShopHelpWinW, ShopHelpWinH);
 }

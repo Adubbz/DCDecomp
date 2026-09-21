@@ -589,7 +589,7 @@ void ClearFishMardanGarayanNum(void);
  * @address 0x1F1410
  * @size 0x1C0
  */
-void InitFishingExchange(void /* CW back-ref target unresolved */ *, int *, int);
+void InitFishingExchange(u_long128 *, int *, int);
 
 /**
  * Enters the fishing menu's textures once they have been read.
@@ -670,7 +670,7 @@ SV_FISH_DATA *GetFishingRankData(int);
  * @address 0x1F2E80
  * @size 0x120
  */
-void InitFishRecordView(void /* CW back-ref target unresolved */ *, int *, int);
+void InitFishRecordView(u_long128 *, int *, int);
 
 /**
  * Loads the fishing record view's textures and message buffers.
