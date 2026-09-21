@@ -756,15 +756,6 @@ SV_FISH_DATA *GetFishingRankData(int);
 void InitFishRecordView(void /* CW back-ref target unresolved */ *, int *, int);
 
 /**
- * Leaves the fishing record view and releases its texture block.
- *
- * @mangled ExitFishRecord__Fv
- * @address 0x1F2FA0
- * @size 0x60
- */
-void ExitFishRecord(void);
-
-/**
  * Loads the fishing record view's textures and message buffers.
  *
  * @mangled FishRecordTextureEnter__Fv

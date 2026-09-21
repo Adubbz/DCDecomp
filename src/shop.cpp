@@ -686,7 +686,21 @@ SV_FISH_DATA *GetFishingRankData(int rank_index) {
 
 INCLUDE_ASM("asm/nonmatchings/shop", InitFishRecordView__FP1Pii);
 INCLUDE_RODATA("asm/nonmatchings/shop", @3257);
-INCLUDE_ASM("asm/nonmatchings/shop", ExitFishRecord__Fv);
+
+/**
+ * Leaves the fishing record view and releases its texture block.
+ *
+ * @mangled ExitFishRecord__Fv
+ * @address 0x1F2FA0
+ * @size 0x60
+ */
+static void ExitFishRecord() {
+    TexManager.DeleteTextureBlock(FishRecordMenu.tex_block);
+    TexManager.CleanUpTextureList();
+    GamePad.AutoRepeatOff();
+    GamePad.MenuModeOff();
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", FishRecordTextureEnter__Fv);
 INCLUDE_RODATA("asm/nonmatchings/shop", @3274);
 INCLUDE_RODATA("asm/nonmatchings/shop", @3275);
