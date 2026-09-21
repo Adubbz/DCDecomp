@@ -313,7 +313,39 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", DrawWaterSurface__FP7CCamera);
  * @address 0x19DAE0
  * @size 0x204
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", StepWater__Fv);
+static void StepWater() {
+    int i;
+    int j;
+    CGroundWater *surface = Water;
+
+    for (i = 0; i < 1; i++, surface++) {
+        if (surface->draw == 0) {
+            continue;
+        }
+        if (surface->water.CheckClip()) {
+            continue;
+        }
+        for (j = 0; j < 4; j++) {
+            if (surface->ripples[j].power == 0.0f && surface->ripples[j].range == 0.0f) {
+                break;
+            }
+            int row = surface->ripples[j].row;
+            int column = surface->ripples[j].column;
+            if (row < 0) {
+                int rows = surface->water.rows;
+                row = rows * (float) rand() / 2.1474836e9f;
+            }
+            if (column < 0) {
+                int rows = surface->water.rows;
+                column = rows * (float) rand() / 2.1474836e9f;
+            }
+            surface->water.Shake(row, column,
+                                 surface->ripples[j].power +
+                                     surface->ripples[j].range * (float) rand() / 2.1474836e9f);
+        }
+        surface->water.Hamon();
+    }
+}
 /**
  * Moves the player and the villagers through the interior for one frame.
  *

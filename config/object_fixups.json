@@ -245,6 +245,7 @@
       "CommandDEBUG__FPPv",
       "GetCollision__FP6CCPolyP7CBoxVu0__2",
       "GetDoorPos__FiPfPfPiPi",
+      "StepWater__Fv",
       "LoadScript__Fv__2"
     ],
     "rodata_exports": [
