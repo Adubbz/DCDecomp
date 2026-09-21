@@ -653,15 +653,6 @@ void InitItemMode(int, int);
 void ExistItemMenu(void);
 
 /**
- * Moves the item page from one party member to the next.
- *
- * @mangled ChangeMenuChara__Fv
- * @address 0x202D50
- * @size 0x1C0
- */
-void ChangeMenuChara(void);
-
-/**
  * Runs one frame of the item page, dispatching on which of its modes is open.
  *
  * @mangled ItemMenuMainKey__Fv

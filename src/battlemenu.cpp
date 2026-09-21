@@ -932,7 +932,52 @@ static void InitItemTrushStart() {
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ExistItemMenu__Fv);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", ChangeMenuChara__Fv);
+/**
+ * Moves the item page from one party member to the next.
+ *
+ * @mangled ChangeMenuChara__Fv
+ * @address 0x202D50
+ * @size 0x1C0
+ */
+static void ChangeMenuChara() {
+    if (MenuWepLevelUp.operation_kind < 4 || MenuWepLevelUp.operation_kind > 13) {
+        int previous = ItemMenuMode.chara;
+        int party_size = BtlMenuStatusPt->party_size;
+
+        if (GamePad.Down(5) != 0) {
+            ItemMenuMode.chara--;
+            if (ItemMenuMode.chara < 0) {
+                ItemMenuMode.chara = party_size - 1;
+            }
+        }
+        if (GamePad.Down(10) != 0) {
+            ItemMenuMode.chara++;
+            if (party_size - 1 < ItemMenuMode.chara) {
+                ItemMenuMode.chara = 0;
+            }
+        }
+        if (previous != ItemMenuMode.chara) {
+            if (ItemMenuMode.chara <= BtlMenuStatusPt->party_size) {
+                if (ReadBGSync() != 0) {
+                    BreakReadBG();
+                }
+                MenuExTextureReadFlag = StartLoadCharaMDS(ItemMenuCharaReadBuf, ItemMenuMode.chara, 0);
+                int chara = ItemMenuMode.chara;
+                CDngStatusData *status = BtlMenuStatusPt;
+                int slot = status->equipped_weapon_slot[chara];
+                WEAPON_HAVE *row = status->chara_weapons[chara];
+                WEAPON_HAVE *weapon = &row[slot];
+                if (weapon != NULL) {
+                    SetNowEquipWeaponDataForMsg(weapon->item_no, weapon->unk_02);
+                } else {
+                    SetNowEquipWeaponDataForMsg(0, 0);
+                }
+            } else {
+                MenuExTextureReadFlag = 1;
+            }
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemMenuMainKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemMenuModeDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemMenuModeKey__Fv);
