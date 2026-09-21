@@ -179,3 +179,12 @@ int FishingFishStatus(int *fish_no);
  * @size 0x4C
  */
 int FishingFishKind(int fish_no);
+
+/**
+ * Turns the fish fighting the line into the one being landed, reading its landing model from a pack.
+ *
+ * @mangled FishingBattleToAngleFish__FPUiP14CDataAlloc2_1_
+ * @address 0x1A9710
+ * @size 0x88
+ */
+void FishingBattleToAngleFish(u_int *pack, CDataAlloc2<1> *alloc);

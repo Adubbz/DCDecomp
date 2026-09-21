@@ -546,15 +546,19 @@ int FishingFishKind(int fish_no) {
     return Fish[fish_no].fish_kind;
 }
 
-/**
- * Turns the fighting fish into the one being landed.
- *
- * @mangled FishingBattleToAngleFish__FPUiP14CDataAlloc2_1_
- * @address 0x1A9710
- * @size 0x88
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingBattleToAngleFish__FPUiP14CDataAlloc2_1_);
-INCLUDE_RODATA("asm/nonmatchings/fishing", @578__3);
+void FishingBattleToAngleFish(u_int *pack, CDataAlloc2<1> *alloc) {
+    AngleFish = BattleFish;
+    BattleFish = NULL;
+    if (AngleFish != NULL) {
+        if (pack != NULL) {
+            CCharacter *model = &AngleFish->angle_model;
+            model->LoadPackData2(pack, "info.cfg", alloc, fish_texb + 1, alloc, 0);
+        }
+        AngleFish->SetAngleMode();
+        CFish *fish = AngleFish;
+        fish->use_angle_model = 1;
+    }
+}
 
 INCLUDE_RODATA("asm/nonmatchings/fishing", @604);
 
