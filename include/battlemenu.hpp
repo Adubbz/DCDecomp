@@ -657,7 +657,7 @@ void CharaStatusMsgDraw(int, int, int, int, int);
  * @address 0x207EF0
  * @size 0x414
  */
-void InitMenuMove(int, int, void /* CW back-ref target unresolved */ *);
+void InitMenuMove(int mode, int texture_block, u_long128 *buffer);
 
 /**
  * Places the party's marker on the town or dungeon the cursor stands on.
@@ -694,15 +694,6 @@ void DrawMenuMove(void);
  * @size 0x2C0
  */
 void DrawEscapeItem(int, int, int);
-
-/**
- * Starts reading one region's world map in the background.
- *
- * @mangled StartLoadWorldMap__FiP1
- * @address 0x209F80
- * @size 0xBC
- */
-void StartLoadWorldMap(int, void /* CW back-ref target unresolved */ *);
 
 /**
  * Waits for the world map and enters its textures and model.

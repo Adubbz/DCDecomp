@@ -15,6 +15,7 @@
 #include "eastking.hpp"
 #include "gamepad.hpp"
 #include "itemdata.hpp"
+#include "mainselect.hpp"
 #include "memcard.hpp"
 #include "menu_draw.hpp"
 #include "menu_dungeon.hpp"
@@ -286,6 +287,26 @@ extern RECT WeaponVolumeNumberRect;
  * Icons flying from the field into the item pack.
  */
 extern CMenuIconAutoGet IconAutoGet;
+
+/**
+ * Map number of each world-map place; dungeons are numbered from 200.
+ */
+extern s16 MenuGrobalMapNoTbl[16];
+
+/**
+ * Save data the travel page reads visits and dungeon progress from.
+ */
+extern CSaveData *BtlMenuSaveDataPt;
+
+/**
+ * Whether the travel page may jump to another map, or -1 while it cannot.
+ */
+extern s32 MenuMapJumpMode;
+
+/**
+ * Texture the travel page draws its map with.
+ */
+extern CTexture *MenuMoveTex;
 
 int GetDefaultWeaponNo(int character_no) {
     return MenuDefaultWeaponNo[character_no];
@@ -1422,6 +1443,7 @@ static void WeaponMenuAttachWepKey() {
         WepMenu.unk_179 = 0;
     }
 }
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuAttachKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", RepairAndLevelUpDraw__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBuildUpWeaponSelect__Fiii);
@@ -1813,6 +1835,20 @@ static int BattleMenuAtoraKey() {
     }
     return 1;
 }
+
+static int IsLoadMapNo();
+
+static int MapNoTransFunc(int map_no);
+
+/**
+ * Starts reading one region's world map in the background.
+ *
+ * @mangled StartLoadWorldMap__FiP1
+ * @address 0x209F80
+ * @size 0xBC
+ */
+static void StartLoadWorldMap(int region, u_long128 *buffer);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", InitMenuMove__FiiP1);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @5858);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @5859);
@@ -1995,8 +2031,11 @@ static int WorldMapMoveKey() {
     return 1;
 }
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawMapCheck__Fi);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetVisitInfo__Fii);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", IsLoadMapNo__Fv);
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", MapNoTransFunc__Fi);
 
 /**
