@@ -931,7 +931,13 @@ void SndSPSeStop(int se_no) {
  * @size 0xB0
  */
 INCLUDE_ASM("asm/nonmatchings/snd", SndSetSPSeVolf__Fif);
-#ifdef NON_MATCHING
+/**
+ * Sets a special sound effect's pan as a share of the widest pan.
+ *
+ * @mangled SndSetSPSePanf__Fif
+ * @address 0x15BA00
+ * @size 0xA8
+ */
 void SndSetSPSePanf(int se_no, float pan) {
     if (pan < -1.0f) {
         pan = -1.0f;
@@ -945,16 +951,7 @@ void SndSetSPSePanf(int se_no, float pan) {
         CSnd.SE_SetPan(12, info->vol_no, (int)(63.0f * pan) + 64, 0);
     }
 }
-#else
-/**
- * Sets a special sound effect's pan as a share of the widest pan.
- *
- * @mangled SndSetSPSePanf__Fif
- * @address 0x15BA00
- * @size 0xA8
- */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetSPSePanf__Fif);
-#endif
+
 /**
  * Reads one sound configuration file through the script interpreter.
  *
