@@ -137,7 +137,16 @@ void CEditGround::GetPartsBox(CBoxVu0 *out_box, float x, float y, float z) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/editground", GetPeoplePos__11CEditGroundFiPf);
-INCLUDE_ASM("asm/nonmatchings/editground", DrawBaseGround__11CEditGroundFv);
+
+void CEditGround::DrawBaseGround() {
+    for (int i = 0; i < 4; i++) {
+        if (areas[i] == NULL) {
+            break;
+        }
+        areas[i]->DrawGrid();
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", Draw__11CEditGroundFfiiiii);
 INCLUDE_ASM("asm/nonmatchings/editground", StepWater__11CEditGroundFv);
 INCLUDE_ASM("asm/nonmatchings/editground", DrawWaterSurface__11CEditGroundFP7CCamera);
