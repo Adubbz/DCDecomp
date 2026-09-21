@@ -577,7 +577,51 @@ static int AlreadyPeopleTalk(int map_no, int chip_no) {
     return npc->talk_message;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraCompOrEvent__FP14EDITPARTS_INFO);
+static int AtoraCompOrEvent(EDITPARTS_INFO *info) {
+    EDIT_PARTS_ATRA *atra;
+    EDITPARTS_ELEMENT *element;
+    int complete;
+    int filled;
+    int talked;
+    int done;
+    int result;
+    int i;
+
+    atra = GetEditAtraPartsData(MenuAtoraSel.map_no, info->parts_no);
+    if (atra == NULL) {
+        return 0;
+    }
+    if (atra->kind == 0) {
+        return 0;
+    }
+    complete = CommonMenuAtoraInfo->CheckComplete(info->parts_no);
+    filled = 0;
+    talked = 1;
+    done = 0;
+    if (info != NULL) {
+        if (info->unk_0C == info->unk_18) {
+            filled = 1;
+        }
+        for (i = 0; i < 6; i++) {
+            element = &info->elements[i];
+            if (element->id >= 40) {
+                if (element->unk_1C >= 0) {
+                    if (AlreadyPeopleTalk(MenuAtoraSel.map_no, element->id) == 0) {
+                        talked = 0;
+                    }
+                }
+            }
+        }
+        if (info->completion_flags & 1) {
+            done = 1;
+        }
+    }
+    result = 0;
+    if (complete && filled && talked && !done) {
+        result = 1;
+    }
+    return result;
+}
 
 static int AtraBoardMaxNum(int ground) {
     EDIT_PARTS_ATRA *parts;
