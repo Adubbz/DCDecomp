@@ -625,7 +625,18 @@ int SndBgmLoadBG(int set_no, u_int *buffer, int *size) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmSyncBG__Fv);
+int SndBgmSyncBG() {
+    if (load_bgm_no < 0 || load_bgm_adr == 0) {
+        return 0;
+    }
+    if (ReadBGSync()) {
+        return 1;
+    }
+    SetBGMFile(load_bgm_no, load_bgm_adr, bgm_cfg_file);
+    load_bgm_no = -1;
+    load_bgm_adr = 0;
+    return 0;
+}
 
 void SndBgmPlay(int track_no) {
     if (bgm_off == 0 && now_bgm_no >= 0 && now_bgm_play != 1) {
