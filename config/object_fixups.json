@@ -207,6 +207,7 @@
   },
   "src/edit_in.cpp": {
     "symbols": {
+      "InitWorkBuffer__Fv": "InitWorkBuffer__Fv__2",
       "Command": "Command__6",
       "CommandExe": "CommandExe__6",
       "CurrentDir": "CurrentDir__5",
@@ -216,7 +217,9 @@
       "water_list": "water_list__2",
       "water_info": "water_info__2"
     },
-    "globalize_symbols": [],
+    "globalize_symbols": [
+      "InitWorkBuffer__Fv__2"
+    ],
     "rodata_exports": [
       "@1592",
       "@1593",

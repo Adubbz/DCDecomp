@@ -88,7 +88,22 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", RunSystemEvent__FiP7CCamera__2);
  * @size 0x90
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", InitWorkBuffer__Fv__2);
+static void InitWorkBuffer() {
+    u_char *free_start = EdNPCBuffer.base + EdNPCBuffer.used * 16;
+    int free_quads = EdNPCBuffer.limit - EdNPCBuffer.used;
+    free_start = (u_char *) ((((int) free_start >> 6) + 1) << 6);
+    EdWorkBuffer.base = free_start;
+    EdWorkBuffer.limit = free_quads - 4;
+    EdWorkBuffer.used = 0;
+    int villagers_loaded;
+    if (EdVillagerBuffer.used > 0) {
+        villagers_loaded = 1;
+    }
+    free_start = (u_char *) read_buffer;
+    EdMenuBuffer.base = free_start - 0x180000;
+    EdMenuBuffer.limit = 0x3A2E0;
+    EdMenuBuffer.used = 0;
+}
 /**
  * Builds everything one interior runs on: its data, models, script and camera.
  *
