@@ -226,6 +226,8 @@ static inline ShopUserItemPackView *ShopUserItemPack(CUserStatus *user_status) {
     return (ShopUserItemPackView *) ((char *) user_status + 0x4360);
 }
 
+static void DrawSellTicket_2(int x, int y, int clip_top, int clip_bottom, int mode);
+
 s16 *GetItemShopList(int shop_no) {
     return ItemShopList2[shop_no];
 }
@@ -1093,7 +1095,59 @@ int ItemShopLoop2() {
 }
 
 INCLUDE_ASM("asm/nonmatchings/shop", CheckSideKey2__Fv);
-INCLUDE_ASM("asm/nonmatchings/shop", DrawItemShopBoard2__Fiii);
+
+/**
+ * Draws the item shop's board with its goods and their prices.
+ *
+ * @mangled DrawItemShopBoard2__Fiii
+ * @address 0x1EC370
+ * @size 0x2C4
+ */
+static void DrawItemShopBoard2(int x, int y, int alpha) {
+    int top = y + 9;
+    int bottom = y + 0xA9;
+    int board_y;
+    int left = x + 0x14;
+
+    board_y = y + 6 - ShopMenu.unk_176 * 0x28;
+    ShopMenu.unk_16C += ((float) board_y - ShopMenu.unk_16C) / 4.0f;
+    board_y = ShopMenu.unk_16C;
+    DrawPerBoardDraw(0, 0x1E, left, board_y, top, bottom, ShopBoard, 0x80);
+
+    int icon_x = left + 2;
+    int icon_y = board_y + 6;
+    for (int i = 0; i < 0x1E; i++) {
+        int item = ShopListPt[i].item_no;
+        int num = 0;
+
+        if (item >= 0x5B && item < 0x5F) {
+            num = ShopListPt[i].data.param[item - 0x57];
+        }
+        if (item == 0x5A) {
+            num = ShopListPt[i].data.param[1];
+        }
+        DrawIconParts(item, icon_x, icon_y, top, bottom, alpha, num);
+        icon_x += 0x28;
+        if (i % 5 == 4) {
+            icon_x = left + 2;
+            icon_y += 0x28;
+        }
+    }
+    DrawSellTicket_2(left + 2, board_y + 6, top, bottom, 0x80);
+
+    CRect_i_ screen(x, y - 0x13, 0x80, 0x14);
+    CRect_i_ texel(0x100, 0x7C, 0x80, 0x14);
+    DrawMenu2DSprite(ShopBoard, screen, texel, alpha);
+    screen.x += 0x80;
+    texel.x += 0x80;
+    texel.y = 0x1C;
+    DrawMenu2DSprite(ShopBoard, screen, texel, alpha);
+
+    PersonalBoardDrawWaku(x, y, ShopBoard, 0x80);
+    PersonalBoardScrlBarDraw(0x1E, x, y, ShopMenu.unk_170, ShopMenu.unk_176, ShopBoard, 0x80);
+    DrawCheckButton(x + 0xA8, y + 0xAA, 0x80);
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", DrawMoneyCheckBoard2__Fiii);
 INCLUDE_ASM("asm/nonmatchings/shop", DrawCheckButton__Fiii);
 INCLUDE_ASM("asm/nonmatchings/shop", DrawSmallSellTicket__Fiiiiii);

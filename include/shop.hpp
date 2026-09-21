@@ -338,15 +338,6 @@ int ItemShopLoop2(void);
 void CheckSideKey2(void);
 
 /**
- * Draws the item shop's board with its goods and their prices.
- *
- * @mangled DrawItemShopBoard2__Fiii
- * @address 0x1EC370
- * @size 0x2C4
- */
-void DrawItemShopBoard2(int, int, int);
-
-/**
  * Draws the running total the purchase will come to.
  *
  * @mangled DrawMoneyCheckBoard2__Fiii
