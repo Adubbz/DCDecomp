@@ -291,7 +291,6 @@ INCLUDE_ASM("asm/nonmatchings/itembombeffect", Step__15CItemBombEffectFv);
  * @address 0x1D60A0
  * @size 0xBC
  */
-#ifdef NON_MATCHING
 void CItemBombEffect::SetBomb(float *position, float scale) {
     for (int effect_no = 0; effect_no < 5; effect_no++) {
         sceVu0CopyVector(positions[effect_no], position);
@@ -305,9 +304,6 @@ void CItemBombEffect::SetBomb(float *position, float scale) {
     phases[0] = 2;
     phases[1] = 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/itembombeffect", SetBomb__15CItemBombEffectFPff);
-#endif
 
 /**
  * Reports whether the bomb effect is still running.
@@ -316,7 +312,6 @@ INCLUDE_ASM("asm/nonmatchings/itembombeffect", SetBomb__15CItemBombEffectFPff);
  * @address 0x1D6160
  * @size 0x48
  */
-#ifdef NON_MATCHING
 int CItemBombEffect::CheckBomb(void) {
     for (int effect_no = 0; effect_no < 5; effect_no++) {
         if (active[effect_no] != 0) {
@@ -325,9 +320,6 @@ int CItemBombEffect::CheckBomb(void) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/itembombeffect", CheckBomb__15CItemBombEffectFv);
-#endif
 
 /**
  * Clears the bomb effect.
@@ -336,15 +328,11 @@ INCLUDE_ASM("asm/nonmatchings/itembombeffect", CheckBomb__15CItemBombEffectFv);
  * @address 0x1D61B0
  * @size 0x30
  */
-#ifdef NON_MATCHING
 void CItemBombEffect::Initialize(void) {
     for (int effect_no = 0; effect_no < 5; effect_no++) {
         active[effect_no] = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/itembombeffect", Initialize__15CItemBombEffectFv);
-#endif
 
 /**
  * Draws the expanding shock-wave ring.
@@ -417,7 +405,6 @@ INCLUDE_ASM("asm/nonmatchings/itembombeffect", Draw__10CShockWaveFP7CCamera);
  * @address 0x1D64E0
  * @size 0xD8
  */
-#ifdef NON_MATCHING
 void CShockWave::Step(void) {
     if (unk_28 == 0) {
         return;
@@ -438,6 +425,3 @@ void CShockWave::Step(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/itembombeffect", Step__10CShockWaveFv);
-#endif
