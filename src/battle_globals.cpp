@@ -181,9 +181,8 @@ INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawSaveBoardCharaName2__FiiPsPP8
  * @address 0x23CDE0
  * @size 0x78
  */
-#ifdef NON_MATCHING
 int GetMsgLengthCharaName(int chara_no) {
-    if (chara_no < 0 || chara_no >= 6) {
+    if (chara_no < 0 || chara_no > 5) {
         return 0;
     }
 
@@ -196,9 +195,6 @@ int GetMsgLengthCharaName(int chara_no) {
     }
     return length;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", GetMsgLengthCharaName__Fi);
-#endif
 /**
  * Opens the storybook that begins the game.
  *
