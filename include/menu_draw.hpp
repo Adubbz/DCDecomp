@@ -98,12 +98,6 @@ extern DUN_ENTER_MENU DEnterMenu;
 /** Dungeon progress the entrance menu shows. */
 extern CDngStatusData *DEnterStatusPt;
 
-/** Directory that menu textures load from. */
-extern char AllMenuTextureDir[9];
-
-/** Path fragment of each selectable language's directory and file names. */
-extern char *ComMenuContryName[7];
-
 /** Frames a menu error message has shown for. */
 extern int MenuEtcErrCnt;
 
