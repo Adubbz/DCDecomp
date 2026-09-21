@@ -238,7 +238,8 @@
       "CommandWATER_SURFACE__FPPv__2",
       "LoadInfo__FPci",
       "CommandPROJECTION__FPPv",
-      "CommandDEBUG__FPPv"
+      "CommandDEBUG__FPPv",
+      "GetDoorPos__FiPfPfPiPi"
     ],
     "rodata_exports": [
       "@1592",

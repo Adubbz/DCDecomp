@@ -273,7 +273,20 @@ void GetMapJumpPos(CCharacter *chara) {
  * @address 0x19E420
  * @size 0xF8
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", GetDoorPos__FiPfPfPiPi);
+static int GetDoorPos(int door_no, float *position, float *rotation, int *parts_no, int *motion) {
+    EPARTS_FUNC_DATA *point = func_point;
+
+    for (int i = 0; i < func_num; i++, point++) {
+        if ((point->kind == 10 || point->kind == 11) && point->link_id == door_no) {
+            sceVu0CopyVector(position, point->position);
+            sceVu0CopyVector(rotation, point->rotation);
+            *parts_no = point->values[0];
+            *motion = EdGetDoorMotion(*parts_no, point->kind == 10);
+            return point->kind == 11;
+        }
+    }
+    return -1;
+}
 /**
  * Places the interior camera so that the player stays in view and the walls do not.
  *
