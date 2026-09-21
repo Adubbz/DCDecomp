@@ -612,7 +612,6 @@ int SndCheckFade() {
     return bgm_fade == 0;
 }
 
-#ifdef NON_MATCHING
 static SND_SE_INFO *GetSeInfo(int se_no) {
     SND_SE_INFO *table;
 
@@ -640,9 +639,6 @@ static SND_SE_INFO *GetSeInfo(int se_no) {
 
     return &se_info[se_no];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", GetSeInfo__Fi);
-#endif
 static int GetPortNo(int se_no) {
     SND_SE_INFO *info = GetSeInfo(se_no);
 
