@@ -865,7 +865,25 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponSelectKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WepAttachHaveCancel__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuAttachModeKey__Fv);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuActWepKey__Fv);
+/**
+ * Handles input on the weapon menu's equipped weapon row.
+ *
+ * @mangled WeaponMenuActWepKey__Fv
+ * @address 0x1FFA90
+ * @size 0xCC
+ */
+static void WeaponMenuActWepKey() {
+    if (GamePad.Down(0x2000) != 0) {
+        WepMenu.unk_02 = 10;
+        WepMenu.unk_20 = WepMenu.unk_2C * 5 + 10;
+    } else if (GamePad.Down(0x4000) != 0) {
+        WepMenu.unk_02 = 11;
+        WepMenu.unk_179 = 0;
+    } else if (GamePad.Down(0x20) != 0) {
+        ComMenuSePlay(2);
+        WepAttachHaveCancel();
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuTagKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuAttachWepKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuAttachKey__Fv);

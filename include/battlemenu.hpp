@@ -543,16 +543,6 @@ void WepAttachHaveCancel(void);
 void WeaponMenuAttachModeKey(void);
 
 /**
- * Handles input while a weapon action is being chosen.
- *
- * @mangled WeaponMenuActWepKey__Fv
- * @address 0x1FFA90
- * @size 0xCC
- * Handles input on the weapon menu's equipped weapon row.
- */
-void WeaponMenuActWepKey(void);
-
-/**
  * Moves the cursor down the tags of the open attachment page.
  *
  * @mangled WeaponMenuTagKey__Fv
