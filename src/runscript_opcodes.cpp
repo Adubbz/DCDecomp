@@ -117,7 +117,6 @@ int _SET_MOTION(RS_STACKDATA *stack, int argc) {
     }
     return 1;
 }
-#ifdef NON_MATCHING
 int _CHK_MOTION_FRM(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
     float current_frame = NowMonstorUnit->chara[monster_no][0].motion_type.state.time;
@@ -128,16 +127,12 @@ int _CHK_MOTION_FRM(RS_STACKDATA *stack, int argc) {
     if (!(current_frame < end_frame - 1.0f) && current_frame < end_frame) {
         done = 1;
     }
-    SetStack(stack, done);
-    stack++;
+    SetStack(stack++, done);
     if (argc == 2) {
         SetStack(stack, current_frame);
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _CHK_MOTION_FRM__FP12RS_STACKDATAi);
-#endif
 int _GET_MOTION_FRM(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
 
