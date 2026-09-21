@@ -123,7 +123,7 @@ public:
      * @address 0x1A17F0
      * @size 0x84
      */
-    float GetAlt_i(float x, float y, float z);
+    int GetAlt_i(float x, float y, float z);
 
     /**
      * Finds the placed part with a given plot number.
