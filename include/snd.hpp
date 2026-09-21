@@ -18,7 +18,7 @@ void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &so
 
 /** Draws a projected quadrilateral with per-corner depth and a uniform alpha. */
 void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source,
-                    int *top_left, int *top_right, int *bottom_right, int *bottom_left,
+                    int *top_left, int *top_right, int *bottom_left, int *bottom_right,
                     unsigned char alpha);
 
 /**
@@ -201,7 +201,6 @@ int SndGetPanf(float pan);
  * @mangled SndSetSeVol__Fiii
  * @address 0x15A900
  * @size 0x70
- * @unknownret
  */
 void SndSetSeVol(int se_no, int vol, int voice);
 
@@ -211,7 +210,6 @@ void SndSetSeVol(int se_no, int vol, int voice);
  * @mangled SndSetSeVolf__Fifi
  * @address 0x15AAB0
  * @size 0x5C
- * @unknownret
  */
 void SndSetSeVolf(int se_no, float vol, int voice);
 
@@ -221,7 +219,6 @@ void SndSetSeVolf(int se_no, float vol, int voice);
  * @mangled SndSetSePanf__Fifi
  * @address 0x15AB10
  * @size 0x80
- * @unknownret
  */
 void SndSetSePanf(int se_no, float pan, int voice);
 
@@ -231,9 +228,8 @@ void SndSetSePanf(int se_no, float pan, int voice);
  * @mangled SndSePlay__Fiii
  * @address 0x15A6B0
  * @size 0xA4
- * @unknownret
  */
-int SndSePlay(int se_no, int voice, int pan);
+void SndSePlay(int se_no, int vol, int voice);
 
 /**
  * Plays a positional sound effect with distance attenuation.
@@ -327,7 +323,6 @@ void SetClut(sceVif1Packet *packet, CTexture *texture, i *clut);
  * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_Uc
  * @address 0x15C310
  * @size 0x318
- * @unknownret
  */
 void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
                  const CRect_i_ &texel, unsigned char alpha);
@@ -338,7 +333,6 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
  * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_UcUcUcUc
  * @address 0x15C630
  * @size 0x350
- * @unknownret
  */
 void set2DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, const CRect_i_ &, unsigned char,
                  unsigned char, unsigned char, unsigned char);
@@ -359,7 +353,6 @@ void set2DSpriteRot(sceVif1Packet *, CTexture *, const CRect_i_ &, const CRect_i
  * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_iif
  * @address 0x15E540
  * @size 0x58C
- * @unknownret
  */
 void set2DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, const CRect_i_ &, int, int, float);
 
@@ -369,7 +362,6 @@ void set2DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, const CRect_i_ &
  * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_ii
  * @address 0x15BD00
  * @size 0x300
- * @unknownret
  */
 void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, int u,
                  int v);
@@ -381,7 +373,6 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
  * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBAi
  * @address 0x15C980
  * @size 0x82C
- * @unknownret
  */
 void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
                  const CRect_i_ &texel, spRGBA *top_left, spRGBA *top_right,
@@ -393,7 +384,6 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
  * @mangled set2DSpriteC4__FP13sceVif1PacketRC8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBA
  * @address 0x15E120
  * @size 0x41C
- * @unknownret
  */
 void set2DSpriteC4(sceVif1Packet *, const CRect_i_ &, spRGBA *, spRGBA *, spRGBA *, spRGBA *);
 
@@ -403,7 +393,6 @@ void set2DSpriteC4(sceVif1Packet *, const CRect_i_ &, spRGBA *, spRGBA *, spRGBA
  * @mangled setColSprite__FP13sceVif1PacketPiPiPiPiUcUcUcUc
  * @address 0x15DED0
  * @size 0x250
- * @unknownret
  */
 void setColSprite(sceVif1Packet *, int *, int *, int *, int *, unsigned char, unsigned char,
                   unsigned char, unsigned char);
@@ -415,7 +404,6 @@ void setColSprite(sceVif1Packet *, int *, int *, int *, int *, unsigned char, un
  * @mangled set3DColSprite__FP13sceVif1PacketPiPiPiPiP6spRGBAP6spRGBAP6spRGBAP6spRGBA
  * @address 0x15D1B0
  * @size 0x2BC
- * @unknownret
  */
 void set3DColSprite(sceVif1Packet *, int *, int *, int *, int *, spRGBA *, spRGBA *, spRGBA *,
                     spRGBA *);
@@ -427,7 +415,6 @@ void set3DColSprite(sceVif1Packet *, int *, int *, int *, int *, spRGBA *, spRGB
  * @mangled set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiPiPiUc
  * @address 0x15D470
  * @size 0x34
- * @unknownret
  */
 void set3DSprite(sceVif1Packet *, CTexture *, const CRect_i_ &, int *, int *, int *, int *,
                  unsigned char);
@@ -459,7 +446,6 @@ void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sourc
  * @mangled SndSetCamera__FP7CCamera
  * @address 0x1596F0
  * @size 0x48
- * @unknownret
  */
 void SndSetCamera(CCamera *camera);
 
@@ -591,13 +577,14 @@ void SndSetSPSePanf(int se_no, float pan);
 int SndSPSeSyncBG(void);
 
 /**
- * Starts loading one background music set.
+ * Reads one background-music set and hands it to the driver, and returns 1;
+ * returns 0 when that set is already loaded or its file cannot be read.
  *
  * @mangled SndBgmLoad__Fi
  * @address 0x159960
  * @size 0x90
  */
-void SndBgmLoad(int set_no);
+int SndBgmLoad(int set_no);
 
 /**
  * Plays one track of the loaded background music set.
@@ -627,13 +614,14 @@ int SndGetNowSetNo(void);
 void SndSetReadBuffer(unsigned int *buffer);
 
 /**
- * Starts loading one sound-effect set.
+ * Reads one sound-effect set and hands it to the driver, and returns 1;
+ * returns 0 when that set is already loaded or its file cannot be read.
  *
  * @mangled SndSoundLoad__Fi
  * @address 0x15A4F0
  * @size 0x90
  */
-void SndSoundLoad(int set_no);
+int SndSoundLoad(int set_no);
 
 /**
  * Starts loading a background-music bank into a caller-provided buffer, and
@@ -677,10 +665,10 @@ int SndSPSeLoad(int set_no);
 int SndSPSeLoadBG(int set_no, u_int *buffer, int *size);
 
 /** Fades a background-music stream in. */
-void SndBgmFadeIn(int bgm_no, int frames, int mode);
+void SndBgmFadeIn(int frames, int volume, int start_volume);
 
 /** Fades a background-music stream out. */
-void SndBgmFadeOut(int bgm_no, int frames);
+void SndBgmFadeOut(int frames, int volume);
 
 /**
  * Steps the background-music fade, and applies the volume it reaches.

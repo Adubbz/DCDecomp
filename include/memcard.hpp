@@ -5,6 +5,7 @@
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
+class CEditPartsInfo;
 class CMemoryCardAccess;
 class CRect_i_;
 class CTexture;
@@ -12,6 +13,49 @@ class ClsMes;
 struct EDITPARTS_INFO;
 struct MC_CARD_INFO;
 struct RECT;
+
+/**
+ * Records the chip that the georama board's cursor has picked up and where it
+ * came from.
+ */
+struct ATORA_TIP_HAVE {
+    s32 mode; /**< Where the chip came from: 0 for a part's chip slot, 1 for the chip list. */
+    s32 unk_04;
+    s32 parts_no; /**< Board position of the part whose slot the chip came from. */
+    s32 slot;     /**< Chip slot of the part, or entry of the chip list, that the chip came from. */
+    s16 tip_no;   /**< Chip that the cursor holds, or -1 when it holds none. */
+};
+
+STATIC_ASSERT(sizeof(ATORA_TIP_HAVE) == 0x14);
+
+/**
+ * Holds the state of the georama board screen.
+ */
+struct MENU_ATORA_SEL {
+    s32 unk_00;
+    u8 unk_04[8];
+    s16 map_no;    /**< Georama that the board shows. */
+    s16 board_pos; /**< Board position of the part that the cursor is on. */
+    u8 unk_10[8];
+    s32 unk_18;
+    u8 unk_1C[4];
+    s32 unk_20;
+    u8 unk_24[8];
+    s32 unk_2C;
+    u8 unk_30[0x10];
+    s16 *tip_list; /**< Chips that the player holds, as the chip list shows them. */
+    u8 unk_44[0x13C];
+    float cursor_x; /**< Where the board's cursor icon draws, from the left of the screen. */
+    float cursor_y; /**< Where the board's cursor icon draws, from the top of the screen. */
+    s32 unk_188;
+    s32 step;       /**< What the screen is doing: 0 running, 1 fading in, 2 fading out, 10 a warning. */
+    s32 step_count; /**< Frames the screen has spent on its current step. */
+    u8 unk_194[6];
+    s16 event_flag; /**< Whether the georama menu is running an event. */
+    u8 unk_19C[0x10];
+};
+
+STATIC_ASSERT(sizeof(MENU_ATORA_SEL) == 0x1AC);
 
 /**
  * Returns one when a card is present in the port and is a PlayStation 2 memory
@@ -328,3 +372,58 @@ extern CMemoryCardAccess McAccess;
  * Frame counter the swaying menu sprites animate with.
  */
 extern s32 CursorVibeCnt;
+
+/**
+ * The part records of the georama that the board screen shows.
+ */
+extern CEditPartsInfo *CommonMenuAtoraInfo;
+
+/**
+ * The texture that the georama board's plates, gauges and frames draw from.
+ */
+extern CTexture *Sozai;
+
+/**
+ * The texture of a chip socket whose chip has been placed.
+ */
+extern CTexture *HoleGold;
+
+/**
+ * The texture of an empty chip socket.
+ */
+extern CTexture *HoleGray;
+
+/**
+ * The texture of the seal a completed georama shows.
+ */
+extern CTexture *CompleteTex;
+
+/**
+ * The texture of the icons of chips that stand for objects.
+ */
+extern CTexture *ObTip;
+
+/**
+ * The texture of the icons of chips that stand for residents.
+ */
+extern CTexture *ObPerson;
+
+/**
+ * The texture of the georama board's town tags.
+ */
+extern CTexture *VillageBar;
+
+/**
+ * The texture of the georama board's town names.
+ */
+extern CTexture *VillageName;
+
+/**
+ * The state of the georama board screen.
+ */
+extern MENU_ATORA_SEL MenuAtoraSel;
+
+/**
+ * The message file that the georama board's messages are read into.
+ */
+extern short *GetAtraMsgReadBuf;

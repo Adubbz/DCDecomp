@@ -175,7 +175,7 @@ struct MONSTOR_EFFECT_STATE {
     float motion_start[16];     /**< Motion frame each sphere starts taking hits on; 0 for always. */
     float motion_end[16];       /**< Motion frame each sphere stops taking hits on. */
     s32 timer[16];              /**< Nonzero while each sphere is in use. */
-    u8 unk_240[0x140];
+    s32 unk_240[16][5];
     s32 parameter[16][6]; /**< Percentage of damage each sphere takes from each attacker. */
     s32 hit_slot;         /**< Sphere the last hit landed on. */
     s32 hit_attributes;   /**< Weapon flags of the last hit. */
@@ -198,7 +198,8 @@ struct MONSTOR_EFFECT_STATE2 {
     float motion_start[16];     /**< Motion frame each sphere starts hitting on. */
     float motion_end[16];       /**< Motion frame each sphere stops hitting on. */
     s32 active[16];             /**< Nonzero while each sphere is in use. */
-    u8 unk_340[0x10];
+    s32 unk_340;
+    u8 unk_344[0xC];
 };
 
 STATIC_ASSERT(sizeof(MONSTOR_EFFECT_STATE2) == 0x350);
@@ -529,6 +530,15 @@ struct BT_ENEMY_FLOOR {
 
 STATIC_ASSERT(sizeof(BT_ENEMY_LAYOUT) == 0x0C);
 STATIC_ASSERT(sizeof(BT_ENEMY_FLOOR) == 0x70);
+
+/**
+ * Scatters the bees over their frames and hides the frames themselves.
+ *
+ * @mangled InitBee__FP6CFramei
+ * @address 0x1D9420
+ * @size 0x164
+ */
+void InitBee(CFrame *frame, int count);
 
 /** Model, script and combat parameters of every kind of monster. */
 extern "C" MONSTOR_MODEL MonstorTable[167];

@@ -13,19 +13,24 @@ struct MENU_ITEMDATA;
 struct SV_FISH_DATA;
 
 /**
- * Gives the goods list one item shop sells from.
- *
- * One shop's twenty-item goods list, eighteen shops long.
+ * The record behind one shop slot, read according to the kind of item in it.
  */
-extern s16 ItemShopList2[18][20];
+union SHOP_ITEM_RECORD {
+    s32 volume;         /**< A dungeon item's volume. */
+    WEAPON_HAVE weapon; /**< A weapon's record. */
+    ATTACH_LIST attach; /**< An attachment's record. */
+    s16 param[0x7C];    /**< The record read as halfwords; items 0x5B to 0x5E each set one of an attachment's stats. */
+};
+
+STATIC_ASSERT(sizeof(SHOP_ITEM_RECORD) == 0xF8);
 
 /**
  * Stores one shop's item-list state.
  */
 struct SHOP_ITEMLIST {
-    s16 unk_00;
+    s16 item_no; /**< The item, weapon or attachment on offer. */
     u8 unk_02[2];
-    u8 unk_04[0xF8];
+    SHOP_ITEM_RECORD data; /**< The item's record. */
 };
 
 STATIC_ASSERT(sizeof(SHOP_ITEMLIST) == 0xFC);
@@ -35,7 +40,11 @@ STATIC_ASSERT(sizeof(SHOP_ITEMLIST) == 0xFC);
  */
 struct IHAVEITEM {
     s32 unk_00;
-    u8 unk_04[0x10];
+    s32 unk_04;
+    s32 unk_08;
+    s32 unk_0C;
+    s16 item_no; /**< The item held. */
+    s16 volume;  /**< The held item's volume. */
 };
 
 STATIC_ASSERT(sizeof(IHAVEITEM) == 0x14);
@@ -86,7 +95,7 @@ public:
     float pos_y; /**< Current vertical screen position of the flying icon. */
     s16 item_no; /**< The item, weapon or attachment identifier the icon is carrying. */
     u8 unk_12[2];
-    u8 data[0xF8]; /**< A copy of the item, weapon or attachment record, sized for the largest (WEAPON_HAVE). */
+    SHOP_ITEM_RECORD data; /**< A copy of the item, weapon or attachment record. */
 
     /**
      * Aims a shop icon at the slot it is to fly to.
@@ -119,22 +128,13 @@ public:
 STATIC_ASSERT(sizeof(ShopIconMove) == 0x10C);
 
 /**
- * Returns an item's price, buying or selling, from the item table.
- *
- * @mangled GetItemMoney__Fii
- * @address 0x1E6EF0
- * @size 0x44
- */
-s16 GetItemMoney(int, int);
-
-/**
  * Turns a shop number into the shop and the master it stands for.
  *
  * @mangled ShopNoInput__FPiii
  * @address 0x1E6F40
  * @size 0x88
  */
-void ShopNoInput(int *, int, int);
+int ShopNoInput(int *, int, int);
 
 /**
  * Clears the shop's held item, weapon and attachment lists.
@@ -152,88 +152,7 @@ void InitAllHaveData(void);
  * @address 0x1E7020
  * @size 0x5C
  */
-void CommonShopLoop(void);
-
-/**
- * Places the camera and lights the shop's model is drawn under.
- *
- * @mangled ShopPolySetInit__Fii
- * @address 0x1E7080
- * @size 0x150
- */
-void ShopPolySetInit(int, int);
-
-/**
- * Records the line the shopkeeper is to say and how it is to be shown.
- *
- * @mangled SetItemShopTalkMode__Fii
- * @address 0x1E71D0
- * @size 0x50
- */
-void SetItemShopTalkMode(int, int);
-
-/**
- * Draws the icons of one shop board row.
- *
- * @mangled ShopIconDraw__FPsPUciiiiii
- * @address 0x1E7220
- * @size 0xFC
- */
-void ShopIconDraw(short *, unsigned char *, int, int, int, int, int, int);
-
-/**
- * Draws the left and right arrows of the recharge shop.
- *
- * @mangled ChargeShopLRDraw__Fi
- * @address 0x1E7320
- * @size 0x1AC
- */
-void ChargeShopLRDraw(int);
-
-/**
- * Draws the shop cursor over the slot it stands on.
- *
- * @mangled ShopCurDraw__Fiiiiiii
- * @address 0x1E74D0
- * @size 0x2FC
- */
-void ShopCurDraw(int, int, int, int, int, int, int);
-
-/**
- * Draws one shop icon at a position.
- *
- * @mangled DrawShopIcon__Fiiii
- * @address 0x1E77D0
- * @size 0x6C
- */
-void DrawShopIcon(int, int, int, int);
-
-/**
- * Reports whether an item may be recharged.
- *
- * @mangled IsEnableCharge__Fi
- * @address 0x1E7840
- * @size 0x10C
- */
-void IsEnableCharge(int);
-
-/**
- * Starts a shop menu up: its buffers, its textures, its board mode and the gamepad.
- *
- * @mangled ShopMenuInit__FPiii
- * @address 0x1E7950
- * @size 0x248
- */
-void ShopMenuInit(int *, int, int);
-
-/**
- * Tears a shop menu down: its textures, its messages and the gamepad.
- *
- * @mangled ShopMenuExit__Fv
- * @address 0x1E7BA0
- * @size 0x12C
- */
-void ShopMenuExit(void);
+int CommonShopLoop(void);
 
 /**
  * Enters the shop's fixed textures into the texture manager.
@@ -245,24 +164,6 @@ void ShopMenuExit(void);
 void ShopTextureLoadFix(void);
 
 /**
- * Draws the fade that covers the shop while it opens and closes.
- *
- * @mangled ShopFadeoutDraw__Fv
- * @address 0x1E7EA0
- * @size 0xF8
- */
-void ShopFadeoutDraw(void);
-
-/**
- * Starts reading a shopkeeper's model in the background.
- *
- * @mangled ShopPersonReadStart__Fii
- * @address 0x1E7FA0
- * @size 0x98
- */
-void ShopPersonReadStart(int, int);
-
-/**
  * Builds the shopkeeper's model once it has been read.
  *
  * @mangled ShopPersonBuild__Fii
@@ -270,34 +171,6 @@ void ShopPersonReadStart(int, int);
  * @size 0x268
  */
 void ShopPersonBuild(int, int);
-
-/**
- * Draws the shopkeeper and points the menu camera at them.
- *
- * @mangled LocalShopPersonDraw__Fv
- * @address 0x1E82B0
- * @size 0xB8
- */
-void LocalShopPersonDraw(void);
-
-/**
- * Draws the shopkeeper.
- *
- * @mangled ShopPersonDraw__Fi
- * @address 0x1E8370
- * @size 0x3C
- */
-void ShopPersonDraw(int);
-
-/**
- * Points the shopkeeper's model at the camera.
- *
- * @mangled ShopMasterVectorSet__Fi
- * @address 0x1E83B0
- * @size 0xD8
- * Turns the shopkeeper to face the menu camera.
- */
-void ShopMasterVectorSet(int);
 
 /**
  * Starts the charge shop up on the player's stock.
@@ -336,15 +209,6 @@ int ChargeShopLoop(void);
 int ChargeShopKey(void);
 
 /**
- * Moves the cursor across the recharge shop's list.
- *
- * @mangled ChargeSelectKey__Fv
- * @address 0x1E9EE0
- * @size 0x8C0
- */
-void ChargeSelectKey(void);
-
-/**
  * Draws one frame of the charge shop.
  *
  * @mangled DrawChargeShop__Fv
@@ -372,24 +236,6 @@ void ChargeShopMaxDraw(int, int, int, int);
 void ChargeShopBoardDraw(int, int, int);
 
 /**
- * Returns the shop price of one item, which is zero for the item numbers below 0x51.
- *
- * @mangled CalItemMoney__Fii
- * @address 0x1EB2D0
- * @size 0x40
- */
-int CalItemMoney(int, int);
-
-/**
- * Gives what a weapon fetches, from its kind and how worn it is.
- *
- * @mangled WeaponCalMoney__FP11WEAPON_HAVEi
- * @address 0x1EB310
- * @size 0x84
- */
-void WeaponCalMoney(WEAPON_HAVE *, int);
-
-/**
  * Totals what the goods currently marked for purchase cost.
  *
  * @mangled BuyMoneyCheck2__Fv
@@ -397,24 +243,6 @@ void WeaponCalMoney(WEAPON_HAVE *, int);
  * @size 0x1A0
  */
 int BuyMoneyCheck2(void);
-
-/**
- * Totals what the goods currently marked for sale fetch.
- *
- * @mangled SellMoneyCheck2__Fv
- * @address 0x1EB540
- * @size 0xB4
- */
-int SellMoneyCheck2(void);
-
-/**
- * Settles which goods are marked for purchase against what may be afforded.
- *
- * @mangled IncludeBuyItem2__Fv
- * @address 0x1EB600
- * @size 0x1A4
- */
-void IncludeBuyItem2(void);
 
 /**
  * Returns a bit mask of the reasons the pending purchase cannot go through.
@@ -426,31 +254,13 @@ void IncludeBuyItem2(void);
 int CheckBuyItemFunc2(void);
 
 /**
- * Leaves the item shop, returning the goods not bought and recording the shop game flag.
- *
- * @mangled ExitItemShop2__Fv
- * @address 0x1EB980
- * @size 0x9C
- */
-void ExitItemShop2(void);
-
-/**
- * Drops the shop special good from the stock once the player already carries one.
- *
- * @mangled ShopSpecialFunc__Fv
- * @address 0x1EBA20
- * @size 0x128
- */
-void ShopSpecialFunc(void);
-
-/**
  * Orders two items for the shop's sort.
  *
  * @mangled CompItem1__Fii
  * @address 0x1EBB50
  * @size 0x11C
  */
-void CompItem1(int, int);
+int CompItem1(int, int);
 
 /**
  * Sorts one shop item board into order and returns one when any entry moved.
@@ -462,22 +272,13 @@ void CompItem1(int, int);
 int SeitonShopItemBoardSub(ITEM_PACK *);
 
 /**
- * Sorts the item board, trying each ordering until one changes it.
- *
- * @mangled SeitonShopItemBoard__FP9ITEM_PACK
- * @address 0x1EBDB0
- * @size 0x88
- */
-void SeitonShopItemBoard(ITEM_PACK *);
-
-/**
  * Orders two attachments for the shop's sort.
  *
  * @mangled CompAttach1__FP11ATTACH_LISTP11ATTACH_LIST
  * @address 0x1EBE40
  * @size 0xFC
  */
-void CompAttach1(ATTACH_LIST *, ATTACH_LIST *);
+int CompAttach1(ATTACH_LIST *, ATTACH_LIST *);
 
 /**
  * Sorts one attachment board into order and returns one when any entry moved.
@@ -487,15 +288,6 @@ void CompAttach1(ATTACH_LIST *, ATTACH_LIST *);
  * @size 0x138
  */
 int SeitonShopAttachBoardSub(ATTACH_LIST *);
-
-/**
- * Sorts the attachment board, trying each ordering until one changes it.
- *
- * @mangled SeitonShopAttachBoard__FP11ATTACH_LIST
- * @address 0x1EC080
- * @size 0x94
- */
-void SeitonShopAttachBoard(ATTACH_LIST *);
 
 /**
  * Runs one frame of the item shop and returns the mode its input handler left.
@@ -516,15 +308,6 @@ int ItemShopLoop2(void);
 void CheckSideKey2(void);
 
 /**
- * Draws the item shop's board with its goods and their prices.
- *
- * @mangled DrawItemShopBoard2__Fiii
- * @address 0x1EC370
- * @size 0x2C4
- */
-void DrawItemShopBoard2(int, int, int);
-
-/**
  * Draws the running total the purchase will come to.
  *
  * @mangled DrawMoneyCheckBoard2__Fiii
@@ -534,24 +317,6 @@ void DrawItemShopBoard2(int, int, int);
 void DrawMoneyCheckBoard2(int, int, int);
 
 /**
- * Draws the shop's confirmation button.
- *
- * @mangled DrawCheckButton__Fiii
- * @address 0x1EC7D0
- * @size 0x9C
- */
-void DrawCheckButton(int, int, int);
-
-/**
- * Draws the small price ticket, clipped to the digits it has to show.
- *
- * @mangled DrawSmallSellTicket__Fiiiiii
- * @address 0x1EC870
- * @size 0xE0
- */
-void DrawSmallSellTicket(int, int, int, int, int, int);
-
-/**
  * Draws the large price ticket.
  *
  * @mangled DrawBigSellTicket__Fiiiii
@@ -559,24 +324,6 @@ void DrawSmallSellTicket(int, int, int, int, int, int);
  * @size 0xE0
  */
 void DrawBigSellTicket(int, int, int, int, int);
-
-/**
- * Draws the selling price ticket of one shop slot.
- *
- * @mangled DrawSellTicket_2__Fiiiii
- * @address 0x1ECA30
- * @size 0x184
- */
-void DrawSellTicket_2(int, int, int, int, int);
-
-/**
- * Draws the price ticket of one shop slot, small or large according to the price.
- *
- * @mangled DrawLocalTicket__Fiiiiiii
- * @address 0x1ECBC0
- * @size 0x14C
- */
-void DrawLocalTicket(int, int, int, int, int, int, int);
 
 /**
  * Draws the price tickets of everything marked on the player's side.
@@ -595,34 +342,6 @@ void DrawSellTicket22(int, int, int, int, int);
  * @size 0x4E0
  */
 void ShopCancelGoodReturn2(void);
-
-/**
- * Chooses the line the shopkeeper says for the shop's current state.
- *
- * @mangled GetNowMasterMsgNo2__Fii
- * @address 0x1ED470
- * @size 0x268
- */
-void GetNowMasterMsgNo2(int, int);
-
-/**
- * Runs the shopkeeper's speech and the model's reaction to it.
- *
- * @mangled ShopModelMsgFunc__Fi
- * @address 0x1ED6E0
- * @size 0x2D8
- */
-void ShopModelMsgFunc(int);
-
-/**
- * Places the shopkeeper's speech bubble above their model.
- *
- * @mangled SetShopTalkMsgPos__Fv
- * @address 0x1ED9C0
- * @size 0xB4
- * Places the shopkeeper's message window over the shopkeeper.
- */
-void SetShopTalkMsgPos(void);
 
 /**
  * Builds the file name of a shopkeeper's model archive.
@@ -664,16 +383,6 @@ void ItemShopMemoryAlloc(void);
 void ItemPosInfoInit(void);
 
 /**
- * Fills the goods board from one shop's list.
- *
- * @mangled ItemShopGoodInitialize__Fi
- * @address 0x1EDEA0
- * @size 0x24C
- * Fills the shop stock from the goods list of the shop number it is given.
- */
-void ItemShopGoodInitialize(int);
-
-/**
  * Starts the item shop up: its goods, its slot table and its buffers.
  *
  * @mangled InitItemShop2__FPiii
@@ -709,15 +418,6 @@ int ItemShopKey2(void);
  * Draws one frame of the item shop.
  */
 void ItemShopDraw2(void);
-
-/**
- * Gives the list of items one fishing prize band offers.
- *
- * @mangled GetExchangeItemList__Fi
- * @address 0x1F1250
- * @size 0x18
- */
-void GetExchangeItemList(int);
 
 /**
  * Returns the save data's Mardan Garayan progress flag.
@@ -765,23 +465,13 @@ int GetFishMardanGarayanNum(void);
 void ClearFishMardanGarayanNum(void);
 
 /**
- * Reports whether the Mardan Garayan weapon has been handed over: zero once game flag 0xCA
- * marks it taken, one or two otherwise according to the Mardan Garayan flag.
- *
- * @mangled AlreadyGetMardanWeapon__Fv
- * @address 0x1F13A0
- * @size 0x70
- */
-int AlreadyGetMardanWeapon(void);
-
-/**
  * Opens the fishing prize exchange and reads its data.
  *
  * @mangled InitFishingExchange__FP1Pii
  * @address 0x1F1410
  * @size 0x1C0
  */
-void InitFishingExchange(void /* CW back-ref target unresolved */ *, int *, int);
+void InitFishingExchange(u_long128 *, int *, int);
 
 /**
  * Enters the fishing menu's textures once they have been read.
@@ -800,15 +490,6 @@ void FishMenuTextureLoad(void);
  * @size 0xB94
  */
 int FishingExchangeKey(void);
-
-/**
- * Draws one fish icon.
- *
- * @mangled FishImageIconDraw__Fiiii
- * @address 0x1F2420
- * @size 0x54
- */
-void FishImageIconDraw(int, int, int, int);
 
 /**
  * Draws the fishing exchange's goods, their prices and its help window.
@@ -853,7 +534,7 @@ int FishingExchangeLoop(void);
  * @address 0x1F2E10
  * @size 0x3C
  */
-void GetFishMsgNo(int);
+int GetFishMsgNo(int);
 
 /**
  * Returns one entry of the fishing leaderboard, or NULL when that rank is empty.
@@ -871,16 +552,7 @@ SV_FISH_DATA *GetFishingRankData(int);
  * @address 0x1F2E80
  * @size 0x120
  */
-void InitFishRecordView(void /* CW back-ref target unresolved */ *, int *, int);
-
-/**
- * Leaves the fishing record view and releases its texture block.
- *
- * @mangled ExitFishRecord__Fv
- * @address 0x1F2FA0
- * @size 0x60
- */
-void ExitFishRecord(void);
+void InitFishRecordView(u_long128 *, int *, int);
 
 /**
  * Loads the fishing record view's textures and message buffers.
@@ -892,15 +564,6 @@ void ExitFishRecord(void);
 void FishRecordTextureEnter(void);
 
 /**
- * Handles one frame of fishing record input and returns the mode it leaves the view in.
- *
- * @mangled FishRecordViewKey__Fv
- * @address 0x1F31E0
- * @size 0x410
- */
-int FishRecordViewKey(void);
-
-/**
  * Draws the fishing record board: each rank, its fish and its size.
  *
  * @mangled FishRecordViewBoard__Fiii
@@ -908,15 +571,6 @@ int FishRecordViewKey(void);
  * @size 0x648
  */
 void FishRecordViewBoard(int, int, int);
-
-/**
- * Draws one frame of the fishing record view.
- *
- * @mangled FishRecordViewDraw__Fv
- * @address 0x1F3C40
- * @size 0x11C
- */
-void FishRecordViewDraw(void);
 
 /**
  * Runs one frame of the fish record view and returns the mode its input handler left.

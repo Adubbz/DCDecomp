@@ -25,7 +25,6 @@ EDITPARTS_INFO *CEditPartsInfo::GetPartsInfo(int index) {
     }
     return &parts[index];
 }
-#ifdef NON_MATCHING
 int CEditPartsInfo::CheckComplete(int index) {
     EDITPARTS_INFO *info = GetPartsInfo(index);
 
@@ -40,9 +39,6 @@ int CEditPartsInfo::CheckComplete(int index) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editpartsinfo", CheckComplete__14CEditPartsInfoFi);
-#endif
 
 void CEditPartsInfo::SetCompEvent(int index, int completed) {
     EDITPARTS_INFO *info = GetPartsInfo(index);
@@ -63,17 +59,12 @@ int CEditPartsInfo::GetCompEvent(int index) {
     return (info->completion_flags & 1) != 0;
 }
 
-#ifdef NON_MATCHING
 int CEditPartsInfo::GetRequest(int index) {
     if (index < 0 || index >= 24) {
         return 0;
     }
     return request[index];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editpartsinfo", GetRequest__14CEditPartsInfoFi);
-#endif
-#ifdef NON_MATCHING
 int CEditPartsInfo::GetNextPartsNum(int index) {
     int remaining = 0;
 
@@ -88,9 +79,6 @@ int CEditPartsInfo::GetNextPartsNum(int index) {
     }
     return remaining;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editpartsinfo", GetNextPartsNum__14CEditPartsInfoFi);
-#endif
 
 int CEditPartsInfo::GetNextParts(int index) {
     for (;;) {
@@ -106,46 +94,39 @@ int CEditPartsInfo::GetNextParts(int index) {
     }
 }
 
-#ifdef NON_MATCHING
 void CEditPartsInfo::Clear(void) {
     for (int plot = 0; plot < 24; plot++) {
         parts[plot].unk_0C = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editpartsinfo", Clear__14CEditPartsInfoFv);
-#endif
 
-#ifdef NON_MATCHING
 void CEditPartsInfo::Save(int georama_no, CSaveData *save_data) {
+    int plot;
     SV_GEORAMA_DATA *georama = save_data->GetGrdData(georama_no);
     if (georama == NULL) {
         return;
     }
 
     georama->request_count = unk_00;
-    for (int plot = 0; plot < 24; plot++) {
+    for (plot = 0; plot < 24; plot++) {
         georama->request_complete[plot] = request[plot];
         SV_EDIT_PARTS_INFO *saved_part = save_data->GetEditPartsInfo(georama_no, plot);
         if (saved_part == NULL) {
             continue;
         }
-        EDITPARTS_INFO &part = parts[plot];
-        saved_part->flag = part.unk_08;
-        saved_part->part_id = part.completion_flags;
-        saved_part->unk_6 = part.unk_0C;
-        saved_part->progress = part.unk_18;
+        saved_part->flag = parts[plot].unk_08;
+        saved_part->part_id = parts[plot].completion_flags;
+        saved_part->unk_6 = parts[plot].unk_0C;
+        saved_part->progress = parts[plot].unk_18;
         for (int element = 0; element < 6; element++) {
-            saved_part->npc_slot[element] = part.elements[element].enabled;
+            saved_part->npc_slot[element] = parts[plot].elements[element].enabled;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editpartsinfo", Save__14CEditPartsInfoFiP9CSaveData);
-#endif
 
-#ifdef NON_MATCHING
 void CEditPartsInfo::Load(int georama_no, CSaveData *save_data, int load_requests) {
+    int plot;
+
     if (georama_no < 0 || georama_no >= 6) {
         return;
     }
@@ -157,29 +138,25 @@ void CEditPartsInfo::Load(int georama_no, CSaveData *save_data, int load_request
     if (load_requests != 0) {
         unk_00 = georama->request_count;
     }
-    for (int plot = 0; plot < 24; plot++) {
+    for (plot = 0; plot < 24; plot++) {
         SV_EDIT_PARTS_INFO *saved_part = save_data->GetEditPartsInfo(georama_no, plot);
         if (saved_part == NULL) {
             continue;
         }
-        EDITPARTS_INFO &part = parts[plot];
-        part.unk_08 = saved_part->flag;
-        part.completion_flags = saved_part->part_id;
+        parts[plot].unk_08 = saved_part->flag;
+        parts[plot].completion_flags = saved_part->part_id;
         if (load_requests != 0) {
-            part.unk_0C = saved_part->unk_6;
+            parts[plot].unk_0C = saved_part->unk_6;
             request[plot] = georama->request_complete[plot];
         }
         if (saved_part->progress > 0) {
-            part.unk_18 = saved_part->progress;
+            parts[plot].unk_18 = saved_part->progress;
         }
         for (int element = 0; element < 6; element++) {
-            part.elements[element].enabled = saved_part->npc_slot[element];
+            parts[plot].elements[element].enabled = saved_part->npc_slot[element];
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editpartsinfo", Load__14CEditPartsInfoFiP9CSaveDatai);
-#endif
 
 #ifdef NON_MATCHING
 void CEditPartsInfo::Initialize(int georama_no) {
@@ -205,7 +182,7 @@ void CEditPartsInfo::Initialize(int georama_no) {
         part.kind = source->kind;
         for (int element = 0; element < 6; element++) {
             EDITPARTS_ELEMENT &destination = part.elements[element];
-            EDIT_PARTS_ELEMENT_ATRA &definition = source->elements[element];
+            EDIT_CHIP_ATTACH_DATA &definition = source->elements[element];
             destination.id = definition.id;
             destination.unk_04 = definition.unk_04;
             destination.enabled = 0;
@@ -223,19 +200,14 @@ void CEditPartsInfo::Initialize(int georama_no) {
 INCLUDE_ASM("asm/nonmatchings/editpartsinfo", Initialize__14CEditPartsInfoFi);
 #endif
 
-#ifdef NON_MATCHING
 void CEditPartsInfo::Initialize(int index, EPARTS_INFO_HEADER *header) {
-    EDITPARTS_INFO &part = parts[index];
-    part.parts_no = index;
-    part.unk_08 = 0;
-    part.completion_flags = 0;
-    part.unk_0C = 0;
+    parts[index].parts_no = index;
+    parts[index].unk_08 = 0;
+    parts[index].completion_flags = 0;
+    parts[index].unk_0C = 0;
     for (int element = 0; element < 6; element++) {
     }
-    part.width = header->width;
-    part.height = header->height;
-    part.header = header;
+    parts[index].width = header->width;
+    parts[index].height = header->height;
+    parts[index].header = header;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editpartsinfo", Initialize__14CEditPartsInfoFiP18EPARTS_INFO_HEADER);
-#endif

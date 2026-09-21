@@ -4,6 +4,9 @@
 
 #include <libvu0.h>
 
+#include "mapparts.hpp"
+#include "water.hpp"
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -12,31 +15,89 @@ class CCPoly;
 class CCamera;
 class CCameraFollow;
 class CEditArea;
+class CEditPartsInfo;
 class CEffectGroup;
 class CFrame;
 class CMapParts;
 class CRect_i_;
+struct EPARTS_FUNC_DATA;
 class CSaveData;
 
 /**
- * Holds the render controls for one editable-ground water surface.
+ * Describes one ripple source that keeps a ground water surface moving.
  */
-struct EDIT_WATER_SURFACE_RENDER {
-    s32 draw; /**< Whether this water surface is drawn. */
-    u8 unk_004[0x3AC];
+struct GROUND_WATER_RIPPLE {
+    float row;    /**< Grid row the ripple starts at; below zero picks one at random. */
+    float column; /**< Grid column the ripple starts at; below zero picks one at random. */
+    float range;  /**< Largest random height added to each push. */
+    float power;  /**< Height of each push before the random part. */
 };
 
+/**
+ * Holds one water surface of the editable ground and whether it is drawn.
+ */
+class CGroundWater {
+public:
+    char name[32]; /**< Frame of the owning part that must be drawn for the surface to draw, or empty. */
+    s32 draw;      /**< Whether this water surface is drawn. */
+    s32 follow_x;  /**< Whether a free surface keeps ahead of the camera along X. */
+    s32 follow_y;  /**< Whether a free surface keeps level with the camera. */
+    s32 follow_z;  /**< Whether a free surface keeps ahead of the camera along Z. */
+    s32 unk_030;
+    s32 parts_no; /**< Plot of the part the surface stands on, or below zero for a free surface. */
+    u8 unk_038[8];
+    sceVu0FVECTOR offset;           /**< Position of the surface relative to its part, or in the world. */
+    GROUND_WATER_RIPPLE ripples[4]; /**< Ripple sources; one with no power and no range ends the list. */
+    CWater water;                   /**< Surface that ripples and draws. */
+};
+
+STATIC_ASSERT(sizeof(CGroundWater) == 0x3B0);
+
+/**
+ * Starts a saved ground: the placed parts follow it as SV_GRD_PART records.
+ */
+struct GROUND_SAVE_HEADER {
+    s16 count;  /**< Number of records before the terminating one. */
+    s16 size;   /**< Bytes from the header to the end of the terminating record. */
+    s16 offset; /**< Bytes from the header to the first record. */
+    s16 unk_06;
+};
+
+/**
+ * Holds the editable areas of a Georama map and every part placed on them.
+ */
 class CEditGround {
 public:
-    u8 unk_00000[4];
+    s32 map_no;          /**< Georama town the ground belongs to, from 0 for Norune to 4 for Yellow Drops. */
     CEditArea *areas[4]; /**< Editable areas that make up the ground. */
-    u8 unk_00014[0x1504C];
-    EDIT_WATER_SURFACE_RENDER water_surfaces[4]; /**< Render controls for the four ground water surfaces. */
+    s32 unk_00014[4];
+    u8 unk_00024[0xC];
+    CMapParts parts[128];       /**< Parts placed on the ground, indexed by part ID. */
+    CEditPartsInfo *parts_info; /**< Catalogue of the parts the map can hold. */
+    u8 unk_15034[0xC];
+    CGroundWater water_surfaces[4]; /**< The four ground water surfaces. */
+    s32 effect_count;               /**< Steps left before the falling part lands; zero or less when none falls. */
+    s32 effect_parts_id;            /**< ID of the falling part, or -1. */
+    float effect_alt;               /**< Height the falling part starts from. */
+    float effect_target_alt;        /**< Height the falling part lands at. */
+    float effect_step;              /**< Height the falling part moves each step. */
+    s32 focus_parts_id;             /**< ID of the part under the cursor, or -1. */
+    u8 unk_15f18[8];
     sceVu0FVECTOR clip_plane; /**< Plane used to clip the editable ground's rendered geometry. */
-    u8 unk_15f30[0x360];
-    CFrame *frame; /**< Root frame containing the editable ground model. */
-    u8 unk_16294[0xA6C8];
-    s32 suppress_water; /**< Whether rendering of the editable ground's water is disabled. */
+    CMapParts *plot_parts;    /**< Template part of each plot, indexed by plot number. */
+    CMapParts *river_parts;   /**< Template river pieces, indexed by how the river joins its neighbours. */
+    CMapParts *road_parts;    /**< Template road pieces, indexed by how the road joins its neighbours. */
+    u8 unk_15f3c[4];
+    CMapParts fixed_parts[64]; /**< Parts of the map that the player cannot move; the second is the ground model. */
+    s32 unk_20740[1];
+    s32 unk_20744;
+    float unk_20748;
+    s32 unk_2074c;
+    s32 unk_20750;
+    u8 unk_20754[4];
+    EPARTS_FUNC_DATA *people[128]; /**< Villager markers of the placed parts. */
+    s32 people_count;              /**< Number of villager markers in use. */
+    s32 suppress_water;            /**< Whether rendering of the editable ground's water is disabled. */
     /**
      * Places one part on the ground, replacing or refusing it according to what already
      * stands there.
@@ -100,7 +161,7 @@ public:
      * @address 0x1A17F0
      * @size 0x84
      */
-    float GetAlt_i(float x, float y, float z);
+    int GetAlt_i(float x, float y, float z);
 
     /**
      * Finds the placed part with a given plot number.
@@ -190,7 +251,7 @@ public:
      * @address 0x1A2A90
      * @size 0x17C
      */
-    int GetNearParts(CMapParts **out_parts, int limit, CBoxVu0 *box, CBoxVu0 *out_box);
+    int GetNearParts(CMapParts **out_parts, int limit, CBoxVu0 *box, CBoxVu0 *fixed_box);
 
     /**
      * Rebuilds the bounding boxes of every editable area.
@@ -211,13 +272,13 @@ public:
     void GetPartsBox(CBoxVu0 *out_box, float x, float y, float z);
 
     /**
-     * Gives the position of one of the villagers standing on the ground.
+     * Gives the position of one of the villagers standing on the ground, and the marker it stands at.
      *
      * @mangled GetPeoplePos__11CEditGroundFiPf
      * @address 0x1A2D10
      * @size 0x190
      */
-    int GetPeoplePos(int villager, float *out_position);
+    EPARTS_FUNC_DATA *GetPeoplePos(int villager, float *out_position);
 
     /**
      * Draws the grid of every editable area.
@@ -235,7 +296,7 @@ public:
      * @address 0x1A2F10
      * @size 0x23C
      */
-    void Draw(float, int, int, int, int, int);
+    void Draw(float time, int pass, int lowest, int highest, int fixed_lowest, int fixed_highest);
 
     /**
      * Advances the ripples of each water surface the view can reach.
@@ -299,16 +360,16 @@ public:
      * @address 0x1A4610
      * @size 0x170
      */
-    void DrawEffect(CCameraFollow *camera, float range, CEffectGroup *effects);
+    void DrawEffect(CCameraFollow *camera, float time, CEffectGroup *effects);
 
     /**
-     * Writes every placed part into a buffer.
+     * Writes every placed part to the host debug file gdata0.edt; the argument is unused.
      *
      * @mangled Save__11CEditGroundFPc
      * @address 0x1A4780
      * @size 0x188
      */
-    void Save(char *buffer);
+    void Save(char *path);
 
     /**
      * Reads placed parts back out of a buffer, clearing the ground first.
@@ -326,7 +387,7 @@ public:
      * @address 0x1A4C90
      * @size 0x17C
      */
-    void Save(int map_no, CSaveData *save);
+    void Save(int town, CSaveData *save);
 
     /**
      * Reads placed parts back out of the save file.
@@ -335,7 +396,7 @@ public:
      * @address 0x1A4E10
      * @size 0xD0
      */
-    void Load(int map_no, CSaveData *save);
+    void Load(int town, CSaveData *save);
 
     /**
      * Collects the collision polygons within thirty units of a position.
@@ -371,7 +432,7 @@ public:
      * @address 0x1A5210
      * @size 0x2F4
      */
-    int PickUpCameraPoly(CCPoly *polygons, CBoxVu0 &box, int flags);
+    int PickUpCameraPoly(CCPoly *out_polygons, CBoxVu0 &box, int flags);
 
     /**
      * Empties every placed part and every editable area.
@@ -417,7 +478,7 @@ public:
      * @address 0x1A5FE0
      * @size 0x1F4
      */
-    int RequestCheck(void);
+    void RequestCheck(void);
 
     /**
      * Reports whether a part of a given kind stands inside a rectangle.
@@ -426,25 +487,25 @@ public:
      * @address 0x1A61E0
      * @size 0xE0
      */
-    int CheckPartsRect(int area, int parts_no, CRect_i_ &rect);
+    int CheckPartsRect(int parts_no, int area, CRect_i_ &rect);
 
     /**
-     * Collects the parts of one kind standing inside a rectangle.
+     * Gives the grid rectangle a part covers, widened by a margin on every side.
      *
      * @mangled GetRectParts__11CEditGroundFP8CRect_i_P9CMapPartsi
      * @address 0x1A62C0
      * @size 0x14C
      */
-    void GetRectParts(CRect_i_ *, CMapParts *, int);
+    void GetRectParts(CRect_i_ *rect, CMapParts *target, int margin);
 
     /**
-     * Collects the parts of one kind and subtype standing inside a rectangle.
+     * Gives the grid cell that one cell of a part lands on, turned the way the part faces.
      *
      * @mangled GetRectParts__11CEditGroundFP8CRect_i_P9CMapPartsii
      * @address 0x1A6410
      * @size 0x338
      */
-    void GetRectParts(CRect_i_ *, CMapParts *, int, int);
+    void GetRectParts(CRect_i_ *rect, CMapParts *target, int column, int row);
 
     /**
      * Collects the parts inside a rectangle that face a given direction.
@@ -462,7 +523,7 @@ public:
      * @address 0x1A69C0
      * @size 0x3C4
      */
-    void NornRequest(CMapParts *(*) [64]);
+    void NornRequest(CMapParts *(*plot_parts)[64]);
 
     /**
      * Checks the ground against Matataki's request, which wants the rivers chained up.
@@ -471,7 +532,7 @@ public:
      * @address 0x1A6D90
      * @size 0x65C
      */
-    void MatatagiRequest(CMapParts *(*) [64]);
+    void MatatagiRequest(CMapParts *(*plot_parts)[64]);
 
     /**
      * Checks the ground against the Queen's request.
@@ -480,7 +541,7 @@ public:
      * @address 0x1A73F0
      * @size 0x49C
      */
-    void QueensRequest(CMapParts *(*) [64]);
+    void QueensRequest(CMapParts *(*plot_parts)[64]);
 
     /**
      * Checks the ground against Muska Racka's request.
@@ -489,7 +550,7 @@ public:
      * @address 0x1A7920
      * @size 0x614
      */
-    void MuskaRequest(CMapParts *(*) [64]);
+    void MuskaRequest(CMapParts *(*plot_parts)[64]);
 
     /**
      * Checks the ground against the yellow request, which wants parts facing one
@@ -499,11 +560,20 @@ public:
      * @address 0x1A7F40
      * @size 0x8A0
      */
-    void YellowRequest(CMapParts *(*) [64]);
+    void YellowRequest(CMapParts *(*plot_parts)[64]);
 };
 
+STATIC_ASSERT(sizeof(CEditGround) == 0x20960);
+
+/**
+ * Draws the placement cursor out of corner, edge and centre pieces.
+ */
 class CPartsCursor {
 public:
+    u8 unk_00[4];
+    float unit_size;   /**< Width of one grid cell. */
+    CFrame *pieces[3]; /**< Corner, edge and centre pieces of the cursor. */
+
     /**
      * Draws the placement cursor over a run of cells.
      *
@@ -511,5 +581,5 @@ public:
      * @address 0x1A5CB0
      * @size 0x328
      */
-    void Draw(float *, int, int);
+    void Draw(float *position, int width, int height);
 };

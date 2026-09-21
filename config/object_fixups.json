@@ -50,6 +50,13 @@
       "@2448"
     ]
   },
+  "src/battlemenu.cpp": {
+    "rodata_exports": [
+      "@924__2",
+      "@926__2",
+      "@927__2"
+    ]
+  },
   "src/ebattle.cpp": {
     "rodata_exports": [
       "@314__2",
@@ -206,6 +213,58 @@
     ]
   },
   "src/edit_in.cpp": {
+    "symbols": {
+      "InitWorkBuffer__Fv": "InitWorkBuffer__Fv__2",
+      "CommandAMBIENT__FPPv": "CommandAMBIENT__FPPv__2",
+      "CommandFOG__FPPv": "CommandFOG__FPPv__2",
+      "CommandBG_COL__FPPv": "CommandBG_COL__FPPv__2",
+      "CommandPEOPLE__FPPv": "CommandPEOPLE__FPPv__2",
+      "CommandCD__FPPv": "CommandCD__FPPv__2",
+      "CommandOBJ_ANIME__FPPv": "CommandOBJ_ANIME__FPPv__2",
+      "CommandMOTION_PARTS__FPPv": "CommandMOTION_PARTS__FPPv__2",
+      "CommandWATER_SURFACE__FPPv": "CommandWATER_SURFACE__FPPv__2",
+      "Command": "Command__6",
+      "CommandExe": "CommandExe__6",
+      "CurrentDir": "CurrentDir__5",
+      "objanime_list": "objanime_list__2",
+      "debug": "debug__2",
+      "motion_parts_list": "motion_parts_list__2",
+      "water_list": "water_list__2",
+      "water_info": "water_info__2",
+      "GetCollision__FP6CCPolyP7CBoxVu0": "GetCollision__FP6CCPolyP7CBoxVu0__2",
+      "func_num": "func_num__2",
+      "Water": "Water__3",
+      "VillagerCollision__Fv": "VillagerCollision__Fv__2",
+      "Chara": "Chara__2",
+      "LoadScript__Fv": "LoadScript__Fv__2",
+      "RunEvent__FiP7CCamera": "RunEvent__FiP7CCamera__2",
+      "RunSystemEvent__FiP7CCamera": "RunSystemEvent__FiP7CCamera__2",
+      "start_event_no": "start_event_no__2",
+      "start_system_event": "start_system_event__2",
+      "EventCamera": "EventCamera__2"
+    },
+    "globalize_symbols": [
+      "InitWorkBuffer__Fv__2",
+      "CommandAMBIENT__FPPv__2",
+      "CommandFOG__FPPv__2",
+      "CommandBG_COL__FPPv__2",
+      "CommandPEOPLE__FPPv__2",
+      "CommandCD__FPPv__2",
+      "CommandOBJ_ANIME__FPPv__2",
+      "CommandMOTION_PARTS__FPPv__2",
+      "CommandWATER_SURFACE__FPPv__2",
+      "LoadInfo__FPci",
+      "CommandPROJECTION__FPPv",
+      "CommandDEBUG__FPPv",
+      "GetCollision__FP6CCPolyP7CBoxVu0__2",
+      "GetDoorPos__FiPfPfPiPi",
+      "StepWater__Fv",
+      "VillagerCollision__Fv__2",
+      "LoadScript__Fv__2",
+      "RunEvent__FiP7CCamera__2",
+      "RunSystemEvent__FiP7CCamera__2",
+      "setTexAnim__Fv"
+    ],
     "rodata_exports": [
       "@1592",
       "@1593",
@@ -439,6 +498,10 @@
       "@2851",
       "@2852",
       "@2853"
+    ],
+    "globalize_symbols": [
+      "RunEvent__FiP7CCamera",
+      "RunSystemEvent__FiP7CCamera"
     ]
   },
   "src/editloop3.cpp": {
@@ -600,11 +663,11 @@
       ".eddata6": [
         "@2577",
         "talk_camera_ref",
-        "@2971",
-        "@2972",
-        "@2980",
-        "@2994",
-        "@3241"
+        "@2992",
+        "@2993",
+        "@3001",
+        "@3015",
+        "@3262"
       ],
       ".edbuffers": [
         "EdVillagerBuffer",
@@ -1068,6 +1131,53 @@
       "@52"
     ]
   },
+  "src/runscript_opcodes.cpp": {
+    "symbols": {
+      "GetStackInt__FP12RS_STACKDATA": "GetStackInt__FP12RS_STACKDATA__3",
+      "GetStackFloat__FP12RS_STACKDATA": "GetStackFloat__FP12RS_STACKDATA__3",
+      "GetStackString__FP12RS_STACKDATA": "GetStackString__FP12RS_STACKDATA__3",
+      "SetStack__FP12RS_STACKDATAi": "SetStack__FP12RS_STACKDATAi__3",
+      "SetStack__FP12RS_STACKDATAf": "SetStack__FP12RS_STACKDATAf__3",
+      "_GET_OBJ_POS__FP12RS_STACKDATAi": "_GET_OBJ_POS__FP12RS_STACKDATAi__2"
+    },
+    "globalize_symbols": [
+      "GetStackInt__FP12RS_STACKDATA__3",
+      "GetStackFloat__FP12RS_STACKDATA__3",
+      "GetStackString__FP12RS_STACKDATA__3",
+      "SetStack__FP12RS_STACKDATAi__3",
+      "SetStack__FP12RS_STACKDATAf__3",
+      "_GET_OBJ_POS__FP12RS_STACKDATAi__2"
+    ],
+    "rodata_exports": [
+      "@870",
+      "@1311",
+      "@1312",
+      "@960",
+      "@1452",
+      "@1453",
+      "@979__2",
+      "@1069",
+      "@1086__2",
+      "@1010",
+      "@1040"
+    ]
+  },
+  "src/btsysscript.cpp": {
+    "symbols": {
+      "GetStackInt__FP12RS_STACKDATA": "GetStackInt__FP12RS_STACKDATA__2",
+      "GetStackFloat__FP12RS_STACKDATA": "GetStackFloat__FP12RS_STACKDATA__2",
+      "GetStackString__FP12RS_STACKDATA": "GetStackString__FP12RS_STACKDATA__2",
+      "SetStack__FP12RS_STACKDATAi": "SetStack__FP12RS_STACKDATAi__2",
+      "SetStack__FP12RS_STACKDATAf": "SetStack__FP12RS_STACKDATAf__2"
+    },
+    "globalize_symbols": [
+      "GetStackInt__FP12RS_STACKDATA__2",
+      "GetStackFloat__FP12RS_STACKDATA__2",
+      "GetStackString__FP12RS_STACKDATA__2",
+      "SetStack__FP12RS_STACKDATAi__2",
+      "SetStack__FP12RS_STACKDATAf__2"
+    ]
+  },
   "src/menu_dungeon.cpp": {
     "sections": {
       ".denterstatus": [
@@ -1127,6 +1237,54 @@
       "@883",
       "@884__3",
       "@885"
+    ]
+  },
+  "src/menu_draw.cpp": {
+    "symbols": {
+      "SeitonAttachBoardSub__FP11ATTACH_LIST": "SeitonAttachBoardSub__FP11ATTACH_LIST__2"
+    }
+  },
+  "src/itemdata.cpp": {
+    "symbols": {
+      "skipSpace__FPci": "skipSpace__FPci__2",
+      "checkArg__FPciPi": "checkArg__FPciPi__2",
+      "teigiFileSize": "teigiFileSize__2"
+    }
+  },
+  "src/memcard.cpp": {
+    "globalize_symbols": [
+      "ExitSaveSelect__Fv",
+      "SaveMenuKeyFadeIn__Fv",
+      "SaveMenuKeyFadeOut__Fv",
+      "SaveMenuKeyModeSelect__Fv",
+      "SaveMenuKeyMcSelect__Fv",
+      "SaveMenuKeyCheckMcType__Fv",
+      "SaveMenuKeyCheckMc__Fv",
+      "SaveMenuKeyLoadConfig__Fv",
+      "SaveMenuKeyFileSelect__Fv"
+    ]
+  },
+  "src/menu_save.cpp": {
+    "symbols": {
+      "allmenu_mes": "@2347"
+    },
+    "globalize_symbols": [
+      "SaveMenuKeySaveCheck__Fv",
+      "SaveMenuKeySaveDecide__Fv",
+      "SaveMenuKeySave__Fv",
+      "SaveMenuKeyEndSave__Fv",
+      "SaveMenuKeyLoad__Fv",
+      "SaveMenuKeyArart__Fv",
+      "SaveMenuKeyNewDirSelect__Fv",
+      "SaveMenuKeyNewDir__Fv",
+      "SaveMenuKeyFormat__Fv",
+      "SaveMenuKeyDifVersion__Fv",
+      "SaveMenuKeyDelete__Fv",
+      "SaveMenuKeyCopy__Fv",
+      "SaveMenuKeyAfterEnding__Fv",
+      "SaveMenuKeySaveDecideEnding__Fv",
+      "SaveMenuKeySaveEnding__Fv",
+      "SaveMenuKeyEndSaveEnding__Fv"
     ]
   }
 }

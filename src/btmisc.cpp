@@ -33,7 +33,6 @@ extern int BtBattleMusic_Wait;
  */
 extern float BtBattleMusic_Vol;
 
-#ifdef NON_MATCHING
 CFrame *LoadMDSFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *buffer) {
     int size;
     unsigned int *file = GetPackFile(pack, name, &size);
@@ -44,17 +43,12 @@ CFrame *LoadMDSFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *buffer) 
     }
     return (CFrame *) LoadMDSFile(file, buffer, 0, NULL, NULL);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btmisc", LoadMDSFilePack__FPUiPcP14CDataAlloc2_1_);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @879__2);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @887__4);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @888__3);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @889__3);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @890__3);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @891__3);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @892__3);
-#ifdef NON_MATCHING
 CFrame *LoadCollisionFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *buffer) {
     int size;
     unsigned int *file = GetPackFile(pack, name, &size);
@@ -65,9 +59,6 @@ CFrame *LoadCollisionFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *bu
     }
     return (CFrame *) LoadCollisionFile(file, buffer);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btmisc", LoadCollisionFilePack__FPUiPcP14CDataAlloc2_1_);
-#endif
 /**
  * Puts the camera on the two named frames of a model's path.
  *
@@ -75,7 +66,6 @@ INCLUDE_ASM("asm/nonmatchings/btmisc", LoadCollisionFilePack__FPUiPcP14CDataAllo
  * @address 0x1B6E80
  * @size 0xA4
  */
-#ifdef NON_MATCHING
 void setCameraPassData(CFrameVu1 *frame, CCamera *camera, char *position_name,
                        char *reference_name) {
     sceVu0FMATRIX matrix;
@@ -86,9 +76,6 @@ void setCameraPassData(CFrameVu1 *frame, CCamera *camera, char *position_name,
     frame->SearchFrame(position_name)->GetLWMatrix(matrix);
     camera->SetPos(matrix[3]);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btmisc", setCameraPassData__FP9CFrameVu1P7CCameraPcPc);
-#endif
 #ifdef NON_MATCHING
 void getFramePos(CFrameVu1 *frame, char *name, float *position) {
     sceVu0FVECTOR origin = {0.0f, 0.0f, 0.0f, 0.0f};

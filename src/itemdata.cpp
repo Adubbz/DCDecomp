@@ -22,10 +22,8 @@
 #include "textureanime.hpp"
 #include "userstatus.hpp"
 
-#ifdef NON_MATCHING
 /** Bytes of the item definition file that were read. */
-static int teigiFileSize;
-#endif
+extern int teigiFileSize;
 
 /** Parsed string argument for each item-definition command. */
 extern char argStrBuff__2[640][36];
@@ -117,7 +115,6 @@ extern u8 main_bgColor[3];
 extern u8 sub_bgColor[3];
 extern u_int *read_buffer;
 
-#ifdef NON_MATCHING
 /**
  * Steps the item definition file past whitespace and comments.
  *
@@ -126,12 +123,8 @@ extern u_int *read_buffer;
  * @size 0x110
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-static int skipSpace(char *text, int pos) {
-    for (;;) {
-        if (pos >= teigiFileSize) {
-            return teigiFileSize;
-        }
-
+int skipSpace(char *text, int pos) {
+    for (; pos < teigiFileSize; pos++) {
         int skipped = 0;
         // The file is Shift-JIS, so a space can be the full-width one.
         if (memcmp(&text[pos], "\x81\x40", 2) == 0) {
@@ -159,17 +152,10 @@ static int skipSpace(char *text, int pos) {
         if (skipped == 0) {
             return pos;
         }
-        pos++;
     }
+    return teigiFileSize;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/itemdata", skipSpace__FPci__2);
-#endif
 
-INCLUDE_RODATA("asm/nonmatchings/itemdata", @549__3);
-INCLUDE_RODATA("asm/nonmatchings/itemdata", @550__2);
-
-#ifdef NON_MATCHING
 /**
  * Reads one argument out of the item definition file.
  *
@@ -178,7 +164,7 @@ INCLUDE_RODATA("asm/nonmatchings/itemdata", @550__2);
  * @size 0x664
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-static int checkArg(char *text, int pos, int *format) {
+int checkArg(char *text, int pos, int *format) {
     enum ARGUMENT_KIND {
         ARGUMENT_STRING = 0,
         ARGUMENT_COMMA_NUMBER = 1,
@@ -186,88 +172,147 @@ static int checkArg(char *text, int pos, int *format) {
     };
 
     int argument;
+    int cursor;
+    int length;
+    int numeric;
 
-    for (argument = 0; argument < format[1]; argument++) {
-        int kind = format[argument + 2];
-        argValBuff__2[argLevel__2][0] = (float) format[0];
-
-        if (kind == ARGUMENT_STRING) {
-            int length;
-            if (text[pos] != '"') {
-                return -1;
-            }
-            pos++;
-            for (length = 0; length < 32; length++) {
-                if (text[pos] == '"') {
-                    argStrBuff__2[argLevel__2][length] = '\0';
-                    pos++;
-                    break;
-                }
-                argStrBuff__2[argLevel__2][length] = text[pos++];
-            }
-            if (length == 32) {
-                return -1;
-            }
-            pos = skipSpace(text, pos);
-            continue;
-        }
-
-        if (kind == ARGUMENT_COMMA_NUMBER) {
-            if (text[pos] != ',') {
-                return -1;
-            }
-            pos = skipSpace(text, pos + 1);
-        }
-
-        if (memcmp(&text[pos], "ON", 2) == 0) {
-            argValBuff__2[argLevel__2][argument + 1] = 1.0f;
-            pos += 2;
-        } else if (memcmp(&text[pos], "OFF", 3) == 0) {
-            argValBuff__2[argLevel__2][argument + 1] = 0.0f;
-            pos += 3;
-        } else {
-            int consumed;
-            char first = text[pos];
-            if (first != '-' && (first < '0' || first > '9')) {
-                return -1;
-            }
-            argValBuff__2[argLevel__2][argument + 1] = (float) atof(&text[pos]);
-            for (consumed = 0; consumed < 32; consumed++) {
-                bool numeric = false;
-                if (text[pos] == '-') {
-                    pos++;
-                    numeric = true;
-                }
-                if (text[pos] >= '0' && text[pos] <= '9') {
-                    pos++;
-                    numeric = true;
-                }
-                if (text[pos] == '.') {
-                    pos++;
-                    numeric = true;
-                }
-                if (!numeric) {
-                    break;
-                }
-            }
-            if (consumed == 32) {
-                return -1;
-            }
-        }
-        if (argument >= 32) {
-            printf("************ TAG OVER !!\n");
-        }
-        pos = skipSpace(text, pos);
+    cursor = pos;
+    if (format[1] == 0) {
+        return pos;
     }
-    return pos;
+    for (argument = 0; argument < format[1]; argument++) {
+        argValBuff__2[argLevel__2][0] = (float) format[0];
+        switch (format[argument + 2]) {
+            case ARGUMENT_STRING:
+                if (text[cursor] != '"') {
+                    return -1;
+                }
+                cursor++;
+                for (length = 0; length < 32; length++) {
+                    if (text[cursor] == '"') {
+                        argStrBuff__2[argLevel__2][length] = '\0';
+                        cursor++;
+                        break;
+                    }
+                    argStrBuff__2[argLevel__2][length] = text[cursor++];
+                }
+                if (length == 32) {
+                    return -1;
+                }
+                cursor = skipSpace(text, cursor);
+                break;
+            case ARGUMENT_COMMA_NUMBER:
+                if (text[cursor] != ',') {
+                    return -1;
+                }
+                cursor = skipSpace(text, cursor + 1);
+                if (memcmp(&text[cursor], "ON", 2) == 0) {
+                    argValBuff__2[argLevel__2][argument + 1] = 1.0f;
+                    if (argument >= 32) {
+                        printf("************TAG OVER!!\n");
+                    }
+                    cursor += 2;
+                } else if (memcmp(&text[cursor], "OFF", 3) == 0) {
+                    argValBuff__2[argLevel__2][argument + 1] = 0.0f;
+                    if (argument >= 32) {
+                        printf("************TAG OVER!!\n");
+                    }
+                    cursor += 3;
+                } else {
+                    numeric = 0;
+                    if (text[cursor] == '-') {
+                        numeric = 1;
+                    }
+                    if (text[cursor] >= '0' && text[cursor] <= '9') {
+                        numeric = 1;
+                    }
+                    if (numeric == 0) {
+                        return -1;
+                    }
+                    argValBuff__2[argLevel__2][argument + 1] = (float) atof(&text[cursor]);
+                    if (argument >= 32) {
+                        printf("************TAG OVER!!\n");
+                    }
+                    for (length = 0; length < 32; length++) {
+                        numeric = 0;
+                        if (text[cursor] == '-') {
+                            cursor++;
+                            numeric = 1;
+                        }
+                        if (text[cursor] >= '0' && text[cursor] <= '9') {
+                            cursor++;
+                            numeric = 1;
+                        }
+                        if (text[cursor] == '.') {
+                            cursor++;
+                            numeric = 1;
+                        }
+                        if (numeric == 0) {
+                            break;
+                        }
+                    }
+                    if (length == 32) {
+                        return -1;
+                    }
+                }
+                cursor = skipSpace(text, cursor);
+                break;
+            case ARGUMENT_NUMBER:
+                if (memcmp(&text[cursor], "ON", 2) == 0) {
+                    argValBuff__2[argLevel__2][argument + 1] = 1.0f;
+                    if (argument >= 32) {
+                        printf("************TAG OVER!!\n");
+                    }
+                    cursor += 2;
+                } else if (memcmp(&text[cursor], "OFF", 3) == 0) {
+                    argValBuff__2[argLevel__2][argument + 1] = 0.0f;
+                    if (argument >= 32) {
+                        printf("************TAG OVER!!\n");
+                    }
+                    cursor += 3;
+                } else {
+                    numeric = 0;
+                    if (text[cursor] == '-') {
+                        numeric = 1;
+                    }
+                    if (text[cursor] >= '0' && text[cursor] <= '9') {
+                        numeric = 1;
+                    }
+                    if (numeric == 0) {
+                        return -1;
+                    }
+                    argValBuff__2[argLevel__2][argument + 1] = (float) atof(&text[cursor]);
+                    if (argument >= 32) {
+                        printf("************TAG OVER!!\n");
+                    }
+                    for (length = 0; length < 32; length++) {
+                        numeric = 0;
+                        if (text[cursor] == '-') {
+                            cursor++;
+                            numeric = 1;
+                        }
+                        if (text[cursor] >= '0' && text[cursor] <= '9') {
+                            cursor++;
+                            numeric = 1;
+                        }
+                        if (text[cursor] == '.') {
+                            cursor++;
+                            numeric = 1;
+                        }
+                        if (numeric == 0) {
+                            break;
+                        }
+                    }
+                    if (length == 32) {
+                        return -1;
+                    }
+                }
+                cursor = skipSpace(text, cursor);
+                break;
+        }
+    }
+    return cursor;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/itemdata", checkArg__FPciPi__2);
-#endif
-
-INCLUDE_RODATA("asm/nonmatchings/itemdata", @653);
-INCLUDE_RODATA("asm/nonmatchings/itemdata", @654);
-INCLUDE_RODATA("asm/nonmatchings/itemdata", @655);
 
 #ifdef NON_MATCHING
 /**

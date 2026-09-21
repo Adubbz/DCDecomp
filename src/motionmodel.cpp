@@ -90,7 +90,6 @@ INCLUDE_RODATA("asm/nonmatchings/motionmodel", @865);
 INCLUDE_RODATA("asm/nonmatchings/motionmodel", @866);
 INCLUDE_RODATA("asm/nonmatchings/motionmodel", @867);
 INCLUDE_RODATA("asm/nonmatchings/motionmodel", @868);
-#ifdef NON_MATCHING
 void CMotionModel::Step(void) {
     motion.state.motion_no = current_motion;
     if (motion.state.motion_no != motion.state.playing_no) {
@@ -98,15 +97,8 @@ void CMotionModel::Step(void) {
     }
     SetMotionEX(frame, &motion, motion.motion_info, &motion.state, motion.frame_info);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/motionmodel", Step__12CMotionModelFv);
-#endif
-#ifdef NON_MATCHING
 void CMotionModel::Draw(void) {
     if (frame != NULL) {
         MGDraw(frame);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/motionmodel", Draw__12CMotionModelFv);
-#endif

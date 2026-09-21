@@ -12,7 +12,6 @@
 
 extern "C" CCharacter CharaMain;
 
-#ifdef NON_MATCHING
 void CHealEffect::Set(float *world) {
     sceVu0CopyVector(this->position, world);
     this->active = 1;
@@ -28,18 +27,14 @@ void CHealEffect::Set(float *world) {
         this->particle_offset[i][1] = 2.0f + 10.0f * (float) rand() / 2.1474836e9f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/healeffect", Set__11CHealEffectFPf);
-#endif
 
-#ifdef NON_MATCHING
 void CHealEffect::Step(void) {
-    float offset[4] = {0.0f, 0.0f, 1.0f, 1.0f};
-    sceVu0FMATRIX unit;
-    sceVu0FMATRIX rotation;
-    int expired = 0;
-
     if (this->active != 0) {
+        float offset[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+        sceVu0FMATRIX unit;
+        sceVu0FMATRIX rotation;
+        int expired = 0;
+
         for (int i = 0; i < 32; i++) {
             if (this->phase[i] < 3.1415927f) {
                 // The phase runs a half sine, so the particle rises and fades once.
@@ -74,10 +69,6 @@ void CHealEffect::Step(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/healeffect", Step__11CHealEffectFv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/healeffect", @1415);
 
 #ifdef NON_MATCHING
 void CHealEffect::Draw(void) {

@@ -6,13 +6,15 @@
  * Stores one map-editor element attribute record.
  */
 struct EDIT_ELEMENT_ATRA {
-    u8 unk_00[0xC];
+    s32 tex_no; /**< Cell of the element sheet that the element's icon draws from, seven to a row. */
+    s32 msg_no; /**< Message of the element's name, counted from its georama's first element message. */
+    u8 unk_08[4];
 };
 
 /**
  * Describes one optional model element in a part attribute record.
  */
-struct EDIT_PARTS_ELEMENT_ATRA {
+struct EDIT_CHIP_ATTACH_DATA {
     s32 id;               /**< Element identifier copied into the runtime part record. */
     s32 unk_04;
     char *names[4];       /**< Optional model names controlled by the element. */
@@ -28,7 +30,7 @@ struct EDIT_PARTS_ATRA {
     s32 unk_08;
     s32 unk_0C;
     s32 kind; /**< Parts classification copied into the runtime record. */
-    EDIT_PARTS_ELEMENT_ATRA elements[6]; /**< Optional model-element definitions. */
+    EDIT_CHIP_ATTACH_DATA elements[6]; /**< Optional model-element definitions. */
 };
 
 /**
@@ -40,7 +42,7 @@ struct EDIT_PARTS_DATA {
 };
 
 STATIC_ASSERT(sizeof(EDIT_ELEMENT_ATRA) == 0xC);
-STATIC_ASSERT(sizeof(EDIT_PARTS_ELEMENT_ATRA) == 0x1C);
+STATIC_ASSERT(sizeof(EDIT_CHIP_ATTACH_DATA) == 0x1C);
 STATIC_ASSERT(sizeof(EDIT_PARTS_ATRA) == 0xBC);
 STATIC_ASSERT(sizeof(EDIT_PARTS_DATA) == 0x125C);
 

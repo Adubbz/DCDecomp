@@ -38,10 +38,8 @@ extern int debug_mode;
 extern CTexture *tex;
 extern CTexture *tex2;
 
-#ifdef NON_MATCHING
 /** The part of the screen the event battle's opening wipe has reached. */
 extern CRect_i_ draw_rect;
-#endif
 extern int eb_key_num;
 
 static void init_draw_ok();
@@ -109,7 +107,6 @@ extern float camera_near_dist;
  * @address 0x168200
  * @size 0xA8
  */
-#ifdef NON_MATCHING
 void EBInitIntro(void) {
     tex = TexManager.GetTexture("ebat", -1);
     if (tex == NULL) {
@@ -124,9 +121,6 @@ void EBInitIntro(void) {
     // The wipe opens from the right edge, so it starts with no width.
     draw_rect = CRect_i_(0x280, 0, 0, 0x1C0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", EBInitIntro__Fv);
-#endif
 INCLUDE_ASM("asm/nonmatchings/ebattle", EBSetMotion__FP10CCharacterPi);
 
 void EBDebug(int mode) {
@@ -366,16 +360,12 @@ static float GetLYf() {
  * @address 0x169AF0
  * @size 0x40
  */
-#ifdef NON_MATCHING
 static int PadOn(int keys) {
     if (keylock() != 0) {
         return 0;
     }
     return EdPadOn(keys, 1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", PadOn__Fi);
-#endif
 /**
  * Reports whether a button was just pressed, unless the pad is locked.
  *
@@ -383,16 +373,12 @@ INCLUDE_ASM("asm/nonmatchings/ebattle", PadOn__Fi);
  * @address 0x169B30
  * @size 0x40
  */
-#ifdef NON_MATCHING
 static int PadDown(int keys) {
     if (keylock() != 0) {
         return 0;
     }
     return EdPadDown(keys, 1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", PadDown__Fi);
-#endif
 /**
  * Moves the camera towards a point, keeping it clear of the collision.
  *

@@ -157,19 +157,34 @@ void EastKingTextureEnter() {
 INCLUDE_ASM("asm/nonmatchings/eastking", EastKingTextureEnter__Fv);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/eastking", @371__4);
-#ifdef NON_MATCHING
-void EastKingMsgDraw() {
+
+/**
+ * Draws the current East King event message.
+ *
+ * @mangled EastKingMsgDraw__Fv
+ * @address 0x00232C60
+ * @size 0x1A0
+ */
+static void EastKingMsgDraw() {
     if (EastKing.resources_ready != 0 && EastKingMsgCls.mes_made != EastKingMsg.message_no &&
         EastKingMsg.draw_message != 0) {
         EastKingMsgCls.MakeMesWin(EastKingMsg.message_no);
     }
     MenuTextureReload(EastKingMsgCls.tex_block);
-    if (EastKing.mode == EAST_KING_MESSAGE_FADE_OUT || EastKing.mode == EAST_KING_CLOSING) {
-        EastKingMsg.alpha -= 2;
-    } else if (EastKing.mode == EAST_KING_MESSAGE_FADE_IN ||
-               EastKing.mode == EAST_KING_DIALOGUE ||
-               (EastKing.mode == EAST_KING_LOADING && EastKing.resources_ready != 0)) {
-        EastKingMsg.alpha += 2;
+    switch (EastKing.mode) {
+        case EAST_KING_LOADING:
+            if (EastKing.resources_ready == 0) {
+                break;
+            }
+            // The window fades in once the loading has finished.
+        case EAST_KING_DIALOGUE:
+        case EAST_KING_MESSAGE_FADE_IN:
+            EastKingMsg.alpha += 2;
+            break;
+        case EAST_KING_CLOSING:
+        case EAST_KING_MESSAGE_FADE_OUT:
+            EastKingMsg.alpha -= 2;
+            break;
     }
     if (EastKingMsg.alpha < 0) {
         EastKingMsg.alpha = 0;
@@ -178,33 +193,33 @@ void EastKingMsgDraw() {
         EastKingMsg.alpha = 0x80;
     }
     if (EastKing.resources_ready != 0) {
-        GetMenuCommonPutXY(&EastKingMsgCls, 0x14C - (EastKingMsgCls.char_width >> 1));
+        int half_width = EastKingMsgCls.char_width >> 1;
+        GetMenuCommonPutXY(&EastKingMsgCls, 0x14C - half_width);
         EastKingMsgCls.text_y = 0x132;
         EastKingMsgCls.edge_alpha = EastKingMsg.alpha;
         EastKingMsgCls.Step();
         EastKingMsgCls.DrawMesWin();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/eastking", EastKingMsgDraw__Fv);
-#endif
 
 void GetPrevEastKingSndVol() {
     PrevEastKingSndVol = SndGetBgmVol();
 }
-#ifdef NON_MATCHING
-void InitEastKingEvent(int event_no, int *texture_block, void *load_buffer) {
+
+void InitEastKingEvent(int event_no, int *texture_block, u_long128 *load_buffer) {
     char path[76];
     int size;
 
     GetPathReadDifferntLang(path);
     strcat(path, "eastk/st%d.pak");
     sprintf(path, path, event_no + 1);
-    EastKing.load_buffer = MenuCalcBufAlignment((u_long128 *)load_buffer);
+    EastKing.load_buffer = load_buffer;
+    EastKing.load_buffer = MenuCalcBufAlignment(EastKing.load_buffer);
     StartReadBG();
     LoadFileBG(path, EastKing.load_buffer, &size);
     ReadBG();
-    EastKingSndReadBuf = (u_int *)MenuCalcBufAlignment(EastKing.load_buffer + size / 16 + 0x10);
+    EastKingSndReadBuf = (u_int *) (EastKing.load_buffer + size / 16 + 0x10);
+    EastKingSndReadBuf = (u_int *) MenuCalcBufAlignment((u_long128 *) EastKingSndReadBuf);
     PrevEastKingSndNo = SndGetBgmNo();
     SndBgmLoadBG(0x16, EastKingSndReadBuf, &size);
     EastKing.resources_ready = 0;
@@ -220,11 +235,6 @@ void InitEastKingEvent(int event_no, int *texture_block, void *load_buffer) {
         SaveData->SetGameFlag(EastKing.event_no + 0xE6, 1);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/eastking", InitEastKingEvent__FiPiP1);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/eastking", @398__2);
-#ifdef NON_MATCHING
 int EastKingEventKey() {
     int finished = 0;
     int size;
@@ -234,7 +244,7 @@ int EastKingEventKey() {
         case EAST_KING_LOADING:
             EastKing.transition_frame++;
             EastKingTextureEnter();
-            if (EastKing.transition_frame >= 0x41 && EastKingMsg.alpha >= 0x80 &&
+            if (EastKing.transition_frame > 0x40 && EastKingMsg.alpha >= 0x80 &&
                 EastKing.resources_ready != 0) {
                 EastKing.mode = EAST_KING_DIALOGUE;
                 EastKing.transition_frame = 0;
@@ -250,7 +260,7 @@ int EastKingEventKey() {
                 SndBgmLoadBG(PrevEastKingSndNo, EastKingSndReadBuf, &size);
             }
             EastKing.transition_frame++;
-            if (EastKing.transition_frame >= 0x41 && SndBgmSyncBG() == 0) {
+            if (EastKing.transition_frame > 0x40 && SndBgmSyncBG() == 0) {
                 finished = 1;
                 SndBgmFadeIn(0x3C, PrevEastKingSndVol, 0);
                 SndBgmPlay(0);
@@ -258,8 +268,8 @@ int EastKingEventKey() {
             break;
         case EAST_KING_DIALOGUE:
             if (GamePad.Down(0x40) != 0 && EastKingMsgCls.State() == 3) {
-                int last_message = EastKing.event_no * 100 + 100 + EastKingMsgMax[EastKing.event_no];
-                if (EastKingMsg.message_no + 1 > last_message) {
+                if (EastKingMsg.message_no + 1 >
+                    EastKing.event_no * 100 + 100 + EastKingMsgMax[EastKing.event_no]) {
                     EastKing.mode = EAST_KING_CLOSING;
                     EastKing.transition_frame = 0;
                     SndBgmFadeOut(0x5A, 0);
@@ -294,17 +304,13 @@ int EastKingEventKey() {
     SndStep();
     return finished;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/eastking", EastKingEventKey__Fv);
-#endif
-#ifdef NON_MATCHING
 void EastKingEventDraw() {
     AllFadeForMenu(0x80);
     if (EastKing.resources_ready != 0) {
         MenuTextureReload(EastKing.texture_block);
-        CTexture *picture = TexManager.GetTexture((char *)"st", EastKing.texture_block);
+        CTexture *picture = TexManager.GetTexture("st", EastKing.texture_block);
         if (EastKing.event_no == 2 && EastKingMsg.message_no == 0x12F) {
-            picture = TexManager.GetTexture((char *)"st1", EastKing.texture_block);
+            picture = TexManager.GetTexture("st1", EastKing.texture_block);
         }
         DrawFullSizePicture(picture, 0, 0, 0x80);
         EastKingMsgDraw();
@@ -337,8 +343,3 @@ void EastKingEventDraw() {
     }
     AllFadeForMenu(fade);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/eastking", EastKingEventDraw__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/eastking", @453);
-INCLUDE_RODATA("asm/nonmatchings/eastking", @454);

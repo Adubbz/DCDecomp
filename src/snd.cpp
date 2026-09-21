@@ -8,22 +8,18 @@
 #include <libvu0.h>
 
 #include <cmath>
+#include <cstdio>
+#include <cstring>
 
+#include "camera.hpp"
+#include "dataread.hpp"
 #include "editatra.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "scriptinterpreter.hpp"
 #include "snd.hpp"
 #include "sound.hpp"
-
-#ifdef NON_MATCHING
-/* Only the drafts below need these; the build's own object must not see a
-   header the retail unit did not. */
-#include <cstdio>
-#include <cstring>
-
-#include "dataread.hpp"
-#endif
+#include "texture.hpp"
 
 /* The sound manager: BGM loading, playback and fading, and the SE table.
  * CSound itself is in src/sound.cpp. */
@@ -67,16 +63,17 @@ struct SND_INFO {
 
 STATIC_ASSERT(sizeof(SND_INFO) == 0x10);
 
-#ifdef NON_MATCHING
-/* Defined at the bottom of the unit, past the drafts that call it. */
-void LoadSoundInfo(SND_INFO *info, char *script, int script_size);
-#endif
+/**
+ * Reads one sound configuration file through the script interpreter.
+ *
+ * @mangled LoadSoundInfo__FP8SND_INFOPci
+ * @address 0x15BAB0
+ * @size 0xF4
+ */
+static void LoadSoundInfo(SND_INFO *info, char *script, int script_size);
 
 /** The two script tags LoadSoundInfo recognises. */
 extern TAG_PARAM Command__3[2];
-
-/** The handler LoadSoundInfo calls for each of Command__3's tags. */
-extern void (*CommandExe__3[2])(void **arguments);
 
 /** The sound configuration the command handlers fill in. */
 extern SND_INFO *SoundInfo;
@@ -102,11 +99,23 @@ static void CommandREVERBE(void **arguments);
  */
 static void CommandTABLE(void **arguments);
 
-/** The fixed sound-effect table, addressed by sound number. */
-extern SND_SE_INFO se_info[2801];
+/** The basic sound-effect set the town maps use. */
+extern SND_SE_INFO geo[199];
+
+/** The basic sound-effect set the dungeon maps use. */
+extern SND_SE_INFO dun[199];
 
 /** The two basic sound-effect sets, one of which is loaded at a time. */
-extern SND_SE_INFO *basic_se_info[2];
+static SND_SE_INFO *basic_se_info[2] = {geo, dun};
+
+/** The handler LoadSoundInfo calls for each of Command__3's tags. */
+static void (*CommandExe__3[2])(void **arguments) = {CommandREVERBE, CommandTABLE};
+
+/** Whether the sprites that follow draw with the bilinear filter. */
+static int linear__2 = 1;
+
+/** The fixed sound-effect table, addressed by sound number. */
+extern SND_SE_INFO se_info[2801];
 
 /** The chapter sound-effect sets; entries the game never loads are zero. */
 extern SND_SE_INFO *cap_se_info[101];
@@ -165,9 +174,6 @@ extern int now_amb_vol;
 /** Whether the ambient loop plays: zero while it is stopped, one while it plays. */
 extern int now_amb_play;
 
-/** Whether the sprites that follow draw with the bilinear filter. */
-extern int linear__2;
-
 /** Whether the sound manager has been started once already. */
 extern int init_snd;
 
@@ -209,6 +215,21 @@ extern char snd_cfg_file[32];
 
 /** The voice set's configuration file name. */
 extern char voice_cfg_file[32];
+
+/** The special-effect set that is loading in the background, or -1 for none. */
+extern int load_sp_no;
+
+/** The buffer the loading special-effect set reads into. */
+extern unsigned int *load_sp_adr;
+
+/** The special-effect set's configuration file name. */
+extern char sp_cfg_file[32];
+
+/** Where the camera the sound pans against stands. */
+extern sceVu0FVECTOR camera_pos;
+
+/** Which way the camera the sound pans against looks. */
+extern sceVu0FVECTOR camera_dir;
 
 /**
  * Returns the table row for a sound effect, or zero when the number names no
@@ -299,21 +320,6 @@ EDIT_ELEMENT_ATRA *GetEditAtraChipData(int ground, int number) {
     return GetEditAtraData(ground, number + 40);
 }
 
-INCLUDE_RODATA("asm/nonmatchings/snd", @348);
-INCLUDE_RODATA("asm/nonmatchings/snd", @349);
-INCLUDE_RODATA("asm/nonmatchings/snd", @350);
-INCLUDE_RODATA("asm/nonmatchings/snd", @362);
-INCLUDE_RODATA("asm/nonmatchings/snd", @363__2);
-INCLUDE_RODATA("asm/nonmatchings/snd", @384__2);
-INCLUDE_RODATA("asm/nonmatchings/snd", @514);
-INCLUDE_RODATA("asm/nonmatchings/snd", @515);
-INCLUDE_RODATA("asm/nonmatchings/snd", @725__2);
-INCLUDE_RODATA("asm/nonmatchings/snd", @726__2);
-INCLUDE_RODATA("asm/nonmatchings/snd", @751);
-INCLUDE_RODATA("asm/nonmatchings/snd", @752);
-INCLUDE_RODATA("asm/nonmatchings/snd", @799);
-INCLUDE_RODATA("asm/nonmatchings/snd", @800);
-
 #ifdef NON_MATCHING
 void LensFlare(CTexture *texture, float *position, unsigned char red, unsigned char green,
                unsigned char blue) {
@@ -370,7 +376,6 @@ INCLUDE_ASM("asm/nonmatchings/snd", LensFlare__FP8CTexturePfUcUcUc);
  * @address 0x1591A0
  * @size 0x60
  */
-#ifdef NON_MATCHING
 void SndInit(void) {
     if (init_snd == 0) {
         CSnd.Init(0, 0, 0, 0);
@@ -378,10 +383,6 @@ void SndInit(void) {
         SndInitialize(4, 0x1E, 4, 5);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", SndInit__Fv);
-#endif
-#ifdef NON_MATCHING
 void SndInitialize(int, int, int, int) {
     snd_read_buf = read_buffer;
     SndBgmInit();
@@ -405,9 +406,6 @@ void SndInitialize(int, int, int, int) {
     load_voice_adr = 0;
     voice_cfg_file[0] = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", SndInitialize__Fiiii);
-#endif
 
 void SndExit() {
     CSnd.Stop(0);
@@ -430,8 +428,92 @@ void SndStep() {
     CSnd.Step();
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndInitSeTable__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetReadBuffer__FPUi);
+void SndInitSeTable() {
+    int i;
+    int j;
+
+    for (i = 0; i < 2800; i++) {
+        SND_SE_INFO *info = &se_info[i];
+
+        if (info->bank >= 0) {
+            info->vol_no = CSnd.GetSeNo(info->bank, info->prog);
+        }
+    }
+
+    for (j = 0; j < 100; j++) {
+        SND_SE_INFO *table = cap_se_info[j];
+
+        if (table == 0) {
+            continue;
+        }
+        for (i = 0; i < 100; i++) {
+            SND_SE_INFO *info = &table[i];
+
+            if (info->bank == -128) {
+                break;
+            }
+            if (info->bank >= 0) {
+                info->vol_no = CSnd.GetSeNo(info->bank, info->prog);
+            }
+        }
+    }
+
+    for (j = 0; j < 2; j++) {
+        SND_SE_INFO *table = basic_se_info[j];
+
+        if (table == 0) {
+            continue;
+        }
+        for (i = 0; i < 200; i++) {
+            SND_SE_INFO *info = &table[i];
+
+            if (info->bank == -128) {
+                break;
+            }
+            if (info->bank >= 0) {
+                info->vol_no = CSnd.GetSeNo(info->bank, info->prog);
+            }
+        }
+    }
+
+    for (j = 0; j < 10; j++) {
+        SND_SE_INFO *table = voice_info[j];
+
+        if (table == 0) {
+            continue;
+        }
+        for (i = 0; i < 100; i++) {
+            SND_SE_INFO *info = &table[i];
+
+            if (info->bank == -128) {
+                break;
+            }
+            if (info->bank >= 0) {
+                info->vol_no = CSnd.GetSeNo(info->bank, info->prog);
+            }
+        }
+    }
+
+    for (i = 0; i < 64; i++) {
+        SND_SE_INFO *info = &special_se_info[i];
+
+        if (info->bank == -128) {
+            break;
+        }
+        if (info->bank >= 0) {
+            info->vol_no = CSnd.GetSeNo(info->bank, info->prog);
+        }
+    }
+}
+
+void SndSetReadBuffer(unsigned int *buffer) {
+    int misalign = (int) buffer % 64;
+
+    if (misalign != 0) {
+        buffer = (unsigned int *) ((int) buffer + (64 - misalign));
+    }
+    snd_read_buf = buffer;
+}
 /**
  * Reports whether any of the background sound loads is still running.
  *
@@ -439,8 +521,23 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSetReadBuffer__FPUi);
  * @address 0x159670
  * @size 0x80
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSyncBG__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetCamera__FP7CCamera);
+int SndSyncBG() {
+    if (SndBgmSyncBG()) {
+        return 1;
+    }
+    if (SndSoundSyncBG()) {
+        return 1;
+    }
+    if (SndSPSeSyncBG()) {
+        return 1;
+    }
+    return SndVoiceSyncBG() ? 1 : 0;
+}
+
+void SndSetCamera(CCamera *camera) {
+    camera->GetPos(camera_pos);
+    camera->GetDir(camera_dir);
+}
 /**
  * Tells the sound where the camera stands and which way it looks.
  *
@@ -448,7 +545,10 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSetCamera__FP7CCamera);
  * @address 0x159740
  * @size 0x50
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetCamera__FPfPf);
+void SndSetCamera(float *position, float *rotation) {
+    sceVu0CopyVector(camera_pos, position);
+    sceVu0CopyVector(camera_dir, rotation);
+}
 /**
  * Builds the archive and configuration file names of one music set.
  *
@@ -456,17 +556,13 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSetCamera__FPfPf);
  * @address 0x159790
  * @size 0x7C
  */
-#ifdef NON_MATCHING
-void GetBGMFile(int set_no, char *archive_name, char *config_name) {
+static void GetBGMFile(int set_no, char *archive_name, char *config_name) {
     char name[16];
 
     sprintf(name, "bgm%d", set_no);
     sprintf(archive_name, "sound/bgm/%s.snd", name);
     sprintf(config_name, "%s.txt", name);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", GetBGMFile__FiPcPc);
-#endif
 /**
  * Hands a loaded music set to the driver and reads its configuration.
  *
@@ -474,10 +570,10 @@ INCLUDE_ASM("asm/nonmatchings/snd", GetBGMFile__FiPcPc);
  * @address 0x159810
  * @size 0x114
  */
-#ifdef NON_MATCHING
-void SetBGMFile(int set_no, unsigned int *buffer, char *filename) {
+static void SetBGMFile(int set_no, unsigned int *buffer, char *filename) {
     char base_name[64];
-    char *dst = base_name;
+    char *dst;
+    char c;
     unsigned int *packed;
     int size;
     SND_INFO info;
@@ -487,8 +583,14 @@ void SetBGMFile(int set_no, unsigned int *buffer, char *filename) {
     now_bgm_no = set_no;
     now_bgm_play = 0;
 
-    for (; *filename != 0 && *filename != '.'; filename++) {
-        *dst++ = *filename;
+    dst = base_name;
+    while ((c = *filename) != 0) {
+        if (c == '.') {
+            break;
+        }
+        *dst = c;
+        filename++;
+        dst++;
     }
     *dst = 0;
 
@@ -500,9 +602,6 @@ void SetBGMFile(int set_no, unsigned int *buffer, char *filename) {
         printf("core 0 rev = %d %d\n", info.reverb_mode, info.reverb_depth);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", SetBGMFile__FiPUiPc);
-#endif
 
 int SndBgmInit() {
     now_bgm_no = -1;
@@ -515,7 +614,20 @@ int SndBgmInit() {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmLoad__Fi);
+int SndBgmLoad(int set_no) {
+    char archive_name[128];
+    char config_name[16];
+
+    if (now_bgm_no == set_no) {
+        return 0;
+    }
+    GetBGMFile(set_no, archive_name, config_name);
+    if (LoadFile2(archive_name, snd_read_buf, 0, 0)) {
+        SetBGMFile(set_no, snd_read_buf, config_name);
+        return 1;
+    }
+    return 0;
+}
 /**
  * Starts loading one music set in the background.
  *
@@ -523,8 +635,37 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndBgmLoad__Fi);
  * @address 0x1599F0
  * @size 0xC0
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmLoadBG__FiPUiPi);
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmSyncBG__Fv);
+int SndBgmLoadBG(int set_no, u_int *buffer, int *size) {
+    char archive_name[128];
+
+    if (size != 0) {
+        *size = 0;
+    }
+    if (now_bgm_no == set_no) {
+        return 0;
+    }
+    GetBGMFile(set_no, archive_name, bgm_cfg_file);
+    printf("%d\n", set_no);
+    if (LoadFileBG(archive_name, (u_long128 *) buffer, size)) {
+        load_bgm_no = set_no;
+        load_bgm_adr = buffer;
+        return 1;
+    }
+    return 0;
+}
+
+int SndBgmSyncBG() {
+    if (load_bgm_no < 0 || load_bgm_adr == 0) {
+        return 0;
+    }
+    if (ReadBGSync()) {
+        return 1;
+    }
+    SetBGMFile(load_bgm_no, load_bgm_adr, bgm_cfg_file);
+    load_bgm_no = -1;
+    load_bgm_adr = 0;
+    return 0;
+}
 
 void SndBgmPlay(int track_no) {
     if (bgm_off == 0 && now_bgm_no >= 0 && now_bgm_play != 1) {
@@ -550,7 +691,19 @@ void SndBgmRePlay() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeOutStop__Fv);
+void SndBgmFadeOutStop() {
+    float volume = SndGetBgmVol();
+    float step = volume / 10.0f;
+    int i;
+
+    for (i = 0; i < 10; i++) {
+        sceGsSyncV(0);
+        volume -= step;
+        SndSetBgmVol((int) volume);
+        SndStep();
+    }
+    SndBgmStop();
+}
 
 int SndBgmCheck() {
     return now_bgm_play;
@@ -567,7 +720,17 @@ int SndGetBgmNo() {
  * @address 0x159D20
  * @size 0x70
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetBgmVol__Fi);
+void SndSetBgmVol(int volume) {
+    if (now_bgm_no >= 0 && now_bgm_vol != volume) {
+        if (volume < 0 || volume > 127) {
+            return;
+        }
+        if (now_bgm_play != 0) {
+            now_bgm_vol = volume;
+            CSnd.SetVol(0, volume);
+        }
+    }
+}
 /**
  * Sets the background music's volume as a share of its default.
  *
@@ -587,7 +750,7 @@ int SndGetDefaultBgmVol() {
     if (now_bgm_no < 0) {
         return 0;
     }
-    return CSnd.GetMidiState()->sequence->volume;
+    return CSnd.GetMidiState()->port[0].sequence[0]->volume;
 }
 
 /**
@@ -597,7 +760,22 @@ int SndGetDefaultBgmVol() {
  * @address 0x159E40
  * @size 0xC8
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeIn__Fiii);
+void SndBgmFadeIn(int frames, int volume, int start_volume) {
+    if (frames > 0) {
+        if (volume < 0) {
+            volume = SndGetDefaultBgmVol();
+        }
+        bgm_fade_vol = volume;
+        if (start_volume < 0) {
+            start_volume = SndGetBgmVol();
+        }
+        if (start_volume != SndGetDefaultBgmVol()) {
+            now_bgm_fade_vol = (float) start_volume / (float) SndGetDefaultBgmVol();
+            bgm_fade = 1;
+            bgm_fade_step = ((float) bgm_fade_vol - now_bgm_fade_vol) / (float) frames;
+        }
+    }
+}
 /**
  * Fades the background music down to a volume over a number of steps.
  *
@@ -605,14 +783,41 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeIn__Fiii);
  * @address 0x159F10
  * @size 0x74
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeOut__Fii);
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmFadeInOut__Fv);
+void SndBgmFadeOut(int frames, int volume) {
+    if (frames > 0) {
+        bgm_fade_vol = volume;
+        now_bgm_fade_vol = (float) SndGetBgmVol();
+        bgm_fade = -1;
+        bgm_fade_step = ((float) bgm_fade_vol - now_bgm_fade_vol) / (float) frames;
+    }
+}
+
+void SndBgmFadeInOut() {
+    float step;
+
+    if (bgm_fade != 0) {
+        now_bgm_fade_vol += bgm_fade_step;
+        step = bgm_fade_step;
+        if ((step < 0.0f ? -step : step) < 0.0001f) {
+            bgm_fade = 0;
+        }
+        if (bgm_fade > 0) {
+            if (now_bgm_fade_vol >= (float) bgm_fade_vol) {
+                now_bgm_fade_vol = (float) bgm_fade_vol;
+                bgm_fade = 0;
+            }
+        } else if (now_bgm_fade_vol <= (float) bgm_fade_vol) {
+            now_bgm_fade_vol = (float) bgm_fade_vol;
+            bgm_fade = 0;
+        }
+        SndSetBgmVol((int) now_bgm_fade_vol);
+    }
+}
 
 int SndCheckFade() {
     return bgm_fade == 0;
 }
 
-#ifdef NON_MATCHING
 static SND_SE_INFO *GetSeInfo(int se_no) {
     SND_SE_INFO *table;
 
@@ -640,9 +845,6 @@ static SND_SE_INFO *GetSeInfo(int se_no) {
 
     return &se_info[se_no];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", GetSeInfo__Fi);
-#endif
 static int GetPortNo(int se_no) {
     SND_SE_INFO *info = GetSeInfo(se_no);
 
@@ -658,7 +860,13 @@ static int GetPortNo(int se_no) {
  * @address 0x15A240
  * @size 0x7C
  */
-INCLUDE_ASM("asm/nonmatchings/snd", GetSoundFile__FiPcPc);
+static void GetSoundFile(int set_no, char *archive_name, char *config_name) {
+    char name[16];
+
+    sprintf(name, "snd%d", set_no);
+    sprintf(archive_name, "sound/set/%s.snd", name);
+    sprintf(config_name, "%s.txt", name);
+}
 /**
  * Hands a loaded sound-effect set to the driver and sets its channel volumes.
  *
@@ -666,7 +874,45 @@ INCLUDE_ASM("asm/nonmatchings/snd", GetSoundFile__FiPcPc);
  * @address 0x15A2C0
  * @size 0x174
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SetSoundFile__FiPUiPc);
+static void SetSoundFile(int set_no, unsigned int *buffer, char *filename) {
+    char base_name[64];
+    char *dst;
+    char c;
+    SND_INFO info;
+    unsigned int *packed;
+    int size;
+
+    CSnd.LoadSoundFileFromPack(filename, buffer);
+    CSnd.SetVol(15, 0x100);
+    CSnd.SetVol(14, 0x100);
+    CSnd.SetVol(10, 0x100);
+    CSnd.SetVol(13, 0x100);
+    CSnd.SetVol(12, 0x100);
+    now_sound_set = set_no;
+    snd_id = 0;
+    now_amb_no = -1;
+    SndStopAllSe();
+
+    dst = base_name;
+    while ((c = *filename) != 0) {
+        if (c == '.') {
+            break;
+        }
+        *dst = c;
+        filename++;
+        dst++;
+    }
+    *dst = 0;
+
+    strcat(base_name, ".cfg");
+    packed = GetPackFile(buffer, base_name, &size);
+    if (packed != 0) {
+        LoadSoundInfo(&info, (char *) packed, size);
+        CSnd.SetReverb(1, info.reverb_mode, info.reverb_depth);
+        basic_se_table_no = info.se_table;
+        se_table_no = info.se_table_type;
+    }
+}
 
 int SndGetNowSetNo() {
     return now_sound_set;
@@ -684,7 +930,20 @@ void SndStopAllSe() {
     CSnd.StopVoice(1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndSoundLoad__Fi);
+int SndSoundLoad(int set_no) {
+    char archive_name[128];
+    char config_name[32];
+
+    if (now_sound_set == set_no) {
+        return 0;
+    }
+    GetSoundFile(set_no, archive_name, config_name);
+    if (LoadFile2(archive_name, snd_read_buf, 0, 0)) {
+        SetSoundFile(set_no, snd_read_buf, config_name);
+        return 1;
+    }
+    return 0;
+}
 /**
  * Starts loading one sound-effect set in the background.
  *
@@ -692,10 +951,54 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSoundLoad__Fi);
  * @address 0x15A580
  * @size 0xAC
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSoundLoadBG__FiPUiPi);
-INCLUDE_ASM("asm/nonmatchings/snd", SndSoundSyncBG__Fv);
-INCLUDE_ASM("asm/nonmatchings/snd", SndSePlay__Fiii);
-#ifdef NON_MATCHING
+int SndSoundLoadBG(int set_no, u_int *buffer, int *size) {
+    char archive_name[128];
+
+    if (size != 0) {
+        *size = 0;
+    }
+    if (now_sound_set == set_no) {
+        return 0;
+    }
+    GetSoundFile(set_no, archive_name, snd_cfg_file);
+    if (LoadFileBG(archive_name, (u_long128 *) buffer, size)) {
+        load_snd_set = set_no;
+        load_snd_adr = buffer;
+        return 1;
+    }
+    return 0;
+}
+
+int SndSoundSyncBG() {
+    if (load_snd_set < 0 || load_snd_adr == 0) {
+        return 0;
+    }
+    if (ReadBGSync()) {
+        return 1;
+    }
+    SetSoundFile(load_snd_set, load_snd_adr, snd_cfg_file);
+    load_snd_set = -1;
+    load_snd_adr = 0;
+    return 0;
+}
+
+void SndSePlay(int se_no, int vol, int voice) {
+    SND_SE_INFO *info = GetSeInfo(se_no);
+
+    if (info != 0) {
+        if (info->vol_no < 0) {
+            vol = 127;
+        }
+        int port = GetPortNo(se_no);
+        static int system_snd_id = (int) 0.0f;
+
+        if (vol < 0) {
+            CSnd.SE_Play(port, info->vol_no, voice);
+        } else {
+            CSnd.SE_Play(port, info->bank, info->prog, vol, voice);
+        }
+    }
+}
 void SndSePlay(int se_no, float volume, float pan, int voice) {
     SND_SE_INFO *info = GetSeInfo(se_no);
 
@@ -709,19 +1012,20 @@ void SndSePlay(int se_no, float volume, float pan, int voice) {
         CSnd.SE_Play(GetPortNo(se_no), info->bank, info->prog, hw_pan, 127, vol, voice);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", SndSePlay__Fiffi);
-#endif
-INCLUDE_ASM("asm/nonmatchings/snd", SndSePlay__FiPfff);
-#ifdef NON_MATCHING
-void SndSeStop(int se_no, int voice) {
-    SND_SE_INFO *info = GetSeInfo(se_no);
 
-    if (info != 0) {
-        CSnd.SE_Stop(GetPortNo(se_no), info->bank, info->prog, voice);
+void SndSePlay(int se_no, float *position, float near, float far) {
+    float volume;
+    float pan;
+
+    if (near < 0.0f) {
+        near = 20.0f;
     }
+    if (far < 0.0f) {
+        far = 500.0f;
+    }
+    SndGetVolPan(&volume, &pan, position, near, far);
+    SndSePlay(se_no, volume, pan, 0);
 }
-#else
 /**
  * Stops a sounding effect.
  *
@@ -729,10 +1033,48 @@ void SndSeStop(int se_no, int voice) {
  * @address 0x15A8B0
  * @size 0x50
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSeStop__Fii);
-#endif
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetSeVol__Fiii);
-INCLUDE_ASM("asm/nonmatchings/snd", SndGetVolf__Fif);
+void SndSeStop(int se_no, int voice) {
+    SND_SE_INFO *info = GetSeInfo(se_no);
+
+    if (info != 0) {
+        CSnd.SE_Stop(GetPortNo(se_no), info->bank, info->prog, voice);
+    }
+}
+
+void SndSetSeVol(int se_no, int vol, int voice) {
+    SND_SE_INFO *info;
+
+    if (vol < 0 || vol > 127) {
+        return;
+    }
+    info = GetSeInfo(se_no);
+    if (info != 0) {
+        CSnd.SE_SetVol(GetPortNo(se_no), info->bank, info->prog, vol, voice);
+    }
+}
+
+int SndGetVolf(int se_no, float vol) {
+    SND_SE_INFO *info = GetSeInfo(se_no);
+    short *table;
+    int level;
+
+    if (info == 0) {
+        return 0;
+    }
+    table = CSnd.GetSeInfTbl();
+    level = 64;
+    if (info->vol_no >= 0) {
+        level = table[info->vol_no * 2 + 1];
+    }
+    level = (int) ((float) level * vol);
+    if (level < 0) {
+        level = 0;
+    }
+    if (level > 127) {
+        level = 127;
+    }
+    return level;
+}
 
 int SndGetPanf(float pan) {
     if (pan < -1.0f) {
@@ -744,16 +1086,11 @@ int SndGetPanf(float pan) {
     return (int) (63.0f * pan) + 64;
 }
 
-#ifdef NON_MATCHING
 void SndSetSeVolf(int se_no, float vol, int voice) {
     if (GetSeInfo(se_no) != 0) {
         SndSetSeVol(se_no, SndGetVolf(se_no, vol), voice);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetSeVolf__Fifi);
-#endif
-#ifdef NON_MATCHING
 void SndSetSePanf(int se_no, float pan, int voice) {
     SND_SE_INFO *info = GetSeInfo(se_no);
 
@@ -763,15 +1100,11 @@ void SndSetSePanf(int se_no, float pan, int voice) {
         CSnd.SE_SetPan(GetPortNo(se_no), info->bank, info->prog, hw_pan, voice);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetSePanf__Fifi);
-#endif
 INCLUDE_ASM("asm/nonmatchings/snd", SndPlayFootSound__FiiPf);
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetVolPan__FPfPfPfff);
 static void InitSeSeq(SND_SE_SEQ *seq) {
     seq->se_no = -1;
 }
-#ifdef NON_MATCHING
 static SND_SE_SEQ *GetSeSeq(int *found, int se_no, int voice) {
     int i;
     SND_SE_SEQ *slot = 0;
@@ -794,11 +1127,14 @@ static SND_SE_SEQ *GetSeSeq(int *found, int se_no, int voice) {
     }
     return slot;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", GetSeSeq__FPiii);
-#endif
-INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqInit__Fv);
-#ifdef NON_MATCHING
+
+void SndSeSeqInit() {
+    int i;
+
+    for (i = 0; i < 32; i++) {
+        InitSeSeq(&se_seq[i]);
+    }
+}
 int SndSeSeqPlayStop(int se_no, int length, int voice) {
     int found;
     SND_SE_SEQ *slot = GetSeSeq(&found, se_no, voice);
@@ -817,10 +1153,25 @@ int SndSeSeqPlayStop(int se_no, int length, int voice) {
     slot->voice = voice;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqPlayStop__Fiii);
-#endif
-INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqStep__Fv);
+
+static void SndSeSeqStep() {
+    int i;
+
+    for (i = 0; i < 32; i++) {
+        SND_SE_SEQ *seq = &se_seq[i];
+
+        if (seq->se_no >= 0) {
+            if (seq->step == 0) {
+                SndSePlay(seq->se_no, -1, seq->voice);
+            }
+            if (seq->step >= seq->length) {
+                SndSeStop(seq->se_no, seq->voice);
+                InitSeSeq(seq);
+            }
+            seq->step++;
+        }
+    }
+}
 /**
  * Stops every sound-effect sequence.
  *
@@ -828,7 +1179,20 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqStep__Fv);
  * @address 0x15B060
  * @size 0x84
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqAllStop__Fv);
+void SndSeSeqAllStop() {
+    SND_SE_SEQ *seq;
+    int i;
+
+    for (i = 0; i < 32; i++) {
+        seq = &se_seq[i];
+
+        if (seq->se_no >= 0) {
+            SndSeStop(seq->se_no, seq->voice);
+            InitSeSeq(seq);
+            seq->step++;
+        }
+    }
+}
 
 int SndAmbientInit() {
     now_amb_no = -1;
@@ -847,7 +1211,12 @@ void SndAmbientPlay(int ambient_no) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientStop__Fv);
+void SndAmbientStop() {
+    if (now_amb_no >= 0 && now_amb_play != 0) {
+        CSnd.Stop(1);
+        now_amb_play = 0;
+    }
+}
 /**
  * Sets the ambient loop's volume.
  *
@@ -855,7 +1224,15 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientStop__Fv);
  * @address 0x15B1E0
  * @size 0x60
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientSetVol__Fi);
+void SndAmbientSetVol(int volume) {
+    if (now_amb_no >= 0 && now_amb_vol != volume && volume >= 0) {
+        if (volume > 127) {
+            volume = 127;
+        }
+        now_amb_vol = volume;
+        CSnd.SetVol(1, volume);
+    }
+}
 /**
  * Sets the ambient loop's volume as a share of its default.
  *
@@ -863,8 +1240,20 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientSetVol__Fi);
  * @address 0x15B240
  * @size 0x5C
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientSetVolf__Ff);
-INCLUDE_ASM("asm/nonmatchings/snd", SndGetAmbientDefaultVol__Fv);
+void SndAmbientSetVolf(float volume) {
+    if (now_amb_no >= 0) {
+        int level = SndGetAmbientDefaultVol();
+
+        SndAmbientSetVol((int) ((float) level * volume));
+    }
+}
+
+int SndGetAmbientDefaultVol() {
+    if (CSnd.GetMidiState()->port[2].sequence[now_amb_no] != 0) {
+        return CSnd.GetMidiState()->port[2].sequence[now_amb_no]->volume;
+    }
+    return 64;
+}
 /**
  * Builds the archive and configuration file names of one voice set.
  *
@@ -872,7 +1261,13 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndGetAmbientDefaultVol__Fv);
  * @address 0x15B310
  * @size 0x7C
  */
-INCLUDE_ASM("asm/nonmatchings/snd", GetVoiceFile__FiPcPc);
+static void GetVoiceFile(int set_no, char *archive_name, char *config_name) {
+    char name[16];
+
+    sprintf(name, "voice%d", set_no);
+    sprintf(archive_name, "sound/voice/%s.snd", name);
+    sprintf(config_name, "%s.txt", name);
+}
 /**
  * Hands a loaded voice set to the driver and reads its configuration.
  *
@@ -885,7 +1280,21 @@ static void SetVoiceFile(int voice_set, u_int *pack, char *file_name) {
     CSnd.SetVol(11, 0x100);
     now_voice_set = voice_set;
 }
-INCLUDE_ASM("asm/nonmatchings/snd", SndVoiceLoad__Fi);
+
+int SndVoiceLoad(int set_no) {
+    char archive_name[128];
+    char config_name[32];
+
+    if (now_voice_set == set_no) {
+        return 0;
+    }
+    GetVoiceFile(set_no, archive_name, config_name);
+    if (LoadFile2(archive_name, snd_read_buf, 0, 0)) {
+        SetVoiceFile(set_no, snd_read_buf, config_name);
+        return 1;
+    }
+    return 0;
+}
 /**
  * Starts loading one voice set in the background.
  *
@@ -893,8 +1302,36 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndVoiceLoad__Fi);
  * @address 0x15B480
  * @size 0xAC
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndVoiceLoadBG__FiPUiPi);
-INCLUDE_ASM("asm/nonmatchings/snd", SndVoiceSyncBG__Fv);
+int SndVoiceLoadBG(int set_no, u_int *buffer, int *size) {
+    char archive_name[128];
+
+    if (size != 0) {
+        *size = 0;
+    }
+    if (now_voice_set == set_no) {
+        return 0;
+    }
+    GetVoiceFile(set_no, archive_name, voice_cfg_file);
+    if (LoadFileBG(archive_name, (u_long128 *) buffer, size)) {
+        load_voice_set = set_no;
+        load_voice_adr = buffer;
+        return 1;
+    }
+    return 0;
+}
+
+int SndVoiceSyncBG() {
+    if (load_voice_set < 0 || load_voice_adr == 0) {
+        return 0;
+    }
+    if (ReadBGSync()) {
+        return 1;
+    }
+    SetVoiceFile(load_voice_set, load_voice_adr, voice_cfg_file);
+    load_voice_set = -1;
+    load_voice_adr = 0;
+    return 0;
+}
 static SND_SE_INFO *GetSPInfo(int se_no) {
     if (se_no < 0 || se_no >= 64) {
         return 0;
@@ -908,7 +1345,13 @@ static SND_SE_INFO *GetSPInfo(int se_no) {
  * @address 0x15B5F0
  * @size 0x7C
  */
-INCLUDE_ASM("asm/nonmatchings/snd", GetSPSeFile__FiPcPc);
+static void GetSPSeFile(int set_no, char *archive_name, char *config_name) {
+    char name[16];
+
+    sprintf(name, "sp%d", set_no);
+    sprintf(archive_name, "sound/special/%s.snd", name);
+    sprintf(config_name, "%s.txt", name);
+}
 /**
  * Hands a loaded special-effect set to the driver and reads its configuration.
  *
@@ -916,9 +1359,41 @@ INCLUDE_ASM("asm/nonmatchings/snd", GetSPSeFile__FiPcPc);
  * @address 0x15B670
  * @size 0x54
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SetSPSeFile__FiPUiPc);
-INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoad__Fi);
-INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoadBG__FiPUiPi);
+static void SetSPSeFile(int set_no, u_int *pack, char *file_name) {
+    CSnd.LoadSoundFileFromPack(file_name, pack);
+    CSnd.SetVol(12, 0x100);
+    now_sp_no = set_no;
+}
+
+int SndSPSeLoad(int set_no) {
+    char archive_name[128];
+    char config_name[32];
+
+    if (now_sp_no == set_no) {
+        return 0;
+    }
+    GetSPSeFile(set_no, archive_name, config_name);
+    if (LoadFile2(archive_name, snd_read_buf, 0, 0)) {
+        SetSPSeFile(set_no, snd_read_buf, config_name);
+        return 1;
+    }
+    return 0;
+}
+
+int SndSPSeLoadBG(int set_no, u_int *buffer, int *size) {
+    char archive_name[128];
+
+    if (size != 0) {
+        *size = 0;
+    }
+    GetSPSeFile(set_no, archive_name, sp_cfg_file);
+    if (LoadFileBG(archive_name, (u_long128 *) buffer, size)) {
+        load_sp_no = set_no;
+        load_sp_adr = buffer;
+        return 1;
+    }
+    return 0;
+}
 /**
  * Polls the special-effect set load and hands the file to the driver once it lands.
  *
@@ -926,8 +1401,26 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeLoadBG__FiPUiPi);
  * @address 0x15B800
  * @size 0x80
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSPSeSyncBG__Fv);
-#ifdef NON_MATCHING
+int SndSPSeSyncBG() {
+    if (load_sp_no < 0 || load_sp_adr == 0) {
+        return 0;
+    }
+    if (ReadBGSync()) {
+        return 1;
+    }
+    SetSPSeFile(load_sp_no, load_sp_adr, sp_cfg_file);
+    load_sp_no = -1;
+    load_sp_adr = 0;
+    return 0;
+}
+
+/**
+ * Plays one special sound effect.
+ *
+ * @mangled SndSPSePlay__Fii
+ * @address 0x15B880
+ * @size 0x7C
+ */
 void SndSPSePlay(int se_no, int vol) {
     SND_SE_INFO *info = GetSPInfo(se_no);
 
@@ -942,16 +1435,6 @@ void SndSPSePlay(int se_no, int vol) {
         }
     }
 }
-#else
-/**
- * Plays one special sound effect.
- *
- * @mangled SndSPSePlay__Fii
- * @address 0x15B880
- * @size 0x7C
- */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSPSePlay__Fii);
-#endif
 void SndSPSeStop(int se_no) {
     SND_SE_INFO *info = GetSPInfo(se_no);
 
@@ -966,8 +1449,32 @@ void SndSPSeStop(int se_no) {
  * @address 0x15B950
  * @size 0xB0
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetSPSeVolf__Fif);
-#ifdef NON_MATCHING
+void SndSetSPSeVolf(int se_no, float volume) {
+    SND_SE_INFO *info = GetSPInfo(se_no);
+
+    if (info != 0) {
+        short *table = CSnd.GetSeInfTbl();
+        int level = table[info->vol_no * 2 + 1];
+
+        level = (int) ((float) level * volume);
+
+        if (level < 0) {
+            level = 0;
+        }
+        if (level > 127) {
+            level = 127;
+        }
+        CSnd.SE_SetVol(12, info->bank, info->prog, level, 0);
+    }
+}
+
+/**
+ * Sets a special sound effect's pan as a share of the widest pan.
+ *
+ * @mangled SndSetSPSePanf__Fif
+ * @address 0x15BA00
+ * @size 0xA8
+ */
 void SndSetSPSePanf(int se_no, float pan) {
     if (pan < -1.0f) {
         pan = -1.0f;
@@ -981,16 +1488,9 @@ void SndSetSPSePanf(int se_no, float pan) {
         CSnd.SE_SetPan(12, info->vol_no, (int)(63.0f * pan) + 64, 0);
     }
 }
-#else
-/**
- * Sets a special sound effect's pan as a share of the widest pan.
- *
- * @mangled SndSetSPSePanf__Fif
- * @address 0x15BA00
- * @size 0xA8
- */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetSPSePanf__Fif);
-#endif
+
+INCLUDE_RODATA("asm/nonmatchings/snd", @799);
+INCLUDE_RODATA("asm/nonmatchings/snd", @800);
 /**
  * Reads one sound configuration file through the script interpreter.
  *
@@ -1020,35 +1520,301 @@ void LoadSoundInfo(SND_INFO *info, char *script, int script_size) {
 #else
 INCLUDE_ASM("asm/nonmatchings/snd", LoadSoundInfo__FP8SND_INFOPci);
 #endif
-#ifdef NON_MATCHING
 static void CommandREVERBE(void **arguments) {
     SoundInfo->reverb_mode = *(s32 *) arguments[0];
     SoundInfo->reverb_depth = *(s32 *) arguments[1];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", CommandREVERBE__FPPv);
-#endif
-#ifdef NON_MATCHING
 static void CommandTABLE(void **arguments) {
     SoundInfo->se_table = *(s32 *) arguments[0];
     SoundInfo->se_table_type = *(s32 *) arguments[1];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", CommandTABLE__FPPv);
-#endif
 
 void setbilinear(int on) {
     linear__2 = on;
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", setAlphaFlag__FP13sceVif1PacketP10sceGsAlpha);
-INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_ii);
-INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_);
-INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_Uc);
-INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_UcUcUcUc);
-INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBAi);
-INCLUDE_ASM("asm/nonmatchings/snd", set3DColSprite__FP13sceVif1PacketPiPiPiPiP6spRGBAP6spRGBAP6spRGBAP6spRGBA);
-INCLUDE_ASM("asm/nonmatchings/snd", set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiPiPiUc);
+void setAlphaFlag(sceVif1Packet *packet, sceGsAlpha *alpha) {
+    sceGifTag tag;
+
+    *(u_long128 *) &tag = 0;
+    tag.EOP = 1;
+    tag.NREG = 1;
+    tag.REGS0 = SCE_GIF_PACKED_AD;
+
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &tag);
+    sceVif1PkAddGsAD(packet, SCE_GS_ALPHA_1, *(u_long *) alpha);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
+                 int u, int v) {
+    sceGsTest test;
+    sceGsZbuf zbuf;
+    float q;
+
+    if (texture == 0) {
+        return;
+    }
+    q = 1.0f;
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, ((u_long) linear__2 << 5) | 0x41);
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
+                     SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
+    test = mgPixelTest;
+    test.bits.ate = 0;
+    test.bits.aref = 0;
+    test.bits.atst = SCE_GS_ALWAYS;
+    test.bits.zte = 1;
+    test.bits.ztst = SCE_GS_ALWAYS;
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &test);
+    zbuf = mgZBuffer;
+    zbuf.bits.zmsk = 1;
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, 0x80, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(u << 4, v << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV,
+                     SCE_GS_SET_UV((u + screen.width) << 4, (v + screen.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647,
+                                      ((screen.y + screen.height) << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
+                 const CRect_i_ &clip) {
+    sceGsTest test;
+    sceGsZbuf zbuf;
+    float q;
+
+    if (texture == 0) {
+        return;
+    }
+    q = 1.0f;
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, ((u_long) linear__2 << 5) | 0x41);
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
+                     SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 1, 1, 0, 0));
+    test = mgPixelTest;
+    test.bits.ate = 0;
+    test.bits.aref = 0;
+    test.bits.atst = SCE_GS_ALWAYS;
+    test.bits.zte = 1;
+    test.bits.ztst = SCE_GS_ALWAYS;
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &test);
+    zbuf = mgZBuffer;
+    zbuf.bits.zmsk = 1;
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, 0x80, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(clip.x << 4, clip.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV,
+                     SCE_GS_SET_UV((clip.x + clip.width) << 4, (clip.y + clip.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647,
+                                      ((screen.y + screen.height) << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
+                 const CRect_i_ &texel, unsigned char alpha) {
+    sceGsTest test;
+    sceGsZbuf zbuf;
+    float q;
+
+    if (texture == 0) {
+        return;
+    }
+    q = 1.0f;
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, ((u_long) linear__2 << 5) | 0x41);
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
+                     SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 1, 1, 0, 0));
+    test = mgPixelTest;
+    test.bits.ate = 0;
+    test.bits.aref = 0;
+    test.bits.atst = SCE_GS_ALWAYS;
+    test.bits.zte = 1;
+    test.bits.ztst = SCE_GS_ALWAYS;
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &test);
+    zbuf = mgZBuffer;
+    zbuf.bits.zmsk = 1;
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, alpha, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV,
+                     SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647,
+                                      ((screen.y + screen.height) << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
+                 const CRect_i_ &texel, unsigned char red,
+                 unsigned char green, unsigned char blue, unsigned char alpha) {
+    sceGsTest test;
+    sceGsZbuf zbuf;
+    float q;
+
+    if (texture == 0) {
+        return;
+    }
+    q = 1.0f;
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, ((u_long) linear__2 << 5) | 0x41);
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
+                     SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 1, 1, 0, 0));
+    test = mgPixelTest;
+    test.bits.ate = 0;
+    test.bits.aref = 0;
+    test.bits.atst = SCE_GS_ALWAYS;
+    test.bits.zte = 1;
+    test.bits.ztst = SCE_GS_ALWAYS;
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &test);
+    zbuf = mgZBuffer;
+    zbuf.bits.zmsk = 1;
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(red, green, blue, alpha, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV,
+                     SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647,
+                                      ((screen.y + screen.height) << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
+                 const CRect_i_ &texel, spRGBA *top_left, spRGBA *top_right, spRGBA *bottom_left,
+                 spRGBA *bottom_right, int mode) {
+    sceGsTest test;
+    sceGsZbuf zbuf;
+    float q;
+
+    if (texture == 0) {
+        return;
+    }
+    q = 1.0f;
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, ((u_long) linear__2 << 5) | 0x41);
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(4, 1, 1, 0, 1, 0, 1, 0, 0));
+    test = mgPixelTest;
+    test.bits.ate = 0;
+    test.bits.aref = 0;
+    test.bits.atst = SCE_GS_ALWAYS;
+    test.bits.zte = 1;
+    test.bits.ztst = SCE_GS_ALWAYS;
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &test);
+    zbuf = mgZBuffer;
+    zbuf.bits.zmsk = 1;
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
+    if (mode != 0) {
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
+                         SCE_GS_SET_RGBAQ(top_left->r, top_left->g, top_left->b, top_left->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
+                         SCE_GS_SET_RGBAQ(top_right->r, top_right->g, top_right->b, top_right->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, texel.y << 4));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, (screen.y << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
+                         SCE_GS_SET_RGBAQ(bottom_left->r, bottom_left->g, bottom_left->b, bottom_left->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, (texel.y + texel.height) << 4));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, ((screen.y + screen.height) << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
+                         SCE_GS_SET_RGBAQ(bottom_right->r, bottom_right->g, bottom_right->b, bottom_right->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, ((screen.y + screen.height) << 3) + 30976, 0, 0));
+    } else {
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
+                         SCE_GS_SET_RGBAQ(top_right->r, top_right->g, top_right->b, top_right->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, texel.y << 4));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, (screen.y << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
+                         SCE_GS_SET_RGBAQ(top_left->r, top_left->g, top_left->b, top_left->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
+                         SCE_GS_SET_RGBAQ(bottom_right->r, bottom_right->g, bottom_right->b, bottom_right->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, ((screen.y + screen.height) << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
+                         SCE_GS_SET_RGBAQ(bottom_left->r, bottom_left->g, bottom_left->b, bottom_left->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, (texel.y + texel.height) << 4));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, ((screen.y + screen.height) << 3) + 30976, 0, 0));
+    }
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
+void set3DColSprite(sceVif1Packet *packet, int *top_left, int *top_right, int *bottom_left,
+                    int *bottom_right, spRGBA *top_left_colour, spRGBA *top_right_colour,
+                    spRGBA *bottom_left_colour, spRGBA *bottom_right_colour) {
+    float q = 1.0f;
+
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
+                     SCE_GS_SET_PRIM(4, 1, 0, 0, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(top_left_colour->r, top_left_colour->g, top_left_colour->b, top_left_colour->a, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(top_left[0], top_left[1], top_left[2], 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(top_right_colour->r, top_right_colour->g, top_right_colour->b, top_right_colour->a, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(top_right[0], top_right[1], top_right[2], 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(bottom_left_colour->r, bottom_left_colour->g, bottom_left_colour->b, bottom_left_colour->a, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(bottom_left[0], bottom_left[1], bottom_left[2], 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(bottom_right_colour->r, bottom_right_colour->g, bottom_right_colour->b, bottom_right_colour->a, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(bottom_right[0], bottom_right[1], bottom_right[2], 0));
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
+void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left,
+                 int *top_right, int *bottom_left, int *bottom_right, unsigned char alpha) {
+    spRGBA colour = {0x80, 0x80, 0x80, 0};
+
+    colour.a = alpha;
+    set3DSprite(packet, texture, source, top_left, top_right, bottom_left, bottom_right, &colour);
+}
 /**
  * Draws a textured sprite in world space, with four corner positions and colours.
  *
@@ -1056,7 +1822,35 @@ INCLUDE_ASM("asm/nonmatchings/snd", set3DSprite__FP13sceVif1PacketP8CTextureRC8C
  * @address 0x15D4B0
  * @size 0x2E0
  */
-INCLUDE_ASM("asm/nonmatchings/snd", set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiPiPiP6spRGBA);
+void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left,
+                 int *top_right, int *bottom_left, int *bottom_right, spRGBA *colour) {
+    float q;
+
+    if (texture == 0) {
+        return;
+    }
+    q = 1.0f;
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, SCE_GS_SET_TEX1(1, 0, 1, 1, 0, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
+                     SCE_GS_SET_PRIM(4, 0, 1, 0, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(colour->r, colour->g, colour->b, colour->a, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(source.x << 4, source.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(top_left[0], top_left[1], top_left[2], 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((source.x + source.width) << 4, source.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(top_right[0], top_right[1], top_right[2], 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(source.x << 4, (source.y + source.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(bottom_left[0], bottom_left[1], bottom_left[2], 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((source.x + source.width) << 4, (source.y + source.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(bottom_right[0], bottom_right[1], bottom_right[2], 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
 /**
  * Draws a textured sprite in world space between two projected corners.
  *
@@ -1064,7 +1858,31 @@ INCLUDE_ASM("asm/nonmatchings/snd", set3DSprite__FP13sceVif1PacketP8CTextureRC8C
  * @address 0x15D790
  * @size 0x210
  */
-INCLUDE_ASM("asm/nonmatchings/snd", set3DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiP6spRGBA);
+void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left,
+                 int *bottom_right, spRGBA *colour) {
+    float q;
+
+    if (texture == 0) {
+        return;
+    }
+    q = 1.0f;
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, SCE_GS_SET_TEX1(1, 0, 1, 1, 0, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
+                     SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(colour->r, colour->g, colour->b, colour->a, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(source.x << 4, source.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(top_left[0], top_left[1], top_left[2], 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((source.x + source.width) << 4, (source.y + source.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(bottom_right[0], bottom_right[1], bottom_right[2], 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
 /**
  * Draws a fogged sprite in world space, with four corner positions.
  *
@@ -1072,7 +1890,35 @@ INCLUDE_ASM("asm/nonmatchings/snd", set3DSprite__FP13sceVif1PacketP8CTextureRC8C
  * @address 0x15D9A0
  * @size 0x2FC
  */
-INCLUDE_ASM("asm/nonmatchings/snd", set3DSpriteFog__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiPiPiUc);
+void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left,
+                    int *top_right, int *bottom_left, int *bottom_right, unsigned char alpha) {
+    float q;
+
+    if (texture == 0) {
+        return;
+    }
+    q = 1.0f;
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, SCE_GS_SET_TEX1(1, 0, 1, 1, 0, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
+                     SCE_GS_SET_PRIM(4, 0, 1, 1, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, alpha, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(source.x << 4, source.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(top_left[0], top_left[1], top_left[2], top_left[3]));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((source.x + source.width) << 4, source.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(top_right[0], top_right[1], top_right[2], top_right[3]));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(source.x << 4, (source.y + source.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(bottom_left[0], bottom_left[1], bottom_left[2], bottom_left[3]));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((source.x + source.width) << 4, (source.y + source.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(bottom_right[0], bottom_right[1], bottom_right[2], bottom_right[3]));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
 /**
  * Draws a fogged sprite in world space between two projected corners.
  *
@@ -1080,11 +1926,215 @@ INCLUDE_ASM("asm/nonmatchings/snd", set3DSpriteFog__FP13sceVif1PacketP8CTextureR
  * @address 0x15DCA0
  * @size 0x228
  */
-INCLUDE_ASM("asm/nonmatchings/snd", set3DSpriteFog__FP13sceVif1PacketP8CTextureRC8CRect_i_PiPiP6spRGBA);
-INCLUDE_ASM("asm/nonmatchings/snd", setColSprite__FP13sceVif1PacketPiPiPiPiUcUcUcUc);
-INCLUDE_ASM("asm/nonmatchings/snd", set2DSpriteC4__FP13sceVif1PacketRC8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBA);
-INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_iif);
-INCLUDE_ASM("asm/nonmatchings/snd", set2DSpriteRot__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_iifUcUcUcUc);
+void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left,
+                    int *bottom_right, spRGBA *colour) {
+    float q;
+
+    if (texture == 0) {
+        return;
+    }
+    q = 1.0f;
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, SCE_GS_SET_TEX1(1, 0, 1, 1, 0, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
+                     SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 1, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(colour->r, colour->g, colour->b, colour->a, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(source.x << 4, source.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(top_left[0], top_left[1], top_left[2], top_left[3]));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((source.x + source.width) << 4, (source.y + source.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(bottom_right[0], bottom_right[1], bottom_right[2], bottom_right[3]));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
+void setColSprite(sceVif1Packet *packet, int *top_left, int *top_right, int *bottom_left,
+                  int *bottom_right, unsigned char red, unsigned char green, unsigned char blue,
+                  unsigned char alpha) {
+    float q = 1.0f;
+
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, SCE_GS_SET_TEX1(1, 0, 1, 1, 0, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
+                     SCE_GS_SET_PRIM(4, 0, 0, 0, 1, 0, 0, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(red, green, blue, alpha, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZ2, (u_long) top_left[0] | ((u_long) top_left[1] << 16) | ((u_long) top_left[2] << 32));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZ2, (u_long) top_right[0] | ((u_long) top_right[1] << 16) | ((u_long) top_right[2] << 32));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZ2,
+                     (u_long) bottom_left[0] | ((u_long) bottom_left[1] << 16) | ((u_long) bottom_left[2] << 32));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZ2,
+                     (u_long) bottom_right[0] | ((u_long) bottom_right[1] << 16) | ((u_long) bottom_right[2] << 32));
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEXFLUSH, 0);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
+void set2DSpriteC4(sceVif1Packet *packet, const CRect_i_ &screen, spRGBA *top_left,
+                   spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right) {
+    sceGsTest test;
+    sceGsZbuf zbuf;
+    float q = 1.0f;
+
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, SCE_GS_SET_TEX1(1, 0, 1, 1, 0, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
+                     SCE_GS_SET_PRIM(4, 1, 0, 0, 1, 0, 0, 0, 0));
+    test = mgPixelTest;
+    test.bits.ate = 0;
+    test.bits.aref = 0;
+    test.bits.atst = SCE_GS_ALWAYS;
+    test.bits.zte = 1;
+    test.bits.ztst = SCE_GS_ALWAYS;
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &test);
+    zbuf = mgZBuffer;
+    zbuf.bits.zmsk = 1;
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(top_left->r, top_left->g, top_left->b, top_left->a, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(top_right->r, top_right->g, top_right->b, top_right->a, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, (screen.y << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(bottom_left->r, bottom_left->g, bottom_left->b, bottom_left->a, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, ((screen.y + screen.height) << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(bottom_right->r, bottom_right->g, bottom_right->b, bottom_right->a, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, ((screen.y + screen.height) << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
+                 const CRect_i_ &texel, int pivot_x, int pivot_y, float angle) {
+    float x[4];
+    float y[4];
+    sceGsTest test;
+    sceGsZbuf zbuf;
+    float q;
+    int i;
+
+    if (texture == 0) {
+        return;
+    }
+    q = 1.0f;
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, ((u_long) linear__2 << 5) | 0x41);
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(4, 0, 1, 0, 1, 1, 1, 0, 0));
+    test = mgPixelTest;
+    test.bits.ate = 0;
+    test.bits.aref = 0;
+    test.bits.atst = SCE_GS_ALWAYS;
+    test.bits.zte = 1;
+    test.bits.ztst = SCE_GS_ALWAYS;
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &test);
+    zbuf = mgZBuffer;
+    zbuf.bits.zmsk = 1;
+
+    x[0] = x[2] = -pivot_x;
+    x[1] = x[3] = (screen.x + screen.width + 1) - (screen.x + pivot_x);
+    y[0] = y[1] = -pivot_y;
+    y[2] = y[3] = (screen.y + screen.height + 1) - (screen.y + pivot_y);
+    for (i = 0; i < 4; i++) {
+        float turned_x = y[i] * cosf(angle) + x[i] * sinf(angle);
+        float turned_y = x[i] * cosf(angle) - y[i] * sinf(angle);
+
+        x[i] = (((int) turned_x + screen.x) << 4) + 27648;
+        y[i] = (((int) turned_y + screen.y) << 3) + 30976;
+    }
+
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, 0x80, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[0], y[0], 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV,
+                     SCE_GS_SET_UV((texel.x + screen.width) << 4, texel.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[1], y[1], 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV,
+                     SCE_GS_SET_UV(texel.x << 4, (texel.y + texel.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[2], y[2], 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV,
+                     SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[3], y[3], 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
+void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
+                    const CRect_i_ &texel, int pivot_x, int pivot_y, float angle,
+                    unsigned char red, unsigned char green, unsigned char blue,
+                    unsigned char alpha) {
+    float x[4];
+    float y[4];
+    sceGsTest test;
+    sceGsZbuf zbuf;
+    float q;
+    int i;
+
+    q = 1.0f;
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, ((u_long) linear__2 << 5) | 0x41);
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(4, 0, 1, 0, 1, 1, 1, 0, 0));
+    test = mgPixelTest;
+    test.bits.ate = 0;
+    test.bits.aref = 0;
+    test.bits.atst = SCE_GS_ALWAYS;
+    test.bits.zte = 1;
+    test.bits.ztst = SCE_GS_ALWAYS;
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &test);
+    zbuf = mgZBuffer;
+    zbuf.bits.zmsk = 1;
+
+    x[0] = x[2] = pivot_x * -16;
+    x[1] = x[3] = ((screen.width - pivot_x) << 4) - 1;
+    y[0] = y[1] = pivot_y * -16;
+    y[2] = y[3] = ((screen.height - pivot_y) << 4) - 1;
+    for (i = 0; i < 4; i++) {
+        float turned_x = -y[i] * sinf(angle) - x[i] * cosf(angle);
+        float turned_y = -x[i] * sinf(angle) + y[i] * cosf(angle);
+
+        x[i] = (int) turned_x + (screen.x << 4) + 27648;
+        y[i] = (int) (0.5f * turned_y) + (screen.y << 3) + 30976;
+    }
+
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(red, green, blue, alpha, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[0], y[0], 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV,
+                     SCE_GS_SET_UV((texel.x + screen.width) << 4, texel.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[1], y[1], 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV,
+                     SCE_GS_SET_UV(texel.x << 4, (texel.y + texel.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[2], y[2], 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV,
+                     SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[3], y[3], 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
 /**
  * Draws a textured sprite in screen space.
  *
@@ -1092,4 +2142,8 @@ INCLUDE_ASM("asm/nonmatchings/snd", set2DSpriteRot__FP13sceVif1PacketP8CTextureR
  * @address 0x15F090
  * @size 0x68
  */
-INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureP4RECTP4RECTUc);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, RECT *screen, RECT *texel,
+                 unsigned char alpha) {
+    set2DSprite(packet, texture, CRect_i_(screen->x, screen->y, screen->width, screen->height),
+                CRect_i_(texel->x, texel->y, texel->width, texel->height), alpha);
+}

@@ -15,15 +15,6 @@ class CFrameVu1;
  */
 void FishingInit();
 
-/** Loads shared fishing resources into an event arena. */
-void FishingLoad(CDataAlloc2<1> *arena, int slot);
-
-/** Loads the selected collection of fish models into an event arena. */
-void FishingLoadFish(int set_no, CDataAlloc2<1> *arena, int slot);
-
-/** Sets the rectangular bounds used by the fishing simulation. */
-void FishingSetRect(CBoxVu0 bounds);
-
 /**
  * Sets the water surface and terrain heights used by the fishing simulation.
  *
@@ -50,18 +41,6 @@ void FishingSetGroundLevel(float uki_height, float hook_height);
  * @size 0xC
  */
 float FishingGetWaterLevel();
-
-/** Supplies the ground collision polygons used by the fishing simulation. */
-void FishingSetCPoly(CCPoly *polygons, int count);
-
-/** Initializes a fish inside the supplied rectangular bounds. */
-void FishingInitFish(CBoxVu0 bounds);
-
-/** Initializes the fishing line at a world-space point. */
-void FishLineInit(float *position);
-
-/** Loads the bait model attached to the fishing rod. */
-void FishingLoadEsa(int item_no, CFrameVu1 *frame, int slot);
 
 /**
  * Takes the bait off the hook.
@@ -116,3 +95,210 @@ void FishPullHook(float tension);
  * @size 0x98
  */
 void FishingExit();
+
+/**
+ * Reads the hook and float models and the fishing sounds, and sets aside room for the collision polygons.
+ *
+ * @mangled FishingLoad__FP14CDataAlloc2_1_i
+ * @address 0x1A87E0
+ * @size 0x110
+ */
+void FishingLoad(CDataAlloc2<1> *alloc, int slot);
+
+/**
+ * Reads the fish of one fishing spot into an arena, choosing their kinds by the spot and the time of day.
+ *
+ * @mangled FishingLoadFish__FiP14CDataAlloc2_1_i
+ * @address 0x1A88F0
+ * @size 0x4CC
+ */
+void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot);
+
+/**
+ * Puts a bait item on the hook, giving any bait already there back to the inventory.
+ *
+ * @mangled FishingLoadEsa__FiP9CFrameVu1i
+ * @address 0x1A8F50
+ * @size 0xBC
+ */
+void FishingLoadEsa(int item_no, CFrameVu1 *frame, int slot);
+
+/**
+ * Returns the item the bait on the hook came from, or -1 when the hook is bare.
+ *
+ * @mangled FishingGetEsaItemNo__Fv
+ * @address 0x1A9030
+ * @size 0x38
+ */
+int FishingGetEsaItemNo();
+
+/**
+ * Copies the collision polygons the fish move against.
+ *
+ * @mangled FishingSetCPoly__FP6CCPolyi
+ * @address 0x1A91E0
+ * @size 0x7C
+ */
+void FishingSetCPoly(CCPoly *polys, int count);
+
+/**
+ * Sets the box the float and hook must stay within.
+ *
+ * @mangled FishingSetRect__F7CBoxVu0
+ * @address 0x1A9260
+ * @size 0x40
+ */
+void FishingSetRect(CBoxVu0 bounds);
+
+/**
+ * Builds the eight triangles of the fishing box's top and sides, and returns how many it built.
+ *
+ * @mangled FishingPickUpPoly__FP6CCPoly
+ * @address 0x1A92A0
+ * @size 0x1BC
+ */
+int FishingPickUpPoly(CCPoly *polys);
+
+/**
+ * Sets the box the fish swim within and puts every fish at its centre, under the water surface.
+ *
+ * @mangled FishingInitFish__F7CBoxVu0
+ * @address 0x1A9460
+ * @size 0x108
+ */
+void FishingInitFish(CBoxVu0 bounds);
+
+/**
+ * Returns whether a fish is fighting the line, biting the hook or eating the bait, and which fish it is.
+ *
+ * @mangled FishingFishStatus__FPi
+ * @address 0x1A9570
+ * @size 0xD8
+ */
+int FishingFishStatus(int *fish_no);
+
+/**
+ * Returns the kind of one of the six fish.
+ *
+ * @mangled FishingFishKind__Fi
+ * @address 0x1A96C0
+ * @size 0x4C
+ */
+int FishingFishKind(int fish_no);
+
+/**
+ * Turns the fish fighting the line into the one being landed, reading its landing model from a pack.
+ *
+ * @mangled FishingBattleToAngleFish__FPUiP14CDataAlloc2_1_
+ * @address 0x1A9710
+ * @size 0x88
+ */
+void FishingBattleToAngleFish(u_int *pack, CDataAlloc2<1> *alloc);
+
+/**
+ * Makes a fish that has bitten the hook the one being landed.
+ *
+ * @mangled FishingAngleFish__Fi
+ * @address 0x1A97B0
+ * @size 0x80
+ */
+void FishingAngleFish(int fish_no);
+
+/**
+ * Returns the kind of the fish being landed, and gives its size in tenths and its fishing points.
+ *
+ * @mangled FishingGetAngleFishSize__FPiPi
+ * @address 0x1A9830
+ * @size 0x84
+ */
+int FishingGetAngleFishSize(int *size, int *fp);
+
+/**
+ * Puts the six fish back to swimming with no interest in the bait.
+ *
+ * @mangled FishingInitFishStatus__Fv
+ * @address 0x1A98C0
+ * @size 0x5C
+ */
+void FishingInitFishStatus();
+
+/**
+ * Advances the fish one step, showing them the hook and the bait on it.
+ *
+ * @mangled FishingStepFish__Fv
+ * @address 0x1A9940
+ * @size 0x138
+ */
+void FishingStepFish();
+
+/**
+ * Draws the fish being landed on the hook, or the fish swimming when they show.
+ *
+ * @mangled FishingDrawFish__Fv
+ * @address 0x1A9A80
+ * @size 0x13C
+ */
+void FishingDrawFish();
+
+/**
+ * Casts the line straight down from the rod tip, with the float and the hook at rest on it.
+ *
+ * @mangled FishLineInit__FPf
+ * @address 0x1A9BF0
+ * @size 0x43C
+ */
+void FishLineInit(float *position);
+
+/**
+ * Pulls the float a share of the way towards a position, or stops pulling it when the share is negative.
+ *
+ * @mangled FishLineSetUki__FPff
+ * @address 0x1AA030
+ * @size 0x98
+ */
+void FishLineSetUki(float *position, float rate);
+
+/**
+ * Pulls the hook a share of the way towards a position, or stops pulling it when the share is negative.
+ *
+ * @mangled FishLineSetHook__FPff
+ * @address 0x1AA0D0
+ * @size 0x98
+ */
+void FishLineSetHook(float *position, float rate);
+
+/**
+ * Gives the position of the float.
+ *
+ * @mangled FishLineGetUki__FPf
+ * @address 0x1AA180
+ * @size 0x28
+ */
+void FishLineGetUki(float *position);
+
+/**
+ * Gives the position of the hook.
+ *
+ * @mangled FishLineGetHook__FPf
+ * @address 0x1AA1B0
+ * @size 0x28
+ */
+void FishLineGetHook(float *position);
+
+/**
+ * Returns whether the float or the hook has left the fishing box or risen above the water.
+ *
+ * @mangled FishingCheckUkiHook__Fv
+ * @address 0x1AA1E0
+ * @size 0x158
+ */
+int FishingCheckUkiHook();
+
+/**
+ * Draws the line, the float, the hook and its bait on one side of the water surface.
+ *
+ * @mangled FishLineDraw__Fi
+ * @address 0x1AB0F0
+ * @size 0x64C
+ */
+void FishLineDraw(int above_water);

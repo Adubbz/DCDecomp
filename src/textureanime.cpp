@@ -6,13 +6,25 @@
 #include "scriptinterpreter.hpp"
 #include "texture.hpp"
 
-#ifdef NON_MATCHING
 extern CTextureAnime *pTexAnime;
 extern int now_group;
 extern TAG_PARAM Command__4[];
-extern void (*CommandExe__4[])(void **arguments);
+static void CommandTEX_ANIME(void **arguments);
+static void CommandTEX_ANIME_DATA(void **arguments);
+static void CommandTEX_ANIME_DATA2(void **arguments);
+static void CommandTEX_SCROLL_DATA(void **arguments);
+static void CommandTEX_ANIME_END(void **arguments);
+
+/** The handler LoadCFGFile calls for each of Command__4's tags. */
+static void (*CommandExe__4[5])(void **arguments) = {
+    CommandTEX_ANIME,
+    CommandTEX_ANIME_DATA,
+    CommandTEX_ANIME_DATA2,
+    CommandTEX_SCROLL_DATA,
+    CommandTEX_ANIME_END,
+};
+
 extern int stop_anime__13CTextureAnime;
-#endif
 
 void CTextureTexAnime::Copy(CTexture *texture) {
     if (texture != NULL) {
@@ -214,7 +226,6 @@ CTexAnimeData *CTextureAnime::NewTexAnimeGroupData(int group) {
     }
     return record;
 }
-#ifdef NON_MATCHING
 int CTextureAnime::EnterTexAnime(CTexAnimeData *source) {
     CTexAnimeData *record = NewTexAnimeGroupData(source->unk_02);
     if (record == NULL) {
@@ -237,9 +248,6 @@ int CTextureAnime::EnterTexAnime(CTexAnimeData *source) {
     record->scroll_y_step = source->scroll_y_step;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/textureanime", EnterTexAnime__13CTextureAnimeFP13CTexAnimeData);
-#endif
 void CTextureAnime::DisableAll() {
     for (int group = 0; group < 24; group++) {
         Disable(group);
@@ -282,8 +290,15 @@ INCLUDE_RODATA("asm/nonmatchings/textureanime", @448);
 INCLUDE_RODATA("asm/nonmatchings/textureanime", @449);
 INCLUDE_RODATA("asm/nonmatchings/textureanime", @450);
 INCLUDE_RODATA("asm/nonmatchings/textureanime", @451);
-#ifdef NON_MATCHING
-void CommandTEX_ANIME(void **arguments) {
+
+/**
+ * Enables or disables the texture-animation group selected by configuration parsing.
+ *
+ * @mangled CommandTEX_ANIME__FPPv
+ * @address 0x167C80
+ * @size 0x5C
+ */
+static void CommandTEX_ANIME(void **arguments) {
     now_group = *(int *) arguments[0];
     if (*(int *) arguments[1] != 0) {
         pTexAnime->Enable(now_group);
@@ -291,14 +306,19 @@ void CommandTEX_ANIME(void **arguments) {
     }
     pTexAnime->Disable(now_group);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/textureanime", CommandTEX_ANIME__FPPv);
-#endif
-#ifdef NON_MATCHING
-void CommandTEX_ANIME_DATA(void **arguments) {
+
+/**
+ * Builds and appends a two-texture animation record from configuration arguments.
+ *
+ * @mangled CommandTEX_ANIME_DATA__FPPv
+ * @address 0x167CE0
+ * @size 0x180
+ */
+static void CommandTEX_ANIME_DATA(void **arguments) {
     CTexAnimeData record;
     record.unk_02 = (s16) now_group;
     record.unk_00 = 0;
+    char *first_name = (char *) arguments[0];
     record.unk_38 = *(s16 *) arguments[1];
     record.unk_3A = *(s16 *) arguments[2];
     record.unk_3C = *(s16 *) arguments[3];
@@ -311,7 +331,7 @@ void CommandTEX_ANIME_DATA(void **arguments) {
         record.unk_04 = -1;
     }
 
-    CTexture *first_texture = TexManager.GetTexture((char *) arguments[0], -1);
+    CTexture *first_texture = TexManager.GetTexture(first_name, -1);
     CTexture *second_texture = TexManager.GetTexture(second_name, -1);
     memset(&record.first_texture, 0, sizeof(record.first_texture));
     record.first_texture.block = -1;
@@ -323,14 +343,19 @@ void CommandTEX_ANIME_DATA(void **arguments) {
         pTexAnime->EnterTexAnime(&record);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/textureanime", CommandTEX_ANIME_DATA__FPPv);
-#endif
-#ifdef NON_MATCHING
-void CommandTEX_ANIME_DATA2(void **arguments) {
+
+/**
+ * Builds and appends a two-texture animation record with an explicit auxiliary index.
+ *
+ * @mangled CommandTEX_ANIME_DATA2__FPPv
+ * @address 0x167E60
+ * @size 0x13C
+ */
+static void CommandTEX_ANIME_DATA2(void **arguments) {
     CTexAnimeData record;
     record.unk_02 = (s16) now_group;
     record.unk_00 = 0;
+    char *first_name = (char *) arguments[0];
     record.unk_38 = *(s16 *) arguments[1];
     record.unk_3A = *(s16 *) arguments[2];
     record.unk_3C = *(s16 *) arguments[3];
@@ -339,12 +364,13 @@ void CommandTEX_ANIME_DATA2(void **arguments) {
     record.unk_40 = *(s16 *) arguments[6];
     record.unk_42 = *(s16 *) arguments[7];
     record.unk_04 = *(s16 *) arguments[8];
-    if (*(int *) arguments[9] != 0) {
+    int hold = *(int *) arguments[9];
+    record.unk_06 = *(s16 *) arguments[10];
+    if (hold != 0) {
         record.unk_04 = -1;
     }
-    record.unk_06 = *(s16 *) arguments[10];
 
-    CTexture *first_texture = TexManager.GetTexture((char *) arguments[0], -1);
+    CTexture *first_texture = TexManager.GetTexture(first_name, -1);
     CTexture *second_texture = TexManager.GetTexture(second_name, -1);
     if (first_texture != NULL && second_texture != NULL) {
         record.first_texture.Copy(first_texture);
@@ -352,14 +378,19 @@ void CommandTEX_ANIME_DATA2(void **arguments) {
         pTexAnime->EnterTexAnime(&record);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/textureanime", CommandTEX_ANIME_DATA2__FPPv);
-#endif
-#ifdef NON_MATCHING
-void CommandTEX_SCROLL_DATA(void **arguments) {
+
+/**
+ * Builds and appends a scrolling texture-animation record from configuration arguments.
+ *
+ * @mangled CommandTEX_SCROLL_DATA__FPPv
+ * @address 0x167FA0
+ * @size 0x14C
+ */
+static void CommandTEX_SCROLL_DATA(void **arguments) {
     CTexAnimeData record;
     record.unk_02 = (s16) now_group;
     record.unk_00 = 1;
+    char *first_name = (char *) arguments[0];
     record.unk_38 = *(s16 *) arguments[1];
     record.unk_3A = *(s16 *) arguments[2];
     record.unk_3C = *(s16 *) arguments[3];
@@ -374,7 +405,7 @@ void CommandTEX_SCROLL_DATA(void **arguments) {
         record.unk_04 = -1;
     }
 
-    CTexture *first_texture = TexManager.GetTexture((char *) arguments[0], -1);
+    CTexture *first_texture = TexManager.GetTexture(first_name, -1);
     CTexture *second_texture = TexManager.GetTexture(second_name, -1);
     if (first_texture != NULL && second_texture != NULL) {
         record.first_texture.Copy(first_texture);
@@ -382,9 +413,6 @@ void CommandTEX_SCROLL_DATA(void **arguments) {
         pTexAnime->EnterTexAnime(&record);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/textureanime", CommandTEX_SCROLL_DATA__FPPv);
-#endif
 
 /**
  * Ends a texture animation command; nothing remains to be done.
@@ -393,5 +421,5 @@ INCLUDE_ASM("asm/nonmatchings/textureanime", CommandTEX_SCROLL_DATA__FPPv);
  * @address 0x1680F0
  * @size 0x8
  */
-void CommandTEX_ANIME_END(void **arguments) {
+static void CommandTEX_ANIME_END(void **arguments) {
 }

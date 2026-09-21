@@ -113,9 +113,14 @@ public:
     s8 equipped_weapon_slot[6];          /**< Specifies each character's equipped weapon slot. */
     u16 unk_4346;                        // 0x4346
     s32 unk_4348[6];                     // 0x4348
-    s16 active_item[3];                  /**< Identifies the item each slot is running, or -1. */
-    s16 active_item_left[3];             /**< How many uses each running item has left. */
-    char unk_436C[0x19E];                // 0x436C
+
+    union {
+        ITEM_PACK item_pack; /**< Dungeon items the player carries. */
+
+        /* The battle code walks the pack as halfwords from its start, indexing by
+         * 1-based quick-use slot: [slot] is that slot's item and [slot + 3] its count. */
+        s16 active_item[3];
+    };
     char unk_450A[2];                    // 0x450A
     WEAPON_HAVE chara_weapons[6][11];    /**< Specifies the weapons owned by each character. */
     DNG_CONSUMABLE consumable_items[43]; /**< Specifies the stored consumable items. */

@@ -49,6 +49,21 @@ int sceSifCallRpc(struct sceSifClientData *client, unsigned int number, unsigned
                   void *send, int send_size, void *receive, int receive_size,
                   void (*end_callback)(void *), void *end_parameter);
 
+/**
+ * Connects the EE to the IOP heap service.
+ */
+int sceSifInitIopHeap(void);
+
+/**
+ * Allocates a block of IOP memory, or gives zero.
+ */
+void *sceSifAllocIopHeap(unsigned int size);
+
+/**
+ * Releases a block of IOP memory.
+ */
+int sceSifFreeIopHeap(void *address);
+
 #ifdef __cplusplus
 }
 #endif

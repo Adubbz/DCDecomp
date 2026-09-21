@@ -36,11 +36,11 @@ void AttachMentValuePlus(ATTACH_LIST *total, ATTACH_LIST *attach, float scale) {
         limit[3] = data->magic_max;
     }
     for (i = 0; i < 4; i++) {
-        value = (&total->attack)[i] + (s16) (int) ((float) (&attach->attack)[i] * scale);
+        value = total->status[i] + (s16) (int) ((float) attach->status[i] * scale);
         if (value >= limit[i]) {
-            (&total->attack)[i] = limit[i];
+            total->status[i] = limit[i];
         } else {
-            (&total->attack)[i] = value;
+            total->status[i] = value;
         }
     }
     for (i = 0; i < 5; i++) {
@@ -103,19 +103,19 @@ void WeaponLevelUpValueCalc(WEAPON_HAVE *src, WEAPON_HAVE *dst, int levels, int 
         }
         memset(dst->attach, 0, 0xC0);
         memcpy(dst, src, 0xF8);
-        dst->attack += total.attack + 1;
+        dst->attack += total.status[0] + 1;
         if (dst->attack > data->attack_max) {
             dst->attack = data->attack_max;
         }
-        dst->endurance += total.endurance + 1;
+        dst->endurance += total.status[1] + 1;
         if (dst->endurance >= 99) {
             dst->endurance = 99;
         }
-        dst->speed += total.speed + 1;
+        dst->speed += total.status[2] + 1;
         if (dst->speed >= 99) {
             dst->speed = 99;
         }
-        dst->magic += total.magic + 1;
+        dst->magic += total.status[3] + 1;
         if (dst->magic >= data->magic_max) {
             dst->magic = data->magic_max;
         }
@@ -262,19 +262,19 @@ void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, C
     }
     flags = CheckWeaponOptionStatus(flags);
     preview.flags |= flags;
-    preview.attack += total.attack;
+    preview.attack += total.status[0];
     if (preview.attack > data->attack_max) {
         preview.attack = data->attack_max;
     }
-    preview.endurance += total.endurance;
+    preview.endurance += total.status[1];
     if (preview.endurance > 99) {
         preview.endurance = 99;
     }
-    preview.speed += total.speed;
+    preview.speed += total.status[2];
     if (preview.speed > 99) {
         preview.speed = 99;
     }
-    preview.magic += total.magic;
+    preview.magic += total.status[3];
     if (preview.magic > data->magic_max) {
         preview.magic = data->magic_max;
     }
@@ -305,7 +305,7 @@ void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, C
             attachment_icons[n] = preview.attach[k].item_no;
             attachment_values[n] = 0;
             if (attachment_icons[n] >= 0x5B && attachment_icons[n] < 0x5F) {
-                attachment_values[n] = (&preview.attach[k].attack)[preview.attach[k].item_no - 0x5B];
+                attachment_values[n] = preview.attach[k].status[preview.attach[k].item_no - 0x5B];
             }
             if (attachment_icons[n] == 0x5A) {
                 attachment_values[n] = preview.attach[k].unk_02;

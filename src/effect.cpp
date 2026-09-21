@@ -7,7 +7,6 @@
 #include "mglib.hpp"
 #include "snd.hpp"
 
-#ifdef NON_MATCHING
 void C3DSprite::Draw(void) {
     if (texture == NULL) {
         return;
@@ -42,26 +41,18 @@ void C3DSprite::Draw(void) {
         MGSetGsZBUF(&mgZBuffer);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/effect", Draw__9C3DSpriteFv);
-#endif
 
-#ifdef NON_MATCHING
 void C3DSprite::Initialize(void) {
     texture = NULL;
     texel = CRect_i_(0, 0, 0, 0);
-    colour.r = 128;
+    colour.a = 128;
     colour.g = 128;
     colour.b = 128;
-    colour.a = 128;
+    colour.r = 128;
     alpha_blend = 0;
     disable_z_write = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/effect", Initialize__9C3DSpriteFv);
-#endif
 
-#ifdef NON_MATCHING
 void CEffect::SetEffect(CEffectParam *parameters) {
     active = 1;
     frame = 0;
@@ -103,9 +94,6 @@ void CEffect::SetEffect(CEffectParam *parameters) {
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/effect", SetEffect__7CEffectFP12CEffectParam);
-#endif
 
 #ifdef NON_MATCHING
 void CEffect::Step(int unused) {
@@ -247,7 +235,6 @@ void CEffect::Draw(void) {
 INCLUDE_ASM("asm/nonmatchings/effect", Draw__7CEffectFv);
 #endif
 
-#ifdef NON_MATCHING
 void CEffectParam::Initialize(void) {
     lifetime = 0;
     draw_mode = 0;
@@ -256,18 +243,13 @@ void CEffectParam::Initialize(void) {
     opacity_mode = 0;
     opacity = 1.0f;
     render_flags = 0;
-    width = 0.0f;
-    height = 0.0f;
-    position[0] = 0.0f;
-    position[1] = 0.0f;
-    position[2] = 0.0f;
-    position[3] = 0.0f;
+    width = height = 0.0f;
+    position[0] = position[1] = position[2] = position[3] = 0.0f;
     sceVu0CopyVector(velocity, position);
     sceVu0CopyVector(acceleration, position);
     sceVu0CopyVector(position_oscillation_scale, position);
     sceVu0CopyVector(position_oscillation_rate, position);
-    scale[0] = 1.0f;
-    scale[1] = 1.0f;
+    scale[0] = scale[1] = 1.0f;
     sceVu0CopyVector(scale_velocity, position);
     sceVu0CopyVector(scale_oscillation_scale, position);
     sceVu0CopyVector(scale_oscillation_rate, position);
@@ -276,11 +258,7 @@ void CEffectParam::Initialize(void) {
     texture_frame_period = 0;
     texture_frames = NULL;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/effect", Initialize__12CEffectParamFv);
-#endif
 
-#ifdef NON_MATCHING
 void CEffect::Initialize(void) {
     active = 0;
     frame = 0;
@@ -292,18 +270,13 @@ void CEffect::Initialize(void) {
     opacity = 1.0f;
     render_flags = 0;
     opacity_step = 0.0f;
-    width = 0.0f;
-    height = 0.0f;
-    position[0] = 0.0f;
-    position[1] = 0.0f;
-    position[2] = 0.0f;
-    position[3] = 0.0f;
+    width = height = 0.0f;
+    position[0] = position[1] = position[2] = position[3] = 0.0f;
     sceVu0CopyVector(velocity, position);
     sceVu0CopyVector(acceleration, position);
     sceVu0CopyVector(position_oscillation_scale, position);
     sceVu0CopyVector(position_oscillation_rate, position);
-    scale[0] = 1.0f;
-    scale[1] = 1.0f;
+    scale[0] = scale[1] = 1.0f;
     sceVu0CopyVector(scale_velocity, position);
     sceVu0CopyVector(scale_oscillation_scale, position);
     sceVu0CopyVector(scale_oscillation_rate, position);
@@ -312,6 +285,3 @@ void CEffect::Initialize(void) {
     texture_frames = NULL;
     texture_frame_period = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/effect", Initialize__7CEffectFv);
-#endif

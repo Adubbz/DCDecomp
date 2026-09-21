@@ -13,7 +13,10 @@
 
 #include <cmath>
 #include <cstdio>
+#include <cstring>
 
+#include "character.hpp"
+#include "dataalloc.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "mathutil.hpp"
@@ -96,7 +99,46 @@ INCLUDE_RODATA("asm/nonmatchings/gameutil", @414__4);
  * @address 0x147B70
  * @size 0x1B0
  */
-INCLUDE_ASM("asm/nonmatchings/gameutil", QuatSlerp__FPfPffPf);
+static void QuatSlerp(float *from, float *to, float t, float *out) {
+    float to_x;
+    float to_y;
+    float to_z;
+    float to_w;
+    float cosine;
+    float angle;
+    float inv_sine;
+    float scale_from;
+    float scale_to;
+
+    from[0] = -from[0];
+    to[0] = -to[0];
+    cosine = from[1] * to[1] + from[2] * to[2] + from[3] * to[3] + from[0] * to[0];
+    if (cosine < 0.0f) {
+        cosine = -cosine;
+        to_x = -to[1];
+        to_y = -to[2];
+        to_z = -to[3];
+        to_w = -to[0];
+    } else {
+        to_x = to[1];
+        to_y = to[2];
+        to_z = to[3];
+        to_w = to[0];
+    }
+    if (1.0f - cosine > 0.001f) {
+        angle = acosf(cosine);
+        inv_sine = 1.0f / sinf(angle);
+        scale_from = inv_sine * sinf((1.0f - t) * angle);
+        scale_to = inv_sine * sinf(t * angle);
+    } else {
+        scale_from = 1.0f - t;
+        scale_to = t;
+    }
+    out[1] = scale_from * from[1] + scale_to * to_x;
+    out[2] = scale_from * from[2] + scale_to * to_y;
+    out[3] = scale_from * from[3] + scale_to * to_z;
+    out[0] = scale_from * from[0] + scale_to * to_w;
+}
 INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc__FP6CFrameP12MOTION_STATEP8Mot_List);
 INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List);
 
@@ -175,7 +217,10 @@ INCLUDE_ASM("asm/nonmatchings/gameutil", CreateAnimeDataEX__FP14tagMOTION_TYPEP1
  * @address 0x149300
  * @size 0x98
  */
-INCLUDE_ASM("asm/nonmatchings/gameutil", AnimeDataInit__FP6CFrameP14tagMOTION_TYPEP14CDataAlloc2_1_PP12tagFRAME_INF);
+void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena, tagFRAME_INF **frame_info) {
+    *frame_info = (tagFRAME_INF *) arena->Alloc64((frame->GetFrameNum() + 10) * sizeof(tagFRAME_INF) / 16 + 1);
+    AnimeDataInit(frame, motion, arena, *frame_info);
+}
 /**
  * Builds the per-frame animation table into storage already set aside.
  *
@@ -289,18 +334,7 @@ int LookAt(CFrameVu1 *frame, CFrameVu1 *target, _FRAMECONSTRAINT constraint) {
     return LookAt(frame, matrix[3], constraint);
 }
 
-/**
- * Collects the polygons of a set that meet a box.
- *
- * @mangled PickUpNearPoly__FP6CCPoly7CBoxVu0P6CCPolyi
- * @address 0x149C30
- * @size 0x118
- */
-INCLUDE_ASM("asm/nonmatchings/gameutil", PickUpNearPoly__FP6CCPoly7CBoxVu0P6CCPolyi);
-INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHit__FP6CCPolyiPfPfPfii);
-INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHitVertical__FP6CCPolyiPffPfi);
-
-/* Loads the line's bounds into VU0 registers, which retail's polygon loop never reads. */
+/* Loads a box's corners into VU0 registers vf10 and vf11 for the box tests that follow. */
 static inline void vu_hold_box(float *max, float *min) {
     register float *p0 = max;
     register float *p1 = min;
@@ -309,6 +343,165 @@ static inline void vu_hold_box(float *max, float *min) {
         lqc2    vf10, 0(p0)
         lqc2    vf11, 0(p1)
     }
+}
+
+/* Whether a triangle's bound misses the box held in VU0: the sign flags of the two subtractions,
+   cleared before them and read back after. */
+static inline int vu_box_missed(float *max, float *min) {
+    register float *p0 = max;
+    register float *p1 = min;
+    register int status;
+
+    asm {
+        lqc2    vf12, 0(p0)
+        lqc2    vf13, 0(p1)
+        vnop
+        vnop
+        vnop
+        ctc2    $0, $vi16
+        vsub.xyz vf25, vf10, vf13
+        vsub.xyz vf25, vf12, vf11
+        vnop
+        vnop
+        vnop
+        vnop
+        vnop
+        cfc2    status, $vi16
+    }
+
+    return status & 0xc0;
+}
+
+/**
+ * Collects the polygons of a set that meet a box.
+ *
+ * @mangled PickUpNearPoly__FP6CCPoly7CBoxVu0P6CCPolyi
+ * @address 0x149C30
+ * @size 0x118
+ */
+int PickUpNearPoly(CCPoly *out, CBoxVu0 box, CCPoly *poly, int count) {
+    sceVu0FVECTOR poly_max;
+    sceVu0FVECTOR poly_min;
+    int picked = 0;
+    int i;
+    CCPoly *src;
+    CCPoly *dst;
+
+    vu_hold_box(box.max, box.min);
+    src = poly;
+    dst = out;
+    for (i = 0; i < count; i++, src++) {
+        VectorMaxMin(poly_max, poly_min, src->vertex[0], src->vertex[1], src->vertex[2]);
+        if (vu_box_missed(poly_max, poly_min)) {
+            continue;
+        }
+        memcpy(dst, src, sizeof(CCPoly));
+        dst++;
+        picked++;
+    }
+    return picked;
+}
+
+int CheckHit(CCPoly *poly, int count, float *from, float *to, float *hit_point, int nearest,
+             int mode) {
+    sceVu0FVECTOR point;
+    sceVu0FVECTOR diff;
+    sceVu0FVECTOR poly_min;
+    sceVu0FVECTOR poly_max;
+    CBoxVu0 line;
+    sceVu0FVECTOR offset;
+    int i;
+    int hit = -1;
+    int found = 0;
+    float best;
+    float from_side;
+    float to_side;
+    float dist;
+
+    VectorMaxMin(line.max, line.min, from, to);
+    vu_hold_box(line.max, line.min);
+    for (i = 0; i < count; i++, poly++) {
+        if (poly->attr.ignore_mask & mode) {
+            continue;
+        }
+        VectorMaxMin(poly_max, poly_min, poly->vertex[0], poly->vertex[1], poly->vertex[2]);
+        if (line.max[0] < poly_min[0] || line.max[1] < poly_min[1] || line.max[2] < poly_min[2]) {
+            continue;
+        }
+        if (line.min[0] > poly_max[0] || line.min[1] > poly_max[1] || line.min[2] > poly_max[2]) {
+            continue;
+        }
+        sceVu0SubVector(offset, from, poly->vertex[0]);
+        from_side = sceVu0InnerProduct(poly->normal, offset);
+        sceVu0SubVector(offset, to, poly->vertex[0]);
+        to_side = sceVu0InnerProduct(poly->normal, offset);
+        if (from_side > 0.0f && to_side > 0.0f) {
+            continue;
+        }
+        if (from_side < 0.0f && to_side < 0.0f) {
+            continue;
+        }
+        if (IntersectionPoint_line_poly3(from, to, poly->vertex[0], poly->vertex[1],
+                                         poly->vertex[2], poly->normal, point) == 0) {
+            continue;
+        }
+        if (nearest == 0) {
+            hit = i;
+            sceVu0CopyVector(hit_point, point);
+            break;
+        }
+        diff[0] = from[0] - point[0];
+        diff[1] = from[1] - point[1];
+        diff[2] = from[2] - point[2];
+        dist = diff[0] * diff[0] + diff[1] * diff[1] + diff[2] * diff[2];
+        if (found == 0) {
+            hit = i;
+            best = dist;
+            sceVu0CopyVector(hit_point, point);
+        } else if (best > dist) {
+            hit = i;
+            best = dist;
+            sceVu0CopyVector(hit_point, point);
+        }
+        found = 1;
+    }
+    return hit;
+}
+
+int CheckHitVertical(CCPoly *poly, int count, float *from, float depth, float *hit_point,
+                     int mode) {
+    sceVu0FVECTOR to;
+    float best_y;
+    int i;
+    int best = -1;
+
+    to[0] = from[0];
+    to[1] = from[1] + depth;
+    to[2] = from[2];
+    for (i = 0; i < count; i++, poly++) {
+        if (poly->attr.ignore_mask & mode) {
+            continue;
+        }
+        if (!IntersectionPoint_line_poly3(from, to, poly->vertex[0], poly->vertex[1], poly->vertex[2],
+                                          poly->normal, hit_point)) {
+            continue;
+        }
+        if (depth <= 0.0f) {
+            if (from[1] > hit_point[1] && (best < 0 || (best >= 0 && best_y <= hit_point[1]))) {
+                best_y = hit_point[1];
+                best = i;
+            }
+        } else {
+            if (from[1] < hit_point[1] && (best < 0 || (best >= 0 && !(best_y < hit_point[1])))) {
+                best_y = hit_point[1];
+                best = i;
+            }
+        }
+    }
+    if (best >= 0) {
+        hit_point[1] = best_y;
+    }
+    return best;
 }
 
 int CheckHits(CCPoly *poly, int count, float *from, float *to, int max, int *hit_poly,
@@ -512,7 +705,6 @@ void SetClut(sceVif1Packet *packet, CTexture *texture, i *clut) {
 float LinerInterpolation(float from, float to, float at) {
     return from + (at * (to - from));
 }
-#ifdef NON_MATCHING
 void AreaAddPos(int *area, int *pos, int *out) {
     int left = area[0];
     int top = area[1];
@@ -538,10 +730,16 @@ void AreaAddPos(int *area, int *pos, int *out) {
     out[2] = right;
     out[3] = bottom;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/gameutil", AreaAddPos__FPiPiPi);
-#endif
-INCLUDE_ASM("asm/nonmatchings/gameutil", RollPos__FPfPffPf);
+
+void RollPos(float *centre, float *point, float angle, float *out) {
+    float centre_x = centre[0];
+    float centre_y = centre[1];
+    float point_x = point[0];
+    float point_y = point[1];
+
+    out[0] = centre_x + ((point_x - centre_x) * cos(angle) - (point_y - centre_y) * sin(angle));
+    out[1] = centre_y - ((point_x - centre_x) * sin(angle) + (point_y - centre_y) * cos(angle));
+}
 
 int CheckPosInOutForRect(RECT *rect, int x, int y) {
     s32 top;
@@ -561,9 +759,24 @@ int CheckPosInOutForRect(RECT *rect, int x, int y) {
     return ((top + rect->height) < y) ? 0 : 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/gameutil", GetDisPosToRect__FP4RECTii);
-INCLUDE_ASM("asm/nonmatchings/gameutil", GetScrPosFromChar__FP10CCharacterPi);
-#ifdef NON_MATCHING
+float GetDisPosToRect(RECT *rect, int x, int y) {
+    float dx = rect->x + (rect->width >> 1) - x;
+    float dy = rect->y + (rect->height >> 1) - y;
+
+    return sqrt(dx * dx + dy * dy);
+}
+
+void GetScrPosFromChar(CCharacter *chara, int *out_pos) {
+    float position[4];
+    int screen[4];
+
+    chara->GetPosition(position);
+    position[1] += 0.85f * chara->body_height;
+    position[3] = 1.0f;
+    MGRotTransPers2D(screen, position, 0);
+    out_pos[0] = screen[0];
+    out_pos[1] = screen[1];
+}
 /** The sixteen colours the font palette can hold. */
 extern "C" u32 FontColorTbl[16];
 
@@ -575,7 +788,27 @@ unsigned int Color2Clut(unsigned int colour) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/gameutil", Color2Clut__FUi);
-#endif
-INCLUDE_ASM("asm/nonmatchings/gameutil", NameRegistCodeJtoE__Fi);
+
+int NameRegistCodeJtoE(int code) {
+    int table[82] = {
+        -683, -682, -681, -680, -679, -678, -677, -676, -675, -674,
+        -673, -672, -679, -671, -670, -669, -254, -668, -667, -666,
+        -665, -664, -679, -679, -679, -679, -679, -679, -657, -656,
+        -655, -654, -653, -652, -651, -650, -649, -648, -679, -679,
+        -679, -661, -660, -659, -658, -679, -647, -646, -645, -644,
+        -643, -642, -641, -640, -639, -638, -637, -636, -635, -634,
+        -633, -632, -631, -630, -629, -628, -627, -626, -625, -624,
+        -623, -622, -621, -620, -619, -618, -617, -616, -615, -614,
+        -613, -612};
+
+    if (code >= 0xD5 && code < 0x102) {
+        return table[code - 0xD5];
+    }
+    if (code >= 0xA1 && code < 0xBB) {
+        return code - 0x380;
+    }
+    if (code >= 0xBB && code < 0xD5) {
+        return code - 0x380;
+    }
+    return -0x2A7;
+}

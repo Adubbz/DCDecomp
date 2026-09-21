@@ -158,8 +158,8 @@ carve_part(main.data.part1.s
            main.data.part1.s=24FAC0-250B30
            main.data.part1b.s=250EC0-250F40)
 carve_part(main.data.part2.s
-           main.data.part2.s=2514C0-251580
-           main.data.part2c.s=2525D0-253F20)
+           main.data.part2.s=2514C0-251560
+           main.data.part2c.s=2525D0-253DD0)
 # Retail's vtables come out in one run that alternates between the units that
 # now own theirs and the dump that still holds the rest, so the dump is cut
 # around each owned block rather than having the block removed from it.
@@ -175,12 +175,16 @@ carve_part(main.rdata.part3.s
 carve_part(main.sdata.part1.s
            main.sdata.part1.s=2A1E88-2A1E8C)
 carve_part(main.sdata.part2.s
-           main.sdata.part2.s=2A1EA0-2A1EC0)
+           main.sdata.sound-tail.s=2A1EB8-2A1EC0)
 carve_part(main.sdata.part2b.s
-           main.sdata.part2b.s=2A1ED0-2A1F14
+           main.sdata.part2b.s=2A1ED0-2A1ED8
+           main.sdata.snd-tail.s=2A1EF0-2A1F14
            main.sdata.part2c.s=2A1F18-2A1F24
            main.sdata.part2d.s=2A1F50-2A1F78
-           main.sdata.part2f.s=2A1F90-2A21C8
+           main.sdata.part2f.s=2A1F90-2A20C8
+           main.sdata.battlemenu-tail.s=2A20D8-2A2150
+           main.sdata.memcard-a.s=2A2158-2A21A0
+           main.sdata.part2g.s=2A21B8-2A21C8
            main.sdata.part2e.s=2A21F0-2A2218)
 carve_part(main.sdata.part3.s
            main.sdata.part3.s=2A22E0-2A2380)
@@ -192,7 +196,6 @@ carve_part(main.bss.part3.s
            main.bss.part3.s=1C7A6B8-1C7A6C0)
 # gameutil.cpp's own run stands in the middle of this one.
 carve_part(main.bss.part4.s
-           main.bss.part4.s=1CE7570-1CECE80
            main.bss.part4d.s=1CECF00-1CF8F40)
 # edit.cpp's own runs stand in the middle of these two, and editloop3.cpp owns
 # EdExchangeInfo inside the second.
@@ -217,14 +220,15 @@ carve_part(main.bss.part5.s
 carve_part(main.sbss.part3.s
            main.sbss.part3.s=2A24FC-2A2500)
 carve_part(main.sbss.part4.s
-           main.sbss.part4.s=2A2588-2A25A4)
+           main.sbss.sound-tail.s=2A25A0-2A25A4)
 # The dun overlay's small data runs from GameEnv to the end of retail's .sbss,
 # and the unit supplies all of it, so the dump stops in front of it.
 carve_part(main.sbss.part5b.s
            main.sbss.part5b.s=2A2FD8-2A2FE4
            main.sbss.part5d.s=2A33A0-2A33A4)
 carve_part(main.sbss.part4b.s
-           main.sbss.part4b.s=2A25B8-2A2728
+           main.sbss.part4b.s=2A25B8-2A264C
+           main.sbss.snd-tail.s=2A2654-2A2728
            main.sbss.part4h.s=2A2730-2A2740
            main.sbss.part4c.s=2A27AC-2A294C
            main.sbss.part4d.s=2A2958-2A2994
@@ -233,29 +237,44 @@ carve_part(main.sbss.part4b.s
            main.sbss.part4f.s=2A2A80-2A2BF0)
 carve_part(main.rdata.part4.s
            main.rdata.part4b.s=2A1168-2A11E0)
-# CheckDmg owns its local static effect index and initialization guard.
+# CheckDmg owns its local static effect index and initialization guard, and
+# runscript_opcodes.cpp owns bak_ColNo after them.
 carve_part(main.sbss.part5.s
            main.sbss.part5.s=2A2BF8-2A2C68
-           main.sbss.part5c.s=2A2C70-2A2F50
+           main.sbss.part5c.s=2A2C74-2A2E84
+           main.sbss.memcard-a.s=2A2F08-2A2F50
            main.sbss.denter-gap.s=2A2F54-2A2F5C
-           main.sbss.denter-tail.s=2A2F60-2A2FD0)
-# The weapon build-up and level-up local templates stand in this residual run.
+           main.sbss.denter-tail.s=2A2F68-2A2FD0)
+# The weapon build-up and level-up local templates stand in this residual run,
+# and runscript_opcodes.cpp supplies its vector initializers ahead of part6f.
+# shop.cpp supplies the start of its own run between part6f and part6k, and
+# battlemenu.cpp supplies the travel page's and DrawWepHole's templates at the end of its run.
 carve_part(main.data.part6.s
            main.data.part6.s=27E790-27EB30
-           main.data.part6f.s=291830-294150
-           main.data.part6g.s=294170-295810
+           main.data.part6f.s=291850-291B80
+           main.data.part6k.s=292704-2938A0
+           main.data.battlemenu-tail.s=293960-293C60
+           main.data.part6h.s=293C80-293D50
+           main.data.memcard-a.s=293EBC-293FE0
+           main.data.menu_save-a.s=294044-294150
+           main.data.part6g.s=2941C0-294460
+           main.data.part6j.s=295644-295810
            main.data.part6d.s=295830-295840
            main.data.part6b.s=2959A0-295FF0)
 carve_part(main.data.part4.s
            main.data.part4.s=25DF70-266810
-           main.data.part4b.s=2668C0-266F70
+           main.data.part4b.s=2668C0-266B70
+           main.data.part4m.s=266B90-266EF0
            main.data.part4c.s=266FB0-269320
            main.data.part4h.s=269400-269480
            main.data.part4j.s=269494-269930
            main.data.part4i.s=269A30-269AD0
            main.data.part4f.s=269B60-269BA0
-           main.data.part4g.s=26A5E8-26B2C0
-           main.data.part4d.s=26B2E0-279EB0)
+           main.data.part4g.s=26A5E8-26AE60
+           main.data.part4k.s=26AE80-26AE90
+           main.data.fishing-a.s=26AFE0-26B0C0
+           main.data.part4l.s=26B0D0-26B2C0
+           main.data.part4d.s=26B310-279EB0)
 carve_part(main.rdata.part5.s
            main.rdata.part5.s=2A1390-2A1490)
 

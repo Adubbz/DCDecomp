@@ -62,15 +62,6 @@ s8 GetNowManualPartTgaNum();
 int GetGameFlagForManualMenu();
 
 /**
- * Begins loading the image resources for the current manual page.
- *
- * @mangled ManualImgLoad__Fv
- * @address 0x002335D0
- * @size 0x1A8
- */
-s16 ManualImgLoad();
-
-/**
  * Installs a completed manual image load into the menu texture state.
  *
  * @mangled ManualImgEnter__Fv

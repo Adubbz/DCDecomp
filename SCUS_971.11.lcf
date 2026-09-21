@@ -436,7 +436,8 @@ SECTIONS
         mainselect.cpp.o            (.text)   // 0x002a1e8c
         *(.text)
         ALIGNALL(1); // Perform no additional alignment
-        *(.vutext)
+        . = ALIGN(0x80);
+        *(.vutext)                            // 0x00245300
 
         # data
         //
@@ -453,10 +454,12 @@ SECTIONS
         chararead.cpp.o (.data)
         . = . + 0x4; // Retail padding after the character command tables.
         main.data.part2.s.o (.data)
+        bound.cpp.o (.data)          // 0x00251560 SetDir's origin, the constructor's forward vector
         dataread.cpp.o (.data)       // 0x00251580 CurrentDir, then LoadFile2's templates
         clothread.cpp.o (.data)      // 0x002517a0 the cloth command tables
         main.cpp.o (.data)
         main.data.part2c.s.o (.data)
+        gameutil.cpp.o (.data)       // 0x00253dd0 NameRegistCodeJtoE's table
         clsmes.cpp.o (.data)
         main.data.part2b.s.o (.data)
         mapobject.cpp.o (.data)
@@ -465,6 +468,9 @@ SECTIONS
         main.data.part4.s.o (.data)
         sysmes.cpp.o (.data)
         main.data.part4b.s.o (.data)
+        textureanime.cpp.o (.data)   // 0x00266b70
+        . = ALIGN(0x10);
+        main.data.part4m.s.o (.data) // 0x00266b90
         edit.cpp.o (.data)
         main.data.part4c.s.o (.data)
         editmapscript.cpp.o (.mapscriptdata) // 0x00269320
@@ -486,18 +492,41 @@ SECTIONS
         editloop3.cpp.o (.fishinglineorigin) // 0x00269c40
         editloop3.cpp.o (.extfuncinfo) // 0x00269c50
         main.data.part4g.s.o (.data)   // 0x0026a5e8
+        editground.cpp.o (.data)       // 0x0026ae60
+        main.data.part4k.s.o (.data)   // 0x0026ae80
+        fishing.cpp.o (.data)          // 0x0026ae90
+        main.data.fishing-a.s.o (.data) // 0x0026afe0
+        healeffect.cpp.o (.data)       // 0x0026b0c0
+        main.data.part4l.s.o (.data)   // 0x0026b0d0
         weaponelement.cpp.o (.data)  // 0x0026b2c0
-        main.data.part4d.s.o (.data) // 0x0026b2e0
+        btsysscript.cpp.o (.data)    // 0x0026b2e0
+        main.data.part4d.s.o (.data) // 0x0026b310
         dungeonmap.cpp.o (.data)
         main.data.part5.s.o (.data)
         itemdata.cpp.o (.data)
         main.data.part6.s.o (.data)
         weaponeffect.cpp.o (.data)   // 0x0027eb30
         monstorunit.cpp.o (.data)    // 0x0027eb50
-        main.data.part6f.s.o (.data) // 0x00291830
+        runscript_opcodes.cpp.o (.data) // 0x00291830
+        main.data.part6f.s.o (.data) // 0x00291850
+        shop.cpp.o (.data)           // 0x00291b80
+        main.data.part6k.s.o (.data) // 0x00292704
+        battlemenu.cpp.o (.data)     // 0x002938a0
+        . = ALIGN(0x10);
+        main.data.battlemenu-tail.s.o (.data) // 0x00293960
+        menu_misc.cpp.o (.data)      // 0x00293c60
+        . = ALIGN(0x10);
+        main.data.part6h.s.o (.data) // 0x00293c80
+        memorycardaccess.cpp.o (.data) // 0x00293d50
+        memcard.cpp.o (.data) // 0x00293e40
+        main.data.memcard-a.s.o (.data) // 0x00293ebc
+        menu_save.cpp.o (.data) // 0x00293fe0
+        main.data.menu_save-a.s.o (.data) // 0x00294044
         menu_dungeon.cpp.o (.data)   // 0x00294150
         . = ALIGN(0x10);
         main.data.part6g.s.o (.data) // 0x00294170
+        menu_draw.cpp.o (.data)      // 0x00294460
+        main.data.part6j.s.o (.data) // 0x00295644
         weapon_buildup.cpp.o (.data) // 0x00295810
         main.data.part6d.s.o (.data) // 0x00295830
         weaponlevelup.cpp.o (.data)  // 0x00295840
@@ -604,9 +633,12 @@ SECTIONS
 		mainselect.cpp.o (.sdata)      // 0x002a1e8c
 		main.cpp.o (.sdata)            // 0x002a1e90
 		main.cpp.o (.gamemodesdata)    // 0x002a1e98
-		main.sdata.part2.s.o (.sdata)  // 0x002a1ea0
+		sound.cpp.o (.sdata)           // 0x002a1ea0
+		main.sdata.sound-tail.s.o (.sdata) // 0x002a1eb8
 		clsmes.cpp.o (.sdata)          // 0x002a1ec0
 		main.sdata.part2b.s.o (.sdata) // 0x002a1ed0
+		snd.cpp.o (.sdata)             // 0x002a1ed8
+		main.sdata.snd-tail.s.o (.sdata) // 0x002a1ef0
 		ebattle.cpp.o (.sdata)         // 0x002a1f14
 		main.sdata.part2c.s.o (.sdata) // 0x002a1f18
 		edit.cpp.o (.sdata)            // 0x002a1f24
@@ -614,6 +646,13 @@ SECTIONS
 		editloop.cpp.o (.sdata)        // 0x002a1f78
 		editloop3.cpp.o (.sdata)       // 0x002a1f80
 		main.sdata.part2f.s.o (.sdata) // 0x002a1f90
+		battlemenu.cpp.o (.sdata)      // 0x002a20c8
+		. = ALIGN(8);
+		main.sdata.battlemenu-tail.s.o (.sdata) // 0x002a20d8
+		memcard.cpp.o (.sdata) // 0x002a2150
+		main.sdata.memcard-a.s.o (.sdata) // 0x002a2158
+		menu_draw.cpp.o (.sdata)       // 0x002a21a0
+		main.sdata.part2g.s.o (.sdata) // 0x002a21b8
 		weapon_buildup.cpp.o (.sdata)  // 0x002a21c8
 		weaponlevelup.cpp.o (.sdata)   // 0x002a21d8
 		main.sdata.part2e.s.o (.sdata) // 0x002a21f0
@@ -650,10 +689,15 @@ SECTIONS
 		dataread.cpp.o (.sbss)         // 0x002a24e4
 		main.sbss.part3.s.o (.sbss)    // 0x002a24fc
 		main.cpp.o (.sbss)
-		main.sbss.part4.s.o (.sbss)
+		sound.cpp.o (.sbss)            // 0x002a2588
+		. = ALIGN(16);
+		main.sbss.sound-tail.s.o (.sbss) // 0x002a25a0
 		clsmes.cpp.o (.sbss)
 		gameutil.cpp.o (.sbss)         // 0x002a25a8
 		main.sbss.part4b.s.o (.sbss)   // 0x002a25b8
+		snd.cpp.o (.sbss)              // 0x002a264c, SndSePlay's statics
+		. = ALIGN(4);
+		main.sbss.snd-tail.s.o (.sbss) // 0x002a2654
 		editarea.cpp.o (.sbss)         // 0x002a2728
 		. = ALIGN(4);
 		main.sbss.part4h.s.o (.sbss)   // 0x002a2730
@@ -677,11 +721,19 @@ SECTIONS
 		main.sbss.part5.s.o (.sbss)
 		monstorunit.cpp.o (.sbss) // 0x002a2c68, counter and guard
 		. = ALIGN(4);
-		main.sbss.part5c.s.o (.sbss) // 0x002a2c70
+		runscript_opcodes.cpp.o (.sbss) // 0x002a2c70
+		main.sbss.part5c.s.o (.sbss) // 0x002a2c74
+		memorycardaccess.cpp.o (.sbss) // 0x002a2e84
+		. = ALIGN(4);
+		memcard.cpp.o (.sbss) // 0x002a2e90
+		. = ALIGN(4);
+		main.sbss.memcard-a.s.o (.sbss) // 0x002a2f08
 		menu_dungeon.cpp.o (.menuerrorcnt) // 0x002a2f50
 		main.sbss.denter-gap.s.o (.sbss) // 0x002a2f54
 		menu_dungeon.cpp.o (.denterstatus) // 0x002a2f5c
-		main.sbss.denter-tail.s.o (.sbss) // 0x002a2f60
+		menu_dungeon.cpp.o (.sbss) // 0x002a2f60, DunEnterDraw's counter and guard
+		. = ALIGN(4);
+		main.sbss.denter-tail.s.o (.sbss) // 0x002a2f68
 		charakey.cpp.o (.sbss)
 		. = ALIGN(4);
 		main.sbss.part5b.s.o (.sbss)   // 0x002a2fd8
@@ -726,7 +778,7 @@ SECTIONS
 		mainselect.cpp.o (.bss)
 		gamepad.cpp.o (.bss)
 		main.cpp.o (.bss)
-		main.bss.part4.s.o (.bss)      // 0x01ce7570
+		sound.cpp.o (.bss)             // 0x01ce7570
 		gameutil.cpp.o (.bss)          // 0x01cece80
 		main.bss.part4d.s.o (.bss)     // 0x01cecf00
 		clsmes.cpp.o (.bss)

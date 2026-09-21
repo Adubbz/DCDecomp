@@ -226,6 +226,14 @@ void EditSave();
 /* editloop's own functions, in the order the unit defines them. Each is still
  * INCLUDE_ASM below; the prototypes are what lets the decompiled ones call
  * ahead of their definitions. */
+/**
+ * Starts a map event and optionally adopts a camera viewpoint.
+ */
+static int RunEvent(int event_no, CCamera *camera);
+/**
+ * Starts a system event and optionally adopts a camera viewpoint.
+ */
+static void RunSystemEvent(int event_no, CCamera *camera);
 void CommandGROUND(void **arguments);
 void CommandBUILD(void **arguments);
 void CommandWATER(void **arguments);
@@ -335,7 +343,7 @@ void LoadScript() {
 /**
  * Starts a map event and copies an optional source camera into the event camera.
  */
-int RunEvent(int event_no, CCamera *camera) {
+static int RunEvent(int event_no, CCamera *camera) {
     sceVu0FVECTOR position;
     sceVu0FVECTOR reference;
 
@@ -357,7 +365,7 @@ int RunEvent(int event_no, CCamera *camera) {
 /**
  * Starts a system event and copies an optional source camera into the event camera.
  */
-void RunSystemEvent(int event_no, CCamera *camera) {
+static void RunSystemEvent(int event_no, CCamera *camera) {
     sceVu0FVECTOR position;
     sceVu0FVECTOR reference;
 
@@ -776,7 +784,7 @@ int EditInit(void *) {
     CEditGround *ground = pEditGround;
     EdEventInfo.edit_ground = ground;
     EdEventInfo.fixed_parts_count = 64;
-    EdEventInfo.fixed_parts = (CMapParts *) &ground->unk_15f30[0x10];
+    EdEventInfo.fixed_parts = ground->fixed_parts;
     EdEventInfo.edit_parts_count = 24;
     EdEventInfo.edit_parts = ObjParts;
     EdEventInfo.player_texture_block = 8;

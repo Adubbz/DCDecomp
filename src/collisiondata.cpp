@@ -14,10 +14,15 @@ extern "C" int DebugInfoNowCursor;
 extern "C" CDebugFont DbgMsg;
 extern "C" char nameblock[64];
 
-#ifdef NON_MATCHING
+/**
+ * The Japanese and American image path prefixes. NameExchg reads it as rows
+ * of two indexed by language and takes the second of the row, so language 0
+ * gives the American prefix; retail sizes the table for the one row.
+ */
+extern "C" char *LanguageStr[1][2];
+
 /** Key items waiting to be dropped, one entry each, -1 where a slot is free. */
-static int gateKeyStack[32];
-#endif
+extern "C" int gateKeyStack[32];
 
 #ifdef NON_MATCHING
 /**
@@ -199,7 +204,6 @@ INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1825);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @511);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @512);
 
-#ifdef NON_MATCHING
 /**
  * Empties the list of key items waiting to be dropped.
  *
@@ -212,11 +216,7 @@ void ClearGateKeyStack(void) {
         gateKeyStack[i] = -1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/collisiondata", ClearGateKeyStack__Fv);
-#endif
 
-#ifdef NON_MATCHING
 int SetGateKeyStack(int item) {
     if (item == -1) {
         return 0;
@@ -235,11 +235,7 @@ int SetGateKeyStack(int item) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/collisiondata", SetGateKeyStack__Fi);
-#endif
 
-#ifdef NON_MATCHING
 /**
  * Builds a resource path by putting one of the fixed prefixes before a name.
  *
@@ -248,14 +244,10 @@ INCLUDE_ASM("asm/nonmatchings/collisiondata", SetGateKeyStack__Fi);
  * @size 0x60
  */
 char *NameExchg(char *name, int language) {
-    static const char *prefixes[2] = {"dun/img/jp/", "dun/img/us/"};
-    strcpy(nameblock, prefixes[language]);
+    strcpy(nameblock, LanguageStr[language][1]);
     strcat(nameblock, name);
     return nameblock;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/collisiondata", NameExchg__FPci);
-#endif
 
 int CCollisionData::Set(float *pos, int damage, int life, float radius, float unknown0, int unknown1,
                         int kind, int flags, int unknown2) {
@@ -335,7 +327,6 @@ int CCollisionData::CheckHitUser(float *position, int mask, float height) {
 INCLUDE_ASM("asm/nonmatchings/collisiondata", CheckHitUser__14CCollisionDataFPfif);
 #endif
 
-#ifdef NON_MATCHING
 /**
  * Records the push a hit gives whatever it struck.
  *
@@ -351,6 +342,3 @@ void CCollisionData::SetKickBack(float *origin, float speed, float decay, int mo
     hit[now_hit].knockback_decay = decay;
     hit[now_hit].knockback_mode = mode;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/collisiondata", SetKickBack__14CCollisionDataFPfffi);
-#endif

@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "btmisc.hpp"
 #include "camera.hpp"
 #include "clsmes.hpp"
 #include "dataread.hpp"
@@ -19,6 +20,7 @@
 #include "memcard.hpp"
 #include "memorycardaccess.hpp"
 #include "menu_inventory.hpp"
+#include "menu_misc.hpp"
 #include "menuitemstep.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
@@ -34,24 +36,193 @@ int MenuEtcErrCnt;
 /** Number of floors available in each dungeon. */
 static int maxFloorTbl__4[7] = {15, 17, 18, 18, 15, 25, 100};
 
-#ifdef NON_MATCHING
-void PlusAttachmentVolume(ATTACH_LIST *base, ATTACH_LIST *add, float scale) {
+/** Screen rectangle the menus draw full-screen pictures into. */
+extern CRect_i_ MenuDispRc;
+
+/** Texture block the battle menu's extra textures load into. */
+extern int BtlMenuExReadBlock;
+
+/** Texture of the dungeon entrance board. */
+extern CTexture *DunLogBoard;
+
+/** Texture of the floor list on the dungeon entrance board. */
+extern CTexture *DunLogBoard2;
+
+/** Dungeon progress the battle menus show. */
+extern CDngStatusData *BtlMenuStatusPt;
+
+/** Buffer the battle menus read their files into. */
+extern u_long128 *BtlMenuReadBuf;
+
+/** State of the debug item menu. */
+extern ITEM_AUTO_GET ItemAutoGet;
+
+/** Model the item preview shows. */
+extern CFrame *ItemPolyView;
+
+/** Set while the debug item preview is shown. */
+extern int MDebugItemPolyViewFlag;
+
+/** Set once the item preview's files have been read. */
+extern int polyreadflag;
+
+/** Position the debug item preview draws its model at. */
+extern float menudebugpos[4];
+
+/** Rotation the debug item preview turns its model to. */
+extern float menudebugrot[3];
+
+/** Scale the debug item preview draws its model at. */
+extern float menudebugrscale[3];
+
+/**
+ * Adds one attachment's values into another, scaled by a factor.
+ *
+ * @mangled PlusAttachmentVolume__FP11ATTACH_LISTP11ATTACH_LISTf
+ * @address 0x225810
+ * @size 0x158
+ */
+static void PlusAttachmentVolume(ATTACH_LIST *, ATTACH_LIST *, float);
+
+/**
+ * Restores the pad and textures when the dungeon entrance menu closes.
+ *
+ * @mangled ExitDunEnterMenu__Fv
+ * @address 0x226520
+ * @size 0x70
+ */
+static void ExitDunEnterMenu(void);
+
+/**
+ * Handles key input on the dungeon entrance menu.
+ *
+ * @mangled DunEnterMenuKey__Fv
+ * @address 0x226620
+ * @size 0x6EC
+ */
+static int DunEnterMenuKey(void);
+
+/**
+ * Draws the dungeon entrance menu.
+ *
+ * @mangled DunEnterDraw__Fv
+ * @address 0x226D10
+ * @size 0x538
+ */
+static void DunEnterDraw(void);
+
+/**
+ * Draws the frame of the dungeon entrance board.
+ *
+ * @mangled DunEnterBoardWaku__Fiii
+ * @address 0x227250
+ * @size 0x4AC
+ */
+static void DunEnterBoardWaku(int, int, int);
+
+/**
+ * Draws the dungeon entry board.
+ *
+ * @mangled DunEnterBoard__Fiii
+ * @address 0x227700
+ * @size 0x7C0
+ */
+static void DunEnterBoard(int, int, int);
+
+/**
+ * Draws a number right to left, one digit at a time, clipped to the board.
+ *
+ * @mangled DrawEnemyNum__Fiiiiii
+ * @address 0x227EC0
+ * @size 0x154
+ */
+static void DrawEnemyNum(int, int, int, int, int, int);
+
+/**
+ * Draws the collected Atla count on the dungeon entrance board.
+ *
+ * @mangled DrawGetAtoraNumBoard__Fiiiiii
+ * @address 0x228020
+ * @size 0x248
+ */
+static void DrawGetAtoraNumBoard(int, int, int, int, int, int);
+
+/**
+ * Draws one digit of the dungeon board's numbers, clipped to the board.
+ *
+ * @mangled DrawDunNumberClip__Fiiiiii
+ * @address 0x228270
+ * @size 0xDC
+ */
+static void DrawDunNumberClip(int, int, int, int, int, int);
+
+/**
+ * Draws the dungeon entry screen's background and its darkening box.
+ *
+ * @mangled DrawDunEnterBack__Fi
+ * @address 0x228350
+ * @size 0x9C
+ */
+static void DrawDunEnterBack(int);
+
+/**
+ * Draws the floor's name and number on the dungeon entry board.
+ *
+ * @mangled DrawDunEnterFloorName__Fiiiiii
+ * @address 0x2283F0
+ * @size 0x290
+ */
+static void DrawDunEnterFloorName(int, int, int, int, int, int);
+
+/**
+ * Sets up the item preview's model and textures once they have been read.
+ *
+ * @mangled EnterItemPolygonView__Fv
+ * @address 0x22AD20
+ * @size 0x21C
+ */
+static int EnterItemPolygonView(void);
+
+/**
+ * Turns and scales the item model under pad control, then draws it.
+ *
+ * @mangled LocalDrawItemPolygonView__Fv
+ * @address 0x22AF40
+ * @size 0x26C
+ */
+static void LocalDrawItemPolygonView(void);
+
+/**
+ * Maps a debug item selection to its spreadsheet item number.
+ *
+ * @mangled ConvDebugSelectToExcelListNo__Fi
+ * @address 0x22B1F0
+ * @size 0x4C
+ */
+static int ConvDebugSelectToExcelListNo(int selection);
+
+/**
+ * Draws the debug overlay listing an item's data.
+ *
+ * @mangled DrawItemDataView__Fi
+ * @address 0x22B7C0
+ * @size 0x230
+ */
+static void DrawItemDataView(int);
+
+static void PlusAttachmentVolume(ATTACH_LIST *base, ATTACH_LIST *add, float scale) {
     int i;
 
     for (i = 0; i < 4; i++) {
-        (&base->attack)[i] = (s16) ((float) (&base->attack)[i] + (float) (&add->attack)[i] * scale);
+        base->status[i] += add->status[i] * scale;
     }
     for (i = 0; i < 5; i++) {
-        base->elem[i] = (s8) ((float) base->elem[i] + (float) add->elem[i] * scale);
+        base->elem[i] += add->elem[i] * scale;
     }
     for (i = 0; i < 10; i++) {
-        base->vs_monster[i] = (s8) ((float) base->vs_monster[i] + (float) add->vs_monster[i] * scale);
+        base->vs_monster[i] += add->vs_monster[i] * scale;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", PlusAttachmentVolume__FP11ATTACH_LISTP11ATTACH_LISTf);
-#endif
-#ifdef NON_MATCHING
 int GetWeaponAttachStatusUp(WEAPON_HAVE *weapon, int stat) {
     int total;
     int i;
@@ -62,32 +233,26 @@ int GetWeaponAttachStatusUp(WEAPON_HAVE *weapon, int stat) {
 
     total = 0;
     for (i = 0; i < 6; i++) {
-        ATTACH_LIST *attach = &weapon->attach[i];
-
-        if (attach->item_no < 0x51) {
+        if (weapon->attach[i].item_no - 0x51 < 0) {
             continue;
         }
 
-        int multiplier = (weapon->attach_kind[i] == 3) ? 2 : 1;
+        int multiplier = 1;
+        if (weapon->attach_kind[i] == 3) {
+            multiplier = 2;
+        }
 
-        /* Attachment stats are read by byte offset from the ATTACH_LIST
-         * start: a 16-bit value at 6 + stat*2 for the base stats, then bytes
-         * out of elem/vs_monster for the element and monster-type stats. */
-        s8 *bytes = (s8 *) attach;
+        ATTACH_LIST *attach = &weapon->attach[i];
         if (stat < 5) {
-            total += *(s16 *) (bytes + 6 + stat * 2) * multiplier;
+            total += attach->status[stat - 1] * multiplier;
         } else if (stat >= 8 && stat < 0xD) {
-            total += bytes[stat + 8] * multiplier;
+            total += attach->elem[stat - 8] * multiplier;
         } else {
-            total += bytes[stat + 7] * multiplier;
+            total += attach->vs_monster[stat - 14] * multiplier;
         }
     }
     return total;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", GetWeaponAttachStatusUp__FP11WEAPON_HAVEi);
-#endif
-#ifdef NON_MATCHING
 void SetWeaponAttachStatus(WEAPON_HAVE *attach_source) {
     if (attach_source == NULL) {
         return;
@@ -100,7 +265,9 @@ void SetWeaponAttachStatus(WEAPON_HAVE *attach_source) {
     }
 
     int chara = dng_status->unk_04;
-    WEAPON_HAVE *equipped = &dng_status->chara_weapons[chara][dng_status->equipped_weapon_slot[chara]];
+    int slot = dng_status->equipped_weapon_slot[chara];
+    WEAPON_HAVE *weapons = dng_status->chara_weapons[chara];
+    WEAPON_HAVE *equipped = &weapons[slot];
     if (equipped == NULL) {
         printf("actwep is NULL\n", chara);
         return;
@@ -108,22 +275,193 @@ void SetWeaponAttachStatus(WEAPON_HAVE *attach_source) {
 
     WeaponAllValueSet(equipped, attach_source, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", SetWeaponAttachStatus__FP11WEAPON_HAVE);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @638__3);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @639__4);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", WeaponAllValueSet__FP11WEAPON_HAVEP11WEAPON_HAVEi);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", SetAttachMentValue__FiisP11ATTACH_LIST);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", GetAttachVolumeForMsg__FP11ATTACH_LIST);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", InitDunEnterMenu__Fiii);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @762__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @763__3);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @764__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @765__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @776__3);
 
-void ExitDunEnterMenu() {
+void WeaponAllValueSet(WEAPON_HAVE *weapon, WEAPON_HAVE *result, int full) {
+    int i;
+    WEAPON_DATA *data;
+    int flags;
+    ATTACH_LIST *attaches;
+    ATTACH_LIST total;
+    float rate;
+    float scale;
+    int value;
+
+    data = GetWeaponData(weapon->item_no);
+    if (data == NULL) {
+        return;
+    }
+    attaches = weapon->attach;
+    memset(&total, 0, sizeof(ATTACH_LIST));
+    rate = GetNowWeaponRate(weapon);
+    if (full) {
+        rate = 1.0f;
+    }
+    flags = 0;
+    flags |= weapon->flags;
+    memcpy(result, weapon, sizeof(WEAPON_HAVE));
+    for (i = 0; i < GetWeaponHoleNum(weapon->item_no); i++) {
+        if (data->hole[i] <= 0) {
+            break;
+        }
+        scale = 1.0f;
+        if (weapon->attach_kind[i] == 3) {
+            scale = 2.0f;
+        }
+        PlusAttachmentVolume(&total, &attaches[i], scale);
+        if (attaches[i].item_no == 0x5A && attaches[i].unk_04 != 0 && attaches[i].unk_04 != 1) {
+            flags |= attaches[i].unk_04;
+        }
+    }
+    result->flags = CheckWeaponOptionStatus(flags);
+    int limit[4] = {data->attack_max, 99, 99, data->magic_max};
+    limit[0] *= rate;
+    limit[3] *= rate;
+    value = result->attack + total.status[0];
+    value *= rate;
+    if (limit[0] < value) {
+        result->attack = limit[0];
+    } else {
+        result->attack = value;
+    }
+    value = result->endurance + total.status[1];
+    value *= rate;
+    if (limit[1] < value) {
+        result->endurance = limit[1];
+    } else {
+        result->endurance = value;
+    }
+    value = result->speed + total.status[2];
+    value *= rate;
+    if (value >= limit[2]) {
+        result->speed = limit[2];
+    } else {
+        result->speed = value;
+    }
+    value = result->magic + total.status[3];
+    value *= rate;
+    if (limit[3] < value) {
+        result->magic = limit[3];
+    } else {
+        result->magic = value;
+    }
+    for (i = 0; i < 5; i++) {
+        value = result->elem[i] + total.elem[i];
+        value *= rate;
+        if (value >= 99) {
+            result->elem[i] = 99;
+        } else {
+            result->elem[i] = value;
+        }
+    }
+    for (i = 0; i < 10; i++) {
+        value = result->vs_monster[i] + total.vs_monster[i];
+        value *= rate;
+        if (value >= 99) {
+            result->vs_monster[i] = 99;
+        } else {
+            result->vs_monster[i] = value;
+        }
+    }
+}
+
+INCLUDE_ASM("asm/nonmatchings/menu_dungeon", SetAttachMentValue__FiisP11ATTACH_LIST);
+
+int GetAttachVolumeForMsg(ATTACH_LIST *attach) {
+    int volume;
+
+    if (attach == NULL) {
+        return 0;
+    }
+    volume = 0;
+    if (attach->item_no >= 0x5B && attach->item_no < 0x5F) {
+        volume = attach->status[attach->item_no - 0x5B];
+    }
+    if (attach->item_no == 0x5A) {
+        volume = attach->stat_00;
+    }
+    return volume;
+}
+
+int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor) {
+    char path[76];
+    int size;
+    u_long128 *buffer;
+    int first_open;
+    int floor;
+    s8 lines;
+
+    SaveData->QuestDungeon(dungeon, 1);
+    DEnterStatusPt = (CDngStatusData *) UserStatus;
+    StartReadBG();
+    buffer = (u_long128 *) read_buffer;
+    buffer = MenuCalcBufAlignment(buffer);
+    DEnterMenu.dungeon = dungeon;
+    GetPathReadDifferntLang(path);
+    strcat(path, "dunenter/dunenter%d.pak");
+    sprintf(path, path, DEnterMenu.dungeon);
+    LoadFileBG(path, buffer, &size);
+    ReadBG();
+    MenuEtcErrCnt = 0;
+    DEnterMenu.texture_block = texture_block;
+    DEnterMenu.unk_00C = 0;
+    DEnterMenu.unk_00E = 1;
+    DEnterMenu.counter = 0;
+    DEnterMenu.state = 1;
+    DEnterMenu.requested_floor = requested_floor;
+    if (requested_floor >= 0) {
+        DEnterMenu.state = 3;
+        return 1;
+    }
+    first_open = -1;
+    floor = DEnterStatusPt->floor_reached[dungeon];
+    if (dungeon == 5) {
+        if (floor >= maxFloorTbl__4[dungeon]) {
+            floor = maxFloorTbl__4[dungeon] - 1;
+        }
+        printf("maxfloor = %d\n", floor);
+    }
+    if (floor >= 0) {
+        DEnterMenu.floor_count = floor + 1;
+    } else {
+        DEnterMenu.floor_count = 1;
+    }
+    for (floor = 0; floor < maxFloorTbl__4[dungeon]; floor++) {
+        DEnterMenu.max_atra[floor] = DEnterStatusPt->GetMaxAtraNum(dungeon, floor);
+        DEnterMenu.collected_atra[floor] = DEnterStatusPt->GetAtraNum(dungeon, floor);
+        DEnterMenu.kills[floor] = DEnterStatusPt->ChkKills(dungeon, floor);
+        if (DEnterMenu.kills[floor] > 999) {
+            DEnterMenu.kills[floor] = 999;
+        }
+        if (first_open == -1 && (u8) DEnterMenu.max_atra[floor] != (u8) DEnterMenu.collected_atra[floor]) {
+            first_open = floor;
+        }
+    }
+    DEnterMenu.selected_floor = DEnterMenu.floor_count - 1;
+    DEnterMenu.scroll_top = DEnterMenu.selected_floor;
+    if (first_open > -1) {
+        DEnterMenu.selected_floor = first_open;
+        DEnterMenu.scroll_top = DEnterMenu.selected_floor;
+    }
+    if (DEnterMenu.scroll_top > DEnterMenu.floor_count - 5) {
+        DEnterMenu.scroll_top = DEnterMenu.floor_count - 5;
+        if (DEnterMenu.scroll_top < 0) {
+            DEnterMenu.scroll_top = 0;
+        }
+    }
+    printf("DEnterMenu.select = %d\n", DEnterMenu.selected_floor);
+    printf("DEnterMenu.topline = %d\n", DEnterMenu.scroll_top);
+    DEnterMenu.unk_004 = 118.0f - 40.0f * DEnterMenu.scroll_top;
+    lines = DEnterMenu.floor_count;
+    if (lines < 5) {
+        lines = 5;
+    }
+    DEnterMenu.unk_008 = 122.0f + 108.0f * DEnterMenu.scroll_top / lines;
+    GamePad.SetAutoRepeat(0xF00F, 30, 5);
+    GamePad.MenuModeOn(0x78);
+    return 1;
+}
+
+static void ExitDunEnterMenu() {
     GamePad.AutoRepeatOff();
     GamePad.MenuModeOff();
     MenuTextureReload(DEnterMenu.texture_block);
@@ -145,20 +483,284 @@ int DunEnterMenuLoop() {
     }
     return result;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DunEnterMenuKey__Fv);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @843__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @844);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @845);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @846);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @847);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DunEnterDraw__Fv);
+
+static int DunEnterMenuKey(void) {
+    int result;
+    int selected;
+    int scroll_top;
+    int count;
+    BG_READ_INFO *archive;
+
+    result = -1;
+    switch (DEnterMenu.state) {
+        case 1:
+        case 3:
+            if (DEnterMenu.unk_00C == 0 && ReadBGSync() == 0) {
+                LOADTEXTURE_INFO2 textures[] = {
+                    {(char *) "#frame_menu_enter#640#448#4", DEnterMenu.texture_block, 0},
+                    {NULL, DEnterMenu.texture_block, 0},
+                    {NULL, 0, 0},
+                };
+                archive = GetReadBGFile(0);
+                textures[1].name = (char *) GetPackFile((u_int *) archive->buffer, (char *) "dunenter.img", NULL);
+                TexManager.DeleteTextureBlock(DEnterMenu.texture_block);
+                TexManager.CleanUpTextureList();
+                TexManager.LoadTextureBlockEX(-1, textures);
+                DunLogBoard = TexManager.GetTexture("dunenter", DEnterMenu.texture_block);
+                DunLogBoard2 = TexManager.GetTexture("kaisou", DEnterMenu.texture_block);
+                InitMenuMesSet(7, (short *) GetPackFile((u_int *) archive->buffer, (char *) "dunlog.bin", NULL));
+                CommonMenuMes2.mes_made = -1;
+                CommonMenuMes2.MakeMesWin(10);
+                DEnterMenu.unk_00C = 1;
+                DEnterMenu.unk_00E = 0;
+                printf("tex enter end \n");
+            } else {
+                MenuEtcErrCnt++;
+            }
+            if (DEnterMenu.unk_00C != 0) {
+                DEnterMenu.counter++;
+            }
+            if (DEnterMenu.unk_00C != 0 && DEnterMenu.counter > 30) {
+                DEnterMenu.state = 0;
+                DEnterMenu.counter = 0;
+                if (DEnterMenu.requested_floor >= 0) {
+                    DEnterMenu.state = 2;
+                    DEnterMenu.result = DEnterMenu.requested_floor;
+                    result = 1;
+                }
+            }
+            break;
+        case 2:
+            DEnterMenu.counter++;
+            if (DEnterMenu.counter > 46) {
+                result = 1;
+            }
+            break;
+        case 0:
+            selected = DEnterMenu.selected_floor;
+            scroll_top = DEnterMenu.scroll_top;
+            if (GamePad.Down(0x1000)) {
+                DEnterMenu.selected_floor--;
+                if (DEnterMenu.selected_floor < DEnterMenu.scroll_top) {
+                    DEnterMenu.scroll_top--;
+                }
+            } else if (GamePad.Down(0x4000)) {
+                DEnterMenu.selected_floor++;
+                if (DEnterMenu.scroll_top + 4 < DEnterMenu.selected_floor) {
+                    DEnterMenu.scroll_top++;
+                }
+            } else if (GamePad.Down(0x200A)) {
+                DEnterMenu.scroll_top += 5;
+                DEnterMenu.selected_floor += 5;
+            } else if (GamePad.Down(0x8005)) {
+                DEnterMenu.scroll_top -= 5;
+                DEnterMenu.selected_floor -= 5;
+            }
+            if (DEnterMenu.scroll_top < 0 || DEnterMenu.selected_floor < 0) {
+                DEnterMenu.selected_floor = 0;
+                DEnterMenu.scroll_top = 0;
+            }
+            if (DEnterMenu.floor_count - 1 < DEnterMenu.selected_floor) {
+                DEnterMenu.selected_floor = DEnterMenu.floor_count - 1;
+                DEnterMenu.scroll_top = DEnterMenu.selected_floor - 4;
+                if (DEnterMenu.scroll_top < 0) {
+                    DEnterMenu.scroll_top = 0;
+                }
+            }
+            if (DEnterMenu.selected_floor > DEnterMenu.floor_count - 1) {
+                DEnterMenu.selected_floor = DEnterMenu.floor_count - 1;
+            }
+            count = DEnterMenu.floor_count;
+            if (count > 5) {
+                if (DEnterMenu.scroll_top > count - 5) {
+                    DEnterMenu.scroll_top = count - 5;
+                    if (DEnterMenu.scroll_top < 0) {
+                        DEnterMenu.scroll_top = 0;
+                        DEnterMenu.selected_floor = 0;
+                    }
+                }
+            } else if (DEnterMenu.selected_floor > count - 1 || DEnterMenu.scroll_top > count - 1) {
+                DEnterMenu.selected_floor = count - 1;
+                DEnterMenu.scroll_top = 0;
+            }
+            if (DEnterMenu.scroll_top < 0 || DEnterMenu.selected_floor < 0) {
+                DEnterMenu.scroll_top = 0;
+                DEnterMenu.selected_floor = 0;
+            }
+            if (abs(DEnterMenu.scroll_top - scroll_top) > 4) {
+                DEnterMenu.unk_004 = 118.0f - 40.0f * DEnterMenu.scroll_top;
+                DEnterMenu.unk_008 = 122.0f + 108.0f * DEnterMenu.scroll_top / DEnterMenu.floor_count;
+            }
+            if (selected != DEnterMenu.selected_floor || scroll_top != DEnterMenu.scroll_top) {
+                ComMenuSePlay(0);
+            }
+            if (GamePad.Down(0x40)) {
+                DEnterMenu.result = DEnterMenu.selected_floor;
+                DEnterMenu.state = 2;
+                ComMenuSePlay(1);
+            }
+            if (GamePad.Down(0x20)) {
+                ComMenuSePlay(2);
+            }
+            break;
+    }
+    return result;
+}
+
+static void DunEnterDraw(void) {
+    int fade;
+    int alpha;
+    int cover;
+    int half_width;
+    int cursor_y;
+    int left;
+    int top;
+    int right;
+    int bottom;
+    float wave;
+
+    setbilinear(0);
+    CRect_i_ screen(0, 0, 0x2800, 0x1C00);
+    alpha = 0x80;
+    fade = alpha;
+    switch (DEnterMenu.state) {
+        case 1:
+            if (DEnterMenu.unk_00C != 0) {
+                fade = DEnterMenu.counter * 6;
+                alpha = fade;
+            }
+            break;
+    }
+    if (alpha < 0) {
+        alpha = 0;
+    }
+    if (fade > 0x80) {
+        fade = 0x80;
+    }
+    if (alpha > 0x80) {
+        alpha = 0x80;
+    }
+    if (DEnterMenu.unk_00C != 0 && DEnterMenu.state != 3) {
+        MenuTextureReload(DEnterMenu.texture_block);
+        DrawDunEnterBack(alpha);
+        DunEnterBoard(0x46, 0x5A, alpha);
+        CursorVibeCnt++;
+        if (CursorVibeCnt > 0x107AC0) {
+            CursorVibeCnt = 0;
+        }
+        if (DEnterMenu.state == 0) {
+            cursor_y = (DEnterMenu.selected_floor - DEnterMenu.scroll_top) * 40 + 0x74;
+            static int DunWakuCnt;
+            static s8 init;
+            if (init == 0) {
+                DunWakuCnt = 0;
+                init = 1;
+            }
+            wave = 0.2f * DunWakuCnt;
+            left = 94.0f + wave;
+            top = cursor_y + wave;
+            right = 204.0f - wave;
+            bottom = (cursor_y + 0x18) - wave;
+            RECT corner = {0x40, 0x60, 0x10, 0x10};
+            DrawMenu2DSprite(DunLogBoard, CRect_i_(left, top, corner.width, corner.height),
+                             CRect_i_(corner.x, corner.y, corner.width, corner.height), alpha);
+            DrawMenu2DSprite(DunLogBoard, CRect_i_(right, top, corner.width, corner.height),
+                             CRect_i_(corner.x + corner.width, corner.y, corner.width, corner.height), alpha);
+            DrawMenu2DSprite(DunLogBoard, CRect_i_(left, bottom, corner.width, corner.height),
+                             CRect_i_(corner.x, corner.y + corner.height, corner.width, corner.height), alpha);
+            DrawMenu2DSprite(DunLogBoard, CRect_i_(right, bottom, corner.width, corner.height),
+                             CRect_i_(corner.x + corner.width, corner.y + corner.height, corner.width, corner.height),
+                             alpha);
+            DunWakuCnt++;
+            if (DunWakuCnt < 0 || DunWakuCnt >= 30) {
+                DunWakuCnt = 0;
+            }
+            CRect_i_ cursor(0x20, 0x60, 0x20, 0x20);
+            DrawObjectVibe(0x49, cursor_y + 2, DunLogBoard, cursor, 0, alpha);
+            DrawObjectVibe(0x46, cursor_y, DunLogBoard, cursor, 0x80, alpha);
+        }
+        MenuTextureReload(CommonMenuMes2.tex_block);
+        CommonMenuMes2.stay_frame = 1;
+        CommonMenuMes2.edge_alpha = alpha;
+        CommonMenuMes2.text_y = 0x158;
+        half_width = CommonMenuMes2.char_width >> 1;
+        GetMenuCommonPutXY(&CommonMenuMes2, 0x148 - half_width);
+        CommonMenuMes2.Step();
+        CommonMenuMes2.DrawMesWin();
+    } else {
+        MGFillBox(screen, 0, 0, 0, 0x80);
+    }
+    cover = 0x80;
+    switch (DEnterMenu.state) {
+        case 1:
+            cover = 0x80 - DEnterMenu.counter * 6;
+            break;
+        case 2:
+            cover = DEnterMenu.counter * 9;
+            break;
+    }
+    if (cover < 0) {
+        cover = 0;
+    }
+    if (cover > 0x80) {
+        cover = 0x80;
+    }
+    switch (DEnterMenu.state) {
+        case 1:
+        case 2:
+            MGFillBox(screen, 0, 0, 0, cover);
+            break;
+    }
+    setbilinear(1);
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DunEnterBoardWaku__Fiii);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DunEnterBoard__Fiii);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawEnemyNum__Fiiiiii);
+
+static void DrawEnemyNum(int x, int y, int top, int bottom, int number, int alpha) {
+    int digits;
+    int position;
+    int source;
+    int length;
+    int u;
+    int digit;
+
+    for (digits = GetNumberKeta(number); 0 < digits; digits--) {
+        position = y;
+        digit = number % 10;
+        x -= 11;
+        u = digit * 12 + 0x20;
+        source = 0x48;
+        length = 12;
+        MenuTextureClip(position, source, length, top, bottom);
+        DrawMenu2DSprite(DunLogBoard, CRect_i_(x, position, 12, length - 1), CRect_i_(u, source, 12, length), alpha);
+        number /= 10;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawGetAtoraNumBoard__Fiiiiii);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawDunNumberClip__Fiiiiii);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawDunEnterBack__Fi);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1255__2);
+
+static void DrawDunNumberClip(int x, int y, int top, int bottom, int digit, int alpha) {
+    int position;
+    int source;
+    int length;
+    int u;
+
+    position = y;
+    u = digit * 12 + 0x20;
+    source = 0x48;
+    length = 12;
+    MenuTextureClip(position, source, length, top, bottom);
+    if (position < bottom) {
+        DrawMenu2DSprite(DunLogBoard, CRect_i_(x, position, 12, length), CRect_i_(u, source, 12, length), alpha);
+    }
+}
+
+static void DrawDunEnterBack(int alpha) {
+    DrawMenu2DSprite(TexManager.GetTexture("frame", -1), MenuDispRc, MenuDispRc, 0x80);
+    MGFillBox(CRect_i_(0, 0, 0x2800, 0x1C00), 10, 10, 10, (alpha * 4) >> 7);
+}
+
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1301);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawDunEnterFloorName__Fiiiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", StartQuickChange__FP1iPii);
@@ -171,9 +773,42 @@ INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1374);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1375);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", CharaChangeKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", CharaChangeDraw__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DngActItemModelReadStart__FP1);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1663);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1664__2);
+
+int DngActItemModelReadStart(u_long128 *buffer) {
+    char model_path[64];
+    char texture_path[76];
+    int size;
+    u_long128 *model_buffer;
+    u_long128 *texture_buffer;
+    int i;
+    ITEM_PACK *pack;
+
+    size = 0;
+    pack = &BtlMenuStatusPt->item_pack;
+    if (pack == NULL) {
+        return 1;
+    }
+    model_buffer = MenuCalcBufAlignment(buffer);
+    texture_buffer = model_buffer + 0xFA1;
+    texture_buffer = MenuCalcBufAlignment(texture_buffer);
+    StartReadBG();
+    for (i = 0; i < 3; i++) {
+        if (pack->quick_item_slot[i] >= 0x84) {
+            printf("mds = %p\n", model_buffer);
+            printf("img = %p\n", texture_buffer);
+            BtGetItemNamePath(model_path, texture_path, pack->quick_item_slot[i]);
+            LoadFileBG(model_path, model_buffer, &size);
+            model_buffer += (((size >> 6) + 1) << 6) >> 4;
+            LoadFileBG(texture_path, texture_buffer, &size);
+            texture_buffer += (((size >> 6) + 1) << 6) >> 4;
+        }
+        if (pack->quick_item_slot[i] < 0x84) {
+            pack->quick_item_slot[i] = -1;
+        }
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DngActItemModelBuild__Fi);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DngActiveItemTextureCopy__Fv);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1728__2);
@@ -210,7 +845,39 @@ s16 GetWeaponMsgNo2(s32 item_no) {
     }
     return 0;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawWepAttach__FiiP11WEAPON_HAVEii);
+
+void DrawWepAttach(int x, int y, WEAPON_HAVE *weapon, int, int alpha) {
+    int holes;
+    int item_no;
+    int i;
+    float size;
+    CTexture *texture;
+    int u;
+    int v;
+    int volume;
+
+    holes = GetWeaponHoleNum(weapon->item_no);
+    if (holes <= 0) {
+        return;
+    }
+    for (i = 0; i < holes; i++) {
+        item_no = weapon->attach[i].item_no;
+        if (item_no >= 0x51) {
+            size = 32.0f;
+            texture = RetCTex(item_no, u, v);
+            CRect_i_ src(u, v, 32, 32);
+            CRect_i_ dest(x, y, size, size);
+            DrawMenu2DSprite(texture, dest, src, alpha);
+            volume = GetAttachVolumeForMsg(&weapon->attach[i]);
+            if (item_no == 0x5A) {
+                volume = weapon->attach[i].unk_02;
+            }
+            DrawAttachNumberOrWeapon(x, y, 0, 0x280, item_no, volume, alpha, 0);
+        }
+        x += 42.0f;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", GetAtraTipNowHave__Fii);
 
 int GetDispVolumeForFloat(float volume) {
@@ -226,10 +893,55 @@ int GetDispVolumeForFloat(float volume) {
 }
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", InitItemPolygonView__FiP1);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", EnterItemPolygonView__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", LocalDrawItemPolygonView__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawItemPolygonView__Fv);
 
-int ConvDebugSelectToExcelListNo(int selection) {
+static void LocalDrawItemPolygonView(void) {
+    float turn;
+    float tilt;
+    int i;
+
+    if (MDebugItemPolyViewFlag != 0 && ItemPolyView != NULL && polyreadflag != 0) {
+        turn = GamePad.GetRXf();
+        tilt = GamePad.GetRYf();
+        menudebugrot[0] += tilt / 32.0f;
+        menudebugrot[1] += turn / 32.0f;
+        for (i = 0; i < 3; i++) {
+            if (menudebugrot[i] < -3.1415927f) {
+                menudebugrot[i] += 6.2831855f;
+            }
+            if (menudebugrot[i] > 3.1415927f) {
+                menudebugrot[i] -= 6.2831855f;
+            }
+        }
+        if (GamePad.Down2(0x20)) {
+            MDebugItemPolyViewFlag = 0;
+        }
+        if (GamePad.On2(0x10)) {
+            for (i = 0; i < 3; i++) {
+                if (menudebugrscale[i] <= 5.0f) {
+                    menudebugrscale[i] += 0.1f;
+                }
+            }
+        }
+        if (GamePad.On2(0x80)) {
+            for (i = 0; i < 3; i++) {
+                if (0.1f < menudebugrscale[i]) {
+                    menudebugrscale[i] -= 0.1f;
+                }
+            }
+        }
+        ItemPolyView->SetRotation(menudebugrot[0], menudebugrot[1], menudebugrot[2]);
+        ItemPolyView->SetScale(menudebugrscale);
+        ItemPolyView->SetPosition(menudebugpos);
+        MGDraw(ItemPolyView);
+    }
+}
+
+void DrawItemPolygonView(void) {
+    MenuTextureReload(BtlMenuExReadBlock);
+    MenuPolygonDraw(0x80, LocalDrawItemPolygonView);
+}
+
+static int ConvDebugSelectToExcelListNo(int selection) {
     int item_no;
 
     item_no = selection + 0x81;
@@ -241,7 +953,76 @@ int ConvDebugSelectToExcelListNo(int selection) {
     }
     return item_no;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DebugItemGetKey__Fv);
+
+int DebugItemGetKey(void) {
+    int result;
+    int selection;
+    int page;
+    int item_no;
+    WEAPON_DATA *data;
+    int count;
+
+    result = 0;
+    selection = ItemAutoGet.selection;
+    page = ItemAutoGet.page;
+    if (GamePad.Down(0x1000)) {
+        ItemAutoGet.selection -= 8;
+    }
+    if (GamePad.Down(0x4000)) {
+        ItemAutoGet.selection += 8;
+    }
+    if (GamePad.Down(0x2000)) {
+        ItemAutoGet.selection += 1;
+    }
+    if (GamePad.Down(0x8000)) {
+        ItemAutoGet.selection -= 1;
+    }
+    if (GamePad.Down(0x100)) {
+        if (ItemAutoGet.show_model) {
+            ItemAutoGet.show_model = 0;
+        } else {
+            ItemAutoGet.show_model = 1;
+        }
+        polyreadflag = InitItemPolygonView(ConvDebugSelectToExcelListNo(ItemAutoGet.selection), BtlMenuReadBuf);
+    }
+    if (GamePad.Down(5)) {
+        ItemAutoGet.selection -= 0x40;
+    }
+    if (GamePad.Down(0xA)) {
+        ItemAutoGet.selection += 0x40;
+    }
+    if (ItemAutoGet.selection < 0) {
+        ItemAutoGet.selection += 0x140;
+    }
+    if (ItemAutoGet.selection > 0x13F) {
+        ItemAutoGet.selection -= 0x140;
+    }
+    ItemAutoGet.page = ItemAutoGet.selection >> 6;
+    if (selection != ItemAutoGet.selection || page != ItemAutoGet.page) {
+        ComMenuSePlay(0);
+    }
+    if (GamePad.Down(0x40)) {
+        ComMenuSePlay(1);
+        count = rand() % 3 + 1;
+        BtlMenuStatusPt->GetItem(ConvDebugSelectToExcelListNo(ItemAutoGet.selection), count);
+    }
+    if (GamePad.Down(0x20)) {
+        result = -1;
+        CommonMenuMes2.mes_made = result;
+        ComMenuSePlay(2);
+    }
+    if (GamePad.Down2(0x40)) {
+        for (item_no = 0x101; item_no < 0x179; item_no++) {
+            data = GetWeaponData(item_no);
+            if (data != NULL && data->flags != 0 && data->flags != 1) {
+                BtlMenuStatusPt->GetItem(item_no, 0);
+            }
+        }
+        ComMenuSePlay(1);
+    }
+    return result;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DebugItemGetDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawItemDataView__Fi);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2140__2);

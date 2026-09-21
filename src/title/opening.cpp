@@ -1058,9 +1058,9 @@ void OpPlayVolSE(int group, int no, int voice, float volume) {
 int OpGetVolSQ(int no) {
     switch (no) {
         case 0:
-            return CSnd.GetMidiState()->sequence->volume;
+            return CSnd.GetMidiState()->port[0].sequence[0]->volume;
         case 1:
-            return CSnd.GetMidiState()->sequence->volume;
+            return CSnd.GetMidiState()->port[0].sequence[0]->volume;
     }
 }
 
@@ -1068,12 +1068,12 @@ void FadeCansel() {
     MIDI_STATE *state;
 
     state = CSnd.GetMidiState();
-    state->unk_5C = 0;
-    state->unk_15C = 0;
-    state->unk_EC = 0;
-    state->unk_26C = 0;
-    state->unk_2EC = 0;
-    state->unk_36C = 0;
+    state->port[0].fade[0].active = 0;
+    state->port[2].fade[0].active = 0;
+    state->port[1].fade[1].active = 0;
+    state->port[4].fade[1].active = 0;
+    state->port[5].fade[1].active = 0;
+    state->port[6].fade[1].active = 0;
     CSnd.SetVol(15, 256);
     CSnd.SetVol(14, 256);
     CSnd.SetVol(13, 256);

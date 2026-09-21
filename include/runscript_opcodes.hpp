@@ -21,54 +21,9 @@ class CRunScript;
 struct RS_STACKDATA;
 
 /**
- * Reads one script argument as an integer, converting it where the slot holds a float.
- *
- * @mangled GetStackInt__FP12RS_STACKDATA__3
- * @address 0x1E1640
- * @size 0x44
- * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
+ * Integers each monster's script pushes and pops, eight per monster.
  */
-int GetStackInt(RS_STACKDATA *argument);
-
-/**
- * Reads one script argument as a float, converting it where the slot holds an integer.
- *
- * @mangled GetStackFloat__FP12RS_STACKDATA__3
- * @address 0x1E1690
- * @size 0x2C
- * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
- */
-float GetStackFloat(RS_STACKDATA *argument);
-
-/**
- * Reads one script argument as a string.
- *
- * @mangled GetStackString__FP12RS_STACKDATA__3
- * @address 0x1E16C0
- * @size 0xC
- * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
- */
-char * GetStackString(RS_STACKDATA *argument);
-
-/**
- * Writes an integer back through a script argument that names a variable.
- *
- * @mangled SetStack__FP12RS_STACKDATAi__3
- * @address 0x1E16D0
- * @size 0x20
- * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
- */
-void SetStack(RS_STACKDATA *argument, int value);
-
-/**
- * Writes a float back through a script argument that names a variable.
- *
- * @mangled SetStack__FP12RS_STACKDATAf__3
- * @address 0x1E16F0
- * @size 0x20
- * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
- */
-void SetStack(RS_STACKDATA *argument, float value);
+extern int PUSH_INT_DATA[16][8];
 
 /**
  * Starts a motion on the monster and every part linked to it, optionally at a given speed and repeat count.
@@ -672,16 +627,6 @@ int _SET_GLOBAL_INT(RS_STACKDATA *stack, int count);
  * @size 0x50
  */
 int _GET_GLOBAL_INT(RS_STACKDATA *stack, int count);
-
-/**
- * Reads the world position of a named frame of the monster's model.
- *
- * @mangled _GET_OBJ_POS__FP12RS_STACKDATAi__2
- * @address 0x1E5240
- * @size 0xC8
- * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
- */
-int _GET_OBJ_POS(RS_STACKDATA *stack, int count);
 
 /**
  * Pitches the monster towards a point.

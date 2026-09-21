@@ -494,7 +494,7 @@ int CSaveData::AtraChipGet(int georama_no, int chip_id) {
     return 0;
 }
 
-s16 CSaveData::VisitMap(int map_no, int add) {
+int CSaveData::VisitMap(int map_no, int add) {
     if (map_no < 0 || map_no >= 0x50) {
         return 0;
     }

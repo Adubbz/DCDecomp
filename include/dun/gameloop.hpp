@@ -34,14 +34,16 @@ struct MAP_TRAP_CIRCLE;
 struct BT_EVENT_INFO {
     sceVu0FVECTOR position;  /**< Where the event run by the script plays. */
     sceVu0FVECTOR direction; /**< Which way that event faces. */
-    u8 unk_20[0x4];
+    s32 unk_20;
     s32 unk_24;
-    u8 unk_28[0x4];
+    s32 unk_28;
     s32 unk_2C;
     s32 unk_30;
     s32 unk_34;
     s32 unk_38;
-    u8 unk_3C[0x48];
+    s32 unk_3C[16];
+    s32 unk_7C;
+    s32 unk_80;
     RS_STACKDATA *entrance_result; /**< Where the floor the player chose is written back. */
     RS_STACKDATA *escape_result;   /**< Where the escape answer is written back. */
     s32 unk_8C;
@@ -53,7 +55,7 @@ struct BT_EVENT_INFO {
     s32 unk_A4;
     s32 script_main_chr; /**< Character _SET_MAIN_CHR2 last asked for, or -1 when none is set. */
     s32 unk_AC;
-    u8 unk_B0[0x4];
+    s32 unk_B0;
     s32 unk_B4;
     s32 no_status_recover; /**< Prevents restoring party status when entering the floor. */
     s32 unk_BC;

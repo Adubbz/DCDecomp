@@ -63,15 +63,6 @@ int PersonalRetMax(int board_mode);
 void DrawPersonalBoard(int x, int y, int board_mode, int cursor_pos, int alpha);
 
 /**
- * Draws the equipped-weapon marker on a personal-board entry.
- *
- * @mangled DrawNowEquipWeaponMark__Fiiiii
- * @address 0x0022F9D0
- * @size 0x100
- */
-void DrawNowEquipWeaponMark(int x, int y, int weapon_no, int character_no, int alpha);
-
-/**
  * Draws a common inventory icon with its quantity and state overlays.
  *
  * @mangled CommonIconDraw__Fiiiiiii
@@ -99,13 +90,14 @@ void PersonalBoardDrawWaku(int x, int y, CTexture *texture, int alpha);
 void PersonalBoardOptionDraw(int x, int y, int board_mode, int cursor_pos, CTexture *texture, int alpha);
 
 /**
- * Draws the category tags associated with a personal inventory board.
+ * Draws the tabs above a personal inventory board, the selected one lit, and in
+ * the village board the village tabs and the selected village's name.
  *
  * @mangled PersonalBoardTagDraw__FiiiP8CTextureii
  * @address 0x00230210
  * @size 0x50C
  */
-void PersonalBoardTagDraw(int x, int y, int board_mode, CTexture *texture, int cursor_pos, int alpha);
+void PersonalBoardTagDraw(int tag, int x, int y, CTexture *texture, int shift, int alpha);
 
 /**
  * Draws and updates the personal-board scroll bar.
@@ -117,22 +109,14 @@ void PersonalBoardTagDraw(int x, int y, int board_mode, CTexture *texture, int c
 void PersonalBoardScrlBarDraw(int x, int y, int count, float &scroll, unsigned char visible_count, CTexture *texture, int alpha);
 
 /**
- * Draws the personal-board maximum-capacity indicator.
+ * Draws the number of entries on a personal inventory board and its capacity,
+ * the capacity picked out once the board is over it.
  *
  * @mangled PersonalBoardMaxDraw__FiiiP8CTexturei
  * @address 0x002309C0
  * @size 0x238
  */
-void PersonalBoardMaxDraw(int x, int y, int board_mode, CTexture *texture, int alpha);
-
-/**
- * Draws the base layers of a personal inventory board.
- *
- * @mangled DrawPersonalBoardBase__FiiiiiP8CTexturei
- * @address 0x00230C00
- * @size 0x1C0
- */
-void DrawPersonalBoardBase(int x, int y, int width, int height, int board_mode, CTexture *texture, int alpha);
+void PersonalBoardMaxDraw(int num, int x, int y, CTexture *texture, int alpha);
 
 /**
  * Draws one complete personal-board view.
@@ -303,7 +287,7 @@ int GetWeaponMaxExp(WEAPON_HAVE *weapon);
  * @address 0x00232130
  * @size 0x8C
  */
-void GetNowItemNum(short item_no, ITEM_PACK *items);
+int GetNowItemNum(short item_no, ITEM_PACK *items);
 
 /**
  * Removes one used item from an item pack.
@@ -348,7 +332,7 @@ void AttachDataListToHaveCopy(int attachment_no, ATTACH_LIST *attachment);
  * @address 0x002326C0
  * @size 0x104
  */
-s16 ItemDataToHaveCopy(int item_no);
+int ItemDataToHaveCopy(int item_no);
 
 /**
  * Draws a texture across the complete menu display rectangle.

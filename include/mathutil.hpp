@@ -143,6 +143,19 @@ void __unexpected(/* unknown args */);
 extern "C" void mwInit(int argc, const char **argv, const char **envp);
 
 /**
+ * The header at the start of an overlay image read off the disc.
+ */
+struct OverlayHeader {
+    u8 unk_00[0x14];
+    int bss_size;          /**< Bytes of zeroed storage that follow the loaded image. */
+    void *static_init;     /**< First entry of the overlay's static initializer table. */
+    void *static_init_end; /**< End of the overlay's static initializer table. */
+    u8 unk_20[0x20];
+};
+
+STATIC_ASSERT(sizeof(OverlayHeader) == 0x40);
+
+/**
  * Starts the overlay loader and records where overlays are read to.
  *
  * @mangled mwOverlayInit

@@ -23,7 +23,6 @@ extern "C" CCharacter CharaMain;
 extern CDngStatusData *UserStatus;
 extern CHitValue *NowHitValue;
 
-#ifdef NON_MATCHING
 void CRandomItem::Draw(void) {
     for (int i = 0; i < 32; i++) {
         if (id[i] == -1 || distance[i] > 200.0f) {
@@ -77,9 +76,6 @@ void CRandomItem::Draw(void) {
                          0x80);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/randomitem", Draw__11CRandomItemFv);
-#endif
 #ifdef NON_MATCHING
 void CRandomItem::MapSymbolDraw(void) {
     CTexture *texture = TexManager.GetTexture("itempack", -1);
@@ -98,7 +94,6 @@ void CRandomItem::MapSymbolDraw(void) {
 INCLUDE_ASM("asm/nonmatchings/randomitem", MapSymbolDraw__11CRandomItemFv);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/randomitem", @1383);
-#ifdef NON_MATCHING
 int CRandomItem::checkEvent(void) {
     for (int i = 0; i < 32; i++) {
         int event = pickup_event[i];
@@ -109,10 +104,6 @@ int CRandomItem::checkEvent(void) {
     }
     return -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/randomitem", checkEvent__11CRandomItemFv);
-#endif
-#ifdef NON_MATCHING
 int CRandomItem::checkErr(void) {
     for (int i = 0; i < 32; i++) {
         if (pickup_blocked[i] > 0 && pickup_blocked[i] < 3) {
@@ -122,10 +113,6 @@ int CRandomItem::checkErr(void) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/randomitem", checkErr__11CRandomItemFv);
-#endif
-#ifdef NON_MATCHING
 int CRandomItem::CheckPosition(void) {
     sceVu0FVECTOR player_position;
     int gold = 0;
@@ -165,10 +152,6 @@ int CRandomItem::CheckPosition(void) {
     }
     return gold;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/randomitem", CheckPosition__11CRandomItemFv);
-#endif
-#ifdef NON_MATCHING
 void CRandomItem::Set(float *drop_position, int slot_id, int gold, int item) {
     int slot = CheckID();
     if (slot != -1) {
@@ -183,10 +166,6 @@ void CRandomItem::Set(float *drop_position, int slot_id, int gold, int item) {
         pickup_blocked[slot] = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/randomitem", Set__11CRandomItemFPfiii);
-#endif
-#ifdef NON_MATCHING
 int CRandomItem::CheckID(void) {
     for (int i = 0; i < 32; i++) {
         if (id[i] == -1) {
@@ -196,10 +175,6 @@ int CRandomItem::CheckID(void) {
     bob_phase = 0.0f;
     return -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/randomitem", CheckID__11CRandomItemFv);
-#endif
-#ifdef NON_MATCHING
 int CRandomItem::CheckItemNo(int item) {
     for (int i = 0; i < 32; i++) {
         if (id[i] != -1 && item_no[i] == item) {
@@ -208,10 +183,6 @@ int CRandomItem::CheckItemNo(int item) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/randomitem", CheckItemNo__11CRandomItemFi);
-#endif
-#ifdef NON_MATCHING
 void CRandomItem::Step(void) {
     bob_phase += 0.05235988f;
     if (bob_phase > 3.1415927f) {
@@ -228,7 +199,11 @@ void CRandomItem::Step(void) {
                 if (phase[i] > 3.1415927f) {
                     state[i] = 1;
                     phase[i] = 0.0f;
-                    SndSePlay(item_no[i] == -1 ? 0xDD : 0xDE, -1, 0);
+                    if (item_no[i] == -1) {
+                        SndSePlay(0xDD, -1, 0);
+                    } else {
+                        SndSePlay(0xDE, -1, 0);
+                    }
                 }
                 break;
             case 1:
@@ -242,6 +217,3 @@ void CRandomItem::Step(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/randomitem", Step__11CRandomItemFv);
-#endif

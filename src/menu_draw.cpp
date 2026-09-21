@@ -4,10 +4,13 @@
 
 #include "menu_draw.hpp"
 
+#include <libvu0.h>
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
+#include "battlemenu.hpp"
 #include "camera.hpp"
 #include "clsmes.hpp"
 #include "dataalloc.hpp"
@@ -20,6 +23,7 @@
 #include "mainselect.hpp"
 #include "memcard.hpp"
 #include "memorycardaccess.hpp"
+#include "menu_dungeon.hpp"
 #include "menu_inventory.hpp"
 #include "menuitemstep.hpp"
 #include "mglib.hpp"
@@ -32,46 +36,83 @@
 /** The personal inventory board the menu is working on. */
 extern PERSONAL_BOARD *PerBoardPt;
 
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @553);
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @554__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @555);
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @556);
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @557);
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @558);
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @559);
-#ifdef NON_MATCHING
+/** Marks, one per item pack slot, of the items the menu offers to throw away. */
+extern s8 MenuTrushMark[100];
+
+/** Screen rectangle the menus draw full-screen pictures into. */
+extern CRect_i_ MenuDispRc;
+
+/** Icon sheet of the consumable items. */
+extern CTexture *ItemIcon;
+
+/** Icon sheet of the weapons. */
+extern CTexture *WepIcon;
+
+/** Texture of the personal inventory board. */
+extern CTexture *PerBoardTex;
+
+/** Texture block the item menu's weapon icons load into. */
+extern int ItemMenuWeaponIconReadBlock;
+
+/** Camera the menu draws 3D models under. */
+extern CCamera MenuCamera;
+
+/** Frame texture the main menu draws its icons in. */
+extern CTexture *StayTex;
+
+/**
+ * Draws the mark over an item that cannot be set.
+ *
+ * @mangled DrawDontSetItemMark__Fiiiii
+ * @address 0x22D4C0
+ * @size 0xDC
+ */
+static void DrawDontSetItemMark(int, int, int, int, int);
+
+/**
+ * Draws the equipped-weapon marker on a personal-board entry.
+ *
+ * @mangled DrawNowEquipWeaponMark__Fiiiii
+ * @address 0x0022F9D0
+ * @size 0x100
+ */
+static void DrawNowEquipWeaponMark(int x, int y, int top, int bottom, int alpha);
+
+/**
+ * Draws the base layers of a personal inventory board.
+ *
+ * @mangled DrawPersonalBoardBase__FiiiiiP8CTexturei
+ * @address 0x00230C00
+ * @size 0x1C0
+ */
+static void DrawPersonalBoardBase(int x, int y, int top, int bottom, int count, CTexture *texture, int alpha);
+
+/** Directory that menu textures load from. */
+static char AllMenuTextureDir[9] = "commenu/";
+
+/** Path fragment of each selectable language's directory and file names. */
+static char *ComMenuContryName[7] = {"a_jpn/", "a_usa/", "a_eng/", "a_fre/", "a_ger/", "a_ita/", "a_spa/"};
+
 char *GetMenuTextureDir(void) {
     return AllMenuTextureDir;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuTextureDir__Fv);
-#endif
 
-#ifdef NON_MATCHING
 int GetMenuLangFlag(void) {
     return LanguageCode;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuLangFlag__Fv);
-#endif
 
-#ifdef NON_MATCHING
 char *GetNowSelectLanguage(int language) {
     if ((language < 0) || (language >= 7)) {
         language = 0;
     }
     return ComMenuContryName[language];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowSelectLanguage__Fi);
-#endif
 
 void GetPathReadDifferntLang(char *path) {
     strcpy(path, GetMenuTextureDir());
     strcat(path, GetNowSelectLanguage(GetMenuLangFlag()));
 }
 
-#ifdef NON_MATCHING
 int LoadFileBGMenuData(char *name, u_long128 *buffer) {
     int size;
 
@@ -83,11 +124,7 @@ int LoadFileBGMenuData(char *name, u_long128 *buffer) {
     LoadFileBG(MenuGrobalDir, buffer, &size);
     return size;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", LoadFileBGMenuData__FPcP1);
-#endif
 
-#ifdef NON_MATCHING
 int LoadFileMenuData(char *name, unsigned int *buffer) {
     int size;
 
@@ -96,26 +133,23 @@ int LoadFileMenuData(char *name, unsigned int *buffer) {
     LoadFile(MenuGrobalDir, buffer, &size);
     return size;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", LoadFileMenuData__FPcPUi);
-#endif
-#ifdef NON_MATCHING
+
+/** Allocator of the edit menu's work memory, which the battle menus also load into. */
 extern CDataAlloc2<1> EdMenuBuffer;
-extern u_int *read_buffer;
 
 u_long128 *BtlMenuBufferSet(int mode) {
+    u_long128 *buffer;
+
     switch (mode) {
         case 0:
-            return (u_long128 *) read_buffer;
+            buffer = (u_long128 *) read_buffer;
+            break;
         case 1:
-            return (u_long128 *) (EdMenuBuffer.base + EdMenuBuffer.used * 0x10);
+            buffer = (u_long128 *) (EdMenuBuffer.base + EdMenuBuffer.used * 0x10);
     }
+    return buffer;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", BtlMenuBufferSet__Fi);
-#endif
 
-#ifdef NON_MATCHING
 u_long128 *MenuCalcBufAlignment(u_long128 *buffer) {
     int offset = (int) buffer;
     int remainder = offset & 0x3F;
@@ -127,10 +161,6 @@ u_long128 *MenuCalcBufAlignment(u_long128 *buffer) {
     }
     return (u_long128 *) offset;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuCalcBufAlignment__FP1);
-#endif
-#ifdef NON_MATCHING
 int GetAtoraMaxVillage(void) {
     int max_village = 3;
     int village;
@@ -144,22 +174,18 @@ int GetAtoraMaxVillage(void) {
     if (SaveData->QuestDungeon(5, 0)) {
         max_village = 8;
     }
-    if ((max_village < 3) || (max_village >= 9)) {
+    if ((max_village < 3) || (max_village > 8)) {
         max_village = 8;
     }
     return max_village;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetAtoraMaxVillage__Fv);
-#endif
-#ifdef NON_MATCHING
 int GetNowMapTransAtraMap(int mapNo) {
+    int village = 0;
     s16 mapToVillage[35] = {
         1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 4, 3, 4, 5, 5,
         5, 3, 1, 4, 4, 4, 4, 1, 3, 2, 3, 4, 5, 2, 5,
         4, 3, 2, 2, 2,
     };
-    int village = 0;
 
     if (mapNo < 5) {
         village = mapNo;
@@ -175,43 +201,27 @@ int GetNowMapTransAtraMap(int mapNo) {
 
     return village;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowMapTransAtraMap__Fi);
-#endif
-#ifdef NON_MATCHING
-#include <libvu0.h>
-
 void MenuWorldTrans(CCamera *camera) {
-    // CCamera has an unnamed field at +0x2B8 (a two-entry function-pointer
-    // table not yet in camera.hpp) whose second entry is called here.
-    typedef void (*CameraExtraStep)(CCamera *, int);
     sceVu0FMATRIX cameraMatrix;
-    sceVu0FMATRIX unitMatrix;
-    sceVu0FMATRIX viewMatrix;
     sceVu0FVECTOR eyePos;
-    void **cameraExtra;
+    sceVu0FMATRIX viewMatrix;
+    sceVu0FMATRIX unitMatrix;
 
     MGSetProjection(800.0f);
     camera->GetCameraMatrix(cameraMatrix);
-    cameraExtra = *(void ***) ((char *) camera + 0x2B8);
-    ((CameraExtraStep) cameraExtra[2])(camera, 1);
+    camera->Step(1);
     camera->GetPos(eyePos);
     sceVu0UnitMatrix(unitMatrix);
     sceVu0MulMatrix(viewMatrix, unitMatrix, cameraMatrix);
     MGSetViewMatrix(viewMatrix, eyePos);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuWorldTrans__FP7CCamera);
-#endif
-#ifdef NON_MATCHING
-#include <libvu0.h>
-
-/** Camera the menu draws 3D models under. */
-extern CCamera MenuCamera;
-
 void MenuPolygonDraw(int distance, void (*draw)(void)) {
     float refPos[4] = {0.0f, 0.0f, -45.0f, 1.0f};
     float eyePos[4] = {0.0f, 0.0f, 60.0f, 1.0f};
+
+    MenuCamera.SetRef(refPos);
+    MenuCamera.SetPos(eyePos);
+
     float lightDir[4][4] = {
         {0.3f, 0.0f, 0.0f, 0.0f},
         {0.3f, 0.0f, 0.0f, 0.0f},
@@ -224,18 +234,19 @@ void MenuPolygonDraw(int distance, void (*draw)(void)) {
         {0.0f, 0.0f, 0.0f, 0.0f},
         {0.0f, 0.0f, 0.0f, 0.0f},
     };
+    float savedAmbient[4];
+    float ambient[4];
     float savedLightDir[4][4];
     float savedLightColour[4][4];
-    float savedAmbient[4];
-    float ambient[4] = {80.0f, 80.0f, 80.0f, 0.0f};
+
+    MGGetPLight(savedLightDir, savedLightColour);
+    MGGetAmbient(savedAmbient);
+    ambient[0] = ambient[1] = ambient[2] = 80.0f;
+    ambient[3] = (float) distance;
+
     float lightVector[4] = {0.3f, 1.0f, 0.3f, 0.0f};
     float lightNormal[4];
 
-    MenuCamera.SetRef(refPos);
-    MenuCamera.SetPos(eyePos);
-    MGGetPLight(savedLightDir, savedLightColour);
-    MGGetAmbient(savedAmbient);
-    ambient[3] = (float) distance;
     sceVu0Normalize(lightNormal, lightVector);
     lightDir[0][0] = lightNormal[0];
     lightDir[1][0] = lightNormal[1];
@@ -246,31 +257,20 @@ void MenuPolygonDraw(int distance, void (*draw)(void)) {
     MGSetPLight(savedLightDir, savedLightColour);
     MGSetAmbient(savedAmbient);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuPolygonDraw__FiPFv_v);
-#endif
-#ifdef NON_MATCHING
 void Get3DPosTo2DPos(CFrame *frame, int *screen) {
-    float origin[4] = {0.0f, 0.0f, 0.0f, 1.0f};
     float world[4];
-    int screenPos[2];
+    float origin[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+    int screenPos[4];
 
     frame->GetWorldPosition(world, origin);
     MGRotTransPers2D(screenPos, world, 0);
     screen[0] = screenPos[0];
     screen[1] = screenPos[1];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", Get3DPosTo2DPos__FP6CFramePi);
-#endif
-#ifdef NON_MATCHING
 int GetMenuCommonFontW(int style, int fontSize) {
-    u8 fontWidths[7] = {16, 11, 11, 11, 11, 11, 11};
+    s8 fontWidths[7] = {16, 11, 11, 11, 11, 11, 11};
     return fontWidths[style];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuCommonFontW__Fii);
-#endif
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuCommonPutXY__FP6ClsMesi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", InitMenuMesSet__FiPs);
 
@@ -288,27 +288,142 @@ void ComMenuSePlay(int sound) {
         SndSePlay(sound, -1, 0);
     }
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_UcUcUci);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBA);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuTextureReload__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuTextureDelete__FPi);
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @728__6);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", AllFillBoxForMenu__FUcUcUcUc);
+
+void DrawMenu2DSprite(CTexture *texture, CRect_i_ screen, CRect_i_ texel, int alpha) {
+    set2DSprite(GetVif1Packet(), texture, screen, texel, alpha);
+}
+
+void DrawMenu2DSprite(CTexture *texture, CRect_i_ screen, CRect_i_ texel, unsigned char r, unsigned char g, unsigned char b, int alpha) {
+    set2DSprite(GetVif1Packet(), texture, screen, texel, r, g, b, alpha);
+}
+
+void DrawMenu2DSprite(CTexture *texture, CRect_i_ screen, CRect_i_ texel, spRGBA *top_left, spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right) {
+    set2DSprite(GetVif1Packet(), texture, screen, texel, top_left, top_right, bottom_left, bottom_right, 1);
+}
+
+void MenuTextureReload(int block) {
+    TexManager.ReloadTexture(GetVif1Packet(), block);
+}
+
+void MenuTextureDelete(int *blocks) {
+    for (int i = 0; blocks[i] != -1; i++) {
+        TexManager.DeleteTextureBlock(blocks[i]);
+        printf("delete block: %d\n", blocks[i]);
+    }
+}
+
+void AllFillBoxForMenu(unsigned char r, unsigned char g, unsigned char b, unsigned char alpha) {
+    if (r < 0 || r > 0xFF) {
+        r = 0x80;
+    }
+    if (g < 0 || g > 0xFF) {
+        g = 0x80;
+    }
+    if (b < 0 || b > 0xFF) {
+        b = 0x80;
+    }
+    if (alpha < 0 || alpha > 0xFF) {
+        alpha = 0x80;
+    }
+    MGFillBox(CRect_i_(0, 0, 0x2800, 0x1C00), r, g, b, alpha);
+}
 
 void AllFadeForMenu(int alpha) {
     AllFillBoxForMenu(0, 0, 0, (unsigned char) alpha);
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", FrameImageDraw__Fii);
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @764__3);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenuColorGradation__FR8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBA);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenuSideGradation__FR8CRect_i_P6spRGBAP6spRGBA);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawDontSetItemMark__Fiiiii);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawIconParts__Fiiiiiii);
+
+void FrameImageDraw(int brightness, int alpha) {
+    sceGsTexa texa;
+    CTexture *texture = TexManager.GetTexture("frame_image", -1);
+
+    if (texture != NULL) {
+        TexManager.ReloadTexture(GetVif1Packet(), texture->block);
+        ((sceGsTex0 *) &texture->tex0)->bits.tcc = 0;
+        texa = mgTexa;
+        texa.AEM = 1;
+        texa.TA0 = 0x80;
+        MGSetGsTEXA(&texa);
+        set2DSprite(GetVif1Packet(), texture, MenuDispRc, MenuDispRc, brightness, brightness, brightness, alpha);
+        MGSetGsTEXA(NULL);
+    }
+}
+
+void DrawMenuColorGradation(CRect_i_ &rect, spRGBA *top_left, spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right) {
+    set2DSpriteC4(GetVif1Packet(), rect, top_left, top_right, bottom_left, bottom_right);
+}
+
+void DrawMenuSideGradation(CRect_i_ &rect, spRGBA *left, spRGBA *right) {
+    set2DSpriteC4(GetVif1Packet(), rect, left, right, left, right);
+}
+
+static void DrawDontSetItemMark(int x, int y, int top, int bottom, int alpha) {
+    int position;
+    int length;
+    int source;
+
+    if (y < top - 31 || y > bottom - 1) {
+        return;
+    }
+    position = y;
+    length = 32;
+    source = 0xC0;
+    MenuTextureClip(position, source, length, top, bottom);
+    DrawMenu2DSprite(PerBoardTex, CRect_i_(x, position, 32, length), CRect_i_(0x13C, source, 32, length), alpha);
+}
+
+void DrawIconParts(int item_no, int x, int y, int top, int bottom, int alpha, int number) {
+    int position;
+    int u;
+    int v;
+    int length;
+    COM_ITEM_INFO *info;
+    CTexture *texture;
+
+    if (y < top - 31 || y > bottom - 1) {
+        return;
+    }
+    position = y;
+    info = GetCommonItemInfo(item_no);
+    if (info != NULL && info->icon_index >= 0) {
+        texture = RetCTex(item_no, u, v);
+        if (texture != NULL) {
+            length = 32;
+            MenuTextureClip(position, v, length, top, bottom);
+            CRect_i_ source(u, v, 32, length);
+            set2DSprite(GetVif1Packet(), texture, CRect_i_(x + 2, position + 1, 32, length), source, 0, 0, 0, alpha * 0x50 >> 7);
+            DrawMenu2DSprite(texture, CRect_i_(x, position, 32, length), source, alpha);
+            DrawAttachNumberOrWeapon(x, y, top, bottom, item_no, number, alpha, 0);
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawAttachNumberOrWeapon__Fiiiiiiii);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @852__4);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", FadeTexX__FiiiiPci);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", RetCTex__FsRiRi);
+
+CTexture *RetCTex(short item_no, int &u, int &v) {
+    CTexture *texture;
+    COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
+
+    if (info == NULL) {
+        return NULL;
+    }
+    int icon = info->icon_index;
+    if (icon < 0) {
+        return NULL;
+    }
+    u = ((icon + 8) % 8) << 5;
+    v = (icon >> 3) << 5;
+    switch (info->kind) {
+        case 1:
+            texture = ItemIcon;
+            break;
+        case 0:
+        case 2:
+            texture = WepIcon;
+            break;
+    }
+    return texture;
+}
 
 void MenuTextureClip(int &position, int &source, int &length, int minimum, int maximum) {
     if (position < minimum && position + length > minimum) {
@@ -329,13 +444,219 @@ int GetNumberKeta(int value) {
     }
     return digits;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuIconInfo__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMainMenuIcon__Fiiiiii);
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @981);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenuVibeItem__Fiiiii);
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @994__2);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMainMenuRightHelpWinLangOffset__FRfRfRfRf);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMainMenuRightHelpMsgLangOffset__FRiRi);
+
+MENU_ICON_INFO MenuIcon[7][14] = {
+    {
+        {0, 0, 0x246, 0, 0x250, 0x28, 0x1E0, 0x48, 0x5E, 0x1E, 0xB},
+        {1, 0, 0x20C, 0, 0x220, 0x28, 0x1E0, 0x66, 0x3A, 0x1E, 0xC},
+        {2, 0, 0x1D2, 0, 0x1F0, 0x28, 0x1E0, 0x84, 0x32, 0x1E, 0xD},
+        {3, 0, 0x198, 0, 0x1C0, 0x28, 0x1E0, 0xA2, 0xA0, 0x1E, 0xE},
+        {4, 0, 0x124, 0, 0x160, 0x28, 0x140, 0xC0, 0x72, 0x1E, 0x10},
+        {5, 0, 0x15E, 0, 0x190, 0x28, 0x140, 0xA2, 0x4E, 0x1E, 0x18},
+        {6, 0, 0xA0, 0x84, 0x1A, 0x48, 0x212, 0x84, 0x6E, 0x1E, 0x1A},
+        {7, 0, 0x78, 0, 0xD0, 0x28, 0x1E0, 0xC0, 0xA0, 0x1E, 0xF},
+        {8, 0, 0x40, 0, 0xA0, 0x28, 0xA0, 0x48, 0xA0, 0x1E, 0x11},
+        {9, 0, 0x108, 0x84, 0xD8, 0x84, 0xA0, 0x66, 0xA0, 0x1E, 0x12},
+        {0xA, 0, 0xEA, 0, 0x130, 0x28, 0x140, 0x66, 0x72, 0x1E, 0x16},
+        {0xB, 0, 0xB0, 0, 0x100, 0x28, 0x140, 0x84, 0x8C, 0x1E, 0x17},
+        {0xC, 0, 0x108, 0xAC, 0xD8, 0xA4, 0x220, 0x66, 0x60, 0x1E, 0x13},
+        {0xD, 0, 0x198, 0, 0x1C0, 0x28, 0x140, 0x48, 0x9E, 0x1E, 0x15},
+    },
+    {
+        {0, 0, 0x246, 0, 0x250, 0x28, 0x1E0, 0x48, 0x30, 0x1E, 0xB},
+        {1, 0, 0x20C, 0, 0x220, 0x28, 0x1E0, 0x66, 0x4E, 0x1E, 0xC},
+        {2, 0, 0x1D2, 0, 0x1F0, 0x28, 0x22E, 0x66, 0x4B, 0x1E, 0xD},
+        {3, 0, 0x198, 0, 0x1C0, 0x28, 0x1E0, 0xA2, 0x8E, 0x1E, 0xE},
+        {4, 0, 0x124, 0, 0x160, 0x28, 0x170, 0x66, 0x4B, 0x1E, 0x10},
+        {5, 0, 0x15E, 0, 0x190, 0x28, 0x170, 0x48, 0x35, 0x1E, 0x18},
+        {6, 0, 0xA0, 0x84, 0x1A, 0x48, 0x1F1, 0x84, 0x5C, 0x1E, 0x1A},
+        {7, 0, 0x78, 0, 0xD0, 0x28, 0x1E0, 0xC0, 0x98, 0x1E, 0xF},
+        {8, 0, 0x40, 0, 0xA0, 0x28, 0x140, 0x84, 0xAA, 0x1E, 0x11},
+        {9, 0, 0x108, 0x84, 0xD8, 0x84, 0x140, 0xA2, 0x8E, 0x1E, 0x12},
+        {0xA, 0, 0xEA, 0, 0x130, 0x28, 0x140, 0xC0, 0x89, 0x1E, 0x16},
+        {0xB, 0, 0xB0, 0, 0x100, 0x28, 0xA0, 0x66, 0xB4, 0x1E, 0x17},
+        {0xC, 0, 0x108, 0xAC, 0xD8, 0xA4, 0x210, 0x48, 0x70, 0x1E, 0x13},
+        {0xD, 0, 0x198, 0, 0x1C0, 0x28, 0xA0, 0x48, 0xAD, 0x1E, 0x15},
+    },
+    {
+        {0, 0, 0x246, 0, 0x250, 0x28, 0x1E0, 0x48, 0x30, 0x1E, 0xB},
+        {1, 0, 0x20C, 0, 0x220, 0x28, 0x1E0, 0x66, 0x4E, 0x1E, 0xC},
+        {2, 0, 0x1D2, 0, 0x1F0, 0x28, 0x22E, 0x66, 0x4B, 0x1E, 0xD},
+        {3, 0, 0x198, 0, 0x1C0, 0x28, 0x1E0, 0xA2, 0x85, 0x1E, 0xE},
+        {4, 0, 0x124, 0, 0x160, 0x28, 0x170, 0x66, 0x4B, 0x1E, 0x10},
+        {5, 0, 0x15E, 0, 0x190, 0x28, 0x170, 0x48, 0x35, 0x1E, 0x18},
+        {6, 0, 0xA0, 0x84, 0x1A, 0x48, 0x1F1, 0x84, 0x5C, 0x1E, 0x1A},
+        {7, 0, 0x78, 0, 0xD0, 0x28, 0x1E0, 0xC0, 0x98, 0x1E, 0xF},
+        {8, 0, 0x40, 0, 0xA0, 0x28, 0x140, 0x84, 0xAA, 0x1E, 0x11},
+        {9, 0, 0x108, 0x84, 0xD8, 0x84, 0x140, 0xA2, 0x8E, 0x1E, 0x12},
+        {0xA, 0, 0xEA, 0, 0x130, 0x28, 0x140, 0xC0, 0x89, 0x1E, 0x16},
+        {0xB, 0, 0xB0, 0, 0x100, 0x28, 0xA0, 0x66, 0xB4, 0x1E, 0x17},
+        {0xC, 0, 0x108, 0xAC, 0xD8, 0xA4, 0x210, 0x48, 0x70, 0x1E, 0x13},
+        {0xD, 0, 0x198, 0, 0x1C0, 0x28, 0xA0, 0x48, 0xAD, 0x1E, 0x15},
+    },
+    {
+        {0, 0, 0x246, 0, 0x250, 0x28, 0x1E0, 0x48, 0x30, 0x1E, 0xB},
+        {1, 0, 0x20C, 0, 0x220, 0x28, 0x1E0, 0x66, 0x4E, 0x1E, 0xC},
+        {2, 0, 0x1D2, 0, 0x1F0, 0x28, 0x22E, 0x66, 0x4B, 0x1E, 0xD},
+        {3, 0, 0x198, 0, 0x1C0, 0x28, 0x1E0, 0xA2, 0x85, 0x1E, 0xE},
+        {4, 0, 0x124, 0, 0x160, 0x28, 0x170, 0x66, 0x4B, 0x1E, 0x10},
+        {5, 0, 0x15E, 0, 0x190, 0x28, 0x170, 0x48, 0x35, 0x1E, 0x18},
+        {6, 0, 0xA0, 0x84, 0x1A, 0x48, 0x1F1, 0x84, 0x5C, 0x1E, 0x1A},
+        {7, 0, 0x78, 0, 0xD0, 0x28, 0x1E0, 0xC0, 0x98, 0x1E, 0xF},
+        {8, 0, 0x40, 0, 0xA0, 0x28, 0x140, 0x84, 0xAA, 0x1E, 0x11},
+        {9, 0, 0x108, 0x84, 0xD8, 0x84, 0x140, 0xA2, 0x8E, 0x1E, 0x12},
+        {0xA, 0, 0xEA, 0, 0x130, 0x28, 0x140, 0xC0, 0x89, 0x1E, 0x16},
+        {0xB, 0, 0xB0, 0, 0x100, 0x28, 0xA0, 0x66, 0xB4, 0x1E, 0x17},
+        {0xC, 0, 0x108, 0xAC, 0xD8, 0xA4, 0x210, 0x48, 0x70, 0x1E, 0x13},
+        {0xD, 0, 0x198, 0, 0x1C0, 0x28, 0xA0, 0x48, 0xAD, 0x1E, 0x15},
+    },
+    {
+        {0, 0, 0x246, 0, 0x250, 0x28, 0x1E0, 0x48, 0x30, 0x1E, 0xB},
+        {1, 0, 0x20C, 0, 0x220, 0x28, 0x1E0, 0x66, 0x4E, 0x1E, 0xC},
+        {2, 0, 0x1D2, 0, 0x1F0, 0x28, 0x22E, 0x66, 0x4B, 0x1E, 0xD},
+        {3, 0, 0x198, 0, 0x1C0, 0x28, 0x1E0, 0xA2, 0x85, 0x1E, 0xE},
+        {4, 0, 0x124, 0, 0x160, 0x28, 0x170, 0x66, 0x4B, 0x1E, 0x10},
+        {5, 0, 0x15E, 0, 0x190, 0x28, 0x170, 0x48, 0x35, 0x1E, 0x18},
+        {6, 0, 0xA0, 0x84, 0x1A, 0x48, 0x1F1, 0x84, 0x5C, 0x1E, 0x1A},
+        {7, 0, 0x78, 0, 0xD0, 0x28, 0x1E0, 0xC0, 0x98, 0x1E, 0xF},
+        {8, 0, 0x40, 0, 0xA0, 0x28, 0x140, 0x84, 0xAA, 0x1E, 0x11},
+        {9, 0, 0x108, 0x84, 0xD8, 0x84, 0x140, 0xA2, 0x8E, 0x1E, 0x12},
+        {0xA, 0, 0xEA, 0, 0x130, 0x28, 0x140, 0xC0, 0x89, 0x1E, 0x16},
+        {0xB, 0, 0xB0, 0, 0x100, 0x28, 0xA0, 0x66, 0xB4, 0x1E, 0x17},
+        {0xC, 0, 0x108, 0xAC, 0xD8, 0xA4, 0x210, 0x48, 0x70, 0x1E, 0x13},
+        {0xD, 0, 0x198, 0, 0x1C0, 0x28, 0xA0, 0x48, 0xAD, 0x1E, 0x15},
+    },
+    {
+        {0, 0, 0x246, 0, 0x250, 0x28, 0x1E0, 0x48, 0x30, 0x1E, 0xB},
+        {1, 0, 0x20C, 0, 0x220, 0x28, 0x1E0, 0x66, 0x4E, 0x1E, 0xC},
+        {2, 0, 0x1D2, 0, 0x1F0, 0x28, 0x22E, 0x66, 0x4B, 0x1E, 0xD},
+        {3, 0, 0x198, 0, 0x1C0, 0x28, 0x1E0, 0xA2, 0x85, 0x1E, 0xE},
+        {4, 0, 0x124, 0, 0x160, 0x28, 0x170, 0x66, 0x4B, 0x1E, 0x10},
+        {5, 0, 0x15E, 0, 0x190, 0x28, 0x170, 0x48, 0x35, 0x1E, 0x18},
+        {6, 0, 0xA0, 0x84, 0x1A, 0x48, 0x1F1, 0x84, 0x5C, 0x1E, 0x1A},
+        {7, 0, 0x78, 0, 0xD0, 0x28, 0x1E0, 0xC0, 0x98, 0x1E, 0xF},
+        {8, 0, 0x40, 0, 0xA0, 0x28, 0x140, 0x84, 0xAA, 0x1E, 0x11},
+        {9, 0, 0x108, 0x84, 0xD8, 0x84, 0x140, 0xA2, 0x8E, 0x1E, 0x12},
+        {0xA, 0, 0xEA, 0, 0x130, 0x28, 0x140, 0xC0, 0x89, 0x1E, 0x16},
+        {0xB, 0, 0xB0, 0, 0x100, 0x28, 0xA0, 0x66, 0xB4, 0x1E, 0x17},
+        {0xC, 0, 0x108, 0xAC, 0xD8, 0xA4, 0x210, 0x48, 0x70, 0x1E, 0x13},
+        {0xD, 0, 0x198, 0, 0x1C0, 0x28, 0xA0, 0x48, 0xAD, 0x1E, 0x15},
+    },
+    {
+        {0, 0, 0x246, 0, 0x250, 0x28, 0x1E0, 0x48, 0x30, 0x1E, 0xB},
+        {1, 0, 0x20C, 0, 0x220, 0x28, 0x1E0, 0x66, 0x4E, 0x1E, 0xC},
+        {2, 0, 0x1D2, 0, 0x1F0, 0x28, 0x22E, 0x66, 0x4B, 0x1E, 0xD},
+        {3, 0, 0x198, 0, 0x1C0, 0x28, 0x1E0, 0xA2, 0x85, 0x1E, 0xE},
+        {4, 0, 0x124, 0, 0x160, 0x28, 0x170, 0x66, 0x4B, 0x1E, 0x10},
+        {5, 0, 0x15E, 0, 0x190, 0x28, 0x170, 0x48, 0x35, 0x1E, 0x18},
+        {6, 0, 0xA0, 0x84, 0x1A, 0x48, 0x1F1, 0x84, 0x5C, 0x1E, 0x1A},
+        {7, 0, 0x78, 0, 0xD0, 0x28, 0x1E0, 0xC0, 0x98, 0x1E, 0xF},
+        {8, 0, 0x40, 0, 0xA0, 0x28, 0x140, 0x84, 0xAA, 0x1E, 0x11},
+        {9, 0, 0x108, 0x84, 0xD8, 0x84, 0x140, 0xA2, 0x8E, 0x1E, 0x12},
+        {0xA, 0, 0xEA, 0, 0x130, 0x28, 0x140, 0xC0, 0x89, 0x1E, 0x16},
+        {0xB, 0, 0xB0, 0, 0x100, 0x28, 0xA0, 0x66, 0xB4, 0x1E, 0x17},
+        {0xC, 0, 0x108, 0xAC, 0xD8, 0xA4, 0x210, 0x48, 0x70, 0x1E, 0x13},
+        {0xD, 0, 0x198, 0, 0x1C0, 0x28, 0xA0, 0x48, 0xAD, 0x1E, 0x15},
+    },
+};
+
+MENU_ICON_INFO *GetMenuIconInfo(int icon) {
+    return &MenuIcon[GetMenuLangFlag()][icon];
+}
+
+void DrawMainMenuIcon(int x, int y, int icon, int selected, int bright, int alpha) {
+    if (StayTex == NULL) {
+        StayTex = TexManager.GetTexture("stayframe", -1);
+        if (StayTex == NULL) {
+            return;
+        }
+    }
+    MENU_ICON_INFO *info = GetMenuIconInfo(icon);
+    if (info == NULL) {
+        return;
+    }
+    int u = info->unk_0C;
+    int v = info->unk_10;
+    s16 frame_size[2][2] = {{0x30, 0x20}, {0x3A, 0x28}};
+    int width = frame_size[selected][0];
+    int height = frame_size[selected][1];
+
+    if (selected) {
+        u = info->unk_04;
+        v = info->unk_08;
+        if (icon == info->id) {
+            width = 0x38;
+        }
+    }
+    set2DSprite(GetVif1Packet(), StayTex, CRect_i_(x, y, width, height - 1), CRect_i_(u, v, width, height), bright, bright, bright, alpha);
+    if (selected) {
+        x += 0x44;
+        y += 1;
+    } else {
+        x += 0x40;
+        y -= 1;
+    }
+    set2DSprite(GetVif1Packet(), StayTex, CRect_i_(x, y, info->unk_1C, info->unk_20 - 1),
+                CRect_i_(info->unk_14, info->unk_18, info->unk_1C, info->unk_20), bright, bright, bright, alpha);
+}
+
+void DrawMenuVibeItem(int x, int y, int offset_x, int offset_y, int) {
+    int item_x = x + offset_x;
+    int item_y = y + offset_y;
+    s16 item_no = PerBoardPt->unk_40;
+    CRect_i_ shadow(0x80, 0x28, 0x20, 0x20);
+    int u;
+    int v;
+    CTexture *texture = RetCTex(item_no, u, v);
+
+    if (texture != NULL) {
+        DrawObjectVibe(x + 4, y + 2, TexManager.GetTexture("StayTex", -1), shadow, 0, 0x50);
+        CRect_i_ source(u, v, 0x20, 0x20);
+        DrawObjectVibe(item_x + 4, item_y + 2, texture, source, 0, 0x50);
+        DrawObjectVibe(item_x, item_y, texture, source, 0x80, 0x80);
+        int number = GetAttachVolumeForMsg(&PerBoardPt->unk_13C);
+        if (item_no == 0x5A) {
+            number = PerBoardPt->unk_13C.unk_02;
+        }
+        DrawAttachNumberOrWeapon(item_x, item_y, 0, 0x280, item_no, number, 0x80, 1);
+    }
+}
+
+int GetMainMenuRightHelpWinLangOffset(float &x, float &y, float &width, float &height) {
+    float offsets[7][4] = {
+        {320.0f, 325.0f, 14.6f, 2.2f},
+        {318.0f, 320.0f, 15.6f, 2.7f},
+        {318.0f, 320.0f, 15.6f, 2.7f},
+        {318.0f, 320.0f, 15.6f, 2.7f},
+        {318.0f, 320.0f, 15.6f, 2.7f},
+        {318.0f, 320.0f, 15.6f, 2.7f},
+        {318.0f, 320.0f, 15.6f, 2.7f},
+    };
+    int lang = GetMenuLangFlag();
+
+    x = offsets[lang][0];
+    y = offsets[lang][1];
+    width = offsets[lang][2];
+    height = offsets[lang][3];
+    return 0;
+}
+
+int GetMainMenuRightHelpMsgLangOffset(int &x, int &y) {
+    s8 offsets[7][2] = {
+        {18, 16},
+        {20, 12},
+        {20, 12},
+        {20, 12},
+        {20, 12},
+        {20, 12},
+        {20, 12},
+    };
+    int lang = GetMenuLangFlag();
+
+    x = offsets[lang][0];
+    y = offsets[lang][1];
+    return 1;
+}
 
 void InitHaveData(IHAVEITEM *item) {
     memset(item, -1, 0x14U);
@@ -398,23 +719,93 @@ void MenuDataSwap(ATTACH_LIST *first, ATTACH_LIST *second) {
     memcpy(second, &temp, sizeof(ATTACH_LIST));
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu_draw", SetMenuTrushMark__FP9ITEM_PACK);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DeleteMenuTrushMark__Fv);
+void SetMenuTrushMark(ITEM_PACK *items) {
+    int quick_count = 0;
+    int i;
+    int slot;
+
+    for (i = 0; i < 3; i++) {
+        quick_count += items->quick_item_qty[i];
+    }
+    for (slot = items->num - 1; slot >= 0; slot--) {
+        if (items->item[slot] < ITEM_DUNGEON_START && quick_count > 0) {
+            MenuTrushMark[slot] = 1;
+            quick_count--;
+        } else {
+            MenuTrushMark[slot] = 0;
+        }
+    }
+}
+
+void DeleteMenuTrushMark() {
+    memset(MenuTrushMark, 0, sizeof(MenuTrushMark));
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", InitPersonalBoardMode__FP11CUserStatusP14PERSONAL_BOARDii);
 INCLUDE_RODATA("asm/nonmatchings/menu_draw", @1073);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", BoardModeChangeKey__Fv);
+
+int BoardModeChangeKey() {
+    int board_mode = PerBoardPt->unk_04;
+
+    if (GamePad.Down(5)) {
+        switch (PerBoardPt->unk_00) {
+            case 0:
+                PerBoardPt->unk_04--;
+                if (PerBoardPt->unk_04 < 0) {
+                    PerBoardPt->unk_04 = 2;
+                }
+                break;
+            case 2:
+            case 1:
+                break;
+        }
+    }
+    if (GamePad.Down(10)) {
+        switch (PerBoardPt->unk_00) {
+            case 0:
+                PerBoardPt->unk_04++;
+                if (PerBoardPt->unk_04 > 2) {
+                    PerBoardPt->unk_04 = 0;
+                }
+                break;
+            case 2:
+            case 1:
+                break;
+        }
+    }
+    if (board_mode != PerBoardPt->unk_04) {
+        return 1;
+    }
+    return 0;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardLimmitCheck__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardKeySub__Fv);
 
-void PersonalBoardKey() {
+int PersonalBoardKey() {
     BoardModeChangeKey();
     PersonalBoardLimmitCheck();
-    PersonalBoardKeySub();
+    return PersonalBoardKeySub();
 }
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardItemPush__FP9IHAVEITEMi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardWeaponPush__FP9IHAVEITEMi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardAttachPush__FP9IHAVEITEMi);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardItemGetorSwap__Fi);
+
+int PersonalBoardItemGetorSwap(int board_pos) {
+    int result = 0;
+    IHAVEITEM *item = (IHAVEITEM *) PerBoardPt->unk_30;
+
+    switch (PerBoardPt->unk_04) {
+        case 0:
+            result = PersonalBoardItemPush(item, board_pos);
+            break;
+        case 1:
+            result = PersonalBoardWeaponPush(item, board_pos);
+            break;
+        case 2:
+            result = PersonalBoardAttachPush(item, board_pos);
+            break;
+    }
+    return result;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardItemCancel__Fv);
 
 int PersonalRetMax(int board_mode) {
@@ -442,25 +833,372 @@ int PersonalRetMax(int board_mode) {
     return max;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawPersonalBoard__Fiiiii);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawNowEquipWeaponMark__Fiiiii);
+void DrawPersonalBoard(int x, int y, int board_mode, int alpha, int) {
+    int max = PersonalRetMax(board_mode);
+    int top = y + 9;
+    int bottom = top + 0xA0;
+    int left = x + 0x13;
+    int row_y = y - 0x11;
+    int kind;
+
+    row_y = row_y + 0x17 - PerBoardPt->unk_18 * 40;
+    PerBoardPt->unk_10 += (row_y - PerBoardPt->unk_10) / 4.0f;
+    row_y = PerBoardPt->unk_10;
+    switch (PerBoardPt->unk_00) {
+        case 2:
+        case 0:
+            MenuTextureReload(PerBoardTex->block);
+            break;
+    }
+    kind = 0;
+    switch (board_mode) {
+        case 1:
+            kind = 2;
+            break;
+    }
+    DrawPerBoardDraw(kind, max, left, row_y, top, bottom, PerBoardTex, alpha);
+    switch (PerBoardPt->unk_00) {
+        case 2:
+            MenuTextureReload(PerBoardTex->block);
+            break;
+        case 0:
+            MenuTextureReload(ItemMenuWeaponIconReadBlock);
+            break;
+    }
+    CommonIconDraw(board_mode, max, left + 2, row_y + 6, top, bottom, alpha);
+    MenuTextureReload(PerBoardTex->block);
+    PersonalBoardOptionDraw(board_mode, max, x, y, PerBoardTex, alpha);
+}
+
+static void DrawNowEquipWeaponMark(int x, int y, int top, int bottom, int alpha) {
+    int position = y;
+    int v = 0xC0;
+    int length = 0x28;
+
+    MenuTextureClip(position, v, length, top, bottom);
+    if (position + length < top || bottom <= position) {
+        return;
+    }
+    MenuTextureReload(PerBoardTex->block);
+    DrawMenu2DSprite(PerBoardTex, CRect_i_(x, position, 0x28, length), CRect_i_(0x114, v, 0x28, length), alpha);
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonIconDraw__Fiiiiiii);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardDrawWaku__FiiP8CTexturei);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardOptionDraw__FiiiiP8CTexturei);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardTagDraw__FiiiP8CTextureii);
+
+void PersonalBoardDrawWaku(int x, int y, CTexture *texture, int alpha) {
+    DrawMenu2DSprite(texture, CRect_i_(x, y + 1, 0x14, 0xBF), CRect_i_(0, 0, 0x14, 0xC0), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x + 0x14, y + 1, 0xC8, 0x13), CRect_i_(0x14, 0, 0xC8, 0x14), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x + 0xDC, y + 1, 0x24, 0xBF), CRect_i_(0xDC, 0, 0x24, 0xC0), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x + 0x14, y + 0xA1, 0xC8, 0x1F), CRect_i_(0x14, 0xA0, 0xC8, 0x20), alpha);
+}
+
+void PersonalBoardOptionDraw(int board_mode, int count, int x, int y, CTexture *texture, int alpha) {
+    PersonalBoardTagDraw(board_mode, x, y, texture, 0, alpha);
+    PersonalBoardDrawWaku(x, y, texture, alpha);
+    PersonalBoardScrlBarDraw(count, x, y, PerBoardPt->scroll, PerBoardPt->unk_18, texture, alpha);
+    PersonalBoardMaxDraw(count, x, y, texture, alpha);
+}
+
+void PersonalBoardTagDraw(int tag, int x, int y, CTexture *texture, int shift, int alpha) {
+    int bright = 0x80;
+    int top;
+    int row;
+
+    switch (PerBoardPt->unk_00) {
+        case 1:
+            bright = 0x40;
+        case 0:
+            for (int kind = 0, i = 0; i < 3; i++, kind++) {
+                if (tag != kind) {
+                    top = y - 0x30;
+                    row = kind * 0x30;
+                    set2DSprite(GetVif1Packet(), texture, CRect_i_(x, top + 2, 0x100, 0x2F), CRect_i_(0x100, row, 0x100, 0x30),
+                                bright, bright, bright, alpha);
+                }
+            }
+            top = y - 0x30;
+            row = tag * 0x30;
+            DrawMenu2DSprite(texture, CRect_i_(x, top + 2, 0x100, 0x2F), CRect_i_(0x100, row, 0x100, 0x30), alpha);
+            x = x + 0x12 + tag * 0x44;
+            top = y - 0x4C;
+            {
+                s8 widths[7][3] = {
+                    {0x34, 0x45, 0x4E},
+                    {0x34, 0x45, 0x4E},
+                    {0x34, 0x45, 0x4E},
+                    {0x34, 0x45, 0x4E},
+                    {0x34, 0x45, 0x4E},
+                    {0x34, 0x45, 0x4E},
+                    {0x34, 0x45, 0x4E},
+                };
+                s8 sources[7][3] = {
+                    {0x00, 0x34, 0x79},
+                    {0x00, 0x34, 0x79},
+                    {0x00, 0x34, 0x79},
+                    {0x00, 0x34, 0x79},
+                    {0x00, 0x34, 0x79},
+                    {0x00, 0x34, 0x79},
+                    {0x00, 0x34, 0x79},
+                };
+                s8 offsets[7][3] = {
+                    {2, -8, -16},
+                    {2, -8, -16},
+                    {2, -8, -16},
+                    {2, -8, -16},
+                    {2, -8, -16},
+                    {2, -8, -16},
+                    {2, -8, -16},
+                };
+                int lang = GetMenuLangFlag();
+                int width = widths[lang][tag];
+                int source = sources[lang][tag];
+
+                x += offsets[lang][tag];
+                x += shift;
+                if (shift == 0) {
+                    DrawMenu2DSprite(texture, CRect_i_(x, top + 1, width, 0x1B), CRect_i_(source, 0xC0, width, 0x1C), alpha);
+                }
+            }
+            break;
+        case 2:
+            if (VillageBar != NULL) {
+                MenuTextureReload(VillageBar->block);
+                int last = 0;
+                int village = 2;
+                int max_village = GetAtoraMaxVillage();
+                int step = 1;
+                int count = 0;
+
+                top = y - 0x30;
+                while (step != 0) {
+                    village += step;
+                    if (max_village < village) {
+                        village = max_village;
+                    }
+                    if (village == tag) {
+                        if (step == 1 && village == max_village) {
+                            last = 1;
+                        } else if (step == -1) {
+                            last = 1;
+                        } else if (step == 1) {
+                            step = -1;
+                            village = max_village;
+                        }
+                    }
+                    int index = village - 3;
+                    int left = x + index * 0x1A;
+
+                    if (last) {
+                        DrawMenu2DSprite(VillageBar, CRect_i_(x, y - 0x12, 0x100, 0x13), CRect_i_(0, 0x90, 0x100, 0x14), alpha);
+                        bright = 0x80;
+                    }
+                    int column = (index % 2) * 0x60;
+                    row = (index >> 1) * 0x30;
+                    set2DSprite(GetVif1Packet(), VillageBar, CRect_i_(left, top + 2, 0x60, 0x2F), CRect_i_(column, row, 0x60, 0x30),
+                                bright, bright, bright, alpha);
+                    if (last) {
+                        break;
+                    }
+                    if (++count >= 7) {
+                        break;
+                    }
+                }
+                top = y - 0x5A;
+                row = (tag - 3) * 0x28;
+                DrawMenu2DSprite(VillageName, CRect_i_(x, top + 1, 0x100, 0x27), CRect_i_(0, row, 0x100, 0x28), alpha);
+            }
+            break;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardScrlBarDraw__FiiiRfUcP8CTexturei);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardMaxDraw__FiiiP8CTexturei);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawPersonalBoardBase__FiiiiiP8CTexturei);
+
+void PersonalBoardMaxDraw(int num, int x, int y, CTexture *texture, int alpha) {
+    int left = x + 0xD2;
+    int top = y - 0x28;
+
+    DrawMenu2DSprite(texture, CRect_i_(left, top + 1, 0x30, 0x2F), CRect_i_(0x100, 0x90, 0x30, 0x30), alpha);
+    RECT digits = {0x90, 0xDC, 12, 12};
+    left = x + 0xF7;
+    top = y - 0xE;
+    if (PerBoardPt->unk_00 == 2) {
+        left += 2;
+    }
+    DrawMenuNumber(num, left, top, texture, digits, 1, alpha);
+    left = x + 0xF4;
+    top = y - 0x22;
+
+    int max = 0;
+    int full = 0;
+    int item;
+
+    switch (PerBoardPt->unk_04) {
+        case 0:
+        case 1:
+        case 2:
+            max = GetNowModeMaxNum(PerBoardPt->unk_04, &full);
+            item = PerBoardPt->unk_40;
+            if (item >= 0x51) {
+                int kind = WhatIsKindofItem(item);
+                if (kind == PerBoardPt->unk_04) {
+                    max++;
+                }
+            }
+            if (num < max) {
+                full = 1;
+            }
+            break;
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+            for (int i = 0; i < num; i++) {
+                if (PerBoardPt->unk_2C[i] >= 0) {
+                    max++;
+                }
+            }
+            if (0 <= PerBoardPt->unk_40) {
+                max++;
+            }
+            break;
+    }
+    if (full) {
+        digits.y += digits.height;
+    }
+    DrawMenuNumber(max, left, top, texture, digits, 1, alpha);
+}
+
+static void DrawPersonalBoardBase(int x, int y, int top, int bottom, int count, CTexture *texture, int alpha) {
+    int v;
+    int length;
+    spRGBA upper;
+    spRGBA lower;
+    int step;
+    int i;
+
+    if (y < top - 39 || y > bottom - 1) {
+        return;
+    }
+    v = 0x14;
+    length = 0x28;
+    MenuTextureClip(y, v, length, top, bottom);
+    step = 9;
+    upper.r = upper.g = upper.b = 0x80;
+    lower.r = lower.g = lower.b = 0x80 - step;
+    lower.a = alpha;
+    upper.a = alpha;
+    for (i = 0; i < count; i++) {
+        set2DSprite(GetVif1Packet(), texture, CRect_i_(x, y, 0x28, length), CRect_i_(0x20, v, 0x28, length), &upper, &lower, &upper, &lower, 1);
+        upper.r = upper.g = upper.b = lower.r;
+        lower.r = lower.g = lower.b = lower.r - step;
+        step--;
+        x += 0x28;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawPerBoardDraw__FiiiiiiP8CTexturei);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonTrushDraw__Fiii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", IsEnableTrushThrow__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonMoneyBoardDraw__Fiiii);
+
+void CommonMoneyBoardDraw(int x, int y, int money, int alpha) {
+    int top = y + 2;
+
+    DrawMenu2DSprite(PerBoardTex, CRect_i_(x, top, 0x1A, 0x1B), CRect_i_(0x160, 0xC0, 0x1A, 0x1C), alpha);
+    DrawMenu2DSprite(PerBoardTex, CRect_i_(x + 0x1A, top, 0x2A, 0x1B), CRect_i_(0x17A, 0xC0, 0x20, 0x1C), alpha);
+    DrawMenu2DSprite(PerBoardTex, CRect_i_(x + 0x44, top, 0x1A, 0x1B), CRect_i_(0x19A, 0xC0, 0x1A, 0x1C), alpha);
+    RECT digits = {0, 0xDC, 12, 12};
+    DrawMenuNumber(money, x + 0x55, y + 8, PerBoardTex, digits, 0, alpha);
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SearchBoardNowPosItemExist__Fii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetBoardSpace__FiPi);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", SwapItem__FP9ITEM_PACKii);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", CompItem__Fii);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonItemBoardSub__FP9ITEM_PACK);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonItemBoard__FP9ITEM_PACK);
+
+void SwapItem(ITEM_PACK *items, int first_pos, int second_pos) {
+    s16 item = items->item[first_pos];
+    s16 vol = items->item_vol[first_pos];
+
+    items->item[first_pos] = items->item[second_pos];
+    items->item_vol[first_pos] = items->item_vol[second_pos];
+    items->item[second_pos] = item;
+    items->item_vol[second_pos] = vol;
+}
+
+/** Rank of each item kind in the item board sort, rebuilt before each sort pass. */
+static int sort_table[9] = {9, 0, 1, 2, 3, 4, 5, 6, 7};
+
+int CompItem(int first_item_no, int second_item_no) {
+    ITEM_DATA *first = GetItemData(first_item_no);
+    ITEM_DATA *second = GetItemData(second_item_no);
+    int first_rank = 0;
+    int second_rank = 0;
+
+    if (first != NULL) {
+        first_rank = sort_table[first->sort_key];
+    }
+    if (second != NULL) {
+        second_rank = sort_table[second->sort_key];
+    }
+    if (first_item_no < ITEM_DUNGEON_START) {
+        first_rank = 9;
+    }
+    if (second_item_no < ITEM_DUNGEON_START) {
+        second_rank = 9;
+    }
+    if (first_rank > second_rank) {
+        return 1;
+    }
+    if (first_rank < second_rank) {
+        return -1;
+    }
+    if (first_item_no > second_item_no) {
+        return 1;
+    }
+    if (first_item_no < second_item_no) {
+        return -1;
+    }
+    return 0;
+}
+
+/** Item kind the item board sort places first. */
+static int sort_top_type = 1;
+
+int SeitonItemBoardSub(ITEM_PACK *items) {
+    int i;
+    int j;
+    int type = sort_top_type;
+    int swapped;
+
+    for (i = 0; i < 9; i++) {
+        sort_table[type] = i;
+        type++;
+        if (type >= 9) {
+            type = 0;
+        }
+    }
+    sort_table[0] = 9;
+    swapped = 0;
+    for (i = 0; i < items->num - 1; i++) {
+        for (j = i + 1; j < items->num; j++) {
+            if (CompItem(items->item[i], items->item[j]) > 0) {
+                SwapItem(items, i, j);
+                swapped = 1;
+            }
+        }
+    }
+    return swapped;
+}
+
+void SeitonItemBoard(ITEM_PACK *items) {
+    if (items != NULL) {
+        for (int i = 0; i < 9; i++) {
+            if (SeitonItemBoardSub(items) != 0) {
+                break;
+            }
+            sort_top_type++;
+            if (sort_top_type >= 9) {
+                sort_top_type = 1;
+            }
+        }
+    }
+}
 
 int GetAttachKind(int item_no) {
     if ((item_no >= ITEM_ATTACH_START) && (item_no < ITEM_ATTACH_ATTACK)) {
@@ -482,10 +1220,73 @@ int GetAttachKind(int item_no) {
     return ATTACHKIND_OTHER;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu_draw", CompAttach__FP11ATTACH_LISTP11ATTACH_LIST);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonAttachBoardSub__FP11ATTACH_LIST__2);
+/** Rank of each attachment kind in the attachment board sort, rebuilt before each sort pass. */
+static int asort_table[5] = {5, 1, 2, 3, 4};
+
+int CompAttach(ATTACH_LIST *first, ATTACH_LIST *second) {
+    int first_rank = asort_table[GetAttachKind(first->item_no)];
+    int second_rank = asort_table[GetAttachKind(second->item_no)];
+
+    if (first->item_no < ITEM_ATTACH_START) {
+        first_rank = 5;
+    }
+    if (second->item_no < ITEM_ATTACH_START) {
+        second_rank = 5;
+    }
+    if (first_rank > second_rank) {
+        return 1;
+    }
+    if (first_rank < second_rank) {
+        return -1;
+    }
+    if (first->item_no > second->item_no) {
+        return 1;
+    }
+    if (first->item_no < second->item_no) {
+        return -1;
+    }
+    return 0;
+}
+
+/** Attachment kind the attachment board sort places first. */
+static int asort_top_type = 1;
+
+int SeitonAttachBoardSub(ATTACH_LIST *attachments) {
+    int i;
+    int j;
+    int type = asort_top_type;
+    int swapped;
+
+    for (i = 0; i < 5; i++) {
+        asort_table[type] = i;
+        type++;
+        if (type >= 5) {
+            type = 0;
+        }
+    }
+    asort_table[0] = 5;
+    swapped = 0;
+    for (i = 0; i < 39; i++) {
+        for (j = i + 1; j < 40; j++) {
+            if (CompAttach(&attachments[i], &attachments[j]) > 0) {
+                MenuDataSwap(&attachments[i], &attachments[j]);
+                swapped = 1;
+            }
+        }
+    }
+    return swapped;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonAttachBoard__FP11ATTACH_LIST);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", WhatIsKindofItem__Fi);
+
+int WhatIsKindofItem(int item_no) {
+    COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
+
+    if (info == NULL) {
+        return -1;
+    }
+    int board_kind[3] = {2, 0, 1};
+    return board_kind[info->kind];
+}
 
 int WhoIsWeaponEquip(int weapon_no) {
     COM_ITEM_INFO *info;
@@ -562,10 +1363,97 @@ int GetWeaponMaxExp(WEAPON_HAVE *weapon) {
     }
     return experience;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowItemNum__FsP9ITEM_PACK);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DeleteItemAfterUseItem__FsP9ITEM_PACK);
+
+int GetNowItemNum(short item_no, ITEM_PACK *items) {
+    int count = 0;
+    int i;
+    int j;
+
+    for (i = 0; i < items->num; i++) {
+        if (items->item[i] == item_no) {
+            count++;
+        }
+    }
+    for (j = 0; j < 3; j++) {
+        if (items->quick_item_slot[j] == item_no) {
+            count += items->quick_item_qty[j];
+        }
+    }
+    return count;
+}
+
+void DeleteItemAfterUseItem(short item_no, ITEM_PACK *items) {
+    int deleted = 0;
+    int i;
+
+    for (i = 0; i < items->num; i++) {
+        if (items->item[i] == item_no) {
+            items->item[i] = -1;
+            deleted = 1;
+            break;
+        }
+    }
+    if (deleted == 0) {
+        for (i = 0; i < 3; i++) {
+            if (items->quick_item_slot[i] == item_no) {
+                items->quick_item_qty[i]--;
+                if (items->quick_item_qty[i] <= 0) {
+                    items->quick_item_slot[i] = -1;
+                }
+                break;
+            }
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowModeMaxNum__FiPi);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", WepDataListToHaveCopy__FiP11WEAPON_HAVE);
+
+void WepDataListToHaveCopy(int weapon_no, WEAPON_HAVE *weapon) {
+    WEAPON_DATA *data;
+    int best;
+    int best_value;
+    int i;
+    int j;
+
+    if (weapon != NULL && weapon_no > 0) {
+        if (weapon_no < 0x51) {
+            weapon_no += 0x100;
+        }
+        data = GetWeaponData(weapon_no);
+        memset(weapon, 0, sizeof(WEAPON_HAVE));
+        weapon->item_no = weapon_no;
+        weapon->attack = data->attack;
+        weapon->endurance = data->endurance;
+        weapon->speed = data->speed;
+        weapon->magic = data->magic;
+        weapon->durability = data->durability;
+        weapon->durability_f = weapon->durability;
+        best = 5;
+        best_value = 0;
+        for (i = 0; i < 5; i++) {
+            weapon->elem[i] = data->elem[i];
+            if (weapon->elem[i] > best_value) {
+                best_value = weapon->elem[i];
+                best = i;
+            }
+        }
+        weapon->best_elem = best;
+        for (j = 0; j < 10; j++) {
+            weapon->vs_monster[j] = data->vs_monster[j];
+        }
+        weapon->flags = data->flags;
+        if (IsDefaultWeapon(weapon->item_no) < 0) {
+            int chance = rand() % 1000;
+            if (chance < 1000) {
+                if (chance < 10) {
+                    weapon->flags |= WEAPONFLAG_DURABLE;
+                }
+                if (chance > 989) {
+                    weapon->flags |= WEAPONFLAG_FRAGILE;
+                }
+            }
+        }
+    }
+}
 
 void AttachDataListToHaveCopy(int attachment_no, ATTACH_LIST *attachment) {
     if ((attachment_no < 0x51) || (attachment_no >= 0x84)) {
@@ -575,6 +1463,34 @@ void AttachDataListToHaveCopy(int attachment_no, ATTACH_LIST *attachment) {
         memcpy(attachment, GetAttachData(attachment_no), 0x20U);
     }
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", ItemDataToHaveCopy__Fi);
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @2113__2);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawFullSizePicture__FP8CTextureiii);
+
+int ItemDataToHaveCopy(int item_no) {
+    int vol;
+
+    if (item_no < ITEM_DUNGEON_START || item_no > ITEM_WEAPON_START - 1) {
+        return 0;
+    }
+    ITEM_DATA *data = GetItemData(item_no);
+    if (data == NULL) {
+        return -1;
+    }
+    vol = data->vol;
+    if (item_no == ITEM_DRAN_S_FEATHER) {
+        int angle = rand() % 360;
+        if (angle < 180) {
+            angle += 180;
+        }
+        vol = angle * 60;
+    }
+    if (item_no >= ITEM_ANTI_FREEZE_AMULET && item_no <= ITEM_ANTIDOTE_AMULET) {
+        vol = rand() % 5 + 3;
+    }
+    printf("vol = %d\n", vol);
+    return vol;
+}
+
+void DrawFullSizePicture(CTexture *texture, int x, int y, int alpha) {
+    if (texture != NULL) {
+        DrawMenu2DSprite(texture, CRect_i_(x, y, MenuDispRc.width, MenuDispRc.height), MenuDispRc, alpha);
+    }
+}

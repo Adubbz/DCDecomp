@@ -2,10 +2,13 @@
 
 #include "mathutil.hpp"
 
+#include <eekernel.h>
 #include <libvu0.h>
+#include <sifdev.h>
 
 #include <cmath>
 #include <cstdlib>
+#include <cstring>
 
 /**
  * First entry of the table of static initializers the runtime calls at startup.
@@ -195,7 +198,18 @@ void mwInit(int argc, const char **argv, const char **envp) {
  * @address 0x122DE0
  * @size 0x8C
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", mwOverlayInit);
+extern "C" void mwOverlayInit(void *overlay, int size) {
+    char *image = (char *) overlay;
+    OverlayHeader *header = (OverlayHeader *) overlay;
+    int bss_size = header->bss_size;
+
+    FlushCache(2);
+    if (bss_size != 0) {
+        image += size;
+        memset(image, 0, bss_size);
+    }
+    __initialize_cpp_rts(header->static_init, header->static_init_end, 0, 0);
+}
 
 /**
  * Tells the runtime that an overlay has finished loading.
@@ -213,7 +227,23 @@ void MWNotifyOverlayLoaded(void) {}
  * @address 0x122E80
  * @size 0xB4
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", mwBload);
+extern "C" int mwBload(char *path, void *buffer) {
+    int fd;
+    int size = 0;
+
+    fd = sceOpen(path, 1);
+    if (fd >= 0) {
+        size = sceLseek(fd, 0, 2);
+        sceLseek(fd, 0, 0);
+    }
+    if (size > 0) {
+        size = sceRead(fd, buffer, size);
+    }
+    if (fd >= 0) {
+        sceClose(fd);
+    }
+    return size;
+}
 /**
  * Reads an overlay into memory and gives back whether it succeeded.
  *

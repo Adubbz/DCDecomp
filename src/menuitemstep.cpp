@@ -6,7 +6,6 @@
 #include "itemdata.hpp"
 #include "savedata.hpp"
 
-#ifdef NON_MATCHING
 void CMenuItemStep::Initialize(void) {
     frame = 0;
     unk_08 = -1;
@@ -21,10 +20,6 @@ void CMenuItemStep::Initialize(void) {
         unk_20[i] = -1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menuitemstep", Initialize__13CMenuItemStepFv);
-#endif
-#ifdef NON_MATCHING
 void CMenuItemStep::LoopStep(int interval) {
     if (enabled != 0) {
         // A negative interval asks for the default of one second.
@@ -38,9 +33,6 @@ void CMenuItemStep::LoopStep(int interval) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menuitemstep", LoopStep__13CMenuItemStepFi);
-#endif
 #ifdef NON_MATCHING
 void CMenuItemStep::CheckItemVolume(void) {
     int elapsed = pending_volume;
@@ -75,13 +67,13 @@ void CMenuItemStep::CheckItemVolume(void) {
             preservation[slot + 1] += 100;
         }
 
-        status->item_vol[slot] -= elapsed;
-        if (status->item_vol[slot] <= 0) {
+        status->inventory.item_vol[slot] -= elapsed;
+        if (status->inventory.item_vol[slot] <= 0) {
             item++;
             if (item >= ITEM_TINY_ICE + 1) {
                 item = -1;
             } else {
-                status->item_vol[slot] = GetItemData(item)->vol;
+                status->inventory.item_vol[slot] = GetItemData(item)->vol;
             }
         }
     }
@@ -95,8 +87,8 @@ void CMenuItemStep::CheckItemVolume(void) {
             preservation[slot] = 100;
         }
         int loss = (int) ((float) elapsed * (100.0f - preservation[slot]) / 100.0f);
-        status->item_vol[slot] -= loss;
-        if (status->item_vol[slot] <= 0) {
+        status->inventory.item_vol[slot] -= loss;
+        if (status->inventory.item_vol[slot] <= 0) {
             item++;
         }
     }

@@ -220,6 +220,15 @@ STATIC_ASSERT(sizeof(PARTS_WATER) == 0x60);
 STATIC_ASSERT(sizeof(CDungeonParts) == 0x1D0);
 
 /**
+ * Gives the two items the clown offers on one floor.
+ *
+ * @mangled GetPieroItem__FiiPiPi
+ * @address 0x1BFAB0
+ * @size 0x440
+ */
+void GetPieroItem(int map_no, int ura_dungeon, int *item0, int *item1);
+
+/**
  * Selects one item preset for a treasure box on a floor.
  *
  * @mangled PresetSmallItemNo_Get__Fiiii

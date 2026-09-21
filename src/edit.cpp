@@ -485,7 +485,6 @@ static void DrawLine(int *from, int *to, u_char r, u_char g, u_char b, u_char a)
     sceVif1PkCloseDirectCode(packet);
 }
 
-#ifdef NON_MATCHING
 void EdSetBgmVol(float time) {
     float scale = 1.0f;
 
@@ -513,22 +512,15 @@ void EdSetBgmVol(float time) {
         SndSetBgmVol(volume);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit", EdSetBgmVol__Ff);
-#endif
-#ifdef NON_MATCHING
 void EdAmbientPlay(float volume) {
     // The ambient sets run one behind the four times of day, and roll over.
-    int ambient_no = EdGetTime(volume) + 1;
+    int ambient_no = EdGetTime(volume);
 
-    if (ambient_no >= 4) {
+    if (++ambient_no >= 4) {
         ambient_no = 0;
     }
     SndAmbientPlay(ambient_no);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit", EdAmbientPlay__Ff);
-#endif
 
 void EdSetAmbientVol(float volume) {
     SndAmbientSetVolf(volume);
@@ -808,7 +800,6 @@ void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_po
  * @address 0x172100
  * @size 0x58
  */
-#ifdef NON_MATCHING
 void EdDoorOpenSe(int door_no, float *position) {
     static int se_open[8] = {0x6C, 0x7E, 0x6E, 0x80, 0x74, 0x82, 0x70, 0x72};
 
@@ -817,9 +808,6 @@ void EdDoorOpenSe(int door_no, float *position) {
     }
     SndSePlay(se_open[door_no], -1, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit", EdDoorOpenSe__FiPf);
-#endif
 /**
  * Plays the sound one kind of door makes when it closes.
  *
@@ -827,7 +815,6 @@ INCLUDE_ASM("asm/nonmatchings/edit", EdDoorOpenSe__FiPf);
  * @address 0x172160
  * @size 0x58
  */
-#ifdef NON_MATCHING
 void EdDoorCloseSe(int door_no, float *position) {
     static int se_close[8] = {0x6D, 0x7F, 0x6F, 0x81, 0x75, 0x83, 0x71, 0x73};
 
@@ -836,10 +823,6 @@ void EdDoorCloseSe(int door_no, float *position) {
     }
     SndSePlay(se_close[door_no], -1, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit", EdDoorCloseSe__FiPf);
-#endif
-#ifdef NON_MATCHING
 int EdGetDoorMotion(int door_no, int state) {
     static int motion[8][2] = {
         {3, 4},
@@ -857,9 +840,6 @@ int EdGetDoorMotion(int door_no, int state) {
     }
     return motion[door_no][state != 0];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit", EdGetDoorMotion__Fii);
-#endif
 /* The map editor's depth of field: one description at a time, taken from the map's own data or
    replaced by a default set, and handed every frame to the effect the rest of the game draws. */
 static DEPTH_OF_FIELD_INFO dof;
@@ -920,7 +900,7 @@ void EdThunderEffect(int map, CEditGround *ground) {
     int channel;
 
     if (map == 40 || map == 50 || map == 24) {
-        frame = ground->frame;
+        frame = ground->fixed_parts[1].frame[0];
         if (frame)
             frame = frame->SearchFrame("inazuma");
         if (frame == 0)
@@ -1320,16 +1300,12 @@ void EdGetItemFile(int item_no, char *model_path, char *texture_path) {
  * @address 0x173380
  * @size 0x58
  */
-#ifdef NON_MATCHING
 void EdDrawItem(void) {
     if (EdEventInfo.item_frame[0] != NULL) {
         TexManager.ReloadTexture(GetVif1Packet(), 0x28);
         MGDraw((CFrame *) EdEventInfo.item_frame[0]);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit", EdDrawItem__Fv);
-#endif
 /* The map editor's own system and help messages, in front of the ones the town runs: every call
    here reaches the town's message code first and then does the same thing again to a window of the
    editor's own, so both are up at once and the editor's is the one drawn last.
@@ -1763,14 +1739,10 @@ void EdDrawOpenItemBox() {
  * @address 0x173E00
  * @size 0x70
  */
-#ifdef NON_MATCHING
 void EdSaveFrameImage(CTexture texture) {
     frame_image_flag = 1;
     frame_image_tex = texture;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit", EdSaveFrameImage__F8CTexture);
-#endif
 
 void EdSaveFrameImageTask() {
     if (frame_image_flag != 0) {
@@ -1792,7 +1764,6 @@ void EdSaveFrameImageInit() {
  * @address 0x173F00
  * @size 0x1EC
  */
-#ifdef NON_MATCHING
 int EdMenuLoop(ClsMes *message) {
     if (message == NULL) {
         return 1;
@@ -1854,9 +1825,6 @@ int EdMenuLoop(ClsMes *message) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit", EdMenuLoop__FP6ClsMes);
-#endif
 
 float ConvertTime(float hour) {
     hour -= 10.0f;

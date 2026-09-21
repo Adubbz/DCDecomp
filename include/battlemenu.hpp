@@ -1,6 +1,9 @@
 #pragma once
 
 #include "common.h"
+
+#include "itemdata.hpp"
+#include "menu_draw.hpp"
 #include "rect.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
@@ -24,10 +27,22 @@ STATIC_ASSERT(sizeof(GRADATION_COLOR_INFO2) == 0x10);
  * Tracks which character and weapon the weapon menu's cursor is on.
  */
 struct WEP_MENU_INFO {
-    char unk_00[4];
+    s16 unk_00;
+    s16 unk_02;
     s8 weapon_slot; /**< Weapon slot the cursor is on, within the selected character's chara_weapons row. */
-    s8 chara;        /**< Party member index the weapon menu is showing. */
-    char unk_06[0x176];
+    s8 chara;       /**< Party member index the weapon menu is showing. */
+    s8 unk_06;
+    char unk_07;
+    s8 unk_08;
+    char unk_09[3];
+    s16 unk_0C;
+    char unk_0E[2];
+    s32 unk_10;
+    PERSONAL_BOARD board; /**< Personal board the weapon menu lists the party member's weapons on. */
+    char unk_174[4];
+    s8 unk_178;
+    s8 unk_179;
+    char unk_17A[2];
 };
 
 STATIC_ASSERT(sizeof(WEP_MENU_INFO) == 0x17C);
@@ -36,12 +51,80 @@ STATIC_ASSERT(sizeof(WEP_MENU_INFO) == 0x17C);
  * Tracks what a message on the item menu is currently about.
  */
 struct ITEM_MENU_MODE_INFO {
-    char unk_000[0x184];
+    s16 unk_00;
+    s16 chara; /**< Party member index the item page is showing. */
+    char unk_04[6];
+    s16 unk_0A;
+    s16 unk_0C;
+    s16 unk_0E[3];
+    char unk_14[4];
+    s16 unk_18;
+    char unk_1A[2];
+    s32 unk_1C;
+    PERSONAL_BOARD board; /**< Personal board the item page lists the pack on. */
+    char unk_180[4];
     s16 message_item_no; /**< Item number the last SetNowEquipWeaponDataForMsg call named. */
     s16 message_slot;    /**< Slot number the last SetNowEquipWeaponDataForMsg call named. */
 };
 
 STATIC_ASSERT(sizeof(ITEM_MENU_MODE_INFO) == 0x188);
+
+/**
+ * Holds the battle menu's character page state.
+ */
+struct MENU_CHARA_INFO {
+    s16 unk_00;
+    s8 unk_02;
+    s8 unk_03;
+    float unk_04;
+    float unk_08;
+};
+
+STATIC_ASSERT(sizeof(MENU_CHARA_INFO) == 0xC);
+
+/**
+ * Holds one party member's place on the character page's turntable.
+ */
+struct SYS_CHARA_INFO {
+    s8 unk_00;
+    s8 unk_01;
+    char unk_02[2];
+    float unk_04;
+    float unk_08;
+};
+
+STATIC_ASSERT(sizeof(SYS_CHARA_INFO) == 0xC);
+
+/**
+ * Holds the travel page's state.
+ */
+struct MENU_MOVE_INFO {
+    s32 unk_00;
+    s32 unk_04;
+    s16 unk_08;
+    s16 unk_0A;
+    s16 unk_0C;
+    s16 unk_0E;
+    char unk_10[4];
+    s32 unk_14;
+    s16 unk_18;
+    char unk_1A[2];
+    s32 unk_1C;
+};
+
+STATIC_ASSERT(sizeof(MENU_MOVE_INFO) == 0x20);
+
+/**
+ * Names one world-map place and where it sits on the map.
+ */
+struct WORLD_MAP_POS {
+    char frame[6]; /**< Name of the map frame the place's marker hangs off. */
+    s16 unk_06;
+    s32 x; /**< Horizontal position of the place on the map. */
+    s32 y; /**< Vertical position of the place on the map. */
+};
+
+STATIC_ASSERT(sizeof(WORLD_MAP_POS) == 0x10);
 
 /**
  * Ranks one world-map destination by how near it is.
@@ -121,26 +204,6 @@ void GetNowEquipWeaponDataForMsg(int &item_no, int &slot);
 GRADATION_COLOR_INFO2 *GetGradationColorInfo2(int index);
 
 /**
- * Gives the weapon the cursor stands on.
- *
- * @mangled GetNowSelectWeapon__Fv
- * @address 0x1F3F00
- * @size 0x3C
- * Returns the weapon the weapon menu's cursor is on.
- */
-WEAPON_HAVE *GetNowSelectWeapon(void);
-
-/**
- * Reports whether the party may leave the floor: freely, with an escape item, or not at
- * all.
- *
- * @mangled EscapeDungeonMode__Fv
- * @address 0x1F3F40
- * @size 0x5C
- */
-int EscapeDungeonMode(void);
-
-/**
  * Sets whether the party is escaping the dungeon.
  *
  * @mangled SetEscapeDngFlag__Fi
@@ -175,24 +238,6 @@ void SetInteriorOutFlag(int flag);
  * @size 0xC
  */
 s16 GetInteriorOutFlag(void);
-
-/**
- * Draws the two-line yes-or-no plate the dungeon menu asks with.
- *
- * @mangled DrawDngYesNoDialog__Fiii
- * @address 0x1F3FE0
- * @size 0xB8
- */
-void DrawDngYesNoDialog(int x, int y, int mode);
-
-/**
- * Fills in the icon numbers the menu bar draws for one mode.
- *
- * @mangled BtlMenuMekeIconInfo__FPii
- * @address 0x1F4160
- * @size 0xE8
- */
-void BtlMenuMekeIconInfo(int *icons, int menu_mode);
 
 /**
  * Chooses the message that explains why the party may not leave the zone.
@@ -240,25 +285,6 @@ void DngComStatus(int, int, int, int);
 void DrawSelCharaStatus(float, float, int, int, int, int, int, int);
 
 /**
- * Draws the saving notice over the menu.
- *
- * @mangled BtlDrawSave__Fv
- * @address 0x1F5860
- * @size 0x34
- */
-void BtlDrawSave(void);
-
-/**
- * Looks up every texture the menu draws from and holds them.
- *
- * @mangled BtlMenuTexBlockEnter__Fv
- * @address 0x1F58A0
- * @size 0x118
- * Looks the battle menu's fixed textures up in the texture manager and keeps them.
- */
-void BtlMenuTexBlockEnter(void);
-
-/**
  * Loads the battle menu's texture blocks and message buffers.
  *
  * @mangled BattleMenuTexEnter__Fv
@@ -288,15 +314,6 @@ void ExitBattleMenu(int);
 void BattleMenuInit(int *, int);
 
 /**
- * Suppresses a draw flag while an Atla event or a character page is showing.
- *
- * @mangled BtlMenuDrawSpecialFlag__Fi
- * @address 0x1F6150
- * @size 0x88
- */
-void BtlMenuDrawSpecialFlag(int);
-
-/**
  * Draws the whole menu for one frame, choosing the page from the menu state.
  *
  * @mangled BattleMenuDraw__Fv
@@ -324,15 +341,6 @@ int BattleMenuCursor(void);
 void BattleMenuAppear(void);
 
 /**
- * Slides the bar icons off the screen and reports when the menu may close.
- *
- * @mangled BattleMenuExit__Fv
- * @address 0x1F6A40
- * @size 0xDC
- */
-void BattleMenuExit(void);
-
-/**
  * Moves the cursor along the menu bar and opens the page it settles on.
  *
  * @mangled BattleMenuSelect__Fv
@@ -350,24 +358,6 @@ void BattleMenuSelect(void);
  * Steps the battle menu ring towards the icon it is given and returns the icon it settles on.
  */
 int ToFromSelect(int);
-
-/**
- * Puts the menu cursor back on the icon of the mode the menu is returning to.
- *
- * @mangled ForBackMenu__Fv
- * @address 0x1F7200
- * @size 0xE0
- */
-void ForBackMenu(void);
-
-/**
- * Reads the character page's models and textures and starts its turntable.
- *
- * @mangled InitMenuChara__FP1
- * @address 0x1F72E0
- * @size 0x158
- */
-void InitMenuChara(void /* CW back-ref target unresolved */ *);
 
 /**
  * Handles input on the character page, including the turntable and the equipment list.
@@ -415,15 +405,6 @@ void DrawWepStatus(int, int, WEAPON_HAVE *, int, int);
 void DrawWepVolumeDisplay(int, int, WEAPON_HAVE *, int);
 
 /**
- * Draws the board a weapon's name sits on.
- *
- * @mangled DrawWeaponNameBoard__Fiiiii
- * @address 0x1F9580
- * @size 0x13C
- */
-void DrawWeaponNameBoard(int, int, int, int, int);
-
-/**
  * Returns the x position that centers a weapon name of a width.
  *
  * @mangled GetWeaponNamePutX__Fii
@@ -433,24 +414,6 @@ void DrawWeaponNameBoard(int, int, int, int, int);
 s32 GetWeaponNamePutX(int, int);
 
 /**
- * Draws the names of the weapons either side of the cursor as they slide past.
- *
- * @mangled WeaponNameDraw__Fiii
- * @address 0x1F96D0
- * @size 0x550
- */
-void WeaponNameDraw(int, int, int);
-
-/**
- * Draws one weapon-status bar, filled to the value's share of its maximum.
- *
- * @mangled WepStatusVolumeDraw__F4RECTiPiiiii
- * @address 0x1F9C20
- * @size 0x220
- */
-void WepStatusVolumeDraw(RECT, int, int *, int, int, int, int);
-
-/**
  * Draws the gradient frame a weapon-status row sits in.
  *
  * @mangled DrawWeaponStatusWaku__Fiiii
@@ -458,15 +421,6 @@ void WepStatusVolumeDraw(RECT, int, int *, int, int, int, int);
  * @size 0x68
  */
 void DrawWeaponStatusWaku(int, int, int, int);
-
-/**
- * Draws the mark that says a weapon value has reached its ceiling.
- *
- * @mangled DrawLimmitMax__Fiii
- * @address 0x1F9EB0
- * @size 0x60
- */
-void DrawLimmitMax(int, int, int);
 
 /**
  * Draws the left and right cursor arrows, bobbing them with a sine.
@@ -507,15 +461,6 @@ void DrawWeaponElemTag(int, int, WEAPON_HAVE *, int, int, int);
 void DrawWeaponVsMonster(int, int, WEAPON_HAVE *, int, int, int);
 
 /**
- * Draws the three tag pages of a weapon and highlights the one the cursor is on.
- *
- * @mangled DrawWeaponTagBoard__FiiP11WEAPON_HAVEiii
- * @address 0x1FAFF0
- * @size 0x210
- */
-void DrawWeaponTagBoard(int, int, WEAPON_HAVE *, int, int, int);
-
-/**
  * Draws one weapon's model, name and every panel that describes it.
  *
  * @mangled DrawAallWeapon__FiifP10CCharacterP11WEAPON_HAVEiii
@@ -534,33 +479,6 @@ void DrawAallWeapon(int, int, float, CCharacter *, WEAPON_HAVE *, int, int, int)
 void BtlWeaponDraw(int, float, int, int);
 
 /**
- * Reports whether a weapon can be repaired, built up, or neither.
- *
- * @mangled NowWeaponStatusValue__FP11WEAPON_HAVE
- * @address 0x1FBEB0
- * @size 0x11C
- */
-void NowWeaponStatusValue(WEAPON_HAVE *);
-
-/**
- * Drops a weapon's element where the attachment no longer supports it.
- *
- * @mangled WeaponMenuCheckElemValue__FP11WEAPON_HAVEP11WEAPON_HAVE
- * @address 0x1FC050
- * @size 0xB8
- */
-void WeaponMenuCheckElemValue(WEAPON_HAVE *, WEAPON_HAVE *);
-
-/**
- * Reports whether an element may be put on a weapon, and complains where it may not.
- *
- * @mangled WeaponMenuCheckEnableSetElem__FP11WEAPON_HAVEP11WEAPON_HAVEi
- * @address 0x1FC110
- * @size 0x10C
- */
-void WeaponMenuCheckEnableSetElem(WEAPON_HAVE *, WEAPON_HAVE *, int);
-
-/**
  * Draws the dialog that offers to repair, build up or scrap the selected weapon.
  *
  * @mangled DrawWeaponSelectDialog__Fiii
@@ -568,24 +486,6 @@ void WeaponMenuCheckEnableSetElem(WEAPON_HAVE *, WEAPON_HAVE *, int);
  * @size 0x530
  */
 void DrawWeaponSelectDialog(int, int, int);
-
-/**
- * Opens the weapon page in one of its modes and puts the cursor where it was left.
- *
- * @mangled InitWeaponSelect__Fii
- * @address 0x1FC750
- * @size 0x3CC
- */
-void InitWeaponSelect(int, int);
-
-/**
- * Rebuilds the player's equipped weapon model and gives the menu's textures back.
- *
- * @mangled ExitWeaponMenuSelect__Fv
- * @address 0x1FCB20
- * @size 0x2CC
- */
-void ExitWeaponMenuSelect(void);
 
 /**
  * Runs one frame of the weapon page, dispatching on which of its modes is open.
@@ -606,16 +506,6 @@ void WeaponMenuSelect(void);
 void WeaponSelectKey(void);
 
 /**
- * Takes the held attachment back out of the player's hand.
- *
- * @mangled WepAttachHaveCancel__Fv
- * @address 0x1FF6B0
- * @size 0x198
- * Puts the attachment the weapon menu is holding back where it came from.
- */
-void WepAttachHaveCancel(void);
-
-/**
  * Moves the cursor between the three attachment pages.
  *
  * @mangled WeaponMenuAttachModeKey__Fv
@@ -623,16 +513,6 @@ void WepAttachHaveCancel(void);
  * @size 0x23C
  */
 void WeaponMenuAttachModeKey(void);
-
-/**
- * Handles input while a weapon action is being chosen.
- *
- * @mangled WeaponMenuActWepKey__Fv
- * @address 0x1FFA90
- * @size 0xCC
- * Handles input on the weapon menu's equipped weapon row.
- */
-void WeaponMenuActWepKey(void);
 
 /**
  * Moves the cursor down the tags of the open attachment page.
@@ -643,25 +523,6 @@ void WeaponMenuActWepKey(void);
  * Handles input on the weapon menu's tag row, fitting and removing tags.
  */
 void WeaponMenuTagKey(void);
-
-/**
- * Moves the cursor across the weapons an attachment may be put on.
- *
- * @mangled WeaponMenuAttachWepKey__Fv
- * @address 0x200120
- * @size 0x414
- * Handles input while an attachment is being fitted to a weapon.
- */
-void WeaponMenuAttachWepKey(void);
-
-/**
- * Handles input while an attachment is being moved on the weapon menu.
- *
- * @mangled WeaponMenuAttachKey__Fv
- * @address 0x200540
- * @size 0x270
- */
-void WeaponMenuAttachKey(void);
 
 /**
  * Draws the repair and build-up dialog with the counts of the items it needs.
@@ -691,15 +552,6 @@ void DrawBuildUpWeaponSelect(int, int, int);
 void WeaponMenuDraw(void);
 
 /**
- * Handles input while items are being thrown away.
- *
- * @mangled ItemTrushKey__FPiPii
- * @address 0x201E30
- * @size 0x2F0
- */
-void ItemTrushKey(int *, int *, int);
-
-/**
  * Draws the list of items that may be thrown away.
  *
  * @mangled DrawTrushItem__Fv
@@ -707,24 +559,6 @@ void ItemTrushKey(int *, int *, int);
  * @size 0x2F4
  */
 void DrawTrushItem(void);
-
-/**
- * Remembers where the item page's cursor stood and closes it.
- *
- * @mangled ExitItemSelect__Fv
- * @address 0x202420
- * @size 0x88
- */
-void ExitItemSelect(void);
-
-/**
- * Starts reading the item page's weapon icons in the background.
- *
- * @mangled StartBGReadItemMenuWepIcon__FP1Ri
- * @address 0x2024B0
- * @size 0x54
- */
-void StartBGReadItemMenuWepIcon(void /* CW back-ref target unresolved */ *, int &);
 
 /**
  * Waits for the item page's weapon icons and enters them into the texture manager.
@@ -736,15 +570,6 @@ void StartBGReadItemMenuWepIcon(void /* CW back-ref target unresolved */ *, int 
 void ReadSyncItemMenuWepIcon(void);
 
 /**
- * Opens the item page on one party member, restoring the mode it was left in.
- *
- * @mangled InitItemMode__Fii
- * @address 0x2025E0
- * @size 0x624
- */
-void InitItemMode(int, int);
-
-/**
  * Gives the item page's textures back and re-equips anyone left without a weapon.
  *
  * @mangled ExistItemMenu__Fv
@@ -752,15 +577,6 @@ void InitItemMode(int, int);
  * @size 0xC0
  */
 void ExistItemMenu(void);
-
-/**
- * Moves the item page from one party member to the next.
- *
- * @mangled ChangeMenuChara__Fv
- * @address 0x202D50
- * @size 0x1C0
- */
-void ChangeMenuChara(void);
 
 /**
  * Runs one frame of the item page, dispatching on which of its modes is open.
@@ -799,15 +615,6 @@ void ItemMenuModeKey(void);
 void ActiveItemDraw(int, int, int);
 
 /**
- * Steps and draws the party member's model on the item page.
- *
- * @mangled MenuCharaPolyDraw__Fv
- * @address 0x206AB0
- * @size 0x84
- */
-void MenuCharaPolyDraw(void);
-
-/**
  * Draws the item page's status panel for one party member.
  *
  * @mangled ItemMenuCharaStatusDraw__Fiiii
@@ -835,22 +642,13 @@ void ItemNaviCursor(int);
 void CharaStatusMsgDraw(int, int, int, int, int);
 
 /**
- * Runs the Atla page and returns to the menu bar when it closes.
- *
- * @mangled BattleMenuAtoraKey__Fv
- * @address 0x207DF0
- * @size 0xFC
- */
-void BattleMenuAtoraKey(void);
-
-/**
  * Opens the travel page, either on the world map or on the local one.
  *
  * @mangled InitMenuMove__FiiP1
  * @address 0x207EF0
  * @size 0x414
  */
-void InitMenuMove(int, int, void /* CW back-ref target unresolved */ *);
+void InitMenuMove(int mode, int texture_block, u_long128 *buffer);
 
 /**
  * Places the party's marker on the town or dungeon the cursor stands on.
@@ -889,15 +687,6 @@ void DrawMenuMove(void);
 void DrawEscapeItem(int, int, int);
 
 /**
- * Starts reading one region's world map in the background.
- *
- * @mangled StartLoadWorldMap__FiP1
- * @address 0x209F80
- * @size 0xBC
- */
-void StartLoadWorldMap(int, void /* CW back-ref target unresolved */ *);
-
-/**
  * Waits for the world map and enters its textures and model.
  *
  * @mangled LoadWorldMap__Fv
@@ -905,25 +694,6 @@ void StartLoadWorldMap(int, void /* CW back-ref target unresolved */ *);
  * @size 0x32C
  */
 void LoadWorldMap(void);
-
-/**
- * Steps and draws the party's marker over the world map.
- *
- * @mangled LocalDrawWorldMap__Fv
- * @address 0x20A370
- * @size 0x6C
- * Draws the world map's menu character.
- */
-void LocalDrawWorldMap(void);
-
-/**
- * Draws the world map with the party's marker over it.
- *
- * @mangled DrawWorldMap__Fi
- * @address 0x20A3E0
- * @size 0x48
- */
-void DrawWorldMap(int);
 
 /**
  * Exchanges two world-map destination rankings.
@@ -938,24 +708,14 @@ void DrawWorldMap(int);
 void MenuDataSwap(MAP_JUMP_COMPARE *first, MAP_JUMP_COMPARE *second);
 
 /**
- * Finds the world-map place nearest the direction the pad was pushed in.
+ * Finds the reachable world-map place nearest the current one in the direction the pad was
+ * pushed, or -1 when there is none.
  *
  * @mangled GetNearWorldPos__FiPi
  * @address 0x20A4A0
  * @size 0x3BC
- * Returns the reachable world map destination nearest the one it is given, or -1 when there
- * is none.
  */
-int GetNearWorldPos(int, int *);
-
-/**
- * Moves the world-map cursor between places and reports the one chosen.
- *
- * @mangled WorldMapMoveKey__Fv
- * @address 0x20A860
- * @size 0x148
- */
-void WorldMapMoveKey(void);
+int GetNearWorldPos(int direction, int *position);
 
 /**
  * Draws the plate that asks whether to travel to the chosen place.
@@ -965,51 +725,6 @@ void WorldMapMoveKey(void);
  * @size 0x150
  */
 void DrawMapCheck(int);
-
-/**
- * Reports whether a world-map place has been visited and may be travelled to.
- *
- * @mangled GetVisitInfo__Fii
- * @address 0x20AB00
- * @size 0x164
- */
-void GetVisitInfo(int, int);
-
-/**
- * Gives the region whose world map should be read for the party's position.
- *
- * @mangled IsLoadMapNo__Fv
- * @address 0x20AC70
- * @size 0x110
- */
-void IsLoadMapNo(void);
-
-/**
- * Turns a map number into the world-map place that stands for it.
- *
- * @mangled MapNoTransFunc__Fi
- * @address 0x20AD80
- * @size 0xD8
- */
-void MapNoTransFunc(int);
-
-/**
- * Runs the options page and returns to the menu bar when it closes.
- *
- * @mangled BattleMenuOptionKey__Fv
- * @address 0x20AE60
- * @size 0x108
- */
-void BattleMenuOptionKey(void);
-
-/**
- * Runs the save page and returns to the menu bar when it closes.
- *
- * @mangled BattleMenuSaveKey__Fv
- * @address 0x20AF70
- * @size 0xF4
- */
-void BattleMenuSaveKey(void);
 
 /**
  * Initializes the battle manual menu from its placement data and load buffer.
@@ -1028,15 +743,6 @@ void BattleManualInit(int *result, u_long128 *load_buffer);
  * @size 0xFC
  */
 int BattleManualKey(void);
-
-/**
- * Draws a current-over-maximum pair, reddening it as the value runs low.
- *
- * @mangled DrawStatusNumberNowAndMax__FPiiiii
- * @address 0x20B1B0
- * @size 0x128
- */
-void DrawStatusNumberNowAndMax(int *, int, int, int, int);
 
 /**
  * Draws the sockets of a weapon and what is fitted into them.
@@ -1061,7 +767,7 @@ public:
     s32 unk_0C;
     s32 option_flags;    /**< Combined option bits of the weapon and its attachments. */
     WEAPON_HAVE *weapon; /**< Weapon whose option messages are displayed. */
-    s32 unk_18;
+    void *unk_18;
     ClsMes *message; /**< Message window that holds the option text. */
     /**
      * Selects the shared East King message window for weapon option text.

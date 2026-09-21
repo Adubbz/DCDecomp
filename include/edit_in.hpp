@@ -1,0 +1,61 @@
+#pragma once
+
+#include "common.h"
+
+#include "editground.hpp"
+#include "editloop.hpp"
+
+class CCharacter;
+
+/**
+ * Holds the settings and records an interior's info script describes.
+ */
+struct EDIT_IN_INFO {
+    char name[0x40]; /**< Path of the interior's map file. */
+    u8 unk_040[0x480];
+    float projection; /**< Distance of the interior's projection plane. */
+    u8 unk_4c4[0xC];
+    float ambient[4];            /**< Ambient light colour. */
+    float light_direction[4][4]; /**< Normalized light directions, one light per column. */
+    float light_colour[4][4];    /**< Colours of the four lights. */
+    float background_colour[4];  /**< Colour the interior clears to. */
+    EDIT_FOG_INFO fog;           /**< Fog distances and colour. */
+    u8 unk_584[0x37AC];
+    EDIT_MOTION_PARTS_INFO motion_parts[4]; /**< Named interior parts with scripted motion. */
+    EDIT_WATER_INFO water_surfaces[8];      /**< Water surfaces the interior defines. */
+};
+
+STATIC_ASSERT(sizeof(EDIT_IN_INFO) == 0x44C0);
+
+/** Settings of the interior being run. */
+extern EDIT_IN_INFO *EdInInfo;
+
+/** Water surface the interior draws. */
+extern CGroundWater Water[1];
+
+/**
+ * Finds the map jump the player is standing on and facing.
+ *
+ * @mangled SearchMapJump__FPfPf
+ * @address 0x19E1F0
+ * @size 0xF4
+ */
+EPARTS_FUNC_DATA *SearchMapJump(float *position, float *rotation);
+
+/**
+ * Puts the player where the interior's map jump says they arrive.
+ *
+ * @mangled GetMapJumpPos__FP10CCharacter
+ * @address 0x19E2F0
+ * @size 0x12C
+ */
+void GetMapJumpPos(CCharacter *chara);
+
+/**
+ * Reads one interior object's levels of detail and hangs them off its part.
+ *
+ * @mangled LoadMapObject__FP9CMapPartsPPUiP14CDataAlloc2_1_
+ * @address 0x19B790
+ * @size 0x204
+ */
+void LoadMapObject(CMapParts *parts, u_int **data, CDataAlloc2<1> *alloc);

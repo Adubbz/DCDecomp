@@ -4,6 +4,7 @@
 #include "sce/libmc.h"
 
 class CSaveData;
+struct SV_CONFIG_SYS;
 
 /**
  * Describes one browser-icon file written into the save directory.
@@ -34,11 +35,11 @@ struct MC_CARD_INFO {
     s32 present;   /**< One while the last sceMcGetInfo found a card in the port. */
     s32 type;      /**< Card type that sceMcGetInfo writes. */
     s32 formatted; /**< Format flag that sceMcGetInfo writes. */
-    s32 unk_0C;
-    s32 unk_10;
+    s32 format_change; /**< 1 once a search finds the card newly formatted, -1 once it finds it unformatted. */
+    s32 dir_exists;    /**< One once GetDir has found the save directory on the card. */
     u8 unk_14[4];
-    s32 free_size; /**< Free space that sceMcGetInfo writes. */
-    s32 unk_1C;
+    s32 free_size;   /**< Free space that sceMcGetInfo writes. */
+    s32 dir_entries; /**< Entries that sceMcGetDir found in the save directory. */
     s32 result; /**< Result of the last sceMcGetInfo on the card. */
 };
 
@@ -106,6 +107,19 @@ enum MC_OPERATION {
     MC_OPERATION_CONVERT                = 15
 };
 // clang-format on
+
+/**
+ * Records what stopped the last memory card operation.
+ */
+struct MC_ERROR_INFO {
+    s32 code;        /**< Kind of error that stopped the last operation, zero while none did. */
+    s32 func_no;     /**< Operation that the class was running when the error came. */
+    s32 file_no;     /**< Save file that the class was working on when the error came. */
+    s32 step;        /**< Step that the operation had reached when the error came. */
+    s32 retry_count; /**< Failed polls of the current read or delete, which stop at 101 and 121. */
+};
+
+STATIC_ASSERT(sizeof(MC_ERROR_INFO) == 0x14);
 
 /**
  * Runs the memory card operations of the game one step at a time.
@@ -359,7 +373,7 @@ public:
      * @address 0x216A50
      * @size 0x19C
      */
-    int McError(int error);
+    int McError(int result);
 
     /**
      * Waits until the memory card library has no command left to finish.
@@ -382,11 +396,7 @@ public:
 public:
     s32 port;               /**< Port that every command of the class names. */
     s32 file_no;            /**< Save file that the current operation works on. */
-    s32 error_code;         /**< Kind of error that stopped the last operation, zero while none did. */
-    s32 error_func_no;      /**< Operation that the class was running when the error came. */
-    s32 error_file_no;      /**< Save file that the class was working on when the error came. */
-    s32 error_step;         /**< Step that the operation had reached when the error came. */
-    s32 retry_count;        /**< Failed polls of the current read or delete, which stop at 101 and 121. */
+    MC_ERROR_INFO error;    /**< What stopped the last operation. */
     char version[0x20];     /**< Version string that every save file carries after its data. */
     char dir_name[0x20];    /**< Name of the save directory on the card. */
     char file_name[0x20];   /**< Name that every save file of the game starts with. */
@@ -435,3 +445,9 @@ int GetOpenAttribute(char *name);
  * directory's listing into.
  */
 extern MC_DIR_ENTRY SaveFileInfo[MC_DIR_ENTRY_MAX];
+
+/**
+ * Configuration image that LoadSysConfig reads from the card and SetBuff and
+ * SaveSysConfig fill for writing.
+ */
+extern SV_CONFIG_SYS sys_config;

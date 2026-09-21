@@ -7,30 +7,103 @@
  *          played and faded through.
  */
 struct MIDI_SEQUENCE {
-    u8 unk_00[12];
-    s32 volume; /**< Volume the sequence plays at, out of 256. */
+    char name[12]; /**< File name of the sequence, without its extension. */
+    s32 volume;    /**< Volume the sequence plays at, out of 256. */
 };
 
 /**
- *          What the MIDI player is doing. Only what the title movie reads is
- *          named; the extents are the gaps between those fields.
+ *          The sequence description table and how many entries it holds.
+ */
+struct SQ_INF_TABLE {
+    MIDI_SEQUENCE sequence[400]; /**< Each sequence's description. */
+    s32 count;                   /**< Number of entries read. */
+};
+
+STATIC_ASSERT(sizeof(SQ_INF_TABLE) == 0x1904);
+
+/**
+ *          One volume fade the sequencer advances once a frame.
+ */
+struct MIDI_FADE {
+    s32 active;        /**< Non-zero while the fade runs. */
+    s32 target_volume; /**< Volume the fade stops at. */
+    float volume;      /**< Volume the fade has reached. */
+    float step;        /**< Volume added each frame. */
+};
+
+STATIC_ASSERT(sizeof(MIDI_FADE) == 0x10);
+
+/**
+ *          What the MIDI player holds for one port: the bank loaded into the
+ *          sound processor, the sequences loaded beside it, and its fades.
+ */
+struct MIDI_PORT {
+    void *bank;                  /**< IOP address of the port's bank header, or zero. */
+    s32 spu_address;             /**< Sound processor address the port's bank body loads to. */
+    void *sequence_address[10];  /**< IOP address of each loaded sequence. */
+    MIDI_SEQUENCE *sequence[10]; /**< Description of each loaded sequence. */
+    s32 sequence_count;          /**< Number of sequences loaded. */
+    MIDI_FADE fade[2];           /**< The port's two volume fades. */
+    u8 unk_7C[4];
+};
+
+STATIC_ASSERT(sizeof(MIDI_PORT) == 0x80);
+
+/**
+ *          What the MIDI player is doing, one record per port.
  */
 struct MIDI_STATE {
-    u8 unk_00[48];
-    MIDI_SEQUENCE *sequence; /**< Sequence that plays now. */
-    u8 unk_34[40];
-    s32 unk_5C;
-    u8 unk_60[140];
-    s32 unk_EC;
-    u8 unk_F0[108];
-    s32 unk_15C;
-    u8 unk_160[268];
-    s32 unk_26C;
-    u8 unk_270[124];
-    s32 unk_2EC;
-    u8 unk_2F0[124];
-    s32 unk_36C;
+    MIDI_PORT port[8]; /**< State of each port. */
 };
+
+STATIC_ASSERT(sizeof(MIDI_STATE) == 0x400);
+
+/**
+ *          The bank a load is handing to the MIDI player: where its header
+ *          and body sit in IOP memory and where the body goes in the sound
+ *          processor.
+ */
+struct MIDI_BANK {
+    void *hd_address; /**< IOP address of the bank header. */
+    void *bd_address; /**< IOP address of the bank body. */
+    s32 bd_size;      /**< Size of the bank body in bytes. */
+    s32 spu_address;  /**< Sound processor address the body loads to. */
+    u8 unk_10[0x30];
+};
+
+STATIC_ASSERT(sizeof(MIDI_BANK) == 0x40);
+
+/**
+ *          How one sound effect is played: the bank and program it comes
+ *          from and its volume.
+ */
+struct SE_INF {
+    s8 bank;    /**< Bank the effect plays from. */
+    s8 program; /**< Program within the bank. */
+    s16 volume; /**< Volume the effect plays at. */
+};
+
+/**
+ *          The sound-effect description table and how many entries it holds.
+ */
+struct SE_INF_TABLE {
+    SE_INF entry[3000]; /**< Each effect's description. */
+    s32 count;          /**< Number of entries read. */
+};
+
+STATIC_ASSERT(sizeof(SE_INF_TABLE) == 0x2EE4);
+
+/**
+ *          One buffer of MIDI messages queued for the stream input module,
+ *          copied across to the IOP once a frame.
+ */
+struct MSIN_BUFFER {
+    s32 size;   /**< Size of the buffer in bytes. */
+    s32 length; /**< Bytes of messages waiting to be sent. */
+    u8 unk_08[0x1F8];
+};
+
+STATIC_ASSERT(sizeof(MSIN_BUFFER) == 0x200);
 
 class CSound {
 public:
@@ -86,7 +159,7 @@ public:
      * @address 0x1440D0
      * @size 0x9B8
      */
-    void LoadSoundFileFromPack(char *, unsigned int *);
+    int LoadSoundFileFromPack(char *, unsigned int *);
 
     /**
      * Reads the sequence description table.
@@ -95,7 +168,7 @@ public:
      * @address 0x144A90
      * @size 0x12C
      */
-    void LoadSqInf(char *, unsigned int *);
+    int LoadSqInf(char *, unsigned int *);
 
     /**
      * Reads the sound-effect description table.
@@ -104,7 +177,7 @@ public:
      * @address 0x144BC0
      * @size 0x198
      */
-    void LoadSeInf(char *, unsigned int *);
+    int LoadSeInf(char *, unsigned int *);
 
     /**
      * Starts the sound system and its sequencer.
@@ -113,7 +186,7 @@ public:
      * @address 0x144D60
      * @size 0x4C0
      */
-    void Init(int, int, int, int);
+    int Init(int, int, int, int);
 
     /**
      * Starts a sequence playing.
@@ -267,7 +340,7 @@ public:
      * @address 0x1469C0
      * @size 0x17C
      */
-    void LoadHdBd_A(int, int, int, int);
+    int LoadHdBd_A(int, int, int, int);
 
     /**
      * Loads the common bank into the sound processor.
@@ -276,7 +349,7 @@ public:
      * @address 0x146B40
      * @size 0x228
      */
-    void LoadHdBd_C(int, int, int, int);
+    int LoadHdBd_C(int, int, int, int);
 
     /**
      * Loads the effect bank into the sound processor.
@@ -285,7 +358,7 @@ public:
      * @address 0x146D70
      * @size 0x17C
      */
-    void LoadHdBd_E(int, int, int, int);
+    int LoadHdBd_E(int, int, int, int);
 
     /**
      * Loads the georama bank into the sound processor.
@@ -294,7 +367,7 @@ public:
      * @address 0x146EF0
      * @size 0x17C
      */
-    void LoadHdBd_G(int, int, int, int);
+    int LoadHdBd_G(int, int, int, int);
 
     /**
      * Loads the interior bank into the sound processor.
@@ -303,7 +376,7 @@ public:
      * @address 0x147070
      * @size 0x26C
      */
-    void LoadHdBd_I(int, int, int, int);
+    int LoadHdBd_I(int, int, int, int);
 
     /**
      * Loads the music bank into the sound processor.
@@ -312,7 +385,7 @@ public:
      * @address 0x1472E0
      * @size 0x164
      */
-    void LoadHdBd_M(int, int, int, int);
+    int LoadHdBd_M(int, int, int, int);
 
     /**
      * Loads the quest bank into the sound processor.
@@ -321,7 +394,7 @@ public:
      * @address 0x147450
      * @size 0x164
      */
-    void LoadHdBd_Q(int, int, int, int);
+    int LoadHdBd_Q(int, int, int, int);
 
     /**
      * Loads the system bank into the sound processor.
@@ -330,7 +403,7 @@ public:
      * @address 0x1475C0
      * @size 0x164
      */
-    void LoadHdBd_S(int, int, int, int);
+    int LoadHdBd_S(int, int, int, int);
 
     /**
      * Loads the ambient sequence set through the sound processor's heap.
@@ -339,7 +412,7 @@ public:
      * @address 0x147730
      * @size 0xBC
      */
-    void LoadSeq_A(int, int);
+    int LoadSeq_A(int, int);
 
     /**
      * Loads the effect sequence set through the sound processor's heap.
@@ -348,7 +421,7 @@ public:
      * @address 0x1477F0
      * @size 0xBC
      */
-    void LoadSeq_E(int, int);
+    int LoadSeq_E(int, int);
 
     /**
      * Loads the interior sequence set through the sound processor's heap.
@@ -357,7 +430,7 @@ public:
      * @address 0x1478B0
      * @size 0xBC
      */
-    void LoadSeq_I(int, int);
+    int LoadSeq_I(int, int);
 };
 
 STATIC_ASSERT(sizeof(CSound) == 1);

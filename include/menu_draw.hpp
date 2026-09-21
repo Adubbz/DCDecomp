@@ -64,24 +64,39 @@ struct PERSONAL_BOARD {
     s32 unk_20;
     ITEM_PACK *item_pack; /**< Item pack the board lists. */
     s32 unk_28;
-    s32 unk_2C;
-    u8 unk_30[0x14];
+    s16 *unk_2C;
+    u8 unk_30[0x10];
+    s16 unk_40;
+    s16 unk_42;
     WEAPON_HAVE weapon; /**< Weapon record the board holds. */
-    u8 unk_13C[0x20];
+    ATTACH_LIST unk_13C;
     s32 unk_15C;
 };
+
+/**
+ * Where one main menu icon and its label sit on the menu frame texture.
+ */
+struct MENU_ICON_INFO {
+    s16 id; /**< Icon the entry describes. */
+    s16 unk_02;
+    s32 unk_04;
+    s32 unk_08;
+    s32 unk_0C;
+    s32 unk_10;
+    s32 unk_14;
+    s32 unk_18;
+    s32 unk_1C;
+    s32 unk_20;
+    s32 unk_24;
+};
+
+STATIC_ASSERT(sizeof(MENU_ICON_INFO) == 0x28);
 
 /** The dungeon entrance menu. */
 extern DUN_ENTER_MENU DEnterMenu;
 
 /** Dungeon progress the entrance menu shows. */
 extern CDngStatusData *DEnterStatusPt;
-
-/** Directory that menu textures load from. */
-extern char AllMenuTextureDir[9];
-
-/** Path fragment of each selectable language's directory and file names. */
-extern char *ComMenuContryName[7];
 
 /** Frames a menu error message has shown for. */
 extern int MenuEtcErrCnt;
@@ -103,6 +118,9 @@ extern int BtlMenuBGMvol;
 
 /** Set while the extra-menu texture has been read. */
 extern int MenuExTextureReadFlag;
+
+/** Description of each main menu icon, for each of the seven languages. */
+extern MENU_ICON_INFO MenuIcon[7][14];
 
 /**
  * Returns the directory that menu textures load from.
@@ -357,15 +375,6 @@ void DrawMenuColorGradation(CRect_i_ &, spRGBA *, spRGBA *, spRGBA *, spRGBA *);
 void DrawMenuSideGradation(CRect_i_ &, spRGBA *, spRGBA *);
 
 /**
- * Draws the mark over an item that cannot be set.
- *
- * @mangled DrawDontSetItemMark__Fiiiii
- * @address 0x22D4C0
- * @size 0xDC
- */
-void DrawDontSetItemMark(int, int, int, int, int);
-
-/**
  * Draws an item's icon with its attachment count or weapon mark.
  *
  * @mangled DrawIconParts__Fiiiiiii
@@ -420,13 +429,13 @@ void MenuTextureClip(int &, int &, int &, int, int);
 int GetNumberKeta(int);
 
 /**
- * Gives the description of one menu icon.
+ * Returns the description of one menu icon in the language the menus display in.
  *
  * @mangled GetMenuIconInfo__Fi
  * @address 0x22DF40
  * @size 0x5C
  */
-void GetMenuIconInfo(int);
+MENU_ICON_INFO *GetMenuIconInfo(int icon);
 
 /**
  * Draws one of the main menu's icons.
@@ -582,13 +591,13 @@ void PersonalBoardLimmitCheck(void);
 int PersonalBoardKeySub(void);
 
 /**
- * Handles key input on the personal board.
+ * Handles key input on the personal board and returns what the cursor handler returned.
  *
  * @mangled PersonalBoardKey__Fv
  * @address 0x22EF60
  * @size 0x30
  */
-void PersonalBoardKey(void);
+int PersonalBoardKey(void);
 
 /**
  * Swaps an inventory entry into a personal board slot.

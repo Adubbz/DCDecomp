@@ -7,7 +7,6 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-#ifdef NON_MATCHING
 void CCandleEffect::Initialize(void) {
     this->enabled = 1;
     this->animation_frame = 0.0f;
@@ -15,53 +14,30 @@ void CCandleEffect::Initialize(void) {
     this->half_width = 1.0f;
     this->texture = NULL;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/candleeffect", Initialize__13CCandleEffectFv);
-#endif
 
-#ifdef NON_MATCHING
 CCandleEffect::CCandleEffect(void) {
     Initialize();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/candleeffect", __ct__13CCandleEffectFv);
-#endif
 
-#ifdef NON_MATCHING
 void CCandleEffect::SetTexture(CTexture *flame_texture) {
     this->texture = flame_texture;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/candleeffect", SetTexture__13CCandleEffectFP8CTexture);
-#endif
 
-#ifdef NON_MATCHING
 void CCandleEffect::SetScale(float half_width, float half_height) {
     this->half_width = half_width;
     this->half_height = half_height;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/candleeffect", SetScale__13CCandleEffectFff);
-#endif
 
-#ifdef NON_MATCHING
 void CCandleEffect::SetPosition(float *world) {
     sceVu0CopyVector(this->position, (float *) world);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/candleeffect", SetPosition__13CCandleEffectFPf);
-#endif
 
-#ifdef NON_MATCHING
 void CCandleEffect::Step(void) {
     this->animation_frame += 0.3f;
     if (this->animation_frame > 8.0f) {
         this->animation_frame = 0.0f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/candleeffect", Step__13CCandleEffectFv);
-#endif
 #ifdef NON_MATCHING
 void CCandleEffect::Draw(void) {
     if (texture == NULL || enabled == 0) {

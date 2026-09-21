@@ -5,7 +5,6 @@
 #include "menu_draw.hpp"
 #include "savedata.hpp"
 
-#ifdef NON_MATCHING
 int CMenuIconAutoGet::IsMoveIcon(void) {
     int moving = 0;
 
@@ -16,11 +15,7 @@ int CMenuIconAutoGet::IsMoveIcon(void) {
     }
     return moving;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menuiconautoget", IsMoveIcon__16CMenuIconAutoGetFv);
-#endif
 
-#ifdef NON_MATCHING
 int CMenuIconAutoGet::IsSameItem(int item) {
     int found = 0;
 
@@ -31,11 +26,7 @@ int CMenuIconAutoGet::IsSameItem(int item) {
     }
     return found;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menuiconautoget", IsSameItem__16CMenuIconAutoGetFi);
-#endif
 
-#ifdef NON_MATCHING
 int CMenuIconAutoGet::GetMoveIconGole(int slot, int item) {
     int found = 0;
 
@@ -46,11 +37,7 @@ int CMenuIconAutoGet::GetMoveIconGole(int slot, int item) {
     }
     return found;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menuiconautoget", GetMoveIconGole__16CMenuIconAutoGetFii);
-#endif
 
-#ifdef NON_MATCHING
 int CMenuIconAutoGet::GetSpace(void) {
     for (int i = 0; i < 3; i++) {
         if (icon[i].item < 0x51) {
@@ -59,9 +46,6 @@ int CMenuIconAutoGet::GetSpace(void) {
     }
     return -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menuiconautoget", GetSpace__16CMenuIconAutoGetFv);
-#endif
 #ifdef NON_MATCHING
 int CMenuIconAutoGet::IconAutoMove(void) {
     static const int destination_x[3] = {92, 156, 220};
@@ -93,7 +77,6 @@ int CMenuIconAutoGet::IconAutoMove(void) {
 INCLUDE_ASM("asm/nonmatchings/menuiconautoget", IconAutoMove__16CMenuIconAutoGetFv);
 #endif
 
-#ifdef NON_MATCHING
 void CMenuIconAutoGet::IconMoveTarSet(int index, int slot, int item, int count, float x, float y) {
     icon[index].slot = slot;
     icon[index].item = item;
@@ -101,9 +84,6 @@ void CMenuIconAutoGet::IconMoveTarSet(int index, int slot, int item, int count, 
     icon[index].x = x;
     icon[index].y = y;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menuiconautoget", IconMoveTarSet__16CMenuIconAutoGetFiiiiff);
-#endif
 #ifdef NON_MATCHING
 void CMenuIconAutoGet::IconAutoMoveDraw(void) {
     for (int i = 0; i < 3; i++) {

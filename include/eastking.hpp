@@ -24,15 +24,6 @@ extern s16 PrevEastKingSndVol;
 void EastKingTextureEnter();
 
 /**
- * Draws the current East King event message.
- *
- * @mangled EastKingMsgDraw__Fv
- * @address 0x00232C60
- * @size 0x1A0
- */
-void EastKingMsgDraw();
-
-/**
  * Restores the background-music volume saved before the East King event.
  *
  * @mangled GetPrevEastKingSndVol__Fv
@@ -48,7 +39,7 @@ void GetPrevEastKingSndVol();
  * @address 0x00232E30
  * @size 0x1A8
  */
-void InitEastKingEvent(int event_no, int *result, void *load_buffer);
+void InitEastKingEvent(int event_no, int *result, u_long128 *load_buffer);
 
 /**
  * Processes input and state transitions for the East King event.

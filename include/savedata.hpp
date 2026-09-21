@@ -26,11 +26,6 @@ public:
      */
     void InitPos();
 
-private:
-    // CSaveData mirrors reset_pos into its own config[16], and sets it from
-    // the memory card data in InvertConfig.
-    friend class CSaveData;
-
     s16 reset_pos; /**< Set to zero to keep the menu positions. Any other value discards them. */
     s16 pos[10];   /**< Contains the cursor position of each menu. */
     s16 mode[10];  /**< Contains the mode of each menu. */
@@ -423,7 +418,7 @@ public:
      * @address 0x158800
      * @size 0x68
      */
-    s16 VisitMap(int map_no, int add);
+    int VisitMap(int map_no, int add);
 
     /**
      * Adds a value to the quest count of a dungeon and returns the new count.
@@ -452,7 +447,14 @@ public:
      */
     int InvertConfig(SV_CONFIG_SYS *in);
 
+    /** Returns the state of the Mardan Garayan fishing quest. */
+    s32 GetMardanGareyanFlag() const { return unk_12F94; }
+
 private:
+    // CMemoryCardAccess::GetSaveFileInfoFromMc reads map_no out of the save
+    // image that it reads from the card.
+    friend class CMemoryCardAccess;
+
     s32 config[18];         /**< Contains the configuration values. */
     s16 chara_name[6][32]; /**< Contains the name of each character, as sixteen-bit characters. */
     s32 map_no;             /**< Map that the game resumes on. */
@@ -479,7 +481,7 @@ private:
     u32 map_init_flags[80][16]; /**< Contains the map initialization flag bits of each map. */
     s16 visit_map[80];          /**< Contains the visit count of each map. */
     s16 quest_dungeon[6];       /**< Contains the quest count of each dungeon. */
-    char unk_12F94[4];
+    s32 unk_12F94;
     s32 quest_dungeon_total; /**< Contains the quest count of all the dungeons. */
     char unk_12F9C[548];
 };

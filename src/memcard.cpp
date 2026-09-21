@@ -1,23 +1,106 @@
 #include "memcard.hpp"
 
 #include <cmath>
+#include <cstdio>
 
 #include "battle_globals.hpp"
 #include "clsmes.hpp"
 #include "dataread.hpp"
+#include "eastking.hpp"
 #include "editatra.hpp"
+#include "editloop.hpp"
 #include "editpartsinfo.hpp"
 #include "gamepad.hpp"
+#include "mainselect.hpp"
 #include "memorycardaccess.hpp"
 #include "menu_draw.hpp"
+#include "menu_save.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "savedata.hpp"
+#include "snd.hpp"
+#include "sound.hpp"
 #include "texture.hpp"
+#include "userstatus.hpp"
 
-// The chip attachment record is opaque to every unit; only the unit's own
-// functions take a pointer to it.
-struct EDIT_CHIP_ATTACH_DATA;
+/**
+ * Holds the state of the option screen.
+ */
+struct OPTION_MENU_STATE {
+    s32 mode; /**< How the screen was opened; 0 from the main menu. */
+    u8 unk_04[8];
+    s32 cursor; /**< Cell that the cursor is on, as ten times the row plus the column. */
+    s32 step;   /**< Stage that the screen is at, 2 once it has begun to close. */
+    s32 unk_14;
+    float cursor_x; /**< Screen X of the cursor. */
+    float cursor_y; /**< Screen Y of the cursor. */
+    float unk_20;
+    s32 flag[12];      /**< Setting of each option row. */
+    s32 prev_flag[12]; /**< Setting of each option row when the screen opened. */
+    s16 unk_84;
+    s16 unk_86;
+};
+
+STATIC_ASSERT(sizeof(OPTION_MENU_STATE) == 0x88);
+
+/** The state of the option screen. */
+extern OPTION_MENU_STATE OptionMenu;
+
+/** The StayTex menu texture. */
+CTexture *StayTex;
+
+/** The AttachIcon menu texture. */
+CTexture *AttachIcon;
+
+/** The texture of the item icons. */
+CTexture *ItemIcon;
+
+/** The ItemIcon2 menu texture. */
+CTexture *ItemIcon2;
+
+/** The texture of the weapon icons. */
+CTexture *WepIcon;
+
+CTexture *Sozai;
+CTexture *HoleGray;
+CTexture *HoleGold;
+CTexture *ObTip;
+CTexture *ObPerson;
+CTexture *CompleteTex;
+CTexture *VillageBar;
+CTexture *VillageName;
+
+/** The texture that the save screen's file boards draw from. */
+CTexture *SaveBoard;
+
+/** The texture that the option screen draws from. */
+CTexture *MenuOption;
+
+CEditPartsInfo *CommonMenuAtoraInfo;
+short *GetAtraMsgReadBuf;
+
+/** The chip that the georama board's cursor has picked up. */
+ATORA_TIP_HAVE *NowTipHavePt;
+
+/** Whether the board screen's texture block has finished loading. */
+int AtoraTextureEnterFlag;
+
+/** The texture block that holds the board's town tags and names. */
+int AtoraTextureBaseBlock;
+
+/** The texture block the georama board screen loads for its own textures. */
+int AtoraTextureReadBlock;
+
+/** The buffer that the georama board screen reads its files into. */
+u_long128 *AtoraOffsetBuf;
+
+s32 CursorVibeCnt;
+
+/** The chip group that the board's sort ranks first. */
+extern int tip_sort_type;
+
+/** The save menu's steps, by SAVE_MENU_STATE::key_no. */
+extern int (*SaveMenuFunc[26])();
 
 /**
  * Returns the record of the n-th valid part in the georama's part list, or NULL
@@ -460,43 +543,226 @@ static int SaveMenuKeyLoadConfig();
  */
 static int SaveMenuKeyFileSelect();
 
-#ifdef NON_MATCHING
 int McCheckMCPs2(MC_CARD_INFO *card) {
     if (!card->present || card->type != 2) {
         return 0;
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", McCheckMCPs2__FP12MC_CARD_INFO);
-#endif
-#ifdef NON_MATCHING
 void DrawObjectVibe(int x, int y, CTexture *texture, CRect_i_ src_rect, unsigned char alpha, int flag) {
-    s32 dest_x = (s32) ((float) x + 7.0f * cosf(0.08055365830659866f * (float) CursorVibeCnt));
-    s32 dest_y = (s32) ((float) y + 5.0f * sinf(0.1163552850484848f * (float) CursorVibeCnt));
-    CRect_i_ dest_rect(dest_x, dest_y, src_rect.width, src_rect.height);
+    float dest_x = (float) x + 7.0f * cosf(0.08055365830659866f * (float) CursorVibeCnt);
+    float dest_y = (float) y + 5.0f * sinf(0.1163552850484848f * (float) CursorVibeCnt);
+    CRect_i_ dest_rect((s32) dest_x, (s32) dest_y, src_rect.width, src_rect.height);
     DrawMenu2DSprite(texture, dest_rect, src_rect, alpha, alpha, alpha, flag);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawObjectVibe__FiiP8CTexture8CRect_i_Uci);
-#endif
-#ifdef NON_MATCHING
 void DrawObjectVibe(int x, int y, CTexture *texture, RECT src_rect, unsigned char alpha, int flag) {
     CRect_i_ src(src_rect.x, src_rect.y, src_rect.width, src_rect.height);
     DrawObjectVibe(x, y, texture, src, alpha, flag);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawObjectVibe__FiiP8CTexture4RECTUci);
-#endif
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuObjectVibe__Fiiii);
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuHelpWindow__FP8CTextureiiiffi);
-INCLUDE_ASM("asm/nonmatchings/memcard", MenuHelpWinDraw__FiiffiiiP8CTexture);
-INCLUDE_ASM("asm/nonmatchings/memcard", MenuHelpWinDraw2__FiiffiiiP8CTexture);
+
+void DrawMenuHelpWindow(CTexture *texture, int style, int x, int y, float width, float height, int alpha) {
+    int corner_u;
+    float middle_width;
+    float middle_height;
+    int middle_y;
+    int bottom_y;
+
+    if (style == 0) {
+        corner_u = 24;
+    } else if (style == 1) {
+        corner_u = 0;
+    } else {
+        corner_u = 48;
+    }
+    middle_width = 24.0f * width;
+    middle_height = 24.0f * height;
+    middle_y = y + 24;
+    bottom_y = middle_y + middle_height;
+    if (texture == NULL) {
+        return;
+    }
+    DrawMenu2DSprite(texture, CRect_i_(x, y, 24, 24), CRect_i_(corner_u, 0, 24, 24), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x, middle_y, 24, middle_height), CRect_i_(24, 24, 24, 24), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, 24, 24), CRect_i_(24, 48, 24, 24), alpha);
+    x += 24;
+    DrawMenu2DSprite(texture, CRect_i_(x, y, middle_width, 24), CRect_i_(48, 0, 24, 24), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x, middle_y, middle_width, middle_height), CRect_i_(48, 24, 24, 24), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, middle_width, 24), CRect_i_(48, 48, 24, 24), alpha);
+    x += middle_width;
+    DrawMenu2DSprite(texture, CRect_i_(x, y, 24, 24), CRect_i_(72, 0, 24, 24), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x, middle_y, 24, middle_height), CRect_i_(72, 24, 24, 24), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, 24, 24), CRect_i_(72, 48, 24, 24), alpha);
+}
+
+void MenuHelpWinDraw(int x, int y, float width, float height, int alpha, int u, int v, CTexture *texture) {
+    int middle_width;
+    int middle_height;
+    int middle_y;
+    int bottom_y;
+
+    middle_width = width * 16.0f;
+    middle_height = height * 22.0f;
+    middle_y = y + 22;
+    bottom_y = middle_y + middle_height;
+    if (texture == NULL) {
+        return;
+    }
+    DrawMenu2DSprite(texture, CRect_i_(x, y, 24, 22), CRect_i_(u, v, 24, 22), (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, middle_y, 24, middle_height), CRect_i_(u, v + 22, 24, 20), (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, 24, 22), CRect_i_(u, v + 42, 24, 22), (alpha * 100) >> 7);
+    x += 24;
+    DrawMenu2DSprite(texture, CRect_i_(x, y, middle_width, 22), CRect_i_(u + 22, v, 16, 22), (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, middle_y, middle_width, middle_height), CRect_i_(u + 22, v + 22, 16, 20),
+                     (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, middle_width, 22), CRect_i_(u + 22, v + 42, 16, 22), (alpha * 100) >> 7);
+    x += middle_width;
+    DrawMenu2DSprite(texture, CRect_i_(x, y, 24, 22), CRect_i_(u + 38, v, 24, 22), (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, middle_y, 24, middle_height), CRect_i_(u + 38, v + 22, 24, 20), (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, 24, 22), CRect_i_(u + 38, v + 42, 24, 22), (alpha * 100) >> 7);
+}
+
+void MenuHelpWinDraw2(int x, int y, float width, float height, int alpha, int u, int v, CTexture *texture) {
+    int middle_width;
+    int middle_height;
+    int middle_y;
+    int bottom_y;
+
+    middle_width = width;
+    middle_height = height;
+    middle_y = y + 22;
+    bottom_y = middle_y + middle_height;
+    if (texture == NULL) {
+        return;
+    }
+    DrawMenu2DSprite(texture, CRect_i_(x, y, 24, 22), CRect_i_(u, v, 24, 22), (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, middle_y, 24, middle_height), CRect_i_(u, v + 22, 24, 20), (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, 24, 22), CRect_i_(u, v + 42, 24, 22), (alpha * 100) >> 7);
+    x += 24;
+    DrawMenu2DSprite(texture, CRect_i_(x, y, middle_width, 22), CRect_i_(u + 22, v, 16, 22), (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, middle_y, middle_width, middle_height), CRect_i_(u + 22, v + 22, 16, 20),
+                     (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, middle_width, 22), CRect_i_(u + 22, v + 42, 16, 22), (alpha * 100) >> 7);
+    x += middle_width;
+    DrawMenu2DSprite(texture, CRect_i_(x, y, 24, 22), CRect_i_(u + 38, v, 24, 22), (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, middle_y, 24, middle_height), CRect_i_(u + 38, v + 22, 24, 20), (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, 24, 22), CRect_i_(u + 38, v + 42, 24, 22), (alpha * 100) >> 7);
+}
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuHelpWinDraw__Fiiffi);
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuWaku__FffiiiP8CTexturei);
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuNumber__FiiiP8CTexture4RECTii);
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuNumber__Fiii4RECTP8CTextureiUcUcUci);
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuNumber__Fiii4RECTP8CTextureiiii);
+
+void DrawMenuWaku(float x, float y, int width, int height, int type, CTexture *texture, int alpha) {
+    RECT *src;
+    float offset;
+    int left;
+    int top;
+    int right;
+    int bottom;
+
+    if (texture != NULL) {
+        static int MenuWakuCnt = 0;
+
+        offset = 0.2f * MenuWakuCnt;
+        left = x + offset;
+        top = y + offset;
+        right = (x + width) - offset;
+        bottom = (y + height) - offset;
+        RECT corner[2] = {{74, 72, 16, 16}, {106, 72, 27, 24}};
+        src = &corner[type];
+        DrawMenu2DSprite(texture, CRect_i_(left, top, src->width, src->height),
+                         CRect_i_(src->x, src->y, src->width, src->height), alpha);
+        DrawMenu2DSprite(texture, CRect_i_(right, top, src->width, src->height),
+                         CRect_i_(src->x + src->width, src->y, src->width, src->height), alpha);
+        DrawMenu2DSprite(texture, CRect_i_(left, bottom, src->width, src->height),
+                         CRect_i_(src->x, src->y + src->height, src->width, src->height), alpha);
+        DrawMenu2DSprite(texture, CRect_i_(right, bottom, src->width, src->height),
+                         CRect_i_(src->x + src->width, src->y + src->height, src->width, src->height), alpha);
+        MenuWakuCnt++;
+        if (MenuWakuCnt < 0 || MenuWakuCnt >= 30) {
+            MenuWakuCnt = 0;
+        }
+    }
+}
+
+int DrawMenuNumber(int number, int x, int y, CTexture *texture, RECT rect, int overlap, int flag) {
+    return DrawMenuNumber(number, x, y, rect, texture, overlap, 0, 0x1C0, flag);
+}
+
+int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int overlap, unsigned char r,
+                   unsigned char g, unsigned char b, int flag) {
+    int digits;
+    int digit;
+    int width;
+    int src_x;
+    int dest_y;
+    int dest_height;
+    int clip_y;
+    int src_y;
+    int height;
+
+    if (texture == NULL) {
+        return 0;
+    }
+    for (digits = GetNumberKeta(number); 0 < digits; digits--) {
+        clip_y = y;
+        digit = number % 10;
+        width = rect.width;
+        x -= width - overlap;
+        src_x = rect.x + width * digit;
+        src_y = rect.y;
+        height = rect.height;
+        MenuTextureClip(clip_y, src_y, height, 0, 0x1C0);
+        CRect_i_ dest;
+        CRect_i_ src(src_x, src_y, width, height);
+        dest_height = height - 1;
+        dest_y = clip_y;
+        dest.x = x;
+        dest.y = dest_y;
+        dest.width = width;
+        dest.height = dest_height;
+        DrawMenu2DSprite(texture, dest, src, r, g, b, flag);
+        number /= 10;
+    }
+    return x;
+}
+
+int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int overlap, int top, int bottom,
+                   int flag) {
+    int digits;
+    int digit;
+    int width;
+    int src_x;
+    int dest_y;
+    int dest_height;
+    int clip_y;
+    int src_y;
+    int height;
+
+    if (texture == NULL) {
+        return 0;
+    }
+    for (digits = GetNumberKeta(number); 0 < digits; digits--) {
+        clip_y = y;
+        digit = number % 10;
+        width = rect.width;
+        x -= width - overlap;
+        src_x = rect.x + width * digit;
+        src_y = rect.y;
+        height = rect.height;
+        MenuTextureClip(clip_y, src_y, height, top, bottom);
+        CRect_i_ dest;
+        CRect_i_ src(src_x, src_y, width, height);
+        dest_height = height - 1;
+        dest_y = clip_y;
+        dest.x = x;
+        dest.y = dest_y;
+        dest.width = width;
+        dest.height = dest_height;
+        DrawMenu2DSprite(texture, dest, src, flag);
+        number /= 10;
+    }
+    return x;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", GetMsgLengthMenu__FP6ClsMesi);
 /**
  * Gives the texture and the cell within it that one georama element draws from.
@@ -505,21 +771,317 @@ INCLUDE_ASM("asm/nonmatchings/memcard", GetMsgLengthMenu__FP6ClsMesi);
  * @address 0x2181E0
  * @size 0xD8
  */
-INCLUDE_ASM("asm/nonmatchings/memcard", RetCTexAtora__FiRiRi);
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtoraParts__Fiiiiii);
-INCLUDE_ASM("asm/nonmatchings/memcard", SearchAtoraInfo__Fi);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraAllTipGet__Fi);
-INCLUDE_ASM("asm/nonmatchings/memcard", AlreadyPeopleTalk__Fii);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraCompOrEvent__FP14EDITPARTS_INFO);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtraBoardMaxNum__Fi);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipStatusSearch__FP14EDITPARTS_INFOi);
+static CTexture *RetCTexAtora(int tip_no, int &x, int &y);
+
+static CTexture *RetCTexAtora(int tip_no, int &x, int &y) {
+    CTexture *texture;
+    int tex_no;
+
+    tex_no = GetEditAtraChipData(MenuAtoraSel.map_no, tip_no)->tex_no;
+    x = ((tex_no + 7) % 7) * 36;
+    y = (tex_no / 7) * 36;
+    if (tip_no < 40) {
+        texture = ObTip;
+    } else if (tip_no >= 40) {
+        texture = ObPerson;
+    }
+    return texture;
+}
+
+void DrawAtoraParts(int x, int y, int tip_no, int top, int bottom, int alpha) {
+    CTexture *texture;
+    int src_x;
+    int src_y;
+    int height;
+
+    if (x < 340 || x > 600) {
+        return;
+    }
+    if (y < 80 || y > 300) {
+        return;
+    }
+    if (y < top - 35 || bottom <= y) {
+        return;
+    }
+    if (tip_no < 0) {
+        return;
+    }
+    texture = RetCTexAtora(tip_no, src_x, src_y);
+    if (texture == NULL) {
+        return;
+    }
+    height = 36;
+    MenuTextureClip(y, src_y, height, top, bottom);
+    CRect_i_ src(src_x, src_y, 36, height);
+    CRect_i_ shadow(x + 2, y + 1, 36, height);
+    DrawMenu2DSprite(texture, shadow, src, 0, 0, 0, (alpha * 80) >> 7);
+    CRect_i_ dest(x, y, 36, height);
+    DrawMenu2DSprite(texture, dest, src, alpha);
+}
+
+static EDITPARTS_INFO *SearchAtoraInfo(int index) {
+    int parts;
+    int count;
+
+    parts = CommonMenuAtoraInfo->GetNextParts(-1);
+    count = -1;
+    while (parts != -1) {
+        count++;
+        if (index == count) {
+            return CommonMenuAtoraInfo->GetPartsInfo(parts);
+        }
+        parts = CommonMenuAtoraInfo->GetNextParts(parts);
+    }
+    return NULL;
+}
+
+static int AtoraAllTipGet(int parts_no) {
+    EDITPARTS_INFO *info;
+    int result;
+    int i;
+    EDITPARTS_ELEMENT *element;
+
+    info = CommonMenuAtoraInfo->GetPartsInfo(parts_no);
+    if (info == NULL) {
+        return 0;
+    }
+    result = 1;
+    for (i = 0; i < 6; i++) {
+        element = &info->elements[i];
+        if (element == NULL) {
+            break;
+        }
+        if (0 <= element->id && element->enabled == 0) {
+            result = 0;
+            break;
+        }
+    }
+    return result;
+}
+
+static int AlreadyPeopleTalk(int map_no, int chip_no) {
+    SV_GRD_NPC *npc;
+
+    npc = SaveData->GetGrdNPCData(map_no, chip_no - 40);
+    if (npc == NULL || chip_no - 40 < 0) {
+        return 1;
+    }
+    return npc->talk_message;
+}
+
+static int AtoraCompOrEvent(EDITPARTS_INFO *info) {
+    EDIT_PARTS_ATRA *atra;
+    EDITPARTS_ELEMENT *element;
+    int complete;
+    int filled;
+    int talked;
+    int done;
+    int result;
+    int i;
+
+    atra = GetEditAtraPartsData(MenuAtoraSel.map_no, info->parts_no);
+    if (atra == NULL) {
+        return 0;
+    }
+    if (atra->kind == 0) {
+        return 0;
+    }
+    complete = CommonMenuAtoraInfo->CheckComplete(info->parts_no);
+    filled = 0;
+    talked = 1;
+    done = 0;
+    if (info != NULL) {
+        if (info->unk_0C == info->unk_18) {
+            filled = 1;
+        }
+        for (i = 0; i < 6; i++) {
+            element = &info->elements[i];
+            if (element->id >= 40) {
+                if (element->unk_1C >= 0) {
+                    if (AlreadyPeopleTalk(MenuAtoraSel.map_no, element->id) == 0) {
+                        talked = 0;
+                    }
+                }
+            }
+        }
+        if (info->completion_flags & 1) {
+            done = 1;
+        }
+    }
+    result = 0;
+    if (complete && filled && talked && !done) {
+        result = 1;
+    }
+    return result;
+}
+
+static int AtraBoardMaxNum(int ground) {
+    EDIT_PARTS_ATRA *parts;
+    int count;
+
+    if (ground < 0 || ground >= 6) {
+        return 0;
+    }
+    parts = GetEditAtraPartsData(ground, 0);
+    if (parts == NULL) {
+        return 0;
+    }
+    for (count = 0; count < 40 && parts->max > 0; count++) {
+        parts++;
+    }
+    return count;
+}
+
+static int AtoraTipStatusSearch(EDITPARTS_INFO *info, int slot) {
+    int next;
+    int link;
+    int code;
+
+    if (info == NULL) {
+        return 0;
+    }
+    if (info->elements[slot].id < 0) {
+        return -1;
+    }
+    link = info->elements[slot].unk_04;
+    if (link < 0 || info->elements[slot].enabled != 0) {
+        return 0;
+    }
+    if (link < 3 && slot >= 3) {
+        code = 2;
+    } else {
+        code = 1;
+    }
+    if (info->elements[link].enabled == 0) {
+        code += 10;
+    }
+    next = info->elements[link].unk_04;
+    if (next >= 0 && info->elements[next].enabled == 0) {
+        code += 10;
+    }
+    return code;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", AtraTipCanDisplay__FP21EDIT_CHIP_ATTACH_DATA);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipRelationDraw__FiiP14EDITPARTS_INFOiii);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraBoardEnableMovePos__FiPi);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraBoardGoToPos__FPiii);
+
+static void AtoraTipRelationDraw(int x, int y, EDITPARTS_INFO *info, int slot, int link, int alpha) {
+    int dx;
+    int dy;
+    int u;
+    int v;
+    int height;
+
+    if (info != NULL) {
+        static int tipcurCnt = 0;
+
+        u = 172;
+        v = 390;
+        height = 14;
+        // Only link codes ending in 1 or 2 give the arrow an offset.
+        if (link > 0) {
+            switch (link % 10) {
+                case 1:
+                    dx = -10;
+                    dy = 8;
+                    u += 12;
+                    break;
+                case 2:
+                    dx = 12;
+                    dy = -12;
+                    break;
+            }
+        }
+        if (tipcurCnt % 460 > 200) {
+            dy += 3;
+            v += 14;
+            height = 10;
+        }
+        if (link < 49 && link >= 20) {
+            return;
+        }
+        if (link < 50 && link > 0) {
+            DrawMenu2DSprite(Sozai, CRect_i_(x + dx, y + dy, 12, height), CRect_i_(u, v, 12, height), alpha);
+        }
+        if (link >= 10) {
+            DrawMenu2DSprite(Sozai, CRect_i_(x, y, 36, 35), CRect_i_(220, 346, 36, 37), alpha);
+        }
+        tipcurCnt++;
+        if (tipcurCnt < 0 || tipcurCnt > 999999) {
+            tipcurCnt = 0;
+        }
+    }
+}
+
+/** Frame counter that DrawAtora's part plates animate with. */
+int AtoraHeyCnt;
+
+/** Frame counter that DrawAtora's completion sprites animate with. */
+int CompMsgCt;
+
+/** The configuration words that the option screen edits. */
+s32 *OpConfigPt;
+
+static void AtoraBoardEnableMovePos(int parts_no, int *enable) {
+    EDITPARTS_INFO *info;
+    int link;
+    int i;
+
+    info = SearchAtoraInfo(parts_no);
+    if (info == NULL) {
+        for (int j = 0; j < 6; j++) {
+            enable[j] = 0;
+        }
+        return;
+    }
+    for (i = 0; i < 6; i++) {
+        enable[i] = 1;
+        if (info->elements[i].id < 0) {
+            enable[i] = 0;
+        } else {
+            link = info->elements[i].unk_04;
+            if (link < 0) {
+                enable[i] = 1;
+            } else {
+                link = info->elements[link].unk_04;
+                if (link < 0) {
+                    enable[i] = 1;
+                } else if (info->elements[link].enabled != 0) {
+                    enable[i] = 1;
+                } else {
+                    enable[i] = 0;
+                }
+            }
+        }
+    }
+}
+
+static int AtoraBoardGoToPos(int *enable, int pos, int min) {
+    while (min < pos) {
+        if (enable[pos] != 0) {
+            return pos;
+        }
+        pos--;
+    }
+    return pos;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", GetAtraMsgNo__Fii);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraMsgNoGet__Fiii);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipOnlyMsgNoGet__Fii);
+
+static int AtoraTipOnlyMsgNoGet(int map_no, int number) {
+    EDIT_ELEMENT_ATRA *chip;
+    int msg_no;
+
+    chip = GetEditAtraChipData(map_no, number);
+    if (chip == NULL) {
+        return -1;
+    }
+    msg_no = chip->msg_no + 40;
+    if (number >= 40) {
+        msg_no += 40;
+    }
+    return msg_no;
+}
 /**
  * Gives the cell within the element sheet that one georama element draws from.
  *
@@ -527,76 +1089,984 @@ INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipOnlyMsgNoGet__Fii);
  * @address 0x219000
  * @size 0xD8
  */
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipGetTexPos__FiRiRi);
+static void AtoraTipGetTexPos(int tip_no, int &x, int &y) {
+    int tex_no;
+
+    tex_no = GetEditAtraChipData(MenuAtoraSel.map_no, tip_no)->tex_no;
+    if (tip_no >= 40) {
+        x = 144;
+        y = 180;
+    } else if (0 <= tex_no && tex_no < 40) {
+        x = (tex_no % 7) * 36;
+        y = (tex_no / 7) * 36;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipObjectOrPerson__Fiiiii);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipHoleTexInfoGet__FiPUc);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraPlateDrawHaichiBar__FP14EDITPARTS_INFOiii);
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtraBuildNum__FP14EDITPARTS_INFOiii);
+
+static CTexture *AtoraTipHoleTexInfoGet(int gold, unsigned char *color) {
+    if (gold) {
+        color[0] = 0x8C;
+        color[1] = 0x80;
+        color[2] = 0x50;
+        return HoleGold;
+    }
+    color[0] = 0x80;
+    color[1] = 0x80;
+    color[2] = 0x80;
+    return HoleGray;
+}
+
+static void AtoraPlateDrawHaichiBar(EDITPARTS_INFO *info, int x, int y, int flag) {
+    int empty = 83 - info->unk_0C * 83 / info->unk_18;
+    CRect_i_ dest;
+    CRect_i_ src(244, 323 - empty, 12, empty);
+
+    dest.x = x + 12;
+    dest.y = y + 107 - empty;
+    dest.width = 12;
+    dest.height = empty;
+    DrawMenu2DSprite(Sozai, dest, src, flag);
+    DrawAtraBuildNum(info, x, y, flag);
+}
+
+void DrawAtraBuildNum(EDITPARTS_INFO *info, int x, int y, int alpha) {
+    RECT digit = {0, 212, 12, 12};
+    int num_x;
+
+    num_x = x + 8;
+    if ((info->unk_18 - info->unk_0C) / 10 > 0) {
+        num_x += 24;
+    } else {
+        num_x += 12;
+    }
+    if (info->unk_18 / 10 > 0) {
+        num_x += 24;
+    } else {
+        num_x += 12;
+    }
+    num_x = DrawMenuNumber(info->unk_18, num_x, y + 5, StayTex, digit, 1, alpha);
+    DrawMenu2DSprite(StayTex, CRect_i_(num_x - 10, y + 5, 12, 12), CRect_i_(120, digit.y, 12, 12), alpha);
+    DrawMenuNumber(info->unk_18 - info->unk_0C, num_x - 7, y + 5, StayTex, digit, 1, alpha);
+}
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtora__Fiiii);
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtoraNothing__Fiii);
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawMsgAtraWarning__FP6ClsMesii);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipInfoInit__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", GetMenuAtraEventFlag__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", SetMenuAtraEventFlag__Fi);
-INCLUDE_ASM("asm/nonmatchings/memcard", MenuAtoraAfterFadeIn__Fv);
+
+static void DrawAtoraNothing(int x, int y, int alpha) {
+    DrawMenu2DSprite(Sozai, CRect_i_(x, y, 18, 18), CRect_i_(184, 346, 18, 18), alpha);
+    DrawMenu2DSprite(Sozai, CRect_i_(x + 18, y, 220, 18), CRect_i_(200, 346, 4, 18), alpha);
+    DrawMenu2DSprite(Sozai, CRect_i_(x + 238, y, 18, 18), CRect_i_(202, 346, 18, 18), alpha);
+    DrawMenu2DSprite(Sozai, CRect_i_(x, y + 18, 18, 84), CRect_i_(184, 360, 18, 4), alpha);
+    DrawMenu2DSprite(Sozai, CRect_i_(x + 238, y + 18, 18, 84), CRect_i_(202, 360, 18, 4), alpha);
+    DrawMenu2DSprite(Sozai, CRect_i_(x, y + 102, 18, 18), CRect_i_(184, 364, 18, 18), alpha);
+    DrawMenu2DSprite(Sozai, CRect_i_(x + 18, y + 102, 220, 18), CRect_i_(200, 364, 4, 18), alpha);
+    DrawMenu2DSprite(Sozai, CRect_i_(x + 238, y + 102, 18, 18), CRect_i_(202, 364, 18, 18), alpha);
+    DrawMenu2DSprite(Sozai, CRect_i_(x + 64, y + 44, 132, 30), CRect_i_(124, 418, 132, 30), alpha);
+}
+
+static void DrawMsgAtraWarning(ClsMes *mes, int x, int y) {
+    if (mes == NULL) {
+        return;
+    }
+    if (mes->mes_made != 200) {
+        mes->MakeMesWin(200);
+    }
+    mes->MakeMesWin(200);
+    MenuTextureReload(mes->tex_block);
+    mes->stay_frame = 1;
+    mes->text_x = x;
+    mes->text_y = y;
+    mes->Step();
+    mes->DrawMesWin();
+}
+
+static void AtoraTipInfoInit() {
+    NowTipHavePt->mode = 0;
+    NowTipHavePt->parts_no = -1;
+    NowTipHavePt->slot = -1;
+    NowTipHavePt->tip_no = -1;
+}
+
+int GetMenuAtraEventFlag() {
+    return MenuAtoraSel.event_flag;
+}
+
+static void SetMenuAtraEventFlag(int flag) {
+    MenuAtoraSel.event_flag = flag;
+}
+
+static void MenuAtoraAfterFadeIn() {
+    int msg_no;
+
+    CommonMenuMes2.SetBuff(GetAtraMsgReadBuf);
+    CommonMenuMes2.mes_made = -1;
+    msg_no = AtoraMsgNoGet(MenuAtoraSel.map_no, MenuAtoraSel.board_pos, 0);
+    CommonMenuMes2.MakeMesWin(msg_no >= 0 ? msg_no + 1000 : 0);
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", InitMenuAtora1__FiiPiP1);
 INCLUDE_ASM("asm/nonmatchings/memcard", InitMenuAtoraSelect__Fi);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @1397);
 INCLUDE_ASM("asm/nonmatchings/memcard", ExitAtoraSelect__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTexInfoGet__Fv);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1410);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1411);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1412);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1413);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1414__2);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1415__2);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1416);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1417);
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuAtoraSelect__Fv);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1502);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1664);
+
+static void AtoraTexInfoGet() {
+    CompleteTex = TexManager.GetTexture("complete", -1);
+    Sozai = TexManager.GetTexture("sozai", AtoraTextureReadBlock);
+    HoleGray = TexManager.GetTexture("holegray", AtoraTextureReadBlock);
+    HoleGold = TexManager.GetTexture("holegold", AtoraTextureReadBlock);
+    ObTip = TexManager.GetTexture("obtip", AtoraTextureReadBlock);
+    ObPerson = TexManager.GetTexture("obperson", AtoraTextureReadBlock);
+    VillageBar = TexManager.GetTexture("viltag", AtoraTextureBaseBlock);
+    VillageName = TexManager.GetTexture("vilname", AtoraTextureBaseBlock);
+}
+
+void DrawMenuAtoraSelect() {
+    int alpha;
+    int tint;
+    int fade;
+
+    alpha = 0x80;
+    switch (MenuAtoraSel.step) {
+        case 1:
+            alpha = MenuAtoraSel.step_count * 8;
+            break;
+        case 2:
+            alpha = 0x80 - MenuAtoraSel.step_count * 8;
+            break;
+    }
+    if (alpha < 0) {
+        alpha = 0;
+    }
+    if (alpha > 0x80) {
+        alpha = 0x80;
+    }
+    if (MenuAtoraSel.step != 8) {
+        DrawAtoraSelect(alpha);
+        if (MenuAtoraSel.step == 0) {
+            DrawMenuObjectVibe(MenuAtoraSel.cursor_x, MenuAtoraSel.cursor_y, 1, MenuAtoraSel.unk_188);
+        }
+        if (MenuAtoraSel.step != 0 && AtoraTextureEnterFlag != 0) {
+            MenuAtoraSel.step_count++;
+        } else {
+            MenuAtoraSel.step_count = 0;
+        }
+        CTexture frame = *TexManager.GetTexture("frame_image", -1);
+        ((sceGsTex0 *) &frame.tex0)->bits.tcc = 0;
+        sceGsTexa texa = mgTexa;
+        texa.AEM = 1;
+        texa.TA0 = 0x80;
+        MGSetGsTEXA(&texa);
+        tint = 0;
+        fade = 0;
+        switch (MenuAtoraSel.step) {
+            case 1:
+                tint = 0x80 - MenuAtoraSel.step_count * 7;
+                break;
+            case 7:
+                fade = MenuAtoraSel.step_count * 2;
+                break;
+            case 9:
+                fade = 0x80 - MenuAtoraSel.step_count * 2;
+                break;
+            case 2:
+                tint = MenuAtoraSel.step_count * 5 + 0x40;
+                break;
+        }
+        if (tint < 0) {
+            tint = 0;
+        }
+        if (tint > 0x80) {
+            tint = 0x80;
+        }
+        if (fade < 0) {
+            fade = 0;
+        }
+        if (fade > 0x80) {
+            fade = 0x80;
+        }
+        CRect_i_ rect(320, 0, 320, 448);
+        DrawMenu2DSprite(&frame, rect, rect, 0x40, 0x40, 0x40, tint);
+        MGSetGsTEXA(NULL);
+        if (MenuAtoraSel.step == 7 || MenuAtoraSel.step == 9) {
+            AllFadeForMenu(fade);
+        }
+        if (MenuAtoraSel.step == 10) {
+            CommonMenuMes3.auto_pos = 5;
+            CommonMenuMes3.edge_alpha = 0x80;
+            DrawMsgAtraWarning(&CommonMenuMes3, 184, 150);
+        } else {
+            CommonMenuMes3.mes_made = -1;
+        }
+    }
+    if (MenuAtoraSel.step == 8) {
+        EastKingEventDraw();
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtoraSelect__Fi);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTextureEnter__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", GetTipKind__Fi);
-INCLUDE_ASM("asm/nonmatchings/memcard", CompTip__Fii);
-INCLUDE_ASM("asm/nonmatchings/memcard", SeitonAtoraTipBoardSub__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", SeitonAtoraTipBoard__Fv);
+
+static int AtoraTextureEnter() {
+    LOADTEXTURE_INFO2 tex[3] = {{"#frame_image3#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+    BG_READ_INFO *bg;
+
+    tex[1].block_no = tex[0].block_no = AtoraTextureReadBlock;
+    bg = GetReadBGFile(0);
+    char name[16] = "a%d.img";
+    sprintf(name, name, MenuAtoraSel.map_no + 1);
+    tex[1].name = (char *) GetPackFile((u_int *) bg->buffer, name, NULL);
+    TexManager.DeleteTextureBlock(AtoraTextureReadBlock);
+    TexManager.LoadTextureBlockEX(-1, tex);
+    CompleteTex = TexManager.GetTexture("complete", -1);
+    Sozai = TexManager.GetTexture("sozai", AtoraTextureReadBlock);
+    HoleGray = TexManager.GetTexture("holegray", AtoraTextureReadBlock);
+    HoleGold = TexManager.GetTexture("holegold", AtoraTextureReadBlock);
+    ObTip = TexManager.GetTexture("obtip", AtoraTextureReadBlock);
+    ObPerson = TexManager.GetTexture("obperson", AtoraTextureReadBlock);
+    return 1;
+}
+
+/** The rank that the board's sort gives each chip group, by group. */
+int tip_table[3] = {3, 1, 2};
+
+static int GetTipKind(int tip_no) {
+    if (tip_no < 0 || tip_no >= 100) {
+        return 0;
+    }
+    if (0 <= tip_no && tip_no < 40) {
+        return 1;
+    }
+    if (tip_no >= 40) {
+        return 2;
+    }
+}
+
+static int CompTip(int tip_a, int tip_b) {
+    int rank_a;
+    int rank_b;
+
+    rank_a = tip_table[GetTipKind(tip_a)];
+    rank_b = tip_table[GetTipKind(tip_b)];
+    if (tip_a < 0) {
+        rank_a = 3;
+    }
+    if (tip_b < 0) {
+        rank_b = 3;
+    }
+    if (rank_a > rank_b) {
+        return 1;
+    }
+    if (rank_a < rank_b) {
+        return -1;
+    }
+    if (tip_a > tip_b) {
+        return 1;
+    }
+    return (tip_a < tip_b) ? -1 : 0;
+}
+
+static int SeitonAtoraTipBoardSub() {
+    int rank;
+    int kind;
+    s16 *list;
+    int i;
+    int j;
+    int moved;
+
+    kind = tip_sort_type;
+    for (rank = 0; rank < 3; rank++) {
+        tip_table[kind] = rank;
+        kind++;
+        if (kind >= 3) {
+            kind = 0;
+        }
+    }
+    tip_table[0] = 3;
+    moved = 0;
+    list = MenuAtoraSel.tip_list;
+    for (i = 0; i < 119; i++) {
+        for (j = i + 1; j < 120; j++) {
+            if (CompTip(list[i], list[j]) > 0) {
+                MenuDataSwap(&list[i], &list[j]);
+                moved = 1;
+            }
+        }
+    }
+    return moved;
+}
+
+static void SeitonAtoraTipBoard() {
+    int i;
+
+    for (i = 0; i < 3; i++) {
+        if (SeitonAtoraTipBoardSub()) {
+            break;
+        }
+        tip_sort_type++;
+        if (tip_sort_type >= 3) {
+            tip_sort_type = 1;
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuAtoraSelectKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraBoardKey__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipKey__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraMenuTipCancel__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraBoardFadeEffect__Fv);
+
+static int AtoraTipKey() {
+    int result = 0;
+    int pos = MenuAtoraSel.unk_20;
+    int mode = MenuAtoraSel.unk_00;
+    int page = MenuAtoraSel.unk_18;
+
+    switch (PersonalBoardKey()) {
+        case 1: {
+            EDITPARTS_INFO *info = SearchAtoraInfo(MenuAtoraSel.board_pos);
+            int event = 0;
+            if (info != NULL) {
+                event = AtoraCompOrEvent(info);
+            }
+            int enable[6];
+            AtoraBoardEnableMovePos(MenuAtoraSel.board_pos, enable);
+            MenuAtoraSel.unk_00 = 0;
+            if (info == NULL || event != 0) {
+                MenuAtoraSel.unk_20 = 0;
+            } else {
+                int slot = AtoraBoardGoToPos(enable, MenuAtoraSel.unk_20 < MenuAtoraSel.unk_2C * 5 + 10 ? 2 : 5, 0);
+                if (enable[slot]) {
+                    MenuAtoraSel.unk_20 = slot + 1;
+                } else {
+                    MenuAtoraSel.unk_20 = 0;
+                }
+            }
+            ComMenuSePlay(0);
+            break;
+        }
+    }
+    if (MenuAtoraSel.unk_00 == 1) {
+        if (pos != MenuAtoraSel.unk_20 || mode != MenuAtoraSel.unk_00 || page != MenuAtoraSel.unk_18) {
+            ComMenuSePlay(0);
+        }
+        if (GamePad.Down(0x40)) {
+            s16 *tip = &MenuAtoraSel.tip_list[MenuAtoraSel.unk_20];
+            if (NowTipHavePt->tip_no == *tip) {
+                ComMenuSePlay(2);
+            } else {
+                ComMenuSePlay(1);
+                s16 tip_no = *tip;
+                *tip = NowTipHavePt->tip_no;
+                NowTipHavePt->tip_no = tip_no;
+                NowTipHavePt->slot = MenuAtoraSel.unk_20;
+                NowTipHavePt->mode = 1;
+                NowTipHavePt->parts_no = -1;
+            }
+            return 0;
+        } else if (GamePad.Down(0x20)) {
+            ComMenuSePlay(2);
+            if (NowTipHavePt->tip_no < 0) {
+                result = 100;
+            } else {
+                AtoraMenuTipCancel();
+            }
+        } else if (GamePad.Down(0x80)) {
+            ComMenuSePlay(1);
+            SeitonAtoraTipBoard();
+        }
+    }
+    return result;
+}
+
+static void AtoraMenuTipCancel() {
+    EDITPARTS_INFO *info;
+    EDITPARTS_ELEMENT *element;
+    s16 tip_no;
+
+    switch (NowTipHavePt->mode) {
+        case 1:
+            tip_no = MenuAtoraSel.tip_list[NowTipHavePt->slot];
+            MenuAtoraSel.tip_list[NowTipHavePt->slot] = NowTipHavePt->tip_no;
+            NowTipHavePt->tip_no = tip_no;
+            break;
+        case 0:
+            info = SearchAtoraInfo(NowTipHavePt->parts_no);
+            element = &info->elements[NowTipHavePt->slot];
+            if (element->id == NowTipHavePt->tip_no && element->enabled == 0) {
+                element->enabled = 1;
+            }
+            MenuAtoraSel.board_pos = NowTipHavePt->parts_no;
+            NowTipHavePt->tip_no = -1;
+            break;
+    }
+}
+
+static void AtoraBoardFadeEffect() {
+    CTexture frame = *TexManager.GetTexture("frame_image", -1);
+
+    if (&frame == NULL) {
+        return;
+    }
+    ((sceGsTex0 *) &frame.tex0)->bits.tcc = 0;
+    sceGsTexa texa = mgTexa;
+    texa.AEM = 1;
+    texa.TA0 = 0x80;
+    MGSetGsTEXA(&texa);
+    spRGBA top;
+    spRGBA bottom;
+    bottom.r = bottom.g = bottom.b = 0x40;
+    top.r = top.g = top.b = 0x40;
+    bottom.a = 0x80;
+    top.a = 0x80;
+    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 0, 320, 1), CRect_i_(0, 0, 320, 1), &top, &top, &bottom, &bottom, 1);
+    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 1, 320, 60), CRect_i_(0, 0, 320, 61), &top, &top, &bottom, &bottom, 1);
+    top.a = 0x80;
+    bottom.a = 0;
+    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 61, 320, 59), CRect_i_(0, 60, 320, 60), &top, &top, &bottom, &bottom,
+                1);
+    top.a = 0;
+    bottom.a = 0x80;
+    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 277, 320, 89), CRect_i_(0, 276, 320, 90), &top, &top, &bottom,
+                &bottom, 1);
+    bottom.a = 0x80;
+    top.a = 0x80;
+    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 366, 320, 1), CRect_i_(0, 366, 320, 1), &top, &top, &bottom, &bottom,
+                1);
+    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 367, 320, 81), CRect_i_(0, 366, 320, 82), &top, &top, &bottom,
+                &bottom, 1);
+    MGSetGsTEXA(NULL);
+}
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraNameDraw__Fi);
 INCLUDE_ASM("asm/nonmatchings/memcard", OptionMenuDraw__Fiiiii);
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawOptionLRCur__Fii);
-INCLUDE_ASM("asm/nonmatchings/memcard", InitMenuOption__FiiP1);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @2211);
+
+static void DrawOptionLRCur(int side, int alpha) {
+    int cursor_x[2] = {32, 520};
+    int v;
+
+    v = side * 32 + 256;
+    DrawMenu2DSprite(MenuOption, CRect_i_(cursor_x[side], 180, 96, 32), CRect_i_(416, v, 96, 32), alpha);
+}
+
+int InitMenuOption(int mode, int block_no, u_long128 *buffer) {
+    u_long128 *data;
+    CUserStatus *status;
+    int i;
+
+    switch ((int) buffer) {
+        case 0:
+            buffer = (u_long128 *) read_buffer;
+    }
+    data = MenuCalcBufAlignment(buffer);
+    StartReadBG();
+    if (LoadFileBGMenuData("option.pac", data) <= 0) {
+        return 0;
+    }
+    OptionMenu.mode = mode;
+    OptionMenu.unk_86 = block_no;
+    switch (OptionMenu.mode) {
+        case 0:
+            GamePad.SetAutoRepeat(0xF000, 30, 5);
+            GamePad.MenuModeOn(120);
+    }
+    OptionMenu.unk_84 = 0;
+    OptionMenu.step = 1;
+    OptionMenu.unk_14 = 0;
+    OptionMenu.cursor = 10;
+    OptionMenu.cursor_x = (OptionMenu.cursor % 10) * 70 + 316;
+    OptionMenu.cursor_y = ((OptionMenu.cursor - 10) / 10) * 30 + 90;
+    OptionMenu.unk_20 = 136.0f;
+    OpConfigPt = (s32 *) SaveData->GetConfigData();
+    status = (CUserStatus *) SaveData->GetDngStatus();
+    OptionMenu.flag[0] = SaveData->GetMenuCursor()->reset_pos;
+    OptionMenu.flag[1] = OpConfigPt[7];
+    OptionMenu.flag[2] = OpConfigPt[4];
+    OptionMenu.flag[3] = OpConfigPt[5];
+    OptionMenu.flag[4] = OpConfigPt[2];
+    OptionMenu.flag[5] = OpConfigPt[3];
+    OptionMenu.flag[6] = status->minimap_status;
+    OptionMenu.flag[7] = OpConfigPt[10];
+    OptionMenu.flag[8] = OpConfigPt[9];
+    OptionMenu.flag[9] = OpConfigPt[11];
+    OptionMenu.flag[10] = OpConfigPt[8];
+    OptionMenu.flag[11] = OpConfigPt[6];
+    for (i = 0; i < 12; i++) {
+        OptionMenu.prev_flag[i] = OptionMenu.flag[i];
+    }
+    return 1;
+}
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2251);
 INCLUDE_ASM("asm/nonmatchings/memcard", ExitMenuOption__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", InitOptionFlag__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", PrevOptionSetFunc__Fv);
+
+static void InitOptionFlag() {
+    int i;
+
+    for (i = 0; i < 12; i++) {
+        OptionMenu.flag[i] = 0;
+    }
+    OptionMenu.flag[6] = 1;
+}
+
+static void PrevOptionSetFunc() {
+    int i;
+
+    for (i = 0; i < 12; i++) {
+        OptionMenu.flag[i] = OptionMenu.prev_flag[i];
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuOptionKey__Fv);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2345);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2346);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2347);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuOption__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", OptionMenuFadeOutStart__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", InitMenuSave__FiiP1);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @2503);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @2504);
-INCLUDE_ASM("asm/nonmatchings/memcard", ExitSaveSelect__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", MenuSaveKey__Fv);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @2597__2);
+
+int OptionMenuFadeOutStart() {
+    int result = 0;
+
+    if (OptionMenu.step == 2) {
+        result = 1;
+    }
+    return result;
+}
+
+int InitMenuSave(int mode, int block_no, u_long128 *buffer) {
+    u_long128 *data;
+    int clear;
+
+    data = buffer;
+    if (buffer == NULL) {
+        data = (u_long128 *) read_buffer;
+    }
+    data = MenuCalcBufAlignment(data);
+    SaveMenu.unk_0 = mode;
+    SaveMenu.block_no = block_no;
+    SaveMenu.result = 0;
+    SaveMenu.unk_28 = 0;
+    SaveMenu.texture_ready = 0;
+    SaveMenu.file_no = 0;
+    SaveMenu.loaded = 0;
+    StartReadBG();
+    LoadFileBGMenuData("savetex.pak", data);
+    if (McAccess.InitForMC()) {
+        return 0;
+    }
+    switch (SaveMenu.unk_0) {
+        case 0:
+            GamePad.SetAutoRepeat(0xA000, 30, 5);
+            GamePad.MenuModeOn(120);
+            SaveMenu.key_no = 3;
+            SaveMenu.unk_1C = 1;
+            break;
+        case 1:
+            SaveMenu.key_no = 3;
+            SaveMenu.unk_1C = 2;
+            EditSave();
+            break;
+        case 2:
+        case 3:
+            clear = SaveMenu.unk_0 == 2;
+            *(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->reserved_36[2] = clear;
+            printf("SaveData clear flag = %d\n",
+                   *(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->reserved_36[2]);
+            GameClearFlag = SaveMenu.unk_0 == 2;
+            SaveMenu.unk_0 = 2;
+            GamePad.SetAutoRepeat(0xA000, 30, 5);
+            GamePad.MenuModeOn(120);
+            SaveMenu.key_no = 22;
+            SaveMenu.unk_1C = 2;
+            break;
+    }
+    SaveMenu.return_key_no = -1;
+    CommonMenuMes2.stay_frame = 1;
+    CommonMenuMes2.value_show = 1;
+    CommonMenuMes2.auto_pos = 5;
+    McAccess.SetFuncNo(1);
+    CommonMenuMes2.cursor_lit = 1;
+    return 1;
+}
+
+static void ExitSaveSelect() {
+    s32 *config;
+
+    CommonMenuMes2.stay_frame = 0;
+    CommonMenuMes2.value_show = 0;
+    CommonMenuMes2.value_signed = 1;
+    CommonMenuMes2.auto_pos = -1;
+    switch (SaveMenu.unk_0) {
+        case 0:
+            GamePad.AutoRepeatOff();
+            GamePad.MenuModeOff();
+            GamePad.SetAutoRepeat(0x5000, 30, 9);
+            GamePad.MenuModeOn(120);
+            if (SaveMenu.loaded) {
+                config = (s32 *) SaveData->GetConfigData();
+                if (config != NULL) {
+                    if (config[5]) {
+                        CSnd.SetStereoMode(0);
+                    } else {
+                        CSnd.SetStereoMode(1);
+                    }
+                }
+            }
+            break;
+        case 1:
+            break;
+        case 2:
+            GamePad.AutoRepeatOff();
+            GamePad.MenuModeOff();
+            break;
+    }
+    CommonMenuMes2.cursor_lit = 0;
+}
+
+int MenuSaveKey() {
+    int func_no;
+    int result;
+    int now_func_no;
+    int msg_no;
+    int value;
+    MC_ERROR_INFO *error;
+    MC_ERROR_INFO *last_error;
+
+    if (!SaveMenu.texture_ready) {
+        SaveMenu.texture_ready = SaveMenuTextureEnter();
+    }
+    func_no = McAccess.GetFuncNo();
+    result = McAccess.Step();
+    now_func_no = McAccess.GetFuncNo();
+    if (func_no == now_func_no) {
+        last_error = &McAccess.error;
+        switch (now_func_no) {
+            case 9:
+                if (result < 0) {
+                    SaveMenu.key_no = 14;
+                    SaveMenu.unk_20 = 7;
+                    McAccess.SetFuncNo(1);
+                }
+                break;
+            case 3:
+            case 5:
+                if (result < 0) {
+                    SaveMenu.key_no = 14;
+                    SaveMenu.unk_20 = 8;
+                    McAccess.SetFuncNo(1);
+                }
+                break;
+            case 6:
+                if (result < 0) {
+                    SaveMenu.key_no = 14;
+                    SaveMenu.unk_20 = 9;
+                    McAccess.SetFuncNo(1);
+                }
+                break;
+            case 2:
+                last_error->code = 0;
+            case 4:
+                if (result < 0) {
+                    SaveMenu.key_no = 14;
+                    SaveMenu.unk_20 = 6;
+                    McAccess.SetFuncNo(1);
+                    break;
+                }
+                switch (last_error->code) {
+                    case 0:
+                        break;
+                    case 1:
+                        SaveMenu.return_key_no = SaveMenu.key_no;
+                        SaveMenu.key_no = 19;
+                        McAccess.SetFuncNo(1);
+                        break;
+                    case 2:
+                    case 3:
+                        break;
+                    case 4:
+                        SaveMenu.key_no = 14;
+                        SaveMenu.unk_20 = 2;
+                        break;
+                }
+                break;
+        }
+    } else {
+        switch (func_no) {
+            case 4:
+                break;
+            case 6:
+                switch (SaveMenu.unk_0) {
+                    case 0:
+                        SaveMenu.key_no = 1;
+                        SaveMenu.loaded = 1;
+                        McAccess.DmySync();
+                        break;
+                    case 1:
+                        EditLoad();
+                        break;
+                    case 2:
+                        break;
+                }
+                break;
+            case 7:
+                error = &McAccess.error;
+                switch (error->code) {
+                    case 1:
+                        McAccess.SetFuncNo(4);
+                        McAccess.step = error->step;
+                        if (SaveMenu.return_key_no >= 0) {
+                            SaveMenu.key_no = SaveMenu.return_key_no;
+                        }
+                        if (McAccess.step > 49) {
+                            McAccess.step = 0;
+                        }
+                        error->code = 0;
+                        error->retry_count = 0;
+                        break;
+                    case 0:
+                        McAccess.SetFuncNo(4);
+                        break;
+                }
+                break;
+            case 5:
+                ComMenuSePlay(12);
+                McAccess.SetFuncNo(4);
+                break;
+        }
+    }
+    switch (McAccess.GetFuncNo()) {
+        case 1:
+            SaveMenuFunc[SaveMenu.key_no]();
+            break;
+    }
+    msg_no = GetSaveMenuMsgNo();
+    if (CommonMenuMes2.mes_made != msg_no) {
+        value = SaveMenu.file_no + 1;
+        switch (msg_no - 250) {
+            case 3:
+            case 6:
+            case 7:
+            case 17:
+            case 29:
+            case 30:
+                value = McAccess.port + 1;
+                break;
+        }
+        CommonMenuMes2.value = value;
+        if (msg_no == 299) {
+            CommonMenuMes2.value = McAccess.error.file_no;
+        }
+        printf("msgno = %d\n", msg_no);
+        CommonMenuMes2.MakeMesWin(msg_no);
+    }
+    return SaveMenu.result;
+}
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuSave__FPc);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2730);
-INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyFadeIn__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyFadeOut__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyModeSelect__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyMcSelect__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyCheckMcType__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyCheckMc__Fv);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @2823);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @2824);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @2825);
-INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyLoadConfig__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyFileSelect__Fv);
+
+static int SaveMenuKeyFadeIn() {
+    if (SaveMenu.unk_28 > 14) {
+        SaveMenu.key_no = 7;
+        SaveMenu.unk_28 = 0;
+    }
+    return 1;
+}
+
+static int SaveMenuKeyFadeOut() {
+    if (SaveMenu.unk_28 > 32) {
+        ExitSaveSelect();
+        if (SaveMenu.loaded) {
+            SaveMenu.result = 1;
+        } else {
+            SaveMenu.result = 2;
+        }
+    }
+    return 1;
+}
+
+static int SaveMenuKeyModeSelect() {
+    if (GamePad.Down(0x5000)) {
+        if (SaveMenu.file_no) {
+            SaveMenu.file_no = 0;
+        } else {
+            SaveMenu.file_no = 1;
+        }
+    }
+    if (GamePad.Down(0x40)) {
+        if (SaveMenu.file_no) {
+            SaveMenu.unk_1C = 1;
+        } else {
+            SaveMenu.unk_1C = 2;
+        }
+        SaveMenu.key_no = 3;
+        SaveMenu.file_no = 0;
+        ComMenuSePlay(1);
+        return 1;
+    }
+    if (GamePad.Down(0x20)) {
+        SaveMenu.key_no = 1;
+        ExitSaveSelect();
+        SaveMenu.unk_28 = 0;
+        ComMenuSePlay(2);
+        return 1;
+    }
+    return 1;
+}
+
+static int SaveMenuKeyMcSelect() {
+    int prev_slot;
+
+    prev_slot = SaveMenu.file_no;
+    if (GamePad.Down(0x5000)) {
+        if (SaveMenu.file_no) {
+            SaveMenu.file_no = 0;
+        } else {
+            SaveMenu.file_no = 1;
+        }
+    }
+    if (prev_slot != SaveMenu.file_no) {
+        ComMenuSePlay(0);
+    }
+    if (GamePad.Down(0x20)) {
+        switch (SaveMenu.unk_0) {
+            case 0:
+                SaveMenu.key_no = 1;
+                ExitSaveSelect();
+                break;
+            case 1:
+                SaveMenu.key_no = 1;
+                CommonMenuMes2.stay_frame = 0;
+                break;
+            case 2:
+                SaveMenu.key_no = 1;
+                ExitSaveSelect();
+                break;
+        }
+        SaveMenu.unk_28 = 0;
+        ComMenuSePlay(2);
+        return 1;
+    }
+    if (GamePad.Down(0x40) && SaveMenu.texture_ready) {
+        SaveMenu.key_no = 4;
+        McAccess.port = SaveMenu.file_no;
+        McAccess.SetFuncNo(0);
+        ComMenuSePlay(1);
+        return 1;
+    }
+    if (GamePad.Down2(0x40) && GamePad.Down2(0x20)) {
+        SaveMenu.key_no = 18;
+        McAccess.SetFuncNo(10);
+        McAccess.port = SaveMenu.file_no;
+        ComMenuSePlay(1);
+    }
+    return 1;
+}
+
+static int SaveMenuKeyCheckMcType() {
+    MC_CARD_INFO *card;
+
+    card = &McAccess.card[McAccess.port];
+    if (card->present) {
+        switch (card->type) {
+            case 2:
+                McAccess.SetFuncNo(2);
+                SaveMenu.key_no = 5;
+                break;
+            default:
+                SaveMenu.key_no = 14;
+                SaveMenu.unk_20 = 1;
+                break;
+        }
+    } else {
+        SaveMenu.key_no = 14;
+        SaveMenu.unk_20 = 1;
+    }
+    return 1;
+}
+
+static int SaveMenuKeyCheckMc() {
+    MC_CARD_INFO *card;
+
+    printf("check end !!\n");
+    card = &McAccess.card[McAccess.port];
+    SaveMenu.unk_20 = 0;
+    if (card->present == 0) {
+        printf("not \n");
+        SaveMenu.unk_20 = 14;
+        SaveMenu.key_no = 3;
+        SaveMenu.file_no = McAccess.port;
+        return 0;
+    }
+    if (card->type != 2) {
+        printf("type is not PS2\n");
+        SaveMenu.unk_20 = 14;
+        SaveMenu.key_no = 3;
+        SaveMenu.file_no = McAccess.port;
+        return 0;
+    }
+    if ((SaveMenu.unk_1C == 1 || SaveMenu.unk_0 == 2) && (card->dir_exists == 0 || card->formatted == 0)) {
+        SaveMenu.unk_20 = 12;
+        SaveMenu.key_no = 14;
+        return 1;
+    }
+    if (SaveMenu.unk_1C == 2 && card->dir_exists == 0 && card->free_size < 400 && card->formatted != 0) {
+        SaveMenu.unk_20 = 10;
+        SaveMenu.key_no = 14;
+        return 1;
+    }
+    if (SaveMenu.unk_0 == 2) {
+        SaveMenu.key_no = 23;
+    } else if (SaveMenu.unk_1C == 1) {
+        SaveMenu.key_no = 6;
+        McAccess.SetFuncNo(13);
+    } else {
+        McAccess.SetFuncNo(4);
+        SaveMenu.key_no = 7;
+        SaveMenu.file_no = ((s32 *) SaveData->GetConfigData())[17];
+    }
+    return 1;
+}
+
+static int SaveMenuKeyLoadConfig() {
+    McAccess.SetFuncNo(4);
+    SaveMenu.key_no = 7;
+    if (*(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->reserved_36[2] != 0) {
+        GameClearFlag = 1;
+    }
+    SaveMenu.file_no = ((s32 *) SaveData->GetConfigData())[17];
+    return 1;
+}
+
+static int SaveMenuKeyFileSelect() {
+    int prev_file;
+    SAVEDATA_INFO *info;
+
+    prev_file = SaveMenu.file_no;
+    if (GamePad.Down(0x4000)) {
+        SaveMenu.file_no++;
+        if (SaveMenu.file_no >= 12) {
+            SaveMenu.file_no--;
+        }
+    }
+    if (GamePad.Down(0x1000) && 0 < SaveMenu.file_no) {
+        SaveMenu.file_no--;
+    }
+    if (prev_file != SaveMenu.file_no) {
+        ComMenuSePlay(0);
+    }
+    if (GamePad.Down(0x20)) {
+        SaveMenu.key_no = 3;
+        SaveMenu.file_no = McAccess.port;
+        SaveMenu.unk_28 = 0;
+        ComMenuSePlay(2);
+        return 1;
+    }
+    if (GamePad.Down(0x40)) {
+        switch (SaveMenu.unk_1C) {
+            case 2:
+                SaveMenu.key_no = 8;
+                McAccess.SetFuncNo(0);
+                break;
+            case 1:
+                info = &McAccess.file_info[SaveMenu.file_no];
+                if (info->state) {
+                    SaveMenu.key_no = 12;
+                } else {
+                    ComMenuSePlay(2);
+                }
+                break;
+        }
+        ComMenuSePlay(1);
+        return 1;
+    }
+    return 1;
+}

@@ -36,15 +36,11 @@ INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1559__3);
  * @address 0x238450
  * @size 0x48
  */
-#ifdef NON_MATCHING
 void GlobalNameInit(void) {
     for (int chara_no = 0; chara_no < 6; chara_no++) {
         NameDefaultSet(chara_no);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", GlobalNameInit__Fv);
-#endif
 /**
  * Opens the name-entry screen and reads its textures.
  *
@@ -108,8 +104,7 @@ INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawNameTemplete__Fiiii);
  * @address 0x2399D0
  * @size 0x6C
  */
-#ifdef NON_MATCHING
-int NameCompare(short *first, short *second) {
+static int NameCompare(short *first, short *second) {
     int same = 0;
 
     for (int i = 0; i < 10; i++) {
@@ -123,9 +118,6 @@ int NameCompare(short *first, short *second) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", NameCompare__FPsPs);
-#endif
 /**
  * Reports whether the entered name may be used.
  *
@@ -189,9 +181,8 @@ INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawSaveBoardCharaName2__FiiPsPP8
  * @address 0x23CDE0
  * @size 0x78
  */
-#ifdef NON_MATCHING
 int GetMsgLengthCharaName(int chara_no) {
-    if (chara_no < 0 || chara_no >= 6) {
+    if (chara_no < 0 || chara_no > 5) {
         return 0;
     }
 
@@ -204,9 +195,6 @@ int GetMsgLengthCharaName(int chara_no) {
     }
     return length;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", GetMsgLengthCharaName__Fi);
-#endif
 /**
  * Opens the storybook that begins the game.
  *

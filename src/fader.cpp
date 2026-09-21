@@ -1,6 +1,5 @@
 #include "fader.hpp"
 
-#ifdef NON_MATCHING
 int Fader::In(void) {
     if (this->value < 0x80) {
         this->value += 4;
@@ -11,11 +10,7 @@ int Fader::In(void) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/fader", In__5FaderFv);
-#endif
 
-#ifdef NON_MATCHING
 int Fader::Out(void) {
     if (this->value > 0) {
         this->value -= 4;
@@ -23,14 +18,9 @@ int Fader::Out(void) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/fader", Out__5FaderFv);
-#endif
 
-#ifdef NON_MATCHING
 int Fader::Get(int maximum) {
-    return (int) ((float) this->value / 128.0f * (float) maximum);
+    float level = (float) this->value / 128.0f;
+    level *= (float) maximum;
+    return (int) level;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/fader", Get__5FaderFi);
-#endif
