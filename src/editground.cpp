@@ -456,15 +456,14 @@ void CEditGround::RemakeGrid() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/editground", __ct__11CEditGroundFv);
-/**
- * Constructs the water surface of one ground tile.
- *
- * @mangled __ct__12CGroundWaterFv
- * @address 0x1A5AE0
- * @size 0x34
- */
-INCLUDE_ASM("asm/nonmatchings/editground", __ct__12CGroundWaterFv);
+CEditGround::CEditGround() {
+    unk_20744 = 0;
+    people[0] = NULL;
+    unk_20750 = 0;
+    unk_2074c = 0;
+    unk_20748 = 1.0f;
+    Initialize();
+}
 
 /**
  * Reports whether a part may be replaced by the one being placed over it.
