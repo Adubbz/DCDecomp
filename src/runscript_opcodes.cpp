@@ -1157,7 +1157,13 @@ int _GUARD_SEARCH(RS_STACKDATA *stack, int argc) {
     SetStack(stack, UserStatus->cur_chara);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_MOVE_VEC__FP12RS_STACKDATAi);
+
+int _GET_MOVE_VEC(RS_STACKDATA *stack, int argc) {
+    SetStack(stack++, BtActStatus.unk_0D0[0]);
+    SetStack(stack++, BtActStatus.unk_0D0[1]);
+    SetStack(stack, BtActStatus.unk_0D0[2]);
+    return 1;
+}
 
 int _PUSH_IGLOBAL(RS_STACKDATA *stack, int argc) {
     int index;
