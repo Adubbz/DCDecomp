@@ -386,7 +386,9 @@ void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/fishing", __ct__5CFishFv);
+CFish::CFish() {
+    Initialize();
+}
 
 /**
  * Reads the model of the bait on the hook.
