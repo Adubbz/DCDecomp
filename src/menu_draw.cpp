@@ -4,6 +4,8 @@
 
 #include "menu_draw.hpp"
 
+#include <libvu0.h>
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -150,31 +152,20 @@ int GetNowMapTransAtraMap(int mapNo) {
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowMapTransAtraMap__Fi);
 #endif
-#ifdef NON_MATCHING
-#include <libvu0.h>
-
 void MenuWorldTrans(CCamera *camera) {
-    // CCamera has an unnamed field at +0x2B8 (a two-entry function-pointer
-    // table not yet in camera.hpp) whose second entry is called here.
-    typedef void (*CameraExtraStep)(CCamera *, int);
     sceVu0FMATRIX cameraMatrix;
-    sceVu0FMATRIX unitMatrix;
-    sceVu0FMATRIX viewMatrix;
     sceVu0FVECTOR eyePos;
-    void **cameraExtra;
+    sceVu0FMATRIX viewMatrix;
+    sceVu0FMATRIX unitMatrix;
 
     MGSetProjection(800.0f);
     camera->GetCameraMatrix(cameraMatrix);
-    cameraExtra = *(void ***) ((char *) camera + 0x2B8);
-    ((CameraExtraStep) cameraExtra[2])(camera, 1);
+    camera->Step(1);
     camera->GetPos(eyePos);
     sceVu0UnitMatrix(unitMatrix);
     sceVu0MulMatrix(viewMatrix, unitMatrix, cameraMatrix);
     MGSetViewMatrix(viewMatrix, eyePos);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", MenuWorldTrans__FP7CCamera);
-#endif
 #ifdef NON_MATCHING
 #include <libvu0.h>
 
