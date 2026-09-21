@@ -1849,15 +1849,76 @@ static int MapNoTransFunc(int map_no);
  */
 static void StartLoadWorldMap(int region, u_long128 *buffer);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", InitMenuMove__FiiP1);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @5858);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @5859);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @5860);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @5861);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @5862);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @5863);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @5864);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @5865);
+void InitMenuMove(int mode, int texture_block, u_long128 *buffer) {
+    BtlMenuSaveDataPt = SaveData;
+    MenuMove.unk_00 = mode;
+    switch (mode) {
+        case 0:
+        case 2:
+            MenuMapJumpMode = 0;
+            MenuMove.unk_04 = 1;
+            MenuMove.unk_0E = 1;
+            CommonMenuMes3.Preset(1);
+            CommonMenuMes3.rows = 3;
+            CommonMenuMes3.auto_pos = -1;
+            SysCur[1] = MenuMove.unk_04 * 26 + 174;
+            MapMoveCursor = NULL;
+            MenuMoveTex = NULL;
+            break;
+        case 5:
+            BtlMenuStatusPt = BtlMenuSaveDataPt->GetDngStatus();
+            StayTex = TexManager.GetTexture("stayfram", -1);
+            GamePad.MenuModeOn(0x78);
+            GamePad.SetAutoRepeat(0xF000, 30, 5);
+        case 1:
+            if (((s32 *) SaveData->GetConfigData())[14] != 0 && SaveData->VisitMap(MenuGrobalMapNoTbl[13], 0) > 0) {
+                printf("clear!!!!\n");
+                if (SaveData->VisitMap(MenuGrobalMapNoTbl[15] <= 0, 0) != 0) {
+                    SaveData->VisitMap(MenuGrobalMapNoTbl[15], 1);
+                    printf("demon shaft On!!!!!\n");
+                }
+            } else {
+                if (((s32 *) SaveData->GetConfigData())[14] == 0) {
+                    printf("not clear \n");
+                }
+                if (SaveData->QuestDungeon(5, 0) <= 0) {
+                    printf("not toki no kairou\n");
+                }
+            }
+            printf("MapNo = %d\n", MapNo);
+            MenuMapJumpMode = -1;
+            MenuMove.unk_04 = MapNoTransFunc(MapNo);
+            MenuMove.unk_0C = MenuMove.unk_04;
+            MenuMove.unk_08 = IsLoadMapNo();
+            printf("Now select map = %d\n", MenuMove.unk_04);
+            printf("Now Load MapNo = %d\n", MenuMove.unk_08);
+            NextWorldPos = TownOrDngPos[MenuMove.unk_04].frame;
+            MenuMove.unk_14 = texture_block;
+            buffer = MenuCalcBufAlignment(buffer);
+            MenuMove.unk_0A = 15;
+            StartLoadWorldMap(MenuMove.unk_08, buffer);
+            if (mode == 5) {
+                do {
+                } while (ReadBGSync() != 0);
+            }
+            MenuMove.unk_0E = 0;
+            CommonMenuMes3.Preset(4);
+            CommonMenuMes3.rows = 1;
+            MapMoveCursor = NULL;
+            break;
+        case 10:
+            MenuMove.unk_04 = 1;
+            MenuMapJumpMode = -1;
+            CommonMenuMes3.Preset(1);
+            CommonMenuMes3.rows = 3;
+            SysCur[1] = MenuMove.unk_04 * 26 + 174;
+            break;
+    }
+    MenuMove.unk_18 = 1;
+    MenuMove.unk_1C = 1;
+    CommonMenuMes2.mes_made = -1;
+    CommonMenuMes3.mes_made = -1;
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetTownOrDngPos__Fv);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @5881);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", MenuMoveKey__Fv);
