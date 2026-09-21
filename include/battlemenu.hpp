@@ -258,16 +258,6 @@ void DngComStatus(int, int, int, int);
 void DrawSelCharaStatus(float, float, int, int, int, int, int, int);
 
 /**
- * Looks up every texture the menu draws from and holds them.
- *
- * @mangled BtlMenuTexBlockEnter__Fv
- * @address 0x1F58A0
- * @size 0x118
- * Looks the battle menu's fixed textures up in the texture manager and keeps them.
- */
-void BtlMenuTexBlockEnter(void);
-
-/**
  * Loads the battle menu's texture blocks and message buffers.
  *
  * @mangled BattleMenuTexEnter__Fv

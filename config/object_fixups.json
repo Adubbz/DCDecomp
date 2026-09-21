@@ -52,7 +52,9 @@
   },
   "src/battlemenu.cpp": {
     "rodata_exports": [
-      "@924__2"
+      "@924__2",
+      "@926__2",
+      "@927__2"
     ]
   },
   "src/ebattle.cpp": {

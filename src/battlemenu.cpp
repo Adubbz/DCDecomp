@@ -521,15 +521,23 @@ static void BtlDrawSave() {
     setbilinear(0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlMenuTexBlockEnter__Fv);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @926__2);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @927__2);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @928__3);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @929__3);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @930__3);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @931__4);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @932__3);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @933__3);
+/**
+ * Looks the battle menu's fixed textures up in the texture manager and keeps them.
+ *
+ * @mangled BtlMenuTexBlockEnter__Fv
+ * @address 0x1F58A0
+ * @size 0x118
+ */
+static void BtlMenuTexBlockEnter() {
+    MenuCharaFace = TexManager.GetTexture("charaface", BtlMenuReadBlock);
+    BtStatus = TexManager.GetTexture("btstatus2", BtlMenuReadBlock);
+    WepIcon = TexManager.GetTexture("wepicon", -1);
+    ItemIcon = TexManager.GetTexture("itemicon", BtlMenuReadBlock);
+    PerBoardTex = TexManager.GetTexture("perbrd", BtlMenuReadBlock);
+    WepStatus = TexManager.GetTexture("wepstatus", BtlMenuReadBlock);
+    VillageName = TexManager.GetTexture("vilname", -1);
+    VillageBar = TexManager.GetTexture("viltag", -1);
+}
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @934);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @935__2);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuTexEnter__Fv);
