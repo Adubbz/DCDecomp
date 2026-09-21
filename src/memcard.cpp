@@ -501,7 +501,17 @@ INCLUDE_ASM("asm/nonmatchings/memcard", RetCTexAtora__FiRiRi);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtoraParts__Fiiiiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", SearchAtoraInfo__Fi);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraAllTipGet__Fi);
-INCLUDE_ASM("asm/nonmatchings/memcard", AlreadyPeopleTalk__Fii);
+
+static int AlreadyPeopleTalk(int map_no, int chip_no) {
+    SV_GRD_NPC *npc;
+
+    npc = SaveData->GetGrdNPCData(map_no, chip_no - 40);
+    if (npc == NULL || chip_no - 40 < 0) {
+        return 1;
+    }
+    return npc->talk_message;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraCompOrEvent__FP14EDITPARTS_INFO);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtraBoardMaxNum__Fi);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipStatusSearch__FP14EDITPARTS_INFOi);
