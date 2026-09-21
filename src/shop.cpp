@@ -713,7 +713,32 @@ int CompAttach1(ATTACH_LIST *first, ATTACH_LIST *second) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", SeitonShopAttachBoardSub__FP11ATTACH_LIST);
+int SeitonShopAttachBoardSub(ATTACH_LIST *attachments) {
+    int sort_type = asort_top_type;
+    int first_slot;
+    int second_slot;
+    int moved;
+
+    for (first_slot = 0; first_slot < 5; first_slot++) {
+        asort_table[sort_type] = first_slot;
+        sort_type++;
+        if (sort_type >= 5) {
+            sort_type = 0;
+        }
+    }
+    asort_table[0] = 5;
+    moved = false;
+    for (first_slot = 0; first_slot < 39; first_slot++) {
+        for (second_slot = first_slot + 1; second_slot < 40; second_slot++) {
+            if (CompAttach1(&attachments[first_slot], &attachments[second_slot]) > 0) {
+                MenuDataSwap(&attachments[first_slot], &attachments[second_slot]);
+                MenuDataSwap(&AttachBoardInfo[first_slot], &AttachBoardInfo[second_slot]);
+                moved = true;
+            }
+        }
+    }
+    return moved;
+}
 
 /**
  * Sorts the attachment board, trying each ordering until one changes it.
