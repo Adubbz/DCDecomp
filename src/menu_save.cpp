@@ -683,6 +683,7 @@ int SaveMenuTextureEnter(void) {
     }
     return 0;
 }
+
 int SaveMenuEffectFadeOut(void) {
     if (SaveMenu.key_no == 1) {
         return 1;

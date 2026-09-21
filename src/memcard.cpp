@@ -658,6 +658,7 @@ void MenuHelpWinDraw2(int x, int y, float width, float height, int alpha, int u,
     DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, 24, 22), CRect_i_(u + 38, v + 42, 24, 22), (alpha * 100) >> 7);
 }
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuHelpWinDraw__Fiiffi);
+
 void DrawMenuWaku(float x, float y, int width, int height, int type, CTexture *texture, int alpha) {
     RECT *src;
     float offset;
@@ -780,6 +781,7 @@ INCLUDE_ASM("asm/nonmatchings/memcard", GetMsgLengthMenu__FP6ClsMesi);
  * @size 0xD8
  */
 static CTexture *RetCTexAtora(int tip_no, int &x, int &y);
+
 static CTexture *RetCTexAtora(int tip_no, int &x, int &y) {
     CTexture *texture;
     int tex_no;
@@ -970,6 +972,7 @@ static int AtoraTipStatusSearch(EDITPARTS_INFO *info, int slot) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/memcard", AtraTipCanDisplay__FP21EDIT_CHIP_ATTACH_DATA);
+
 static void AtoraTipRelationDraw(int x, int y, EDITPARTS_INFO *info, int slot, int link, int alpha) {
     int dx;
     int dy;
@@ -1073,6 +1076,7 @@ static int AtoraBoardGoToPos(int *enable, int pos, int min) {
 
 INCLUDE_ASM("asm/nonmatchings/memcard", GetAtraMsgNo__Fii);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraMsgNoGet__Fiii);
+
 static int AtoraTipOnlyMsgNoGet(int map_no, int number) {
     EDIT_ELEMENT_ATRA *chip;
     int msg_no;
@@ -1536,6 +1540,7 @@ static void AtoraBoardFadeEffect() {
 }
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraNameDraw__Fi);
 INCLUDE_ASM("asm/nonmatchings/memcard", OptionMenuDraw__Fiiiii);
+
 static void DrawOptionLRCur(int side, int alpha) {
     int cursor_x[2] = {32, 520};
     int v;
@@ -1543,6 +1548,7 @@ static void DrawOptionLRCur(int side, int alpha) {
     v = side * 32 + 256;
     DrawMenu2DSprite(MenuOption, CRect_i_(cursor_x[side], 180, 96, 32), CRect_i_(416, v, 96, 32), alpha);
 }
+
 int InitMenuOption(int mode, int block_no, u_long128 *buffer) {
     u_long128 *data;
     CUserStatus *status;
@@ -1680,6 +1686,7 @@ int InitMenuSave(int mode, int block_no, u_long128 *buffer) {
     CommonMenuMes2.cursor_lit = 1;
     return 1;
 }
+
 static void ExitSaveSelect() {
     s32 *config;
 
@@ -1713,6 +1720,7 @@ static void ExitSaveSelect() {
     }
     CommonMenuMes2.cursor_lit = 0;
 }
+
 int MenuSaveKey() {
     int func_no;
     int result;
@@ -1853,6 +1861,7 @@ int MenuSaveKey() {
 }
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuSave__FPc);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2730);
+
 static int SaveMenuKeyFadeIn() {
     if (SaveMenu.unk_28 > 14) {
         SaveMenu.key_no = 7;
@@ -1860,6 +1869,7 @@ static int SaveMenuKeyFadeIn() {
     }
     return 1;
 }
+
 static int SaveMenuKeyFadeOut() {
     if (SaveMenu.unk_28 > 32) {
         ExitSaveSelect();
@@ -1871,6 +1881,7 @@ static int SaveMenuKeyFadeOut() {
     }
     return 1;
 }
+
 static int SaveMenuKeyModeSelect() {
     if (GamePad.Down(0x5000)) {
         if (SaveMenu.file_no) {
@@ -1899,6 +1910,7 @@ static int SaveMenuKeyModeSelect() {
     }
     return 1;
 }
+
 static int SaveMenuKeyMcSelect() {
     int prev_slot;
 
@@ -1947,6 +1959,7 @@ static int SaveMenuKeyMcSelect() {
     }
     return 1;
 }
+
 static int SaveMenuKeyCheckMcType() {
     MC_CARD_INFO *card;
 
@@ -1968,6 +1981,7 @@ static int SaveMenuKeyCheckMcType() {
     }
     return 1;
 }
+
 static int SaveMenuKeyCheckMc() {
     MC_CARD_INFO *card;
 
@@ -2010,6 +2024,7 @@ static int SaveMenuKeyCheckMc() {
     }
     return 1;
 }
+
 static int SaveMenuKeyLoadConfig() {
     McAccess.SetFuncNo(4);
     SaveMenu.key_no = 7;
@@ -2019,6 +2034,7 @@ static int SaveMenuKeyLoadConfig() {
     SaveMenu.file_no = ((s32 *) SaveData->GetConfigData())[17];
     return 1;
 }
+
 static int SaveMenuKeyFileSelect() {
     int prev_file;
     SAVEDATA_INFO *info;

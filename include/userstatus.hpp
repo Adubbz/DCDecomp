@@ -113,6 +113,7 @@ public:
     s8 equipped_weapon_slot[6];          /**< Specifies each character's equipped weapon slot. */
     u16 unk_4346;                        // 0x4346
     s32 unk_4348[6];                     // 0x4348
+
     union {
         ITEM_PACK item_pack; /**< Dungeon items the player carries. */
 

@@ -48,7 +48,7 @@ public:
     u8 unk_038[8];
     sceVu0FVECTOR offset;           /**< Position of the surface relative to its part, or in the world. */
     GROUND_WATER_RIPPLE ripples[4]; /**< Ripple sources; one with no power and no range ends the list. */
-    CWater water; /**< Surface that ripples and draws. */
+    CWater water;                   /**< Surface that ripples and draws. */
 };
 
 STATIC_ASSERT(sizeof(CGroundWater) == 0x3B0);

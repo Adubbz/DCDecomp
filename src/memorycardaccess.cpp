@@ -115,7 +115,7 @@ void CMemoryCardAccess::MakeMcIconSysInfo() {
     strcpy(this->icon_sys.head, "PS2D");
     // "Dark Cloud Data" in full-width Shift-JIS.
     strcpy((char *) this->icon_sys.title_name, "\x82\x63\x82\x81\x82\x92\x82\x8B\x81\x40\x82\x62\x82\x8C\x82\x8F"
-                                                 "\x82\x95\x82\x84\x81\x40\x82\x63\x82\x81\x82\x94\x82\x81");
+                                               "\x82\x95\x82\x84\x81\x40\x82\x63\x82\x81\x82\x94\x82\x81");
     this->icon_sys.nl_offset = 20;
     this->icon_sys.trans_rate = 0x60;
     // Only the first entry of each table is copied; the rest of the image stays zero.

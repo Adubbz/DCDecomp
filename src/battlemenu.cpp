@@ -355,6 +355,7 @@ static WEAPON_HAVE *GetNowSelectWeapon() {
     WEAPON_HAVE *row = status->chara_weapons[chara];
     return &row[WepMenu.weapon_slot];
 }
+
 /**
  * Reports whether the party may leave the floor: freely, with an escape item, or not at
  * all.
@@ -910,6 +911,7 @@ static void WepStatusVolumeDraw(RECT rect, int width, int *value, int color, int
                        alpha);
     }
 }
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponStatusWaku__Fiiii);
 
 /**
@@ -922,6 +924,7 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponStatusWaku__Fiiii);
 static void DrawLimmitMax(int x, int y, int alpha) {
     DrawMenu2DSprite(WepStatus, CRect_i_(x, y, 0x1E, 0xA), CRect_i_(0xF8, 0x158, 0x1E, 0xA), alpha);
 }
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBtlMenuLRCursor__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponStatusTag__FiiP11WEAPON_HAVEiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponElemTag__FiiP11WEAPON_HAVEiii);
@@ -974,6 +977,7 @@ static void DrawWeaponTagBoard(int x, int y, WEAPON_HAVE *weapon, int value_x, i
         }
     }
 }
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawAallWeapon__FiifP10CCharacterP11WEAPON_HAVEiii);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2244);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2245);
@@ -1083,7 +1087,9 @@ static int WeaponMenuCheckEnableSetElem(WEAPON_HAVE *weapon, WEAPON_HAVE *attach
     }
     return refused;
 }
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponSelectDialog__Fiii);
+
 /**
  * Opens the weapon page in one of its modes and puts the cursor where it was left.
  *
@@ -1223,6 +1229,7 @@ static void ExitWeaponMenuSelect() {
     ForBackMenu();
     BattleMenuFlag = 0;
 }
+
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuSelect__Fv);
 
 /**

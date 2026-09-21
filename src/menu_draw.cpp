@@ -139,6 +139,7 @@ int LoadFileMenuData(char *name, unsigned int *buffer) {
     LoadFile(MenuGrobalDir, buffer, &size);
     return size;
 }
+
 /** Allocator of the edit menu's work memory, which the battle menus also load into. */
 extern CDataAlloc2<1> EdMenuBuffer;
 

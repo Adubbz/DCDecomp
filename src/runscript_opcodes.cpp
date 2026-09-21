@@ -1,5 +1,4 @@
 #include "runscript_opcodes.hpp"
-#include "runscript.hpp"
 
 #include <cmath>
 #include <cstdio>
@@ -14,9 +13,10 @@
 #include "frame.hpp"
 #include "mathutil.hpp"
 #include "monstorunit.hpp"
+#include "runscript.hpp"
 #include "shot_freefuncs.hpp"
-#include "userstatus.hpp"
 #include "snd.hpp"
+#include "userstatus.hpp"
 
 /**
  * Integers the monster scripts share, set and read by index.

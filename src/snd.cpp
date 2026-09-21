@@ -106,10 +106,10 @@ extern SND_SE_INFO geo[199];
 extern SND_SE_INFO dun[199];
 
 /** The two basic sound-effect sets, one of which is loaded at a time. */
-static SND_SE_INFO *basic_se_info[2] = { geo, dun };
+static SND_SE_INFO *basic_se_info[2] = {geo, dun};
 
 /** The handler LoadSoundInfo calls for each of Command__3's tags. */
-static void (*CommandExe__3[2])(void **arguments) = { CommandREVERBE, CommandTABLE };
+static void (*CommandExe__3[2])(void **arguments) = {CommandREVERBE, CommandTABLE};
 
 /** Whether the sprites that follow draw with the bilinear filter. */
 static int linear__2 = 1;
@@ -981,6 +981,7 @@ int SndSoundSyncBG() {
     load_snd_adr = 0;
     return 0;
 }
+
 void SndSePlay(int se_no, int vol, int voice) {
     SND_SE_INFO *info = GetSeInfo(se_no);
 
@@ -1246,6 +1247,7 @@ void SndAmbientSetVolf(float volume) {
         SndAmbientSetVol((int) ((float) level * volume));
     }
 }
+
 int SndGetAmbientDefaultVol() {
     if (CSnd.GetMidiState()->port[2].sequence[now_amb_no] != 0) {
         return CSnd.GetMidiState()->port[2].sequence[now_amb_no]->volume;
@@ -1411,6 +1413,7 @@ int SndSPSeSyncBG() {
     load_sp_adr = 0;
     return 0;
 }
+
 /**
  * Plays one special sound effect.
  *
@@ -1464,6 +1467,7 @@ void SndSetSPSeVolf(int se_no, float volume) {
         CSnd.SE_SetVol(12, info->bank, info->prog, level, 0);
     }
 }
+
 /**
  * Sets a special sound effect's pan as a share of the widest pan.
  *
@@ -1806,7 +1810,7 @@ void set3DColSprite(sceVif1Packet *packet, int *top_left, int *top_right, int *b
 
 void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left,
                  int *top_right, int *bottom_left, int *bottom_right, unsigned char alpha) {
-    spRGBA colour = { 0x80, 0x80, 0x80, 0 };
+    spRGBA colour = {0x80, 0x80, 0x80, 0};
 
     colour.a = alpha;
     set3DSprite(packet, texture, source, top_left, top_right, bottom_left, bottom_right, &colour);
