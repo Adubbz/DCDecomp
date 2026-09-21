@@ -595,7 +595,31 @@ static int BattleMenuExit() {
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuSelect__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ToFromSelect__Fi);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", ForBackMenu__Fv);
+/**
+ * Puts the menu cursor back on the icon of the mode the menu is returning to.
+ *
+ * @mangled ForBackMenu__Fv
+ * @address 0x1F7200
+ * @size 0xE0
+ */
+static void ForBackMenu() {
+    int position[2];
+
+    BtlEffectCt = 0.0f;
+    BtlEffectFlag = -1;
+    BtlWakuMake2 = 1;
+    CommonMenuMes1.mes_made = -1;
+    CommonMenuMes1.auto_pos = -1;
+    CommonMenuMes1.edge_alpha = 128;
+    for (int i = 0; i < 10; i++) {
+        CommonMenuMes1.mes_no[i] = -1;
+        CommonMenuMes1.values[i] = -1;
+    }
+    MenuSelect[0] = BattleMenuFlag - 16;
+    GetMenuIconPos(MenuSelect[1], position);
+    SysCur[0] = position[0] - 40;
+    SysCur[1] = position[1] + 20;
+}
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", InitMenuChara__FP1);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1348);

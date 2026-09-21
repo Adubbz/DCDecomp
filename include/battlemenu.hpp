@@ -333,15 +333,6 @@ void BattleMenuSelect(void);
 int ToFromSelect(int);
 
 /**
- * Puts the menu cursor back on the icon of the mode the menu is returning to.
- *
- * @mangled ForBackMenu__Fv
- * @address 0x1F7200
- * @size 0xE0
- */
-void ForBackMenu(void);
-
-/**
  * Reads the character page's models and textures and starts its turntable.
  *
  * @mangled InitMenuChara__FP1
