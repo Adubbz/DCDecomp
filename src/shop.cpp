@@ -499,7 +499,26 @@ static void ShopMasterVectorSet(int mode) {
     MenuCharaFrame.SetRotation(rotation);
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", InitChargeShop__FPiii);
+void InitChargeShop(int *state, int shop_no, int mode) {
+    int rows;
+
+    if (shop_no >= 100) {
+        shop_no -= 100;
+    }
+    ShopMenuInit(state, shop_no, mode);
+    ShopMenu.unk_14 = 0;
+    ShopMenu.unk_02 = 1;
+    ShopMenu.unk_178 = (ShopMenu.unk_14 % 5) * 0x28 + 0x154;
+    ShopMenu.unk_17C = 120.0f;
+    ShopStockPt = SaveData->GetStockItem();
+    rows = ChargeShopMax[0] / 5;
+    ShopMenu.unk_176 = 0;
+    ShopMenu.unk_16C = 0x8A - ShopMenu.unk_176 * 0x28;
+    ShopMenu.unk_170 = 142.0f + 114.0f * ShopMenu.unk_176 / rows;
+    ShopMenu.unk_174 = 0;
+    GetMainMenuRightHelpWinLangOffset(ShopHelpWinPos[0], ShopHelpWinPos[1], ShopHelpWinW, ShopHelpWinH);
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopLimmitCheck__Fv);
 
 static void ExitChargeShop() {
