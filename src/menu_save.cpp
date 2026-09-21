@@ -57,7 +57,25 @@ int SaveMenuKeySaveCheck(void) {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeySaveDecide__Fv);
+
+int SaveMenuKeySaveDecide(void) {
+    if (GamePad.Down(0x40) != 0) {
+        McAccess.SetFuncNo(0);
+        int file_no = SaveMenu.file_no;
+        McAccess.file_no = file_no;
+        ((s32 *) SaveData->GetConfigData())[17] = file_no;
+        SaveMenu.key_no = 0xA;
+        ComMenuSePlay(1);
+        return 1;
+    }
+    if (GamePad.Down(0x20) != 0) {
+        SaveMenu.key_no = 7;
+        ComMenuSePlay(2);
+        SaveMenu.unk_28 = 0;
+        return 1;
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeySave__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyEndSave__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyLoadDecide__Fv);
