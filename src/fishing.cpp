@@ -1,7 +1,38 @@
 #include "fishing.hpp"
 
+#include <libgraph.h>
+#include <libpkt.h>
+#include <libvu0.h>
+
+#include <cstdlib>
+#include <cstring>
+
+#include "boxvu0.hpp"
+#include "dataalloc.hpp"
+#include "dataread.hpp"
+#include "edit.hpp"
+#include "editloop3.hpp"
 #include "fish.hpp"
 #include "framevu1.hpp"
+#include "mathutil.hpp"
+#include "mds.hpp"
+#include "mglib.hpp"
+#include "savedata.hpp"
+#include "snd.hpp"
+#include "texture.hpp"
+
+/**
+ * Describes one kind of bait that can be put on the hook.
+ */
+struct EsaInfo {
+    int item_no;  /**< Item the bait is made from. */
+    float radius; /**< Distance from which fish notice the bait. */
+};
+
+/**
+ * The kinds of bait, indexed by esa_type.
+ */
+extern EsaInfo esa_info[13];
 
 /**
  * The water surface height used by the fishing simulation.
@@ -104,6 +135,117 @@ extern CFrameVu1 UkiFrameTop;
 extern CCharacter Rod;
 
 /**
+ * The box the float and hook must stay within.
+ */
+extern CBoxVu0 fishing_rect;
+
+/**
+ * The box the fish swim within.
+ */
+extern CBoxVu0 fish_rect;
+
+/**
+ * The points of the line from the rod tip to the hook.
+ */
+extern sceVu0FVECTOR point[24];
+
+/**
+ * The points of the float's body.
+ */
+extern sceVu0FVECTOR ukip[4];
+
+/**
+ * The points of the hook's body.
+ */
+extern sceVu0FVECTOR hookp[3];
+
+/**
+ * The position the float is being pulled to.
+ */
+extern sceVu0FVECTOR uki;
+
+/**
+ * The position the hook is being pulled to.
+ */
+extern sceVu0FVECTOR fishhook;
+
+/**
+ * Whether the float is being pulled towards uki.
+ */
+extern int set_uki_pos;
+
+/**
+ * Whether the hook is being pulled towards fishhook.
+ */
+extern int set_hook_pos;
+
+/**
+ * The world position of the rod tip.
+ */
+extern sceVu0FVECTOR rod_top;
+
+/**
+ * The previous positions of the line's points.
+ */
+extern sceVu0FVECTOR old_p[24];
+
+/**
+ * The velocities of the line's points.
+ */
+extern sceVu0FVECTOR velo[24];
+
+/**
+ * The previous positions of the hook's points.
+ */
+extern sceVu0FVECTOR hookop[3];
+
+/**
+ * The velocities of the hook's points.
+ */
+extern sceVu0FVECTOR hookv[3];
+
+/**
+ * The previous positions of the float's points.
+ */
+extern sceVu0FVECTOR ukiop[4];
+
+/**
+ * The velocities of the float's points.
+ */
+extern sceVu0FVECTOR ukiv[4];
+
+/**
+ * The rest lengths of the hook's links.
+ */
+extern float hook_dist[3];
+
+/**
+ * The rest lengths of the float's links.
+ */
+extern float uki_dist[6];
+
+/**
+ * The spacing between neighbouring points of the line.
+ */
+extern float distp;
+
+/**
+ * Whether the fish are drawn while none is being landed.
+ */
+extern int draw_under_water;
+
+/**
+ * Gives the greatest coordinates of three points on each axis.
+ *
+ * @mangled VectorMax__FPfPfPfPf
+ * @address 0x122FD0
+ * @size 0x20
+ */
+void VectorMax(float *max, float *a, float *b, float *c);
+
+static void GetHookPos(float *position);
+
+/**
  * Reads the fishing minigame's models and textures.
  *
  * @mangled FishingLoad__FP14CDataAlloc2_1_i
@@ -114,6 +256,7 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishingLoad__FP14CDataAlloc2_1_i);
 INCLUDE_RODATA("asm/nonmatchings/fishing", @353__4);
 INCLUDE_RODATA("asm/nonmatchings/fishing", @354__2);
 INCLUDE_RODATA("asm/nonmatchings/fishing", @355__2);
+
 /**
  * Reads the six fish of one fishing spot into an arena.
  *
@@ -123,7 +266,9 @@ INCLUDE_RODATA("asm/nonmatchings/fishing", @355__2);
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingLoadFish__FiP14CDataAlloc2_1_i);
 INCLUDE_RODATA("asm/nonmatchings/fishing", @436__2);
+
 INCLUDE_ASM("asm/nonmatchings/fishing", __ct__5CFishFv);
+
 /**
  * Reads the model of the bait on the hook.
  *
@@ -137,6 +282,7 @@ void FishingDeleteEsa() {
     EsaFrame = NULL;
     esa_type = -1;
 }
+
 /**
  * Gives the item the bait on the hook came from.
  *
@@ -165,6 +311,7 @@ void FishingInit() {
     cpoly = NULL;
     cpoly_num = 0;
 }
+
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingExit__Fv);
 
 void FishingSetWaterLevel(float water_level, float ground_level) {
@@ -190,6 +337,7 @@ float FishingGetWaterLevel() {
  * @size 0x7C
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingSetCPoly__FP6CCPolyi);
+
 /**
  * Sets the box the fish may swim within.
  *
@@ -198,6 +346,7 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishingSetCPoly__FP6CCPolyi);
  * @size 0x40
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingSetRect__F7CBoxVu0);
+
 /**
  * Collects the collision polygons around the fishing spot.
  *
@@ -206,6 +355,7 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishingSetRect__F7CBoxVu0);
  * @size 0x1BC
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingPickUpPoly__FP6CCPoly);
+
 /**
  * Places the six fish at random within the fishing box.
  *
@@ -214,6 +364,7 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishingPickUpPoly__FP6CCPoly);
  * @size 0x108
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingInitFish__F7CBoxVu0);
+
 /**
  * Gives what the nearest fish is doing and how interested it is.
  *
@@ -233,6 +384,7 @@ void FishingBattleFish(int fish_no) {
         }
     }
 }
+
 /**
  * Gives the kind of one of the six fish.
  *
@@ -241,6 +393,7 @@ void FishingBattleFish(int fish_no) {
  * @size 0x4C
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingFishKind__Fi);
+
 /**
  * Turns the fighting fish into the one being landed.
  *
@@ -250,6 +403,7 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishingFishKind__Fi);
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingBattleToAngleFish__FPUiP14CDataAlloc2_1_);
 INCLUDE_RODATA("asm/nonmatchings/fishing", @578__3);
+
 INCLUDE_RODATA("asm/nonmatchings/fishing", @604);
 
 CFish *FishingGetBattleFish() {
@@ -264,6 +418,7 @@ CFish *FishingGetBattleFish() {
  * @size 0x80
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingAngleFish__Fi);
+
 /**
  * Gives the kind and size of the fish being landed.
  *
@@ -272,6 +427,7 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishingAngleFish__Fi);
  * @size 0x84
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingGetAngleFishSize__FPiPi);
+
 /**
  * Puts the six fish back to swimming.
  *
@@ -286,6 +442,7 @@ void FishingDeleteAngleFish() {
         AngleFish->fish_kind = -1;
     }
 }
+
 /**
  * Advances the six fish one step, steering them by the hook.
  *
@@ -294,6 +451,7 @@ void FishingDeleteAngleFish() {
  * @size 0x138
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingStepFish__Fv);
+
 /**
  * Draws the six fish.
  *
@@ -302,6 +460,7 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishingStepFish__Fv);
  * @size 0x13C
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingDrawFish__Fv);
+
 /**
  * Gives where the hook is.
  *
@@ -310,6 +469,7 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishingDrawFish__Fv);
  * @size 0x28
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", GetHookPos__FPf);
+
 /**
  * Casts the line, putting the float and hook at a position.
  *
@@ -318,6 +478,7 @@ INCLUDE_ASM("asm/nonmatchings/fishing", GetHookPos__FPf);
  * @size 0x43C
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineInit__FPf);
+
 /**
  * Pulls the float towards a position by a share of the distance.
  *
@@ -326,6 +487,7 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishLineInit__FPf);
  * @size 0x98
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineSetUki__FPff);
+
 /**
  * Pulls the hook towards a position by a share of the distance.
  *
@@ -338,6 +500,7 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishLineSetHook__FPff);
 void FishPullHook(float tension) {
     pull_hook = tension;
 }
+
 /**
  * Gives where the float is.
  *
@@ -346,6 +509,7 @@ void FishPullHook(float tension) {
  * @size 0x28
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineGetUki__FPf);
+
 /**
  * Gives where the hook is.
  *
@@ -354,6 +518,7 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishLineGetUki__FPf);
  * @size 0x28
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineGetHook__FPf);
+
 /**
  * Reports whether the float and hook are clear of the ground.
  *
@@ -362,6 +527,7 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishLineGetHook__FPf);
  * @size 0x158
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishingCheckUkiHook__Fv);
+
 /**
  * Advances the line, float and hook one step from the rod's position.
  *
@@ -370,6 +536,7 @@ INCLUDE_ASM("asm/nonmatchings/fishing", FishingCheckUkiHook__Fv);
  * @size 0xDA8
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineStep__FPfPf);
+
 /**
  * Draws the line between the rod, the float and the hook.
  *
