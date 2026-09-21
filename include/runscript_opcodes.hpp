@@ -21,56 +21,6 @@ class CRunScript;
 struct RS_STACKDATA;
 
 /**
- * Reads one script argument as an integer, converting it where the slot holds a float.
- *
- * @mangled GetStackInt__FP12RS_STACKDATA__3
- * @address 0x1E1640
- * @size 0x44
- * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
- */
-int GetStackInt(RS_STACKDATA *argument);
-
-/**
- * Reads one script argument as a float, converting it where the slot holds an integer.
- *
- * @mangled GetStackFloat__FP12RS_STACKDATA__3
- * @address 0x1E1690
- * @size 0x2C
- * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
- */
-float GetStackFloat(RS_STACKDATA *argument);
-
-/**
- * Reads one script argument as a string.
- *
- * @mangled GetStackString__FP12RS_STACKDATA__3
- * @address 0x1E16C0
- * @size 0xC
- * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
- */
-char * GetStackString(RS_STACKDATA *argument);
-
-/**
- * Writes an integer back through a script argument that names a variable.
- *
- * @mangled SetStack__FP12RS_STACKDATAi__3
- * @address 0x1E16D0
- * @size 0x20
- * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
- */
-void SetStack(RS_STACKDATA *argument, int value);
-
-/**
- * Writes a float back through a script argument that names a variable.
- *
- * @mangled SetStack__FP12RS_STACKDATAf__3
- * @address 0x1E16F0
- * @size 0x20
- * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
- */
-void SetStack(RS_STACKDATA *argument, float value);
-
-/**
  * Starts a motion on the monster and every part linked to it, optionally at a given speed and repeat count.
  *
  * @mangled _SET_MOTION__FP12RS_STACKDATAi

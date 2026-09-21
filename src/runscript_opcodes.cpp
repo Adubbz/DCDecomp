@@ -10,51 +10,51 @@
 #include "userstatus.hpp"
 #include "snd.hpp"
 
-#ifdef NON_MATCHING
-int GetStackInt(RS_STACKDATA *argument) {
+/**
+ * Reads one script argument as an integer, converting it where the slot holds a float.
+ */
+static int GetStackInt(RS_STACKDATA *argument) {
     if (argument->type == RS_FLOAT) {
         return (int) argument->f;
     }
     return argument->i;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", GetStackInt__FP12RS_STACKDATA__3);
-#endif
-#ifdef NON_MATCHING
-float GetStackFloat(RS_STACKDATA *argument) {
+
+/**
+ * Reads one script argument as a float, converting it where the slot holds an integer.
+ */
+static float GetStackFloat(RS_STACKDATA *argument) {
     if (argument->type == RS_INT) {
         return (float) argument->i;
     }
     return argument->f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", GetStackFloat__FP12RS_STACKDATA__3);
-#endif
-#ifdef NON_MATCHING
-char *GetStackString(RS_STACKDATA *argument) {
+
+/**
+ * Reads one script argument as a string.
+ */
+static char *GetStackString(RS_STACKDATA *argument) {
     return argument->s;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", GetStackString__FP12RS_STACKDATA__3);
-#endif
-#ifdef NON_MATCHING
-void SetStack(RS_STACKDATA *argument, int value) {
+
+/**
+ * Writes an integer back through a script argument that names a variable.
+ */
+static void SetStack(RS_STACKDATA *argument, int value) {
     if (argument->type == RS_PTR) {
         argument->p->i = value;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", SetStack__FP12RS_STACKDATAi__3);
-#endif
-#ifdef NON_MATCHING
-void SetStack(RS_STACKDATA *argument, float value) {
+
+/**
+ * Writes a float back through a script argument that names a variable.
+ */
+static void SetStack(RS_STACKDATA *argument, float value) {
     if (argument->type == RS_PTR) {
         argument->p->f = value;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", SetStack__FP12RS_STACKDATAf__3);
-#endif
+
 #ifdef NON_MATCHING
 int _SET_MOTION(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
