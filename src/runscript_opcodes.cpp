@@ -278,14 +278,13 @@ int _STATUS_GET_HEIGHT(RS_STACKDATA *stack, int argc) {
 }
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_RAND__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_RANDF__FP12RS_STACKDATAi);
-#ifdef NON_MATCHING
 int _SIN_DEG(RS_STACKDATA *stack, int argc) {
-    SetStack(&stack[1], sinf(0.017453292f * GetStackFloat(stack)));
+    float angle = GetStackFloat(stack++);
+
+    angle = 0.017453292f * angle;
+    SetStack(stack, sinf(angle));
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SIN_DEG__FP12RS_STACKDATAi);
-#endif
 #ifdef NON_MATCHING
 int _COS_DEG(RS_STACKDATA *stack, int argc) {
     SetStack(&stack[1], cosf(0.017453292f * GetStackFloat(stack)));
