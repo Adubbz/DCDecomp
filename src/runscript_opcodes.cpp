@@ -55,15 +55,19 @@ static void SetStack(RS_STACKDATA *argument, float value) {
     }
 }
 
-#ifdef NON_MATCHING
 int _SET_MOTION(RS_STACKDATA *stack, int argc) {
+    int motion_id;
     int monster_no = NowMonstorUnit->unk_090;
-    int motion_id = GetStackInt(stack);
-    int half_speed = NowMonstorUnit->monster[monster_no].unk_014 > 0;
+    int half_speed;
+
+    motion_id = GetStackInt(stack++);
 
     NowMonstorUnit->monster[monster_no].last_hit_damage = -1;
     NowMonstorUnit->monster[monster_no].requested_motion_speed = -1.0f;
-    stack++;
+    half_speed = 0;
+    if (NowMonstorUnit->monster[monster_no].unk_014 > 0) {
+        half_speed = 1;
+    }
 
     if (argc == 1) {
         float speed = NowMonstorUnit->chara[monster_no][0].motion_type.motion_info[motion_id].speed;
@@ -81,8 +85,7 @@ int _SET_MOTION(RS_STACKDATA *stack, int argc) {
         }
     }
     if (argc == 2) {
-        float speed = GetStackFloat(stack);
-        stack++;
+        float speed = GetStackFloat(stack++);
         if (half_speed) {
             speed *= 0.5f;
         }
@@ -97,13 +100,11 @@ int _SET_MOTION(RS_STACKDATA *stack, int argc) {
         }
     }
     if (argc == 3) {
-        float speed = GetStackFloat(stack);
-        stack++;
+        float speed = GetStackFloat(stack++);
         if (half_speed) {
             speed *= 0.5f;
         }
-        int mode = GetStackInt(stack);
-        stack++;
+        int mode = GetStackInt(stack++);
         NowMonstorUnit->chara[monster_no][0].SetMotion(motion_id, mode);
         NowMonstorUnit->chara[monster_no][0].SetMotionSpeed(speed);
         NowMonstorUnit->monster[monster_no].requested_motion = motion_id;
@@ -116,9 +117,6 @@ int _SET_MOTION(RS_STACKDATA *stack, int argc) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MOTION__FP12RS_STACKDATAi);
-#endif
 #ifdef NON_MATCHING
 int _CHK_MOTION_FRM(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
