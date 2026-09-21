@@ -320,7 +320,12 @@ int _GET_RAND(RS_STACKDATA *stack, int argc) {
     SetStack(stack, value);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_RANDF__FP12RS_STACKDATAi);
+int _GET_RANDF(RS_STACKDATA *stack, int argc) {
+    float range = GetStackFloat(stack++);
+
+    SetStack(stack, (float) (int) (range * rand() / 2147483648.0f));
+    return 1;
+}
 int _SIN_DEG(RS_STACKDATA *stack, int argc) {
     float angle = GetStackFloat(stack++);
 
