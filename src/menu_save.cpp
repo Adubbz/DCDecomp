@@ -27,6 +27,9 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
+/** Texture block the event item selection menu's textures load into. */
+extern s32 MiniEventTextureBlock;
+
 /**
  * Closes the save screen's message window and restores the pad, and after a
  * load sets the stereo mode from the loaded configuration.
@@ -311,7 +314,13 @@ INCLUDE_RODATA("asm/nonmatchings/menu_save", @3427);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3428);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3429);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3430);
-INCLUDE_ASM("asm/nonmatchings/menu_save", EventItemSelectExit__Fv);
+
+void EventItemSelectExit(void) {
+    TexManager.DeleteTextureBlock(MiniEventTextureBlock);
+    TexManager.CleanUpTextureList();
+    GamePad.AutoRepeatOff();
+    GamePad.MenuModeOff();
+}
 INCLUDE_ASM("asm/nonmatchings/menu_save", EventItemSelectLoop__FPi);
 INCLUDE_ASM("asm/nonmatchings/menu_save", EventItemSelectKey__FPi);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3548);
