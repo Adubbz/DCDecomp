@@ -334,16 +334,44 @@ int CMemoryCardAccess::GetMsgNo(int msg_no) {
     return result;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", McError__17CMemoryCardAccessFi);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1188__3);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1189);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1190);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1191);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1192__2);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1193__2);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1194__2);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1195__3);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1196);
+int CMemoryCardAccess::McError(int result) {
+    MC_ERROR_INFO *info = &this->error;
+
+    switch (result) {
+        case -2:
+        case -12:
+            printf("mc is unformat\n");
+            info->code = 6;
+            break;
+        case -3:
+            printf("memory is over or noting, break!\n");
+            info->code = 4;
+            break;
+        case -4:
+            printf("file not open or not exist\n");
+            break;
+        case -5:
+            printf("not open by write mode \n");
+            break;
+        case -8:
+            printf("write failed\n");
+            break;
+    }
+    if (result < -10) {
+        info->code = 7;
+        printf("not memory card or (read write)error = %d\n", result);
+    }
+    if (result < 0) {
+        printf("result = %d\n", result);
+        info->func_no = this->GetFuncNo();
+        info->step = this->step;
+        printf("func = %d\n", info->func_no);
+        printf("phase = %d\n", info->step);
+        info->file_no = this->file_no;
+    }
+    return 0;
+}
+
 
 void CMemoryCardAccess::DmySync() {
     int cmd;
