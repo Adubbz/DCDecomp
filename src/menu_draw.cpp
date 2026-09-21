@@ -558,7 +558,23 @@ void MenuDataSwap(ATTACH_LIST *first, ATTACH_LIST *second) {
     memcpy(second, &temp, sizeof(ATTACH_LIST));
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu_draw", SetMenuTrushMark__FP9ITEM_PACK);
+void SetMenuTrushMark(ITEM_PACK *items) {
+    int quick_count = 0;
+    int i;
+    int slot;
+
+    for (i = 0; i < 3; i++) {
+        quick_count += items->quick_item_qty[i];
+    }
+    for (slot = items->num - 1; slot >= 0; slot--) {
+        if (items->item[slot] < ITEM_DUNGEON_START && quick_count > 0) {
+            MenuTrushMark[slot] = 1;
+            quick_count--;
+        } else {
+            MenuTrushMark[slot] = 0;
+        }
+    }
+}
 
 void DeleteMenuTrushMark() {
     memset(MenuTrushMark, 0, sizeof(MenuTrushMark));
