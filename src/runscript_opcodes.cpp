@@ -524,8 +524,27 @@ int _STATUS_SET_LOCKON_TRG(RS_STACKDATA *stack, int argc) {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MOV_COL__FP12RS_STACKDATAi);
-INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @979__2);
+int _SET_MOV_COL(RS_STACKDATA *stack, int argc) {
+    char *name = GetStackString(stack++);
+    float radius = GetStackFloat(stack);
+    int i;
+    int monster_no = NowMonstorUnit->unk_090;
+
+    for (i = 0; i < 12; i++) {
+        if (NowMonstorUnit->effect3[monster_no].timer[i] == 0) {
+            CFrame *frame = NowMonstorUnit->chara[monster_no][0].frame->SearchFrame(name);
+            if (frame != NULL) {
+                NowMonstorUnit->effect3[monster_no].timer[i] = 1;
+                NowMonstorUnit->effect3[monster_no].frame[i] = frame;
+                NowMonstorUnit->effect3[monster_no].radius[i] = radius;
+                NowMonstorUnit->effect3[monster_no].count++;
+                break;
+            }
+            printf("[%d]mov col -> %s\n", NowMonstorUnit->monster[monster_no].base_model, name);
+        }
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_BODY_COL__FP12RS_STACKDATAi);
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1010);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_BODY_COL_PARA__FP12RS_STACKDATAi);
