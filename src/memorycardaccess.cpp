@@ -475,8 +475,6 @@ INCLUDE_ASM("asm/nonmatchings/memorycardaccess", GetSaveFileInfoFromMc__17CMemor
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @892__5);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @893__4);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @894__4);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1031);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1032__2);
 
 int CMemoryCardAccess::GetAllSaveFileInfo() {
     int result;
@@ -516,7 +514,177 @@ int CMemoryCardAccess::CheckFileNo(int file_no) {
     return GetOpenAttribute(name);
 }
 
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SaveToMc__17CMemoryCardAccessFi);
+int CMemoryCardAccess::SaveToMc(int file_no) {
+    char name[0x20];
+    char pattern[0x48];
+    int result;
+    int cmd;
+    int status;
+    int i;
+    MC_CARD_INFO *card;
+
+    strcpy(name, this->file_name);
+    strcat(name, "%d");
+    sprintf(name, name, file_no);
+    switch (this->step) {
+        case 0:
+            sys_config.values[17] = file_no;
+            sys_config.values_copy1[17] = file_no;
+            sys_config.values_copy2[17] = file_no;
+            cmd = sceMcOpen(this->port, 1, name, GetOpenAttribute(name) ? 2 : 0x202);
+            if (cmd == 0) {
+                this->step++;
+            } else {
+                printf("cmd = %d\n", cmd);
+                return -1;
+            }
+            break;
+        case 1:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 2) {
+                printf("fd = %d\n", result);
+                break;
+            }
+            if (result < 0) {
+                return -1;
+            }
+            this->fd = result;
+            this->transferred = 0;
+            this->transfer_size = 0x136A7;
+            if (sceMcWrite(this->fd, this->save_buffer, this->transfer_size) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 2:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 6 || (cmd == 6 && result < 0)) {
+                return -1;
+            }
+            this->transferred += result;
+            if (this->transferred < this->transfer_size) {
+                break;
+            }
+            if (sceMcFlush(this->fd) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 3:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 0xA || (cmd == 0xA && result < 0)) {
+                return -1;
+            }
+            if (sceMcClose(this->fd) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 4:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 3 || (cmd == 3 && result < 0)) {
+                return -1;
+            }
+            strcpy(pattern, this->file_name);
+            strcat(pattern, "*");
+            if (sceMcGetDir(this->port, 1, pattern, 0, 15, SaveFileInfo) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 5:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 0xD || (cmd == 0xD && result < 0)) {
+                return -1;
+            }
+            card = &this->card[this->port];
+            card->dir_exists = 1;
+            this->step++;
+            break;
+        case 6:
+            cmd = sceMcOpen(this->port, 1, this->dir_name, 2);
+            if (cmd == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 7:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 2) {
+                return -1;
+            }
+            if (result < 0) {
+                return -1;
+            }
+            this->fd = result;
+            this->transferred = 0;
+            this->transfer_size = 0x40;
+            for (i = 0; i < 12; i++) {
+            }
+            if (sceMcWrite(this->fd, &sys_config, this->transfer_size) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 8:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 6 || (cmd == 6 && result < 0)) {
+                return -1;
+            }
+            this->transferred += result;
+            if (this->transferred < this->transfer_size) {
+                break;
+            }
+            if (sceMcFlush(this->fd) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 9:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 0xA || (cmd == 0xA && result < 0)) {
+                return -1;
+            }
+            if (sceMcClose(this->fd) == 0) {
+                this->step++;
+            } else {
+                return -1;
+            }
+            break;
+        case 10:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
+                break;
+            }
+            if (cmd != 3 || (cmd == 3 && result < 0)) {
+                return -1;
+            }
+            return 1;
+    }
+    return status;
+}
 
 int CMemoryCardAccess::LoadFromMc(int file_no) {
     char name[0x80];
@@ -618,7 +786,6 @@ int CMemoryCardAccess::LoadFromMc(int file_no) {
     }
     return 0;
 }
-
 
 int CMemoryCardAccess::FormatForMc() {
     int result;
