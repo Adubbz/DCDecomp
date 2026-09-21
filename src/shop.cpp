@@ -731,7 +731,54 @@ static int SellMoneyCheck2() {
     return total;
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", IncludeBuyItem2__Fv);
+/**
+ * Settles which goods are marked for purchase against what may be afforded.
+ *
+ * @mangled IncludeBuyItem2__Fv
+ * @address 0x1EB600
+ * @size 0x1A4
+ */
+static void IncludeBuyItem2() {
+    int buy = BuyMoneyCheck2();
+    int balance = SellMoneyCheck2() - buy;
+    CUserStatus *status;
+    int money;
+    int i;
+    int j;
+
+    for (i = 0; i < 30; i++) {
+        if (ShopBoardInfo[i] == 2) {
+            ShopBoardInfo[i] = 0;
+            memset(&ShopListPt[i], 0, sizeof(SHOP_ITEMLIST));
+        }
+    }
+    for (j = 0; j < 100; j++) {
+        if (ItemBoardInfo[j] == 1) {
+            ItemBoardInfo[j] = 2;
+        }
+    }
+    // All six characters' weapon rows, walked as one run of sixty slots.
+    for (i = 0; i < 60; i++) {
+        if (WeaponBoardInfo[0][i] == 1) {
+            WeaponBoardInfo[0][i] = 2;
+        }
+    }
+    for (i = 0; i < 40; i++) {
+        if (AttachBoardInfo[i] == 1) {
+            AttachBoardInfo[i] = 2;
+        }
+    }
+    status = ShopUserStatusPt;
+    money = status->unk_4346 + balance;
+    if (money >= 0xFFFF) {
+        status->unk_4346 = 0xFFFF;
+    } else {
+        status->unk_4346 = money;
+    }
+    ItemShopGoodInitialize(ShopMenu.unk_00);
+    ItemPosInfoInit();
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", CheckBuyItemFunc2__Fv);
 
 /**

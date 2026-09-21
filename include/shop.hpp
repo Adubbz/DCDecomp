@@ -272,15 +272,6 @@ void ChargeShopBoardDraw(int, int, int);
 int BuyMoneyCheck2(void);
 
 /**
- * Settles which goods are marked for purchase against what may be afforded.
- *
- * @mangled IncludeBuyItem2__Fv
- * @address 0x1EB600
- * @size 0x1A4
- */
-void IncludeBuyItem2(void);
-
-/**
  * Returns a bit mask of the reasons the pending purchase cannot go through.
  *
  * @mangled CheckBuyItemFunc2__Fv
