@@ -918,7 +918,76 @@ static int WeaponMenuCheckEnableSetElem(WEAPON_HAVE *weapon, WEAPON_HAVE *attach
     return refused;
 }
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponSelectDialog__Fiii);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", InitWeaponSelect__Fii);
+/**
+ * Opens the weapon page in one of its modes and puts the cursor where it was left.
+ *
+ * @mangled InitWeaponSelect__Fii
+ * @address 0x1FC750
+ * @size 0x3CC
+ */
+static void InitWeaponSelect(int mode, int chara) {
+    InitPersonalBoardMode((CUserStatus *) BtlMenuStatusPt, &WepMenu.board, 1, 2);
+    WepMenu.unk_00 = mode;
+    WepMenu.unk_02 = 0;
+    WepMenu.chara = chara;
+    switch (mode) {
+        case 0:
+            WepMenu.unk_0C = 1;
+            BtlHaveItemPt = (IHAVEITEM *) WepMenu.board.unk_30;
+            break;
+        case 1:
+            WepMenu.unk_0C = 0;
+            break;
+        case 2:
+            break;
+    }
+    WepMenu.unk_10 = 0;
+    StartReadWepMDS(BtlMenuReadBuf, chara);
+    MenuExTextureReadFlag = 0;
+    CDngStatusData *status = BtlMenuStatusPt;
+    DngWepHavePt = status->chara_weapons[chara];
+    for (int i = 0; i < 10; i++) {
+        if (DngWepHavePt[i].item_no < 257) {
+            memset(&DngWepHavePt[i], 0, sizeof(WEAPON_HAVE));
+            DngWepHavePt[i].item_no = -1;
+        }
+    }
+    WepMenu.weapon_slot = BtlMenuStatusPt->equipped_weapon_slot[chara];
+    if (WepMenu.weapon_slot < 0 || WepMenu.weapon_slot >= 10) {
+        WepMenu.weapon_slot = 0;
+    }
+    SysCur[0] = 235.0f;
+    SysCur[1] = 165.0f;
+    WepMenu.chara = chara;
+    for (int i = 0; i < 6; i++) {
+        SysChara[i].unk_04 = (SysChara[i].unk_00 - WepMenu.chara) * 110 + 270;
+        SysChara[i].unk_08 = 14.0f;
+    }
+    WeaponPos = 0xE8 - WepMenu.weapon_slot * 0xD6;
+    WepPolyPos = 2.0f + 16.0f * -WepMenu.weapon_slot;
+    WepFrameRate = 3.1415927f;
+    WepMenu.unk_08 = -1;
+    MenuWepLevelUp.buildup_complete = 0;
+    CommonMenuMes3.Preset(1);
+    CommonMenuMes3.char_width = GetMenuCommonFontW(BtlMenuNowLang, -1);
+    CommonMenuMes3.style = 0;
+    AtoraNameMes.value_show = 0;
+    AtoraNameMes.value_narrow = 0;
+    AtoraNameMes.char_width = GetMenuCommonFontW(BtlMenuNowLang, -1);
+    AtoraNameMes.style = 0;
+    AtoraNameMes.narrow_gaiji = 1;
+    memset(AtoraNameMes.unk_17B0, 0, 0x100);
+    for (int i = 0; i < 10; i++) {
+        AtoraNameMes.mes_no[i] = -1;
+        AtoraNameMes.values[i] = 0;
+    }
+    AtoraNameMes.columns = 16;
+    AtoraNameMes.Preset(4);
+    AtoraNameMes.mes_made = -1;
+    MenuMes.InitData();
+    MenuMes.message->unk_02C = 0x10;
+    MenuMes.message->unk_030 = 0x10;
+}
 
 /**
  * Rebuilds the player's equipped weapon model and gives the menu's textures back.

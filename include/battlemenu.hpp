@@ -489,15 +489,6 @@ void BtlWeaponDraw(int, float, int, int);
 void DrawWeaponSelectDialog(int, int, int);
 
 /**
- * Opens the weapon page in one of its modes and puts the cursor where it was left.
- *
- * @mangled InitWeaponSelect__Fii
- * @address 0x1FC750
- * @size 0x3CC
- */
-void InitWeaponSelect(int, int);
-
-/**
  * Runs one frame of the weapon page, dispatching on which of its modes is open.
  *
  * @mangled WeaponMenuSelect__Fv
