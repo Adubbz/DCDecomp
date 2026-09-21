@@ -622,15 +622,6 @@ void InitFishRecordView(u_long128 *, int *, int);
 void FishRecordTextureEnter(void);
 
 /**
- * Handles one frame of fishing record input and returns the mode it leaves the view in.
- *
- * @mangled FishRecordViewKey__Fv
- * @address 0x1F31E0
- * @size 0x410
- */
-int FishRecordViewKey(void);
-
-/**
  * Draws the fishing record board: each rank, its fish and its size.
  *
  * @mangled FishRecordViewBoard__Fiii

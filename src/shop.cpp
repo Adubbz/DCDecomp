@@ -1635,7 +1635,105 @@ static void ExitFishRecord() {
 INCLUDE_ASM("asm/nonmatchings/shop", FishRecordTextureEnter__Fv);
 INCLUDE_RODATA("asm/nonmatchings/shop", @3274);
 INCLUDE_RODATA("asm/nonmatchings/shop", @3275);
-INCLUDE_ASM("asm/nonmatchings/shop", FishRecordViewKey__Fv);
+
+/**
+ * Handles one frame of fishing record input and returns the mode it leaves the view in.
+ *
+ * @mangled FishRecordViewKey__Fv
+ * @address 0x1F31E0
+ * @size 0x410
+ */
+static int FishRecordViewKey() {
+    ReadBG();
+    int ret = 0;
+
+    switch (FishRecordMenu.fade_mode) {
+        case 0:
+            FishRecordMenu.fade_count++;
+            if (!FishRecordMenu.ready) {
+                FishRecordTextureEnter();
+            } else if (FishRecordMenu.fade_count > 0x20) {
+                FishRecordMenu.fade_mode = 2;
+                FishRecordMenu.fade_count = 0;
+            }
+            break;
+        case 1:
+            FishRecordMenu.fade_count++;
+            if (FishRecordMenu.fade_count > 0x20) {
+                ExitFishRecord();
+                ret = 1;
+            }
+            break;
+        case 2: {
+            int old_cursor = FishRecordMenu.unk_00;
+
+            if (GamePad.Down(0x200A)) {
+                FishRecordMenu.unk_04 += 5;
+                FishRecordMenu.unk_00 += 5;
+                if (FishRecordMenu.unk_04 > 0x10) {
+                    FishRecordMenu.unk_04 = 0xF;
+                }
+                if (FishRecordMenu.unk_00 >= 0x13) {
+                    FishRecordMenu.unk_00 = 0x13;
+                }
+            }
+            if (GamePad.Down(0x8005)) {
+                FishRecordMenu.unk_04 -= 5;
+                FishRecordMenu.unk_00 -= 5;
+                if (FishRecordMenu.unk_00 < 0 || FishRecordMenu.unk_04 < 0) {
+                    FishRecordMenu.unk_00 = 0;
+                    FishRecordMenu.unk_04 = 0;
+                }
+            }
+            if (GamePad.Down(0x1000)) {
+                FishRecordMenu.unk_00--;
+                if (FishRecordMenu.unk_00 < 0) {
+                    FishRecordMenu.unk_00 = 0;
+                }
+                if (FishRecordMenu.unk_00 < FishRecordMenu.unk_04) {
+                    FishRecordMenu.unk_04--;
+                }
+                if (FishRecordMenu.unk_04 < 0) {
+                    FishRecordMenu.unk_04 = 0;
+                    FishRecordMenu.unk_00 = 0;
+                }
+            }
+            if (GamePad.Down(0x4000)) {
+                FishRecordMenu.unk_00++;
+                if (FishRecordMenu.unk_00 >= 0x13) {
+                    FishRecordMenu.unk_00 = 0x13;
+                }
+                if (FishRecordMenu.unk_04 < FishRecordMenu.unk_00 - 4) {
+                    FishRecordMenu.unk_04++;
+                    if (FishRecordMenu.unk_04 > 0x10) {
+                        FishRecordMenu.unk_04 = 0x10;
+                    }
+                }
+            }
+            if (GamePad.Down(0x20)) {
+                FishRecordMenu.fade_mode = 1;
+                FishRecordMenu.fade_count = 0;
+            }
+            if (old_cursor != FishRecordMenu.unk_00) {
+                ComMenuSePlay(0);
+                for (int i = 0; i < 5; i++) {
+                    SV_FISH_DATA *fish = GetFishingRankData(FishRecordMenu.unk_04 + i);
+
+                    if (fish != NULL) {
+                        AtoraNameMes.mes_no[i] = GetFishMsgNo(fish->fish_id);
+                    } else {
+                        AtoraNameMes.mes_no[i] = 0;
+                    }
+                }
+                AtoraNameMes.mes_made = -1;
+                AtoraNameMes.MakeMesWin(0xC8);
+            }
+            break;
+        }
+    }
+    return ret;
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", FishRecordViewBoard__Fiii);
 
 /**
