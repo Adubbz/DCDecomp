@@ -215,6 +215,7 @@
       "CommandCD__FPPv": "CommandCD__FPPv__2",
       "CommandOBJ_ANIME__FPPv": "CommandOBJ_ANIME__FPPv__2",
       "CommandMOTION_PARTS__FPPv": "CommandMOTION_PARTS__FPPv__2",
+      "CommandWATER_SURFACE__FPPv": "CommandWATER_SURFACE__FPPv__2",
       "Command": "Command__6",
       "CommandExe": "CommandExe__6",
       "CurrentDir": "CurrentDir__5",
@@ -233,6 +234,7 @@
       "CommandCD__FPPv__2",
       "CommandOBJ_ANIME__FPPv__2",
       "CommandMOTION_PARTS__FPPv__2",
+      "CommandWATER_SURFACE__FPPv__2",
       "LoadInfo__FPci",
       "CommandPROJECTION__FPPv",
       "CommandDEBUG__FPPv"

@@ -491,7 +491,39 @@ static void CommandMOTION_PARTS(void **arguments) {
  * @size 0x184
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandWATER_SURFACE__FPPv__2);
+static void CommandWATER_SURFACE(void **arguments) {
+    if (water_list < 8) {
+        EDIT_WATER_INFO *surface = &EdInInfo->water_surfaces[water_list];
+        water_list++;
+        strcpy(surface->name, (char *) arguments[0]);
+        surface->type = *(int *) arguments[1];
+        surface->number = *(int *) arguments[2];
+        surface->corner_a[0] = *(float *) arguments[3];
+        surface->corner_a[1] = *(float *) arguments[4];
+        surface->corner_a[2] = *(float *) arguments[5];
+        surface->corner_a[3] = 1.0f;
+        surface->corner_b[0] = *(float *) arguments[6];
+        surface->corner_b[1] = *(float *) arguments[7];
+        surface->corner_b[2] = *(float *) arguments[8];
+        surface->corner_b[3] = 1.0f;
+        surface->corner_c[0] = *(float *) arguments[9];
+        surface->corner_c[1] = *(float *) arguments[10];
+        surface->corner_c[2] = *(float *) arguments[11];
+        surface->corner_c[3] = 1.0f;
+        surface->texture_scroll[0] = *(float *) arguments[12];
+        surface->texture_scroll[1] = *(float *) arguments[13];
+        surface->texture_scroll[2] = *(float *) arguments[14];
+        surface->texture_scroll[3] = *(float *) arguments[15];
+        surface->unk_50 = *(int *) arguments[16];
+        surface->unk_54 = *(int *) arguments[17];
+        surface->unk_58 = *(int *) arguments[18];
+        surface->unk_70 = *(int *) arguments[19];
+        surface->unk_74 = *(int *) arguments[20];
+        surface->unk_78 = *(int *) arguments[21];
+        surface->parts_no = -1;
+        water_info = surface;
+    }
+}
 /**
  * Starts a ripple on the interior's water surface.
  *
