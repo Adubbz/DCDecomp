@@ -225,7 +225,15 @@ int SaveMenuKeyFormat(void) {
     return 1;
 }
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyUnFormat__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyDifVersion__Fv);
+
+int SaveMenuKeyDifVersion(void) {
+    if (GamePad.Down(0xF0) != 0) {
+        McAccess.SetFuncNo(7);
+        int file_no = McAccess.file_no;
+        McAccess.file_no = file_no;
+    }
+    return 1;
+}
 
 s32 SaveMenuKeyDelete(void) {
     return 1;
