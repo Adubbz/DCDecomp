@@ -973,7 +973,53 @@ static int AtoraTipStatusSearch(EDITPARTS_INFO *info, int slot) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/memcard", AtraTipCanDisplay__FP21EDIT_CHIP_ATTACH_DATA);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipRelationDraw__FiiP14EDITPARTS_INFOiii);
+static void AtoraTipRelationDraw(int x, int y, EDITPARTS_INFO *info, int slot, int link, int alpha) {
+    int dx;
+    int dy;
+    int u;
+    int v;
+    int height;
+
+    if (info != NULL) {
+        static int tipcurCnt = 0;
+
+        u = 172;
+        v = 390;
+        height = 14;
+        // Only link codes ending in 1 or 2 give the arrow an offset.
+        if (link > 0) {
+            switch (link % 10) {
+                case 1:
+                    dx = -10;
+                    dy = 8;
+                    u += 12;
+                    break;
+                case 2:
+                    dx = 12;
+                    dy = -12;
+                    break;
+            }
+        }
+        if (tipcurCnt % 460 > 200) {
+            dy += 3;
+            v += 14;
+            height = 10;
+        }
+        if (link < 49 && link >= 20) {
+            return;
+        }
+        if (link < 50 && link > 0) {
+            DrawMenu2DSprite(Sozai, CRect_i_(x + dx, y + dy, 12, height), CRect_i_(u, v, 12, height), alpha);
+        }
+        if (link >= 10) {
+            DrawMenu2DSprite(Sozai, CRect_i_(x, y, 36, 35), CRect_i_(220, 346, 36, 37), alpha);
+        }
+        tipcurCnt++;
+        if (tipcurCnt < 0 || tipcurCnt > 999999) {
+            tipcurCnt = 0;
+        }
+    }
+}
 
 static void AtoraBoardEnableMovePos(int parts_no, int *enable) {
     EDITPARTS_INFO *info;
