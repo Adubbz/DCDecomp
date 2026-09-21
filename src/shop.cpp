@@ -441,7 +441,31 @@ static void ExitItemShop2() {
 INCLUDE_ASM("asm/nonmatchings/shop", ShopSpecialFunc__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", CompItem1__Fii);
 INCLUDE_ASM("asm/nonmatchings/shop", SeitonShopItemBoardSub__FP9ITEM_PACK);
-INCLUDE_ASM("asm/nonmatchings/shop", SeitonShopItemBoard__FP9ITEM_PACK);
+
+/**
+ * Sorts the item board, trying each ordering until one changes it.
+ *
+ * @mangled SeitonShopItemBoard__FP9ITEM_PACK
+ * @address 0x1EBDB0
+ * @size 0x88
+ */
+static void SeitonShopItemBoard(ITEM_PACK *pack) {
+    int i;
+
+    if (pack == NULL) {
+        return;
+    }
+    for (i = 0; i < 9; i++) {
+        if (SeitonShopItemBoardSub(pack)) {
+            return;
+        }
+        sort_top_type++;
+        if (sort_top_type >= 9) {
+            sort_top_type = 1;
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", CompAttach1__FP11ATTACH_LISTP11ATTACH_LIST);
 INCLUDE_ASM("asm/nonmatchings/shop", SeitonShopAttachBoardSub__FP11ATTACH_LIST);
 INCLUDE_ASM("asm/nonmatchings/shop", SeitonShopAttachBoard__FP11ATTACH_LIST);

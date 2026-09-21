@@ -390,15 +390,6 @@ void CompItem1(int, int);
 int SeitonShopItemBoardSub(ITEM_PACK *);
 
 /**
- * Sorts the item board, trying each ordering until one changes it.
- *
- * @mangled SeitonShopItemBoard__FP9ITEM_PACK
- * @address 0x1EBDB0
- * @size 0x88
- */
-void SeitonShopItemBoard(ITEM_PACK *);
-
-/**
  * Orders two attachments for the shop's sort.
  *
  * @mangled CompAttach1__FP11ATTACH_LISTP11ATTACH_LIST
