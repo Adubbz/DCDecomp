@@ -366,7 +366,12 @@ static void CommandFOG(void **arguments) {
  * @size 0x44
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandBG_COL__FPPv__2);
+static void CommandBG_COL(void **arguments) {
+    EdInInfo->background_colour[0] = *(float *) arguments[0];
+    EdInInfo->background_colour[1] = *(float *) arguments[1];
+    EdInInfo->background_colour[2] = *(float *) arguments[2];
+    EdInInfo->background_colour[3] = 128.0f;
+}
 /**
  * Sets the interior's projection distance.
  *
