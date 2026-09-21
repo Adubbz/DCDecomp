@@ -443,7 +443,16 @@ int _GET_MONSTOR_FRM(RS_STACKDATA *stack, int argc) {
     SetStack(stack, frame);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MONSTOR_POS__FP12RS_STACKDATAi);
+int _SET_MONSTOR_POS(RS_STACKDATA *stack, int argc) {
+    int monster_no = GetStackInt(stack++);
+    float position[4];
+
+    position[0] = GetStackFloat(stack++);
+    position[1] = GetStackFloat(stack++);
+    position[2] = GetStackFloat(stack);
+    NowMonstorUnit->chara[monster_no][0].SetPosition(position);
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MONSTOR_MOVE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MONSTOR_LINK_MOVE__FP12RS_STACKDATAi);
 int _SET_MONSTOR_MOVE_CANSEL(RS_STACKDATA *stack, int argc) {
