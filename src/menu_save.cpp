@@ -62,7 +62,12 @@ INCLUDE_RODATA("asm/nonmatchings/menu_save", @3082);
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuTextureEnter__Fv);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3094);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3095);
-INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuEffectFadeOut__Fv);
+int SaveMenuEffectFadeOut(void) {
+    if (SaveMenu.key_no == 1) {
+        return 1;
+    }
+    return 0;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_save", GetSaveBoardAlphaInfo__FiiRiRii);
 INCLUDE_ASM("asm/nonmatchings/menu_save", DrawSaveBoard__FP13SAVEDATA_INFOPP8CTextureiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_save", DrawNewFileTemplete__Fiii);
