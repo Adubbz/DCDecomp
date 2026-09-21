@@ -736,15 +736,6 @@ int GetNearWorldPos(int direction, int *position);
 void DrawMapCheck(int);
 
 /**
- * Reports whether a world-map place has been visited and may be travelled to.
- *
- * @mangled GetVisitInfo__Fii
- * @address 0x20AB00
- * @size 0x164
- */
-void GetVisitInfo(int, int);
-
-/**
  * Gives the region whose world map should be read for the party's position.
  *
  * @mangled IsLoadMapNo__Fv

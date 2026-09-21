@@ -2032,7 +2032,53 @@ static int WorldMapMoveKey() {
 }
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawMapCheck__Fi);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", GetVisitInfo__Fii);
+/**
+ * Gives how often a world-map place has been visited, or how far its dungeon has been cleared.
+ *
+ * @mangled GetVisitInfo__Fii
+ * @address 0x20AB00
+ * @size 0x164
+ */
+static int GetVisitInfo(int place, int menu_mode) {
+    int visits;
+    int dungeon;
+    int map_no = MenuGrobalMapNoTbl[place];
+
+    if (map_no >= 200) {
+        map_no -= 200;
+    }
+    switch (place) {
+        case 0:
+        case 2:
+        case 4:
+        case 5:
+        case 7:
+        case 8:
+        case 10:
+        case 11:
+        case 13:
+        case 15:
+            dungeon = 0;
+            break;
+        default:
+            dungeon = 1;
+            break;
+    }
+    if (!dungeon) {
+        visits = BtlMenuSaveDataPt->VisitMap(map_no, 0);
+        switch (NowGetGameFlagForBtlMenu(menu_mode)) {
+            case 1:
+            case 5:
+                if (map_no == 1) {
+                    visits = 1;
+                }
+                break;
+        }
+    } else {
+        visits = BtlMenuSaveDataPt->QuestDungeon(map_no, 0);
+    }
+    return visits;
+}
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", IsLoadMapNo__Fv);
 
