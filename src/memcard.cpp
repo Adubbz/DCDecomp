@@ -791,7 +791,15 @@ static void SetMenuAtraEventFlag(int flag) {
     MenuAtoraSel.event_flag = flag;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memcard", MenuAtoraAfterFadeIn__Fv);
+static void MenuAtoraAfterFadeIn() {
+    int msg_no;
+
+    CommonMenuMes2.SetBuff(GetAtraMsgReadBuf);
+    CommonMenuMes2.mes_made = -1;
+    msg_no = AtoraMsgNoGet(MenuAtoraSel.map_no, MenuAtoraSel.board_pos, 0);
+    CommonMenuMes2.MakeMesWin(msg_no >= 0 ? msg_no + 1000 : 0);
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", InitMenuAtora1__FiiPiP1);
 INCLUDE_ASM("asm/nonmatchings/memcard", InitMenuAtoraSelect__Fi);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @1397);
