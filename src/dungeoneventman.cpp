@@ -54,7 +54,6 @@ void CDungeonEventMan::SearchDataSwitch(int script_no, int enable) {
 #else
 INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchDataSwitch__16CDungeonEventManFii);
 #endif
-#ifdef NON_MATCHING
 void CDungeonEventMan::SearchItemEventHold(int script_no) {
     for (int i = 0; i < 96; i++) {
         int active;
@@ -68,9 +67,6 @@ void CDungeonEventMan::SearchItemEventHold(int script_no) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchItemEventHold__16CDungeonEventManFi);
-#endif
 
 int CDungeonEventMan::GetDataNum(void) {
     int count = 0;
