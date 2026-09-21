@@ -40,17 +40,16 @@ void CEditArea::SetSize(s32 width, s32 height, float unit_size, float unit_alt) 
     this->unit_size = unit_size;
     this->unit_alt = unit_alt;
 }
-#ifdef NON_MATCHING
 void CEditArea::GetPos(CVector3_i_ *position, float x, float y, float z) {
-    float grid_y = y - offset_y;
-    float grid_z = (z - offset_z) + 0.1f;
-    position->x = (int) (((x - offset_x) + 0.1f) / unit_size);
-    position->y = (int) (grid_y / unit_alt);
-    position->z = (int) (grid_z / unit_size);
+    x -= offset_x;
+    y -= offset_y;
+    z -= offset_z;
+    x += 0.1f;
+    z += 0.1f;
+    position->x = (int) (x / unit_size);
+    position->y = (int) (y / unit_alt);
+    position->z = (int) (z / unit_size);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editarea", GetPos__9CEditAreaFP11CVector3_i_fff);
-#endif
 
 void CEditArea::GetPos(CVector3_f_ *position, s32 x, s32 y, s32 z) {
     position->x = this->offset_x + ((float) x * this->unit_size);
