@@ -38,9 +38,15 @@ struct GROUND_WATER_RIPPLE {
  */
 class CGroundWater {
 public:
-    u8 unk_000[0x20];
-    s32 draw; /**< Whether this water surface is drawn. */
-    u8 unk_024[0x2C];
+    char name[32]; /**< Frame of the owning part that must be drawn for the surface to draw, or empty. */
+    s32 draw;      /**< Whether this water surface is drawn. */
+    s32 follow_x;  /**< Whether a free surface keeps ahead of the camera along X. */
+    s32 follow_y;  /**< Whether a free surface keeps level with the camera. */
+    s32 follow_z;  /**< Whether a free surface keeps ahead of the camera along Z. */
+    s32 unk_030;
+    s32 parts_no; /**< Plot of the part the surface stands on, or below zero for a free surface. */
+    u8 unk_038[8];
+    sceVu0FVECTOR offset;           /**< Position of the surface relative to its part, or in the world. */
     GROUND_WATER_RIPPLE ripples[4]; /**< Ripple sources; one with no power and no range ends the list. */
     CWater water; /**< Surface that ripples and draws. */
 };
