@@ -54,7 +54,7 @@ struct BT_ACT_STATUS {
     float unk_0B8;
     float unk_0BC;
     sceVu0FVECTOR unk_0C0;
-    u8 unk_0D0[0x10];
+    sceVu0FVECTOR unk_0D0;
     s32 unk_0E0;
     s32 unk_0E4;
     s32 unk_0E8;
