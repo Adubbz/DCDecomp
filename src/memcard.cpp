@@ -865,7 +865,14 @@ static void InitOptionFlag() {
     OptionMenu.flag[6] = 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memcard", PrevOptionSetFunc__Fv);
+static void PrevOptionSetFunc() {
+    int i;
+
+    for (i = 0; i < 12; i++) {
+        OptionMenu.flag[i] = OptionMenu.prev_flag[i];
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuOptionKey__Fv);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2345);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2346);
