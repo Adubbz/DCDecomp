@@ -288,7 +288,7 @@ void BtSetMapJumpFloor(int floor) {
  * @size 0x44
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-extern "C" static int GetStackInt__FP12RS_STACKDATA__2(RS_STACKDATA *argument) {
+static int GetStackInt(RS_STACKDATA *argument) {
     if (argument->type == RS_FLOAT) {
         return (int) argument->f;
     }
@@ -303,7 +303,7 @@ extern "C" static int GetStackInt__FP12RS_STACKDATA__2(RS_STACKDATA *argument) {
  * @size 0x2C
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-extern "C" static float GetStackFloat__FP12RS_STACKDATA__2(RS_STACKDATA *argument) {
+static float GetStackFloat(RS_STACKDATA *argument) {
     if (argument->type == RS_INT) {
         return (float) argument->i;
     }
@@ -318,7 +318,7 @@ extern "C" static float GetStackFloat__FP12RS_STACKDATA__2(RS_STACKDATA *argumen
  * @size 0xC
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-extern "C" static char *GetStackString__FP12RS_STACKDATA__2(RS_STACKDATA *argument) {
+static char *GetStackString(RS_STACKDATA *argument) {
     return argument->s;
 }
 
@@ -330,7 +330,7 @@ extern "C" static char *GetStackString__FP12RS_STACKDATA__2(RS_STACKDATA *argume
  * @size 0x20
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-extern "C" static void SetStack__FP12RS_STACKDATAi__2(RS_STACKDATA *argument, int value) {
+static void SetStack(RS_STACKDATA *argument, int value) {
     if (argument->type == RS_PTR) {
         argument->p->i = value;
     }
@@ -344,29 +344,29 @@ extern "C" static void SetStack__FP12RS_STACKDATAi__2(RS_STACKDATA *argument, in
  * @size 0x20
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-extern "C" static void SetStack__FP12RS_STACKDATAf__2(RS_STACKDATA *argument, float value) {
+static void SetStack(RS_STACKDATA *argument, float value) {
     if (argument->type == RS_PTR) {
         argument->p->f = value;
     }
 }
 
 int _GET_FLOOR_LEVEL(RS_STACKDATA *stack, int count) {
-    SetStack__FP12RS_STACKDATAi__2(stack, UserStatus->cur_floor);
+    SetStack(stack, UserStatus->cur_floor);
     return 1;
 }
 
 int _SET_FLOOR_LEVEL(RS_STACKDATA *stack, int count) {
-    ((CDngStatusData *) UserStatus)->SetNowFloor(GetStackInt__FP12RS_STACKDATA__2(stack));
+    ((CDngStatusData *) UserStatus)->SetNowFloor(GetStackInt(stack));
     return 1;
 }
 
 int _GET_OLD_FLOOR_LEVEL(RS_STACKDATA *stack, int count) {
-    SetStack__FP12RS_STACKDATAi__2(stack, UserStatus->unk_03);
+    SetStack(stack, UserStatus->unk_03);
     return 1;
 }
 
 int _GET_ACTION_MODE(RS_STACKDATA *stack, int count) {
-    SetStack__FP12RS_STACKDATAi__2(stack, BtEventInfo.unk_24);
+    SetStack(stack, BtEventInfo.unk_24);
     return 1;
 }
 
@@ -379,7 +379,7 @@ int _ITEM_USE_WINDOW(RS_STACKDATA *stack, int count) {
     stack++;
     int i;
     for (i = 0; i < count - 1; i++) {
-        BtEventInfo.unk_3C[i] = GetStackInt__FP12RS_STACKDATA__2(stack++);
+        BtEventInfo.unk_3C[i] = GetStackInt(stack++);
     }
     BtEventInfo.unk_7C = 0;
     if (count > 1) {
@@ -391,15 +391,15 @@ int _ITEM_USE_WINDOW(RS_STACKDATA *stack, int count) {
 }
 
 int _CHECK_EVENT_FLG(RS_STACKDATA *stack, int count) {
-    int flag_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int flag_no = GetStackInt(stack++);
     int flag = UserStatus->ChkEventFlag(flag_no);
-    SetStack__FP12RS_STACKDATAi__2(stack, flag);
+    SetStack(stack, flag);
     return 1;
 }
 
 int _SET_EVENT_FLG(RS_STACKDATA *stack, int count) {
-    int flag_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
-    int value = GetStackInt__FP12RS_STACKDATA__2(stack);
+    int flag_no = GetStackInt(stack++);
+    int value = GetStackInt(stack);
     CUserStatus *status = UserStatus;
 
     if (flag_no >= 0 && flag_no < 50) {
@@ -409,9 +409,9 @@ int _SET_EVENT_FLG(RS_STACKDATA *stack, int count) {
 }
 
 int _GET_OBJHDL(RS_STACKDATA *stack, int count) {
-    int index = GetStackInt__FP12RS_STACKDATA__2(stack++);
-    int parts_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
-    char *name = GetStackString__FP12RS_STACKDATA__2(stack);
+    int index = GetStackInt(stack++);
+    int parts_no = GetStackInt(stack++);
+    char *name = GetStackString(stack);
     BT_OBJ_HANDLE *handle = GetObjHDL(index);
 
     if (parts_no != -1) {
@@ -440,10 +440,10 @@ int _GET_OBJHDL(RS_STACKDATA *stack, int count) {
 }
 
 int _SET_OBJHDL_POS(RS_STACKDATA *stack, int count) {
-    int index = GetStackInt__FP12RS_STACKDATA__2(stack++);
-    float x = GetStackFloat__FP12RS_STACKDATA__2(stack++);
-    float y = GetStackFloat__FP12RS_STACKDATA__2(stack++);
-    float z = GetStackFloat__FP12RS_STACKDATA__2(stack);
+    int index = GetStackInt(stack++);
+    float x = GetStackFloat(stack++);
+    float y = GetStackFloat(stack++);
+    float z = GetStackFloat(stack);
     BT_OBJ_HANDLE *handle = GetObjHDL(index);
 
     if (handle->type == 0 && handle->frame != NULL) {
@@ -456,10 +456,10 @@ int _SET_OBJHDL_POS(RS_STACKDATA *stack, int count) {
 }
 
 int _SET_OBJHDL_ROT(RS_STACKDATA *stack, int count) {
-    int index = GetStackInt__FP12RS_STACKDATA__2(stack++);
-    float x = GetStackFloat__FP12RS_STACKDATA__2(stack++);
-    float y = GetStackFloat__FP12RS_STACKDATA__2(stack++);
-    float z = GetStackFloat__FP12RS_STACKDATA__2(stack);
+    int index = GetStackInt(stack++);
+    float x = GetStackFloat(stack++);
+    float y = GetStackFloat(stack++);
+    float z = GetStackFloat(stack);
     BT_OBJ_HANDLE *handle = GetObjHDL(index);
 
     if (handle->type == 0) {
@@ -479,8 +479,8 @@ int _SET_OBJHDL_ROT(RS_STACKDATA *stack, int count) {
 }
 
 int _SET_OBJHDL_DRAW_FLAG(RS_STACKDATA *stack, int count) {
-    int index = GetStackInt__FP12RS_STACKDATA__2(stack++);
-    int draw = GetStackInt__FP12RS_STACKDATA__2(stack);
+    int index = GetStackInt(stack++);
+    int draw = GetStackInt(stack);
     BT_OBJ_HANDLE *handle = GetObjHDL(index);
 
     if (handle->type == 0) {
@@ -513,7 +513,7 @@ int _SET_OBJHDL_DRAW_FLAG(RS_STACKDATA *stack, int count) {
 int _GET_OBJHDL_POS(RS_STACKDATA *stack, int count) {
     sceVu0FVECTOR local = {0.0f, 0.0f, 0.0f, 0.0f};
     sceVu0FVECTOR pos;
-    BT_OBJ_HANDLE *handle = GetObjHDL(GetStackInt__FP12RS_STACKDATA__2(stack++));
+    BT_OBJ_HANDLE *handle = GetObjHDL(GetStackInt(stack++));
 
     if (handle->type == 0) {
         CFrame *frame = handle->frame;
@@ -527,16 +527,16 @@ int _GET_OBJHDL_POS(RS_STACKDATA *stack, int count) {
             chara->GetPosition(pos);
         }
     }
-    SetStack__FP12RS_STACKDATAf__2(stack++, pos[0]);
-    SetStack__FP12RS_STACKDATAf__2(stack++, pos[1]);
-    SetStack__FP12RS_STACKDATAf__2(stack, pos[2]);
+    SetStack(stack++, pos[0]);
+    SetStack(stack++, pos[1]);
+    SetStack(stack, pos[2]);
     return 1;
 }
 
 int _GET_OBJHDL_ROT(RS_STACKDATA *stack, int count) {
     sceVu0FVECTOR rot = {0.0f, 0.0f, 0.0f, 1.0f};
     sceVu0FMATRIX matrix;
-    BT_OBJ_HANDLE *handle = GetObjHDL(GetStackInt__FP12RS_STACKDATA__2(stack++));
+    BT_OBJ_HANDLE *handle = GetObjHDL(GetStackInt(stack++));
 
     if (handle->type == 0) {
         CFrame *frame = handle->frame;
@@ -554,9 +554,9 @@ int _GET_OBJHDL_ROT(RS_STACKDATA *stack, int count) {
             chara->GetRotation(rot);
         }
     }
-    SetStack__FP12RS_STACKDATAf__2(stack++, rot[0]);
-    SetStack__FP12RS_STACKDATAf__2(stack++, rot[1]);
-    SetStack__FP12RS_STACKDATAf__2(stack, rot[2]);
+    SetStack(stack++, rot[0]);
+    SetStack(stack++, rot[1]);
+    SetStack(stack, rot[2]);
     return 1;
 }
 
@@ -566,16 +566,16 @@ int _SET_URA_DUNGEON(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _GET_EVENT_POS(RS_STACKDATA *stack, int count) {
-    SetStack__FP12RS_STACKDATAf__2(stack++, BtEventInfo.position[0]);
-    SetStack__FP12RS_STACKDATAf__2(stack++, BtEventInfo.position[1]);
-    SetStack__FP12RS_STACKDATAf__2(stack, BtEventInfo.position[2]);
+    SetStack(stack++, BtEventInfo.position[0]);
+    SetStack(stack++, BtEventInfo.position[1]);
+    SetStack(stack, BtEventInfo.position[2]);
     return 1;
 }
 
 int _GET_EVENT_ROT(RS_STACKDATA *stack, int count) {
-    SetStack__FP12RS_STACKDATAf__2(stack++, BtEventInfo.direction[0]);
-    SetStack__FP12RS_STACKDATAf__2(stack++, BtEventInfo.direction[1]);
-    SetStack__FP12RS_STACKDATAf__2(stack, BtEventInfo.direction[2]);
+    SetStack(stack++, BtEventInfo.direction[0]);
+    SetStack(stack++, BtEventInfo.direction[1]);
+    SetStack(stack, BtEventInfo.direction[2]);
     return 1;
 }
 
@@ -606,8 +606,8 @@ int _GO_DUNGEON(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _SET_DUNGEON_MAP(RS_STACKDATA *stack, int count) {
-    char *map_file = GetStackString__FP12RS_STACKDATA__2(stack++);
-    BtLoadMapType = GetStackInt__FP12RS_STACKDATA__2(stack);
+    char *map_file = GetStackString(stack++);
+    BtLoadMapType = GetStackInt(stack);
     strcpy(BtLoadMapFileName, map_file);
     MainDungeonMap.unk_BDEC = BtLoadMapType;
     return 1;
@@ -636,38 +636,38 @@ int _SET_RANDOM_MAP(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _SET_EVENT_SW(RS_STACKDATA *stack, int count) {
-    int script_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
-    NowEventMan->SearchDataSwitch(script_no, GetStackInt__FP12RS_STACKDATA__2(stack));
+    int script_no = GetStackInt(stack++);
+    NowEventMan->SearchDataSwitch(script_no, GetStackInt(stack));
     return 1;
 }
 
 int _SET_MONSTOR_ID(RS_STACKDATA *stack, int count) {
-    int model_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int model_no = GetStackInt(stack++);
     int event_flag = -1;
     float pos[3];
 
     if (count == 2) {
-        if (GetStackInt__FP12RS_STACKDATA__2(stack++)) {
+        if (GetStackInt(stack++)) {
             BtLoadMonstor(0);
             NowMonstorUnit->CleanViewMonstor(0);
         }
     }
     if (count == 5) {
-        int clean = GetStackInt__FP12RS_STACKDATA__2(stack++);
-        pos[0] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
-        pos[1] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
-        pos[2] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
+        int clean = GetStackInt(stack++);
+        pos[0] = GetStackFloat(stack++);
+        pos[1] = GetStackFloat(stack++);
+        pos[2] = GetStackFloat(stack++);
         if (clean) {
             BtLoadMonstor(0);
             NowMonstorUnit->CleanViewMonstor(0);
         }
     }
     if (count == 6) {
-        int clean = GetStackInt__FP12RS_STACKDATA__2(stack++);
-        pos[0] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
-        pos[1] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
-        pos[2] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
-        event_flag = GetStackInt__FP12RS_STACKDATA__2(stack);
+        int clean = GetStackInt(stack++);
+        pos[0] = GetStackFloat(stack++);
+        pos[1] = GetStackFloat(stack++);
+        pos[2] = GetStackFloat(stack++);
+        event_flag = GetStackInt(stack);
         if (clean) {
             BtLoadMonstor(0);
             NowMonstorUnit->CleanViewMonstor(0);
@@ -678,53 +678,53 @@ int _SET_MONSTOR_ID(RS_STACKDATA *stack, int count) {
 }
 
 int _CHK_ATRA_HAVE(RS_STACKDATA *stack, int count) {
-    int atra_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int atra_no = GetStackInt(stack++);
     int have = GetAtraTipNowHave(atra_no, UserStatus->cur_georama);
 
     printf("%d,%d --> %d\n", atra_no, UserStatus->cur_georama, have);
-    SetStack__FP12RS_STACKDATAi__2(stack, have);
+    SetStack(stack, have);
     return 1;
 }
 
 int _SET_ATRA(RS_STACKDATA *stack, int count) {
     sceVu0FVECTOR pos;
 
-    pos[0] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
-    pos[1] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
-    pos[2] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
+    pos[0] = GetStackFloat(stack++);
+    pos[1] = GetStackFloat(stack++);
+    pos[2] = GetStackFloat(stack++);
     pos[3] = 1.0f;
-    NowDngMap->SetAtraBoll(pos, GetStackInt__FP12RS_STACKDATA__2(stack));
+    NowDngMap->SetAtraBoll(pos, GetStackInt(stack));
     return 1;
 }
 
 int _SET_IBOX(RS_STACKDATA *stack, int count) {
     sceVu0FVECTOR pos;
 
-    pos[0] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
-    pos[1] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
-    pos[2] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
+    pos[0] = GetStackFloat(stack++);
+    pos[1] = GetStackFloat(stack++);
+    pos[2] = GetStackFloat(stack++);
     pos[3] = 1.0f;
-    NowDngMap->SetTreasureBox(pos, GetStackInt__FP12RS_STACKDATA__2(stack), 1, 0);
+    NowDngMap->SetTreasureBox(pos, GetStackInt(stack), 1, 0);
     return 1;
 }
 
 int _GET_NOW_USER_ID(RS_STACKDATA *stack, int count) {
     int cur_chara = UserStatus->cur_chara;
     printf("get id = %d\n", cur_chara);
-    SetStack__FP12RS_STACKDATAi__2(stack, cur_chara);
+    SetStack(stack, cur_chara);
     return 1;
 }
 
 int _RUN_SCRIPT_NO(RS_STACKDATA *stack, int count) {
-    int script_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int script_no = GetStackInt(stack++);
 
     BtEventInfo.unk_34 = 0;
     if (count == 2) {
-        BtEventInfo.unk_34 = GetStackInt__FP12RS_STACKDATA__2(stack++);
+        BtEventInfo.unk_34 = GetStackInt(stack++);
     }
     if (count == 3) {
-        BtEventInfo.unk_34 = GetStackInt__FP12RS_STACKDATA__2(stack++);
-        BtEventInfo.unk_90 = GetStackInt__FP12RS_STACKDATA__2(stack);
+        BtEventInfo.unk_34 = GetStackInt(stack++);
+        BtEventInfo.unk_90 = GetStackInt(stack);
     }
     BtEventInfo.request = 5;
     BtEventInfo.unk_9C = script_no;
@@ -732,19 +732,19 @@ int _RUN_SCRIPT_NO(RS_STACKDATA *stack, int count) {
 }
 
 int _CLEAN_MONSTOR_SCRIPT_NO(RS_STACKDATA *stack, int count) {
-    int script_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int script_no = GetStackInt(stack++);
 
     BtEventInfo.unk_A4 = 0;
     if (count > 1) {
-        BtEventInfo.unk_A4 = GetStackInt__FP12RS_STACKDATA__2(stack);
+        BtEventInfo.unk_A4 = GetStackInt(stack);
     }
     BtEventInfo.unk_A0 = script_no;
     return 1;
 }
 
 int _GET_NPC_OBJHDL(RS_STACKDATA *stack, int count) {
-    int index = GetStackInt__FP12RS_STACKDATA__2(stack++);
-    int npc_no = GetStackInt__FP12RS_STACKDATA__2(stack);
+    int index = GetStackInt(stack++);
+    int npc_no = GetStackInt(stack);
     BT_OBJ_HANDLE *handle = GetObjHDL(index);
 
     if (npc_no < 0 || npc_no > 3) {
@@ -764,16 +764,16 @@ int _GET_NPC_OBJHDL(RS_STACKDATA *stack, int count) {
 }
 
 int _SET_MOTION_OBJHDL(RS_STACKDATA *stack, int count) {
-    int npc_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
-    int motion_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int npc_no = GetStackInt(stack++);
+    int motion_no = GetStackInt(stack++);
     int speed = -1;
     int mode = 0;
 
     if (count > 2) {
-        speed = GetStackFloat__FP12RS_STACKDATA__2(stack++);
+        speed = GetStackFloat(stack++);
     }
     if (count > 3) {
-        mode = GetStackInt__FP12RS_STACKDATA__2(stack);
+        mode = GetStackInt(stack);
     }
     if (NowDngMap->npc[npc_no].chara.frame == NULL) {
         return 1;
@@ -787,8 +787,8 @@ int _SET_MOTION_OBJHDL(RS_STACKDATA *stack, int count) {
 }
 
 int _SET_NPC_ON_OFF(RS_STACKDATA *stack, int count) {
-    int npc_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
-    int enable = GetStackInt__FP12RS_STACKDATA__2(stack);
+    int npc_no = GetStackInt(stack++);
+    int enable = GetStackInt(stack);
 
     if (NowDngMap->npc[npc_no].chara.frame == NULL) {
         return 1;
@@ -798,7 +798,7 @@ int _SET_NPC_ON_OFF(RS_STACKDATA *stack, int count) {
 }
 
 int _GET_GATEKEY_NO(RS_STACKDATA *stack, int count) {
-    SetStack__FP12RS_STACKDATAi__2(stack, NowDngMap->unk_0464);
+    SetStack(stack, NowDngMap->unk_0464);
     return 1;
 }
 
@@ -816,11 +816,11 @@ INCLUDE_ASM("asm/nonmatchings/btsysscript", _USER_WEAPON_DRAW__FP12RS_STACKDATAi
 #endif
 
 int _SET_MAIN_CHR2(RS_STACKDATA *stack, int count) {
-    int chara = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int chara = GetStackInt(stack++);
     int mode = 0;
 
     if (count == 2) {
-        mode = GetStackInt__FP12RS_STACKDATA__2(stack);
+        mode = GetStackInt(stack);
     }
     if (chara < 0 || chara > 5) {
         return 1;
@@ -840,7 +840,7 @@ int _RESET_MAIN_CHR(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _SET_LIMMIT_ZONE(RS_STACKDATA *stack, int count) {
-    UserStatus->res_limit_zone_current = GetStackInt__FP12RS_STACKDATA__2(stack);
+    UserStatus->res_limit_zone_current = GetStackInt(stack);
     SndSPSeLoad(0x1B);
     return 1;
 }
@@ -852,7 +852,7 @@ int _SET_DEAD_FLAG(RS_STACKDATA *stack, int argument_count) {
 
 int _ALL_DRAW_FLAG(RS_STACKDATA *stack, int count) {
     if (count == 1) {
-        BtAllDrawFlag = GetStackInt__FP12RS_STACKDATA__2(stack);
+        BtAllDrawFlag = GetStackInt(stack);
     }
     return 1;
 }
@@ -863,12 +863,12 @@ int _SET_FLOOR_TITLE(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _GET_RUBY_ELEMENT(RS_STACKDATA *stack, int count) {
-    SetStack__FP12RS_STACKDATAi__2(stack, BtRubyDoorKey);
+    SetStack(stack, BtRubyDoorKey);
     return 1;
 }
 
 int _SET_RUBY_ELEMENT(RS_STACKDATA *stack, int count) {
-    GetStackInt__FP12RS_STACKDATA__2(stack);
+    GetStackInt(stack);
     return 1;
 }
 
@@ -891,7 +891,7 @@ int _CLEAR_DEAMON_SHAFT(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _INIT_BEE(RS_STACKDATA *stack, int count) {
-    BtEventInfo.unk_94 = GetStackInt__FP12RS_STACKDATA__2(stack);
+    BtEventInfo.unk_94 = GetStackInt(stack);
     InitBee(NPCUnit[BtEventInfo.unk_94].chara.frame, 15);
     return 1;
 }
@@ -902,13 +902,13 @@ int _END_BEE(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _EASTKING_COMPLETE(RS_STACKDATA *stack, int count) {
-    SetStack__FP12RS_STACKDATAi__2(stack, EastKingCheckComplete());
+    SetStack(stack, EastKingCheckComplete());
     return 1;
 }
 
 int _GET_ITEM_TRAPID(RS_STACKDATA *stack, int count) {
     int box = BtEventInfo.unk_AC;
-    SetStack__FP12RS_STACKDATAi__2(stack, NowDngMap->boxes[box].unk_30);
+    SetStack(stack, NowDngMap->boxes[box].unk_30);
     return 1;
 }
 
@@ -939,7 +939,7 @@ int _BOM_SET(RS_STACKDATA *stack, int count) {
 
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_STATUS_ERR__FP12RS_STACKDATAi);
 int _CHECK_MARDAN(RS_STACKDATA *stack, int count) {
-    SetStack__FP12RS_STACKDATAi__2(stack, SaveData->GetMardanGareyanFlag());
+    SetStack(stack, SaveData->GetMardanGareyanFlag());
     return 1;
 }
 
@@ -949,12 +949,12 @@ int _NO_RESET_CHARA_NO(RS_STACKDATA *stack, int count) {
 }
 
 int _CHECK_CHR_HELP(RS_STACKDATA *stack, int count) {
-    SetStack__FP12RS_STACKDATAi__2(stack, BtEventInfo.unk_B4);
+    SetStack(stack, BtEventInfo.unk_B4);
     return 1;
 }
 
 int _HOLD_ITEM_EVENT(RS_STACKDATA *stack, int count) {
-    int script_no = GetStackInt__FP12RS_STACKDATA__2(stack);
+    int script_no = GetStackInt(stack);
     DngEventMan.SearchItemEventHold(script_no);
     UraEventMan.SearchItemEventHold(script_no);
     return 1;
@@ -971,13 +971,13 @@ int _NO_STATUS_RECOVER(RS_STACKDATA *stack, int count) {
 }
 
 int _SET_QUEST_DUNGEON(RS_STACKDATA *stack, int count) {
-    int dungeon_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
-    SaveData->QuestDungeon(dungeon_no, GetStackInt__FP12RS_STACKDATA__2(stack));
+    int dungeon_no = GetStackInt(stack++);
+    SaveData->QuestDungeon(dungeon_no, GetStackInt(stack));
     return 1;
 }
 
 int _GET_MAP_CODE(RS_STACKDATA *stack, int count) {
-    SetStack__FP12RS_STACKDATAi__2(stack, UserStatus->cur_georama + 1);
+    SetStack(stack, UserStatus->cur_georama + 1);
     return 1;
 }
 
@@ -987,7 +987,7 @@ int _SET_ACTIVE_ITEM_ICON(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _GET_ITEM_UNIT_NO(RS_STACKDATA *stack, int count) {
-    int item_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int item_no = GetStackInt(stack++);
     int unit = -1;
     int below = item_no < 0x101;
 
@@ -1011,12 +1011,12 @@ int _GET_ITEM_UNIT_NO(RS_STACKDATA *stack, int count) {
             unit = 5;
         }
     }
-    SetStack__FP12RS_STACKDATAi__2(stack, unit);
+    SetStack(stack, unit);
     return 1;
 }
 
 int _SET_IBOX_ANGLE(RS_STACKDATA *stack, int count) {
-    NowDngMap->boxes[BtEventInfo.unk_AC].lid_angle = GetStackFloat__FP12RS_STACKDATA__2(stack);
+    NowDngMap->boxes[BtEventInfo.unk_AC].lid_angle = GetStackFloat(stack);
     return 1;
 }
 
@@ -1030,8 +1030,8 @@ int _GET_PIERO_ITEM(RS_STACKDATA *stack, int count) {
     int item0, item1;
 
     GetPieroItem(selectMapNo, BtUraDongeon, &item0, &item1);
-    SetStack__FP12RS_STACKDATAi__2(stack++, item0);
-    SetStack__FP12RS_STACKDATAi__2(stack, item1);
+    SetStack(stack++, item0);
+    SetStack(stack, item1);
     return 1;
 }
 

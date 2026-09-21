@@ -1097,6 +1097,22 @@
       "@1086__2"
     ]
   },
+  "src/btsysscript.cpp": {
+    "symbols": {
+      "GetStackInt__FP12RS_STACKDATA": "GetStackInt__FP12RS_STACKDATA__2",
+      "GetStackFloat__FP12RS_STACKDATA": "GetStackFloat__FP12RS_STACKDATA__2",
+      "GetStackString__FP12RS_STACKDATA": "GetStackString__FP12RS_STACKDATA__2",
+      "SetStack__FP12RS_STACKDATAi": "SetStack__FP12RS_STACKDATAi__2",
+      "SetStack__FP12RS_STACKDATAf": "SetStack__FP12RS_STACKDATAf__2"
+    },
+    "globalize_symbols": [
+      "GetStackInt__FP12RS_STACKDATA__2",
+      "GetStackFloat__FP12RS_STACKDATA__2",
+      "GetStackString__FP12RS_STACKDATA__2",
+      "SetStack__FP12RS_STACKDATAi__2",
+      "SetStack__FP12RS_STACKDATAf__2"
+    ]
+  },
   "src/menu_dungeon.cpp": {
     "sections": {
       ".denterstatus": [
