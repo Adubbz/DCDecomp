@@ -529,7 +529,10 @@ void SndSetCamera(CCamera *camera) {
  * @address 0x159740
  * @size 0x50
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetCamera__FPfPf);
+void SndSetCamera(float *position, float *rotation) {
+    sceVu0CopyVector(camera_pos, position);
+    sceVu0CopyVector(camera_dir, rotation);
+}
 /**
  * Builds the archive and configuration file names of one music set.
  *
