@@ -312,7 +312,57 @@ int CEditGround::PickUpPoly(CCPoly *polygons, float x, float y, float z) {
     return PickUpPoly(polygons, box, 0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/editground", PickUpPoly__11CEditGroundFP6CCPoly7CBoxVu0i);
+int CEditGround::PickUpPoly(CCPoly *out_polygons, CBoxVu0 box, int flags) {
+    int i;
+    int count = 0;
+    CCPoly *polygons = out_polygons;
+    CMapParts *object = parts;
+    int found;
+    CFrame *frame;
+
+    for (i = 0; i < 128; i++, object++) {
+        if (object->unk_0E8 < 0) {
+            continue;
+        }
+        if (flags != 0 && object->unk_118 == 0) {
+            continue;
+        }
+        frame = object->GetCollisionFrame();
+        if (frame == NULL) {
+            continue;
+        }
+        if (!object->CheckBox(&box)) {
+            continue;
+        }
+        found = frame->PickUpNearPoly(polygons, box);
+        polygons += found;
+        count += found;
+    }
+    for (i = 0; i < 64; i++) {
+        if (fixed_parts[i].unk_0E8 < 0) {
+            continue;
+        }
+        CMapParts *fixed = &fixed_parts[i];
+        frame = fixed->GetCollisionFrame();
+        if (frame == NULL) {
+            continue;
+        }
+        if (!fixed->CheckBox2(&box)) {
+            continue;
+        }
+        found = frame->PickUpNearPoly(polygons, box);
+        polygons += found;
+        count += found;
+    }
+    for (i = 0; i < 4; i++) {
+        if (areas[i] != NULL) {
+            found = areas[i]->PickUpPoly(polygons, box);
+            polygons += found;
+            count += found;
+        }
+    }
+    return count;
+}
 
 int CEditGround::PickUpEditAreaPoly(CCPoly *polygons, float x, float y, float z) {
     int area = GetAreaCode(x, y, z);
