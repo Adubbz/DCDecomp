@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <cstring>
 
+#include "camera.hpp"
 #include "dataread.hpp"
 #include "editatra.hpp"
 #include "mglib.hpp"
@@ -207,6 +208,12 @@ extern char snd_cfg_file[32];
 
 /** The voice set's configuration file name. */
 extern char voice_cfg_file[32];
+
+/** Where the camera the sound pans against stands. */
+extern sceVu0FVECTOR camera_pos;
+
+/** Which way the camera the sound pans against looks. */
+extern sceVu0FVECTOR camera_dir;
 
 /**
  * Returns the table row for a sound effect, or zero when the number names no
@@ -511,7 +518,10 @@ int SndSyncBG() {
     return SndVoiceSyncBG() ? 1 : 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetCamera__FP7CCamera);
+void SndSetCamera(CCamera *camera) {
+    camera->GetPos(camera_pos);
+    camera->GetDir(camera_dir);
+}
 /**
  * Tells the sound where the camera stands and which way it looks.
  *
