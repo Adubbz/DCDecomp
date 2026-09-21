@@ -218,16 +218,6 @@ void ShopTextureLoadFix(void);
 void ShopPersonBuild(int, int);
 
 /**
- * Points the shopkeeper's model at the camera.
- *
- * @mangled ShopMasterVectorSet__Fi
- * @address 0x1E83B0
- * @size 0xD8
- * Turns the shopkeeper to face the menu camera.
- */
-void ShopMasterVectorSet(int);
-
-/**
  * Starts the charge shop up on the player's stock.
  *
  * @mangled InitChargeShop__FPiii

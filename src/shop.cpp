@@ -454,7 +454,36 @@ static void ShopPersonDraw(int) {
     MenuPolygonDraw(0x80, LocalShopPersonDraw);
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", ShopMasterVectorSet__Fi);
+/**
+ * Points the shopkeeper's model at the camera.
+ *
+ * @mangled ShopMasterVectorSet__Fi
+ * @address 0x1E83B0
+ * @size 0xD8
+ * Turns the shopkeeper to face the menu camera.
+ */
+static void ShopMasterVectorSet(int mode) {
+    float camera_pos[4];
+    float pos[4];
+    float rotation[4];
+    float offset[4];
+    float angle;
+
+    switch (mode) {
+        case 0:
+            MenuCamera.GetPos(camera_pos);
+            break;
+        case 1:
+            break;
+    }
+    sceVu0CopyVector(pos, MenuCharaFrame.pos);
+    MenuCharaFrame.GetRotation(rotation);
+    sceVu0SubVector(offset, pos, camera_pos);
+    angle = atan2f(-offset[0], -offset[2]);
+    rotation[1] = AngleInterpolate(rotation[1], angle, 0.1f, 0);
+    MenuCharaFrame.SetRotation(rotation);
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", InitChargeShop__FPiii);
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopLimmitCheck__Fv);
 
