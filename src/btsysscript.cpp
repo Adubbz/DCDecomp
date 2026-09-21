@@ -707,7 +707,35 @@ int _SET_ACTIVE_ITEM_ICON(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _GET_ITEM_UNIT_NO__FP12RS_STACKDATAi);
+int _GET_ITEM_UNIT_NO(RS_STACKDATA *stack, int count) {
+    int item_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int unit = -1;
+    int below = item_no < 0x101;
+
+    if (!below) {
+        if (!below && item_no < 0x12B) {
+            unit = 0;
+        }
+        if (item_no >= 0x12B && item_no < 0x13A) {
+            unit = 1;
+        }
+        if (item_no >= 0x13A && item_no < 0x14B) {
+            unit = 2;
+        }
+        if (item_no >= 0x14B && item_no < 0x15B) {
+            unit = 3;
+        }
+        if (item_no >= 0x15B && item_no < 0x16B) {
+            unit = 4;
+        }
+        if (item_no >= 0x16B) {
+            unit = 5;
+        }
+    }
+    SetStack__FP12RS_STACKDATAi__2(stack, unit);
+    return 1;
+}
+
 int _SET_IBOX_ANGLE(RS_STACKDATA *stack, int count) {
     NowDngMap->boxes[BtEventInfo.unk_AC].lid_angle = GetStackFloat__FP12RS_STACKDATA__2(stack);
     return 1;
