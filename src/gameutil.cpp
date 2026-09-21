@@ -429,7 +429,41 @@ int CheckHit(CCPoly *poly, int count, float *from, float *to, float *hit_point, 
     return hit;
 }
 
-INCLUDE_ASM("asm/nonmatchings/gameutil", CheckHitVertical__FP6CCPolyiPffPfi);
+int CheckHitVertical(CCPoly *poly, int count, float *from, float depth, float *hit_point,
+                     int mode) {
+    sceVu0FVECTOR to;
+    float best_y;
+    int i;
+    int best = -1;
+
+    to[0] = from[0];
+    to[1] = from[1] + depth;
+    to[2] = from[2];
+    for (i = 0; i < count; i++, poly++) {
+        if (poly->attr.ignore_mask & mode) {
+            continue;
+        }
+        if (!IntersectionPoint_line_poly3(from, to, poly->vertex[0], poly->vertex[1], poly->vertex[2],
+                                          poly->normal, hit_point)) {
+            continue;
+        }
+        if (depth <= 0.0f) {
+            if (from[1] > hit_point[1] && (best < 0 || (best >= 0 && best_y <= hit_point[1]))) {
+                best_y = hit_point[1];
+                best = i;
+            }
+        } else {
+            if (from[1] < hit_point[1] && (best < 0 || (best >= 0 && !(best_y < hit_point[1])))) {
+                best_y = hit_point[1];
+                best = i;
+            }
+        }
+    }
+    if (best >= 0) {
+        hit_point[1] = best_y;
+    }
+    return best;
+}
 
 int CheckHits(CCPoly *poly, int count, float *from, float *to, int max, int *hit_poly,
               float (*hit_point)[4], int sort, int mode) {
