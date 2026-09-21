@@ -319,7 +319,17 @@ int _CHK_ATRA_HAVE(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_ATRA__FP12RS_STACKDATAi);
+int _SET_ATRA(RS_STACKDATA *stack, int count) {
+    sceVu0FVECTOR pos;
+
+    pos[0] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
+    pos[1] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
+    pos[2] = GetStackFloat__FP12RS_STACKDATA__2(stack++);
+    pos[3] = 1.0f;
+    NowDngMap->SetAtraBoll(pos, GetStackInt__FP12RS_STACKDATA__2(stack));
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_IBOX__FP12RS_STACKDATAi);
 int _GET_NOW_USER_ID(RS_STACKDATA *stack, int count) {
     int cur_chara = UserStatus->cur_chara;
