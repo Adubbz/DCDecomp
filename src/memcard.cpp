@@ -1338,7 +1338,13 @@ INCLUDE_ASM("asm/nonmatchings/memcard", MenuSaveKey__Fv);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2597__2);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuSave__FPc);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2730);
-INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyFadeIn__Fv);
+static int SaveMenuKeyFadeIn() {
+    if (SaveMenu.unk_28 > 14) {
+        SaveMenu.key_no = 7;
+        SaveMenu.unk_28 = 0;
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyFadeOut__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyModeSelect__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyMcSelect__Fv);
