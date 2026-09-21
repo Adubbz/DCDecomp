@@ -794,7 +794,54 @@ int CEditGround::PickUpEditAreaPoly(CCPoly *polygons, float x, float y, float z)
     return areas[area]->PickUpPoly(polygons, x, y, z);
 }
 
-INCLUDE_ASM("asm/nonmatchings/editground", PickUpCameraPoly__11CEditGroundFP6CCPolyR7CBoxVu0i);
+int CEditGround::PickUpCameraPoly(CCPoly *out_polygons, CBoxVu0 &box, int flags) {
+    int i;
+    int count = 0;
+    CCPoly *polygons = out_polygons;
+    CMapParts *object = parts;
+    CFrame *frame;
+    int found;
+    sceVu0FVECTOR center;
+
+    for (i = 0; i < 128 && (flags & 2); i++, object++) {
+        if (object->unk_0E8 < 0) {
+            continue;
+        }
+        frame = GetCameraFrame(object);
+        if (frame == NULL) {
+            continue;
+        }
+        if (!object->CheckBox(&box)) {
+            continue;
+        }
+        found = frame->PickUpNearPoly(polygons, box);
+        polygons += found;
+        count += found;
+    }
+    for (i = 0; i < 64 && (flags & 1); i++) {
+        if (fixed_parts[i].unk_0E8 < 0) {
+            continue;
+        }
+        frame = GetCameraFrame(&fixed_parts[i]);
+        if (frame == NULL) {
+            continue;
+        }
+        if (!fixed_parts[i].CheckBox(&box)) {
+            continue;
+        }
+        found = frame->PickUpNearPoly(polygons, box);
+        polygons += found;
+        count += found;
+    }
+    for (i = 0; i < 4; i++) {
+        if (areas[i] != NULL) {
+            sceVu0AddVector(center, box.max, box.min);
+            sceVu0ScaleVector(center, center, 0.5f);
+            count += areas[i]->PickUpPoly(polygons, center[0], center[1], center[2]);
+        }
+    }
+    return count;
+}
 
 void CEditGround::Clear() {
     int i;

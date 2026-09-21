@@ -426,7 +426,7 @@ public:
      * @address 0x1A5210
      * @size 0x2F4
      */
-    int PickUpCameraPoly(CCPoly *polygons, CBoxVu0 &box, int flags);
+    int PickUpCameraPoly(CCPoly *out_polygons, CBoxVu0 &box, int flags);
 
     /**
      * Empties every placed part and every editable area.
