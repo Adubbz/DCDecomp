@@ -326,8 +326,29 @@ INCLUDE_ASM("asm/nonmatchings/shop", ShopTextureLoadFix__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopFadeoutDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopPersonReadStart__Fii);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopPersonBuild__Fii);
+
+/**
+ * Draws the shopkeeper and points the menu camera at them.
+ *
+ * @mangled LocalShopPersonDraw__Fv
+ * @address 0x1E82B0
+ * @size 0xB8
+ */
+static void LocalShopPersonDraw();
 INCLUDE_ASM("asm/nonmatchings/shop", LocalShopPersonDraw__Fv);
-INCLUDE_ASM("asm/nonmatchings/shop", ShopPersonDraw__Fi);
+
+/**
+ * Draws the shopkeeper.
+ *
+ * @mangled ShopPersonDraw__Fi
+ * @address 0x1E8370
+ * @size 0x3C
+ */
+static void ShopPersonDraw(int) {
+    MenuTextureReload(ShopMenu.unk_196);
+    MenuPolygonDraw(0x80, LocalShopPersonDraw);
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", ShopMasterVectorSet__Fi);
 INCLUDE_ASM("asm/nonmatchings/shop", InitChargeShop__FPiii);
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopLimmitCheck__Fv);

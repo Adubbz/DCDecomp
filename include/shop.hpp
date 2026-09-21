@@ -245,24 +245,6 @@ void ShopPersonReadStart(int, int);
 void ShopPersonBuild(int, int);
 
 /**
- * Draws the shopkeeper and points the menu camera at them.
- *
- * @mangled LocalShopPersonDraw__Fv
- * @address 0x1E82B0
- * @size 0xB8
- */
-void LocalShopPersonDraw(void);
-
-/**
- * Draws the shopkeeper.
- *
- * @mangled ShopPersonDraw__Fi
- * @address 0x1E8370
- * @size 0x3C
- */
-void ShopPersonDraw(int);
-
-/**
  * Points the shopkeeper's model at the camera.
  *
  * @mangled ShopMasterVectorSet__Fi
