@@ -412,14 +412,10 @@ int _GET_CHR_ID(RS_STACKDATA *stack, int argc) {
     SetStack(stack, (int) UserStatus->cur_chara);
     return 1;
 }
-#ifdef NON_MATCHING
 int _GET_COL_HIT_ID(RS_STACKDATA *stack, int argc) {
     SetStack(stack, NowMonstorUnit->effect[NowMonstorUnit->unk_090].hit_slot);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_COL_HIT_ID__FP12RS_STACKDATAi);
-#endif
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_SCRIPT_ID__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_MONSTOR_POS__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_MONSTOR_FRM__FP12RS_STACKDATAi);
