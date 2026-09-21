@@ -388,8 +388,26 @@ int CMemoryCardAccess::SaveSysConfig() {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", Write__17CMemoryCardAccessFv);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @643__3);
+int CMemoryCardAccess::Write() {
+    char buffer[0x198];
+    int result;
+    int cmd;
+
+    result = 0;
+    sceMcChdir(this->port, 1, "/", NULL);
+    sceMcSync(MC_WAIT, &cmd, &result);
+    sceMcOpen(this->port, 1, "test", 0x202);
+    sceMcSync(MC_WAIT, &cmd, &result);
+    this->fd = result;
+    sceMcWrite(this->fd, buffer, 0x76F800);
+    sceMcSync(MC_WAIT, &cmd, &result);
+    sceMcFlush(this->fd);
+    sceMcSync(MC_WAIT, &cmd, &result);
+    sceMcClose(this->fd);
+    sceMcSync(MC_WAIT, &cmd, &result);
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", Convert__17CMemoryCardAccessFv);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @668__2);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @669__2);
