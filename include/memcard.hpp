@@ -37,7 +37,13 @@ struct MENU_ATORA_SEL {
     s16 board_pos; /**< Board position of the part that the cursor is on. */
     u8 unk_10[0x30];
     s16 *tip_list; /**< Chips that the player holds, as the chip list shows them. */
-    u8 unk_44[0x156];
+    u8 unk_44[0x13C];
+    float cursor_x; /**< Where the board's cursor icon draws, from the left of the screen. */
+    float cursor_y; /**< Where the board's cursor icon draws, from the top of the screen. */
+    s32 unk_188;
+    s32 step;       /**< What the screen is doing: 0 running, 1 fading in, 2 fading out, 10 a warning. */
+    s32 step_count; /**< Frames the screen has spent on its current step. */
+    u8 unk_194[6];
     s16 event_flag; /**< Whether the georama menu is running an event. */
     u8 unk_19C[0x10];
 };

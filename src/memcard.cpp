@@ -5,6 +5,7 @@
 #include "battle_globals.hpp"
 #include "clsmes.hpp"
 #include "dataread.hpp"
+#include "eastking.hpp"
 #include "editatra.hpp"
 #include "editpartsinfo.hpp"
 #include "gamepad.hpp"
@@ -47,6 +48,9 @@ extern int AtoraTextureReadBlock;
 
 /** The texture block that holds the board's town tags and names. */
 extern int AtoraTextureBaseBlock;
+
+/** Whether the board screen's texture block has finished loading. */
+extern int AtoraTextureEnterFlag;
 
 // The chip attachment record is opaque to every unit; only the unit's own
 // functions take a pointer to it.
@@ -1022,8 +1026,89 @@ static void AtoraTexInfoGet() {
     VillageBar = TexManager.GetTexture("viltag", AtoraTextureBaseBlock);
     VillageName = TexManager.GetTexture("vilname", AtoraTextureBaseBlock);
 }
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuAtoraSelect__Fv);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1502);
+
+void DrawMenuAtoraSelect() {
+    int alpha;
+    int tint;
+    int fade;
+
+    alpha = 0x80;
+    switch (MenuAtoraSel.step) {
+        case 1:
+            alpha = MenuAtoraSel.step_count * 8;
+            break;
+        case 2:
+            alpha = 0x80 - MenuAtoraSel.step_count * 8;
+            break;
+    }
+    if (alpha < 0) {
+        alpha = 0;
+    }
+    if (alpha > 0x80) {
+        alpha = 0x80;
+    }
+    if (MenuAtoraSel.step != 8) {
+        DrawAtoraSelect(alpha);
+        if (MenuAtoraSel.step == 0) {
+            DrawMenuObjectVibe(MenuAtoraSel.cursor_x, MenuAtoraSel.cursor_y, 1, MenuAtoraSel.unk_188);
+        }
+        if (MenuAtoraSel.step != 0 && AtoraTextureEnterFlag != 0) {
+            MenuAtoraSel.step_count++;
+        } else {
+            MenuAtoraSel.step_count = 0;
+        }
+        CTexture frame = *TexManager.GetTexture("frame_image", -1);
+        ((sceGsTex0 *) &frame.tex0)->bits.tcc = 0;
+        sceGsTexa texa = mgTexa;
+        texa.AEM = 1;
+        texa.TA0 = 0x80;
+        MGSetGsTEXA(&texa);
+        tint = 0;
+        fade = 0;
+        switch (MenuAtoraSel.step) {
+            case 1:
+                tint = 0x80 - MenuAtoraSel.step_count * 7;
+                break;
+            case 7:
+                fade = MenuAtoraSel.step_count * 2;
+                break;
+            case 9:
+                fade = 0x80 - MenuAtoraSel.step_count * 2;
+                break;
+            case 2:
+                tint = MenuAtoraSel.step_count * 5 + 0x40;
+                break;
+        }
+        if (tint < 0) {
+            tint = 0;
+        }
+        if (tint > 0x80) {
+            tint = 0x80;
+        }
+        if (fade < 0) {
+            fade = 0;
+        }
+        if (fade > 0x80) {
+            fade = 0x80;
+        }
+        CRect_i_ rect(320, 0, 320, 448);
+        DrawMenu2DSprite(&frame, rect, rect, 0x40, 0x40, 0x40, tint);
+        MGSetGsTEXA(NULL);
+        if (MenuAtoraSel.step == 7 || MenuAtoraSel.step == 9) {
+            AllFadeForMenu(fade);
+        }
+        if (MenuAtoraSel.step == 10) {
+            CommonMenuMes3.auto_pos = 5;
+            CommonMenuMes3.edge_alpha = 0x80;
+            DrawMsgAtraWarning(&CommonMenuMes3, 184, 150);
+        } else {
+            CommonMenuMes3.mes_made = -1;
+        }
+    }
+    if (MenuAtoraSel.step == 8) {
+        EastKingEventDraw();
+    }
+}
 INCLUDE_RODATA("asm/nonmatchings/memcard", @1664);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtoraSelect__Fi);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTextureEnter__Fv);
