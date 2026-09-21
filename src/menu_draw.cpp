@@ -82,7 +82,7 @@ static void DrawDontSetItemMark(int, int, int, int, int);
  * @address 0x0022F9D0
  * @size 0x100
  */
-static void DrawNowEquipWeaponMark(int x, int y, int weapon_no, int character_no, int alpha);
+static void DrawNowEquipWeaponMark(int x, int y, int top, int bottom, int alpha);
 
 /**
  * Draws the base layers of a personal inventory board.
@@ -692,7 +692,19 @@ void DrawPersonalBoard(int x, int y, int board_mode, int alpha, int) {
     MenuTextureReload(PerBoardTex->block);
     PersonalBoardOptionDraw(board_mode, max, x, y, PerBoardTex, alpha);
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawNowEquipWeaponMark__Fiiiii);
+
+static void DrawNowEquipWeaponMark(int x, int y, int top, int bottom, int alpha) {
+    int position = y;
+    int v = 0xC0;
+    int length = 0x28;
+
+    MenuTextureClip(position, v, length, top, bottom);
+    if (position + length < top || bottom <= position) {
+        return;
+    }
+    MenuTextureReload(PerBoardTex->block);
+    DrawMenu2DSprite(PerBoardTex, CRect_i_(x, position, 0x28, length), CRect_i_(0x114, v, 0x28, length), alpha);
+}
 INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonIconDraw__Fiiiiiii);
 
 void PersonalBoardDrawWaku(int x, int y, CTexture *texture, int alpha) {
