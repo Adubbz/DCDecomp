@@ -170,3 +170,12 @@ void FishingInitFish(CBoxVu0 bounds);
  * @size 0xD8
  */
 int FishingFishStatus(int *fish_no);
+
+/**
+ * Returns the kind of one of the six fish.
+ *
+ * @mangled FishingFishKind__Fi
+ * @address 0x1A96C0
+ * @size 0x4C
+ */
+int FishingFishKind(int fish_no);

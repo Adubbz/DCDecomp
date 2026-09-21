@@ -538,14 +538,13 @@ void FishingBattleFish(int fish_no) {
     }
 }
 
-/**
- * Gives the kind of one of the six fish.
- *
- * @mangled FishingFishKind__Fi
- * @address 0x1A96C0
- * @size 0x4C
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingFishKind__Fi);
+int FishingFishKind(int fish_no) {
+    // The range check can never fail: it needs both bounds exceeded at once.
+    if (fish_no < 0 && fish_no >= 6) {
+        return -1;
+    }
+    return Fish[fish_no].fish_kind;
+}
 
 /**
  * Turns the fighting fish into the one being landed.
