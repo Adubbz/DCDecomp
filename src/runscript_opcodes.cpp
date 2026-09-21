@@ -445,7 +445,12 @@ int _GET_STATUS_BIN2(RS_STACKDATA *stack, int argc) {
     SetStack(stack, status);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_COLLISION_WIDTH__FP12RS_STACKDATAi);
+int _SET_COLLISION_WIDTH(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+
+    NowMonstorUnit->monster[monster_no].collision_radius = GetStackFloat(stack);
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_NEAR_MONSTER__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _BOSS_FADE_OUT__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _CHEKC_FADE_OUT__FP12RS_STACKDATAi);
