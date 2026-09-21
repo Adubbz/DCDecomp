@@ -509,8 +509,17 @@ static void BtlDrawOption() {
     setbilinear(0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlDrawSave__Fv);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @924__2);
+/**
+ * Draws the saving notice over the menu and restores unfiltered rendering.
+ *
+ * @mangled BtlDrawSave__Fv
+ * @address 0x1F5860
+ * @size 0x34
+ */
+static void BtlDrawSave() {
+    DrawMenuSave("frame_image");
+    setbilinear(0);
+}
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlMenuTexBlockEnter__Fv);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @926__2);

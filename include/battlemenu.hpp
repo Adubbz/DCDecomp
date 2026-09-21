@@ -258,15 +258,6 @@ void DngComStatus(int, int, int, int);
 void DrawSelCharaStatus(float, float, int, int, int, int, int, int);
 
 /**
- * Draws the saving notice over the menu.
- *
- * @mangled BtlDrawSave__Fv
- * @address 0x1F5860
- * @size 0x34
- */
-void BtlDrawSave(void);
-
-/**
  * Looks up every texture the menu draws from and holds them.
  *
  * @mangled BtlMenuTexBlockEnter__Fv

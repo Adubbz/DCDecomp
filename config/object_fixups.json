@@ -50,6 +50,11 @@
       "@2448"
     ]
   },
+  "src/battlemenu.cpp": {
+    "rodata_exports": [
+      "@924__2"
+    ]
+  },
   "src/ebattle.cpp": {
     "rodata_exports": [
       "@314__2",
