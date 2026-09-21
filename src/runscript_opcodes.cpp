@@ -516,7 +516,22 @@ int _SET_GLOBAL_INT(RS_STACKDATA *stack, int argc) {
     return 1;
 }
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_GLOBAL_INT__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_OBJ_POS__FP12RS_STACKDATAi__2);
+/**
+ * Reads the world position of a named frame of the monster's model.
+ */
+static int _GET_OBJ_POS(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+    CFrame *frame = NowMonstorUnit->chara[monster_no][0].frame->SearchFrame(GetStackString(stack++));
+    float local[4];
+    float world[4];
+
+    sceVu0CopyVector(local, frame->position);
+    frame->GetWorldPosition(world, local);
+    SetStack(stack++, world[0]);
+    SetStack(stack++, world[1]);
+    SetStack(stack, world[2]);
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_ROTATION_X__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _LOOKAT__FP12RS_STACKDATAi);
 int _SET_MOTION_CHANGE_STEP(RS_STACKDATA *stack, int argc) {

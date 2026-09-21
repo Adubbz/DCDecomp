@@ -1074,14 +1074,16 @@
       "GetStackFloat__FP12RS_STACKDATA": "GetStackFloat__FP12RS_STACKDATA__3",
       "GetStackString__FP12RS_STACKDATA": "GetStackString__FP12RS_STACKDATA__3",
       "SetStack__FP12RS_STACKDATAi": "SetStack__FP12RS_STACKDATAi__3",
-      "SetStack__FP12RS_STACKDATAf": "SetStack__FP12RS_STACKDATAf__3"
+      "SetStack__FP12RS_STACKDATAf": "SetStack__FP12RS_STACKDATAf__3",
+      "_GET_OBJ_POS__FP12RS_STACKDATAi": "_GET_OBJ_POS__FP12RS_STACKDATAi__2"
     },
     "globalize_symbols": [
       "GetStackInt__FP12RS_STACKDATA__3",
       "GetStackFloat__FP12RS_STACKDATA__3",
       "GetStackString__FP12RS_STACKDATA__3",
       "SetStack__FP12RS_STACKDATAi__3",
-      "SetStack__FP12RS_STACKDATAf__3"
+      "SetStack__FP12RS_STACKDATAf__3",
+      "_GET_OBJ_POS__FP12RS_STACKDATAi__2"
     ],
     "rodata_exports": [
       "@870"

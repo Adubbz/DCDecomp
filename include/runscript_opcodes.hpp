@@ -624,16 +624,6 @@ int _SET_GLOBAL_INT(RS_STACKDATA *stack, int count);
 int _GET_GLOBAL_INT(RS_STACKDATA *stack, int count);
 
 /**
- * Reads the world position of a named frame of the monster's model.
- *
- * @mangled _GET_OBJ_POS__FP12RS_STACKDATAi__2
- * @address 0x1E5240
- * @size 0xC8
- * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
- */
-int _GET_OBJ_POS(RS_STACKDATA *stack, int count);
-
-/**
  * Pitches the monster towards a point.
  *
  * @mangled _SET_ROTATION_X__FP12RS_STACKDATAi
