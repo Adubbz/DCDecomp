@@ -26,11 +26,6 @@ public:
      */
     void InitPos();
 
-private:
-    // CSaveData mirrors reset_pos into its own config[16], and sets it from
-    // the memory card data in InvertConfig.
-    friend class CSaveData;
-
     s16 reset_pos; /**< Set to zero to keep the menu positions. Any other value discards them. */
     s16 pos[10];   /**< Contains the cursor position of each menu. */
     s16 mode[10];  /**< Contains the mode of each menu. */
