@@ -294,7 +294,22 @@ void MenuTextureDelete(int *blocks) {
         printf("delete block: %d\n", blocks[i]);
     }
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", AllFillBoxForMenu__FUcUcUcUc);
+
+void AllFillBoxForMenu(unsigned char r, unsigned char g, unsigned char b, unsigned char alpha) {
+    if (r < 0 || r > 0xFF) {
+        r = 0x80;
+    }
+    if (g < 0 || g > 0xFF) {
+        g = 0x80;
+    }
+    if (b < 0 || b > 0xFF) {
+        b = 0x80;
+    }
+    if (alpha < 0 || alpha > 0xFF) {
+        alpha = 0x80;
+    }
+    MGFillBox(CRect_i_(0, 0, 0x2800, 0x1C00), r, g, b, alpha);
+}
 
 void AllFadeForMenu(int alpha) {
     AllFillBoxForMenu(0, 0, 0, (unsigned char) alpha);
