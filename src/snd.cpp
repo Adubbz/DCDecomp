@@ -924,7 +924,20 @@ void SndStopAllSe() {
     CSnd.StopVoice(1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndSoundLoad__Fi);
+int SndSoundLoad(int set_no) {
+    char archive_name[128];
+    char config_name[32];
+
+    if (now_sound_set == set_no) {
+        return 0;
+    }
+    GetSoundFile(set_no, archive_name, config_name);
+    if (LoadFile2(archive_name, snd_read_buf, 0, 0)) {
+        SetSoundFile(set_no, snd_read_buf, config_name);
+        return 1;
+    }
+    return 0;
+}
 /**
  * Starts loading one sound-effect set in the background.
  *
