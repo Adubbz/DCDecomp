@@ -543,7 +543,29 @@ static EDITPARTS_INFO *SearchAtoraInfo(int index) {
     return NULL;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraAllTipGet__Fi);
+static int AtoraAllTipGet(int parts_no) {
+    EDITPARTS_INFO *info;
+    int result;
+    int i;
+    EDITPARTS_ELEMENT *element;
+
+    info = CommonMenuAtoraInfo->GetPartsInfo(parts_no);
+    if (info == NULL) {
+        return 0;
+    }
+    result = 1;
+    for (i = 0; i < 6; i++) {
+        element = &info->elements[i];
+        if (element == NULL) {
+            break;
+        }
+        if (0 <= element->id && element->enabled == 0) {
+            result = 0;
+            break;
+        }
+    }
+    return result;
+}
 
 static int AlreadyPeopleTalk(int map_no, int chip_no) {
     SV_GRD_NPC *npc;
