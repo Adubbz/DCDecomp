@@ -621,8 +621,44 @@ static void ForBackMenu() {
     SysCur[1] = position[1] + 20;
 }
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", InitMenuChara__FP1);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1348);
+/**
+ * Reads the character page's models and textures and starts its turntable.
+ *
+ * @mangled InitMenuChara__FP1
+ * @address 0x1F72E0
+ * @size 0x158
+ */
+static void InitMenuChara(u_long128 *buffer) {
+    StartReadBG();
+    LoadFileBGMenuData("charatex.img", buffer);
+    ReadBG();
+    BtlMenuExReadFlag = 0;
+    MenuChara.unk_03 = 1;
+    MenuChara.unk_04 = 0.0f;
+    chara_r_long = 118.0f;
+    BtlEffectCt = 0.0f;
+    MenuCharaMove = 0;
+    SysCur[0] = 60.0f;
+    SysCur[1] = 160.0f;
+    CDngStatusData *status = BtlMenuStatusPt;
+    int chara = status->unk_04;
+    MenuChara.unk_00 = chara;
+    for (int i = 0; i < MenuChara.unk_02; i++) {
+        SysChara[i].unk_01 = i - chara;
+        SysChara[i].unk_00 = i;
+        SysChara[i].unk_04 = 0;
+        SysChara[i].unk_08 = 0;
+        if (SysChara[i].unk_01 < 0) {
+            SysChara[i].unk_01 = MenuChara.unk_02 + SysChara[i].unk_01;
+        }
+    }
+    int message_no = chara + 30;
+    if (status->party_size - 1 < chara) {
+        message_no = 39;
+    }
+    CommonMenuMes2.mes_made = -1;
+    CommonMenuMes2.MakeMesWin(message_no);
+}
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1363__3);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1511__3);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1512__3);

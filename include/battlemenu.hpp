@@ -333,15 +333,6 @@ void BattleMenuSelect(void);
 int ToFromSelect(int);
 
 /**
- * Reads the character page's models and textures and starts its turntable.
- *
- * @mangled InitMenuChara__FP1
- * @address 0x1F72E0
- * @size 0x158
- */
-void InitMenuChara(void /* CW back-ref target unresolved */ *);
-
-/**
  * Handles input on the character page, including the turntable and the equipment list.
  *
  * @mangled BattleMenuCharaKey__Fv
