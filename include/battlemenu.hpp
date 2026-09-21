@@ -838,15 +838,6 @@ void IsLoadMapNo(void);
 void MapNoTransFunc(int);
 
 /**
- * Runs the options page and returns to the menu bar when it closes.
- *
- * @mangled BattleMenuOptionKey__Fv
- * @address 0x20AE60
- * @size 0x108
- */
-void BattleMenuOptionKey(void);
-
-/**
  * Runs the save page and returns to the menu bar when it closes.
  *
  * @mangled BattleMenuSaveKey__Fv

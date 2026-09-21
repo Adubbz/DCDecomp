@@ -1149,7 +1149,46 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", GetVisitInfo__Fii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", IsLoadMapNo__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", MapNoTransFunc__Fi);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuOptionKey__Fv);
+/**
+ * Runs the options page and returns to the menu bar when it closes.
+ *
+ * @mangled BattleMenuOptionKey__Fv
+ * @address 0x20AE60
+ * @size 0x108
+ */
+static void BattleMenuOptionKey() {
+    int transition_done = 0;
+
+    switch (BtlEffectFlag) {
+        case 1:
+            transition_done = ToFromSelect(0);
+            if (transition_done != 0) {
+                BtlEffectFlag = -1;
+                BtlEffectCt = 0.0f;
+            }
+            break;
+        case 0:
+            transition_done = ToFromSelect(1);
+            break;
+    }
+
+    if (BtlEffectFlag != -1) {
+        BtlEffectCt += 1.0f;
+    } else {
+        BtlEffectCt = 0.0f;
+    }
+
+    int closed = MenuOptionKey();
+    if (OptionMenuFadeOutStart() != 0) {
+        BtlEffectFlag = 0;
+        if (transition_done != 0 && closed != 0) {
+            MenuSelect[0] = 6;
+            BattleMenuFlag = 22;
+            ForBackMenu();
+            BattleMenuFlag = 0;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuSaveKey__Fv);
 
