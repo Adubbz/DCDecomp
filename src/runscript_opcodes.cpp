@@ -23,6 +23,19 @@
 extern int GL_INT[10];
 
 /**
+ * Describes one opcode a monster script can call and the number that calls it.
+ */
+struct BT_EVENT_EXTERNAL_FUNCTION {
+    int (*function)(RS_STACKDATA *, int); /**< Native function the opcode runs. */
+    int operation;                        /**< Number the script calls the opcode by. */
+};
+
+/**
+ * Opcodes of the monster scripts, ended by an entry with no function.
+ */
+extern BT_EVENT_EXTERNAL_FUNCTION ext_func_info__3[];
+
+/**
  * Opcode table the monster scripts dispatch through, indexed by operation number.
  */
 extern int (*ext_func[256])(RS_STACKDATA *, int);
@@ -757,6 +770,29 @@ int BtSetEventScript(CRunScript *script, char *program, CDataAlloc2<1> *arena) {
     script->ext_func(ext_func, 256);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", BtSetEventExtendTable__Fv);
-INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1452);
-INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1453);
+void BtSetEventExtendTable() {
+    int i;
+
+    for (i = 0; i < 256; i++) {
+        ext_func[i] = NULL;
+    }
+    for (i = 0;; i++) {
+        if (ext_func_info__3[i].function == NULL) {
+            break;
+        }
+        int j;
+        for (j = 0; j < i; j++) {
+            if (ext_func_info__3[i].operation == ext_func_info__3[j].operation) {
+                printf("same ext_func_no!!!\n");
+                while (1) {
+                }
+            }
+        }
+        int operation = ext_func_info__3[i].operation;
+        if (operation < 0 || operation >= 256) {
+            printf("ext func over!!");
+        } else {
+            ext_func[operation] = ext_func_info__3[i].function;
+        }
+    }
+}
