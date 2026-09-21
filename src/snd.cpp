@@ -370,7 +370,6 @@ INCLUDE_ASM("asm/nonmatchings/snd", LensFlare__FP8CTexturePfUcUcUc);
  * @address 0x1591A0
  * @size 0x60
  */
-#ifdef NON_MATCHING
 void SndInit(void) {
     if (init_snd == 0) {
         CSnd.Init(0, 0, 0, 0);
@@ -378,9 +377,6 @@ void SndInit(void) {
         SndInitialize(4, 0x1E, 4, 5);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", SndInit__Fv);
-#endif
 #ifdef NON_MATCHING
 void SndInitialize(int, int, int, int) {
     snd_read_buf = read_buffer;
