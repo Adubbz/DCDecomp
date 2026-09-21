@@ -155,15 +155,6 @@ int CommonShopLoop(void);
 void ShopPolySetInit(int, int);
 
 /**
- * Records the line the shopkeeper is to say and how it is to be shown.
- *
- * @mangled SetItemShopTalkMode__Fii
- * @address 0x1E71D0
- * @size 0x50
- */
-void SetItemShopTalkMode(int, int);
-
-/**
  * Draws the icons of one shop board row.
  *
  * @mangled ShopIconDraw__FPsPUciiiiii

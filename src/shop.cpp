@@ -274,7 +274,27 @@ int CommonShopLoop() {
 }
 
 INCLUDE_ASM("asm/nonmatchings/shop", ShopPolySetInit__Fii);
-INCLUDE_ASM("asm/nonmatchings/shop", SetItemShopTalkMode__Fii);
+
+/**
+ * Records the line the shopkeeper is to say and how it is to be shown.
+ *
+ * @mangled SetItemShopTalkMode__Fii
+ * @address 0x1E71D0
+ * @size 0x50
+ */
+static void SetItemShopTalkMode(int talk_mode, int msg_mode) {
+    if (talk_mode >= 0) {
+        ShopMenu.unk_180 = talk_mode;
+    }
+    if (msg_mode >= 0) {
+        ShopMenu.unk_19A = msg_mode;
+    }
+    if (ShopMenu.unk_19A == 1) {
+        CommonMenuMes3.mes_made = -1;
+        ShopMenu.unk_19E = -1;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", ShopIconDraw__FPsPUciiiiii);
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopLRDraw__Fi);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopCurDraw__Fiiiiiii);
