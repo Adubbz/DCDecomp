@@ -506,6 +506,8 @@ SECTIONS
         main.data.part6h.s.o (.data) // 0x002945a0
         menu_draw.cpp.o (.mdrawdata2) // 0x002954f0
         main.data.part6i.s.o (.data) // 0x002955f0
+        menu_draw.cpp.o (.mdrawdata3) // 0x00295638
+        main.data.part6j.s.o (.data) // 0x00295648
         weapon_buildup.cpp.o (.data) // 0x00295810
         main.data.part6d.s.o (.data) // 0x00295830
         weaponlevelup.cpp.o (.data)  // 0x00295840

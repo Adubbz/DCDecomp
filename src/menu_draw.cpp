@@ -1136,7 +1136,15 @@ int SeitonAttachBoardSub(ATTACH_LIST *attachments) {
 }
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonAttachBoard__FP11ATTACH_LIST);
 
-INCLUDE_ASM("asm/nonmatchings/menu_draw", WhatIsKindofItem__Fi);
+int WhatIsKindofItem(int item_no) {
+    COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
+
+    if (info == NULL) {
+        return -1;
+    }
+    int board_kind[3] = {2, 0, 1};
+    return board_kind[info->kind];
+}
 
 int WhoIsWeaponEquip(int weapon_no) {
     COM_ITEM_INFO *info;
