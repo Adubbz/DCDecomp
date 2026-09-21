@@ -576,7 +576,12 @@ int _SET_IBOX_ANGLE(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_IBOX_FINISH__FP12RS_STACKDATAi);
+int _SET_IBOX_FINISH(RS_STACKDATA *stack, int count) {
+    NowDngMap->boxes[BtEventInfo.unk_AC].lid_angle = -30.0f;
+    NowDngMap->boxes[BtEventInfo.unk_AC].unk_24 = 0;
+    return 1;
+}
+
 int _GET_PIERO_ITEM(RS_STACKDATA *stack, int count) {
     int item0, item1;
 
