@@ -131,16 +131,6 @@ GRADATION_COLOR_INFO2 *GetGradationColorInfo2(int index);
 WEAPON_HAVE *GetNowSelectWeapon(void);
 
 /**
- * Reports whether the party may leave the floor: freely, with an escape item, or not at
- * all.
- *
- * @mangled EscapeDungeonMode__Fv
- * @address 0x1F3F40
- * @size 0x5C
- */
-int EscapeDungeonMode(void);
-
-/**
  * Sets whether the party is escaping the dungeon.
  *
  * @mangled SetEscapeDngFlag__Fi
@@ -175,15 +165,6 @@ void SetInteriorOutFlag(int flag);
  * @size 0xC
  */
 s16 GetInteriorOutFlag(void);
-
-/**
- * Draws the two-line yes-or-no plate the dungeon menu asks with.
- *
- * @mangled DrawDngYesNoDialog__Fiii
- * @address 0x1F3FE0
- * @size 0xB8
- */
-void DrawDngYesNoDialog(int x, int y, int mode);
 
 /**
  * Fills in the icon numbers the menu bar draws for one mode.

@@ -111,14 +111,10 @@ int IsDefaultWeapon(int weapon_no) {
 #else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", IsDefaultWeapon__Fi);
 #endif
-#ifdef NON_MATCHING
 void SetNowEquipWeaponDataForMsg(int item_no, int slot) {
     ItemMenuMode.message_item_no = item_no;
     ItemMenuMode.message_slot = slot;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", SetNowEquipWeaponDataForMsg__Fii);
-#endif
 #ifdef NON_MATCHING
 void GetNowEquipWeaponDataForMsg(int &item_no, int &slot) {
     COM_ITEM_INFO *item_info = GetCommonItemInfo(ItemMenuMode.message_item_no);
@@ -132,13 +128,9 @@ void GetNowEquipWeaponDataForMsg(int &item_no, int &slot) {
 #else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetNowEquipWeaponDataForMsg__FRiRi);
 #endif
-#ifdef NON_MATCHING
 GRADATION_COLOR_INFO2 *GetGradationColorInfo2(int index) {
     return &MenuColorInfo2[index];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", GetGradationColorInfo2__Fi);
-#endif
 #ifdef NON_MATCHING
 WEAPON_HAVE *GetNowSelectWeapon(void) {
     return &BtlMenuStatusPt->chara_weapons[WepMenu.chara][WepMenu.weapon_slot];
@@ -146,8 +138,15 @@ WEAPON_HAVE *GetNowSelectWeapon(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetNowSelectWeapon__Fv);
 #endif
-#ifdef NON_MATCHING
-int EscapeDungeonMode(void) {
+/**
+ * Reports whether the party may leave the floor: freely, with an escape item, or not at
+ * all.
+ *
+ * @mangled EscapeDungeonMode__Fv
+ * @address 0x1F3F40
+ * @size 0x5C
+ */
+static int EscapeDungeonMode(void) {
     int mode = 0;
 
     if (BtlMenuStatusPt->SearchItemIndexNo(ITEM_ESCAPE_POWDER) >= 0) {
@@ -158,9 +157,6 @@ int EscapeDungeonMode(void) {
     }
     return mode;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", EscapeDungeonMode__Fv);
-#endif
 
 void SetEscapeDngFlag(int flag) {
     EscapeDngFlg = flag;
@@ -178,8 +174,14 @@ s16 GetInteriorOutFlag() {
     return RoomOutFlag;
 }
 
-#ifdef NON_MATCHING
-void DrawDngYesNoDialog(int x, int y, int mode) {
+/**
+ * Draws the two-line yes-or-no plate the dungeon menu asks with.
+ *
+ * @mangled DrawDngYesNoDialog__Fiii
+ * @address 0x1F3FE0
+ * @size 0xB8
+ */
+static void DrawDngYesNoDialog(int x, int y, int mode) {
     CRect_i_ dst(x, y, 0x60, 0x20);
     CRect_i_ src(0, 0, 0x60, 0x20);
 
@@ -189,9 +191,6 @@ void DrawDngYesNoDialog(int x, int y, int mode) {
         src.y += 0x20;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawDngYesNoDialog__Fiii);
-#endif
 
 /**
  * Gives how many icons the battle menu ring shows, which depends on the menu mode and
