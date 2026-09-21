@@ -40,7 +40,7 @@ void CMemoryCardAccess::Initialize() {
     this->port = 0;
     this->file_no = 0;
     this->fd = -1;
-    memset(&this->error_code, 0, 0x14);
+    memset(&this->error, 0, sizeof(this->error));
     this->SetVersion("darkcloudVer1.9");
     this->func_no = MC_OPERATION_IDLE;
     this->unk_E0 = 0x3D;
@@ -140,10 +140,10 @@ int CMemoryCardAccess::Step() {
             result = McUnFormatForDebug();
             break;
         case MC_OPERATION_DELETE:
-            if (error_code == 0) {
+            if (error.code == 0) {
                 target_file = file_no;
             } else {
-                target_file = error_file_no;
+                target_file = error.file_no;
             }
             result = DeleteFile(target_file);
             break;

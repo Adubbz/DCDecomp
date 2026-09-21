@@ -108,6 +108,19 @@ enum MC_OPERATION {
 // clang-format on
 
 /**
+ * Records what stopped the last memory card operation.
+ */
+struct MC_ERROR_INFO {
+    s32 code;        /**< Kind of error that stopped the last operation, zero while none did. */
+    s32 func_no;     /**< Operation that the class was running when the error came. */
+    s32 file_no;     /**< Save file that the class was working on when the error came. */
+    s32 step;        /**< Step that the operation had reached when the error came. */
+    s32 retry_count; /**< Failed polls of the current read or delete, which stop at 101 and 121. */
+};
+
+STATIC_ASSERT(sizeof(MC_ERROR_INFO) == 0x14);
+
+/**
  * Runs the memory card operations of the game one step at a time.
  */
 class CMemoryCardAccess {
@@ -359,7 +372,7 @@ public:
      * @address 0x216A50
      * @size 0x19C
      */
-    int McError(int error);
+    int McError(int result);
 
     /**
      * Waits until the memory card library has no command left to finish.
@@ -382,11 +395,7 @@ public:
 public:
     s32 port;               /**< Port that every command of the class names. */
     s32 file_no;            /**< Save file that the current operation works on. */
-    s32 error_code;         /**< Kind of error that stopped the last operation, zero while none did. */
-    s32 error_func_no;      /**< Operation that the class was running when the error came. */
-    s32 error_file_no;      /**< Save file that the class was working on when the error came. */
-    s32 error_step;         /**< Step that the operation had reached when the error came. */
-    s32 retry_count;        /**< Failed polls of the current read or delete, which stop at 101 and 121. */
+    MC_ERROR_INFO error;    /**< What stopped the last operation. */
     char version[0x20];     /**< Version string that every save file carries after its data. */
     char dir_name[0x20];    /**< Name of the save directory on the card. */
     char file_name[0x20];   /**< Name that every save file of the game starts with. */
