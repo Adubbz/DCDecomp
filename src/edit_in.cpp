@@ -413,7 +413,8 @@ static void CommandCD(void **arguments) {
  * @size 0x8
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandOBJ_ANIME__FPPv__2);
+static void CommandOBJ_ANIME(void **) {
+}
 
 /**
  * Reserved effect-setup hook with no operation.
