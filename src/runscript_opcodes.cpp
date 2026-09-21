@@ -283,7 +283,27 @@ int _STATUS_SET_ALPHA(RS_STACKDATA *stack, int argc) {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_CHK_ALPHA__FP12RS_STACKDATAi);
+int _STATUS_CHK_ALPHA(RS_STACKDATA *stack, int argc) {
+    int done;
+    int monster_no = NowMonstorUnit->unk_090;
+    int opaque;
+
+    done = 0;
+    opaque = 0;
+
+    if (argc == 2) {
+        opaque = GetStackInt(stack++);
+    }
+    if (opaque == 0) {
+        if (NowMonstorUnit->monster[monster_no].palette_alpha <= 0.0f) {
+            done = 1;
+        }
+    } else if (NowMonstorUnit->monster[monster_no].palette_alpha >= 128.0f) {
+        done = 1;
+    }
+    SetStack(stack, done);
+    return 1;
+}
 int _STATUS_SET_DEAD(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
 
