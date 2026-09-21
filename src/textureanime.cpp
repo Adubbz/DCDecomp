@@ -6,13 +6,11 @@
 #include "scriptinterpreter.hpp"
 #include "texture.hpp"
 
-#ifdef NON_MATCHING
 extern CTextureAnime *pTexAnime;
 extern int now_group;
 extern TAG_PARAM Command__4[];
 extern void (*CommandExe__4[])(void **arguments);
 extern int stop_anime__13CTextureAnime;
-#endif
 
 void CTextureTexAnime::Copy(CTexture *texture) {
     if (texture != NULL) {
@@ -214,7 +212,6 @@ CTexAnimeData *CTextureAnime::NewTexAnimeGroupData(int group) {
     }
     return record;
 }
-#ifdef NON_MATCHING
 int CTextureAnime::EnterTexAnime(CTexAnimeData *source) {
     CTexAnimeData *record = NewTexAnimeGroupData(source->unk_02);
     if (record == NULL) {
@@ -237,9 +234,6 @@ int CTextureAnime::EnterTexAnime(CTexAnimeData *source) {
     record->scroll_y_step = source->scroll_y_step;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/textureanime", EnterTexAnime__13CTextureAnimeFP13CTexAnimeData);
-#endif
 void CTextureAnime::DisableAll() {
     for (int group = 0; group < 24; group++) {
         Disable(group);
