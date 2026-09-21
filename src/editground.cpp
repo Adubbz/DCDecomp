@@ -395,7 +395,67 @@ void CEditGround::StepWater() {
 }
 
 INCLUDE_ASM("asm/nonmatchings/editground", DrawWaterSurface__11CEditGroundFP7CCamera);
-INCLUDE_ASM("asm/nonmatchings/editground", DrawWater__11CEditGroundFi);
+
+void CEditGround::DrawWater(int pass) {
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR corner;
+    CMapParts *object = parts;
+    int i;
+
+    for (i = 0; i < 128; i++, object++) {
+        if (suppress_water) {
+            break;
+        }
+        if (object->unk_0E8 < 0) {
+            continue;
+        }
+        if (object->unk_0F4 >= 0 && unk_00014[object->unk_0F4] == 0) {
+            continue;
+        }
+        CMapParts *water = &river_parts[7];
+        object->GetPosition(position);
+        switch (object->unk_118) {
+            case 2:
+            case 5:
+            case 3:
+                water->SetPosition(position);
+                water->Draw();
+                break;
+            case 4:
+                if (object->unk_0F4 < 0) {
+                    break;
+                }
+                if (object->GetWidth() != 2) {
+                    break;
+                }
+                if (object->GetHeight() != 2) {
+                    break;
+                }
+                float size = areas[object->unk_0F4]->GetUnitSize();
+                position[0] += 0.5f * size;
+                position[2] += 0.5f * size;
+                water->SetPosition(position);
+                water->Draw();
+                sceVu0CopyVector(corner, position);
+                corner[0] = position[0] - size;
+                water->SetPosition(corner);
+                water->Draw();
+                corner[2] = position[2] - size;
+                water->SetPosition(corner);
+                water->Draw();
+                corner[0] = position[0];
+                water->SetPosition(corner);
+                water->Draw();
+                break;
+        }
+    }
+    for (int j = 0; j < 64; j++) {
+        if (fixed_parts[j].unk_0E4 == pass) {
+            fixed_parts[j].Draw();
+        }
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", DrawRipple__11CEditGroundFi);
 INCLUDE_ASM("asm/nonmatchings/editground", DrawShadow__11CEditGroundFiff);
 INCLUDE_ASM("asm/nonmatchings/editground", DrawPartsCursor__11CEditGroundFiPfPfiPfi);
