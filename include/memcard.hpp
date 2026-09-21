@@ -32,7 +32,8 @@ STATIC_ASSERT(sizeof(ATORA_TIP_HAVE) == 0x14);
  * Holds the state of the georama board screen.
  */
 struct MENU_ATORA_SEL {
-    u8 unk_00[0xE];
+    u8 unk_00[0xC];
+    s16 map_no;    /**< Georama that the board shows. */
     s16 board_pos; /**< Board position of the part that the cursor is on. */
     u8 unk_10[0x30];
     s16 *tip_list; /**< Chips that the player holds, as the chip list shows them. */
@@ -365,6 +366,11 @@ extern s32 CursorVibeCnt;
 extern CEditPartsInfo *CommonMenuAtoraInfo;
 
 /**
+ * The texture that the georama board's plates, gauges and frames draw from.
+ */
+extern CTexture *Sozai;
+
+/**
  * The texture of a chip socket whose chip has been placed.
  */
 extern CTexture *HoleGold;
@@ -378,3 +384,8 @@ extern CTexture *HoleGray;
  * The state of the georama board screen.
  */
 extern MENU_ATORA_SEL MenuAtoraSel;
+
+/**
+ * The message file that the georama board's messages are read into.
+ */
+extern short *GetAtraMsgReadBuf;
