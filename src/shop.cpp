@@ -2431,7 +2431,9 @@ static FISH_EXCHANGE_ITEM *GetExchangeItemList(int index) {
     return &exitemlst[index];
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", GetMardanGareyanFlag__Fv);
+int GetMardanGareyanFlag() {
+    return SaveData->GetMardanGareyanFlag();
+}
 
 void SetAlreadyGetMardanWeapon(int value) {
     SaveData->SetGameFlag(0xCA, value);
