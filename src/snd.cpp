@@ -1925,7 +1925,42 @@ void setColSprite(sceVif1Packet *packet, int *top_left, int *top_right, int *bot
     sceVif1PkCloseDirectCode(packet);
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", set2DSpriteC4__FP13sceVif1PacketRC8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBA);
+void set2DSpriteC4(sceVif1Packet *packet, const CRect_i_ &screen, spRGBA *top_left,
+                   spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right) {
+    sceGsTest test;
+    sceGsZbuf zbuf;
+    float q = 1.0f;
+
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, SCE_GS_SET_TEX1(1, 0, 1, 1, 0, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
+                     SCE_GS_SET_PRIM(4, 1, 0, 0, 1, 0, 0, 0, 0));
+    test = mgPixelTest;
+    test.bits.ate = 0;
+    test.bits.aref = 0;
+    test.bits.atst = SCE_GS_ALWAYS;
+    test.bits.zte = 1;
+    test.bits.ztst = SCE_GS_ALWAYS;
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &test);
+    zbuf = mgZBuffer;
+    zbuf.bits.zmsk = 1;
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(top_left->r, top_left->g, top_left->b, top_left->a, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(top_right->r, top_right->g, top_right->b, top_right->a, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, (screen.y << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(bottom_left->r, bottom_left->g, bottom_left->b, bottom_left->a, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, ((screen.y + screen.height) << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(bottom_right->r, bottom_right->g, bottom_right->b, bottom_right->a, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, ((screen.y + screen.height) << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_iif);
 INCLUDE_ASM("asm/nonmatchings/snd", set2DSpriteRot__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_iifUcUcUcUc);
 /**
