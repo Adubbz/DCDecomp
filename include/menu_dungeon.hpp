@@ -5,15 +5,6 @@
 #include "menu_draw.hpp"
 
 /**
- * Adds one attachment's values into another, scaled by a factor.
- *
- * @mangled PlusAttachmentVolume__FP11ATTACH_LISTP11ATTACH_LISTf
- * @address 0x225810
- * @size 0x158
- */
-void PlusAttachmentVolume(ATTACH_LIST *, ATTACH_LIST *, float);
-
-/**
  * Returns how much a weapon's attachments raise one of its values.
  *
  * @mangled GetWeaponAttachStatusUp__FP11WEAPON_HAVEi
@@ -69,15 +60,6 @@ int GetAttachVolumeForMsg(ATTACH_LIST *);
 int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor);
 
 /**
- * Restores the pad and textures when the dungeon entrance menu closes.
- *
- * @mangled ExitDunEnterMenu__Fv
- * @address 0x226520
- * @size 0x70
- */
-void ExitDunEnterMenu(void);
-
-/**
  * Runs one frame of the dungeon entrance menu, and returns its result once it closes.
  *
  * @mangled DunEnterMenuLoop__Fv
@@ -85,87 +67,6 @@ void ExitDunEnterMenu(void);
  * @size 0x8C
  */
 int DunEnterMenuLoop(void);
-
-/**
- * Handles key input on the dungeon entrance menu.
- *
- * @mangled DunEnterMenuKey__Fv
- * @address 0x226620
- * @size 0x6EC
- */
-int DunEnterMenuKey(void);
-
-/**
- * Draws the dungeon entrance menu.
- *
- * @mangled DunEnterDraw__Fv
- * @address 0x226D10
- * @size 0x538
- */
-void DunEnterDraw(void);
-
-/**
- * Draws the frame of the dungeon entrance board.
- *
- * @mangled DunEnterBoardWaku__Fiii
- * @address 0x227250
- * @size 0x4AC
- */
-void DunEnterBoardWaku(int, int, int);
-
-/**
- * Draws the dungeon entry board.
- *
- * @mangled DunEnterBoard__Fiii
- * @address 0x227700
- * @size 0x7C0
- */
-void DunEnterBoard(int, int, int);
-
-/**
- * Draws a number right to left, one digit at a time, clipped to the board.
- *
- * @mangled DrawEnemyNum__Fiiiiii
- * @address 0x227EC0
- * @size 0x154
- */
-void DrawEnemyNum(int, int, int, int, int, int);
-
-/**
- * Draws the collected Atla count on the dungeon entrance board.
- *
- * @mangled DrawGetAtoraNumBoard__Fiiiiii
- * @address 0x228020
- * @size 0x248
- */
-void DrawGetAtoraNumBoard(int, int, int, int, int, int);
-
-/**
- * Draws one digit of the dungeon board's numbers, clipped to the board.
- *
- * @mangled DrawDunNumberClip__Fiiiiii
- * @address 0x228270
- * @size 0xDC
- */
-void DrawDunNumberClip(int, int, int, int, int, int);
-
-/**
- * Draws the dungeon entry screen's background and its darkening box.
- *
- * @mangled DrawDunEnterBack__Fi
- * @address 0x228350
- * @size 0x9C
- */
-void DrawDunEnterBack(int);
-
-/**
- * Draws the floor's name and number on the dungeon entry board.
- *
- * @mangled DrawDunEnterFloorName__Fiiiiii
- * @address 0x2283F0
- * @size 0x290
- */
-void DrawDunEnterFloorName(int, int, int, int, int, int);
 
 /**
  * Opens the character change menu.
@@ -292,24 +193,6 @@ int GetDispVolumeForFloat(float);
 int InitItemPolygonView(int item_no, u_long128 *buffer);
 
 /**
- * Sets up the item preview's model and textures once they have been read.
- *
- * @mangled EnterItemPolygonView__Fv
- * @address 0x22AD20
- * @size 0x21C
- */
-int EnterItemPolygonView(void);
-
-/**
- * Turns and scales the item model under pad control, then draws it.
- *
- * @mangled LocalDrawItemPolygonView__Fv
- * @address 0x22AF40
- * @size 0x26C
- */
-void LocalDrawItemPolygonView(void);
-
-/**
  * Draws the item preview model.
  *
  * @mangled DrawItemPolygonView__Fv
@@ -317,15 +200,6 @@ void LocalDrawItemPolygonView(void);
  * @size 0x38
  */
 void DrawItemPolygonView(void);
-
-/**
- * Maps a debug item selection to its spreadsheet item number.
- *
- * @mangled ConvDebugSelectToExcelListNo__Fi
- * @address 0x22B1F0
- * @size 0x4C
- */
-int ConvDebugSelectToExcelListNo(int selection);
 
 /**
  * Handles key input on the debug item menu.
@@ -344,12 +218,3 @@ int DebugItemGetKey(void);
  * @size 0x204
  */
 void DebugItemGetDraw(void);
-
-/**
- * Draws the debug overlay listing an item's data.
- *
- * @mangled DrawItemDataView__Fi
- * @address 0x22B7C0
- * @size 0x230
- */
-void DrawItemDataView(int);

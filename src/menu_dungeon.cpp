@@ -34,7 +34,142 @@ int MenuEtcErrCnt;
 /** Number of floors available in each dungeon. */
 static int maxFloorTbl__4[7] = {15, 17, 18, 18, 15, 25, 100};
 
-void PlusAttachmentVolume(ATTACH_LIST *base, ATTACH_LIST *add, float scale) {
+/**
+ * Adds one attachment's values into another, scaled by a factor.
+ *
+ * @mangled PlusAttachmentVolume__FP11ATTACH_LISTP11ATTACH_LISTf
+ * @address 0x225810
+ * @size 0x158
+ */
+static void PlusAttachmentVolume(ATTACH_LIST *, ATTACH_LIST *, float);
+
+/**
+ * Restores the pad and textures when the dungeon entrance menu closes.
+ *
+ * @mangled ExitDunEnterMenu__Fv
+ * @address 0x226520
+ * @size 0x70
+ */
+static void ExitDunEnterMenu(void);
+
+/**
+ * Handles key input on the dungeon entrance menu.
+ *
+ * @mangled DunEnterMenuKey__Fv
+ * @address 0x226620
+ * @size 0x6EC
+ */
+static int DunEnterMenuKey(void);
+
+/**
+ * Draws the dungeon entrance menu.
+ *
+ * @mangled DunEnterDraw__Fv
+ * @address 0x226D10
+ * @size 0x538
+ */
+static void DunEnterDraw(void);
+
+/**
+ * Draws the frame of the dungeon entrance board.
+ *
+ * @mangled DunEnterBoardWaku__Fiii
+ * @address 0x227250
+ * @size 0x4AC
+ */
+static void DunEnterBoardWaku(int, int, int);
+
+/**
+ * Draws the dungeon entry board.
+ *
+ * @mangled DunEnterBoard__Fiii
+ * @address 0x227700
+ * @size 0x7C0
+ */
+static void DunEnterBoard(int, int, int);
+
+/**
+ * Draws a number right to left, one digit at a time, clipped to the board.
+ *
+ * @mangled DrawEnemyNum__Fiiiiii
+ * @address 0x227EC0
+ * @size 0x154
+ */
+static void DrawEnemyNum(int, int, int, int, int, int);
+
+/**
+ * Draws the collected Atla count on the dungeon entrance board.
+ *
+ * @mangled DrawGetAtoraNumBoard__Fiiiiii
+ * @address 0x228020
+ * @size 0x248
+ */
+static void DrawGetAtoraNumBoard(int, int, int, int, int, int);
+
+/**
+ * Draws one digit of the dungeon board's numbers, clipped to the board.
+ *
+ * @mangled DrawDunNumberClip__Fiiiiii
+ * @address 0x228270
+ * @size 0xDC
+ */
+static void DrawDunNumberClip(int, int, int, int, int, int);
+
+/**
+ * Draws the dungeon entry screen's background and its darkening box.
+ *
+ * @mangled DrawDunEnterBack__Fi
+ * @address 0x228350
+ * @size 0x9C
+ */
+static void DrawDunEnterBack(int);
+
+/**
+ * Draws the floor's name and number on the dungeon entry board.
+ *
+ * @mangled DrawDunEnterFloorName__Fiiiiii
+ * @address 0x2283F0
+ * @size 0x290
+ */
+static void DrawDunEnterFloorName(int, int, int, int, int, int);
+
+/**
+ * Sets up the item preview's model and textures once they have been read.
+ *
+ * @mangled EnterItemPolygonView__Fv
+ * @address 0x22AD20
+ * @size 0x21C
+ */
+static int EnterItemPolygonView(void);
+
+/**
+ * Turns and scales the item model under pad control, then draws it.
+ *
+ * @mangled LocalDrawItemPolygonView__Fv
+ * @address 0x22AF40
+ * @size 0x26C
+ */
+static void LocalDrawItemPolygonView(void);
+
+/**
+ * Maps a debug item selection to its spreadsheet item number.
+ *
+ * @mangled ConvDebugSelectToExcelListNo__Fi
+ * @address 0x22B1F0
+ * @size 0x4C
+ */
+static int ConvDebugSelectToExcelListNo(int selection);
+
+/**
+ * Draws the debug overlay listing an item's data.
+ *
+ * @mangled DrawItemDataView__Fi
+ * @address 0x22B7C0
+ * @size 0x230
+ */
+static void DrawItemDataView(int);
+
+static void PlusAttachmentVolume(ATTACH_LIST *base, ATTACH_LIST *add, float scale) {
     int i;
 
     for (i = 0; i < 4; i++) {
@@ -109,7 +244,7 @@ INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @764__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @765__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @776__3);
 
-void ExitDunEnterMenu() {
+static void ExitDunEnterMenu() {
     GamePad.AutoRepeatOff();
     GamePad.MenuModeOff();
     MenuTextureReload(DEnterMenu.texture_block);
@@ -215,7 +350,7 @@ INCLUDE_ASM("asm/nonmatchings/menu_dungeon", EnterItemPolygonView__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", LocalDrawItemPolygonView__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawItemPolygonView__Fv);
 
-int ConvDebugSelectToExcelListNo(int selection) {
+static int ConvDebugSelectToExcelListNo(int selection) {
     int item_no;
 
     item_no = selection + 0x81;
