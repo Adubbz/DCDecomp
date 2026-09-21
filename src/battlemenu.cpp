@@ -2142,7 +2142,52 @@ static void DrawStatusNumberNowAndMax(int *values, int x, int y, int color, int 
     DrawMenu2DSprite(StayTex, CRect_i_(end - 11, y, 12, 12), CRect_i_(0x78, digits.y, 12, 12), alpha);
     DrawMenuNumber(values[0], end - 11, y, StayTex, digits, color, alpha);
 }
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWepHole__FiiP11WEAPON_HAVEii);
+
+void DrawWepHole(int x, int y, WEAPON_HAVE *weapon, int, int alpha) {
+    if (x < 10 || x > 620) {
+        return;
+    }
+    if (weapon == NULL) {
+        return;
+    }
+    WEAPON_DATA *data = GetWeaponData(weapon->item_no);
+    u8 colors[3][3] = {
+        {0x80, 0x80, 0x80},
+        {0x28, 0x28, 0xA0},
+        {0xFF, 0xE8, 0x02},
+    };
+    x += 10.0f;
+    for (int i = 0; i < 6; i++) {
+        if (data->hole[i] - 1 < 0) {
+            return;
+        }
+        if (weapon->attach_kind[i] == 3) {
+            float width = 26.0f;
+            float height = 12.0f;
+            DrawMenu2DSprite(WepStatus, CRect_i_(x + 8, y + 16, width, height), CRect_i_(0xD4, 0x134, 0x1A, 0xD),
+                             alpha);
+        }
+        int src_y = 0xE0;
+        int filled = 0;
+        if (weapon->attach[i].item_no > 0) {
+            src_y += 0x2A;
+            filled = 1;
+        }
+        CRect_i_ src(0xD4, src_y, 0x2A, 0x2A);
+        DrawMenu2DSprite(WepStatus, CRect_i_(x + 1, y + 2, 0x2A, 0x29), src, 0, 0, 0, alpha * 80 >> 7);
+        u8 *color;
+        if (data->hole[i] == 2) {
+            color = colors[1];
+            if (filled) {
+                color = colors[2];
+            }
+        } else {
+            color = colors[0];
+        }
+        DrawMenu2DSprite(WepStatus, CRect_i_(x, y + 1, 0x2A, 0x29), src, color[0], color[1], color[2], alpha);
+        x += 0x2A;
+    }
+}
 
 void MenuClsMes::InitMes() {
     message = &EastKingMsgCls;
