@@ -205,7 +205,33 @@ INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @893__4);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @894__4);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1031);
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1032__2);
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", GetAllSaveFileInfo__17CMemoryCardAccessFv);
+
+int CMemoryCardAccess::GetAllSaveFileInfo() {
+    int result;
+    int file_no;
+    int status;
+
+    switch (this->step) {
+        case 0:
+            if (sceMcSync(MC_NOWAIT, NULL, &result) == 0) {
+                break;
+            }
+            this->step++;
+            memset(this->file_info, 0, sizeof(this->file_info));
+        default:
+            file_no = (this->step - 1) >> 2;
+            status = this->GetSaveFileInfoFromMc(file_no);
+            if (status == 1 && file_no + 1 >= MC_SAVE_FILE_MAX) {
+                return 1;
+            }
+            if (status < 0) {
+                return -1;
+            }
+            break;
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", CheckFileNo__17CMemoryCardAccessFi);
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SaveToMc__17CMemoryCardAccessFi);
 INCLUDE_ASM("asm/nonmatchings/memorycardaccess", LoadFromMc__17CMemoryCardAccessFi);
