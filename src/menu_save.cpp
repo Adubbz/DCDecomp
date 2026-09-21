@@ -174,7 +174,28 @@ int SaveMenuKeyNewDirSelect(void) {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyNewDir__Fv);
+
+int SaveMenuKeyNewDir(void) {
+    MC_CARD_INFO *card = &McAccess.card[McAccess.port];
+
+    if (McCheckMCPs2(card) == 0) {
+        SaveMenu.key_no = 0xE;
+        SaveMenu.unk_20 = 1;
+        return 1;
+    }
+    if ((card->result < 0) || (card->formatted == 0)) {
+        SaveMenu.key_no = 0xE;
+        SaveMenu.unk_20 = 6;
+        return 1;
+    }
+    if (card->free_size < 0x190) {
+        SaveMenu.key_no = 0xE;
+        SaveMenu.unk_20 = 0xA;
+        return 1;
+    }
+    McAccess.SetFuncNo(3);
+    SaveMenu.key_no = 0xA;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyFormat__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyUnFormat__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyDifVersion__Fv);
