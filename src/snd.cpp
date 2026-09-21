@@ -731,7 +731,6 @@ void SndSetSeVolf(int se_no, float vol, int voice) {
         SndSetSeVol(se_no, SndGetVolf(se_no, vol), voice);
     }
 }
-#ifdef NON_MATCHING
 void SndSetSePanf(int se_no, float pan, int voice) {
     SND_SE_INFO *info = GetSeInfo(se_no);
 
@@ -741,9 +740,6 @@ void SndSetSePanf(int se_no, float pan, int voice) {
         CSnd.SE_SetPan(GetPortNo(se_no), info->bank, info->prog, hw_pan, voice);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetSePanf__Fifi);
-#endif
 INCLUDE_ASM("asm/nonmatchings/snd", SndPlayFootSound__FiiPf);
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetVolPan__FPfPfPfff);
 static void InitSeSeq(SND_SE_SEQ *seq) {
