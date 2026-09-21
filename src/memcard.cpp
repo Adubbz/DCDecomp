@@ -823,7 +823,30 @@ static void SeitonAtoraTipBoard() {
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuAtoraSelectKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraBoardKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipKey__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraMenuTipCancel__Fv);
+
+static void AtoraMenuTipCancel() {
+    EDITPARTS_INFO *info;
+    EDITPARTS_ELEMENT *element;
+    s16 tip_no;
+
+    switch (NowTipHavePt->mode) {
+        case 1:
+            tip_no = MenuAtoraSel.tip_list[NowTipHavePt->slot];
+            MenuAtoraSel.tip_list[NowTipHavePt->slot] = NowTipHavePt->tip_no;
+            NowTipHavePt->tip_no = tip_no;
+            break;
+        case 0:
+            info = SearchAtoraInfo(NowTipHavePt->parts_no);
+            element = &info->elements[NowTipHavePt->slot];
+            if (element->id == NowTipHavePt->tip_no && element->enabled == 0) {
+                element->enabled = 1;
+            }
+            MenuAtoraSel.board_pos = NowTipHavePt->parts_no;
+            NowTipHavePt->tip_no = -1;
+            break;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraBoardFadeEffect__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraNameDraw__Fi);
 INCLUDE_ASM("asm/nonmatchings/memcard", OptionMenuDraw__Fiiiii);
