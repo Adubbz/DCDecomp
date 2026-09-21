@@ -14,6 +14,7 @@
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "savedata.hpp"
+#include "snd.hpp"
 #include "texture.hpp"
 
 /**
@@ -1220,7 +1221,41 @@ static void AtoraMenuTipCancel() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraBoardFadeEffect__Fv);
+static void AtoraBoardFadeEffect() {
+    CTexture frame = *TexManager.GetTexture("frame_image", -1);
+
+    if (&frame == NULL) {
+        return;
+    }
+    ((sceGsTex0 *) &frame.tex0)->bits.tcc = 0;
+    sceGsTexa texa = mgTexa;
+    texa.AEM = 1;
+    texa.TA0 = 0x80;
+    MGSetGsTEXA(&texa);
+    spRGBA top;
+    spRGBA bottom;
+    bottom.r = bottom.g = bottom.b = 0x40;
+    top.r = top.g = top.b = 0x40;
+    bottom.a = 0x80;
+    top.a = 0x80;
+    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 0, 320, 1), CRect_i_(0, 0, 320, 1), &top, &top, &bottom, &bottom, 1);
+    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 1, 320, 60), CRect_i_(0, 0, 320, 61), &top, &top, &bottom, &bottom, 1);
+    top.a = 0x80;
+    bottom.a = 0;
+    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 61, 320, 59), CRect_i_(0, 60, 320, 60), &top, &top, &bottom, &bottom,
+                1);
+    top.a = 0;
+    bottom.a = 0x80;
+    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 277, 320, 89), CRect_i_(0, 276, 320, 90), &top, &top, &bottom,
+                &bottom, 1);
+    bottom.a = 0x80;
+    top.a = 0x80;
+    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 366, 320, 1), CRect_i_(0, 366, 320, 1), &top, &top, &bottom, &bottom,
+                1);
+    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 367, 320, 81), CRect_i_(0, 366, 320, 82), &top, &top, &bottom,
+                &bottom, 1);
+    MGSetGsTEXA(NULL);
+}
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraNameDraw__Fi);
 INCLUDE_ASM("asm/nonmatchings/memcard", OptionMenuDraw__Fiiiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawOptionLRCur__Fii);
