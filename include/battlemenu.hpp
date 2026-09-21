@@ -414,15 +414,6 @@ void WepStatusVolumeDraw(RECT, int, int *, int, int, int, int);
 void DrawWeaponStatusWaku(int, int, int, int);
 
 /**
- * Draws the mark that says a weapon value has reached its ceiling.
- *
- * @mangled DrawLimmitMax__Fiii
- * @address 0x1F9EB0
- * @size 0x60
- */
-void DrawLimmitMax(int, int, int);
-
-/**
  * Draws the left and right cursor arrows, bobbing them with a sine.
  *
  * @mangled DrawBtlMenuLRCursor__Fiiii

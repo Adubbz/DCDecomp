@@ -699,7 +699,16 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponNameDraw__Fiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WepStatusVolumeDraw__F4RECTiPiiiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponStatusWaku__Fiiii);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawLimmitMax__Fiii);
+/**
+ * Draws the mark that says a weapon value has reached its ceiling.
+ *
+ * @mangled DrawLimmitMax__Fiii
+ * @address 0x1F9EB0
+ * @size 0x60
+ */
+static void DrawLimmitMax(int x, int y, int alpha) {
+    DrawMenu2DSprite(WepStatus, CRect_i_(x, y, 0x1E, 0xA), CRect_i_(0xF8, 0x158, 0x1E, 0xA), alpha);
+}
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBtlMenuLRCursor__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponStatusTag__FiiP11WEAPON_HAVEiii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponElemTag__FiiP11WEAPON_HAVEiii);
