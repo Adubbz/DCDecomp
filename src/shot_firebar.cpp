@@ -78,16 +78,12 @@ int CSHOT_FIREBAR::Set(float *origin, float *direction, int collision_damage,
 #else
 INCLUDE_ASM("asm/nonmatchings/shot_firebar", Set__13CSHOT_FIREBARFPfPfii);
 #endif
-#ifdef NON_MATCHING
 void CSHOT_FIREBAR::Rset(void) {
-    // A cell of -1 is what stops a slot being drawn.
+    // A state of -1 is what stops a slot being drawn.
     for (int i = 0; i < 24; i++) {
-        texture_cell[i] = -1;
+        state[i] = -1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_firebar", Rset__13CSHOT_FIREBARFv);
-#endif
 #ifdef NON_MATCHING
 void CSHOT_FIREBAR::Step(void) {
     static int collision_timer = 0;
