@@ -260,15 +260,131 @@ void FishingLoad(CDataAlloc2<1> *alloc, int slot) {
     SndSPSeLoad(0x2F);
 }
 
-/**
- * Reads the six fish of one fishing spot into an arena.
- *
- * @mangled FishingLoadFish__FiP14CDataAlloc2_1_i
- * @address 0x1A88F0
- * @size 0x4CC
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingLoadFish__FiP14CDataAlloc2_1_i);
-INCLUDE_RODATA("asm/nonmatchings/fishing", @436__2);
+void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot) {
+    int interval;
+    int loaded;
+
+    draw_under_water = 1;
+    if (spot == 3) {
+        draw_under_water = 0;
+    }
+    Fish = new ((u_long128 *) alloc->Alloc(0xD8C)) CFish[6];
+    fish_texb = slot;
+    FishNum = 5;
+    if (spot == 0) {
+        FishNum = 4;
+    }
+    if (spot == 4) {
+        FishNum = 4;
+    }
+    interval = 30;
+    switch (EdGetTime(SaveData->GetNowTime())) {
+        case 0:
+            interval = 50;
+            break;
+        case 1:
+            interval = 20;
+            break;
+        case 2:
+            interval = 35;
+            break;
+        case 3:
+            interval = 25;
+            break;
+    }
+    loaded = 0;
+    LoadFile("chara/f00s.chr", read_buffer, NULL);
+    for (int i = 0; i < FishNum; i++) {
+        int kind = -1;
+        int r = rand();
+        switch (spot) {
+            case 0:
+                switch ((int) (3.99999f * rnd())) {
+                    case 0:
+                        kind = 1;
+                        break;
+                    case 1:
+                        kind = 2;
+                        break;
+                    case 2:
+                        kind = 6;
+                        break;
+                    case 3:
+                        kind = 7;
+                        break;
+                }
+                break;
+            case 1: {
+                int roll = 100.0f * rnd();
+                if (roll < 35) {
+                    kind = 1;
+                } else if (roll < 70) {
+                    kind = 4;
+                } else if (roll < 80) {
+                    kind = 9;
+                } else if (roll < 100) {
+                    kind = 10;
+                }
+                break;
+            }
+            case 2:
+                if (r % interval == 0) {
+                    if (rand() % 5 == 0) {
+                        kind = 17;
+                    } else {
+                        kind = 5;
+                    }
+                } else {
+                    r %= 3;
+                    if (r == 0) {
+                        kind = 2;
+                    }
+                    if (r == 1) {
+                        kind = 4;
+                    }
+                    if (r == 2) {
+                        kind = 6;
+                    }
+                }
+                break;
+            case 3: {
+                int roll = r % 100;
+                if (roll < 20) {
+                    kind = 0;
+                } else if (roll < 40) {
+                    kind = 3;
+                } else if (roll < 60) {
+                    kind = 11;
+                } else if (roll < 80) {
+                    kind = 12;
+                } else {
+                    kind = 13;
+                }
+                break;
+            }
+            case 4:
+                if (r % interval == 0) {
+                    if (rand() % 5 == 0) {
+                        kind = 17;
+                    } else {
+                        kind = 5;
+                    }
+                } else {
+                    int roll = r % 100;
+                    if (roll < 40) {
+                        kind = 14;
+                    } else if (roll < 70) {
+                        kind = 15;
+                    } else if (roll < 100) {
+                        kind = 16;
+                    }
+                }
+                break;
+        }
+        LoadFish(&Fish[i], kind, slot, alloc, loaded);
+        loaded = 1;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/fishing", __ct__5CFishFv);
 

@@ -15,9 +15,6 @@ class CFrameVu1;
  */
 void FishingInit();
 
-/** Loads the selected collection of fish models into an event arena. */
-void FishingLoadFish(int set_no, CDataAlloc2<1> *arena, int slot);
-
 /** Sets the rectangular bounds used by the fishing simulation. */
 void FishingSetRect(CBoxVu0 bounds);
 
@@ -122,3 +119,12 @@ void FishingExit();
  * @size 0x110
  */
 void FishingLoad(CDataAlloc2<1> *alloc, int slot);
+
+/**
+ * Reads the fish of one fishing spot into an arena, choosing their kinds by the spot and the time of day.
+ *
+ * @mangled FishingLoadFish__FiP14CDataAlloc2_1_i
+ * @address 0x1A88F0
+ * @size 0x4CC
+ */
+void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot);
