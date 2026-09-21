@@ -648,7 +648,19 @@ INCLUDE_RODATA("asm/nonmatchings/memcard", @1502);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @1664);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtoraSelect__Fi);
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTextureEnter__Fv);
-INCLUDE_ASM("asm/nonmatchings/memcard", GetTipKind__Fi);
+
+static int GetTipKind(int tip_no) {
+    if (tip_no < 0 || tip_no >= 100) {
+        return 0;
+    }
+    if (0 <= tip_no && tip_no < 40) {
+        return 1;
+    }
+    if (tip_no >= 40) {
+        return 2;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", CompTip__Fii);
 INCLUDE_ASM("asm/nonmatchings/memcard", SeitonAtoraTipBoardSub__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", SeitonAtoraTipBoard__Fv);
