@@ -327,15 +327,6 @@ void ChargeShopMaxDraw(int, int, int, int);
 void ChargeShopBoardDraw(int, int, int);
 
 /**
- * Gives what a weapon fetches, from its kind and how worn it is.
- *
- * @mangled WeaponCalMoney__FP11WEAPON_HAVEi
- * @address 0x1EB310
- * @size 0x84
- */
-void WeaponCalMoney(WEAPON_HAVE *, int);
-
-/**
  * Totals what the goods currently marked for purchase cost.
  *
  * @mangled BuyMoneyCheck2__Fv

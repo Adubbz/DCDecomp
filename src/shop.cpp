@@ -389,7 +389,30 @@ static int CalItemMoney(int item_no, int sell) {
     return GetItemMoney(item_no, sell);
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", WeaponCalMoney__FP11WEAPON_HAVEi);
+/**
+ * Totals the shop price of the attachments fitted to a weapon.
+ *
+ * @mangled WeaponCalMoney__FP11WEAPON_HAVEi
+ * @address 0x1EB310
+ * @size 0x84
+ */
+static int WeaponCalMoney(WEAPON_HAVE *weapon, int sell) {
+    int total;
+    int i;
+
+    if (weapon == NULL) {
+        return 0;
+    }
+    total = 0;
+    for (i = 0; i < 6; i++) {
+        ATTACH_LIST *attach = &weapon->attach[i];
+        if (attach != NULL && attach->item_no >= 0x51) {
+            total += CalItemMoney(attach->item_no, sell);
+        }
+    }
+    return total;
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", BuyMoneyCheck2__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", SellMoneyCheck2__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", IncludeBuyItem2__Fv);
