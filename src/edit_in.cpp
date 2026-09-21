@@ -579,9 +579,38 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", GetFuncPoint__FiPUiP16EPARTS_FUNC_DATA);
  * @address 0x19F9B0
  * @size 0x1C0
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", setTexAnim__Fv);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1589);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1590);
+static void setTexAnim() {
+    sceVif1PkCnt(Vif1Packet, 0);
+    sceVif1PkOpenDirectCode(Vif1Packet, 0);
+    sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
+    sceVif1PkCloseGifTag(Vif1Packet);
+    sceVif1PkCloseDirectCode(Vif1Packet);
+
+    if (setTexAnimCntf >= 7.0f) {
+        setTexAnimCntf = 0.0f;
+    } else {
+        setTexAnimCntf += 0.2f;
+    }
+
+    setTexAnimCnt = (int) setTexAnimCntf;
+
+    CTexture *strip = TexManager.GetTexture("i01e01_a", -1);
+    CTexture *plate = TexManager.GetTexture("i01e01", -1);
+
+    if (strip == 0 || plate == 0) {
+        return;
+    }
+
+    MGMoveImage((sceGsTex0 *) &strip->tex0, CRect_i_(0, setTexAnimCnt * 64, 64, 64),
+                (sceGsTex0 *) &plate->tex0, 0, 0, 0);
+    sceVif1PkCnt(Vif1Packet, 0);
+    sceVif1PkOpenDirectCode(Vif1Packet, 0);
+    sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
+    sceVif1PkCloseGifTag(Vif1Packet);
+    sceVif1PkCloseDirectCode(Vif1Packet);
+}
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @1592);
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @1593);
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @1594);

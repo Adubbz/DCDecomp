@@ -248,7 +248,8 @@
       "GetDoorPos__FiPfPfPiPi",
       "StepWater__Fv",
       "VillagerCollision__Fv__2",
-      "LoadScript__Fv__2"
+      "LoadScript__Fv__2",
+      "setTexAnim__Fv"
     ],
     "rodata_exports": [
       "@1592",
