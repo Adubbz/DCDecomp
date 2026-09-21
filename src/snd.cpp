@@ -606,8 +606,25 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndBgmLoad__Fi);
  * @address 0x1599F0
  * @size 0xC0
  */
-INCLUDE_RODATA("asm/nonmatchings/snd", @384__2);
-INCLUDE_ASM("asm/nonmatchings/snd", SndBgmLoadBG__FiPUiPi);
+int SndBgmLoadBG(int set_no, u_int *buffer, int *size) {
+    char archive_name[128];
+
+    if (size != 0) {
+        *size = 0;
+    }
+    if (now_bgm_no == set_no) {
+        return 0;
+    }
+    GetBGMFile(set_no, archive_name, bgm_cfg_file);
+    printf("%d\n", set_no);
+    if (LoadFileBG(archive_name, (u_long128 *) buffer, size)) {
+        load_bgm_no = set_no;
+        load_bgm_adr = buffer;
+        return 1;
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndBgmSyncBG__Fv);
 
 void SndBgmPlay(int track_no) {
