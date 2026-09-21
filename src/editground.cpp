@@ -22,7 +22,14 @@ int CEditGround::GetAreaCode(float x, float y, float z) {
     }
     return -1;
 }
-INCLUDE_ASM("asm/nonmatchings/editground", GetAlt__11CEditGroundFfff);
+
+float CEditGround::GetAlt(float x, float y, float z) {
+    int area = GetAreaCode(x, y, z);
+    if (area < 0) {
+        return 0.0f;
+    }
+    return areas[area]->GetAlt(x, y, z);
+}
 INCLUDE_ASM("asm/nonmatchings/editground", GetAlt_i__11CEditGroundFfff);
 INCLUDE_ASM("asm/nonmatchings/editground", GetPartsObject__11CEditGroundFi);
 INCLUDE_ASM("asm/nonmatchings/editground", GetPartsID__11CEditGroundFfff);
