@@ -247,7 +247,26 @@ void ShopIconMove::IconMoveTarSet(int slot_no, int icon_no, int item_no, MENU_IT
     this->pos_y = start_y;
 }
 INCLUDE_ASM("asm/nonmatchings/shop", IconAutoMove__12ShopIconMoveFii);
-INCLUDE_ASM("asm/nonmatchings/shop", IconAutoMoveDraw__12ShopIconMoveFv);
+
+void ShopIconMove::IconAutoMoveDraw() {
+    if (item_no >= 0x51) {
+        int kind = WhatIsKindofItem(item_no);
+
+        if (ShopMenu.board.unk_04 == kind) {
+            int num = 0;
+            int item = item_no;
+
+            if (item == 0x5A) {
+                num = data.param[1];
+            }
+            if (item >= 0x5B && item < 0x5F) {
+                num = data.param[item - 0x57];
+            }
+            DrawIconParts(item, pos_x, pos_y, 0, 0x280, 0x80, num);
+        }
+    }
+}
+
 /** An item's buy and sell price, indexed by item number. */
 struct ITEM_MONEY_ENTRY {
     s16 buy_price;
