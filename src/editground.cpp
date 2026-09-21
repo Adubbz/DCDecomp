@@ -49,7 +49,14 @@ CMapParts *CEditGround::GetPartsObject(int parts_no) {
     }
     return NULL;
 }
-INCLUDE_ASM("asm/nonmatchings/editground", GetPartsID__11CEditGroundFfff);
+
+int CEditGround::GetPartsID(float x, float y, float z) {
+    int area = GetAreaCode(x, y, z);
+    if (area < 0) {
+        return -1;
+    }
+    return areas[area]->SearchPartsID(x, y, z);
+}
 INCLUDE_ASM("asm/nonmatchings/editground", GetParts__11CEditGroundFfff);
 INCLUDE_ASM("asm/nonmatchings/editground", CheckEffect__11CEditGroundFv);
 INCLUDE_ASM("asm/nonmatchings/editground", SetBuildEffect__11CEditGroundFi);
