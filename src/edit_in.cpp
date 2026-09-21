@@ -58,7 +58,42 @@ enum EFFECT_TYPE {
 };
 // clang-format on
 
-INCLUDE_ASM("asm/nonmatchings/edit_in", GetElementObjName__FP14EDITPARTS_INFOPPcii);
+/**
+ * Splits one element's space-separated object names into the caller's name buffers.
+ */
+void GetElementObjName(EDITPARTS_INFO *info, char **names, int element, int mode) {
+    names[0][0] = '\0';
+    if (info == NULL) {
+        return;
+    }
+    if (element < 0 || element >= 6) {
+        return;
+    }
+    if (mode < 0 || mode >= 4) {
+        return;
+    }
+    char *text = info->elements[element].names[mode];
+    if (text == NULL) {
+        return;
+    }
+    int word = 0;
+    int length = 0;
+    char c;
+    while ((c = *text) != '\0') {
+        if (c == ' ') {
+            names[word][length] = '\0';
+            length = 0;
+            word++;
+        } else {
+            names[word][length] = c;
+            length++;
+        }
+        text++;
+    }
+    names[word][length] = '\0';
+    word++;
+    names[word][0] = '\0';
+}
 /**
  * Reads one interior object's levels of detail and hangs them off its part.
  *
