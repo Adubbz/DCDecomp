@@ -16,6 +16,7 @@
 #include "editloop.hpp"
 #include "editloop3.hpp"
 #include "frame.hpp"
+#include "menu_dungeon.hpp"
 #include "menu_misc.hpp"
 #include "nowload.hpp"
 #include "npcharacter.hpp"
@@ -298,8 +299,16 @@ int _SET_EVENT_SW(RS_STACKDATA *stack, int count) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_MONSTOR_ID__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _CHK_ATRA_HAVE__FP12RS_STACKDATAi);
-INCLUDE_RODATA("asm/nonmatchings/btsysscript", @809);
+
+int _CHK_ATRA_HAVE(RS_STACKDATA *stack, int count) {
+    int atra_no = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int have = GetAtraTipNowHave(atra_no, UserStatus->cur_georama);
+
+    printf("%d,%d --> %d\n", atra_no, UserStatus->cur_georama, have);
+    SetStack__FP12RS_STACKDATAi__2(stack, have);
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_ATRA__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_IBOX__FP12RS_STACKDATAi);
 int _GET_NOW_USER_ID(RS_STACKDATA *stack, int count) {
