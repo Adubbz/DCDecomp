@@ -499,6 +499,9 @@ SECTIONS
         monstorunit.cpp.o (.data)    // 0x0027eb50
         runscript_opcodes.cpp.o (.data) // 0x00291830
         main.data.part6f.s.o (.data) // 0x00291850
+        menu_misc.cpp.o (.data)      // 0x00293c60
+        . = ALIGN(0x10);
+        main.data.part6h.s.o (.data) // 0x00293c80
         menu_dungeon.cpp.o (.data)   // 0x00294150
         . = ALIGN(0x10);
         main.data.part6g.s.o (.data) // 0x00294170

@@ -415,15 +415,11 @@ int CheckWeaponOptionStatus(int options) {
     return options;
 }
 
-#ifdef NON_MATCHING
 int IsWeaponOptionGoodOrBad(int option) {
     // Whether each of the fourteen weapon options is a benefit (1) or a drawback (0).
     s16 good_or_bad[14] = { 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1 };
     return good_or_bad[option];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", IsWeaponOptionGoodOrBad__Fi);
-#endif
 
 int DefaultWeaponOptionSet(int weapon_no) {
     WEAPON_DATA *data = GetWeaponData(weapon_no);
