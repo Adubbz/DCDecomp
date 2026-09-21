@@ -406,7 +406,30 @@ static void ShopFadeoutDraw() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", ShopPersonReadStart__Fii);
+/**
+ * Starts reading a shopkeeper's model in the background.
+ *
+ * @mangled ShopPersonReadStart__Fii
+ * @address 0x1E7FA0
+ * @size 0x98
+ */
+static int ShopPersonReadStart(int shop_no, int person_no) {
+    char file_name[76];
+    int size;
+    u_long128 *buffer;
+
+    ItemShopGetPacFileName(shop_no, person_no, file_name);
+    buffer = (u_long128 *) (ShopCashBuffer.base + ShopCashBuffer.used * 16);
+    buffer = MenuCalcBufAlignment(buffer);
+    StartReadBG();
+    if (!LoadFileBG(file_name, buffer, &size)) {
+        return 0;
+    }
+    ReadBG();
+    ShopMenu.unk_194 = 0;
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", ShopPersonBuild__Fii);
 
 /**

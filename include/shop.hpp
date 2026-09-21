@@ -209,15 +209,6 @@ void ShopMenuExit(void);
 void ShopTextureLoadFix(void);
 
 /**
- * Starts reading a shopkeeper's model in the background.
- *
- * @mangled ShopPersonReadStart__Fii
- * @address 0x1E7FA0
- * @size 0x98
- */
-void ShopPersonReadStart(int, int);
-
-/**
  * Builds the shopkeeper's model once it has been read.
  *
  * @mangled ShopPersonBuild__Fii
