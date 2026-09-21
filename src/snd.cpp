@@ -1165,7 +1165,15 @@ void SndAmbientStop() {
  * @address 0x15B1E0
  * @size 0x60
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndAmbientSetVol__Fi);
+void SndAmbientSetVol(int volume) {
+    if (now_amb_no >= 0 && now_amb_vol != volume && volume >= 0) {
+        if (volume > 127) {
+            volume = 127;
+        }
+        now_amb_vol = volume;
+        CSnd.SetVol(1, volume);
+    }
+}
 /**
  * Sets the ambient loop's volume as a share of its default.
  *
