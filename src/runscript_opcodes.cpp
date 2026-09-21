@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include "btactstatus.hpp"
 #include "collision.hpp"
 #include "dataalloc.hpp"
 #include "dun/gameloop.hpp"
@@ -764,7 +765,29 @@ int _SET_GUARD_FRAME(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->guard[monster_no].motion_end[slot] = end;
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GUARD_SEARCH__FP12RS_STACKDATAi);
+int _GUARD_SEARCH(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+    float player[4];
+    float position[4];
+    float direction[4];
+    float distance;
+
+    sceVu0CopyVector(player, CharaMain.pos);
+    NowMonstorUnit->chara[monster_no][0].GetPosition(position);
+    distance = DistVector(player, position);
+    direction[0] = position[0] - player[0];
+    direction[1] = 0.0f;
+    direction[2] = position[2] - player[2];
+    direction[3] = 1.0f;
+    sceVu0Normalize(direction, direction);
+    if (sceVu0InnerProduct(BtActStatus.unk_0C0, direction) >= 0.35) {
+        BtActStatus.unk_0E0 = 3600;
+    }
+    SetStack(stack++, BtActStatus.unk_0E0);
+    SetStack(stack++, distance);
+    SetStack(stack, UserStatus->cur_chara);
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_MOVE_VEC__FP12RS_STACKDATAi);
 int _PUSH_IGLOBAL(RS_STACKDATA *stack, int argc) {
     int index;
