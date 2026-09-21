@@ -260,3 +260,12 @@ void FishLineGetUki(float *position);
  * @size 0x28
  */
 void FishLineGetHook(float *position);
+
+/**
+ * Returns whether the float or the hook has left the fishing box or risen above the water.
+ *
+ * @mangled FishingCheckUkiHook__Fv
+ * @address 0x1AA1E0
+ * @size 0x158
+ */
+int FishingCheckUkiHook();

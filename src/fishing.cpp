@@ -697,14 +697,36 @@ void FishLineGetHook(float *position) {
     sceVu0CopyVector(position, point[23]);
 }
 
-/**
- * Reports whether the float and hook are clear of the ground.
- *
- * @mangled FishingCheckUkiHook__Fv
- * @address 0x1AA1E0
- * @size 0x158
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingCheckUkiHook__Fv);
+int FishingCheckUkiHook() {
+    sceVu0FVECTOR uki_pos;
+    sceVu0FVECTOR hook_pos;
+    float water;
+
+    FishLineGetUki(uki_pos);
+    FishLineGetHook(hook_pos);
+    for (int i = 0; i < 3; i++) {
+        if (fishing_rect.max[i] < uki_pos[i]) {
+            return 1;
+        }
+        if (fishing_rect.max[i] < hook_pos[i]) {
+            return 1;
+        }
+        if (fishing_rect.min[i] > uki_pos[i]) {
+            return 1;
+        }
+        if (fishing_rect.min[i] > hook_pos[i]) {
+            return 1;
+        }
+    }
+    water = 5.0f + FishingGetWaterLevel();
+    if (hook_pos[1] > water) {
+        return 1;
+    }
+    if (uki_pos[1] > water) {
+        return 1;
+    }
+    return 0;
+}
 
 /**
  * Advances the line, float and hook one step from the rod's position.
