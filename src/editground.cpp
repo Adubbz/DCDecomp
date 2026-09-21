@@ -338,7 +338,51 @@ void CEditGround::Save(char *) {
 
 INCLUDE_ASM("asm/nonmatchings/editground", Load__11CEditGroundFPc);
 INCLUDE_RODATA("asm/nonmatchings/editground", @1325);
-INCLUDE_ASM("asm/nonmatchings/editground", Save__11CEditGroundFiP9CSaveData);
+
+void CEditGround::Save(int town, CSaveData *save) {
+    sceVu0FVECTOR position;
+    int count;
+    int i;
+
+    SV_GRD_PART *record = save->GetParts(town, &count);
+    if (record == NULL) {
+        return;
+    }
+    for (i = 0; i < 128; i++) {
+        CMapParts *object = &parts[i];
+        int parts_id = parts[i].unk_0E8;
+        if (parts_id < 0) {
+            continue;
+        }
+        int j;
+        int kind = object->unk_118;
+        switch (kind) {
+            case 1:
+            case 2:
+            case 3:
+                for (j = 0; j < 24; j++) {
+                    if (kind == plot_parts[j].unk_118) {
+                        parts_id = plot_parts[j].unk_0E8;
+                        break;
+                    }
+                }
+                break;
+        }
+        object->GetPosition(position);
+        record->part_id = parts_id;
+        record->variant = object->rot_y;
+        record->pos_x = position[0];
+        record->pos_y = position[1];
+        record->pos_z = position[2];
+        record++;
+    }
+    record->part_id = -1;
+    record->variant = -1;
+    record->pos_x = 0.0f;
+    record->pos_y = 0.0f;
+    record->pos_z = 0.0f;
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", Load__11CEditGroundFiP9CSaveData);
 
 int CEditGround::PickUpPoly(CCPoly *polygons, float x, float y, float z) {

@@ -381,7 +381,7 @@ public:
      * @address 0x1A4C90
      * @size 0x17C
      */
-    void Save(int map_no, CSaveData *save);
+    void Save(int town, CSaveData *save);
 
     /**
      * Reads placed parts back out of the save file.
