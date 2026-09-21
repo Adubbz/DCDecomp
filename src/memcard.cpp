@@ -704,7 +704,14 @@ INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtraBuildNum__FP14EDITPARTS_INFOiii)
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtora__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtoraNothing__Fiii);
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawMsgAtraWarning__FP6ClsMesii);
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipInfoInit__Fv);
+
+static void AtoraTipInfoInit() {
+    NowTipHavePt->mode = 0;
+    NowTipHavePt->parts_no = -1;
+    NowTipHavePt->slot = -1;
+    NowTipHavePt->tip_no = -1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", GetMenuAtraEventFlag__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", SetMenuAtraEventFlag__Fi);
 INCLUDE_ASM("asm/nonmatchings/memcard", MenuAtoraAfterFadeIn__Fv);
