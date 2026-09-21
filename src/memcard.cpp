@@ -15,6 +15,33 @@
 #include "savedata.hpp"
 #include "texture.hpp"
 
+/**
+ * Holds the state of the option screen.
+ */
+struct OPTION_MENU_STATE {
+    u8 unk_00[0x10];
+    s32 step; /**< Stage that the screen is at, 2 once it has begun to close. */
+    u8 unk_14[0x10];
+    s32 flag[12];      /**< Setting of each option row. */
+    s32 prev_flag[12]; /**< Setting of each option row when the screen opened. */
+    s16 unk_84;
+    s16 unk_86;
+};
+
+STATIC_ASSERT(sizeof(OPTION_MENU_STATE) == 0x88);
+
+/** The state of the option screen. */
+extern OPTION_MENU_STATE OptionMenu;
+
+/** The chip that the georama board's cursor has picked up. */
+extern ATORA_TIP_HAVE *NowTipHavePt;
+
+/** The rank that the board's sort gives each chip group, by group. */
+extern int tip_table[3];
+
+/** The chip group that the board's sort ranks first. */
+extern int tip_sort_type;
+
 // The chip attachment record is opaque to every unit; only the unit's own
 // functions take a pointer to it.
 struct EDIT_CHIP_ATTACH_DATA;
