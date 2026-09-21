@@ -11,20 +11,21 @@
 #include "rect.hpp"
 #include "texture.hpp"
 
-#ifdef NON_MATCHING
 /** Direction the wind blows the effects in. */
-static sceVu0FVECTOR wind_dir;
+extern sceVu0FVECTOR wind_dir;
 
 /** Frames the effects have been running, which thins how often they spawn. */
-static int effect_count;
+extern int effect_count;
 
-/** Textures the three effects draw with, looked up once a frame. */
-static CTexture *smoke_tex;
-static CTexture *sibuki_tex;
-static CTexture *hamon_tex;
-#endif
+/** Texture the smoke effect draws with, looked up once a frame. */
+extern CTexture *smoke_tex;
 
-#ifdef NON_MATCHING
+/** Texture the water-spray effect draws with, looked up once a frame. */
+extern CTexture *sibuki_tex;
+
+/** Texture the ripple effect draws with, looked up once a frame. */
+extern CTexture *hamon_tex;
+
 void EffectMacroStep(float *wind) {
     sceVu0CopyVector(wind_dir, wind);
     effect_count++;
@@ -32,13 +33,6 @@ void EffectMacroStep(float *wind) {
     sibuki_tex = TexManager.GetTexture("shibuki", -1);
     hamon_tex = TexManager.GetTexture("hamon", -1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/effectmacro", EffectMacroStep__FPf);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/effectmacro", @621__2);
-INCLUDE_RODATA("asm/nonmatchings/effectmacro", @622);
-INCLUDE_RODATA("asm/nonmatchings/effectmacro", @623);
-#ifdef NON_MATCHING
 void EffectSmoke(CEffectGroup *group, float *position, float size, int period) {
     CEffectParam effect;
 
@@ -47,7 +41,7 @@ void EffectSmoke(CEffectGroup *group, float *position, float size, int period) {
         return;
     }
 
-    effect.texel = CRect_i_(0, 0, 0, 0);
+    effect.texel.x = effect.texel.y = effect.texel.width = effect.texel.height = 0;
     effect.Initialize();
     sceVu0CopyVector(effect.position, position);
     // Half the puffs drift, on a sine of their own in x and z.
@@ -90,10 +84,6 @@ void EffectSmoke(CEffectGroup *group, float *position, float size, int period) {
     effect.height = 10.0f;
     group->EnterEffect(&effect);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/effectmacro", EffectSmoke__FP12CEffectGroupPffi);
-#endif
-#ifdef NON_MATCHING
 void EffectWaterSpray(CEffectGroup *group, float *position, float *extent, int period,
                       int phase) {
     CEffectParam effect;
@@ -102,7 +92,7 @@ void EffectWaterSpray(CEffectGroup *group, float *position, float *extent, int p
         return;
     }
 
-    effect.texel = CRect_i_(0, 0, 0, 0);
+    effect.texel.x = effect.texel.y = effect.texel.width = effect.texel.height = 0;
     effect.Initialize();
     sceVu0CopyVector(effect.position, position);
     effect.opacity_mode = 2;
@@ -111,10 +101,9 @@ void EffectWaterSpray(CEffectGroup *group, float *position, float *extent, int p
 
     float spread_x = 0.2f * extent[0];
     float spread_z = 0.2f * extent[2];
-    float height = extent[1];
-    float rise = 0.1f * height * (1.0f + (float) rand() / 2.1474836e9f);
+    float rise = 0.1f * extent[1] * (1.0f + (float) rand() / 2.1474836e9f);
     float width_grown = rise + 0.5f * (extent[0] + extent[2]);
-    float height_grown = height + rise;
+    float height_grown = extent[1] + rise;
 
     effect.velocity[0] = spread_x * (float) rand() / 2.1474836e9f - 0.5f * spread_x;
     effect.velocity[2] = (spread_x * (float) rand() / 2.1474836e9f - 0.5f * spread_z) - 0.5f;
@@ -131,14 +120,10 @@ void EffectWaterSpray(CEffectGroup *group, float *position, float *extent, int p
     effect.height = 10.0f;
     group->EnterEffect(&effect);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/effectmacro", EffectWaterSpray__FP12CEffectGroupPfPfii);
-#endif
-#ifdef NON_MATCHING
 void EffectHamon(CEffectGroup *group, float *position, float size) {
     CEffectParam effect;
 
-    effect.texel = CRect_i_(0, 0, 0, 0);
+    effect.texel.x = effect.texel.y = effect.texel.width = effect.texel.height = 0;
     effect.Initialize();
     sceVu0CopyVector(effect.position, position);
     effect.opacity_mode = 2;
@@ -159,9 +144,6 @@ void EffectHamon(CEffectGroup *group, float *position, float size) {
     effect.height = size;
     group->EnterEffect(&effect);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/effectmacro", EffectHamon__FP12CEffectGroupPff);
-#endif
 #ifdef NON_MATCHING
 void DepthOfField(float *focus, int level, int alpha, int blur) {
     static float displacement[21][15];
