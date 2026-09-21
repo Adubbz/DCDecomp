@@ -456,6 +456,10 @@ public:
     s32 GetMardanGareyanFlag() const { return unk_12F94; }
 
 private:
+    // CMemoryCardAccess::GetSaveFileInfoFromMc reads map_no out of the save
+    // image that it reads from the card.
+    friend class CMemoryCardAccess;
+
     s32 config[18];         /**< Contains the configuration values. */
     s16 chara_name[6][32]; /**< Contains the name of each character, as sixteen-bit characters. */
     s32 map_no;             /**< Map that the game resumes on. */
