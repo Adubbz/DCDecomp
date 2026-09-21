@@ -1,6 +1,7 @@
 #include "memcard.hpp"
 
 #include <cmath>
+#include <cstdio>
 
 #include "battle_globals.hpp"
 #include "clsmes.hpp"
@@ -1453,9 +1454,47 @@ static int SaveMenuKeyCheckMcType() {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyCheckMc__Fv);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @2823);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @2824);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @2825);
+static int SaveMenuKeyCheckMc() {
+    MC_CARD_INFO *card;
+
+    printf("check end !!\n");
+    card = &McAccess.card[McAccess.port];
+    SaveMenu.unk_20 = 0;
+    if (card->present == 0) {
+        printf("not \n");
+        SaveMenu.unk_20 = 14;
+        SaveMenu.key_no = 3;
+        SaveMenu.file_no = McAccess.port;
+        return 0;
+    }
+    if (card->type != 2) {
+        printf("type is not PS2\n");
+        SaveMenu.unk_20 = 14;
+        SaveMenu.key_no = 3;
+        SaveMenu.file_no = McAccess.port;
+        return 0;
+    }
+    if ((SaveMenu.unk_1C == 1 || SaveMenu.unk_0 == 2) && (card->dir_exists == 0 || card->formatted == 0)) {
+        SaveMenu.unk_20 = 12;
+        SaveMenu.key_no = 14;
+        return 1;
+    }
+    if (SaveMenu.unk_1C == 2 && card->dir_exists == 0 && card->free_size < 400 && card->formatted != 0) {
+        SaveMenu.unk_20 = 10;
+        SaveMenu.key_no = 14;
+        return 1;
+    }
+    if (SaveMenu.unk_0 == 2) {
+        SaveMenu.key_no = 23;
+    } else if (SaveMenu.unk_1C == 1) {
+        SaveMenu.key_no = 6;
+        McAccess.SetFuncNo(13);
+    } else {
+        McAccess.SetFuncNo(4);
+        SaveMenu.key_no = 7;
+        SaveMenu.file_no = ((s32 *) SaveData->GetConfigData())[17];
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyLoadConfig__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyFileSelect__Fv);
