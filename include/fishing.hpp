@@ -54,9 +54,6 @@ void FishingInitFish(CBoxVu0 bounds);
 /** Initializes the fishing line at a world-space point. */
 void FishLineInit(float *position);
 
-/** Loads the bait model attached to the fishing rod. */
-void FishingLoadEsa(int item_no, CFrameVu1 *frame, int slot);
-
 /**
  * Takes the bait off the hook.
  *
@@ -128,3 +125,12 @@ void FishingLoad(CDataAlloc2<1> *alloc, int slot);
  * @size 0x4CC
  */
 void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot);
+
+/**
+ * Puts a bait item on the hook, giving any bait already there back to the inventory.
+ *
+ * @mangled FishingLoadEsa__FiP9CFrameVu1i
+ * @address 0x1A8F50
+ * @size 0xBC
+ */
+void FishingLoadEsa(int item_no, CFrameVu1 *frame, int slot);

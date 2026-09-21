@@ -390,14 +390,20 @@ CFish::CFish() {
     Initialize();
 }
 
-/**
- * Reads the model of the bait on the hook.
- *
- * @mangled FishingLoadEsa__FiP9CFrameVu1i
- * @address 0x1A8F50
- * @size 0xBC
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingLoadEsa__FiP9CFrameVu1i);
+void FishingLoadEsa(int item_no, CFrameVu1 *frame, int slot) {
+    if (esa_type >= 0) {
+        EdGetItem(esa_info[esa_type].item_no, 1, -1);
+    }
+    EsaFrame = frame;
+    esa_texb = slot;
+    esa_type = 0;
+    for (int i = 0; i < 13; i++) {
+        if (item_no == esa_info[i].item_no) {
+            esa_type = i;
+            return;
+        }
+    }
+}
 
 void FishingDeleteEsa() {
     EsaFrame = NULL;
