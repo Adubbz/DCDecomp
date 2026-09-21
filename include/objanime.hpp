@@ -10,6 +10,7 @@
 class CCamera;
 class CEffectGroup;
 class CFrame;
+class CMapParts;
 
 /**
  * Stores one function marker extracted from a map-part resource.
@@ -19,7 +20,7 @@ class CFrame;
 struct EPARTS_FUNC_DATA {
     u8 unk_00[0x10];
     int kind;                  /**< Selects how the marker is interpreted by map setup. */
-    int parts_index;           /**< Identifies the map part from which the marker was extracted. */
+    CMapParts *parts;          /**< Map part the marker was extracted from. */
     float start_time;          /**< Beginning of the marker's active time interval. */
     float end_time;            /**< End of the marker's active time interval. */
     int link_id;               /**< Associates related markers belonging to one event. */
