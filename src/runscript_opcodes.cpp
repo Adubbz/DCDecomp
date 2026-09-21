@@ -307,16 +307,12 @@ int _RUN_SCRIPT(RS_STACKDATA *stack, int argc) {
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _RUN_SCRIPT__FP12RS_STACKDATAi);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @870);
-#ifdef NON_MATCHING
 int _STATUS_SET_COL_OFF(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
 
     NowMonstorUnit->monster[monster_no].unk_0A8 = GetStackInt(stack);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_COL_OFF__FP12RS_STACKDATAi);
-#endif
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_GET_LIFE_RATE__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_GET_USER_VECTOR__FP12RS_STACKDATAi);
 #ifdef NON_MATCHING
