@@ -372,7 +372,6 @@ int CMemoryCardAccess::McError(int result) {
     return 0;
 }
 
-
 void CMemoryCardAccess::DmySync() {
     int cmd;
     int result;
@@ -384,6 +383,36 @@ void CMemoryCardAccess::DmySync() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", McUnFormatForDebug__17CMemoryCardAccessFv);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @1230);
+int CMemoryCardAccess::McUnFormatForDebug() {
+    int result;
+    int cmd;
+    int status;
+
+    switch (this->step) {
+        case 0:
+            result = sceMcUnformat(this->port, 1);
+            if (result == 0) {
+                this->step++;
+            } else {
+                sceMcSync(MC_NOWAIT, &result, &status);
+                printf("dmy sync\n");
+            }
+            break;
+        case 1:
+            result = sceMcSync(MC_NOWAIT, &cmd, &status);
+            if (result == 0) {
+                break;
+            }
+            if (cmd != 0x11) {
+                break;
+            }
+            if (cmd == 0x11 && status < 0) {
+                break;
+            }
+            this->card[this->port].formatted = 0;
+            return 1;
+    }
+    return 0;
+}
+
 INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @594__2);
