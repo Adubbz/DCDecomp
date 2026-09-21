@@ -689,14 +689,9 @@ void FishPullHook(float tension) {
     pull_hook = tension;
 }
 
-/**
- * Gives where the float is.
- *
- * @mangled FishLineGetUki__FPf
- * @address 0x1AA180
- * @size 0x28
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishLineGetUki__FPf);
+void FishLineGetUki(float *position) {
+    sceVu0CopyVector(position, point[18]);
+}
 
 /**
  * Gives where the hook is.
