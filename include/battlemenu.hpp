@@ -595,15 +595,6 @@ void ItemTrushKey(int *, int *, int);
 void DrawTrushItem(void);
 
 /**
- * Remembers where the item page's cursor stood and closes it.
- *
- * @mangled ExitItemSelect__Fv
- * @address 0x202420
- * @size 0x88
- */
-void ExitItemSelect(void);
-
-/**
  * Waits for the item page's weapon icons and enters them into the texture manager.
  *
  * @mangled ReadSyncItemMenuWepIcon__Fv

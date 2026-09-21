@@ -1096,7 +1096,26 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemTrushKey__FPiPii);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawTrushItem__Fv);
 
-INCLUDE_ASM("asm/nonmatchings/battlemenu", ExitItemSelect__Fv);
+/**
+ * Remembers where the item page's cursor stood and closes it.
+ *
+ * @mangled ExitItemSelect__Fv
+ * @address 0x202420
+ * @size 0x88
+ */
+static void ExitItemSelect() {
+    CommonMenuMes3.rows = 3;
+    CommonMenuMes3.narrow_gaiji = 0;
+    CommonMenuMes3.char_width = 11;
+    AtoraNameMes.stay_frame = 0;
+    AtoraNameMes.auto_pos = -1;
+    CMenuCursor *cursor = SaveData->GetMenuCursor();
+    if (cursor->reset_pos == 0) {
+        SetCursorPos(cursor, 0, ItemMenuMode.unk_2C);
+        cursor->mode[0] = ItemMenuMode.unk_00;
+        SetCursorChara(cursor, ItemMenuMode.unk_24);
+    }
+}
 
 /**
  * Starts reading the item page's weapon icons in the background.
