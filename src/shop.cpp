@@ -1091,7 +1091,72 @@ static int ChargeSelectKey() {
 
 INCLUDE_ASM("asm/nonmatchings/shop", DrawChargeShop__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopMaxDraw__Fiiii);
-INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopBoardDraw__Fiii);
+
+void ChargeShopBoardDraw(int x, int y, int alpha) {
+    s16 items[120];
+    u8 values[120];
+    int top = y + 9;
+    int bottom = y + 0xA9;
+    int board_y;
+    int left = x + 0x14;
+
+    board_y = y + 6 - ShopMenu.unk_176 * 0x28;
+    ShopMenu.unk_16C += ((float) board_y - ShopMenu.unk_16C) / 4.0f;
+    board_y = ShopMenu.unk_16C;
+    DrawPerBoardDraw(0, 0x64, left, board_y, top, bottom, ShopBoard, alpha);
+
+    int board_mode = ShopMenu.board.unk_04;
+    int i;
+
+    switch (board_mode) {
+        case 1:
+            for (i = 0; i < 30; i++) {
+                items[i] = ShopStockPt->weapons[i].item_no;
+                values[i] = 0;
+            }
+            break;
+        case 0:
+            for (i = 0; i < 60; i++) {
+                items[i] = ShopStockPt->dungeon_items[i];
+                values[i] = 0;
+            }
+            break;
+        case 2:
+            for (i = 0; i < 30; i++) {
+                items[i] = ShopStockPt->attachments[i].item_no;
+                if (items[i] >= 0x5B && items[i] < 0x5F) {
+                    values[i] = (&ShopStockPt->attachments[i].item_no)[items[i] - 0x57];
+                } else if (items[i] == 0x5A) {
+                    values[i] = ShopStockPt->attachments[i].unk_02;
+                } else {
+                    values[i] = 0;
+                }
+            }
+            break;
+    }
+    for (; i < 60; i++) {
+        items[i] = -1;
+        values[i] = 0;
+    }
+    ShopIconDraw(items, values, 0x80, left + 4, board_y + 6, top, bottom, 0x80);
+
+    int tag = 0;
+    switch (board_mode) {
+        case 0:
+            tag += 0xC;
+            break;
+        case 1:
+            tag += 0xA;
+            break;
+        case 2:
+            tag = 1;
+            break;
+    }
+    PersonalBoardTagDraw(board_mode, x, y, ShopBoard, tag, alpha);
+    PersonalBoardDrawWaku(x, y, ShopBoard, alpha);
+    PersonalBoardScrlBarDraw(ChargeShopMax[board_mode], x, y, ShopMenu.unk_170, ShopMenu.unk_176, ShopBoard, alpha);
+    ChargeShopMaxDraw(ChargeShopMax[board_mode], x, y, alpha);
+}
 
 /**
  * Returns the shop price of one item, which is zero for the item numbers below 0x51.
