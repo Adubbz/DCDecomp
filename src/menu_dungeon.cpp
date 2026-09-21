@@ -34,6 +34,9 @@ int MenuEtcErrCnt;
 /** Number of floors available in each dungeon. */
 static int maxFloorTbl__4[7] = {15, 17, 18, 18, 15, 25, 100};
 
+/** Texture of the dungeon entrance board. */
+extern CTexture *DunLogBoard;
+
 /**
  * Adds one attachment's values into another, scaled by a factor.
  *
@@ -291,7 +294,28 @@ INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @847);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DunEnterDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DunEnterBoardWaku__Fiii);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DunEnterBoard__Fiii);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawEnemyNum__Fiiiiii);
+
+static void DrawEnemyNum(int x, int y, int top, int bottom, int number, int alpha) {
+    int digits;
+    int position;
+    int source;
+    int length;
+    int u;
+    int digit;
+
+    for (digits = GetNumberKeta(number); 0 < digits; digits--) {
+        position = y;
+        digit = number % 10;
+        x -= 11;
+        u = digit * 12 + 0x20;
+        source = 0x48;
+        length = 12;
+        MenuTextureClip(position, source, length, top, bottom);
+        DrawMenu2DSprite(DunLogBoard, CRect_i_(x, position, 12, length - 1), CRect_i_(u, source, 12, length), alpha);
+        number /= 10;
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawGetAtoraNumBoard__Fiiiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawDunNumberClip__Fiiiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawDunEnterBack__Fi);
