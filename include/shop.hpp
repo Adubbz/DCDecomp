@@ -479,16 +479,6 @@ void GetNowMasterMsgNo2(int, int);
 void ShopModelMsgFunc(int);
 
 /**
- * Places the shopkeeper's speech bubble above their model.
- *
- * @mangled SetShopTalkMsgPos__Fv
- * @address 0x1ED9C0
- * @size 0xB4
- * Places the shopkeeper's message window over the shopkeeper.
- */
-void SetShopTalkMsgPos(void);
-
-/**
  * Builds the file name of a shopkeeper's model archive.
  *
  * @mangled ItemShopGetPacFileName__FiiPc

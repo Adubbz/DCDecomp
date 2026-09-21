@@ -801,7 +801,32 @@ INCLUDE_ASM("asm/nonmatchings/shop", DrawSellTicket22__Fiiiii);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopCancelGoodReturn2__Fv);
 INCLUDE_ASM("asm/nonmatchings/shop", GetNowMasterMsgNo2__Fii);
 INCLUDE_ASM("asm/nonmatchings/shop", ShopModelMsgFunc__Fi);
-INCLUDE_ASM("asm/nonmatchings/shop", SetShopTalkMsgPos__Fv);
+
+/**
+ * Places the shopkeeper's speech bubble above their model.
+ *
+ * @mangled SetShopTalkMsgPos__Fv
+ * @address 0x1ED9C0
+ * @size 0xB4
+ * Places the shopkeeper's message window over the shopkeeper.
+ */
+static void SetShopTalkMsgPos() {
+    float pos[4];
+    int screen[6];
+    int msg_pos[2];
+    float scale[3];
+
+    sceVu0CopyVector(pos, MenuCharaFrame.pos);
+    MenuCharaFrame.GetScale(scale);
+    pos[0] -= 2.0f;
+    pos[1] += 0.85f * MenuCharaFrame.body_height;
+    pos[3] = 1.0f;
+    MGRotTransPers2D(screen, pos, 0);
+    msg_pos[0] = screen[0];
+    msg_pos[1] = screen[1];
+    CommonMenuMes3.AutoSet(msg_pos);
+}
+
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopGetPacFileName__FiiPc);
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopGetImgFileName__FiiPc);
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopMemoryAlloc__Fv);
