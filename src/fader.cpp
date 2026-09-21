@@ -19,10 +19,8 @@ int Fader::Out(void) {
     return 1;
 }
 
-#ifdef NON_MATCHING
 int Fader::Get(int maximum) {
-    return (int) ((float) this->value / 128.0f * (float) maximum);
+    float level = (float) this->value / 128.0f;
+    level *= (float) maximum;
+    return (int) level;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/fader", Get__5FaderFi);
-#endif

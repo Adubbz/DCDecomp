@@ -436,7 +436,8 @@ SECTIONS
         mainselect.cpp.o            (.text)   // 0x002a1e8c
         *(.text)
         ALIGNALL(1); // Perform no additional alignment
-        *(.vutext)
+        . = ALIGN(0x80);
+        *(.vutext)                            // 0x00245300
 
         # data
         //
