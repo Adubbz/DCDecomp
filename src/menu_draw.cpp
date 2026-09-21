@@ -43,13 +43,9 @@ char *GetMenuTextureDir(void) {
     return AllMenuTextureDir;
 }
 
-#ifdef NON_MATCHING
 int GetMenuLangFlag(void) {
     return LanguageCode;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuLangFlag__Fv);
-#endif
 
 #ifdef NON_MATCHING
 char *GetNowSelectLanguage(int language) {
