@@ -285,14 +285,13 @@ int _SIN_DEG(RS_STACKDATA *stack, int argc) {
     SetStack(stack, sinf(angle));
     return 1;
 }
-#ifdef NON_MATCHING
 int _COS_DEG(RS_STACKDATA *stack, int argc) {
-    SetStack(&stack[1], cosf(0.017453292f * GetStackFloat(stack)));
+    float angle = GetStackFloat(stack++);
+
+    angle = 0.017453292f * angle;
+    SetStack(stack, cosf(angle));
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _COS_DEG__FP12RS_STACKDATAi);
-#endif
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_SET_PALLET__FP12RS_STACKDATAi);
 #ifdef NON_MATCHING
 int _STATUS_SET_CLIPLEVEL(RS_STACKDATA *stack, int argc) {
