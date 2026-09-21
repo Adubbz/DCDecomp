@@ -257,9 +257,18 @@ void ComMenuSePlay(int sound) {
         SndSePlay(sound, -1, 0);
     }
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_i);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_UcUcUci);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawMenu2DSprite__FP8CTexture8CRect_i_8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBA);
+
+void DrawMenu2DSprite(CTexture *texture, CRect_i_ screen, CRect_i_ texel, int alpha) {
+    set2DSprite(GetVif1Packet(), texture, screen, texel, alpha);
+}
+
+void DrawMenu2DSprite(CTexture *texture, CRect_i_ screen, CRect_i_ texel, unsigned char r, unsigned char g, unsigned char b, int alpha) {
+    set2DSprite(GetVif1Packet(), texture, screen, texel, r, g, b, alpha);
+}
+
+void DrawMenu2DSprite(CTexture *texture, CRect_i_ screen, CRect_i_ texel, spRGBA *top_left, spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right) {
+    set2DSprite(GetVif1Packet(), texture, screen, texel, top_left, top_right, bottom_left, bottom_right, 1);
+}
 
 void MenuTextureReload(int block) {
     TexManager.ReloadTexture(GetVif1Packet(), block);
