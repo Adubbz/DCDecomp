@@ -96,21 +96,19 @@ extern s16 BtlDrawTbl[2][8];
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", GetDefaultWeaponNo__Fi);
 
-#ifdef NON_MATCHING
 int IsDefaultWeapon(int weapon_no) {
+    int owner = -1;
     int chara;
 
-    for (chara = 0; chara < 6; chara++) {
+    for (chara = 0; chara <= 5; chara++) {
         int default_weapon_no = GetDefaultWeaponNo(chara);
         if (default_weapon_no == weapon_no || default_weapon_no + 1 == weapon_no) {
-            return chara;
+            owner = chara;
+            break;
         }
     }
-    return -1;
+    return owner;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", IsDefaultWeapon__Fi);
-#endif
 void SetNowEquipWeaponDataForMsg(int item_no, int slot) {
     ItemMenuMode.message_item_no = item_no;
     ItemMenuMode.message_slot = slot;
