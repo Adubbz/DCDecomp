@@ -416,7 +416,11 @@ int _GET_COL_HIT_ID(RS_STACKDATA *stack, int argc) {
     SetStack(stack, NowMonstorUnit->effect[NowMonstorUnit->unk_090].hit_slot);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_SCRIPT_ID__FP12RS_STACKDATAi);
+int _GET_SCRIPT_ID(RS_STACKDATA *stack, int argc) {
+    SetStack(stack, NowMonstorUnit->unk_090);
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_MONSTOR_POS__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_MONSTOR_FRM__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MONSTOR_POS__FP12RS_STACKDATAi);
