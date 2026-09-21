@@ -61,7 +61,6 @@ INCLUDE_ASM("asm/nonmatchings/dungeonparts", chkAtraFloor__Fii);
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", BtAtraListMake__Fi);
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", BtAtraFloorCyoice__FiiPi);
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", setCollisionData__FP11CDungeonMapP6CCPolyPfff);
-#ifdef NON_MATCHING
 CFrame *CDungeonParts::GetSearchFrame(char *name) {
     for (int i = 0; i < 6; i++) {
         if (frame[i] != NULL) {
@@ -86,9 +85,6 @@ CFrame *CDungeonParts::GetSearchFrame(char *name) {
     }
     return NULL;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonparts", GetSearchFrame__13CDungeonPartsFPc);
-#endif
 /**
  * Places a healing zone within one dungeon part.
  *
