@@ -27,7 +27,36 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
-INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeySaveCheck__Fv);
+int SaveMenuKeySaveCheck(void) {
+    MC_CARD_INFO *card = &McAccess.card[McAccess.port];
+
+    if (McCheckMCPs2(card) == 0) {
+        SaveMenu.key_no = 0xE;
+        SaveMenu.unk_20 = 1;
+        return 1;
+    }
+    if ((card->result < 0) || (card->format_change != 0)) {
+        SaveMenu.key_no = 0xE;
+        SaveMenu.unk_20 = 6;
+        return 1;
+    }
+    if (card->formatted == 0) {
+        SaveMenu.key_no = 0x11;
+        McAccess.SetFuncNo(0);
+        return 1;
+    }
+    if (card->dir_exists == 0) {
+        SaveMenu.key_no = 0x10;
+        return 1;
+    }
+    if (McAccess.CheckFileNo(SaveMenu.file_no) != 0) {
+        SaveMenu.key_no = 9;
+    } else {
+        McAccess.SetFuncNo(0);
+        SaveMenu.key_no = 0xA;
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeySaveDecide__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeySave__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyEndSave__Fv);
