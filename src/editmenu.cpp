@@ -380,17 +380,13 @@ int GetNumHowManyItemsHave(int item) {
 #else
 INCLUDE_ASM("asm/nonmatchings/editmenu", GetNumHowManyItemsHave__Fi);
 #endif
-#ifdef NON_MATCHING
 static int GetEditMenuMax() {
     int max = 6;
     if (GetGameFlagForManualMenu() == 0) {
-        max = 5;
+        max--;
     }
     return max;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", GetEditMenuMax__Fv);
-#endif
 INCLUDE_ASM("asm/nonmatchings/editmenu", DrawMenuIcon__Fi);
 INCLUDE_ASM("asm/nonmatchings/editmenu", GetEditMenuIconPos__FiPi);
 #ifdef NON_MATCHING
