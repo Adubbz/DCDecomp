@@ -161,29 +161,22 @@ int _GET_DISTANCE(RS_STACKDATA *stack, int argc) {
     SetStack(stack, DistVector(monster_position, target_position));
     return 1;
 }
-#ifdef NON_MATCHING
 int _GET_POSITION(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
-    int who = (int) GetStackFloat(stack);
+    int who = (int) GetStackFloat(stack++);
     float position[4];
 
-    stack++;
     if (who == -1) {
         NowMonstorUnit->chara[monster_no][0].GetPosition(position);
     }
     if (who == -2) {
         sceVu0CopyVector(position, CharaMain.pos);
     }
-    SetStack(stack, position[0]);
-    stack++;
-    SetStack(stack, position[1]);
-    stack++;
+    SetStack(stack++, position[0]);
+    SetStack(stack++, position[1]);
     SetStack(stack, position[2]);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_POSITION__FP12RS_STACKDATAi);
-#endif
 #ifdef NON_MATCHING
 int _SET_ROTATION(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
