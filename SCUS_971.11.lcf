@@ -454,6 +454,7 @@ SECTIONS
         chararead.cpp.o (.data)
         . = . + 0x4; // Retail padding after the character command tables.
         main.data.part2.s.o (.data)
+        bound.cpp.o (.data)          // 0x00251570 the constructor's forward vector
         dataread.cpp.o (.data)       // 0x00251580 CurrentDir, then LoadFile2's templates
         clothread.cpp.o (.data)      // 0x002517a0 the cloth command tables
         main.cpp.o (.data)

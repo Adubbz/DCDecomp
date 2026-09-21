@@ -259,10 +259,7 @@ void CBound::InitParam() {
     sceVu0CopyVector(to, position);
     length0 = length1 = 1.0f;
 }
-#ifdef NON_MATCHING
 CBound::CBound(float half_width, float half_height, float half_depth) {
-    sceVu0FVECTOR forward = {0.0f, 0.0f, 1.0f, 0.0f};
-
     InitParam();
     extent[0] = half_width;
     extent[1] = half_height;
@@ -276,8 +273,6 @@ CBound::CBound(float half_width, float half_height, float half_depth) {
     if (!(extent[2] <= 0.0f)) {
         reciprocal[2] = 1.0f / half_depth;
     }
+    sceVu0FVECTOR forward = {0.0f, 0.0f, 1.0f, 0.0f};
     SetDir(forward);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/bound", __ct__6CBoundFfff);
-#endif
