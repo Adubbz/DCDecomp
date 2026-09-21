@@ -659,14 +659,18 @@ static void GetHookPos(float *position) {
  */
 INCLUDE_ASM("asm/nonmatchings/fishing", FishLineInit__FPf);
 
-/**
- * Pulls the float towards a position by a share of the distance.
- *
- * @mangled FishLineSetUki__FPff
- * @address 0x1AA030
- * @size 0x98
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishLineSetUki__FPff);
+void FishLineSetUki(float *position, float rate) {
+    sceVu0FVECTOR offset;
+
+    if (rate < 0.0f) {
+        set_uki_pos = 0;
+        return;
+    }
+    sceVu0SubVector(offset, position, ukip[0]);
+    sceVu0ScaleVector(offset, offset, rate);
+    sceVu0AddVector(uki, ukip[0], offset);
+    set_uki_pos = 1;
+}
 
 /**
  * Pulls the hook towards a position by a share of the distance.

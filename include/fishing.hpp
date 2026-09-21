@@ -224,3 +224,12 @@ void FishingInitFishStatus();
  * @size 0x138
  */
 void FishingStepFish();
+
+/**
+ * Pulls the float a share of the way towards a position, or stops pulling it when the share is negative.
+ *
+ * @mangled FishLineSetUki__FPff
+ * @address 0x1AA030
+ * @size 0x98
+ */
+void FishLineSetUki(float *position, float rate);
