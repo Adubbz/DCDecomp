@@ -486,6 +486,8 @@ SECTIONS
         editloop3.cpp.o (.fishinglineorigin) // 0x00269c40
         editloop3.cpp.o (.extfuncinfo) // 0x00269c50
         main.data.part4g.s.o (.data)   // 0x0026a5e8
+        editground.cpp.o (.data)       // 0x0026ae60
+        main.data.part4k.s.o (.data)   // 0x0026ae80
         weaponelement.cpp.o (.data)  // 0x0026b2c0
         btsysscript.cpp.o (.data)    // 0x0026b2e0
         main.data.part4d.s.o (.data) // 0x0026b310

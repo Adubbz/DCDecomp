@@ -361,7 +361,43 @@ void CEditGround::DrawBaseGround() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/editground", Draw__11CEditGroundFfiiiii);
+void CEditGround::Draw(float time, int pass, int lowest, int highest, int fixed_lowest, int fixed_highest) {
+    sceVu0FVECTOR distance = {50.0f, 300.0f, 500.0f, 800.0f};
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR ambient;
+    int i;
+
+    for (i = 0; i < 64; i++) {
+        if (fixed_parts[i].unk_0E4 == pass) {
+            fixed_parts[i].DrawParts(time, distance, fixed_lowest, fixed_highest, NULL);
+        }
+    }
+    CMapParts *object = parts;
+    for (i = 0; i < 128; i++, object++) {
+        if (object->unk_0E4 != pass) {
+            continue;
+        }
+        if (object->unk_0E8 < 0) {
+            continue;
+        }
+        if (object->unk_0F4 >= 0 && unk_00014[object->unk_0F4] == 0) {
+            continue;
+        }
+        if (!(clip_plane[3] <= 0.0f)) {
+            object->GetPosition(position);
+            if (!(DistVector(position, clip_plane) <= clip_plane[3]) && !object->ChangeDigData()) {
+                continue;
+            }
+        }
+        sceVu0FVECTOR focus = {32.0f, 32.0f, 128.0f, 128.0f};
+        MGGetAmbient(ambient);
+        if (focus_parts_id == i) {
+            MGSetAmbient(focus);
+        }
+        object->DrawParts(time, distance, lowest, highest, NULL);
+        MGSetAmbient(ambient);
+    }
+}
 
 void CEditGround::StepWater() {
     int i;

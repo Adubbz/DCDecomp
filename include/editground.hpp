@@ -296,7 +296,7 @@ public:
      * @address 0x1A2F10
      * @size 0x23C
      */
-    void Draw(float, int, int, int, int, int);
+    void Draw(float time, int pass, int lowest, int highest, int fixed_lowest, int fixed_highest);
 
     /**
      * Advances the ripples of each water surface the view can reach.
