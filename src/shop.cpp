@@ -851,7 +851,53 @@ INCLUDE_ASM("asm/nonmatchings/shop", DrawMoneyCheckBoard2__Fiii);
 INCLUDE_ASM("asm/nonmatchings/shop", DrawCheckButton__Fiii);
 INCLUDE_ASM("asm/nonmatchings/shop", DrawSmallSellTicket__Fiiiiii);
 INCLUDE_ASM("asm/nonmatchings/shop", DrawBigSellTicket__Fiiiii);
-INCLUDE_ASM("asm/nonmatchings/shop", DrawSellTicket_2__Fiiiii);
+
+/**
+ * Draws the selling price ticket of one shop slot.
+ *
+ * @mangled DrawSellTicket_2__Fiiiii
+ * @address 0x1ECA30
+ * @size 0x184
+ */
+static void DrawSellTicket_2(int x, int y, int clip_top, int clip_bottom, int mode) {
+    int draw_x = x;
+    int draw_y = y;
+    int visible;
+    int selected;
+    int state;
+    int i;
+
+    for (i = 0; i < 30; i++) {
+        state = ShopBoardInfo[i];
+        if (state == 0) {
+            draw_x += 0x28;
+            if (i % 5 == 4) {
+                draw_x = x;
+                draw_y += 0x28;
+            }
+        } else {
+            visible = 1;
+            if (ShopListPt[i].item_no < ITEM_ATTACH_START) {
+                visible = 0;
+            }
+            if (ShopMenu.unk_02 == 0 && i == ShopMenu.unk_14) {
+                visible = 0;
+            }
+            selected = 0;
+            if (state == 2) {
+                selected = 1;
+            }
+            if (visible) {
+                DrawSmallSellTicket(selected, draw_x, draw_y, clip_top, clip_bottom, mode);
+            }
+            draw_x += 0x28;
+            if (i % 5 == 4) {
+                draw_x = x;
+                draw_y += 0x28;
+            }
+        }
+    }
+}
 
 /**
  * Draws the price ticket of one shop slot, small or large according to the price.
