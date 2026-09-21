@@ -909,7 +909,24 @@ INCLUDE_ASM("asm/nonmatchings/snd", SndSoundLoad__Fi);
  * @address 0x15A580
  * @size 0xAC
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSoundLoadBG__FiPUiPi);
+int SndSoundLoadBG(int set_no, u_int *buffer, int *size) {
+    char archive_name[128];
+
+    if (size != 0) {
+        *size = 0;
+    }
+    if (now_sound_set == set_no) {
+        return 0;
+    }
+    GetSoundFile(set_no, archive_name, snd_cfg_file);
+    if (LoadFileBG(archive_name, (u_long128 *) buffer, size)) {
+        load_snd_set = set_no;
+        load_snd_adr = buffer;
+        return 1;
+    }
+    return 0;
+}
+
 INCLUDE_ASM("asm/nonmatchings/snd", SndSoundSyncBG__Fv);
 INCLUDE_ASM("asm/nonmatchings/snd", SndSePlay__Fiii);
 void SndSePlay(int se_no, float volume, float pan, int voice) {
