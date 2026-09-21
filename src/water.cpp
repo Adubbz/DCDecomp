@@ -224,7 +224,6 @@ void CWater::Shake(int row, int column, float height_change) {
 #else
 INCLUDE_ASM("asm/nonmatchings/water", Shake__6CWaterFiif);
 #endif
-#ifdef NON_MATCHING
 void CWater::SetSize(int row_count, int column_count, CDataAlloc2<1> *arena) {
     if (arena == NULL) {
         arena = (CDataAlloc2<1> *) WaterData;
@@ -236,8 +235,8 @@ void CWater::SetSize(int row_count, int column_count, CDataAlloc2<1> *arena) {
     rows = row_count;
     columns = column_count;
     for (int i = 0; i < rows * columns; i++) {
-        height_a[i] = 0.0f;
         height_b[i] = 0.0f;
+        height_a[i] = 0.0f;
     }
     height = height_a;
 
@@ -251,9 +250,6 @@ void CWater::SetSize(int row_count, int column_count, CDataAlloc2<1> *arena) {
     CreateVUData(packet[2], &info);
     unk_0A4 = 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/water", SetSize__6CWaterFiiP14CDataAlloc2_1_);
-#endif
 #ifdef NON_MATCHING
 CWater::CWater(void) {
     rows = 0;
