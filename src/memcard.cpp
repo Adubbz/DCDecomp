@@ -1384,7 +1384,54 @@ static int SaveMenuKeyModeSelect() {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyMcSelect__Fv);
+static int SaveMenuKeyMcSelect() {
+    int prev_slot;
+
+    prev_slot = SaveMenu.file_no;
+    if (GamePad.Down(0x5000)) {
+        if (SaveMenu.file_no) {
+            SaveMenu.file_no = 0;
+        } else {
+            SaveMenu.file_no = 1;
+        }
+    }
+    if (prev_slot != SaveMenu.file_no) {
+        ComMenuSePlay(0);
+    }
+    if (GamePad.Down(0x20)) {
+        switch (SaveMenu.unk_0) {
+            case 0:
+                SaveMenu.key_no = 1;
+                ExitSaveSelect();
+                break;
+            case 1:
+                SaveMenu.key_no = 1;
+                CommonMenuMes2.stay_frame = 0;
+                break;
+            case 2:
+                SaveMenu.key_no = 1;
+                ExitSaveSelect();
+                break;
+        }
+        SaveMenu.unk_28 = 0;
+        ComMenuSePlay(2);
+        return 1;
+    }
+    if (GamePad.Down(0x40) && SaveMenu.texture_ready) {
+        SaveMenu.key_no = 4;
+        McAccess.port = SaveMenu.file_no;
+        McAccess.SetFuncNo(0);
+        ComMenuSePlay(1);
+        return 1;
+    }
+    if (GamePad.Down2(0x40) && GamePad.Down2(0x20)) {
+        SaveMenu.key_no = 18;
+        McAccess.SetFuncNo(10);
+        McAccess.port = SaveMenu.file_no;
+        ComMenuSePlay(1);
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyCheckMcType__Fv);
 INCLUDE_ASM("asm/nonmatchings/memcard", SaveMenuKeyCheckMc__Fv);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2823);
