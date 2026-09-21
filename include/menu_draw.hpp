@@ -64,7 +64,7 @@ struct PERSONAL_BOARD {
     s32 unk_20;
     ITEM_PACK *item_pack; /**< Item pack the board lists. */
     s32 unk_28;
-    s32 unk_2C;
+    s16 *unk_2C;
     u8 unk_30[0x10];
     s16 unk_40;
     u8 unk_42[2];
