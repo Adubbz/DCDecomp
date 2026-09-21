@@ -317,15 +317,6 @@ void IncludeBuyItem2(void);
 int CheckBuyItemFunc2(void);
 
 /**
- * Drops the shop special good from the stock once the player already carries one.
- *
- * @mangled ShopSpecialFunc__Fv
- * @address 0x1EBA20
- * @size 0x128
- */
-void ShopSpecialFunc(void);
-
-/**
  * Orders two items for the shop's sort.
  *
  * @mangled CompItem1__Fii

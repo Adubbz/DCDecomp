@@ -632,7 +632,41 @@ static void ExitItemShop2() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", ShopSpecialFunc__Fv);
+/**
+ * Drops the shop special good from the stock once the player already carries one.
+ *
+ * @mangled ShopSpecialFunc__Fv
+ * @address 0x1EBA20
+ * @size 0x128
+ */
+static void ShopSpecialFunc() {
+    int found;
+    int i;
+    WEAPON_HAVE *weapons;
+
+    if (ShopMenu.unk_00 == 1) {
+        found = 0;
+        weapons = ShopUserStatusPt->chara_weapons[0];
+        for (i = 0; i < 10; i++) {
+            if (weapons[i].item_no == 5) {
+                found = 1;
+                break;
+            }
+        }
+        if (ShopDataMove.item_no == 5) {
+            found = 1;
+        }
+        if (found) {
+            for (i = 0; i < 30; i++) {
+                if (ShopListPt[i].item_no == 5 && ShopBoardInfo[i] == 1) {
+                    memset(&ShopListPt[i], 0, sizeof(SHOP_ITEMLIST));
+                    ShopBoardInfo[i] = 0;
+                    return;
+                }
+            }
+        }
+    }
+}
 
 int CompItem1(int first_item_no, int second_item_no) {
     ITEM_DATA *first = GetItemData(first_item_no);
