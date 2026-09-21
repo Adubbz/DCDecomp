@@ -20,8 +20,95 @@
 static int CheckDelete(CEditArea *area, CMapParts *parts, float x, float y, float z);
 
 INCLUDE_ASM("asm/nonmatchings/editground", SetMapParts__11CEditGroundFifffi);
-INCLUDE_ASM("asm/nonmatchings/editground", SetRiverParts__11CEditGroundFfffii);
+
+/**
+ * Gives back the frame that a map part's shadow draws from.
+ */
+static inline CFrame *GetShadowFrame(CMapParts *parts) {
+    return parts->shadow_frame;
+}
+
+/**
+ * Gives back the frame that a map part's shade draws from.
+ */
+static inline CFrame *GetShadeFrame(CMapParts *parts) {
+    return parts->shade_frame;
+}
+
+/**
+ * Gives back the frame that a map part's ripple draws from.
+ */
+static inline CFrame *GetRippleFrame(CMapParts *parts) {
+    return parts->unk_104;
+}
+
+int CEditGround::SetRiverParts(float x, float y, float z, int column_step, int row_step) {
+    CVector3_i_ cell;
+    CVector3_f_ position;
+    int parts_no;
+    int kind;
+
+    int area_no = GetAreaCode(x, y, z);
+    if (area_no < 0) {
+        return 0;
+    }
+    CEditArea *area = areas[area_no];
+    area->GetPos(&cell, x, y, z);
+    cell.x += column_step;
+    cell.z += row_step;
+    int parts_id = area->GetPartsID(cell.x, cell.z);
+    if (parts_id < 0) {
+        return 0;
+    }
+    CMapParts *object = &parts[parts_id];
+    int water = object->unk_118;
+    if ((water != 2 && water != 3 && water != 5) || river_parts == NULL) {
+        return 0;
+    }
+    if (water == 3 || water == 5) {
+        area->GetPos(&position, cell.x, cell.y, cell.z);
+        DeleteMapParts(&parts_no, &kind, position.x + 1.0f, position.y, position.z + 1.0f);
+    }
+    int code = area->SetRiverParts(cell.x, cell.z);
+    if (code < 0) {
+        return 0;
+    }
+    int piece = (code & 0xFF0) >> 4;
+    int rot_y = code & 0xF;
+    if (piece - 1 < 0 || piece - 1 >= 16) {
+        return 0;
+    }
+    if (rot_y >= 3) {
+        rot_y = -1;
+    }
+    for (int i = 0; i < 4; i++) {
+        CMapParts *river = &river_parts[(u32) (piece - 1)];
+        CFrameVu1 *frame = river->frame[i];
+        object->SetFrame(frame, i);
+    }
+    object->collision_frame = river_parts[(u32) (piece - 1)].GetCollisionFrame();
+    object->shadow_frame = GetShadowFrame(&river_parts[(u32) (piece - 1)]);
+    object->shade_frame = GetShadeFrame(&river_parts[(u32) (piece - 1)]);
+    CMapParts *river = &river_parts[(u32) (piece - 1)];
+    CFrame *frame;
+    if (river->unk_0DC == NULL) {
+        frame = NULL;
+    } else {
+        river->unk_0DC->SetPosition(river->pos[0], river->pos[1], river->pos[2]);
+        river->unk_0DC->SetRotation(river->rotation.x, river->rotation.y, river->rotation.z);
+        frame = river->unk_0DC;
+    }
+    object->unk_0DC = frame;
+    object->unk_104 = GetRippleFrame(&river_parts[(u32) (piece - 1)]);
+    object->unk_0E8 = river_parts[(u32) (piece - 1)].unk_0E8;
+    object->unk_118 = river_parts[(u32) (piece - 1)].unk_118;
+    object->bound = river_parts[(u32) (piece - 1)].bound;
+    object->SetRotY(rot_y);
+    return 1;
+}
+
 INCLUDE_ASM("asm/nonmatchings/editground", SetRoadParts__11CEditGroundFfffii);
+
 INCLUDE_ASM("asm/nonmatchings/editground", DeleteMapParts__11CEditGroundFPiPifff);
 
 int CEditGround::GetAreaCode(float x, float y, float z) {
