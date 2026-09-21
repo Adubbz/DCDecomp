@@ -8,6 +8,7 @@
 #include "dataread.hpp"
 #include "eastking.hpp"
 #include "editatra.hpp"
+#include "editloop.hpp"
 #include "editpartsinfo.hpp"
 #include "gamepad.hpp"
 #include "mainselect.hpp"
@@ -1300,9 +1301,61 @@ int OptionMenuFadeOutStart() {
     return result;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memcard", InitMenuSave__FiiP1);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @2503);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @2504);
+int InitMenuSave(int mode, int block_no, u_long128 *buffer) {
+    u_long128 *data;
+    int clear;
+
+    data = buffer;
+    if (buffer == NULL) {
+        data = (u_long128 *) read_buffer;
+    }
+    data = MenuCalcBufAlignment(data);
+    SaveMenu.unk_0 = mode;
+    SaveMenu.block_no = block_no;
+    SaveMenu.result = 0;
+    SaveMenu.unk_28 = 0;
+    SaveMenu.texture_ready = 0;
+    SaveMenu.file_no = 0;
+    SaveMenu.loaded = 0;
+    StartReadBG();
+    LoadFileBGMenuData("savetex.pak", data);
+    if (McAccess.InitForMC()) {
+        return 0;
+    }
+    switch (SaveMenu.unk_0) {
+        case 0:
+            GamePad.SetAutoRepeat(0xA000, 30, 5);
+            GamePad.MenuModeOn(120);
+            SaveMenu.key_no = 3;
+            SaveMenu.unk_1C = 1;
+            break;
+        case 1:
+            SaveMenu.key_no = 3;
+            SaveMenu.unk_1C = 2;
+            EditSave();
+            break;
+        case 2:
+        case 3:
+            clear = SaveMenu.unk_0 == 2;
+            *(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->reserved_36[2] = clear;
+            printf("SaveData clear flag = %d\n",
+                   *(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->reserved_36[2]);
+            GameClearFlag = SaveMenu.unk_0 == 2;
+            SaveMenu.unk_0 = 2;
+            GamePad.SetAutoRepeat(0xA000, 30, 5);
+            GamePad.MenuModeOn(120);
+            SaveMenu.key_no = 22;
+            SaveMenu.unk_1C = 2;
+            break;
+    }
+    SaveMenu.return_key_no = -1;
+    CommonMenuMes2.stay_frame = 1;
+    CommonMenuMes2.value_show = 1;
+    CommonMenuMes2.auto_pos = 5;
+    McAccess.SetFuncNo(1);
+    CommonMenuMes2.cursor_lit = 1;
+    return 1;
+}
 static void ExitSaveSelect() {
     s32 *config;
 
