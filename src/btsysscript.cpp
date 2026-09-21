@@ -407,7 +407,21 @@ int _USER_WEAPON_DRAW(RS_STACKDATA *stack, int count) {
 #else
 INCLUDE_ASM("asm/nonmatchings/btsysscript", _USER_WEAPON_DRAW__FP12RS_STACKDATAi);
 #endif
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_MAIN_CHR2__FP12RS_STACKDATAi);
+
+int _SET_MAIN_CHR2(RS_STACKDATA *stack, int count) {
+    int chara = GetStackInt__FP12RS_STACKDATA__2(stack++);
+    int mode = 0;
+
+    if (count == 2) {
+        mode = GetStackInt__FP12RS_STACKDATA__2(stack);
+    }
+    if (chara < 0 || chara > 5) {
+        return 1;
+    }
+    selectChrUnit(chara, mode);
+    BtEventInfo.script_main_chr = chara;
+    return 1;
+}
 
 int _RESET_MAIN_CHR(RS_STACKDATA *stack, int argument_count) {
     if (BtEventInfo.script_main_chr == -1) {
