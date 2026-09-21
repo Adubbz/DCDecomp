@@ -236,7 +236,23 @@ void SetWeaponAttachStatus(WEAPON_HAVE *attach_source) {
 }
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", WeaponAllValueSet__FP11WEAPON_HAVEP11WEAPON_HAVEi);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", SetAttachMentValue__FiisP11ATTACH_LIST);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", GetAttachVolumeForMsg__FP11ATTACH_LIST);
+
+int GetAttachVolumeForMsg(ATTACH_LIST *attach) {
+    int volume;
+
+    if (attach == NULL) {
+        return 0;
+    }
+    volume = 0;
+    if (attach->item_no >= 0x5B && attach->item_no < 0x5F) {
+        volume = attach->status[attach->item_no - 0x5B];
+    }
+    if (attach->item_no == 0x5A) {
+        volume = attach->stat_00;
+    }
+    return volume;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", InitDunEnterMenu__Fiii);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @762__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @763__3);
