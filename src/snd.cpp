@@ -1120,7 +1120,20 @@ static void SndSeSeqStep() {
  * @address 0x15B060
  * @size 0x84
  */
-INCLUDE_ASM("asm/nonmatchings/snd", SndSeSeqAllStop__Fv);
+void SndSeSeqAllStop() {
+    SND_SE_SEQ *seq;
+    int i;
+
+    for (i = 0; i < 32; i++) {
+        seq = &se_seq[i];
+
+        if (seq->se_no >= 0) {
+            SndSeStop(seq->se_no, seq->voice);
+            InitSeSeq(seq);
+            seq->step++;
+        }
+    }
+}
 
 int SndAmbientInit() {
     now_amb_no = -1;
