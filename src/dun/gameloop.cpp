@@ -894,19 +894,9 @@ void ClearGateKeyStack(void);
 void SndSetReadBuffer(unsigned int *buffer);
 
 /**
- * @mangled SndBgmLoad__Fi
- */
-void SndBgmLoad(int bgm_no);
-
-/**
  * @mangled SndBgmPlay__Fi
  */
 void SndBgmPlay(int bgm_no);
-
-/**
- * @mangled SndSoundLoad__Fi
- */
-void SndSoundLoad(int bank_no);
 
 /**
  * @mangled SndAmbientPlay__Fi

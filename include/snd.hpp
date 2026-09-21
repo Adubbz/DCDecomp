@@ -578,13 +578,14 @@ void SndSetSPSePanf(int se_no, float pan);
 int SndSPSeSyncBG(void);
 
 /**
- * Starts loading one background music set.
+ * Reads one background-music set and hands it to the driver, and returns 1;
+ * returns 0 when that set is already loaded or its file cannot be read.
  *
  * @mangled SndBgmLoad__Fi
  * @address 0x159960
  * @size 0x90
  */
-void SndBgmLoad(int set_no);
+int SndBgmLoad(int set_no);
 
 /**
  * Plays one track of the loaded background music set.
@@ -614,13 +615,14 @@ int SndGetNowSetNo(void);
 void SndSetReadBuffer(unsigned int *buffer);
 
 /**
- * Starts loading one sound-effect set.
+ * Reads one sound-effect set and hands it to the driver, and returns 1;
+ * returns 0 when that set is already loaded or its file cannot be read.
  *
  * @mangled SndSoundLoad__Fi
  * @address 0x15A4F0
  * @size 0x90
  */
-void SndSoundLoad(int set_no);
+int SndSoundLoad(int set_no);
 
 /**
  * Starts loading a background-music bank into a caller-provided buffer, and
