@@ -106,7 +106,6 @@ u_long128 *MenuCalcBufAlignment(u_long128 *buffer) {
     }
     return (u_long128 *) offset;
 }
-#ifdef NON_MATCHING
 int GetAtoraMaxVillage(void) {
     int max_village = 3;
     int village;
@@ -120,14 +119,11 @@ int GetAtoraMaxVillage(void) {
     if (SaveData->QuestDungeon(5, 0)) {
         max_village = 8;
     }
-    if ((max_village < 3) || (max_village >= 9)) {
+    if ((max_village < 3) || (max_village > 8)) {
         max_village = 8;
     }
     return max_village;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetAtoraMaxVillage__Fv);
-#endif
 #ifdef NON_MATCHING
 int GetNowMapTransAtraMap(int mapNo) {
     s16 mapToVillage[35] = {
