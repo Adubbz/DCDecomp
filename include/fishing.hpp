@@ -15,9 +15,6 @@ class CFrameVu1;
  */
 void FishingInit();
 
-/** Loads shared fishing resources into an event arena. */
-void FishingLoad(CDataAlloc2<1> *arena, int slot);
-
 /** Loads the selected collection of fish models into an event arena. */
 void FishingLoadFish(int set_no, CDataAlloc2<1> *arena, int slot);
 
@@ -116,3 +113,12 @@ void FishPullHook(float tension);
  * @size 0x98
  */
 void FishingExit();
+
+/**
+ * Reads the hook and float models and the fishing sounds, and sets aside room for the collision polygons.
+ *
+ * @mangled FishingLoad__FP14CDataAlloc2_1_i
+ * @address 0x1A87E0
+ * @size 0x110
+ */
+void FishingLoad(CDataAlloc2<1> *alloc, int slot);

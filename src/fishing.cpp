@@ -245,17 +245,20 @@ void VectorMax(float *max, float *a, float *b, float *c);
 
 static void GetHookPos(float *position);
 
-/**
- * Reads the fishing minigame's models and textures.
- *
- * @mangled FishingLoad__FP14CDataAlloc2_1_i
- * @address 0x1A87E0
- * @size 0x110
- */
-INCLUDE_ASM("asm/nonmatchings/fishing", FishingLoad__FP14CDataAlloc2_1_i);
-INCLUDE_RODATA("asm/nonmatchings/fishing", @353__4);
-INCLUDE_RODATA("asm/nonmatchings/fishing", @354__2);
-INCLUDE_RODATA("asm/nonmatchings/fishing", @355__2);
+void FishingLoad(CDataAlloc2<1> *alloc, int slot) {
+    LoadFile("chara/fishing.pak", read_buffer, NULL);
+    fishing_texb = slot;
+    HookFrame = LoadMDSFile(GetPackFile(read_buffer, "hari.mds", NULL), alloc, 0, NULL, NULL);
+    UkiFrame = LoadMDSFile(GetPackFile(read_buffer, "uki.mds", NULL), alloc, 0, NULL, NULL);
+    CFrameAttr attr;
+    attr.unk_14 = 1;
+    if (UkiFrame != NULL) {
+        UkiFrame->SetAttr(attr, 1, 0x200);
+    }
+    cpoly = (CCPoly *) alloc->Alloc(0x1800);
+    cpoly_num = 0;
+    SndSPSeLoad(0x2F);
+}
 
 /**
  * Reads the six fish of one fishing spot into an arena.
