@@ -483,7 +483,14 @@ void SndInitSeTable() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/snd", SndSetReadBuffer__FPUi);
+void SndSetReadBuffer(unsigned int *buffer) {
+    int misalign = (int) buffer % 64;
+
+    if (misalign != 0) {
+        buffer = (unsigned int *) ((int) buffer + (64 - misalign));
+    }
+    snd_read_buf = buffer;
+}
 /**
  * Reports whether any of the background sound loads is still running.
  *
