@@ -42,6 +42,10 @@ extern CRect_i_ MenuDispRc;
 
 /** Item kind the item board sort places first. */
 extern int sort_top_type__2;
+
+/** Rank of each item kind in the item board sort, rebuilt before each sort pass. */
+extern int sort_table__2[9];
+
 /** Icon sheet of the consumable items. */
 extern CTexture *ItemIcon;
 
@@ -543,8 +547,65 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonMoneyBoardDraw__Fiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SearchBoardNowPosItemExist__Fii);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetBoardSpace__FiPi);
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SwapItem__FP9ITEM_PACKii);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", CompItem__Fii);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonItemBoardSub__FP9ITEM_PACK);
+
+int CompItem(int first_item_no, int second_item_no) {
+    ITEM_DATA *first = GetItemData(first_item_no);
+    ITEM_DATA *second = GetItemData(second_item_no);
+    int first_rank = 0;
+    int second_rank = 0;
+
+    if (first != NULL) {
+        first_rank = sort_table__2[first->sort_key];
+    }
+    if (second != NULL) {
+        second_rank = sort_table__2[second->sort_key];
+    }
+    if (first_item_no < ITEM_DUNGEON_START) {
+        first_rank = 9;
+    }
+    if (second_item_no < ITEM_DUNGEON_START) {
+        second_rank = 9;
+    }
+    if (first_rank > second_rank) {
+        return 1;
+    }
+    if (first_rank < second_rank) {
+        return -1;
+    }
+    if (first_item_no > second_item_no) {
+        return 1;
+    }
+    if (first_item_no < second_item_no) {
+        return -1;
+    }
+    return 0;
+}
+
+int SeitonItemBoardSub(ITEM_PACK *items) {
+    int i;
+    int j;
+    int type = sort_top_type__2;
+    int swapped;
+
+    for (i = 0; i < 9; i++) {
+        sort_table__2[type] = i;
+        type++;
+        if (type >= 9) {
+            type = 0;
+        }
+    }
+    sort_table__2[0] = 9;
+    swapped = 0;
+    for (i = 0; i < items->num - 1; i++) {
+        for (j = i + 1; j < items->num; j++) {
+            if (CompItem(items->item[i], items->item[j]) > 0) {
+                SwapItem(items, i, j);
+                swapped = 1;
+            }
+        }
+    }
+    return swapped;
+}
 
 void SeitonItemBoard(ITEM_PACK *items) {
     if (items != NULL) {
