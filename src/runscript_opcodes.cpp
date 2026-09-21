@@ -396,7 +396,12 @@ int _SET_MONSTOR_MOVE_CANSEL(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->monster[monster_no].movement_speed = 0.0f;
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_LOCKON_DIST__FP12RS_STACKDATAi);
+int _SET_LOCKON_DIST(RS_STACKDATA *stack, int argc) {
+    int monster_no = NowMonstorUnit->unk_090;
+
+    NowMonstorUnit->monster[monster_no].lock_range = GetStackFloat(stack);
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_LOCKON_SW__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_MONSTOR_MOTION__FP12RS_STACKDATAi);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_GLOBAL_INT__FP12RS_STACKDATAi);
