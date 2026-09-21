@@ -472,13 +472,13 @@ public:
     void GetRectParts(CRect_i_ *rect, CMapParts *target, int margin);
 
     /**
-     * Collects the parts of one kind and subtype standing inside a rectangle.
+     * Gives the grid cell that one cell of a part lands on, turned the way the part faces.
      *
      * @mangled GetRectParts__11CEditGroundFP8CRect_i_P9CMapPartsii
      * @address 0x1A6410
      * @size 0x338
      */
-    void GetRectParts(CRect_i_ *, CMapParts *, int, int);
+    void GetRectParts(CRect_i_ *rect, CMapParts *target, int column, int row);
 
     /**
      * Collects the parts inside a rectangle that face a given direction.

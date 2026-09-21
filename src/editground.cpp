@@ -430,7 +430,89 @@ void CEditGround::GetRectParts(CRect_i_ *rect, CMapParts *target, int margin) {
     rect->height = height + margin * 2;
 }
 
-INCLUDE_ASM("asm/nonmatchings/editground", GetRectParts__11CEditGroundFP8CRect_i_P9CMapPartsii);
+void CEditGround::GetRectParts(CRect_i_ *rect, CMapParts *target, int column, int row) {
+    sceVu0FVECTOR position;
+    CVector3_i_ grid;
+    int width;
+    int height;
+    int rot_y;
+    int offset_x;
+    int offset_z;
+
+    *rect = CRect_i_(0, 0, 0, 0);
+    if (target == NULL) {
+        return;
+    }
+    target->GetPosition(position);
+    int area = GetAreaCode(position[0], position[1], position[2]);
+    if (area < 0 || area >= 4) {
+        return;
+    }
+    if (areas[area] == NULL) {
+        return;
+    }
+    areas[area]->GetPos(&grid, position[0], position[1], position[2]);
+    rot_y = target->GetRotY();
+    target->SetRotY(0);
+    width = target->GetWidth();
+    height = target->GetHeight();
+    target->SetRotY(rot_y);
+    column -= width >> 1;
+    row -= height >> 1;
+    int adjust_x = 0;
+    int adjust_z = 0;
+    // A part with an even side has no centre cell, so turning it shifts the cells by one.
+    if (width % 2 == 1 && height % 2 == 0) {
+        if (rot_y == -1) {
+            adjust_x = -1;
+        }
+        if (rot_y == 2) {
+            adjust_z = -1;
+        }
+    }
+    if (width % 2 == 0 && height % 2 == 1) {
+        if (rot_y == 1) {
+            adjust_z = -1;
+        }
+        if (rot_y == 2) {
+            adjust_x = -1;
+        }
+    }
+    if (width % 2 == 0 && height % 2 == 0) {
+        if (rot_y == -1) {
+            adjust_x = -1;
+        }
+        if (rot_y == 1) {
+            adjust_z = -1;
+        }
+        if (rot_y == 2) {
+            adjust_x = -1;
+            adjust_z = -1;
+        }
+    }
+    switch (target->GetRotY()) {
+        case 0:
+            offset_x = column;
+            offset_z = row;
+            break;
+        case 1:
+            offset_x = row;
+            offset_z = -column;
+            break;
+        case 2:
+            offset_x = -column;
+            offset_z = -row;
+            break;
+        case -1:
+            offset_x = -row;
+            offset_z = column;
+            break;
+    }
+    rect->x = grid.x + offset_x + adjust_x;
+    rect->y = grid.z + offset_z + adjust_z;
+    rect->width = 1;
+    rect->height = 1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/editground", GetRectDirParts__11CEditGroundFP8CRect_i_P9CMapPartsii);
 INCLUDE_ASM("asm/nonmatchings/editground", NornRequest__11CEditGroundFPA64_P9CMapParts);
