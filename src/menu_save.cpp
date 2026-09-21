@@ -76,7 +76,30 @@ int SaveMenuKeySaveDecide(void) {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeySave__Fv);
+
+int SaveMenuKeySave(void) {
+    MC_CARD_INFO *card = &McAccess.card[McAccess.port];
+
+    if (McCheckMCPs2(card) == 0) {
+        SaveMenu.key_no = 0xE;
+        SaveMenu.unk_20 = 1;
+        return 1;
+    }
+    if (card->result < 0) {
+        SaveMenu.key_no = 0xE;
+        SaveMenu.unk_20 = 6;
+        return 1;
+    }
+    if ((card->free_size < 0x50) && (McAccess.CheckFileNo(SaveMenu.file_no) == 0)) {
+        SaveMenu.key_no = 0xE;
+        SaveMenu.unk_20 = 0xB;
+        return 1;
+    }
+    McAccess.SetFuncNo(5);
+    McAccess.file_no = SaveMenu.file_no;
+    SaveMenu.key_no = 0xB;
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyEndSave__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyLoadDecide__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyLoad__Fv);
