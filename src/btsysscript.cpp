@@ -60,6 +60,12 @@ extern "C" CNPCharacter NPCUnit[6];
 /** Whether the player is in the back dungeon rather than the main one. */
 extern s32 BtUraDongeon;
 
+/** Message window the system script talks through first. */
+extern "C" ClsMes BtEventMes0;
+
+/** Message window the system script talks through second. */
+extern "C" ClsMes BtEventMes1;
+
 /**
  * Scatters the bees over their frames and hides the frames themselves.
  */
@@ -70,7 +76,41 @@ void InitBee(CFrame *frame, int count);
  */
 void GetPieroItem(int map_no, int ura_dungeon, int *item0, int *item1);
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", BtSystemScriptEventInfoInit__Fv);
+void BtSystemScriptEventInfoInit(void) {
+    BtEventInfo.unk_2C = -1;
+    BtEventInfo.unk_30 = -1;
+    BtEventInfo.unk_28 = 1;
+    BtEventInfo.unk_34 = 0;
+    BtEventInfo.unk_20 = 1;
+    BtEventInfo.unk_80 = 0;
+    BtEventInfo.entrance_result = NULL;
+    BtEventInfo.escape_result = NULL;
+    BtEventInfo.request = 0;
+    BtEventInfo.unk_9C = -1;
+    BtEventInfo.unk_A0 = -1;
+    BtEventInfo.unk_A4 = 0;
+    BtEventInfo.script_main_chr = -1;
+    BtEventInfo.unk_8C = 0;
+    BtEventInfo.unk_94 = -1;
+    BtEventInfo.unk_90 = 1;
+    BtEventInfo.no_status_recover = 0;
+    EdEventInfo.projection = -1.0f;
+    EdEventInfo.main_character = &CharaMain;
+    for (int i = 0; i < 6; i++) {
+        NPCUnit[i].chara.frame = NULL;
+    }
+    EdEventInfo.npcs = NPCUnit;
+    EdEventInfo.npc_texture_block = 32;
+    EdEventInfo.player_texture_block = 17;
+    EdEventInfo.npc_count = 6;
+    EdEventInfo.villagers = NULL;
+    for (int i = 0; i < 8; i++) {
+        EdEventInfo.messages[i] = NULL;
+    }
+    EdEventInfo.messages[1] = &BtEventMes0;
+    EdEventInfo.messages[2] = &BtEventMes1;
+    EdEventAllClear();
+}
 
 BT_OBJ_HANDLE *GetObjHDL(int index) {
     if (index < 0 || index >= 32) {
