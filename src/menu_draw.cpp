@@ -47,16 +47,12 @@ int GetMenuLangFlag(void) {
     return LanguageCode;
 }
 
-#ifdef NON_MATCHING
 char *GetNowSelectLanguage(int language) {
     if ((language < 0) || (language >= 7)) {
         language = 0;
     }
     return ComMenuContryName[language];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowSelectLanguage__Fi);
-#endif
 
 void GetPathReadDifferntLang(char *path) {
     strcpy(path, GetMenuTextureDir());
