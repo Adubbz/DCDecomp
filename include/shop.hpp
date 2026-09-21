@@ -167,15 +167,6 @@ int CommonShopLoop(void);
 void ShopPolySetInit(int, int);
 
 /**
- * Draws the shop cursor over the slot it stands on.
- *
- * @mangled ShopCurDraw__Fiiiiiii
- * @address 0x1E74D0
- * @size 0x2FC
- */
-void ShopCurDraw(int, int, int, int, int, int, int);
-
-/**
  * Reports whether an item may be recharged.
  *
  * @mangled IsEnableCharge__Fi

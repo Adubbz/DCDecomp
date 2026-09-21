@@ -416,7 +416,66 @@ static void ChargeShopLRDraw(int mode) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", ShopCurDraw__Fiiiiiii);
+/**
+ * Draws the shop cursor over the slot it stands on.
+ *
+ * @mangled ShopCurDraw__Fiiiiiii
+ * @address 0x1E74D0
+ * @size 0x2FC
+ */
+static void ShopCurDraw(int x, int y, int pos, int top, int mode, int select, int alpha) {
+    float cur_x;
+    float cur_y;
+    int waku_x;
+    int waku_y;
+    int vibe = select * 0x20 + 0x40;
+    int width;
+    int height;
+
+    height = width = 0x26;
+    switch (mode) {
+        case 0: {
+            cur_x = x + pos % 5 * 0x28;
+            int row = pos / 5 - top;
+            if (row < 0) {
+                row = 0;
+            }
+            if (row > 3) {
+                row = 3;
+            }
+            cur_y = y + row * 0x28;
+            if (ShopMenu.board.unk_08 == 2) {
+                cur_x = x + 0xD2;
+                cur_y = y + 0x8C;
+            }
+            waku_x = (int) cur_x + 0x1E;
+            waku_y = (int) cur_y - 0xA;
+            break;
+        }
+        case 1:
+            cur_x = x + 0x90;
+            cur_y = y + 0x9E;
+            waku_x = (int) cur_x + 0x1E;
+            waku_y = (int) cur_y - 0xA;
+            width = 0x64;
+            break;
+    }
+    DrawMenuWaku(waku_x, waku_y, width, height, 0, StayTex, alpha);
+    if (select) {
+        cur_x += 34.0f;
+        cur_y += 20.0f;
+    }
+    ShopMenu.unk_178 += (cur_x - ShopMenu.unk_178) / 4.0f;
+    ShopMenu.unk_17C += (cur_y - ShopMenu.unk_17C) / 4.0f;
+    if (select == 2) {
+        DrawMenuVibeItem(ShopMenu.unk_178, ShopMenu.unk_17C, 0, -0xE, alpha);
+    }
+    DrawMenuObjectVibe(ShopMenu.unk_178, ShopMenu.unk_17C, 1, vibe);
+    CursorVibeCnt++;
+    if (CursorVibeCnt >= 0x202FBF00) {
+        CursorVibeCnt = 0;
+    }
+}
 
 /**
  * Draws one shop icon at a position.
