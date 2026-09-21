@@ -600,8 +600,34 @@ int _SET_MOV_COL(RS_STACKDATA *stack, int argc) {
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_BODY_COL__FP12RS_STACKDATAi);
 INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1010);
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_BODY_COL_PARA__FP12RS_STACKDATAi);
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_DMG_COL__FP12RS_STACKDATAi);
-INCLUDE_RODATA("asm/nonmatchings/runscript_opcodes", @1040);
+
+int _SET_DMG_COL(RS_STACKDATA *stack, int argc) {
+    char *name = GetStackString(stack++);
+    float radius = GetStackFloat(stack++);
+    float start = GetStackFloat(stack++);
+    float end = GetStackFloat(stack);
+    int i;
+    int monster_no = NowMonstorUnit->unk_090;
+
+    for (i = 0; i < 16; i++) {
+        if (NowMonstorUnit->effect2[monster_no].active[i] == 0) {
+            CFrame *frame = NowMonstorUnit->chara[monster_no][0].frame->SearchFrame(name);
+            if (frame != NULL) {
+                NowMonstorUnit->effect2[monster_no].active[i] = 1;
+                NowMonstorUnit->effect2[monster_no].frame[i] = frame;
+                NowMonstorUnit->effect2[monster_no].radius[i] = radius;
+                NowMonstorUnit->effect2[monster_no].motion_start[i] = start;
+                NowMonstorUnit->effect2[monster_no].motion_end[i] = end;
+                NowMonstorUnit->effect2[monster_no].unk_340 = i;
+                break;
+            }
+            printf("[%d] dcol -> %s\n", NowMonstorUnit->monster[monster_no].base_model, name);
+            NowMonstorUnit->effect2[monster_no].unk_340 = -1;
+            return 1;
+        }
+    }
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_DMG_PARA__FP12RS_STACKDATAi);
 
 int _SET_SHOT(RS_STACKDATA *stack, int argc) {
