@@ -20,6 +20,9 @@ The build produces the main executable `SCUS_971.11` with matching text and data
 2. Place the NTSC 1.02 disc image, named `Dark Cloud (USA).iso`, in the `rom` folder at the root of the project.
 3. Run `run.sh`.
 
+With access to the private repository, building the executables and diffing
+work without the disc image; see [Reference assembly](#reference-assembly).
+
 `run.sh` builds the disc image and boots it in PCSX2. `build.sh` does the build
 alone, against a clean copy of the sources in a container, and leaves the
 results in `build/`.
@@ -80,12 +83,22 @@ against.
 Each translation unit becomes one segment, so its functions and its constants
 are written to a single file per unit.
 
-The result is checked in, so the project builds without the disc image. To
-regenerate it:
+The result, `asm/`, is not checked in. The build splits it on first use and
+again whenever the configuration changes. To force a fresh split:
 
 ```
 cmake --build build --target disassemble
 ```
+
+The exception is `asm/data/main/parts/`: the main executable's residual data
+dumps, carved and hand-edited from an earlier split. They cannot be
+regenerated from the disc, so they are checked in.
+
+Without the disc image, `asm/` can instead be split from a copy of
+`rom/extracted/iso/SCUS_971.11`, `TITLE.BIN` and `DUN.BIN` kept in a private
+repository whose layout mirrors this one; `scripts/host/overlay_private.sh`
+copies them into place. This is how CI builds. Either way they are checked
+against `rom/extracted.sha256` before a split.
 
 ## Documentation
 

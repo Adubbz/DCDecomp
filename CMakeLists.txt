@@ -18,6 +18,16 @@ set(SCRIPTS_DIR scripts)
 set(ROM_DIR rom)
 set(ASM_DIR asm)
 set(ASM_DATA_DIR ${ASM_DIR}/data)
+# The main executable's residual data dumps: carved and hand-edited rather
+# than split, so unlike the rest of asm/ they are committed.
+set(PARTS_DIR ${ASM_DATA_DIR}/main/parts)
+if(NOT EXISTS "${CMAKE_SOURCE_DIR}/${ROM_DIR}/Dark Cloud (USA).iso"
+   AND NOT EXISTS "${CMAKE_SOURCE_DIR}/${ROM_DIR}/extracted/iso/${BASENAME}")
+    message(FATAL_ERROR
+        "Nothing to split asm/ from. Place the NTSC 1.02 disc image at "
+        "rom/Dark Cloud (USA).iso, or copy the extracted binaries in from the "
+        "private repository with scripts/host/overlay_private.sh.")
+endif()
 set(CONFIG_DIR config)
 set(REF_INDEX ${CONFIG_DIR}/main.symbols.txt)
 if(EXISTS ${CMAKE_SOURCE_DIR}/${REF_INDEX})
@@ -76,14 +86,14 @@ foreach(section IN LISTS SECTIONS)
 endforeach()
 file(GLOB STATIC_SECTION_SOURCES CONFIGURE_DEPENDS
      RELATIVE ${CMAKE_SOURCE_DIR}
-     ${CMAKE_SOURCE_DIR}/${ASM_DATA_DIR}/main/parts/*.s)
+     ${CMAKE_SOURCE_DIR}/${PARTS_DIR}/*.s)
 # A residual dump that a decompiled unit now owns part of is carved into the
 # runs the unit leaves behind. The cuts are addresses rather than symbol names
 # because a compiler-generated constant has no name to key on.
 set(CARVED_PART_SOURCES "")
 set(CARVED_PART_OUTPUTS "")
 function(carve_part part)
-    set(input ${ASM_DATA_DIR}/main/parts/${part})
+    set(input ${PARTS_DIR}/${part})
     set(outputs "")
     set(specs "")
     set(relatives "")
@@ -284,27 +294,27 @@ carve_part(main.rdata.part5.s
 list(REMOVE_ITEM STATIC_SECTION_SOURCES
      ${ASM_DATA_DIR}/title/data.data.s
      ${ASM_DATA_DIR}/title/bss.bss.s
-     ${ASM_DATA_DIR}/main/parts/main.bss.part2b.s
-     ${ASM_DATA_DIR}/main/parts/main.sbss.part1.s
-     ${ASM_DATA_DIR}/main/parts/main.sbss.part1b.s
-     ${ASM_DATA_DIR}/main/parts/main.sbss.part2.s
-     ${ASM_DATA_DIR}/main/parts/main.sbss.part6.s
-     ${ASM_DATA_DIR}/main/parts/main.sbss.part7.s
-     ${ASM_DATA_DIR}/main/parts/main.sbss.part8.s
-     ${ASM_DATA_DIR}/main/parts/main.sbss.part9.s)
+     ${PARTS_DIR}/main.bss.part2b.s
+     ${PARTS_DIR}/main.sbss.part1.s
+     ${PARTS_DIR}/main.sbss.part1b.s
+     ${PARTS_DIR}/main.sbss.part2.s
+     ${PARTS_DIR}/main.sbss.part6.s
+     ${PARTS_DIR}/main.sbss.part7.s
+     ${PARTS_DIR}/main.sbss.part8.s
+     ${PARTS_DIR}/main.sbss.part9.s)
 
 # fish.cpp now owns the complete fish data run at 0x296050-0x2965C0.
 list(REMOVE_ITEM STATIC_SECTION_SOURCES
-     ${ASM_DATA_DIR}/main/parts/main.data.part7.s)
+     ${PARTS_DIR}/main.data.part7.s)
 
 set(FILTERED_SBSS_PART1 generated/asm/data/main/parts/main.sbss.part1.s)
 add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${FILTERED_SBSS_PART1}
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/filter_asm_symbols.py
-            ${ASM_DATA_DIR}/main/parts/main.sbss.part1.s
+            ${PARTS_DIR}/main.sbss.part1.s
             ${BUILD_DIR}/${FILTERED_SBSS_PART1}
             dset_mds_packet dset_mds_objnum flag$332 init$333 D_002A239D
-    DEPENDS ${CMAKE_SOURCE_DIR}/${ASM_DATA_DIR}/main/parts/main.sbss.part1.s
+    DEPENDS ${CMAKE_SOURCE_DIR}/${PARTS_DIR}/main.sbss.part1.s
             ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/filter_asm_symbols.py
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Filtering source-owned globals from main.sbss.part1"
@@ -347,7 +357,7 @@ endforeach()
 # Typed data carved from residual section dumps.
 list(APPEND CPP_SOURCES src/texture_data.cpp)
 file(GLOB EXTRA_ASM_SOURCES CONFIGURE_DEPENDS
-     RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/asm/handwritten/*.s)
+     RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/${SRC_DIR}/handwritten/*.s)
 
 set(CPP_OBJS "")
 foreach(src IN LISTS CPP_SOURCES)
@@ -619,6 +629,10 @@ set(EXTRACTED_ELF ${ROM_DIR}/extracted/iso/${BASENAME})
 set(SPLIT_COMMANDS
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/disassemble.py --config ${CONFIG_DIR})
 
+# asm/ is never committed; it is split from the three binaries under
+# rom/extracted/iso. They come from extracting the disc image, which `iso` and
+# `run` need in full, or, without one, from the private repository. Either way
+# they are checked against rom/extracted.sha256 before the split.
 if(EXISTS "${CMAKE_SOURCE_DIR}/${RETAIL_ISO}")
 
 add_custom_command(
@@ -643,14 +657,18 @@ add_custom_command(
     USES_TERMINAL
     VERBATIM)
 
+endif()
+
 add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/${DISASSEMBLE_STAMP}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${STAMP_DIR}
+    COMMAND ${CMAKE_COMMAND} -E chdir ${ROM_DIR} sha256sum -c extracted.sha256
     ${SPLIT_COMMANDS}
     COMMAND ${CMAKE_COMMAND} -E touch ${DISASSEMBLE_STAMP}
     DEPENDS ${CMAKE_SOURCE_DIR}/${EXTRACTED_ELF}
             ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/disassemble.py
             ${CMAKE_SOURCE_DIR}/${LD_TEMPLATE}
+            ${CMAKE_SOURCE_DIR}/${ROM_DIR}/extracted.sha256
             ${REF_CONFIGS}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Splitting the disc with splat"
@@ -658,15 +676,6 @@ add_custom_command(
     VERBATIM)
 
 add_custom_target(setup DEPENDS ${CMAKE_SOURCE_DIR}/${DISASSEMBLE_STAMP})
-
-else()
-
-add_custom_target(setup
-    COMMAND ${CMAKE_COMMAND} -E echo
-            "No disc image; building against the committed asm/."
-    VERBATIM)
-
-endif()
 
 add_custom_target(disassemble
     ${SPLIT_COMMANDS}

@@ -114,10 +114,24 @@ report_parallelism() {
     echo "  podman machine start"
 }
 
-require_rom() {
+# The disc image itself, for what masters or boots a disc (run.sh).
+require_iso() {
     if [ ! -f "rom/Dark Cloud (USA).iso" ]; then
         echo "rom/Dark Cloud (USA).iso is missing." >&2
         echo "Place the NTSC 1.02 disc image there and try again." >&2
+        exit 1
+    fi
+}
+
+# Something to split asm/ from. The private repository's copies of the three
+# binaries splat reads stand in for the disc for everything short of
+# mastering one.
+require_rom() {
+    if [ ! -f "rom/Dark Cloud (USA).iso" ] \
+       && [ ! -f rom/extracted/iso/SCUS_971.11 ]; then
+        echo "rom/Dark Cloud (USA).iso is missing." >&2
+        echo "Place the NTSC 1.02 disc image there, or copy the extracted" >&2
+        echo "binaries in from the private repository, and try again." >&2
         exit 1
     fi
 }

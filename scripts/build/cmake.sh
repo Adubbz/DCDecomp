@@ -90,15 +90,9 @@ regenerate
 had_asm=1
 [ -d asm/nonmatchings ] || had_asm=0
 
-if [ -f "rom/Dark Cloud (USA).iso" ]; then
-    build setup
-elif [ "$had_asm" = 0 ]; then
-    echo "cmake.sh: no rom/Dark Cloud (USA).iso and no asm/ to fall back on." >&2
-    echo "          Place the NTSC 1.02 disc image in rom/ and try again." >&2
-    exit 1
-else
-    echo "cmake.sh: no disc image; building against the committed asm/." >&2
-fi
+# asm/ is split rather than committed, from the binaries under rom/extracted:
+# the disc's once it has been extracted, or the private repository's copies.
+build setup
 
 if [ "$had_asm" = 0 ]; then
     cmake -G Ninja -S . -B "$BUILD_DIR"

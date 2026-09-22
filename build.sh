@@ -40,7 +40,7 @@ if [ "${CLEAN:-0}" = 1 ]; then
     echo "CLEAN=1: discarding build/; everything in it is built again."
     rm -rf build
 fi
-mkdir -p build
+mkdir -p build asm
 
 report_parallelism
 

@@ -13,6 +13,10 @@ rom/
 # to land in the tree rather than in a copy that goes away with the container.
 asm/
 
+# A checkout of the private repository: retail binaries. What the build needs
+# of it is copied into rom/, which is mounted.
+.private/
+
 # Reverse-engineering scratch: the IDA database and the CodeWarrior installs
 # the compiler under tools/compilers was lifted from. Half a gig, unused by
 # the build.

@@ -16,6 +16,7 @@ cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # nothing sensible for it to do from inside the container.
 require_builder
 require_rom
+require_iso
 ensure_image dcdecomp_dev dev
 report_parallelism
 

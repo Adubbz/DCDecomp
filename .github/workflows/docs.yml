@@ -1,8 +1,7 @@
 # Doxygen documentation, published to GitHub Pages.
 #
-# Needs no disc: doxygen reads src/ and include/ only, and the `asm` body
-# fragments it would otherwise miss are regenerated from the committed dumps
-# under ref/. No game data is downloaded, stored or uploaded here.
+# Needs no disc and no private submodule: doxygen reads src/ and include/
+# only, never asm/. No game data is downloaded, stored or uploaded here.
 #
 # Pages must also be enabled once by hand, at Settings -> Pages -> Source ->
 # "GitHub Actions"; this workflow alone does not turn it on.

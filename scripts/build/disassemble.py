@@ -704,9 +704,8 @@ def clear_generated():
     """Remove what a previous split wrote, so nothing stale survives it.
 
     splat writes files and never takes them away, so a moved boundary leaves
-    the old file behind defining the same symbol twice. The handwritten
-    assembly and checked-in residual section parts are not splat outputs and
-    are kept.
+    the old file behind defining the same symbol twice. The checked-in
+    residual section parts are not splat outputs and are kept.
     """
     removed = 0
     root = Path("asm")
@@ -937,15 +936,14 @@ def main():
         return 0
 
     # Before anything is removed: clear_generated() takes out the whole of the
-    # previous split, and the reference assembly is checked in, so a run that
-    # cannot reach splat -- the dev image does not carry it -- would leave the
-    # tree needing `git checkout -- asm` to get back.
+    # previous split, and a run that cannot reach splat would leave no asm/ at
+    # all to build against until the next successful one.
     try:
         import splat  # noqa: F401
         import spimdisasm  # noqa: F401
     except ImportError as missing:
         print(f"disassemble: {missing.name} is not installed, so nothing can be "
-              f"split; leaving the checked-in asm/ alone.", file=sys.stderr)
+              f"split; leaving the existing asm/ alone.", file=sys.stderr)
         return 1
 
     # splat keeps the symbol table and the disassembler's context in module

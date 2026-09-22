@@ -2,9 +2,21 @@
 #
 # decomp.dev renders its progress page from an artifact named
 # "<VERSION>_report" holding objdiff's report.json, which this job builds from
-# scratch on every push. It needs no disc: ref/ and the compiler are committed,
-# and the disc is only required to produce ref/, which has already happened --
-# so no game data is downloaded, stored or uploaded here.
+# scratch on every push.
+#
+# asm/ is not committed, so the job splits it with splat first. It needs no
+# disc for that: the private repository carries the three binaries splat
+# reads, laid out as they sit in this tree. It is checked out with a
+# read-only deploy key -- the
+# PRIVATE_REPO_SSH_KEY secret -- and copied in by the same
+# scripts/host/overlay_private.sh a developer runs. Only report.json leaves
+# the runner. In particular neither the checkout nor asm/ is ever cached: a
+# pull request from a fork can restore the default branch's caches.
+#
+# The private repository is named only by the PRIVATE_REPOSITORY Actions
+# variable (owner/name). Without it or the key -- and pull requests from forks
+# get neither secrets nor, here, a reason to trust them -- the job reports
+# that it was skipped rather than failing.
 #
 # The repository must also be registered once by hand at
 # https://decomp.dev/manage/new; this workflow alone does not add it.
@@ -23,19 +35,53 @@ jobs:
   report:
     runs-on: ubuntu-latest
 
+    env:
+      HAS_PRIVATE: ${{ secrets.PRIVATE_REPO_SSH_KEY != '' && vars.PRIVATE_REPOSITORY != '' }}
+      PRIVATE_REPOSITORY: ${{ vars.PRIVATE_REPOSITORY }}
+
     steps:
+      - name: Skip without access to the private repository
+        if: env.HAS_PRIVATE != 'true'
+        run: |
+          echo "::notice::PRIVATE_REPOSITORY or PRIVATE_REPO_SSH_KEY is not set (a pull request from a fork?); no progress report without the private repository."
+
       - name: Check out the repository
+        if: env.HAS_PRIVATE == 'true'
         uses: actions/checkout@v4
 
       - name: Check out the mwccgap submodule
+        if: env.HAS_PRIVATE == 'true'
         run: git submodule update --init tools/mwccgap
 
+      - name: Check out the private repository
+        if: env.HAS_PRIVATE == 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.PRIVATE_REPOSITORY }}
+          path: .private
+          ssh-key: ${{ secrets.PRIVATE_REPO_SSH_KEY }}
+          persist-credentials: false
+
+      - name: Copy in the private files
+        if: env.HAS_PRIVATE == 'true'
+        # The checkout goes once its files are in rom/; .dockerignore already
+        # keeps it and them out of the image built next.
+        run: |
+          scripts/host/overlay_private.sh .private
+          rm -rf .private
+
       - name: Build the toolchain image
+        if: env.HAS_PRIVATE == 'true'
+        # .dockerignore keeps rom/ and asm/ out of the image; they are
+        # mounted below with the rest of the tree.
         # The Dockerfile is the only description of this toolchain, so CI uses
         # it rather than a second copy of the same steps that could drift.
         run: docker build -t dcdecomp_dev --target dev .
 
-      - name: Build and generate the report
+      - name: Split, build and generate the report
+        if: env.HAS_PRIVATE == 'true'
+        # There is no disc image, so `setup` checks the binaries copied into
+        # rom/extracted against rom/extracted.sha256 and splits them.
         run: |
           docker run --rm \
             -v "$PWD:/dcdecomp" -w /dcdecomp -e HOME=/tmp \
@@ -47,6 +93,7 @@ jobs:
             '
 
       - name: Summarise
+        if: env.HAS_PRIVATE == 'true'
         run: |
           python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
           import json
@@ -61,6 +108,7 @@ jobs:
           PY
 
       - name: Upload the progress report
+        if: env.HAS_PRIVATE == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: SCUS_971.11_report
@@ -68,13 +116,13 @@ jobs:
           if-no-files-found: error
 
       - name: Create the Discord progress message
-        if: github.event_name != 'pull_request'
+        if: env.HAS_PRIVATE == 'true' && github.event_name != 'pull_request'
         run: |
           python3 .github/scripts/discord_progress.py \
             progress/report.json "$RUNNER_TEMP/discord-progress.json"
 
       - name: Send the progress message to Discord
-        if: github.event_name != 'pull_request'
+        if: env.HAS_PRIVATE == 'true' && github.event_name != 'pull_request'
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
