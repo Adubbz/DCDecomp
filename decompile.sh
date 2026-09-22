@@ -48,7 +48,7 @@ run() {
         exit 1
     fi
 
-    located=$(python3 scripts/diff/ref_index.py "$symbol" "${section[@]}" 2>/dev/null) || {
+    located=$(python3 scripts/diff/ref_index.py "$symbol" ${section[@]+"${section[@]}"} 2>/dev/null) || {
         if [[ ${#section[@]} -ne 0 ]]; then
             echo "$0: $symbol is not in the ${section[0]} reference index" >&2
         else
@@ -87,5 +87,5 @@ exec "$BUILDER" run --rm \
     -v "$PWD:$CONTAINER_WORKDIR:Z" \
     -w "$CONTAINER_WORKDIR" \
     -e HOME=/tmp \
-    dcdecomp_dev "$CONTAINER_WORKDIR/decompile.sh" "${section[@]}" "$symbol" \
+    dcdecomp_dev "$CONTAINER_WORKDIR/decompile.sh" ${section[@]+"${section[@]}"} "$symbol" \
     ${raw:+$([ "$raw" = 1 ] && echo --raw)} "$@"

@@ -17,13 +17,20 @@ cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 require_builder
 require_rom
 ensure_image dcdecomp_dev dev
+report_parallelism
 
 ISO="build/Dark Cloud (Build).iso"
 
 # -t keeps the colours and progress line, skipped when this script's own output
 # is redirected.
+# bash 3.2, which is what macOS ships, treats an empty array as unset under
+# `set -u`, hence the guarded expansions below.
 TTY=()
 if [ -t 1 ]; then TTY=(-t); fi
+
+# JOBS, when it is set, is for scripts/build/cmake.sh inside the container.
+ENV_ARGS=()
+if [ -n "${JOBS:-}" ]; then ENV_ARGS=(-e "JOBS=$JOBS"); fi
 
 # Building comes first and on its own: neither target is tied to the hash
 # check, so code that does not match retail still boots, which is the whole
@@ -36,7 +43,7 @@ if [ -t 1 ]; then TTY=(-t); fi
 # deliberately not the `build` target: that also pulls in verify_extracted,
 # which hashes the 1.7GB DATA.DAT, and nothing about booting the image depends
 # on the extracted files. It only reports, so the boot goes ahead either way.
-"$BUILDER" run --rm "${TTY[@]}" \
+"$BUILDER" run --rm ${TTY[@]+"${TTY[@]}"} ${ENV_ARGS[@]+"${ENV_ARGS[@]}"} \
     -v "$PWD:$CONTAINER_WORKDIR:Z" \
     -w "$CONTAINER_WORKDIR" \
     -e HOME=/tmp \

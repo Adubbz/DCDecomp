@@ -15,6 +15,7 @@ import os
 import subprocess
 import re
 import sys
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 CONFIG = Path("config")
@@ -630,27 +631,66 @@ def restore_invented_names_in_parts(root="asm"):
     return changed
 
 
+# What a worker process needs to run the per-file passes, built once in each
+# of them. The symbol table is a few thousand rows and image_of is a closure,
+# so neither travels well as an argument to every call.
+_PER_FILE_STATE = {}
+
+
+def _per_file_init():
+    _PER_FILE_STATE["symbols"] = read_symbol_table()
+    _PER_FILE_STATE["image_of"] = image_of_file()
+
+
+def _per_file_passes(item):
+    """The passes that read one file and nothing else."""
+    path, text = item
+    text = restore_gp_relative_relocations(
+        path, text, _PER_FILE_STATE["symbols"], _PER_FILE_STATE["image_of"]
+    )
+    return path, restore_invented_names(
+        twin_branched_labels(localize_alt_labels(globalize_addressed_labels(text)))
+    )
+
+
+def job_count():
+    """How many processes to split per-file work over."""
+    jobs = os.environ.get("JOBS")
+    if jobs and jobs.isdigit() and int(jobs) > 0:
+        return int(jobs)
+    try:
+        return len(os.sched_getaffinity(0))
+    except AttributeError:
+        return os.cpu_count() or 1
+
+
 def fix_branches(root):
     """Apply every label pass to the assembly splat wrote.
 
     The files are read as a set, because whether a label has to be exported is
-    a question about the whole tree rather than about one file.
+    a question about the whole tree rather than about one file. That question
+    is the only one that is: once it has been answered, each file is rewritten
+    from its own text alone, which is minutes of regular expressions over 50MB
+    of assembly and the one part of the split worth spreading over the CPUs.
     """
     paths = sorted(
         path for path in Path(root).rglob("*.s") if "parts" not in path.parts
     )
     original = {path: path.read_text(encoding="utf-8") for path in paths}
-    symbols = read_symbol_table()
-    image_of = image_of_file()
 
     texts, shared = globalize_shared_labels(original)
-    for path, text in texts.items():
-        text = restore_gp_relative_relocations(path, text, symbols, image_of)
-        texts[path] = restore_invented_names(
-            twin_branched_labels(
-                localize_alt_labels(globalize_addressed_labels(text))
-            )
-        )
+
+    workers = min(job_count(), len(texts)) if texts else 1
+    if workers > 1:
+        # A chunk at a time: 5000 files one call each would spend longer
+        # posting text between the processes than transforming it.
+        with ProcessPoolExecutor(
+            max_workers=workers, initializer=_per_file_init
+        ) as pool:
+            texts = dict(pool.map(_per_file_passes, texts.items(), chunksize=32))
+    else:
+        _per_file_init()
+        texts = dict(_per_file_passes(item) for item in texts.items())
 
     changed = 0
     for path, text in texts.items():
@@ -915,6 +955,7 @@ def main():
     if stale:
         print(f"disassemble: cleared {stale} file(s) from the previous split")
 
+    configs = []
     for image in args.names or IMAGES:
         config = args.config / f"{image}.yaml"
         if not config.exists():
@@ -924,12 +965,35 @@ def main():
                 file=sys.stderr,
             )
             return 1
-        result = subprocess.run(
-            [sys.executable, os.path.abspath(__file__), "--single", str(config)]
-        )
-        if result.returncode != 0:
+        configs.append((image, config))
+
+    # The images run at the same time. Each one already needs a process of its
+    # own for the globals above, and they write disjoint files -- an image owns
+    # its own subtree of asm/ and its own build/splat names -- so the split
+    # costs the largest image rather than the sum of the three. Their output is
+    # held back and printed per image, or three progress lines would interleave.
+    print(f"disassemble: splitting {', '.join(image for image, _c in configs)} "
+          f"at once; each image reports when it is done")
+    running = []
+    for image, config in configs:
+        running.append((image, subprocess.Popen(
+            [sys.executable, os.path.abspath(__file__), "--single", str(config)],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+        )))
+
+    status = 0
+    for image, process in running:
+        output = process.communicate()[0]
+        if output:
+            sys.stdout.write(output)
+            sys.stdout.flush()
+        if process.returncode != 0:
             print(f"disassemble: splitting {image} failed", file=sys.stderr)
-            return result.returncode
+            status = status or process.returncode
+    if status:
+        return status
 
     unaligned = drop_rodata_alignment("asm")
     if unaligned:

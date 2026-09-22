@@ -1,5 +1,17 @@
 # Derive object rules from the split configuration.
+#
+# Each ask is a python process that reads the whole split configuration, and
+# configure asks for the same rows once per image, so what a flag produced is
+# kept for the rest of the run.
 function(derive_config flag out_var)
+    string(MAKE_C_IDENTIFIER "derive_config_${flag}" key)
+    get_property(known GLOBAL PROPERTY ${key} SET)
+    if(known)
+        get_property(rows GLOBAL PROPERTY ${key})
+        set(${out_var} "${rows}" PARENT_SCOPE)
+        return()
+    endif()
+
     execute_process(
         COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/disassemble.py ${flag}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -10,6 +22,7 @@ function(derive_config flag out_var)
         message(FATAL_ERROR "disassemble.py ${flag} failed (${status})")
     endif()
     string(REPLACE "\n" ";" rows "${rows}")
+    set_property(GLOBAL PROPERTY ${key} "${rows}")
     set(${out_var} "${rows}" PARENT_SCOPE)
 endfunction()
 

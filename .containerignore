@@ -8,6 +8,11 @@
 # run time precisely so it stays out of the image.
 rom/
 
+# The split. 70MB of the context, mounted in by build.sh for the same reason
+# rom/ is: it is generated, it has to survive between runs, and a re-split has
+# to land in the tree rather than in a copy that goes away with the container.
+asm/
+
 # Reverse-engineering scratch: the IDA database and the CodeWarrior installs
 # the compiler under tools/compilers was lifted from. Half a gig, unused by
 # the build.

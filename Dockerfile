@@ -119,11 +119,10 @@ WORKDIR /dcdecomp
 # scratch come too, and this one layer is 6GB.
 COPY . .
 
-# Build everything and copy the results out, through the same cmake.sh the
-# entry points use. `ctx` is named because this builds `elf`, not the default
-# target it hangs off. rom/ is mounted in and /output is where the
-# results land; see build.sh.
+# Build everything, through the same cmake.sh the entry points use. `ctx` is
+# named because this builds `elf`, not the default target it hangs off. rom/
+# and build/ are mounted in, so the results land in the tree's own build/ and
+# a second run has the extracted disc, the split and the objects to compare
+# against rather than starting from nothing; see build.sh.
 CMD scripts/build/cmake.sh elf ctx \
-    && scripts/build/verify_built.sh \
-    && cp build/SCUS_971.11 build/TITLE.BIN build/DUN.BIN \
-          build/ctx.c build/ctx.cpp build/compiler_flags.txt /output/
+    && scripts/build/verify_built.sh

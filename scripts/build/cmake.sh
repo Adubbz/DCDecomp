@@ -4,8 +4,10 @@
 #
 #   scripts/build/cmake.sh <target>...       build these targets
 #   BUILD_DIR=other scripts/build/cmake.sh elf
+#   JOBS=8 scripts/build/cmake.sh elf        override ninja's own job count
 #
-# It configures, builds `setup`, then builds what was asked for.
+# It brings the build files up to date, builds `setup`, then builds what was
+# asked for.
 #
 # CMakeCache.txt records the absolute source directory it was generated for,
 # and build/ is shared between contexts that see the tree at different paths
@@ -47,13 +49,49 @@ configure() {
     cmake --fresh -G Ninja -S . -B "$BUILD_DIR"
 }
 
-configure
+# Configuring takes about as long as compiling a dozen objects, and every
+# entry point starts with it. Ninja already knows when it is needed: build.ninja
+# is a target of its own, rebuilt when CMakeLists.txt, anything a
+# CMAKE_CONFIGURE_DEPENDS names, or a CONFIGURE_DEPENDS glob changes. So ask
+# for that instead, and configure outright only when there is nothing to ask.
+regenerate() {
+    if [ ! -f "$BUILD_DIR/build.ninja" ] || cache_is_stale; then
+        configure
+        return
+    fi
+    # Held back and printed only when there was something to do, so the usual
+    # case does not open with ninja reporting that it had nothing to.
+    if regen=$(cmake --build "$BUILD_DIR" --target build.ninja 2>&1); then
+        case $regen in
+            ''|*"no work to do"*) : ;;
+            *) printf '%s\n' "$regen" ;;
+        esac
+        return
+    fi
+    printf '%s\n' "$regen" >&2
+    echo "cmake.sh: regenerating the build files failed; reconfiguring from scratch." >&2
+    cmake --fresh -G Ninja -S . -B "$BUILD_DIR"
+}
+
+# Ninja picks its own job count from the CPUs it can see; JOBS is for saying
+# otherwise, on a machine where that is the wrong number.
+JOB_ARGS=""
+if [ -n "${JOBS:-}" ]; then
+    JOB_ARGS="--parallel $JOBS"
+fi
+
+build() {
+    # shellcheck disable=SC2086 -- JOB_ARGS is a flag pair or nothing at all.
+    cmake --build "$BUILD_DIR" $JOB_ARGS --target "$@"
+}
+
+regenerate
 
 had_asm=1
 [ -d asm/nonmatchings ] || had_asm=0
 
 if [ -f "rom/Dark Cloud (USA).iso" ]; then
-    cmake --build "$BUILD_DIR" --target setup
+    build setup
 elif [ "$had_asm" = 0 ]; then
     echo "cmake.sh: no rom/Dark Cloud (USA).iso and no asm/ to fall back on." >&2
     echo "          Place the NTSC 1.02 disc image in rom/ and try again." >&2
@@ -68,4 +106,4 @@ fi
 
 [ $# -gt 0 ] || set -- build
 
-exec cmake --build "$BUILD_DIR" --target "$@"
+build "$@"

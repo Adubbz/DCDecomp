@@ -20,6 +20,24 @@ The build produces the main executable `SCUS_971.11` with matching text and data
 2. Place the NTSC 1.02 disc image, named `Dark Cloud (USA).iso`, in the `rom` folder at the root of the project.
 3. Run `run.sh`.
 
+`run.sh` builds the disc image and boots it in PCSX2. `build.sh` does the build
+alone, against a clean copy of the sources in a container, and leaves the
+results in `build/`.
+
+Both are incremental. The disc is extracted and split once, not once per
+build: `rom/`, `asm/` and `build/` are mounted into the container, so the
+extracted files, the split and every object survive between runs, and each
+step reruns only when one of its inputs changes. Two variables tune it:
+
+```
+CLEAN=1 ./build.sh       throw build/ away first, so everything is rebuilt
+JOBS=8 ./build.sh        override the job count picked from the visible CPUs
+```
+
+On macOS and Windows that count is the podman machine's rather than the
+host's, and podman's default is well under it; both scripts say so when they
+differ.
+
 ## Diffing
 
 `diff.sh <symbol>` compares a function against the retail original with

@@ -54,12 +54,14 @@ fi
 require_rom
 ensure_image dcdecomp_dev dev
 
+# bash 3.2, which is what macOS ships, treats an empty array as unset under
+# `set -u`, hence the guarded expansions below.
 TTY=()
 
 case $mode in
     scratch)
         [[ $# -eq 0 ]] || { echo "$0: --scratch takes no extra flags: $*" >&2; exit 1; }
-        ARGS=(python3 scripts/diff/decompme.py "$symbol" "${section[@]}")
+        ARGS=(python3 scripts/diff/decompme.py "$symbol" ${section[@]+"${section[@]}"})
         ;;
 
     report)
@@ -77,7 +79,7 @@ case $mode in
         # objdiff addresses a function by its unit, so the section has to be
         # resolved even when it was not given -- the reference index is what
         # knows it, exactly as it does for --scratch.
-        if located=$(python3 scripts/diff/ref_index.py "$symbol" "${section[@]}" 2>/dev/null); then
+        if located=$(python3 scripts/diff/ref_index.py "$symbol" ${section[@]+"${section[@]}"} 2>/dev/null); then
             read -r _ reference _ <<<"$located"
             # objdiff names a unit after its source, e.g. camera or
             # dun/gameloop; the reference path spells the same thing out as
@@ -112,7 +114,7 @@ fi
 
 require_builder
 
-exec "$BUILDER" run --rm "${TTY[@]}" \
+exec "$BUILDER" run --rm ${TTY[@]+"${TTY[@]}"} \
     -v "$PWD:$CONTAINER_WORKDIR:Z" \
     -w "$CONTAINER_WORKDIR" \
     -e HOME=/tmp \

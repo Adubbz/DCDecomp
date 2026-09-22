@@ -69,6 +69,51 @@ ensure_image() {
     "$BUILDER" build -t "$image" --target "$target" .
 }
 
+# How much of the machine the build gets. On macOS and Windows podman runs the
+# build in a virtual machine with a CPU count of its own, and the default is
+# well under the host's -- which caps every parallel step in the build without
+# saying so. Reported once per run rather than left to look like the build's
+# own speed. Nothing here fails: a podman without a machine, or docker, simply
+# has nothing to report.
+report_parallelism() {
+    if in_container || [ "${BUILDER:-}" != podman ]; then
+        return
+    fi
+
+    vm_cpus=$(podman machine inspect --format '{{.Resources.CPUs}}' 2>/dev/null \
+              | head -1)
+    case $vm_cpus in
+        ''|*[!0-9]*) return ;;
+    esac
+
+    host_cpus=$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 0)
+    case $host_cpus in
+        ''|*[!0-9]*) return ;;
+    esac
+
+    [ "$host_cpus" -gt "$vm_cpus" ] || return 0
+
+    # Half the host's memory, so the suggestion is not one that fails to
+    # start on a small machine. Left out entirely if it cannot be read.
+    host_mb=$(sysctl -n hw.memsize 2>/dev/null)
+    if [ -n "$host_mb" ]; then
+        host_mb=$((host_mb / 1024 / 1024))
+    else
+        host_mb=$(awk '/^MemTotal:/ {print int($2 / 1024)}' /proc/meminfo 2>/dev/null)
+    fi
+    memory=""
+    case $host_mb in
+        ''|*[!0-9]*) ;;
+        *) [ "$host_mb" -ge 4096 ] && memory=" --memory $((host_mb / 2))" ;;
+    esac
+
+    echo "The podman machine has $vm_cpus of this host's $host_cpus CPUs; the build is"
+    echo "only as parallel as that. To give it the rest:"
+    echo "  podman machine stop"
+    echo "  podman machine set --cpus $host_cpus$memory"
+    echo "  podman machine start"
+}
+
 require_rom() {
     if [ ! -f "rom/Dark Cloud (USA).iso" ]; then
         echo "rom/Dark Cloud (USA).iso is missing." >&2

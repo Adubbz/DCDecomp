@@ -4,6 +4,14 @@
 #
 # On the host this builds a container image from a clean copy of the tree and
 # runs it; inside a container it drives the same targets against the tree.
+#
+#   ./build.sh              build what has changed since the last run
+#   CLEAN=1 ./build.sh      throw build/ away first, so everything is rebuilt
+#   JOBS=8 ./build.sh       override the job count ninja picks for itself
+#
+# What was extracted from the disc survives CLEAN: it is checked against the
+# disc rather than against a stamp. `scripts/build/extract.py --force` is the
+# way to write it out again.
 set -euo pipefail
 
 cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -24,20 +32,42 @@ fi
 require_builder
 
 # Always rebuilt: this stage copies the tree into the image, so a stale image
-# would build stale sources.
+# would build stale sources. Only that copy is rebuilt -- the toolchain stages
+# under it are cached, and the sources are the last thing the image adds.
 "$BUILDER" build -t dcdecomp_build --target build .
 
+if [ "${CLEAN:-0}" = 1 ]; then
+    echo "CLEAN=1: discarding build/; everything in it is built again."
+    rm -rf build
+fi
 mkdir -p build
 
-# rom/ is mounted rather than copied in, to keep the 1.7GB disc out of the
-# build context. The reference assembly is checked in, so nothing else has to
-# survive between runs. The image still gets a clean copy of the sources, which
-# is the point of this script. -t keeps the colours and progress line, skipped
-# when this script's own output is redirected.
+report_parallelism
+
+# bash 3.2, which is what macOS ships, treats an empty array as unset under
+# `set -u`, hence the guarded expansions below.
 TTY=()
 if [ -t 1 ]; then TTY=(-t); fi
 
-"$BUILDER" run --rm "${TTY[@]}" \
-  -v "$(pwd)/rom:/dcdecomp/rom:Z" \
-  -v "$(pwd)/build:/output:Z" \
+# JOBS, when it is set, is for scripts/build/cmake.sh inside the container.
+ENV_ARGS=()
+if [ -n "${JOBS:-}" ]; then ENV_ARGS=(-e "JOBS=$JOBS"); fi
+
+# The image carries a clean copy of the sources; the three generated
+# directories are mounted instead, and are what make a second run cheap.
+#
+#   rom/    the 1.7GB disc and what was extracted from it, which would
+#           otherwise be extracted again into a fresh image every run
+#   asm/    the split. Its stamp lives in build/, so the split it describes
+#           has to be the one the next run reads -- and a re-split here
+#           persists exactly as it does through run.sh
+#   build/  the stamps and every object, so only what changed is rebuilt.
+#           The results land here directly
+#
+# -t keeps the colours and progress line, skipped when this script's own
+# output is redirected.
+"$BUILDER" run --rm ${TTY[@]+"${TTY[@]}"} ${ENV_ARGS[@]+"${ENV_ARGS[@]}"} \
+  -v "$(pwd)/rom:$CONTAINER_WORKDIR/rom:Z" \
+  -v "$(pwd)/asm:$CONTAINER_WORKDIR/asm:Z" \
+  -v "$(pwd)/build:$CONTAINER_WORKDIR/build:Z" \
   dcdecomp_build
