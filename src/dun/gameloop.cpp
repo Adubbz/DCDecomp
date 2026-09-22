@@ -8258,7 +8258,10 @@ void DelActiveItem(int slot) {
 #ifdef NON_MATCHING
 int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
     if (trap == NULL) {
-        return 0;
+        // Retail sets no return value here: beqz jumps straight to the
+        // epilogue, past the v0 = kind. The mwcc warning "return value
+        // expected" is correct and expected.
+        return;
     }
 
     int element;
@@ -8297,7 +8300,7 @@ int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
             se = 0xE1;
             break;
         case 1: {
-            float rate = 0.2f;
+            float rate = 1.2f;
             int added = (int) (had * rate) + 10;
 
             if (had + added >= 0xFFFF) {
