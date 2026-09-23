@@ -8255,18 +8255,28 @@ void DelActiveItem(int slot) {
     }
 }
 
-#ifdef NON_MATCHING
+// Duplicates offsetof(CUserStatus, chara_weapons): the address below is built
+// from sizeof-scaled row/slot terms rather than indexing chara_weapons
+// directly, so this offset has to be kept in sync by hand if a field is ever
+// added above chara_weapons.
+#define CHARA_WEAPONS_OFFSET 0x450c
+STATIC_ASSERT((int) &((CUserStatus *) 0)->chara_weapons == CHARA_WEAPONS_OFFSET);
+
+#pragma opt_propagation off
 int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
     if (trap == NULL) {
-        return 0;
+        // Retail sets no return value here: beqz jumps straight to the
+        // epilogue, past the v0 = kind. The mwcc warning "return value
+        // expected" is correct and expected.
+        return;
     }
 
     int element;
     int se;
     int kind;
     WEAPON_HAVE *weapon;
-    int had;
     CUserStatus *status;
+    int had;
     u16 *gauge;
     s8 chara;
     s8 *slots;
@@ -8275,10 +8285,18 @@ int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
     status = UserStatus;
     gauge = &status->unk_4346;
     had = status->unk_4346;
+    // Read through the pointer rather than assigned from had: CSE creates the
+    // copy retail hoists to the entry block, while a direct assignment gets
+    // unified away in the frontend.
+    int had_copy = *gauge;
     chara = status->cur_chara;
     slots = status->equipped_weapon_slot;
     slot = slots[chara];
-    weapon = &status->chara_weapons[chara][slot];
+    // Computed before row_bytes so the row stride's constant materialises
+    // after slot's last use -- that ordering is what gives chara its register.
+    int slot_bytes = slot * (int) sizeof(WEAPON_HAVE);
+    int row_bytes = chara * (int) sizeof(status->chara_weapons[0]);
+    weapon = (WEAPON_HAVE *) ((char *) status + row_bytes + slot_bytes + CHARA_WEAPONS_OFFSET);
     element = -1;
     se = 0;
     kind = trap->kind;
@@ -8297,8 +8315,10 @@ int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
             se = 0xE1;
             break;
         case 1: {
-            float rate = 0.2f;
-            int added = (int) (had * rate) + 10;
+            // Compound assignment lowers differently from `x = x * c` and is
+            // what produces retail's mul.s operand order.
+            had_copy *= 1.2f;
+            int added = had_copy + 10;
 
             if (had + added >= 0xFFFF) {
                 status->unk_4346 = 0xFFFF;
@@ -8325,12 +8345,12 @@ int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
             se = 0xE2;
             break;
         case 6: {
-            int left = (int) (had - 0.2f * had);
+            had_copy = (int) (had_copy - 0.2f * had_copy);
 
-            if (left <= 0) {
-                left = 0;
+            if (had_copy <= 0) {
+                had_copy = 0;
             }
-            *gauge = left;
+            *gauge = had_copy;
             se = 0xE2;
             break;
         }
@@ -8355,9 +8375,7 @@ int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
     SndSePlay(se, -1, 0);
     return kind;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dun/gameloop", Run_TrapCircle__FP15MAP_TRAP_CIRCLE);
-#endif
+#pragma opt_propagation reset
 
 void LockOffTargte(void) {
     lockOnTargetDraw = 0;
