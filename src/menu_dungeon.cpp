@@ -227,6 +227,7 @@ static void PlusAttachmentVolume(ATTACH_LIST *base, ATTACH_LIST *add, float scal
         base->vs_monster[i] += add->vs_monster[i] * scale;
     }
 }
+
 int GetWeaponAttachStatusUp(WEAPON_HAVE *weapon, int stat) {
     int total;
     int i;
@@ -368,6 +369,7 @@ void WeaponAllValueSet(WEAPON_HAVE *weapon, WEAPON_HAVE *result, int full) {
     }
 }
 
+#ifdef NON_MATCHING
 int SetAttachMentValue(int item_no, int, short level, ATTACH_LIST *attachment) {
     ATTACH_DATA *data;
 
@@ -390,6 +392,9 @@ int SetAttachMentValue(int item_no, int, short level, ATTACH_LIST *attachment) {
     }
     return 0;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/menu_dungeon", SetAttachMentValue__FiisP11ATTACH_LIST);
+#endif
 
 int GetAttachVolumeForMsg(ATTACH_LIST *attach) {
     int volume;
@@ -791,6 +796,7 @@ static void DrawEnemyNum(int x, int y, int top, int bottom, int number, int alph
     }
 }
 
+#ifdef NON_MATCHING
 static void DrawGetAtoraNumBoard(int floor, int x, int y, int top, int bottom, int alpha) {
     int collected = (u8) DEnterMenu.collected_atra[floor];
     int maximum = (u8) DEnterMenu.max_atra[floor];
@@ -803,6 +809,9 @@ static void DrawGetAtoraNumBoard(int floor, int x, int y, int top, int bottom, i
         DrawEnemyNum(x + 122, y + 16, top, bottom - 6, maximum, alpha);
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawGetAtoraNumBoard__Fiiiiii);
+#endif
 
 static void DrawDunNumberClip(int x, int y, int top, int bottom, int digit, int alpha) {
     int position;
@@ -872,6 +881,7 @@ INCLUDE_ASM("asm/nonmatchings/menu_dungeon", StartQuickChange__FP1iPii);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1348__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1349);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1350__3);
+#ifdef NON_MATCHING
 int CharaChangeLoop(void) {
     int result = CharaChangeKey();
 
@@ -889,6 +899,9 @@ int CharaChangeLoop(void) {
     }
     return result;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/menu_dungeon", CharaChangeLoop__Fv);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1373);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1374);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1375);
@@ -1037,6 +1050,7 @@ INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2048);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2049);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2050);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2051);
+#ifdef NON_MATCHING
 void DngActiveWeaponTextureCopy(void) {
     char source[] = "weaponicon";
     char destination[] = "reserved";
@@ -1061,6 +1075,9 @@ void DngActiveWeaponTextureCopy(void) {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DngActiveWeaponTextureCopy__Fv);
+#endif
 
 s32 GetWeaponMsgNo(WEAPON_HAVE *weapon) {
     s16 item_no;
@@ -1117,6 +1134,7 @@ void DrawWepAttach(int x, int y, WEAPON_HAVE *weapon, int, int alpha) {
     }
 }
 
+#ifdef NON_MATCHING
 int GetAtraTipNowHave(int atla_no, int georama) {
     int plot;
 
@@ -1145,6 +1163,9 @@ int GetAtraTipNowHave(int atla_no, int georama) {
     }
     return 0;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/menu_dungeon", GetAtraTipNowHave__Fii);
+#endif
 
 int GetDispVolumeForFloat(float volume) {
     int whole;

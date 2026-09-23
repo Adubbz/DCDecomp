@@ -164,6 +164,7 @@ void EBInitIntro(void) {
     // The wipe opens from the right edge, so it starts with no width.
     draw_rect = CRect_i_(0x280, 0, 0, 0x1C0);
 }
+#ifdef NON_MATCHING
 void EBSetMotion(CCharacter *character, int *motions) {
     if (character == NULL) {
         return;
@@ -195,11 +196,15 @@ void EBSetMotion(CCharacter *character, int *motions) {
     eb_cool_flag = 1;
     GamePad.MenuModeOn(0x50);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/ebattle", EBSetMotion__FP10CCharacterPi);
+#endif
 
 void EBDebug(int mode) {
     debug_mode = mode;
 }
 
+#ifdef NON_MATCHING
 void EBSetKey(float time, int buttons, int mode) {
     if (eb_key_num >= 64) {
         return;
@@ -224,6 +229,9 @@ void EBSetKey(float time, int buttons, int mode) {
     key->early = 0;
     key->reserved = 0;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/ebattle", EBSetKey__Ffii);
+#endif
 
 void EBExit() {
     ebattle_flag = 0;
@@ -244,6 +252,7 @@ void EBExit() {
  * @address 0x1685C0
  * @size 0xCC
  */
+#ifdef NON_MATCHING
 int EBIntroLoop() {
     if (ebattle_intro_flag == 0) {
         return 1;
@@ -262,6 +271,9 @@ int EBIntroLoop() {
     draw_rect = CRect_i_(0, 0, 0x280, 0x1C0);
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/ebattle", EBIntroLoop__Fv);
+#endif
 /**
  * Runs one frame of the event battle and reports the result.
  *
@@ -269,6 +281,7 @@ int EBIntroLoop() {
  * @address 0x168690
  * @size 0x4E4
  */
+#ifdef NON_MATCHING
 int EBLoop() {
     if (ebattle_flag == 0) {
         return 1;
@@ -357,9 +370,13 @@ int EBLoop() {
     eb_result = (eb_cool_flag != 0) + 1;
     return 0;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/ebattle", EBLoop__Fv);
+#endif
 /**
  * Draws the event battle's prompt strip and result overlay.
  */
+#ifdef NON_MATCHING
 void EBDraw() {
     if ((ebattle_intro_flag == 0 && ebattle_flag == 0) || EdDebugParamDrawOff != 0) {
         return;
@@ -421,6 +438,9 @@ void EBDraw() {
         draw_ok((int) position);
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/ebattle", EBDraw__Fv);
+#endif
 /**
  * Draws one button prompt of the event battle.
  *
@@ -428,6 +448,7 @@ void EBDraw() {
  * @address 0x1690E0
  * @size 0x260
  */
+#ifdef NON_MATCHING
 void DrawButton(int buttons, int x, int y, float scale, int early) {
     if (x < -0x20 || x >= 0x281) {
         return;
@@ -458,6 +479,9 @@ void DrawButton(int buttons, int x, int y, float scale, int early) {
         DrawButtonSub(x, y, 0x20, 0x20, scale);
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/ebattle", DrawButton__Fiiifi);
+#endif
 /**
  * Draws one button prompt at a scale.
  *
@@ -465,6 +489,7 @@ void DrawButton(int buttons, int x, int y, float scale, int early) {
  * @address 0x169340
  * @size 0xE0
  */
+#ifdef NON_MATCHING
 void DrawButtonSub(int x, int y, int texture_x, int texture_y, float scale) {
     int width = (int) (32.0f * scale);
     int height = (int) (32.0f * scale);
@@ -472,6 +497,9 @@ void DrawButtonSub(int x, int y, int texture_x, int texture_y, float scale) {
     CRect_i_ texel(texture_x, texture_y, 32, 32);
     set2DSprite(GetVif1Packet(), tex, screen, texel);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/ebattle", DrawButtonSub__Fiiiif);
+#endif
 
 /**
  * Clears the enemy-battle confirmation effect.
@@ -521,6 +549,7 @@ void draw_ok_loop() {
  * @address 0x169490
  * @size 0x2A0
  */
+#ifdef NON_MATCHING
 static void draw_ok(int x) {
     if (ok_draw_cnt <= 0) {
         return;
@@ -555,6 +584,9 @@ static void draw_ok(int x) {
         set2DSprite(GetVif1Packet(), tex, screen, spark_texel, (unsigned char) alpha);
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/ebattle", draw_ok__Fi);
+#endif
 /**
  * Gives the scale a button prompt draws at while it flashes.
  *
@@ -562,6 +594,7 @@ static void draw_ok(int x) {
  * @address 0x169730
  * @size 0x90
  */
+#ifdef NON_MATCHING
 static float button_scale(int button) {
     if (button != ok_effect_button) {
         return 1.0f;
@@ -578,6 +611,9 @@ static float button_scale(int button) {
     }
     return 1.0f;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/ebattle", button_scale__Fi);
+#endif
 static int key_mode = 0xFFFF;
 
 /**
@@ -713,6 +749,7 @@ static int PadDown(int keys) {
  * @address 0x169B70
  * @size 0x20C
  */
+#ifdef NON_MATCHING
 void CameraAutoMove(CCameraFollow *camera, CCPoly *collision, float *target,
                     float previous_angle, float next_angle) {
     float reference[4];
@@ -748,6 +785,9 @@ void CameraAutoMove(CCameraFollow *camera, CCPoly *collision, float *target,
     }
     (void) collision;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/ebattle", CameraAutoMove__FP13CCameraFollowP6CCPolyPfff);
+#endif
 
 /**
  * Disables the editor camera-view mode.
@@ -779,6 +819,7 @@ void InitEyeCamera(CCharacter *character) {
  * @address 0x169DD0
  * @size 0x1B0
  */
+#ifdef NON_MATCHING
 void EyeCamera(CCamera *camera, CCharacter *character, int use_right_stick) {
     float horizontal;
     float vertical;
@@ -805,6 +846,9 @@ void EyeCamera(CCamera *camera, CCharacter *character, int use_right_stick) {
     }
     EdEyeCamera(camera, character);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/ebattle", EyeCamera__FP7CCameraP10CCharacteri);
+#endif
 
 void EdInitCameraParam(CCameraFollow *camera) {
     if (camera != 0) {
@@ -827,6 +871,7 @@ void EdMoveCharaInit() {
  * @address 0x169FF0
  * @size 0x128
  */
+#ifdef NON_MATCHING
 void EdEyeCamera(CCamera *camera, CCharacter *character) {
     sceVu0FVECTOR eye;
     sceVu0FVECTOR reference = {0.0f, 0.0f, 10.0f, 0.0f};
@@ -845,6 +890,9 @@ void EdEyeCamera(CCamera *camera, CCharacter *character) {
     camera->SetPos(eye);
     camera->SetRef(reference);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/ebattle", EdEyeCamera__FP7CCameraP10CCharacter);
+#endif
 
 int EdCheckViewMode() {
     return viewMode;
@@ -884,6 +932,7 @@ void EdASetViewAngle(float horizontal, float vertical) {
     viewAngleV = vertical;
 }
 
+#ifdef NON_MATCHING
 void EdMoveChara() {
     CCharacter *character = EdMoveCharaInfo.chara;
     CCamera *camera = EdMoveCharaInfo.camera;
@@ -925,6 +974,9 @@ void EdMoveChara() {
     EdMoveCharaInfo.motion_previous = EdMoveCharaInfo.motion_current;
     EdMoveCharaInfo.motion_current = character->GetNowTime();
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/ebattle", EdMoveChara__Fv);
+#endif
 
 /**
  * Copies ladder endpoints and event parameters into the active event.

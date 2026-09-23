@@ -296,6 +296,7 @@ void SetMotionEX(CFrame *frame, tagMOTION_TYPE *motion, MOTION_INFO *info, MOTIO
  * @address 0x149090
  * @size 0x264
  */
+#ifdef NON_MATCHING
 static Mot_List *LoadMotionList(CDataAlloc2<1> *arena, MOTION_FILE_INFO *file) {
     Mot_List *head = NULL;
     Mot_List **tail = &head;
@@ -338,6 +339,9 @@ int CreateAnimeDataEX(tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
     motion->proc_list2 = LoadMotionList(arena, &files[2]);
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/gameutil", CreateAnimeDataEX__FP14tagMOTION_TYPEP14CDataAlloc2_1_P16MOTION_FILE_INFO);
+#endif
 /**
  * Builds the per-frame animation table a model's motion needs.
  *
@@ -356,6 +360,7 @@ void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
  * @address 0x1493A0
  * @size 0x318
  */
+#ifdef NON_MATCHING
 void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
                    tagFRAME_INF *frame_info) {
     int frame_count = frame->GetFrameNum();
@@ -378,6 +383,9 @@ void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/gameutil", AnimeDataInit__FP6CFrameP14tagMOTION_TYPEP14CDataAlloc2_1_P12tagFRAME_INF);
+#endif
 
 int NextMotionTime_GET_EX(MOTION_INFO *info, MOTION_STATE *state) {
     int playing_start = info[state->playing_no].start;
@@ -921,10 +929,14 @@ INCLUDE_ASM("asm/nonmatchings/gameutil", CheckWidth__FP6CCPolyiPffPfi);
  * @address 0x14B830
  * @size 0x9EC
  */
+#ifdef NON_MATCHING
 int CheckCameraWidth(CCPoly *polys, int poly_num, float *position, float radius,
                      float *out_position, int mode) {
     return CheckWidthCore(polys, poly_num, position, radius, out_position, mode, 1);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/gameutil", CheckCameraWidth__FP6CCPolyiPffPfi);
+#endif
 static s32 linear_filter;          // Nonzero selects linear filtering for sprite batches.
 static u_long128 *sprite_data_top; // First quadword of the open sprite batch.
 static u_long128 *sprite_data;     // Current write cursor of the open sprite batch.

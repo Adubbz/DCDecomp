@@ -195,7 +195,8 @@ carve_part(main.sdata.part2b.s
            main.sdata.battlemenu-tail.s=2A20D8-2A2150
            main.sdata.memcard-a.s=2A2158-2A21A0
            main.sdata.part2g.s=2A21B8-2A21C8
-           main.sdata.part2e.s=2A21F0-2A2218)
+           main.sdata.part2e.s=2A21F0-2A21F8
+           main.sdata.battle_globals-a.s=2A2200-2A2218)
 carve_part(main.sdata.part3.s
            main.sdata.part3.s=2A22E0-2A2380)
 # .sbss: the same again, one unit's run at a time.

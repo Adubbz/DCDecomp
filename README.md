@@ -21,7 +21,7 @@ The build produces the main executable `SCUS_971.11` with matching text and data
 3. Run `run.sh`.
 
 With access to the private repository, building the executables and diffing
-work without the disc image; see [Reference assembly](#reference-assembly).
+work without the disc image; see the reference assembly instructions below.
 
 `run.sh` builds the disc image and boots it in PCSX2. `build.sh` does the build
 alone, against a clean copy of the sources in a container, and leaves the

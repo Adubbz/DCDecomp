@@ -94,10 +94,11 @@ void GlobalNameInit(void) {
  * @address 0x2384A0
  * @size 0x190
  */
-void InitNameRegist(int character, int texture_block, void *buffer) {
+#ifdef NON_MATCHING
+void InitNameRegist(int character, int texture_block, u_long128 *buffer) {
     StartReadBG();
     if (buffer == NULL) {
-        buffer = read_buffer;
+        buffer = (u_long128 *) read_buffer;
     }
     LoadFileBGMenuData("nameregi.pak", MenuCalcBufAlignment((u_long128 *) buffer));
 
@@ -121,6 +122,9 @@ void InitNameRegist(int character, int texture_block, void *buffer) {
     GamePad.MenuModeOn(0x78);
     GamePad.SetAutoRepeat(0xF000, 30, 9);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/battle_globals", InitNameRegist__FiiP1);
+#endif
 /**
  * Gives the name-entry screen's textures back and closes it.
  *
@@ -142,6 +146,7 @@ void ExitNameEnterFunc() {
  * @address 0x2386A0
  * @size 0xBC
  */
+#ifdef NON_MATCHING
 CTexture *GetNameTextureInfo(CTexture **textures, int character, int &texture_x,
                              int &texture_y) {
     CTexture *texture;
@@ -163,6 +168,9 @@ CTexture *GetNameTextureInfo(CTexture **textures, int character, int &texture_x,
     texture_y = (cell / 10) * 22;
     return texture;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/battle_globals", GetNameTextureInfo__FPP8CTextureiRiRi);
+#endif
 /**
  * Draws a party member's name.
  *
@@ -170,6 +178,7 @@ CTexture *GetNameTextureInfo(CTexture **textures, int character, int &texture_x,
  * @address 0x238760
  * @size 0x118
  */
+#ifdef NON_MATCHING
 void DrawCharaName(int character, int x, int y, int brightness, int blend_mode) {
     CTexture *textures[3] = {AlphaTex, KataTex, HiraTex};
     s16 *name = SaveData->GetCharaName(character);
@@ -183,6 +192,9 @@ void DrawCharaName(int character, int x, int y, int brightness, int blend_mode) 
                          (u8) brightness, (u8) brightness, blend_mode);
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawCharaName__Fiiiii);
+#endif
 /**
  * Draws the frame around the name being entered, bobbing it with a sine.
  *
@@ -190,6 +202,7 @@ void DrawCharaName(int character, int x, int y, int brightness, int blend_mode) 
  * @address 0x238880
  * @size 0x1F0
  */
+#ifdef NON_MATCHING
 void DrawNameRegiWaku(int x, int y, int size, int brightness, int blend_mode) {
     int inset = NameSelect.frame % 29;
     if (inset > 14) {
@@ -206,6 +219,9 @@ void DrawNameRegiWaku(int x, int y, int size, int brightness, int blend_mode) {
                          (u8) brightness, (u8) brightness, blend_mode);
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawNameRegiWaku__Fiiiii);
+#endif
 /**
  * Draws the name being entered above the keyboard.
  *
@@ -213,6 +229,7 @@ void DrawNameRegiWaku(int x, int y, int size, int brightness, int blend_mode) {
  * @address 0x238A70
  * @size 0x628
  */
+#ifdef NON_MATCHING
 void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
     CTexture *textures[3] = {AlphaTex, KataTex, HiraTex};
     for (int index = 0; index < 10; index++) {
@@ -228,6 +245,9 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
     DrawNameRegiWaku(x + 93 + NameSelect.name_length * 22, y + 28, 26,
                      brightness, blend_mode);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawCharaNameUp__Fiiii);
+#endif
 /**
  * Draws the character keyboard the name is entered from.
  *
@@ -235,6 +255,7 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
  * @address 0x2390A0
  * @size 0x930
  */
+#ifdef NON_MATCHING
 void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
     CTexture *textures[3] = {AlphaTex, KataTex, HiraTex};
     int first_character = NameSelect.keyboard_page == 0 ? 1 : 82;
@@ -255,6 +276,9 @@ void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
     int cursor_y = y + (NameSelect.cursor / 10) * 24;
     DrawNameRegiWaku(cursor_x - 2, cursor_y - 2, 26, brightness, blend_mode);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawNameTemplete__Fiiii);
+#endif
 /**
  * Reports whether two names are the same.
  *
@@ -283,6 +307,7 @@ static int NameCompare(short *first, short *second) {
  * @address 0x239A40
  * @size 0x160
  */
+#ifdef NON_MATCHING
 int CheckName() {
     int blank_characters = 0;
     for (int index = 0; index < 10; index++) {
@@ -301,6 +326,9 @@ int CheckName() {
     }
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/battle_globals", CheckName__Fv);
+#endif
 /**
  * Draws the name-entry screen.
  *
@@ -308,6 +336,7 @@ int CheckName() {
  * @address 0x239BA0
  * @size 0xC9C
  */
+#ifdef NON_MATCHING
 void NameEnterDraw() {
     AllFadeForMenu(128);
     MenuTextureReload(NameSelect.texture_block);
@@ -315,6 +344,9 @@ void NameEnterDraw() {
     DrawNameTemplete(80, 160, 128, 0);
     NameSelect.frame++;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/battle_globals", NameEnterDraw__Fv);
+#endif
 /**
  * Moves the cursor across the keyboard and enters the character it settles on.
  *
@@ -322,6 +354,7 @@ void NameEnterDraw() {
  * @address 0x23A840
  * @size 0x1F28
  */
+#ifdef NON_MATCHING
 void NameEnterKey() {
     if (GamePad.Down(0x1000)) {
         NameSelect.cursor = (NameSelect.cursor + 79) % 80;
@@ -347,6 +380,9 @@ void NameEnterKey() {
     }
     NameSelect.result = CheckName();
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/battle_globals", NameEnterKey__Fv);
+#endif
 /**
  * Gives one party member their default name for the chosen language.
  *
@@ -354,6 +390,7 @@ void NameEnterKey() {
  * @address 0x23C770
  * @size 0x110
  */
+#ifdef NON_MATCHING
 void NameDefaultSet(int chara_no) {
     static const s16 default_names[6][11] = {
         {20, 15, 1, 14, 0},
@@ -378,6 +415,9 @@ void NameDefaultSet(int chara_no) {
         name[length++] = 0;
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/battle_globals", NameDefaultSet__Fi);
+#endif
 /**
  * Gives the kerning between two name characters.
  *
@@ -385,6 +425,7 @@ void NameDefaultSet(int chara_no) {
  * @address 0x23C880
  * @size 0x78
  */
+#ifdef NON_MATCHING
 int GetFontLRTumeW(int index, int previous, int character) {
     (void) previous;
     if (character < 162 || character >= 256) {
@@ -398,6 +439,9 @@ int GetFontLRTumeW(int index, int previous, int character) {
     }
     return adjustment;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/battle_globals", GetFontLRTumeW__Fiii);
+#endif
 /**
  * Draws a party member's name on the character-select page.
  *
@@ -405,6 +449,7 @@ int GetFontLRTumeW(int index, int previous, int character) {
  * @address 0x23C900
  * @size 0x250
  */
+#ifdef NON_MATCHING
 void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures,
                           int blend_mode) {
     if (name == NULL) {
@@ -429,6 +474,9 @@ void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures,
                                       name[index]);
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/battle_globals", CharaSelectNameDraw2__FiiPsPP8CTexturei);
+#endif
 /**
  * Draws a party member's name on the save board, in a gradient.
  *
@@ -436,6 +484,7 @@ void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures,
  * @address 0x23CB50
  * @size 0x284
  */
+#ifdef NON_MATCHING
 void DrawSaveBoardCharaName2(int x, int y, short *name, CTexture **textures,
                              spRGBA top, spRGBA bottom) {
     int length = 10;
@@ -460,6 +509,9 @@ void DrawSaveBoardCharaName2(int x, int y, short *name, CTexture **textures,
                                       name[index]);
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawSaveBoardCharaName2__FiiPsPP8CTexture6spRGBA6spRGBA);
+#endif
 /**
  * Gives how wide a party member's name draws.
  *
@@ -488,9 +540,10 @@ int GetMsgLengthCharaName(int chara_no) {
  * @address 0x23CE60
  * @size 0xB0
  */
-void InitOpeningBook(void *buffer, int *blocks) {
+#ifdef NON_MATCHING
+void InitOpeningBook(u_long128 *buffer, int *blocks) {
     if (buffer == NULL) {
-        buffer = read_buffer;
+        buffer = (u_long128 *) read_buffer;
     }
     StartReadBG();
     LoadFileBGMenuData("openbook.pak", MenuCalcBufAlignment((u_long128 *) buffer));
@@ -502,6 +555,9 @@ void InitOpeningBook(void *buffer, int *blocks) {
     OpenBook.fade = 128;
     OpenBook.message_alpha = 0;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/battle_globals", InitOpeningBook__FP1Pi);
+#endif
 /**
  * Turns the storybook's pages with the pad.
  *
@@ -509,6 +565,7 @@ void InitOpeningBook(void *buffer, int *blocks) {
  * @address 0x23CF10
  * @size 0x664
  */
+#ifdef NON_MATCHING
 int OpeningBookKey() {
     ReadBG();
     switch (OpenBook.state) {
@@ -558,6 +615,9 @@ int OpeningBookKey() {
     }
     return 0;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/battle_globals", OpeningBookKey__Fv);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1573);
 /**
  * Draws the storybook page by page.
@@ -566,6 +626,7 @@ INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1573);
  * @address 0x23D580
  * @size 0x134
  */
+#ifdef NON_MATCHING
 void OpeningBookDraw() {
     setbilinear(0);
     AllFadeForMenu(128);
@@ -582,3 +643,6 @@ void OpeningBookDraw() {
         NameEnterDraw();
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/battle_globals", OpeningBookDraw__Fv);
+#endif

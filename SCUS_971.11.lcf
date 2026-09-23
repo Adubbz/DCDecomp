@@ -656,6 +656,8 @@ SECTIONS
 		weapon_buildup.cpp.o (.sdata)  // 0x002a21c8
 		weaponlevelup.cpp.o (.sdata)   // 0x002a21d8
 		main.sdata.part2e.s.o (.sdata) // 0x002a21f0
+        battle_globals.cpp.o (.sdata) // 0x002a21f8 ExitNameEnterFunc texture blocks
+        main.sdata.battle_globals-a.s.o (.sdata) // 0x002a2200
 		stockitem.cpp.o (.sdata)
 
 		// The title overlay's small data, reached through $gp like its small

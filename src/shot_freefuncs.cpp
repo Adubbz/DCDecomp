@@ -44,8 +44,10 @@ extern "C" s32 BtSteebMsgNo;
 extern "C" char BtCfgCash[64];
 extern "C" sceVu0FVECTOR StatusColor;
 
+#ifdef NON_MATCHING
 static sceVu0FVECTOR water_position;
 static s32 healing_water_active;
+#endif
 
 /**
  * Clears the water-splash effects.
@@ -54,6 +56,7 @@ static s32 healing_water_active;
  * @address 0x1AF360
  * @size 0x48
  */
+#ifdef NON_MATCHING
 void WaterSplash_Init() {
     Water_Splash_actFlag = 0;
     healing_water_active = 0;
@@ -63,6 +66,9 @@ void WaterSplash_Init() {
         WaterWaveLing[ring].radius = 0.0f;
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", WaterSplash_Init__Fv);
+#endif
 /**
  * Reports whether the party stands in healing water.
  *
@@ -70,6 +76,7 @@ void WaterSplash_Init() {
  * @address 0x1AF3B0
  * @size 0x328
  */
+#ifdef NON_MATCHING
 int CheckHealingWater() {
     sceVu0FVECTOR position;
     CharaMain.GetPosition(position);
@@ -93,6 +100,9 @@ int CheckHealingWater() {
     }
     return healing_water_active;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", CheckHealingWater__Fv);
+#endif
 /**
  * Reports whether the party stands in a healing zone.
  *
@@ -100,6 +110,7 @@ int CheckHealingWater() {
  * @address 0x1AF6E0
  * @size 0x29C
  */
+#ifdef NON_MATCHING
 int CheckHealZone() {
     sceVu0FVECTOR position;
     CharaMain.GetPosition(position);
@@ -117,6 +128,9 @@ int CheckHealZone() {
     }
     return 0;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", CheckHealZone__Fv);
+#endif
 /**
  * Restores the party while they stand in healing water.
  *
@@ -124,6 +138,7 @@ int CheckHealZone() {
  * @address 0x1AF980
  * @size 0x158
  */
+#ifdef NON_MATCHING
 void HealingWater() {
     if (CheckHealZone() == 0 && CheckHealingWater() == 0) {
         return;
@@ -139,6 +154,9 @@ void HealingWater() {
         healingSpeed--;
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", HealingWater__Fv);
+#endif
 /**
  * Draws the rings spreading on the water.
  *
@@ -146,6 +164,7 @@ void HealingWater() {
  * @address 0x1AFAE0
  * @size 0x27C
  */
+#ifdef NON_MATCHING
 void DrawWaterLing() {
     CTexture *texture = TexManager.GetTexture("waterspl", -1);
     for (int ring = 0; ring < 6; ring++) {
@@ -156,6 +175,9 @@ void DrawWaterLing() {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", DrawWaterLing__Fv);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @703);
 /**
  * Advances the rings spreading on the water.
@@ -164,6 +186,7 @@ INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @703);
  * @address 0x1AFD60
  * @size 0x130
  */
+#ifdef NON_MATCHING
 void StepWaterLing() {
     if (healing_water_active != 0 && ++WaterWaveLingWait > 19) {
         WaterWaveLingWait = 0;
@@ -183,6 +206,9 @@ void StepWaterLing() {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", StepWaterLing__Fv);
+#endif
 /**
  * Chooses the stance the player takes from the nearest monster.
  *
@@ -190,6 +216,7 @@ void StepWaterLing() {
  * @address 0x1AFE90
  * @size 0x1D0
  */
+#ifdef NON_MATCHING
 float SetBattleStyle(int map_no, int preserve_bgm) {
     (void) map_no;
     float nearest_distance = 10000.0f;
@@ -205,6 +232,9 @@ float SetBattleStyle(int map_no, int preserve_bgm) {
     }
     return nearest_distance;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", SetBattleStyle__Fii);
+#endif
 /**
  * Draws a three-digit value out of the number sheet.
  *
@@ -212,6 +242,7 @@ float SetBattleStyle(int map_no, int preserve_bgm) {
  * @address 0x1B0060
  * @size 0x1F8
  */
+#ifdef NON_MATCHING
 int ValuePrint(int x, int y, int value, int palette, unsigned char alpha) {
     CTexture *texture = TexManager.GetTexture("status", -1);
     int digits[3] = {value / 100, (value / 10) % 10, value % 10};
@@ -225,6 +256,9 @@ int ValuePrint(int x, int y, int value, int palette, unsigned char alpha) {
     }
     return 3 - first;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", ValuePrint__FiiiiUc);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @778);
 /**
  * Clears the pulse that warns of low life.
@@ -233,6 +267,7 @@ INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @778);
  * @address 0x1B0260
  * @size 0xB8
  */
+#ifdef NON_MATCHING
 void BtStatusAlarmInit() {
     statusAlarmRate = 128;
     statusAlarmCounter = 0.0f;
@@ -245,6 +280,9 @@ void BtStatusAlarmInit() {
     statusRGBColor_30_2 = (spRGBA) {63, 0, 49, 128};
     statusRGBColor_15_2 = (spRGBA) {63, 0, 0, 128};
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", BtStatusAlarmInit__Fv);
+#endif
 /**
  * Advances the pulse that warns of low life.
  *
@@ -252,6 +290,7 @@ void BtStatusAlarmInit() {
  * @address 0x1B0320
  * @size 0xC8
  */
+#ifdef NON_MATCHING
 void BtStatusAlarmAnime() {
     statusAlarmCounter += 0.1f;
     if (statusAlarmCounter >= 6.2831855f) {
@@ -261,6 +300,9 @@ void BtStatusAlarmAnime() {
     statusAlarmRate = 192 - (int) pulse;
     statusRGBColor_15.a = (u8) (-64 - (int) pulse);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", BtStatusAlarmAnime__Fv);
+#endif
 /**
  * Chooses the colour a status bar draws in from how full it is.
  *
@@ -268,6 +310,7 @@ void BtStatusAlarmAnime() {
  * @address 0x1B03F0
  * @size 0x80
  */
+#ifdef NON_MATCHING
 spRGBA *BtGetStatusPal(int kind, float maximum, float current) {
     if (current > maximum * 0.5f) {
         return kind == 0 ? &statusRGBColor_life : &statusRGBColor_weapon;
@@ -277,6 +320,9 @@ spRGBA *BtGetStatusPal(int kind, float maximum, float current) {
     }
     return &statusRGBColor_15;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", BtGetStatusPal__Fiff);
+#endif
 /**
  * Chooses the second colour a status bar draws in from how full it is.
  *
@@ -284,6 +330,7 @@ spRGBA *BtGetStatusPal(int kind, float maximum, float current) {
  * @address 0x1B0470
  * @size 0x80
  */
+#ifdef NON_MATCHING
 spRGBA *BtGetStatusPal2(int kind, float maximum, float current) {
     if (current > maximum * 0.5f) {
         return kind == 0 ? &statusRGBColor_life_2 : &statusRGBColor_weapon_2;
@@ -293,6 +340,9 @@ spRGBA *BtGetStatusPal2(int kind, float maximum, float current) {
     }
     return &statusRGBColor_15_2;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", BtGetStatusPal2__Fiff);
+#endif
 /**
  * Draws the life, magic and stamina bars at the top of the screen.
  *
@@ -300,6 +350,7 @@ spRGBA *BtGetStatusPal2(int kind, float maximum, float current) {
  * @address 0x1B04F0
  * @size 0x1438
  */
+#ifdef NON_MATCHING
 void topStatusInfo(int x, int y, int blend_mode) {
     (void) blend_mode;
     int character = UserStatus->cur_chara;
@@ -321,6 +372,9 @@ void topStatusInfo(int x, int y, int blend_mode) {
     CRect_i_ water_bar(x, y + 17, width, 6);
     set2DSpriteC4(Vif1Packet, water_bar, top, bottom, top, bottom);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", topStatusInfo__Fiii);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1150);
 /**
  * Reports whether the party is suffering one status ailment.
@@ -329,9 +383,13 @@ INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1150);
  * @address 0x1B1930
  * @size 0x28
  */
+#ifdef NON_MATCHING
 int StatusErrCheck(int status) {
     return (UserStatus->unk_42C8[UserStatus->cur_chara] & status) != 0;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", StatusErrCheck__Fi);
+#endif
 /**
  * Chooses the tint the party's status ailment gives them.
  *
@@ -339,6 +397,7 @@ int StatusErrCheck(int status) {
  * @address 0x1B1960
  * @size 0xE8
  */
+#ifdef NON_MATCHING
 int BtStatusErrColorSet() {
     int status = UserStatus->unk_42C8[UserStatus->cur_chara];
     int active = 0;
@@ -368,6 +427,9 @@ int BtStatusErrColorSet() {
     }
     return active;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", BtStatusErrColorSet__Fv);
+#endif
 /**
  * Advances the party's status ailments and applies what they cost.
  *
@@ -375,6 +437,7 @@ int BtStatusErrColorSet() {
  * @address 0x1B1A50
  * @size 0x154
  */
+#ifdef NON_MATCHING
 void BtStatusErrStep() {
     poison_counter++;
     int character = UserStatus->cur_chara;
@@ -390,6 +453,9 @@ void BtStatusErrStep() {
     }
     BtStatusErrColorSet();
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", BtStatusErrStep__Fv);
+#endif
 /**
  * Inflicts one status ailment on the party.
  *
@@ -397,6 +463,7 @@ void BtStatusErrStep() {
  * @address 0x1B1BB0
  * @size 0x1CC
  */
+#ifdef NON_MATCHING
 void BtSetStatusErr(int status) {
     int character = UserStatus->cur_chara;
     u32 &current = (u32 &) UserStatus->unk_42C8[character];
@@ -430,6 +497,9 @@ void BtSetStatusErr(int status) {
         break;
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", BtSetStatusErr__Fi);
+#endif
 /**
  * Draws the icons of the party's status ailments.
  *
@@ -437,6 +507,7 @@ void BtSetStatusErr(int status) {
  * @address 0x1B1D80
  * @size 0x16C
  */
+#ifdef NON_MATCHING
 void BtStatusErrDraw(int y) {
     static const int status_flags[5] = {4, 8, 0x10, 0x20, 0x40};
     CTexture *texture = TexManager.GetTexture("status", -1);
@@ -450,6 +521,9 @@ void BtStatusErrDraw(int y) {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", BtStatusErrDraw__Fi);
+#endif
 /**
  * Draws one item into the reserved slot area.
  *
@@ -457,6 +531,7 @@ void BtStatusErrDraw(int y) {
  * @address 0x1B1EF0
  * @size 0x1CC
  */
+#ifdef NON_MATCHING
 void setItemToReserved(char *source_name, int source_x, int source_y,
                        char *destination_name, int destination_x,
                        int destination_y) {
@@ -467,6 +542,9 @@ void setItemToReserved(char *source_name, int source_x, int source_y,
                 (sceGsTex0 *) &destination_texture->tex0,
                 destination_x, destination_y, 0);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", setItemToReserved__FPciiPcii);
+#endif
 /**
  * Clears the cached map-jump data.
  *
@@ -486,6 +564,7 @@ void BtMapJumpCashClear() {
  * @address 0x1B20E0
  * @size 0x70C
  */
+#ifdef NON_MATCHING
 void BtMapJumpLoad(char *map_name) {
     if (map_name == NULL || map_name[0] == '\0') {
         return;
@@ -515,6 +594,9 @@ void BtMapJumpLoad(char *map_name) {
     BtCfgCash[sizeof(BtCfgCash) - 1] = '\0';
     BtCfgFlag = 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", BtMapJumpLoad__FPc);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1353__2);
 INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1354);
 INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1355);
@@ -540,6 +622,7 @@ INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1370);
  * @address 0x1B27F0
  * @size 0x108
  */
+#ifdef NON_MATCHING
 void BtSet3DCellModel(float *world, CTexture *texture, float size,
                       int texture_x, int texture_y, int width, int height,
                       int alpha) {
@@ -563,3 +646,6 @@ void BtSet3DCellModel(float *world, CTexture *texture, float size,
     set3DSprite(Vif1Packet, texture, source, top_left, top_right,
                 bottom_left, bottom_right, (u8) alpha);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", BtSet3DCellModel__FPfP8CTexturefiiiii);
+#endif

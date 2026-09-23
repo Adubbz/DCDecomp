@@ -17,9 +17,9 @@
 /** Function used by the runtime to construct or destroy one object. */
 typedef void (*MWRuntimeObjectFunction)(void *object, int mode);
 
-void __construct_array(void *array, MWRuntimeObjectFunction constructor,
-                       MWRuntimeObjectFunction destructor, unsigned int element_size,
-                       unsigned int count);
+extern "C" void __construct_array(void *array, MWRuntimeObjectFunction constructor,
+                                  MWRuntimeObjectFunction destructor, unsigned int element_size,
+                                  unsigned int count);
 
 /**
  * Runs a constructor over every element of a newly allocated array.
@@ -28,9 +28,9 @@ void __construct_array(void *array, MWRuntimeObjectFunction constructor,
  * @address 0x122400
  * @size 0x14C
  */
-void *__construct_new_array(void *allocation, MWRuntimeObjectFunction constructor,
-                            MWRuntimeObjectFunction destructor, unsigned int element_size,
-                            unsigned int count);
+extern "C" void *__construct_new_array(void *allocation, MWRuntimeObjectFunction constructor,
+                                       MWRuntimeObjectFunction destructor, unsigned int element_size,
+                                       unsigned int count);
 
 /**
  * Frees storage that `operator new` handed out.
@@ -102,8 +102,8 @@ struct MWGlobalDestructor {
     void *object;                          /**< Object passed to the destructor. */
 };
 
-void *__register_global_object(void *object, MWRuntimeObjectFunction destructor,
-                               MWGlobalDestructor *record);
+extern "C" void *__register_global_object(void *object, MWRuntimeObjectFunction destructor,
+                                          MWGlobalDestructor *record);
 
 /**
  * Calls each static initializer in the table from the first pointer up to the second.

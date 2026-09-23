@@ -26,7 +26,7 @@ void GlobalNameInit(void);
  * @address 0x2384A0
  * @size 0x190
  */
-void InitNameRegist(int, int, void /* CW back-ref target unresolved */ *);
+void InitNameRegist(int, int, u_long128 *);
 
 /**
  * Gives the name-entry screen's textures back and closes it.
@@ -163,7 +163,7 @@ int GetMsgLengthCharaName(int chara_no);
  * @address 0x23CE60
  * @size 0xB0
  */
-void InitOpeningBook(void /* CW back-ref target unresolved */ *, int *);
+void InitOpeningBook(u_long128 *, int *);
 
 /**
  * Turns the storybook's pages with the pad.
