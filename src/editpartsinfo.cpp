@@ -96,7 +96,7 @@ int CEditPartsInfo::GetNextParts(int index) {
 
 void CEditPartsInfo::Clear(void) {
     for (int plot = 0; plot < 24; plot++) {
-        parts[plot].unk_0C = 0;
+        parts[plot].placed = 0;
     }
 }
 
@@ -107,7 +107,7 @@ void CEditPartsInfo::Save(int georama_no, CSaveData *save_data) {
         return;
     }
 
-    georama->request_count = unk_00;
+    georama->request_count = parts_max;
     for (plot = 0; plot < 24; plot++) {
         georama->request_complete[plot] = request[plot];
         SV_EDIT_PARTS_INFO *saved_part = save_data->GetEditPartsInfo(georama_no, plot);
@@ -116,8 +116,8 @@ void CEditPartsInfo::Save(int georama_no, CSaveData *save_data) {
         }
         saved_part->flag = parts[plot].unk_08;
         saved_part->part_id = parts[plot].completion_flags;
-        saved_part->unk_6 = parts[plot].unk_0C;
-        saved_part->progress = parts[plot].unk_18;
+        saved_part->unk_6 = parts[plot].placed;
+        saved_part->progress = parts[plot].stock;
         for (int element = 0; element < 6; element++) {
             saved_part->npc_slot[element] = parts[plot].elements[element].enabled;
         }
@@ -136,7 +136,7 @@ void CEditPartsInfo::Load(int georama_no, CSaveData *save_data, int load_request
         return;
     }
     if (load_requests != 0) {
-        unk_00 = georama->request_count;
+        parts_max = georama->request_count;
     }
     for (plot = 0; plot < 24; plot++) {
         SV_EDIT_PARTS_INFO *saved_part = save_data->GetEditPartsInfo(georama_no, plot);
@@ -146,11 +146,11 @@ void CEditPartsInfo::Load(int georama_no, CSaveData *save_data, int load_request
         parts[plot].unk_08 = saved_part->flag;
         parts[plot].completion_flags = saved_part->part_id;
         if (load_requests != 0) {
-            parts[plot].unk_0C = saved_part->unk_6;
+            parts[plot].placed = saved_part->unk_6;
             request[plot] = georama->request_complete[plot];
         }
         if (saved_part->progress > 0) {
-            parts[plot].unk_18 = saved_part->progress;
+            parts[plot].stock = saved_part->progress;
         }
         for (int element = 0; element < 6; element++) {
             parts[plot].elements[element].enabled = saved_part->npc_slot[element];
@@ -176,8 +176,8 @@ void CEditPartsInfo::Initialize(int georama_no) {
         part.parts_no = plot;
         part.unk_08 = 0;
         part.completion_flags = 0;
-        part.unk_18 = source->max;
-        part.unk_0C = 0;
+        part.stock = source->max;
+        part.placed = 0;
         part.unk_10 = source->unk_08;
         part.kind = source->kind;
         for (int element = 0; element < 6; element++) {
@@ -204,7 +204,7 @@ void CEditPartsInfo::Initialize(int index, EPARTS_INFO_HEADER *header) {
     parts[index].parts_no = index;
     parts[index].unk_08 = 0;
     parts[index].completion_flags = 0;
-    parts[index].unk_0C = 0;
+    parts[index].placed = 0;
     for (int element = 0; element < 6; element++) {
     }
     parts[index].width = header->width;

@@ -2,12 +2,17 @@
 
 #include <libvu0.h>
 
+#include <cmath>
+
 #include "camerafollow.hpp"
+#include "character.hpp"
 #include "dataread.hpp"
 #include "ebattle.hpp"
 #include "edit.hpp"
 #include "editloop.hpp"
 #include "gamepad.hpp"
+#include "mathutil.hpp"
+#include "mglib.hpp"
 #include "rect.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
@@ -38,11 +43,49 @@ extern int debug_mode;
 extern CTexture *tex;
 extern CTexture *tex2;
 
+/**
+ * Stores one motion segment used to convert animation time into battle frames.
+ */
+struct EB_MOTION_ENTRY {
+    int motion_no;
+    float start;
+    float end;
+    float speed;
+    int duration;
+};
+
+/**
+ * Stores one timed controller prompt in an event battle.
+ */
+struct EB_KEY_ENTRY {
+    int frame;
+    int buttons;
+    int mode;
+    int pressed;
+    int complete;
+    int early;
+    int reserved;
+};
+
+extern CCharacter *eb_chara;
+extern int eb_cool_flag;
+extern int eb_result;
+extern float now_time;
+extern int eb_key[0x1C0];
+extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
+
 /** The part of the screen the event battle's opening wipe has reached. */
 extern CRect_i_ draw_rect;
 extern int eb_key_num;
 
 static void init_draw_ok();
+static void set_draw_ok(int type, int button);
+void draw_ok_loop();
+void DrawButton(int buttons, int x, int y, float scale, int early);
+void DrawButtonSub(int x, int y, int texture_x, int texture_y, float scale);
+static void draw_ok(int x);
+static float button_scale(int button);
+void EdEyeCamera(CCamera *camera, CCharacter *character);
 
 /* @ 0x168100 (0x10 bytes) -- EBInitialize__Fv */
 void EBInitialize() {
@@ -121,13 +164,66 @@ void EBInitIntro(void) {
     // The wipe opens from the right edge, so it starts with no width.
     draw_rect = CRect_i_(0x280, 0, 0, 0x1C0);
 }
-INCLUDE_ASM("asm/nonmatchings/ebattle", EBSetMotion__FP10CCharacterPi);
+void EBSetMotion(CCharacter *character, int *motions) {
+    if (character == NULL) {
+        return;
+    }
+
+    EB_MOTION_ENTRY *motion_entries = (EB_MOTION_ENTRY *) eb_motion;
+    int motion_index;
+    for (motion_index = 0; motions[motion_index] >= 0; ++motion_index) {
+        motion_entries[motion_index].motion_no = motions[motion_index];
+    }
+    motion_entries[motion_index].motion_no = -1;
+
+    eb_chara = character;
+    for (motion_index = 0; motion_entries[motion_index].motion_no >= 0; ++motion_index) {
+        MOTION_INFO *info = character->GetMotionInfo(motion_entries[motion_index].motion_no);
+        if (info == NULL) {
+            return;
+        }
+
+        EB_MOTION_ENTRY &entry = motion_entries[motion_index];
+        entry.start = (float) info->start;
+        entry.end = (float) info->end;
+        entry.speed = info->speed;
+        entry.duration = (int) ((entry.end - entry.start) / entry.speed);
+        eb_end_count += entry.duration;
+    }
+
+    ebattle_flag = 1;
+    eb_cool_flag = 1;
+    GamePad.MenuModeOn(0x50);
+}
 
 void EBDebug(int mode) {
     debug_mode = mode;
 }
 
-INCLUDE_ASM("asm/nonmatchings/ebattle", EBSetKey__Ffii);
+void EBSetKey(float time, int buttons, int mode) {
+    if (eb_key_num >= 64) {
+        return;
+    }
+
+    EB_KEY_ENTRY *key = &((EB_KEY_ENTRY *) eb_key)[eb_key_num++];
+    key->frame = 0;
+    EB_MOTION_ENTRY *motion_entries = (EB_MOTION_ENTRY *) eb_motion;
+    for (int i = 0; motion_entries[i].motion_no >= 0; ++i) {
+        EB_MOTION_ENTRY &motion = motion_entries[i];
+        if (motion.start <= time && time < motion.end) {
+            key->frame += (int) ((time - motion.start) / motion.speed);
+            break;
+        }
+        key->frame += motion.duration;
+    }
+
+    key->buttons = buttons;
+    key->mode = mode > 5 ? 5 : mode;
+    key->pressed = 0;
+    key->complete = 0;
+    key->early = 0;
+    key->reserved = 0;
+}
 
 void EBExit() {
     ebattle_flag = 0;
@@ -148,7 +244,24 @@ void EBExit() {
  * @address 0x1685C0
  * @size 0xCC
  */
-INCLUDE_ASM("asm/nonmatchings/ebattle", EBIntroLoop__Fv);
+int EBIntroLoop() {
+    if (ebattle_intro_flag == 0) {
+        return 1;
+    }
+
+    draw_rect.width = (eb_intro_cnt * 0x280) / 100;
+    if (draw_rect.width > 0x280) {
+        draw_rect.width = 0x280;
+    }
+    draw_rect.x = 0x280 - draw_rect.width;
+    ++eb_intro_cnt;
+    if (eb_intro_cnt < 101) {
+        return 0;
+    }
+
+    draw_rect = CRect_i_(0, 0, 0x280, 0x1C0);
+    return 1;
+}
 /**
  * Runs one frame of the event battle and reports the result.
  *
@@ -156,8 +269,158 @@ INCLUDE_ASM("asm/nonmatchings/ebattle", EBIntroLoop__Fv);
  * @address 0x168690
  * @size 0x4E4
  */
-INCLUDE_ASM("asm/nonmatchings/ebattle", EBLoop__Fv);
-INCLUDE_ASM("asm/nonmatchings/ebattle", EBDraw__Fv);
+int EBLoop() {
+    if (ebattle_flag == 0) {
+        return 1;
+    }
+    if (eb_finish_cnt > 1) {
+        --eb_finish_cnt;
+        return 0;
+    }
+    if (eb_finish_cnt == 1) {
+        EBExit();
+        return eb_result;
+    }
+
+    if (eb_count == 0 && play_fanfare != 0) {
+        int sound_size;
+        StartReadBG();
+        SndSPSeLoadBG(0x2F, read_buffer, &sound_size);
+    }
+    ReadBG();
+
+    EB_KEY_ENTRY *keys = (EB_KEY_ENTRY *) eb_key;
+    EB_KEY_ENTRY *active = NULL;
+    int timing_grade = 0;
+    for (int i = 0; i < eb_key_num; ++i) {
+        EB_KEY_ENTRY &key = keys[i];
+        float distance = (float) (eb_count - key.frame) * speed;
+        int early_window = key.mode > 0 ? (6 - key.mode) * 64 : 0;
+        key.early = distance <= 16.0f - (float) early_window && early_window > 0;
+        if (distance > 0.0f) {
+            if (distance >= 48.0f) {
+                key.complete = 1;
+            } else if (distance < 24.0f) {
+                timing_grade = 1;
+            }
+        }
+        if (distance > -16.0f && distance < 48.0f) {
+            active = &key;
+        }
+    }
+
+    int failed = 0;
+    if (active == NULL) {
+        failed = GamePad.GetPadDown() != 0;
+    } else {
+        active->pressed |= GamePad.GetPadDown();
+        if (active->pressed == active->buttons) {
+            if (active->complete == 0) {
+                SndSePlay(timing_grade != 0 ? 10 : 9, -1, 0);
+                int button = (int) (active - keys);
+                set_draw_ok(timing_grade, button);
+                eb_cool_flag &= timing_grade;
+                ++eb_key_count;
+            }
+            active->complete = 1;
+        }
+        if (active->buttons != (active->buttons | active->pressed)) {
+            failed = 1;
+        }
+    }
+
+    if (failed != 0 && debug_mode == 0 && eb_key_count < eb_key_num &&
+        EdDebugParamDrawOff == 0) {
+        SndBgmFadeOut(40, 0);
+        eb_finish_cnt = 80;
+        eb_result = -1;
+        ++eb_count;
+        return 0;
+    }
+
+    if (eb_count == eb_end_count - 100 && fade_bgm != 0) {
+        SndBgmFadeOut(100, 0);
+    }
+    if (eb_count < eb_end_count) {
+        old_time = now_time;
+        draw_ok_loop();
+        ++eb_count;
+        return 0;
+    }
+
+    if (play_fanfare != 0) {
+        while (SndSPSeSyncBG() != 0) {
+        }
+        SndSPSePlay(0x2F, -1);
+    }
+    eb_finish_cnt = 160;
+    eb_result = (eb_cool_flag != 0) + 1;
+    return 0;
+}
+/**
+ * Draws the event battle's prompt strip and result overlay.
+ */
+void EBDraw() {
+    if ((ebattle_intro_flag == 0 && ebattle_flag == 0) || EdDebugParamDrawOff != 0) {
+        return;
+    }
+
+    setbilinear(0);
+    TexManager.ReloadTexture(GetVif1Packet(), 0x2D);
+    if (eb_finish_cnt > 0) {
+        CRect_i_ result_screen;
+        CRect_i_ result_texel;
+        if (eb_result < 0) {
+            result_texel = CRect_i_(0, 0x50, 0x92, 0x3C);
+        } else if (eb_result == 2) {
+            result_texel = CRect_i_(0, 0, 0x100, 0x46);
+        } else {
+            result_texel = CRect_i_(0, 0x92, 0xB8, 0x40);
+        }
+        if (eb_result < 1 && ((eb_finish_cnt >> 2) & 1) == 0) {
+            return;
+        }
+        result_screen = CRect_i_(0x140 - result_texel.width / 2,
+                                 0xE0 - result_texel.height / 2,
+                                 result_texel.width, result_texel.height);
+        set2DSprite(GetVif1Packet(), tex2, result_screen, 0, result_texel.y);
+        return;
+    }
+
+    CRect_i_ dark_bar(0, 0xA0, 0x280, 0x10);
+    CRect_i_ top_line(0xA8, 0xA0, 0x40, 0x10);
+    CRect_i_ bottom_line(0xC0, 0xA0, 0x10, 0x10);
+    if (ebattle_intro_flag != 0) {
+        dark_bar.x += draw_rect.x;
+        top_line.x += draw_rect.x;
+        bottom_line.x += draw_rect.x;
+    }
+    MGFillBox(dark_bar, 0, 0x28, 0xA0, 0x40);
+    MGFillBox(top_line, 0xFF, 0xFF, 0xFF, 0x20);
+    MGFillBox(bottom_line, 0xFF, 0xFF, 0xFF, 0x20);
+
+    if (ebattle_intro_flag != 0) {
+        if (((eb_intro_cnt >> 2) & 1) != 0) {
+            CRect_i_ caution(0x140 - 0x49, 0xE0 - 0x1E, 0x92, 0x3C);
+            set2DSprite(GetVif1Packet(), tex2, caution, Caution[0], Caution[1]);
+        }
+        if ((eb_intro_cnt & 7) == 0) {
+            SndSePlay(8, -1, 0);
+        }
+        return;
+    }
+
+    EB_KEY_ENTRY *keys = (EB_KEY_ENTRY *) eb_key;
+    for (int i = eb_key_count; i < eb_key_num; ++i) {
+        float position = 200.0f - (float) (eb_count - keys[i].frame) * speed;
+        DrawButton(keys[i].buttons, (int) position, 0x140, button_scale(i), keys[i].early);
+    }
+    if (eb_key_count > 0) {
+        EB_KEY_ENTRY &previous = keys[eb_key_count - 1];
+        float position = 200.0f - (float) (eb_count - previous.frame) * speed;
+        draw_ok((int) position);
+    }
+}
 /**
  * Draws one button prompt of the event battle.
  *
@@ -165,7 +428,36 @@ INCLUDE_ASM("asm/nonmatchings/ebattle", EBDraw__Fv);
  * @address 0x1690E0
  * @size 0x260
  */
-INCLUDE_ASM("asm/nonmatchings/ebattle", DrawButton__Fiiifi);
+void DrawButton(int buttons, int x, int y, float scale, int early) {
+    if (x < -0x20 || x >= 0x281) {
+        return;
+    }
+    if (early != 0) {
+        DrawButtonSub(x, y, 0, 0x60, scale);
+    } else if ((buttons & 0x20) != 0) {
+        DrawButtonSub(x, y, 0, 0, scale);
+    } else if ((buttons & 0x10) != 0) {
+        DrawButtonSub(x, y, 0x20, 0, scale);
+    } else if ((buttons & 0x80) != 0) {
+        DrawButtonSub(x, y, 0x40, 0, scale);
+    } else if ((buttons & 0x40) != 0) {
+        DrawButtonSub(x, y, 0x60, 0, scale);
+    } else if ((buttons & 0x1000) != 0) {
+        if ((buttons & 0x8000) != 0) {
+            DrawButtonSub(x, y, 0x20, 0x40, scale);
+        } else if ((buttons & 0x2000) != 0) {
+            DrawButtonSub(x, y, 0, 0x40, scale);
+        } else {
+            DrawButtonSub(x, y, 0, 0x20, scale);
+        }
+    } else if ((buttons & 0x8000) != 0) {
+        DrawButtonSub(x, y, 0x60, 0x20, scale);
+    } else if ((buttons & 0x2000) != 0) {
+        DrawButtonSub(x, y, 0x40, 0x20, scale);
+    } else if ((buttons & 0x4000) != 0) {
+        DrawButtonSub(x, y, 0x20, 0x20, scale);
+    }
+}
 /**
  * Draws one button prompt at a scale.
  *
@@ -173,7 +465,13 @@ INCLUDE_ASM("asm/nonmatchings/ebattle", DrawButton__Fiiifi);
  * @address 0x169340
  * @size 0xE0
  */
-INCLUDE_ASM("asm/nonmatchings/ebattle", DrawButtonSub__Fiiiif);
+void DrawButtonSub(int x, int y, int texture_x, int texture_y, float scale) {
+    int width = (int) (32.0f * scale);
+    int height = (int) (32.0f * scale);
+    CRect_i_ screen(x - (width - 32) / 2, y - (height - 32) / 2, width, height);
+    CRect_i_ texel(texture_x, texture_y, 32, 32);
+    set2DSprite(GetVif1Packet(), tex, screen, texel);
+}
 
 /**
  * Clears the enemy-battle confirmation effect.
@@ -223,7 +521,40 @@ void draw_ok_loop() {
  * @address 0x169490
  * @size 0x2A0
  */
-INCLUDE_ASM("asm/nonmatchings/ebattle", draw_ok__Fi);
+static void draw_ok(int x) {
+    if (ok_draw_cnt <= 0) {
+        return;
+    }
+
+    CRect_i_ success_texel(0, 0xD0, 0x1A, 0x10);
+    CRect_i_ cool_texel(0, 0xE0, 0x28, 0x10);
+    CRect_i_ spark_texel(0x20, 0x60, 0x20, 0x20);
+    CRect_i_ *result_texel = ok_type == 0 ? &success_texel : &cool_texel;
+    if (((ok_draw_cnt / 3) & 1) != 0) {
+        CRect_i_ result_screen(0xC8 - result_texel->width / 2,
+                               0x13E - result_texel->height,
+                               result_texel->width, result_texel->height);
+        set2DSprite(GetVif1Packet(), tex2, result_screen, result_texel->x, result_texel->y);
+    }
+
+    sceVu0FVECTOR directions[8] = {
+        {1.0f, 0.0f, 0.0f, 0.0f},   {1.0f, 1.0f, 0.0f, 0.0f},
+        {0.0f, 1.0f, 0.0f, 0.0f},   {-1.0f, 1.0f, 0.0f, 0.0f},
+        {-1.0f, 0.0f, 0.0f, 0.0f},  {-1.0f, -1.0f, 0.0f, 0.0f},
+        {0.0f, -1.0f, 0.0f, 0.0f},  {1.0f, -1.0f, 0.0f, 0.0f},
+    };
+    int age = 30 - ok_draw_cnt;
+    int alpha = 0x80 - ((30 - ok_draw_cnt * 2) * 0x80) / 30;
+    for (int i = 0; i < 8 && alpha > 0; ++i) {
+        sceVu0FVECTOR offset;
+        sceVu0Normalize(directions[i], directions[i]);
+        sceVu0ScaleVector(offset, directions[i], 2.0f * (float) age);
+        CRect_i_ screen(x + 0x18 + (int) offset[0] - spark_texel.width / 2,
+                        (int) offset[1] + 0x15E - spark_texel.height,
+                        spark_texel.width, spark_texel.height);
+        set2DSprite(GetVif1Packet(), tex, screen, spark_texel, (unsigned char) alpha);
+    }
+}
 /**
  * Gives the scale a button prompt draws at while it flashes.
  *
@@ -231,7 +562,6 @@ INCLUDE_ASM("asm/nonmatchings/ebattle", draw_ok__Fi);
  * @address 0x169730
  * @size 0x90
  */
-#ifdef NON_MATCHING
 static float button_scale(int button) {
     if (button != ok_effect_button) {
         return 1.0f;
@@ -248,9 +578,6 @@ static float button_scale(int button) {
     }
     return 1.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", button_scale__Fi);
-#endif
 static int key_mode = 0xFFFF;
 
 /**
@@ -386,7 +713,41 @@ static int PadDown(int keys) {
  * @address 0x169B70
  * @size 0x20C
  */
-INCLUDE_ASM("asm/nonmatchings/ebattle", CameraAutoMove__FP13CCameraFollowP6CCPolyPfff);
+void CameraAutoMove(CCameraFollow *camera, CCPoly *collision, float *target,
+                    float previous_angle, float next_angle) {
+    float reference[4];
+    float offset[4];
+    camera->GetRef(reference);
+    offset[0] = target[0] - reference[0];
+    offset[1] = 0.0f;
+    offset[2] = target[2] - reference[2];
+    offset[3] = 0.0f;
+
+    camera->SetDistance(5.0f + DistVector(offset));
+    float distance_error = camera->GetDistance() - camera_near_dist;
+    float turn_speed = 0.0f;
+    if (distance_error < 0.0f) {
+        turn_speed = -distance_error / 10.0f;
+    } else if (distance_error > 0.0f) {
+        turn_speed = distance_error / 15.0f;
+    }
+    if (turn_speed > 2.0f) {
+        turn_speed = 2.0f;
+    }
+    if (turn_speed < 0.1f) {
+        turn_speed = 0.1f;
+    }
+    if (distance_error < 0.0f) {
+        turn_speed *= 2.0f;
+    }
+
+    camera->SetAngle(atan2f(offset[0], offset[2]));
+    camera->AddAngle((previous_angle < next_angle ? -0.1f : 0.1f) * turn_speed);
+    if (camera->GetDistance() < 0.5f * camera_near_dist) {
+        camera->AddHeight(1.0f);
+    }
+    (void) collision;
+}
 
 /**
  * Disables the editor camera-view mode.
@@ -406,7 +767,11 @@ void EdViewModeOff() {
  * @address 0x169D90
  * @size 0x34
  */
-INCLUDE_ASM("asm/nonmatchings/ebattle", InitEyeCamera__FP10CCharacter);
+void InitEyeCamera(CCharacter *character) {
+    CVector3_f_ *rotation = character->GetRotation();
+    viewAngleH = rotation->y;
+    viewAngleV = 0.0f;
+}
 /**
  * Aims the eye camera from a character's head.
  *
@@ -414,7 +779,32 @@ INCLUDE_ASM("asm/nonmatchings/ebattle", InitEyeCamera__FP10CCharacter);
  * @address 0x169DD0
  * @size 0x1B0
  */
-INCLUDE_ASM("asm/nonmatchings/ebattle", EyeCamera__FP7CCameraP10CCharacteri);
+void EyeCamera(CCamera *camera, CCharacter *character, int use_right_stick) {
+    float horizontal;
+    float vertical;
+    if (use_right_stick == 0) {
+        horizontal = GetLXf();
+        vertical = -GetLYf();
+    } else {
+        horizontal = 0.0f;
+        vertical = -GetRYf();
+    }
+
+    if (horizontal != 0.0f) {
+        viewAngleH -= horizontal * 0.05f;
+        if (viewAngleH < -3.1415927f) {
+            viewAngleH += 6.2831855f;
+        } else if (viewAngleH > 3.1415927f) {
+            viewAngleH -= 6.2831855f;
+        }
+    }
+    if (vertical > 0.0f && viewAngleV < 1.0f) {
+        viewAngleV += vertical * 0.05f;
+    } else if (vertical < 0.0f && viewAngleV > -1.0f) {
+        viewAngleV += vertical * 0.05f;
+    }
+    EdEyeCamera(camera, character);
+}
 
 void EdInitCameraParam(CCameraFollow *camera) {
     if (camera != 0) {
@@ -437,7 +827,24 @@ void EdMoveCharaInit() {
  * @address 0x169FF0
  * @size 0x128
  */
-INCLUDE_ASM("asm/nonmatchings/ebattle", EdEyeCamera__FP7CCameraP10CCharacter);
+void EdEyeCamera(CCamera *camera, CCharacter *character) {
+    sceVu0FVECTOR eye;
+    sceVu0FVECTOR reference = {0.0f, 0.0f, 10.0f, 0.0f};
+    sceVu0FMATRIX identity;
+    sceVu0FMATRIX rotation;
+    sceVu0UnitMatrix(identity);
+    sceVu0RotMatrixX(rotation, identity, viewAngleV);
+    sceVu0RotMatrixY(rotation, rotation, viewAngleH);
+    sceVu0ApplyMatrix(reference, rotation, reference);
+
+    character->GetPosition(eye);
+    eye[1] += 14.0f;
+    reference[0] += eye[0];
+    reference[1] += eye[1];
+    reference[2] += eye[2];
+    camera->SetPos(eye);
+    camera->SetRef(reference);
+}
 
 int EdCheckViewMode() {
     return viewMode;
@@ -477,7 +884,47 @@ void EdASetViewAngle(float horizontal, float vertical) {
     viewAngleV = vertical;
 }
 
-INCLUDE_ASM("asm/nonmatchings/ebattle", EdMoveChara__Fv);
+void EdMoveChara() {
+    CCharacter *character = EdMoveCharaInfo.chara;
+    CCamera *camera = EdMoveCharaInfo.camera;
+    if (character == NULL || camera == NULL) {
+        return;
+    }
+
+    if (EdMoveCharaInfo.key_lock == 0) {
+        chara_mode &= ~1;
+    } else {
+        chara_mode |= 1;
+    }
+
+    float horizontal = GetLXf();
+    float vertical = GetLYf();
+    float camera_angle = camera->GetAngleH();
+    float forward = horizontal * cosf(camera_angle) + vertical * sinf(camera_angle);
+    float sideways = vertical * cosf(camera_angle) - horizontal * sinf(camera_angle);
+    if (viewMode == 0 && (forward != 0.0f || sideways != 0.0f)) {
+        float position[4];
+        character->GetPosition(position);
+        position[0] += forward;
+        position[2] += sideways;
+        character->SetPosition(position[0], position[1], position[2]);
+        character->SetRotation(0.0f, atan2f(forward, sideways), 0.0f);
+        character->SetMotion(1, 0);
+    } else if (viewMode == 0) {
+        character->SetMotion(0, 0);
+    }
+
+    if (EdMoveCharaInfo.in_event == 0 && PadDown(2) != 0) {
+        viewMode = viewMode == 0;
+        InitEyeCamera(character);
+    }
+    if (viewMode != 0) {
+        EyeCamera(camera, character, EdMoveCharaInfo.key_lock);
+    }
+
+    EdMoveCharaInfo.motion_previous = EdMoveCharaInfo.motion_current;
+    EdMoveCharaInfo.motion_current = character->GetNowTime();
+}
 
 /**
  * Copies ladder endpoints and event parameters into the active event.

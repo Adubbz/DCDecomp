@@ -26,6 +26,11 @@
 #include "snd.hpp"
 #include "texture.hpp"
 #include "userstatus.hpp"
+#ifdef NON_MATCHING // draft includes
+#include "menu_draw.hpp"
+#include "battle_globals.hpp"
+#include <libvu0.h>
+#endif
 
 /** Texture block the event item selection menu's textures load into. */
 extern s32 MiniEventTextureBlock;
@@ -355,7 +360,29 @@ static int SaveMenuKeyEndSave(void) {
     }
     return 1;
 }
+#ifdef NON_MATCHING
+static int SaveMenuKeyLoadDecide(void) {
+    if (GamePad.Down(0x40) != 0) {
+        if (McAccess.file_info[SaveMenu.file_no].state != 0) {
+            McAccess.SetFuncNo(0);
+            McAccess.file_no = SaveMenu.file_no;
+            SaveMenu.key_no = 0xD;
+            ComMenuSePlay(1);
+        } else {
+            ComMenuSePlay(2);
+        }
+        return 1;
+    }
+    if (GamePad.Down(0x20) != 0) {
+        SaveMenu.key_no = 7;
+        ComMenuSePlay(2);
+        return 1;
+    }
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyLoadDecide__Fv);
+#endif
 
 static int SaveMenuKeyLoad(void) {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
@@ -471,7 +498,19 @@ static int SaveMenuKeyFormat(void) {
     }
     return 1;
 }
+#ifdef NON_MATCHING
+static int SaveMenuKeyUnFormat(void) {
+    if (McAccess.card[McAccess.port].formatted != 0) {
+        McAccess.SetFuncNo(0xA);
+    } else {
+        SaveMenu.key_no = 3;
+        SaveMenu.file_no = McAccess.port;
+    }
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyUnFormat__Fv);
+#endif
 
 static int SaveMenuKeyDifVersion(void) {
     if (GamePad.Down(0xF0) != 0) {
@@ -717,8 +756,194 @@ static void GetSaveBoardAlphaInfo(int x, int width, int &start_alpha, int &end_a
         end_alpha = 0;
     }
 }
+#ifdef NON_MATCHING
+static void DrawSaveBoardDigits(int number, int right, int y, int alpha_x, spRGBA *start, spRGBA *end,
+                                CRect_i_ &digit) {
+    int x = right;
+    for (int count = GetNumberKeta(number); count > 0; count--) {
+        int clip_y = y;
+        int clip_v = digit.y;
+        int clip_height = digit.height;
+        x -= digit.width - 1;
+        MenuTextureClip(clip_y, clip_v, clip_height, 0, 0x1C0);
+        DrawMenu2DSprite(SaveBoard, CRect_i_(x, clip_y, digit.width, clip_height - 1),
+                         CRect_i_(digit.x + digit.width * (number % 10), clip_v, digit.width, clip_height),
+                         start, start, end, end);
+        number /= 10;
+    }
+}
+
+void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, int unused, int alpha) {
+    // Row of each map's name on the board texture; a map from 14 on is in the second block.
+    s16 map_name[62] = {0,  1,  2,  3,  6,  0,  0,  0,  0,  0,  0,  1,  1,  1,  9,  9,
+                        9,  9,  9,  2,  2,  4,  10, 4,  13, 13, 13, 10, 9,  4,  4,  4,
+                        4,  1,  10, 12, 10, 5,  13, 12, 13, 4,  10, 2,  2,  2,  13, 4,
+                        13, 13, 13, 0,  0,  0,  0,  0,  0,  0,  0,  0,  14, 14};
+    spRGBA start = {0x80, 0x80, 0x80, 0};
+    spRGBA end = {0x80, 0x80, 0x80, 0};
+    int start_alpha;
+    int end_alpha;
+    int time[3];
+    int i;
+
+    if (info == NULL) {
+        return;
+    }
+    start.a = alpha;
+    end.a = alpha;
+    GetSaveBoardAlphaInfo(y, 0x88, start_alpha, end_alpha, alpha);
+    start.a = start_alpha;
+    end.a = end_alpha;
+    DrawMenu2DSprite(SaveBoard, CRect_i_(x, y, 0x180, 0x87), CRect_i_(0, 0, 0x180, 0x87), &start, &start,
+                     &end, &end);
+
+    CRect_i_ digit(0x88, 0xCA, 0xC, 0x10);
+    GetSaveBoardAlphaInfo(y, 0x10, start_alpha, end_alpha, alpha);
+    start.a = start_alpha;
+    end.a = end_alpha;
+    DrawSaveBoardDigits(info->file_no, x + 0x54, y + 8, y, &start, &end, digit);
+
+    GetSaveBoardAlphaInfo(y, 0x16, start_alpha, end_alpha, alpha);
+    start.a = start_alpha;
+    end.a = end_alpha;
+    if (info->name != NULL) {
+        DrawSaveBoardCharaName2(x + 0x22, y + 0x1C, (short *) info->name, name_texture, start, end);
+    }
+
+    // Play time, as hours, minutes and seconds.
+    CRect_i_ time_digit(0x88, 0xB8, 0xC, 0x12);
+    int column = x + 0x92;
+    int time_x = column + 0xA;
+    int time_y = y + 0x36;
+    GetSaveBoardAlphaInfo(time_y, 0x12, start_alpha, end_alpha, alpha);
+    start.a = start_alpha;
+    end.a = end_alpha;
+    int frames = (int) info->play_time;
+    if (frames >= 0x01499700) {
+        frames = 0x014996C4;
+    }
+    int seconds = frames / 60;
+    time[0] = seconds / 3600;
+    time[1] = (seconds / 60 - time[0] * 60) % 60;
+    time[2] = seconds % 60;
+    for (i = 2; i >= 0; i--) {
+        int value = time[i];
+        DrawMenu2DSprite(SaveBoard, CRect_i_(time_x, time_y, time_digit.width, time_digit.height),
+                         CRect_i_(time_digit.x + time_digit.width * (value / 10), time_digit.y,
+                                  time_digit.width, time_digit.height),
+                         &start, &start, &end, &end);
+        DrawMenu2DSprite(SaveBoard,
+                         CRect_i_(time_x + time_digit.width, time_y, time_digit.width, time_digit.height),
+                         CRect_i_(time_digit.x + time_digit.width * (value % 10), time_digit.y,
+                                  time_digit.width, time_digit.height),
+                         &start, &start, &end, &end);
+        time_x -= 0x1E;
+    }
+    CRect_i_ colon(0x100, 0xB8, 0xC, 0x12);
+    GetSaveBoardAlphaInfo(time_y, 0x12, start_alpha, end_alpha, alpha);
+    start.a = start_alpha;
+    end.a = end_alpha;
+    DrawMenu2DSprite(SaveBoard, CRect_i_(column + 2, time_y, 0xC, 0x12), colon, &start, &start, &end, &end);
+    DrawMenu2DSprite(SaveBoard, CRect_i_(column + 2 - 0x1E, time_y, 0xC, 0x12), colon, &start, &start, &end,
+                     &end);
+
+    GetSaveBoardAlphaInfo(y + 0x52, 0x12, start_alpha, end_alpha, alpha);
+    start.a = start_alpha;
+    end.a = end_alpha;
+    DrawSaveBoardDigits(info->quest_total, x + 0x88, y + 0x52, y, &start, &end, digit);
+
+    // Name of the map the save was made on.
+    int map = map_name[info->unk_30];
+    int name_v;
+    if (map < 14) {
+        name_v = (map % 7) * 0x14 + 0xB8;
+    } else {
+        map -= 14;
+        name_v = (map % 7) * 0x14 + 0x144;
+    }
+    int name_u = (map / 7) * 0x88;
+    GetSaveBoardAlphaInfo(y + 0x63, 0x14, start_alpha, end_alpha, alpha);
+    start.a = start_alpha;
+    end.a = end_alpha;
+    DrawMenu2DSprite(SaveBoard, CRect_i_(x + 0x23, y + 0x63, 0x88, 0x15), CRect_i_(name_u, name_v, 0x88, 0x14),
+                     &start, &start, &end, &end);
+
+    // A face for each member of the party, three to a row.
+    int face_x = x + 0xCF;
+    int face_y = y + 0x1A;
+    GetSaveBoardAlphaInfo(face_y, 0x30, start_alpha, end_alpha, alpha);
+    start.a = start_alpha;
+    end.a = end_alpha;
+    for (i = 0; i < info->party_size; i++) {
+        DrawMenu2DSprite(SaveBoard, CRect_i_(face_x, face_y, 0x30, 0x31), CRect_i_(i * 0x30, 0x88, 0x30, 0x30),
+                         &start, &start, &end, &end);
+        face_x += 0x38;
+        if (i == 2) {
+            face_x = x + 0xCF;
+            face_y += 0x34;
+            GetSaveBoardAlphaInfo(face_y, 0x30, start_alpha, end_alpha, alpha);
+            start.a = start_alpha;
+            end.a = end_alpha;
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_save", DrawSaveBoard__FP13SAVEDATA_INFOPP8CTextureiiii);
+#endif
+#ifdef NON_MATCHING
+void DrawNewFileTemplete(int x, int y, int alpha) {
+    spRGBA start = {0x80, 0x80, 0x80, 0};
+    spRGBA end = {0x80, 0x80, 0x80, 0};
+    int start_alpha;
+    int end_alpha;
+
+    if (y % 2 != 0) {
+        y++;
+    }
+    start.a = alpha;
+    end.a = alpha;
+
+    // Top edge: two corners and the run between them.
+    GetSaveBoardAlphaInfo(y, 0x10, start_alpha, end_alpha, 0x80);
+    start.a = start_alpha;
+    end.a = end_alpha;
+    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x, y, 0x10, 0xF), CRect_i_(0x120, 0x88, 0x10, 0x10), &start,
+                &start, &end, &end, 1);
+    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x170, y, 0x10, 0xF), CRect_i_(0x140, 0x88, 0x10, 0x10),
+                &start, &start, &end, &end, 1);
+    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x10, y, 0x160, 0xF), CRect_i_(0x130, 0x88, 0x10, 0x10),
+                &start, &start, &end, &end, 1);
+
+    // Bottom edge.
+    GetSaveBoardAlphaInfo(y + 0x78, 0x10, start_alpha, end_alpha, 0x80);
+    start.a = start_alpha;
+    end.a = end_alpha;
+    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x, y + 0x78, 0x10, 0xF), CRect_i_(0x120, 0xA8, 0x10, 0x10),
+                &start, &start, &end, &end, 1);
+    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x170, y + 0x78, 0x10, 0xF),
+                CRect_i_(0x140, 0xA8, 0x10, 0x10), &start, &start, &end, &end, 1);
+    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x10, y + 0x78, 0x160, 0xF),
+                CRect_i_(0x130, 0xA8, 0x10, 0x10), &start, &start, &end, &end, 1);
+
+    // Sides.
+    GetSaveBoardAlphaInfo(y + 0x10, 0x68, start_alpha, end_alpha, 0x80);
+    start.a = start_alpha;
+    end.a = end_alpha;
+    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x, y + 0xF, 0x10, 0x69), CRect_i_(0x120, 0x98, 0x10, 0x10),
+                &start, &start, &end, &end, 1);
+    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x170, y + 0xF, 0x10, 0x69),
+                CRect_i_(0x140, 0x98, 0x10, 0x10), &start, &start, &end, &end, 1);
+
+    // "New file".
+    GetSaveBoardAlphaInfo(y + 0x35, 0x1E, start_alpha, end_alpha, 0x80);
+    start.a = start_alpha;
+    end.a = end_alpha;
+    set2DSprite(GetVif1Packet(), SaveBoard, CRect_i_(x + 0x86, y + 0x35, 0x74, 0x1E),
+                CRect_i_(0x10C, 0xB8, 0x74, 0x1E), &start, &start, &end, &end, 1);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_save", DrawNewFileTemplete__Fiii);
+#endif
 
 int InitExistData(void) {
     int port;
@@ -806,7 +1031,78 @@ int SaveEnableCheck(void) {
     }
     return 1;
 }
+#ifdef NON_MATCHING
+extern float EventBoardPos[2];
+extern float EventBarY;
+extern float MiniCur[2];
+extern int EventItemMoveY;
+extern ITEM_PACK *EventItemPackPt;
+extern int MiniEventTexReadFlag;
+extern CTexture *StayTex;
+extern CTexture *MiniEventBoard;
+extern CTexture *FishFoodBoard;
+extern CTexture *ItemIcon;
+
+void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, int vanish, int fish_mode) {
+    s8 lang_y[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    LOADTEXTURE_INFO2 texture[2] = {{"stayframe.img", 0, 0}, {NULL, 0, 0}};
+    int i;
+
+    GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
+    GamePad.MenuModeOn(0x78);
+    StayTex = TexManager.GetTexture("stayframe", -1);
+    MiniMenu.fish_mode = fish_mode;
+    MiniEventTextureBlock = block;
+    MiniMenu.lang = GetMenuLangFlag();
+    EventBoardPos[0] = (float) x;
+    EventBoardPos[1] = (float) y + (float) lang_y[MiniMenu.lang];
+    EventItemPackPt = pack;
+    MiniMenu.event_item_num = 0;
+    for (i = 0; i < pack->num; i++) {
+        if (pack->item[i] >= 0x84) {
+            MiniMenu.event_item_num++;
+        }
+    }
+    for (MiniMenu.usable_num = 0; MiniMenu.usable_num < 13;) {
+        MiniMenu.usable[MiniMenu.usable_num] = usable[MiniMenu.usable_num];
+        printf("itemno = %d\n", usable[MiniMenu.usable_num]);
+        if (usable[MiniMenu.usable_num] < 0) {
+            break;
+        }
+        MiniMenu.usable_num++;
+    }
+    MiniMenu.selected = -1;
+    MiniMenu.vanish = vanish;
+    if (MiniMenu.vanish != 0) {
+        printf("vanish after use !\n");
+    } else {
+        printf("exist after use \n");
+    }
+    texture[0].block_no = MiniEventTextureBlock;
+    TexManager.DeleteTextureBlock(MiniEventTextureBlock);
+    TexManager.CleanUpTextureList();
+    TexManager.LoadTextureBlockEX(-1, texture);
+    StartReadBG();
+    LoadFileBGMenuData("eventmnu2.pak", MenuCalcBufAlignment((u_long128 *) read_buffer));
+    ReadBG();
+    MiniMenu.cursor = 0;
+    MiniMenu.scroll_row = 0;
+    int row = MiniMenu.scroll_row;
+    float top = EventBoardPos[1];
+    EventItemMoveY = (int) ((56.0f + top) - (float) (row * 0x28));
+    int rows = EventItemPackPt->num / 5;
+    if (rows <= 0) {
+        rows = 1;
+    }
+    EventBarY = 60.0f + top + (float) ((int) (68.0f * (float) row) / rows);
+    MiniCur[0] = 6.0f + EventBoardPos[0] + (float) (((MiniMenu.cursor + 5) % 5) * 0x2A);
+    MiniCur[1] = 60.0f + top + (float) (((MiniMenu.cursor - row * 5) / 5) * 0x28);
+    MiniMenu.state = 2;
+    MiniEventTexReadFlag = 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_save", InitEventItemSelect__FiPiP9ITEM_PACKiiii);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3427);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3428);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3429);
@@ -825,18 +1121,18 @@ int EventItemSelectLoop(int *result) {
 
     ReadBG();
     alpha = 0x40;
-    switch (MiniMenu.unk_4C) {
+    switch (MiniMenu.state) {
         case 0:
             alpha = 0x40;
             break;
         case 2:
-            alpha = 0x80 - MiniMenu.unk_50 * 4;
+            alpha = 0x80 - MiniMenu.state_time * 4;
             if (alpha < 0x40) {
                 alpha = 0x40;
             }
             break;
         case 3:
-            alpha = MiniMenu.unk_50 * 4 + 0x40;
+            alpha = MiniMenu.state_time * 4 + 0x40;
             if (alpha > 0x80) {
                 alpha = 0x80;
             }
@@ -853,7 +1149,144 @@ int EventItemSelectLoop(int *result) {
     }
     return ret;
 }
+#ifdef NON_MATCHING
+static int EventItemSelectKey(int *result) {
+    LOADTEXTURE_INFO2 texture[4] = {};
+    int done = 0;
+    int i;
+    s16 *slot;
+
+    if (MiniEventTexReadFlag == 0) {
+        if (ReadBGSync() != 0) {
+            return 0;
+        }
+        BG_READ_INFO *file = GetReadBGFile(0);
+        texture[0].block_no = MiniEventTextureBlock;
+        texture[1].block_no = MiniEventTextureBlock;
+        texture[2].block_no = MiniEventTextureBlock;
+        texture[0].name = (char *) GetPackFile((u_int *) file->buffer, "eventmnu.img", NULL);
+        texture[1].name = (char *) GetPackFile((u_int *) file->buffer, "fishmnu.img", NULL);
+        TexManager.DeleteTextureBlock(MiniEventTextureBlock);
+        TexManager.LoadTextureBlockEX(-1, texture);
+        MiniEventBoard = TexManager.GetTexture("eventmnu", -1);
+        FishFoodBoard = TexManager.GetTexture("fishmnu", -1);
+        ItemIcon = TexManager.GetTexture("itemicon", -1);
+        InitMenuMesSet(1, (short *) GetPackFile((u_int *) file->buffer, "eventuse.bin", NULL));
+        CommonMenuMes2.MakeMesWin(0);
+        CommonMenuMes2.Step();
+        MiniEventTexReadFlag = 1;
+    }
+    int last = MiniMenu.cursor;
+    int num = EventItemPackPt->num;
+    switch (MiniMenu.state) {
+        case 1:
+            if (GamePad.Down(0x60) != 0) {
+                MiniMenu.state = 0;
+            }
+            break;
+        case 0: {
+            if (GamePad.Down(0x1000) != 0 && MiniMenu.cursor >= 5) {
+                MiniMenu.cursor -= 5;
+            }
+            if (GamePad.Down(0x4000) != 0 && MiniMenu.cursor < num - 5) {
+                MiniMenu.cursor += 5;
+            }
+            if (GamePad.Down(0x8000) != 0 && MiniMenu.cursor > 0) {
+                MiniMenu.cursor--;
+            }
+            if (GamePad.Down(0x2000) != 0 && MiniMenu.cursor < num - 1) {
+                MiniMenu.cursor++;
+            }
+            if (MiniMenu.cursor < MiniMenu.scroll_row * 5) {
+                MiniMenu.scroll_row--;
+            }
+            if ((MiniMenu.scroll_row + 2) * 5 - 1 < MiniMenu.cursor) {
+                MiniMenu.scroll_row++;
+            }
+            if (last != MiniMenu.cursor) {
+                ComMenuSePlay(0);
+            }
+            if (GamePad.Down(0x80) != 0) {
+                SeitonItemBoard(EventItemPackPt);
+                ComMenuSePlay(1);
+                break;
+            }
+            if (GamePad.Down(0x40) != 0) {
+                int index = -1;
+                slot = NULL;
+                if (MiniMenu.cursor < MiniMenu.event_item_num) {
+                    int n = 0;
+                    slot = EventItemPackPt->item;
+                    for (index = 0; index < EventItemPackPt->num; index++, slot++) {
+                        if (*slot >= 0x84) {
+                            if (MiniMenu.cursor == n) {
+                                *result = *slot;
+                                break;
+                            }
+                            n++;
+                        }
+                    }
+                }
+                int accepted = 0;
+                if (slot != NULL) {
+                    for (i = 0; MiniMenu.usable[i] >= 0x84 && i < 13; i++) {
+                        if (MiniMenu.usable[i] == *result) {
+                            accepted = 1;
+                            if (MiniMenu.vanish != 0 && index >= 0 && index < EventItemPackPt->num) {
+                                EventItemPackPt->item[index] = 0;
+                            }
+                            break;
+                        }
+                    }
+                }
+                if (slot == NULL) {
+                    ComMenuSePlay(2);
+                } else if (accepted != 0) {
+                    done = 1;
+                    ComMenuSePlay(1);
+                } else {
+                    printf("Miss\tselected itemNo = %d\n", *result);
+                    ComMenuSePlay(1);
+                    done = 1;
+                    if (MiniMenu.fish_mode != 0) {
+                        done = 0;
+                        MiniMenu.state = 1;
+                    }
+                }
+            } else if (GamePad.Down(0x20) != 0) {
+                ComMenuSePlay(2);
+                *result = -1;
+                done = 1;
+            }
+            break;
+        }
+    }
+    slot = NULL;
+    if (MiniMenu.cursor < MiniMenu.event_item_num) {
+        int n = 0;
+        s16 *item = EventItemPackPt->item;
+        for (i = 0; i < EventItemPackPt->num; i++, item++) {
+            if (*item >= 0x84) {
+                if (MiniMenu.cursor == n) {
+                    slot = item;
+                    break;
+                }
+                n++;
+            }
+        }
+    }
+    int message = 0;
+    if (slot != NULL) {
+        message = *slot <= 0 ? 0 : *slot + 500;
+    }
+    if (CommonMenuMes2.mes_made != message) {
+        CommonMenuMes2.MakeMesWin(message);
+    }
+    return done;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_save", EventItemSelectKey__FPi);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3548);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3549);
 INCLUDE_RODATA("asm/nonmatchings/menu_save", @3550);
@@ -871,8 +1304,129 @@ static void DrawEventAndFishMenuBoard_Ver(CTexture *texture, CRect_i_ rect, int 
     y += rect.height + 0x32;
     DrawMenu2DSprite(texture, CRect_i_(rect.x, y, rect.width, 0x1E), CRect_i_(u, 0xC6, width, 0x1E), alpha);
 }
+#ifdef NON_MATCHING
+extern s16 EventBoardHeight[2];
+extern s16 EventBoardEdge[2];
+
+static void DrawEventAndFishMenuBoard(CTexture *texture, int x, int y, int alpha, int lang) {
+    int height = EventBoardHeight[lang];
+    int edge = EventBoardEdge[lang] + 6;
+
+    DrawEventAndFishMenuBoard_Ver(texture, CRect_i_(x + 0x1C, y, 0xD2, height), 0x1C, 0xD2, lang, alpha);
+    DrawEventAndFishMenuBoard_Ver(texture, CRect_i_(x + 0x1C - edge, y, edge, height), 0x14, 6, lang, alpha);
+    DrawEventAndFishMenuBoard_Ver(texture, CRect_i_(x + 8 - edge, y, 0x14, height), 0, 0x14, lang, alpha);
+    DrawEventAndFishMenuBoard_Ver(texture, CRect_i_(x + 0xEE, y, edge, height), 0xEC, 6, lang, alpha);
+    DrawEventAndFishMenuBoard_Ver(texture, CRect_i_(x + 0xEE + edge, y, 0x20, height), 0xF4, 0x20, lang, alpha);
+    int rows = EventItemPackPt->num / 5;
+    if (rows <= 0) {
+        rows = 1;
+    }
+    float bar = 136.0f / (float) rows;
+    if (bar > 68.0f) {
+        bar = 68.0f;
+    }
+    EventBarY += ((float) (int) ((float) (y + 0x3C) + (68.0f * (float) MiniMenu.scroll_row) / (float) rows) -
+                  EventBarY) / 4.0f;
+    DrawMenu2DSprite(texture, CRect_i_(x + 0xF6 + edge, (int) EventBarY, 8, (int) bar), CRect_i_(0, 0xE4, 8, 0xC),
+                     alpha);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_save", DrawEventAndFishMenuBoard__FP8CTextureiiii);
+#endif
+#ifdef NON_MATCHING
+static void EventItemSelectDraw(void) {
+    s16 items[100];
+    s8 message_pos[2][2] = {{0, 0}, {0, 0}};
+    int alpha;
+    int i;
+
+    if (MiniEventTexReadFlag == 0) {
+        return;
+    }
+    alpha = 0x80;
+    switch (MiniMenu.state) {
+        case 2:
+            alpha = MiniMenu.state_time * 8;
+            if (alpha > 0x80) {
+                alpha = 0x80;
+                MiniMenu.state = 0;
+            }
+            break;
+        case 3:
+            alpha = 0x80 - MiniMenu.state_time * 8;
+            if (alpha < 0) {
+                alpha = 0;
+            }
+            break;
+    }
+    float left = EventBoardPos[0];
+    float top = EventBoardPos[1];
+    int clip_bottom_y = (int) top;
+    CTexture *board = MiniMenu.fish_mode != 0 ? FishFoodBoard : MiniEventBoard;
+    int clip_top = (int) (56.0f + top);
+    int clip_bottom = (int) (136.0f + top);
+    int icon_x = (int) (32.0f + left);
+    int board_x = (int) (28.0f + left);
+    int target = (int) ((56.0f + top) - (float) (MiniMenu.scroll_row * 0x28));
+    EventItemMoveY += (target - EventItemMoveY) >> 2;
+    if (abs(EventItemMoveY - target) < 4) {
+        EventItemMoveY = target;
+    }
+    int row_y = EventItemMoveY;
+    for (i = 0; i < EventItemPackPt->num / 5; i++) {
+        DrawEventItemBoard(board_x, row_y, clip_top, clip_bottom, alpha, board);
+        row_y += 0x28;
+    }
+    memset(items, 0, sizeof(items));
+    int count = 0;
+    for (i = 0; i < EventItemPackPt->num; i++) {
+        if (EventItemPackPt->item[i] >= 0x84) {
+            items[count++] = EventItemPackPt->item[i];
+        }
+    }
+    row_y = EventItemMoveY;
+    for (i = 0; i < 100 && clip_bottom >= clip_bottom_y; i++) {
+        clip_bottom_y = row_y + 4;
+        DrawIconParts(items[i], icon_x, clip_bottom_y, clip_top, clip_bottom, alpha, 0);
+        icon_x += 0x2A;
+        if (i % 5 == 4) {
+            icon_x = (int) (32.0f + left);
+            row_y += 0x28;
+        }
+    }
+    DrawEventAndFishMenuBoard(board, (int) left, (int) top, alpha, MiniMenu.lang);
+    int cursor = MiniMenu.cursor;
+    int cursor_x = (int) (6.0f + left + (float) (((cursor + 5) % 5) * 0x2A));
+    int cursor_y = (int) (60.0f + top + (float) (((cursor - MiniMenu.scroll_row * 5) / 5) * 0x28));
+    DrawMenuWaku((float) (cursor_x + 0x10), (float) (cursor_y - 9), 0x24, 0x24, 0, StayTex, alpha);
+    MiniCur[0] += ((float) cursor_x - MiniCur[0]) / 4.0f;
+    MiniCur[1] += ((float) cursor_y - MiniCur[1]) / 4.0f;
+    DrawMenuObjectVibe((int) MiniCur[0], (int) MiniCur[1], 1, 0x40);
+    CursorVibeCnt++;
+    if (CursorVibeCnt >= 0x405F7E00) {
+        CursorVibeCnt = 0;
+    }
+    CommonMenuMes2.edge_alpha = alpha;
+    DrawMenuClsMes(&CommonMenuMes2, (int) (20.0f + left + (float) message_pos[MiniMenu.lang][0]),
+                   (int) (146.0f + top + (float) message_pos[MiniMenu.lang][1]));
+    if (MiniMenu.state == 1) {
+        if (CommonMenuMes1.mes_made != 1) {
+            CommonMenuMes1.MakeMesWin(1);
+        }
+        AllFadeForMenu(0);
+        CommonMenuMes1.stay_frame = 1;
+        DrawMenuClsMes(&CommonMenuMes1, 0xDC, 0xA0);
+    }
+    if (MiniMenu.state != 0) {
+        MiniMenu.state_time++;
+    } else {
+        MiniMenu.state_time = 0;
+    }
+    setbilinear(1);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/menu_save", EventItemSelectDraw__Fv);
+#endif
 
 static void DrawEventItemBoard(int x, int y, int top, int bottom, int alpha, CTexture *texture) {
     int clip_y;

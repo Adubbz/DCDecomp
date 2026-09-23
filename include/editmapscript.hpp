@@ -27,3 +27,10 @@ int CheckMotionTime(float target, float previous, float current);
  * Provides the editor hook for stopping all currently managed sound.
  */
 void StopAllSound();
+
+/**
+ * Loads one file of the active script directory into the editor's read buffer.
+ *
+ * @mangled EdLoadFile__FPc
+ */
+void *EdLoadFile(char *name);

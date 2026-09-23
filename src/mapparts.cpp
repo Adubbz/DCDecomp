@@ -58,8 +58,8 @@ void CMapParts::Initialize() {
     this->kind = 0;
     this->rot_y = 0;
     this->unk_114 = 0;
-    this->unk_118 = 0;
-    this->parts_no = this->unk_0F4 = -1;
+    this->subtype = 0;
+    this->parts_no = this->area = -1;
     this->unk_11C = 0.0f;
     this->unk_120 = -1.0f;
     for (i = 0; i < MAP_PARTS_EFFECT_MAX; i++) {
@@ -263,7 +263,7 @@ void CMapParts::DrawLOD(float *distance, int lowest, int highest, int *out_level
     sceVu0FVECTOR saved_rotation;
     float depth;
 
-    if (this->unk_0E8 < 0) {
+    if (this->handle < 0) {
         return;
     }
     if (this->draw_on == 0) {
@@ -405,7 +405,7 @@ void CMapParts::DrawEffect(CCamera *camera, float time, CEffectGroup *group) {
     int i;
     EDIT_EFFECT_INFO *info;
 
-    if (this->unk_0E8 < 0) {
+    if (this->handle < 0) {
         return;
     }
     if (this->draw_on == 0) {

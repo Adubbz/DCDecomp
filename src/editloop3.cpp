@@ -1294,9 +1294,9 @@ static void EdSetVillagerNextPos(CNPCharacter *villager, VILLAGER_INFO *info,
                     weights[i] = weight;
                 }
                 if (next_parts != NULL &&
-                    (next_parts->unk_118 == 1 ||
-                     (current_parts != NULL && current_parts->unk_118 != 3 &&
-                      next_parts->unk_118 == 3))) {
+                    (next_parts->subtype == 1 ||
+                     (current_parts != NULL && current_parts->subtype != 3 &&
+                      next_parts->subtype == 3))) {
                     total += weight;
                     weights[i] = weight;
                 }
@@ -7259,7 +7259,7 @@ ED_SPRITE::ED_SPRITE() {
 int CheckPartsInfo(EDITPARTS_INFO *info) {
     if (info->unk_08 == 0)
         return 0;
-    if (info->unk_18 <= 0)
+    if (info->stock <= 0)
         return 0;
     return 1;
 }

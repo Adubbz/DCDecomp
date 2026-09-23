@@ -10,6 +10,7 @@
 #include <cassert>
 #include <cstdio>
 #include <cstring>
+#include <libpkt.h>
 
 #include "btsysscript.hpp"
 #include "cloth.hpp"
@@ -21,10 +22,18 @@
 #include "gameutil.hpp"
 #include "mathutil.hpp"
 #include "mglib.hpp"
+#include "rect.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "sound.hpp"
 #include "sysmes.hpp"
+#ifdef NON_MATCHING // draft includes
+#include "bound.hpp"
+#include "visualvu1.hpp"
+#include <cstdlib>
+#include <libpkt.h>
+#include "rect.hpp"
+#endif
 
 /**
  * Cloth instance currently receiving configuration commands.
@@ -115,7 +124,59 @@ INCLUDE_RODATA("asm/nonmatchings/clothread", @255);
  * @address 0x13F9C0
  * @size 0x1B4
  */
+#ifdef NON_MATCHING
+static int GetArg(input_str &input, int *args, void **argv);
+static int SearchCommand(input_str &input, int *command);
+static int SkipSpace(input_str &input);
+static int CheckChar(char c);
+
+/* The allocator the cloth and its exclusion boxes come out of. */
+static CDataAlloc2<1> *DataBuffer;
+
+/* The frame whose model the configuration describes. */
+static CFrameVu1 *ParentFrame;
+
+/* The exclusion box added last, which the next one is chained after. */
+static CBound *pBound;
+
+CCloth *InitCloth(CFrameVu1 *frame, input_str &input, CDataAlloc2<1> *alloc) {
+    char words[16][256];
+    void *argv[16];
+    int command;
+
+    DataBuffer = alloc;
+    pCloth = new ((u_long128 *) alloc->Alloc(0x856)) CCloth(16, 16, 1.0f);
+    ParentFrame = frame;
+    pBound = NULL;
+    if (frame == NULL) {
+        return NULL;
+    }
+    if (pCloth == NULL) {
+        return NULL;
+    }
+    SkipSpace(input);
+    for (int i = 0; i < 16; i++) {
+        argv[i] = words[i];
+    }
+    while (SearchCommand(input, &command) != 0) {
+        if (command >= 9 || command < 0) {
+            printf("unknown command!!\n");
+            continue;
+        }
+        int result = GetArg(input, Command[command].args, argv);
+        if (result == 0) {
+            break;
+        }
+        if (result < 0) {
+            printf("error!!\n");
+        }
+        CommandExe[command](argv);
+    }
+    return pCloth;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/clothread", InitCloth__FP9CFrameVu1R9input_strP14CDataAlloc2_1_);
+#endif
 
 static void CommandSIZE(void **argv) {
     int num_i = *(int *) argv[0];
@@ -140,7 +201,20 @@ static void CommandSIZE(void **argv) {
  * @address 0x13FBE0
  * @size 0x7C
  */
+#ifdef NON_MATCHING
+static void CommandFRAME(void **argv) {
+    CFrameVu1 *frame = (CFrameVu1 *) ParentFrame->SearchFrame((char *) argv[0]);
+
+    pCloth->frame = frame;
+    if (frame != NULL) {
+        frame->attr.draw_on = 2;
+        CVisualVu1 *visual = frame->GetVisual();
+        pCloth->Initialize((MDT_HEADER *) visual->GetMDTDataAddress(), DataBuffer);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/clothread", CommandFRAME__FPPv);
+#endif
 
 static void CommandNORMAL(void **argv) {
     pCloth->normal_scale = *(float *) argv[0];
@@ -188,7 +262,51 @@ static void CommandPOLYDIVE(void **argv) {
  * @address 0x13FDB0
  * @size 0x24C
  */
+#ifdef NON_MATCHING
+static void CommandBOUND(void **argv) {
+    sceVu0FVECTOR vectors[4];
+    CBound *bound = new ((u_long128 *) DataBuffer->Alloc(0x14)) CBound(1.0f, 1.0f, 1.0f);
+
+    if (bound == NULL) {
+        return;
+    }
+    int arg = 1;
+    CFrame *frame = ParentFrame->SearchFrame((char *) argv[0]);
+    if (frame == NULL) {
+        return;
+    }
+    for (int i = 0; i < 4; i++) {
+        vectors[i][0] = *(float *) argv[arg];
+        vectors[i][1] = *(float *) argv[arg + 1];
+        vectors[i][2] = *(float *) argv[arg + 2];
+        arg += 3;
+        vectors[i][3] = 1.0f;
+    }
+    vectors[0][3] = 0.0f;
+    bound->SetDir(frame, vectors[1], vectors[2], vectors[0], vectors[3][0], vectors[3][1]);
+    bound->extent[0] = vectors[3][0];
+    bound->extent[1] = vectors[3][1];
+    bound->extent[2] = vectors[3][2];
+    if (bound->extent[0] > 0.0f) {
+        bound->reciprocal[0] = 1.0f / vectors[3][0];
+    }
+    if (bound->extent[1] > 0.0f) {
+        bound->reciprocal[1] = 1.0f / vectors[3][1];
+    }
+    if (bound->extent[2] > 0.0f) {
+        bound->reciprocal[2] = 1.0f / vectors[3][2];
+    }
+    bound->friction = *(float *) argv[arg];
+    if (pBound == NULL) {
+        pCloth->bound = bound;
+    } else {
+        pBound->next = bound;
+    }
+    pBound = bound;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/clothread", CommandBOUND__FPPv);
+#endif
 /**
  * Reads one command argument out of a model script.
  *
@@ -197,7 +315,68 @@ INCLUDE_ASM("asm/nonmatchings/clothread", CommandBOUND__FPPv);
  * @size 0x320
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
+#ifdef NON_MATCHING
+static int GetArg(input_str &input, int *args, void **argv) {
+    char word[256];
+
+    if (!SkipSpace(input))
+        return 0;
+    int argc = 0;
+    while (args[argc++] >= 0)
+        ;
+    int c;
+    for (int i = 0; i < argc - 1; i++) {
+        int length = 0;
+        if (!SkipSpace(input))
+            return 0;
+        while (1) {
+            if (input.get(&c) == 0)
+                return 0;
+            if (c == ',' || !CheckChar(c))
+                break;
+            word[length++] = c;
+        }
+        word[length] = 0;
+        switch (args[i]) {
+            case 0:
+                if (word[0] != '"')
+                    return -1;
+                for (length = 1;; length++) {
+                    char value = word[length];
+                    if (value == '"') {
+                        word[length] = 0;
+                        break;
+                    }
+                    if (value == 0)
+                        return -1;
+                }
+                strcpy((char *) argv[i], word + 1);
+                break;
+            case 1:
+                for (length = 0; word[length] != 0; length++) {
+                    char value = word[length];
+                    if (value < '0' || value > '9')
+                        return -1;
+                }
+                *(int *) argv[i] = atoi(word);
+                break;
+            case 2:
+                for (length = 0; word[length] != 0; length++) {
+                    char value = word[length];
+                    if ((value < '0' || value > '9') && value != '.' && value != '-')
+                        return -1;
+                }
+                *(float *) argv[i] = (float) atof(word);
+                break;
+            default:
+                return -1;
+        }
+    }
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/clothread", GetArg__FR9input_strPiPPv__2);
+#endif
 /**
  * Finds the command table entry a model script's next word names.
  *
@@ -206,7 +385,34 @@ INCLUDE_ASM("asm/nonmatchings/clothread", GetArg__FR9input_strPiPPv__2);
  * @size 0x144
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
+#ifdef NON_MATCHING
+static int SearchCommand(input_str &input, int *command) {
+    char word[256];
+
+    if (!SkipSpace(input))
+        return 0;
+    int length = 0;
+    int c;
+    while (1) {
+        if (input.get(&c) == 0)
+            return 0;
+        if (!CheckChar(c))
+            break;
+        word[length++] = c;
+    }
+    word[length] = 0;
+    for (int i = 0; i < 9; i++) {
+        if (strcmp(Command[i].name, word) == 0) {
+            *command = i;
+            return 1;
+        }
+    }
+    *command = 10;
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/clothread", SearchCommand__FR9input_strPi__2);
+#endif
 /**
  * Steps a model script past whitespace and comments.
  *
@@ -215,7 +421,28 @@ INCLUDE_ASM("asm/nonmatchings/clothread", SearchCommand__FR9input_strPi__2);
  * @size 0x94
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
+#ifdef NON_MATCHING
+static int SkipSpace(input_str &input) {
+    char *str;
+    int i;
+
+    str = input.data;
+    i = input.pos;
+    while (i < input.size) {
+        if (CheckChar(str[i])) {
+            break;
+        }
+        i++;
+    }
+    input.pos = i;
+
+    if (i >= input.size)
+        return 0;
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/clothread", SkipSpace__FR9input_str__2);
+#endif
 /**
  * Reports whether a character is not whitespace.
  *
@@ -224,7 +451,22 @@ INCLUDE_ASM("asm/nonmatchings/clothread", SkipSpace__FR9input_str__2);
  * @size 0x60
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
+#ifdef NON_MATCHING
+static int CheckChar(char c) {
+    int found = 0;
+    if (c == ' ')
+        found = 1;
+    if (c == '\t')
+        found = 1;
+    if (c == '\n')
+        found = 1;
+    if (c == '\r')
+        found = 1;
+    return !found;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/clothread", CheckChar__Fc__2);
+#endif
 
 /**
  * Converts analog-stick displacement into a motion speed and movement state.
@@ -267,7 +509,22 @@ int keyCtrl(float x, float y, MOTION_INFO *motion) {
  * @address 0x140660
  * @size 0x1A4
  */
-INCLUDE_ASM("asm/nonmatchings/clothread", MoveImageTest__FP13sceVif1PacketiiiRC8CRect_i_iiiiii);
+void MoveImageTest(sceVif1Packet *packet, int src_base, int src_width, int src_format,
+                   const CRect_i_ &rect, int dst_base, int dst_width, int dst_format, int dst_x,
+                   int dst_y, int direction) {
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_BITBLTBUF,
+                     SCE_GS_SET_BITBLTBUF(src_base, src_width, src_format, dst_base, dst_width,
+                                          dst_format));
+    sceVif1PkAddGsAD(packet, SCE_GS_TRXPOS,
+                     SCE_GS_SET_TRXPOS(rect.x, rect.y, dst_x, dst_y, direction));
+    sceVif1PkAddGsAD(packet, SCE_GS_TRXREG, SCE_GS_SET_TRXREG(rect.width, rect.height));
+    sceVif1PkAddGsAD(packet, SCE_GS_TRXDIR, 2);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
+}
 
 /**
  * Turns a frame toward a heading by one angular step and returns the new yaw.

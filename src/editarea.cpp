@@ -9,6 +9,9 @@
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "vector3.hpp"
+#ifdef NON_MATCHING // draft includes
+#include "visualvu1.hpp"
+#endif
 
 /**
  * Identifies map-part attributes used by connection queries.
@@ -195,7 +198,37 @@ int CEditArea::GetPartsExtra(int x, int y) {
         return -1;
     return grid[x][y].parts_extra;
 }
+#ifdef NON_MATCHING
+void CEditArea::SetMapParts(int parts_id, CMapParts *parts, float x, float y, float z, int unused) {
+    CVector3_i_ position;
+    CMapParts *part = &parts[parts_id];
+
+    *(float *) &part->kind = this->unit_size;
+    int width = part->GetWidth();
+    int height = part->GetHeight();
+    GetPos(&position, x, y, z);
+    for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; j++) {
+            int grid_x = i + (position.x - (width >> 1));
+            int grid_y = j + (position.z - (height >> 1));
+            int code = part->GetInfoData(i, j);
+            if (code != 0) {
+                SetCode(grid_x, grid_y, code);
+                if (code < 0x80) {
+                    AddAlt(grid_x, grid_y, code);
+                } else {
+                    SetPartsNo(grid_x, grid_y, part->handle);
+                    SetPartsID(grid_x, grid_y, parts_id);
+                    SetPartsExtra(grid_x, grid_y, part->subtype);
+                }
+            }
+        }
+    }
+    this->grid_redraw = 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/editarea", SetMapParts__9CEditAreaFiP9CMapPartsfffi);
+#endif
 int CEditArea::DeleteMapParts(int parts_no, CMapParts *parts, float x, float y, float z) {
     CVector3_i_ position;
     GetPos(&position, x, y, z);
@@ -451,7 +484,43 @@ void CEditArea::GetGrid(CVector3_f_ *position, float x, float y, float z) {
     GetPos(&grid_position, x, y, z);
     GetPos(position, grid_position.x, grid_position.y, grid_position.z);
 }
+#ifdef NON_MATCHING
+void CEditArea::RemakeGrid() {
+    if (this->grid_frame == NULL) {
+        return;
+    }
+    CVisualVu1 *visual = this->grid_frame->GetVisual();
+    if (visual == NULL) {
+        return;
+    }
+    unsigned int *mdt = visual->GetMDTDataAddress();
+    if (mdt == NULL) {
+        return;
+    }
+    sceVu0FVECTOR *vertex = (sceVu0FVECTOR *) ((char *) mdt + mdt[4]);
+    for (int x = 0; x < this->width; x++) {
+        for (int y = 0; y < this->height; y++) {
+            int index = (x + y * this->width) * 4;
+            if (GetCode(x, y) == 0x81) {
+                sceVu0CopyVector(vertex[index + 1], vertex[index]);
+                sceVu0CopyVector(vertex[index + 2], vertex[index]);
+                sceVu0CopyVector(vertex[index + 3], vertex[index]);
+            } else {
+                float *corner = vertex[index];
+                corner[4] = 1.002f * this->unit_size + corner[0];
+                corner[6] = corner[2];
+                corner[8] = corner[0];
+                corner[10] = 1.002f * this->unit_size + corner[2];
+                corner[12] = 1.002f * this->unit_size + corner[0];
+                corner[14] = 1.002f * this->unit_size + corner[2];
+            }
+        }
+    }
+    this->grid_frame->attr.unk_0A = 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/editarea", RemakeGrid__9CEditAreaFv);
+#endif
 
 void CEditArea::GetPartsBox(CBoxVu0 *box) {
     memcpy(box, &this->parts_box, sizeof(CBoxVu0));
@@ -527,7 +596,7 @@ int CEditArea::CheckParts(CMapParts *parts, float x, float y, float z, int rotat
     }
     CVector3_i_ position;
     GetPos(&position, x, y, z);
-    if (parts->unk_118 == 5) {
+    if (parts->subtype == 5) {
         if (GetPartsExtra(position.x, position.z) != 2) {
             return 0;
         }
@@ -554,13 +623,13 @@ int CEditArea::CheckParts(CMapParts *parts, float x, float y, float z, int rotat
             if (info != 0) {
                 int neighbor_parts_no = grid[cell_x][cell_y].parts_no;
                 int extra = GetPartsExtra(cell_x, cell_y);
-                if ((parts->unk_118 == 1 || extra != 1) && neighbor_parts_no >= 0) {
+                if ((parts->subtype == 1 || extra != 1) && neighbor_parts_no >= 0) {
                     return 0;
                 }
             }
         }
     }
-    if (parts->unk_118 == 2) {
+    if (parts->subtype == 2) {
         if (GetAlt_i(position.x, position.z) > 0) {
             return 0;
         }
@@ -585,7 +654,7 @@ int CEditArea::CheckParts(CMapParts *parts, float x, float y, float z, int rotat
             }
         }
     }
-    if (parts->unk_118 == 4) {
+    if (parts->subtype == 4) {
         if (GetAlt_i(position.x, position.z) > 0) {
             return 0;
         }
@@ -618,7 +687,60 @@ int CEditArea::PickUpPoly(CCPoly *polygons, float x, float y, float z) {
     CRect_i_ rect(position.x - 1, position.z - 1, 2, 2);
     return PickUpPoly(polygons, rect);
 }
+#ifdef NON_MATCHING
+int CEditArea::PickUpPoly(CCPoly *polygons, CRect_i_ rect) {
+    static int sound[5] = {0, 1, 0, 14, 2};
+    CVector3_f_ position;
+    sceVu0FVECTOR corner0;
+    sceVu0FVECTOR corner1;
+    sceVu0FVECTOR corner2;
+    sceVu0FVECTOR corner3;
+    sceVu0FVECTOR normal;
+    CCPolyInfo info;
+    CCPoly *poly = polygons;
+    int count = 0;
+
+    for (int x = rect.x; x < rect.x + rect.width; x++) {
+        for (int y = rect.y; y < rect.y + rect.height; y++) {
+            if (x >= 0 && x < this->width && y >= 0 && y < this->height && GetCode(x, y) != 0x81) {
+                GetPos(&position, x, 0, y);
+                memset(&info, 0, sizeof(info));
+                ((s16 *) &info)[1] = sound[this->map_no];
+                corner0[0] = position.x - 0.01f * this->unit_size;
+                corner0[1] = position.y;
+                corner0[2] = position.z - 0.01f * this->unit_size;
+                corner0[3] = 1.0f;
+                sceVu0CopyVector(corner1, corner0);
+                sceVu0CopyVector(corner2, corner0);
+                sceVu0CopyVector(corner3, corner0);
+                corner1[0] = 0.02f * this->unit_size + (corner0[0] + this->unit_size);
+                corner2[2] = 0.02f * this->unit_size + (corner0[2] + this->unit_size);
+                corner3[0] = 0.02f * this->unit_size + (corner0[0] + this->unit_size);
+                corner3[2] = 0.02f * this->unit_size + (corner0[2] + this->unit_size);
+                normal[0] = 0.0f;
+                normal[1] = 1.0f;
+                normal[2] = 0.0f;
+                normal[3] = 0.0f;
+                sceVu0CopyVector(poly[0].vertex[0], corner0);
+                sceVu0CopyVector(poly[0].vertex[1], corner1);
+                sceVu0CopyVector(poly[0].vertex[2], corner2);
+                sceVu0CopyVector(poly[0].normal, normal);
+                poly[0].info = info;
+                sceVu0CopyVector(poly[1].vertex[0], corner2);
+                sceVu0CopyVector(poly[1].vertex[1], corner1);
+                sceVu0CopyVector(poly[1].vertex[2], corner3);
+                sceVu0CopyVector(poly[1].normal, normal);
+                poly[1].info = info;
+                poly += 2;
+                count += 2;
+            }
+        }
+    }
+    return count;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/editarea", PickUpPoly__9CEditAreaFP6CCPoly8CRect_i_);
+#endif
 
 int CEditArea::PickUpPoly(CCPoly *polygons, CBoxVu0 box) {
     int left, top;

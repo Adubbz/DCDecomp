@@ -67,7 +67,7 @@ void CMapObject::Draw() {
     if (this->draw_on == 0) {
         return;
     }
-    if (this->unk_0E8 < 0) {
+    if (this->handle < 0) {
         return;
     }
     CObjectFrame::Draw();
@@ -79,7 +79,7 @@ void CMapObject::DrawLOD(float *distance, int lowest, int highest, int *out_leve
     if (this->draw_on == 0) {
         return;
     }
-    if (this->unk_0E8 < 0) {
+    if (this->handle < 0) {
         return;
     }
     CObjectFrame::DrawLOD(distance, lowest, highest, &level);
@@ -135,7 +135,7 @@ void CMapObject::DrawShade() {
 
 void CMapObject::Initialize() {
     CObjectFrame::Initialize(NULL);
-    this->unk_0E4 = this->unk_0E8 = -1;
+    this->unk_0E4 = this->handle = -1;
     this->shadow_frame = NULL;
     this->shade_frame = NULL;
     this->collision_frame = NULL;

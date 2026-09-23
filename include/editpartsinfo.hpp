@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+struct EPARTS_FUNC_DATA;
+
 /**
  * @file
  * Declares what the game remembers about every part an edited map can hold.
@@ -19,11 +21,14 @@ struct EPARTS_INFO_HEADER {
     s32 width;  /**< Cells that the part covers from west to east. */
     s32 height; /**< Cells that the part covers from north to south. */
     s32 kind; /**< Parts classification copied from the source definition. */
-    u8 unk_14[0x28];
+    u8 unk_14[0x10];
+    float position[3]; /**< Where the part stands, relative to its plot. */
+    float rotation[3]; /**< Which way it faces. */
     u8 *cell; /**< One byte per grid cell, row by row, that says what the cell is. */
     s32 element_id[6]; /**< Identifiers for the part's optional visual elements. */
     char *element_name[6]; /**< Packed names of the part's optional visual elements. */
-    u8 unk_70[8];
+    EPARTS_FUNC_DATA *func; /**< Records that say what stands on the part. */
+    s32 func_count;         /**< Number of those records. */
 };
 
 /**
@@ -58,10 +63,10 @@ struct EDITPARTS_INFO {
     s32 parts_no; /**< Number that names the part. */
     s32 completion_flags; /**< Bit zero records whether the completion event has run. */
     s32 unk_08;
-    s32 unk_0C;
+    s32 placed; /**< Copies of the part standing on the map. */
     s32 unk_10;
     s32 kind;   /**< What the plot holds: 2 where a story building stands on it. */
-    s32 unk_18;
+    s32 stock;  /**< Copies of the part the player may place. */
     s32 width;  /**< Cells that the part covers from west to east. */
     s32 height; /**< Cells that the part covers from north to south. */
     EDITPARTS_ELEMENT elements[6]; /**< Visibility definitions for optional model elements. */
@@ -72,7 +77,7 @@ STATIC_ASSERT(sizeof(EDITPARTS_INFO) == 0xE8);
 
 class CEditPartsInfo {
 public:
-    s32 unk_00;
+    s32 parts_max; /**< Parts the map's own catalogue holds. */
     s32 request[24]; /**< Villager request each part belongs to. */
     EDITPARTS_INFO parts[24]; /**< Every part the map can hold. */
     u8 unk_1624[4];

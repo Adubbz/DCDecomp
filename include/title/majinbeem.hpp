@@ -20,6 +20,7 @@ public:
      * @size 0x30
      */
     CMajinBeem();
+    void Initialize(void);
     /**
      * Draws the beam trail as camera-facing sprites.
      *

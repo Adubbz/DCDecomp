@@ -14,7 +14,12 @@
  * @address 0x1222D0
  * @size 0x12C
  */
-void __construct_array(/* unknown args */);
+/** Function used by the runtime to construct or destroy one object. */
+typedef void (*MWRuntimeObjectFunction)(void *object, int mode);
+
+void __construct_array(void *array, MWRuntimeObjectFunction constructor,
+                       MWRuntimeObjectFunction destructor, unsigned int element_size,
+                       unsigned int count);
 
 /**
  * Runs a constructor over every element of a newly allocated array.
@@ -23,7 +28,9 @@ void __construct_array(/* unknown args */);
  * @address 0x122400
  * @size 0x14C
  */
-void __construct_new_array(/* unknown args */);
+void *__construct_new_array(void *allocation, MWRuntimeObjectFunction constructor,
+                            MWRuntimeObjectFunction destructor, unsigned int element_size,
+                            unsigned int count);
 
 /**
  * Frees storage that `operator new` handed out.
@@ -41,7 +48,7 @@ void __dl(void *);
  * @address 0x122610
  * @size 0x26C
  */
-void __throw_catch_compare(/* unknown args */);
+int __throw_catch_compare(char *thrown_type, char *caught_type, int *pointer_adjustment);
 
 /**
  * Calls the handler for an exception a function did not declare.
@@ -50,7 +57,7 @@ void __throw_catch_compare(/* unknown args */);
  * @address 0x122880
  * @size 0x24
  */
-void unexpected(void);
+extern "C" void unexpected__3stdFv(void);
 
 /**
  * Calls the handler that ends the program after an unrecoverable exception.
@@ -59,7 +66,7 @@ void unexpected(void);
  * @address 0x1228B0
  * @size 0x24
  */
-void terminate(void);
+extern "C" void terminate__3stdFv(void);
 
 /**
  * The default unexpected-exception handler, which terminates.
@@ -68,7 +75,7 @@ void terminate(void);
  * @address 0x1228E0
  * @size 0x24
  */
-void duhandler(void);
+extern "C" void duhandler__3stdFv(void);
 
 /**
  * The default terminate handler, which stops the program.
@@ -77,7 +84,7 @@ void duhandler(void);
  * @address 0x122910
  * @size 0x1C
  */
-void dthandler(void);
+extern "C" void dthandler__3stdFv(void);
 
 /**
  * Records one global object so that its destructor runs at exit.
@@ -86,7 +93,17 @@ void dthandler(void);
  * @address 0x122930
  * @size 0x24
  */
-void __register_global_object(/* unknown args */);
+/**
+ * Links one object and its destructor into the runtime shutdown chain.
+ */
+struct MWGlobalDestructor {
+    MWGlobalDestructor *next;              /**< Next object destroyed during shutdown. */
+    MWRuntimeObjectFunction destructor;    /**< Function that destroys the registered object. */
+    void *object;                          /**< Object passed to the destructor. */
+};
+
+void *__register_global_object(void *object, MWRuntimeObjectFunction destructor,
+                               MWGlobalDestructor *record);
 
 /**
  * Calls each static initializer in the table from the first pointer up to the second.
@@ -104,7 +121,7 @@ extern "C" void __initialize_cpp_rts(void *, void *, void *, void *);
  * @address 0x1229C0
  * @size 0xA0
  */
-void __DecodeUnsignedNumber(char *, unsigned int *);
+char *__DecodeUnsignedNumber(char *encoded, unsigned int *value);
 
 /**
  * Reads a signed number out of a mangled type name.
@@ -113,7 +130,7 @@ void __DecodeUnsignedNumber(char *, unsigned int *);
  * @address 0x122A60
  * @size 0xA0
  */
-void __DecodeSignedNumber(char *, int *);
+char *__DecodeSignedNumber(char *encoded, int *value);
 
 /**
  * Ends a catch clause and releases the exception it caught.
@@ -122,7 +139,16 @@ void __DecodeSignedNumber(char *, int *);
  * @address 0x122B00
  * @size 0x38
  */
-void __end__catch(/* unknown args */);
+/**
+ * Holds the object and cleanup routine associated with one active catch clause.
+ */
+struct MWCatchRecord {
+    void *object;                       /**< Exception object owned by the catch clause. */
+    int unk_04;                          /**< Runtime state retained while the catch is active. */
+    MWRuntimeObjectFunction destructor; /**< Routine that destroys the exception object. */
+};
+
+void __end__catch(MWCatchRecord *record);
 
 /**
  * Raises an exception a function did not declare, through the unexpected handler.
@@ -131,7 +157,7 @@ void __end__catch(/* unknown args */);
  * @address 0x122B40
  * @size 0x1C0
  */
-void __unexpected(/* unknown args */);
+void __unexpected(void *exception_record);
 
 /**
  * Starts the MetroWerks runtime.
@@ -162,7 +188,7 @@ STATIC_ASSERT(sizeof(OverlayHeader) == 0x40);
  * @address 0x122DE0
  * @size 0x8C
  */
-void mwOverlayInit(/* unknown args */);
+extern "C" void mwOverlayInit(void *overlay, int size);
 
 /**
  * Tells the runtime that an overlay has finished loading.
@@ -180,7 +206,7 @@ extern "C" void MWNotifyOverlayLoaded(void);
  * @address 0x122E80
  * @size 0xB4
  */
-void mwBload(/* unknown args */);
+extern "C" int mwBload(char *path, void *buffer);
 
 /**
  * Reads an overlay into memory and gives back whether it succeeded.

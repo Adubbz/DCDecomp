@@ -15,6 +15,7 @@
 #include <cstdio>
 #include <cstring>
 
+#include "camera.hpp"
 #include "character.hpp"
 #include "dataalloc.hpp"
 #include "frame.hpp"
@@ -139,8 +140,94 @@ static void QuatSlerp(float *from, float *to, float t, float *out) {
     out[3] = scale_from * from[3] + scale_to * to_z;
     out[0] = scale_from * from[0] + scale_to * to_w;
 }
+#ifdef NON_MATCHING
+Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
+    u32 next_key = 0;
+    u32 previous_key;
+    u32 target_key;
+    float amount;
+    float value[4];
+    float from_quaternion[4];
+    float to_quaternion[4];
+    float *from;
+    float *to;
+    CFrame *target;
+
+    while (next_key < list->key_count &&
+           *(u32 *) (list->keys + next_key * 0x20) <= state->frame) {
+        next_key++;
+    }
+    if (next_key == 0 || next_key >= list->key_count) {
+        return list->next;
+    }
+    previous_key = next_key - 1;
+    target_key = next_key;
+    from = (float *) (list->keys + previous_key * 0x20 + 0x10);
+    to = (float *) (list->keys + target_key * 0x20 + 0x10);
+    if (state->next_frame == state->frame + 1) {
+        u32 from_frame = *(u32 *) (list->keys + previous_key * 0x20);
+        u32 to_frame = *(u32 *) (list->keys + target_key * 0x20);
+        amount = to_frame == from_frame + 1
+                     ? state->blend
+                     : (state->time - from_frame) / (float) (to_frame - from_frame);
+    } else {
+        amount = state->blend;
+    }
+    if (amount < 0.0f || amount > 1.0f) {
+        return list->next;
+    }
+    target = frame + list->frame;
+    if (list->type == 0) {
+        sceVu0CopyVector(from_quaternion, from);
+        sceVu0CopyVector(to_quaternion, to);
+        QuatSlerp(from_quaternion, to_quaternion, amount, value);
+        target->SetTransMatrix(value);
+    } else {
+        sceVu0InterVectorXYZ(value, to, from, amount);
+        if (list->type == 1) {
+            target->SetScale(value);
+        } else if (list->type == 2) {
+            target->SetPosition(value);
+        } else if (list->type == 0x1E && state->camera != NULL) {
+            frame->GetWorldPosition(value, value);
+            state->camera->SetPos(value);
+        } else if (list->type == 0x1F && state->camera != NULL) {
+            frame->GetWorldPosition(value, value);
+            state->camera->SetRef(value);
+        }
+    }
+    return list->next;
+}
+
+Mot_List *MotionProc2(CFrame *frame, tagMOTION_TYPE *motion, tagFRAME_INF *frame_info,
+                      Mot_List *list) {
+    u32 key;
+    CFrame *target;
+
+    if (list->type == 200) {
+        return list->next;
+    }
+    target = frame + list->frame;
+    if (list->target != frame_info[list->frame].parent_frame) {
+        sceVu0CopyMatrix(frame_info[list->target].matrix, target->local);
+    }
+    for (key = 0; key < list->key_count; key++) {
+        u32 vertex = *(u32 *) (list->keys + key * 0x20);
+        float *offset = (float *) (list->keys + key * 0x20 + 0x10);
+        if (frame_info[list->frame].base_vertices != NULL &&
+            vertex < frame_info[list->frame].vertex_count) {
+            sceVu0FVECTOR *base = frame_info[list->frame].base_vertices;
+            base[vertex][0] += offset[0];
+            base[vertex][1] += offset[1];
+            base[vertex][2] += offset[2];
+        }
+    }
+    return list->next;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc__FP6CFrameP12MOTION_STATEP8Mot_List);
 INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List);
+#endif
 
 void SetMotionEX(CFrame *frame, tagMOTION_TYPE *motion, MOTION_INFO *info, MOTION_STATE *state,
                  tagFRAME_INF *frame_info) {
@@ -209,7 +296,48 @@ void SetMotionEX(CFrame *frame, tagMOTION_TYPE *motion, MOTION_INFO *info, MOTIO
  * @address 0x149090
  * @size 0x264
  */
-INCLUDE_ASM("asm/nonmatchings/gameutil", CreateAnimeDataEX__FP14tagMOTION_TYPEP14CDataAlloc2_1_P16MOTION_FILE_INFO);
+static Mot_List *LoadMotionList(CDataAlloc2<1> *arena, MOTION_FILE_INFO *file) {
+    Mot_List *head = NULL;
+    Mot_List **tail = &head;
+    u8 *source;
+
+    if (file->name == NULL || file->data == NULL) {
+        return NULL;
+    }
+    source = (u8 *) file->data;
+    while (true) {
+        Mot_List *source_list = (Mot_List *) source;
+        Mot_List *list = (Mot_List *) arena->Alloc(3);
+        u32 key_bytes;
+
+        list->frame = source_list->frame;
+        list->target = source_list->target;
+        list->type = source_list->type;
+        list->key_count = source_list->key_count;
+        key_bytes = list->key_count * 0x20;
+        list->keys = arena->Alloc((key_bytes >> 4) + 1);
+        memcpy(list->keys, source + 0x20, key_bytes);
+        list->next = NULL;
+        *tail = list;
+        tail = &list->next;
+        source += 0x20 + key_bytes;
+        if (source_list->next == NULL) {
+            break;
+        }
+    }
+    return head;
+}
+
+int CreateAnimeDataEX(tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
+                      MOTION_FILE_INFO *files) {
+    if (files[0].name != NULL && files[0].data != NULL) {
+        motion->base_matrices = (sceVu0FMATRIX *) arena->Alloc((files[0].size >> 4) + 1);
+        memcpy(motion->base_matrices, files[0].data, files[0].size);
+    }
+    motion->proc_list = LoadMotionList(arena, &files[1]);
+    motion->proc_list2 = LoadMotionList(arena, &files[2]);
+    return 1;
+}
 /**
  * Builds the per-frame animation table a model's motion needs.
  *
@@ -228,7 +356,28 @@ void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
  * @address 0x1493A0
  * @size 0x318
  */
-INCLUDE_ASM("asm/nonmatchings/gameutil", AnimeDataInit__FP6CFrameP14tagMOTION_TYPEP14CDataAlloc2_1_P12tagFRAME_INF);
+void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
+                   tagFRAME_INF *frame_info) {
+    int frame_count = frame->GetFrameNum();
+    int index;
+
+    for (index = 0; index < frame_count; index++) {
+        CFrame *current = frame + index;
+        frame_info[index].parent_frame = current->parent == NULL ? -1 : current->parent - frame;
+        frame_info[index].vertex_count = 0;
+        frame_info[index].base_vertices = NULL;
+        sceVu0CopyMatrix(frame_info[index].matrix, current->local);
+    }
+    for (Mot_List *list = motion->proc_list2; list != NULL; list = list->next) {
+        if (list->type != 200 && list->frame >= 0 && list->frame < frame_count &&
+            frame_info[list->frame].base_vertices == NULL) {
+            u32 count = list->key_count;
+            frame_info[list->frame].vertex_count = count;
+            frame_info[list->frame].base_vertices = (sceVu0FVECTOR *) arena->Alloc(count + 1);
+            memset(frame_info[list->frame].base_vertices, 0, count * sizeof(sceVu0FVECTOR));
+        }
+    }
+}
 
 int NextMotionTime_GET_EX(MOTION_INFO *info, MOTION_STATE *state) {
     int playing_start = info[state->playing_no].start;
@@ -588,8 +737,85 @@ int CheckHits(CCPoly *poly, int count, float *from, float *to, int max, int *hit
     return hits;
 }
 
+#ifdef NON_MATCHING
+void MoveCheck(float *position, float *velocity, float *out_position, MoveCheckInfo *out_info,
+               CCPoly *polys, int poly_num, int mode) {
+    sceVu0FVECTOR from;
+    sceVu0FVECTOR to;
+    sceVu0FVECTOR hit;
+    sceVu0FVECTOR ground_probe;
+    CCPoly ground;
+    int wall;
+
+    memset(out_info, 0, sizeof(MoveCheckInfo));
+    sceVu0CopyVector(from, position);
+    from[1] += 4.0f;
+    sceVu0AddVector(to, from, velocity);
+    wall = CheckHit(polys, poly_num, from, to, hit, 0, mode);
+    if (wall >= 0) {
+        sceVu0FVECTOR normal;
+        float into_wall;
+
+        sceVu0Normalize(normal, polys[wall].normal);
+        into_wall = sceVu0InnerProduct(velocity, normal);
+        to[0] -= normal[0] * into_wall;
+        to[2] -= normal[2] * into_wall;
+    }
+    sceVu0CopyVector(ground_probe, to);
+    ground_probe[1] -= 4.0f;
+    if (GetFootPoly(ground_probe, 15.0f, &ground, hit, polys, poly_num, mode)) {
+        out_info->unk_60 = 1;
+        out_info->poly = ground;
+        out_info->ground_height = hit[1];
+        if (to[1] - 6.0f < hit[1]) {
+            out_info->unk_00 = 1;
+            sceVu0CopyVector(to, hit);
+        }
+    }
+    if (!out_info->unk_00) {
+        to[1] -= 4.0f;
+    }
+    if (CheckWidth(polys, poly_num, to, 5.0f, out_position, mode) == 0) {
+        sceVu0CopyVector(out_position, to);
+    }
+}
+
+int GetFootPoly(float *position, float depth, CCPoly *out_poly, float *hit_point,
+                CCPoly *polys, int poly_num, int mode) {
+    int indices[32];
+    sceVu0FVECTOR hits[32];
+    sceVu0FVECTOR from;
+    sceVu0FVECTOR to;
+    int hit_count;
+    int index;
+
+    sceVu0CopyVector(from, position);
+    sceVu0CopyVector(to, position);
+    to[1] -= depth;
+    hit_count = CheckHits(polys, poly_num, from, to, 32, indices, hits, 1, mode);
+    memset(out_poly, 0, sizeof(CCPoly));
+    if (hit_count > 0) {
+        *out_poly = polys[indices[0]];
+        sceVu0CopyVector(hit_point, hits[0]);
+    }
+    for (index = 0; index < hit_count; index++) {
+        CCPoly *poly = &polys[indices[index]];
+        if (out_poly->attr.ground_kind == 0) {
+            out_poly->attr.ground_kind = poly->attr.ground_kind;
+        }
+        if (out_poly->attr.foot_sound == 0) {
+            out_poly->attr.foot_sound = poly->attr.foot_sound;
+        }
+        if (out_poly->attr.unk_44 == 0) {
+            out_poly->attr.unk_44 = poly->attr.unk_44;
+        }
+    }
+    return hit_count > 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/gameutil", MoveCheck__FPfPfPfP13MoveCheckInfoP6CCPolyii);
 INCLUDE_ASM("asm/nonmatchings/gameutil", GetFootPoly__FPffP6CCPolyPfP6CCPolyii);
+#endif
 /**
  * Finds the event polygon a movement crosses.
  *
@@ -597,8 +823,97 @@ INCLUDE_ASM("asm/nonmatchings/gameutil", GetFootPoly__FPffP6CCPolyPfP6CCPolyii);
  * @address 0x14AD90
  * @size 0x1E0
  */
+#ifdef NON_MATCHING
+short GetEventPoly(float *position, float *movement, CCPoly *out_poly, int *out_index,
+                   float *hit_point, CCPoly *polys, int poly_num, int mode) {
+    int indices[32];
+    sceVu0FVECTOR hits[32];
+    sceVu0FVECTOR end;
+    int hit_count;
+    int index;
+
+    sceVu0AddVector(end, position, movement);
+    hit_count = CheckHits(polys, poly_num, position, end, 32, indices, hits, 1, mode);
+    memset(out_poly, 0, sizeof(CCPoly));
+    *out_index = -1;
+    if (hit_count > 0) {
+        *out_poly = polys[indices[0]];
+        *out_index = indices[0];
+        sceVu0CopyVector(hit_point, hits[0]);
+    }
+    for (index = 0; index < hit_count; index++) {
+        CCPoly *poly = &polys[indices[index]];
+        if (out_poly->attr.ground_kind == 0) {
+            out_poly->attr.ground_kind = poly->attr.ground_kind;
+        }
+        if (out_poly->attr.foot_sound == 0) {
+            out_poly->attr.foot_sound = poly->attr.foot_sound;
+        }
+        if (out_poly->attr.unk_44 == 0) {
+            out_poly->attr.unk_44 = poly->attr.unk_44;
+        }
+    }
+    return out_poly->attr.ground_kind;
+}
+
+static int CheckWidthDirection(CCPoly *polys, int poly_num, float *position, float dx,
+                               float dz, float *out_position, int mode, int camera) {
+    sceVu0FVECTOR end;
+    sceVu0FVECTOR hit;
+    sceVu0FVECTOR normal;
+    int poly_index;
+
+    sceVu0CopyVector(end, position);
+    end[0] += dx;
+    end[2] += dz;
+    poly_index = CheckHit(polys, poly_num, position, end, hit, 0, mode);
+    if (poly_index < 0) {
+        return 0;
+    }
+    sceVu0Normalize(normal, polys[poly_index].normal);
+    if (normal[1] <= -0.5f || normal[1] >= 0.5f) {
+        return 0;
+    }
+    if (camera && normal[0] * dx + normal[2] * dz >= 0.0f) {
+        return 0;
+    }
+    sceVu0CopyVector(out_position, hit);
+    out_position[0] -= dx;
+    out_position[2] -= dz;
+    return 1;
+}
+
+static int CheckWidthCore(CCPoly *polys, int poly_num, float *position, float radius,
+                          float *out_position, int mode, int camera) {
+    static const float directions[8][2] = {
+        {0.70710677f, 0.70710677f},  {-0.70710677f, -0.70710677f},
+        {0.70710677f, -0.70710677f}, {-0.70710677f, 0.70710677f},
+        {1.0f, 0.0f},                {-1.0f, 0.0f},
+        {0.0f, 1.0f},                {0.0f, -1.0f},
+    };
+    int direction;
+    int collided = 0;
+
+    sceVu0CopyVector(out_position, position);
+    for (direction = 0; direction < 8; direction++) {
+        float dx = directions[direction][0] * radius;
+        float dz = directions[direction][1] * radius;
+        if (CheckWidthDirection(polys, poly_num, out_position, dx, dz, out_position, mode,
+                                camera)) {
+            collided = 1;
+        }
+    }
+    return collided;
+}
+
+int CheckWidth(CCPoly *polys, int poly_num, float *position, float radius,
+               float *out_position, int mode) {
+    return CheckWidthCore(polys, poly_num, position, radius, out_position, mode, 0);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/gameutil", GetEventPoly__FPfPfP6CCPolyPiPfP6CCPolyii);
 INCLUDE_ASM("asm/nonmatchings/gameutil", CheckWidth__FP6CCPolyiPffPfi);
+#endif
 /**
  * Reports how far the camera may stand back before the collision stops it.
  *
@@ -606,7 +921,10 @@ INCLUDE_ASM("asm/nonmatchings/gameutil", CheckWidth__FP6CCPolyiPffPfi);
  * @address 0x14B830
  * @size 0x9EC
  */
-INCLUDE_ASM("asm/nonmatchings/gameutil", CheckCameraWidth__FP6CCPolyiPffPfi);
+int CheckCameraWidth(CCPoly *polys, int poly_num, float *position, float radius,
+                     float *out_position, int mode) {
+    return CheckWidthCore(polys, poly_num, position, radius, out_position, mode, 1);
+}
 static s32 linear_filter;          // Nonzero selects linear filtering for sprite batches.
 static u_long128 *sprite_data_top; // First quadword of the open sprite batch.
 static u_long128 *sprite_data;     // Current write cursor of the open sprite batch.

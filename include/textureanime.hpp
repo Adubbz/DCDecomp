@@ -76,6 +76,13 @@ STATIC_ASSERT(sizeof(CTexAnimeData) == 0x58);
  */
 class CTextureAnime {
 public:
+    /**
+     * Stops every texture animation from advancing while it is non-zero.
+     *
+     * @mangled stop_anime__13CTextureAnime
+     */
+    static s32 stop_anime;
+
     s32 enabled[24];            /**< Enables playback for each animation group. */
     CTexAnimeData *first[24];   /**< Points to each group's first animation record. */
     CTexAnimeData *last[24];    /**< Points to each group's last animation record. */

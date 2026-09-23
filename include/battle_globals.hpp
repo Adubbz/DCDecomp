@@ -44,7 +44,7 @@ void ExitNameEnterFunc(void);
  * @address 0x2386A0
  * @size 0xBC
  */
-void GetNameTextureInfo(CTexture **, int, int &, int &);
+CTexture *GetNameTextureInfo(CTexture **, int, int &, int &);
 
 /**
  * Draws a party member's name.
@@ -89,7 +89,7 @@ void DrawNameTemplete(int, int, int, int);
  * @address 0x239A40
  * @size 0x160
  */
-void CheckName(void);
+int CheckName(void);
 
 /**
  * Draws the name-entry screen.
@@ -125,7 +125,7 @@ void NameDefaultSet(int chara_no);
  * @address 0x23C880
  * @size 0x78
  */
-void GetFontLRTumeW(int, int, int);
+int GetFontLRTumeW(int, int, int);
 
 /**
  * Draws a party member's name on the character-select page.
@@ -172,7 +172,7 @@ void InitOpeningBook(void /* CW back-ref target unresolved */ *, int *);
  * @address 0x23CF10
  * @size 0x664
  */
-void OpeningBookKey(void);
+int OpeningBookKey(void);
 
 /**
  * Draws the storybook page by page.

@@ -141,8 +141,10 @@ STATIC_ASSERT(sizeof(MOTION_STATE) == 0x50);
  * Describes the frames of one model that a motion drives.
  */
 struct tagFRAME_INF {
-    s32 frame; /**< Frame of the model this entry drives. */
-    u8 unk_04[12];
+    s32 parent_frame;             /**< Parent frame used to build the driven frame's transform. */
+    u32 vertex_count;             /**< Number of visual vertices copied for vertex motion. */
+    sceVu0FVECTOR *base_vertices; /**< Arena copy of the visual's undeformed vertices. */
+    u8 unk_0C[4];
     sceVu0FMATRIX matrix; /**< Transform the driver interpolates into the frame. */
     u8 unk_50[128];
 };
@@ -154,7 +156,7 @@ STATIC_ASSERT(sizeof(tagFRAME_INF) == 0xD0);
  * they drive.
  */
 struct tagMOTION_TYPE {
-    s32 unk_00;
+    sceVu0FMATRIX *base_matrices; /**< Bind-pose matrices loaded from the motion archive. */
     Mot_List *proc_list;  /**< Frame drivers applied from the motion state. */
     Mot_List *proc_list2; /**< Frame drivers applied from the frame table. */
     u8 unk_0C[4];
@@ -170,6 +172,20 @@ struct tagMOTION_TYPE {
 } __attribute__((aligned(16)));
 
 STATIC_ASSERT(sizeof(tagMOTION_TYPE) == 0x80);
+
+/**
+ * Describes one animated frame property and its packed sequence of keys.
+ */
+struct Mot_List {
+    s32 frame;        /**< Frame in the model hierarchy that receives the keys. */
+    s32 target;       /**< Secondary frame, vertex, or component selected by the keys. */
+    s32 type;         /**< Kind of transform or visual property stored in the keys. */
+    u32 key_count;    /**< Number of 32-byte keys in the sequence. */
+    u8 *keys;         /**< Packed key records, each beginning with its frame number. */
+    Mot_List *next;   /**< Next animated property in archive order. */
+};
+
+STATIC_ASSERT(sizeof(Mot_List) == 0x18);
 
 /**
  * Names one optional motion-data file found in a model archive.
@@ -189,8 +205,8 @@ STATIC_ASSERT(sizeof(MOTION_FILE_INFO) == 0xC);
  * @address 0x149090
  * @size 0x264
  */
-void CreateAnimeDataEX(tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
-                       MOTION_FILE_INFO *files);
+int CreateAnimeDataEX(tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
+                      MOTION_FILE_INFO *files);
 
 /**
  * Builds the per-frame animation table a model's motion needs.
@@ -387,6 +403,26 @@ void MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_i
                int poly_num, int mode);
 
 /**
+ * Finds the collision polygon below a point and combines its surface attributes.
+ *
+ * @mangled GetFootPoly__FPffP6CCPolyPfP6CCPolyii
+ * @address 0x14ABB0
+ * @size 0x1DC
+ */
+int GetFootPoly(float *position, float depth, CCPoly *out_poly, float *hit_point,
+                CCPoly *polys, int poly_num, int mode);
+
+/**
+ * Finds the first event polygon crossed by a movement and returns its ground kind.
+ *
+ * @mangled GetEventPoly__FPfPfP6CCPolyPiPfP6CCPolyii
+ * @address 0x14AD90
+ * @size 0x1E0
+ */
+short GetEventPoly(float *position, float *movement, CCPoly *out_poly, int *out_index,
+                   float *hit_point, CCPoly *polys, int poly_num, int mode);
+
+/**
  * Pushes a position out of the polygons within a radius of it.
  *
  * @mangled CheckWidth__FP6CCPolyiPffPfi
@@ -394,3 +430,13 @@ void MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_i
  * @size 0x8B8
  */
 int CheckWidth(CCPoly *poly, int count, float *position, float radius, float *hit, int mode);
+
+/**
+ * Pushes a camera point out of nearby walls when its travel points into them.
+ *
+ * @mangled CheckCameraWidth__FP6CCPolyiPffPfi
+ * @address 0x14B830
+ * @size 0x9EC
+ */
+int CheckCameraWidth(CCPoly *poly, int count, float *position, float radius, float *hit,
+                     int mode);

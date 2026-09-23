@@ -27,7 +27,7 @@ public:
     CFrame *unk_0DC;
     float shadow_offset; /**< Height that the shadow drops below the object. */
     s32 unk_0E4;
-    s32 unk_0E8;
+    s32 handle; /**< Handle the map gave the object; below zero where the slot is free. */
     s32 unk_0EC;
 
     /**

@@ -4,6 +4,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 
 #include <libvu0.h>
 
@@ -14,7 +15,13 @@
 #include "itemdata.hpp"
 #include "mds.hpp"
 #include "dataalloc.hpp"
+#include "dngstatusdata.hpp"
+#include "dun/gameloop.hpp"
+#include "savedata.hpp"
 #include "snd.hpp"
+#ifdef NON_MATCHING // draft includes
+#include "menu_save.hpp"
+#endif
 
 /* Battle support: pack loading, item name paths, battle music, floor queries. */
 
@@ -92,7 +99,45 @@ INCLUDE_ASM("asm/nonmatchings/btmisc", getFramePos__FP9CFrameVu1PcPf);
  * @address 0x1B6F80
  * @size 0x198
  */
+#ifdef NON_MATCHING
+void makeWeaponName(char *name, int weapon_no) {
+    char *prefix[6] = {"c01w", "c04w", "c06w", "c05w", "c10w", "c18w"};
+    int first[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
+    char number[32];
+    int chara_no = 0;
+
+    if (weapon_no >= 0x101) {
+        if (weapon_no >= 0x101 && weapon_no < 0x12B) {
+        }
+        if (weapon_no >= 0x12B && weapon_no < 0x13A) {
+            chara_no = 1;
+        }
+        if (weapon_no >= 0x13A && weapon_no < 0x14B) {
+            chara_no = 2;
+        }
+        if (weapon_no >= 0x14B && weapon_no < 0x15B) {
+            chara_no = 3;
+        }
+        if (weapon_no >= 0x15B && weapon_no < 0x16B) {
+            chara_no = 4;
+        }
+        if (weapon_no >= 0x16B) {
+            chara_no = 5;
+        }
+    }
+    strcpy(name, "dun/item/main_wep/");
+    strcat(name, prefix[chara_no]);
+    int offset = weapon_no - first[chara_no];
+    if (offset < 10) {
+        sprintf(number, "0%d", offset);
+    } else {
+        sprintf(number, "%2d", offset);
+    }
+    strcat(name, number);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/btmisc", makeWeaponName__FPci);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @919__2);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @920__2);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @921__2);
@@ -103,12 +148,60 @@ INCLUDE_RODATA("asm/nonmatchings/btmisc", @921__2);
  * @address 0x1B7120
  * @size 0x124
  */
+#ifdef NON_MATCHING
+/** Base name of each item's model and texture files, by item number. */
+extern char *ComItemFileName[];
+
+void BtGetItemNamePath(char *model_path, char *texture_path, int item_no) {
+    item_no = TransWepNo(item_no);
+    if (item_no >= 0x101) {
+        makeWeaponName(model_path, item_no);
+    } else {
+        if (ComItemFileName[item_no] == NULL) {
+            item_no = 0x91;
+        }
+        strcpy(model_path, "dun/item/main_data/");
+        strcat(model_path, ComItemFileName[item_no]);
+    }
+    strcpy(texture_path, model_path);
+    strcat(model_path, ".mds");
+    strcat(texture_path, ".img");
+    printf("mds = %s\n", model_path);
+    printf("img = %s\n", texture_path);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/btmisc", BtGetItemNamePath__FPcPci);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @928__2);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @929__2);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @930__2);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @931__3);
+extern char nameWepBuff_mds[];
+extern char nameWepBuff_img[];
+
+#ifdef NON_MATCHING
+void BtGetWeaponNamePath2(char *name, char *path, int chara, int weapon) {
+    char *prefix[6] = {"c01w", "c04w", "c06w", "c05w", "c10w", "c18w"};
+    char number[32];
+    char *base = prefix[chara];
+
+    strcpy(nameWepBuff_mds, base);
+    strcpy(nameWepBuff_img, base);
+    if (weapon < 10) {
+        sprintf(number, "0%d", weapon);
+    } else {
+        sprintf(number, "%2d", weapon);
+    }
+    strcat(nameWepBuff_mds, number);
+    strcat(nameWepBuff_mds, ".chr");
+    strcat(nameWepBuff_img, number);
+    strcat(nameWepBuff_img, ".cfg");
+    strcpy(name, nameWepBuff_mds);
+    strcpy(path, nameWepBuff_img);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/btmisc", BtGetWeaponNamePath2__FPcPcii);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @946);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @947);
 #ifdef NON_MATCHING
@@ -140,8 +233,15 @@ INCLUDE_RODATA("asm/nonmatchings/btmisc", @953);
  * @address 0x1B7470
  * @size 0xBC
  */
-INCLUDE_ASM("asm/nonmatchings/btmisc", getAtraToSaveData__FiiP9CSaveDataii);
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @958);
+void getAtraToSaveData(int atra_id, int atra_no, CSaveData *save, int georama_no, int floor) {
+    printf("GET ATRA [%d] !!\n", atra_id);
+    if (atra_id < 40) {
+        save->AtraPartsGet(georama_no, atra_id);
+    } else {
+        save->AtraChipGet(georama_no, atra_id - 40);
+    }
+    ((CDngStatusData *) UserStatus)->GetAtraData(georama_no, floor, atra_no);
+}
 /**
  * Gives how much of an attachment one item yields.
  *
@@ -149,7 +249,23 @@ INCLUDE_RODATA("asm/nonmatchings/btmisc", @958);
  * @address 0x1B7530
  * @size 0xE8
  */
-INCLUDE_ASM("asm/nonmatchings/btmisc", createAttachVolume__Fii);
+int createAttachVolume(int item_no, int unused) {
+    int volume;
+
+    if (item_no < 0x5B || item_no > 0x5E) {
+        return 0;
+    }
+    int total = (int) ((50.0f * (float) rand()) / 2.1474836e9f);
+    total += (int) ((50.0f * (float) rand()) / 2.1474836e9f);
+    volume = 1;
+    if (total < 31) {
+        volume = 2;
+    }
+    if (total < 16) {
+        volume = 3;
+    }
+    return volume;
+}
 
 void BtBattleMusic_Init() {
     BtBattleMusic_Flag = 0;
@@ -201,4 +317,11 @@ void BtBattleMusic_Excg(float distance, float *field_volume, float *battle_volum
     *battle_volume = BtBattleMusic_Vol;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btmisc", BtGetFloorLevel__Fi);
+extern int yearFloorTbl[25];
+
+int BtGetFloorLevel(int dungeon_no) {
+    if (dungeon_no >= 0 && dungeon_no < 25) {
+        return yearFloorTbl[dungeon_no];
+    }
+    return 0;
+}

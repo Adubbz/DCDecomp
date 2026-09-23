@@ -18,13 +18,17 @@ class CFrame;
 class CSHOT_EFFECT {
 public:
     BT_SHOT_EFFECT *effect_data; /**< Description shared by the active effect slots. */
-    u8 unk_0004[0x9FFC];
+    u8 unk_0004[0x9F3C];
+    sceVu0FVECTOR velocity[8]; /**< Movement applied to each projectile-effect slot. */
+    s16 source_id[8];          /**< Source identifier supplied when each slot starts. */
+    s32 phase_delay[8];        /**< Remaining delay before each slot changes phase. */
+    s16 phase[8];              /**< Current animation and collision phase of each slot. */
     s16 active[8];        /**< Nonzero while each effect slot is active. */
     s32 damage[8];        /**< Damage dealt by each effect slot. */
     s32 weapon_status[8]; /**< Weapon status carried by each effect slot. */
-    s16 unk_A050[8];
+    s16 user_id[8]; /**< Primary user identifier of each effect slot. */
     s16 user_id_2[8]; /**< Secondary user identifier of each effect slot. */
-    s32 unk_A070[8];
+    s32 user_sub_id[8]; /**< Secondary collision-owner value of each effect slot. */
     char *vs_monster[8];  /**< Monster-effectiveness table of each effect slot. */
     s32 loop[8];          /**< Whether each effect slot loops. */
     float random_rate[8]; /**< Randomization rate of each effect slot. */
@@ -33,7 +37,7 @@ public:
     u8 no_sound[8];         /**< Whether sound is suppressed for each effect slot. */
     u8 wait[8];             /**< Delay applied to each effect slot. */
     u8 wait_state[8];       /**< Secondary delay state of each effect slot. */
-    s32 unk_A148;
+    s32 status;       /**< Shared runtime status reset whenever a shot starts. */
     s32 slot_count;   /**< Number of effect slots initialized by the loader. */
     s32 current_slot; /**< Currently selected effect slot, or -1. */
     s32 unk_A154;
@@ -86,7 +90,7 @@ public:
      * @size 0x5E4
      * @unknownret
      */
-    void Entry(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
+    int Entry(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
 
     /**
      * Initializes projectile-effect slots from an already loaded resource.
@@ -267,7 +271,8 @@ STATIC_ASSERT(sizeof(CSHOT) == 0x400);
 
 class CSHOT_MACHINGUN {
 public:
-    u8 unk_000[0x200];
+    sceVu0FVECTOR position[16]; /**< Current position of each rapid-fire projectile. */
+    sceVu0FVECTOR velocity[16]; /**< Movement applied to each rapid-fire projectile. */
     s32 unk_200[16];
     s32 unk_240[16];
     s32 unk_280[16];
@@ -279,7 +284,7 @@ public:
      * @address 0x1AE660
      * @size 0xEC
      */
-    void Set(float *, float *, int, int);
+    int Set(float *, float *, int, int);
 
     /**
      * Advances the sixteen rapid-fire projectiles.
@@ -290,3 +295,5 @@ public:
      */
     void Step(void);
 };
+
+STATIC_ASSERT(sizeof(CSHOT_MACHINGUN) == 0x2C0);

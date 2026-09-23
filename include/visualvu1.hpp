@@ -21,6 +21,7 @@ class CVisualPolyVu1;
 
 class CVisualVu1 {
 public:
+    CVisualVu1 &operator=(const CVisualVu1 &);
     s32 unk_00; /**< Unknown base-visual state preceding the virtual table pointer. */
     s32 unk_04; /**< Unknown base-visual state preceding the virtual table pointer. */
     /**
@@ -111,6 +112,7 @@ public:
 
 class CVisualPolyVu1 : public CVisualVu1 {
 public:
+    CVisualPolyVu1 &operator=(const CVisualPolyVu1 &);
     sceVu0FVECTOR unk_010;
 };
 
@@ -118,6 +120,9 @@ STATIC_ASSERT(sizeof(CVisualPolyVu1) == 0x20);
 
 class CVisual {
 public:
+#ifdef NON_MATCHING
+    CVisual &operator=(const CVisual &);
+#endif
     /**
      * Clears the visual's draw flags.
      *

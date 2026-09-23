@@ -4,10 +4,15 @@
 
 class CMainItemModel {
 public:
-    u_int *cash[6]; /**< Model data each cache slot holds, or zero where the slot is free. */
-    u8 unk_018[0x30];
-    s32 model[16];  /**< What each model slot holds; -1 where the slot is free. */
-    u8 unk_088[0x2788];
+    u_int *cash[6];        /**< Model data each cache slot holds, or zero where the slot is free. */
+    s32 cash_item[6];      /**< Item whose model each cache slot holds. */
+    s32 cash_lock[6];      /**< Model slots that draw each cache slot's model. */
+    s32 model[16];         /**< What each model slot holds; -1 where the slot is free. */
+    s32 model_cash[16];    /**< Cache slot whose model each model slot draws. */
+    u8 unk_0C8[8];
+    u8 frame[16][0x260];   /**< Frame that places each model slot's model. */
+    float velocity[16][4]; /**< Distance each thrown model moves in a frame. */
+    s32 throw_time[16];    /**< Frames each thrown model has flown. */
 
     /**
      * Gives a free cache slot, or -1 where none is free.
@@ -123,3 +128,6 @@ public:
 STATIC_ASSERT(sizeof(CActiveItemPack) == 0x3C);
 
 STATIC_ASSERT(sizeof(CMainItemModel) == 0x2810);
+
+/** Pool that owns the active item models used during dungeon play. */
+extern "C" CMainItemModel mainItemModel;

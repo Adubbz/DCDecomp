@@ -8,6 +8,7 @@
 #include <cstring>
 
 // Our imports
+#include "character.hpp"
 #include "clsmes.hpp"
 #include "btsysscript.hpp"
 #include "dataalloc.hpp"
@@ -31,6 +32,16 @@
 #include "sound.hpp"
 #include "sysmes.hpp"
 #include "texture.hpp"
+#include "visualvu1.hpp"
+#ifdef NON_MATCHING // draft includes
+#include "dungeonmap.hpp"
+#include "water.hpp"
+#include "visualvu1.hpp"
+#include "shot_effect.hpp"
+#include "hitmark.hpp"
+#include "textureanime.hpp"
+#include "object.hpp"
+#endif
 
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
@@ -1259,7 +1270,23 @@ void TrialStart() {}
 
 int CheckTrialEnd() { return 0; }
 
+#ifdef NON_MATCHING
+MAP_NPC_MODEL &MAP_NPC_MODEL::operator=(const MAP_NPC_MODEL &src) {
+    chara = src.chara;
+    memcpy(pos, src.pos, sizeof(pos));
+    memcpy(unk_11C0, src.unk_11C0, sizeof(unk_11C0));
+    parts_no = src.parts_no;
+    used = src.used;
+    unk_11D8 = src.unk_11D8;
+    unk_11DC = src.unk_11DC;
+    memcpy(draw_pos, src.draw_pos, sizeof(draw_pos));
+    memcpy(draw_param, src.draw_param, sizeof(draw_param));
+    draw_num = src.draw_num;
+    return *this;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/main", __as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL);
+#endif
 /**
  * Copies one character over another, field by field.
  *
@@ -1267,7 +1294,16 @@ INCLUDE_ASM("asm/nonmatchings/main", __as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL);
  * @address 0x142DA0
  * @size 0x43C
  */
+#ifdef NON_MATCHING
+CCharacter &CCharacter::operator=(const CCharacter &src) {
+    CObject::operator=(src);
+    memcpy((char *) this + sizeof(CObject), (const char *) &src + sizeof(CObject),
+           sizeof(CCharacter) - sizeof(CObject));
+    return *this;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/main", __as__10CCharacterFRC10CCharacter);
+#endif
 #ifdef NON_MATCHING
 #include "object.hpp"
 
@@ -1294,7 +1330,30 @@ CObject &CObject::operator=(const CObject &source) {
 #else
 INCLUDE_ASM("asm/nonmatchings/main", __as__7CObjectFRC7CObject);
 #endif
+#ifdef NON_MATCHING
+CWater &CWater::operator=(CWater &src) {
+    rows = src.rows;
+    columns = src.columns;
+    height = src.height;
+    height_a = src.height_a;
+    height_b = src.height_b;
+    memcpy(vertex, src.vertex, sizeof(vertex));
+    packet[0] = src.packet[0];
+    packet[1] = src.packet[1];
+    packet[2] = src.packet[2];
+    visual = src.visual;
+    memcpy(color, src.color, sizeof(color));
+    wave_speed = src.wave_speed;
+    damping = src.damping;
+    unk_09C = src.unk_09C;
+    unk_0A0 = src.unk_0A0;
+    unk_0A4 = src.unk_0A4;
+    frame = src.frame;
+    return *this;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/main", __as__6CWaterFR6CWater);
+#endif
 /**
  * Copies one polygon visual over another, field by field.
  *
@@ -1302,7 +1361,10 @@ INCLUDE_ASM("asm/nonmatchings/main", __as__6CWaterFR6CWater);
  * @address 0x143360
  * @size 0x30
  */
-INCLUDE_ASM("asm/nonmatchings/main", __as__14CVisualPolyVu1FRC14CVisualPolyVu1);
+CVisualPolyVu1 &CVisualPolyVu1::operator=(const CVisualPolyVu1 &src) {
+    CVisualVu1::operator=(src);
+    return *this;
+}
 /**
  * Copies one vector-unit visual over another, field by field.
  *
@@ -1310,7 +1372,16 @@ INCLUDE_ASM("asm/nonmatchings/main", __as__14CVisualPolyVu1FRC14CVisualPolyVu1);
  * @address 0x143390
  * @size 0x5C
  */
+#ifdef NON_MATCHING
+CVisualVu1 &CVisualVu1::operator=(const CVisualVu1 &src) {
+    unk_00 = src.unk_00;
+    unk_04 = src.unk_04;
+    unk_0C = src.unk_0C;
+    return *this;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/main", __as__10CVisualVu1FRC10CVisualVu1);
+#endif
 /**
  * Copies one visual over another, field by field.
  *
@@ -1318,7 +1389,14 @@ INCLUDE_ASM("asm/nonmatchings/main", __as__10CVisualVu1FRC10CVisualVu1);
  * @address 0x1433F0
  * @size 0x1C
  */
+#ifdef NON_MATCHING
+CVisual &CVisual::operator=(const CVisual &src) {
+    memcpy(this, &src, 8);
+    return *this;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/main", __as__7CVisualFRC7CVisual);
+#endif
 /**
  * Clears the category attributes.
  *
@@ -1326,7 +1404,23 @@ INCLUDE_ASM("asm/nonmatchings/main", __as__7CVisualFRC7CVisual);
  * @address 0x143410
  * @size 0x30
  */
-INCLUDE_ASM("asm/nonmatchings/main", __ct__12CategoryAttrFv);
+/**
+ * Level-of-detail range of one category of map parts.
+ */
+class CategoryAttr {
+public:
+    CategoryAttr();
+    void Initialize();
+
+    float unk_00;
+    u8 unk_04[0xC];
+    s32 unk_10;
+    s32 unk_14;
+};
+
+CategoryAttr::CategoryAttr() {
+    Initialize();
+}
 /**
  * Gives the category attributes their starting values.
  *
@@ -1334,8 +1428,16 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__12CategoryAttrFv);
  * @address 0x143440
  * @size 0x1C
  */
-INCLUDE_ASM("asm/nonmatchings/main", Initialize__12CategoryAttrFv);
-INCLUDE_ASM("asm/nonmatchings/main", __ct__11CBombEffectFv);
+void CategoryAttr::Initialize() {
+    unk_00 = -1.0f;
+    unk_10 = 0;
+    unk_14 = 3;
+}
+#include "title/bombeffect.hpp"
+
+CBombEffect::CBombEffect() {
+    Initialize();
+}
 /**
  * Clears the bomb effect.
  *
@@ -1343,8 +1445,16 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__11CBombEffectFv);
  * @address 0x143490
  * @size 0x30
  */
-INCLUDE_ASM("asm/nonmatchings/main", Initialize__11CBombEffectFv);
-INCLUDE_ASM("asm/nonmatchings/main", __ct__10CMajinBeemFv);
+void CBombEffect::Initialize() {
+    for (int i = 0; i < 8; i++) {
+        active[i] = 0;
+    }
+}
+#include "title/majinbeem.hpp"
+
+CMajinBeem::CMajinBeem() {
+    Initialize();
+}
 /**
  * Clears the beam effect.
  *
@@ -1352,7 +1462,10 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__10CMajinBeemFv);
  * @address 0x1434F0
  * @size 0x10
  */
-INCLUDE_ASM("asm/nonmatchings/main", Initialize__10CMajinBeemFv);
+void CMajinBeem::Initialize() {
+    active = 0;
+    alphas[59] = 0.0f;
+}
 /**
  * Constructs one map character slot.
  *
@@ -1360,7 +1473,15 @@ INCLUDE_ASM("asm/nonmatchings/main", Initialize__10CMajinBeemFv);
  * @address 0x143500
  * @size 0x30
  */
+#ifdef NON_MATCHING
+/* The compiler emits the constructor for arrays of slots. */
+void DraftNpcModelArray() {
+    MAP_NPC_MODEL *models = new MAP_NPC_MODEL[16];
+    delete[] models;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/main", __ct__13MAP_NPC_MODELFv);
+#endif
 /**
  * Constructs a character with no model, motion or texture animation.
  *
@@ -1368,7 +1489,15 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__13MAP_NPC_MODELFv);
  * @address 0x143530
  * @size 0xD4
  */
+#ifdef NON_MATCHING
+/* The compiler emits the inline constructor out of line for arrays of characters. */
+void DraftCharacterArray() {
+    CCharacter *characters = new CCharacter[16];
+    delete[] characters;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/main", __ct__10CCharacterFv);
+#endif
 /**
  * Constructs the motion parameters.
  *
@@ -1376,7 +1505,7 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__10CCharacterFv);
  * @address 0x143610
  * @size 0xC
  */
-INCLUDE_ASM("asm/nonmatchings/main", __ct__11MotionParamFv);
+MotionParam::MotionParam() {}
 /**
  * Constructs a texture animation with no data attached.
  *
@@ -1384,7 +1513,15 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__11MotionParamFv);
  * @address 0x143620
  * @size 0x28
  */
+#ifdef NON_MATCHING
+/* The compiler emits the argument-less constructor for arrays of animations. */
+void DraftTextureAnimeArray() {
+    CTextureAnime *animes = new CTextureAnime[16];
+    delete[] animes;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/main", __ct__13CTextureAnimeFv);
+#endif
 /**
  * Constructs an object at the origin with an identity transform.
  *
@@ -1392,7 +1529,15 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__13CTextureAnimeFv);
  * @address 0x143650
  * @size 0x28
  */
+#ifdef NON_MATCHING
+/* The compiler emits the argument-less constructor for arrays of objects. */
+void DraftObjectArray() {
+    CObject *objects = new CObject[16];
+    delete[] objects;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/main", __ct__7CObjectFv);
+#endif
 /**
  * Constructs a projectile effect.
  *
@@ -1400,7 +1545,15 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__7CObjectFv);
  * @address 0x143680
  * @size 0x54
  */
+#ifdef NON_MATCHING
+/* The compiler emits the constructor for arrays of projectile effects. */
+void DraftShotEffectArray() {
+    CSHOT_EFFECT *effects = new CSHOT_EFFECT[16];
+    delete[] effects;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/main", __ct__12CSHOT_EFFECTFv);
+#endif
 /**
  * Constructs a hit marker.
  *
@@ -1408,7 +1561,15 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__12CSHOT_EFFECTFv);
  * @address 0x1436E0
  * @size 0x3C
  */
+#ifdef NON_MATCHING
+/* The compiler emits the constructor for arrays of hit markers. */
+void DraftHitMarkArray() {
+    CHitMark *marks = new CHitMark[16];
+    delete[] marks;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/main", __ct__8CHitMarkFv);
+#endif
 /**
  * Takes a run of quadwords out of the six-thousand-quadword arena.
  *
@@ -1416,7 +1577,21 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__8CHitMarkFv);
  * @address 0x143720
  * @size 0x68
  */
+#ifdef NON_MATCHING
+u_char *CDataAlloc<1, 6000>::Alloc(int quads) {
+    int start = used;
+
+    if (start + quads > 6000) {
+        printf("Alocation Error! %d/%d\n", start, 6000);
+        while (1)
+            ;
+    }
+    used = start + quads;
+    return (u_char *) &block[start];
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/main", Alloc__18CDataAlloc_1_6000_Fi);
+#endif
 /**
  * Rounds the six-thousand-quadword arena's cursor up to sixty-four bytes.
  *
@@ -1424,5 +1599,20 @@ INCLUDE_ASM("asm/nonmatchings/main", Alloc__18CDataAlloc_1_6000_Fi);
  * @address 0x143790
  * @size 0x90
  */
+#ifdef NON_MATCHING
+void CDataAlloc<1, 6000>::Align64() {
+    int misalign = (int) &block[used] & 0x3F;
+
+    if (misalign != 0) {
+        used += (u32) (0x40 - misalign) >> 4;
+    }
+    if (used >= 6000) {
+        printf("Alocation Error! %d/%d\n", used, 6000);
+        while (1)
+            ;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/main", Align64__18CDataAlloc_1_6000_Fv);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/main", @1195);

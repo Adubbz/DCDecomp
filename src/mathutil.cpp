@@ -25,6 +25,14 @@ extern void (*__static_init_end[])(void);
  */
 extern u8 _overlay_group_addresses[];
 
+extern "C" void abort(void);
+extern "C" void free(void *storage);
+extern "C" void *__vt__Q23std9exception[];
+extern "C" void *__vt__Q23std13bad_exception[];
+extern "C" void (*thandler__3std)(void);
+extern "C" void (*uhandler__3std)(void);
+extern "C" MWGlobalDestructor *__global_destructor_chain;
+
 INCLUDE_RODATA("asm/nonmatchings/mathutil", @245);
 INCLUDE_RODATA("asm/nonmatchings/mathutil", @424);
 INCLUDE_RODATA("asm/nonmatchings/mathutil", @425);
@@ -42,7 +50,24 @@ INCLUDE_RODATA("asm/nonmatchings/mathutil", @1039);
  * @address 0x1222D0
  * @size 0x12C
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", __construct_array);
+void __construct_array(void *array, MWRuntimeObjectFunction constructor,
+                       MWRuntimeObjectFunction destructor, unsigned int element_size,
+                       unsigned int count) {
+    unsigned char *element = (unsigned char *) array;
+    unsigned int constructed = 0;
+    for (; constructed < count; ++constructed, element += element_size) {
+        constructor(element, 1);
+    }
+
+    // The runtime reaches this cleanup path when construction is unwound.
+    if (constructed < count && destructor != NULL) {
+        element = (unsigned char *) array + constructed * element_size;
+        while (constructed-- != 0) {
+            element -= element_size;
+            destructor(element, -1);
+        }
+    }
+}
 /**
  * Runs a constructor over every element of a newly allocated array.
  *
@@ -50,7 +75,37 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __construct_array);
  * @address 0x122400
  * @size 0x14C
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", __construct_new_array);
+void *__construct_new_array(void *allocation, MWRuntimeObjectFunction constructor,
+                            MWRuntimeObjectFunction destructor, unsigned int element_size,
+                            unsigned int count) {
+    if (allocation == NULL) {
+        return NULL;
+    }
+
+    unsigned int *header = (unsigned int *) allocation;
+    header[0] = element_size;
+    header[1] = count;
+    unsigned char *array = (unsigned char *) allocation + 16;
+    if (constructor == NULL) {
+        return array;
+    }
+
+    unsigned char *element = array;
+    unsigned int constructed = 0;
+    for (; constructed < count; ++constructed, element += element_size) {
+        constructor(element, 1);
+    }
+
+    // The runtime reaches this cleanup path when construction is unwound.
+    if (constructed < count && destructor != NULL) {
+        element = array + constructed * element_size;
+        while (constructed-- != 0) {
+            element -= element_size;
+            destructor(element, -1);
+        }
+    }
+    return array;
+}
 /**
  * Frees storage that `operator new` handed out.
  *
@@ -58,7 +113,9 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __construct_new_array);
  * @address 0x122550
  * @size 0x40
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", __dl__FPv);
+void __dl(void *storage) {
+    free(storage);
+}
 /**
  * Destroys a `std::exception`.
  *
@@ -66,7 +123,15 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __dl__FPv);
  * @address 0x122590
  * @size 0x6C
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", __dt__Q23std9exceptionFv);
+extern "C" void *__dt__Q23std9exceptionFv(void *exception, int mode) {
+    if (exception != NULL) {
+        *(void ***) exception = __vt__Q23std9exception;
+        if (mode > 0) {
+            __dl(exception);
+        }
+    }
+    return exception;
+}
 /**
  * Gives a `std::exception`'s description.
  *
@@ -74,7 +139,10 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __dt__Q23std9exceptionFv);
  * @address 0x122600
  * @size 0xC
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", what__Q23std9exceptionCFv);
+extern "C" const char *what__Q23std9exceptionCFv(const void *exception) {
+    (void) exception;
+    return "exception";
+}
 /**
  * Reports whether a thrown type matches a catch clause's type.
  *
@@ -82,7 +150,94 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", what__Q23std9exceptionCFv);
  * @address 0x122610
  * @size 0x26C
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", __throw_catch_compare);
+int __throw_catch_compare(char *thrown_type, char *caught_type, int *pointer_adjustment) {
+    *pointer_adjustment = 0;
+    if (caught_type == NULL) {
+        return 1;
+    }
+
+    char *caught = caught_type;
+    if (*caught == 'P') {
+        ++caught;
+        if (*caught == 'C') {
+            ++caught;
+        }
+        if (*caught == 'V') {
+            ++caught;
+        }
+        if (*caught == 'v' && (*thrown_type == 'P' || *thrown_type == '*')) {
+            return 1;
+        }
+    }
+
+    if (*thrown_type == '!' || *thrown_type == '*') {
+        if (*thrown_type != *caught_type) {
+            return 0;
+        }
+        char *base = thrown_type + 1;
+        while (*base != '\0') {
+            char *candidate = caught_type + 1;
+            while (*base != *candidate) {
+                while (*base != '\0' && *base != '!') {
+                    ++base;
+                }
+                if (*base == '\0') {
+                    return 0;
+                }
+                ++base;
+                while (*base != '\0' && *base != '!') {
+                    ++base;
+                }
+                if (*base == '\0') {
+                    return 0;
+                }
+                ++base;
+                candidate = caught_type + 1;
+            }
+            while (*base == *candidate && *base != '\0' && *base != '!') {
+                ++base;
+                ++candidate;
+            }
+            if (*candidate == '\0' && *base == '!') {
+                ++base;
+                int adjustment = 0;
+                while (*base >= '0' && *base <= '9') {
+                    adjustment = adjustment * 10 + (*base++ - '0');
+                }
+                *pointer_adjustment = adjustment;
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    while (*thrown_type == 'P' || *thrown_type == 'R') {
+        if (*thrown_type != *caught_type) {
+            return 0;
+        }
+        ++thrown_type;
+        ++caught_type;
+        if (*caught_type == 'C') {
+            if (*thrown_type == 'C') {
+                ++thrown_type;
+            }
+            ++caught_type;
+        }
+        if (*thrown_type == 'C') {
+            return 0;
+        }
+        if (*caught_type == 'V') {
+            if (*thrown_type == 'V') {
+                ++thrown_type;
+            }
+            ++caught_type;
+        }
+        if (*thrown_type == 'V') {
+            return 0;
+        }
+    }
+    return strcmp(thrown_type, caught_type) == 0;
+}
 /**
  * Calls the handler for an exception a function did not declare.
  *
@@ -90,7 +245,9 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __throw_catch_compare);
  * @address 0x122880
  * @size 0x24
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", unexpected__3stdFv);
+extern "C" void unexpected__3stdFv() {
+    uhandler__3std();
+}
 /**
  * Calls the handler that ends the program after an unrecoverable exception.
  *
@@ -98,7 +255,9 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", unexpected__3stdFv);
  * @address 0x1228B0
  * @size 0x24
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", terminate__3stdFv);
+extern "C" void terminate__3stdFv() {
+    thandler__3std();
+}
 /**
  * The default unexpected-exception handler, which terminates.
  *
@@ -106,7 +265,9 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", terminate__3stdFv);
  * @address 0x1228E0
  * @size 0x24
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", duhandler__3stdFv);
+extern "C" void duhandler__3stdFv() {
+    thandler__3std();
+}
 /**
  * The default terminate handler, which stops the program.
  *
@@ -114,7 +275,9 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", duhandler__3stdFv);
  * @address 0x122910
  * @size 0x1C
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", dthandler__3stdFv);
+extern "C" void dthandler__3stdFv() {
+    abort();
+}
 /**
  * Records one global object so that its destructor runs at exit.
  *
@@ -122,7 +285,14 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", dthandler__3stdFv);
  * @address 0x122930
  * @size 0x24
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", __register_global_object);
+void *__register_global_object(void *object, MWRuntimeObjectFunction destructor,
+                               MWGlobalDestructor *record) {
+    record->next = __global_destructor_chain;
+    record->destructor = destructor;
+    record->object = object;
+    __global_destructor_chain = record;
+    return object;
+}
 /**
  * Starts the C++ runtime: its handlers and its global-object list.
  *
@@ -130,7 +300,16 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __register_global_object);
  * @address 0x122960
  * @size 0x54
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", __initialize_cpp_rts);
+extern "C" void __initialize_cpp_rts(void *first, void *last, void *overlay_start,
+                                      void *overlay_end) {
+    void (**initializer)(void) = (void (**)(void)) first;
+    void (**end)(void) = (void (**)(void)) last;
+    while (initializer < end) {
+        (*initializer++)();
+    }
+    (void) overlay_start;
+    (void) overlay_end;
+}
 /**
  * Reads an unsigned number out of a mangled type name.
  *
@@ -138,7 +317,28 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __initialize_cpp_rts);
  * @address 0x1229C0
  * @size 0xA0
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", __DecodeUnsignedNumber__FPcPUi);
+char *__DecodeUnsignedNumber(char *encoded, unsigned int *value) {
+    unsigned char first = (unsigned char) encoded[0];
+    if ((first & 1) == 0) {
+        *value = first >> 1;
+        return encoded + 1;
+    }
+
+    unsigned char second = (unsigned char) encoded[1];
+    if ((first & 2) == 0) {
+        *value = ((unsigned int) (first >> 2) << 8) | second;
+        return encoded + 2;
+    }
+    unsigned char third = (unsigned char) encoded[2];
+    if ((first & 4) == 0) {
+        *value = ((unsigned int) (first >> 3) << 16) | ((unsigned int) second << 8) | third;
+        return encoded + 3;
+    }
+    unsigned char fourth = (unsigned char) encoded[3];
+    *value = ((unsigned int) (first >> 3) << 24) | ((unsigned int) second << 16) |
+             ((unsigned int) third << 8) | fourth;
+    return encoded + 4;
+}
 /**
  * Reads a signed number out of a mangled type name.
  *
@@ -146,7 +346,27 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __DecodeUnsignedNumber__FPcPUi);
  * @address 0x122A60
  * @size 0xA0
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", __DecodeSignedNumber__FPcPi);
+char *__DecodeSignedNumber(char *encoded, int *value) {
+    signed char first = encoded[0];
+    if ((first & 1) == 0) {
+        *value = first >> 1;
+        return encoded + 1;
+    }
+
+    unsigned int second = (unsigned char) encoded[1];
+    if ((first & 2) == 0) {
+        *value = ((first >> 2) << 8) | second;
+        return encoded + 2;
+    }
+    unsigned int third = (unsigned char) encoded[2];
+    if ((first & 4) == 0) {
+        *value = ((first >> 3) << 16) | (second << 8) | third;
+        return encoded + 3;
+    }
+    unsigned int fourth = (unsigned char) encoded[3];
+    *value = ((first >> 3) << 24) | (second << 16) | (third << 8) | fourth;
+    return encoded + 4;
+}
 /**
  * Ends a catch clause and releases the exception it caught.
  *
@@ -154,7 +374,11 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __DecodeSignedNumber__FPcPi);
  * @address 0x122B00
  * @size 0x38
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", __end__catch);
+void __end__catch(MWCatchRecord *record) {
+    if (record->object != NULL && record->destructor != NULL) {
+        record->destructor(record->object, -1);
+    }
+}
 /**
  * Raises an exception a function did not declare, through the unexpected handler.
  *
@@ -162,7 +386,13 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __end__catch);
  * @address 0x122B40
  * @size 0x1C0
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", __unexpected);
+void __unexpected(void *exception_record) {
+    // The retail unwinder first offers the exception to the unexpected handler,
+    // then terminates if that handler returns instead of throwing an allowed type.
+    unexpected__3stdFv();
+    terminate__3stdFv();
+    (void) exception_record;
+}
 /**
  * Destroys a `std::bad_exception`.
  *
@@ -170,7 +400,16 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __unexpected);
  * @address 0x122D00
  * @size 0x84
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", __dt__Q23std13bad_exceptionFv);
+extern "C" void *__dt__Q23std13bad_exceptionFv(void *exception, int mode) {
+    if (exception != NULL) {
+        *(void ***) exception = __vt__Q23std13bad_exception;
+        *(void ***) exception = __vt__Q23std9exception;
+        if (mode > 0) {
+            __dl(exception);
+        }
+    }
+    return exception;
+}
 /**
  * Gives a `std::bad_exception`'s description.
  *
@@ -178,7 +417,10 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __dt__Q23std13bad_exceptionFv);
  * @address 0x122D90
  * @size 0xC
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", what__Q23std13bad_exceptionCFv);
+extern "C" const char *what__Q23std13bad_exceptionCFv(const void *exception) {
+    (void) exception;
+    return "bad_exception";
+}
 
 /**
  * Starts the MetroWerks runtime.
@@ -251,7 +493,14 @@ extern "C" int mwBload(char *path, void *buffer) {
  * @address 0x122F40
  * @size 0x70
  */
-INCLUDE_ASM("asm/nonmatchings/mathutil", mwLoadOverlay);
+extern "C" int mwLoadOverlay(char *path, void *address) {
+    int size = mwBload(path, address);
+    if (size > 0) {
+        MWNotifyOverlayLoaded();
+        mwOverlayInit(address, size);
+    }
+    return size > 0;
+}
 
 #define PI 3.1415927f
 

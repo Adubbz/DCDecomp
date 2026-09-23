@@ -3850,14 +3850,14 @@ void MoveChara(void) {
                                                                             &NowDngMap->parts[i];
 
                                                                         sceVu0CopyVector(parts_pos,
-                                                                                         part->unk_110);
+                                                                                         part->frame_offset[0]);
 
                                                                         CDungeonMap *map = NowDngMap;
                                                                         CDungeonParts *part2 =
                                                                             &map->parts[i];
 
-                                                                        turn = (int) part2->unk_170[0];
-                                                                        turn += part2->unk_010;
+                                                                        turn = (int) part2->frame_turn[0];
+                                                                        turn += part2->collision_turn;
                                                                         if (turn > 3) {
                                                                             turn -= 3;
                                                                         }
@@ -3966,7 +3966,7 @@ void MoveChara(void) {
                                                                         if (collision != NULL &&
                                                                             cell->unk_08 <= 240.0f) {
                                                                             int dir = NowDngMap->cells[x + z * 20].direction;
-                                                                            int base = parts_no == -1 ? 0 : NowDngMap->parts[parts_no].unk_010;
+                                                                            int base = parts_no == -1 ? 0 : NowDngMap->parts[parts_no].collision_turn;
 
                                                                             turn = dir;
                                                                             turn += base;
@@ -4774,12 +4774,12 @@ void MoveChara(void) {
                         if (collision != NULL) {
                             CDungeonParts *part = &NowDngMap->parts[i];
 
-                            sceVu0CopyVector(parts_pos, part->unk_110);
+                            sceVu0CopyVector(parts_pos, part->frame_offset[0]);
 
                             CDungeonParts *part2 = &NowDngMap->parts[i];
 
-                            turn = (int) part2->unk_170[0];
-                            turn += part2->unk_010;
+                            turn = (int) part2->frame_turn[0];
+                            turn += part2->collision_turn;
                             if (turn > 3) {
                                 turn -= 3;
                             }
@@ -7994,10 +7994,10 @@ void autoCamTrial(void) {
             if (frame != NULL) {
                 CDungeonParts *part = &NowDngMap->parts[i];
 
-                sceVu0CopyVector(eye, part->unk_110);
+                sceVu0CopyVector(eye, part->frame_offset[0]);
 
                 CDungeonMap *map = NowDngMap;
-                int turn = (int) ((CDungeonMap *) map)->parts[i].unk_170[0];
+                int turn = (int) ((CDungeonMap *) map)->parts[i].frame_turn[0];
 
                 turn += i == -1 ? 0 : map->parts[i].unk_008;
 

@@ -146,7 +146,7 @@ public:
     s16 unk_008;
     s16 unk_00A;
     CFrame *collision; /**< Model that the collision of the part uses. */
-    s16 unk_010;
+    s16 collision_turn; /**< Quarter turns added to the collision model's own. */
     s16 fire_num; /**< Number of points of the part that show a fire. */
     u8 unk_014[12];
     float fire_pos[6][4]; /**< Position of each point of the part that shows a fire. */
@@ -156,15 +156,15 @@ public:
     s16 direction; /**< Rotation that the part uses. */
     s16 unk_102;
     u8 unk_104[12];
-    float unk_110[4];
-    u8 unk_120[0x40];
-    float event_direction; /**< Additional quarter-turn applied to the part's event frames. */
+    float frame_offset[5][4]; /**< Offset of each model from the part's position. */
+    float event_direction;    /**< Additional quarter-turn applied to the part's event frames. */
     u8 unk_164[0xC];
-    float unk_170[6];
-    u8 unk_188[0x18];
+    float frame_turn[6];      /**< Quarter turns added to each model's own. */
+    u8 unk_188[8];
+    float heal_pos[4]; /**< Centre of the part's healing zone. */
     s32 loaded; /**< Whether this map-part slot contains loaded data. */
-    u8 unk_1A4[4];
-    s32 unk_1A8;
+    float heal_height; /**< Height of the part's healing zone. */
+    s32 heal_on;       /**< 1 if the part has a healing zone. */
     s32 unk_1AC;
     CFrame *frame[6]; /**< Models that draw the part; a free slot has zero in the first. */
     u8 unk_1C8[8];

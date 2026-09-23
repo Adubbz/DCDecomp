@@ -151,7 +151,7 @@ int InitObjAnime(CFrame **frames, int count, OBJ_ANIME_SEQ *sequence);
  * @address 0x166010
  * @size 0x160
  */
-void InitObjAnime(CFrame **, int, EPARTS_FUNC_DATA *, OBJ_ANIME_SEQ *);
+int InitObjAnime(CFrame **, int, EPARTS_FUNC_DATA *, OBJ_ANIME_SEQ *);
 
 /**
  * Reports whether an animated value has passed its target in the direction it moves.

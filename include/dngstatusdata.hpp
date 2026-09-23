@@ -18,7 +18,7 @@ struct STATIC_ASSER;
  * (id=-1) once it reaches 0. unk4 is not yet used by any decompiled function. */
 struct DNG_ATRA_REGISTRY_ENTRY {
     s32 id;
-    s32 unk4;
+    s32 floor; /**< Floor the atla lies on counted from one, or -1 or -2 for any upper or lower floor. */
     s32 refcount;
 };
 

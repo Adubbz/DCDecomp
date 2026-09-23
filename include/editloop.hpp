@@ -41,7 +41,9 @@ struct EDIT_SCENE_LAYER_INFO {
     int unk_40;      /**< Runtime state reset when the layer is selected. */
     int unk_44;      /**< Runtime state reset when the layer is selected. */
     int unk_48;      /**< Runtime state reset when the layer is selected. */
-    u8 unk_4c[0xac];
+    u8 unk_4c[0x4c];
+    s16 obj_anime[8]; /**< Object animations the layer plays; zero or below where a slot holds none. */
+    u8 unk_a8[0x50];
 };
 
 /**
@@ -148,9 +150,9 @@ struct EDIT_WATER_INFO {
     int unk_58;
     u8 unk_5c[0x4];
     sceVu0FVECTOR texture_scroll; /**< Texture offset and scroll rates. */
-    int unk_70;
-    int unk_74;
-    int unk_78;
+    int follow_x; /**< Whether the surface keeps ahead of the camera along X. */
+    int follow_y; /**< Whether the surface keeps level with the camera. */
+    int follow_z; /**< Whether the surface keeps ahead of the camera along Z. */
     u8 unk_7c[0x4];
     sceVu0FVECTOR wave[4]; /**< Pending water-wave parameters, terminated by an empty entry. */
 };
@@ -360,7 +362,7 @@ extern sceVu0FVECTOR NowCursorPos;
 extern sceVu0FVECTOR NextCursorPos;
 
 /** Map part currently under the editor cursor. */
-extern void *NowFocusParts;
+extern CMapParts *NowFocusParts;
 
 /** Number of frames for which the focused part name remains visible. */
 extern int DrawPartsNameCount;
