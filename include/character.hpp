@@ -106,6 +106,10 @@ public:
      */
     CCharacter() { Initialize(); }
 
+#ifdef NON_MATCHING
+    CCharacter &operator=(const CCharacter &);
+#endif
+
     /**
      * Selects the motion the character plays next, without advancing it.
      */
@@ -566,6 +570,10 @@ public:
     s32 unk_11C4;
     s32 unk_11C8;
     s32 unk_11CC;
+    s32 in_trigger;     /**< Non-zero while the character stands in an event trigger. */
+    u8 unk_11D4[0x4c];
+    s16 trigger_event;  /**< Event the trigger asks for; zero once it has been run. */
+    u8 unk_1222[0x7e];
 
     /**
      * Draws the player character.
@@ -586,4 +594,4 @@ public:
     virtual void Initialize(void);
 };
 
-STATIC_ASSERT(sizeof(CMainChara) == 0x11D0);
+STATIC_ASSERT(sizeof(CMainChara) == 0x12A0);

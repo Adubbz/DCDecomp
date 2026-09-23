@@ -834,7 +834,7 @@ void CDungeonMap::DrawFireFreeStyle(CFrameVu1 *frame, CCameraFollow *camera) {
 
     near_dist = 16000.0f;
     for (i = 0; this->parts[i].frame[0] != NULL; i++) {
-        sceVu0CopyVector(part_pos, this->parts[i].unk_110);
+        sceVu0CopyVector(part_pos, this->parts[i].frame_offset[0]);
 
         for (j = 0; j < this->parts[i].fire_num; j++) {
             float angle;
@@ -853,7 +853,7 @@ void CDungeonMap::DrawFireFreeStyle(CFrameVu1 *frame, CCameraFollow *camera) {
             param = this->parts[i].fire_param[j];
 
             // The point turns with the part that holds it.
-            angle = this->parts[i].unk_170[0];
+            angle = this->parts[i].frame_turn[0];
             if (angle != 0.0f) {
                 angle = (3.1415927f * (90.0f * (4.0f - angle))) / 180.0f;
                 turn = -fire_pos[2] * sinf(angle);

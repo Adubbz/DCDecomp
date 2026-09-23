@@ -34,20 +34,20 @@ extern SAVE_MENU_STATE SaveMenu;
  * Holds the state of the event item selection menu.
  */
 struct MINI_MENU_INFO {
-    s16 unk_00;
+    s16 fish_mode;     /**< Nonzero when the menu offers fishing bait rather than event items. */
     u8 unk_02[2];
-    s16 unk_04;
-    s16 unk_06;
-    s32 unk_08;
-    s32 unk_0C[13];
-    s32 unk_40;
-    s8 unk_44;
-    s8 unk_45;
+    s16 event_item_num; /**< Items of the pack that events can take. */
+    s16 lang;           /**< Menu language, which picks the board's layout. */
+    s32 cursor;         /**< Slot the cursor is on. */
+    s32 usable[13];     /**< Items the event accepts, ended by a negative number. */
+    s32 selected;       /**< Item the player picked, or -1. */
+    s8 scroll_row;      /**< Row of five slots shown at the top of the board. */
+    s8 usable_num;      /**< Number of items the event accepts. */
     u8 unk_46[2];
-    s32 unk_48;
-    s16 unk_4C;
+    s32 vanish;         /**< Whether the item picked is used up. */
+    s16 state;          /**< 0 while choosing, 1 while a refusal shows, 2 fading in, 3 fading out. */
     u8 unk_4E[2];
-    s32 unk_50;
+    s32 state_time;     /**< Frames spent in the current state. */
 };
 
 STATIC_ASSERT(sizeof(MINI_MENU_INFO) == 0x54);

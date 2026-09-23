@@ -891,7 +891,7 @@ static int AtoraCompOrEvent(EDITPARTS_INFO *info) {
     talked = 1;
     done = 0;
     if (info != NULL) {
-        if (info->unk_0C == info->unk_18) {
+        if (info->placed == info->stock) {
             filled = 1;
         }
         for (i = 0; i < 6; i++) {
@@ -1117,7 +1117,7 @@ static CTexture *AtoraTipHoleTexInfoGet(int gold, unsigned char *color) {
 }
 
 static void AtoraPlateDrawHaichiBar(EDITPARTS_INFO *info, int x, int y, int flag) {
-    int empty = 83 - info->unk_0C * 83 / info->unk_18;
+    int empty = 83 - info->placed * 83 / info->stock;
     CRect_i_ dest;
     CRect_i_ src(244, 323 - empty, 12, empty);
 
@@ -1134,19 +1134,19 @@ void DrawAtraBuildNum(EDITPARTS_INFO *info, int x, int y, int alpha) {
     int num_x;
 
     num_x = x + 8;
-    if ((info->unk_18 - info->unk_0C) / 10 > 0) {
+    if ((info->stock - info->placed) / 10 > 0) {
         num_x += 24;
     } else {
         num_x += 12;
     }
-    if (info->unk_18 / 10 > 0) {
+    if (info->stock / 10 > 0) {
         num_x += 24;
     } else {
         num_x += 12;
     }
-    num_x = DrawMenuNumber(info->unk_18, num_x, y + 5, StayTex, digit, 1, alpha);
+    num_x = DrawMenuNumber(info->stock, num_x, y + 5, StayTex, digit, 1, alpha);
     DrawMenu2DSprite(StayTex, CRect_i_(num_x - 10, y + 5, 12, 12), CRect_i_(120, digit.y, 12, 12), alpha);
-    DrawMenuNumber(info->unk_18 - info->unk_0C, num_x - 7, y + 5, StayTex, digit, 1, alpha);
+    DrawMenuNumber(info->stock - info->placed, num_x - 7, y + 5, StayTex, digit, 1, alpha);
 }
 INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtora__Fiiii);
 

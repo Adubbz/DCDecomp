@@ -35,7 +35,7 @@ struct EDITPARTS_INFO;
 class CMapParts : public CMapObject {
 public:
     s32 parts_no; /**< Plot the part stands on, as the part catalogue numbers it. */
-    s32 unk_0F4;
+    s32 area; /**< Area of the ground the part stands in, or -1. */
     s32 rot_y; /**< Quarter turns about the vertical axis that the part faces. */
     s32 unk_0FC;
     s32 unk_100;
@@ -44,7 +44,7 @@ public:
     s32 unk_10C;
     s32 unk_110;
     s32 unk_114;
-    s32 unk_118; /**< 2 on the parts whose ambient sound is the one a door makes. */
+    s32 subtype; /**< Subtype of the part: 1 for a road, 2 for a river, 3 and 5 for parts a new part may replace. */
     float unk_11C;
     float unk_120;
     s32 unk_124;

@@ -18,6 +18,8 @@ class CCharacter;
 class CCamera;
 class CEditGround;
 struct ED_EVENT_POINT;
+class CMapObject;
+class CFrame;
 class CCameraFollow;
 
 /**
@@ -70,8 +72,11 @@ struct EDIT_MAP_INFO;
  * Stores one script-defined timer that gates a map object.
  */
 struct EDIT_OBJECT_TIMER {
-    u8 active; /**< Whether the timer takes part in map processing. */
-    u8 unk_01[0x1f];
+    char name[16];      /**< Frame the timer switches; empty leaves the record unused. */
+    CMapObject *object; /**< Object the frame belongs to, where one owns it. */
+    CFrame *frame;      /**< Root the frame is searched under, where no object does. */
+    float start_time;   /**< Hour at which the frame starts being drawn. */
+    float end_time;     /**< Hour at which it stops. */
 };
 
 STATIC_ASSERT(sizeof(EDIT_OBJECT_TIMER) == 0x20);

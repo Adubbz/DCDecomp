@@ -20,6 +20,7 @@ public:
      * @size 0x30
      */
     CBombEffect();
+    void Initialize(void);
     sceVu0FVECTOR positions[8]; /**< Shared-origin positions of the eight billboards. */
     s32 phases[8];              /**< Envelope phase currently run by each billboard. */
     s32 counters[8];            /**< Frames elapsed in each billboard's current phase. */

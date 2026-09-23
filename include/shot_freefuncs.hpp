@@ -6,6 +6,7 @@
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 class CTexture;
+struct spRGBA;
 
 /**
  * Clears the water-splash effects.
@@ -23,7 +24,7 @@ void WaterSplash_Init(void);
  * @address 0x1AF3B0
  * @size 0x328
  */
-void CheckHealingWater(void);
+int CheckHealingWater(void);
 
 /**
  * Reports whether the party stands in a healing zone.
@@ -32,7 +33,7 @@ void CheckHealingWater(void);
  * @address 0x1AF6E0
  * @size 0x29C
  */
-void CheckHealZone(void);
+int CheckHealZone(void);
 
 /**
  * Restores the party while they stand in healing water.
@@ -77,7 +78,7 @@ float SetBattleStyle(int, int);
  * @address 0x1B0060
  * @size 0x1F8
  */
-void ValuePrint(int, int, int, int, unsigned char);
+int ValuePrint(int, int, int, int, unsigned char);
 
 /**
  * Clears the pulse that warns of low life.
@@ -104,7 +105,7 @@ void BtStatusAlarmAnime(void);
  * @address 0x1B03F0
  * @size 0x80
  */
-void BtGetStatusPal(int, float, float);
+spRGBA *BtGetStatusPal(int, float, float);
 
 /**
  * Chooses the second colour a status bar draws in from how full it is.
@@ -113,7 +114,7 @@ void BtGetStatusPal(int, float, float);
  * @address 0x1B0470
  * @size 0x80
  */
-void BtGetStatusPal2(int, float, float);
+spRGBA *BtGetStatusPal2(int, float, float);
 
 /**
  * Draws the life, magic and stamina bars at the top of the screen.

@@ -3,6 +3,24 @@
 #include "common.h"
 
 /**
+ * State that the edit menu keeps between frames.
+ */
+struct EDIT_MENU_STATUS {
+    s32 mode;     /**< What the menu is doing; -1 while it is closed. */
+    s32 parts;    /**< Plot of the part the player picked, or -1. */
+    u8 unk_08[8];
+    s32 event_no; /**< Event the menu asks the loop to run. */
+    u8 unk_14[8];
+};
+
+STATIC_ASSERT(sizeof(EDIT_MENU_STATUS) == 0x1C);
+
+/**
+ * The edit menu's state.
+ */
+extern EDIT_MENU_STATUS EditMenuStatus;
+
+/**
  * Returns how many of an item the party is carrying.
  *
  * @mangled GetNumHowManyItemsHave__Fi

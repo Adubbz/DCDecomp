@@ -64,13 +64,32 @@ struct GROUND_SAVE_HEADER {
 };
 
 /**
+ * Draws the placement cursor out of corner, edge and centre pieces.
+ */
+class CPartsCursor {
+public:
+    s32 area;          /**< Area the cursor is drawn in. */
+    float unit_size;   /**< Width of one grid cell. */
+    CFrame *pieces[3]; /**< Corner, edge and centre pieces of the cursor. */
+
+    /**
+     * Draws the placement cursor over a run of cells.
+     *
+     * @mangled Draw__12CPartsCursorFPfii
+     * @address 0x1A5CB0
+     * @size 0x328
+     */
+    void Draw(float *position, int width, int height);
+};
+
+/**
  * Holds the editable areas of a Georama map and every part placed on them.
  */
 class CEditGround {
 public:
     s32 map_no;          /**< Georama town the ground belongs to, from 0 for Norune to 4 for Yellow Drops. */
     CEditArea *areas[4]; /**< Editable areas that make up the ground. */
-    s32 unk_00014[4];
+    s32 area_visible[4]; /**< Whether each area is drawn this frame. */
     u8 unk_00024[0xC];
     CMapParts parts[128];       /**< Parts placed on the ground, indexed by part ID. */
     CEditPartsInfo *parts_info; /**< Catalogue of the parts the map can hold. */
@@ -90,11 +109,7 @@ public:
     u8 unk_15f3c[4];
     CMapParts fixed_parts[64]; /**< Parts of the map that the player cannot move; the second is the ground model. */
     s32 unk_20740[1];
-    s32 unk_20744;
-    float unk_20748;
-    s32 unk_2074c;
-    s32 unk_20750;
-    u8 unk_20754[4];
+    CPartsCursor cursor; /**< Cursor drawn over the cells a part would occupy. */
     EPARTS_FUNC_DATA *people[128]; /**< Villager markers of the placed parts. */
     s32 people_count;              /**< Number of villager markers in use. */
     s32 suppress_water;            /**< Whether rendering of the editable ground's water is disabled. */
@@ -106,7 +121,7 @@ public:
      * @address 0x1A0470
      * @size 0x79C
      */
-    CMapParts *SetMapParts(int parts_no, float x, float y, float z, int rot_y);
+    int SetMapParts(int parts_no, float x, float y, float z, int rot_y);
 
     /**
      * Re-chooses the river piece one cell away so the water joins up with its
@@ -565,21 +580,3 @@ public:
 
 STATIC_ASSERT(sizeof(CEditGround) == 0x20960);
 
-/**
- * Draws the placement cursor out of corner, edge and centre pieces.
- */
-class CPartsCursor {
-public:
-    u8 unk_00[4];
-    float unit_size;   /**< Width of one grid cell. */
-    CFrame *pieces[3]; /**< Corner, edge and centre pieces of the cursor. */
-
-    /**
-     * Draws the placement cursor over a run of cells.
-     *
-     * @mangled Draw__12CPartsCursorFPfii
-     * @address 0x1A5CB0
-     * @size 0x328
-     */
-    void Draw(float *position, int width, int height);
-};

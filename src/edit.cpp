@@ -89,7 +89,7 @@ void BtGetItemNamePath(char *model_path, char *texture_path, int item_no);
 
 /* 28 bytes nothing reads other than a word at a time, so it is spelled as words rather than as a
    layout nothing supports. */
-extern int EditMenuStatus[7];
+#include "editmenu.hpp"
 extern u_int *read_buffer;
 
 extern ClsMes EditSystemMes;
@@ -775,7 +775,7 @@ void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_po
                 src->num++;
             }
         }
-        if (parts[i]->unk_118 != 2)
+        if (parts[i]->subtype != 2)
             continue;
         if (DistVector(camera_pos, position) >= 300.0f)
             continue;
@@ -1144,7 +1144,7 @@ int EdInitModeFinish(CCamera *camera, CTexture *texture) {
 
     switch (menu_mode) {
         case 1:
-            EditMenuInit(texture_block, EditMenuStatus[0] == 0);
+            EditMenuInit(texture_block, EditMenuStatus.mode == 0);
             return 6;
         case 2:
             BattleMenuInit(texture_block, 1);

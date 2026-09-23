@@ -641,7 +641,7 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
                 part.pos[1] = value[4] * 10.0f;
                 part.pos[2] = value[5] * 10.0f;
                 part.pos[3] = 1.0f;
-                part.unk_170[part_frame] = value[6];
+                part.frame_turn[part_frame] = value[6];
                 part.direction_offset = (s16) value[2];
             }
             part_frame++;
@@ -679,7 +679,7 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
             CDungeonParts &part = NowDngMap->parts[nowPartsCnt__2];
             if (kind == TEIGI_PT_COLS__2[0]) {
                 part.collision = current_collision;
-                part.unk_010 = (s16) value[2];
+                part.collision_turn = (s16) value[2];
             } else {
                 part.unk_004 = current_collision;
                 part.unk_008 = (s16) value[2];

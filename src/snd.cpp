@@ -1100,8 +1100,67 @@ void SndSetSePanf(int se_no, float pan, int voice) {
         CSnd.SE_SetPan(GetPortNo(se_no), info->bank, info->prog, hw_pan, voice);
     }
 }
+#ifdef NON_MATCHING
+void SndPlayFootSound(int kind, int foot, float *position) {
+    float volume;
+    float pan;
+
+    SndGetVolPan(&volume, &pan, position, 50.0f, 300.0f);
+    SndSePlay(kind * 4 + 500 + (foot > 0), volume, pan, 0);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/snd", SndPlayFootSound__FiiPf);
+#endif
+#ifdef NON_MATCHING
+float DistVector(float *a, float *b);
+
+void SndGetVolPan(float *vol, float *pan, float *pos, float near, float far) {
+    sceVu0FVECTOR direction;
+    sceVu0FVECTOR side;
+    float distance;
+    float volume;
+    float facing;
+    int sign;
+
+    distance = DistVector(pos, camera_pos);
+    volume = 1.0f - (distance - near) / (far - near);
+    if (distance > far) {
+        volume = 0.0f;
+    }
+    if (distance < near) {
+        volume = 1.0f;
+    }
+    *vol = volume;
+    *pan = 0.0f;
+    sceVu0CopyVector(direction, camera_dir);
+    direction[1] = 0.0f;
+    sceVu0Normalize(direction, direction);
+    side[0] = direction[2];
+    side[1] = 0.0f;
+    side[2] = -direction[0];
+    sceVu0SubVector(direction, pos, camera_pos);
+    direction[1] = 0.0f;
+    sceVu0Normalize(direction, direction);
+    facing = -sceVu0InnerProduct(direction, side);
+    sign = 1;
+    if (facing < 0.0f) {
+        sign = -1;
+    }
+    if (facing < 0.0f) {
+        facing = -facing;
+    }
+    facing = facing * facing;
+    facing = 0.7f * ((float) sign * (facing * facing));
+    *pan = facing;
+    if (facing < 0.0f) {
+        facing = -facing;
+    }
+    *vol = *vol * (0.7f + 0.3f * facing);
+    *vol = *vol * 1.4f;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/snd", SndGetVolPan__FPfPfPfff);
+#endif
 static void InitSeSeq(SND_SE_SEQ *seq) {
     seq->se_no = -1;
 }

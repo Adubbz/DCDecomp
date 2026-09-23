@@ -225,12 +225,12 @@ STATIC_ASSERT(sizeof(EDIT_CHARA_DATA_ENTRY) == 0x14);
 
 extern EDIT_CHARA_DATA_ENTRY EditCharaData[5][16];
 extern u8 EditElementInfo[0x120];
-extern int EditMenuStatus[7];
+#include "editmenu.hpp"
 extern u8 MesWinTexBuff_01[0x100];
 extern u8 MesWinTexBuff_02[0x100];
-extern u8 SkyFrame[0x10];
-extern u8 SunFrame[0x10];
-extern u8 SystemEffect[0x200];
+extern CFrameVu1 *SkyFrame[4];
+extern CFrame *SunFrame[4];
+extern C3DSprite SystemEffect[8];
 extern float def_light[12][4];
 
 void CommandIMGSub(int image_type, int image_number, char *name);
@@ -337,9 +337,9 @@ void InitInfo() {
         edit_info->work.effects.first[i].kind = 0;
     }
 
-    edit_info->work.object_timers.timers[0].active = 0;
+    edit_info->work.object_timers.timers[0].name[0] = 0;
     for (int i = 0; i < 128; i++) {
-        edit_info->work.object_timers.timers[i].active = 0;
+        edit_info->work.object_timers.timers[i].name[0] = 0;
     }
 
     edit_info->work.events.points[0].event_type = 0;
@@ -830,9 +830,9 @@ void CommandWATER_SURFACE(void **arguments) {
         surface->unk_50 = *(int *) arguments[16];
         surface->unk_54 = *(int *) arguments[17];
         surface->unk_58 = *(int *) arguments[18];
-        surface->unk_70 = *(int *) arguments[19];
-        surface->unk_74 = *(int *) arguments[20];
-        surface->unk_78 = *(int *) arguments[21];
+        surface->follow_x = *(int *) arguments[19];
+        surface->follow_y = *(int *) arguments[20];
+        surface->follow_z = *(int *) arguments[21];
         surface->parts_no = now_parts_no;
         water_info = surface;
     }

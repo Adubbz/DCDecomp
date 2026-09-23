@@ -886,9 +886,9 @@ static void CommandWATER_SURFACE(void **arguments) {
         surface->unk_50 = *(int *) arguments[16];
         surface->unk_54 = *(int *) arguments[17];
         surface->unk_58 = *(int *) arguments[18];
-        surface->unk_70 = *(int *) arguments[19];
-        surface->unk_74 = *(int *) arguments[20];
-        surface->unk_78 = *(int *) arguments[21];
+        surface->follow_x = *(int *) arguments[19];
+        surface->follow_y = *(int *) arguments[20];
+        surface->follow_z = *(int *) arguments[21];
         surface->parts_no = -1;
         water_info = surface;
     }

@@ -928,7 +928,16 @@ int _BOM_SET(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _SET_STATUS_ERR__FP12RS_STACKDATAi);
+int _SET_STATUS_ERR(RS_STACKDATA *stack, int count) {
+    sceVu0FVECTOR pos;
+
+    BtSetStatusErr(GetStackInt(stack));
+    sceVu0CopyVector(pos, CharaMain.pos);
+    pos[1] += 16.0f;
+    float hit_value = 0.0f;
+    NowColData->Set(pos, 2, 2, 5.0f, hit_value, 1, 2, 0, 0);
+    return 1;
+}
 int _CHECK_MARDAN(RS_STACKDATA *stack, int count) {
     SetStack(stack, SaveData->GetMardanGareyanFlag());
     return 1;

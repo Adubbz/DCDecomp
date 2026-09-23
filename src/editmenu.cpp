@@ -45,7 +45,6 @@ extern float EdMenuEffectCt;
 /** Whether the edit menu's second window is to be made. */
 extern s16 MakeWin2Flag;
 
-extern int EditMenuStatus[7];
 extern CDataAlloc2<1> EdMenuBuffer;
 
 #ifdef NON_MATCHING
