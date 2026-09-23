@@ -226,7 +226,7 @@ void CDungeonEventMan::SetupEvent(CDungeonMap *map, int mode) {
         return;
     }
 
-    for (int parts_id = 0; map->parts[parts_id].loaded != 0; parts_id++) {
+    for (int parts_id = 0; map->parts[parts_id].frame[0] != NULL; parts_id++) {
         for (int slot_no = 0; slot_no < 64; slot_no++) {
             CDungeonEvent *definition = SearchPartsID(slot_no, parts_id);
             if (definition == NULL) {

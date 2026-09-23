@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include "sysmes.hpp"
+
 /** Types used to decode values following a script tag or command. */
 enum SCRIPT_ARGUMENT_TYPE {
     SCRIPT_ARGUMENT_STRING = 0,  /**< A quoted text argument. */
@@ -42,7 +44,7 @@ STATIC_ASSERT(sizeof(TAG_PARAM) == 0x64);
  * Parses tagged text scripts and dispatches their embedded commands.
  *
  */
-class CScriptInterpreter {
+class CScriptInterpreter : public input_str {
 public:
     /**
      * Reads the next tag out of the script and gives its number.
@@ -125,9 +127,6 @@ public:
      */
     int SearchCommand(int *tag_index);
 
-    char *data;                /**< Mutable script text being parsed. */
-    int size;                  /**< Number of bytes available in the script. */
-    int pos;                   /**< Current byte position in the script. */
     int current_tag;           /**< Index of the tag most recently read, or -1. */
     int argument_data_used;    /**< Offset of command-call values in the work buffer. */
     int tag_count;             /**< Number of entries in the tag table. */

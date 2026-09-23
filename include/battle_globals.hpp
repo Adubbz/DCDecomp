@@ -11,6 +11,21 @@ struct funcdata;
 struct spRGBA;
 
 /**
+ * State of the storybook that plays before the game begins.
+ */
+struct OPENING_BOOK {
+    s16 open;      /**< Whether the storybook draws at all. */
+    s16 tex_block; /**< Texture block the storybook's pages are loaded into. */
+    s16 unk_004;
+    s16 unk_006;
+    s16 step; /**< Which part of the opening the storybook is showing. */
+    s16 fade; /**< How brightly the screen fades the storybook in. */
+    s16 unk_00C;
+};
+
+STATIC_ASSERT(sizeof(OPENING_BOOK) == 0xE);
+
+/**
  * Gives every party member their default name.
  *
  * @mangled GlobalNameInit__Fv
@@ -74,15 +89,6 @@ void DrawNameRegiWaku(int, int, int, int, int);
 void DrawCharaNameUp(int, int, int, int);
 
 /**
- * Draws the character keyboard the name is entered from.
- *
- * @mangled DrawNameTemplete__Fiiii
- * @address 0x2390A0
- * @size 0x930
- */
-void DrawNameTemplete(int, int, int, int);
-
-/**
  * Reports whether the entered name may be used.
  *
  * @mangled CheckName__Fv
@@ -101,13 +107,13 @@ int CheckName(void);
 void NameEnterDraw(void);
 
 /**
- * Moves the cursor across the keyboard and enters the character it settles on.
+ * Moves the cursor across the keyboard, enters a character and reports a transition.
  *
  * @mangled NameEnterKey__Fv
  * @address 0x23A840
  * @size 0x1F28
  */
-void NameEnterKey(void);
+s32 NameEnterKey(void);
 
 /**
  * Gives one party member their default name for the chosen language.
@@ -117,15 +123,6 @@ void NameEnterKey(void);
  * @size 0x110
  */
 void NameDefaultSet(int chara_no);
-
-/**
- * Gives the kerning between two name characters.
- *
- * @mangled GetFontLRTumeW__Fiii
- * @address 0x23C880
- * @size 0x78
- */
-int GetFontLRTumeW(int, int, int);
 
 /**
  * Draws a party member's name on the character-select page.
@@ -163,7 +160,7 @@ int GetMsgLengthCharaName(int chara_no);
  * @address 0x23CE60
  * @size 0xB0
  */
-void InitOpeningBook(u_long128 *, int *);
+void InitOpeningBook(void /* CW back-ref target unresolved */ *, int *);
 
 /**
  * Turns the storybook's pages with the pad.

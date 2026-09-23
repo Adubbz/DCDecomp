@@ -9,6 +9,30 @@ class CTexture;
 struct spRGBA;
 
 /**
+ * Records the party's position relative to the nearest water surface.
+ */
+struct CHECK_WATER_INFO {
+    float unk_00[4];
+    float unk_10[4];
+    s32 unk_20;
+    char unk_24[0xC];
+};
+
+STATIC_ASSERT(sizeof(CHECK_WATER_INFO) == 0x30);
+
+/**
+ * Records one ring spreading across the water.
+ */
+struct WATER_WAVE_LING {
+    float unk_00[4];
+    float unk_10;
+    s32 unk_14;
+    char unk_18[8];
+};
+
+STATIC_ASSERT(sizeof(WATER_WAVE_LING) == 0x20);
+
+/**
  * Clears the water-splash effects.
  *
  * @mangled WaterSplash_Init__Fv
@@ -105,7 +129,7 @@ void BtStatusAlarmAnime(void);
  * @address 0x1B03F0
  * @size 0x80
  */
-spRGBA *BtGetStatusPal(int, float, float);
+u8 *BtGetStatusPal(int bar, float max, float value);
 
 /**
  * Chooses the second colour a status bar draws in from how full it is.
@@ -114,7 +138,7 @@ spRGBA *BtGetStatusPal(int, float, float);
  * @address 0x1B0470
  * @size 0x80
  */
-spRGBA *BtGetStatusPal2(int, float, float);
+u8 *BtGetStatusPal2(int bar, float max, float value);
 
 /**
  * Draws the life, magic and stamina bars at the top of the screen.
@@ -205,7 +229,8 @@ void BtMapJumpLoad(char *);
  * @address 0x1B27F0
  * @size 0x108
  */
-void BtSet3DCellModel(float *, CTexture *, float, int, int, int, int, int);
+void BtSet3DCellModel(float *world, CTexture *texture, float size, int x, int y, int width,
+                      int height, int alpha);
 
 /**
  * Gives the way a shot flies for one heading and pitch.

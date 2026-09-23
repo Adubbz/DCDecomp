@@ -1,9 +1,22 @@
 #include "common.h"
 
+#include <libvu0.h>
+
+#include "btactstatus.hpp"
 #include "btitem.hpp"
+#include "btmisc.hpp"
+#include "dataalloc.hpp"
+#include "dataread.hpp"
+#include "dngmessageman.hpp"
 #include "dngstatusdata.hpp"
 #include "dun/gameloop.hpp"
+#include "gamepad.hpp"
+#include "menu_draw.hpp"
+#include "menu_save.hpp"
+#include "nowload.hpp"
+#include "snd.hpp"
 #include "sysmes.hpp"
+#include "userstatus.hpp"
 
 /* Battle item handling: treasure boxes, pickups and thrown items. */
 
@@ -18,6 +31,103 @@ extern int BtGetTreasureboxSmall_itemNo;
 extern int BtGetTreasureboxSmall_itemVolume;
 
 /**
+ * Step the gate-key and attachment pickup presentations are on.
+ */
+extern int GateKey_Sled;
+
+/**
+ * Step the small character-select window is on.
+ */
+extern int BtMiniChrSelecter_Sled;
+
+/**
+ * Selection mode the small character-select window was opened with.
+ */
+extern int BtMiniChrSel_Type;
+
+/**
+ * Step the small item-select window is on.
+ */
+extern int BtMiniItemSelect_Sled;
+
+/**
+ * Holds the party where it stands instead of running its movement step.
+ */
+extern int driveStepHold;
+
+/**
+ * Freezes the drawn frame so a menu can open over it.
+ */
+extern int frameCaputer;
+
+/**
+ * Item the small item-select window returned, or -1.
+ */
+extern int miniItemSelNo;
+
+/**
+ * Mode the battle loop runs its menus in.
+ */
+extern int BtGameModeFlag;
+
+/**
+ * Event the dungeon loop is running, or -1 when none is.
+ */
+extern int iventInfo;
+
+/**
+ * Stops the monster units stepping.
+ */
+extern int CMonUnitHold;
+
+/**
+ * Stops the effects stepping.
+ */
+extern int CEffectHold;
+
+/**
+ * Marks that the party is holding a gate key.
+ */
+extern int gateItemFlag;
+
+/**
+ * Item the gate-key presentation is showing.
+ */
+extern int GateKey_itemNo;
+
+/**
+ * Model of the item a pickup presentation is showing.
+ */
+extern int itemOpenItemMds;
+
+/**
+ * Texture of the item a pickup presentation is showing.
+ */
+extern int itemOpenItemImg;
+
+/**
+ * Hides the monster units instead of drawing them.
+ */
+extern int CMonUnitHyde;
+
+/**
+ * Hides the effects instead of drawing them.
+ */
+extern int CEffectHyde;
+
+/**
+ * Model the escape presentation draws.
+ */
+extern int escape_chr;
+
+/**
+ * Step the escape presentation is on.
+ */
+extern int escape_sled;
+
+extern "C" CDataAlloc2<1> BtCashBuffer;
+
+/**
  * Computes the quantity represented by an acquired attachment.
  */
 int createAttachVolume(int item_no, int dungeon);
@@ -30,8 +140,25 @@ INCLUDE_RODATA("asm/nonmatchings/btitem", @638);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @639__2);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @640__2);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @641);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @642__2);
-INCLUDE_ASM("asm/nonmatchings/btitem", LoadActiveItemIcon__Fv);
+/**
+ * Marks the active item icons as loaded by the battle item-list flow.
+ */
+extern s32 BtItemListCashFlag;
+
+/**
+ * Loads the image used by the active item icons.
+ *
+ * @mangled LoadActiveItemIcon__Fv
+ * @address 0x1D13A0
+ * @size 0x4C
+ */
+void LoadActiveItemIcon(void) {
+    unsigned int *buffer = read_buffer;
+    LoadFileMenuData("itemlst.img", buffer);
+    wait_now_loading_vsync();
+    SetTempTexture(0x28, (char *) read_buffer);
+    BtItemListCashFlag = 1;
+}
 /**
  * Opens the large treasure chest and starts its presentation.
  *
@@ -96,14 +223,21 @@ INCLUDE_RODATA("asm/nonmatchings/btitem", @902);
  * @size 0x61C
  */
 INCLUDE_ASM("asm/nonmatchings/btitem", BtAtraGetShort_Loop__Fii);
+
 /**
- * Opens the small character-select window.
+ * Opens the small character-select window in the given selection mode.
  *
  * @mangled BtMiniChrSelect_Init__Fi
  * @address 0x1D3290
  * @size 0x40
  */
-INCLUDE_ASM("asm/nonmatchings/btitem", BtMiniChrSelect_Init__Fi);
+void BtMiniChrSelect_Init(int type) {
+    SetMIniMapStatus(0);
+    DngMessMan.unk_00 = 0;
+    BtMiniChrSelecter_Sled = 0;
+    BtMiniChrSel_Type = type;
+}
+
 /**
  * Runs the small character-select window and reports the choice.
  *
@@ -119,23 +253,100 @@ INCLUDE_ASM("asm/nonmatchings/btitem", BtMiniChrSelect_Loop__Fv);
  * @address 0x1D3400
  * @size 0x38
  */
-INCLUDE_ASM("asm/nonmatchings/btitem", BtMiniItemSelect__Fv);
+void BtMiniItemSelect(void) {
+    SetMIniMapStatus(0);
+    DngMessMan.unk_00 = 0;
+    BtMiniItemSelect_Sled = 0;
+    driveStepHold = 1;
+}
+
 /**
- * Runs the small item-select window and reports the choice.
+ * Runs one frame of the small item-select window, and reports when it closes.
  *
  * @mangled BtMiniItemSelect_Loop__Fv
  * @address 0x1D3440
  * @size 0x118
  */
-INCLUDE_ASM("asm/nonmatchings/btitem", BtMiniItemSelect_Loop__Fv);
+int BtMiniItemSelect_Loop(void) {
+    int done = 0;
+
+    switch (BtMiniItemSelect_Sled) {
+        case 0:
+            BtMiniItemSelect_Sled++;
+            frameCaputer = 1;
+            break;
+
+        case 1:
+            BtMiniItemSelect_Sled++;
+            break;
+
+        case 2: {
+            frameCaputer = 0;
+            driveStepHold = 0;
+            miniItemSelNo = -1;
+
+            ITEM_PACK *pack = &UserStatus->item_pack;
+
+            InitEventItemSelect(0x18, BtEventInfo.unk_3C, pack, 0xB4, 0xD2, BtEventInfo.unk_7C, 0);
+            BtGameModeFlag = 3;
+            BtMiniItemSelect_Sled++;
+            break;
+        }
+
+        case 3:
+            if (BtEventInfo.unk_80 != 0) {
+                ((int *) BtEventInfo.unk_80)[1] = miniItemSelNo;
+            }
+            BtEventInfo.unk_80 = 0;
+            SetMIniMapStatus(1);
+            done = 1;
+            DngMessMan.unk_00 = done;
+            break;
+    }
+
+    return done;
+}
+
 /**
- * Starts the presentation for picking up a gate key.
+ * Starts the gate-key pickup presentation for the given item.
  *
  * @mangled BtGetGateKey_Init__Fi
  * @address 0x1D3560
  * @size 0x13C
  */
-INCLUDE_ASM("asm/nonmatchings/btitem", BtGetGateKey_Init__Fi);
+void BtGetGateKey_Init(int item_no) {
+    char model_path[64];
+    char texture_path[64];
+    u_char *model;
+    u_char *texture;
+    int size;
+
+    GateKey_itemNo = item_no;
+    BtGetItemNamePath(model_path, texture_path, item_no);
+    BtCashBuffer.base = (u_char *) read_buffer;
+    BtCashBuffer.limit = 0x445C0;
+    BtCashBuffer.used = 0;
+    StartReadBG();
+    model = BtCashBuffer.base + BtCashBuffer.used * 16;
+    itemOpenItemMds = (int) model;
+    LoadFileBG(model_path, (u_long128 *) model, &size);
+    BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
+    texture = BtCashBuffer.base + BtCashBuffer.used * 16;
+    itemOpenItemImg = (int) texture;
+    LoadFileBG(texture_path, (u_long128 *) texture, &size);
+    BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
+    ResetMovePower();
+    DngMessMan.unk_00 = 0;
+
+    CUserStatus *user = UserStatus;
+
+    user->step_disable = 1;
+    BtActStatus.unk_00C = 0;
+    BtActStatus.unk_09C = 1;
+    GateKey_Sled = 0;
+    autoCamTrial();
+}
+
 /**
  * Runs the gate-key presentation and reports when it ends.
  *
@@ -158,23 +369,84 @@ void BtGetAttach_Init(int dungeon, int item_no) {
     ClearSystemMes();
     ItemGetMes(BtGetTreasureboxSmall_itemNo, BtGetTreasureboxSmall_itemVolume, 0x78, 0);
 }
+
 /**
- * Runs the attachment pickup presentation and reports when it ends.
+ * Runs one frame of the attachment pickup message, and reports when it ends.
  *
  * @mangled BtGetAttach_Loop__Fv
  * @address 0x1D3B00
  * @size 0xF0
  */
-INCLUDE_ASM("asm/nonmatchings/btitem", BtGetAttach_Loop__Fv);
+int BtGetAttach_Loop(void) {
+    int done = 0;
+
+    switch (GateKey_Sled) {
+        case 0:
+            SetMIniMapStatus(0);
+            iventInfo = -1;
+            CMonUnitHold = 1;
+            CEffectHold = 1;
+            ItemGetMes(BtGetTreasureboxSmall_itemNo, BtGetTreasureboxSmall_itemVolume, 0x28, 1);
+            GateKey_Sled++;
+            break;
+
+        case 1:
+            if (GamePad.Down(0x60) != 0) {
+                DngMessMan.unk_00 = 1;
+                UserStatus->step_disable = 0;
+                SetMIniMapStatus(1);
+                CMonUnitHold = 0;
+                CEffectHold = 0;
+                gateItemFlag = 0;
+                BtActStatus.unk_09C = 0;
+                ClearSystemMes();
+                done = 1;
+            }
+            break;
+    }
+
+    return done;
+}
+
 /**
- * Starts the presentation for escaping the floor.
+ * Starts the presentation that carries the party off the floor.
  *
  * @mangled BtEscape_Init__Fv
  * @address 0x1D3BF0
  * @size 0x14C
  */
-INCLUDE_ASM("asm/nonmatchings/btitem", BtEscape_Init__Fv);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @996);
+void BtEscape_Init(void) {
+    u_char *chr;
+    int size;
+
+    BtCashBuffer.base = (u_char *) read_buffer;
+    BtCashBuffer.limit = 0x445C0;
+    BtCashBuffer.used = 0;
+    StartReadBG();
+    chr = BtCashBuffer.base + BtCashBuffer.used * 16;
+    escape_chr = (int) chr;
+    LoadFileBG("dun/effect/escape.chr", (u_long128 *) chr, &size);
+    BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
+    SndSPSeLoadBG(8, (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16), &size);
+    BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
+    DngMessMan.unk_00 = 0;
+
+    CUserStatus *user = UserStatus;
+
+    user->step_disable = 1;
+    CMonUnitHold = 1;
+    CMonUnitHyde = 1;
+    CEffectHold = 1;
+    CEffectHyde = 1;
+    SetMIniMapStatus(0);
+    iventInfo = -1;
+    ResetMovePower();
+    BtActStatus.unk_00C = 0;
+    BtActStatus.unk_09C = 1;
+    escape_sled = 0;
+    autoCamTrial();
+}
+
 INCLUDE_RODATA("asm/nonmatchings/btitem", @549__4);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @595__2);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @596__3);
@@ -333,8 +605,44 @@ INCLUDE_ASM("asm/nonmatchings/btitem", BtEscape_Loop__Fv);
  * @size 0x1B0
  */
 INCLUDE_ASM("asm/nonmatchings/btitem", BtSetActiveItemModel__FPUi);
-INCLUDE_ASM("asm/nonmatchings/btitem", ParabolicInitialVector__FPfPfPfff);
-INCLUDE_ASM("asm/nonmatchings/btitem", setShotVector__FPffff);
+
+/**
+ * Computes the velocity needed to move an object between two points in time.
+ *
+ * @mangled ParabolicInitialVector__FPfPfPfff
+ * @address 0x1D4080
+ * @size 0x7C
+ */
+void ParabolicInitialVector(float *velocity, float *from, float *to, float gravity, float time) {
+    velocity[0] = (to[0] - from[0]) / time;
+    velocity[1] = (2.0f * (to[1] - from[1]) - time * (gravity * time)) / (2.0f * time);
+    velocity[2] = (to[2] - from[2]) / time;
+    velocity[3] = 1.0f;
+    float negative_one = -1.0f;
+    velocity[1] = velocity[1] * negative_one;
+}
+
+/**
+ * Builds the velocity of a shot fired at the given speed and angles.
+ *
+ * @mangled setShotVector__FPffff
+ * @address 0x1D4100
+ * @size 0x98
+ */
+void setShotVector(float *velocity, float speed, float angle_y, float angle_x) {
+    sceVu0FMATRIX rotation;
+    sceVu0FMATRIX unit;
+
+    velocity[0] = 0.0f;
+    velocity[1] = 0.0f;
+    velocity[2] = speed;
+    velocity[3] = 1.0f;
+    sceVu0UnitMatrix(unit);
+    sceVu0RotMatrixX(rotation, unit, angle_x);
+    sceVu0RotMatrixY(rotation, rotation, angle_y);
+    sceVu0ApplyMatrix(velocity, rotation, velocity);
+}
+
 INCLUDE_ASM("asm/nonmatchings/btitem", getCharacterVector__FPff);
 /**
  * Advances a thrown item along its arc.

@@ -21,10 +21,40 @@
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 517
 
+/**
+ * Stores one event-battle key and its timing state.
+ */
+struct EB_KEY {
+    int unk_00;
+    int unk_04;
+    int unk_08;
+    int unk_0C;
+    int unk_10;
+    int unk_14;
+    int unk_18;
+};
+
+STATIC_ASSERT(sizeof(EB_KEY) == 0x1C);
+
+/**
+ * Stores one motion and its frame range for the event-battle sequence.
+ */
+struct EB_MOTION {
+    int motion_no; /**< Motion requested from the character. */
+    float start;   /**< First frame of the motion. */
+    float end;     /**< Frame after the motion ends. */
+    float speed;   /**< Frames advanced on each update. */
+    int frames;    /**< Number of updates in the motion. */
+};
+
+STATIC_ASSERT(sizeof(EB_MOTION) == 0x14);
+
 /* The four values EBDraw reads to place its caution mark; all of them zero. */
 extern "C" const s32 Caution[4] = {0, 0, 0, 0};
 
-extern int eb_motion[160];
+/** Stores the key state for each event-battle motion. */
+extern EB_KEY eb_key[64];
+extern EB_MOTION eb_motion[32];
 extern float old_time;
 extern float speed;
 extern int now_eb_key;
@@ -71,7 +101,6 @@ extern CCharacter *eb_chara;
 extern int eb_cool_flag;
 extern int eb_result;
 extern float now_time;
-extern int eb_key[0x1C0];
 extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 
 /** The part of the screen the event battle's opening wipe has reached. */
@@ -82,7 +111,7 @@ static void init_draw_ok();
 static void set_draw_ok(int type, int button);
 void draw_ok_loop();
 void DrawButton(int buttons, int x, int y, float scale, int early);
-void DrawButtonSub(int x, int y, int texture_x, int texture_y, float scale);
+static void DrawButtonSub(int x, int y, int texture_x, int texture_y, float scale);
 static void draw_ok(int x);
 static float button_scale(int button);
 void EdEyeCamera(CCamera *camera, CCharacter *character);
@@ -108,7 +137,7 @@ void EBInit(float speed_mult) {
             now_eb_key = -1;
             sound_cnt = 0;
             debug_mode = 0;
-            eb_motion[0] = -1;
+            eb_motion[0].motion_no = -1;
             eb_key_count = 0;
             eb_finish_cnt = 0;
             now_button_no = 0;
@@ -252,28 +281,27 @@ void EBExit() {
  * @address 0x1685C0
  * @size 0xCC
  */
-#ifdef NON_MATCHING
-int EBIntroLoop() {
+int EBIntroLoop(void) {
+    int width;
+
     if (ebattle_intro_flag == 0) {
         return 1;
     }
 
-    draw_rect.width = (eb_intro_cnt * 0x280) / 100;
-    if (draw_rect.width > 0x280) {
-        draw_rect.width = 0x280;
+    // The wipe crosses the screen over a hundred frames.
+    width = eb_intro_cnt * 640 / 100;
+    if (width > 640) {
+        width = 640;
     }
-    draw_rect.x = 0x280 - draw_rect.width;
-    ++eb_intro_cnt;
-    if (eb_intro_cnt < 101) {
-        return 0;
+    draw_rect.x = 640 - width;
+    draw_rect.width = width;
+    eb_intro_cnt++;
+    if (eb_intro_cnt > 100) {
+        draw_rect = CRect_i_(0, 0, 640, 448);
+        return 1;
     }
-
-    draw_rect = CRect_i_(0, 0, 0x280, 0x1C0);
-    return 1;
+    return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", EBIntroLoop__Fv);
-#endif
 /**
  * Runs one frame of the event battle and reports the result.
  *
@@ -489,17 +517,25 @@ INCLUDE_ASM("asm/nonmatchings/ebattle", DrawButton__Fiiifi);
  * @address 0x169340
  * @size 0xE0
  */
-#ifdef NON_MATCHING
-void DrawButtonSub(int x, int y, int texture_x, int texture_y, float scale) {
-    int width = (int) (32.0f * scale);
-    int height = (int) (32.0f * scale);
-    CRect_i_ screen(x - (width - 32) / 2, y - (height - 32) / 2, width, height);
-    CRect_i_ texel(texture_x, texture_y, 32, 32);
+static void DrawButtonSub(int x, int y, int u, int v, float scale) {
+    int width = 32.0f * scale;
+    int height = 32.0f * scale;
+    CRect_i_ screen;
+    CRect_i_ texel;
+
+    // The prompt grows about its own centre.
+    x -= (width - 32) >> 1;
+    y -= (height - 32) >> 1;
+    texel.x = u;
+    texel.y = v;
+    texel.width = 32;
+    texel.height = 32;
+    screen.x = x;
+    screen.y = y;
+    screen.width = width;
+    screen.height = height;
     set2DSprite(GetVif1Packet(), tex, screen, texel);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", DrawButtonSub__Fiiiif);
-#endif
 
 /**
  * Clears the enemy-battle confirmation effect.
@@ -594,7 +630,6 @@ INCLUDE_ASM("asm/nonmatchings/ebattle", draw_ok__Fi);
  * @address 0x169730
  * @size 0x90
  */
-#ifdef NON_MATCHING
 static float button_scale(int button) {
     if (button != ok_effect_button) {
         return 1.0f;
@@ -603,17 +638,15 @@ static float button_scale(int button) {
     // The prompt swells over the first five frames of the flash and settles
     // back over the next five.
     int elapsed = 30 - ok_draw_cnt;
+    float scale = 1.0f;
+
     if (elapsed < 5) {
-        return 1.0f + 0.2f * (float) elapsed;
+        scale += 0.2f * (float) elapsed;
+    } else if (elapsed < 10) {
+        scale += 0.2f * (float) (10 - elapsed);
     }
-    if (elapsed < 10) {
-        return 1.0f + 0.2f * (float) (10 - elapsed);
-    }
-    return 1.0f;
+    return scale;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", button_scale__Fi);
-#endif
 static int key_mode = 0xFFFF;
 
 /**
@@ -749,45 +782,46 @@ static int PadDown(int keys) {
  * @address 0x169B70
  * @size 0x20C
  */
-#ifdef NON_MATCHING
-void CameraAutoMove(CCameraFollow *camera, CCPoly *collision, float *target,
-                    float previous_angle, float next_angle) {
+static void CameraAutoMove(CCameraFollow *camera, CCPoly *poly, float *position, float from,
+                           float to) {
     float reference[4];
     float offset[4];
-    camera->GetRef(reference);
-    offset[0] = target[0] - reference[0];
-    offset[1] = 0.0f;
-    offset[2] = target[2] - reference[2];
-    offset[3] = 0.0f;
+    float step;
 
-    camera->SetDistance(5.0f + DistVector(offset));
-    float distance_error = camera->GetDistance() - camera_near_dist;
-    float turn_speed = 0.0f;
-    if (distance_error < 0.0f) {
-        turn_speed = -distance_error / 10.0f;
-    } else if (distance_error > 0.0f) {
-        turn_speed = distance_error / 15.0f;
+    camera->GetRef(reference);
+    offset[0] = position[0] - reference[0];
+    offset[2] = position[2] - reference[2];
+    offset[1] = 0.0f;
+    camera->SetDistance(0.1f + DistVector(offset));
+
+    step = 0.0f;
+    float over = camera->GetDistance() - camera_near_dist;
+    if (over < step) {
+        step = -over / 10.0f;
     }
-    if (turn_speed > 2.0f) {
-        turn_speed = 2.0f;
+    if (over > 0.0f) {
+        step = over / 15.0f;
     }
-    if (turn_speed < 0.1f) {
-        turn_speed = 0.1f;
+    if (step > 2.0f) {
+        step = 2.0f;
     }
-    if (distance_error < 0.0f) {
-        turn_speed *= 2.0f;
+    if (step < 0.05f) {
+        step = 0.05f;
+    }
+    if (over < 0.0f) {
+        step *= 2.0f;
     }
 
     camera->SetAngle(atan2f(offset[0], offset[2]));
-    camera->AddAngle((previous_angle < next_angle ? -0.1f : 0.1f) * turn_speed);
-    if (camera->GetDistance() < 0.5f * camera_near_dist) {
+    if (from < to) {
+        camera->AddAngle(0.2f * -step);
+    } else {
+        camera->AddAngle(0.2f * step);
+    }
+    if (camera->GetDistance() < 0.8f * camera_near_dist) {
         camera->AddHeight(1.0f);
     }
-    (void) collision;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", CameraAutoMove__FP13CCameraFollowP6CCPolyPfff);
-#endif
 
 /**
  * Disables the editor camera-view mode.
@@ -807,11 +841,12 @@ void EdViewModeOff() {
  * @address 0x169D90
  * @size 0x34
  */
-void InitEyeCamera(CCharacter *character) {
-    CVector3_f_ *rotation = character->GetRotation();
-    viewAngleH = rotation->y;
+static void InitEyeCamera(CCharacter *chara) {
+    // The camera looks the way the character faces.
+    viewAngleH = chara->GetRotation()->y;
     viewAngleV = 0.0f;
 }
+
 /**
  * Aims the eye camera from a character's head.
  *
@@ -819,36 +854,41 @@ void InitEyeCamera(CCharacter *character) {
  * @address 0x169DD0
  * @size 0x1B0
  */
-#ifdef NON_MATCHING
-void EyeCamera(CCamera *camera, CCharacter *character, int use_right_stick) {
-    float horizontal;
-    float vertical;
-    if (use_right_stick == 0) {
-        horizontal = GetLXf();
-        vertical = -GetLYf();
-    } else {
-        horizontal = 0.0f;
-        vertical = -GetRYf();
-    }
+void EyeCamera(CCamera *camera, CCharacter *character, int right_stick) {
+    float stick_x;
+    float stick_y;
 
-    if (horizontal != 0.0f) {
-        viewAngleH -= horizontal * 0.05f;
+    if (right_stick != 0) {
+        stick_x = 0.0f;
+        stick_y = -GetRYf();
+    } else {
+        stick_x = GetLXf();
+        stick_y = -GetLYf();
+    }
+    if (stick_x > 0.0f) {
+        float rate = 0.02f;
+        viewAngleH -= stick_x * rate;
         if (viewAngleH < -3.1415927f) {
             viewAngleH += 6.2831855f;
-        } else if (viewAngleH > 3.1415927f) {
+        }
+    }
+    if (stick_x < -0.0f) {
+        float rate = 0.02f;
+        viewAngleH -= stick_x * rate;
+        if (viewAngleH > 3.1415927f) {
             viewAngleH -= 6.2831855f;
         }
     }
-    if (vertical > 0.0f && viewAngleV < 1.0f) {
-        viewAngleV += vertical * 0.05f;
-    } else if (vertical < 0.0f && viewAngleV > -1.0f) {
-        viewAngleV += vertical * 0.05f;
+    if (stick_y > 0.0f && viewAngleV < 0.65f) {
+        float rate = 0.02f;
+        viewAngleV += stick_y * rate;
+    }
+    if (stick_y < -0.0f && viewAngleV > -1.0f) {
+        float rate = 0.02f;
+        viewAngleV += stick_y * rate;
     }
     EdEyeCamera(camera, character);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", EyeCamera__FP7CCameraP10CCharacteri);
-#endif
 
 void EdInitCameraParam(CCameraFollow *camera) {
     if (camera != 0) {
@@ -871,28 +911,30 @@ void EdMoveCharaInit() {
  * @address 0x169FF0
  * @size 0x128
  */
-#ifdef NON_MATCHING
-void EdEyeCamera(CCamera *camera, CCharacter *character) {
-    sceVu0FVECTOR eye;
-    sceVu0FVECTOR reference = {0.0f, 0.0f, 10.0f, 0.0f};
-    sceVu0FMATRIX identity;
+void EdEyeCamera(CCamera *camera, CCharacter *chara) {
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR reference;
     sceVu0FMATRIX rotation;
-    sceVu0UnitMatrix(identity);
-    sceVu0RotMatrixX(rotation, identity, viewAngleV);
+    sceVu0FMATRIX unit;
+
+    // The point the camera looks at sits ten units ahead of the head, turned
+    // by the two view angles.
+    reference[0] = 0.0f;
+    reference[1] = 0.0f;
+    reference[2] = 10.0f;
+    reference[3] = 0.0f;
+    sceVu0UnitMatrix(unit);
+    sceVu0RotMatrixX(rotation, unit, viewAngleV);
     sceVu0RotMatrixY(rotation, rotation, viewAngleH);
     sceVu0ApplyMatrix(reference, rotation, reference);
-
-    character->GetPosition(eye);
-    eye[1] += 14.0f;
-    reference[0] += eye[0];
-    reference[1] += eye[1];
-    reference[2] += eye[2];
-    camera->SetPos(eye);
+    chara->GetPosition(position);
+    position[1] += 14.0f;
+    reference[0] += position[0];
+    reference[1] += position[1];
+    reference[2] += position[2];
+    camera->SetPos(position);
     camera->SetRef(reference);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", EdEyeCamera__FP7CCameraP10CCharacter);
-#endif
 
 int EdCheckViewMode() {
     return viewMode;

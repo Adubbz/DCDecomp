@@ -170,6 +170,8 @@ carve_part(main.data.part1.s
 carve_part(main.data.part2.s
            main.data.part2.s=2514C0-251560
            main.data.part2c.s=2525D0-253DD0)
+carve_part(main.data.part2b.s
+           main.data.nowload-a.s=2540B0-2540C0)
 # Retail's vtables come out in one run that alternates between the units that
 # now own theirs and the dump that still holds the rest, so the dump is cut
 # around each owned block rather than having the block removed from it.
@@ -196,7 +198,7 @@ carve_part(main.sdata.part2b.s
            main.sdata.memcard-a.s=2A2158-2A21A0
            main.sdata.part2g.s=2A21B8-2A21C8
            main.sdata.part2e.s=2A21F0-2A21F8
-           main.sdata.battle_globals-a.s=2A2200-2A2218)
+           main.sdata.battle_globals-a.s=2A2208-2A2218)
 carve_part(main.sdata.part3.s
            main.sdata.part3.s=2A22E0-2A2380)
 # .sbss: the same again, one unit's run at a time.
@@ -218,7 +220,7 @@ carve_part(main.bss.part4b.s
 carve_part(main.bss.part6.s
            main.bss.part6.s=1D65C20-1D87380
            main.bss.part6b.s=1D8FA80-1DA8B80
-           main.bss.part6c.s=1DA8D30-1DABD00)
+           main.bss.part6c.s=1DA8D90-1DABD00)
 carve_part(main.bss.part5.s
            main.bss.part5.s=1D1B218-1D1B360
            main.bss.part5e.s=1D1B390-1D25B90
@@ -263,7 +265,11 @@ carve_part(main.sbss.part5.s
 carve_part(main.data.part6.s
            main.data.part6.s=27E790-27EB30
            main.data.part6f.s=291850-291B80
-           main.data.part6k.s=292704-2938A0
+           main.data.part6k.s=292704-292750
+           main.data.shop-local.s=292770-2927B0
+           main.data.shop-checkbuy-a.s=2927BC-2927C0
+           main.data.shop-checkbuy-b.s=2927CC-292830
+           main.data.shop-ticket.s=292840-293860
            main.data.battlemenu-tail.s=293960-293C60
            main.data.part6h.s=293C80-293D50
            main.data.memcard-a.s=293EBC-293FE0
@@ -271,11 +277,14 @@ carve_part(main.data.part6.s
            main.data.part6g.s=2941C0-294460
            main.data.part6j.s=295644-295810
            main.data.part6d.s=295830-295840
-           main.data.part6b.s=2959A0-295FF0)
+           main.data.part6b.s=2959A0-295A10
+           main.data.battle_globals-a.s=295A70-295AA0
+           main.data.battle_globals-gap.s=295B18-295B50
+           main.data.battle_globals-b.s=295B50-295FF0)
 carve_part(main.data.part4.s
            main.data.part4.s=25DF70-266810
            main.data.part4b.s=2668C0-266B70
-           main.data.part4m.s=266B90-266EF0
+           main.data.part4m.s=266B90-266ED0
            main.data.part4c.s=266FB0-269320
            main.data.part4h.s=269400-269480
            main.data.part4j.s=269494-269930
@@ -284,8 +293,15 @@ carve_part(main.data.part4.s
            main.data.part4g.s=26A5E8-26AE60
            main.data.part4k.s=26AE80-26AE90
            main.data.fishing-a.s=26AFE0-26B0C0
-           main.data.part4l.s=26B0D0-26B2C0
+           main.data.motionmodel-a.s=26B0D0-26B1B0
+           main.data.motionmodel-gap.s=26B1C8-26B1D0
+           main.data.motionmodel-b.s=26B1D0-26B2C0
            main.data.part4d.s=26B310-279EB0)
+# itemdata.cpp supplies the texture lists TEIGIImgLoad builds, between the
+# command tables and the weapon definitions the unit already owns.
+carve_part(main.data.part5.s
+           main.data.itemdata-a.s=27A090-27A610
+           main.data.itemdata-b.s=27A6A0-27A6C0)
 carve_part(main.rdata.part5.s
            main.rdata.part5.s=2A1390-2A1490)
 

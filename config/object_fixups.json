@@ -1,4 +1,62 @@
 {
+  "src/shop.cpp": {
+    "sections": {
+      ".shopdata-prefix": [
+        "PriceList",
+        "ItemShopList2",
+        "@888",
+        "@889",
+        "@1007"
+      ],
+      ".shopdata-ticket": [
+        "@1526"
+      ],
+      ".shopdata-checkbuy-a": [
+        "@1312"
+      ],
+      ".shopdata-checkbuy-b": [
+        "@1313"
+      ],
+      ".shopdata-local-a": [
+        "@1034"
+      ],
+      ".shopdata-local-b": [
+        "@1035"
+      ]
+    },
+    "rekey_sections": [
+      [
+        ".shopdata-local-a",
+        [
+          16
+        ]
+      ],
+      [
+        ".shopdata-local-b",
+        [
+          16
+        ]
+      ],
+      [
+        ".shopdata-checkbuy-a",
+        [
+          12
+        ]
+      ],
+      [
+        ".shopdata-checkbuy-b",
+        [
+          12
+        ]
+      ],
+      [
+        ".shopdata-ticket",
+        [
+          16
+        ]
+      ]
+    ]
+  },
   "src/gamepad.cpp": {
     "sections": {
       ".padbss": [
@@ -42,6 +100,9 @@
     ]
   },
   "src/dungeonmap.cpp": {
+    "symbols": {
+      "info_cfg_literal": "@1007__2"
+    },
     "rodata_exports": [
       "@2283",
       "@2284",
@@ -1244,12 +1305,34 @@
       "SeitonAttachBoardSub__FP11ATTACH_LIST": "SeitonAttachBoardSub__FP11ATTACH_LIST__2"
     }
   },
+  "src/menu_misc.cpp": {
+    "symbols": {
+      "CharaFileExtension": "@1037__2"
+    },
+    "globalize_symbols": [
+      "readFilePath",
+      "charaFile"
+    ],
+    "rodata_exports": [
+      "@1037__2"
+    ]
+  },
   "src/itemdata.cpp": {
     "symbols": {
       "skipSpace__FPci": "skipSpace__FPci__2",
       "checkArg__FPciPi": "checkArg__FPciPi__2",
       "teigiFileSize": "teigiFileSize__2"
-    }
+    },
+    "sections": {
+      ".itemdata1": [
+        "@829",
+        "@831",
+        "@832"
+      ]
+    },
+    "rodata_exports": [
+      "@766__2"
+    ]
   },
   "src/memcard.cpp": {
     "globalize_symbols": [
@@ -1263,6 +1346,73 @@
       "SaveMenuKeyLoadConfig__Fv",
       "SaveMenuKeyFileSelect__Fv"
     ]
+  },
+  "src/battle_globals.cpp": {
+    "sections": {
+      ".nameenterdata1": [
+        "@82",
+        "@83"
+      ],
+      ".nameentersdata1": [
+        "@67",
+        "@79"
+      ],
+      ".nameenterdata2": [
+        "@233",
+        "@234",
+        "@255",
+        "@258"
+      ]
+    },
+    "rekey_sections": [
+      [
+        ".nameenterdata1",
+        [
+          44,
+          44
+        ]
+      ],
+      [
+        ".nameenterdata2",
+        [
+          36,
+          14,
+          22,
+          22
+        ]
+      ]
+    ],
+    "symbols": {
+      "NameEntryTextureFile": "@781__3",
+      "NameEntryMessageFile": "@787__2",
+      "NameEntryTempTexture": "@782__3",
+      "NameEntryHiraganaTexture": "@783__5",
+      "NameEntryKatakanaTexture": "@784__3",
+      "NameEntryAlphabetTexture": "@785",
+      "NameEntryFaceTexture": "@786",
+      "NameEntryMessageFile2": "@788__2",
+      "NameEntryFrameTexture": "@789__4",
+      "NameEntryImageDescriptor": "@663__2"
+    },
+    "rodata_exports": [
+      "@781__3",
+      "@782__3",
+      "@783__5",
+      "@784__3",
+      "@785",
+      "@786",
+      "@787__2",
+      "@788__2",
+      "@789__4",
+      "@663__2"
+    ]
+  },
+  "src/motionmodel.cpp": {
+    "sections": {
+      ".motionmodeldata": [
+        "element_tbl"
+      ]
+    }
   },
   "src/menu_save.cpp": {
     "symbols": {
@@ -1284,7 +1434,17 @@
       "SaveMenuKeyAfterEnding__Fv",
       "SaveMenuKeySaveDecideEnding__Fv",
       "SaveMenuKeySaveEnding__Fv",
-      "SaveMenuKeyEndSaveEnding__Fv"
+      "SaveMenuKeyEndSaveEnding__Fv",
+      "SaveMenuKeyUnFormat__Fv",
+      "SaveMenuKeyLoadDecide__Fv"
+    ]
+  },
+  "src/memorycardaccess.cpp": {
+    "symbols": {
+      "@594__2": "AtoraVibeTextureName"
+    },
+    "globalize_symbols": [
+      "AtoraVibeTextureName"
     ]
   }
 }

@@ -1,5 +1,7 @@
 #include "shot_effect.hpp"
 
+#include <cstdlib>
+
 #include "collisiondata.hpp"
 #include "dun/gameloop.hpp"
 #include "hit_machingun_effect.hpp"
@@ -10,7 +12,6 @@
 #include "shot_utils.hpp"
 #include "texture.hpp"
 
-#include <cstdlib>
 
 int GetWeaponElementAttr(int element);
 
@@ -450,27 +451,27 @@ void CSHOT_EFFECT_PACK::SetDmg(s32 damage) {
  * @address 0x1AE660
  * @size 0xEC
  */
-#ifdef NON_MATCHING
-int CSHOT_MACHINGUN::Set(float *origin, float *movement, int shot_damage,
-                         int shot_attribute) {
-    int slot = 0;
-    while (slot < 16 && unk_280[slot] != 0) {
-        slot++;
+int CSHOT_MACHINGUN::Set(float *origin, float *direction, int damage, int element) {
+    int slot = -1;
+    for (int i = 0; i < 16; i++) {
+        if (this->unk_280[i] == 0) {
+            slot = i;
+            break;
+        }
     }
-    if (slot == 16) {
+
+    if (slot == -1) {
         return -1;
     }
 
-    sceVu0CopyVector(position[slot], origin);
-    sceVu0CopyVector(velocity[slot], movement);
-    unk_200[slot] = shot_damage;
-    unk_240[slot] = shot_attribute;
-    unk_280[slot] = 1;
+    sceVu0CopyVector(this->position[slot], origin);
+    sceVu0CopyVector(this->velocity[slot], direction);
+    this->unk_200[slot] = damage;
+    this->unk_240[slot] = element;
+    this->unk_280[slot] = 1;
     return slot;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", Set__15CSHOT_MACHINGUNFPfPfii);
-#endif
+
 /**
  * Advances the sixteen rapid-fire projectiles.
  *

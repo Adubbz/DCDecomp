@@ -1080,7 +1080,7 @@ static void ShopMenuInit(int *tex_block, int shop_no, int mode) {
     ShopMenu.unk_18E = 0;
     ShopMenu.unk_02 = 1;
     InitPersonalBoardMode(ShopUserStatusPt, &ShopMenu.board, 0, 0);
-    ShopHaveItemPt = (IHAVEITEM *) ShopMenu.board.unk_30;
+    ShopHaveItemPt = &ShopMenu.board.unk_30;
     ShopHaveWepPt = &ShopMenu.board.weapon;
     ShopHaveAttachPt = &ShopMenu.board.unk_13C;
     ShopMenu.unk_176 = 0;
@@ -1221,7 +1221,17 @@ static int ShopPersonReadStart(int shop_no, int person_no) {
     return 1;
 }
 
+/**
+ * Builds the shopkeeper's model using the current shop data.
+ */
+static int ShopPersonBuild(int, int);
+
 INCLUDE_ASM("asm/nonmatchings/shop", ShopPersonBuild__Fii);
+
+/**
+ * Sets the shopkeeper's model direction toward the menu camera.
+ */
+static void ShopMasterVectorSet(int);
 
 /**
  * Draws the shopkeeper and points the menu camera at them.
@@ -1230,8 +1240,20 @@ INCLUDE_ASM("asm/nonmatchings/shop", ShopPersonBuild__Fii);
  * @address 0x1E82B0
  * @size 0xB8
  */
-static void LocalShopPersonDraw();
-INCLUDE_ASM("asm/nonmatchings/shop", LocalShopPersonDraw__Fv);
+static void LocalShopPersonDraw() {
+    float ref[4] = {0.0f, 0.0f, -30.0f, 1.0f};
+    float pos[4] = {0.0f, 0.0f, 30.0f, 1.0f};
+
+    MenuCamera.SetRef(ref);
+    MenuCamera.SetPos(pos);
+    ShopMasterVectorSet(0);
+    MenuCharaFrame.Step();
+    if (ShopMenu.unk_1A0 < 4) {
+        ShopMenu.unk_1A0++;
+    } else {
+        MenuCharaFrame.Draw();
+    }
+}
 
 /**
  * Draws the shopkeeper.
@@ -1711,7 +1733,60 @@ static void IncludeBuyItem2() {
     ItemPosInfoInit();
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", CheckBuyItemFunc2__Fv);
+/**
+ * Reports the bit flags that prevent the marked item purchase.
+ *
+ * @mangled CheckBuyItemFunc2__Fv
+ * @address 0x1EB7B0
+ * @size 0x1C4
+ */
+static int CheckBuyItemFunc2() {
+    int ret = 1;
+    int shop_slot;
+
+    for (shop_slot = 0; shop_slot < 30; shop_slot++) {
+        if (ShopBoardInfo[shop_slot] == 2) {
+            ret |= 2;
+            break;
+        }
+    }
+
+    int carried = 0;
+    ITEM_PACK *pack = ShopUserItemPack(ShopUserStatusPt);
+    int i;
+
+    for (i = 0; i < 3; i++) {
+        if (pack->quick_item_slot[i] >= 0x84) {
+            carried += pack->quick_item_qty[i];
+        }
+    }
+    for (i = 0; i < pack->num; i++) {
+        if (pack->item[i] >= 0x84) {
+            carried++;
+        }
+    }
+
+    int board_max[3] = {100, 60, 40};
+    s32 *board_info[3] = {ItemBoardInfo, WeaponBoardInfo[0], AttachBoardInfo};
+    int board;
+    int slot;
+
+    for (board = 0; board < 3; board++) {
+        for (slot = 0; slot < board_max[board]; slot++) {
+            if (board_info[board][slot] == 1) {
+                ret |= 4;
+                break;
+            }
+        }
+        if (ret & 4) {
+            break;
+        }
+    }
+    if ((ret & 4) && carried > pack->num) {
+        ret = 8;
+    }
+    return ret;
+}
 
 /**
  * Leaves the item shop, returning the goods not bought and recording the shop game flag.
@@ -2046,7 +2121,26 @@ static void DrawSmallSellTicket(int selected, int x, int y, int clip_top, int cl
     DrawMenu2DSprite(ShopBoard, CRect_i_(draw_x, draw_y, 0x10, height), CRect_i_(0x130, v, 0x10, height), mode);
 }
 
-INCLUDE_ASM("asm/nonmatchings/shop", DrawBigSellTicket__Fiiiii);
+/**
+ * Draws the large price ticket of the shop slot under the cursor.
+ *
+ * @mangled DrawBigSellTicket__Fiiiii
+ * @address 0x1EC950
+ * @size 0xE0
+ */
+static void DrawBigSellTicket(int selected, int money, int x, int y, int mode) {
+    int draw_x = x + 0x12;
+    int draw_y = y + 0x14;
+    int u = 0x1A0;
+    RECT clip = {0x140, 0xB0, 8, 0xC};
+
+    if (selected) {
+        u = 0x1CC;
+        clip.y += 0xC;
+    }
+    DrawMenu2DSprite(ShopBoard, CRect_i_(draw_x, draw_y, 0x2C, 0x20), CRect_i_(u, 0xB0, 0x2C, 0x20), mode);
+    DrawMenuNumber(money, draw_x + 0x24, draw_y + 0xE, ShopBoard, clip, 0, mode);
+}
 
 /**
  * Draws the selling price ticket of one shop slot.

@@ -6,13 +6,13 @@ template <int>
 class CDataAlloc2;
 
 /**
- * Reads the item-definition text file into the intermediate command table.
+ * Reads the item-definition text file into the intermediate command table and returns its size.
  *
  * @mangled TEIGIAnalyz__FPc
  * @address 0x1CE090
  * @size 0x3B4
  */
-void TEIGIAnalyz(char *path);
+int TEIGIAnalyz(char *path);
 
 /**
  * Loads texture resources named by the parsed item-definition commands.

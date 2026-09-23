@@ -52,7 +52,7 @@ public:
     s32 unk_12C;
     CBoxVu0 bound; /**< Extremes of everything the part draws, in its own space. */
     u8 unk_150[128];
-    s32 kind; /**< Kind of map part. */
+    float unit_size; /**< Width of one grid cell of the area the part stands on. */
     s32 unk_1D4;
     /** 1 where the slot carries an effect; below zero where no slot after it does. */
     s32 effect_on[MAP_PARTS_EFFECT_MAX];

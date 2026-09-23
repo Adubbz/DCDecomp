@@ -55,7 +55,7 @@ struct SAVEDATA_INFO {
     float play_time; /**< Play time of the save. */
     s8 party_size;   /**< Characters in the party of the save. */
     u8 unk_2D[3];
-    s32 unk_30;
+    s32 map_no;      /**< Map the save was written on. */
     s32 quest_total; /**< Sum of the quest counts of the seven dungeons of the save, held below 10000. */
 };
 
@@ -451,3 +451,8 @@ extern MC_DIR_ENTRY SaveFileInfo[MC_DIR_ENTRY_MAX];
  * SaveSysConfig fill for writing.
  */
 extern SV_CONFIG_SYS sys_config;
+
+/**
+ * Name of the texture used for the georama board vibration effect.
+ */
+extern char AtoraVibeTextureName[];

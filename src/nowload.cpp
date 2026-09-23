@@ -67,7 +67,6 @@ void now_loading_off(void) {
     now_loding_off = 1;
 }
 
-#ifdef NON_MATCHING
 /**
  * Loads the loading screen for one map, arms its vertical-sync callback, and starts its fade.
  *
@@ -82,16 +81,22 @@ void init_now_loading(int title_number) {
         return;
     }
 
-    u_char raw_archive[64064];
-    u_char *archive = (u_char *) (((u_int) raw_archive + 63) & ~63);
+    u_char raw_archive[64000];
+    u_char *archive = raw_archive;
     int archive_size;
-    char image_directory[64] = "img";
-    char path[64] = "";
+    int misalignment = (int) archive % 64;
 
+    if (misalignment != 0) {
+        archive += 64 - misalignment;
+    }
     now_loding_flag = 0;
+
+    char image_directory[64] = "img";
     if (LanguageCode > 0) {
         sprintf(image_directory, "img_%d", LanguageCode);
     }
+
+    char path[64] = "";
     if (title_number < 5) {
         sprintf(path, "%s/mt0%d.tm2", image_directory, title_number + 1);
     } else if (title_number < 100) {
@@ -108,7 +113,10 @@ void init_now_loading(int title_number) {
         LoadTexture("SCElogo", archive, &nl_tex, 0x1A40, 10000);
         LoadTexture("L5logo", archive, &nl_tex2, 8000, 0x2774);
     } else {
-        if (path[0] == '\0' || LoadFile2(path, archive, &archive_size, 0) == 0) {
+        if (path[0] == '\0') {
+            return;
+        }
+        if (LoadFile2(path, archive, &archive_size, 0) == 0) {
             return;
         }
         LoadTexture((TM2_head *) archive, &nl_tex, 0x1A40, 8000);
@@ -117,7 +125,13 @@ void init_now_loading(int title_number) {
     map_title_no = title_number;
     nl_start_cnt = 20;
     sceGsSetDefDBuff(&nowloadDB, 0, 640, 224, 2, 0x31, 1);
+    nowloadDB.clear0.rgbaq.R = 0;
+    nowloadDB.clear0.rgbaq.G = 0;
+    nowloadDB.clear0.rgbaq.B = 0;
     nowloadDB.clear0.rgbaq.A = 0x80;
+    nowloadDB.clear1.rgbaq.R = 0;
+    nowloadDB.clear1.rgbaq.G = 0;
+    nowloadDB.clear1.rgbaq.B = 0;
     nowloadDB.clear1.rgbaq.A = 0x80;
     sceVif1PkInit(&nlPacket, now_load);
     col_cnt = 0.0f;
@@ -128,15 +142,6 @@ void init_now_loading(int title_number) {
     now_loading_vsync_end = 1;
     MGInitVSyncCallBack(VSyncCallBack_Load);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/nowload", init_now_loading__Fi);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/nowload", @285__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @286);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @287);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @288);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @289);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @290);
 
 #ifdef NON_MATCHING
 /**
@@ -225,7 +230,6 @@ int VSyncCallBack_Load(int field) {
 INCLUDE_ASM("asm/nonmatchings/nowload", VSyncCallBack_Load__Fi);
 #endif
 
-#ifdef NON_MATCHING
 /**
  * Uploads a named image and its palette to video memory and records where they went.
  *
@@ -241,7 +245,7 @@ void LoadTexture(char *name, u_char *archive, CTexture *texture, int image_addre
     sceGsSetDefLoadImage(&load, (short) image_address, tex0->TBW, tex0->PSM, 0, 0,
                          texture->width, texture->height);
     FlushCache(0);
-    sceGsExecLoadImage(&load, texture->image[2]);
+    sceGsExecLoadImage(&load, (u_long128 *) texture->image[0]);
     if (texture->bpp == 0) {
         sceGsSetDefLoadImage(&load, (short) palette_address, 1, 0, 0, 0, 8, 2);
     }
@@ -250,17 +254,13 @@ void LoadTexture(char *name, u_char *archive, CTexture *texture, int image_addre
     }
     FlushCache(0);
     if (texture->bpp < 2) {
-        sceGsExecLoadImage(&load, texture->clut);
+        sceGsExecLoadImage(&load, (u_long128 *) texture->clut);
     }
     tex0->TBP0 = image_address;
     tex0->bits.tcc = 1;
     tex0->CBP = palette_address;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/nowload", LoadTexture__FPcPUcP8CTextureii);
-#endif
 
-#ifdef NON_MATCHING
 /**
  * Uploads one already-located image and its palette to video memory and records where they went.
  *
@@ -275,7 +275,7 @@ void LoadTexture(TM2_head *image, CTexture *texture, int image_address, int pale
     sceGsSetDefLoadImage(&load, (short) image_address, tex0->TBW, tex0->PSM, 0, 0,
                          texture->width, texture->height);
     FlushCache(0);
-    sceGsExecLoadImage(&load, texture->image[2]);
+    sceGsExecLoadImage(&load, (u_long128 *) texture->image[0]);
     if (texture->bpp == 0) {
         sceGsSetDefLoadImage(&load, (short) palette_address, 1, 0, 0, 0, 8, 2);
     }
@@ -284,16 +284,12 @@ void LoadTexture(TM2_head *image, CTexture *texture, int image_address, int pale
     }
     FlushCache(0);
     if (texture->bpp < 2) {
-        sceGsExecLoadImage(&load, texture->clut);
+        sceGsExecLoadImage(&load, (u_long128 *) texture->clut);
     }
     tex0->TBP0 = image_address;
     tex0->bits.tcc = 1;
     tex0->CBP = palette_address;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/nowload", LoadTexture__FP8TM2_headP8CTextureii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/nowload", @388__2);
 INCLUDE_RODATA("asm/nonmatchings/nowload", @249__2);
 INCLUDE_RODATA("asm/nonmatchings/nowload", @250__2);
 INCLUDE_RODATA("asm/nonmatchings/nowload", @251__2);

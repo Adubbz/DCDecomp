@@ -101,28 +101,32 @@ void CDranMapField::LoadCollision(unsigned int *pack, CDataAlloc2<1> *arena) {
 #else
 INCLUDE_ASM("asm/nonmatchings/dranmapfield", LoadCollision__13CDranMapFieldFPUiP14CDataAlloc2_1_);
 #endif
-#ifdef NON_MATCHING
+/**
+ * Draws every active drainage-field model that has finished loading.
+ *
+ * @mangled Draw__13CDranMapFieldFv
+ * @address 0x1CD720
+ * @size 0xAC
+ */
 void CDranMapField::Draw(void) {
+    int i;
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
 
     if (set->field_count != 0) {
-        for (int i = 0; i < set->field_count; i++) {
-            if (set->field[i].frame != NULL && set->state[i] != 0) {
-                set->field[i].Draw();
+        for (i = 0; i < set->field_count; i++) {
+            if (set->field[i].character.frame != NULL && set->state[i] != 0) {
+                set->field[i].character.Draw();
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dranmapfield", Draw__13CDranMapFieldFv);
-#endif
 #ifdef NON_MATCHING
 void CDranMapField::Step(void) {
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
 
     if (set->field_count != 0) {
         for (int i = 0; i < set->field_count; i++) {
-            if (set->field[i].frame == NULL) {
+            if (set->field[i].character.frame == NULL) {
                 continue;
             }
             if (set->state[i] <= 0) {
@@ -134,8 +138,8 @@ void CDranMapField::Step(void) {
                 set->state[i]--;
             }
             if (set->state[i] == 1) {
-                set->field[i].Step();
-                if (!(set->field[i].GetNowTime() < 59.0f)) {
+                set->field[i].character.Step();
+                if (!(set->field[i].character.GetNowTime() < 59.0f)) {
                     set->state[i]--;
                 }
             }

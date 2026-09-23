@@ -162,8 +162,8 @@ public:
     float frame_turn[6];      /**< Quarter turns added to each model's own. */
     u8 unk_188[8];
     float heal_pos[4]; /**< Centre of the part's healing zone. */
-    s32 loaded; /**< Whether this map-part slot contains loaded data. */
-    float heal_height; /**< Height of the part's healing zone. */
+    float heal_width;  /**< Width of the part's healing zone. */
+    float heal_depth;  /**< Depth of the part's healing zone. */
     s32 heal_on;       /**< 1 if the part has a healing zone. */
     s32 unk_1AC;
     CFrame *frame[6]; /**< Models that draw the part; a free slot has zero in the first. */

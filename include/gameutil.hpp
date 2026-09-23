@@ -24,7 +24,6 @@ class CCamera;
 class CFrame;
 class CRect_i_;
 class CTexture;
-struct Mot_List;
 struct RECT;
 struct sceVif1Packet;
 struct i;
@@ -142,7 +141,7 @@ STATIC_ASSERT(sizeof(MOTION_STATE) == 0x50);
  */
 struct tagFRAME_INF {
     s32 parent_frame;             /**< Parent frame used to build the driven frame's transform. */
-    u32 vertex_count;             /**< Number of visual vertices copied for vertex motion. */
+    s32 vertex_count;             /**< Number of visual vertices copied for vertex motion. */
     sceVu0FVECTOR *base_vertices; /**< Arena copy of the visual's undeformed vertices. */
     u8 unk_0C[4];
     sceVu0FMATRIX matrix; /**< Transform the driver interpolates into the frame. */
@@ -150,6 +149,48 @@ struct tagFRAME_INF {
 };
 
 STATIC_ASSERT(sizeof(tagFRAME_INF) == 0xD0);
+
+/**
+ * Holds one key of a frame driver: a motion frame and the value the driver
+ * takes there.
+ */
+struct Mot_Key {
+    u32 frame; /**< Motion frame that the key stands on. */
+    u8 unk_04[12];
+    sceVu0FVECTOR value; /**< What the driver sets on that frame. */
+};
+
+STATIC_ASSERT(sizeof(Mot_Key) == 0x20);
+
+/**
+ * Drives one frame of a model from a run of motion keys.
+ */
+struct Mot_List {
+    u32 frame;      /**< Frame of the model that the keys drive. */
+    u32 target;     /**< Part of the frame that the keys drive: a vertex, a material or a bone. */
+    s32 type;       /**< What the keys set. */
+    u32 key_count;  /**< Number of keys. */
+    Mot_Key *keys;  /**< The keys, in frame order. */
+    Mot_List *next; /**< The next driver, or NULL after the last. */
+    u8 unk_18[8];
+};
+
+STATIC_ASSERT(sizeof(Mot_List) == 0x20);
+
+/**
+ * Heads one driver's keys in a motion file; the keys follow it.
+ */
+struct Mot_File_List {
+    u32 frame;  /**< Frame of the model that the keys drive. */
+    u32 target; /**< Part of the frame that the keys drive. */
+    s32 type;   /**< What the keys set. */
+    u8 unk_0C[4];
+    u32 key_count; /**< Number of keys after the header. */
+    u32 more;      /**< Nonzero when another driver follows this one's keys. */
+    u8 unk_18[8];
+};
+
+STATIC_ASSERT(sizeof(Mot_File_List) == 0x20);
 
 /**
  * Carries one set of motions, the state that plays them and the frames that
@@ -173,19 +214,7 @@ struct tagMOTION_TYPE {
 
 STATIC_ASSERT(sizeof(tagMOTION_TYPE) == 0x80);
 
-/**
- * Describes one animated frame property and its packed sequence of keys.
- */
-struct Mot_List {
-    s32 frame;        /**< Frame in the model hierarchy that receives the keys. */
-    s32 target;       /**< Secondary frame, vertex, or component selected by the keys. */
-    s32 type;         /**< Kind of transform or visual property stored in the keys. */
-    u32 key_count;    /**< Number of 32-byte keys in the sequence. */
-    u8 *keys;         /**< Packed key records, each beginning with its frame number. */
-    Mot_List *next;   /**< Next animated property in archive order. */
-};
 
-STATIC_ASSERT(sizeof(Mot_List) == 0x18);
 
 /**
  * Names one optional motion-data file found in a model archive.
@@ -205,8 +234,7 @@ STATIC_ASSERT(sizeof(MOTION_FILE_INFO) == 0xC);
  * @address 0x149090
  * @size 0x264
  */
-int CreateAnimeDataEX(tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
-                      MOTION_FILE_INFO *files);
+int CreateAnimeDataEX(tagMOTION_TYPE *motion, CDataAlloc2<1> *arena, MOTION_FILE_INFO *files);
 
 /**
  * Builds the per-frame animation table a model's motion needs.
@@ -224,10 +252,9 @@ void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
  * @mangled AnimeDataInit__FP6CFrameP14tagMOTION_TYPEP14CDataAlloc2_1_P12tagFRAME_INF
  * @address 0x1493A0
  * @size 0x318
- * @unknownret
  */
-void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
-                   tagFRAME_INF *frame_info);
+int AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
+                  tagFRAME_INF *frame_info);
 
 /**
  * Applies one motion's frame to a model's frame hierarchy, and gives back the
@@ -380,8 +407,9 @@ void AreaAddPos(int *area, int *pos, int *out);
  */
 struct MoveCheckInfo {
     s32 unk_00; /**< 1 where the step landed on a polygon. */
-    u8 unk_04[0x5C];
-    s32 unk_60; /**< 1 where the step found ground below it. */
+    u8 unk_04[0xC];
+    CCPoly ground_poly; /**< Polygon found below the step. */
+    s32 unk_60;         /**< 1 where the step found ground below it. */
     u8 unk_64[0xC];
     CCPoly poly; /**< Polygon that the step landed on. */
     u8 unk_c0[0x4];
@@ -397,10 +425,9 @@ STATIC_ASSERT(sizeof(MoveCheckInfo) == 0xD0);
  * @mangled MoveCheck__FPfPfPfP13MoveCheckInfoP6CCPolyii
  * @address 0x14A680
  * @size 0x530
- * @unknownret
  */
-void MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_info, CCPoly *polys,
-               int poly_num, int mode);
+int MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_info, CCPoly *polys,
+              int poly_num, int mode);
 
 /**
  * Finds the collision polygon below a point and combines its surface attributes.
@@ -412,15 +439,6 @@ void MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_i
 int GetFootPoly(float *position, float depth, CCPoly *out_poly, float *hit_point,
                 CCPoly *polys, int poly_num, int mode);
 
-/**
- * Finds the first event polygon crossed by a movement and returns its ground kind.
- *
- * @mangled GetEventPoly__FPfPfP6CCPolyPiPfP6CCPolyii
- * @address 0x14AD90
- * @size 0x1E0
- */
-short GetEventPoly(float *position, float *movement, CCPoly *out_poly, int *out_index,
-                   float *hit_point, CCPoly *polys, int poly_num, int mode);
 
 /**
  * Pushes a position out of the polygons within a radius of it.
@@ -432,7 +450,19 @@ short GetEventPoly(float *position, float *movement, CCPoly *out_poly, int *out_
 int CheckWidth(CCPoly *poly, int count, float *position, float radius, float *hit, int mode);
 
 /**
- * Pushes a camera point out of nearby walls when its travel points into them.
+ * Finds the event polygon that a step crosses, and gives back the kind of
+ * ground it is.
+ *
+ * @mangled GetEventPoly__FPfPfP6CCPolyPiPfP6CCPolyii
+ * @address 0x14AD90
+ * @size 0x1E0
+ */
+int GetEventPoly(float *position, float *velocity, CCPoly *found, int *found_no, float *hit,
+                 CCPoly *polys, int count, int mode);
+
+/**
+ * Pushes the camera out of the polygons within a radius of it, counting only
+ * the polygons that face the way it is pushed.
  *
  * @mangled CheckCameraWidth__FP6CCPolyiPffPfi
  * @address 0x14B830

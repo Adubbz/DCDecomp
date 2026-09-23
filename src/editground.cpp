@@ -18,13 +18,7 @@
 #include "vector3.hpp"
 #ifdef NON_MATCHING // draft includes
 #include <cmath>
-#include <cstdlib>
 #include "camera.hpp"
-#include "dataread.hpp"
-#include "vector3.hpp"
-#include "editarea.hpp"
-#include "editpartsinfo.hpp"
-#include "rect.hpp"
 #endif
 
 static int CheckDelete(CEditArea *area, CMapParts *parts, float x, float y, float z);
@@ -125,7 +119,7 @@ int CEditGround::SetMapParts(int plot, float x, float y, float z, int rot_y) {
         cell.z += 0.5f * area->GetUnitSize();
     }
     cell.y = area->GetAlt(cell.x, cell.y, cell.z);
-    *(float *) &slot->kind = area->GetUnitSize();
+    slot->unit_size = area->GetUnitSize();
     position[0] = cell.x;
     position[1] = cell.y;
     position[2] = cell.z;
@@ -436,12 +430,12 @@ void CEditGround::SetBuildEffect(int parts_id) {
     effect_step = (effect_target_alt - effect_alt) / effect_count;
 }
 
-#ifdef NON_MATCHING
 void CEditGround::EffectTask() {
     sceVu0FVECTOR position;
-
-    if (effect_parts_id < 0 || effect_parts_id >= 128 || effect_count <= 0 ||
-        parts[effect_parts_id].handle < 0) {
+    int stop = effect_parts_id < 0 || effect_parts_id >= 128;
+    stop = (bool) stop || effect_count <= 0;
+    stop = (bool) stop || parts[effect_parts_id].handle < 0;
+    if (stop) {
         effect_parts_id = -1;
         effect_count = -1;
         return;
@@ -455,9 +449,6 @@ void CEditGround::EffectTask() {
         parts[effect_parts_id].SetPosition(position);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editground", EffectTask__11CEditGroundFv);
-#endif
 
 int CEditGround::SetFocusParts(float x, float y, float z) {
     focus_parts_id = -1;
@@ -629,68 +620,73 @@ void CEditGround::EditAreaClip(CCamera *camera, float range) {
 #else
 INCLUDE_ASM("asm/nonmatchings/editground", EditAreaClip__11CEditGroundFP7CCameraf);
 #endif
-#ifdef NON_MATCHING
-int CEditGround::GetRandomPlanePos(float *out, float (*avoid)[4], int avoid_count, float *centre) {
-    int cells[0x800];
-    CVector3_f_ cell;
-    sceVu0FVECTOR position;
-    int count = 0;
-    int area_count = 0;
-    int a;
 
-    while (areas[area_count] != NULL) {
+int CEditGround::GetRandomPlanePos(sceVu0FVECTOR out_position, sceVu0FVECTOR avoid[], int avoid_count, sceVu0FVECTOR bounds) {
+    int cells[2048];
+    sceVu0FVECTOR position;
+    CVector3_f_ grid;
+    CVector3_f_ chosen;
+    int found = 0;
+    int area_count = 0;
+    int x;
+    int z;
+    int area;
+
+    for (x = 0;; x++) {
+        if (areas[x] == NULL) {
+            break;
+        }
         area_count++;
     }
     if (area_count == 0) {
         return 0;
     }
-    for (a = 0; a < area_count; a++) {
-        int width = areas[a]->GetWidth();
-        int height = areas[a]->GetHeight();
-        for (int x = 2; x < width - 2; x++) {
-            for (int z = 2; z < height - 2; z++) {
-                if (areas[a]->GetPartsID(x, z) >= 0 && areas[a]->GetPartsExtra(x, z) != 1) {
+    for (area = 0; area < area_count; area++) {
+        int width = areas[area]->GetWidth();
+        int height = areas[area]->GetHeight();
+        // The outer two cells of each edge are never chosen.
+        for (x = 2; x < width - 2; x++) {
+            for (z = 2; z < height - 2; z++) {
+                if (areas[area]->GetPartsID(x, z) >= 0 && areas[area]->GetPartsExtra(x, z) != 1) {
                     continue;
                 }
                 int blocked = 0;
-                areas[a]->GetPos(&cell, x, 0, z);
-                position[0] = cell.x;
-                position[1] = areas[a]->GetAlt(x, z);
-                position[2] = cell.z;
-                if (centre[3] > 0.0f && DistVector(centre, position) > centre[3]) {
+                areas[area]->GetPos(&grid, x, 0, z);
+                position[0] = grid.x;
+                position[1] = areas[area]->GetAlt(x, z);
+                position[2] = grid.z;
+                if (!(bounds[3] <= 0.0f) && !(DistVector(bounds, position) <= bounds[3])) {
                     blocked = 1;
                 }
                 for (int i = 0; i < avoid_count; i++) {
-                    if (DistVector(avoid[i], position) < avoid[i][3]) {
+                    float distance = DistVector(avoid[i], position);
+                    if (distance < avoid[i][3]) {
                         blocked = 1;
                         break;
                     }
                 }
-                if (areas[a]->GetAlt_i(x, z) > 0) {
+                if (areas[area]->GetAlt_i(x, z) > 0) {
                     blocked = 1;
                 }
-                if (blocked == 0) {
-                    cells[count++] = (a << 16) | x | (z << 8);
+                if (!blocked) {
+                    cells[found++] = (area << 16) | (x | (z << 8));
                 }
             }
         }
     }
-    if (count == 0) {
+    if (found == 0) {
         return 0;
     }
-    int pick = cells[rand() % count];
-    int x = pick & 0xFF;
-    int z = (pick >> 8) & 0xFF;
-    a = (pick >> 16) & 0xFF;
-    areas[a]->GetPos(&cell, x, 0, z);
-    out[0] = cell.x + 0.5f * areas[a]->GetUnitSize();
-    out[1] = areas[0]->GetAlt(x, z);
-    out[2] = cell.z + 0.5f * areas[a]->GetUnitSize();
+    int cell = cells[rand() % found];
+    int column = cell & 0xFF;
+    int row = (cell >> 8) & 0xFF;
+    area = (cell >> 16) & 0xFF;
+    areas[area]->GetPos(&chosen, column, 0, row);
+    out_position[0] = chosen.x + 0.5f * areas[area]->GetUnitSize();
+    out_position[1] = areas[0]->GetAlt(column, row);
+    out_position[2] = chosen.z + 0.5f * areas[area]->GetUnitSize();
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editground", GetRandomPlanePos__11CEditGroundFPfPA4_fiPf);
-#endif
 
 int CEditGround::GetNearParts(CMapParts **out_parts, int limit, CBoxVu0 *box, CBoxVu0 *fixed_box) {
     int i;
@@ -1930,64 +1926,65 @@ void CEditGround::GetRectParts(CRect_i_ *rect, CMapParts *target, int column, in
     rect->height = 1;
 }
 
-#ifdef NON_MATCHING
-void CEditGround::GetRectDirParts(CRect_i_ *rect, CMapParts *part, int turn, int depth) {
-    sceVu0FVECTOR position;
-    CVector3_i_ cell;
+/**
+ * Gives the first cell that a span covers when it is centred on a cell.
+ */
+static inline int SpanStart(int &centre, int size) {
+    int half = size >> 1;
+    return centre - half;
+}
 
-    rect->x = 0;
-    rect->y = 0;
-    rect->width = 0;
-    rect->height = 0;
-    if (part == NULL) {
+void CEditGround::GetRectDirParts(CRect_i_ *rect, CMapParts *target, int direction, int depth) {
+    sceVu0FVECTOR position;
+    CVector3_i_ grid;
+
+    *rect = CRect_i_(0, 0, 0, 0);
+    if (target == NULL) {
         return;
     }
-    part->GetPosition(position);
-    int area_code = GetAreaCode(position[0], position[1], position[2]);
-    if (area_code < 0 || area_code >= 4) {
+    target->GetPosition(position);
+    int area = GetAreaCode(position[0], position[1], position[2]);
+    if (area < 0 || area >= 4) {
         return;
     }
-    if (areas[area_code] == NULL) {
+    if (areas[area] == NULL) {
         return;
     }
-    areas[area_code]->GetPos(&cell, position[0], position[1], position[2]);
-    int width = part->GetWidth();
-    int height = part->GetHeight();
-    int direction = turn + part->GetRotY();
-    if (direction >= 3) {
+    areas[area]->GetPos(&grid, position[0], position[1], position[2]);
+    int width = target->GetWidth();
+    int height = target->GetHeight();
+    direction += target->GetRotY();
+    if (direction > 2) {
         direction -= 4;
     }
     if (direction < -1) {
         direction += 4;
     }
-    if (direction < -1 || direction >= 3) {
+    if (direction < -1 || direction > 2) {
         return;
     }
     if (direction % 2 != 0) {
         rect->width = depth;
         rect->height = height;
         if (direction == 1) {
-            rect->x = (cell.x - (width >> 1)) - rect->width;
-            rect->y = cell.z - (height >> 1);
-            return;
+            rect->x = SpanStart(grid.x, width) - rect->width;
+            rect->y = SpanStart(grid.z, height);
+        } else {
+            rect->x = width + SpanStart(grid.x, width);
+            rect->y = SpanStart(grid.z, height);
         }
-        rect->x = width + (cell.x - (width >> 1));
-        rect->y = cell.z - (height >> 1);
-        return;
+    } else {
+        rect->width = width;
+        rect->height = depth;
+        if (direction == 0) {
+            rect->x = SpanStart(grid.x, width);
+            rect->y = SpanStart(grid.z, height) - rect->height;
+        } else {
+            rect->x = SpanStart(grid.x, width);
+            rect->y = height + SpanStart(grid.z, height);
+        }
     }
-    rect->width = width;
-    rect->height = depth;
-    if (direction == 0) {
-        rect->x = cell.x - (width >> 1);
-        rect->y = (cell.z - (height >> 1)) - rect->height;
-        return;
-    }
-    rect->x = cell.x - (width >> 1);
-    rect->y = height + (cell.z - (height >> 1));
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editground", GetRectDirParts__11CEditGroundFP8CRect_i_P9CMapPartsii);
-#endif
 
 void CEditGround::NornRequest(CMapParts *(*plot_parts)[64]) {
     parts_info->parts_max = 8;

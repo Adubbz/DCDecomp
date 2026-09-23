@@ -1,22 +1,21 @@
 #include "common.h"
 
-#include "btmisc.hpp"
+#include <libvu0.h>
 
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
-#include <libvu0.h>
-
+#include "btmisc.hpp"
 #include "camera.hpp"
+#include "dataalloc.hpp"
 #include "dataread.hpp"
+#include "dngstatusdata.hpp"
+#include "dun/gameloop.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "itemdata.hpp"
 #include "mds.hpp"
-#include "dataalloc.hpp"
-#include "dngstatusdata.hpp"
-#include "dun/gameloop.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
 #ifdef NON_MATCHING // draft includes
@@ -83,15 +82,23 @@ void setCameraPassData(CFrameVu1 *frame, CCamera *camera, char *position_name,
     frame->SearchFrame(position_name)->GetLWMatrix(matrix);
     camera->SetPos(matrix[3]);
 }
-#ifdef NON_MATCHING
-void getFramePos(CFrameVu1 *frame, char *name, float *position) {
-    sceVu0FVECTOR origin = {0.0f, 0.0f, 0.0f, 0.0f};
 
-    frame->SearchFrame(name)->GetWorldPosition(position, origin);
+/**
+ * Gives the world position of one frame of a model.
+ *
+ * @mangled getFramePos__FP9CFrameVu1PcPf
+ * @address 0x1B6F30
+ * @size 0x50
+ */
+void getFramePos(CFrameVu1 *frame, char *name, float *position) {
+    CFrame *found = frame->SearchFrame(name);
+    sceVu0FVECTOR origin;
+
+    // The position wanted is the frame's own origin.
+    origin[0] = origin[1] = origin[2] = 0.0f;
+    origin[3] = 0.0f;
+    found->GetWorldPosition(position, origin);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btmisc", getFramePos__FP9CFrameVu1PcPf);
-#endif
 /**
  * Builds the resource name of one weapon.
  *
@@ -233,14 +240,14 @@ INCLUDE_RODATA("asm/nonmatchings/btmisc", @953);
  * @address 0x1B7470
  * @size 0xBC
  */
-void getAtraToSaveData(int atra_id, int atra_no, CSaveData *save, int georama_no, int floor) {
-    printf("GET ATRA [%d] !!\n", atra_id);
-    if (atra_id < 40) {
-        save->AtraPartsGet(georama_no, atra_id);
+void getAtraToSaveData(int atra, int atra_no, CSaveData *save, int dungeon, int floor) {
+    printf("GET ATRA [%d] !!\n", atra);
+    if (atra < 0x28) {
+        save->AtraPartsGet(dungeon, atra);
     } else {
-        save->AtraChipGet(georama_no, atra_id - 40);
+        save->AtraChipGet(dungeon, atra - 0x28);
     }
-    ((CDngStatusData *) UserStatus)->GetAtraData(georama_no, floor, atra_no);
+    ((CDngStatusData *) UserStatus)->GetAtraData(dungeon, floor, atra_no);
 }
 /**
  * Gives how much of an attachment one item yields.

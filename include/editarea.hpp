@@ -195,7 +195,7 @@ public:
      * @address 0x16E010
      * @size 0x1FC
      */
-    void SetMapParts(int parts_no, CMapParts *parts, float x, float y, float z, int parts_extra);
+    int SetMapParts(int parts_id, CMapParts *parts, float x, float y, float z, int parts_extra);
 
     /**
      * Removes one map part from the editable grid.

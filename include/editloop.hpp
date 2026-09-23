@@ -134,6 +134,16 @@ struct EDIT_AREA_RECT_INFO {
 };
 
 /**
+ * Stores the four scalar parameters for one editor water wave.
+ */
+struct EDIT_WATER_WAVE_INFO {
+    float x;      /**< First wave parameter. */
+    float y;      /**< Second wave parameter. */
+    float z;      /**< Third wave parameter. */
+    float active; /**< Fourth wave parameter and slot-usage marker. */
+};
+
+/**
  * Stores transient wave offsets for editor water surfaces.
  */
 struct EDIT_WATER_INFO {
@@ -154,7 +164,7 @@ struct EDIT_WATER_INFO {
     int follow_y; /**< Whether the surface keeps level with the camera. */
     int follow_z; /**< Whether the surface keeps ahead of the camera along Z. */
     u8 unk_7c[0x4];
-    sceVu0FVECTOR wave[4]; /**< Pending water-wave parameters, terminated by an empty entry. */
+    EDIT_WATER_WAVE_INFO wave[4]; /**< Pending water-wave parameters, terminated by an empty entry. */
 };
 
 /**
@@ -387,6 +397,7 @@ STATIC_ASSERT(sizeof(EDIT_SCENE_LAYER_INFO) == 0xf8);
 STATIC_ASSERT(sizeof(EDIT_AREA_INFO) == 0x5c);
 STATIC_ASSERT(sizeof(EDIT_MOTION_PARTS_INFO) == 0x64);
 STATIC_ASSERT(sizeof(EDIT_AREA_RECT_INFO) == 0x20);
+STATIC_ASSERT(sizeof(EDIT_WATER_WAVE_INFO) == 0x10);
 STATIC_ASSERT(sizeof(EDIT_WATER_INFO) == 0xc0);
 STATIC_ASSERT(sizeof(MAP_PARTS_INFO) == 0x2d8);
 STATIC_ASSERT(sizeof(EDIT_MAP_PARTS_WORK) == 0x9fa0);

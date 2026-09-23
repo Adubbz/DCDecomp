@@ -413,9 +413,6 @@ extern "C" CStealItem StealItem;
 /* The bombs the player has thrown. */
 extern "C" CItemBombEffect CBomb__2[3];
 
-/* The effect Osmond's machine gun leaves where it hits. */
-extern "C" CHIT_MACHINGUN_EFFECT OzumondShotEffect;
-
 /* The effect that heals the player. */
 extern "C" CHealEffect HealEffect;
 

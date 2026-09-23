@@ -461,7 +461,7 @@ void sceGsSetDefStoreImage(sceGsStoreImage *si, short sbp, short sbw, short spsm
 void sceGsExecStoreImage(sceGsStoreImage *si, u_long128 *dest);
 void sceGsSetDefLoadImage(sceGsLoadImage *li, short dbp, short dbw, short dpsm, short dsax,
                           short dsay, short rrw, short rrh);
-void sceGsExecLoadImage(sceGsLoadImage *li, u_int *source);
+void sceGsExecLoadImage(sceGsLoadImage *li, u_long128 *source);
 }
 
 #define R bits.r

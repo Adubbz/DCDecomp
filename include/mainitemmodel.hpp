@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include "frame.hpp"
+
 class CMainItemModel {
 public:
     u_int *cash[6];        /**< Model data each cache slot holds, or zero where the slot is free. */
@@ -10,7 +12,7 @@ public:
     s32 model[16];         /**< What each model slot holds; -1 where the slot is free. */
     s32 model_cash[16];    /**< Cache slot whose model each model slot draws. */
     u8 unk_0C8[8];
-    u8 frame[16][0x260];   /**< Frame that places each model slot's model. */
+    CFrame frame[16];      /**< Frame that places each model slot's model. */
     float velocity[16][4]; /**< Distance each thrown model moves in a frame. */
     s32 throw_time[16];    /**< Frames each thrown model has flown. */
 
@@ -39,7 +41,7 @@ public:
      * @address 0x1D45E0
      * @size 0x190
      */
-    void SetCashModel(int, unsigned int *, unsigned int *, int);
+    int SetCashModel(int, unsigned int *, unsigned int *, int);
 
     /**
      * Releases one model slot.
@@ -69,13 +71,13 @@ public:
     void AllReleasItem(void);
 
     /**
-     * Starts one item model flying from a position along a heading.
+     * Starts an item model flying from a position along a heading and returns its slot.
      *
      * @mangled SetThrowModel__14CMainItemModelFiPfPf
      * @address 0x1D49C0
      * @size 0x108
      */
-    void SetThrowModel(int, float *, float *);
+    int SetThrowModel(int, float *, float *);
 
     /**
      * Draws every item model the player is carrying or has thrown.

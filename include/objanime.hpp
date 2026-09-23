@@ -154,15 +154,6 @@ int InitObjAnime(CFrame **frames, int count, OBJ_ANIME_SEQ *sequence);
 int InitObjAnime(CFrame **, int, EPARTS_FUNC_DATA *, OBJ_ANIME_SEQ *);
 
 /**
- * Reports whether an animated value has passed its target in the direction it moves.
- *
- * @mangled end_check__Ffff
- * @address 0x166170
- * @size 0x68
- */
-int end_check(float value, float target, float step);
-
-/**
  * Advances one object animation by a frame.
  *
  * @mangled ObjAnimePlay__FP13OBJ_ANIME_SEQ

@@ -4,61 +4,20 @@
 #include <cstdlib>
 #include <cstring>
 
-#ifdef NON_MATCHING
 /**
- *
+ * Advances a parser to its next character that is not whitespace.
+ */
+extern "C" int SkipSpace__FR9input_str__3(input_str &input);
+
+/**
  * Reports whether a character is not parser whitespace.
- *
  */
-static int CheckChar(char character) {
-    return character != ' ' && character != '\t' && character != '\n' &&
-           character != '\r';
-}
+extern "C" int CheckChar__Fc__3(char value);
 
 /**
- *
- * Advances a parser to its next non-whitespace character.
- *
+ * Replaces the comments in a script with whitespace before it is parsed.
  */
-static int SkipSpace(CScriptInterpreter &input) {
-    int position = input.pos;
-    while (position < input.size && !CheckChar(input.data[position])) {
-        position++;
-    }
-    input.pos = position;
-    return position < input.size;
-}
-
-/**
- *
- * Replaces comments in a script with whitespace before parsing.
- *
- */
-static void PreProcess(CScriptInterpreter &input) {
-    unsigned char *script = (unsigned char *) input.data;
-    int position = 0;
-    while (position < input.size) {
-        if (script[position] == '/' && script[position + 1] == '/') {
-            while (position < input.size && script[position] != '\n' &&
-                   script[position] != '\r') {
-                script[position++] = ' ';
-            }
-        }
-        if (script[position] == '/' && script[position + 1] == '*') {
-            while (position < input.size) {
-                if (script[position] == '*' && script[position + 1] == '/') {
-                    script[position] = ' ';
-                    script[position + 1] = ' ';
-                    break;
-                }
-                script[position++] = ' ';
-            }
-            continue;
-        }
-        position++;
-    }
-}
-#endif
+extern "C" void PreProcess__FR9input_str__2(input_str &input);
 
 int CScriptInterpreter::GetNextTAG(void) {
     if (tag_table == NULL) {
@@ -95,20 +54,16 @@ void CScriptInterpreter::SetFunction(SPI_FUNC_PARAM *functions, int count) {
     function_table = functions;
     function_count = count;
 }
-#ifdef NON_MATCHING
 void CScriptInterpreter::SetScript(char *script, int script_size) {
     data = script;
     size = script_size;
     pos = 0;
     argument_data_used = 0;
     current_tag = -1;
-    PreProcess(*this);
+    PreProcess__FR9input_str__2(*this);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/scriptinterpreter", SetScript__18CScriptInterpreterFPci);
-#endif
-#ifdef NON_MATCHING
 CScriptInterpreter::CScriptInterpreter(void) {
+    data = NULL;
     data = NULL;
     size = 0;
     pos = 0;
@@ -117,12 +72,8 @@ CScriptInterpreter::CScriptInterpreter(void) {
     tag_table = NULL;
     function_table = NULL;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/scriptinterpreter", __ct__18CScriptInterpreterFv);
-#endif
-#ifdef NON_MATCHING
 int CScriptInterpreter::ControlCode(void) {
-    if (!SkipSpace(*this)) {
+    if (!SkipSpace__FR9input_str__3(*this)) {
         return 0;
     }
 
@@ -135,13 +86,12 @@ int CScriptInterpreter::ControlCode(void) {
         return 1;
     }
 
-    char character;
+    int c;
     do {
-        character = data[pos++];
-        if (pos > size) {
+        if (get(&c) == 0) {
             return 0;
         }
-    } while (character != '(');
+    } while (c != '(');
 
     int condition;
     if (!CallFunction(&condition)) {
@@ -149,53 +99,48 @@ int CScriptInterpreter::ControlCode(void) {
     }
     if (condition == 0) {
         do {
-            character = data[pos++];
-            if (pos > size) {
+            if (get(&c) == 0) {
                 return 0;
             }
-        } while (character != '}');
+        } while (c != '}');
     }
     return control_type;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/scriptinterpreter", ControlCode__18CScriptInterpreterFv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/scriptinterpreter", @223);
-INCLUDE_RODATA("asm/nonmatchings/scriptinterpreter", @224);
-#ifdef NON_MATCHING
 int CScriptInterpreter::CallFunction(int *result) {
-    if (!SkipSpace(*this)) {
+    char words[512];
+    void *argv[24];
+
+    if (!SkipSpace__FR9input_str__3(*this)) {
         return 0;
     }
 
-    char words[512];
-    int text_length = 0;
-    int word_count = 0;
-    while (true) {
-        char character = data[pos++];
-        if (pos > size) {
+    int length = 0;
+    int argc = 0;
+    int c;
+    while (1) {
+        if (get(&c) == 0) {
             return 0;
         }
-        if (character == ')') {
-            words[text_length] = '\0';
-            words[text_length + 1] = '\0';
+        if (c == ')') {
             break;
         }
-        if (character == '(' || character == ',') {
-            words[text_length++] = '\0';
-            word_count++;
-        } else if (CheckChar(character)) {
-            words[text_length++] = character;
+        if (c == '(' || c == ',') {
+            words[length++] = 0;
+            argc++;
+        } else if (CheckChar__Fc__3(c)) {
+            words[length++] = c;
         }
     }
+    words[length] = 0;
+    words[length + 1] = 0;
     if (function_table == NULL) {
         return -1;
     }
 
     SPI_FUNC_PARAM *function = NULL;
-    for (int index = 0; index < function_count; index++) {
-        if (strcmp(function_table[index].name, words) == 0) {
-            function = &function_table[index];
+    for (length = 0; length < function_count; length++) {
+        if (strcmp(function_table[length].name, words) == 0) {
+            function = &function_table[length];
             break;
         }
     }
@@ -203,151 +148,149 @@ int CScriptInterpreter::CallFunction(int *result) {
         return -1;
     }
 
-    int expected_count = 0;
-    while (function->argument_types[expected_count] >= 0) {
-        expected_count++;
+    for (length = 0; function->argument_types[length] >= 0; length++) {
     }
-    if (expected_count != word_count || word_count >= 24) {
+    if (length != argc || argc >= 24) {
         return -1;
     }
 
-    int destination_offset = argument_data_used;
+    int used = 0;
+    u8 *out = &function_argument_data[argument_data_used];
     char *word = words;
-    for (int argument = 0; argument < word_count; argument++) {
-        while (*word++ != '\0') {
+    for (length = 0; length < argc; length++) {
+        int size = 0;
+        while (*word++ != 0) {
         }
-        arguments[argument] = &function_argument_data[destination_offset];
-        switch (function->argument_types[argument]) {
-        case SCRIPT_ARGUMENT_STRING: {
-            strcpy((char *) arguments[argument], word);
-            destination_offset += (strlen(word) / 4 + 1) * 4;
-            break;
+        argv[length] = out;
+        switch (function->argument_types[length]) {
+            case SCRIPT_ARGUMENT_STRING:
+                strcpy((char *) out, word);
+                size = strlen(word);
+                size = ((size >> 2) + 1) << 2;
+                break;
+            case SCRIPT_ARGUMENT_INTEGER:
+                *(int *) out = atoi(word);
+                size = 4;
+                break;
+            case SCRIPT_ARGUMENT_FLOAT:
+                *(float *) out = atof(word);
+                size = 4;
+                break;
         }
-        case SCRIPT_ARGUMENT_INTEGER:
-            *(int *) arguments[argument] = atoi(word);
-            destination_offset += sizeof(int);
-            break;
-        case SCRIPT_ARGUMENT_FLOAT:
-            *(float *) arguments[argument] = (float) atof(word);
-            destination_offset += sizeof(float);
-            break;
-        }
+        out += size;
+        used += size;
     }
-    *result = function->function(arguments);
+    *result = function->function(argv);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/scriptinterpreter", CallFunction__18CScriptInterpreterFPi);
-#endif
-#ifdef NON_MATCHING
 int CScriptInterpreter::GetArg(int *argument_types) {
-    if (!SkipSpace(*this)) {
+    char value[256];
+
+    if (!SkipSpace__FR9input_str__3(*this)) {
         return 0;
     }
 
-    int argument_count = 0;
-    while (argument_types[argument_count] >= 0) {
-        argument_count++;
+    int argc;
+    for (argc = 0; argument_types[argc] >= 0; argc++) {
     }
-    int storage_used = 0;
-    for (int argument = 0; argument < argument_count; argument++) {
-        arguments[argument] = &argument_text[storage_used];
-        char value[256];
+
+    int c;
+    int i;
+    int used = 0;
+    for (i = 0; i < argc; i++) {
+        arguments[i] = &argument_text[used];
         int length = 0;
-        if (!SkipSpace(*this)) {
+        if (!SkipSpace__FR9input_str__3(*this)) {
             return 0;
         }
-        char character = data[pos++];
-        if (pos > size) {
+        if (get(&c) == 0) {
             return 0;
         }
-        if (character == ',') {
-            if (!SkipSpace(*this)) {
-                return 0;
-            }
-        } else {
-            value[length++] = character;
+        if (c != ',') {
+            value[length++] = c;
+        } else if (!SkipSpace__FR9input_str__3(*this)) {
+            return 0;
         }
-        while (true) {
-            character = data[pos++];
-            if (pos > size) {
+        while (1) {
+            if (get(&c) == 0) {
                 return 0;
             }
-            if (character == ',' || !CheckChar(character)) {
+            if (c == ',' || !CheckChar__Fc__3(c)) {
                 break;
             }
-            value[length++] = character;
+            value[length++] = c;
         }
-        value[length] = '\0';
+        value[length] = 0;
 
-        if (argument_types[argument] == SCRIPT_ARGUMENT_FLOAT) {
-            for (int index = 0; value[index] != '\0'; index++) {
-                character = value[index];
-                if ((character < '0' || character > '9') && character != '.' &&
-                    character != '-') {
+        switch (argument_types[i]) {
+            case SCRIPT_ARGUMENT_STRING:
+                if (value[0] != '"') {
                     return -1;
                 }
-            }
-            *(float *) arguments[argument] = (float) atof(value);
-            storage_used += sizeof(float);
-        } else if (argument_types[argument] == SCRIPT_ARGUMENT_INTEGER) {
-            for (int index = 0; value[index] != '\0'; index++) {
-                character = value[index];
-                if ((character < '0' || character > '9') && character != '-') {
-                    return -1;
+                for (length = 1;; length++) {
+                    if (value[length] == '"') {
+                        value[length] = 0;
+                        break;
+                    }
+                    if (value[length] == 0) {
+                        return -1;
+                    }
                 }
-            }
-            *(int *) arguments[argument] = atoi(value);
-            storage_used += sizeof(int);
-        } else if (argument_types[argument] == SCRIPT_ARGUMENT_STRING) {
-            if (value[0] != '"') {
+                strcpy((char *) arguments[i], value + 1);
+                used += ((((int) strlen((char *) arguments[i]) + 1) >> 2) + 1) << 2;
+                break;
+            case SCRIPT_ARGUMENT_INTEGER:
+                for (length = 0; value[length] != 0; length++) {
+                    char digit = value[length];
+                    if ((digit < '0' || digit > '9') && digit != '-') {
+                        return -1;
+                    }
+                }
+                *(int *) arguments[i] = atoi(value);
+                used += 4;
+                break;
+            case SCRIPT_ARGUMENT_FLOAT:
+                for (length = 0; value[length] != 0; length++) {
+                    char digit = value[length];
+                    if ((digit < '0' || digit > '9') && digit != '.' && digit != '-') {
+                        return -1;
+                    }
+                }
+                *(float *) arguments[i] = atof(value);
+                used += 4;
+                break;
+            default:
                 return -1;
-            }
-            int quote = 1;
-            while (value[quote] != '"') {
-                if (value[quote] == '\0') {
-                    return -1;
-                }
-                quote++;
-            }
-            value[quote] = '\0';
-            strcpy((char *) arguments[argument], value + 1);
-            storage_used += ((strlen((char *) arguments[argument]) + 1) / 4 + 1) * 4;
-        } else {
-            return -1;
         }
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/scriptinterpreter", GetArg__18CScriptInterpreterFPi);
-#endif
-#ifdef NON_MATCHING
 int CScriptInterpreter::SearchCommand(int *tag_index) {
-    if (!SkipSpace(*this)) {
+    char command[256];
+
+    if (!SkipSpace__FR9input_str__3(*this)) {
         return 0;
     }
 
-    char command[256];
     int length = 0;
-    while (true) {
-        char character = data[pos++];
-        if (pos > size) {
+    int c;
+    while (1) {
+        if (get(&c) == 0) {
             return 0;
         }
-        if (!CheckChar(character)) {
-            command[length] = '\0';
+        if (!CheckChar__Fc__3(c)) {
             break;
         }
-        command[length++] = character;
+        command[length++] = c;
     }
+    command[length] = 0;
     if (command[0] < 'A' || command[0] > 'Z') {
         *tag_index = -1;
         return 1;
     }
-    for (int index = 0; index < tag_count; index++) {
-        if (strcmp(tag_table[index].name, command) == 0) {
-            *tag_index = index;
+    for (int i = 0; i < tag_count; i++) {
+        if (strcmp(tag_table[i].name, command) == 0) {
+            *tag_index = i;
             return 1;
         }
     }
@@ -357,7 +300,3 @@ int CScriptInterpreter::SearchCommand(int *tag_index) {
     *tag_index = -1;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/scriptinterpreter", SearchCommand__18CScriptInterpreterFPi);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/scriptinterpreter", @403);

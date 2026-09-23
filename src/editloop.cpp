@@ -215,13 +215,11 @@ extern u8 EditElementInfo[0x120];
 #include "editmenu.hpp"
 #ifdef NON_MATCHING // draft includes
 #include "wind.hpp"
-#include "editmapscript.hpp"
 #include "memcard.hpp"
 #include "fishing.hpp"
 #include "effectmacro.hpp"
 #include "nowload.hpp"
 #include "menu_draw.hpp"
-#include <libgraph.h>
 #endif
 extern u8 MesWinTexBuff_01[0x100];
 extern u8 MesWinTexBuff_02[0x100];
@@ -4200,7 +4198,7 @@ void LoadGroundData() {
                 (&surface->follow_x)[j] = (&info->follow_x)[j];
             }
             for (int j = 0; j < 4; j++) {
-                sceVu0CopyVector((float *) &surface->ripples[j], info->wave[j]);
+                sceVu0CopyVector((float *) &surface->ripples[j], &info->wave[j].x);
             }
             water->SetVertex(near_left, near_right, far_left, far_right);
             water->frame.SetPosition(info->corner_c);
@@ -4562,6 +4560,10 @@ void LoadPTS(CMapParts *parts, MAP_PARTS_INFO *info, OBJ_ANIME_SEQ *anime,
  */
 void LoadMapObject(CMapParts *map_parts, char **script) {
 }
+
+/**
+ * Draws one textured rectangle rotated about a caller-supplied pivot.
+ */
 void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
                     const CRect_i_ &texel, int pivot_x, int pivot_y, float angle,
                     unsigned char alpha) {
@@ -4569,16 +4571,15 @@ void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sc
     float y[4];
     sceGsTest test;
     sceGsZbuf zbuf;
-    float q = 1.0f;
+    float q;
     int i;
 
+    q = 1.0f;
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
     sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, 0x41);
-    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
-                     SCE_GS_SET_PRIM(4, 0, 1, 0, 1, 1, 1, 0, 0));
-
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(4, 0, 1, 0, 1, 1, 1, 0, 0));
     test = mgPixelTest;
     test.bits.ate = 0;
     test.bits.aref = 0;
@@ -4586,36 +4587,35 @@ void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sc
     test.bits.zte = 1;
     test.bits.ztst = SCE_GS_ALWAYS;
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &test);
-
     zbuf = mgZBuffer;
     zbuf.bits.zmsk = 1;
 
-    x[0] = x[2] = (float) (-pivot_x * 16);
-    x[1] = x[3] = (float) ((screen.width - pivot_x) * 16 - 1);
-    y[0] = y[1] = (float) (-pivot_y * 16);
-    y[2] = y[3] = (float) ((screen.height - pivot_y) * 16 - 1);
-
+    x[0] = x[2] = pivot_x * -16;
+    x[1] = x[3] = ((screen.width - pivot_x) << 4) - 1;
+    y[0] = y[1] = pivot_y * -16;
+    y[2] = y[3] = ((screen.height - pivot_y) << 4) - 1;
     for (i = 0; i < 4; i++) {
         float turned_x = y[i] * cosf(angle) + x[i] * sinf(angle);
         float turned_y = x[i] * cosf(angle) - y[i] * sinf(angle);
-        x[i] = (float) ((int) turned_x + screen.x * 16 + 27648);
-        y[i] = (float) ((int) (0.5f * turned_y) + screen.y * 8 + 30976);
+
+        x[i] = (int) turned_x + (screen.x << 4) + 27648;
+        y[i] = (int) (0.5f * turned_y) + (screen.y << 3) + 30976;
     }
 
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
-    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(128, 128, 128, alpha, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, alpha, *(u_int *) &q));
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
-    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x * 16, texel.y * 16));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((u_long) x[0], (u_long) y[0], 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[0], y[0], 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_UV,
-                     SCE_GS_SET_UV((texel.x + screen.width) * 16, texel.y * 16));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((u_long) x[1], (u_long) y[1], 0, 0));
+                     SCE_GS_SET_UV((texel.x + screen.width) << 4, texel.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[1], y[1], 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_UV,
-                     SCE_GS_SET_UV(texel.x * 16, (texel.y + texel.height) * 16));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((u_long) x[2], (u_long) y[2], 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) * 16,
-                                                      (texel.y + texel.height) * 16));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((u_long) x[3], (u_long) y[3], 0, 0));
+                     SCE_GS_SET_UV(texel.x << 4, (texel.y + texel.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[2], y[2], 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV,
+                     SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[3], y[3], 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
     sceVif1PkCloseGifTag(packet);

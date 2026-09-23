@@ -271,14 +271,14 @@ STATIC_ASSERT(sizeof(CSHOT) == 0x400);
 
 class CSHOT_MACHINGUN {
 public:
-    sceVu0FVECTOR position[16]; /**< Current position of each rapid-fire projectile. */
-    sceVu0FVECTOR velocity[16]; /**< Movement applied to each rapid-fire projectile. */
+    float position[16][4]; /**< Positions of the sixteen rapid-fire projectiles. */
+    float velocity[16][4]; /**< Movement vectors of the sixteen rapid-fire projectiles. */
     s32 unk_200[16];
     s32 unk_240[16];
     s32 unk_280[16];
 
     /**
-     * Starts one rapid-fire projectile from a position along a heading.
+     * Starts one rapid-fire projectile and returns its slot, or -1 if full.
      *
      * @mangled Set__15CSHOT_MACHINGUNFPfPfii
      * @address 0x1AE660

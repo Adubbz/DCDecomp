@@ -154,7 +154,7 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
     CFrame *target;
 
     while (next_key < list->key_count &&
-           *(u32 *) (list->keys + next_key * 0x20) <= state->frame) {
+           *(u32 *) ((u8 *) list->keys + next_key * 0x20) <= state->frame) {
         next_key++;
     }
     if (next_key == 0 || next_key >= list->key_count) {
@@ -162,11 +162,11 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
     }
     previous_key = next_key - 1;
     target_key = next_key;
-    from = (float *) (list->keys + previous_key * 0x20 + 0x10);
-    to = (float *) (list->keys + target_key * 0x20 + 0x10);
+    from = (float *) ((u8 *) list->keys + previous_key * 0x20 + 0x10);
+    to = (float *) ((u8 *) list->keys + target_key * 0x20 + 0x10);
     if (state->next_frame == state->frame + 1) {
-        u32 from_frame = *(u32 *) (list->keys + previous_key * 0x20);
-        u32 to_frame = *(u32 *) (list->keys + target_key * 0x20);
+        u32 from_frame = *(u32 *) ((u8 *) list->keys + previous_key * 0x20);
+        u32 to_frame = *(u32 *) ((u8 *) list->keys + target_key * 0x20);
         amount = to_frame == from_frame + 1
                      ? state->blend
                      : (state->time - from_frame) / (float) (to_frame - from_frame);
@@ -212,8 +212,8 @@ Mot_List *MotionProc2(CFrame *frame, tagMOTION_TYPE *motion, tagFRAME_INF *frame
         sceVu0CopyMatrix(frame_info[list->target].matrix, target->local);
     }
     for (key = 0; key < list->key_count; key++) {
-        u32 vertex = *(u32 *) (list->keys + key * 0x20);
-        float *offset = (float *) (list->keys + key * 0x20 + 0x10);
+        u32 vertex = *(u32 *) ((u8 *) list->keys + key * 0x20);
+        float *offset = (float *) ((u8 *) list->keys + key * 0x20 + 0x10);
         if (frame_info[list->frame].base_vertices != NULL &&
             vertex < frame_info[list->frame].vertex_count) {
             sceVu0FVECTOR *base = frame_info[list->frame].base_vertices;
@@ -296,52 +296,91 @@ void SetMotionEX(CFrame *frame, tagMOTION_TYPE *motion, MOTION_INFO *info, MOTIO
  * @address 0x149090
  * @size 0x264
  */
-#ifdef NON_MATCHING
-static Mot_List *LoadMotionList(CDataAlloc2<1> *arena, MOTION_FILE_INFO *file) {
-    Mot_List *head = NULL;
-    Mot_List **tail = &head;
-    u8 *source;
-
-    if (file->name == NULL || file->data == NULL) {
-        return NULL;
-    }
-    source = (u8 *) file->data;
-    while (true) {
-        Mot_List *source_list = (Mot_List *) source;
-        Mot_List *list = (Mot_List *) arena->Alloc(3);
-        u32 key_bytes;
-
-        list->frame = source_list->frame;
-        list->target = source_list->target;
-        list->type = source_list->type;
-        list->key_count = source_list->key_count;
-        key_bytes = list->key_count * 0x20;
-        list->keys = arena->Alloc((key_bytes >> 4) + 1);
-        memcpy(list->keys, source + 0x20, key_bytes);
-        list->next = NULL;
-        *tail = list;
-        tail = &list->next;
-        source += 0x20 + key_bytes;
-        if (source_list->next == NULL) {
-            break;
-        }
-    }
-    return head;
-}
-
-int CreateAnimeDataEX(tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
-                      MOTION_FILE_INFO *files) {
-    if (files[0].name != NULL && files[0].data != NULL) {
+int CreateAnimeDataEX(tagMOTION_TYPE *motion, CDataAlloc2<1> *arena, MOTION_FILE_INFO *files) {
+    if (files[0].name != NULL) {
         motion->base_matrices = (sceVu0FMATRIX *) arena->Alloc((files[0].size >> 4) + 1);
         memcpy(motion->base_matrices, files[0].data, files[0].size);
     }
-    motion->proc_list = LoadMotionList(arena, &files[1]);
-    motion->proc_list2 = LoadMotionList(arena, &files[2]);
+    if (files[1].name != NULL) {
+        Mot_List *list;
+        Mot_File_List *record;
+        u_char *data;
+        Mot_List *reversed;
+        Mot_List *previous;
+        Mot_List *node;
+        u_char *keys;
+
+        data = (u_char *) files[1].data;
+        motion->proc_list = NULL;
+        do {
+            record = (Mot_File_List *) data;
+            list = (Mot_List *) arena->Alloc(sizeof(Mot_List) / 16 + 1);
+            list->frame = record->frame;
+            list->target = record->target;
+            list->key_count = record->key_count;
+            list->type = record->type;
+            list->keys = (Mot_Key *) arena->Alloc(list->key_count * sizeof(Mot_Key) / 16 + 1);
+            data += sizeof(Mot_File_List);
+            keys = data;
+            data += list->key_count * sizeof(Mot_Key);
+            memcpy(list->keys, keys, list->key_count * sizeof(Mot_Key));
+            if (motion->proc_list == NULL) {
+                list->next = NULL;
+            } else {
+                list->next = motion->proc_list;
+            }
+            motion->proc_list = list;
+        } while (record->more != 0L);
+        reversed = NULL;
+        while ((node = motion->proc_list) != NULL) {
+            previous = reversed;
+            reversed = node;
+            motion->proc_list = node->next;
+            node->next = previous;
+        }
+        motion->proc_list = reversed;
+    }
+    if (files[2].name != NULL) {
+        Mot_List *list;
+        Mot_File_List *record;
+        u_char *data;
+        Mot_List *reversed;
+        Mot_List *previous;
+        Mot_List *node;
+        u_char *keys;
+
+        data = (u_char *) files[2].data;
+        motion->proc_list2 = NULL;
+        do {
+            record = (Mot_File_List *) data;
+            list = (Mot_List *) arena->Alloc(sizeof(Mot_List) / 16 + 1);
+            list->frame = record->frame;
+            list->target = record->target;
+            list->key_count = record->key_count;
+            list->type = record->type;
+            list->keys = (Mot_Key *) arena->Alloc(list->key_count * sizeof(Mot_Key) / 16 + 1);
+            data += sizeof(Mot_File_List);
+            keys = data;
+            data += list->key_count * sizeof(Mot_Key);
+            memcpy(list->keys, keys, list->key_count * sizeof(Mot_Key));
+            if (motion->proc_list2 == NULL) {
+                list->next = NULL;
+            } else {
+                list->next = motion->proc_list2;
+            }
+            motion->proc_list2 = list;
+        } while (record->more != 0L);
+        reversed = NULL;
+        while ((node = motion->proc_list2) != NULL) {
+            previous = reversed;
+            reversed = node;
+            motion->proc_list2 = node->next;
+            node->next = previous;
+        }
+        motion->proc_list2 = reversed;
+    }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/gameutil", CreateAnimeDataEX__FP14tagMOTION_TYPEP14CDataAlloc2_1_P16MOTION_FILE_INFO);
-#endif
 /**
  * Builds the per-frame animation table a model's motion needs.
  *
@@ -361,8 +400,8 @@ void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
  * @size 0x318
  */
 #ifdef NON_MATCHING
-void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
-                   tagFRAME_INF *frame_info) {
+int AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
+                  tagFRAME_INF *frame_info) {
     int frame_count = frame->GetFrameNum();
     int index;
 
@@ -382,6 +421,7 @@ void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
             memset(frame_info[list->frame].base_vertices, 0, count * sizeof(sceVu0FVECTOR));
         }
     }
+    return 1;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/gameutil", AnimeDataInit__FP6CFrameP14tagMOTION_TYPEP14CDataAlloc2_1_P12tagFRAME_INF);
@@ -746,8 +786,8 @@ int CheckHits(CCPoly *poly, int count, float *from, float *to, int max, int *hit
 }
 
 #ifdef NON_MATCHING
-void MoveCheck(float *position, float *velocity, float *out_position, MoveCheckInfo *out_info,
-               CCPoly *polys, int poly_num, int mode) {
+int MoveCheck(float *position, float *velocity, float *out_position, MoveCheckInfo *out_info,
+              CCPoly *polys, int poly_num, int mode) {
     sceVu0FVECTOR from;
     sceVu0FVECTOR to;
     sceVu0FVECTOR hit;
@@ -786,157 +826,439 @@ void MoveCheck(float *position, float *velocity, float *out_position, MoveCheckI
     if (CheckWidth(polys, poly_num, to, 5.0f, out_position, mode) == 0) {
         sceVu0CopyVector(out_position, to);
     }
+    return wall >= 0;
 }
 
-int GetFootPoly(float *position, float depth, CCPoly *out_poly, float *hit_point,
-                CCPoly *polys, int poly_num, int mode) {
-    int indices[32];
-    sceVu0FVECTOR hits[32];
+#else
+INCLUDE_ASM("asm/nonmatchings/gameutil", MoveCheck__FPfPfPfP13MoveCheckInfoP6CCPolyii);
+#endif
+
+/**
+ * Describes the surface of a collision triangle, in the shape that CCPoly
+ * carries alongside its plane.
+ */
+struct CCPolyAttr {
+    s16 ground_kind; /**< What the surface is made of. */
+    s16 foot_sound;  /**< Sound the character's feet play on it. */
+    s16 unk_44;      /**< Light or ambience the surface puts the character in. */
+    s16 ignore_mask; /**< Collision query modes that pass through the surface. */
+    u8 unk_48[8];
+};
+
+/**
+ * Finds the polygon under a position, within a drop of the given height, and
+ * gives back the surface it is made of.
+ *
+ * @mangled GetFootPoly__FPffP6CCPolyPfP6CCPolyii
+ * @address 0x14ABB0
+ * @size 0x1DC
+ */
+int GetFootPoly(float *position, float height, CCPoly *found, float *ground, CCPoly *polys,
+                int count, int mode) {
+    int hits;
+    int i;
+    int hit_no[32];
     sceVu0FVECTOR from;
     sceVu0FVECTOR to;
-    int hit_count;
-    int index;
+    sceVu0FVECTOR hit_point[64];
+    CCPolyAttr attr;
+    CCPolyAttr saved;
 
     sceVu0CopyVector(from, position);
     sceVu0CopyVector(to, position);
-    to[1] -= depth;
-    hit_count = CheckHits(polys, poly_num, from, to, 32, indices, hits, 1, mode);
-    memset(out_poly, 0, sizeof(CCPoly));
-    if (hit_count > 0) {
-        *out_poly = polys[indices[0]];
-        sceVu0CopyVector(hit_point, hits[0]);
+    to[1] -= height;
+    hits = CheckHits(polys, count, from, to, 32, hit_no, hit_point, 1, mode);
+    attr.ground_kind = 0;
+    attr.foot_sound = 0;
+    attr.unk_44 = 0;
+    saved = attr;
+    if (hits > 0) {
+        *found = polys[hit_no[0]];
+        sceVu0CopyVector(ground, hit_point[0]);
     }
-    for (index = 0; index < hit_count; index++) {
-        CCPoly *poly = &polys[indices[index]];
-        if (out_poly->attr.ground_kind == 0) {
-            out_poly->attr.ground_kind = poly->attr.ground_kind;
-        }
-        if (out_poly->attr.foot_sound == 0) {
-            out_poly->attr.foot_sound = poly->attr.foot_sound;
-        }
-        if (out_poly->attr.unk_44 == 0) {
-            out_poly->attr.unk_44 = poly->attr.unk_44;
-        }
-    }
-    return hit_count > 0;
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/gameutil", MoveCheck__FPfPfPfP13MoveCheckInfoP6CCPolyii);
-INCLUDE_ASM("asm/nonmatchings/gameutil", GetFootPoly__FPffP6CCPolyPfP6CCPolyii);
-#endif
-/**
- * Finds the event polygon a movement crosses.
- *
- * @mangled GetEventPoly__FPfPfP6CCPolyPiPfP6CCPolyii
- * @address 0x14AD90
- * @size 0x1E0
- */
-#ifdef NON_MATCHING
-short GetEventPoly(float *position, float *movement, CCPoly *out_poly, int *out_index,
-                   float *hit_point, CCPoly *polys, int poly_num, int mode) {
-    int indices[32];
-    sceVu0FVECTOR hits[32];
-    sceVu0FVECTOR end;
-    int hit_count;
-    int index;
+    for (i = 0; i < hits; i++) {
+        CCPolyAttr *hit_attr = (CCPolyAttr *) &polys[hit_no[i]].attr;
 
-    sceVu0AddVector(end, position, movement);
-    hit_count = CheckHits(polys, poly_num, position, end, 32, indices, hits, 1, mode);
-    memset(out_poly, 0, sizeof(CCPoly));
-    *out_index = -1;
-    if (hit_count > 0) {
-        *out_poly = polys[indices[0]];
-        *out_index = indices[0];
-        sceVu0CopyVector(hit_point, hits[0]);
-    }
-    for (index = 0; index < hit_count; index++) {
-        CCPoly *poly = &polys[indices[index]];
-        if (out_poly->attr.ground_kind == 0) {
-            out_poly->attr.ground_kind = poly->attr.ground_kind;
+        if (attr.ground_kind == 0) {
+            attr.ground_kind = hit_attr->ground_kind;
         }
-        if (out_poly->attr.foot_sound == 0) {
-            out_poly->attr.foot_sound = poly->attr.foot_sound;
+        if (attr.foot_sound == 0) {
+            attr.foot_sound = hit_attr->foot_sound;
         }
-        if (out_poly->attr.unk_44 == 0) {
-            out_poly->attr.unk_44 = poly->attr.unk_44;
+        if (attr.unk_44 == 0) {
+            attr.unk_44 = hit_attr->unk_44;
         }
     }
-    return out_poly->attr.ground_kind;
+    found->info = *(CCPolyInfo *) &attr;
+    return hits > 0;
 }
 
-static int CheckWidthDirection(CCPoly *polys, int poly_num, float *position, float dx,
-                               float dz, float *out_position, int mode, int camera) {
-    sceVu0FVECTOR end;
-    sceVu0FVECTOR hit;
+int GetEventPoly(float *position, float *velocity, CCPoly *found, int *found_no, float *hit,
+                 CCPoly *polys, int count, int mode) {
+    int hits;
+    int i;
+    int hit_no[32];
+    sceVu0FVECTOR from;
+    sceVu0FVECTOR to;
+    sceVu0FVECTOR hit_point[32];
+    CCPolyAttr attr;
+
+    sceVu0CopyVector(from, position);
+    sceVu0AddVector(to, position, velocity);
+    hits = CheckHits(polys, count, from, to, 32, hit_no, hit_point, 1, mode);
+    attr.ground_kind = 0;
+    attr.foot_sound = 0;
+    attr.unk_44 = 0;
+    *found_no = -1;
+    if (hits > 0) {
+        *found = polys[hit_no[0]];
+        *found_no = hit_no[0];
+        sceVu0CopyVector(hit, hit_point[0]);
+    }
+    for (i = 0; i < hits; i++) {
+        CCPolyAttr *hit_attr = (CCPolyAttr *) &polys[hit_no[i]].attr;
+
+        if (attr.ground_kind == 0) {
+            attr.ground_kind = hit_attr->ground_kind;
+        }
+        if (attr.foot_sound == 0) {
+            attr.foot_sound = hit_attr->foot_sound;
+        }
+        if (attr.unk_44 == 0) {
+            attr.unk_44 = hit_attr->unk_44;
+        }
+    }
+    found->info = *(CCPolyInfo *) &attr;
+    return attr.ground_kind;
+}
+
+int CheckWidth(CCPoly *polys, int count, float *position, float radius, float *out, int flags) {
+    int hit;
+    int hit_plus;
+    int hit_minus;
+    int poly_no;
+    float step;
+    sceVu0FVECTOR to;
+    sceVu0FVECTOR hit_a;
+    sceVu0FVECTOR hit_b;
+    sceVu0FVECTOR pos;
     sceVu0FVECTOR normal;
-    int poly_index;
 
-    sceVu0CopyVector(end, position);
-    end[0] += dx;
-    end[2] += dz;
-    poly_index = CheckHit(polys, poly_num, position, end, hit, 0, mode);
-    if (poly_index < 0) {
-        return 0;
-    }
-    sceVu0Normalize(normal, polys[poly_index].normal);
-    if (normal[1] <= -0.5f || normal[1] >= 0.5f) {
-        return 0;
-    }
-    if (camera && normal[0] * dx + normal[2] * dz >= 0.0f) {
-        return 0;
-    }
-    sceVu0CopyVector(out_position, hit);
-    out_position[0] -= dx;
-    out_position[2] -= dz;
-    return 1;
-}
-
-static int CheckWidthCore(CCPoly *polys, int poly_num, float *position, float radius,
-                          float *out_position, int mode, int camera) {
-    static const float directions[8][2] = {
-        {0.70710677f, 0.70710677f},  {-0.70710677f, -0.70710677f},
-        {0.70710677f, -0.70710677f}, {-0.70710677f, 0.70710677f},
-        {1.0f, 0.0f},                {-1.0f, 0.0f},
-        {0.0f, 1.0f},                {0.0f, -1.0f},
-    };
-    int direction;
-    int collided = 0;
-
-    sceVu0CopyVector(out_position, position);
-    for (direction = 0; direction < 8; direction++) {
-        float dx = directions[direction][0] * radius;
-        float dz = directions[direction][1] * radius;
-        if (CheckWidthDirection(polys, poly_num, out_position, dx, dz, out_position, mode,
-                                camera)) {
-            collided = 1;
+    hit = 0;
+    step = radius / 1.4142135f;
+    sceVu0CopyVector(pos, position);
+    sceVu0CopyVector(out, position);
+    hit_minus = 0;
+    hit_plus = 0;
+    to[0] = pos[0] + step;
+    to[1] = pos[1];
+    to[2] = pos[2] + step;
+    poly_no = CheckHit(polys, count, pos, to, hit_a, 0, flags);
+    if (poly_no != -1) {
+        sceVu0Normalize(normal, polys[poly_no].normal);
+        if (normal[1] < 0.5f && !(normal[1] <= -0.5f)) {
+            hit_plus = 1;
+            hit = 1;
         }
     }
-    return collided;
+    to[0] = pos[0] - step;
+    to[1] = pos[1];
+    to[2] = pos[2] - step;
+    poly_no = CheckHit(polys, count, pos, to, hit_b, 0, flags);
+    if (poly_no != -1) {
+        sceVu0Normalize(normal, polys[poly_no].normal);
+        if (normal[1] < 0.5f && !(normal[1] <= -0.5f)) {
+            hit = 1;
+            hit_minus = 1;
+        }
+    }
+    if (hit_plus != 0 && hit_minus != 0) {
+        out[0] = 0.5f * (hit_a[0] + hit_b[0]);
+        out[2] = 0.5f * (hit_a[2] + hit_b[2]);
+    } else {
+        if (hit_plus != 0) {
+            out[0] = hit_a[0] - step;
+            out[2] = hit_a[2] - step;
+        }
+        if (hit_minus != 0) {
+            out[0] = hit_b[0] + step;
+            out[2] = hit_b[2] + step;
+        }
+    }
+    sceVu0CopyVector(pos, out);
+    hit_minus = 0;
+    hit_plus = 0;
+    to[0] = pos[0] + step;
+    to[1] = pos[1];
+    to[2] = pos[2] - step;
+    poly_no = CheckHit(polys, count, pos, to, hit_a, 0, flags);
+    if (poly_no != -1) {
+        sceVu0Normalize(normal, polys[poly_no].normal);
+        if (normal[1] < 0.5f && !(normal[1] <= -0.5f)) {
+            hit_plus = 1;
+            hit = 1;
+        }
+    }
+    to[0] = pos[0] - step;
+    to[1] = pos[1];
+    to[2] = pos[2] + step;
+    poly_no = CheckHit(polys, count, pos, to, hit_b, 0, flags);
+    if (poly_no != -1) {
+        sceVu0Normalize(normal, polys[poly_no].normal);
+        if (normal[1] < 0.5f && !(normal[1] <= -0.5f)) {
+            hit = 1;
+            hit_minus = 1;
+        }
+    }
+    if (hit_plus != 0 && hit_minus != 0) {
+        out[0] = 0.5f * (hit_a[0] + hit_b[0]);
+        out[2] = 0.5f * (hit_a[2] + hit_b[2]);
+    } else {
+        if (hit_plus != 0) {
+            out[0] = hit_a[0] - step;
+            out[2] = hit_a[2] + step;
+        }
+        if (hit_minus != 0) {
+            out[0] = hit_b[0] + step;
+            out[2] = hit_b[2] - step;
+        }
+    }
+    sceVu0CopyVector(pos, out);
+    hit_minus = 0;
+    hit_plus = 0;
+    to[0] = pos[0] + radius;
+    to[1] = pos[1];
+    to[2] = pos[2];
+    poly_no = CheckHit(polys, count, pos, to, hit_a, 0, flags);
+    if (poly_no != -1) {
+        sceVu0Normalize(normal, polys[poly_no].normal);
+        if (normal[1] < 0.5f && !(normal[1] <= -0.5f)) {
+            hit_plus = 1;
+            hit = 1;
+        }
+    }
+    to[0] = pos[0] - radius;
+    to[1] = pos[1];
+    to[2] = pos[2];
+    poly_no = CheckHit(polys, count, pos, to, hit_b, 0, flags);
+    if (poly_no != -1) {
+        sceVu0Normalize(normal, polys[poly_no].normal);
+        if (normal[1] < 0.5f && !(normal[1] <= -0.5f)) {
+            hit = 1;
+            hit_minus = 1;
+        }
+    }
+    if (hit_plus != 0 && hit_minus != 0) {
+        out[0] = 0.5f * (hit_a[0] + hit_b[0]);
+    } else {
+        if (hit_plus != 0) {
+            out[0] = hit_a[0] - radius;
+        }
+        if (hit_minus != 0) {
+            out[0] = hit_b[0] + radius;
+        }
+    }
+    sceVu0CopyVector(pos, out);
+    hit_minus = 0;
+    hit_plus = 0;
+    to[0] = pos[0];
+    to[1] = pos[1];
+    to[2] = pos[2] + radius;
+    poly_no = CheckHit(polys, count, pos, to, hit_a, 0, flags);
+    if (poly_no != -1) {
+        sceVu0Normalize(normal, polys[poly_no].normal);
+        if (normal[1] < 0.5f && !(normal[1] <= -0.5f)) {
+            hit = 1;
+            hit_plus = 1;
+        }
+    }
+    to[0] = pos[0];
+    to[1] = pos[1];
+    to[2] = pos[2] - radius;
+    poly_no = CheckHit(polys, count, pos, to, hit_b, 0, flags);
+    if (poly_no != -1) {
+        sceVu0Normalize(normal, polys[poly_no].normal);
+        if (normal[1] < 0.5f && !(normal[1] <= -0.5f)) {
+            hit = 1;
+            hit_minus = 1;
+        }
+    }
+    if (hit_plus != 0 && hit_minus != 0) {
+        out[2] = 0.5f * (hit_a[2] + hit_b[2]);
+    } else {
+        if (hit_plus != 0) {
+            out[2] = hit_a[2] - radius;
+        }
+        if (hit_minus != 0) {
+            out[2] = hit_b[2] + radius;
+        }
+    }
+    return hit;
 }
 
-int CheckWidth(CCPoly *polys, int poly_num, float *position, float radius,
-               float *out_position, int mode) {
-    return CheckWidthCore(polys, poly_num, position, radius, out_position, mode, 0);
+int CheckCameraWidth(CCPoly *polys, int count, float *position, float radius, float *out, int flags) {
+    int hit;
+    int hit_plus;
+    int hit_minus;
+    int poly_no;
+    float step;
+    sceVu0FVECTOR to;
+    sceVu0FVECTOR hit_a;
+    sceVu0FVECTOR hit_b;
+    sceVu0FVECTOR pos;
+    sceVu0FVECTOR normal;
+
+    hit = 0;
+    step = radius / 1.4142135f;
+    sceVu0CopyVector(pos, position);
+    sceVu0CopyVector(out, position);
+    hit_minus = 0;
+    hit_plus = 0;
+    to[0] = pos[0] + step;
+    to[1] = pos[1];
+    to[2] = pos[2] + step;
+    poly_no = CheckHit(polys, count, pos, to, hit_a, 0, flags);
+    if (poly_no != -1) {
+        sceVu0Normalize(normal, polys[poly_no].normal);
+        if (normal[1] < 0.5f && !(normal[1] <= -0.5f) && normal[0] * step + normal[2] * step < 0.0f) {
+            hit_plus = 1;
+            hit = 1;
+        }
+    }
+    to[0] = pos[0] - step;
+    to[1] = pos[1];
+    to[2] = pos[2] - step;
+    poly_no = CheckHit(polys, count, pos, to, hit_b, 0, flags);
+    if (poly_no != -1) {
+        sceVu0Normalize(normal, polys[poly_no].normal);
+        if (normal[1] < 0.5f && !(normal[1] <= -0.5f) && normal[0] * -step + normal[2] * -step < 0.0f) {
+            hit = 1;
+            hit_minus = 1;
+        }
+    }
+    if (hit_plus != 0 && hit_minus != 0) {
+        out[0] = 0.5f * (hit_a[0] + hit_b[0]);
+        out[2] = 0.5f * (hit_a[2] + hit_b[2]);
+    } else {
+        if (hit_plus != 0) {
+            out[0] = hit_a[0] - step;
+            out[2] = hit_a[2] - step;
+        }
+        if (hit_minus != 0) {
+            out[0] = hit_b[0] + step;
+            out[2] = hit_b[2] + step;
+        }
+    }
+    sceVu0CopyVector(pos, out);
+    hit_minus = 0;
+    hit_plus = 0;
+    to[0] = pos[0] + step;
+    to[1] = pos[1];
+    to[2] = pos[2] - step;
+    poly_no = CheckHit(polys, count, pos, to, hit_a, 0, flags);
+    if (poly_no != -1) {
+        sceVu0Normalize(normal, polys[poly_no].normal);
+        if (normal[1] < 0.5f && !(normal[1] <= -0.5f) && normal[0] * step + normal[2] * -step < 0.0f) {
+            hit_plus = 1;
+            hit = 1;
+        }
+    }
+    to[0] = pos[0] - step;
+    to[1] = pos[1];
+    to[2] = pos[2] + step;
+    poly_no = CheckHit(polys, count, pos, to, hit_b, 0, flags);
+    if (poly_no != -1) {
+        sceVu0Normalize(normal, polys[poly_no].normal);
+        if (normal[1] < 0.5f && !(normal[1] <= -0.5f) && normal[0] * -step + normal[2] * step < 0.0f) {
+            hit = 1;
+            hit_minus = 1;
+        }
+    }
+    if (hit_plus != 0 && hit_minus != 0) {
+        out[0] = 0.5f * (hit_a[0] + hit_b[0]);
+        out[2] = 0.5f * (hit_a[2] + hit_b[2]);
+    } else {
+        if (hit_plus != 0) {
+            out[0] = hit_a[0] - step;
+            out[2] = hit_a[2] + step;
+        }
+        if (hit_minus != 0) {
+            out[0] = hit_b[0] + step;
+            out[2] = hit_b[2] - step;
+        }
+    }
+    sceVu0CopyVector(pos, out);
+    hit_minus = 0;
+    hit_plus = 0;
+    to[0] = pos[0] + radius;
+    to[1] = pos[1];
+    to[2] = pos[2];
+    poly_no = CheckHit(polys, count, pos, to, hit_a, 0, flags);
+    if (poly_no != -1) {
+        sceVu0Normalize(normal, polys[poly_no].normal);
+        if (normal[1] < 0.5f && !(normal[1] <= -0.5f) && normal[0] * radius < 0.0f) {
+            hit_plus = 1;
+            hit = 1;
+        }
+    }
+    to[0] = pos[0] - radius;
+    to[1] = pos[1];
+    to[2] = pos[2];
+    poly_no = CheckHit(polys, count, pos, to, hit_b, 0, flags);
+    if (poly_no != -1) {
+        sceVu0Normalize(normal, polys[poly_no].normal);
+        if (normal[1] < 0.5f && !(normal[1] <= -0.5f) && normal[0] * -radius < 0.0f) {
+            hit = 1;
+            hit_minus = 1;
+        }
+    }
+    if (hit_plus != 0 && hit_minus != 0) {
+        out[0] = 0.5f * (hit_a[0] + hit_b[0]);
+    } else {
+        if (hit_plus != 0) {
+            out[0] = hit_a[0] - radius;
+        }
+        if (hit_minus != 0) {
+            out[0] = hit_b[0] + radius;
+        }
+    }
+    sceVu0CopyVector(pos, out);
+    hit_minus = 0;
+    hit_plus = 0;
+    to[0] = pos[0];
+    to[1] = pos[1];
+    to[2] = pos[2] + radius;
+    poly_no = CheckHit(polys, count, pos, to, hit_a, 0, flags);
+    if (poly_no != -1) {
+        sceVu0Normalize(normal, polys[poly_no].normal);
+        if (normal[1] < 0.5f && !(normal[1] <= -0.5f) && normal[2] * radius < 0.0f) {
+            hit = 1;
+            hit_plus = 1;
+        }
+    }
+    to[0] = pos[0];
+    to[1] = pos[1];
+    to[2] = pos[2] - radius;
+    poly_no = CheckHit(polys, count, pos, to, hit_b, 0, flags);
+    if (poly_no != -1) {
+        sceVu0Normalize(normal, polys[poly_no].normal);
+        if (normal[1] < 0.5f && !(normal[1] <= -0.5f) && normal[2] * -radius < 0.0f) {
+            hit = 1;
+            hit_minus = 1;
+        }
+    }
+    if (hit_plus != 0 && hit_minus != 0) {
+        out[2] = 0.5f * (hit_a[2] + hit_b[2]);
+    } else {
+        if (hit_plus != 0) {
+            out[2] = hit_a[2] - radius;
+        }
+        if (hit_minus != 0) {
+            out[2] = hit_b[2] + radius;
+        }
+    }
+    return hit;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/gameutil", GetEventPoly__FPfPfP6CCPolyPiPfP6CCPolyii);
-INCLUDE_ASM("asm/nonmatchings/gameutil", CheckWidth__FP6CCPolyiPffPfi);
-#endif
-/**
- * Reports how far the camera may stand back before the collision stops it.
- *
- * @mangled CheckCameraWidth__FP6CCPolyiPffPfi
- * @address 0x14B830
- * @size 0x9EC
- */
-#ifdef NON_MATCHING
-int CheckCameraWidth(CCPoly *polys, int poly_num, float *position, float radius,
-                     float *out_position, int mode) {
-    return CheckWidthCore(polys, poly_num, position, radius, out_position, mode, 1);
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/gameutil", CheckCameraWidth__FP6CCPolyiPffPfi);
-#endif
 static s32 linear_filter;          // Nonzero selects linear filtering for sprite batches.
 static u_long128 *sprite_data_top; // First quadword of the open sprite batch.
 static u_long128 *sprite_data;     // Current write cursor of the open sprite batch.

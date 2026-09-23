@@ -197,7 +197,7 @@ extern "C" void mwOverlayInit(void *overlay, int size);
  * @address 0x122E70
  * @size 0x8
  */
-extern "C" void MWNotifyOverlayLoaded(void);
+extern "C" void MWNotifyOverlayLoaded(void *address);
 
 /**
  * Reads one overlay image off the disc.

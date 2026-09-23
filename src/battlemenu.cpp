@@ -74,6 +74,11 @@ extern s32 MenuWarningMsgFlag;
 extern float BtlEffectCt;
 
 /**
+ * Is nonzero once the battle menu's textures have finished loading.
+ */
+extern s32 BtlMenuReadEndFlag;
+
+/**
  * Stores the dungeon status used by the battle menu.
  */
 extern CDngStatusData *BtlMenuStatusPt;
@@ -653,7 +658,47 @@ static int BtlMenuDrawSpecialFlag(int flag) {
 }
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuCursor__Fv);
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuAppear__Fv);
+
+/**
+ * Slides the bar icons into place and opens the menu once they have all arrived.
+ *
+ * @mangled BattleMenuAppear__Fv
+ * @address 0x1F68C0
+ * @size 0x17C
+ */
+static void BattleMenuAppear() {
+    int arrived = 0;
+    int i;
+    int position[2];
+
+    for (i = 0; i < GetMenuModeMax(); i++) {
+        GetMenuIconPos(i, position);
+        float x = NorMenuIcon[i].x;
+        float dx = position[0] - x;
+        NorMenuIcon[i].x = x + dx / 4.0f;
+        NorMenuIcon[i].y += (position[1] - NorMenuIcon[i].y) / 4.2f;
+        if (dx < 3.4f) {
+            NorMenuIcon[i].x = position[0];
+            arrived++;
+        }
+    }
+    BtlEffectCt += 1.0f;
+    if (!(BtlEffectCt < 19.0f)) {
+        BtlEffectCt = 19.0f;
+    }
+    int reading = ReadBGSync();
+    if (arrived >= 6 && reading == 0) {
+        BattleMenuTexEnter();
+        BtlMenuReadEndFlag = 1;
+        BtlEffectCt = 0.0f;
+        BtlEffectFlag = -1;
+        BattleMenuFlag = 0;
+        MenuSelect[0] = 1;
+        MenuSelect[1] = 0;
+        SysCur[0] = 64.0f;
+        SysCur[1] = 54.0f;
+    }
+}
 
 /**
  * Slides the bar icons off the screen and closes the menu once they are gone.
@@ -1105,7 +1150,7 @@ static void InitWeaponSelect(int mode, int chara) {
     switch (mode) {
         case 0:
             WepMenu.unk_0C = 1;
-            BtlHaveItemPt = (IHAVEITEM *) WepMenu.board.unk_30;
+            BtlHaveItemPt = &WepMenu.board.unk_30;
             break;
         case 1:
             WepMenu.unk_0C = 0;
@@ -1264,6 +1309,11 @@ static int WeaponMenuKastumSelectDown(int row, int enabled_rows) {
     }
     return selected_row;
 }
+
+/**
+ * Moves the cursor across the weapon list and opens what it settles on.
+ */
+static int WeaponSelectKey(void);
 
 INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponSelectKey__Fv);
 
@@ -1529,8 +1579,8 @@ static int ItemTrushKey(int *, int *, int slot) {
     switch (page) {
         case 0:
             if (!kind || kind == -1) {
-                MenuDataSwap(&MenuItemPackPt->item[MenuItemPackPt->num + slot], &ItemMenuMode.board.unk_40);
-                MenuDataSwap(&ItemMenuMode.board.unk_42, &MenuItemPackPt->item_vol[MenuItemPackPt->num + slot]);
+                MenuDataSwap(&MenuItemPackPt->item[MenuItemPackPt->num + slot], &ItemMenuMode.board.unk_30.item_no);
+                MenuDataSwap(&ItemMenuMode.board.unk_30.volume, &MenuItemPackPt->item_vol[MenuItemPackPt->num + slot]);
                 swapped = 1;
             }
             break;
@@ -1729,7 +1779,7 @@ static void InitItemMode(int, int chara) {
     StartBGReadItemMenuWepIcon(buffer, size);
     buffer += (size >> 4) + 1;
     ItemMenuCharaReadBuf = MenuCalcBufAlignment(buffer);
-    BtlHaveItemPt = (IHAVEITEM *) ItemMenuMode.board.unk_30;
+    BtlHaveItemPt = &ItemMenuMode.board.unk_30;
     StartLoadCharaMDS(ItemMenuCharaReadBuf, chara, 1);
     MenuExTextureReadFlag = 0;
     memset(&IconAutoGet, -1, sizeof(IconAutoGet));
@@ -2151,7 +2201,38 @@ static int WorldMapMoveKey() {
     }
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawMapCheck__Fi);
+
+/**
+ * Marks every world-map place the party has already reached.
+ *
+ * @mangled DrawMapCheck__Fi
+ * @address 0x20A9B0
+ * @size 0x150
+ */
+void DrawMapCheck(int) {
+    s16 offset[16][2] = {0};
+    CRect_i_ dst(0, 0, 0x10, 0xF);
+    CRect_i_ src(0, 0x68, 0x15, 0x15);
+
+    for (int i = 0; i < 16; i++) {
+        WORLD_MAP_POS *place = &TownOrDngPos[i];
+        if (place->frame != NULL && place->unk_06 > 0) {
+            CFrame *frame = MenuCharaFrame.frame->SearchFrame(place->frame);
+            if (frame != NULL) {
+                int pos[2];
+
+                Get3DPosTo2DPos(frame, pos);
+                dst.x = pos[0] + offset[i][0];
+                dst.y = pos[1] + offset[i][1];
+                src.x = 0;
+                if (MenuMove.unk_0C == i) {
+                    src.x += 0x14;
+                }
+                DrawMenu2DSprite(MenuMoveTex, dst, src, 0x80);
+            }
+        }
+    }
+}
 
 /**
  * Gives how often a world-map place has been visited, or how far its dungeon has been cleared.

@@ -537,12 +537,13 @@ CFrame *CDungeonParts::GetSearchFrame(char *name) {
  * @address 0x1C1670
  * @size 0x58
  */
-void CDungeonParts::SetHealZone(float *position, float radius, float height) {
+void CDungeonParts::SetHealZone(float *position, float width, float depth) {
     sceVu0CopyVector(heal_pos, position);
-    *(float *) &loaded = radius;
-    heal_height = height;
+    heal_width = width;
+    heal_depth = depth;
     heal_on = 1;
 }
+
 /**
  * Draws one dungeon part and everything standing on it.
  *

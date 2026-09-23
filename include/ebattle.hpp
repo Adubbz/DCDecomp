@@ -1,6 +1,7 @@
 #pragma once
 
 class CCharacter;
+class CCamera;
 
 void EBInitialize();
 void EBInit(float speed_mult);
@@ -27,6 +28,15 @@ int EBIntroLoop();
 /** Advances the active enemy-battle sequence and returns its state. */
 int EBLoop();
 void EBFinishSound(int fade_bgm, int play_fanfare);
+
+/**
+ * Aims the editor camera from the character's head position.
+ *
+ * @mangled EdEyeCamera__FP7CCameraP10CCharacter
+ * @address 0x169FF0
+ * @size 0x128
+ */
+void EdEyeCamera(CCamera *camera, CCharacter *character);
 
 /**
  * Assigns the enemy-battle motion sequence for a character.

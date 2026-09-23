@@ -12,15 +12,23 @@ class CCamera;
 class CMajinBeem {
 public:
     /**
-     * Clears the effect. The compiler writes this one, for the members that
-     * have constructors of their own; retail's copy stands in main.
+     * Initializes the beam before it is fired.
      *
      * @mangled __ct__10CMajinBeemFv
      * @address 0x1434C0
      * @size 0x30
      */
     CMajinBeem();
-    void Initialize(void);
+
+    /**
+     * Drops the beam, so that nothing draws until it is fired again.
+     *
+     * @mangled Initialize__10CMajinBeemFv
+     * @address 0x1434F0
+     * @size 0x10
+     */
+    void Initialize();
+
     /**
      * Draws the beam trail as camera-facing sprites.
      *

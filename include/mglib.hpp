@@ -244,7 +244,6 @@ void MGDrawShade(CFrame *frame);
  * @mangled MGGetFBuffTex__FP9sceGsTex0
  * @address 0x12F130
  * @size 0x70
- * @unknownret
  */
 void MGGetFBuffTex(sceGsTex0 *tex0);
 

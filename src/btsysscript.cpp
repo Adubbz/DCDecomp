@@ -793,18 +793,13 @@ int _GET_GATEKEY_NO(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-#ifdef NON_MATCHING
-extern s32 BtUserWeaponDraw;
-
 int _USER_WEAPON_DRAW(RS_STACKDATA *stack, int count) {
-    if (count == 1) {
-        BtUserWeaponDraw = GetStackInt(stack);
+    if (count != 1) {
+        return 1;
     }
+    BtActStatus.unk_058 = GetStackInt(stack);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btsysscript", _USER_WEAPON_DRAW__FP12RS_STACKDATAi);
-#endif
 
 int _SET_MAIN_CHR2(RS_STACKDATA *stack, int count) {
     int chara = GetStackInt(stack++);
@@ -934,10 +929,10 @@ int _SET_STATUS_ERR(RS_STACKDATA *stack, int count) {
     BtSetStatusErr(GetStackInt(stack));
     sceVu0CopyVector(pos, CharaMain.pos);
     pos[1] += 16.0f;
-    float hit_value = 0.0f;
-    NowColData->Set(pos, 2, 2, 5.0f, hit_value, 1, 2, 0, 0);
+    NowColData->Set(pos, 2, 2, 5.0f, 0.0f, 1, 2, 0, 0);
     return 1;
 }
+
 int _CHECK_MARDAN(RS_STACKDATA *stack, int count) {
     SetStack(stack, SaveData->GetMardanGareyanFlag());
     return 1;

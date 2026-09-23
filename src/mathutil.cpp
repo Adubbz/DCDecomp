@@ -532,7 +532,7 @@ extern "C" void mwOverlayInit(void *overlay, int size) {
  * @address 0x122E70
  * @size 0x8
  */
-void MWNotifyOverlayLoaded(void) {}
+void MWNotifyOverlayLoaded(void *address) {}
 
 /**
  * Reads one overlay image off the disc.
@@ -565,18 +565,17 @@ extern "C" int mwBload(char *path, void *buffer) {
  * @address 0x122F40
  * @size 0x70
  */
-#ifdef NON_MATCHING
 extern "C" int mwLoadOverlay(char *path, void *address) {
-    int size = mwBload(path, address);
+    int size;
+    int result = 0;
+    size = mwBload(path, address);
     if (size > 0) {
-        MWNotifyOverlayLoaded();
+        MWNotifyOverlayLoaded(address);
         mwOverlayInit(address, size);
+        result = 1;
     }
-    return size > 0;
+    return result;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", mwLoadOverlay);
-#endif
 
 #define PI 3.1415927f
 

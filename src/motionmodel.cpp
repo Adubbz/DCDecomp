@@ -9,22 +9,20 @@
 #include "frame.hpp"
 #include "mglib.hpp"
 
-#ifdef NON_MATCHING
-/* The attribute bit each weapon element hits with; the last entry is what an
- * element outside the table gets. */
+/**
+ * Holds the hit attribute for each weapon element.
+ */
 static int element_tbl[6] = {1, 2, 4, 8, 0x10, 0};
-#endif
 
-#ifdef NON_MATCHING
+/**
+ * Returns the attribute bit for a weapon element, or zero for an invalid element.
+ */
 int GetWeaponElementAttr(int element) {
-    if (element < 0 || element >= 6) {
+    if (element < 0 || element > 5) {
         element = 5;
     }
     return element_tbl[element];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/motionmodel", GetWeaponElementAttr__Fi);
-#endif
 #ifdef NON_MATCHING
 void CMotionModel::LoadPack(unsigned int *pack, char *base_name, CDataAlloc2<1> *model_arena,
                             CDataAlloc2<1> *motion_arena, MOTION_INFO *motion_info,

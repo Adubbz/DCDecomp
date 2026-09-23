@@ -5,10 +5,12 @@
 #include <cstring>
 
 #include "battlemenu.hpp"
+#include "clsmes.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dun/gameloop.hpp"
 #include "edit.hpp"
+#include "editpartsinfo.hpp"
 #include "frame.hpp"
 #include "gamepad.hpp"
 #include "memcard.hpp"
@@ -20,9 +22,7 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-#ifdef NON_MATCHING
 extern "C" int abs(int);
-#endif
 
 /** The state the edit menu is in. */
 extern int EditSwitch;
@@ -47,7 +47,6 @@ extern s16 MakeWin2Flag;
 
 extern CDataAlloc2<1> EdMenuBuffer;
 
-#ifdef NON_MATCHING
 /** The edit menu's eased cursor position and current icon selection. */
 struct EDIT_MENU_CURSOR {
     float x;      /**< Cursor's current screen x, eased toward its target. */
@@ -56,14 +55,34 @@ struct EDIT_MENU_CURSOR {
 };
 
 /** The edit menu's cursor. */
-static EDIT_MENU_CURSOR EdCur;
+extern EDIT_MENU_CURSOR EdCur;
 
 /** Resting screen position of each edit menu icon, one x/y pair per icon. */
-static float MenuIconPos[6][2];
+extern float MenuIconPos[6][2];
 
 /** The icon shown at each edit menu slot. */
-static s8 EditMenuIconID[6];
-#endif
+extern s8 EditMenuIconID[6];
+
+/** Whether the edit menu's page textures have finished reading. */
+extern int EdMenuTextureReadEndFlag;
+
+/** How bright the edit menu's message windows draw while it closes. */
+extern s16 EdMenuRGB;
+
+/** The texture the analysis page's headings come from. */
+extern CTexture *Analyze;
+
+/** The texture the analysis page's panels, bars and digits come from. */
+extern CTexture *AnaBar;
+
+/** How far the analysis page's scrolling background has moved. */
+extern s16 AnalyzeBackBlockCnt;
+
+/** How far each of the analysis page's three bars has filled, in screen columns. */
+extern float AnalyzeFill[3];
+
+/** The texture the menu's plain frame comes from. */
+extern CTexture *StayTex;
 
 /**
  * Returns the number of edit menu icons, one fewer until the manual is available.
@@ -388,21 +407,38 @@ static int GetEditMenuMax() {
     }
     return max;
 }
-INCLUDE_ASM("asm/nonmatchings/editmenu", DrawMenuIcon__Fi);
-INCLUDE_ASM("asm/nonmatchings/editmenu", GetEditMenuIconPos__FiPi);
-#ifdef NON_MATCHING
-static void DrawMoveMenuIcon() {
-    int icon_max = GetEditMenuMax();
-    int brightness;
 
-    for (int i = 0; i < icon_max; i++) {
+/**
+ * Draws the selected edit menu icon at its resting position.
+ */
+static void DrawMenuIcon(int slot) {
+    MENU_ICON_INFO *info = GetMenuIconInfo(EditMenuIconID[slot]);
+
+    DrawMainMenuIcon((int) (MenuIconPos[slot][0] - 6.0f), (int) (MenuIconPos[slot][1] - 4.0f),
+                     info->id, 1, 0x80, 0x80);
+}
+INCLUDE_ASM("asm/nonmatchings/editmenu", GetEditMenuIconPos__FiPi);
+
+/**
+ * Draws each edit menu icon at its current position.
+ */
+static void DrawMoveMenuIcon() {
+    int y_offset;
+    int brightness;
+    int icon_max;
+    int i;
+    int icon;
+    int x_offset;
+
+    icon_max = GetEditMenuMax();
+    for (i = 0; i < icon_max; i++) {
         if (EditSwitch == 2) {
             brightness = 0x80;
         }
-        if (EditSwitch > 8 && EditSwitch < 0x10) {
+        if (EditSwitch >= 9 && EditSwitch < 0x10) {
             brightness = 0x80 - EdEffectCt * 8;
         }
-        if (EditSwitch > 0xF && EditSwitch < 0x16) {
+        if (EditSwitch >= 0x10 && EditSwitch < 0x16) {
             brightness = EdEffectCt * 8;
         }
         if (brightness < 0) {
@@ -412,26 +448,24 @@ static void DrawMoveMenuIcon() {
             brightness = 0x80;
         }
 
-        s8 icon = EditMenuIconID[i];
+        icon = EditMenuIconID[i];
         GetMenuIconInfo(icon);
 
-        int x_offset = 0;
-        int y_offset = 0;
-        int selected = 0;
+        int selected;
+
+        y_offset = 0;
+        x_offset = 0;
+        selected = 0;
         if (i == EdCur.selection) {
             x_offset = 6;
             y_offset = 2;
             brightness = 0x80;
             selected = 1;
         }
-        int x = (int) (MenuIconPos[i][0] - x_offset);
-        int y = (int) (MenuIconPos[i][1] - y_offset);
-        DrawMainMenuIcon(x, y, icon, selected, 0x80, brightness);
+        DrawMainMenuIcon((int) (MenuIconPos[i][0] - x_offset),
+                         (int) (MenuIconPos[i][1] - y_offset), icon, selected, 0x80, brightness);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", DrawMoveMenuIcon__Fv);
-#endif
 #ifdef NON_MATCHING
 /** The screen position an icon animates to when it leaves for its own page. */
 struct EDIT_MENU_ICON_TARGET {
@@ -483,10 +517,13 @@ static int CalMoveFromMenuIcon() {
 #else
 INCLUDE_ASM("asm/nonmatchings/editmenu", CalMoveFromMenuIcon__Fv);
 #endif
-#ifdef NON_MATCHING
+/**
+ * Moves the edit menu icons back to their resting positions.
+ */
 static int CalMoveToMenuIcon() {
-    int icon_max = GetEditMenuMax();
+    int done = 0;
     int arrived_count = 0;
+    int icon_max = GetEditMenuMax();
 
     for (int i = 0; i < icon_max; i++) {
         int arrived_axes = 0;
@@ -512,11 +549,11 @@ static int CalMoveToMenuIcon() {
             arrived_count++;
         }
     }
-    return arrived_count >= icon_max;
+    if (arrived_count >= icon_max) {
+        done = 1;
+    }
+    return done;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", CalMoveToMenuIcon__Fv);
-#endif
 INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuInit__FPii);
 INCLUDE_RODATA("asm/nonmatchings/editmenu", @464__3);
 INCLUDE_RODATA("asm/nonmatchings/editmenu", @465__2);
@@ -589,25 +626,216 @@ INCLUDE_RODATA("asm/nonmatchings/editmenu", @588__2);
 INCLUDE_RODATA("asm/nonmatchings/editmenu", @589__3);
 INCLUDE_RODATA("asm/nonmatchings/editmenu", @590__3);
 INCLUDE_RODATA("asm/nonmatchings/editmenu", @650__5);
-INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuSelectDraw__Fv);
+
+/**
+ * Draws the edit menu page and its selected icon.
+ */
+static void EditMenuSelectDraw() {
+    DrawMoveMenuIcon();
+
+    int icon_max = GetEditMenuMax();
+    s8 selection = EdCur.selection;
+    float slot = selection;
+    float x = 48.0f + 16.0f * slot;
+    if (icon_max == 6) {
+        if (selection == icon_max - 2) {
+            x -= 16.0f;
+        }
+        if (selection == icon_max - 1) {
+            x -= 48.0f;
+        }
+    }
+    if (icon_max == 5 && selection == icon_max - 1) {
+        x -= 32.0f;
+    }
+    float y = 76.0f + 40.0f * selection;
+
+    EdCur.x += (x - EdCur.x) / 4.0f;
+    EdCur.y += (y - EdCur.y) / 3.0f;
+
+    MENU_ICON_INFO *info = GetMenuIconInfo(EditMenuIconID[EdCur.selection]);
+    int width = info->unk_1C + 0x4A;
+    DrawMenuWaku(x + 18.0f, y - 15.0f, width, 0x28, 0, StayTex, 0x80);
+    DrawMenuObjectVibe((int) EdCur.x, (int) EdCur.y, 1, 0x40);
+
+    CommonMenuMes2.stay_frame = 0;
+    if (CommonMenuMes2.mes_made != info->unk_24) {
+        CommonMenuMes2.MakeMesWin(info->unk_24);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuSelect__Fv);
 
 static void EditMenuToExitDraw() {
     DrawMoveMenuIcon();
 }
 
-INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuToExit__Fv);
-INCLUDE_ASM("asm/nonmatchings/editmenu", AtoraSelectDraw__Fv);
-INCLUDE_ASM("asm/nonmatchings/editmenu", AtoraSelect__Fv);
+/**
+ * Moves the edit menu offscreen while closing its message windows.
+ */
+static int EditMenuToExit() {
+    EdMenuRGB += 3;
+    if (EdMenuRGB > 0x80) {
+        EdMenuRGB = 0x80;
+    }
+
+    CommonMenuMes2.edge_alpha -= 9;
+    if (CommonMenuMes2.edge_alpha < 0) {
+        CommonMenuMes2.edge_alpha = 0;
+    }
+    CommonMenuMes3.edge_alpha -= 9;
+    if (CommonMenuMes3.edge_alpha < 0) {
+        CommonMenuMes3.edge_alpha = 0;
+    }
+
+    for (int i = 0; i < GetEditMenuMax(); i++) {
+        MenuIconPos[i][0] += (-220.0f - MenuIconPos[i][0]) / 4.0f;
+    }
+
+    EdEffectCt++;
+    if (EdEffectCt > 0x15) {
+        EdEffectCt = 0;
+        EditMenuStatus.mode = -1;
+        EditMenuStatus.parts = -1;
+        EditMenuExit();
+        return 1;
+    }
+    return 0;
+}
+
+/**
+ * Draws the Atora selection page and its moving icons.
+ */
+static void AtoraSelectDraw() {
+    if (EdMenuTextureReadEndFlag == 0 && ReadBGSync() == 0) {
+        EdMenuTextureReadEndFlag = 1;
+    }
+    DrawMenuAtoraSelect();
+    switch (EdMenuEffectFlag) {
+        case 1:
+        case 2:
+            DrawMoveMenuIcon();
+            break;
+        default:
+            if (GetMenuAtraEventFlag() == 0) {
+                DrawMoveMenuIcon();
+            }
+            break;
+    }
+}
+
+/**
+ * Processes input and transitions on the Atora selection page.
+ */
+static int AtoraSelect() {
+    int result = 0;
+
+    switch (EdMenuEffectFlag) {
+        case 1:
+            if (CalMoveFromMenuIcon()) {
+                EditSwitch = 3;
+                EdMenuEffectFlag = 0;
+                EdMenuEffectCt = 0.0f;
+            }
+            break;
+        case 2:
+            if (CalMoveToMenuIcon()) {
+                EditSwitch = 2;
+                EdCur.selection = 0;
+                EdCur.x = EdCur.selection * 16 + 0x30;
+                EdCur.y = EdCur.selection * 40 + 0x4C;
+            }
+            break;
+        default:
+            switch (MenuAtoraSelectKey()) {
+                case 0x6E:
+                case 10:
+                    result = 1;
+                    break;
+                case 0x64:
+                    EditSwitch = 0x10;
+                    EdMenuEffectFlag = 2;
+                    EdMenuEffectCt = 0.0f;
+                    break;
+                case 0:
+                    break;
+            }
+            break;
+    }
+
+    if (EdMenuEffectFlag != 0) {
+        EdMenuEffectCt += 1.0f;
+        EdEffectCt++;
+    } else {
+        EdMenuEffectCt = 0.0f;
+        EdEffectCt = 0;
+    }
+    return result;
+}
 
 static void AtoraMoveDraw() {}
 
-INCLUDE_ASM("asm/nonmatchings/editmenu", AtoraMove__Fv);
-INCLUDE_ASM("asm/nonmatchings/editmenu", AnalyzeBackDraw__Fii);
-INCLUDE_ASM("asm/nonmatchings/editmenu", AnalyzeRequestPer__Fv);
+/**
+ * Closes the edit menu and selects the Atora page.
+ */
+static int AtoraMove() {
+    EditMenuExit();
+    EditMenuStatus.mode = 3;
+    return 1;
+}
+
+/**
+ * Draws the scrolling background panels on the analysis page.
+ */
+static void AnalyzeBackDraw(int alpha, int brightness) {
+    AnalyzeBackBlockCnt++;
+    if (AnalyzeBackBlockCnt >= 0x10E) {
+        AnalyzeBackBlockCnt = 0;
+    }
+
+    int x = AnalyzeBackBlockCnt / 5 - 0x36;
+    int y = 0x3C;
+    for (int column = 0; column < 0xD; column++, x += 0x36, y = 0x3C) {
+        for (int row = 0; row < 5; row++, y += 0x36) {
+            int bottom = 0x36;
+            int top = 0;
+            if (y < 0x50) {
+                top = 0x50 - y;
+            }
+            if (y + 0x36 > 0x11C) {
+                bottom = 0x11C - y;
+            }
+            DrawMenu2DSprite(AnaBar, CRect_i_(x, y + top, 0x36, bottom - top),
+                             CRect_i_(0x36, top, 0x36, bottom - top), brightness, brightness,
+                             brightness, alpha);
+        }
+    }
+}
+
+/**
+ * Returns the percentage of requested parts that have been collected.
+ */
+static float AnalyzeRequestPer() {
+    CEditPartsInfo *info = CommonMenuAtoraInfo;
+    float total = (float) info->parts_max;
+    if (total < 1.0f) {
+        return 100.0f;
+    }
+
+    float done = 0.0f;
+    for (int i = 0; i < 24; i++) {
+        if (info->request[i] != 0) {
+            done += 1.0f;
+        }
+    }
+
+    float percent = 100.0f * done / total;
+    if (percent >= 100.0f) {
+        percent = 100.0f;
+    }
+    return percent;
+}
 INCLUDE_ASM("asm/nonmatchings/editmenu", AnalyzeBarDraw__Fv);
 INCLUDE_ASM("asm/nonmatchings/editmenu", ToAnalyzeEditDraw__Fv);
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @894__3);
 
 static void ToAnalyzeEdit() {
     if (GamePad.AllOn()) {
@@ -616,7 +844,35 @@ static void ToAnalyzeEdit() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/editmenu", AnalyzeEditDraw__Fv);
+/**
+ * Draws the panels and progress bars on the analysis page.
+ */
+static void AnalyzeEditDraw() {
+    DrawMenuIcon(2);
+    AnalyzeBackDraw(0x80, 0x40);
+
+    for (int i = 0; i < 3; i++) {
+        DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x136, 0x7E, 0x50),
+                         CRect_i_(0x80, i * 0x50, 0x7E, 0x50), 0x80);
+    }
+    AnalyzeBarDraw();
+    DrawMenu2DSprite(AnaBar, CRect_i_(0, 0x11C, 0x280, 0x18), CRect_i_(0, 0x36, 0x20, 0x18), 0x80);
+
+    int x = 0x75;
+    int i = 0;
+    while (x < 0x280) {
+        int width = 0x280 - x;
+        if (width > 0x3C) {
+            width = 0x3C;
+        }
+        if (AnalyzeFill[i] > 0.0f) {
+            DrawMenu2DSprite(AnaBar, CRect_i_(x, 0x11C, width, 0xF),
+                             CRect_i_(0x20, 0x36, 0x36, 0xF), 0x80);
+        }
+        i++;
+        x += 0xB5;
+    }
+}
 
 static int AnalyzeEdit() {
     if (GamePad.Down(0x60)) {
@@ -638,8 +894,38 @@ static void FromAnalyzeEditDraw() {
     AnalyzeBackDraw(alpha, 0x40);
 }
 
-INCLUDE_ASM("asm/nonmatchings/editmenu", FromAnalyzeEdit__Fv);
-INCLUDE_ASM("asm/nonmatchings/editmenu", EditSaveDraw__Fv);
+/**
+ * Returns the cursor to the edit menu after analysis.
+ */
+static void FromAnalyzeEdit() {
+    CalMoveToMenuIcon();
+    EdEffectCt++;
+    if (EdEffectCt >= 0x10) {
+        EdEffectCt = 0;
+        MakeWin2Flag = 1;
+        EdCur.selection = 2;
+        EdCur.x = EdCur.selection * 16 + 0x30;
+        EdCur.y = EdCur.selection * 40 + 0x4C;
+        EditSwitch = 2;
+    }
+}
+
+/**
+ * Draws the save page and its selected icon.
+ */
+static void EditSaveDraw() {
+    DrawMenuSave("frame_image");
+    setbilinear(0);
+    switch (EdMenuEffectFlag) {
+        case 1:
+        case 2:
+            DrawMoveMenuIcon();
+            break;
+        default:
+            DrawMenuIcon(3);
+            break;
+    }
+}
 
 static void EditSaveKey() {
     int arrived;
@@ -671,7 +957,23 @@ static void EditSaveKey() {
         }
     }
 }
-INCLUDE_ASM("asm/nonmatchings/editmenu", OptionDraw__Fv);
+
+/**
+ * Draws the options page and its selected icon.
+ */
+static void OptionDraw() {
+    DrawMenuOption();
+    setbilinear(0);
+    switch (EdMenuEffectFlag) {
+        case 1:
+        case 2:
+            DrawMoveMenuIcon();
+            break;
+        default:
+            DrawMenuIcon(4);
+            break;
+    }
+}
 
 static void EdOptionSelect() {
     int arrived = 0;
@@ -738,4 +1040,19 @@ static int EdMenuManualKey() {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/editmenu", EdMenuManualDraw__Fv);
+/**
+ * Draws the manual page and its selected icon.
+ */
+static void EdMenuManualDraw() {
+    MenuManualDraw();
+    setbilinear(0);
+    switch (EdMenuEffectFlag) {
+        case 1:
+        case 2:
+            DrawMoveMenuIcon();
+            break;
+        default:
+            DrawMenuIcon(5);
+            break;
+    }
+}

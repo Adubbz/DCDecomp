@@ -332,15 +332,6 @@ void BattleMenuDraw(void);
 int BattleMenuCursor(void);
 
 /**
- * Slides the bar icons into place and reports when they have all arrived.
- *
- * @mangled BattleMenuAppear__Fv
- * @address 0x1F68C0
- * @size 0x17C
- */
-void BattleMenuAppear(void);
-
-/**
  * Moves the cursor along the menu bar and opens the page it settles on.
  *
  * @mangled BattleMenuSelect__Fv
@@ -495,15 +486,6 @@ void DrawWeaponSelectDialog(int, int, int);
  * @size 0x107C
  */
 void WeaponMenuSelect(void);
-
-/**
- * Moves the cursor across the weapon list and opens what it settles on.
- *
- * @mangled WeaponSelectKey__Fv
- * @address 0x1FDF20
- * @size 0x178C
- */
-void WeaponSelectKey(void);
 
 /**
  * Moves the cursor between the three attachment pages.
