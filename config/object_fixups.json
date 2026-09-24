@@ -328,7 +328,12 @@
       "ViewCamera": "ViewCamera__2",
       "door_open_cnt": "door_open_cnt__2",
       "fix_chara_pos": "fix_chara_pos__2",
-      "fix_chara_rot": "fix_chara_rot__2"
+      "fix_chara_rot": "fix_chara_rot__2",
+      "NowCamera": "NowCamera__2",
+      "loop_counter": "loop_counter__2",
+      "key_counter": "key_counter__2",
+      "goto_menu": "goto_menu__2",
+      "goto_return_menu": "goto_return_menu__2"
     },
     "globalize_symbols": [
       "InitWorkBuffer__Fv__2",
@@ -378,22 +383,25 @@
       "@1606"
     ],
     "sections": {
+      ".editininit": [
+        "@159"
+      ],
       ".editinmove": [
-        "@204",
-        "@205"
+        "@222",
+        "@223"
       ],
       ".editincamdist": [
         "camera_distance$1155"
       ],
       ".editincampos": [
-        "@312"
+        "@330"
       ],
       ".editintex": [
         "texdata$1374"
       ],
       ".editinpts": [
-        "@444",
-        "@469"
+        "@462",
+        "@487"
       ],
       ".editinfixpos": [
         "fix_pos$1123"
@@ -404,6 +412,12 @@
       ]
     },
     "rekey_sections": [
+      [
+        ".editininit",
+        [
+          16
+        ]
+      ],
       [
         ".editinmove",
         [

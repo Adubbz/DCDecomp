@@ -31,6 +31,7 @@
 #include "npcharacter.hpp"
 #include "rect.hpp"
 #include "scriptinterpreter.hpp"
+#include "snd.hpp"
 #include "texture.hpp"
 #include "water.hpp"
 
@@ -47,7 +48,6 @@
 #include "menu_misc.hpp"
 #include "objanime.hpp"
 #include "savedata.hpp"
-#include "snd.hpp"
 #include "sysmes.hpp"
 #endif
 
@@ -100,6 +100,7 @@ extern CTexAnimeData TexAnimeData[64];
 
 /* Interior state the editor units share. */
 extern int EdInteriorDoorSound;
+extern int EdInteriorStartEvent;
 extern int EdDebugCameraFlag;
 extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 
@@ -117,6 +118,16 @@ extern sceVu0FVECTOR fix_chara_pos;
 extern sceVu0FVECTOR fix_chara_rot;
 /* Whether the debug camera stays put instead of following the player. */
 extern int fix_camera;
+/* The camera the interior draws through this frame. */
+extern CCamera *NowCamera;
+/* Frames the interior has run, and frames a held key has been held. */
+extern int loop_counter;
+extern int key_counter;
+/* Whether the interior is leaving for the menu, and whether it is coming back from it. */
+extern int goto_menu;
+extern int goto_return_menu;
+/* Whether a simple event, one the player only reads, is running. */
+extern int simple_event;
 
 /* Where the camera sits for one camera marker of the interior, and the box the player must stand in. */
 struct INTERIOR_CAMERA {
@@ -133,11 +144,15 @@ struct INTERIOR_CAMERA {
 extern INTERIOR_CAMERA *active_camera;
 extern int camera_change_count;
 
+static void LoadInfo(char *script, int size);
+static int LoadTexture();
+static void LoadChara();
+void LoadData();
+void EdDoorCloseSe(int door_no, float *position);
 static void MoveCamera(CCameraFollow *camera);
 static int GetDoorPos(int door_no, float *position, float *rotation, int *parts_no, int *motion);
 
 #ifdef NON_MATCHING // draft declarations
-extern int EdInteriorStartEvent;
 extern int EdInteriorPartsNo;
 extern char EdInteriorName[];
 extern int EdDebugEventEnable;
@@ -147,18 +162,10 @@ extern int EdPauseFlag;
 extern int MenuMapJumpMode;
 extern CEffectGroup EdEffectGroup;
 
-static CCamera *NowCamera;
-static int loop_counter;
-static int key_counter;
-static int goto_menu;
-static int goto_return_menu;
 static int camera_num;
-static int simple_event;
 static CCharacter MotionParts[4];
 
 static void LoadScript();
-static void LoadInfo(char *script, int size);
-void EdDoorCloseSe(int door_sound, float *position);
 void EdDoorOpenSe(int door_sound, float *position);
 void EdSetCharaCursor(int on);
 void EdEventNPCStep();
@@ -181,9 +188,6 @@ static void StepWater();
 static void MainDraw();
 static void MoveCharacter();
 static void VillagerCollision();
-static int LoadTexture();
-static void LoadChara();
-void LoadData();
 int LoadPTS(CMapParts *parts, u_int *archive);
 int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points);
 void DrawWaterSurface(CCamera *camera);
@@ -425,7 +429,6 @@ static void InitWorkBuffer() {
  * @address 0x19BE30
  * @size 0x478
  */
-#ifdef NON_MATCHING
 int EditInInit(float time, char *name) {
     MGSetFogParm(10000.0f, 50000.0f, 0, 0, 0, 255.0f, 255.0f);
     memset(EdInInfo, 0, sizeof(EDIT_IN_INFO));
@@ -445,12 +448,14 @@ int EditInInit(float time, char *name) {
     BG_READ_INFO *info = GetReadBGFile(1);
     if (info != NULL) {
         char *text = (char *) EdNPCBuffer.Alloc((info->size >> 4) + 1);
-        memcpy(text, (char *) info->buffer, info->size);
+        memcpy(text, info->buffer, info->size);
         LoadInfo(text, info->size);
     }
     LoadData();
-    int remaining = EdNPCBuffer.limit - EdNPCBuffer.used;
-    EdVillagerBuffer.base = EdNPCBuffer.base + EdNPCBuffer.used * 16;
+    int used = EdNPCBuffer.used;
+    u_char *start = EdNPCBuffer.base + used * 16;
+    int remaining = EdNPCBuffer.limit - used;
+    EdVillagerBuffer.base = start;
     EdVillagerBuffer.limit = remaining;
     EdVillagerBuffer.used = 0;
     printf("buffer %d\n", remaining);
@@ -467,16 +472,16 @@ int EditInInit(float time, char *name) {
     EdFadeIn(0x40, 0.0f, 0.0f, 0.0f);
     door_open_cnt = 0;
     GameMode = 0;
-    Chara->foot_sound[0].frame = 0;
+    Chara->unk_C98 = 0;
     Chara->SetPosition(0.0f, 0.0f, 0.0f);
     Chara->SetRotation(0.0f, 0.0f, 0.0f);
     GetMapJumpPos(Chara);
     Chara->ClothStep(-1);
     if (EdInteriorDoorSound >= 0) {
         sceVu0FVECTOR position;
-        sceVu0FVECTOR reference = {0.0f, 0.0f, 0.0f, 0.0f};
+        sceVu0FVECTOR reference = {0.0f, 0.0f, 10.0f, 0.0f};
         Chara->GetPosition(position);
-        position[1] -= 10.0f;
+        position[2] -= 10.0f;
         SndSetCamera(position, reference);
         Chara->GetPosition(position);
         EdDoorCloseSe(EdInteriorDoorSound, position);
@@ -502,10 +507,6 @@ int EditInInit(float time, char *name) {
     EdInitSoundSrc();
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", EditInInit__FfPc);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @469__4);
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @886__2);
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @891__2);
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @892__2);
