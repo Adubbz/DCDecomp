@@ -1328,15 +1328,29 @@ CCharacter &CCharacter::operator=(const CCharacter &src) {
 #else
 INCLUDE_ASM("asm/nonmatchings/main", __as__10CCharacterFRC10CCharacter);
 #endif
-#ifdef NON_MATCHING
-
+/**
+ * Copies one object over another, field by field.
+ *
+ * @mangled __as__7CObjectFRC7CObject
+ * @address 0x1431E0
+ * @size 0x74
+ */
 CObject &CObject::operator=(const CObject &source) {
+    float w;
+    float z;
+    float y;
+    float x;
+
     // The three words after the mass are not carried over.
     mass = source.mass;
-    pos[0] = source.pos[0];
-    pos[1] = source.pos[1];
-    pos[2] = source.pos[2];
-    pos[3] = source.pos[3];
+    x = source.pos[0];
+    y = source.pos[1];
+    z = source.pos[2];
+    w = source.pos[3];
+    pos[0] = x;
+    pos[1] = y;
+    pos[2] = z;
+    pos[3] = w;
     velocity = source.velocity;
     acceleration = source.acceleration;
     gravity = source.gravity;
@@ -1344,15 +1358,9 @@ CObject &CObject::operator=(const CObject &source) {
     rotation = source.rotation;
     rot_velocity = source.rot_velocity;
     rot_acceleration = source.rot_acceleration;
-    scale[0] = source.scale[0];
-    scale[1] = source.scale[1];
-    scale[2] = source.scale[2];
-    scale[3] = source.scale[3];
+    *(CVector3_f_ *) scale = *(const CVector3_f_ *) source.scale;
     return *this;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __as__7CObjectFRC7CObject);
-#endif
 #ifdef NON_MATCHING
 CWater &CWater::operator=(CWater &src) {
     rows = src.rows;
