@@ -71,7 +71,6 @@ public:
      * @mangled EndEffect__12CSHOT_EFFECTFv
      * @address 0x1ACB30
      * @size 0xD4
-     * @unknownret
      */
     void EndEffect(void);
 

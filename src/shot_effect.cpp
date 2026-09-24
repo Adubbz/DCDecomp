@@ -165,20 +165,19 @@ void CSHOT_EFFECT::Step() {
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Step__12CSHOT_EFFECTFv);
 #endif
 
-#ifdef NON_MATCHING
 void CSHOT_EFFECT::EndEffect() {
     for (int slot = 0; slot < 8; slot++) {
-        if (active[slot] != 0 && (phase[slot] == 0 || phase[slot] == 1)) {
+        if (active[slot] != 0 && (phase[slot] == 1 || phase[slot] == 0)) {
             phase[slot] = 2;
-            if (effect_data->motion[2] == -1) {
-                active[slot] = 0;
+            int motion = effect_data->motion[phase[slot]];
+            if (motion != -1) {
+                chara[slot].motion_type.state.time =
+                    (float) chara[slot].motion_type.motion_info[motion].start;
+                chara[slot].SetMotion(effect_data->motion[phase[slot]], 6);
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", EndEffect__12CSHOT_EFFECTFv);
-#endif
 
 void CSHOT_EFFECT::OffEffect(s32 slot) {
     if (slot != -1) {
