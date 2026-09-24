@@ -44,7 +44,6 @@ void CSHOT::draw() {
  * @address 0x1ABD10
  * @size 0x204
  */
-#ifdef NON_MATCHING
 void CSHOT::step() {
     sceVu0FVECTOR hit_position;
 
@@ -62,12 +61,12 @@ void CSHOT::step() {
                 pos[shot][2] += vector[shot][2];
             } else {
                 NowColData->Set(pos[shot], damage[shot], 1, 3.0f, 0.0f, 2, 2, 0, 0);
-                COLLISION_HIT &hit = NowColData->hit[NowColData->now_hit];
-                hit.owner = 1;
-                hit.unk_60 = 0;
-                hit.flags = GetWeaponElementAttr(NowWeaponHave->best_elem);
-                hit.weapon_flags = NowWeaponHave->flags;
-                hit.vs_monster = NowWeaponHave->vs_monster;
+                NowColData->SetUserID(1, 0);
+                s8 elem = NowWeaponHave->best_elem;
+                CCollisionData *attr_col = NowColData;
+                attr_col->hit[attr_col->now_hit].flags = GetWeaponElementAttr(elem);
+                NowColData->hit[NowColData->now_hit].weapon_flags = NowWeaponHave->flags;
+                NowColData->hit[NowColData->now_hit].vs_monster = NowWeaponHave->vs_monster;
                 used[shot] = 0;
             }
         }
@@ -78,9 +77,6 @@ void CSHOT::step() {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", step__5CSHOTFv);
-#endif
 
 void CSHOT_EFFECT::Draw() {
     if (effect_data == NULL) {
