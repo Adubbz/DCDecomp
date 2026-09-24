@@ -1106,6 +1106,7 @@ void CEditGround::DrawShadow(int pass, float near_distance, float far_distance) 
     }
 }
 
+/** The all-zero matrix mglib keeps; passed as both point-light matrices it turns them off. */
 extern float mgZeroMatrix[4][4];
 
 void CEditGround::DrawPartsCursor(int plot, float *position, float *model_pos, int rot_y, float *rotation,
