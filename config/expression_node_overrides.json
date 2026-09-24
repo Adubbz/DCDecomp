@@ -2863,6 +2863,34 @@
           "value_bits": "0x00000000",
           "ordinal": 1,
           "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 2,
+          "evaluate_first": 1
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 3,
+          "evaluate_first": 1
+        },
+        {
+          "type": "binary32",
+          "value": "-0x1.0000000000000p+0",
+          "value_bits": "0xbf800000",
+          "ordinal": 1,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x1.4000000000000p+3",
+          "value_bits": "0x41200000",
+          "ordinal": 1,
+          "evaluate_first": 1
         }
       ],
       "BtGetGateKey_Loop__Fv": [

@@ -17,6 +17,8 @@
 #include "dngstatusdata.hpp"
 #include "dun/gameloop.hpp"
 #include "dungeonmap.hpp"
+#include "edit.hpp"
+#include "editloop3.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "gamepad.hpp"
@@ -328,6 +330,16 @@ extern "C" s32 driveNoInterpolate;
  */
 extern "C" CCharacter shortAtraEffect;
 
+/**
+ * Whether the escape effect is drawn.
+ */
+extern s32 EscapeFlag;
+
+/**
+ * Effect model of the escape presentation.
+ */
+extern "C" CCharacter EscapeEffect;
+
 extern "C" CDataAlloc2<1> BtCashBuffer;
 
 #ifdef NON_MATCHING // draft declarations
@@ -361,9 +373,7 @@ extern CFrame *itemBoxModel;
 extern "C" CCameraFollow SubCamera;
 extern "C" CCameraFollow MainCamera__4;
 extern CCameraFollow *NowCamera__3;
-extern s32 EscapeFlag;
 extern "C" CActiveItemPack activeItem;
-extern "C" CCharacter EscapeEffect;
 
 void getCharacterVector(float *vector, float pitch);
 #endif
@@ -1552,7 +1562,6 @@ INCLUDE_RODATA("asm/nonmatchings/btitem", @735__3);
  * @address 0x1D3D40
  * @size 0x18C
  */
-#ifdef NON_MATCHING
 int BtEscape_Loop() {
     sceVu0FVECTOR position;
     sceVu0FVECTOR rotation;
@@ -1585,9 +1594,6 @@ int BtEscape_Loop() {
     }
     return done;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", BtEscape_Loop__Fv);
-#endif
 /**
  * Builds the models of the items in the active slots.
  *
