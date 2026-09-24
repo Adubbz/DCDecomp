@@ -1722,32 +1722,33 @@ void WeaponOptionStatusDraw(WEAPON_HAVE *weapon, int x, int y, int alpha) {
 INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponOptionStatusDraw__FP11WEAPON_HAVEiii);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1507);
-#ifdef NON_MATCHING
+
+/**
+ * Draws a weapon's star rating.
+ *
+ * @mangled WeaponStarDraw__FiiP11WEAPON_HAVEi
+ * @address 0x20FA20
+ * @size 0x1C0
+ */
 void WeaponStarDraw(int x, int y, WEAPON_HAVE *weapon, int alpha) {
     if (weapon == NULL) {
         return;
     }
     CTexture *texture = TexManager.GetTexture("wepstatus", -1);
     int stars = weapon->unk_F0;
-    if (stars >= 50) {
+    if (stars > 49) {
         stars = 49;
     }
     int draw_x = x + 0x4C;
     CRect_i_ big(0x108, 0x176, 0x18, 0x18);
-    for (int i = 0; i < stars / 10; i++) {
+    for (int i = 0; i < stars / 10; i++, draw_x += big.width) {
         DrawMenu2DSprite(texture, CRect_i_(draw_x, y, big.width, big.height), big, alpha);
-        draw_x += big.width;
     }
-    int small_x = x - 6;
-    for (int i = 0; i < stars % 10; i++) {
-        DrawMenu2DSprite(texture, CRect_i_(small_x, y + 0x16, 0x14, 0x14), CRect_i_(0x10A, 0x162, 0x14, 0x14), alpha);
-        small_x += 0x14;
+    x -= 6;
+    for (int i = 0; i < stars % 10; i++, x += 0x14) {
+        DrawMenu2DSprite(texture, CRect_i_(x, y + 0x16, 0x14, 0x14), CRect_i_(0x10A, 0x162, 0x14, 0x14), alpha);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponStarDraw__FiiP11WEAPON_HAVEi);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1536);
 
 /**
  * Randomly reduces one value in a weapon's status array.
