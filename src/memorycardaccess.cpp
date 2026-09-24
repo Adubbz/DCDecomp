@@ -901,7 +901,7 @@ int CMemoryCardAccess::GetSaveFileInfoFromMc(int file_no) {
             info->state = 1;
             info->file_no = file_no + 1;
             memcpy(info->name, save->GetCharaName(0), 0x20);
-            info->unk_30 = save->map_no;
+            info->map_no = save->map_no;
             info->play_time = (float) save->GetPlayTime();
             info->party_size = save->GetDngStatus()->GetPartySize();
             info->quest_total = 0;

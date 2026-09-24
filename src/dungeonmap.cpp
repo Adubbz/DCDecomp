@@ -32,6 +32,11 @@ extern "C" s32 selectMapNo;
 /* One texture animation for every part of every character in the dungeon. */
 extern "C" CTexAnimeData BtNPCTexAnimeData[4][32];
 
+/**
+ * Configuration file name used when loading an NPC's model pack.
+ */
+extern const char info_cfg_literal[];
+
 /* The texture manager that the dungeon draws its textures out of. */
 extern "C" CTextureManager TexManager;
 
@@ -150,7 +155,6 @@ s32 chainTableDividDoor[2][3] = {
     {6, MAP_PARTS_DIVIDE_DOOR_EAST, 0},
 };
 
-#if DNG_COMPILE_UNMATCHED
 void CDungeonMap::SetNPC(int npc_no, unsigned int *pack, int parts_no, sceVu0FVECTOR pos, sceVu0FVECTOR rot,
                          int visible, int motion_no, CDataAlloc2<1> *alloc) {
     int i;
@@ -169,8 +173,7 @@ void CDungeonMap::SetNPC(int npc_no, unsigned int *pack, int parts_no, sceVu0FVE
         BtNPCTexAnimeData[npc_no][i].Initialize();
     }
     this->npc[npc_no].chara.InitializeTexAnime(BtNPCTexAnimeData[npc_no], 32);
-    this->npc[npc_no].chara.LoadPackData2(pack, "info.cfg", alloc, npc_no + 64,
-                                          alloc, 0);
+    this->npc[npc_no].chara.LoadPackData2(pack, info_cfg_literal, alloc, npc_no + 64, alloc, 0);
     if (this->npc[npc_no].chara.frame == NULL) {
         printf("******* NPCEntryErr\n");
     }
@@ -187,10 +190,6 @@ void CDungeonMap::SetNPC(int npc_no, unsigned int *pack, int parts_no, sceVu0FVE
     this->npc[npc_no].chara.flags = 0;
     this->npc[npc_no].chara.motion_speed = -1.0f;
 }
-#endif /* DNG_COMPILE_UNMATCHED */
-
-INCLUDE_ASM("asm/nonmatchings/dungeonmap", SetNPC__11CDungeonMapFiPUiiPfPfiiP14CDataAlloc2_1_);
-INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @1008);
 
 void CDungeonMap::ClearNPC_Cash() {
     for (int i = 0; i < 4; i++) {
@@ -811,7 +810,9 @@ void CDungeonMap::FlushCheckMask() {
     }
 }
 
-#if DNG_COMPILE_UNMATCHED
+/**
+ * Draws free-style fires and updates the sound for the nearest active fire.
+ */
 void CDungeonMap::DrawFireFreeStyle(CFrameVu1 *frame, CCameraFollow *camera) {
     float fire_pos[4];
     float part_pos[4];
@@ -895,10 +896,6 @@ void CDungeonMap::DrawFireFreeStyle(CFrameVu1 *frame, CCameraFollow *camera) {
         SndSetSeVol(53, 0, 0);
     }
 }
-#endif /* DNG_COMPILE_UNMATCHED */
-INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawFireFreeStyle__11CDungeonMapFP9CFrameVu1P13CCameraFollow);
-INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @1559);
-INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @1560);
 
 #if DNG_COMPILE_UNMATCHED
 void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
@@ -2129,10 +2126,11 @@ found:
     this->atra_num++;
 }
 
-/* 192 of 192 instructions, in order; retail puts the second loop's counter in
- * a2 where mwcc reuses a0 after the sceVu0CopyVector call between the loops. */
-#if DNG_COMPILE_UNMATCHED
-int CDungeonMap::SetTreasureBox(float *pos, int item_no, int kind, int unk) {
+/**
+ * Adds a treasure box to an open slot and creates its matching map event.
+ * The event stores the box coordinates and interaction radius.
+ */
+int CDungeonMap::SetTreasureBox(float *pos, int item_no, int kind, int param) {
     int box_no;
     int event_no;
     int i;
@@ -2155,7 +2153,7 @@ int CDungeonMap::SetTreasureBox(float *pos, int item_no, int kind, int unk) {
     this->boxes[box_no].kind = kind;
     this->boxes[box_no].item_no = item_no;
     this->boxes[box_no].unk_24 = 1;
-    this->boxes[box_no].unk_30 = unk;
+    this->boxes[box_no].unk_30 = param;
 
     for (j = 0; j < 48; j++) {
         if (this->events[j].kind == -1) {
@@ -2191,8 +2189,6 @@ found:
     this->box_num++;
     return event_no;
 }
-#endif /* DNG_COMPILE_UNMATCHED */
-INCLUDE_ASM("asm/nonmatchings/dungeonmap", SetTreasureBox__11CDungeonMapFPfiii);
 
 #if DNG_COMPILE_UNMATCHED
 /**

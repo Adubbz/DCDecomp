@@ -4,6 +4,7 @@
 
 #include <libvu0.h>
 
+#include "hit_machingun_effect.hpp"
 #include "runscript.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
@@ -113,6 +114,15 @@ extern CDranMapField *NowDranMapField;
 
 /** Damage numbers the dungeon shows. */
 extern CHitValue *NowHitValue;
+
+/**
+ * Stores the machine-gun hit flashes used by dungeon projectile effects.
+ *
+ * @mangled OzumondShotEffect
+ * @address 0x1EFC000
+ * @size 0x140
+ */
+extern "C" CHIT_MACHINGUN_EFFECT OzumondShotEffect;
 
 /** Projectile effects the dungeon has running. */
 extern CSHOT_EFFECT_PACK *NowShotEffect;

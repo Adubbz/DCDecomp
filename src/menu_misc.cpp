@@ -10,6 +10,7 @@
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dun/gameloop.hpp"
+#include "editloop.hpp"
 #include "frame.hpp"
 #include "gamepad.hpp"
 #include "itemdata.hpp"
@@ -73,6 +74,21 @@ extern CDataAlloc2<1> MenuExCashBuffer;
 extern CCharacter MenuCharaFrame;
 extern CCharacter DngWeaponFrm[12];
 extern "C" CWeaponEffect CWeaponFx;
+
+/**
+ * Provides the base path used to assemble character model file names.
+ */
+extern "C" const char readFilePath[0x40];
+
+/**
+ * Provides the model file name for each playable character.
+ */
+extern "C" const char *charaFile[6];
+
+/**
+ * Provides the file extension appended to character model file names.
+ */
+extern "C" const char CharaFileExtension[5];
 
 /** Frame numbers of the menu's cached weapon models. */
 extern int MenuWeaponModelData[42];
@@ -143,13 +159,57 @@ static void GetCharaChangeReadCharaFilePath(char *, int);
  */
 static void LocalWeaponDataChange(char *, int, int, int);
 
-INCLUDE_ASM("asm/nonmatchings/menu_misc", NowGetGameFlagForBtlMenu__Fi);
+/**
+ * Selects the battle-menu game flag for the current dungeon state.
+ *
+ * @mangled NowGetGameFlagForBtlMenu__Fi
+ * @address 0x20BEC0
+ * @size 0xB8
+ */
+int NowGetGameFlagForBtlMenu(int game_flag) {
+    switch (game_flag) {
+        case 0:
+            break;
+        case 5:
+        case 1:
+            if (EdInteriorFlag == 1) {
+                game_flag = 2;
+            } else if (BtlMenuStatusPt->special_flag_238 == 0) {
+                if (SaveData->QuestDungeon(0, 0) == 0) {
+                    game_flag = 11;
+                } else if (BtlMenuStatusPt->special_flag_238 == 0) {
+                    game_flag = 10;
+                }
+            }
+            break;
+    }
+    return game_flag;
+}
 
 int GetMenuHebikiriFlag() {
     return SaveData->GetGameFlag(0x30);
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu_misc", EquipDefaultWeapon__Fi);
+/**
+ * Selects the default weapon slot for one character.
+ *
+ * @mangled EquipDefaultWeapon__Fi
+ * @address 0x20BFB0
+ * @size 0xB4
+ */
+void EquipDefaultWeapon(int chara_no) {
+    CDngStatusData *status = SaveData->GetDngStatus();
+    WEAPON_HAVE *weapons = status->chara_weapons[chara_no];
+    int default_weapon_no = GetDefaultWeaponNo(chara_no);
+
+    for (int slot = 0; slot < 10; slot++) {
+        if (weapons[slot].item_no == default_weapon_no ||
+            weapons[slot].item_no == default_weapon_no + 1) {
+            status->equipped_weapon_slot[chara_no] = slot;
+            break;
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/menu_misc", DrawMenuNothing__FiiiiPcii);
 
 int GetMenuItemUseVolume() {
@@ -160,7 +220,22 @@ INCLUDE_ASM("asm/nonmatchings/menu_misc", ItemUseFunc__FP11CUserStatusiiiP11WEAP
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @869);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @870__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @871__2);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", GetNowWeaponRate__FP11WEAPON_HAVE);
+
+/**
+ * Returns a higher damage rate for a fragile Chronicle sword.
+ *
+ * @mangled GetNowWeaponRate__FP11WEAPON_HAVE
+ * @address 0x20CDD0
+ * @size 0x5C
+ */
+float GetNowWeaponRate(WEAPON_HAVE *weapon) {
+    float rate = 1.0f;
+    if (weapon != NULL && weapon->item_no == 0x110 &&
+        weapon->durability_f <= 0.2f * weapon->durability) {
+        rate = 1.5f;
+    }
+    return rate;
+}
 
 int WeaponStatusBreakEnable(WEAPON_HAVE *weapon) {
     int enable;
@@ -175,7 +250,32 @@ int WeaponStatusBreakEnable(WEAPON_HAVE *weapon) {
     return enable;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponStatusBuildUp__FP11WEAPON_HAVERi);
+/**
+ * Counts the available and enabled build-up choices for a weapon.
+ *
+ * @mangled WeaponStatusBuildUp__FP11WEAPON_HAVERi
+ * @address 0x20CE70
+ * @size 0xC0
+ */
+int WeaponStatusBuildUp(WEAPON_HAVE *weapon, int &enabled_count) {
+    if (weapon == NULL) {
+        return 0;
+    }
+
+    WEP_BUILDUP_INFO build_info[8];
+    EnableBuildUpModel(build_info, weapon);
+
+    int total = 0;
+    while (build_info[total].weapon_no != -1 && total < 5) {
+        total++;
+    }
+    for (int i = 0; i < total; i++) {
+        if (build_info[i].enabled == 1) {
+            enabled_count++;
+        }
+    }
+    return total;
+}
 INCLUDE_ASM("asm/nonmatchings/menu_misc", MenuWeaponSpSet__FP10CCharacterP11WEAPON_HAVE);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @914__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @915__2);
@@ -301,9 +401,77 @@ static int GetNowMotionStepCnt(int status) {
     return step;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu_misc", GetNowActiveCharaStatus__Fi);
+/**
+ * Returns the active battle-menu status for one character.
+ *
+ * @mangled GetNowActiveCharaStatus__Fi
+ * @address 0x20DEC0
+ * @size 0x30
+ */
+int GetNowActiveCharaStatus(int chara_no) {
+    if (BtlMenuStatusPt == NULL) {
+        return 0;
+    }
+    return BtlMenuStatusPt->GetActiveCharaStatus(chara_no);
+}
 INCLUDE_ASM("asm/nonmatchings/menu_misc", SetNowCharaMotionNo__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", SetItemMenuColor__Fi);
+
+/**
+ * Sets the menu ambient colour for one character's status effects.
+ *
+ * @mangled SetItemMenuColor__Fi
+ * @address 0x20E020
+ * @size 0x150
+ */
+void SetItemMenuColor(int chara) {
+    float red;
+    float green;
+    float blue;
+    int status;
+    int should_tint;
+
+    MGGetAmbient(MenuCharaOldAmbient);
+    status = GetNowActiveCharaStatus(chara);
+    should_tint = 0;
+    if (status & 4) {
+        red = 83.0f;
+        green = 104.0f;
+        blue = 95.0f;
+        should_tint = 1;
+    }
+    if (status & 0x40) {
+        red = 36.0f;
+        green = 148.0f;
+        blue = 195.0f;
+        should_tint = 1;
+    }
+    if (status & 0x10) {
+        red = 156.0f;
+        green = 122.0f;
+        blue = 182.0f;
+        should_tint = 1;
+    }
+    if (status & 0x20) {
+        red = 171.0f;
+        green = 40.0f;
+        blue = 125.0f;
+        should_tint = 1;
+    }
+    if (status & 8) {
+        red = 230.0f;
+        green = 168.0f;
+        blue = 92.0f;
+        should_tint = 1;
+    }
+    if (should_tint == 1) {
+        float ambient[4];
+        ambient[0] = red;
+        ambient[1] = green;
+        ambient[2] = blue;
+        ambient[3] = 128.0f;
+        MGSetAmbient(ambient);
+    }
+}
 void SetItemMenuOldAmbient() {
     MGSetAmbient(MenuCharaOldAmbient);
 }
@@ -314,7 +482,19 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1178);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", MenuCharaMDSBuild2__Fii);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1199__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1200);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", GetCharaChangeReadCharaFilePath__FPci);
+
+/**
+ * Writes the file path of one character's model into a buffer.
+ *
+ * @mangled GetCharaChangeReadCharaFilePath__FPci
+ * @address 0x20E530
+ * @size 0x74
+ */
+static void GetCharaChangeReadCharaFilePath(char *path, int chara_no) {
+    strcpy(path, readFilePath);
+    strcat(path, charaFile[chara_no]);
+    strcat(path, CharaFileExtension);
+}
 INCLUDE_ASM("asm/nonmatchings/menu_misc", CharaChangeInitToGL__FP1i);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", MenuWepDir);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1205);
@@ -332,7 +512,27 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1250);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1251);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1254);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", BtMenuLoad2__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", EastKingCheckComplete__Fv);
+
+/**
+ * Checks whether all East King event flags are set.
+ *
+ * @mangled EastKingCheckComplete__Fv
+ * @address 0x20EAE0
+ * @size 0x80
+ */
+int EastKingCheckComplete() {
+    if (SaveData == NULL) {
+        return 0;
+    }
+
+    int complete = 1;
+    for (int i = 0; i < 12; i++) {
+        if (SaveData->GetGameFlag(i + 0xE6) == 0) {
+            complete = 0;
+        }
+    }
+    return complete;
+}
 
 void SetMonsterNameDrawFlag(int flag) {
     CharaNameDrawFlag = flag;
@@ -433,8 +633,36 @@ INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponOptionStatusDraw__FP11WEAPON_HAV
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1507);
 INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponStarDraw__FiiP11WEAPON_HAVEi);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1536);
-INCLUDE_ASM("asm/nonmatchings/menu_misc", LocalWeaponDataChange__FPciii);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1549__2);
+
+/**
+ * Randomly reduces one value in a weapon's status array.
+ *
+ * @mangled LocalWeaponDataChange__FPciii
+ * @address 0x20FBE0
+ * @size 0xF8
+ */
+static void LocalWeaponDataChange(char *values, int count, int base, int range) {
+    if (values == NULL) {
+        printf("target is NULL\n");
+        return;
+    }
+
+    int selected = rand() % count;
+    int reduction = base + rand() % range;
+    char *value = values;
+    int i = 0;
+    while (i < count) {
+        if (i == selected) {
+            *value -= reduction;
+            if (*value < 0) {
+                *value = 0;
+            }
+            break;
+        }
+        i++;
+        value++;
+    }
+}
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1616__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1617__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1618__2);

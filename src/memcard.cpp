@@ -1,7 +1,11 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
+
 #include "memcard.hpp"
 
 #include <cmath>
 #include <cstdio>
+#include <cstring>
 
 #include "battle_globals.hpp"
 #include "clsmes.hpp"
@@ -75,6 +79,9 @@ CTexture *SaveBoard;
 
 /** The texture that the option screen draws from. */
 CTexture *MenuOption;
+
+/** Holds the georama parts of a town the player is not standing in. */
+extern CEditPartsInfo BtEditPartsInfo;
 
 CEditPartsInfo *CommonMenuAtoraInfo;
 short *GetAtraMsgReadBuf;
@@ -559,7 +566,19 @@ void DrawObjectVibe(int x, int y, CTexture *texture, RECT src_rect, unsigned cha
     CRect_i_ src(src_rect.x, src_rect.y, src_rect.width, src_rect.height);
     DrawObjectVibe(x, y, texture, src, alpha, flag);
 }
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuObjectVibe__Fiiii);
+
+/**
+ * Draws the pulsing highlight over an object on the georama board.
+ */
+void DrawMenuObjectVibe(int x, int y, int highlight, int alpha) {
+    CTexture *texture = TexManager.GetTexture(AtoraVibeTextureName, -1);
+    CRect_i_ src(alpha, 0x28, 0x20, 0x20);
+
+    if (highlight != 0) {
+        DrawObjectVibe(x + 5, y + 3, texture, src, 0, 100);
+    }
+    DrawObjectVibe(x, y, texture, src, 0x80, 0x80);
+}
 
 void DrawMenuHelpWindow(CTexture *texture, int style, int x, int y, float width, float height, int alpha) {
     int corner_u;
@@ -648,7 +667,14 @@ void MenuHelpWinDraw2(int x, int y, float width, float height, int alpha, int u,
     DrawMenu2DSprite(texture, CRect_i_(x, middle_y, 24, middle_height), CRect_i_(u + 38, v + 22, 24, 20), (alpha * 100) >> 7);
     DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, 24, 22), CRect_i_(u + 38, v + 42, 24, 22), (alpha * 100) >> 7);
 }
-INCLUDE_ASM("asm/nonmatchings/memcard", MenuHelpWinDraw__Fiiffi);
+
+/**
+ * Draws the framed help window used by the georama menu.
+ */
+void MenuHelpWinDraw(int x, int y, float width, float height, int alpha) {
+    StayTex = TexManager.GetTexture(AtoraVibeTextureName, -1);
+    MenuHelpWinDraw(x, y, width, height, alpha, 0, 0, StayTex);
+}
 
 void DrawMenuWaku(float x, float y, int width, int height, int type, CTexture *texture, int alpha) {
     RECT *src;
@@ -962,7 +988,20 @@ static int AtoraTipStatusSearch(EDITPARTS_INFO *info, int slot) {
     return code;
 }
 
-INCLUDE_ASM("asm/nonmatchings/memcard", AtraTipCanDisplay__FP21EDIT_CHIP_ATTACH_DATA);
+/**
+ * Answers whether a georama chip attachment may be shown on the board: a
+ * person's chip stays hidden until that resident has moved in.
+ */
+static int AtraTipCanDisplay(EDIT_CHIP_ATTACH_DATA *attach) {
+    int display;
+
+    display = 1;
+    if (attach != NULL && attach->id < 40 && attach->unk_18 >= 0 &&
+        (SaveData->GetGrdNPCData(MenuAtoraSel.map_no, attach->unk_18)->flags & 2) == 0) {
+        display = 0;
+    }
+    return display;
+}
 
 static void AtoraTipRelationDraw(int x, int y, EDITPARTS_INFO *info, int slot, int link, int alpha) {
     int dx;
@@ -1203,9 +1242,123 @@ static void MenuAtoraAfterFadeIn() {
 }
 
 INCLUDE_ASM("asm/nonmatchings/memcard", InitMenuAtora1__FiiPiP1);
-INCLUDE_ASM("asm/nonmatchings/memcard", InitMenuAtoraSelect__Fi);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @1397);
-INCLUDE_ASM("asm/nonmatchings/memcard", ExitAtoraSelect__Fv);
+
+void InitMenuAtoraSelect(int map_no) {
+    int place;
+    char path[64];
+    int map;
+    int next;
+    int count;
+    EDITPARTS_INFO *info;
+    int pos;
+    int y;
+    int i;
+
+    MenuAtoraSel.map_no = map_no;
+    map = MenuAtoraSel.map_no;
+    if (AtoraTextureEnterFlag == 0) {
+        GetPathReadDifferntLang(path);
+        strcat(path, "a%d.pak");
+        sprintf(path, path, map + 1);
+        if (ReadBGSync()) {
+            BreakReadBG();
+        }
+        StartReadBG();
+        LoadFileBG(path, AtoraOffsetBuf, NULL);
+        MenuAtoraSel.unk_1A8 = 0;
+        if ((MenuAtoraSel.unk_04 == 2 || MenuAtoraSel.unk_04 == 1) && MenuAtoraSel.map_no == MapNo) {
+            CommonMenuAtoraInfo = &EditPartsInfo;
+        } else {
+            CommonMenuAtoraInfo = &BtEditPartsInfo;
+            CommonMenuAtoraInfo->Load(MenuAtoraSel.map_no, SaveData, 1);
+        }
+    }
+    MenuAtoraSel.tip_list = SaveData->GetElemData(map);
+    next = CommonMenuAtoraInfo->GetNextPartsNum(-1);
+    AtoraTipInfoInit();
+    count = AtraBoardMaxNum(MenuAtoraSel.map_no);
+    if (MenuAtoraSel.board_pos > count - 1) {
+        MenuAtoraSel.board_pos = count - 1;
+    }
+    info = SearchAtoraInfo(MenuAtoraSel.board_pos);
+    if (MenuAtoraSel.mode == 0) {
+        if (info != NULL) {
+            if (MenuAtoraSel.tip_pos > 0 && info->elements[MenuAtoraSel.tip_pos - 1].id < 0) {
+                MenuAtoraSel.tip_pos = 0;
+            }
+        } else {
+            MenuAtoraSel.tip_pos = 0;
+        }
+    }
+    MenuAtoraSel.scroll_y = 146.0f - 130.0f * MenuAtoraSel.board_pos;
+    if (0 < next) {
+        MenuAtoraSel.cursor_x = 38.0f;
+        MenuAtoraSel.cursor_y = 175.0f;
+    } else {
+        place = MenuAtoraSel.tip_pos % 4;
+        MenuAtoraSel.cursor_x = place * 58 + 334;
+        place = (MenuAtoraSel.tip_pos >> 2) - MenuAtoraSel.unk_2C;
+        if (place < 0) {
+            place = 0;
+        }
+        if (place > 3) {
+            place = 3;
+        }
+        MenuAtoraSel.cursor_y = place * 50 + 118;
+    }
+    if (next > 0) {
+        pos = MenuAtoraSel.board_pos - 1;
+        y = MenuAtoraSel.scroll_y + 80 + 130.0f * pos;
+        for (i = 0; i < 3; i++) {
+            info = SearchAtoraInfo(pos);
+            if (info != NULL) {
+                AtoraNameMes.mes_no[i] = info->parts_no + (MenuAtoraSel.map_no * 200 + 1000);
+                AtoraNameMes.line_pos[0].x = 134;
+                AtoraNameMes.line_pos[0].y = y;
+                y += 130.0f;
+            } else {
+                AtoraNameMes.mes_no[i] = 999;
+            }
+            pos++;
+        }
+        AtoraNameMes.mes_made = -1;
+        AtoraNameMes.MakeMesWin(210);
+    }
+}
+
+/**
+ * Stores the mode of a menu in the saved menu cursors.
+ */
+static inline void SetCursorMode(CMenuCursor *cursor, int menu, int mode) {
+    cursor->mode[menu] = mode;
+}
+
+/**
+ * Closes the georama board screen, saving the cursor position unless the
+ * menus were told to forget it, and restores the shared message windows.
+ */
+static void ExitAtoraSelect() {
+    CMenuCursor *cursor;
+    int pos;
+
+    cursor = SaveData->GetMenuCursor();
+    if (cursor->reset_pos == 0) {
+        SetCursorMode(cursor, 3, MenuAtoraSel.mode);
+        switch (MenuAtoraSel.mode) {
+            case 0:
+                pos = MenuAtoraSel.board_pos;
+                break;
+            case 1:
+                pos = MenuAtoraSel.tip_pos;
+                break;
+        }
+        cursor->pos[3] = pos;
+    }
+    CommonMenuMes2.SetBuff(MenuAtoraSel.prev_mes_buff);
+    CommonMenuMes3.auto_pos = -1;
+    CommonMenuMes3.Preset(1);
+    AtoraNameMes.narrow_gaiji = 0;
+}
 
 static void AtoraTexInfoGet() {
     CompleteTex = TexManager.GetTexture("complete", -1);
@@ -1410,8 +1563,8 @@ INCLUDE_ASM("asm/nonmatchings/memcard", AtoraBoardKey__Fv);
 
 static int AtoraTipKey() {
     int result = 0;
-    int pos = MenuAtoraSel.unk_20;
-    int mode = MenuAtoraSel.unk_00;
+    int pos = MenuAtoraSel.tip_pos;
+    int mode = MenuAtoraSel.mode;
     int page = MenuAtoraSel.unk_18;
 
     switch (PersonalBoardKey()) {
@@ -1423,27 +1576,27 @@ static int AtoraTipKey() {
             }
             int enable[6];
             AtoraBoardEnableMovePos(MenuAtoraSel.board_pos, enable);
-            MenuAtoraSel.unk_00 = 0;
+            MenuAtoraSel.mode = 0;
             if (info == NULL || event != 0) {
-                MenuAtoraSel.unk_20 = 0;
+                MenuAtoraSel.tip_pos = 0;
             } else {
-                int slot = AtoraBoardGoToPos(enable, MenuAtoraSel.unk_20 < MenuAtoraSel.unk_2C * 5 + 10 ? 2 : 5, 0);
+                int slot = AtoraBoardGoToPos(enable, MenuAtoraSel.tip_pos < MenuAtoraSel.unk_2C * 5 + 10 ? 2 : 5, 0);
                 if (enable[slot]) {
-                    MenuAtoraSel.unk_20 = slot + 1;
+                    MenuAtoraSel.tip_pos = slot + 1;
                 } else {
-                    MenuAtoraSel.unk_20 = 0;
+                    MenuAtoraSel.tip_pos = 0;
                 }
             }
             ComMenuSePlay(0);
             break;
         }
     }
-    if (MenuAtoraSel.unk_00 == 1) {
-        if (pos != MenuAtoraSel.unk_20 || mode != MenuAtoraSel.unk_00 || page != MenuAtoraSel.unk_18) {
+    if (MenuAtoraSel.mode == 1) {
+        if (pos != MenuAtoraSel.tip_pos || mode != MenuAtoraSel.mode || page != MenuAtoraSel.unk_18) {
             ComMenuSePlay(0);
         }
         if (GamePad.Down(0x40)) {
-            s16 *tip = &MenuAtoraSel.tip_list[MenuAtoraSel.unk_20];
+            s16 *tip = &MenuAtoraSel.tip_list[MenuAtoraSel.tip_pos];
             if (NowTipHavePt->tip_no == *tip) {
                 ComMenuSePlay(2);
             } else {
@@ -1451,7 +1604,7 @@ static int AtoraTipKey() {
                 s16 tip_no = *tip;
                 *tip = NowTipHavePt->tip_no;
                 NowTipHavePt->tip_no = tip_no;
-                NowTipHavePt->slot = MenuAtoraSel.unk_20;
+                NowTipHavePt->slot = MenuAtoraSel.tip_pos;
                 NowTipHavePt->mode = 1;
                 NowTipHavePt->parts_no = -1;
             }
@@ -1529,7 +1682,88 @@ static void AtoraBoardFadeEffect() {
                 &bottom, 1);
     MGSetGsTEXA(NULL);
 }
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraNameDraw__Fi);
+
+void AtoraNameDraw(int) {
+    int prev_mes_no[3];
+    int pos;
+    int y;
+    int i;
+    int mes_no;
+    int x;
+    int alpha;
+    EDITPARTS_INFO *info;
+
+    MenuTextureReload(AtoraNameMes.tex_block);
+    pos = MenuAtoraSel.board_pos - 1;
+    for (int j = 0; j < 3; j++) {
+        prev_mes_no[j] = AtoraNameMes.mes_no[j];
+    }
+    y = MenuAtoraSel.scroll_y + 92 + 130.0f * pos;
+    for (i = 0; i < 3; i++) {
+        if (y < 96 || y > 341) {
+            mes_no = 999;
+        } else {
+            info = SearchAtoraInfo(pos);
+            if (info != NULL) {
+                mes_no = GetAtraMsgNo(MenuAtoraSel.map_no, info->parts_no);
+            } else {
+                mes_no = 999;
+            }
+        }
+        AtoraNameMes.mes_no[i] = mes_no;
+        x = GetMsgLengthMenu(&AtoraNameMes, mes_no);
+        if (GetMenuLangFlag() == 0 && mes_no == 1000) {
+            x = GetMsgLengthCharaName(0) + 3;
+        }
+        x = 186.0f - 58.0f * (x / 10.0f);
+        if (GetMenuLangFlag() > 0) {
+            if (mes_no == 2001) {
+                x += 6;
+            }
+            if (mes_no == 2002) {
+                x += 8;
+            }
+        }
+        if (i >= 0 && i < 10) {
+            AtoraNameMes.line_pos[i].x = x;
+            AtoraNameMes.line_pos[i].y = y;
+        }
+        y += 130.0f;
+        pos++;
+    }
+    for (int k = 0; k < 3; k++) {
+        if (AtoraNameMes.mes_no[k] != prev_mes_no[k]) {
+            AtoraNameMes.mes_made = -1;
+            AtoraNameMes.MakeMesWin(210);
+            break;
+        }
+    }
+    alpha = MenuAtoraSel.name_alpha;
+    switch (MenuAtoraSel.step) {
+        case 7:
+            alpha = 0x80 - MenuAtoraSel.step_count * 2;
+            if (alpha < 0) {
+                alpha = 0;
+            }
+            break;
+        case 9:
+            alpha = MenuAtoraSel.step_count * 2;
+            if (alpha > 0x80) {
+                alpha = 0x80;
+            }
+            break;
+        case 8:
+            alpha = 0;
+            break;
+    }
+    AtoraNameMes.edge_alpha = alpha;
+    AtoraNameMes.Step();
+    AtoraNameMes.DrawMesWin();
+    if (GetMenuAtraEventFlag() == 0) {
+        AtoraBoardFadeEffect();
+    }
+}
+
 INCLUDE_ASM("asm/nonmatchings/memcard", OptionMenuDraw__Fiiiii);
 
 static void DrawOptionLRCur(int side, int alpha) {
@@ -1588,7 +1822,48 @@ int InitMenuOption(int mode, int block_no, u_long128 *buffer) {
     return 1;
 }
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2251);
-INCLUDE_ASM("asm/nonmatchings/memcard", ExitMenuOption__Fv);
+
+/**
+ * Stores whether the menus discard their saved positions in the saved menu
+ * cursors.
+ */
+static inline void SetCursorResetPos(CMenuCursor *cursor, int reset) {
+    cursor->reset_pos = reset;
+}
+
+/**
+ * Closes the option screen, writing every setting the player changed back to
+ * the configuration and the saved status.
+ */
+static void ExitMenuOption() {
+    CUserStatus *status;
+    CMenuCursor *cursor;
+
+    if (OptionMenu.mode == 0) {
+        GamePad.AutoRepeatOff();
+        GamePad.MenuModeOff();
+        GamePad.SetAutoRepeat(0x5000, 30, 9);
+        GamePad.MenuModeOn(120);
+    }
+    status = (CUserStatus *) SaveData->GetDngStatus();
+    cursor = SaveData->GetMenuCursor();
+    SetCursorResetPos(cursor, OptionMenu.flag[0]);
+    if (cursor->reset_pos) {
+        cursor->InitPos();
+    }
+    OpConfigPt[7] = OptionMenu.flag[1];
+    OpConfigPt[4] = OptionMenu.flag[2];
+    OpConfigPt[5] = OptionMenu.flag[3];
+    CSnd.SetStereoMode(OpConfigPt[5] ? 0 : 1);
+    OpConfigPt[2] = OptionMenu.flag[4];
+    OpConfigPt[3] = OptionMenu.flag[5];
+    status->minimap_status = OptionMenu.flag[6];
+    OpConfigPt[10] = OptionMenu.flag[7];
+    OpConfigPt[9] = OptionMenu.flag[8];
+    OpConfigPt[11] = OptionMenu.flag[9];
+    OpConfigPt[8] = OptionMenu.flag[10];
+    OpConfigPt[6] = OptionMenu.flag[11];
+}
 
 static void InitOptionFlag() {
     int i;

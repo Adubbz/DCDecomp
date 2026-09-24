@@ -15,8 +15,39 @@ class CCPoly;
 /**
  * Loads, draws and advances one drainage-field model.
  */
-class CDranMapField : public CCharacter {
+class CDranMapField {
 public:
+    CCharacter character; /**< Character data for one drainage-field model. */
+
+    /**
+     * Initializes this drainage-field model's character data.
+     */
+    void Initialize(void) {
+        character.Initialize();
+    }
+
+    /**
+     * Loads model data into this drainage-field model's character.
+     */
+    void LoadPackData(unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc,
+                      CDataAlloc2<1> *texture_alloc) {
+        character.LoadPackData(pack, name, model_alloc, texture_alloc);
+    }
+
+    /**
+     * Sets this drainage-field model's world position.
+     */
+    void SetPosition(float x, float y, float z) {
+        character.SetPosition(x, y, z);
+    }
+
+    /**
+     * Sets this drainage-field model's world rotation.
+     */
+    void SetRotation(float x, float y, float z) {
+        character.SetRotation(x, y, z);
+    }
+
     /**
      * Loads one drainage-field model into the next free slot.
      *

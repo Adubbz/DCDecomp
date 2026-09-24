@@ -41,7 +41,7 @@
 #pragma argument_flag_ones 3685, 3687, 3688, 3891, 3911, 3922, 3943, 3946, 3947, 3999
 #pragma argument_flag_ones 4058, 4069, 4077, 4097, 4100, 4135, 4142, 4157, 4160, 4185
 #pragma argument_flag_ones 4213, 4220, 4234, 4253, 4265, 4269, 4270, 4340, 4346, 4355
-#pragma argument_flag_ones 4367, 4393, 4415, 4422, 4429, 4688, 4689, 4690, 4733, 4736
+#pragma argument_flag_ones 4367, 4393, 4415, 4422, 4429, 4701, 4702, 4703, 4746, 4749
 #pragma argument_flag 0
 
 #include "dun/gameloop.hpp"
@@ -412,9 +412,6 @@ extern "C" CStealItem StealItem;
 
 /* The bombs the player has thrown. */
 extern "C" CItemBombEffect CBomb__2[3];
-
-/* The effect Osmond's machine gun leaves where it hits. */
-extern "C" CHIT_MACHINGUN_EFFECT OzumondShotEffect;
 
 /* The effect that heals the player. */
 extern "C" CHealEffect HealEffect;

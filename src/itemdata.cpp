@@ -314,18 +314,30 @@ int checkArg(char *text, int pos, int *format) {
     return cursor;
 }
 
-#ifdef NON_MATCHING
 /**
- * Reads the item definition file and fills in the item tables.
+ * Positions in TEIGI_TABLE of the commands that take no arguments.
+ */
+// clang-format off
+enum TEIGI_TABLE_INDEX {
+    TEIGI_INDEX_DEF_PATS = 11,
+    TEIGI_INDEX_DEF_ENDS = 12,
+};
+// clang-format on
+
+/**
+ * Reads the item definition file into the parsed command table and returns its size.
  *
  * @mangled TEIGIAnalyz__FPc
  * @address 0x1CE090
  * @size 0x3B4
  */
-void TEIGIAnalyz(char *path) {
-    char *text;
+int TEIGIAnalyz(char *path) {
+    int i;
     int pos;
     int command;
+    int found;
+    int name_length;
+    char *text;
 
     argLevel__2 = 0;
     errFlag2 = 0x7E;
@@ -338,8 +350,9 @@ void TEIGIAnalyz(char *path) {
     }
 
     MapModelBuffer.Align64();
-    text = (char *) MapModelBuffer.base + MapModelBuffer.used * 16;
+    text = (char *) (MapModelBuffer.used * 16 + MapModelBuffer.base);
     if (LoadFile(path, text, &teigiFileSize) == 0) {
+        // The failure path leaves the result unset.
         return;
     }
     wait_now_loading_vsync();
@@ -347,46 +360,49 @@ void TEIGIAnalyz(char *path) {
     MapModelBuffer.Align64();
 
     // The parser treats each source line as a null-terminated record.
-    for (pos = 0; pos < teigiFileSize; pos++) {
-        if (text[pos] == '\r' && text[pos + 1] == '\n') {
-            text[pos] = '\0';
-            text[pos + 1] = '\0';
+    for (i = 0; i < teigiFileSize; i++) {
+        if (text[i] == '\r' && text[i + 1] == '\n') {
+            text[i + 1] = '\0';
+            text[i] = '\0';
         }
     }
 
-    for (pos = 0; pos < teigiFileSize; pos = skipSpace(text, pos)) {
-        bool found = false;
+    pos = 0;
+    while (pos < teigiFileSize) {
         pos = skipSpace(text, pos);
-        for (command = 0; TEIGI_TABLE[command] != NULL; command++) {
-            int name_length = strlen(TEIGI_TABLE[command]);
-            if (memcmp(&text[pos], TEIGI_TABLE[command], name_length) != 0) {
-                continue;
-            }
-
-            pos = skipSpace(text, pos + name_length);
-            if ((unsigned int) (command - 11) < 2) {
-                argValBuff__2[argLevel__2][0] = (float) TEIGI_ARG_TABLE[command][0];
-            } else {
-                pos = checkArg(text, pos, TEIGI_ARG_TABLE[command]);
-                if (pos == -1) {
-                    printf("def Error:%s\n", TEIGI_TABLE[command]);
-                    exit__2(-1);
+        command = 0;
+        found = 0;
+        while (TEIGI_TABLE[command] != NULL) {
+            name_length = strlen(TEIGI_TABLE[command]);
+            if (memcmp(&text[pos], TEIGI_TABLE[command], name_length) == 0) {
+                if (command == TEIGI_INDEX_DEF_PATS || command == TEIGI_INDEX_DEF_ENDS) {
+                    pos = skipSpace(text, pos + name_length);
+                    argValBuff__2[argLevel__2][0] = (float) TEIGI_ARG_TABLE[command][0];
+                } else {
+                    pos = skipSpace(text, pos + name_length);
+                    pos = checkArg(text, pos, TEIGI_ARG_TABLE[command]);
+                    if (pos == -1) {
+                        printf("def Error:%s\n", TEIGI_TABLE[command]);
+                        exit__2(-1);
+                    }
+                    pos = skipSpace(text, pos);
                 }
-                pos = skipSpace(text, pos);
-            }
-            argLevel__2++;
-            if (argLevel__2 >= 640) {
-                printf("arg line level err!!\n");
-                for (;;) {
+                argLevel__2++;
+                if (argLevel__2 >= 640) {
+                    printf("arg line level err!!\n");
+                    for (;;) {
+                    }
                 }
+                found = 1;
+                break;
             }
-            found = true;
-            break;
+            command++;
         }
-        if (!found) {
-            printf("TAG SyntaxError!! >> %s\n", &text[pos]);
+        if (found == 0) {
+            printf("TAG SyntaxError!! >>%s\n", &text[pos]);
             exit__2(-1);
         }
+        pos = skipSpace(text, pos);
     }
 
     if (errFlag2 != 0x7E) {
@@ -394,17 +410,9 @@ void TEIGIAnalyz(char *path) {
         for (;;) {
         }
     }
+    return teigiFileSize;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/itemdata", TEIGIAnalyz__FPc);
-#endif
 
-INCLUDE_RODATA("asm/nonmatchings/itemdata", @762);
-INCLUDE_RODATA("asm/nonmatchings/itemdata", @763);
-INCLUDE_RODATA("asm/nonmatchings/itemdata", @764);
-INCLUDE_RODATA("asm/nonmatchings/itemdata", @765);
-
-#ifdef NON_MATCHING
 /**
  * Reads the textures the item definitions name.
  *
@@ -413,42 +421,39 @@ INCLUDE_RODATA("asm/nonmatchings/itemdata", @765);
  * @size 0x594
  */
 void TEIGIImgLoad(u_int *pack, CDataAlloc2<1> *arena) {
-    LOADTEXTURE_INFO2 ground_images[5] = {};
-    LOADTEXTURE_INFO2 fire_images[2] = {};
-    LOADTEXTURE_INFO2 minimap_images[2] = {};
     char full_path[256];
-    int ground_count = 0;
-    int size;
-    int command;
     int i;
+    int ground_count = 0;
 
-    pathName[0] = '\0';
+    strcpy(pathName, "");
+    LOADTEXTURE_INFO2 ground_images[5] = {{"", 0, 0}, {"", 0, 0}, {"", 0, 0}, {"", 0, 0}, {"", 0, 0}};
+    LOADTEXTURE_INFO2 fire_images[3] = {{"#blender#640#224#4", 14, 0}, {"", 14, 0}, {"", 0, 0}};
+    LOADTEXTURE_INFO2 minimap_images[2] = {{"", 31, 0}, {"", 0, 0}};
+    int size;
+
     for (i = 0; i < 4; i++) {
         TexManager.DeleteTextureBlock(i + 64);
     }
     TexManager.CleanUpTextureList();
     TexManager.CleanUpBuffer();
 
-    for (command = 0; command < argLevel__2; command++) {
-        int kind = (int) argValBuff__2[command][0];
-        if (kind == TEIGI_SET_PATH[0]) {
-            strcpy(pathName, argStrBuff__2[command]);
+    for (i = 0; i < argLevel__2; i++) {
+        if (TEIGI_SET_PATH[0] == (int) argValBuff__2[i][0]) {
+            strcpy(pathName, argStrBuff__2[i]);
         }
 
-        if (kind == TEIGI_GRD_IMG__2[0]) {
-            u_char *destination;
-            u_int *image;
+        if (TEIGI_GRD_IMG__2[0] == (int) argValBuff__2[i][0]) {
             strcpy(full_path, pathName);
-            strcat(full_path, argStrBuff__2[command]);
-            strcpy(argStrBuff__2[command], full_path);
+            strcat(full_path, argStrBuff__2[i]);
+            strcpy(argStrBuff__2[i], full_path);
 
-            destination = arena->base + arena->used * 16;
-            image = GetPackFile(pack, argStrBuff__2[command], &size);
+            u_char *destination = arena->used * 16 + arena->base;
+            u_int *image = GetPackFile(pack, argStrBuff__2[i], &size);
             arena->Alloc((((size >> 6) + 1) << 6) >> 4);
             memcpy(destination, image, size);
             ground_images[ground_count].name = (char *) destination;
             ground_images[ground_count].block_no = 3;
-            ground_images[ground_count].unk_08 = (int) argValBuff__2[command][2];
+            ground_images[ground_count].unk_08 = (int) argValBuff__2[i][2];
             ground_count++;
             ground_images[ground_count].name = NULL;
 
@@ -460,20 +465,19 @@ void TEIGIImgLoad(u_int *pack, CDataAlloc2<1> *arena) {
             BtTexAnime.Initialize(BtTexAnimeData, 96);
             char *config = (char *) GetPackFile(pack, "texanime.cfg", &size);
             if (config != NULL) {
-                for (i = 0; i < 96; i++) {
-                    BtTexAnimeData[i].Initialize();
+                for (int j = 0; j < 96; j++) {
+                    BtTexAnimeData[j].Initialize();
                 }
                 BtTexAnime.LoadCFGFile(config, size);
             }
         }
 
-        if (kind == TEIGI_FIRE_IMG__2[0]) {
+        if (TEIGI_FIRE_IMG__2[0] == (int) argValBuff__2[i][0]) {
             strcpy(full_path, pathName);
-            strcat(full_path, argStrBuff__2[command]);
-            printf("%s\n", argStrBuff__2[command]);
-            fire_images[0].name = (char *) GetPackFile(pack, "fire.img", &size);
-            fire_images[0].block_no = 14;
-            if (fire_images[0].name == NULL) {
+            strcat(full_path, argStrBuff__2[i]);
+            printf("%s\n", argStrBuff__2[i]);
+            fire_images[1].name = (char *) GetPackFile(pack, "fire.img", &size);
+            if (fire_images[1].name == NULL) {
                 exit__2(-1);
             }
             TexManager.DeleteTextureBlock(14);
@@ -482,11 +486,10 @@ void TEIGIImgLoad(u_int *pack, CDataAlloc2<1> *arena) {
             TexManager.LoadTextureBlock(-1, fire_images);
         }
 
-        if (kind == TEIGI_MINIMAP_IMG[0]) {
+        if (TEIGI_MINIMAP_IMG[0] == (int) argValBuff__2[i][0]) {
             strcpy(full_path, pathName);
-            strcat(full_path, argStrBuff__2[command]);
+            strcat(full_path, argStrBuff__2[i]);
             minimap_images[0].name = (char *) GetPackFile(pack, full_path, &size);
-            minimap_images[0].block_no = 31;
             if (minimap_images[0].name == NULL) {
                 exit__2(-1);
             }
@@ -497,15 +500,7 @@ void TEIGIImgLoad(u_int *pack, CDataAlloc2<1> *arena) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/itemdata", TEIGIImgLoad__FPUiP14CDataAlloc2_1_);
-#endif
 
-INCLUDE_RODATA("asm/nonmatchings/itemdata", @766__2);
-INCLUDE_RODATA("asm/nonmatchings/itemdata", @768);
-INCLUDE_RODATA("asm/nonmatchings/itemdata", @809__2);
-INCLUDE_RODATA("asm/nonmatchings/itemdata", @810);
-INCLUDE_RODATA("asm/nonmatchings/itemdata", @811);
 #ifdef NON_MATCHING
 void TEIGIMdsLoad(u_int *pack, int reuse_only) {
     CFrameAttr frame_attr;

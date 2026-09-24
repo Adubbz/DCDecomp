@@ -9,6 +9,7 @@
 
 #include "clsmes.hpp"
 #include "dataread.hpp"
+#include "dngstatusdata.hpp"
 #include "eastking.hpp"
 #include "gamepad.hpp"
 #include "memcard.hpp"
@@ -18,21 +19,27 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-#ifdef NON_MATCHING
-s8 GetNowManualPartTgaNum() {
-    return ManualTgaNum[ManualMenu.category * 6 + ManualMenu.entry];
+/**
+ * Returns the texture page for the selected manual category and entry.
+ */
+s8 GetNowManualPartTgaNum(void) {
+    return *(ManualMenu.entry + (ManualTgaNum + (ManualMenu.category * 6)));
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_manual", GetNowManualPartTgaNum__Fv);
-#endif
-#ifdef NON_MATCHING
+
+/**
+ * Reports whether the party has the item that unlocks the manual.
+ */
 int GetGameFlagForManualMenu() {
     CDngStatusData *status = SaveData->GetDngStatus();
-    return status == NULL || status->SearchItemIndexNo(0xFD) >= 0;
+    if (status == NULL) {
+        return 1;
+    }
+    int result = 0;
+    if (status->SearchItemIndexNo(0xFD) >= 0) {
+        result++;
+    }
+    return result;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_manual", GetGameFlagForManualMenu__Fv);
-#endif
 /**
  * Begins loading the image resources for the current manual page.
  *

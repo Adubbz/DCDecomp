@@ -1,5 +1,7 @@
 #include "shot_effect.hpp"
 
+#include <cstdlib>
+
 #include "collisiondata.hpp"
 #include "dun/gameloop.hpp"
 #include "hit_machingun_effect.hpp"
@@ -10,7 +12,6 @@
 #include "shot_utils.hpp"
 #include "texture.hpp"
 
-#include <cstdlib>
 
 int GetWeaponElementAttr(int element);
 
@@ -21,6 +22,7 @@ int GetWeaponElementAttr(int element);
  * @address 0x1ABC40
  * @size 0xCC
  */
+#ifdef NON_MATCHING
 void CSHOT::draw() {
     int texture_cell = NowWeaponHave->item_no - 300;
     if (texture_cell <= 0) {
@@ -35,6 +37,9 @@ void CSHOT::draw() {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_effect", draw__5CSHOTFv);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/shot_effect", @625__2);
 /**
  * Advances the twelve projectiles of one shot.
@@ -43,6 +48,7 @@ INCLUDE_RODATA("asm/nonmatchings/shot_effect", @625__2);
  * @address 0x1ABD10
  * @size 0x204
  */
+#ifdef NON_MATCHING
 void CSHOT::step() {
     sceVu0FVECTOR hit_position;
 
@@ -76,7 +82,11 @@ void CSHOT::step() {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_effect", step__5CSHOTFv);
+#endif
 
+#ifdef NON_MATCHING
 void CSHOT_EFFECT::Draw() {
     if (effect_data == NULL) {
         return;
@@ -95,7 +105,11 @@ void CSHOT_EFFECT::Draw() {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_effect", Draw__12CSHOT_EFFECTFv);
+#endif
 
+#ifdef NON_MATCHING
 void CSHOT_EFFECT::Step() {
     if (effect_data == NULL) {
         return;
@@ -151,7 +165,11 @@ void CSHOT_EFFECT::Step() {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_effect", Step__12CSHOT_EFFECTFv);
+#endif
 
+#ifdef NON_MATCHING
 void CSHOT_EFFECT::EndEffect() {
     for (int slot = 0; slot < 8; slot++) {
         if (active[slot] != 0 && (phase[slot] == 0 || phase[slot] == 1)) {
@@ -162,6 +180,9 @@ void CSHOT_EFFECT::EndEffect() {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_effect", EndEffect__12CSHOT_EFFECTFv);
+#endif
 
 void CSHOT_EFFECT::OffEffect(s32 slot) {
     if (slot != -1) {
@@ -174,6 +195,7 @@ void CSHOT_EFFECT::OffEffect(s32 slot) {
     }
 }
 
+#ifdef NON_MATCHING
 int CSHOT_EFFECT::Entry(BT_SHOT_EFFECT *description, unsigned int *resource,
                         int texture_block, CDataAlloc2<1> *allocator, int slots) {
     (void) resource;
@@ -194,8 +216,12 @@ int CSHOT_EFFECT::Entry(BT_SHOT_EFFECT *description, unsigned int *resource,
     current_slot = -1;
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_effect", Entry__12CSHOT_EFFECTFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/shot_effect", @899);
 INCLUDE_RODATA("asm/nonmatchings/shot_effect", @900);
+#ifdef NON_MATCHING
 int CSHOT_EFFECT::Entry2(BT_SHOT_EFFECT *description, unsigned int *resource,
                          int texture_block, CDataAlloc2<1> *allocator, int slots) {
     (void) resource;
@@ -214,7 +240,11 @@ int CSHOT_EFFECT::Entry2(BT_SHOT_EFFECT *description, unsigned int *resource,
     current_slot = -1;
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_effect", Entry2__12CSHOT_EFFECTFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i);
+#endif
 
+#ifdef NON_MATCHING
 void CSHOT_EFFECT::ReEntry(BT_SHOT_EFFECT *description, CDataAlloc2<1> *allocator) {
     (void) allocator;
     effect_data = description;
@@ -225,6 +255,9 @@ void CSHOT_EFFECT::ReEntry(BT_SHOT_EFFECT *description, CDataAlloc2<1> *allocato
     }
     current_slot = -1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_effect", ReEntry__12CSHOT_EFFECTFP14BT_SHOT_EFFECTP14CDataAlloc2_1_);
+#endif
 
 void CSHOT_EFFECT::SetLoop(s32 loop) {
     s32 slot;
@@ -235,6 +268,7 @@ void CSHOT_EFFECT::SetLoop(s32 loop) {
     }
 }
 
+#ifdef NON_MATCHING
 int CSHOT_EFFECT::Set(float *position, float *target, int owner, int sub_id,
                       int source, CFrame *frame, int initial_phase) {
     (void) frame;
@@ -278,6 +312,9 @@ int CSHOT_EFFECT::Set(float *position, float *target, int owner, int sub_id,
     wait_state[slot] = 0;
     return slot;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_effect", Set__12CSHOT_EFFECTFPfPfiiiP6CFramei);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/shot_effect", @977__2);
 
 void CSHOT_EFFECT::SetWait(s32 wait) {
@@ -414,23 +451,27 @@ void CSHOT_EFFECT_PACK::SetDmg(s32 damage) {
  * @address 0x1AE660
  * @size 0xEC
  */
-int CSHOT_MACHINGUN::Set(float *origin, float *movement, int shot_damage,
-                         int shot_attribute) {
-    int slot = 0;
-    while (slot < 16 && unk_280[slot] != 0) {
-        slot++;
+int CSHOT_MACHINGUN::Set(float *origin, float *direction, int damage, int element) {
+    int slot = -1;
+    for (int i = 0; i < 16; i++) {
+        if (this->unk_280[i] == 0) {
+            slot = i;
+            break;
+        }
     }
-    if (slot == 16) {
+
+    if (slot == -1) {
         return -1;
     }
 
-    sceVu0CopyVector(position[slot], origin);
-    sceVu0CopyVector(velocity[slot], movement);
-    unk_200[slot] = shot_damage;
-    unk_240[slot] = shot_attribute;
-    unk_280[slot] = 1;
+    sceVu0CopyVector(this->position[slot], origin);
+    sceVu0CopyVector(this->velocity[slot], direction);
+    this->unk_200[slot] = damage;
+    this->unk_240[slot] = element;
+    this->unk_280[slot] = 1;
     return slot;
 }
+
 /**
  * Advances the sixteen rapid-fire projectiles.
  *
@@ -438,6 +479,7 @@ int CSHOT_MACHINGUN::Set(float *origin, float *movement, int shot_damage,
  * @address 0x1AE750
  * @size 0x230
  */
+#ifdef NON_MATCHING
 extern "C" CHIT_MACHINGUN_EFFECT OzumondShotEffect;
 
 void CSHOT_MACHINGUN::Step() {
@@ -473,3 +515,6 @@ void CSHOT_MACHINGUN::Step() {
         position[slot][2] += velocity[slot][2];
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/shot_effect", Step__15CSHOT_MACHINGUNFv);
+#endif

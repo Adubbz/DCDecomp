@@ -360,10 +360,21 @@ static int SaveMenuKeyEndSave(void) {
     }
     return 1;
 }
-#ifdef NON_MATCHING
+
+/**
+ * Confirms loading the selected save file and advances the menu state.
+ *
+ * @mangled SaveMenuKeyLoadDecide__Fv
+ * @address 0x221B30
+ * @size 0x100
+ */
 static int SaveMenuKeyLoadDecide(void) {
     if (GamePad.Down(0x40) != 0) {
-        if (McAccess.file_info[SaveMenu.file_no].state != 0) {
+        int file_no = SaveMenu.file_no;
+
+        SAVEDATA_INFO *file_info = &McAccess.file_info[file_no];
+
+        if (file_info->state != 0) {
             McAccess.SetFuncNo(0);
             McAccess.file_no = SaveMenu.file_no;
             SaveMenu.key_no = 0xD;
@@ -380,9 +391,6 @@ static int SaveMenuKeyLoadDecide(void) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyLoadDecide__Fv);
-#endif
 
 static int SaveMenuKeyLoad(void) {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
@@ -498,9 +506,18 @@ static int SaveMenuKeyFormat(void) {
     }
     return 1;
 }
-#ifdef NON_MATCHING
+
+/**
+ * Handles the menu response after checking an unformatted memory card.
+ *
+ * @mangled SaveMenuKeyUnFormat__Fv
+ * @address 0x222170
+ * @size 0x78
+ */
 static int SaveMenuKeyUnFormat(void) {
-    if (McAccess.card[McAccess.port].formatted != 0) {
+    MC_CARD_INFO *card = &McAccess.card[McAccess.port];
+
+    if (card->formatted != 0) {
         McAccess.SetFuncNo(0xA);
     } else {
         SaveMenu.key_no = 3;
@@ -508,9 +525,6 @@ static int SaveMenuKeyUnFormat(void) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_save", SaveMenuKeyUnFormat__Fv);
-#endif
 
 static int SaveMenuKeyDifVersion(void) {
     if (GamePad.Down(0xF0) != 0) {
@@ -853,7 +867,7 @@ void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, i
     DrawSaveBoardDigits(info->quest_total, x + 0x88, y + 0x52, y, &start, &end, digit);
 
     // Name of the map the save was made on.
-    int map = map_name[info->unk_30];
+    int map = map_name[info->map_no];
     int name_v;
     if (map < 14) {
         name_v = (map % 7) * 0x14 + 0xB8;

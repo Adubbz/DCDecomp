@@ -115,7 +115,7 @@ public:
     s32 suppress_water;            /**< Whether rendering of the editable ground's water is disabled. */
     /**
      * Places one part on the ground, replacing or refusing it according to what already
-     * stands there.
+     * stands there, and gives back the slot it took or -1 when it was refused.
      *
      * @mangled SetMapParts__11CEditGroundFifffi
      * @address 0x1A0470
@@ -251,13 +251,15 @@ public:
     void EditAreaClip(CCamera *camera, float range);
 
     /**
-     * Picks a random point on the walkable ground.
+     * Picks a random flat, unbuilt cell away from the edges, inside the bounds sphere
+     * when it has a radius and outside every avoid sphere, and gives its centre.
      *
      * @mangled GetRandomPlanePos__11CEditGroundFPfPA4_fiPf
      * @address 0x1A26D0
      * @size 0x3BC
      */
-    int GetRandomPlanePos(float *out_position, float (*matrix)[4], int area, float *extent);
+    int GetRandomPlanePos(sceVu0FVECTOR out_position, sceVu0FVECTOR avoid[], int avoid_count,
+                          sceVu0FVECTOR bounds);
 
     /**
      * Collects the placed parts whose bounds meet a box.
@@ -523,13 +525,14 @@ public:
     void GetRectParts(CRect_i_ *rect, CMapParts *target, int column, int row);
 
     /**
-     * Collects the parts inside a rectangle that face a given direction.
+     * Gives the strip of cells a set depth deep along one side of a part, the side
+     * taken relative to the way the part faces.
      *
      * @mangled GetRectDirParts__11CEditGroundFP8CRect_i_P9CMapPartsii
      * @address 0x1A6750
      * @size 0x264
      */
-    void GetRectDirParts(CRect_i_ *, CMapParts *, int, int);
+    void GetRectDirParts(CRect_i_ *rect, CMapParts *target, int direction, int depth);
 
     /**
      * Checks the ground against Norn's request.

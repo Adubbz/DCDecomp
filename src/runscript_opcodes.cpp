@@ -510,17 +510,15 @@ int _STATUS_SET_COL_OFF(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->monster[monster_no].unk_0A8 = GetStackInt(stack);
     return 1;
 }
-#ifdef NON_MATCHING
+
 int _STATUS_GET_LIFE_RATE(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
+    float max_hp = NowMonstorUnit->monster[monster_no].max_hp;
+    float hp = NowMonstorUnit->monster[monster_no].hp;
 
-    SetStack(stack, 100.0f * ((float) NowMonstorUnit->monster[monster_no].hp /
-                              (float) NowMonstorUnit->monster[monster_no].max_hp));
+    SetStack(stack, 100.0f * (hp / max_hp));
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _STATUS_GET_LIFE_RATE__FP12RS_STACKDATAi);
-#endif
 
 int _STATUS_GET_USER_VECTOR(RS_STACKDATA *stack, int argc) {
     int normalize = 0;
@@ -716,16 +714,16 @@ int _SET_BODY_COL(RS_STACKDATA *stack, int argc) {
     }
     return 1;
 }
-#ifdef NON_MATCHING
+
 int _SET_BODY_COL_PARA(RS_STACKDATA *stack, int argc) {
     int index = GetStackInt(stack++);
     int value = GetStackInt(stack);
-    int monster_no = NowMonstorUnit->unk_090;
+    int monster_no = NowMonstorUnit->GetCurrentMonsterIndex();
 
     if (bak_ColNo == -1) {
         return 1;
     }
-    if (index < 10) {
+    if (index <= 9) {
         NowMonstorUnit->effect[monster_no].unk_240[bak_ColNo][index] = value;
     }
     if (index >= 10) {
@@ -733,9 +731,6 @@ int _SET_BODY_COL_PARA(RS_STACKDATA *stack, int argc) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _SET_BODY_COL_PARA__FP12RS_STACKDATAi);
-#endif
 
 int _SET_DMG_COL(RS_STACKDATA *stack, int argc) {
     char *name = GetStackString(stack++);
@@ -1041,16 +1036,13 @@ int _SET_GLOBAL_INT(RS_STACKDATA *stack, int argc) {
     GL_INT[index] = GetStackInt(stack);
     return 1;
 }
-#ifdef NON_MATCHING
-int _GET_GLOBAL_INT(RS_STACKDATA *stack, int argc) {
-    int index = GetStackInt(stack);
 
-    SetStack(stack + 1, GL_INT[index]);
+int _GET_GLOBAL_INT(RS_STACKDATA *stack, int argc) {
+    int index = GetStackInt(stack++);
+
+    SetStack(stack++, GL_INT[index]);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _GET_GLOBAL_INT__FP12RS_STACKDATAi);
-#endif
 
 /**
  * Reads the world position of a named frame of the monster's model.
@@ -1279,16 +1271,14 @@ int _GET_NEAR_MONSTER(RS_STACKDATA *stack, int argc) {
     SetStack(stack++, found_position[2]);
     SetStack(stack, found);
 }
-#ifdef NON_MATCHING
+
 int _BOSS_FADE_OUT(RS_STACKDATA *stack, int argc) {
     EdFadeInit();
     EdFadeOut(120, 0.0f, 0.0f, 0.0f);
     BtActStatus.unk_064 = 0;
     BtActStatus.unk_098 = 1;
+    return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _BOSS_FADE_OUT__FP12RS_STACKDATAi);
-#endif
 
 int _CHEKC_FADE_OUT(RS_STACKDATA *stack, int argc) {
     int done = EdFadeOutCheck();
@@ -1371,20 +1361,18 @@ int _PUSH_IGLOBAL(RS_STACKDATA *stack, int argc) {
     PUSH_INT_DATA[monster_no][index] = GetStackInt(stack);
     return 1;
 }
-#ifdef NON_MATCHING
-int _POP_IGLOBAL(RS_STACKDATA *stack, int argc) {
-    int monster_no = NowMonstorUnit->unk_090;
-    int index = GetStackInt(stack);
 
-    if (index < 0 || index >= 8) {
+int _POP_IGLOBAL(RS_STACKDATA *stack, int argc) {
+    int index;
+    int monster_no = NowMonstorUnit->unk_090;
+
+    index = GetStackInt(stack++);
+    if (index < 0 || index > 7) {
         return 0;
     }
-    SetStack(&stack[1], PUSH_INT_DATA[monster_no][index]);
+    SetStack(stack++, PUSH_INT_DATA[monster_no][index]);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runscript_opcodes", _POP_IGLOBAL__FP12RS_STACKDATAi);
-#endif
 
 int _GET_USER_STATUS(RS_STACKDATA *stack, int argc) {
     int kind = GetStackInt(stack++);

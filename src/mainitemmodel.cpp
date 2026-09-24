@@ -36,13 +36,13 @@ int CMainItemModel::GetFreeModelNo(void) {
 #ifdef NON_MATCHING
 extern CDataAlloc2<1> BtItemCashArea[6];
 
-void CMainItemModel::SetCashModel(int item_no, unsigned int *model_data, unsigned int *texture_data,
-                                  int texture_size) {
+int CMainItemModel::SetCashModel(int item_no, unsigned int *model_data, unsigned int *texture_data,
+                                 int texture_size) {
     LOADTEXTURE_INFO2 texture[2] = {};
     int slot = GetFreeCashNo();
 
     if (slot == -1) {
-        return;
+        return -1;
     }
     CDataAlloc2<1> *area = &BtItemCashArea[slot];
     area->used = 0;
@@ -60,6 +60,7 @@ void CMainItemModel::SetCashModel(int item_no, unsigned int *model_data, unsigne
     int model_no = GetFreeModelNo();
     model[model_no] = 0;
     model_cash[model_no] = slot;
+    return model_no;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/mainitemmodel", SetCashModel__14CMainItemModelFiPUiPUii);
@@ -86,7 +87,7 @@ int CMainItemModel::SetHandModel(int source) {
         return -1;
     }
     model[index] = 1;
-    CFrame *placement = (CFrame *) frame[index];
+    CFrame *placement = &frame[index];
     placement->SetPosition(0.0f, 0.0f, 0.0f);
     placement->SetRotation(1.5707964f, 0.0f, 0.0f);
     model_cash[index] = model_cash[source];
@@ -106,22 +107,21 @@ void CMainItemModel::AllReleasItem(void) {
         }
     }
 }
-#ifdef NON_MATCHING
-void CMainItemModel::SetThrowModel(int source, float *position, float *direction) {
-    int index = GetFreeModelNo();
 
-    model[index] = 2;
-    sceVu0CopyVector(velocity[index], direction);
-    CFrame *placement = (CFrame *) frame[index];
-    placement->SetPosition(position);
-    placement->SetRotation(1.5707964f, 0.0f, 0.0f);
-    throw_time[index] = 0;
-    model_cash[index] = model_cash[source];
-    cash_lock[model_cash[source]]++;
+/**
+ * Creates a thrown model at a position with a copied heading vector.
+ */
+int CMainItemModel::SetThrowModel(int model_index, float *position, float *heading) {
+    int slot = GetFreeModelNo();
+    model[slot] = 2;
+    sceVu0CopyVector(velocity[slot], heading);
+    frame[slot].SetPosition(position);
+    frame[slot].SetRotation(1.5707964f, 0.0f, 0.0f);
+    throw_time[slot] = 0;
+    model_cash[slot] = model_cash[model_index];
+    cash_lock[model_cash[model_index]]++;
+    return slot;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mainitemmodel", SetThrowModel__14CMainItemModelFiPfPf);
-#endif
 #ifdef NON_MATCHING
 void CMainItemModel::Draw(void) {
     sceVu0FVECTOR position;
@@ -129,7 +129,7 @@ void CMainItemModel::Draw(void) {
     CFrame *hand = CharaMain.frame->SearchFrame("item");
 
     for (int i = 0; i < 16; i++) {
-        CFrame *placement = (CFrame *) frame[i];
+        CFrame *placement = &frame[i];
         CFrame *item = (CFrame *) cash[model_cash[i]];
         switch (model[i]) {
             case -1:
@@ -188,7 +188,7 @@ void CMainItemModel::Step(void) {
             case 3:
                 break;
             case 2: {
-                CFrame *placement = (CFrame *) frame[i];
+                CFrame *placement = &frame[i];
                 sceVu0CopyVector(position, placement->position);
                 int result = ItemThrowStep(position, velocity[i]);
                 placement->SetPosition(position);
@@ -266,7 +266,7 @@ void CMainItemModel::Initialize(void) {
     }
     for (i = 0; i < 16; i++) {
         model[i] = -1;
-        CFrame *placement = (CFrame *) frame[i];
+        CFrame *placement = &frame[i];
         placement->SetPosition(0.0f, 0.0f, 0.0f);
         placement->SetRotation(3.1415927f, 0.0f, 0.0f);
     }

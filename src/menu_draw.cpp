@@ -29,12 +29,16 @@
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "savedata.hpp"
+#include "shop.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
 #include "userstatus.hpp"
 
 /** The personal inventory board the menu is working on. */
 extern PERSONAL_BOARD *PerBoardPt;
+
+/** Player data used by personal-board item operations. */
+extern CUserStatus *PerBoardStatusPt;
 
 /** Marks, one per item pack slot, of the items the menu offers to throw away. */
 extern s8 MenuTrushMark[100];
@@ -603,7 +607,7 @@ void DrawMainMenuIcon(int x, int y, int icon, int selected, int bright, int alph
 void DrawMenuVibeItem(int x, int y, int offset_x, int offset_y, int) {
     int item_x = x + offset_x;
     int item_y = y + offset_y;
-    s16 item_no = PerBoardPt->unk_40;
+    s16 item_no = PerBoardPt->unk_30.item_no;
     CRect_i_ shadow(0x80, 0x28, 0x20, 0x20);
     int u;
     int v;
@@ -785,13 +789,65 @@ int PersonalBoardKey() {
     PersonalBoardLimmitCheck();
     return PersonalBoardKeySub();
 }
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardItemPush__FP9IHAVEITEMi);
+
+/**
+ * Moves a selected item into the personal board.
+ */
+int PersonalBoardItemPush(IHAVEITEM *item, int board_pos) {
+    int enabled = 0;
+    int kind = WhatIsKindofItem(item->item_no);
+
+    if (kind == 0 || kind < 0) {
+        s16 *board_item = &PerBoardPt->item_pack->item[board_pos];
+        s16 *board_volume = &PerBoardPt->item_pack->item_vol[board_pos];
+        if (MenuTrushMark[board_pos] == 1) {
+            enabled = 0;
+        } else {
+            MenuDataSwap(board_item, &item->item_no);
+            MenuDataSwap(board_volume, &item->volume);
+            if (item->item_no >= 0x51) {
+                item->unk_04 = 0;
+                item->unk_0C = PerBoardPt->unk_0C;
+            }
+            if (item->item_no >= 0x84 || *board_item >= 0x84) {
+                enabled = 1;
+            }
+        }
+    }
+    return enabled;
+}
+
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardWeaponPush__FP9IHAVEITEMi);
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardAttachPush__FP9IHAVEITEMi);
+
+/**
+ * Swaps an attachment between the held item and the personal board.
+ */
+int PersonalBoardAttachPush(IHAVEITEM *item, int board_pos) {
+    int enabled = 0;
+    int kind = WhatIsKindofItem(item->item_no);
+
+    if (kind == 2 || kind < 0) {
+        item->unk_04 = 2;
+        item->unk_0C = board_pos;
+        CUserStatus *status = PerBoardStatusPt;
+        DNG_CONSUMABLE *consumables = status->consumable_items;
+        ATTACH_LIST *slot = (ATTACH_LIST *) &consumables[board_pos];
+        s16 item_no = item->item_no;
+        s16 slot_item_no = slot->item_no;
+
+        MenuDataSwap(slot, &PerBoardPt->unk_13C);
+        item->item_no = slot_item_no;
+        slot->item_no = item_no;
+        if (item->item_no >= 0x51 || slot->item_no >= 0x51) {
+            enabled = 1;
+        }
+    }
+    return enabled;
+}
 
 int PersonalBoardItemGetorSwap(int board_pos) {
     int result = 0;
-    IHAVEITEM *item = (IHAVEITEM *) PerBoardPt->unk_30;
+    IHAVEITEM *item = &PerBoardPt->unk_30;
 
     switch (PerBoardPt->unk_04) {
         case 0:
@@ -1035,7 +1091,7 @@ void PersonalBoardMaxDraw(int num, int x, int y, CTexture *texture, int alpha) {
         case 1:
         case 2:
             max = GetNowModeMaxNum(PerBoardPt->unk_04, &full);
-            item = PerBoardPt->unk_40;
+            item = PerBoardPt->unk_30.item_no;
             if (item >= 0x51) {
                 int kind = WhatIsKindofItem(item);
                 if (kind == PerBoardPt->unk_04) {
@@ -1057,7 +1113,7 @@ void PersonalBoardMaxDraw(int num, int x, int y, CTexture *texture, int alpha) {
                     max++;
                 }
             }
-            if (0 <= PerBoardPt->unk_40) {
+            if (0 <= PerBoardPt->unk_30.item_no) {
                 max++;
             }
             break;

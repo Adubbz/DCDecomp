@@ -164,15 +164,6 @@ int CommonShopLoop(void);
 void ShopTextureLoadFix(void);
 
 /**
- * Builds the shopkeeper's model once it has been read.
- *
- * @mangled ShopPersonBuild__Fii
- * @address 0x1E8040
- * @size 0x268
- */
-void ShopPersonBuild(int, int);
-
-/**
  * Starts the charge shop up on the player's stock.
  *
  * @mangled InitChargeShop__FPiii
@@ -245,15 +236,6 @@ void ChargeShopBoardDraw(int, int, int);
 int BuyMoneyCheck2(void);
 
 /**
- * Returns a bit mask of the reasons the pending purchase cannot go through.
- *
- * @mangled CheckBuyItemFunc2__Fv
- * @address 0x1EB7B0
- * @size 0x1C4
- */
-int CheckBuyItemFunc2(void);
-
-/**
  * Orders two items for the shop's sort.
  *
  * @mangled CompItem1__Fii
@@ -315,15 +297,6 @@ void CheckSideKey2(void);
  * @size 0x18C
  */
 void DrawMoneyCheckBoard2(int, int, int);
-
-/**
- * Draws the large price ticket.
- *
- * @mangled DrawBigSellTicket__Fiiiii
- * @address 0x1EC950
- * @size 0xE0
- */
-void DrawBigSellTicket(int, int, int, int, int);
 
 /**
  * Draws the price tickets of everything marked on the player's side.

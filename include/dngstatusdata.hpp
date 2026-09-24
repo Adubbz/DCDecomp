@@ -245,6 +245,12 @@ public:
 public:
     s8 floor_reached[7]; /**< Deepest floor the player has reached in each dungeon. */
 
+public:
+    /**
+     * Returns one character's active battle-menu status value.
+     */
+    s32 GetActiveCharaStatus(int chara_no) { return unk_field_4468[chara_no]; }
+
 private:
     char unk_42C6[2];
     s32 unk_field_4468[6];

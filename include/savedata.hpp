@@ -84,7 +84,8 @@ struct SV_GRD_PART {
  * Contains one NPC slot of a Georama town.
  */
 struct SV_GRD_NPC {
-    char unk_0[8];
+    s32 flags; /**< State of the slot; bit one keeps the georama menu from naming its chip. */
+    char unk_4[4];
     s32 talk_message; /**< Message number currently assigned to this NPC slot. */
 };
 

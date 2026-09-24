@@ -120,17 +120,17 @@ STATIC_ASSERT(sizeof(CVisualPolyVu1) == 0x20);
 
 class CVisual {
 public:
-#ifdef NON_MATCHING
-    CVisual &operator=(const CVisual &);
-#endif
+    int unk_00;
+    int unk_04;
+
     /**
-     * Clears the visual's draw flags.
+     * Copies the visual's scalar state and returns this visual.
      *
-     * @mangled Initialize__7CVisualFv
-     * @address 0x134B50
-     * @size 0x10
+     * @mangled __as__7CVisualFRC7CVisual
+     * @address 0x1433F0
+     * @size 0x1C
      */
-    void Initialize(void);
+    CVisual &operator=(const CVisual &other);
 
     /**
      * Constructs a visual and clears it.
@@ -139,5 +139,9 @@ public:
      * @address 0x134B60
      * @size 0x44
      */
-    CVisual(void);
+    CVisual();
+
+    virtual void Initialize();
+
+    int unk_0C;
 };

@@ -55,7 +55,7 @@ void CMapParts::Initialize() {
     this->unk_100 = 0;
     this->unk_104 = NULL;
     this->unk_1D4 = 0;
-    this->kind = 0;
+    this->unit_size = 0.0f;
     this->rot_y = 0;
     this->unk_114 = 0;
     this->subtype = 0;

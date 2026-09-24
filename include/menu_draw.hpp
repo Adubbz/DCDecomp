@@ -3,11 +3,13 @@
 #include "common.h"
 
 #include "itemdata.hpp"
+#include "shop.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 struct ATTACH_LIST;
+struct DNG_CONSUMABLE;
 class CCamera;
 class CFrame;
 class CRect_i_;
@@ -15,7 +17,6 @@ class CTexture;
 class CUserStatus;
 class CDngStatusData;
 class ClsMes;
-struct IHAVEITEM;
 struct ITEM_PACK;
 struct SAVEDATA_INFO;
 struct WEAPON_HAVE;
@@ -63,15 +64,15 @@ struct PERSONAL_BOARD {
     u8 unk_1E[2];
     s32 unk_20;
     ITEM_PACK *item_pack; /**< Item pack the board lists. */
-    s32 unk_28;
+    DNG_CONSUMABLE *unk_28;
     s16 *unk_2C;
-    u8 unk_30[0x10];
-    s16 unk_40;
-    s16 unk_42;
+    IHAVEITEM unk_30;
     WEAPON_HAVE weapon; /**< Weapon record the board holds. */
     ATTACH_LIST unk_13C;
     s32 unk_15C;
 };
+
+STATIC_ASSERT(sizeof(PERSONAL_BOARD) == 0x160);
 
 /**
  * Where one main menu icon and its label sit on the menu frame texture.
@@ -87,7 +88,8 @@ struct MENU_ICON_INFO {
     s32 unk_18;
     s32 unk_1C;
     s32 unk_20;
-    s32 unk_24;
+    s16 unk_24;
+    s16 unk_26;
 };
 
 STATIC_ASSERT(sizeof(MENU_ICON_INFO) == 0x28);

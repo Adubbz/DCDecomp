@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <cstring>
 
+#include "boxvu0.hpp"
 #include "camera.hpp"
 #include "dataread.hpp"
 #include "editatra.hpp"
@@ -1111,56 +1112,56 @@ void SndPlayFootSound(int kind, int foot, float *position) {
 #else
 INCLUDE_ASM("asm/nonmatchings/snd", SndPlayFootSound__FiiPf);
 #endif
-#ifdef NON_MATCHING
-float DistVector(float *a, float *b);
 
+/**
+ * Calculates the volume and stereo balance of a sound at a world position.
+ *
+ * @mangled SndGetVolPan__FPfPfPfff
+ * @address 0x15AC00
+ * @size 0x1F8
+ */
 void SndGetVolPan(float *vol, float *pan, float *pos, float near, float far) {
-    sceVu0FVECTOR direction;
-    sceVu0FVECTOR side;
-    float distance;
-    float volume;
-    float facing;
+    sceVu0FVECTOR to_source;
+    sceVu0FVECTOR right;
+    float distance = DistVector(pos, camera_pos);
+    float level = 1.0f - (distance - near) / (far - near);
+    float side;
+    float weight;
     int sign;
 
-    distance = DistVector(pos, camera_pos);
-    volume = 1.0f - (distance - near) / (far - near);
     if (distance > far) {
-        volume = 0.0f;
+        level = 0.0f;
     }
     if (distance < near) {
-        volume = 1.0f;
+        level = 1.0f;
     }
-    *vol = volume;
+    *vol = level;
     *pan = 0.0f;
-    sceVu0CopyVector(direction, camera_dir);
-    direction[1] = 0.0f;
-    sceVu0Normalize(direction, direction);
-    side[0] = direction[2];
-    side[1] = 0.0f;
-    side[2] = -direction[0];
-    sceVu0SubVector(direction, pos, camera_pos);
-    direction[1] = 0.0f;
-    sceVu0Normalize(direction, direction);
-    facing = -sceVu0InnerProduct(direction, side);
+
+    sceVu0CopyVector(to_source, camera_dir);
+    to_source[1] = 0.0f;
+    sceVu0Normalize(to_source, to_source);
+    right[0] = to_source[2];
+    right[1] = 0.0f;
+    right[2] = -to_source[0];
+
+    sceVu0SubVector(to_source, pos, camera_pos);
+    to_source[1] = 0.0f;
+    sceVu0Normalize(to_source, to_source);
+    side = -sceVu0InnerProduct(to_source, right);
+
     sign = 1;
-    if (facing < 0.0f) {
+    if (side < 0.0f) {
         sign = -1;
     }
-    if (facing < 0.0f) {
-        facing = -facing;
-    }
-    facing = facing * facing;
-    facing = 0.7f * ((float) sign * (facing * facing));
-    *pan = facing;
-    if (facing < 0.0f) {
-        facing = -facing;
-    }
-    *vol = *vol * (0.7f + 0.3f * facing);
-    *vol = *vol * 1.4f;
+    weight = side < 0.0f ? -side : side;
+    weight *= weight;
+    weight *= weight;
+    *pan = 0.7f * ((float) sign * weight);
+    level = *vol * (0.7f + 0.3f * (*pan < 0.0f ? -*pan : *pan));
+    *vol = level;
+    *vol *= 1.4f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", SndGetVolPan__FPfPfPfff);
-#endif
 static void InitSeSeq(SND_SE_SEQ *seq) {
     seq->se_no = -1;
 }

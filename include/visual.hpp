@@ -34,6 +34,15 @@ public:
     int unk_04;
 
     /**
+     * Copies the visual's scalar state and returns this visual.
+     *
+     * @mangled __as__7CVisualFRC7CVisual
+     * @address 0x1433F0
+     * @size 0x1C
+     */
+    CVisual &operator=(const CVisual &other);
+
+    /**
      * Constructs a visual and clears it.
      *
      * @mangled __ct__7CVisualFv

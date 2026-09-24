@@ -8,9 +8,9 @@
 #include <cstring>
 
 // Our imports
+#include "btsysscript.hpp"
 #include "character.hpp"
 #include "clsmes.hpp"
-#include "btsysscript.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dataset.hpp"
@@ -20,9 +20,9 @@
 #include "gamemode.hpp"
 #include "gamepad.hpp"
 #include "mainselect.hpp"
+#include "mathutil.hpp"
 #include "memcard.hpp"
 #include "menu_draw.hpp"
-#include "mathutil.hpp"
 #include "menu_save.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
@@ -36,12 +36,43 @@
 #ifdef NON_MATCHING // draft includes
 #include "dungeonmap.hpp"
 #include "water.hpp"
-#include "visualvu1.hpp"
 #include "shot_effect.hpp"
 #include "hitmark.hpp"
 #include "textureanime.hpp"
 #include "object.hpp"
 #endif
+#include "title/bombeffect.hpp"
+#include "title/majinbeem.hpp"
+
+/**
+ * Holds the category's level-of-detail thresholds and trailing state.
+ */
+class CategoryAttr {
+public:
+    /**
+     * Constructs the category attributes with their starting values.
+     *
+     * @mangled __ct__12CategoryAttrFv
+     * @address 0x143410
+     * @size 0x30
+     */
+    CategoryAttr();
+
+    /**
+     * Resets the category's thresholds and trailing state.
+     *
+     * @mangled Initialize__12CategoryAttrFv
+     * @address 0x143440
+     * @size 0x1C
+     */
+    void Initialize();
+
+    float lod[4]; /**< Distances at which the category changes level of detail. */
+    int unk_10;
+    int unk_14;
+};
+
+STATIC_ASSERT(sizeof(CategoryAttr) == 0x18);
 
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
@@ -1305,7 +1336,6 @@ CCharacter &CCharacter::operator=(const CCharacter &src) {
 INCLUDE_ASM("asm/nonmatchings/main", __as__10CCharacterFRC10CCharacter);
 #endif
 #ifdef NON_MATCHING
-#include "object.hpp"
 
 CObject &CObject::operator=(const CObject &source) {
     // The three words after the mass are not carried over.
@@ -1389,14 +1419,12 @@ INCLUDE_ASM("asm/nonmatchings/main", __as__10CVisualVu1FRC10CVisualVu1);
  * @address 0x1433F0
  * @size 0x1C
  */
-#ifdef NON_MATCHING
-CVisual &CVisual::operator=(const CVisual &src) {
-    memcpy(this, &src, 8);
+CVisual &CVisual::operator=(const CVisual &other) {
+    unk_00 = other.unk_00;
+    unk_04 = other.unk_04;
     return *this;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __as__7CVisualFRC7CVisual);
-#endif
+
 /**
  * Clears the category attributes.
  *
@@ -1404,20 +1432,6 @@ INCLUDE_ASM("asm/nonmatchings/main", __as__7CVisualFRC7CVisual);
  * @address 0x143410
  * @size 0x30
  */
-/**
- * Level-of-detail range of one category of map parts.
- */
-class CategoryAttr {
-public:
-    CategoryAttr();
-    void Initialize();
-
-    float unk_00;
-    u8 unk_04[0xC];
-    s32 unk_10;
-    s32 unk_14;
-};
-
 CategoryAttr::CategoryAttr() {
     Initialize();
 }
@@ -1429,15 +1443,15 @@ CategoryAttr::CategoryAttr() {
  * @size 0x1C
  */
 void CategoryAttr::Initialize() {
-    unk_00 = -1.0f;
+    lod[0] = -1.0f;
     unk_10 = 0;
     unk_14 = 3;
 }
-#include "title/bombeffect.hpp"
 
 CBombEffect::CBombEffect() {
     Initialize();
 }
+
 /**
  * Clears the bomb effect.
  *
@@ -1450,11 +1464,11 @@ void CBombEffect::Initialize() {
         active[i] = 0;
     }
 }
-#include "title/majinbeem.hpp"
 
 CMajinBeem::CMajinBeem() {
     Initialize();
 }
+
 /**
  * Clears the beam effect.
  *
@@ -1577,21 +1591,20 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__8CHitMarkFv);
  * @address 0x143720
  * @size 0x68
  */
-#ifdef NON_MATCHING
 u_char *CDataAlloc<1, 6000>::Alloc(int quads) {
-    int start = used;
+    int filled = used + quads;
 
-    if (start + quads > 6000) {
-        printf("Alocation Error! %d/%d\n", start, 6000);
+    if (filled > 6000) {
+        printf("Alocation Error! %d/%d\n", used, 6000);
         while (1)
             ;
     }
-    used = start + quads;
-    return (u_char *) &block[start];
+
+    u_char *run = (u_char *) block + used * 16;
+    used = filled;
+    return run;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/main", Alloc__18CDataAlloc_1_6000_Fi);
-#endif
+
 /**
  * Rounds the six-thousand-quadword arena's cursor up to sixty-four bytes.
  *
@@ -1599,20 +1612,20 @@ INCLUDE_ASM("asm/nonmatchings/main", Alloc__18CDataAlloc_1_6000_Fi);
  * @address 0x143790
  * @size 0x90
  */
-#ifdef NON_MATCHING
 void CDataAlloc<1, 6000>::Align64() {
-    int misalign = (int) &block[used] & 0x3F;
+    asm {
+        bne $0, $0, done
+    }
 
-    if (misalign != 0) {
-        used += (u32) (0x40 - misalign) >> 4;
+    u_int slack = (u_int) ((u_char *) block + used * 16) & 63;
+
+    if (slack) {
+        used += (64 - slack) >> 4;
     }
     if (used >= 6000) {
         printf("Alocation Error! %d/%d\n", used, 6000);
         while (1)
             ;
     }
+done:;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/main", Align64__18CDataAlloc_1_6000_Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/main", @1195);

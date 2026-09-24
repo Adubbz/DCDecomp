@@ -34,6 +34,34 @@
 #include "userstatus.hpp"
 
 DUN_ENTER_MENU DEnterMenu;
+
+/**
+ * State of the character change menu and its character positions.
+ */
+struct CHARA_CHANGE_MENU {
+    s8 unk_00;
+    s8 unk_01;
+    s8 unk_02;
+    s8 unk_03;
+    float unk_04;
+    float unk_08[6][2];
+    s16 unk_38[6];
+    float unk_44;
+    u8 unk_48[4];
+    s32 unk_4c;
+    u8 unk_50[2];
+    s8 unk_52;
+    u8 unk_53;
+    float unk_54;
+    float unk_58;
+    s16 unk_5c;
+    u8 unk_5e[2];
+};
+
+STATIC_ASSERT(sizeof(CHARA_CHANGE_MENU) == 0x60);
+
+/** State of the character change menu. */
+static CHARA_CHANGE_MENU ChangeMenu;
 CDngStatusData *DEnterStatusPt;
 int MenuEtcErrCnt;
 
@@ -227,6 +255,7 @@ static void PlusAttachmentVolume(ATTACH_LIST *base, ATTACH_LIST *add, float scal
         base->vs_monster[i] += add->vs_monster[i] * scale;
     }
 }
+
 int GetWeaponAttachStatusUp(WEAPON_HAVE *weapon, int stat) {
     int total;
     int i;
@@ -368,6 +397,7 @@ void WeaponAllValueSet(WEAPON_HAVE *weapon, WEAPON_HAVE *result, int full) {
     }
 }
 
+#ifdef NON_MATCHING
 int SetAttachMentValue(int item_no, int, short level, ATTACH_LIST *attachment) {
     ATTACH_DATA *data;
 
@@ -390,6 +420,9 @@ int SetAttachMentValue(int item_no, int, short level, ATTACH_LIST *attachment) {
     }
     return 0;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/menu_dungeon", SetAttachMentValue__FiisP11ATTACH_LIST);
+#endif
 
 int GetAttachVolumeForMsg(ATTACH_LIST *attach) {
     int volume;
@@ -791,6 +824,7 @@ static void DrawEnemyNum(int x, int y, int top, int bottom, int number, int alph
     }
 }
 
+#ifdef NON_MATCHING
 static void DrawGetAtoraNumBoard(int floor, int x, int y, int top, int bottom, int alpha) {
     int collected = (u8) DEnterMenu.collected_atra[floor];
     int maximum = (u8) DEnterMenu.max_atra[floor];
@@ -803,6 +837,9 @@ static void DrawGetAtoraNumBoard(int floor, int x, int y, int top, int bottom, i
         DrawEnemyNum(x + 122, y + 16, top, bottom - 6, maximum, alpha);
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawGetAtoraNumBoard__Fiiiiii);
+#endif
 
 static void DrawDunNumberClip(int x, int y, int top, int bottom, int digit, int alpha) {
     int position;
@@ -872,6 +909,7 @@ INCLUDE_ASM("asm/nonmatchings/menu_dungeon", StartQuickChange__FP1iPii);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1348__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1349);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1350__3);
+#ifdef NON_MATCHING
 int CharaChangeLoop(void) {
     int result = CharaChangeKey();
 
@@ -889,6 +927,9 @@ int CharaChangeLoop(void) {
     }
     return result;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/menu_dungeon", CharaChangeLoop__Fv);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1373);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1374);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1375);
@@ -1037,6 +1078,7 @@ INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2048);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2049);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2050);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2051);
+#ifdef NON_MATCHING
 void DngActiveWeaponTextureCopy(void) {
     char source[] = "weaponicon";
     char destination[] = "reserved";
@@ -1061,6 +1103,9 @@ void DngActiveWeaponTextureCopy(void) {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DngActiveWeaponTextureCopy__Fv);
+#endif
 
 s32 GetWeaponMsgNo(WEAPON_HAVE *weapon) {
     s16 item_no;
@@ -1117,33 +1162,48 @@ void DrawWepAttach(int x, int y, WEAPON_HAVE *weapon, int, int alpha) {
     }
 }
 
-int GetAtraTipNowHave(int atla_no, int georama) {
+/**
+ * Checks whether the requested Atla is present in the georama.
+ */
+int GetAtraTipNowHave(int tip_no, int georama_no) {
+    int have;
+    int i;
     int plot;
+    int j;
+    int id;
+    s16 *elem;
+    SV_EDIT_PARTS_INFO *info;
+    EDIT_PARTS_ATRA *atra;
 
-    if (atla_no < 40) {
-        SV_EDIT_PARTS_INFO *part = SaveData->GetEditPartsInfo(georama, atla_no);
-        return part != NULL && part->flag != 0;
-    }
-    atla_no -= 40;
-    s16 *elements = SaveData->GetElemData(georama);
-    for (int index = 0; index < 128; index++) {
-        if (elements[index] == atla_no) {
-            return 1;
+    have = 0;
+    if (tip_no < 0x28) {
+        SV_EDIT_PARTS_INFO *plot_info = SaveData->GetEditPartsInfo(georama_no, tip_no);
+        if (plot_info != NULL && plot_info->flag != 0) {
+            have = 1;
         }
-    }
-    for (plot = 0; plot < 24; plot++) {
-        SV_EDIT_PARTS_INFO *part = SaveData->GetEditPartsInfo(georama, plot);
-        EDIT_PARTS_ATRA *definition = GetEditAtraPartsData(georama, plot);
-        if (part == NULL || definition == NULL) {
-            continue;
+    } else {
+        elem = SaveData->GetElemData(georama_no);
+        for (i = 0; i < 0x80; i++, elem++) {
+            if (*elem == tip_no - 0x28) {
+                have = 1;
+                break;
+            }
         }
-        for (int socket = 0; socket < 6; socket++) {
-            if (definition->elements[socket].id == atla_no && part->npc_slot[socket] != 0) {
-                return 1;
+        if (have == 0) {
+            for (plot = 0; plot < 0x18; plot++) {
+                info = SaveData->GetEditPartsInfo(georama_no, plot);
+                atra = GetEditAtraPartsData(georama_no, plot);
+                for (j = 0; j < 6; j++) {
+                    EDIT_CHIP_ATTACH_DATA *element = atra->elements + j;
+                    id = element->id;
+                    if (id >= 0 && id == tip_no - 0x28 && info->npc_slot[j] != 0) {
+                        have = 1;
+                    }
+                }
             }
         }
     }
-    return 0;
+    return have;
 }
 
 int GetDispVolumeForFloat(float volume) {
@@ -1157,31 +1217,35 @@ int GetDispVolumeForFloat(float volume) {
     }
     return shown;
 }
-#ifdef NON_MATCHING
+
+/**
+ * Loads the selected item's model and texture files into the preview buffer.
+ */
 int InitItemPolygonView(int item_no, u_long128 *buffer) {
     char model_path[64];
     char texture_path[76];
     int size;
-    u_long128 *aligned;
+    u_long128 *texture_buffer;
 
-    if (item_no < ITEM_ATTACH_START || item_no > 0x100) {
+    if (item_no < 0x51 || item_no >= 0x101) {
         return 0;
     }
     BtGetItemNamePath(model_path, texture_path, item_no);
     StartReadBG();
     MDebugItemPolyViewFlag = 0;
-    polyreadflag = 0;
-    aligned = MenuCalcBufAlignment(buffer);
-    if (!LoadFileBG(model_path, aligned, &size)) {
+    buffer = MenuCalcBufAlignment(buffer);
+    if (LoadFileBG(model_path, buffer, &size) == 0) {
         return 1;
     }
-    aligned = MenuCalcBufAlignment(aligned + (size >> 4) + 1);
-    if (!LoadFileBG(texture_path, aligned, &size)) {
+    texture_buffer = buffer + (size >> 4) + 1;
+    texture_buffer = MenuCalcBufAlignment(texture_buffer);
+    if (LoadFileBG(texture_path, texture_buffer, &size) == 0) {
         return 1;
     }
     ItemPolyView = NULL;
     return 0;
 }
+#ifdef NON_MATCHING
 
 static int EnterItemPolygonView(void) {
     BG_READ_INFO *model;
@@ -1212,7 +1276,6 @@ static int EnterItemPolygonView(void) {
     return 1;
 }
 #else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", InitItemPolygonView__FiP1);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", EnterItemPolygonView__Fv);
 #endif
 
