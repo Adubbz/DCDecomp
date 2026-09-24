@@ -12,6 +12,7 @@
 #include "character.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
+#include "dispctrl.hpp"
 #include "dngmessageman.hpp"
 #include "dngstatusdata.hpp"
 #include "dun/gameloop.hpp"
@@ -24,6 +25,7 @@
 #include "menu_save.hpp"
 #include "motionmodel.hpp"
 #include "nowload.hpp"
+#include "savedata.hpp"
 #include "snd.hpp"
 #include "sysmes.hpp"
 #include "userstatus.hpp"
@@ -272,14 +274,59 @@ extern float itemNormalScale;
 extern "C" int BtEquipMap;
 
 /**
- * Nonzero while the player holds the crystal that shows every monster on the minimap.
- */
-extern "C" int BtEquipMasuisyou;
-
-/**
  * Opening effect of the small treasure chest.
  */
 extern "C" CMotionModel itemOpenSmallFx;
+
+/**
+ * Atla the short pickup presentation is showing.
+ */
+extern int BtAtraGetID;
+
+/**
+ * Stage of the Atla pickup the dungeon draw follows.
+ */
+extern s32 atraGetStatus;
+
+/**
+ * Fade-in level of the Atla pickup's light, up to 256.
+ */
+extern float atraGetStatusRate__2;
+
+/**
+ * Whether the Atla pickup's message board is up.
+ */
+extern s32 atraGetMsgBord;
+
+/**
+ * Fade-in level of the Atla pickup's message board, up to 128.
+ */
+extern float atraGetMsgBordRate;
+
+/**
+ * Where the player stood when the Atla pickup began.
+ */
+extern sceVu0FVECTOR atraGetPos;
+
+/**
+ * Which way the player faced when the Atla pickup began.
+ */
+extern sceVu0FVECTOR atraGetRot;
+
+/**
+ * Screen fade of the dungeon.
+ */
+extern "C" CDispCtrl DispFade__3;
+
+/**
+ * Set to skip motion blending for the next frame.
+ */
+extern "C" s32 driveNoInterpolate;
+
+/**
+ * Effect model of the short Atla pickup.
+ */
+extern "C" CCharacter shortAtraEffect;
 
 extern "C" CDataAlloc2<1> BtCashBuffer;
 
@@ -310,25 +357,14 @@ extern int defWeapon__4[6];
 extern "C" CWeaponEffect CWeaponFx;
 extern "C" CCharacter *NowWeapon;
 extern s32 BtItemListCashFlag;
-extern int BtAtraGetID;
 extern CFrame *itemBoxModel;
 extern "C" CCameraFollow SubCamera;
 extern "C" CCameraFollow MainCamera__4;
 extern CCameraFollow *NowCamera__3;
-extern s32 atraGetStatus;
-extern float atraGetStatusRate;
-extern s32 atraGetMsgBord;
-extern float atraGetMsgBordRate;
-extern sceVu0FVECTOR atraGetPos;
-extern sceVu0FVECTOR atraGetRot;
-extern "C" CDispCtrl DispFade__3;
-extern "C" s32 driveNoInterpolate;
 extern s32 EscapeFlag;
 extern "C" CActiveItemPack activeItem;
-extern "C" CCharacter shortAtraEffect;
 extern "C" CCharacter EscapeEffect;
 
-void getAtraToSaveData(int atra, int atra_no, CSaveData *save, int dungeon, int floor);
 void getCharacterVector(float *vector, float pitch);
 #endif
 
@@ -918,7 +954,6 @@ void BtAtraGetShort_Init() {
     BtGetAtraBoll_Sled = 0;
     BtActStatus.unk_09C = 1;
 }
-INCLUDE_RODATA("asm/nonmatchings/btitem", @902);
 /**
  * Runs the Atla pickup presentation and reports when it ends.
  *
@@ -926,7 +961,6 @@ INCLUDE_RODATA("asm/nonmatchings/btitem", @902);
  * @address 0x1D2C70
  * @size 0x61C
  */
-#ifdef NON_MATCHING
 int BtAtraGetShort_Loop(int map_no, int floor) {
     sceVu0FVECTOR position;
     int done = -1;
@@ -947,17 +981,18 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
                 sceVu0CopyVector(atraGetPos, CharaMain.pos);
                 CharaMain.GetRotation(atraGetRot);
                 driveNoInterpolate = 1;
-                ATRA_BOLL *boll = &NowDngMap->atra[NowDngMap->events[BtAtraGetNo].index];
-                shortAtraEffect.SetPosition(boll->pos);
+                int index = NowDngMap->events[BtAtraGetNo].index;
+                shortAtraEffect.SetPosition(NowDngMap->atra[index].pos);
                 shortAtraEffect.SetRotation(0.0f, 0.0f, 0.0f);
                 shortAtraEffect.SetMotion(0, 6);
-                atraGetStatusRate = 0.0f;
-                int atra_id = ((CDngStatusData *) UserStatus)->atra_registry[map_no][boll->atra_no].id;
+                atraGetStatusRate__2 = 0.0f;
+                CDngStatusData *status = (CDngStatusData *) UserStatus;
+                int atra_id = status->atra_registry[map_no][NowDngMap->atra[index].atra_no].id;
                 BtAtraGetID = atra_id;
                 NowDngMap->atra[NowDngMap->events[BtAtraGetNo].index].used = 0;
                 NowDngMap->events[BtAtraGetNo].kind = -1;
-                getAtraToSaveData(atra_id, boll->atra_no, SaveData, map_no, floor);
-                sceVu0CopyVector(position, boll->pos);
+                getAtraToSaveData(atra_id, NowDngMap->atra[index].atra_no, SaveData, map_no, floor);
+                sceVu0CopyVector(position, NowDngMap->atra[index].pos);
                 CharaMain.SetPosition(position);
                 CharaMain.SetRotation(0.0f, 0.0f, 0.0f);
                 BtActStatus.unk_00C = 0x2E;
@@ -971,8 +1006,8 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
             autoCamTrial();
             break;
         case 1: {
-            if (atraGetStatusRate < 256.0f) {
-                atraGetStatusRate += 2.0f;
+            if (atraGetStatusRate__2 < 256.0f) {
+                atraGetStatusRate__2 += 2.0f;
             }
             float time = shortAtraEffect.motion_type.state.time;
             if (!(time < 53.0f) && time < 54.0f) {
@@ -1032,9 +1067,6 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
     }
     return done;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", BtAtraGetShort_Loop__Fii);
-#endif
 
 /**
  * Opens the small character-select window in the given selection mode.

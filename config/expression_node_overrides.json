@@ -2692,7 +2692,7 @@
           "value": "0x0.0p+0",
           "value_bits": "0x00000000",
           "ordinal": 1,
-          "evaluate_first": 0
+          "evaluate_first": 1
         },
         {
           "type": "binary32",
@@ -2706,7 +2706,7 @@
           "value": "0x0.0p+0",
           "value_bits": "0x00000000",
           "ordinal": 3,
-          "evaluate_first": 0
+          "evaluate_first": 1
         },
         {
           "type": "binary32",
@@ -2798,6 +2798,62 @@
           "value_bits": "0xc0490fdb",
           "ordinal": 1,
           "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 10,
+          "evaluate_first": 1
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 5,
+          "evaluate_first": 1
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 7,
+          "evaluate_first": 1
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 6,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "-0x1.0000000000000p+0",
+          "value_bits": "0xbf800000",
+          "ordinal": 1,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 8,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 9,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 11,
+          "evaluate_first": 1
         }
       ],
       "BtEscape_Loop__Fv": [

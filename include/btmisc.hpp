@@ -7,6 +7,7 @@
 class CCamera;
 class CFrame;
 class CFrameVu1;
+class CSaveData;
 
 /**
  * Loads a model from a pack file.
@@ -92,6 +93,15 @@ void BtGetWeaponNamePath2(char *name, char *path, int chara, int weapon);
  * @size 0xB4
  */
 void BtGetWeaponNamePath3(char *name, char *effect_name, int weapon_no);
+
+/**
+ * Records in the save file that an Atla has been collected.
+ *
+ * @mangled getAtraToSaveData__FiiP9CSaveDataii
+ * @address 0x1B7470
+ * @size 0xBC
+ */
+void getAtraToSaveData(int atra, int atra_no, CSaveData *save, int dungeon, int floor);
 
 /**
  * Stops the current battle music.
