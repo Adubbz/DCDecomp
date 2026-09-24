@@ -1308,51 +1308,53 @@ static int AnalyzeBarDraw() {
 #else
 INCLUDE_ASM("asm/nonmatchings/editmenu", AnalyzeBarDraw__Fv);
 #endif
-#ifdef NON_MATCHING
 static void ToAnalyzeEditDraw() {
     MenuTextureReload(EdMenuTextureBlock);
     for (int i = 0; i < 3; i++) {
-        DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x136, 0x7E, 0x50), CRect_i_(0x80, i * 0x50, 0x7E, 0x50),
-                         0x80);
+        DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x136, 0x7E, 0x50),
+                         CRect_i_(0x80, i * 0x50, 0x7E, 0x50), 0x80);
     }
-    float left = (float) (0x280 - EdEffectCt * 16);
-    int right = (int) (80.0f + left);
-    if (left < 0.0f) {
-        left = 0.0f;
+
+    float slide = 0x280 - EdEffectCt * 16;
+    int right = (int) (80.0f + slide);
+    if (slide < 0.0f) {
+        slide = 0.0f;
     }
-    int width = (int) ((float) right - left);
-    if (width < 0) {
-        width = 0;
+    right = (int) (right - slide);
+    if (right < 0) {
+        right = 0;
     }
-    FadeTexX((int) left, width, 0x280, 0, "frame_image", 0);
+    FadeTexX((int) slide, right, 0x280, 0, "frame_image", 0);
     DrawMoveMenuIcon();
+
     int alpha = EdEffectCt * 4;
     if (alpha > 0x80) {
         alpha = 0x80;
     }
-    int bright = EdEffectCt + 16;
-    if (bright > 0x40) {
-        bright = 0x40;
+    int brightness = EdEffectCt + 0x10;
+    if (brightness > 0x40) {
+        brightness = 0x40;
     }
-    AnalyzeBackDraw(alpha, bright);
+    AnalyzeBackDraw(alpha, brightness);
+
     int done = 0;
-    float bar = (float) (EdEffectCt * 20);
-    if (bar > 640.0f) {
-        bar = 640.0f;
+    float fill = EdEffectCt * 20;
+    if (640.0f < fill) {
+        fill = 640.0f;
     }
-    if (bar > 560.0f) {
+    if (560.0f < fill) {
         done = AnalyzeBarDraw();
     }
-    if (bar > 640.0f) {
-        bar = 640.0f;
+    if (640.0f < fill) {
+        fill = 640.0f;
     }
-    DrawMenu2DSprite(AnaBar, CRect_i_(0, 0x11C, (int) bar, 0x18), CRect_i_(0, 0x36, 0x20, 0x18), 0x80);
-    for (int x = 0x75; (float) x < bar; x += 0xB5) {
-        int w = (int) (bar - (float) x);
-        if (w > 0x3C) {
-            w = 0x3C;
+    DrawMenu2DSprite(AnaBar, CRect_i_(0, 0x11C, (int) fill, 0x18), CRect_i_(0, 0x36, 0x20, 0x18), 0x80);
+    for (int x = 0x75; x < fill; x += 0xB5) {
+        int width = (int) (fill - x);
+        if (width > 0x3C) {
+            width = 0x3C;
         }
-        DrawMenu2DSprite(AnaBar, CRect_i_(x, 0x11C, w, 0xF), CRect_i_(0x20, 0x36, 0x36, 0xF), 0x80);
+        DrawMenu2DSprite(AnaBar, CRect_i_(x, 0x11C, width, 0xF), CRect_i_(0x20, 0x36, 0x36, 0xF), 0x80);
     }
     CalMoveFromMenuIcon();
     EdEffectCt++;
@@ -1362,9 +1364,6 @@ static void ToAnalyzeEditDraw() {
         EditSwitch = 5;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", ToAnalyzeEditDraw__Fv);
-#endif
 
 static void ToAnalyzeEdit() {
     if (GamePad.AllOn()) {
