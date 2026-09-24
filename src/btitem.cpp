@@ -22,6 +22,7 @@
 #include "snd.hpp"
 #include "sysmes.hpp"
 #include "userstatus.hpp"
+#include "weaponeffect.hpp"
 
 /* Battle item handling: treasure boxes, pickups and thrown items. */
 
@@ -150,6 +151,31 @@ extern "C" CCameraFollow MainCamera__4;
  */
 extern "C" CCameraFollow SubCamera;
 
+/**
+ * Marks the active item icons as loaded by the battle item-list flow.
+ */
+extern s32 BtItemListCashFlag;
+
+/**
+ * Model file of each party member, by character number.
+ */
+extern char *charaNameTbl[6];
+
+/**
+ * First weapon of each party member, by character number.
+ */
+extern int defWeapon__4[6];
+
+/**
+ * Trail effect drawn behind the swung weapon.
+ */
+extern "C" CWeaponEffect CWeaponFx;
+
+/**
+ * Model of the weapon the current character holds.
+ */
+extern "C" CCharacter *NowWeapon;
+
 extern "C" CDataAlloc2<1> BtCashBuffer;
 
 #ifdef NON_MATCHING // draft declarations
@@ -228,7 +254,13 @@ void getCharacterVector(float *vector, float pitch);
  */
 int createAttachVolume(int item_no, int dungeon);
 
-#ifdef NON_MATCHING
+/**
+ * Puts one party member in the player's hands, loading them if need be.
+ *
+ * @mangled selectChrUnit__Fii
+ * @address 0x1D1030
+ * @size 0x368
+ */
 void selectChrUnit(int chara_no, int reload) {
     char name[64];
     char name1[64];
@@ -246,7 +278,8 @@ void selectChrUnit(int chara_no, int reload) {
     wait_now_loading_vsync();
     size = (u_int) (((size >> 6) + 1) << 6) >> 2;
     u_int *weapon0 = &read_buffer[size];
-    BtGetWeaponNamePath3(name, path, defWeapon__4[chara_no]);
+    int weapon = defWeapon__4[chara_no];
+    BtGetWeaponNamePath3(name, path, weapon);
     BtGetWeaponNamePath3(name1, path, defWeapon__4[chara_no] + 1);
     BtGetWeaponNamePath3(name2, path,
                          UserStatus->chara_weapons[chara_no][UserStatus->equipped_weapon_slot[chara_no]].item_no);
@@ -271,30 +304,18 @@ void selectChrUnit(int chara_no, int reload) {
     CWeaponFx.InitSet(NowWeapon->frame, "dcol0", "dcol1");
     SetWeaponColor();
     SndVoiceLoad(UserStatus->cur_chara);
-    LoadFileMenuData("itemlst.img", read_buffer);
+    unsigned int *buffer = read_buffer;
+    LoadFileMenuData("itemlst.img", buffer);
     wait_now_loading_vsync();
     SetTempTexture(0x28, (char *) read_buffer);
     BtItemListCashFlag = 1;
     nowUnitNow = UserStatus->cur_chara;
     if (UserStatus->CheckLife() == 0) {
-        UserStatus->hp[UserStatus->cur_chara] = 1;
+        CUserStatus *user = UserStatus;
+        int chara = user->cur_chara;
+        user->hp[chara] = 1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", selectChrUnit__Fii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/btitem", @635__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @636);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @637);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @638);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @639__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @640__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @641);
-/**
- * Marks the active item icons as loaded by the battle item-list flow.
- */
-extern s32 BtItemListCashFlag;
-
 /**
  * Loads the image used by the active item icons.
  *
@@ -388,6 +409,7 @@ void BtGetTreasureboxBig_Init() {
 #else
 INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxBig_Init__Fv);
 #endif
+#ifdef NON_MATCHING
 /**
  * Runs the large treasure chest's presentation and reports when it ends.
  *
@@ -395,7 +417,6 @@ INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxBig_Init__Fv);
  * @address 0x1D1810
  * @size 0x7A8
  */
-#ifdef NON_MATCHING
 int BtGetTreasureboxBig_Loop() {
     sceVu0FVECTOR position;
     sceVu0FVECTOR item_position;
@@ -621,6 +642,7 @@ void BtGetTreasureboxSmall_Init(int chance) {
 #else
 INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxSmall_Init__Fi);
 #endif
+#ifdef NON_MATCHING
 /**
  * Runs the small treasure chest's presentation and reports when it ends.
  *
@@ -628,7 +650,6 @@ INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxSmall_Init__Fi);
  * @address 0x1D2460
  * @size 0x690
  */
-#ifdef NON_MATCHING
 int BtGetTreasureboxSmall_Loop() {
     sceVu0FVECTOR position;
     int done = 0;
@@ -758,6 +779,7 @@ int BtGetTreasureboxSmall_Loop() {
 #else
 INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxSmall_Loop__Fv);
 #endif
+#ifdef NON_MATCHING
 /**
  * Starts the short presentation for picking up an Atla.
  *
@@ -765,8 +787,9 @@ INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxSmall_Loop__Fv);
  * @address 0x1D2AF0
  * @size 0x180
  */
-#ifdef NON_MATCHING
 void BtAtraGetShort_Init() {
+    u_char *chr;
+    u_char *effect;
     int size;
 
     atraShortGetType = 1;
@@ -774,17 +797,22 @@ void BtAtraGetShort_Init() {
     BtCashBuffer.limit = 0x445C0;
     BtCashBuffer.used = 0;
     StartReadBG();
-    itemOpenItemChr = (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16);
-    LoadFileBG("dun/mainchara/c01d_ex00.chr", (u_long128 *) itemOpenItemChr, &size);
+    chr = BtCashBuffer.base + BtCashBuffer.used * 16;
+    itemOpenItemChr = (u_int *) chr;
+    LoadFileBG("dun/mainchara/c01d_ex00.chr", (u_long128 *) chr, &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
-    shortAtraEffectPtr = (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16);
-    LoadFileBG("dun/effect/saget.chr", (u_long128 *) shortAtraEffectPtr, &size);
+    effect = BtCashBuffer.base + BtCashBuffer.used * 16;
+    shortAtraEffectPtr = (u_int *) effect;
+    LoadFileBG("dun/effect/saget.chr", (u_long128 *) effect, &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     SndSPSeLoadBG(1, (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16), &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     DngMessMan.unk_00 = 0;
     ResetMovePower();
-    UserStatus->step_disable = 1;
+
+    CUserStatus *user = UserStatus;
+
+    user->step_disable = 1;
     BtAtraGetNo = iventActive;
     iventActive = -1;
     BtGetAtraBoll_Sled = 0;
