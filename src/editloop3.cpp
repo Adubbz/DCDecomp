@@ -365,37 +365,39 @@ void EdEventPointDraw(ED_EVENT_POINT *point, int count, float time) {
         if (CheckEventPoint(p, time) == 0)
             continue;
         switch (p->event_type) {
+            case 2:
+                break;
             case 3:
                 if (p->linked_value <= 0)
-                    break;
-            case 2: {
-                sceVu0FVECTOR position;
-                sceVu0FVECTOR rotation;
-                sceVu0CopyVector(position, p->position);
-                sceVu0CopyVector(rotation, p->rotation);
-                CMapObject *object = p->map_object;
-                if (p->parts_no >= 0) {
-                    object = ground->GetPartsObject(p->parts_no);
-                    if (object == NULL)
-                        break;
-                    GetPosRot(object, position, rotation);
-                } else if (object != NULL) {
-                    GetPosRot(object, position, rotation);
-                }
-                if (p->event_type == 2 && marker != NULL) {
-                    marker->SetPosition(position);
-                    marker->SetRotation(0.0f, rotation[1], 0.0f);
-                    MGDraw(marker);
-                }
-                if (p->event_type == 3) {
-                    sceVu0CopyVector(effect->position, position);
-                    effect->half_width = 2.0f * sys_eff_sc;
-                    effect->half_height = sys_eff_sc;
-                    effect->position[1] += 1.0f;
-                    effect->Draw();
-                }
+                    continue;
                 break;
-            }
+            default:
+                continue;
+        }
+        sceVu0FVECTOR position;
+        sceVu0FVECTOR rotation;
+        sceVu0CopyVector(position, p->position);
+        sceVu0CopyVector(rotation, p->rotation);
+        CMapObject *object = p->map_object;
+        if (p->parts_no >= 0) {
+            object = ground->GetPartsObject(p->parts_no);
+            if (object == NULL)
+                continue;
+            GetPosRot(object, position, rotation);
+        } else if (object != NULL) {
+            GetPosRot(object, position, rotation);
+        }
+        if (p->event_type == 2 && marker != NULL) {
+            marker->SetPosition(position);
+            marker->SetRotation(0.0f, rotation[1], 0.0f);
+            MGDraw(marker);
+        }
+        if (p->event_type == 3) {
+            sceVu0CopyVector(effect->position, position);
+            effect->half_width = 2.0f * sys_eff_sc;
+            effect->half_height = sys_eff_sc;
+            effect->position[1] += 1.0f;
+            effect->Draw();
         }
     }
 }
