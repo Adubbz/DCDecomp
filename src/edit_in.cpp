@@ -1908,7 +1908,6 @@ static void SetEffect(EFFECT_TYPE, char *, float *, float *, float *) {
  * @size 0x94
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static void CommandFIRE(void **arguments) {
     sceVu0FVECTOR position;
     sceVu0FVECTOR scale;
@@ -1923,9 +1922,6 @@ static void CommandFIRE(void **arguments) {
     scale[2] = *(float *) arguments[4];
     SetEffect(EFFECT_FIRE, (char *) arguments[0], position, scale, rotation);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandFIRE__FPPv__2);
-#endif
 /**
  * Places a flame effect in the interior.
  *
@@ -1934,7 +1930,6 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", CommandFIRE__FPPv__2);
  * @size 0x94
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static void CommandFLAME(void **arguments) {
     sceVu0FVECTOR position;
     sceVu0FVECTOR scale;
@@ -1949,9 +1944,6 @@ static void CommandFLAME(void **arguments) {
     scale[2] = *(float *) arguments[4];
     SetEffect(EFFECT_FLAME, (char *) arguments[0], position, scale, rotation);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandFLAME__FPPv__2);
-#endif
 /**
  * Places a glow effect in the interior.
  *
@@ -1960,7 +1952,6 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", CommandFLAME__FPPv__2);
  * @size 0x94
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static void CommandBRIGHT(void **arguments) {
     sceVu0FVECTOR position;
     sceVu0FVECTOR scale;
@@ -1975,9 +1966,6 @@ static void CommandBRIGHT(void **arguments) {
     scale[2] = *(float *) arguments[4];
     SetEffect(EFFECT_BRIGHT, (char *) arguments[0], position, scale, rotation);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandBRIGHT__FPPv__2);
-#endif
 /**
  * Turns the interior's debug drawing on.
  *
