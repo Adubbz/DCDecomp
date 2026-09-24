@@ -2348,7 +2348,6 @@ void ParamDraw() {
 void EdSetCharaCursor(int on) {
     draw_npc_cursor = on;
 }
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2122);
 /**
  * Draws the villager cursors, the attention marker and the event points.
  */
@@ -2425,7 +2424,6 @@ void EdInitDrawDay() {
     draw_day_cnt = 0.0f;
     draw_day_flag = 0;
 }
-#ifdef NON_MATCHING
 /**
  * Gives a rectangle that starts at zero.
  *
@@ -2449,18 +2447,21 @@ public:
         this->height = height;
     }
 };
-#endif
-#ifdef NON_MATCHING
+
+/**
+ * Draws the banner that fades in when a new day starts: the day count, the
+ * weekday and the bar beneath them.
+ */
 void DrawDay() {
     if (draw_day_flag != 0) {
         int week;
         int x;
         int width;
+        int alpha;
         int day;
-        int count;
         int digit[4];
         CTexture *texture;
-        int alpha;
+        int count;
         int drawn;
         int remain;
         int value;
@@ -2558,6 +2559,7 @@ void DrawDay() {
             default:
                 break;
             }
+            drawn = 0;
             for (; count > 0; count--) {
                 number = cell;
                 value = digit[count - 1];
@@ -2610,9 +2612,6 @@ void DrawDay() {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop", DrawDay__Fv);
-#endif
 /**
  * Draws the editor's clock, day display, event cursors, and pause overlay.
  */
