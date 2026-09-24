@@ -299,9 +299,6 @@ extern int partseffect_list;
 extern int objeffect_list;
 extern int objtimer_list;
 
-INCLUDE_RODATA("asm/nonmatchings/editmapscript", @478);
-INCLUDE_RODATA("asm/nonmatchings/editmapscript", @482__2);
-
 /**
  * Sets the directory prefix used while parsing the current map script.
  */
@@ -355,24 +352,31 @@ void InitInfo() {
  * @address 0x174390
  * @size 0x74C
  */
-#ifdef NON_MATCHING
 int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
-    edit_info = info;
+    int file_size;
+    int cache_buffer[16000];
+    char *extension;
+    char *script;
+    int *cache;
+    int command;
+    char c;
 
-    char *extension = name;
-    while (*extension != '\0') {
-        if (*extension++ == '.') {
+    edit_info = info;
+    extension = name;
+    while ((c = *extension) != '\0') {
+        if (c == '.') {
+            extension++;
             break;
         }
+        extension++;
     }
-
-    int file_size;
-    if (LoadFile2(name, read_buffer, &file_size, 0) == 0) {
+    if (!LoadFile2(name, (void *) read_buffer, &file_size, 0)) {
+        // No compiled script: read the text one beside it.
         extension[2] = 'g';
-        LoadFile(name, read_buffer, &file_size);
+        LoadFile(name, (void *) read_buffer, &file_size);
     }
-
-    u8 *script = (u8 *) read_buffer;
+    script = (char *) read_buffer;
+    cache = cache_buffer;
     light_no = 0;
     CurrentDir__3[0] = '\0';
     binary = 0;
@@ -412,7 +416,7 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
     edit_info->reverb_mode[0] = 2;
     edit_info->reverb_mode[1] = 4;
     edit_info->reverb_depth[0] = 5;
-    edit_info->reverb_depth[1] = 0x1E;
+    edit_info->reverb_depth[1] = 30;
     edit_info->ambient_sound_off = 0;
     edit_info->wind[0] = 0.3f;
     edit_info->wind[1] = 0.0f;
@@ -423,27 +427,27 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
     }
 
     if (strcmp(extension, "cfb") == 0) {
+        // A compiled script: each command is its number and a typed argument list.
+        void *arguments[32];
+        char *cursor;
+
         binary = 1;
-        u8 *cursor = script;
-        u8 *end = script + file_size;
-        while (cursor < end) {
-            int command = *(int *) cursor;
+        for (cursor = script; cursor - script < file_size;) {
+            command = *(int *) cursor;
             cursor += sizeof(int);
             if (command < 0) {
                 break;
             }
-
-            void *arguments[32];
-            int argument_count = 0;
+            int count = 0;
             for (;;) {
                 int type = *(int *) cursor;
                 cursor += sizeof(int);
                 if (type < 0) {
                     break;
                 }
-                arguments[argument_count++] = cursor;
+                arguments[count++] = cursor;
                 if (type == 0) {
-                    cursor += (strlen((char *) cursor) + 4) & ~3;
+                    cursor += ((strlen(cursor) + 4) / 4) * 4;
                 } else {
                     cursor += sizeof(int);
                 }
@@ -451,29 +455,38 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
             CommandExe__5[command](arguments);
         }
     } else {
-        int command_cache[16000];
-        int *cache = command_cache;
+        // A text script: run it, keeping a compiled copy of each command as it goes.
         CScriptInterpreter interpreter;
-        interpreter.SetScript((char *) script, file_size);
-        interpreter.SetTAG(Command__5, 61);
+
+        interpreter.SetScript(script, file_size);
+        interpreter.SetTAG((TAG_PARAM *) Command__5, 61);
         interpreter.SetFunction(&func_table, 1);
-
-        int command;
-        while ((command = interpreter.GetNextTAG()) >= 0) {
-            CommandExe__5[command](interpreter.arguments);
+        for (;;) {
+            command = interpreter.GetNextTAG();
+            if (command < 0) {
+                break;
+            }
+            void **arguments = interpreter.arguments;
+            CommandExe__5[command](arguments);
             *cache++ = command;
-
+            int *type = Command__5[command].argument_types;
             int argument = 0;
-            for (int *type = Command__5[command].argument_types; *type >= 0; type++, argument++) {
-                *cache++ = *type;
-                if (*type == 0) {
-                    int bytes = (strlen((char *) interpreter.arguments[argument]) + 4) & ~3;
-                    memset(cache, 0, bytes);
-                    strcpy((char *) cache, (char *) interpreter.arguments[argument]);
-                    cache += bytes / 4;
-                } else {
-                    *cache++ = *(int *) interpreter.arguments[argument];
+            for (;;) {
+                int kind = *type++;
+                if (kind < 0) {
+                    break;
                 }
+                *cache++ = kind;
+                if (kind == 0) {
+                    void **text = &arguments[argument];
+                    int words = (int) (strlen((char *) *text) + 4) >> 2;
+                    memset(cache, 0, words * 4);
+                    strcpy((char *) cache, (char *) *text);
+                    cache += words;
+                } else {
+                    *cache++ = *(int *) arguments[argument];
+                }
+                argument++;
             }
             *cache++ = -1;
         }
@@ -482,12 +495,13 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
 
     edit_info->images[texture_list].name[0] = '\0';
     edit_info->images[texture_list].type = -1;
-    for (int i = 0; i < 4; i++) {
-        edit_info->map_objects[mapobj_list].name[i][0] = '\0';
-    }
+    edit_info->map_objects[mapobj_list].name[0][0] = '\0';
+    edit_info->map_objects[mapobj_list].name[1][0] = '\0';
+    edit_info->map_objects[mapobj_list].name[2][0] = '\0';
+    edit_info->map_objects[mapobj_list].name[3][0] = '\0';
     edit_info->obj_anime_count = objanime_list;
-    edit_info->object_effect_count = objeffect_list;
     edit_info->parts_effect_count = partseffect_list;
+    edit_info->object_effect_count = objeffect_list;
     edit_info->object_timer_count = objtimer_list;
     edit_info->event_count = event_list;
 
@@ -515,9 +529,6 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmapscript", LoadEditMapData__FP13EDIT_MAP_INFOPci);
-#endif
 /**
  * Sets the scene resource used by the current editor map.
  */
