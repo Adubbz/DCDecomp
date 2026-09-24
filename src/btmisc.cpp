@@ -197,28 +197,35 @@ void BtGetWeaponNamePath2(char *name, char *path, int chara, int weapon) {
     strcpy(name, nameWepBuff_mds);
     strcpy(path, nameWepBuff_img);
 }
-#ifdef NON_MATCHING
+
+/**
+ * First weapon of each character's chain, which weapon file numbers count from.
+ */
+extern int defWeapon__2[6];
+
+/**
+ * Builds the model and effect names for an absolute weapon item identifier.
+ *
+ * @mangled BtGetWeaponNamePath3__FPcPci
+ * @address 0x1B73B0
+ * @size 0xB4
+ */
 void BtGetWeaponNamePath3(char *name, char *effect_name, int weapon_no) {
-    static int defWeapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
+    int chara_no = 0;
 
     if (weapon_no < 0x101) {
+        chara_no = 0;
         return;
     }
-
     WEAPON_DATA *weapon = GetWeaponData(weapon_no);
     if (weapon != NULL) {
-        // The identifier counts on from the first weapon of the chain.
-        int chara_no = weapon->owner;
-        int offset = weapon_no - defWeapon[chara_no];
+        chara_no = (s8) weapon->owner;
+        int offset = weapon_no - defWeapon__2[chara_no];
 
         printf("offset %d\n", offset);
         BtGetWeaponNamePath2(name, effect_name, chara_no, offset);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btmisc", BtGetWeaponNamePath3__FPcPci);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @953);
 /**
  * Records in the save file that an Atla has been collected.
  *
