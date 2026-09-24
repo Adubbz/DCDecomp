@@ -20,6 +20,7 @@
 #include "menu_dungeon.hpp"
 #include "menu_inventory.hpp"
 #include "menu_manual.hpp"
+#include "menuitemstep.hpp"
 #include "mglib.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
@@ -34,7 +35,6 @@
 #include "btactstatus.hpp"
 #include "btmisc.hpp"
 #include "dngstatusdata.hpp"
-#include "menuitemstep.hpp"
 #include "shot_effect.hpp"
 #include "weaponlevelup.hpp"
 
@@ -46,7 +46,6 @@ extern u_long128 *WepMenuEffectReadBuf;
 extern char MenureadFile[64];
 extern char MenuWepDir[];
 extern int defWeapon__5[6];
-extern s16 DngEscapeSelect;
 extern "C" CCharacter DefaultWeapon;
 extern "C" CCharacter MainWeapon;
 extern "C" CSHOT_EFFECT *NowMainEffect;
@@ -128,6 +127,9 @@ extern u_long128 *MenuVoiceLoadPtr;
 
 /** The monster name's draw state, reset when the name is set up. */
 extern s16 CharaNameDrawCase;
+
+/** The dungeon escape prompt's chosen answer, 1 or 2. */
+extern s16 DngEscapeSelect;
 
 /** The model of the weapon the active character holds. */
 extern "C" CCharacter *NowWeapon;
@@ -1527,7 +1529,13 @@ void DngEscapeMsgDraw() {
     AllFadeForMenu(DngEscapeAlpha);
 }
 
-#ifdef NON_MATCHING
+/**
+ * Handles one frame of pad input for the dungeon escape prompt and returns its result.
+ *
+ * @mangled DngEscapeMsgLoop__Fv
+ * @address 0x20F360
+ * @size 0x164
+ */
 int DngEscapeMsgLoop() {
     int result = 0;
 
@@ -1540,7 +1548,9 @@ int DngEscapeMsgLoop() {
             }
             ComMenuSePlay(0);
         }
-        CharaNameMes->cursor_row = DngEscapeSelect - 1;
+        int row = DngEscapeSelect - 1;
+        ClsMes *mes = CharaNameMes;
+        mes->cursor_row = row;
         if (GamePad.Down(0x40) != 0) {
             DngEscapeEndFlag = 1;
             ComMenuSePlay(1);
@@ -1553,15 +1563,13 @@ int DngEscapeMsgLoop() {
         GamePad.AutoRepeatOff();
         GamePad.MenuModeOff();
         ItemVolumeStep.CheckItemVolume();
-        CharaNameMes->cursor_row = -1;
+        ClsMes *mes = CharaNameMes;
+        mes->cursor_row = -1;
     }
     ItemVolumeStep.LoopStep(0x3C);
     DngEscapeMsgDraw();
     return result;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", DngEscapeMsgLoop__Fv);
-#endif
 #ifdef NON_MATCHING
 int CheckItemThrow(int *items, int *values) {
     int found = 0;
