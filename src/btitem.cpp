@@ -256,6 +256,31 @@ extern "C" CMotionModel itemOpenBigFx;
  */
 extern "C" CMotionModel itemOpenSmall;
 
+/**
+ * Stage of the small chest's opening the dungeon draw follows.
+ */
+extern s32 itemOpenSmallFlag;
+
+/**
+ * Size the small chest's item is drawn at.
+ */
+extern float itemNormalScale;
+
+/**
+ * Nonzero while the player holds the floor's map.
+ */
+extern "C" int BtEquipMap;
+
+/**
+ * Nonzero while the player holds the crystal that shows every monster on the minimap.
+ */
+extern "C" int BtEquipMasuisyou;
+
+/**
+ * Opening effect of the small treasure chest.
+ */
+extern "C" CMotionModel itemOpenSmallFx;
+
 extern "C" CDataAlloc2<1> BtCashBuffer;
 
 #ifdef NON_MATCHING // draft declarations
@@ -287,13 +312,9 @@ extern "C" CCharacter *NowWeapon;
 extern s32 BtItemListCashFlag;
 extern int BtAtraGetID;
 extern CFrame *itemBoxModel;
-extern s32 itemOpenSmallFlag;
-extern float itemNormalScale;
 extern "C" CCameraFollow SubCamera;
 extern "C" CCameraFollow MainCamera__4;
 extern CCameraFollow *NowCamera__3;
-extern "C" int BtEquipMap;
-extern "C" int BtEquipMasuisyou;
 extern s32 atraGetStatus;
 extern float atraGetStatusRate;
 extern s32 atraGetMsgBord;
@@ -304,7 +325,6 @@ extern "C" CDispCtrl DispFade__3;
 extern "C" s32 driveNoInterpolate;
 extern s32 EscapeFlag;
 extern "C" CActiveItemPack activeItem;
-extern "C" CMotionModel itemOpenSmallFx;
 extern "C" CCharacter shortAtraEffect;
 extern "C" CCharacter EscapeEffect;
 
@@ -731,9 +751,7 @@ void BtGetTreasureboxSmall_Init(int chance) {
  * @address 0x1D2460
  * @size 0x690
  */
-#ifdef NON_MATCHING
 int BtGetTreasureboxSmall_Loop() {
-    sceVu0FVECTOR position;
     int done = 0;
 
     switch (BtGetTreasurebox_Sled) {
@@ -749,16 +767,18 @@ int BtGetTreasureboxSmall_Loop() {
             autoCamTrial();
             break;
         case 1: {
+            sceVu0FVECTOR position;
+
             SetMIniMapStatus(0);
             iventInfo = -1;
             CMonUnitHold = 1;
             CMonUnitHyde = 1;
             CEffectHold = 1;
             CEffectHyde = 1;
-            TREASURE_BOX *box = &NowDngMap->boxes[NowDngMap->events[iventActive].index];
-            sceVu0CopyVector(position, box->pos);
-            box->lid_angle = -30.0f;
-            box->unk_24 = 0;
+            int index = NowDngMap->events[iventActive].index;
+            sceVu0CopyVector(position, NowDngMap->boxes[index].pos);
+            NowDngMap->boxes[index].lid_angle = -30.0f;
+            NowDngMap->boxes[index].unk_24 = 0;
             itemOpenSmall.frame->SetPosition(position);
             itemOpenSmallFx.frame->SetPosition(position);
             itemOpenSmallFx.frame->SetRotation(0.0f, 0.0f, 0.0f);
@@ -787,9 +807,9 @@ int BtGetTreasureboxSmall_Loop() {
                 SndSePlay(0xCF, -1, 0);
                 SndSPSePlay(2, -1);
             }
-            time = itemOpenSmallFx.motion.state.time;
-            if (!(time <= 50.0f) && time <= 55.0f) {
-                float scale = 0.2f * (time - 50.0f);
+            float now = itemOpenSmallFx.motion.state.time;
+            if (!(now <= 50.0f) && now <= 55.0f) {
+                float scale = 0.2f * (now - 50.0f);
                 itemNormalScale = scale;
                 itemBoxModel->SetScale(scale, scale, scale);
             }
@@ -821,6 +841,8 @@ int BtGetTreasureboxSmall_Loop() {
                 } else {
                     ((CDngStatusData *) UserStatus)->GetItem(BtGetTreasureboxSmall_itemNo, BtGetTreasureboxSmall_itemVolume);
                 }
+                sceVu0FVECTOR position;
+
                 sceVu0CopyVector(position, CharaMain.pos);
                 position[2] += 10.0f;
                 CharaMain.SetPosition(position);
@@ -858,9 +880,6 @@ int BtGetTreasureboxSmall_Loop() {
     }
     return done;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxSmall_Loop__Fv);
-#endif
 /**
  * Starts the short presentation for picking up an Atla.
  *
