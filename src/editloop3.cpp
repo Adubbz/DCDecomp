@@ -4901,9 +4901,12 @@ static int _GET_CAMERA_ROTATE(RS_STACKDATA *stack, int) {
     return 1;
 }
 
+/**
+ * Requests a camera reset on the next event frame, facing back along the reset yaw.
+ */
 static int _RESET_CAMERA(RS_STACKDATA *stack, int) {
     EdEventInfo.reset_camera_angle = GetStackInt(stack);
-    EdEventInfo.reset_camera_yaw = 3.1415927f;
+    EdEventInfo.reset_camera_yaw = 3.141592f;
     return 1;
 }
 
