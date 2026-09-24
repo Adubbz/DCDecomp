@@ -480,42 +480,34 @@ int CSHOT_MACHINGUN::Set(float *origin, float *direction, int damage, int elemen
  * @address 0x1AE750
  * @size 0x230
  */
-#ifdef NON_MATCHING
 extern "C" CHIT_MACHINGUN_EFFECT OzumondShotEffect;
 
 void CSHOT_MACHINGUN::Step() {
     for (int slot = 0; slot < 16; slot++) {
-        if (unk_280[slot] <= 0) {
-            continue;
+        if (unk_280[slot] > 0) {
+            unk_280[slot]++;
+            if (unk_280[slot] >= 240) {
+                unk_280[slot] = 0;
+            } else {
+                int result = checkCollision(position[slot], position[slot], velocity[slot], 2, 2.0f);
+                if (result == SHOT_COLLISION_MAP) {
+                    OzumondShotEffect.Set(position[slot]);
+                    unk_280[slot] = 0;
+                }
+                if (result == SHOT_COLLISION_MONSTER) {
+                    NowColData->Set(position[slot], unk_200[slot], 2, 4.0f, 1.0f, 2, 2, 0, 0);
+                    s8 elem = NowWeaponHave->best_elem;
+                    CCollisionData *attr_col = NowColData;
+                    attr_col->hit[attr_col->now_hit].flags = GetWeaponElementAttr(elem);
+                    NowColData->hit[NowColData->now_hit].vs_monster = NowWeaponHave->vs_monster;
+                    NowColData->hit[NowColData->now_hit].weapon_flags = NowWeaponHave->flags;
+                    NowColData->SetUserID(5, 6);
+                    unk_280[slot] = 0;
+                }
+                position[slot][0] += velocity[slot][0];
+                position[slot][1] += velocity[slot][1];
+                position[slot][2] += velocity[slot][2];
+            }
         }
-
-        unk_280[slot]++;
-        if (unk_280[slot] >= 240) {
-            unk_280[slot] = 0;
-            continue;
-        }
-
-        SHOT_COLLISION_RESULT result =
-            checkCollision(position[slot], position[slot], velocity[slot], 2, 2.0f);
-        if (result == SHOT_COLLISION_MAP) {
-            OzumondShotEffect.Set(position[slot]);
-            unk_280[slot] = 0;
-        } else if (result == SHOT_COLLISION_MONSTER) {
-            NowColData->Set(position[slot], unk_200[slot], 2, 4.0f, 1.0f, 2, 2, 0, 0);
-            COLLISION_HIT &hit = NowColData->hit[NowColData->now_hit];
-            hit.flags = GetWeaponElementAttr(NowWeaponHave->best_elem);
-            hit.vs_monster = NowWeaponHave->vs_monster;
-            hit.weapon_flags = NowWeaponHave->flags;
-            hit.owner = 5;
-            hit.unk_60 = 6;
-            unk_280[slot] = 0;
-        }
-
-        position[slot][0] += velocity[slot][0];
-        position[slot][1] += velocity[slot][1];
-        position[slot][2] += velocity[slot][2];
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", Step__15CSHOT_MACHINGUNFv);
-#endif
