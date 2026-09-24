@@ -2257,6 +2257,14 @@ void ClsMes::DrawMesWin_sub(CTexture *texture, int dx, int dy, int frame) {
     }
 }
 
+/**
+ * Draws a help window from nine texture pieces, stretching the edges and the
+ * middle to the requested size.
+ *
+ * @mangled MyMenuHelpWinDraw__FiiiiiiiP8CTexture
+ * @address 0x152930
+ * @size 0x380
+ */
 void MyMenuHelpWinDraw(int x, int y, int width, int height, int shade, int u, int v,
                        CTexture *texture) {
     int bar_width = width < 0x20 ? 0 : width - 0x20;
