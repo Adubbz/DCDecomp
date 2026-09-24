@@ -607,8 +607,6 @@ void CCharacter::Step() {
     }
 }
 
-FUZZY_MATCH("asm/nonmatchings/character", ShadowStep__10CCharacterFv);
-
 void CCharacter::ShadowStep() {
     int index;
     int i;
@@ -630,7 +628,7 @@ void CCharacter::ShadowStep() {
             continue;
         }
         start = this->motion_start[i];
-        if (motion_no < start) {
+        if (start > motion_no) {
             continue;
         }
         if (motion_no >= this->motion_end[i]) {
