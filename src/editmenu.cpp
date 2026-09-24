@@ -873,7 +873,7 @@ static int EditMenuStart() {
     }
     if (ReadBGSync() == 0 && EdMenuTextureReadEndFlag == 0) {
         LOADTEXTURE_INFO2 texture = {0};
-        int blocks[5] = {0, 0, 0, 0, 0};
+        int blocks[5] = {0, 0, 0, 0, -1};
         texture.block_no = EdMenuTextureBlock;
         BG_READ_INFO *file = GetReadBGFile(0);
         texture.name = (char *) GetPackFile((u_int *) file->buffer, "editmenu.img", NULL);
