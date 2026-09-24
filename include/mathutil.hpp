@@ -148,7 +148,7 @@ struct MWCatchRecord {
     MWRuntimeObjectFunction destructor; /**< Routine that destroys the exception object. */
 };
 
-void __end__catch(MWCatchRecord *record);
+extern "C" void __end__catch(MWCatchRecord *record);
 
 /**
  * Raises an exception a function did not declare, through the unexpected handler.

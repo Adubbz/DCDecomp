@@ -29,9 +29,16 @@ extern "C" void abort(void);
 extern "C" void free(void *storage);
 extern "C" void *__vt__Q23std9exception[];
 extern "C" void *__vt__Q23std13bad_exception[];
-extern "C" void (*thandler__3std)(void);
-extern "C" void (*uhandler__3std)(void);
-extern "C" MWGlobalDestructor *__global_destructor_chain;
+
+// These live in .data and .bss rather than in the small-data area, so they
+// are reached by absolute address.
+extern "C" void (*thandler__3std)(void) __attribute__((section(".data")));
+extern "C" void (*uhandler__3std)(void) __attribute__((section(".data")));
+extern "C" MWGlobalDestructor *__global_destructor_chain __attribute__((section(".bss")));
+
+// The runtime support routines up to std::bad_exception::what are built with
+// instruction scheduling, which fills branch delay slots.
+#pragma schedule on
 
 INCLUDE_RODATA("asm/nonmatchings/mathutil", @245);
 INCLUDE_RODATA("asm/nonmatchings/mathutil", @424);
@@ -269,13 +276,9 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __throw_catch_compare);
  * @address 0x122880
  * @size 0x24
  */
-#ifdef NON_MATCHING
 extern "C" void unexpected__3stdFv() {
     uhandler__3std();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", unexpected__3stdFv);
-#endif
 /**
  * Calls the handler that ends the program after an unrecoverable exception.
  *
@@ -283,13 +286,9 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", unexpected__3stdFv);
  * @address 0x1228B0
  * @size 0x24
  */
-#ifdef NON_MATCHING
 extern "C" void terminate__3stdFv() {
     thandler__3std();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", terminate__3stdFv);
-#endif
 /**
  * The default unexpected-exception handler, which terminates.
  *
@@ -297,13 +296,9 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", terminate__3stdFv);
  * @address 0x1228E0
  * @size 0x24
  */
-#ifdef NON_MATCHING
 extern "C" void duhandler__3stdFv() {
     thandler__3std();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", duhandler__3stdFv);
-#endif
 /**
  * The default terminate handler, which stops the program.
  *
@@ -311,13 +306,9 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", duhandler__3stdFv);
  * @address 0x122910
  * @size 0x1C
  */
-#ifdef NON_MATCHING
 extern "C" void dthandler__3stdFv() {
     abort();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", dthandler__3stdFv);
-#endif
 /**
  * Records one global object so that its destructor runs at exit.
  *
@@ -325,7 +316,6 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", dthandler__3stdFv);
  * @address 0x122930
  * @size 0x24
  */
-#ifdef NON_MATCHING
 void *__register_global_object(void *object, MWRuntimeObjectFunction destructor,
                                MWGlobalDestructor *record) {
     record->next = __global_destructor_chain;
@@ -334,9 +324,6 @@ void *__register_global_object(void *object, MWRuntimeObjectFunction destructor,
     __global_destructor_chain = record;
     return object;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", __register_global_object);
-#endif
 /**
  * Starts the C++ runtime: its handlers and its global-object list.
  *
@@ -365,32 +352,26 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __initialize_cpp_rts);
  * @address 0x1229C0
  * @size 0xA0
  */
-#ifdef NON_MATCHING
 char *__DecodeUnsignedNumber(char *encoded, unsigned int *value) {
-    unsigned char first = (unsigned char) encoded[0];
+    unsigned int first = (unsigned char) encoded[0];
     if ((first & 1) == 0) {
         *value = first >> 1;
         return encoded + 1;
     }
 
-    unsigned char second = (unsigned char) encoded[1];
+    unsigned int second = (unsigned char) encoded[1];
     if ((first & 2) == 0) {
-        *value = ((unsigned int) (first >> 2) << 8) | second;
+        *value = ((first >> 2) << 8) | second;
         return encoded + 2;
     }
-    unsigned char third = (unsigned char) encoded[2];
+    unsigned int third = (unsigned char) encoded[2];
     if ((first & 4) == 0) {
-        *value = ((unsigned int) (first >> 3) << 16) | ((unsigned int) second << 8) | third;
+        *value = ((first >> 3) << 16) | (second << 8) | third;
         return encoded + 3;
     }
-    unsigned char fourth = (unsigned char) encoded[3];
-    *value = ((unsigned int) (first >> 3) << 24) | ((unsigned int) second << 16) |
-             ((unsigned int) third << 8) | fourth;
+    *value = ((first >> 3) << 24) | (second << 16) | (third << 8) | (unsigned char) encoded[3];
     return encoded + 4;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", __DecodeUnsignedNumber__FPcPUi);
-#endif
 /**
  * Reads a signed number out of a mangled type name.
  *
@@ -398,7 +379,6 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __DecodeUnsignedNumber__FPcPUi);
  * @address 0x122A60
  * @size 0xA0
  */
-#ifdef NON_MATCHING
 char *__DecodeSignedNumber(char *encoded, int *value) {
     signed char first = encoded[0];
     if ((first & 1) == 0) {
@@ -416,13 +396,9 @@ char *__DecodeSignedNumber(char *encoded, int *value) {
         *value = ((first >> 3) << 16) | (second << 8) | third;
         return encoded + 3;
     }
-    unsigned int fourth = (unsigned char) encoded[3];
-    *value = ((first >> 3) << 24) | (second << 16) | (third << 8) | fourth;
+    *value = ((first >> 3) << 24) | (second << 16) | (third << 8) | (unsigned char) encoded[3];
     return encoded + 4;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", __DecodeSignedNumber__FPcPi);
-#endif
 /**
  * Ends a catch clause and releases the exception it caught.
  *
@@ -430,15 +406,11 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __DecodeSignedNumber__FPcPi);
  * @address 0x122B00
  * @size 0x38
  */
-#ifdef NON_MATCHING
 void __end__catch(MWCatchRecord *record) {
     if (record->object != NULL && record->destructor != NULL) {
         record->destructor(record->object, -1);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", __end__catch);
-#endif
 /**
  * Raises an exception a function did not declare, through the unexpected handler.
  *
@@ -493,6 +465,8 @@ extern "C" const char *what__Q23std13bad_exceptionCFv(const void *exception) {
 #else
 INCLUDE_ASM("asm/nonmatchings/mathutil", what__Q23std13bad_exceptionCFv);
 #endif
+
+#pragma schedule reset
 
 /**
  * Starts the MetroWerks runtime.
