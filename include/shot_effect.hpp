@@ -4,6 +4,7 @@
 
 #include <libvu0.h>
 
+#include "character.hpp"
 #include "dataalloc_fwd.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
@@ -18,7 +19,8 @@ class CFrame;
 class CSHOT_EFFECT {
 public:
     BT_SHOT_EFFECT *effect_data; /**< Description shared by the active effect slots. */
-    u8 unk_0004[0x9F3C];
+    CCharacter unk_0010;
+    CCharacter chara[8];       /**< Model that each projectile-effect slot draws and animates. */
     sceVu0FVECTOR velocity[8]; /**< Movement applied to each projectile-effect slot. */
     s16 source_id[8];          /**< Source identifier supplied when each slot starts. */
     s32 phase_delay[8];        /**< Remaining delay before each slot changes phase. */
