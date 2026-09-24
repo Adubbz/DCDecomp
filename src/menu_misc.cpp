@@ -1415,30 +1415,37 @@ void MonsterNamePosSet(int x, int y) {
         CharaNameMes->text_y = y;
     }
 }
-#ifdef NON_MATCHING
+
+/**
+ * Steps and draws the monster name message window while it is enabled.
+ *
+ * @mangled MonsterNameDraw__Fv
+ * @address 0x20EE70
+ * @size 0x114
+ */
 void MonsterNameDraw() {
     if (CharaNameMes == NULL || GetMonsterNameDrawFlag() == 0) {
         return;
     }
-    if (((int *) SaveData->GetConfigData())[8] == 0 && CharaNameMes->mes_made >= 0) {
-        int width = CharaNameMes->char_width * CharaNameMes->text_columns + 0x20;
-        int x = CharaNameMes->text_x;
-        int y;
-        if (x < 0x22 || x >= 0x26D || (y = CharaNameMes->text_y, y < 0x1E) || y >= 0x199 || width >= 0xFB ||
-            width < 10) {
-            SetMonsterNameDrawFlag(0);
-            return;
-        }
-        CharaNameMes->cursor_row = -1;
-        MenuTextureReload(CharaNameMes->tex_block);
-        setbilinear(0);
-        CharaNameMes->Step();
-        CharaNameMes->DrawMesWin();
+    if (((s32 *) SaveData->GetConfigData())[8] != 0) {
+        return;
     }
+    if (CharaNameMes->mes_made < 0) {
+        return;
+    }
+    int columns = CharaNameMes->text_columns;
+    int width = CharaNameMes->char_width * columns + 0x20;
+    if (CharaNameMes->text_x < 0x22 || CharaNameMes->text_x > 0x26C || CharaNameMes->text_y < 0x1E ||
+        CharaNameMes->text_y > 0x198 || width > 0xFA || width < 0xA) {
+        SetMonsterNameDrawFlag(0);
+        return;
+    }
+    CharaNameMes->cursor_row = -1;
+    MenuTextureReload(CharaNameMes->tex_block);
+    setbilinear(0);
+    CharaNameMes->Step();
+    CharaNameMes->DrawMesWin();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", MonsterNameDraw__Fv);
-#endif
 #ifdef NON_MATCHING
 void DngEscapeMsgInit(ClsMes *title, ClsMes *choice, int dungeon) {
     char path[64];
