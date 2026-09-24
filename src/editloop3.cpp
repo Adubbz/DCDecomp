@@ -115,15 +115,13 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
     int has_extent;
     int created;
     int j;
-    volatile int point_offset[4];
 
     for (int i = 0; i < 8 && indices != NULL; i++) {
         int point_index = indices[i];
         if (point_index <= 0)
             continue;
 
-        point_offset[0] = point_index * sizeof(ED_EVENT_POINT);
-        ED_EVENT_POINT *point = (ED_EVENT_POINT *) ((int) points + point_offset[0]);
+        ED_EVENT_POINT *point = &points[point_index];
         if (point->event_type != 1)
             continue;
 
@@ -142,8 +140,7 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
             int kind = function->kind;
             if (kind != 16 && kind != 11 && kind != 10 && kind != 2) {
                 kind = function->kind;
-            } else if (function->link_id ==
-                       ((ED_EVENT_POINT *) (point_offset[0] + (int) points))->map_no) {
+            } else if (function->link_id == points[point_index].map_no) {
                 if (kind == 2) {
                     sceVu0CopyVector(point->position, function->position);
                     sceVu0CopyVector(point->rotation, function->rotation);
