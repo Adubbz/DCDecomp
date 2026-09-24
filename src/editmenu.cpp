@@ -725,7 +725,6 @@ int EditMenuLoop() {
     EditMenuDraw();
     return result;
 }
-#ifdef NON_MATCHING
 void EditMenuDraw() {
     int text_x;
     int text_y;
@@ -777,7 +776,7 @@ void EditMenuDraw() {
             break;
     }
     CursorVibeCnt++;
-    if (CursorVibeCnt >= 3.4906585f) {
+    if (CursorVibeCnt >= 1080000000) {
         CursorVibeCnt = 0;
     }
     MenuTextureReload(CommonMenuMes2.tex_block);
@@ -786,25 +785,27 @@ void EditMenuDraw() {
     CommonMenuMes2.text_x = (int) (WindowPos[0] + text_x);
     CommonMenuMes2.text_y = (int) (WindowPos[1] + text_y);
     if (EdMenuTextureReadEndFlag != 0) {
-        if (EditSwitch != 15) {
-            EdMenuHelpWinAlpha += 8;
-            if (EdMenuHelpWinAlpha > 0x80) {
-                EdMenuHelpWinAlpha = 0x80;
-            }
-            CommonMenuMes2.edge_alpha += 8;
-            if (CommonMenuMes2.edge_alpha > 0x80) {
-                CommonMenuMes2.edge_alpha = 0x80;
-            }
-        } else {
-            EdMenuHelpWinAlpha -= 8;
-            if (EdMenuHelpWinAlpha < 0) {
-                EdMenuHelpWinAlpha = 0;
-            }
-            CommonMenuMes2.edge_alpha = EdMenuHelpWinAlpha;
+        switch (EditSwitch) {
+            case 15:
+                EdMenuHelpWinAlpha -= 8;
+                if (EdMenuHelpWinAlpha < 0) {
+                    EdMenuHelpWinAlpha = 0;
+                }
+                CommonMenuMes2.edge_alpha = EdMenuHelpWinAlpha;
+                break;
+            default:
+                EdMenuHelpWinAlpha += 8;
+                if (EdMenuHelpWinAlpha > 0x80) {
+                    EdMenuHelpWinAlpha = 0x80;
+                }
+                CommonMenuMes2.edge_alpha += 8;
+                if (CommonMenuMes2.edge_alpha > 0x80) {
+                    CommonMenuMes2.edge_alpha = 0x80;
+                }
+                break;
         }
         if (GetDrawHelpWindow(MakeWin2Flag) != 0) {
-            int x = (int) WindowPos[0];
-            MenuHelpWinDraw(x, (int) WindowPos[1], EditMenuWinW, EditMenuWinH, EdMenuHelpWinAlpha);
+            MenuHelpWinDraw((int) WindowPos[0], (int) WindowPos[1], EditMenuWinW, EditMenuWinH, EdMenuHelpWinAlpha);
             if (EdMenuMesMake2 != 0) {
                 EdMenuMesMake2 = CommonMenuMes2.MakeMesWin(EdMenuMesNo2);
             }
@@ -814,9 +815,6 @@ void EditMenuDraw() {
     }
     setbilinear(1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuDraw__Fv);
-#endif
 INCLUDE_RODATA("asm/nonmatchings/editmenu", @573__2);
 #ifdef NON_MATCHING
 static int EditMenuStart() {
