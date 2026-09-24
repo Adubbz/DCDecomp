@@ -10,6 +10,7 @@
 #include "dataread.hpp"
 #include "dun/gameloop.hpp"
 #include "edit.hpp"
+#include "editloop.hpp"
 #include "editpartsinfo.hpp"
 #include "frame.hpp"
 #include "gamepad.hpp"
@@ -18,6 +19,7 @@
 #include "menu_manual.hpp"
 #include "menu_misc.hpp"
 #include "menu_save.hpp"
+#include "menuitemstep.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
@@ -96,18 +98,30 @@ extern int EdMenuExTextureBlock1;
 /** Texture block containing the edit menu's third extra texture set. */
 extern int EdMenuExTextureBlock2;
 
-#ifdef NON_MATCHING // draft declarations
-#include "editloop.hpp"
-#include "mainselect.hpp"
-#include "menuitemstep.hpp"
-
+/** Work area after the edit menu's data, where its pages read their files. */
 extern u_long128 *EdMenuWorkBuf;
+
+/** How opaque the edit menu's help window draws. */
 extern s16 EdMenuHelpWinAlpha;
+
+/** The message the edit menu's second window shows. */
 extern int EdMenuMesNo2;
+
+/** Whether the edit menu's second window message is to be made. */
 extern int EdMenuMesMake2;
+
+/** Screen position of the edit menu's help window. */
 extern float WindowPos[2];
+
+/** Width of the edit menu's help window. */
 extern float EditMenuWinW;
+
+/** Height of the edit menu's help window. */
 extern float EditMenuWinH;
+
+#ifdef NON_MATCHING // draft declarations
+#include "mainselect.hpp"
+
 extern CTexture *PerBoardTex;
 #endif
 
@@ -172,6 +186,7 @@ static int CalMoveToMenuIcon();
  * @address 0x210DA0
  * @size 0x8C
  */
+#ifdef NON_MATCHING
 static void EditMenuExit();
 
 /**
@@ -427,6 +442,9 @@ int GetNumHowManyItemsHave(int item) {
     }
     return count;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuExit__Fv);
+#endif
 static int GetEditMenuMax() {
     int max = 6;
     if (GetGameFlagForManualMenu() == 0) {
@@ -599,7 +617,6 @@ static int CalMoveToMenuIcon() {
     }
     return done;
 }
-#ifdef NON_MATCHING
 void EditMenuInit(int *texture_blocks, int atora) {
     StartReadBG();
     u_long128 *buffer = (u_long128 *) (EdMenuBuffer.base + EdMenuBuffer.used * 16);
@@ -625,11 +642,11 @@ void EditMenuInit(int *texture_blocks, int atora) {
     EdMenuEffectCt = 0;
     ItemVolumeStep.CheckItemVolume();
     if (atora != 0) {
-        int blocks[2] = {0, 0};
         EdMenuTextureReadEndFlag = 1;
         EdMenuRGB = 0x40;
         MenuIconPos[0][0] = 80.0f;
         MenuIconPos[0][1] = 52.0f;
+        int blocks[2] = {0, 0};
         blocks[0] = EdMenuTextureBlock;
         blocks[1] = EdMenuExTextureBlock;
         InitMenuAtora1(2, NowEditMap, blocks, EdMenuWorkBuf);
@@ -654,14 +671,8 @@ void EditMenuInit(int *texture_blocks, int atora) {
         MenuIconPos[i][1] = i * 40 + 0x4A;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuInit__FPii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @464__3);
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @465__2);
-#ifdef NON_MATCHING
 static void EditMenuExit() {
-    int blocks[5] = {0, 0, 0, 0, 0};
+    int blocks[5] = {0, 0, 0, 0, -1};
 
     blocks[0] = EdMenuTextureBlock;
     blocks[1] = EdMenuExTextureBlock;
@@ -672,9 +683,6 @@ static void EditMenuExit() {
     GamePad.AutoRepeatOff();
     GamePad.MenuModeOff();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuExit__Fv);
-#endif
 
 static int GetDrawHelpWindow(int draw) {
     if ((EditSwitch == 9 || EditSwitch == 3 || EditSwitch == 0x10) && GetMenuAtraEventFlag()) {

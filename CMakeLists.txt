@@ -193,7 +193,7 @@ carve_part(main.sdata.part2b.s
            main.sdata.part2d.s=2A1F50-2A1F78
            main.sdata.part2f.s=2A1F90-2A20C8
            main.sdata.battlemenu-tail.s=2A20D8-2A2100
-           main.sdata.editmenu-a.s=2A2118-2A2150
+           main.sdata.editmenu-a.s=2A2120-2A2150
            main.sdata.memcard-a.s=2A2158-2A21A0
            main.sdata.part2g.s=2A21B8-2A21C8
            main.sdata.part2e.s=2A21F0-2A21F8
@@ -270,7 +270,8 @@ carve_part(main.data.part6.s
            main.data.shop-ticket.s=292840-2936E0
            main.data.shop-ticket-after.s=293700-293860
            main.data.battlemenu-tail.s=293960-293C60
-           main.data.part6h.s=293C80-293D50
+           main.data.part6h.s=293C80-293CA0
+           main.data.editmenu-a.s=293CB0-293D50
            main.data.memcard-a.s=293EBC-293FE0
            main.data.menu_save-a.s=294044-294150
            main.data.part6g.s=2941C0-294460
