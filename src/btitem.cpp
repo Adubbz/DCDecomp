@@ -12,12 +12,14 @@
 #include "dngmessageman.hpp"
 #include "dngstatusdata.hpp"
 #include "dun/gameloop.hpp"
+#include "dungeonmap.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "gamepad.hpp"
 #include "menu_draw.hpp"
 #include "menu_dungeon.hpp"
 #include "menu_save.hpp"
+#include "motionmodel.hpp"
 #include "nowload.hpp"
 #include "snd.hpp"
 #include "sysmes.hpp"
@@ -176,6 +178,36 @@ extern "C" CWeaponEffect CWeaponFx;
  */
 extern "C" CCharacter *NowWeapon;
 
+/**
+ * Step the treasure-chest presentations are on.
+ */
+extern int BtGetTreasurebox_Sled;
+
+/**
+ * Item the large treasure chest holds.
+ */
+extern int TreasureboxBig_itemNo;
+
+/**
+ * Pose the large-chest presentation holds the item in.
+ */
+extern int TreasureboxBig_itemType;
+
+/**
+ * Character model the pickup presentations animate.
+ */
+extern u_int *itemOpenItemChr;
+
+/**
+ * Lid animation of the large treasure chest.
+ */
+extern "C" CMotionModel itemOpenBig;
+
+/**
+ * Event the party is standing on, or -1 when none is.
+ */
+extern s32 iventActive;
+
 extern "C" CDataAlloc2<1> BtCashBuffer;
 
 #ifdef NON_MATCHING // draft declarations
@@ -206,25 +238,22 @@ extern char *ITEM_NAME_TBL_NEW[];
 extern "C" CWeaponEffect CWeaponFx;
 extern "C" CCharacter *NowWeapon;
 extern s32 BtItemListCashFlag;
-extern int BtGetTreasurebox_Sled;
 extern int BtGetAtraBoll_Sled;
-extern int TreasureboxBig_itemNo;
-extern int TreasureboxBig_itemType;
 extern float TreasureboxBig_itemScale;
-extern int BtAtraGetID;
 extern int BtAtraGetNo;
+extern s32 atraShortGetType;
+extern u_int *shortAtraEffectPtr;
+extern int BtAtraGetID;
 extern CFrame *itemBoxModel;
 extern s32 itemOpenBigFlag;
 extern s32 itemOpenSmallFlag;
 extern float itemWeponScale;
 extern float itemNormalScale;
-extern s32 iventActive;
 extern "C" CCameraFollow SubCamera;
 extern "C" CCameraFollow MainCamera__4;
 extern CCameraFollow *NowCamera__3;
 extern "C" int BtEquipMap;
 extern "C" int BtEquipMasuisyou;
-extern s32 atraShortGetType;
 extern s32 atraGetStatus;
 extern float atraGetStatusRate;
 extern s32 atraGetMsgBord;
@@ -234,10 +263,7 @@ extern sceVu0FVECTOR atraGetRot;
 extern "C" CDispCtrl DispFade__3;
 extern "C" s32 driveNoInterpolate;
 extern s32 EscapeFlag;
-extern u_int *itemOpenItemChr;
-extern u_int *shortAtraEffectPtr;
 extern "C" CActiveItemPack activeItem;
-extern "C" CMotionModel itemOpenBig;
 extern "C" CMotionModel itemOpenBigFx;
 extern "C" CMotionModel itemOpenSmall;
 extern "C" CMotionModel itemOpenSmallFx;
@@ -337,22 +363,18 @@ void LoadActiveItemIcon(void) {
  * @address 0x1D13F0
  * @size 0x418
  */
-#ifdef NON_MATCHING
 void BtGetTreasureboxBig_Init() {
-    char *chara_files[6] = {"dun/mainchara/c01d_ex00.chr", "dun/mainchara/c04b_ex00.chr",
-                            "dun/mainchara/c06b_ex00.chr", "dun/mainchara/c05a_ex00.chr",
-                            "dun/mainchara/c10b_ex00.chr", "dun/mainchara/c18a_ex00.chr"};
-    char model_path[64];
-    char texture_path[64];
-    int size;
-    TREASURE_BOX *box = &NowDngMap->boxes[NowDngMap->events[iventActive].index];
-    int item_no = box->item_no;
+    u_char *mds;
+    u_char *img;
+    u_char *chr;
+    int item_no = NowDngMap->boxes[NowDngMap->events[iventActive].index].item_no;
 
     ResetMovePower();
     if (((CDngStatusData *) UserStatus)->CheckWeaponRot(item_no) >= 10) {
         SndSePlay(0xCE, -1, 0);
         SetSystemMes(((CDngStatusData *) UserStatus)->CheckWeaponUser(item_no) + 0x49, -1, 5, 0, NULL, NULL);
-        NowDngMap->boxes[NowDngMap->events[iventActive].index].lid_angle = -20.0f;
+        int index = NowDngMap->events[iventActive].index;
+        NowDngMap->boxes[index].lid_angle = -20.0f;
         SetMIniMapStatus(0);
         iventInfo = -1;
         CMonUnitHold = 1;
@@ -360,7 +382,10 @@ void BtGetTreasureboxBig_Init() {
         CEffectHold = 1;
         CEffectHyde = 1;
         DngMessMan.unk_00 = 0;
-        UserStatus->step_disable = 1;
+
+        CUserStatus *user = UserStatus;
+
+        user->step_disable = 1;
         BtActStatus.unk_00C = 0;
         BtActStatus.unk_09C = 1;
         BtGetTreasurebox_Sled = 10;
@@ -380,6 +405,14 @@ void BtGetTreasureboxBig_Init() {
     if (((CDngStatusData *) UserStatus)->CheckWeaponUser(item_no) == 3) {
         TreasureboxBig_itemType = 3;
     }
+
+    char *chara_files[6] = {"dun/mainchara/c01d_ex00.chr", "dun/mainchara/c04b_ex00.chr",
+                            "dun/mainchara/c06b_ex00.chr", "dun/mainchara/c05a_ex00.chr",
+                            "dun/mainchara/c10b_ex00.chr", "dun/mainchara/c18a_ex00.chr"};
+    char model_path[64];
+    char texture_path[64];
+    int size;
+
     TreasureboxBig_itemNo = item_no;
     NowDngMap->events[iventActive].kind = -1;
     BtGetItemNamePath(model_path, texture_path, item_no);
@@ -387,28 +420,31 @@ void BtGetTreasureboxBig_Init() {
     BtCashBuffer.limit = 0x445C0;
     BtCashBuffer.used = 0;
     StartReadBG();
-    itemOpenItemMds = (int) (BtCashBuffer.base + BtCashBuffer.used * 16);
-    LoadFileBG(model_path, (u_long128 *) itemOpenItemMds, &size);
+    mds = BtCashBuffer.base + BtCashBuffer.used * 16;
+    itemOpenItemMds = (int) mds;
+    LoadFileBG(model_path, (u_long128 *) mds, &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
-    itemOpenItemImg = (int) (BtCashBuffer.base + BtCashBuffer.used * 16);
-    LoadFileBG(texture_path, (u_long128 *) itemOpenItemImg, &size);
+    img = BtCashBuffer.base + BtCashBuffer.used * 16;
+    itemOpenItemImg = (int) img;
+    LoadFileBG(texture_path, (u_long128 *) img, &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
-    itemOpenItemChr = (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16);
-    LoadFileBG(chara_files[UserStatus->cur_chara], (u_long128 *) itemOpenItemChr, &size);
+    chr = BtCashBuffer.base + BtCashBuffer.used * 16;
+    itemOpenItemChr = (u_int *) chr;
+    LoadFileBG(chara_files[UserStatus->cur_chara], (u_long128 *) chr, &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     SndSPSeLoadBG(2, (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16), &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     itemOpenBig.frame->SetRotation(0.0f, 0.0f, 0.0f);
     DngMessMan.unk_00 = 0;
-    UserStatus->step_disable = 1;
+
+    CUserStatus *user = UserStatus;
+
+    user->step_disable = 1;
     BtActStatus.unk_00C = 0;
     BtActStatus.unk_09C = 1;
     BtGetTreasurebox_Sled = 0;
     autoCamTrial();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxBig_Init__Fv);
-#endif
 #ifdef NON_MATCHING
 /**
  * Runs the large treasure chest's presentation and reports when it ends.
@@ -821,12 +857,6 @@ void BtAtraGetShort_Init() {
 #else
 INCLUDE_ASM("asm/nonmatchings/btitem", BtAtraGetShort_Init__Fv);
 #endif
-INCLUDE_RODATA("asm/nonmatchings/btitem", @656__4);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @657__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @658__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @659__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @660);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @661);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @747);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @754);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @755);

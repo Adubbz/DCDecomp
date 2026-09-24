@@ -1566,5 +1566,29 @@
     "globalize_symbols": [
       "AtoraVibeTextureName"
     ]
+  },
+  "src/btitem.cpp": {
+    "sections": {
+      ".btitemdata1": [
+        "@94"
+      ],
+      ".btitemdata2": [
+        "@154"
+      ]
+    },
+    "rekey_sections": [
+      [
+        ".btitemdata1",
+        [
+          24
+        ]
+      ],
+      [
+        ".btitemdata2",
+        [
+          16
+        ]
+      ]
+    ]
   }
 }
