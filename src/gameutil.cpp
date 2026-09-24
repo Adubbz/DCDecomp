@@ -785,53 +785,108 @@ int CheckHits(CCPoly *poly, int count, float *from, float *to, int max, int *hit
     return hits;
 }
 
-#ifdef NON_MATCHING
-int MoveCheck(float *position, float *velocity, float *out_position, MoveCheckInfo *out_info,
-              CCPoly *polys, int poly_num, int mode) {
+int MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_info, CCPoly *polys,
+              int poly_num, int mode) {
+    int hit_wall;
+    CCPoly *wall;
+    int poly_no;
+    int i;
+    float drop;
+    sceVu0FVECTOR hit;
     sceVu0FVECTOR from;
     sceVu0FVECTOR to;
-    sceVu0FVECTOR hit;
-    sceVu0FVECTOR ground_probe;
-    CCPoly ground;
-    int wall;
+    CCPoly poly;
+    sceVu0FVECTOR probe;
+    sceVu0FVECTOR centre;
 
-    memset(out_info, 0, sizeof(MoveCheckInfo));
-    sceVu0CopyVector(from, position);
-    from[1] += 4.0f;
-    sceVu0AddVector(to, from, velocity);
-    wall = CheckHit(polys, poly_num, from, to, hit, 0, mode);
-    if (wall >= 0) {
-        sceVu0FVECTOR normal;
-        float into_wall;
-
-        sceVu0Normalize(normal, polys[wall].normal);
-        into_wall = sceVu0InnerProduct(velocity, normal);
-        to[0] -= normal[0] * into_wall;
-        to[2] -= normal[2] * into_wall;
+    out_pos[0] = pos[0];
+    out_pos[1] = pos[1];
+    out_pos[2] = pos[2];
+    from[0] = pos[0] + velocity[0];
+    from[1] = 17.0f + pos[1];
+    from[2] = pos[2] + velocity[0];
+    to[0] = from[0];
+    to[1] = 4.0f + pos[1] + velocity[1];
+    to[2] = from[2];
+    if (CheckHit(polys, poly_num, from, to, hit, 0, mode) >= 0) {
+        velocity[2] = 0.0f;
+        velocity[0] = 0.0f;
     }
-    sceVu0CopyVector(ground_probe, to);
-    ground_probe[1] -= 4.0f;
-    if (GetFootPoly(ground_probe, 15.0f, &ground, hit, polys, poly_num, mode)) {
-        out_info->unk_60 = 1;
-        out_info->poly = ground;
-        out_info->ground_height = hit[1];
-        if (to[1] - 6.0f < hit[1]) {
-            out_info->unk_00 = 1;
-            sceVu0CopyVector(to, hit);
+    from[0] = pos[0];
+    from[1] = 4.0f + pos[1];
+    from[2] = pos[2];
+    to[0] = from[0] + velocity[0];
+    to[1] = from[1] + velocity[1];
+    to[2] = from[2] + velocity[2];
+    poly_no = CheckHit(polys, poly_num, from, to, hit, 0, mode);
+    hit_wall = poly_no >= 0;
+    if (hit_wall == 0) {
+        from[0] = to[0];
+        from[1] = to[1];
+        from[2] = to[2];
+        to[0] = from[0];
+        to[1] = from[1] - 4.0f;
+        to[2] = from[2];
+    } else {
+        wall = &polys[poly_no];
+        sceVu0Normalize(wall->normal, wall->normal);
+        if (wall->normal[1] < 0.5f && !(wall->normal[1] <= -0.5f)) {
+            to[0] = pos[0];
+            to[1] = pos[1];
+            to[2] = pos[2];
+        } else {
+            from[0] = hit[0];
+            from[1] = 4.0f + hit[1];
+            from[2] = hit[2];
+            to[0] = from[0];
+            to[1] = from[1] - 4.0f;
+            to[2] = from[2];
         }
     }
-    if (!out_info->unk_00) {
-        to[1] -= 4.0f;
+    out_info->unk_60 = 0;
+    out_info->unk_00 = 0;
+    drop = 2.0f;
+    if (!(velocity[1] <= 0.1f)) {
+        drop = 0.0f;
     }
-    if (CheckWidth(polys, poly_num, to, 5.0f, out_position, mode) == 0) {
-        sceVu0CopyVector(out_position, to);
+    sceVu0CopyVector(probe, from);
+    for (i = 0; i < 2; i++) {
+        if (GetFootPoly(probe, 15.0f, &poly, hit, polys, poly_num, mode) != 0) {
+            sceVu0Normalize(poly.normal, poly.normal);
+            out_info->ground_poly = poly;
+            out_info->poly = poly;
+            out_info->unk_60 = 1;
+            *(u_long128 *) out_info->unk_c0 = *(u_long128 *) hit;
+            if (!(hit[1] <= from[1] + velocity[1] - 4.0f - drop)) {
+                out_info->unk_00 = 1;
+                if (poly.normal[1] < 0.5f && !(poly.normal[1] <= -0.5f)) {
+                    i = 2;
+                }
+            } else {
+                out_info->unk_00 = 0;
+            }
+            break;
+        }
+        probe[0] += 0.01f;
+        probe[2] += 0.001f;
     }
-    return wall >= 0;
+    if (out_info->unk_00 != 0) {
+        out_pos[0] = hit[0];
+        out_pos[1] = hit[1];
+        out_pos[2] = hit[2];
+    } else {
+        out_pos[0] = to[0];
+        out_pos[1] = to[1];
+        out_pos[2] = to[2];
+    }
+    *(u_long128 *) centre = *(u_long128 *) out_pos;
+    centre[1] += 4.0f;
+    if (CheckWidth(polys, poly_num, centre, 5.0f, to, mode) != 0) {
+        out_pos[0] = to[0];
+        out_pos[2] = to[2];
+    }
+    return hit_wall;
 }
-
-#else
-INCLUDE_ASM("asm/nonmatchings/gameutil", MoveCheck__FPfPfPfP13MoveCheckInfoP6CCPolyii);
-#endif
 
 /**
  * Describes the surface of a collision triangle, in the shape that CCPoly
