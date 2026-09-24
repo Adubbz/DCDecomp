@@ -51,7 +51,6 @@ public:
      * @mangled Draw__12CSHOT_EFFECTFv
      * @address 0x1ABF20
      * @size 0x25C
-     * @unknownret
      */
     void Draw(void);
 

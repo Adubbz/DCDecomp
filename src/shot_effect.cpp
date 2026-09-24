@@ -82,7 +82,6 @@ void CSHOT::step() {
 INCLUDE_ASM("asm/nonmatchings/shot_effect", step__5CSHOTFv);
 #endif
 
-#ifdef NON_MATCHING
 void CSHOT_EFFECT::Draw() {
     if (effect_data == NULL) {
         return;
@@ -90,20 +89,31 @@ void CSHOT_EFFECT::Draw() {
 
     TexManager.ReloadTexture(Vif1Packet, unk_A154);
     for (int slot = 0; slot < 8; slot++) {
-        if (active[slot] != 0 && random_rate[slot] >= 0.0f) {
-            // Drawing temporarily offsets each model by three independent random values.
-            float jitter_x = random_rate[slot] * (float) rand() / 2147483648.0f;
-            float jitter_y = random_rate[slot] * (float) rand() / 2147483648.0f;
-            float jitter_z = random_rate[slot] * (float) rand() / 2147483648.0f;
-            (void) jitter_x;
-            (void) jitter_y;
-            (void) jitter_z;
+        if (active[slot] != 0) {
+            CCharacter *model = &chara[slot];
+            sceVu0FVECTOR position;
+            sceVu0FVECTOR jittered;
+
+            model->Step();
+            // A slot with a random rate draws at a random offset of up to that rate on each axis.
+            if (!(random_rate[slot] < 0.0f)) {
+                model->GetPosition(position);
+                jittered[0] = position[0] + 2.0f * (random_rate[slot] * rand()) / 2147483648.0f -
+                              random_rate[slot];
+                jittered[1] = position[1] + 2.0f * (random_rate[slot] * rand()) / 2147483648.0f -
+                              random_rate[slot];
+                jittered[2] = position[2] + 2.0f * (random_rate[slot] * rand()) / 2147483648.0f -
+                              random_rate[slot];
+                jittered[3] = 1.0f;
+                model->SetPosition(jittered);
+            }
+            model->Draw();
+            if (!(random_rate[slot] < 0.0f)) {
+                model->SetPosition(position);
+            }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", Draw__12CSHOT_EFFECTFv);
-#endif
 
 #ifdef NON_MATCHING
 void CSHOT_EFFECT::Step() {
