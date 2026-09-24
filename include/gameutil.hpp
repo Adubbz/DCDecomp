@@ -141,11 +141,12 @@ STATIC_ASSERT(sizeof(MOTION_STATE) == 0x50);
  */
 struct tagFRAME_INF {
     s32 parent_frame;             /**< Parent frame used to build the driven frame's transform. */
-    s32 vertex_count;             /**< Number of visual vertices copied for vertex motion. */
+    u32 vertex_count;             /**< Number of visual vertices copied for vertex motion. */
     sceVu0FVECTOR *base_vertices; /**< Arena copy of the visual's undeformed vertices. */
     u8 unk_0C[4];
-    sceVu0FMATRIX matrix; /**< Transform the driver interpolates into the frame. */
-    u8 unk_50[128];
+    sceVu0FMATRIX matrix;           /**< Transform the driver interpolates into the frame. */
+    sceVu0FMATRIX bone_base_matrix; /**< Inverse bind pose of the bone that skins the frame. */
+    sceVu0FMATRIX bone_matrix;      /**< Accumulated transform of the bone that skins the frame. */
 };
 
 STATIC_ASSERT(sizeof(tagFRAME_INF) == 0xD0);
