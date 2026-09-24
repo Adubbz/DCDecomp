@@ -380,7 +380,6 @@ void InitEditEffect(CFrame *frame, EDIT_EFFECT_INFO *effect) {
  * @address 0x1669D0
  * @size 0x1E0
  */
-#ifdef NON_MATCHING
 int InitEditEffect(CFrame *frame, EPARTS_FUNC_DATA *func, EDIT_EFFECT_INFO *effect) {
     switch (func->kind) {
         case 3:
@@ -409,8 +408,8 @@ int InitEditEffect(CFrame *frame, EPARTS_FUNC_DATA *func, EDIT_EFFECT_INFO *effe
             return 0;
     }
     effect->map_flag = func->completion_flag;
-    if (func->frame_name[0] != 0) {
-        strcpy(effect->frame_name, func->frame_name);
+    if ((u8) func->frame_name[0] != 0) {
+        strcpy(effect->frame_name, (char *) func->frame_name);
     } else {
         strcpy(effect->frame_name, frame->name);
     }
@@ -426,9 +425,6 @@ int InitEditEffect(CFrame *frame, EPARTS_FUNC_DATA *func, EDIT_EFFECT_INFO *effe
     InitEditEffect(frame, effect);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/objanime", InitEditEffect__FP6CFrameP16EPARTS_FUNC_DATAP16EDIT_EFFECT_INFO);
-#endif
 
 int CheckEditEffect(EDIT_EFFECT_INFO *effect, float time) {
     if (effect->kind <= 0) {
