@@ -158,47 +158,46 @@ void CEditPartsInfo::Load(int georama_no, CSaveData *save_data, int load_request
     }
 }
 
-#ifdef NON_MATCHING
 void CEditPartsInfo::Initialize(int georama_no) {
     EDIT_PARTS_ATRA empty_part;
-    memset(&empty_part, 0, sizeof(empty_part));
-    for (int element = 0; element < 6; element++) {
-        empty_part.elements[element].id = -1;
-    }
+    int plot;
+    int element;
+    int name;
+    EDIT_PARTS_ATRA *source;
 
-    unk_1624[0] = 0;
-    for (int plot = 0; plot < 24; plot++) {
-        EDIT_PARTS_ATRA *source = &empty_part;
-        if (georama_no >= 0 && georama_no < 6) {
+    memset(&empty_part, 0, sizeof(empty_part));
+    for (element = 0; element < 6; element++) {
+        empty_part.elements[element].unk_04 = -1;
+    }
+    unk_1624 = 0;
+    for (plot = 0; plot < 24; plot++) {
+        if (georama_no < 0 || georama_no >= 6) {
+            source = &empty_part;
+        } else {
             source = GetEditAtraPartsData(georama_no, plot);
         }
-        EDITPARTS_INFO &part = parts[plot];
-        part.parts_no = plot;
-        part.unk_08 = 0;
-        part.completion_flags = 0;
-        part.stock = source->max;
-        part.placed = 0;
-        part.unk_10 = source->unk_08;
-        part.kind = source->kind;
-        for (int element = 0; element < 6; element++) {
-            EDITPARTS_ELEMENT &destination = part.elements[element];
-            EDIT_CHIP_ATTACH_DATA &definition = source->elements[element];
-            destination.id = definition.id;
-            destination.unk_04 = definition.unk_04;
-            destination.enabled = 0;
-            for (int name = 0; name < 4; name++) {
-                destination.names[name] = NULL;
-                if (definition.names[name] != NULL && definition.names[name][0] != '\0') {
-                    destination.names[name] = definition.names[name];
+        parts[plot].parts_no = plot;
+        parts[plot].unk_08 = 0;
+        parts[plot].completion_flags = 0;
+        parts[plot].stock = source->max;
+        parts[plot].placed = 0;
+        parts[plot].unk_10 = source->unk_08;
+        parts[plot].kind = source->kind;
+        for (element = 0; element < 6; element++) {
+            parts[plot].elements[element].id = source->elements[element].id;
+            parts[plot].elements[element].unk_04 = source->elements[element].unk_04;
+            parts[plot].elements[element].enabled = 0;
+            parts[plot].elements[element].names[0] = NULL;
+            for (name = 0; name < 4; name++) {
+                parts[plot].elements[element].names[name] = NULL;
+                if (source->elements[element].names[name] != NULL && source->elements[element].names[name][0] != '\0') {
+                    parts[plot].elements[element].names[name] = source->elements[element].names[name];
                 }
             }
-            destination.unk_1C = definition.unk_18;
+            parts[plot].elements[element].unk_1C = source->elements[element].unk_18;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editpartsinfo", Initialize__14CEditPartsInfoFi);
-#endif
 
 void CEditPartsInfo::Initialize(int index, EPARTS_INFO_HEADER *header) {
     parts[index].parts_no = index;
