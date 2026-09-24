@@ -2062,22 +2062,22 @@ static void CommandWATER_SURFACE(void **arguments) {
  * @size 0x9C
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static void CommandWATER_SHAKE(void **arguments) {
     EDIT_WATER_INFO *info = water_info;
-
     if (info != NULL) {
-        for (int i = 0;; i++) {
-            if (info->wave[i].active == 0.0f && info->wave[i].z == 0.0f) {
-                info->wave[i].x = (float) *(int *) arguments[0];
-                info->wave[i].y = (float) *(int *) arguments[1];
-                info->wave[i].z = *(float *) arguments[3];
-                info->wave[i].active = *(float *) arguments[2];
+        int index = 0;
+        while (1) {
+            u_int offset = index * sizeof(sceVu0FVECTOR);
+            offset += (u_int) info;
+            EDIT_WATER_WAVE_VIEW *wave = (EDIT_WATER_WAVE_VIEW *) offset;
+            if (wave->active == 0.0f && wave->z == 0.0f) {
+                wave->x = (float) *(int *) arguments[0];
+                wave->y = (float) *(int *) arguments[1];
+                wave->z = *(float *) arguments[3];
+                wave->active = *(float *) arguments[2];
                 break;
             }
+            index++;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandWATER_SHAKE__FPPv__2);
-#endif

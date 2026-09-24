@@ -312,7 +312,8 @@
       "start_event_no": "start_event_no__2",
       "start_system_event": "start_system_event__2",
       "EventCamera": "EventCamera__2",
-      "CommandLIGHT_C__FPPv": "CommandLIGHT_C__FPPv__2"
+      "CommandLIGHT_C__FPPv": "CommandLIGHT_C__FPPv__2",
+      "CommandWATER_SHAKE__FPPv": "CommandWATER_SHAKE__FPPv__2"
     },
     "globalize_symbols": [
       "InitWorkBuffer__Fv__2",
@@ -335,7 +336,8 @@
       "RunEvent__FiP7CCamera__2",
       "RunSystemEvent__FiP7CCamera__2",
       "setTexAnim__Fv",
-      "CommandLIGHT_C__FPPv__2"
+      "CommandLIGHT_C__FPPv__2",
+      "CommandWATER_SHAKE__FPPv__2"
     ],
     "rodata_exports": [
       "@1592",
