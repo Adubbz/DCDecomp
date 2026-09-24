@@ -4,6 +4,7 @@
 
 #include "dataalloc_fwd.hpp"
 
+class CCamera;
 class CFrame;
 class CFrameVu1;
 
@@ -34,6 +35,16 @@ CFrame *LoadCollisionFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *bu
  */
 CFrameVu1 *LoadMDSFile(unsigned int *data, CDataAlloc2<1> *buffer, int flags,
                        char **model_name, char **texture_name);
+
+/**
+ * Puts the camera on the two named frames of a model's path.
+ *
+ * @mangled setCameraPassData__FP9CFrameVu1P7CCameraPcPc
+ * @address 0x1B6E80
+ * @size 0xA4
+ */
+void setCameraPassData(CFrameVu1 *frame, CCamera *camera, char *position_name,
+                       char *reference_name);
 
 /**
  * Gives the world position of one frame of a model.
