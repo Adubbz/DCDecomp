@@ -60,6 +60,8 @@ public:
     void SetNextLife(int chara_no, s16 value, float ratio);
 
     /**
+     * Drains the active character's water, then moves every water and HP gauge one step.
+     *
      * @mangled Step__11CUserStatusFi
      * @address 0x1BEA50
      * @size 0x388
