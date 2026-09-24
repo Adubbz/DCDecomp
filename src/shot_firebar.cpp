@@ -36,36 +36,35 @@ int CSHOT_FIREBAR::Init(float *origin, float *direction, int collision_damage, i
     init_element = element;
     return -1;
 }
-#ifdef NON_MATCHING
-int CSHOT_FIREBAR::Set(float *origin, float *direction, int collision_damage,
-                       int element) {
+
+int CSHOT_FIREBAR::Set(float *origin, float *direction, int collision_damage, int element) {
     sceVu0FVECTOR step;
 
     direction[3] = 1.0f;
     sceVu0Normalize(direction, direction);
     sceVu0ScaleVectorXYZ(step, direction, 2.0f);
 
+    // Each particle travels from where it is to its place along the new stream, the farther
+    // ones over more steps.
     for (int particle = 0; particle < 24; particle++) {
-        int slot = particle + start_index;
-        float distance = (float) particle;
-        float travel_steps = distance * 0.5f + 1.0f;
-        velocity[slot][0] =
-            (origin[0] + step[0] * distance - position[slot][0]) / travel_steps;
-        velocity[slot][1] =
-            (origin[1] + step[1] * distance - position[slot][1]) / travel_steps;
-        velocity[slot][2] =
-            (origin[2] + step[2] * distance - position[slot][2]) / travel_steps;
-        state[slot] = 0;
-        size[slot] = 3.0f + distance * 0.3f + (3.0f * (float) rand()) / 2147483648.0f;
-        opacity[slot] = 180.0f - distance * 8.0f;
+        velocity[particle + start_index][0] =
+            (origin[0] + step[0] * (float) particle - position[particle + start_index][0]) /
+            (1.0f + 0.5f * (float) particle);
+        velocity[particle + start_index][1] =
+            (origin[1] + step[1] * (float) particle - position[particle + start_index][1]) /
+            (1.0f + 0.5f * (float) particle);
+        velocity[particle + start_index][2] =
+            (origin[2] + step[2] * (float) particle - position[particle + start_index][2]) /
+            (1.0f + 0.5f * (float) particle);
+        state[particle + start_index] = 0;
+        size[particle + start_index] =
+            3.0f + 0.3f * (float) particle + 3.0f * (float) rand() / 2147483648.0f;
+        opacity[particle + start_index] = 180.0f - 8.0f * (float) particle;
         damage[particle] = collision_damage;
         texture_cell[particle] = element;
     }
     return -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_firebar", Set__13CSHOT_FIREBARFPfPfii);
-#endif
 void CSHOT_FIREBAR::Rset(void) {
     // A state of -1 is what stops a slot being drawn.
     for (int i = 0; i < 24; i++) {
