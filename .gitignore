@@ -52,3 +52,6 @@ permuting/
 
 # splat scratch (the linker scripts it writes are not the ones this build uses)
 /build/splat/
+
+# The lock every build of the tree takes; see scripts/build/cmake.sh.
+/.build.lock

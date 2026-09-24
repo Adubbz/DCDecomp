@@ -37,7 +37,7 @@ IMAGES = {'title': ('rom/extracted/iso/TITLE.BIN', 'config/title.symbols.txt', 0
 
 # An operand that says nothing until the image is linked.
 NUMBER = re.compile(r'(?<![$a-z])-?(?:0x)?[0-9a-f]+\b')
-LABEL = re.compile(r'^([0-9a-f]+)\s+<([^>]+)>:$')
+LABEL = re.compile(r'^([0-9a-f]+)\s+<(.+)>:$')
 BRANCH = re.compile(r'^(b|beql?|bnel?|beqz|bnez|bgtz|blez|bltz|bgez|bltzal'
                     r'|bgezal|bc1t|bc1f|bc1tl|bc1fl|j|jal)\s')
 INSN = re.compile(r'^\s*([0-9a-f]+):\s+[0-9a-f]{8}\s+(.*)$')

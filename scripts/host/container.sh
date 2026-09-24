@@ -77,29 +77,32 @@ ensure_image() {
 # has nothing to report.
 report_parallelism() {
     if in_container || [ "${BUILDER:-}" != podman ]; then
-        return
+        return 0
     fi
 
+    # Every return here is an explicit 0: the callers run under `set -e` and
+    # `pipefail`, and on Linux there is no podman machine to inspect, so a bare
+    # `return` would hand back that failure and end the caller.
     vm_cpus=$(podman machine inspect --format '{{.Resources.CPUs}}' 2>/dev/null \
-              | head -1)
+              | head -1) || true
     case $vm_cpus in
-        ''|*[!0-9]*) return ;;
+        ''|*[!0-9]*) return 0 ;;
     esac
 
     host_cpus=$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 0)
     case $host_cpus in
-        ''|*[!0-9]*) return ;;
+        ''|*[!0-9]*) return 0 ;;
     esac
 
     [ "$host_cpus" -gt "$vm_cpus" ] || return 0
 
     # Half the host's memory, so the suggestion is not one that fails to
     # start on a small machine. Left out entirely if it cannot be read.
-    host_mb=$(sysctl -n hw.memsize 2>/dev/null)
+    host_mb=$(sysctl -n hw.memsize 2>/dev/null) || true
     if [ -n "$host_mb" ]; then
         host_mb=$((host_mb / 1024 / 1024))
     else
-        host_mb=$(awk '/^MemTotal:/ {print int($2 / 1024)}' /proc/meminfo 2>/dev/null)
+        host_mb=$(awk '/^MemTotal:/ {print int($2 / 1024)}' /proc/meminfo 2>/dev/null) || true
     fi
     memory=""
     case $host_mb in

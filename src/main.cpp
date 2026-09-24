@@ -92,15 +92,6 @@ CRunScript RunScript;
  * only, not code bytes; restore `static` once it lands in this TU. */
 CDataAlloc<1, 6000> SystemMesBuffer;
 
-/* Touched briefly by main(); purpose unanalysed. LOCAL in retail
- * (`nm`: pBound/ParentFrame/DataBuffer, 0x2a2500-0x2a250c). They live here
- * rather than in mainselect.cpp because retail's main.sbss interleaves them
- * with SaveData and main()'s other globals, and one object contributes a
- * single contiguous run -- see re/ai/build_pipeline.md. */
-static s32 pBound;
-static s32 ParentFrame;
-static s32 DataBuffer;
-
 /* The global save-data instance and the pointer used to reach it. Retail's
  * symbol table:
  *     2433: 01cd4140 78272 OBJECT LOCAL  4 save_data

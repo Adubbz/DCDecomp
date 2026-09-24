@@ -1,8 +1,10 @@
 # Build with podman:
 #   podman build -t dcdecomp_dev --target dev .     # toolchain + diffing tools
 #   podman build -t dcdecomp_build --target build . # one-shot build of the ISO
-# build.sh wraps the second one. Everything here is plain OCI, so
-# docker works too, but podman is what the project targets.
+# build.sh, run.sh and dev.sh use the first, with the tree mounted; the second
+# bakes a copy of the sources in, for a build that needs nothing mounted but
+# rom/. Everything here is plain OCI, so docker works too, but podman is what
+# the project targets.
 #
 # Debian for glibc (the toolchain binaries are glibc-linked), trixie because
 # binutils-mips-ps2-decompals needs glibc 2.38 and bookworm ships 2.36.
@@ -121,8 +123,7 @@ COPY . .
 
 # Build everything, through the same cmake.sh the entry points use. `ctx` is
 # named because this builds `elf`, not the default target it hangs off. rom/
-# and build/ are mounted in, so the results land in the tree's own build/ and
-# a second run has the extracted disc, the split and the objects to compare
-# against rather than starting from nothing; see build.sh.
+# has to be mounted in; mounting asm/ and build/ too keeps the split and the
+# objects between runs.
 CMD scripts/build/cmake.sh elf ctx \
     && scripts/build/verify_built.sh

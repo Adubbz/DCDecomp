@@ -4,7 +4,7 @@
 #
 #   scripts/build/cmake.sh <target>...       build these targets
 #   BUILD_DIR=other scripts/build/cmake.sh elf
-#   JOBS=8 scripts/build/cmake.sh elf        override ninja's own job count
+#   JOBS=8 scripts/build/cmake.sh elf        run 8 jobs rather than one per CPU
 #
 # It brings the build files up to date, builds `setup`, then builds what was
 # asked for.
@@ -19,6 +19,22 @@
 set -eu
 
 cd "$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
+
+# One build of the tree at a time. The split rewrites thousands of files under
+# asm/ over several seconds, and objdiff's GUI watches asm/ and starts a build
+# of its own (scripts/build/build_objdiff.sh) the moment they change; a unit
+# compiled against a half-written split links into an image that is wrong
+# throughout. Everything that builds takes this lock, so such a build waits
+# for the split to finish instead. It lives outside build/ so that CLEAN
+# cannot delete it from under a build holding it.
+BUILD_LOCK=.build.lock
+if [ -z "${DCDECOMP_BUILD_LOCKED:-}" ]; then
+    export DCDECOMP_BUILD_LOCKED=1
+    if ! flock -n "$BUILD_LOCK" true; then
+        echo "cmake.sh: another build of this tree is running (objdiff's, perhaps); waiting for it." >&2
+    fi
+    exec flock "$BUILD_LOCK" "$(pwd)/scripts/build/cmake.sh" "$@"
+fi
 
 BUILD_DIR=${BUILD_DIR:-build}
 
@@ -73,12 +89,13 @@ regenerate() {
     cmake --fresh -G Ninja -S . -B "$BUILD_DIR"
 }
 
-# Ninja picks its own job count from the CPUs it can see; JOBS is for saying
-# otherwise, on a machine where that is the wrong number.
-JOB_ARGS=""
-if [ -n "${JOBS:-}" ]; then
-    JOB_ARGS="--parallel $JOBS"
+# Every CPU this process may run on, unless JOBS says otherwise. Exported so
+# the split (scripts/build/disassemble.py) spreads over the same count.
+if [ -z "${JOBS:-}" ]; then
+    JOBS=$(nproc 2>/dev/null || getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1)
 fi
+export JOBS
+JOB_ARGS="--parallel $JOBS"
 
 build() {
     # shellcheck disable=SC2086 -- JOB_ARGS is a flag pair or nothing at all.

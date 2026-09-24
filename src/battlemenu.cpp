@@ -8,6 +8,7 @@
 #include <cstring>
 
 #include "character.hpp"
+#include "camera.hpp"
 #include "clsmes.hpp"
 #include "dataread.hpp"
 #include "dngstatusdata.hpp"
@@ -313,12 +314,18 @@ extern s32 MenuMapJumpMode;
  */
 extern CTexture *MenuMoveTex;
 
+/**
+ * Camera used to project menu models and world-map markers.
+ */
+extern CCamera MenuCamera;
+
+static int GetVisitInfo(int place, int menu_mode);
+
 #ifdef NON_MATCHING // draft declarations
 #include <cstdlib>
 
 #include "battle_globals.hpp"
 #include "btactstatus.hpp"
-#include "camera.hpp"
 #include "dataalloc.hpp"
 #include "menuitemstep.hpp"
 #include "userstatus.hpp"
@@ -356,7 +363,6 @@ extern MENU_WEP_POLY_OFFSET MenuWepPolyOffset[6];
 extern "C" CCharacter DngWeaponFrm[12];
 extern CRect_i_ MenuDispRc;
 extern u_long128 Vu_prog0f;
-extern CCamera MenuCamera;
 
 static void DrawStatusNumberNowAndMax(int *values, int x, int y, int color, int alpha);
 static void BattleMenuAppear();
@@ -382,7 +388,6 @@ extern "C" CSHOT_EFFECT *NowMainEffect;
 extern "C" CSHOT_EFFECT CharaMainEffectCrash;
 extern s32 CharaMainHandViewFlag;
 static void MenuCharaPolyDraw();
-static int GetVisitInfo(int place, int menu_mode);
 static int WorldMapMoveKey();
 static void DrawWorldMap(int alpha);
 extern float mapmovev[4];
@@ -7043,7 +7048,6 @@ void InitMenuMove(int mode, int texture_block, u_long128 *buffer) {
     CommonMenuMes2.mes_made = -1;
     CommonMenuMes3.mes_made = -1;
 }
-#ifdef NON_MATCHING
 void GetTownOrDngPos() {
     MenuWorldTrans(&MenuCamera);
     float scale = 2.2f;
@@ -7073,10 +7077,6 @@ void GetTownOrDngPos() {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", GetTownOrDngPos__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @5881);
 #ifdef NON_MATCHING
 int MenuMoveKey() {
     int stay = 1;

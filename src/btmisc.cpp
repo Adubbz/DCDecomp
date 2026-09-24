@@ -156,19 +156,19 @@ INCLUDE_RODATA("asm/nonmatchings/btmisc", @921__2);
  * @size 0x124
  */
 #ifdef NON_MATCHING
-/** Base name of each item's model and texture files, by item number. */
-extern char *ComItemFileName[];
+/** Base name of each item's model and texture files, beginning with attachments. */
+extern char *ITEM_NAME_TBL_NEW[];
 
 void BtGetItemNamePath(char *model_path, char *texture_path, int item_no) {
     item_no = TransWepNo(item_no);
     if (item_no >= 0x101) {
         makeWeaponName(model_path, item_no);
     } else {
-        if (ComItemFileName[item_no] == NULL) {
+        if (ITEM_NAME_TBL_NEW[item_no - ITEM_ATTACH_START] == NULL) {
             item_no = 0x91;
         }
         strcpy(model_path, "dun/item/main_data/");
-        strcat(model_path, ComItemFileName[item_no]);
+        strcat(model_path, ITEM_NAME_TBL_NEW[item_no - ITEM_ATTACH_START]);
     }
     strcpy(texture_path, model_path);
     strcat(model_path, ".mds");

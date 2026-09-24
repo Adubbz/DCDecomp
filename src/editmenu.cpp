@@ -84,16 +84,24 @@ extern float AnalyzeFill[3];
 /** The texture the menu's plain frame comes from. */
 extern CTexture *StayTex;
 
+/** Texture block containing the edit menu's main page textures. */
+extern int EdMenuTextureBlock;
+
+/** Texture block containing the edit menu's first extra texture set. */
+extern int EdMenuExTextureBlock;
+
+/** Texture block containing the edit menu's second extra texture set. */
+extern int EdMenuExTextureBlock1;
+
+/** Texture block containing the edit menu's third extra texture set. */
+extern int EdMenuExTextureBlock2;
+
 #ifdef NON_MATCHING // draft declarations
 #include "editloop.hpp"
 #include "mainselect.hpp"
 #include "menuitemstep.hpp"
 
-extern int EdMenuTextureBlock;
 extern u_long128 *EdMenuWorkBuf;
-extern int EdMenuExTextureBlock;
-extern int EdMenuExTextureBlock1;
-extern int EdMenuExTextureBlock2;
 extern s16 EdMenuHelpWinAlpha;
 extern int EdMenuMesNo2;
 extern int EdMenuMesMake2;

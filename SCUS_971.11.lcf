@@ -528,6 +528,9 @@ SECTIONS
         main.data.shop-checkbuy-b.s.o (.data) // 0x002927CC
         shop.cpp.o (.shopdata-ticket) // 0x00292830
         main.data.shop-ticket.s.o (.data) // 0x00292840
+        battlemenu.cpp.o (.battlemenu-town-ref) // 0x002936E0
+        battlemenu.cpp.o (.battlemenu-town-pos) // 0x002936F0
+        main.data.shop-ticket-after.s.o (.data) // 0x00293700
         battlemenu.cpp.o (.data)     // 0x00293860
         . = ALIGN(0x10);
         main.data.battlemenu-tail.s.o (.data) // 0x00293960
@@ -713,6 +716,7 @@ SECTIONS
 		chararead.cpp.o (.sbss)        // 0x002a247c
 		dataread.cpp.o (.sbss)         // 0x002a24e4
 		main.sbss.part3.s.o (.sbss)    // 0x002a24fc
+		clothread.cpp.o (.sbss)        // 0x002a2500 pBound, ParentFrame, DataBuffer
 		main.cpp.o (.sbss)
 		sound.cpp.o (.sbss)            // 0x002a2588
 		. = ALIGN(16);

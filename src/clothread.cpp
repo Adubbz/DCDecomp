@@ -12,6 +12,7 @@
 #include <cstring>
 #include <libpkt.h>
 
+#include "bound.hpp"
 #include "btsysscript.hpp"
 #include "cloth.hpp"
 #include "clothread.hpp"
@@ -28,7 +29,6 @@
 #include "sound.hpp"
 #include "sysmes.hpp"
 #ifdef NON_MATCHING // draft includes
-#include "bound.hpp"
 #include "visualvu1.hpp"
 #include <cstdlib>
 #include <libpkt.h>
@@ -39,6 +39,21 @@
  * Cloth instance currently receiving configuration commands.
  */
 extern CCloth *pCloth;
+
+/**
+ * Last exclusion bound attached while reading one cloth configuration.
+ */
+static CBound *pBound;
+
+/**
+ * Model frame whose cloth configuration is being read.
+ */
+static CFrameVu1 *ParentFrame;
+
+/**
+ * Allocator used for the cloth currently being initialized.
+ */
+static CDataAlloc2<1> *DataBuffer;
 
 /**
  * Sets and clamps the cloth grid dimensions.
@@ -130,15 +145,6 @@ static int SearchCommand(input_str &input, int *command);
 static int SkipSpace(input_str &input);
 static int CheckChar(char c);
 
-/* The allocator the cloth and its exclusion boxes come out of. */
-static CDataAlloc2<1> *DataBuffer;
-
-/* The frame whose model the configuration describes. */
-static CFrameVu1 *ParentFrame;
-
-/* The exclusion box added last, which the next one is chained after. */
-static CBound *pBound;
-
 CCloth *InitCloth(CFrameVu1 *frame, input_str &input, CDataAlloc2<1> *alloc) {
     char words[16][256];
     void *argv[16];
@@ -201,7 +207,6 @@ static void CommandSIZE(void **argv) {
  * @address 0x13FBE0
  * @size 0x7C
  */
-#ifdef NON_MATCHING
 static void CommandFRAME(void **argv) {
     CFrameVu1 *frame = (CFrameVu1 *) ParentFrame->SearchFrame((char *) argv[0]);
 
@@ -212,9 +217,6 @@ static void CommandFRAME(void **argv) {
         pCloth->Initialize((MDT_HEADER *) visual->GetMDTDataAddress(), DataBuffer);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/clothread", CommandFRAME__FPPv);
-#endif
 
 static void CommandNORMAL(void **argv) {
     pCloth->normal_scale = *(float *) argv[0];
@@ -451,7 +453,6 @@ INCLUDE_ASM("asm/nonmatchings/clothread", SkipSpace__FR9input_str__2);
  * @size 0x60
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static int CheckChar(char c) {
     int found = 0;
     if (c == ' ')
@@ -464,9 +465,6 @@ static int CheckChar(char c) {
         found = 1;
     return !found;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/clothread", CheckChar__Fc__2);
-#endif
 
 /**
  * Converts analog-stick displacement into a motion speed and movement state.

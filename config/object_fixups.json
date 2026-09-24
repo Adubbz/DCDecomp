@@ -112,10 +112,19 @@
     ]
   },
   "src/battlemenu.cpp": {
+    "sections": {
+      ".battlemenu-town-ref": [
+        "@799"
+      ],
+      ".battlemenu-town-pos": [
+        "@800"
+      ]
+    },
     "rodata_exports": [
       "@924__2",
       "@926__2",
-      "@927__2"
+      "@927__2",
+      "@5881"
     ]
   },
   "src/ebattle.cpp": {
@@ -1252,7 +1261,11 @@
   "src/clothread.cpp": {
     "symbols": {
       "Command": "Command__2",
-      "CommandExe": "CommandExe__2"
+      "CommandExe": "CommandExe__2",
+      "GetArg__FR9input_strPiPPv": "GetArg__FR9input_strPiPPv__2",
+      "SearchCommand__FR9input_strPi": "SearchCommand__FR9input_strPi__2",
+      "SkipSpace__FR9input_str": "SkipSpace__FR9input_str__2",
+      "CheckChar__Fc": "CheckChar__Fc__2"
     },
     "rodata_exports": [
       "@187",
@@ -1267,7 +1280,11 @@
     ],
     "globalize_symbols": [
       "Command__2",
-      "CommandExe__2"
+      "CommandExe__2",
+      "GetArg__FR9input_strPiPPv__2",
+      "SearchCommand__FR9input_strPi__2",
+      "SkipSpace__FR9input_str__2",
+      "CheckChar__Fc__2"
     ]
   },
   "src/editmapscript.cpp": {

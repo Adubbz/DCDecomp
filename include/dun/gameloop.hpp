@@ -82,6 +82,9 @@ extern CMonstorUnit *NowMonstorUnit;
 /** Player character. */
 extern "C" CCharacter CharaMain;
 
+/** Character currently controlled by the player. */
+extern s32 nowUnitNow;
+
 /** Debug switches shared by dungeon rendering. */
 extern "C" s32 DebugStatus[21];
 

@@ -5,13 +5,16 @@
 #include "btactstatus.hpp"
 #include "btitem.hpp"
 #include "btmisc.hpp"
+#include "character.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dngmessageman.hpp"
 #include "dngstatusdata.hpp"
 #include "dun/gameloop.hpp"
+#include "frame.hpp"
 #include "gamepad.hpp"
 #include "menu_draw.hpp"
+#include "menu_dungeon.hpp"
 #include "menu_save.hpp"
 #include "nowload.hpp"
 #include "snd.hpp"
@@ -133,7 +136,6 @@ extern "C" CDataAlloc2<1> BtCashBuffer;
 
 #include "btmisc.hpp"
 #include "camerafollow.hpp"
-#include "character.hpp"
 #include "collision.hpp"
 #include "dispctrl.hpp"
 #include "dungeonmap.hpp"
@@ -143,7 +145,6 @@ extern "C" CDataAlloc2<1> BtCashBuffer;
 #include "mainitemmodel.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
-#include "menu_dungeon.hpp"
 #include "monstorunit.hpp"
 #include "motionmodel.hpp"
 #include "savedata.hpp"
@@ -157,7 +158,6 @@ extern char *ITEM_NAME_TBL_NEW[];
 extern "C" CWeaponEffect CWeaponFx;
 extern "C" CCharacter *NowWeapon;
 extern s32 BtItemListCashFlag;
-extern s32 nowUnitNow;
 extern int BtGetTreasurebox_Sled;
 extern int BtGetAtraBoll_Sled;
 extern int TreasureboxBig_itemNo;
@@ -195,7 +195,6 @@ extern "C" CMotionModel itemOpenSmall;
 extern "C" CMotionModel itemOpenSmallFx;
 extern "C" CCharacter shortAtraEffect;
 extern "C" CCharacter EscapeEffect;
-extern "C" CCharacter CharaMain;
 
 void setCameraPassData(CFrameVu1 *frame, CCamera *camera, char *position_name, char *reference_name);
 void getAtraToSaveData(int atra, int atra_no, CSaveData *save, int dungeon, int floor);
@@ -947,7 +946,7 @@ int BtMiniChrSelect_Loop() {
         case 2: {
             frameCaputer = 0;
             driveStepHold = 0;
-            int blocks[2] = {0x1C, 0x1D};
+            int blocks[2] = {0x128, 0xD8};
             StartQuickChange((u_long128 *) read_buffer, 0x17, blocks, BtMiniChrSel_Type);
             BtGameModeFlag = 5;
             BtMiniChrSelecter_Sled++;
@@ -1514,7 +1513,7 @@ void setShotVector(float *velocity, float speed, float angle_y, float angle_x) {
 
 #ifdef NON_MATCHING
 void getCharacterVector(float *vector, float pitch) {
-    sceVu0FVECTOR forward = {0.0f, 0.0f, 1.0f, 0.0f};
+    sceVu0FVECTOR forward = {0.0f, 0.0f, 1.0f, 1.0f};
     sceVu0FVECTOR rotation;
     sceVu0FMATRIX matrix;
     sceVu0FMATRIX yaw;

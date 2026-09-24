@@ -1,6 +1,6 @@
 #include "mainitemmodel.hpp"
-#ifdef NON_MATCHING // draft includes
 #include <cstdio>
+#ifdef NON_MATCHING // draft includes
 #include <cstring>
 #include <libvu0.h>
 #include "dataalloc.hpp"

@@ -12,13 +12,17 @@ set -euo pipefail
 cd "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 . scripts/host/container.sh
 
+# Under the lock scripts/build/cmake.sh takes, so a save that lands while a
+# split is rewriting asm/ waits for the split rather than compiling against it.
 REBUILD='
-    cache=build/CMakeCache.txt
-    home=$(sed -n "s/^CMAKE_HOME_DIRECTORY:INTERNAL=//p" "$cache" 2>/dev/null | head -1)
-    if [ -f build/build.ninja ] && [ "$home" = "$(pwd)" ]; then
-        exec cmake --build build --target objdiff
-    fi
-    exec scripts/build/cmake.sh objdiff
+    exec flock .build.lock sh -c "
+        cache=build/CMakeCache.txt
+        home=\$(sed -n \"s/^CMAKE_HOME_DIRECTORY:INTERNAL=//p\" \"\$cache\" 2>/dev/null | head -1)
+        if [ -f build/build.ninja ] && [ \"\$home\" = \"\$(pwd)\" ]; then
+            exec cmake --build build --target objdiff
+        fi
+        DCDECOMP_BUILD_LOCKED=1 exec scripts/build/cmake.sh objdiff
+    "
 '
 
 if in_container; then

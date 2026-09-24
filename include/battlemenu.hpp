@@ -635,7 +635,7 @@ void CharaStatusMsgDraw(int, int, int, int, int);
 void InitMenuMove(int mode, int texture_block, u_long128 *buffer);
 
 /**
- * Places the party's marker on the town or dungeon the cursor stands on.
+ * Updates the screen positions and visit markers of world-map destinations.
  *
  * @mangled GetTownOrDngPos__Fv
  * @address 0x208310

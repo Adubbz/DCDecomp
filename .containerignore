@@ -43,3 +43,6 @@ ctx.c
 .claude/
 .codex/
 .agents/
+
+# The lock every build of the tree takes; see scripts/build/cmake.sh.
+.build.lock

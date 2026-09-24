@@ -24,18 +24,24 @@ With access to the private repository, building the executables and diffing
 work without the disc image; see the reference assembly instructions below.
 
 `run.sh` builds the disc image and boots it in PCSX2. `build.sh` does the build
-alone, against a clean copy of the sources in a container, and leaves the
-results in `build/`.
+alone and leaves the results in `build/`.
 
-Both are incremental. The disc is extracted and split once, not once per
-build: `rom/`, `asm/` and `build/` are mounted into the container, so the
-extracted files, the split and every object survive between runs, and each
-step reruns only when one of its inputs changes. Two variables tune it:
+Both run in the `dcdecomp_dev` container image, which holds only the
+toolchain: it is built the first time and reused after that (`REBUILD_IMAGE=1`
+builds it again, for after editing the `Dockerfile`). The tree is mounted
+rather than copied in, so both are incremental. The disc is extracted and
+split once, not once per build, and each step reruns only when one of its
+inputs changes. The build runs one job per CPU the container can see. Two
+variables tune it:
 
 ```
 CLEAN=1 ./build.sh       throw build/ away first, so everything is rebuilt
-JOBS=8 ./build.sh        override the job count picked from the visible CPUs
+JOBS=8 ./build.sh        run 8 jobs rather than one per CPU
 ```
+
+Only one build of the tree runs at a time: `scripts/build/cmake.sh` and
+objdiff's rebuild both take `.build.lock`, so a build that starts while
+another one is splitting the disc waits for it.
 
 On macOS and Windows that count is the podman machine's rather than the
 host's, and podman's default is well under it; both scripts say so when they
