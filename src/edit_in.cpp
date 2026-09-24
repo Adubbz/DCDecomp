@@ -1801,29 +1801,25 @@ static void CommandAMBIENT(void **arguments) {
  * @size 0x128
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static void CommandLIGHT_C(void **arguments) {
     sceVu0FVECTOR direction;
     int light = *(int *) arguments[6];
-    int index;
 
     direction[0] = *(float *) arguments[0];
     direction[1] = *(float *) arguments[1];
     direction[2] = *(float *) arguments[2];
     direction[3] = 0.0f;
     sceVu0Normalize(direction, direction);
-    EdInInfo->light_direction[0][index = light - 1] = direction[0];
-    EdInInfo->light_direction[1][index] = direction[1];
-    EdInInfo->light_direction[2][index] = direction[2];
-    EdInInfo->light_direction[3][index] = direction[3];
-    EdInInfo->light_colour[index][0] = *(float *) arguments[3];
-    EdInInfo->light_colour[index][1] = *(float *) arguments[4];
-    EdInInfo->light_colour[index][2] = *(float *) arguments[5];
-    EdInInfo->light_colour[index][3] = 128.0f;
+    light--;
+    EdInInfo->light_direction[0][light] = direction[0];
+    EdInInfo->light_direction[1][light] = direction[1];
+    EdInInfo->light_direction[2][light] = direction[2];
+    EdInInfo->light_direction[3][light] = direction[3];
+    EdInInfo->light_colour[light][0] = *(float *) arguments[3];
+    EdInInfo->light_colour[light][1] = *(float *) arguments[4];
+    EdInInfo->light_colour[light][2] = *(float *) arguments[5];
+    EdInInfo->light_colour[light][3] = 128.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandLIGHT_C__FPPv__2);
-#endif
 /**
  * Sets the interior's fog distances and colour.
  *
