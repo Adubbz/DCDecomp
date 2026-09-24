@@ -118,10 +118,6 @@ INCLUDE_RODATA("asm/nonmatchings/battle_globals", @788__2);
 INCLUDE_RODATA("asm/nonmatchings/battle_globals", @789__4);
 INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1349__3);
 INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1350__5);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1505);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1511__4);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1558__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1559__3);
 
 /**
  * Gives every party member their default name.
@@ -986,24 +982,27 @@ int GetMsgLengthCharaName(int chara_no) {
  * @address 0x23CE60
  * @size 0xB0
  */
-#ifdef NON_MATCHING
 void InitOpeningBook(u_long128 *buffer, int *blocks) {
+    u_long128 *work = buffer;
+
     if (buffer == NULL) {
-        buffer = (u_long128 *) read_buffer;
+        work = (u_long128 *) read_buffer;
     }
+    work = MenuCalcBufAlignment(work);
     StartReadBG();
-    LoadFileBGMenuData("openbook.pak", MenuCalcBufAlignment((u_long128 *) buffer));
+    LoadFileBGMenuData("openbook.pak", work);
+    OpenBook.tex_block = blocks[0];
+    OpenBook.unk_004 = blocks[1];
     OpenBook.open = 0;
-    OpenBook.tex_block = (s16) blocks[0];
-    OpenBook.unk_004 = (s16) blocks[1];
-    OpenBook.unk_006 = 0;
     OpenBook.step = 0;
+    OpenBook.unk_006 = 0;
     OpenBook.fade = 128;
     OpenBook.unk_00C = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", InitOpeningBook__FP1Pi);
-#endif
+
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1511__4);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1558__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1559__3);
 /**
  * Turns the storybook's pages with the pad.
  *
