@@ -333,7 +333,9 @@
       "loop_counter": "loop_counter__2",
       "key_counter": "key_counter__2",
       "goto_menu": "goto_menu__2",
-      "goto_return_menu": "goto_return_menu__2"
+      "goto_return_menu": "goto_return_menu__2",
+      "MainDraw__Fv": "MainDraw__Fv__2",
+      "MotionParts": "MotionParts__2"
     },
     "globalize_symbols": [
       "InitWorkBuffer__Fv__2",
@@ -363,7 +365,8 @@
       "CommandBRIGHT__FPPv__2",
       "MoveCamera__FP13CCameraFollow__2",
       "LoadTexture__Fv__2",
-      "MoveCharacter__Fv"
+      "MoveCharacter__Fv",
+      "MainDraw__Fv__2"
     ],
     "rodata_exports": [
       "@1592",
@@ -386,59 +389,42 @@
       ".editininit": [
         "@159"
       ],
+      ".editindraw": [
+        "@173",
+        "@195"
+      ],
+      ".editinpause": [
+        "@235"
+      ],
       ".editinmove": [
-        "@222",
-        "@223"
+        "@302",
+        "@303"
       ],
       ".editincamdist": [
         "camera_distance$1155"
       ],
       ".editincampos": [
-        "@330"
+        "@410"
       ],
       ".editintex": [
         "texdata$1374"
       ],
       ".editinpts": [
-        "@462",
-        "@487"
+        "@542",
+        "@567"
       ],
       ".editinfixpos": [
         "fix_pos$1123"
       ],
-      ".editincnt": [
+      ".editinsbss": [
+        "debug_flag$964",
+        "init$965",
+        "debug_menu_mode$967",
+        "init$968",
         "cnt$1223",
         "init$1224"
       ]
-    },
-    "rekey_sections": [
-      [
-        ".editininit",
-        [
-          16
-        ]
-      ],
-      [
-        ".editinmove",
-        [
-          16,
-          16
-        ]
-      ],
-      [
-        ".editincampos",
-        [
-          16
-        ]
-      ],
-      [
-        ".editinpts",
-        [
-          40,
-          16
-        ]
-      ]
-    ]
+    }
   },
   "src/edit.cpp": {
     "export_constants_shared": [

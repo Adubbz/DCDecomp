@@ -191,7 +191,8 @@ carve_part(main.sdata.part2b.s
            main.sdata.snd-tail.s=2A1EF0-2A1F14
            main.sdata.part2c.s=2A1F18-2A1F24
            main.sdata.part2d.s=2A1F50-2A1F78
-           main.sdata.part2f.s=2A1F90-2A20C8
+           main.sdata.part2f.s=2A1F90-2A1F98
+           main.sdata.edit_in-a.s=2A1FA0-2A20C8
            main.sdata.battlemenu-tail.s=2A20D8-2A2100
            main.sdata.editmenu-a.s=2A2140-2A2150
            main.sdata.memcard-a.s=2A2158-2A21A0
@@ -245,7 +246,7 @@ carve_part(main.sbss.part4b.s
            main.sbss.part4d.s=2A2958-2A2994
            main.sbss.part4g.s=2A29A4-2A29DC
            main.sbss.part4e.s=2A2A54-2A2A64
-           main.sbss.part4f.s=2A2A80-2A2AF4
+           main.sbss.part4f.s=2A2A80-2A2AE4
            main.sbss.edit_in-a.s=2A2AFC-2A2B20
            main.sbss.editground-tail.s=2A2B28-2A2BF0)
 carve_part(main.rdata.part4.s
@@ -291,7 +292,6 @@ carve_part(main.data.part4.s
            main.data.part4i.s=269A30-269AD0
            main.data.part4f.s=269B60-269BA0
            main.data.part4g.s=26A5E8-26A640
-           main.data.edit_in-e.s=26A650-26A670
            main.data.edit_in-d.s=26A770-26A7B0
            main.data.edit_in-c.s=26A7F0-26AE10
            main.data.edit_in-b.s=26AE40-26AE60

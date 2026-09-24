@@ -10,6 +10,7 @@
 #include "camera.hpp"
 #include "camerafollow.hpp"
 #include "character.hpp"
+#include "clsmes.hpp"
 #include "collision.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
@@ -20,6 +21,8 @@
 #include "editloop.hpp"
 #include "editloop3.hpp"
 #include "editpartsinfo.hpp"
+#include "effectgroup.hpp"
+#include "effectmacro.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "gamepad.hpp"
@@ -27,6 +30,7 @@
 #include "mapparts.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
+#include "menu_misc.hpp"
 #include "mglib.hpp"
 #include "npcharacter.hpp"
 #include "rect.hpp"
@@ -39,13 +43,9 @@
 #include <cmath>
 
 #include "battlemenu.hpp"
-#include "clsmes.hpp"
 #include "dispctrl.hpp"
 #include "edit.hpp"
-#include "effectgroup.hpp"
-#include "effectmacro.hpp"
 #include "gamemode.hpp"
-#include "menu_misc.hpp"
 #include "objanime.hpp"
 #include "savedata.hpp"
 #include "sysmes.hpp"
@@ -103,6 +103,10 @@ extern int EdInteriorDoorSound;
 extern int EdInteriorStartEvent;
 extern int EdDebugCameraFlag;
 extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
+extern int EdDrawOffFlag;
+extern int EdDrawOffMapShadow;
+extern int EdPauseFlag;
+extern CEffectGroup EdEffectGroup;
 
 /* What the interior is doing this frame: walking about, or leaving through a door. */
 extern int GameMode;
@@ -128,6 +132,8 @@ extern int goto_menu;
 extern int goto_return_menu;
 /* Whether a simple event, one the player only reads, is running. */
 extern int simple_event;
+/* Characters that stand in for the interior's moving parts. */
+extern CCharacter MotionParts[4];
 
 /* Where the camera sits for one camera marker of the interior, and the box the player must stand in. */
 struct INTERIOR_CAMERA {
@@ -145,6 +151,13 @@ extern INTERIOR_CAMERA *active_camera;
 extern int camera_change_count;
 
 static void LoadInfo(char *script, int size);
+static void setTexAnim();
+void DrawWaterSurface(CCamera *camera);
+void EdDrawCharacter(CCharacter *chara, int detail, int count, CNPCharacter *villagers, int *marks, int shadow,
+                     ED_EVENT_INFO *event);
+void EdEventBackSpriteDraw();
+void EdDrawItem();
+void EdEventSpriteDraw();
 static int LoadTexture();
 static void LoadChara();
 void LoadData();
@@ -156,14 +169,9 @@ static int GetDoorPos(int door_no, float *position, float *rotation, int *parts_
 extern int EdInteriorPartsNo;
 extern char EdInteriorName[];
 extern int EdDebugEventEnable;
-extern int EdDrawOffFlag;
-extern int EdDrawOffMapShadow;
-extern int EdPauseFlag;
 extern int MenuMapJumpMode;
-extern CEffectGroup EdEffectGroup;
 
 static int camera_num;
-static CCharacter MotionParts[4];
 
 static void LoadScript();
 void EdDoorOpenSe(int door_sound, float *position);
@@ -175,12 +183,6 @@ void EdASetViewAngle(float h, float v);
 void EdEyeCamera(CCamera *camera, CCharacter *chara);
 void EdViewModeOff();
 void EdInitMesParam();
-void EdDrawCharacter(CCharacter *chara, int detail, int count, CNPCharacter *villagers, int *marks, int shadow,
-                     ED_EVENT_INFO *event);
-void EdEventBackSpriteDraw();
-void EdDrawItem();
-void EdEventSpriteDraw();
-static void setTexAnim();
 static void RunEvent(int event_no, CCamera *camera);
 static void RunSystemEvent(int event_no, CCamera *camera);
 static void InitWorkBuffer();
@@ -190,7 +192,6 @@ static void MoveCharacter();
 static void VillagerCollision();
 int LoadPTS(CMapParts *parts, u_int *archive);
 int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points);
-void DrawWaterSurface(CCamera *camera);
 void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara);
 #endif
 
@@ -853,13 +854,9 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", EditInLoop__Fv);
  * @size 0x6AC
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static void MainDraw() {
     sceVu0FVECTOR position;
-    sceVu0FVECTOR light = {0.0f, 0.0f, 0.0f, 0.0f};
-    sceVu0FVECTOR ref;
-    sceVu0FVECTOR wind = {0.0f, 0.0f, 0.0f, 0.0f};
-    int marks_store[10];
+    int i;
 
     if (EdDrawOffFlag != 0) {
         return;
@@ -877,23 +874,24 @@ static void MainDraw() {
         TexManager.ReloadTexture(GetVif1Packet(), 15);
         TexAnime.TexAnime(15);
         setTexAnim();
-        for (int i = 0; i < parts_num; i++) {
-            InteriorParts[i].DrawParts(NowTime, light, 0, 0, NULL);
+        sceVu0FVECTOR distance = {0.0f, 1000.0f, 10000.0f, 1000000.0f};
+        for (i = 0; i < parts_num; i++) {
+            InteriorParts[i].DrawParts(NowTime, distance, 0, 0, NULL);
         }
     }
     sceGsTex0 frame;
     CRect_i_ screen;
     sceGsTex0 water;
-    sceGsZbuf zbuf;
     MGGetFBuffTex(&frame);
     screen.x = 0;
     screen.y = 0;
     screen.width = 0x280;
     screen.height = 0xE0;
-    *(u_long *) &water = TexManager.GetTexture("water_buff", -1)->tex0;
+    water = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
     MGMoveImage(&frame, screen, &water, 0, 0, 0);
+    sceVu0FVECTOR ref;
     MainCamera.GetRef(ref);
-    zbuf = mgZBuffer;
+    sceGsZbuf zbuf = mgZBuffer;
     zbuf.bits.zmsk = 1;
     MGSetGsZBUF(&zbuf);
     DrawWaterSurface(NowCamera);
@@ -906,6 +904,7 @@ static void MainDraw() {
     }
     ED_EVENT_INFO *event = NULL;
     int detail = 3;
+    int marks_store[10];
     int *marks = marks_store;
     if (EdCheckViewMode() != 0) {
         detail = 0;
@@ -913,7 +912,7 @@ static void MainDraw() {
     if (GameMode == 2) {
         marks = NULL;
     } else {
-        for (int i = 0; i < 10; i++) {
+        for (i = 0; i < 10; i++) {
             marks_store[i] = 3;
         }
     }
@@ -923,25 +922,26 @@ static void MainDraw() {
     }
     EdDrawCharacter(Chara, detail, 10, EdVillager, marks, 1, event);
     TexManager.ReloadTexture(GetVif1Packet(), 0x18);
+    sceVu0FVECTOR wind = {0.0f, 0.0f, 0.0f, 0.0f};
     if (GameMode != 5 || EdPauseFlag == 0) {
         EditEffectStep();
         EffectMacroStep(wind);
         EdEffectGroup.Step(1);
-        for (int i = 0; i < 4; i++) {
+        for (i = 0; i < 4; i++) {
             MotionParts[i].Step();
         }
     }
     EditEffectStep2();
     if (EdDrawOffMap == 0) {
         EDIT_EFFECT_INFO *effect = EdInInfo->effects;
-        for (int i = 0; i < effect_num; i++, effect++) {
+        for (i = 0; i < effect_num; i++, effect++) {
             if (CheckEditEffect(effect, NowTime) != 0) {
                 DrawEditEffect(effect, NowCamera, &EdEffectGroup);
             }
         }
     }
     EdEffectGroup.Draw();
-    for (int i = 0; i < 4; i++) {
+    for (i = 0; i < 4; i++) {
         TexManager.ReloadTexture(GetVif1Packet(), i + 0x32);
         MotionParts[i].Draw();
     }
@@ -967,35 +967,33 @@ static void MainDraw() {
     EdSystemMesDraw();
     static int debug_flag = 0;
     static int debug_menu_mode = 0;
-    char pause_texture[] = "pause";
-    if (EdDebugParamDrawOff == 0 && (GameMode == 5 || EdPauseFlag != 0)) {
-        TexManager.ReloadTexture(GetVif1Packet(), 0x14);
-        CRect_i_ fade;
-        fade.x = 0;
-        fade.y = 0;
-        fade.width = 0x2800;
-        fade.height = 0xE00;
-        MGFillBox(fade, 0, 0, 0, 0x40);
-        setbilinear(0);
-        CRect_i_ texel;
-        CRect_i_ place;
-        texel.x = 0;
-        texel.y = 0;
-        texel.width = 0x80;
-        texel.height = 0x28;
-        place.x = 0x100;
-        place.y = 0xCC;
-        place.width = 0x80;
-        place.height = 0x28;
-        sceVif1Packet *packet = GetVif1Packet();
-        set2DSprite(packet, TexManager.GetTexture(pause_texture, -1), place, texel, 0x80);
+    if (EdDebugParamDrawOff == 0) {
+        char pause_texture[] = "pause";
+        if (GameMode == 5 || EdPauseFlag != 0) {
+            TexManager.ReloadTexture(GetVif1Packet(), 0x14);
+            CRect_i_ fade;
+            fade.x = 0;
+            fade.y = 0;
+            fade.width = 0x2800;
+            fade.height = 0xE00;
+            MGFillBox(fade, 0, 0, 0, 0x40);
+            setbilinear(0);
+            CRect_i_ place;
+            CRect_i_ texel;
+            texel.x = 0;
+            texel.y = 0;
+            texel.width = 0x80;
+            texel.height = 0x28;
+            place.x = 0x100;
+            place.y = 0xCC;
+            place.width = 0x80;
+            place.height = 0x28;
+            sceVif1Packet *packet = GetVif1Packet();
+            set2DSprite(packet, TexManager.GetTexture(pause_texture, -1), place, texel, 0x80);
+        }
     }
     EdFadeInOut();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", MainDraw__Fv__2);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1082__2);
 /**
  * Draws the interior's water surfaces, ordered back to front from the camera.
  *
