@@ -14,6 +14,7 @@
 #include "frame.hpp"
 #include "gamepad.hpp"
 #include "itemdata.hpp"
+#include "mainselect.hpp"
 #include "memcard.hpp"
 #include "menu_draw.hpp"
 #include "menu_dungeon.hpp"
@@ -33,7 +34,6 @@
 #include "btactstatus.hpp"
 #include "btmisc.hpp"
 #include "dngstatusdata.hpp"
-#include "mainselect.hpp"
 #include "menuitemstep.hpp"
 #include "shot_effect.hpp"
 #include "weaponlevelup.hpp"
@@ -46,7 +46,6 @@ extern u_long128 *WepMenuEffectReadBuf;
 extern char MenureadFile[64];
 extern char MenuWepDir[];
 extern int defWeapon__5[6];
-extern s16 CharaNameDrawCase;
 extern s16 DngEscapeSelect;
 extern "C" CCharacter DefaultWeapon;
 extern "C" CCharacter MainWeapon;
@@ -126,6 +125,9 @@ extern u_long128 *MenuWepIconCharaChangePtr;
 
 /** The buffer a character change loads the character's voice into. */
 extern u_long128 *MenuVoiceLoadPtr;
+
+/** The monster name's draw state, reset when the name is set up. */
+extern s16 CharaNameDrawCase;
 
 /** The model of the weapon the active character holds. */
 extern "C" CCharacter *NowWeapon;
@@ -1315,7 +1317,13 @@ int GetMonsterNameDrawFlag() {
     return CharaNameDrawFlag;
 }
 
-#ifdef NON_MATCHING
+/**
+ * Prepares the monster name message window over the given message buffers.
+ *
+ * @mangled MonsterNameInit__FP6ClsMesPsPUc
+ * @address 0x20EB80
+ * @size 0x208
+ */
 void MonsterNameInit(ClsMes *mes, short *buff, unsigned char *texture_buffer) {
     CharaNameMes = NULL;
     if (mes == NULL) {
@@ -1371,14 +1379,10 @@ void MonsterNameInit(ClsMes *mes, short *buff, unsigned char *texture_buffer) {
     CharaNameDrawFlag = 1;
     int *config = (int *) SaveData->GetConfigData();
     if (config != NULL) {
-        CharaNameDrawFlag = config[8] == 0;
+        CharaNameDrawFlag = !config[8];
     }
     CharaNameDrawCase = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", MonsterNameInit__FP6ClsMesPsPUc);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1287__2);
 
 void MonsterNameMake(int mes_no) {
     if (CharaNameMes != NULL) {
