@@ -14,6 +14,7 @@
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dataset.hpp"
+#include "ebattle.hpp"
 #include "edit_in.hpp"
 #include "editground.hpp"
 #include "editloop.hpp"
@@ -39,7 +40,6 @@
 #include "battlemenu.hpp"
 #include "clsmes.hpp"
 #include "dispctrl.hpp"
-#include "ebattle.hpp"
 #include "edit.hpp"
 #include "effectgroup.hpp"
 #include "effectmacro.hpp"
@@ -98,6 +98,29 @@ extern int camera_dist_mode;
 extern CTextureAnime TexAnime;
 extern CTexAnimeData TexAnimeData[64];
 
+/* Interior state the editor units share. */
+extern int EdInteriorDoorSound;
+extern int EdDebugCameraFlag;
+extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
+
+/* What the interior is doing this frame: walking about, or leaving through a door. */
+extern int GameMode;
+/* The time one frame advances everything by. */
+extern float NowTime;
+/* The camera that follows the player, and the one the player looks through. */
+extern CCameraFollow MainCamera;
+extern CCameraFollow ViewCamera;
+/* Frames left before a door the player walked into opens. */
+extern int door_open_cnt;
+/* Where the player stands and faces while a door plays its motion. */
+extern sceVu0FVECTOR fix_chara_pos;
+extern sceVu0FVECTOR fix_chara_rot;
+/* Whether the debug camera stays put instead of following the player. */
+extern int fix_camera;
+
+static void MoveCamera(CCameraFollow *camera);
+static int GetDoorPos(int door_no, float *position, float *rotation, int *parts_no, int *motion);
+
 #ifdef NON_MATCHING // draft declarations
 /* Where the camera sits for one camera marker of the interior, and the box the player must stand in. */
 struct INTERIOR_CAMERA {
@@ -109,32 +132,21 @@ struct INTERIOR_CAMERA {
     u8 unk_2e4[0xC];
 };
 
-extern int EdInteriorDoorSound;
 extern int EdInteriorStartEvent;
 extern int EdInteriorPartsNo;
 extern char EdInteriorName[];
-extern int EdDebugCameraFlag;
 extern int EdDebugEventEnable;
 extern int EdDrawOffFlag;
 extern int EdDrawOffMapShadow;
 extern int EdPauseFlag;
 extern int MenuMapJumpMode;
 extern CEffectGroup EdEffectGroup;
-extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 
-static int GameMode;
-static float NowTime;
-static CCameraFollow MainCamera(0.0f, 0.0f, 0.0f, 0.0f);
-static CCameraFollow ViewCamera(0.0f, 0.0f, 0.0f, 0.0f);
 static CCamera *NowCamera;
 static int loop_counter;
 static int key_counter;
 static int goto_menu;
 static int goto_return_menu;
-static int door_open_cnt;
-static sceVu0FVECTOR fix_chara_pos;
-static sceVu0FVECTOR fix_chara_rot;
-static int fix_camera;
 static int camera_num;
 static INTERIOR_CAMERA *active_camera;
 static int camera_change_count;
@@ -165,8 +177,6 @@ static void InitWorkBuffer();
 static void StepWater();
 static void MainDraw();
 static void MoveCharacter();
-static void MoveCamera(CCameraFollow *camera);
-static int GetDoorPos(int door_no, float *position, float *rotation, int *parts_no, int *motion);
 static void VillagerCollision();
 static int LoadTexture();
 static void LoadChara();
@@ -1069,7 +1079,6 @@ static void StepWater() {
  * @address 0x19DCF0
  * @size 0x38C
  */
-#ifdef NON_MATCHING
 static void MoveCharacter() {
     sceVu0FVECTOR follow;
     static sceVu0FVECTOR fix_pos;
@@ -1087,7 +1096,7 @@ static void MoveCharacter() {
     EdMoveCharaInfo.unk_a0 = 0;
     EdMoveChara();
     if (EdDebugCameraFlag != 0 && GamePad.Down(0x20) != 0) {
-        fix_camera = fix_camera == 0;
+        fix_camera = !fix_camera;
         MainCamera.GetPos(fix_pos);
     }
     if (fix_camera != 0) {
@@ -1107,12 +1116,13 @@ static void MoveCharacter() {
         return;
     }
     if (EdMoveCharaInfo.unk_a0 == 0 && EdPadDown(0x40, 1) != 0) {
-        sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 0.0f};
+        sceVu0FVECTOR position;
+        sceVu0FVECTOR start = {-40.5f, 0.0f, -12.55f, 1.0f};
         sceVu0FVECTOR rotation = {0.0f, 0.0f, 0.0f, 0.0f};
         Chara->GetPosition(position);
         Chara->GetRotation(rotation);
-        EPARTS_FUNC_DATA *jump = SearchMapJump(position, rotation);
-        if (jump != NULL) {
+        EPARTS_FUNC_DATA *jump;
+        if ((jump = SearchMapJump(position, rotation)) != NULL) {
             int motion;
             EdMoveCharaInit();
             motion = 0;
@@ -1128,13 +1138,11 @@ static void MoveCharacter() {
             Chara->Step();
             Chara->ClothStep(-1);
             GameMode = 1;
-            EdFadeOut(100, 0.0f, 0.0f, 0.0f);
+            float zero = 0.0f;
+            EdFadeOut(100, zero, zero, zero);
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", MoveCharacter__Fv);
-#endif
 /**
  * Applies the right stick to the interior camera, holding its height and distance in
  * range.

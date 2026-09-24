@@ -321,7 +321,14 @@
       "camera_dist_mode": "camera_dist_mode__2",
       "LoadTexture__Fv": "LoadTexture__Fv__2",
       "TexAnime": "TexAnime__2",
-      "TexAnimeData": "TexAnimeData__2"
+      "TexAnimeData": "TexAnimeData__2",
+      "GameMode": "GameMode__2",
+      "NowTime": "NowTime__2",
+      "MainCamera": "MainCamera__2",
+      "ViewCamera": "ViewCamera__2",
+      "door_open_cnt": "door_open_cnt__2",
+      "fix_chara_pos": "fix_chara_pos__2",
+      "fix_chara_rot": "fix_chara_rot__2"
     },
     "globalize_symbols": [
       "InitWorkBuffer__Fv__2",
@@ -350,7 +357,8 @@
       "CommandFLAME__FPPv__2",
       "CommandBRIGHT__FPPv__2",
       "MoveCamera__FP13CCameraFollow__2",
-      "LoadTexture__Fv__2"
+      "LoadTexture__Fv__2",
+      "MoveCharacter__Fv"
     ],
     "rodata_exports": [
       "@1592",
@@ -370,6 +378,10 @@
       "@1606"
     ],
     "sections": {
+      ".editinmove": [
+        "@204",
+        "@205"
+      ],
       ".editincamdist": [
         "camera_distance$1155"
       ],
@@ -377,11 +389,21 @@
         "texdata$1374"
       ],
       ".editinpts": [
-        "@313",
-        "@338"
+        "@341",
+        "@366"
+      ],
+      ".editinfixpos": [
+        "fix_pos$1123"
       ]
     },
     "rekey_sections": [
+      [
+        ".editinmove",
+        [
+          16,
+          16
+        ]
+      ],
       [
         ".editinpts",
         [
