@@ -2257,33 +2257,32 @@ void ClsMes::DrawMesWin_sub(CTexture *texture, int dx, int dy, int frame) {
     }
 }
 
-FUZZY_MATCH("asm/nonmatchings/clsmes", MyMenuHelpWinDraw__FiiiiiiiP8CTexture);
-
 void MyMenuHelpWinDraw(int x, int y, int width, int height, int shade, int u, int v,
                        CTexture *texture) {
     int bar_width = width < 0x20 ? 0 : width - 0x20;
     int bar_height = height < 0x1C ? 0 : height - 0x1C;
+    int alpha;
 
     setbilinear(0);
 
     set2DSprite(Vif1Packet, texture, CRect_i_(x, y, 0x10, 0xE),
-                CRect_i_(u, v, 0x10, 0xE), shade = (shade * 100) >> 7);
+                CRect_i_(u, v, 0x10, 0xE), alpha = (shade * 100) >> 7);
     set2DSprite(Vif1Packet, texture, CRect_i_(x, y + 0xE, 0x10, bar_height),
-                CRect_i_(u, v + 0xE, 0x10, 0x24), shade);
+                CRect_i_(u, v + 0xE, 0x10, 0x24), alpha);
     set2DSprite(Vif1Packet, texture, CRect_i_(x, bar_height + (y + 0xE), 0x10, 0xE),
-                CRect_i_(u, v + 0x32, 0x10, 0xE), shade);
+                CRect_i_(u, v + 0x32, 0x10, 0xE), alpha);
     set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x10, y, bar_width, 0xE),
-                CRect_i_(u + 0x10, v, 0x20, 0xE), shade);
+                CRect_i_(u + 0x10, v, 0x20, 0xE), alpha);
     set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x10, y + 0xE, bar_width, bar_height),
-                CRect_i_(u + 0x10, v + 0xE, 0x20, 0x24), shade);
+                CRect_i_(u + 0x10, v + 0xE, 0x20, 0x24), alpha);
     set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x10, bar_height + (y + 0xE), bar_width, 0xE),
-                CRect_i_(u + 0x10, v + 0x32, 0x20, 0xE), shade);
+                CRect_i_(u + 0x10, v + 0x32, 0x20, 0xE), alpha);
     set2DSprite(Vif1Packet, texture, CRect_i_(bar_width + (x + 0x10), y, 0x10, 0xE),
-                CRect_i_(u + 0x30, v, 0x10, 0xE), shade);
+                CRect_i_(u + 0x30, v, 0x10, 0xE), alpha);
     set2DSprite(Vif1Packet, texture, CRect_i_(bar_width + (x + 0x10), y + 0xE, 0x10, bar_height),
-                CRect_i_(u + 0x30, v + 0xE, 0x10, 0x24), shade);
+                CRect_i_(u + 0x30, v + 0xE, 0x10, 0x24), alpha);
     set2DSprite(Vif1Packet, texture, CRect_i_(bar_width + (x + 0x10), bar_height + (y + 0xE), 0x10, 0xE),
-                CRect_i_(u + 0x30, v + 0x32, 0x10, 0xE), shade);
+                CRect_i_(u + 0x30, v + 0x32, 0x10, 0xE), alpha);
 }
 
 void GetPos_AbsPosSet(int x, int y, int width, int height, int win_width, int win_height,
