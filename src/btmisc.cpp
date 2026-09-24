@@ -16,11 +16,9 @@
 #include "framevu1.hpp"
 #include "itemdata.hpp"
 #include "mds.hpp"
+#include "menu_save.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
-#ifdef NON_MATCHING // draft includes
-#include "menu_save.hpp"
-#endif
 
 /* Battle support: pack loading, item name paths, battle music, floor queries. */
 
@@ -149,16 +147,17 @@ INCLUDE_RODATA("asm/nonmatchings/btmisc", @919__2);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @920__2);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @921__2);
 /**
+ * Base name of each item's model and texture files, beginning with attachments.
+ */
+extern char *ITEM_NAME_TBL_NEW[];
+
+/**
  * Builds the model and texture paths of one item.
  *
  * @mangled BtGetItemNamePath__FPcPci
  * @address 0x1B7120
  * @size 0x124
  */
-#ifdef NON_MATCHING
-/** Base name of each item's model and texture files, beginning with attachments. */
-extern char *ITEM_NAME_TBL_NEW[];
-
 void BtGetItemNamePath(char *model_path, char *texture_path, int item_no) {
     item_no = TransWepNo(item_no);
     if (item_no >= 0x101) {
@@ -176,13 +175,6 @@ void BtGetItemNamePath(char *model_path, char *texture_path, int item_no) {
     printf("mds = %s\n", model_path);
     printf("img = %s\n", texture_path);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btmisc", BtGetItemNamePath__FPcPci);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @928__2);
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @929__2);
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @930__2);
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @931__3);
 extern char nameWepBuff_mds[];
 extern char nameWepBuff_img[];
 
