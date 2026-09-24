@@ -121,9 +121,10 @@ extern float EditMenuWinH;
 
 #ifdef NON_MATCHING // draft declarations
 #include "mainselect.hpp"
-
-extern CTexture *PerBoardTex;
 #endif
+
+/** The texture the personal board's pieces come from. */
+extern CTexture *PerBoardTex;
 
 /**
  * Returns the number of edit menu icons, one fewer until the manual is available.
@@ -815,14 +816,16 @@ void EditMenuDraw() {
     }
     setbilinear(1);
 }
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @573__2);
-#ifdef NON_MATCHING
 static int EditMenuStart() {
     u8 six[6] = {0x50, 0x60, 0x70, 0x80, 0x80, 0x70};
     u8 five[5] = {0x50, 0x60, 0x70, 0x80, 0x70};
     int icon_max = GetEditMenuMax();
     u8 x[6] = {0x50, 0x60, 0x70, 0x80, 0x80, 0x70};
     int brightness;
+    int x_offset;
+    int y_offset;
+    int i;
+    int icon;
 
     if (icon_max == 5) {
         for (int i = 0; i < icon_max; i++) {
@@ -844,10 +847,10 @@ static int EditMenuStart() {
     if (brightness > 0x80) {
         brightness = 0x80;
     }
-    for (int i = 0; i < GetEditMenuMax(); i++) {
-        int y_offset = 0;
-        int x_offset = 0;
-        s8 icon = EditMenuIconID[i];
+    for (i = 0; i < GetEditMenuMax(); i++) {
+        y_offset = 0;
+        x_offset = 0;
+        icon = EditMenuIconID[i];
         GetMenuIconInfo(icon);
         int selected = 0;
         if (i == EdCur.selection) {
@@ -856,22 +859,21 @@ static int EditMenuStart() {
             brightness = 0x80;
             selected = 1;
         }
-        int draw_x = (int) (MenuIconPos[i][0] - x_offset);
-        DrawMainMenuIcon(draw_x, (int) (MenuIconPos[i][1] - y_offset), icon, selected, 0x80, brightness);
+        DrawMainMenuIcon((int) (MenuIconPos[i][0] - x_offset), (int) (MenuIconPos[i][1] - y_offset), icon, selected, 0x80, brightness);
     }
     if (ReadBGSync() == 0 && EdMenuTextureReadEndFlag == 0) {
-        LOADTEXTURE_INFO2 texture = {0};
-        int blocks[5] = {0, 0, 0, 0, -1};
-        texture.block_no = EdMenuTextureBlock;
+        LOADTEXTURE_INFO2 textures[3] = {{"#frame_menuemenu#640#448#4"}};
+        textures[1].block_no = textures[0].block_no = EdMenuTextureBlock;
         BG_READ_INFO *file = GetReadBGFile(0);
-        texture.name = (char *) GetPackFile((u_int *) file->buffer, "editmenu.img", NULL);
+        textures[1].name = (char *) GetPackFile((u_int *) file->buffer, "editmenu.img", NULL);
+        int blocks[5] = {0, 0, 0, 0, -1};
         blocks[0] = EdMenuTextureBlock;
         blocks[1] = EdMenuExTextureBlock;
         blocks[2] = EdMenuExTextureBlock1;
         blocks[3] = EdMenuExTextureBlock2;
         MenuTextureDelete(blocks);
         TexManager.CleanUpTextureList();
-        TexManager.LoadTextureBlockEX(-1, &texture);
+        TexManager.LoadTextureBlockEX(-1, textures);
         Analyze = TexManager.GetTexture("analyzeB", EdMenuTextureBlock);
         AnaBar = TexManager.GetTexture("anabar", EdMenuTextureBlock);
         PerBoardTex = TexManager.GetTexture("perbrd", EdMenuTextureBlock);
@@ -882,24 +884,13 @@ static int EditMenuStart() {
         EdMenuTextureReadEndFlag = 1;
     }
     EdEffectCt++;
-    if (EdEffectCt > 16 && EdMenuTextureReadEndFlag != 0) {
+    if (EdEffectCt >= 17 && EdMenuTextureReadEndFlag != 0) {
         EditSwitch = 2;
         EdCur.selection = 0;
         EdEffectCt = 0;
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuStart__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @583);
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @584__2);
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @585__2);
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @586__2);
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @587__2);
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @588__2);
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @589__3);
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @590__3);
 INCLUDE_RODATA("asm/nonmatchings/editmenu", @650__5);
 
 /**
