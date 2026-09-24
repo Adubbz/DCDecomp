@@ -243,7 +243,8 @@ carve_part(main.sbss.part4b.s
            main.sbss.part4d.s=2A2958-2A2994
            main.sbss.part4g.s=2A29A4-2A29DC
            main.sbss.part4e.s=2A2A54-2A2A64
-           main.sbss.part4f.s=2A2A80-2A2BF0)
+           main.sbss.part4f.s=2A2A80-2A2B20
+           main.sbss.editground-tail.s=2A2B28-2A2BF0)
 carve_part(main.rdata.part4.s
            main.rdata.part4b.s=2A1168-2A11E0)
 # CheckDmg owns its local static effect index and initialization guard, and
@@ -288,7 +289,6 @@ carve_part(main.data.part4.s
            main.data.part4i.s=269A30-269AD0
            main.data.part4f.s=269B60-269BA0
            main.data.part4g.s=26A5E8-26AE60
-           main.data.part4k.s=26AE80-26AE90
            main.data.fishing-a.s=26AFE0-26B0C0
            main.data.motionmodel-a.s=26B0D0-26B1B0
            main.data.motionmodel-gap.s=26B1C8-26B1D0

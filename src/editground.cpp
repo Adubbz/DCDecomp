@@ -469,12 +469,12 @@ int CEditGround::SetFocusParts(float x, float y, float z) {
     return focus_parts_id;
 }
 
-#ifdef NON_MATCHING
 /* The size of a number, whatever its sign. */
 static inline float Magnitude(float value) {
     return value < 0.0f ? -value : value;
 }
 
+#ifdef NON_MATCHING
 void CEditGround::EditAreaClip(CCamera *camera, float range) {
     sceVu0FVECTOR eye = {0.0f, 0.0f, 0.0f, 0.0f};
     sceVu0FVECTOR target;
@@ -1106,42 +1106,50 @@ void CEditGround::DrawShadow(int pass, float near_distance, float far_distance) 
     }
 }
 
-#ifdef NON_MATCHING
 extern float mgZeroMatrix[4][4];
 
 void CEditGround::DrawPartsCursor(int plot, float *position, float *model_pos, int rot_y, float *rotation,
                                   int area_no) {
     static int old_parts = -1;
-    CVector3_i_ grid;
     CVector3_f_ cell;
-    sceVu0FVECTOR ambient;
+    CVector3_i_ grid;
     sceVu0FMATRIX light_direction;
     sceVu0FMATRIX light_colour;
-    sceVu0FVECTOR dark = {0.0f, 0.0f, 0.0f, 0.0f};
-    sceVu0FVECTOR goal;
+    sceVu0FVECTOR ambient;
+    int area_code;
+    CEditArea *area;
+    CMapParts *source;
+    int width;
+    int height;
+    int fits;
+    int id;
+    EDITPARTS_INFO *info;
+    CFrame *preview;
     CFrame *model;
     int saved_draw;
+    int subtype;
+    float step;
 
     if (plot < 0 || plot >= 24) {
         sceVu0CopyVector(model_pos, position);
         return;
     }
-    int area_code = GetAreaCode(position[0], position[1], position[2]);
+    area_code = GetAreaCode(position[0], position[1], position[2]);
     if (area_code < 0) {
         sceVu0CopyVector(model_pos, position);
         return;
     }
-    CEditArea *area = areas[area_code];
-    CMapParts *source = &plot_parts[plot];
-    int width = source->GetWidth();
-    int height = source->GetHeight();
+    area = areas[area_code];
+    source = &plot_parts[plot];
+    width = source->GetWidth();
+    height = source->GetHeight();
     if (area->CheckAreaRect(position[0], position[1], position[2], width, height) == 0) {
         sceVu0CopyVector(model_pos, position);
         return;
     }
     area->GetPos(&grid, position[0], position[1], position[2]);
-    int fits = area->CheckParts(source, position[0], position[1], position[2], rot_y);
-    int id = area->SearchPartsID(position[0], position[1], position[2]);
+    fits = area->CheckParts(source, position[0], position[1], position[2], rot_y);
+    id = area->SearchPartsID(position[0], position[1], position[2]);
     if (source->subtype == 5) {
         if (CheckDelete(area, source, position[0], position[1], position[2]) != 0) {
             fits = 0;
@@ -1151,7 +1159,7 @@ void CEditGround::DrawPartsCursor(int plot, float *position, float *model_pos, i
         }
     }
     if (parts_info != NULL) {
-        EDITPARTS_INFO *info = parts_info->GetPartsInfo(plot);
+        info = parts_info->GetPartsInfo(plot);
         if (info != NULL) {
             fits &= info->placed < info->stock;
         }
@@ -1161,7 +1169,7 @@ void CEditGround::DrawPartsCursor(int plot, float *position, float *model_pos, i
     position[1] = 5.0f + cell.y;
     position[2] = cell.z;
     position[3] = 0.0f;
-    CFrame *preview = fits != 0 ? (CFrame *) source->unk_0FC : (CFrame *) source->unk_100;
+    preview = fits != 0 ? (CFrame *) source->unk_0FC : (CFrame *) source->unk_100;
     if (width % 2 == 1) {
         position[0] += 0.5f * area->GetUnitSize();
     }
@@ -1169,10 +1177,11 @@ void CEditGround::DrawPartsCursor(int plot, float *position, float *model_pos, i
         position[2] += 0.5f * area->GetUnitSize();
     }
     if (fits == 0) {
-        // Draw the cursor unlit where the part cannot go.
+        // Draw the cursor dim and without point lights where the part cannot go.
         MGGetAmbient(ambient);
         MGGetPLight(light_direction, light_colour);
-        MGSetAmbient(dark);
+        sceVu0FVECTOR dim = {60.0f, 60.0f, 60.0f, 128.0f};
+        MGSetAmbient(dim);
         MGSetPLight(mgZeroMatrix, mgZeroMatrix);
     }
     cursor.unit_size = area->GetUnitSize();
@@ -1184,43 +1193,51 @@ void CEditGround::DrawPartsCursor(int plot, float *position, float *model_pos, i
         MGSetPLight(light_direction, light_colour);
     }
     position[1] += 50.0f;
+    sceVu0FVECTOR goal;
     sceVu0CopyVector(goal, position);
-    for (int i = 0; i < 3; i++) {
-        float step = goal[i] - model_pos[i];
-        if (Magnitude(step) < 1.0f) {
-            model_pos[i] = goal[i];
-        } else {
-            model_pos[i] += step / 8.0f;
+    step = goal[0] - model_pos[0];
+    if (Magnitude(step) < 1.0f) {
+        model_pos[0] = goal[0];
+    } else {
+        model_pos[0] += step / 8.0f;
+    }
+    step = goal[1] - model_pos[1];
+    if (Magnitude(step) < 1.0f) {
+        model_pos[1] = goal[1];
+    } else {
+        model_pos[1] += step / 8.0f;
+    }
+    step = goal[2] - model_pos[2];
+    if (Magnitude(step) < 1.0f) {
+        model_pos[2] = goal[2];
+    } else {
+        model_pos[2] += step / 8.0f;
+    }
+    if (source->unk_0E4 == area_no) {
+        subtype = source->subtype;
+        if (preview != NULL && subtype != 2 && subtype != 3) {
+            model = NULL;
+            if (subtype == 5) {
+                model = preview->SearchFrame("kawa");
+                if (model != NULL) {
+                    saved_draw = model->attr.draw_on;
+                    model->attr.draw_on = 2;
+                }
+                if (id >= 0) {
+                    CMapParts *target = &parts[id];
+                    target->GetRotation(rotation);
+                }
+            }
+            float *angle = rotation;
+            preview->SetPosition(model_pos);
+            preview->SetRotation(angle[0], angle[1], angle[2]);
+            MGDraw(preview);
+            if (model != NULL) {
+                model->attr.draw_on = saved_draw;
+            }
         }
-    }
-    if (source->unk_0E4 != area_no) {
-        return;
-    }
-    if (preview == NULL || source->subtype == 2 || source->subtype == 3) {
-        return;
-    }
-    model = NULL;
-    if (source->subtype == 5) {
-        model = preview->SearchFrame("kawa");
-        if (model != NULL) {
-            saved_draw = model->attr.draw_on;
-            model->attr.draw_on = 2;
-        }
-        if (id >= 0) {
-            parts[id].GetRotation(rotation);
-        }
-    }
-    preview->SetPosition(model_pos);
-    preview->SetRotation(rotation[0], rotation[1], rotation[2]);
-    MGDraw(preview);
-    if (model != NULL) {
-        model->attr.draw_on = saved_draw;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editground", DrawPartsCursor__11CEditGroundFiPfPfiPfi);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/editground", @1207);
 
 void CEditGround::DrawEffect(CCameraFollow *camera, float time, CEffectGroup *effects) {
     sceVu0FVECTOR position;
