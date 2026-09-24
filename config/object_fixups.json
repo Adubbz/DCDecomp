@@ -316,7 +316,9 @@
       "CommandWATER_SHAKE__FPPv": "CommandWATER_SHAKE__FPPv__2",
       "CommandFIRE__FPPv": "CommandFIRE__FPPv__2",
       "CommandFLAME__FPPv": "CommandFLAME__FPPv__2",
-      "CommandBRIGHT__FPPv": "CommandBRIGHT__FPPv__2"
+      "CommandBRIGHT__FPPv": "CommandBRIGHT__FPPv__2",
+      "MoveCamera__FP13CCameraFollow": "MoveCamera__FP13CCameraFollow__2",
+      "camera_dist_mode": "camera_dist_mode__2"
     },
     "globalize_symbols": [
       "InitWorkBuffer__Fv__2",
@@ -343,7 +345,8 @@
       "CommandWATER_SHAKE__FPPv__2",
       "CommandFIRE__FPPv__2",
       "CommandFLAME__FPPv__2",
-      "CommandBRIGHT__FPPv__2"
+      "CommandBRIGHT__FPPv__2",
+      "MoveCamera__FP13CCameraFollow__2"
     ],
     "rodata_exports": [
       "@1592",
@@ -361,7 +364,12 @@
       "@1604",
       "@1605",
       "@1606"
-    ]
+    ],
+    "sections": {
+      ".editincamdist": [
+        "camera_distance$1155"
+      ]
+    }
   },
   "src/edit.cpp": {
     "export_constants_shared": [

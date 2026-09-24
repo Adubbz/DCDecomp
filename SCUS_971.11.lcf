@@ -494,6 +494,9 @@ SECTIONS
         editloop3.cpp.o (.fishinglineorigin) // 0x00269c40
         editloop3.cpp.o (.extfuncinfo) // 0x00269c50
         main.data.part4g.s.o (.data)   // 0x0026a5e8
+        edit_in.cpp.o (.editincamdist) // 0x0026a690
+        . = ALIGN(0x10);
+        main.data.edit_in-a.s.o (.data) // 0x0026a6a0
         edit_in.cpp.o (.data)          // 0x0026ae10
         main.data.edit_in-b.s.o (.data) // 0x0026ae40
         editground.cpp.o (.data)       // 0x0026ae60

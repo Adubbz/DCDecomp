@@ -288,7 +288,8 @@ carve_part(main.data.part4.s
            main.data.part4j.s=269494-269930
            main.data.part4i.s=269A30-269AD0
            main.data.part4f.s=269B60-269BA0
-           main.data.part4g.s=26A5E8-26AE10
+           main.data.part4g.s=26A5E8-26A690
+           main.data.edit_in-a.s=26A6A0-26AE10
            main.data.edit_in-b.s=26AE40-26AE60
            main.data.fishing-a.s=26AFE0-26B0C0
            main.data.motionmodel-a.s=26B0D0-26B1B0

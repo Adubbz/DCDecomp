@@ -21,6 +21,7 @@
 #include "editpartsinfo.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
+#include "gamepad.hpp"
 #include "mainselect.hpp"
 #include "mapparts.hpp"
 #include "mathutil.hpp"
@@ -43,7 +44,6 @@
 #include "effectgroup.hpp"
 #include "effectmacro.hpp"
 #include "gamemode.hpp"
-#include "gamepad.hpp"
 #include "menu_misc.hpp"
 #include "objanime.hpp"
 #include "savedata.hpp"
@@ -92,6 +92,9 @@ extern float setTexAnimCntf;
 /* Map jump the player arrives through when entering an interior. */
 extern int EdInteriorJumpID;
 
+/* How far the interior camera stands from the player, as an index into its distances. */
+extern int camera_dist_mode;
+
 #ifdef NON_MATCHING // draft declarations
 /* Where the camera sits for one camera marker of the interior, and the box the player must stand in. */
 struct INTERIOR_CAMERA {
@@ -126,7 +129,6 @@ static int key_counter;
 static int goto_menu;
 static int goto_return_menu;
 static int door_open_cnt;
-static int camera_dist_mode;
 static sceVu0FVECTOR fix_chara_pos;
 static sceVu0FVECTOR fix_chara_rot;
 static int fix_camera;
@@ -1141,9 +1143,8 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", MoveCharacter__Fv);
  * @size 0x164
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static void MoveCamera(CCameraFollow *camera) {
-    static float camera_distance[3] = {50.0f, 80.0f, 110.0f};
+    static float camera_distance[3] = {20.0f, 60.0f, 100.0f};
 
     float horizontal = GamePad.GetRXf();
     camera->AddHeight(-GamePad.GetRYf());
@@ -1152,10 +1153,10 @@ static void MoveCamera(CCameraFollow *camera) {
     }
     camera->AddAngle(0.04f * -horizontal);
     if (GamePad.On(8) != 0) {
-        camera->AddAngle(-0.0174533f);
+        camera->AddAngle(-0.017453292f);
     }
     if (GamePad.On(4) != 0) {
-        camera->AddAngle(0.0174533f);
+        camera->AddAngle(0.017453292f);
     }
     camera->SetDistance(camera_distance[camera_dist_mode]);
     if (GamePad.Down(0x10) != 0) {
@@ -1165,9 +1166,6 @@ static void MoveCamera(CCameraFollow *camera) {
         camera_dist_mode = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", MoveCamera__FP13CCameraFollow__2);
-#endif
 /**
  * Finds the map jump the player is standing on.
  *
