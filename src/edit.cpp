@@ -753,9 +753,9 @@ void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_po
             } else {
                 dist = DistVector(camera_pos, from);
             }
-            far_dist = info->far_distance;
-            near_dist = info->near_distance;
-            se = (int) info->sound_no;
+            far_dist = info->values[2];
+            near_dist = info->values[1];
+            se = (int) info->values[0];
             /* A torch and a fire are one sound at one range whatever the description says. */
             if (info->kind == 1 || info->kind == 2) {
                 se = 54;

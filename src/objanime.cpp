@@ -424,9 +424,9 @@ int InitEditEffect(CFrame *frame, EPARTS_FUNC_DATA *func, EDIT_EFFECT_INFO *effe
     effect->end = ConvertTime(func->end_time);
     for (int i = 0; i < 4; i++) {
         effect->offset[i] = func->position[i];
-        ((float *) effect->unk_40)[i] = func->rotation[i];
+        effect->unk_40[i] = func->rotation[i];
         effect->colour[i] = func->parameters[i];
-        (&effect->sound_no)[i] = func->values[i];
+        effect->values[i] = func->values[i];
     }
     effect->offset[3] = 1.0f;
     InitEditEffect(frame, effect);
@@ -518,7 +518,7 @@ void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *gro
             Candle.Draw();
             scale *= 0.1f;
             position[1] -= 4.0f;
-            if (effect->sound_no > 0.0f) {
+            if (effect->values[0] > 0.0f) {
                 break;
             }
         case 1:
