@@ -159,10 +159,25 @@ void BtGetItemNamePath(char *model_path, char *texture_path, int item_no) {
     printf("mds = %s\n", model_path);
     printf("img = %s\n", texture_path);
 }
+
+/**
+ * Buffer the weapon model's file name is built in.
+ */
 extern char nameWepBuff_mds[];
+
+/**
+ * Buffer the weapon texture's file name is built in.
+ */
 extern char nameWepBuff_img[];
 
-#ifdef NON_MATCHING
+/**
+ * Builds the model and texture file names of one of a character's weapons into
+ * the two given buffers.
+ *
+ * @mangled BtGetWeaponNamePath2__FPcPcii
+ * @address 0x1B7250
+ * @size 0x158
+ */
 void BtGetWeaponNamePath2(char *name, char *path, int chara, int weapon) {
     char *prefix[6] = {"c01w", "c04w", "c06w", "c05w", "c10w", "c18w"};
     char number[32];
@@ -182,11 +197,6 @@ void BtGetWeaponNamePath2(char *name, char *path, int chara, int weapon) {
     strcpy(name, nameWepBuff_mds);
     strcpy(path, nameWepBuff_img);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btmisc", BtGetWeaponNamePath2__FPcPcii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @946);
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @947);
 #ifdef NON_MATCHING
 void BtGetWeaponNamePath3(char *name, char *effect_name, int weapon_no) {
     static int defWeapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
