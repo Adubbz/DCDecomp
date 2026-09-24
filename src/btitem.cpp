@@ -204,6 +204,26 @@ extern u_int *itemOpenItemChr;
 extern "C" CMotionModel itemOpenBig;
 
 /**
+ * Which Atla pickup presentation is running.
+ */
+extern s32 atraShortGetType;
+
+/**
+ * Effect model the short Atla pickup draws.
+ */
+extern u_int *shortAtraEffectPtr;
+
+/**
+ * Event number of the Atla being picked up.
+ */
+extern int BtAtraGetNo;
+
+/**
+ * Step the Atla pickup presentation is on.
+ */
+extern int BtGetAtraBoll_Sled;
+
+/**
  * Event the party is standing on, or -1 when none is.
  */
 extern s32 iventActive;
@@ -238,11 +258,7 @@ extern char *ITEM_NAME_TBL_NEW[];
 extern "C" CWeaponEffect CWeaponFx;
 extern "C" CCharacter *NowWeapon;
 extern s32 BtItemListCashFlag;
-extern int BtGetAtraBoll_Sled;
 extern float TreasureboxBig_itemScale;
-extern int BtAtraGetNo;
-extern s32 atraShortGetType;
-extern u_int *shortAtraEffectPtr;
 extern int BtAtraGetID;
 extern CFrame *itemBoxModel;
 extern s32 itemOpenBigFlag;
@@ -815,7 +831,14 @@ int BtGetTreasureboxSmall_Loop() {
 #else
 INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxSmall_Loop__Fv);
 #endif
-#ifdef NON_MATCHING
+INCLUDE_RODATA("asm/nonmatchings/btitem", @747);
+INCLUDE_RODATA("asm/nonmatchings/btitem", @754);
+INCLUDE_RODATA("asm/nonmatchings/btitem", @755);
+INCLUDE_RODATA("asm/nonmatchings/btitem", @792);
+INCLUDE_RODATA("asm/nonmatchings/btitem", @793);
+INCLUDE_RODATA("asm/nonmatchings/btitem", @794__2);
+INCLUDE_RODATA("asm/nonmatchings/btitem", @795__2);
+INCLUDE_RODATA("asm/nonmatchings/btitem", @796);
 /**
  * Starts the short presentation for picking up an Atla.
  *
@@ -854,18 +877,6 @@ void BtAtraGetShort_Init() {
     BtGetAtraBoll_Sled = 0;
     BtActStatus.unk_09C = 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", BtAtraGetShort_Init__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/btitem", @747);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @754);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @755);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @792);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @793);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @794__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @795__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @796);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @866__2);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @902);
 /**
  * Runs the Atla pickup presentation and reports when it ends.
