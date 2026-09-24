@@ -134,8 +134,8 @@ void CBound::SetDir(float *direction, float *up_direction) {
     sceVu0TransposeMatrix(matrix, inverse);
 }
 #ifdef NON_MATCHING
-void CBound::SetDir(float *unused_direction) {
-    sceVu0Normalize(direction, direction);
+void CBound::SetDir(float *new_direction) {
+    sceVu0Normalize(direction, new_direction);
     float length = vuabs(direction);
     float saved_y = direction[1];
     direction[1] = 0.0f;
