@@ -379,8 +379,6 @@ void CCharacter::SetMotionCamera(CCamera *camera) {
     }
 }
 
-FUZZY_MATCH("asm/nonmatchings/character", GetMotionParam__10CCharacterFiPiPiPiPi);
-
 tagMOTION_TYPE *CCharacter::GetMotionParam(int motion_no, int *out_index, int *out_start,
                                            int *out_end, int *out_set) {
     int index;
@@ -394,7 +392,7 @@ tagMOTION_TYPE *CCharacter::GetMotionParam(int motion_no, int *out_index, int *o
     // holds the number is the one whose range covers it.
     for (i = 0; i < CHARA_MOTION_MAX; i++) {
         if (this->motion[i] != NULL) {
-            if (motion_no < this->motion_start[i]) {
+            if (this->motion_start[i] > motion_no) {
                 continue;
             }
             if (!(motion_no < this->motion_end[i])) {
