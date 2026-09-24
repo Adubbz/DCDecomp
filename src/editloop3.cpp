@@ -644,30 +644,36 @@ static void RestoreVillagerInfo(VILLAGER_INFO *villagers) {
         villagers[i] = restore_info[i];
 }
 
-void EdSelectVillager(VILLAGER_INFO *villagers, float clock, EDIT_MAP_INFO *map_info) {
+/**
+ * Chooses the villagers placed on the map for the given time, returning the number of slots filled.
+ */
+int EdSelectVillager(VILLAGER_INFO *villagers, float clock, EDIT_MAP_INFO *map_info) {
     EdInitVillagerTable(clock, map_info);
     EdGetTime(clock);
 
-    for (int i = 0; i < 10; i++)
+    int i;
+    for (i = 0; i < 10; i++)
         select_table[i] = -1;
 
     int selected_count = 0;
-    int i;
     for (i = 0; i < 16 && selected_count < 6; i++) {
         int action = appear[i].action;
         if (action == 4 || action == 2)
             select_table[selected_count++] = i;
     }
     for (i = 0; i < 10 && selected_count < 6; i++) {
+        int j;
+        int duplicate;
         int index = appear_table[i];
         if (index < 0)
             break;
         int action = appear[index].action;
         if (action == 3 || action == 1)
             continue;
-        int duplicate = 0;
-        for (int j = 0; j < selected_count; j++) {
-            if (select_table[j] == index) {
+        duplicate = 0;
+        for (j = 0; j < selected_count; j++) {
+            int selected = select_table[j];
+            if (selected == index) {
                 duplicate = 1;
                 break;
             }
@@ -690,6 +696,7 @@ void EdSelectVillager(VILLAGER_INFO *villagers, float clock, EDIT_MAP_INFO *map_
     }
     if (i < 9)
         villagers[i].name[0] = '\0';
+    return i;
 }
 
 int EdCheckVillagerIn(int index, VILLAGER_INFO *villagers) {
