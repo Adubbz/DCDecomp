@@ -122,8 +122,8 @@ public:
     void SetLoop(int loop);
 
     /**
-     * Starts one shot effect and gives back the slot it went into, or -1
-     * where none was free.
+     * Starts one shot effect and gives back the slot it went into; with no
+     * description loaded or no free slot it returns without a value.
      *
      * @mangled Set__12CSHOT_EFFECTFPfPfiiiP6CFramei
      * @address 0x1ADD60

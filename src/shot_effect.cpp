@@ -1,11 +1,13 @@
 #include "shot_effect.hpp"
 
+#include <cstdio>
 #include <cstdlib>
 
 #include "collisiondata.hpp"
 #include "dun/gameloop.hpp"
 #include "hit_machingun_effect.hpp"
 #include "itemdata.hpp"
+#include "mathutil.hpp"
 #include "mglib.hpp"
 #include "nowload.hpp"
 #include "shot_effect_pack.hpp"
@@ -269,38 +271,76 @@ void CSHOT_EFFECT::SetLoop(s32 loop) {
     }
 }
 
-#ifdef NON_MATCHING
-int CSHOT_EFFECT::Set(float *position, float *target, int owner, int sub_id,
-                      int source, CFrame *frame, int initial_phase) {
-    (void) frame;
+int CSHOT_EFFECT::Set(float *position, float *target, int owner, int sub_id, int source,
+                      CFrame *parent, int initial_phase) {
+    int slot = -1;
+
     current_slot = -1;
     if (effect_data == NULL) {
-        return -1;
+        printf("******** shot err ***********\n");
+        return;
     }
 
-    int slot = 0;
-    while (slot < slot_count && active[slot] != 0) {
-        slot++;
+    for (int i = 0; i < slot_count; i++) {
+        if (active[i] == 0) {
+            slot = i;
+            break;
+        }
     }
-    if (slot >= slot_count || slot >= 8) {
-        return -1;
+    if (slot == -1) {
+        return;
     }
 
-    phase[slot] = initial_phase == -1 ? (effect_data->motion[0] == -1) : initial_phase;
+    // An effect with no first-phase motion starts in its flying phase.
+    int start_phase = 0;
+    if (effect_data->motion[0] == -1) {
+        start_phase++;
+    }
+    phase[slot] = start_phase;
+    if (initial_phase != -1) {
+        phase[slot] = initial_phase;
+    }
+
     if (effect_data->unk_010 == 0) {
         position[3] = 1.0f;
         target[3] = 1.0f;
         sceVu0SubVector(velocity[slot], target, position);
         sceVu0Normalize(velocity[slot], velocity[slot]);
+        if (parent == NULL) {
+            if (effect_data->unk_014 != 0) {
+                sceVu0FMATRIX rotation;
+                LookAtMatrixZ(rotation, velocity[slot]);
+                chara[slot].frame->SetTransMatrix(rotation);
+            }
+            chara[slot].frame->DeleteReference();
+        } else {
+            chara[slot].frame->SetReference(parent);
+            chara[slot].SetPosition(0.0f, 0.0f, 0.0f);
+            chara[slot].SetRotation(0.0f, -1.5707964f, 0.0f);
+        }
         sceVu0ScaleVectorXYZ(velocity[slot], velocity[slot], effect_data->speed[phase[slot]]);
     }
 
+    if (phase[slot] == 0) {
+        chara[slot].SetMotion(effect_data->motion[0], 6);
+        chara[slot].motion_type.state.time =
+            (float) chara[slot].motion_type.motion_info[effect_data->motion[0]].start;
+    } else {
+        chara[slot].SetMotion(effect_data->motion[1], 4);
+        chara[slot].motion_type.state.time =
+            (float) chara[slot].motion_type.motion_info[effect_data->motion[1]].start;
+    }
+    if (parent == NULL) {
+        chara[slot].SetPosition(position);
+    }
+
+    damage[slot] = effect_data->unk_03C;
+    phase_delay[slot] = effect_data->life_time;
     active[slot] = 1;
     user_id[slot] = owner;
     user_sub_id[slot] = sub_id;
+    weapon_status[slot] = 1;
     source_id[slot] = source;
-    damage[slot] = effect_data->unk_03C;
-    phase_delay[slot] = effect_data->life_time;
     loop[slot] = -1;
     random_rate[slot] = -1.0f;
     life_time[slot] = -1;
@@ -313,10 +353,6 @@ int CSHOT_EFFECT::Set(float *position, float *target, int owner, int sub_id,
     wait_state[slot] = 0;
     return slot;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", Set__12CSHOT_EFFECTFPfPfiiiP6CFramei);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/shot_effect", @977__2);
 
 void CSHOT_EFFECT::SetWait(s32 wait) {
     s32 slot;
