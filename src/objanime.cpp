@@ -6,15 +6,11 @@
 
 #include "candleeffect.hpp"
 #include "editloop.hpp"
+#include "effectmacro.hpp"
 #include "fireomni.hpp"
 #include "frame.hpp"
-#include "texture.hpp"
-#ifdef NON_MATCHING // draft includes
-#include <cstring>
-#include "edit.hpp"
-#include "effectmacro.hpp"
 #include "snd.hpp"
-#endif
+#include "texture.hpp"
 
 /** The one fire and the one candle the editor lends to every map part. */
 extern CFireOmni Fire;
@@ -489,13 +485,21 @@ void EditEffectStep2(void) {
  * @address 0x166E10
  * @size 0x24C
  */
-#ifdef NON_MATCHING
 void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *group) {
     sceVu0FVECTOR position;
     float scale;
     int kind;
+    float x;
+    float y;
+    float z;
 
-    if (effect == NULL || effect->kind <= 0 || effect->frame == NULL) {
+    if (effect == NULL) {
+        return;
+    }
+    if (effect->kind <= 0) {
+        return;
+    }
+    if (effect->frame == NULL) {
         return;
     }
     effect->frame->GetWorldPosition(position, effect->offset);
@@ -514,9 +518,12 @@ void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *gro
         case 1:
         case 2:
         case 3:
-            Fire.pos[0] = 10.0f * (0.1f * position[0]);
-            Fire.pos[1] = 10.0f * (0.1f * position[1]);
-            Fire.pos[2] = 10.0f * (0.1f * position[2]);
+            z = 0.1f * position[2];
+            y = 0.1f * position[1];
+            x = 0.1f * position[0];
+            Fire.pos[0] = 10.0f * x;
+            Fire.pos[1] = 10.0f * y;
+            Fire.pos[2] = 10.0f * z;
             Fire.pos[3] = 1.0f;
             position[3] = 1.0f;
             if (effect->kind == 1) {
@@ -536,11 +543,8 @@ void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *gro
             break;
         case 4:
             if (group != NULL) {
-                EffectSmoke(group, position, scale, 13);
+                EffectSmoke(group, position, effect->colour[0], 13);
             }
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/objanime", DrawEditEffect__FP16EDIT_EFFECT_INFOP7CCameraP12CEffectGroup);
-#endif
