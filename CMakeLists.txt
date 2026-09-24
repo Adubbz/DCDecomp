@@ -207,7 +207,7 @@ carve_part(main.bss.part3.s
            main.bss.part3.s=1C7A6B8-1C7A6C0)
 # gameutil.cpp's own run stands in the middle of this one.
 carve_part(main.bss.part4.s
-           main.bss.part4d.s=1CECF00-1CF8F40)
+           main.bss.part4d.s=1CF8B40-1CF8F40)
 # edit.cpp's own runs stand in the middle of these two, and editloop3.cpp owns
 # EdExchangeInfo inside the second.
 carve_part(main.bss.part4b.s
@@ -230,8 +230,6 @@ carve_part(main.bss.part5.s
            main.bss.part5h.s=1D4A630-1D569A0)
 carve_part(main.sbss.part3.s
            main.sbss.part3.s=2A24FC-2A2500)
-carve_part(main.sbss.part4.s
-           main.sbss.sound-tail.s=2A25A0-2A25A4)
 # The dun overlay's small data runs from GameEnv to the end of retail's .sbss,
 # and the unit supplies all of it, so the dump stops in front of it.
 carve_part(main.sbss.part5b.s
@@ -326,6 +324,10 @@ list(REMOVE_ITEM STATIC_SECTION_SOURCES
 # actionseq.cpp now owns the complete data run at 0x2540B0-0x2540C0.
 list(REMOVE_ITEM STATIC_SECTION_SOURCES
      ${PARTS_DIR}/main.data.part2b.s)
+
+# gameutil.cpp now owns the complete small-data run at 0x2A25A0-0x2A25A4.
+list(REMOVE_ITEM STATIC_SECTION_SOURCES
+     ${PARTS_DIR}/main.sbss.part4.s)
 
 set(FILTERED_SBSS_PART1 generated/asm/data/main/parts/main.sbss.part1.s)
 add_custom_command(

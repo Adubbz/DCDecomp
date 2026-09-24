@@ -720,7 +720,7 @@ SECTIONS
 		main.cpp.o (.sbss)
 		sound.cpp.o (.sbss)            // 0x002a2588
 		. = ALIGN(16);
-		main.sbss.sound-tail.s.o (.sbss) // 0x002a25a0
+		gameutil.cpp.o (.gameutilsbss)  // 0x002a25a0 MotionProc2's vertex pointer
 		clsmes.cpp.o (.sbss)
 		gameutil.cpp.o (.sbss)         // 0x002a25a8
 		main.sbss.part4b.s.o (.sbss)   // 0x002a25b8

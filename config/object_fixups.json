@@ -922,6 +922,11 @@
     ]
   },
   "src/gameutil.cpp": {
+    "sections": {
+      ".gameutilsbss": [
+        "vert$388"
+      ]
+    },
     "rodata_exports": [
       "@25"
     ]

@@ -93,7 +93,6 @@ int ezTransToIOP(void *iop_address, void *ee_address, int size) {
     return 0;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/gameutil", @414__4);
 
 /**
  * Interpolates between two quaternions along the shorter arc.
@@ -357,35 +356,113 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
     }
     return list->next;
 }
-#ifdef NON_MATCHING
+
+static sceVu0FVECTOR def_vrtx[3000]; // Working copy of the skinned frame's vertices that the bone weights move.
+
 Mot_List *MotionProc2(CFrame *frame, tagMOTION_TYPE *motion, tagFRAME_INF *frame_info,
                       Mot_List *list) {
-    u32 key;
-    CFrame *target;
+    static sceVu0FMATRIX Bone_Matrix;
+    static sceVu0FMATRIX Bone_Matrix_inv;
+    static sceVu0FMATRIX Bone_Matrix_Base;
+    static sceVu0FVECTOR *vert;
+    CFrameVu1 *target;
+    u_int i;
 
     if (list->type == 200) {
         return list->next;
     }
-    target = frame + list->frame;
-    if (list->target != frame_info[list->frame].parent_frame) {
-        sceVu0CopyMatrix(frame_info[list->target].matrix, target->local);
+    target = &((CFrameVu1 *) frame)[list->target];
+    if (list->target == frame_info[list->frame].parent_frame) {
+        CFrameVu1 *owner = &((CFrameVu1 *) frame)[list->frame];
+        MDT_HEADER *model = (MDT_HEADER *) owner->GetVisual()->GetMDTDataAddress();
+
+        vert = (sceVu0FVECTOR *) ((u_char *) model + model->vertex_ofs);
+        if (frame_info[list->frame].vertex_count > 3000) {
+            printf("###### MAX_VERTX OVER %d/%d######\n", frame_info[list->frame].vertex_count, 3000);
+        }
+        memcpy(def_vrtx, frame_info[list->frame].base_vertices,
+               frame_info[list->frame].vertex_count * sizeof(sceVu0FVECTOR));
+        sceVu0UnitMatrix(Bone_Matrix);
+        sceVu0UnitMatrix(Bone_Matrix_Base);
+        sceVu0InversMatrix(Bone_Matrix_inv, frame_info[list->frame].matrix);
+        owner->attr.unk_0A = 1;
+        sceVu0UnitMatrix(frame_info[list->target].bone_base_matrix);
+        sceVu0UnitMatrix(frame_info[list->target].bone_matrix);
+    } else {
+        sceVu0FMATRIX local;
+        sceVu0FVECTOR translation;
+
+        sceVu0CopyMatrix(local, target->local);
+        MulMatrix(Bone_Matrix, frame_info[frame_info[list->target].parent_frame].bone_matrix, local);
+        MulMatrix(Bone_Matrix_Base, frame_info[frame_info[list->target].parent_frame].bone_base_matrix,
+                  motion->base_matrices[list->target]);
+        sceVu0CopyMatrix(frame_info[list->target].bone_base_matrix, Bone_Matrix_Base);
+        sceVu0CopyMatrix(frame_info[list->target].bone_matrix, Bone_Matrix);
+        sceVu0CopyVector(translation, Bone_Matrix_Base[3]);
+        sceVu0InversMatrix(Bone_Matrix_Base, Bone_Matrix_Base);
+        sceVu0CopyVector(Bone_Matrix_Base[3], translation);
     }
-    for (key = 0; key < list->key_count; key++) {
-        u32 vertex = *(u32 *) ((u8 *) list->keys + key * 0x20);
-        float *offset = (float *) ((u8 *) list->keys + key * 0x20 + 0x10);
-        if (frame_info[list->frame].base_vertices != NULL &&
-            vertex < frame_info[list->frame].vertex_count) {
-            sceVu0FVECTOR *base = frame_info[list->frame].base_vertices;
-            base[vertex][0] += offset[0];
-            base[vertex][1] += offset[1];
-            base[vertex][2] += offset[2];
+    for (i = 0; i < list->key_count; i++) {
+        sceVu0FVECTOR weight;
+        register float *weight_ptr;
+        register float *bone;
+        register float *base;
+        register float *inverse;
+        register float *source;
+        register float *deformed;
+        register float *out;
+
+        weight[0] = 0.01f * list->keys[i].value[0];
+        out = vert[list->keys[i].frame];
+        source = frame_info[list->frame].base_vertices[list->keys[i].frame];
+        base = (float *) Bone_Matrix_Base;
+        bone = (float *) Bone_Matrix;
+        deformed = def_vrtx[list->keys[i].frame];
+        weight_ptr = weight;
+        inverse = (float *) Bone_Matrix_inv;
+        // Move the vertex toward the bone's transform by its weight, then map it back into the
+        // skinned frame's space.
+        asm {
+            lqc2        vf4, 0x30(base)
+            lqc2        vf10, 0(source)
+            lqc2        vf1, 0(base)
+            lqc2        vf2, 0x10(base)
+            lqc2        vf3, 0x20(base)
+            vsub.xyz    vf15, vf10, vf4
+            vaddx.w     vf15, vf0, vf0x
+            lqc2        vf5, 0(bone)
+            lqc2        vf6, 0x10(bone)
+            lqc2        vf7, 0x20(bone)
+            lqc2        vf8, 0x30(bone)
+            vmulax.xyzw ACC, vf1, vf15x
+            vmadday.xyzw ACC, vf2, vf15y
+            vmaddaz.xyzw ACC, vf3, vf15z
+            vmaddaw.xyzw ACC, vf4, vf15w
+            vmsubw.xyz  vf15, vf4, vf0w
+            vaddx.w     vf15, vf0, vf0x
+            lqc2        vf9, 0(weight_ptr)
+            lqc2        vf11, 0(deformed)
+            vmulax.xyzw ACC, vf5, vf15x
+            vmadday.xyzw ACC, vf6, vf15y
+            vmaddaz.xyzw ACC, vf7, vf15z
+            vmaddaw.xyzw ACC, vf8, vf15w
+            vmsubw.xyz  vf15, vf10, vf0w
+            vmulaw.xyzw ACC, vf11, vf0w
+            lqc2        vf20, 0(inverse)
+            lqc2        vf21, 0x10(inverse)
+            lqc2        vf22, 0x20(inverse)
+            lqc2        vf23, 0x30(inverse)
+            vmaddx.xyz  vf11, vf15, vf9x
+            sqc2        vf11, 0(deformed)
+            vmulax.xyzw ACC, vf20, vf11x
+            vmadday.xyzw ACC, vf21, vf11y
+            vmaddaz.xyzw ACC, vf22, vf11z
+            vmaddw.xyzw vf16, vf23, vf11w
+            sqc2        vf16, 0(out)
         }
     }
     return list->next;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List);
-#endif
 
 void SetMotionEX(CFrame *frame, tagMOTION_TYPE *motion, MOTION_INFO *info, MOTION_STATE *state,
                  tagFRAME_INF *frame_info) {
