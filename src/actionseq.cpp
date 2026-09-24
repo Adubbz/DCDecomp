@@ -274,7 +274,6 @@ static ACT_SEQ *DeleteSeq(ACT_SEQ *sequence) {
     return next;
 }
 
-#ifdef NON_MATCHING
 /**
  * Advances queued actions and updates the bound character transform.
  *
@@ -283,36 +282,14 @@ static ACT_SEQ *DeleteSeq(ACT_SEQ *sequence) {
  * @size 0xB04
  */
 void CActionSeq::Play() {
+    int played;
+    ACT_SEQ *sequence;
+
     if (move_head == NULL && motion_head == NULL && anime_head == NULL) {
         return;
     }
 
-    while (move_head != NULL) {
-        ACT_SEQ *sequence = move_head;
-        if (sequence->operation == ACT_SEQ_MOVE) {
-            move_frame++;
-            if (move_frame >= sequence->duration) {
-                sceVu0CopyVector(position, sequence->arguments.vector);
-                sceVu0CopyVector(start_position, sequence->arguments.vector);
-                move_head = DeleteSeq(sequence);
-                move_frame = 0;
-            } else {
-                sceVu0FVECTOR offset;
-                sceVu0SubVector(offset, sequence->arguments.vector, start_position);
-                sceVu0ScaleVector(offset, offset,
-                                  (float) move_frame / (float) sequence->duration);
-                sceVu0AddVector(position, start_position, offset);
-            }
-            break;
-        }
-        if (sequence->operation == ACT_SEQ_WAIT_ROTATION) {
-            if (rotation_complete != 0) {
-                rotation_mode = 0;
-                rotation_complete = 0;
-                move_head = DeleteSeq(sequence);
-            }
-            break;
-        }
+    while ((sequence = move_head) != NULL) {
         switch (sequence->operation) {
             case ACT_SEQ_TRIGGER_MOTION:
                 if (motion_trigger != 0) {
@@ -325,52 +302,83 @@ void CActionSeq::Play() {
                     motion_trigger = 1;
                     motion_delay = sequence->duration;
                 }
-                break;
+                move_head = DeleteSeq(sequence);
+                continue;
             case ACT_SEQ_TRIGGER_ANIMATION:
                 anime_trigger = 1;
                 anime_delay = sequence->duration;
-                break;
+                move_head = DeleteSeq(sequence);
+                continue;
             case ACT_SEQ_SET_POSITION:
                 sceVu0CopyVector(position, sequence->arguments.vector);
                 sceVu0CopyVector(start_position, sequence->arguments.vector);
+                move_head = DeleteSeq(sequence);
                 move_frame = 0;
-                break;
+                continue;
             case ACT_SEQ_SET_ROTATION:
+                // The rotation is written twice; the start rotation keeps its old value.
                 sceVu0CopyVector(rotation, sequence->arguments.vector);
-                sceVu0CopyVector(start_rotation, sequence->arguments.vector);
+                sceVu0CopyVector(rotation, sequence->arguments.vector);
+                move_head = DeleteSeq(sequence);
                 move_frame = 0;
-                break;
+                continue;
             case ACT_SEQ_ROTATE_REFERENCE:
                 rotation_mode = 1;
                 rotation_complete = 0;
                 sceVu0CopyVector(rotation_target, sequence->arguments.vector);
-                break;
-            case ACT_SEQ_ROTATE_MOVEMENT:
-                rotation_mode = 2;
-                rotation_complete = 0;
-                sceVu0CopyVector(rotation_target, sequence->arguments.vector);
-                break;
+                move_head = DeleteSeq(sequence);
+                continue;
             case ACT_SEQ_ROTATE_ANGLE:
                 rotation_mode = 3;
                 rotation_complete = 0;
                 sceVu0CopyVector(rotation_target, sequence->arguments.vector);
-                break;
+                move_head = DeleteSeq(sequence);
+                continue;
+            case ACT_SEQ_DELAY_ROTATION:
+                rotation_delay = sequence->duration;
+                move_head = DeleteSeq(sequence);
+                continue;
+            case ACT_SEQ_ROTATE_MOVEMENT:
+                rotation_mode = 2;
+                rotation_complete = 0;
+                sceVu0CopyVector(rotation_target, sequence->arguments.vector);
+                move_head = DeleteSeq(sequence);
+                continue;
             case ACT_SEQ_CLEAR_ROTATION:
                 rotation_mode = 0;
                 rotation_complete = 0;
+                move_head = DeleteSeq(sequence);
+                continue;
+            case ACT_SEQ_WAIT_ROTATION:
+                if (rotation_complete != 0) {
+                    rotation_mode = 0;
+                    rotation_complete = 0;
+                    move_head = DeleteSeq(sequence);
+                }
                 break;
-            case ACT_SEQ_DELAY_ROTATION:
-                rotation_delay = sequence->duration;
+            case ACT_SEQ_MOVE:
+                move_frame++;
+                if (move_frame >= sequence->duration) {
+                    sceVu0CopyVector(position, sequence->arguments.vector);
+                    sceVu0CopyVector(start_position, sequence->arguments.vector);
+                    move_head = DeleteSeq(sequence);
+                    move_frame = 0;
+                } else {
+                    sceVu0FVECTOR offset;
+
+                    sceVu0SubVector(offset, sequence->arguments.vector, start_position);
+                    sceVu0ScaleVector(offset, offset, (float) move_frame / (float) sequence->duration);
+                    sceVu0AddVector(position, start_position, offset);
+                }
                 break;
         }
-        move_head = DeleteSeq(sequence);
+        break;
     }
     if (move_head == NULL) {
         move_tail = NULL;
     }
 
-    while (rotation_head != NULL) {
-        ACT_SEQ *sequence = rotation_head;
+    while ((sequence = rotation_head) != NULL) {
         if (sequence->operation == ACT_SEQ_SET_ROTATION) {
             sceVu0CopyVector(rotation, sequence->arguments.vector);
             sceVu0CopyVector(start_rotation, sequence->arguments.vector);
@@ -386,9 +394,9 @@ void CActionSeq::Play() {
             rotation_frame = 0;
         } else {
             sceVu0FVECTOR offset;
+
             sceVu0SubVector(offset, sequence->arguments.vector, start_rotation);
-            sceVu0ScaleVector(offset, offset,
-                              (float) rotation_frame / (float) sequence->duration);
+            sceVu0ScaleVector(offset, offset, (float) rotation_frame / (float) sequence->duration);
             sceVu0AddVector(rotation, start_rotation, offset);
         }
         break;
@@ -396,19 +404,24 @@ void CActionSeq::Play() {
 
     if (rotation_mode != 0 && rotation_delay == 0) {
         sceVu0FVECTOR direction = {0.0f, 0.0f, 0.0f, 0.0f};
+
         if (rotation_mode == 1) {
             sceVu0SubVector(direction, rotation_target, position);
-        } else if (rotation_mode == 2) {
+        }
+        if (rotation_mode == 4) {
+            sceVu0CopyVector(direction, rotation_target);
+        }
+        if (rotation_mode == 2) {
             sceVu0SubVector(direction, position, start_position);
         }
         if (rotation_mode == 3) {
-            rotation[1] = AngleInterpolate(rotation[1], rotation_target[1],
-                                           rotation_target[3], 0);
+            rotation[1] = AngleInterpolate(rotation[1], rotation_target[1], rotation_target[3], 0);
             if (AngleCmp(rotation[1], rotation_target[1], 0.001f) == 0) {
                 rotation_complete = 1;
             }
         } else if (direction[0] != 0.0f || direction[2] != 0.0f) {
             float target = atan2f(direction[0], direction[2]);
+
             rotation[1] = AngleInterpolate(rotation[1], target, rotation_target[3], 0);
             if (AngleCmp(rotation[1], target, 0.001f) == 0) {
                 rotation_complete = 1;
@@ -417,69 +430,134 @@ void CActionSeq::Play() {
             rotation_complete = 1;
         }
     }
-    if (--rotation_delay < 0) {
+    rotation_delay--;
+    if (rotation_delay < 0) {
         rotation_delay = 0;
     }
 
-    if (motion_trigger != 0 && motion_delay <= 0 && motion_head != NULL && character != NULL) {
-        ACT_SEQ *sequence = motion_head;
-        character->SetMotion(sequence->arguments.animation.id,
-                             sequence->arguments.animation.mode,
-                             sequence->arguments.animation.playback.speed);
+    if (character != NULL) {
+        float now = character->GetNowTime();
+
+        if (motion_head != NULL && motion_head->arguments.animation.id == character->motion_no) {
+            MOTION_INFO *info = character->GetMotionInfo(motion_head->arguments.animation.id);
+
+            if (info != NULL && motion_head->arguments.animation.mode == 7) {
+                if (!(info->end <= now) && info->start < now &&
+                    info->end - info->speed - 0.01f <= now) {
+                    int index;
+                    tagMOTION_TYPE *motion =
+                        character->GetMotionParam(character->motion_no, &index, NULL, NULL, NULL);
+
+                    if (motion != NULL) {
+                        motion->state.time = (int) (0.999f + motion->state.time);
+                    }
+                    motion_head = DeleteSeq(motion_head);
+                    if (motion_head == NULL) {
+                        motion_tail = NULL;
+                    }
+                }
+            }
+        }
+    }
+
+    if (motion_trigger != 0 && motion_delay <= 0) {
+        ACT_SEQ *motion = motion_head;
+
+        if (motion != NULL && character != NULL) {
+            int flags = 0;
+
+            switch (motion->arguments.animation.mode) {
+                case 6:
+                case 7:
+                    flags = 2;
+            }
+            if (character->motion_no != motion->arguments.animation.id) {
+                flags |= motion->arguments.animation.flags;
+            }
+            character->SetMotion(motion->arguments.animation.id, flags);
+            character->SetMotionSpeed(motion->arguments.animation.playback.speed);
+        }
     }
 
     if (anime_trigger != 0 && anime_delay <= 0 && character != NULL) {
-        int active = 0;
-        while (anime_head != NULL) {
-            ACT_SEQ *sequence = anime_head;
-            if (sequence->operation != ACT_SEQ_ANIMATION) {
-                anime_head = DeleteSeq(sequence);
-                continue;
+        played = 0;
+        while ((sequence = anime_head) != NULL) {
+            switch (sequence->operation) {
+                case ACT_SEQ_ANIMATION:
+                    if (sequence->duration == 0) {
+                        if (sequence->arguments.animation.id == -1 && sequence->arguments.animation.mode == 0) {
+                            character->ClearTexAnime();
+                        }
+                        if (sequence->arguments.animation.mode != 0) {
+                            character->TexAnimeOn(sequence->arguments.animation.id);
+                        } else {
+                            character->TexAnimeOff(sequence->arguments.animation.id);
+                        }
+                        anime_head = DeleteSeq(sequence);
+                        anime_frame = 0;
+                        continue;
+                    }
+                    if (anime_frame >= sequence->duration) {
+                        if (sequence->arguments.animation.playback.disable_after != 0) {
+                            character->TexAnimeOff(sequence->arguments.animation.id);
+                        }
+                        anime_head = DeleteSeq(sequence);
+                        anime_frame = 0;
+                        continue;
+                    }
+                    if (sequence->arguments.animation.id == -1 && sequence->arguments.animation.mode == 0) {
+                        character->ClearTexAnime();
+                    }
+                    if (sequence->arguments.animation.mode != 0) {
+                        character->TexAnimeOn(sequence->arguments.animation.id);
+                    } else {
+                        character->TexAnimeOff(sequence->arguments.animation.id);
+                    }
+                    played = 1;
+                    break;
+                default:
+                    anime_head = DeleteSeq(sequence);
+                    break;
             }
-            if (sequence->duration != 0 && anime_frame >= sequence->duration) {
-                if (sequence->arguments.animation.playback.disable_after != 0) {
-                    character->TexAnimeOff(sequence->arguments.animation.id);
-                }
-                anime_head = DeleteSeq(sequence);
-                anime_frame = 0;
-                continue;
+            if (played != 0) {
+                break;
             }
-            if (sequence->arguments.animation.id == -1 &&
-                sequence->arguments.animation.mode == 0) {
-                character->ClearTexAnime();
-            }
-            if (sequence->arguments.animation.mode != 0) {
-                character->TexAnimeOn(sequence->arguments.animation.id);
-            } else {
-                character->TexAnimeOff(sequence->arguments.animation.id);
-            }
-            if (sequence->duration == 0) {
-                anime_head = DeleteSeq(sequence);
-                anime_frame = 0;
-                continue;
-            }
-            active = 1;
-            break;
         }
-        anime_frame += active;
+        anime_frame++;
         if (anime_head == NULL) {
             anime_tail = NULL;
             anime_trigger = 0;
         }
     }
 
-    if (--motion_delay < 0) {
+    motion_delay--;
+    if (motion_delay < 0) {
         motion_delay = 0;
     }
-    if (--anime_delay < 0) {
+    anime_delay--;
+    if (anime_delay < 0) {
         anime_delay = 0;
     }
     if (character != NULL) {
+        sceVu0FVECTOR angle;
+        float turns;
+        int whole;
+
         character->SetPosition(position);
-        rotation[1] = AngleLimit(rotation[1]);
-        character->SetRotation(rotation);
+        angle[0] = rotation[0];
+        angle[1] = rotation[1];
+        angle[2] = rotation[2];
+        angle[3] = 0.0f;
+        // Wrap the yaw into [-pi, pi]; the first truncation's result is unused.
+        turns = angle[1] / 6.2831855f;
+        whole = (int) turns;
+        angle[1] -= 3.1415927f * (2.0f * (int) turns);
+        if (angle[1] > 3.1415927f) {
+            angle[1] -= 6.2831855f;
+        }
+        if (angle[1] < -3.1415927f) {
+            angle[1] += 6.2831855f;
+        }
+        character->SetRotation(angle);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/actionseq", Play__10CActionSeqFv);
-#endif

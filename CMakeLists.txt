@@ -170,8 +170,6 @@ carve_part(main.data.part1.s
 carve_part(main.data.part2.s
            main.data.part2.s=2514C0-251560
            main.data.part2c.s=2525D0-253DD0)
-carve_part(main.data.part2b.s
-           main.data.nowload-a.s=2540B0-2540C0)
 # Retail's vtables come out in one run that alternates between the units that
 # now own theirs and the dump that still holds the rest, so the dump is cut
 # around each owned block rather than having the block removed from it.
@@ -324,6 +322,10 @@ list(REMOVE_ITEM STATIC_SECTION_SOURCES
 # fish.cpp now owns the complete fish data run at 0x296050-0x2965C0.
 list(REMOVE_ITEM STATIC_SECTION_SOURCES
      ${PARTS_DIR}/main.data.part7.s)
+
+# actionseq.cpp now owns the complete data run at 0x2540B0-0x2540C0.
+list(REMOVE_ITEM STATIC_SECTION_SOURCES
+     ${PARTS_DIR}/main.data.part2b.s)
 
 set(FILTERED_SBSS_PART1 generated/asm/data/main/parts/main.sbss.part1.s)
 add_custom_command(

@@ -462,7 +462,7 @@ SECTIONS
         gameutil.cpp.o (.data)       // 0x00253dd0 NameRegistCodeJtoE's table
         clsmes.cpp.o (.data)
         nowload.cpp.o (.data)        // 0x00254030 init_now_loading's two local array templates
-        main.data.nowload-a.s.o (.data)
+        actionseq.cpp.o (.data)      // 0x002540b0 Play's zero direction template
         mapobject.cpp.o (.data)
         main.data.part3.s.o (.data)
         savedata.cpp.o (.data)
