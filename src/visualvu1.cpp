@@ -159,18 +159,15 @@ int CVisualVu1::RemakeData(unsigned int *data) {
  * @address 0x134BC0
  * @size 0xC4
  */
-#ifdef NON_MATCHING
 int CVisualVu1::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
                         VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
+    int size;
+
     sceVif1PkTerminate(packet);
-    int size = CVisualVu1::DrawVu1((u_int *) packet->pCurrent, matrix, info, program, draw_state,
-                                   unknown1, unknown2);
-    sceVif1PkReserve(packet, size);
+    sceVif1PkReserve(packet, size = CVisualVu1::DrawVu1((u_int *) packet->pCurrent, matrix, info,
+                                                        program, draw_state, unknown1, unknown2));
     return size;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__10CVisualVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
-#endif
 
 /**
  * Writes the shadow draw packet and its transform matrix.
