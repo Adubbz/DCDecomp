@@ -211,29 +211,25 @@ CTexture *GetNameTextureInfo(CTexture **textures, int code, int &cell_x, int &ce
     return texture;
 }
 /**
- * Draws a party member's name.
+ * Draws the name being entered; the character argument goes unused.
  *
  * @mangled DrawCharaName__Fiiiii
  * @address 0x238760
  * @size 0x118
  */
-#ifdef NON_MATCHING
 void DrawCharaName(int character, int x, int y, int brightness, int blend_mode) {
+    int left = x;
     CTexture *textures[3] = {AlphaTex, KataTex, HiraTex};
-    s16 *name = SaveData->GetCharaName(character);
+
     for (int index = 0; index < 10; index++) {
         int texture_x;
         int texture_y;
-        CTexture *texture = GetNameTextureInfo(textures, name[index], texture_x, texture_y);
-        CRect_i_ destination(x + index * 22, y, 22, 22);
-        CRect_i_ source(texture_x, texture_y, 22, 22);
-        DrawMenu2DSprite(texture, destination, source, (u8) brightness,
+        CTexture *texture = GetNameTextureInfo(textures, CharaName[index], texture_x, texture_y);
+        DrawMenu2DSprite(texture, CRect_i_(left, y, 22, 22), CRect_i_(texture_x, texture_y, 22, 22), (u8) brightness,
                          (u8) brightness, (u8) brightness, blend_mode);
+        left += 22;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawCharaName__Fiiiii);
-#endif
 /**
  * Draws the frame around the name being entered, bobbing it with a sine.
  *

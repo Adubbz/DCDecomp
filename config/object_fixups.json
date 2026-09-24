@@ -1469,22 +1469,31 @@
   },
   "src/battle_globals.cpp": {
     "sections": {
+      ".nameenterdata0": [
+        "@79"
+      ],
       ".nameenterdata1": [
-        "@82",
-        "@83"
+        "@97",
+        "@98"
       ],
       ".nameentersdata1": [
         "@67",
-        "@79"
+        "@94"
       ],
       ".nameenterdata2": [
-        "@233",
-        "@234",
-        "@255",
-        "@258"
+        "@248",
+        "@249",
+        "@270",
+        "@273"
       ]
     },
     "rekey_sections": [
+      [
+        ".nameenterdata0",
+        [
+          12
+        ]
+      ],
       [
         ".nameenterdata1",
         [

@@ -62,7 +62,7 @@ void ExitNameEnterFunc(void);
 CTexture *GetNameTextureInfo(CTexture **, int, int &, int &);
 
 /**
- * Draws a party member's name.
+ * Draws the name being entered; the character argument goes unused.
  *
  * @mangled DrawCharaName__Fiiiii
  * @address 0x238760
