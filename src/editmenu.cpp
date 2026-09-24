@@ -14,6 +14,7 @@
 #include "editpartsinfo.hpp"
 #include "frame.hpp"
 #include "gamepad.hpp"
+#include "mainselect.hpp"
 #include "memcard.hpp"
 #include "menu_draw.hpp"
 #include "menu_manual.hpp"
@@ -118,10 +119,6 @@ extern float EditMenuWinW;
 
 /** Height of the edit menu's help window. */
 extern float EditMenuWinH;
-
-#ifdef NON_MATCHING // draft declarations
-#include "mainselect.hpp"
-#endif
 
 /** The texture the personal board's pieces come from. */
 extern CTexture *PerBoardTex;
@@ -891,7 +888,6 @@ static int EditMenuStart() {
     }
     return 0;
 }
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @650__5);
 
 /**
  * Draws the edit menu page and its selected icon.
@@ -929,10 +925,9 @@ static void EditMenuSelectDraw() {
         CommonMenuMes2.MakeMesWin(info->unk_24);
     }
 }
-#ifdef NON_MATCHING
 static int EditMenuSelect() {
     int icon_max = GetEditMenuMax();
-    s8 previous = EdCur.selection;
+    int previous = EdCur.selection;
 
     if (GamePad.Down(0x9000) != 0) {
         EdCur.selection--;
@@ -942,7 +937,7 @@ static int EditMenuSelect() {
     }
     if (GamePad.Down(0x6000) != 0) {
         EdCur.selection++;
-        if (EdCur.selection - 1 >= icon_max - 1) {
+        if (icon_max - 1 <= EdCur.selection - 1) {
             EdCur.selection = 0;
         }
     }
@@ -966,7 +961,7 @@ static int EditMenuSelect() {
                 blocks[0] = EdMenuTextureBlock;
                 blocks[1] = EdMenuExTextureBlock;
                 int area = GetNowMapTransAtraMap(MapNo);
-                if (area < 0 || area >= 5) {
+                if (area < 0 || area > 4) {
                     area = 0;
                 }
                 printf("now atra load area = %d\n", area);
@@ -1019,9 +1014,6 @@ static int EditMenuSelect() {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuSelect__Fv);
-#endif
 
 static void EditMenuToExitDraw() {
     DrawMoveMenuIcon();
