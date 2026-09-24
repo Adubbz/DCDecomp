@@ -22,25 +22,21 @@ int GetWeaponElementAttr(int element);
  * @address 0x1ABC40
  * @size 0xCC
  */
-#ifdef NON_MATCHING
 void CSHOT::draw() {
-    int texture_cell = NowWeaponHave->item_no - 300;
-    if (texture_cell <= 0) {
-        texture_cell = 0;
-    }
-
     for (int shot = 0; shot < 12; shot++) {
         if (used[shot] != 0) {
-            set3DCellModel(pos[shot], "basefx01", unk_09[shot],
-                           (texture_cell % 4) << 5, (texture_cell / 4) << 5,
-                           32, 32, 128);
+            // Each slingshot has its own 32x32 cell in the effect texture, four to a row.
+            int texture_cell = NowWeaponHave->item_no - ITEM_WEAPON_WOODENSLINGSHOT_BROKEN;
+            texture_cell--;
+            if (texture_cell <= 0) {
+                texture_cell = 0;
+            }
+            int cell_x = (texture_cell % 4) << 5;
+            int cell_y = (texture_cell >> 2) << 5;
+            set3DCellModel(pos[shot], "basefx01", unk_09[shot], cell_x, cell_y, 32, 32, 128);
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", draw__5CSHOTFv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/shot_effect", @625__2);
 /**
  * Advances the twelve projectiles of one shot.
  *
