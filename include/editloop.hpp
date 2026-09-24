@@ -273,6 +273,14 @@ struct EDIT_CONFIG_VIEW {
 };
 
 /**
+ * One of the georama's element slots; the interior test map fills all of them.
+ */
+struct EDIT_ELEMENT_INFO {
+    int unk_00;
+    int unk_04;
+};
+
+/**
  * Stores the parsed resources and environmental settings for an editor map.
  */
 struct EDIT_MAP_INFO {
@@ -406,6 +414,7 @@ STATIC_ASSERT(sizeof(EDIT_MAP_WORK_INFO) == 0x12000);
 STATIC_ASSERT(sizeof(EDIT_MAP_INFO) == 0x2C260);
 STATIC_ASSERT(sizeof(ED_EVENT_POINT) == 0x90);
 STATIC_ASSERT(sizeof(VILLAGER_INFO) == 0x90);
+STATIC_ASSERT(sizeof(EDIT_ELEMENT_INFO) == 0x8);
 
 /** Whether the current editor map is an interior. */
 extern int EdInteriorFlag;

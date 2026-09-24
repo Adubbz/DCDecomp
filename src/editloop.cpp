@@ -211,7 +211,7 @@ extern sceVu0FVECTOR fix_camera_pos;
 extern CTexAnimeData CharaTexAnimeData[0x80];
 extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 extern u8 EditCharaData[0x960];
-extern u8 EditElementInfo[0x120];
+extern EDIT_ELEMENT_INFO EditElementInfo[36];
 #include "editmenu.hpp"
 #ifdef NON_MATCHING // draft includes
 #include "wind.hpp"
@@ -739,13 +739,6 @@ void EdInitMesParam() {
 int EditInit(void *) {
     char map_path[0x80];
     char save_path[0x80];
-    sceVu0FVECTOR position;
-    sceVu0FVECTOR rotation;
-    sceVu0FVECTOR fade;
-    char mes_path[0x40];
-    char sys_path[0x40];
-    char language[0x10];
-    char win_path[0x40];
     int size;
     int mes_size;
 
@@ -935,7 +928,7 @@ int EditInit(void *) {
                     info->elements[j].enabled = 1;
             }
             for (int i = 0; i < 36; i++)
-                *(int *) (EditElementInfo + 4 + i * 8) = i % 15 + 1;
+                EditElementInfo[i].unk_04 = i % 15 + 1;
             short element_table[40] = {
                 0, 3, 12, 0, 11, 4, 1, 0, 16, 2, 0, 5, 17, 6, 1, 10, 2, 2, 0, 15,
                 1, 1, 1, 2, 1, 2, 12, 3, 14, 7, 8, 9, 1, 2, 1, 8, 13, 0, 0, -1,
@@ -984,6 +977,7 @@ int EditInit(void *) {
     EdLoadMainChara("chara/c01d.chr", "info.cfg", &CharaBuffer);
     sceVu0FVECTOR start_position = {0.0f, 0.0f, 0.0f, 1.0f};
     sceVu0FVECTOR start_rotation = {0.0f, 0.0f, 0.0f, 0.0f};
+    sceVu0FVECTOR fade;
     GameMode = 1;
     EdGetFadeColor(fade);
     EdFadeIn(128, (float) (int) fade[0], (float) (int) fade[1], (float) (int) fade[2]);
@@ -1004,6 +998,9 @@ int EditInit(void *) {
     EditMes1.unk_17B0 = MesWinTexBuff_01;
     EditEventMes1.unk_17B0 = MesWinTexBuff_02;
     short *buffer = (short *) (EdMesBuffer.base + EdMesBuffer.used * 16);
+    char mes_path[0x40];
+    char sys_path[0x40];
+    char language[0x10];
     GetEditDataDir(sys_path);
     GetEditDataDir(mes_path);
     strcat(mes_path, EditMapName);
