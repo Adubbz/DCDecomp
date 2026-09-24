@@ -453,7 +453,7 @@ void InitFishingExchange(u_long128 *, int *, int);
  * @address 0x1F15D0
  * @size 0x2AC
  */
-void FishMenuTextureLoad(void);
+int FishMenuTextureLoad(void);
 
 /**
  * Handles one frame of fishing exchange input and returns the mode it leaves the exchange in.

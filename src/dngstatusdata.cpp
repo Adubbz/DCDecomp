@@ -11,10 +11,7 @@
  * (SetNowFloor..SearchItemIndexNo, ChkEventFlag..ClearEventFlag, LostItem..
  * CheckDefaultWeapon, AddDrink..Init, SetDead..GetAtraData), so both classes
  * live in this one translation unit, in that order.
- *
- * `#if DNG_COMPILE_UNMATCHED` guards remaining C++ that is written but does
- * not yet compile to retail's bytes; it is off, and the marker below each
- * guard supplies the function instead. */
+ */
 
 #include <cstdio>
 #include <cstdlib>

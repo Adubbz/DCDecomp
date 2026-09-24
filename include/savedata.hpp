@@ -448,6 +448,9 @@ public:
      */
     int InvertConfig(SV_CONFIG_SYS *in);
 
+    /** Returns the fishing points the player holds. */
+    s32 GetFishingPoint() const { return fishing_point; }
+
     /** Returns the state of the Mardan Garayan fishing quest. */
     s32 GetMardanGareyanFlag() const { return unk_12F94; }
 

@@ -377,36 +377,6 @@ struct LOADED_PARTS {
     char name[0x20];  /**< Resource name the part was built from. */
     CMapParts *parts; /**< Part built from that name. */
 };
-/**
- * The archive one part is built from: the chunk each of its models stands in,
- * as an offset from the archive and a length.
- */
-struct EPARTS_ARCHIVE {
-    u8 unk_00[0x48];
-    s32 offset_48;
-    s32 offset_4c;
-    s32 offset_50;
-    s32 offset_54;
-    s32 size_58;
-    s32 size_5c;
-    s32 size_60;
-    s32 size_64;
-    u8 unk_68[0x10];
-    s32 offset_78;
-    s32 size_7c;
-    u8 unk_80[0x10];
-    s32 offset_90;
-    s32 size_94;
-    u8 unk_98[0x10];
-    s32 offset_a8;
-    s32 size_ac;
-    u8 unk_b0[0x10];
-    s32 offset_c0;
-    s32 size_c4;
-    u8 unk_c8[0x10];
-    s32 offset_d8;
-    s32 size_dc;
-};
 void LoadMapObject(CMapParts *parts, u_int **data, CDataAlloc2<1> *alloc);
 #endif
 
@@ -3214,7 +3184,7 @@ void MoveChara() {
     EdMoveCharaInfo.follow = &ViewCamera;
     EdMoveCharaInfo.key_lock = key_lock;
     EdMoveCharaInfo.chara = Chara;
-    EdMoveCharaInfo.unk_18 = 0;
+    EdMoveCharaInfo.interior = 0;
     EdMoveCharaInfo.ground = pEditGround;
     EDIT_MAP_INFO *info = EditMapInfo;
     EdMoveCharaInfo.points = info->work.events.points;

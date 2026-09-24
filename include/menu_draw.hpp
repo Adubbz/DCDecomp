@@ -54,21 +54,21 @@ STATIC_ASSERT(sizeof(DUN_ENTER_MENU) == 0x1AC);
  */
 struct PERSONAL_BOARD {
     s32 unk_00;
-    s32 unk_04;
-    s32 unk_08;
-    s32 unk_0C;
-    float unk_10;
-    float scroll; /**< Scroll bar position the board draws. */
-    s32 unk_18;
-    s16 unk_1C;
+    s32 page;        /**< Page of the board that is showing. */
+    s32 cursor_area; /**< Part of the board the cursor is on: 1 the cells, 2 the trash. */
+    s32 cursor;      /**< Cell that the cursor is on. */
+    float y;         /**< Screen Y the board draws at, eased toward its top row. */
+    float scroll;    /**< Scroll bar position the board draws. */
+    s32 top_row;     /**< Row the board shows first. */
+    s16 trash_anim; /**< One while the trash can plays its throw animation. */
     u8 unk_1E[2];
-    s32 unk_20;
+    s32 trash_frame; /**< Frame of the trash can's throw animation. */
     ITEM_PACK *item_pack; /**< Item pack the board lists. */
-    DNG_CONSUMABLE *unk_28;
+    DNG_CONSUMABLE *consumables; /**< Stored attachments the board lists. */
     s16 *unk_2C;
-    IHAVEITEM unk_30;
+    IHAVEITEM held_item; /**< Item the board's cursor is holding. */
     WEAPON_HAVE weapon; /**< Weapon record the board holds. */
-    ATTACH_LIST unk_13C;
+    ATTACH_LIST held_attach; /**< Attachment record the board holds. */
     s32 unk_15C;
 };
 

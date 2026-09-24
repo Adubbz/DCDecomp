@@ -34,32 +34,32 @@
  * this unit's own functions are named.
  */
 struct ShopMenuWork {
-    s16 unk_00;
-    s16 unk_02;
-    s16 unk_04;
+    s16 shop_no;  /**< Shop being run. */
+    s16 side;     /**< Board the cursor is on: 0 the shop's stock, 1 the player's own board. */
+    s16 mode;     /**< How the shop was opened. */
     s16 unk_06;
     PERSONAL_BOARD board; /**< The player's side of the shop: the personal board and the records it holds. */
     s32 unk_168;
-    float unk_16C;
-    float unk_170;
+    float stock_y;      /**< Screen Y the stock board draws at, eased toward its top row. */
+    float stock_scroll; /**< Scroll bar position of the stock board. */
     s16 unk_174;
-    u8 unk_176;
+    u8 stock_top_row; /**< Row the stock board shows first. */
     u8 unk_177;
-    float unk_178;
-    float unk_17C;
-    s16 unk_180;
+    float cursor_x; /**< Screen X of the cursor, eased toward its cell. */
+    float cursor_y; /**< Screen Y of the cursor, eased toward its cell. */
+    s16 talk_mode;  /**< What the shopkeeper is saying or waiting on; 0 while the player shops. */
     s16 unk_182;
-    s32 unk_184;
-    s16 unk_188;
-    s16 unk_18A;
+    s32 step_count; /**< Frames the shop has spent in its talk mode. */
+    s16 ready;      /**< Nonzero once the shop's textures are entered. */
+    s16 tex_block;  /**< Texture block the shop's textures are entered into. */
     s16 unk_18C;
-    s16 unk_18E;
-    s16 unk_190;
+    s16 alpha;      /**< Opacity the shop draws with. */
+    s16 lang;       /**< Language the shop's plates are laid out for. */
     s16 unk_192;
-    s16 unk_194;
-    s16 unk_196;
+    s16 person_state;     /**< Shopkeeper model: 1 while it is read, 2 once it is built, 0 when there is none. */
+    s16 person_tex_block; /**< Texture block the shopkeeper's textures are entered into. */
     s16 unk_198;
-    s16 unk_19A;
+    s16 msg_mode; /**< How the shopkeeper's message is shown. */
     s16 unk_19C;
     s16 unk_19E;
     s32 unk_1A0;
@@ -143,20 +143,40 @@ extern s16 ChargeShopMax[3];
 /** Nonzero while the item shop is open, zero while the charge shop is open. */
 extern s16 ChargeOrShopFlag;
 
+#ifdef NON_MATCHING // draft declarations
+#include <cstdio>
+#include <cstring>
+
+#include "itemdata.hpp"
+#include "menu_dungeon.hpp"
+#include "menu_misc.hpp"
+#include "stockitem.hpp"
+
+extern CDataAlloc2<1> ShopCashBuffer2;
+
+static void ShopMasterVectorSet(int);
+static int ChargeSelectKey();
+static void ShopModelMsgFunc(int);
+#endif
+
 /**
  * State of the fishing prize exchange screen.
  */
 struct FishMenuWork {
-    s16 tex_block; /**< Texture block the exchange's textures are entered into. */
-    u8 unk_02[2];
-    s16 ready; /**< Nonzero once the exchange's contents may be drawn. */
-    u8 unk_06[2];
-    s32 point; /**< Fishing points the player has left to spend. */
-    u8 unk_0C[0xA];
-    s16 fade_mode; /**< Whether the exchange is fading in (0) or out (1). */
-    u8 unk_18[8];
-    s32 fade_count; /**< Frames the current fade has run for. */
-    u8 unk_24[4];
+    s16 tex_block;  /**< Texture block the exchange's textures are entered into. */
+    s16 tex_block2; /**< Second texture block lent to the exchange. */
+    s16 ready;      /**< Nonzero once the exchange's contents may be drawn. */
+    s16 warning;    /**< Which refusal the exchange shows, as an offset from its first refusal message. */
+    s32 point;      /**< Fishing points the player has left to spend. */
+    s32 cursor_y;   /**< Screen Y of the cursor, eased toward its row. */
+    s16 mode;       /**< How the exchange was opened. */
+    s16 confirm;    /**< Choice the confirmation window's cursor is on: 0 yes, 1 no. */
+    s16 cursor;     /**< Prize the cursor is on. */
+    s16 fade_mode;  /**< What the exchange is doing: 0 opening, 1 closing, 3 choosing, 4 confirming, 5 refusing. */
+    s16 top;        /**< Prize the list shows first. */
+    u8 unk_1A[6];
+    s32 fade_count;     /**< Frames the current fade has run for. */
+    u_long128 *buffer;  /**< Buffer the exchange's files are read into. */
 };
 
 STATIC_ASSERT(sizeof(FishMenuWork) == 0x28);
@@ -168,12 +188,12 @@ extern FishMenuWork FishMenu;
  * State of the fishing record screen.
  */
 struct FishRecordMenuWork {
-    s32 unk_00;
-    s32 unk_04;
+    s32 cursor;     /**< Rank the cursor is on. */
+    s32 top;        /**< Rank the board shows first. */
     s32 mode;       /**< The mode the record view was opened in. */
     s32 fade_mode;  /**< Whether the record view is fading in (0) or out (1). */
     s32 fade_count; /**< Frames the current fade has run for. */
-    u8 unk_14[4];
+    s32 cursor_y;   /**< Screen Y of the cursor, eased toward its row. */
     s32 ready;      /**< Nonzero once the record view's contents may be drawn. */
     s32 tex_block;  /**< Texture block the record view's textures are entered into. */
     s32 tex_block2; /**< Second texture block the record view's textures are entered into. */
@@ -194,8 +214,8 @@ extern s8 FishMsg[18];
  * One prize the fishing exchange offers.
  */
 struct FISH_EXCHANGE_ITEM {
-    s16 unk_00;
-    s16 unk_02;
+    s16 item_no; /**< Prize the exchange offers. */
+    s16 price;   /**< Fishing points the prize costs. */
 };
 
 STATIC_ASSERT(sizeof(FISH_EXCHANGE_ITEM) == 4);
@@ -678,7 +698,7 @@ void ShopIconMove::IconAutoMoveDraw() {
     if (item_no >= 0x51) {
         int kind = WhatIsKindofItem(item_no);
 
-        if (ShopMenu.board.unk_04 == kind) {
+        if (ShopMenu.board.page == kind) {
             int num = 0;
             int item = item_no;
 
@@ -868,12 +888,12 @@ static void ShopPolySetInit(int shop_no, int person_no) {
  */
 static void SetItemShopTalkMode(int talk_mode, int msg_mode) {
     if (talk_mode >= 0) {
-        ShopMenu.unk_180 = talk_mode;
+        ShopMenu.talk_mode = talk_mode;
     }
     if (msg_mode >= 0) {
-        ShopMenu.unk_19A = msg_mode;
+        ShopMenu.msg_mode = msg_mode;
     }
-    if (ShopMenu.unk_19A == 1) {
+    if (ShopMenu.msg_mode == 1) {
         CommonMenuMes3.mes_made = -1;
         ShopMenu.unk_19E = -1;
     }
@@ -912,7 +932,7 @@ static void ChargeShopLRDraw(int mode) {
     int x = -1;
     int gap = x;
 
-    switch (ShopMenu.unk_02) {
+    switch (ShopMenu.side) {
         case 0:
             x = 0x38;
             gap = 0xD8;
@@ -960,7 +980,7 @@ static void ShopCurDraw(int x, int y, int pos, int top, int mode, int select, in
                 row = 3;
             }
             cur_y = y + row * 0x28;
-            if (ShopMenu.board.unk_08 == 2) {
+            if (ShopMenu.board.cursor_area == 2) {
                 cur_x = x + 0xD2;
                 cur_y = y + 0x8C;
             }
@@ -981,12 +1001,12 @@ static void ShopCurDraw(int x, int y, int pos, int top, int mode, int select, in
         cur_x += 34.0f;
         cur_y += 20.0f;
     }
-    ShopMenu.unk_178 += (cur_x - ShopMenu.unk_178) / 4.0f;
-    ShopMenu.unk_17C += (cur_y - ShopMenu.unk_17C) / 4.0f;
+    ShopMenu.cursor_x += (cur_x - ShopMenu.cursor_x) / 4.0f;
+    ShopMenu.cursor_y += (cur_y - ShopMenu.cursor_y) / 4.0f;
     if (select == 2) {
-        DrawMenuVibeItem(ShopMenu.unk_178, ShopMenu.unk_17C, 0, -0xE, alpha);
+        DrawMenuVibeItem(ShopMenu.cursor_x, ShopMenu.cursor_y, 0, -0xE, alpha);
     }
-    DrawMenuObjectVibe(ShopMenu.unk_178, ShopMenu.unk_17C, 1, vibe);
+    DrawMenuObjectVibe(ShopMenu.cursor_x, ShopMenu.cursor_y, 1, vibe);
     CursorVibeCnt++;
     if (CursorVibeCnt >= 0x202FBF00) {
         CursorVibeCnt = 0;
@@ -1068,25 +1088,25 @@ static void ShopMenuInit(int *tex_block, int shop_no, int mode) {
     ShopCashBuffer.limit = limit;
     ShopCashBuffer.used = 0;
     ShopUserStatusPt = (CUserStatus *) SaveData->GetDngStatus();
-    ShopMenu.unk_190 = GetMenuLangFlag();
+    ShopMenu.lang = GetMenuLangFlag();
     StartReadBG();
     ShopCashBuffer.Alloc((LoadFileBGMenuData("itemshop.pak", buffer) >> 4) + 0x102);
-    ShopMenu.unk_00 = shop_no;
-    ShopMenu.unk_04 = mode;
-    ShopMenu.unk_18A = tex_block[0];
-    ShopMenu.unk_188 = 0;
-    ShopMenu.unk_196 = tex_block[1];
-    ShopMenu.unk_194 = 1;
-    ShopMenu.unk_18E = 0;
-    ShopMenu.unk_02 = 1;
+    ShopMenu.shop_no = shop_no;
+    ShopMenu.mode = mode;
+    ShopMenu.tex_block = tex_block[0];
+    ShopMenu.ready = 0;
+    ShopMenu.person_tex_block = tex_block[1];
+    ShopMenu.person_state = 1;
+    ShopMenu.alpha = 0;
+    ShopMenu.side = 1;
     InitPersonalBoardMode(ShopUserStatusPt, &ShopMenu.board, 0, 0);
-    ShopHaveItemPt = &ShopMenu.board.unk_30;
+    ShopHaveItemPt = &ShopMenu.board.held_item;
     ShopHaveWepPt = &ShopMenu.board.weapon;
-    ShopHaveAttachPt = &ShopMenu.board.unk_13C;
-    ShopMenu.unk_176 = 0;
+    ShopHaveAttachPt = &ShopMenu.board.held_attach;
+    ShopMenu.stock_top_row = 0;
     ShopMenu.unk_174 = 0;
-    ShopMenu.unk_184 = 0;
-    ShopMenu.unk_180 = 1;
+    ShopMenu.step_count = 0;
+    ShopMenu.talk_mode = 1;
     StayTex = TexManager.GetTexture("stayframe", -1);
     ItemVolumeStep.CheckItemVolume();
     ShopDataMove.unk_02 = -1;
@@ -1127,8 +1147,8 @@ static void ShopMenuExit() {
     DeleteMenuTrushMark();
     CommonMenuMes3.auto_pos = -1;
     AtoraNameMes.rows = 4;
-    TexManager.DeleteTextureBlock(ShopMenu.unk_18A);
-    TexManager.DeleteTextureBlock(ShopMenu.unk_196);
+    TexManager.DeleteTextureBlock(ShopMenu.tex_block);
+    TexManager.DeleteTextureBlock(ShopMenu.person_tex_block);
     TexManager.CleanUpTextureList();
     GamePad.AutoRepeatOff();
     GamePad.MenuModeOff();
@@ -1141,18 +1161,18 @@ void ShopTextureLoadFix() {
         {NULL, 0, 0},
     };
 
-    info[0].block_no = ShopMenu.unk_18A;
-    info[1].block_no = ShopMenu.unk_18A;
+    info[0].block_no = ShopMenu.tex_block;
+    info[1].block_no = ShopMenu.tex_block;
     BG_READ_INFO *file = GetReadBGFile(0);
     info[1].name = (char *) GetPackFile((u_int *) file->buffer, "itemshop.img", NULL);
-    TexManager.DeleteTextureBlock(ShopMenu.unk_18A);
+    TexManager.DeleteTextureBlock(ShopMenu.tex_block);
     TexManager.CleanUpTextureList();
     TexManager.LoadTextureBlockEX(-1, info);
-    ShopBoard = TexManager.GetTexture("shopbrd", ShopMenu.unk_18A);
-    PerBoardTex = TexManager.GetTexture("perbrd", ShopMenu.unk_18A);
-    WepIcon = TexManager.GetTexture("wepicon", ShopMenu.unk_18A);
-    ItemIcon = TexManager.GetTexture("itemicon", ShopMenu.unk_18A);
-    ShopMenu.unk_188 = 1;
+    ShopBoard = TexManager.GetTexture("shopbrd", ShopMenu.tex_block);
+    PerBoardTex = TexManager.GetTexture("perbrd", ShopMenu.tex_block);
+    WepIcon = TexManager.GetTexture("wepicon", ShopMenu.tex_block);
+    ItemIcon = TexManager.GetTexture("itemicon", ShopMenu.tex_block);
+    ShopMenu.ready = 1;
     s16 *shop_messages = (s16 *) GetPackFile((u_int *) file->buffer, "itemshop.bin", NULL);
     s16 *keeper_messages = (s16 *) GetPackFile((u_int *) file->buffer, "shopman.bin", NULL);
     InitMenuMesSet(2, shop_messages);
@@ -1169,12 +1189,12 @@ void ShopTextureLoadFix() {
 static void ShopFadeoutDraw() {
     int alpha = 0;
 
-    switch (ShopMenu.unk_180) {
+    switch (ShopMenu.talk_mode) {
         case 1:
-            alpha = 0x80 - ShopMenu.unk_184 * 3;
+            alpha = 0x80 - ShopMenu.step_count * 3;
             break;
         case 2:
-            alpha = ShopMenu.unk_184 * 3 + 0x40;
+            alpha = ShopMenu.step_count * 3 + 0x40;
             break;
     }
     if (alpha < 0) {
@@ -1184,14 +1204,14 @@ static void ShopFadeoutDraw() {
         alpha = 0x80;
     }
     FrameImageDraw(0x40, alpha);
-    switch (ShopMenu.unk_180) {
+    switch (ShopMenu.talk_mode) {
         case 0:
         case 0x19:
-            ShopMenu.unk_184 = 0;
+            ShopMenu.step_count = 0;
             break;
         default:
-            if (ShopMenu.unk_188 != 0) {
-                ShopMenu.unk_184++;
+            if (ShopMenu.ready != 0) {
+                ShopMenu.step_count++;
             }
             break;
     }
@@ -1217,7 +1237,7 @@ static int ShopPersonReadStart(int shop_no, int person_no) {
         return 0;
     }
     ReadBG();
-    ShopMenu.unk_194 = 0;
+    ShopMenu.person_state = 0;
     return 1;
 }
 
@@ -1226,7 +1246,48 @@ static int ShopPersonReadStart(int shop_no, int person_no) {
  */
 static int ShopPersonBuild(int, int);
 
+#ifdef NON_MATCHING
+static int ShopPersonBuild(int kind, int shop_no) {
+    char name[64];
+    int size;
+
+    if (ShopMenu.person_state == 0 && ReadBGSync() != 0) {
+        return 0;
+    }
+    ItemShopGetImgFileName(kind, shop_no, name);
+    BG_READ_INFO *file = GetReadBGFile(0);
+    u_int *pack = (u_int *) file->buffer;
+    u_char *model_area = (u_char *) pack + ((file->size >> 4) + 1) * 16;
+    LOADTEXTURE_INFO2 texture = {0};
+    texture.block_no = ShopMenu.person_tex_block;
+    texture.name = (char *) GetPackFile(pack, name, &size);
+    TexManager.DeleteTextureBlock(ShopMenu.person_tex_block);
+    TexManager.LoadTextureBlockEX(-1, &texture);
+    size = EdMenuBuffer.limit - ShopCashBuffer.limit;
+    ShopCashBuffer2.base = model_area;
+    ShopCashBuffer2.limit = size;
+    ShopCashBuffer2.used = 0;
+    MenuCharaFrame.Initialize();
+    MenuCharaFrame.LoadPackData(pack, "info.cfg", &ShopCashBuffer2, &ShopCashBuffer2, NULL);
+    sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 0.0f};
+    MenuCharaFrame.SetPosition(position);
+    ShopPolySetInit(kind, shop_no);
+    if (MenuCharaFrame.frame == NULL) {
+        printf("Frame is NULL\n");
+        return 0;
+    }
+    ShopMenu.unk_19C = 3;
+    MenuCharaFrame.SetMotion(ShopMenu.unk_19C, 0);
+    SetItemShopTalkMode(3, 1);
+    ShopMenu.unk_1A4 = 0;
+    ShopMenu.unk_19E = 0;
+    ShopMasterVectorSet(0);
+    ShopMenu.unk_1A0 = 0;
+    return 2;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", ShopPersonBuild__Fii);
+#endif
 
 /**
  * Sets the shopkeeper's model direction toward the menu camera.
@@ -1263,7 +1324,7 @@ static void LocalShopPersonDraw() {
  * @size 0x3C
  */
 static void ShopPersonDraw(int) {
-    MenuTextureReload(ShopMenu.unk_196);
+    MenuTextureReload(ShopMenu.person_tex_block);
     MenuPolygonDraw(0x80, LocalShopPersonDraw);
 }
 
@@ -1304,20 +1365,54 @@ void InitChargeShop(int *state, int shop_no, int mode) {
         shop_no -= 100;
     }
     ShopMenuInit(state, shop_no, mode);
-    ShopMenu.board.unk_0C = 0;
-    ShopMenu.unk_02 = 1;
-    ShopMenu.unk_178 = (ShopMenu.board.unk_0C % 5) * 0x28 + 0x154;
-    ShopMenu.unk_17C = 120.0f;
+    ShopMenu.board.cursor = 0;
+    ShopMenu.side = 1;
+    ShopMenu.cursor_x = (ShopMenu.board.cursor % 5) * 0x28 + 0x154;
+    ShopMenu.cursor_y = 120.0f;
     ShopStockPt = SaveData->GetStockItem();
     rows = ChargeShopMax[0] / 5;
-    ShopMenu.unk_176 = 0;
-    ShopMenu.unk_16C = 0x8A - ShopMenu.unk_176 * 0x28;
-    ShopMenu.unk_170 = 142.0f + 114.0f * ShopMenu.unk_176 / rows;
+    ShopMenu.stock_top_row = 0;
+    ShopMenu.stock_y = 0x8A - ShopMenu.stock_top_row * 0x28;
+    ShopMenu.stock_scroll = 142.0f + 114.0f * ShopMenu.stock_top_row / rows;
     ShopMenu.unk_174 = 0;
     GetMainMenuRightHelpWinLangOffset(ShopHelpWinPos[0], ShopHelpWinPos[1], ShopHelpWinW, ShopHelpWinH);
 }
 
+#ifdef NON_MATCHING
+void ChargeShopLimmitCheck() {
+    int max = ChargeShopMax[ShopMenu.board.page];
+    int rows = max / 5;
+    int last_top = rows - 4;
+
+    if (last_top < 0) {
+        last_top = 0;
+    }
+    if (max - 1 < ShopMenu.board.cursor && ShopMenu.side == 0) {
+        while (ShopMenu.board.cursor >= max) {
+            ShopMenu.board.cursor -= 5;
+        }
+        ShopMenu.stock_top_row = ShopMenu.board.cursor / 5 - 3;
+        if ((s8) ShopMenu.stock_top_row < 0) {
+            ShopMenu.stock_top_row = 0;
+        }
+        ShopMenu.stock_y = 0x8A - ShopMenu.stock_top_row * 0x28;
+        if (rows <= 0) {
+            rows = 4;
+        }
+        ShopMenu.stock_scroll = 142.0f + 114.0f * ShopMenu.stock_top_row / rows;
+        return;
+    }
+    if (last_top < ShopMenu.stock_top_row) {
+        while (last_top < ShopMenu.stock_top_row) {
+            ShopMenu.stock_top_row--;
+        }
+        ShopMenu.stock_y = 0x8A - ShopMenu.stock_top_row * 0x28;
+        ShopMenu.stock_scroll = 142.0f + 114.0f * ShopMenu.stock_top_row / rows;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopLimmitCheck__Fv);
+#endif
 
 static void ExitChargeShop() {
     ShopMenuExit();
@@ -1335,7 +1430,462 @@ int ChargeShopLoop() {
     return done;
 }
 
+#ifdef NON_MATCHING
+static inline void ShopDataMoveClear() {
+    ShopDataMove.unk_02 = -1;
+    ShopDataMove.slot_no = -1;
+    ShopDataMove.icon_no = -1;
+    ShopDataMove.item_no = -1;
+    ShopDataMove.pos_y = 0.0f;
+    ShopDataMove.pos_x = 0.0f;
+    memset(&ShopDataMove.data, 0, sizeof(WEAPON_HAVE));
+}
+
+static inline void ShopDataMoveFinish() {
+    if (ShopDataMove.icon_no >= 0) {
+        ShopDataMove.IconAutoMove(ChargeOrShopFlag, 1);
+        ShopDataMoveClear();
+    }
+}
+
+int ChargeShopKey() {
+    int result = 0;
+    int item_no;
+    u8 record[0xF8];
+    u8 weapon[0xF8];
+    u8 attach[0x20];
+
+    if (ShopMenu.ready == 0) {
+        if (ReadBGSync() == 0) {
+            ShopTextureLoadFix();
+            ShopPersonReadStart(0, ShopMenu.shop_no);
+        }
+        return 0;
+    }
+    ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
+    switch (ShopMenu.talk_mode) {
+        case 1:
+            ShopMenu.alpha += 8;
+            if (ShopMenu.alpha >= 0x80) {
+                ShopMenu.alpha = 0x80;
+            }
+            if (ShopMenu.step_count > 20 && ShopMenu.ready != 0 && ShopMenu.alpha >= 0x80) {
+                ShopMenu.talk_mode = 0;
+            }
+            break;
+        case 2:
+            ShopMenu.alpha -= 8;
+            if (ShopMenu.alpha <= 0) {
+                ShopMenu.alpha = 0;
+            }
+            if (ShopMenu.step_count > 26 && ShopMenu.alpha <= 0) {
+                result = 1;
+            }
+            break;
+        case 3:
+            CommonMenuMes3.page_arrow = 1;
+            if (GamePad.Down(0xF000) != 0 || GamePad.AllOn() != 0) {
+                ShopMenu.talk_mode = 0;
+                ComMenuSePlay(2);
+                CommonMenuMes3.page_arrow = 0;
+            }
+            break;
+        case 8:
+            CommonMenuMes3.page_arrow = 1;
+            if (GamePad.Down(0xF000) != 0) {
+                ShopMenu.talk_mode = 0;
+                ComMenuSePlay(2);
+                CommonMenuMes3.page_arrow = 0;
+            }
+        case 10:
+        case 7:
+            CommonMenuMes3.page_arrow = 1;
+            if (GamePad.Down(0x60) != 0) {
+                SetItemShopTalkMode(0, 0);
+                ComMenuSePlay(2);
+                CommonMenuMes3.page_arrow = 0;
+            }
+            break;
+        case 17:
+            if (GamePad.Down(0x20) != 0) {
+                ShopMenu.talk_mode = 0;
+                ComMenuSePlay(2);
+            } else if (GamePad.Down(0x50) != 0) {
+                ShopDataMoveFinish();
+                int space = ShopStockPt->GetNowModeSpace(ShopMenu.board.page);
+                int icon = space - ShopMenu.stock_top_row * 5;
+                s16 cursor = ShopMenu.board.cursor;
+                switch (ShopMenu.board.page) {
+                    case 0:
+                        item_no = pack->item[cursor];
+                        *(int *) record = pack->item_vol[cursor];
+                        printf("charge vol = %d\n", *(int *) record);
+                        pack->item[cursor] = -1;
+                        pack->item_vol[cursor] = 0;
+                        break;
+                    case 2: {
+                        ATTACH_LIST *list = (ATTACH_LIST *) &ShopUserStatusPt->consumable_items[cursor];
+                        item_no = list->item_no;
+                        memcpy(record, list, sizeof(ATTACH_LIST));
+                        memset(list, 0, sizeof(ATTACH_LIST));
+                        break;
+                    }
+                    case 1: {
+                        WEAPON_HAVE *have = &ShopUserStatusPt->chara_weapons[cursor / 10][cursor % 10];
+                        item_no = have->item_no;
+                        memcpy(record, have, sizeof(WEAPON_HAVE));
+                        memset(have, 0, sizeof(WEAPON_HAVE));
+                        break;
+                    }
+                }
+                ShopDataMove.IconMoveTarSet(space, icon, item_no, (MENU_ITEMDATA *) record,
+                                            ShopMenu.board.cursor % 5 * 0x28 + 0x156,
+                                            (ShopMenu.board.cursor / 5 - ShopMenu.board.top_row) * 0x28 + 0x94, 1);
+                if (icon < 0 || icon >= 20) {
+                    ShopDataMove.IconAutoMove(ChargeOrShopFlag, 1);
+                    ShopDataMoveClear();
+                }
+                SetItemShopTalkMode(0, 0);
+                ComMenuSePlay(1);
+            }
+            break;
+        case 18:
+            if (GamePad.Down(0x50) != 0) {
+                int page;
+                s16 got = 0;
+                s16 vol;
+                ShopDataMoveFinish();
+                memset(weapon, 0, sizeof(weapon));
+                switch (ShopMenu.board.page) {
+                    case 0:
+                        vol = 0;
+                        ShopStockPt->SetItemToPos(ShopMenu.board.cursor, &got, &vol);
+                        *(int *) weapon = vol;
+                        break;
+                    case 2:
+                        ShopStockPt->SetAttachToPos(ShopMenu.board.cursor, (ATTACH_LIST *) weapon);
+                        got = *(s16 *) weapon;
+                        break;
+                    case 1:
+                        ShopStockPt->SetWepToPos(ShopMenu.board.cursor, (WEAPON_HAVE *) weapon);
+                        got = *(s16 *) weapon;
+                        break;
+                }
+                int space = GetBoardSpace(got, &page);
+                int icon = space - ShopMenu.board.top_row * 5;
+                ShopDataMove.IconMoveTarSet(space, icon, got, (MENU_ITEMDATA *) weapon,
+                                            ShopMenu.board.cursor % 5 * 0x28 + 0x34,
+                                            (ShopMenu.board.cursor / 5 - ShopMenu.stock_top_row) * 0x28 + 0x94, 0);
+                if (icon < 0 || icon >= 20) {
+                    ShopDataMove.IconAutoMove(ChargeOrShopFlag, 1);
+                    ShopDataMoveClear();
+                }
+                SetItemShopTalkMode(0, 0);
+                ComMenuSePlay(1);
+            } else if (GamePad.Down(0x20) != 0) {
+                ShopMenu.talk_mode = 0;
+                ComMenuSePlay(2);
+            }
+            break;
+        case 25:
+            CommonMenuMes3.page_arrow = 1;
+            if (GamePad.Down(0x60) != 0) {
+                ShopMenu.talk_mode = 2;
+                ShopMenu.step_count = 0;
+                CommonMenuMes3.page_arrow = 0;
+                ComMenuSePlay(1);
+            }
+            break;
+        case 24:
+            CommonMenuMes3.page_arrow = 0;
+            if (GamePad.Down(0x40) != 0) {
+                SetItemShopTalkMode(0, 0);
+                ComMenuSePlay(1);
+                CommonMenuMes3.page_arrow = 0;
+            } else if (GamePad.Down(0x20) != 0) {
+                SetItemShopTalkMode(25, 1);
+                ComMenuSePlay(2);
+                CommonMenuMes3.page_arrow = 0;
+            }
+            break;
+        case 0: {
+            if (ShopMenu.person_state == 0) {
+                ShopMenu.person_state = ShopPersonBuild(0, ShopMenu.shop_no);
+            }
+            int page = ShopMenu.board.page;
+            int cursor = ShopMenu.board.cursor;
+            int left = 0;
+            switch (ShopMenu.side) {
+                case 0:
+                    left = ChargeSelectKey();
+                    break;
+                case 1:
+                    if (ShopHaveItemPt->item_no < 0x51) {
+                        BoardModeChangeKey();
+                        PersonalBoardLimmitCheck();
+                        ChargeShopLimmitCheck();
+                    }
+                    left = PersonalBoardKeySub();
+                    if (left == 0 && GamePad.Down(0x40) != 0) {
+                        PERSONAL_BOARD *board = &ShopMenu.board;
+                        switch (board->cursor_area) {
+                            case 2: {
+                                s16 held = ShopHaveItemPt->item_no;
+                                if (held < 0x51) {
+                                    ComMenuSePlay(2);
+                                } else {
+                                    if (IsEnableTrushThrow(held) != 0) {
+                                        board->trash_anim = 1;
+                                        board->trash_frame = 0;
+                                        InitAllHaveData();
+                                    }
+                                    ComMenuSePlay(2);
+                                }
+                                break;
+                            }
+                            case 1:
+                                if (PersonalBoardItemGetorSwap(ShopMenu.board.cursor) != 0) {
+                                    if (ShopHaveItemPt->item_no >= 0x51) {
+                                        ShopHaveItemPt->unk_00 = 1;
+                                    } else {
+                                        InitAllHaveData();
+                                        ShopMenu.board.unk_15C = -1;
+                                    }
+                                    ComMenuSePlay(1);
+                                } else {
+                                    ComMenuSePlay(2);
+                                }
+                                break;
+                        }
+                    } else if (left == 0 && GamePad.Down(0x80) != 0) {
+                        switch (ShopMenu.board.page) {
+                            case 0:
+                                SeitonItemBoard(pack);
+                                SetMenuTrushMark(pack);
+                                break;
+                            case 2:
+                                SeitonAttachBoard((ATTACH_LIST *) ShopUserStatusPt->consumable_items);
+                                break;
+                        }
+                        ComMenuSePlay(1);
+                    } else if (left == 0 && GamePad.Down(0x10) != 0) {
+                        int enable = 1;
+                        if (ShopMenu.board.cursor_area == 2) {
+                            ComMenuSePlay(2);
+                        } else if (ShopHaveItemPt->item_no >= 0x51) {
+                            ComMenuSePlay(2);
+                        } else {
+                            s16 target = SearchBoardNowPosItemExist(ShopMenu.board.page, ShopMenu.board.cursor);
+                            switch (ShopMenu.board.page) {
+                                case 2:
+                                case 0:
+                                    break;
+                                case 1: {
+                                    int owner = WhoIsWeaponEquip(target);
+                                    if (target < 0x101) {
+                                        ComMenuSePlay(2);
+                                    } else {
+                                        if (owner == IsDefaultWeapon(target)) {
+                                            SetItemShopTalkMode(7, 1);
+                                            enable = 0;
+                                        }
+                                        if (ShopMenu.board.cursor % 10 ==
+                                            ShopUserStatusPt->equipped_weapon_slot[owner]) {
+                                            SetItemShopTalkMode(7, 1);
+                                            enable = 0;
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+                            if (enable != 0) {
+                                enable = IsEnableCharge(target);
+                                if (enable == 0) {
+                                    SetItemShopTalkMode(7, 1);
+                                }
+                            }
+                            if (ShopStockPt->GetNowModeSpace(ShopMenu.board.page) < 0) {
+                                enable = 0;
+                                SetItemShopTalkMode(8, 1);
+                            }
+                            if (target < 0x51) {
+                                SetItemShopTalkMode(0, 0);
+                                enable = 0;
+                            }
+                            if (enable != 0) {
+                                ShopMenu.talk_mode = 17;
+                                ComMenuSePlay(1);
+                            } else {
+                                ComMenuSePlay(2);
+                            }
+                        }
+                    }
+                    break;
+            }
+            if (GamePad.Down(0x20) != 0) {
+                ComMenuSePlay(2);
+                if (ShopHaveItemPt->item_no < 0x51) {
+                    SetItemShopTalkMode(24, 1);
+                } else {
+                    switch (ShopHaveItemPt->unk_00) {
+                        case 1:
+                            PersonalBoardItemCancel();
+                            break;
+                        case 0:
+                            switch (ShopHaveItemPt->unk_04) {
+                                case 0:
+                                    ShopStockPt->SetItemToPos(ShopHaveItemPt->unk_0C, &ShopHaveItemPt->item_no,
+                                                              &ShopHaveItemPt->volume);
+                                    break;
+                                case 1:
+                                    ShopStockPt->GetWeaponInfo(ShopHaveItemPt->unk_0C, (WEAPON_HAVE *) weapon);
+                                    ShopStockPt->SetWepToPos(ShopHaveItemPt->unk_0C, ShopHaveWepPt);
+                                    ShopHaveItemPt->item_no = *(s16 *) weapon;
+                                    break;
+                                case 2:
+                                    ShopStockPt->GetAttachInfo(ShopHaveItemPt->unk_0C, (ATTACH_LIST *) attach);
+                                    ShopStockPt->SetAttachToPos(ShopHaveItemPt->unk_0C, ShopHaveAttachPt);
+                                    ShopHaveItemPt->item_no = *(s16 *) attach;
+                                    break;
+                            }
+                            if (ShopHaveItemPt->item_no < 0x51) {
+                                InitAllHaveData();
+                            }
+                            break;
+                    }
+                }
+            }
+            switch (left) {
+                case 0:
+                    break;
+                case 1:
+                    ShopMenu.side = 0;
+                    ShopMenu.board.cursor =
+                        (ShopMenu.stock_top_row + (ShopMenu.board.cursor / 5 - ShopMenu.board.top_row)) * 5 + 4;
+                    break;
+            }
+            if (cursor != ShopMenu.board.cursor || page != ShopMenu.board.page) {
+                int rows = ChargeShopMax[ShopMenu.board.page] / 5;
+                int last_top = rows - 4;
+                if (last_top < 0) {
+                    last_top = 0;
+                }
+                if (last_top < ShopMenu.stock_top_row) {
+                    ShopMenu.stock_top_row = ShopMenu.board.cursor / 5 - 3;
+                    if ((s8) ShopMenu.stock_top_row < 0) {
+                        ShopMenu.stock_top_row = 0;
+                    }
+                    ShopMenu.stock_y = 0x8A - ShopMenu.stock_top_row * 0x28;
+                    if (rows <= 0) {
+                        rows = 4;
+                    }
+                    ShopMenu.stock_scroll = 142.0f + 114.0f * ShopMenu.stock_top_row / rows;
+                }
+                ComMenuSePlay(0);
+            }
+            break;
+        }
+    }
+    int mes_no = 0;
+    int item = 0;
+    int value = 0;
+    int name_mes = -1;
+    int cursor = ShopMenu.board.cursor;
+    if (ShopHaveItemPt->item_no >= 0x51) {
+        item = ShopHaveItemPt->item_no;
+        COM_ITEM_INFO *info = GetCommonItemInfo(item);
+        if (info != NULL) {
+            mes_no = info->msg + 500;
+        }
+        value = GetAttachVolumeForMsg(ShopHaveAttachPt);
+        if (ShopHaveItemPt->item_no == 0x5A) {
+            name_mes = ShopHaveAttachPt->unk_02 + 100;
+        }
+    }
+    switch (ShopMenu.side) {
+        case 0:
+            switch (ShopMenu.board.page) {
+                case 0:
+                    item = ShopStockPt->dungeon_items[cursor];
+                    break;
+                case 1: {
+                    COM_ITEM_INFO *info = GetCommonItemInfo(ShopStockPt->weapons[cursor].item_no);
+                    item = info != NULL ? info->msg : -1;
+                    if (item >= 0x101) {
+                        value = ShopStockPt->weapons[cursor].unk_02;
+                    }
+                    break;
+                }
+                case 2:
+                    item = ShopStockPt->attachments[cursor].item_no;
+                    if (item >= 0x51) {
+                        mes_no = item + 500;
+                        value = GetAttachVolumeForMsg(&ShopStockPt->attachments[cursor]);
+                        if (item == 0x5A) {
+                            name_mes = ShopStockPt->attachments[cursor].unk_02 + 100;
+                        }
+                    }
+                    break;
+            }
+            break;
+        case 1:
+            switch (ShopMenu.board.page) {
+                case 0:
+                    item = pack->item[cursor];
+                    if (item >= 0x84) {
+                        mes_no = item + 500;
+                    }
+                    break;
+                case 1: {
+                    WEAPON_HAVE *have = &ShopUserStatusPt->chara_weapons[cursor / 10][cursor % 10];
+                    COM_ITEM_INFO *info = GetCommonItemInfo(have->item_no);
+                    item = info != NULL ? info->msg : -1;
+                    if (item >= 0) {
+                        mes_no = item + 500;
+                        value = have->unk_02;
+                    }
+                    break;
+                }
+                case 2: {
+                    ATTACH_LIST *list = (ATTACH_LIST *) &ShopUserStatusPt->consumable_items[cursor];
+                    item = list->item_no;
+                    if (item >= 0x51) {
+                        mes_no = item + 500;
+                        value = GetAttachVolumeForMsg(list);
+                        if (item == 0x5A) {
+                            name_mes = list->unk_02 + 100;
+                        }
+                    }
+                    break;
+                }
+            }
+            if (ShopMenu.board.cursor_area == 2) {
+                mes_no = 1000;
+            }
+            break;
+    }
+    if (item > 0) {
+        mes_no = item + 500;
+    }
+    if (CommonMenuMes2.mes_made != mes_no || (name_mes > 0 && CommonMenuMes2.mes_no[0] != name_mes) ||
+        CommonMenuMes2.value != value) {
+        CommonMenuMes2.value_signed = 1;
+        CommonMenuMes2.value = value;
+        if (name_mes > 0) {
+            CommonMenuMes2.mes_no[0] = name_mes;
+        }
+        if (mes_no <= 500) {
+            mes_no = 0;
+        }
+        printf("msgno = %d\n", mes_no);
+        CommonMenuMes2.mes_made = -1;
+        CommonMenuMes2.MakeMesWin(mes_no);
+    }
+    return result;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopKey__Fv);
+#endif
 
 /**
  * Moves the cursor across the recharge shop's list.
@@ -1349,37 +1899,37 @@ static int ChargeSelectKey() {
         PersonalBoardLimmitCheck();
         ChargeShopLimmitCheck();
     }
-    int count = ChargeShopMax[ShopMenu.board.unk_04];
+    int count = ChargeShopMax[ShopMenu.board.page];
 
     if (GamePad.Down(0x1000)) {
-        ShopMenu.board.unk_0C -= 5;
-        if (ShopMenu.board.unk_0C < 0) {
-            ShopMenu.board.unk_0C += 5;
+        ShopMenu.board.cursor -= 5;
+        if (ShopMenu.board.cursor < 0) {
+            ShopMenu.board.cursor += 5;
         }
-        if (ShopMenu.board.unk_0C / 5 < ShopMenu.unk_176) {
-            ShopMenu.unk_176--;
+        if (ShopMenu.board.cursor / 5 < ShopMenu.stock_top_row) {
+            ShopMenu.stock_top_row--;
         }
     }
     if (GamePad.Down(0x4000)) {
-        if (ShopMenu.board.unk_0C < count - 5) {
-            ShopMenu.board.unk_0C += 5;
+        if (ShopMenu.board.cursor < count - 5) {
+            ShopMenu.board.cursor += 5;
         }
-        if (ShopMenu.unk_176 + 3 < ShopMenu.board.unk_0C / 5) {
-            ShopMenu.unk_176++;
+        if (ShopMenu.stock_top_row + 3 < ShopMenu.board.cursor / 5) {
+            ShopMenu.stock_top_row++;
         }
     }
-    if (GamePad.Down(0x8000) && ShopMenu.board.unk_0C % 5 != 0) {
-        ShopMenu.board.unk_0C--;
+    if (GamePad.Down(0x8000) && ShopMenu.board.cursor % 5 != 0) {
+        ShopMenu.board.cursor--;
     }
     if (GamePad.Down(0x2000)) {
-        if (ShopMenu.board.unk_0C % 5 == 4) {
-            ShopMenu.unk_02 = 1;
-            ShopMenu.board.unk_0C = (ShopMenu.board.unk_18 + (ShopMenu.board.unk_0C / 5 - ShopMenu.unk_176)) * 5;
+        if (ShopMenu.board.cursor % 5 == 4) {
+            ShopMenu.side = 1;
+            ShopMenu.board.cursor = (ShopMenu.board.top_row + (ShopMenu.board.cursor / 5 - ShopMenu.stock_top_row)) * 5;
         } else {
-            ShopMenu.board.unk_0C++;
+            ShopMenu.board.cursor++;
         }
     }
-    switch (ShopMenu.unk_02) {
+    switch (ShopMenu.side) {
         case 0:
             int se = 2;
             IHAVEITEM saved;
@@ -1391,17 +1941,17 @@ static int ChargeSelectKey() {
                     SetItemShopTalkMode(7, 1);
                     return 0;
                 }
-                int mode = ShopMenu.board.unk_04;
+                int mode = ShopMenu.board.page;
                 int kind = WhatIsKindofItem(ShopHaveItemPt->item_no);
                 if (mode != kind && kind != -1) {
                     se = 2;
                 } else {
                     switch (mode) {
                         case 0:
-                            ShopStockPt->SetItemToPos(ShopMenu.board.unk_0C, &ShopHaveItemPt->item_no, &ShopHaveItemPt->volume);
+                            ShopStockPt->SetItemToPos(ShopMenu.board.cursor, &ShopHaveItemPt->item_no, &ShopHaveItemPt->volume);
                             break;
                         case 1:
-                            ShopStockPt->SetWepToPos(ShopMenu.board.unk_0C, ShopHaveWepPt);
+                            ShopStockPt->SetWepToPos(ShopMenu.board.cursor, ShopHaveWepPt);
                             if (ShopHaveWepPt->item_no < 0x51) {
                                 ShopHaveItemPt->item_no = -1;
                                 InitHaveWep(ShopHaveWepPt);
@@ -1411,7 +1961,7 @@ static int ChargeSelectKey() {
                             }
                             break;
                         case 2:
-                            ShopStockPt->SetAttachToPos(ShopMenu.board.unk_0C, ShopHaveAttachPt);
+                            ShopStockPt->SetAttachToPos(ShopMenu.board.cursor, ShopHaveAttachPt);
                             if (ShopHaveAttachPt->item_no < 0x51) {
                                 ShopHaveItemPt->item_no = -1;
                                 InitHaveAttach(ShopHaveAttachPt);
@@ -1427,8 +1977,8 @@ static int ChargeSelectKey() {
                     InitAllHaveData();
                 } else {
                     ShopHaveItemPt->unk_00 = 0;
-                    ShopHaveItemPt->unk_04 = ShopMenu.board.unk_04;
-                    ShopHaveItemPt->unk_0C = ShopMenu.board.unk_0C;
+                    ShopHaveItemPt->unk_04 = ShopMenu.board.page;
+                    ShopHaveItemPt->unk_0C = ShopMenu.board.cursor;
                     se = 1;
                 }
                 if (memcmp(&saved, ShopHaveItemPt, sizeof(IHAVEITEM)) != 0 || se != 2) {
@@ -1450,16 +2000,16 @@ static int ChargeSelectKey() {
                 s16 item;
                 s16 volume;
 
-                switch (ShopMenu.board.unk_04) {
+                switch (ShopMenu.board.page) {
                     case 0:
-                        ShopStockPt->GetItemInfo(ShopMenu.board.unk_0C, &item, &volume);
+                        ShopStockPt->GetItemInfo(ShopMenu.board.cursor, &item, &volume);
                         break;
                     case 2:
-                        ShopStockPt->GetAttachInfo(ShopMenu.board.unk_0C, &attach);
+                        ShopStockPt->GetAttachInfo(ShopMenu.board.cursor, &attach);
                         item = attach.item_no;
                         break;
                     case 1:
-                        ShopStockPt->GetWeaponInfo(ShopMenu.board.unk_0C, &weapon);
+                        ShopStockPt->GetWeaponInfo(ShopMenu.board.cursor, &weapon);
                         item = weapon.item_no;
                         break;
                 }
@@ -1467,7 +2017,7 @@ static int ChargeSelectKey() {
                 full = 0;
                 int used = 0;
                 int max = 0;
-                GetNowModeMaxNum(ShopMenu.board.unk_04, &full);
+                GetNowModeMaxNum(ShopMenu.board.page, &full);
                 switch (kind) {
                     case 0: {
                         ITEM_PACK *pack = ShopUserItemPack(ShopUserStatusPt);
@@ -1527,13 +2077,13 @@ static int ChargeSelectKey() {
                     SetItemShopTalkMode(0, 0);
                 }
                 if (ok) {
-                    ShopMenu.unk_180 = 0x12;
+                    ShopMenu.talk_mode = 0x12;
                     ComMenuSePlay(1);
                 } else {
                     ComMenuSePlay(2);
                 }
             } else if (GamePad.Down(0x80)) {
-                switch (ShopMenu.board.unk_04) {
+                switch (ShopMenu.board.page) {
                     case 0:
                         ShopStockPt->SeitonItem();
                         break;
@@ -1550,8 +2100,165 @@ static int ChargeSelectKey() {
     return 0;
 }
 
+#ifdef NON_MATCHING
+void DrawChargeShop() {
+    int text_x;
+    int text_y;
+
+    setbilinear(0);
+    MenuWorldTrans(&MenuCamera);
+    int bright = 0x40;
+    switch (ShopMenu.talk_mode) {
+        case 1:
+            bright = 0x80 - ShopMenu.step_count * 3;
+            break;
+        case 2:
+            bright = ShopMenu.step_count * 3 + 0x40;
+            break;
+    }
+    if (bright < 0x40) {
+        bright = 0x40;
+    }
+    if (bright > 0x80) {
+        bright = 0x80;
+    }
+    FrameImageDraw(bright, 0x80);
+    if (ShopMenu.ready != 0) {
+        int cur_x;
+        int top_row;
+        int state;
+        MenuTextureReload(ShopMenu.tex_block);
+        DrawPersonalBoard(0x154, 0x84, ShopMenu.board.page, 0x80, 0);
+        CommonTrushDraw(0x232, 0x118, 0x80);
+        CommonMoneyBoardDraw(0x163, 0x12C, ShopUserStatusPt->money, 0x80);
+        ChargeShopBoardDraw(0x32, 0x84, 0x80);
+        if (ShopHaveItemPt->item_no < 0x51) {
+            ChargeShopLRDraw(0x80);
+        }
+        if (ShopMenu.talk_mode != 24 && ShopMenu.talk_mode != 25) {
+            switch (ShopMenu.side) {
+                case 0:
+                    cur_x = 0x22;
+                    top_row = ShopMenu.stock_top_row;
+                    break;
+                case 1:
+                    cur_x = 0x144;
+                    top_row = (u8) ShopMenu.board.top_row;
+                    break;
+            }
+            if (ShopHaveItemPt->item_no >= 0x51) {
+                state = 2;
+            } else {
+                switch (ShopMenu.side) {
+                    case 1:
+                        if (SearchBoardNowPosItemExist(ShopMenu.board.page, ShopMenu.board.cursor) <= 0) {
+                            state = 0;
+                        } else {
+                            state = 1;
+                        }
+                        break;
+                    case 0:
+                        state = ShopStockPt->SearchSpace(ShopMenu.board.cursor, ShopMenu.board.page);
+                        if (state > 0) {
+                            state = 1;
+                        }
+                        break;
+                }
+            }
+            ShopCurDraw(cur_x, 0x90, ShopMenu.board.cursor, top_row, 0, state, 0x80);
+        }
+        DrawShopIcon(0x4C, 0x2A, 1, 0x80);
+        ShopDataMove.IconAutoMoveDraw();
+        ShopDataMove.IconAutoMove(ChargeOrShopFlag, 0);
+        if (ShopMenu.talk_mode == 17 || ShopMenu.talk_mode == 18) {
+            int prompt[2] = {0x516, 0x517};
+            int mes_no = prompt[ShopMenu.talk_mode - 17];
+            if (CommonMenuMes1.mes_made != mes_no) {
+                CommonMenuMes1.MakeMesWin(mes_no);
+            }
+            CommonMenuMes1.text_x = 0x14A;
+            CommonMenuMes1.text_y = 0xBE;
+            if (ShopMenu.talk_mode == 17) {
+                CommonMenuMes1.text_x = 0x96;
+            }
+            CommonMenuMes1.stay_frame = 1;
+            CommonMenuMes1.Step();
+            CommonMenuMes1.DrawMesWin();
+        } else {
+            CommonMenuMes1.stay_frame = 0;
+        }
+        int help_x = (int) ShopHelpWinPos[0];
+        MenuHelpWinDraw(help_x, (int) ShopHelpWinPos[1], ShopHelpWinW, ShopHelpWinH, 0x80);
+        GetMainMenuRightHelpMsgLangOffset(text_x, text_y);
+        CommonMenuMes2.text_x = (int) (ShopHelpWinPos[0] + text_x);
+        CommonMenuMes2.text_y = (int) (ShopHelpWinPos[1] + text_y);
+    }
+    if (ShopMenu.person_state == 2) {
+        ShopPersonDraw(ShopMenu.shop_no);
+    }
+    if (ShopMenu.ready != 0) {
+        MenuTextureReload(CommonMenuMes2.tex_block);
+        CommonMenuMes2.Step();
+        CommonMenuMes2.DrawMesWin();
+        if (ShopHaveItemPt->item_no < 0x51) {
+            s16 plate_x[7][2] = {{0xA2, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4},
+                                 {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}};
+            int mes_no = 0x519;
+            AtoraNameMes.text_x = plate_x[ShopMenu.lang][0];
+            if (ShopMenu.side == 1) {
+                mes_no = 0x518;
+                AtoraNameMes.text_x = plate_x[ShopMenu.lang][1];
+            }
+            if (AtoraNameMes.mes_made != mes_no) {
+                AtoraNameMes.MakeMesWin(mes_no);
+            }
+            AtoraNameMes.stay_frame = 1;
+            AtoraNameMes.text_y = 0x162;
+            AtoraNameMes.Step();
+            AtoraNameMes.DrawMesWin();
+        }
+    }
+    ShopModelMsgFunc(0);
+    ShopFadeoutDraw();
+    setbilinear(1);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", DrawChargeShop__Fv);
+#endif
+#ifdef NON_MATCHING
+void ChargeShopMaxDraw(int max, int x, int y, int alpha) {
+    DrawMenu2DSprite(ShopBoard, CRect_i_(x + 0xD2, y - 0x28 + 1, 0x30, 0x2F), CRect_i_(0x100, 0x90, 0x30, 0x30), alpha);
+    RECT digits = {0x90, 0xDC, 0xC, 0xD};
+    DrawMenuNumber(max, x + 0xF7, y - 0xE, ShopBoard, digits, 1, alpha);
+    int count = 0;
+    switch (ShopMenu.board.page) {
+        case 0:
+            for (int i = 0; i < 60; i++) {
+                if (ShopStockPt->dungeon_items[i] >= 0x84) {
+                    count++;
+                }
+            }
+            break;
+        case 1:
+            for (int i = 0; i < 30; i++) {
+                if (ShopStockPt->weapons[i].item_no >= 0x101) {
+                    count++;
+                }
+            }
+            break;
+        case 2:
+            for (int i = 0; i < 30; i++) {
+                if (ShopStockPt->attachments[i].item_no >= 0x51) {
+                    count++;
+                }
+            }
+            break;
+    }
+    DrawMenuNumber(count, x + 0xF2, y - 0x22, ShopBoard, digits, 1, alpha);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopMaxDraw__Fiiii);
+#endif
 
 void ChargeShopBoardDraw(int x, int y, int alpha) {
     s16 items[120];
@@ -1561,12 +2268,12 @@ void ChargeShopBoardDraw(int x, int y, int alpha) {
     int board_y;
     int left = x + 0x14;
 
-    board_y = y + 6 - ShopMenu.unk_176 * 0x28;
-    ShopMenu.unk_16C += ((float) board_y - ShopMenu.unk_16C) / 4.0f;
-    board_y = ShopMenu.unk_16C;
+    board_y = y + 6 - ShopMenu.stock_top_row * 0x28;
+    ShopMenu.stock_y += ((float) board_y - ShopMenu.stock_y) / 4.0f;
+    board_y = ShopMenu.stock_y;
     DrawPerBoardDraw(0, 0x64, left, board_y, top, bottom, ShopBoard, alpha);
 
-    int board_mode = ShopMenu.board.unk_04;
+    int board_mode = ShopMenu.board.page;
     int i;
 
     switch (board_mode) {
@@ -1615,7 +2322,7 @@ void ChargeShopBoardDraw(int x, int y, int alpha) {
     }
     PersonalBoardTagDraw(board_mode, x, y, ShopBoard, tag, alpha);
     PersonalBoardDrawWaku(x, y, ShopBoard, alpha);
-    PersonalBoardScrlBarDraw(ChargeShopMax[board_mode], x, y, ShopMenu.unk_170, ShopMenu.unk_176, ShopBoard, alpha);
+    PersonalBoardScrlBarDraw(ChargeShopMax[board_mode], x, y, ShopMenu.stock_scroll, ShopMenu.stock_top_row, ShopBoard, alpha);
     ChargeShopMaxDraw(ChargeShopMax[board_mode], x, y, alpha);
 }
 
@@ -1657,7 +2364,36 @@ static int WeaponCalMoney(WEAPON_HAVE *weapon, int sell) {
     return total;
 }
 
+#ifdef NON_MATCHING
+int BuyMoneyCheck2() {
+    int max[3] = {100, 60, 40};
+    int total = 0;
+    ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
+
+    for (int i = 0; i < 100; i++) {
+        if (ItemBoardInfo[i] == 1) {
+            total += CalItemMoney(pack->item[i], 0);
+        }
+    }
+    for (int chara = 0; chara < 6; chara++) {
+        for (int i = 0; i < 10; i++) {
+            if (WeaponBoardInfo[chara][i] == 1) {
+                WEAPON_HAVE *weapon = &ShopUserStatusPt->chara_weapons[chara][i];
+                total += CalItemMoney(weapon->item_no, 0) + WeaponCalMoney(weapon, 0);
+            }
+        }
+    }
+    DNG_CONSUMABLE *attach = ShopUserStatusPt->consumable_items;
+    for (int i = 0; i < 40; i++, attach++) {
+        if (AttachBoardInfo[i] == 1) {
+            total += CalItemMoney(attach->id, 0);
+        }
+    }
+    return total;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", BuyMoneyCheck2__Fv);
+#endif
 
 /**
  * Totals what the goods currently marked for sale fetch.
@@ -1723,13 +2459,13 @@ static void IncludeBuyItem2() {
         }
     }
     status = ShopUserStatusPt;
-    money = status->unk_4346 + balance;
+    money = status->money + balance;
     if (money >= 0xFFFF) {
-        status->unk_4346 = 0xFFFF;
+        status->money = 0xFFFF;
     } else {
-        status->unk_4346 = money;
+        status->money = money;
     }
-    ItemShopGoodInitialize(ShopMenu.unk_00);
+    ItemShopGoodInitialize(ShopMenu.shop_no);
     ItemPosInfoInit();
 }
 
@@ -1800,7 +2536,7 @@ static void ExitItemShop2() {
 
     ShopCancelGoodReturn2();
     ShopMenuExit();
-    if (SaveData != NULL && ShopMenu.unk_00 == 1 && !SaveData->GetGameFlag(0xC8)) {
+    if (SaveData != NULL && ShopMenu.shop_no == 1 && !SaveData->GetGameFlag(0xC8)) {
         dng_status = SaveData->GetDngStatus();
         if (dng_status != NULL && dng_status->SearchItemIndexNo(5) >= 0) {
             SaveData->SetGameFlag(0xC8, 1);
@@ -1820,7 +2556,7 @@ static void ShopSpecialFunc() {
     int i;
     WEAPON_HAVE *weapons;
 
-    if (ShopMenu.unk_00 == 1) {
+    if (ShopMenu.shop_no == 1) {
         found = 0;
         weapons = ShopUserStatusPt->chara_weapons[0];
         for (i = 0; i < 10; i++) {
@@ -2021,7 +2757,54 @@ int ItemShopLoop2() {
     return done;
 }
 
+#ifdef NON_MATCHING
+void CheckSideKey2() {
+    int se;
+
+    if (GamePad.Down(0x9000) != 0) {
+        ShopMenu.side = 0;
+        ShopMenu.board.cursor_area = 1;
+        ShopMenu.board.cursor = (ShopMenu.stock_top_row + 3) * 5 + 3;
+    }
+    if (GamePad.Down(0x40) != 0) {
+        ShopMenu.unk_06 = 1;
+        if (ShopHaveItemPt->item_no >= 0x51) {
+            se = 2;
+        } else {
+            int flags = CheckBuyItemFunc2();
+            if (flags & 1) {
+                se = 2;
+                SetItemShopTalkMode(23, 1);
+            }
+            if ((flags & 2) || (flags & 4)) {
+                int money = ShopUserStatusPt->money;
+                int buy = BuyMoneyCheck2();
+                int balance = money + (SellMoneyCheck2() - buy);
+                if (balance < 0) {
+                    SetItemShopTalkMode(21, 1);
+                    se = 2;
+                } else if (balance >= 0x10000) {
+                    SetItemShopTalkMode(22, 1);
+                    se = 2;
+                } else {
+                    SetItemShopTalkMode(12, 1);
+                    se = 1;
+                }
+            }
+            if (flags & 8) {
+                SetItemShopTalkMode(10, 1);
+            }
+        }
+        ComMenuSePlay(se);
+    }
+    if (GamePad.Down(0x2000) != 0) {
+        ShopMenu.side = 1;
+        ShopMenu.board.cursor = (ShopMenu.board.top_row + 3) * 5;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", CheckSideKey2__Fv);
+#endif
 
 /**
  * Draws the item shop's board with its goods and their prices.
@@ -2036,9 +2819,9 @@ static void DrawItemShopBoard2(int x, int y, int alpha) {
     int board_y;
     int left = x + 0x14;
 
-    board_y = y + 6 - ShopMenu.unk_176 * 0x28;
-    ShopMenu.unk_16C += ((float) board_y - ShopMenu.unk_16C) / 4.0f;
-    board_y = ShopMenu.unk_16C;
+    board_y = y + 6 - ShopMenu.stock_top_row * 0x28;
+    ShopMenu.stock_y += ((float) board_y - ShopMenu.stock_y) / 4.0f;
+    board_y = ShopMenu.stock_y;
     DrawPerBoardDraw(0, 0x1E, left, board_y, top, bottom, ShopBoard, 0x80);
 
     int icon_x = left + 2;
@@ -2071,11 +2854,38 @@ static void DrawItemShopBoard2(int x, int y, int alpha) {
     DrawMenu2DSprite(ShopBoard, screen, texel, alpha);
 
     PersonalBoardDrawWaku(x, y, ShopBoard, 0x80);
-    PersonalBoardScrlBarDraw(0x1E, x, y, ShopMenu.unk_170, ShopMenu.unk_176, ShopBoard, 0x80);
+    PersonalBoardScrlBarDraw(0x1E, x, y, ShopMenu.stock_scroll, ShopMenu.stock_top_row, ShopBoard, 0x80);
     DrawCheckButton(x + 0xA8, y + 0xAA, 0x80);
 }
 
+#ifdef NON_MATCHING
+void DrawMoneyCheckBoard2(int x, int y, int alpha) {
+    int u;
+    int v;
+
+    DrawMenu2DSprite(ShopBoard, CRect_i_(x, y + 1, 0x60, 0x1B), CRect_i_(0xD0, 0xC0, 0x60, 0x1C), alpha);
+    int buy = BuyMoneyCheck2();
+    int balance = SellMoneyCheck2() - buy;
+    RECT digits = {0, 0xDC, 0xC, 0xC};
+    if (balance < 0) {
+        digits.y += 0xC;
+        u = 0x84;
+        v = 0xE8;
+    }
+    if (balance > 0) {
+        digits.y += 0x18;
+        u = 0x78;
+        v = 0xF4;
+    }
+    int number_y = y + 7;
+    int left = DrawMenuNumber(abs(balance), x + 0x54, number_y, ShopBoard, digits, 1, alpha);
+    if (balance != 0) {
+        DrawMenu2DSprite(ShopBoard, CRect_i_(left - 0xC, number_y, 0xC, 0xC), CRect_i_(u, v, 0xC, 0xC), alpha);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", DrawMoneyCheckBoard2__Fiii);
+#endif
 
 /**
  * Draws the shop's confirmation button.
@@ -2087,11 +2897,11 @@ INCLUDE_ASM("asm/nonmatchings/shop", DrawMoneyCheckBoard2__Fiii);
 static void DrawCheckButton(int x, int y, int mode) {
     int u = 0x130;
 
-    switch (ShopMenu.unk_180) {
+    switch (ShopMenu.talk_mode) {
         case 0x1A:
             u = 0x190;
-            if (ShopMenu.unk_184 > 8) {
-                ShopMenu.unk_180 = 0;
+            if (ShopMenu.step_count > 8) {
+                ShopMenu.talk_mode = 0;
             }
             break;
     }
@@ -2170,7 +2980,7 @@ static void DrawSellTicket_2(int x, int y, int clip_top, int clip_bottom, int mo
             if (ShopListPt[i].item_no < ITEM_ATTACH_START) {
                 visible = 0;
             }
-            if (ShopMenu.unk_02 == 0 && i == ShopMenu.board.unk_0C) {
+            if (ShopMenu.side == 0 && i == ShopMenu.board.cursor) {
                 visible = 0;
             }
             selected = 0;
@@ -2201,7 +3011,7 @@ static void DrawLocalTicket(int x, int y, int clip_top, int clip_bottom, int slo
     int ticket_x;
     int ticket_y;
 
-    if (slot == ShopMenu.board.unk_0C && ShopMenu.unk_02 == 1) {
+    if (slot == ShopMenu.board.cursor && ShopMenu.side == 1) {
         money = CalItemMoney(item_no, 0);
         if (money < 0) {
             money = 1;
@@ -2218,8 +3028,142 @@ static void DrawLocalTicket(int x, int y, int clip_top, int clip_bottom, int slo
     }
 }
 
+#ifdef NON_MATCHING
+void DrawSellTicket22(int x, int y, int top, int bottom, int alpha) {
+    int max[3] = {100, 60, 40};
+    ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
+    DNG_CONSUMABLE *attach = ShopUserStatusPt->consumable_items;
+
+    switch (ShopMenu.board.page) {
+        case 0:
+            for (int i = 0; i < 100; i++) {
+                if (ItemBoardInfo[i] == 1) {
+                    int item_no = pack->item[i];
+                    if (item_no >= 0x84) {
+                        DrawLocalTicket(x, y, top, bottom, i, item_no, alpha);
+                    }
+                }
+            }
+            return;
+        case 1:
+            for (int chara = 0; chara < 6; chara++) {
+                WEAPON_HAVE *weapons = ShopUserStatusPt->chara_weapons[chara];
+                for (int i = 0; i < 10; i++) {
+                    if (WeaponBoardInfo[chara][i] == 1) {
+                        int item_no = weapons[i].item_no;
+                        if (item_no >= 0x101) {
+                            DrawLocalTicket(x, y, top, bottom, i + chara * 10, item_no, 0x80);
+                        }
+                    }
+                }
+            }
+            return;
+        case 2:
+            for (int i = 0; i < 40; i++) {
+                if (AttachBoardInfo[i] == 1) {
+                    int item_no = attach[i].id;
+                    if (item_no >= 0x51) {
+                        DrawLocalTicket(x, y, top, bottom, i, item_no, 0x80);
+                    }
+                }
+            }
+            return;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", DrawSellTicket22__Fiiiii);
+#endif
+#ifdef NON_MATCHING
+void ShopCancelGoodReturn2() {
+    int count = -1;
+    int page = -1;
+    DNG_CONSUMABLE *attach = ShopUserStatusPt->consumable_items;
+    ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
+
+    for (int i = 0; i < 100; i++) {
+        if (ItemBoardInfo[i] == 1) {
+            count++;
+            ShopWorkBuf[count].item_no = pack->item[i];
+            *(int *) &ShopWorkBuf[count].data = pack->item_vol[i];
+            pack->item[i] = 0;
+            pack->item_vol[i] = 0;
+            ItemBoardInfo[i] = 0;
+        }
+    }
+    for (int i = 0; i < 60; i++) {
+        if (WeaponBoardInfo[0][i] == 1) {
+            WEAPON_HAVE *weapon = &ShopUserStatusPt->chara_weapons[i / 10][i % 10];
+            int item_no = weapon->item_no;
+            if (item_no >= 0x101) {
+                count++;
+                ShopWorkBuf[count].item_no = item_no;
+                memcpy(&ShopWorkBuf[count].data, weapon, sizeof(WEAPON_HAVE));
+                InitHaveWep(weapon);
+                WeaponBoardInfo[0][i] = 0;
+            }
+        }
+    }
+    for (int i = 0; i < 40; i++) {
+        if (AttachBoardInfo[i] == 1 && attach != NULL) {
+            count++;
+            ATTACH_LIST *list = (ATTACH_LIST *) &attach[i];
+            ShopWorkBuf[count].item_no = list->item_no;
+            memcpy(&ShopWorkBuf[count].data, list, sizeof(ATTACH_LIST));
+            InitHaveAttach(list);
+            AttachBoardInfo[i] = 0;
+        }
+    }
+    for (int i = 0; i < 30; i++) {
+        if (ShopBoardInfo[i] == 2) {
+            int item_no = ShopListPt[i].item_no;
+            if (item_no >= 0x51) {
+                int space = GetBoardSpace(item_no, &page);
+                if (space >= 0) {
+                    s32 *info;
+                    switch (page) {
+                        case 0:
+                            pack->item[space] = item_no;
+                            pack->item_vol[space] = *(int *) &ShopListPt[i].data;
+                            info = ItemBoardInfo;
+                            break;
+                        case 1: {
+                            WEAPON_HAVE *weapon = &ShopUserStatusPt->chara_weapons[space / 10][space % 10];
+                            memcpy(weapon, &ShopListPt[i].data, sizeof(WEAPON_HAVE));
+                            weapon->item_no = item_no;
+                            info = WeaponBoardInfo[0];
+                            break;
+                        }
+                        case 2: {
+                            ATTACH_LIST *list = (ATTACH_LIST *) &attach[space];
+                            memcpy(list, &ShopListPt[i].data, sizeof(ATTACH_LIST));
+                            list->item_no = item_no;
+                            info = AttachBoardInfo;
+                            break;
+                        }
+                    }
+                    info[space] = 2;
+                    memset(&ShopListPt[i], 0, sizeof(SHOP_ITEMLIST));
+                    ShopBoardInfo[i] = 0;
+                }
+            }
+        }
+    }
+    int next = 0;
+    for (int i = 0; i < 30; i++) {
+        if (ShopListPt[i].item_no < 0x51) {
+            if (count < next) {
+                break;
+            }
+            ShopBoardInfo[i] = 1;
+            memcpy(&ShopListPt[i], &ShopWorkBuf[next], sizeof(SHOP_ITEMLIST));
+            ShopListPt[i].item_no = ShopWorkBuf[next].item_no;
+            next++;
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", ShopCancelGoodReturn2__Fv);
+#endif
 
 /**
  * Chooses the line the shopkeeper says for the shop's current state.
@@ -2229,7 +3173,86 @@ INCLUDE_ASM("asm/nonmatchings/shop", ShopCancelGoodReturn2__Fv);
  * @size 0x268
  */
 static int GetNowMasterMsgNo2(int, int);
-INCLUDE_ASM("asm/nonmatchings/shop", GetNowMasterMsgNo2__Fii);
+static int GetNowMasterMsgNo2(int shop, int kind) {
+    int mes_no;
+    int base = shop * 2000;
+
+    mes_no = base + 2000 + kind * 100;
+
+    switch (ShopMenu.talk_mode) {
+        case 3:
+            break;
+        case 7:
+            mes_no += 0x32;
+            break;
+        case 21:
+            mes_no += 0x34;
+            break;
+        case 22:
+            mes_no += 0x38;
+            break;
+        case 23:
+            mes_no += 0x33;
+            break;
+        case 4:
+            mes_no += 0x36;
+            break;
+        case 5:
+            mes_no += 0x35;
+            break;
+        case 8:
+            mes_no += 0x3A;
+            break;
+        case 11:
+        case 10:
+            mes_no += 0x37;
+            break;
+        case 6:
+            mes_no += 0x41;
+            break;
+        case 12: {
+            int flags = CheckBuyItemFunc2();
+            if (flags & 2) {
+                mes_no = base + 2070 + kind * 100;
+            }
+            if (flags & 4) {
+                mes_no = base + 2071 + kind * 100;
+            }
+            if (flags & 6) {
+                mes_no = base + 2072 + kind * 100;
+            }
+            break;
+        }
+        case 20:
+            mes_no += 0x4B;
+            break;
+        case 24:
+            mes_no += 0x5A;
+            break;
+        case 25:
+        case 2:
+            mes_no += 0x5B;
+            break;
+        case 0:
+            switch (ShopMenu.side) {
+                case 0:
+                    mes_no += 0x14;
+                    break;
+                case 1:
+                    if (ShopMenu.board.cursor_area == 2) {
+                        mes_no += 0x28;
+                    } else {
+                        mes_no += 0x1E;
+                    }
+                    break;
+                case 2:
+                    mes_no += 0x3C;
+                    break;
+            }
+            break;
+    }
+    return mes_no;
+}
 
 /**
  * Runs the shopkeeper's speech and the model's reaction to it.
@@ -2239,10 +3262,10 @@ INCLUDE_ASM("asm/nonmatchings/shop", GetNowMasterMsgNo2__Fii);
  * @size 0x2D8
  */
 static void ShopModelMsgFunc(int shop_no) {
-    if (ShopMenu.unk_194 == 2) {
+    if (ShopMenu.person_state == 2) {
         int motion = ShopMenu.unk_19C;
 
-        switch (ShopMenu.unk_19A) {
+        switch (ShopMenu.msg_mode) {
             case 0:
                 motion = 0;
                 if (GamePad.AllOn()) {
@@ -2250,16 +3273,16 @@ static void ShopModelMsgFunc(int shop_no) {
                 } else {
                     ShopMenu.unk_1A4++;
                     if (ShopMenu.unk_1A4 >= 0x140) {
-                        ShopMenu.unk_19A = 1;
+                        ShopMenu.msg_mode = 1;
                         motion = 3;
                     }
                 }
                 break;
             case 1:
-                switch (ShopMenu.unk_180) {
+                switch (ShopMenu.talk_mode) {
                     case 0:
                         if (GamePad.AllOn()) {
-                            ShopMenu.unk_19A = 0;
+                            ShopMenu.msg_mode = 0;
                             ShopMenu.unk_1A4 = 0;
                             motion = 0;
                         }
@@ -2270,8 +3293,8 @@ static void ShopModelMsgFunc(int shop_no) {
                 }
                 break;
         }
-        if (ShopMenu.unk_19A == 1) {
-            int msg_no = GetNowMasterMsgNo2(shop_no, ShopMenu.unk_00);
+        if (ShopMenu.msg_mode == 1) {
+            int msg_no = GetNowMasterMsgNo2(shop_no, ShopMenu.shop_no);
 
             if (ShopMenu.unk_19E != msg_no || GamePad.Down(0x60)) {
                 ShopMenu.unk_19E = msg_no;
@@ -2279,12 +3302,12 @@ static void ShopModelMsgFunc(int shop_no) {
                 CommonMenuMes3.MakeMesWin(ShopMenu.unk_19E);
                 motion = 3;
             }
-            switch (ShopMenu.unk_180) {
+            switch (ShopMenu.talk_mode) {
                 case 2:
                 case 1:
                     break;
                 default:
-                    if (ShopMenu.unk_194) {
+                    if (ShopMenu.person_state) {
                         SetShopTalkMsgPos();
                         CommonMenuMes3.tail_on = 1;
                         CommonMenuMes3.auto_pos = 8;
@@ -2339,8 +3362,37 @@ static void SetShopTalkMsgPos() {
     CommonMenuMes3.AutoSet(msg_pos);
 }
 
+#ifdef NON_MATCHING
+void ItemShopGetPacFileName(int kind, int shop_no, char *name) {
+    char *names[2][18] = {
+        {"p13", "p31", "p39", "p54", "p74", "c03", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+        {"p02", "p32", "p35", "p36", "p36", "p36", "p36", "p37", "p49", "p55", "p75", "c03", "p41", "p02", "p32", "p38",
+         "c03", "c03"}};
+    char file[32];
+    char path[64] = "commenu/shopchara/";
+
+    strcpy(file, names[kind][shop_no]);
+    strcat(file, "a.pac");
+    strcat(path, file);
+    strcpy(name, path);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopGetPacFileName__FiiPc);
+#endif
+#ifdef NON_MATCHING
+void ItemShopGetImgFileName(int kind, int shop_no, char *name) {
+    char *names[2][18] = {
+        {"p13a", "p31a", "p39a", "p54a", "p74a", "c03c", "", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+         NULL},
+        {"p02a", "p32a", "p35a", "p36a", "p36a", "p36a", "p36a", "p37a", "p49a", "p55a", "p75a", "c03c", "p41a", "p02a",
+         "p32a", "p38a", "c03c", "c03c"}};
+
+    strcpy(name, names[kind][shop_no]);
+    strcat(name, "01.img");
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopGetImgFileName__FiiPc);
+#endif
 
 void ItemShopMemoryAlloc() {
     ShopBoardInfo = (s32 *) ShopCashBuffer.Alloc(0x78);
@@ -2444,19 +3496,262 @@ void InitItemShop2(int *state, int shop_no, int mode) {
     ItemPosInfoInit();
     InitAllHaveData();
     ShopHaveItemPt->unk_00 = 0;
-    ShopMenu.board.unk_0C = 0;
-    ShopMenu.unk_02 = 0;
-    ShopMenu.unk_176 = 0;
-    ShopMenu.unk_170 = 142.0f + 114.0f * ShopMenu.unk_176 / 6.0f;
-    ShopMenu.unk_16C = 0x7E - ShopMenu.unk_176 * 0x28;
-    ShopMenu.unk_178 = 86.0f;
-    ShopMenu.unk_17C = 152.0f;
-    ShopMenu.unk_178 = (ShopMenu.board.unk_0C % 5) * 0x28 + 0x154;
-    ShopMenu.unk_17C = 120.0f;
+    ShopMenu.board.cursor = 0;
+    ShopMenu.side = 0;
+    ShopMenu.stock_top_row = 0;
+    ShopMenu.stock_scroll = 142.0f + 114.0f * ShopMenu.stock_top_row / 6.0f;
+    ShopMenu.stock_y = 0x7E - ShopMenu.stock_top_row * 0x28;
+    ShopMenu.cursor_x = 86.0f;
+    ShopMenu.cursor_y = 152.0f;
+    ShopMenu.cursor_x = (ShopMenu.board.cursor % 5) * 0x28 + 0x154;
+    ShopMenu.cursor_y = 120.0f;
     GetMainMenuRightHelpWinLangOffset(ShopHelpWinPos[0], ShopHelpWinPos[1], ShopHelpWinW, ShopHelpWinH);
 }
 
+#ifdef NON_MATCHING
+void ItemShopSelectKey2() {
+    u8 held[0xF8];
+    u8 taken[0xF8];
+
+    if (GamePad.Down(0x1000) != 0) {
+        ShopMenu.board.cursor -= 5;
+        if (ShopMenu.board.cursor < 0) {
+            ShopMenu.board.cursor += 5;
+        }
+        if (ShopMenu.board.cursor / 5 < ShopMenu.stock_top_row) {
+            ShopMenu.stock_top_row--;
+        }
+    }
+    if (GamePad.Down(0x4000) != 0) {
+        if (ShopMenu.board.cursor >= 25) {
+            ShopMenu.side = 2;
+        } else {
+            ShopMenu.board.cursor += 5;
+        }
+        if (ShopMenu.stock_top_row + 3 < ShopMenu.board.cursor / 5) {
+            ShopMenu.stock_top_row++;
+        }
+    }
+    if (GamePad.Down(0x8000) != 0 && ShopMenu.board.cursor % 5 != 0) {
+        ShopMenu.board.cursor--;
+    }
+    if (GamePad.Down(0x2000) != 0) {
+        if (ShopMenu.board.cursor % 5 == 4) {
+            ShopMenu.side = 1;
+            ShopMenu.board.cursor = (ShopMenu.board.top_row + (ShopMenu.board.cursor / 5 - ShopMenu.stock_top_row)) * 5;
+        } else {
+            ShopMenu.board.cursor++;
+        }
+    }
+    if (ShopMenu.side == 0 && ShopMenu.board.cursor > 30) {
+        while (ShopMenu.board.cursor > 30) {
+            ShopMenu.board.cursor -= 5;
+        }
+        ShopMenu.stock_top_row = ShopMenu.board.cursor / 5 - 2;
+        ShopMenu.side = 2;
+        return;
+    }
+    if (GamePad.Down(0x40) != 0) {
+        ShopMenu.unk_06 = 1;
+        int cursor = ShopMenu.board.cursor;
+        if (ShopListPt[cursor].item_no < 0x51 && ShopHaveItemPt->item_no < 0x51) {
+            ComMenuSePlay(2);
+            return;
+        }
+        int enable = IsEnableCharge(ShopHaveItemPt->item_no);
+        if (enable != 0) {
+            int item_no = ShopHaveItemPt->item_no;
+            if (item_no >= 0x84) {
+                ITEM_DATA *data = GetItemData(item_no);
+                if (data != NULL) {
+                    if (data->kind_flags & 0x10) {
+                        enable = 0;
+                    }
+                    if (ShopHaveItemPt->item_no == 0xB9) {
+                        enable = 0;
+                    }
+                }
+            }
+            if (ShopHaveItemPt->item_no == 0x10C && GetMenuHebikiriFlag() == 0) {
+                enable = 0;
+            }
+        }
+        if (ShopMenu.board.unk_15C >= 0) {
+            ComMenuSePlay(2);
+            SetItemShopTalkMode(5, 1);
+            return;
+        }
+        if (enable == 0) {
+            ComMenuSePlay(2);
+            SetItemShopTalkMode(4, 1);
+            return;
+        }
+        int shop_info = ShopBoardInfo[cursor];
+        int have_info = ShopHaveItemPt->unk_00;
+        memset(taken, 0, sizeof(taken));
+        SHOP_ITEMLIST *good = &ShopListPt[cursor];
+        int good_kind = WhatIsKindofItem(good->item_no);
+        int good_no = good->item_no;
+        switch (good_kind) {
+            case 0:
+                *(int *) taken = *(int *) &good->data;
+                break;
+            case 1:
+                memcpy(taken, &good->data, sizeof(WEAPON_HAVE));
+                break;
+            case 2:
+                memcpy(taken, &good->data, sizeof(ATTACH_LIST));
+                break;
+            default:
+                InitShopItemListData(good);
+                break;
+        }
+        int held_kind = WhatIsKindofItem(ShopHaveItemPt->item_no);
+        int held_no = ShopHaveItemPt->item_no;
+        switch (held_kind) {
+            case 0:
+                *(int *) held = ShopHaveItemPt->volume;
+                break;
+            case 1:
+                memcpy(held, ShopHaveWepPt, sizeof(WEAPON_HAVE));
+                break;
+            case 2:
+                memcpy(held, ShopHaveAttachPt, sizeof(ATTACH_LIST));
+                break;
+        }
+        switch (good_kind) {
+            case 0:
+                ShopHaveItemPt->volume = *(int *) taken;
+                break;
+            case 1:
+                memcpy(ShopHaveWepPt, taken, sizeof(WEAPON_HAVE));
+                break;
+            case 2:
+                memcpy(ShopHaveAttachPt, taken, sizeof(ATTACH_LIST));
+                break;
+        }
+        ShopHaveItemPt->item_no = good_no;
+        switch (held_kind) {
+            case 0:
+                *(int *) &good->data = *(int *) held;
+                break;
+            case 1:
+                memcpy(&good->data, held, sizeof(WEAPON_HAVE));
+                break;
+            case 2:
+                memcpy(&good->data, held, sizeof(ATTACH_LIST));
+                break;
+        }
+        good->item_no = held_no;
+        ShopHaveItemPt->unk_00 = shop_info;
+        ShopBoardInfo[cursor] = have_info;
+        if (ShopHaveItemPt->item_no < 0x51) {
+            InitAllHaveData();
+            ShopMenu.board.unk_15C = -1;
+        } else {
+            ShopHaveItemPt->unk_08 = cursor;
+            ShopMenu.board.page = good_kind;
+            PersonalBoardLimmitCheck();
+        }
+        ComMenuSePlay(1);
+    } else if (GamePad.Down(0x10) != 0) {
+        ShopMenu.unk_06 = 1;
+        if (ShopHaveItemPt->item_no >= 0x51) {
+            ComMenuSePlay(2);
+            return;
+        }
+        if (ShopBoardInfo[ShopMenu.board.cursor] == 1) {
+            int item_no = ShopListPt[ShopMenu.board.cursor].item_no;
+            int price = CalItemMoney(item_no, 0);
+            int enable = 1;
+            if (item_no < 0x51) {
+                enable = 0;
+            }
+            if (ShopUserStatusPt->money < price) {
+                enable = 0;
+                SetItemShopTalkMode(21, 1);
+            }
+            int page = WhatIsKindofItem(item_no);
+            if (GetBoardSpace(item_no, &page) < 0) {
+                enable = 0;
+                SetItemShopTalkMode(11, 1);
+            }
+            int full = 0;
+            int max = 0;
+            int used = 0;
+            int owner = WhoIsWeaponEquip(item_no);
+            switch (page) {
+                case 0: {
+                    ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
+                    max = pack->num;
+                    for (int i = 0; i < 3; i++) {
+                        if (pack->quick_item_slot[i] >= 0x84) {
+                            used += pack->quick_item_qty[i];
+                        }
+                    }
+                    for (int i = 0; i < max; i++) {
+                        if (pack->item[i] >= 0x84) {
+                            used++;
+                        }
+                    }
+                    break;
+                }
+                case 1:
+                    max = 10;
+                    for (int i = 0; i < 10; i++) {
+                        if (ShopUserStatusPt->chara_weapons[owner][i].item_no >= 0x101) {
+                            used++;
+                        }
+                    }
+                    break;
+                case 2:
+                    max = 40;
+                    for (int i = 0; i < 40; i++) {
+                        if (ShopUserStatusPt->consumable_items[i].id >= 0x51) {
+                            used++;
+                        }
+                    }
+                    break;
+            }
+            if (ShopDataMove.item_no > 0) {
+                used++;
+            }
+            for (int i = 0; i < 30; i++) {
+                if (page >= 0 && page == WhatIsKindofItem(ShopListPt[i].item_no) && ShopBoardInfo[i] == 2) {
+                    if (page == 1) {
+                        if (owner == WhoIsWeaponEquip(ShopListPt[i].item_no)) {
+                            used++;
+                        }
+                    } else {
+                        used++;
+                    }
+                }
+            }
+            if (used >= max) {
+                full = 1;
+            }
+            if (full != 0) {
+                enable = 0;
+                SetItemShopTalkMode(11, 1);
+            }
+            if (enable != 0) {
+                ShopMenu.talk_mode = 13;
+                ComMenuSePlay(1);
+            } else {
+                ComMenuSePlay(2);
+            }
+        } else {
+            ComMenuSePlay(2);
+        }
+    }
+    if (BoardModeChangeKey() != 0) {
+        PersonalBoardLimmitCheck();
+        ComMenuSePlay(0);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopSelectKey2__Fv);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/shop", @819);
 INCLUDE_RODATA("asm/nonmatchings/shop", @837__3);
 INCLUDE_RODATA("asm/nonmatchings/shop", @838__2);
@@ -2497,8 +3792,793 @@ INCLUDE_RODATA("asm/nonmatchings/shop", @2141);
 INCLUDE_RODATA("asm/nonmatchings/shop", @2142);
 INCLUDE_RODATA("asm/nonmatchings/shop", @2143);
 INCLUDE_RODATA("asm/nonmatchings/shop", @2146);
+#ifdef NON_MATCHING
+static inline void ShopSwapHeldGood(SHOP_ITEMLIST *good) {
+    u8 taken[0xF8];
+    u8 held[0xF8];
+
+    memset(taken, 0, sizeof(taken));
+    int good_kind = WhatIsKindofItem(good->item_no);
+    switch (good_kind) {
+        case 0:
+            *(int *) taken = *(int *) &good->data;
+            break;
+        case 1:
+            memcpy(taken, &good->data, sizeof(WEAPON_HAVE));
+            break;
+        case 2:
+            memcpy(taken, &good->data, sizeof(ATTACH_LIST));
+            break;
+    }
+    int held_kind = WhatIsKindofItem(ShopHaveItemPt->item_no);
+    switch (held_kind) {
+        case 0:
+            *(int *) held = ShopHaveItemPt->volume;
+            break;
+        case 1:
+            memcpy(held, ShopHaveWepPt, sizeof(WEAPON_HAVE));
+            break;
+        case 2:
+            memcpy(held, ShopHaveAttachPt, sizeof(ATTACH_LIST));
+            break;
+    }
+    switch (good_kind) {
+        case 0:
+            ShopHaveItemPt->volume = *(int *) taken;
+            break;
+        case 1:
+            memcpy(ShopHaveWepPt, taken, sizeof(WEAPON_HAVE));
+            break;
+        case 2:
+            memcpy(ShopHaveAttachPt, taken, sizeof(ATTACH_LIST));
+            break;
+    }
+    switch (held_kind) {
+        case 0:
+            *(int *) &good->data = *(int *) held;
+            break;
+        case 1:
+            memcpy(&good->data, held, sizeof(WEAPON_HAVE));
+            break;
+        case 2:
+            memcpy(&good->data, held, sizeof(ATTACH_LIST));
+            break;
+    }
+}
+
+int ItemShopKey2() {
+    int result = 0;
+    u8 record[0xF8];
+    s32 *info;
+    int page;
+
+    if (ShopMenu.ready == 0) {
+        if (ReadBGSync() == 0) {
+            ShopTextureLoadFix();
+            ShopPersonReadStart(1, ShopMenu.shop_no);
+        }
+        return result;
+    }
+    ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
+    switch (ShopMenu.talk_mode) {
+        case 1:
+            ShopMenu.alpha += 8;
+            if (ShopMenu.alpha >= 0x80) {
+                ShopMenu.alpha = 0x80;
+            }
+            if (ShopMenu.step_count > 20 && ShopMenu.ready != 0 && ShopMenu.alpha >= 0x80) {
+                ShopMenu.talk_mode = 0;
+            }
+            break;
+        case 2:
+            ShopMenu.alpha -= 8;
+            if (ShopMenu.alpha <= 0) {
+                ShopMenu.alpha = 0;
+            }
+            if (ShopMenu.step_count > 26 && ShopMenu.alpha <= 0) {
+                result = 1;
+            }
+            break;
+        case 14:
+            if (GamePad.Down(0x50) != 0) {
+                s16 cursor = ShopMenu.board.cursor;
+                int item_no;
+                WEAPON_HAVE *weapon;
+                switch (ShopMenu.board.page) {
+                    case 0:
+                        item_no = pack->item[cursor];
+                        pack->item[cursor] = -1;
+                        pack->item_vol[cursor] = 0;
+                        info = ItemBoardInfo;
+                        break;
+                    case 2: {
+                        ATTACH_LIST *list = (ATTACH_LIST *) &ShopUserStatusPt->consumable_items[cursor];
+                        item_no = list->item_no;
+                        memset(list, 0, sizeof(ATTACH_LIST));
+                        info = AttachBoardInfo;
+                        break;
+                    }
+                    case 1:
+                        weapon = &ShopUserStatusPt->chara_weapons[cursor / 10][cursor % 10];
+                        item_no = weapon->item_no;
+                        info = WeaponBoardInfo[0];
+                        break;
+                }
+                int money = CalItemMoney(item_no, 1);
+                if (item_no >= 0x101) {
+                    money += WeaponCalMoney(weapon, 1);
+                    memset(weapon, 0, sizeof(WEAPON_HAVE));
+                }
+                int total = ShopUserStatusPt->money + money;
+                if (total >= 0xFFFF) {
+                    ShopUserStatusPt->money = 0xFFFF;
+                } else {
+                    ShopUserStatusPt->money = total;
+                }
+                info[cursor] = 0;
+                ShopMenu.talk_mode = 0;
+                ComMenuSePlay(0x9A);
+            } else if (GamePad.Down(0x20) != 0) {
+                ShopMenu.talk_mode = 0;
+                ComMenuSePlay(2);
+            }
+            break;
+        case 13:
+            if (CommonMenuMes1.mes_made != 0x4B4) {
+                CommonMenuMes1.MakeMesWin(0x4B4);
+            }
+            if (GamePad.Down(0x50) != 0) {
+                int item_no = ShopListPt[ShopMenu.board.cursor].item_no;
+                ShopDataMoveFinish();
+                int price = CalItemMoney(item_no, 0);
+                page = WhatIsKindofItem(item_no);
+                int space = GetBoardSpace(item_no, &page);
+                int icon = space - ShopMenu.board.top_row * 5;
+                switch (page) {
+                    case 0:
+                        *(int *) record = *(int *) &ShopListPt[ShopMenu.board.cursor].data;
+                        info = ItemBoardInfo;
+                        break;
+                    case 1:
+                        memcpy(record, &ShopListPt[ShopMenu.board.cursor].data, sizeof(WEAPON_HAVE));
+                        info = WeaponBoardInfo[0];
+                        break;
+                    case 2:
+                        memcpy(record, &ShopListPt[ShopMenu.board.cursor].data, sizeof(ATTACH_LIST));
+                        info = AttachBoardInfo;
+                        break;
+                }
+                ShopMenu.board.page = page;
+                ShopDataMove.IconMoveTarSet(space, icon, item_no, (MENU_ITEMDATA *) record,
+                                            ShopMenu.board.cursor % 5 * 0x28 + 0x34,
+                                            (ShopMenu.board.cursor / 5 - ShopMenu.stock_top_row) * 0x28 + 0x94, 0);
+                if (icon < 0 || icon >= 20) {
+                    ShopDataMove.IconAutoMove(ChargeOrShopFlag, 1);
+                    ShopDataMoveClear();
+                }
+                info[space] = 2;
+                PersonalBoardLimmitCheck();
+                ShopSpecialFunc();
+                int money = ShopUserStatusPt->money;
+                if (money - price >= 0xFFFF) {
+                    ShopUserStatusPt->money = 0xFFFF;
+                } else {
+                    ShopUserStatusPt->money = money - price;
+                }
+                SetItemShopTalkMode(0, 0);
+                ComMenuSePlay(0x9A);
+            } else if (GamePad.Down(0x20) != 0) {
+                SetItemShopTalkMode(0, 0);
+                ComMenuSePlay(2);
+            }
+            break;
+        case 6:
+        case 10:
+            CommonMenuMes3.page_arrow = 1;
+            if (GamePad.Down(0x40) != 0) {
+                SetItemShopTalkMode(0, 0);
+                ComMenuSePlay(1);
+                CommonMenuMes3.page_arrow = 0;
+            } else if (GamePad.Down(0x20) != 0) {
+                ComMenuSePlay(2);
+                CommonMenuMes3.page_arrow = 0;
+                SetItemShopTalkMode(0, 0);
+                ShopCancelGoodReturn2();
+            }
+            break;
+        case 4:
+        case 5:
+            if (GamePad.Down(0x60) != 0) {
+                ShopMenu.talk_mode = 0;
+                int item_no = ShopHaveItemPt->item_no;
+                int space = GetBoardSpace(item_no, &page);
+                if (space < 0) {
+                    ComMenuSePlay(2);
+                } else {
+                    switch (page) {
+                        case 0:
+                            pack->item[space] = item_no;
+                            pack->item_vol[space] = ShopHaveItemPt->volume;
+                            break;
+                        case 1: {
+                            int chara = space / 10;
+                            int slot = space % 10;
+                            WEAPON_HAVE *weapon = &ShopUserStatusPt->chara_weapons[chara][slot];
+                            memcpy(weapon, ShopHaveWepPt, sizeof(WEAPON_HAVE));
+                            weapon->item_no = item_no;
+                            if (ShopMenu.board.unk_15C >= 0) {
+                                ShopUserStatusPt->equipped_weapon_slot[chara] = slot;
+                                ShopMenu.board.unk_15C = -1;
+                            }
+                            break;
+                        }
+                        case 2: {
+                            ATTACH_LIST *list = (ATTACH_LIST *) &ShopUserStatusPt->consumable_items[space];
+                            memcpy(list, ShopHaveAttachPt, sizeof(ATTACH_LIST));
+                            list->item_no = item_no;
+                            break;
+                        }
+                    }
+                    InitAllHaveData();
+                    ComMenuSePlay(2);
+                }
+            }
+            break;
+        case 3:
+            if (GamePad.Down(0xF060) != 0) {
+                ShopMenu.talk_mode = 0;
+                CommonMenuMes3.page_arrow = 0;
+            }
+            break;
+        case 9:
+        case 11:
+        case 16:
+        case 20:
+        case 21:
+        case 22:
+        case 23:
+            CommonMenuMes3.page_arrow = 1;
+            if (GamePad.Down(0x60) != 0) {
+                ComMenuSePlay(2);
+                SetItemShopTalkMode(0, 0);
+                CommonMenuMes3.page_arrow = 0;
+            }
+            break;
+        case 25:
+            CommonMenuMes3.page_arrow = 1;
+            if (GamePad.Down(0x60) != 0) {
+                ShopMenu.talk_mode = 2;
+                ShopMenu.step_count = 0;
+                CommonMenuMes3.page_arrow = 0;
+                ComMenuSePlay(2);
+            }
+            break;
+        case 24:
+            CommonMenuMes3.page_arrow = 1;
+            if (GamePad.Down(0x40) != 0) {
+                SetItemShopTalkMode(0, 0);
+                CommonMenuMes3.page_arrow = 0;
+                ComMenuSePlay(1);
+            } else if (GamePad.Down(0x20) != 0) {
+                SetItemShopTalkMode(25, 1);
+                CommonMenuMes3.page_arrow = 0;
+                ComMenuSePlay(2);
+            }
+            break;
+        case 12:
+            if (GamePad.Down(0x40) != 0) {
+                SetItemShopTalkMode(20, 1);
+                IncludeBuyItem2();
+                ComMenuSePlay(0x9A);
+            } else if (GamePad.Down(0x20) != 0) {
+                SetItemShopTalkMode(0, 0);
+                ComMenuSePlay(2);
+            }
+            break;
+        case 0: {
+            if (ShopMenu.person_state == 0) {
+                ShopMenu.person_state = ShopPersonBuild(1, ShopMenu.shop_no);
+            }
+            int cursor = ShopMenu.board.cursor;
+            int old_page = ShopMenu.board.page;
+            switch (ShopMenu.side) {
+                case 2:
+                    CheckSideKey2();
+                    break;
+                case 0:
+                    ItemShopSelectKey2();
+                    break;
+                case 1: {
+                    int left = PersonalBoardKey();
+                    if (left == 0 && GamePad.Down(0x40) != 0) {
+                        PERSONAL_BOARD *board = &ShopMenu.board;
+                        int held_info = ShopHaveItemPt->unk_00;
+                        switch (board->cursor_area) {
+                            case 2: {
+                                ComMenuSePlay(2);
+                                s16 held = ShopHaveItemPt->item_no;
+                                if (held >= 0x51 && held_info != 1 && IsEnableTrushThrow(held) != 0) {
+                                    board->trash_anim = 1;
+                                    board->trash_frame = 0;
+                                    ShopHaveItemPt->item_no = 0;
+                                }
+                                break;
+                            }
+                            case 1: {
+                                int pos = ShopMenu.board.cursor;
+                                switch (ShopMenu.board.page) {
+                                    case 0:
+                                        info = ItemBoardInfo;
+                                        break;
+                                    case 1:
+                                        info = WeaponBoardInfo[0];
+                                        break;
+                                    case 2:
+                                        info = AttachBoardInfo;
+                                        break;
+                                }
+                                s32 *slot = &info[pos];
+                                int slot_info = *slot;
+                                if (ShopMenu.board.page == 1 && held_info == 1 &&
+                                    (ShopHaveItemPt->item_no == 0xB1 || ShopHaveItemPt->item_no == 0xB2)) {
+                                    ComMenuSePlay(2);
+                                } else if (PersonalBoardItemGetorSwap(pos) != 1) {
+                                    ComMenuSePlay(2);
+                                } else {
+                                    ShopHaveItemPt->unk_00 = slot_info;
+                                    *slot = held_info;
+                                    if (ShopHaveItemPt->item_no < 0x51) {
+                                        InitAllHaveData();
+                                        ShopMenu.board.unk_15C = -1;
+                                    } else {
+                                        ShopHaveItemPt->unk_08 = pos;
+                                    }
+                                    ComMenuSePlay(1);
+                                }
+                                break;
+                            }
+                        }
+                    } else if (left == 0 && GamePad.Down(0x10) != 0) {
+                        ShopMenu.unk_06 = 1;
+                        if (ShopHaveItemPt->item_no >= 0x51) {
+                            ComMenuSePlay(2);
+                            return 0;
+                        }
+                        s16 target = SearchBoardNowPosItemExist(ShopMenu.board.page, ShopMenu.board.cursor);
+                        s32 *slot;
+                        switch (ShopMenu.board.page) {
+                            case 0:
+                                slot = &ItemBoardInfo[ShopMenu.board.cursor];
+                                break;
+                            case 2:
+                                slot = &AttachBoardInfo[ShopMenu.board.cursor];
+                                break;
+                            case 1:
+                                slot = &WeaponBoardInfo[0][ShopMenu.board.cursor];
+                                break;
+                        }
+                        if (*slot == 1) {
+                            ComMenuSePlay(2);
+                        } else {
+                            int enable = IsEnableCharge(target);
+                            if (enable != 0) {
+                                if (target < 0x102 && target >= 0x84) {
+                                    ITEM_DATA *data = GetItemData(target);
+                                    if (data != NULL && ((data->kind_flags & 0x10) || ShopHaveItemPt->item_no == 0xB9)) {
+                                        enable = 0;
+                                        SetItemShopTalkMode(4, 1);
+                                    }
+                                }
+                                if (target >= 0x101) {
+                                    int chara = ShopMenu.board.cursor / 10;
+                                    if (chara == IsDefaultWeapon(target)) {
+                                        SetItemShopTalkMode(4, 1);
+                                        enable = 0;
+                                    }
+                                    if (target == 0x10C && GetMenuHebikiriFlag() == 0) {
+                                        SetItemShopTalkMode(4, 1);
+                                        enable = 0;
+                                    }
+                                    if (ShopMenu.board.cursor % 10 ==
+                                        ShopUserStatusPt->equipped_weapon_slot[ShopMenu.board.cursor / 10]) {
+                                        enable = 0;
+                                        SetItemShopTalkMode(5, 1);
+                                    }
+                                }
+                            } else {
+                                SetItemShopTalkMode(4, 1);
+                            }
+                            int money = CalItemMoney(target, 1);
+                            if (target >= 0x101) {
+                                money += WeaponCalMoney(
+                                    &ShopUserStatusPt->chara_weapons[ShopMenu.board.cursor / 10][ShopMenu.board.cursor % 10],
+                                    1);
+                            }
+                            if (money <= 0) {
+                                money = 1;
+                            }
+                            if (ShopUserStatusPt->money + money >= 0x10000) {
+                                SetItemShopTalkMode(22, 1);
+                                enable = 0;
+                            }
+                            if (target < 0x51) {
+                                ComMenuSePlay(2);
+                            } else if (enable != 0) {
+                                ShopMenu.talk_mode = 14;
+                                ComMenuSePlay(1);
+                            } else {
+                                ComMenuSePlay(2);
+                            }
+                        }
+                    }
+                    if (left != 0) {
+                        ShopMenu.side = 0;
+                        ShopMenu.board.cursor =
+                            (ShopMenu.stock_top_row + (ShopMenu.board.cursor / 5 - ShopMenu.board.top_row)) * 5 + 4;
+                    }
+                    break;
+                }
+            }
+            if (ShopMenu.unk_06 == 0 && GamePad.Down(0x20) != 0) {
+                ComMenuSePlay(2);
+                s16 held = ShopHaveItemPt->item_no;
+                if (held < 0x51) {
+                    if (ShopMenu.side == 2) {
+                        CommonMenuMes3.mes_made = -1;
+                        ShopMenu.msg_mode = 1;
+                        int flags = CheckBuyItemFunc2();
+                        if (flags & 1) {
+                            ShopMenu.talk_mode = 24;
+                        }
+                        if (flags & 6) {
+                            ShopMenu.talk_mode = 6;
+                            ShopMenu.side = 2;
+                        }
+                        if (flags & 8) {
+                            ShopMenu.talk_mode = 10;
+                        }
+                    } else {
+                        ShopMenu.side = 2;
+                    }
+                } else {
+                    int held_info = ShopHaveItemPt->unk_00;
+                    switch (held_info) {
+                        case 1: {
+                            int free = -1;
+                            for (int i = 0; i < 30; i++) {
+                                if (ShopBoardInfo[i] == 0) {
+                                    free = i;
+                                    break;
+                                }
+                            }
+                            if (free < 0) {
+                                ComMenuSePlay(2);
+                            } else {
+                                SHOP_ITEMLIST *good = &ShopListPt[free];
+                                ShopSwapHeldGood(good);
+                                MenuDataSwap(&ShopHaveItemPt->unk_00, &ShopBoardInfo[free]);
+                                MenuDataSwap(&ShopHaveItemPt->item_no, &good->item_no);
+                            }
+                            break;
+                        }
+                        case 2: {
+                            page = WhatIsKindofItem(held);
+                            switch (page) {
+                                case 0:
+                                    info = ItemBoardInfo;
+                                    break;
+                                case 1:
+                                    info = WeaponBoardInfo[0];
+                                    break;
+                                case 2:
+                                    info = AttachBoardInfo;
+                                    break;
+                            }
+                            int space = GetBoardSpace(held, &page);
+                            int max = PersonalRetMax(page);
+                            if (space < 0 || space >= max) {
+                                ComMenuSePlay(2);
+                            } else {
+                                s32 *slot = &info[space];
+                                int slot_info = *slot;
+                                ShopHaveItemPt->unk_04 = page;
+                                ShopHaveItemPt->unk_0C = space;
+                                int equipped = ShopMenu.board.unk_15C;
+                                int item_no = ShopHaveItemPt->item_no;
+                                PersonalBoardItemCancel();
+                                if (equipped >= 0) {
+                                    ShopUserStatusPt->equipped_weapon_slot[WhoIsWeaponEquip(item_no)] = space % 10;
+                                }
+                                ShopHaveItemPt->unk_00 = slot_info;
+                                *slot = held_info;
+                            }
+                            break;
+                        }
+                    }
+                }
+            } else if (GamePad.Down(0x80) != 0) {
+                switch (ShopMenu.board.page) {
+                    case 0:
+                        SeitonShopItemBoard(pack);
+                        SetMenuTrushMark(pack);
+                        break;
+                    case 2:
+                        SeitonShopAttachBoard((ATTACH_LIST *) ShopUserStatusPt->consumable_items);
+                        break;
+                }
+                ComMenuSePlay(1);
+            }
+            if (cursor != ShopMenu.board.cursor || old_page != ShopMenu.board.page) {
+                ComMenuSePlay(0);
+            }
+            int mes_no = 0;
+            int value = 0;
+            int name_mes = -1;
+            if (ShopHaveItemPt->item_no >= 0x51) {
+                COM_ITEM_INFO *item_info = GetCommonItemInfo(ShopHaveItemPt->item_no);
+                if (item_info != NULL) {
+                    mes_no = item_info->msg + 500;
+                }
+                value = GetAttachVolumeForMsg(ShopHaveAttachPt);
+                if (ShopHaveItemPt->item_no == 0x5A) {
+                    name_mes = GetWeaponMsgNo2(ShopHaveAttachPt->unk_02);
+                }
+            }
+            int item_no = -1;
+            switch (ShopMenu.side) {
+                case 2:
+                    mes_no = 0x4B3;
+                    break;
+                case 0: {
+                    SHOP_ITEMLIST *good = &ShopListPt[ShopMenu.board.cursor];
+                    item_no = good->item_no;
+                    if (item_no >= 0x101) {
+                        value = ((WEAPON_HAVE *) &good->data)->unk_02;
+                    }
+                    if (item_no >= 0x5B && item_no < 0x5F) {
+                        value = GetAttachVolumeForMsg((ATTACH_LIST *) &good->data);
+                    }
+                    if (item_no == 0x5A) {
+                        name_mes = GetWeaponMsgNo2(((ATTACH_LIST *) &good->data)->unk_02);
+                        value = ((s16 *) &good->data)[3];
+                    }
+                    break;
+                }
+                case 1:
+                    switch (ShopMenu.board.page) {
+                        case 0:
+                            item_no = pack->item[ShopMenu.board.cursor];
+                            break;
+                        case 1: {
+                            WEAPON_HAVE *weapon =
+                                &ShopUserStatusPt->chara_weapons[ShopMenu.board.cursor / 10][ShopMenu.board.cursor % 10];
+                            item_no = weapon->item_no;
+                            value = weapon->unk_02;
+                            break;
+                        }
+                        case 2: {
+                            ATTACH_LIST *list = (ATTACH_LIST *) &ShopUserStatusPt->consumable_items[ShopMenu.board.cursor];
+                            if (list != NULL) {
+                                item_no = list->item_no;
+                                if (item_no > 0) {
+                                    value = GetAttachVolumeForMsg(list);
+                                    if (list->item_no == 0x5A) {
+                                        name_mes = GetWeaponMsgNo2(list->unk_02);
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    break;
+            }
+            if (item_no >= 0x51) {
+                COM_ITEM_INFO *item_info = GetCommonItemInfo(item_no);
+                if (item_info != NULL) {
+                    mes_no = item_info->msg + 500;
+                }
+            }
+            if (CommonMenuMes2.mes_made != mes_no || (name_mes > 0 && CommonMenuMes2.mes_no[0] != name_mes + 100) ||
+                CommonMenuMes2.value != value) {
+                CommonMenuMes2.value_signed = 1;
+                CommonMenuMes2.value_show = 0;
+                CommonMenuMes2.value = value;
+                if (name_mes > 0) {
+                    CommonMenuMes2.mes_no[0] = name_mes + 100;
+                }
+                if (mes_no <= 500) {
+                    mes_no = 0;
+                }
+                CommonMenuMes2.mes_made = -1;
+                CommonMenuMes2.MakeMesWin(mes_no);
+            }
+            break;
+        }
+    }
+    return result;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopKey2__Fv);
+#endif
+#ifdef NON_MATCHING
+void ItemShopDraw2() {
+    int text_x;
+    int text_y;
+
+    setbilinear(0);
+    MenuWorldTrans(&MenuCamera);
+    int bright = 0x40;
+    switch (ShopMenu.talk_mode) {
+        case 1:
+            bright = 0x80 - ShopMenu.step_count * 3;
+            break;
+        case 2:
+            bright = ShopMenu.step_count * 4 + 0x40;
+            break;
+    }
+    if (bright < 0x40) {
+        bright = 0x40;
+    }
+    if (bright > 0x80) {
+        bright = 0x80;
+    }
+    FrameImageDraw(bright, 0x80);
+    if (ShopMenu.ready != 0) {
+        MenuTextureReload(ShopMenu.tex_block);
+        int count = PersonalRetMax(ShopMenu.board.page);
+        ShopMenu.board.y += ((float) (0x7F - ShopMenu.board.top_row * 0x28) - ShopMenu.board.y) / 4.0f;
+        int cur_x = 0x168;
+        int board_y = (int) ShopMenu.board.y;
+        int mark = 0;
+        if (ShopMenu.board.page == 1) {
+            mark = 2;
+        }
+        DrawPerBoardDraw(mark, count, 0x168, board_y, 0x81, 0x121, PerBoardTex, 0x80);
+        CommonIconDraw(ShopMenu.board.page, count, 0x16A, board_y + 6, 0x81, 0x121, 0x80);
+        PersonalBoardOptionDraw(ShopMenu.board.page, count, 0x154, 0x78, PerBoardTex, 0x80);
+        CommonTrushDraw(0x232, 0x10C, 0x80);
+        CommonMoneyBoardDraw(0x163, 0x120, ShopUserStatusPt->money, 0x80);
+        DrawMoneyCheckBoard2(0x1C8, 0x120, 0x80);
+        DrawItemShopBoard2(0x32, 0x78, 0x80);
+        ChargeShopLRDraw(0x80);
+        ShopDataMove.IconAutoMoveDraw();
+        ShopDataMove.IconAutoMove(ChargeOrShopFlag, 0);
+        int top_row;
+        switch (ShopMenu.side) {
+            case 0:
+            case 2:
+                cur_x = 0x22;
+                top_row = ShopMenu.stock_top_row;
+                break;
+            case 1:
+                cur_x = 0x144;
+                top_row = (u8) ShopMenu.board.top_row;
+                break;
+        }
+        int state = 0;
+        if (ShopHaveItemPt->item_no >= 0x51) {
+            state = 2;
+        } else {
+            switch (ShopMenu.side) {
+                case 2:
+                    break;
+                case 1:
+                    state = SearchBoardNowPosItemExist(ShopMenu.board.page, ShopMenu.board.cursor) < 0x51 ? 0 : 1;
+                    break;
+                case 0:
+                    if (ShopListPt[ShopMenu.board.cursor].item_no > 0x51) {
+                        state = 1;
+                    }
+                    break;
+            }
+        }
+        int on_button = 0;
+        if (ShopMenu.side == 2) {
+            on_button = 1;
+        }
+        ShopCurDraw(cur_x, 0x84, ShopMenu.board.cursor, top_row, on_button, state, 0x80);
+        DrawShopIcon(0x4C, 0x2A, 0, 0x80);
+        switch (ShopMenu.side) {
+            case 0: {
+                int cursor = ShopMenu.board.cursor;
+                int item_no = ShopListPt[cursor].item_no;
+                if (item_no >= 0x51) {
+                    int selling = 0;
+                    if (ShopBoardInfo[cursor] == 2) {
+                        selling = 1;
+                    }
+                    int money = CalItemMoney(item_no, selling);
+                    if (item_no >= 0x101) {
+                        money += WeaponCalMoney((WEAPON_HAVE *) &ShopListPt[cursor].data, selling);
+                    }
+                    if (money < 0) {
+                        money = 1;
+                    }
+                    DrawBigSellTicket(selling, money, cursor % 5 * 0x28 + 0x4A,
+                                      (int) (6.0f + ShopMenu.stock_y + (float) (cursor / 5 * 0x28)), 0x80);
+                }
+                break;
+            }
+            case 1:
+                if (ShopMenu.talk_mode == 14) {
+                    int cursor = ShopMenu.board.cursor;
+                    int item_no;
+                    switch (ShopMenu.board.page) {
+                        case 0:
+                            item_no = ShopUserStatusPt->item_pack.item[cursor];
+                            break;
+                        case 2:
+                            item_no = ShopUserStatusPt->consumable_items[cursor].id;
+                            break;
+                        case 1:
+                            item_no = ShopUserStatusPt->chara_weapons[cursor / 10][cursor % 10].item_no;
+                            break;
+                    }
+                    int ticket_y = (int) (6.0f + ShopMenu.board.y);
+                    int money = CalItemMoney(item_no, 1);
+                    if (item_no >= 0x101) {
+                        money += WeaponCalMoney(&ShopUserStatusPt->chara_weapons[cursor / 10][cursor % 10], 1);
+                    }
+                    if (money <= 0) {
+                        money = 1;
+                    }
+                    DrawBigSellTicket(1, money, cursor % 5 * 0x28 + 0x16A, ticket_y + cursor / 5 * 0x28, 0x80);
+                }
+                break;
+        }
+        DrawSellTicket22(0x16A, (int) (6.0f + ShopMenu.board.y), 0x81, 0x121, 0x80);
+        int help_x = (int) ShopHelpWinPos[0];
+        MenuHelpWinDraw(help_x, (int) ShopHelpWinPos[1], ShopHelpWinW, ShopHelpWinH, 0x80);
+        GetMainMenuRightHelpMsgLangOffset(text_x, text_y);
+        CommonMenuMes2.text_x = (int) (ShopHelpWinPos[0] + text_x);
+        CommonMenuMes2.text_y = (int) (ShopHelpWinPos[1] + text_y);
+    }
+    if (ShopMenu.person_state == 2) {
+        ShopPersonDraw(ShopMenu.shop_no);
+    }
+    if (ShopMenu.ready != 0) {
+        MenuTextureReload(CommonMenuMes2.tex_block);
+        CommonMenuMes2.Step();
+        CommonMenuMes2.DrawMesWin();
+        if (ShopHaveItemPt->item_no < 0x51) {
+            int plate[3] = {0x4B6, 0x4B7, 0x4B8};
+            int mes_no = plate[ShopMenu.side];
+            if (AtoraNameMes.mes_made != mes_no) {
+                AtoraNameMes.MakeMesWin(mes_no);
+            }
+            AtoraNameMes.stay_frame = 1;
+            AtoraNameMes.text_x = 0xB4;
+            AtoraNameMes.text_y = 0x168;
+            AtoraNameMes.Step();
+            AtoraNameMes.DrawMesWin();
+        }
+        if (ShopMenu.talk_mode != 14 && ShopMenu.talk_mode != 13) {
+            CommonMenuMes1.stay_frame = 0;
+        } else {
+            s16 prompt[2] = {0x4B4, 0x4B5};
+            int mes_no = prompt[ShopMenu.talk_mode - 13];
+            if (CommonMenuMes1.mes_made != mes_no) {
+                CommonMenuMes1.MakeMesWin(mes_no);
+            }
+            u8 offset[7][2] = {{0x1E, 0x32}, {0x18, 0x32}, {0x18, 0x32}, {0x18, 0x32},
+                               {0x18, 0x32}, {0x18, 0x32}, {0x18, 0x32}};
+            CommonMenuMes1.text_x = offset[ShopMenu.lang][0] + 0x12C;
+            CommonMenuMes1.text_y = 0xBE;
+            if (ShopMenu.talk_mode == 14) {
+                CommonMenuMes1.text_x = offset[ShopMenu.lang][1] + 0x64;
+            }
+            CommonMenuMes1.stay_frame = 1;
+            CommonMenuMes1.Step();
+            CommonMenuMes1.DrawMesWin();
+        }
+    }
+    ShopModelMsgFunc(1);
+    ShopFadeoutDraw();
+    setbilinear(1);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopDraw2__Fv);
+#endif
 
 /**
  * Returns one prize the fishing exchange offers.
@@ -2563,14 +4643,358 @@ static int AlreadyGetMardanWeapon() {
     return flag;
 }
 
+#ifdef NON_MATCHING
+void InitFishingExchange(u_long128 *buffer, int *texture_blocks, int mode) {
+    FishMenu.buffer = (u_long128 *) (EdMenuBuffer.base + EdMenuBuffer.used * 16);
+    FishMenu.buffer = MenuCalcBufAlignment(FishMenu.buffer);
+    FishMenu.tex_block = texture_blocks[0];
+    FishMenu.tex_block2 = texture_blocks[1];
+    FishMenu.mode = mode;
+    StartReadBG();
+    FishMenu.buffer = FishMenu.buffer + (LoadFileBGMenuData("fishmenu.pac", FishMenu.buffer) >> 4) + 1;
+    FishMenu.buffer = MenuCalcBufAlignment(FishMenu.buffer);
+    FishMenu.ready = 0;
+    FishMenu.confirm = 1;
+    FishMenu.cursor = 0;
+    FishMenu.top = 0;
+    FishMenu.fade_mode = 0;
+    FishMenu.fade_count = 0;
+    FishMenu.point = SaveData->GetFishingPoint();
+    if (FishMenu.point < 0) {
+        SaveData->SetFishingPoint(0);
+        FishMenu.point = SaveData->GetFishingPoint();
+    }
+    if (FishMenu.point >= 10000) {
+        FishMenu.point = 9999;
+    }
+    StayTex = TexManager.GetTexture("stayframe", -1);
+    GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
+    GamePad.MenuModeOn(0x78);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", InitFishingExchange__FP1Pii);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/shop", @2943);
 INCLUDE_RODATA("asm/nonmatchings/shop", @2948);
+#ifdef NON_MATCHING
+int FishMenuTextureLoad() {
+    int done = 0;
+
+    if (FishMenu.ready != 0) {
+        return 1;
+    }
+    if (ReadBGSync() == 0) {
+        BG_READ_INFO *file = GetReadBGFile(0);
+        LOADTEXTURE_INFO2 texture = {0};
+        texture.block_no = FishMenu.tex_block;
+        texture.name = (char *) GetPackFile((u_int *) file->buffer, "fishing.img", NULL);
+        TexManager.DeleteTextureBlock(FishMenu.tex_block);
+        TexManager.CleanUpTextureList();
+        TexManager.LoadTextureBlockEX(-1, &texture);
+        FishMenuTex = TexManager.GetTexture("fishbrd", -1);
+        WepIcon = TexManager.GetTexture("wepicon", -1);
+        ItemIcon = TexManager.GetTexture("itemicon", -1);
+        InitMenuMesSet(0, (short *) GetPackFile((u_int *) file->buffer, "fishmes.bin", NULL));
+        CommonMenuMes2.mes_made = -1;
+        AtoraNameMes.Preset(1);
+        for (int i = 0; i < 5; i++) {
+            AtoraNameMes.mes_no[i] = GetExchangeItemList(i)->item_no + 100;
+        }
+        AtoraNameMes.narrow_gaiji = 1;
+        AtoraNameMes.style = 4;
+        AtoraNameMes.value_signed = 0;
+        AtoraNameMes.value_show = 1;
+        AtoraNameMes.mes_made = -1;
+        AtoraNameMes.MakeMesWin(0xC8);
+        AtoraNameMes.Step();
+        FishMenu.ready = 1;
+        CommonMenuMes3.value_signed = 0;
+        CommonMenuMes3.value_show = 1;
+        CommonMenuMes3.stay_frame = 1;
+        CommonMenuMes3.value = 0;
+        int digits = GetNumberKeta(0);
+        CommonMenuMes3.mes_made = -1;
+        CommonMenuMes3.MakeMesWin(digits + 0xCD);
+        FishMenu.cursor_y = 0x7E;
+        done = 1;
+    }
+    return done;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", FishMenuTextureLoad__Fv);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/shop", @2962);
 INCLUDE_RODATA("asm/nonmatchings/shop", @2963);
 INCLUDE_RODATA("asm/nonmatchings/shop", @2964);
+#ifdef NON_MATCHING
+int FishingExchangeKey() {
+    int result = 0;
+
+    ReadBG();
+    int mardan = AlreadyGetMardanWeapon();
+    int party = SaveData->GetDngStatus()->party_size;
+    if (party <= 0) {
+        party = 1;
+    }
+    int last = party + 0x19;
+    int last_top = party + 0x16;
+    if (mardan == 1) {
+        last++;
+        last_top++;
+    }
+    switch (FishMenu.fade_mode) {
+        case 0:
+            FishMenuTextureLoad();
+            FishMenu.fade_count++;
+            if (FishMenu.ready != 0 && FishMenu.fade_count > 32) {
+                FishMenu.fade_mode = 3;
+            }
+            break;
+        case 1:
+            FishMenu.fade_count++;
+            if (FishMenu.fade_count > 32) {
+                result = 1;
+            }
+            break;
+        case 3: {
+            int cursor = FishMenu.cursor;
+            int top = FishMenu.top;
+            if (GamePad.Down(0x200A) != 0) {
+                FishMenu.top += 5;
+                FishMenu.cursor += 5;
+            }
+            if (GamePad.Down(0x8005) != 0) {
+                FishMenu.top -= 5;
+                FishMenu.cursor -= 5;
+                if (FishMenu.cursor < 0 || FishMenu.top < 0) {
+                    FishMenu.cursor = 0;
+                    FishMenu.top = 0;
+                }
+            }
+            if (GamePad.Down(0x1000) != 0) {
+                FishMenu.cursor--;
+                if (FishMenu.cursor < 0) {
+                    FishMenu.cursor = 0;
+                }
+                if (FishMenu.cursor < FishMenu.top) {
+                    FishMenu.top--;
+                }
+                if (FishMenu.top < 0) {
+                    FishMenu.top = 0;
+                    FishMenu.cursor = 0;
+                }
+            }
+            if (GamePad.Down(0x4000) != 0) {
+                FishMenu.cursor++;
+                if (last < FishMenu.cursor) {
+                    FishMenu.cursor = last;
+                }
+                if (FishMenu.top < FishMenu.cursor - 4) {
+                    FishMenu.top++;
+                    if (last_top < FishMenu.top) {
+                        FishMenu.top = last_top - 1;
+                    }
+                }
+            }
+            if (last < FishMenu.cursor) {
+                FishMenu.cursor = last;
+            }
+            if (last_top < FishMenu.top) {
+                FishMenu.top = last_top - 1;
+            }
+            if (cursor != FishMenu.cursor) {
+                ComMenuSePlay(0);
+            }
+            FISH_EXCHANGE_ITEM *prize = GetExchangeItemList(FishMenu.cursor);
+            if (mardan == 1 && FishMenu.cursor == last) {
+                prize = GetExchangeItemList(0x20);
+            }
+            if (prize != NULL) {
+                COM_ITEM_INFO *info = GetCommonItemInfo(prize->item_no);
+                if (info != NULL) {
+                    int mes_no = info->msg + 500;
+                    if (CommonMenuMes2.mes_made != mes_no) {
+                        CommonMenuMes2.MakeMesWin(mes_no);
+                    }
+                }
+            }
+            if (GamePad.Down(0x40) != 0) {
+                CUserStatus *status = (CUserStatus *) SaveData->GetDngStatus();
+                int full = 0;
+                int kind = WhatIsKindofItem(prize->item_no);
+                int count = 0;
+                switch (kind) {
+                    case 0: {
+                        ITEM_PACK *pack = &status->item_pack;
+                        for (int i = 0; i < 3; i++) {
+                            count += pack->quick_item_qty[i];
+                        }
+                        for (int i = 0; i < pack->num; i++) {
+                            if (pack->item[i] >= 0x84) {
+                                count++;
+                            }
+                        }
+                        if (count >= pack->num) {
+                            full = 1;
+                        }
+                        break;
+                    }
+                    case 1: {
+                        int held = 0;
+                        WEAPON_HAVE *weapons = status->chara_weapons[WhoIsWeaponEquip(prize->item_no)];
+                        for (int i = 0; i < 10; i++) {
+                            if (weapons[i].item_no >= 0x101) {
+                                held++;
+                            }
+                        }
+                        if (held >= 10) {
+                            full = 1;
+                        }
+                        break;
+                    }
+                    case 2: {
+                        int held = 0;
+                        for (; count < 40; count++) {
+                            if (status->consumable_items[count].id >= 0x51) {
+                                held++;
+                            }
+                        }
+                        if (held >= 40) {
+                            full = 1;
+                        }
+                        break;
+                    }
+                }
+                if (FishMenu.point < prize->price) {
+                    FishMenu.fade_mode = 5;
+                    FishMenu.warning = 14;
+                    ComMenuSePlay(2);
+                } else if (full != 0) {
+                    FishMenu.warning = kind;
+                    FishMenu.fade_mode = 5;
+                    ComMenuSePlay(2);
+                } else {
+                    FishMenu.confirm = 1;
+                    FishMenu.cursor_y = FishMenu.confirm * 0x24 + 0x102;
+                    FishMenu.fade_mode = 4;
+                    ComMenuSePlay(1);
+                }
+            } else if (GamePad.Down(0x20) != 0) {
+                FishMenu.fade_mode = 1;
+                FishMenu.fade_count = 0;
+                ComMenuSePlay(2);
+            }
+            if (top != FishMenu.top) {
+                FISH_EXCHANGE_ITEM *entry = GetExchangeItemList(FishMenu.top);
+                for (int i = 0; i < 5; i++) {
+                    if (mardan == 1 && FishMenu.cursor == FishMenu.top + i && FishMenu.cursor == last) {
+                        entry = GetExchangeItemList(0x20);
+                    }
+                    if (entry == NULL) {
+                        printf("getinfo is NULL\n");
+                    } else {
+                        COM_ITEM_INFO *info = GetCommonItemInfo(entry->item_no);
+                        if (info != NULL) {
+                            AtoraNameMes.mes_no[i] = info->msg + 100;
+                            entry++;
+                        }
+                    }
+                }
+                AtoraNameMes.mes_made = -1;
+                AtoraNameMes.MakeMesWin(0xC8);
+            }
+            break;
+        }
+        case 4: {
+            if (GamePad.Down(0x5000) != 0) {
+                if (FishMenu.confirm != 0) {
+                    FishMenu.confirm = 0;
+                } else {
+                    FishMenu.confirm = 1;
+                }
+                ComMenuSePlay(0);
+            }
+            FISH_EXCHANGE_ITEM *prize;
+            if (GamePad.Down(0x40) != 0) {
+                prize = GetExchangeItemList(FishMenu.cursor);
+                if (mardan == 1 && FishMenu.cursor == last) {
+                    prize = GetExchangeItemList(0x20);
+                }
+                if (prize == NULL) {
+                    ComMenuSePlay(2);
+                    break;
+                }
+                int price = prize->price;
+                int enough = 1;
+                if (FishMenu.point < price) {
+                    enough = 0;
+                }
+                if (FishMenu.confirm == 0) {
+                    if (enough != 0) {
+                        ComMenuSePlay(0x9A);
+                        ((CDngStatusData *) SaveData->GetDngStatus())->GetItem(prize->item_no, 0);
+                        FishMenu.point -= price;
+                        if (prize->item_no == 0x116) {
+                            SetAlreadyGetMardanWeapon(1);
+                            ClearFishMardanGarayanNum();
+                            FishMenu.top--;
+                            FishMenu.cursor--;
+                        }
+                        if (FishMenu.point < 0) {
+                            FishMenu.point = 0;
+                        }
+                    } else {
+                        ComMenuSePlay(2);
+                    }
+                } else {
+                    ComMenuSePlay(2);
+                }
+                FishMenu.cursor_y = (FishMenu.cursor - FishMenu.top) * 0x22 + 0x7E;
+                FishMenu.fade_mode = 3;
+            } else if (GamePad.Down(0x20) != 0) {
+                ComMenuSePlay(2);
+                FishMenu.fade_mode = 3;
+            }
+            prize = GetExchangeItemList(FishMenu.cursor);
+            if (mardan == 1 && FishMenu.cursor == last) {
+                prize = GetExchangeItemList(0x20);
+            }
+            if (prize != NULL) {
+                COM_ITEM_INFO *info = GetCommonItemInfo(prize->item_no);
+                if (info != NULL) {
+                    int name = info->msg + 100;
+                    if (CommonMenuMes1.mes_made != 0xCA || CommonMenuMes1.mes_no[0] != name ||
+                        CommonMenuMes1.values[0] != prize->price) {
+                        CommonMenuMes1.mes_made = -1;
+                        CommonMenuMes1.mes_no[0] = name;
+                        CommonMenuMes1.values[0] = prize->price;
+                        CommonMenuMes1.MakeMesWin(0xCA);
+                    }
+                }
+            }
+            break;
+        }
+        case 5: {
+            if (GamePad.Down(0x60) != 0) {
+                FishMenu.fade_mode = 3;
+                ComMenuSePlay(2);
+            }
+            int mes_no = FishMenu.warning + 0xCB;
+            if (CommonMenuMes1.mes_made != mes_no) {
+                CommonMenuMes1.MakeMesWin(mes_no);
+            }
+            break;
+        }
+    }
+    CursorVibeCnt++;
+    if (CursorVibeCnt >= 0x066FF300) {
+        CursorVibeCnt = 0;
+    }
+    return result;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", FishingExchangeKey__Fv);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/shop", @3159);
 
 /**
@@ -2584,7 +5008,117 @@ static void FishImageIconDraw(int x, int y, int width, int mode) {
     DrawMenu2DSprite(FishMenuTex, CRect_i_(x, y, width, 0x28), CRect_i_(0, 0xD0, width, 0x28), mode);
 }
 
+#ifdef NON_MATCHING
+void FishExchangeItemDraw(int x, int y, int alpha) {
+    float win_x;
+    float win_y;
+    float win_w;
+    float win_h;
+    int text_x;
+    int text_y;
+
+    MenuTextureReload(FishMenu.tex_block);
+    int mardan = AlreadyGetMardanWeapon();
+    int party = SaveData->GetDngStatus()->party_size;
+    if (party <= 0) {
+        party = 1;
+    }
+    int last = party + 0x19;
+    if (mardan == 1) {
+        last++;
+    }
+    DrawMenu2DSprite(FishMenuTex, CRect_i_(x, y, 0x160, 0xD0), CRect_i_(0, 0, 0x160, 0xD0), alpha);
+    float rows = last;
+    int bar_x = x + 0x144;
+    int bar_y = (int) ((float) (y + 0x28) + FishMenu.top * (126.0f / rows));
+    float length = 630.0f / rows - 8.0f;
+    CRect_i_ source(0xF0, 0xD0, 8, 4);
+    DrawMenu2DSprite(FishMenuTex, CRect_i_(bar_x, bar_y, 8, 4), source, alpha);
+    source.y += 4;
+    DrawMenu2DSprite(FishMenuTex, CRect_i_(bar_x, bar_y + 4, 8, (int) length), source, alpha);
+    source.y += 4;
+    DrawMenu2DSprite(FishMenuTex, CRect_i_(bar_x, (int) ((float) (bar_y + 4) + length), 8, 4), source, alpha);
+    int item_x = x + 0x16;
+    int item_y = y + 0x14;
+    for (int i = 0; i < 5; i++) {
+        FISH_EXCHANGE_ITEM *prize = GetExchangeItemList(FishMenu.top + i);
+        if (mardan == 1 && i == 4 && FishMenu.top + 4 == last) {
+            prize = GetExchangeItemList(0x20);
+        }
+        DrawIconParts(prize->item_no, item_x, item_y, y, y + 0xCE, alpha, 0);
+        DrawMenu2DSprite(FishMenuTex, CRect_i_(item_x + 0x104, item_y + 8, 0x20, 0x14), CRect_i_(0x1E0, 0xEC, 0x20, 0x14),
+                         alpha);
+        RECT digits = {0x140, 0xEA, 0x10, 0x16};
+        DrawMenuNumber(prize->price, item_x + 0x106, item_y + 6, FishMenuTex, digits, 1, alpha);
+        if (i >= 0 && i < 10) {
+            AtoraNameMes.line_pos[i].x = item_x + 0x24;
+            AtoraNameMes.line_pos[i].y = item_y + 4;
+        }
+        item_y += 0x22;
+    }
+    int target_y = y + 0x14 + (FishMenu.cursor - FishMenu.top) * 0x22;
+    int cursor_x = item_x - 0x1C;
+    if (FishMenu.fade_mode == 4) {
+        cursor_x = 0xF2;
+        target_y = (FishMenu.confirm << 5) + 0x102;
+    }
+    FishMenu.cursor_y += (int) ((float) (target_y - FishMenu.cursor_y) / 4.0f);
+    if (abs(FishMenu.cursor_y - target_y) < 2) {
+        FishMenu.cursor_y = target_y;
+    }
+    int cursor_y = FishMenu.cursor_y;
+    MenuTextureReload(CommonMenuMes2.tex_block);
+    GetMainMenuRightHelpWinLangOffset(win_x, win_y, win_w, win_h);
+    int help_x = (int) win_x;
+    MenuHelpWinDraw(help_x, (int) win_y, win_w, win_h, 0x80);
+    GetMainMenuRightHelpMsgLangOffset(text_x, text_y);
+    CommonMenuMes2.edge_alpha = alpha;
+    CommonMenuMes2.text_x = (int) (win_x + text_x);
+    CommonMenuMes2.text_y = (int) (win_y + text_y);
+    CommonMenuMes2.Step();
+    CommonMenuMes2.DrawMesWin();
+    AtoraNameMes.edge_alpha = alpha;
+    AtoraNameMes.Step();
+    AtoraNameMes.DrawMesWin();
+    if (CommonMenuMes3.value != FishMenu.point) {
+        CommonMenuMes3.value = FishMenu.point;
+        int digits = GetNumberKeta(FishMenu.point);
+        CommonMenuMes3.mes_made = -1;
+        CommonMenuMes3.MakeMesWin(digits + 0xCD);
+    }
+    CommonMenuMes3.edge_alpha = alpha;
+    CommonMenuMes3.text_x = 0x46;
+    CommonMenuMes3.text_y = 0x140;
+    CommonMenuMes3.Step();
+    CommonMenuMes3.DrawMesWin();
+    if (FishMenu.fade_mode == 4 || FishMenu.fade_mode == 5) {
+        AllFadeForMenu(0x40);
+        if (FishMenu.fade_mode == 4) {
+            CRect_i_ dest(0x110, 0x102, 0x60, 0x1F);
+            CRect_i_ window(0x1A0, 0, 0x60, 0x20);
+            MenuTextureReload(FishMenu.tex_block);
+            DrawMenu2DSprite(FishMenuTex, dest, window, 0x80);
+            dest.y += 0x20;
+            window.y = 0x20;
+            DrawMenu2DSprite(FishMenuTex, dest, window, 0x80);
+            CommonMenuMes1.auto_pos = 5;
+        } else {
+            CommonMenuMes1.auto_pos = 5;
+        }
+        MenuTextureReload(CommonMenuMes1.tex_block);
+        CommonMenuMes1.stay_frame = 1;
+        CommonMenuMes1.text_x = 0xDC;
+        CommonMenuMes1.text_y = 0x8C;
+        CommonMenuMes1.Step();
+        CommonMenuMes1.DrawMesWin();
+    }
+    if (FishMenu.fade_mode != 5) {
+        DrawMenuObjectVibe(cursor_x, cursor_y, 1, 0x40);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", FishExchangeItemDraw__Fiii);
+#endif
 
 void FishingExchangeDraw() {
     int frame_alpha;
@@ -2668,8 +5202,8 @@ void InitFishRecordView(u_long128 *buffer, int *tex_block, int mode) {
     StartReadBG();
     LoadFileBGMenuData("fishrec.pak", load_buffer);
     FishRecordMenu.ready = 0;
-    FishRecordMenu.unk_00 = 0;
-    FishRecordMenu.unk_04 = 0;
+    FishRecordMenu.cursor = 0;
+    FishRecordMenu.top = 0;
     FishRecordMenu.fade_count = 0;
     FishRecordMenu.fade_mode = 0;
     StayTex = TexManager.GetTexture("stayframe", -1);
@@ -2691,7 +5225,37 @@ static void ExitFishRecord() {
     GamePad.MenuModeOff();
 }
 
+#ifdef NON_MATCHING
+void FishRecordTextureEnter() {
+    if (ReadBGSync() != 0) {
+        return;
+    }
+    BG_READ_INFO *file = GetReadBGFile(0);
+    LOADTEXTURE_INFO2 texture = {0};
+    texture.block_no = FishRecordMenu.tex_block;
+    texture.name = (char *) GetPackFile((u_int *) file->buffer, "fishrec.img", NULL);
+    TexManager.DeleteTextureBlock(FishRecordMenu.tex_block);
+    TexManager.CleanUpTextureList();
+    TexManager.LoadTextureBlockEX(-1, &texture);
+    FishMenuTex = TexManager.GetTexture("fprecbrd", -1);
+    InitMenuMesSet(0, (short *) GetPackFile((u_int *) file->buffer, "fishmes.bin", NULL));
+    CommonMenuMes2.mes_made = -1;
+    AtoraNameMes.mes_made = -1;
+    for (int i = 0; i < 5; i++) {
+        SV_FISH_DATA *rank = GetFishingRankData(FishRecordMenu.top + i);
+        if (rank != NULL) {
+            AtoraNameMes.mes_no[i] = GetFishMsgNo(*(s16 *) rank);
+        } else {
+            AtoraNameMes.mes_no[i] = 0;
+        }
+    }
+    AtoraNameMes.MakeMesWin(0xC8);
+    FishRecordMenu.cursor_y = 0x7E;
+    FishRecordMenu.ready = 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", FishRecordTextureEnter__Fv);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/shop", @3274);
 INCLUDE_RODATA("asm/nonmatchings/shop", @3275);
 
@@ -2724,48 +5288,48 @@ static int FishRecordViewKey() {
             }
             break;
         case 2: {
-            int old_cursor = FishRecordMenu.unk_00;
+            int old_cursor = FishRecordMenu.cursor;
 
             if (GamePad.Down(0x200A)) {
-                FishRecordMenu.unk_04 += 5;
-                FishRecordMenu.unk_00 += 5;
-                if (FishRecordMenu.unk_04 > 0x10) {
-                    FishRecordMenu.unk_04 = 0xF;
+                FishRecordMenu.top += 5;
+                FishRecordMenu.cursor += 5;
+                if (FishRecordMenu.top > 0x10) {
+                    FishRecordMenu.top = 0xF;
                 }
-                if (FishRecordMenu.unk_00 >= 0x13) {
-                    FishRecordMenu.unk_00 = 0x13;
+                if (FishRecordMenu.cursor >= 0x13) {
+                    FishRecordMenu.cursor = 0x13;
                 }
             }
             if (GamePad.Down(0x8005)) {
-                FishRecordMenu.unk_04 -= 5;
-                FishRecordMenu.unk_00 -= 5;
-                if (FishRecordMenu.unk_00 < 0 || FishRecordMenu.unk_04 < 0) {
-                    FishRecordMenu.unk_00 = 0;
-                    FishRecordMenu.unk_04 = 0;
+                FishRecordMenu.top -= 5;
+                FishRecordMenu.cursor -= 5;
+                if (FishRecordMenu.cursor < 0 || FishRecordMenu.top < 0) {
+                    FishRecordMenu.cursor = 0;
+                    FishRecordMenu.top = 0;
                 }
             }
             if (GamePad.Down(0x1000)) {
-                FishRecordMenu.unk_00--;
-                if (FishRecordMenu.unk_00 < 0) {
-                    FishRecordMenu.unk_00 = 0;
+                FishRecordMenu.cursor--;
+                if (FishRecordMenu.cursor < 0) {
+                    FishRecordMenu.cursor = 0;
                 }
-                if (FishRecordMenu.unk_00 < FishRecordMenu.unk_04) {
-                    FishRecordMenu.unk_04--;
+                if (FishRecordMenu.cursor < FishRecordMenu.top) {
+                    FishRecordMenu.top--;
                 }
-                if (FishRecordMenu.unk_04 < 0) {
-                    FishRecordMenu.unk_04 = 0;
-                    FishRecordMenu.unk_00 = 0;
+                if (FishRecordMenu.top < 0) {
+                    FishRecordMenu.top = 0;
+                    FishRecordMenu.cursor = 0;
                 }
             }
             if (GamePad.Down(0x4000)) {
-                FishRecordMenu.unk_00++;
-                if (FishRecordMenu.unk_00 >= 0x13) {
-                    FishRecordMenu.unk_00 = 0x13;
+                FishRecordMenu.cursor++;
+                if (FishRecordMenu.cursor >= 0x13) {
+                    FishRecordMenu.cursor = 0x13;
                 }
-                if (FishRecordMenu.unk_04 < FishRecordMenu.unk_00 - 4) {
-                    FishRecordMenu.unk_04++;
-                    if (FishRecordMenu.unk_04 > 0x10) {
-                        FishRecordMenu.unk_04 = 0x10;
+                if (FishRecordMenu.top < FishRecordMenu.cursor - 4) {
+                    FishRecordMenu.top++;
+                    if (FishRecordMenu.top > 0x10) {
+                        FishRecordMenu.top = 0x10;
                     }
                 }
             }
@@ -2773,10 +5337,10 @@ static int FishRecordViewKey() {
                 FishRecordMenu.fade_mode = 1;
                 FishRecordMenu.fade_count = 0;
             }
-            if (old_cursor != FishRecordMenu.unk_00) {
+            if (old_cursor != FishRecordMenu.cursor) {
                 ComMenuSePlay(0);
                 for (int i = 0; i < 5; i++) {
-                    SV_FISH_DATA *fish = GetFishingRankData(FishRecordMenu.unk_04 + i);
+                    SV_FISH_DATA *fish = GetFishingRankData(FishRecordMenu.top + i);
 
                     if (fish != NULL) {
                         AtoraNameMes.mes_no[i] = GetFishMsgNo(fish->fish_id);
@@ -2793,7 +5357,87 @@ static int FishRecordViewKey() {
     return ret;
 }
 
+#ifdef NON_MATCHING
+void FishRecordViewBoard(int x, int y, int alpha) {
+    int widths[3] = {0x54, 0x5A, 0};
+
+    MenuTextureReload(FishMenu.tex_block);
+    DrawMenu2DSprite(FishMenuTex, CRect_i_(x, y, 0x160, 0xD0), CRect_i_(0, 0, 0x160, 0xD0), alpha);
+    int head_x = x + 0x10;
+    CRect_i_ head(0x160, 0x1A, 0x44, 0x1C);
+    for (int i = 0; i < 3; i++) {
+        if (i == 2) {
+            head.width = 0x74;
+        }
+        DrawMenu2DSprite(FishMenuTex, CRect_i_(head_x, y - 0xE, head.width, head.height - 1), head, alpha);
+        head_x += widths[i];
+        head.y += head.height;
+    }
+    int bar_x = x + 0x144;
+    int bar_y = (int) ((float) (y + 0x2A) + 6.3f * FishRecordMenu.top);
+    CRect_i_ source(0x110, 0xD0, 8, 4);
+    DrawMenu2DSprite(FishMenuTex, CRect_i_(bar_x, bar_y, 8, 4), source, alpha);
+    source.y += 4;
+    DrawMenu2DSprite(FishMenuTex, CRect_i_(bar_x, bar_y + 4, 8, (int) 23.5f), source, alpha);
+    source.y += 4;
+    DrawMenu2DSprite(FishMenuTex, CRect_i_(bar_x, (int) ((float) (bar_y + 4) + 23.5f), 8, 4), source, alpha);
+    int row_x = x + 0x12;
+    int row_y = y + 6;
+    for (int i = 0; i < 5; i++) {
+        int rank_no = FishRecordMenu.top + i;
+        SV_FISH_DATA *rank = GetFishingRankData(rank_no);
+        RECT digits = {0x158, 0xDC, 0xE, 0x12};
+        if (rank_no == FishRecordMenu.cursor) {
+            digits.y += digits.height;
+        }
+        CRect_i_ medal(0x160, 0, 0x20, 0x1B);
+        int medal_x = row_x + 0x10;
+        if (rank_no != 0) {
+            medal.x += 0x20;
+            if (rank_no == FishRecordMenu.cursor) {
+                medal.x += 0x20;
+            }
+        }
+        DrawMenu2DSprite(FishMenuTex, CRect_i_(medal_x, row_y + 0x14, medal.width, medal.height - 1), medal, alpha);
+        int number_x = medal_x + 0x14;
+        if (GetNumberKeta(rank_no + 1) >= 2) {
+            number_x += digits.width >> 1;
+        }
+        DrawMenuNumber(rank_no + 1, number_x, row_y + 0x18, FishMenuTex, digits, 1, alpha);
+        int size = 0;
+        if (rank != NULL) {
+            size = (int) ((float *) rank)[1];
+        }
+        if (size > 0) {
+            DrawMenuNumber(size, row_x + 0xFE, row_y + 0x18, FishMenuTex, digits, 1, alpha);
+            int unit_width = digits.width * 2;
+            DrawMenu2DSprite(FishMenuTex, CRect_i_(row_x + 0xFE, row_y + 0x16, unit_width, digits.height),
+                             CRect_i_(digits.x + digits.width * 10, digits.y, unit_width, digits.height), alpha);
+            if (i >= 0 && i < 10) {
+                AtoraNameMes.line_pos[i].x = row_x + 0x3E;
+                AtoraNameMes.line_pos[i].y = row_y + 0x14;
+            }
+        }
+        row_y += 0x22;
+    }
+    if (GetMardanGareyanFlag() != 0) {
+        DrawMenu2DSprite(FishMenuTex, CRect_i_(x + 0x134, y + 0xB6, 0x28, 0x28), CRect_i_(0x1D8, 0xB4, 0x28, 0x28), alpha);
+    }
+    int target_y = y + 0x14 + (FishRecordMenu.cursor - FishRecordMenu.top) * 0x22;
+    FishRecordMenu.cursor_y += (int) ((float) (target_y - FishRecordMenu.cursor_y) / 4.0f);
+    if (abs(FishRecordMenu.cursor_y - target_y) < 2) {
+        FishRecordMenu.cursor_y = target_y;
+    }
+    int cursor_y = FishRecordMenu.cursor_y;
+    MenuTextureReload(CommonMenuMes2.tex_block);
+    AtoraNameMes.edge_alpha = alpha;
+    AtoraNameMes.Step();
+    AtoraNameMes.DrawMesWin();
+    DrawMenuObjectVibe(x + 0x16 - 0x1C, cursor_y, 1, 0x40);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/shop", FishRecordViewBoard__Fiii);
+#endif
 
 /**
  * Draws one frame of the fishing record view.

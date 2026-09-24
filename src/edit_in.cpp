@@ -32,6 +32,25 @@
 #include "texture.hpp"
 #include "water.hpp"
 
+#ifdef NON_MATCHING // draft includes
+#include <cmath>
+
+#include "battlemenu.hpp"
+#include "clsmes.hpp"
+#include "dispctrl.hpp"
+#include "ebattle.hpp"
+#include "edit.hpp"
+#include "effectgroup.hpp"
+#include "effectmacro.hpp"
+#include "gamemode.hpp"
+#include "gamepad.hpp"
+#include "menu_misc.hpp"
+#include "objanime.hpp"
+#include "savedata.hpp"
+#include "snd.hpp"
+#include "sysmes.hpp"
+#endif
+
 /* The arenas the interior carves the read buffer into. */
 extern CDataAlloc2<1> EdWorkBuffer;
 extern CDataAlloc2<1> EdMenuBuffer;
@@ -73,11 +92,96 @@ extern float setTexAnimCntf;
 /* Map jump the player arrives through when entering an interior. */
 extern int EdInteriorJumpID;
 
+#ifdef NON_MATCHING // draft declarations
+/* Where the camera sits for one camera marker of the interior, and the box the player must stand in. */
+struct INTERIOR_CAMERA {
+    u8 unk_000[0x60];
+    CFrame frame;
+    sceVu0FVECTOR max;
+    sceVu0FVECTOR min;
+    int link_id;
+    u8 unk_2e4[0xC];
+};
+
+extern int EdInteriorDoorSound;
+extern int EdInteriorStartEvent;
+extern int EdInteriorPartsNo;
+extern char EdInteriorName[];
+extern int EdDebugCameraFlag;
+extern int EdDebugEventEnable;
+extern int EdDrawOffFlag;
+extern int EdDrawOffMapShadow;
+extern int EdPauseFlag;
+extern int MenuMapJumpMode;
+extern CEffectGroup EdEffectGroup;
+extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
+
+static int GameMode;
+static float NowTime;
+static CCameraFollow MainCamera(0.0f, 0.0f, 0.0f, 0.0f);
+static CCameraFollow ViewCamera(0.0f, 0.0f, 0.0f, 0.0f);
+static CCamera *NowCamera;
+static int loop_counter;
+static int key_counter;
+static int goto_menu;
+static int goto_return_menu;
+static int door_open_cnt;
+static int camera_dist_mode;
+static sceVu0FVECTOR fix_chara_pos;
+static sceVu0FVECTOR fix_chara_rot;
+static int fix_camera;
+static int camera_num;
+static INTERIOR_CAMERA *active_camera;
+static int camera_change_count;
+static int simple_event;
+static CCharacter MotionParts[4];
+static CTextureAnime TexAnime;
+static CTexAnimeData TexAnimeData[64];
+
+static void LoadScript();
+static void LoadInfo(char *script, int size);
+void EdDoorCloseSe(int door_sound, float *position);
+void EdDoorOpenSe(int door_sound, float *position);
+void EdSetCharaCursor(int on);
+void EdEventNPCStep();
+float EdAGetViewAngleH();
+float EdAGetViewAngleV();
+void EdASetViewAngle(float h, float v);
+void EdEyeCamera(CCamera *camera, CCharacter *chara);
+void EdViewModeOff();
+void EdInitMesParam();
+void EdDrawCharacter(CCharacter *chara, int detail, int count, CNPCharacter *villagers, int *marks, int shadow,
+                     ED_EVENT_INFO *event);
+void EdEventBackSpriteDraw();
+void EdDrawItem();
+void EdEventSpriteDraw();
+static void setTexAnim();
+static void RunEvent(int event_no, CCamera *camera);
+static void RunSystemEvent(int event_no, CCamera *camera);
+static void InitWorkBuffer();
+static void StepWater();
+static void MainDraw();
+static void MoveCharacter();
+static void MoveCamera(CCameraFollow *camera);
+static int GetDoorPos(int door_no, float *position, float *rotation, int *parts_no, int *motion);
+static void VillagerCollision();
+static int LoadTexture();
+static void LoadChara();
+void LoadData();
+int LoadPTS(CMapParts *parts, u_int *archive);
+int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points);
+void DrawWaterSurface(CCamera *camera);
+void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara);
+#endif
+
 /**
  * Identifies the kind of editor effect requested.
  */
 // clang-format off
 enum EFFECT_TYPE {
+    EFFECT_FIRE = 1, /**< A fire. */
+    EFFECT_FLAME,    /**< A flame. */
+    EFFECT_BRIGHT,   /**< A glow. */
 };
 // clang-format on
 
@@ -305,7 +409,86 @@ static void InitWorkBuffer() {
  * @address 0x19BE30
  * @size 0x478
  */
+#ifdef NON_MATCHING
+int EditInInit(float time, char *name) {
+    MGSetFogParm(10000.0f, 50000.0f, 0, 0, 0, 255.0f, 255.0f);
+    memset(EdInInfo, 0, sizeof(EDIT_IN_INFO));
+    EdInInfo->projection = 800.0f;
+    strcpy(EdInInfo->name, name);
+    PlayTimeCountFlag(1);
+    simple_event = 0;
+    LoadScript();
+    NowTime = time;
+    int hour = (int) (time / 3.0f);
+    EdNPCBuffer.used = 0;
+    for (int i = 0; i < 10; i++) {
+        EdVillager[i].Initialize();
+        EdVillager[i].unk_148C = 0x36;
+    }
+    LoadTexture();
+    BG_READ_INFO *info = GetReadBGFile(1);
+    if (info != NULL) {
+        char *text = (char *) EdNPCBuffer.Alloc((info->size >> 4) + 1);
+        memcpy(text, (char *) info->buffer, info->size);
+        LoadInfo(text, info->size);
+    }
+    LoadData();
+    int remaining = EdNPCBuffer.limit - EdNPCBuffer.used;
+    EdVillagerBuffer.base = EdNPCBuffer.base + EdNPCBuffer.used * 16;
+    EdVillagerBuffer.limit = remaining;
+    EdVillagerBuffer.used = 0;
+    printf("buffer %d\n", remaining);
+    LoadChara();
+    MGSetRenderInfo(EdInInfo->projection, 5.0f, 65535.0f);
+    MGSetPLight(EdInInfo->light_direction, EdInInfo->light_colour);
+    MGSetAmbient(EdInInfo->ambient);
+    MGSetBGColor(EdInInfo->background_colour);
+    Chara = EdExchangeInfo.player;
+    camera_dist_mode = 1;
+    if (Chara != NULL) {
+        Chara->SetPosition(0.0f, 0.0f, 0.0f);
+    }
+    EdFadeIn(0x40, 0.0f, 0.0f, 0.0f);
+    door_open_cnt = 0;
+    GameMode = 0;
+    Chara->foot_sound[0].frame = 0;
+    Chara->SetPosition(0.0f, 0.0f, 0.0f);
+    Chara->SetRotation(0.0f, 0.0f, 0.0f);
+    GetMapJumpPos(Chara);
+    Chara->ClothStep(-1);
+    if (EdInteriorDoorSound >= 0) {
+        sceVu0FVECTOR position;
+        sceVu0FVECTOR reference = {0.0f, 0.0f, 0.0f, 0.0f};
+        Chara->GetPosition(position);
+        position[1] -= 10.0f;
+        SndSetCamera(position, reference);
+        Chara->GetPosition(position);
+        EdDoorCloseSe(EdInteriorDoorSound, position);
+    }
+    EdMoveCharaInit();
+    active_camera = NULL;
+    camera_change_count = 0;
+    MainCamera.FollowOff();
+    NowCamera = &MainCamera;
+    start_event_no = EdInteriorStartEvent;
+    start_system_event = -1;
+    goto_menu = 0;
+    goto_return_menu = 0;
+    key_counter = 0;
+    loop_counter = 0;
+    EdEventInfo.interior_parts_count = parts_num;
+    EdEventInfo.interior_parts = InteriorParts;
+    EdInitEventParam();
+    InitWorkBuffer();
+    printf("buffer %d\n", EdWorkBuffer.limit - EdWorkBuffer.used);
+    EdSaveFrameImageInit();
+    EdInitMenu(-1);
+    EdInitSoundSrc();
+    return 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit_in", EditInInit__FfPc);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @469__4);
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @886__2);
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @891__2);
@@ -317,7 +500,334 @@ INCLUDE_RODATA("asm/nonmatchings/edit_in", @892__2);
  * @address 0x19C2B0
  * @size 0x1014
  */
+#ifdef NON_MATCHING
+int EditInLoop() {
+    sceVu0FMATRIX view;
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR eye;
+    sceVu0FVECTOR dir;
+    CMapParts *parts[10];
+    static int old_mode;
+
+    if (EdSystemMesCheck() != 0 || EdCheckItemOver() != 0) {
+        EdSetKeyMode(0);
+    } else {
+        EdSetKeyMode(0xFFFF);
+    }
+    if (EdPadDown(0x800, 4) != 0) {
+        goto_return_menu = 1;
+    }
+    int hour = (int) (NowTime / 3.0f);
+    if (GameMode != 14) {
+        if (EdCheckViewMode() == 0) {
+            MGSetRenderInfo(EdInInfo->projection, 5.0f, 65535.0f);
+        } else {
+            MGSetRenderInfo(600.0f, 4.0f, 65535.0f);
+        }
+    }
+    Chara->GetPosition(position);
+    if (GameMode != 5 && GameMode != 7 && GameMode != 6) {
+        OBJ_ANIME_SEQ *anime = EdInInfo->obj_anime;
+        for (int i = 0; i < obj_anime_num; i++, anime++) {
+            int flag = anime->completion_flag;
+            if (flag <= 0 || EdGetMapFlag(flag) == 0) {
+                ObjAnimePlay(anime);
+            }
+        }
+        StepWater();
+    }
+    if (fix_camera != 0 && camera_num > 0 && GameMode == 0) {
+        SetCameraPos((CFrame *) InteriorParts[0].frame[0], &MainCamera, Chara);
+    }
+    EdSetCharaCursor(0);
+    switch (GameMode) {
+    case 0:
+        if (loop_counter > 0) {
+            MoveCharacter();
+        }
+        EdSetCharaCursor(1);
+        for (int i = 0; i < 10; i++) {
+            CNPCharacter *villager = &EdVillager[i];
+            villager->Step();
+            villager->ShadowStep();
+            villager->chara.ClothStep(0);
+        }
+        NowCamera = &MainCamera;
+        if (EdCheckViewMode() != 0) {
+            NowCamera = &ViewCamera;
+        }
+        break;
+    case 4: {
+        NowCamera = &EventCamera;
+        Chara->SetVelocity(CVector3_f_(0.0f, 0.0f, 0.0f));
+        EdEventInfo.current_time = NowTime;
+        int result = EdEventMode(&EventCamera, 0);
+        if (result != 0) {
+            GameMode = 0;
+            NowCamera = &MainCamera;
+            switch (result) {
+            case 7:
+                if (MapNo == 3 && strcmp(EdInteriorName, "i04h04") == 0) {
+                    EdInteriorDoorSound = -1;
+                }
+                return 1;
+            case 8:
+                return 99;
+            case 9:
+                GameMode = 3;
+            default:
+                if (EdEventInfo.reset_camera_angle < 0) {
+                    sceVu0FVECTOR pos;
+                    sceVu0FVECTOR ref;
+                    EventCamera.GetPos(pos);
+                    EventCamera.GetRef(ref);
+                    MainCamera.SetPos(pos);
+                    MainCamera.SetRef(ref);
+                }
+                camera_change_count = 0;
+                break;
+            }
+        }
+        VillagerCollision();
+        EdEventNPCStep();
+        goto_return_menu = 0;
+        break;
+    }
+    case 1: {
+        NowCamera = &MainCamera;
+        Chara->SetVelocity(CVector3_f_(0.0f, 0.0f, 0.0f));
+        Chara->Step();
+        Chara->ShadowStep();
+        Chara->SetPosition(fix_chara_pos);
+        Chara->SetRotation(fix_chara_rot[0], fix_chara_rot[1], fix_chara_rot[2]);
+        Chara->ClothStep(0);
+        for (int i = 0; i < 10; i++) {
+            CNPCharacter *villager = &EdVillager[i];
+            villager->Step();
+            villager->ShadowStep();
+            villager->chara.ClothStep(0);
+        }
+        door_open_cnt--;
+        if (door_open_cnt == 100 && EdInteriorDoorSound >= 0) {
+            sceVu0FVECTOR pos;
+            Chara->GetPosition(pos);
+            EdDoorOpenSe(EdInteriorDoorSound, pos);
+        }
+        if (door_open_cnt < 0) {
+            door_open_cnt = 0;
+            GameMode = 2;
+        }
+        break;
+    }
+    case 2:
+        NowCamera = &MainCamera;
+        EdStopSoundSrc();
+        if (EdEventInfo.map_jump_bgm_stop != 0) {
+            SndBgmFadeOutStop();
+        } else {
+            EdBeforeInBgmNo = -1;
+        }
+        return 1;
+    case 3: {
+        sceVu0FVECTOR direction;
+        NowCamera = &MainCamera;
+        if (EdCheckViewMode() != 0) {
+            NowCamera = &ViewCamera;
+        }
+        Chara->SetMotion(0, 0);
+        Chara->SetVelocity(CVector3_f_(0.0f, 0.0f, 0.0f));
+        Chara->Step();
+        Chara->ShadowStep();
+        Chara->ClothStep(0);
+        for (int i = 0; i < 10; i++) {
+            CNPCharacter *villager = &EdVillager[i];
+            villager->Step();
+            villager->ShadowStep();
+            villager->chara.ClothStep(0);
+        }
+        CNPCharacter *talker = EdNowTalkChara();
+        float distance = Chara->GetDistance(talker->chara);
+        Chara->GetDir(talker->chara, direction);
+        float pitch = -atan2f(-Chara->body_height + (1.3f + talker->chara.body_height + direction[1]), distance);
+        float yaw = atan2f(direction[0], direction[2]);
+        float h = EdAGetViewAngleH();
+        float v = EdAGetViewAngleV();
+        h = AngleInterpolate(h, yaw, 0.05f, 0);
+        v = AngleInterpolate(v, pitch, 0.03f, 0);
+        EdASetViewAngle(h, v);
+        EdEyeCamera(&ViewCamera, Chara);
+        int settled = 1;
+        if (EdCheckViewMode() != 0) {
+            float d = h - yaw;
+            if (d < 0.0f) {
+                d = -d;
+            }
+            settled = 0;
+            if (d < 0.001f) {
+                d = v - pitch;
+                if (d < 0.0f) {
+                    d = -d;
+                }
+                if (d < 0.001f) {
+                    settled = 1;
+                }
+            }
+        }
+        if (settled) {
+            int event_no;
+            EdASetViewAngle(yaw, pitch);
+            event_no = 0;
+            int result = EdTalkMode(Chara, NULL, EdCheckViewMode(), &event_no);
+            if (result != 0) {
+                if (result == 2) {
+                    goto_menu = 3;
+                }
+                if (result == 3) {
+                    goto_menu = 4;
+                }
+                if (result == 4 && event_no > 0) {
+                    RunEvent(event_no, NowCamera);
+                }
+                GameMode = 0;
+            }
+        }
+        break;
+    }
+    case 6:
+        Chara->SetMotion(Chara->motion_no, 1);
+        Chara->Step();
+        Chara->ShadowStep();
+        for (int i = 0; i < 10; i++) {
+            CNPCharacter *villager = &EdVillager[i];
+            villager->chara.SetMotion(villager->chara.motion_no, 1);
+            villager->Step();
+            villager->ShadowStep();
+        }
+        break;
+    case 7:
+        MenuMapJumpMode = -1;
+        if (EdMenuMode() != 0) {
+            GameMode = 0;
+            EdExitMenu();
+            if (GetInteriorOutFlag() != 0) {
+                EdViewModeOff();
+                return 1;
+            }
+            for (int i = 0; i < 10; i++) {
+                CNPCharacter *villager = &EdVillager[i];
+                villager->chara.SetMotion(villager->chara.motion_no, 0);
+                villager->Step();
+                villager->ShadowStep();
+            }
+            return 0;
+        }
+        break;
+    }
+    if (EdEventInfo.lighting_override != 0) {
+        MGSetPLight(EdEventInfo.light_direction, EdEventInfo.light_color);
+        MGSetAmbient(EdEventInfo.ambient_color);
+    }
+    NowCamera->Step(1);
+    NowCamera->GetCameraMatrix(view);
+    NowCamera->GetPos(eye);
+    NowCamera->GetDir(dir);
+    MGSetViewMatrix(view, eye);
+    for (int i = 0; i < parts_num; i++) {
+        parts[i] = &InteriorParts[i];
+    }
+    EdSetSoundSrcVol(NowTime, parts, parts_num, eye, dir);
+    if (GameMode != 7) {
+        MainDraw();
+    } else {
+        EdFadeInOut();
+    }
+    if (GameMode == 6 && EdInitModeFinish(NowCamera, TexManager.GetTexture("frame_image", -1)) != 0) {
+        GameMode = 7;
+    }
+    EdSaveFrameImageTask();
+    if (GameMode == 0 && ((EdPadDown(0x10, 1) != 0 && loop_counter >= 2) || goto_menu != 0 ||
+                          (SystemMesCheck() == 0 && EdCheckItemOver() != 0))) {
+        int menu = 2;
+        if (goto_menu != 0) {
+            menu = goto_menu;
+            goto_menu = 0;
+            printf("%d\n", menu);
+        }
+        if (EdInitMenu(menu) != 0) {
+            SndSePlay(1, -1, 0);
+            GameMode = 6;
+        }
+    }
+    static int event_text = 0;
+    if (GamePad.Down2(0x80) != 0) {
+        event_text = 4;
+        EdEventAllClear();
+        simple_event = 0;
+    }
+    event_text--;
+    if (event_text < 0) {
+        event_text = 0;
+    }
+    if (event_text == 1) {
+        start_event_no = 150;
+    }
+    if (GameMode != 4 && ((CMainChara *) Chara)->in_trigger != 0) {
+        int trigger = ((CMainChara *) Chara)->trigger_event;
+        if (trigger > 0) {
+            start_event_no = trigger;
+        }
+    }
+    if (EdDebugEventEnable != 0 && (start_event_no > 0 || start_system_event > 0)) {
+        if (start_system_event > 0) {
+            if (EdEventInit(start_system_event, &EdNPCBuffer, EdSystemEventData) != 0) {
+                EdInitMesParam();
+                GameMode = 4;
+            }
+        } else if (EdEventInit(start_event_no, &EdNPCBuffer, EdEventData) != 0) {
+            EdInitMesParam();
+            GameMode = 4;
+        } else if (EdEventInfo.return_code == 9) {
+            EdInitMesParam();
+            GameMode = 3;
+            simple_event = 0;
+        }
+        start_event_no = -1;
+        start_system_event = -1;
+    } else {
+        simple_event = 0;
+    }
+    if (GameMode == 5 && GamePad.Down(0x800) != 0) {
+        GameMode = old_mode;
+        EdSePlay((ED_SOUND_ID) 2, -1);
+        PlayTimeCountFlag(1);
+    } else if (GameMode != 4 && goto_return_menu != 0 && loop_counter >= 2 && GameMode == 0) {
+        old_mode = GameMode;
+        GameMode = 5;
+        EdSePlay((ED_SOUND_ID) 1, -1);
+        PlayTimeCountFlag(0);
+    }
+    goto_return_menu = 0;
+    static int end_count = 0;
+    if (GamePad.AllOn() != 0) {
+        key_counter = 0;
+    }
+    if (end_count == 1) {
+        end_count = 0;
+        MapJump(800, -1);
+        return 99;
+    }
+    end_count--;
+    if (end_count < 0) {
+        end_count = 0;
+    }
+    key_counter++;
+    loop_counter++;
+    SndStep();
+    return 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit_in", EditInLoop__Fv);
+#endif
 /**
  * Draws the interior for one frame.
  *
@@ -326,7 +836,148 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", EditInLoop__Fv);
  * @size 0x6AC
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
+#ifdef NON_MATCHING
+static void MainDraw() {
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR light = {0.0f, 0.0f, 0.0f, 0.0f};
+    sceVu0FVECTOR ref;
+    sceVu0FVECTOR wind = {0.0f, 0.0f, 0.0f, 0.0f};
+    int marks_store[10];
+
+    if (EdDrawOffFlag != 0) {
+        return;
+    }
+    if (GameMode == 5) {
+        CTextureAnime::stop_anime = 1;
+    } else {
+        CTextureAnime::stop_anime = 0;
+    }
+    EdDrawOffMap = EdEventInfo.suppress_background;
+    EdDrawOffMapShadow = EdEventInfo.suppress_shadows;
+    Chara->GetPosition(position);
+    int hour = (int) (NowTime / 3.0f);
+    if (EdDrawOffMap == 0) {
+        TexManager.ReloadTexture(GetVif1Packet(), 15);
+        TexAnime.TexAnime(15);
+        setTexAnim();
+        for (int i = 0; i < parts_num; i++) {
+            InteriorParts[i].DrawParts(NowTime, light, 0, 0, NULL);
+        }
+    }
+    sceGsTex0 frame;
+    CRect_i_ screen;
+    sceGsTex0 water;
+    sceGsZbuf zbuf;
+    MGGetFBuffTex(&frame);
+    screen.x = 0;
+    screen.y = 0;
+    screen.width = 0x280;
+    screen.height = 0xE0;
+    *(u_long *) &water = TexManager.GetTexture("water_buff", -1)->tex0;
+    MGMoveImage(&frame, screen, &water, 0, 0, 0);
+    MainCamera.GetRef(ref);
+    zbuf = mgZBuffer;
+    zbuf.bits.zmsk = 1;
+    MGSetGsZBUF(&zbuf);
+    DrawWaterSurface(NowCamera);
+    MGSetGsZBUF(&mgZBuffer);
+    if (GameMode == 4) {
+        EdEventBackSpriteDraw();
+    }
+    if (GameMode == 4) {
+        EdDrawItem();
+    }
+    ED_EVENT_INFO *event = NULL;
+    int detail = 3;
+    int *marks = marks_store;
+    if (EdCheckViewMode() != 0) {
+        detail = 0;
+    }
+    if (GameMode == 2) {
+        marks = NULL;
+    } else {
+        for (int i = 0; i < 10; i++) {
+            marks_store[i] = 3;
+        }
+    }
+    if (GameMode == 4) {
+        event = &EdEventInfo;
+        detail = 3;
+    }
+    EdDrawCharacter(Chara, detail, 10, EdVillager, marks, 1, event);
+    TexManager.ReloadTexture(GetVif1Packet(), 0x18);
+    if (GameMode != 5 || EdPauseFlag == 0) {
+        EditEffectStep();
+        EffectMacroStep(wind);
+        EdEffectGroup.Step(1);
+        for (int i = 0; i < 4; i++) {
+            MotionParts[i].Step();
+        }
+    }
+    EditEffectStep2();
+    if (EdDrawOffMap == 0) {
+        EDIT_EFFECT_INFO *effect = EdInInfo->effects;
+        for (int i = 0; i < effect_num; i++, effect++) {
+            if (CheckEditEffect(effect, NowTime) != 0) {
+                DrawEditEffect(effect, NowCamera, &EdEffectGroup);
+            }
+        }
+    }
+    EdEffectGroup.Draw();
+    for (int i = 0; i < 4; i++) {
+        TexManager.ReloadTexture(GetVif1Packet(), i + 0x32);
+        MotionParts[i].Draw();
+    }
+    TexManager.ReloadTexture(Vif1Packet, 0x14);
+    EdDrawSysCursor(EdInInfo->event_points, 32);
+    if (GameMode == 4) {
+        EdEventSpriteDraw();
+    }
+    if ((unsigned int) (GameMode - 3) < 2U) {
+        TexManager.ReloadTexture(Vif1Packet, EditMes1.tex_block);
+        EditMes1.DrawMesWin();
+        if (GameMode == 4) {
+            EditEventMes1.DrawMesWin();
+            EditSystemMes.DrawMesWin();
+        }
+    }
+    if (GameMode == 0) {
+        MonsterNameDraw();
+    } else {
+        MonsterNameMake(-1);
+    }
+    EdSystemMesStep();
+    EdSystemMesDraw();
+    static int debug_flag = 0;
+    static int debug_menu_mode = 0;
+    char pause_texture[] = "pause";
+    if (EdDebugParamDrawOff == 0 && (GameMode == 5 || EdPauseFlag != 0)) {
+        TexManager.ReloadTexture(GetVif1Packet(), 0x14);
+        CRect_i_ fade;
+        fade.x = 0;
+        fade.y = 0;
+        fade.width = 0x2800;
+        fade.height = 0xE00;
+        MGFillBox(fade, 0, 0, 0, 0x40);
+        setbilinear(0);
+        CRect_i_ texel;
+        CRect_i_ place;
+        texel.x = 0;
+        texel.y = 0;
+        texel.width = 0x80;
+        texel.height = 0x28;
+        place.x = 0x100;
+        place.y = 0xCC;
+        place.width = 0x80;
+        place.height = 0x28;
+        sceVif1Packet *packet = GetVif1Packet();
+        set2DSprite(packet, TexManager.GetTexture(pause_texture, -1), place, texel, 0x80);
+    }
+    EdFadeInOut();
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit_in", MainDraw__Fv__2);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @1082__2);
 /**
  * Draws the interior's water surfaces, ordered back to front from the camera.
@@ -335,7 +986,39 @@ INCLUDE_RODATA("asm/nonmatchings/edit_in", @1082__2);
  * @address 0x19D980
  * @size 0x15C
  */
-INCLUDE_ASM("asm/nonmatchings/edit_in", DrawWaterSurface__FP7CCamera);
+void DrawWaterSurface(CCamera *camera) {
+    sceVu0FVECTOR eye;
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR dir;
+    int i;
+    CGroundWater *surface = Water;
+
+    camera->GetPos(eye);
+    camera->GetDir(dir);
+    dir[1] = 0.0f;
+    sceVu0Normalize(dir, dir);
+    for (i = 0; i < 1; i++, surface++) {
+        if (surface->draw == 0) {
+            continue;
+        }
+        CWater *water = &surface->water;
+        sceVu0CopyVector(position, surface->offset);
+        if (surface->follow_x) {
+            position[0] = eye[0] + 50.0f * dir[0];
+        }
+        if (surface->follow_y) {
+            position[1] = eye[1];
+        }
+        if (surface->follow_z) {
+            position[2] = eye[2] + 50.0f * dir[2];
+        }
+        CVector3_f_ rotation;
+        rotation.x = rotation.y = rotation.z = 0.0f;
+        water->frame.SetRotation(rotation.x, rotation.y, rotation.z);
+        water->frame.SetPosition(position);
+        DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(water, &mgRenderInfo, GetVif1Packet(), NULL);
+    }
+}
 /**
  * Advances the ripples of the interior's water surfaces.
  *
@@ -383,7 +1066,72 @@ static void StepWater() {
  * @address 0x19DCF0
  * @size 0x38C
  */
+#ifdef NON_MATCHING
+static void MoveCharacter() {
+    sceVu0FVECTOR follow;
+    static sceVu0FVECTOR fix_pos;
+
+    EdMoveCharaInfo.time = NowTime;
+    EdMoveCharaInfo.camera = &MainCamera;
+    EdMoveCharaInfo.follow = &ViewCamera;
+    EdMoveCharaInfo.key_lock = 0;
+    EdMoveCharaInfo.chara = Chara;
+    EdMoveCharaInfo.interior = 1;
+    EdMoveCharaInfo.parts = InteriorParts;
+    EdMoveCharaInfo.parts_count = parts_num;
+    EdMoveCharaInfo.points = EdInInfo->event_points;
+    EdMoveCharaInfo.point_count = 32;
+    EdMoveCharaInfo.unk_a0 = 0;
+    EdMoveChara();
+    if (EdDebugCameraFlag != 0 && GamePad.Down(0x20) != 0) {
+        fix_camera = fix_camera == 0;
+        MainCamera.GetPos(fix_pos);
+    }
+    if (fix_camera != 0) {
+        MainCamera.FollowOff();
+    } else {
+        MainCamera.FollowOn();
+        Chara->GetPosition(follow);
+        MainCamera.SetFollow(follow[0], 14.0f + follow[1], follow[2]);
+        MoveCamera(&MainCamera);
+    }
+    if (EdMoveCharaInfo.system_event_no > 0) {
+        RunSystemEvent(EdMoveCharaInfo.system_event_no, &MainCamera);
+        return;
+    }
+    if (EdMoveCharaInfo.event_no > 0) {
+        RunEvent(EdMoveCharaInfo.event_no, &MainCamera);
+        return;
+    }
+    if (EdMoveCharaInfo.unk_a0 == 0 && EdPadDown(0x40, 1) != 0) {
+        sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 0.0f};
+        sceVu0FVECTOR rotation = {0.0f, 0.0f, 0.0f, 0.0f};
+        Chara->GetPosition(position);
+        Chara->GetRotation(rotation);
+        EPARTS_FUNC_DATA *jump = SearchMapJump(position, rotation);
+        if (jump != NULL) {
+            int motion;
+            EdMoveCharaInit();
+            motion = 0;
+            door_open_cnt = 140;
+            if (jump != NULL) {
+                GetDoorPos(jump->link_id, position, rotation, &EdInteriorDoorSound, &motion);
+            }
+            Chara->SetMotion(motion, 6);
+            sceVu0CopyVector(fix_chara_pos, position);
+            sceVu0CopyVector(fix_chara_rot, rotation);
+            Chara->SetPosition(fix_chara_pos);
+            Chara->SetRotation(fix_chara_rot[0], fix_chara_rot[1], fix_chara_rot[2]);
+            Chara->Step();
+            Chara->ClothStep(-1);
+            GameMode = 1;
+            EdFadeOut(100, 0.0f, 0.0f, 0.0f);
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit_in", MoveCharacter__Fv);
+#endif
 /**
  * Applies the right stick to the interior camera, holding its height and distance in
  * range.
@@ -393,7 +1141,33 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", MoveCharacter__Fv);
  * @size 0x164
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
+#ifdef NON_MATCHING
+static void MoveCamera(CCameraFollow *camera) {
+    static float camera_distance[3] = {50.0f, 80.0f, 110.0f};
+
+    float horizontal = GamePad.GetRXf();
+    camera->AddHeight(-GamePad.GetRYf());
+    if (!(camera->GetHeight() <= 30.0f)) {
+        camera->SetHeight(30.0f);
+    }
+    camera->AddAngle(0.04f * -horizontal);
+    if (GamePad.On(8) != 0) {
+        camera->AddAngle(-0.0174533f);
+    }
+    if (GamePad.On(4) != 0) {
+        camera->AddAngle(0.0174533f);
+    }
+    camera->SetDistance(camera_distance[camera_dist_mode]);
+    if (GamePad.Down(0x10) != 0) {
+        camera_dist_mode++;
+    }
+    if (camera_dist_mode >= 3) {
+        camera_dist_mode = 0;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit_in", MoveCamera__FP13CCameraFollow__2);
+#endif
 /**
  * Finds the map jump the player is standing on.
  *
@@ -467,7 +1241,90 @@ static int GetDoorPos(int door_no, float *position, float *rotation, int *parts_
  * @address 0x19E520
  * @size 0x3F8
  */
+#ifdef NON_MATCHING
+void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara) {
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR local;
+    INTERIOR_CAMERA cameras[8];
+    sceVu0FMATRIX matrix;
+    EPARTS_FUNC_DATA *point = func_point;
+    int count;
+
+    chara->GetPosition(position);
+    count = 0;
+    for (int i = 0; i < func_num; i++, point++) {
+        if (point->kind == 7) {
+            INTERIOR_CAMERA *entry = &cameras[count];
+            entry->link_id = point->link_id;
+            CFrame *owner = (CFrame *) point->parts;
+            sceVu0CopyVector(entry->min, point->position);
+            sceVu0CopyVector(entry->max, point->rotation);
+            sceVu0UnitMatrix(matrix);
+            if (owner != NULL) {
+                CFrame *found = owner->SearchFrame(point->frame_name);
+                if (found != NULL) {
+                    found->GetLWMatrix(matrix);
+                }
+            }
+            sceVu0MulMatrix(matrix, matrix, point->matrix);
+            entry->frame.SetTransMatrix(matrix);
+            count++;
+            if (count >= 8) {
+                break;
+            }
+        }
+    }
+    if (count <= 0) {
+        return;
+    }
+    INTERIOR_CAMERA *inside = NULL;
+    static int cnt = 0;
+    for (int i = 0; i < count; i++) {
+        INTERIOR_CAMERA *entry = &cameras[i];
+        if (entry->link_id == 0) {
+            inside = entry;
+            continue;
+        }
+        position[3] = 1.0f;
+        sceVu0ApplyMatrix(local, entry->frame.GetInverseMatrix(), position);
+        if (!(local[0] < entry->min[0]) && !(local[1] < entry->min[1]) && !(local[2] < entry->min[2]) &&
+            local[0] <= entry->max[0] && local[1] <= entry->max[1] && local[2] <= entry->max[2]) {
+            inside = entry;
+            break;
+        }
+    }
+    cnt++;
+    if (cnt >= 61) {
+        cnt = 0;
+    }
+    if (active_camera == NULL) {
+        active_camera = inside;
+    }
+    if (inside == NULL) {
+        return;
+    }
+    if (camera_change_count <= 0) {
+        active_camera = inside;
+        camera_change_count = 0;
+    }
+    if (inside == active_camera) {
+        camera_change_count = 20;
+    } else {
+        camera_change_count--;
+    }
+    if (active_camera != NULL) {
+        sceVu0FVECTOR eye = {0.0f, 0.0f, 0.0f, 0.0f};
+        active_camera->frame.GetWorldPosition(eye, eye);
+        position[1] += 17.0f;
+        camera->SetPos(eye);
+        camera->SetRef(position);
+        camera->SetNextPos(NULL, eye[0], eye[1], eye[2]);
+        camera->SetNextRef(NULL, position[0], position[1], position[2]);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit_in", SetCameraPos__FP6CFrameP7CCameraP10CCharacter);
+#endif
 /**
  * Collects the collision polygons of the interior parts meeting a box.
  *
@@ -568,7 +1425,49 @@ static void VillagerCollision() {
  * @size 0x20C
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
+#ifdef NON_MATCHING
+static int LoadTexture() {
+    u_int *cfg;
+    int cfg_size;
+    static LOADTEXTURE_INFO2 texdata;
+
+    BG_READ_INFO *file = GetReadBGFile(2);
+    if (file == NULL) {
+        return 0;
+    }
+    char *ext = file->name;
+    while (*ext != '\0') {
+        if (*ext++ == '.') {
+            break;
+        }
+    }
+    u_int *data = NULL;
+    TexAnime.Initialize(NULL, 0);
+    if (strcmp(ext, "img") == 0) {
+        texdata.name = (char *) file->buffer;
+    } else {
+        u_int *found;
+        if (GetPackFileExt((u_int *) file->buffer, "img", &found, 1, NULL, NULL) > 0) {
+            texdata.name = (char *) found;
+        }
+        if (GetPackFileExt((u_int *) file->buffer, "cfg", &found, 1, &cfg_size, NULL) > 0) {
+            TexAnime.Initialize(TexAnimeData, 64);
+            data = found;
+            for (int i = 0; i < 64; i++) {
+                TexAnimeData[i].Initialize();
+            }
+        }
+    }
+    TexManager.LoadTextureBlockEX(15, &texdata);
+    if (data != NULL) {
+        TexAnime.LoadCFGFile((char *) data, cfg_size);
+    }
+    EdNPCBuffer.Alloc((file->size >> 4) + 1);
+    return 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit_in", LoadTexture__Fv__2);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @1399);
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @1400);
 
@@ -584,7 +1483,133 @@ static void LoadChara() {
  * @address 0x19EED0
  * @size 0x818
  */
+#ifdef NON_MATCHING
+void LoadData() {
+    CFrame *frames[9];
+
+    func_point = new ((u_long128 *) (EdNPCBuffer.base + EdNPCBuffer.used * 16)) EPARTS_FUNC_DATA[128];
+    EdNPCBuffer.Alloc(0x600);
+    for (int i = 0; i < 128; i++) {
+        func_point[i].kind = 0;
+    }
+    func_num = 0;
+    BG_READ_INFO *file = GetReadBGFile(0);
+    u_int *archive = NULL;
+    if (file != NULL) {
+        archive = (u_int *) file->buffer;
+    }
+    int count;
+    u_int *pts;
+    for (count = 0; (pts = SearchPTS(archive, count)) != NULL; count++) {
+        CMapParts *parts = &InteriorParts[count];
+        LoadPTS(parts, pts);
+        parts->handle = count;
+        parts->unk_0E4 = 15;
+        int first = func_num;
+        func_num += GetFuncPoint(count, pts, &func_point[first]);
+        if (EdInteriorPartsNo >= 0) {
+            EDITPARTS_INFO *info = EditPartsInfo.GetPartsInfo(EdInteriorPartsNo);
+            if (info != NULL) {
+                EDITPARTS_INFO copy = *info;
+                EdPartsObjectOnOff(parts, info, EdInteriorJumpID + 1);
+            }
+        }
+        for (int i = 0; i < 9; i++) {
+            frames[i] = NULL;
+        }
+        for (int i = 0; i < 4; i++) {
+            frames[i] = (CFrame *) parts->frame[i];
+        }
+        frames[4] = parts->shadow_frame;
+        frames[5] = parts->GetCollisionFrame();
+        frames[6] = parts->shade_frame;
+        frames[7] = parts->unk_104;
+        CFrame *extra = parts->unk_0DC;
+        if (extra != NULL) {
+            extra->SetPosition(parts->pos[0], parts->pos[1], parts->pos[2]);
+            parts->unk_0DC->SetRotation(parts->rotation.x, parts->rotation.y, parts->rotation.z);
+            extra = parts->unk_0DC;
+        }
+        frames[8] = extra;
+        EPARTS_FUNC_DATA *point = &func_point[first];
+        effect_num = 32;
+        for (int i = 0; i < 24; i++) {
+            parts->effect_on[i] = 0;
+            parts->effect[i] = NULL;
+        }
+        for (; first < func_num; first++, point++) {
+            EnterPartsEffect(parts, point, EdInInfo->effects, 32);
+            if (obj_anime_num < 32 && InitObjAnime(frames, 9, point, &EdInInfo->obj_anime[obj_anime_num]) != 0) {
+                obj_anime_num++;
+            }
+        }
+        EdInitEventPoint(parts, NULL, func_point, func_num, EdInInfo->event_points, 32);
+    }
+    parts_num = count;
+    for (int i = 0; i < func_num; i++) {
+        EPARTS_FUNC_DATA *point = &func_point[i];
+        point->parts = (CMapParts *) InteriorParts[(int) point->parts].frame[0];
+        int flag = func_point[i].completion_flag;
+        if (flag > 0 && SaveData->GetMapInitFlag(MapNo, flag) == 0) {
+            SaveData->SetMapInitFlag(MapNo, func_point[i].completion_flag, 1);
+            EPARTS_FUNC_DATA *set = &func_point[i];
+            SaveData->SetMapFlag(MapNo, set->completion_flag, (s8) set->unk_28[0] == 0);
+        }
+    }
+    camera_num = 0;
+    EPARTS_FUNC_DATA *point = func_point;
+    for (int i = 0; i < func_num; i++, point++) {
+        if (point->kind == 7) {
+            camera_num++;
+        }
+    }
+    for (int i = 0; i < 4; i++) {
+        EDIT_MOTION_PARTS_INFO *motion = &EdInInfo->motion_parts[i];
+        CCharacter *chara = &MotionParts[i];
+        chara->Initialize();
+        if (motion->name[0] != '\0') {
+            LoadFile(motion->name, read_buffer, NULL);
+            chara->LoadPackData2((u_int *) read_buffer, "info.cfg", &EdNPCBuffer, i + 0x32, &EdNPCBuffer, 0);
+            chara->SetPosition(motion->values[0], motion->values[1], motion->values[2]);
+            chara->SetRotation(motion->values[3], motion->values[4], motion->values[5]);
+            chara->SetScale(motion->values[6], motion->values[7], motion->values[8]);
+        }
+    }
+    for (int i = 0; i < 1; i++) {
+        Water[i].draw = 0;
+    }
+    for (int i = 0; i < 1; i++) {
+        EDIT_WATER_INFO *info = &EdInInfo->water_surfaces[i];
+        if (info->type > 0) {
+            CGroundWater *surface = &Water[i];
+            CWater *water = &surface->water;
+            sceVu0FVECTOR near_left = {info->corner_a[0], info->corner_a[1], info->corner_a[2], 1.0f};
+            sceVu0FVECTOR near_right = {info->corner_b[0], info->corner_a[1], info->corner_a[2], 1.0f};
+            sceVu0FVECTOR far_left = {info->corner_a[0], info->corner_a[1], info->corner_c[2], 1.0f};
+            sceVu0FVECTOR far_right = {info->corner_b[0], info->corner_a[1], info->corner_c[2], 1.0f};
+
+            surface->draw = 1;
+            strcpy(surface->name, info->name);
+            surface->parts_no = info->parts_no;
+            sceVu0CopyVector(surface->offset, info->corner_c);
+            for (int j = 0; j < 3; j++) {
+                (&surface->follow_x)[j] = (&info->follow_x)[j];
+            }
+            for (int j = 0; j < 4; j++) {
+                sceVu0CopyVector((float *) &surface->ripples[j], (float *) &info->wave[j]);
+            }
+            water->SetVertex(near_left, near_right, far_left, far_right);
+            water->frame.SetPosition(info->corner_c);
+            water->SetSize(info->type, info->number, &EdNPCBuffer);
+            water->SetParam(info->texture_scroll[0], info->texture_scroll[1], info->texture_scroll[2],
+                            info->texture_scroll[3]);
+            water->SetColor(info->unk_50, info->unk_54, info->unk_58, 0x80);
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit_in", LoadData__Fv);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @1537);
 /**
  * Builds one interior part from its archive entry.
@@ -593,7 +1618,60 @@ INCLUDE_RODATA("asm/nonmatchings/edit_in", @1537);
  * @address 0x19F6F0
  * @size 0x238
  */
+#ifdef NON_MATCHING
+int LoadPTS(CMapParts *parts, u_int *archive) {
+    EPARTS_INFO_HEADER *header = (EPARTS_INFO_HEADER *) ((char *) archive + archive[1]);
+    u_int *names[9] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+    EPARTS_ARCHIVE *pack = (EPARTS_ARCHIVE *) archive;
+
+    if (pack->size_58 <= 0) {
+        return 0;
+    }
+    names[0] = (u_int *) ((char *) archive + pack->offset_48);
+    if (pack->size_5c > 0) {
+        names[1] = (u_int *) ((char *) archive + pack->offset_4c);
+    }
+    if (pack->size_60 > 0) {
+        names[2] = (u_int *) ((char *) archive + pack->offset_50);
+    }
+    if (pack->size_64 > 0) {
+        names[3] = (u_int *) ((char *) archive + pack->offset_54);
+    }
+    if (pack->size_94 > 0) {
+        names[4] = (u_int *) ((char *) archive + pack->offset_90);
+    }
+    if (pack->size_7c > 0) {
+        names[5] = (u_int *) ((char *) archive + pack->offset_78);
+    }
+    if (pack->size_ac > 0) {
+        names[6] = (u_int *) ((char *) archive + pack->offset_a8);
+    }
+    if (pack->size_dc > 0) {
+        names[7] = (u_int *) ((char *) archive + pack->offset_d8);
+    }
+    if (pack->size_c4 > 0) {
+        names[8] = (u_int *) ((char *) archive + pack->offset_c0);
+    }
+    parts->SetFrame(LoadMDSFile(names[0], &EdNPCBuffer, 0, NULL, NULL), 0);
+    if (names[5] != NULL) {
+        parts->collision_frame = LoadCollisionFile(names[5], &EdNPCBuffer);
+    }
+    if (names[8] != NULL) {
+        parts->unk_0DC = LoadCollisionFile(names[8], &EdNPCBuffer);
+    } else {
+        parts->unk_0DC = NULL;
+    }
+    sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 0.0f};
+    position[0] = header->position[0];
+    position[1] = header->position[1];
+    position[2] = header->position[2];
+    parts->SetPosition(position);
+    parts->SetRotation(header->rotation[0], header->rotation[1], header->rotation[2]);
+    return 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit_in", LoadPTS__FP9CMapPartsPUi);
+#endif
 /**
  * Collects the function points one interior part defines.
  *
@@ -601,7 +1679,21 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", LoadPTS__FP9CMapPartsPUi);
  * @address 0x19F930
  * @size 0x74
  */
+#ifdef NON_MATCHING
+int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points) {
+    EPARTS_INFO_HEADER *header = (EPARTS_INFO_HEADER *) ((char *) archive + archive[1]);
+    EPARTS_FUNC_DATA *source = (EPARTS_FUNC_DATA *) ((char *) header + (int) header->func);
+    int i;
+
+    for (i = 0; i < header->func_count; i++, source++, points++) {
+        *points = *source;
+        points->parts = (CMapParts *) parts_no;
+    }
+    return i;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit_in", GetFuncPoint__FiPUiP16EPARTS_FUNC_DATA);
+#endif
 /**
  * Uploads the interior's texture-animation state to the graphics synthesizer.
  *
@@ -709,7 +1801,29 @@ static void CommandAMBIENT(void **arguments) {
  * @size 0x128
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
+#ifdef NON_MATCHING
+static void CommandLIGHT_C(void **arguments) {
+    sceVu0FVECTOR direction;
+    int light = *(int *) arguments[6];
+    int index;
+
+    direction[0] = *(float *) arguments[0];
+    direction[1] = *(float *) arguments[1];
+    direction[2] = *(float *) arguments[2];
+    direction[3] = 0.0f;
+    sceVu0Normalize(direction, direction);
+    EdInInfo->light_direction[0][index = light - 1] = direction[0];
+    EdInInfo->light_direction[1][index] = direction[1];
+    EdInInfo->light_direction[2][index] = direction[2];
+    EdInInfo->light_direction[3][index] = direction[3];
+    EdInInfo->light_colour[index][0] = *(float *) arguments[3];
+    EdInInfo->light_colour[index][1] = *(float *) arguments[4];
+    EdInInfo->light_colour[index][2] = *(float *) arguments[5];
+    EdInInfo->light_colour[index][3] = 128.0f;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit_in", CommandLIGHT_C__FPPv__2);
+#endif
 /**
  * Sets the interior's fog distances and colour.
  *
@@ -798,7 +1912,24 @@ static void SetEffect(EFFECT_TYPE, char *, float *, float *, float *) {
  * @size 0x94
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
+#ifdef NON_MATCHING
+static void CommandFIRE(void **arguments) {
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR scale;
+    sceVu0FVECTOR rotation = {0.0f, 0.0f, 0.0f, 0.0f};
+
+    position[0] = *(float *) arguments[1];
+    position[1] = *(float *) arguments[2];
+    position[2] = *(float *) arguments[3];
+    position[3] = 1.0f;
+    scale[0] = *(float *) arguments[4];
+    scale[1] = *(float *) arguments[4];
+    scale[2] = *(float *) arguments[4];
+    SetEffect(EFFECT_FIRE, (char *) arguments[0], position, scale, rotation);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit_in", CommandFIRE__FPPv__2);
+#endif
 /**
  * Places a flame effect in the interior.
  *
@@ -807,7 +1938,24 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", CommandFIRE__FPPv__2);
  * @size 0x94
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
+#ifdef NON_MATCHING
+static void CommandFLAME(void **arguments) {
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR scale;
+    sceVu0FVECTOR rotation = {0.0f, 0.0f, 0.0f, 0.0f};
+
+    position[0] = *(float *) arguments[1];
+    position[1] = *(float *) arguments[2];
+    position[2] = *(float *) arguments[3];
+    position[3] = 1.0f;
+    scale[0] = *(float *) arguments[4];
+    scale[1] = *(float *) arguments[4];
+    scale[2] = *(float *) arguments[4];
+    SetEffect(EFFECT_FLAME, (char *) arguments[0], position, scale, rotation);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit_in", CommandFLAME__FPPv__2);
+#endif
 /**
  * Places a glow effect in the interior.
  *
@@ -816,7 +1964,24 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", CommandFLAME__FPPv__2);
  * @size 0x94
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
+#ifdef NON_MATCHING
+static void CommandBRIGHT(void **arguments) {
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR scale;
+    sceVu0FVECTOR rotation = {0.0f, 0.0f, 0.0f, 0.0f};
+
+    position[0] = *(float *) arguments[1];
+    position[1] = *(float *) arguments[2];
+    position[2] = *(float *) arguments[3];
+    position[3] = 1.0f;
+    scale[0] = *(float *) arguments[4];
+    scale[1] = *(float *) arguments[4];
+    scale[2] = *(float *) arguments[4];
+    SetEffect(EFFECT_BRIGHT, (char *) arguments[0], position, scale, rotation);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit_in", CommandBRIGHT__FPPv__2);
+#endif
 /**
  * Turns the interior's debug drawing on.
  *
@@ -901,4 +2066,22 @@ static void CommandWATER_SURFACE(void **arguments) {
  * @size 0x9C
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
+#ifdef NON_MATCHING
+static void CommandWATER_SHAKE(void **arguments) {
+    EDIT_WATER_INFO *info = water_info;
+
+    if (info != NULL) {
+        for (int i = 0;; i++) {
+            if (info->wave[i].active == 0.0f && info->wave[i].z == 0.0f) {
+                info->wave[i].x = (float) *(int *) arguments[0];
+                info->wave[i].y = (float) *(int *) arguments[1];
+                info->wave[i].z = *(float *) arguments[3];
+                info->wave[i].active = *(float *) arguments[2];
+                break;
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/edit_in", CommandWATER_SHAKE__FPPv__2);
+#endif

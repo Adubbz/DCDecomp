@@ -47,9 +47,10 @@ struct ED_MOVE_CHARA_INFO {
     CCameraFollow *follow; /**< Camera that follows the character. */
     int key_lock;          /**< Whether the pad is ignored this step. */
     u8 unk_14[0x4];
-    int unk_18;
+    int interior;        /**< Whether the character walks through an interior's parts rather than the ground. */
     CEditGround *ground; /**< Ground the character walks on. */
-    u8 unk_20[0x8];
+    CMapParts *parts;    /**< Parts of the interior the character walks through. */
+    int parts_count;     /**< How many of them there are. */
     int event_ready; /**< Set where the character stands in an event. */
     u8 unk_2c[0x4];
     ED_EVENT_PARAM param;   /**< The event the character stands in. */
@@ -57,7 +58,7 @@ struct ED_MOVE_CHARA_INFO {
     int point_count;        /**< How many of them there are. */
     int event_no;           /**< Map event the step asks to run. */
     int system_event_no;    /**< System event the step asks to run. */
-    u8 unk_a0[0x4];
+    int unk_a0;
     int in_event;          /**< Whether an event already has the character. */
     float motion_previous; /**< Motion time at the previous step. */
     float motion_current;  /**< Motion time at this one. */

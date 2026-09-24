@@ -31,7 +31,7 @@ struct EPARTS_FUNC_DATA {
     sceVu0FVECTOR rotation;    /**< Primary rotation carried by the marker. */
     sceVu0FVECTOR parameters;  /**< Secondary vector whose meaning depends on the marker kind. */
     sceVu0FVECTOR values;      /**< Scalar parameters whose meaning depends on the marker kind. */
-    u8 unk_80[0x40];
+    sceVu0FMATRIX matrix;      /**< Placement of the marker's frame relative to its owning frame. */
 };
 
 STATIC_ASSERT(sizeof(EPARTS_FUNC_DATA) == 0xC0);

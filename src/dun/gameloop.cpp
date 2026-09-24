@@ -5885,12 +5885,12 @@ void motionDrive(void) {
 
     int drunk = RandomItem->CheckPosition();
     CUserStatus *drink = UserStatus;
-    int water = drink->unk_4346 + drunk;
+    int water = drink->money + drunk;
 
     if (!(water < 0xFFFF)) {
-        drink->unk_4346 = 0xFFFF;
+        drink->money = 0xFFFF;
     } else {
-        drink->unk_4346 = water;
+        drink->money = water;
     }
 
     RandomItem->Step();
@@ -6747,8 +6747,8 @@ int BtCheckDamageProc(void) {
             // A hit that drains takes water off the player and gives it to
             // whatever landed it.
             if ((hit->flags & 0x40000) && roll < 20 && monster != -1) {
-                u16 *water = &UserStatus->unk_4346;
-                u16 had = UserStatus->unk_4346;
+                u16 *water = &UserStatus->money;
+                u16 had = UserStatus->money;
 
                 if (had > 10) {
                     int drained = had / 5;
@@ -8252,19 +8252,12 @@ void DelActiveItem(int slot) {
     }
 }
 
-// Duplicates offsetof(CUserStatus, chara_weapons): the address below is built
-// from sizeof-scaled row/slot terms rather than indexing chara_weapons
-// directly, so this offset has to be kept in sync by hand if a field is ever
-// added above chara_weapons.
 #define CHARA_WEAPONS_OFFSET 0x450c
 STATIC_ASSERT((int) &((CUserStatus *) 0)->chara_weapons == CHARA_WEAPONS_OFFSET);
 
 #pragma opt_propagation off
 int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
     if (trap == NULL) {
-        // Retail sets no return value here: beqz jumps straight to the
-        // epilogue, past the v0 = kind. The mwcc warning "return value
-        // expected" is correct and expected.
         return;
     }
 
@@ -8280,17 +8273,12 @@ int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
     s8 slot;
 
     status = UserStatus;
-    gauge = &status->unk_4346;
-    had = status->unk_4346;
-    // Read through the pointer rather than assigned from had: CSE creates the
-    // copy retail hoists to the entry block, while a direct assignment gets
-    // unified away in the frontend.
+    gauge = &status->money;
+    had = status->money;
     int had_copy = *gauge;
     chara = status->cur_chara;
     slots = status->equipped_weapon_slot;
     slot = slots[chara];
-    // Computed before row_bytes so the row stride's constant materialises
-    // after slot's last use -- that ordering is what gives chara its register.
     int slot_bytes = slot * (int) sizeof(WEAPON_HAVE);
     int row_bytes = chara * (int) sizeof(status->chara_weapons[0]);
     weapon = (WEAPON_HAVE *) ((char *) status + row_bytes + slot_bytes + CHARA_WEAPONS_OFFSET);
@@ -8298,8 +8286,6 @@ int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
     se = 0;
     kind = trap->kind;
 
-    // A character still holding the weapon they started with takes the
-    // first trap instead of whatever the circle says.
     s16 item_no = status->chara_weapons[status->cur_chara][slot].item_no;
 
     if (item_no == defWeapon__6[chara] || item_no == defWeapon__6[chara] + 1) {
@@ -8312,15 +8298,13 @@ int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
             se = 0xE1;
             break;
         case 1: {
-            // Compound assignment lowers differently from `x = x * c` and is
-            // what produces retail's mul.s operand order.
             had_copy *= 1.2f;
             int added = had_copy + 10;
 
             if (had + added >= 0xFFFF) {
-                status->unk_4346 = 0xFFFF;
+                status->money = 0xFFFF;
             } else {
-                status->unk_4346 += added;
+                status->money += added;
             }
             se = 0xE1;
             break;

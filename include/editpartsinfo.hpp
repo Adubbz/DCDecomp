@@ -32,6 +32,39 @@ struct EPARTS_INFO_HEADER {
 };
 
 /**
+ * The archive one part is built from: the chunk each of its models stands in,
+ * as an offset from the archive and a length.
+ */
+struct EPARTS_ARCHIVE {
+    u8 unk_00[0x48];
+    s32 offset_48; /**< Offset of the level-of-detail 0 model from the archive. */
+    s32 offset_4c; /**< Offset of the level-of-detail 1 model from the archive. */
+    s32 offset_50; /**< Offset of the level-of-detail 2 model from the archive. */
+    s32 offset_54; /**< Offset of the level-of-detail 3 model from the archive. */
+    s32 size_58; /**< Length of the level-of-detail 0 model, or zero where there is none. */
+    s32 size_5c; /**< Length of the level-of-detail 1 model, or zero where there is none. */
+    s32 size_60; /**< Length of the level-of-detail 2 model, or zero where there is none. */
+    s32 size_64; /**< Length of the level-of-detail 3 model, or zero where there is none. */
+    u8 unk_68[0x10];
+    s32 offset_78; /**< Offset of the collision model from the archive. */
+    s32 size_7c; /**< Length of the collision model, or zero where there is none. */
+    u8 unk_80[0x10];
+    s32 offset_90; /**< Offset of the shadow model from the archive. */
+    s32 size_94; /**< Length of the shadow model, or zero where there is none. */
+    u8 unk_98[0x10];
+    s32 offset_a8; /**< Offset of the shade model from the archive. */
+    s32 size_ac; /**< Length of the shade model, or zero where there is none. */
+    u8 unk_b0[0x10];
+    s32 offset_c0; /**< Offset of the second collision model from the archive. */
+    s32 size_c4; /**< Length of the second collision model, or zero where there is none. */
+    u8 unk_c8[0x10];
+    s32 offset_d8; /**< Offset of the extra model from the archive. */
+    s32 size_dc; /**< Length of the extra model, or zero where there is none. */
+};
+
+STATIC_ASSERT(sizeof(EPARTS_ARCHIVE) == 0xE0);
+
+/**
  * Describes one optional visual element attached to an editable part.
  */
 struct EDITPARTS_ELEMENT {

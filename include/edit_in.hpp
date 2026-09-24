@@ -20,7 +20,10 @@ struct EDIT_IN_INFO {
     float light_colour[4][4];    /**< Colours of the four lights. */
     float background_colour[4];  /**< Colour the interior clears to. */
     EDIT_FOG_INFO fog;           /**< Fog distances and colour. */
-    u8 unk_584[0x37AC];
+    u8 unk_584[0x5AC];
+    OBJ_ANIME_SEQ obj_anime[32];     /**< Object animations of the interior's parts. */
+    EDIT_EFFECT_INFO effects[32];    /**< Effects standing on the interior's parts. */
+    ED_EVENT_POINT event_points[32]; /**< Event points the interior's parts define. */
     EDIT_MOTION_PARTS_INFO motion_parts[4]; /**< Named interior parts with scripted motion. */
     EDIT_WATER_INFO water_surfaces[8];      /**< Water surfaces the interior defines. */
 };

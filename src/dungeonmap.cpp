@@ -341,7 +341,7 @@ void CDungeonMap::DrawMapCalc(int mode) {
     }
 }
 
-#if DNG_COMPILE_UNMATCHED
+#ifdef NON_MATCHING
 void CDungeonMap::DrawMap(CCameraFollow *camera, CFrameVu1 *player) {
     float cam_pos[4];
     float view_delta[4];
@@ -546,8 +546,9 @@ void CDungeonMap::DrawMap(CCameraFollow *camera, CFrameVu1 *player) {
         SndSetSePanf(sound_no, pan, 0);
     }
 }
-#endif /* DNG_COMPILE_UNMATCHED */
+#else
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawMap__11CDungeonMapFP13CCameraFollowP9CFrameVu1);
+#endif
 
 void CDungeonMap::DrawBGModel(CCamera *camera) {
     float pos[4];
@@ -582,7 +583,7 @@ void CDungeonMap::DrawDummyModel(CCamera *camera) {
     }
 }
 
-#if DNG_COMPILE_UNMATCHED
+#ifdef NON_MATCHING
 void CDungeonMap::DrawMiniMap(float *pos, float angle) {
     CRect_i_ map_dst;
     CRect_i_ map_src;
@@ -749,8 +750,9 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
     BtEquipMap = saved_map;
     BtEquipMasuisyou = saved_crystal;
 }
-#endif
+#else
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawMiniMap__11CDungeonMapFPff);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @1470);
 INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @1471);
 
@@ -897,7 +899,7 @@ void CDungeonMap::DrawFireFreeStyle(CFrameVu1 *frame, CCameraFollow *camera) {
     }
 }
 
-#if DNG_COMPILE_UNMATCHED
+#ifdef NON_MATCHING
 void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
     float fire_pos[4];
     float frame_pos[4];
@@ -1002,10 +1004,11 @@ void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
         SndSetSeVol(53, 0, 0);
     }
 }
-#endif /* DNG_COMPILE_UNMATCHED */
+#else
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawFire__11CDungeonMapFP9CFrameVu1P13CCameraFollow);
+#endif
 
-#if DNG_COMPILE_UNMATCHED
+#ifdef NON_MATCHING
 /* 189 of 202 instructions. Retail's loop test forms `&parts[parts_no]` and the
  * body reads the fire positions at 0x20 from it; mwcc carries only the scaled
  * index across the test and folds the 0x490 into the load displacement. A
@@ -1068,8 +1071,9 @@ void CDungeonMap::DrawRaster(CFrameVu1 *frame) {
         }
     }
 }
-#endif /* DNG_COMPILE_UNMATCHED */
+#else
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawRaster__11CDungeonMapFP9CFrameVu1);
+#endif
 
 void CDungeonMap::DrawWater(float *pos, int mute) {
     static int wait;
@@ -1201,7 +1205,7 @@ void CDungeonMap::DrawWater(float *pos, int mute) {
     }
 }
 
-#if DNG_COMPILE_UNMATCHED
+#ifdef NON_MATCHING
 /* 193 of 201 instructions. The small box's case is retail's. The large box's
  * differs only in where the two zero arguments to SetRotation are set up:
  * retail puts them in the load delay slot after the lid angle, ahead of the
@@ -1254,8 +1258,9 @@ void CDungeonMap::DrawItemBox(float *pos) {
         }
     }
 }
-#endif /* DNG_COMPILE_UNMATCHED */
+#else
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawItemBox__11CDungeonMapFPf);
+#endif
 
 void CDungeonMap::DrawAtraBoll(float *pos) {
     float draw_pos[4];
@@ -1348,7 +1353,7 @@ static int buildRoom(int x, int y, int w, int h, int room_no) {
     return 1;
 }
 
-#if DNG_COMPILE_UNMATCHED
+#ifdef NON_MATCHING
 /**
  * Converts the builder flags and adjacency data into drawable map parts.
  */
@@ -1513,8 +1518,9 @@ void mapPartsFilter(void) {
         }
     }
 }
-#endif
+#else
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", mapPartsFilter__Fv);
+#endif
 
 static void copyMapInfo(BUILD_MAP_INFO *dst, BUILD_MAP_INFO *src) {
     for (int i = 0; i < 400; i++) {
@@ -1531,7 +1537,14 @@ static void copyMapInfo(BUILD_MAP_INFO *dst, BUILD_MAP_INFO *src) {
 // definition can satisfy.
 int joinRoom(int a, int b);
 
-#if DNG_COMPILE_UNMATCHED
+/**
+ * Joins two rooms with a corridor.
+ *
+ * @mangled joinRoom__Fii
+ * @address 0x1C61C0
+ * @size 0x878
+ */
+#ifdef NON_MATCHING
 int joinRoom(int a, int b) {
     int cy;
     int done;
@@ -1728,15 +1741,9 @@ int joinRoom(int a, int b) {
     copyMapInfo(buildMapDat, buildMapWork);
     return 1;
 }
-#endif /* DNG_COMPILE_UNMATCHED */
-/**
- * Joins two rooms with a corridor.
- *
- * @mangled joinRoom__Fii
- * @address 0x1C61C0
- * @size 0x878
- */
+#else
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", joinRoom__Fii);
+#endif
 
 static void setRoomObject() {
     int i;
@@ -2190,7 +2197,7 @@ found:
     return event_no;
 }
 
-#if DNG_COMPILE_UNMATCHED
+#ifdef NON_MATCHING
 /**
  * Places treasure boxes, trap circles, and atla events on one floor.
  */
@@ -2306,8 +2313,9 @@ void CDungeonMap::buildEventData(int floor_no, int enabled, int place_atla) {
         }
     }
 }
-#endif
+#else
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", buildEventData__11CDungeonMapFiii);
+#endif
 
 void CDungeonMap::SetMimicEvent(float x, float y, float z, int item_no, int kind) {
     float pos[4];
@@ -2518,7 +2526,7 @@ void CDungeonMap::buildDummyModel() {
     }
 }
 
-#if DNG_COMPILE_UNMATCHED
+#ifdef NON_MATCHING
 /**
  * Selects a special door, labels its connected area, and places its key item.
  */
@@ -2730,8 +2738,9 @@ void CDungeonMap::GetRoomLinkInfo(void) {
         }
     }
 }
-#endif
+#else
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", GetRoomLinkInfo__11CDungeonMapFv);
+#endif
 INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @2859);
 INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @2860);
 
@@ -3070,7 +3079,8 @@ int CDungeonMap::SetCharaDoor(int chara_no) {
 
     return num;
 }
-#if DNG_COMPILE_UNMATCHED
+INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @3190);
+#ifdef NON_MATCHING
 /* Every instruction is retail's but for one saved register: retail builds a
  * 0xB0 frame over s0-s8 and mwcc builds 0xA0 over s0-s7, so `room_max` lands
  * in s7 rather than s8 and `j`, `near_no` and `near_dist` shift with it.
@@ -3270,9 +3280,9 @@ void CDungeonMap::buildRandomMap(int room_max, int full) {
     this->SetUnderLoad();
     printf("map build success!!\n");
 }
-#endif /* DNG_COMPILE_UNMATCHED */
-INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @3190);
+#else
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", buildRandomMap__11CDungeonMapFii);
+#endif
 
 void CDungeonMap::initSubmap(CDataAlloc2<1> *alloc) {
     int i;

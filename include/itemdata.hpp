@@ -374,7 +374,7 @@ struct ITEM_DATA {
     s16 vol;        /**< The volume a fresh copy starts with. */
     s16 vol_range;  /**< The range of random variation for the item's volume. */
     s16 unk_0E;
-    s16 shop;
+    s16 stack_kind; /**< How the item sits in a quick-use slot: 0 stacks, 1 alone, 2 never. */
     s16 unk_12;
 };
 
