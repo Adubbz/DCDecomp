@@ -192,7 +192,8 @@ carve_part(main.sdata.part2b.s
            main.sdata.part2c.s=2A1F18-2A1F24
            main.sdata.part2d.s=2A1F50-2A1F78
            main.sdata.part2f.s=2A1F90-2A1F98
-           main.sdata.edit_in-a.s=2A1FA0-2A20C8
+           main.sdata.edit_in-a.s=2A1FA0-2A1FE8
+           main.sdata.btitem-a.s=2A1FF0-2A20C8
            main.sdata.battlemenu-tail.s=2A20D8-2A2100
            main.sdata.editmenu-a.s=2A2140-2A2150
            main.sdata.memcard-a.s=2A2158-2A21A0
@@ -254,7 +255,8 @@ carve_part(main.rdata.part4.s
 # CheckDmg owns its local static effect index and initialization guard, and
 # runscript_opcodes.cpp owns bak_ColNo after them.
 carve_part(main.sbss.part5.s
-           main.sbss.part5.s=2A2BF8-2A2C68
+           main.sbss.part5.s=2A2BF8-2A2C48
+           main.sbss.btitem-a.s=2A2C4C-2A2C68
            main.sbss.part5c.s=2A2C74-2A2E84
            main.sbss.memcard-a.s=2A2F08-2A2F50
            main.sbss.denter-gap.s=2A2F54-2A2F5C

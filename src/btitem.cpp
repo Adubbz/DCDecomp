@@ -925,7 +925,6 @@ void BtMiniChrSelect_Init(int type) {
  * @address 0x1D32D0
  * @size 0x128
  */
-#ifdef NON_MATCHING
 int BtMiniChrSelect_Loop() {
     static int frameWait;
     int done = 0;
@@ -964,9 +963,6 @@ int BtMiniChrSelect_Loop() {
     }
     return done;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", BtMiniChrSelect_Loop__Fv);
-#endif
 /**
  * Opens the small item-select window.
  *

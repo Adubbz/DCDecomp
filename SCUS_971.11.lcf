@@ -688,6 +688,8 @@ SECTIONS
 		edit_in.cpp.o (.editinpause)   // 0x002a1f98
 		. = ALIGN(4);
 		main.sdata.edit_in-a.s.o (.sdata) // 0x002a1fa0
+		btitem.cpp.o (.sdata)          // 0x002a1fe8
+		main.sdata.btitem-a.s.o (.sdata) // 0x002a1ff0
 		battlemenu.cpp.o (.sdata)      // 0x002a20c8
 		. = ALIGN(8);
 		main.sdata.battlemenu-tail.s.o (.sdata) // 0x002a20d8
@@ -772,6 +774,8 @@ SECTIONS
 		main.sbss.editground-tail.s.o (.sbss) // 0x002a2b28
 		dungeonmap.cpp.o (.sbss)
 		main.sbss.part5.s.o (.sbss)
+		btitem.cpp.o (.sbss)           // 0x002a2c48
+		main.sbss.btitem-a.s.o (.sbss) // 0x002a2c4c
 		monstorunit.cpp.o (.sbss) // 0x002a2c68, counter and guard
 		. = ALIGN(4);
 		runscript_opcodes.cpp.o (.sbss) // 0x002a2c70
