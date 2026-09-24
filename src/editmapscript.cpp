@@ -852,15 +852,14 @@ void CommandWATER_SURFACE(void **arguments) {
 /**
  * Adds one water-wave parameter set to the first unused wave slot.
  */
-FUZZY_MATCH("asm/matchings/editloop", CommandWATER_SHAKE__FPPv);
-
 void CommandWATER_SHAKE(void **arguments) {
     EDIT_WATER_INFO *info = water_info;
     if (info != NULL) {
         int index = 0;
         while (1) {
-            EDIT_WATER_WAVE_VIEW *wave =
-                (EDIT_WATER_WAVE_VIEW *) ((u8 *) info + index * sizeof(sceVu0FVECTOR));
+            u_int offset = index * sizeof(sceVu0FVECTOR);
+            offset += (u_int) info;
+            EDIT_WATER_WAVE_VIEW *wave = (EDIT_WATER_WAVE_VIEW *) offset;
             if (wave->active == 0.0f && wave->z == 0.0f) {
                 wave->x = (float) *(int *) arguments[0];
                 wave->y = (float) *(int *) arguments[1];
