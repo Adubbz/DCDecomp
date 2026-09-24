@@ -145,9 +145,6 @@ static void (*CommandExe[9])(void **) = {
     CommandBOUND,
 };
 
-INCLUDE_RODATA("asm/nonmatchings/clothread", @254);
-INCLUDE_RODATA("asm/nonmatchings/clothread", @255);
-
 /**
  * Reads one model's cloth description and attaches the simulation.
  *
@@ -155,10 +152,9 @@ INCLUDE_RODATA("asm/nonmatchings/clothread", @255);
  * @address 0x13F9C0
  * @size 0x1B4
  */
-#ifdef NON_MATCHING
 CCloth *InitCloth(CFrameVu1 *frame, input_str &input, CDataAlloc2<1> *alloc) {
     char words[16][256];
-    void *argv[16];
+    char *argv[16];
     int command;
 
     DataBuffer = alloc;
@@ -180,20 +176,17 @@ CCloth *InitCloth(CFrameVu1 *frame, input_str &input, CDataAlloc2<1> *alloc) {
             printf("unknown command!!\n");
             continue;
         }
-        int result = GetArg(input, Command[command].args, argv);
+        int result = GetArg(input, Command[command].args, (void **) argv);
         if (result == 0) {
             break;
         }
         if (result < 0) {
             printf("error!!\n");
         }
-        CommandExe[command](argv);
+        CommandExe[command]((void **) argv);
     }
     return pCloth;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/clothread", InitCloth__FP9CFrameVu1R9input_strP14CDataAlloc2_1_);
-#endif
 
 static void CommandSIZE(void **argv) {
     int num_i = *(int *) argv[0];
