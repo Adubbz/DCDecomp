@@ -352,41 +352,6 @@ extern "C" CActiveItemPack activeItem;
 
 extern "C" CDataAlloc2<1> BtCashBuffer;
 
-#ifdef NON_MATCHING // draft declarations
-#include <cstdio>
-#include <cstring>
-
-#include "btmisc.hpp"
-#include "camerafollow.hpp"
-#include "collision.hpp"
-#include "dispctrl.hpp"
-#include "dungeonmap.hpp"
-#include "dungeonparts.hpp"
-#include "edit.hpp"
-#include "editloop3.hpp"
-#include "mainitemmodel.hpp"
-#include "mathutil.hpp"
-#include "mds.hpp"
-#include "monstorunit.hpp"
-#include "motionmodel.hpp"
-#include "savedata.hpp"
-#include "texture.hpp"
-#include "vector.hpp"
-#include "weaponeffect.hpp"
-
-extern char *charaNameTbl[6];
-extern int defWeapon__4[6];
-extern "C" CWeaponEffect CWeaponFx;
-extern "C" CCharacter *NowWeapon;
-extern s32 BtItemListCashFlag;
-extern CFrame *itemBoxModel;
-extern "C" CCameraFollow SubCamera;
-extern "C" CCameraFollow MainCamera__4;
-extern CCameraFollow *NowCamera__3;
-
-void getCharacterVector(float *vector, float pitch);
-#endif
-
 /**
  * Computes the quantity represented by an acquired attachment.
  */
