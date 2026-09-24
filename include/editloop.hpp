@@ -268,7 +268,7 @@ union EDIT_MAP_WORK_INFO {
 struct EDIT_CONFIG_VIEW {
     u8 unk_00[0x8];
     int clock_hidden; /**< Whether the player has turned the editor clock off. */
-    u8 unk_0C[0x4];
+    int unk_0C;
     int message_speed; /**< Whether editor messages use the faster reveal rate. */
 };
 

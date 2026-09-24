@@ -601,8 +601,20 @@
         "a$1906",
         "init$1907"
       ],
+      ".edmodeflags": [
+        "time_flag$2188",
+        "init$2189",
+        "parts$2227",
+        "init$2228",
+        "now_obj$2241",
+        "init$2242"
+      ],
+      ".edmodedata": [
+        "@925",
+        "@926"
+      ],
       ".edsuffix": [
-        "@944"
+        "@1048"
       ]
     },
     "rekey_sections": [
@@ -613,6 +625,13 @@
           16,
           16,
           64
+        ]
+      ],
+      [
+        ".edmodedata",
+        [
+          10,
+          10
         ]
       ],
       [

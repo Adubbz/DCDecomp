@@ -213,8 +213,8 @@ extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 extern u8 EditCharaData[0x960];
 extern EDIT_ELEMENT_INFO EditElementInfo[36];
 #include "editmenu.hpp"
-#ifdef NON_MATCHING // draft includes
 #include "wind.hpp"
+#ifdef NON_MATCHING // draft includes
 #include "memcard.hpp"
 #include "fishing.hpp"
 #include "effectmacro.hpp"
@@ -224,12 +224,15 @@ extern EDIT_ELEMENT_INFO EditElementInfo[36];
 extern u8 MesWinTexBuff_01[0x100];
 extern u8 MesWinTexBuff_02[0x100];
 extern CFrameVu1 *SkyFrame[4];
+extern CFrameVu1 *SkyBackFrame;
+extern CWind EdWind;
 extern CFrame *SunFrame[4];
 extern C3DSprite SystemEffect[8];
 extern u8 def_light[0xC0];
 
 void CommandIMGSub(int image_type, int image_number, char *name);
 void EditSave();
+void PlayAmbient(float volume);
 
 /* editloop's own functions, in the order the unit defines them. Each is still
  * INCLUDE_ASM below; the prototypes are what lets the decompiled ones call
@@ -311,7 +314,6 @@ void EdSaveFrameImageTask(void);
 int SystemMesCheck(void);
 int EdEventInit(int event_no, CDataAlloc2<1> *alloc, char *script);
 void MapJump(int map_no, int entrance);
-void PlayAmbient(float volume);
 extern CCameraFollow TalkCamera;
 extern CCameraFollow ViewCamera;
 extern int MenuMapJumpMode;
@@ -321,14 +323,12 @@ extern int bgm_vol;
 extern u_long128 Vu_prog0f;
 extern CEffectGroup EdEffectGroup;
 extern int binary;
-extern CFrameVu1 *SkyBackFrame;
 extern int NowSelectParts;
 extern int NowSelectAngle;
 extern float NowCursorRotY;
 extern CTextureAnime TexAnime;
 extern CTexAnimeData TexAnimeData;
 extern CTexture *StayTexture;
-extern CWind EdWind;
 extern float NowPartsCursorPos[4];
 extern int EdBeforeInBgmNo;
 extern int EdDrawOffMap;
@@ -2738,7 +2738,6 @@ void EditMode() {
  * @address 0x17DEA0
  * @size 0x7A4
  */
-#ifdef NON_MATCHING
 void MainEditMode() {
     if (EdEventInfo.lighting_override != 0) {
         MGSetPLight(EdEventInfo.light_direction, EdEventInfo.light_color);
@@ -2791,7 +2790,9 @@ void MainEditMode() {
 
     float step = 0.0011133334f;
 
-    if (((int *) SaveData->GetConfigData())[3] == 0) {
+    EDIT_CONFIG_VIEW *config = (EDIT_CONFIG_VIEW *) SaveData->GetConfigData();
+
+    if (config->unk_0C == 0) {
         step /= 2.0f;
     }
     if (change_time_event != 0) {
@@ -2866,7 +2867,8 @@ void MainEditMode() {
     char night_window[10] = "win2";
 
     for (level = 0; level < 4; level++) {
-        CFrame *frame = ObjParts[parts].frame[level];
+        CMapParts *object = &ObjParts[parts];
+        CFrame *frame = object->frame[level];
 
         FrameOnOff(frame, day_window, day_on);
         FrameOnOff(frame, night_window, night_on);
@@ -2904,9 +2906,6 @@ void MainEditMode() {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop", MainEditMode__Fv);
-#endif
 /**
  * Steps the player while a door plays its motion, holding them and the camera
  * at the place the door fixed.
