@@ -1781,8 +1781,7 @@ int CMonstorUnit::SetupViewMonstor(int model_no, float *position, int event_flag
     chara[unk_090][0] = base_chara[model_no][0];
     chara[unk_090][0].motion[0] = &chara[unk_090][0].motion_type;
     chara[unk_090][0].SetPosition(position);
-    float zero = 0.0f;
-    chara[unk_090][0].SetRotation(zero, zero, zero);
+    chara[unk_090][0].SetRotation(0.0f, 0.0f, 0.0f);
     if (UserStatus->cur_georama == 3 && UserStatus->cur_floor == 17 && unk_090 == 1) {
         InitBee(chara[1][0].frame, 15);
     }
