@@ -541,8 +541,7 @@ SECTIONS
         main.data.battlemenu-tail.s.o (.data) // 0x00293960
         menu_misc.cpp.o (.data)      // 0x00293c60
         . = ALIGN(0x10);
-        main.data.part6h.s.o (.data) // 0x00293c80
-        editmenu.cpp.o (.data)       // 0x00293ca0
+        editmenu.cpp.o (.data)       // 0x00293c80
         . = ALIGN(0x10);
         main.data.editmenu-a.s.o (.data) // 0x00293cd0
         memorycardaccess.cpp.o (.data) // 0x00293d50

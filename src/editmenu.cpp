@@ -525,45 +525,35 @@ static void DrawMoveMenuIcon() {
                          (int) (MenuIconPos[i][1] - y_offset), icon, selected, 0x80, brightness);
     }
 }
-#ifdef NON_MATCHING
-/** The screen position an icon animates to when it leaves for its own page. */
-struct EDIT_MENU_ICON_TARGET {
-    s16 x;
-    s16 y;
-};
-
 static int CalMoveFromMenuIcon() {
-    static const EDIT_MENU_ICON_TARGET panel_target[6] = {
-        {0x50, 0x34}, {0x50, 0x34}, {0x50, 0x20}, {0x5E, 0x1E}, {0x50, 0x34}, {0x50, 0x34},
-    };
-    static const s16 offscreen_x = -250;
-    int icon_max = GetEditMenuMax();
+    int done = 0;
     int arrived_count = 0;
+    s16 target[13] = {0x50, 0x34, 0x50, 0x34, 0x50, 0x20, 0x5E, 0x1E, 0x50, 0x34, 0x50, 0x34, -250};
+    int icon_max = GetEditMenuMax();
 
+    int x;
+    int y;
     for (int i = 0; i < icon_max; i++) {
         int arrived_axes = 0;
-        s16 target_x;
-        s16 target_y;
-
-        if (i == EditSwitch - 9) {
-            target_x = panel_target[i].x;
-            target_y = panel_target[i].y;
+        if (i != EditSwitch - 9) {
+            x = target[12];
+            y = (int) MenuIconPos[i][1];
         } else {
-            target_x = offscreen_x;
-            target_y = (s16) MenuIconPos[i][1];
+            x = target[i * 2];
+            y = target[i * 2 + 1];
         }
 
-        float delta_x = (float) target_x - MenuIconPos[i][0];
+        float delta_x = x - MenuIconPos[i][0];
         MenuIconPos[i][0] += delta_x / 4.0f;
         if (abs((int) delta_x) < 4.0f) {
-            MenuIconPos[i][0] = target_x;
+            MenuIconPos[i][0] = x;
             arrived_axes++;
         }
 
-        float delta_y = (float) target_y - MenuIconPos[i][1];
+        float delta_y = y - MenuIconPos[i][1];
         MenuIconPos[i][1] += delta_y / 4.0f;
         if (abs((int) delta_y) < 4.0f) {
-            MenuIconPos[i][1] = target_y;
+            MenuIconPos[i][1] = y;
             arrived_axes++;
         }
 
@@ -571,11 +561,11 @@ static int CalMoveFromMenuIcon() {
             arrived_count++;
         }
     }
-    return arrived_count >= icon_max;
+    if (arrived_count >= icon_max) {
+        done = 1;
+    }
+    return done;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", CalMoveFromMenuIcon__Fv);
-#endif
 /**
  * Moves the edit menu icons back to their resting positions.
  */

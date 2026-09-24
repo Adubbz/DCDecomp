@@ -270,7 +270,6 @@ carve_part(main.data.part6.s
            main.data.shop-ticket.s=292840-2936E0
            main.data.shop-ticket-after.s=293700-293860
            main.data.battlemenu-tail.s=293960-293C60
-           main.data.part6h.s=293C80-293CA0
            main.data.editmenu-a.s=293CD0-293D50
            main.data.memcard-a.s=293EBC-293FE0
            main.data.menu_save-a.s=294044-294150
