@@ -266,7 +266,8 @@ carve_part(main.sbss.part5.s
 # shop.cpp supplies the start of its own run between part6f and part6k, and
 # battlemenu.cpp supplies the travel page's and DrawWepHole's templates at the end of its run.
 carve_part(main.data.part6.s
-           main.data.part6.s=27E790-27EB30
+           main.data.part6.s=27E790-27EAD0
+           main.data.btitem-a.s=27EAE0-27EB30
            main.data.part6f.s=291850-291B80
            main.data.part6k.s=292704-292750
            main.data.shop-local.s=292770-2927B0

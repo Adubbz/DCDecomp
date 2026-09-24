@@ -1507,7 +1507,13 @@ void setShotVector(float *velocity, float speed, float angle_y, float angle_x) {
     sceVu0ApplyMatrix(velocity, rotation, velocity);
 }
 
-#ifdef NON_MATCHING
+/**
+ * Gives the direction the main character faces, tilted by the given pitch.
+ *
+ * @mangled getCharacterVector__FPff
+ * @address 0x1D41A0
+ * @size 0xC0
+ */
 void getCharacterVector(float *vector, float pitch) {
     sceVu0FVECTOR forward = {0.0f, 0.0f, 1.0f, 1.0f};
     sceVu0FVECTOR rotation;
@@ -1523,9 +1529,6 @@ void getCharacterVector(float *vector, float pitch) {
     sceVu0MulMatrix(matrix, yaw, tilt);
     sceVu0ApplyMatrix(vector, matrix, forward);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", getCharacterVector__FPff);
-#endif
 /**
  * Advances a thrown item along its arc.
  *
