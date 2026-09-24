@@ -9,6 +9,7 @@
 
 #include <cassert>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <libpkt.h>
 
@@ -30,7 +31,6 @@
 #include "sysmes.hpp"
 #ifdef NON_MATCHING // draft includes
 #include "visualvu1.hpp"
-#include <cstdlib>
 #include <libpkt.h>
 #include "rect.hpp"
 #endif
@@ -91,6 +91,22 @@ static void CommandPOLYDIVE(void **argv);
  * Creates and attaches an exclusion bound for the cloth.
  */
 static void CommandBOUND(void **argv);
+/**
+ * Reads one command's arguments into the argument buffers.
+ */
+static int GetArg(input_str &input, int *args, void **argv);
+/**
+ * Reads the next keyword and finds its command table entry.
+ */
+static int SearchCommand(input_str &input, int *command);
+/**
+ * Steps the input past whitespace.
+ */
+static int SkipSpace(input_str &input);
+/**
+ * Reports whether a character is not whitespace.
+ */
+static int CheckChar(char c);
 
 /**
  *              Names one keyword of the cloth configuration file.
@@ -140,11 +156,6 @@ INCLUDE_RODATA("asm/nonmatchings/clothread", @255);
  * @size 0x1B4
  */
 #ifdef NON_MATCHING
-static int GetArg(input_str &input, int *args, void **argv);
-static int SearchCommand(input_str &input, int *command);
-static int SkipSpace(input_str &input);
-static int CheckChar(char c);
-
 CCloth *InitCloth(CFrameVu1 *frame, input_str &input, CDataAlloc2<1> *alloc) {
     char words[16][256];
     void *argv[16];
@@ -317,7 +328,6 @@ INCLUDE_ASM("asm/nonmatchings/clothread", CommandBOUND__FPPv);
  * @size 0x320
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static int GetArg(input_str &input, int *args, void **argv) {
     char word[256];
 
@@ -376,9 +386,6 @@ static int GetArg(input_str &input, int *args, void **argv) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/clothread", GetArg__FR9input_strPiPPv__2);
-#endif
 /**
  * Finds the command table entry a model script's next word names.
  *
@@ -387,7 +394,6 @@ INCLUDE_ASM("asm/nonmatchings/clothread", GetArg__FR9input_strPiPPv__2);
  * @size 0x144
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static int SearchCommand(input_str &input, int *command) {
     char word[256];
 
@@ -412,9 +418,6 @@ static int SearchCommand(input_str &input, int *command) {
     *command = 10;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/clothread", SearchCommand__FR9input_strPi__2);
-#endif
 /**
  * Steps a model script past whitespace and comments.
  *
@@ -423,7 +426,6 @@ INCLUDE_ASM("asm/nonmatchings/clothread", SearchCommand__FR9input_strPi__2);
  * @size 0x94
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static int SkipSpace(input_str &input) {
     char *str;
     int i;
@@ -442,9 +444,6 @@ static int SkipSpace(input_str &input) {
         return 0;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/clothread", SkipSpace__FR9input_str__2);
-#endif
 /**
  * Reports whether a character is not whitespace.
  *
