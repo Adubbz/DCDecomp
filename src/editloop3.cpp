@@ -1365,14 +1365,30 @@ void EdLimitShadowLight(float light[][4], float scale) {
 
 void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
                CCamera *camera, int *follow_axes) {
+    sceVu0FVECTOR ambient;
+    sceVu0FVECTOR old_ambient;
     sceVu0FMATRIX identity;
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR cloud_position;
+
     sceVu0UnitMatrix(identity);
     identity[3][1] = 2100.0f;
 
+    CFrameVu1 *current_sky;
+    CFrameVu1 *following_sky;
     int transition;
-    int sky_index = (int) (clock / 3.0f);
-    int next_sky = sky_index + 1;
-    int previous_sky = sky_index - 1;
+    int sky_index;
+    int next_sky;
+    int next_sun;
+    CFrame *current_sun;
+    CFrame *moon;
+    int sun_index;
+    CFrame *following_sun;
+    int previous_sky;
+
+    sky_index = (int) (clock / 3.0f);
+    next_sky = sky_index + 1;
+    previous_sky = sky_index - 1;
     if (EditMapInfo->time_stop != 0) {
         clock = 0.0f;
         sky_index = 0;
@@ -1383,12 +1399,11 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
         next_sky = 0;
     if (previous_sky < 0)
         previous_sky = (int) previous_sky;
-    CFrameVu1 *current_sky = sky[sky_index];
-    CFrameVu1 *following_sky = sky[next_sky];
+    current_sky = sky[sky_index];
+    following_sky = sky[next_sky];
     if (current_sky != NULL && following_sky == NULL)
         following_sky = (CFrameVu1 *) following_sky;
 
-    sceVu0FVECTOR position;
     camera->GetPos(position);
     if (follow_axes[0] == 0)
         position[0] = 0.0f;
@@ -1396,7 +1411,6 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
         position[1] = 0.0f;
     if (follow_axes[2] == 0)
         position[2] = 0.0f;
-    sceVu0FVECTOR cloud_position;
     sceVu0CopyVector(cloud_position, position);
     cloud_position[1] -= 50.0f;
 
@@ -1413,24 +1427,22 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
     MGDraw(clouds);
     mgRenderInfo.unk_340 = 0;
 
-    sceVu0FVECTOR old_ambient;
-    sceVu0FVECTOR ambient;
     MGGetAmbient(old_ambient);
     sceVu0CopyVector(ambient, old_ambient);
     transition = 0;
-    int sun_index = 2;
+    sun_index = 2;
     if (clock >= 9.0f && clock < 12.0f)
         sun_index = 3;
     if (clock >= 0.0f && clock < 3.5f)
         sun_index = 0;
     if (clock >= 3.5f && clock < 5.5f)
         sun_index = 1;
-    int next_sun = sun_index + 1;
-    if (next_sun >= 4)
+    next_sun = sun_index + 1;
+    if (next_sun > 3)
         next_sun = 0;
-    CFrame *current_sun = sun[sun_index];
-    CFrame *following_sun = sun[next_sun];
-    CFrame *moon = sun[2];
+    current_sun = sun[sun_index];
+    following_sun = sun[next_sun];
+    moon = sun[2];
     if (EditMapInfo->time_stop != 0) {
         next_sun = 0;
         sun_index = 0;
@@ -1449,7 +1461,8 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
         ambient[3] = 2.0f * (128.0f * (3.5f - clock));
         transition = 1;
     }
-    float alpha = ambient[3];
+    float *ambient_alpha = &ambient[3];
+    float alpha = *ambient_alpha;
     float adjusted_clock = clock;
     if (clock > 10.0f)
         adjusted_clock = clock - 12.0f;
@@ -1459,20 +1472,19 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
     float moon_rotation = 1.2f * (3.141592f * ((clock - 4.0f) / 6.0f) - 1.5707964f);
     if (sun_index != 2) {
         float absolute_rotation = sun_rotation < 0.0f ? -sun_rotation : sun_rotation;
-        if (absolute_rotation < 3.141592f) {
+        if (absolute_rotation < 1.57f) {
             TexManager.ReloadTexture(Vif1Packet, 7);
             if (transition != 0) {
-                ambient[3] = 128.0f - alpha;
+                *ambient_alpha = 128.0f - alpha;
                 MGSetAmbient(ambient);
                 if (next_sun != 2 && following_sun != NULL) {
                     following_sun->SetTransMatrix(identity);
-                    float rotation_y = 0.0f;
-                    following_sun->SetRotation(0.0f, rotation_y, sun_rotation);
+                    following_sun->SetRotation(0.0f, 0.0f, sun_rotation);
                     following_sun->SetPosition(position);
                     MGDraw(following_sun);
                 }
             }
-            ambient[3] = alpha;
+            *ambient_alpha = alpha;
             if (sun_index != 2 && current_sun != NULL) {
                 current_sun->SetTransMatrix(identity);
                 MGSetAmbient(ambient);
@@ -1491,34 +1503,34 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
     MGDraw(clouds);
     mgRenderInfo.unk_340 = 0;
 
-    ambient[3] = 128.0f;
-    int sky_transition = 0;
+    *ambient_alpha = 128.0f;
+    transition = 0;
     if (clock > 2.0f && clock < 3.0f) {
-        ambient[3] = 128.0f * (3.0f - clock);
-        sky_transition = 1;
+        *ambient_alpha = 128.0f * (3.0f - clock);
+        transition = 1;
     }
     if (clock > 5.0f && clock < 6.0f) {
-        ambient[3] = 128.0f * (6.0f - clock);
-        sky_transition = 1;
+        *ambient_alpha = 128.0f * (6.0f - clock);
+        transition = 1;
     }
     if (clock > 8.0f && clock < 9.0f) {
-        ambient[3] = 128.0f * (9.0f - clock);
-        sky_transition = 1;
+        *ambient_alpha = 128.0f * (9.0f - clock);
+        transition = 1;
     }
     if (clock > 11.0f) {
-        ambient[3] = 128.0f * (12.0f - clock);
-        sky_transition = 1;
+        *ambient_alpha = 128.0f * (12.0f - clock);
+        transition = 1;
     }
     float sky_alpha = ambient[3];
-    if (sky_transition != 0) {
-        ambient[3] = 128.0f - sky_alpha;
+    if (transition != 0) {
+        *ambient_alpha = 128.0f - sky_alpha;
         MGSetAmbient(ambient);
         TexManager.ReloadTexture(Vif1Packet, next_sky + 3);
         if (following_sky != NULL)
             following_sky->SetPosition(position);
         MGDraw(following_sky);
     }
-    ambient[3] = sky_alpha;
+    *ambient_alpha = sky_alpha;
     MGSetAmbient(ambient);
     TexManager.ReloadTexture(Vif1Packet, sky_index + 3);
     if (current_sky != NULL)
@@ -1527,14 +1539,14 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
     MGSetAmbient(old_ambient);
 
     if (sun_index == 2 && moon != NULL) {
-        ambient[3] = 0.0f;
+        *ambient_alpha = 0.0f;
         if (clock > 5.5f && clock < 9.0) {
             TexManager.ReloadTexture(Vif1Packet, 7);
-            ambient[3] = 128.0f;
+            *ambient_alpha = 128.0f;
             if (clock > 5.5f && clock < 6.0f)
-                ambient[3] = 128.0f - 2.0f * (128.0f * (6.0f - clock));
+                *ambient_alpha = 128.0f - 2.0f * (128.0f * (6.0f - clock));
             if (clock > 8.5f && clock < 9.0f)
-                ambient[3] = 2.0f * (128.0f * (9.0f - clock));
+                *ambient_alpha = 2.0f * (128.0f * (9.0f - clock));
             MGSetAmbient(ambient);
             moon->SetTransMatrix(identity);
             moon->SetRotation(0.0f, 0.0f, moon_rotation);
