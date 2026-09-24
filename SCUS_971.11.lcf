@@ -488,6 +488,7 @@ SECTIONS
         main.data.part4j.s.o (.data)    // 0x00269494
         editloop.cpp.o (.edtexdata)     // 0x002694e0
         main.data.editloop-b.s.o (.data) // 0x00269880
+        editloop.cpp.o (.edptsdata)     // 0x002698f0
         editloop3.cpp.o (.eventoffset) // 0x00269930
         editloop3.cpp.o (.eddata1)     // 0x00269940
         editloop3.cpp.o (.eddata2)     // 0x00269970

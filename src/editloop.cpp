@@ -34,6 +34,7 @@
 #include "editmapscript.hpp"
 #include "editloop3.hpp"
 #include "edit.hpp"
+#include "edit_in.hpp"
 #include "editpartsinfo.hpp"
 #include "editground.hpp"
 #include "effect.hpp"
@@ -168,7 +169,6 @@ extern CEffect *EffectTable__3;
 extern u8 MesWinTexBuff_11[0x100];
 
 /* Whether an interior is being entered, and the item-volume step to check. */
-extern u_char *EdInInfo;
 extern CMenuItemStep ItemVolumeStep;
 
 /* The interior the player is walking into, and the map file it is built from. */
@@ -377,7 +377,6 @@ struct LOADED_PARTS {
     char name[0x20];  /**< Resource name the part was built from. */
     CMapParts *parts; /**< Part built from that name. */
 };
-void LoadMapObject(CMapParts *parts, u_int **data, CDataAlloc2<1> *alloc);
 #endif
 
 /**
@@ -799,7 +798,7 @@ int EditInit(void *) {
     GetEditDataDir(map_path);
     strcat(map_path, "mapinfo.cfb");
     EditMapInfo = (EDIT_MAP_INFO *) EtcDataBuffer.Alloc(0x2C27);
-    EdInInfo = EtcDataBuffer.Alloc(0x44D);
+    EdInInfo = (EDIT_IN_INFO *) EtcDataBuffer.Alloc(0x44D);
     if (interior_test == 0) {
         LoadEditMapData(EditMapInfo, map_path, MapNo);
     } else {
@@ -4268,6 +4267,19 @@ void LoadObjectParts(void) {
         }
     }
 }
+
+/**
+ * Puts a map part's camera collision frame where the part stands and returns it.
+ */
+static inline CFrame *GetCameraFrame(CMapParts *parts) {
+    if (parts->unk_0DC == NULL) {
+        return NULL;
+    }
+    parts->unk_0DC->SetPosition(parts->pos[0], parts->pos[1], parts->pos[2]);
+    parts->unk_0DC->SetRotation(parts->rotation.x, parts->rotation.y, parts->rotation.z);
+    return parts->unk_0DC;
+}
+
 /**
  * Builds one map part from its archive entry, sharing the models of a part already
  * built.
@@ -4276,18 +4288,21 @@ void LoadObjectParts(void) {
  * @address 0x1828B0
  * @size 0x754
  */
-#ifdef NON_MATCHING
 EPARTS_INFO_HEADER *LoadPTS(CMapParts *parts, unsigned int *archive, MAP_PARTS_INFO *info,
                             OBJ_ANIME_SEQ *anime, EDIT_EFFECT_INFO *effects,
                             EDIT_OBJECT_TIMER *timers, ED_EVENT_POINT *points,
                             CMapParts *shared) {
-    EPARTS_INFO_HEADER *source = (EPARTS_INFO_HEADER *) ((char *) archive + archive[1]);
-    EPARTS_INFO_HEADER *header =
-        (EPARTS_INFO_HEADER *) EPartsInfoBuff.Alloc((source->data_size >> 4) + 1);
+    EPARTS_INFO_HEADER *source;
+    EPARTS_ARCHIVE *record = (EPARTS_ARCHIVE *) archive;
+    int i;
+    EPARTS_INFO_HEADER *header;
+    CFrame *frame;
 
+    source = (EPARTS_INFO_HEADER *) ((char *) record + record->info_offset);
+    header = (EPARTS_INFO_HEADER *) EPartsInfoBuff.Alloc((source->data_size >> 4) + 1);
     memcpy(header, source, source->data_size);
     header->cell = (u8 *) header + (int) source->cell;
-    for (int i = 0; i < 6; i++) {
+    for (i = 0; i < 6; i++) {
         if (header->element_name[i] != NULL) {
             header->element_name[i] = (char *) header + (int) source->element_name[i];
         }
@@ -4296,7 +4311,7 @@ EPARTS_INFO_HEADER *LoadPTS(CMapParts *parts, unsigned int *archive, MAP_PARTS_I
 
     EPARTS_FUNC_DATA *walk = header->func;
 
-    for (int i = 0; i < header->func_count; i++) {
+    for (i = 0; i < header->func_count; i++) {
         walk++;
     }
     parts->unk_10C = header->func_count;
@@ -4304,129 +4319,107 @@ EPARTS_INFO_HEADER *LoadPTS(CMapParts *parts, unsigned int *archive, MAP_PARTS_I
     if (shared != NULL) {
         CopyCMapParts(parts, shared, &DataBuffer__2);
     } else {
-        u_int *names[9] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+        char *names[9] = {NULL};
 
-        if (((EPARTS_ARCHIVE *) archive)->size_58 > 0) {
-            names[0] = (u_int *) ((char *) archive + ((EPARTS_ARCHIVE *) archive)->offset_48);
+        if (record->size_58 > 0) {
+            names[0] = (char *) record + record->offset_48;
         } else {
             return header;
         }
-        if (((EPARTS_ARCHIVE *) archive)->size_5c > 0) {
-            names[1] = (u_int *) ((char *) archive + ((EPARTS_ARCHIVE *) archive)->offset_4c);
+        if (record->size_5c > 0) {
+            names[1] = (char *) record + record->offset_4c;
         }
-        if (((EPARTS_ARCHIVE *) archive)->size_60 > 0) {
-            names[2] = (u_int *) ((char *) archive + ((EPARTS_ARCHIVE *) archive)->offset_50);
+        if (record->size_60 > 0) {
+            names[2] = (char *) record + record->offset_50;
         }
-        if (((EPARTS_ARCHIVE *) archive)->size_64 > 0) {
-            names[3] = (u_int *) ((char *) archive + ((EPARTS_ARCHIVE *) archive)->offset_54);
+        if (record->size_64 > 0) {
+            names[3] = (char *) record + record->offset_54;
         }
-        if (((EPARTS_ARCHIVE *) archive)->size_94 > 0) {
-            names[4] = (u_int *) ((char *) archive + ((EPARTS_ARCHIVE *) archive)->offset_90);
+        if (record->size_94 > 0) {
+            names[4] = (char *) record + record->offset_90;
         }
-        if (((EPARTS_ARCHIVE *) archive)->size_7c > 0) {
-            names[5] = (u_int *) ((char *) archive + ((EPARTS_ARCHIVE *) archive)->offset_78);
+        if (record->size_7c > 0) {
+            names[5] = (char *) record + record->offset_78;
         }
-        if (((EPARTS_ARCHIVE *) archive)->size_ac > 0) {
-            names[6] = (u_int *) ((char *) archive + ((EPARTS_ARCHIVE *) archive)->offset_a8);
+        if (record->size_ac > 0) {
+            names[6] = (char *) record + record->offset_a8;
         }
-        if (((EPARTS_ARCHIVE *) archive)->size_dc > 0) {
-            names[7] = (u_int *) ((char *) archive + ((EPARTS_ARCHIVE *) archive)->offset_d8);
+        if (record->size_dc > 0) {
+            names[7] = (char *) record + record->offset_d8;
         }
-        if (((EPARTS_ARCHIVE *) archive)->size_c4 > 0) {
-            names[8] = (u_int *) ((char *) archive + ((EPARTS_ARCHIVE *) archive)->offset_c0);
+        if (record->size_c4 > 0) {
+            names[8] = (char *) record + record->offset_c0;
         }
-        LoadMapObject(parts, names, &DataBuffer__2);
+        LoadMapObject(parts, (u_int **) names, &DataBuffer__2);
     }
 
     CFrame *frames[9];
     CBoxVu0 bound;
     CBoxVu0 part_bound;
 
-    for (int i = 0; i < 9; i++) {
-        frames[i] = NULL;
+    for (int k = 0; k < 9; k++) {
+        frames[k] = NULL;
     }
-    for (int i = 0; i < 4; i++) {
-        frames[i] = (CFrame *) parts->frame[i];
+    for (int k = 0; k < 4; k++) {
+        CFrame *level = parts->frame[k];
+
+        frames[k] = level;
     }
     frames[4] = parts->shadow_frame;
     frames[5] = parts->GetCollisionFrame();
     frames[6] = parts->shade_frame;
     frames[7] = parts->unk_104;
-
-    CFrame *shadow = parts->unk_0DC;
-
-    if (shadow == NULL) {
-        shadow = NULL;
-    } else {
-        shadow->SetPosition(parts->pos[0], parts->pos[1], parts->pos[2]);
-        parts->unk_0DC->SetRotation(parts->rotation.x, parts->rotation.y, parts->rotation.z);
-        shadow = parts->unk_0DC;
-    }
-    frames[8] = shadow;
+    frames[8] = GetCameraFrame(parts);
     if (frames[0] == NULL) {
         return NULL;
     }
-
     frames[0]->GetBoundBox(&bound, 1);
-
-    CFrame *collision = parts->GetCollisionFrame();
-
-    if (collision != NULL) {
-        collision->GetBoundBox(&part_bound, 1);
+    frame = parts->GetCollisionFrame();
+    if (frame != NULL) {
+        frame->GetBoundBox(&part_bound, 1);
         VectorMaxMin(bound.max, bound.min, bound.max, bound.min, part_bound.max, part_bound.min);
     }
-
-    CFrame *shade = parts->unk_0DC;
-
-    if (shade == NULL) {
-        shade = NULL;
-    } else {
-        shade->SetPosition(parts->pos[0], parts->pos[1], parts->pos[2]);
-        parts->unk_0DC->SetRotation(parts->rotation.x, parts->rotation.y, parts->rotation.z);
-        shade = parts->unk_0DC;
-    }
-    if (shade != NULL) {
-        shade->GetBoundBox(&part_bound, 1);
+    frame = GetCameraFrame(parts);
+    if (frame != NULL) {
+        frame->GetBoundBox(&part_bound, 1);
         VectorMaxMin(bound.max, bound.min, bound.max, bound.min, part_bound.max, part_bound.min);
     }
     memcpy(&parts->bound, &bound, sizeof(CBoxVu0));
-    for (int i = 0; i < 8; i++) {
-        short no = info->anime[i];
+    for (int k = 0; k < 8; k++) {
+        int no = info->anime[k];
 
         if (no > 0) {
             InitObjAnime(frames, &anime[no]);
         }
     }
+
+    EPARTS_FUNC_DATA *list = header->func;
+
     EditMapInfo->event_count +=
-        EdInitEventPoint(parts, info->events, (EPARTS_FUNC_DATA *) header->func,
-                         header->func_count, points, 0x100);
+        EdInitEventPoint(parts, info->events, list, header->func_count, points, 0x100);
 
     EPARTS_FUNC_DATA *func = header->func;
 
-    for (int i = 0; i < header->func_count; i++, func += 1) {
+    for (i = 0; i < header->func_count; i++, func++) {
         if (func->completion_flag > 0 && SaveData->GetMapInitFlag(MapNo, func->completion_flag) == 0) {
             SaveData->SetMapInitFlag(MapNo, func->completion_flag, 1);
-            SaveData->SetMapFlag(MapNo, func->completion_flag, (u8) !func->unk_28);
+            SaveData->SetMapFlag(MapNo, func->completion_flag, !(char) func->unk_28[0]);
         }
         EnterPartsEffect(parts, func, effects, 0x40);
-
-        int count = EditMapInfo->obj_anime_count;
-
-        if (count < 128 && InitObjAnime(frames, 9, func, &anime[count]) != 0) {
+        if (EditMapInfo->obj_anime_count < 128 &&
+            InitObjAnime(frames, 9, func, &anime[EditMapInfo->obj_anime_count]) != 0) {
             EditMapInfo->obj_anime_count++;
         }
         if (func->kind == 9) {
-            int timer_no = EditMapInfo->object_timer_count++;
-            EDIT_OBJECT_TIMER *timer = &timers[timer_no];
+            EDIT_OBJECT_TIMER *timer = &timers[EditMapInfo->object_timer_count++];
 
-            if (EditMapInfo->object_timer_count < 129) {
-                strcpy(timer->name, func->frame_name);
-                timer->start_time = ConvertTime(func->start_time);
-                timer->end_time = ConvertTime(func->end_time);
-                timer->object = parts;
-            } else {
+            if (EditMapInfo->object_timer_count > 128) {
                 continue;
             }
+            strcpy(timer->name, (char *) func->frame_name);
+            timer->start_time = ConvertTime(func->start_time);
+            timer->end_time = ConvertTime(func->end_time);
+            timer->object = parts;
         }
         if (func->kind == 1) {
             pEditGround->people[pEditGround->people_count++] = func;
@@ -4434,16 +4427,15 @@ EPARTS_INFO_HEADER *LoadPTS(CMapParts *parts, unsigned int *archive, MAP_PARTS_I
         }
     }
 
-    sceVu0FVECTOR position = {source->position[0], source->position[1], source->position[2],
-                              1.0f};
+    sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 1.0f};
 
+    position[0] = source->position[0];
+    position[1] = source->position[1];
+    position[2] = source->position[2];
     parts->SetPosition(position);
     parts->SetRotation(source->rotation[0], source->rotation[1], source->rotation[2]);
     return header;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop", LoadPTS__FP9CMapPartsPUiP14MAP_PARTS_INFOP13OBJ_ANIME_SEQP16EDIT_EFFECT_INFOP17EDIT_OBJECT_TIMERP14ED_EVENT_POINTP9CMapParts);
-#endif
 /**
  * Builds one map part that has no part-definition file: its models are loaded
  * straight from the names the script gave, and its bound comes from them.
