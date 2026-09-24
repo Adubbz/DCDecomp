@@ -529,13 +529,12 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
 INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__10CVisualVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
 #endif
 /**
- * Writes one vector-unit upload header and gives back its length in words.
+ * Writes one strip's vector-unit upload and gives back its length in quadwords.
  *
  * @mangled SetVuData__FiP1PUiP1P1P1P1i
  * @address 0x135970
  * @size 0x130
  */
-#ifdef NON_MATCHING
 static int SetVuData(int count, u_long128 *block, u_int *index, u_long128 *vertex,
                      u_long128 *normal, u_long128 *uv, u_long128 *colour, int prim) {
     u_int *header = (u_int *) block;
@@ -543,21 +542,24 @@ static int SetVuData(int count, u_long128 *block, u_int *index, u_long128 *verte
     u_long128 *normal_out;
     u_long128 *uv_out;
     u_long128 *colour_out;
+    int size;
 
     header[0] = count | 0x8000;
     if (prim != 4) {
         header[1] = 0x302DC000;
+        header += 2;
     } else {
         header[1] = 0x302E4000;
+        header += 2;
     }
-    header[2] = 0x412;
-    header[3] = 0;
-    header[4] = count;
-    header[5] = prim;
+    header[0] = 0x412;
+    header[1] = 0;
+    header[2] = count;
+    header[3] = prim;
     if (colour != NULL) {
-        header[6] = 0x100;
+        header[4] = 0x100;
     } else {
-        header[6] = 0;
+        header[4] = 0;
     }
     vertex_out = &block[2];
     normal_out = &vertex_out[count];
@@ -573,14 +575,12 @@ static int SetVuData(int count, u_long128 *block, u_int *index, u_long128 *verte
             index++;
         }
     }
+    size = count * 3 + 2;
     if (colour != NULL) {
-        return count * 4 + 2;
+        size = count * 4 + 2;
     }
-    return count * 3 + 2;
+    return size;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/visualvu1", SetVuData__FiP1PUiP1P1P1P1i);
-#endif
 #ifdef NON_MATCHING
 static u_long128 VuDataEnd;
 
