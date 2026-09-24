@@ -93,7 +93,6 @@ int ezTransToIOP(void *iop_address, void *ee_address, int size) {
     return 0;
 }
 
-
 /**
  * Interpolates between two quaternions along the shorter arc.
  *
@@ -357,7 +356,8 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
     return list->next;
 }
 
-static sceVu0FVECTOR def_vrtx[3000]; // Working copy of the skinned frame's vertices that the bone weights move.
+/** Working copy of the skinned frame's vertices that the bone weights move. */
+static sceVu0FVECTOR def_vrtx[3000];
 
 Mot_List *MotionProc2(CFrame *frame, tagMOTION_TYPE *motion, tagFRAME_INF *frame_info,
                       Mot_List *list) {

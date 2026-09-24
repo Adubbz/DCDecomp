@@ -94,8 +94,8 @@ public:
     void SetDir(float *direction, float *up_direction);
 
     /**
-     * Rebuilds the box's orientation from its stored facing direction; the
-     * argument is not read.
+     * Normalizes the given direction into the box's facing direction and
+     * rebuilds the box's orientation from it.
      *
      * @mangled SetDir__6CBoundFPf
      * @address 0x13D8A0

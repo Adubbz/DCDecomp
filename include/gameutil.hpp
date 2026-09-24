@@ -268,8 +268,8 @@ int AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
 Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list);
 
 /**
- * Applies one motion's frame to a model, blending between two motions, and
- * gives back the next driver in the list.
+ * Skins one bone of a model: moves each weighted vertex toward the bone's
+ * transform, and gives back the next driver in the list.
  *
  * @mangled MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List
  * @address 0x148860
