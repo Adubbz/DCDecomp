@@ -1357,9 +1357,7 @@ void CMonstorUnit::Step(int pause) {
                 WorkBuffer__2->Reset();
                 monster[unk_090].collision_poly = (CCPoly *) WorkBuffer__2->Alloc(2000);
                 chara[unk_090][0].GetPosition(position);
-                float collision_radius = 30.0f;
-                float collision_height = 5.0f;
-                monster[unk_090].unk_050 = setCollisionData(NowDngMap, monster[unk_090].collision_poly, position, 30, 5);
+                monster[unk_090].unk_050 = setCollisionData(NowDngMap, monster[unk_090].collision_poly, position, 30.0f, 5.0f);
                 int original_count = monster[unk_090].unk_050;
                 box.max[0] = 30.0f + position[0];
                 box.max[1] = 80.0f + position[1];
