@@ -61,19 +61,26 @@ void CCloth::Draw() {
 #ifdef NON_MATCHING
 void CCloth::Clear() {
     sceVu0FMATRIX matrix;
+    float *velocity;
+    float *vertex;
+    int i;
+    int j;
 
     if (frame != NULL) {
         frame->GetLWMatrix(matrix);
     }
     sceVu0ApplyMatrix(last_position, matrix, position);
-    for (int j = 0; j < num_j; j++) {
-        for (int i = 0; i < num_i; i++) {
-            speed[i][j][0] = 0.0f;
-            speed[i][j][1] = 0.0f;
-            speed[i][j][2] = 0.0f;
+    for (j = 0; j < num_j; j++) {
+        for (i = 0; i < num_i; i++) {
+            vertex = point[i][j];
+            velocity = speed[i][j];
+
+            velocity[0] = 0.0f;
+            velocity[1] = 0.0f;
+            velocity[2] = 0.0f;
             if (frame != NULL) {
-                sceVu0ApplyMatrix(point[i][j], matrix, home[i][j]);
-                sceVu0CopyVector(last[i][j], point[i][j]);
+                sceVu0ApplyMatrix(vertex, matrix, home[i][j]);
+                sceVu0CopyVector(last[i][j], vertex);
             }
         }
     }
