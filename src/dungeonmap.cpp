@@ -895,7 +895,6 @@ void CDungeonMap::DrawFireFreeStyle(CFrameVu1 *frame, CCameraFollow *camera) {
     }
 }
 
-#ifdef NON_MATCHING
 void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
     float fire_pos[4];
     float frame_pos[4];
@@ -939,14 +938,15 @@ void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
 
                 if (this->cells[no].parts_no != MAP_PARTS_NONE &&
                     this->cells[no].unk_08 <= 160.0f * (3.0f + this->draw_dist_scale)) {
-                    for (j = 0; j < this->parts[this->cells[no].parts_no].fire_num; j++) {
+                    CDungeonParts *part;
+
+                    for (j = 0; j < (part = &this->parts[this->cells[no].parts_no])->fire_num; j++) {
                         float turn;
                         float rot_x;
                         float rot_z;
+                        float height;
                         float angle;
                         float dist;
-
-                        CDungeonParts *part = &this->parts[this->cells[no].parts_no];
 
                         fire_pos[0] = part->fire_pos[j][0];
                         fire_pos[1] = part->fire_pos[j][1];
@@ -970,11 +970,13 @@ void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
                         }
 
                         fire_pos[0] = rot_x + 16.0f * (float) col;
-                        fire_pos[2] = rot_z + 16.0f * (float) row;
+                        rot_z += 16.0f * (float) row;
+                        fire_pos[2] = rot_z;
+                        height = fire_pos[1];
 
                         this->fire.pos[0] = 10.0f * fire_pos[0];
-                        this->fire.pos[1] = 10.0f * fire_pos[1];
-                        this->fire.pos[2] = 10.0f * fire_pos[2];
+                        this->fire.pos[1] = 10.0f * height;
+                        this->fire.pos[2] = 10.0f * rot_z;
                         this->fire.pos[3] = 1.0f;
                         this->fire.DrawFire(1, 1, (CCamera *) camera, frame_pos, 1.0f, param,
                                             15.0f);
@@ -1000,9 +1002,6 @@ void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
         SndSetSeVol(53, 0, 0);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawFire__11CDungeonMapFP9CFrameVu1P13CCameraFollow);
-#endif
 
 void CDungeonMap::DrawRaster(CFrameVu1 *frame) {
     float pos[4];
