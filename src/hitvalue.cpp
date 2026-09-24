@@ -254,7 +254,6 @@ INCLUDE_ASM("asm/nonmatchings/hitvalue", Draw__9CHitValueFv);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/hitvalue", @804);
 INCLUDE_RODATA("asm/nonmatchings/hitvalue", @805);
-INCLUDE_RODATA("asm/nonmatchings/hitvalue", @863);
 void CHitValue::Step(void) {
     if (active != 0) {
         if (digits[0] == -2) {
