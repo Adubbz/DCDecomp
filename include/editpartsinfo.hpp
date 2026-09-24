@@ -113,7 +113,7 @@ public:
     s32 parts_max; /**< Parts the map's own catalogue holds. */
     s32 request[24]; /**< Villager request each part belongs to. */
     EDITPARTS_INFO parts[24]; /**< Every part the map can hold. */
-    u8 unk_1624[4];
+    s32 unk_1624;
 
     /**
      * Returns the record of one editable map part, or NULL.
