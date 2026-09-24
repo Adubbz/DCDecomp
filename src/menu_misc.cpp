@@ -43,7 +43,6 @@ extern CTexture *WepIcon;
 extern u_long128 *WeaponRead_Buf;
 extern u_long128 *MenuWeaponModelBuildBuffer;
 extern u_long128 *WepMenuEffectReadBuf;
-extern int CharaFileBGReadNo;
 extern u_long128 *CharaChangeBaseBuf;
 extern s16 charachangeid;
 extern u_long128 *menucharReadbuf;
@@ -109,6 +108,9 @@ extern s16 DngEscapeEndFlag;
 
 /** The darkness drawn over the dungeon escape prompt, from 0 (none) to 0x80 (black). */
 extern s16 DngEscapeAlpha;
+
+/** The file-read slot the menu's character model is loaded through. */
+extern int CharaFileBGReadNo;
 
 extern CDataAlloc2<1> MenuExCashBuffer;
 extern CCharacter MenuCharaFrame;
@@ -1053,7 +1055,14 @@ void SetItemMenuColor(int chara) {
 void SetItemMenuOldAmbient() {
     MGSetAmbient(MenuCharaOldAmbient);
 }
-#ifdef NON_MATCHING
+
+/**
+ * Starts the background read of a menu character model file and reports whether it was started.
+ *
+ * @mangled StartLoadCharaMDS__FP1ii
+ * @address 0x20E1A0
+ * @size 0xE0
+ */
 int StartLoadCharaMDS(u_long128 *buffer, int chara, int read_no) {
     char path[64];
     char name[32];
@@ -1063,21 +1072,16 @@ int StartLoadCharaMDS(u_long128 *buffer, int chara, int read_no) {
     strcat(path, "dungeon/");
     sprintf(name, "c0%dmodel.pak", chara + 1);
     strcat(path, name);
-    u_long128 *aligned = MenuCalcBufAlignment(buffer);
+    buffer = MenuCalcBufAlignment(buffer);
     CharaFileBGReadNo = read_no;
     if (read_no == 0) {
         StartReadBG();
     }
-    if (LoadFileBG(path, aligned, &size) == 0) {
+    if (LoadFileBG(path, buffer, &size) == 0) {
         return 1;
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", StartLoadCharaMDS__FP1ii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1176);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1177);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1178);
 #ifdef NON_MATCHING
 void MenuCharaMDSBuild2(int chara, int texture_block) {
