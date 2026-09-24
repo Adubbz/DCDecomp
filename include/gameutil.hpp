@@ -209,7 +209,7 @@ struct tagMOTION_TYPE {
     s32 unk_6C;
     s32 unk_70;
     s32 unk_74;
-    s32 unk_78;
+    float unk_78;
     s32 unk_7C;
 } __attribute__((aligned(16)));
 
