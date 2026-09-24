@@ -1,6 +1,7 @@
 #include "objanime.hpp"
 
 #include <libvu0.h>
+#include <cstdlib>
 #include <cstring>
 
 #include "candleeffect.hpp"
@@ -10,7 +11,6 @@
 #include "texture.hpp"
 #ifdef NON_MATCHING // draft includes
 #include <cstring>
-#include <cstdlib>
 #include "edit.hpp"
 #include "effectmacro.hpp"
 #include "snd.hpp"
@@ -200,17 +200,17 @@ static int end_check(float value, float target, float step) {
  * @address 0x1661E0
  * @size 0x78C
  */
-#ifdef NON_MATCHING
 void ObjAnimePlay(OBJ_ANIME_SEQ *sequence) {
     sceVu0FVECTOR position;
     sceVu0FVECTOR scale;
     sceVu0FVECTOR rotation;
     int i;
+    float value;
 
     if (all_stop != 0) {
         return;
     }
-    if (sequence->type < 0) {
+    if (sequence->type <= -1) {
         return;
     }
     switch (sequence->type) {
@@ -235,27 +235,29 @@ void ObjAnimePlay(OBJ_ANIME_SEQ *sequence) {
             break;
         case 3:
             if (sequence->frames[0] != NULL) {
-                sceVu0CopyVector(sequence->frames[0]->attr.color, sequence->current);
-                sequence->frames[0]->attr.unk_14 = 1;
+                CFrameAttr *attr = &sequence->frames[0]->attr;
+                sceVu0CopyVector(attr->color, sequence->current);
+                attr->unk_14 = 1;
             }
             break;
     }
     if (sequence->frames[0] != NULL) {
         sceVu0CopyVector(position, sequence->frames[0]->position);
-        scale[0] = sequence->frames[0]->scale[0];
-        scale[1] = sequence->frames[0]->scale[1];
-        scale[2] = sequence->frames[0]->scale[2];
+        CFrame *frame = sequence->frames[0];
+        scale[0] = frame->scale[0];
+        scale[1] = frame->scale[1];
+        scale[2] = frame->scale[2];
         sequence->frames[0]->GetRotation(rotation);
         for (i = 1; i < 10; i++) {
-            CFrame *frame = sequence->frames[i];
-            if (frame != NULL) {
-                frame->SetRotType(2);
-                frame->SetRotation(rotation[0], rotation[1], rotation[2]);
-                frame->SetPosition(position);
-                frame->SetScale(scale);
+            if (sequence->frames[i] != NULL) {
+                sequence->frames[i]->SetRotType(2);
+                sequence->frames[i]->SetRotation(rotation[0], rotation[1], rotation[2]);
+                sequence->frames[i]->SetPosition(position);
+                sequence->frames[i]->SetScale(scale);
                 if (sequence->type == 3) {
-                    sceVu0CopyVector(frame->attr.color, sequence->current);
-                    frame->attr.unk_14 = 1;
+                    CFrameAttr *attr = &sequence->frames[i]->attr;
+                    sceVu0CopyVector(attr->color, sequence->current);
+                    attr->unk_14 = 1;
                 }
             }
         }
@@ -279,20 +281,20 @@ void ObjAnimePlay(OBJ_ANIME_SEQ *sequence) {
         case 2:
             // Reverse at either end, swapping the two ends round.
             sceVu0AddVector(sequence->current, sequence->current, sequence->offset);
-            for (i = 0; i < 3; i++) {
+            for (int i = 0; i < 3; i++) {
                 if (end_check(sequence->current[i], sequence->speed[i], sequence->offset[i]) != 0) {
                     sequence->offset[i] *= -1.0f;
                     sequence->current[i] = sequence->speed[i];
-                    float end = sequence->range[i];
+                    value = sequence->range[i];
                     sequence->range[i] = sequence->speed[i];
-                    sequence->speed[i] = end;
+                    sequence->speed[i] = value;
                 }
             }
             break;
         case 3:
             // Stop at the far end.
             sceVu0AddVector(sequence->current, sequence->current, sequence->offset);
-            for (i = 0; i < 3; i++) {
+            for (int i = 0; i < 3; i++) {
                 if (end_check(sequence->current[i], sequence->speed[i], sequence->offset[i]) != 0) {
                     sequence->current[i] = sequence->speed[i];
                     sequence->offset[i] = 0.0f;
@@ -301,21 +303,21 @@ void ObjAnimePlay(OBJ_ANIME_SEQ *sequence) {
             break;
         case 4:
             for (i = 0; i < 3; i++) {
-                sequence->current[i] = sequence->range[i] + (sequence->speed[i] - sequence->range[i]) *
-                                                                ((float) rand() / 2.1474836e9f);
+                value = sequence->speed[i] - sequence->range[i];
+                value *= (float) rand() / 2.1474836e9f;
+                sequence->current[i] = sequence->range[i] + value;
             }
             break;
-        case 6: {
-            float value = sequence->range[0] +
-                          (sequence->speed[0] - sequence->range[0]) * ((float) rand() / 2.1474836e9f);
-            sequence->current[0] = value;
-            sequence->current[1] = value;
+        case 6:
+            value = sequence->speed[0] - sequence->range[0];
+            value *= (float) rand() / 2.1474836e9f;
+            sequence->current[1] = sequence->current[0] = sequence->range[0] + value;
             sequence->current[2] = sequence->current[0];
             break;
-        }
         case 5:
             for (i = 0; i < 3; i++) {
-                sequence->current[i] += sequence->offset[i] * (((float) rand() / 2.1474836e9f) - 0.5f);
+                value = sequence->offset[i] * (((float) rand() / 2.1474836e9f) - 0.5f);
+                sequence->current[i] += value;
                 if (sequence->current[i] < sequence->range[i]) {
                     sequence->current[i] = sequence->range[i];
                 }
@@ -325,7 +327,8 @@ void ObjAnimePlay(OBJ_ANIME_SEQ *sequence) {
             }
             break;
         case 7:
-            sequence->current[0] += sequence->offset[0] * (((float) rand() / 2.1474836e9f) - 0.5f);
+            value = sequence->offset[0] * (((float) rand() / 2.1474836e9f) - 0.5f);
+            sequence->current[0] += value;
             if (sequence->current[0] < sequence->range[0]) {
                 sequence->current[0] = sequence->range[0];
             }
@@ -337,21 +340,26 @@ void ObjAnimePlay(OBJ_ANIME_SEQ *sequence) {
             break;
     }
     if (sequence->type == 0) {
-        for (i = 0; i < 3; i++) {
-            if (sequence->current[i] > 180.0f) {
-                sequence->current[i] -= 360.0f;
-            }
+        if (sequence->current[0] > 180.0f) {
+            sequence->current[0] -= 360.0f;
         }
-        for (i = 0; i < 3; i++) {
-            if (sequence->current[i] < -180.0f) {
-                sequence->current[i] += 360.0f;
-            }
+        if (sequence->current[1] > 180.0f) {
+            sequence->current[1] -= 360.0f;
+        }
+        if (sequence->current[2] > 180.0f) {
+            sequence->current[2] -= 360.0f;
+        }
+        if (sequence->current[0] < -180.0f) {
+            sequence->current[0] += 360.0f;
+        }
+        if (sequence->current[1] < -180.0f) {
+            sequence->current[1] += 360.0f;
+        }
+        if (sequence->current[2] < -180.0f) {
+            sequence->current[2] += 360.0f;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/objanime", ObjAnimePlay__FP13OBJ_ANIME_SEQ);
-#endif
 
 void InitEditEffect(CFrame *frame, EDIT_EFFECT_INFO *effect) {
     if (frame == NULL) {
