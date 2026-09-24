@@ -5559,6 +5559,9 @@ static int _OBJ_ANIME_INIT(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
+/**
+ * Starts an object animation with up to three rotation keys, converting radians to degrees.
+ */
 static int _OBJ_ANIME(RS_STACKDATA *stack, int argument_count) {
     int object = GetStackInt(stack++);
     int animation = GetStackInt(stack++);
@@ -5574,18 +5577,18 @@ static int _OBJ_ANIME(RS_STACKDATA *stack, int argument_count) {
     first[1] = GetStackFloat(stack++);
     first[2] = GetStackFloat(stack++);
     if (angle_mode == 0) {
-        first[0] = 180.0f * first[0] / 3.1415927f;
-        first[1] = 180.0f * first[1] / 3.1415927f;
-        first[2] = 180.0f * first[2] / 3.1415927f;
+        first[0] = 180.0f * first[0] / 3.141592f;
+        first[1] = 180.0f * first[1] / 3.141592f;
+        first[2] = 180.0f * first[2] / 3.141592f;
     }
     if (argument_count >= 10) {
         second[0] = GetStackFloat(stack++);
         second[1] = GetStackFloat(stack++);
         second[2] = GetStackFloat(stack++);
         if (angle_mode == 0) {
-            second[0] = 180.0f * second[0] / 3.1415927f;
-            second[1] = 180.0f * second[1] / 3.1415927f;
-            second[2] = 180.0f * second[2] / 3.1415927f;
+            second[0] = 180.0f * second[0] / 3.141592f;
+            second[1] = 180.0f * second[1] / 3.141592f;
+            second[2] = 180.0f * second[2] / 3.141592f;
         }
     }
     if (argument_count >= 13) {
@@ -5593,9 +5596,9 @@ static int _OBJ_ANIME(RS_STACKDATA *stack, int argument_count) {
         third[1] = GetStackFloat(stack++);
         third[2] = GetStackFloat(stack);
         if (angle_mode == 0) {
-            third[0] = 180.0f * third[0] / 3.1415927f;
-            third[1] = 180.0f * third[1] / 3.1415927f;
-            third[2] = 180.0f * third[2] / 3.1415927f;
+            third[0] = 180.0f * third[0] / 3.141592f;
+            third[1] = 180.0f * third[1] / 3.141592f;
+            third[2] = 180.0f * third[2] / 3.141592f;
         }
     }
     init_obj_anime(object, animation, angle_mode, playback_mode, first, second, third);
