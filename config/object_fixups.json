@@ -1570,11 +1570,11 @@
   "src/btitem.cpp": {
     "sections": {
       ".btitemdata1": [
-        "@94",
-        "@149"
+        "@95",
+        "@150"
       ],
       ".btitemdata2": [
-        "@317"
+        "@318"
       ]
     },
     "rekey_sections": [

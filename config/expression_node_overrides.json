@@ -3596,6 +3596,13 @@
           "value_bits": "0x41a00000",
           "ordinal": 1,
           "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x1.0000000000000p+0",
+          "value_bits": "0x3f800000",
+          "ordinal": 1,
+          "evaluate_first": 0
         }
       ],
       "ParabolicInitialVector__FPfPfPfff": [

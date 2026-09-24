@@ -10,6 +10,7 @@
 #include "btmisc.hpp"
 #include "camerafollow.hpp"
 #include "character.hpp"
+#include "collision.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dispctrl.hpp"
@@ -17,15 +18,18 @@
 #include "dngstatusdata.hpp"
 #include "dun/gameloop.hpp"
 #include "dungeonmap.hpp"
+#include "dungeonparts.hpp"
 #include "edit.hpp"
 #include "editloop3.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "gamepad.hpp"
 #include "mainitemmodel.hpp"
+#include "mathutil.hpp"
 #include "menu_draw.hpp"
 #include "menu_dungeon.hpp"
 #include "menu_save.hpp"
+#include "monstorunit.hpp"
 #include "motionmodel.hpp"
 #include "nowload.hpp"
 #include "savedata.hpp"
@@ -1711,7 +1715,6 @@ void getCharacterVector(float *vector, float pitch) {
  * @address 0x1D4260
  * @size 0x2D4
  */
-#ifdef NON_MATCHING
 int ItemThrowStep(float *position, float *velocity) {
     sceVu0FVECTOR next;
     sceVu0FVECTOR direction;
@@ -1726,8 +1729,7 @@ int ItemThrowStep(float *position, float *velocity) {
     sceVu0Normalize(direction, velocity);
     for (int unit = 0; unit < 16; unit++) {
         for (int i = 0; i < 16; i++) {
-            MONSTOR_EFFECT_STATE *effect = &NowMonstorUnit->effect[unit];
-            if (effect->timer[i] != 0 && DistVector(effect->position[i], position) <= 1.5f + effect->radius[i]) {
+            if (NowMonstorUnit->effect[unit].timer[i] != 0 && DistVector(NowMonstorUnit->effect[unit].position[i], position) <= 1.5f + NowMonstorUnit->effect[unit].radius[i]) {
                 return 2;
             }
         }
@@ -1751,6 +1753,3 @@ int ItemThrowStep(float *position, float *velocity) {
     sceVu0CopyVector(position, next);
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", ItemThrowStep__FPfPf);
-#endif
