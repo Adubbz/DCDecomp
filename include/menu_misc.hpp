@@ -90,7 +90,7 @@ int WeaponStatusBreakEnable(WEAPON_HAVE *);
 int WeaponStatusBuildUp(WEAPON_HAVE *, int &);
 
 /**
- * Applies a weapon's values to named frames of the menu character model.
+ * Shows the intact or broken model frame of weapon 0x110 by its remaining durability.
  *
  * @mangled MenuWeaponSpSet__FP10CCharacterP11WEAPON_HAVE
  * @address 0x20CF30

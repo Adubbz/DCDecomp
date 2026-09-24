@@ -580,7 +580,14 @@ int WeaponStatusBuildUp(WEAPON_HAVE *weapon, int &enabled_count) {
     }
     return total;
 }
-#ifdef NON_MATCHING
+
+/**
+ * Shows the intact or broken model frame of weapon 0x110 by its remaining durability.
+ *
+ * @mangled MenuWeaponSpSet__FP10CCharacterP11WEAPON_HAVE
+ * @address 0x20CF30
+ * @size 0x114
+ */
 void MenuWeaponSpSet(CCharacter *chara, WEAPON_HAVE *weapon) {
     if (chara == NULL || weapon == NULL) {
         return;
@@ -595,7 +602,7 @@ void MenuWeaponSpSet(CCharacter *chara, WEAPON_HAVE *weapon) {
     }
     int show_broken;
     int show_whole;
-    if (weapon->durability_f <= 0.3 * weapon->durability) {
+    if (weapon->durability_f <= 0.2 * weapon->durability) {
         show_broken = 1;
         show_whole = 2;
     } else {
@@ -605,11 +612,6 @@ void MenuWeaponSpSet(CCharacter *chara, WEAPON_HAVE *weapon) {
     whole->attr.draw_on = show_whole;
     broken->attr.draw_on = show_broken;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", MenuWeaponSpSet__FP10CCharacterP11WEAPON_HAVE);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @914__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @915__2);
 
 void SetMenuCharaEffectReadFlag(int flag) {
     MenuCharaEffectReadFlag = flag;
