@@ -581,97 +581,127 @@ static int SetVuData(int count, u_long128 *block, u_int *index, u_long128 *verte
     }
     return size;
 }
-#ifdef NON_MATCHING
-static u_long128 VuDataEnd;
 
-int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int prim_hint) {
-    MDT_HEADER *header = (MDT_HEADER *) data;
-    int first = 1;
-    int word = 0;
-    u_long128 end = VuDataEnd;
+/**
+ * Builds a model's VU data block and returns its size in quadwords.
+ *
+ * @mangled CreateVUdataFromMDT__10CVisualVu1FPUiPUiii
+ * @address 0x135AA0
+ * @size 0x3A8
+ */
+int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int unknown1) {
+    int first;
+    int strip;
+    int word;
+    int stride;
+    u_long128 *colour;
+    int remaining;
+    u_int *index;
+    MDT_MATERIAL *info;
+    MDT_HEADER *header;
+    u_int *mesh;
+    u_long128 *vertex;
+    u_long128 *normal;
+    u_long128 *uv;
+    MDT_MATERIAL *materials;
+    int strips;
+    int prim;
+    int material;
+    int unpack;
+    int qwc;
+    int limit;
+    int handle;
+    int continued;
+    int size;
+    int count;
+
+    header = (MDT_HEADER *) data;
+    first = 1;
+    word = 0;
+    u_int end[4] = {0x13000000, 0, 0, 0};
 
     vu_data = block;
-    u_int *mesh = (u_int *) ((u_char *) data + header->mesh_ofs);
-    u_long128 *vertex = (u_long128 *) ((u_char *) data + header->vertex_ofs);
-    u_long128 *normal = (u_long128 *) ((u_char *) data + header->unk_14[1]);
-    u_long128 *uv = (u_long128 *) ((u_char *) data + header->unk_2c[1]);
+    mesh = (u_int *) ((u_char *) data + header->mesh_ofs);
+    vertex = (u_long128 *) ((u_char *) data + header->vertex_ofs);
+    normal = (u_long128 *) ((u_char *) data + header->unk_14[1]);
+    uv = (u_long128 *) ((u_char *) data + header->unk_2c[1]);
     if (header->unk_2c[1] <= 0) {
         uv = vertex;
     }
-    u_long128 *colour;
-    int stride;
+    colour = (u_long128 *) ((u_char *) data + header->colour_ofs);
     if (header->colour_ofs <= 0) {
         stride = 3;
         colour = NULL;
     } else {
         stride = 4;
-        colour = (u_long128 *) ((u_char *) data + header->colour_ofs);
     }
-    MDT_MATERIAL *materials = (MDT_MATERIAL *) ((u_char *) data + header->info_ofs);
-    u_int *index = mesh + 4;
-    int strips = mesh[2];
-    for (int strip = 0; strip < strips; strip++) {
-        int remaining = index[1];
-        int prim = index[0];
-        int material = index[2];
-        MDT_MATERIAL *info = &materials[material];
+    materials = (MDT_MATERIAL *) ((u_char *) data + header->info_ofs);
+    index = mesh + 4;
+    strips = mesh[2];
+    for (strip = 0; strip < strips; strip++) {
+        remaining = index[1];
+        prim = index[0];
+        material = index[2];
+        info = &materials[material];
         index += 3;
         if (material != -1) {
-            int handle = TexManager.GetTextureHandle(info->texture, -1);
-            CTexture *texture = TexManager.GetTexture(handle);
-            word += SetTEX0(&block[word], texture->tex0, TexManager.GetTexture(handle)->tex1);
+            handle = TexManager.GetTextureHandle(info->texture, -1);
+            word += SetTEX0(&block[word], TexManager.GetTexture(handle)->tex0,
+                            TexManager.GetTexture(handle)->tex1);
             word += SetMaterial(&block[word], info);
         }
-        int limit = 0x36;
+        limit = 0x36;
         if (colour != NULL) {
             limit = 0x21;
         }
+        continued = 0;
         while (remaining > 0) {
-            int count = limit;
+            count = limit;
             if (remaining < limit) {
                 count = remaining;
             }
+            qwc = 0;
             block[word] = 0;
-            block[word + 1] = 0;
-            block[word + 2] = 0;
-            int unpack = word + 3;
+            block[(u_int) (word + 1)] = 0;
+            block[(u_int) (word + 2)] = 0;
+            unpack = word + 3;
             block[unpack] = 0x6C008000;
             word += 4;
-            int size = SetVuData(count, (u_long128 *) &block[word], index, vertex, normal, uv,
-                                 colour, prim);
-            // A strip that carries on in the next chunk repeats its last two vertices.
+            size = SetVuData(count, (u_long128 *) &block[word], index, vertex, normal, uv, colour,
+                             prim);
             if (prim == 4 && limit < remaining) {
                 index -= stride * 2;
                 remaining += 2;
             }
             index += count * stride;
+            qwc += size;
             word += size * 4;
-            block[unpack] |= size << 16;
+            block[(u_int) unpack] |= qwc << 16;
             block[word] = 0;
-            block[word + 1] = 0;
-            block[word + 2] = 0;
-            if (prim_hint == 0) {
+            block[(u_int) (word + 1)] = 0;
+            block[(u_int) (word + 2)] = 0;
+            if (!continued) {
                 if (first) {
-                    block[word + 3] = 0x14000000;
+                    block[(u_int) (word + 3)] = 0x14000000;
+                    word += 4;
                     first = 0;
                 } else {
-                    block[word + 3] = 0x14000001;
+                    block[(u_int) (word + 3)] = 0x14000001;
+                    word += 4;
                 }
+                continued = 1;
             } else {
-                block[word + 3] = 0x17000000;
+                block[(u_int) (word + 3)] = 0x17000000;
+                word += 4;
             }
-            word += 4;
             remaining -= limit;
         }
-        *(u_long128 *) &block[word] = end;
+        *(u_long128 *) &block[word] = *(u_long128 *) end;
         word += 4;
     }
     vu_size = word >> 2;
     return vu_size;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/visualvu1", CreateVUdataFromMDT__10CVisualVu1FPUiPUiii);
-#endif
 #ifdef NON_MATCHING
 int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown0) {
     MDT_HEADER *header = (MDT_HEADER *) data;

@@ -94,12 +94,13 @@ public:
     CVisualVu1(void);
 
     /**
+     * Builds a model's VU data block and returns its size in quadwords.
+     *
      * @mangled CreateVUdataFromMDT__10CVisualVu1FPUiPUiii
      * @address 0x135AA0
      * @size 0x3A8
-     * @unknownret
      */
-    void CreateVUdataFromMDT(unsigned int *, unsigned int *, int, int);
+    int CreateVUdataFromMDT(unsigned int *, unsigned int *, int, int);
 
     /**
      * @mangled CreateVUdataFromMDTRemake__10CVisualVu1FPUiPUii
