@@ -5,6 +5,7 @@
 #include "btactstatus.hpp"
 #include "btitem.hpp"
 #include "btmisc.hpp"
+#include "camerafollow.hpp"
 #include "character.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
@@ -12,6 +13,7 @@
 #include "dngstatusdata.hpp"
 #include "dun/gameloop.hpp"
 #include "frame.hpp"
+#include "framevu1.hpp"
 #include "gamepad.hpp"
 #include "menu_draw.hpp"
 #include "menu_dungeon.hpp"
@@ -127,6 +129,26 @@ extern int escape_chr;
  * Step the escape presentation is on.
  */
 extern int escape_sled;
+
+/**
+ * Model of the item a pickup presentation holds up.
+ */
+extern CFrame *itemBoxModel;
+
+/**
+ * Camera the dungeon currently draws through.
+ */
+extern CCameraFollow *NowCamera__3;
+
+/**
+ * Camera that follows the player.
+ */
+extern "C" CCameraFollow MainCamera__4;
+
+/**
+ * Camera that stands in for the player's while an event runs.
+ */
+extern "C" CCameraFollow SubCamera;
 
 extern "C" CDataAlloc2<1> BtCashBuffer;
 
@@ -1071,7 +1093,6 @@ void BtGetGateKey_Init(int item_no) {
  * @address 0x1D36A0
  * @size 0x3D0
  */
-#ifdef NON_MATCHING
 int BtGetGateKey_Loop() {
     sceVu0FVECTOR eye;
     sceVu0FVECTOR ref;
@@ -1149,10 +1170,6 @@ int BtGetGateKey_Loop() {
     }
     return done;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", BtGetGateKey_Loop__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/btitem", @969);
 
 void BtGetAttach_Init(int dungeon, int item_no) {
     int volume = 0;
@@ -1386,6 +1403,7 @@ INCLUDE_RODATA("asm/nonmatchings/btitem", @732__5);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @733__4);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @734__4);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @735__3);
+#ifdef NON_MATCHING
 /**
  * Runs the escape presentation and reports when it ends.
  *
@@ -1393,7 +1411,6 @@ INCLUDE_RODATA("asm/nonmatchings/btitem", @735__3);
  * @address 0x1D3D40
  * @size 0x18C
  */
-#ifdef NON_MATCHING
 int BtEscape_Loop() {
     sceVu0FVECTOR position;
     sceVu0FVECTOR rotation;
