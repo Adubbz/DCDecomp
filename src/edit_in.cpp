@@ -94,6 +94,9 @@ extern int EdInteriorJumpID;
 
 /* How far the interior camera stands from the player, as an index into its distances. */
 extern int camera_dist_mode;
+/* The interior's texture animations and the table they are read into. */
+extern CTextureAnime TexAnime;
+extern CTexAnimeData TexAnimeData[64];
 
 #ifdef NON_MATCHING // draft declarations
 /* Where the camera sits for one camera marker of the interior, and the box the player must stand in. */
@@ -137,8 +140,6 @@ static INTERIOR_CAMERA *active_camera;
 static int camera_change_count;
 static int simple_event;
 static CCharacter MotionParts[4];
-static CTextureAnime TexAnime;
-static CTexAnimeData TexAnimeData[64];
 
 static void LoadScript();
 static void LoadInfo(char *script, int size);
@@ -1423,51 +1424,48 @@ static void VillagerCollision() {
  * @size 0x20C
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static int LoadTexture() {
-    u_int *cfg;
-    int cfg_size;
-    static LOADTEXTURE_INFO2 texdata;
+    static LOADTEXTURE_INFO2 texdata[16] = {{NULL, 15}};
 
     BG_READ_INFO *file = GetReadBGFile(2);
     if (file == NULL) {
         return 0;
     }
     char *ext = file->name;
-    while (*ext != '\0') {
-        if (*ext++ == '.') {
+    while (*ext) {
+        if (*ext == '.') {
+            ext++;
             break;
         }
+        ext++;
     }
-    u_int *data = NULL;
+    u_int *cfg = NULL;
+    int cfg_size;
     TexAnime.Initialize(NULL, 0);
     if (strcmp(ext, "img") == 0) {
-        texdata.name = (char *) file->buffer;
+        texdata[0].name = (char *) file->buffer;
     } else {
         u_int *found;
+        int found_size;
         if (GetPackFileExt((u_int *) file->buffer, "img", &found, 1, NULL, NULL) > 0) {
-            texdata.name = (char *) found;
+            texdata[0].name = (char *) found;
         }
-        if (GetPackFileExt((u_int *) file->buffer, "cfg", &found, 1, &cfg_size, NULL) > 0) {
+        if (GetPackFileExt((u_int *) file->buffer, "cfg", &found, 1, &found_size, NULL) > 0) {
             TexAnime.Initialize(TexAnimeData, 64);
-            data = found;
+            cfg = found;
+            cfg_size = found_size;
             for (int i = 0; i < 64; i++) {
                 TexAnimeData[i].Initialize();
             }
         }
     }
-    TexManager.LoadTextureBlockEX(15, &texdata);
-    if (data != NULL) {
-        TexAnime.LoadCFGFile((char *) data, cfg_size);
+    TexManager.LoadTextureBlockEX(15, texdata);
+    if (cfg != NULL) {
+        TexAnime.LoadCFGFile((char *) cfg, cfg_size);
     }
     EdNPCBuffer.Alloc((file->size >> 4) + 1);
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", LoadTexture__Fv__2);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1399);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1400);
 
 /**
  * Reserved character-loading hook with no operation.
