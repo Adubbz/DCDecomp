@@ -1906,8 +1906,9 @@ void MainDraw() {
             pEditGround->DrawBaseGround();
 
             float lod[4] = {50.0f, 350.0f, 600.0f, 1000.0f};
+            float far_lod;
             float near_lod = 2.0f;
-            float far_lod = 0.0f;
+            far_lod = 0.0f;
             float mid_lod = 0.0f;
 
             if (edit_mode_grd_draw != 0) {
@@ -2010,7 +2011,7 @@ void MainDraw() {
         case 7:
             CCharacter::MotionStopFlag = 1;
             Chara->Step();
-            Chara->Draw();
+            Chara->ShadowStep();
             for (int i = 0; i < 10; i++) {
                 CNPCharacter *villager = &EdVillager[i];
                 unsigned char addressable = villager->initialized != 0;
@@ -2023,7 +2024,7 @@ void MainDraw() {
 
                     villager->sequence_enabled = 0;
                     villager->chara.Step();
-                    villager->chara.Draw();
+                    villager->chara.ShadowStep();
                     villager->sequence_enabled = saved;
                 }
             }
@@ -2043,6 +2044,7 @@ void MainDraw() {
             float here[4];
             CBoxVu0 box;
             CMapParts *near_parts[0x40];
+            int i;
 
             if (GameMode == 2 || EdSystemMesCheck() != 0) {
                 shadow_on = 0;
@@ -2053,7 +2055,7 @@ void MainDraw() {
             if (GameMode == 0xB) {
                 marks = NULL;
             } else {
-                for (int i = 0; i < 10; i++) {
+                for (i = 0; i < 10; i++) {
                     marks_store[i] = 3;
                 }
             }
@@ -2074,7 +2076,7 @@ void MainDraw() {
             int found = pEditGround->GetNearParts(near_parts, 0x40, &box, NULL);
 
             Chara->ClearPointLight();
-            for (int i = 0; i < found; i++) {
+            for (i = 0; i < found; i++) {
                 CMapParts *parts = near_parts[i];
                 CFrame *frame = (CFrame *) parts->frame[0];
 
@@ -2240,7 +2242,7 @@ void MainDraw() {
         }
         EdSystemMesStep();
         EdSystemMesDraw();
-        if (GameMode == 4 && EditMenuStatus.mode < 2) {
+        if (GameMode == 4 && (EditMenuStatus.mode == 0 || EditMenuStatus.mode == 1)) {
             EDITPARTS_INFO *info = EditPartsInfo.GetPartsInfo(NowSelectParts);
 
             if (info != NULL) {
@@ -3434,9 +3436,6 @@ int CheckEditToWalk(float *position) {
 #ifdef NON_MATCHING
 void MoveEditCursor() {
     float pos[4];
-    CVector3_f_ grid;
-    float parts_pos[4];
-    float walk[4];
     float camera_distance[3] = {1000.0f, 2000.0f, 4000.0f};
     float camera_height[3] = {1000.0f, 1400.0f, 2000.0f};
 
@@ -3502,6 +3501,8 @@ void MoveEditCursor() {
         DrawPartsNameCount = 0;
     }
     if (area != NULL) {
+        CVector3_f_ grid;
+
         area->GetGrid(&grid, pos[0], pos[1], pos[2]);
 
         float half = area->GetUnitSize() / 2.0f;
@@ -3526,6 +3527,8 @@ void MoveEditCursor() {
         camera_dist_mode = 0;
     }
     ECursorFrame->SetPosition(pos[0], pos[1], pos[2]);
+    float parts_pos[4];
+
     sceVu0CopyVector(parts_pos, ECursorFrame->position);
     if (3.141592f * (float) NowSelectAngle / 2.0f == NowCursorRotY) {
         if (EdPadDown(2, 2) != 0) {
@@ -3550,7 +3553,7 @@ void MoveEditCursor() {
     OldFocusParts = NowFocusParts;
     NowFocusParts = pEditGround->GetParts(pos[0], pos[1], pos[2]);
     static int parts_no = 0;
-    if (EditMenuStatus.mode < 2 && EdPadDown(0x40, 2) != 0) {
+    if ((EditMenuStatus.mode == 0 || EditMenuStatus.mode == 1) && EdPadDown(0x40, 2) != 0) {
         int sound = 13;
 
         if (MapNo == 4) {
@@ -3657,9 +3660,11 @@ void MoveEditCursor() {
     EditCamera.FollowOn();
     EditCamera.SetFollow(pos[0], pos[1], pos[2]);
     if (EditMenuStatus.mode == -1) {
+        float walk[4];
+
         EdEditMainHelpMes(CheckEditToWalk(walk));
     }
-    if (EditMenuStatus.mode < 2) {
+    if (EditMenuStatus.mode == 0 || EditMenuStatus.mode == 1) {
         EdEditBuildHelpMes(NowSelectParts);
     }
     if (EditMenuStatus.mode == 3) {
