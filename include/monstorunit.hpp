@@ -456,7 +456,6 @@ public:
      * @mangled Step__12CMonstorUnitFi
      * @address 0x1DD540
      * @size 0x24A4
-     * @unknownret
      */
     void Step(int);
 
@@ -485,7 +484,6 @@ public:
      * @mangled SetupViewMonstor__12CMonstorUnitFiPfi
      * @address 0x1E02B0
      * @size 0x138C
-     * @unknownret
      */
     int SetupViewMonstor(int, float *, int);
 };
