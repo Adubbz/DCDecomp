@@ -3,9 +3,24 @@
 #include "frame.hpp"
 
 /**
- * Returns the length of a three-component vector.
+ * Gives the length of a three-component vector, on the vector unit. Calls
+ * bind to chararead's copy; the body is here so the compiler knows which
+ * registers the call leaves alone.
  */
-float vuabs(float *);
+static float vuabs(float *vector) {
+    asm {
+        lqc2 $vf4, 0x0($4)
+        vmul.xyz $vf4, $vf4, $vf4
+        vmr32.xy $vf5, $vf4
+        vmr32.x $vf6, $vf5
+        vadd.x $vf7, $vf4, $vf5
+        vadd.x $vf5, $vf6, $vf7
+        vsqrt $Q, $vf5x
+        vwaitq
+        cfc2.ni $2, $vi22
+        mtc1 $2, $f0
+    }
+}
 
 int CBound::InCheck(float *point, float *result) {
     float length;
@@ -133,7 +148,6 @@ void CBound::SetDir(float *direction, float *up_direction) {
     sceVu0CameraMatrix(inverse, origin, direction, up_direction);
     sceVu0TransposeMatrix(matrix, inverse);
 }
-#ifdef NON_MATCHING
 void CBound::SetDir(float *new_direction) {
     sceVu0Normalize(direction, new_direction);
     float length = vuabs(direction);
@@ -171,9 +185,6 @@ void CBound::SetDir(float *new_direction) {
     inverse[2][3] = 0.0f;
     sceVu0TransposeMatrix(matrix, inverse);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/bound", SetDir__6CBoundFPf);
-#endif
 void CBound::UpDateDirPos(void) {
     sceVu0FMATRIX frame_matrix;
     sceVu0FVECTOR world_from;

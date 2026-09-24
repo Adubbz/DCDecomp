@@ -830,6 +830,14 @@
       "@892__3"
     ]
   },
+  "src/bound.cpp": {
+    "globalize_symbols": [
+      "vuabs__FPf"
+    ],
+    "extern_functions": [
+      "vuabs__FPf"
+    ]
+  },
   "src/chararead.cpp": {
     "symbols": {
       "ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2<1>P14CDataAlloc2<1>P14CDataAlloc2<1>iP14CDataAlloc2<1>ii": "ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P14CDataAlloc2_1_iP14CDataAlloc2_1_ii",
