@@ -552,15 +552,18 @@ void EditExit() {
  * Carves the villager, work and menu arenas out of what the NPC arena left.
  */
 void InitWorkBuffer() {
-    u_char *free_start = EdNPCBuffer.base + EdNPCBuffer.used * 16;
-    int free_quads = EdNPCBuffer.limit - EdNPCBuffer.used;
+    int quads = EdNPCBuffer.used;
+    u_char *free_start = EdNPCBuffer.base + quads * 16;
+    quads = EdNPCBuffer.limit - quads;
     EdVillagerBuffer.base = free_start;
-    EdVillagerBuffer.limit = free_quads;
+    EdVillagerBuffer.limit = quads;
     EdVillagerBuffer.used = 0;
-    EdWorkBuffer.base = (u_char *) ((((int) free_start >> 6) + 1) << 6);
-    EdWorkBuffer.limit = free_quads - 4;
+    free_start = (u_char *) ((((int) free_start >> 6) + 1) << 6);
+    EdWorkBuffer.base = free_start;
+    EdWorkBuffer.limit = quads - 4;
     EdWorkBuffer.used = 0;
-    EdMenuBuffer.base = (u_char *) read_buffer - 0x180000;
+    free_start = (u_char *) read_buffer;
+    EdMenuBuffer.base = free_start - 0x180000;
     EdMenuBuffer.limit = 0x3A2E0;
     EdMenuBuffer.used = 0;
 }
