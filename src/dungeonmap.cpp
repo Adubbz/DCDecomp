@@ -341,7 +341,6 @@ void CDungeonMap::DrawMapCalc(int mode) {
     }
 }
 
-#ifdef NON_MATCHING
 void CDungeonMap::DrawMap(CCameraFollow *camera, CFrameVu1 *player) {
     float cam_pos[4];
     float view_delta[4];
@@ -453,16 +452,16 @@ void CDungeonMap::DrawMap(CCameraFollow *camera, CFrameVu1 *player) {
             if (draw != 1)
                 continue;
 
+            CDungeonParts *part;
             int direction = this->cells[cell_no].direction;
 
-            this->parts[this->cells[cell_no].parts_no].direction = direction;
-            {
-                CDungeonParts *position_part = &this->parts[this->cells[cell_no].parts_no];
-                position_part->pos[0] = world_x;
-                position_part->pos[1] = 0.0f;
-                position_part->pos[2] = world_z;
-                position_part->pos[3] = 1.0f;
-            }
+            part = &this->parts[this->cells[cell_no].parts_no];
+            part->direction = direction;
+            part = &this->parts[this->cells[cell_no].parts_no];
+            part->pos[0] = world_x;
+            part->pos[1] = 0.0f;
+            part->pos[2] = world_z;
+            part->pos[3] = 1.0f;
             for (npc_no = 0; npc_no < 4; npc_no++) {
                 if (this->npc[npc_no].parts_no == this->cells[cell_no].parts_no) {
                     this->ReservNPC_Draw(npc_no, world_x, 0.0f, world_z,
@@ -546,9 +545,6 @@ void CDungeonMap::DrawMap(CCameraFollow *camera, CFrameVu1 *player) {
         SndSetSePanf(sound_no, pan, 0);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawMap__11CDungeonMapFP13CCameraFollowP9CFrameVu1);
-#endif
 
 void CDungeonMap::DrawBGModel(CCamera *camera) {
     float pos[4];
