@@ -791,6 +791,9 @@ SECTIONS
 		editground.cpp.o (.sbss) // 0x002a2b20, DrawPartsCursor's last part and guard
 		. = ALIGN(4);
 		main.sbss.editground-tail.s.o (.sbss) // 0x002a2b28
+		shot_firebar.cpp.o (.sbss) // 0x002a2b7c, CSHOT_FIREBAR::Step's hit counter and guard
+		. = ALIGN(4);
+		main.sbss.shot_firebar-tail.s.o (.sbss) // 0x002a2b84
 		dungeonmap.cpp.o (.sbss)
 		main.sbss.part5.s.o (.sbss)
 		btitem.cpp.o (.sbss)           // 0x002a2c48

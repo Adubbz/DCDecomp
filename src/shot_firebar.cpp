@@ -84,33 +84,27 @@ void CSHOT_FIREBAR::Rset(void) {
         state[i] = -1;
     }
 }
-#ifdef NON_MATCHING
 void CSHOT_FIREBAR::Step(void) {
-    static int collision_timer = 0;
-    static char initialized = 0;
+    static int msg_cnt = 0;
 
-    if (initialized == 0) {
-        collision_timer = 0;
-        initialized = 1;
-    }
-    collision_timer++;
-    if (collision_timer >= 30) {
-        collision_timer = 0;
+    // The particles hit what they touch once every thirty steps.
+    msg_cnt++;
+    if (msg_cnt >= 30) {
+        msg_cnt = 0;
     }
 
     for (int particle = 0; particle < 24; particle++) {
         if (state[particle] != -1 && state[particle] == 0) {
             opacity[particle] -= 4.0f;
             size[particle] += 0.06f;
-            if (collision_timer == 0) {
-                NowColData->Set(position[particle], damage[particle], 2, 4.0f, 1.0f,
-                                2, 2, 0, 0);
-                COLLISION_HIT *hit = &NowColData->hit[NowColData->now_hit];
-                hit->owner = 5;
-                hit->unk_60 = 6;
-                hit->weapon_flags = NowWeaponHave->flags;
-                hit->vs_monster = NowWeaponHave->vs_monster;
-                hit->flags = GetWeaponElementAttr(NowWeaponHave->best_elem);
+            if (msg_cnt == 0) {
+                NowColData->Set(position[particle], damage[particle], 2, 4.0f, 1.0f, 2, 2, 0, 0);
+                NowColData->SetUserID(5, 6);
+                NowColData->hit[NowColData->now_hit].weapon_flags = NowWeaponHave->flags;
+                NowColData->hit[NowColData->now_hit].vs_monster = NowWeaponHave->vs_monster;
+                s8 elem = NowWeaponHave->best_elem;
+                CCollisionData *attr_col = NowColData;
+                attr_col->hit[attr_col->now_hit].flags = GetWeaponElementAttr(elem);
             }
             position[particle][0] += velocity[particle][0];
             position[particle][1] += velocity[particle][1];
@@ -121,9 +115,6 @@ void CSHOT_FIREBAR::Step(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_firebar", Step__13CSHOT_FIREBARFv);
-#endif
 #ifdef NON_MATCHING
 void CSHOT_FIREBAR::Draw(void) {
     bool texture_loaded = false;
