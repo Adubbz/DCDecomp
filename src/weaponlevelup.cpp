@@ -361,9 +361,6 @@ void CWeaponLevelUp::SetLevelUpWeaponData() {
     weapon->unk_14 = 0;
 }
 
-FUZZY_MATCH("asm/nonmatchings/weaponlevelup",
-            SetStatusBreak__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i);
-
 void CWeaponLevelUp::SetStatusBreak(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *effect, int no) {
     ATTACH_LIST total;
     int space;
@@ -399,11 +396,12 @@ void CWeaponLevelUp::SetStatusBreak(WEAPON_HAVE *have, CCharacter *character, CW
     for (i = 0; i < 4; i++) {
         status_stats[i] = 0.6f * (float) stat[i];
     }
+    scale = 0.6f;
     for (i = 0; i < 5; i++) {
-        status_elements[i] = weapon->elem[i] * 0.6f;
+        status_elements[i] = weapon->elem[i] * scale;
     }
     for (i = 0; i < 10; i++) {
-        status_monster[i] = weapon->vs_monster[i] * 0.6f;
+        status_monster[i] = weapon->vs_monster[i] * scale;
     }
     flags = 0;
     flags |= weapon->flags;
