@@ -21,9 +21,11 @@
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "mathutil.hpp"
+#include "mdt.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "texture.hpp"
+#include "visualvu1.hpp"
 
 /* Shared helpers: the IOP midi bridge, motion interpolation, collision and
  * ground queries, and 2D sprite setup. */
@@ -140,65 +142,222 @@ static void QuatSlerp(float *from, float *to, float t, float *out) {
     out[3] = scale_from * from[3] + scale_to * to_z;
     out[0] = scale_from * from[0] + scale_to * to_w;
 }
-#ifdef NON_MATCHING
-Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
-    u32 next_key = 0;
-    u32 previous_key;
-    u32 target_key;
-    float amount;
-    float value[4];
-    float from_quaternion[4];
-    float to_quaternion[4];
-    float *from;
-    float *to;
-    CFrame *target;
 
-    while (next_key < list->key_count &&
-           *(u32 *) ((u8 *) list->keys + next_key * 0x20) <= state->frame) {
-        next_key++;
+/**
+ * Finds the last key of a driver that stands at or before a motion frame.
+ */
+static inline int SearchMotKey(Mot_List *list, u_int frame) {
+    int middle;
+    int low = 0;
+    int high = list->key_count;
+
+    while (low < high) {
+        middle = (low + high) >> 1;
+        if (list->keys[middle].frame <= frame) {
+            low = middle + 1;
+        } else {
+            high = middle;
+        }
     }
-    if (next_key == 0 || next_key >= list->key_count) {
-        return list->next;
-    }
-    previous_key = next_key - 1;
-    target_key = next_key;
-    from = (float *) ((u8 *) list->keys + previous_key * 0x20 + 0x10);
-    to = (float *) ((u8 *) list->keys + target_key * 0x20 + 0x10);
+    return low - 1;
+}
+
+Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
+    int key;
+    int next;
+    float t;
+
+    key = SearchMotKey(list, state->frame);
     if (state->next_frame == state->frame + 1) {
-        u32 from_frame = *(u32 *) ((u8 *) list->keys + previous_key * 0x20);
-        u32 to_frame = *(u32 *) ((u8 *) list->keys + target_key * 0x20);
-        amount = to_frame == from_frame + 1
-                     ? state->blend
-                     : (state->time - from_frame) / (float) (to_frame - from_frame);
+        u_int time;
+        u_int next_time;
+
+        next = key + 1;
+        next_time = list->keys[next].frame;
+        time = list->keys[key].frame;
+        if ((next_time != time + 1) != 0) {
+            t = (state->time - (float) time) / ((float) next_time - (float) time);
+        } else {
+            t = state->blend;
+        }
     } else {
-        amount = state->blend;
+        if (state->next_frame == list->keys[state->next_frame - 1].frame) {
+            next = state->next_frame - 1;
+        } else {
+            int found = SearchMotKey(list, state->next_frame);
+
+            next = found;
+        }
+        t = state->blend;
     }
-    if (amount < 0.0f || amount > 1.0f) {
-        return list->next;
-    }
-    target = frame + list->frame;
-    if (list->type == 0) {
-        sceVu0CopyVector(from_quaternion, from);
-        sceVu0CopyVector(to_quaternion, to);
-        QuatSlerp(from_quaternion, to_quaternion, amount, value);
-        target->SetTransMatrix(value);
-    } else {
-        sceVu0InterVectorXYZ(value, to, from, amount);
-        if (list->type == 1) {
-            target->SetScale(value);
-        } else if (list->type == 2) {
-            target->SetPosition(value);
-        } else if (list->type == 0x1E && state->camera != NULL) {
-            frame->GetWorldPosition(value, value);
-            state->camera->SetPos(value);
-        } else if (list->type == 0x1F && state->camera != NULL) {
-            frame->GetWorldPosition(value, value);
-            state->camera->SetRef(value);
+    if (!(t < 0.0f) && t <= 1.0f && key < list->key_count && next < list->key_count) {
+        float s;
+        sceVu0FVECTOR value;
+        sceVu0FVECTOR rotation;
+        sceVu0FVECTOR from;
+        sceVu0FVECTOR to;
+        CFrameVu1 *target = &((CFrameVu1 *) frame)[list->frame];
+
+        switch (list->type) {
+            case 0:
+                sceVu0CopyVector(from, list->keys[key].value);
+                sceVu0CopyVector(to, list->keys[next].value);
+                if (!(t <= 0.0001f) && t < 0.9999f) {
+                    QuatSlerp(from, to, t, rotation);
+                    target->SetTransMatrix(rotation);
+                } else {
+                    from[0] = -from[0];
+                    to[0] = -to[0];
+                    if (t <= 0.0001f) {
+                        target->SetTransMatrix(from);
+                    }
+                    if (!(t < 0.9999f)) {
+                        target->SetTransMatrix(to);
+                    }
+                }
+                break;
+            case 1:
+                if (!(t <= 0.0001f) && t < 0.9999f) {
+                    sceVu0InterVectorXYZ(value, list->keys[next].value, list->keys[key].value, t);
+                } else {
+                    if (t <= 0.0001f) {
+                        sceVu0CopyVectorXYZ(value, list->keys[key].value);
+                    }
+                    if (!(t < 0.9999f)) {
+                        sceVu0CopyVectorXYZ(value, list->keys[next].value);
+                    }
+                }
+                target->SetScale(value[0], value[1], value[2]);
+                break;
+            case 2:
+                if (!(t <= 0.0001f) && t < 0.9999f) {
+                    sceVu0InterVectorXYZ(value, list->keys[next].value, list->keys[key].value, t);
+                } else {
+                    if (t <= 0.0001f) {
+                        sceVu0CopyVectorXYZ(value, list->keys[key].value);
+                    }
+                    if (!(t < 0.9999f)) {
+                        sceVu0CopyVectorXYZ(value, list->keys[next].value);
+                    }
+                }
+                target->local[3][0] = value[0];
+                target->local[3][1] = value[1];
+                target->local[3][2] = value[2];
+                target->world_valid = 0;
+                break;
+            case 12: {
+                int vertex;
+                MDT_HEADER *model = (MDT_HEADER *) target->GetVisual()->GetMDTDataAddress();
+                sceVu0FVECTOR *vertices = (sceVu0FVECTOR *) ((u_char *) model + model->vertex_ofs);
+                u_int frame_no;
+
+                target->attr.unk_0A = 1;
+                frame_no = list->frame;
+                if (!(t <= 0.0001f) && t < 0.9999f) {
+                    while (frame_no == list->frame) {
+                        vertex = list->target - 1;
+                        sceVu0InterVectorXYZ(value, list->keys[next].value, list->keys[key].value, t);
+                        sceVu0CopyVectorXYZ(vertices[vertex], value);
+                        list = list->next;
+                        switch ((int) list) {
+                            case 0:
+                                return NULL;
+                        }
+                    }
+                } else {
+                    if (t <= 0.0001f) {
+                        while (frame_no == list->frame) {
+                            vertex = list->target - 1;
+                            sceVu0CopyVectorXYZ(vertices[vertex], list->keys[key].value);
+                            list = list->next;
+                            switch ((int) list) {
+                                case 0:
+                                    return NULL;
+                            }
+                        }
+                    }
+                    if (!(t < 0.9999f)) {
+                        while (frame_no == list->frame) {
+                            vertex = list->target - 1;
+                            sceVu0CopyVectorXYZ(vertices[vertex], list->keys[next].value);
+                            list = list->next;
+                            switch ((int) list) {
+                                case 0:
+                                    return NULL;
+                            }
+                        }
+                    }
+                }
+                return list;
+            }
+            case 30:
+                if (state->camera != NULL) {
+                    sceVu0InterVectorXYZ(value, list->keys[next].value, list->keys[key].value, t);
+                    frame->GetWorldPosition(value, value);
+                    state->camera->SetPos(NULL, value[0], value[1], value[2]);
+                }
+                break;
+            case 31:
+                if (state->camera != NULL) {
+                    sceVu0InterVectorXYZ(value, list->keys[next].value, list->keys[key].value, t);
+                    frame->GetWorldPosition(value, value);
+                    state->camera->SetRef(NULL, value[0], value[1], value[2]);
+                }
+                break;
+            case 40: {
+                MDT_HEADER *model;
+                MDT_MATERIAL *material;
+
+                s = 1.0f - t;
+                model = (MDT_HEADER *) target->GetVisual()->GetMDTDataAddress();
+                material = (MDT_MATERIAL *) ((u_char *) model + model->info_ofs);
+                material[list->target].unk_00[3] =
+                    1.0f - (s * list->keys[key].value[0] + t * list->keys[next].value[0]);
+                target->attr.unk_0A = 2;
+                break;
+            }
+            case 41: {
+                MDT_HEADER *model = (MDT_HEADER *) target->GetVisual()->GetMDTDataAddress();
+                MDT_MATERIAL *material = (MDT_MATERIAL *) ((u_char *) model + model->info_ofs);
+
+                sceVu0InterVectorXYZ(material[list->target].unk_00, list->keys[next].value,
+                                     list->keys[key].value, t);
+                target->attr.unk_0A = 2;
+                break;
+            }
+            case 32:
+                if (state->camera != NULL) {
+                    s = 1.0f - t;
+                    state->camera->SetRoll(
+                        -(3.1415927f * ((s * list->keys[key].value[0] + t * list->keys[next].value[0]) / 180.0f)));
+                }
+                break;
+            case 33:
+                if (state->camera != NULL) {
+                    s = 1.0f - t;
+                    MGSetProjection(
+                        0.5f * (480.0f * (1.0f / tanf(3.1415927f * ((0.5f * (s * list->keys[key].value[0] + t * list->keys[next].value[0])) / 180.0f)))));
+                }
+                break;
+            case 50:
+                if (list->keys[key].value[0] < 1.0f) {
+                    target->attr.draw_on = 0;
+                } else {
+                    target->attr.draw_on = 3;
+                }
+                break;
+            case 51:
+                if (list->keys[key].value[0] < 1.0f) {
+                    target->attr.draw_on = 2;
+                } else {
+                    target->attr.draw_on = 1;
+                }
+                break;
         }
     }
     return list->next;
 }
-
+#ifdef NON_MATCHING
 Mot_List *MotionProc2(CFrame *frame, tagMOTION_TYPE *motion, tagFRAME_INF *frame_info,
                       Mot_List *list) {
     u32 key;
@@ -225,7 +384,6 @@ Mot_List *MotionProc2(CFrame *frame, tagMOTION_TYPE *motion, tagFRAME_INF *frame
     return list->next;
 }
 #else
-INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc__FP6CFrameP12MOTION_STATEP8Mot_List);
 INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List);
 #endif
 
