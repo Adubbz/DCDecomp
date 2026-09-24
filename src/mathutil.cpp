@@ -40,16 +40,6 @@ extern "C" MWGlobalDestructor *__global_destructor_chain __attribute__((section(
 // instruction scheduling, which fills branch delay slots.
 #pragma schedule on
 
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @245);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @424);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @425);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @1035);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @1037);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std9exception__2);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @1036);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std13bad_exception);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @1039);
-
 /**
  * Runs a constructor over every element of an array.
  *
@@ -162,14 +152,19 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __dt__Q23std9exceptionFv);
  * @address 0x122600
  * @size 0xC
  */
-#ifdef NON_MATCHING
 extern "C" const char *what__Q23std9exceptionCFv(const void *exception) {
     (void) exception;
     return "exception";
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", what__Q23std9exceptionCFv);
-#endif
+
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @424);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @425);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @1035);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @1037);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std9exception__2);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @1036);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std13bad_exception);
+
 /**
  * Reports whether a thrown type matches a catch clause's type.
  *
@@ -457,14 +452,10 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __dt__Q23std13bad_exceptionFv);
  * @address 0x122D90
  * @size 0xC
  */
-#ifdef NON_MATCHING
 extern "C" const char *what__Q23std13bad_exceptionCFv(const void *exception) {
     (void) exception;
     return "bad_exception";
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", what__Q23std13bad_exceptionCFv);
-#endif
 
 #pragma schedule reset
 
