@@ -368,8 +368,21 @@
     "sections": {
       ".editincamdist": [
         "camera_distance$1155"
+      ],
+      ".editinpts": [
+        "@286",
+        "@311"
       ]
-    }
+    },
+    "rekey_sections": [
+      [
+        ".editinpts",
+        [
+          40,
+          16
+        ]
+      ]
+    ]
   },
   "src/edit.cpp": {
     "export_constants_shared": [

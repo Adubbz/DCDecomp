@@ -1616,16 +1616,16 @@ INCLUDE_RODATA("asm/nonmatchings/edit_in", @1537);
  * @address 0x19F6F0
  * @size 0x238
  */
-#ifdef NON_MATCHING
 int LoadPTS(CMapParts *parts, u_int *archive) {
     EPARTS_INFO_HEADER *header = (EPARTS_INFO_HEADER *) ((char *) archive + archive[1]);
-    u_int *names[9] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+    u_int *names[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
     EPARTS_ARCHIVE *pack = (EPARTS_ARCHIVE *) archive;
 
-    if (pack->size_58 <= 0) {
+    if (pack->size_58 > 0) {
+        names[0] = (u_int *) ((char *) archive + pack->offset_48);
+    } else {
         return 0;
     }
-    names[0] = (u_int *) ((char *) archive + pack->offset_48);
     if (pack->size_5c > 0) {
         names[1] = (u_int *) ((char *) archive + pack->offset_4c);
     }
@@ -1659,7 +1659,7 @@ int LoadPTS(CMapParts *parts, u_int *archive) {
     } else {
         parts->unk_0DC = NULL;
     }
-    sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 0.0f};
+    sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 1.0f};
     position[0] = header->position[0];
     position[1] = header->position[1];
     position[2] = header->position[2];
@@ -1667,9 +1667,6 @@ int LoadPTS(CMapParts *parts, u_int *archive) {
     parts->SetRotation(header->rotation[0], header->rotation[1], header->rotation[2]);
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", LoadPTS__FP9CMapPartsPUi);
-#endif
 /**
  * Collects the function points one interior part defines.
  *
