@@ -9961,7 +9961,7 @@
           "value": "0x1.6000000000000p+3",
           "value_bits": "0x41300000",
           "ordinal": 3,
-          "evaluate_first": 0
+          "evaluate_first": 1
         },
         {
           "type": "binary32",
