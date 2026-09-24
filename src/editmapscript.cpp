@@ -223,7 +223,7 @@ struct EDIT_CHARA_DATA_ENTRY {
 
 STATIC_ASSERT(sizeof(EDIT_CHARA_DATA_ENTRY) == 0x14);
 
-extern EDIT_CHARA_DATA_ENTRY EditCharaData[5][16];
+extern EDIT_CHARA_DATA_ENTRY EditCharaData[6][20];
 extern u8 EditElementInfo[0x120];
 #include "editmenu.hpp"
 extern u8 MesWinTexBuff_01[0x100];
