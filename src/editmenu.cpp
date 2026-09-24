@@ -186,7 +186,6 @@ static int CalMoveToMenuIcon();
  * @address 0x210DA0
  * @size 0x8C
  */
-#ifdef NON_MATCHING
 static void EditMenuExit();
 
 /**
@@ -442,9 +441,6 @@ int GetNumHowManyItemsHave(int item) {
     }
     return count;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuExit__Fv);
-#endif
 static int GetEditMenuMax() {
     int max = 6;
     if (GetGameFlagForManualMenu() == 0) {
