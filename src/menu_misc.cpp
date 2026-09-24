@@ -1398,20 +1398,23 @@ void MonsterNameMake(int mes_no) {
     }
 }
 
-#ifdef NON_MATCHING
+/**
+ * Sets the screen position of the monster name message window.
+ *
+ * @mangled MonsterNamePosSet__Fii
+ * @address 0x20EE10
+ * @size 0x5C
+ */
 void MonsterNamePosSet(int x, int y) {
-    ClsMes *mes = CharaNameMes;
-    if (mes != NULL) {
-        mes->text_x = x - mes->text_columns * 14 / 2;
+    if (CharaNameMes != NULL) {
+        int columns = CharaNameMes->text_columns;
+        CharaNameMes->text_x = x - columns * 14 / 2;
         if (y % 2 != 0) {
             y++;
         }
-        mes->text_y = y;
+        CharaNameMes->text_y = y;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", MonsterNamePosSet__Fii);
-#endif
 #ifdef NON_MATCHING
 void MonsterNameDraw() {
     if (CharaNameMes == NULL || GetMonsterNameDrawFlag() == 0) {
