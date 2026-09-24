@@ -385,15 +385,22 @@
       ".editincamdist": [
         "camera_distance$1155"
       ],
+      ".editincampos": [
+        "@312"
+      ],
       ".editintex": [
         "texdata$1374"
       ],
       ".editinpts": [
-        "@341",
-        "@366"
+        "@444",
+        "@469"
       ],
       ".editinfixpos": [
         "fix_pos$1123"
+      ],
+      ".editincnt": [
+        "cnt$1223",
+        "init$1224"
       ]
     },
     "rekey_sections": [
@@ -401,6 +408,12 @@
         ".editinmove",
         [
           16,
+          16
+        ]
+      ],
+      [
+        ".editincampos",
+        [
           16
         ]
       ],

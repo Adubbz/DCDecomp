@@ -118,10 +118,6 @@ extern sceVu0FVECTOR fix_chara_rot;
 /* Whether the debug camera stays put instead of following the player. */
 extern int fix_camera;
 
-static void MoveCamera(CCameraFollow *camera);
-static int GetDoorPos(int door_no, float *position, float *rotation, int *parts_no, int *motion);
-
-#ifdef NON_MATCHING // draft declarations
 /* Where the camera sits for one camera marker of the interior, and the box the player must stand in. */
 struct INTERIOR_CAMERA {
     u8 unk_000[0x60];
@@ -132,6 +128,15 @@ struct INTERIOR_CAMERA {
     u8 unk_2e4[0xC];
 };
 
+/* The camera marker the interior camera is placed from, and how many more frames the player must
+   stand in another marker's box before the camera switches to it. */
+extern INTERIOR_CAMERA *active_camera;
+extern int camera_change_count;
+
+static void MoveCamera(CCameraFollow *camera);
+static int GetDoorPos(int door_no, float *position, float *rotation, int *parts_no, int *motion);
+
+#ifdef NON_MATCHING // draft declarations
 extern int EdInteriorStartEvent;
 extern int EdInteriorPartsNo;
 extern char EdInteriorName[];
@@ -148,8 +153,6 @@ static int key_counter;
 static int goto_menu;
 static int goto_return_menu;
 static int camera_num;
-static INTERIOR_CAMERA *active_camera;
-static int camera_change_count;
 static int simple_event;
 static CCharacter MotionParts[4];
 
@@ -1248,27 +1251,28 @@ static int GetDoorPos(int door_no, float *position, float *rotation, int *parts_
  * @address 0x19E520
  * @size 0x3F8
  */
-#ifdef NON_MATCHING
 void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara) {
     sceVu0FVECTOR position;
     sceVu0FVECTOR local;
-    INTERIOR_CAMERA cameras[8];
-    sceVu0FMATRIX matrix;
+    int i;
     EPARTS_FUNC_DATA *point = func_point;
     int count;
+    INTERIOR_CAMERA *entry;
 
     chara->GetPosition(position);
+    INTERIOR_CAMERA cameras[8];
+    sceVu0FMATRIX matrix;
     count = 0;
-    for (int i = 0; i < func_num; i++, point++) {
+    for (i = 0; i < func_num; i++, point++) {
         if (point->kind == 7) {
-            INTERIOR_CAMERA *entry = &cameras[count];
+            entry = &cameras[count];
             entry->link_id = point->link_id;
             CFrame *owner = (CFrame *) point->parts;
-            sceVu0CopyVector(entry->min, point->position);
-            sceVu0CopyVector(entry->max, point->rotation);
+            sceVu0CopyVector(entry->min, point->parameters);
+            sceVu0CopyVector(entry->max, point->values);
             sceVu0UnitMatrix(matrix);
             if (owner != NULL) {
-                CFrame *found = owner->SearchFrame(point->frame_name);
+                CFrame *found = owner->SearchFrame((char *) point->frame_name);
                 if (found != NULL) {
                     found->GetLWMatrix(matrix);
                 }
@@ -1286,14 +1290,15 @@ void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara) {
     }
     INTERIOR_CAMERA *inside = NULL;
     static int cnt = 0;
-    for (int i = 0; i < count; i++) {
-        INTERIOR_CAMERA *entry = &cameras[i];
+    for (i = 0; i < count; i++) {
+        entry = &cameras[i];
         if (entry->link_id == 0) {
             inside = entry;
             continue;
         }
+        float (*inverse)[4] = entry->frame.GetInverseMatrix();
         position[3] = 1.0f;
-        sceVu0ApplyMatrix(local, entry->frame.GetInverseMatrix(), position);
+        sceVu0ApplyMatrix(local, inverse, position);
         if (!(local[0] < entry->min[0]) && !(local[1] < entry->min[1]) && !(local[2] < entry->min[2]) &&
             local[0] <= entry->max[0] && local[1] <= entry->max[1] && local[2] <= entry->max[2]) {
             inside = entry;
@@ -1301,7 +1306,7 @@ void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara) {
         }
     }
     cnt++;
-    if (cnt >= 61) {
+    if (cnt > 60) {
         cnt = 0;
     }
     if (active_camera == NULL) {
@@ -1320,7 +1325,7 @@ void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara) {
         camera_change_count--;
     }
     if (active_camera != NULL) {
-        sceVu0FVECTOR eye = {0.0f, 0.0f, 0.0f, 0.0f};
+        sceVu0FVECTOR eye = {0.0f, 0.0f, 0.0f, 1.0f};
         active_camera->frame.GetWorldPosition(eye, eye);
         position[1] += 17.0f;
         camera->SetPos(eye);
@@ -1329,9 +1334,6 @@ void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara) {
         camera->SetNextRef(NULL, position[0], position[1], position[2]);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", SetCameraPos__FP6CFrameP7CCameraP10CCharacter);
-#endif
 /**
  * Collects the collision polygons of the interior parts meeting a box.
  *
