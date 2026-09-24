@@ -148,6 +148,7 @@ void CBound::SetDir(float *direction, float *up_direction) {
     sceVu0CameraMatrix(inverse, origin, direction, up_direction);
     sceVu0TransposeMatrix(matrix, inverse);
 }
+
 void CBound::SetDir(float *new_direction) {
     sceVu0Normalize(direction, new_direction);
     float length = vuabs(direction);
