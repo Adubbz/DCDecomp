@@ -5,12 +5,10 @@
 #include "dataalloc.hpp"
 #include "mathutil.hpp"
 #include "mdt.hpp"
+#include "mglib.hpp"
 #include "renderinfo.hpp"
 
 extern CDataAlloc2<1> *ActiveData;
-#ifdef NON_MATCHING
-extern int DBuffID;
-#endif
 
 int CVisualShadow::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
                            VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
@@ -164,16 +162,12 @@ int CVisualShadow::CreateVUdataShadow(u_int *block, u_int *model_data) {
 INCLUDE_ASM("asm/nonmatchings/visualshadow", CreateVUdataShadow__13CVisualShadowFPUiPUi);
 #endif
 
-#ifdef NON_MATCHING
 int CVisualShadow::RemakeData(u_int *block) {
-    if (!data) {
+    if (data == NULL) {
         return 0;
     }
-    return CreateVUdataShadow(DBuffID ? vu_data_buffer[1] : vu_data_buffer[0], data);
+    return CreateVUdataShadow(vu_data_buffer[DBuffID], data);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/visualshadow", RemakeData__13CVisualShadowFPUi);
-#endif
 
 #ifdef NON_MATCHING
 int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, RenderInfo *info,

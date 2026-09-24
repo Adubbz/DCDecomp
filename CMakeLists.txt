@@ -250,8 +250,6 @@ carve_part(main.sbss.part4b.s
            main.sbss.edit_in-a.s=2A2AFC-2A2B20
            main.sbss.editground-tail.s=2A2B28-2A2B7C
            main.sbss.shot_firebar-tail.s=2A2B84-2A2BF0)
-carve_part(main.rdata.part4.s
-           main.rdata.part4b.s=2A1180-2A11A0)
 # CheckDmg owns its local static effect index and initialization guard, and
 # runscript_opcodes.cpp owns bak_ColNo after them.
 carve_part(main.sbss.part5.s
@@ -335,7 +333,8 @@ list(REMOVE_ITEM STATIC_SECTION_SOURCES
 
 # fish.cpp now owns the complete fish data run at 0x296050-0x2965C0.
 list(REMOVE_ITEM STATIC_SECTION_SOURCES
-     ${PARTS_DIR}/main.data.part7.s)
+     ${PARTS_DIR}/main.data.part7.s
+     ${PARTS_DIR}/main.rdata.part4.s)
 
 # langset.cpp now owns LangsetInit's texture list template at 0x296630-0x29666C.
 list(REMOVE_ITEM STATIC_SECTION_SOURCES

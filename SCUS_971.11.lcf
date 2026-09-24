@@ -637,7 +637,7 @@ SECTIONS
         . = ALIGN(8);
         visualvu1.cpp.o (.visualvu1-vt)  // 0x002a1168
         . = ALIGN(16);
-        main.rdata.part4b.s.o (.rdata)   // 0x002a1180
+        visualshadow.cpp.o (.vtables)    // 0x002a1180
         visualvu1.cpp.o (.vtables)       // 0x002a11a0
         character.cpp.o (.vtables)       // 0x002a11e0
         . = . + 0x8;
