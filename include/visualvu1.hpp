@@ -103,12 +103,13 @@ public:
     int CreateVUdataFromMDT(unsigned int *, unsigned int *, int, int);
 
     /**
+     * Rebuilds a VU data block from retained model data and returns its size in quadwords.
+     *
      * @mangled CreateVUdataFromMDTRemake__10CVisualVu1FPUiPUii
      * @address 0x135E50
      * @size 0x288
-     * @unknownret
      */
-    void CreateVUdataFromMDTRemake(unsigned int *, unsigned int *, int);
+    int CreateVUdataFromMDTRemake(unsigned int *, unsigned int *, int);
 };
 
 class CVisualPolyVu1 : public CVisualVu1 {
