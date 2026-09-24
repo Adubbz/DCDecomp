@@ -1188,7 +1188,9 @@ void MemCheckInit() {
     TexManager.Initialize(16352);
     result = TexManager.EnterTextureFile(texdata);
     TexManager.LoadTextureBlock(-1, read_buffer);
-    MGSetBGColor(0.0f, 0.0f, 0.0f, 0.0f);
+    float r, g, b, a;
+    g = a = r = b = 0.0f;
+    MGSetBGColor(r, g, b, a);
     if (sceMcInit())
         printf("libmc initialize faild\n");
     mem_chk_mode = 0;
