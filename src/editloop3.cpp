@@ -1349,9 +1349,9 @@ int EdGetTime(float time) {
         period = 0;
     if (EdCheckTime(time, 2.5f, 5.5f) != 0)
         period = 1;
-    if (EdCheckTime(time, (0, 5.5f), 8.5f) != 0)
+    if (EdCheckTime(time, 5.5f, 8.5f) != 0)
         period = 2;
-    if (EdCheckTime(time, (0, 8.5f), 11.5f) != 0)
+    if (EdCheckTime(time, 8.5f, 11.5f) != 0)
         period = 3;
     return period;
 }
