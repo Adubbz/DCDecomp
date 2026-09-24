@@ -213,13 +213,13 @@ extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 extern u8 EditCharaData[0x960];
 extern EDIT_ELEMENT_INFO EditElementInfo[36];
 #include "editmenu.hpp"
+#include "menu_draw.hpp"
+#include "nowload.hpp"
 #include "wind.hpp"
 #ifdef NON_MATCHING // draft includes
 #include "memcard.hpp"
 #include "fishing.hpp"
 #include "effectmacro.hpp"
-#include "nowload.hpp"
-#include "menu_draw.hpp"
 #endif
 extern u8 MesWinTexBuff_01[0x100];
 extern u8 MesWinTexBuff_02[0x100];
@@ -229,6 +229,9 @@ extern CWind EdWind;
 extern CFrame *SunFrame[4];
 extern C3DSprite SystemEffect[8];
 extern u8 def_light[0xC0];
+extern CTextureAnime TexAnime;
+extern CTexAnimeData TexAnimeData[0x40];
+extern CTexture *StayTexture;
 
 void CommandIMGSub(int image_type, int image_number, char *name);
 void EditSave();
@@ -326,9 +329,6 @@ extern int binary;
 extern int NowSelectParts;
 extern int NowSelectAngle;
 extern float NowCursorRotY;
-extern CTextureAnime TexAnime;
-extern CTexAnimeData TexAnimeData;
-extern CTexture *StayTexture;
 extern float NowPartsCursorPos[4];
 extern int EdBeforeInBgmNo;
 extern int EdDrawOffMap;
@@ -3349,52 +3349,6 @@ void VillagerCollision() {
         }
     }
 }
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2737);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2738);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2739);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2740);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2741);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2742);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2747);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2748);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2749);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2750);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2751);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2752);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2753);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2754);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2755);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2756);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2803);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2804);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2805);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2806);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2807);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2808);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2809);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2810);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2811);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2812);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2813);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2814);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2815);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2816);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2817);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2818);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2819);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2820);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2821);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2822);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2850);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2851);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2852);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2853);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2999);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @3000);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @3001);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @3002);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @3003);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @3004);
 /**
  * Says whether the ground under the editor's cursor can be walked on, and
  * gives back the place on it the player would stand.
@@ -3722,7 +3676,6 @@ INCLUDE_ASM("asm/nonmatchings/editloop", MoveEditCursor__Fv);
  * @address 0x180C00
  * @size 0x878
  */
-#ifdef NON_MATCHING
 int LoadTexture() {
     int entered;
     int image;
@@ -3850,14 +3803,14 @@ int LoadTexture() {
         blocks[entered].block_no = 0;
         blocks[entered].unk_08 = 0;
         TexManager.LoadTextureBlock(-1, blocks);
-        TexAnime.Initialize(&TexAnimeData, 0x40);
+        TexAnime.Initialize(TexAnimeData, 0x40);
 
         int anime_size;
         char *anime = (char *) GetPackFile(menu_data, "texanime.cfg", &anime_size);
 
         if (anime != NULL) {
             for (int i = 0; i < 64; i++) {
-                (&TexAnimeData)[i].Initialize();
+                TexAnimeData[i].Initialize();
             }
             TexAnime.LoadCFGFile(anime, anime_size);
         }
@@ -3883,9 +3836,17 @@ int LoadTexture() {
     DataBuffer__2.Align64();
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop", LoadTexture__Fv);
-#endif
+
+INCLUDE_RODATA("asm/nonmatchings/editloop", @2850);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @2851);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @2852);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @2853);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @2999);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @3000);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @3001);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @3002);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @3003);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @3004);
 /**
  * Loads the player's model and motions into the arena the caller names, or
  * into the character arena when it names none.
