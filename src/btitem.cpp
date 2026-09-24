@@ -170,7 +170,6 @@ extern char *charaNameTbl[6];
  * First weapon of each party member, by character number.
  */
 extern int defWeapon__4[6];
-extern char *ITEM_NAME_TBL_NEW[];
 
 /**
  * Trail effect drawn behind the swung weapon.
@@ -639,7 +638,6 @@ int BtGetTreasureboxBig_Loop() {
  * @address 0x1D1FC0
  * @size 0x4A0
  */
-#ifdef NON_MATCHING
 void BtGetTreasureboxSmall_Init(int chance) {
     u_char *mds;
     u_char *img;
@@ -726,9 +724,6 @@ void BtGetTreasureboxSmall_Init(int chance) {
     BtGetTreasurebox_Sled = 0;
     autoCamTrial();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxSmall_Init__Fi);
-#endif
 /**
  * Runs the small treasure chest's presentation and reports when it ends.
  *
@@ -866,11 +861,6 @@ int BtGetTreasureboxSmall_Loop() {
 #else
 INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxSmall_Loop__Fv);
 #endif
-INCLUDE_RODATA("asm/nonmatchings/btitem", @792);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @793);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @794__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @795__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @796);
 /**
  * Starts the short presentation for picking up an Atla.
  *

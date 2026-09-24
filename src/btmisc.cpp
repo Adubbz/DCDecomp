@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "btitem.hpp"
 #include "btmisc.hpp"
 #include "camera.hpp"
 #include "dataalloc.hpp"
@@ -146,11 +147,6 @@ INCLUDE_ASM("asm/nonmatchings/btmisc", makeWeaponName__FPci);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @919__2);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @920__2);
 INCLUDE_RODATA("asm/nonmatchings/btmisc", @921__2);
-/**
- * Base name of each item's model and texture files, beginning with attachments.
- */
-extern char *ITEM_NAME_TBL_NEW[];
-
 /**
  * Builds the model and texture paths of one item.
  *

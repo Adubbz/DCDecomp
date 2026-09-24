@@ -1,6 +1,11 @@
 #pragma once
 
 /**
+ * Base name of each item's model and texture files, beginning with attachments.
+ */
+extern char *ITEM_NAME_TBL_NEW[];
+
+/**
  * Puts one party member in the player's hands, loading them if need be.
  *
  * @mangled selectChrUnit__Fii

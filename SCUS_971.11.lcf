@@ -527,7 +527,7 @@ SECTIONS
         main.data.part6.s.o (.data)
         btitem.cpp.o (.btitemdata1)  // 0x0027e7d0
         . = ALIGN(0x10);
-        main.data.btitem-a.s.o (.data) // 0x0027e7f0
+        main.data.btitem-a.s.o (.data) // 0x0027e810
         btitem.cpp.o (.btitemdata2)  // 0x0027ead0
         main.data.btitem-b.s.o (.data) // 0x0027eae0
         weaponeffect.cpp.o (.data)   // 0x0027eb30
