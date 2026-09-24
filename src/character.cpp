@@ -779,8 +779,6 @@ void CCharacter::SetScale(float *scale) {
     CCharacter::SetScale(scale[0], scale[1], scale[2]);
 }
 
-FUZZY_MATCH("asm/nonmatchings/character", Draw__10CCharacterFv);
-
 void CCharacter::Draw() {
     sceVu0FVECTOR ambient;
     sceVu0FVECTOR saved_ambient;
@@ -793,6 +791,8 @@ void CCharacter::Draw() {
     int fade;
     int light;
     int i;
+    int colour_no;
+    int cloth_no;
     float distance;
     float level;
 
@@ -852,15 +852,15 @@ void CCharacter::Draw() {
         light_colour[light][3] = this->point_light[i].colour[3];
 
         light--;
-        if (light < 3) {
+        if (light <= 2) {
             break;
         }
     }
 
     if (fade) {
         sceVu0ScaleVectorXYZ(ambient, ambient, this->fade[0]);
-        for (i = 0; i < 4; i++) {
-            sceVu0ScaleVectorXYZ(light_colour[i], light_colour[i], this->fade[0]);
+        for (colour_no = 0; colour_no < 4; colour_no++) {
+            sceVu0ScaleVectorXYZ(light_colour[colour_no], light_colour[colour_no], this->fade[0]);
         }
     }
 
@@ -875,9 +875,9 @@ void CCharacter::Draw() {
     MGSetPLight(light_direction, light_colour);
     MGDraw(this->frame);
 
-    for (i = 0; i < CHARA_CLOTH_MAX; i++) {
-        if (this->cloth[i] != NULL) {
-            this->cloth[i]->Draw();
+    for (cloth_no = 0; cloth_no < CHARA_CLOTH_MAX; cloth_no++) {
+        if (this->cloth[cloth_no] != NULL) {
+            this->cloth[cloth_no]->Draw();
         }
     }
 
