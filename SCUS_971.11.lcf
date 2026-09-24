@@ -576,9 +576,8 @@ SECTIONS
         battle_globals.cpp.o (.nameenterdata0) // 0x002959c0 DrawCharaName's texture list
         . = ALIGN(0x10);
         main.data.battle_globals-c.s.o (.data) // 0x002959d0
-        battle_globals.cpp.o (.nameenterdata1) // 0x00295a10 DrawNameTemplete's tab tables
+        battle_globals.cpp.o (.nameenterdata1) // 0x00295a10 DrawNameTemplete's tab tables, CheckName's reserved names
         . = ALIGN(0x10);
-        main.data.battle_globals-a.s.o (.data) // 0x00295a70
         battle_globals.cpp.o (.nameenterdata2) // 0x00295aa0 NameEnterDraw local tables
         main.data.battle_globals-gap.s.o (.data) // 0x00295b18
         main.data.battle_globals-b.s.o (.data) // 0x00295b50

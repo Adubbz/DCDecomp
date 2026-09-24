@@ -500,34 +500,40 @@ static int NameCompare(short *first, short *second) {
     return 1;
 }
 /**
- * Reports whether the entered name may be used.
+ * Reports whether the entered name may be used: 2 when it is blank, 0 when it
+ * is reserved or an earlier party member already has it, 1 otherwise.
  *
  * @mangled CheckName__Fv
  * @address 0x239A40
  * @size 0x160
  */
-#ifdef NON_MATCHING
 int CheckName() {
+    s16 reserved[2][10] = {
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {230, 230, 230, 230, 230, 230, 230, 230, 230, 230},
+    };
     int blank_characters = 0;
+
     for (int index = 0; index < 10; index++) {
         if (CharaName[index] == 0 || CharaName[index] == 230) {
             blank_characters++;
         }
     }
-    if (blank_characters == 10) {
+    if (blank_characters >= 10) {
         return 2;
     }
-
-    for (int character = NameSelect.chara_no - 1; character >= 0; character--) {
+    for (int index = 0; index < 2; index++) {
+        if (NameCompare(CharaName, reserved[index]) == 0) {
+            return 0;
+        }
+    }
+    for (int character = NameSelect.chara_no - 1; 0 <= character; character--) {
         if (NameCompare(CharaName, SaveData->GetCharaName(character)) == 0) {
             return 0;
         }
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", CheckName__Fv);
-#endif
 /**
  * Draws the name-entry screen.
  *
