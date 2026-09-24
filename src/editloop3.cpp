@@ -880,12 +880,14 @@ void EdInitVillagerOnOff(CNPCharacter *characters, VILLAGER_INFO *villagers,
 
 void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
                            CEditGround *ground, float (*transform)[4]) {
+    int i;
+
     if (MapNo > 10) {
         RestoreVillagerInfo(info);
-        for (int i = 0; i < 10; i++) {
+        for (i = 0; i < 10; i++) {
             int draw = 1;
-            VILLAGER_INFO *entry = &info[i];
-            if (entry->index >= 0) {
+            if (info[i].index >= 0) {
+                VILLAGER_INFO *entry = &info[i];
                 sceVu0FVECTOR position;
                 sceVu0FVECTOR rotation;
                 sceVu0FVECTOR people_position;
@@ -919,18 +921,16 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
     int stationary_target = villager_count >> 1;
     int moving_target = villager_count - stationary_target;
     int random_state = rand();
-    for (int i = 0; i < 10; i++)
+    for (i = 0; i < 10; i++)
         info[i].placed = 0;
     while (info[villager_count].name[0] != '\0')
         villager_count++;
 
     int stationary_count = 0;
-    for (int i = 0; i < 10; i++) {
-        VILLAGER_INFO *entry = &info[i];
-        int *placed = &entry->placed;
-        if (entry->placed == 0 && entry->initial_motion == 0) {
+    for (i = 0; i < 10; i++) {
+        if (info[i].placed == 0 && info[i].initial_motion == 0) {
             stationary_count++;
-            *placed = 1;
+            info[i].placed = 1;
             if (stationary_count >= stationary_target)
                 break;
         }
@@ -947,21 +947,18 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
         int selected = GetRandomMoveVillager(info);
         if (selected < 0)
             break;
-        int *motion;
-        int *placed = &info[selected].placed;
         info[selected].placed = 1;
-        motion = &info[selected].initial_motion;
         info[selected].initial_motion = 1;
         int failed = 0;
         int avoid_count = 0;
         sceVu0FVECTOR avoid_positions[11];
         if (transform != NULL)
             sceVu0CopyVector(avoid_positions[avoid_count++], *transform);
-        for (int i = 0; i < 10; i++) {
-            if (*motion != 0)
+        for (i = 0; i < 10; i++) {
+            if (info[selected].initial_motion != 0)
                 sceVu0CopyVector(avoid_positions[avoid_count++], info[i].position);
         }
-        for (int i = 0; i < avoid_count; i++)
+        for (i = 0; i < avoid_count; i++)
             avoid_positions[i][3] = 200.0f;
 
         sceVu0FVECTOR random_position;
@@ -975,14 +972,14 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
         for (;;) {
             if (ground->GetRandomPlanePos(random_position, avoid_positions,
                                           avoid_count, reference) != 0) {
-                sceVu0CopyVector(((VILLAGER_INFO *) info)[selected].position, random_position);
+                sceVu0CopyVector(info[selected].position, random_position);
                 break;
             }
             if (reference[3] > 500.0f) {
                 reference[3] = -1.0f;
                 if (ground->GetRandomPlanePos(random_position, avoid_positions,
                                               avoid_count, reference) != 0) {
-                    sceVu0CopyVector(((VILLAGER_INFO *) info)[selected].position, random_position);
+                    sceVu0CopyVector(info[selected].position, random_position);
                     break;
                 }
                 failed = 1;
@@ -991,7 +988,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
             reference[3] += 100.0f;
         }
         if (failed != 0)
-            *placed = 0;
+            info[selected].placed = 0;
         moving_count++;
     }
 
@@ -1002,7 +999,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
         selected = GetRandomVillager(info);
     }
 
-    for (int i = 0; i < 10; i++) {
+    for (i = 0; i < 10; i++) {
         VILLAGER_INFO *entry = &info[i];
         if (entry->placed != 0) {
             sceVu0FVECTOR position;
@@ -1047,7 +1044,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
             character->chara.SetPosition(position);
             character->chara.SetRotation(rotation[0], rotation[1], rotation[2]);
             villagers[i].draw_enabled = draw;
-            character->chara.SetMotion(0, 0);
+            villagers[i].chara.SetMotion(0, 0);
         }
     }
     srand(random_state);
