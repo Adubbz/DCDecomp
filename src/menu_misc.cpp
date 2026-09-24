@@ -43,8 +43,6 @@ extern CTexture *WepIcon;
 extern u_long128 *WeaponRead_Buf;
 extern u_long128 *MenuWeaponModelBuildBuffer;
 extern u_long128 *WepMenuEffectReadBuf;
-extern u_long128 *CharaChangeBaseBuf;
-extern s16 charachangeid;
 extern u_long128 *menucharReadbuf;
 extern u_long128 *menud0wepReadBuf;
 extern u_long128 *menud1wepReadBuf;
@@ -52,8 +50,6 @@ extern u_long128 *menud2wepReadBuf;
 extern char MenureadFile[64];
 extern char MenuWepDir[];
 extern int defWeapon__5[6];
-extern u_long128 *MenuWepIconCharaChangePtr;
-extern u_long128 *MenuVoiceLoadPtr;
 extern s16 CharaNameDrawCase;
 extern s16 DngEscapeSelect;
 extern "C" CCharacter DefaultWeapon;
@@ -111,6 +107,18 @@ extern s16 DngEscapeAlpha;
 
 /** The file-read slot the menu's character model is loaded through. */
 extern int CharaFileBGReadNo;
+
+/** The start of the buffer a character change loads into. */
+extern u_long128 *CharaChangeBaseBuf;
+
+/** The character a character change switches to. */
+extern s16 charachangeid;
+
+/** The buffer a character change loads the weapon icons into. */
+extern u_long128 *MenuWepIconCharaChangePtr;
+
+/** The buffer a character change loads the character's voice into. */
+extern u_long128 *MenuVoiceLoadPtr;
 
 extern CDataAlloc2<1> MenuExCashBuffer;
 extern CCharacter MenuCharaFrame;
@@ -1204,15 +1212,21 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1208);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1209);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1210);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1236);
-#ifdef NON_MATCHING
+
+/**
+ * Starts the background read of the character change screen's voice data.
+ *
+ * @mangled CharaChangeInitToGL2__Fi
+ * @address 0x20E8B0
+ * @size 0xB0
+ */
 void CharaChangeInitToGL2(int load_icon) {
     int size;
 
-    u_long128 *base = CharaChangeBaseBuf;
-    MenuWepIconCharaChangePtr = base;
+    MenuWepIconCharaChangePtr = CharaChangeBaseBuf;
     if (load_icon != 0) {
         MenuWepIconCharaChangePtr = MenuCalcBufAlignment(MenuWepIconCharaChangePtr);
-        size = LoadFileBGMenuData("wepicon.img", MenuWepIconCharaChangePtr);
+        size = LoadFileBGMenuData("wepicon.img", (u_long128 *) MenuWepIconCharaChangePtr);
         MenuWepIconCharaChangePtr = MenuWepIconCharaChangePtr + (size >> 4) + 1;
     }
     MenuVoiceLoadPtr = MenuWepIconCharaChangePtr;
@@ -1221,11 +1235,6 @@ void CharaChangeInitToGL2(int load_icon) {
         printf("*** voice read err \n");
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", CharaChangeInitToGL2__Fi);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1242);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1243);
 #ifdef NON_MATCHING
 void BtMenuLoadChara() {
     s8 chara = charachangeid;
