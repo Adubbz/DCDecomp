@@ -16,12 +16,14 @@
 #include "itemdata.hpp"
 #include "memcard.hpp"
 #include "menu_draw.hpp"
+#include "menu_dungeon.hpp"
 #include "menu_inventory.hpp"
 #include "menu_manual.hpp"
 #include "mglib.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
+#include "userstatus.hpp"
 #include "weapon_buildup.hpp"
 #include "weaponeffect.hpp"
 
@@ -31,11 +33,9 @@
 #include "btactstatus.hpp"
 #include "btmisc.hpp"
 #include "dngstatusdata.hpp"
-#include "menu_dungeon.hpp"
 #include "mainselect.hpp"
 #include "menuitemstep.hpp"
 #include "shot_effect.hpp"
-#include "userstatus.hpp"
 #include "weaponlevelup.hpp"
 
 extern s32 BtlMenuMode;
@@ -43,10 +43,6 @@ extern CTexture *WepIcon;
 extern u_long128 *WeaponRead_Buf;
 extern u_long128 *MenuWeaponModelBuildBuffer;
 extern u_long128 *WepMenuEffectReadBuf;
-extern u_long128 *menucharReadbuf;
-extern u_long128 *menud0wepReadBuf;
-extern u_long128 *menud1wepReadBuf;
-extern u_long128 *menud2wepReadBuf;
 extern char MenureadFile[64];
 extern char MenuWepDir[];
 extern int defWeapon__5[6];
@@ -57,7 +53,6 @@ extern "C" CCharacter MainWeapon;
 extern "C" CSHOT_EFFECT *NowMainEffect;
 extern "C" CSHOT_EFFECT CharaMainEffectCrash;
 extern s32 CharaMainHandViewFlag;
-extern "C" CCharacter *NowWeapon;
 #endif
 
 /** The weapon test number GetNowTestNo reports, initialised to 1. */
@@ -114,11 +109,26 @@ extern u_long128 *CharaChangeBaseBuf;
 /** The character a character change switches to. */
 extern s16 charachangeid;
 
+/** The buffer the changed-to character's model is read into. */
+extern u_long128 *menucharReadbuf;
+
+/** The buffer the changed-to character's first weapon model is read into. */
+extern u_long128 *menud0wepReadBuf;
+
+/** The buffer the changed-to character's second weapon model is read into. */
+extern u_long128 *menud1wepReadBuf;
+
+/** The buffer the changed-to character's third weapon model is read into. */
+extern u_long128 *menud2wepReadBuf;
+
 /** The buffer a character change loads the weapon icons into. */
 extern u_long128 *MenuWepIconCharaChangePtr;
 
 /** The buffer a character change loads the character's voice into. */
 extern u_long128 *MenuVoiceLoadPtr;
+
+/** The model of the weapon the active character holds. */
+extern "C" CCharacter *NowWeapon;
 
 extern CDataAlloc2<1> MenuExCashBuffer;
 extern CCharacter MenuCharaFrame;
@@ -1235,10 +1245,18 @@ void CharaChangeInitToGL2(int load_icon) {
         printf("*** voice read err \n");
     }
 }
-#ifdef NON_MATCHING
+
+/**
+ * Loads the battle menu's character and sets up its weapon effect.
+ *
+ * @mangled BtMenuLoadChara__Fv
+ * @address 0x20E960
+ * @size 0x94
+ */
 void BtMenuLoadChara() {
     s8 chara = charachangeid;
-    UserStatus->cur_chara = chara;
+    CUserStatus *status = UserStatus;
+    status->cur_chara = chara;
     LoadChara2((s16) charachangeid, 0, (u_int *) menucharReadbuf, (u_int *) menud0wepReadBuf,
                (u_int *) menud1wepReadBuf, (u_int *) menud2wepReadBuf);
     SetWeaponAttachStatus(NowWeaponHave);
@@ -1246,11 +1264,6 @@ void BtMenuLoadChara() {
     SetWeaponColor();
     MainChara_Effect(WepEffectMenuPt, (u_int *) WepEffectMenuReadBuf, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", BtMenuLoadChara__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1250);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1251);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1254);
 #ifdef NON_MATCHING
 void BtMenuLoad2(int load_texture) {
