@@ -22,6 +22,7 @@
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "gamepad.hpp"
+#include "mainitemmodel.hpp"
 #include "menu_draw.hpp"
 #include "menu_dungeon.hpp"
 #include "menu_save.hpp"
@@ -340,6 +341,11 @@ extern s32 EscapeFlag;
  */
 extern "C" CCharacter EscapeEffect;
 
+/**
+ * Items in the player's quick-use slots and the models they draw with.
+ */
+extern "C" CActiveItemPack activeItem;
+
 extern "C" CDataAlloc2<1> BtCashBuffer;
 
 #ifdef NON_MATCHING // draft declarations
@@ -373,7 +379,6 @@ extern CFrame *itemBoxModel;
 extern "C" CCameraFollow SubCamera;
 extern "C" CCameraFollow MainCamera__4;
 extern CCameraFollow *NowCamera__3;
-extern "C" CActiveItemPack activeItem;
 
 void getCharacterVector(float *vector, float pitch);
 #endif
@@ -1601,15 +1606,21 @@ int BtEscape_Loop() {
  * @address 0x1D3ED0
  * @size 0x1B0
  */
-#ifdef NON_MATCHING
 void BtSetActiveItemModel(u_int *buffer) {
     char model_path[64];
     char texture_path[64];
     int model_size;
     int texture_size;
+    int i;
+    u_int *texture;
+    int size;
+    ITEM_PACK *pack;
+    int item_no;
 
-    for (int i = 0; i < 3; i++) {
-        int item_no = UserStatus->item_pack.quick_item_slot[i];
+    pack = &UserStatus->item_pack;
+
+    for (i = 0; i < 3; i++) {
+        item_no = pack->quick_item_slot[i];
         if (item_no == -1) {
             continue;
         }
@@ -1623,17 +1634,16 @@ void BtSetActiveItemModel(u_int *buffer) {
             activeItem.models->DeleteModel(activeItem.model[i + 1]);
             activeItem.model[i + 1] = -1;
         }
+        size = texture_size;
+        texture = &buffer[model_size];
         if (activeItem.model[i + 1] != -1) {
             activeItem.models->DeleteModel(activeItem.model[i + 1]);
         }
-        activeItem.model[i + 1] = activeItem.models->SetCashModel(item_no, buffer, &buffer[model_size], texture_size);
+        activeItem.model[i + 1] = activeItem.models->SetCashModel(item_no, buffer, texture, size);
         activeItem.model[i + 5] = 0;
         activeItem.item[i + 1] = item_no;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", BtSetActiveItemModel__FPUi);
-#endif
 
 /**
  * Computes the velocity needed to move an object between two points in time.
