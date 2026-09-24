@@ -1427,7 +1427,8 @@
   },
   "src/menu_misc.cpp": {
     "symbols": {
-      "FrameImageTexture": "@1254"
+      "FrameImageTexture": "@1254",
+      "CharaFileExtension": "@1037__2"
     },
     "sections": {
       ".menu_misc-wepread": [
@@ -1701,6 +1702,13 @@
   "src/shot_freefuncs.cpp": {
     "symbols": {
       "itempack_name": "@1150"
+    }
+  },
+  "src/visualvu1.cpp": {
+    "sections": {
+      ".visualvu1-vt": [
+        "__vt__7CVisual"
+      ]
     }
   }
 }
