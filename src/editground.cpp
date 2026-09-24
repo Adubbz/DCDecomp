@@ -1286,69 +1286,69 @@ void CEditGround::Save(char *) {
     WriteFile("host0:y:/ps2/dc_data/gdata0.edt", buffer, header->size);
 }
 
-#ifdef NON_MATCHING
-/**
- * One part in a saved ground layout.
- */
-struct EDIT_GROUND_SAVE_PART {
-    s16 plot;  /**< Plot of the part. */
-    s16 rot_y; /**< Quarter turns the part faces. */
-    float x;   /**< Where the part stands. */
-    float y;
-    float z;
-};
-
-/**
- * The head of a saved ground layout.
- */
-struct EDIT_GROUND_SAVE {
-    int count;  /**< Number of parts. */
-    int offset; /**< Byte offset from the head to the parts. */
-};
-
-void CEditGround::Load(char *buffer) {
-    char file[0x800];
-    EDIT_GROUND_SAVE *save;
-    EDIT_GROUND_SAVE_PART *part;
+void CEditGround::Load(char *data) {
+    char buffer[4000];
+    GROUND_SAVE_HEADER *header;
+    char *file;
+    SV_GRD_PART *record;
+    SV_GRD_PART *records;
     int i;
 
     Clear();
-    save = (EDIT_GROUND_SAVE *) file;
-    if (buffer == NULL) {
-        if (LoadFile2("gdata0.edt", save, NULL, 0) == 0) {
+    file = buffer;
+    if (data == NULL) {
+        if (!LoadFile2("gdata0.edt", file, NULL, 0)) {
             return;
         }
     } else {
-        save = (EDIT_GROUND_SAVE *) buffer;
+        file = data;
     }
-    EDIT_GROUND_SAVE_PART *first = (EDIT_GROUND_SAVE_PART *) ((char *) save + save->offset);
-
-    // Plain parts first, then the rivers, then what crosses them.
-    part = first;
-    for (i = 0; i < save->count && part->plot >= 0 && part->plot < 24; i++, part++) {
-        if (plot_parts[part->plot].ChangeAltData() != 0) {
-            SetMapParts(part->plot, 1.0f + part->x, part->y, 1.0f + part->z, part->rot_y);
+    header = (GROUND_SAVE_HEADER *) file;
+    records = (SV_GRD_PART *) (file + header->offset);
+    // Parts that follow the ground's height go down first, then the rest, then the
+    // parts that stand on others.
+    record = records;
+    for (i = 0; i < header->count; i++, record++) {
+        int parts_id = record->part_id;
+        if (parts_id < 0 || parts_id >= 24) {
+            break;
+        }
+        if (plot_parts[parts_id].ChangeAltData()) {
+            float x = record->pos_x + 1.0f;
+            float z = record->pos_z + 1.0f;
+            SetMapParts(record->part_id, x, record->pos_y, z, record->variant);
         }
     }
-    part = first;
-    for (i = 0; i < save->count && part->plot >= 0 && part->plot < 24; i++, part++) {
-        int subtype = plot_parts[part->plot].subtype;
-        if (subtype == 3 || subtype == 5) {
-            for (int river = 0; river < 24; river++) {
-                if (plot_parts[river].subtype == 2) {
-                    SetMapParts(river, 1.0f + part->x, part->y, 1.0f + part->z, part->rot_y);
+    record = records;
+    for (i = 0; i < header->count; i++, record++) {
+        int parts_id = record->part_id;
+        if (parts_id < 0 || parts_id >= 24) {
+            break;
+        }
+        int kind = plot_parts[parts_id].subtype;
+        if (kind == 3 || kind == 5) {
+            for (int j = 0; j < 24; j++) {
+                if (plot_parts[j].subtype == 2) {
+                    SetMapParts(j, record->pos_x + 1.0f, record->pos_y, record->pos_z + 1.0f, record->variant);
                     break;
                 }
             }
         } else {
-            SetMapParts(part->plot, 1.0f + part->x, part->y, 1.0f + part->z, part->rot_y);
+            SetMapParts(parts_id, record->pos_x + 1.0f, record->pos_y, record->pos_z + 1.0f, record->variant);
         }
     }
-    part = first;
-    for (i = 0; i < save->count && part->plot >= 0 && part->plot < 24; i++, part++) {
-        int subtype = plot_parts[part->plot].subtype;
-        if (subtype == 5 || subtype == 3) {
-            SetMapParts(part->plot, 1.0f + part->x, part->y, 1.0f + part->z, part->rot_y);
+    record = records;
+    for (i = 0; i < header->count; i++, record++) {
+        int parts_id = record->part_id;
+        if (parts_id < 0 || parts_id >= 24) {
+            break;
+        }
+        switch (plot_parts[parts_id].subtype) {
+            case 3:
+            case 5:
+                SetMapParts(parts_id, record->pos_x + 1.0f, record->pos_y, record->pos_z + 1.0f,
+                            record->variant);
+                break;
         }
     }
     for (i = 0; i < 4; i++) {
@@ -1358,10 +1358,6 @@ void CEditGround::Load(char *buffer) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editground", Load__11CEditGroundFPc);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/editground", @1325);
 
 void CEditGround::Save(int town, CSaveData *save) {
     sceVu0FVECTOR position;
