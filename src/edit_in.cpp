@@ -136,13 +136,15 @@ extern char EdInteriorName[];
 extern int EdDebugEventEnable;
 extern int MenuMapJumpMode;
 
-/* Where the camera sits for one camera marker of the interior, and the box the player must stand in. */
+/**
+ * Where the camera sits for one camera marker of the interior, and the box the player must stand in.
+ */
 struct INTERIOR_CAMERA {
     u8 unk_000[0x60];
-    CFrame frame;
-    sceVu0FVECTOR max;
-    sceVu0FVECTOR min;
-    int link_id;
+    CFrame frame;      /**< Places the camera at the marker's position in the world. */
+    sceVu0FVECTOR max; /**< Far corner of the box, in the marker's space. */
+    sceVu0FVECTOR min; /**< Near corner of the box, in the marker's space. */
+    int link_id;       /**< Link number of the marker; 0 for the camera used outside every box. */
     u8 unk_2e4[0xC];
 };
 
@@ -151,6 +153,7 @@ struct INTERIOR_CAMERA {
 extern INTERIOR_CAMERA *active_camera;
 extern int camera_change_count;
 
+/* Routines defined later in this unit, and the editor routines of other units that the interior calls. */
 static void LoadInfo(char *script, int size);
 static void setTexAnim();
 void DrawWaterSurface(CCamera *camera);
