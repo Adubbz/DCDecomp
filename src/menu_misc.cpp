@@ -40,8 +40,6 @@
 #include "weaponlevelup.hpp"
 
 extern CTexture *WepIcon;
-extern char MenureadFile[64];
-extern char MenuWepDir[];
 #endif
 
 /** The weapon test number GetNowTestNo reports, initialised to 1. */
@@ -58,6 +56,9 @@ extern u_long128 *MenuWeaponModelBuildBuffer;
 
 /** The buffer the menu's weapon level-up effect data is read into. */
 extern u_long128 *WepMenuEffectReadBuf;
+
+/** The path of the model file a character change reads. */
+extern char MenureadFile[64];
 
 /** The menu's weapon-effect read flag. */
 extern s16 MenuCharaEffectReadFlag;
@@ -1210,12 +1211,28 @@ static void GetCharaChangeReadCharaFilePath(char *path, int chara_no) {
     strcat(path, charaFile[chara_no]);
     strcat(path, CharaFileExtension);
 }
-#ifdef NON_MATCHING
+
+/** The directory the menu reads weapon model files from. */
+static const char MenuWepDir[64] = "commenu/weapon/";
+INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1205);
+INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1206);
+INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1207__2);
+INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1208);
+INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1209);
+INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1210);
+
+/**
+ * Starts the background reads of the character change screen and reports whether they were started.
+ *
+ * @mangled CharaChangeInitToGL__FP1i
+ * @address 0x20E5B0
+ * @size 0x2F4
+ */
 int CharaChangeInitToGL(u_long128 *buffer, int chara) {
     char path[64];
     char name[64];
-    char cfg[64];
-    char effect[64];
+    char cfg[16];
+    char effect[32];
     int size;
 
     CharaChangeBaseBuf = buffer;
@@ -1239,7 +1256,9 @@ int CharaChangeInitToGL(u_long128 *buffer, int chara) {
     LoadFileBG(path, menud1wepReadBuf, &size);
     menud2wepReadBuf = menud1wepReadBuf + (size >> 4) + 1;
     menud2wepReadBuf = MenuCalcBufAlignment(menud2wepReadBuf);
-    int kind = UserStatus->chara_weapons[chara][UserStatus->equipped_weapon_slot[chara]].item_no - defWeapon__5[chara];
+    WEAPON_HAVE *weapon = &UserStatus->chara_weapons[chara][UserStatus->equipped_weapon_slot[chara]];
+    int def = defWeapon__5[chara];
+    int kind = weapon->item_no - def;
     if (kind < 0) {
         kind = 0;
     }
@@ -1249,28 +1268,19 @@ int CharaChangeInitToGL(u_long128 *buffer, int chara) {
     LoadFileBG(path, menud2wepReadBuf, &size);
     WepEffectMenuReadBuf = menud2wepReadBuf + (size >> 4) + 1;
     WepEffectMenuReadBuf = MenuCalcBufAlignment(WepEffectMenuReadBuf);
-    if (UserStatus == NULL) {
-        printf("USerStatus is NULL\n", UserStatus);
+    CUserStatus *status = UserStatus;
+    if (status == NULL) {
+        printf("USerStatus is NULL\n");
         return -1;
     }
-    WepEffectMenuPt = Get_Main_EffectPtr(
-        charachangeid,
-        UserStatus->chara_weapons[charachangeid][UserStatus->equipped_weapon_slot[charachangeid]].best_elem);
-    sprintf(effect, "dun/mainchara/wep_eff/%s.chr", (char *) WepEffectMenuPt);
-    LoadFileBG(effect, WepEffectMenuReadBuf, &size);
+    int slot = status->equipped_weapon_slot[charachangeid];
+    WEAPON_HAVE *row = status->chara_weapons[charachangeid];
+    WEAPON_HAVE *equipped = &row[slot];
+    WepEffectMenuPt = Get_Main_EffectPtr(charachangeid, equipped->best_elem);
+    sprintf(effect, "dun/mainchara/wep_eff/%s.chr", WepEffectMenuPt->model_name);
+    LoadFileBG(effect, (u_long128 *) WepEffectMenuReadBuf, &size);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", CharaChangeInitToGL__FP1i);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", MenuWepDir);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1205);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1206);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1207__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1208);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1209);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1210);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1236);
 
 /**
  * Starts the background read of the character change screen's voice data.
