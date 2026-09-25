@@ -168,7 +168,7 @@ carve_part(main.data.part1.s
            main.data.part1.s=24FAC0-250B30
            main.data.part1b.s=250ED0-250F40)
 carve_part(main.data.part2.s
-           main.data.part2.s=2514C0-251560
+           main.data.part2.s=2514C0-251530
            main.data.part2c.s=2525D0-253DD0)
 # Retail's vtables come out in one run that alternates between the units that
 # now own theirs and the dump that still holds the rest, so the dump is cut
@@ -314,7 +314,7 @@ carve_part(main.data.part5.s
            main.data.itemdata-a.s=27A0A0-27A610
            main.data.itemdata-b.s=27A6A0-27A6C0)
 carve_part(main.rdata.part5.s
-           main.rdata.part5.s=2A1390-2A1490)
+           main.rdata.part5.s=2A13C0-2A1490)
 
 # These residual ranges are now fully owned by their decompiled translation
 # units. Keep the retail dumps intact as toolchain inputs, but do not assemble

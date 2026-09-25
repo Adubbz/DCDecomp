@@ -4,6 +4,7 @@
 
 #include "cloth.hpp"
 
+#include "chararead.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "mglib.hpp"
@@ -97,7 +98,6 @@ INCLUDE_ASM("asm/nonmatchings/cloth", Clear__6CClothFv);
  */
 #ifdef NON_MATCHING
 void StretchBind2(float *a, float *b, float *param);
-float vuabs(float *vector);
 
 /* The grid being solved, in scratchpad memory. */
 #define CLOTH_WORK ((sceVu0FVECTOR(*)[16]) 0x70000000)
@@ -433,10 +433,7 @@ INCLUDE_ASM("asm/nonmatchings/cloth", CreateVUData__6CClothFPUi);
  * @address 0x13C9B0
  * @size 0x1C0
  */
-#ifdef NON_MATCHING
 void CCloth::InitParam() {
-    sceVu0FVECTOR zero = {0.0f, 0.0f, 0.0f, 0.0f};
-
     num_i = 16;
     num_j = 16;
     pitch = 1.0f;
@@ -464,6 +461,7 @@ void CCloth::InitParam() {
     normal_scale = 1.0f;
     stop = 0;
     floor_on = 1;
+    sceVu0FVECTOR zero = {0.0f, 0.0f, 0.0f, 0.0f};
     for (int i = 0; i < num_i; i++) {
         for (int j = 0; j < num_j; j++) {
             mask[i][j] = 0xFFFF;
@@ -479,9 +477,6 @@ void CCloth::InitParam() {
     bound = NULL;
     material.texture[0] = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/cloth", InitParam__6CClothFv);
-#endif
 
 /**
  * Constructs a cloth grid with the requested dimensions and spacing.
@@ -500,11 +495,7 @@ CCloth::CCloth(int grid_i, int grid_j, float grid_pitch) {
  * @address 0x13CBF0
  * @size 0x458
  */
-#ifdef NON_MATCHING
 void CCloth::Initialize(CDataAlloc2<1> *alloc) {
-    sceVu0FVECTOR zero = {0.0f, 0.0f, 0.0f, 0.0f};
-    sceVu0FVECTOR centre = {0.0f, 0.0f, 0.0f, 0.0f};
-    sceVu0FVECTOR edge;
     int i;
     int j;
 
@@ -512,14 +503,15 @@ void CCloth::Initialize(CDataAlloc2<1> *alloc) {
         alloc = &VisualData;
     }
     alloc->Align64();
-    unk_20 = (int) (alloc->base + alloc->used * 16);
-    visual_vu_size = CreateVUData((u_int *) unk_20);
-    alloc->Alloc(visual_vu_size);
-    vu_block[0] = (u_int *) alloc->Alloc64(visual_vu_size);
+    vu_block[0] = (u_int *) (alloc->base + alloc->used * 16);
     visual_vu_size = CreateVUData(vu_block[0]);
+    alloc->Alloc(visual_vu_size);
+    vu_block[1] = (u_int *) alloc->Alloc64(visual_vu_size);
+    visual_vu_size = CreateVUData(vu_block[1]);
     for (i = 0; i < num_i; i++) {
         polygon_divide[i] = 0;
         for (j = 0; j < num_j; j++) {
+            sceVu0FVECTOR zero = {0.0f, 0.0f, 0.0f, 0.0f};
             sceVu0CopyVector(last[j][i], zero);
             sceVu0CopyVector(speed[j][i], zero);
             sceVu0CopyVector(normal_grid[j][i], zero);
@@ -528,12 +520,13 @@ void CCloth::Initialize(CDataAlloc2<1> *alloc) {
             last[j][i][3] = 1.0f;
         }
     }
-    for (j = 0; j < num_j; j++) {
-        for (i = 0; i < num_i; i++) {
-            sceVu0CopyVector(last[i][j], point[i][j]);
-            sceVu0CopyVector(home[i][j], point[i][j]);
+    for (i = 0; i < num_j; i++) {
+        for (j = 0; j < num_i; j++) {
+            sceVu0CopyVector(last[j][i], point[j][i]);
+            sceVu0CopyVector(home[j][i], point[j][i]);
         }
     }
+    sceVu0FVECTOR centre = {0.0f, 0.0f, 0.0f, 0.0f};
     for (i = 0; i < num_i; i++) {
         sceVu0AddVector(centre, centre, home[0][i]);
     }
@@ -542,35 +535,34 @@ void CCloth::Initialize(CDataAlloc2<1> *alloc) {
     position[2] = centre[2] / (float) num_i;
     position[3] = 1.0f;
 
+    sceVu0FVECTOR edge;
+
     // Record each vertex's rest distance to its neighbours down and across the grid.
-    for (j = 0; j < num_j; j++) {
-        for (i = 0; i < num_i; i++) {
-            int next_i = i + 1;
-            int prev_i = i - 1;
-            int prev_j = j - 1;
-            int next_j = j + 1;
-            if (prev_i > 0) {
-                sceVu0SubVector(edge, point[i][j], point[prev_i][j]);
-            } else if (next_i >= num_i) {
-                sceVu0SubVector(edge, point[i][j], point[prev_i][j]);
+    for (i = 0; i < num_j; i++) {
+        for (j = 0; j < num_i; j++) {
+            int next_row = j + 1;
+            int prev_row = j - 1;
+            int prev_column = i - 1;
+            int next_column = i + 1;
+            if (prev_row > 0) {
+                sceVu0SubVector(edge, point[j][i], point[prev_row][i]);
+            } else if (next_row >= num_i) {
+                sceVu0SubVector(edge, point[j][i], point[prev_row][i]);
             } else {
-                sceVu0SubVector(edge, point[i][j], point[next_i][j]);
+                sceVu0SubVector(edge, point[j][i], point[next_row][i]);
             }
-            rest[i][j][0] = vuabs(edge);
-            if (next_j >= num_j) {
-                sceVu0SubVector(edge, point[i][j], point[i][prev_j]);
-            } else if (prev_j < 0) {
-                sceVu0SubVector(edge, point[i][j], point[i][next_j]);
+            rest[j][i][0] = vuabs(edge);
+            if (next_column >= num_j) {
+                sceVu0SubVector(edge, point[j][i], point[j][prev_column]);
+            } else if (prev_column < 0) {
+                sceVu0SubVector(edge, point[j][i], point[j][next_column]);
             } else {
-                sceVu0SubVector(edge, point[i][j], point[i][next_j]);
+                sceVu0SubVector(edge, point[j][i], point[j][next_column]);
             }
-            rest[i][j][1] = vuabs(edge);
+            rest[j][i][1] = vuabs(edge);
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/cloth", Initialize__6CClothFP14CDataAlloc2_1_);
-#endif
 /**
  * Builds the cloth's grid from a model's mesh and takes its storage out of an arena.
  *

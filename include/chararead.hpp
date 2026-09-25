@@ -26,3 +26,12 @@ class CCharacter;
 void ReadInfo(CCharacter *chara, unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc,
               CDataAlloc2<1> *motion_alloc, CDataAlloc2<1> *texture_alloc, int motion_set,
               CDataAlloc2<1> *extend_alloc, int texture_block, int preserve_texture);
+
+/**
+ * Gives the length of a three-component vector, on the vector unit.
+ *
+ * @mangled vuabs__FPf
+ * @address 0x13B450
+ * @size 0x30
+ */
+float vuabs(float *vector);
