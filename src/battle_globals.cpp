@@ -104,21 +104,6 @@ extern OPENING_BOOK OpenBook;
 /** The name currently being edited. */
 extern "C" s16 *CharaName;
 
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @348__4);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @481__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @663__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @781__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @782__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @783__5);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @784__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @785);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @786);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @787__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @788__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @789__4);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1349__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1350__5);
-
 /**
  * Gives every party member their default name.
  *
@@ -138,37 +123,52 @@ void GlobalNameInit(void) {
  * @address 0x2384A0
  * @size 0x190
  */
-#ifdef NON_MATCHING
 void InitNameRegist(int character, int texture_block, u_long128 *buffer) {
     StartReadBG();
-    if (buffer == NULL) {
-        buffer = (u_long128 *) read_buffer;
-    }
-    LoadFileBGMenuData("nameregi.pak", MenuCalcBufAlignment((u_long128 *) buffer));
+    buffer = buffer == NULL ? (u_long128 *) read_buffer : buffer;
+    LoadFileBGMenuData("nameregi.pak", MenuCalcBufAlignment(buffer));
+    NameSelect.language = GetMenuLangFlag();
+    GamePad.MenuModeOn(0x78);
+    GamePad.SetAutoRepeat(0xF000, 30, 9);
 
     NameSelect.chara_no = character;
     NameSelect.area = 4;
-    NameSelect.name_pos = 0;
-    NameSelect.side_row = 0;
-    NameSelect.input_mode = GetMenuLangFlag() == 0 ? 0 : 2;
     NameSelect.cursor = 0;
+    switch (NameSelect.language) {
+        case 0:
+            NameSelect.input_mode = 0;
+            break;
+        case 1:
+        default:
+            NameSelect.input_mode = 2;
+            break;
+    }
+    NameSelect.side_row = 0;
     NameSelect.state = 1;
     NameSelect.state_count = 0;
+    NameSelect.loaded = 0;
+    NameSelect.texture_block = texture_block;
     NameSelect.cursor_x = 100.0f;
     NameSelect.cursor_y = 242.0f;
     NameSelect.frame = 0;
-    NameSelect.language = GetMenuLangFlag();
-    NameSelect.texture_block = texture_block;
-    NameSelect.loaded = 0;
-    CharaName = SaveData->GetCharaName(character);
-    NameDefaultSet(character);
-
-    GamePad.MenuModeOn(0x78);
-    GamePad.SetAutoRepeat(0xF000, 30, 9);
+    CharaName = SaveData->GetCharaName(NameSelect.chara_no);
+    NameDefaultSet(NameSelect.chara_no);
+    NameSelect.name_pos = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", InitNameRegist__FiiP1);
-#endif
+
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @481__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @663__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @781__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @782__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @783__5);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @784__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @785);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @786);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @787__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @788__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @789__4);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1349__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1350__5);
 /**
  * Gives the name-entry screen's textures back and closes it.
  *
