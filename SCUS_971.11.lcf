@@ -699,7 +699,10 @@ SECTIONS
         main.data.part6g-2942F0.s.o (.data) // 0x002942f0
         menu_dungeon.cpp.o (.itemviewdata) // 0x00294320
         . = ALIGN(0x10);
-        main.data.menu_dungeon-d.s.o (.data) // 0x00294380
+        menu_dungeon.cpp.o (.itemgetdata) // 0x00294380
+        . = ALIGN(0x10);
+        main.data.menu_dungeon-d.s.o (.data) // 0x002943c0
+        menu_dungeon.cpp.o (.itemdataview) // 0x002943e0
         menu_draw.cpp.o (.data)      // 0x00294460
         main.data.part6j.s.o (.data) // 0x00295644
         eastking.cpp.o (.data)       // 0x00295660 EastKingTextureEnter's two local array templates

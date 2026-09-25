@@ -303,7 +303,7 @@ carve_part(main.data.part6.s
            main.data.menu_dungeon-b.s=294230-294250
            main.data.menu_dungeon-a.s=2942A0-2942C0
            main.data.part6g-2942F0.s=2942F0-294320
-           main.data.menu_dungeon-d.s=294380-294460
+           main.data.menu_dungeon-d.s=2943C0-2943E0
            main.data.part6j.s=295644-295660
            main.data.eastking-tail.s=2956D0-2956F0
            main.data.part6d.s=295830-295840

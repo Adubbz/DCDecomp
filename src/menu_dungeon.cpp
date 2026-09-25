@@ -8,12 +8,13 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "btmisc.hpp"
 #include "battlemenu.hpp"
+#include "btmisc.hpp"
 #include "camera.hpp"
 #include "clsmes.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
+#include "debugfont.hpp"
 #include "dun/gameloop.hpp"
 #include "editatra.hpp"
 #include "gamepad.hpp"
@@ -28,8 +29,8 @@
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "savedata.hpp"
-#include "snd.hpp"
 #include "shot_freefuncs.hpp"
+#include "snd.hpp"
 #include "texture.hpp"
 #include "userstatus.hpp"
 
@@ -1541,60 +1542,88 @@ int DebugItemGetKey(void) {
     return result;
 }
 
-#ifdef NON_MATCHING
-void DebugItemGetDraw(void) {
-    int item_no = ConvDebugSelectToExcelListNo(ItemAutoGet.selection);
-    COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
-    int icon_x;
-    int icon_y;
-    CTexture *icons;
+/** Texture of the item icon sheet. */
+extern CTexture *ItemIcon;
 
-    MGFillBox(CRect_i_(70, 40, 256, 128), 0, 0, 0, 128);
-    icons = RetCTex(item_no, icon_x, icon_y);
-    if (icons != NULL) {
-        MenuTextureReload(-1);
-        DrawMenu2DSprite(icons, CRect_i_(70, 80, 256, 128),
-                         CRect_i_(0, 0, 256, 128), 128);
-        DrawMenu2DSprite(icons,
-                         CRect_i_(46 + (ItemAutoGet.selection & 7) * 32,
-                                  80 + ((ItemAutoGet.selection & 0x3F) >> 3) * 32,
-                                  32, 32),
-                         CRect_i_(icon_x, icon_y, 32, 32), 128);
+/** Texture of the weapon icon sheet. */
+extern CTexture *WepIcon;
+
+void DebugItemGetDraw(void) {
+    CTexture *sheets[5] = {ItemIcon, ItemIcon, WepIcon, WepIcon, WepIcon};
+    int sheet_y[5] = {0, 0x100, 0, 0x100, 0x200};
+    CTexture *sheet = sheets[ItemAutoGet.page];
+    int y = sheet_y[ItemAutoGet.page];
+    int height = 0x100;
+
+    if (ItemAutoGet.page == 4) {
+        height = 0x80;
     }
-    DrawMenuObjectVibe(46 + (ItemAutoGet.selection & 7) * 32,
-                       80 + ((ItemAutoGet.selection & 0x3F) >> 3) * 32, 1, 64);
-    if (info != NULL && CommonMenuMes2.mes_made != info->msg + 500) {
-        CommonMenuMes2.MakeMesWin(info->msg + 500);
+    if (sheet != NULL) {
+        MenuTextureReload(sheet->block);
     }
+    MGFillBox(CRect_i_(0x460, 0x280, 0x1000, 0x800), 0, 0, 0, 0x60);
+    DrawMenu2DSprite(sheet, CRect_i_(0x46, 0x50, 0x100, height), CRect_i_(0, y, 0x100, height), 0x80);
+    int item_no = ConvDebugSelectToExcelListNo(ItemAutoGet.selection);
     if (ItemAutoGet.show_model) {
         DrawItemDataView(item_no);
     }
+    int cell = ItemAutoGet.selection - ItemAutoGet.page * 64;
+    DrawMenuObjectVibe((cell % 8) * 32 + 0x2E, (cell / 8) * 32 + 0x50, 1, 0x40);
+    COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
+    if (info != NULL) {
+        int message = info->msg + 500;
+        if (CommonMenuMes2.mes_made != message) {
+            CommonMenuMes2.MakeMesWin(message);
+        }
+    }
 }
+
+/** Submode the battle menu runs in. */
+extern s32 BtlMenuMode;
+
+/** Debug text the dungeon menus print their item data into. */
+extern CDebugFont MenuDbgMsg;
+
+/** Formats of the lines the item data view prints. */
+extern char *ItemTemplete[];
 
 static void DrawItemDataView(int item_no) {
-    COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
-    RECT digits = {0x20, 0x48, 12, 12};
+    int block;
 
-    MGFillBox(CRect_i_(350, 60, 230, 300), 8, 8, 16, 112);
-    if (info != NULL && DunLogBoard != NULL) {
-        DrawMenuNumber(item_no, 374, 84, DunLogBoard, digits, 128, 0);
-        DrawMenuNumber(info->icon_index, 374, 108, DunLogBoard, digits, 128, 0);
-        DrawMenuNumber(info->msg, 374, 132, DunLogBoard, digits, 128, 0);
+    switch (BtlMenuMode) {
+        case 0:
+            block = 0xC;
+            break;
+        case 1:
+            block = 0x1F;
+            break;
     }
-    if (item_no > 0x83) {
-        if (GamePad.Down(0x10)) {
-            polyreadflag = InitItemPolygonView(item_no, BtlMenuReadBuf);
+    MenuTextureReload(block);
+    int line = 0;
+    char type[128] = "";
+    if (0 <= item_no && item_no < ITEM_ATTACH_START) {
+        return;
+    }
+    // Retail keeps these range tests although nothing depends on them.
+    if (item_no >= ITEM_ATTACH_START && item_no < 0xFF) {
+        int index = item_no - ITEM_ATTACH_START;
+        if (index < 0) {
+            index = 0;
         }
-        if (polyreadflag == 0) {
-            polyreadflag = EnterItemPolygonView();
-        }
-        if (polyreadflag != 0) {
-            DrawItemPolygonView();
-        }
+    }
+    if (MDebugItemPolyViewFlag == 0) {
+        MenuDbgMsg.len += sprintf(&MenuDbgMsg.text[MenuDbgMsg.len], "-----ItemData View-----\n");
+        MenuDbgMsg.len += sprintf(&MenuDbgMsg.text[MenuDbgMsg.len], ItemTemplete[line++], item_no);
+        MenuDbgMsg.len += sprintf(&MenuDbgMsg.text[MenuDbgMsg.len], ItemTemplete[line], type);
+        type[0] = '\0';
+    }
+    if (GamePad.Down(0x10)) {
+        polyreadflag = InitItemPolygonView(ConvDebugSelectToExcelListNo(ItemAutoGet.selection), BtlMenuReadBuf);
+    }
+    if (polyreadflag == 0) {
+        polyreadflag = EnterItemPolygonView();
+    }
+    if (polyreadflag != 0) {
+        DrawItemPolygonView();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DebugItemGetDraw__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawItemDataView__Fi);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2140__2);
