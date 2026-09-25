@@ -45,7 +45,7 @@ extern char MenuWepDir[];
 #endif
 
 /** The weapon test number GetNowTestNo reports, initialised to 1. */
-extern int MenuWeaponTestCase;
+int MenuWeaponTestCase = 1;
 
 /** The amount the last item use gave, a base value plus a random part. */
 extern int MenuItemUseVolume;
@@ -99,7 +99,7 @@ extern s16 DngEscapeBlock;
 extern s16 DngEscapeEndFlag;
 
 /** The darkness drawn over the dungeon escape prompt, from 0 (none) to 0x80 (black). */
-extern s16 DngEscapeAlpha;
+s16 DngEscapeAlpha = 0x80;
 
 /** The file-read slot the menu's character model is loaded through. */
 extern int CharaFileBGReadNo;
@@ -132,7 +132,7 @@ extern u_long128 *MenuVoiceLoadPtr;
 extern s16 CharaNameDrawCase;
 
 /** The dungeon escape prompt's chosen answer, 1 or 2. */
-extern s16 DngEscapeSelect;
+s16 DngEscapeSelect = 1;
 
 /** The model of the weapon the active character holds. */
 extern "C" CCharacter *NowWeapon;
@@ -1503,11 +1503,17 @@ void MonsterNameDraw() {
     CharaNameMes->Step();
     CharaNameMes->DrawMesWin();
 }
-#ifdef NON_MATCHING
+
+/**
+ * Loads the textures and message windows of the dungeon escape prompt.
+ *
+ * @mangled DngEscapeMsgInit__FP6ClsMesP6ClsMesi
+ * @address 0x20EF90
+ * @size 0x2AC
+ */
 void DngEscapeMsgInit(ClsMes *title, ClsMes *choice, int dungeon) {
     char path[64];
-    char name[8] = "d0%do";
-    int size[4];
+    int file_size;
 
     if (title == NULL || choice == NULL) {
         return;
@@ -1519,40 +1525,45 @@ void DngEscapeMsgInit(ClsMes *title, ClsMes *choice, int dungeon) {
     strcpy(path, GetMenuTextureDir());
     strcat(path, "d0%do.img");
     sprintf(path, path, no);
-    LoadFile(path, read_buffer, &size[0]);
-    LOADTEXTURE_INFO2 texture = {0};
-    texture.block_no = 0x17;
-    texture.name = (char *) read_buffer;
-    TexManager.DeleteTextureBlock(0x17);
+    LoadFile(path, read_buffer, &file_size);
+    int block = 0x17;
+    char *image = (char *) read_buffer;
+    LOADTEXTURE_INFO2 texture[3] = {
+        {(char *) FrameImageTexture, block, 0},
+        {image, block, 0},
+        {NULL, 0, 0},
+    };
+    int size[4];
+    TexManager.DeleteTextureBlock(block);
     TexManager.CleanUpTextureList();
-    TexManager.LoadTextureBlockEX(-1, &texture);
+    TexManager.LoadTextureBlockEX(-1, texture);
     GamePad.MenuModeOn(0x78);
     GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
+    char name[8] = "d0%do";
     sprintf(name, name, no);
     DngEscapeTex = TexManager.GetTexture(name, -1);
     CharaNameMes = title;
     DngMenuMes = choice;
     int lang = GetMenuLangFlag();
-    u8 title_x[7] = {0xB4, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0};
+    u_char title_x[7] = {0xB4, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0};
     CharaNameMes->text_x = title_x[lang];
     CharaNameMes->text_y = 0x8C;
     CharaNameMes->mes_made = -1;
     CharaNameMes->MakeMesWin(dungeon + 0x14);
+    // Built but never read: the choice window is right-aligned by its measured width instead.
     s16 choice_x[7] = {0x154, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0};
+    int right = 0x280;
     DngMenuMes->mes_made = -1;
     DngMenuMes->MakeMesWin(12);
     DngMenuMes->NeedMesWinWH(DngMenuMes->mes_made, size);
-    DngMenuMes->text_x = 0x280 - size[2] - 0x26;
+    right -= size[2];
+    DngMenuMes->text_x = right - 0x26;
     DngMenuMes->text_y = 0x140;
     DngEscapeSelect = 1;
     DngEscapeEndFlag = 0;
     DngEscapeAlpha = 0x80;
-    DngEscapeBlock = 0x17;
+    DngEscapeBlock = block;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", DngEscapeMsgInit__FP6ClsMesP6ClsMesi);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1341);
 
 void DngEscapeMsgDraw() {
     AllFadeForMenu(0x80);

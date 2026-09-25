@@ -564,7 +564,6 @@ SECTIONS
         menu_misc.cpp.o (.menu_misc-model) // 0x00293A80
         main.data.menu_misc-b.s.o (.data) // 0x00293B88
         menu_misc.cpp.o (.menu_misc-frame) // 0x00293BF0
-        main.data.menu_misc-c.s.o (.data) // 0x00293C14
         menu_misc.cpp.o (.menu_misc-options) // 0x00293C60
         . = ALIGN(0x10);
         editmenu.cpp.o (.data)       // 0x00293c80
@@ -719,7 +718,8 @@ SECTIONS
 		main.sdata.btitem-a.s.o (.sdata) // 0x002a1ff0
 		battlemenu.cpp.o (.sdata)      // 0x002a20c8
 		. = ALIGN(8);
-		main.sdata.battlemenu-tail.s.o (.sdata) // 0x002a20d8
+		menu_misc.cpp.o (.sdata)       // 0x002a20d8
+		main.sdata.battlemenu-tail.s.o (.sdata) // 0x002a20f8
 		editmenu.cpp.o (.sdata)        // 0x002a2100
 		main.sdata.editmenu-a.s.o (.sdata) // 0x002a2140
 		memcard.cpp.o (.sdata) // 0x002a2150
