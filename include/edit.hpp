@@ -374,6 +374,24 @@ void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_po
                       float *camera_reference);
 
 /**
+ * Plays the sound one kind of door makes when it opens.
+ *
+ * @mangled EdDoorOpenSe__FiPf
+ * @address 0x172100
+ * @size 0x58
+ */
+void EdDoorOpenSe(int door_no, float *position);
+
+/**
+ * Plays the sound one kind of door makes when it closes.
+ *
+ * @mangled EdDoorCloseSe__FiPf
+ * @address 0x172160
+ * @size 0x58
+ */
+void EdDoorCloseSe(int door_no, float *position);
+
+/**
  * Selects the default depth-of-field parameters for a level.
  *
  * @mangled EdSetDOFLevel__Fi

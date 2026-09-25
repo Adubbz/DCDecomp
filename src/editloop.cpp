@@ -1,7 +1,7 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 414
-#pragma argument_flag_ones 0, 207, 208, 215
+#pragma argument_flag_ones 0, 207, 208, 215, 626
 
 #include "common.h"
 
@@ -21,31 +21,32 @@
 #include "character.hpp"
 #include "clsmes.hpp"
 #include "collision.hpp"
+#include "dataalloc.hpp"
+#include "dataread.hpp"
 #include "dataset.hpp"
 #include "debugfont.hpp"
-#include "editarea.hpp"
-#include "effectgroup.hpp"
-#include "menuitemstep.hpp"
-#include "dataread.hpp"
-#include "dataalloc.hpp"
 #include "dngstatusdata.hpp"
 #include "ebattle.hpp"
-#include "editloop.hpp"
-#include "editmapscript.hpp"
-#include "editloop3.hpp"
 #include "edit.hpp"
 #include "edit_in.hpp"
-#include "editpartsinfo.hpp"
+#include "editarea.hpp"
 #include "editground.hpp"
+#include "editloop.hpp"
+#include "editloop3.hpp"
+#include "editmapscript.hpp"
+#include "editpartsinfo.hpp"
 #include "effect.hpp"
+#include "effectgroup.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
+#include "gamemode.hpp"
 #include "gamepad.hpp"
-#include "mapparts.hpp"
 #include "mainselect.hpp"
+#include "mapparts.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
 #include "menu_misc.hpp"
+#include "menuitemstep.hpp"
 #include "mglib.hpp"
 #include "npcharacter.hpp"
 #include "objanime.hpp"
@@ -54,6 +55,7 @@
 #include "runeffect.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
+#include "sysmes.hpp"
 #include "texture.hpp"
 
 /* Retail editloop.cpp: town-script parsing, map construction and pre-event editor state. */
@@ -105,7 +107,7 @@ extern int depth_of_field;
 extern int edit_mode_lighting;
 extern int draw_sky;
 extern int move_count;
-extern u_int *EdNPCReadBuffer;
+extern u_long128 *EdNPCReadBuffer;
 extern CFrameVu1 *TreasureCursor;
 extern CFrameVu1 *TreasureCursorOpen;
 extern int end_counter;
@@ -299,18 +301,35 @@ int EditInit(void *param);
 int EditLoop(void);
 void EditLoad(void);
 void EditPartsObjectOnOff();
-#ifdef NON_MATCHING
 int EditInLoop(void);
 void EditInInit(float time, char *name);
-int EdMenuMode(void);
-void EdExitMenu(void);
 void MainMode(void);
 void EditMode(void);
-void EdMapJump(int hour, char *name);
 void EdSelectVillager(VILLAGER_INFO *info, float time, EDIT_MAP_INFO *map);
-void EdInitVilager(VILLAGER_INFO *info, CEditGround *ground, VILLAGER_INFO *walkers);
+void EdInitVilager(VILLAGER_INFO *info, CEditGround *ground, u_long128 *buffer);
 void EdInitVillagerOnOff(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGround *ground);
 void EdEventNPCStep(void);
+extern int MenuMapJumpMode;
+extern int chg_time_cnt;
+extern int bgm_vol;
+extern u_int Vu_prog0f[];
+extern int NowSelectParts;
+extern int NowSelectAngle;
+extern float NowCursorRotY;
+extern float NowPartsCursorPos[4];
+extern CMapParts *OldFocusParts;
+extern int OldSelectAngle;
+
+/** The ground the player has built on one map, as the save holds it. */
+struct ED_GRD_DATA {
+    u8 unk_00[0x64];
+    int unk_64; /**< Zero until the map's own build event has been seen. */
+};
+
+#ifdef NON_MATCHING
+int EdMenuMode(void);
+void EdExitMenu(void);
+void EdMapJump(int hour, char *name);
 void EdDoorOpenSe(int door_no, float *position);
 void EdDoorCloseSe(int door_no, float *position);
 void EdSetAmbientVol(float volume);
@@ -322,17 +341,9 @@ int EdEventInit(int event_no, CDataAlloc2<1> *alloc, char *script);
 void MapJump(int map_no, int entrance);
 extern CCameraFollow TalkCamera;
 extern CCameraFollow ViewCamera;
-extern int MenuMapJumpMode;
 extern int main_select_menu_no;
-extern int chg_time_cnt;
-extern int bgm_vol;
-extern u_long128 Vu_prog0f;
 extern CEffectGroup EdEffectGroup;
 extern int binary;
-extern int NowSelectParts;
-extern int NowSelectAngle;
-extern float NowCursorRotY;
-extern float NowPartsCursorPos[4];
 extern int EdBeforeInBgmNo;
 extern int EdDrawOffMap;
 extern int EdThunderEffectFlag;
@@ -343,21 +354,8 @@ extern int partseffect_list;
 extern int objeffect_list;
 extern int objtimer_list;
 extern ED_EXCHANGE_INFO EdExchangeInfo;
-extern int MenuMapJumpMode;
 extern int main_select_menu_no;
-extern int chg_time_cnt;
-extern int bgm_vol;
-extern u_long128 Vu_prog0f;
-/* The ground the player has built on one map, as the save holds it. */
-struct ED_GRD_DATA {
-    u8 unk_00[0x64];
-    int unk_64; /**< Zero until the map's own build event has been seen. */
-};
 
-/* The names of the interiors the debug menu offers. */
-static char *InteriorList[64];
-extern CMapParts *OldFocusParts;
-extern int OldSelectAngle;
 extern CCameraFollow EditCamera;
 void EBDraw(void);
 void EdDrawCharacter(CCharacter *chara, int detail, int count, CNPCharacter *villagers,
@@ -369,17 +367,6 @@ void EffectMacroStep(float *wind);
 void EffectWaterSpray(CEffectGroup *group, float *position, float *size, int count, int index);
 void FishLineDraw(int kind);
 void FishingDrawFish(void);
-/* Mode the loop returns to once the debug menu closes. */
-static int old_mode;
-/* Buffer the parts archive is read into. */
-static u_int *parts_read_buffer;
-/**
- * A part already built while the map loads, so later copies can share it.
- */
-struct LOADED_PARTS {
-    char name[0x20];  /**< Resource name the part was built from. */
-    CMapParts *parts; /**< Part built from that name. */
-};
 #endif
 
 /**
@@ -967,12 +954,12 @@ int EditInit(void *) {
     EdVillagerBuffer.base = (u_char *) free_start;
     EdVillagerBuffer.limit = free_quads - 4;
     EdVillagerBuffer.used = 0;
-    EdNPCReadBuffer = (u_int *) (EdNPCBuffer.base + EdNPCBuffer.used * 16 + (free_quads >> 1) * 16);
+    EdNPCReadBuffer = (u_long128 *) (EdNPCBuffer.base + EdNPCBuffer.used * 16 + (free_quads >> 1) * 16);
     int read_align = (int) EdNPCReadBuffer & 0x3F;
     if ((int) EdNPCReadBuffer < 0 && read_align != 0)
         read_align -= 0x40;
     if (read_align != 0)
-        EdNPCReadBuffer += ((0x40 - read_align) >> 4) * 4;
+        EdNPCReadBuffer += (0x40 - read_align) >> 4;
     EdCreateVillagerTable(EditMapInfo);
     EdInitVillagerControl();
     EdInitVillagerTable(NowTime, EditMapInfo);
@@ -1100,10 +1087,6 @@ int EditInit(void *) {
     ItemVolumeStep.CheckItemVolume();
     return 0;
 }
-INCLUDE_RODATA("asm/nonmatchings/editloop", @827);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @828);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @1609);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @1610);
 
 
 /**
@@ -1123,7 +1106,6 @@ int cat_end() {
  * @address 0x1797E0
  * @size 0x1FE8
  */
-#ifdef NON_MATCHING
 int EditLoop(void) {
     goto_return_menu = 0;
     if (EdPadDown(0x800, 4) != 0) {
@@ -1135,10 +1117,10 @@ int EditLoop(void) {
     static int end_count = -1;
     if (GameMode != 0xE) {
         if (EdCheckViewMode() != 0) {
-            MGSetRenderInfo(800.0f, 4.0f, 0x1FFFE);
+            MGSetRenderInfo(800.0f, 4.0f, 0x20000 - 2);
             MGScisioringForce(1);
         } else {
-            MGSetRenderInfo(800.0f, 5.0f, 0x1FFFE);
+            MGSetRenderInfo(800.0f, 5.0f, 0x20000 - 2);
             MGScisioringForce(0);
         }
     }
@@ -1147,10 +1129,12 @@ int EditLoop(void) {
     EdExchangeInfo.camera = (CCameraFollow *) NowCamera;
     EdExchangeInfo.event_marker = TreasureCursor;
     EdExchangeInfo.system_effect = SystemEffect;
-    sceVif1PkCall(Vif1Packet, &Vu_prog0f, 0);
+    sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
     EdSetFlag();
     EdEventInfo.current_time = NowTime;
-    pEditGround->focus_parts_id = -1;
+    CEditGround *ground = pEditGround;
+
+    ground->focus_parts_id = -1;
     if (((int *) SaveData->GetConfigData())[4] != 0) {
         EditMes1.text_rate_set = 0.6f;
     } else {
@@ -1175,13 +1159,7 @@ int EditLoop(void) {
             simple_event = 0;
             LoadScript();
 
-            CRect_i_ screen;
-
-            screen.x = 0;
-            screen.y = 0;
-            screen.width = 0x2800;
-            screen.height = 0xE00;
-            MGFillBox(screen, 0, 0, 0, 0x80);
+            MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), 0, 0, 0, 0x80);
             MGEndFrame();
             TexManager.DeleteTextureBlock(0xF);
             EdNPCBuffer.used = 0;
@@ -1192,13 +1170,7 @@ int EditLoop(void) {
             EdInitVilagerPosition(EdVillager, &EdVillagerInfo, pEditGround, NULL);
             MGBeginFrame();
 
-            CRect_i_ cover;
-
-            cover.x = 0;
-            cover.y = 0;
-            cover.width = 0x2800;
-            cover.height = 0xE00;
-            MGFillBox(cover, 0, 0, 0, 0x80);
+            MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), 0, 0, 0, 0x80);
 
             ED_EVENT_PARAM entry;
 
@@ -1209,10 +1181,11 @@ int EditLoop(void) {
             }
             Chara->SetPosition(fix_chara_pos);
 
-            float turn = fix_chara_rot[1] + 3.141592f;
+            float turn = fix_chara_rot[1];
 
+            turn += 3.141592f;
             if (!(turn <= 3.141592f)) {
-                turn -= 6.2831855f;
+                turn -= 6.283184f;
             }
             Chara->SetRotation(fix_chara_rot[0], turn, fix_chara_rot[2]);
             MainCamera.FollowOff();
@@ -1259,13 +1232,15 @@ int EditLoop(void) {
         static int top = 0;
         static int select = 0;
         static int cur = 0;
+        static char *menu[64];
+
         for (int i = 0; i < 64; i++) {
-            InteriorList[i] = interior_name[i];
+            menu[i] = interior_name[i];
         }
 
         int count;
 
-        for (count = 0; InteriorList[count][0] != '\0'; count++) {
+        for (count = 0; menu[count][0] != '\0'; count++) {
         }
         GamePad.SetAutoRepeat(0x5000, 20, 5);
         if (GamePad.Down(0x4000) != 0) {
@@ -1290,7 +1265,7 @@ int EditLoop(void) {
         DebugFont__3.len = 0;
         for (int i = top; i < top + 14; i++) {
             DebugFont__3.len += sprintf(&DebugFont__3.text[DebugFont__3.len], "%s %s\n",
-                                        mark[i == select], InteriorList[i]);
+                                        mark[i == select], menu[i]);
         }
         TexManager.ReloadTexture(GetVif1Packet(), 0x1F);
         DebugFont__3.Draw();
@@ -1298,11 +1273,11 @@ int EditLoop(void) {
             float hour = NowTime / 3.0f;
             int jump = (int) hour;
 
-            EdMapJump((int) hour, InteriorList[select]);
+            EdMapJump((int) hour, menu[select]);
             GameMode = 0xC;
             while (ReadBGSync() != 0) {
             }
-            strcpy(interior_map_name, InteriorList[select]);
+            strcpy(interior_map_name, menu[select]);
             EditInInit(NowTime, interior_map_name);
         }
         if (GamePad.On(0x100) != 0 && GamePad.On(0x800) != 0) {
@@ -1427,13 +1402,7 @@ int EditLoop(void) {
             }
             SndStep();
 
-            CRect_i_ screen;
-
-            screen.x = 0;
-            screen.y = 0;
-            screen.width = 0x2800;
-            screen.height = 0xE00;
-            MGFillBox(screen, 0, 0, 0, 0x80);
+            MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), 0, 0, 0, 0x80);
             MGEndFrame();
             for (int i = 0; i < 10; i++) {
                 TexManager.DeleteTextureBlock(i + 0x36);
@@ -1446,13 +1415,7 @@ int EditLoop(void) {
             EditInInit(NowTime, interior_map_name);
             MGBeginFrame();
 
-            CRect_i_ cover;
-
-            cover.x = 0;
-            cover.y = 0;
-            cover.width = 0x2800;
-            cover.height = 0xE00;
-            MGFillBox(cover, 0, 0, 0, 0x80);
+            MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), 0, 0, 0, 0x80);
             ItemVolumeStep.CheckItemVolume();
             return 0;
         }
@@ -1508,7 +1471,7 @@ int EditLoop(void) {
             EdVillagerBuffer.used = 0;
             StartReadBG();
             EdSelectVillager(&EdVillagerInfo, NowTime, EditMapInfo);
-            EdInitVilager(&EdVillagerInfo, pEditGround, (VILLAGER_INFO *) EdNPCReadBuffer);
+            EdInitVilager(&EdVillagerInfo, pEditGround, EdNPCReadBuffer);
         }
         NowCamera = (CCamera *) &MainCamera;
         Chara->GetVelocity()->y = 0.0f;
@@ -1535,9 +1498,9 @@ int EditLoop(void) {
                 BG_READ_INFO *file = GetReadBGFile(i);
 
                 if (file != NULL) {
-                    EdLoadVillager((u_int *) file->buffer,
-                               (char *) EdVillager[i].resource_name,
-                               &EdVillager[i],
+                    u_int *pack = (u_int *) file->buffer;
+
+                    EdLoadVillager(pack, EdVillager[i].resource_name, &EdVillager[i],
                                    &EdVillagerBuffer);
                 }
             }
@@ -1622,9 +1585,9 @@ int EditLoop(void) {
     }
     if ((EdDebugMoveFlag > 0 || MapNo < 5) && EdPadDown(0x100, 2) != 0 &&
         EdCheckViewMode() == 0 && change_time_event == 0) {
-        if (GameMode == 1) {
-            sceVu0FVECTOR at;
+        sceVu0FVECTOR at;
 
+        if (GameMode == 1) {
             move_count = 30;
             GameMode = 4;
             EditCamera.SetAngleSoon(MainCamera.GetAngle());
@@ -1649,8 +1612,6 @@ int EditLoop(void) {
             EditMenuStatus.parts = -1;
             NowSelectParts = -1;
         } else if (GameMode == 4 && pEditGround->CheckEffect() == 0) {
-            sceVu0FVECTOR at;
-
             move_count = 30;
             GamePad.AutoRepeatOff();
             if (CheckEditToWalk(at) != 0) {
@@ -1680,7 +1641,7 @@ int EditLoop(void) {
                     FadeOutToEvent(0xB, 0xA);
                 }
             }
-            EdInitVilagerPosition(EdVillager, &EdVillagerInfo, pEditGround, (float (*)[4]) at);
+            EdInitVilagerPosition(EdVillager, &EdVillagerInfo, pEditGround, &at);
         }
     }
     if (move_count > 0) {
@@ -1700,11 +1661,13 @@ int EditLoop(void) {
         }
     }
     EdSaveFrameImageTask();
-    if (GameMode == 4 && (EdStopSoundSrc(), EdPadDown(0x10, 2) != 0 || EdPadDown(0x20, 2) != 0) &&
-        EdInitMenu(1) != 0) {
-        NowSelectParts = -1;
-        GameMode = 5;
-        SndSePlay(1, -1, 0);
+    if (GameMode == 4) {
+        EdStopSoundSrc();
+        if ((EdPadDown(0x10, 2) != 0 || EdPadDown(0x20, 2) != 0) && EdInitMenu(1) != 0) {
+            NowSelectParts = -1;
+            GameMode = 5;
+            SndSePlay(1, -1, 0);
+        }
     }
     if (GameMode == 1 && (EdPadDown(0x10, 1) != 0 || goto_menu != 0 ||
                           (SystemMesCheck() == 0 && EdCheckItemOver() != 0))) {
@@ -1729,25 +1692,24 @@ int EditLoop(void) {
     if (GameMode != 6 && GameMode != 4 && loop_counter > 10) {
         sceVu0FVECTOR eye_pos;
         sceVu0FVECTOR eye_dir;
-        sceVu0FVECTOR maximum;
-        sceVu0FVECTOR minimum;
-        CMapParts *nearby[64];
+        CBoxVu0 box;
+        CMapParts *nearby[128];
 
         NowCamera->GetPos(eye_pos);
         NowCamera->GetDir(eye_dir);
 
         float reach = 550;
 
-        minimum[0] = eye_pos[0] - reach;
-        minimum[1] = eye_pos[1] - reach;
-        minimum[2] = eye_pos[2] - reach;
-        minimum[3] = 1.0f;
-        maximum[0] = reach + eye_pos[0];
-        maximum[1] = reach + eye_pos[1];
-        maximum[2] = reach + eye_pos[2];
-        maximum[3] = 1.0f;
+        box.min[0] = eye_pos[0] - reach;
+        box.min[1] = eye_pos[1] - reach;
+        box.min[2] = eye_pos[2] - reach;
+        box.min[3] = 1.0f;
+        box.max[0] = reach + eye_pos[0];
+        box.max[1] = reach + eye_pos[1];
+        box.max[2] = reach + eye_pos[2];
+        box.max[3] = 1.0f;
 
-        int found = pEditGround->GetNearParts(nearby, 64, (CBoxVu0 *) maximum, NULL);
+        int found = pEditGround->GetNearParts(nearby, 64, &box, NULL);
 
         for (int i = 0; i < found; i++) {
             if (nearby[i]->subtype == 2 && pEditGround->suppress_water != 0) {
@@ -1793,12 +1755,12 @@ int EditLoop(void) {
         EventCamera.SetRef(to);
         EventCamera.Step(-1);
         if (start_system_event > 0) {
-            if (EdEventInit(start_system_event, &EdWorkBuffer, EdSystemEventData) != 0) {
+            if (EdEventInit(start_system_event, &EdWorkBuffer, (char *) EdSystemEventData) != 0) {
                 EdInitMesParam();
                 GameMode = 0xE;
             }
         } else {
-            if (EdEventInit(start_event_no, &EdWorkBuffer, EdEventData) != 0) {
+            if (EdEventInit(start_event_no, &EdWorkBuffer, (char *) EdEventData) != 0) {
                 EdInitMesParam();
                 GameMode = 0xE;
                 ItemVolumeStep.CheckItemVolume();
@@ -1816,26 +1778,24 @@ int EditLoop(void) {
         simple_event = 0;
     }
     PauseOffCheck();
+    static int old_mode;
+
     if ((unsigned int) (GameMode - 9) < 2U && EdPadDown(0x800, 0xFFFF) != 0) {
         GameMode = old_mode;
         EdSePlay((ED_SOUND_ID) 2, -1);
         PlayTimeCountFlag(1);
     } else if (goto_return_menu != 0) {
-        switch (GameMode) {
-        case 1:
-        case 16:
+        if (GameMode == 1 || GameMode == 16) {
             old_mode = GameMode;
             oldGameMode = GameMode;
             GameMode = 9;
             EdSePlay((ED_SOUND_ID) 1, -1);
             PlayTimeCountFlag(0);
-            break;
-        case 4:
+        } else if (GameMode == 4) {
             old_mode = GameMode;
             GameMode = 0xA;
             EdSePlay((ED_SOUND_ID) 1, -1);
             PlayTimeCountFlag(0);
-            break;
         }
     }
     goto_return_menu = 0;
@@ -1872,9 +1832,6 @@ int EditLoop(void) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop", EditLoop__Fv);
-#endif
 
 INCLUDE_RODATA("asm/nonmatchings/editloop", @1837__2);
 INCLUDE_RODATA("asm/nonmatchings/editloop", @1838__2);
