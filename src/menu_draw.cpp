@@ -1914,34 +1914,36 @@ void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CT
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawPerBoardDraw__FiiiiiiP8CTexturei);
 #endif
-#ifdef NON_MATCHING
 void CommonTrushDraw(int x, int y, int alpha) {
+    PERSONAL_BOARD *board = PerBoardPt;
+    PERSONAL_BOARD_TRASH *trash = &board->trash;
     CRect_i_ source(0x190, 0x90, 0x30, 0x30);
     CRect_i_ dest(x, y + 1, 0x30, 0x2F);
 
-    if (PerBoardPt->trash.anim != 1) {
-        if (PerBoardPt->cursor_area == 2) {
-            source.x = 0x130;
+    switch (trash->anim) {
+        case 1: {
+            int frame = trash->frame;
+            if (frame <= 3 || frame > 12) {
+                source.x -= 0x30;
+            } else if (frame > 6 && frame < 10) {
+                source.x += 0x30;
+            }
+            DrawMenu2DSprite(PerBoardTex, dest, source, alpha);
+            trash->frame++;
+            if (frame > 15) {
+                trash->anim = 0;
+                trash->frame = 0;
+            }
+            break;
         }
-        DrawMenu2DSprite(PerBoardTex, dest, source, alpha);
-        return;
-    }
-    int frame = PerBoardPt->trash.frame;
-    if (frame < 4 || frame >= 13) {
-        source.x -= 0x30;
-    } else if (frame >= 7 && frame < 10) {
-        source.x += 0x30;
-    }
-    DrawMenu2DSprite(PerBoardTex, dest, source, alpha);
-    PerBoardPt->trash.frame++;
-    if (frame >= 16) {
-        PerBoardPt->trash.anim = 0;
-        PerBoardPt->trash.frame = 0;
+        default:
+            if (board->cursor_area == 2) {
+                source.x = 0x130;
+            }
+            DrawMenu2DSprite(PerBoardTex, dest, source, alpha);
+            break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonTrushDraw__Fiii);
-#endif
 #ifdef NON_MATCHING
 int IsEnableTrushThrow(int item_no) {
     int enable = 0;
