@@ -5,6 +5,7 @@
 #include <cstring>
 
 #include "battlemenu.hpp"
+#include "bt_shot_effect.hpp"
 #include "character.hpp"
 #include "clsmes.hpp"
 #include "dataalloc.hpp"
@@ -661,25 +662,30 @@ static void SetWepEffectMenuReadBuf(u_long128 *buf) {
     WepEffectMenuReadBuf = buf;
 }
 
-#ifdef NON_MATCHING
+/**
+ * Starts reading the active character's weapon effect file and returns the effect it is for.
+ *
+ * @mangled DngWepEffectReadStart__Fv
+ * @address 0x20D0B0
+ * @size 0xB4
+ */
 BT_SHOT_EFFECT *DngWepEffectReadStart() {
     char path[64];
     int size;
-    int chara = ((CUserStatus *) BtlMenuStatusPt)->cur_chara;
+    CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
+    int chara = status->cur_chara;
+    int slot = status->equipped_weapon_slot[chara];
+    WEAPON_HAVE *row = status->chara_weapons[chara];
+    WEAPON_HAVE *weapon = &row[slot];
 
-    WepEffectMenuPt = Get_Main_EffectPtr(
-        chara, ((CUserStatus *) BtlMenuStatusPt)->chara_weapons[chara][((CUserStatus *) BtlMenuStatusPt)->equipped_weapon_slot[chara]].best_elem);
-    sprintf(path, "dun/mainchara/wep_eff/%s.chr", (char *) WepEffectMenuPt);
+    WepEffectMenuPt = Get_Main_EffectPtr(chara, weapon->best_elem);
+    sprintf(path, "dun/mainchara/wep_eff/%s.chr", WepEffectMenuPt->model_name);
     WepEffectMenuReadBuf = GetWepEffectMenuReadBuf();
     WepEffectMenuReadBuf = MenuCalcBufAlignment(WepEffectMenuReadBuf);
-    LoadFileBG(path, WepEffectMenuReadBuf, &size);
+    LoadFileBG(path, (u_long128 *) WepEffectMenuReadBuf, &size);
     SetMenuCharaEffectReadFlag(1);
     return GetDngWepEffectPointer();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", DngWepEffectReadStart__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @936__3);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @947__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @948);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @949);
