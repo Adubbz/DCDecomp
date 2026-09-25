@@ -620,8 +620,6 @@ int CSHOT_MACHINGUN::Set(float *origin, float *direction, int damage, int elemen
  * @address 0x1AE750
  * @size 0x230
  */
-extern "C" CHIT_MACHINGUN_EFFECT OzumondShotEffect;
-
 void CSHOT_MACHINGUN::Step() {
     for (int slot = 0; slot < 16; slot++) {
         if (unk_280[slot] > 0) {
