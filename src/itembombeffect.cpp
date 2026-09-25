@@ -13,12 +13,11 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
+extern ITEM_DATA ITEM_LIST[];
 extern CItemBombEffect *NowBombEffect;
 extern CShockWave *NowShockWave;
 
 #ifdef NON_MATCHING
-extern ITEM_DATA ITEM_LIST[];
-
 static const int bomb_uv[4][2] = {{0, 0}, {1, 0}, {0, 1}, {1, 1}};
 #endif
 
@@ -93,8 +92,8 @@ int checkItemUsed(int slot) {
  * @size 0x248
  * @unknownret
  */
-#ifdef NON_MATCHING
 void usedActiveItem(CUserStatus *status, int item) {
+    int volume;
     int character = status->cur_chara;
 
     if (item == 0xAA) {
@@ -103,40 +102,39 @@ void usedActiveItem(CUserStatus *status, int item) {
         return;
     }
 
-    ITEM_DATA *item_data = &ITEM_LIST[item - 0x51];
-    if ((item_data->kind_flags & 4) != 0) {
-        int used_hp_value = 0;
-        if ((item_data->use_flags & 0x40) != 0) {
-            status->AddNowLife(character, item_data->vol, 100.0f);
-            used_hp_value = 1;
+    item -= 0x51;
+    if ((ITEM_LIST[item].kind_flags & ITEMKINDF_CONSUMABLE) != 0) {
+        volume = 0;
+        if ((ITEM_LIST[item].use_flags & ITEMUSE_HEAL_HP) != 0) {
+            s16 life = ITEM_LIST[item].vol;
+            status->AddNowLife(character, life, 100.0f);
+            volume++;
         }
-        if ((item_data->use_flags & 0x80) != 0) {
-            s16 *volume = &item_data->vol;
-            status->AddDrink(status->cur_chara, volume[used_hp_value], 5.0f);
+        if ((ITEM_LIST[item].use_flags & ITEMUSE_DRINK) != 0) {
+            s16 drink = (&ITEM_LIST[item].vol)[volume];
+            status->AddDrink(status->cur_chara, drink, 5.0f);
         }
     }
 
-    if ((item_data->kind_flags & 1) != 0) {
-        if ((item_data->use_flags & 0x1000) != 0) {
+    if ((ITEM_LIST[item].kind_flags & 1) != 0) {
+        if ((ITEM_LIST[item].use_flags & 0x1000) != 0) {
             BtSetStatusErr(8);
             SndSePlay(0x6F, -1, 0);
         }
-        if ((item_data->use_flags & 0x20000) != 0 &&
-            (status->unk_42C8[character] & 0x40) != 0) {
-            status->unk_42C8[character] = 0;
+        if ((ITEM_LIST[item].use_flags & 0x20000) != 0 &&
+            (UserStatus->unk_42C8[character] & 0x40) != 0) {
+            UserStatus->unk_42C8[character] = 0;
         }
-        if ((item_data->use_flags & 0x8000) != 0 &&
-            (status->unk_42C8[character] & 0x10) != 0) {
-            status->unk_42C8[character] = 0;
+        if ((ITEM_LIST[item].use_flags & 0x8000) != 0 &&
+            (UserStatus->unk_42C8[character] & 0x10) != 0) {
+            UserStatus->unk_42C8[character] = 0;
         }
-        if ((item_data->use_flags & 0x3C000) != 0) {
-            status->unk_42C8[character] = 0;
+        if ((ITEM_LIST[item].use_flags & 0x3C000) != 0 &&
+            (UserStatus->unk_42C8[character] != 0 || UserStatus->unk_42C8[character] != 8)) {
+            UserStatus->unk_42C8[character] = 0;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/itembombeffect", usedActiveItem__FP11CUserStatusi);
-#endif
 
 /**
  * Starts a bomb effect at a position and gives back the slot it took.
