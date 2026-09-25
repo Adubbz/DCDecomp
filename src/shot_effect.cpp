@@ -252,20 +252,16 @@ int CSHOT_EFFECT::Entry2(BT_SHOT_EFFECT *description, unsigned int *pack, int te
     return effect_data == NULL ? 0 : 1;
 }
 
-#ifdef NON_MATCHING
-void CSHOT_EFFECT::ReEntry(BT_SHOT_EFFECT *description, CDataAlloc2<1> *allocator) {
-    (void) allocator;
-    effect_data = description;
-    for (int slot = 0; slot < 8; slot++) {
-        active[slot] = 0;
-        phase[slot] = 0;
-        phase_delay[slot] = description != NULL ? description->life_time : 0;
+int CSHOT_EFFECT::ReEntry(BT_SHOT_EFFECT *description, CDataAlloc2<1> *allocator) {
+    for (int slot = 0; slot < slot_count; slot++) {
+        chara[slot] = unk_0010;
+        chara[slot].motion[0] = &chara[slot].motion_type;
+        chara[slot].frame = (CFrame *) CopyFrameVu1((CFrameVu1 *) unk_0010.frame, allocator);
     }
-    current_slot = -1;
+
+    effect_data = description;
+    return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", ReEntry__12CSHOT_EFFECTFP14BT_SHOT_EFFECTP14CDataAlloc2_1_);
-#endif
 
 void CSHOT_EFFECT::SetLoop(s32 loop) {
     s32 slot;

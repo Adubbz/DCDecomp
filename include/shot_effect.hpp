@@ -103,14 +103,14 @@ public:
     int Entry2(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
 
     /**
-     * Reinitializes projectile-effect slots from a replacement description.
+     * Gives every slot a fresh copy of the template character and switches to a replacement
+     * description; returns 1.
      *
      * @mangled ReEntry__12CSHOT_EFFECTFP14BT_SHOT_EFFECTP14CDataAlloc2_1_
      * @address 0x1AD810
      * @size 0x508
-     * @unknownret
      */
-    void ReEntry(BT_SHOT_EFFECT *, CDataAlloc2<1> *);
+    int ReEntry(BT_SHOT_EFFECT *, CDataAlloc2<1> *);
 
     /**
      * Selects whether the current projectile effect loops.
