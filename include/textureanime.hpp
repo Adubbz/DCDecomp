@@ -177,14 +177,14 @@ public:
     void Disable(int group);
 
     /**
-     * Parses texture-animation records from a named configuration file.
+     * Runs the texture-animation commands of a configuration script held in memory.
      *
      * @mangled LoadCFGFile__13CTextureAnimeFPci
      * @address 0x167BC0
      * @size 0xB4
      * @unknownret
      */
-    void LoadCFGFile(char *, int);
+    void LoadCFGFile(char *script, int script_size);
 };
 
 STATIC_ASSERT(sizeof(CTextureAnime) == 0x1F0);
