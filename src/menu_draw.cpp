@@ -65,13 +65,21 @@ extern CCamera MenuCamera;
 /** Frame texture the main menu draws its icons in. */
 extern CTexture *StayTex;
 
+/** Texture scratch of the first common menu message window. */
+extern u8 MesWinTexBuff_01[0x100];
+
+/** Texture scratch of the second common menu message window. */
+extern u8 MesWinTexBuff_02[0x100];
+
+/** Texture scratch of the third common menu message window. */
+extern u8 MesWinTexBuff_11[0x100];
+
+/** Texture scratch of the Atora name message window. */
+extern u8 MesWinTexBuff_12[0x100];
+
 #ifdef NON_MATCHING // draft declarations
 #include "sysmes.hpp"
 
-extern u8 MesWinTexBuff_01[0x100];
-extern u8 MesWinTexBuff_02[0x100];
-extern u8 MesWinTexBuff_11[0x100];
-extern u8 MesWinTexBuff_12[0x100];
 extern int MenuShadowReadBlock;
 extern int asort_top_type;
 #endif
@@ -298,8 +306,11 @@ int GetMenuCommonPutXY(ClsMes *mes, int x) {
     put_x -= size[2] >> 1;
     mes->text_x = put_x;
 }
-#ifdef NON_MATCHING
-static void ResetMenuMes(ClsMes *mes) {
+
+/**
+ * Resets a menu message window to its empty default layout.
+ */
+static inline void ResetMenuMes(ClsMes *mes) {
     mes->text_columns = 0x46;
     mes->text_rows = 10;
     mes->text_len = 0;
@@ -490,9 +501,6 @@ void InitMenuMesSet(int mode, short *buff) {
             return;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", InitMenuMesSet__FiPs);
-#endif
 
 void DrawMenuClsMes(ClsMes *message, int x, int y) {
     if (message != NULL) {
