@@ -1747,7 +1747,6 @@ void PersonalBoardTagDraw(int tag, int x, int y, CTexture *texture, int shift, i
             break;
     }
 }
-#ifdef NON_MATCHING
 void PersonalBoardScrlBarDraw(int count, int x, int y, float &scroll, unsigned char top_row, CTexture *texture, int alpha) {
     int bar_x = x + 0xE8;
     int rows = count / 5;
@@ -1756,22 +1755,18 @@ void PersonalBoardScrlBarDraw(int count, int x, int y, float &scroll, unsigned c
         rows = 1;
     }
     int length = (int) (456.0f / rows - 8.0f);
-    if ((float) length > 114.0f) {
+    if (114.0f < length) {
         length = 0x69;
     }
     CRect_i_ source(0xAE, 0x14, 8, 4);
-    scroll += (((float) (y + 0x16) + 114.0f * top_row / rows) - scroll) / 4.0f;
-    float bar_y = scroll;
+    float bar_y = (y + 0x16) + 114.0f * top_row / rows;
+    bar_y = scroll += (bar_y - scroll) / 4.0f;
     DrawMenu2DSprite(texture, CRect_i_(bar_x, (int) bar_y, 8, 4), source, alpha);
     source.y += 4;
-    float body_y = 4.0f + bar_y;
-    DrawMenu2DSprite(texture, CRect_i_(bar_x, (int) body_y, 8, length + 1), source, alpha);
+    DrawMenu2DSprite(texture, CRect_i_(bar_x, (int) (4.0f + bar_y), 8, length + 1), source, alpha);
     source.y += 4;
-    DrawMenu2DSprite(texture, CRect_i_(bar_x, (int) (body_y + length), 8, 4), source, alpha);
+    DrawMenu2DSprite(texture, CRect_i_(bar_x, (int) (4.0f + bar_y + length), 8, 4), source, alpha);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardScrlBarDraw__FiiiRfUcP8CTexturei);
-#endif
 
 void PersonalBoardMaxDraw(int num, int x, int y, CTexture *texture, int alpha) {
     int left = x + 0xD2;
