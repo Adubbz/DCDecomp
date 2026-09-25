@@ -73,30 +73,6 @@ extern int debug_mode;
 extern CTexture *tex;
 extern CTexture *tex2;
 
-/**
- * Stores one motion segment used to convert animation time into battle frames.
- */
-struct EB_MOTION_ENTRY {
-    int motion_no;
-    float start;
-    float end;
-    float speed;
-    int duration;
-};
-
-/**
- * Stores one timed controller prompt in an event battle.
- */
-struct EB_KEY_ENTRY {
-    int frame;
-    int buttons;
-    int mode;
-    int pressed;
-    int complete;
-    int early;
-    int reserved;
-};
-
 extern CCharacter *eb_chara;
 extern int eb_cool_flag;
 extern int eb_result;
@@ -438,73 +414,90 @@ int EBLoop() {
 }
 
 /**
- * Draws the event battle's prompt strip and result overlay.
+ * Draws the event battle's prompt strip, its opening caution mark and its result overlay.
+ *
+ * @mangled EBDraw__Fv
+ * @address 0x168B80
+ * @size 0x560
  */
-#ifdef NON_MATCHING
 void EBDraw() {
-    if ((ebattle_intro_flag == 0 && ebattle_flag == 0) || EdDebugParamDrawOff != 0) {
+    if (ebattle_intro_flag == 0 && ebattle_flag == 0) {
         return;
     }
-
     setbilinear(0);
-    TexManager.ReloadTexture(GetVif1Packet(), 0x2D);
+    if (EdDebugParamDrawOff != 0) {
+        return;
+    }
     if (eb_finish_cnt > 0) {
-        CRect_i_ result_screen;
-        CRect_i_ result_texel;
+        TexManager.ReloadTexture(GetVif1Packet(), 0x2D);
+        CRect_i_ texel;
+        texel.x = texel.y = texel.width = texel.height = 0;
         if (eb_result < 0) {
-            result_texel = CRect_i_(0, 0x50, 0x92, 0x3C);
-        } else if (eb_result == 2) {
-            result_texel = CRect_i_(0, 0, 0x100, 0x46);
-        } else {
-            result_texel = CRect_i_(0, 0x92, 0xB8, 0x40);
+            texel = CRect_i_(0, 0x50, 0x92, 0x3C);
         }
-        if (eb_result < 1 && ((eb_finish_cnt >> 2) & 1) == 0) {
-            return;
+        if (eb_result == 2) {
+            texel = CRect_i_(0, 0, 0x100, 0x46);
         }
-        result_screen = CRect_i_(0x140 - result_texel.width / 2,
-                                 0xE0 - result_texel.height / 2,
-                                 result_texel.width, result_texel.height);
-        set2DSprite(GetVif1Packet(), tex2, result_screen, 0, result_texel.y);
+        if (eb_result == 1) {
+            texel = CRect_i_(0, 0x92, 0xB8, 0x40);
+        }
+        int left = 0x140 - (texel.width >> 1);
+        int top = 0xE0 - (texel.height >> 1);
+        if (eb_result > 0 || (eb_finish_cnt >> 2) % 2 != 0) {
+            set2DSprite(GetVif1Packet(), tex2, CRect_i_(left, top, texel.width, texel.height), texel.x, texel.y);
+        }
         return;
     }
 
-    CRect_i_ dark_bar(0, 0xA0, 0x280, 0x10);
-    CRect_i_ top_line(0xA8, 0xA0, 0x40, 0x10);
-    CRect_i_ bottom_line(0xC0, 0xA0, 0x10, 0x10);
+    CRect_i_ bar(0, 0xA00, 0x2800, 0x100);
+    CRect_i_ left_edge(0xA80, 0xA00, 0x400, 0x100);
+    CRect_i_ right_edge(0xC00, 0xA00, 0x100, 0x100);
     if (ebattle_intro_flag != 0) {
-        dark_bar.x += draw_rect.x;
-        top_line.x += draw_rect.x;
-        bottom_line.x += draw_rect.x;
-    }
-    MGFillBox(dark_bar, 0, 0x28, 0xA0, 0x40);
-    MGFillBox(top_line, 0xFF, 0xFF, 0xFF, 0x20);
-    MGFillBox(bottom_line, 0xFF, 0xFF, 0xFF, 0x20);
-
-    if (ebattle_intro_flag != 0) {
-        if (((eb_intro_cnt >> 2) & 1) != 0) {
-            CRect_i_ caution(0x140 - 0x49, 0xE0 - 0x1E, 0x92, 0x3C);
-            set2DSprite(GetVif1Packet(), tex2, caution, Caution[0], Caution[1]);
+        TexManager.ReloadTexture(GetVif1Packet(), 0x2D);
+        int shift = draw_rect.x << 4;
+        bar.x += shift;
+        left_edge.x += shift;
+        right_edge.x += shift;
+        MGFillBox(bar, 0, 0x28, 0xA0, 0x40);
+        MGFillBox(left_edge, 0xFF, 0xFF, 0xFF, 0x20);
+        MGFillBox(right_edge, 0xFF, 0xFF, 0xFF, 0x20);
+        if ((eb_intro_cnt >> 2) % 2 != 0) {
+            int left = 0x140 - (Caution[2] >> 1);
+            int top = 0xE0 - (Caution[3] >> 1);
+            set2DSprite(GetVif1Packet(), tex2, CRect_i_(left, top, Caution[2], Caution[3]), Caution[0], Caution[1]);
         }
-        if ((eb_intro_cnt & 7) == 0) {
+        if (eb_intro_cnt % 8 == 0) {
             SndSePlay(8, -1, 0);
         }
         return;
     }
+    if (ebattle_flag == 0) {
+        return;
+    }
+    TexManager.ReloadTexture(GetVif1Packet(), 0x2D);
+    MGFillBox(bar, 0, 0x28, 0xA0, 0x40);
+    MGFillBox(left_edge, 0xFF, 0xFF, 0xFF, 0x20);
+    MGFillBox(right_edge, 0xFF, 0xFF, 0xFF, 0x20);
+    eb_chara->GetMotionInfo(eb_chara->motion_no);
 
-    EB_KEY_ENTRY *keys = (EB_KEY_ENTRY *) eb_key;
-    for (int i = eb_key_count; i < eb_key_num; ++i) {
-        float position = 200.0f - (float) (eb_count - keys[i].frame) * speed;
-        DrawButton(keys[i].buttons, (int) position, 0x140, button_scale(i), keys[i].early);
+    float scale = speed;
+    for (int i = eb_key_count; i < eb_key_num; i++) {
+        EB_KEY *key = &eb_key[i];
+        float delta = eb_count - key->frame;
+        delta *= scale;
+        float position = 200.0f - delta;
+        int x = position;
+        DrawButton(key->buttons, x, 0x140, button_scale(i), key->highlight);
     }
     if (eb_key_count > 0) {
-        EB_KEY_ENTRY &previous = keys[eb_key_count - 1];
-        float position = 200.0f - (float) (eb_count - previous.frame) * speed;
-        draw_ok((int) position);
+        EB_KEY *key = &eb_key[eb_key_count - 1];
+        float delta = eb_count - key->frame;
+        delta *= scale;
+        float position = 200.0f - delta;
+        int x = position;
+        draw_ok(x);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", EBDraw__Fv);
-#endif
 /**
  * Draws one button prompt of the event battle.
  *
