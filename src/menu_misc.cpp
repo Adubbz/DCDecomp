@@ -6,6 +6,7 @@
 
 #include "battlemenu.hpp"
 #include "bt_shot_effect.hpp"
+#include "btactstatus.hpp"
 #include "character.hpp"
 #include "clsmes.hpp"
 #include "dataalloc.hpp"
@@ -33,7 +34,6 @@
 #ifdef NON_MATCHING // draft includes
 #include <cstring>
 
-#include "btactstatus.hpp"
 #include "btmisc.hpp"
 #include "dngstatusdata.hpp"
 #include "shot_effect.hpp"
@@ -154,6 +154,11 @@ extern "C" const char *charaFile[6];
  * Provides the file extension appended to character model file names.
  */
 extern "C" const char CharaFileExtension[5];
+
+/**
+ * Names the synthetic texture a menu builds from the current frame image.
+ */
+extern "C" const char FrameImageTexture[];
 
 /** Weapon model files the menu has taken out of the weapon pack, by pack order. */
 extern u_int *MenuWeaponModelData[42];
@@ -1284,15 +1289,28 @@ void BtMenuLoadChara() {
     MainChara_Effect(WepEffectMenuPt, (u_int *) WepEffectMenuReadBuf, 0);
 }
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1254);
-#ifdef NON_MATCHING
+
+/**
+ * Enters the battle menu's read textures and clears its load state.
+ *
+ * @mangled BtMenuLoad2__Fi
+ * @address 0x20EA00
+ * @size 0xD4
+ */
 void BtMenuLoad2(int load_texture) {
     if (load_texture != 0) {
         BG_READ_INFO *file = GetReadBGFile(0);
-        LOADTEXTURE_INFO2 texture = {0};
-        texture.block_no = MenuShadowReadBlock;
-        texture.name = (char *) file->buffer;
-        TexManager.DeleteTextureBlock(MenuShadowReadBlock);
-        TexManager.LoadTextureBlockEX(-1, &texture);
+        LOADTEXTURE_INFO2 texture[3] = {
+            {(char *) FrameImageTexture, 0, 0},
+            {NULL, 0, 0},
+            {NULL, 0, 0},
+        };
+        int block_no = MenuShadowReadBlock;
+        texture[0].block_no = block_no;
+        texture[1].name = (char *) file->buffer;
+        texture[1].block_no = block_no;
+        TexManager.DeleteTextureBlock(block_no);
+        TexManager.LoadTextureBlockEX(-1, texture);
         MenuTextureReload(MenuShadowReadBlock);
         DngActiveWeaponTextureCopy();
     }
@@ -1301,9 +1319,6 @@ void BtMenuLoad2(int load_texture) {
     BtActStatus.unk_00C = 0;
     BtActStatus.action_on = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", BtMenuLoad2__Fi);
-#endif
 
 /**
  * Checks whether all East King event flags are set.

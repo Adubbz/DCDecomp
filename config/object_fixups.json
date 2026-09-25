@@ -1427,11 +1427,15 @@
   },
   "src/menu_misc.cpp": {
     "symbols": {
-      "CharaFileExtension": "@1037__2"
+      "CharaFileExtension": "@1037__2",
+      "FrameImageTexture": "@1254"
     },
     "sections": {
       ".menu_misc-motion": [
         "@171"
+      ],
+      ".menu_misc-frame": [
+        "@221"
       ]
     },
     "rekey_sections": [
@@ -1440,6 +1444,12 @@
         [
           12
         ]
+      ],
+      [
+        ".menu_misc-frame",
+        [
+          36
+        ]
       ]
     ],
     "globalize_symbols": [
@@ -1447,7 +1457,8 @@
       "charaFile"
     ],
     "rodata_exports": [
-      "@1037__2"
+      "@1037__2",
+      "@1254"
     ]
   },
   "src/itemdata.cpp": {
