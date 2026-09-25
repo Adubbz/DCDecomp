@@ -19,6 +19,7 @@
 #include "dungeonmap.hpp"
 #include "frame.hpp"
 #include "healeffect.hpp"
+#include "hitvalue.hpp"
 #include "itemdata.hpp"
 #include "mainselect.hpp"
 #include "mathutil.hpp"
@@ -789,6 +790,16 @@ int BtStatusErrColorSet(void) {
 
     return ailing;
 }
+
+/**
+ * How tall the current character stands.
+ */
+static inline float CharaHeight(CUserStatus *status) {
+    float chara_height[6] = {16.0f, 14.0f, 16.0f, 16.0f, 18.0f, 15.0f};
+
+    return chara_height[status->cur_chara];
+}
+
 /**
  * Advances the party's status ailments and applies what they cost.
  *
@@ -796,25 +807,33 @@ int BtStatusErrColorSet(void) {
  * @address 0x1B1A50
  * @size 0x154
  */
-#ifdef NON_MATCHING
-void BtStatusErrStep() {
+void BtStatusErrStep(void) {
+    int flags;
+    CUserStatus *status = UserStatus;
+    s8 *cur_chara = &status->cur_chara;
+
+    flags = status->unk_42C8[*cur_chara];
     poison_counter++;
-    int character = UserStatus->cur_chara;
-    if ((UserStatus->unk_42C8[character] & 0x10) && poison_counter > 179) {
-        int damage = (int) ((double) UserStatus->max_hp[character] * 0.05);
-        if (damage < 1) {
-            damage = 1;
-        }
-        UserStatus->AddNowLife(character, (s16) -damage, 10.0f);
+
+    // Poison takes 4% of the character's max HP every 180 steps and shows the loss over them.
+    if ((flags & 0x10) && poison_counter >= 180) {
+        int chara = *cur_chara;
+        int max_hp = status->max_hp[chara];
+        int damage = 0.04 * max_hp;
+        status->AddNowLife((s8) chara, -damage, 10.0f);
+
+        float position[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+        position[1] = CharaHeight(UserStatus);
+        HitValueEntry(NowHitValue, position, damage, 2, CharaMain.frame);
     }
-    if (poison_counter > 179) {
+
+    if (poison_counter >= 180) {
         poison_counter = 0;
     }
+
     BtStatusErrColorSet();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", BtStatusErrStep__Fv);
-#endif
+
 /**
  * Inflicts one status ailment on the party.
  *

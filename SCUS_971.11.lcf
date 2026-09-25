@@ -513,7 +513,7 @@ SECTIONS
         fishing.cpp.o (.data)          // 0x0026ae90
         shot_utils.cpp.o (.data)       // 0x0026afe0
         main.data.shot_freefuncs-a.s.o (.data) // 0x0026aff8
-        shot_freefuncs.cpp.o (.data)   // 0x0026b070
+        shot_freefuncs.cpp.o (.data)   // 0x0026b040
         healeffect.cpp.o (.data)       // 0x0026b0c0
         main.data.motionmodel-a.s.o (.data) // 0x0026b0d0
         motionmodel.cpp.o (.motionmodeldata) // 0x0026b1b0
