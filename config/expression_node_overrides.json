@@ -16258,6 +16258,13 @@
         },
         {
           "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 2,
+          "evaluate_first": 1
+        },
+        {
+          "type": "binary32",
           "value": "0x1.47ae140000000p-7",
           "value_bits": "0x3c23d70a",
           "ordinal": 1,
@@ -16267,6 +16274,13 @@
           "type": "binary32",
           "value": "0x1.0000000000000p-1",
           "value_bits": "0x3f000000",
+          "ordinal": 1,
+          "evaluate_first": 1
+        },
+        {
+          "type": "binary32",
+          "value": "0x1.ea00000000000p+8",
+          "value_bits": "0x43f50000",
           "ordinal": 1,
           "evaluate_first": 0
         }

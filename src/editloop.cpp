@@ -141,6 +141,9 @@ extern char **interior_name;
 extern int bgm_play_flag;
 extern int bgm_play_start;
 
+/** Buffer the map's part archive is read into. */
+extern u_int *parts_read_buffer;
+
 /* The arenas the map's own data is carved out of. */
 extern CDataAlloc2<1> EtcDataBuffer;
 extern CDataAlloc2<1> EPartsInfoBuff;
@@ -3840,16 +3843,6 @@ int LoadTexture() {
     return 0;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2850);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2851);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2852);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2853);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2999);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @3000);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @3001);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @3002);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @3003);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @3004);
 /**
  * Loads the player's model and motions into the arena the caller names, or
  * into the character arena when it names none.
@@ -3882,7 +3875,6 @@ void EdLoadMainChara(char *pack, char *name, CDataAlloc2<1> *arena) {
  * @address 0x1815E0
  * @size 0xDA8
  */
-#ifdef NON_MATCHING
 void LoadGroundData() {
     parts_read_buffer = read_buffer;
 
@@ -3895,7 +3887,7 @@ void LoadGroundData() {
 
     u_int *data;
     OBJ_ANIME_SEQ *anime = EditMapInfo->work.obj_anime;
-    EDIT_EFFECT_INFO *effects = EditMapInfo->work.effects.second;
+    EDIT_EFFECT_INFO *effects = EditMapInfo->work.effects.first;
     EDIT_OBJECT_TIMER *timers = EditMapInfo->work.object_timers.timers;
     ED_EVENT_POINT *points = EditMapInfo->work.events.points;
 
@@ -3994,7 +3986,7 @@ void LoadGroundData() {
         MotionParts[i].Initialize();
         if (info->name[0] != '\0') {
             data = (u_int *) EdLoadFile(info->name);
-            MotionParts[i].InitializeTexAnime(&TexAnimeData, 64);
+            MotionParts[i].InitializeTexAnime(TexAnimeData, 64);
             MotionParts[i].LoadPackData2(data, "info.cfg", &DataBuffer__2, i + 0x1B,
                                          &DataBuffer__2, 0);
             MotionParts[i].SetPosition(info->values[0], info->values[1], info->values[2]);
@@ -4025,17 +4017,22 @@ void LoadGroundData() {
     pEditGround->river_parts = RiverParts;
     pEditGround->road_parts = RoadParts;
     pEditGround->parts_info = &EditPartsInfo;
-    ((float *) ObjParts)[0x828] = 490.0f;
+    ObjParts[12].unk_120 = 490.0f;
 
-    LOADED_PARTS built[64];
+    struct LOADED_PARTS {
+        char name[0x20];
+        CMapParts *parts;
+    } built[64];
 
-    for (int i = 0; i < 64; i++) {
+    int i;
+
+    for (i = 0; i < 64; i++) {
         built[i].name[0] = '\0';
     }
 
     int found = 0;
 
-    for (int i = 0; ; i++) {
+    for (i = 0;; i++) {
         MAP_PARTS_INFO *info = &EditMapInfo->map_objects[i];
 
         if (info->name[0][0] == '\0' && info->name[1][0] == '\0' &&
@@ -4043,7 +4040,7 @@ void LoadGroundData() {
             break;
         }
 
-        CMapParts *parts = &pEditGround->parts[i];
+        CMapParts *parts = &pEditGround->fixed_parts[i];
 
         parts->Initialize();
 
@@ -4060,10 +4057,11 @@ void LoadGroundData() {
             }
             LoadPTS(parts, pts, info, anime, effects, timers, points, shared);
 
-            char *base = info->name[0];
+            char *c = info->name[0];
+            char *base = c;
             char letter;
 
-            for (char *c = info->name[0]; (letter = *c) != '\0'; c++) {
+            for (; (letter = *c) != '\0'; c++) {
                 if (letter == '/') {
                     base = c + 1;
                 }
@@ -4108,43 +4106,42 @@ void LoadGroundData() {
         parts->handle = i;
         parts->unk_0E4 = kind;
     }
-    for (int i = 0; i < 4; i++) {
+    for (i = 0; i < 4; i++) {
         EDIT_WATER_INFO *info = &EditMapInfo->water_surfaces[i];
 
-        if (info->type > 0) {
-            CGroundWater *surface = &pEditGround->water_surfaces[i];
-            CWater *water = &pEditGround->water_surfaces[i].water;
-            sceVu0FVECTOR near_left = {info->corner_a[0], info->corner_a[1], info->corner_a[2],
-                                       1.0f};
-            sceVu0FVECTOR near_right = {info->corner_b[0], info->corner_a[1], info->corner_a[2],
-                                        1.0f};
-            sceVu0FVECTOR far_left = {info->corner_a[0], info->corner_a[1], info->corner_c[2],
-                                      1.0f};
-            sceVu0FVECTOR far_right = {info->corner_b[0], info->corner_a[1], info->corner_c[2],
-                                       1.0f};
-
-            surface->draw = 1;
-            strcpy(surface->name, info->name);
-            surface->parts_no = info->parts_no;
-            sceVu0CopyVector(surface->offset, info->corner_c);
-            for (int j = 0; j < 3; j++) {
-                (&surface->follow_x)[j] = (&info->follow_x)[j];
-            }
-            for (int j = 0; j < 4; j++) {
-                sceVu0CopyVector((float *) &surface->ripples[j], &info->wave[j].x);
-            }
-            water->SetVertex(near_left, near_right, far_left, far_right);
-            water->frame.SetPosition(info->corner_c);
-            water->SetSize(info->type, info->number, &DataBuffer__2);
-            water->SetParam(info->texture_scroll[0], info->texture_scroll[1],
-                            info->texture_scroll[2], info->texture_scroll[3]);
-            water->SetColor(info->unk_50, info->unk_54, info->unk_58, 0x80);
+        if (info->type <= 0) {
+            break;
         }
+
+        CGroundWater *surface = &pEditGround->water_surfaces[i];
+        CWater *water = &pEditGround->water_surfaces[i].water;
+        sceVu0FVECTOR near_left = {info->corner_a[0], info->corner_a[1], info->corner_a[2],
+                                   1.0f};
+        sceVu0FVECTOR near_right = {info->corner_b[0], info->corner_a[1], info->corner_a[2],
+                                    1.0f};
+        sceVu0FVECTOR far_left = {info->corner_a[0], info->corner_a[1], info->corner_b[2],
+                                  1.0f};
+        sceVu0FVECTOR far_right = {info->corner_b[0], info->corner_a[1], info->corner_b[2],
+                                   1.0f};
+
+        surface->draw = 1;
+        strcpy(surface->name, info->name);
+        surface->parts_no = info->parts_no;
+        sceVu0CopyVector(surface->offset, info->corner_c);
+        for (int j = 0; j < 3; j++) {
+            (&surface->follow_x)[j] = (&info->follow_x)[j];
+        }
+        for (int j = 0; j < 4; j++) {
+            sceVu0CopyVector(&surface->ripples[j].row, &info->wave[j].x);
+        }
+        water->SetVertex(near_left, near_right, far_left, far_right);
+        water->frame.SetPosition(info->corner_c);
+        water->SetSize(info->type, info->number, &DataBuffer__2);
+        water->SetParam(info->texture_scroll[0], info->texture_scroll[1],
+                        info->texture_scroll[2], info->texture_scroll[3]);
+        water->SetColor(info->unk_50, info->unk_54, info->unk_58, 0x80);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop", LoadGroundData__Fv);
-#endif
 /**
  * Builds every map part the script placed -- the objects, then the roads and
  * rivers -- and hands a part that names a model already loaded the part that
