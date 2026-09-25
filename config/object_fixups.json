@@ -1436,14 +1436,15 @@
         "@149",
         "@158"
       ],
-      ".menu_misc-motion": [
-        "@198"
+      ".menu_misc-model": [
+        "@179",
+        "@233"
       ],
       ".menu_misc-frame": [
-        "@248"
+        "@283"
       ],
       ".menu_misc-options": [
-        "@418"
+        "@453"
       ]
     },
     "rekey_sections": [
@@ -1456,8 +1457,9 @@
         ]
       ],
       [
-        ".menu_misc-motion",
+        ".menu_misc-model",
         [
+          24,
           12
         ]
       ],

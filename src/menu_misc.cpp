@@ -7,6 +7,7 @@
 #include "battlemenu.hpp"
 #include "bt_shot_effect.hpp"
 #include "btactstatus.hpp"
+#include "btmisc.hpp"
 #include "character.hpp"
 #include "clsmes.hpp"
 #include "dataalloc.hpp"
@@ -35,13 +36,10 @@
 #ifdef NON_MATCHING // draft includes
 #include <cstring>
 
-#include "btmisc.hpp"
 #include "dngstatusdata.hpp"
 #include "weaponlevelup.hpp"
 
 extern CTexture *WepIcon;
-extern u_long128 *MenuWeaponModelBuildBuffer;
-extern u_long128 *WepMenuEffectReadBuf;
 extern char MenureadFile[64];
 extern char MenuWepDir[];
 #endif
@@ -54,6 +52,12 @@ extern int MenuItemUseVolume;
 
 /** The buffer the menu's weapon model file is read into. */
 extern u_long128 *WeaponRead_Buf;
+
+/** The buffer the menu builds its weapon models in. */
+extern u_long128 *MenuWeaponModelBuildBuffer;
+
+/** The buffer the menu's weapon level-up effect data is read into. */
+extern u_long128 *WepMenuEffectReadBuf;
 
 /** The menu's weapon-effect read flag. */
 extern s16 MenuCharaEffectReadFlag;
@@ -879,25 +883,34 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1036__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1037__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1038__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1039__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1040__2);
-#ifdef NON_MATCHING
-void WeaponModelBuildFunc(int chara, int texture_block) {
-    char name[32];
-    char cfg[32];
 
+/**
+ * Builds the models of a character's weapons into the menu's model cache.
+ *
+ * @mangled WeaponModelBuildFunc__Fii
+ * @address 0x20D930
+ * @size 0x430
+ */
+void WeaponModelBuildFunc(int chara, int texture_block) {
     printf("weapon model build func start\n");
     InitMenuWeaponModelReference();
-    LOADTEXTURE_INFO2 texture = {0};
-    texture.block_no = texture_block;
+    LOADTEXTURE_INFO2 texture[2] = {
+        {"#frame_menuwep#640#448#4", 0, 0},
+        {NULL, 0, 0},
+    };
+    char name[32];
+    char cfg[32];
+    texture[0].block_no = texture_block;
     TexManager.DeleteTextureBlock(texture_block);
     TexManager.CleanUpTextureList();
-    TexManager.LoadTextureBlockEX(-1, &texture);
+    TexManager.LoadTextureBlockEX(-1, texture);
     printf("modelbuildbuffer = %p\n", MenuWeaponModelBuildBuffer);
     MenuExCashBuffer.base = (u_char *) MenuWeaponModelBuildBuffer;
     MenuExCashBuffer.limit = 0xEC00;
     MenuExCashBuffer.used = 0;
+    int default_no;
     WEAPON_HAVE *weapons = ((CUserStatus *) BtlMenuStatusPt)->chara_weapons[chara];
-    int default_no = GetDefaultWeaponNo(chara);
+    default_no = GetDefaultWeaponNo(chara);
     int next = 2;
     u_int **data = GetMenuWeaponModelData(0);
     BtGetWeaponNamePath2(name, cfg, chara, 0);
@@ -931,12 +944,12 @@ void WeaponModelBuildFunc(int chara, int texture_block) {
             }
         }
         if (found == 0) {
-            data = GetMenuWeaponModelData(kind);
-            if (*data == NULL) {
+            u_int **model = GetMenuWeaponModelData(kind);
+            if (*model == NULL) {
                 printf("%d pack data is NULL\n", kind);
             } else {
                 BtGetWeaponNamePath2(name, cfg, chara, kind);
-                DngWeaponFrm[next].LoadPackData3(*data, cfg, &MenuExCashBuffer, texture_block, &MenuExCashBuffer, 1, 0);
+                DngWeaponFrm[next].LoadPackData3(*model, cfg, &MenuExCashBuffer, texture_block, &MenuExCashBuffer, 1, 0);
                 SetMenuWeaponModelReference(i, next, kind);
                 next++;
             }
@@ -946,21 +959,10 @@ void WeaponModelBuildFunc(int chara, int texture_block) {
     WepMenuEffectReadBuf = MenuCalcBufAlignment(WepMenuEffectReadBuf);
     printf("read buffer           = %p\n", read_buffer);
     printf("model build buffer    = %p\n", MenuWeaponModelBuildBuffer);
-    printf("WeaponBuffer Size     = %d\n", MenuExCashBuffer.limit);
+    printf("WeaponBuffer Size     = %d\n", (int) MenuExCashBuffer.limit);
     printf("WeaponBuffer address  = %p\n", MenuExCashBuffer.base + MenuExCashBuffer.used * 16);
     printf("WepMenuEffectReadBuf = %p\n", WepMenuEffectReadBuf);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponModelBuildFunc__Fii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1104);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1105);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1106);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1107);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1108);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1109);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1110);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1111);
 
 /**
  * Builds the model of a character's equipped weapon for the dungeon and attaches its effect.
