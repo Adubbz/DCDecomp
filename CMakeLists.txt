@@ -190,7 +190,6 @@ carve_part(main.sdata.part2b.s
            main.sdata.snd-tail.s=2A1EF0-2A1F14
            main.sdata.part2c.s=2A1F18-2A1F24
            main.sdata.part2d.s=2A1F50-2A1F68
-           main.sdata.editloop-c.s=2A1F70-2A1F78
            main.sdata.part2f.s=2A1F90-2A1F98
            main.sdata.edit_in-a.s=2A1FA0-2A1FE8
            main.sdata.btitem-a.s=2A1FF0-2A20C8
@@ -294,7 +293,6 @@ carve_part(main.data.part4.s
            main.data.part4m.s=266B90-266E10
            main.data.ebattle-a.s=266E90-266ED0
            main.data.part4c.s=266FB0-269320
-           main.data.part4h.s=269400-269460
            main.data.part4i.s=269A30-269AD0
            main.data.part4f.s=269B60-269BA0
            main.data.part4g.s=26A5E8-26A640

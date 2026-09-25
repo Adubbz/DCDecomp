@@ -481,7 +481,7 @@ SECTIONS
         main.data.part4c.s.o (.data)
         editmapscript.cpp.o (.mapscriptdata) // 0x00269320
         editloop.cpp.o (.editinitdata) // 0x00269350
-        main.data.part4h.s.o (.data)    // 0x00269400
+        editloop.cpp.o (.eddrawdata)    // 0x00269400
         editloop.cpp.o (.edmodedata)    // 0x00269460
         editloop.cpp.o (.edsuffix)      // 0x00269480
         . = ALIGN(4);
@@ -718,7 +718,6 @@ SECTIONS
 		edit.cpp.o (.sdata)            // 0x002a1f24
 		main.sdata.part2d.s.o (.sdata) // 0x002a1f50
 		editloop.cpp.o (.edmarkdata)   // 0x002a1f68
-		main.sdata.editloop-c.s.o (.sdata) // 0x002a1f70
 		editloop.cpp.o (.sdata)        // 0x002a1f78
 		editloop3.cpp.o (.sdata)       // 0x002a1f80
 		main.sdata.part2f.s.o (.sdata) // 0x002a1f90

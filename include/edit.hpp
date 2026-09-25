@@ -437,6 +437,16 @@ void EdInitThunderEffect();
 void EdThunderEffect(int map, CEditGround *ground);
 
 /**
+ * Draws one editor character with its shadow, cursor and event state.
+ *
+ * @mangled EdDrawCharacter__FP10CCharacteriiP12CNPCharacterPiiP13ED_EVENT_INFO
+ * @address 0x1725F0
+ * @size 0x4C8
+ */
+void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count, CNPCharacter *npcs,
+                     int *npc_draw_masks, int draw_shadows, ED_EVENT_INFO *event);
+
+/**
  * Starts effects attached to the supplied map parts.
  *
  * @mangled EnterPartsEffect__FP9CMapPartsP16EPARTS_FUNC_DATAP16EDIT_EFFECT_INFOi
@@ -472,6 +482,15 @@ void EdSetUseItem(int *items);
  * @size 0x30
  */
 void EdGetItemFile(int item_no, char *model_path, char *texture_path);
+
+/**
+ * Draws the item the player is holding up.
+ *
+ * @mangled EdDrawItem__Fv
+ * @address 0x173380
+ * @size 0x58
+ */
+void EdDrawItem(void);
 
 /**
  * Returns the item selected by the editor menu.

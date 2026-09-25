@@ -37,6 +37,8 @@
 #include "editpartsinfo.hpp"
 #include "effect.hpp"
 #include "effectgroup.hpp"
+#include "effectmacro.hpp"
+#include "fishing.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "gamemode.hpp"
@@ -222,10 +224,6 @@ extern EDIT_ELEMENT_INFO EditElementInfo[36];
 #include "menu_draw.hpp"
 #include "nowload.hpp"
 #include "wind.hpp"
-#ifdef NON_MATCHING // draft includes
-#include "fishing.hpp"
-#include "effectmacro.hpp"
-#endif
 extern u8 MesWinTexBuff_01[0x100];
 extern u8 MesWinTexBuff_02[0x100];
 extern CFrameVu1 *SkyFrame[4];
@@ -326,48 +324,9 @@ struct ED_GRD_DATA {
     int unk_64; /**< Zero until the map's own build event has been seen. */
 };
 
-#ifdef NON_MATCHING
-int EdMenuMode(void);
-void EdExitMenu(void);
-void EdMapJump(int hour, char *name);
-void EdDoorOpenSe(int door_no, float *position);
-void EdDoorCloseSe(int door_no, float *position);
-void EdSetAmbientVol(float volume);
-void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *position, float *direction);
-int SndGetBgmNo(void);
-void EdSaveFrameImageTask(void);
-int SystemMesCheck(void);
-int EdEventInit(int event_no, CDataAlloc2<1> *alloc, char *script);
-void MapJump(int map_no, int entrance);
-extern CCameraFollow TalkCamera;
-extern CCameraFollow ViewCamera;
-extern int main_select_menu_no;
-extern CEffectGroup EdEffectGroup;
-extern int binary;
-extern int EdBeforeInBgmNo;
-extern int EdDrawOffMap;
-extern int EdThunderEffectFlag;
-extern int EdInteriorFlag;
-extern char EditEmptyText[];
-extern int fobject_list;
-extern int partseffect_list;
-extern int objeffect_list;
-extern int objtimer_list;
-extern ED_EXCHANGE_INFO EdExchangeInfo;
-extern int main_select_menu_no;
-
-extern CCameraFollow EditCamera;
 void EBDraw(void);
-void EdDrawCharacter(CCharacter *chara, int detail, int count, CNPCharacter *villagers,
-                     int *marks, int shadow, ED_EVENT_INFO *event);
-void EdDrawItem(void);
 void EdEventBackSpriteDraw(void);
 void EdEventSpriteDraw(void);
-void EffectMacroStep(float *wind);
-void EffectWaterSpray(CEffectGroup *group, float *position, float *size, int count, int index);
-void FishLineDraw(int kind);
-void FishingDrawFish(void);
-#endif
 
 /**
  * Appends the active language suffix used by editor resource names.
@@ -1833,8 +1792,6 @@ int EditLoop(void) {
     return 0;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/editloop", @1837__2);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @1838__2);
 /**
  * Draws the editor's world for one frame.
  *
@@ -1842,8 +1799,13 @@ INCLUDE_RODATA("asm/nonmatchings/editloop", @1838__2);
  * @address 0x17B7D0
  * @size 0x11D8
  */
-#ifdef NON_MATCHING
 void MainDraw() {
+    ED_EVENT_INFO *event;
+    int shadow_on;
+    int detail;
+    int *marks;
+    int i;
+
     if (EdDrawOffFlag == 0) {
         if (EdPauseFlag != 0 || (unsigned int) (GameMode - 9) < 2U) {
             CTextureAnime::stop_anime = 1;
@@ -1858,7 +1820,7 @@ void MainDraw() {
         if (EdDrawOffMap == 0) {
             if (draw_sky != 0) {
                 EdDrawSky(NowTime, SkyFrame, SunFrame, SkyBackFrame, NowCamera,
-                          (int *) &EditMapInfo->sky_layers[0]);
+                          EditMapInfo->sky_follow);
             }
             TexManager.ReloadTexture(Vif1Packet, 1);
             TexAnime.TexAnime(1);
@@ -1870,14 +1832,14 @@ void MainDraw() {
             far_lod = 0.0f;
             float mid_lod = 0.0f;
 
-            if (edit_mode_grd_draw != 0) {
+            if (edit_mode_draw != 0) {
                 near_lod = 3.0f;
                 far_lod = 3.0f;
                 mid_lod = 3.0f;
             }
             pEditGround->Draw(NowTime, 1, (int) far_lod, (int) near_lod, (int) mid_lod,
                               (int) near_lod);
-            if (edit_mode_grd_draw != 0) {
+            if (edit_mode_draw != 0) {
                 sceVu0FVECTOR at;
                 sceVu0FVECTOR colour = {0.0f, 0.0f, 0.0f, 0.0f};
 
@@ -1890,7 +1852,7 @@ void MainDraw() {
             TexManager.ReloadTexture(Vif1Packet, 2);
             TexAnime.TexAnime(2);
             pEditGround->Draw(NowTime, 2, (int) far_lod, (int) near_lod, 0, 3);
-            if (edit_mode_grd_draw != 0) {
+            if (edit_mode_draw != 0) {
                 sceVu0FVECTOR at2;
                 sceVu0FVECTOR colour2 = {0.0f, 0.0f, 0.0f, 0.0f};
 
@@ -1931,7 +1893,7 @@ void MainDraw() {
                 screen.y = 0;
                 screen.width = 0x280;
                 screen.height = 0xE0;
-                *(u_long *) &water = TexManager.GetTexture("water_buff", -1)->tex0;
+                water = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
                 MGMoveImage(&frame, screen, &water, 0, 0, 0);
                 MainCamera.GetRef(ref);
                 zbuf = mgZBuffer;
@@ -1971,7 +1933,7 @@ void MainDraw() {
             CCharacter::MotionStopFlag = 1;
             Chara->Step();
             Chara->ShadowStep();
-            for (int i = 0; i < 10; i++) {
+            for (i = 0; i < 10; i++) {
                 CNPCharacter *villager = &EdVillager[i];
                 unsigned char addressable = villager->initialized != 0;
 
@@ -1995,15 +1957,14 @@ void MainDraw() {
         case 14:
         case 3:
         case 11: {
-            ED_EVENT_INFO *event = NULL;
-            int shadow_on = 1;
-            int detail = 3;
+            event = NULL;
+            shadow_on = 1;
+            detail = 3;
             int marks_store[10];
-            int *marks = marks_store;
+            marks = marks_store;
             float here[4];
             CBoxVu0 box;
             CMapParts *near_parts[0x40];
-            int i;
 
             if (GameMode == 2 || EdSystemMesCheck() != 0) {
                 shadow_on = 0;
@@ -2107,7 +2068,7 @@ void MainDraw() {
             }
             MGSetPLight(light, colour);
         }
-        for (int i = 0; i < 4; i++) {
+        for (i = 0; i < 4; i++) {
             TexManager.ReloadTexture(Vif1Packet, i + 0x1B);
             MotionParts[i].TextureAnime(i + 0x1B);
             MotionParts[i].Draw();
@@ -2149,8 +2110,9 @@ void MainDraw() {
             case 9:
             case 10:
                 EditEffectStep2();
-                pEditGround->DrawEffect((CCameraFollow *) NowCamera, NowTime,
-                                        &EdEffectGroup);
+                CEditGround *ground = pEditGround;
+
+                ground->DrawEffect((CCameraFollow *) NowCamera, NowTime, &EdEffectGroup);
                 EdEffectGroup.Draw();
                 break;
             }
@@ -2242,9 +2204,6 @@ void MainDraw() {
         clear_screen = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop", MainDraw__Fv);
-#endif
 
 /**
  * Draws the editor's map cursor, and the plate that names the part under it.
