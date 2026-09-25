@@ -238,11 +238,12 @@ extern CTexture *StayTexture;
 
 void CommandIMGSub(int image_type, int image_number, char *name);
 void EditSave();
+
+/* Defined in editmapscript.cpp, whose header does not declare it. */
 void PlayAmbient(float volume);
 
-/* editloop's own functions, in the order the unit defines them. Each is still
- * INCLUDE_ASM below; the prototypes are what lets the decompiled ones call
- * ahead of their definitions. */
+/* editloop's own functions, in the order the unit defines them; the prototypes
+ * let each call ahead of its definition. */
 /**
  * Starts a map event and optionally adopts a camera viewpoint.
  */
@@ -299,10 +300,12 @@ int EditInit(void *param);
 int EditLoop(void);
 void EditLoad(void);
 void EditPartsObjectOnOff();
-int EditInLoop(void);
-void EditInInit(float time, char *name);
 void MainMode(void);
 void EditMode(void);
+
+/* Defined in edit_in.cpp and editloop3.cpp, whose headers do not declare them. */
+int EditInLoop(void);
+void EditInInit(float time, char *name);
 void EdSelectVillager(VILLAGER_INFO *info, float time, EDIT_MAP_INFO *map);
 void EdInitVilager(VILLAGER_INFO *info, CEditGround *ground, u_long128 *buffer);
 void EdInitVillagerOnOff(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGround *ground);
@@ -324,6 +327,7 @@ struct ED_GRD_DATA {
     int unk_64; /**< Zero until the map's own build event has been seen. */
 };
 
+/* Defined in ebattle.cpp and editloop3.cpp, whose headers do not declare them. */
 void EBDraw(void);
 void EdEventBackSpriteDraw(void);
 void EdEventSpriteDraw(void);
@@ -2369,6 +2373,10 @@ public:
 /**
  * Draws the banner that fades in when a new day starts: the day count, the
  * weekday and the bar beneath them.
+ *
+ * @mangled DrawDay__Fv
+ * @address 0x17D040
+ * @size 0x9A8
  */
 void DrawDay() {
     if (draw_day_flag != 0) {
