@@ -42,7 +42,8 @@ STATIC_ASSERT(sizeof(WATER_WAVE_LING) == 0x20);
 void WaterSplash_Init(void);
 
 /**
- * Reports whether the party stands in healing water.
+ * Reports whether the party stands in the water of the nearest map part, records the surface
+ * point in CheckWaterInfo and starts the splash as they enter it.
  *
  * @mangled CheckHealingWater__Fv
  * @address 0x1AF3B0

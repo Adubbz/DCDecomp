@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <cstring>
 
+#include "btactstatus.hpp"
 #include "character.hpp"
 #include "dataread.hpp"
 #include "dun/gameloop.hpp"
@@ -20,10 +21,6 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
-#ifdef NON_MATCHING
-static sceVu0FVECTOR water_position;
-static s32 healing_water_active;
-#endif
 extern "C" s32 poison_counter;
 
 /**
@@ -147,6 +144,11 @@ extern int WaterWaveLingWait;
 extern int Water_Splash_actFlag;
 
 /**
+ * The splash shown where the party enters the water.
+ */
+extern CCharacter Water_Splash;
+
+/**
  * Clears the water-splash effects.
  *
  * @mangled WaterSplash_Init__Fv
@@ -167,39 +169,78 @@ void WaterSplash_Init(void) {
 }
 
 /**
- * Reports whether the party stands in healing water.
+ * Reports whether the party stands in the water of the nearest map part, records the surface
+ * point in CheckWaterInfo and starts the splash as they enter it.
  *
  * @mangled CheckHealingWater__Fv
  * @address 0x1AF3B0
  * @size 0x328
  */
-#ifdef NON_MATCHING
-int CheckHealingWater() {
-    sceVu0FVECTOR position;
-    CharaMain.GetPosition(position);
-    healing_water_active = 0;
+int CheckHealingWater(void) {
+    float position[4];
+    float water_position[4];
+    PARTS_WATER *nearest_water;
+    float nearest_distance;
+    float water_x;
+    float water_y;
+    float water_z;
+    int row;
+    int column;
 
-    float nearest = 160.0f;
-    for (int part = 0; part < 72; part++) {
-        CDungeonParts &map_part = NowDngMap->parts[part];
-        if (map_part.frame[0] == NULL || map_part.water.used == 0) {
-            continue;
-        }
-        float dx = position[0] - map_part.pos[0];
-        float dz = position[2] - map_part.pos[2];
-        float distance = sqrtf(dx * dx + dz * dz);
-        if (distance < nearest && position[1] < map_part.water.vertex[0][1]) {
-            nearest = distance;
-            sceVu0CopyVector(water_position, position);
-            water_position[1] = map_part.water.vertex[0][1];
-            healing_water_active = 1;
+    nearest_distance = 160.0f;
+    sceVu0CopyVector(position, CharaMain.pos);
+
+    for (row = 0; row < 16; row++) {
+        for (column = 0; column < 16; column++) {
+            int parts_no = NowDngMap->cells[row * 20 + column].parts_no;
+
+            if (parts_no != -1) {
+                CDungeonParts *part = &NowDngMap->parts[parts_no];
+                PARTS_WATER *water = &part->water;
+
+                if (part->water.used != 0) {
+                    water_position[0] = 160.0f * column;
+                    water_position[1] = water->vertex[0][1];
+                    water_position[2] = 160.0f * row;
+
+                    float distance = DistVector(position, water_position);
+
+                    if (distance < nearest_distance) {
+                        nearest_water = water;
+                        nearest_distance = distance;
+                        water_x = water_position[0];
+                        water_y = water_position[1];
+                        water_z = water_position[2];
+                    }
+                }
+            }
         }
     }
-    return healing_water_active;
+
+    if (nearest_distance < 160.0f && position[0] >= water_x + nearest_water->vertex[0][0] &&
+        position[0] < water_x + nearest_water->vertex[3][0] &&
+        position[2] >= water_z + nearest_water->vertex[0][2] &&
+        position[2] < water_z + nearest_water->vertex[3][2] && position[1] < water_y) {
+        position[1] = water_y;
+        sceVu0CopyVector(CheckWaterInfo.unk_10, position);
+        BtActStatus.unk_094 = 1;
+
+        if (Water_Splash_actFlag == 0 && CheckWaterInfo.unk_20 == 0 &&
+            CheckWaterInfo.unk_00[1] - CheckWaterInfo.unk_10[1] > 0.5f) {
+            Water_Splash.SetPosition(CheckWaterInfo.unk_10);
+            Water_Splash.SetMotion(0, 6);
+            SndSePlay(0x223, -1, 0);
+            Water_Splash_actFlag = 1;
+        }
+
+        CheckWaterInfo.unk_20 = 1;
+        return 1;
+    }
+
+    sceVu0CopyVector(CheckWaterInfo.unk_00, position);
+    CheckWaterInfo.unk_20 = 0;
+    return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", CheckHealingWater__Fv);
-#endif
 /**
  * Reports whether the party stands in a healing zone.
  *
