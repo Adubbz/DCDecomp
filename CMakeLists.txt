@@ -287,7 +287,8 @@ carve_part(main.data.part6.s
 carve_part(main.data.part4.s
            main.data.part4.s=25DF70-266810
            main.data.part4b.s=2668C0-266B70
-           main.data.part4m.s=266B90-266ED0
+           main.data.part4m.s=266B90-266E10
+           main.data.ebattle-a.s=266E90-266ED0
            main.data.part4c.s=266FB0-269320
            main.data.part4h.s=269400-269480
            main.data.part4j.s=269494-269930

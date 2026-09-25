@@ -631,44 +631,50 @@ void draw_ok_loop() {
  * @address 0x169490
  * @size 0x2A0
  */
-#ifdef NON_MATCHING
 static void draw_ok(int x) {
-    if (ok_draw_cnt <= 0) {
-        return;
-    }
-
-    CRect_i_ success_texel(0, 0xD0, 0x1A, 0x10);
-    CRect_i_ cool_texel(0, 0xE0, 0x28, 0x10);
-    CRect_i_ spark_texel(0x20, 0x60, 0x20, 0x20);
-    CRect_i_ *result_texel = ok_type == 0 ? &success_texel : &cool_texel;
-    if (((ok_draw_cnt / 3) & 1) != 0) {
-        CRect_i_ result_screen(0xC8 - result_texel->width / 2,
-                               0x13E - result_texel->height,
-                               result_texel->width, result_texel->height);
-        set2DSprite(GetVif1Packet(), tex2, result_screen, result_texel->x, result_texel->y);
-    }
-
-    sceVu0FVECTOR directions[8] = {
-        {1.0f, 0.0f, 0.0f, 0.0f},   {1.0f, 1.0f, 0.0f, 0.0f},
-        {0.0f, 1.0f, 0.0f, 0.0f},   {-1.0f, 1.0f, 0.0f, 0.0f},
-        {-1.0f, 0.0f, 0.0f, 0.0f},  {-1.0f, -1.0f, 0.0f, 0.0f},
-        {0.0f, -1.0f, 0.0f, 0.0f},  {1.0f, -1.0f, 0.0f, 0.0f},
+    static sceVu0FVECTOR dir[8] = {
+        {1.0f, 0.0f, 0.0f, 0.0f},
+        {-1.0f, 0.0f, 0.0f, 0.0f},
+        {0.0f, 1.0f, 0.0f, 0.0f},
+        {0.0f, -1.0f, 0.0f, 0.0f},
+        {1.0f, 1.0f, 0.0f, 0.0f},
+        {1.0f, -1.0f, 0.0f, 0.0f},
+        {-1.0f, 1.0f, 0.0f, 0.0f},
+        {-1.0f, -1.0f, 0.0f, 0.0f},
     };
-    int age = 30 - ok_draw_cnt;
-    int alpha = 0x80 - ((30 - ok_draw_cnt * 2) * 0x80) / 30;
-    for (int i = 0; i < 8 && alpha > 0; ++i) {
+
+    if (ok_draw_cnt > 0) {
+        CRect_i_ good_texel(0, 0xD0, 0x1A, 0x10);
+        CRect_i_ cool_texel(0, 0xE0, 0x28, 0x10);
+        CRect_i_ star_texel(0x20, 0x60, 0x20, 0x20);
+        CRect_i_ *texel = &good_texel;
         sceVu0FVECTOR offset;
-        sceVu0Normalize(directions[i], directions[i]);
-        sceVu0ScaleVector(offset, directions[i], 2.0f * (float) age);
-        CRect_i_ screen(x + 0x18 + (int) offset[0] - spark_texel.width / 2,
-                        (int) offset[1] + 0x15E - spark_texel.height,
-                        spark_texel.width, spark_texel.height);
-        set2DSprite(GetVif1Packet(), tex, screen, spark_texel, (unsigned char) alpha);
+
+        if (ok_type != 0) {
+            texel = &cool_texel;
+        }
+        if ((ok_draw_cnt / 3) % 2 != 0) {
+            int left = 200 - (texel->width >> 1);
+            int top = 318 - texel->height;
+            CRect_i_ screen(left, top, texel->width, texel->height);
+            set2DSprite(GetVif1Packet(), tex2, screen, texel->x, texel->y);
+        }
+        texel = &star_texel;
+        int center = x + 0x18;
+        for (int i = 0; i < 8; i++) {
+            sceVu0Normalize(dir[i], dir[i]);
+            sceVu0ScaleVector(offset, dir[i], 2.0f * (30 - ok_draw_cnt));
+            int screen_x = center + (int) offset[0] - (texel->width >> 1);
+            int bottom = (int) offset[1] + 0x160;
+            int screen_y = bottom - texel->height - 2;
+            int alpha = 0x80 - (int) (128.0 * (float) (30 - ok_draw_cnt * 2) / 30.0);
+            if (alpha > 0) {
+                CRect_i_ screen(screen_x, screen_y, texel->width, texel->height);
+                set2DSprite(GetVif1Packet(), tex, screen, star_texel, alpha);
+            }
+        }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", draw_ok__Fi);
-#endif
 /**
  * Gives the scale a button prompt draws at while it flashes.
  *
