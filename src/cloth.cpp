@@ -361,20 +361,20 @@ int SetMaterial(u_int *packet, MDT_MATERIAL *material);
 int SetTEX0(u_int *packet, u_long tex0, u_long tex1);
 
 int CCloth::CreateVUData(u_int *packet) {
-    int word;
-    int kicked;
-    u_long128 *vertex;
+    int j;
+    CTexture *texture;
     int i;
-    int count;
     u_int *tag;
+    int word;
+    int count;
+    int kicked;
     int qwc;
     int header;
-    int j;
     int columns;
-    u_int header_tag;
+    u_long128 *vertex;
     u_long128 *normal;
+    u_int header_tag;
     u_long128 *uv;
-    CTexture *texture;
 
     word = 0;
     u_int end_tag[4] = {0x11000000, 0, 0, 0};
