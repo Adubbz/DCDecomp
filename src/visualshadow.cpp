@@ -10,6 +10,14 @@
 
 extern CDataAlloc2<1> *ActiveData;
 
+/**
+ * Clips a triangle against the near plane, giving back the polygon that survives.
+ * Defined in character.cpp.
+ *
+ * @mangled scissior__FPA4_fPA4_fPA4_ff
+ * @address 0x137440
+ * @size 0xA38
+ */
 int scissior(float out[][4], float first[][4], float second[][4], float near_z);
 
 int CVisualShadow::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
