@@ -414,7 +414,7 @@ void DngEscapeMsgDraw();
 int DngEscapeMsgLoop();
 
 /**
- * Collects the party's special items and weapons into the given arrays and reports whether there are any.
+ * Collects what the party holds beyond its inventory's room, which must be thrown away, and reports whether there is any.
  *
  * @mangled CheckItemThrow__FPiPi
  * @address 0x20F4D0

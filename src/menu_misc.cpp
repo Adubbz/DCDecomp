@@ -1580,13 +1580,23 @@ int DngEscapeMsgLoop() {
     DngEscapeMsgDraw();
     return result;
 }
-#ifdef NON_MATCHING
+
+/**
+ * Collects what the party holds beyond its inventory's room, which must be thrown away, and reports whether there is any.
+ *
+ * @mangled CheckItemThrow__FPiPi
+ * @address 0x20F4D0
+ * @size 0x1B0
+ */
 int CheckItemThrow(int *items, int *values) {
+    int i;
+    int any = 0;
     int found = 0;
+    int item_no;
     ITEM_PACK *pack = &((CUserStatus *) BtlMenuStatusPt)->item_pack;
 
-    for (int i = 0; i < 3; i++) {
-        int item_no = pack->item[pack->num + i];
+    for (i = 0; i < 3; i++) {
+        item_no = pack->item[pack->num + i];
         if (item_no >= 0x84) {
             found++;
             if (items != NULL) {
@@ -1597,46 +1607,41 @@ int CheckItemThrow(int *items, int *values) {
             }
         }
     }
-    for (int i = 0; i < 6; i++) {
-        WEAPON_HAVE *weapon = &((CUserStatus *) BtlMenuStatusPt)->chara_weapons[i][10];
-        int item_no = weapon->item_no;
+    for (i = 0; i < 6; i++) {
+        WEAPON_HAVE *row = ((CUserStatus *) BtlMenuStatusPt)->chara_weapons[i];
+        item_no = row[10].item_no;
         if (item_no >= 0x101) {
             found++;
             if (items != NULL) {
                 items[3] = item_no;
             }
             if (values != NULL) {
-                values[3] = weapon->unk_02;
+                values[3] = row[10].unk_02;
             }
             break;
         }
     }
-    DNG_CONSUMABLE *extra = &((CUserStatus *) BtlMenuStatusPt)->consumable_items[40];
-    for (int i = 0; i < 3; i++) {
-        ATTACH_LIST *list = (ATTACH_LIST *) &extra[i];
-        int item_no = list->item_no;
+    ATTACH_LIST *attach = (ATTACH_LIST *) ((CUserStatus *) BtlMenuStatusPt)->consumable_items;
+    for (i = 0; i < 3; i++) {
+        item_no = attach[i + 40].item_no;
         if (item_no >= 0x51) {
             found++;
             if (items != NULL) {
                 items[i + 4] = item_no;
             }
             if (values != NULL && item_no >= 0x5B && item_no < 0x5F) {
-                values[i + 4] = ((s16 *) list)[item_no - 0x5A];
+                values[i + 4] = attach[i + 40].status[item_no - 0x5B];
             }
             if (values != NULL && item_no == 0x5A) {
-                values[i + 4] = list->unk_02;
+                values[i + 4] = attach[i + 40].unk_02;
             }
         }
     }
-    int any = 0;
     if (found > 0) {
         any = 1;
     }
     return any;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", CheckItemThrow__FPiPi);
-#endif
 #ifdef NON_MATCHING
 void SetWeaponElementStatus(WEAPON_HAVE *weapon) {
     int best = 0;
