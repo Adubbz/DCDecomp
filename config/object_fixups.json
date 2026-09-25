@@ -2263,5 +2263,10 @@
         "@37"
       ]
     }
+  },
+  "src/menu_manual.cpp": {
+    "symbols": {
+      "manual_frame_image": "@354__3"
+    }
   }
 }

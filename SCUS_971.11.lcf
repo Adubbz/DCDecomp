@@ -694,7 +694,7 @@ SECTIONS
         main.data.part6j.s.o (.data) // 0x00295644
         eastking.cpp.o (.data)       // 0x00295660 EastKingTextureEnter's two local array templates
         main.data.eastking-tail.s.o (.data) // 0x002956d0
-        menu_manual.cpp.o (.data)    // 0x002957f0
+        menu_manual.cpp.o (.data)    // 0x002956f0
         main.data.menu_manual-after.s.o (.data) // 0x00295800
         weapon_buildup.cpp.o (.data) // 0x00295810
         main.data.part6d.s.o (.data) // 0x00295830

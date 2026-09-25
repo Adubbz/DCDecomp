@@ -301,7 +301,7 @@ carve_part(main.data.part6.s
            main.data.part6g.s=2941C0-2942D0
            main.data.part6g-2942F0.s=2942F0-294460
            main.data.part6j.s=295644-295660
-           main.data.eastking-tail.s=2956D0-2957F0
+           main.data.eastking-tail.s=2956D0-2956F0
            main.data.menu_manual-after.s=295800-295810
            main.data.part6d.s=295830-295840
            main.data.part6b.s=2959B0-2959C0
