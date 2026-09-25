@@ -1476,5 +1476,10 @@
         "__vt__10CVisualVu1"
       ]
     }
+  },
+  "src/healeffect.cpp": {
+    "symbols": {
+      "HealEffectTextureName": "@1430"
+    }
   }
 }

@@ -1090,9 +1090,9 @@ int BtGetGateKey_Loop() {
                 SetTempTexture(0x1C, (char *) itemOpenItemImg);
                 itemBoxModel = LoadMDSFile((u_int *) itemOpenItemMds, &BtCashBuffer, 0, NULL, NULL);
                 itemBoxModel->SetReference(CharaMain.frame->SearchFrame("item"));
-                itemBoxModel->SetPosition(0.0f, 0.0f, 0.0f);
+                itemBoxModel->SetPosition((0, 0.0f), (0, (0, 0.0f)), (0, (0, 0.0f)));
                 itemBoxModel->SetRotation(0.0f, 0.0f, 0.0f);
-                itemBoxModel->SetScale(1.0f, 1.0f, 1.0f);
+                itemBoxModel->SetScale((0, (0, 1.0f)), 1.0f, (0, 1.0f));
                 gateItemFlag = 1;
                 GateKey_Sled++;
             }

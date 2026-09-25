@@ -597,7 +597,6 @@ static int CalMoveToMenuIcon() {
     }
     return done;
 }
-#ifdef NON_MATCHING
 void EditMenuInit(int *texture_blocks, int atora) {
     StartReadBG();
     u_long128 *buffer = (u_long128 *) (EdMenuBuffer.base + EdMenuBuffer.used * 16);
@@ -652,14 +651,8 @@ void EditMenuInit(int *texture_blocks, int atora) {
         MenuIconPos[i][1] = i * 40 + 0x4A;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuInit__FPii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @464__3);
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @465__2);
-#ifdef NON_MATCHING
 static void EditMenuExit() {
-    int blocks[5] = {0, 0, 0, 0, 0};
+    int blocks[5] = {0, 0, 0, 0, -1};
 
     blocks[0] = EdMenuTextureBlock;
     blocks[1] = EdMenuExTextureBlock;
@@ -670,9 +663,6 @@ static void EditMenuExit() {
     GamePad.AutoRepeatOff();
     GamePad.MenuModeOff();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuExit__Fv);
-#endif
 
 static int GetDrawHelpWindow(int draw) {
     if ((EditSwitch == 9 || EditSwitch == 3 || EditSwitch == 0x10) && GetMenuAtraEventFlag()) {

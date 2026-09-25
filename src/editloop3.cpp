@@ -114,6 +114,7 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                      int function_count, ED_EVENT_POINT *points, int point_count) {
     int has_extent;
     int created;
+    int j;
     volatile int point_offset[4];
 
     for (int i = 0; i < 8 && indices != NULL; i++) {
@@ -142,7 +143,7 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
             if (kind != 16 && kind != 11 && kind != 10 && kind != 2) {
                 kind = function->kind;
             } else if (function->link_id ==
-                       ((ED_EVENT_POINT *) ((int) points + point_offset[0]))->map_no) {
+                       ((ED_EVENT_POINT *) (point_offset[0] + (int) points))->map_no) {
                 if (kind == 2) {
                     sceVu0CopyVector(point->position, function->position);
                     sceVu0CopyVector(point->rotation, function->rotation);
@@ -214,7 +215,7 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                     point->unk_60[0] = 6.0f;
                     point->unk_60[3] = function->values[0];
                     point->side = (int) function->values[1];
-                    for (int j = 0; j < function_count; j++) {
+                    for (j = 0; j < function_count; j++) {
                         EPARTS_FUNC_DATA *other = &functions[j];
                         if (other->kind == 20 && other->link_id == function->link_id) {
                             sceVu0CopyVector(point->extent, other->position);
@@ -233,7 +234,7 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                     point->unk_60[0] = 6.0f;
                     point->unk_60[3] = function->values[0];
                     point->linked_value = (int) function->values[1];
-                    for (int j = 0; j < function_count; j++) {
+                    for (j = 0; j < function_count; j++) {
                         EPARTS_FUNC_DATA *other = &functions[j];
                         if (other->kind == 19 && other->link_id == function->link_id) {
                             sceVu0CopyVector(point->extent, other->position);
@@ -3147,12 +3148,15 @@ int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     npc->initialized = 1;
     npc->draw_enabled = 1;
     npc->event_status = 1;
-    npc->chara.foot_sound[3].frame = 128.0f;
+    npc->chara.ambient_offset[3] = 128.0f;
     sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 1.0f};
     sceVu0FVECTOR rotation = {0.0f, 0.0f, 0.0f, 0.0f};
-    if (argument_count >= 4) {
+    if (argument_count > 3) {
         GetPosition(stack, position);
-        rotation[1] = GetStackFloat(stack + 3);
+        stack += 3;
+        rotation[1] = GetStackFloat(stack++);
+        rotation[2] = 0.0f;
+        rotation[0] = 0.0f;
         GetWorldRot(rotation, rotation);
     }
     npc->chara.SetPosition(position);
@@ -3184,12 +3188,15 @@ int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     npc->initialized = 1;
     npc->draw_enabled = 1;
     npc->event_status = 0;
-    npc->chara.foot_sound[3].frame = 128.0f;
+    npc->chara.ambient_offset[3] = 128.0f;
     sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 1.0f};
     sceVu0FVECTOR rotation = {0.0f, 0.0f, 0.0f, 0.0f};
-    if (argument_count >= 4) {
+    if (argument_count > 3) {
         GetPosition(stack, position);
-        rotation[1] = GetStackFloat(stack + 3);
+        stack += 3;
+        rotation[1] = GetStackFloat(stack++);
+        rotation[2] = 0.0f;
+        rotation[0] = 0.0f;
         GetWorldRot(rotation, rotation);
     }
     npc->chara.SetPosition(position);

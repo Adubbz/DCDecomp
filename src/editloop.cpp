@@ -555,7 +555,8 @@ void InitWorkBuffer() {
     EdVillagerBuffer.base = free_start;
     EdVillagerBuffer.limit = free_quads;
     EdVillagerBuffer.used = 0;
-    EdWorkBuffer.base = (u_char *) ((((int) free_start >> 6) + 1) << 6);
+    free_start = (u_char *) ((((int) free_start >> 6) + 1) << 6);
+    EdWorkBuffer.base = free_start;
     EdWorkBuffer.limit = free_quads - 4;
     EdWorkBuffer.used = 0;
     EdMenuBuffer.base = (u_char *) read_buffer - 0x180000;

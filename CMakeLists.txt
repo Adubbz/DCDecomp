@@ -195,7 +195,7 @@ carve_part(main.sdata.part2b.s
            main.sdata.part2d.s=2A1F50-2A1F78
            main.sdata.part2f.s=2A1F90-2A20C8
            main.sdata.battlemenu-tail.s=2A20D8-2A2100
-           main.sdata.editmenu-after.s=2A2118-2A2150
+           main.sdata.editmenu-after.s=2A2120-2A2150
            main.sdata.memcard-a.s=2A2158-2A21A0
            main.sdata.part2g.s=2A21B8-2A21C8
            main.sdata.part2e.s=2A21F0-2A21F8
@@ -271,11 +271,13 @@ carve_part(main.data.part6.s
            main.data.shop-ticket.s=292840-2936E0
            main.data.shop-ticket-after.s=293700-293860
            main.data.battlemenu-tail.s=293960-293C60
-           main.data.part6h.s=293C80-293D50
+           main.data.part6h.s=293C80-293CA0
+           main.data.editmenu-after.s=293CD0-293D50
            main.data.memcard-a.s=293EBC-293FE0
            main.data.menu_save-a.s=294044-294150
            main.data.part6g.s=2941C0-294460
-           main.data.part6j.s=295644-295810
+           main.data.part6j.s=295644-2957F0
+           main.data.menu_manual-after.s=295800-295810
            main.data.part6d.s=295830-295840
            main.data.part6b.s=2959A0-295A10
            main.data.battle_globals-a.s=295A70-295AA0
@@ -293,7 +295,7 @@ carve_part(main.data.part4.s
            main.data.part4g.s=26A5E8-26AE60
            main.data.part4k.s=26AE80-26AE90
            main.data.fishing-a.s=26AFE0-26B0C0
-           main.data.motionmodel-a.s=26B0D0-26B1B0
+           main.data.motionmodel-a.s=26B0E0-26B1B0
            main.data.motionmodel-gap.s=26B1C8-26B1D0
            main.data.motionmodel-b.s=26B1D0-26B2C0
            main.data.part4d.s=26B310-279EB0)

@@ -12,6 +12,9 @@
 
 extern "C" CCharacter CharaMain;
 
+/* The effect texture's name. Retail keeps one copy of the string, in the hit-mark code. */
+extern char HealEffectTextureName[];
+
 void CHealEffect::Set(float *world) {
     sceVu0CopyVector(this->position, world);
     this->active = 1;
@@ -70,13 +73,12 @@ void CHealEffect::Step(void) {
     }
 }
 
-#ifdef NON_MATCHING
 void CHealEffect::Draw(void) {
     if (this->active != 0) {
         float world[4];
         // Unread; Step builds its particle offsets from the same template.
         float offset[4] = {0.0f, 0.0f, 1.0f, 1.0f};
-        CTexture *texture = TexManager.GetTexture("basefx00", -1);
+        CTexture *texture = TexManager.GetTexture(HealEffectTextureName, -1);
 
         sceVu0CopyVector(this->position, CharaMain.pos);
         for (int i = 0; i < 32; i++) {
@@ -90,6 +92,3 @@ void CHealEffect::Draw(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/healeffect", Draw__11CHealEffectFv);
-#endif

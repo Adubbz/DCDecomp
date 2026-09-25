@@ -70,9 +70,10 @@ void CCloth::Clear() {
     sceVu0ApplyMatrix(last_position, matrix, position);
     for (j = 0; j < num_j; j++) {
         for (i = 0; i < num_i; i++) {
-            speed[i][j][0] = 0.0f;
-            speed[i][j][1] = 0.0f;
-            speed[i][j][2] = 0.0f;
+            float *s = speed[i][j];
+            s[0] = 0.0f;
+            s[1] = 0.0f;
+            s[2] = 0.0f;
             if (frame != NULL) {
                 sceVu0ApplyMatrix(point[i][j], matrix, home[i][j]);
                 sceVu0CopyVector(last[i][j], point[i][j]);
@@ -505,7 +506,6 @@ CCloth::CCloth(int grid_i, int grid_j, float grid_pitch) {
  */
 #ifdef NON_MATCHING
 void CCloth::Initialize(CDataAlloc2<1> *alloc) {
-    float *p;
     int i;
     int j;
 
@@ -532,9 +532,8 @@ void CCloth::Initialize(CDataAlloc2<1> *alloc) {
     }
     for (i = 0; i < num_j; i++) {
         for (j = 0; j < num_i; j++) {
-            p = point[j][i];
-            sceVu0CopyVector(last[j][i], p);
-            sceVu0CopyVector(home[j][i], p);
+            sceVu0CopyVector(last[j][i], point[j][i]);
+            sceVu0CopyVector(home[j][i], point[j][i]);
         }
     }
     sceVu0FVECTOR centre = {0.0f, 0.0f, 0.0f, 0.0f};

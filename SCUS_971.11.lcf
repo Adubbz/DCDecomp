@@ -499,7 +499,7 @@ SECTIONS
         fishing.cpp.o (.data)          // 0x0026ae90
         main.data.fishing-a.s.o (.data) // 0x0026afe0
         healeffect.cpp.o (.data)       // 0x0026b0c0
-        main.data.motionmodel-a.s.o (.data) // 0x0026b0d0
+        main.data.motionmodel-a.s.o (.data) // 0x0026b0e0
         motionmodel.cpp.o (.motionmodeldata) // 0x0026b1b0
         main.data.motionmodel-gap.s.o (.data) // 0x0026b1c8
         main.data.motionmodel-b.s.o (.data) // 0x0026b1d0
@@ -537,6 +537,9 @@ SECTIONS
         menu_misc.cpp.o (.data)      // 0x00293c60
         . = ALIGN(0x10);
         main.data.part6h.s.o (.data) // 0x00293c80
+        editmenu.cpp.o (.data)       // 0x00293ca0
+        . = ALIGN(0x10);
+        main.data.editmenu-after.s.o (.data) // 0x00293cd0
         memorycardaccess.cpp.o (.data) // 0x00293d50
         memcard.cpp.o (.data) // 0x00293e40
         main.data.memcard-a.s.o (.data) // 0x00293ebc
@@ -547,6 +550,8 @@ SECTIONS
         main.data.part6g.s.o (.data) // 0x00294170
         menu_draw.cpp.o (.data)      // 0x00294460
         main.data.part6j.s.o (.data) // 0x00295644
+        menu_manual.cpp.o (.data)    // 0x002957f0
+        main.data.menu_manual-after.s.o (.data) // 0x00295800
         weapon_buildup.cpp.o (.data) // 0x00295810
         main.data.part6d.s.o (.data) // 0x00295830
         weaponlevelup.cpp.o (.data)  // 0x00295840
@@ -679,7 +684,7 @@ SECTIONS
 		. = ALIGN(8);
 		main.sdata.battlemenu-tail.s.o (.sdata) // 0x002a20d8
 		editmenu.cpp.o (.sdata)        // 0x002a2100
-		main.sdata.editmenu-after.s.o (.sdata) // 0x002a2118
+		main.sdata.editmenu-after.s.o (.sdata) // 0x002a2120
 		memcard.cpp.o (.sdata) // 0x002a2150
 		main.sdata.memcard-a.s.o (.sdata) // 0x002a2158
 		menu_draw.cpp.o (.sdata)       // 0x002a21a0

@@ -2366,25 +2366,27 @@ static int WeaponCalMoney(WEAPON_HAVE *weapon, int sell) {
 
 #ifdef NON_MATCHING
 int BuyMoneyCheck2() {
-    int max[3] = {100, 60, 40};
     int total = 0;
+    int max[3] = {100, 60, 40};
+    int i;
     ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
 
-    for (int i = 0; i < 100; i++) {
+    for (i = 0; i < 100; i++) {
         if (ItemBoardInfo[i] == 1) {
             total += CalItemMoney(pack->item[i], 0);
         }
     }
     for (int chara = 0; chara < 6; chara++) {
-        for (int i = 0; i < 10; i++) {
+        for (i = 0; i < 10; i++) {
             if (WeaponBoardInfo[chara][i] == 1) {
-                WEAPON_HAVE *weapon = &ShopUserStatusPt->chara_weapons[chara][i];
-                total += CalItemMoney(weapon->item_no, 0) + WeaponCalMoney(weapon, 0);
+                WEAPON_HAVE *weapon = &((WEAPON_HAVE *) ((CUserStatus *) ShopUserStatusPt)->chara_weapons[chara])[i];
+                total += CalItemMoney(weapon->item_no, 0);
+                total += WeaponCalMoney(weapon, 0);
             }
         }
     }
     DNG_CONSUMABLE *attach = ShopUserStatusPt->consumable_items;
-    for (int i = 0; i < 40; i++, attach++) {
+    for (i = 0; i < 40; i++, attach++) {
         if (AttachBoardInfo[i] == 1) {
             total += CalItemMoney(attach->id, 0);
         }
@@ -2758,7 +2760,7 @@ int ItemShopLoop2() {
 }
 
 #ifdef NON_MATCHING
-void CheckSideKey2() {
+int CheckSideKey2() {
     int se;
 
     if (GamePad.Down(0x9000) != 0) {
@@ -2801,6 +2803,7 @@ void CheckSideKey2() {
         ShopMenu.side = 1;
         ShopMenu.board.cursor = (ShopMenu.board.top_row + 3) * 5;
     }
+    return 0;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/shop", CheckSideKey2__Fv);

@@ -3095,11 +3095,9 @@ void CDungeonMap::buildRandomMap(int room_max, int full) {
     int y;
     int done;
     int retry;
-    int dx;
-    int dy;
     int dist;
-    int near_dist;
     int near_no;
+    int near_dist;
 
     // A floor that is built for the first time picks the seed it is built from.
     if (full != 0) {
@@ -3183,11 +3181,11 @@ void CDungeonMap::buildRandomMap(int room_max, int full) {
                 near_no = -1;
                 near_dist = 10000;
                 for (j = 0; j < roomStackCnt - 1; j++) {
-                    dx = (roomStack[roomStackCnt - 1].x + (roomStack[roomStackCnt - 1].width >> 1)) -
+                    w = (roomStack[roomStackCnt - 1].x + (roomStack[roomStackCnt - 1].width >> 1)) -
                          (roomStack[j].x + (roomStack[j].width >> 1));
-                    dy = (roomStack[roomStackCnt - 1].y + (roomStack[roomStackCnt - 1].height >> 1)) -
+                    h = (roomStack[roomStackCnt - 1].y + (roomStack[roomStackCnt - 1].height >> 1)) -
                          (roomStack[j].y + (roomStack[j].height >> 1));
-                    dist = (int) sqrt((double) (dx * dx + dy * dy));
+                    dist = (int) sqrt((double) (w * w + h * h));
                     if (dist < near_dist) {
                         near_no = j;
                         near_dist = dist;

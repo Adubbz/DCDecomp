@@ -534,10 +534,10 @@ INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__10CVisualVu1FPUiPA4_fP10Rende
  * @address 0x135970
  * @size 0x130
  */
-#ifdef NON_MATCHING
 static int SetVuData(int count, u_long128 *block, u_int *index, u_long128 *vertex,
                      u_long128 *normal, u_long128 *uv, u_long128 *colour, int prim) {
     u_int *header = (u_int *) block;
+    u_int *cursor = (u_int *) block;
     u_long128 *vertex_out;
     u_long128 *normal_out;
     u_long128 *uv_out;
@@ -545,18 +545,20 @@ static int SetVuData(int count, u_long128 *block, u_int *index, u_long128 *verte
 
     header[0] = count | 0x8000;
     if (prim != 4) {
-        header[1] = 0x302DC000;
+        cursor[1] = 0x302DC000;
+        cursor += 2;
     } else {
-        header[1] = 0x302E4000;
+        cursor[1] = 0x302E4000;
+        cursor += 2;
     }
-    header[2] = 0x412;
-    header[3] = 0;
-    header[4] = count;
-    header[5] = prim;
+    cursor[0] = 0x412;
+    cursor[1] = 0;
+    cursor[2] = count;
+    cursor[3] = prim;
     if (colour != NULL) {
-        header[6] = 0x100;
+        cursor[4] = 0x100;
     } else {
-        header[6] = 0;
+        cursor[4] = 0;
     }
     vertex_out = &block[2];
     normal_out = &vertex_out[count];
@@ -572,14 +574,12 @@ static int SetVuData(int count, u_long128 *block, u_int *index, u_long128 *verte
             index++;
         }
     }
+    int size = count * 3 + 2;
     if (colour != NULL) {
-        return count * 4 + 2;
+        size = count * 4 + 2;
     }
-    return count * 3 + 2;
+    return size;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/visualvu1", SetVuData__FiP1PUiP1P1P1P1i);
-#endif
 #ifdef NON_MATCHING
 static u_long128 VuDataEnd;
 

@@ -12,7 +12,6 @@
 #include "texture.hpp"
 #include "weaponelement.hpp"
 
-#ifdef NON_MATCHING
 int CSHOT_FIREBAR::Init(float *origin, float *direction, int collision_damage,
                         int element) {
     sceVu0FVECTOR step;
@@ -22,32 +21,25 @@ int CSHOT_FIREBAR::Init(float *origin, float *direction, int collision_damage,
     sceVu0ScaleVectorXYZ(step, direction, 2.0f);
 
     for (int particle = 0; particle < 24; particle++) {
-        int slot = particle + start_index;
+        sceVu0CopyVector(position[particle + start_index], origin);
+        float start_x = origin[0];
         float distance = (float) particle;
-        sceVu0CopyVector(position[slot], origin);
-        position[slot][0] = origin[0] + step[0] * distance;
-        position[slot][1] = origin[1] + step[1] * distance;
-        position[slot][2] = origin[2] + step[2] * distance;
-        velocity[slot][0] = direction[0] * 0.01f;
-        velocity[slot][1] = direction[1] * 0.01f;
-        velocity[slot][2] = direction[2] * 0.01f;
-        size[slot] = 3.0f + distance * 0.3f;
-        opacity[slot] = 180.0f - distance * 8.0f;
-        state[slot] = 0;
+        position[particle + start_index][0] = start_x + step[0] * distance;
+        position[particle + start_index][1] = origin[1] + step[1] * distance;
+        position[particle + start_index][2] = origin[2] + step[2] * distance;
+        velocity[particle + start_index][0] = direction[0] * 0.01f;
+        velocity[particle + start_index][1] = direction[1] * 0.01f;
+        velocity[particle + start_index][2] = direction[2] * 0.01f;
+        size[particle + start_index] = 3.0f + distance * 0.3f;
+        float fade = distance * 8.0f;
+        opacity[particle + start_index] = 180.0f - fade;
+        state[particle + start_index] = 0;
     }
 
-    union {
-        int integer;
-        float scalar;
-    } damage_bits;
-    damage_bits.integer = collision_damage;
-    opacity[63] = damage_bits.scalar;
+    *(int *) &opacity[63] = collision_damage;
     damage[63] = element;
     return -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_firebar", Init__13CSHOT_FIREBARFPfPfii);
-#endif
 #ifdef NON_MATCHING
 int CSHOT_FIREBAR::Set(float *origin, float *direction, int collision_damage,
                        int element) {

@@ -301,7 +301,6 @@ s16 SetManualMsgBuffer() {
 INCLUDE_ASM("asm/nonmatchings/menu_manual", SetManualMsgBuffer__Fv);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/menu_manual", @606__5);
-#ifdef NON_MATCHING
 void ExitManualMenu() {
     int texture_blocks[] = {ManualMenu.common_texture_block, ManualMenu.image_texture_block,
                             ManualMenu.extra_texture_block, -1};
@@ -313,9 +312,6 @@ void ExitManualMenu() {
     msg->cursor_row = -1;
     ManualMsg->stay_frame = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_manual", ExitManualMenu__Fv);
-#endif
 int GetNowManualMenuMode() {
     return ManualMenu.mode;
 }

@@ -528,10 +528,9 @@ void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *gro
         case 2:
         case 3:
             {
-                float x, y, z;
-                z = 0.1f * position[2];
-                y = 0.1f * position[1];
-                x = 0.1f * position[0];
+                float z = 0.1f * position[2];
+                float y = 0.1f * position[1];
+                float x = 0.1f * position[0];
                 Fire.pos[0] = 10.0f * x;
                 Fire.pos[1] = 10.0f * y;
                 Fire.pos[2] = 10.0f * z;
@@ -555,7 +554,7 @@ void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *gro
             break;
         case 4:
             if (group != NULL) {
-                EffectSmoke(group, position, scale, 13);
+                EffectSmoke(group, position, effect->colour[0], 13);
             }
             break;
     }

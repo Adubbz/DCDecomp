@@ -281,13 +281,13 @@ int SeitonShopAttachBoardSub(ATTACH_LIST *);
 int ItemShopLoop2(void);
 
 /**
- * Moves the shop cursor between the goods side and the player's side.
+ * Moves the shop cursor between the goods side and the player's side and returns zero.
  *
  * @mangled CheckSideKey2__Fv
  * @address 0x1EC170
  * @size 0x1F4
  */
-void CheckSideKey2(void);
+int CheckSideKey2(void);
 
 /**
  * Draws the running total the purchase will come to.

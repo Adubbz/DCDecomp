@@ -1170,7 +1170,8 @@ int CharaChangeInitToGL(u_long128 *buffer, int chara) {
     LoadFileBG(path, menud1wepReadBuf, &size);
     menud2wepReadBuf = menud1wepReadBuf + (size >> 4) + 1;
     menud2wepReadBuf = MenuCalcBufAlignment(menud2wepReadBuf);
-    int kind = ((WEAPON_HAVE *) UserStatus->chara_weapons[chara])[UserStatus->equipped_weapon_slot[chara]].item_no - defWeapon__5[chara];
+    int slot = UserStatus->equipped_weapon_slot[chara];
+    int kind = UserStatus->chara_weapons[chara][slot].item_no - defWeapon__5[chara];
     if (kind < 0) {
         kind = 0;
     }
@@ -1184,11 +1185,11 @@ int CharaChangeInitToGL(u_long128 *buffer, int chara) {
         printf("USerStatus is NULL\n", UserStatus);
         return -1;
     }
+    slot = UserStatus->equipped_weapon_slot[charachangeid];
     WepEffectMenuPt = Get_Main_EffectPtr(
-        charachangeid,
-        UserStatus->chara_weapons[charachangeid][(int) UserStatus->equipped_weapon_slot[charachangeid]].best_elem);
+        charachangeid, ((WEAPON_HAVE *) UserStatus->chara_weapons[charachangeid])[slot].best_elem);
     sprintf(effect, "dun/mainchara/wep_eff/%s.chr", WepEffectMenuPt);
-    LoadFileBG(effect, WepEffectMenuReadBuf, &size);
+    LoadFileBG(effect, (u_long128 *) WepEffectMenuReadBuf, &size);
     return 1;
 }
 #else
@@ -1633,20 +1634,20 @@ void WeaponOptionStatusDraw(WEAPON_HAVE *weapon, int x, int y, int alpha) {
             flags |= option;
         }
     }
-    int status = CheckWeaponOptionStatus(flags);
+    flags = CheckWeaponOptionStatus(flags);
     CTexture *texture = TexManager.GetTexture("charaface", -1);
     if (texture == NULL) {
         return;
     }
     int count = 0;
     CRect_i_ source(0xEC, 0x50, 0x14, 0x14);
-    for (int bit = 1; bit < 14; bit++) {
+    for (int bit = 1; bit <= 13; bit++) {
         if (bit == 8) {
             source.x -= source.width;
         }
-        if (status & (1 << bit)) {
+        if (flags & (1 << bit)) {
             int row = bit;
-            if (bit >= 8) {
+            if (bit > 7) {
                 row = bit - 7;
             }
             if (bit == 8 && row == 1) {

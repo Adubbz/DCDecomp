@@ -1047,20 +1047,24 @@ int DngActItemModelBuild(int wait) {
 }
 
 void DngActiveItemTextureCopy(void) {
-    char source[] = "itemicon";
-    char destination[] = "reserved";
-    int slot;
-
-    if (UserStatus == NULL) {
+    int i;
+    ITEM_PACK *pack = &UserStatus->item_pack;
+    if (pack == NULL) {
         return;
     }
-    for (slot = 0; slot < 3; slot++) {
-        int item_no = BtlMenuStatusPt->item_pack.quick_item_slot[slot];
-        COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
-        if (item_no >= ITEM_DUNGEON_START && info != NULL && info->icon_index >= 0) {
-            int icon = info->icon_index;
-            setItemToReserved(source, (icon & 7) * 32, (icon >> 3) * 32,
-                              destination, slot * 32 + 32, 0);
+    char source[] = "itemicon";
+    for (i = 0; i < 3; i++) {
+        int item_no = pack->quick_item_slot[i];
+        if (item_no >= ITEM_DUNGEON_START) {
+            COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
+            if (info != NULL) {
+                int icon = info->icon_index;
+                if (icon >= 0 && icon <= 256) {
+                    int u = (icon % 8) * 32;
+                    int v = (icon >> 3) * 32;
+                    setItemToReserved(source, u, v, "itempack", i * 32 + 32, 0);
+                }
+            }
         }
     }
 }
@@ -1080,26 +1084,22 @@ INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2050);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2051);
 #ifdef NON_MATCHING
 void DngActiveWeaponTextureCopy(void) {
-    char source[] = "weaponicon";
-    char destination[] = "reserved";
-    int weapons[3];
-    int index;
+    int chara = UserStatus->cur_chara;
+    char source[] = "wepicon";
+    int slot = UserStatus->equipped_weapon_slot[chara];
+    WEAPON_HAVE *owned = UserStatus->chara_weapons[chara];
+    WEAPON_HAVE *weapon = &owned[slot];
+    int default_no = GetDefaultWeaponNo(chara);
+    s16 pos[3][2] = {{0, 0}, {0, 32}, {32, 32}};
+    s16 weapons[3] = {weapon->item_no, default_no + 1, default_no};
 
-    if (UserStatus == NULL) {
-        return;
-    }
-    weapons[0] = BtlMenuStatusPt
-                     ->chara_weapons[UserStatus->cur_chara]
-                                    [BtlMenuStatusPt->equipped_weapon_slot[UserStatus->cur_chara]]
-                     .item_no;
-    weapons[2] = GetDefaultWeaponNo(UserStatus->cur_chara);
-    weapons[1] = weapons[2] + 1;
-    for (index = 0; index < 3; index++) {
-        COM_ITEM_INFO *info = GetCommonItemInfo(weapons[index]);
+    for (int i = 0; i < 3; i++) {
+        COM_ITEM_INFO *info = GetCommonItemInfo(weapons[i]);
         if (info != NULL) {
             int icon = info->icon_index;
-            setItemToReserved(source, (icon & 7) * 32, (icon >> 3) * 32,
-                              destination, index * 32, 0);
+            int u = (icon % 8) * 32;
+            int v = (icon >> 3) * 32;
+            setItemToReserved(source, u, v, "itempack", pos[i][0], pos[i][1]);
         }
     }
 }

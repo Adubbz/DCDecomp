@@ -287,7 +287,6 @@ int GetMenuCommonFontW(int style, int fontSize) {
     s8 fontWidths[7] = {16, 11, 11, 11, 11, 11, 11};
     return fontWidths[style];
 }
-#ifdef NON_MATCHING
 int GetMenuCommonPutXY(ClsMes *mes, int x) {
     int size[4];
 
@@ -299,9 +298,6 @@ int GetMenuCommonPutXY(ClsMes *mes, int x) {
     put_x -= size[2] >> 1;
     mes->text_x = put_x;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuCommonPutXY__FP6ClsMesi);
-#endif
 #ifdef NON_MATCHING
 static void ResetMenuMes(ClsMes *mes) {
     mes->text_columns = 0x46;

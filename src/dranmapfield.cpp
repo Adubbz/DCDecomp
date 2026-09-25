@@ -13,17 +13,15 @@
 void CDranMapField::LoadModel(unsigned int *pack, CDataAlloc2<1> *arena) {
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
 
-    if (set->field_count >= 12) {
+    if (set->field_count < 12) {
+        (&this[set->field_count].character)->Initialize();
+        (&this[set->field_count].character)->LoadPackData(pack, "info", arena, arena);
+        (&this[set->field_count].character)->SetPosition(0.0f, 0.0f, 0.0f);
+        (&this[set->field_count].character)->SetRotation(0.0f, 0.0f, 0.0f);
+        set->field_count++;
+    } else {
         printf(" ************* over!!\n");
-        return;
     }
-
-    CDranMapField *field = &set->field[set->field_count];
-    field->Initialize();
-    field->LoadPackData(pack, "info", arena, arena);
-    field->SetPosition(0.0f, 0.0f, 0.0f);
-    field->SetRotation(0.0f, 0.0f, 0.0f);
-    set->field_count++;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/dranmapfield", LoadModel__13CDranMapFieldFPUiP14CDataAlloc2_1_);
@@ -69,15 +67,15 @@ INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @524);
 INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @525);
 #ifdef NON_MATCHING
 int CDranMapField::AddCollision(CCPoly *poly, int count, CBoxVu0 box) {
+    int i;
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
-    CBoxVu0 region = box;
 
     if (set->collision_count == 0) {
         return count;
     }
-    for (int i = 0; i < set->collision_count; i++) {
-        if (set->collision[i] != NULL && set->state[i] >= 2) {
-            count += set->collision[i]->PickUpNearPoly(&poly[count], region);
+    for (i = 0; i < set->collision_count; i++) {
+        if (set->collision[i] != NULL && ((DRAN_MAP_FIELD_SET *) this)->state[i] > 1) {
+            count += set->collision[i]->PickUpNearPoly(&poly[count], box);
         }
     }
     return count;
@@ -89,14 +87,14 @@ INCLUDE_ASM("asm/nonmatchings/dranmapfield", AddCollision__13CDranMapFieldFP6CCP
 void CDranMapField::LoadCollision(unsigned int *pack, CDataAlloc2<1> *arena) {
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
 
-    if (set->collision_count >= 12) {
+    if (set->collision_count < 12) {
+        set->collision[set->collision_count] = (CFrame *) LoadCollisionFile(pack, arena);
+        set->collision[set->collision_count]->SetPosition(0.0f, 0.0f, 0.0f);
+        set->collision[set->collision_count]->SetRotation(0.0f, 0.0f, 0.0f);
+        set->collision_count++;
+    } else {
         printf(" ************* over!!\n");
-        return;
     }
-    set->collision[set->collision_count] = (CFrame *) LoadCollisionFile(pack, arena);
-    set->collision[set->collision_count]->SetPosition(0.0f, 0.0f, 0.0f);
-    set->collision[set->collision_count]->SetRotation(0.0f, 0.0f, 0.0f);
-    set->collision_count++;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/dranmapfield", LoadCollision__13CDranMapFieldFPUiP14CDataAlloc2_1_);
@@ -122,11 +120,12 @@ void CDranMapField::Draw(void) {
 }
 #ifdef NON_MATCHING
 void CDranMapField::Step(void) {
+    int i;
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
 
     if (set->field_count != 0) {
-        for (int i = 0; i < set->field_count; i++) {
-            if (set->field[i].character.frame == NULL) {
+        for (i = 0; i < set->field_count; i++) {
+            if (this[i].character.frame == NULL) {
                 continue;
             }
             if (set->state[i] <= 0) {
@@ -138,8 +137,8 @@ void CDranMapField::Step(void) {
                 set->state[i]--;
             }
             if (set->state[i] == 1) {
-                set->field[i].character.Step();
-                if (!(set->field[i].character.GetNowTime() < 59.0f)) {
+                this[i].character.Step();
+                if (!(this[i].character.GetNowTime() < 59.0f)) {
                     set->state[i]--;
                 }
             }
