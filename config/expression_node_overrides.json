@@ -9182,6 +9182,13 @@
           "value_bits": "0xc2b40000",
           "ordinal": 2,
           "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 5,
+          "evaluate_first": 1
         }
       ]
     },
