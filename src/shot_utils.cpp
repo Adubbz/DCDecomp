@@ -87,11 +87,10 @@ INCLUDE_ASM("asm/nonmatchings/shot_utils", checkCollision__FPfPfPfif);
 #ifdef NON_MATCHING
 void set3DCellModel(float *world, char *texture_name, float size, s32 x, s32 y, s32 width,
                     s32 height, u8 blend) {
-    int top_left[3];
-    int top_right[3];
-    int bottom_left[3];
-    int bottom_right[3];
-    CRect_i_ cell;
+    sceVu0IVECTOR top_left;
+    sceVu0IVECTOR top_right;
+    sceVu0IVECTOR bottom_left;
+    sceVu0IVECTOR bottom_right;
     CTexture *texture = TexManager.GetTexture(texture_name, -1);
 
     world[3] = 1.0f;
@@ -103,12 +102,8 @@ void set3DCellModel(float *world, char *texture_name, float size, s32 x, s32 y, 
         bottom_left[0] = top_left[0];
         bottom_left[1] = bottom_right[1];
         bottom_left[2] = bottom_right[2];
-        cell.x = x;
-        cell.y = y;
-        cell.width = width;
-        cell.height = height;
-        set3DSprite(Vif1Packet, texture, cell, top_left, top_right, bottom_left, bottom_right,
-                    blend);
+        set3DSprite(Vif1Packet, texture, CRect_i_(x, y, width, height), top_left, top_right,
+                    bottom_left, bottom_right, blend);
     }
 }
 #else

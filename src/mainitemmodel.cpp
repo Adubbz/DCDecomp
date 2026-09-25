@@ -88,8 +88,10 @@ int CMainItemModel::SetHandModel(int source) {
         return -1;
     }
     model[index] = 1;
-    frame[index].SetPosition(0.0f, 0.0f, 0.0f);
-    frame[index].SetRotation(1.5707964f, 0.0f, 0.0f);
+    float zero = 0.0f;
+    frame[index].SetPosition(zero, zero, zero);
+    float rot = 1.5707964f;
+    frame[index].SetRotation(rot, 0.0f, 0.0f);
     model_cash[index] = model_cash[source];
     cash_lock[model_cash[source]]++;
     printf("code = %d, lock = %d\n", index, cash_lock[model_cash[source]]);
@@ -257,18 +259,15 @@ INCLUDE_ASM("asm/nonmatchings/mainitemmodel", Step__14CMainItemModelFv);
 #endif
 #ifdef NON_MATCHING
 void CMainItemModel::Initialize(void) {
-    int i;
-
-    for (i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++) {
         cash[i] = NULL;
         cash_lock[i] = 0;
         throw_time[i] = 0;
     }
-    for (i = 0; i < 16; i++) {
+    for (int i = 0; i < 16; i++) {
         model[i] = -1;
-        CFrame *placement = &frame[i];
-        placement->SetPosition(0.0f, 0.0f, 0.0f);
-        placement->SetRotation(3.1415927f, 0.0f, 0.0f);
+        frame[i].SetPosition(0.0f, 0.0f, 0.0f);
+        frame[i].SetRotation(3.1415927f, 0.0f, 0.0f);
     }
 }
 #else
@@ -285,9 +284,10 @@ int CActiveItemPack::CheckStatusType(void) {
     }
     int item_no = item[now];
     type = -1;
+    if (item_no == -1) {
+        return 0;
+    }
     switch (item_no) {
-        case -1:
-            return 0;
         case 145:
         case 146:
         case 147:

@@ -597,7 +597,10 @@ SECTIONS
         . = ALIGN(16);
         frame.cpp.o (.vtables)           // 0x002a1130
         . = ALIGN(8);
-        main.rdata.part4b.s.o (.rdata)   // 0x002a1168
+        visualvu1.cpp.o (.vt-visual)        // 0x002a1168
+        visualshadow.cpp.o (.vtables)       // 0x002a1180
+        visualvu1.cpp.o (.vt-visualmdtvu1)  // 0x002a11a0
+        visualvu1.cpp.o (.vt-visualvu1)     // 0x002a11c0
         character.cpp.o (.vtables)       // 0x002a11e0
         . = . + 0x8;
         dispctrl.cpp.o (.vtables)        // 0x002a1380
@@ -675,6 +678,8 @@ SECTIONS
 		battlemenu.cpp.o (.sdata)      // 0x002a20c8
 		. = ALIGN(8);
 		main.sdata.battlemenu-tail.s.o (.sdata) // 0x002a20d8
+		editmenu.cpp.o (.sdata)        // 0x002a2100
+		main.sdata.editmenu-after.s.o (.sdata) // 0x002a2118
 		memcard.cpp.o (.sdata) // 0x002a2150
 		main.sdata.memcard-a.s.o (.sdata) // 0x002a2158
 		menu_draw.cpp.o (.sdata)       // 0x002a21a0

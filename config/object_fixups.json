@@ -1463,5 +1463,18 @@
     "globalize_symbols": [
       "AtoraVibeTextureName"
     ]
+  },
+  "src/visualvu1.cpp": {
+    "sections": {
+      ".vt-visual": [
+        "__vt__7CVisual"
+      ],
+      ".vt-visualmdtvu1": [
+        "__vt__13CVisualMDTVu1"
+      ],
+      ".vt-visualvu1": [
+        "__vt__10CVisualVu1"
+      ]
+    }
   }
 }

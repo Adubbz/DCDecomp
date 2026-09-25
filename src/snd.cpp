@@ -1105,9 +1105,12 @@ void SndSetSePanf(int se_no, float pan, int voice) {
 void SndPlayFootSound(int kind, int foot, float *position) {
     float volume;
     float pan;
+    int se_no = kind * 4 + 500 + (foot > 0);
 
-    SndGetVolPan(&volume, &pan, position, 50.0f, 300.0f);
-    SndSePlay(kind * 4 + 500 + (foot > 0), volume, pan, 0);
+    float near = 50.0f;
+    float far = 300.0f;
+    SndGetVolPan(&volume, &pan, position, near, far);
+    SndSePlay(se_no, volume, pan, 0);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/snd", SndPlayFootSound__FiiPf);

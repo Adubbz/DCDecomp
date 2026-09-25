@@ -172,6 +172,11 @@ int LoadPTS(CMapParts *parts, u_int *archive);
 int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points);
 void DrawWaterSurface(CCamera *camera);
 void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara);
+
+/* Word-aligned image of one function marker as stored in a part resource. */
+struct EPARTS_FUNC_RECORD {
+    int words[0x30];
+};
 #endif
 
 /**
@@ -1427,8 +1432,6 @@ static void VillagerCollision() {
  */
 #ifdef NON_MATCHING
 static int LoadTexture() {
-    u_int *cfg;
-    int cfg_size;
     static LOADTEXTURE_INFO2 texdata;
 
     BG_READ_INFO *file = GetReadBGFile(2);
@@ -1436,23 +1439,29 @@ static int LoadTexture() {
         return 0;
     }
     char *ext = file->name;
-    while (*ext != '\0') {
-        if (*ext++ == '.') {
+    char c;
+    while ((c = *ext) != '\0') {
+        if (c == '.') {
+            ext++;
             break;
         }
+        ext++;
     }
     u_int *data = NULL;
+    int size;
     TexAnime.Initialize(NULL, 0);
     if (strcmp(ext, "img") == 0) {
         texdata.name = (char *) file->buffer;
     } else {
         u_int *found;
+        int cfg_size;
         if (GetPackFileExt((u_int *) file->buffer, "img", &found, 1, NULL, NULL) > 0) {
             texdata.name = (char *) found;
         }
         if (GetPackFileExt((u_int *) file->buffer, "cfg", &found, 1, &cfg_size, NULL) > 0) {
             TexAnime.Initialize(TexAnimeData, 64);
             data = found;
+            size = cfg_size;
             for (int i = 0; i < 64; i++) {
                 TexAnimeData[i].Initialize();
             }
@@ -1460,7 +1469,7 @@ static int LoadTexture() {
     }
     TexManager.LoadTextureBlockEX(15, &texdata);
     if (data != NULL) {
-        TexAnime.LoadCFGFile((char *) data, cfg_size);
+        TexAnime.LoadCFGFile((char *) data, size);
     }
     EdNPCBuffer.Alloc((file->size >> 4) + 1);
     return 0;
@@ -1621,13 +1630,14 @@ INCLUDE_RODATA("asm/nonmatchings/edit_in", @1537);
 #ifdef NON_MATCHING
 int LoadPTS(CMapParts *parts, u_int *archive) {
     EPARTS_INFO_HEADER *header = (EPARTS_INFO_HEADER *) ((char *) archive + archive[1]);
-    u_int *names[9] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+    u_int *names[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
     EPARTS_ARCHIVE *pack = (EPARTS_ARCHIVE *) archive;
 
-    if (pack->size_58 <= 0) {
+    if (pack->size_58 > 0) {
+        names[0] = (u_int *) ((char *) archive + pack->offset_48);
+    } else {
         return 0;
     }
-    names[0] = (u_int *) ((char *) archive + pack->offset_48);
     if (pack->size_5c > 0) {
         names[1] = (u_int *) ((char *) archive + pack->offset_4c);
     }
@@ -1686,7 +1696,8 @@ int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points) {
     EPARTS_FUNC_DATA *source = (EPARTS_FUNC_DATA *) ((char *) header + (int) header->func);
 
     for (i = 0; i < header->func_count; points++) {
-        *points = *source++;
+        *(EPARTS_FUNC_RECORD *) points = *(EPARTS_FUNC_RECORD *) source;
+        source++;
         points->parts = (CMapParts *) parts_no;
         i++;
     }
@@ -1806,21 +1817,21 @@ static void CommandAMBIENT(void **arguments) {
 static void CommandLIGHT_C(void **arguments) {
     sceVu0FVECTOR direction;
     int light = *(int *) arguments[6];
-    int index;
 
     direction[0] = *(float *) arguments[0];
     direction[1] = *(float *) arguments[1];
     direction[2] = *(float *) arguments[2];
     direction[3] = 0.0f;
     sceVu0Normalize(direction, direction);
-    EdInInfo->light_direction[0][index = light - 1] = direction[0];
-    EdInInfo->light_direction[1][index] = direction[1];
-    EdInInfo->light_direction[2][index] = direction[2];
-    EdInInfo->light_direction[3][index] = direction[3];
-    EdInInfo->light_colour[index][0] = *(float *) arguments[3];
-    EdInInfo->light_colour[index][1] = *(float *) arguments[4];
-    EdInInfo->light_colour[index][2] = *(float *) arguments[5];
-    EdInInfo->light_colour[index][3] = 128.0f;
+    light--;
+    EdInInfo->light_direction[0][light] = direction[0];
+    EdInInfo->light_direction[1][light] = direction[1];
+    EdInInfo->light_direction[2][light] = direction[2];
+    EdInInfo->light_direction[3][light] = direction[3];
+    EdInInfo->light_colour[light][0] = *(float *) arguments[3];
+    EdInInfo->light_colour[light][1] = *(float *) arguments[4];
+    EdInInfo->light_colour[light][2] = *(float *) arguments[5];
+    EdInInfo->light_colour[light][3] = 128.0f;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/edit_in", CommandLIGHT_C__FPPv__2);
@@ -2072,14 +2083,17 @@ static void CommandWATER_SHAKE(void **arguments) {
     EDIT_WATER_INFO *info = water_info;
 
     if (info != NULL) {
-        for (int i = 0;; i++) {
-            if (((float (*)[4]) info->wave)[i][3] == 0.0f && ((float (*)[4]) info->wave)[i][2] == 0.0f) {
-                ((float (*)[4]) info->wave)[i][0] = (float) *(int *) arguments[0];
-                ((float (*)[4]) info->wave)[i][1] = (float) *(int *) arguments[1];
-                ((float (*)[4]) info->wave)[i][2] = *(float *) arguments[3];
-                ((float (*)[4]) info->wave)[i][3] = *(float *) arguments[2];
+        int i = 0;
+        while (1) {
+            if (info->wave[i].active == 0.0f && info->wave[i].z == 0.0f) {
+                EDIT_WATER_WAVE_VIEW *wave = (EDIT_WATER_WAVE_VIEW *) &((EDIT_WATER_WAVE_INFO *) info)[i];
+                wave->x = (float) *(int *) arguments[0];
+                wave->y = (float) *(int *) arguments[1];
+                wave->z = *(float *) arguments[3];
+                wave->active = *(float *) arguments[2];
                 break;
             }
+            i++;
         }
     }
 }

@@ -162,16 +162,12 @@ int CVisualShadow::CreateVUdataShadow(u_int *block, u_int *model_data) {
 INCLUDE_ASM("asm/nonmatchings/visualshadow", CreateVUdataShadow__13CVisualShadowFPUiPUi);
 #endif
 
-#ifdef NON_MATCHING
 int CVisualShadow::RemakeData(u_int *block) {
     if (data == NULL) {
         return 0;
     }
     return CreateVUdataShadow(vu_data_buffer[DBuffID], data);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/visualshadow", RemakeData__13CVisualShadowFPUi);
-#endif
 
 #ifdef NON_MATCHING
 int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, RenderInfo *info,

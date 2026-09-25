@@ -147,28 +147,37 @@ void InitNameRegist(int character, int texture_block, u_long128 *buffer) {
     StartReadBG();
     if (buffer == NULL) {
         buffer = (u_long128 *) read_buffer;
+    } else {
+        buffer = (u_long128 *) buffer;
     }
-    LoadFileBGMenuData("nameregi.pak", MenuCalcBufAlignment((u_long128 *) buffer));
+    LoadFileBGMenuData("nameregi.pak", MenuCalcBufAlignment(buffer));
+    NameSelect.language = GetMenuLangFlag();
+    GamePad.MenuModeOn(0x78);
+    GamePad.SetAutoRepeat(0xF000, 30, 9);
 
     NameSelect.chara_no = character;
     NameSelect.area = 4;
-    NameSelect.name_pos = 0;
-    NameSelect.side_row = 0;
-    NameSelect.input_mode = GetMenuLangFlag() == 0 ? 0 : 2;
     NameSelect.cursor = 0;
+    switch (NameSelect.language) {
+        case 0:
+            NameSelect.input_mode = 0;
+            break;
+        case 1:
+        default:
+            NameSelect.input_mode = 2;
+            break;
+    }
+    NameSelect.side_row = 0;
     NameSelect.state = 1;
     NameSelect.state_count = 0;
+    NameSelect.loaded = 0;
+    NameSelect.texture_block = texture_block;
     NameSelect.cursor_x = 100.0f;
     NameSelect.cursor_y = 242.0f;
     NameSelect.frame = 0;
-    NameSelect.language = GetMenuLangFlag();
-    NameSelect.texture_block = texture_block;
-    NameSelect.loaded = 0;
-    CharaName = SaveData->GetCharaName(character);
-    NameDefaultSet(character);
-
-    GamePad.MenuModeOn(0x78);
-    GamePad.SetAutoRepeat(0xF000, 30, 9);
+    CharaName = SaveData->GetCharaName(NameSelect.chara_no);
+    NameDefaultSet(NameSelect.chara_no);
+    NameSelect.name_pos = 0;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/battle_globals", InitNameRegist__FiiP1);
@@ -223,16 +232,16 @@ CTexture *GetNameTextureInfo(CTexture **textures, int code, int &cell_x, int &ce
  */
 #ifdef NON_MATCHING
 void DrawCharaName(int character, int x, int y, int brightness, int blend_mode) {
+    int draw_x = x;
     CTexture *textures[3] = {AlphaTex, KataTex, HiraTex};
-    s16 *name = SaveData->GetCharaName(character);
+
     for (int index = 0; index < 10; index++) {
         int texture_x;
         int texture_y;
-        CTexture *texture = GetNameTextureInfo(textures, name[index], texture_x, texture_y);
-        CRect_i_ destination(x + index * 22, y, 22, 22);
-        CRect_i_ source(texture_x, texture_y, 22, 22);
-        DrawMenu2DSprite(texture, destination, source, (u8) brightness,
-                         (u8) brightness, (u8) brightness, blend_mode);
+        CTexture *texture = GetNameTextureInfo(textures, CharaName[index], texture_x, texture_y);
+        DrawMenu2DSprite(texture, CRect_i_(draw_x, y, 22, 22), CRect_i_(texture_x, texture_y, 22, 22), brightness, brightness,
+                         brightness, blend_mode);
+        draw_x += 22;
     }
 }
 #else
@@ -516,17 +525,26 @@ static int NameCompare(short *first, short *second) {
  */
 #ifdef NON_MATCHING
 int CheckName() {
+    s16 blank_names[2][10] = {
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {230, 230, 230, 230, 230, 230, 230, 230, 230, 230},
+    };
     int blank_characters = 0;
+
     for (int index = 0; index < 10; index++) {
         if (CharaName[index] == 0 || CharaName[index] == 230) {
             blank_characters++;
         }
     }
-    if (blank_characters == 10) {
+    if (blank_characters >= 10) {
         return 2;
     }
-
-    for (int character = NameSelect.chara_no - 1; character >= 0; character--) {
+    for (int blank = 0; blank < 2; blank++) {
+        if (NameCompare(CharaName, blank_names[blank]) == 0) {
+            return 0;
+        }
+    }
+    for (int character = NameSelect.chara_no - 1; 0 <= character; character--) {
         if (NameCompare(CharaName, SaveData->GetCharaName(character)) == 0) {
             return 0;
         }
@@ -824,27 +842,25 @@ INCLUDE_ASM("asm/nonmatchings/battle_globals", NameEnterKey__Fv);
  */
 #ifdef NON_MATCHING
 void NameDefaultSet(int chara_no) {
-    static const s16 default_names[6][11] = {
-        {20, 15, 1, 14, 0},
-        {24, 9, 1, 15, 0},
-        {7, 15, 18, 15, 0},
-        {18, 21, 2, 25, 0},
-        {21, 14, 7, 1, 7, 1, 0},
-        {15, 19, 13, 15, 14, 4, 0},
+    int language = GetMenuLangFlag();
+    s16 default_names[7][6][11] = {
+        {{20, 1, 46}, {12, 47, 5}, {60, 43, 222}, {41, 77, 222}, {3, 46, 56, 56}, {5, 63, 35, 46, 70}},
+        {{181, 202, 188, 201}, {185, 196, 188, 202}, {168, 202, 205, 202}, {179, 208, 189, 212}, {182, 201, 194, 188, 194, 188}, {176, 206, 200, 202, 201, 191}},
+        {{181, 202, 188, 201}, {185, 196, 188, 202}, {168, 202, 205, 202}, {179, 208, 189, 212}, {182, 201, 194, 188, 194, 188}, {176, 206, 200, 202, 201, 191}},
+        {{181, 202, 188, 201}, {185, 196, 188, 202}, {168, 202, 205, 202}, {179, 208, 189, 212}, {182, 201, 194, 188, 194, 188}, {176, 206, 200, 202, 201, 191}},
+        {{181, 202, 188, 201}, {185, 196, 188, 202}, {168, 202, 205, 202}, {179, 208, 189, 212}, {182, 201, 194, 188, 194, 188}, {176, 206, 200, 202, 201, 191}},
+        {{181, 202, 188, 201}, {185, 196, 188, 202}, {168, 202, 205, 202}, {179, 208, 189, 212}, {182, 201, 194, 188, 194, 188}, {176, 206, 200, 202, 201, 191}},
+        {{181, 202, 188, 201}, {185, 196, 188, 202}, {168, 202, 205, 202}, {179, 208, 189, 212}, {182, 201, 194, 188, 194, 188}, {176, 206, 200, 202, 201, 191}},
     };
-    if (chara_no < 0 || chara_no >= 6) {
-        return;
-    }
-
     s16 *name = SaveData->GetCharaName(chara_no);
-    int length = 0;
-    while (length < 10 && default_names[chara_no][length] != 0) {
-        name[length] = default_names[chara_no][length];
-        length++;
+    int length;
+
+    for (length = 0; default_names[language][chara_no][length] != 0 && length < 10; length++) {
+        name[length] = default_names[language][chara_no][length];
     }
     NameSelect.name_pos = length;
-    while (length < 32) {
-        name[length++] = 0;
+    for (; length < 32; length++) {
+        name[length] = 0;
     }
 }
 #else
@@ -988,16 +1004,18 @@ int GetMsgLengthCharaName(int chara_no) {
  */
 #ifdef NON_MATCHING
 void InitOpeningBook(u_long128 *buffer, int *blocks) {
-    if (buffer == NULL) {
-        buffer = (u_long128 *) read_buffer;
+    u_long128 *load_buffer = buffer;
+    if (load_buffer == NULL) {
+        load_buffer = (u_long128 *) read_buffer;
     }
+    load_buffer = MenuCalcBufAlignment(load_buffer);
     StartReadBG();
-    LoadFileBGMenuData("openbook.pak", MenuCalcBufAlignment((u_long128 *) buffer));
+    LoadFileBGMenuData("openbook.pak", load_buffer);
+    OpenBook.tex_block = blocks[0];
+    OpenBook.unk_004 = blocks[1];
     OpenBook.open = 0;
-    OpenBook.tex_block = (s16) blocks[0];
-    OpenBook.unk_004 = (s16) blocks[1];
-    OpenBook.unk_006 = 0;
     OpenBook.step = 0;
+    OpenBook.unk_006 = 0;
     OpenBook.fade = 128;
     OpenBook.unk_00C = 0;
 }

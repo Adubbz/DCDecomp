@@ -442,7 +442,6 @@ static void DrawMenuIcon(int slot) {
     DrawMainMenuIcon((int) (MenuIconPos[slot][0] - 6.0f), (int) (MenuIconPos[slot][1] - 4.0f),
                      info->id, 1, 0x80, 0x80);
 }
-#ifdef NON_MATCHING
 static void GetEditMenuIconPos(int slot, int *position) {
     u8 six[6] = {0x50, 0x60, 0x70, 0x80, 0x80, 0x70};
     u8 five[5] = {0x50, 0x60, 0x70, 0x80, 0x70};
@@ -462,9 +461,6 @@ static void GetEditMenuIconPos(int slot, int *position) {
     position[0] = x[slot];
     position[1] = slot * 40 + 0x4A;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", GetEditMenuIconPos__FiPi);
-#endif
 
 /**
  * Draws each edit menu icon at its current position.

@@ -133,14 +133,10 @@ void SetTextureInfo(CTexture *tex, char *name, u_char *buffer) {
  * @address 0x134B50
  * @size 0x10
  */
-#ifdef NON_MATCHING
 void CVisual::Initialize(void) {
     unk_00 = 0;
     unk_04 = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/visualvu1", Initialize__7CVisualFv);
-#endif
 /**
  * Constructs a visual and clears it.
  *
@@ -148,13 +144,9 @@ INCLUDE_ASM("asm/nonmatchings/visualvu1", Initialize__7CVisualFv);
  * @address 0x134B60
  * @size 0x44
  */
-#ifdef NON_MATCHING
 CVisual::CVisual(void) {
     Initialize();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/visualvu1", __ct__7CVisualFv);
-#endif
 
 int CVisualVu1::RemakeData(unsigned int *data) {
     return 0;
@@ -167,7 +159,6 @@ int CVisualVu1::RemakeData(unsigned int *data) {
  * @address 0x134BC0
  * @size 0xC4
  */
-#ifdef NON_MATCHING
 int CVisualVu1::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
                         VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
     sceVif1PkTerminate(packet);
@@ -176,9 +167,6 @@ int CVisualVu1::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *i
                                                         program, draw_state, unknown1, unknown2));
     return size;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__10CVisualVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
-#endif
 
 /**
  * Writes the shadow draw packet and its transform matrix.
@@ -275,7 +263,6 @@ int SetTEX0(u_int *packet, u_long tex0, u_long tex1) {
  * @address 0x134EC0
  * @size 0x3C
  */
-#ifdef NON_MATCHING
 void CVisualVu1::Initialize(void) {
     CVisual::Initialize();
     vu_data = NULL;
@@ -283,9 +270,6 @@ void CVisualVu1::Initialize(void) {
     unk_00 = 0;
     unk_04 = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/visualvu1", Initialize__10CVisualVu1Fv);
-#endif
 /**
  * Constructs a vector-unit visual and clears it.
  *
@@ -293,13 +277,9 @@ INCLUDE_ASM("asm/nonmatchings/visualvu1", Initialize__10CVisualVu1Fv);
  * @address 0x134F00
  * @size 0x50
  */
-#ifdef NON_MATCHING
 CVisualVu1::CVisualVu1(void) {
     Initialize();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/visualvu1", __ct__10CVisualVu1Fv);
-#endif
 /**
  * Points the visual at the model data it draws from.
  *
@@ -327,7 +307,6 @@ u_int *CVisualMDTVu1::GetMDTDataAddress(void) {
  * @address 0x134F70
  * @size 0x3C
  */
-#ifdef NON_MATCHING
 void CVisualMDTVu1::Initialize(void) {
     CVisualVu1::Initialize();
     unk_00 = 0;
@@ -335,9 +314,6 @@ void CVisualMDTVu1::Initialize(void) {
     vu_data_buffer[1] = NULL;
     vu_data_buffer[0] = NULL;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/visualvu1", Initialize__13CVisualMDTVu1Fv);
-#endif
 /**
  * Constructs a model visual and clears it.
  *

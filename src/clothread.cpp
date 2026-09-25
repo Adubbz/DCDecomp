@@ -169,7 +169,7 @@ CCloth *InitCloth(CFrameVu1 *frame, input_str &input, CDataAlloc2<1> *alloc) {
             printf("unknown command!!\n");
             continue;
         }
-        int result = GetArg(input, Command[command].args, argv);
+        int result = GetArg(input, Command[command].args, (void **) argv);
         if (result == 0) {
             break;
         }
@@ -272,31 +272,37 @@ static void CommandBOUND(void **argv) {
     if (bound == NULL) {
         return;
     }
-    int arg = 1;
-    CFrame *frame = ParentFrame->SearchFrame((char *) argv[0]);
+    int arg = 0;
+    CFrame *frame = ParentFrame->SearchFrame((char *) argv[arg++]);
     if (frame == NULL) {
         return;
     }
     for (int i = 0; i < 4; i++) {
         vectors[i][0] = *(float *) argv[arg];
-        vectors[i][1] = *(float *) argv[arg + 1];
-        vectors[i][2] = *(float *) argv[arg + 2];
+        vectors[i][1] = *(float *) argv[(int) (arg + 1)];
+        vectors[i][2] = *(float *) argv[(int) (arg + 2)];
         arg += 3;
         vectors[i][3] = 1.0f;
     }
     vectors[0][3] = 0.0f;
     bound->SetDir(frame, vectors[1], vectors[2], vectors[0], vectors[3][0], vectors[3][1]);
-    bound->extent[0] = vectors[3][0];
-    bound->extent[1] = vectors[3][1];
-    bound->extent[2] = vectors[3][2];
+    float x;
+    float y;
+    float z;
+    z = vectors[3][2];
+    y = vectors[3][1];
+    x = vectors[3][0];
+    bound->extent[0] = x;
+    bound->extent[1] = y;
+    bound->extent[2] = z;
     if (bound->extent[0] > 0.0f) {
-        bound->reciprocal[0] = 1.0f / vectors[3][0];
+        bound->reciprocal[0] = 1.0f / x;
     }
     if (bound->extent[1] > 0.0f) {
-        bound->reciprocal[1] = 1.0f / vectors[3][1];
+        bound->reciprocal[1] = 1.0f / y;
     }
     if (bound->extent[2] > 0.0f) {
-        bound->reciprocal[2] = 1.0f / vectors[3][2];
+        bound->reciprocal[2] = 1.0f / z;
     }
     bound->friction = *(float *) argv[arg];
     if (pBound == NULL) {

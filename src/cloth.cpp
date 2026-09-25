@@ -61,13 +61,15 @@ void CCloth::Draw() {
 #ifdef NON_MATCHING
 void CCloth::Clear() {
     sceVu0FMATRIX matrix;
+    int i;
+    int j;
 
     if (frame != NULL) {
         frame->GetLWMatrix(matrix);
     }
     sceVu0ApplyMatrix(last_position, matrix, position);
-    for (int j = 0; j < num_j; j++) {
-        for (int i = 0; i < num_i; i++) {
+    for (j = 0; j < num_j; j++) {
+        for (i = 0; i < num_i; i++) {
             speed[i][j][0] = 0.0f;
             speed[i][j][1] = 0.0f;
             speed[i][j][2] = 0.0f;
@@ -327,7 +329,7 @@ int CCloth::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PRO
                     RenderInfo *unknown, int arg1, int arg2) {
     CreateVUData(vu_block[DBuffID]);
     visual_vu_data = vu_block[DBuffID];
-    return CVisualVu1::DrawVu1(packet, matrix, info, program, unknown, arg1, arg2);
+    return CVisualVu1::DrawVu1(packet, matrix, info, program, unknown, arg2, 0);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/cloth", DrawVu1__6CClothFPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
@@ -344,7 +346,7 @@ int CCloth::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
                     VU1_PROGRAM program, sceVif1Packet *unknown, int arg1, int arg2) {
     CreateVUData(vu_block[DBuffID]);
     visual_vu_data = vu_block[DBuffID];
-    return CVisualVu1::DrawVu1(packet, matrix, info, program, unknown, arg1, arg2);
+    return CVisualVu1::DrawVu1(packet, matrix, info, program, unknown, arg2, 0);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/cloth", DrawVu1__6CClothFP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
@@ -436,8 +438,7 @@ INCLUDE_ASM("asm/nonmatchings/cloth", CreateVUData__6CClothFPUi);
  */
 #ifdef NON_MATCHING
 void CCloth::InitParam() {
-    sceVu0FVECTOR zero = {0.0f, 0.0f, 0.0f, 0.0f};
-
+    float side_follow = 0.9f;
     num_i = 16;
     num_j = 16;
     pitch = 1.0f;
@@ -456,15 +457,16 @@ void CCloth::InitParam() {
     stiffness[0] = 0.1f;
     stiffness[1] = 0.1f;
     stiffness[2] = 0.1f;
-    follow[0] = 0.9f;
+    follow[0] = side_follow;
     follow[1] = 0.4f;
-    follow[2] = 0.9f;
+    follow[2] = side_follow;
     gravity[0] = 0.0f;
     gravity[1] = -0.1f;
     gravity[2] = 0.0f;
     normal_scale = 1.0f;
     stop = 0;
     floor_on = 1;
+    sceVu0FVECTOR zero = {0.0f, 0.0f, 0.0f, 0.0f};
     for (int i = 0; i < num_i; i++) {
         for (int j = 0; j < num_j; j++) {
             mask[i][j] = 0xFFFF;
@@ -503,9 +505,7 @@ CCloth::CCloth(int grid_i, int grid_j, float grid_pitch) {
  */
 #ifdef NON_MATCHING
 void CCloth::Initialize(CDataAlloc2<1> *alloc) {
-    sceVu0FVECTOR zero = {0.0f, 0.0f, 0.0f, 0.0f};
-    sceVu0FVECTOR centre = {0.0f, 0.0f, 0.0f, 0.0f};
-    sceVu0FVECTOR edge;
+    float *p;
     int i;
     int j;
 
@@ -513,14 +513,15 @@ void CCloth::Initialize(CDataAlloc2<1> *alloc) {
         alloc = &VisualData;
     }
     alloc->Align64();
-    unk_20 = (int) (alloc->base + alloc->used * 16);
-    visual_vu_size = CreateVUData((u_int *) unk_20);
-    alloc->Alloc(visual_vu_size);
-    vu_block[0] = (u_int *) alloc->Alloc64(visual_vu_size);
+    vu_block[0] = (u_int *) (alloc->base + alloc->used * 16);
     visual_vu_size = CreateVUData(vu_block[0]);
+    alloc->Alloc(visual_vu_size);
+    vu_block[1] = (u_int *) alloc->Alloc64(visual_vu_size);
+    visual_vu_size = CreateVUData(vu_block[1]);
     for (i = 0; i < num_i; i++) {
         polygon_divide[i] = 0;
         for (j = 0; j < num_j; j++) {
+            sceVu0FVECTOR zero = {0.0f, 0.0f, 0.0f, 0.0f};
             sceVu0CopyVector(last[j][i], zero);
             sceVu0CopyVector(speed[j][i], zero);
             sceVu0CopyVector(normal_grid[j][i], zero);
@@ -529,12 +530,14 @@ void CCloth::Initialize(CDataAlloc2<1> *alloc) {
             last[j][i][3] = 1.0f;
         }
     }
-    for (j = 0; j < num_j; j++) {
-        for (i = 0; i < num_i; i++) {
-            sceVu0CopyVector(last[i][j], point[i][j]);
-            sceVu0CopyVector(home[i][j], point[i][j]);
+    for (i = 0; i < num_j; i++) {
+        for (j = 0; j < num_i; j++) {
+            p = point[j][i];
+            sceVu0CopyVector(last[j][i], p);
+            sceVu0CopyVector(home[j][i], p);
         }
     }
+    sceVu0FVECTOR centre = {0.0f, 0.0f, 0.0f, 0.0f};
     for (i = 0; i < num_i; i++) {
         sceVu0AddVector(centre, centre, home[0][i]);
     }
@@ -544,28 +547,29 @@ void CCloth::Initialize(CDataAlloc2<1> *alloc) {
     position[3] = 1.0f;
 
     // Record each vertex's rest distance to its neighbours down and across the grid.
-    for (j = 0; j < num_j; j++) {
-        for (i = 0; i < num_i; i++) {
-            int next_i = i + 1;
-            int prev_i = i - 1;
-            int prev_j = j - 1;
+    sceVu0FVECTOR edge;
+    for (i = 0; i < num_j; i++) {
+        for (j = 0; j < num_i; j++) {
             int next_j = j + 1;
-            if (prev_i > 0) {
-                sceVu0SubVector(edge, point[i][j], point[prev_i][j]);
-            } else if (next_i >= num_i) {
-                sceVu0SubVector(edge, point[i][j], point[prev_i][j]);
+            int prev_j = j - 1;
+            int prev_i = i - 1;
+            int next_i = i + 1;
+            if (prev_j > 0) {
+                sceVu0SubVector(edge, point[j][i], point[prev_j][i]);
+            } else if (next_j >= num_i) {
+                sceVu0SubVector(edge, point[j][i], point[prev_j][i]);
             } else {
-                sceVu0SubVector(edge, point[i][j], point[next_i][j]);
+                sceVu0SubVector(edge, point[j][i], point[next_j][i]);
             }
-            rest[i][j][0] = vuabs(edge);
-            if (next_j >= num_j) {
-                sceVu0SubVector(edge, point[i][j], point[i][prev_j]);
-            } else if (prev_j < 0) {
-                sceVu0SubVector(edge, point[i][j], point[i][next_j]);
+            rest[j][i][0] = vuabs(edge);
+            if (next_i >= num_j) {
+                sceVu0SubVector(edge, point[j][i], point[j][prev_i]);
+            } else if (prev_i < 0) {
+                sceVu0SubVector(edge, point[j][i], point[j][next_i]);
             } else {
-                sceVu0SubVector(edge, point[i][j], point[i][next_j]);
+                sceVu0SubVector(edge, point[j][i], point[j][next_i]);
             }
-            rest[i][j][1] = vuabs(edge);
+            rest[j][i][1] = vuabs(edge);
         }
     }
 }
@@ -581,6 +585,8 @@ INCLUDE_ASM("asm/nonmatchings/cloth", Initialize__6CClothFP14CDataAlloc2_1_);
  */
 #ifdef NON_MATCHING
 void CCloth::Initialize(MDT_HEADER *header, CDataAlloc2<1> *alloc) {
+    int *strip;
+
     if (header == NULL) {
         return;
     }
@@ -588,7 +594,8 @@ void CCloth::Initialize(MDT_HEADER *header, CDataAlloc2<1> *alloc) {
     sceVu0FVECTOR *uvs = (sceVu0FVECTOR *) ((u_char *) header + header->unk_2c[1]);
     MDT_MATERIAL *materials = (MDT_MATERIAL *) ((u_char *) header + header->info_ofs);
     int *mesh = (int *) ((u_char *) header + header->mesh_ofs);
-    int *strips = mesh + 4;
+    strip = mesh + 4;
+    int *strips = strip;
     int strip_count = mesh[2];
     int found = 0;
 
@@ -596,11 +603,12 @@ void CCloth::Initialize(MDT_HEADER *header, CDataAlloc2<1> *alloc) {
         for (int j = 0; j < num_j; j++) {
             int vertex_no = j + i * num_j;
             sceVu0CopyVector(point[i][j], vertices[vertex_no]);
-            int *strip = strips;
+            strip = strips;
             for (int s = 0; s < strip_count; s++) {
                 int count = strip[1];
                 memcpy(&material, &materials[strip[2]], sizeof(MDT_MATERIAL));
-                int *index = strip + 3;
+                strip += 3;
+                int *index = strip;
                 for (int k = 0; k < count; k++) {
                     if (index[0] == vertex_no) {
                         found++;
@@ -608,7 +616,7 @@ void CCloth::Initialize(MDT_HEADER *header, CDataAlloc2<1> *alloc) {
                     }
                     index += 3;
                 }
-                strip = strip + 3 + count * 3;
+                strip += count * 3;
             }
         }
     }

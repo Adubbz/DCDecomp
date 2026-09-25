@@ -859,8 +859,9 @@ void WeaponModelBuildFunc(int chara, int texture_block) {
     MenuExCashBuffer.base = (u_char *) MenuWeaponModelBuildBuffer;
     MenuExCashBuffer.limit = 0xEC00;
     MenuExCashBuffer.used = 0;
+    int default_no;
     WEAPON_HAVE *weapons = ((CUserStatus *) BtlMenuStatusPt)->chara_weapons[chara];
-    int default_no = GetDefaultWeaponNo(chara);
+    default_no = GetDefaultWeaponNo(chara);
     int next = 2;
     u_int **data = (u_int **) GetMenuWeaponModelData(0);
     BtGetWeaponNamePath2(name, cfg, chara, 0);
@@ -894,12 +895,12 @@ void WeaponModelBuildFunc(int chara, int texture_block) {
             }
         }
         if (found == 0) {
-            data = (u_int **) GetMenuWeaponModelData(kind);
-            if (*data == NULL) {
+            u_int **pack = (u_int **) GetMenuWeaponModelData(kind);
+            if (*pack == NULL) {
                 printf("%d pack data is NULL\n", kind);
             } else {
                 BtGetWeaponNamePath2(name, cfg, chara, kind);
-                DngWeaponFrm[next].LoadPackData3(*data, cfg, &MenuExCashBuffer, texture_block, &MenuExCashBuffer, 1, 0);
+                DngWeaponFrm[next].LoadPackData3(*pack, cfg, &MenuExCashBuffer, texture_block, &MenuExCashBuffer, 1, 0);
                 SetMenuWeaponModelReference(i, next, kind);
                 next++;
             }
@@ -909,7 +910,7 @@ void WeaponModelBuildFunc(int chara, int texture_block) {
     WepMenuEffectReadBuf = MenuCalcBufAlignment(WepMenuEffectReadBuf);
     printf("read buffer           = %p\n", read_buffer);
     printf("model build buffer    = %p\n", MenuWeaponModelBuildBuffer);
-    printf("WeaponBuffer Size     = %d\n", MenuExCashBuffer.limit);
+    printf("WeaponBuffer Size     = %d\n", (int) MenuExCashBuffer.limit);
     printf("WeaponBuffer address  = %p\n", MenuExCashBuffer.base + MenuExCashBuffer.used * 16);
     printf("WepMenuEffectReadBuf = %p\n", WepMenuEffectReadBuf);
 }
@@ -1144,8 +1145,8 @@ static void GetCharaChangeReadCharaFilePath(char *path, int chara_no) {
 int CharaChangeInitToGL(u_long128 *buffer, int chara) {
     char path[64];
     char name[64];
-    char cfg[64];
-    char effect[64];
+    char cfg[16];
+    char effect[32];
     int size;
 
     CharaChangeBaseBuf = buffer;
@@ -1169,7 +1170,7 @@ int CharaChangeInitToGL(u_long128 *buffer, int chara) {
     LoadFileBG(path, menud1wepReadBuf, &size);
     menud2wepReadBuf = menud1wepReadBuf + (size >> 4) + 1;
     menud2wepReadBuf = MenuCalcBufAlignment(menud2wepReadBuf);
-    int kind = UserStatus->chara_weapons[chara][UserStatus->equipped_weapon_slot[chara]].item_no - defWeapon__5[chara];
+    int kind = ((WEAPON_HAVE *) UserStatus->chara_weapons[chara])[UserStatus->equipped_weapon_slot[chara]].item_no - defWeapon__5[chara];
     if (kind < 0) {
         kind = 0;
     }
@@ -1185,8 +1186,8 @@ int CharaChangeInitToGL(u_long128 *buffer, int chara) {
     }
     WepEffectMenuPt = Get_Main_EffectPtr(
         charachangeid,
-        UserStatus->chara_weapons[charachangeid][UserStatus->equipped_weapon_slot[charachangeid]].best_elem);
-    sprintf(effect, "dun/mainchara/wep_eff/%s.chr", (char *) WepEffectMenuPt);
+        UserStatus->chara_weapons[charachangeid][(int) UserStatus->equipped_weapon_slot[charachangeid]].best_elem);
+    sprintf(effect, "dun/mainchara/wep_eff/%s.chr", WepEffectMenuPt);
     LoadFileBG(effect, WepEffectMenuReadBuf, &size);
     return 1;
 }

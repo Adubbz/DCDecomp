@@ -1417,7 +1417,7 @@ int BtEscape_Loop() {
                 EscapeEffect.SetPosition(position);
                 EscapeEffect.SetRotation(rotation);
                 EdFadeInit();
-                EdFadeOut(0x78, 0.0f, 0.0f, 0.0f);
+                EdFadeOut(0x78, (0, 0.0f), (0, 0.0f), 0.0f);
                 SndSPSePlay(8, -1);
                 escape_sled++;
             }

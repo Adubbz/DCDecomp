@@ -1519,13 +1519,11 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuSelect__Fv);
 #endif
 #ifdef NON_MATCHING
 int ToFromSelect(int out) {
-    MENU_ICON_POS home[8] = {{70.0f, 28.0f}, {-150.0f, 88.0f}, {-150.0f, 128.0f}, {-150.0f, 168.0f},
-                             {-150.0f, 208.0f}, {-150.0f, 248.0f}, {-150.0f, 288.0f}, {-150.0f, 328.0f}};
-    int pos[2];
-
-    if (out < 0 || out >= 2) {
+    if (out < 0 || out > 1) {
         return -1;
     }
+    int home[8][2] = {{70, 28}, {100, 48}, {86, 38}, {50, 40}, {90, 40}, {94, 30}, {80, 40}, {70, 28}};
+    int pos[2];
     float hide_x = -224.0f;
     if (BtlMenuNowLang > 0) {
         hide_x = -258.0f;
@@ -1540,21 +1538,19 @@ int ToFromSelect(int out) {
             pos[0] = (int) hide_x;
             pos[1] = i * 0x28 + 0x48;
         } else {
-            pos[0] = (int) home[i].x;
-            pos[1] = (int) home[i].y;
+            pos[0] = home[i][0];
+            pos[1] = home[i][1];
         }
-        float *x = &NorMenuIcon[i].x;
-        float dx = (float) pos[0] - *x;
-        float *y = &NorMenuIcon[i].y;
-        float dy = (float) pos[1] - *y;
-        *x += dx / 4.0f;
-        *y += dy / 4.0f;
+        float dx = (float) pos[0] - NorMenuIcon[i].x;
+        float dy = (float) pos[1] - NorMenuIcon[i].y;
+        NorMenuIcon[i].x += dx / 4.0f;
+        NorMenuIcon[i].y += dy / 4.0f;
         if ((float) abs((int) dx) < 2.0f) {
-            *x = pos[0];
-            axes = 1;
+            NorMenuIcon[i].x = pos[0];
+            axes++;
         }
         if ((float) abs((int) dy) < 2.0f) {
-            *y = pos[1];
+            NorMenuIcon[i].y = pos[1];
             axes++;
         }
         if (axes >= 2) {
@@ -2349,8 +2345,9 @@ static void DrawLimmitMax(int x, int y, int alpha) {
 
 #ifdef NON_MATCHING
 void DrawBtlMenuLRCursor(int x, int y, int width, int alpha) {
-    double pi = 3.141592653589793;
-    int draw_y = (int) ((float) y + 4.0f * sinf((float) (pi * ((double) (CursorVibeCnt % 79) - 40.0) / 40.0)));
+    int count = CursorVibeCnt % 79;
+    double pi = 3.1415927f;
+    int draw_y = (int) ((float) y + 4.0f * sinf((float) (pi * ((double) count - 40.0) / 40.0)));
     CRect_i_ source(0x62, 0x14, 0x1A, 0x18);
     DrawMenu2DSprite(PerBoardTex, CRect_i_(x, draw_y, source.width, source.height), source, alpha);
     source.x += source.width;
@@ -6892,11 +6889,10 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemNaviCursor__Fi);
 #ifdef NON_MATCHING
 void CharaStatusMsgDraw(int x, int y, int chara, int shared, int alpha) {
     static float statusCnt = -3.1415927f;
-    CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
 
     int bob_y = (int) ((float) y + 4.0f * sinf(statusCnt));
+    int condition = BtlMenuStatusPt->GetActiveCharaStatus(chara);
     int icon = -1;
-    int condition = status->unk_42C8[chara];
     if (condition & 0x40) {
         icon = 5;
     }
@@ -6912,16 +6908,18 @@ void CharaStatusMsgDraw(int x, int y, int chara, int shared, int alpha) {
     if (condition & 4) {
         icon = 3;
     }
-    if (status->hp[chara] <= 0 || (condition & 2)) {
+    if (BtlMenuStatusPt->hp[chara] <= 0 || (condition & 2)) {
         icon = 0;
     }
     if (icon >= 0) {
-        DrawMenu2DSprite(BtStatus, CRect_i_(x, bob_y, 0x44, 0x23), CRect_i_(icon / 3 * 0x44 + 0x78, icon % 3 * 0x24 + 0x14, 0x44, 0x24),
-                         alpha);
+        int u = icon / 3 * 0x44 + 0x78;
+        int v = icon % 3 * 0x24 + 0x14;
+        DrawMenu2DSprite(BtStatus, CRect_i_(x, bob_y, 0x44, 0x23), CRect_i_(u, v, 0x44, 0x24), alpha);
     }
     float period;
     if (shared != 0) {
-        period = 50.0f * (float) status->party_size;
+        float count = BtlMenuStatusPt->GetPartySize();
+        period = 50.0f * count;
     } else {
         period = 50.0f;
     }

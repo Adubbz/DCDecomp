@@ -3492,10 +3492,10 @@ void MoveEditCursor() {
     }
 
     float step_z;
+    float camera_angle;
     float step_x;
     float forward;
     float right;
-    float camera_angle;
 
     camera_angle = EditCamera.GetAngle();
     right = EdGetLXf(2);

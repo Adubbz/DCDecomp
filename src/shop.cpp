@@ -2860,13 +2860,12 @@ static void DrawItemShopBoard2(int x, int y, int alpha) {
 
 #ifdef NON_MATCHING
 void DrawMoneyCheckBoard2(int x, int y, int alpha) {
-    int u;
-    int v;
-
     DrawMenu2DSprite(ShopBoard, CRect_i_(x, y + 1, 0x60, 0x1B), CRect_i_(0xD0, 0xC0, 0x60, 0x1C), alpha);
     int buy = BuyMoneyCheck2();
     int balance = SellMoneyCheck2() - buy;
     RECT digits = {0, 0xDC, 0xC, 0xC};
+    int u;
+    int v;
     if (balance < 0) {
         digits.y += 0xC;
         u = 0x84;
@@ -2877,10 +2876,11 @@ void DrawMoneyCheckBoard2(int x, int y, int alpha) {
         u = 0x78;
         v = 0xF4;
     }
+    int number_x = x + 0x54;
     int number_y = y + 7;
-    int left = DrawMenuNumber(abs(balance), x + 0x54, number_y, ShopBoard, digits, 1, alpha);
+    number_x = DrawMenuNumber(abs(balance), number_x, number_y, ShopBoard, digits, 1, alpha);
     if (balance != 0) {
-        DrawMenu2DSprite(ShopBoard, CRect_i_(left - 0xC, number_y, 0xC, 0xC), CRect_i_(u, v, 0xC, 0xC), alpha);
+        DrawMenu2DSprite(ShopBoard, CRect_i_(number_x - 0xC, number_y, 0xC, 0xC), CRect_i_(u, v, 0xC, 0xC), alpha);
     }
 }
 #else

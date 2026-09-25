@@ -5086,12 +5086,13 @@ static int _DRAW_SHADOW(RS_STACKDATA *stack, int) {
 #ifdef NON_MATCHING
 int _SET_CLIP_POINT(RS_STACKDATA *stack, int) {
     sceVu0FVECTOR plane;
-    RS_STACKDATA *distance_argument = stack + 3;
     GetPosition(stack, plane);
+    stack += 3;
     if (EdEventInfo.edit_ground != NULL) {
-        float distance = GetStackFloat(distance_argument);
-        sceVu0CopyVector(EdEventInfo.edit_ground->clip_plane, plane);
-        EdEventInfo.edit_ground->clip_plane[3] = distance;
+        float distance = GetStackFloat(stack++);
+        CEditGround *ground = EdEventInfo.edit_ground;
+        sceVu0CopyVector(ground->clip_plane, plane);
+        ground->clip_plane[3] = distance;
     }
     return 1;
 }
@@ -5559,8 +5560,7 @@ int _ASQ_CHECK(RS_STACKDATA *stack, int) {
     CActionSeq *sequence = GetActSeq(GetStackInt(stack));
     if (sequence == NULL)
         return 0;
-    int ended = sequence->CheckEnd();
-    SetStack(result, (0, ((ended != 0) ^ 1) & 0xFF));
+    SetStack(result, ((sequence->CheckEnd() != 0) ^ 1) & 0xFF);
     return 1;
 }
 #else
@@ -6787,9 +6787,11 @@ void RunEvent(CRunScript *script, int program, CDataAlloc2<1> *arena) {
     script->run(program);
 }
 
+/**
+ * Starts an event script using the shared event-script runner.
+ */
 int EdRunEvent(int program, CDataAlloc2<1> *arena) {
     RunEvent(&EdEventScript, program, arena);
-    return 1;
 }
 
 int EdResumeEvent() {

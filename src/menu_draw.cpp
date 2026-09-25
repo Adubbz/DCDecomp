@@ -2298,8 +2298,7 @@ void SeitonAttachBoard(ATTACH_LIST *list) {
     if (list == NULL) {
         return;
     }
-    int i = 0;
-    while (i < 5) {
+    for (int i = 0; i < 5; i++) {
         if (SeitonAttachBoardSub(list) != 0) {
             break;
         }
@@ -2307,9 +2306,7 @@ void SeitonAttachBoard(ATTACH_LIST *list) {
         if (asort_top_type >= 5) {
             asort_top_type = 0;
         }
-        i++;
     }
-
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonAttachBoard__FP11ATTACH_LIST);
@@ -2470,8 +2467,9 @@ int GetNowModeMaxNum(int page, int *over) {
         }
         case 1:
             for (int chara = 0; chara < 6; chara++) {
+                int i;
                 WEAPON_HAVE *weapons = status->chara_weapons[chara];
-                for (int i = 0; i < 11; i++) {
+                for (i = 0; i < 11; i++) {
                     if (weapons[i].item_no >= 0x101) {
                         count++;
                         if (i == 10 && over != NULL) {
@@ -2482,8 +2480,9 @@ int GetNowModeMaxNum(int page, int *over) {
             }
             break;
         case 2:
+            int i;
             DNG_CONSUMABLE *items = status->consumable_items;
-            for (int i = 0; i < 43; i++) {
+            for (i = 0; i < 43; i++) {
                 if (items[i].id >= 0x51) {
                     count++;
                 }

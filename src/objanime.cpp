@@ -189,10 +189,7 @@ int InitObjAnime(CFrame **frames, int count, EPARTS_FUNC_DATA *func, OBJ_ANIME_S
  * @size 0x68
  */
 int end_check(float value, float target, float step) {
-    if (step > 0.0f) {
-        return value > target;
-    }
-    return value < target;
+    return step > 0.0f ? (value > target ? 1 : 0) : (value < target ? 1 : 0);
 }
 #else
 #ifdef NON_MATCHING
@@ -415,18 +412,18 @@ int InitEditEffect(CFrame *frame, EPARTS_FUNC_DATA *func, EDIT_EFFECT_INFO *effe
             return 0;
     }
     effect->map_flag = func->completion_flag;
-    if (func->frame_name[0] != 0) {
-        strcpy(effect->frame_name, func->frame_name);
+    if ((u_char) func->frame_name[0] != 0) {
+        strcpy(effect->frame_name, (char *) func->frame_name);
     } else {
         strcpy(effect->frame_name, frame->name);
     }
     effect->start = ConvertTime(func->start_time);
     effect->end = ConvertTime(func->end_time);
     for (int i = 0; i < 4; i++) {
-        effect->offset[i] = func->position[i];
-        ((float *) effect->unk_40)[i] = func->rotation[i];
-        effect->colour[i] = func->parameters[i];
-        (&effect->sound_no)[i] = func->values[i];
+        (&effect->offset)[0][i] = (&func->position)[0][i];
+        (&effect->offset)[1][i] = (&func->position)[1][i];
+        (&effect->offset)[2][i] = (&func->position)[2][i];
+        (&effect->offset)[3][i] = (&func->position)[3][i];
     }
     effect->offset[3] = 1.0f;
     InitEditEffect(frame, effect);
@@ -505,7 +502,13 @@ void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *gro
     float scale;
     int kind;
 
-    if (effect == NULL || effect->kind <= 0 || effect->frame == NULL) {
+    if (effect == NULL) {
+        return;
+    }
+    if (effect->kind <= 0) {
+        return;
+    }
+    if (effect->frame == NULL) {
         return;
     }
     effect->frame->GetWorldPosition(position, effect->offset);
@@ -524,9 +527,15 @@ void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *gro
         case 1:
         case 2:
         case 3:
-            Fire.pos[0] = 10.0f * (0.1f * position[0]);
-            Fire.pos[1] = 10.0f * (0.1f * position[1]);
-            Fire.pos[2] = 10.0f * (0.1f * position[2]);
+            {
+                float x, y, z;
+                z = 0.1f * position[2];
+                y = 0.1f * position[1];
+                x = 0.1f * position[0];
+                Fire.pos[0] = 10.0f * x;
+                Fire.pos[1] = 10.0f * y;
+                Fire.pos[2] = 10.0f * z;
+            }
             Fire.pos[3] = 1.0f;
             position[3] = 1.0f;
             if (effect->kind == 1) {

@@ -7132,7 +7132,7 @@
           "value": "0x1.0000000000000p+2",
           "value_bits": "0x40800000",
           "ordinal": 1,
-          "evaluate_first": 0
+          "evaluate_first": 1
         },
         {
           "type": "binary32",
@@ -8616,7 +8616,7 @@
           "value": "0x1.4000000000000p+3",
           "value_bits": "0x41200000",
           "ordinal": 1,
-          "evaluate_first": 0
+          "evaluate_first": 1
         }
       ]
     },
@@ -9403,7 +9403,7 @@
           "value": "0x0.0p+0",
           "value_bits": "0x00000000",
           "ordinal": 6,
-          "evaluate_first": 0
+          "evaluate_first": 1
         },
         {
           "type": "binary32",
@@ -9961,7 +9961,7 @@
           "value": "0x1.6000000000000p+3",
           "value_bits": "0x41300000",
           "ordinal": 3,
-          "evaluate_first": 0
+          "evaluate_first": 1
         },
         {
           "type": "binary32",
@@ -15128,6 +15128,13 @@
         },
         {
           "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 5,
+          "evaluate_first": 1
+        },
+        {
+          "type": "binary32",
           "value": "0x1.99999a0000000p-4",
           "value_bits": "0x3dcccccd",
           "ordinal": 1,
@@ -15306,21 +15313,21 @@
           "value": "0x0.0p+0",
           "value_bits": "0x00000000",
           "ordinal": 2,
-          "evaluate_first": 0
+          "evaluate_first": 1
         },
         {
           "type": "binary32",
           "value": "0x0.0p+0",
           "value_bits": "0x00000000",
           "ordinal": 3,
-          "evaluate_first": 0
+          "evaluate_first": 1
         },
         {
           "type": "binary32",
           "value": "0x1.0000000000000p+7",
           "value_bits": "0x43000000",
           "ordinal": 1,
-          "evaluate_first": 0
+          "evaluate_first": 1
         }
       ],
       "EditInit__FPv": [
@@ -17368,7 +17375,7 @@
           "value": "0x1.6000000000000p+2",
           "value_bits": "0x40b00000",
           "ordinal": 1,
-          "evaluate_first": 0
+          "evaluate_first": 1
         },
         {
           "type": "binary32",
@@ -26864,7 +26871,7 @@
           "value": "0x1.4000000000000p+1",
           "value_bits": "0x40200000",
           "ordinal": 1,
-          "evaluate_first": 0
+          "evaluate_first": 1
         },
         {
           "type": "binary32",
@@ -27695,7 +27702,7 @@
           "value": "0x0.0p+0",
           "value_bits": "0x00000000",
           "ordinal": 1,
-          "evaluate_first": 0
+          "evaluate_first": 1
         },
         {
           "type": "binary32",
@@ -27716,7 +27723,7 @@
           "value": "0x0.0p+0",
           "value_bits": "0x00000000",
           "ordinal": 4,
-          "evaluate_first": 0
+          "evaluate_first": 1
         }
       ],
       "MenuInit__Fv": [
