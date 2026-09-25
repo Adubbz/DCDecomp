@@ -17,10 +17,6 @@ extern ITEM_DATA ITEM_LIST[];
 extern CItemBombEffect *NowBombEffect;
 extern CShockWave *NowShockWave;
 
-#ifdef NON_MATCHING
-static const int bomb_uv[4][2] = {{0, 0}, {1, 0}, {0, 1}, {1, 1}};
-#endif
-
 /**
  * Reports whether one running item is still in use.
  *
@@ -184,48 +180,51 @@ int SetBombEffect(float *position, int owner, int damage, float scale) {
  * @address 0x1D5B30
  * @size 0x374
  */
-#ifdef NON_MATCHING
 void CItemBombEffect::Draw(CCamera *camera) {
+    static int uvTable[4][2] = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
     sceVu0FVECTOR camera_position;
     sceVu0FVECTOR direction;
     sceVu0FVECTOR world;
     int top_left[4];
+    int bottom_right[4];
     int top_right[4];
     int bottom_left[4];
-    int bottom_right[4];
-    sceGsAlpha alpha = mgAlpha;
-    sceGsZbuf zbuffer = mgZBuffer;
 
     camera->GetPos(camera_position);
+    sceGsAlpha alpha = mgAlpha;
     alpha.bits.a = 0;
     alpha.bits.b = 2;
     alpha.bits.c = 0;
     alpha.bits.d = 1;
     MGSetGsALPHA(&alpha);
+    sceGsZbuf zbuffer = mgZBuffer;
     zbuffer.bits.zmsk = 1;
     MGSetGsZBUF(&zbuffer);
 
-    for (int effect_no = 0; effect_no < 5; effect_no++) {
-        if (active[effect_no] != 1 || counters[effect_no] < 0) {
+    for (int i = 0; i < 5; i++) {
+        if (active[i] != 1 || counters[i] < 0) {
             continue;
         }
 
-        int cell = effect_no < 3 ? effect_no : 3;
-        CRect_i_ source(bomb_uv[cell][0] << 6, bomb_uv[cell][1] << 6, 0x40, 0x40);
-        direction[0] = camera_position[0] - positions[effect_no][0];
-        direction[1] = 0.0f;
-        direction[2] = camera_position[2] - positions[effect_no][2];
-        direction[3] = 0.0f;
+        int cell = i;
+        if (cell >= 3) {
+            cell = 3;
+        }
+        int u = uvTable[cell][0] << 6;
+        int v = uvTable[cell][1] << 6;
+        direction[0] = camera_position[0] - positions[i][0];
+        float *up = &direction[1];
+        *up = 0.0f;
+        direction[2] = camera_position[2] - positions[i][2];
         sceVu0Normalize(direction, direction);
-        float distance = effect_no * 5.0f + counters[effect_no] * 2.0f;
-        direction[0] *= distance;
-        direction[2] *= distance;
-        world[0] = positions[effect_no][0] + direction[0];
-        world[1] = positions[effect_no][1] + direction[1];
-        world[2] = positions[effect_no][2] + direction[2];
+        direction[0] *= i * 5.0f + phases[i] * 2.0f;
+        direction[2] *= i * 5.0f + phases[i] * 2.0f;
+        world[0] = direction[0] + positions[i][0];
+        world[1] = *up + positions[i][1];
+        world[2] = direction[2] + positions[i][2];
         world[3] = 1.0f;
 
-        float size = sizes[effect_no] * scale;
+        float size = sizes[i] * scale;
         if (MGRotTransPers3DSprite(top_left, bottom_right, world, size, size / 2.0f, 0) != 1) {
             continue;
         }
@@ -237,17 +236,14 @@ void CItemBombEffect::Draw(CCamera *camera) {
         bottom_left[1] = bottom_right[1];
         bottom_left[2] = bottom_right[2];
         bottom_left[3] = bottom_right[3];
+        CRect_i_ source(u, v, 0x40, 0x40);
         set3DSprite(Vif1Packet, TexManager.GetTexture("bomb_ex", -1), source, top_left, top_right,
-                    bottom_left, bottom_right, (u8) alphas[effect_no]);
+                    bottom_left, bottom_right, (u8) alphas[i]);
     }
 
     MGSetGsALPHA(NULL);
     MGSetGsZBUF(NULL);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/itembombeffect", Draw__15CItemBombEffectFP7CCamera);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/itembombeffect", @1169__2);
 
 /**
  * Advances the bomb effect by a frame.

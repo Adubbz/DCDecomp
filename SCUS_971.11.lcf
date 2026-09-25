@@ -552,7 +552,7 @@ SECTIONS
         mainitemmodel.cpp.o (.mainitemmodel-c862) // 0x0027eae0 @862
         . = ALIGN(16);
         mainitemmodel.cpp.o (.mainitemmodel-c937) // 0x0027eb00 @937
-        main.data.part6-27EAE0.s.o (.data) // 0x0027eb10
+        itembombeffect.cpp.o (.data) // 0x0027eb10
         weaponeffect.cpp.o (.data)   // 0x0027eb30
         monstorunit.cpp.o (.data)    // 0x0027eb50
         runscript_opcodes.cpp.o (.data) // 0x00291830

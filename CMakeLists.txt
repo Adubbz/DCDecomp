@@ -272,7 +272,6 @@ carve_part(main.sbss.part5.s
 carve_part(main.data.part6.s
            main.data.part6.s=27E790-27E7D0
            main.data.btitem-a.s=27E810-27EAD0
-           main.data.part6-27EAE0.s=27EB10-27EB30
            main.data.part6f.s=291850-291B80
            main.data.part6k.s=292704-292750
            main.data.shop-local.s=292770-2927A0
