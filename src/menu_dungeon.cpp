@@ -1116,35 +1116,61 @@ int DngActItemModelReadStart(u_long128 *buffer) {
     return 0;
 }
 
-#ifdef NON_MATCHING
+/** Quick-use item slots and the models they draw with. */
+extern "C" CActiveItemPack activeItem;
+
 int DngActItemModelBuild(int wait) {
-    int slot;
-    int read_index = 0;
+    BG_READ_INFO *model;
+    BG_READ_INFO *texture;
+    u_int *model_buffer;
+    u_int *texture_buffer;
+    int texture_size;
+    int read_index;
+    int i;
 
     if (ReadBGSync() != 0) {
-        if (!wait) {
+        if (wait != 0) {
+            while (ReadBGSync() != 0) {
+            }
+        } else {
             ReadBG();
             return 0;
         }
-        while (ReadBGSync() != 0) {
-        }
     }
-    for (slot = 0; slot < 3; slot++) {
-        int item_no = BtlMenuStatusPt->item_pack.quick_item_slot[slot];
-        if (item_no >= ITEM_DUNGEON_START) {
-            BG_READ_INFO *model = GetReadBGFile(read_index++);
-            BG_READ_INFO *texture = GetReadBGFile(read_index++);
-            if (model != NULL && texture != NULL) {
-                mainItemModel.SetCashModel(item_no, (u_int *) model->buffer,
-                                           (u_int *) texture->buffer, texture->size);
-            }
+    ITEM_PACK *pack = &BtlMenuStatusPt->item_pack;
+    int items[3] = {pack->quick_item_slot[0], pack->quick_item_slot[1], pack->quick_item_slot[2]};
+    read_index = 0;
+    for (i = 0; i < 3; i++) {
+        if (items[i] < ITEM_DUNGEON_START) {
+            continue;
         }
+        model = GetReadBGFile(read_index * 2);
+        texture = GetReadBGFile(read_index * 2 + 1);
+        read_index++;
+        if (model != NULL) {
+            model_buffer = (u_int *) model->buffer;
+        }
+        if (texture != NULL) {
+            texture_buffer = (u_int *) texture->buffer;
+            texture_size = texture->size;
+        }
+        if (model == NULL || texture == NULL) {
+            continue;
+        }
+        if (activeItem.model[i + 1] != -1) {
+            activeItem.models->DeleteModel(activeItem.model[i + 1]);
+            activeItem.model[i + 1] = -1;
+        }
+        if (activeItem.model[i + 1] != -1) {
+            activeItem.models->DeleteModel(activeItem.model[i + 1]);
+        }
+        activeItem.model[i + 1] =
+            activeItem.models->SetCashModel(items[i], model_buffer, texture_buffer, texture_size);
+        activeItem.model[i + 5] = 0;
+        activeItem.item[i + 1] = items[i];
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DngActItemModelBuild__Fi);
-#endif
 
 int DngActiveItemTextureCopy(void) {
     int i;
