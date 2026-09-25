@@ -387,31 +387,37 @@
     ],
     "sections": {
       ".editininit": [
-        "@159"
+        "@161"
       ],
       ".editindraw": [
-        "@173",
-        "@195"
+        "@175",
+        "@197"
       ],
       ".editinpause": [
-        "@235"
+        "@237"
       ],
       ".editinmove": [
-        "@302",
-        "@303"
+        "@304",
+        "@305"
       ],
       ".editincamdist": [
         "camera_distance$1155"
       ],
       ".editincampos": [
-        "@410"
+        "@412"
       ],
       ".editintex": [
         "texdata$1374"
       ],
+      ".editinload": [
+        "@622",
+        "@623",
+        "@624",
+        "@625"
+      ],
       ".editinpts": [
-        "@542",
-        "@567"
+        "@656",
+        "@681"
       ],
       ".editinfixpos": [
         "fix_pos$1123"

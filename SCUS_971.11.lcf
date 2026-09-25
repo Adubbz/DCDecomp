@@ -501,7 +501,7 @@ SECTIONS
         . = ALIGN(0x10);
         edit_in.cpp.o (.editincampos)  // 0x0026a6a0
         edit_in.cpp.o (.editintex)     // 0x0026a6b0
-        main.data.edit_in-d.s.o (.data) // 0x0026a770
+        edit_in.cpp.o (.editinload)    // 0x0026a770
         edit_in.cpp.o (.editinpts)     // 0x0026a7b0
         main.data.edit_in-c.s.o (.data) // 0x0026a7f0
         edit_in.cpp.o (.data)          // 0x0026ae10

@@ -15,7 +15,9 @@
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dataset.hpp"
+#include "dispctrl.hpp"
 #include "ebattle.hpp"
+#include "edit.hpp"
 #include "edit_in.hpp"
 #include "editground.hpp"
 #include "editloop.hpp"
@@ -33,7 +35,9 @@
 #include "menu_misc.hpp"
 #include "mglib.hpp"
 #include "npcharacter.hpp"
+#include "objanime.hpp"
 #include "rect.hpp"
+#include "savedata.hpp"
 #include "scriptinterpreter.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
@@ -43,11 +47,7 @@
 #include <cmath>
 
 #include "battlemenu.hpp"
-#include "dispctrl.hpp"
-#include "edit.hpp"
 #include "gamemode.hpp"
-#include "objanime.hpp"
-#include "savedata.hpp"
 #include "sysmes.hpp"
 #endif
 
@@ -89,8 +89,9 @@ extern CNPCharacter EdVillager[10];
 extern int setTexAnimCnt;
 extern float setTexAnimCntf;
 
-/* Map jump the player arrives through when entering an interior. */
+/* Map jump the player arrives through when entering an interior, and the part that holds it. */
 extern int EdInteriorJumpID;
+extern int EdInteriorPartsNo;
 
 /* How far the interior camera stands from the player, as an index into its distances. */
 extern int camera_dist_mode;
@@ -134,6 +135,8 @@ extern int goto_return_menu;
 extern int simple_event;
 /* Characters that stand in for the interior's moving parts. */
 extern CCharacter MotionParts[4];
+/* Number of camera markers the interior defines. */
+extern int camera_num;
 
 /* Where the camera sits for one camera marker of the interior, and the box the player must stand in. */
 struct INTERIOR_CAMERA {
@@ -164,14 +167,13 @@ void LoadData();
 void EdDoorCloseSe(int door_no, float *position);
 static void MoveCamera(CCameraFollow *camera);
 static int GetDoorPos(int door_no, float *position, float *rotation, int *parts_no, int *motion);
+int LoadPTS(CMapParts *parts, u_int *archive);
+int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points);
 
 #ifdef NON_MATCHING // draft declarations
-extern int EdInteriorPartsNo;
 extern char EdInteriorName[];
 extern int EdDebugEventEnable;
 extern int MenuMapJumpMode;
-
-static int camera_num;
 
 static void LoadScript();
 void EdDoorOpenSe(int door_sound, float *position);
@@ -190,8 +192,6 @@ static void StepWater();
 static void MainDraw();
 static void MoveCharacter();
 static void VillagerCollision();
-int LoadPTS(CMapParts *parts, u_int *archive);
-int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points);
 void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara);
 #endif
 
@@ -1488,10 +1488,7 @@ static void LoadChara() {
  * @address 0x19EED0
  * @size 0x818
  */
-#ifdef NON_MATCHING
 void LoadData() {
-    CFrame *frames[9];
-
     func_point = new ((u_long128 *) (EdNPCBuffer.base + EdNPCBuffer.used * 16)) EPARTS_FUNC_DATA[128];
     EdNPCBuffer.Alloc(0x600);
     for (int i = 0; i < 128; i++) {
@@ -1504,8 +1501,11 @@ void LoadData() {
         archive = (u_int *) file->buffer;
     }
     int count;
-    u_int *pts;
-    for (count = 0; (pts = SearchPTS(archive, count)) != NULL; count++) {
+    for (count = 0;; count++) {
+        u_int *pts = SearchPTS(archive, count);
+        if (pts == NULL) {
+            break;
+        }
         CMapParts *parts = &InteriorParts[count];
         LoadPTS(parts, pts);
         parts->handle = count;
@@ -1519,19 +1519,23 @@ void LoadData() {
                 EdPartsObjectOnOff(parts, info, EdInteriorJumpID + 1);
             }
         }
+        CFrame *frames[9];
         for (int i = 0; i < 9; i++) {
             frames[i] = NULL;
         }
         for (int i = 0; i < 4; i++) {
-            frames[i] = (CFrame *) parts->frame[i];
+            CFrame *frame = parts->frame[i];
+            frames[i] = frame;
         }
         frames[4] = parts->shadow_frame;
         frames[5] = parts->GetCollisionFrame();
         frames[6] = parts->shade_frame;
         frames[7] = parts->unk_104;
-        CFrame *extra = parts->unk_0DC;
-        if (extra != NULL) {
-            extra->SetPosition(parts->pos[0], parts->pos[1], parts->pos[2]);
+        CFrame *extra;
+        if (parts->unk_0DC == NULL) {
+            extra = NULL;
+        } else {
+            parts->unk_0DC->SetPosition(parts->pos[0], parts->pos[1], parts->pos[2]);
             parts->unk_0DC->SetRotation(parts->rotation.x, parts->rotation.y, parts->rotation.z);
             extra = parts->unk_0DC;
         }
@@ -1544,21 +1548,21 @@ void LoadData() {
         }
         for (; first < func_num; first++, point++) {
             EnterPartsEffect(parts, point, EdInInfo->effects, 32);
-            if (obj_anime_num < 32 && InitObjAnime(frames, 9, point, &EdInInfo->obj_anime[obj_anime_num]) != 0) {
-                obj_anime_num++;
+            if (obj_anime_num < 32) {
+                OBJ_ANIME_SEQ *seq = &EdInInfo->obj_anime[obj_anime_num];
+                if (InitObjAnime(frames, 9, point, seq) != 0) {
+                    obj_anime_num++;
+                }
             }
         }
         EdInitEventPoint(parts, NULL, func_point, func_num, EdInInfo->event_points, 32);
     }
     parts_num = count;
     for (int i = 0; i < func_num; i++) {
-        EPARTS_FUNC_DATA *point = &func_point[i];
-        point->parts = (CMapParts *) InteriorParts[(int) point->parts].frame[0];
-        int flag = func_point[i].completion_flag;
-        if (flag > 0 && SaveData->GetMapInitFlag(MapNo, flag) == 0) {
+        func_point[i].parts = (CMapParts *) InteriorParts[(int) func_point[i].parts].frame[0];
+        if (func_point[i].completion_flag > 0 && SaveData->GetMapInitFlag(MapNo, func_point[i].completion_flag) == 0) {
             SaveData->SetMapInitFlag(MapNo, func_point[i].completion_flag, 1);
-            EPARTS_FUNC_DATA *set = &func_point[i];
-            SaveData->SetMapFlag(MapNo, set->completion_flag, (s8) set->unk_28[0] == 0);
+            SaveData->SetMapFlag(MapNo, func_point[i].completion_flag, !(s8) func_point[i].unk_28[0]);
         }
     }
     camera_num = 0;
@@ -1570,14 +1574,13 @@ void LoadData() {
     }
     for (int i = 0; i < 4; i++) {
         EDIT_MOTION_PARTS_INFO *motion = &EdInInfo->motion_parts[i];
-        CCharacter *chara = &MotionParts[i];
-        chara->Initialize();
+        MotionParts[i].Initialize();
         if (motion->name[0] != '\0') {
             LoadFile(motion->name, read_buffer, NULL);
-            chara->LoadPackData2((u_int *) read_buffer, "info.cfg", &EdNPCBuffer, i + 0x32, &EdNPCBuffer, 0);
-            chara->SetPosition(motion->values[0], motion->values[1], motion->values[2]);
-            chara->SetRotation(motion->values[3], motion->values[4], motion->values[5]);
-            chara->SetScale(motion->values[6], motion->values[7], motion->values[8]);
+            MotionParts[i].LoadPackData2((u_int *) read_buffer, "info.cfg", &EdNPCBuffer, i + 0x32, &EdNPCBuffer, 0);
+            MotionParts[i].SetPosition(motion->values[0], motion->values[1], motion->values[2]);
+            MotionParts[i].SetRotation(motion->values[3], motion->values[4], motion->values[5]);
+            MotionParts[i].SetScale(motion->values[6], motion->values[7], motion->values[8]);
         }
     }
     for (int i = 0; i < 1; i++) {
@@ -1585,37 +1588,36 @@ void LoadData() {
     }
     for (int i = 0; i < 1; i++) {
         EDIT_WATER_INFO *info = &EdInInfo->water_surfaces[i];
-        if (info->type > 0) {
-            CGroundWater *surface = &Water[i];
-            CWater *water = &surface->water;
-            sceVu0FVECTOR near_left = {info->corner_a[0], info->corner_a[1], info->corner_a[2], 1.0f};
-            sceVu0FVECTOR near_right = {info->corner_b[0], info->corner_a[1], info->corner_a[2], 1.0f};
-            sceVu0FVECTOR far_left = {info->corner_a[0], info->corner_a[1], info->corner_c[2], 1.0f};
-            sceVu0FVECTOR far_right = {info->corner_b[0], info->corner_a[1], info->corner_c[2], 1.0f};
-
-            surface->draw = 1;
-            strcpy(surface->name, info->name);
-            surface->parts_no = info->parts_no;
-            sceVu0CopyVector(surface->offset, info->corner_c);
-            for (int j = 0; j < 3; j++) {
-                (&surface->follow_x)[j] = (&info->follow_x)[j];
-            }
-            for (int j = 0; j < 4; j++) {
-                sceVu0CopyVector((float *) &surface->ripples[j], (float *) &info->wave[j]);
-            }
-            water->SetVertex(near_left, near_right, far_left, far_right);
-            water->frame.SetPosition(info->corner_c);
-            water->SetSize(info->type, info->number, &EdNPCBuffer);
-            water->SetParam(info->texture_scroll[0], info->texture_scroll[1], info->texture_scroll[2],
-                            info->texture_scroll[3]);
-            water->SetColor(info->unk_50, info->unk_54, info->unk_58, 0x80);
+        if (info->type <= 0) {
+            break;
         }
+        CWater *water;
+        int j;
+        CGroundWater *surface = &Water[i];
+        water = &surface->water;
+        sceVu0FVECTOR near_left = {info->corner_a[0], info->corner_a[1], info->corner_a[2], 1.0f};
+        sceVu0FVECTOR near_right = {info->corner_b[0], info->corner_a[1], info->corner_a[2], 1.0f};
+        sceVu0FVECTOR far_left = {info->corner_a[0], info->corner_a[1], info->corner_b[2], 1.0f};
+        sceVu0FVECTOR far_right = {info->corner_b[0], info->corner_a[1], info->corner_b[2], 1.0f};
+
+        surface->draw = 1;
+        strcpy(surface->name, info->name);
+        surface->parts_no = info->parts_no;
+        sceVu0CopyVector(surface->offset, info->corner_c);
+        for (int j = 0; j < 3; j++) {
+            (&surface->follow_x)[j] = (&info->follow_x)[j];
+        }
+        for (j = 0; j < 4; j++) {
+            sceVu0CopyVector(&surface->ripples[j].row, &info->wave[j].x);
+        }
+        water->SetVertex(near_left, near_right, far_left, far_right);
+        water->frame.SetPosition(info->corner_c);
+        water->SetSize(info->type, info->number, &EdNPCBuffer);
+        water->SetParam(info->texture_scroll[0], info->texture_scroll[1], info->texture_scroll[2],
+                        info->texture_scroll[3]);
+        water->SetColor(info->unk_50, info->unk_54, info->unk_58, 0x80);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", LoadData__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1537);
 /**
  * Builds one interior part from its archive entry.
  *

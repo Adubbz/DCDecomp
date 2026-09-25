@@ -292,7 +292,6 @@ carve_part(main.data.part4.s
            main.data.part4i.s=269A30-269AD0
            main.data.part4f.s=269B60-269BA0
            main.data.part4g.s=26A5E8-26A640
-           main.data.edit_in-d.s=26A770-26A7B0
            main.data.edit_in-c.s=26A7F0-26AE10
            main.data.edit_in-b.s=26AE40-26AE60
            main.data.fishing-a.s=26AFE0-26B0C0
