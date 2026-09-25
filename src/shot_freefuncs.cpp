@@ -115,11 +115,23 @@ extern "C" CDungeonEventMan DngEventMan;
 extern CDungeonEventMan *NowEventMan;
 
 /**
- * Opening motions of the small and the big item-get boxes.
+ * Opening motion of the small item-get box.
  */
 extern "C" CMotionModel itemOpenSmall;
+
+/**
+ * Opening motion of the big item-get box.
+ */
 extern "C" CMotionModel itemOpenBig;
+
+/**
+ * Motion information LoadPack fills for the small item-get box.
+ */
 extern "C" MOTION_INFO itemOpenSmall_info;
+
+/**
+ * Motion information LoadPack fills for the big item-get box.
+ */
 extern "C" MOTION_INFO itemOpenBig_info;
 
 /**
