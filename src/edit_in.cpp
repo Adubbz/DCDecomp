@@ -1682,14 +1682,15 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", LoadPTS__FP9CMapPartsPUi);
 #ifdef NON_MATCHING
 int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points) {
     EPARTS_INFO_HEADER *header = (EPARTS_INFO_HEADER *) ((char *) archive + archive[1]);
-    EPARTS_FUNC_DATA *source = (EPARTS_FUNC_DATA *) ((char *) header + (int) header->func);
     int i;
+    EPARTS_FUNC_DATA *source = (EPARTS_FUNC_DATA *) ((char *) header + (int) header->func);
 
-    for (i = 0; i < header->func_count; i++, source++, points++) {
-        *points = *source;
+    for (i = 0; i < header->func_count; points++) {
+        *points = *source++;
         points->parts = (CMapParts *) parts_no;
+        i++;
     }
-    return i;
+    return header->func_count;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/edit_in", GetFuncPoint__FiPUiP16EPARTS_FUNC_DATA);
@@ -2072,11 +2073,11 @@ static void CommandWATER_SHAKE(void **arguments) {
 
     if (info != NULL) {
         for (int i = 0;; i++) {
-            if (info->wave[i].active == 0.0f && info->wave[i].z == 0.0f) {
-                info->wave[i].x = (float) *(int *) arguments[0];
-                info->wave[i].y = (float) *(int *) arguments[1];
-                info->wave[i].z = *(float *) arguments[3];
-                info->wave[i].active = *(float *) arguments[2];
+            if (((float (*)[4]) info->wave)[i][3] == 0.0f && ((float (*)[4]) info->wave)[i][2] == 0.0f) {
+                ((float (*)[4]) info->wave)[i][0] = (float) *(int *) arguments[0];
+                ((float (*)[4]) info->wave)[i][1] = (float) *(int *) arguments[1];
+                ((float (*)[4]) info->wave)[i][2] = *(float *) arguments[3];
+                ((float (*)[4]) info->wave)[i][3] = *(float *) arguments[2];
                 break;
             }
         }

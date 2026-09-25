@@ -84,16 +84,14 @@ int CMemoryCardAccess::InitForMC() {
     }
     return result;
 }
-#ifdef NON_MATCHING
-extern SV_CONFIG_SYS sys_config;
-
 void CMemoryCardAccess::SetBuff(char *buffer) {
     char *data;
     char *sum;
     u32 i;
     char total;
 
-    this->save_buffer = (CSaveData *) ((((int) buffer >> 6) + 1) << 6);
+    buffer = (char *) ((((int) buffer >> 6) + 1) << 6);
+    this->save_buffer = (CSaveData *) buffer;
     memcpy(this->save_buffer, SaveData, 0x131C0);
     this->save_buffer->ConvertConfig(&sys_config);
     char *version = (char *) this->save_buffer + 0x131C0;
@@ -113,9 +111,6 @@ void CMemoryCardAccess::SetBuff(char *buffer) {
     this->read_buffer = (char *) ((((int) sum >> 6) + 1) << 6);
     this->unk_D8 = this->read_buffer;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", SetBuff__17CMemoryCardAccessFPc);
-#endif
 
 void CMemoryCardAccess::SetIconData(MC_ICON_DATA *icon) {
     memcpy(&this->icon.view, &icon->view, sizeof(MC_ICON_FILE));

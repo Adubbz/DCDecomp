@@ -72,9 +72,10 @@ void CHealEffect::Step(void) {
 
 #ifdef NON_MATCHING
 void CHealEffect::Draw(void) {
-    float world[4] = {0.0f, 0.0f, 1.0f, 1.0f};
-
     if (this->active != 0) {
+        float world[4];
+        // Unread; Step builds its particle offsets from the same template.
+        float offset[4] = {0.0f, 0.0f, 1.0f, 1.0f};
         CTexture *texture = TexManager.GetTexture("basefx00", -1);
 
         sceVu0CopyVector(this->position, CharaMain.pos);

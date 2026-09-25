@@ -33,14 +33,12 @@
 #include "sysmes.hpp"
 #include "texture.hpp"
 #include "visualvu1.hpp"
-#ifdef NON_MATCHING // draft includes
 #include "dungeonmap.hpp"
 #include "water.hpp"
 #include "shot_effect.hpp"
 #include "hitmark.hpp"
 #include "textureanime.hpp"
 #include "object.hpp"
-#endif
 #include "title/bombeffect.hpp"
 #include "title/majinbeem.hpp"
 
@@ -1329,12 +1327,17 @@ INCLUDE_ASM("asm/nonmatchings/main", __as__10CCharacterFRC10CCharacter);
 #ifdef NON_MATCHING
 
 CObject &CObject::operator=(const CObject &source) {
-    // The three words after the mass are not carried over.
+    // The three words after the mass are alignment padding and are not carried over.
     mass = source.mass;
-    pos[0] = source.pos[0];
-    pos[1] = source.pos[1];
-    pos[2] = source.pos[2];
-    pos[3] = source.pos[3];
+    float w, z, y, x;
+    x = source.pos[0];
+    y = source.pos[1];
+    z = source.pos[2];
+    w = source.pos[3];
+    pos[0] = x;
+    pos[1] = y;
+    pos[2] = z;
+    pos[3] = w;
     velocity = source.velocity;
     acceleration = source.acceleration;
     gravity = source.gravity;
@@ -1342,10 +1345,7 @@ CObject &CObject::operator=(const CObject &source) {
     rotation = source.rotation;
     rot_velocity = source.rot_velocity;
     rot_acceleration = source.rot_acceleration;
-    scale[0] = source.scale[0];
-    scale[1] = source.scale[1];
-    scale[2] = source.scale[2];
-    scale[3] = source.scale[3];
+    *(CVector3_f_ *) scale = *(const CVector3_f_ *) source.scale;
     return *this;
 }
 #else
@@ -1480,10 +1480,14 @@ void CMajinBeem::Initialize() {
  */
 #ifdef NON_MATCHING
 /* The compiler emits the constructor for arrays of slots. */
+#pragma push
+#pragma dont_inline on
 void DraftNpcModelArray() {
     MAP_NPC_MODEL *models = new MAP_NPC_MODEL[16];
     delete[] models;
 }
+void DraftNpcModelArray();
+#pragma pop
 #else
 INCLUDE_ASM("asm/nonmatchings/main", __ct__13MAP_NPC_MODELFv);
 #endif
@@ -1496,10 +1500,14 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__13MAP_NPC_MODELFv);
  */
 #ifdef NON_MATCHING
 /* The compiler emits the inline constructor out of line for arrays of characters. */
+#pragma push
+#pragma dont_inline on
 void DraftCharacterArray() {
     CCharacter *characters = new CCharacter[16];
     delete[] characters;
 }
+void DraftCharacterArray();
+#pragma pop
 #else
 INCLUDE_ASM("asm/nonmatchings/main", __ct__10CCharacterFv);
 #endif
@@ -1520,10 +1528,14 @@ MotionParam::MotionParam() {}
  */
 #ifdef NON_MATCHING
 /* The compiler emits the argument-less constructor for arrays of animations. */
+#pragma push
+#pragma dont_inline on
 void DraftTextureAnimeArray() {
     CTextureAnime *animes = new CTextureAnime[16];
     delete[] animes;
 }
+void DraftTextureAnimeArray();
+#pragma pop
 #else
 INCLUDE_ASM("asm/nonmatchings/main", __ct__13CTextureAnimeFv);
 #endif
@@ -1536,10 +1548,14 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__13CTextureAnimeFv);
  */
 #ifdef NON_MATCHING
 /* The compiler emits the argument-less constructor for arrays of objects. */
+#pragma push
+#pragma dont_inline on
 void DraftObjectArray() {
     CObject *objects = new CObject[16];
     delete[] objects;
 }
+void DraftObjectArray();
+#pragma pop
 #else
 INCLUDE_ASM("asm/nonmatchings/main", __ct__7CObjectFv);
 #endif
@@ -1552,10 +1568,14 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__7CObjectFv);
  */
 #ifdef NON_MATCHING
 /* The compiler emits the constructor for arrays of projectile effects. */
+#pragma push
+#pragma dont_inline on
 void DraftShotEffectArray() {
     CSHOT_EFFECT *effects = new CSHOT_EFFECT[16];
     delete[] effects;
 }
+void DraftShotEffectArray();
+#pragma pop
 #else
 INCLUDE_ASM("asm/nonmatchings/main", __ct__12CSHOT_EFFECTFv);
 #endif
@@ -1568,10 +1588,14 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__12CSHOT_EFFECTFv);
  */
 #ifdef NON_MATCHING
 /* The compiler emits the constructor for arrays of hit markers. */
+#pragma push
+#pragma dont_inline on
 void DraftHitMarkArray() {
     CHitMark *marks = new CHitMark[16];
     delete[] marks;
 }
+void DraftHitMarkArray();
+#pragma pop
 #else
 INCLUDE_ASM("asm/nonmatchings/main", __ct__8CHitMarkFv);
 #endif

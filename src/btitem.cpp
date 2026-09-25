@@ -130,7 +130,6 @@ extern int escape_sled;
 
 extern "C" CDataAlloc2<1> BtCashBuffer;
 
-#ifdef NON_MATCHING // draft declarations
 #include <cstdio>
 #include <cstring>
 
@@ -199,7 +198,6 @@ extern "C" CCharacter EscapeEffect;
 void setCameraPassData(CFrameVu1 *frame, CCamera *camera, char *position_name, char *reference_name);
 void getAtraToSaveData(int atra, int atra_no, CSaveData *save, int dungeon, int floor);
 void getCharacterVector(float *vector, float pitch);
-#endif
 
 /**
  * Computes the quantity represented by an acquired attachment.
@@ -224,7 +222,8 @@ void selectChrUnit(int chara_no, int reload) {
     wait_now_loading_vsync();
     size = (u_int) (((size >> 6) + 1) << 6) >> 2;
     u_int *weapon0 = &read_buffer[size];
-    BtGetWeaponNamePath3(name, path, defWeapon__4[chara_no]);
+    int weapon_no = defWeapon__4[chara_no];
+    BtGetWeaponNamePath3(name, path, weapon_no);
     BtGetWeaponNamePath3(name1, path, defWeapon__4[chara_no] + 1);
     BtGetWeaponNamePath3(name2, path,
                          UserStatus->chara_weapons[chara_no][UserStatus->equipped_weapon_slot[chara_no]].item_no);
@@ -249,13 +248,16 @@ void selectChrUnit(int chara_no, int reload) {
     CWeaponFx.InitSet(NowWeapon->frame, "dcol0", "dcol1");
     SetWeaponColor();
     SndVoiceLoad(UserStatus->cur_chara);
-    LoadFileMenuData("itemlst.img", read_buffer);
+    unsigned int *buffer = read_buffer;
+    LoadFileMenuData("itemlst.img", buffer);
     wait_now_loading_vsync();
     SetTempTexture(0x28, (char *) read_buffer);
     BtItemListCashFlag = 1;
     nowUnitNow = UserStatus->cur_chara;
     if (UserStatus->CheckLife() == 0) {
-        UserStatus->hp[UserStatus->cur_chara] = 1;
+        CUserStatus *user = UserStatus;
+        int cur_chara = user->cur_chara;
+        user->hp[cur_chara] = 1;
     }
 }
 #else

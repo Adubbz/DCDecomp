@@ -3369,12 +3369,15 @@ void ItemShopGetPacFileName(int kind, int shop_no, char *name) {
         {"p02", "p32", "p35", "p36", "p36", "p36", "p36", "p37", "p49", "p55", "p75", "c03", "p41", "p02", "p32", "p38",
          "c03", "c03"}};
     char file[32];
-    char path[64] = "commenu/shopchara/";
 
     strcpy(file, names[kind][shop_no]);
     strcat(file, "a.pac");
-    strcat(path, file);
-    strcpy(name, path);
+    {
+        char path[64] = "commenu/shopchara/";
+
+        strcat(path, file);
+        strcpy(name, path);
+    }
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopGetPacFileName__FiiPc);
@@ -4664,7 +4667,7 @@ void InitFishingExchange(u_long128 *buffer, int *texture_blocks, int mode) {
         SaveData->SetFishingPoint(0);
         FishMenu.point = SaveData->GetFishingPoint();
     }
-    if (FishMenu.point >= 10000) {
+    if (FishMenu.point > 9999) {
         FishMenu.point = 9999;
     }
     StayTex = TexManager.GetTexture("stayframe", -1);

@@ -213,14 +213,12 @@ extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 extern u8 EditCharaData[0x960];
 extern u8 EditElementInfo[0x120];
 #include "editmenu.hpp"
-#ifdef NON_MATCHING // draft includes
 #include "wind.hpp"
 #include "memcard.hpp"
 #include "fishing.hpp"
 #include "effectmacro.hpp"
 #include "nowload.hpp"
 #include "menu_draw.hpp"
-#endif
 extern u8 MesWinTexBuff_01[0x100];
 extern u8 MesWinTexBuff_02[0x100];
 extern CFrameVu1 *SkyFrame[4];
@@ -2866,7 +2864,8 @@ void MainEditMode() {
     char night_window[10] = "win2";
 
     for (level = 0; level < 4; level++) {
-        CFrame *frame = ObjParts[parts].frame[level];
+        CMapParts *obj = &ObjParts[parts];
+        CFrame *frame = obj->frame[level];
 
         FrameOnOff(frame, day_window, day_on);
         FrameOnOff(frame, night_window, night_on);
@@ -3481,9 +3480,6 @@ int CheckEditToWalk(float *position) {
 #ifdef NON_MATCHING
 void MoveEditCursor() {
     float pos[4];
-    CVector3_f_ grid;
-    float parts_pos[4];
-    float walk[4];
     float camera_distance[3] = {1000.0f, 2000.0f, 4000.0f};
     float camera_height[3] = {1000.0f, 1400.0f, 2000.0f};
 
@@ -3495,9 +3491,15 @@ void MoveEditCursor() {
         cursor_scale[0] *= 0.6f;
     }
 
-    float camera_angle = EditCamera.GetAngle();
-    float right = EdGetLXf(2);
-    float forward = EdGetLYf(2);
+    float step_z;
+    float step_x;
+    float forward;
+    float right;
+    float camera_angle;
+
+    camera_angle = EditCamera.GetAngle();
+    right = EdGetLXf(2);
+    forward = EdGetLYf(2);
 
     sceVu0CopyVector(pos, ECursorFrame->position);
 
@@ -3526,8 +3528,8 @@ void MoveEditCursor() {
         }
     }
 
-    float step_x = right * cosf(camera_angle) + forward * sinf(camera_angle);
-    float step_z = forward * cosf(camera_angle) - right * sinf(camera_angle);
+    step_x = right * cosf(camera_angle) + forward * sinf(camera_angle);
+    step_z = forward * cosf(camera_angle) - right * sinf(camera_angle);
 
     sceVu0CopyVector(pos, ECursorFrame->position);
     if (area != NULL) {
@@ -3549,6 +3551,8 @@ void MoveEditCursor() {
         DrawPartsNameCount = 0;
     }
     if (area != NULL) {
+        CVector3_f_ grid;
+
         area->GetGrid(&grid, pos[0], pos[1], pos[2]);
 
         float half = area->GetUnitSize() / 2.0f;
@@ -3573,6 +3577,8 @@ void MoveEditCursor() {
         camera_dist_mode = 0;
     }
     ECursorFrame->SetPosition(pos[0], pos[1], pos[2]);
+    float parts_pos[4];
+
     sceVu0CopyVector(parts_pos, ECursorFrame->position);
     if (3.141592f * (float) NowSelectAngle / 2.0f == NowCursorRotY) {
         if (EdPadDown(2, 2) != 0) {
@@ -3597,7 +3603,7 @@ void MoveEditCursor() {
     OldFocusParts = NowFocusParts;
     NowFocusParts = pEditGround->GetParts(pos[0], pos[1], pos[2]);
     static int parts_no = 0;
-    if (EditMenuStatus.mode < 2 && EdPadDown(0x40, 2) != 0) {
+    if ((u_int) EditMenuStatus.mode < 2 && EdPadDown(0x40, 2) != 0) {
         int sound = 13;
 
         if (MapNo == 4) {
@@ -3704,9 +3710,11 @@ void MoveEditCursor() {
     EditCamera.FollowOn();
     EditCamera.SetFollow(pos[0], pos[1], pos[2]);
     if (EditMenuStatus.mode == -1) {
+        float walk[4];
+
         EdEditMainHelpMes(CheckEditToWalk(walk));
     }
-    if (EditMenuStatus.mode < 2) {
+    if ((u_int) EditMenuStatus.mode < 2) {
         EdEditBuildHelpMes(NowSelectParts);
     }
     if (EditMenuStatus.mode == 3) {
@@ -3789,9 +3797,7 @@ int LoadTexture() {
                                NULL, NULL);
     CharaCursor1->SetAttr(cursor_attr, 1, 0x200);
 
-    float cursor_scale = 2.5f;
-
-    CharaCursor1->SetScale(cursor_scale, cursor_scale, cursor_scale);
+    CharaCursor1->SetScale(2.5f, 2.5f, 2.5f);
     CharaCursor2 = LoadMDSFile(GetPackFile(read_buffer, "bic.mds", NULL), &EtcDataBuffer, 0,
                                NULL, NULL);
     CharaCursor2->SetAttr(cursor_attr, 1, 0x200);

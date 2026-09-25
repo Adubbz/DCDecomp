@@ -17,11 +17,13 @@
 #include "memcard.hpp"
 #include "menu_draw.hpp"
 #include "menu_inventory.hpp"
+#include "menuitemstep.hpp"
 #include "menu_manual.hpp"
 #include "mglib.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
+#include "userstatus.hpp"
 #include "weapon_buildup.hpp"
 #include "weaponeffect.hpp"
 
@@ -33,9 +35,7 @@
 #include "dngstatusdata.hpp"
 #include "menu_dungeon.hpp"
 #include "mainselect.hpp"
-#include "menuitemstep.hpp"
 #include "shot_effect.hpp"
-#include "userstatus.hpp"
 #include "weaponlevelup.hpp"
 
 extern s32 BtlMenuMode;
@@ -56,7 +56,6 @@ extern int defWeapon__5[6];
 extern u_long128 *MenuWepIconCharaChangePtr;
 extern u_long128 *MenuVoiceLoadPtr;
 extern s16 CharaNameDrawCase;
-extern s16 DngEscapeSelect;
 extern "C" CCharacter DefaultWeapon;
 extern "C" CCharacter MainWeapon;
 extern "C" CSHOT_EFFECT *NowMainEffect;
@@ -106,6 +105,9 @@ extern s16 DngEscapeBlock;
 
 /** Whether the dungeon escape prompt is closing and fades to black. */
 extern s16 DngEscapeEndFlag;
+
+/** The currently selected answer in the dungeon escape prompt. */
+extern s16 DngEscapeSelect;
 
 /** The darkness drawn over the dungeon escape prompt, from 0 (none) to 0x80 (black). */
 extern s16 DngEscapeAlpha;
@@ -595,7 +597,7 @@ void MenuWeaponSpSet(CCharacter *chara, WEAPON_HAVE *weapon) {
     }
     int show_broken;
     int show_whole;
-    if (weapon->durability_f <= 0.3 * weapon->durability) {
+    if (weapon->durability_f <= 0.2 * weapon->durability) {
         show_broken = 1;
         show_whole = 2;
     } else {
@@ -639,14 +641,17 @@ static void SetWepEffectMenuReadBuf(u_long128 *buf) {
 BT_SHOT_EFFECT *DngWepEffectReadStart() {
     char path[64];
     int size;
-    int chara = ((CUserStatus *) BtlMenuStatusPt)->cur_chara;
+    CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
+    int chara = status->cur_chara;
+    int slot = status->equipped_weapon_slot[chara];
+    WEAPON_HAVE *weapons = status->chara_weapons[chara];
+    WEAPON_HAVE *equipped = &weapons[slot];
 
-    WepEffectMenuPt = Get_Main_EffectPtr(
-        chara, ((CUserStatus *) BtlMenuStatusPt)->chara_weapons[chara][((CUserStatus *) BtlMenuStatusPt)->equipped_weapon_slot[chara]].best_elem);
-    sprintf(path, "dun/mainchara/wep_eff/%s.chr", (char *) WepEffectMenuPt);
+    WepEffectMenuPt = Get_Main_EffectPtr(chara, equipped->best_elem);
+    sprintf(path, "dun/mainchara/wep_eff/%s.chr", WepEffectMenuPt);
     WepEffectMenuReadBuf = GetWepEffectMenuReadBuf();
     WepEffectMenuReadBuf = MenuCalcBufAlignment(WepEffectMenuReadBuf);
-    LoadFileBG(path, WepEffectMenuReadBuf, &size);
+    LoadFileBG(path, (u_long128 *) WepEffectMenuReadBuf, &size);
     SetMenuCharaEffectReadFlag(1);
     return GetDngWepEffectPointer();
 }
@@ -839,16 +844,17 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1039__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1040__2);
 #ifdef NON_MATCHING
 void WeaponModelBuildFunc(int chara, int texture_block) {
-    char name[32];
-    char cfg[32];
-
     printf("weapon model build func start\n");
     InitMenuWeaponModelReference();
-    LOADTEXTURE_INFO2 texture = {0};
-    texture.block_no = texture_block;
+    LOADTEXTURE_INFO2 textures[] = {
+        {(char *) "#frame_menuwep#640#448#4", texture_block, 0},
+        {NULL, 0, 0},
+    };
+    char name[32];
+    char cfg[32];
     TexManager.DeleteTextureBlock(texture_block);
     TexManager.CleanUpTextureList();
-    TexManager.LoadTextureBlockEX(-1, &texture);
+    TexManager.LoadTextureBlockEX(-1, textures);
     printf("modelbuildbuffer = %p\n", MenuWeaponModelBuildBuffer);
     MenuExCashBuffer.base = (u_char *) MenuWeaponModelBuildBuffer;
     MenuExCashBuffer.limit = 0xEC00;
@@ -918,15 +924,14 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1108);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1109);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1110);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1111);
-#ifdef NON_MATCHING
 int DngWeaponEquipModelBuild(int chara, int texture_block, u_long128 *) {
     TexManager.DeleteTextureBlock(texture_block);
     u_int **first = (u_int **) GetMenuWeaponModelData(0);
     u_int **second = (u_int **) GetMenuWeaponModelData(1);
     int kind = 0;
     if (UserStatus != NULL) {
-        int weapon_no = UserStatus->chara_weapons[chara][UserStatus->equipped_weapon_slot[chara]].item_no;
-        kind = weapon_no - GetDefaultWeaponNo(chara);
+        kind = UserStatus->chara_weapons[chara][UserStatus->equipped_weapon_slot[chara]].item_no;
+        kind -= GetDefaultWeaponNo(chara);
     }
     u_int **equipped = (u_int **) GetMenuWeaponModelData(kind);
     if (equipped == NULL) {
@@ -938,9 +943,6 @@ int DngWeaponEquipModelBuild(int chara, int texture_block, u_long128 *) {
     MenuWeaponEffectSet(1);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", DngWeaponEquipModelBuild__FiiP1);
-#endif
 
 static int GetNowMotionStepCnt(int status) {
     int step = 0;
@@ -968,17 +970,18 @@ int GetNowActiveCharaStatus(int chara_no) {
 }
 #ifdef NON_MATCHING
 void SetNowCharaMotionNo(int chara) {
-    float speed[3] = {0.1f, 0.05f, 0.0f};
     int status = GetNowActiveCharaStatus(chara);
-    float hp = ((CUserStatus *) BtlMenuStatusPt)->hp[chara];
+    CUserStatus *st = (CUserStatus *) BtlMenuStatusPt;
+    float max_hp = st->max_hp[chara];
+    float hp = st->hp[chara];
     int motion = MenuCharaFrame.motion_no;
+    float speed[3] = {0.1f, 0.05f, 0.0f};
     int next = motion;
-    float low = 0.3f * ((CUserStatus *) BtlMenuStatusPt)->max_hp[chara];
 
-    if (!(hp < low)) {
+    if (!(hp < 0.3f * max_hp)) {
         next = 0;
     }
-    if ((status & 0x10) || (status & 2) || hp < low) {
+    if ((status & 0x10) || (status & 2) || hp < 0.3f * max_hp) {
         next = 1;
     }
     if (next != motion) {
@@ -1061,12 +1064,12 @@ int StartLoadCharaMDS(u_long128 *buffer, int chara, int read_no) {
     strcat(path, "dungeon/");
     sprintf(name, "c0%dmodel.pak", chara + 1);
     strcat(path, name);
-    u_long128 *aligned = MenuCalcBufAlignment(buffer);
+    buffer = MenuCalcBufAlignment(buffer);
     CharaFileBGReadNo = read_no;
     if (read_no == 0) {
         StartReadBG();
     }
-    if (LoadFileBG(path, aligned, &size) == 0) {
+    if (LoadFileBG(path, buffer, &size) == 0) {
         return 1;
     }
     return 0;
@@ -1202,11 +1205,10 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1236);
 void CharaChangeInitToGL2(int load_icon) {
     int size;
 
-    u_long128 *base = CharaChangeBaseBuf;
-    MenuWepIconCharaChangePtr = base;
+    MenuWepIconCharaChangePtr = CharaChangeBaseBuf;
     if (load_icon != 0) {
         MenuWepIconCharaChangePtr = MenuCalcBufAlignment(MenuWepIconCharaChangePtr);
-        size = LoadFileBGMenuData("wepicon.img", MenuWepIconCharaChangePtr);
+        size = LoadFileBGMenuData("wepicon.img", (u_long128 *) MenuWepIconCharaChangePtr);
         MenuWepIconCharaChangePtr = MenuWepIconCharaChangePtr + (size >> 4) + 1;
     }
     MenuVoiceLoadPtr = MenuWepIconCharaChangePtr;
@@ -1223,7 +1225,8 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1243);
 #ifdef NON_MATCHING
 void BtMenuLoadChara() {
     s8 chara = charachangeid;
-    UserStatus->cur_chara = chara;
+    CUserStatus *status = UserStatus;
+    status->cur_chara = chara;
     LoadChara2((s16) charachangeid, 0, (u_int *) menucharReadbuf, (u_int *) menud0wepReadBuf,
                (u_int *) menud1wepReadBuf, (u_int *) menud2wepReadBuf);
     SetWeaponAttachStatus(NowWeaponHave);
@@ -1241,11 +1244,13 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1254);
 void BtMenuLoad2(int load_texture) {
     if (load_texture != 0) {
         BG_READ_INFO *file = GetReadBGFile(0);
-        LOADTEXTURE_INFO2 texture = {0};
-        texture.block_no = MenuShadowReadBlock;
-        texture.name = (char *) file->buffer;
+        LOADTEXTURE_INFO2 textures[] = {
+            {(char *) "#frame_image#640#448#4", MenuShadowReadBlock, 0},
+            {(char *) file->buffer, MenuShadowReadBlock, 0},
+            {NULL, 0, 0},
+        };
         TexManager.DeleteTextureBlock(MenuShadowReadBlock);
-        TexManager.LoadTextureBlockEX(-1, &texture);
+        TexManager.LoadTextureBlockEX(-1, textures);
         MenuTextureReload(MenuShadowReadBlock);
         DngActiveWeaponTextureCopy();
     }
@@ -1343,7 +1348,7 @@ void MonsterNameInit(ClsMes *mes, short *buff, unsigned char *texture_buffer) {
     CharaNameDrawFlag = 1;
     int *config = (int *) SaveData->GetConfigData();
     if (config != NULL) {
-        CharaNameDrawFlag = config[8] == 0;
+        CharaNameDrawFlag = !config[8];
     }
     CharaNameDrawCase = 0;
 }
@@ -1366,44 +1371,38 @@ void MonsterNameMake(int mes_no) {
     }
 }
 
-#ifdef NON_MATCHING
 void MonsterNamePosSet(int x, int y) {
-    ClsMes *mes = CharaNameMes;
-    if (mes != NULL) {
-        mes->text_x = x - mes->text_columns * 14 / 2;
+    if (CharaNameMes != NULL) {
+        int columns = CharaNameMes->text_columns;
+        CharaNameMes->text_x = x - columns * 14 / 2;
         if (y % 2 != 0) {
             y++;
         }
-        mes->text_y = y;
+        CharaNameMes->text_y = y;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", MonsterNamePosSet__Fii);
-#endif
-#ifdef NON_MATCHING
 void MonsterNameDraw() {
     if (CharaNameMes == NULL || GetMonsterNameDrawFlag() == 0) {
         return;
     }
-    if (((int *) SaveData->GetConfigData())[8] == 0 && CharaNameMes->mes_made >= 0) {
-        int width = CharaNameMes->char_width * CharaNameMes->text_columns + 0x20;
-        int x = CharaNameMes->text_x;
-        int y;
-        if (x < 0x22 || x >= 0x26D || (y = CharaNameMes->text_y, y < 0x1E) || y >= 0x199 || width >= 0xFB ||
-            width < 10) {
-            SetMonsterNameDrawFlag(0);
-            return;
+    if (((int *) SaveData->GetConfigData())[8] == 0) {
+        ClsMes *mes = CharaNameMes;
+        if (mes->mes_made >= 0) {
+            int width = mes->text_columns;
+            width = mes->char_width * width + 0x20;
+            if (mes->text_x < 0x22 || mes->text_x >= 0x26D || mes->text_y < 0x1E || mes->text_y >= 0x199 ||
+                width >= 0xFB || width < 10) {
+                SetMonsterNameDrawFlag(0);
+                return;
+            }
+            mes->cursor_row = -1;
+            MenuTextureReload(CharaNameMes->tex_block);
+            setbilinear(0);
+            CharaNameMes->Step();
+            CharaNameMes->DrawMesWin();
         }
-        CharaNameMes->cursor_row = -1;
-        MenuTextureReload(CharaNameMes->tex_block);
-        setbilinear(0);
-        CharaNameMes->Step();
-        CharaNameMes->DrawMesWin();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", MonsterNameDraw__Fv);
-#endif
 #ifdef NON_MATCHING
 void DngEscapeMsgInit(ClsMes *title, ClsMes *choice, int dungeon) {
     char path[64];
@@ -1485,7 +1484,6 @@ void DngEscapeMsgDraw() {
     AllFadeForMenu(DngEscapeAlpha);
 }
 
-#ifdef NON_MATCHING
 int DngEscapeMsgLoop() {
     int result = 0;
 
@@ -1498,7 +1496,9 @@ int DngEscapeMsgLoop() {
             }
             ComMenuSePlay(0);
         }
-        CharaNameMes->cursor_row = DngEscapeSelect - 1;
+        int row = DngEscapeSelect - 1;
+        ClsMes *mes = CharaNameMes;
+        mes->cursor_row = row;
         if (GamePad.Down(0x40) != 0) {
             DngEscapeEndFlag = 1;
             ComMenuSePlay(1);
@@ -1511,15 +1511,13 @@ int DngEscapeMsgLoop() {
         GamePad.AutoRepeatOff();
         GamePad.MenuModeOff();
         ItemVolumeStep.CheckItemVolume();
-        CharaNameMes->cursor_row = -1;
+        ClsMes *mes = CharaNameMes;
+        mes->cursor_row = -1;
     }
     ItemVolumeStep.LoopStep(0x3C);
     DngEscapeMsgDraw();
     return result;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", DngEscapeMsgLoop__Fv);
-#endif
 #ifdef NON_MATCHING
 int CheckItemThrow(int *items, int *values) {
     int found = 0;
@@ -1577,20 +1575,19 @@ int CheckItemThrow(int *items, int *values) {
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_misc", CheckItemThrow__FPiPi);
 #endif
-#ifdef NON_MATCHING
 void SetWeaponElementStatus(WEAPON_HAVE *weapon) {
+    if (weapon->best_elem >= 5) {
+        weapon = (WEAPON_HAVE *) weapon;
+    }
     int best = 0;
 
     for (int i = 1; i < 5; i++) {
-        if (weapon->elem[best] < weapon->elem[i]) {
+        if (weapon->elem[i] > weapon->elem[best]) {
             best = i;
         }
     }
     weapon->best_elem = best;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", SetWeaponElementStatus__FP11WEAPON_HAVE);
-#endif
 
 int CheckWeaponOptionStatus(int options) {
     // Each pair of opposed options cancels out when both are set.
@@ -1679,19 +1676,17 @@ void WeaponStarDraw(int x, int y, WEAPON_HAVE *weapon, int alpha) {
     }
     CTexture *texture = TexManager.GetTexture("wepstatus", -1);
     int stars = weapon->unk_F0;
-    if (stars >= 50) {
+    if (stars > 49) {
         stars = 49;
     }
     int draw_x = x + 0x4C;
     CRect_i_ big(0x108, 0x176, 0x18, 0x18);
-    for (int i = 0; i < stars / 10; i++) {
+    for (int i = 0; i < stars / 10; i++, draw_x += big.width) {
         DrawMenu2DSprite(texture, CRect_i_(draw_x, y, big.width, big.height), big, alpha);
-        draw_x += big.width;
     }
-    int small_x = x - 6;
-    for (int i = 0; i < stars % 10; i++) {
-        DrawMenu2DSprite(texture, CRect_i_(small_x, y + 0x16, 0x14, 0x14), CRect_i_(0x10A, 0x162, 0x14, 0x14), alpha);
-        small_x += 0x14;
+    x -= 6;
+    for (int i = 0; i < stars % 10; i++, x += 0x14) {
+        DrawMenu2DSprite(texture, CRect_i_(x, y + 0x16, 0x14, 0x14), CRect_i_(0x10A, 0x162, 0x14, 0x14), alpha);
     }
 }
 #else

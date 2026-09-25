@@ -46,6 +46,15 @@ CFrameVu1 *LoadMDSFile(unsigned int *data, CDataAlloc2<1> *buffer, int flags,
 void getFramePos(CFrameVu1 *frame, char *name, float *position);
 
 /**
+ * Builds the resource name for an absolute weapon item identifier.
+ *
+ * @mangled makeWeaponName__FPci
+ * @address 0x1B6F80
+ * @size 0x198
+ */
+void makeWeaponName(char *name, int weapon_no);
+
+/**
  * Resolves the model and texture paths for a battle item.
  *
  * @mangled BtGetItemNamePath__FPcPci

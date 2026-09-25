@@ -801,7 +801,6 @@ int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int o
     return x;
 }
 
-#ifdef NON_MATCHING
 int GetMsgLengthMenu(ClsMes *mes, int mes_no) {
     int length = 0;
     short *code = mes->GetTextLineDataTop_system(mes_no);
@@ -809,7 +808,7 @@ int GetMsgLengthMenu(ClsMes *mes, int mes_no) {
     if (code != NULL) {
         while (1) {
             short c = *code++;
-            if ((unsigned int) (c + 0x100) < 2U || code == NULL) {
+            if ((unsigned int) (c + 0x100) <= 1U || code == NULL) {
                 break;
             }
             length++;
@@ -817,9 +816,6 @@ int GetMsgLengthMenu(ClsMes *mes, int mes_no) {
     }
     return length;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", GetMsgLengthMenu__FP6ClsMesi);
-#endif
 /**
  * Gives the texture and the cell within it that one georama element draws from.
  *
@@ -1134,19 +1130,23 @@ static int AtoraBoardGoToPos(int *enable, int pos, int min) {
     return pos;
 }
 
-#ifdef NON_MATCHING
 int GetAtraMsgNo(int map_no, int element) {
     int mes_no;
 
     if (element < 0 || element >= 100) {
         mes_no = 999;
     } else {
-        mes_no = GetEditAtraData(map_no, element)->msg_no + (map_no * 200 + 1000);
-        if (map_no == 2 && element == 1) {
-            int count = SaveData->GetGameIntFlag(1);
-            if (count > 0) {
-                mes_no += count + 0x1C;
-            }
+        EDIT_ELEMENT_ATRA *atra = GetEditAtraData(map_no, element);
+        mes_no = atra->msg_no + (map_no * 200 + 1000);
+        switch (map_no) {
+            case 2:
+                if (element == 1) {
+                    int count = SaveData->GetGameIntFlag(1);
+                    if (count > 0) {
+                        mes_no += count + 0x1C;
+                    }
+                }
+                break;
         }
         if (element >= 40) {
             mes_no += 40;
@@ -1157,9 +1157,6 @@ int GetAtraMsgNo(int map_no, int element) {
     }
     return mes_no;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", GetAtraMsgNo__Fii);
-#endif
 #ifdef NON_MATCHING
 static int AtoraMsgNoGet(int map_no, int board_pos, int slot) {
     int mes_no;
@@ -1247,14 +1244,14 @@ static void AtoraTipObjectOrPerson(int x, int y, int tip_no, int dark, int alpha
     int v;
     CTexture *texture = RetCTexAtora(tip_no, u, v);
     CRect_i_ source(u, v, 0x24, 0x24);
-    int green = 0x80;
-    int blue = 0x80;
+    int red, green, blue;
 
+    red = green = blue = 0x80;
     if (dark != 0) {
         green = 0x44;
         blue = 0;
     }
-    DrawMenu2DSprite(texture, CRect_i_(x, y, source.width, source.height - 1), source, 0x80, green, blue, alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x, y, source.width, source.height - 1), source, red, green, blue, alpha);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipObjectOrPerson__Fiiiii);

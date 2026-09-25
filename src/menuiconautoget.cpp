@@ -1,3 +1,5 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
 #include "menuiconautoget.hpp"
 
 #include <cstring>
@@ -84,7 +86,6 @@ void CMenuIconAutoGet::IconMoveTarSet(int index, int slot, int item, int count, 
     icon[index].x = x;
     icon[index].y = y;
 }
-#ifdef NON_MATCHING
 void CMenuIconAutoGet::IconAutoMoveDraw(void) {
     for (int i = 0; i < 3; i++) {
         if (icon[i].item >= 0x84) {
@@ -92,6 +93,3 @@ void CMenuIconAutoGet::IconAutoMoveDraw(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menuiconautoget", IconAutoMoveDraw__16CMenuIconAutoGetFv);
-#endif

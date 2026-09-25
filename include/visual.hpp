@@ -51,6 +51,13 @@ public:
      */
     CVisual();
 
+    /**
+     * Clears the visual's draw flags.
+     *
+     * @mangled Initialize__7CVisualFv
+     * @address 0x134B50
+     * @size 0x10
+     */
     virtual void Initialize();
 
     int unk_0C;
@@ -63,6 +70,13 @@ public:
  */
 class CVisualVu1 : public CVisual {
 public:
+    /**
+     * Constructs a vector-unit visual and clears it.
+     *
+     * @mangled __ct__10CVisualVu1Fv
+     * @address 0x134F00
+     * @size 0x50
+     */
     CVisualVu1();
 
     /**
@@ -88,6 +102,13 @@ public:
        which is what decides the slot each call site reaches, so the order is evidence rather than
        layout.
  */
+    /**
+     * Clears the vector-unit visual's packet pointers and sizes.
+     *
+     * @mangled Initialize__10CVisualVu1Fv
+     * @address 0x134EC0
+     * @size 0x3C
+     */
     virtual void Initialize();
     virtual void SetMDTDataAddress(u_int *data);
     virtual u_int *GetMDTDataAddress();
@@ -127,6 +148,13 @@ public:
     CVisualMDTVu1();
 
     /* Every one of them, because a block that is kept can be rebuilt and one that is not cannot. */
+    /**
+     * Clears the model visual's data pointer and packet buffers.
+     *
+     * @mangled Initialize__13CVisualMDTVu1Fv
+     * @address 0x134F70
+     * @size 0x3C
+     */
     virtual void Initialize();
     virtual void SetMDTDataAddress(u_int *data);
     virtual u_int *GetMDTDataAddress();

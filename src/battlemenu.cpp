@@ -935,16 +935,19 @@ INCLUDE_RODATA("asm/nonmatchings/battlemenu", @934);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @935__2);
 #ifdef NON_MATCHING
 void BattleMenuTexEnter() {
-    LOADTEXTURE_INFO2 texture = {0};
-    int blocks[2] = {0, 0};
+    LOADTEXTURE_INFO2 textures[4] = {
+        {"#frame_image#640#448#4", 0, 0}, {"#dbgwork_menu#256#224#3", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
 
-    texture.block_no = BtlMenuReadBlock;
+    textures[0].block_no = BtlMenuReadBlock;
+    textures[1].block_no = BtlMenuReadBlock;
+    textures[2].block_no = BtlMenuReadBlock;
     BG_READ_INFO *file = GetReadBGFile(0);
-    texture.name = (char *) GetPackFile((u_int *) file->buffer, "btlmenu.img", NULL);
+    textures[2].name = (char *) GetPackFile((u_int *) file->buffer, "btlmenu.img", NULL);
+    int blocks[2] = {0, 0};
     blocks[0] = BtlMenuReadBlock;
     MenuTextureDelete(blocks);
     TexManager.CleanUpTextureList();
-    TexManager.LoadTextureBlockEX(-1, &texture);
+    TexManager.LoadTextureBlockEX(-1, textures);
     BtlMenuTexBlockEnter();
     GetAtraMsgReadBuf = (short *) GetPackFile((u_int *) file->buffer, "atrames.bin", NULL);
     short *mes = (short *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL);
@@ -972,17 +975,17 @@ void ExitBattleMenu(int) {
             *item = -1;
         }
     }
-    s16 *quick = MenuItemPackPt->quick_item_slot;
-    for (int i = 0; i < 3; i++, quick++) {
-        if (*quick >= 0x84) {
+    item = MenuItemPackPt->quick_item_slot;
+    for (int i = 0; i < 3; i++, item++) {
+        if (*item >= 0x84) {
             count += MenuItemPackPt->quick_item_qty[i];
         } else {
-            *quick = -1;
+            *item = -1;
             MenuItemPackPt->quick_item_qty[i] = 0;
         }
     }
     MenuItemPackPt->item_count = count;
-    int blocks[5] = {0, 0, 0, 0, 0};
+    int blocks[6] = {0, 0, 0, 0, 0, 0};
     blocks[0] = BtlMenuReadBlock;
     blocks[1] = MenuExtendReadBlock;
     blocks[2] = BtlMenuExReadBlock;
@@ -993,10 +996,13 @@ void ExitBattleMenu(int) {
     TexManager.CleanUpTextureList();
     ItemVolumeStep.Initialize();
     MenuWepLevelUp.CheckSnd();
-    if (BtlMenuMode == 0) {
-        LOADTEXTURE_INFO2 texture = {0};
-        texture.block_no = BtlMenuReadBlock;
-        TexManager.LoadTextureBlock(-1, &texture);
+    switch (BtlMenuMode) {
+        case 0: {
+            LOADTEXTURE_INFO2 textures[2] = {{"#frame_image0#640#448#4", 0, 0}, {NULL, 0, 0}};
+            textures[0].block_no = BtlMenuReadBlock;
+            TexManager.LoadTextureBlock(-1, textures);
+            break;
+        }
     }
     SndSetBgmVol(BtlMenuBGMvol);
     InitReadBG();
@@ -1317,8 +1323,10 @@ int BattleMenuCursor() {
             break;
     }
     MenuWepLevelUp.StepSnd();
-    if (BtlMenuMode == 0) {
-        SetEscapeDngFlag(EscapeDungeonMode());
+    switch (BtlMenuMode) {
+        case 0:
+            SetEscapeDngFlag(EscapeDungeonMode());
+            break;
     }
     return result;
 }
@@ -1405,7 +1413,7 @@ int BattleMenuSelect() {
     }
     if (GamePad.Down(0x6000) != 0) {
         MenuSelect[1]++;
-        if (max - 1 < MenuSelect[1]) {
+        if (MenuSelect[1] > max - 1) {
             MenuSelect[1] = 0;
         }
     }
@@ -1453,7 +1461,7 @@ int BattleMenuSelect() {
                         break;
                     case 1:
                         map = GetNowMapTransAtraMap(MapNo);
-                        if (map < 0 || map >= 6) {
+                        if (map < 0 || map > 5) {
                             map = 0;
                         }
                         break;
@@ -1469,10 +1477,10 @@ int BattleMenuSelect() {
                         ComMenuSePlay(2);
                         return 1;
                     default:
-                    case 0:
-                    case 2:
-                    case 10:
                     case 1:
+                    case 10:
+                    case 2:
+                    case 0:
                         InitMenuMove(flag, MenuExtendReadBlock, buffer);
                         BtlWakuMake2 = 0;
                         break;
@@ -2137,9 +2145,8 @@ void DrawWepVolumeDisplay(int x, int y, WEAPON_HAVE *weapon, int alpha) {
     CRect_i_ source(0x110, 0xCC, 0x10, 0x10);
     CRect_i_ dest(x, y, source.width, source.height);
     RECT digits = {0xD4, 0x1F4, 0xC, 0xD};
-    int elem = weapon->best_elem;
-    if (elem < 5) {
-        DrawMenu2DSprite(MenuCharaFace, CRect_i_(x, y - 0x10, 0x20, 0x10), CRect_i_(0xE0, elem * 16, 0x20, 0x10), alpha);
+    if (weapon->best_elem < 5) {
+        DrawMenu2DSprite(MenuCharaFace, CRect_i_(x, y - 0x10, 0x20, 0x10), CRect_i_(0xE0, weapon->best_elem * 16, 0x20, 0x10), alpha);
     }
     int values[4] = {0, 0, 0, 0};
     values[0] = total.attack;
@@ -2147,20 +2154,15 @@ void DrawWepVolumeDisplay(int x, int y, WEAPON_HAVE *weapon, int alpha) {
     values[2] = total.speed;
     values[3] = total.magic;
     float rate = GetNowWeaponRate(&total);
-    int limit[4] = {0, 99, 99, 0};
-    limit[0] = data->attack_max;
-    limit[3] = data->magic_max;
+    int limit[4] = {data->attack_max, 99, 99, data->magic_max};
     limit[0] = (int) ((float) limit[0] * rate);
     limit[3] = (int) ((float) limit[3] * rate);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++, dest.y += source.height, source.y += source.height) {
         if (limit[i] < values[i]) {
             values[i] = limit[i];
         }
         DrawMenu2DSprite(WepStatus, dest, source, alpha);
         DrawMenuNumber(values[i], dest.x + source.width + digits.width * 3 - 2, dest.y + 2, WepStatus, digits, 1, alpha);
-        int step = source.height;
-        dest.y += step;
-        source.y += step;
     }
 }
 #else
@@ -2347,7 +2349,8 @@ static void DrawLimmitMax(int x, int y, int alpha) {
 
 #ifdef NON_MATCHING
 void DrawBtlMenuLRCursor(int x, int y, int width, int alpha) {
-    int draw_y = (int) ((float) y + 4.0f * sinf((float) (3.141592653589793 * ((double) (CursorVibeCnt % 79) - 40.0) / 40.0)));
+    double pi = 3.141592653589793;
+    int draw_y = (int) ((float) y + 4.0f * sinf((float) (pi * ((double) (CursorVibeCnt % 79) - 40.0) / 40.0)));
     CRect_i_ source(0x62, 0x14, 0x1A, 0x18);
     DrawMenu2DSprite(PerBoardTex, CRect_i_(x, draw_y, source.width, source.height), source, alpha);
     source.x += source.width;
@@ -4129,29 +4132,35 @@ static void WepAttachHaveCancel() {
 }
 #ifdef NON_MATCHING
 void WeaponMenuAttachModeKey() {
-    if (WepMenu.unk_02 == 8 || WepMenu.unk_02 == 10 || WepMenu.unk_02 == 9 || WepMenu.unk_02 == 11) {
-        s8 page = WepMenu.unk_178;
-        if (GamePad.Down(0xA) != 0) {
-            WepMenu.unk_178++;
-            if (WepMenu.unk_178 >= 3) {
-                WepMenu.unk_178 = 0;
+    switch (WepMenu.unk_02) {
+        case 11:
+        case 9:
+        case 10:
+        case 8: {
+            int page = WepMenu.unk_178;
+            if (GamePad.Down(0xA) != 0) {
+                WepMenu.unk_178++;
+                if (WepMenu.unk_178 > 2) {
+                    WepMenu.unk_178 = 0;
+                }
             }
-        }
-        if (GamePad.Down(5) != 0) {
-            WepMenu.unk_178--;
-            if (WepMenu.unk_178 < 0) {
-                WepMenu.unk_178 = 2;
+            if (GamePad.Down(5) != 0) {
+                WepMenu.unk_178--;
+                if (WepMenu.unk_178 < 0) {
+                    WepMenu.unk_178 = 2;
+                }
             }
-        }
-        if (page != WepMenu.unk_178) {
-            int rows[3] = {5, 4, 9};
-            if (rows[WepMenu.unk_178] < WepMenu.unk_179) {
-                WepMenu.unk_179 = rows[WepMenu.unk_178];
+            if (page != WepMenu.unk_178) {
+                int rows[3] = {5, 4, 9};
+                if (rows[WepMenu.unk_178] < WepMenu.unk_179) {
+                    WepMenu.unk_179 = rows[WepMenu.unk_178];
+                }
+                ComMenuSePlay(0);
             }
-            ComMenuSePlay(0);
+            break;
         }
     }
-    s8 row = WepMenu.unk_179;
+    int row = WepMenu.unk_179;
     s16 mode = WepMenu.unk_02;
     WeaponMenuSelectKeyLockFlag = 0;
     switch (mode) {
@@ -4511,34 +4520,33 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", RepairAndLevelUpDraw__Fiii);
 #endif
 #ifdef NON_MATCHING
 void DrawBuildUpWeaponSelect(int x, int y, int cursor) {
+    MenuTextureReload(BtlMenuReadBlock);
     float size[7][2] = {{14.2f, 0.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}};
     s8 offset[7][2] = {{-8, 0}, {-6, -6}, {-6, -6}, {-6, -6}, {-6, -6}, {-6, -6}, {-6, -6}};
     int build;
 
-    MenuTextureReload(BtlMenuReadBlock);
     MenuHelpWinDraw(x - 0xE + offset[BtlMenuNowLang][0], y - 0xC + offset[BtlMenuNowLang][1], size[BtlMenuNowLang][0],
                     size[BtlMenuNowLang][1], 0x80);
     CommonMenuMes1.stay_frame = 0;
     CommonMenuMes1.line_pos[0].x = x;
     CommonMenuMes1.line_pos[0].y = y - 6;
-    int next_y = y + CommonMenuMes1.char_height;
+    y += CommonMenuMes1.char_height;
     CommonMenuMes1.line_pos[1].x = x;
-    CommonMenuMes1.line_pos[1].y = next_y - 6;
-    int row_y = next_y + 0x1E;
+    CommonMenuMes1.line_pos[1].y = y - 6;
+    y += 0x1E;
     int count = WeaponStatusBuildUp(GetNowSelectWeapon(), build);
     for (int i = 0; i < count; i++) {
         int selected = 0;
         if (i == cursor) {
             selected = 1;
         }
-        DrawWeaponNameBoard(x + 0x10, row_y, selected, 0x80, 0x6E);
+        DrawWeaponNameBoard(x + 0x10, y, selected, 0x80, 0x6E);
         int name_x = GetWeaponNamePutX(x + 0x76, CommonMenuMes1.GetMesWidth_system(CommonMenuMes1.mes_no[i]));
-        int line = i + 2;
-        if (line >= 0 && line < 10) {
-            CommonMenuMes1.line_pos[line].x = name_x;
-            CommonMenuMes1.line_pos[line].y = row_y + 5;
+        if (i + 2 >= 0 && i + 2 < 10) {
+            CommonMenuMes1.line_pos[i + 2].x = name_x;
+            CommonMenuMes1.line_pos[i + 2].y = y + 5;
         }
-        row_y += 0x26;
+        y += 0x26;
     }
     MenuTextureReload(CommonMenuMes1.tex_block);
     CommonMenuMes1.Step();
@@ -5004,7 +5012,6 @@ static int ItemTrushKey(int *, int *, int slot) {
 }
 #ifdef NON_MATCHING
 void DrawTrushItem() {
-    static int ncnt = 0;
     int items[7];
     int values[7];
 
@@ -5021,22 +5028,22 @@ void DrawTrushItem() {
     int entry = first[page];
     int y = 0x7E;
     MenuTextureReload(ItemMenuWeaponIconReadBlock);
+    static int ncnt = 0;
     int bright = (int) (112.0f + 48.0f * sinf(3.1415927f * (float) (ncnt - 0x3C) / 60.0f));
     for (int i = 0; i < 3; i++) {
         if ((ItemMenuMode.overflow_pages & (1 << (i + 1))) && page == i) {
-            for (int j = 0; j < ItemMenuMode.overflow_count[i]; j++) {
+            for (int j = 0; j < ItemMenuMode.overflow_count[i]; j++, entry++) {
                 DrawMenu2DSprite(CharaStatus, CRect_i_(0x138, y, 0x2A, 0x29), CRect_i_(0xC2, 0xD6, 0x2A, 0x2A), bright, bright,
                                  bright, 0x80);
                 DrawIconParts(items[entry], 0x13C, y + 6, 0, 0x280, 0x80, values[entry]);
                 y += 0x2E;
-                entry++;
             }
             break;
         }
     }
     (void) count;
     ncnt++;
-    if (ncnt >= 0x3C) {
+    if (ncnt > 0x3B) {
         ncnt = 0;
     }
     MenuTextureReload(AtoraNameMes.tex_block);
@@ -5087,14 +5094,15 @@ static void StartBGReadItemMenuWepIcon(u_long128 *buffer, int &size) {
 #ifdef NON_MATCHING
 void ReadSyncItemMenuWepIcon() {
     BG_READ_INFO *file = GetReadBGFile(0);
-    LOADTEXTURE_INFO2 texture = {0};
+    LOADTEXTURE_INFO2 textures[3] = {{"#frame_image#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
 
-    texture.block_no = ItemMenuWeaponIconReadBlock;
-    texture.name = (char *) file->buffer;
+    textures[0].block_no = ItemMenuWeaponIconReadBlock;
+    textures[1].name = (char *) file->buffer;
+    textures[1].block_no = ItemMenuWeaponIconReadBlock;
     CharaStatus = TexManager.GetTexture("status", -1);
     TexManager.DeleteTextureBlock(ItemMenuWeaponIconReadBlock);
     TexManager.CleanUpTextureList();
-    TexManager.LoadTextureBlockEX(-1, &texture);
+    TexManager.LoadTextureBlockEX(-1, textures);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ReadSyncItemMenuWepIcon__Fv);
@@ -5246,7 +5254,6 @@ static void InitItemTrushStart() {
 #ifdef NON_MATCHING
 void ExistItemMenu() {
     int blocks[3] = {0, 0, 0};
-    CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
 
     blocks[0] = MenuExtendReadBlock;
     blocks[1] = ItemMenuWeaponIconReadBlock;
@@ -5254,8 +5261,8 @@ void ExistItemMenu() {
     TexManager.CleanUpTextureList();
     BtlMenuTexBlockEnter();
     for (int i = 0; i < 6; i++) {
-        int slot = status->equipped_weapon_slot[i];
-        if (slot < 0 || slot >= 10) {
+        int slot = BtlMenuStatusPt->equipped_weapon_slot[i];
+        if (0 > slot || slot >= 10) {
             EquipDefaultWeapon(i);
         }
     }
@@ -6596,17 +6603,20 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemMenuModeKey__Fv);
 #ifdef NON_MATCHING
 void ActiveItemDraw(int x, int y, int alpha) {
     RECT digits = {0x90, 0xDC, 0xC, 0xC};
-    int slot_x = x + 0xE;
 
     MenuTextureReload(ItemMenuWeaponIconReadBlock);
+    int slot_x = x + 0xE;
+    int slot_y;
     DrawMenu2DSprite(CharaStatus, CRect_i_(slot_x, y + 1, 0xE0, 0x4F), CRect_i_(0, 0, 0xE0, 0x50), alpha);
     s16 *items = MenuItemPackPt->quick_item_slot;
     s16 *counts = MenuItemPackPt->quick_item_qty;
     for (int i = 0; i < 3; i++) {
         s16 item_no = items[i];
         if (item_no >= 0x84) {
-            slot_x = x + 0x22 + (i << 6);
-            int slot_y = y + 0x1F;
+            if (item_no >= 0x84) {
+                slot_x = x + 0x22 + (i << 6);
+            }
+            slot_y = y + 0x1F;
             DrawMenu2DSprite(CharaStatus, CRect_i_(slot_x, slot_y, 0x2C, 0x2C), CRect_i_(0x128, 0, 0x2C, 0x2C), alpha);
             DrawIconParts(item_no, slot_x + 6, slot_y + 6, 0, 0x280, alpha, 0);
             s16 count = counts[i];
@@ -6615,10 +6625,11 @@ void ActiveItemDraw(int x, int y, int alpha) {
             }
         }
     }
-    if (BtlMenuMode != 0) {
-        return;
+    switch (BtlMenuMode) {
+        case 0:
+            DngActiveItemTextureCopy();
+            break;
     }
-    DngActiveItemTextureCopy();
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ActiveItemDraw__Fiii);
@@ -6839,7 +6850,9 @@ void ItemNaviCursor(int item_no) {
             }
             if (item_no == 0xB0) {
                 shown[1] = 1;
-                if ((float) ((CUserStatus *) BtlMenuStatusPt)->hp[ItemMenuMode.chara] <= 0.0f) {
+                int chara = ItemMenuMode.chara;
+                CDngStatusData *status = BtlMenuStatusPt;
+                if ((float) status->hp[chara] <= 0.0f) {
                     shown[0] = 1;
                 }
             }
@@ -6864,10 +6877,8 @@ void ItemNaviCursor(int item_no) {
             int px = pos[i][0];
             int py = pos[i][1];
             CRect_i_ texel(0xD8, 0, 0x28, 0x14);
-            for (int j = 0; j < 2; j++) {
+            for (int j = 0; j < 2; j++, py -= 0x14, texel.x -= 0x28) {
                 DrawMenu2DSprite(BtStatus, CRect_i_(px, py, texel.width, texel.height), texel, 0x80);
-                py -= 0x14;
-                texel.x -= 0x28;
             }
         }
     }
@@ -7632,17 +7643,25 @@ void DrawEscapeItem(int x, int y, int alpha) {
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawEscapeItem__Fiii);
 #endif
 #ifdef NON_MATCHING
+/**
+ * Appends the world map archive name of a region to a path.
+ */
+inline void AddWorldMapFileName(char *path, int region) {
+    char *files[6] = {"matatagi.pac", "queen.pac", "musuka.pac", "moon.pac", "dark.pac", "lastdng.pac"};
+
+    strcat(path, files[region]);
+}
+
 static void StartLoadWorldMap(int region, u_long128 *buffer) {
     char path[64];
     int size;
 
-    if (region < 0 || region >= 6) {
+    if (region < 0 || region > 5) {
         return;
     }
     GetPathReadDifferntLang(path);
     strcat(path, "map/");
-    char *files[6] = {"matatagi.pac", "queen.pac", "musuka.pac", "moon.pac", "dark.pac", "lastdng.pac"};
-    strcat(path, files[region]);
+    AddWorldMapFileName(path, region);
     StartReadBG();
     LoadFileBG(path, buffer, &size);
 }

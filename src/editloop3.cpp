@@ -1585,7 +1585,7 @@ void EdDrawLensFlare(float time, CFrame **sky) {
     mgPickZBuff->x = screen[0];
     mgPickZBuff->y = screen[1];
     if (mgPickZBuff->z >= 0) {
-        if (screen[2] + 100 < mgPickZBuff->z)
+        if (mgPickZBuff->z > screen[2] + 100)
             return;
         TexManager.ReloadTexture(GetVif1Packet(), 23);
         CTexture *texture = TexManager.GetTexture("lensfler", 23);
@@ -4514,8 +4514,8 @@ int _GET_TALKNPC_STATUS(RS_STACKDATA *stack, int) {
     int index = EdEventInfo.talk_npc_id;
     int status = 0;
     if (index >= 0 && index < EdEventInfo.npc_count) {
-        CNPCharacter *npcs = EdEventInfo.npcs;
-        status = npcs[index].event_status;
+        CNPCharacter *npc = &EdEventInfo.npcs[index];
+        status = npc->event_status;
     }
     SetStack(stack, status);
     return 1;

@@ -267,7 +267,6 @@ void CTextureAnime::Disable(int group) {
     current[group] = first[group];
     frame[group] = 0;
 }
-#ifdef NON_MATCHING
 void CTextureAnime::LoadCFGFile(char *script, int script_size) {
     pTexAnime = this;
     now_group = 0;
@@ -275,15 +274,16 @@ void CTextureAnime::LoadCFGFile(char *script, int script_size) {
 
     CScriptInterpreter interpreter;
     interpreter.SetScript(script, script_size);
-    interpreter.SetTAG(Command__4, 5);
+    interpreter.SetTAG((TAG_PARAM *) Command__4, 5);
     int command;
-    while ((command = interpreter.GetNextTAG()) >= 0) {
+    for (;;) {
+        command = interpreter.GetNextTAG();
+        if (command < 0) {
+            break;
+        }
         CommandExe__4[command](interpreter.arguments);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/textureanime", LoadCFGFile__13CTextureAnimeFPci);
-#endif
 
 INCLUDE_RODATA("asm/nonmatchings/textureanime", @447__2);
 INCLUDE_RODATA("asm/nonmatchings/textureanime", @448);

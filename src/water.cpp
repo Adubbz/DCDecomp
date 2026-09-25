@@ -251,9 +251,9 @@ void CWater::SetSize(int row_count, int column_count, CDataAlloc2<1> *arena) {
 CWater::CWater(void) {
     rows = 0;
     columns = 0;
-    packet[0] = NULL;
-    packet[1] = NULL;
     packet[2] = NULL;
+    packet[1] = NULL;
+    packet[0] = NULL;
     color[0] = 0x80;
     color[1] = 0x80;
     color[2] = 0x80;

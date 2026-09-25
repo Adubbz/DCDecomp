@@ -1,5 +1,6 @@
 #include "mainitemmodel.hpp"
 #include <cstdio>
+#pragma argument_flag_ones 0
 #ifdef NON_MATCHING // draft includes
 #include <cstring>
 #include <libvu0.h>
@@ -87,9 +88,8 @@ int CMainItemModel::SetHandModel(int source) {
         return -1;
     }
     model[index] = 1;
-    CFrame *placement = &frame[index];
-    placement->SetPosition(0.0f, 0.0f, 0.0f);
-    placement->SetRotation(1.5707964f, 0.0f, 0.0f);
+    frame[index].SetPosition(0.0f, 0.0f, 0.0f);
+    frame[index].SetRotation(1.5707964f, 0.0f, 0.0f);
     model_cash[index] = model_cash[source];
     cash_lock[model_cash[source]]++;
     printf("code = %d, lock = %d\n", index, cash_lock[model_cash[source]]);

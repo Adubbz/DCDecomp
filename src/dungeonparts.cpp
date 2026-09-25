@@ -1,7 +1,6 @@
 #include "dungeonparts.hpp"
 
 #include "frame.hpp"
-#ifdef NON_MATCHING // draft includes
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -15,17 +14,18 @@
 #include "boxvu0.hpp"
 #include "mglib.hpp"
 #include "editloop.hpp"
-#endif
 
 #ifdef NON_MATCHING
 /* The floors each dungeon keeps Atla off, one list per dungeon, ending at -1. */
-static int noEntry0[] = {4, 8, 11, -1};
-static int noEntry1[] = {4, 9, 12, -1};
-static int noEntry2[] = {5, 9, 12, -1};
-static int noEntry3[] = {5, 9, 13, -1};
-static int noEntry4[] = {4, 8, 11, -1};
-static int noEntry5[] = {19, 20, 21, 22, 23, -1};
-static int *noEntryTbl[6] = {noEntry0, noEntry1, noEntry2, noEntry3, noEntry4, noEntry5};
+static int noEntryTbl00[] = {4, 8, 11, -1};
+static int noEntryTbl01[] = {4, 9, 12, -1};
+static int noEntryTbl02[] = {5, 9, 12, -1};
+static int noEntryTbl03[] = {5, 9, 13, -1};
+static int noEntryTbl04[] = {4, 8, 11, -1};
+static int noEntryTbl05[] = {19, 20, 21, 22, 23, -1};
+static int *noEntryTbl[6] = {noEntryTbl00, noEntryTbl01, noEntryTbl02, noEntryTbl03, noEntryTbl04, noEntryTbl05};
+#else
+extern int *noEntryTbl[6];
 #endif
 
 /**
@@ -282,25 +282,18 @@ INCLUDE_ASM("asm/nonmatchings/dungeonparts", SearchiDoPutArea__FP8MAPPARTSiiiiPf
  * @address 0x1C0940
  * @size 0x74
  */
-#ifdef NON_MATCHING
 int chkAtraFloor(int dungeon, int floor) {
     if (dungeon >= 6) {
         return 0;
     }
-    for (int i = 0;; i++) {
-        int barred = noEntryTbl[dungeon][i];
-
-        if (barred == -1) {
-            return 1;
-        }
-        if (floor == barred) {
+    int *floors = noEntryTbl[dungeon];
+    for (int i = 0; floors[i] != -1; i++) {
+        if (floor == floors[i]) {
             return 0;
         }
     }
+    return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonparts", chkAtraFloor__Fii);
-#endif
 /**
  * Builds the list of Atla one dungeon may hand out.
  *

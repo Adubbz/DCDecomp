@@ -18,9 +18,7 @@
 #include "mds.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
-#ifdef NON_MATCHING // draft includes
 #include "menu_save.hpp"
-#endif
 
 /* Battle support: pack loading, item name paths, battle music, floor queries. */
 

@@ -341,7 +341,6 @@ void CDungeonMap::DrawMapCalc(int mode) {
     }
 }
 
-#ifdef NON_MATCHING
 void CDungeonMap::DrawMap(CCameraFollow *camera, CFrameVu1 *player) {
     float cam_pos[4];
     float view_delta[4];
@@ -454,8 +453,8 @@ void CDungeonMap::DrawMap(CCameraFollow *camera, CFrameVu1 *player) {
                 continue;
 
             int direction = this->cells[cell_no].direction;
-
-            this->parts[this->cells[cell_no].parts_no].direction = direction;
+            CDungeonParts *direction_part = &this->parts[this->cells[cell_no].parts_no];
+            direction_part->direction = direction;
             {
                 CDungeonParts *position_part = &this->parts[this->cells[cell_no].parts_no];
                 position_part->pos[0] = world_x;
@@ -546,9 +545,6 @@ void CDungeonMap::DrawMap(CCameraFollow *camera, CFrameVu1 *player) {
         SndSetSePanf(sound_no, pan, 0);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawMap__11CDungeonMapFP13CCameraFollowP9CFrameVu1);
-#endif
 
 void CDungeonMap::DrawBGModel(CCamera *camera) {
     float pos[4];
@@ -2197,7 +2193,6 @@ found:
     return event_no;
 }
 
-#ifdef NON_MATCHING
 /**
  * Places treasure boxes, trap circles, and atla events on one floor.
  */
@@ -2205,19 +2200,19 @@ void CDungeonMap::buildEventData(int floor_no, int enabled, int place_atla) {
     float box_pos[4];
     float object_pos[4];
     int atra_no[6];
+    int special;
     int object_count;
-    int target_count;
-    int i;
     int valid;
     int event_no;
-    int event_coord;
-    int j;
+    int event_x;
+    int event_y;
+    int target_count;
 
     if (enabled != 1) {
         return;
     }
 
-    int special = 0;
+    special = 0;
     if (place_atla == 0)
         special = 1;
     object_count = 0;
@@ -2258,7 +2253,7 @@ void CDungeonMap::buildEventData(int floor_no, int enabled, int place_atla) {
     }
 
     this->initTrapCircle();
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         if ((int) ((100.0f * (float) rand()) / 2147483648.0f) < 21) {
             SearchiDoPutArea(this->cells, 0, 0, 20, 20, object_pos);
             valid = 1;
@@ -2275,8 +2270,8 @@ void CDungeonMap::buildEventData(int floor_no, int enabled, int place_atla) {
 
     if (place_atla != 0) {
         object_count = 0;
-        target_count = BtAtraFloorCyoice(selectMapNo, floor_no, atra_no);
-        while (object_count < target_count) {
+        int atra_count = BtAtraFloorCyoice(selectMapNo, floor_no, atra_no);
+        while (object_count < atra_count) {
             SearchiDoPutArea(this->cells, 0, 0, 20, 20, object_pos);
             valid = 1;
             if (this->CheckTreasureBox(object_pos, 20.0f) == 0)
@@ -2290,9 +2285,9 @@ void CDungeonMap::buildEventData(int floor_no, int enabled, int place_atla) {
                 this->atra[this->atra_num].phase = 0.0f;
                 this->atra[this->atra_num].atra_no = atra_no[object_count];
                 this->atra[this->atra_num].used = 1;
-                for (i = 0; i < 48; i++) {
-                    if (this->events[i].kind == -1) {
-                        event_no = i;
+                for (int k = 0; k < 48; k++) {
+                    if (this->events[k].kind == -1) {
+                        event_no = k;
                         goto found_atla_event;
                     }
                 }
@@ -2302,8 +2297,8 @@ void CDungeonMap::buildEventData(int floor_no, int enabled, int place_atla) {
             found_atla_event:
                 this->events[event_no].kind = 3;
                 this->events[event_no].unk_0C = 0;
-                this->events[event_no].unk_00 = event_coord;
-                this->events[event_no].unk_04 = event_coord;
+                this->events[event_no].unk_00 = event_x;
+                this->events[event_no].unk_04 = event_y;
                 this->events[event_no].index = this->atra_num;
                 sceVu0CopyVector(this->events[event_no].pos, object_pos);
                 this->events[event_no].radius = 13.0f;
@@ -2313,9 +2308,6 @@ void CDungeonMap::buildEventData(int floor_no, int enabled, int place_atla) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonmap", buildEventData__11CDungeonMapFiii);
-#endif
 
 void CDungeonMap::SetMimicEvent(float x, float y, float z, int item_no, int kind) {
     float pos[4];

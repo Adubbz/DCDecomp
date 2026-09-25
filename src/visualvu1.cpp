@@ -171,9 +171,9 @@ int CVisualVu1::RemakeData(unsigned int *data) {
 int CVisualVu1::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
                         VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
     sceVif1PkTerminate(packet);
-    int size = CVisualVu1::DrawVu1((u_int *) packet->pCurrent, matrix, info, program, draw_state,
-                                   unknown1, unknown2);
-    sceVif1PkReserve(packet, size);
+    int size;
+    sceVif1PkReserve(packet, size = CVisualVu1::DrawVu1((u_int *) packet->pCurrent, matrix, info,
+                                                        program, draw_state, unknown1, unknown2));
     return size;
 }
 #else
@@ -278,10 +278,10 @@ int SetTEX0(u_int *packet, u_long tex0, u_long tex1) {
 #ifdef NON_MATCHING
 void CVisualVu1::Initialize(void) {
     CVisual::Initialize();
-    unk_04 = 0;
+    vu_data = NULL;
     vu_size = 0;
     unk_00 = 0;
-    vu_data = NULL;
+    unk_04 = 0;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/visualvu1", Initialize__10CVisualVu1Fv);

@@ -96,7 +96,6 @@ extern int EdMenuExTextureBlock1;
 /** Texture block containing the edit menu's third extra texture set. */
 extern int EdMenuExTextureBlock2;
 
-#ifdef NON_MATCHING // draft declarations
 #include "editloop.hpp"
 #include "mainselect.hpp"
 #include "menuitemstep.hpp"
@@ -109,7 +108,6 @@ extern float WindowPos[2];
 extern float EditMenuWinW;
 extern float EditMenuWinH;
 extern CTexture *PerBoardTex;
-#endif
 
 /**
  * Returns the number of edit menu icons, one fewer until the manual is available.
@@ -629,11 +627,11 @@ void EditMenuInit(int *texture_blocks, int atora) {
     EdMenuEffectCt = 0;
     ItemVolumeStep.CheckItemVolume();
     if (atora != 0) {
-        int blocks[2] = {0, 0};
         EdMenuTextureReadEndFlag = 1;
         EdMenuRGB = 0x40;
         MenuIconPos[0][0] = 80.0f;
         MenuIconPos[0][1] = 52.0f;
+        int blocks[2] = {0, 0};
         blocks[0] = EdMenuTextureBlock;
         blocks[1] = EdMenuExTextureBlock;
         InitMenuAtora1(2, NowEditMap, blocks, EdMenuWorkBuf);

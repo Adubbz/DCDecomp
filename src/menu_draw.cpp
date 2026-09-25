@@ -25,6 +25,7 @@
 #include "memorycardaccess.hpp"
 #include "menu_dungeon.hpp"
 #include "menu_inventory.hpp"
+#include "menu_misc.hpp"
 #include "menuitemstep.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
@@ -65,7 +66,6 @@ extern CCamera MenuCamera;
 extern CTexture *StayTex;
 
 #ifdef NON_MATCHING // draft declarations
-#include "menu_misc.hpp"
 #include "sysmes.hpp"
 
 extern u8 MesWinTexBuff_01[0x100];
@@ -294,9 +294,10 @@ int GetMenuCommonPutXY(ClsMes *mes, int x) {
     if (mes == NULL) {
         return 0;
     }
+    int put_x = x;
     mes->NeedMesWinWH(mes->mes_made, size);
-    mes->text_x = x - (size[2] >> 1);
-    return 1;
+    put_x -= size[2] >> 1;
+    mes->text_x = put_x;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", GetMenuCommonPutXY__FP6ClsMesi);
@@ -1086,15 +1087,16 @@ void InitPersonalBoardMode(CUserStatus *status, PERSONAL_BOARD *board, int mode,
             full = 2;
         }
         for (int i = 0; i < 6; i++) {
-            if (PerBoardStatusPt->chara_weapons[i][10].item_no >= 0x101) {
+            if (((CUserStatus *) PerBoardStatusPt)->chara_weapons[i][10].item_no >= 0x101) {
                 full = 1;
                 break;
             }
         }
-        if (full != 0) {
-            return;
+        switch (full) {
+            case 0:
+                SetMenuTrushMark(pack);
+                break;
         }
-        SetMenuTrushMark(pack);
     }
 }
 #else
@@ -1140,6 +1142,7 @@ int BoardModeChangeKey() {
 void PersonalBoardLimmitCheck() {
     int *cursor = &PerBoardPt->cursor;
     int max = PersonalRetMax(PerBoardPt->page);
+
     int rows = max / 5;
     int last_top = rows - 4;
 
@@ -1177,34 +1180,38 @@ INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardLimmitCheck__Fv);
 int PersonalBoardKeySub() {
     int left = 0;
     int area = PerBoardPt->cursor_area;
+    int page = PerBoardPt->page;
     int *cursor = &PerBoardPt->cursor;
-    int max = PersonalRetMax(PerBoardPt->page);
+    int max = PersonalRetMax(page);
+
+
+
 
     if (GamePad.Down(0x1000) != 0) {
         switch (PerBoardPt->cursor_area) {
-            case 2:
-                break;
             case 1:
-                if (*cursor >= 5) {
+                if (*cursor > 4) {
                     *cursor -= 5;
                 }
                 if (*cursor / 5 < PerBoardPt->top_row) {
                     PerBoardPt->top_row--;
                 }
                 break;
+            case 2:
+                break;
         }
     }
     if (GamePad.Down(0x4000) != 0) {
         switch (PerBoardPt->cursor_area) {
-            case 2:
-                break;
             case 1:
                 if (*cursor < max - 5) {
                     *cursor += 5;
                 }
-                if (PerBoardPt->top_row + 3 < *cursor / 5) {
+                if (*cursor / 5 > PerBoardPt->top_row + 3) {
                     PerBoardPt->top_row++;
                 }
+                break;
+            case 2:
                 break;
         }
     }
@@ -1285,16 +1292,18 @@ int PersonalBoardWeaponPush(IHAVEITEM *have, int cell) {
     int kind = WhatIsKindofItem(have->item_no);
     int chara = cell / 10;
     int slot = cell % 10;
-    WEAPON_HAVE *weapon = &PerBoardStatusPt->chara_weapons[chara][slot];
+    CUserStatus *status = PerBoardStatusPt;
+    WEAPON_HAVE *weapons = status->chara_weapons[chara];
+    WEAPON_HAVE *weapon = &weapons[slot];
+    int weapon_no = weapon->item_no;
 
     if (kind == 0) {
-        if (weapon->item_no < 0x101) {
+        if (weapon_no < 0x101) {
             return 0;
         }
         if (have->item_no == 0xB1) {
-            float durability = weapon->durability;
-            if (weapon->durability_f < durability) {
-                weapon->durability_f = durability;
+            if (weapon->durability_f < weapon->durability) {
+                weapon->durability_f = weapon->durability;
                 if (weapon->item_no == GetDefaultWeaponNo(chara)) {
                     weapon->item_no++;
                     WepDataListToHaveCopy(weapon->item_no, weapon);
@@ -1961,7 +1970,8 @@ int IsEnableTrushThrow(int item_no) {
 
     if (item_no >= 0x101) {
         int owner = WhoIsWeaponEquip(item_no);
-        WEAPON_HAVE *weapons = PerBoardStatusPt->chara_weapons[owner];
+        CUserStatus *status = PerBoardStatusPt;
+        WEAPON_HAVE *weapons = status->chara_weapons[owner];
         int default_no = GetDefaultWeaponNo(owner);
         for (int i = 0; i < 11; i++) {
             int weapon_no = weapons[i].item_no;
@@ -1995,7 +2005,11 @@ int IsEnableTrushThrow(int item_no) {
                 case 1: {
                     ITEM_DATA *data = GetItemData(item_no);
                     if (data != NULL) {
-                        enable = (data->kind_flags & 0x10) ? 0 : 1;
+                        if (data->kind_flags & 0x10) {
+                            enable = 0;
+                        } else {
+                            enable = 1;
+                        }
                     }
                     break;
                 }
@@ -2019,33 +2033,36 @@ void CommonMoneyBoardDraw(int x, int y, int money, int alpha) {
 }
 #ifdef NON_MATCHING
 s16 SearchBoardNowPosItemExist(int page, int cell) {
-    s16 item_no = -1;
+    int item_no = -1;
 
     switch (page) {
         case 0: {
             ITEM_PACK *pack = &PerBoardStatusPt->item_pack;
             if (pack != NULL) {
-                return pack->item[cell];
+                item_no = pack->item[cell];
             }
-            return item_no;
+            break;
         }
         case 1: {
-            WEAPON_HAVE *weapon = &PerBoardStatusPt->chara_weapons[cell / 10][cell % 10];
+            int chara = cell / 10;
+            int slot = cell % 10;
+            CUserStatus *status = PerBoardStatusPt;
+            WEAPON_HAVE *weapons = status->chara_weapons[chara];
+            WEAPON_HAVE *weapon = &weapons[slot];
             if (weapon != NULL) {
-                return weapon->item_no;
+                item_no = weapon->item_no;
             }
-            return item_no;
+            break;
         }
         case 2: {
             DNG_CONSUMABLE *items = PerBoardStatusPt->consumable_items;
             if (items != NULL) {
                 item_no = items[cell].id;
             }
-            return item_no;
+            break;
         }
-        default:
-            return -1;
     }
+    return item_no;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SearchBoardNowPosItemExist__Fii);
@@ -2061,12 +2078,15 @@ int GetBoardSpace(int item_no, int *page) {
     int max = PersonalRetMax(*page);
     switch (*page) {
         case 0: {
+            int quick;
+            int i;
             ITEM_PACK *pack = &PerBoardStatusPt->item_pack;
-            int quick = 0;
-            for (int i = 0; i < 3; i++) {
+            quick = 0;
+
+            for (i = 0; i < 3; i++) {
                 quick += pack->quick_item_qty[i];
             }
-            for (int i = 0; i < max - quick; i++) {
+            for (i = 0; i < max - quick; i++) {
                 if (pack->item[i] < 0x84 && MenuTrushMark[i] == 0) {
                     space = i;
                     break;
@@ -2076,8 +2096,10 @@ int GetBoardSpace(int item_no, int *page) {
         }
         case 1: {
             int owner = WhoIsWeaponEquip(item_no);
-            WEAPON_HAVE *weapons = PerBoardStatusPt->chara_weapons[owner];
-            for (int i = 0; i < 10; i++) {
+            int i;
+            CUserStatus *status = PerBoardStatusPt;
+            WEAPON_HAVE *weapons = status->chara_weapons[owner];
+            for (i = 0; i < 10; i++) {
                 if (weapons[i].item_no < 0x101) {
                     space = i + owner * 10;
                     break;
@@ -2085,14 +2107,20 @@ int GetBoardSpace(int item_no, int *page) {
             }
             break;
         }
-        case 2:
-            for (int i = 0; i < max; i++) {
-                if (PerBoardStatusPt->consumable_items[i].id < 0x51) {
+        case 2: {
+            int i;
+            DNG_CONSUMABLE *items = PerBoardStatusPt->consumable_items;
+            for (i = 0; i < max; i++) {
+
+
+                if (items[i].id < 0x51) {
                     space = i;
                     break;
                 }
             }
             break;
+        }
+
     }
     return space;
 }
@@ -2270,7 +2298,8 @@ void SeitonAttachBoard(ATTACH_LIST *list) {
     if (list == NULL) {
         return;
     }
-    for (int i = 0; i < 5; i++) {
+    int i = 0;
+    while (i < 5) {
         if (SeitonAttachBoardSub(list) != 0) {
             break;
         }
@@ -2278,7 +2307,9 @@ void SeitonAttachBoard(ATTACH_LIST *list) {
         if (asort_top_type >= 5) {
             asort_top_type = 0;
         }
+        i++;
     }
+
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonAttachBoard__FP11ATTACH_LIST);
@@ -2418,16 +2449,18 @@ int GetNowModeMaxNum(int page, int *over) {
 
     switch (page) {
         case 0: {
+            int i;
+            int j;
             ITEM_PACK *pack = &status->item_pack;
             int num;
-            for (int i = 0; i < (num = pack->num) + 3; i++) {
+            for (i = 0; i < (num = pack->num) + 3; i++) {
                 if (pack->item[i] >= 0x84) {
                     count++;
                 }
             }
-            for (int i = 0; i < 3; i++) {
-                if (pack->quick_item_slot[i] >= 0x84) {
-                    count += pack->quick_item_qty[i];
+            for (j = 0; j < 3; j++) {
+                if (pack->quick_item_slot[j] >= 0x84) {
+                    count += pack->quick_item_qty[j];
                 }
             }
             if (over != NULL && num < count) {
@@ -2437,8 +2470,9 @@ int GetNowModeMaxNum(int page, int *over) {
         }
         case 1:
             for (int chara = 0; chara < 6; chara++) {
+                WEAPON_HAVE *weapons = status->chara_weapons[chara];
                 for (int i = 0; i < 11; i++) {
-                    if (status->chara_weapons[chara][i].item_no >= 0x101) {
+                    if (weapons[i].item_no >= 0x101) {
                         count++;
                         if (i == 10 && over != NULL) {
                             *over = chara + 1;
@@ -2448,12 +2482,14 @@ int GetNowModeMaxNum(int page, int *over) {
             }
             break;
         case 2:
+            DNG_CONSUMABLE *items = status->consumable_items;
             for (int i = 0; i < 43; i++) {
-                if (status->consumable_items[i].id >= 0x51) {
+                if (items[i].id >= 0x51) {
                     count++;
                 }
             }
-            if (over != NULL && count >= 41) {
+            if (over != NULL && count > 40) {
+
                 *over = 1;
             }
             break;

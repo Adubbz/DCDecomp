@@ -309,8 +309,9 @@ void ExitManualMenu() {
     CommonMenuMes3.centre_rows = 1;
     CommonMenuMes3.cursor_row = -1;
     CommonMenuMes3.stay_frame = 0;
-    ManualMsg->tex_block = -1;
-    ManualMsg->fade = 0.0f;
+    ClsMes *msg = ManualMsg;
+    msg->cursor_row = -1;
+    ManualMsg->stay_frame = 0;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_manual", ExitManualMenu__Fv);
