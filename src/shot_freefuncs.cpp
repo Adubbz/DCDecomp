@@ -4,17 +4,27 @@
 
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 #include "btactstatus.hpp"
+#include "btmisc.hpp"
 #include "character.hpp"
+#include "clsmes.hpp"
+#include "dataalloc.hpp"
 #include "dataread.hpp"
+#include "dranmapfield.hpp"
 #include "dun/gameloop.hpp"
+#include "dungeoneventman.hpp"
 #include "dungeonmap.hpp"
+#include "frame.hpp"
 #include "healeffect.hpp"
+#include "itemdata.hpp"
+#include "mainselect.hpp"
 #include "mathutil.hpp"
 #include "mglib.hpp"
 #include "monstorunit.hpp"
+#include "motionmodel.hpp"
 #include "nowload.hpp"
 #include "rect.hpp"
 #include "snd.hpp"
@@ -52,6 +62,59 @@ extern void BtBattleMusic_Excg(float distance, float *field_volume, float *battl
  * The message shown for the cached map jump.
  */
 extern int BtSteebMsgNo;
+
+/**
+ * Arena the steeb message file is read into.
+ */
+extern "C" CDataAlloc2<1> BtSteebMesBuffer;
+
+/**
+ * Arena the map, its textures and its models are read into.
+ */
+extern "C" CDataAlloc2<1> MapModelBuffer;
+
+/**
+ * Arena the monsters load into, after whatever the map used.
+ */
+extern "C" CDataAlloc2<1> MonstorModelBuffer;
+
+/**
+ * Pack buffer the dungeon started with, reused for every map load.
+ */
+extern u_int *old_read_buffer;
+
+/**
+ * Messages the dungeon's steeb shows.
+ */
+extern "C" ClsMes DngMesStb;
+
+/**
+ * Monsters of the current floor.
+ */
+extern "C" CMonstorUnit MainMonstorUnit;
+
+/**
+ * Map of the current floor.
+ */
+extern "C" CDungeonMap MainDungeonMap;
+
+/**
+ * Events of the current floor.
+ */
+extern "C" CDungeonEventMan DngEventMan;
+
+/**
+ * Event manager the dungeon runs through.
+ */
+extern CDungeonEventMan *NowEventMan;
+
+/**
+ * Opening motions of the small and the big item-get boxes.
+ */
+extern "C" CMotionModel itemOpenSmall;
+extern "C" CMotionModel itemOpenBig;
+extern "C" MOTION_INFO itemOpenSmall_info;
+extern "C" MOTION_INFO itemOpenBig_info;
 
 /**
  * The colour of a full life bar.
@@ -873,63 +936,165 @@ void BtMapJumpCashClear(void) {
 }
 
 /**
- * Reads the map a jump leads to, along with its message buffer.
+ * Size, in quadwords, of the arena an allocator was given.
+ */
+static inline int ArenaLimit(CDataAlloc2<1> &arena) {
+    return arena.limit;
+}
+
+/**
+ * Loads the steeb message file for the current floor if it changed, then reads the map a jump
+ * leads to, its treasure-box models and item-get motions; returns 0 when that map is already
+ * loaded, 1 otherwise.
  *
  * @mangled BtMapJumpLoad__FPc
  * @address 0x1B20E0
  * @size 0x70C
  */
-#ifdef NON_MATCHING
-void BtMapJumpLoad(char *map_name) {
-    if (map_name == NULL || map_name[0] == '\0') {
-        return;
+int BtMapJumpLoad(char *map_name) {
+    char mpd_path[64];
+    char cfg_path[64];
+    char mes_path[64];
+    int mes_size;
+    int size;
+
+    CUserStatus *status = UserStatus;
+    int msg_no = status->cur_georama;
+    int floor = status->cur_floor;
+
+    // From dungeon 6 on, the message file also changes every twenty floors.
+    if (msg_no >= 6) {
+        if (floor >= 20) {
+            msg_no++;
+        }
+        if (floor >= 40) {
+            msg_no++;
+        }
+        if (floor >= 60) {
+            msg_no++;
+        }
+        if (floor >= 80) {
+            msg_no++;
+        }
     }
 
-    if (BtCfgFlag != 0 && strcmp(BtCfgCash, map_name) == 0) {
-        return;
+    if (msg_no != BtSteebMsgNo) {
+        BtSteebMesBuffer.used = 0;
+        u_char *mes = BtSteebMesBuffer.base + BtSteebMesBuffer.used * 16;
+        if (status->cur_georama == 6) {
+            sprintf(mes_path, "dun/message/ww_mes/steve07_%d_%d.mes", msg_no - 5, LanguageCode);
+        } else {
+            sprintf(mes_path, "dun/message/ww_mes/steve0%d_%d.mes", msg_no + 1, LanguageCode);
+        }
+        LoadFile(mes_path, mes, &mes_size);
+        wait_now_loading_vsync();
+        DngMesStb.SetBuff((short *) mes);
+        BtSteebMesBuffer.Alloc((((mes_size >> 6) + 1) << 6) >> 4);
+        BtSteebMesBuffer.Align64();
+        BtSteebMsgNo = msg_no;
     }
 
-    char definition_path[64];
-    char image_path[64];
-    sprintf(definition_path, "dungeon/%s/%s.cfg", map_name, map_name);
-    sprintf(image_path, "dungeon/%s/%s.img", map_name, map_name);
+    TexManager.DeleteTextureBlock(42);
+    MainMonstorUnit.CleanViewMonstor(0);
+    NowDngMap = &MainDungeonMap;
+    NowEventMan = &DngEventMan;
 
-    int size = 0;
-    LoadFile(definition_path, read_buffer, &size);
+    if (strcmp(BtCfgCash, map_name) == 0 && BtCfgFlag != 0) {
+        return 0;
+    }
+    strcpy(BtCfgCash, map_name);
+
+    MapModelBuffer.used = 0;
+    u_int *pack = read_buffer;
+    read_buffer = old_read_buffer;
+
+    int i;
+    DRAN_MAP_FIELD_SET *dran = (DRAN_MAP_FIELD_SET *) NowDranMapField;
+    for (i = 0; i < 12; i++) {
+        dran->field[i].Initialize();
+        dran->collision[i] = NULL;
+        dran->state[i] = 3;
+    }
+    dran->field_count = 0;
+    dran->collision_count = 0;
+
+    MainDungeonMap.initSubmap(&MapModelBuffer);
+    for (int slot = 0; slot < 64; slot++) {
+        CDungeonEvent *event = &DngEventMan.slot[slot];
+        event->state = 0;
+        event->script_no = -1;
+        event->parts_id = -1;
+        event->unk_34 = 0;
+        event->enabled = 0;
+    }
+    for (int record = 0; record < 96; record++) {
+        CDungeonEventData *data = &DngEventMan.event[record];
+        data->event = NULL;
+        data->unk_34 = 0;
+        data->enabled = 0;
+        data->hold = 0;
+        data->chara_done = -1;
+    }
+
+    strcpy(mpd_path, "dun/mpd_pack/");
+    strcat(mpd_path, map_name);
+    strcat(mpd_path, ".mpd");
+    strcpy(cfg_path, "dun/");
+    strcat(cfg_path, map_name);
+    strcat(cfg_path, ".cfg");
+    TEIGIAnalyz(cfg_path);
+
+    size = 0;
+    LoadFile(mpd_path, (void *) read_buffer, &size);
     wait_now_loading_vsync();
-    if (size > 6400000) {
-        return;
+    if (size >= 6400000) {
+        printf("MAPDATA BUFFER OVER!! %d\n", size);
+        exit__2(1);
     }
 
-    // The retail loader consumes both paths while rebuilding the map's image,
-    // model, motion and collision resources into the map allocator.
-    LoadFile(image_path, read_buffer, &size);
-    wait_now_loading_vsync();
-    strncpy(BtCfgCash, map_name, sizeof(BtCfgCash) - 1);
-    BtCfgCash[sizeof(BtCfgCash) - 1] = '\0';
+    TEIGIImgLoad(read_buffer, &MapModelBuffer);
+    TEIGIMdsLoad(read_buffer, 0);
+
+    CFrameAttr attr;
+    attr.fog_enable = 1;
+    attr.unk_04 = 100.0f;
+    attr.unk_08 = 0;
+    attr.unk_0B = 0;
+    NowDngMap->box_body_model = LoadMDSFilePack(read_buffer, "ibox_0.mds", &MapModelBuffer);
+    NowDngMap->box_lid_model = LoadMDSFilePack(read_buffer, "ibox_t.mds", &MapModelBuffer);
+    NowDngMap->box_collision_model =
+        LoadCollisionFilePack(read_buffer, "ibox_a.mds", &MapModelBuffer);
+    NowDngMap->box_body_model->SetAttr(attr, 1, 0);
+    NowDngMap->box_lid_model->SetAttr(attr, 1, 0);
+    NowDngMap->chest_body_model = LoadMDSFilePack(read_buffer, "iboxs_0.mds", &MapModelBuffer);
+    NowDngMap->chest_lid_model = LoadMDSFilePack(read_buffer, "iboxs_t.mds", &MapModelBuffer);
+    NowDngMap->unk_BC78 = LoadCollisionFilePack(read_buffer, "iboxs_a.mds", &MapModelBuffer);
+    NowDngMap->chest_body_model->SetAttr(attr, 1, 0);
+    NowDngMap->chest_lid_model->SetAttr(attr, 1, 0);
+
+    itemOpenSmall.LoadPack(read_buffer, "dun/etc/itemget_s/d01i02m", &MapModelBuffer,
+                           &MapModelBuffer, &itemOpenSmall_info, 0);
+    itemOpenBig.LoadPack(read_buffer, "dun/etc/itemget_b/d01i01m", &MapModelBuffer,
+                         &MapModelBuffer, &itemOpenBig_info, 0);
+
+    // The monsters get whatever the map left of its buffer.
+    int map_used = MapModelBuffer.used;
+    u_char *monster_base = MapModelBuffer.base + map_used * 16;
+    long monster_size = 0xA7F80 - map_used;
+    MonstorModelBuffer.base = monster_base;
+    MonstorModelBuffer.limit = monster_size;
+    MonstorModelBuffer.used = 0;
+    read_buffer = pack;
+
+    printf("TotalMem = %d\n", 0xA7F80);
+    printf("MapVisualData   [%x]  %d/%d\n", MapModelBuffer.base + MapModelBuffer.used * 16,
+           MapModelBuffer.used, ArenaLimit(MapModelBuffer));
+    printf("MonstorData     [%x]  %d/%d\n", MonstorModelBuffer.base + MonstorModelBuffer.used * 16,
+           MonstorModelBuffer.used, ArenaLimit(MonstorModelBuffer));
     BtCfgFlag = 1;
+    return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", BtMapJumpLoad__FPc);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1353__2);
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1354);
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1355);
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1356);
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1357);
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1358);
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1359);
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1360);
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1361);
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1362);
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1363);
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1364);
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1365);
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1366);
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1367);
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1368);
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1369__2);
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1370);
+
 /**
  * Draws a textured cell in world space.
  *

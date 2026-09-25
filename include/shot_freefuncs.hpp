@@ -216,13 +216,15 @@ void setItemToReserved(char *, int, int, char *, int, int);
 void BtMapJumpCashClear(void);
 
 /**
- * Reads the map a jump leads to, along with its message buffer.
+ * Loads the steeb message file for the current floor if it changed, then reads the map a jump
+ * leads to, its treasure-box models and item-get motions; returns 0 when that map is already
+ * loaded, 1 otherwise.
  *
  * @mangled BtMapJumpLoad__FPc
  * @address 0x1B20E0
  * @size 0x70C
  */
-void BtMapJumpLoad(char *);
+int BtMapJumpLoad(char *);
 
 /**
  * Draws a textured cell in world space.
