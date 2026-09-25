@@ -1364,39 +1364,53 @@ int InitItemPolygonView(int item_no, u_long128 *buffer) {
     ItemPolyView = NULL;
     return 0;
 }
-#ifdef NON_MATCHING
+
+/** Buffer the item preview's model is read into. */
+extern CDataAlloc2<1> MenuItemCashBuffer;
+
+/** Name of the frame-buffer texture the item preview's pictures are drawn into. */
+extern char item_view_frame_image[];
 
 static int EnterItemPolygonView(void) {
     BG_READ_INFO *model;
     BG_READ_INFO *texture;
 
-    if (ReadBGSync() != 0 || polyreadflag != 0 || MDebugItemPolyViewFlag != 0) {
-        return 0;
+    if (ReadBGSync() == 0 && polyreadflag == 0 && MDebugItemPolyViewFlag == 0) {
+        LOADTEXTURE_INFO2 table[] = {
+            {item_view_frame_image, 0, 0},
+            {NULL, 0, 0},
+            {NULL, 0, 0},
+        };
+        table[0].block_no = BtlMenuExReadBlock;
+        table[1].block_no = BtlMenuExReadBlock;
+        model = GetReadBGFile(0);
+        texture = GetReadBGFile(1);
+        table[1].name = (char *) texture->buffer;
+        TexManager.DeleteTextureBlock(BtlMenuExReadBlock);
+        TexManager.CleanUpTextureList();
+        TexManager.LoadTextureBlockEX(-1, table);
+        if (model == NULL) {
+            return 0;
+        }
+        if (texture == NULL) {
+            return 0;
+        }
+        MenuItemCashBuffer.base = (u_char *) (texture->buffer + (texture->size >> 4) + 1);
+        MenuItemCashBuffer.limit = 0x6080;
+        MenuItemCashBuffer.Reset();
+        MDebugItemPolyViewFlag = 1;
+        ItemPolyView = (CFrame *) LoadMDSFile((u_int *) model->buffer, &MenuItemCashBuffer, 0, NULL, NULL);
+        sceVu0FVECTOR position = {4.0f, 0.0f, 0.0f, 1.0f};
+        float rotation[3] = {0.0f, 0.0f, 0.0f};
+        float scale[3] = {3.0f, 3.0f, 3.0f};
+        // Each copy moves a whole vector, one float more than the rotation and scale hold.
+        memcpy(menudebugpos, position, sizeof(sceVu0FVECTOR));
+        memcpy(menudebugrot, rotation, sizeof(sceVu0FVECTOR));
+        memcpy(menudebugrscale, scale, sizeof(sceVu0FVECTOR));
+        return 1;
     }
-    model = GetReadBGFile(0);
-    texture = GetReadBGFile(1);
-    if (model == NULL || texture == NULL) {
-        return 0;
-    }
-    MenuEffectCashBuffer.base = (u8 *) texture->buffer + texture->size;
-    MenuEffectCashBuffer.limit = 0x6000;
-    MenuEffectCashBuffer.Reset();
-    ItemPolyView = (CFrame *) LoadMDSFile((u_int *) model->buffer, &MenuEffectCashBuffer, 0,
-                                         (char **) 0, (char **) 0);
-    if (ItemPolyView == NULL) {
-        return 0;
-    }
-    menudebugpos[0] = 0.0f;
-    menudebugpos[1] = 0.0f;
-    menudebugpos[2] = 96.0f;
-    menudebugrot[0] = menudebugrot[1] = menudebugrot[2] = 0.0f;
-    menudebugrscale[0] = menudebugrscale[1] = menudebugrscale[2] = 1.0f;
-    MDebugItemPolyViewFlag = 1;
-    return 1;
+    return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", EnterItemPolygonView__Fv);
-#endif
 
 static void LocalDrawItemPolygonView(void) {
     float turn;

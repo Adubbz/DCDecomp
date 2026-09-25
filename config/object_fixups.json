@@ -1828,10 +1828,17 @@
       ],
       ".menu_dungeon-c1731": [
         "@1195"
+      ],
+      ".itemviewdata": [
+        "@1294",
+        "@1299",
+        "@1300",
+        "@1301"
       ]
     },
     "symbols": {
-      "chara_change_frame_image": "@1301"
+      "chara_change_frame_image": "@1301",
+      "item_view_frame_image": "@1841"
     },
     "rodata_exports": [
       "@1728__2"
