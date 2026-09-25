@@ -511,7 +511,8 @@ SECTIONS
         main.data.edit_in-b.s.o (.data) // 0x0026ae40
         editground.cpp.o (.data)       // 0x0026ae60
         fishing.cpp.o (.data)          // 0x0026ae90
-        main.data.fishing-a.s.o (.data) // 0x0026afe0
+        shot_utils.cpp.o (.data)       // 0x0026afe0
+        main.data.shot_freefuncs-a.s.o (.data) // 0x0026aff8
         healeffect.cpp.o (.data)       // 0x0026b0c0
         main.data.motionmodel-a.s.o (.data) // 0x0026b0d0
         motionmodel.cpp.o (.motionmodeldata) // 0x0026b1b0

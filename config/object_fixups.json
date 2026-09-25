@@ -1630,5 +1630,10 @@
         ]
       ]
     ]
+  },
+  "src/shot_utils.cpp": {
+    "symbols": {
+      "fishing_err_format": "@604"
+    }
   }
 }
