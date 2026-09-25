@@ -1130,12 +1130,12 @@ int BoardModeChangeKey() {
     }
     return 0;
 }
-#ifdef NON_MATCHING
 void PersonalBoardLimmitCheck() {
+    int page = PerBoardPt->page;
     int *cursor = &PerBoardPt->cursor;
-    int max = PersonalRetMax(PerBoardPt->page);
-    int rows = max / 5;
-    int last_top = rows - 4;
+    int max = PersonalRetMax(page);
+    int top_row = PerBoardPt->top_row;
+    int last_top = max / 5 - 4;
 
     if (last_top < 0) {
         last_top = 0;
@@ -1149,13 +1149,14 @@ void PersonalBoardLimmitCheck() {
             PerBoardPt->top_row = 0;
         }
         PerBoardPt->y = 0x7F - PerBoardPt->top_row * 0x28;
+        int rows = max / 5;
         if (rows <= 0) {
             rows = 4;
         }
         PerBoardPt->scroll = 140.0f + 114.0f * PerBoardPt->top_row / rows;
         return;
     }
-    if (last_top < PerBoardPt->top_row) {
+    if (last_top < top_row) {
         if (last_top < 0) {
             last_top = 0;
         }
@@ -1164,9 +1165,6 @@ void PersonalBoardLimmitCheck() {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardLimmitCheck__Fv);
-#endif
 #ifdef NON_MATCHING
 int PersonalBoardKeySub() {
     int left = 0;
