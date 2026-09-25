@@ -104,6 +104,12 @@ extern OPENING_BOOK OpenBook;
 /** The name currently being edited. */
 extern "C" s16 *CharaName;
 
+/** The work area the storybook hands to the name-entry screen once its pages are read. */
+extern u_long128 *OpeningReadBuf;
+
+/** The message window font's texture work area. */
+extern u8 MesWinTexBuff_02[0x100];
+
 /**
  * Gives every party member their default name.
  *
@@ -1131,42 +1137,112 @@ void InitOpeningBook(u_long128 *buffer, int *blocks) {
     OpenBook.unk_00C = 0;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1511__4);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1558__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1559__3);
 /**
- * Turns the storybook's pages with the pad.
+ * Steps the storybook that plays before the game begins: reads its pages, fades them in and out on the pad, then hands over to naming the hero.
  *
  * @mangled OpeningBookKey__Fv
  * @address 0x23CF10
  * @size 0x664
  */
-#ifdef NON_MATCHING
 int OpeningBookKey() {
+    int result;
+
     ReadBG();
+    result = 0;
     switch (OpenBook.step) {
         case 0:
-            if (ReadBGSync() == 0) {
+            if (OpenBook.open == 0 && ReadBGSync() == 0) {
+                LOADTEXTURE_INFO2 info[3] = {{"#frame_image#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+
+                info[0].block_no = OpenBook.tex_block;
+                info[1].block_no = OpenBook.tex_block;
+                BG_READ_INFO *read = GetReadBGFile(0);
+                info[1].name = (char *) GetPackFile((u_int *) read->buffer, "opentex.img", NULL);
+                TexManager.DeleteTextureBlock(OpenBook.tex_block);
+                TexManager.CleanUpTextureList();
+                TexManager.LoadTextureBlockEX(-1, info);
+                OpeningReadBuf = read->buffer + (read->size >> 4) + 1;
+                OpeningReadBuf = MenuCalcBufAlignment(OpeningReadBuf);
+                short *mes = (short *) GetPackFile((u_int *) read->buffer, "opmes.bin", NULL);
+
+                CommonMenuMes2.text_columns = 0x46;
+                CommonMenuMes2.text_rows = 10;
+                CommonMenuMes2.text_len = 0;
+                CommonMenuMes2.text_width = 0;
+                CommonMenuMes2.text_height = 0;
+                CommonMenuMes2.fade = 0.0f;
+                CommonMenuMes2.fade_in = 1;
+                CommonMenuMes2.text_rate = CommonMenuMes2.text_rate_set;
+                CommonMenuMes2.waiting = 0;
+                CommonMenuMes2.text_at = 0.0f;
+                CommonMenuMes2.text_no = 0;
+                CommonMenuMes2.text_from = 0;
+                CommonMenuMes2.page_from = 0;
+                CommonMenuMes2.InitMesWinTbl();
+                CommonMenuMes2.clut_now = CommonMenuMes2.clut_default;
+                CommonMenuMes2.wait = 0;
+                CommonMenuMes2.blink = 0;
+                CommonMenuMes2.auto_page_wait = 0;
+                CommonMenuMes2.mes_made = -1;
+                CommonMenuMes2.edge_alpha = 0x80;
+                for (int i = 0; i < 10; i++) {
+                    CommonMenuMes2.mes_no[i] = -1;
+                }
+                for (int i = 0; i < 8; i++) {
+                    CommonMenuMes2.values[i] = 0;
+                }
+                CommonMenuMes2.value = 0;
+                CommonMenuMes2.value_signed = 0;
+                CommonMenuMes2.value_show = 1;
+                CommonMenuMes2.value_narrow = 0;
+                CommonMenuMes2.space_width = -1;
+                CommonMenuMes2.space_area = -1;
+                CommonMenuMes2.cursor_row = -1;
+                CommonMenuMes2.cursor_y = 0;
+                CommonMenuMes2.cursor_lit = 0;
+                for (int i = 0; i < 10; i++) {
+                    CommonMenuMes2.line_pos[i].x = -1;
+                    CommonMenuMes2.line_pos[i].y = -1;
+                }
+                CommonMenuMes2.SetMesFukidashi(4);
+                CommonMenuMes2.text_rate = 0.0f;
+                CommonMenuMes2.text_rate_set = 0.0f;
+                CommonMenuMes2.page_arrow = 1;
+                CommonMenuMes2.centre_rows = 1;
+                CommonMenuMes2.columns = 40;
+                CommonMenuMes2.rows = 3;
+                int language = GetMenuLangFlag();
+                if (language > 0) {
+                    CommonMenuMes2.char_width--;
+                }
+                CommonMenuMes2.tex_block = 0x1A;
+                CommonMenuMes2.unk_17B0 = MesWinTexBuff_02;
+                CommonMenuMes2.SetBuff(mes);
+                CommonMenuMes2.edge_alpha = OpenBook.unk_00C;
                 OpenBook.open = 1;
-                OpenBook.fade = 128;
+                OpenBook.fade = 0x80;
+                s8 text_y[7] = {20, 16, 16, 16, 16, 16, 16};
+                CommonMenuMes2.text_y = text_y[language] + 300;
+                CommonMenuMes2.mes_made = -1;
+                CommonMenuMes2.MakeMesWin(100);
             }
-            if (OpenBook.open && OpenBook.fade > 0) {
+            if (OpenBook.open != 0) {
                 OpenBook.fade--;
+                if (OpenBook.fade <= 0) {
+                    OpenBook.fade = 0;
+                }
             }
-            if (OpenBook.open && OpenBook.fade == 0) {
+            if (OpenBook.fade <= 0) {
                 OpenBook.step = 1;
+                OpenBook.unk_00C = 0;
             }
             break;
         case 1:
             OpenBook.unk_00C += 2;
-            if (OpenBook.unk_00C >= 128) {
-                OpenBook.unk_00C = 128;
+            if (OpenBook.unk_00C >= 0x80) {
+                OpenBook.unk_00C = 0x80;
                 OpenBook.step = 2;
-            }
-            break;
-        case 2:
-            if (GamePad.Down(0x40)) {
-                OpenBook.step = OpenBook.unk_006 > 10 ? 4 : 3;
+                OpenBook.fade = 0;
             }
             break;
         case 3:
@@ -1174,26 +1250,32 @@ int OpeningBookKey() {
             if (OpenBook.unk_00C <= 0) {
                 OpenBook.unk_00C = 0;
                 OpenBook.unk_006++;
+                CommonMenuMes2.MakeMesWin(OpenBook.unk_006 + 100);
                 OpenBook.step = 1;
             }
             break;
+        case 2:
+            if (GamePad.Down(0x40)) {
+                OpenBook.step = 3;
+                if (OpenBook.unk_006 >= 11) {
+                    OpenBook.step = 4;
+                }
+            }
+            break;
         case 4:
-            if (OpenBook.unk_00C > 0) {
-                OpenBook.unk_00C--;
-            } else {
-                InitNameRegist(0, OpenBook.unk_004, NULL);
+            OpenBook.unk_00C--;
+            if (OpenBook.unk_00C <= 0 && OpenBook.step == 4 && OpenBook.unk_00C <= 0) {
+                CommonMenuMes2.page_arrow = 0;
+                InitNameRegist(0, OpenBook.unk_004, OpeningReadBuf);
                 OpenBook.step = 5;
             }
             break;
         case 5:
-            NameEnterKey();
-            return NameSelect.state_count;
+            result = NameEnterKey();
+            break;
     }
-    return 0;
+    return result;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", OpeningBookKey__Fv);
-#endif
 /**
  * Draws the storybook page by page.
  *

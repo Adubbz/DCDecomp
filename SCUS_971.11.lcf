@@ -582,6 +582,7 @@ SECTIONS
         battle_globals.cpp.o (.nameenterdata3) // 0x00295b50 NameDefaultSet's default names
         . = ALIGN(0x10);
         main.data.battle_globals-b.s.o (.data) // 0x00295ef0
+        battle_globals.cpp.o (.nameenterdata4) // 0x00295fc0 OpeningBookKey's texture list
         stockitem.cpp.o (.data)
         . = . + 0xC;
         fish.cpp.o (.data)
@@ -713,8 +714,7 @@ SECTIONS
 		weapon_buildup.cpp.o (.sdata)  // 0x002a21c8
 		weaponlevelup.cpp.o (.sdata)   // 0x002a21d8
 		main.sdata.part2e.s.o (.sdata) // 0x002a21f0
-		battle_globals.cpp.o (.nameentersdata1) // 0x002a21f8 ExitNameEnterFunc texture blocks, DrawNameTemplete key counts and DrawSaveBoardCharaName2 shadow colours
-		main.sdata.battle_globals-a.s.o (.sdata) // 0x002a2210
+		battle_globals.cpp.o (.nameentersdata1) // 0x002a21f8 ExitNameEnterFunc texture blocks, DrawNameTemplete key counts, DrawSaveBoardCharaName2 shadow colours and OpeningBookKey text heights
 		stockitem.cpp.o (.sdata)
 
 		// The title overlay's small data, reached through $gp like its small
