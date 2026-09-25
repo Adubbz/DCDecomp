@@ -724,7 +724,7 @@ void BtGetTreasureboxSmall_Init(int chance) {
     int size;
 
     NowDngMap->events[iventActive].kind = -1;
-    if (ITEM_NAME_TBL_NEW[item_no - 81] == NULL) {
+    if (ITEM_NAME_TBL_NEW[item_no - ITEM_ATTACH_START] == NULL) {
         item_no = 0x66;
     }
     int volume = createAttachVolume(item_no, chance);
@@ -732,7 +732,7 @@ void BtGetTreasureboxSmall_Init(int chance) {
     BtGetTreasureboxSmall_itemNo = item_no;
     BtGetTreasureboxSmall_itemVolume = volume;
     strcpy(model_path, "dun/item/main_data/");
-    strcat(model_path, ITEM_NAME_TBL_NEW[item_no - 81]);
+    strcat(model_path, ITEM_NAME_TBL_NEW[item_no - ITEM_ATTACH_START]);
     strcpy(texture_path, model_path);
     strcat(model_path, ".mds");
     strcat(texture_path, ".img");
