@@ -197,22 +197,20 @@ void CHitValue::EntryValue(float *world, int amount, int kind, CFrame *frame) {
             break;
     }
 }
-#ifdef NON_MATCHING
 void CHitValue::Draw(void) {
     if (active == 0) {
         return;
     }
-
-    s32 *config = (s32 *) SaveData->GetConfigData();
-    if (kind == 2 && config[9] == 1) {
+    if (kind == 2 && ((s32 *) SaveData->GetConfigData())[9] == 1) {
         return;
     }
-    if ((kind == 0 || kind == -1) && config[10] == 1) {
+    if ((kind == 0 || kind == -1) && ((s32 *) SaveData->GetConfigData())[10] == 1) {
         return;
     }
 
-    CTexture *digit_texture = TexManager.GetTexture((char *) "stayframe", -1);
-    CTexture *mark_texture = TexManager.GetTexture((char *) "itempack", -1);
+    CTexture *digit_texture = TexManager.GetTexture("stayframe", -1);
+    CTexture *mark_texture = TexManager.GetTexture("itempack", -1);
+    int screen[4];
     sceVu0FVECTOR world;
     if (frame != NULL) {
         sceVu0CopyVector(world, frame->position);
@@ -224,16 +222,14 @@ void CHitValue::Draw(void) {
         sceVu0CopyVector(world, pos);
     }
 
-    int screen[4];
     if (MGRotTransPers2D(screen, world, 0) == 0) {
         return;
     }
 
     if (digit[0] == -2) {
         int bounce = (int) (48.0f * sinf(phase[0]));
-        CRect_i_ destination(screen[0], screen[1] - bounce - 48, 72, 24);
-        CRect_i_ source(0, 128, 72, 24);
-        set2DSprite(Vif1Packet, mark_texture, destination, source, (u8) fade);
+        set2DSprite(Vif1Packet, mark_texture, CRect_i_(screen[0], screen[1] - bounce - 48, 72, 24),
+                    CRect_i_(0, 128, 72, 24), (u8) fade);
         return;
     }
 
@@ -243,17 +239,14 @@ void CHitValue::Draw(void) {
         }
 
         int bounce = (int) (48.0f * sinf(phase[place]));
-        CRect_i_ destination(screen[0] - place * texel.width, screen[1] - bounce - 48,
-                             texel.width, texel.height);
-        CRect_i_ source(texel.x + digit[place] * texel.width, texel.y, texel.width, texel.height);
-        set2DSprite(Vif1Packet, digit_texture, destination, source, (u8) fade);
+        set2DSprite(Vif1Packet, digit_texture,
+                    CRect_i_(screen[0] - place * texel.width, screen[1] - bounce - 48, texel.width,
+                             texel.height),
+                    CRect_i_(texel.x + digit[place] * texel.width, texel.y, texel.width,
+                             texel.height),
+                    (u8) fade);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/hitvalue", Draw__9CHitValueFv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/hitvalue", @804);
-INCLUDE_RODATA("asm/nonmatchings/hitvalue", @805);
 void CHitValue::Step(void) {
     if (active != 0) {
         if (digits[0] == -2) {
