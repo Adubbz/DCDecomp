@@ -346,24 +346,30 @@ INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", SetBattleStyle__Fii);
  * @address 0x1B0060
  * @size 0x1F8
  */
-#ifdef NON_MATCHING
-int ValuePrint(int x, int y, int value, int palette, unsigned char alpha) {
-    CTexture *texture = TexManager.GetTexture("status", -1);
-    int digits[3] = {value / 100, (value / 10) % 10, value % 10};
-    int first = digits[0] > 0 ? 0 : 1;
-    int source_y = palette * 12 + 176;
-    for (int digit = first; digit < 3; digit++) {
-        CRect_i_ destination(x, y, 12, 12);
-        CRect_i_ source(digits[digit] * 12, source_y, 12, 12);
-        set2DSprite(Vif1Packet, texture, destination, source, alpha);
+int ValuePrint(int x, int y, int value, int row, u8 alpha) {
+    CTexture *digits = TexManager.GetTexture("stayframe", -1);
+    int top = row * 12 + 176;
+    int drawn = 0;
+    int place = value / 100;
+
+    if (place > 0) {
+        set2DSprite(Vif1Packet, digits, CRect_i_(x, y, 12, 12),
+                    CRect_i_(place * 12, top, 12, 12), alpha);
+        value -= place * 100;
         x += 12;
+        drawn++;
     }
-    return 3 - first;
+
+    place = value / 10;
+    set2DSprite(Vif1Packet, digits, CRect_i_(x, y, 12, 12), CRect_i_(place * 12, top, 12, 12),
+                alpha);
+
+    place = value % 10;
+    set2DSprite(Vif1Packet, digits, CRect_i_(x + 12, y, 12, 12),
+                CRect_i_(place * 12, top, 12, 12), alpha);
+
+    return drawn + 2;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", ValuePrint__FiiiiUc);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @778);
 /**
  * Clears the pulse that warns of low life.
  *
