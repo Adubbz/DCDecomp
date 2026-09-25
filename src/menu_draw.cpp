@@ -1047,7 +1047,6 @@ void SetMenuTrushMark(ITEM_PACK *items) {
 void DeleteMenuTrushMark() {
     memset(MenuTrushMark, 0, sizeof(MenuTrushMark));
 }
-#ifdef NON_MATCHING
 void InitPersonalBoardMode(CUserStatus *status, PERSONAL_BOARD *board, int mode, int page) {
     PerBoardStatusPt = status;
     PerBoardPt = board;
@@ -1083,21 +1082,19 @@ void InitPersonalBoardMode(CUserStatus *status, PERSONAL_BOARD *board, int mode,
             full = 2;
         }
         for (int i = 0; i < 6; i++) {
-            if (PerBoardStatusPt->chara_weapons[i][10].item_no >= 0x101) {
+            WEAPON_HAVE *row = PerBoardStatusPt->chara_weapons[i];
+            if (row[10].item_no >= 0x101) {
                 full = 1;
                 break;
             }
         }
-        if (full != 0) {
-            return;
+        switch (full) {
+            case 0:
+                SetMenuTrushMark(pack);
+                break;
         }
-        SetMenuTrushMark(pack);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", InitPersonalBoardMode__FP11CUserStatusP14PERSONAL_BOARDii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @1073);
 
 int BoardModeChangeKey() {
     int board_mode = PerBoardPt->page;
