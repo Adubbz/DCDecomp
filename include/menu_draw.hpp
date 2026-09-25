@@ -50,6 +50,16 @@ struct DUN_ENTER_MENU {
 STATIC_ASSERT(sizeof(DUN_ENTER_MENU) == 0x1AC);
 
 /**
+ * Throw animation state of a personal inventory board's trash can.
+ */
+struct PERSONAL_BOARD_TRASH {
+    s16 anim;  /**< One while the trash can plays its throw animation. */
+    s32 frame; /**< Frame of the throw animation. */
+};
+
+STATIC_ASSERT(sizeof(PERSONAL_BOARD_TRASH) == 0x8);
+
+/**
  * State of a personal inventory board, the item list that the item, shop and Atla menus share.
  */
 struct PERSONAL_BOARD {
@@ -60,9 +70,7 @@ struct PERSONAL_BOARD {
     float y;         /**< Screen Y the board draws at, eased toward its top row. */
     float scroll;    /**< Scroll bar position the board draws. */
     s32 top_row;     /**< Row the board shows first. */
-    s16 trash_anim; /**< One while the trash can plays its throw animation. */
-    u8 unk_1E[2];
-    s32 trash_frame; /**< Frame of the trash can's throw animation. */
+    PERSONAL_BOARD_TRASH trash; /**< Throw animation of the board's trash can. */
     ITEM_PACK *item_pack; /**< Item pack the board lists. */
     DNG_CONSUMABLE *consumables; /**< Stored attachments the board lists. */
     s16 *unk_2C;

@@ -5769,8 +5769,8 @@ int ItemMenuMainKey() {
                             if (held < 0x51) {
                                 ComMenuSePlay(2);
                             } else if (IsEnableTrushThrow(held) != 0) {
-                                board->trash_anim = 1;
-                                board->trash_frame = 0;
+                                board->trash.anim = 1;
+                                board->trash.frame = 0;
                                 InitHaveData(BtlHaveItemPt);
                                 ComMenuSePlay(1);
                             } else {

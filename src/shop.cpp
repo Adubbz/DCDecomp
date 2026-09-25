@@ -1635,8 +1635,8 @@ int ChargeShopKey() {
                                     ComMenuSePlay(2);
                                 } else {
                                     if (IsEnableTrushThrow(held) != 0) {
-                                        board->trash_anim = 1;
-                                        board->trash_frame = 0;
+                                        board->trash.anim = 1;
+                                        board->trash.frame = 0;
                                         InitAllHaveData();
                                     }
                                     ComMenuSePlay(2);
@@ -4098,8 +4098,8 @@ int ItemShopKey2() {
                                 ComMenuSePlay(2);
                                 s16 held = ShopHaveItemPt->item_no;
                                 if (held >= 0x51 && held_info != 1 && IsEnableTrushThrow(held) != 0) {
-                                    board->trash_anim = 1;
-                                    board->trash_frame = 0;
+                                    board->trash.anim = 1;
+                                    board->trash.frame = 0;
                                     ShopHaveItemPt->item_no = 0;
                                 }
                                 break;

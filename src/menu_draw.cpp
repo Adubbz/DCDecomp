@@ -1073,8 +1073,8 @@ void InitPersonalBoardMode(CUserStatus *status, PERSONAL_BOARD *board, int mode,
     InitHaveData(&PerBoardPt->held_item);
     InitHaveWep(&PerBoardPt->weapon);
     PerBoardPt->unk_15C = -1;
-    PerBoardPt->trash_anim = 0;
-    PerBoardPt->trash_frame = 0;
+    PerBoardPt->trash.anim = 0;
+    PerBoardPt->trash.frame = 0;
     DeleteMenuTrushMark();
     s16 full = -1;
     if (PerBoardStatusPt->unk_431C != 0) {
@@ -1932,24 +1932,24 @@ void CommonTrushDraw(int x, int y, int alpha) {
     CRect_i_ source(0x190, 0x90, 0x30, 0x30);
     CRect_i_ dest(x, y + 1, 0x30, 0x2F);
 
-    if (PerBoardPt->trash_anim != 1) {
+    if (PerBoardPt->trash.anim != 1) {
         if (PerBoardPt->cursor_area == 2) {
             source.x = 0x130;
         }
         DrawMenu2DSprite(PerBoardTex, dest, source, alpha);
         return;
     }
-    int frame = PerBoardPt->trash_frame;
+    int frame = PerBoardPt->trash.frame;
     if (frame < 4 || frame >= 13) {
         source.x -= 0x30;
     } else if (frame >= 7 && frame < 10) {
         source.x += 0x30;
     }
     DrawMenu2DSprite(PerBoardTex, dest, source, alpha);
-    PerBoardPt->trash_frame++;
+    PerBoardPt->trash.frame++;
     if (frame >= 16) {
-        PerBoardPt->trash_anim = 0;
-        PerBoardPt->trash_frame = 0;
+        PerBoardPt->trash.anim = 0;
+        PerBoardPt->trash.frame = 0;
     }
 }
 #else
