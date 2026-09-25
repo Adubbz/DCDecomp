@@ -390,39 +390,44 @@
         "@161"
       ],
       ".editindraw": [
-        "@175",
-        "@197"
+        "@413",
+        "@435"
       ],
       ".editinpause": [
-        "@237"
+        "@475"
       ],
       ".editinmove": [
-        "@304",
-        "@305"
+        "@542",
+        "@543"
       ],
       ".editincamdist": [
         "camera_distance$1155"
       ],
       ".editincampos": [
-        "@412"
+        "@650"
       ],
       ".editintex": [
         "texdata$1374"
       ],
       ".editinload": [
-        "@622",
-        "@623",
-        "@624",
-        "@625"
+        "@860",
+        "@861",
+        "@862",
+        "@863"
       ],
       ".editinpts": [
-        "@656",
-        "@681"
+        "@894",
+        "@919"
       ],
       ".editinfixpos": [
         "fix_pos$1123"
       ],
       ".editinsbss": [
+        "event_text$604",
+        "init$605",
+        "old_mode$633",
+        "end_count$644",
+        "init$645",
         "debug_flag$964",
         "init$965",
         "debug_menu_mode$967",
