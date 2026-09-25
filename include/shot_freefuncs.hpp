@@ -87,7 +87,8 @@ void DrawWaterLing(void);
 void StepWaterLing(void);
 
 /**
- * Chooses the stance the player takes from the nearest monster.
+ * Mixes the battle music against the ambience by the distance to the nearest active monster
+ * and returns that distance.
  *
  * @mangled SetBattleStyle__Fii
  * @address 0x1AFE90

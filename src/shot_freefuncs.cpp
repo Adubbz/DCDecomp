@@ -11,7 +11,9 @@
 #include "dun/gameloop.hpp"
 #include "dungeonmap.hpp"
 #include "healeffect.hpp"
+#include "mathutil.hpp"
 #include "mglib.hpp"
+#include "monstorunit.hpp"
 #include "nowload.hpp"
 #include "rect.hpp"
 #include "snd.hpp"
@@ -38,6 +40,16 @@ extern char BtCfgCash[64];
  * Whether the jump cache holds a map.
  */
 extern int BtCfgFlag;
+
+/**
+ * Number of floors in each dungeon.
+ */
+extern int maxFloorTbl[7];
+
+/**
+ * Crossfades the battle music and the field ambience from the distance of the nearest monster.
+ */
+extern void BtBattleMusic_Excg(float distance, float *field_volume, float *battle_volume);
 
 /**
  * The message shown for the cached map jump.
@@ -313,32 +325,66 @@ void StepWaterLing(void) {
         }
     }
 }
+
 /**
- * Chooses the stance the player takes from the nearest monster.
+ * Mixes the battle music against the ambience by the distance to the nearest active monster
+ * and returns that distance.
  *
  * @mangled SetBattleStyle__Fii
  * @address 0x1AFE90
  * @size 0x1D0
  */
-#ifdef NON_MATCHING
-float SetBattleStyle(int map_no, int preserve_bgm) {
-    (void) map_no;
-    float nearest_distance = 10000.0f;
-    // The retail routine lowers the battle mix as the closest living monster approaches.
-    float battle_volume = nearest_distance < 60.0f ? 1.0f : 0.0f;
-    float ambient_volume = 1.0f - battle_volume;
-    if (preserve_bgm == 0) {
-        SndSetBgmVolf(battle_volume);
+float SetBattleStyle(int dungeon, int keep_bgm) {
+    float monster_position[4];
+    float player_position[4];
+    float bgm_volume;
+    float ambient_volume;
+    float distance;
+    float nearest_distance;
+    int i;
+    int active;
+
+    nearest_distance = 10000;
+    sceVu0CopyVector(player_position, CharaMain.pos);
+
+    for (i = 0; i < 16; i++) {
+        if (NowMonstorUnit->monster[i].state != -1) {
+            if (i >= 0 && i < 17) {
+                active = NowMonstorUnit->monster[i].unk_0D4;
+            }
+
+            if (active != 0) {
+                NowMonstorUnit->chara[i][0].GetPosition(monster_position);
+                distance = DistVector(player_position, monster_position);
+
+                if (distance < nearest_distance) {
+                    nearest_distance = distance;
+                }
+            }
+        }
     }
-    SndAmbientSetVolf(ambient_volume);
-    if (ambient_volume > 0.0f) {
-        SndAmbientPlay(0);
+
+    if (dungeon != 5) {
+        int max_floor = maxFloorTbl[dungeon];
+        CUserStatus *status = UserStatus;
+
+        if (status->cur_floor < max_floor - 1) {
+            BtBattleMusic_Excg(nearest_distance, &bgm_volume, &ambient_volume);
+
+            if (!(ambient_volume <= 0.0f)) {
+                SndAmbientPlay(0);
+            }
+
+            if (keep_bgm == 0) {
+                SndSetBgmVolf(bgm_volume);
+            }
+
+            SndAmbientSetVolf(ambient_volume);
+        }
     }
+
     return nearest_distance;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", SetBattleStyle__Fii);
-#endif
 /**
  * Draws a three-digit value out of the number sheet.
  *
