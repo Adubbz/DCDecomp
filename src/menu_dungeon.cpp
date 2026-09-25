@@ -1031,37 +1031,211 @@ int CharaChangeLoop(void) {
     }
     return result;
 }
-#ifdef NON_MATCHING
-int CharaChangeKey(void) {
-    int previous = quick_change_selected;
-    int party_size = UserStatus != NULL ? UserStatus->party_size : 1;
 
-    if (GamePad.Down(0x3000)) {
-        quick_change_selected--;
-    } else if (GamePad.Down(0xC000)) {
-        quick_change_selected++;
-    }
-    if (quick_change_selected < 0) {
-        quick_change_selected = party_size - 1;
-    } else if (quick_change_selected >= party_size) {
-        quick_change_selected = 0;
-    }
-    if (previous != quick_change_selected) {
-        CharaChangeInitToGL(quick_change_buffer, quick_change_selected);
-        ComMenuSePlay(0);
-    }
-    if (GamePad.Down(0x40) && UserStatus != NULL) {
-        UserStatus->cur_chara = quick_change_selected;
-        ComMenuSePlay(1);
-        return 1;
-    }
-    if (GamePad.Down(0x20)) {
-        ComMenuSePlay(2);
-        return quick_change_state == 2 ? 2 : 1;
-    }
-    return 0;
+/** Status of the party the character change menu picks from. */
+extern CDngStatusData *ChangeStatusDataPt;
+
+/**
+ * Makes a character the party's leader.
+ */
+static inline void SetStatusChara(CDngStatusData *status, s8 chara) {
+    status->unk_04 = chara;
 }
 
+int CharaChangeKey(void) {
+    int result = 0;
+
+    ReadBG();
+    switch (ChangeMenu.unk_03) {
+        case 5:
+            ChangeMenu.unk_4c++;
+            if (ReadBGSync() == 0 && ChangeMenu.unk_4c > 0x10) {
+                BtMenuLoadChara();
+                StartReadBG();
+                CharaChangeInitToGL2(0);
+                ChangeMenu.unk_03 = 6;
+            }
+            break;
+        case 6:
+            ChangeMenu.unk_4c++;
+            if (ReadBGSync() == 0 && ChangeMenu.unk_4c > 0x10) {
+                BtMenuLoad2(0);
+                LockOffTargte();
+                InitReadBG();
+                return 1;
+            }
+            break;
+        case 3:
+        case 4: {
+            int message = 1;
+            if (ChangeMenu.unk_52 == 1) {
+                message = 4;
+            }
+            if (ChangeMenu.unk_52 == 2) {
+                message = 5;
+            }
+            if (CommonMenuMes3.mes_made != message) {
+                CommonMenuMes3.MakeMesWin(message);
+            }
+            if (GamePad.Down(0x60)) {
+                if (ChangeMenu.unk_5c != 0) {
+                    ChangeMenu.unk_03 = 2;
+                    CommonMenuMes3.MakeMesWin(ChangeMenu.unk_52 == 0 ? 1 : 2);
+                } else {
+                    ChangeMenu.unk_03 = 0;
+                }
+                ComMenuSePlay(2);
+            }
+            break;
+        }
+        case 1:
+            ChangeMenu.unk_04 += 1.0f;
+            if (ChangeMenu.unk_04 >= 21.0f) {
+                if (ChangeMenu.unk_44 > 0.0f) {
+                    for (int i = 0; i < 6; i++) {
+                        ChangeMenu.unk_38[i]++;
+                        if (ChangeMenu.unk_38[i] == ChangeMenu.unk_02) {
+                            ChangeMenu.unk_38[i] = 0;
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < ChangeMenu.unk_02; i++) {
+                        ChangeMenu.unk_38[i]--;
+                        if (ChangeMenu.unk_38[i] == -1) {
+                            ChangeMenu.unk_38[i] = ChangeMenu.unk_02 - 1;
+                        }
+                    }
+                }
+                ChangeMenu.unk_03 = 0;
+                ChangeMenu.unk_04 = 0.0f;
+                ChangeMenu.unk_44 = 0.0f;
+            }
+            break;
+        case 2: {
+            int message = 1;
+            if (ChangeMenu.unk_52 == 1 || ChangeMenu.unk_52 == 2) {
+                message = 2;
+            }
+            if (CommonMenuMes3.mes_made != message) {
+                CommonMenuMes3.MakeMesWin(message);
+            }
+            if (GamePad.Down(0x5000)) {
+                if (ChangeMenu.unk_01 > 0) {
+                    ChangeMenu.unk_01 = 0;
+                } else {
+                    ChangeMenu.unk_01 = 1;
+                }
+                ComMenuSePlay(0);
+            }
+            if (GamePad.Down(0x40)) {
+                ITEM_PACK *pack = &ChangeStatusDataPt->item_pack;
+                int count = GetNowItemNum(0xAE, pack);
+                if (ChangeMenu.unk_01 != 0) {
+                    result = 2;
+                    ComMenuSePlay(1);
+                } else if (ChangeMenu.unk_52 == 1) {
+                    ComMenuSePlay(2);
+                    ChangeMenu.unk_03 = 3;
+                    return 0;
+                } else if (ChangeMenu.unk_52 == 2) {
+                    ComMenuSePlay(2);
+                    ChangeMenu.unk_03 = 3;
+                    return 0;
+                } else if (count > 0) {
+                    ChangeMenu.unk_03 = 0;
+                    ComMenuSePlay(1);
+                } else {
+                    ComMenuSePlay(2);
+                }
+            } else if (GamePad.Down(0x20)) {
+                ComMenuSePlay(2);
+            }
+            break;
+        }
+        case 0: {
+            if (GamePad.Down(0x40)) {
+                if (ChangeMenu.unk_00 > ChangeMenu.unk_02 - 1) {
+                    ComMenuSePlay(2);
+                    ChangeMenu.unk_03 = 3;
+                    return 0;
+                }
+                if (ChangeMenu.unk_52 == 1) {
+                    ComMenuSePlay(2);
+                    CommonMenuMes3.MakeMesWin(4);
+                    ChangeMenu.unk_03 = 3;
+                    return 0;
+                }
+                if (ChangeMenu.unk_52 == 2) {
+                    CommonMenuMes3.MakeMesWin(5);
+                    ChangeMenu.unk_03 = 3;
+                    ComMenuSePlay(2);
+                    return 0;
+                }
+                CDngStatusData *status = ChangeStatusDataPt;
+                int hp = status->hp[ChangeMenu.unk_00];
+                int flags = status->GetActiveCharaStatus(ChangeMenu.unk_00);
+                if (hp <= 0 || (flags & 2)) {
+                    ComMenuSePlay(2);
+                    return 0;
+                }
+                if (ChangeMenu.unk_00 != status->unk_04) {
+                    ComMenuSePlay(1);
+                    SetStatusChara(ChangeStatusDataPt, ChangeMenu.unk_00);
+                    if (ChangeMenu.unk_5c == 1) {
+                        ChangeStatusDataPt->LostItem(0xAE);
+                    }
+                    ChangeMenu.unk_4c = 0;
+                    ChangeMenu.unk_03 = 5;
+                    ChangeMenu.unk_5c = 0;
+                    return 0;
+                }
+                ComMenuSePlay(1);
+            } else if (GamePad.Down(0x20)) {
+                if (ChangeStatusDataPt->hp[ChangeStatusDataPt->unk_04] < 0 || ChangeMenu.unk_5c != 0) {
+                    ChangeMenu.unk_03 = 2;
+                    ChangeMenu.unk_01 = 0;
+                    ChangeMenu.unk_54 = CommonMenuMes3.text_x - 0x1E;
+                    ChangeMenu.unk_58 = CommonMenuMes3.text_y + 0x10 + ChangeMenu.unk_01 * 24;
+                } else {
+                    result = 1;
+                }
+                ComMenuSePlay(2);
+            }
+            int previous = ChangeMenu.unk_00;
+            if (GamePad.Down(0x3000)) {
+                ChangeMenu.unk_44 = 1.0f;
+                ChangeMenu.unk_00--;
+                if (ChangeMenu.unk_00 < 0) {
+                    ChangeMenu.unk_00 = ChangeMenu.unk_02 - 1;
+                }
+            }
+            if (GamePad.Down(0xC000)) {
+                ChangeMenu.unk_44 = -1.0f;
+                ChangeMenu.unk_00++;
+                if (ChangeMenu.unk_02 - 1 < ChangeMenu.unk_00) {
+                    ChangeMenu.unk_00 = 0;
+                }
+            }
+            if (previous != ChangeMenu.unk_00) {
+                ChangeMenu.unk_03 = 1;
+                BreakReadBG();
+                u_long128 *buffer = chara_change_buf;
+                CharaChangeInitToGL(buffer, ChangeMenu.unk_00);
+                ComMenuSePlay(0);
+            }
+            break;
+        }
+        case 7:
+            ChangeMenu.unk_4c += 7;
+            if (ChangeMenu.unk_4c > 0xFA) {
+                result = 2;
+            }
+            break;
+    }
+    return result;
+}
+
+#ifdef NON_MATCHING
 void CharaChangeDraw(void) {
     int index;
     int party_size = UserStatus != NULL ? UserStatus->party_size : 0;
@@ -1078,7 +1252,6 @@ void CharaChangeDraw(void) {
     CommonMenuMes3.DrawMesWin();
 }
 #else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", CharaChangeKey__Fv);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", CharaChangeDraw__Fv);
 #endif
 
