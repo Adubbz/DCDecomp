@@ -1341,74 +1341,77 @@ static int buildRoom(int x, int y, int w, int h, int room_no) {
     return 1;
 }
 
-#ifdef NON_MATCHING
 /**
  * Converts the builder flags and adjacency data into drawable map parts.
  */
 void mapPartsFilter(void) {
-    int row;
     int col;
+    int row;
     int room_no;
     int table_no;
+    int north;
+    int south;
+    int east;
+    int west;
 
     for (row = 0; row < 20; row++) {
         for (col = 0; col < 20; col++) {
-            BUILD_MAP_INFO *cell = &buildMapDat[col + row * 20];
-
-            if ((cell->unk_48 & 2) == 2) {
+            // A corridor cell joins every neighbour that shares one of its rooms.
+            if ((buildMapDat[col + row * 20].unk_48 & 2) == 2) {
                 int mask = 15;
-                BUILD_MAP_INFO *north = &buildMapDat[col + (row - 1) * 20];
-                BUILD_MAP_INFO *south = &buildMapDat[col + (row + 1) * 20];
-                BUILD_MAP_INFO *east = &buildMapDat[col + 1 + row * 20];
-                BUILD_MAP_INFO *west = &buildMapDat[col - 1 + row * 20];
+                int north = buildMapDat[col + (row - 1) * 20].unk_48;
+                int south = buildMapDat[col + (row + 1) * 20].unk_48;
+                int east = buildMapDat[col + row * 20 + 1].unk_48;
+                int west = buildMapDat[col + row * 20 - 1].unk_48;
+
                 int allow_north = 1;
-                int allow_south = (south->unk_48 & 5) != 1;
-                int allow_east = (east->unk_48 & 5) != 1;
-                int allow_west = 1;
-
-                if ((north->unk_48 & 5) == 1)
+                if ((north & 5) == 1)
                     allow_north = 0;
-                if ((west->unk_48 & 5) == 1)
-                    allow_west = 0;
-
-                if ((north->unk_48 & 0x180) != 0 && north->unk_04 != 0) {
+                if ((north & 0x180) != 0 && buildMapDat[col + (row - 1) * 20].unk_04 != 0)
                     allow_north = 0;
-                }
-                if ((south->unk_48 & 0x180) != 0 && south->unk_04 != 2) {
+                int allow_south = 1;
+                if ((south & 5) == 1)
                     allow_south = 0;
-                }
-                if ((east->unk_48 & 0x180) != 0 && east->unk_04 != 1) {
+                if ((south & 0x180) != 0 && buildMapDat[col + (row + 1) * 20].unk_04 != 2)
+                    allow_south = 0;
+                int allow_east = 1;
+                if ((east & 5) == 1)
                     allow_east = 0;
-                }
-                if ((west->unk_48 & 0x180) != 0 && west->unk_04 != 3) {
+                if ((east & 0x180) != 0 && buildMapDat[col + row * 20 + 1].unk_04 != 1)
+                    allow_east = 0;
+                int allow_west = 1;
+                if ((west & 5) == 1)
                     allow_west = 0;
-                }
+                if ((west & 0x180) != 0 && buildMapDat[col + row * 20 - 1].unk_04 != 3)
+                    allow_west = 0;
+
                 for (room_no = 0; room_no < 16; room_no++) {
-                    if (cell->link[room_no] == 1) {
-                        if (north->link[room_no] == 1 && allow_north != 0)
+                    if (buildMapDat[col + row * 20].link[room_no] == 1) {
+                        if (buildMapDat[col + (row - 1) * 20].link[room_no] == 1 && allow_north != 0)
                             mask &= ~1;
-                        if (south->link[room_no] == 1 && allow_south != 0)
+                        if (buildMapDat[col + (row + 1) * 20].link[room_no] == 1 && allow_south != 0)
                             mask &= ~8;
-                        if (east->link[room_no] == 1 && allow_east != 0)
+                        if (buildMapDat[col + row * 20 + 1].link[room_no] == 1 && allow_east != 0)
                             mask &= ~2;
-                        if (west->link[room_no] == 1 && allow_west != 0)
+                        if (buildMapDat[col + row * 20 - 1].link[room_no] == 1 && allow_west != 0)
                             mask &= ~4;
                     }
                 }
                 for (table_no = 0; table_no < 15; table_no++) {
                     if (mask == chainTableRoad[table_no][0]) {
-                        cell->kind = chainTableRoad[table_no][1];
-                        cell->unk_04 = chainTableRoad[table_no][2];
+                        buildMapDat[col + row * 20].kind = chainTableRoad[table_no][1];
+                        buildMapDat[col + row * 20].unk_04 = chainTableRoad[table_no][2];
                     }
                 }
             }
 
-            if ((cell->unk_48 & 1) == 1) {
+            // A room cell joins the neighbouring room cells.
+            if ((buildMapDat[col + row * 20].unk_48 & 1) == 1) {
                 int mask = 15;
-                int north = row != 0 ? buildMapDat[col + (row - 1) * 20].unk_48 & 1 : 0;
-                int south = row != 19 ? buildMapDat[col + (row + 1) * 20].unk_48 & 1 : 0;
-                int east = col != 19 ? buildMapDat[col + 1 + row * 20].unk_48 & 1 : 0;
-                int west = col != 0 ? buildMapDat[col - 1 + row * 20].unk_48 & 1 : 0;
+                north = row != 0 ? buildMapDat[col + (row - 1) * 20].unk_48 & 1 : 0;
+                south = row != 19 ? buildMapDat[col + (row + 1) * 20].unk_48 & 1 : 0;
+                east = col != 19 ? buildMapDat[col + row * 20 + 1].unk_48 & 1 : 0;
+                west = col != 0 ? buildMapDat[col + row * 20 - 1].unk_48 & 1 : 0;
                 if (north == 1)
                     mask &= ~1;
                 if (south == 1)
@@ -1419,46 +1422,58 @@ void mapPartsFilter(void) {
                     mask &= ~4;
                 for (table_no = 0; table_no < 8; table_no++) {
                     if (mask == chainTableRoom[table_no][0]) {
-                        cell->kind = chainTableRoom[table_no][1];
-                        cell->unk_04 = chainTableRoom[table_no][2];
+                        buildMapDat[col + row * 20].kind = chainTableRoom[table_no][1];
+                        buildMapDat[col + row * 20].unk_04 = chainTableRoom[table_no][2];
                     }
                 }
             }
 
-            if ((cell->unk_48 & 0x404) == 4) {
-                int mask = (buildMapDat[col + (row - 1) * 20].unk_48 & 1) == 1;
+            // A door faces the room cell beside it.
+            if ((buildMapDat[col + row * 20].unk_48 & 0x404) == 4) {
+                int mask = 0;
+
+                if ((buildMapDat[col + (row - 1) * 20].unk_48 & 1) == 1)
+                    mask |= 1;
                 if ((buildMapDat[col + (row + 1) * 20].unk_48 & 1) == 1)
                     mask |= 8;
-                if ((buildMapDat[col + 1 + row * 20].unk_48 & 1) == 1)
+                if ((buildMapDat[col + row * 20 + 1].unk_48 & 1) == 1)
                     mask |= 2;
-                if ((buildMapDat[col - 1 + row * 20].unk_48 & 1) == 1)
+                if ((buildMapDat[col + row * 20 - 1].unk_48 & 1) == 1)
                     mask |= 4;
                 for (table_no = 0; table_no < 4; table_no++) {
                     if (mask == chainTableDoor[table_no][0])
-                        cell->kind = chainTableDoor[table_no][1];
+                        buildMapDat[col + row * 20].kind = chainTableDoor[table_no][1];
                 }
             }
-            if ((cell->unk_48 & 8) == 8) {
-                cell->kind = MAP_PARTS_HEAL_SPRING_NORTH;
-                cell->unk_04 = 0;
+            if ((buildMapDat[col + row * 20].unk_48 & 8) == 8) {
+                buildMapDat[col + row * 20].kind = MAP_PARTS_HEAL_SPRING_NORTH;
+                buildMapDat[col + row * 20].unk_04 = 0;
             }
-            if ((cell->unk_48 & 0x40) == 0x40) {
-                if ((100.0f * (float) rand()) / 2147483648.0f > 50.0f) {
-                    cell->kind = MAP_PARTS_PILLAR_2;
+            if ((buildMapDat[col + row * 20].unk_48 & 0x40) == 0x40) {
+                if ((100.0f * (float) rand()) / 2147483648.0f <= 50.0f) {
+                    buildMapDat[col + row * 20].kind = MAP_PARTS_PILLAR_1;
                 } else {
-                    cell->kind = MAP_PARTS_PILLAR_1;
+                    buildMapDat[col + row * 20].kind = MAP_PARTS_PILLAR_2;
                 }
-                cell->unk_04 = 0;
+                buildMapDat[col + row * 20].unk_04 = 0;
             }
 
-            if ((cell->unk_48 & 0x10) == 0x10) {
+            // A dividing wall joins the walls and rooms around it.
+            if ((buildMapDat[col + row * 20].unk_48 & 0x10) == 0x10) {
                 int mask = 0;
-                int north = row != 0 ? buildMapDat[col + (row - 1) * 20].unk_48 : 0;
-                int south = row != 19 ? buildMapDat[col + (row + 1) * 20].unk_48 : 0;
-                int east = col != 19 ? buildMapDat[col + 1 + row * 20].unk_48 : 0;
-                int west = col != 0 ? buildMapDat[col - 1 + row * 20].unk_48 : 0;
+
+                north = south = east = west = 0;
+
+                if (row != 0)
+                    north = buildMapDat[col + (row - 1) * 20].unk_48;
+                if (row != 19)
+                    south = buildMapDat[col + (row + 1) * 20].unk_48;
+                if (col != 19)
+                    east = buildMapDat[col + row * 20 + 1].unk_48;
+                if (col != 0)
+                    west = buildMapDat[col + row * 20 - 1].unk_48;
                 if ((north & 0x10) == 0x10)
-                    mask = 1;
+                    mask |= 1;
                 if ((south & 0x10) == 0x10)
                     mask |= 8;
                 if ((east & 0x10) == 0x10)
@@ -1475,17 +1490,24 @@ void mapPartsFilter(void) {
                     mask |= 0x40;
                 for (table_no = 0; table_no < 6; table_no++) {
                     if (mask == chainTableDivid[table_no][0])
-                        cell->kind = chainTableDivid[table_no][1];
+                        buildMapDat[col + row * 20].kind = chainTableDivid[table_no][1];
                 }
             }
-            if ((cell->unk_48 & 0x20) == 0x20) {
+            if ((buildMapDat[col + row * 20].unk_48 & 0x20) == 0x20) {
                 int mask = 0;
-                int north = row != 0 ? buildMapDat[col + (row - 1) * 20].unk_48 : 0;
-                int south = row != 19 ? buildMapDat[col + (row + 1) * 20].unk_48 : 0;
-                int east = col != 19 ? buildMapDat[col + 1 + row * 20].unk_48 : 0;
-                int west = col != 0 ? buildMapDat[col - 1 + row * 20].unk_48 : 0;
+
+                north = south = east = west = 0;
+
+                if (row != 0)
+                    north = buildMapDat[col + (row - 1) * 20].unk_48;
+                if (row != 19)
+                    south = buildMapDat[col + (row + 1) * 20].unk_48;
+                if (col != 19)
+                    east = buildMapDat[col + row * 20 + 1].unk_48;
+                if (col != 0)
+                    west = buildMapDat[col + row * 20 - 1].unk_48;
                 if ((north & 0x10) == 0x10)
-                    mask = 1;
+                    mask |= 1;
                 if ((south & 0x10) == 0x10)
                     mask |= 8;
                 if ((east & 0x10) == 0x10)
@@ -1494,21 +1516,18 @@ void mapPartsFilter(void) {
                     mask |= 4;
                 for (table_no = 0; table_no < 2; table_no++) {
                     if (mask == chainTableDividDoor[table_no][0])
-                        cell->kind = chainTableDividDoor[table_no][1];
+                        buildMapDat[col + row * 20].kind = chainTableDividDoor[table_no][1];
                 }
             }
-            if ((cell->unk_48 & 0x80) == 0x80)
-                cell->kind = MAP_PARTS_STAIR_DOWN;
-            if ((cell->unk_48 & 0x100) == 0x100)
-                cell->kind = MAP_PARTS_STAIR_UP;
-            if ((cell->unk_48 & 0x200) == 0x200)
-                cell->kind = MAP_PARTS_URA_ENTRANCE_NORTH;
+            if ((buildMapDat[col + row * 20].unk_48 & 0x80) == 0x80)
+                buildMapDat[col + row * 20].kind = MAP_PARTS_STAIR_DOWN;
+            if ((buildMapDat[col + row * 20].unk_48 & 0x100) == 0x100)
+                buildMapDat[col + row * 20].kind = MAP_PARTS_STAIR_UP;
+            if ((buildMapDat[col + row * 20].unk_48 & 0x200) == 0x200)
+                buildMapDat[col + row * 20].kind = MAP_PARTS_URA_ENTRANCE_NORTH;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonmap", mapPartsFilter__Fv);
-#endif
 
 static void copyMapInfo(BUILD_MAP_INFO *dst, BUILD_MAP_INFO *src) {
     for (int i = 0; i < 400; i++) {
