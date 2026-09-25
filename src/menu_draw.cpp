@@ -2039,7 +2039,6 @@ s16 SearchBoardNowPosItemExist(int page, int cell) {
     }
     return item_no;
 }
-#ifdef NON_MATCHING
 int GetBoardSpace(int item_no, int *page) {
     int space = -1;
 
@@ -2050,12 +2049,14 @@ int GetBoardSpace(int item_no, int *page) {
     int max = PersonalRetMax(*page);
     switch (*page) {
         case 0: {
+            int quick;
+            int i;
             ITEM_PACK *pack = &PerBoardStatusPt->item_pack;
-            int quick = 0;
-            for (int i = 0; i < 3; i++) {
+            quick = 0;
+            for (i = 0; i < 3; i++) {
                 quick += pack->quick_item_qty[i];
             }
-            for (int i = 0; i < max - quick; i++) {
+            for (i = 0; i < max - quick; i++) {
                 if (pack->item[i] < 0x84 && MenuTrushMark[i] == 0) {
                     space = i;
                     break;
@@ -2065,8 +2066,10 @@ int GetBoardSpace(int item_no, int *page) {
         }
         case 1: {
             int owner = WhoIsWeaponEquip(item_no);
-            WEAPON_HAVE *weapons = PerBoardStatusPt->chara_weapons[owner];
-            for (int i = 0; i < 10; i++) {
+            int i;
+            CUserStatus *status = PerBoardStatusPt;
+            WEAPON_HAVE *weapons = status->chara_weapons[owner];
+            for (i = 0; i < 10; i++) {
                 if (weapons[i].item_no < 0x101) {
                     space = i + owner * 10;
                     break;
@@ -2074,20 +2077,20 @@ int GetBoardSpace(int item_no, int *page) {
             }
             break;
         }
-        case 2:
-            for (int i = 0; i < max; i++) {
-                if (PerBoardStatusPt->consumable_items[i].id < 0x51) {
+        case 2: {
+            int i;
+            DNG_CONSUMABLE *items = PerBoardStatusPt->consumable_items;
+            for (i = 0; i < max; i++) {
+                if (items[i].id < 0x51) {
                     space = i;
                     break;
                 }
             }
             break;
+        }
     }
     return space;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetBoardSpace__FiPi);
-#endif
 
 void SwapItem(ITEM_PACK *items, int first_pos, int second_pos) {
     s16 item = items->item[first_pos];
