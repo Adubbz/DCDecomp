@@ -355,41 +355,54 @@ void CItemBombEffect::Initialize(void) {
  * @address 0x1D61E0
  * @size 0x2F8
  */
-#ifdef NON_MATCHING
 void CShockWave::Draw(CCamera *camera) {
+    sceVu0FVECTOR corner0;
+    sceVu0FVECTOR corner1;
+    sceVu0FVECTOR corner2;
+    sceVu0FVECTOR corner3;
+    int screen0[4];
+    int screen1[4];
+    int screen2[4];
+    int screen3[4];
+    sceVu0FVECTOR camera_position;
+    sceVu0FVECTOR direction;
+
     if (unk_28 == 0) {
         return;
     }
 
-    sceVu0FVECTOR camera_position;
-    sceVu0FVECTOR direction;
-    sceVu0FVECTOR corner[4];
-    int screen[4][4];
     camera->GetPos(camera_position);
     direction[0] = camera_position[0] - position[0];
-    direction[1] = 0.0f;
+    float *up = &direction[1];
+    *up = 0.0f;
     direction[2] = camera_position[2] - position[2];
-    direction[3] = 0.0f;
     sceVu0Normalize(direction, direction);
     direction[0] *= 10.0f;
     direction[2] *= 10.0f;
 
-    for (int i = 0; i < 4; i++) {
-        sceVu0CopyVector(corner[i], position);
-    }
-    corner[0][0] -= radius;
-    corner[0][2] -= radius;
-    corner[1][0] += radius;
-    corner[1][2] -= radius;
-    corner[2][0] -= radius;
-    corner[2][2] += radius;
-    corner[3][0] += radius;
-    corner[3][2] += radius;
+    sceVu0CopyVector(corner0, position);
+    corner0[0] -= radius;
+    corner0[2] -= radius;
+    sceVu0CopyVector(corner1, position);
+    corner1[0] += radius;
+    corner1[2] -= radius;
+    sceVu0CopyVector(corner2, position);
+    corner2[0] -= radius;
+    corner2[2] += radius;
+    sceVu0CopyVector(corner3, position);
+    corner3[0] += radius;
+    corner3[2] += radius;
 
-    if (MGRotTransPers(screen[0], corner[0], 0) == 0 ||
-        MGRotTransPers(screen[1], corner[1], 0) == 0 ||
-        MGRotTransPers(screen[2], corner[2], 0) == 0 ||
-        MGRotTransPers(screen[3], corner[3], 0) == 0) {
+    if (MGRotTransPers(screen0, corner0, 0) == 0) {
+        return;
+    }
+    if (MGRotTransPers(screen1, corner1, 0) == 0) {
+        return;
+    }
+    if (MGRotTransPers(screen2, corner2, 0) == 0) {
+        return;
+    }
+    if (MGRotTransPers(screen3, corner3, 0) == 0) {
         return;
     }
 
@@ -403,14 +416,11 @@ void CShockWave::Draw(CCamera *camera) {
     zbuffer.bits.zmsk = 1;
     MGSetGsZBUF(&zbuffer);
     CRect_i_ source(0x80, 0, 0x40, 0x40);
-    set3DSprite(Vif1Packet, TexManager.GetTexture("bomb_ex", -1), source, screen[0], screen[1],
-                screen[2], screen[3], (u8) alpha);
+    set3DSprite(Vif1Packet, TexManager.GetTexture("bomb_ex", -1), source, screen0, screen1,
+                screen2, screen3, (u8) alpha);
     MGSetGsALPHA(NULL);
     MGSetGsZBUF(NULL);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/itembombeffect", Draw__10CShockWaveFP7CCamera);
-#endif
 
 /**
  * Expands and fades the shock-wave ring by a frame.
