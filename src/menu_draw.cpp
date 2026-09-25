@@ -1165,38 +1165,38 @@ void PersonalBoardLimmitCheck() {
         }
     }
 }
-#ifdef NON_MATCHING
 int PersonalBoardKeySub() {
     int left = 0;
     int area = PerBoardPt->cursor_area;
+    int page = PerBoardPt->page;
     int *cursor = &PerBoardPt->cursor;
-    int max = PersonalRetMax(PerBoardPt->page);
+    int max = PersonalRetMax(page);
 
     if (GamePad.Down(0x1000) != 0) {
         switch (PerBoardPt->cursor_area) {
-            case 2:
-                break;
             case 1:
-                if (*cursor >= 5) {
+                if (*cursor > 4) {
                     *cursor -= 5;
                 }
                 if (*cursor / 5 < PerBoardPt->top_row) {
                     PerBoardPt->top_row--;
                 }
                 break;
+            case 2:
+                break;
         }
     }
     if (GamePad.Down(0x4000) != 0) {
         switch (PerBoardPt->cursor_area) {
-            case 2:
-                break;
             case 1:
                 if (*cursor < max - 5) {
                     *cursor += 5;
                 }
-                if (PerBoardPt->top_row + 3 < *cursor / 5) {
+                if (*cursor / 5 > PerBoardPt->top_row + 3) {
                     PerBoardPt->top_row++;
                 }
+                break;
+            case 2:
                 break;
         }
     }
@@ -1234,9 +1234,6 @@ int PersonalBoardKeySub() {
     }
     return left;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardKeySub__Fv);
-#endif
 
 int PersonalBoardKey() {
     BoardModeChangeKey();
