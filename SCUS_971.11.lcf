@@ -485,7 +485,7 @@ SECTIONS
         editloop.cpp.o (.edmodedata)    // 0x00269460
         editloop.cpp.o (.edsuffix)      // 0x00269480
         . = ALIGN(4);
-        main.data.part4j.s.o (.data)    // 0x00269494
+        editloop.cpp.o (.edcursordata)  // 0x00269498
         editloop.cpp.o (.edtexdata)     // 0x002694e0
         editloop.cpp.o (.edgrounddata)  // 0x00269880
         editloop.cpp.o (.edptsdata)     // 0x002698f0
@@ -798,7 +798,9 @@ SECTIONS
 		main.sbss.part4g.s.o (.sbss)   // 0x002a29a4
 		editloop.cpp.o (.edmodeflags) // 0x002a29ac
 		. = ALIGN(4);
-		main.sbss.editloop-a.s.o (.sbss) // 0x002a29c4
+		editloop.cpp.o (.edmoveflags)  // 0x002a29c4
+		. = ALIGN(4);
+		main.sbss.editloop-a.s.o (.sbss) // 0x002a29d4
 		editloop3.cpp.o (.edsbss1)     // 0x002a29dc
 		editloop3.cpp.o (.fadebss)     // 0x002a29f8
 		editloop3.cpp.o (.edsbss2)     // 0x002a2a04

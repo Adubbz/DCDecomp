@@ -45,6 +45,7 @@
 #include "mapparts.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
+#include "memcard.hpp"
 #include "menu_misc.hpp"
 #include "menuitemstep.hpp"
 #include "mglib.hpp"
@@ -222,7 +223,6 @@ extern EDIT_ELEMENT_INFO EditElementInfo[36];
 #include "nowload.hpp"
 #include "wind.hpp"
 #ifdef NON_MATCHING // draft includes
-#include "memcard.hpp"
 #include "fishing.hpp"
 #include "effectmacro.hpp"
 #endif
@@ -3391,7 +3391,6 @@ int CheckEditToWalk(float *position) {
  * @address 0x1800C0
  * @size 0xB40
  */
-#ifdef NON_MATCHING
 void MoveEditCursor() {
     float pos[4];
     float camera_distance[3] = {1000.0f, 2000.0f, 4000.0f};
@@ -3406,8 +3405,13 @@ void MoveEditCursor() {
     }
 
     float camera_angle = EditCamera.GetAngle();
-    float right = EdGetLXf(2);
-    float forward = EdGetLYf(2);
+    float step_x;
+    float step_z;
+    float forward;
+    float right;
+
+    right = EdGetLXf(2);
+    forward = EdGetLYf(2);
 
     sceVu0CopyVector(pos, ECursorFrame->position);
 
@@ -3436,8 +3440,8 @@ void MoveEditCursor() {
         }
     }
 
-    float step_x = right * cosf(camera_angle) + forward * sinf(camera_angle);
-    float step_z = forward * cosf(camera_angle) - right * sinf(camera_angle);
+    step_x = right * cosf(camera_angle) + forward * sinf(camera_angle);
+    step_z = forward * cosf(camera_angle) - right * sinf(camera_angle);
 
     sceVu0CopyVector(pos, ECursorFrame->position);
     if (area != NULL) {
@@ -3629,9 +3633,6 @@ void MoveEditCursor() {
         EdEditMoveHelpMes();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop", MoveEditCursor__Fv);
-#endif
 /**
  * Enters the editor map's textures once they have been read.
  *
