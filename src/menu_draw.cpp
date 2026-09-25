@@ -25,6 +25,7 @@
 #include "memorycardaccess.hpp"
 #include "menu_dungeon.hpp"
 #include "menu_inventory.hpp"
+#include "menu_misc.hpp"
 #include "menuitemstep.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
@@ -65,7 +66,6 @@ extern CCamera MenuCamera;
 extern CTexture *StayTex;
 
 #ifdef NON_MATCHING // draft declarations
-#include "menu_misc.hpp"
 #include "sysmes.hpp"
 
 extern u8 MesWinTexBuff_01[0x100];
@@ -1268,22 +1268,23 @@ int PersonalBoardItemPush(IHAVEITEM *item, int board_pos) {
     return enabled;
 }
 
-#ifdef NON_MATCHING
 int PersonalBoardWeaponPush(IHAVEITEM *have, int cell) {
     int result = 0;
     int kind = WhatIsKindofItem(have->item_no);
     int chara = cell / 10;
     int slot = cell % 10;
-    WEAPON_HAVE *weapon = &PerBoardStatusPt->chara_weapons[chara][slot];
+    CUserStatus *status = PerBoardStatusPt;
+    WEAPON_HAVE *row = status->chara_weapons[chara];
+    WEAPON_HAVE *weapon = &row[slot];
+    int weapon_no = weapon->item_no;
 
     if (kind == 0) {
-        if (weapon->item_no < 0x101) {
+        if (weapon_no < 0x101) {
             return 0;
         }
         if (have->item_no == 0xB1) {
-            float durability = weapon->durability;
-            if (weapon->durability_f < durability) {
-                weapon->durability_f = durability;
+            if (weapon->durability_f < weapon->durability) {
+                weapon->durability_f = weapon->durability;
                 if (weapon->item_no == GetDefaultWeaponNo(chara)) {
                     weapon->item_no++;
                     WepDataListToHaveCopy(weapon->item_no, weapon);
@@ -1348,9 +1349,6 @@ int PersonalBoardWeaponPush(IHAVEITEM *have, int cell) {
     }
     return result;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardWeaponPush__FP9IHAVEITEMi);
-#endif
 
 /**
  * Swaps an attachment between the held item and the personal board.
