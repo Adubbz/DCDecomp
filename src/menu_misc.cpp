@@ -154,8 +154,8 @@ extern "C" const char *charaFile[6];
  */
 extern "C" const char CharaFileExtension[5];
 
-/** Frame numbers of the menu's cached weapon models. */
-extern int MenuWeaponModelData[42];
+/** Weapon model files the menu has taken out of the weapon pack, by pack order. */
+extern u_int *MenuWeaponModelData[42];
 
 /** Each weapon model slot's frame number and read state. */
 extern int MenuWeaponModelInfo[12][2];
@@ -176,7 +176,7 @@ static void SetWepEffectMenuReadBuf(u_long128 *);
  * @address 0x20D3B0
  * @size 0x18
  */
-static int *GetMenuWeaponModelData(int);
+static u_int **GetMenuWeaponModelData(int);
 
 /**
  * Clears the menu's weapon model table.
@@ -752,7 +752,7 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @995);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @996__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @997);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1002);
-static int *GetMenuWeaponModelData(int index) {
+static u_int **GetMenuWeaponModelData(int index) {
     return &MenuWeaponModelData[index];
 }
 static void InitMenuWeaponModelData() {
@@ -834,7 +834,7 @@ int EnterWeaponModel(int chara, int texture_block, int) {
                 strcat(image, ".mds");
                 u_int *file = GetPackFile((u_int *) pack->buffer, chr, NULL);
                 if (file != NULL) {
-                    *(u_int **) GetMenuWeaponModelData(i) = file;
+                    *GetMenuWeaponModelData(i) = file;
                 }
             }
             u_long128 *build;
@@ -882,10 +882,10 @@ void WeaponModelBuildFunc(int chara, int texture_block) {
     WEAPON_HAVE *weapons = ((CUserStatus *) BtlMenuStatusPt)->chara_weapons[chara];
     int default_no = GetDefaultWeaponNo(chara);
     int next = 2;
-    u_int **data = (u_int **) GetMenuWeaponModelData(0);
+    u_int **data = GetMenuWeaponModelData(0);
     BtGetWeaponNamePath2(name, cfg, chara, 0);
     DngWeaponFrm[0].LoadPackData3(*data, cfg, &MenuExCashBuffer, texture_block, &MenuExCashBuffer, 1, 0);
-    data = (u_int **) GetMenuWeaponModelData(1);
+    data = GetMenuWeaponModelData(1);
     BtGetWeaponNamePath2(name, cfg, chara, 1);
     DngWeaponFrm[1].LoadPackData3(*data, cfg, &MenuExCashBuffer, texture_block, &MenuExCashBuffer, 1, 0);
     for (int i = 0; i < 10; i++) {
@@ -914,7 +914,7 @@ void WeaponModelBuildFunc(int chara, int texture_block) {
             }
         }
         if (found == 0) {
-            data = (u_int **) GetMenuWeaponModelData(kind);
+            data = GetMenuWeaponModelData(kind);
             if (*data == NULL) {
                 printf("%d pack data is NULL\n", kind);
             } else {
@@ -947,14 +947,14 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1111);
 #ifdef NON_MATCHING
 int DngWeaponEquipModelBuild(int chara, int texture_block, u_long128 *) {
     TexManager.DeleteTextureBlock(texture_block);
-    u_int **first = (u_int **) GetMenuWeaponModelData(0);
-    u_int **second = (u_int **) GetMenuWeaponModelData(1);
+    u_int **first = GetMenuWeaponModelData(0);
+    u_int **second = GetMenuWeaponModelData(1);
     int kind = 0;
     if (UserStatus != NULL) {
         int weapon_no = UserStatus->chara_weapons[chara][UserStatus->equipped_weapon_slot[chara]].item_no;
         kind = weapon_no - GetDefaultWeaponNo(chara);
     }
-    u_int **equipped = (u_int **) GetMenuWeaponModelData(kind);
+    u_int **equipped = GetMenuWeaponModelData(kind);
     if (equipped == NULL) {
         equipped = second;
     } else if (*equipped == NULL) {
