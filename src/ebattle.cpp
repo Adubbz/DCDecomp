@@ -491,40 +491,71 @@ INCLUDE_ASM("asm/nonmatchings/ebattle", EBDraw__Fv);
  * @address 0x1690E0
  * @size 0x260
  */
-#ifdef NON_MATCHING
 void DrawButton(int buttons, int x, int y, float scale, int early) {
-    if (x < -0x20 || x >= 0x281) {
+    int cross;
+    int circle;
+
+    if (x < -32) {
+        return;
+    }
+    if (x > 0x280) {
         return;
     }
     if (early != 0) {
         DrawButtonSub(x, y, 0, 0x60, scale);
-    } else if ((buttons & 0x20) != 0) {
+        return;
+    }
+    if (buttons & 0x20) {
         DrawButtonSub(x, y, 0, 0, scale);
-    } else if ((buttons & 0x10) != 0) {
+        return;
+    }
+    if (buttons & 0x10) {
         DrawButtonSub(x, y, 0x20, 0, scale);
-    } else if ((buttons & 0x80) != 0) {
+        return;
+    }
+    if (buttons & 0x80) {
         DrawButtonSub(x, y, 0x40, 0, scale);
-    } else if ((buttons & 0x40) != 0) {
+        return;
+    }
+    if (buttons & 0x40) {
         DrawButtonSub(x, y, 0x60, 0, scale);
-    } else if ((buttons & 0x1000) != 0) {
-        if ((buttons & 0x8000) != 0) {
+        return;
+    }
+    if (buttons & 0x1000) {
+        if (buttons & 0x8000) {
             DrawButtonSub(x, y, 0x20, 0x40, scale);
-        } else if ((buttons & 0x2000) != 0) {
-            DrawButtonSub(x, y, 0, 0x40, scale);
-        } else {
-            DrawButtonSub(x, y, 0, 0x20, scale);
+            return;
         }
-    } else if ((buttons & 0x8000) != 0) {
+        if (buttons & 0x2000) {
+            DrawButtonSub(x, y, 0, 0x40, scale);
+            return;
+        }
+        DrawButtonSub(x, y, 0, 0x20, scale);
+        return;
+    }
+    cross = buttons & 0x8000;
+    if (cross != 0) {
         DrawButtonSub(x, y, 0x60, 0x20, scale);
-    } else if ((buttons & 0x2000) != 0) {
+        return;
+    }
+    circle = buttons & 0x2000;
+    if (circle != 0) {
         DrawButtonSub(x, y, 0x40, 0x20, scale);
-    } else if ((buttons & 0x4000) != 0) {
+        return;
+    }
+    if (buttons & 0x4000) {
+        if (cross != 0) {
+            DrawButtonSub(x, y, 0x60, 0x40, scale);
+            return;
+        }
+        if (circle != 0) {
+            DrawButtonSub(x, y, 0x40, 0x40, scale);
+            return;
+        }
         DrawButtonSub(x, y, 0x20, 0x20, scale);
+        return;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", DrawButton__Fiiifi);
-#endif
 /**
  * Draws one button prompt at a scale.
  *
