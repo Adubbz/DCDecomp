@@ -32,8 +32,20 @@ extern "C" void *__vt__Q23std13bad_exception[];
 
 // These live in .data and .bss rather than in the small-data area, so they
 // are reached by absolute address.
+
+/**
+ * Handler std::terminate calls to end the program.
+ */
 extern "C" void (*thandler__3std)(void) __attribute__((section(".data")));
+
+/**
+ * Handler std::unexpected calls when a function throws a type it did not declare.
+ */
 extern "C" void (*uhandler__3std)(void) __attribute__((section(".data")));
+
+/**
+ * Head of the list of global objects whose destructors run at exit.
+ */
 extern "C" MWGlobalDestructor *__global_destructor_chain __attribute__((section(".bss")));
 
 // The runtime support routines up to std::bad_exception::what are built with
