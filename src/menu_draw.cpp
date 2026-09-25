@@ -1944,13 +1944,13 @@ void CommonTrushDraw(int x, int y, int alpha) {
             break;
     }
 }
-#ifdef NON_MATCHING
 int IsEnableTrushThrow(int item_no) {
     int enable = 0;
 
     if (item_no >= 0x101) {
         int owner = WhoIsWeaponEquip(item_no);
-        WEAPON_HAVE *weapons = PerBoardStatusPt->chara_weapons[owner];
+        CUserStatus *status = PerBoardStatusPt;
+        WEAPON_HAVE *weapons = status->chara_weapons[owner];
         int default_no = GetDefaultWeaponNo(owner);
         for (int i = 0; i < 11; i++) {
             int weapon_no = weapons[i].item_no;
@@ -1984,7 +1984,11 @@ int IsEnableTrushThrow(int item_no) {
                 case 1: {
                     ITEM_DATA *data = GetItemData(item_no);
                     if (data != NULL) {
-                        enable = (data->kind_flags & 0x10) ? 0 : 1;
+                        if (data->kind_flags & 0x10) {
+                            enable = 0;
+                        } else {
+                            enable = 1;
+                        }
                     }
                     break;
                 }
@@ -1993,9 +1997,6 @@ int IsEnableTrushThrow(int item_no) {
     }
     return enable;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", IsEnableTrushThrow__Fi);
-#endif
 
 void CommonMoneyBoardDraw(int x, int y, int money, int alpha) {
     int top = y + 2;
