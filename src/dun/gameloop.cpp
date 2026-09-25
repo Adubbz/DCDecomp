@@ -6190,8 +6190,6 @@ void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out) {
     SetWeaponColor();
 }
 
-FUZZY_MATCH("asm/nonmatchings/dun/gameloop", LoadWeapon2__FPUiPUiPUiii)
-
 void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned int *main_data,
                  int chara, int reload) {
     int weapon_kind[6] = {1, 4, 6, 5, 10, 7};
@@ -6224,8 +6222,7 @@ void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned 
     CUserStatus *status = UserStatus;
     s8 owner = status->cur_chara;
 
-    // One scratch integer serves the weapon's place in the table and then the
-    // block count the effect models start from.
+    // The weapon's item number, counted from its character's first weapon.
     int work = status->chara_weapons[owner][status->equipped_weapon_slot[owner]].item_no;
 
     work -= weapon_first[chara];
@@ -6236,10 +6233,13 @@ void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned 
     EquipWeaponFrame(&MainWeapon, chara, CharaMainHandViewFlag);
 
     // The effect models take whatever the weapon models leave.
-    work = WeaponModelBuffer.used;
+    u8 *free_start;
+    u8 *weapon_end;
+    int used = WeaponModelBuffer.used;
 
-    u8 *free_start = WeaponModelBuffer.base + work * 16;
-    s64 free_size = 0x33450 - CharaModelBuffer.used - work;
+    weapon_end = WeaponModelBuffer.base + used * 16;
+    free_start = weapon_end;
+    s64 free_size = 0x33450 - CharaModelBuffer.used - used;
 
     WEffectModelBuffer.base = free_start;
     WEffectModelBuffer.limit = free_size;
