@@ -571,6 +571,8 @@ SECTIONS
         main.data.part6g.s.o (.data) // 0x00294170
         menu_draw.cpp.o (.data)      // 0x00294460
         main.data.part6j.s.o (.data) // 0x00295644
+        eastking.cpp.o (.data)       // 0x00295660 EastKingTextureEnter's two local array templates
+        main.data.eastking-tail.s.o (.data) // 0x002956d0
         weapon_buildup.cpp.o (.data) // 0x00295810
         main.data.part6d.s.o (.data) // 0x00295830
         weaponlevelup.cpp.o (.data)  // 0x00295840
@@ -715,7 +717,8 @@ SECTIONS
 		memcard.cpp.o (.sdata) // 0x002a2150
 		main.sdata.memcard-a.s.o (.sdata) // 0x002a2158
 		menu_draw.cpp.o (.sdata)       // 0x002a21a0
-		main.sdata.part2g.s.o (.sdata) // 0x002a21b8
+		eastking.cpp.o (.sdata)        // 0x002a21b8 EastKingTextureEnter's font width template
+		main.sdata.part2g.s.o (.sdata) // 0x002a21c0
 		weapon_buildup.cpp.o (.sdata)  // 0x002a21c8
 		weaponlevelup.cpp.o (.sdata)   // 0x002a21d8
 		main.sdata.part2e.s.o (.sdata) // 0x002a21f0
