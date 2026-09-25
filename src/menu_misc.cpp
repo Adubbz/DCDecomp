@@ -1642,20 +1642,28 @@ int CheckItemThrow(int *items, int *values) {
     }
     return any;
 }
-#ifdef NON_MATCHING
-void SetWeaponElementStatus(WEAPON_HAVE *weapon) {
-    int best = 0;
 
+/**
+ * Stores the index of a weapon's largest element value in its best_elem.
+ *
+ * @mangled SetWeaponElementStatus__FP11WEAPON_HAVE
+ * @address 0x20F680
+ * @size 0x5C
+ */
+void SetWeaponElementStatus(WEAPON_HAVE *weapon) {
+    int best;
+
+    if (weapon->best_elem >= 5) {
+        best = 0;
+    }
+    best = 0;
     for (int i = 1; i < 5; i++) {
-        if (weapon->elem[best] < weapon->elem[i]) {
+        if (weapon->elem[i] > weapon->elem[best]) {
             best = i;
         }
     }
     weapon->best_elem = best;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", SetWeaponElementStatus__FP11WEAPON_HAVE);
-#endif
 
 int CheckWeaponOptionStatus(int options) {
     // Each pair of opposed options cancels out when both are set.
