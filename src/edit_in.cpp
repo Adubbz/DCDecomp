@@ -1641,6 +1641,14 @@ int LoadPTS(CMapParts *parts, u_int *archive) {
     parts->SetRotation(header->rotation[0], header->rotation[1], header->rotation[2]);
     return 0;
 }
+
+/**
+ * Views one function point as the words it is copied in.
+ */
+struct EPARTS_FUNC_WORDS {
+    u_int words[sizeof(EPARTS_FUNC_DATA) / sizeof(u_int)]; /**< The record, one word at a time. */
+};
+
 /**
  * Collects the function points one interior part defines.
  *
@@ -1648,21 +1656,21 @@ int LoadPTS(CMapParts *parts, u_int *archive) {
  * @address 0x19F930
  * @size 0x74
  */
-#ifdef NON_MATCHING
 int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points) {
     EPARTS_INFO_HEADER *header = (EPARTS_INFO_HEADER *) ((char *) archive + archive[1]);
-    EPARTS_FUNC_DATA *source = (EPARTS_FUNC_DATA *) ((char *) header + (int) header->func);
     int i;
+    EPARTS_FUNC_DATA *source = (EPARTS_FUNC_DATA *) ((char *) header + (int) header->func);
 
-    for (i = 0; i < header->func_count; i++, source++, points++) {
-        *points = *source;
+    i = 0;
+    while (i < header->func_count) {
+        *(EPARTS_FUNC_WORDS *) points = *(EPARTS_FUNC_WORDS *) source;
+        source++;
         points->parts = (CMapParts *) parts_no;
+        i++;
+        points++;
     }
-    return i;
+    return header->func_count;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", GetFuncPoint__FiPUiP16EPARTS_FUNC_DATA);
-#endif
 /**
  * Uploads the interior's texture-animation state to the graphics synthesizer.
  *
