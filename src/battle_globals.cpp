@@ -156,19 +156,6 @@ void InitNameRegist(int character, int texture_block, u_long128 *buffer) {
     NameSelect.name_pos = 0;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @481__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @663__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @781__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @782__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @783__5);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @784__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @785);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @786);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @787__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @788__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @789__4);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1349__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1350__5);
 /**
  * Gives the name-entry screen's textures back and closes it.
  *
@@ -255,31 +242,115 @@ void DrawNameRegiWaku(int x, int y, int size, int brightness, int blend_mode) {
     }
 }
 /**
- * Draws the name being entered above the keyboard.
+ * Draws the top of the name-entry screen: the party member's face and title, the name being entered and the cursor over it.
  *
  * @mangled DrawCharaNameUp__Fiiii
  * @address 0x238A70
  * @size 0x628
  */
-#ifdef NON_MATCHING
 void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
-    CTexture *textures[3] = {AlphaTex, KataTex, HiraTex};
-    for (int index = 0; index < 10; index++) {
-        int texture_x;
-        int texture_y;
-        CTexture *texture =
-            GetNameTextureInfo(textures, CharaName[index], texture_x, texture_y);
-        CRect_i_ destination(x + 95 + index * 22, y + 30, 22, 23);
-        CRect_i_ source(texture_x, texture_y, 22, 23);
-        DrawMenu2DSprite(texture, destination, source, (u8) brightness,
-                         (u8) brightness, (u8) brightness, blend_mode);
+    int left;
+    int top;
+    int character = NameSelect.chara_no;
+    left = x - 2;
+    top = y + 14;
+    int face_x = 0;
+    int face_y = character * 106;
+    int length;
+
+    if (character > 2) {
+        face_x = 106;
+        face_y = (character - 3) * 106;
     }
-    DrawNameRegiWaku(x + 93 + NameSelect.name_pos * 22, y + 28, 26,
-                     brightness, blend_mode);
+    DrawMenu2DSprite(CharaFace, CRect_i_(left, top, 88, 88), CRect_i_(face_x, face_y, 106, 106), blend_mode);
+    DrawMenuHelpWindow(TexManager.GetTexture("window", -1), -1, left + 102, top + 16, 8.6f, 1.0f, blend_mode);
+    DrawMenu2DSprite(NameTemp, CRect_i_(left + 97, top + 16, 26, 23), CRect_i_(0, 256, 26, 24), (u8) brightness,
+                     (u8) brightness, (u8) brightness, blend_mode);
+    DrawMenu2DSprite(NameTemp, CRect_i_(left + 123, top + 16, 210, 23), CRect_i_(26, 256, 172, 24), (u8) brightness,
+                     (u8) brightness, (u8) brightness, blend_mode);
+    DrawMenu2DSprite(NameTemp, CRect_i_(left + 333, top + 16, 26, 23), CRect_i_(198, 256, 26, 24), (u8) brightness,
+                     (u8) brightness, (u8) brightness, blend_mode);
+
+    MenuTextureReload(AtoraNameMes.tex_block);
+    int message_length = AtoraNameMes.GetMesLen_system(character - 1220);
+    float char_width[7] = {18.0f, 12.0f, 12.0f, 12.0f, 12.0f, 12.0f, 12.0f};
+    float width = char_width[NameSelect.language];
+    AtoraNameMes.line_pos[0].x = 290.0f - width * (message_length / 2.0f);
+    AtoraNameMes.line_pos[0].y = 82;
+    AtoraNameMes.edge_alpha = blend_mode;
+    AtoraNameMes.Step();
+    AtoraNameMes.DrawMesWin();
+    MenuTextureReload(NameSelect.texture_block);
+
+    if (NameSelect.area < 6) {
+        CRect_i_ destination(left + 89, top + 25, 24, 24);
+        CRect_i_ source(24, 472, 24, 24);
+        DrawMenu2DSprite(NameTemp, destination, source, blend_mode);
+        source.x += 25;
+        destination.x = left + 331;
+        DrawMenu2DSprite(NameTemp, destination, source, blend_mode);
+    }
+
+    left = x + 120;
+    top = y + 58;
+    DrawCharaName(character, left, top, brightness, blend_mode);
+
+    left = x + 122;
+    top = y + 82;
+    if (NameSelect.area == 7) {
+        for (length = 10; length > 0; length--) {
+            if (CharaName[length - 1] != 0 && CharaName[length - 1] != 0xE6) {
+                break;
+            }
+        }
+    }
+    for (int i = 0; i < 10; i++) {
+        int shade = brightness;
+        if (NameSelect.area == 7 && length <= i) {
+            shade = 0x38;
+        }
+        DrawMenu2DSprite(NameTemp, CRect_i_(left, top, 18, 2), CRect_i_(470, 328, 18, 2), (u8) shade, (u8) shade,
+                         (u8) shade, blend_mode);
+        left += 22;
+    }
+
+    int position = NameSelect.name_pos;
+    if (position >= 10) {
+        position = 9;
+    }
+    left = x + 110 + position * 22;
+    top = y + 48;
+    switch (NameSelect.state) {
+        case 1:
+        case 2:
+            break;
+        default:
+            if (NameSelect.area < 6) {
+                DrawNameRegiWaku(left, top, 30, brightness, blend_mode);
+                int frame = NameSelect.frame - 15;
+                if (NameSelect.area >= 6) {
+                    frame = 0;
+                }
+                top = (top - 20) + 4.0f * sinf(0.20943952f * (frame % 31));
+                DrawMenu2DSprite(NameTemp, CRect_i_(left + 20, top, 24, 24), CRect_i_(488, 328, 24, 24), (u8) brightness,
+                                 (u8) brightness, (u8) brightness, blend_mode);
+            }
+            break;
+    }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawCharaNameUp__Fiiii);
-#endif
+
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @663__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @781__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @782__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @783__5);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @784__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @785);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @786);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @787__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @788__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @789__4);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1349__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1350__5);
 /**
  * Draws the character keyboard the name is entered from.
  *
