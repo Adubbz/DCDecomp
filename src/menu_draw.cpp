@@ -2403,23 +2403,24 @@ void DeleteItemAfterUseItem(short item_no, ITEM_PACK *items) {
         }
     }
 }
-#ifdef NON_MATCHING
 int GetNowModeMaxNum(int page, int *over) {
     CUserStatus *status = (CUserStatus *) SaveData->GetDngStatus();
     int count = 0;
 
     switch (page) {
         case 0: {
+            int i;
+            int j;
             ITEM_PACK *pack = &status->item_pack;
             int num;
-            for (int i = 0; i < (num = pack->num) + 3; i++) {
+            for (i = 0; i < (num = pack->num) + 3; i++) {
                 if (pack->item[i] >= 0x84) {
                     count++;
                 }
             }
-            for (int i = 0; i < 3; i++) {
-                if (pack->quick_item_slot[i] >= 0x84) {
-                    count += pack->quick_item_qty[i];
+            for (j = 0; j < 3; j++) {
+                if (pack->quick_item_slot[j] >= 0x84) {
+                    count += pack->quick_item_qty[j];
                 }
             }
             if (over != NULL && num < count) {
@@ -2429,8 +2430,10 @@ int GetNowModeMaxNum(int page, int *over) {
         }
         case 1:
             for (int chara = 0; chara < 6; chara++) {
-                for (int i = 0; i < 11; i++) {
-                    if (status->chara_weapons[chara][i].item_no >= 0x101) {
+                int i;
+                WEAPON_HAVE *row = status->chara_weapons[chara];
+                for (i = 0; i < 11; i++) {
+                    if (row[i].item_no >= 0x101) {
                         count++;
                         if (i == 10 && over != NULL) {
                             *over = chara + 1;
@@ -2439,22 +2442,22 @@ int GetNowModeMaxNum(int page, int *over) {
                 }
             }
             break;
-        case 2:
-            for (int i = 0; i < 43; i++) {
-                if (status->consumable_items[i].id >= 0x51) {
+        case 2: {
+            int i;
+            DNG_CONSUMABLE *items = status->consumable_items;
+            for (i = 0; i < 43; i++) {
+                if (items[i].id >= 0x51) {
                     count++;
                 }
             }
-            if (over != NULL && count >= 41) {
+            if (over != NULL && count > 40) {
                 *over = 1;
             }
             break;
+        }
     }
     return count;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowModeMaxNum__FiPi);
-#endif
 
 void WepDataListToHaveCopy(int weapon_no, WEAPON_HAVE *weapon) {
     WEAPON_DATA *data;
