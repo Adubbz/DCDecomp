@@ -1431,14 +1431,30 @@
       "FrameImageTexture": "@1254"
     },
     "sections": {
+      ".menu_misc-wepread": [
+        "@142",
+        "@149",
+        "@158"
+      ],
       ".menu_misc-motion": [
-        "@171"
+        "@198"
       ],
       ".menu_misc-frame": [
-        "@221"
+        "@248"
+      ],
+      ".menu_misc-options": [
+        "@418"
       ]
     },
     "rekey_sections": [
+      [
+        ".menu_misc-wepread",
+        [
+          64,
+          24,
+          24
+        ]
+      ],
       [
         ".menu_misc-motion",
         [
@@ -1449,6 +1465,12 @@
         ".menu_misc-frame",
         [
           36
+        ]
+      ],
+      [
+        ".menu_misc-options",
+        [
+          28
         ]
       ]
     ],

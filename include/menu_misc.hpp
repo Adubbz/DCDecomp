@@ -171,7 +171,7 @@ void MenuWeaponEffectSet(int);
 int GetNowTestNo();
 
 /**
- * Starts the background read of a weapon model file and reports whether it was started.
+ * Reads a character's menu weapon models and shadow image into a buffer and, in a dungeon, starts its weapon effect read; returns 0 when a read fails.
  *
  * @mangled StartReadWepMDS__FP1i
  * @address 0x20D1D0

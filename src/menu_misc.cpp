@@ -39,9 +39,7 @@
 #include "shot_effect.hpp"
 #include "weaponlevelup.hpp"
 
-extern s32 BtlMenuMode;
 extern CTexture *WepIcon;
-extern u_long128 *WeaponRead_Buf;
 extern u_long128 *MenuWeaponModelBuildBuffer;
 extern u_long128 *WepMenuEffectReadBuf;
 extern char MenureadFile[64];
@@ -59,6 +57,9 @@ extern int MenuWeaponTestCase;
 
 /** The amount the last item use gave, a base value plus a random part. */
 extern int MenuItemUseVolume;
+
+/** The buffer the menu's weapon model file is read into. */
+extern u_long128 *WeaponRead_Buf;
 
 /** The menu's weapon-effect read flag. */
 extern s16 MenuCharaEffectReadFlag;
@@ -80,6 +81,9 @@ extern s16 CharaNameDrawFlag;
 
 /** The dungeon status data the battle menu is showing, or NULL outside the dungeon. */
 extern CDngStatusData *BtlMenuStatusPt;
+
+/** The battle menu's mode: 0 when it is opened in a dungeon. */
+extern s32 BtlMenuMode;
 
 /** The ambient light saved before the item menu tinted it. */
 extern float MenuCharaOldAmbient[4];
@@ -691,18 +695,6 @@ BT_SHOT_EFFECT *DngWepEffectReadStart() {
     SetMenuCharaEffectReadFlag(1);
     return GetDngWepEffectPointer();
 }
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @947__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @948);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @949);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @950);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @951);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @952);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @956);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @957);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @958__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @959__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @960__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @961);
 
 void MenuWeaponEffectSet(int effect_no) {
     SetMenuCharaEffectReadFlag(0);
@@ -714,42 +706,44 @@ int GetNowTestNo() {
     return MenuWeaponTestCase;
 }
 
-#ifdef NON_MATCHING
+/**
+ * Reads a character's menu weapon models and shadow image into a buffer and, in a dungeon, starts its weapon effect read; returns 0 when a read fails.
+ *
+ * @mangled StartReadWepMDS__FP1i
+ * @address 0x20D1D0
+ * @size 0x1D4
+ */
 int StartReadWepMDS(u_long128 *buffer, int chara) {
-    char path[64] = "commenu/c";
-    char *numbers[6] = {"01", "04", "06", "05", "10", "18"};
-    char image[64];
-    int size;
-
     if (ReadBGSync() == 1) {
         BreakReadBG();
     }
+    char path[64] = "commenu/c";
+    char *numbers[6] = {"01", "04", "06", "05", "10", "18"};
     strcat(path, numbers[chara]);
     strcat(path, "wtes.chr");
     WeaponRead_Buf = MenuCalcBufAlignment(buffer);
     StartReadBG();
+    int size;
     if (LoadFileBG(path, buffer, &size) == 0) {
         return 0;
     }
-    u_long128 *next = MenuCalcBufAlignment(buffer + (size >> 4) + 1);
+    buffer += (size >> 4) + 1;
+    buffer = MenuCalcBufAlignment(buffer);
+    char image[64];
     GetPathReadDifferntLang(image);
     char *shadows[6] = {"kgetoan", "kgesyao", "kgegoro", "kgeruby", "kgeunga", "kgeozu"};
     strcat(image, shadows[chara]);
     strcat(image, "2.img");
-    if (LoadFileBG(image, next, &size) == 0) {
+    if (LoadFileBG(image, buffer, &size) == 0) {
         return 0;
     }
     if (BtlMenuMode == 0) {
-        SetWepEffectMenuReadBuf(next + (size >> 4) + 1);
+        buffer += (size >> 4) + 1;
+        SetWepEffectMenuReadBuf(buffer);
         DngWepEffectReadStart();
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", StartReadWepMDS__FP1i);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @969__3);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @970__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @985__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @986__3);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @987);
