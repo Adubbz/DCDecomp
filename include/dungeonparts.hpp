@@ -220,6 +220,22 @@ STATIC_ASSERT(sizeof(PARTS_WATER) == 0x60);
 STATIC_ASSERT(sizeof(CDungeonParts) == 0x1D0);
 
 /**
+ * The items the clown can offer on one side of a dungeon's midpoint.
+ */
+struct PIERO_ITEM_SET {
+    int count[2];    /**< Number of items in each of the two lists. */
+    int item[2][64]; /**< The two lists the clown's two offers are drawn from. */
+};
+
+STATIC_ASSERT(sizeof(PIERO_ITEM_SET) == 0x208);
+
+/**
+ * The clown's item lists, seven dungeons and then their back floors, each
+ * pointing at the lists for the floors below and above the midpoint.
+ */
+extern PIERO_ITEM_SET *PieroItemListPtr[14];
+
+/**
  * Gives the two items the clown offers on one floor.
  *
  * @mangled GetPieroItem__FiiPiPi

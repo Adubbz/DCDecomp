@@ -1,14 +1,16 @@
 #include "dungeonparts.hpp"
 
+#include <cstdlib>
+
+#include "dun/gameloop.hpp"
 #include "frame.hpp"
+#include "userstatus.hpp"
 #include <cmath>
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
 #include <libvu0.h>
 #include "dungeonmap.hpp"
 #include "dngstatusdata.hpp"
-#include "dun/gameloop.hpp"
 #include "dranmapfield.hpp"
 #include "collision.hpp"
 #include "boxvu0.hpp"
@@ -29,59 +31,85 @@ extern int *noEntryTbl[6];
 #endif
 
 /**
+ * Chance out of a hundred that each item is turned down when drawn, one table per dungeon.
+ */
+extern s16 *ItemSetRateTbl[7];
+
+/**
+ * The floor that divides each dungeon's lower item lists from its upper ones.
+ */
+extern int floorNum[7];
+
+/**
  * Gives the two items the clown offers on one floor.
  *
  * @mangled GetPieroItem__FiiPiPi
  * @address 0x1BFAB0
  * @size 0x440
  */
-#ifdef NON_MATCHING
-/**
- * The items the clown can offer on the floors either side of a dungeon's midpoint.
- */
-struct PIERO_ITEM_SET {
-    int count[2];     /**< Number of items in each of the two lists. */
-    int item[2][64];  /**< The two lists the clown's offers are drawn from. */
-};
+void GetPieroItem(int map_no, int ura_dungeon, int *item0, int *item1) {
+    PIERO_ITEM_SET *list = PieroItemListPtr[map_no + ura_dungeon * 7];
+    s16 *rate = ItemSetRateTbl[map_no];
+    int count0;
+    int count1;
+    int pick0;
+    int pick1;
+    int chance;
 
-extern PIERO_ITEM_SET *PieroItemListPtr[14];
-extern s16 *ItemSetRateTbl[7];
-extern int floorNum[7];
-
-static int PickPieroItem(int count, int *items, s16 *rate) {
-    int pick = -1;
-
-    while (pick == -1) {
-        pick = (int) (((float) count * (float) rand()) / 2.1474836e9f);
-        if (pick >= count) {
-            pick = 0;
+    if (UserStatus->cur_floor < floorNum[map_no]) {
+        count0 = list[0].count[0];
+        count1 = list[0].count[1];
+        pick1 = pick0 = -1;
+        while (pick0 == -1) {
+            pick0 = (int) (((float) count0 * (float) rand()) / 2.1474836e9f);
+            if (pick0 >= count0) {
+                pick0 = 0;
+            }
+            chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
+            if (rate[list[0].item[0][pick0] - 1] >= chance) {
+                pick0 = -1;
+            }
         }
-        if (rate[items[pick] - 1] >= (int) ((100.0f * (float) rand()) / 2.1474836e9f)) {
-            pick = -1;
+        while (pick1 == -1) {
+            pick1 = (int) (((float) count1 * (float) rand()) / 2.1474836e9f);
+            if (pick1 >= count1) {
+                pick1 = 0;
+            }
+            chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
+            if (rate[list[0].item[1][pick1] - 1] >= chance) {
+                pick1 = -1;
+            }
         }
-    }
-    return pick;
-}
-
-void GetPieroItem(int dungeon, int kind, int *first, int *second) {
-    PIERO_ITEM_SET *list = PieroItemListPtr[dungeon + kind * 7];
-    s16 *rate = ItemSetRateTbl[dungeon];
-
-    if (((CDngStatusData *) UserStatus)->cur_floor < floorNum[dungeon]) {
-        int a = PickPieroItem(list[0].count[0], list[0].item[0], rate);
-        int b = PickPieroItem(list[0].count[1], list[0].item[1], rate);
-        *first = list[0].item[0][a];
-        *second = list[0].item[1][b];
+        *item0 = list[0].item[0][pick0];
+        *item1 = list[0].item[1][pick1];
         return;
     }
-    int a = PickPieroItem(list[1].count[0], list[1].item[0], rate);
-    int b = PickPieroItem(list[1].count[1], list[1].item[1], rate);
-    *first = list[1].item[0][a];
-    *second = list[1].item[1][b];
+    count0 = list[1].count[0];
+    count1 = list[1].count[1];
+    pick1 = pick0 = -1;
+    while (pick0 == -1) {
+        pick0 = (int) (((float) count0 * (float) rand()) / 2.1474836e9f);
+        if (pick0 >= count0) {
+            pick0 = 0;
+        }
+        chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
+        if (rate[list[1].item[0][pick0] - 1] >= chance) {
+            pick0 = -1;
+        }
+    }
+    while (pick1 == -1) {
+        pick1 = (int) (((float) count1 * (float) rand()) / 2.1474836e9f);
+        if (pick1 >= count1) {
+            pick1 = 0;
+        }
+        chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
+        if (rate[list[1].item[1][pick1] - 1] >= chance) {
+            pick1 = -1;
+        }
+    }
+    *item0 = list[1].item[0][pick0];
+    *item1 = list[1].item[1][pick1];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonparts", GetPieroItem__FiiPiPi);
-#endif
 #ifdef NON_MATCHING
 /**
  * The items a treasure box can hold on one floor.
