@@ -6718,7 +6718,7 @@ int BtCheckDamageProc(void) {
                 ruby_effect_id = -1;
             }
 
-            int damage = NowColData->hit[no].damage;
+            int damage = NowColData->Get(no)->damage;
             int guard = UserStatus->unk_4348[UserStatus->cur_chara];
             int monster;
             int roll;
@@ -6732,12 +6732,15 @@ int BtCheckDamageProc(void) {
                 damage = 0;
             }
 
-            monster = -1;
+            int owner = NowColData->hit[no].owner;
 
-            if (NowColData->hit[no].owner != -1) {
-                monster = (NowColData->hit[no].owner - 200) / 5;
+            monster = -1;
+            if (owner != -1) {
+                monster = (owner - 200) / 5;
+                CMonstorUnit *unit = NowMonstorUnit;
+
                 if (monster >= 0 && monster < 16) {
-                    NowMonstorUnit->monster[monster].last_hit_damage = damage;
+                    unit->monster[monster].last_hit_damage = damage;
                 }
                 NowMonstorUnit->chara[monster][0].GetPosition(from);
             }
@@ -6775,8 +6778,12 @@ int BtCheckDamageProc(void) {
                 if (slot == -1) {
                     BtSetStatusErr(4);
                 } else {
+                    // &who->active_item_vol[slot], spelled so the index is added first.
                     CUserStatus *who = UserStatus;
-                    s32 *vol = &who->active_item_vol[slot];
+                    unsigned int address = slot * sizeof(s32);
+
+                    address += (unsigned int) who;
+                    s32 *vol = &((CUserStatus *) address)->active_item_vol[0];
 
                     if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
@@ -6799,7 +6806,10 @@ int BtCheckDamageProc(void) {
                     DngMessMan.unk_1C = 0;
                 } else {
                     CUserStatus *who = UserStatus;
-                    s32 *vol = &who->active_item_vol[slot];
+                    unsigned int address = slot * sizeof(s32);
+
+                    address += (unsigned int) who;
+                    s32 *vol = &((CUserStatus *) address)->active_item_vol[0];
 
                     if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
@@ -6822,7 +6832,10 @@ int BtCheckDamageProc(void) {
                     DngMessMan.unk_1C = 0;
                 } else {
                     CUserStatus *who = UserStatus;
-                    s32 *vol = &who->active_item_vol[slot];
+                    unsigned int address = slot * sizeof(s32);
+
+                    address += (unsigned int) who;
+                    s32 *vol = &((CUserStatus *) address)->active_item_vol[0];
 
                     if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
@@ -6845,7 +6858,10 @@ int BtCheckDamageProc(void) {
                     DngMessMan.unk_1C = 0;
                 } else {
                     CUserStatus *who = UserStatus;
-                    s32 *vol = &who->active_item_vol[slot];
+                    unsigned int address = slot * sizeof(s32);
+
+                    address += (unsigned int) who;
+                    s32 *vol = &((CUserStatus *) address)->active_item_vol[0];
 
                     if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
@@ -6912,13 +6928,14 @@ int BtCheckDamageProc(void) {
                 }
             }
 
-            int kind = NowColData->hit[no].kind;
+            COLLISION_HIT *hits = NowColData->hit;
+            int kind = hits[no].kind;
 
-            if (kind == 2 || kind == 4) {
+            if (kind == 2 || hits[no].kind == 4) {
                 sceVu0FVECTOR at;
                 sceVu0FVECTOR away;
 
-                sceVu0CopyVector(at, NowColData->hit[no].pos);
+                sceVu0CopyVector(at, hits[no].pos);
                 GamePad.SetVibration(1, 0xDC, 0xC);
 
                 if (blown != 0) {
