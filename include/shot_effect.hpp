@@ -93,12 +93,12 @@ public:
     int Entry(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
 
     /**
-     * Initializes projectile-effect slots from an already loaded resource.
+     * Reads the effect's model from a pack that is already loaded and gives every slot a copy;
+     * returns 1, or 0 when a description is already loaded.
      *
      * @mangled Entry2__12CSHOT_EFFECTFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i
      * @address 0x1AD260
      * @size 0x5A8
-     * @unknownret
      */
     int Entry2(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
 

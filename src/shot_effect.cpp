@@ -228,28 +228,29 @@ int CSHOT_EFFECT::Entry(BT_SHOT_EFFECT *description, unsigned int *pack, int tex
     return effect_data == NULL ? 0 : 1;
 }
 
-#ifdef NON_MATCHING
-int CSHOT_EFFECT::Entry2(BT_SHOT_EFFECT *description, unsigned int *resource,
-                         int texture_block, CDataAlloc2<1> *allocator, int slots) {
-    (void) resource;
-    (void) allocator;
-    if (effect_data != NULL || description == NULL) {
+int CSHOT_EFFECT::Entry2(BT_SHOT_EFFECT *description, unsigned int *pack, int texture_block,
+                         CDataAlloc2<1> *allocator, int slots) {
+    char name[64];
+
+    if (effect_data != NULL) {
         return 0;
     }
 
-    effect_data = description;
+    sprintf(name, "%s.cfg", description->model_name);
     unk_A154 = texture_block;
+    unk_0010.Initialize();
+    unk_0010.LoadPackData3(pack, name, allocator, texture_block, allocator, 1, 0x10);
+
     slot_count = slots;
-    for (int slot = 0; slot < slots && slot < 8; slot++) {
-        active[slot] = 0;
-        phase[slot] = 0;
+    for (int slot = 0; slot < slots; slot++) {
+        chara[slot] = unk_0010;
+        chara[slot].motion[0] = &chara[slot].motion_type;
+        chara[slot].frame = (CFrame *) CopyFrameVu1((CFrameVu1 *) unk_0010.frame, allocator);
     }
-    current_slot = -1;
-    return 1;
+
+    effect_data = description;
+    return effect_data == NULL ? 0 : 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", Entry2__12CSHOT_EFFECTFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i);
-#endif
 
 #ifdef NON_MATCHING
 void CSHOT_EFFECT::ReEntry(BT_SHOT_EFFECT *description, CDataAlloc2<1> *allocator) {
