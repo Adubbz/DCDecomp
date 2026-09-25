@@ -1100,7 +1100,7 @@ void SetItemMenuOldAmbient() {
 }
 
 /**
- * Starts the background read of a menu character model file and reports whether it was started.
+ * Starts the background read of a menu character model file; returns 1 when the read could not be queued and 0 otherwise.
  *
  * @mangled StartLoadCharaMDS__FP1ii
  * @address 0x20E1A0
