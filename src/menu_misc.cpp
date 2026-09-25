@@ -1132,28 +1132,39 @@ int StartLoadCharaMDS(u_long128 *buffer, int chara, int read_no) {
     }
     return 0;
 }
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1178);
-#ifdef NON_MATCHING
+
+/**
+ * Builds the menu character model from its read file and poses it for the menu.
+ *
+ * @mangled MenuCharaMDSBuild2__Fii
+ * @address 0x20E280
+ * @size 0x2A8
+ */
 void MenuCharaMDSBuild2(int chara, int texture_block) {
     char name[32];
     int size;
 
     sprintf(name, "c0%ddmenu.img", chara + 1);
-    LOADTEXTURE_INFO2 texture = {0};
-    texture.block_no = texture_block;
+    LOADTEXTURE_INFO2 texture[3] = {
+        {"#frame_menu_chara#640#448#4", 0, 0},
+        {NULL, 0, 0},
+        {NULL, 0, 0},
+    };
+    texture[0].block_no = texture_block;
+    texture[1].block_no = texture_block;
     BG_READ_INFO *file = GetReadBGFile(CharaFileBGReadNo);
-    texture.name = (char *) GetPackFile((u_int *) file->buffer, name, &size);
+    texture[1].name = (char *) GetPackFile((u_int *) file->buffer, name, &size);
     TexManager.DeleteTextureBlock(texture_block);
     TexManager.CleanUpTextureList();
-    TexManager.LoadTextureBlockEX(-1, &texture);
-    u_int *pack = (u_int *) file->buffer;
-    u_char *model = (u_char *) pack + ((file->size >> 4) + 1) * 16;
+    TexManager.LoadTextureBlockEX(-1, texture);
+    u_long128 *pack = file->buffer;
+    u_long128 *model = pack + (file->size >> 4) + 1;
     sprintf(name, "c0%ddmenu.cfg", chara + 1);
     MenuCharaFrame.Initialize();
-    MenuExCashBuffer.base = model;
+    MenuExCashBuffer.base = (u_char *) model;
     MenuExCashBuffer.limit = 0xDC00;
     MenuExCashBuffer.used = 0;
-    MenuCharaFrame.LoadPackData(pack, name, &MenuExCashBuffer, &MenuExCashBuffer, NULL);
+    MenuCharaFrame.LoadPackData((u_int *) pack, name, &MenuExCashBuffer, &MenuExCashBuffer, NULL);
     CFrameAttr attr;
     attr.fog_enable = 1;
     attr.unk_08 = 0;
@@ -1161,11 +1172,22 @@ void MenuCharaMDSBuild2(int chara, int texture_block) {
     if (MenuCharaFrame.frame != NULL) {
         MenuCharaFrame.frame->SetAttr(attr, 1, 4);
     }
-    sceVu0FVECTOR position[6] = {{-4.8f, -13.0f, 0.0f, 1.0f}, {-5.2f, -12.8f, 0.0f, 1.0f},
-                                 {-5.0f, -11.4f, 0.0f, 1.0f}, {-5.0f, -15.0f, 0.0f, 1.0f},
-                                 {-5.0f, -16.0f, 0.0f, 1.0f}, {-5.0f, -15.0f, 0.0f, 1.0f}};
-    float scale[6][3] = {{1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f},
-                         {1.0f, 1.0f, 1.0f}, {0.9f, 0.9f, 0.9f}, {0.9f, 0.9f, 0.9f}};
+    sceVu0FVECTOR position[6] = {
+        {-4.8f, -13.0f, 0.0f, 1.0f},
+        {-5.2f, -12.8f, 0.0f, 1.0f},
+        {-5.0f, -11.4f, 0.0f, 1.0f},
+        {-5.0f, -15.0f, 0.0f, 1.0f},
+        {-5.0f, -16.0f, 0.0f, 1.0f},
+        {-5.0f, -15.0f, 0.0f, 1.0f},
+    };
+    float scale[6][3] = {
+        {1.0f, 1.0f, 1.0f},
+        {1.0f, 1.0f, 1.0f},
+        {1.0f, 1.0f, 1.0f},
+        {1.0f, 1.0f, 1.0f},
+        {0.9f, 0.9f, 0.9f},
+        {0.9f, 0.9f, 0.9f},
+    };
     MenuCharaFrame.SetPosition(position[chara]);
     SetNowCharaMotionNo(chara);
     MenuCharaFrame.SetScale(scale[chara]);
@@ -1175,11 +1197,6 @@ void MenuCharaMDSBuild2(int chara, int texture_block) {
         MenuCharaFrame.ClothStep(0);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", MenuCharaMDSBuild2__Fii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1199__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1200);
 
 /**
  * Writes the file path of one character's model into a buffer.

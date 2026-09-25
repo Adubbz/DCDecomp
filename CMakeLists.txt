@@ -266,7 +266,8 @@ carve_part(main.sbss.part5.s
 # shop.cpp supplies the start of its own run between part6f and part6k, and
 # battlemenu.cpp supplies the travel page's and DrawWepHole's templates at the end of its run,
 # and menu_misc.cpp supplies StartReadWepMDS's file names, WeaponModelBuildFunc's texture list,
-# SetNowCharaMotionNo's motion speeds and BtMenuLoad2's texture list inside its own run.
+# SetNowCharaMotionNo's motion speeds, MenuCharaMDSBuild2's texture list, positions and scales
+# and BtMenuLoad2's texture list inside its own run.
 carve_part(main.data.part6.s
            main.data.part6.s=27E790-27E7D0
            main.data.btitem-a.s=27E810-27EAD0
@@ -280,7 +281,7 @@ carve_part(main.data.part6.s
            main.data.shop-ticket-after.s=293700-293860
            main.data.battlemenu-tail.s=293960-293990
            main.data.menu_misc-a.s=293A08-293A80
-           main.data.menu_misc-b.s=293AA4-293BF0
+           main.data.menu_misc-b.s=293B88-293BF0
            main.data.menu_misc-c.s=293C14-293C60
            main.data.memcard-a.s=293EBC-293FE0
            main.data.menu_save-a.s=294044-294150
