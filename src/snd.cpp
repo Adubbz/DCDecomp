@@ -321,55 +321,73 @@ EDIT_ELEMENT_ATRA *GetEditAtraChipData(int ground, int number) {
     return GetEditAtraData(ground, number + 40);
 }
 
-#ifdef NON_MATCHING
 void LensFlare(CTexture *texture, float *position, unsigned char red, unsigned char green,
                unsigned char blue) {
-    static const float flare_offset[8] = { 0.1f, 0.2f, 0.4f, 0.5f, 0.8f, 0.9f, 1.0f, 1.3f };
-    static const float flare_size[8] = { 0.1f, 0.2f, 1.0f, 0.3f, 2.0f, 0.5f, 3.8f, 0.5f };
-    int screen[3];
+    sceVu0IVECTOR screen;
     int visible;
+    int screen_x;
+    int screen_y;
+    int size;
+    int half;
+    int x;
+    int y;
+    float offset;
+    float shift;
     int i;
-    int center_x;
-    int center_y;
-    unsigned char alpha;
 
     if (texture == 0) {
         return;
     }
 
     visible = MGRotTransPers2D(screen, position, 0);
+    screen_x = screen[0];
+    screen_y = screen[1];
+    float flare_offset[8] = {0.1f, 0.2f, 0.4f, 0.5f, 0.8f, 0.9f, 1.0f, 1.3f};
+    float flare_size[8] = {0.1f, 0.2f, 1.0f, 0.3f, 2.0f, 0.5f, 3.8f, 0.5f};
 
     for (i = 0; i < 8; i++) {
-        int size = (int) (64.0f * flare_size[i]);
-        int x = (int) ((float) (320 - screen[0]) * flare_offset[i]) + screen[0] - (size >> 1);
-        int y = (int) ((float) (224 - screen[1]) * flare_offset[i]) + screen[1] - (size >> 1);
+        offset = flare_offset[i];
+        size = (int) (64.0f * flare_size[i]);
+        shift = 320 - screen_x;
+        shift *= offset;
+        x = (int) shift;
+        x += screen_x;
+        half = size >> 1;
+        x -= half;
+        shift = 224 - screen_y;
+        shift *= offset;
+        y = (int) shift;
+        y += screen_y;
+        y -= half;
 
-        if (visible && screen[0] >= 0 && screen[0] < 640 && screen[1] >= 0 && screen[1] < 448) {
+        if (visible && 0 <= screen_x && screen_x < 640 && 0 <= screen_y && screen_y < 448) {
             setbilinear(1);
-            set2DSprite(Vif1Packet, texture, CRect_i_(x, y, size, size),
-                        CRect_i_(0, 0, 0x40, 0x40));
+            set2DSprite(Vif1Packet, texture, CRect_i_(x, y, size, size), CRect_i_(0, 0, 64, 64));
         }
     }
 
-    if (visible && screen[0] >= 0 && screen[0] < 640 && screen[1] >= 0 && screen[1] < 448) {
-        if (screen[0] >= 320) {
-            center_x = 320 - (screen[0] - 320);
-        } else {
-            center_x = screen[0];
+    if (visible && 0 <= screen_x && screen_x < 640 && 0 <= screen_y && screen_y < 448) {
+        int center_x = 0;
+        int center_y = 0;
+
+        if (screen_x >= 320) {
+            center_x = 320 - (screen_x - 320);
         }
-        if (screen[1] >= 224) {
-            center_y = 224 - (screen[1] - 224);
-        } else {
-            center_y = screen[1];
+        if (screen_x < 320) {
+            center_x = screen_x;
+        }
+        if (screen_y >= 224) {
+            center_y = 224 - (screen_y - 224);
+        }
+        if (screen_y < 224) {
+            center_y = screen_y;
         }
 
-        alpha = (unsigned char) (int) ((float) ((center_x + center_y) >> 1) / 2.7f);
-        MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), red, green, blue, alpha);
+        float alpha = (float) ((center_x + center_y) >> 1) / 2.7f;
+        (int) alpha;
+        MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), red, green, blue, (unsigned char) (int) alpha);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", LensFlare__FP8CTexturePfUcUcUc);
-#endif
 /**
  * Starts the sound manager once, and loads its effect table.
  *

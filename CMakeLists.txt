@@ -285,7 +285,7 @@ carve_part(main.data.part6.s
            main.data.battle_globals-gap.s=295B18-295B50
            main.data.battle_globals-b.s=295EF0-295FC0)
 carve_part(main.data.part4.s
-           main.data.part4.s=25DF70-266810
+           main.data.part4.s=25DFB0-266810
            main.data.part4b.s=2668C0-266B70
            main.data.part4m.s=266B90-266E10
            main.data.ebattle-a.s=266E90-266ED0

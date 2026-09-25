@@ -466,6 +466,7 @@ SECTIONS
         mapobject.cpp.o (.data)
         main.data.part3.s.o (.data)
         savedata.cpp.o (.data)
+        snd.cpp.o (.data)            // 0x0025df70 LensFlare's two local array templates
         main.data.part4.s.o (.data)
         sysmes.cpp.o (.data)
         main.data.part4b.s.o (.data)
