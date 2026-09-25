@@ -950,15 +950,22 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1108);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1109);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1110);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1111);
-#ifdef NON_MATCHING
+
+/**
+ * Builds the model of a character's equipped weapon for the dungeon and attaches its effect.
+ *
+ * @mangled DngWeaponEquipModelBuild__FiiP1
+ * @address 0x20DD60
+ * @size 0x114
+ */
 int DngWeaponEquipModelBuild(int chara, int texture_block, u_long128 *) {
     TexManager.DeleteTextureBlock(texture_block);
     u_int **first = GetMenuWeaponModelData(0);
     u_int **second = GetMenuWeaponModelData(1);
     int kind = 0;
     if (UserStatus != NULL) {
-        int weapon_no = UserStatus->chara_weapons[chara][UserStatus->equipped_weapon_slot[chara]].item_no;
-        kind = weapon_no - GetDefaultWeaponNo(chara);
+        kind = UserStatus->chara_weapons[chara][UserStatus->equipped_weapon_slot[chara]].item_no;
+        kind -= GetDefaultWeaponNo(chara);
     }
     u_int **equipped = GetMenuWeaponModelData(kind);
     if (equipped == NULL) {
@@ -970,9 +977,6 @@ int DngWeaponEquipModelBuild(int chara, int texture_block, u_long128 *) {
     MenuWeaponEffectSet(1);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", DngWeaponEquipModelBuild__FiiP1);
-#endif
 
 static int GetNowMotionStepCnt(int status) {
     int step = 0;
