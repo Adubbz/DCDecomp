@@ -25,13 +25,13 @@
  * Stores one event-battle key and its timing state.
  */
 struct EB_KEY {
-    int unk_00;
-    int unk_04;
-    int unk_08;
-    int unk_0C;
-    int unk_10;
-    int unk_14;
-    int unk_18;
+    int frame;     /**< Battle frame the prompt reaches the hit mark on. */
+    int buttons;   /**< Buttons the prompt asks for. */
+    int mode;      /**< How early the prompt lights before the hit mark; 0 never. */
+    int pressed;   /**< Buttons pressed so far while the prompt is live. */
+    int hit;       /**< Whether the prompt has been answered. */
+    int passed;    /**< Whether the prompt has gone past the hit mark. */
+    int highlight; /**< Whether the prompt is drawn lit this frame. */
 };
 
 STATIC_ASSERT(sizeof(EB_KEY) == 0x1C);
@@ -253,27 +253,27 @@ void EBSetKey(float time, int buttons, int mode) {
     if (eb_key_num < 64) {
         EB_KEY *key = &eb_key[eb_key_num++];
 
-        key->unk_00 = 0;
+        key->frame = 0;
         for (int index = 0;; index++) {
             EB_MOTION *motion = &eb_motion[index];
             if (motion->motion_no < 0) {
                 break;
             }
             if (time >= motion->start && time < motion->end) {
-                key->unk_00 += (time - motion->start) / motion->speed;
+                key->frame += (time - motion->start) / motion->speed;
                 break;
             }
-            key->unk_00 += motion->frames;
+            key->frame += motion->frames;
         }
-        key->unk_04 = buttons;
-        key->unk_0C = 0;
+        key->buttons = buttons;
+        key->pressed = 0;
         if (mode > 5) {
             mode = 5;
         }
-        key->unk_08 = mode;
-        key->unk_14 = 0;
-        key->unk_10 = 0;
-        key->unk_18 = 0;
+        key->mode = mode;
+        key->passed = 0;
+        key->hit = 0;
+        key->highlight = 0;
     }
 }
 
