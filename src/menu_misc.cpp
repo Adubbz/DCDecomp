@@ -39,7 +39,6 @@
 #include "dngstatusdata.hpp"
 #include "weaponlevelup.hpp"
 
-extern CTexture *WepIcon;
 #endif
 
 /** The weapon test number GetNowTestNo reports, initialised to 1. */
@@ -56,6 +55,9 @@ extern u_long128 *MenuWeaponModelBuildBuffer;
 
 /** The buffer the menu's weapon level-up effect data is read into. */
 extern u_long128 *WepMenuEffectReadBuf;
+
+/** The weapon icon texture the weapon menus draw from. */
+extern CTexture *WepIcon;
 
 /** The path of the model file a character change reads. */
 extern char MenureadFile[64];
@@ -170,11 +172,6 @@ extern "C" const char readFilePath[0x40];
  * Provides the model file name for each playable character.
  */
 extern "C" const char *charaFile[6];
-
-/**
- * Provides the file extension appended to character model file names.
- */
-extern "C" const char CharaFileExtension[5];
 
 /**
  * Names the synthetic texture a menu builds from the current frame image.
@@ -765,19 +762,6 @@ int StartReadWepMDS(u_long128 *buffer, int chara) {
     }
     return 1;
 }
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @985__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @986__3);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @987);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @988);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @989);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @990__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @992__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @993__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @994);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @995);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @996__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @997);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1002);
 static u_int **GetMenuWeaponModelData(int index) {
     return &MenuWeaponModelData[index];
 }
@@ -802,29 +786,43 @@ void SetMenuWeaponModelReference(int index, int frame_no, int value) {
 int GetMenuWeaponModelFrameNo(int index) {
     return MenuWeaponModelInfo[index][0];
 }
-#ifdef NON_MATCHING
+
+/**
+ * Enters a menu page's weapon models and textures from their read files and returns the outcome.
+ *
+ * @mangled EnterWeaponModel__Fiii
+ * @address 0x20D4C0
+ * @size 0x464
+ */
 int EnterWeaponModel(int chara, int texture_block, int) {
-    char *shadows[6] = {"kagetoan", "kagesyao", "kagegoro", "kageruby", "kageunga", "kageozu"};
-    char *names[6] = {"c01", "c04", "c06", "c05", "c10", "c18"};
-    char order[16];
-    char model[32];
-    char image[32];
-    char chr[32];
     BG_READ_INFO *pack = GetReadBGFile(0);
     BG_READ_INFO *shadow = GetReadBGFile(1);
     BG_READ_INFO *effect = GetReadBGFile(2);
+    // Built and indexed but never read.
+    char *shadows[6] = {"kagetoan", "kagesyao", "kagegoro", "kageruby", "kageunga", "kageozu"};
+    char *shadow_name = shadows[chara];
     s16 max = MenuCharaWeaponMax[chara];
+    char *names[6] = {"c01", "c04", "c06", "c05", "c10", "c18"};
+    char order[42];
+    char image[32];
+    char model[32];
+    char chr[32];
 
     switch (GetNowTestNo()) {
         case 0:
             break;
         case 1: {
-            LOADTEXTURE_INFO2 texture = {0};
-            texture.block_no = MenuShadowReadBlock;
-            texture.name = (char *) shadow->buffer;
+            LOADTEXTURE_INFO2 texture[3] = {
+                {"#frame_menuwep_dmy#640#448#4", 0, 0},
+                {NULL, 0, 0},
+                {NULL, 0, 0},
+            };
+            texture[0].block_no = MenuShadowReadBlock;
+            texture[1].block_no = MenuShadowReadBlock;
+            texture[1].name = (char *) shadow->buffer;
             TexManager.DeleteTextureBlock(MenuShadowReadBlock);
             TexManager.CleanUpTextureList();
-            TexManager.LoadTextureBlockEX(-1, &texture);
+            TexManager.LoadTextureBlockEX(-1, texture);
             WepIcon = TexManager.GetTexture("wepicon", MenuShadowReadBlock);
             for (int i = 0; i < max; i++) {
                 order[i] = i;
@@ -832,32 +830,32 @@ int EnterWeaponModel(int chara, int texture_block, int) {
             InitMenuWeaponModelData();
             for (int i = 0; i < max; i++) {
                 char *name = names[chara];
-                strcpy(model, name);
                 strcpy(image, name);
+                strcpy(model, name);
                 strcpy(chr, name);
                 int no = order[i];
-                if (no >= 0 && no < 10) {
+                if (0 <= no && no <= 9) {
                     strcat(chr, "w0%d");
                     sprintf(chr, chr, no);
-                    strcat(model, "w0%d");
-                    sprintf(model, model, no);
                     strcat(image, "w0%d");
                     sprintf(image, image, no);
+                    strcat(model, "w0%d");
+                    sprintf(model, model, no);
                 } else if (no >= 10) {
                     strcat(chr, "w%d");
                     sprintf(chr, chr, no);
-                    strcat(model, "w%d");
-                    sprintf(model, model, no);
                     strcat(image, "w%d");
                     sprintf(image, image, no);
+                    strcat(model, "w%d");
+                    sprintf(model, model, no);
                 } else {
                     strcat(chr, "w01");
-                    strcat(model, "w01");
-                    strcat(image, "w01d");
+                    strcat(image, "w01");
+                    strcat(model, "w01d");
                 }
                 strcat(chr, ".chr");
-                strcat(model, ".img");
-                strcat(image, ".mds");
+                strcat(image, ".img");
+                strcat(model, ".mds");
                 u_int *file = GetPackFile((u_int *) pack->buffer, chr, NULL);
                 if (file != NULL) {
                     *GetMenuWeaponModelData(i) = file;
@@ -877,17 +875,6 @@ int EnterWeaponModel(int chara, int texture_block, int) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", EnterWeaponModel__Fiii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1032);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1033);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1034__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1035__3);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1036__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1037__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1038__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1039__2);
 
 /**
  * Builds the models of a character's weapons into the menu's model cache.
@@ -1213,7 +1200,7 @@ void MenuCharaMDSBuild2(int chara, int texture_block) {
 static void GetCharaChangeReadCharaFilePath(char *path, int chara_no) {
     strcpy(path, readFilePath);
     strcat(path, charaFile[chara_no]);
-    strcat(path, CharaFileExtension);
+    strcat(path, ".chr");
 }
 
 /** The directory the menu reads weapon model files from. */

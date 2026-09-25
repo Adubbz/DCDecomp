@@ -560,7 +560,6 @@ SECTIONS
         . = ALIGN(0x10);
         main.data.battlemenu-tail.s.o (.data) // 0x00293960
         menu_misc.cpp.o (.menu_misc-wepread) // 0x00293990
-        main.data.menu_misc-a.s.o (.data) // 0x00293A08
         menu_misc.cpp.o (.menu_misc-model) // 0x00293A80
         main.data.menu_misc-b.s.o (.data) // 0x00293B88
         menu_misc.cpp.o (.menu_misc-frame) // 0x00293BF0
