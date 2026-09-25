@@ -962,40 +962,58 @@ void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures, int so
     }
 }
 /**
- * Draws a party member's name on the save board, in a gradient.
+ * Draws a party member's name centred on the save board, with a shadow and a top-to-bottom gradient.
  *
  * @mangled DrawSaveBoardCharaName2__FiiPsPP8CTexture6spRGBA6spRGBA
  * @address 0x23CB50
  * @size 0x284
  */
-#ifdef NON_MATCHING
-void DrawSaveBoardCharaName2(int x, int y, short *name, CTexture **textures,
-                             spRGBA top, spRGBA bottom) {
-    int length = 10;
-    while (length > 0 && name[length - 1] == 0) {
-        length--;
+void DrawSaveBoardCharaName2(int x, int y, s16 *name, CTexture **textures, spRGBA top, spRGBA bottom) {
+    spRGBA shadow_top = {10, 10, 10, top.a};
+    spRGBA shadow_bottom = {10, 10, 10, bottom.a};
+    int narrow;
+    int put_x;
+    CTexture *texture;
+    int last;
+
+    last = 9;
+    while (name[last] == 0 && last > 0) {
+        last--;
     }
-    int draw_x = x + 54 + length * 10;
-    spRGBA shadow_top = {0, 0, 0, top.a};
-    spRGBA shadow_bottom = {0, 0, 0, bottom.a};
-    for (int index = length - 1; index >= 0; index--) {
-        int texture_x;
-        int texture_y;
-        CTexture *texture =
-            GetNameTextureInfo(textures, name[index], texture_x, texture_y);
-        CRect_i_ source(texture_x, texture_y, 22, 23);
-        CRect_i_ shadow(draw_x + 2, y + 2, 22, 21);
-        CRect_i_ destination(draw_x, y, 22, 21);
-        DrawMenu2DSprite(texture, shadow, source, &shadow_top, &shadow_top,
+
+    narrow = 0;
+    int width = (last + 1) * 0x16;
+    if (width >= 0xB0) {
+        narrow = 1;
+    }
+
+    int tume = 0;
+    for (int i = last; i >= 0; i--) {
+        tume += GetFontLRTumeW(i, name[i - 1], name[i]);
+    }
+    if (narrow == 1) {
+        width -= tume;
+    }
+
+    put_x = x + 0x36 + (width >> 1) - ((width / (last + 1)) >> 1);
+
+    for (; last >= 0; last--) {
+        int cell_x;
+        int cell_y;
+        texture = GetNameTextureInfo(textures, name[last], cell_x, cell_y);
+        CRect_i_ cell(cell_x, cell_y, 0x16, 0x17);
+
+        DrawMenu2DSprite(texture, CRect_i_(put_x + 2, y + 2, 0x16, 0x15), cell, &shadow_top, &shadow_top,
                          &shadow_bottom, &shadow_bottom);
-        DrawMenu2DSprite(texture, destination, source, &top, &top, &bottom, &bottom);
-        draw_x -= 20 - GetFontLRTumeW(index, index > 0 ? name[index - 1] : 0,
-                                      name[index]);
+        DrawMenu2DSprite(texture, CRect_i_(put_x, y, 0x16, 0x15), cell, &top, &top, &bottom, &bottom);
+
+        int step = 0;
+        if (last >= 0 && narrow == 1) {
+            step = GetFontLRTumeW(last, name[last - 1], name[last]);
+        }
+        put_x -= 0x14 - step;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawSaveBoardCharaName2__FiiPsPP8CTexture6spRGBA6spRGBA);
-#endif
 /**
  * Gives how wide a party member's name draws.
  *
