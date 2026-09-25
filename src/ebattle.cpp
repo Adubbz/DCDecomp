@@ -324,98 +324,119 @@ int EBIntroLoop(void) {
  * @address 0x168690
  * @size 0x4E4
  */
-#ifdef NON_MATCHING
 int EBLoop() {
     if (ebattle_flag == 0) {
         return 1;
     }
-    if (eb_finish_cnt > 1) {
-        --eb_finish_cnt;
+    if (eb_finish_cnt > 0) {
+        if (eb_finish_cnt == 1) {
+            EBExit();
+            return eb_result;
+        }
+        eb_finish_cnt--;
         return 0;
     }
-    if (eb_finish_cnt == 1) {
-        EBExit();
-        return eb_result;
-    }
-
     if (eb_count == 0 && play_fanfare != 0) {
-        int sound_size;
+        int size;
         StartReadBG();
-        SndSPSeLoadBG(0x2F, read_buffer, &sound_size);
+        SndSPSeLoadBG(0x2F, read_buffer, &size);
     }
     ReadBG();
 
-    EB_KEY_ENTRY *keys = (EB_KEY_ENTRY *) eb_key;
-    EB_KEY_ENTRY *active = NULL;
-    int timing_grade = 0;
-    for (int i = 0; i < eb_key_num; ++i) {
-        EB_KEY_ENTRY &key = keys[i];
-        float distance = (float) (eb_count - key.frame) * speed;
-        int early_window = key.mode > 0 ? (6 - key.mode) * 64 : 0;
-        key.early = distance <= 16.0f - (float) early_window && early_window > 0;
+    int i;
+    float scale = speed;
+    EB_KEY *active = NULL;
+    int cool = 0;
+    for (i = 0; i < eb_key_num; i++) {
+        EB_KEY *key = &eb_key[i];
+        float distance = eb_count - key->frame;
+        distance *= scale;
+        int early = 0;
+        if (key->mode > 0) {
+            early = (6 - key->mode) << 6;
+        }
+        key->highlight = 0;
         if (distance > 0.0f) {
-            if (distance >= 48.0f) {
-                key.complete = 1;
-            } else if (distance < 24.0f) {
-                timing_grade = 1;
+            if (distance < 48.0f) {
+                active = key;
+            } else {
+                key->passed = 1;
+            }
+            if (distance < 24.0f) {
+                cool = 1;
+            }
+        } else {
+            if (distance > -16.0f) {
+                active = key;
+            }
+            if (early > 0 && distance <= 16.0f - early) {
+                key->highlight = 1;
             }
         }
-        if (distance > -16.0f && distance < 48.0f) {
-            active = &key;
+        if (debug_mode != 0 && eb_count == key->frame) {
+            SndSePlay(9, -1, 0);
+            SndSePlay(1, -1, 0);
         }
     }
 
     int failed = 0;
-    if (active == NULL) {
-        failed = GamePad.GetPadDown() != 0;
-    } else {
+    if (active != NULL) {
         active->pressed |= GamePad.GetPadDown();
         if (active->pressed == active->buttons) {
-            if (active->complete == 0) {
-                SndSePlay(timing_grade != 0 ? 10 : 9, -1, 0);
-                int button = (int) (active - keys);
-                set_draw_ok(timing_grade, button);
-                eb_cool_flag &= timing_grade;
-                ++eb_key_count;
+            if (active->hit == 0) {
+                if (cool) {
+                    SndSePlay(10, -1, 0);
+                } else {
+                    SndSePlay(9, -1, 0);
+                }
+                set_draw_ok(cool, active - eb_key);
+                eb_cool_flag &= cool;
+                eb_key_count++;
             }
-            active->complete = 1;
+            active->hit = 1;
         }
         if (active->buttons != (active->buttons | active->pressed)) {
             failed = 1;
         }
+    } else if (GamePad.GetPadDown()) {
+        failed = 1;
+    }
+    for (i = 0; i < eb_key_num; i++) {
+        EB_KEY *key = &eb_key[i];
+        if (key->passed == 0) {
+            break;
+        }
+        if (key->buttons != key->pressed) {
+            failed = 1;
+        }
     }
 
-    if (failed != 0 && debug_mode == 0 && eb_key_count < eb_key_num &&
-        EdDebugParamDrawOff == 0) {
+    if (failed && debug_mode == 0 && eb_key_count < eb_key_num && EdDebugParamDrawOff == 0) {
         SndBgmFadeOut(40, 0);
         eb_finish_cnt = 80;
         eb_result = -1;
-        ++eb_count;
+        eb_count++;
         return 0;
     }
-
     if (eb_count == eb_end_count - 100 && fade_bgm != 0) {
         SndBgmFadeOut(100, 0);
     }
-    if (eb_count < eb_end_count) {
-        old_time = now_time;
-        draw_ok_loop();
-        ++eb_count;
+    if (eb_count >= eb_end_count) {
+        if (play_fanfare != 0) {
+            while (SndSPSeSyncBG() != 0) {
+            }
+            SndSPSePlay(0x2F, -1);
+        }
+        eb_finish_cnt = 160;
+        eb_result = (eb_cool_flag != 0) + 1;
         return 0;
     }
-
-    if (play_fanfare != 0) {
-        while (SndSPSeSyncBG() != 0) {
-        }
-        SndSPSePlay(0x2F, -1);
-    }
-    eb_finish_cnt = 160;
-    eb_result = (eb_cool_flag != 0) + 1;
+    old_time = now_time;
+    draw_ok_loop();
+    eb_count++;
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", EBLoop__Fv);
-#endif
+
 /**
  * Draws the event battle's prompt strip and result overlay.
  */
