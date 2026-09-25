@@ -1812,12 +1812,19 @@
       ".menuerrorcnt": [
         "MenuEtcErrCnt"
       ],
+      ".charachangedata": [
+        "@1065",
+        "@1076"
+      ],
       ".menu_dungeon-c1707": [
-        "@1079"
+        "@1100"
       ],
       ".menu_dungeon-c1731": [
-        "@1098"
+        "@1119"
       ]
+    },
+    "symbols": {
+      "chara_change_frame_image": "@1301"
     },
     "rodata_exports": [
       "@1728__2"

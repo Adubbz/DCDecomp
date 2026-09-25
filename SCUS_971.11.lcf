@@ -685,6 +685,9 @@ SECTIONS
         menu_dungeon.cpp.o (.data)   // 0x00294150
         . = ALIGN(0x10);
         main.data.part6g.s.o (.data) // 0x002941c0
+        menu_dungeon.cpp.o (.charachangedata) // 0x00294250
+        . = ALIGN(0x10);
+        main.data.menu_dungeon-a.s.o (.data) // 0x002942a0
         menu_dungeon.cpp.o (.menu_dungeon-c1707) // 0x002942d0 @1707
         . = ALIGN(0x10);
         menu_dungeon.cpp.o (.menu_dungeon-c1731) // 0x002942e0 @1731

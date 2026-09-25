@@ -867,6 +867,23 @@ static void DrawDunEnterBack(int alpha) {
     MGFillBox(CRect_i_(0, 0, 0x2800, 0x1C00), 10, 10, 10, (alpha * 4) >> 7);
 }
 
+/** Texture block the character change menu loads its pictures into. */
+extern s16 CharaChangeTexBlock;
+
+/** Set once the character change menu's files have been read. */
+extern s16 CharaChangeReadFlag;
+
+/** Buffer past the character change menu's pictures, where its models are read. */
+extern u_long128 *chara_change_buf;
+
+/** Texture of the character change menu's portraits. */
+extern CTexture *QuickCharaTex;
+
+/**
+ * Name of the frame-buffer texture the character change menu's pictures are drawn into.
+ */
+extern char chara_change_frame_image[];
+
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1301);
 #ifdef NON_MATCHING
 static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, int alpha) {
@@ -914,30 +931,65 @@ INCLUDE_ASM("asm/nonmatchings/menu_dungeon", StartQuickChange__FP1iPii);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1348__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1349);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1350__3);
-#ifdef NON_MATCHING
 int CharaChangeLoop(void) {
-    int result = CharaChangeKey();
-
-    ReadBG();
+    if (ReadBGSync() == 0 && CharaChangeReadFlag == 0) {
+        LOADTEXTURE_INFO2 table[] = {
+            {chara_change_frame_image, 0, 0},
+            {NULL, 0, 0},
+            {NULL, 0, 0},
+        };
+        table[0].block_no = CharaChangeTexBlock;
+        table[1].block_no = CharaChangeTexBlock;
+        BG_READ_INFO *file = GetReadBGFile(0);
+        if (file == NULL) {
+            return 1;
+        }
+        table[1].name = (char *) GetPackFile((u_int *) file->buffer, "quickchr.img", NULL);
+        TexManager.DeleteTextureBlock(CharaChangeTexBlock);
+        TexManager.CleanUpTextureList();
+        TexManager.LoadTextureBlockEX(-1, table);
+        QuickCharaTex = TexManager.GetTexture("quickchara", -1);
+        chara_change_buf = file->buffer + (file->size >> 4) + 4;
+        chara_change_buf = MenuCalcBufAlignment(chara_change_buf);
+        CharaChangeReadFlag = 1;
+        InitMenuMesSet(0, (s16 *) GetPackFile((u_int *) file->buffer, "qchr.mes", NULL));
+        CommonMenuMes3.auto_pos = -1;
+        CommonMenuMes3.Preset(1);
+        int message = 1;
+        if (ChangeMenu.unk_52 == 1) {
+            message = 4;
+        }
+        if (ChangeMenu.unk_52 == 2) {
+            message = 5;
+        }
+        CommonMenuMes3.MakeMesWin(message);
+        CommonMenuMes1.Preset(1);
+        CommonMenuMes1.MakeMesWin(3);
+    }
+    int result = 0;
+    if (CharaChangeReadFlag != 0) {
+        result = CharaChangeKey();
+    }
     CharaChangeDraw();
     ItemVolumeStep.LoopStep(60);
     if (result != 0) {
-        MenuTextureReload(quick_change_texture_block);
+        MenuTextureReload(CharaChangeTexBlock);
         DngActiveWeaponTextureCopy();
+        CharaChangeReadFlag = 0;
         ItemVolumeStep.CheckItemVolume();
         GamePad.MenuModeOff();
         GamePad.AutoRepeatOff();
-        TexManager.DeleteTextureBlock(quick_change_texture_block);
+        TexManager.DeleteTextureBlock(CharaChangeTexBlock);
         TexManager.CleanUpTextureList();
+        LOADTEXTURE_INFO2 restore[] = {
+            {chara_change_frame_image, 0, 0},
+            {NULL, 0, 0},
+        };
+        restore[0].block_no = CharaChangeTexBlock;
+        TexManager.LoadTextureBlockEX(-1, restore);
     }
     return result;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", CharaChangeLoop__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1373);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1374);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1375);
 #ifdef NON_MATCHING
 int CharaChangeKey(void) {
     int previous = quick_change_selected;
