@@ -762,6 +762,7 @@ int StartReadWepMDS(u_long128 *buffer, int chara) {
     }
     return 1;
 }
+
 static u_int **GetMenuWeaponModelData(int index) {
     return &MenuWeaponModelData[index];
 }
