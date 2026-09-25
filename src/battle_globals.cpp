@@ -817,34 +817,77 @@ INCLUDE_ASM("asm/nonmatchings/battle_globals", NameEnterKey__Fv);
  * @address 0x23C770
  * @size 0x110
  */
-#ifdef NON_MATCHING
 void NameDefaultSet(int chara_no) {
-    static const s16 default_names[6][11] = {
-        {20, 15, 1, 14, 0},
-        {24, 9, 1, 15, 0},
-        {7, 15, 18, 15, 0},
-        {18, 21, 2, 25, 0},
-        {21, 14, 7, 1, 7, 1, 0},
-        {15, 19, 13, 15, 14, 4, 0},
+    int language = GetMenuLangFlag();
+    s16 default_names[7][6][11] = {
+        {
+            {20, 1, 46},
+            {12, 47, 5},
+            {60, 43, 222},
+            {41, 77, 222},
+            {3, 46, 56, 56},
+            {5, 63, 35, 46, 70},
+        },
+        {
+            {181, 202, 188, 201},
+            {185, 196, 188, 202},
+            {168, 202, 205, 202},
+            {179, 208, 189, 212},
+            {182, 201, 194, 188, 194, 188},
+            {176, 206, 200, 202, 201, 191},
+        },
+        {
+            {181, 202, 188, 201},
+            {185, 196, 188, 202},
+            {168, 202, 205, 202},
+            {179, 208, 189, 212},
+            {182, 201, 194, 188, 194, 188},
+            {176, 206, 200, 202, 201, 191},
+        },
+        {
+            {181, 202, 188, 201},
+            {185, 196, 188, 202},
+            {168, 202, 205, 202},
+            {179, 208, 189, 212},
+            {182, 201, 194, 188, 194, 188},
+            {176, 206, 200, 202, 201, 191},
+        },
+        {
+            {181, 202, 188, 201},
+            {185, 196, 188, 202},
+            {168, 202, 205, 202},
+            {179, 208, 189, 212},
+            {182, 201, 194, 188, 194, 188},
+            {176, 206, 200, 202, 201, 191},
+        },
+        {
+            {181, 202, 188, 201},
+            {185, 196, 188, 202},
+            {168, 202, 205, 202},
+            {179, 208, 189, 212},
+            {182, 201, 194, 188, 194, 188},
+            {176, 206, 200, 202, 201, 191},
+        },
+        {
+            {181, 202, 188, 201},
+            {185, 196, 188, 202},
+            {168, 202, 205, 202},
+            {179, 208, 189, 212},
+            {182, 201, 194, 188, 194, 188},
+            {176, 206, 200, 202, 201, 191},
+        },
     };
-    if (chara_no < 0 || chara_no >= 6) {
-        return;
-    }
-
     s16 *name = SaveData->GetCharaName(chara_no);
-    int length = 0;
-    while (length < 10 && default_names[chara_no][length] != 0) {
-        name[length] = default_names[chara_no][length];
-        length++;
+    int length;
+
+    for (length = 0; default_names[language][chara_no][length] != 0 && length < 10; length++) {
+        name[length] = default_names[language][chara_no][length];
     }
     NameSelect.name_pos = length;
-    while (length < 32) {
-        name[length++] = 0;
+    for (; length < 32; length++) {
+        name[length] = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", NameDefaultSet__Fi);
-#endif
 /**
  * Gives the kerning between two name characters.
  *

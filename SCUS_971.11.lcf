@@ -580,7 +580,9 @@ SECTIONS
         . = ALIGN(0x10);
         battle_globals.cpp.o (.nameenterdata2) // 0x00295aa0 NameEnterDraw local tables
         main.data.battle_globals-gap.s.o (.data) // 0x00295b18
-        main.data.battle_globals-b.s.o (.data) // 0x00295b50
+        battle_globals.cpp.o (.nameenterdata3) // 0x00295b50 NameDefaultSet's default names
+        . = ALIGN(0x10);
+        main.data.battle_globals-b.s.o (.data) // 0x00295ef0
         stockitem.cpp.o (.data)
         . = . + 0xC;
         fish.cpp.o (.data)
