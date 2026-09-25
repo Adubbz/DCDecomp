@@ -531,7 +531,7 @@ SECTIONS
         main.data.motionmodel-a.s.o (.data) // 0x0026b0e0
         motionmodel.cpp.o (.motionmodeldata) // 0x0026b1b0
         main.data.motionmodel-gap.s.o (.data) // 0x0026b1c8
-        main.data.motionmodel-b.s.o (.data) // 0x0026b1d0
+        hitvalue.cpp.o (.data)       // 0x0026b1d0
         btmisc.cpp.o (.data)         // 0x0026b1f0 makeWeaponName's and BtGetWeaponNamePath2's tables
         . = ALIGN(0x10);
         main.data.motionmodel-b-26B250.s.o (.data) // 0x0026b250

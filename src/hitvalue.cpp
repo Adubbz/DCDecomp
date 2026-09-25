@@ -20,13 +20,12 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
-extern "C" s32 defWeapon__6[];
-
-#ifdef NON_MATCHING
 int BattleSubWeaponDmg(float amount, int kind) {
+    int defWeapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
     int chara_no = UserStatus->cur_chara;
-    int equipped_slot = UserStatus->equipped_weapon_slot[chara_no];
-    WEAPON_HAVE *weapon = &UserStatus->chara_weapons[chara_no][equipped_slot];
+    int default_weapon;
+    WEAPON_HAVE *weapon =
+        &UserStatus->chara_weapons[chara_no][UserStatus->equipped_weapon_slot[chara_no]];
 
     if (weapon->item_no == 0x10C && SaveData->GetGameFlag(0x30) == 0) {
         return 0;
@@ -39,19 +38,23 @@ int BattleSubWeaponDmg(float amount, int kind) {
         amount *= 2.0f;
     }
 
-    int default_weapon = defWeapon__6[chara_no];
-    if (default_weapon == weapon->item_no) {
+    default_weapon = defWeapon[chara_no];
+    if (default_weapon ==
+        UserStatus->chara_weapons[chara_no][UserStatus->equipped_weapon_slot[chara_no]].item_no) {
         return 0;
     }
 
+    float wear = 1.5f - 0.01f * NowWeaponHave->endurance;
     float old_durability = weapon->durability_f;
-    weapon->durability_f -= (1.5f - 0.01f * (float) NowWeaponHave->endurance) * amount + 0.1f * (float) kind;
+    wear *= amount;
+    wear += 0.1f * kind;
+    weapon->durability_f = old_durability - wear;
 
     if (weapon->durability_f <= 0.0f) {
         int powder_slot = ((CDngStatusData *) UserStatus)->CheckActItemSlot(0xB7);
         if (powder_slot != -1) {
             DelActiveItem(powder_slot + 1);
-            weapon->durability_f = (float) weapon->durability;
+            weapon->durability_f = weapon->durability;
             DngMessMan.message = 0xBC;
             DngMessMan.timer = 0xF0;
             DngMessMan.unk_1C = 0;
@@ -63,7 +66,9 @@ int BattleSubWeaponDmg(float amount, int kind) {
         weapon->durability_f = 0.0f;
         SndSePlay(0xE0, -1, 0);
 
-        if (default_weapon + 1 == weapon->item_no) {
+        int now_item =
+            UserStatus->chara_weapons[chara_no][UserStatus->equipped_weapon_slot[chara_no]].item_no;
+        if (default_weapon + 1 == now_item) {
             DngMessMan.unk_0C = GetCommonItemDataSystemMsg(weapon->item_no);
             DngMessMan.unk_14 = weapon->unk_02;
             DngMessMan.message = 0xA1;
@@ -76,46 +81,52 @@ int BattleSubWeaponDmg(float amount, int kind) {
             return 1;
         }
 
-        for (int slot = 0; slot < 10; slot++) {
-            WEAPON_HAVE *replacement = &UserStatus->chara_weapons[chara_no][slot];
-            int result;
-
-            if (replacement->item_no == default_weapon) {
-                result = 1;
-            } else if (replacement->item_no == default_weapon + 1) {
-                result = 2;
-            } else {
-                continue;
+        if (default_weapon + 1 != (s16) now_item) {
+            WEAPON_HAVE *replacement = UserStatus->chara_weapons[chara_no];
+            for (int slot = 0; slot < 10; replacement++, slot++) {
+                if (replacement->item_no == default_weapon) {
+                    UserStatus->equipped_weapon_slot[chara_no] = slot;
+                    SetWeaponAttachStatus(NowWeaponHave);
+                    DngMessMan.unk_0C = GetCommonItemDataSystemMsg(weapon->item_no);
+                    DngMessMan.unk_14 = weapon->unk_02;
+                    DngMessMan.unk_10 = GetCommonItemDataSystemMsg(replacement->item_no);
+                    DngMessMan.unk_18 = replacement->unk_02;
+                    DngMessMan.message = 0xA0;
+                    DngMessMan.timer = 0x1E0;
+                    DngMessMan.unk_1C = 0;
+                    weapon->item_no = -1;
+                    return 1;
+                }
+                if (replacement->item_no == default_weapon + 1) {
+                    UserStatus->equipped_weapon_slot[chara_no] = slot;
+                    SetWeaponAttachStatus(NowWeaponHave);
+                    DngMessMan.unk_0C = GetCommonItemDataSystemMsg(weapon->item_no);
+                    DngMessMan.unk_14 = weapon->unk_02;
+                    DngMessMan.unk_10 = GetCommonItemDataSystemMsg(replacement->item_no);
+                    DngMessMan.unk_18 = replacement->unk_02;
+                    DngMessMan.message = 0xA0;
+                    DngMessMan.timer = 0x1E0;
+                    DngMessMan.unk_1C = 0;
+                    if (chara_no == 3) {
+                        replacement->best_elem = 0;
+                    }
+                    weapon->item_no = -1;
+                    return 2;
+                }
             }
-
-            UserStatus->equipped_weapon_slot[chara_no] = slot;
-            SetWeaponAttachStatus(NowWeaponHave);
-            DngMessMan.unk_0C = GetCommonItemDataSystemMsg(weapon->item_no);
-            DngMessMan.unk_14 = weapon->unk_02;
-            DngMessMan.unk_10 = GetCommonItemDataSystemMsg(replacement->item_no);
-            DngMessMan.unk_18 = replacement->unk_02;
-            DngMessMan.message = 0xA0;
-            DngMessMan.timer = 0x1E0;
-            DngMessMan.unk_1C = 0;
-            if (result == 2 && chara_no == 3) {
-                replacement->attach_kind[0] = 0;
-            }
-            weapon->item_no = -1;
-            return result;
         }
     }
 
-    float low_threshold = 0.1f * (float) weapon->durability;
-    if (low_threshold <= old_durability && weapon->durability_f < low_threshold) {
+    if (0.1f * weapon->durability <= old_durability &&
+        0.1f * weapon->durability > weapon->durability_f) {
         DngMessMan.unk_0C = GetCommonItemDataSystemMsg(weapon->item_no);
         DngMessMan.unk_14 = weapon->unk_02;
         DngMessMan.message = 0x97;
         DngMessMan.timer = 0xF0;
         DngMessMan.unk_1C = 0;
     }
-
-    float critical_threshold = 0.05f * (float) weapon->durability;
-    if (critical_threshold <= old_durability && weapon->durability_f < critical_threshold) {
+    if (0.05f * weapon->durability <= old_durability &&
+        0.05f * weapon->durability > weapon->durability_f) {
         DngMessMan.unk_0C = GetCommonItemDataSystemMsg(weapon->item_no);
         DngMessMan.unk_14 = weapon->unk_02;
         DngMessMan.message = 0x98;
@@ -124,9 +135,6 @@ int BattleSubWeaponDmg(float amount, int kind) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/hitvalue", BattleSubWeaponDmg__Ffi);
-#endif
 void HitValueEntry(CHitValue *values, float *world, int amount, int kind, CFrame *frame) {
     for (int i = 0; i < 32; i++) {
         if (values[i].active == 0) {
