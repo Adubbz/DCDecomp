@@ -7986,7 +7986,11 @@ void autoCamTrial(void) {
 
         i = 0;
         while (NowDngMap->parts[i].frame[0] != NULL) {
-            frame = i == -1 ? NULL : NowDngMap->parts[i].unk_004;
+            if (i == -1) {
+                frame = NULL;
+            } else {
+                frame = NowDngMap->parts[i].unk_004;
+            }
 
             if (frame != NULL) {
                 CDungeonParts *part = &NowDngMap->parts[i];
@@ -8012,20 +8016,26 @@ void autoCamTrial(void) {
         }
     } else {
         CFrame *frame;
-        int j;
         int i;
+        int j;
 
         for (j = 0; j < 20; j++) {
             for (i = 0; i < 20; i++) {
                 CDungeonMap *map = NowDngMap;
                 s32 parts_no = map->cells[i + j * 20].parts_no;
 
-                frame = parts_no == -1 ? NULL : map->parts[parts_no].unk_004;
+                if (parts_no == -1) {
+                    frame = NULL;
+                } else {
+                    frame = map->parts[parts_no].unk_004;
+                }
+
+                MAP_CELL *cell = &map->cells[i + j * 20];
 
                 if (frame == NULL) {
                     continue;
                 }
-                if (!(map->cells[i + j * 20].unk_08 <= 240.0f)) {
+                if (!(cell->unk_08 <= 240.0f)) {
                     continue;
                 }
 
