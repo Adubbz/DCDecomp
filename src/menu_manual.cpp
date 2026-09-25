@@ -451,31 +451,49 @@ int MenuManualKey() {
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_manual", MenuManualKey__Fv);
 #endif
-#ifdef NON_MATCHING
 void MenuManualDraw() {
     if (ManualMenu.mode >= 3 && ManualMenu.mode < 6 && ManualMenu.images_ready != 0) {
         MenuTextureReload(ManualMenu.image_texture_block);
         int image_count = GetNowManualPartTgaNum();
-        int target = -ManualMenu.image_page * 0x280;
-        float distance = (float)(target - ManualMenu.image_offset);
-        ManualMenu.image_offset += (int)(distance / 4.0f);
-        int distance_int = (int) distance;
-        if (distance_int >= -3 && distance_int <= 3) ManualMenu.image_offset = target;
+        int target = -(ManualMenu.image_page * 0x280);
+        float distance = target - ManualMenu.image_offset;
+        ManualMenu.image_offset += (int) (distance / 4.0f);
+        if (abs((int) distance) <= 3.0) {
+            ManualMenu.image_offset = target;
+        }
         int x = ManualMenu.image_offset;
         for (int image = 0; image < image_count; image++, x += 0x280) {
-            if (image == 3) MenuTextureReload(ManualMenu.extra_texture_block);
-            if (x >= 0x281) continue;
+            if (image == 3) {
+                MenuTextureReload(ManualMenu.extra_texture_block);
+            }
             int source_x = 0;
-            int width = 0x280;
             int screen_x = x;
+            if (x > 0x280) {
+                break;
+            }
+            int width = 0x280;
             MenuTextureClip(screen_x, source_x, width, 0, 0x280);
-            if (width > 0x280) width = 0x280;
-            if (width < 0) width = 0;
+            if (width > 0x280) {
+                width = 0x280;
+            }
+            if (width < 0) {
+                width = 0;
+            }
             CRect_i_ screen(screen_x, 0, width, 0x1C0);
             CRect_i_ texel(source_x, 0, width, 0x1C0);
             CTexture *texture = ManualMenuTex[image];
             if (texture != NULL) {
-                set2DSprite(GetVif1Packet(), texture, screen, texel, 0x64, 0x64, 0x64, 0x80);
+                set2DSprite(GetVif1Packet(), texture, screen, texel, 100, 100, 100, 0x80);
+            } else {
+                int previous = image - 1;
+                while (ManualMenuTex[previous] == NULL) {
+                    if (--previous <= 0) {
+                        break;
+                    }
+                }
+                if (previous >= 0) {
+                    set2DSprite(GetVif1Packet(), texture, screen, texel, 0x50, 0x50, 0x50, 0x80);
+                }
             }
         }
         MenuTextureReload(ManualMenu.common_texture_block);
@@ -485,6 +503,3 @@ void MenuManualDraw() {
         DrawManualMsg();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_manual", MenuManualDraw__Fv);
-#endif
