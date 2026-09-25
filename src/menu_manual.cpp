@@ -324,7 +324,14 @@ void ExitManualMenu() {
 int GetNowManualMenuMode() {
     return ManualMenu.mode;
 }
-#ifdef NON_MATCHING
+
+/**
+ * Puts a message window's choice cursor on a line, or takes it away for a negative line.
+ */
+static inline void SetCursorRow(ClsMes *message, int row) {
+    message->cursor_row = row;
+}
+
 int MenuManualKey() {
     ReadBG();
     int closed = 0;
@@ -335,20 +342,24 @@ int MenuManualKey() {
             }
             break;
         case 1:
-            if (++ManualMenu.transition_frame >= 33) {
+            ManualMenu.transition_frame++;
+            if (ManualMenu.transition_frame > 32) {
                 ExitManualMenu();
                 closed = 1;
             }
             break;
         case 2: {
-            int minimum = 0;
-            int maximum = 0;
-            int *selection = NULL;
+            int minimum;
+            int maximum;
+            int *selection;
             if (ManualMenu.selection_level == -2) {
+                minimum = 0;
                 maximum = 3;
                 selection = &ManualMenu.category;
-            } else if (ManualMenu.selection_level == -1) {
-                static int entry_max[] = {4, 4, 3, 2};
+            }
+            if (ManualMenu.selection_level == -1) {
+                int entry_max[] = {4, 4, 3, 2};
+                minimum = 0;
                 maximum = entry_max[ManualMenu.category];
                 selection = &ManualMenu.entry;
             }
@@ -361,10 +372,14 @@ int MenuManualKey() {
                     (*selection)++;
                     ComMenuSePlay(0);
                 }
-                if (*selection < minimum) *selection = maximum;
-                if (*selection > maximum) *selection = minimum;
+                if (*selection < minimum) {
+                    *selection = maximum;
+                }
+                if (*selection > maximum) {
+                    *selection = minimum;
+                }
                 if (ManualMenu.selection_level == -2) {
-                    ManualMsg->cursor_row = *selection;
+                    SetCursorRow(ManualMsg, *selection);
                     CommonMenuMes3.cursor_row = -1;
                 } else {
                     CommonMenuMes3.cursor_row = *selection;
@@ -375,12 +390,12 @@ int MenuManualKey() {
             }
             if (GamePad.Down(0x40)) {
                 if (ManualMenu.selection_level == -1) {
-                    ManualMenu.selection_level = 0;
+                    ManualMenu.selection_level++;
                     ManualMenu.mode = 3;
                     ManualMenu.message_page = 0;
                     ManualImgLoad();
                 } else if (ManualMenu.selection_level == -2) {
-                    ManualMenu.selection_level = -1;
+                    ManualMenu.selection_level++;
                     CommonMenuMes3.cursor_row = 0;
                 }
                 ComMenuSePlay(1);
@@ -389,36 +404,29 @@ int MenuManualKey() {
                     ManualMenu.mode = 1;
                     ManualMsg->Preset(1);
                     CommonMenuMes3.SetBuff(ManualMenu.common_message_buffer);
-                    for (int slot = 0; slot < 10; slot++) CommonMenuMes3.mes_no[slot] = -1;
+                    for (int slot = 0; slot < 10; slot++) {
+                        CommonMenuMes3.mes_no[slot] = -1;
+                    }
                     CommonMenuMes3.Preset(4);
                     CommonMenuMes3.char_width = ManualMenu.char_width;
                     ManualMsg->SetBuff(ManualMenu.menu_message_buffer);
                     ManualMsg->Preset(1);
-                } else {
-                    ManualMenu.selection_level = -2;
-                    ManualMenu.entry = 0;
+                } else if (ManualMenu.selection_level == -1) {
+                    ManualMenu.selection_level--;
+                    *selection = 0;
                 }
                 ComMenuSePlay(2);
             }
             break;
         }
-        case 3:
-            CommonMenuMes3.cursor_row = -1;
-            ManualMsg->cursor_row = -1;
-            ManualMenu.transition_frame++;
-            ManualImgEnter();
-            if (ManualMenu.images_ready && ManualMenu.transition_frame >= 33) {
-                ManualMenu.mode = 5;
-                ManualMenu.transition_frame = 0;
-            }
-            break;
         case 4:
             CommonMenuMes3.cursor_row = -1;
-            ManualMsg->cursor_row = -1;
+            SetCursorRow(ManualMsg, -1);
             if (GamePad.Down(0x204A)) {
                 if (CommonMenuMes3.State() == 5) {
                     CommonMenuMes3.GoNextPage();
                 } else if (CommonMenuMes3.State() == 3) {
+                    int image_count = GetNowManualPartTgaNum();
                     ManualMenu.image_page++;
                     ManualMenu.message_page++;
                     if ((ManualMenu.category == 0 && ManualMenu.entry == 4 &&
@@ -429,7 +437,7 @@ int MenuManualKey() {
                          ManualMenu.message_page == 1)) {
                         ManualMenu.image_page--;
                     }
-                    if (ManualMenu.image_page >= GetNowManualPartTgaNum()) {
+                    if (ManualMenu.image_page >= image_count) {
                         ManualMenu.mode = 2;
                         ManualMenu.selection_level = -1;
                     }
@@ -443,9 +451,9 @@ int MenuManualKey() {
                     (ManualMenu.category == 2 && ManualMenu.entry == 3 &&
                      ManualMenu.message_page == 1)) {
                     ManualMenu.message_page--;
-                } else if (ManualMenu.image_page > 0) {
-                    ManualMenu.image_page--;
+                } else if (0 < ManualMenu.image_page) {
                     ManualMenu.message_page--;
+                    ManualMenu.image_page--;
                 }
                 ComMenuSePlay(2);
             } else if (GamePad.Down(0x20)) {
@@ -454,17 +462,28 @@ int MenuManualKey() {
                 ComMenuSePlay(2);
             }
             break;
+        case 3:
+            CommonMenuMes3.cursor_row = -1;
+            SetCursorRow(ManualMsg, -1);
+            ManualMenu.transition_frame++;
+            ManualImgEnter();
+            if (ManualMenu.images_ready != 0 && ManualMenu.transition_frame > 32) {
+                ManualMenu.mode = 5;
+                ManualMenu.transition_frame = 0;
+            }
+            break;
         case 5:
             CommonMenuMes3.cursor_row = -1;
-            ManualMsg->cursor_row = -1;
-            if (++ManualMenu.transition_frame >= 33) ManualMenu.mode = 4;
+            SetCursorRow(ManualMsg, -1);
+            ManualMenu.transition_frame++;
+            if (ManualMenu.transition_frame > 32) {
+                ManualMenu.mode = 4;
+            }
             break;
     }
     return closed;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_manual", MenuManualKey__Fv);
-#endif
+
 void MenuManualDraw() {
     if (ManualMenu.mode >= 3 && ManualMenu.mode < 6 && ManualMenu.images_ready != 0) {
         MenuTextureReload(ManualMenu.image_texture_block);
