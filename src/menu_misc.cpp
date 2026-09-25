@@ -25,6 +25,7 @@
 #include "menuitemstep.hpp"
 #include "mglib.hpp"
 #include "savedata.hpp"
+#include "shot_effect.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
 #include "userstatus.hpp"
@@ -36,7 +37,6 @@
 
 #include "btmisc.hpp"
 #include "dngstatusdata.hpp"
-#include "shot_effect.hpp"
 #include "weaponlevelup.hpp"
 
 extern CTexture *WepIcon;
@@ -44,12 +44,6 @@ extern u_long128 *MenuWeaponModelBuildBuffer;
 extern u_long128 *WepMenuEffectReadBuf;
 extern char MenureadFile[64];
 extern char MenuWepDir[];
-extern int defWeapon__5[6];
-extern "C" CCharacter DefaultWeapon;
-extern "C" CCharacter MainWeapon;
-extern "C" CSHOT_EFFECT *NowMainEffect;
-extern "C" CSHOT_EFFECT CharaMainEffectCrash;
-extern s32 CharaMainHandViewFlag;
 #endif
 
 /** The weapon test number GetNowTestNo reports, initialised to 1. */
@@ -138,6 +132,24 @@ extern s16 DngEscapeSelect;
 
 /** The model of the weapon the active character holds. */
 extern "C" CCharacter *NowWeapon;
+
+/** The default weapon of each character, by character number. */
+extern int defWeapon__5[6];
+
+/** The model of a character's default weapon. */
+extern "C" CCharacter DefaultWeapon;
+
+/** The model of the weapon the active character wields. */
+extern "C" CCharacter MainWeapon;
+
+/** The shot effect the active character's weapon plays. */
+extern "C" CSHOT_EFFECT *NowMainEffect;
+
+/** The shot effect of a crashing weapon. */
+extern "C" CSHOT_EFFECT CharaMainEffectCrash;
+
+/** Whether the weapon in the active character's main hand is shown. */
+extern s32 CharaMainHandViewFlag;
 
 extern CDataAlloc2<1> MenuExCashBuffer;
 extern CCharacter MenuCharaFrame;
@@ -1816,17 +1828,14 @@ static void LocalWeaponDataChange(char *values, int count, int base, int range) 
         value++;
     }
 }
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1616__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1617__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1618__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1619__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1620__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1621__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1622__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1623__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1624__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1625__2);
-#ifdef NON_MATCHING
+
+/**
+ * Applies one of the R gate's weapon effects by kind: fill its ABS, lower a random stat, raise or lower its maximum WHp, restore or quarter its WHp; returns -1 without a weapon.
+ *
+ * @mangled WeaponDataChangeByRGate__FP11WEAPON_HAVEi
+ * @address 0x20FCE0
+ * @size 0x4F0
+ */
 int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
     if (weapon == NULL) {
         return -1;
@@ -1840,7 +1849,7 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
     }
     switch (kind) {
         case 0:
-            printf("abs full\n", i);
+            printf("abs full\n");
             if (is_default == 1) {
                 printf("this weapon default\n");
             } else {
@@ -1891,7 +1900,7 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
             } else {
                 int add = rand() % 3 + 3;
                 weapon->durability += add;
-                if (weapon->durability >= 100) {
+                if (weapon->durability > 99) {
                     weapon->durability = 99;
                 }
                 printf("WHp up is %d\n", add);
@@ -1914,7 +1923,7 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
             }
             break;
         case 4:
-            printf("whp cure\n", i);
+            printf("whp cure\n");
             if (is_default == 1) {
                 if (UserStatus != NULL) {
                     int chara = UserStatus->cur_chara;
@@ -1923,7 +1932,10 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
                         NowMainEffect = &CharaMainEffectCrash;
                         BtActStatus.unk_0A0 = 0;
                     }
-                    MenuWeaponSpSet(&MainWeapon, &UserStatus->chara_weapons[chara][UserStatus->equipped_weapon_slot[chara]]);
+                    CUserStatus *status = UserStatus;
+                    int slot = status->equipped_weapon_slot[chara];
+                    WEAPON_HAVE *row = status->chara_weapons[chara];
+                    MenuWeaponSpSet(&MainWeapon, &row[slot]);
                     printf("equip default Weapon\n");
                 }
             } else {
@@ -1939,11 +1951,8 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
             break;
         }
         default:
-            printf("now %d  ??? \n", i);
+            printf("now %d  ??? \n", kind);
             break;
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponDataChangeByRGate__FP11WEAPON_HAVEi);
-#endif

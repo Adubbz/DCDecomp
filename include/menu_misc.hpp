@@ -477,7 +477,7 @@ void WeaponOptionStatusDraw(WEAPON_HAVE *, int, int, int);
 void WeaponStarDraw(int, int, WEAPON_HAVE *, int);
 
 /**
- * Changes a weapon into another one, carrying over and adjusting its values, and reports success.
+ * Applies one of the R gate's weapon effects by kind: fill its ABS, lower a random stat, raise or lower its maximum WHp, restore or quarter its WHp; returns -1 without a weapon.
  *
  * @mangled WeaponDataChangeByRGate__FP11WEAPON_HAVEi
  * @address 0x20FCE0
