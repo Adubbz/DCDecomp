@@ -230,33 +230,30 @@ void DrawCharaName(int character, int x, int y, int brightness, int blend_mode) 
         left += 22;
     }
 }
+
 /**
- * Draws the frame around the name being entered, bobbing it with a sine.
+ * Draws the four corners of the frame around the name being entered, pulling them inward as the frame counter cycles.
  *
  * @mangled DrawNameRegiWaku__Fiiiii
  * @address 0x238880
  * @size 0x1F0
  */
-#ifdef NON_MATCHING
 void DrawNameRegiWaku(int x, int y, int size, int brightness, int blend_mode) {
-    int inset = NameSelect.frame % 29;
-    if (inset > 14) {
-        inset = 28 - inset;
-    }
-    const int corner_x[4] = {x + inset, x + size - inset, x + inset, x + size - inset};
-    const int corner_y[4] = {y + inset, y + inset, y + size - inset, y + size - inset};
-    const int source_x[4] = {0, 16, 0, 16};
-    const int source_y[4] = {0, 0, 16, 16};
-    for (int corner = 0; corner < 4; corner++) {
-        CRect_i_ destination(corner_x[corner], corner_y[corner], 12, 12);
-        CRect_i_ source(source_x[corner], source_y[corner], 16, 16);
-        DrawMenu2DSprite(NameTemp, destination, source, (u8) brightness,
-                         (u8) brightness, (u8) brightness, blend_mode);
+    float inset = 0.1f * (NameSelect.frame % 29);
+    int edge[4];
+
+    edge[0] = x + inset;
+    edge[1] = y + inset;
+    edge[2] = x + size - inset;
+    edge[3] = y + size - inset;
+    s16 corner[4][2] = {{edge[0], edge[1]}, {edge[2], edge[1]}, {edge[0], edge[3]}, {edge[2], edge[3]}};
+    s16 cell[4][2] = {{480, 296}, {496, 296}, {480, 312}, {496, 312}};
+    for (int index = 0; index < 4; index++) {
+        DrawMenu2DSprite(NameTemp, CRect_i_(corner[index][0], corner[index][1], 12, 12),
+                         CRect_i_(cell[index][0], cell[index][1], 16, 16), (u8) brightness, (u8) brightness,
+                         (u8) brightness, blend_mode);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawNameRegiWaku__Fiiiii);
-#endif
 /**
  * Draws the name being entered above the keyboard.
  *

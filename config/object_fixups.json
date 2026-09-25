@@ -1470,29 +1470,33 @@
   "src/battle_globals.cpp": {
     "sections": {
       ".nameenterdata0": [
-        "@79"
+        "@79",
+        "@94",
+        "@95"
       ],
       ".nameenterdata1": [
-        "@97",
-        "@98",
-        "@242"
+        "@125",
+        "@126",
+        "@270"
       ],
       ".nameentersdata1": [
         "@67",
-        "@94"
+        "@122"
       ],
       ".nameenterdata2": [
-        "@275",
-        "@276",
-        "@297",
-        "@300"
+        "@303",
+        "@304",
+        "@325",
+        "@328"
       ]
     },
     "rekey_sections": [
       [
         ".nameenterdata0",
         [
-          12
+          12,
+          16,
+          16
         ]
       ],
       [

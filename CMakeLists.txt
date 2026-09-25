@@ -283,7 +283,7 @@ carve_part(main.data.part6.s
            main.data.part6j.s=295644-295810
            main.data.part6d.s=295830-295840
            main.data.part6b.s=2959A0-2959C0
-           main.data.battle_globals-c.s=2959D0-295A10
+           main.data.battle_globals-c.s=2959F0-295A10
            main.data.battle_globals-gap.s=295B18-295B50
            main.data.battle_globals-b.s=295B50-295FF0)
 carve_part(main.data.part4.s
