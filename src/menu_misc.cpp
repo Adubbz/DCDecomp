@@ -301,34 +301,38 @@ void EquipDefaultWeapon(int chara_no) {
         }
     }
 }
-#ifdef NON_MATCHING
+
+/**
+ * Draws the menu's empty-slot picture from a named texture at a screen position.
+ *
+ * @mangled DrawMenuNothing__FiiiiPcii
+ * @address 0x20C070
+ * @size 0x360
+ */
 void DrawMenuNothing(int x, int y, int width, int height, char *name, int custom, int alpha) {
-    int u;
-    int v;
     CTexture *texture = TexManager.GetTexture(name, -1);
     int inner_w = width - 0x24;
     int inner_h = height - 0x24;
+    int u;
+    int v;
 
-    if (custom == 0) {
-        u = 0xD4;
-        v = 0x159;
+    switch (custom) {
+        case 0:
+            u = 0xD4;
+            v = 0x159;
+            break;
     }
     DrawMenu2DSprite(texture, CRect_i_(x, y, 0x12, 0x12), CRect_i_(u, v, 0x12, 0x12), alpha);
     DrawMenu2DSprite(texture, CRect_i_(x + 0x12, y, inner_w, 0x12), CRect_i_(u + 0x10, v, 4, 0x12), alpha);
-    int right = x + 0x12 + inner_w;
-    DrawMenu2DSprite(texture, CRect_i_(right, y, 0x12, 0x12), CRect_i_(u + 0x12, v, 0x12, 0x12), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x + 0x12 + inner_w, y, 0x12, 0x12), CRect_i_(u + 0x12, v, 0x12, 0x12), alpha);
     DrawMenu2DSprite(texture, CRect_i_(x, y + 0x12, 0x12, inner_h), CRect_i_(u, v + 0xE, 0x12, 4), alpha);
-    DrawMenu2DSprite(texture, CRect_i_(right, y + 0x12, 0x12, inner_h), CRect_i_(u + 0x12, v + 0xE, 0x12, 4), alpha);
-    int bottom = y + 0x12 + inner_h;
-    DrawMenu2DSprite(texture, CRect_i_(x, bottom, 0x12, 0x12), CRect_i_(u, v + 0x12, 0x12, 0x12), alpha);
-    DrawMenu2DSprite(texture, CRect_i_(x + 0x12, bottom, inner_w, 0x12), CRect_i_(u + 0x10, v + 0x12, 4, 0x12), alpha);
-    DrawMenu2DSprite(texture, CRect_i_(right, bottom, 0x12, 0x12), CRect_i_(u + 0x12, v + 0x12, 0x12, 0x12), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x + 0x12 + inner_w, y + 0x12, 0x12, inner_h), CRect_i_(u + 0x12, v + 0xE, 0x12, 4), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x, y + 0x12 + inner_h, 0x12, 0x12), CRect_i_(u, v + 0x12, 0x12, 0x12), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x + 0x12, y + 0x12 + inner_h, inner_w, 0x12), CRect_i_(u + 0x10, v + 0x12, 4, 0x12), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x + 0x12 + inner_w, y + 0x12 + inner_h, 0x12, 0x12), CRect_i_(u + 0x12, v + 0x12, 0x12, 0x12), alpha);
     DrawMenu2DSprite(texture, CRect_i_(x - 0x33 + (inner_w >> 1), y - 1 + (inner_h >> 1), 0x86, 0x22),
                      CRect_i_(0xFA, 0x1D2, 0x86, 0x22), alpha);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", DrawMenuNothing__FiiiiPcii);
-#endif
 
 int GetMenuItemUseVolume() {
     return MenuItemUseVolume;
