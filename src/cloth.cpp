@@ -163,6 +163,7 @@ void CCloth::Step(int step) {
         }
     }
 
+    // Pull each vertex after its frame, springing towards where the frame carries its rest position.
     for (j = 0; j < num_j; j++) {
         for (i = 0; i < num_i; i++) {
             position = work[i][j];
@@ -247,6 +248,7 @@ void CCloth::Step(int step) {
         }
     }
 
+    // Push the vertices out of the exclusion boxes.
     if (bound != NULL) {
         bound->UpDate();
     }
@@ -279,6 +281,7 @@ void CCloth::Step(int step) {
         }
     }
 
+    // Carry the motion into the speeds, with gravity, wind and damping.
     sceVu0FVECTOR wind_force = {0.0f, 0.0f, 0.0f, 0.0f};
     for (i = 0; i < num_i; i++) {
         if (wind != NULL) {
@@ -324,6 +327,7 @@ void CCloth::Step(int step) {
         }
     }
 
+    // Rebuild each vertex's normal from its four neighbours.
     sceVu0FVECTOR edge[4];
     sceVu0FVECTOR normal;
     sceVu0FVECTOR cross[4];
