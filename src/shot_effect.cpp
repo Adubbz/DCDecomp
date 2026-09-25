@@ -7,6 +7,7 @@
 #include "dataread.hpp"
 #include "dun/gameloop.hpp"
 #include "hit_machingun_effect.hpp"
+#include "itembombeffect.hpp"
 #include "itemdata.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
@@ -14,6 +15,7 @@
 #include "nowload.hpp"
 #include "shot_effect_pack.hpp"
 #include "shot_utils.hpp"
+#include "snd.hpp"
 #include "texture.hpp"
 
 
@@ -59,7 +61,7 @@ void CSHOT::step() {
         if (unk_280[shot] == 0) {
             SHOT_COLLISION_RESULT result =
                 checkCollision(hit_position, pos[shot], vector[shot], 2, 2.0f);
-            if (result == SHOT_COLLISION_NONE) {
+            if (result == 0) {
                 pos[shot][0] += vector[shot][0];
                 pos[shot][1] += vector[shot][1];
                 pos[shot][2] += vector[shot][2];
@@ -115,65 +117,166 @@ void CSHOT_EFFECT::Draw() {
     }
 }
 
-#ifdef NON_MATCHING
 void CSHOT_EFFECT::Step() {
-    if (effect_data == NULL) {
-        return;
-    }
-
-    sceVu0FVECTOR hit_position;
     for (int slot = 0; slot < 8; slot++) {
         if (active[slot] == 0) {
             continue;
         }
 
-        int current_phase = phase[slot];
-        if (current_phase < 0 || current_phase >= 4) {
-            active[slot] = 0;
+        int motion = effect_data->motion[phase[slot]];
+        float time = chara[slot].motion_type.state.time;
+        MOTION_INFO *info = chara[slot].motion_type.motion_info;
+        float end = (float) info[motion].end;
+
+        // A looping effect only steps its motion forward until it reaches the loop phase.
+        if (loop[slot] != -1) {
+            if (phase[slot] < loop[slot] && time >= end - 1.0f && time <= end) {
+                phase[slot]++;
+                chara[slot].SetMotion(effect_data->motion[phase[slot]], 4);
+            }
             continue;
         }
 
-        SHOT_COLLISION_RESULT result = SHOT_COLLISION_NONE;
-        if (current_phase < 2) {
-            result = checkCollision(hit_position, hit_position, velocity[slot],
-                                    effect_data->unk_048,
-                                    effect_data->radius[current_phase]);
+        // The starting motion hands over to the flying one when it finishes.
+        if (phase[slot] == 0 && time >= end - 1.0f && time <= end) {
+            phase[slot]++;
+            motion = effect_data->motion[phase[slot]];
+            if (motion == -1) {
+                active[slot] = 0;
+                continue;
+            }
+            chara[slot].motion_type.state.time =
+                (float) chara[slot].motion_type.motion_info[motion].start;
+            chara[slot].SetMotion(effect_data->motion[phase[slot]], 4);
+        }
+
+        sceVu0FVECTOR hit_position;
+        sceVu0FVECTOR position;
+        chara[slot].GetPosition(position);
+        chara[slot].GetPosition(hit_position);
+
+        int result = 0;
+        if (phase[slot] < 2) {
+            result = checkCollision(hit_position, position, velocity[slot], effect_data->unk_048,
+                                    effect_data->radius[phase[slot]]);
         }
 
         if (life_time[slot] > 0) {
             life_time[slot]--;
         }
-        if (effect_data->radius[current_phase] > 0.0f && life_time[slot] != 0) {
-            int hit_index = NowColData->Set(hit_position, damage[slot], 2,
-                                            effect_data->radius[current_phase], 1.0f,
-                                            effect_data->unk_048, effect_data->unk_044,
-                                            effect_data->unk_040, 0);
-            if (hit_index != -1) {
-                COLLISION_HIT &hit = NowColData->hit[hit_index];
-                hit.owner = user_id[slot];
-                hit.unk_60 = user_sub_id[slot];
-                hit.weapon_flags = weapon_status[slot];
-                hit.vs_monster = vs_monster[slot];
-                hit.monster_no = user_id_2[slot];
-                hit.target_kind = enemy_attribute[slot];
+
+        if (!(effect_data->radius[phase[slot]] <= 0.0f) && life_time[slot] != 0) {
+            // After each hit the effect waits its delay before it can hit again.
+            if (wait_state[slot] <= 0) {
+                int hit = NowColData->Set(hit_position, damage[slot], 2,
+                                          effect_data->radius[phase[slot]], 1.0f,
+                                          effect_data->unk_048, effect_data->unk_044,
+                                          effect_data->unk_040, 0);
+                if (hit != -1) {
+                    NowColData->SetUserID(user_id[slot], user_sub_id[slot]);
+                    NowColData->hit[NowColData->now_hit].weapon_flags = weapon_status[slot];
+                    NowColData->hit[NowColData->now_hit].vs_monster = vs_monster[slot];
+                    NowColData->hit[NowColData->now_hit].monster_no = user_id_2[slot];
+                    NowColData->hit[NowColData->now_hit].target_kind = enemy_attribute[slot];
+                    // Hits of kind 3 throw along the flight, or at the player once it stops.
+                    if (effect_data->unk_044 == 3) {
+                        velocity[slot][3] = 1.0f;
+                        if (effect_data->speed[phase[slot]] <= 0.0f) {
+                            sceVu0FVECTOR player;
+                            sceVu0FVECTOR direction;
+                            sceVu0CopyVector(player, CharaMain.pos);
+                            direction[0] = player[0] - position[0];
+                            direction[1] = 0.0f;
+                            direction[2] = player[2] - position[2];
+                            direction[3] = 1.0f;
+                            sceVu0Normalize(direction, direction);
+                            NowColData->SetVelocity(hit, direction, 1.0f);
+                        } else {
+                            NowColData->SetVelocity(hit, velocity[slot], 1.0f);
+                        }
+                    }
+                    wait_state[slot] = wait[slot];
+                }
+            } else {
+                wait_state[slot]--;
             }
         }
 
-        if (phase_delay[slot] > 0) {
-            phase_delay[slot]--;
-        }
-        if ((result != SHOT_COLLISION_NONE && current_phase == 1) ||
-            (phase_delay[slot] == 0 && current_phase < 3)) {
+        if (result == 0) {
+            position[0] += velocity[slot][0];
+            position[1] += velocity[slot][1];
+            position[2] += velocity[slot][2];
+            chara[slot].SetPosition(position);
+            // A flying effect that runs out of time skips straight to its last phase.
+            if (phase[slot] == 1 && phase_delay[slot] != -1) {
+                phase_delay[slot]--;
+                if (phase_delay[slot] == -1) {
+                    phase[slot] += 2;
+                    motion = effect_data->motion[phase[slot]];
+                    if (motion == -1) {
+                        active[slot] = 0;
+                        switch (effect_data->unk_054) {
+                            case 100:
+                                SetBombEffect(hit_position, effect_data->unk_048,
+                                              effect_data->unk_05C, effect_data->unk_058);
+                                break;
+                        }
+                        continue;
+                    }
+                    if (phase[slot] != -1) {
+                        chara[slot].motion_type.state.time =
+                            (float) chara[slot].motion_type.motion_info[motion].start;
+                        chara[slot].SetMotion(effect_data->motion[phase[slot]], 6);
+                        sceVu0Normalize(velocity[slot], velocity[slot]);
+                        sceVu0ScaleVectorXYZ(velocity[slot], velocity[slot],
+                                             effect_data->speed[phase[slot]]);
+                        if (effect_data->sound[phase[slot]] != -1 && no_sound[slot] == 0) {
+                            SndSePlay(effect_data->sound[phase[slot]], -1, 0);
+                        }
+                    }
+                }
+            }
+        } else if (phase[slot] == 1) {
+            // A flying effect that hits something moves on to its impact phase.
             phase[slot]++;
-            if (effect_data->motion[phase[slot]] == -1) {
+            motion = effect_data->motion[phase[slot]];
+            if (motion == -1) {
                 active[slot] = 0;
+                switch (effect_data->unk_054) {
+                    case 100:
+                        SetBombEffect(hit_position, effect_data->unk_048, effect_data->unk_05C,
+                                      effect_data->unk_058);
+                        break;
+                }
+                continue;
+            }
+            if (motion != -1) {
+                chara[slot].motion_type.state.time =
+                    (float) chara[slot].motion_type.motion_info[motion].start;
+                chara[slot].SetMotion(effect_data->motion[phase[slot]], 6);
+                sceVu0Normalize(velocity[slot], velocity[slot]);
+                sceVu0ScaleVectorXYZ(velocity[slot], velocity[slot],
+                                     effect_data->speed[phase[slot]]);
+                if (effect_data->sound[phase[slot]] != -1 && no_sound[slot] == 0) {
+                    SndSePlay(effect_data->sound[phase[slot]], -1, 0);
+                }
+            }
+        }
+
+        // The effect ends when the motion of its impact or last phase finishes.
+        if ((phase[slot] == 2 || phase[slot] == 3) &&
+            chara[slot].motion_type.state.time >= end - 1.0f &&
+            chara[slot].motion_type.state.time < end) {
+            active[slot] = 0;
+            switch (effect_data->unk_054) {
+                case 100:
+                    SetBombEffect(hit_position, effect_data->unk_048, effect_data->unk_05C,
+                                  effect_data->unk_058);
+                    break;
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", Step__12CSHOT_EFFECTFv);
-#endif
 
 void CSHOT_EFFECT::EndEffect() {
     for (int slot = 0; slot < 8; slot++) {

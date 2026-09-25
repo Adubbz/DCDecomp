@@ -36,9 +36,9 @@ public:
     float random_rate[8]; /**< Randomization rate of each effect slot. */
     s32 life_time[8];     /**< Lifetime of each effect slot. */
     s32 enemy_attribute[8]; /**< Enemy attribute of each effect slot. */
-    u8 no_sound[8];         /**< Whether sound is suppressed for each effect slot. */
-    u8 wait[8];             /**< Delay applied to each effect slot. */
-    u8 wait_state[8];       /**< Secondary delay state of each effect slot. */
+    char no_sound[8];        /**< Whether sound is suppressed for each effect slot. */
+    char wait[8];            /**< Delay applied to each effect slot. */
+    char wait_state[8];      /**< Secondary delay state of each effect slot. */
     s32 status;       /**< Shared runtime status reset whenever a shot starts. */
     s32 slot_count;   /**< Number of effect slots initialized by the loader. */
     s32 current_slot; /**< Currently selected effect slot, or -1. */
@@ -55,12 +55,12 @@ public:
     void Draw(void);
 
     /**
-     * Advances every active projectile-effect slot.
+     * Advances every active projectile-effect slot: plays its motions through their phases, moves
+     * it, records its hit, and ends it when its last motion finishes.
      *
      * @mangled Step__12CSHOT_EFFECTFv
      * @address 0x1AC180
      * @size 0x9B0
-     * @unknownret
      */
     void Step(void);
 
