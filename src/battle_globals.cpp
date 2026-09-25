@@ -203,6 +203,7 @@ CTexture *GetNameTextureInfo(CTexture **textures, int code, int &cell_x, int &ce
     cell_y = (code / 10) * 0x16;
     return texture;
 }
+
 /**
  * Draws the name being entered; the character argument goes unused.
  *
@@ -247,6 +248,7 @@ void DrawNameRegiWaku(int x, int y, int size, int brightness, int blend_mode) {
                          (u8) brightness, blend_mode);
     }
 }
+
 /**
  * Draws the top of the name-entry screen: the party member's face and title, the name being entered and the cursor over it.
  *
@@ -573,6 +575,7 @@ static int NameCompare(short *first, short *second) {
     }
     return 1;
 }
+
 /**
  * Reports whether the entered name may be used: 2 when it is blank, 0 when it
  * is reserved or an earlier party member already has it, 1 otherwise.
@@ -1038,6 +1041,7 @@ void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures, int so
         put_x -= 0x14 - step;
     }
 }
+
 /**
  * Draws a party member's name centred on the save board, with a shadow and a top-to-bottom gradient.
  *
