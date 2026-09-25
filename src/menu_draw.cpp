@@ -2007,39 +2007,38 @@ void CommonMoneyBoardDraw(int x, int y, int money, int alpha) {
     RECT digits = {0, 0xDC, 12, 12};
     DrawMenuNumber(money, x + 0x55, y + 8, PerBoardTex, digits, 0, alpha);
 }
-#ifdef NON_MATCHING
 s16 SearchBoardNowPosItemExist(int page, int cell) {
-    s16 item_no = -1;
+    int item_no = -1;
 
     switch (page) {
         case 0: {
             ITEM_PACK *pack = &PerBoardStatusPt->item_pack;
             if (pack != NULL) {
-                return pack->item[cell];
+                item_no = pack->item[cell];
             }
-            return item_no;
+            break;
         }
         case 1: {
-            WEAPON_HAVE *weapon = &PerBoardStatusPt->chara_weapons[cell / 10][cell % 10];
+            int chara = cell / 10;
+            int slot = cell % 10;
+            CUserStatus *status = PerBoardStatusPt;
+            WEAPON_HAVE *row = status->chara_weapons[chara];
+            WEAPON_HAVE *weapon = &row[slot];
             if (weapon != NULL) {
-                return weapon->item_no;
+                item_no = weapon->item_no;
             }
-            return item_no;
+            break;
         }
         case 2: {
             DNG_CONSUMABLE *items = PerBoardStatusPt->consumable_items;
             if (items != NULL) {
                 item_no = items[cell].id;
             }
-            return item_no;
+            break;
         }
-        default:
-            return -1;
     }
+    return item_no;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", SearchBoardNowPosItemExist__Fii);
-#endif
 #ifdef NON_MATCHING
 int GetBoardSpace(int item_no, int *page) {
     int space = -1;
