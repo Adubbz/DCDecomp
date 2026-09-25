@@ -242,34 +242,40 @@ void EBDebug(int mode) {
     debug_mode = mode;
 }
 
-#ifdef NON_MATCHING
+/**
+ * Adds a button prompt at a point in the event battle's motions, converted to a frame count.
+ *
+ * @mangled EBSetKey__Ffii
+ * @address 0x168430
+ * @size 0x12C
+ */
 void EBSetKey(float time, int buttons, int mode) {
-    if (eb_key_num >= 64) {
-        return;
-    }
+    if (eb_key_num < 64) {
+        EB_KEY *key = &eb_key[eb_key_num++];
 
-    EB_KEY_ENTRY *key = &((EB_KEY_ENTRY *) eb_key)[eb_key_num++];
-    key->frame = 0;
-    EB_MOTION_ENTRY *motion_entries = (EB_MOTION_ENTRY *) eb_motion;
-    for (int i = 0; motion_entries[i].motion_no >= 0; ++i) {
-        EB_MOTION_ENTRY &motion = motion_entries[i];
-        if (motion.start <= time && time < motion.end) {
-            key->frame += (int) ((time - motion.start) / motion.speed);
-            break;
+        key->unk_00 = 0;
+        for (int index = 0;; index++) {
+            EB_MOTION *motion = &eb_motion[index];
+            if (motion->motion_no < 0) {
+                break;
+            }
+            if (time >= motion->start && time < motion->end) {
+                key->unk_00 += (time - motion->start) / motion->speed;
+                break;
+            }
+            key->unk_00 += motion->frames;
         }
-        key->frame += motion.duration;
+        key->unk_04 = buttons;
+        key->unk_0C = 0;
+        if (mode > 5) {
+            mode = 5;
+        }
+        key->unk_08 = mode;
+        key->unk_14 = 0;
+        key->unk_10 = 0;
+        key->unk_18 = 0;
     }
-
-    key->buttons = buttons;
-    key->mode = mode > 5 ? 5 : mode;
-    key->pressed = 0;
-    key->complete = 0;
-    key->early = 0;
-    key->reserved = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", EBSetKey__Ffii);
-#endif
 
 void EBExit() {
     ebattle_flag = 0;
