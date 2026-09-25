@@ -64,6 +64,11 @@ extern void BtBattleMusic_Excg(float distance, float *field_volume, float *battl
 extern int BtSteebMsgNo;
 
 /**
+ * "itempack", the texture the status panel draws from; the constant topStatusInfo emits.
+ */
+extern char itempack_name[];
+
+/**
  * Arena the steeb message file is read into.
  */
 extern "C" CDataAlloc2<1> BtSteebMesBuffer;
@@ -865,23 +870,21 @@ void BtSetStatusErr(int status) {
  * @address 0x1B1D80
  * @size 0x16C
  */
-#ifdef NON_MATCHING
 void BtStatusErrDraw(int y) {
-    static const int status_flags[5] = {4, 8, 0x10, 0x20, 0x40};
-    CTexture *texture = TexManager.GetTexture("status", -1);
-    int draw_x = 430;
+    CTexture *texture = TexManager.GetTexture(itempack_name, -1);
+    int status_flags[5] = {4, 8, 0x10, 0x20, 0x40};
+    int icon_cell[5][2] = {{1, 0}, {0, 1}, {1, 1}, {1, 2}, {0, 2}};
+    int flags = UserStatus->unk_42C8[UserStatus->cur_chara];
+
     for (int icon = 4; icon >= 0; icon--) {
-        if (StatusErrCheck(status_flags[icon])) {
-            CRect_i_ destination(draw_x, y - 10, 62, 35);
-            CRect_i_ source(132 + icon * 62, 84, 62, 36);
-            set2DSprite(Vif1Packet, texture, destination, source, 128);
-            draw_x -= 32;
+        if (flags & status_flags[icon]) {
+            set2DSprite(Vif1Packet, texture, CRect_i_(430, y - 10, 62, 35),
+                        CRect_i_(icon_cell[icon][0] * 62 + 132, icon_cell[icon][1] * 36 + 84, 62,
+                                 36));
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", BtStatusErrDraw__Fi);
-#endif
+
 /**
  * Draws one item into the reserved slot area.
  *

@@ -1635,5 +1635,10 @@
     "symbols": {
       "fishing_err_format": "@604"
     }
+  },
+  "src/shot_freefuncs.cpp": {
+    "symbols": {
+      "itempack_name": "@1150"
+    }
   }
 }
