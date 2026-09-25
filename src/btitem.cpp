@@ -350,6 +350,9 @@ extern "C" CCharacter EscapeEffect;
  */
 extern "C" CActiveItemPack activeItem;
 
+/**
+ * Work buffer the pickup presentations load their models, textures and sounds into.
+ */
 extern "C" CDataAlloc2<1> BtCashBuffer;
 
 /**
