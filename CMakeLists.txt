@@ -166,7 +166,7 @@ carve_dump(dun data.data.s
 
 carve_part(main.data.part1.s
            main.data.part1.s=24FAC0-250B30
-           main.data.part1b.s=250ED0-250F40)
+           main.data.part1b.s=250EF0-250F40)
 carve_part(main.data.part2.s
            main.data.part2.s=2514C0-251530
            main.data.part2c.s=2525D0-253DD0)

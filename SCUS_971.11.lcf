@@ -449,6 +449,7 @@ SECTIONS
         mglib.cpp.o (.data)
         texture.cpp.o (.data)
         visualvu1.cpp.o (.data)
+        visualshadow.cpp.o (.data)   // 0x00250ed0 CreateVUdataShadow's end tag and unit vector
         main.data.part1b.s.o (.data)
         character.cpp.o (.data)
         chararead.cpp.o (.data)
