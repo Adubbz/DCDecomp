@@ -1002,19 +1002,27 @@ int GetNowActiveCharaStatus(int chara_no) {
     }
     return BtlMenuStatusPt->GetActiveCharaStatus(chara_no);
 }
-#ifdef NON_MATCHING
-void SetNowCharaMotionNo(int chara) {
-    float speed[3] = {0.1f, 0.05f, 0.0f};
-    int status = GetNowActiveCharaStatus(chara);
-    float hp = ((CUserStatus *) BtlMenuStatusPt)->hp[chara];
-    int motion = MenuCharaFrame.motion_no;
-    int next = motion;
-    float low = 0.3f * ((CUserStatus *) BtlMenuStatusPt)->max_hp[chara];
 
-    if (!(hp < low)) {
+/**
+ * Switches the menu character model to its hurt motion when its status or HP calls for it, and sets the motion's speed.
+ *
+ * @mangled SetNowCharaMotionNo__Fi
+ * @address 0x20DEF0
+ * @size 0x12C
+ */
+void SetNowCharaMotionNo(int chara) {
+    int status = GetNowActiveCharaStatus(chara);
+    CUserStatus *user = (CUserStatus *) BtlMenuStatusPt;
+    float max_hp = user->max_hp[chara];
+    float hp = user->hp[chara];
+    int motion = MenuCharaFrame.motion_no;
+    float speed[3] = {0.1f, 0.05f, 0.0f};
+    int next = motion;
+
+    if (!(hp < 0.3f * max_hp)) {
         next = 0;
     }
-    if ((status & 0x10) || (status & 2) || hp < low) {
+    if ((status & 0x10) || (status & 2) || hp < 0.3f * max_hp) {
         next = 1;
     }
     if (next != motion) {
@@ -1024,9 +1032,6 @@ void SetNowCharaMotionNo(int chara) {
     MOTION_INFO *info = MenuCharaFrame.GetMotionInfo(motion);
     info->speed = speed[GetNowMotionStepCnt(status)];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", SetNowCharaMotionNo__Fi);
-#endif
 
 /**
  * Sets the menu ambient colour for one character's status effects.

@@ -243,7 +243,7 @@ int DngWeaponEquipModelBuild(int, int, u_long128 *);
 int GetNowActiveCharaStatus(int);
 
 /**
- * Sets the menu character model's motion from its status bits.
+ * Switches the menu character model to its hurt motion when its status or HP calls for it, and sets the motion's speed.
  *
  * @mangled SetNowCharaMotionNo__Fi
  * @address 0x20DEF0

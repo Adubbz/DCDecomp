@@ -1429,6 +1429,19 @@
     "symbols": {
       "CharaFileExtension": "@1037__2"
     },
+    "sections": {
+      ".menu_misc-motion": [
+        "@171"
+      ]
+    },
+    "rekey_sections": [
+      [
+        ".menu_misc-motion",
+        [
+          12
+        ]
+      ]
+    ],
     "globalize_symbols": [
       "readFilePath",
       "charaFile"
