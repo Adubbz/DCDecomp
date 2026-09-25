@@ -654,25 +654,26 @@ void DrawAttachNumberOrWeapon(int x, int y, int top, int bottom, int item_no, in
         }
     }
 }
-#ifdef NON_MATCHING
 void FadeTexX(int left_x, int left_width, int right_x, int right_width, char *name, int dim) {
     CTexture texture = *TexManager.GetTexture(name, -1);
     spRGBA left;
     spRGBA right;
 
-    texture.tex0 &= ~((u_long) 1 << 34);
+    if (&texture == NULL) {
+        return;
+    }
+    ((sceGsTex0 *) &texture.tex0)->bits.tcc = 0;
     sceGsTexa texa = mgTexa;
     texa.AEM = 1;
     texa.TA0 = 0x80;
     MGSetGsTEXA(&texa);
-    left.r = left.g = left.b = 0x40;
     right.r = right.g = right.b = 0x40;
+    left.r = left.g = left.b = 0x40;
     if (left_width != 0) {
-        left.a = 0x80;
         right.a = 0x80;
-        CRect_i_ dest(0, 0, left_x, 0x1C0);
-        CRect_i_ source(0, 0, left_x, 0x1BF);
-        set2DSprite(GetVif1Packet(), &texture, dest, source, &left, &right, &left, &right, 1);
+        left.a = 0x80;
+        set2DSprite(GetVif1Packet(), &texture, CRect_i_(0, 0, left_x, 0x1C0), CRect_i_(0, 0, left_x, 0x1BF), &left, &right,
+                    &left, &right, 1);
     }
     left.a = 0x80;
     right.a = 0;
@@ -691,16 +692,11 @@ void FadeTexX(int left_x, int left_width, int right_x, int right_width, char *na
     if (right_width != 0) {
         right.a = 0x80;
         left.a = 0x80;
-        int x = right_x + right_width;
-        int width = 0x280 - right_x - right_width;
-        set2DSprite(GetVif1Packet(), &texture, CRect_i_(x, 0, width, 0x1C0), CRect_i_(x, 0, width, 0x1BF), &left, &right,
-                    &left, &right, 1);
+        set2DSprite(GetVif1Packet(), &texture, CRect_i_(right_x + right_width, 0, 0x280 - right_x - right_width, 0x1C0),
+                    CRect_i_(right_x + right_width, 0, 0x280 - right_x - right_width, 0x1BF), &left, &right, &left, &right, 1);
     }
     MGSetGsTEXA(NULL);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", FadeTexX__FiiiiPci);
-#endif
 
 CTexture *RetCTex(short item_no, int &u, int &v) {
     CTexture *texture;
