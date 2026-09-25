@@ -330,6 +330,10 @@ list(REMOVE_ITEM STATIC_SECTION_SOURCES
 list(REMOVE_ITEM STATIC_SECTION_SOURCES
      ${PARTS_DIR}/main.data.part7.s)
 
+# langset.cpp now owns LangsetInit's texture list template at 0x296630-0x29666C.
+list(REMOVE_ITEM STATIC_SECTION_SOURCES
+     ${PARTS_DIR}/main.data.part7b.s)
+
 # actionseq.cpp now owns the complete data run at 0x2540B0-0x2540C0.
 list(REMOVE_ITEM STATIC_SECTION_SOURCES
      ${PARTS_DIR}/main.data.part2b.s)

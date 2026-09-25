@@ -28,27 +28,22 @@ extern int Proc;
 /** Opacity of each language entry. */
 extern int Alpha[5];
 
-INCLUDE_RODATA("asm/nonmatchings/langset", @355__4);
-INCLUDE_RODATA("asm/nonmatchings/langset", @356__3);
-INCLUDE_RODATA("asm/nonmatchings/langset", @357__3);
-INCLUDE_RODATA("asm/nonmatchings/langset", @358__3);
-INCLUDE_RODATA("asm/nonmatchings/langset", @359__2);
-#ifdef NON_MATCHING
 void LangsetInit(void) {
-    LOADTEXTURE_INFO textures[] = {
-        {"#frame_image_mes#640#448#4", 26, 0},
-        {"#fukidashibase#640#224#4", 26, 0},
-        {"#fontbase#512#256#1", 26, 0},
-        {"titledat/lang_set.img", 0, 0},
-        {NULL, 0, 0},
-    };
-
     InitializeDataBuffer();
     SetDataBuffer(&VisualData, 200000);
     SetDataBuffer(&MotionData, 500000);
     SetDataBuffer(&TextureData, 300000);
     SetPacketReadBuffer(40000, 300000);
     MGSetBGColor(0.0f, 0.0f, 0.0f, 128.0f);
+
+    LOADTEXTURE_INFO textures[] = {
+        {"#frame_image_mes#640#448#4", 26, 0},
+        {"#fukidashibase#640#224#4", 26, 0},
+        {"#fontbase#512#256#1", 26, 0},
+        {"titledat/lang_set.img", 0, 0},
+        {"", 0, 0},
+    };
+
     TexManager.Initialize(0x3FE0);
     TexManager.LoadTextureBlock(-1, textures, read_buffer);
     GamePad.SetAutoRepeat(0x5000, 30, 9);
@@ -57,9 +52,6 @@ void LangsetInit(void) {
     Cursor = 0;
     Proc = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/langset", LangsetInit__Fv);
-#endif
 int LangsetLoop(void) {
     sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
     sceVif1PkTerminate(Vif1Packet);

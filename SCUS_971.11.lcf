@@ -590,7 +590,8 @@ SECTIONS
         . = . + 0xC;
         fish.cpp.o (.data)
         charakey.cpp.o (.data)
-        main.data.part7b.s.o (.data)
+        langset.cpp.o (.data)        // 0x00296630 LangsetInit's texture list template
+        . = ALIGN(0x80);             // 0x00296680, the end of retail's .data
         *(.data)
         *(.vudata)
 
