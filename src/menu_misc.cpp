@@ -1762,32 +1762,39 @@ int DefaultWeaponOptionSet(int weapon_no) {
     return data->flags;
 }
 
-#ifdef NON_MATCHING
+/**
+ * Draws the icons of the options a weapon carries.
+ *
+ * @mangled WeaponOptionStatusDraw__FP11WEAPON_HAVEiii
+ * @address 0x20F7F0
+ * @size 0x224
+ */
 void WeaponOptionStatusDraw(WEAPON_HAVE *weapon, int x, int y, int alpha) {
     int draw_x = x;
     int draw_y = y;
-    int flags = weapon->flags;
+    int status = weapon->flags;
 
     for (int i = 0; i < 6; i++) {
-        int option = ((ATTACH_LIST *) &weapon->attach[i])->unk_04;
+        ATTACH_LIST *attach = &weapon->attach[i];
+        int option = attach->unk_04;
         if (option != 0 && option != 1) {
-            flags |= option;
+            status |= option;
         }
     }
-    int status = CheckWeaponOptionStatus(flags);
+    status = CheckWeaponOptionStatus(status);
     CTexture *texture = TexManager.GetTexture("charaface", -1);
     if (texture == NULL) {
         return;
     }
     int count = 0;
     CRect_i_ source(0xEC, 0x50, 0x14, 0x14);
-    for (int bit = 1; bit < 14; bit++) {
+    for (int bit = 1; bit <= 13; bit++) {
         if (bit == 8) {
             source.x -= source.width;
         }
         if (status & (1 << bit)) {
             int row = bit;
-            if (bit >= 8) {
+            if (bit > 7) {
                 row = bit - 7;
             }
             if (bit == 8 && row == 1) {
@@ -1807,10 +1814,6 @@ void WeaponOptionStatusDraw(WEAPON_HAVE *weapon, int x, int y, int alpha) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponOptionStatusDraw__FP11WEAPON_HAVEiii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1507);
 
 /**
  * Draws a weapon's star rating.
