@@ -83,12 +83,12 @@ public:
     void OffEffect(int slot);
 
     /**
-     * Loads projectile-effect resources and initializes their runtime slots.
+     * Loads the effect's model file into the pack, reads its model from it and gives every slot
+     * a copy; returns 1, or 0 when a description is already loaded.
      *
      * @mangled Entry__12CSHOT_EFFECTFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i
      * @address 0x1ACC70
      * @size 0x5E4
-     * @unknownret
      */
     int Entry(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
 
