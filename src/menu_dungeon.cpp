@@ -885,24 +885,65 @@ extern CTexture *QuickCharaTex;
 extern char chara_change_frame_image[];
 
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1301);
-#ifdef NON_MATCHING
 static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, int alpha) {
-    int source_x = DEnterMenu.dungeon < 6 ? DEnterMenu.dungeon * 32
-                                          : (DEnterMenu.dungeon - 6) * 32;
-    int source_y = DEnterMenu.dungeon < 6 ? 0 : 128;
-    int clipped_y = y;
-    int clipped_source = source_x;
-    int height = 28;
+    int position = y;
+    int height;
+    int source;
+    int u;
 
-    MenuTextureClip(clipped_y, clipped_source, height, top, bottom);
-    if (clipped_y < bottom) {
-        DrawMenu2DSprite(DunLogBoard2, CRect_i_(x, clipped_y, 112, height),
-                         CRect_i_(source_y, clipped_source, 112, height), alpha);
-        DrawDunNumberClip(x + 88, y + 8, top, bottom, (floor / 10) % 10, alpha);
-        DrawDunNumberClip(x + 100, y + 8, top, bottom, floor % 10, alpha);
+    if (y < bottom) {
+        height = 0x1C;
+        u = 0;
+        source = DEnterMenu.dungeon * 32;
+        if (DEnterMenu.dungeon >= 6) {
+            u = 0x80;
+            source = (DEnterMenu.dungeon - 6) * 32;
+        }
+        MenuTextureClip(position, source, height, top, bottom);
+        if (position + height >= top) {
+            DrawMenu2DSprite(DunLogBoard2, CRect_i_(x, position, 0x70, height),
+                             CRect_i_(u, source, 0x70, height), alpha);
+        }
+        if (DEnterMenu.dungeon == 5) {
+            floor = BtGetFloorLevel(floor - 1);
+        }
+        int offset = 0;
+        if (floor < 10) {
+            offset = -6;
+        }
+        if (DEnterMenu.dungeon == 5 || DEnterMenu.dungeon == 6) {
+            if (floor < 10) {
+                offset = -12;
+            }
+            if (floor >= 10 && floor < 100) {
+                offset = -6;
+            }
+            if (floor >= 100) {
+                offset = 0;
+                if (DEnterMenu.dungeon == 6 && GetMenuLangFlag() == 1) {
+                    offset += 4;
+                }
+            }
+        }
+        s8 name_width[7][7] = {
+            {0x50, 0x6E, 0x48, 0x68, 0x38, 0x30, 0x50},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
+        };
+        x = offset + (x + name_width[GetMenuLangFlag()][DEnterMenu.dungeon]);
+        position = y;
+        RECT digits = {0, 0xC0, 0x10, 0x1C};
+        if (y + height >= top) {
+            DrawMenuNumber(floor, x, y, digits, DunLogBoard2, 0, top, bottom, alpha);
+        }
     }
 }
 
+#ifdef NON_MATCHING
 /** Buffer that holds the character-change screen's asynchronously read data. */
 static u_long128 *quick_change_buffer;
 /** Optional pairs of screen coordinates for the selectable party members. */
@@ -925,7 +966,6 @@ void StartQuickChange(u_long128 *buffer, int texture_block, int *positions, int 
     GamePad.MenuModeOn(0x78);
 }
 #else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawDunEnterFloorName__Fiiiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", StartQuickChange__FP1iPii);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1348__2);

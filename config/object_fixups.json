@@ -1812,15 +1812,19 @@
       ".menuerrorcnt": [
         "MenuEtcErrCnt"
       ],
+      ".floornamedata": [
+        "@1085",
+        "@1086"
+      ],
       ".charachangedata": [
-        "@1065",
-        "@1076"
+        "@1106",
+        "@1117"
       ],
       ".menu_dungeon-c1707": [
-        "@1100"
+        "@1141"
       ],
       ".menu_dungeon-c1731": [
-        "@1119"
+        "@1160"
       ]
     },
     "symbols": {
