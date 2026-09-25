@@ -426,7 +426,9 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
     if (IsOff(info->unk_320) && IsOff(info->unk_340)) {
         lighting = true;
     }
-    *packet++ = ((program == 15) << 8) | ((!info->unk_320 << 3) | (((((info->unk_324 != 0 && !info->unk_320)) << 5) | 0x40) | (lighting * 16)));
+    *packet++ = ((program == 15) << 8) |
+                ((!info->unk_320 << 3) |
+                 (((((info->unk_324 != 0 && !info->unk_320)) << 5) | 0x40) | (lighting * 16)));
     *packet++ = 0;
     *packet++ = 0x1B;
     *packet++ = 0;
@@ -595,6 +597,7 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
     *packet++ = 0;
     return packet - start;
 }
+
 /**
  * Writes one strip's vector-unit upload and gives back its length in quadwords.
  *
@@ -736,6 +739,7 @@ int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int
             word += 4;
             size = SetVuData(count, (u_long128 *) &block[word], index, vertex, normal, uv, colour,
                              prim);
+            // A strip that carries on in the next chunk repeats its last two vertices.
             if (prim == 4 && limit < remaining) {
                 index -= stride * 2;
                 remaining += 2;
