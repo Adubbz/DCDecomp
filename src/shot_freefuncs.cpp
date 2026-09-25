@@ -316,21 +316,79 @@ void HealingWater(void) {
  * @address 0x1AFAE0
  * @size 0x27C
  */
-#ifdef NON_MATCHING
-void DrawWaterLing() {
-    CTexture *texture = TexManager.GetTexture("waterspl", -1);
-    for (int ring = 0; ring < 6; ring++) {
-        if (WaterWaveLing[ring].unk_14 > 0) {
-            int alpha = WaterWaveLing[ring].unk_14 * 128 / 45;
-            BtSet3DCellModel(WaterWaveLing[ring].unk_00, texture,
-                             WaterWaveLing[ring].unk_10, 0, 0, 64, 64, alpha);
+void DrawWaterLing(void) {
+    float corner[4][4];
+    int screen[4][4];
+    sceGsAlpha alpha;
+    sceGsZbuf zbuf;
+    CTexture *ripple;
+    int i;
+    int visible;
+    int j;
+    float radius;
+    float x;
+    float y;
+    float near;
+    float left;
+    float z;
+    float right;
+    float far;
+
+    ripple = TexManager.GetTexture("d00e01", -1);
+
+    alpha = mgAlpha;
+    alpha.bits.a = 0;
+    alpha.bits.b = 2;
+    alpha.bits.c = 0;
+    alpha.bits.d = 1;
+    MGSetGsALPHA(&alpha);
+
+    zbuf = mgZBuffer;
+    zbuf.bits.zmsk = 1;
+    MGSetGsZBUF(&zbuf);
+
+    for (i = 0; i < 6; i++) {
+        if (WaterWaveLing[i].unk_14 > 0) {
+            radius = WaterWaveLing[i].unk_10;
+            x = WaterWaveLing[i].unk_00[0];
+            left = x - radius;
+            corner[0][0] = left;
+            y = WaterWaveLing[i].unk_00[1];
+            corner[0][1] = y;
+            z = WaterWaveLing[i].unk_00[2];
+            near = z - radius;
+            corner[0][2] = near;
+            right = radius + x;
+            corner[1][0] = right;
+            corner[1][1] = y;
+            corner[1][2] = near;
+            corner[2][0] = left;
+            corner[2][1] = y;
+            far = radius + z;
+            corner[2][2] = far;
+            corner[3][0] = right;
+            corner[3][1] = y;
+            corner[3][2] = far;
+
+            visible = 1;
+            for (j = 0; j < 4; j++) {
+                corner[j][3] = 1.0f;
+                if (MGRotTransPers(screen[j], corner[j], 0) == 0) {
+                    visible = 0;
+                }
+            }
+
+            if (visible) {
+                float fade = 2.8444445f * WaterWaveLing[i].unk_14;
+                set3DSprite(Vif1Packet, ripple, CRect_i_(0, 64, 64, 64), screen[0], screen[1],
+                            screen[2], screen[3], fade);
+            }
         }
     }
+
+    MGSetGsALPHA(NULL);
+    MGSetGsZBUF(NULL);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", DrawWaterLing__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @703);
 
 /**
  * Advances the rings spreading on the water.
