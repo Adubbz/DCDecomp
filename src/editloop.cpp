@@ -48,9 +48,11 @@
 #include "mathutil.hpp"
 #include "mds.hpp"
 #include "memcard.hpp"
+#include "menu_draw.hpp"
 #include "menu_misc.hpp"
 #include "menuitemstep.hpp"
 #include "mglib.hpp"
+#include "nowload.hpp"
 #include "npcharacter.hpp"
 #include "objanime.hpp"
 #include "objectframe.hpp"
@@ -60,6 +62,7 @@
 #include "snd.hpp"
 #include "sysmes.hpp"
 #include "texture.hpp"
+#include "wind.hpp"
 
 /* Retail editloop.cpp: town-script parsing, map construction and pre-event editor state. */
 
@@ -221,9 +224,6 @@ extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 extern u8 EditCharaData[0x960];
 extern EDIT_ELEMENT_INFO EditElementInfo[36];
 #include "editmenu.hpp"
-#include "menu_draw.hpp"
-#include "nowload.hpp"
-#include "wind.hpp"
 extern u8 MesWinTexBuff_01[0x100];
 extern u8 MesWinTexBuff_02[0x100];
 extern CFrameVu1 *SkyFrame[4];
