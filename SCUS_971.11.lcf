@@ -472,6 +472,8 @@ SECTIONS
         main.data.part4.s.o (.data) // 0x0025dfb0
         sysmes.cpp.o (.data)
         main.data.part4b.s.o (.data)
+        runeffect.cpp.o (.data)      // 0x00266910
+        main.data.runeffect-tail.s.o (.data) // 0x00266920
         textureanime.cpp.o (.data)   // 0x00266b70
         . = ALIGN(0x10);
         main.data.part4m.s.o (.data) // 0x00266b90

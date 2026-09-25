@@ -311,7 +311,8 @@ carve_part(main.data.part6.s
            main.data.battle_globals-b.s=295EF0-295FC0)
 carve_part(main.data.part4.s
            main.data.part4.s=25DFB0-266810
-           main.data.part4b.s=2668C0-266B70
+           main.data.part4b.s=2668C0-266910
+           main.data.runeffect-tail.s=266920-266B70
            main.data.part4m.s=266B90-266E10
            main.data.part4m-266E90.s=266E90-266ED0
            main.data.part4c.s=266FB0-269320

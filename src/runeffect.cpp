@@ -176,7 +176,6 @@ INCLUDE_ASM("asm/nonmatchings/runeffect", blendTextuerTest__FP13sceVif1Packetiii
 void CRunEffect::Lighting(int enabled) {
     lighting = enabled;
 }
-#ifdef NON_MATCHING
 /**
  * Draws the dust the player's run leaves behind.
  *
@@ -185,6 +184,12 @@ void CRunEffect::Lighting(int enabled) {
  * @size 0x46C
  */
 void CRunEffect::Draw(void) {
+    int top_left[4];
+    int bottom_right[4];
+    int top_right[4];
+    int bottom_left[4];
+    sceVu0FVECTOR light;
+
     CTexture *first = TexManager.GetTexture("fx_foot", -1);
     CTexture *second = TexManager.GetTexture("fx_foot2", -1);
     if (first == NULL || second == NULL) {
@@ -192,66 +197,77 @@ void CRunEffect::Draw(void) {
     }
 
     sceVu0FVECTOR normal = {0.0f, 1.0f, 0.0f, 0.0f};
-    sceVu0FVECTOR light;
     MGCalcColor(light, normal);
     light[0] += 80.0f;
     light[1] += 60.0f;
     light[2] += 40.0f;
-    for (int i = 0; i < 3; i++) {
-        if (light[i] > 255.0f) {
-            light[i] = 255.0f;
-        }
+    if (!(light[0] <= 255.0f)) {
+        light[0] = 255.0f;
     }
+    if (!(light[1] <= 255.0f)) {
+        light[1] = 255.0f;
+    }
+    if (!(light[2] <= 255.0f)) {
+        light[2] = 255.0f;
+    }
+
     spRGBA colour;
     if (lighting != 0) {
-        colour.r = (u8) light[0];
-        colour.g = (u8) light[1];
-        colour.b = (u8) light[2];
+        colour.r = (int) light[0];
+        colour.g = (int) light[1];
+        colour.b = (int) light[2];
+        colour.a = 0x80;
     } else {
         colour.r = 0x80;
         colour.g = 0x80;
         colour.b = 0x80;
+        colour.a = 0x80;
     }
-    colour.a = 0x80;
     sw ^= 1;
 
     sceGsZbuf zbuffer = mgZBuffer;
     zbuffer.bits.zmsk = 1;
-    sceVif1PkCnt(Vif1Packet, 0);
-    sceVif1PkOpenDirectCode(Vif1Packet, 0);
-    sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *(u_long *) &zbuffer);
-    sceVif1PkCloseGifTag(Vif1Packet);
-    sceVif1PkCloseDirectCode(Vif1Packet);
+    sceVif1Packet *packet = Vif1Packet;
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuffer);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
 
-    CRect_i_ source(0, 0, 0x20, 0x20);
     for (int i = 0; i < 8; i++) {
-        if (life[i] != 0) {
-            int top_left[4];
-            int bottom_right[4];
-            float width = 12.0f - 0.5f * (float) life[i];
-            float height = 5.5f - 0.25f * (float) life[i];
-            if (MGRotTransPers3DSprite(top_left, bottom_right, position[i], width, height, 0) ==
-                1) {
-                colour.a = (u8) life[i] * 10;
-                set3DSprite(Vif1Packet, sw != 0 ? first : second, source, top_left,
-                            bottom_right, &colour);
-            }
+        if (life[i] == 0) {
+            continue;
+        }
+        if (MGRotTransPers3DSprite(top_left, bottom_right, position[i], 12.0f - 0.5f * life[i],
+                                   5.5f - 0.25f * life[i], 0) != 1) {
+            continue;
+        }
+        top_right[0] = bottom_right[0];
+        top_right[1] = top_left[1];
+        top_right[2] = top_left[2];
+        top_right[3] = top_left[3];
+        bottom_left[0] = top_left[0];
+        bottom_left[1] = bottom_right[1];
+        bottom_left[2] = bottom_right[2];
+        bottom_left[3] = bottom_right[3];
+        colour.a = life[i] * 10;
+        if (sw != 0) {
+            set3DSprite(Vif1Packet, first, CRect_i_(0, 0, 0x20, 0x20), top_left, top_right,
+                        bottom_left, bottom_right, &colour);
+        } else {
+            set3DSprite(Vif1Packet, second, CRect_i_(0, 0, 0x20, 0x20), top_left, top_right,
+                        bottom_left, bottom_right, &colour);
         }
     }
 
-    sceVif1PkCnt(Vif1Packet, 0);
-    sceVif1PkOpenDirectCode(Vif1Packet, 0);
-    sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
-    sceVif1PkCloseGifTag(Vif1Packet);
-    sceVif1PkCloseDirectCode(Vif1Packet);
+    sceVif1PkCnt(packet, 0);
+    sceVif1PkOpenDirectCode(packet, 0);
+    sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
+    sceVif1PkCloseGifTag(packet);
+    sceVif1PkCloseDirectCode(packet);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runeffect", Draw__10CRunEffectFv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/runeffect", @395__2);
-INCLUDE_RODATA("asm/nonmatchings/runeffect", @396);
 /**
  * Starts one puff of run dust at a position.
  *
