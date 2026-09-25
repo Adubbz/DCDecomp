@@ -95,15 +95,13 @@ void CEffect::SetEffect(CEffectParam *parameters) {
     }
 }
 
-#ifdef NON_MATCHING
 void CEffect::Step(int unused) {
-    (void) unused;
     if (active == 0) {
         return;
     }
 
     frame++;
-    if (lifetime < frame) {
+    if (frame > lifetime) {
         frame = 0;
         active = 0;
     }
@@ -111,11 +109,14 @@ void CEffect::Step(int unused) {
     sceVu0AddVector(velocity, velocity, acceleration);
     if ((position_oscillation_flags & 1) != 0) {
         float phase = (float) frame;
-        for (int axis = 0; axis < 3; axis++) {
-            if (position_oscillation_scale[axis] > 0.0f) {
-                position[axis] += position_oscillation_scale[axis] *
-                                  Sinf(phase * position_oscillation_rate[axis]);
-            }
+        if (position_oscillation_scale[0] > 0.0f) {
+            position[0] += position_oscillation_scale[0] * Sinf(phase * position_oscillation_rate[0]);
+        }
+        if (position_oscillation_scale[1] > 0.0f) {
+            position[1] += position_oscillation_scale[1] * Sinf(phase * position_oscillation_rate[1]);
+        }
+        if (position_oscillation_scale[2] > 0.0f) {
+            position[2] += position_oscillation_scale[2] * Sinf(phase * position_oscillation_rate[2]);
         }
     }
 
@@ -123,11 +124,11 @@ void CEffect::Step(int unused) {
     scale[1] += scale_velocity[1];
     if ((scale_oscillation_flags & 1) != 0) {
         float phase = (float) frame;
-        for (int axis = 0; axis < 2; axis++) {
-            if (scale_oscillation_scale[axis] > 0.0f) {
-                scale[axis] += scale_oscillation_scale[axis] *
-                               Sinf(phase * scale_oscillation_rate[axis]);
-            }
+        if (scale_oscillation_scale[0] > 0.0f) {
+            scale[0] += scale_oscillation_scale[0] * Sinf(phase * scale_oscillation_rate[0]);
+        }
+        if (scale_oscillation_scale[1] > 0.0f) {
+            scale[1] += scale_oscillation_scale[1] * Sinf(phase * scale_oscillation_rate[1]);
         }
     }
 
@@ -139,9 +140,6 @@ void CEffect::Step(int unused) {
         opacity = 1.0f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/effect", Step__7CEffectFi);
-#endif
 
 #ifdef NON_MATCHING
 void CEffect::Draw(void) {
