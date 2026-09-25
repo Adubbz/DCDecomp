@@ -268,39 +268,49 @@ static void CommandPOLYDIVE(void **argv) {
  * @address 0x13FDB0
  * @size 0x24C
  */
-#ifdef NON_MATCHING
 static void CommandBOUND(void **argv) {
     sceVu0FVECTOR vectors[4];
-    CBound *bound = new ((u_long128 *) DataBuffer->Alloc(0x14)) CBound(1.0f, 1.0f, 1.0f);
+    int arg;
+    CBound *bound;
+    CFrame *frame;
+    int i;
+    float width;
+    float height;
+    float depth;
 
+    bound = new ((u_long128 *) DataBuffer->Alloc(0x14)) CBound(1.0f, 1.0f, 1.0f);
     if (bound == NULL) {
         return;
     }
-    int arg = 1;
-    CFrame *frame = ParentFrame->SearchFrame((char *) argv[0]);
+    arg = 0;
+    frame = ParentFrame->SearchFrame((char *) argv[arg++]);
     if (frame == NULL) {
         return;
     }
-    for (int i = 0; i < 4; i++) {
+    // The box's up direction, the two ends of its axis, and its half extents.
+    for (i = 0; i < 4; i++) {
         vectors[i][0] = *(float *) argv[arg];
-        vectors[i][1] = *(float *) argv[arg + 1];
-        vectors[i][2] = *(float *) argv[arg + 2];
+        vectors[i][1] = *(float *) argv[(u_int) (arg + 1)];
+        vectors[i][2] = *(float *) argv[(u_int) (arg + 2)];
         arg += 3;
         vectors[i][3] = 1.0f;
     }
     vectors[0][3] = 0.0f;
     bound->SetDir(frame, vectors[1], vectors[2], vectors[0], vectors[3][0], vectors[3][1]);
-    bound->extent[0] = vectors[3][0];
-    bound->extent[1] = vectors[3][1];
-    bound->extent[2] = vectors[3][2];
+    depth = vectors[3][2];
+    height = vectors[3][1];
+    width = vectors[3][0];
+    bound->extent[0] = width;
+    bound->extent[1] = height;
+    bound->extent[2] = depth;
     if (bound->extent[0] > 0.0f) {
-        bound->reciprocal[0] = 1.0f / vectors[3][0];
+        bound->reciprocal[0] = 1.0f / width;
     }
     if (bound->extent[1] > 0.0f) {
-        bound->reciprocal[1] = 1.0f / vectors[3][1];
+        bound->reciprocal[1] = 1.0f / height;
     }
     if (bound->extent[2] > 0.0f) {
-        bound->reciprocal[2] = 1.0f / vectors[3][2];
+        bound->reciprocal[2] = 1.0f / depth;
     }
     bound->friction = *(float *) argv[arg];
     if (pBound == NULL) {
@@ -310,9 +320,6 @@ static void CommandBOUND(void **argv) {
     }
     pBound = bound;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/clothread", CommandBOUND__FPPv);
-#endif
 /**
  * Reads one command argument out of a model script.
  *
