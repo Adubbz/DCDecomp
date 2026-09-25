@@ -397,34 +397,37 @@ void WeaponAllValueSet(WEAPON_HAVE *weapon, WEAPON_HAVE *result, int full) {
     }
 }
 
-#ifdef NON_MATCHING
 int SetAttachMentValue(int item_no, int slot, short level, ATTACH_LIST *) {
+    CDngStatusData *status;
+    ATTACH_LIST *attach;
+    ATTACH_DATA *data;
+    s16 held_no;
+
     if (item_no < ITEM_ATTACH_START || item_no >= ITEM_DUNGEON_START) {
         return -1;
     }
-    ATTACH_LIST *attachment = (ATTACH_LIST *) &SaveData->GetDngStatus()->consumable_items[slot];
-    ATTACH_DATA *data = GetAttachData(item_no);
-    int kind = attachment->item_no;
-    if (kind < ITEM_ATTACH_START || kind >= ITEM_DUNGEON_START) {
+    status = SaveData->GetDngStatus();
+    DNG_CONSUMABLE *items = status->consumable_items;
+    attach = (ATTACH_LIST *) &items[slot];
+    data = GetAttachData(item_no);
+    held_no = attach->item_no;
+    if (held_no < ITEM_ATTACH_START || held_no >= ITEM_DUNGEON_START) {
         return -1;
     }
-    memset(attachment, 0, sizeof(ATTACH_LIST));
-    attachment->item_no = kind;
-    memcpy(attachment, data, sizeof(ATTACH_LIST));
+    memset(attach, 0, sizeof(ATTACH_LIST));
+    attach->item_no = held_no;
+    memcpy(attach, data, sizeof(ATTACH_LIST));
     if (level <= 0) {
         level = 1;
     }
     if (level > 3) {
         level = 3;
     }
-    if (kind >= ITEM_ATTACH_ATTACK && kind <= ITEM_ATTACH_MAGICAL_POWER) {
-        attachment->status[kind - ITEM_ATTACH_ATTACK] += level;
+    if (held_no >= ITEM_ATTACH_ATTACK && held_no <= ITEM_ATTACH_MAGICAL_POWER) {
+        attach->status[held_no - ITEM_ATTACH_ATTACK] += level;
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", SetAttachMentValue__FiisP11ATTACH_LIST);
-#endif
 
 int GetAttachVolumeForMsg(ATTACH_LIST *attach) {
     int volume;

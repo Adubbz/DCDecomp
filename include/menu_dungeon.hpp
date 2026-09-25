@@ -44,7 +44,9 @@ void SetWeaponAttachStatus(WEAPON_HAVE *);
 void WeaponAllValueSet(WEAPON_HAVE *, WEAPON_HAVE *, int);
 
 /**
- * Fills an attachment record from the attachment data table.
+ * Refills the attachment in a dungeon inventory slot from the attachment data
+ * table, and raises its stat bonus by the level, clamped to 1-3. Returns -1
+ * when the item or the slot's attachment is out of the attachment range.
  *
  * @mangled SetAttachMentValue__FiisP11ATTACH_LIST
  * @address 0x225F50

@@ -1813,10 +1813,10 @@
         "MenuEtcErrCnt"
       ],
       ".menu_dungeon-c1707": [
-        "@1064"
+        "@1079"
       ],
       ".menu_dungeon-c1731": [
-        "@1083"
+        "@1098"
       ]
     },
     "rodata_exports": [
@@ -2248,9 +2248,9 @@
     ]
   },
   "src/menu_manual.cpp": {
-    "rodata_exports": [
-      "@535"
-    ]
+    "symbols": {
+      "manual_frame_image": "@354__3"
+    }
   },
   "src/randomitem.cpp": {
     "rodata_exports": [
@@ -2262,11 +2262,6 @@
       ".menuiconautoget-c1515": [
         "@37"
       ]
-    }
-  },
-  "src/menu_manual.cpp": {
-    "symbols": {
-      "manual_frame_image": "@354__3"
     }
   }
 }
