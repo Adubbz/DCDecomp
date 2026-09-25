@@ -4,12 +4,13 @@
 
 #include "cloth.hpp"
 
+#include <cstring>
+
 #include "chararead.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "mglib.hpp"
 #ifdef NON_MATCHING // draft includes
-#include <cstring>
 #include "bound.hpp"
 #include "wind.hpp"
 #include "texture.hpp"
@@ -606,7 +607,6 @@ void CCloth::Initialize(CDataAlloc2<1> *alloc) {
  * @address 0x13D050
  * @size 0x200
  */
-#ifdef NON_MATCHING
 void CCloth::Initialize(MDT_HEADER *header, CDataAlloc2<1> *alloc) {
     int *strip;
     int i;
@@ -631,7 +631,7 @@ void CCloth::Initialize(MDT_HEADER *header, CDataAlloc2<1> *alloc) {
     uvs = (sceVu0FVECTOR *) ((u_char *) header + header->unk_2c[1]);
     materials = (MDT_MATERIAL *) ((u_char *) header + header->info_ofs);
     mesh = (int *) ((u_char *) header + header->mesh_ofs);
-    strips = mesh + 4;
+    strips = strip = mesh + 4;
     strip_count = mesh[2];
     found = 0;
     for (i = 0; i < num_i; i++) {
@@ -657,6 +657,3 @@ void CCloth::Initialize(MDT_HEADER *header, CDataAlloc2<1> *alloc) {
     }
     Initialize(alloc);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/cloth", Initialize__6CClothFP10MDT_HEADERP14CDataAlloc2_1_);
-#endif
