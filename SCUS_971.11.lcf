@@ -603,6 +603,7 @@ SECTIONS
         // holds is what comes after -- the static initialisers, the vtables
         // and the literal pool -- so its placement follows.
         *(.rodata)
+        . = ALIGN(0x80);                 // 0x0029fe80, the end of retail's .rodata
         main.rdata.part1.s.o (.rdata)    // 0x0029fe80  __sinit_dataset.cpp
         mglib.cpp.o (.init)              // 0x0029ff40
         . = . + 0x4;                     // the four bytes this unit's own initialiser is short

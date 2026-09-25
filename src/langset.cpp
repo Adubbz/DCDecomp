@@ -96,25 +96,43 @@ int LangsetProc(void) {
     }
     return 0;
 }
-#ifdef NON_MATCHING
+
+/** Fills in a rectangle's position and size. */
+static inline void SetRect(RECT *rect, int x, int y, int width, int height) {
+    rect->x = x;
+    rect->y = y;
+    rect->width = width;
+    rect->height = height;
+}
+
 void LangsetDraw(void) {
+    RECT rect;
+    int language;
+    int alpha;
+
     setbilinear(1);
-    for (int language = 0; language < 5; language++) {
+    for (language = 0; language < 5; language++) {
         Alpha[language] = 0x40;
     }
     Alpha[Cursor] = 0x80;
 
     TexManager.ReloadTexture(GetVif1Packet(), 0);
-    CTexture *texture = TexManager.GetTexture("lang_set", -1);
-    RECT rect = {0x9E, 0, 0x144, 0x5A};
-    set2DSprite(GetVif1Packet(), texture, &rect, &rect, Fade.Get(0x80));
-    for (int language = 0; language < 5; language++) {
-        rect.y = 0x5F + language * 0x3D;
-        rect.height = 0x3C;
-        set2DSprite(GetVif1Packet(), texture, &rect, &rect, Fade.Get(Alpha[language]));
-    }
+    SetRect(&rect, 0x9E, 0, 0x144, 0x5A);
+    alpha = Fade.Get(0x80);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("lang_set", -1), &rect, &rect, alpha);
+    SetRect(&rect, 0x9E, 0x5F, 0x144, 0x3C);
+    alpha = Fade.Get(Alpha[0]);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("lang_set", -1), &rect, &rect, alpha);
+    SetRect(&rect, 0x9E, 0x9C, 0x144, 0x3C);
+    alpha = Fade.Get(Alpha[1]);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("lang_set", -1), &rect, &rect, alpha);
+    SetRect(&rect, 0x9E, 0xD9, 0x144, 0x3C);
+    alpha = Fade.Get(Alpha[2]);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("lang_set", -1), &rect, &rect, alpha);
+    SetRect(&rect, 0x9E, 0x116, 0x144, 0x3C);
+    alpha = Fade.Get(Alpha[3]);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("lang_set", -1), &rect, &rect, alpha);
+    SetRect(&rect, 0x9E, 0x153, 0x144, 0x3C);
+    alpha = Fade.Get(Alpha[4]);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("lang_set", -1), &rect, &rect, alpha);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/langset", LangsetDraw__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/langset", @395__3);
