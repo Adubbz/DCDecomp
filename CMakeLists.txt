@@ -295,7 +295,7 @@ carve_part(main.data.part6.s
            main.data.battlemenu-293750.s=293750-293790
            main.data.battlemenu-tail.s=293960-293990
            main.data.battlemenu-tail-293B90.s=293B90-293BF0
-           main.data.memcard-a.s=293EBC-293F50
+           main.data.memcard-a.s=293EBC-293F20
            main.data.memcard-a-293F60.s=293F60-293FE0
            main.data.menu_save-a.s=294044-294150
            main.data.part6g.s=2941C0-2942D0

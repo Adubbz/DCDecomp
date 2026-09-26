@@ -2835,7 +2835,6 @@ int InitMenuOption(int mode, int block_no, u_long128 *buffer) {
     }
     return 1;
 }
-INCLUDE_RODATA("asm/nonmatchings/memcard", @2251);
 
 /**
  * Stores whether the menus discard their saved positions in the saved menu
@@ -2896,7 +2895,6 @@ static void PrevOptionSetFunc() {
     }
 }
 
-#ifdef NON_MATCHING
 int MenuOptionKey() {
     int result = 0;
 
@@ -2905,13 +2903,14 @@ int MenuOptionKey() {
             if (OptionMenu.texture_ready == 0) {
                 ReadBG();
                 if (ReadBGSync() == 0) {
-                    LOADTEXTURE_INFO2 texture = {0};
-                    texture.block_no = OptionMenu.block_no;
+                    LOADTEXTURE_INFO2 textures[3] = {{"#frame_image_option#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+                    textures[0].block_no = OptionMenu.block_no;
+                    textures[1].block_no = OptionMenu.block_no;
                     BG_READ_INFO *file = GetReadBGFile(0);
-                    texture.name = (char *) GetPackFile((u_int *) file->buffer, "option.img", NULL);
+                    textures[1].name = (char *) GetPackFile((u_int *) file->buffer, "option.img", NULL);
                     TexManager.DeleteTextureBlock(OptionMenu.block_no);
                     TexManager.CleanUpTextureList();
-                    TexManager.LoadTextureBlockEX(-1, &texture);
+                    TexManager.LoadTextureBlockEX(-1, textures);
                     MenuOption = TexManager.GetTexture("option2", -1);
                     if (OptionMenu.mode == 0) {
                         InitMenuMesSet(0, (short *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL));
@@ -2945,33 +2944,44 @@ int MenuOptionKey() {
             switch (OptionMenu.buttons) {
                 case 0:
                     if (GamePad.Down(0x4000) != 0) {
-                        int row = OptionMenu.cursor / 10 - 1;
-                        if (row != 11 && row != 5) {
-                            OptionMenu.cursor += 10;
-                        } else {
-                            OptionMenu.buttons = 1;
+                        switch (OptionMenu.cursor / 10 - 1) {
+                            case 5:
+                            case 11:
+                                OptionMenu.buttons = 1;
+                                break;
+                            default:
+                                OptionMenu.cursor += 10;
+                                break;
                         }
                     }
                     if (GamePad.Down(0x1000) != 0) {
-                        int row = OptionMenu.cursor / 10 - 1;
-                        if (row != 6 && row != 0) {
-                            OptionMenu.cursor -= 10;
-                        } else {
-                            OptionMenu.buttons = 1;
+                        switch (OptionMenu.cursor / 10 - 1) {
+                            case 0:
+                            case 6:
+                                OptionMenu.buttons = 1;
+                                break;
+                            default:
+                                OptionMenu.cursor -= 10;
+                                break;
                         }
                     }
                     if (GamePad.Down(0x2000) != 0) {
                         OptionMenu.cursor++;
-                        if (OptionMenu.cursor / 10 - 1 != 6) {
-                            if (OptionMenu.cursor % 10 == 2) {
-                                OptionMenu.cursor -= 2;
-                                OptionMenu.cursor += 60;
-                                if (OptionMenu.cursor / 10 - 1 >= 12) {
-                                    OptionMenu.cursor -= 120;
+                        switch (OptionMenu.cursor / 10 - 1) {
+                            case 6:
+                                if (OptionMenu.cursor % 10 == 4) {
+                                    OptionMenu.cursor -= 64;
                                 }
-                            }
-                        } else if (OptionMenu.cursor % 10 == 4) {
-                            OptionMenu.cursor -= 64;
+                                break;
+                            default:
+                                if (OptionMenu.cursor % 10 == 2) {
+                                    OptionMenu.cursor -= 2;
+                                    OptionMenu.cursor += 60;
+                                    if (OptionMenu.cursor / 10 - 1 >= 12) {
+                                        OptionMenu.cursor -= 120;
+                                    }
+                                }
+                                break;
                         }
                     }
                     if (GamePad.Down(0x8000) != 0) {
@@ -2979,15 +2989,18 @@ int MenuOptionKey() {
                             OptionMenu.cursor--;
                         } else {
                             int row = OptionMenu.cursor / 10 - 1;
-                            if (row != 0) {
-                                if (row < 6) {
-                                    OptionMenu.cursor += 60;
-                                } else {
-                                    OptionMenu.cursor -= 60;
-                                }
-                                OptionMenu.cursor++;
-                            } else {
-                                OptionMenu.cursor = 0x49;
+                            switch (row) {
+                                case 0:
+                                    OptionMenu.cursor = 0x49;
+                                    break;
+                                default:
+                                    if (row < 6) {
+                                        OptionMenu.cursor += 60;
+                                    } else {
+                                        OptionMenu.cursor -= 60;
+                                    }
+                                    OptionMenu.cursor++;
+                                    break;
                             }
                         }
                     }
@@ -3047,12 +3060,6 @@ int MenuOptionKey() {
     }
     return result;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", MenuOptionKey__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/memcard", @2345);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @2346);
-INCLUDE_RODATA("asm/nonmatchings/memcard", @2347);
 void DrawMenuOption() {
     setbilinear(0);
     if (OptionMenu.texture_ready == 0) {
