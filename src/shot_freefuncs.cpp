@@ -11,6 +11,7 @@
 #include "dun/gameloop.hpp"
 #include "dungeonmap.hpp"
 #include "healeffect.hpp"
+#include "hitvalue.hpp"
 #include "mglib.hpp"
 #include "nowload.hpp"
 #include "rect.hpp"
@@ -22,6 +23,17 @@
 static sceVu0FVECTOR water_position;
 static s32 healing_water_active;
 #endif
+#ifdef NON_MATCHING
+/**
+ * How tall the character in play stands, where a status ailment's damage number rises from.
+ */
+static inline float PoisonCharaHeight(CUserStatus *status) {
+    float chara_height[6] = {16.0f, 14.0f, 16.0f, 16.0f, 18.0f, 15.0f};
+
+    return chara_height[status->cur_chara];
+}
+#endif
+
 extern "C" s32 poison_counter;
 
 /**
@@ -579,16 +591,19 @@ int BtStatusErrColorSet(void) {
  */
 #ifdef NON_MATCHING
 void BtStatusErrStep() {
+    CUserStatus *status = UserStatus;
+    s8 *chara_no = &status->cur_chara;
+    u_int flags = status->unk_42C8[status->cur_chara];
     poison_counter++;
-    int character = UserStatus->cur_chara;
-    if ((UserStatus->unk_42C8[character] & 0x10) && poison_counter > 179) {
-        int damage = (int) ((double) UserStatus->max_hp[character] * 0.05);
-        if (damage < 1) {
-            damage = 1;
-        }
-        UserStatus->AddNowLife(character, (s16) -damage, 10.0f);
+    if ((flags & 0x10) && poison_counter >= 180) {
+        int chara = *chara_no;
+        int damage = (int) ((double) status->max_hp[chara] * 0.04);
+        status->AddNowLife((s8) chara, (s16) -damage, 10.0f);
+        sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 1.0f};
+        position[1] = PoisonCharaHeight(UserStatus);
+        HitValueEntry(NowHitValue, position, damage, 2, CharaMain.frame);
     }
-    if (poison_counter > 179) {
+    if (poison_counter >= 180) {
         poison_counter = 0;
     }
     BtStatusErrColorSet();
