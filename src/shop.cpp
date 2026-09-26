@@ -4681,9 +4681,15 @@ void InitFishingExchange(u_long128 *buffer, int *texture_blocks, int mode) {
 }
 
 /**
- * The fishing screens' frame-buffer backdrop and message pack, shared by FishMenuTextureLoad and FishRecordTextureEnter.
+ * Name of the fishing screens' frame-buffer backdrop, loaded by
+ * FishMenuTextureLoad and FishRecordTextureEnter.
  */
 extern char FishFrameImage[];
+
+/**
+ * Name of the fishing screens' message file inside their pack, read by FishMenuTextureLoad
+ * and FishRecordTextureEnter.
+ */
 extern char FishMessageFile[];
 
 INCLUDE_RODATA("asm/nonmatchings/shop", @2948);
