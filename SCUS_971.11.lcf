@@ -575,7 +575,9 @@ SECTIONS
         shop.cpp.o (.shopdata-fishrec) // 0x00292ac0 @3261
         main.data.shop-filenames-after-292AE4.s.o (.data) // 0x00292ae4
         battlemenu.cpp.o (.battlemenu-c731__6) // 0x00292e50 @731__6
-        main.data.battlemenu-292E60.s.o (.data) // 0x00292e60
+        battlemenu.cpp.o (.battlemenu-c789__3) // 0x00292e60 @789__3
+        battlemenu.cpp.o (.battlemenu-c791__2) // 0x00292e70 @791__2
+        main.data.battlemenu-292E88.s.o (.data) // 0x00292e88
         battlemenu.cpp.o (.battlemenu-c889__4) // 0x00292e90 @889__4
         battlemenu.cpp.o (.battlemenu-c890__4) // 0x00292ea0 @890__4
         . = ALIGN(16);
@@ -836,7 +838,9 @@ SECTIONS
 		main.sdata.part2f-2A1FF0.s.o (.sdata) // 0x002a1ff0
 		battlemenu.cpp.o (.battlemenu-c702__2) // 0x002a2028 @702__2
 		. = ALIGN(8);
-		main.sdata.part2f-2A2030.s.o (.sdata) // 0x002a2030
+		battlemenu.cpp.o (.battlemenu-c782__2) // 0x002a2030 @782__2
+		battlemenu.cpp.o (.battlemenu-c790__2) // 0x002a2038 @790__2
+		battlemenu.cpp.o (.battlemenu-c792__4) // 0x002a2040 @792__4
 		battlemenu.cpp.o (.battlemenu-texenter-s) // 0x002a2048 @937__3
 		battlemenu.cpp.o (.battlemenu-c1249) // 0x002a2050 @1249
 		main.sdata.part2f-2A2050.s.o (.sdata) // 0x002a2058

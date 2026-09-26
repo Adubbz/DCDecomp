@@ -769,29 +769,33 @@ void DrawOtherCharaStatus(int x, int y, int chara, int alpha) {
     MGFillBox(CRect_i_((bar_x + 8) * 16, ((bar_y + 12) >> 1) * 16, 0x340, 0x20), 0x4F, 0x4F, 0x4F, alpha);
     MGFillBox(CRect_i_((bar_x + 8) * 16, ((bar_y + 12) >> 1) * 16, water_len * 16, 0x20), 0xC8, 0xEF, 0xF2, alpha);
 }
-#ifdef NON_MATCHING
 void DngComStatus(int x, int y, int chara, int alpha) {
     CTexture *texture = TexManager.GetTexture("charastb", -1);
     int left = x - 6;
-    float scale[2] = {32.0f, 32.0f};
-    CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
-    float hp = status->hp[chara];
-    float max_hp = status->max_hp[chara];
+    int fill;
+    int row_y;
+    float unused_scale[2] = {0.0f, 0.0f};
+    float hp = BtlMenuStatusPt->hp[chara];
+    float max_hp = BtlMenuStatusPt->max_hp[chara];
     if (max_hp < 1.0f) {
         max_hp = 32.0f;
     }
-    int slot = status->equipped_weapon_slot[chara];
-    WEAPON_HAVE *weapon = (WEAPON_HAVE *) ((char *) status + chara * sizeof(status->chara_weapons[0]) + 0x450C) + slot;
+    int slot = BtlMenuStatusPt->equipped_weapon_slot[chara];
+    WEAPON_HAVE *weapons = BtlMenuStatusPt->chara_weapons[chara];
+    WEAPON_HAVE *weapon = &weapons[slot];
     if (weapon == NULL) {
         return;
     }
+    float whp = weapon->durability_f;
     float max_whp = weapon->durability;
     if (max_whp < 1.0f) {
         max_whp = 32.0f;
     }
-    float values[2][2] = {{hp, max_hp}, {weapon->durability_f, max_whp}};
-    float full[2] = {32.0f, 32.0f};
-    int colour_no[2] = {0, 3};
+    float values[2][2] = {{hp, max_hp}, {whp, max_whp}};
+    float full[2] = {200.0f, 99.0f};
+    int unused_colour[6] = {64, 212, 162, 255, 128, 0};
+    int colour_no[2] = {22, 25};
+    row_y = 0x50;
     if (y % 2 == 0) {
         y--;
     }
@@ -800,7 +804,7 @@ void DngComStatus(int x, int y, int chara, int alpha) {
         DrawMenu2DSprite(texture, CRect_i_(left + 0x10, y + 5, 4, 0xF), CRect_i_(0x10, 0xB0, 4, 0x10), alpha);
         DrawMenu2DSprite(texture, CRect_i_(left + 0x14, y + 5, length, 0xF), CRect_i_(0x14, 0xB0, 4, 0x10), alpha);
         DrawMenu2DSprite(texture, CRect_i_(left + 0x13 + length, y + 5, 4, 0xF), CRect_i_(0x18, 0xB0, 4, 0x10), alpha);
-        int fill = (int) ((float) length * values[i][0] / values[i][1]);
+        fill = (int) ((float) length * values[i][0] / values[i][1]);
         if (i == 0) {
             if (hp < 0.3f * max_hp) {
                 colour_no[i]++;
@@ -815,8 +819,7 @@ void DngComStatus(int x, int y, int chara, int alpha) {
         colours.colors[2].a = alpha;
         colours.colors[1].a = alpha;
         colours.colors[0].a = alpha;
-        CRect_i_ bar(left + 0x14, y + 6, fill, 6);
-        DrawMenuColorGradation(bar, &colours.colors[0], &colours.colors[1], &colours.colors[2], &colours.colors[3]);
+        DrawMenuColorGradation(CRect_i_(left + 0x14, y + 6, fill, 6), &colours.colors[0], &colours.colors[1], &colours.colors[2], &colours.colors[3]);
         int number_x = left + 0x4C + length;
         while (x + 0x9A < number_x) {
             number_x--;
@@ -826,8 +829,9 @@ void DngComStatus(int x, int y, int chara, int alpha) {
         numbers[1] = GetDispVolumeForFloat(values[i][1]);
         DrawStatusNumberNowAndMax(numbers, number_x, y + 6, 1, alpha);
         y += 0x10;
+        row_y += 0x10;
     }
-    int drops = (int) status->water_max[chara] / 10;
+    int drops = (int) BtlMenuStatusPt->stat_float_a[chara] / 10;
     int drop_x = left + 0x12;
     for (int i = 0; i < drops - 1; i++) {
         DrawMenu2DSprite(texture, CRect_i_(drop_x, y + 5, 0x12, 0x13), CRect_i_(0x22, 0x9C, 0x12, 0x14), alpha);
@@ -835,21 +839,17 @@ void DngComStatus(int x, int y, int chara, int alpha) {
     }
     DrawMenu2DSprite(texture, CRect_i_(drop_x, y + 5, 0x18, 0x14), CRect_i_(0x34, 0x9C, 0x18, 0x14), alpha);
     int water_alpha = (alpha * 0x50) >> 7;
-    int full_drops = (int) status->water_now[chara] / 10;
+    int full_drops = (int) BtlMenuStatusPt->stat_float_b[chara] / 10;
     for (int i = 0; i < full_drops; i++) {
         DrawMenu2DSprite(texture, CRect_i_(left + 0x13 + i * 0x12, y, 0x10, 0x14), CRect_i_(0, 0x88, 0x10, 0x14),
                          water_alpha);
     }
-    int rest = (int) status->water_now[chara] % 10;
+    int rest = (int) BtlMenuStatusPt->stat_float_b[chara] % 10;
     if (rest != 0) {
         DrawMenu2DSprite(texture, CRect_i_(left + 0x13 + full_drops * 0x12, y, 0x10, 0x14),
                          CRect_i_((3 - (int) ((float) rest / 2.5f)) * 16, 0x88, 0x10, 0x14), water_alpha);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DngComStatus__Fiiii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @885__2);
 
 /* The status board texture's name. Retail keeps one copy of the string, emitted with DngComStatus. */
 extern char CharaStatusTextureName[];
