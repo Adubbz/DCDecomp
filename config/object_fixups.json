@@ -1157,7 +1157,8 @@
       "@947"
     ],
     "symbols": {
-      "MdsExtension": "@863"
+      "MdsExtension": "@863",
+      "defWeapon": "defWeapon__2"
     }
   },
   "src/chararead.cpp": {

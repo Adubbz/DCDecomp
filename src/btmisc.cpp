@@ -187,14 +187,14 @@ void BtGetWeaponNamePath2(char *name, char *path, int chara, int weapon) {
     strcpy(name, nameWepBuff_mds);
     strcpy(path, nameWepBuff_img);
 }
-#ifdef NON_MATCHING
 extern int defWeapon[6];
 
 void BtGetWeaponNamePath3(char *name, char *effect_name, int weapon_no) {
     WEAPON_DATA *weapon;
     int chara_no;
-    switch (weapon_no <= 0x100) {
-    case 0:
+    if (weapon_no <= 0x100) {
+        weapon = NULL;
+    } else {
         weapon = GetWeaponData(weapon_no);
         if (weapon != NULL) {
             chara_no = (s8) weapon->owner;
@@ -204,10 +204,6 @@ void BtGetWeaponNamePath3(char *name, char *effect_name, int weapon_no) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btmisc", BtGetWeaponNamePath3__FPcPci);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @953);
 /**
  * Records in the save file that an Atla has been collected.
  *
