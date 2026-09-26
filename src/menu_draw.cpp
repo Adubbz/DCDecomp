@@ -1767,7 +1767,6 @@ void PersonalBoardTagDraw(int tag, int x, int y, CTexture *texture, int shift, i
             break;
     }
 }
-#ifdef NON_MATCHING
 void PersonalBoardScrlBarDraw(int count, int x, int y, float &scroll, unsigned char top_row, CTexture *texture, int alpha) {
     int bar_x = x + 0xE8;
     int rows = count / 5;
@@ -1776,22 +1775,19 @@ void PersonalBoardScrlBarDraw(int count, int x, int y, float &scroll, unsigned c
         rows = 1;
     }
     int length = (int) (456.0f / rows - 8.0f);
-    if ((float) length > 114.0f) {
+    if (114.0f < (float) length) {
         length = 0x69;
     }
     CRect_i_ source(0xAE, 0x14, 8, 4);
-    scroll += (((float) (y + 0x16) + 114.0f * top_row / rows) - scroll) / 4.0f;
-    float bar_y = scroll;
+    float bar_y = (float) (y + 0x16) + 114.0f * top_row / rows;
+    bar_y = scroll + (bar_y - scroll) / 4.0f;
+    scroll = bar_y;
     DrawMenu2DSprite(texture, CRect_i_(bar_x, (int) bar_y, 8, 4), source, alpha);
     source.y += 4;
-    float body_y = 4.0f + bar_y;
-    DrawMenu2DSprite(texture, CRect_i_(bar_x, (int) body_y, 8, length + 1), source, alpha);
+    DrawMenu2DSprite(texture, CRect_i_(bar_x, (int) (4.0f + bar_y), 8, length + 1), source, alpha);
     source.y += 4;
-    DrawMenu2DSprite(texture, CRect_i_(bar_x, (int) (body_y + length), 8, 4), source, alpha);
+    DrawMenu2DSprite(texture, CRect_i_(bar_x, (int) (4.0f + bar_y + length), 8, 4), source, alpha);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardScrlBarDraw__FiiiRfUcP8CTexturei);
-#endif
 
 void PersonalBoardMaxDraw(int num, int x, int y, CTexture *texture, int alpha) {
     int left = x + 0xD2;
@@ -1879,8 +1875,9 @@ static void DrawPersonalBoardBase(int x, int y, int top, int bottom, int count, 
 }
 #ifdef NON_MATCHING
 void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CTexture *texture, int alpha) {
+    int board_y = y;
     for (int row = 0; row < 26; row++) {
-        DrawPersonalBoardBase(x, y, top, bottom, 5, texture, alpha);
+        DrawPersonalBoardBase(x, board_y, top, bottom, 5, texture, alpha);
         int draw_mark = 0;
         switch (mark) {
             case 0:
@@ -1898,7 +1895,7 @@ void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CT
         }
         if (draw_mark != 0) {
             int mark_x = x - 4;
-            int mark_y = y - 8;
+            int mark_y = board_y - 8;
             int v = 0x3C;
             int height = 0x10;
             if (mark_y + 0x10 >= top && mark_y < bottom) {
@@ -1907,12 +1904,14 @@ void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CT
                 spRGBA left;
                 spRGBA right;
                 left.r = left.g = left.b = 0x80;
-                right.r = right.g = right.b = 0x80 - 9;
-                left.a = alpha;
+                right.r = right.g = right.b = 0x80 - step;
                 right.a = alpha;
+                left.a = alpha;
                 for (int i = 0; i < 5; i++) {
-                    set2DSprite(GetVif1Packet(), texture, CRect_i_(mark_x, mark_y, 0x28, height),
-                                CRect_i_(0x20, v, 0x28, height), &left, &right, &left, &right, 1);
+                    CRect_i_ texel(0x20, v, 0x28, height);
+                    CRect_i_ screen(mark_x, mark_y, 0x28, height);
+                    set2DSprite(GetVif1Packet(), texture, screen, texel, &left, &right, &left, &right, 1);
+
                     left.r = left.g = left.b = right.r;
                     right.r = right.g = right.b = right.r - step;
                     step--;
@@ -1920,8 +1919,8 @@ void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CT
                 }
             }
         }
-        y += 0x28;
-        if (bottom < y) {
+        board_y += 0x28;
+        if (bottom < board_y) {
             break;
         }
     }
