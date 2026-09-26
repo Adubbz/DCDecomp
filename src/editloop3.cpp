@@ -4538,20 +4538,14 @@ static int _GET_TALKNPC_STATUS(RS_STACKDATA *stack, int) {
     return 1;
 }
 
-/**
- * Camera offsets used for each of the three talk-camera views.
- *
- * Retail keeps this inside `_SET_TALK_CAMERA` and calls it `vv`; the name is
- * held apart because `EdTalkMode`'s assembly still references its own `vv`,
- * which the compiled copy would otherwise absorb.
- */
-static sceVu0FVECTOR talk_camera_ref[3] = {
-    {-18.8f, 7.1f, -21.3f, 1.0f},
-    {21.0f, 6.5f, -5.7f, 1.0f},
-    {22.6f, 6.9f, 16.5f, 1.0f},
-};
-
 static int _SET_TALK_CAMERA(RS_STACKDATA *stack, int) {
+    /** Camera offsets from the speakers' midpoint for each of the three talk-camera views. */
+    static sceVu0FVECTOR vv[3] = {
+        {-18.8f, 7.1f, -21.3f, 1.0f},
+        {21.0f, 6.5f, -5.7f, 1.0f},
+        {22.6f, 6.9f, 16.5f, 1.0f},
+    };
+
     int view = GetStackInt(stack);
     sceVu0FVECTOR player_position;
     sceVu0FVECTOR npc_position;
@@ -4576,7 +4570,7 @@ static int _SET_TALK_CAMERA(RS_STACKDATA *stack, int) {
     sceVu0FMATRIX rotation;
     sceVu0UnitMatrix(rotation);
     sceVu0RotMatrixY(rotation, rotation, angle);
-    sceVu0ApplyMatrix(camera_position, rotation, talk_camera_ref[view]);
+    sceVu0ApplyMatrix(camera_position, rotation, vv[view]);
     sceVu0AddVector(camera_position, midpoint, camera_position);
     if (camera != NULL)
         camera->SetPos(camera_position);
