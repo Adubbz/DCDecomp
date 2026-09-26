@@ -989,7 +989,6 @@ int InitExistData(void) {
     }
     return 0;
 }
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3413);
 
 int SaveEnableCheck(void) {
     int found;
@@ -1047,43 +1046,52 @@ extern float EventBarY;
 
 /** The item pack the event item selection menu lists. */
 extern ITEM_PACK *EventItemPackPt;
-#ifdef NON_MATCHING
+
+/** Screen position of the event item selection board's top left corner. */
 extern float EventBoardPos[2];
+
+/** Screen position of the event item cursor's highlight, eased toward the cursor. */
 extern float MiniCur[2];
+
+/** Screen y of the event item board's first row, eased toward the scroll row. */
 extern int EventItemMoveY;
+
+/** Nonzero once the event item selection menu's textures have loaded. */
 extern int MiniEventTexReadFlag;
+
+/** Texture of the cursor frame. */
 extern CTexture *StayTex;
+#ifdef NON_MATCHING
 extern CTexture *MiniEventBoard;
 extern CTexture *FishFoodBoard;
 extern CTexture *ItemIcon;
+#endif
 
 void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, int vanish, int fish_mode) {
-    s8 lang_y[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-    LOADTEXTURE_INFO2 texture[2] = {{"stayframe.img", 0, 0}, {NULL, 0, 0}};
     int i;
 
     GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
     GamePad.MenuModeOn(0x78);
-    StayTex = TexManager.GetTexture("stayframe", -1);
+    StayTex = TexManager.GetTexture(AtoraVibeTextureName, -1);
     MiniMenu.fish_mode = fish_mode;
     MiniEventTextureBlock = block;
     MiniMenu.lang = GetMenuLangFlag();
-    EventBoardPos[0] = (float) x;
+    s8 lang_y[7] = {0, -0x10, -0x10, -0x10, -0x10, -0x10, -0x10};
+    EventBoardPos[0] = x;
     EventBoardPos[1] = (float) y + (float) lang_y[MiniMenu.lang];
     EventItemPackPt = pack;
     MiniMenu.event_item_num = 0;
     for (i = 0; i < pack->num; i++) {
-        if (pack->item[i] >= 0x84) {
+        if (pack->item[i] >= ITEM_DUNGEON_START) {
             MiniMenu.event_item_num++;
         }
     }
-    for (MiniMenu.usable_num = 0; MiniMenu.usable_num < 13;) {
+    for (MiniMenu.usable_num = 0; MiniMenu.usable_num < 13; MiniMenu.usable_num++) {
         MiniMenu.usable[MiniMenu.usable_num] = usable[MiniMenu.usable_num];
         printf("itemno = %d\n", usable[MiniMenu.usable_num]);
         if (usable[MiniMenu.usable_num] < 0) {
             break;
         }
-        MiniMenu.usable_num++;
     }
     MiniMenu.selected = -1;
     MiniMenu.vanish = vanish;
@@ -1092,35 +1100,29 @@ void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, 
     } else {
         printf("exist after use \n");
     }
+    LOADTEXTURE_INFO2 texture[2] = {{"#frame_image#640#448#4", 0, 0}, {NULL, 0, 0}};
     texture[0].block_no = MiniEventTextureBlock;
     TexManager.DeleteTextureBlock(MiniEventTextureBlock);
     TexManager.CleanUpTextureList();
     TexManager.LoadTextureBlockEX(-1, texture);
     StartReadBG();
-    LoadFileBGMenuData("eventmnu2.pak", MenuCalcBufAlignment((u_long128 *) read_buffer));
+    u_long128 *buffer = (u_long128 *) read_buffer;
+    buffer = MenuCalcBufAlignment(buffer);
+    LoadFileBGMenuData("eventmnu2.pak", buffer);
     ReadBG();
     MiniMenu.cursor = 0;
     MiniMenu.scroll_row = 0;
-    int row = MiniMenu.scroll_row;
-    float top = EventBoardPos[1];
-    EventItemMoveY = (int) ((56.0f + top) - (float) (row * 0x28));
+    EventItemMoveY = 56.0f + EventBoardPos[1] - MiniMenu.scroll_row * 0x28;
     int rows = EventItemPackPt->num / 5;
     if (rows <= 0) {
         rows = 1;
     }
-    EventBarY = 60.0f + top + (float) ((int) (68.0f * (float) row) / rows);
-    MiniCur[0] = 6.0f + EventBoardPos[0] + (float) (((MiniMenu.cursor + 5) % 5) * 0x2A);
-    MiniCur[1] = 60.0f + top + (float) (((MiniMenu.cursor - row * 5) / 5) * 0x28);
+    EventBarY = 60.0f + EventBoardPos[1] + (int) (68.0f * MiniMenu.scroll_row) / rows;
+    MiniCur[0] = 6.0f + EventBoardPos[0] + ((MiniMenu.cursor + 5) % 5) * 0x2A;
+    MiniCur[1] = 60.0f + EventBoardPos[1] + ((MiniMenu.cursor - MiniMenu.scroll_row * 5) / 5) * 0x28;
     MiniMenu.state = 2;
     MiniEventTexReadFlag = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_save", InitEventItemSelect__FiPiP9ITEM_PACKiiii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3427);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3428);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3429);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3430);
 
 static void EventItemSelectExit(void) {
     TexManager.DeleteTextureBlock(MiniEventTextureBlock);

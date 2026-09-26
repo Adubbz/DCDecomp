@@ -2168,6 +2168,19 @@
       "SaveMenuKeyEndSaveEnding__Fv",
       "SaveMenuKeyUnFormat__Fv",
       "SaveMenuKeyLoadDecide__Fv"
+    ],
+    "sections": {
+      ".menu_save-c3414": [
+        "@3472"
+      ]
+    },
+    "rekey_sections": [
+      [
+        ".menu_save-c3414",
+        [
+          24
+        ]
+      ]
     ]
   },
   "src/memorycardaccess.cpp": {
