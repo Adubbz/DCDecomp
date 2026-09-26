@@ -189,11 +189,15 @@ void CFireOmni::RasterStep(void) {
     }
 }
 
-#ifdef NON_MATCHING
 void CFireOmni::DrawRaster(void) {
-    sceVu0FVECTOR world = {pos[0], pos[1] + 3.0f, pos[2], 1.0f};
+    sceVu0FVECTOR world;
     int top_left[4];
     int bottom_right[4];
+
+    world[0] = pos[0];
+    world[1] = pos[1] + 3.0f;
+    world[2] = pos[2];
+    world[3] = 1.0f;
     if (MGRotTransPers3DSprite(top_left, bottom_right, world, 15.0f, 16.0f, 0) != 1) {
         return;
     }
@@ -201,36 +205,24 @@ void CFireOmni::DrawRaster(void) {
     int x = (top_left[0] - 0x6C00) >> 4;
     int y = (top_left[1] - 0x7900) >> 3;
     int width = (bottom_right[0] - top_left[0]) >> 4;
-    int height = (bottom_right[1] - top_left[1]) >> 5;
+    int height = (bottom_right[1] - top_left[1]) >> 4;
+    height >>= 1;
     if (x + width > 639 && x < 640) {
         width = 639 - x;
     }
     if (x < 0 && x + width > 0) {
-        width += x;
+        width = x + width;
         x = 0;
     }
     if (y < 1) {
-        height += (top_left[1] - 0x7900) >> 4;
+        height += y >> 1;
         y = 0;
     }
 
-    CTexture *blend_target = TexManager.GetTexture((char *) "blender", -1);
-    CTexture *raster_texture = TexManager.GetTexture((char *) "alpha01", -1);
-    CRect_i_ destination(x, y >> 1, width, height);
-    CRect_i_ texture_rect(0, 0, width, height);
-    CRect_i_ source_rect(0, 0, 64, 64);
-    int destination_address = blend_target->tex0 & 0x3FFF;
-    int destination_width = (blend_target->tex0 & 0xFFFFF) >> 14;
-    int destination_format = ((blend_target->tex0 >> 16) & 0x3FF) >> 4;
-    blendTextuerTest(Vif1Packet, destination_address, destination_width, destination_format,
-                     destination, raster_texture, texture_rect, source_rect,
-                     (float) (top_left[2] >> 4), raster_phase);
-
-    CRect_i_ screen(x, y, width, height * 2);
-    CRect_i_ clip(1, 1, width - 2, height - 2);
-    set2DSprite(Vif1Packet, blend_target, screen, clip);
+    sceGsTex0 blend = *reinterpret_cast<sceGsTex0 *>(&TexManager.GetTexture("blender", -1)->tex0);
+    blendTextuerTest(Vif1Packet, blend.TBP0, blend.TBW, blend.PSM, CRect_i_(x, y >> 1, width, height),
+                     TexManager.GetTexture("alpha01", -1), CRect_i_(0, 0, width, height),
+                     CRect_i_(0, 0, 64, 64), top_left[2] >> 4, raster_phase);
+    set2DSprite(Vif1Packet, TexManager.GetTexture("blender", -1), CRect_i_(x, y, width, height * 2),
+                CRect_i_(1, 1, width - 2, height - 2));
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/fireomni", DrawRaster__9CFireOmniFv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/fireomni", @328__2);
