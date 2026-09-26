@@ -397,8 +397,6 @@ extern ATRA_APPEAR *AtraAppearData[6];
 extern int MaxFloorTbl[6];
 
 void BtAtraListMake(int dungeon) {
-    CDngStatusData *status = (CDngStatusData *) UserStatus;
-
     if (dungeon >= 6) {
         return;
     }
@@ -417,7 +415,7 @@ void BtAtraListMake(int dungeon) {
             lower += appear[count].count;
         }
         if (floor != -1 && floor != -2) {
-            status->SetGetAtra(dungeon, floor - 1, count);
+            ((CDngStatusData *) UserStatus)->SetGetAtra(dungeon, --floor, count);
         }
     }
     int i;
@@ -425,8 +423,8 @@ void BtAtraListMake(int dungeon) {
         int placed = 0;
         while (placed == 0) {
             int floor = (int) (((float) (center - 1) * (float) rand()) / 2.1474836e9f);
-            if (status->GetMaxAtraNum(dungeon, floor) < 8 && chkAtraFloor(dungeon, floor + 1) != 0) {
-                status->SetGetAtra(dungeon, floor, -2);
+            if (((CDngStatusData *) UserStatus)->GetMaxAtraNum(dungeon, floor) < 8 && chkAtraFloor(dungeon, floor + 1) != 0) {
+                ((CDngStatusData *) UserStatus)->SetGetAtra(dungeon, floor, -2);
                 placed = 1;
             }
         }
@@ -434,17 +432,18 @@ void BtAtraListMake(int dungeon) {
     for (i = 0; i < lower; i++) {
         int placed = 0;
         while (placed == 0) {
-            int floor = (int) (((float) ((max - center) - 1) * (float) rand()) / 2.1474836e9f) + center;
-            if (status->GetMaxAtraNum(dungeon, floor) < 8 && chkAtraFloor(dungeon, floor + 1) != 0) {
-                status->SetGetAtra(dungeon, floor, -2);
+            int floor = (int) (((float) ((max - center) - 1) * (float) rand()) / 2.1474836e9f);
+            floor += center;
+            if (((CDngStatusData *) UserStatus)->GetMaxAtraNum(dungeon, floor) < 8 && chkAtraFloor(dungeon, floor + 1) != 0) {
+                ((CDngStatusData *) UserStatus)->SetGetAtra(dungeon, floor, -2);
                 placed = 1;
             }
         }
     }
-    for (i = 0; i < count; i++) {
-        status->atra_registry[dungeon][i].id = appear[i].id;
-        status->atra_registry[dungeon][i].floor = appear[i].floor;
-        status->atra_registry[dungeon][i].refcount = appear[i].count;
+    for (int j = 0; j < count; j++) {
+        UserStatus->atra_data[dungeon][j].unk_00 = appear[j].id;
+        UserStatus->atra_data[dungeon][j].unk_04 = appear[j].floor;
+        UserStatus->atra_data[dungeon][j].unk_08 = appear[j].count;
     }
 }
 #else
