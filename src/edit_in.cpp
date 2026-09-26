@@ -34,7 +34,6 @@
 
 #include <cmath>
 
-#include "battlemenu.hpp"
 #include "clsmes.hpp"
 #include "dispctrl.hpp"
 #include "ebattle.hpp"
@@ -125,6 +124,8 @@ float EdAGetViewAngleV();
 void EdASetViewAngle(float h, float v);
 void EdEyeCamera(CCamera *camera, CCharacter *chara);
 void EdViewModeOff();
+/* battlemenu.hpp declares it returning s16; this unit was built without that header and reads the full register. */
+int GetInteriorOutFlag();
 void EdInitMesParam();
 void EdDrawCharacter(CCharacter *chara, int detail, int count, CNPCharacter *villagers, int *marks, int shadow,
                      ED_EVENT_INFO *event);
