@@ -1,21 +1,20 @@
 #include "dungeonparts.hpp"
 
-#include <cstdlib>
-
-#include "dun/gameloop.hpp"
 #include "frame.hpp"
-#include "userstatus.hpp"
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <libvu0.h>
 #include "dungeonmap.hpp"
 #include "dngstatusdata.hpp"
+#include "dun/gameloop.hpp"
 #include "dranmapfield.hpp"
 #include "collision.hpp"
 #include "boxvu0.hpp"
 #include "mglib.hpp"
 #include "editloop.hpp"
+#include "userstatus.hpp"
 
 #ifdef NON_MATCHING
 /* The floors each dungeon keeps Atla off, one list per dungeon, ending at -1. */
@@ -115,9 +114,9 @@ void GetPieroItem(int map_no, int ura_dungeon, int *item0, int *item1) {
  * The items a treasure box can hold on one floor.
  */
 struct ITEM_PUT_SET {
-    int floor; /**< Floor the list is for, counted from one; -1 ends the table. */
+    int floor;      /**< Floor the list is for, counted from one; -1 ends the table. */
     int unk_04;
-    int item[128]; /**< Items a box on the floor can hold, ended by -1. */
+    int item[128];  /**< Items a box on the floor can hold, ended by -1. */
 };
 
 extern ITEM_PUT_SET *ItemPutListPtr[14];
@@ -508,6 +507,7 @@ int BtAtraFloorCyoice(int dungeon, int floor, int *atra) {
     return count;
 }
 #ifdef NON_MATCHING
+/** Gives a map part's collision model, or null for an empty cell. */
 static inline CFrame *PartsCollision(CDungeonMap *map, int parts_no) {
     if (parts_no == -1) {
         return NULL;
@@ -515,6 +515,7 @@ static inline CFrame *PartsCollision(CDungeonMap *map, int parts_no) {
     return map->parts[parts_no].collision;
 }
 
+/** Gives the quarter turns a map part's collision model is given, or 0 for an empty cell. */
 static inline int PartsCollisionTurn(CDungeonMap *map, int parts_no) {
     if (parts_no == -1) {
         return 0;
