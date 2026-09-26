@@ -600,6 +600,13 @@ SECTIONS
         main.data.shop-filenames-after-292EE0-292FA0-293040.s.o (.data) // 0x00293070
         battlemenu.cpp.o (.battlemenu-c1879) // 0x00293080 @1879
         main.data.shop-filenames-after-292EE0-292FA0-293040-293090.s.o (.data) // 0x00293090
+        battlemenu.cpp.o (.battlemenu-c2002) // 0x00293100 @2002
+        battlemenu.cpp.o (.battlemenu-c2003) // 0x00293110 @2003
+        main.data.battlemenu-293124.s.o (.data) // 0x00293124
+        battlemenu.cpp.o (.battlemenu-c2004) // 0x00293130 @2004
+        main.data.battlemenu-293144.s.o (.data) // 0x00293144
+        battlemenu.cpp.o (.battlemenu-c2020) // 0x00293148 @2020
+        main.data.battlemenu-293154.s.o (.data) // 0x00293154
         battlemenu.cpp.o (.battlemenu-c2056) // 0x00293160 @2056
         battlemenu.cpp.o (.battlemenu-c2057) // 0x00293170 @2057
         . = ALIGN(8);

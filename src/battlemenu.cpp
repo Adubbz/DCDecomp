@@ -2436,7 +2436,6 @@ void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapo
 #else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponStatusTag__FiiP11WEAPON_HAVEiii);
 #endif
-#ifdef NON_MATCHING
 void DrawWeaponElemTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapon_no, int alpha) {
     WEAPON_DATA *built = NULL;
     if (build == 1) {
@@ -2444,11 +2443,11 @@ void DrawWeaponElemTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapon_
     }
     int best = weapon->best_elem;
     if (best < 5) {
-        int offset = best * 0x18;
-        DrawMenu2DSprite(WepStatus, CRect_i_(x + 6, y + 0x24 + offset + 1, 0x2C, 0x18), CRect_i_(0xD4, offset + 0x68, 0x2C, 0x18),
-                         alpha);
+        int src_y = best * 0x18 + 0x68;
+        int tag_y = y + 0x24 + best * 0x18;
+        DrawMenu2DSprite(WepStatus, CRect_i_(x + 6, tag_y + 1, 0x2C, 0x18), CRect_i_(0xD4, src_y, 0x2C, 0x18), alpha);
     }
-    RECT row = {0, 0, 0, 0};
+    RECT row = {0, 0, -4, -4};
     row.x = x + 0x4A;
     row.y = y + 0x30;
     float rate = GetNowWeaponRate(weapon);
@@ -2464,36 +2463,36 @@ void DrawWeaponElemTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapon_
             target[i] = built->elem[i];
         }
     }
-    int volume[3] = {100, 0, 0};
+    int volume[3] = {0, 0, 0};
+    volume[0] = 100;
     for (int i = 0; i < 5; i++) {
         int limited = 0;
-        s8 *elem = &weapon->elem[i];
         volume[1] = weapon->elem[i] + bonus[i];
         volume[1] = (int) ((float) volume[1] * rate);
         if (volume[1] >= 99) {
             volume[1] = 99;
             limited = 1;
         }
-        volume[2] = *elem;
+        volume[2] = weapon->elem[i];
         if (volume[2] >= 99) {
             volume[2] = 99;
         }
         float length = (float) (volume[1] << 7) / (float) volume[0];
+        int width = (int) length;
         DrawWeaponStatusWaku(row.x, row.y, (int) length, limited);
-        WepStatusVolumeDraw(row, 0x80, volume, i + 7, alpha, build, target[i] - *elem);
+        int diff = target[i] - weapon->elem[i];
+        WepStatusVolumeDraw(row, 0x80, volume, i + 7, alpha, build, diff);
         if (limited != 0) {
             DrawLimmitMax(row.x + 2, row.y + 4, 0x80);
         }
         row.y += 0x18;
     }
     if (best < 5) {
-        DrawMenu2DSprite(WepStatus, CRect_i_(x + 0x8A, y + 0x30 + best * 0x18, 0x42, 0x15), CRect_i_(0xD4, 0x190, 0x42, 0x16),
+        int mark_y = y + 0x30 + best * 0x18;
+        DrawMenu2DSprite(WepStatus, CRect_i_(x + 0x8A, mark_y, 0x42, 0x15), CRect_i_(0xD4, 0x190, 0x42, 0x16),
                          (alpha * 0x6E) >> 7);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponElemTag__FiiP11WEAPON_HAVEiii);
-#endif
 void DrawWeaponVsMonster(int x, int y, WEAPON_HAVE *weapon, int build, int weapon_no, int alpha) {
     WEAPON_DATA *built = NULL;
     if (build == 1) {
