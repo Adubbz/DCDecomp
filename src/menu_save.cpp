@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "battle_globals.hpp"
 #include "camera.hpp"
 #include "clsmes.hpp"
 #include "dataread.hpp"
@@ -18,6 +19,7 @@
 #include "mainitemmodel.hpp"
 #include "memcard.hpp"
 #include "memorycardaccess.hpp"
+#include "menu_draw.hpp"
 #include "menu_inventory.hpp"
 #include "menuitemstep.hpp"
 #include "mglib.hpp"
@@ -26,8 +28,6 @@
 #include "snd.hpp"
 #include "texture.hpp"
 #include "userstatus.hpp"
-#include "menu_draw.hpp"
-#include "battle_globals.hpp"
 #ifdef NON_MATCHING // draft includes
 #include <libvu0.h>
 #endif
