@@ -954,13 +954,13 @@ void CEditGround::DrawWaterSurface(CCamera *camera) {
             owner->GetRotation(parts_position);
             water->frame.SetRotation(parts_position[0], parts_position[1], parts_position[2]);
         } else {
-            if (surface->follow_x) {
+            if (surface->follow[0]) {
                 position[0] = eye[0] + 50.0f * dir[0];
             }
-            if (surface->follow_y) {
+            if (surface->follow[1]) {
                 position[1] = eye[1];
             }
-            if (surface->follow_z) {
+            if (surface->follow[2]) {
                 position[2] = eye[2] + 50.0f * dir[2];
             }
             CVector3_f_ rotation;

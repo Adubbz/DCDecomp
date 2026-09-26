@@ -4052,7 +4052,7 @@ void LoadGroundData() {
         surface->parts_no = info->parts_no;
         sceVu0CopyVector(surface->offset, info->corner_c);
         for (int j = 0; j < 3; j++) {
-            (&surface->follow_x)[j] = (&info->follow_x)[j];
+            surface->follow[j] = info->follow[j];
         }
         for (int j = 0; j < 4; j++) {
             sceVu0CopyVector(&surface->ripples[j].row, &info->wave[j].x);

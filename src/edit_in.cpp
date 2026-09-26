@@ -996,13 +996,13 @@ void DrawWaterSurface(CCamera *camera) {
         }
         CWater *water = &surface->water;
         sceVu0CopyVector(position, surface->offset);
-        if (surface->follow_x) {
+        if (surface->follow[0]) {
             position[0] = eye[0] + 50.0f * dir[0];
         }
-        if (surface->follow_y) {
+        if (surface->follow[1]) {
             position[1] = eye[1];
         }
-        if (surface->follow_z) {
+        if (surface->follow[2]) {
             position[2] = eye[2] + 50.0f * dir[2];
         }
         CVector3_f_ rotation;
@@ -1584,7 +1584,7 @@ void LoadData() {
         surface->parts_no = info->parts_no;
         sceVu0CopyVector(surface->offset, info->corner_c);
         for (int j = 0; j < 3; j++) {
-            (&surface->follow_x)[j] = (&info->follow_x)[j];
+            surface->follow[j] = info->follow[j];
         }
         for (j = 0; j < 4; j++) {
             sceVu0CopyVector(&surface->ripples[j].row, &info->wave[j].x);
@@ -2016,9 +2016,9 @@ static void CommandWATER_SURFACE(void **arguments) {
         surface->unk_50 = *(int *) arguments[16];
         surface->unk_54 = *(int *) arguments[17];
         surface->unk_58 = *(int *) arguments[18];
-        surface->follow_x = *(int *) arguments[19];
-        surface->follow_y = *(int *) arguments[20];
-        surface->follow_z = *(int *) arguments[21];
+        surface->follow[0] = *(int *) arguments[19];
+        surface->follow[1] = *(int *) arguments[20];
+        surface->follow[2] = *(int *) arguments[21];
         surface->parts_no = -1;
         water_info = surface;
     }
