@@ -34,44 +34,31 @@ void CFireOmni::FireStep(void) {
     }
     flicker_seed = (int) (60000.0f * (float) rand() / 2.1474836e9f);
 }
-#ifdef NON_MATCHING
 void CFireOmni::FireCreate(void) {
-    CTexture *destination = TexManager.GetTexture((char *) "d01e02", -1);
-    if (destination == NULL) {
+    CTexture *texture = TexManager.GetTexture("d01e02", -1);
+    if (texture == NULL) {
         return;
     }
 
-    CTexture *blend_target = TexManager.GetTexture((char *) "blender", -1);
-    CTexture *flame_texture = TexManager.GetTexture((char *) "d01e03", -1);
-    CRect_i_ blend_source(0, (int) flame_phase, 128, 64);
-    CRect_i_ full_source(0, 0, 128, 128);
-    CRect_i_ full_destination(0, 0, 128, 128);
-    CRect_i_ cell_source;
-
-    if (destination->bpp == 1) {
+    if (texture->bpp == 1) {
         int cell = (int) cell_phase;
         int column = cell % 4;
-        if (column < 0) {
-            column -= 4;
-        }
-        cell_source = CRect_i_(column * 64, (cell / 4) * 64, 64, 64);
+        int row = cell / 4;
+        sceGsTex0 blend =
+            *reinterpret_cast<sceGsTex0 *>(&TexManager.GetTexture("blender", -1)->tex0);
+        blendTextuer(Vif1Packet, blend.TBP0, blend.TBW, blend.PSM,
+                     TexManager.GetTexture("d01e03", -1), CRect_i_(0, 0, 128, 128),
+                     CRect_i_(0, (int) flame_phase, 128, 64), TexManager.GetTexture("d01e02", -1),
+                     CRect_i_(0, 0, 128, 128), CRect_i_(column * 64, row * 64, 64, 64));
     } else {
-        cell_source = CRect_i_(0, (int) cell_phase * 64, 64, 64);
+        sceGsTex0 blend =
+            *reinterpret_cast<sceGsTex0 *>(&TexManager.GetTexture("blender", -1)->tex0);
+        blendTextuer(Vif1Packet, blend.TBP0, blend.TBW, blend.PSM,
+                     TexManager.GetTexture("d01e03", -1), CRect_i_(0, 0, 128, 128),
+                     CRect_i_(0, (int) flame_phase, 128, 64), TexManager.GetTexture("d01e02", -1),
+                     CRect_i_(0, 0, 128, 128), CRect_i_(0, (int) cell_phase * 64, 64, 64));
     }
-
-    int destination_address = blend_target->tex0 & 0x3FFF;
-    int destination_width = (blend_target->tex0 & 0xFFFFF) >> 14;
-    int destination_format = ((blend_target->tex0 >> 16) & 0x3FF) >> 4;
-    blendTextuer(Vif1Packet, destination_address, destination_width, destination_format,
-                 flame_texture, full_destination, blend_source, destination, full_source,
-                 cell_source);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/fireomni", FireCreate__9CFireOmniFv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/fireomni", @259__2);
-INCLUDE_RODATA("asm/nonmatchings/fireomni", @260__2);
-INCLUDE_RODATA("asm/nonmatchings/fireomni", @261__2);
 void CFireOmni::SetTexture(CTexture *core_texture, CTexture *glow_texture) {
     this->core = core_texture;
     this->glow = glow_texture;
