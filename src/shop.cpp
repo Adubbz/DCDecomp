@@ -1258,18 +1258,24 @@ static int ShopPersonBuild(int kind, int shop_no) {
     BG_READ_INFO *file = GetReadBGFile(0);
     u_int *pack = (u_int *) file->buffer;
     u_char *model_area = (u_char *) pack + ((file->size >> 4) + 1) * 16;
-    LOADTEXTURE_INFO2 texture = {0};
-    texture.block_no = ShopMenu.person_tex_block;
-    texture.name = (char *) GetPackFile(pack, name, &size);
+    LOADTEXTURE_INFO2 texture[3] = {
+        {"#frame_menushop_model#640#448#4", 0, 0},
+        {NULL, 0, 0},
+        {NULL, 0, 0},
+    };
+    texture[0].block_no = ShopMenu.person_tex_block;
+    texture[1].block_no = ShopMenu.person_tex_block;
+    texture[1].name = (char *) GetPackFile(pack, name, &size);
     TexManager.DeleteTextureBlock(ShopMenu.person_tex_block);
-    TexManager.LoadTextureBlockEX(-1, &texture);
+    TexManager.LoadTextureBlockEX(-1, texture);
     size = EdMenuBuffer.limit - ShopCashBuffer.limit;
+    int limit = size;
     ShopCashBuffer2.base = model_area;
-    ShopCashBuffer2.limit = size;
+    ShopCashBuffer2.limit = limit;
     ShopCashBuffer2.used = 0;
     MenuCharaFrame.Initialize();
     MenuCharaFrame.LoadPackData(pack, "info.cfg", &ShopCashBuffer2, &ShopCashBuffer2, NULL);
-    sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 0.0f};
+    sceVu0FVECTOR position = {-7.0f, -17.0f, 0.0f, 1.0f};
     MenuCharaFrame.SetPosition(position);
     ShopPolySetInit(kind, shop_no);
     if (MenuCharaFrame.frame == NULL) {
