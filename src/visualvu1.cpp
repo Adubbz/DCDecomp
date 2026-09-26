@@ -597,14 +597,13 @@ int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int
     if (header->unk_2c[1] <= 0) {
         uv = vertex;
     }
-    u_long128 *colour;
+    u_long128 *colour = (u_long128 *) ((u_char *) data + header->colour_ofs);
     int stride;
     if (header->colour_ofs <= 0) {
         stride = 3;
         colour = NULL;
     } else {
         stride = 4;
-        colour = (u_long128 *) ((u_char *) data + header->colour_ofs);
     }
     MDT_MATERIAL *materials = (MDT_MATERIAL *) ((u_char *) data + header->info_ofs);
     u_int *index = mesh + 4;
@@ -680,14 +679,13 @@ int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown
     vu_data = block;
     u_int *mesh = (u_int *) ((u_char *) data + header->mesh_ofs);
     u_long128 *vertex = (u_long128 *) ((u_char *) data + header->vertex_ofs);
-    u_long128 *colour;
+    u_long128 *colour = (u_long128 *) ((u_char *) data + header->colour_ofs);
     int stride;
     if (header->colour_ofs <= 0) {
         stride = 3;
         colour = NULL;
     } else {
         stride = 4;
-        colour = (u_long128 *) ((u_char *) data + header->colour_ofs);
     }
     MDT_MATERIAL *materials = (MDT_MATERIAL *) ((u_char *) data + header->info_ofs);
     u_int *index = mesh + 4;
@@ -696,10 +694,11 @@ int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown
         int remaining = index[1];
         int prim = index[0];
         int material = index[2];
+        MDT_MATERIAL *info = &materials[material];
         index += 3;
         if (material != -1) {
             word += 16;
-            word += SetMaterial(&block[word], &materials[material]);
+            word += SetMaterial(&block[word], info);
         }
         int limit = 0x36;
         if (colour != NULL) {
