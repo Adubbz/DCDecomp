@@ -2834,6 +2834,16 @@ float oldCameraAngle;
 float inputH1;
 
 /**
+ * Drops the model an active item slot shows, once its last use is gone.
+ */
+static inline void DeleteItemModel(int no) {
+    if (activeItem.model[no] != -1) {
+        activeItem.models->DeleteModel(activeItem.model[no]);
+        activeItem.model[no] = -1;
+    }
+}
+
+/**
  *              Runs the dungeon for one frame.
  *
  * `gameTask` says what the dungeon is doing: zero while the player walks the
@@ -3202,7 +3212,9 @@ void MoveChara(void) {
                             ResetStatusInfo();
                             driveStepHold = 1;
                             EdFadeInit();
-                            EdFadeOut(0x78, 0.0f, 0.0f, 0.0f);
+                            float r, g, b;
+                            r = g = b = 0.0f;
+                            EdFadeOut(0x78, r, g, b);
                             BtEventInfo.unk_90 = 0;
                             gameTask = 0x226;
                         } else if (UserStatus->CheckLife() != 0 && BtActStatus.action_on == 0 &&
@@ -3282,9 +3294,13 @@ void MoveChara(void) {
                                     sceVu0FVECTOR slot_pos;
                                     sceVu0FVECTOR slot_dir;
 
-                                    if (state != NULL && state->event->chara_no != -1 &&
-                                        UserStatus->cur_chara == state->chara_done) {
-                                        state = NULL;
+                                    if (state != NULL && state->event->chara_no != -1) {
+                                        s8 chara = UserStatus->cur_chara;
+                                        int done = state->chara_done;
+
+                                        if (done == chara) {
+                                            state = NULL;
+                                        }
                                     }
                                     BtEventInfo.unk_2C = -1;
                                     if (state != NULL && state->event->script_no != -1) {
@@ -3424,11 +3440,8 @@ void MoveChara(void) {
                                                         break;
                                                     case 3:
                                                         BtActStatus.unk_00C = 0;
-                                                        if (NowDngMap
-                                                                ->atra[NowDngMap
-                                                                           ->events[iventActive]
-                                                                           .index]
-                                                                .used != 0) {
+                                                        index = NowDngMap->events[iventActive].index;
+                                                        if (NowDngMap->atra[index].used != 0) {
                                                             s8 chara = UserStatus->cur_chara;
 
                                                             if (UserStatus->cur_chara == 0) {
@@ -3444,11 +3457,11 @@ void MoveChara(void) {
                                                     case 8:
                                                         index = NowDngMap->events[iventActive].index;
 
+                                                        int item_no = NowDngMap->boxes[index].item_no;
                                                         CMonstorUnit *unit = NowMonstorUnit;
 
-                                                        if (NowDngMap->boxes[index].item_no >= 0 &&
-                                                            NowDngMap->boxes[index].item_no < 0x11) {
-                                                            unit->monster[NowDngMap->boxes[index].item_no].unk_0D4 = 1;
+                                                        if (item_no >= 0 && item_no < 0x11) {
+                                                            unit->monster[item_no].unk_0D4 = 1;
                                                         }
                                                         NowDngMap->boxes[index].used = 0;
                                                         NowDngMap->events[iventActive].kind = -1;
@@ -3534,16 +3547,16 @@ void MoveChara(void) {
 
                                                     if (activeItem.CheckStatusType() == 3 &&
                                                         slots[itemNowSel + 3] > 0) {
-                                                        s32 *vol;
-
                                                         // A running item that
                                                         // boosts is spent by the
                                                         // frame while the button
                                                         // is held.
                                                         BtBySpeedFlag = 1;
-                                                        vol = &UserStatus
-                                                                   ->active_item_vol[itemNowSel - 1];
-                                                        if ((*vol -= 1) <= 0) {
+                                                        int slot = itemNowSel - 1;
+                                                        int left = UserStatus->active_item_vol[slot] - 1;
+
+                                                        UserStatus->active_item_vol[slot] = left;
+                                                        if (left <= 0) {
                                                             DelActiveItem(itemNowSel);
                                                             DngMessMan.message = 0xB6;
                                                             DngMessMan.unk_0C =
@@ -3577,9 +3590,6 @@ void MoveChara(void) {
                                                 }
                                                 if (activeItem.CheckStatusType() == 4 && used != 0 &&
                                                     slots[itemNowSel + 3] > 0) {
-                                                    s16 *left;
-                                                    s16 *item;
-
                                                     setUnitAmbientAnime(64.0f, 1.0f, 0.0f, 122.0f,
                                                                         208.0f);
                                                     SndSePlay(0x13, -1, 0);
@@ -3590,21 +3600,12 @@ void MoveChara(void) {
 
                                                     s16 *inner = UserStatus->active_item;
 
-                                                    item = &inner[itemNowSel];
-                                                    left = &item[3];
-                                                    if (*left == 1) {
-                                                        s32 *model;
-
-                                                        item[0] = -1;
+                                                    if (inner[itemNowSel + 3] == 1) {
+                                                        inner[itemNowSel] = -1;
                                                         inner[itemNowSel + 3] = 0;
-                                                        if (activeItem.model[itemNowSel] != -1) {
-                                                            model = &activeItem.model[(s32) itemNowSel];
-                                                            activeItem.models->DeleteModel(
-                                                                activeItem.model[itemNowSel]);
-                                                            *model = -1;
-                                                        }
+                                                        DeleteItemModel(itemNowSel);
                                                     } else {
-                                                        (*left)--;
+                                                        inner[itemNowSel + 3]--;
                                                     }
                                                     SndSePlay(0x1B8, -1, 0);
                                                 }
@@ -4132,12 +4133,13 @@ void MoveChara(void) {
                                                                 }
                                                             }
                                                             HealingWater();
-                                                            rx = GamePad.GetRXf();
+                                                            float turn = GamePad.GetRXf();
+
                                                             NowCamera__3->AddHeight(-GamePad.GetRYf());
                                                             if (NowCamera__3->GetHeight() >= 30.0f) {
                                                                 NowCamera__3->SetHeight(30.0f);
                                                             }
-                                                            NowCamera__3->AddAngle(0.04f * -rx);
+                                                            NowCamera__3->AddAngle(0.04f * -turn);
                                                             if (lockOnTargetFlag == 0) {
                                                                 if (GamePad.On(8) != 0) {
                                                                     NowCamera__3->AddAngle(
@@ -4305,8 +4307,8 @@ void MoveChara(void) {
                 }
                 MainMonstorUnit.CleanViewMonstor(BtUraDongeon);
                 MonstorModelBuffer.used = 0;
-                s32 cash_size = MonstorModelBuffer.limit;
                 u8 *cash = MonstorModelBuffer.base;
+                u32 cash_size = MonstorModelBuffer.limit;
 
                 BtCashBuffer.base = cash;
                 BtCashBuffer.limit = cash_size + 0x88B8;
@@ -4384,7 +4386,9 @@ void MoveChara(void) {
                         SndSPSePlay(0x1B, -1);
                     }
                     if (UserStatus->CheckLife() <= 0) {
-                        UserStatus->hp[UserStatus->cur_chara] = 1;
+                        s8 chara = UserStatus->cur_chara;
+
+                        UserStatus->hp[chara] = 1;
                     }
                     rogoSwitch2 = 1;
                     infoMap = 0;
@@ -4524,10 +4528,10 @@ void MoveChara(void) {
                         int atra_no = NowDngMap->atra[i].atra_no;
 
                         if (atra_no != -1) {
-                            CUserStatus *who = UserStatus;
+                            int atra = UserStatus->atra_data[selectMapNo][atra_no].unk_00;
 
-                            getAtraToSaveData(who->atra_data[selectMapNo][atra_no].unk_00, atra_no,
-                                              SaveData, selectMapNo, who->cur_floor);
+                            getAtraToSaveData(atra, atra_no, SaveData, selectMapNo,
+                                              UserStatus->cur_floor);
                         }
                     }
                     driveStepHold = 0;
@@ -5360,7 +5364,9 @@ void MoveChara(void) {
         case 0x212: {
             s8 chara = UserStatus->cur_chara;
 
-            if (!(UserStatus->hp[chara] < (UserStatus->max_hp[chara] >> 1))) {
+            s16 max_hp = UserStatus->max_hp[chara];
+
+            if (!(UserStatus->hp[chara] < (max_hp >> 1))) {
                 CUserStatus *stepper = UserStatus;
 
                 stepper->step_disable = 1;
