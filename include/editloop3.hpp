@@ -355,6 +355,15 @@ int EdEventAllClear();
 int EdEventNPCStep();
 
 /**
+ * Draws the Georama editor's event sprites over the frame.
+ *
+ * @mangled EdEventSpriteDraw__Fv
+ * @address 0x1989D0
+ * @size 0x2A0
+ */
+int EdEventSpriteDraw();
+
+/**
  * Draws the event sprites layered behind the scene.
  *
  * @mangled EdEventBackSpriteDraw__Fv

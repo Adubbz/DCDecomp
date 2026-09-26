@@ -335,7 +335,6 @@ extern CMapParts *OldFocusParts;
 extern int OldSelectAngle;
 extern CCameraFollow EditCamera;
 void EBDraw(void);
-void EdEventSpriteDraw(void);
 /* Mode the loop returns to once the debug menu closes. */
 /* Buffer the parts archive is read into. */
 /**

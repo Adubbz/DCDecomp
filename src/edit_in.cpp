@@ -116,7 +116,6 @@ extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 
 static void LoadScript();
 static void LoadInfo(char *script, int size);
-void EdEventSpriteDraw();
 static void setTexAnim();
 static void RunEvent(int event_no, CCamera *camera);
 static void RunSystemEvent(int event_no, CCamera *camera);

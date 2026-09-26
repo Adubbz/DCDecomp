@@ -673,16 +673,6 @@ void DepthOfField(float *focus, int steps, int strength, int mode);
 void DrawBee(CFrame *frame, int block_no);
 
 /**
- * Draws the Georama editor's sprites over the frame.
- *
- * @mangled EdEventSpriteDraw__Fv
- * @address 0x1989D0
- * @size 0x2A0
- * @unknownret
- */
-void EdEventSpriteDraw(void);
-
-/**
  * Draws the event battle's own overlay.
  *
  * @mangled EBDraw__Fv
