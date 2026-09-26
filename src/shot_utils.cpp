@@ -6,6 +6,7 @@
 
 #include <cstdio>
 
+#include "charaheight.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dranmapfield.hpp"
@@ -24,15 +25,6 @@
  * overflow count with.
  */
 extern char fishing_err_format[];
-
-/**
- * How tall the current character stands.
- */
-static inline float CharaHeight(CUserStatus *status) {
-    float chara_height[6] = {16.0f, 14.0f, 16.0f, 16.0f, 18.0f, 15.0f};
-
-    return chara_height[status->cur_chara];
-}
 
 SHOT_COLLISION_RESULT checkCollision(float *hit_position, float *position, float *movement,
                                      s32 target_mode, float radius) {

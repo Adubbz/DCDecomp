@@ -10,6 +10,7 @@
 #include "btactstatus.hpp"
 #include "btmisc.hpp"
 #include "character.hpp"
+#include "charaheight.hpp"
 #include "clsmes.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
@@ -775,15 +776,6 @@ int BtStatusErrColorSet(void) {
     }
 
     return ailing;
-}
-
-/**
- * How tall the current character stands.
- */
-static inline float CharaHeight(CUserStatus *status) {
-    float chara_height[6] = {16.0f, 14.0f, 16.0f, 16.0f, 18.0f, 15.0f};
-
-    return chara_height[status->cur_chara];
 }
 
 /**
