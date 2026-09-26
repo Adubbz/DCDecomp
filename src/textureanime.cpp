@@ -158,6 +158,7 @@ void CTextureAnime::TexAnime(int texture_block) {
                 y = record->source_y;
                 width = scroll_x;
                 height = scroll_y;
+                // Unlike the other pieces of the wrapped scroll, retail places this one from source_x rather than dest_x.
                 to_x = record->source_x + record->source_width - scroll_x;
                 to_y = record->dest_y + record->source_height - scroll_y;
                 if (width > 0 && height > 0) {

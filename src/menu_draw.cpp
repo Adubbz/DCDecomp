@@ -648,6 +648,7 @@ void FadeTexX(int left_x, int left_width, int right_x, int right_width, char *na
     spRGBA left;
     spRGBA right;
 
+    // Retail tests the local copy's address, which is never null, so a missing texture is not caught here.
     if (&texture == NULL) {
         return;
     }

@@ -1041,6 +1041,7 @@ int MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_in
     out_pos[2] = pos[2];
     from[0] = pos[0] + velocity[0];
     from[1] = 17.0f + pos[1];
+    // The probe steps along Z by the X velocity; retail uses velocity[0] for both horizontal coordinates.
     from[2] = pos[2] + velocity[0];
     to[0] = from[0];
     to[1] = 4.0f + pos[1] + velocity[1];
