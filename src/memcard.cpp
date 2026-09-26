@@ -1478,7 +1478,7 @@ void InitMenuAtora1(int open_mode, int edit_map, int *texture_blocks, u_long128 
     AtoraNameMes.unk_17B0 = MesWinTexBuff_12;
     memset(AtoraNameMes.unk_17B0, 0, 0x100);
     AtoraNameMes.rows = 4;
-    u8 widths[6] = {0x10, 0x0C, 0x0C, 0x0C, 0x0C, 0x10};
+    s8 widths[7] = {0x10, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C};
     AtoraNameMes.char_width = widths[GetMenuLangFlag()];
     AtoraNameMes.narrow_gaiji_set = 2;
     for (int i = 0; i < 10; i++) {
@@ -1496,10 +1496,10 @@ void InitMenuAtora1(int open_mode, int edit_map, int *texture_blocks, u_long128 
     CMenuCursor *cursor = SaveData->GetMenuCursor();
     if (cursor->reset_pos == 0) {
         MenuAtoraSel.mode = cursor->mode[3];
-        if (MenuAtoraSel.mode < 0 || MenuAtoraSel.mode >= 2) {
+        if (MenuAtoraSel.mode < 0 || MenuAtoraSel.mode > 1) {
             MenuAtoraSel.mode = 0;
         }
-        s16 pos = cursor->pos[3];
+        int pos = cursor->pos[3];
         switch (MenuAtoraSel.mode) {
             case 0:
                 MenuAtoraSel.board_pos = pos;
