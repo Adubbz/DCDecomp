@@ -1426,15 +1426,20 @@ int BtEscape_Loop() {
  * @address 0x1D3ED0
  * @size 0x1B0
  */
-#ifdef NON_MATCHING
 void BtSetActiveItemModel(u_int *buffer) {
+    u_int *texture;
+    int i;
+    int size;
+    ITEM_PACK *pack;
+    int item_no;
     char model_path[64];
     char texture_path[64];
     int model_size;
     int texture_size;
+    pack = &UserStatus->item_pack;
 
-    for (int i = 0; i < 3; i++) {
-        int item_no = UserStatus->item_pack.quick_item_slot[i];
+    for (i = 0; i < 3; i++) {
+        item_no = pack->quick_item_slot[i];
         if (item_no == -1) {
             continue;
         }
@@ -1448,17 +1453,16 @@ void BtSetActiveItemModel(u_int *buffer) {
             activeItem.models->DeleteModel(activeItem.model[i + 1]);
             activeItem.model[i + 1] = -1;
         }
+        size = texture_size;
+        texture = &buffer[model_size];
         if (activeItem.model[i + 1] != -1) {
             activeItem.models->DeleteModel(activeItem.model[i + 1]);
         }
-        activeItem.model[i + 1] = activeItem.models->SetCashModel(item_no, buffer, &buffer[model_size], texture_size);
+        activeItem.model[i + 1] = activeItem.models->SetCashModel(item_no, buffer, texture, size);
         activeItem.model[i + 5] = 0;
         activeItem.item[i + 1] = item_no;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", BtSetActiveItemModel__FPUi);
-#endif
 
 /**
  * Computes the velocity needed to move an object between two points in time.
