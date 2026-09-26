@@ -277,7 +277,6 @@ carve_part(main.data.part6.s
            main.data.shop-buymoney.s=2927AC-2927B0
            main.data.shop-checkbuy-a.s=2927BC-2927C0
            main.data.shop-checkbuy-b.s=2927CC-292830
-           main.data.shop-ticket.s=292840-292850
            main.data.shop-filenames-after.s=2929B0-292AC0
            main.data.shop-filenames-after-292AE4.s=292AE4-292EB0
            main.data.shop-filenames-after-292EE0.s=292F20-292F60

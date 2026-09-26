@@ -579,7 +579,8 @@ SECTIONS
         shop.cpp.o (.shopdata-checkbuy-b) // 0x002927C0
         main.data.shop-checkbuy-b.s.o (.data) // 0x002927CC
         shop.cpp.o (.shopdata-ticket) // 0x00292830
-        main.data.shop-ticket.s.o (.data) // 0x00292840
+        shop.cpp.o (.shopdata-sellticket) // 0x00292840 @1894
+        . = ALIGN(16);
         shop.cpp.o (.shopdata-filenames) // 0x00292850
         main.data.shop-filenames-after.s.o (.data) // 0x002929B0
         shop.cpp.o (.shopdata-fishrec) // 0x00292ac0 @3261

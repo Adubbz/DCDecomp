@@ -3031,51 +3031,53 @@ static void DrawLocalTicket(int x, int y, int clip_top, int clip_bottom, int slo
     }
 }
 
-#ifdef NON_MATCHING
 void DrawSellTicket22(int x, int y, int top, int bottom, int alpha) {
+    int page = ShopMenu.board.page;
     int max[3] = {100, 60, 40};
+    int i;
+    int j;
+    int item_no;
     ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
     DNG_CONSUMABLE *attach = ShopUserStatusPt->consumable_items;
+    WEAPON_HAVE *weapons;
 
-    switch (ShopMenu.board.page) {
+    switch (page) {
         case 0:
-            for (int i = 0; i < 100; i++) {
+            for (i = 0; i < 100; i++) {
                 if (ItemBoardInfo[i] == 1) {
-                    int item_no = pack->item[i];
+                    item_no = pack->item[i];
                     if (item_no >= 0x84) {
                         DrawLocalTicket(x, y, top, bottom, i, item_no, alpha);
                     }
                 }
             }
-            return;
+            break;
         case 1:
-            for (int chara = 0; chara < 6; chara++) {
-                WEAPON_HAVE *weapons = ShopUserStatusPt->chara_weapons[chara];
-                for (int i = 0; i < 10; i++) {
-                    if (WeaponBoardInfo[chara][i] == 1) {
-                        int item_no = weapons[i].item_no;
+            for (i = 0; i < 6; i++) {
+                weapons = (WEAPON_HAVE *) ((char *) ShopUserStatusPt + i * sizeof(ShopUserStatusPt->chara_weapons[0]) +
+                                           0x450C);
+                for (j = 0; j < 10; j++) {
+                    if (WeaponBoardInfo[i][j] == 1) {
+                        item_no = weapons[j].item_no;
                         if (item_no >= 0x101) {
-                            DrawLocalTicket(x, y, top, bottom, i + chara * 10, item_no, 0x80);
+                            DrawLocalTicket(x, y, top, bottom, j + i * 10, item_no, 0x80);
                         }
                     }
                 }
             }
-            return;
+            break;
         case 2:
-            for (int i = 0; i < 40; i++) {
+            for (i = 0; i < 40; i++) {
                 if (AttachBoardInfo[i] == 1) {
-                    int item_no = attach[i].id;
+                    item_no = attach[i].id;
                     if (item_no >= 0x51) {
                         DrawLocalTicket(x, y, top, bottom, i, item_no, 0x80);
                     }
                 }
             }
-            return;
+            break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", DrawSellTicket22__Fiiiii);
-#endif
 #ifdef NON_MATCHING
 void ShopCancelGoodReturn2() {
     int count = -1;

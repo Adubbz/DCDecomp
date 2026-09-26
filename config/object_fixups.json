@@ -13,9 +13,9 @@
         "@1007"
       ],
       ".shopdata-filenames": [
-        "@1734",
-        "@1735",
-        "@1755"
+        "@1774",
+        "@1775",
+        "@1795"
       ],
       ".shopdata-ticket": [
         "@1604"
@@ -36,7 +36,10 @@
         "@1035"
       ],
       ".shopdata-fishrec": [
-        "@1900"
+        "@1940"
+      ],
+      ".shopdata-sellticket": [
+        "@1644"
       ]
     },
     "rekey_sections": [
@@ -74,6 +77,12 @@
         ".shopdata-ticket",
         [
           16
+        ]
+      ],
+      [
+        ".shopdata-sellticket",
+        [
+          12
         ]
       ],
       [
