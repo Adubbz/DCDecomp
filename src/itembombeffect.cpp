@@ -87,7 +87,6 @@ int checkItemUsed(int slot) {
  * @mangled usedActiveItem__FP11CUserStatusi
  * @address 0x1D56F0
  * @size 0x248
- * @unknownret
  */
 void usedActiveItem(CUserStatus *status, int item) {
     int volume;

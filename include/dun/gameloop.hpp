@@ -672,7 +672,6 @@ void EdEventSpriteDraw(void);
  * @mangled EBDraw__Fv
  * @address 0x168B80
  * @size 0x560
- * @unknownret
  */
 void EBDraw(void);
 

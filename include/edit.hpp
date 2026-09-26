@@ -851,7 +851,6 @@ int EdInitEventParam(void);
  * @mangled EdInitEventPoint__FP9CMapPartsPsP16EPARTS_FUNC_DATAiP14ED_EVENT_POINTi
  * @address 0x183D50
  * @size 0x600
- * @unknownret
  */
 int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *funcs, int count, ED_EVENT_POINT *points, int max_points);
 
@@ -1009,7 +1008,6 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
  * @mangled EdTalkMode__FP10CCharacterP13CCameraFollowiPi
  * @address 0x199090
  * @size 0xEBC
- * @unknownret
  */
 int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selection);
 

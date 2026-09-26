@@ -278,7 +278,6 @@ void MGSetGsTEST(sceGsTest *test);
  * @mangled MGFillBox__FRC8CRect_i_UcUcUcUc
  * @address 0x12FA70
  * @size 0x2C0
- * @unknownret
  */
 void MGFillBox(const CRect_i_ &rect, unsigned char r, unsigned char g, unsigned char b,
                unsigned char a);
