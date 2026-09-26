@@ -98,6 +98,11 @@ extern MG_PICKZ mgPickZBuff[16];
 extern sceGifTag GiftagAD;
 extern sceGsDBuff mgDBuff;
 extern sceVu0FVECTOR mgBackColor;
+
+/**
+ * All-zero matrix; passed as both point-light matrices it turns the lights off.
+ */
+extern sceVu0FMATRIX mgZeroMatrix;
 extern CRect_i_ mgWindowRect;
 extern sceGsTexa mgTexa;
 
