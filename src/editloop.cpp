@@ -1884,6 +1884,8 @@ INCLUDE_RODATA("asm/nonmatchings/editloop", @1838__2);
  */
 #ifdef NON_MATCHING
 void MainDraw() {
+    int i;
+
     if (EdDrawOffFlag == 0) {
         if (EdPauseFlag != 0 || (unsigned int) (GameMode - 9) < 2U) {
             CTextureAnime::stop_anime = 1;
@@ -2009,8 +2011,8 @@ void MainDraw() {
         case 7:
             CCharacter::MotionStopFlag = 1;
             Chara->Step();
-            Chara->Draw();
-            for (int i = 0; i < 10; i++) {
+            Chara->ShadowStep();
+            for (i = 0; i < 10; i++) {
                 CNPCharacter *villager = &EdVillager[i];
                 unsigned char addressable = villager->initialized != 0;
 
@@ -2022,7 +2024,7 @@ void MainDraw() {
 
                     villager->sequence_enabled = 0;
                     villager->chara.Step();
-                    villager->chara.Draw();
+                    villager->chara.ShadowStep();
                     villager->sequence_enabled = saved;
                 }
             }
@@ -2052,7 +2054,7 @@ void MainDraw() {
             if (GameMode == 0xB) {
                 marks = NULL;
             } else {
-                for (int i = 0; i < 10; i++) {
+                for (i = 0; i < 10; i++) {
                     marks_store[i] = 3;
                 }
             }
@@ -2073,7 +2075,7 @@ void MainDraw() {
             int found = pEditGround->GetNearParts(near_parts, 0x40, &box, NULL);
 
             Chara->ClearPointLight();
-            for (int i = 0; i < found; i++) {
+            for (i = 0; i < found; i++) {
                 CMapParts *parts = near_parts[i];
                 CFrame *frame = (CFrame *) parts->frame[0];
 
@@ -2145,7 +2147,7 @@ void MainDraw() {
             }
             MGSetPLight(light, colour);
         }
-        for (int i = 0; i < 4; i++) {
+        for (i = 0; i < 4; i++) {
             TexManager.ReloadTexture(Vif1Packet, i + 0x1B);
             MotionParts[i].TextureAnime(i + 0x1B);
             MotionParts[i].Draw();
@@ -2177,7 +2179,7 @@ void MainDraw() {
                         sceVu0FVECTOR spray = {800.0f, -20.0f, 1300.0f, 1.0f};
                         sceVu0FVECTOR size = {10.0f, 7.0f, 10.0f, 1.0f};
 
-                        for (int i = 0; i < 5; i++) {
+                        for (i = 0; i < 5; i++) {
                             EffectWaterSpray(&EdEffectGroup, spray, size, 0xA, i);
                             spray[0] += 20.0f;
                         }

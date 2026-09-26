@@ -127,8 +127,6 @@ static void (*CommandExe[9])(void **) = {
     CommandBOUND,
 };
 
-INCLUDE_RODATA("asm/nonmatchings/clothread", @254);
-INCLUDE_RODATA("asm/nonmatchings/clothread", @255);
 
 static int GetArg(input_str &input, int *args, void **argv);
 static int SearchCommand(input_str &input, int *command);
@@ -142,7 +140,6 @@ static int CheckChar(char c);
  * @address 0x13F9C0
  * @size 0x1B4
  */
-#ifdef NON_MATCHING
 CCloth *InitCloth(CFrameVu1 *frame, input_str &input, CDataAlloc2<1> *alloc) {
     char words[16][256];
     void *argv[16];
@@ -178,9 +175,6 @@ CCloth *InitCloth(CFrameVu1 *frame, input_str &input, CDataAlloc2<1> *alloc) {
     }
     return pCloth;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/clothread", InitCloth__FP9CFrameVu1R9input_strP14CDataAlloc2_1_);
-#endif
 
 static void CommandSIZE(void **argv) {
     int num_i = *(int *) argv[0];

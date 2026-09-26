@@ -89,9 +89,10 @@ INCLUDE_ASM("asm/nonmatchings/cloth", Clear__6CClothFv);
  * @address 0x13B8A0
  * @size 0xBCC
  */
-#ifdef NON_MATCHING
 void StretchBind2(float *a, float *b, float *param);
 float vuabs(float *vector);
+
+#ifdef NON_MATCHING
 
 /* The grid being solved, in scratchpad memory. */
 #define CLOTH_WORK ((sceVu0FVECTOR(*)[16]) 0x70000000)
@@ -490,7 +491,6 @@ CCloth::CCloth(int grid_i, int grid_j, float grid_pitch) {
  * @address 0x13CBF0
  * @size 0x458
  */
-#ifdef NON_MATCHING
 void CCloth::Initialize(CDataAlloc2<1> *alloc) {
     int i;
     int j;
@@ -558,9 +558,6 @@ void CCloth::Initialize(CDataAlloc2<1> *alloc) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/cloth", Initialize__6CClothFP14CDataAlloc2_1_);
-#endif
 /**
  * Builds the cloth's grid from a model's mesh and takes its storage out of an arena.
  *

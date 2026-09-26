@@ -454,8 +454,7 @@ SECTIONS
         chararead.cpp.o (.data)
         . = . + 0x4; // Retail padding after the character command tables.
         main.data.part2.s.o (.data)
-        cloth.cpp.o (.data)          // 0x00251530 InitParam's zero vector
-        main.data.cloth-after.s.o (.data) // 0x00251540
+        cloth.cpp.o (.data)          // 0x00251530 InitParam's and Initialize's templates
         bound.cpp.o (.data)          // 0x00251560 SetDir's origin, the constructor's forward vector
         dataread.cpp.o (.data)       // 0x00251580 CurrentDir, then LoadFile2's templates
         clothread.cpp.o (.data)      // 0x002517a0 the cloth command tables
@@ -727,7 +726,9 @@ SECTIONS
         character.cpp.o (.vtables)       // 0x002a11e0
         . = . + 0x8;
         dispctrl.cpp.o (.vtables)        // 0x002a1380
-        main.rdata.part5.s.o (.rdata)    // 0x002a1390
+        cloth.cpp.o (.vtables)           // 0x002a1390
+        . = ALIGN(16);
+        main.rdata.part5.s.o (.rdata)    // 0x002a13c0
         mapobject.cpp.o (.vtables)
         objectframe2.cpp.o (.vtables)
         savedata.cpp.o (.vtables)
