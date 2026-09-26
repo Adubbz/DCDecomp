@@ -454,6 +454,8 @@ SECTIONS
         chararead.cpp.o (.data)
         . = . + 0x4; // Retail padding after the character command tables.
         main.data.part2.s.o (.data)
+        cloth.cpp.o (.data)          // 0x00251530 InitParam's zero vector
+        main.data.cloth-after.s.o (.data) // 0x00251540
         bound.cpp.o (.data)          // 0x00251560 SetDir's origin, the constructor's forward vector
         dataread.cpp.o (.data)       // 0x00251580 CurrentDir, then LoadFile2's templates
         clothread.cpp.o (.data)      // 0x002517a0 the cloth command tables
@@ -522,12 +524,16 @@ SECTIONS
         shop.cpp.o (.shopdata-local-a) // 0x00292750
         shop.cpp.o (.shopdata-local-b) // 0x00292760
         main.data.shop-local.s.o (.data) // 0x00292770
+        shop.cpp.o (.shopdata-buymoney) // 0x002927A0
+        main.data.shop-buymoney.s.o (.data) // 0x002927AC
         shop.cpp.o (.shopdata-checkbuy-a) // 0x002927B0
         main.data.shop-checkbuy-a.s.o (.data) // 0x002927BC
         shop.cpp.o (.shopdata-checkbuy-b) // 0x002927C0
         main.data.shop-checkbuy-b.s.o (.data) // 0x002927CC
         shop.cpp.o (.shopdata-ticket) // 0x00292830
         main.data.shop-ticket.s.o (.data) // 0x00292840
+        shop.cpp.o (.shopdata-filenames) // 0x00292850
+        main.data.shop-filenames-after.s.o (.data) // 0x002929B0
         battlemenu.cpp.o (.battlemenu-town-ref) // 0x002936E0
         battlemenu.cpp.o (.battlemenu-town-pos) // 0x002936F0
         main.data.shop-ticket-after.s.o (.data) // 0x00293700

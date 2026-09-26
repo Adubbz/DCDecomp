@@ -8,14 +8,22 @@
         "@889",
         "@1007"
       ],
+      ".shopdata-filenames": [
+        "@1707",
+        "@1708",
+        "@1728"
+      ],
       ".shopdata-ticket": [
-        "@1526"
+        "@1577"
+      ],
+      ".shopdata-buymoney": [
+        "@1241"
       ],
       ".shopdata-checkbuy-a": [
-        "@1312"
+        "@1340"
       ],
       ".shopdata-checkbuy-b": [
-        "@1313"
+        "@1341"
       ],
       ".shopdata-local-a": [
         "@1034"
@@ -38,6 +46,12 @@
         ]
       ],
       [
+        ".shopdata-buymoney",
+        [
+          12
+        ]
+      ],
+      [
         ".shopdata-checkbuy-a",
         [
           12
@@ -53,6 +67,14 @@
         ".shopdata-ticket",
         [
           16
+        ]
+      ],
+      [
+        ".shopdata-filenames",
+        [
+          144,
+          64,
+          144
         ]
       ]
     ]

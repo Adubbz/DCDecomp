@@ -2371,7 +2371,6 @@ static int WeaponCalMoney(WEAPON_HAVE *weapon, int sell) {
  * @address 0x1EB3A0
  * @size 0x1A0
  */
-#ifdef NON_MATCHING
 static int BuyMoneyCheck2() {
     int total = 0;
     int max[3] = {100, 60, 40};
@@ -2400,9 +2399,6 @@ static int BuyMoneyCheck2() {
     }
     return total;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", BuyMoneyCheck2__Fv);
-#endif
 
 /**
  * Totals what the goods currently marked for sale fetch.
@@ -2766,7 +2762,6 @@ int ItemShopLoop2() {
     return done;
 }
 
-#ifdef NON_MATCHING
 int CheckSideKey2() {
     int se;
 
@@ -2815,9 +2810,6 @@ int CheckSideKey2() {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", CheckSideKey2__Fv);
-#endif
 
 /**
  * Draws the item shop's board with its goods and their prices.
@@ -3375,7 +3367,12 @@ static void SetShopTalkMsgPos() {
     CommonMenuMes3.AutoSet(msg_pos);
 }
 
-#ifdef NON_MATCHING
+INCLUDE_RODATA("asm/nonmatchings/shop", @819);
+INCLUDE_RODATA("asm/nonmatchings/shop", @837__3);
+INCLUDE_RODATA("asm/nonmatchings/shop", @838__2);
+INCLUDE_RODATA("asm/nonmatchings/shop", @1180);
+INCLUDE_RODATA("asm/nonmatchings/shop", @1181);
+
 void ItemShopGetPacFileName(int kind, int shop_no, char *name) {
     char *names[2][18] = {
         {"p13", "p31", "p39", "p54", "p74", "c03", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
@@ -3392,10 +3389,6 @@ void ItemShopGetPacFileName(int kind, int shop_no, char *name) {
         strcpy(name, path);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", ItemShopGetPacFileName__FiiPc);
-#endif
-#ifdef NON_MATCHING
 void ItemShopGetImgFileName(int kind, int shop_no, char *name) {
     char *names[2][18] = {
         {"p13a", "p31a", "p39a", "p54a", "p74a", "c03c", "", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
@@ -3406,9 +3399,6 @@ void ItemShopGetImgFileName(int kind, int shop_no, char *name) {
     strcpy(name, names[kind][shop_no]);
     strcat(name, "01.img");
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", ItemShopGetImgFileName__FiiPc);
-#endif
 
 void ItemShopMemoryAlloc() {
     ShopBoardInfo = (s32 *) ShopCashBuffer.Alloc(0x78);
@@ -3768,46 +3758,6 @@ void ItemShopSelectKey2() {
 #else
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopSelectKey2__Fv);
 #endif
-INCLUDE_RODATA("asm/nonmatchings/shop", @819);
-INCLUDE_RODATA("asm/nonmatchings/shop", @837__3);
-INCLUDE_RODATA("asm/nonmatchings/shop", @838__2);
-INCLUDE_RODATA("asm/nonmatchings/shop", @1180);
-INCLUDE_RODATA("asm/nonmatchings/shop", @1181);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2107);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2108);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2109);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2110);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2111);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2112);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2113);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2114);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2115);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2116);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2117);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2118);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2119);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2120__2);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2121__2);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2122__2);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2126);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2127__2);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2128);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2129);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2130);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2131);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2132);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2133);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2134);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2135);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2136);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2137);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2138);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2139);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2140);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2141);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2142);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2143);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2146);
 #ifdef NON_MATCHING
 static inline void ShopSwapHeldGood(SHOP_ITEMLIST *good) {
     u8 taken[0xF8];
@@ -4659,7 +4609,6 @@ static int AlreadyGetMardanWeapon() {
     return flag;
 }
 
-#ifdef NON_MATCHING
 void InitFishingExchange(u_long128 *buffer, int *texture_blocks, int mode) {
     FishMenu.buffer = (u_long128 *) (EdMenuBuffer.base + EdMenuBuffer.used * 16);
     FishMenu.buffer = MenuCalcBufAlignment(FishMenu.buffer);
@@ -4687,10 +4636,6 @@ void InitFishingExchange(u_long128 *buffer, int *texture_blocks, int mode) {
     GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
     GamePad.MenuModeOn(0x78);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", InitFishingExchange__FP1Pii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/shop", @2943);
 INCLUDE_RODATA("asm/nonmatchings/shop", @2948);
 #ifdef NON_MATCHING
 int FishMenuTextureLoad() {

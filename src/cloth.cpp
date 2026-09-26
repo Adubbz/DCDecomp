@@ -429,7 +429,6 @@ INCLUDE_ASM("asm/nonmatchings/cloth", CreateVUData__6CClothFPUi);
  * @address 0x13C9B0
  * @size 0x1C0
  */
-#ifdef NON_MATCHING
 void CCloth::InitParam() {
     float side_follow = 0.9f;
     num_i = 16;
@@ -475,9 +474,6 @@ void CCloth::InitParam() {
     bound = NULL;
     material.texture[0] = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/cloth", InitParam__6CClothFv);
-#endif
 
 /**
  * Constructs a cloth grid with the requested dimensions and spacing.

@@ -5,15 +5,14 @@
 
 #include "candleeffect.hpp"
 #include "editloop.hpp"
+#include "effectmacro.hpp"
 #include "fireomni.hpp"
 #include "frame.hpp"
+#include "snd.hpp"
 #include "texture.hpp"
 #ifdef NON_MATCHING // draft includes
-#include <cstring>
 #include <cstdlib>
 #include "edit.hpp"
-#include "effectmacro.hpp"
-#include "snd.hpp"
 #endif
 
 /** The one fire and the one candle the editor lends to every map part. */
@@ -369,7 +368,6 @@ void InitEditEffect(CFrame *frame, EDIT_EFFECT_INFO *effect) {
  * @address 0x1669D0
  * @size 0x1E0
  */
-#ifdef NON_MATCHING
 int InitEditEffect(CFrame *frame, EPARTS_FUNC_DATA *func, EDIT_EFFECT_INFO *effect) {
     switch (func->kind) {
         case 3:
@@ -415,9 +413,6 @@ int InitEditEffect(CFrame *frame, EPARTS_FUNC_DATA *func, EDIT_EFFECT_INFO *effe
     InitEditEffect(frame, effect);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/objanime", InitEditEffect__FP6CFrameP16EPARTS_FUNC_DATAP16EDIT_EFFECT_INFO);
-#endif
 
 int CheckEditEffect(EDIT_EFFECT_INFO *effect, float time) {
     if (effect->kind <= 0) {
@@ -482,7 +477,6 @@ void EditEffectStep2(void) {
  * @address 0x166E10
  * @size 0x24C
  */
-#ifdef NON_MATCHING
 void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *group) {
     sceVu0FVECTOR position;
     float scale;
@@ -545,6 +539,3 @@ void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *gro
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/objanime", DrawEditEffect__FP16EDIT_EFFECT_INFOP7CCameraP12CEffectGroup);
-#endif

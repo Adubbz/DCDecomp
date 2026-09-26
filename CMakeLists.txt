@@ -168,7 +168,8 @@ carve_part(main.data.part1.s
            main.data.part1.s=24FAC0-250B30
            main.data.part1b.s=250EC0-250F40)
 carve_part(main.data.part2.s
-           main.data.part2.s=2514C0-251560
+           main.data.part2.s=2514C0-251530
+           main.data.cloth-after.s=251540-251560
            main.data.part2c.s=2525D0-253DD0)
 carve_part(main.data.part2b.s
            main.data.nowload-a.s=2540B0-2540C0)
@@ -265,10 +266,12 @@ carve_part(main.data.part6.s
            main.data.part6.s=27E790-27EB30
            main.data.part6f.s=291850-291B80
            main.data.part6k.s=292704-292750
-           main.data.shop-local.s=292770-2927B0
+           main.data.shop-local.s=292770-2927A0
+           main.data.shop-buymoney.s=2927AC-2927B0
            main.data.shop-checkbuy-a.s=2927BC-2927C0
            main.data.shop-checkbuy-b.s=2927CC-292830
-           main.data.shop-ticket.s=292840-2936E0
+           main.data.shop-ticket.s=292840-292850
+           main.data.shop-filenames-after.s=2929B0-2936E0
            main.data.shop-ticket-after.s=293700-293860
            main.data.battlemenu-tail.s=293960-293C60
            main.data.part6h.s=293C80-293CA0
