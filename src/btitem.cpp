@@ -178,7 +178,6 @@ extern "C" int BtEquipMap;
 extern "C" int BtEquipMasuisyou;
 extern s32 atraShortGetType;
 extern s32 atraGetStatus;
-extern float atraGetStatusRate;
 extern s32 atraGetMsgBord;
 extern float atraGetMsgBordRate;
 extern sceVu0FVECTOR atraGetPos;
