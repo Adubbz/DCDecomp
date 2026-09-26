@@ -294,21 +294,15 @@ int GetMenuItemUseVolume() {
     return MenuItemUseVolume;
 }
 
-#ifdef NON_MATCHING
 int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_HAVE *weapon) {
     int used = 0;
-    u8 level_up[0xF8];
+    WEAPON_HAVE level_up;
 
     MenuItemUseVolume = 0;
-    s16 *hp = &status->hp[chara];
     int now_hp = status->hp[chara];
-    s16 *max_hp = &status->max_hp[chara];
     int max = status->max_hp[chara];
-    float *water = &status->water_now[chara];
     int now_water = (int) status->water_now[chara];
-    float *water_max = &status->water_max[chara];
     float max_water = status->water_max[chara];
-    s32 *condition = &status->unk_42C8[chara];
     int old_condition = status->unk_42C8[chara];
     printf("trueNo = %d\n", item_no);
     int value_no = 0;
@@ -316,36 +310,38 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
     if (data == NULL) {
         return 0;
     }
-    s16 *values = &data->vol;
-    if ((data->kind_flags & 4) && target == 1) {
-        if (item_no != 0xAA) {
-            if ((data->use_flags & 0x40) && now_hp > 0 && now_hp < max) {
-                value_no = 1;
-                status->SetNextLife(chara, now_hp + data->vol, 5.0f);
+    if ((data->kind_flags & ITEMKINDF_CONSUMABLE) && target == 1) {
+        if (item_no != ITEM_MELLOW_BANANA) {
+            if ((data->use_flags & ITEMUSE_HEAL_HP) && 0 < now_hp && now_hp < max) {
+                int add = (&data->vol)[value_no];
+                value_no++;
+                status->SetNextLife(chara, now_hp + add, 5.0f);
                 used = 1;
             }
-            if ((data->use_flags & 0x80) && 2.0f + now_water < max_water) {
-                int add = values[value_no];
+            if ((data->use_flags & ITEMUSE_DRINK) && 2.0f + now_water < max_water) {
+                int add = (&data->vol)[value_no];
                 value_no++;
-                float limit = *water_max;
-                float next = *water + add;
+                float limit;
+                float next = status->water_now[chara];
+                limit = status->water_max[chara];
+                next += add;
                 if (limit < next) {
                     next = limit;
                 }
-                *water = next;
+                status->water_now[chara] = next;
                 used = 1;
             }
         } else if (now_hp > 0 && now_hp < max) {
-            value_no = 1;
+            value_no++;
             status->SetNextLife(chara, now_hp + 200, 5.0f);
             status->AddDrink(chara, -20, 1.0f);
             used = 1;
         }
     }
-    if ((data->kind_flags & 0x20) && (data->use_flags & 0x20) && item_no >= 0x88 && item_no < 0x8E) {
-        if (chara == item_no - 0x88) {
-            s32 *stat = &status->unk_4348[chara];
-            int old = *stat;
+    if ((data->kind_flags & ITEMKINDF_RANDOM) && (data->use_flags & ITEMUSE_STATUS) && item_no >= ITEM_FLUFFY_DOUGHNUT &&
+        item_no < ITEM_DUMMY) {
+        if (chara == item_no - ITEM_FLUFFY_DOUGHNUT) {
+            int old = status->unk_4348[chara];
             int range = data->vol_range;
             if (range <= 0) {
                 printf("value=0\n");
@@ -353,11 +349,11 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
             }
             int add = data->vol + rand() % range;
             MenuItemUseVolume = add;
-            int next = old + add;
-            if (next >= 99) {
-                next = 99;
+            old += add;
+            if (old >= 99) {
+                old = 99;
             }
-            *stat = next;
+            status->unk_4348[chara] = old;
             used = 1;
         } else {
             used = 0;
@@ -365,90 +361,92 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
     }
     if (data->kind_flags & 1) {
         if (target == 1) {
-            if (data->use_flags & 0x20) {
+            if (data->use_flags & ITEMUSE_STATUS) {
                 switch (item_no) {
-                    case 0xB3: {
-                        int num = status->item_pack.num;
+                    case ITEM_POCKET: {
+                        int i;
+                        int num;
+                        ITEM_PACK *pack = &status->item_pack;
+                        num = pack->num;
                         if (num < 0x60) {
-                            status->item_pack.num += values[value_no];
-                            MenuItemUseVolume = status->item_pack.num;
-                            if (status->item_pack.num > 100) {
-                                status->item_pack.num = 100;
+                            pack->num += (&data->vol)[value_no];
+                            MenuItemUseVolume = pack->num;
+                            if (pack->num > 100) {
+                                pack->num = 100;
                             }
-                            for (; num < status->item_pack.num; num++) {
-                                s16 *slot = &status->item_pack.item[num];
-                                if (*slot < 0x84) {
-                                    *slot = -1;
+                            for (i = num; i < pack->num; i++) {
+                                if (pack->item[i] < ITEM_DUNGEON_START) {
+                                    pack->item[i] = -1;
                                 }
                             }
                             used = 1;
                         }
                         break;
                     }
-                    case 0xB4: {
+                    case ITEM_FRUIT_OF_EDEN: {
                         s16 limit[6] = {0xAA, 0x8C, 0xAA, 0x8C, 0xB4, 0xA0};
-                        int cap = limit[chara];
-                        if ((old_condition & 2) || now_hp <= 0 || !((s16) max < cap)) {
+                        if ((old_condition & 2) || now_hp <= 0 || !((s16) max < limit[chara])) {
                             used = 0;
                         } else {
-                            *max_hp = max + values[value_no];
-                            s16 next = *max_hp;
-                            if (next >= cap) {
-                                next = cap;
-                                *max_hp = cap;
+                            status->max_hp[chara] = max + (&data->vol)[value_no];
+                            s16 next = status->max_hp[chara];
+                            if (next >= limit[chara]) {
+                                next = limit[chara];
+                                status->max_hp[chara] = limit[chara];
                             }
                             status->SetNextLife(chara, next, 0.0f);
                             used = 1;
                         }
                         break;
                     }
-                    case 0xB6:
+                    case ITEM_GOURD:
                         if (max_water <= 90.0f) {
-                            float next = max_water + values[value_no];
-                            *water_max = next;
-                            *water = next;
+                            float next = max_water + (&data->vol)[value_no];
+                            status->water_max[chara] = next;
+                            status->water_now[chara] = next;
                             used = 1;
                         }
                         break;
                 }
             }
             printf("prev status = %d\n", old_condition);
+            u32 flags = data->use_flags;
             if ((old_condition & 2) || now_hp <= 0) {
-                if (item_no == 0xB0) {
-                    *condition = 0;
-                    *hp = max >> 1;
+                if (item_no == ITEM_REVIVAL_POWDER) {
+                    status->unk_42C8[chara] = 0;
+                    status->hp[chara] = max >> 1;
                     used = 1;
                 }
             } else {
-                if ((data->use_flags & 0x4000) && (old_condition & 4)) {
-                    *condition ^= 4;
+                if ((flags & 0x4000) && (old_condition & 4)) {
+                    status->unk_42C8[chara] ^= 4;
                     used = 1;
                 }
                 if ((data->use_flags & 0x8000) && (old_condition & 0x10)) {
-                    *condition ^= 0x10;
+                    status->unk_42C8[chara] ^= 0x10;
                     used = 1;
                 }
                 if ((data->use_flags & 0x10000) && (old_condition & 0x20)) {
-                    *condition ^= 0x20;
+                    status->unk_42C8[chara] ^= 0x20;
                     used = 1;
                 }
                 if ((data->use_flags & 0x20000) && (old_condition & 0x40)) {
-                    *condition ^= 0x40;
+                    status->unk_42C8[chara] ^= 0x40;
                     used = 1;
                 }
-                if (item_no == 0x9A && (old_condition & 0x74)) {
-                    if (*condition & 8) {
-                        *condition = 0;
-                        *condition |= 8;
+                if (item_no == ITEM_MIGHTY_HEALING && (old_condition & 0x74)) {
+                    if (status->unk_42C8[chara] & 8) {
+                        status->unk_42C8[chara] = 0;
+                        status->unk_42C8[chara] |= 8;
                     } else {
-                        *condition = 0;
+                        status->unk_42C8[chara] = 0;
                     }
                     used = 1;
                 }
                 if (BtlMenuMode == 0 && (data->use_flags & 0x1000)) {
-                    int now = *condition;
+                    int now = status->unk_42C8[chara];
                     if (!(now & 4)) {
-                        *condition = now | 8;
+                        status->unk_42C8[chara] = now | 8;
                         status->unk_42E0[chara] = 0x708;
                         used = 1;
                     }
@@ -460,10 +458,9 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
                 return used;
             }
             int default_no = GetDefaultWeaponNo(chara);
-            if (item_no == 0xB1) {
-                float durability = weapon->durability;
-                if (weapon->durability_f < durability) {
-                    weapon->durability_f = durability;
+            if (item_no == ITEM_REPAIR_POWDER) {
+                if (weapon->durability_f < weapon->durability) {
+                    weapon->durability_f = weapon->durability;
                     int weapon_no = weapon->item_no;
                     if (weapon_no == default_no) {
                         weapon->item_no = weapon_no + 1;
@@ -472,8 +469,8 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
                     used = 2;
                 }
             }
-            if (item_no == 0xB2) {
-                if (weapon->item_no == 0x10C && GetMenuHebikiriFlag() == 0) {
+            if (item_no == ITEM_POWERUP_POWDER) {
+                if (weapon->item_no == ITEM_WEAPON_SERPENT_SWORD && GetMenuHebikiriFlag() == 0) {
                     return 0;
                 }
                 if (weapon->unk_02 >= 99) {
@@ -482,8 +479,8 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
                 if (weapon->item_no != default_no) {
                     int exp = weapon->unk_14;
                     if (exp < GetWeaponMaxExp(weapon)) {
-                        WeaponLevelUpValueCalc(weapon, (WEAPON_HAVE *) level_up, 1, 0);
-                        memcpy(weapon, level_up, sizeof(WEAPON_HAVE));
+                        WeaponLevelUpValueCalc(weapon, &level_up, 1, 0);
+                        memcpy(weapon, &level_up, sizeof(WEAPON_HAVE));
                         weapon->unk_02++;
                         memset(weapon->attach, 0, sizeof(weapon->attach));
                         used = 1;
@@ -493,48 +490,42 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
         }
     }
     if (BtlMenuMode == 0 && !(old_condition & 2) && now_hp > 0 && (data->kind_flags & 2) && target == 1) {
-        int before = *condition;
+        int before = status->unk_42C8[chara];
         if (data->use_flags & 0x100) {
             if (old_condition & 4) {
-                *condition = before ^ 4;
+                status->unk_42C8[chara] = before ^ 4;
             } else {
-                *condition = before | 4;
-                *condition &= ~0x58;
+                status->unk_42C8[chara] = before | 4;
+                status->unk_42C8[chara] &= ~0x58;
                 status->unk_42E0[chara] = 300;
             }
             ComMenuSePlay(0x6B);
         }
         if (data->use_flags & 0x200) {
-            int now = *condition;
+            int now = status->unk_42C8[chara];
             if (!(now & 0xC)) {
-                *condition = now | 0x10;
-                *condition &= ~0x40;
+                status->unk_42C8[chara] = now | 0x10;
+                status->unk_42C8[chara] &= ~0x40;
                 ComMenuSePlay(0x6B);
             }
         }
         if (data->use_flags & 0x400) {
-            *condition |= 0x20;
+            status->unk_42C8[chara] |= 0x20;
             ComMenuSePlay(0x6B);
         }
         if (data->use_flags & 0x800) {
-            int now = *condition;
+            int now = status->unk_42C8[chara];
             if (!(now & 0x1C)) {
-                *condition = now | 0x40;
+                status->unk_42C8[chara] = now | 0x40;
                 ComMenuSePlay(0x6B);
             }
         }
-        if (before != *condition) {
+        if (before != status->unk_42C8[chara]) {
             used = 1;
         }
     }
     return used;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", ItemUseFunc__FP11CUserStatusiiiP11WEAPON_HAVE);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @869);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @870__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @871__2);
 
 /**
  * Returns a higher damage rate for a fragile Chronicle sword.
