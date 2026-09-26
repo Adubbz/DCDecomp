@@ -273,6 +273,8 @@ def main():
             total = 0
             for symbol, name in sorted(names.items()):
                 symbol = symbol.replace(stem[1], stem[0])
+                # Retail spells a template argument the way splat does.
+                name = name.replace('<1>', '_1_')
                 try:
                     theirs = retail_function(args.image, name)
                 except SystemExit:

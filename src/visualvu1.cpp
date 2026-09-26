@@ -670,17 +670,17 @@ int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int
 #else
 INCLUDE_ASM("asm/nonmatchings/visualvu1", CreateVUdataFromMDT__10CVisualVu1FPUiPUiii);
 #endif
-#ifdef NON_MATCHING
 int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown0) {
+    int strip;
     MDT_HEADER *header = (MDT_HEADER *) data;
     int word = 0;
     int quads = 0;
 
     vu_data = block;
     u_int *mesh = (u_int *) ((u_char *) data + header->mesh_ofs);
+    int stride;
     u_long128 *vertex = (u_long128 *) ((u_char *) data + header->vertex_ofs);
     u_long128 *colour = (u_long128 *) ((u_char *) data + header->colour_ofs);
-    int stride;
     if (header->colour_ofs <= 0) {
         stride = 3;
         colour = NULL;
@@ -690,7 +690,7 @@ int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown
     MDT_MATERIAL *materials = (MDT_MATERIAL *) ((u_char *) data + header->info_ofs);
     u_int *index = mesh + 4;
     int strips = mesh[2];
-    for (int strip = 0; strip < strips; strip++) {
+    for (strip = 0; strip < strips; strip++) {
         int remaining = index[1];
         int prim = index[0];
         int material = index[2];
@@ -700,29 +700,33 @@ int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown
             word += 16;
             word += SetMaterial(&block[word], info);
         }
+        int count;
         int limit = 0x36;
         if (colour != NULL) {
             limit = 0x21;
         }
+        count = 0;
         while (remaining > 0) {
-            int count = limit;
+            count = limit;
             if (remaining < limit) {
                 count = remaining;
             }
             word += 4;
+            int i;
+            u_long128 *out;
             u_int *source = index;
             index += count * stride;
-            u_long128 *out = (u_long128 *) &block[word] + 2;
+            out = (u_long128 *) &block[word] + 2;
             u_long128 *colour_out = out + count * 3;
             int size;
             if (colour == NULL) {
-                for (int i = count; i > 0; i--) {
+                for (i = count; i > 0; i--) {
                     *out++ = vertex[source[0]];
                     source += 3;
                 }
                 size = count * 3 + 2;
             } else {
-                for (int i = count; i > 0; i--) {
+                for (i = count; i > 0; i--) {
                     *out++ = vertex[source[0]];
                     *colour_out++ = colour[source[3]];
                     source += 4;
@@ -734,7 +738,8 @@ int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown
                 remaining += 2;
             }
             quads += size;
-            word += size * 4 + 4;
+            word += size * 4;
+            word += 4;
             remaining -= limit;
         }
         word += 4;
@@ -742,9 +747,6 @@ int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown
     vu_size = word >> 2;
     return vu_size;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/visualvu1", CreateVUdataFromMDTRemake__10CVisualVu1FPUiPUii);
-#endif
 /**
  * Draws the model, from a copy of this frame's block when the visual asks for one.
  *

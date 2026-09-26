@@ -163,73 +163,73 @@
   "src/battlemenu.cpp": {
     "sections": {
       ".battlemenu-town-ref": [
-        "@1366"
+        "@1493"
       ],
       ".battlemenu-town-pos": [
-        "@1367"
+        "@1494"
       ],
       ".battlemenu-texenter": [
-        "@177"
+        "@225"
       ],
       ".battlemenu-texenter-s": [
-        "@178"
+        "@226"
       ],
       ".battlemenu-c4433": [
-        "@1097"
+        "@1224"
       ],
       ".battlemenu-c1239__2": [
-        "@297"
+        "@345"
       ],
       ".battlemenu-c1249": [
-        "@308"
+        "@356"
       ],
       ".battlemenu-c1270": [
-        "@330"
+        "@378"
       ],
       ".battlemenu-c3967": [
-        "@899"
+        "@1026"
       ],
       ".battlemenu-c3968": [
-        "@900"
+        "@1027"
       ],
       ".battlemenu-c2056": [
-        "@557"
+        "@605"
       ],
       ".battlemenu-c2057": [
-        "@558"
+        "@606"
       ],
       ".battlemenu-c2058": [
-        "@559"
+        "@607"
       ],
       ".battlemenu-c2059": [
-        "@560"
+        "@608"
       ],
       ".battlemenu-c5492": [
-        "@1184"
+        "@1311"
       ],
       ".battlemenu-c4331": [
-        "@1017"
+        "@1144"
       ],
       ".battlemenu-c1292__2": [
-        "@340"
+        "@388"
       ],
       ".battlemenu-c3657": [
-        "@779"
+        "@827"
       ],
       ".battlemenu-c959": [
-        "@200"
+        "@248"
       ],
       ".battlemenu-c963": [
-        "@204"
+        "@252"
       ],
       ".battlemenu-c6227": [
-        "@1412"
+        "@1539"
       ],
       ".battlemenu-c4290": [
-        "@979"
+        "@1106"
       ],
       ".battlemenu-c4291": [
-        "@980"
+        "@1107"
       ],
       ".battlemenu-ncnt_4292": [
         "ncnt$4292"
@@ -238,7 +238,7 @@
         "init$4293"
       ],
       ".battlemenu-c5711": [
-        "@1223"
+        "@1350"
       ],
       ".battlemenu-ct_5739": [
         "ct$5739"
@@ -247,7 +247,7 @@
         "init$5740"
       ],
       ".battlemenu-c5742": [
-        "@1252"
+        "@1379"
       ],
       ".battlemenu-statusCnt_5776": [
         "statusCnt$5776"
@@ -256,43 +256,55 @@
         "init$5777"
       ],
       ".battlemenu-c1717": [
-        "@393"
+        "@441"
       ],
       ".battlemenu-c1879": [
-        "@528"
+        "@576"
       ],
       ".battlemenu-c6185": [
-        "@1383"
+        "@1510"
       ],
       ".battlemenu-c6188": [
-        "@1386"
+        "@1513"
       ],
       ".battlemenu-c1725": [
-        "@401"
+        "@449"
       ],
       ".battlemenu-c1728": [
-        "@404"
+        "@452"
       ],
       ".battlemenu-c1729": [
-        "@405"
+        "@453"
       ],
       ".battlemenu-c3929": [
-        "@874"
+        "@1001"
       ],
       ".battlemenu-c5503": [
-        "@1193"
+        "@1320"
       ],
       ".battlemenu-c6232": [
-        "@1422"
+        "@1549"
       ],
       ".battlemenu-c6233": [
-        "@1423"
+        "@1550"
       ],
       ".battlemenu-c6235": [
-        "@1425"
+        "@1552"
       ],
       ".battlemenu-c6236": [
-        "@1426"
+        "@1553"
+      ],
+      ".battlemenu-c889__4": [
+        "@188"
+      ],
+      ".battlemenu-c890__4": [
+        "@189"
+      ],
+      ".battlemenu-c702__2": [
+        "@166"
+      ],
+      ".battlemenu-c3682": [
+        "@852"
       ]
     },
     "rodata_exports": [
@@ -300,7 +312,10 @@
       "@926__2",
       "@927__2",
       "@5881"
-    ]
+    ],
+    "symbols": {
+      "CharaStatusTextureName": "@885__2"
+    }
   },
   "src/ebattle.cpp": {
     "rodata_exports": [
@@ -1699,13 +1714,22 @@
         "@158"
       ],
       ".menu_misc-c1255": [
-        "@284"
+        "@309"
       ],
       ".menu_misc-c1136": [
         "@233"
       ],
       ".menu_misc-c1041": [
         "@179"
+      ],
+      ".menu_misc-c1179": [
+        "@269"
+      ],
+      ".menu_misc-c1182__2": [
+        "@272"
+      ],
+      ".menu_misc-c1183__2": [
+        "@273"
       ]
     }
   },
@@ -1727,6 +1751,11 @@
     ]
   },
   "src/memcard.cpp": {
+    "sections": {
+      ".memcard-c1322": [
+        "@632"
+      ]
+    },
     "globalize_symbols": [
       "ExitSaveSelect__Fv",
       "SaveMenuKeyFadeIn__Fv",
@@ -1923,7 +1952,8 @@
   },
   "src/dranmapfield.cpp": {
     "symbols": {
-      "OverMessage": "@3606"
+      "OverMessage": "@3606",
+      "info_cfg_literal": "@1007__2"
     }
   },
   "src/shot_firebar.cpp": {

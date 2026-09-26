@@ -1029,22 +1029,25 @@ int StartLoadCharaMDS(u_long128 *buffer, int chara, int read_no) {
     }
     return 0;
 }
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1178);
-#ifdef NON_MATCHING
 void MenuCharaMDSBuild2(int chara, int texture_block) {
     char name[32];
     int size;
 
     sprintf(name, "c0%ddmenu.img", chara + 1);
-    LOADTEXTURE_INFO2 texture = {0};
-    texture.block_no = texture_block;
+    LOADTEXTURE_INFO2 textures[3] = {
+        {"#frame_menu_chara#640#448#4", 0, 0},
+        {NULL, 0, 0},
+        {NULL, 0, 0},
+    };
+    textures[0].block_no = texture_block;
+    textures[1].block_no = texture_block;
     BG_READ_INFO *file = GetReadBGFile(CharaFileBGReadNo);
-    texture.name = (char *) GetPackFile((u_int *) file->buffer, name, &size);
+    textures[1].name = (char *) GetPackFile((u_int *) file->buffer, name, &size);
     TexManager.DeleteTextureBlock(texture_block);
     TexManager.CleanUpTextureList();
-    TexManager.LoadTextureBlockEX(-1, &texture);
+    TexManager.LoadTextureBlockEX(-1, textures);
     u_int *pack = (u_int *) file->buffer;
-    u_char *model = (u_char *) pack + ((file->size >> 4) + 1) * 16;
+    u_char *model = (u_char *) ((u_long128 *) pack + (file->size >> 4) + 1);
     sprintf(name, "c0%ddmenu.cfg", chara + 1);
     MenuCharaFrame.Initialize();
     MenuExCashBuffer.base = model;
@@ -1072,11 +1075,6 @@ void MenuCharaMDSBuild2(int chara, int texture_block) {
         MenuCharaFrame.ClothStep(0);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", MenuCharaMDSBuild2__Fii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1199__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1200);
 
 /**
  * Writes the file path of one character's model into a buffer.
@@ -1090,7 +1088,13 @@ static void GetCharaChangeReadCharaFilePath(char *path, int chara_no) {
     strcat(path, charaFile[chara_no]);
     strcat(path, CharaFileExtension);
 }
-#ifdef NON_MATCHING
+const char MenuWepDir[64] = "commenu/weapon/";
+INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1205);
+INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1206);
+INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1207__2);
+INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1208);
+INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1209);
+INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1210);
 int CharaChangeInitToGL(u_long128 *buffer, int chara) {
     char path[64];
     char name[64];
@@ -1119,8 +1123,8 @@ int CharaChangeInitToGL(u_long128 *buffer, int chara) {
     LoadFileBG(path, menud1wepReadBuf, &size);
     menud2wepReadBuf = menud1wepReadBuf + (size >> 4) + 1;
     menud2wepReadBuf = MenuCalcBufAlignment(menud2wepReadBuf);
-    int slot = UserStatus->equipped_weapon_slot[chara];
-    int kind = UserStatus->chara_weapons[chara][slot].item_no - defWeapon__5[chara];
+    WEAPON_HAVE *equipped = &UserStatus->chara_weapons[chara][UserStatus->equipped_weapon_slot[chara]];
+    int kind = equipped->item_no - (int) defWeapon__5[chara];
     if (kind < 0) {
         kind = 0;
     }
@@ -1134,24 +1138,14 @@ int CharaChangeInitToGL(u_long128 *buffer, int chara) {
         printf("USerStatus is NULL\n", UserStatus);
         return -1;
     }
-    slot = UserStatus->equipped_weapon_slot[charachangeid];
-    WepEffectMenuPt = Get_Main_EffectPtr(
-        charachangeid, ((WEAPON_HAVE *) UserStatus->chara_weapons[charachangeid])[slot].best_elem);
+    int slot = UserStatus->equipped_weapon_slot[charachangeid];
+    WEAPON_HAVE *row = UserStatus->chara_weapons[charachangeid];
+    WEAPON_HAVE *weapon = &row[slot];
+    WepEffectMenuPt = Get_Main_EffectPtr(charachangeid, weapon->best_elem);
     sprintf(effect, "dun/mainchara/wep_eff/%s.chr", WepEffectMenuPt);
     LoadFileBG(effect, (u_long128 *) WepEffectMenuReadBuf, &size);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", CharaChangeInitToGL__FP1i);
-#endif
-const char MenuWepDir[64] = "commenu/weapon/";
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1205);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1206);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1207__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1208);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1209);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1210);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1236);
 void CharaChangeInitToGL2(int load_icon) {
     int size;
 
@@ -1643,17 +1637,6 @@ static void LocalWeaponDataChange(char *values, int count, int base, int range) 
         value++;
     }
 }
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1616__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1617__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1618__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1619__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1620__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1621__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1622__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1623__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1624__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1625__2);
-#ifdef NON_MATCHING
 int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
     if (weapon == NULL) {
         return -1;
@@ -1667,7 +1650,7 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
     }
     switch (kind) {
         case 0:
-            printf("abs full\n", i);
+            printf("abs full\n");
             if (is_default == 1) {
                 printf("this weapon default\n");
             } else {
@@ -1718,7 +1701,7 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
             } else {
                 int add = rand() % 3 + 3;
                 weapon->durability += add;
-                if (weapon->durability >= 100) {
+                if (weapon->durability > 99) {
                     weapon->durability = 99;
                 }
                 printf("WHp up is %d\n", add);
@@ -1741,7 +1724,7 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
             }
             break;
         case 4:
-            printf("whp cure\n", i);
+            printf("whp cure\n");
             if (is_default == 1) {
                 if (UserStatus != NULL) {
                     int chara = UserStatus->cur_chara;
@@ -1750,7 +1733,9 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
                         NowMainEffect = &CharaMainEffectCrash;
                         BtActStatus.unk_0A0 = 0;
                     }
-                    MenuWeaponSpSet(&MainWeapon, &UserStatus->chara_weapons[chara][UserStatus->equipped_weapon_slot[chara]]);
+                    int slot = UserStatus->equipped_weapon_slot[chara];
+                    WEAPON_HAVE *row = UserStatus->chara_weapons[chara];
+                    MenuWeaponSpSet(&MainWeapon, &row[slot]);
                     printf("equip default Weapon\n");
                 }
             } else {
@@ -1766,11 +1751,8 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
             break;
         }
         default:
-            printf("now %d  ??? \n", i);
+            printf("now %d  ??? \n");
             break;
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponDataChangeByRGate__FP11WEAPON_HAVEi);
-#endif

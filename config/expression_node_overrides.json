@@ -8621,6 +8621,64 @@
       ]
     },
     "dranmapfield.cpp": {
+      "LoadCollision__13CDranMapFieldFPUiP14CDataAlloc2<1>": [
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 1,
+          "evaluate_first": 1
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 2,
+          "evaluate_first": 1
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 3,
+          "evaluate_first": 1
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 4,
+          "evaluate_first": 1
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 5,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 6,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 7,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 8,
+          "evaluate_first": 0
+        }
+      ],
       "LoadCollision__13CDranMapFieldFPUiP14CDataAlloc2_1_": [
         {
           "type": "binary32",
@@ -8634,6 +8692,50 @@
           "value": "0x0.0p+0",
           "value_bits": "0x00000000",
           "ordinal": 2,
+          "evaluate_first": 0
+        }
+      ],
+      "LoadModel__13CDranMapFieldFPUiP14CDataAlloc2<1>": [
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 1,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 2,
+          "evaluate_first": 1
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 3,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 4,
+          "evaluate_first": 1
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 5,
+          "evaluate_first": 1
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 6,
           "evaluate_first": 0
         }
       ],
@@ -8659,7 +8761,7 @@
           "value": "0x1.d800000000000p+5",
           "value_bits": "0x426c0000",
           "ordinal": 1,
-          "evaluate_first": 0
+          "evaluate_first": 1
         }
       ]
     },
@@ -27501,6 +27603,20 @@
           "value": "0x0.0p+0",
           "value_bits": "0x00000000",
           "ordinal": 1,
+          "evaluate_first": 1
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 2,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 3,
           "evaluate_first": 0
         },
         {
@@ -27508,7 +27624,7 @@
           "value": "0x1.0000000000000p+7",
           "value_bits": "0x43000000",
           "ordinal": 1,
-          "evaluate_first": 0
+          "evaluate_first": 1
         }
       ]
     },

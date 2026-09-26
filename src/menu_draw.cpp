@@ -614,7 +614,6 @@ void DrawIconParts(int item_no, int x, int y, int top, int bottom, int alpha, in
         }
     }
 }
-#ifdef NON_MATCHING
 void DrawAttachNumberOrWeapon(int x, int y, int top, int bottom, int item_no, int value, int alpha, int vibe) {
     int draw_y;
     int u;
@@ -622,7 +621,7 @@ void DrawAttachNumberOrWeapon(int x, int y, int top, int bottom, int item_no, in
     int height;
 
     TexManager.GetTexture("wepicon", -1);
-    if (value > 0 && item_no >= 0x5B && item_no < 0x5F) {
+    if (0 < value && item_no >= 0x5B && item_no < 0x5F) {
         int number_x = x + 12;
         draw_y = y + 10;
         u = (value - 1) * 0x12 + 0x84;
@@ -649,14 +648,10 @@ void DrawAttachNumberOrWeapon(int x, int y, int top, int bottom, int item_no, in
                 DrawObjectVibe(x, draw_y, texture, source, 0x80, 0x80);
                 return;
             }
-            DrawMenu2DSprite(texture, CRect_i_(x, draw_y, 0x20, height), source, alpha);
+            DrawMenu2DSprite(texture, CRect_i_(x, draw_y, 0x20, height), source, (alpha * 0x80) >> 7);
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawAttachNumberOrWeapon__Fiiiiiiii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @852__4);
 #ifdef NON_MATCHING
 void FadeTexX(int left_x, int left_width, int right_x, int right_width, char *name, int dim) {
     CTexture texture = *TexManager.GetTexture(name, -1);

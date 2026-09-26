@@ -194,13 +194,14 @@ carve_part(main.sdata.part2b.s
            main.sdata.part2c.s=2A1F18-2A1F24
            main.sdata.part2d.s=2A1F50-2A1F78
            main.sdata.part2f.s=2A1F98-2A1FE8
-           main.sdata.part2f-2A1FF0.s=2A1FF0-2A2048
-           main.sdata.part2f-2A2050.s=2A2058-2A2080
+           main.sdata.part2f-2A1FF0.s=2A1FF0-2A2028
+           main.sdata.part2f-2A2030.s=2A2030-2A2048
+           main.sdata.part2f-2A2050.s=2A2058-2A2078
            main.sdata.part2f-2A2050-2A2088.s=2A2088-2A20B0
            main.sdata.part2f-2A2050-2A20B8.s=2A20B8-2A20C0
            main.sdata.battlemenu-tail.s=2A20D8-2A2100
            main.sdata.editmenu-after.s=2A2120-2A2138
-           main.sdata.editmenu-after-2A2140.s=2A2140-2A2150
+           main.sdata.editmenu-after-2A2148.s=2A2148-2A2150
            main.sdata.memcard-a.s=2A2158-2A2168
            main.sdata.memcard-a-2A2170.s=2A2170-2A2190
            main.sdata.part2g.s=2A21B8-2A21C0
@@ -281,7 +282,7 @@ carve_part(main.data.part6.s
            main.data.shop-checkbuy-a.s=2927BC-2927C0
            main.data.shop-checkbuy-b.s=2927CC-292830
            main.data.shop-filenames-after.s=2929B0-292AC0
-           main.data.shop-filenames-after-292AE4.s=292AE4-292EB0
+           main.data.shop-filenames-after-292AE4.s=292AE4-292E90
            main.data.shop-filenames-after-292EE0.s=292F20-292F60
            main.data.shop-filenames-after-292EE0-292FA0.s=292FF0-293030
            main.data.shop-filenames-after-292EE0-292FA0-293040.s=293070-293080
@@ -294,7 +295,7 @@ carve_part(main.data.part6.s
            main.data.shop-ticket-after.s=293700-293790
            main.data.battlemenu-tail.s=293960-293990
            main.data.battlemenu-tail-293A10.s=293A10-293A80
-           main.data.battlemenu-tail-293AB0.s=293AB0-293BF0
+           main.data.battlemenu-tail-293B90.s=293B90-293BF0
            main.data.battlemenu-tail-293C20.s=293C20-293C60
            main.data.part6h.s=293C80-293CA0
            main.data.editmenu-after.s=293CD0-293D20
@@ -312,7 +313,8 @@ carve_part(main.data.part6.s
 carve_part(main.data.part4.s
            main.data.part4.s=25DFB0-266810
            main.data.part4b.s=2668C0-266B70
-           main.data.part4m.s=266B90-266ED0
+           main.data.part4m.s=266B90-266E10
+           main.data.part4m-266E90.s=266E90-266ED0
            main.data.part4c.s=266FB0-269320
            main.data.part4h.s=269400-269460
            main.data.part4j.s=269494-269498
@@ -365,6 +367,10 @@ list(REMOVE_ITEM STATIC_SECTION_SOURCES
 # fish.cpp now owns the complete fish data run at 0x296050-0x2965C0.
 list(REMOVE_ITEM STATIC_SECTION_SOURCES
      ${PARTS_DIR}/main.data.part7.s)
+
+# langset.cpp now emits LangsetInit's texture table, all of main.data.part7b.s.
+list(REMOVE_ITEM STATIC_SECTION_SOURCES
+     ${PARTS_DIR}/main.data.part7b.s)
 
 set(FILTERED_SBSS_PART1 generated/asm/data/main/parts/main.sbss.part1.s)
 add_custom_command(

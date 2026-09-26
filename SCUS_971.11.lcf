@@ -475,6 +475,8 @@ SECTIONS
         textureanime.cpp.o (.data)   // 0x00266b70
         . = ALIGN(0x10);
         main.data.part4m.s.o (.data) // 0x00266b90
+        ebattle.cpp.o (.data)        // 0x00266e10
+        main.data.part4m-266E90.s.o (.data) // 0x00266e90
         editarea.cpp.o (.data)       // 0x00266ed0
         edit.cpp.o (.data)
         main.data.part4c.s.o (.data)
@@ -587,6 +589,9 @@ SECTIONS
         main.data.shop-filenames-after.s.o (.data) // 0x002929B0
         shop.cpp.o (.shopdata-fishrec) // 0x00292ac0 @3261
         main.data.shop-filenames-after-292AE4.s.o (.data) // 0x00292ae4
+        battlemenu.cpp.o (.battlemenu-c889__4) // 0x00292e90 @889__4
+        battlemenu.cpp.o (.battlemenu-c890__4) // 0x00292ea0 @890__4
+        . = ALIGN(16);
         battlemenu.cpp.o (.battlemenu-texenter) // 0x00292eb0 @936__2
         battlemenu.cpp.o (.battlemenu-c959) // 0x00292ee0 @959
         . = ALIGN(16);
@@ -659,7 +664,12 @@ SECTIONS
         menu_misc.cpp.o (.menu_misc-c1041) // 0x00293a80 @1041
         menu_misc.cpp.o (.menu_misc-c1136) // 0x00293a98 @1136
         . = ALIGN(16);
-        main.data.battlemenu-tail-293AB0.s.o (.data) // 0x00293ab0
+        menu_misc.cpp.o (.menu_misc-c1179) // 0x00293ab0 @1179
+        . = ALIGN(16);
+        menu_misc.cpp.o (.menu_misc-c1182__2) // 0x00293ae0 @1182__2
+        menu_misc.cpp.o (.menu_misc-c1183__2) // 0x00293b40 @1183__2
+        . = ALIGN(16);
+        main.data.battlemenu-tail-293B90.s.o (.data) // 0x00293b90
         menu_misc.cpp.o (.menu_misc-c1255) // 0x00293bf0 @1255
         . = ALIGN(16);
         main.data.battlemenu-tail-293C20.s.o (.data) // 0x00293c20
@@ -712,7 +722,8 @@ SECTIONS
         . = . + 0xC;
         fish.cpp.o (.data)
         charakey.cpp.o (.data)
-        main.data.part7b.s.o (.data)
+        langset.cpp.o (.data)        // 0x00296630 @360__2
+        . = ALIGN(0x80);             // 0x00296680
         *(.data)
         *(.vudata)
 
@@ -830,9 +841,14 @@ SECTIONS
 		main.sdata.part2f.s.o (.sdata) // 0x002a1f98
 		btitem.cpp.o (.btitem-c914) // 0x002a1fe8 @914
 		main.sdata.part2f-2A1FF0.s.o (.sdata) // 0x002a1ff0
+		battlemenu.cpp.o (.battlemenu-c702__2) // 0x002a2028 @702__2
+		. = ALIGN(8);
+		main.sdata.part2f-2A2030.s.o (.sdata) // 0x002a2030
 		battlemenu.cpp.o (.battlemenu-texenter-s) // 0x002a2048 @937__3
 		battlemenu.cpp.o (.battlemenu-c1249) // 0x002a2050 @1249
 		main.sdata.part2f-2A2050.s.o (.sdata) // 0x002a2058
+		battlemenu.cpp.o (.battlemenu-c3682) // 0x002a2078 @3682
+		. = ALIGN(8);
 		battlemenu.cpp.o (.battlemenu-c3929) // 0x002a2080 @3929
 		main.sdata.part2f-2A2050-2A2088.s.o (.sdata) // 0x002a2088
 		battlemenu.cpp.o (.battlemenu-c5711) // 0x002a20b0 @5711
@@ -845,7 +861,8 @@ SECTIONS
 		editmenu.cpp.o (.sdata)        // 0x002a2100
 		main.sdata.editmenu-after.s.o (.sdata) // 0x002a2120
 		editmenu.cpp.o (.editmenu-c630) // 0x002a2138 @630__5
-		main.sdata.editmenu-after-2A2140.s.o (.sdata) // 0x002a2140
+		memcard.cpp.o (.memcard-c1322) // 0x002a2140 @1322
+		main.sdata.editmenu-after-2A2148.s.o (.sdata) // 0x002a2148
 		memcard.cpp.o (.sdata) // 0x002a2150
 		main.sdata.memcard-a.s.o (.sdata) // 0x002a2158
 		menu_save.cpp.o (.sdata) // 0x002a2168 @3260, @3261__2

@@ -571,7 +571,6 @@ void CDungeonParts::Draw() {
         MGDraw(frame[i]);
     }
 }
-#ifdef NON_MATCHING
 /**
  * Chooses the level of detail each of a part's frames draws at.
  *
@@ -619,7 +618,8 @@ void CDungeonParts::DrawCalc(int x, int z, int turn, int fixed) {
             collision_turn = -1;
         }
         model->SetRotation(0.0f, (3.1415927f * (-90.0f * (float) collision_turn)) / 180.0f, 0.0f);
-        collision->SetPosition(160.0f * (float) x, 0.0f, 160.0f * (float) z);
+        float y = 0.0f;
+        collision->SetPosition(160.0f * (float) x, y, 160.0f * (float) z);
         return;
     }
     int collision_turn = (int) (frame_turn[0] + (float) this->collision_turn);
@@ -637,9 +637,6 @@ void CDungeonParts::DrawCalc(int x, int z, int turn, int fixed) {
     position[3] = 1.0f;
     collision->SetPosition(frame_offset[0]);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonparts", DrawCalc__13CDungeonPartsFiiii);
-#endif
 
 /**
  * Clears one dungeon part.

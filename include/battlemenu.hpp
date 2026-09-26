@@ -221,7 +221,7 @@ void SetEscapeDngFlag(int flag);
  * @address 0x1F3FB0
  * @size 0xC
  */
-s16 GetEscapeDngFlag(void);
+int GetEscapeDngFlag(void);
 
 /**
  * Sets whether the party is leaving an interior area.

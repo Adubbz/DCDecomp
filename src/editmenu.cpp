@@ -1299,7 +1299,6 @@ static int AnalyzeBarDraw() {
 #else
 INCLUDE_ASM("asm/nonmatchings/editmenu", AnalyzeBarDraw__Fv);
 #endif
-#ifdef NON_MATCHING
 static void ToAnalyzeEditDraw() {
     MenuTextureReload(EdMenuTextureBlock);
     for (int i = 0; i < 3; i++) {
@@ -1307,11 +1306,11 @@ static void ToAnalyzeEditDraw() {
                          0x80);
     }
     float left = (float) (0x280 - EdEffectCt * 16);
-    int right = (int) (80.0f + left);
+    int width = (int) (80.0f + left);
     if (left < 0.0f) {
         left = 0.0f;
     }
-    int width = (int) ((float) right - left);
+    width = (int) ((float) width - left);
     if (width < 0) {
         width = 0;
     }
@@ -1328,13 +1327,13 @@ static void ToAnalyzeEditDraw() {
     AnalyzeBackDraw(alpha, bright);
     int done = 0;
     float bar = (float) (EdEffectCt * 20);
-    if (bar > 640.0f) {
+    if (640.0f < bar) {
         bar = 640.0f;
     }
-    if (bar > 560.0f) {
+    if (560.0f < bar) {
         done = AnalyzeBarDraw();
     }
-    if (bar > 640.0f) {
+    if (640.0f < bar) {
         bar = 640.0f;
     }
     DrawMenu2DSprite(AnaBar, CRect_i_(0, 0x11C, (int) bar, 0x18), CRect_i_(0, 0x36, 0x20, 0x18), 0x80);
@@ -1353,9 +1352,6 @@ static void ToAnalyzeEditDraw() {
         EditSwitch = 5;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", ToAnalyzeEditDraw__Fv);
-#endif
 
 static void ToAnalyzeEdit() {
     if (GamePad.AllOn()) {

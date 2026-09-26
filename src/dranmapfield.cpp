@@ -9,13 +9,15 @@
 #include "frame.hpp"
 #include "snd.hpp"
 
-#ifdef NON_MATCHING
+/* The model pack's configuration name. Retail keeps one copy of the string, in the dungeon parts code. */
+extern char info_cfg_literal[];
+
 void CDranMapField::LoadModel(unsigned int *pack, CDataAlloc2<1> *arena) {
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
 
     if (set->field_count < 12) {
         (&this[set->field_count].character)->Initialize();
-        (&this[set->field_count].character)->LoadPackData(pack, "info", arena, arena);
+        (&this[set->field_count].character)->LoadPackData(pack, info_cfg_literal, arena, arena);
         (&this[set->field_count].character)->SetPosition(0.0f, 0.0f, 0.0f);
         (&this[set->field_count].character)->SetRotation(0.0f, 0.0f, 0.0f);
         set->field_count++;
@@ -23,10 +25,6 @@ void CDranMapField::LoadModel(unsigned int *pack, CDataAlloc2<1> *arena) {
         printf(" ************* over!!\n");
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dranmapfield", LoadModel__13CDranMapFieldFPUiP14CDataAlloc2_1_);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @3606);
 INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @488);
 INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @489);
 INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @490);

@@ -468,7 +468,7 @@ void SetEscapeDngFlag(int flag) {
     EscapeDngFlg = flag;
 }
 
-s16 GetEscapeDngFlag() {
+int GetEscapeDngFlag() {
     return EscapeDngFlg;
 }
 
@@ -659,7 +659,6 @@ int GetLimmitMsg(void) {
     }
     return message;
 }
-#ifdef NON_MATCHING
 void DrawBattleMain() {
     int pos[2];
     int icons[8];
@@ -721,9 +720,6 @@ void DrawBattleMain() {
     DrawMenuWaku(NorMenuIcon[MenuSelect[1]].x - 18.0f, waku_y, width, 0x22, 0, StayTex, 0x80);
     DrawMenuObjectVibe((int) SysCur[0], (int) SysCur[1], 1, 0x40);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBattleMain__Fv);
-#endif
 #ifdef NON_MATCHING
 void DrawOtherCharaStatus(int x, int y, int chara, int alpha) {
     int bar_x = x - 5;
@@ -855,18 +851,21 @@ void DngComStatus(int x, int y, int chara, int alpha) {
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DngComStatus__Fiiii);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @885__2);
-#ifdef NON_MATCHING
+
+/* The status board texture's name. Retail keeps one copy of the string, emitted with DngComStatus. */
+extern char CharaStatusTextureName[];
+
 void DrawSelCharaStatus(float x, float y, int chara, int alpha, int, int, int, int) {
     int u;
     int v;
     int px = (int) (x - 144.0f);
     float top = 1.0f + y;
     int py = (int) (top - 24.0f);
-    CTexture *texture = TexManager.GetTexture("charastb", -1);
+    CTexture *texture = TexManager.GetTexture(CharaStatusTextureName, -1);
 
     DrawMenu2DSprite(texture, CRect_i_(px, py - 1, 0x100, 0x88), CRect_i_(0, 0, 0x100, 0x88), alpha);
     RECT digits = {0x40, 0x88, 0xC, 0xE};
-    DrawMenuNumber(BtlMenuStatusPt->unk_field_1[chara], px + 0x5E, py + 0x72, texture, digits, 1, alpha);
+    DrawMenuNumber((int) BtlMenuStatusPt->unk_field_1[chara], px + 0x5E, py + 0x72, texture, digits, 1, alpha);
 
     px = (int) (x - 132.0f);
     py = (int) (10.0f + y);
@@ -878,7 +877,8 @@ void DrawSelCharaStatus(float x, float y, int chara, int alpha, int, int, int, i
     px = (int) (x - 118.0f - 12.0f);
     py = (int) (70.0f + y);
     int slot = BtlMenuStatusPt->equipped_weapon_slot[chara];
-    WEAPON_HAVE *weapon = (WEAPON_HAVE *) ((char *) BtlMenuStatusPt + chara * sizeof(BtlMenuStatusPt->chara_weapons[0]) + 0x450C) + slot;
+    WEAPON_HAVE *row = BtlMenuStatusPt->chara_weapons[chara];
+    WEAPON_HAVE *weapon = &row[slot];
     if (weapon != NULL) {
         CTexture *icon = RetCTex(weapon->item_no, u, v);
         if (icon != NULL) {
@@ -893,9 +893,6 @@ void DrawSelCharaStatus(float x, float y, int chara, int alpha, int, int, int, i
     px = (int) (x - 40.0f);
     CharaStatusMsgDraw(px, (int) (68.0f + y), chara, 1, alpha);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawSelCharaStatus__Fffiiiiii);
-#endif
 
 /**
  * Draws the battle menu's Atora selection screen.
@@ -4162,10 +4159,9 @@ static void WeaponMenuActWepKey() {
         WepAttachHaveCancel();
     }
 }
-#ifdef NON_MATCHING
 void WeaponMenuTagKey() {
-    s16 rows[3] = {5, 4, 10};
     int moved = 0;
+    s16 rows[3] = {5, 4, 10};
 
     if (WepMenu.unk_179 < 0) {
         WepMenu.unk_179 = 0;
@@ -4178,7 +4174,7 @@ void WeaponMenuTagKey() {
         case 0:
             if (GamePad.Down(0x1000) != 0) {
                 moved = 1;
-                if (WepMenu.unk_179 > 0) {
+                if (0 < WepMenu.unk_179) {
                     WepMenu.unk_179--;
                 } else if (WepMenu.unk_06 != 0) {
                     WepMenu.unk_02 = 9;
@@ -4198,7 +4194,7 @@ void WeaponMenuTagKey() {
         case 1:
             if (GamePad.Down(0x1000) != 0) {
                 moved = 1;
-                if (WepMenu.unk_179 > 0) {
+                if (0 < WepMenu.unk_179) {
                     WepMenu.unk_179--;
                 } else if (WepMenu.unk_06 != 0) {
                     WepMenu.unk_02 = 9;
@@ -4266,17 +4262,14 @@ void WeaponMenuTagKey() {
                 WepMenu.unk_02 = 10;
                 WepMenu.board.cursor = (WepMenu.board.top_row + 2) * 5;
                 return;
-            case 1:
             case 0:
+            case 1:
                 WepMenu.unk_02 = 10;
                 WepMenu.board.cursor = (WepMenu.board.top_row + 2) * 5;
                 break;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuTagKey__Fv);
-#endif
 
 /**
  * Moves the cursor across the sockets of the selected weapon and fits or takes off the attachment held.

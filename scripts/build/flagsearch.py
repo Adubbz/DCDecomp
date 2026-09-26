@@ -55,6 +55,8 @@ def measure(source, ones, flag, image, ignore=(), shapes=None,
         out = {}
         for symbol, name in names.items():
             symbol = symbol.replace(stem[1], stem[0])
+            # Retail spells a template argument the way splat does.
+            name = name.replace('<1>', '_1_')
             try:
                 theirs = quicktu.retail_function(image, name)
             except SystemExit:

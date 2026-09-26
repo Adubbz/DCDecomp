@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+#include "menu_draw.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
@@ -38,16 +39,8 @@ struct MENU_ATORA_SEL {
     s16 map_no;    /**< Georama that the board shows. */
     s16 board_pos; /**< Board position of the part that the cursor is on. */
     s32 scroll_y;  /**< Where the board has scrolled to, as the pixel offset of its first row. */
-    u8 unk_14[4];
-    s32 unk_18;
-    u8 unk_1C[4];
-    s32 tip_pos; /**< Entry of the chip list that the cursor is on. */
-    float unk_24;
-    float unk_28;
-    s32 unk_2C;
-    u8 unk_30[0x10];
-    s16 *tip_list; /**< Chips that the player holds, as the chip list shows them. */
-    u8 unk_44[0x13A];
+    PERSONAL_BOARD board; /**< Board that lists the chips the player holds. */
+    u8 unk_174[0xA];
     s16 unk_17E;
     float cursor_x; /**< Where the board's cursor icon draws, from the left of the screen. */
     float cursor_y; /**< Where the board's cursor icon draws, from the top of the screen. */

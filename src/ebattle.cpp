@@ -593,13 +593,12 @@ void draw_ok_loop() {
  * @address 0x169490
  * @size 0x2A0
  */
-#ifdef NON_MATCHING
 static void draw_ok(int x) {
     static sceVu0FVECTOR dir[8] = {
-        {1.0f, 0.0f, 0.0f, 0.0f},   {1.0f, 1.0f, 0.0f, 0.0f},
-        {0.0f, 1.0f, 0.0f, 0.0f},   {-1.0f, 1.0f, 0.0f, 0.0f},
-        {-1.0f, 0.0f, 0.0f, 0.0f},  {-1.0f, -1.0f, 0.0f, 0.0f},
-        {0.0f, -1.0f, 0.0f, 0.0f},  {1.0f, -1.0f, 0.0f, 0.0f},
+        {1.0f, 0.0f, 0.0f, 0.0f},   {-1.0f, 0.0f, 0.0f, 0.0f},
+        {0.0f, 1.0f, 0.0f, 0.0f},   {0.0f, -1.0f, 0.0f, 0.0f},
+        {1.0f, 1.0f, 0.0f, 0.0f},   {1.0f, -1.0f, 0.0f, 0.0f},
+        {-1.0f, 1.0f, 0.0f, 0.0f},  {-1.0f, -1.0f, 0.0f, 0.0f},
     };
 
     if (ok_draw_cnt <= 0) {
@@ -616,9 +615,10 @@ static void draw_ok(int x) {
     }
     if ((ok_draw_cnt / 3) % 2 != 0) {
         int width = texel->width;
-        int left = 200 - (width >> 1);
+        int left = 200 - (int) (width >> 1);
         int height = texel->height;
-        CRect_i_ result_screen(left, 318 - height, width, height);
+        int top = 318 - height;
+        CRect_i_ result_screen(left, top, width, height);
 
         set2DSprite(GetVif1Packet(), tex2, result_screen, texel->x, texel->y);
     }
@@ -628,22 +628,26 @@ static void draw_ok(int x) {
     for (int i = 0; i < 8; ++i) {
         sceVu0Normalize(dir[i], dir[i]);
         sceVu0ScaleVector(offset, dir[i], 2.0f * (float) (30 - ok_draw_cnt));
-        int width = texel->width;
-        int half = width >> 1;
-        int left = base + (int) offset[0] - half;
-        int height = texel->height;
-        int top = (int) offset[1] + 0x160;
-        top = top - height - 2;
-        int alpha = 0x80 - (int) ((float) (30 - ok_draw_cnt * 2) * 128.0 / 30.0);
+        int half;
+        int left;
+        int top;
+        int alpha;
+        int height;
+        int width;
+        int bottom;
+        width = texel->width;
+        half = width >> 1;
+        left = base + (int) offset[0] - half;
+        bottom = (int) offset[1] + 0x160;
+        height = texel->height;
+        top = bottom - height - 2;
+        alpha = 0x80 - (int) ((float) (30 - ok_draw_cnt * 2) * 128.0 / 30.0);
         if (alpha > 0) {
             CRect_i_ screen(left, top, width, height);
             set2DSprite(GetVif1Packet(), tex, screen, spark_texel, (unsigned char) alpha);
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", draw_ok__Fi);
-#endif
 /**
  * Gives the scale a button prompt draws at while it flashes.
  *
