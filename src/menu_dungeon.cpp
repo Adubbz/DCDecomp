@@ -404,12 +404,12 @@ int SetAttachMentValue(int item_no, int slot, short level, ATTACH_LIST *) {
     }
     ATTACH_LIST *attachment = (ATTACH_LIST *) &SaveData->GetDngStatus()->consumable_items[slot];
     ATTACH_DATA *data = GetAttachData(item_no);
-    item_no = attachment->item_no;
-    if (item_no < ITEM_ATTACH_START || item_no >= ITEM_DUNGEON_START) {
+    int kind = attachment->item_no;
+    if (kind < ITEM_ATTACH_START || kind >= ITEM_DUNGEON_START) {
         return -1;
     }
     memset(attachment, 0, sizeof(ATTACH_LIST));
-    attachment->item_no = item_no;
+    attachment->item_no = kind;
     memcpy(attachment, data, sizeof(ATTACH_LIST));
     if (level <= 0) {
         level = 1;
@@ -417,8 +417,8 @@ int SetAttachMentValue(int item_no, int slot, short level, ATTACH_LIST *) {
     if (level > 3) {
         level = 3;
     }
-    if (item_no >= ITEM_ATTACH_ATTACK && item_no <= ITEM_ATTACH_MAGICAL_POWER) {
-        attachment->status[item_no - ITEM_ATTACH_ATTACK] += level;
+    if (kind >= ITEM_ATTACH_ATTACK && kind <= ITEM_ATTACH_MAGICAL_POWER) {
+        attachment->status[kind - ITEM_ATTACH_ATTACK] += level;
     }
     return 0;
 }
