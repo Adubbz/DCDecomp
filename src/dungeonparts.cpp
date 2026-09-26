@@ -507,7 +507,9 @@ int BtAtraFloorCyoice(int dungeon, int floor, int *atra) {
     return count;
 }
 #ifdef NON_MATCHING
-/** Gives a map part's collision model, or null for an empty cell. */
+/**
+ * Gives a map part's collision model, or null for an empty cell.
+ */
 static inline CFrame *PartsCollision(CDungeonMap *map, int parts_no) {
     if (parts_no == -1) {
         return NULL;
@@ -515,7 +517,9 @@ static inline CFrame *PartsCollision(CDungeonMap *map, int parts_no) {
     return map->parts[parts_no].collision;
 }
 
-/** Gives the quarter turns a map part's collision model is given, or 0 for an empty cell. */
+/**
+ * Gives the quarter turns a map part's collision model is given, or 0 for an empty cell.
+ */
 static inline int PartsCollisionTurn(CDungeonMap *map, int parts_no) {
     if (parts_no == -1) {
         return 0;

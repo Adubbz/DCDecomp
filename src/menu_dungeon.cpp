@@ -869,16 +869,24 @@ static void DrawDunEnterBack(int alpha) {
     MGFillBox(CRect_i_(0, 0, 0x2800, 0x1C00), 10, 10, 10, (alpha * 4) >> 7);
 }
 
-/** Texture block the character change menu loads its pictures into. */
+/**
+ * Texture block the character change menu loads its pictures into.
+ */
 extern s16 CharaChangeTexBlock;
 
-/** Set once the character change menu's files have been read. */
+/**
+ * Set once the character change menu's files have been read.
+ */
 extern s16 CharaChangeReadFlag;
 
-/** Buffer past the character change menu's pictures, where its models are read. */
+/**
+ * Buffer past the character change menu's pictures, where its models are read.
+ */
 extern u_long128 *chara_change_buf;
 
-/** Texture of the character change menu's portraits. */
+/**
+ * Texture of the character change menu's portraits.
+ */
 extern CTexture *QuickCharaTex;
 
 /**
@@ -1033,7 +1041,9 @@ int CharaChangeLoop(void) {
     return result;
 }
 
-/** Status of the party the character change menu picks from. */
+/**
+ * Status of the party the character change menu picks from.
+ */
 extern CDngStatusData *ChangeStatusDataPt;
 
 /**
@@ -1236,10 +1246,14 @@ int CharaChangeKey(void) {
     return result;
 }
 
-/** Screen position of the character change ring's centre. */
+/**
+ * Screen position of the character change ring's centre.
+ */
 extern int QuickCharaPos[2];
 
-/** Radius of the character change ring, which grows while the ring turns. */
+/**
+ * Radius of the character change ring, which grows while the ring turns.
+ */
 extern float changeMenu_long;
 
 /**
@@ -1416,7 +1430,9 @@ int DngActItemModelReadStart(u_long128 *buffer) {
     return 0;
 }
 
-/** Quick-use item slots and the models they draw with. */
+/**
+ * Quick-use item slots and the models they draw with.
+ */
 extern "C" CActiveItemPack activeItem;
 
 int DngActItemModelBuild(int wait) {
@@ -1665,10 +1681,14 @@ int InitItemPolygonView(int item_no, u_long128 *buffer) {
     return 0;
 }
 
-/** Buffer the item preview's model is read into. */
+/**
+ * Buffer the item preview's model is read into.
+ */
 extern CDataAlloc2<1> MenuItemCashBuffer;
 
-/** Name of the frame-buffer texture the item preview's pictures are drawn into. */
+/**
+ * Name of the frame-buffer texture the item preview's pictures are drawn into.
+ */
 extern char item_view_frame_image[];
 
 static int EnterItemPolygonView(void) {
@@ -1871,13 +1891,19 @@ void DebugItemGetDraw(void) {
     }
 }
 
-/** Submode the battle menu runs in. */
+/**
+ * Submode the battle menu runs in.
+ */
 extern s32 BtlMenuMode;
 
-/** Debug text the dungeon menus print their item data into. */
+/**
+ * Debug text the dungeon menus print their item data into.
+ */
 extern CDebugFont MenuDbgMsg;
 
-/** Formats of the lines the item data view prints. */
+/**
+ * Formats of the lines the item data view prints.
+ */
 extern char *ItemTemplete[];
 
 static void DrawItemDataView(int item_no) {

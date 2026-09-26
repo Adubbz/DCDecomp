@@ -483,7 +483,9 @@ int CEditGround::SetFocusParts(float x, float y, float z) {
     return focus_parts_id;
 }
 
-/* The size of a number, whatever its sign. */
+/**
+ * Returns the absolute value of a floating-point number.
+ */
 static inline float Magnitude(float value) {
     return value < 0.0f ? -value : value;
 }

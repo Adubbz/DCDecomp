@@ -104,10 +104,14 @@ extern OPENING_BOOK OpenBook;
 /** The name currently being edited. */
 extern "C" s16 *CharaName;
 
-/** The work area the storybook hands to the name-entry screen once its pages are read. */
+/**
+ * The work area the storybook hands to the name-entry screen once its pages are read.
+ */
 extern u_long128 *OpeningReadBuf;
 
-/** The message window font's texture work area. */
+/**
+ * The message window font's texture work area.
+ */
 extern u8 MesWinTexBuff_02[0x100];
 
 /**

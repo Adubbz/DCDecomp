@@ -1076,28 +1076,44 @@ int SaveEnableCheck(void) {
     return 1;
 }
 
-/** Screen y of the event item board's scroll bar, eased toward its target. */
+/**
+ * Screen y of the event item board's scroll bar, eased toward its target.
+ */
 extern float EventBarY;
 
-/** The item pack the event item selection menu lists. */
+/**
+ * The item pack the event item selection menu lists.
+ */
 extern ITEM_PACK *EventItemPackPt;
 
-/** Screen position of the event item selection board's top left corner. */
+/**
+ * Screen position of the event item selection board's top left corner.
+ */
 extern float EventBoardPos[2];
 
-/** Screen position of the event item cursor's highlight, eased toward the cursor. */
+/**
+ * Screen position of the event item cursor's highlight, eased toward the cursor.
+ */
 extern float MiniCur[2];
 
-/** Screen y of the event item board's first row, eased toward the scroll row. */
+/**
+ * Screen y of the event item board's first row, eased toward the scroll row.
+ */
 extern int EventItemMoveY;
 
-/** Nonzero once the event item selection menu's textures have loaded. */
+/**
+ * Nonzero once the event item selection menu's textures have loaded.
+ */
 extern int MiniEventTexReadFlag;
 
-/** Board texture of the event item selection menu. */
+/**
+ * Board texture of the event item selection menu.
+ */
 extern CTexture *MiniEventBoard;
 
-/** Board texture of the fish food selection menu. */
+/**
+ * Board texture of the fish food selection menu.
+ */
 extern CTexture *FishFoodBoard;
 
 void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, int vanish, int fish_mode) {
@@ -1356,10 +1372,14 @@ static void DrawEventAndFishMenuBoard_Ver(CTexture *texture, CRect_i_ rect, int 
     DrawMenu2DSprite(texture, CRect_i_(rect.x, y, rect.width, 0x1E), CRect_i_(u, 0xC6, width, 0x1E), alpha);
 }
 
-/** Extra height of the event item board in each menu language. */
+/**
+ * Extra height of the event item board in each menu language.
+ */
 extern s8 kakudai_tate_lang[7];
 
-/** Extra width of the event item board's side pieces in each menu language. */
+/**
+ * Extra width of the event item board's side pieces in each menu language.
+ */
 extern s8 kakudai_yoko_lang[7];
 
 static void DrawEventAndFishMenuBoard(CTexture *texture, int x, int y, int alpha, int lang) {

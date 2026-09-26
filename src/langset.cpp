@@ -95,7 +95,9 @@ int LangsetProc(void) {
     return 0;
 }
 
-/** Fills in a rectangle's position and size. */
+/**
+ * Fills in a rectangle's position and size.
+ */
 static inline void SetRect(RECT *rect, int x, int y, int width, int height) {
     rect->x = x;
     rect->y = y;

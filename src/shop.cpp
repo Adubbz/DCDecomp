@@ -98,7 +98,9 @@ extern CMenuItemStep ItemVolumeStep;
 /** Arena the shopkeeper's model and the item shop's board tables are read into. */
 extern CDataAlloc2<1> ShopCashBuffer;
 
-/** Arena the shopkeeper's model data is built in, carved from the menu buffer past ShopCashBuffer. */
+/**
+ * Arena the shopkeeper's model data is built in, carved from the menu buffer past ShopCashBuffer.
+ */
 extern CDataAlloc2<1> ShopCashBuffer2;
 
 /** Texture the shop board frame, tags and tickets are drawn from. */
@@ -4678,7 +4680,9 @@ void InitFishingExchange(u_long128 *buffer, int *texture_blocks, int mode) {
     GamePad.MenuModeOn(0x78);
 }
 
-/** The fishing screens' frame-buffer backdrop and message pack, shared by FishMenuTextureLoad and FishRecordTextureEnter. */
+/**
+ * The fishing screens' frame-buffer backdrop and message pack, shared by FishMenuTextureLoad and FishRecordTextureEnter.
+ */
 extern char FishFrameImage[];
 extern char FishMessageFile[];
 

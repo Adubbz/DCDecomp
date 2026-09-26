@@ -124,7 +124,9 @@ void DebugInfomationInit(void) {
     DebugStatus[20] = 0;
 }
 
-/** Empties every runtime event record of the event manager. */
+/**
+ * Resets every runtime event record of the event manager to an idle, unheld state.
+ */
 static inline void ClearEventData(CDungeonEventMan *event_man) {
     int i;
 
@@ -139,7 +141,9 @@ static inline void ClearEventData(CDungeonEventMan *event_man) {
     }
 }
 
-/** Frees the floor's event places, treasure boxes, atla balls and room links. */
+/**
+ * Marks the floor's event places, treasure boxes, atla balls and room links unused and resets their counts.
+ */
 static inline void ClearMapEvent(CDungeonMap *map) {
     int i;
 

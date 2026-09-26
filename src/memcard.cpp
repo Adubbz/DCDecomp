@@ -87,7 +87,9 @@ extern CEditPartsInfo BtEditPartsInfo;
 
 extern u8 MesWinTexBuff_12[0x100];
 
-/** The four lettering textures that the save file boards draw with. */
+/**
+ * The four lettering textures that the save file boards draw with.
+ */
 extern CTexture *SaveMenuMojiTextbl[4];
 
 #ifdef NON_MATCHING // draft declarations
@@ -2028,7 +2030,9 @@ static int AtoraTextureEnter() {
     return 1;
 }
 
-/** The chip group that the board's sort ranks first. */
+/**
+ * The chip group that the board's sort ranks first.
+ */
 int tip_sort_type = 1;
 
 /** The rank that the board's sort gives each chip group, by group. */

@@ -4597,7 +4597,9 @@ static int _GET_TALKNPC_STATUS(RS_STACKDATA *stack, int) {
 }
 
 static int _SET_TALK_CAMERA(RS_STACKDATA *stack, int) {
-    /** Camera offsets from the speakers' midpoint for each of the three talk-camera views. */
+    /**
+     * Camera offsets from the speakers' midpoint for each of the three talk-camera views.
+     */
     static sceVu0FVECTOR vv[3] = {
         {-18.8f, 7.1f, -21.3f, 1.0f},
         {21.0f, 6.5f, -5.7f, 1.0f},
@@ -7265,7 +7267,9 @@ static inline void EdCloseTalkMes() {
  * @size 0xEBC
  */
 int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selection) {
-    /** Camera offsets from the speakers' midpoint for each of the three talk-camera views. */
+    /**
+     * Camera offsets from the speakers' midpoint for each of the three talk-camera views.
+     */
     static sceVu0FVECTOR vv[3] = {
         {-18.8f, 7.1f, -21.3f, 1.0f},
         {21.0f, 6.5f, -5.7f, 1.0f},

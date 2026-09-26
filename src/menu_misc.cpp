@@ -107,7 +107,9 @@ extern s16 DngEscapeEndFlag;
 /** The darkness drawn over the dungeon escape prompt, from 0 (none) to 0x80 (black). */
 s16 DngEscapeAlpha = 0x80;
 
-/** The dungeon escape prompt's chosen answer, 1 or 2. */
+/**
+ * The dungeon escape prompt's chosen answer, 1 or 2.
+ */
 s16 DngEscapeSelect = 1;
 
 extern CDataAlloc2<1> MenuExCashBuffer;

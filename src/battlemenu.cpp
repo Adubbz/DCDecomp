@@ -8471,6 +8471,9 @@ void MenuClsMes::Step() {
 }
 
 #ifdef NON_MATCHING
+/**
+ * Shifts a message line's x left by five pixels for each of its characters.
+ */
 static inline int MesLineX(int x, int len) {
     return x - len * 5;
 }

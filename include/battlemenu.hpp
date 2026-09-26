@@ -159,7 +159,9 @@ struct MENU_ICON_POS {
 
 STATIC_ASSERT(sizeof(MENU_ICON_POS) == 0x8);
 
-/** Buffer the weapon menu's level-up, build-up and repair effects are read into. */
+/**
+ * Buffer the weapon menu's level-up, build-up and repair effects are read into.
+ */
 extern CWeaponLevelUp *WepMenuEffectReadBuf;
 
 /**

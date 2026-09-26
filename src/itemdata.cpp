@@ -105,7 +105,9 @@ extern int filePathNum;
 extern int filePathColNum;
 extern int nowPartsCnt__2;
 
-/** Frame animations the map parts declare, and how many are in use. */
+/**
+ * Frame animations the map parts declare, and how many are in use.
+ */
 extern OBJ_ANIME_SEQ FrameObjAnim[48];
 extern int FrameObjAnimCnt;
 

@@ -143,7 +143,9 @@ extern char **interior_name;
 extern int bgm_play_flag;
 extern int bgm_play_start;
 
-/** Buffer the map's part archive is read into. */
+/**
+ * Buffer the map's part archive is read into.
+ */
 extern u_int *parts_read_buffer;
 
 /* The arenas the map's own data is carved out of. */
