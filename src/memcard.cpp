@@ -1310,6 +1310,7 @@ void DrawAtraBuildNum(EDITPARTS_INFO *info, int x, int y, int alpha) {
     DrawMenu2DSprite(StayTex, CRect_i_(num_x - 10, y + 5, 12, 12), CRect_i_(120, digit.y, 12, 12), alpha);
     DrawMenuNumber(info->stock - info->placed, num_x - 7, y + 5, StayTex, digit, 1, alpha);
 }
+
 void DrawAtora(int x, int y, int parts_index, int alpha) {
     int u;
     int v;
@@ -3103,6 +3104,7 @@ int MenuOptionKey() {
     }
     return result;
 }
+
 void DrawMenuOption() {
     setbilinear(0);
     if (OptionMenu.texture_ready == 0) {
@@ -3480,6 +3482,7 @@ int MenuSaveKey() {
     }
     return SaveMenu.result;
 }
+
 void DrawMenuSave(char *) {
     if (SaveMenu.texture_ready == 0) {
         return;
