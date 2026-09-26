@@ -29,6 +29,9 @@ extern "C" void abort(void);
 extern "C" void free(void *storage);
 extern "C" void *__vt__Q23std9exception[];
 extern "C" void *__vt__Q23std13bad_exception[];
+/* What std::exception::what and std::bad_exception::what return. */
+extern const char ExceptionWhat[];
+extern const char BadExceptionWhat[];
 extern "C" __declspec(data) void (*thandler__3std)(void);
 extern "C" __declspec(data) void (*uhandler__3std)(void);
 extern "C" __declspec(data) MWGlobalDestructor *__global_destructor_chain;
@@ -193,16 +196,19 @@ void __dl(void *storage) throw() {
  * @address 0x122590
  * @size 0x6C
  */
-#ifdef NON_MATCHING
 #pragma schedule on
 #pragma exceptions on
-inline std::exception::~exception() throw() {
+extern "C" void *__dt__Q23std9exceptionFv(void **self, short flag) throw() {
+    if (self != NULL) {
+        *self = __vt__Q23std9exception;
+        if (flag > 0) {
+            __dl(self);
+        }
+    }
+    return self;
 }
 #pragma exceptions reset
 #pragma schedule reset
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", __dt__Q23std9exceptionFv);
-#endif
 /**
  * Gives a `std::exception`'s description.
  *
@@ -210,16 +216,12 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __dt__Q23std9exceptionFv);
  * @address 0x122600
  * @size 0xC
  */
-#ifdef NON_MATCHING
 #pragma schedule on
 extern "C" const char *what__Q23std9exceptionCFv(const void *exception) {
     (void) exception;
-    return "exception";
+    return ExceptionWhat;
 }
 #pragma schedule reset
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", what__Q23std9exceptionCFv);
-#endif
 /**
  * Reports whether a thrown type matches a catch clause's type.
  *
@@ -512,16 +514,22 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __unexpected);
  * @address 0x122D00
  * @size 0x84
  */
-#ifdef NON_MATCHING
 #pragma schedule on
 #pragma exceptions on
-std::bad_exception::~bad_exception() throw() {
+extern "C" void *__dt__Q23std13bad_exceptionFv(void **self, short flag) throw() {
+    if (self != NULL) {
+        *self = __vt__Q23std13bad_exception;
+        if (self != NULL) {
+            *self = __vt__Q23std9exception;
+        }
+        if (flag > 0) {
+            __dl(self);
+        }
+    }
+    return self;
 }
 #pragma exceptions reset
 #pragma schedule reset
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", __dt__Q23std13bad_exceptionFv);
-#endif
 /**
  * Gives a `std::bad_exception`'s description.
  *
@@ -529,16 +537,12 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __dt__Q23std13bad_exceptionFv);
  * @address 0x122D90
  * @size 0xC
  */
-#ifdef NON_MATCHING
 #pragma schedule on
 extern "C" const char *what__Q23std13bad_exceptionCFv(const void *exception) {
     (void) exception;
-    return "bad_exception";
+    return BadExceptionWhat;
 }
 #pragma schedule reset
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", what__Q23std13bad_exceptionCFv);
-#endif
 
 /**
  * Starts the MetroWerks runtime.

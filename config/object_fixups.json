@@ -1271,7 +1271,11 @@
       ".exception",
       ".exceptix",
       ".rel.exceptix"
-    ]
+    ],
+    "symbols": {
+      "ExceptionWhat": "@245",
+      "BadExceptionWhat": "@1039"
+    }
   },
   "src/mglib.cpp": {
     "symbols": {
