@@ -645,7 +645,12 @@ static void RestoreVillagerInfo(VILLAGER_INFO *villagers) {
 }
 
 /**
- * Chooses the villagers placed on the map for the given time, returning the number of slots filled.
+ * Chooses the villagers on the map for the given time and fills the villager table.
+ *
+ * @mangled EdSelectVillager__FP13VILLAGER_INFOfP13EDIT_MAP_INFO
+ * @address 0x1857E0
+ * @size 0x30C
+ * @note Returns the copy loop's final counter (10); callers ignore it.
  */
 int EdSelectVillager(VILLAGER_INFO *villagers, float clock, EDIT_MAP_INFO *map_info) {
     EdInitVillagerTable(clock, map_info);
