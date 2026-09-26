@@ -69,6 +69,11 @@ extern float UkiGroundLevel;
 extern float HookGroundLevel;
 
 /**
+ * The ground height the whole line rests on, the lower of the float and hook heights.
+ */
+extern float LineGroundLevel;
+
+/**
  * The fish fighting the line, or null when none is.
  */
 extern CFish *BattleFish;
@@ -831,51 +836,42 @@ int FishingCheckUkiHook() {
  * @address 0x1AA340
  * @size 0xDA8
  */
-#ifdef NON_MATCHING
-extern float LineGroundLevel;
-
 void FishLineStep(float *rod_position, float *unused) {
-    sceVu0FVECTOR from;
-    sceVu0FVECTOR to;
+    sceVu0FVECTOR hook_from;
+    sceVu0FVECTOR hook_to;
+    sceVu0FVECTOR uki_from;
+    sceVu0FVECTOR uki_to;
     sceVu0FVECTOR hit;
     sceVu0FVECTOR normal;
-    sceVu0FVECTOR delta;
-    sceVu0FVECTOR move_a;
-    sceVu0FVECTOR move_b;
-    int i;
-    int iteration;
+    sceVu0FVECTOR diff;
+    sceVu0FVECTOR move0;
+    sceVu0FVECTOR move1;
     float water;
-    float pull;
+    float weight;
+    int i;
+    int k;
 
     if (cpoly != NULL) {
-        int poly;
-
-        sceVu0CopyVector(from, point[23]);
-        sceVu0CopyVector(to, point[23]);
-        from[1] += 40.0f;
-        to[1] -= 40.0f;
-        poly = CheckHit(cpoly, cpoly_num, from, to, hit, 1, 0);
-        if (poly >= 0) {
-            sceVu0Normalize(normal, cpoly[poly].normal);
-            float slope = normal[1];
-            if (slope < 0.0f) {
-                slope = -slope;
-            }
+        sceVu0CopyVector(hook_from, point[23]);
+        sceVu0CopyVector(hook_to, point[23]);
+        hook_from[1] += 40.0f;
+        hook_to[1] -= 40.0f;
+        int hit_no = CheckHit(cpoly, cpoly_num, hook_from, hook_to, hit, 1, 0);
+        if (hit_no >= 0) {
+            sceVu0Normalize(normal, cpoly[hit_no].normal);
+            float slope = normal[1] < 0.0f ? -normal[1] : normal[1];
             if (slope > 0.2f) {
                 HookGroundLevel = 0.2f + hit[1];
             }
         }
-        sceVu0CopyVector(from, point[18]);
-        sceVu0CopyVector(to, point[18]);
-        from[1] += 40.0f;
-        to[1] -= 40.0f;
-        poly = CheckHit(cpoly, cpoly_num, from, to, hit, 1, 0);
-        if (poly >= 0) {
-            sceVu0Normalize(normal, cpoly[poly].normal);
-            float slope = normal[1];
-            if (slope < 0.0f) {
-                slope = -slope;
-            }
+        sceVu0CopyVector(uki_from, point[18]);
+        sceVu0CopyVector(uki_to, point[18]);
+        uki_from[1] += 40.0f;
+        uki_to[1] -= 40.0f;
+        hit_no = CheckHit(cpoly, cpoly_num, uki_from, uki_to, hit, 1, 0);
+        if (hit_no >= 0) {
+            sceVu0Normalize(normal, cpoly[hit_no].normal);
+            float slope = normal[1] < 0.0f ? -normal[1] : normal[1];
             if (slope > 0.2f) {
                 UkiGroundLevel = 1.0f + hit[1];
             }
@@ -887,74 +883,78 @@ void FishLineStep(float *rod_position, float *unused) {
         LineGroundLevel = HookGroundLevel;
     }
     water = WaterLevel;
+
     sceVu0CopyVector(rod_top, rod_position);
     rod_top[3] = 1.0f;
     fishhook[3] = 1.0f;
-
     for (i = 0; i < 24; i++) {
         velo[i][1] += -0.1f;
         velo[i][3] = 0.0f;
         sceVu0AddVector(point[i], point[i], velo[i]);
     }
-    pull = pull_hook;
-    point[23][1] += pull;
+    weight = pull_hook;
+    point[23][1] += weight;
     for (i = 0; i < 3; i++) {
-        hookv[i][1] += -0.1f + pull;
+        hookv[i][1] += -0.1f + weight;
         hookv[i][3] = 0.0f;
         sceVu0AddVector(hookp[i], hookp[i], hookv[i]);
     }
     for (i = 0; i < 4; i++) {
-        ukiv[i][1] += -0.1f + pull;
+        ukiv[i][1] += -0.1f + weight;
         ukiv[i][3] = 0.0f;
         sceVu0AddVector(ukip[i], ukip[i], ukiv[i]);
     }
 
-    for (iteration = 0; iteration < 16; iteration++) {
+    for (k = 0; k < 16; k++) {
         sceVu0CopyVector(point[0], rod_top);
         sceVu0CopyVector(old_p[0], rod_top);
         for (i = 1; i < 24; i++) {
-            float rate = 0.5f;
+            weight = 0.5f;
             if (i == 23) {
-                rate = 0.9f;
+                weight = 0.9f;
             }
-            sceVu0SubVector(delta, point[i - 1], point[i]);
-            float length = DistVector(delta);
+            float rest = 1.0f - weight;
+            float *near = point[i - 1];
+            float *far = point[i];
+            sceVu0SubVector(diff, near, far);
+            float length = DistVector(diff);
             float stretch = length - distp;
-            sceVu0ScaleVector(move_a, delta, ((1.0f - rate) * stretch) / length);
-            sceVu0ScaleVector(move_b, delta, (rate * stretch) / length);
-            sceVu0SubVector(point[i - 1], point[i - 1], move_a);
-            sceVu0AddVector(point[i], point[i], move_b);
+            float scale = rest * stretch / length;
+            weight = weight * stretch / length;
+            sceVu0ScaleVector(move0, diff, scale);
+            sceVu0ScaleVector(move1, diff, weight);
+            sceVu0SubVector(near, near, move0);
+            sceVu0AddVector(far, far, move1);
         }
-
         sceVu0CopyVector(hookp[0], point[23]);
         for (i = 0; i < 3; i++) {
-            sceVu0SubVector(delta, hookp[hook_link[i][0]], hookp[hook_link[i][1]]);
-            float length = DistVector(delta);
-            sceVu0ScaleVector(move_a, delta, (0.5f * (length - hook_dist[i])) / length);
-            sceVu0SubVector(hookp[hook_link[i][0]], hookp[hook_link[i][0]], move_a);
-            sceVu0AddVector(hookp[hook_link[i][1]], hookp[hook_link[i][1]], move_a);
+            sceVu0SubVector(diff, hookp[hook_link[i][0]], hookp[hook_link[i][1]]);
+            float length = DistVector(diff);
+            sceVu0ScaleVector(move0, diff, 0.5f * (length - hook_dist[i]) / length);
+            sceVu0SubVector(hookp[hook_link[i][0]], hookp[hook_link[i][0]], move0);
+            sceVu0AddVector(hookp[hook_link[i][1]], hookp[hook_link[i][1]], move0);
         }
-
-        sceVu0SubVector(delta, point[18], ukip[0]);
-        float length = DistVector(delta);
-        float uki_rate = (length * 0.2f) / length;
-        sceVu0ScaleVector(move_a, delta, (length * 0.8f) / length);
-        sceVu0ScaleVector(move_b, delta, uki_rate);
-        sceVu0SubVector(point[18], point[18], move_a);
-        sceVu0AddVector(ukip[0], ukip[0], move_b);
+        sceVu0SubVector(diff, point[18], ukip[0]);
+        float length = DistVector(diff);
+        weight = 0.2f;
+        float scale = length * (1.0f - weight) / length;
+        weight = length * weight / length;
+        sceVu0ScaleVector(move0, diff, scale);
+        sceVu0ScaleVector(move1, diff, weight);
+        sceVu0SubVector(point[18], point[18], move0);
+        sceVu0AddVector(ukip[0], ukip[0], move1);
         for (i = 0; i < 6; i++) {
-            sceVu0SubVector(delta, ukip[uki_link[i][0]], ukip[uki_link[i][1]]);
-            float link_length = DistVector(delta);
-            sceVu0ScaleVector(move_a, delta, (0.5f * (link_length - uki_dist[i])) / link_length);
-            sceVu0SubVector(ukip[uki_link[i][0]], ukip[uki_link[i][0]], move_a);
-            sceVu0AddVector(ukip[uki_link[i][1]], ukip[uki_link[i][1]], move_a);
+            sceVu0SubVector(diff, ukip[uki_link[i][0]], ukip[uki_link[i][1]]);
+            float length = DistVector(diff);
+            sceVu0ScaleVector(move0, diff, 0.5f * (length - uki_dist[i]) / length);
+            sceVu0SubVector(ukip[uki_link[i][0]], ukip[uki_link[i][0]], move0);
+            sceVu0AddVector(ukip[uki_link[i][1]], ukip[uki_link[i][1]], move0);
         }
-
-        if (set_hook_pos != 0) {
+        if (set_hook_pos) {
             sceVu0CopyVector(point[23], fishhook);
             sceVu0CopyVector(hookp[0], fishhook);
         }
-        if (set_uki_pos != 0) {
+        if (set_uki_pos) {
             sceVu0CopyVector(point[18], uki);
             sceVu0CopyVector(ukip[0], uki);
         }
@@ -981,7 +981,6 @@ void FishLineStep(float *rod_position, float *unused) {
         }
         sceVu0CopyVector(old_p[i], point[i]);
     }
-
     for (i = 0; i < 3; i++) {
         sceVu0SubVector(hookv[i], hookp[i], hookop[i]);
         if (hookp[i][1] < HookGroundLevel) {
@@ -993,7 +992,6 @@ void FishLineStep(float *rod_position, float *unused) {
         sceVu0CopyVector(hookop[i], hookp[i]);
         sceVu0ScaleVector(hookv[i], hookv[i], 0.99f);
     }
-
     for (i = 0; i < 4; i++) {
         sceVu0SubVector(ukiv[i], ukip[i], ukiop[i]);
         if (ukip[i][1] < UkiGroundLevel) {
@@ -1008,47 +1006,30 @@ void FishLineStep(float *rod_position, float *unused) {
         }
         if (ukip[0][1] < water && !(ukip[i][1] < water)) {
             float height = ukip[0][1] - ukip[i][1];
-            float distance = height;
-            if (height < 0.0f) {
-                distance = -height;
-            }
+            float depth = ukip[0][1] - ukip[i][1];
+            height = depth < 0.0f ? -depth : height;
             ukiv[i][0] *= 0.6f;
             ukiv[i][2] *= 0.6f;
-            if (height < 0.0f) {
-                height = -height;
-            }
-            if (height > 0.001f) {
-                ukiv[i][1] += (0.3f * (water - ukip[0][1])) / distance;
+            if ((depth < 0.0f ? -depth : depth) > 0.001f) {
+                ukiv[i][1] += 0.3f * (water - ukip[0][1]) / height;
             }
         }
-        float height = ukip[i][1];
-        if (height < water && !(ukip[0][1] < water)) {
-            float distance = height - ukip[0][1];
-            if (distance < 0.0f) {
-                distance = -distance;
-            }
-            float gap = ukip[0][1] - height;
-            if (gap < 0.0f) {
-                gap = -gap;
-            }
-            if (gap > 0.001f) {
-                ukiv[i][1] += (0.3f * (water - height)) / distance;
+        if (ukip[i][1] < water && !(ukip[0][1] < water)) {
+            float height = ukip[i][1] - ukip[0][1];
+            height = height < 0.0f ? -height : height;
+            float depth = ukip[0][1] - ukip[i][1];
+            if ((depth < 0.0f ? -depth : depth) > 0.001f) {
+                ukiv[i][1] += 0.3f * (water - ukip[i][1]) / height;
             }
         }
         sceVu0CopyVector(ukiop[i], ukip[i]);
         sceVu0ScaleVector(ukiv[i], ukiv[i], 0.999f);
     }
-
-    UkiGroundLevel = GroundLevel;
-    HookGroundLevel = GroundLevel;
-    LineGroundLevel = GroundLevel;
+    LineGroundLevel = HookGroundLevel = UkiGroundLevel = GroundLevel;
     set_uki_pos = 0;
     set_hook_pos = 0;
     pull_hook = 0.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/fishing", FishLineStep__FPfPf);
-#endif
 
 void FishLineDraw(int above_water) {
     int screen[4];
