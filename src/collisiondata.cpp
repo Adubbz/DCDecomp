@@ -90,7 +90,6 @@ INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1631);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1632__2);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1633);
 
-#ifdef NON_MATCHING
 /**
  * Clears the debug overlay's state.
  *
@@ -99,22 +98,28 @@ INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1633);
  * @size 0xC8
  */
 void DebugInfomationInit(void) {
-    for (int i = 0; i < 21; i++) {
-        DebugStatus[i] = 0;
-    }
+    DebugStatus[0] = 0;
+    DebugStatus[1] = 0;
+    DebugStatus[2] = 0;
+    DebugStatus[3] = 0;
     DebugStatus[5] = 1;
+    DebugStatus[6] = 0;
+    DebugStatus[4] = 0;
+    DebugStatus[7] = 0;
     DebugStatus[8] = 150;
     DebugStatus[9] = -1;
+    DebugStatus[10] = 0;
     DebugStatus[11] = 100;
+    DebugStatus[12] = 0;
     DebugStatus[13] = 16;
+    DebugStatus[14] = 0;
     DebugStatus[15] = 16;
+    DebugStatus[16] = 0;
+    DebugStatus[17] = 0;
     DebugStatus[18] = 400;
     DebugStatus[19] = 1;
-    DebugInfoNowCursor = 0;
+    DebugStatus[20] = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/collisiondata", DebugInfomationInit__Fv);
-#endif
 
 #ifdef NON_MATCHING
 /**
