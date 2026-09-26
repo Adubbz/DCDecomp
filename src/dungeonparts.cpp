@@ -138,6 +138,7 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
     int i;
     s16 *table;
 
+    // Retail copies from the pointer table itself rather than from the dungeon's rate list.
     memcpy(rate, &ItemSetRateTbl[dungeon], 0x17C);
     // Weapons the player already holds come up less often.
     for (i = 0x101; i < 0x17C; i++) {
