@@ -24,59 +24,77 @@
 static int CheckDelete(CEditArea *area, CMapParts *parts, float x, float y, float z);
 
 #ifdef NON_MATCHING
-int CEditGround::SetMapParts(int plot, float x, float y, float z, int rot_y) {
-    CVector3_f_ cell;
-    sceVu0FVECTOR position;
-    int removed_plot;
-    int removed_rot;
+int CEditGround::SetMapParts(int parts_no, float x, float y, float z, int rot_y) {
+    CVector3_f_ grid;
+    int area_no;
+    int size[2];
+    int deleted_parts_no;
+    int deleted_rot_y;
+    int width;
+    int height;
+    int i;
+    int j;
+    CMapParts *source;
+    int parts_id;
+    CEditArea **slot;
+    CMapParts *target;
+    CEditArea *area;
+    int placeable;
+    EDITPARTS_INFO *info;
 
-    if (CheckEffect() != 0) {
+    if (CheckEffect()) {
         return -1;
     }
-    if (plot < 0 || plot >= 24) {
+    if (parts_no < 0 || parts_no >= 24) {
         return -1;
     }
     if (plot_parts == NULL) {
         return -1;
     }
-    CMapParts *source = &plot_parts[plot];
+    source = &plot_parts[parts_no];
     if (source->handle < 0) {
         return -1;
     }
-    int area_code = GetAreaCode(x, y, z);
-    if (area_code < 0) {
+    area_no = GetAreaCode(x, y, z);
+    if (area_no < 0) {
         return -1;
     }
-    CEditArea *area = areas[area_code];
+    slot = &areas[area_no];
+    area = *slot;
     if (source->info == NULL) {
         return -1;
     }
-    int fits = area->CheckParts(source, x, y, z, rot_y);
-    CMapParts *slot = &parts[0];
-    int id = -1;
-    if (source->subtype == 5 || source->subtype == 3) {
-        // A bridge or a crossing replaces the river or road piece beneath it.
-        id = area->SearchPartsID(x, y, z);
-        if (id >= 0 && CheckDelete(area, source, x, y, z) == 0) {
-            if (parts[id].subtype != 2 || parts[id].subtype != 1) {
-                if (!(parts[id].subtype == 2 && parts[id].handle == 1)) {
+    placeable = area->CheckParts(source, x, y, z, rot_y);
+    target = parts;
+    parts_id = -1;
+    switch (source->subtype) {
+        case 3:
+        case 5:
+            // A bridge or a crossing replaces the river or road piece beneath it.
+            parts_id = (*slot)->SearchPartsID(x, y, z);
+            if (parts_id >= 0 && CheckDelete(area, source, x, y, z) == 0) {
+                if (parts[parts_id].subtype == 2 && parts[parts_id].handle == 1) {
+                    target = &parts[parts_id];
+                    rot_y = target->GetRotY();
+                    if (source->subtype != 5) {
+                        source = &river_parts[6];
+                    }
+                    parts_no = source->parts_no;
+                } else {
                     return -1;
                 }
+            } else if (source->subtype != 1) {
+                return -1;
             }
-            slot = &parts[id];
-            rot_y = slot->GetRotY();
-            if (source->subtype != 5) {
-                source = &river_parts[6];
+            break;
+        default:
+            if (placeable == 0) {
+                return parts_id;
             }
-            plot = source->parts_no;
-        } else if (source->subtype != 1) {
-            return -1;
-        }
-    } else if (fits == 0) {
-        return -1;
+            break;
     }
     if (parts_info != NULL) {
-        EDITPARTS_INFO *info = parts_info->GetPartsInfo(plot);
+        info = parts_info->GetPartsInfo(parts_no);
         if (info != NULL) {
             if (info->placed == info->stock) {
                 return -1;
@@ -84,65 +102,65 @@ int CEditGround::SetMapParts(int plot, float x, float y, float z, int rot_y) {
             info->placed++;
         }
     }
-    if (id < 0) {
-        for (id = 0; id < 128; id++, slot++) {
-            if (slot->handle < 0) {
+    if (parts_id < 0) {
+        for (parts_id = 0; parts_id < 128; target++, parts_id++) {
+            if (target->handle < 0) {
                 break;
             }
         }
-        if (id == 128) {
+        if (parts_id == 128) {
             return -1;
         }
     }
-    if (fits != 0 && source->subtype != 1) {
-        int width = source->GetWidth();
-        int height = source->GetHeight();
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                float cell_x = x - (float) ((width >> 1) - i) * area->GetUnitSize();
-                float cell_z = z - (float) ((height >> 1) - j) * area->GetUnitSize();
+    if (placeable != 0 && source->subtype != 1) {
+        size[0] = source->GetWidth();
+        size[1] = source->GetHeight();
+        for (i = 0; i < size[0]; i++) {
+            for (j = 0; j < size[1]; j++) {
+                float cell_x = x - (float) ((size[0] >> 1) - i) * area->GetUnitSize();
+                float cell_z = z - (float) ((size[1] >> 1) - j) * area->GetUnitSize();
                 if (area->SearchPartsExtra(cell_x, y, cell_z) == 1) {
-                    DeleteMapParts(&removed_plot, &removed_rot, cell_x, y, cell_z);
+                    DeleteMapParts(&deleted_parts_no, &deleted_rot_y, cell_x, y, cell_z);
                 }
             }
         }
     }
-    memcpy(slot, source, sizeof(CMapParts));
-    slot->SetRotY(rot_y);
-    area->GetGrid(&cell, x, y, z);
-    int width = source->GetWidth();
-    int height = source->GetHeight();
+    memcpy(target, source, sizeof(CMapParts));
+    target->SetRotY(rot_y);
+    (*slot)->GetGrid(&grid, x, y, z);
+    width = source->GetWidth();
+    height = source->GetHeight();
     if (width % 2 == 1) {
-        cell.x += 0.5f * area->GetUnitSize();
+        grid.x += 0.5f * (*slot)->GetUnitSize();
     }
     if (height % 2 == 1) {
-        cell.z += 0.5f * area->GetUnitSize();
+        grid.z += 0.5f * (*slot)->GetUnitSize();
     }
-    cell.y = area->GetAlt(cell.x, cell.y, cell.z);
-    slot->unit_size = area->GetUnitSize();
-    position[0] = cell.x;
-    position[1] = cell.y;
-    position[2] = cell.z;
-    position[3] = 1.0f;
-    slot->SetPosition(position);
-    slot->SetRotY(rot_y);
-    slot->area = area_code;
-    area->SetMapParts(id, parts, x, y, z, rot_y);
-    if (slot->subtype == 2 && slot->handle != 6) {
+    grid.y = (*slot)->GetAlt(grid.x, grid.y, grid.z);
+    target->unit_size = (*slot)->GetUnitSize();
+    sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 1.0f};
+    position[0] = grid.x;
+    position[1] = grid.y;
+    position[2] = grid.z;
+    target->SetPosition(position);
+    target->SetRotY(rot_y);
+    target->area = area_no;
+    (*slot)->SetMapParts(parts_id, parts, x, y, z, rot_y);
+    if (target->subtype == 2 && target->handle != 6) {
         SetRiverParts(x, y, z, 0, 0);
         SetRiverParts(x, y, z, 1, 0);
         SetRiverParts(x, y, z, 0, 1);
         SetRiverParts(x, y, z, -1, 0);
         SetRiverParts(x, y, z, 0, -1);
     }
-    if (slot->subtype == 1) {
+    if (target->subtype == 1) {
         SetRoadParts(x, y, z, 0, 0);
         SetRoadParts(x, y, z, 1, 0);
         SetRoadParts(x, y, z, 0, 1);
         SetRoadParts(x, y, z, -1, 0);
         SetRoadParts(x, y, z, 0, -1);
     }
-    return id;
+    return parts_id;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/editground", SetMapParts__11CEditGroundFifffi);
