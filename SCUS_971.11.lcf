@@ -520,6 +520,8 @@ SECTIONS
         edit_in.cpp.o (.edit_in-camera_distance_1155) // 0x0026a690 camera_distance$1155
         . = ALIGN(8);
         main.data.part4g-26A6A0.s.o (.data) // 0x0026a6a0
+        edit_in.cpp.o (.edit_in-texdata_1374) // 0x0026a6b0 texdata$1374
+        main.data.part4g-26A6A0-26A770.s.o (.data) // 0x0026a770
         edit_in.cpp.o (.edit_in-c1538) // 0x0026a7b0 @1538
         . = ALIGN(16);
         edit_in.cpp.o (.edit_in-c1563) // 0x0026a7e0 @1563

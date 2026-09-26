@@ -179,6 +179,9 @@ static int simple_event;
 static CCharacter MotionParts[4];
 static CTextureAnime TexAnime;
 static CTexAnimeData TexAnimeData[64];
+#else
+extern CTextureAnime TexAnime;
+extern CTexAnimeData TexAnimeData[64];
 #endif
 
 /**
@@ -1433,9 +1436,8 @@ static void VillagerCollision() {
  * @size 0x20C
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static int LoadTexture() {
-    static LOADTEXTURE_INFO2 texdata;
+    static LOADTEXTURE_INFO2 texdata[16] = {{NULL, 15}};
 
     BG_READ_INFO *file = GetReadBGFile(2);
     if (file == NULL) {
@@ -1454,12 +1456,12 @@ static int LoadTexture() {
     int size;
     TexAnime.Initialize(NULL, 0);
     if (strcmp(ext, "img") == 0) {
-        texdata.name = (char *) file->buffer;
+        texdata[0].name = (char *) file->buffer;
     } else {
         u_int *found;
         int cfg_size;
         if (GetPackFileExt((u_int *) file->buffer, "img", &found, 1, NULL, NULL) > 0) {
-            texdata.name = (char *) found;
+            texdata[0].name = (char *) found;
         }
         if (GetPackFileExt((u_int *) file->buffer, "cfg", &found, 1, &cfg_size, NULL) > 0) {
             TexAnime.Initialize(TexAnimeData, 64);
@@ -1470,18 +1472,13 @@ static int LoadTexture() {
             }
         }
     }
-    TexManager.LoadTextureBlockEX(15, &texdata);
+    TexManager.LoadTextureBlockEX(15, texdata);
     if (data != NULL) {
         TexAnime.LoadCFGFile((char *) data, size);
     }
     EdNPCBuffer.Alloc((file->size >> 4) + 1);
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", LoadTexture__Fv__2);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1399);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1400);
 
 /**
  * Reserved character-loading hook with no operation.
