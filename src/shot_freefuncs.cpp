@@ -70,11 +70,6 @@ extern "C" CDataAlloc2<1> MapModelBuffer;
 extern "C" CDataAlloc2<1> MonstorModelBuffer;
 
 /**
- * Pack buffer the dungeon started with, reused for every map load.
- */
-extern u_int *old_read_buffer;
-
-/**
  * Messages the dungeon's steeb shows.
  */
 extern "C" ClsMes DngMesStb;
@@ -93,11 +88,6 @@ extern "C" CDungeonMap MainDungeonMap;
  * Events of the current floor.
  */
 extern "C" CDungeonEventMan DngEventMan;
-
-/**
- * Event manager the dungeon runs through.
- */
-extern CDungeonEventMan *NowEventMan;
 
 /**
  * Opening motion of the small item-get box.

@@ -17,9 +17,6 @@ extern "C" int DebugInfoNowCursor;
 extern "C" CDebugFont DbgMsg;
 extern "C" char nameblock[64];
 
-/** The event manager of the floor the dungeon is running. */
-extern CDungeonEventMan *NowEventMan;
-
 /**
  * The Japanese and American image path prefixes. NameExchg reads it as rows
  * of two indexed by language and takes the second of the row, so language 0

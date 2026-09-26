@@ -109,9 +109,6 @@ extern int nowPartsCnt__2;
 extern OBJ_ANIME_SEQ FrameObjAnim[48];
 extern int FrameObjAnimCnt;
 
-/** Events of the floor being loaded. */
-extern CDungeonEventMan *NowEventMan;
-
 /** Scene-wide values filled from model-definition directives. */
 extern int debugModeFlag__2;
 extern "C" float run_speed__2;

@@ -179,11 +179,6 @@ extern "C" int BtEquipMasuisyou;
 extern s32 atraShortGetType;
 extern s32 atraGetStatus;
 extern float atraGetStatusRate;
-/**
- * Fade-in level of the Atla pickup's light, up to 256.
- */
-extern float atraGetStatusRate__2;
-
 extern s32 atraGetMsgBord;
 extern float atraGetMsgBordRate;
 extern sceVu0FVECTOR atraGetPos;

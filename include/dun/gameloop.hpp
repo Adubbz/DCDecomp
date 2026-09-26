@@ -18,6 +18,7 @@ struct WEAPON_HAVE;
 class CFrame;
 class CCollisionData;
 class CDngMessageMan;
+class CDungeonEventMan;
 class CDungeonMap;
 class CDranMapField;
 class CHitValue;
@@ -135,6 +136,15 @@ extern CCollisionData *NowColData;
 
 /** Weapon currently equipped by the player character. */
 extern WEAPON_HAVE *NowWeaponHave;
+
+/** Event manager of the floor the player is on. */
+extern CDungeonEventMan *NowEventMan;
+
+/** Fade-in level of the Atlamillia pickup's light, up to 256. */
+extern float atraGetStatusRate__2;
+
+/** Pack buffer the dungeon started with, reused for every map load. */
+extern u_int *old_read_buffer;
 
 /**
  * @mangled LoadBaseTexture__Fv
