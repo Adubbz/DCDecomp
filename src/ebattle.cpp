@@ -233,34 +233,32 @@ void EBDebug(int mode) {
     debug_mode = mode;
 }
 
-#ifdef NON_MATCHING
 void EBSetKey(float time, int buttons, int mode) {
-    if (eb_key_num >= 64) {
-        return;
-    }
-
-    EB_KEY_ENTRY *key = &((EB_KEY_ENTRY *) eb_key)[eb_key_num++];
-    key->frame = 0;
-    EB_MOTION_ENTRY *motion_entries = (EB_MOTION_ENTRY *) eb_motion;
-    for (int i = 0; motion_entries[i].motion_no >= 0; ++i) {
-        EB_MOTION_ENTRY &motion = motion_entries[i];
-        if (motion.start <= time && time < motion.end) {
-            key->frame += (int) ((time - motion.start) / motion.speed);
-            break;
+    if (eb_key_num < 64) {
+        EB_KEY_ENTRY *key = (EB_KEY_ENTRY *) &eb_key[eb_key_num++];
+        key->frame = 0;
+        for (int i = 0;; i++) {
+            EB_MOTION *motion = &eb_motion[i];
+            if (motion->motion_no < 0) {
+                break;
+            }
+            if (time >= motion->start && time < motion->end) {
+                key->frame += (time - motion->start) / motion->speed;
+                break;
+            }
+            key->frame += motion->frames;
         }
-        key->frame += motion.duration;
+        key->buttons = buttons;
+        key->pressed = 0;
+        if (mode > 5) {
+            mode = 5;
+        }
+        key->mode = mode;
+        key->early = 0;
+        key->complete = 0;
+        key->reserved = 0;
     }
-
-    key->buttons = buttons;
-    key->mode = mode > 5 ? 5 : mode;
-    key->pressed = 0;
-    key->complete = 0;
-    key->early = 0;
-    key->reserved = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", EBSetKey__Ffii);
-#endif
 
 void EBExit() {
     ebattle_flag = 0;
