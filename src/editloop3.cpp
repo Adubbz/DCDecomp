@@ -1112,65 +1112,106 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
     CEditGround *ground = EdExchangeInfo.ground;
     CCharacter *player = EdExchangeInfo.player;
     CCamera *camera = EdExchangeInfo.camera;
+    int i;
 
-    for (int i = 0; i < 10; i++) {
-        CNPCharacter *villager = &EdVillager[i];
+    for (i = 0; i < 10; i++) {
+        sceVu0FVECTOR position;
+        sceVu0FVECTOR rotation;
+        EdVillager[i].near_camera = 0;
         VILLAGER_INFO *info = &villagers[i];
-        villager->near_camera = 0;
-        if (info->placed == 0 || (info->character_no >= 0 && villager->initialized == 0)) {
+        if (info->placed == 0) {
             continue;
         }
-
-        int draw = info->character_no < 0;
+        sceVu0CopyVector(position, info->position);
+        sceVu0CopyVector(rotation, info->rotation);
+        if (info->character_no >= 0 && EdVillager[i].draw_enabled == 0) {
+            continue;
+        }
         if (info->character_no >= 0 && info->initial_motion == 0) {
             EDITPARTS_INFO *parts = EditPartsInfo.GetPartsInfo(info->character_no);
-            if (parts->unk_08 != 0 && parts->elements[info->model_no].enabled != 0) {
-                draw = 1;
+            if (parts->unk_08 == 0 || parts->elements[info->model_no].enabled == 0) {
+                continue;
             }
+            EdVillager[i].near_camera = 1;
+            sceVu0CopyVector(position, info->position);
+            sceVu0CopyVector(rotation, info->rotation);
         } else {
-            draw = 1;
+            EdVillager[i].near_camera = 1;
+            sceVu0CopyVector(position, info->position);
+            sceVu0CopyVector(rotation, info->rotation);
         }
-        villager->near_camera = draw;
-        if (draw == 0) {
-            continue;
-        }
-
         if (info->initial_motion == 0) {
-            villager->chara.SetPosition(info->position);
-            villager->chara.SetRotation(info->rotation[0], info->rotation[1], info->rotation[2]);
+            EdVillager[i].chara.SetPosition(position);
+            EdVillager[i].chara.SetRotation(rotation[0], rotation[1], rotation[2]);
         } else {
             sceVu0FVECTOR player_position;
             sceVu0FVECTOR villager_position;
             player->GetPosition(player_position);
-            villager->chara.GetPosition(villager_position);
-            villager->sequence_enabled = 1;
-            if (DistVector(player_position, villager_position) < 20.0f) {
-                villager->sequence_enabled = 0;
+            CNPCharacter *npc = &EdVillager[i];
+            sceVu0CopyVector(villager_position, npc->chara.pos);
+            float distance = DistVector(player_position, villager_position);
+            EdVillager[i].sequence_enabled = 1;
+            if (distance < 20.0f) {
+                EdVillager[i].sequence_enabled = 0;
+                EdVillager[i].chara.SetMotion(0, 0);
             }
-            EdSetVillagerNextPos(villager, info, ground);
+            EdSetVillagerNextPos(npc, info, ground);
         }
     }
 
     int indices[10];
     float distances[10];
     GetNearVill(camera, player, EdVillager, indices, distances);
-    for (int i = 0; i < 2 && distances[i] >= 0.0f; i++) {
-        if (distances[i] < 150.0f) {
-            EdVillager[indices[i]].near_camera = 1;
+    for (int j = 0; j < 2; j++) {
+        if (distances[j] < 0.0f) {
+            break;
+        }
+        if (distances[j] < 150.0f) {
+            EdVillager[indices[j]].near_camera = 1;
         }
     }
 
-    for (int i = 0; i < 10; i++) {
-        CNPCharacter *villager = &EdVillager[i];
-        villager->Step();
-        villager->ShadowStep();
-        villager->chara.ClothStep(0);
-        if (villager->sequence_enabled != 0) {
+    for (i = 0; i < 10; i++) {
+        EdVillager[i].Step();
+        EdVillager[i].ShadowStep();
+        EdVillager[i].chara.ClothStep(0);
+        if (EdVillager[i].event_status != 0) {
             sceVu0FVECTOR position;
-            villager->chara.GetPosition(position);
-            position[1] = ground->GetAlt(position[0], position[1], position[2]);
-            villager->chara.SetPosition(position);
-            villager->chara.FootSoundEnable(villager->CheckDraw() != 0);
+            sceVu0FVECTOR hit;
+            sceVu0CopyVector(position, EdVillager[i].chara.pos);
+            float altitude = ground->GetAlt(position[0], position[1], position[2]);
+            EdVillager[i].chara.SetPosition(position[0], altitude, position[2]);
+            EdVillager[i].chara.FootSoundEnable(0);
+            if (EdVillager[i].CheckDraw()) {
+                EdVillager[i].chara.FootSoundEnable(1);
+                WorkBuffer__2->used = 0;
+                CCPoly *polys = (CCPoly *) WorkBuffer__2->Alloc(2000);
+                int count = ground->PickUpEditAreaPoly(polys, position[0], position[1], position[2]);
+                CMapParts *parts = ground->GetParts(position[0], position[1], position[2]);
+                if (parts != NULL) {
+                    CBoxVu0 box;
+                    box.max[0] = position[0] + 20.0f;
+                    box.min[0] = position[0] - 20.0f;
+                    box.max[2] = position[2] + 20.0f;
+                    box.min[2] = position[2] - 20.0f;
+                    box.max[1] = 1000.0f;
+                    box.min[1] = -1000.0f;
+                    CFrame *frame = parts->GetCollisionFrame();
+                    if (frame != NULL) {
+                        count += frame->PickUpNearPoly(polys + count, box);
+                    }
+                }
+                if (count > 0) {
+                    CCPoly poly;
+                    position[1] += 30.0f;
+                    if (GetFootPoly(position, 1000.0f, &poly, hit, polys, count, 0)) {
+                        altitude = hit[1];
+                        EdVillager[i].chara.SetFootSoundID(poly.attr.foot_sound);
+                    }
+                }
+                position[1] = altitude;
+                EdVillager[i].chara.SetPosition(position);
+            }
         }
     }
 }
