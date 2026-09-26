@@ -139,7 +139,7 @@ int DngActItemModelBuild(int);
  * @size 0x104
  * @unknownret
  */
-void DngActiveItemTextureCopy(void);
+int DngActiveItemTextureCopy(void);
 
 /**
  * @mangled DngActiveWeaponTextureCopy__Fv
@@ -147,7 +147,7 @@ void DngActiveItemTextureCopy(void);
  * @size 0x130
  * @unknownret
  */
-void DngActiveWeaponTextureCopy(void);
+int DngActiveWeaponTextureCopy(void);
 
 /**
  * Returns the message number of a held weapon's name.

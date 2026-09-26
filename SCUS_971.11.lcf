@@ -658,7 +658,12 @@ SECTIONS
         main.data.menu_save-a.s.o (.data) // 0x00294044
         menu_dungeon.cpp.o (.data)   // 0x00294150
         . = ALIGN(0x10);
-        main.data.part6g.s.o (.data) // 0x00294170
+        main.data.part6g.s.o (.data) // 0x002941c0
+        menu_dungeon.cpp.o (.menu_dungeon-c1707) // 0x002942d0 @1707
+        . = ALIGN(0x10);
+        menu_dungeon.cpp.o (.menu_dungeon-c1731) // 0x002942e0 @1731
+        . = ALIGN(0x10);
+        main.data.part6g-2942F0.s.o (.data) // 0x002942f0
         menu_draw.cpp.o (.data)      // 0x00294460
         main.data.part6j.s.o (.data) // 0x00295644
         menu_manual.cpp.o (.data)    // 0x002957f0
@@ -818,6 +823,8 @@ SECTIONS
 		main.sdata.editmenu-after.s.o (.sdata) // 0x002a2120
 		memcard.cpp.o (.sdata) // 0x002a2150
 		main.sdata.memcard-a.s.o (.sdata) // 0x002a2158
+		menu_dungeon.cpp.o (.sdata) // 0x002a2190 @1730, @1732
+		. = ALIGN(8);
 		menu_draw.cpp.o (.sdata)       // 0x002a21a0
 		main.sdata.part2g.s.o (.sdata) // 0x002a21b8
 		weapon_buildup.cpp.o (.sdata)  // 0x002a21c8

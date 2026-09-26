@@ -200,7 +200,7 @@ carve_part(main.sdata.part2b.s
            main.sdata.part2f-2A2050-2A20B8.s=2A20B8-2A20C0
            main.sdata.battlemenu-tail.s=2A20D8-2A2100
            main.sdata.editmenu-after.s=2A2120-2A2150
-           main.sdata.memcard-a.s=2A2158-2A21A0
+           main.sdata.memcard-a.s=2A2158-2A2190
            main.sdata.part2g.s=2A21B8-2A21C8
            main.sdata.part2e.s=2A21F0-2A21F8
            main.sdata.battle_globals-a.s=2A2208-2A2218)
@@ -296,7 +296,8 @@ carve_part(main.data.part6.s
            main.data.editmenu-after.s=293CD0-293D50
            main.data.memcard-a.s=293EBC-293FE0
            main.data.menu_save-a.s=294044-294150
-           main.data.part6g.s=2941C0-294460
+           main.data.part6g.s=2941C0-2942D0
+           main.data.part6g-2942F0.s=2942F0-294460
            main.data.part6j.s=295644-2957F0
            main.data.menu_manual-after.s=295800-295810
            main.data.part6d.s=295830-295840

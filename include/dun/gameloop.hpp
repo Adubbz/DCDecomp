@@ -733,7 +733,7 @@ int BtGetFloorLevel(int floor);
  * @size 0x104
  * @unknownret
  */
-void DngActiveItemTextureCopy(void);
+int DngActiveItemTextureCopy(void);
 
 /**
  * The same, for the weapon the player holds.
@@ -743,4 +743,4 @@ void DngActiveItemTextureCopy(void);
  * @size 0x130
  * @unknownret
  */
-void DngActiveWeaponTextureCopy(void);
+int DngActiveWeaponTextureCopy(void);

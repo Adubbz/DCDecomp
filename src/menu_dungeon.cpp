@@ -1045,12 +1045,15 @@ int DngActItemModelBuild(int wait) {
     }
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DngActItemModelBuild__Fi);
+#endif
 
-void DngActiveItemTextureCopy(void) {
+int DngActiveItemTextureCopy(void) {
     int i;
     ITEM_PACK *pack = &UserStatus->item_pack;
     if (pack == NULL) {
-        return;
+        return -1;
     }
     char source[] = "itemicon";
     for (i = 0; i < 3; i++) {
@@ -1067,12 +1070,8 @@ void DngActiveItemTextureCopy(void) {
             }
         }
     }
+    return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DngActItemModelBuild__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DngActiveItemTextureCopy__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1728__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1841);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2044);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2045);
@@ -1082,8 +1081,7 @@ INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2048);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2049);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2050);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2051);
-#ifdef NON_MATCHING
-void DngActiveWeaponTextureCopy(void) {
+int DngActiveWeaponTextureCopy(void) {
     int chara = UserStatus->cur_chara;
     char source[] = "wepicon";
     int slot = UserStatus->equipped_weapon_slot[chara];
@@ -1102,10 +1100,8 @@ void DngActiveWeaponTextureCopy(void) {
             setItemToReserved(source, u, v, "itempack", pos[i][0], pos[i][1]);
         }
     }
+    return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DngActiveWeaponTextureCopy__Fv);
-#endif
 
 s32 GetWeaponMsgNo(WEAPON_HAVE *weapon) {
     s16 item_no;

@@ -68,13 +68,14 @@ void CCloth::Clear() {
     sceVu0ApplyMatrix(last_position, matrix, position);
     for (j = 0; j < num_j; j++) {
         for (i = 0; i < num_i; i++) {
+            float *p = point[i][j];
             float *s = speed[i][j];
             s[0] = 0.0f;
             s[1] = 0.0f;
             s[2] = 0.0f;
             if (frame != NULL) {
-                sceVu0ApplyMatrix(point[i][j], matrix, home[i][j]);
-                sceVu0CopyVector(last[i][j], point[i][j]);
+                sceVu0ApplyMatrix(p, matrix, home[i][j]);
+                sceVu0CopyVector(last[i][j], p);
             }
         }
     }

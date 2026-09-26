@@ -1548,8 +1548,17 @@
       ],
       ".menuerrorcnt": [
         "MenuEtcErrCnt"
+      ],
+      ".menu_dungeon-c1707": [
+        "@1064"
+      ],
+      ".menu_dungeon-c1731": [
+        "@1083"
       ]
-    }
+    },
+    "rodata_exports": [
+      "@1728__2"
+    ]
   },
   "src/clothread.cpp": {
     "symbols": {
