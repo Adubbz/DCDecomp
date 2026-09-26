@@ -438,15 +438,6 @@ void InitFishingExchange(u_long128 *, int *, int);
 int FishingExchangeKey(void);
 
 /**
- * Draws the fishing exchange's goods, their prices and its help window.
- *
- * @mangled FishExchangeItemDraw__Fiii
- * @address 0x1F2480
- * @size 0x788
- */
-void FishExchangeItemDraw(int, int, int);
-
-/**
  * Draws one frame of the fishing exchange.
  *
  * @mangled FishingExchangeDraw__Fv

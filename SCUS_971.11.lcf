@@ -581,7 +581,8 @@ SECTIONS
         main.data.shop-filenames-after.s.o (.data) // 0x002929B0
         shop.cpp.o (.shopdata-fishtex) // 0x00292a60 @2949
         . = ALIGN(16);
-        main.data.shop-fishdraw.s.o (.data) // 0x00292a90
+        shop.cpp.o (.shopdata-fishdraw) // 0x00292a90 @3177
+        main.data.shop-fishdraw.s.o (.data) // 0x00292aa0
         shop.cpp.o (.shopdata-fishrec) // 0x00292ac0 @3261
         main.data.shop-filenames-after-292AE4.s.o (.data) // 0x00292ae4
         battlemenu.cpp.o (.battlemenu-c731__6) // 0x00292e50 @731__6

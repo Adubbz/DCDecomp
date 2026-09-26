@@ -32,7 +32,7 @@
         "@1374"
       ],
       ".shopdata-fishrec": [
-        "@2077"
+        "@2137"
       ],
       ".shopdata-sellticket": [
         "@1766"
@@ -52,6 +52,9 @@
       ],
       ".shopdata-plate": [
         "@1272"
+      ],
+      ".shopdata-fishdraw": [
+        "@2057"
       ]
     },
     "rekey_sections": [
@@ -134,6 +137,12 @@
         ".shopdata-fishtex",
         [
           36
+        ]
+      ],
+      [
+        ".shopdata-fishdraw",
+        [
+          16
         ]
       ],
       [

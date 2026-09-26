@@ -5007,14 +5007,31 @@ static void FishImageIconDraw(int x, int y, int width, int mode) {
     DrawMenu2DSprite(FishMenuTex, CRect_i_(x, y, width, 0x28), CRect_i_(0, 0xD0, width, 0x28), mode);
 }
 
-#ifdef NON_MATCHING
-void FishExchangeItemDraw(int x, int y, int alpha) {
+/**
+ * Returns @p base moved by @p offset.
+ */
+static inline float AddOffset(float base, float offset) {
+    return base + offset;
+}
+
+/**
+ * Draws the fishing exchange's goods, their prices and its help window.
+ *
+ * @mangled FishExchangeItemDraw__Fiii
+ * @address 0x1F2480
+ * @size 0x788
+ */
+static void FishExchangeItemDraw(int x, int y, int alpha) {
+    int last;
+    int pos_y;
     float win_x;
     float win_y;
-    float win_w;
     float win_h;
+    float win_w;
     int text_x;
     int text_y;
+    int i;
+    int row;
 
     MenuTextureReload(FishMenu.tex_block);
     int mardan = AlreadyGetMardanWeapon();
@@ -5022,41 +5039,42 @@ void FishExchangeItemDraw(int x, int y, int alpha) {
     if (party <= 0) {
         party = 1;
     }
-    int last = party + 0x19;
+    last = party + 0x19;
     if (mardan == 1) {
         last++;
     }
     DrawMenu2DSprite(FishMenuTex, CRect_i_(x, y, 0x160, 0xD0), CRect_i_(0, 0, 0x160, 0xD0), alpha);
     float rows = last;
     int bar_x = x + 0x144;
-    int bar_y = (int) ((float) (y + 0x28) + FishMenu.top * (126.0f / rows));
+    float step = 126.0f / rows;
+    pos_y = (int) AddOffset((float) (y + 0x28), FishMenu.top * step);
     float length = 630.0f / rows - 8.0f;
     CRect_i_ source(0xF0, 0xD0, 8, 4);
-    DrawMenu2DSprite(FishMenuTex, CRect_i_(bar_x, bar_y, 8, 4), source, alpha);
+    DrawMenu2DSprite(FishMenuTex, CRect_i_(bar_x, pos_y, 8, 4), source, alpha);
     source.y += 4;
-    DrawMenu2DSprite(FishMenuTex, CRect_i_(bar_x, bar_y + 4, 8, (int) length), source, alpha);
+    DrawMenu2DSprite(FishMenuTex, CRect_i_(bar_x, pos_y + 4, 8, (int) length), source, alpha);
     source.y += 4;
-    DrawMenu2DSprite(FishMenuTex, CRect_i_(bar_x, (int) ((float) (bar_y + 4) + length), 8, 4), source, alpha);
-    int item_x = x + 0x16;
-    int item_y = y + 0x14;
-    for (int i = 0; i < 5; i++) {
+    DrawMenu2DSprite(FishMenuTex, CRect_i_(bar_x, (int) ((float) (pos_y + 4) + length), 8, 4), source, alpha);
+    x = (int) (x + 0x16);
+    pos_y = y + 0x14;
+    for (i = 0; i < 5; i++, pos_y += 0x22) {
         FISH_EXCHANGE_ITEM *prize = GetExchangeItemList(FishMenu.top + i);
         if (mardan == 1 && i == 4 && FishMenu.top + 4 == last) {
             prize = GetExchangeItemList(0x20);
         }
-        DrawIconParts(prize->item_no, item_x, item_y, y, y + 0xCE, alpha, 0);
-        DrawMenu2DSprite(FishMenuTex, CRect_i_(item_x + 0x104, item_y + 8, 0x20, 0x14), CRect_i_(0x1E0, 0xEC, 0x20, 0x14),
+        DrawIconParts(prize->item_no, x, pos_y, y, y + 0xCE, alpha, 0);
+        DrawMenu2DSprite(FishMenuTex, CRect_i_(x + 0x104, pos_y + 8, 0x20, 0x14), CRect_i_(0x1E0, 0xEC, 0x20, 0x14),
                          alpha);
         RECT digits = {0x140, 0xEA, 0x10, 0x16};
-        DrawMenuNumber(prize->price, item_x + 0x106, item_y + 6, FishMenuTex, digits, 1, alpha);
+        DrawMenuNumber(prize->price, x + 0x106, pos_y + 6, FishMenuTex, digits, 1, alpha);
         if (i >= 0 && i < 10) {
-            AtoraNameMes.line_pos[i].x = item_x + 0x24;
-            AtoraNameMes.line_pos[i].y = item_y + 4;
+            AtoraNameMes.line_pos[i].x = x + 0x24;
+            AtoraNameMes.line_pos[i].y = pos_y + 4;
         }
-        item_y += 0x22;
     }
-    int target_y = y + 0x14 + (FishMenu.cursor - FishMenu.top) * 0x22;
-    int cursor_x = item_x - 0x1C;
+    row = FishMenu.cursor - FishMenu.top;
+    int target_y = y + 0x14 + row * 0x22;
+    int cursor_x = x - 0x1C;
     if (FishMenu.fade_mode == 4) {
         cursor_x = 0xF2;
         target_y = (FishMenu.confirm << 5) + 0x102;
@@ -5068,8 +5086,7 @@ void FishExchangeItemDraw(int x, int y, int alpha) {
     int cursor_y = FishMenu.cursor_y;
     MenuTextureReload(CommonMenuMes2.tex_block);
     GetMainMenuRightHelpWinLangOffset(win_x, win_y, win_w, win_h);
-    int help_x = (int) win_x;
-    MenuHelpWinDraw(help_x, (int) win_y, win_w, win_h, 0x80);
+    MenuHelpWinDraw((int) win_x, (int) win_y, win_w, win_h, 0x80);
     GetMainMenuRightHelpMsgLangOffset(text_x, text_y);
     CommonMenuMes2.edge_alpha = alpha;
     CommonMenuMes2.text_x = (int) (win_x + text_x);
@@ -5079,9 +5096,10 @@ void FishExchangeItemDraw(int x, int y, int alpha) {
     AtoraNameMes.edge_alpha = alpha;
     AtoraNameMes.Step();
     AtoraNameMes.DrawMesWin();
-    if (CommonMenuMes3.value != FishMenu.point) {
-        CommonMenuMes3.value = FishMenu.point;
-        int digits = GetNumberKeta(FishMenu.point);
+    int point = FishMenu.point;
+    if (CommonMenuMes3.value != point) {
+        CommonMenuMes3.value = point;
+        int digits = GetNumberKeta(point);
         CommonMenuMes3.mes_made = -1;
         CommonMenuMes3.MakeMesWin(digits + 0xCD);
     }
@@ -5115,9 +5133,6 @@ void FishExchangeItemDraw(int x, int y, int alpha) {
         DrawMenuObjectVibe(cursor_x, cursor_y, 1, 0x40);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", FishExchangeItemDraw__Fiii);
-#endif
 
 void FishingExchangeDraw() {
     int frame_alpha;
