@@ -1084,17 +1084,17 @@ s32 atraGetStatus;
 
 /* Whether the Atlamillia message board is up. */
 s32 atraGetMsgBord;
-s32 atraGetMsgBordRate;
-s32 shortAtraEffectPtr;
-s32 itemNormalScale;
+float atraGetMsgBordRate;
+u_int *shortAtraEffectPtr;
+float itemNormalScale;
 s32 itemOpenSmallFlag;
 s32 itemOpenItemMds;
 s32 itemOpenItemImg;
-s32 itemOpenItemChr;
+u_int *itemOpenItemChr;
 
 /* The model the item a gate holds draws with. */
 CFrame *itemBoxModel;
-s32 itemWeponScale;
+float itemWeponScale;
 s32 itemOpenBigFlag;
 
 /* How long the dungeon has waited before it opens the menu, in frames. */
