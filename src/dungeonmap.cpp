@@ -1005,7 +1005,6 @@ void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
 INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawFire__11CDungeonMapFP9CFrameVu1P13CCameraFollow);
 #endif
 
-#ifdef NON_MATCHING
 /* 189 of 202 instructions. Retail's loop test forms `&parts[parts_no]` and the
  * body reads the fire positions at 0x20 from it; mwcc carries only the scaled
  * index across the test and folds the 0x490 into the load displacement. A
@@ -1031,7 +1030,8 @@ void CDungeonMap::DrawRaster(CFrameVu1 *frame) {
 
                 if (this->cells[no].parts_no != MAP_PARTS_NONE && this->cells[no].unk_08 <= 240.0f &&
                     this->cells[no].unk_0C == 1) {
-                    for (i = 0; i < this->parts[this->cells[no].parts_no].fire_num; i++) {
+                    CDungeonParts *part;
+                    for (i = 0; i < (part = &this->parts[this->cells[no].parts_no])->fire_num; i++) {
                         float x;
                         float y;
                         float z;
@@ -1040,9 +1040,9 @@ void CDungeonMap::DrawRaster(CFrameVu1 *frame) {
                         float angle;
                         int dir;
 
-                        x = this->parts[this->cells[no].parts_no].fire_pos[i][0];
-                        y = this->parts[this->cells[no].parts_no].fire_pos[i][1];
-                        z = this->parts[this->cells[no].parts_no].fire_pos[i][2];
+                        x = part->fire_pos[i][0];
+                        y = part->fire_pos[i][1];
+                        z = part->fire_pos[i][2];
                         // The point turns with the part that holds it.
                         dir = this->cells[no].direction;
                         angle = (3.1415927f * (float) ((4 - dir) * 90)) / 180.0f;
@@ -1068,9 +1068,6 @@ void CDungeonMap::DrawRaster(CFrameVu1 *frame) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawRaster__11CDungeonMapFP9CFrameVu1);
-#endif
 
 void CDungeonMap::DrawWater(float *pos, int mute) {
     static int wait;
