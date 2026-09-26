@@ -258,10 +258,14 @@ void CNPCharacter::Initialize() {
     recurring_talk_event = -1;
 }
 
-#ifdef NON_MATCHING
+extern "C" void *__vt__12CNPCharacter[];
+
+/* Retail's walker derives from CCharacter, which this tree models as the
+ * `chara` member at offset 0. Once the character is built -- which calls its
+ * Initialize through the table -- the walker's own table replaces it and
+ * Initialize is dispatched through the table again. */
 CNPCharacter::CNPCharacter(void) {
-    Initialize();
+    *(void ***) ((char *) &chara + 0xA0) = __vt__12CNPCharacter;
+    CCharacter *self = &chara;
+    self->Initialize();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/npcharacter", __ct__12CNPCharacterFv);
-#endif
