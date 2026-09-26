@@ -160,7 +160,7 @@ struct EDIT_WATER_INFO {
     int unk_58;
     u8 unk_5c[0x4];
     sceVu0FVECTOR texture_scroll; /**< Texture offset and scroll rates. */
-    int follow[3]; /**< Whether the surface keeps ahead of the camera along X, level with it, and ahead along Z. */
+    int follow[3];                /**< Whether the surface keeps ahead of the camera along X, level with it, and ahead along Z. */
     u8 unk_7c[0x4];
     EDIT_WATER_WAVE_INFO wave[4]; /**< Pending water-wave parameters, terminated by an empty entry. */
 };

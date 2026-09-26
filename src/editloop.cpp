@@ -4073,6 +4073,7 @@ void LoadGroundData() {
 void LoadObjectParts(void) {
     char name_buffer[7][0x40];
     char *names[7];
+
     /**
      * A part already built while the map loads, so later copies can share it.
      */
