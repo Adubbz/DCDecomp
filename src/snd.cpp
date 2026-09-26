@@ -1569,7 +1569,6 @@ INCLUDE_RODATA("asm/nonmatchings/snd", @800);
  * @address 0x15BAB0
  * @size 0xF4
  */
-#ifdef NON_MATCHING
 void LoadSoundInfo(SND_INFO *info, char *script, int script_size) {
     u8 *clear;
     u8 *data = (u8 *) script;
@@ -1592,9 +1591,6 @@ void LoadSoundInfo(SND_INFO *info, char *script, int script_size) {
         CommandExe__3[tag](interpreter.arguments);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", LoadSoundInfo__FP8SND_INFOPci);
-#endif
 static void CommandREVERBE(void **arguments) {
     SoundInfo->reverb_mode = *(s32 *) arguments[0];
     SoundInfo->reverb_depth = *(s32 *) arguments[1];
