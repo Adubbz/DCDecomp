@@ -104,7 +104,6 @@ extern int depth_of_field;
 extern int edit_mode_lighting;
 extern int draw_sky;
 extern int move_count;
-extern u_int *EdNPCReadBuffer;
 extern CFrameVu1 *TreasureCursor;
 extern CFrameVu1 *TreasureCursorOpen;
 extern int end_counter;
@@ -224,7 +223,6 @@ struct EDIT_CHARA_DATA_ENTRY {
 STATIC_ASSERT(sizeof(EDIT_CHARA_DATA_ENTRY) == 0x14);
 
 extern EDIT_CHARA_DATA_ENTRY EditCharaData[6][20];
-extern u8 EditElementInfo[0x120];
 #include "editmenu.hpp"
 extern u8 MesWinTexBuff_01[0x100];
 extern u8 MesWinTexBuff_02[0x100];

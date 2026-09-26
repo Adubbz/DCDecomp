@@ -215,7 +215,6 @@ extern sceVu0FVECTOR fix_camera_pos;
 /* Data whose shape the unit does not need yet. */
 extern CTexAnimeData CharaTexAnimeData[0x80];
 extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
-extern u8 EditCharaData[0x960];
 extern EDIT_ELEMENT_INFO EditElementInfo[36];
 #include "editmenu.hpp"
 #include "wind.hpp"
