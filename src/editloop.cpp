@@ -337,13 +337,6 @@ extern CCameraFollow EditCamera;
 void EBDraw(void);
 /* Mode the loop returns to once the debug menu closes. */
 /* Buffer the parts archive is read into. */
-/**
- * A part already built while the map loads, so later copies can share it.
- */
-struct LOADED_PARTS {
-    char name[0x20];  /**< Resource name the part was built from. */
-    CMapParts *parts; /**< Part built from that name. */
-};
 void LoadMapObject(CMapParts *parts, u_int **data, CDataAlloc2<1> *alloc);
 
 /**
@@ -3946,9 +3939,12 @@ void LoadGroundData() {
     pEditGround->parts_info = &EditPartsInfo;
     ObjParts[12].unk_120 = 490.0f;
 
+    /**
+     * A part already built while the map loads, so later copies can share it.
+     */
     struct LOADED_PARTS {
-        char name[0x20];
-        CMapParts *parts;
+        char name[0x20];  /**< Resource name the part was built from. */
+        CMapParts *parts; /**< Part built from that name. */
     } built[64];
 
     int i;
@@ -4077,9 +4073,12 @@ void LoadGroundData() {
 void LoadObjectParts(void) {
     char name_buffer[7][0x40];
     char *names[7];
+    /**
+     * A part already built while the map loads, so later copies can share it.
+     */
     struct LOADED_PARTS {
-        char name[0x20];
-        CMapParts *parts;
+        char name[0x20];  /**< Resource name the part was built from. */
+        CMapParts *parts; /**< Part built from that name. */
     } loaded[64];
 
     OBJ_ANIME_SEQ *anime = EditMapInfo->work.obj_anime;
