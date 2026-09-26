@@ -727,6 +727,10 @@ int BtGetTreasureboxSmall_Loop() {
 #else
 INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxSmall_Loop__Fv);
 #endif
+/** The pickup model shared with the treasure chests, and the short presentation's effect pack. */
+extern char BtAtraShortCharaFile[];
+extern char BtAtraShortEffectFile[];
+
 /**
  * Starts the short presentation for picking up an Atla.
  *
@@ -734,7 +738,6 @@ INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxSmall_Loop__Fv);
  * @address 0x1D2AF0
  * @size 0x180
  */
-#ifdef NON_MATCHING
 void BtAtraGetShort_Init() {
     int size;
 
@@ -743,25 +746,26 @@ void BtAtraGetShort_Init() {
     BtCashBuffer.limit = 0x445C0;
     BtCashBuffer.used = 0;
     StartReadBG();
-    itemOpenItemChr = (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16);
-    LoadFileBG("dun/mainchara/c01d_ex00.chr", (u_long128 *) itemOpenItemChr, &size);
+    LoadFileBG(BtAtraShortCharaFile,
+               (u_long128 *) (itemOpenItemChr = (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16)),
+               &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
-    shortAtraEffectPtr = (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16);
-    LoadFileBG("dun/effect/saget.chr", (u_long128 *) shortAtraEffectPtr, &size);
+    LoadFileBG(BtAtraShortEffectFile,
+               (u_long128 *) (shortAtraEffectPtr = (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16)),
+               &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     SndSPSeLoadBG(1, (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16), &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     DngMessMan.unk_00 = 0;
     ResetMovePower();
-    UserStatus->step_disable = 1;
+    CUserStatus *status = UserStatus;
+    int one = 1;
+    status->step_disable = one;
     BtAtraGetNo = iventActive;
     iventActive = -1;
     BtGetAtraBoll_Sled = 0;
-    BtActStatus.unk_09C = 1;
+    BtActStatus.unk_09C = one;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", BtAtraGetShort_Init__Fv);
-#endif
 INCLUDE_RODATA("asm/nonmatchings/btitem", @656__4);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @657__2);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @658__2);

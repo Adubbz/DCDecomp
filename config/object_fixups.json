@@ -1859,17 +1859,19 @@
   "src/btitem.cpp": {
     "sections": {
       ".btitem-c792__2": [
-        "@151"
+        "@153"
       ],
       ".btitem-c914": [
-        "@86"
+        "@88"
       ],
       ".btitem-framewait": [
         "frameWait$907"
       ]
     },
     "symbols": {
-      "BtEffectInfoFile": "@902"
+      "BtEffectInfoFile": "@902",
+      "BtAtraShortCharaFile": "@656__4",
+      "BtAtraShortEffectFile": "@866__2"
     }
   },
   "src/water.cpp": {
