@@ -322,6 +322,12 @@ int chkAtraFloor(int dungeon, int floor) {
     }
     return 1;
 }
+
+/**
+ * The floor each dungeon's upper half ends on.
+ */
+extern int CenterFloorTbl[6];
+
 /**
  * Builds the list of Atla one dungeon may hand out.
  *
@@ -340,7 +346,6 @@ struct ATRA_APPEAR {
 };
 
 extern ATRA_APPEAR *AtraAppearData[6];
-extern int CenterFloorTbl[6];
 extern int MaxFloorTbl[6];
 
 void BtAtraListMake(int dungeon) {
@@ -397,28 +402,36 @@ void BtAtraListMake(int dungeon) {
 #else
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", BtAtraListMake__Fi);
 #endif
-#ifdef NON_MATCHING
+/**
+ * Selects the atla identifiers that appear on a floor: keeps the fixed ones,
+ * draws each open slot from the dungeon's list for its half, packs them to the
+ * front and returns how many there are.
+ *
+ * @mangled BtAtraFloorCyoice__FiiPi
+ * @address 0x1C0D20
+ * @size 0x2A0
+ */
 int BtAtraFloorCyoice(int dungeon, int floor, int *atra) {
-    DNG_ATRA_REGISTRY_ENTRY registry[100];
+    DNG_ATRA_REGISTRY_ENTRY registry[128];
     int packed[8];
-    CDngStatusData *status = (CDngStatusData *) UserStatus;
-    int i;
 
     if (dungeon >= 6) {
         return 0;
     }
-    status->GetMaxAtraNum(dungeon, floor);
+    ((CDngStatusData *) UserStatus)->GetMaxAtraNum(dungeon, floor);
     int center = CenterFloorTbl[dungeon];
-    status->SetCopyAtraList(dungeon, floor, atra);
-    for (i = 0; i < 100; i++) {
-        registry[i] = status->atra_registry[dungeon][i];
+    ((CDngStatusData *) UserStatus)->SetCopyAtraList(dungeon, floor, atra);
+    for (int j = 0; j < 100; j++) {
+        registry[j].id = UserStatus->atra_data[dungeon][j].unk_00;
+        registry[j].floor = UserStatus->atra_data[dungeon][j].unk_04;
+        registry[j].refcount = UserStatus->atra_data[dungeon][j].unk_08;
     }
     int half = -1;
     if (floor > center - 1) {
         half = -2;
     }
     int count = 0;
-    for (i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; i++) {
         if (atra[i] >= 0) {
             count++;
         } else if (atra[i] == -2) {
@@ -435,21 +448,18 @@ int BtAtraFloorCyoice(int dungeon, int floor, int *atra) {
             count++;
         }
     }
-    for (i = 0; i < 8; i++) {
-        packed[i] = -1;
+    for (int k = 0; k < 8; k++) {
+        packed[k] = -1;
     }
     int out = 0;
-    for (i = 0; i < 8; i++) {
-        if (atra[i] >= 0) {
-            packed[out++] = atra[i];
+    for (int m = 0; m < 8; m++) {
+        if (atra[m] >= 0) {
+            packed[out++] = atra[m];
         }
     }
     memcpy(atra, packed, sizeof(packed));
     return count;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonparts", BtAtraFloorCyoice__FiiPi);
-#endif
 #ifdef NON_MATCHING
 extern CDranMapField *NowDranMapField;
 
