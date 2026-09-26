@@ -255,7 +255,8 @@ carve_part(main.sbss.part4b.s
 carve_part(main.sbss.part5.s
            main.sbss.part5.s=2A2BF8-2A2C48
            main.sbss.part5-2A2C4C.s=2A2C4C-2A2C68
-           main.sbss.part5c.s=2A2C74-2A2DA4
+           main.sbss.part5c.s=2A2C74-2A2D80
+           main.sbss.battlemenu-2A2D85.s=2A2D85-2A2DA4
            main.sbss.part5c-2A2DA8.s=2A2DBC-2A2E84
            main.sbss.memcard-a.s=2A2F08-2A2F50
            main.sbss.denter-gap.s=2A2F54-2A2F5C
@@ -283,7 +284,7 @@ carve_part(main.data.part6.s
            main.data.battlemenu-292E60.s=292E60-292E90
            main.data.battlemenu-292F38.s=292F38-292F40
            main.data.battlemenu-292F58.s=292F58-292F60
-           main.data.shop-filenames-after-292EE0-292FA0.s=292FF0-293030
+           main.data.shop-filenames-after-292EE0-292FA0.s=292FF0-293020
            main.data.shop-filenames-after-292EE0-292FA0-293040.s=293070-293080
            main.data.shop-filenames-after-292EE0-292FA0-293040-293090.s=293090-293100
            main.data.battlemenu-293124.s=293124-293130

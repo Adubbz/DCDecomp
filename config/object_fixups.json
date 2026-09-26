@@ -196,121 +196,127 @@
         "@459"
       ],
       ".battlemenu-c1717": [
-        "@512"
+        "@557"
       ],
       ".battlemenu-c1725": [
-        "@520"
+        "@565"
       ],
       ".battlemenu-c1728": [
-        "@523"
+        "@568"
       ],
       ".battlemenu-c1729": [
-        "@524"
+        "@569"
       ],
       ".battlemenu-c1879": [
-        "@647"
+        "@692"
       ],
       ".battlemenu-c2002": [
-        "@678"
+        "@723"
       ],
       ".battlemenu-c2003": [
-        "@679"
+        "@724"
       ],
       ".battlemenu-c2004": [
-        "@680"
+        "@725"
       ],
       ".battlemenu-c2020": [
-        "@696"
+        "@741"
       ],
       ".battlemenu-c2056": [
-        "@731"
+        "@776"
       ],
       ".battlemenu-c2057": [
-        "@732"
+        "@777"
       ],
       ".battlemenu-c2058": [
-        "@733"
+        "@778"
       ],
       ".battlemenu-c2059": [
-        "@734"
+        "@779"
       ],
       ".battlemenu-c2127__3": [
-        "@796"
+        "@841"
       ],
       ".battlemenu-c2195": [
-        "@854"
+        "@899"
       ],
       ".battlemenu-c2196": [
-        "@855"
+        "@900"
       ],
       ".battlemenu-c2197": [
-        "@856"
+        "@901"
       ],
       ".battlemenu-c2198": [
-        "@857"
+        "@902"
       ],
       ".battlemenu-c2199": [
-        "@858"
+        "@903"
       ],
       ".battlemenu-c2250": [
-        "@909"
+        "@954"
       ],
       ".battlemenu-c3657": [
-        "@1109"
+        "@1154"
       ],
       ".battlemenu-c3967": [
-        "@1308"
+        "@1353"
       ],
       ".battlemenu-c3968": [
-        "@1309"
+        "@1354"
       ],
       ".battlemenu-c4290": [
-        "@1388"
+        "@1433"
       ],
       ".battlemenu-c4291": [
-        "@1389"
+        "@1434"
       ],
       ".battlemenu-c4331": [
-        "@1426"
+        "@1471"
       ],
       ".battlemenu-c4433": [
-        "@1506"
+        "@1551"
       ],
       ".battlemenu-c5492": [
-        "@1593"
+        "@1638"
       ],
       ".battlemenu-c5503": [
-        "@1602"
+        "@1647"
       ],
       ".battlemenu-c5534": [
-        "@1634"
+        "@1679"
       ],
       ".battlemenu-c5742": [
-        "@1813"
+        "@1858"
       ],
       ".battlemenu-town-ref": [
-        "@1927"
+        "@1972"
       ],
       ".battlemenu-town-pos": [
-        "@1928"
+        "@1973"
+      ],
+      ".battlemenu-c6018": [
+        "@2100"
+      ],
+      ".battlemenu-c6037": [
+        "@2119"
       ],
       ".battlemenu-c6185": [
-        "@2091"
+        "@2136"
       ],
       ".battlemenu-c6188": [
-        "@2094"
+        "@2139"
       ],
       ".battlemenu-c6227": [
-        "@2120"
+        "@2165"
       ],
       ".battlemenu-c6232": [
-        "@2130"
+        "@2175"
       ],
       ".battlemenu-c6233": [
-        "@2131"
+        "@2176"
       ],
       ".battlemenu-c6235": [
-        "@2133"
+        "@2178"
       ],
       ".battlemenu-c702__2": [
         "@166"
@@ -322,28 +328,31 @@
         "@427"
       ],
       ".battlemenu-c2169": [
-        "@838"
+        "@883"
       ],
       ".battlemenu-c3682": [
-        "@1134"
+        "@1179"
       ],
       ".battlemenu-c3929": [
-        "@1283"
+        "@1328"
       ],
       ".battlemenu-c5556": [
-        "@1656"
+        "@1701"
       ],
       ".battlemenu-c5592": [
-        "@1693"
+        "@1738"
       ],
       ".battlemenu-c5593": [
-        "@1694"
+        "@1739"
       ],
       ".battlemenu-c5711": [
-        "@1784"
+        "@1829"
+      ],
+      ".battlemenu-c5977": [
+        "@2087"
       ],
       ".battlemenu-c6236": [
-        "@2134"
+        "@2179"
       ],
       ".battlemenu-ncnt_4292": [
         "ncnt$4292"
@@ -363,14 +372,14 @@
       ".battlemenu-init_5777": [
         "init$5777"
       ],
-      ".battlemenu-c6018": [
-        "@2055"
+      ".battlemenu-c1684__2": [
+        "@525"
       ],
-      ".battlemenu-c6037": [
-        "@2074"
+      ".battlemenu-warningcnt_1676": [
+        "warningcnt$1676"
       ],
-      ".battlemenu-c5977": [
-        "@2042"
+      ".battlemenu-init_1677": [
+        "init$1677"
       ]
     },
     "rodata_exports": [

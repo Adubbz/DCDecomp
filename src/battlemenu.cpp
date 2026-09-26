@@ -2029,15 +2029,15 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawCharaSelect__Fv);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1665);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1668);
-#ifdef NON_MATCHING
 void DrawWepDamageDraw(RECT rect, WEAPON_HAVE *weapon, int alpha) {
-    static int warningcnt = 0;
-    RECT pos = rect;
-    int y = pos.y;
+    int x = rect.x;
+    int max_exp;
+    int exp;
+    int y = rect.y;
     int durability = weapon->durability;
     int now = GetDispVolumeForFloat(weapon->durability_f);
-    int max_exp = GetWeaponMaxExp(weapon);
-    int exp = weapon->unk_14;
+    max_exp = GetWeaponMaxExp(weapon);
+    exp = weapon->unk_14;
 
     if (max_exp < exp) {
         exp = max_exp;
@@ -2049,7 +2049,8 @@ void DrawWepDamageDraw(RECT rect, WEAPON_HAVE *weapon, int alpha) {
         max_exp = 99;
     }
     int exp_len = exp * 99 / max_exp;
-    DrawMenu2DSprite(WepStatus, CRect_i_(pos.x, y, durability, 8), CRect_i_(0x100, 0x70, 8, 8), alpha);
+    DrawMenu2DSprite(WepStatus, CRect_i_(rect.x, y, durability, 8), CRect_i_(0x100, 0x70, 8, 8), alpha);
+    static int warningcnt = 0;
     warningcnt++;
     if (weapon->durability_f <= 0.1f * weapon->durability || max_exp == exp) {
         abs((int) (60.0f * sinf((float) warningcnt / 18.0f)));
@@ -2058,37 +2059,33 @@ void DrawWepDamageDraw(RECT rect, WEAPON_HAVE *weapon, int alpha) {
             warningcnt = 0;
         }
     }
-    MGFillBox(CRect_i_(pos.x * 16, ((y - 1) >> 1) * 16, (durability + 1) * 16, 0x50), 0x4F, 0x4F, 0x4F, alpha);
+    MGFillBox(CRect_i_(rect.x * 16, ((y - 1) >> 1) * 16, (durability + 1) * 16, 0x50), 0x4F, 0x4F, 0x4F, alpha);
     GRADATION_COLOR_INFO2 colours;
     memcpy(&colours, GetGradationColorInfo2(25), sizeof(colours));
     colours.colors[3].a = alpha;
     colours.colors[2].a = alpha;
     colours.colors[1].a = alpha;
     colours.colors[0].a = alpha;
-    CRect_i_ bar(pos.x, y, now, 8);
-    DrawMenuColorGradation(bar, &colours.colors[0], &colours.colors[1], &colours.colors[2], &colours.colors[3]);
-    int number_y = y + pos.height;
+    DrawMenuColorGradation(CRect_i_(rect.x, y, now, 8), &colours.colors[0], &colours.colors[1], &colours.colors[2],
+                           &colours.colors[3]);
+    y += rect.height;
     RECT digits = {0xD4, 0x1F4, 0xC, 0xD};
-    int number_x = pos.x + pos.width;
-    DrawMenuNumber(durability, number_x, number_y, WepStatus, digits, 1, alpha);
-    DrawMenu2DSprite(WepStatus, CRect_i_(number_x - 0x20, number_y, 0xC, 0xB), CRect_i_(digits.x + 0x78, digits.y, 0xC, 0xC),
-                     alpha);
-    DrawMenuNumber(now, number_x - 0x20, number_y, WepStatus, digits, 1, alpha);
-    pos.y += 0x14;
-    y = pos.y;
-    DrawMenu2DSprite(WepStatus, CRect_i_(pos.x, y, exp_len, 8), CRect_i_(0x100, 0x78, 8, 8), alpha);
+    x += rect.width;
+    DrawMenuNumber(durability, x, y, WepStatus, digits, 1, alpha);
+    DrawMenu2DSprite(WepStatus, CRect_i_(x - 0x20, y, 0xC, 0xB), CRect_i_(digits.x + 0x78, digits.y, 0xC, 0xC), alpha);
+    DrawMenuNumber(now, x - 0x20, y, WepStatus, digits, 1, alpha);
+    rect.y += 0x14;
+    y = rect.y;
+    DrawMenu2DSprite(WepStatus, CRect_i_(rect.x, y, exp_len, 8), CRect_i_(0x100, 0x78, 8, 8), alpha);
     int digits_count = GetNumberKeta(max_exp);
-    number_y = y + pos.height;
-    number_x = pos.x + digits_count * 0x18;
-    DrawMenuNumber(max_exp, number_x, number_y, WepStatus, digits, 1, alpha);
-    number_x -= digits_count * 0x10;
-    DrawMenu2DSprite(WepStatus, CRect_i_(number_x, number_y, 0xC, 0xB), CRect_i_(digits.x + 0x78, digits.y, 0xC, 0xC),
-                     alpha);
-    DrawMenuNumber(exp, number_x, number_y, WepStatus, digits, 1, alpha);
+    x = rect.x;
+    y += rect.height;
+    x += digits_count * 0x18;
+    DrawMenuNumber(max_exp, x, y, WepStatus, digits, 1, alpha);
+    x -= digits_count * 0x10;
+    DrawMenu2DSprite(WepStatus, CRect_i_(x, y, 0xC, 0xB), CRect_i_(digits.x + 0x78, digits.y, 0xC, 0xC), alpha);
+    DrawMenuNumber(exp, x, y, WepStatus, digits, 1, alpha);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWepDamageDraw__F4RECTP11WEAPON_HAVEi);
-#endif
 void DrawWepStatus(int x, int y, WEAPON_HAVE *weapon, int selected, int alpha) {
     int v = 0;
 
