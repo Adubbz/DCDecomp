@@ -16,6 +16,8 @@ extern "C" char *DebugInfoMsg[15];
 extern "C" int DebugInfoNowCursor;
 extern "C" CDebugFont DbgMsg;
 extern "C" char nameblock[64];
+
+/** The event manager of the floor the dungeon is running. */
 extern CDungeonEventMan *NowEventMan;
 
 /**
