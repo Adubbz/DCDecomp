@@ -1863,11 +1863,12 @@ static void DrawPersonalBoardBase(int x, int y, int top, int bottom, int count, 
         x += 0x28;
     }
 }
-#ifdef NON_MATCHING
+
 void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CTexture *texture, int alpha) {
-    int board_y = y;
+    int row_y = y;
+    int board_x = x;
     for (int row = 0; row < 26; row++) {
-        DrawPersonalBoardBase(x, board_y, top, bottom, 5, texture, alpha);
+        DrawPersonalBoardBase(board_x, row_y, top, bottom, 5, texture, alpha);
         int draw_mark = 0;
         switch (mark) {
             case 0:
@@ -1885,10 +1886,10 @@ void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CT
         }
         if (draw_mark != 0) {
             int mark_x = x - 4;
-            int mark_y = board_y - 8;
+            int mark_y = row_y - 8;
             int v = 0x3C;
             int height = 0x10;
-            if (mark_y + 0x10 >= top && mark_y < bottom) {
+            if (top <= mark_y + 0x10 && mark_y < bottom) {
                 MenuTextureClip(mark_y, v, height, top, bottom);
                 int step = 9;
                 spRGBA left;
@@ -1898,10 +1899,8 @@ void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CT
                 right.a = alpha;
                 left.a = alpha;
                 for (int i = 0; i < 5; i++) {
-                    CRect_i_ texel(0x20, v, 0x28, height);
-                    CRect_i_ screen(mark_x, mark_y, 0x28, height);
-                    set2DSprite(GetVif1Packet(), texture, screen, texel, &left, &right, &left, &right, 1);
-
+                    set2DSprite(GetVif1Packet(), texture, CRect_i_(mark_x, mark_y, 0x28, height),
+                                CRect_i_(0x20, v, 0x28, height), &left, &right, &left, &right, 1);
                     left.r = left.g = left.b = right.r;
                     right.r = right.g = right.b = right.r - step;
                     step--;
@@ -1909,15 +1908,13 @@ void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CT
                 }
             }
         }
-        board_y += 0x28;
-        if (bottom < board_y) {
+        row_y += 0x28;
+        if (bottom < row_y) {
             break;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawPerBoardDraw__FiiiiiiP8CTexturei);
-#endif
+
 /* The trash can's animation fields, which CommonTrushDraw reaches as one record. */
 struct PERSONAL_BOARD_TRASH {
     s16 anim;

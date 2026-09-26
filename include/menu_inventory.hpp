@@ -119,13 +119,14 @@ void PersonalBoardScrlBarDraw(int x, int y, int count, float &scroll, unsigned c
 void PersonalBoardMaxDraw(int num, int x, int y, CTexture *texture, int alpha);
 
 /**
- * Draws one complete personal-board view.
+ * Draws the rows of a personal board's slot grid down to the clip bottom, with a divider bar above the third row
+ * (mark 1) or above every other row (mark 2).
  *
  * @mangled DrawPerBoardDraw__FiiiiiiP8CTexturei
  * @address 0x00230DC0
  * @size 0x298
  */
-void DrawPerBoardDraw(int x, int y, int board_mode, int cursor_pos, int top_pos, int count, CTexture *texture, int alpha);
+void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CTexture *texture, int alpha);
 
 /**
  * Draws the common trash target used by inventory boards.
