@@ -571,6 +571,7 @@ void CDungeonParts::Draw() {
         MGDraw(frame[i]);
     }
 }
+#ifdef NON_MATCHING
 /**
  * Chooses the level of detail each of a part's frames draws at.
  *
@@ -578,16 +579,15 @@ void CDungeonParts::Draw() {
  * @address 0x1C1850
  * @size 0x348
  */
-#ifdef NON_MATCHING
 void CDungeonParts::DrawCalc(int x, int z, int turn, int fixed) {
     sceVu0FVECTOR position;
 
     for (int i = 0; i < 6; i++) {
-        CFrame **slot = &frame[i];
-        CFrame *model = *slot;
+        CFrame *model = frame[i];
         if (model == NULL) {
             continue;
         }
+
         int model_turn = (int) ((float) direction + frame_turn[i]);
         if (model_turn > 3) {
             model_turn -= 3;
@@ -604,7 +604,7 @@ void CDungeonParts::DrawCalc(int x, int z, int turn, int fixed) {
         position[1] += frame_offset[i][1];
         position[2] += frame_offset[i][2];
         position[3] = 1.0f;
-        (*slot)->SetPosition(position);
+        frame[i]->SetPosition(position);
     }
     CFrame *model = collision;
     if (model == NULL) {
