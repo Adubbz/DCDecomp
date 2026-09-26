@@ -214,7 +214,7 @@ INCLUDE_RODATA("asm/nonmatchings/dungeonparts", @1007__2);
  */
 struct ITEM_FREE_AREA {
     s8 parts_no;          /**< Map part the areas lie on; -1 ends the table. */
-    u8 count;             /**< Number of boxes that follow. */
+    s8 count;             /**< Number of boxes that follow. */
     s8 direction;         /**< Quarter turns the boxes are given in. */
     u8 unk_03;
     float box[4][6];      /**< Each box as its two corners, in tenths of a unit. */
@@ -222,50 +222,51 @@ struct ITEM_FREE_AREA {
 
 extern ITEM_FREE_AREA *ItemFreeAreaAll[];
 
-void SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float *out) {
-    float corner[4][4];
+int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float *out) {
     float quad[196][4][3];
+    float px[4];
+    float py[4];
+    float pz[4];
     int count = 0;
     ITEM_FREE_AREA *areas = ItemFreeAreaAll[selectMapNo];
 
     for (int cy = y; cy < y + height; cy++) {
         for (int cx = x; cx < x + width; cx++) {
-            MAPPARTS *cell = &cells[cy * 20 + cx];
-            int parts_no = cell->parts_no;
-            int direction = cell->direction;
+            int parts_no = (cells + cy * 20)[cx].parts_no;
+            int direction = (cells + cy * 20)[cx].direction;
             for (int a = 0; areas[a].parts_no != -1 && count < 196; a++) {
                 if (parts_no != areas[a].parts_no) {
                     continue;
                 }
                 for (int b = 0; b < areas[a].count; b++) {
-                    int turn = areas[a].direction + direction;
-                    if (turn >= 4) {
+                    int turn = areas[a].direction;
+                    turn += direction;
+                    if (turn > 3) {
                         turn -= 4;
                     }
                     float angle = (3.1415927f * (90.0f * (float) (4 - turn))) / 180.0f;
-                    float *box = areas[a].box[b];
-                    corner[0][0] = 10.0f * box[0];
-                    corner[1][0] = 10.0f * box[1];
-                    corner[2][0] = 10.0f * box[2];
-                    corner[0][3] = 10.0f * box[3];
-                    corner[1][3] = 10.0f * box[4];
-                    corner[2][3] = 10.0f * box[5];
-                    corner[0][1] = corner[0][3];
-                    corner[1][1] = corner[1][0];
-                    corner[2][1] = corner[2][0];
-                    corner[0][2] = corner[0][0];
-                    corner[1][2] = corner[1][0];
-                    corner[2][2] = corner[2][3];
+                    px[0] = areas[a].box[b][0] * 10.0f;
+                    py[0] = areas[a].box[b][1] * 10.0f;
+                    pz[0] = areas[a].box[b][2] * 10.0f;
+                    px[3] = areas[a].box[b][3] * 10.0f;
+                    py[3] = areas[a].box[b][4] * 10.0f;
+                    pz[3] = areas[a].box[b][5] * 10.0f;
+                    px[1] = px[3];
+                    py[1] = py[0];
+                    pz[1] = pz[0];
+                    px[2] = px[0];
+                    py[2] = py[0];
+                    pz[2] = pz[3];
                     for (int k = 0; k < 4; k++) {
                         if (count < 196) {
-                            float cz = corner[2][k];
-                            float cxv = corner[0][k];
-                            quad[count][k][0] = -cz * sinf(angle) - cxv * cosf(angle);
+                            float cz;
+                            float cxv;
+                            quad[count][k][0] = -(cz = pz[k]) * sinf(angle) - (cxv = px[k]) * cosf(angle);
                             quad[count][k][2] = -cxv * sinf(angle) + cz * cosf(angle);
                             quad[count][k][0] *= -1.0f;
                             quad[count][k][0] += 160.0f * (float) cx;
                             quad[count][k][2] += 160.0f * (float) cy;
-                            quad[count][k][1] = corner[1][k];
+                            quad[count][k][1] = py[k];
                         }
                     }
                     count++;
@@ -277,10 +278,10 @@ void SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, floa
         }
     }
     int pick = (int) (((float) count * (float) rand()) / 2.1474836e9f);
-    float min_x = quad[pick][0][0];
-    float max_x = min_x;
-    float min_z = quad[pick][0][2];
-    float max_z = min_z;
+    float max_x = quad[pick][0][0];
+    float min_x = max_x;
+    float max_z = quad[pick][0][2];
+    float min_z = max_z;
     for (int k = 1; k < 4; k++) {
         if (min_x > quad[pick][k][0]) {
             min_x = quad[pick][k][0];
@@ -295,10 +296,13 @@ void SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, floa
             max_z = quad[pick][k][2];
         }
     }
-    out[0] = min_x + ((max_x - min_x) * (float) rand()) / 2.1474836e9f;
+    float span_x = max_x - min_x;
+    float span_z = max_z - min_z;
+    out[0] = min_x + (span_x * (float) rand()) / 2.1474836e9f;
     out[1] = quad[pick][0][1];
-    out[2] = min_z + ((max_z - min_z) * (float) rand()) / 2.1474836e9f;
+    out[2] = min_z + (span_z * (float) rand()) / 2.1474836e9f;
     out[3] = 1.0f;
+    return count;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", SearchiDoPutArea__FP8MAPPARTSiiiiPf);
